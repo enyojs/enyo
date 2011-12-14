@@ -1,0 +1,12 @@
+﻿.enyo-hflexbox, .enyo-vflexbox {
+	display: -moz-box;
+	-moz-box-sizing: border-box;
+}
+
+.enyo-hflexbox {
+	-moz-box-orient: horizontal;
+}
+
+.enyo-vflexbox {
+	-moz-box-orient: vertical;
+}

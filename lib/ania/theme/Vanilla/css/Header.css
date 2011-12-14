@@ -1,0 +1,35 @@
+.enyo-header {
+	-webkit-box-sizing: border-box;
+	min-height: 50px;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#E8E8E8), to(#CECECE));
+	border-style: solid;
+	border-color: #9E9E9E;
+	border-width: 1px 0px;
+	box-shadow: inset 0px 1px 0px white, 0px 1px 1px rgba(0,0,0,0.1);
+	color: #2a2a2a;
+	text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+	/*
+		Note: shadow is problematic if we support background colors.
+		Afaict, has to be done with a separate div or webkit--webkit-box-shadow; (unsupported on device)
+	*/
+	/*
+	-webkit-box-shadow: 0 0 4px #888;
+	*/
+}
+
+.enyo-header.enyo-header-dark {
+	color: white;
+	border-color: #363636;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#4C4C4C), to(#343434));
+	box-shadow: inset 0px 1px 0px #5F5F5F, 0px 1px 1px rgba(0,0,0,0.4);
+	text-shadow: 0px 1px 0 rgba(0,0,0,0.7);
+}
+
+.enyo-header-inner {
+	padding: 13px 12px;
+	min-height: 52px;
+}
+
+.enyo-header-icon {
+	padding-right: 10px;
+}

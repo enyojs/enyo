@@ -1,0 +1,59 @@
+.enyo-divider,
+.enyo-divider-alpha {
+	height:  36px;
+	margin: 7px 0px;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#E4E5E6), to(#E0E1E3));
+}
+
+.enyo-divider.enyo-dark,
+.enyo-divider-alpha.enyo-dark {
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#18191B), to(#121315));
+}
+
+.enyo-divider-right-cap {
+}
+
+.enyo-divider-left-cap {
+}
+
+
+
+.enyo-divider-icon {
+	margin: 0 6px;
+}
+
+.enyo-divider-icon-collapse {
+	margin: 0 6px 0 0;
+}
+
+.enyo-divider-content,
+.enyo-divider-alpha-content {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-transform: uppercase;
+	white-space: nowrap;
+	font-weight: bold;
+	font-size: 11pt;
+	color: #6493E9;
+	margin-left: 10px;
+
+	/* Needs to be effectively zero compared to .enyo-divider-left-cap's
+	   flex so the content will flex but take as little space as possible
+	   and still truncate properly */
+	-webkit-box-flex: .1;
+}
+
+.enyo-divider.enyo-dark .enyo-divider-content,
+.enyo-divider-alpha.enyo-dark .enyo-divider-alpha-content {
+	color:  #BABFC4;
+}
+
+.enyo-divider-alpha {
+	line-height: 36px;
+}
+
+.enyo-divider-alpha-content {
+	font-size: 12pt;
+}
+
+

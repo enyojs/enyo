@@ -1,0 +1,9 @@
+.enyo-pickergroup-above-scrim {
+	z-index: 110;
+}
+
+.enyo-pickergroup-pickerpopup {
+	border-width: 0;
+	-webkit-border-image: none;
+	min-width: 0px;
+}

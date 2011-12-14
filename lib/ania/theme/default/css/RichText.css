@@ -1,0 +1,26 @@
+﻿.enyo-richtext {
+	word-wrap: break-word;
+	cursor: text;
+	border: none;
+	outline: none;
+	overflow: hidden;
+}
+
+.enyo-richtext-hint {
+	color: #A9A9A9;
+}
+
+.enyo-richtext {
+	-webkit-user-select: text;
+	-webkit-user-modify: read-write;
+	-webkit-line-break: after-white-space;
+}
+
+.enyo-richtext.enyo-richtext-plaintext {
+	-webkit-user-modify: read-write-plaintext-only;
+}
+
+.enyo-richtext.enyo-richtext-disabled, .enyo-richtext.enyo-richtext-plaintext.enyo-richtext-disabled {
+	-webkit-user-modify: read-only;
+	color: darkGray;
+}

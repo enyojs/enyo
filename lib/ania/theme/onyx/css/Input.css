@@ -1,0 +1,94 @@
+.enyo-input {
+	border-width: 14px;
+	border-style: solid;
+	border-color: transparent;
+	-webkit-box-sizing: border-box;
+	font-size: .9rem;
+}
+
+.enyo-input.enyo-input-focus {
+	-webkit-border-image: url(../images/input-focus.png) 14 14;
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-input.enyo-input-focus {
+		-webkit-border-image: url(../images-1.5/input-focus.png) 21 21;
+	}
+}
+
+.enyo-input > .enyo-input-spacing {
+	margin: -2px -4px;
+}
+
+.enyo-input-input {
+	display: block;
+	border: none;
+	margin: 0;
+	outline: none;
+	background-color: transparent;
+	padding: 0;
+	width: 100%;
+	-webkit-appearance: caret;
+	-webkit-box-sizing: border-box;
+	cursor: pointer;
+	font-size: .9rem;
+}
+
+input::-webkit-input-placeholder, isindex::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+	color: #888;
+}
+
+.enyo-input-disabled {
+	/*color: darkGray;*/
+	/* HACK: this is needed to color a disabled input placeholder.
+	 * Also works for filled inputs as well thankfully */
+	-webkit-text-fill-color: #888;
+	opacity: 0.625;
+}
+
+.enyo-input-input:focus {
+	cursor: text;
+}
+
+/* 
+FIXME: we almost always want some padding on a enyo-item, except when it's surrounding 
+		a fancy-input.... so we special case that here, non-ideal 
+*/
+.enyo-item > .enyo-input {
+	margin: -11px -10px;
+}
+
+/* Row styling for inputs */
+.enyo-first.enyo-input.enyo-input-focus, .enyo-first > .enyo-input.enyo-input-focus {
+	padding-bottom: 12px;
+	border-width: 14px 14px 2px 14px;
+	-webkit-border-image: url(../images/input-first-focus.png) 14 14 2 14;
+}
+
+.enyo-last.enyo-input.enyo-input-focus, .enyo-last > .enyo-input.enyo-input-focus {
+	padding-top: 12px;
+	border-width: 2px 14px 14px 14px;
+	-webkit-border-image: url(../images/input-last-focus.png) 2 14 14 14;
+}
+
+/* NOTE: .enyo-middle is a boxy input type automatically applied when the input is the middle item in a group
+.enyo-box-input an alias which users can use to create a rectangular input.
+*/
+.enyo-box-input.enyo-input.enyo-input-focus, .enyo-middle.enyo-input.enyo-input-focus, .enyo-middle > .enyo-input.enyo-input-focus {
+	background-color: transparent;
+	border-width: 14px;
+	-webkit-border-image: url(../images/input-middle-focus.png) 14 14;
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-first.enyo-input.enyo-input-focus, .enyo-first > .enyo-input.enyo-input-focus {
+		-webkit-border-image: url(../images-1.5/input-first-focus.png) 21 21 3 21;
+	}
+	.enyo-last.enyo-input.enyo-input-focus, .enyo-last > .enyo-input.enyo-input-focus {
+		-webkit-border-image: url(../images-1.5/input-last-focus.png) 3 21 21 21;
+	}
+	
+	.enyo-box-input.enyo-input.enyo-input-focus, .enyo-middle.enyo-input.enyo-input-focus, .enyo-middle > .enyo-input.enyo-input-focus {
+		-webkit-border-image: url(../images-1.5/input-middle-focus.png) 21 21;
+	}
+}

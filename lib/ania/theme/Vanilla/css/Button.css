@@ -1,0 +1,105 @@
+.enyo-button {
+	/* defeats flex; flex layout could set children to display block */
+	/*display: inline-block;*/
+	/*-webkit-box-sizing: border-box;*/
+	font-size: 16px;
+	text-align: center;
+	padding: 0px 10px;
+	min-width: 36px;
+	height: 36px;
+	line-height: 36px;
+	border-radius: 3px;
+	margin: 3px;
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#DADADA), to(#C7C7C7));
+	-webkit-box-shadow: inset 0px 2px 0px rgba(255,255,255,0.25), inset 1px 1px 0px rgba(0,0,0,0.3), inset -1px -1px 0px rgba(0,0,0,0.3);
+	color: #222;
+	text-shadow: 0px 1px 0 rgba(255,255,255,0.25);	
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.enyo-button.enyo-button-down, .enyo-button.enyo-button-depressed {
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#C7C7C7), to(#DADADA));	
+	-webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.20), inset 1px 1px 0px rgba(0,0,0,0.3), inset -1px -1px 0px rgba(0,0,0,0.3);
+}
+
+.enyo-button.enyo-button-disabled {
+	opacity: 0.4;
+}
+
+.enyo-button.enyo-button-affirmative, 
+.enyo-button.enyo-button-negative, 
+.enyo-button.enyo-button-blue, 
+.enyo-button.enyo-button-dark,
+.enyo-button.enyo-dark {
+	color: white;
+	text-shadow: 0px -1px 0 rgba(0,0,0,0.25);
+}
+
+
+/* NotificationButtons default to 'alternate' style (yellow).*/
+.enyo-button.enyo-button-alternate, .enyo-notification-button {
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#ECCE47), to(#E1B03D));	
+}
+.enyo-button-alternate.enyo-button-down, 
+.enyo-button-alternate.enyo-button-depressed,
+.enyo-notification-button.enyo-button-down, 
+.enyo-notification-button.enyo-button-depressed {
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#E1B03D), to(#ECCE47));	
+}
+
+
+
+.enyo-button.enyo-button-affirmative {
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#92BB3D), to(#568D2B));	
+}
+.enyo-button-affirmative.enyo-button-down, 
+.enyo-button-affirmative.enyo-button-depressed {
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#65962F), to(#709E32));	
+}
+
+.enyo-button.enyo-button-negative, .enyo-notification-button-negative {
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#B10016), to(#890010));	
+}
+.enyo-button-negative.enyo-button-down, 
+.enyo-button-negative.enyo-button-depressed {
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#8E0011), to(#B10016));	
+}
+
+.enyo-button.enyo-button-blue {
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#3E9AE8), to(#2D5ADA));	
+}
+.enyo-button-blue.enyo-button-down, 
+.enyo-button-blue.enyo-button-depressed {
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#2D5ADA), to(#3E9AE8));	
+}
+
+
+.enyo-button.enyo-button-dark,
+.enyo-button.enyo-dark {
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#72757A), to(#47484B));
+}
+.enyo-button-dark.enyo-button-down, .enyo-button-dark.enyo-button-depressed,
+.enyo-button.enyo-dark.enyo-button-down, .enyo-button.enyo-dark.enyo-button-depressed {
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#505255), to(#585A5E));
+}
+
+
+.enyo-button-standard-width {
+	min-width: 120px;
+}
+
+.enyo-button img {
+	padding: 0px 3px;
+}
+
+
+
+/* notification button */
+
+.enyo-button.enyo-notification-button {
+	color: white;
+	font-weight: bold;
+	text-shadow: 0px 1px 3px rgba(0,0,0,0.45);
+}

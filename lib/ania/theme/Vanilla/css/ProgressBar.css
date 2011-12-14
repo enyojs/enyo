@@ -1,0 +1,32 @@
+.enyo-progress-bar {
+	height: 8px;
+	border-radius: 4px;
+	background-color: #B8B8B8;
+	-webkit-box-shadow: 0px 1px 0px rgba(255,255,255,0.5), inset 0px 1px 4px rgba(0,0,0,0.6);
+	position: relative;
+}
+
+@-webkit-keyframes enyo-candycane {
+	from {
+		background-position: 0px 0px, 0px 0px;
+	}
+	to {
+		background-position: 18px 0px, 18px 0px;
+	}
+}
+
+.enyo-progress-bar-inner {
+	border-radius: 4px;
+	height: 8px;
+	z-index:10; /* for progressSlider altBarPosition */
+	-webkit-box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.3), inset 0 0 1px #000;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(129, 212, 247, 0.5)), to(rgba(35, 105, 227, 0.9))), -webkit-gradient(linear, left top, right bottom, color-stop(0.125, #3e8bdc), color-stop(0.125, #58ABEF), color-stop(0.375, #58ABEF), color-stop(0.375, #3e8bdc), color-stop(0.625, #3e8bdc), color-stop(0.625, #58ABEF), color-stop(0.875, #58ABEF), color-stop(0.875, #3e8bdc));
+	background-size:18px 18px;
+
+	-webkit-animation-name: enyo-candycane;
+	-webkit-animation-duration: 1s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-direction: repeat;
+	-webkit-animation-timing-function: linear;
+}
+

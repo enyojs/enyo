@@ -1,0 +1,26 @@
+.enyo-popup {
+	min-width: 300px;
+	z-index: 120;
+	/* Causes rendering artifacts */
+	/*position: fixed;*/
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	-webkit-box-sizing: border-box;
+	border-width: 24px;
+	-webkit-border-image: url(../images/popup.png) 24 24 24 24 stretch stretch;
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-popup {
+		-webkit-border-image: url(../images-1.5/popup.png) 36 36 36 36 stretch stretch;
+	}
+}
+
+
+.enyo-popup-inner {
+	margin: -7px -14px;
+	/* NOTE: experimental use of css clipping to solve highlights not overflowing curved corners */
+	/* does not work on pre/emulator as of build 3455. */
+	/*-webkit-mask-box-image: url(../images/popup-mask.png) 10 10 10 10 stretch stretch;*/
+}

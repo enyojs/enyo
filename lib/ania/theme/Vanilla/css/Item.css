@@ -1,0 +1,46 @@
+.enyo-item {
+	-webkit-box-shadow: 0px -1px 0px rgba(0,0,0,0.15), 0px 1px 0px rgba(255, 255, 255, 0.3);
+	text-shadow: 0px 1px 0 rgba(255,255,255,0.75);
+	padding: 10px;
+	font-size: .9rem;
+}
+
+.enyo-item.enyo-dark {
+	color: white;
+	-webkit-box-shadow: 0px -1px 0px rgba(0,0,0,0.15), 0px 1px 0px rgba(255, 255, 255, 0.1);
+	text-shadow: 0px 1px 0 rgba(0,0,0,0.5);
+}
+
+.enyo-held {
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0.06)), to(rgba(0,0,0,0.02)));
+	-webkit-box-shadow: inset 0px 1px 3px rgba(0,0,0,0.3);
+}
+.enyo-held.enyo-dark {
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0.5)), to(rgba(0,0,0,0.25)));
+}
+
+.enyo-item-selected {
+	color: #2E5473;
+	background: -webkit-gradient(linear, left top, left bottom, from(#D5E6FE), to(#C7DEFE));
+}
+
+.enyo-item-selected.enyo-dark {
+	background: -webkit-gradient(linear, left top, left bottom, from(#40546B), to(#2F3E4F));
+}
+
+.enyo-disabled {
+	opacity: 0.5;
+}
+
+.enyo-item.enyo-first {
+	border-top: 0;
+}
+
+.enyo-item.enyo-last {
+	border-bottom: 0;
+}
+
+.enyo-group-inner > .enyo-item.enyo-last, .enyo-item.rounded.enyo-last {
+	border-bottom-right-radius: 8px;
+	border-bottom-left-radius: 8px;
+}

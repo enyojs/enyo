@@ -1,0 +1,20 @@
+﻿enyo-button {
+	-webkit-user-select: none;
+	-webkit-box-sizing: border-box;
+}
+
+.enyo-button {
+	-webkit-border-image: url(../images/aristo-normal-68x31.png) 5 5 5 5 stretch stretch;
+}
+
+.enyo-button-default {
+	-webkit-border-image: url(../images/aristo-default-68x31.png) 5 5 5 5 stretch stretch;
+}
+
+.enyo-button-hot {
+	-webkit-border-image: url(../images/aristo-hot-68x31.png) 5 5 5 5 stretch stretch;
+}
+
+.enyo-button-down {
+	-webkit-border-image: url(../images/aristo-down-68x31.png) 5 5 5 5 stretch stretch;
+}

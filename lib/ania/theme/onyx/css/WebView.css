@@ -1,0 +1,12 @@
+.enyo-webview-animate {
+	-webkit-transition: -webkit-transform 0.5s ease-in;
+}
+
+.enyo-webview-flashpopup-animate {
+	-webkit-transition: opacity 1s linear;
+}
+
+.enyo-webview-popup-spinner {
+	min-width: 0px;
+	-webkit-border-image: none;
+}

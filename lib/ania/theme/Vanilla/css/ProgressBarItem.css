@@ -1,0 +1,57 @@
+
+.enyo-progress-bar-item {
+	min-height: 48px;
+	position:relative;
+	-webkit-box-shadow: inset 0px 1px 0px rgba(0,0,0,0.4), 
+				inset 0px 2px 0px rgba(255,255,255,0.2);
+	text-shadow: 0px 1px 0 rgba(255,255,255,0.4);
+}
+
+.enyo-progress-bar-item.enyo-dark {
+	color: white;
+}
+
+.enyo-progress-bar-item-inner {
+	height:100%;
+	position:absolute;
+	background-image:  -webkit-gradient(linear, left top, right bottom, 
+			color-stop(0.125, #B7BFC4), color-stop(0.125, #ADB6BC), 
+			color-stop(0.375, #ADB6BC), color-stop(0.375, #B7BFC4), 
+			color-stop(0.625, #B7BFC4), color-stop(0.625, #ADB6BC), 
+			color-stop(0.875, #ADB6BC), color-stop(0.875, #B7BFC4));
+	background-size:18px 18px;
+	-webkit-animation-name: enyo-candycane;
+	-webkit-animation-duration: 1s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-direction: repeat;
+	-webkit-animation-timing-function: linear;
+}
+
+.enyo-progress-bar-item.enyo-dark > .enyo-progress-bar-item-inner {
+	background-image:  -webkit-gradient(linear, left top, right bottom, 
+			color-stop(0.125, #1C2A37), color-stop(0.125, #18242F), 
+			color-stop(0.375, #18242F), color-stop(0.375, #1C2A37), 
+			color-stop(0.625, #1C2A37), color-stop(0.625, #18242F), 
+			color-stop(0.875, #18242F), color-stop(0.875, #1C2A37));	
+}
+
+.enyo-progress-bar-item-inner::after {
+	content: "";
+	display: block;
+	width: 100%;
+	height: 100%;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(249, 249, 250, 0.3)), to(rgba(97, 117, 131, 0.3)));
+	-webkit-box-shadow: inset 0px 1px 0px rgba(0,0,0,0.4), 
+				inset -1px -1px 0px rgba(0,0,0,0.3), 
+				inset 0px 2px 0px rgba(255,255,255,0.13);
+}
+
+.enyo-progress-bar-item.enyo-dark > .enyo-progress-bar-item-inner::after {
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(55, 82, 107, 0.3)), to(rgba(0, 1, 2, 0.3)));
+}
+
+.enyo-progress-bar-item-client {
+	margin: 0px 12px;
+	position:relative;
+}
+

@@ -1,0 +1,83 @@
+.enyo-progress-button {
+	min-height: 34px;
+	border-width: 4px;
+	border-radius: 5px;
+	-webkit-border-image: url(../images/button-down.png) 4 4 4 4 stretch stretch;
+	color: white;
+	background-color: rgba(23,23,23,0.5);
+	margin: 3px;
+	position:relative;
+	font-size: 18px;
+	line-height: 34px;
+}
+
+.enyo-progress-button-inner {
+	margin: -4px;
+	top: 0;
+	bottom: 0;
+	border-width: 4px;
+	border-radius: 5px;
+	position: absolute;
+	-webkit-border-image: url(../images/button.png) 4 4 4 4 stretch stretch;
+}
+
+.enyo-progress-button-client {
+	margin: 0 5px;
+	position:relative;
+}
+
+.enyo-progress-button-cancel {
+	position:relative;
+	width:32px;
+	height:32px;
+	margin-right:2px;
+	margin-top:2px;
+	background-image: url(../images/progress-button-cancel.png);
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-progress-button {
+		-webkit-border-image: url(../images-1.5/button-down.png) 6 6 6 6 stretch stretch;
+	}
+	
+	.enyo-progress-button-inner {
+		-webkit-border-image: url(../images-1.5/button.png) 6 6 6 6 stretch stretch;
+	}
+	
+	.enyo-progress-button-cancel {
+		background-image: url(../images-1.5/progress-button-cancel.png);
+		background-size: 32px 64px;
+	}
+}
+
+
+.enyo-progress-button-cancel:active {
+	background-position: 0 -32px;
+}
+
+.enyo-progress-button.affirmative > .enyo-progress-button-inner {
+	color: white;
+	background-color: #2aa100;
+}
+
+.enyo-progress-button.negative > .enyo-progress-button-inner {
+	color: white;
+	background-color: #be0003;
+}
+
+.enyo-progress-button.light > .enyo-progress-button-inner {
+	background-color: rgba(255,255,255,0.8);
+	color: #292929;
+}
+
+.enyo-progress-button.dark > .enyo-progress-button-inner {
+	color: white;
+	background-color: rgba(23,23,23,0.5);
+}
+
+.enyo-progress-button.blue > .enyo-progress-button-inner {
+	color: white;
+	background-color: #2071bb;
+}
+
+

@@ -1,0 +1,31 @@
+
+.enyo-progress-bar-item {
+	min-height: 24px;
+	border-width: 12px 0px;
+	-webkit-border-image: url(../images/progress-item.png) 12 0 12 0 repeat repeat;
+	-webkit-box-sizing: border-box;
+	position:relative;
+}
+
+.enyo-progress-bar-item-inner {
+	margin: -12px 0px;
+	padding: 12px 0px;
+	height:100%;
+	border-width: 0 8px 0 0;
+	position:absolute;
+	-webkit-border-image: url(../images/progress-item-inner.png) 0 8 0 0 repeat stretch;
+}
+
+.enyo-progress-bar-item-client {
+	margin: -12px 0px;
+	position:relative;
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-progress-bar-item {
+		-webkit-border-image: url(../images-1.5/progress-item.png) 18 0 18 0 stretch repeat; /* TODO: should be repeat, but it triggers CFISH-10276. */
+	}
+	.enyo-progress-bar-item-inner {
+		-webkit-border-image: url(../images-1.5/progress-item-inner.png) 0 12 0 0 repeat stretch;
+	}	
+}

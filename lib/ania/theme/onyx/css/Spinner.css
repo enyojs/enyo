@@ -1,0 +1,25 @@
+.enyo-spinner {
+	width: 32px;
+	height: 32px;
+	-webkit-box-sizing: border-box;
+	background-image: url(../images/spinner.png);
+}
+
+.enyo-spinner-large {
+	width: 128px;
+	height: 128px;
+	-webkit-box-sizing: border-box;
+	background-image: url(../images/spinner-large.png);
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-spinner {
+		background-image: url(../images-1.5/spinner.png);
+		background-size: 32px 384px;
+	}
+
+	.enyo-spinner-large {
+		background-image: url(../images-1.5/spinner-large.png);
+		background-size: 128px 1536px;
+	}
+}

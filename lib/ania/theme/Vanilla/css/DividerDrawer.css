@@ -1,0 +1,31 @@
+.enyo-collapsible-arrow {
+	height: 40px;
+	width: 50px;
+}
+
+.enyo-collapsible-arrow::after {
+	content: "";
+	display: block;
+	position: relative;
+	top: 8px;
+	left: 25px;
+	height: 13px;
+	width: 13px;
+	background-image: -webkit-gradient(linear, left top, right bottom, 
+		from(rgba(0,0,0,0)), 
+		color-stop(0.5,rgba(0,0,0,0)),
+		color-stop(0.5,#2F93E2));
+	-webkit-transform: rotate(45deg);
+/*	-webkit-transition: -webkit-transform 1s ease-in-out 0s;*/
+}
+
+.enyo-button-switched.enyo-collapsible-arrow::after {
+	top: 16px;
+	-webkit-transform: rotate(225deg);
+}
+
+.enyo-button-down.enyo-button-switched.enyo-collapsible-arrow {
+}
+
+.enyo-button-down.enyo-collapsible-arrow {
+}

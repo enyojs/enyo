@@ -1,0 +1,14 @@
+.enyo-picker-content {
+	line-height: 52px;
+	padding-right: 5px;
+	font-size: 18px;
+}
+
+.enyo-picker-popup {
+
+}
+
+.enyo-picker-item-selected {
+	font-weight: bold;
+	background: #fff;
+}

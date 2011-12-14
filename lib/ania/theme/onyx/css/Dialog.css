@@ -1,0 +1,47 @@
+.enyo-dialog {
+	width: 320px;
+	border-width: 42px 24px 24px;
+	-webkit-border-image: url(../images/dialog.png) 42 24 24 24 stretch stretch;
+	-webkit-transition-property: opacity;
+	-webkit-transition-duration: 0.5s;
+	opacity: 0;
+}
+
+.enyo-dialog.enyo-dialog-open {
+	opacity: 1;
+}
+
+.enyo-dialog-container {
+	margin: -22px -4px -4px;
+}
+.enyo-dialog-title {
+	font-size: 1rem;
+	margin: 0 0 10px;
+	text-align: center;
+}
+
+.enyo-group.enyo-dialog-group {
+	border-width: 14px;
+	-webkit-border-image: url(../images/dialog-group-unlabeled.png) 14 14 repeat repeat;
+	margin: 8px 0;
+}
+
+.enyo-group.enyo-dialog-group.enyo-group-with-content {
+	border-width: 36px 14px 14px 14px;
+	-webkit-border-image: url(../images/dialog-group-labeled.png) 36 14 14 14 repeat repeat;
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-dialog {
+		-webkit-border-image: url(../images-1.5/dialog.png) 63 36 36 36 stretch stretch;
+	}
+	
+	.enyo-group.enyo-dialog-group {
+		-webkit-border-image: url(../images-1.5/dialog-group-unlabeled.png) 21 21 stretch stretch; /*TODO: This should be 'repeat', but it triggers CFISH-10276 */
+	}
+	
+	.enyo-group.enyo-dialog-group.enyo-group-with-content {
+		-webkit-border-image: url(../images-1.5/dialog-group-labeled.png) 54 21 21 21 stretch stretch; /*TODO: This should be 'repeat', but it triggers CFISH-10276 */
+	}
+}
+

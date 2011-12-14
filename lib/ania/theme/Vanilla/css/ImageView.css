@@ -1,0 +1,8 @@
+.enyo-viewimage {
+	position: relative;
+}
+
+.enyo-viewimage-image {
+	display: block;
+	margin: auto;
+}

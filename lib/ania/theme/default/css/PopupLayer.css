@@ -1,0 +1,10 @@
+﻿/*
+.enyo-popup-layer {
+	z-index: 1;
+	pointer-events: none;
+}
+
+.enyo-popup-layer > .enyo-popup-float, .enyo-popup-layer > .enyo-popup {
+	pointer-events: auto;
+}
+*/

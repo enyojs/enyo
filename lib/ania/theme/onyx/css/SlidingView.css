@@ -1,0 +1,35 @@
+.enyo-sliding-view-shadow {
+	position: absolute;
+	z-index: 2;
+	height: 100%;
+	width: 20px;
+	left: -20px;
+	background: url(../images/sliding-shadow.png) repeat-y;
+	background-size: 20px 2px;
+	pointer-events: none;
+}
+
+.enyo-sliding-view-nub {
+	position: absolute;
+	-webkit-box-sizing: border-box;
+	cursor: pointer;
+	z-index: 2;
+	left: -20px;
+	width: 40px;
+	top: 0;
+	bottom: 0;
+}
+
+.enyo-sliding-view {
+	position: relative;
+	/*
+		accelerated settings handled within control. And note: cannot use preserve-3d
+		to mark as accelerated because Chrome fails to render internal content.
+	*/
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-sliding-view-shadow {
+		background-image: url(../images-1.5/sliding-shadow.png);
+	}
+}

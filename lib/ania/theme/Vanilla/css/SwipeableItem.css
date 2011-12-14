@@ -1,0 +1,5 @@
+.enyo-swipeableitem {
+	/*position: relative;*/
+	min-height: 44px;
+	padding: 8px 14px;
+}

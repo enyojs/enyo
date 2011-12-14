@@ -1,0 +1,37 @@
+.enyo-progress-slider {
+	height: 10px;
+	border-width: 0 4px;
+	-webkit-border-image: url(../images/slider-track.png) 0 4 0 4 repeat repeat;
+	-webkit-box-sizing: border-box;
+	position:relative;
+}
+
+.enyo-progress-slider-alt-bar, .enyo-progress-slider > .enyo-progress-bar-inner {
+	height: 10px;
+	border-width: 0 4px;
+	margin: 0 -4px;
+	position: absolute;
+	-webkit-border-image: url(../images/slider-progress.png) 0 4 0 4 repeat repeat;
+}
+
+.enyo-progress-slider-alt-bar {
+	z-index:5; /* under primary progress */
+	-webkit-border-image: url(../images/slider-progress-secondary.png) 0 4 0 4 repeat repeat;
+	-webkit-transition: width 0.3s ease;
+}
+
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-progress-slider {
+		-webkit-border-image: url(../images-1.5/slider-track.png) 0 6 0 6 repeat stretch;
+	}
+	
+	.enyo-progress-slider > .enyo-progress-bar-inner {
+		-webkit-border-image: url(../images-1.5/slider-progress.png) 0 6 0 6 repeat stretch;
+	}
+	
+	.enyo-progress-slider-alt-bar {
+		-webkit-border-image: url(../images-1.5/slider-progress-secondary.png) 0 6 0 6 repeat stretch;
+	}
+}
+

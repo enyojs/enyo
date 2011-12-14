@@ -1,0 +1,50 @@
+.enyo-menuitem {
+}
+
+.enyo-menuitem-content {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	font-size: 16px;
+	line-height: 22px;
+}
+
+.enyo-menuitem-icon {
+	padding: 2px 8px;
+}
+
+.enyo-menuitem-arrow.enyo-button-depressed,
+.enyo-menuitem-arrow.enyo-button-down {
+	background-position: 0px -24px;
+}
+
+.enyo-menuitem-arrow {
+	height: 24px;
+	width: 30px;
+	background: url(../images/menuitem-arrow.png) center 0px;
+	margin-right: -5px;
+}
+
+.enyo-menuitem.enyo-checked.enyo-menucheckitem-content, .enyo-menuitem.enyo-checked .enyo-menucheckitem-content {
+	background: url(../images/checkmark.png) center right no-repeat;
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-menuitem-arrow {
+		background-image: url(../images-1.5/menuitem-arrow.png);
+		background-size: 24px 48px;
+	}
+	.enyo-menuitem.enyo-checked.enyo-menucheckitem-content, .enyo-menuitem.enyo-checked .enyo-menucheckitem-content {
+		background-image: url(../images-1.5/checkmark.png);
+		background-size: 32px;
+	}
+}
+
+.enyo-menucheckitem-content {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	font-size: 16px;
+	line-height: 22px;
+	padding-right: 34px;
+}

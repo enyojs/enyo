@@ -1,0 +1,25 @@
+
+.enyo-collapsible-arrow {
+	height: 40px;
+	width: 50px;
+	background: url(../images/divider-arrow.png) center -80px;
+	background-size: 50px 160px;
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-collapsible-arrow {
+		background-image: url(../images-1.5/divider-arrow.png);
+	}
+}
+
+.enyo-button-switched.enyo-collapsible-arrow {
+	background-position: center 0px;
+}
+
+.enyo-button-down.enyo-button-switched.enyo-collapsible-arrow {
+	background-position: center -40px;
+}
+
+.enyo-button-down.enyo-collapsible-arrow {
+	background-position: center -120px;
+}

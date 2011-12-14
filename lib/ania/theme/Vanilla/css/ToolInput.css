@@ -1,0 +1,35 @@
+.enyo-input.enyo-tool-input {
+	font-size: 16pt;
+/*	border-width: 6px 6px 6px 6px;*/
+/*	border-style: solid;*/
+/*	border-color: transparent;*/
+/*	-webkit-box-sizing: border-box;*/
+/*	-webkit-border-image: url(../images/input-tool.png) 6 6 6 6;*/
+	margin: 0 3px;
+}
+
+.enyo-input.enyo-tool-input.enyo-input-focus {
+/*	-webkit-border-image: url(../images/input-tool-focus.png) 6 6 6 6;*/
+}
+
+.enyo-input.enyo-tool-input > .enyo-input-spacing {
+/*	margin: -1px;*/
+}
+
+.enyo-input.enyo-tool-input .enyo-input-input {
+/*	color: #e5e5e5;*/
+	font-size: 16px;
+}
+
+.enyo-input.enyo-tool-input .enyo-input-input:focus, .enyo-input.enyo-tool-input.enyo-input-focus .enyo-input-input {
+/*	color: #000;*/
+}
+
+.enyo-input.enyo-tool-input .enyo-input-input::-webkit-input-placeholder {
+	line-height: 40px;
+/*	color: #ddd;*/
+}
+
+.enyo-input.enyo-tool-input.enyo-input-focus .enyo-input-input::-webkit-input-placeholder {
+/*	color: DarkGray;*/
+}

@@ -1,0 +1,14 @@
+.enyo-picker-content {
+	line-height: 64px;
+	padding-right: 5px;
+	font-size: 18px;
+}
+
+.enyo-picker-popup {
+
+}
+
+.enyo-picker-item-selected {
+	color: #2E5473;
+	background: -webkit-gradient(linear, left top, left bottom, from(#D5E6FE), to(#C7DEFE));
+}

@@ -1,0 +1,28 @@
+.enyo-appmenu-item.enyo-item {
+	-webkit-border-image: url(../images/appmenu-divider.png) 0 0 2 0 stretch;
+	color: white;
+	border-bottom: 2px;
+	padding: 10px 7px 10px 5px;
+	font-size: 18px;
+}
+
+.enyo-appmenu-item.enyo-held {
+	background-image: url(../images/appmenu-highlight.png);
+	background-size: 40px 56px;
+}
+
+.enyo-appmenu-item.enyo-item.enyo-menu-last {
+	border-bottom: 0;
+}
+
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-appmenu-item.enyo-item { 
+		-webkit-border-image: url(../images-1.5/appmenu-divider.png) 0 0 3 0 stretch;
+	}
+	
+	.enyo-appmenu-item.enyo-held {
+		background-image: url(../images-1.5/appmenu-highlight.png);
+	}
+	
+}

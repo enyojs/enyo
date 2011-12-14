@@ -1,0 +1,21 @@
+﻿.enyo-button {
+	color: black;
+	line-height: normal;
+	height: auto;
+	vertical-align: middle;
+}
+
+.enyo-button {
+	/*display: inline-block;*/
+	margin: 0.08em 0.04em;
+	padding: 3px 8px;
+	border-width: 5px;
+}
+
+.enyo-button-down {
+	padding: 4px 8px 2px;
+}
+
+.enyo-button-disabled {
+	color: silver;
+}

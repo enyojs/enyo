@@ -1,0 +1,116 @@
+.enyo-button {
+	/* defeats flex; flex layout could set children to display block */
+	/*display: inline-block;*/
+	/*-webkit-box-sizing: border-box;*/
+	font-size: 16px;
+	line-height: 20px;
+	text-align: center;
+	padding: 4px 8px;
+	min-width: 14px;
+	min-height: 20px;
+	-webkit-border-image: url(../images/button-up.png) 4 4 4 4 stretch stretch;
+	border-width: 4px;
+	border-radius: 5px;
+	margin: 3px;
+	color: #292929;
+	background-color: rgba(255,255,255,0.8);
+}
+
+.enyo-button.enyo-button-down, .enyo-button.enyo-button-depressed {
+	-webkit-border-image: url(../images/button-down.png) 4 4 4 4 stretch stretch;
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-button {
+		-webkit-border-image: url(../images-1.5/button-up.png) 6 6 6 6 stretch stretch;
+	}
+	
+	.enyo-button.enyo-button-down, .enyo-button.enyo-button-depressed {
+		-webkit-border-image: url(../images-1.5/button-down.png) 6 6 6 6 stretch stretch;
+	}
+}
+
+.enyo-button.enyo-button-disabled {
+	opacity: 0.4;
+	/*color: rgba(255,254,255,0.4);*/
+}
+
+.enyo-button-natural-width {
+}
+
+.enyo-button-standard-width {
+	min-width: 120px;
+}
+
+.enyo-button img {
+	padding: 0px 3px;
+}
+
+/* light button (often cancel) */
+
+.enyo-button-light {
+	background-color: rgba(255,255,255,0.8);
+	color: #292929;
+}
+
+/* dark button */
+
+.enyo-button-dark {
+	color: white;
+	background-color: rgba(23,23,23,0.5);
+}
+
+/* affirmative (green) */
+
+.enyo-button-affirmative {
+	color: white;
+	background-color: #2aa100;
+}
+
+/* negative (red) */
+
+.enyo-button-negative {
+	color: white;
+	background-color: #be0003;
+}
+
+/* blue */
+
+.enyo-button-blue {
+	color: white;
+	background-color: #2071bb;
+}
+
+/* gray */
+
+.enyo-button-gray {
+	color: white;
+	background-color: #4b4b4b;
+}
+
+/* notification button */
+
+.enyo-notification-button {
+	color: white;
+	background-color: #000;
+	padding: 6px 10px;
+	font-weight: bold;
+}
+
+/* notification button (affirmative) */
+
+.enyo-notification-button-affirmative {
+	background-color: #43a200;
+}
+
+/* notification button (negative) */
+
+.enyo-notification-button-negative {
+	background-color: #c01b1e;
+}
+
+/* notification button (alternate) */
+
+.enyo-notification-button-alternate {
+	background-color: #e5b900;
+}

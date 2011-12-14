@@ -1,0 +1,27 @@
+.enyo-grabbutton {
+	background-image: url(../images/grabbutton.png);
+	background-size: 46px 54px;
+	cursor: pointer;
+	width: 46px;
+	height: 54px;
+	position: absolute;
+	left: 0;
+}
+
+.enyo-grabbutton-h {
+	background-image: url(../images/grabbutton-h.png);
+	background-size: 54px 46px;
+	height: 46px;
+	width: 54px;
+}
+
+/*.enyo-toolbar .enyo-grabbutton {
+	position: relative;
+}*/
+
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-grabbutton {
+		background-image: url(../images-1.5/grabbutton.png);
+	}
+}

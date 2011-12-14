@@ -1,0 +1,17 @@
+.enyo-button-icon {
+	display: inline-block;
+	vertical-align: baseline;
+	width: 32px;
+	height: 32px;
+	background-size: 32px 64px;
+	margin: -6px -6px -10px -6px;
+		/* show highlight for a bit after button is released. */
+	-webkit-transition: background-position 0s linear 0.5s;
+}
+
+.enyo-button-down .enyo-button-icon {
+	background-position: 0 -32px;
+	-webkit-transition: none;
+}
+
+

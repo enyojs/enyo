@@ -1,0 +1,52 @@
+.enyo-tool-button {
+	cursor: pointer;
+	padding: 5px;
+}
+
+.enyo-tool-button-client {
+	font-size: 16px;
+	line-height: 20px;
+	text-align: center;
+	cursor: pointer;
+	height: 32px;
+	margin: 3px;
+}
+
+.enyo-tool-button-client > .enyo-button-icon {
+	margin: -2px -2px -6px;
+}
+
+.enyo-tool-button-client.enyo-tool-button-content {
+	padding: 4px 8px;
+	border-style: none;
+	border-radius: 3px;
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#E8E8E8), to(#D8D8D8));
+	color: #333333;
+	text-shadow: 0px 1px 0 rgba(255,255,255,0.25);	
+	-webkit-box-shadow: 0px 1px 0px rgba(255,255,255,0.1), inset 0px 2px 0px rgba(255,255,255,0.25), inset 1px 1px 0px rgba(0,0,0,0.3), inset -1px -1px 0px rgba(0,0,0,0.3);
+}
+
+.enyo-tool-button-client.enyo-tool-button-content.enyo-button-down, 
+.enyo-tool-button-client.enyo-tool-button-content.enyo-button-depressed {
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#CBCBCB), to(#CFCFCF));	
+}
+
+.enyo-tool-button-client.enyo-button-disabled {
+	opacity: 0.4;
+}
+
+.enyo-toolbar.enyo-dark .enyo-tool-button-client.enyo-tool-button-content {
+	color: white;
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#505050), to(#323232));
+	-webkit-box-shadow: 0px 1px 0px rgba(255,255,255,0.1), inset 0px 2px 0px rgba(255,255,255,0.15), inset 0px 1px 0px rgba(0,0,0,0.6), inset 1px 1px 0px rgba(0,0,0,0.3), inset -1px -1px 0px rgba(0,0,0,0.3);
+	text-shadow: 0px 1px 0 rgba(0,0,0,0.25);	
+}
+
+.enyo-toolbar.enyo-dark .enyo-tool-button-client.enyo-tool-button-content.enyo-button-down, 
+.enyo-toolbar.enyo-dark .enyo-tool-button-client.enyo-tool-button-content.enyo-button-depressed {
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#373737), to(#3D3D3D));
+	-webkit-box-shadow: 0px 1px 0px rgba(255,255,255,0.1), inset 1px 1px 0px rgba(0,0,0,0.3), inset -1px -1px 0px rgba(0,0,0,0.3);
+}
+
+
+

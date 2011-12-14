@@ -1,0 +1,97 @@
+html, body {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+}
+
+::selection {
+	color: transparent;
+}
+
+body {
+	margin: 0;
+	overflow: hidden;
+}
+
+.fit {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
+.app {
+	overflow: hidden;
+}
+
+.bg {
+	color: #ddd;
+	background: #404040;
+}
+
+.search-box {
+	margin-bottom: 4px;
+	z-index: 1;
+	-webkit-box-shadow: -6px 0px 6px #000;
+	box-shadow: -6px 0px 6px #000;
+}
+
+.search-control {
+	margin: 10px;
+}
+
+.select {
+	width: 150px;
+	height: 26px;
+	background: #CDCDCD;
+}
+
+.select:focus {
+	outline: none;
+}
+
+.simple-scroller {
+	-webkit-overflow-scrolling: touch;
+}
+
+.list {
+	overflow: auto;
+}
+
+.item {
+	border-bottom: 1px solid #aaa;
+	padding: 10px;
+	cursor: pointer;
+}
+
+.related-list {
+	overflow-x: auto;
+	overflow-y: hidden;
+	white-space: nowrap;
+}
+
+.related-item {
+	height: 75px;
+	margin: 10px;
+	-webkit-box-shadow: 0px 0px 10px #888;
+	box-shadow: 0px 0px 10px #888;
+	cursor: pointer;
+}
+
+.content-panel {
+	-webkit-box-shadow: 0px -10px 6px #000;
+	box-shadow: 0px -10px 10px #000;
+}
+
+.main-panel {
+	-webkit-box-shadow: 6px 0px 6px #000;
+	box-shadow: 6px 0px 10px #000;
+}
+
+.youtube-content {
+	margin: 50px;
+}
+
+.center {
+	margin: auto;
+}

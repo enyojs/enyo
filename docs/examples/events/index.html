@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="viewport" content="width=device-width initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<!-- -->
+	<title>Enyo Event Tester</title>
+	<script src="../../../enyo/source/enyo.js" type="text/javascript"></script>
+	<script src="../../../lib/fu/depends.js" type="text/javascript"></script>
+	<style type="text/css">
+		body {
+			box-sizing: border-box;
+			overflow: auto;
+			font-family: Helvetica, Arial, Sans-Serif;
+		}
+		h4 {
+			background-color: Orange;
+			padding: 4px;
+			margin: 1em 0 0 0;
+		}
+		.border {
+			border: 1px solid orange;
+			padding: 4px;
+		}
+	</style>
+</head>
+<body class="theme-fu enyo-unselectable">
+	<script>
+		if (/Android 2/i.test(navigator.userAgent)) {
+			enyo.kind({
+				name: "SimpleScroller",
+				kind: "Control",
+				create: function() {
+					this.inherited(arguments);
+					this.addStyles("overflow: hidden;"); // background-color: silver;");
+				},
+				isSelectEvent: function(inEvent) {
+					return inEvent.ctrlKey;
+					return false;
+				},
+				mousedownHandler: function(inSender, inEvent) {
+					if (!this.isSelectEvent(inEvent)) {
+						if (window.getSelection) {
+							getSelection().removeAllRanges();
+						} else if (document.selection) {
+							document.selection.clear();
+						}
+						inEvent.preventDefault();
+					}
+				},
+				dragstartHandler: function(inSender, inEvent) {
+					if (!this.isSelectEvent(inEvent) && this.hasNode()) {
+						this.dragging = true;
+						this.x0 = this.node.scrollLeft;
+						this.y0 = this.node.scrollTop;
+					}
+				},
+				dragHandler: function(inSender, inEvent) {
+					if (this.dragging && this.hasNode()) {
+						this.node.scrollLeft = this.x0 - inEvent.dx;
+						this.node.scrollTop = this.y0 - inEvent.dy;
+					}
+				},
+				dragfinishHandler: function(inSender, inEvent) {
+					this.dragging = false;
+				}
+			});
+		} else {
+			enyo.kind({
+				name: "SimpleScroller",
+				kind: "Control",
+				create: function() {
+					this.inherited(arguments);
+					this.addStyles("overflow: auto;");
+				}
+			});
+		}
+	</script>
+	<!-- -->
+	<script>
+		var content = '<p>Lorem ipsum dolor sit amet, nonummy ad, quia duis, vicis ingenium, hendrerit capio hendrerit esca roto.</p><input />&nbsp;<button>Cursor Testing</button>&nbsp;<a href="#top">Cursor Testing</a>&nbsp;<img src="resources/hp.png" style="vertical-align: middle;" alt="Cursor Testing" /><p>Singularis erat melior quod ullamcorper loquor.</p>';
+		new SimpleScroller({
+			className: "enyo-fit",
+			style: "padding: 8px;",
+			components: [
+				{name: "tapLabel", kind: "h4", content: "Basic Events"},
+				{className: "border", content: content, ontap: "logEvent", ondragstart: "logEvent", ondrag: "logEvent", ondragfinish: "logEvent"},
+				//
+				{kind: "h4", content: "Basic Text (Not Selectable)"},
+				{className: "border", content: content},
+				//
+				{kind: "h4", content: "Selectable Text"},
+				{className: "border enyo-selectable", content: content},
+				//
+				{kind: "h4", content: "SimpleScroller"},
+				{kind: "SimpleScroller", className: "border", content: content + content + content, style: "height: 150px; border: 2px solid lightblue; padding: 4px;"},
+				//
+				{kind: "h4", content: "SimpleScroller (Selectable)"},
+				{kind: "SimpleScroller", className: "border enyo-selectable", content: content + content + content, style: "height: 150px; border: 2px solid lightblue; padding: 4px;"}
+			],
+			logEvent: function(inSender, inEvent) {
+				this.$.tapLabel.setContent(inEvent.type + ": " + inSender.id);
+				//console.log(inEvent.type, inSender.id);
+			}
+		}).write();
+	</script>
+</body>
+</html>

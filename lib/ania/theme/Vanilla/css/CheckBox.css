@@ -1,0 +1,46 @@
+.enyo-checkbox {
+	cursor: pointer;
+	display: inline-block;
+	vertical-align: middle;
+	height: 31px;
+	width: 30px;
+	margin: 0px;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#909090), to(#A4A4A4));
+	-webkit-box-shadow: 0px 1px 0px rgba(255,255,255,0.25), inset 0px 1px 3px rgba(0,0,0,0.4);
+	border-radius: 3px;
+}
+
+.enyo-checkbox-checked {
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#3E9AE8), to(#2D5ADA));	
+}
+
+.enyo-checkbox-checked::before {
+	content: "";
+	position:relative;
+	display: block;
+	left: 4px;
+	top: 17px;
+	-webkit-transform: rotate(45deg);
+	background-color: white;
+	width: 12px;
+	height: 5px;
+	border-radius: 0 0 3px 0;
+	-webkit-box-shadow: 0px 1px 0px rgba(0,0,0,0.35);
+}
+.enyo-checkbox-checked::after {
+	content: "";
+	position:relative;
+	display: block;
+	left: 8px;
+	top: 9px;
+	-webkit-transform: rotate(-45deg);
+	background-color: white;
+	width: 20px;
+	height: 5px;
+	border-radius: 0 0 0 3px ;
+	-webkit-box-shadow: -1px 1px 0px rgba(0,0,0,0.35);
+}
+
+.enyo-checkbox-disabled {
+	opacity: 0.4;
+}

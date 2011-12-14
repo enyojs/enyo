@@ -1,0 +1,36 @@
+.enyo-popup.enyo-appmenu {
+	z-index: 120;
+	position: fixed;
+	font-size: 18px;
+	border-width: 12px 24px 20px 24px;
+	-webkit-border-image: url(../images/appmenu.png) 12 24 20 24 stretch stretch;
+	color: white;
+	top: 0px;
+	left: -10px;
+	min-width: 210px;
+	/* FIXME: consider when works more reliably */
+	/*
+	-webkit-transition-property: opacity, -webkit-tranform;
+	-webkit-transition-duration: 0.5s, 0.5s;
+	-webkit-transform: translateY(-100%);
+	*/
+}
+
+/*
+.enyo-appmenu.enyo-menu-open {
+	-webkit-transform: translateY(0%);
+	opacity: 1;
+}
+*/
+
+.enyo-appmenu-inner {
+	margin: -12px -14px 0 -13px;
+}
+
+
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-popup.enyo-appmenu {
+		-webkit-border-image: url(../images-1.5/appmenu.png) 18 36 30 36 stretch stretch;
+	}
+}

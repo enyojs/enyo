@@ -1,0 +1,38 @@
+.enyo-scrollfades-top,
+.enyo-scrollfades-bottom,
+.enyo-scrollfades-left,
+.enyo-scrollfades-right {
+	position: absolute; 
+	z-index: 100;
+	pointer-events: none;
+}
+
+.enyo-scrollfades-top {
+	top: 0;
+	height: 54px; 
+	width: 100%;
+	background: url(../images/fade-top.png) top center repeat-x;
+}
+
+.enyo-scrollfades-bottom {
+	bottom: 0;
+	height: 54px; 
+	width: 100%;
+	background: url(../images/fade-bottom.png) bottom center repeat-x;
+}
+
+.enyo-scrollfades-left {
+	top: 0;
+	left: 0; 
+	height: 100%; 
+	width: 54px;
+	background: url(../images/fade-left.png) left center repeat-y;
+}
+
+.enyo-scrollfades-right {
+	top: 0;
+	right: 0;
+	height: 100%; 
+	width: 54px;
+	background: url(../images/fade-right.png) right center repeat-y;
+}

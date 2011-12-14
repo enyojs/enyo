@@ -1,0 +1,16 @@
+﻿enyo.depends(
+	"$lib/utils/animation.js",
+	"$lib/aura/animator",
+	"$lib/aura/transformer",
+	"$lib/aura/panels",
+	"$lib/aura/slidingpanels",
+	"$lib/aura/spinner",
+	"$lib/fu",
+	"source/SimpleScroller.js",
+	"source/Flickr.js",
+	"source/FlickrSearch.js",
+	"source/Youtube.js",
+	"source/YoutubeSearch.js",
+	"source/app.css",
+	"source/App.js"
+);

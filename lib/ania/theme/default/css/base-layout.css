@@ -1,0 +1,23 @@
+﻿/**/
+
+.enyo-inline {
+	display: inline-block;
+}
+
+/**/
+
+.enyo-grid {
+	/*overflow: auto;*/
+	padding: 8px;
+}
+
+.enyo-grid-div {
+	float: left;
+	width: 64px;
+	height: 48px;
+	margin: 4px;
+	border: 1px solid gray;
+	box-shadow: 4px 4px 9px #888;
+	-moz-box-shadow: 4px 4px 9px #888;
+	-webkit-box-shadow: 4px 4px 9px #888;
+}

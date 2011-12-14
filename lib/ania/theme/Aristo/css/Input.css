@@ -1,0 +1,11 @@
+﻿.aristo.enyo-input {
+	outline: none;
+	background-color: transparent;
+	font-size: 20px;
+	border-width: 4px 17px 2px 17px;
+}
+
+.aristo.enyo-input {
+	-webkit-box-sizing: border-box;
+	-webkit-border-image: url(../images/border.png) 4 17 2 17;
+}

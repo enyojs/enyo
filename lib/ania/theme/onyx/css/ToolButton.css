@@ -1,0 +1,54 @@
+.enyo-tool-button {
+	cursor: pointer;
+	padding: 5px;
+}
+
+.enyo-tool-button-client {
+	font-size: 16px;
+	line-height: 20px;
+	text-align: center;
+	cursor: pointer;
+	border-width: 4px;
+	border-radius: 5px;
+	border-style: solid;
+	border-color: transparent;
+	min-width: 14px;
+	min-height: 20px;
+	margin: 3px;
+	color: #f2f2f2;
+}
+
+.enyo-tool-button-client > .enyo-button-icon {
+	margin: -2px -2px -6px;
+}
+
+.enyo-tool-button-client.enyo-tool-button-content {
+	padding: 4px 8px;
+	border-style: none;
+	-webkit-border-image: url(../images/button-toolbar.png) 4 4 4 4 stretch stretch;
+}
+
+.enyo-tool-button-client.enyo-tool-button-content.enyo-button-down, .enyo-tool-button-client.enyo-button-depressed {
+	-webkit-border-image: url(../images/button-down.png) 4 4 4 4 stretch stretch;
+}
+
+.enyo-tool-button-client.enyo-button-depressed {
+	/*background-color: #2071bb;*/
+}
+
+.enyo-tool-button-client.enyo-button-disabled {
+	opacity: 0.4;
+}
+
+
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-tool-button-client.enyo-tool-button-content.enyo-button-down, .enyo-tool-button-client.enyo-button-depressed {
+		-webkit-border-image: url(../images-1.5/button-down.png) 6 6 6 6 stretch stretch;
+	}
+	
+	.enyo-tool-button-client.enyo-tool-button-content {
+		-webkit-border-image: url(../images-1.5/button-toolbar.png) 6 6 6 6 stretch stretch;
+	}
+}
+

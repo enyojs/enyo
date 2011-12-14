@@ -1,0 +1,15 @@
+@-webkit-keyframes enyo-rotating-image-rotate {
+	0% { -webkit-transform: rotateZ(0deg);}
+	100% { -webkit-transform: rotateZ(359deg);}
+}
+.enyo-rotating-image {
+	-webkit-animation-name: enyo-rotating-image-rotate;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-duration: 1s;
+	-webkit-animation-timing-function: linear;
+	overflow: hidden;
+	/*background: -webkit-gradient(linear, left top, left bottom, from(#00ABEB), to(white), color-stop(0.5, white), color-stop(0.5, #6C0));*/
+	-webkit-background-origin: padding-box;
+	-webkit-background-clip: content-box;
+
+}

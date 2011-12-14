@@ -1,0 +1,27 @@
+.enyo-progress-bar {
+	height: 12px;
+	border-width: 0 4px;
+	-webkit-border-image: url(../images/progress-bar.png) 0 4 0 4 repeat repeat;
+	-webkit-box-sizing: border-box;
+	position:relative;
+}
+
+.enyo-progress-bar-inner {
+	margin: 0 -5px;
+	height: 12px;
+	border-width: 0 4px;
+	position: absolute;
+	z-index:10; /* for progressSlider altBarPosition */
+	-webkit-border-image: url(../images/progress-bar-inner.png) 0 4 0 4 repeat repeat;
+} 
+
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-progress-bar {
+		-webkit-border-image: url(../images-1.5/progress-bar.png) 0 6 0 6 stretch stretch; /* TODO: This should  be repeat, but it hits CFISH-10276. */
+	}
+	.enyo-progress-bar-inner {
+		-webkit-border-image: url(../images-1.5/progress-bar-inner.png) 0 6 0 6 stretch stretch; /* TODO: This should  be repeat, but it hits CFISH-10276. */
+	}
+}
+

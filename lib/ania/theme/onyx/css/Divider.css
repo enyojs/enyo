@@ -1,0 +1,76 @@
+.enyo-divider-right-cap,
+.enyo-divider-left-cap {
+	height: 4px;
+	margin: 13px 0px;
+}
+
+.enyo-divider {
+}
+
+.enyo-divider-right-cap {
+	border-right-width: 0px;
+	margin-right: 7px;
+}
+
+.enyo-divider-left-cap {
+	min-width: 3px;
+	border-width: 0px;
+	background: url(../images/divider.png) left top repeat-x;
+	background-size: 6px 4px;
+	margin-left: 6px;
+
+	/* Needs to be effectively infinity compared to .enyo-divider-content's
+ 	   flex so the left cap will take as much space as possible */
+	-webkit-box-flex: 1000;
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-divider-left-cap {
+		background-image: url(../images-1.5/divider.png);
+	}
+}
+
+
+.enyo-divider-icon {
+	margin: 0 6px;
+}
+
+.enyo-divider-icon-collapse {
+	margin: 0 6px 0 0;
+}
+
+.enyo-divider-content {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-weight: bold;
+	font-size: 12pt;
+	color: #3a8bcb;
+
+	/* Needs to be effectively zero compared to .enyo-divider-left-cap's
+	   flex so the content will flex but take as little space as possible
+	   and still truncate properly */
+	-webkit-box-flex: .1;
+}
+
+.enyo-divider-alpha {
+	background: url(../images/divider.png) left center repeat-x;
+	background-size: 6px 4px;
+	height: 30px;
+	line-height: 30px;
+	margin: 0 0 0 30px;
+}
+
+.enyo-divider-alpha-content {
+	margin-left: -23px;
+	font-size: 12pt;
+	font-weight: bold;
+	color: #4299ea;
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-divider-alpha {
+		background-image: url(../images-1.5/divider.png);
+	}
+}
+

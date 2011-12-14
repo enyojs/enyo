@@ -1,0 +1,79 @@
+.enyo-input {
+	height: 40px;
+/*	line-height: 40px;*/
+	font-size: 16pt;
+	color: #5C5E62;
+	border-radius: 3px;
+	-webkit-box-shadow: inset 0px 0px 1px rgba(0,0,0,0.5), inset 0px 1px 4px rgba(0,0,0,0.3), 0px 1px 0px rgba(255,255,255,0.3);
+	background-color: #EEE;
+}
+
+.enyo-input.enyo-input-focus {
+	background-color: white;
+}
+
+.enyo-input > .enyo-input-spacing {
+	margin: 0px 4px;
+	height: 100%;
+}
+
+.enyo-input-input {
+	display: block;
+	border: none;
+	outline: none;
+	background-color: transparent;
+	padding: 0 0 0 5px;
+	width: 100%;
+	-webkit-appearance: caret;
+	-webkit-box-sizing: border-box;
+	cursor: pointer;
+	color: #5C5E62;
+}
+
+.enyo-richtext.enyo-richtext-hint, input::-webkit-input-placeholder, isindex::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+/*	line-height: 40px;*/
+	color: #888;
+}
+
+.enyo-input-disabled {
+	/*color: darkGray;*/
+	/* HACK: this is needed to color a disabled input placeholder.
+	 * Also works for filled inputs as well thankfully */
+	-webkit-text-fill-color: #8F8;
+	opacity: 0.625;
+}
+
+.enyo-input-input:focus {
+	cursor: text;
+}
+
+/* 
+FIXME: we almost always want some padding on a enyo-item, except when it's surrounding 
+		a fancy-input.... so we special case that here, non-ideal.
+*/
+.enyo-item > .enyo-input {
+/*	margin: -11px -10px;*/
+}
+
+/* Row styling for inputs */
+.enyo-first.enyo-input.enyo-input-focus, .enyo-first > .enyo-input.enyo-input-focus {
+	padding-bottom: 12px;
+/*	border-width: 14px 14px 2px 14px;*/
+/*	-webkit-border-image: url(../images/input-first-focus.png) 14 14 2 14;*/
+}
+
+.enyo-last.enyo-input.enyo-input-focus, .enyo-last > .enyo-input.enyo-input-focus {
+	padding-top: 12px;
+/*	border-width: 2px 14px 14px 14px;*/
+/*	-webkit-border-image: url(../images/input-last-focus.png) 2 14 14 14;*/
+}
+
+/* NOTE: .enyo-middle is a boxy input type automatically applied when the input is the middle item in a group
+.enyo-box-input an alias which users can use to create a rectangular input.
+*/
+.enyo-box-input.enyo-input.enyo-input-focus, .enyo-middle.enyo-input.enyo-input-focus, .enyo-middle > .enyo-input.enyo-input-focus {
+/*	background-color: transparent;*/
+/*	border-width: 14px;*/
+/*	-webkit-border-image: url(../images/input-middle-focus.png) 14 14;*/
+}
+

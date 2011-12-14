@@ -1,0 +1,58 @@
+.enyo-popup.enyo-popup-menu {
+	min-width: inherit;
+	padding: 0px;
+	background-color: #EAEAEA;
+	border: 1px solid #BEBEBE;
+}
+
+.enyo-menu-scroll-fades {
+	pointer-events: none;
+}
+
+.enyo-menu-top-fade,
+.enyo-menu-bottom-fade {
+	position: absolute; 
+	z-index: 1; /* appear above list contents */
+	pointer-events: none;
+	text-align: center;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(white), to(rgba(234,234,234,0)));
+}
+.enyo-menu-bottom-fade {
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(234,234,234,0)), to(white));
+}
+
+/* Scroll arrows for the fades */
+.enyo-menu-top-fade::after,
+.enyo-menu-bottom-fade::after {
+	content: "";
+	display: inline-block;
+	position: relative;
+	top: -5px;
+	height: 9px;
+	width: 9px;
+	background-image: -webkit-gradient(linear, left top, right bottom, 
+		from(rgba(0,0,0,0)), 
+		color-stop(0.5,rgba(0,0,0,0)),
+		color-stop(0.5,#999999),
+		to(#BCBCBC));
+	-webkit-transform: rotate(225deg);
+}
+
+.enyo-menu-bottom-fade::after {
+	-webkit-transform: rotate(45deg);
+	top: -12px;
+}
+
+.enyo-menu-top-fade {
+	top: 0px;
+	height: 10px; 
+	width: 100%;
+}
+
+.enyo-menu-bottom-fade {
+	bottom: 0px;
+	height: 10px; 
+	width: 100%;
+}
+
+

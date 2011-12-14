@@ -1,0 +1,33 @@
+.enyo-toolbar {
+	/* needed to host a GrabButton, which is position: absolute */
+	position: relative;
+	min-height: 54px;
+	-webkit-box-sizing: border-box;
+	-webkit-border-image: url(../images/toolbar.png) 2 4 repeat stretch;
+	border-width: 2px 4px;
+	background-color: #343434;
+}
+
+.enyo-toolbar-light {
+	-webkit-border-image: url(../images/toolbar-light.png) 2 4 repeat stretch;
+	background-color: #a9a9a9;
+}
+
+.enyo-toolbar-snap-out {
+	opacity: 0;
+}
+
+.enyo-toolbar-fade-in {
+	-webkit-transition: opacity 0.15s linear;
+	opacity: 1;
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-toolbar {
+		-webkit-border-image: url(../images-1.5/toolbar.png) 3 6 repeat stretch;
+	}
+	
+	.enyo-toolbar-light {
+		-webkit-border-image: url(../images-1.5/toolbar-light.png) 3 6 repeat stretch;
+	}
+}

@@ -1,0 +1,80 @@
+.enyo-item > .enyo-toggle-button {
+	margin: -10px;
+	
+}
+
+.enyo-toggle-button {
+	padding: 10px;
+}
+
+.enyo-toggle-button-bar {
+	min-width: 36px;
+	height: 30px;
+	line-height: 26px;
+	display: inline-block;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.enyo-toggle-button-bar.on {
+	border-width: 0px 30px 0px 8px;
+	-webkit-border-image: url(../images/toggle-button.png) 1 30 97 8 repeat repeat;
+}
+
+.enyo-toggle-button-bar.off {
+	border-width: 0px 8px 0px 30px;
+	-webkit-border-image: url(../images/toggle-button.png) 33 8 65 30 repeat repeat;
+}
+
+.enyo-toggle-button-bar.disabled.on {
+	border-width: 0px 30px 0px 8px;
+	-webkit-border-image: url(../images/toggle-button.png) 65 30 33 8 repeat repeat;
+}
+
+.enyo-toggle-button-bar.disabled.off {
+	border-width: 0px 8px 0px 30px;
+	-webkit-border-image: url(../images/toggle-button.png) 97 8 1 30 repeat repeat;
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-toggle-button-bar.on {
+		-webkit-border-image: url(../images-1.5/toggle-button.png) 2 45 145 12 stretch stretch;/* TODO: This should  be repeat, but it hits CFISH-10276. */
+	}
+
+	.enyo-toggle-button-bar.off {
+		-webkit-border-image: url(../images-1.5/toggle-button.png) 50 12 97 45 stretch stretch;/* TODO: This should  be repeat, but it hits CFISH-10276. */
+	}
+
+	.enyo-toggle-button-bar.disabled.on {
+		-webkit-border-image: url(../images-1.5/toggle-button.png) 98 45 49 12 stretch stretch;/* TODO: This should  be repeat, but it hits CFISH-10276. */
+	}
+
+	.enyo-toggle-button-bar.disabled.off {
+		-webkit-border-image: url(../images-1.5/toggle-button.png) 146 12 1 45 stretch stretch;/* TODO: This should  be repeat, but it hits CFISH-10276. */
+	}
+}
+
+
+
+.enyo-toggle-content-off, .enyo-toggle-content-on {
+	color: white;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.enyo-toggle-content-off {
+	padding-left: 4px;
+	padding-right: 2px;
+	text-transform: uppercase;
+}
+
+.enyo-toggle-content-on {
+	padding-right: 4px;
+	padding-left: 2px;
+	text-transform: uppercase;
+}
+
+.enyo-tool-button.enyo-button-disabled {
+	opacity: 0.4;
+	/*color: rgba(255,254,255,0.4);*/
+}

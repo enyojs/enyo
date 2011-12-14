@@ -1,0 +1,57 @@
+.enyo-item {
+	border-top: 1px solid rgba(255,255,255,0.5);
+	border-bottom: 1px solid rgba(0,0,0,0.2);
+	padding: 10px;
+	font-size: .9rem;
+}
+
+.enyo-held {
+	/*background-color: gray;*/
+	/* fancy... can we get away with this or do we need to use images? */
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(218,235,251,0.4)), to(rgba(197,224,249,0.4)));
+}
+
+.enyo-item-selected, .enyo-selected {
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(218,235,251,0.4)), to(rgba(197,224,249,0.4)));
+}
+
+.enyo-disabled {
+	opacity: 0.5;
+}
+
+.enyo-item.enyo-first {
+	border-top: 0;
+}
+
+.enyo-item.enyo-last {
+	border-bottom: 0;
+}
+
+.enyo-item.enyo-single {
+	/*
+		due to webos webkit bug, must have a non-zero border when -webkit-gradient 
+		and border-radius are used together or else the border radius will be ignored.
+	*/
+	/* border: 0;*/
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+}
+
+
+.enyo-group-inner > .enyo-item, .enyo-item.rounded {
+	-webkit-border-radius: 8px;
+}
+
+.enyo-group-inner > .enyo-item.enyo-first, .enyo-item.rounded.enyo-first {
+	-webkit-border-bottom-right-radius: 0;
+	-webkit-border-bottom-left-radius: 0;
+}
+
+.enyo-group-inner > .enyo-item.enyo-middle, .enyo-item.rounded.enyo-middle {
+	-webkit-border-radius: 0;
+}
+
+.enyo-group-inner > .enyo-item.enyo-last, .enyo-item.rounded.enyo-last {
+	-webkit-border-top-right-radius: 0;
+	-webkit-border-top-left-radius: 0;
+}

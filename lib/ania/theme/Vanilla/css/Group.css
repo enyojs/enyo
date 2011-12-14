@@ -1,0 +1,20 @@
+.enyo-group {
+	margin: 8px 3px;	
+	-webkit-box-shadow: 0px 0px 0px rgba(255,255,255,0.5), inset 0px 0px 1px rgba(0,0,0,0.4);
+	overflow: hidden;
+	border-radius: 4px;
+}
+
+
+.enyo-group-content {
+	padding: 0 0 0 10px;
+	font-size: .7rem;
+	color: #fff;
+	font-weight: bold;
+	line-height: 26px;
+	text-transform: uppercase;
+	background-color: #444545;
+	border-radius: 4px 4px 0 0 ;
+	-webkit-box-shadow: 0px 1px 0px rgba(255,255,255,0.5), inset 0px 1px 1px rgba(0,0,0,0.6);
+}
+

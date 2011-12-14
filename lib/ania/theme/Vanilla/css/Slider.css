@@ -1,0 +1,56 @@
+.enyo-slider-button {
+	height: 23px;
+	width: 23px;
+	z-index: 50;
+	border-radius: 11px;
+	position: absolute;
+	margin: -8px -11px;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#FCFCFC), to(#E3E3E3));
+	-webkit-box-shadow: 0px 1px 3px rgba(0,0,0,0.6);
+}
+
+/*
+.enyo-slider-button:active::before {
+	color: white;
+	text-align: center;
+	line-height: 34px;
+	font-weight: bold;
+	font-size: 12pt;
+	content: attr(positionPct);
+	width: 62px;
+	height: 34px;
+	border-radius: 7px;
+	display: block;
+	position: relative;
+	top: -40px;
+	left:  -19px;
+	background-image:  -webkit-gradient(linear, left top, left bottom, from(#5E6065), to(#333436));
+}*/
+
+
+.enyo-slider-button.enyo-button-down {
+/*	background-position-y: -40px;*/
+}
+
+.enyo-slider {
+	/* 
+	FIXME: why in the heck does this work to properly position the progress
+	div inside this one?
+	*/
+	padding: 1px 0;
+	position:relative;
+}
+
+.enyo-slider-progress {
+	height: 8px;
+	border-radius: 4px;
+	margin: 20px 0px;
+	position:relative;
+	background-color: #B8B8B8;
+	-webkit-box-shadow: 0px 1px 0px rgba(255,255,255,0.5), inset 0px 1px 4px rgba(0,0,0,0.6);
+}
+
+.enyo-slider-inner {
+	margin: 0 -4px;
+}
+

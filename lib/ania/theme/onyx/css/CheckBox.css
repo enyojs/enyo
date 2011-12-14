@@ -1,0 +1,24 @@
+.enyo-checkbox {
+	cursor: pointer;
+	display: inline-block;
+	vertical-align: middle;
+	height: 31px;
+	width: 30px;
+	margin: 0px;
+	background: url(../images/checkbox.png) -1px -1px;
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-checkbox {
+		background-image: url(../images-1.5/checkbox.png);
+		background-size: 32px 128px;
+	}
+}
+
+.enyo-checkbox-checked {
+	background-position: -1px -33px;
+}
+
+.enyo-checkbox-disabled {
+	opacity: 0.4;
+}

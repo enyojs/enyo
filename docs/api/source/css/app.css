@@ -1,0 +1,142 @@
+/*
+html {
+	position: relative;
+}
+
+body {
+	background: #fff;
+	font-family: Verdana, Helvetica, sans-serif;
+	font-size: 15px;
+	line-height: 1.6;
+	color: #383838;
+	margin: 0;
+	border: 5px solid #D7D7D7;
+}
+*/
+
+/* endemic */
+
+html, body {
+	margin: 0;
+	height: 100%;
+	overflow: hidden;
+	position: relative;
+}
+
+button {
+	font-size: inherit;
+}
+
+.enyo-fit {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.selectable {
+	-webkit-user-select: text;
+	cursor: text;
+}
+
+.unselectable {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+}
+
+.unselectable ::selection {
+	color: transparent;
+}
+
+/*::selection {
+	color: transparent;
+}*/
+
+/* systemic */
+
+body {
+	font-family: Verdana, Helvetica, sans-serif;
+	font-size: 14px;
+	line-height: 1.6;
+	background-color: #D7D7D7;
+}
+
+p {
+	Xwhite-space: pre;
+}
+
+literal {
+	color: #1D284C;
+}
+
+#app {
+	background-color: White;
+}
+
+#app_header {
+	background-color: #D7D7D7;
+	padding: 0 8px;
+	text-align: right;
+	font-size: 1.3rem;
+	font-weight: bold;
+	line-height: 50px;
+}
+
+#toc {
+	padding: 10px; 
+	background-color: white;
+	overflow: auto;
+}
+
+#index {
+	style: padding: 10px;
+	Xfont-size: 70%;
+}
+
+#docs {
+	max-width: 550px;
+	margin: 0 auto;
+}
+
+/*
+#left {
+	position: absolute;
+	padding: 0.5em;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: 260px;
+	overflow: scroll;
+	overflow-x: hidden;
+}
+
+#main {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 188px;
+	left: 274px;
+	overflow: scroll;
+}
+
+#bottom {
+	position: absolute;
+	padding: 0.5em;
+	left: 274px;
+	bottom: 0;
+	right: 0;
+	height: 180px;
+	overflow: scroll;
+	overflow-x: hidden;
+}
+
+#bottom h2, #left h2 {
+	margin-top: 0;
+	font-size: 90%;
+}
+*/
+
+ul {
+	margin-top: 0px;
+}

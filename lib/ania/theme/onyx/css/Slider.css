@@ -1,0 +1,44 @@
+.enyo-slider-button {
+	height: 40px;
+	width: 40px;
+	z-index: 50;
+	background: url(../images/slider-handle.png) left top no-repeat;
+	position: absolute;
+	margin: -14px -20px;
+}
+
+.enyo-slider-button.enyo-button-down {
+	background-position-y: -40px;
+}
+
+.enyo-slider {
+	/* 
+	FIXME: why in the heck does this work to properly position the progress
+	div inside this one?
+	*/
+	padding: 1px 0;
+	position:relative;
+}
+
+.enyo-slider-progress {
+	height: 10px;
+	border-width: 0px 4px;
+	-webkit-border-image: url(../images/slider-track.png) 0 4 0 4 repeat repeat;
+	margin: 20px 0px;
+	position:relative;
+}
+
+.enyo-slider-inner {
+	margin: 0 -4px;
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-slider-button {
+		background-image: url(../images-1.5/slider-handle.png);
+		background-size: 40px 80px;
+	}
+	
+	.enyo-slider-progress {
+		-webkit-border-image: url(../images-1.5/slider-track.png) 0 6 0 6 repeat stretch;
+	}
+}

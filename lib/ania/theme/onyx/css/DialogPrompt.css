@@ -1,0 +1,18 @@
+.enyo-dialog-prompt-title {
+	color: #4c4c4c;
+	text-shadow: #f2f2f2 0px 0px 1px;
+	font-size: 21px;
+	padding: 0 0 10px 10px;
+	word-wrap: break-word;
+	border-bottom: 1px solid gray;
+}
+
+.enyo-dialog-prompt-message {
+	color: #222;
+	font-size: 16px;
+	padding: 10px;
+}
+
+.enyo-dialog-prompt-content {
+	padding: 10px;
+}

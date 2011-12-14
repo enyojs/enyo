@@ -1,0 +1,11 @@
+﻿.enyo-input.enyo-rounded-input {
+	margin: 2px 0;
+	font-size: .8rem;
+	border-radius: 20px;
+}
+
+.enyo-input.enyo-rounded-input > .enyo-input-spacing {
+	margin: 0px 10px 0px 10px;
+	min-height: 26px;
+}
+

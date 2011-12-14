@@ -1,0 +1,66 @@
+.enyo-popup.enyo-popup-menu {
+	min-width: inherit;
+	border-width: 20px;
+	-webkit-border-image: url(../images/menu-background.png) 20 20 20 20 stretch stretch;
+	
+	/* FIXME: consider when works more reliably */
+	/*
+	-webkit-transition-property: opacity, -webkit-tranform;
+	-webkit-transition-duration: 0.25s, 0.25s;
+	-webkit-transform: scale(0);
+	-webkit-transform-origin: 50% 0;
+	opacity: 0;
+	*/
+}
+
+/*
+.enyo-popup.enyo-menu-open {
+	-webkit-transform: scale(1);
+	opacity: 1;
+	
+}
+*/
+
+.enyo-menu-inner {
+	margin: -3px -14px;
+}
+
+.enyo-menu-scroll-fades {
+	pointer-events: none;
+}
+
+.enyo-menu-top-fade,
+.enyo-menu-bottom-fade {
+	position: absolute; 
+	pointer-events: none;
+}
+
+.enyo-menu-top-fade {
+	top: -10px;
+	height: 10px; 
+	width: 100%;
+	background: url(../images/menu-fade-arrow-up.png) top center no-repeat no-repeat;
+}
+
+.enyo-menu-bottom-fade {
+	bottom: -11px;
+	height: 10px; 
+	width: 100%;
+	background: url(../images/menu-fade-arrow-down.png) bottom center no-repeat no-repeat;
+}
+
+@media (-webkit-min-device-pixel-ratio:1.5) {
+	.enyo-menu-top-fade {
+		background-image: url(../images-1.5/menu-fade-arrow-up.png);
+		background-size: 8px 8px;
+	}
+	.enyo-menu-bottom-fade {
+		background-image: url(../images-1.5/menu-fade-arrow-down.png);
+		background-size: 8px 8px;
+	}
+	.enyo-popup.enyo-popup-menu {
+		-webkit-border-image: url(../images-1.5/menu-background.png) 30 30 30 30 stretch stretch;
+	}
+}
+
+

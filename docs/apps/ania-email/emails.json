@@ -1,0 +1,30 @@
+{
+   "folders" : [
+      {
+         "emails" : [
+            {
+               "body" : "It works!",
+               "subject" : "Test"
+            },
+            {
+               "body" : "meh...",
+               "subject" : "Test2"
+            }
+         ],
+         "name" : "Personal"
+      },
+      {
+         "emails" : [
+            {
+               "body" : "Please delete the rescinded email without reading it.",
+               "subject" : "'Bar' would like to rescind message: 'Emergency Meeting'"
+            },
+            {
+               "body" : "Massive layoffs. No time to explain. Pack your stuff and get out.",
+               "subject" : "Emergency Meeting"
+            }
+         ],
+         "name" : "Work"
+      }
+   ]
+}

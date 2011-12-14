@@ -1,0 +1,30 @@
+.enyo-dialog {
+	width: 320px;
+	-webkit-transition-property: opacity;
+	-webkit-transition-duration: 0.5s;
+	opacity: 0;
+}
+
+.enyo-dialog.enyo-dialog-open {
+	opacity: 1;
+}
+
+.enyo-dialog-container {
+}
+.enyo-dialog-title {
+	font-size: 1rem;
+	margin: 0 0 10px;
+	text-align: center;
+}
+
+/*.enyo-group.enyo-dialog-group {
+	border-width: 14px;
+	-webkit-border-image: url(../images/dialog-group-unlabeled.png) 14 14 repeat repeat;
+	margin: 8px 0;
+}
+
+.enyo-group.enyo-dialog-group.enyo-group-with-content {
+	border-width: 36px 14px 14px 14px;
+	-webkit-border-image: url(../images/dialog-group-labeled.png) 36 14 14 14 repeat repeat;
+}
+*/

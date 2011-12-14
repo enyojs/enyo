@@ -1,0 +1,30 @@
+﻿.aristo.enyo-border-button {
+	-moz-user-select: none;
+	-moz-box-sizing: border-box;
+}
+
+.aristo.enyo-border-button-normal {
+	-moz-border-image: url(../images/aristo-normal-68x31.png) 5 5 5 5 stretch stretch;
+}
+
+.aristo.enyo-border-button-default {
+	-moz-border-image: url(../images/aristo-default-68x31.png) 5 5 5 5 stretch stretch;
+}
+
+.aristo.enyo-border-button-hot {
+	-moz-border-image: url(../images/aristo-hot-68x31.png) 5 5 5 5 stretch stretch;
+}
+
+.aristo.enyo-border-button-down {
+	-moz-border-image: url(../images/aristo-down-68x31.png) 5 5 5 5 stretch stretch;
+}
+
+/* ace */
+
+.ace.enyo-border-button-normal {
+	-moz-border-image: url(../images/ace-normal-18x24.png) 5 5 5 5 stretch stretch;
+}
+
+.ace.enyo-border-button-default {
+	-moz-border-image: url(../images/ace-default-18x24.png) 5 5 5 5 stretch stretch;
+}

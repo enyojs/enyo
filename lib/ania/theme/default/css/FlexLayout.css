@@ -1,0 +1,12 @@
+﻿.enyo-hflexbox, .enyo-vflexbox {
+	display: -webkit-box;
+	-webkit-box-sizing: border-box;
+}
+
+.enyo-hflexbox {
+	-webkit-box-orient: horizontal;
+}
+
+.enyo-vflexbox {
+	-webkit-box-orient: vertical;
+}
