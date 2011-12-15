@@ -1,4 +1,7 @@
-﻿/* for apps */
+
+/* ..//dom/dom.css */
+
+/* for apps */
 
 html, body {
 	margin: 0;
@@ -47,4 +50,25 @@ button {
 	top: 0;
 	right: 0;
 	bottom: 0;
+}
+
+/* ..//layout/HLayout.css */
+
+.enyo-hlayout {
+	white-space: nowrap;
+}
+
+.enyo-hlayout > * {
+	display: inline-block;
+}
+
+
+/* ..//layout/BoxLayout.css */
+
+﻿.enyo-hbox-div, .enyo-vbox-div{
+	position: absolute !important;
+	/*
+		platform specific
+	*/
+	-webkit-box-sizing: border-box;
 }

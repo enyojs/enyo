@@ -1,1 +1,0 @@
-enyo.depends("$enyo/source");
