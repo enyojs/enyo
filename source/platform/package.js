@@ -1,0 +1,3 @@
+﻿enyo.depends(
+	"touch.js"
+);

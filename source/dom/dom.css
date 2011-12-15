@@ -1,0 +1,50 @@
+/* for apps */
+
+html, body {
+	margin: 0;
+	height: 100%;
+	/* ios needs at least overflow: auto to scroll */
+	overflow: auto;
+	position: relative;
+	-webkit-overflow-scrolling: touch;
+}
+
+/* reset */
+
+button {
+	font-size: inherit;
+	font-family: inherit;
+}
+
+/* user selection */
+
+.enyo-unselectable {
+	cursor: default;
+	-webkit-user-select: none;
+	-moz-user-select: -moz-none;
+}
+
+.enyo-unselectable ::selection {
+	color: transparent;
+}
+
+.enyo-selectable {
+	cursor: auto;
+	-webkit-user-select: text;
+	-moz-user-select: text;
+}
+
+.enyo-selectable ::selection {
+	background: #3297FD;
+	color: #FFF;
+}
+
+/* layout */
+
+.enyo-fit {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
