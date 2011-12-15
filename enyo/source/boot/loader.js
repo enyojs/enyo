@@ -60,6 +60,7 @@
 	};
 
 	enyo.loaderFactory.prototype  = {
+		packageManifest: "package",
 		package: "",
 		packageFolder: "",
 		verbose: false,
@@ -197,26 +198,26 @@
 			//	"foo"
 			//
 			// the package name is 'foo', $foo points to "foo/", 
-			// and the dependency file is "foo/depends.js"
+			// and the dependency file is "foo/package.js"
 			//
 			//	"foo/bar-depends"
 			//
 			// the package name is 'foo', $foo points to "foo/", 
-			// and the dependency file is "foo/foo-depends.js"
+			// and the dependency file is "foo/foo-package.js"
 			//
 			var parts = inPath.split("/");
 			// the last string contains the package name
 			var name = parts.pop();
 			// reconstitute (at least part of) the folder
 			var folder = parts.join("/") + "/";
-			if (name.slice(-8) == "-depends") {
+			if (name.slice(-8) == "-package") {
 				// if the name defines a depends file explicitly,
 				// it is only missing ".js"
 				this.manifest = folder + name + ".js";
 			} else {
 				// if it's a folder, rebuild the path (ensure trailling slash)
 				folder = folder + name + "/";
-				this.manifest = folder + "depends.js";
+				this.manifest = folder + "package.js";
 			}
 			//
 			// construct an alias for this package based on it's path

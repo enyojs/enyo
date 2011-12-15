@@ -18,7 +18,7 @@ enyo.loader = new enyo.loaderFactory(enyo.machine);
 enyo.depends = function() {
 	var ldr = enyo.loader;
 	if (!ldr.packageFolder) {
-		var tag = enyo.locateScript("depends.js");
+		var tag = enyo.locateScript("package.js");
 		if (tag) {
 			ldr.aliasPackage(tag.path);
 			ldr.packageFolder = tag.path + "/";
