@@ -1,8 +1,0 @@
-.enyo-sliding-panels, .enyo-sliding-fit-panels {
-	position: relative;
-}
-
-.enyo-sliding-fit-panels > * {
-	height: 100%;
-	width: 100%;
-}

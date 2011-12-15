@@ -1,8 +1,0 @@
-﻿.enyo-virtual-scroller {
-	overflow: hidden;
-	position: relative;
-}
-
-.enyo-accel-children > * {
-	-webkit-transform-style: preserve-3d;
-}

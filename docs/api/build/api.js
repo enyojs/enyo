@@ -1,7 +1,7 @@
 
 // minifier: path aliases
 
-enyo.path.addPaths({fu: "../../../../enyo/../lib/fu/", parser: "../../../../enyo/../lib/parser/", analyzer: "../../../../enyo/../lib/analyzer/"});
+enyo.path.addPaths({analyzer: "../../../lib/analyzer/", fu: "../../../lib/fu/"});
 
 // lexer.js
 
@@ -537,7 +537,7 @@ this.modules = this.$.reader.modules, this.doFinish();
 }
 });
 
-// $lib/utils/macroize.js
+// ../../../lib/utils/macroize.js
 
 enyo.macroize = function(a, b, c) {
 var d, e, f = a, g = c || enyo.macroize.pattern, h = function(a, c) {
@@ -547,7 +547,7 @@ do e = !1, f = f.replace(g, h); while (e && i++ < 100);
 return f;
 }, enyo.macroize.pattern = /{\$([^{}]*)}/g;
 
-// $lib/foss/showdown-v0.9/compressed/showdown.js
+// ../../../lib/foss/showdown-v0.9/compressed/showdown.js
 
 var Showdown = {};
 
@@ -720,7 +720,7 @@ return "~E" + c + "E";
 };
 };
 
-// ../Formatter.js
+// Formatter.js
 
 enyo.kind({
 name: "Formatter",
@@ -833,7 +833,7 @@ return "<ul>" + a.join("") + "</ul>";
 }
 });
 
-// ../Doc.js
+// Doc.js
 
 enyo.kind({
 name: "Doc",
@@ -910,13 +910,14 @@ return f.join("");
 }
 });
 
-// ../App.js
+// App.js
 
 enyo.kind({
 name: "App",
 kind: "Control",
-className: "enyo-fit",
+className: "enyo-fit enyo-unselectable",
 layoutKind: "VBoxLayout",
+target: "../../enyo/source",
 components: [ {
 kind: "Doc",
 onFinish: "info",
@@ -936,7 +937,6 @@ width: 300,
 style: "overflow: auto;",
 components: [ {
 name: "index",
-className: "unselectable",
 allowHtml: !0,
 style: "padding: 10px;"
 } ]
@@ -944,8 +944,7 @@ style: "padding: 10px;"
 width: "fill",
 layoutKind: "VBoxLayout",
 components: [ {
-height: 100,
-className: "unselectable",
+height: 40,
 components: [ {
 name: "group",
 kind: "SimpleScroller",
@@ -966,14 +965,13 @@ components: [ {
 name: "docs",
 content: "<b>Loading...</b>",
 onclick: "docClick",
-className: "unselectable",
 allowHtml: !0
 } ]
 } ]
 } ]
 } ],
 create: function() {
-this.inherited(arguments), this.selectViewByIndex(0), window.onhashchange = enyo.bind(this, "hashChange"), enyo.asyncMethod(this.$.doc, "walkEnyo", enyo.path.rewrite("../../enyo/source"));
+this.inherited(arguments), this.selectViewByIndex(0), window.onhashchange = enyo.bind(this, "hashChange"), enyo.asyncMethod(this.$.doc, "walkEnyo", enyo.path.rewrite(this.target));
 },
 report: function(a, b, c) {
 this.$.docs.setContent("<b>" + b + (c ? "</b>: <span style='color: green;'>" + c + "</span>" : ""));
@@ -1028,13 +1026,16 @@ owner: this
 }).render()), e.hasNode().scrollIntoView();
 }
 }), enyo.kind({
+name: "SimpleScroller",
+kind: "Control"
+}), enyo.kind({
 name: "Tabbar",
 kind: "Control",
 className: "tabbar",
 removeControl: function() {
-this.inherited(arguments), this.overflowed() || (this.hasNode().style.left = "0");
+this.inherited(arguments), this.hasNode() && this.overflowAmount() <= 0 && (this.node.style.left = "0");
 },
-overflowed: function() {
+overflowAmount: function() {
 var a = this.hasNode();
 return a.clientWidth - a.scrollWidth;
 },
@@ -1042,19 +1043,12 @@ dragstartHandler: function() {
 this.x0 = this.hasNode().offsetLeft;
 },
 dragoverHandler: function(a, b) {
+if (this.hasNode()) {
 var c = this.x0 + b.dx, d = this.overflowed();
-this.hasNode().style.left = Math.min(0, Math.max(c, d)) + "px";
+this.node.style.left = Math.min(0, Math.max(c, d)) + "px";
+}
 },
 dragfinishHandler: function(a, b) {}
-}), enyo.kind({
-name: "SimpleScroller",
-kind: "Control",
-dragstartHandler: function() {
-this.x0 = this.hasNode().scrollLeft, this.y0 = this.hasNode().scrollTop;
-},
-dragoverHandler: function(a, b) {
-this.hasNode().scrollLeft = this.x0 - b.dx, this.hasNode().scrollTop = this.y0 - b.dy;
-}
 }), enyo.kind({
 name: "TopicTab",
 kind: "Control",
@@ -1079,7 +1073,3 @@ closeDown: function(a, b) {
 b.stopPropagation();
 }
 });
-
-// minifier: load css
-
-enyo.machine.sheet("build/api.css");
