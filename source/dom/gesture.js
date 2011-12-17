@@ -14,14 +14,14 @@ enyo.gesture = {
 		return e;
 	},
 	down: function(inEvent) {
-		var e = this.makeEvent("tapdown", inEvent);
+		var e = this.makeEvent("down", inEvent);
 		enyo.dispatch(e);
 		this.dispatchTarget = e.dispatchTarget;
 		this.beginHold(e);
 	},
 	up: function(inEvent) {
 		this.cancelHold();
-		var e = this.makeEvent("tapup", inEvent);
+		var e = this.makeEvent("up", inEvent);
 		var tapPrevented = false;
 		e.preventTap = function() {
 			tapPrevented = true;
@@ -33,13 +33,13 @@ enyo.gesture = {
 	},
 	move: function(inEvent) {
 		this.cancelHold();
-		enyo.dispatch(this.makeEvent("tapmove", inEvent));
+		enyo.dispatch(this.makeEvent("move", inEvent));
 	},
 	over: function(inEvent) {
-		enyo.dispatch(this.makeEvent("tapenter", inEvent));
+		enyo.dispatch(this.makeEvent("enter", inEvent));
 	},
 	out: function(inEvent) {
-		enyo.dispatch(this.makeEvent("tapleave", inEvent));
+		enyo.dispatch(this.makeEvent("leave", inEvent));
 	},
 	beginHold: function(inEvent) {
 		this.holdStart = new Date().getTime();
@@ -51,7 +51,7 @@ enyo.gesture = {
 	},
 	sendHold: function(e) {
 		e.holdTime = new Date().getTime() - this.holdStart;
-		enyo.dispatch(this.makeEvent("taphold", e));
+		enyo.dispatch(this.makeEvent("hold", e));
 	},
 	sendTap: function(e) {
 		// The common ancestor for the down/up pair is the origin for the tap event

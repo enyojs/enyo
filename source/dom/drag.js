@@ -28,7 +28,7 @@ enyo.dispatcher.features.push(
 enyo.gesture.drag = {
 	//* @protected
 	hysteresis: 4,
-	tapdown: function(e) {
+	down: function(e) {
 		// tracking if the mouse is down
 		//console.log("tracking ON");
 		// Note: 'tracking' flag indicates interest in mousemove, it's turned off
@@ -40,7 +40,7 @@ enyo.gesture.drag = {
 		this.px0 = e.pageX;
 		this.py0 = e.pageY;
 	},
-	tapmove: function(e) {
+	move: function(e) {
 		if (this.tracking) {
 			this.dx = e.pageX - this.px0;
 			this.dy = e.pageY - this.py0;
@@ -51,11 +51,11 @@ enyo.gesture.drag = {
 			}
 		}
 	},
-	tapup: function(e) {
+	up: function(e) {
 		this.tracking = false;
 		this.stopDragging(e);
 	},
-	tapleave: function(e) {
+	leave: function(e) {
 		if (this.dragEvent) {
 			this.sendDragOut(e);
 		}
