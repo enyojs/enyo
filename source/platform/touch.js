@@ -13,12 +13,17 @@ enyo.requiresWindow(function() {
 		// However, it's problematic to systematize this because preventing touchstart
 		// stops native scrolling and prevents focus changes.
 		touchstart: function(inEvent) {
+			this.excludedTarget = null;
 			var e = this.makeEvent(inEvent);
 			gesture.down(e);
 			this.overEvent = e;
 			gesture.over(e);
 		},
 		touchmove: function(inEvent) {
+			// NOTE: allow user to supply a node to exclude from event 
+			// target finding via the drag event.
+			var de = gesture.drag.dragEvent;
+			this.excludedTarget = de && de.dragInfo && de.dragInfo.node;
 			var e = this.makeEvent(inEvent);
 			gesture.move(e);
 			// synthesize over and out (normally generated via mouseout)
@@ -31,8 +36,14 @@ enyo.requiresWindow(function() {
 			this.overEvent = e;
 		},
 		touchend: function(inEvent) {
-			gesture.out(this.overEvent);
 			gesture.up(this.makeEvent(inEvent));
+			// FIXME: in touch land, there is no distinction between
+			// a pointer enter/leave and a drag over/out.
+			// While it may make sense to send a leave event when a touch
+			// ends, it does not make sense to send a dragout.
+			// We avoid this by processing out after up, but
+			// this ordering is ad hoc.
+			gesture.out(this.overEvent);
 		},
 		makeEvent: function(inEvent) {
 			var e = enyo.clone(inEvent.changedTouches[0]);
@@ -44,7 +55,7 @@ enyo.requiresWindow(function() {
 		// will fail if an element is positioned outside the bounding box of its parent
 		findTarget: function(inNode, inX, inY) {
 			var n = inNode || document.body;
-			if (n.getBoundingClientRect) {
+			if (n.getBoundingClientRect && (n != this.excludedTarget)) {
 				var o = n.getBoundingClientRect();
 				var x = inX - o.left;
 				var y = inY - o.top;
