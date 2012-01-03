@@ -9,6 +9,9 @@ enyo.gesture = {
 	//* @protected
 	holdDelay: 200,
 	makeEvent: function(inType, inEvent) {
+		// FIXME: omg, pacify chrome warning.
+		delete inEvent.layerX;
+		delete inEvent.layerY;
 		var e = enyo.clone(inEvent);
 		e.type = inType;
 		return e;
