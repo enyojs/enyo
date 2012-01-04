@@ -8,12 +8,13 @@
 enyo.gesture = {
 	//* @protected
 	holdDelay: 200,
+	eventProps: ["target", "relatedTarget", "clientX", "clientY", "pageX", "pageY", "screenX", "screenY", "altKey", "ctrlKey", "metaKey", "shiftKey",
+		"detail", "identifier", "dispatchTarget"],
 	makeEvent: function(inType, inEvent) {
-		// FIXME: omg, pacify chrome warning.
-		delete inEvent.layerX;
-		delete inEvent.layerY;
-		var e = enyo.clone(inEvent);
-		e.type = inType;
+		var e = {type: inType};
+		for (var i=0, p; p=this.eventProps[i]; i++) {
+			e[p] = inEvent[p];
+		}
 		return e;
 	},
 	down: function(inEvent) {
