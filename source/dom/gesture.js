@@ -53,9 +53,11 @@ enyo.gesture = {
 		clearInterval(this.holdJob);
 		this.holdJob = null;
 	},
-	sendHold: function(e) {
+	sendHold: function(inEvent) {
+		console.log(inEvent.target);
+		var e = this.makeEvent("hold", inEvent);
 		e.holdTime = new Date().getTime() - this.holdStart;
-		enyo.dispatch(this.makeEvent("hold", e));
+		enyo.dispatch(e);
 	},
 	sendTap: function(e) {
 		// The common ancestor for the down/up pair is the origin for the tap event

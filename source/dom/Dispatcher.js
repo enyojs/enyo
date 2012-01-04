@@ -4,7 +4,7 @@ enyo.$ = {};
 enyo.dispatcher = {
 	handlerName: "dispatchDomEvent",
 	captureHandlerName: "captureDomEvent",
-	mouseOverOutEvents: {tapenter: 1, tapleave: 1},
+	mouseOverOutEvents: {enter: 1, leave: 1},
 	// these events come from document
 	events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel", "click", "dblclick", "change", "keydown", "keyup", "keypress", "input"],
 	// thes events come from window
