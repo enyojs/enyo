@@ -22,7 +22,7 @@ enyo.depends = function() {
 		if (tag) {
 			ldr.aliasPackage(tag.path);
 			ldr.packageFolder = tag.path + "/";
-			console.log("detected PACKAGEFOLDER [", ldr.packageFolder, "]");
+			console.log("detected PACKAGEFOLDER [" + ldr.packageFolder + "]");
 		}
 	}
 	ldr.load.apply(ldr, arguments);

@@ -52,6 +52,18 @@ enyo.kind({
 	constructor: function() {
 		enyo._objectCount++;
 	},
+	_setProperty: function(n, v, cf) {
+		if (this[cf]) {
+			var old = this[n];
+			this[n] = v;
+			if (old != v) {
+				this[cf](old);
+			}
+		} else {
+			this[n] = v;
+		}
+	},
+	//* @public
 	destroyObject: function(inName) {
 		if (this[inName] && this[inName].destroy) {
 			this[inName].destroy();
@@ -61,15 +73,6 @@ enyo.kind({
 	getProperty: function(n) {
 		return this[n];
 	},
-	_setProperty: function(n, v, cf) {
-		if (this[cf]) {
-			var old = this[n];
-			this[n] = v;
-			this[cf](old); 
-		} else {
-			this[n] = v;
-		}
-	},
 	setProperty: function(n, v) {
 		var setter = "set" + enyo.cap(n);
 		if (this[setter]) {
@@ -78,7 +81,6 @@ enyo.kind({
 			this._setProperty(n, v, n + "Changed");
 		}
 	},
-	//* @public
 	/**
 		Sends a log message to the console, prepended with the name of the kind and method from which log was invoked. Multiple arguments are coerced to String and joined with spaces.
 

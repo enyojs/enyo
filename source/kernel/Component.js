@@ -159,6 +159,7 @@ enyo.kind({
 		_kindPrefixi: {}
 	},
 	defaultKind: "Component",
+	handlers: {},
 	toString: function() {
 		return this.kindName;
 	},
@@ -243,8 +244,7 @@ enyo.kind({
 		}
 	},
 	makeId: function() {
-		var delim = "_";
-		var pre = this.owner && this.owner.getId();
+		var delim = "_", pre = this.owner && this.owner.getId();
 		return this.name ? (pre ? pre + delim : "") + this.name : "";
 	},
 	ownerChanged: function(inOldOwner) {
@@ -252,9 +252,12 @@ enyo.kind({
 			inOldOwner.removeComponent(this);
 		}
 		if (this.owner) {
-			 this.owner.addComponent(this);
+			this.owner.addComponent(this);
 		}
-		this.id = this.makeId();
+		if (!this.id) {
+			this.id = this.makeId();
+		}
+		//this.id = this.makeId();
 	},
 	nameComponent: function(inComponent) {
 		var prefix = enyo.Component.prefixFromKindName(inComponent.kindName);
@@ -408,9 +411,10 @@ enyo.kind({
 	// dispatcher sends DOM events here
 	dispatchDomEvent: function(e) {
 		// call direct handlers first
-		var fn = e.type + "Handler";
+		//var fn = e.type + "Handler";
+		var fn = this.handlers[e.type] || (e.type + "Handler");
 		// if e.g., this.clickHandler
-		if (this[fn]) {
+		if (fn && this[fn]) {
 			// propagate the return value from the handler, truthy return stops bubbling
 			return this[fn](e.dispatchTarget, e);
 		} else {

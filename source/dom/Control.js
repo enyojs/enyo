@@ -9,6 +9,7 @@ enyo.kind({
 	published: {
 		tagName: "div",
 		attributes: {},
+		domStyles: {},
 		style: "",
 		content: "",
 		showing: true,
@@ -34,27 +35,29 @@ enyo.kind({
 		this.initStyles();
 		// 'showing' is tertiary method for modifying display style
 		// setting 'display: none;' style at initialization time will
-		// not work if showing is true.
-		//this.showingChanged();
+		// not work if 'showing' is true.
+		this.showingChanged();
 		// Notes:
 		// - className is a virtual property, this.className value is only useful here.
 		// - addClass instead of setClassName, because this.attributes.className may already have a value.
 		// - inheritors should 'addClass' to add classes, or 'setClassName' to start over.
 		// - should we implement initClassName to allow subclasses more control over inherited behavior?
 		this.addClass(this.className);
-		//this.contentChanged();
-		//this.initProps(["Xid", "Xshowing", "Xcontent", "src", "disabled"]);
-		this.initProps(["id", "showing", "content", "src", "disabled"]);
+		this.initProps(["id", "content", "src", "disabled"]);
 	},
 	destroy: function() {
 		this.removeNodeFromDom();
 		this.inherited(arguments);
 	},
 	initProps: function(inPropNames) {
-		// for each named property, if the instance value differs from the prototype value, trigger the *Changed handler
-		for (var i=0, n; n=inPropNames[i]; i++) {
-			if (this.ctor.prototype[n] != this[n]) {
-				this.setProperty(n, this[n]);
+		// for each named property, trigger the *Changed handler if the property value is truthy
+		for (var i=0, n, cf; n=inPropNames[i]; i++) {
+			if (this[n]) {
+				// FIXME: awkward
+				cf = n + "Changed";
+				if (this[cf]) {
+					this[cf]();
+				}
 			}
 		}
 	},
@@ -386,11 +389,11 @@ enyo.kind({
 		this.invalidateTags();
 		this.renderStyles();
 	},
-	srcChanged: function(inValue) {
-		this.setAttribute("src", inValue);
+	srcChanged: function() {
+		this.setAttribute("src", this.src);
 	},
-	disabledChanged: function(inValue) {
-		this.setAttribute("disabled", inValue);
+	disabledChanged: function() {
+		this.setAttribute("disabled", this.disabled);
 	},
 	attributesChanged: function() {
 		this.invalidateTags();

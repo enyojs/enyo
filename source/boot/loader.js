@@ -129,8 +129,13 @@
 							// continuation
 							return true;
 						}
+					/*
 					} else if ("paths" in d) {
 						enyo.path.addPaths(d.paths);
+					}
+					*/
+					} else {
+						enyo.path.addPaths(d);
 					}
 				}
 			}
@@ -254,15 +259,19 @@
 			name = name.replace("-source", "")
 			var target = (folder.slice(-7) == "/source") ? folder.slice(0, -7) : folder;
 			//
-			// debug only
-			var old = enyo.path.paths[name];
-			if (old && old != folder) {
-				console.warn("mapping alias [" + name + "] to [" + folder + "] replacing [" + old + "]");
-			}
-			console.log("mapping alias [" + name + "] to [" + folder + "]");
-			//
-			// create a path alias for this package
-			enyo.path.addPath(name, target);
+			//if (name.indexOf("-") < 0) {
+				// debug only
+				var old = enyo.path.paths[name];
+				if (old && old != folder) {
+					console.warn("mapping alias [" + name + "] to [" + folder + "] replacing [" + old + "]");
+				}
+				console.log("mapping alias [" + name + "] to [" + folder + "]");
+				//
+				// create a path alias for this package
+				enyo.path.addPath(name, target);
+			//} else {
+			//	console.warn("ignoring aliasable path: ", name);
+			//}
 			//
 			// cache current folder
 			this.packageFolder = folder;
