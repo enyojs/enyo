@@ -1,7 +1,7 @@
 
 // minifier: path aliases
 
-enyo.path.addPaths({analyzer: "../../../lib/analyzer/", fu: "../../../lib/fu/"});
+enyo.path.addPaths({fu: "..\..\..\..\enyo/../lib/fu/"});
 
 // lexer.js
 
@@ -436,7 +436,7 @@ type: "module",
 create: function() {
 this.inherited(arguments), this.module = (new enyo.Documentor(this.source)).results, this.group = this.module.group || "public";
 var a = "enyo", b = this.path.indexOf(a), c = this.path.slice(b + a.length);
-this.addToIndex(c, this), console.log(c), this.indexObjects();
+this.addToIndex(c, this), this.indexObjects();
 },
 addToIndex: function(a, b) {
 Module.topicMap2[a] = b, Module.topicIndex2.push(a);
@@ -521,7 +521,7 @@ kind: "Reader",
 onFinish: "readerFinish"
 } ],
 walk: function(a) {
-this.loader = new enyo.loaderFactory(runtimeMachine), this.loader.loadScript = function() {}, this.loader.loadSheet = function() {}, this.loader.verbose = this.verbose, this.loader.report = enyo.bind(this, "walkReport"), this.loader.finish = enyo.bind(this, "walkFinish"), enyo.loader = this.loader, enyo.depends(a);
+this.loader = new enyo.loaderFactory(runtimeMachine), this.loader.loadScript = function() {}, this.loader.loadSheet = function() {}, this.loader.verbose = this.verbose, this.loader.report = enyo.bind(this, "walkReport"), this.loader.finish = enyo.bind(this, "walkFinish"), enyo.loader = this.loader, enyo.loader.load(a);
 },
 walkReport: function(a, b) {
 this.doReport(a, b);
@@ -537,7 +537,7 @@ this.modules = this.$.reader.modules, this.doFinish();
 }
 });
 
-// ../../../lib/utils/macroize.js
+// $lib/extra/utils/macroize.js
 
 enyo.macroize = function(a, b, c) {
 var d, e, f = a, g = c || enyo.macroize.pattern, h = function(a, c) {
@@ -547,7 +547,7 @@ do e = !1, f = f.replace(g, h); while (e && i++ < 100);
 return f;
 }, enyo.macroize.pattern = /{\$([^{}]*)}/g;
 
-// ../../../lib/foss/showdown-v0.9/compressed/showdown.js
+// showdown-v0.9/compressed/showdown.js
 
 var Showdown = {};
 
@@ -932,7 +932,7 @@ content: "Enyo API Viewer"
 layoutKind: "HBoxLayout",
 height: "fill",
 components: [ {
-kind: "SimpleScroller",
+xkind: "SimpleScroller",
 width: 300,
 style: "overflow: auto;",
 components: [ {
@@ -958,7 +958,7 @@ style: "background-color: black; color: yellow;",
 showing: !1
 } ]
 }, {
-kind: "SimpleScroller",
+xkind: "SimpleScroller",
 style: "padding: 10px; overflow: auto;",
 height: "fill",
 components: [ {
@@ -1027,7 +1027,13 @@ owner: this
 }
 }), enyo.kind({
 name: "SimpleScroller",
-kind: "Control"
+kind: "Control",
+dragstartHandler: function() {
+this.x0 = this.hasNode().scrollLeft, this.y0 = this.hasNode().scrollTop;
+},
+dragoverHandler: function(a, b) {
+this.hasNode().scrollLeft = this.x0 - b.dx, this.hasNode().scrollTop = this.y0 - b.dy;
+}
 }), enyo.kind({
 name: "Tabbar",
 kind: "Control",
@@ -1073,3 +1079,7 @@ closeDown: function(a, b) {
 b.stopPropagation();
 }
 });
+
+// minifier: load css
+
+enyo.machine.sheet("api.css");
