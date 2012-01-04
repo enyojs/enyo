@@ -1,5 +1,5 @@
 
-/* ../../../lib/fu/build/fu.css */
+/* ..\..\..\..\enyo/../lib/fu/build/fu.css */
 
 
 /* ../../../fu/source/button.css */
@@ -185,7 +185,7 @@ literal {
 #app_header {
 	background-color: #D7D7D7;
 	padding: 0 8px;
-	text-align: right;
+	text-align: left;
 	font-size: 1.3rem;
 	font-weight: bold;
 	line-height: 50px;

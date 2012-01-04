@@ -5,9 +5,9 @@
 var a = "enyo.js";
 enyo = window.enyo || {}, enyo.locateScript = function(a) {
 var b = document.getElementsByTagName("script");
-for (var c = b.length - 1, d, e, f = a.length; c >= 0 && (d = b[c]); c--) {
+for (var c = b.length - 1, d, e, f = a.length; c >= 0 && (d = b[c]); c--) if (!d.located) {
 e = d.getAttribute("src") || "";
-if (e.slice(-f) == a) return {
+if (e.slice(-f) == a) return d.located = !0, {
 path: e.slice(0, -f - 1),
 node: d
 };
@@ -15,7 +15,7 @@ node: d
 }, enyo.args = enyo.args || {};
 var b = enyo.locateScript(a);
 if (b) {
-enyo.args.root || (enyo.args.root = b.path.replace("/source", ""));
+enyo.args.root = (enyo.args.root || b.path).replace("/source", "");
 for (var c = 0, d; d = b.node.attributes.item(c); c++) enyo.args[d.nodeName] = d.nodeValue;
 }
 })();
@@ -85,7 +85,7 @@ while (a.index < a.depends.length) {
 var b = a.depends[a.index++];
 if (b) if (typeof b == "string") {
 if (this.require(b, a)) return !0;
-} else "paths" in b && enyo.path.addPaths(b.paths);
+} else enyo.path.addPaths(b);
 }
 },
 require: function(a, b) {
@@ -108,7 +108,7 @@ path: b
 }), this.loadScript(b);
 },
 aliasPackage: function(a) {
-var b = a.split("/"), c = b.pop(), d = b.join("/") + "/";
+var b = a.split("/"), c = b.pop(), d = b.length ? b.join("/") + "/" : "";
 c.slice(-8) == "-package" ? this.manifest = d + c + ".js" : (d = d + c + "/", this.manifest = d + "package.js");
 var e = enyo.path.unwrite(d).split("/");
 e[0] == "$enyo" ? c = e.slice(1).join("/") : e[0] == "$lib" && (c = e.slice(1).join("/"));
@@ -116,9 +116,9 @@ for (var f = e.length - 1; f >= 0; f--) if (e[f] == "lib") {
 c = e.slice(f + 1).join("/");
 break;
 }
-c = c.replace(/\.\.\//g, "").replace(/\$/g, "").replace(/[\/]/g, "-").slice(0, -1), c = c.replace("-source", "");
+c = c.replace(/\.\.\//g, "").replace(/\$/g, "").replace(/[\/]/g, "-"), c[c.length - 1] == "-" && (c = c.slice(0, -1)), c = c.replace("-source", "");
 var g = d.slice(-7) == "/source" ? d.slice(0, -7) : d, h = enyo.path.paths[c];
-h && h != d && console.warn("mapping alias [" + c + "] to [" + d + "] replacing [" + h + "]"), console.log("mapping alias [" + c + "] to [" + d + "]"), enyo.path.addPath(c, g), this.packageFolder = d, this.package = c, this.packages.push({
+h && h != d && this.verbose && console.warn("mapping alias [" + c + "] to [" + d + "] replacing [" + h + "]"), this.verbose && console.log("mapping alias [" + c + "] to [" + d + "]"), enyo.path.addPath(c, g), this.packageFolder = d, this.package = c, this.packages.push({
 name: c,
 folder: d
 });
@@ -145,7 +145,7 @@ document.write('<script type="text/javascript">' + a + "</script>");
 var a = enyo.loader;
 if (!a.packageFolder) {
 var b = enyo.locateScript("package.js");
-b && (a.aliasPackage(b.path), a.packageFolder = b.path + "/", console.log("detected PACKAGEFOLDER [", a.packageFolder, "]"));
+b && b.path && (a.aliasPackage(b.path), a.packageFolder = b.path + "/");
 }
 a.load.apply(a, arguments);
 }, enyo.path.addPaths({
@@ -326,17 +326,17 @@ name: "enyo.Object",
 constructor: function() {
 enyo._objectCount++;
 },
+_setProperty: function(a, b, c) {
+if (this[c]) {
+var d = this[a];
+this[a] = b, d != b && this[c](d);
+} else this[a] = b;
+},
 destroyObject: function(a) {
 this[a] && this[a].destroy && this[a].destroy(), this[a] = null;
 },
 getProperty: function(a) {
 return this[a];
-},
-_setProperty: function(a, b, c) {
-if (this[c]) {
-var d = this[a];
-this[a] = b, this[c](d);
-} else this[a] = b;
 },
 setProperty: function(a, b) {
 var c = "set" + enyo.cap(a);
@@ -393,6 +393,7 @@ statics: {
 _kindPrefixi: {}
 },
 defaultKind: "Component",
+handlers: {},
 toString: function() {
 return this.kindName;
 },
@@ -438,7 +439,7 @@ var a = "_", b = this.owner && this.owner.getId();
 return this.name ? (b ? b + a : "") + this.name : "";
 },
 ownerChanged: function(a) {
-a && a.removeComponent(this), this.owner && this.owner.addComponent(this), this.id = this.makeId();
+a && a.removeComponent(this), this.owner && this.owner.addComponent(this), this.id || (this.id = this.makeId());
 },
 nameComponent: function(a) {
 var b = enyo.Component.prefixFromKindName(a.kindName), c = this._componentNameMap[b] || 0;
@@ -481,8 +482,8 @@ dispatchIndirectly: function(a, b) {
 return this.dispatch(this.owner, this[a], b);
 },
 dispatchDomEvent: function(a) {
-var b = a.type + "Handler";
-return this[b] ? this[b](a.dispatchTarget, a) : this.dispatchIndirectly("on" + a.type, arguments);
+var b = this.handlers[a.type] || a.type + "Handler";
+return b && this[b] ? this[b](a.dispatchTarget, a) : this.dispatchIndirectly("on" + a.type, arguments);
 },
 fire: function(a) {
 var b = enyo.cloneArray(arguments, 1);
@@ -692,21 +693,6 @@ var d = enyo.call(this.context || this, c, [ this, a ]);
 (this.failed ? this.fail : this.respond).call(this, d);
 }
 },
-respond: function(a) {
-this.failed = !1, this.handle(a, this.responders);
-},
-fail: function(a) {
-this.failed = !0, this.handle(a, this.errorHandlers);
-},
-recover: function() {
-this.failed = !1;
-},
-go: function(a) {
-return this.respond(a), this;
-}
-}), enyo.kind({
-name: "enyo.AsyncWithTimeout",
-kind: enyo.Async,
 startTimer: function() {
 this.startTime = (new Date).getTime(), this.timeout && (this.timeoutJob = setTimeout(enyo.bind(this, "timeoutComplete"), this.timeout));
 },
@@ -716,11 +702,17 @@ this.timeoutJob && (this.endTime = (new Date).getTime(), clearTimeout(this.timeo
 timeoutComplete: function() {
 this.timedout = !0, this.fail("timeout");
 },
-respond: function() {
-this.endTimer(), this.inherited(arguments);
+respond: function(a) {
+this.failed = !1, this.endTimer(), this.handle(a, this.responders);
 },
-fail: function() {
-this.endTimer(), this.inherited(arguments);
+fail: function(a) {
+this.failed = !0, this.endTimer(), this.handle(a, this.errorHandlers);
+},
+recover: function() {
+this.failed = !1;
+},
+go: function(a) {
+return this.respond(a), this;
 }
 });
 
@@ -733,6 +725,23 @@ return JSON.stringify(a, b, c);
 parse: function(a) {
 return a ? JSON.parse(a) : null;
 }
+};
+
+// cookie.js
+
+enyo.getCookie = function(a) {
+var b = document.cookie.match(new RegExp("(?:^|; )" + a + "=([^;]*)"));
+return b ? decodeURIComponent(b[1]) : undefined;
+}, enyo.setCookie = function(a, b, c) {
+var d = a + "=" + encodeURIComponent(b), e = c || {}, f = e.expires;
+if (typeof f == "number") {
+var g = new Date;
+g.setTime(g.getTime() + f * 24 * 60 * 60 * 1e3), f = g;
+}
+f && f.toUTCString && (e.expires = f.toUTCString());
+var h, i;
+for (h in e) d += "; " + h, i = e[h], i !== !0 && (d += "=" + i);
+document.cookie = d;
 };
 
 // xhr.js
@@ -771,7 +780,7 @@ a.callback = a.load, a.method = "POST", enyo.xhr.request(a);
 
 enyo.kind({
 name: "enyo.Ajax",
-kind: enyo.AsyncWithTimeout,
+kind: enyo.Async,
 published: {
 cacheBust: !0,
 url: "",
@@ -788,7 +797,7 @@ constructor: function(a) {
 enyo.mixin(this, a), this.inherited(arguments);
 },
 go: function(a) {
-return this.xhr(a), this;
+return this.startTimer(), this.xhr(a), this;
 },
 xhr: function(a) {
 var b = this.url.split("?"), c = b.shift() || "", d = b.join("?").split("&"), e = enyo.isString(a) ? a : enyo.Ajax.objectToQuery(a);
@@ -878,6 +887,7 @@ onclick: ""
 published: {
 tagName: "div",
 attributes: {},
+domStyles: {},
 style: "",
 content: "",
 showing: !0,
@@ -892,13 +902,13 @@ constructor: function() {
 this.inherited(arguments), this.attributes = enyo.clone(this.attributes), this.domStyles = enyo.clone(this.domStyles);
 },
 create: function() {
-this.inherited(arguments), this.initStyles(), this.addClass(this.className), this.initProps([ "id", "showing", "content", "src", "disabled" ]);
+this.inherited(arguments), this.initStyles(), this.showingChanged(), this.addClass(this.className), this.initProps([ "id", "content", "src", "disabled" ]);
 },
 destroy: function() {
 this.removeNodeFromDom(), this.inherited(arguments);
 },
 initProps: function(a) {
-for (var b = 0, c; c = a[b]; b++) this.ctor.prototype[c] != this[c] && this.setProperty(c, this[c]);
+for (var b = 0, c, d; c = a[b]; b++) this[c] && (d = c + "Changed", this[d] && this[d]());
 },
 adjustComponentProps: function(a) {
 this.inherited(arguments), a.kind && !enyo.constructorForKind(a.kind) && (a.tagName = a.kind, a.kind = enyo.Control);
@@ -997,11 +1007,11 @@ this.hasNode() && this.renderContent();
 domStylesChanged: function() {
 this.invalidateTags(), this.renderStyles();
 },
-srcChanged: function(a) {
-this.setAttribute("src", a);
+srcChanged: function() {
+this.setAttribute("src", this.src);
 },
-disabledChanged: function(a) {
-this.setAttribute("disabled", a);
+disabledChanged: function() {
+this.setAttribute("disabled", this.disabled);
 },
 attributesChanged: function() {
 this.invalidateTags(), this.renderAttributes();
@@ -1289,29 +1299,33 @@ return !1;
 
 enyo.gesture = {
 holdDelay: 200,
+eventProps: [ "target", "relatedTarget", "clientX", "clientY", "pageX", "pageY", "screenX", "screenY", "altKey", "ctrlKey", "metaKey", "shiftKey", "detail", "identifier", "dispatchTarget" ],
 makeEvent: function(a, b) {
-var c = enyo.clone(b);
-return c.type = a, c;
+var c = {
+type: a
+};
+for (var d = 0, e; e = this.eventProps[d]; d++) c[e] = b[e];
+return c;
 },
 down: function(a) {
-var b = this.makeEvent("tapdown", a);
+var b = this.makeEvent("down", a);
 enyo.dispatch(b), this.dispatchTarget = b.dispatchTarget, this.beginHold(b);
 },
 up: function(a) {
 this.cancelHold();
-var b = this.makeEvent("tapup", a), c = !1;
+var b = this.makeEvent("up", a), c = !1;
 b.preventTap = function() {
 c = !0;
 }, enyo.dispatch(b), c || this.sendTap(b);
 },
 move: function(a) {
-this.cancelHold(), enyo.dispatch(this.makeEvent("tapmove", a));
+this.cancelHold(), enyo.dispatch(this.makeEvent("move", a));
 },
 over: function(a) {
-enyo.dispatch(this.makeEvent("tapenter", a));
+enyo.dispatch(this.makeEvent("enter", a));
 },
 out: function(a) {
-enyo.dispatch(this.makeEvent("tapleave", a));
+enyo.dispatch(this.makeEvent("leave", a));
 },
 beginHold: function(a) {
 this.holdStart = (new Date).getTime(), this.holdJob = setInterval(enyo.bind(this, "sendHold", a), this.holdDelay);
@@ -1320,7 +1334,7 @@ cancelHold: function() {
 clearInterval(this.holdJob), this.holdJob = null;
 },
 sendHold: function(a) {
-a.holdTime = (new Date).getTime() - this.holdStart, enyo.dispatch(this.makeEvent("taphold", a));
+a.holdTime = (new Date).getTime() - this.holdStart, enyo.dispatch(this.makeEvent("hold", a));
 },
 sendTap: function(a) {
 var b = this.findCommonAncestor(this.dispatchTarget, a.dispatchTarget), c = b && b.hasNode();
@@ -1365,16 +1379,16 @@ enyo.dispatcher.features.push(function(a) {
 if (enyo.gesture.drag[a.type]) return enyo.gesture.drag[a.type](a);
 }), enyo.gesture.drag = {
 hysteresis: 4,
-tapdown: function(a) {
+down: function(a) {
 this.tracking = !0, this.target = a.target, this.dispatchTarget = a.dispatchTarget, this.targetEvent = a, this.px0 = a.pageX, this.py0 = a.pageY;
 },
-tapmove: function(a) {
+move: function(a) {
 this.tracking && (this.dx = a.pageX - this.px0, this.dy = a.pageY - this.py0, this.dragEvent ? this.sendDrag(a) : Math.sqrt(this.dy * this.dy + this.dx * this.dx) >= this.hysteresis && this.sendDragStart(a));
 },
-tapup: function(a) {
+up: function(a) {
 this.tracking = !1, this.stopDragging(a);
 },
-tapleave: function(a) {
+leave: function(a) {
 this.dragEvent && this.sendDragOut(a);
 },
 stopDragging: function(a) {
@@ -1437,15 +1451,18 @@ a.events = b, a.events.touchstart(c);
 };
 var b = {
 touchstart: function(b) {
+this.excludedTarget = null;
 var c = this.makeEvent(b);
 a.down(c), this.overEvent = c, a.over(c);
 },
 touchmove: function(b) {
-var c = this.makeEvent(b);
-a.move(c), this.overEvent && this.overEvent.target != c.target && (this.overEvent.relatedTarget = c.target, c.relatedTarget = this.overEvent.target, a.out(this.overEvent), a.over(c)), this.overEvent = c;
+var c = a.drag.dragEvent;
+this.excludedTarget = c && c.dragInfo && c.dragInfo.node;
+var d = this.makeEvent(b);
+a.move(d), this.overEvent && this.overEvent.target != d.target && (this.overEvent.relatedTarget = d.target, d.relatedTarget = this.overEvent.target, a.out(this.overEvent), a.over(d)), this.overEvent = d;
 },
 touchend: function(b) {
-a.out(this.overEvent), a.up(this.makeEvent(b));
+a.up(this.makeEvent(b)), a.out(this.overEvent);
 },
 makeEvent: function(a) {
 var b = enyo.clone(a.changedTouches[0]);
@@ -1453,7 +1470,7 @@ return b.target = this.findTarget(null, b.pageX, b.pageY), b;
 },
 findTarget: function(a, b, c) {
 var d = a || document.body;
-if (d.getBoundingClientRect) {
+if (d.getBoundingClientRect && d != this.excludedTarget) {
 var e = d.getBoundingClientRect(), f = b - e.left, g = c - e.top;
 if (f > 0 && g > 0 && f <= e.width && g <= e.height) {
 var h;
@@ -1541,4 +1558,4 @@ layoutKind: "enyo.VBoxLayout"
 
 // minifier: load css
 
-enyo.machine.sheet(enyo.path.rewrite("$enyo/enyo.css"));
+enyo.machine.sheet(enyo.args.root + "/enyo.css");

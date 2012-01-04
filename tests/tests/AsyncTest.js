@@ -5,6 +5,7 @@ enyo.kind({
 		new enyo.Async();
 		this.finish();
 	},
+	/*
 	testDefer: function() {
 		var a = new enyo.Defer(200);
 		a.response(function(inSender, inValue) {
@@ -47,6 +48,7 @@ enyo.kind({
 			.go()
 			;
 	},
+	*/
 	testAsyncFail: function() {
 		var a = new enyo.Async();
 		a.response(this, function(inSender, inValue) {
@@ -83,6 +85,7 @@ enyo.kind({
 			.respond("foo")
 			;
 	},
+	/*
 	testService: function() {
 		new enyo.AsyncService()
 			.transaction()
@@ -95,6 +98,7 @@ enyo.kind({
 			.respond("foo")
 			;
 	},
+	*/
 	testAjax200: function() {
 		new enyo.Ajax({url: "index.html", handleAs: "text"})
 			.response(this, function(inSender, inValue){

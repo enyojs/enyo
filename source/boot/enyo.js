@@ -28,17 +28,4 @@
 			enyo.args[it.nodeName] = it.nodeValue;
 		}
 	}
-	/*
-	var tag = enyo.locateScript(thisScript);
-	if (tag) {
-		// infer the framework path from the document, unless the user has specified one explicitly
-		if (!enyo.args.root) {
-			enyo.args.root = tag.path.replace("/source", "");
-		}
-		// all attributes of the bootstrap script tag become enyo.args
-		for (var i=0/*, l=tag.node.attributes.length*/, it; /*i<l &&*/ (it = tag.node.attributes.item(i)); i++) {
-			enyo.args[it.nodeName] = it.nodeValue;
-		}
-	}
-	*/
 })();

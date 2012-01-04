@@ -1,6 +1,6 @@
 ﻿enyo.kind({
 	name: "enyo.Ajax",
-	kind: enyo.AsyncWithTimeout,
+	kind: enyo.Async,
 	published: {
 		cacheBust: true,
 		/**
@@ -54,6 +54,7 @@
 		Send the ajax request with parameters _inParams_.
 	*/
 	go: function(inParams) {
+		this.startTimer();
 		this.xhr(inParams);
 		return this;
 	},

@@ -214,14 +214,15 @@
 			// the last string contains the package name
 			var name = parts.pop();
 			// reconstitute (at least part of) the folder
-			var folder = parts.join("/") + "/";
+			var folder = parts.length ? (parts.join("/") + "/") : "";
+			// if the name defines a package file explicitly...
 			if (name.slice(-8) == "-package") {
-				// if the name defines a depends file explicitly,
 				// it is only missing ".js"
 				this.manifest = folder + name + ".js";
 			} else {
-				// if it's a folder, rebuild the path (ensure trailling slash)
+				// otherwise, it's a folder, so rebuild the path (ensure trailling slash)
 				folder = folder + name + "/";
+				// this is the package path
 				this.manifest = folder + "package.js";
 			}
 			//
@@ -252,7 +253,10 @@
 			//
 			// now clean the path a bit (remove "..", convert slashes to dashes)
 			// e.g. "../foo/bar/zot" becomes "foo-bar-zot"
-			name = name.replace(/\.\.\//g, "").replace(/\$/g, "").replace(/[\/]/g, "-").slice(0, -1);
+			name = name.replace(/\.\.\//g, "").replace(/\$/g, "").replace(/[\/]/g, "-");
+			if (name[name.length-1] == "-") {
+				name = name.slice(0, -1);
+			}
 			//
 			// 'source' folder is magic: we omit it from the name, so we can depends from <package>/source
 			// but the alias is <package>
@@ -263,9 +267,9 @@
 				// debug only
 				var old = enyo.path.paths[name];
 				if (old && old != folder) {
-					console.warn("mapping alias [" + name + "] to [" + folder + "] replacing [" + old + "]");
+					this.verbose && console.warn("mapping alias [" + name + "] to [" + folder + "] replacing [" + old + "]");
 				}
-				console.log("mapping alias [" + name + "] to [" + folder + "]");
+				this.verbose && console.log("mapping alias [" + name + "] to [" + folder + "]");
 				//
 				// create a path alias for this package
 				enyo.path.addPath(name, target);

@@ -19,10 +19,10 @@ enyo.depends = function() {
 	var ldr = enyo.loader;
 	if (!ldr.packageFolder) {
 		var tag = enyo.locateScript("package.js");
-		if (tag) {
+		if (tag && tag.path) {
 			ldr.aliasPackage(tag.path);
 			ldr.packageFolder = tag.path + "/";
-			console.log("detected PACKAGEFOLDER [" + ldr.packageFolder + "]");
+			//console.log("detected PACKAGEFOLDER [" + ldr.packageFolder + "]");
 		}
 	}
 	ldr.load.apply(ldr, arguments);

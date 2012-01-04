@@ -44,29 +44,6 @@
 			}
 		}
 	},
-	//* @public
-	respond: function(inValue) {
-		this.failed = false;
-		this.handle(inValue, this.responders);
-	},
-	fail: function(inError) {
-		this.failed = true;
-		this.handle(inError, this.errorHandlers);
-	},
-	recover: function() {
-		this.failed = false;
-	},
-	go: function(inValue) {
-		this.respond(inValue);
-		return this;
-	}
-});
-
-//* @public
-enyo.kind({
-	//* @protected
-	name: "enyo.AsyncWithTimeout",
-	kind: enyo.Async,
 	startTimer: function() {
 		this.startTime = new Date().getTime();
 		if (this.timeout) {
@@ -85,12 +62,22 @@ enyo.kind({
 		this.timedout = true;
 		this.fail("timeout");
 	},
-	respond: function() {
+	//* @public
+	respond: function(inValue) {
+		this.failed = false;
 		this.endTimer();
-		this.inherited(arguments);
+		this.handle(inValue, this.responders);
 	},
-	fail: function() {
+	fail: function(inError) {
+		this.failed = true;
 		this.endTimer();
-		this.inherited(arguments);
+		this.handle(inError, this.errorHandlers);
+	},
+	recover: function() {
+		this.failed = false;
+	},
+	go: function(inValue) {
+		this.respond(inValue);
+		return this;
 	}
 });
