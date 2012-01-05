@@ -6,7 +6,7 @@
 	<!-- -->
 	<title>Enyo Event Tester</title>
 	<script src="../../../source/enyo.js" type="text/javascript"></script>
-	<script src="../../../lib/utils/fu/package.js" type="text/javascript"></script>
+	<script src="../../../../lib/fu/package.js" type="text/javascript"></script>
 	<style type="text/css">
 		body {
 			box-sizing: border-box;
@@ -14,13 +14,44 @@
 			font-family: Helvetica, Arial, Sans-Serif;
 		}
 		h4 {
-			background-color: Orange;
+			background-color: orange;
 			padding: 4px;
 			margin: 1em 0 0 0;
 		}
 		.border {
 			border: 1px solid orange;
 			padding: 4px;
+		}
+		.spaced {
+			padding: 20px;
+		}
+		.log {
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			opacity: 0.5;
+			background: #000;
+			color: white;
+		}
+		.dragSink {
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			box-sizing: border-box;
+			width: 50px;
+			height: 50px;
+			line-height: 50px;
+			font-size: 10px;
+			text-align: center;
+			margin: 25px;
+			background: lightblue;
+		}
+		.dragSource {
+			position: absolute;
+			left: 10px;
+			border-radius: 25px;
+			border: 1px solid transparent;
+			background: orange;
+			-webkit-transform: translateZ(0);
 		}
 	</style>
 </head>
@@ -32,6 +63,7 @@
 				kind: "Control",
 				create: function() {
 					this.inherited(arguments);
+					this.attributes.onscroll = enyo.bubbler;
 					this.addStyles("overflow: hidden;"); // background-color: silver;");
 				},
 				isSelectEvent: function(inEvent) {
@@ -71,6 +103,7 @@
 				kind: "Control",
 				create: function() {
 					this.inherited(arguments);
+					this.attributes.onscroll = enyo.bubbler;
 					this.addStyles("overflow: auto;");
 				}
 			});
@@ -83,8 +116,31 @@
 			className: "enyo-fit",
 			style: "padding: 8px;",
 			components: [
-				{name: "tapLabel", kind: "h4", content: "Basic Events"},
-				{className: "border", content: content, ontap: "logEvent", ondragstart: "logEvent", ondrag: "logEvent", ondragfinish: "logEvent"},
+				{name: "log", className: "log"},
+				//
+				{kind: "h4", content: "Basic Gesture Events"},
+				{className: "border spaced", components: [
+					{kind: "button", content: "Tap 1", ontap: "logEventTarget"},
+					{kind: "span", className: "button", components: [
+						{kind: "span", content: "Tap 2", ontap: "logEventTarget", style: "border: 1px solid red;"},
+						{name: "closeImage", kind: "img", src: "resources/close.png", ontap: "logEventTarget"},
+					]},
+					{kind: "button", content: "Hold", onhold: "holdEvent"},
+					{kind: "button", content: "Down / Up", ondown: "logEnterLeave", onup: "logEnterLeave"},
+					{name: "enterLeaveButton", kind: "button", onenter: "logEnterLeave", onleave: "logEnterLeave", components: [
+						{name: "enterLeaveSpan", kind: "span", content: "Enter / leave", style: "border: 1px solid red;", onenter: "logEnterLeave", onleave: "logEnterLeave"},
+						{name: "enterLeaveImage", kind: "img", style: "height: 16px; margin: 0 0 0 10px;", src: "resources/hp.png", onenter: "logEnterLeave", onleave: "logEnterLeave"},
+					]}
+				]},
+				{kind: "h4", content: "Drag Events"},
+				{className: "border", layoutKind: "HLayout", style: "position: relative; text-align: right;", components: [
+					{name: "dragger", className: "dragSource dragSink", ondragstart: "startdragEvent", ondrag: "dragEvent", ondragfinish: "dragfinishEvent", content: "Drag Me!"},
+					{className: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
+					{className: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
+					{className: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
+					{className: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
+					{name: "dragOffsetCheckbox", kind: "input", attributes: {type: "checkbox"}, content: "offset"}
+				]},
 				//
 				{kind: "h4", content: "Basic Text (Not Selectable)"},
 				{className: "border", content: content},
@@ -96,11 +152,81 @@
 				{kind: "SimpleScroller", className: "border", content: content + content + content, style: "height: 150px; border: 2px solid lightblue; padding: 4px;"},
 				//
 				{kind: "h4", content: "SimpleScroller (Selectable)"},
+				{kind: "SimpleScroller", className: "border enyo-selectable", content: content + content + content, style: "height: 150px; border: 2px solid lightblue; padding: 4px;"},
+				//
+				{kind: "h4", content: "SimpleScroller (Selectable)"},
 				{kind: "SimpleScroller", className: "border enyo-selectable", content: content + content + content, style: "height: 150px; border: 2px solid lightblue; padding: 4px;"}
 			],
+			scrollHandler: function(inSender) {
+				this.$.log.applyStyle("bottom", -inSender.hasNode().scrollTop + "px");
+			},
 			logEvent: function(inSender, inEvent) {
-				this.$.tapLabel.setContent(inEvent.type + ": " + inSender.id);
-				//console.log(inEvent.type, inSender.id);
+				var m = inEvent.type  + ": " + (inSender.content || inSender.name);
+				this.addToLog(m);
+				this.$.log.setContent();
+			},
+			logEventTarget: function(inSender, inEvent) {
+				var dt = inEvent.dispatchTarget;
+				var m = inEvent.type  + ": " + (dt.content || dt.name);
+				this.addToLog(m);
+			},
+			logEnterLeave: function(inSender, inEvent) {
+				this.logEventTarget(inSender, inEvent);
+				return true;
+			},
+			holdEvent: function(inSender, inEvent) {
+				this.addToLog(inEvent.type  + ": " + inEvent.holdTime);
+			},
+			addToLog: function(inMessage) {
+				this.$.log.setContent(inMessage);
+				console.log(inMessage);
+			},
+			startdragEvent: function(inSender, inEvent) {
+				this.dragging = true;
+				var c = this.$.dragger;
+				inEvent.dragInfo = {};
+				c.applyStyle("pointer-events", "none");
+				var o = this.$.dragOffsetCheckbox.hasNode().checked ? 25 : 0;
+				var x = (c.x || 0) + o;
+				var y = (c.y || 0) - o;
+				this.drag0 = {x: x, y: y};
+
+			},
+			dragEvent: function(inSender, inEvent) {
+				if (this.dragging) {
+					this.move(inEvent.dx + this.drag0.x, inEvent.dy + this.drag0.y);
+				}
+			},
+			dragfinishEvent: function(inSender, inEvent) {
+				this.$.dragger.applyStyle("pointer-events", null);
+				if (!inEvent.dragInfo.dropped) {
+					this.move(0, 0);
+				}
+				this.dragging = false;
+			},
+			dropEvent: function(inSender, inEvent) {
+				inEvent.dragInfo.dropped = true;
+				var b = inSender.getBounds();
+				var cb = this.$.dragger.getBounds();
+				this.move(b.left - cb.left, b.top - cb.top);
+			},
+			dragoverEvent: function(inSender) {
+				inSender.applyStyle("background", "green");
+			},
+			dragoutEvent: function(inSender) {
+				inSender.applyStyle("background", null);
+			},
+			move: function(inX, inY) {
+				var c = this.$.dragger;
+				c.x = inX;
+				c.y = inY;
+				var t = "translate(" + inX + "px," + inY + "px)";
+				var ds = c.domStyles;
+				ds["-webkit-transform"] = ds["-moz-transform"] = ds["-ms-transform"] = ds["transform"] = t;
+				if (c.hasNode()) {
+					var s = c.node.style;
+					s.webkitTransform = s.MozTransform = s.msTransform = s.transform = t;
+				}
 			}
 		}).write();
 	</script>
