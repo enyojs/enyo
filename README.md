@@ -1,3 +1,3 @@
 # Enyo
 
-> Cross Platform, Object Oriented, Javascript Application Framework
+> An object oriented application framework for modern desktop and mobile browsers.
