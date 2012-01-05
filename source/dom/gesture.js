@@ -54,7 +54,6 @@ enyo.gesture = {
 		this.holdJob = null;
 	},
 	sendHold: function(inEvent) {
-		console.log(inEvent.target);
 		var e = this.makeEvent("hold", inEvent);
 		e.holdTime = new Date().getTime() - this.holdStart;
 		enyo.dispatch(e);
