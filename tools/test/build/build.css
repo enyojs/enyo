@@ -1,0 +1,36 @@
+
+/* ../../../lib/test/TestCase.css */
+
+.enyo-testcase {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: smaller;
+}
+
+.enyo-testcase-title {
+	font-weight: bold;
+	padding: 4px;
+	color: white;
+	background-color: #222;
+	text-align: center;
+}
+
+.enyo-testcase-group {
+}
+
+.enyo-testcase-running, .enyo-testcase-passed, .enyo-testcase-failed {
+	padding: 4px 4px 4px 36px;
+	border-bottom: 1px dotted gray;
+	white-space: pre;
+}
+
+.enyo-testcase-running {
+	background-color: yellow;
+}
+
+.enyo-testcase-passed {
+	background-color: #B0FFB0;
+}
+
+.enyo-testcase-failed {
+	background-color: #FF8080;
+}
