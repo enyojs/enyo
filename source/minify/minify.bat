@@ -1,13 +1,15 @@
 REM @ECHO OFF
 
-SET TOOLS=..\..\tools
+SET TOOLS=..\..\tools\minifier
 SET NODE=%TOOLS%\node.exe
 SET MINIFY=%TOOLS%\minify.js
-SET ENYO=../..
+SET ENYO=..\..
+SET TARGET=..\..\build
 
 %NODE% %MINIFY% package.js -enyo %ENYO% -output enyo -no-alias
 
-move /Y enyo.js %ENYO%
-move /Y enyo.css %ENYO%
+mkdir %TARGET%
+move /Y enyo.js %TARGET%
+move /Y enyo.css %TARGET%
 
 PAUSE
