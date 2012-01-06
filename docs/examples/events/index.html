@@ -116,10 +116,9 @@
 			className: "enyo-fit",
 			style: "padding: 8px;",
 			components: [
-				{name: "log", className: "log"},
 				//
 				{kind: "h4", content: "Basic Gesture Events"},
-				{className: "border spaced", components: [
+				{className: "border spaced", style: "position: relative;", components: [
 					{kind: "button", content: "Tap 1", ontap: "logEventTarget"},
 					{kind: "span", className: "button", components: [
 						{kind: "span", content: "Tap 2", ontap: "logEventTarget", style: "border: 1px solid red;"},
@@ -127,19 +126,20 @@
 					]},
 					{kind: "button", content: "Hold", onhold: "holdEvent"},
 					{kind: "button", content: "Down / Up", ondown: "logEnterLeave", onup: "logEnterLeave"},
-					{name: "enterLeaveButton", kind: "button", onenter: "logEnterLeave", onleave: "logEnterLeave", components: [
+					{name: "enterLeaveButton", kind: "button", ontouchstart: "squelchEvent", onenter: "logEnterLeave", onleave: "logEnterLeave", components: [
 						{name: "enterLeaveSpan", kind: "span", content: "Enter / leave", style: "border: 1px solid red;", onenter: "logEnterLeave", onleave: "logEnterLeave"},
 						{name: "enterLeaveImage", kind: "img", style: "height: 16px; margin: 0 0 0 10px;", src: "resources/hp.png", onenter: "logEnterLeave", onleave: "logEnterLeave"},
-					]}
+					]},
+					{name: "log", className: "log"}
 				]},
 				{kind: "h4", content: "Drag Events"},
 				{className: "border", layoutKind: "HLayout", style: "position: relative; text-align: right;", components: [
-					{name: "dragger", className: "dragSource dragSink", ondragstart: "startdragEvent", ondrag: "dragEvent", ondragfinish: "dragfinishEvent", content: "Drag Me!"},
 					{className: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
 					{className: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
 					{className: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
 					{className: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
-					{name: "dragOffsetCheckbox", kind: "input", attributes: {type: "checkbox"}, content: "offset"}
+					{name: "dragOffsetCheckbox", kind: "input", attributes: {type: "checkbox"}, content: "offset"},
+					{name: "dragger", className: "dragSource dragSink", ontouchstart: "squelchEvent", onmousedown: "squelchEvent", ondragstart: "startdragEvent", ondrag: "dragEvent", ondragfinish: "dragfinishEvent", content: "Drag Me!"}
 				]},
 				//
 				{kind: "h4", content: "Basic Text (Not Selectable)"},
@@ -157,13 +157,8 @@
 				{kind: "h4", content: "SimpleScroller (Selectable)"},
 				{kind: "SimpleScroller", className: "border enyo-selectable", content: content + content + content, style: "height: 150px; border: 2px solid lightblue; padding: 4px;"}
 			],
-			scrollHandler: function(inSender) {
-				this.$.log.applyStyle("bottom", -inSender.hasNode().scrollTop + "px");
-			},
-			logEvent: function(inSender, inEvent) {
-				var m = inEvent.type  + ": " + (inSender.content || inSender.name);
-				this.addToLog(m);
-				this.$.log.setContent();
+			squelchEvent: function(inSender, inEvent) {
+				inEvent.preventDefault();
 			},
 			logEventTarget: function(inSender, inEvent) {
 				var dt = inEvent.dispatchTarget;
@@ -184,7 +179,7 @@
 			startdragEvent: function(inSender, inEvent) {
 				this.dragging = true;
 				var c = this.$.dragger;
-				inEvent.dragInfo = {};
+				inEvent.dragInfo = {node: c.hasNode()};
 				c.applyStyle("pointer-events", "none");
 				var o = this.$.dragOffsetCheckbox.hasNode().checked ? 25 : 0;
 				var x = (c.x || 0) + o;
