@@ -8,6 +8,7 @@
 enyo.gesture = {
 	//* @protected
 	holdDelay: 200,
+	minFlick: 0.1,
 	eventProps: ["target", "relatedTarget", "clientX", "clientY", "pageX", "pageY", "screenX", "screenY", "altKey", "ctrlKey", "metaKey", "shiftKey",
 		"detail", "identifier", "dispatchTarget"],
 	makeEvent: function(inType, inEvent) {
@@ -20,8 +21,18 @@ enyo.gesture = {
 	down: function(inEvent) {
 		var e = this.makeEvent("down", inEvent);
 		enyo.dispatch(e);
+		this.startTracking(e);
+		this.downTarget = e.target;
 		this.dispatchTarget = e.dispatchTarget;
 		this.beginHold(e);
+	},
+	move: function(inEvent) {
+		this.cancelHold();
+		var e = this.makeEvent("move", inEvent);
+		enyo.dispatch(e);
+		if (this.trackInfo) {
+			this.track(e);
+		}
 	},
 	up: function(inEvent) {
 		this.cancelHold();
@@ -30,14 +41,36 @@ enyo.gesture = {
 		e.preventTap = function() {
 			tapPrevented = true;
 		};
+		this.endTracking(e);
 		enyo.dispatch(e);
 		if (!tapPrevented) {
 			this.sendTap(e);
 		}
 	},
-	move: function(inEvent) {
-		this.cancelHold();
-		enyo.dispatch(this.makeEvent("move", inEvent));
+	startTracking: function(e) {
+		this.trackInfo = {};
+		this.flickable = false;
+		this.track(e);
+	},
+	track: function(inEvent) {
+		//this.flickable = false;
+		var ti = this.trackInfo;
+		var s = ti.last;
+		if (s) {
+			// setting max hz to 120 helps avoid spaz data
+			var dt = ti.dt = Math.max(8, new Date().getTime() - s.time);
+			var x = ti.vx = (inEvent.pageX - s.x) / dt;
+			var y = ti.vy = (inEvent.pageY - s.y) / dt;
+			var v = ti.v = Math.sqrt(x*x + y*y);
+			this.flickable = v > this.minFlick;
+		}
+		ti.last = {x: inEvent.pageX, y: inEvent.pageY, time: new Date().getTime()};
+	},
+	endTracking: function(e) {
+		if (this.flickable) {
+			this.sendFlick(e);
+		}
+		this.trackInfo = null;
 	},
 	over: function(inEvent) {
 		enyo.dispatch(this.makeEvent("enter", inEvent));
@@ -75,9 +108,13 @@ enyo.gesture = {
 			p = p.parent;
 		}
 	},
-	// FIXME: tbd
 	sendFlick: function(inEvent) {
-		enyo.dispatch(this.makeEvent("flick", inEvent));
+		var e = this.makeEvent("flick", inEvent);
+		e.xVelocity = this.trackInfo.vx;
+		e.yVelocity = this.trackInfo.vy;
+		e.velocity = this.trackInfo.v;
+		e.target = this.downTarget;
+		enyo.dispatch(e);
 	}
 };
 
