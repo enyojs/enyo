@@ -164,17 +164,7 @@
 		},
 		getPathPrefix: function(inPath) {
 			var delim = inPath.slice(0, 1);
-			if (/*this.packageFolder &&*/ (delim != "/") && (delim != "\\") && (delim != "$") && (inPath.slice(0, 5) != "http:")) {
-				/*
-				if (!this.packageFolder) {
-					console.log("No PACKAGEFOLDER");
-					var tag = enyo.locateScript("depends.js");
-					if (tag) {
-						this.packageFolder = tag.path + "/";
-					}
-					console.log("No PACKAGEFOLDER [", this.packageFolder, "]");
-				}
-				*/
+			if ((delim != "/") && (delim != "\\") && (delim != "$") && (inPath.slice(0, 5) != "http:")) {
 				return this.packageFolder;
 			}
 			return "";
@@ -263,19 +253,15 @@
 			name = name.replace("-source", "")
 			var target = (folder.slice(-7) == "/source") ? folder.slice(0, -7) : folder;
 			//
-			//if (name.indexOf("-") < 0) {
-				// debug only
-				var old = enyo.path.paths[name];
-				if (old && old != folder) {
-					this.verbose && console.warn("mapping alias [" + name + "] to [" + folder + "] replacing [" + old + "]");
-				}
-				this.verbose && console.log("mapping alias [" + name + "] to [" + folder + "]");
-				//
-				// create a path alias for this package
-				enyo.path.addPath(name, target);
-			//} else {
-			//	console.warn("ignoring aliasable path: ", name);
-			//}
+			// debug only
+			var old = enyo.path.paths[name];
+			if (old && old != folder) {
+				this.verbose && console.warn("mapping alias [" + name + "] to [" + folder + "] replacing [" + old + "]");
+			}
+			this.verbose && console.log("mapping alias [" + name + "] to [" + folder + "]");
+			//
+			// create a path alias for this package
+			enyo.path.addPath(name, target);
 			//
 			// cache current folder
 			this.packageFolder = folder;
@@ -301,7 +287,6 @@
 			// load the actual package. the package MUST call a continuation function
 			// or the process will halt.
 			this.loadPackage(this.manifest);
-			//console.log(name, folder, manifest);
 		}
 	};
 })();

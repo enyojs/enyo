@@ -5,14 +5,14 @@ enyo.kind({
 	//* @protected
 	constructor: function(inContainer) {
 		this.container = inContainer;
-		inContainer.addClass(this.layoutClass);
+		inContainer.addClasses(this.layoutClass);
 		if (inContainer.align) {
 			inContainer.domStyles['text-align'] = inContainer.align;
 		}
 	},
 	destroy: function() {
 		if (this.container) {
-			this.container.removeClass(this.layoutClass);
+			this.container.removeClasses(this.layoutClass);
 		}
 	}
 });

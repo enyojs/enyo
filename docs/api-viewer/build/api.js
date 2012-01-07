@@ -1079,7 +1079,3 @@ closeDown: function(a, b) {
 b.stopPropagation();
 }
 });
-
-// minifier: load css
-
-enyo.machine.sheet("api.css");

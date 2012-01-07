@@ -5,11 +5,11 @@ enyo.kind({
 	//* @protected
 	constructor: function(inContainer) {
 		this.container = inContainer;
-		inContainer.addClass(this.layoutClass);
+		inContainer.addClasses(this.layoutClass);
 	},
 	destroy: function() {
 		if (this.container) {
-			this.container.removeClass(this.layoutClass);
+			this.container.removeClasses(this.layoutClass);
 		}
 	},
 	_flow: function(measure, mAttr, nAttr, pAttr, qAttr, boxClass) {
@@ -20,7 +20,7 @@ enyo.kind({
 		for (var i=0; (c=c$[i]); i++) {
 			m += p;
 			c.applyStyle("position", "absolute");
-			//c.addClass(boxClass + "-div");
+			//c.addClasses(boxClass + "-div");
 			if (c[measure] == "fill") {
 				break;
 			}
@@ -34,7 +34,7 @@ enyo.kind({
 			var client = c, n = 0;
 			for (i=c$.length-1; c=c$[i]; i--) {
 				c.applyStyle("position", "absolute");
-				//c.addClass(boxClass + "-div");
+				//c.addClasses(boxClass + "-div");
 				n += p;
 				if (c == client) {
 					break;

@@ -170,14 +170,16 @@ enyo.kind({
 		this.inherited(arguments);
 	},
 	constructed: function(inProps) {
-		// entire constructor chain has fired, now start create chain
-		this.create(inProps);
-		// finally call ready
+		// entire constructor chain has fired, now start creation chain
+		// process instance properties
+		this.importProps(inProps);
+		// perform initialization
+		this.create();
+		// finally call ready: 'ready' should only be defined in instances
 		this.ready();
 	},
 	//* @public
-	create: function(inProps) {
-		this.importProps(inProps);
+	create: function() {
 		this.ownerChanged();
 		this.initComponents();
 	},
