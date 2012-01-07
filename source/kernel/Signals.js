@@ -1,6 +1,6 @@
 ﻿enyo.kind({
 	name: "enyo.Signals",
-	kind: "Component",
+	kind: enyo.Component,
 	create: function() {
 		this.inherited(arguments);
 		enyo.Signals.addListener(this);
