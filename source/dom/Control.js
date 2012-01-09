@@ -272,6 +272,9 @@ enyo.kind({
 			}
 	*/
 	rendered: function() {
+		// CAVEAT: currently we use one entry point ('reflow') for
+		// post-render layout work *and* post-resize layout work.
+		this.reflow();
 		for (var i=0, c; c=this.children[i]; i++) {
 			c.rendered(); 
 		}

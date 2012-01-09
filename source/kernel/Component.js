@@ -449,7 +449,7 @@ enyo.create = enyo.Component.create = function(inConfig) {
 	var kind = inConfig.kind || inConfig.isa || enyo.defaultCtor;
 	var ctor = enyo.constructorForKind(kind);
 	if (!ctor) {
-		console.warn('no constructor found for kind "' + kind + '"');
+		console.error('no constructor found for kind "' + kind + '"');
 		ctor = enyo.Component;
 	}
 	return new ctor(inConfig);

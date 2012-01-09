@@ -1,17 +1,9 @@
 enyo.kind({
 	name: "enyo.BoxLayout",
+	kind: enyo.Layout,
 	layoutClass: "enyo-box",
 	unit: "px",
 	//* @protected
-	constructor: function(inContainer) {
-		this.container = inContainer;
-		inContainer.addClasses(this.layoutClass);
-	},
-	destroy: function() {
-		if (this.container) {
-			this.container.removeClasses(this.layoutClass);
-		}
-	},
 	_flow: function(measure, mAttr, nAttr, pAttr, qAttr, boxClass) {
 		var ex, m = 0, b = {}, p = ("pad" in this.container) ? Number(this.container.pad) : 0, c;
 		b[pAttr] = p;

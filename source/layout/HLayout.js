@@ -1,19 +1,14 @@
 enyo.kind({
 	name: "enyo.HLayout",
+	kind: enyo.Layout,
 	layoutClass: "enyo-hlayout",
-	flow: function () {},
 	//* @protected
 	constructor: function(inContainer) {
-		this.container = inContainer;
-		inContainer.addClasses(this.layoutClass);
+		this.inherited(arguments);
 		if (inContainer.align) {
 			inContainer.domStyles['text-align'] = inContainer.align;
 		}
-	},
-	destroy: function() {
-		if (this.container) {
-			this.container.removeClasses(this.layoutClass);
-		}
+
 	}
 });
 

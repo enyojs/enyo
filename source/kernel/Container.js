@@ -126,7 +126,12 @@ enyo.kind({
 	},
 	flow: function() {
 		if (this.layout) {
-			this.layout.flow(this);
+			this.layout.flow();
+		}
+	},
+	reflow: function() {
+		if (this.layout) {
+			this.layout.reflow();
 		}
 	},
 	/*
@@ -162,6 +167,12 @@ enyo.kind({
 	},
 	//* @protected
 	resizeHandler: function() {
+		// FIXME: once we are the business of reflowing layouts on resize, then we have a 
+		// inside/outside problem: namely, some scenarios will need to reflow before child
+		// controls reflow, and some will need to reflow after. Even more complex scenarios
+		// have circular dependencies, and can require multiple passes or other resolution.
+		// When we can rely on CSS to manage reflows we do not have these problems.
+		this.reflow();
 		this.broadcastToControls("resize");
 	},
 	/**

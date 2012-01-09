@@ -1,8 +1,8 @@
 REM @ECHO OFF
 
-SET TOOLS=..\..\tools\minifier
+SET TOOLS=..\..\tools
 SET NODE=%TOOLS%\node.exe
-SET MINIFY=%TOOLS%\minify.js
+SET MINIFY=%TOOLS%\minifier\minify.js
 SET ENYO=..\..
 SET TARGET=..\..\build
 
