@@ -1,7 +1,7 @@
 
 // minifier: path aliases
 
-enyo.path.addPaths({fu: "..\..\..\..\enyo/../lib/fu/"});
+enyo.path.addPaths({fu: "..\..\..\..\enyo/../lib/fu/", collapsing: "collapsing/"});
 
 // lexer.js
 
@@ -720,6 +720,103 @@ return "~E" + c + "E";
 };
 };
 
+// BasicBoxLayout.js
+
+enyo.kind({
+name: "enyo.BasicBoxLayout",
+kind: "Layout",
+layoutClass: "enyo-box",
+unit: "px",
+calcMetrics: function(a) {
+var b = {
+flex: 0,
+fixed: 0
+};
+for (var c = 0, d = this.container.children, e; e = d[c]; c++) b.flex += e.flex || 0, b.fixed += e[a] || 0;
+return b;
+},
+flow: function() {
+var a = this.container.children;
+for (var b = 0, c; c = a[b]; b++) c.applyStyle("position", "absolute");
+},
+_reflow: function(a, b, c, d, e) {
+var f = this.container.getBounds(), g = this.container.children, h = this.calcMetrics(a), i = {}, j = "pad" in this.container ? Number(this.container.pad) : 0;
+i[d] = j, i[e] = j;
+var k = f[a] - h.fixed - j * (g.length + 1);
+for (var l = 0, m = 0, n, o; o = g[l]; l++) m += j, n = Math.round(o.flex ? o.flex / h.flex * k : Number(o[a]) || 96), i[a] = n, i[b] = m, o.setBounds(i, this.unit), m += n;
+},
+reflow: function() {
+this.orient == "h" ? this._reflow("width", "left", "right", "top", "bottom") : this._reflow("height", "top", "bottom", "left", "right");
+}
+}), enyo.kind({
+name: "enyo.HBasicBoxLayout",
+kind: enyo.BasicBoxLayout,
+orient: "h"
+}), enyo.kind({
+name: "enyo.VBasicBoxLayout",
+kind: enyo.BasicBoxLayout,
+orient: "v"
+}), enyo.kind({
+name: "enyo.HBasicBox",
+kind: enyo.ControlWithLayout,
+layoutKind: "enyo.HBasicBoxLayout"
+}), enyo.kind({
+name: "enyo.VBasicBox",
+kind: enyo.ControlWithLayout,
+layoutKind: "enyo.VBasicBoxLayout"
+});
+
+// CollapsingBoxLayout.js
+
+enyo.kind({
+name: "enyo.CollapsingBoxLayout",
+kind: "BasicBoxLayout",
+_reflow: function(a, b, c, d, e) {
+this.index = this.index || 0;
+var f = this.container.getBounds(), g = this.container.children, h = this.container.collapse || 0, i = h > f[a], j = "pad" in this.container ? Number(this.container.pad) : 0, k = {};
+k[d] = k[e] = k[b] = k[c] = j;
+for (var l = 0, m = 0, n, o; o = g[l]; l++) n = this.index == l, o.setShowing(!i || n), i && n && (k[a] = f[a] - j * 2, o.setBounds(k, this.unit));
+i || this.inherited(arguments);
+}
+});
+
+// Panels.js
+
+enyo.kind({
+name: "enyo.Panels",
+kind: "ControlWithLayout",
+published: {
+index: 0
+},
+create: function() {
+this.inherited(arguments), this.indexChanged();
+},
+indexChanged: function() {
+this.layout && (this.layout.index = this.index, this.resized());
+}
+});
+
+// CollapsingPanels.js
+
+enyo.kind({
+name: "enyo.CollapsingPanels",
+kind: "Panels",
+layoutKind: "CollapsingBoxLayout",
+published: {
+orient: "h",
+collapse: 400
+},
+create: function() {
+this.inherited(arguments), this.orientChanged();
+},
+layoutKindChanged: function() {
+this.inherited(arguments), this.orientChanged();
+},
+orientChanged: function() {
+this.layout.orient = this.orient, this.hasNode() && this.layout.reflow();
+}
+});
+
 // Formatter.js
 
 enyo.kind({
@@ -915,7 +1012,6 @@ return f.join("");
 enyo.kind({
 name: "App",
 kind: "Control",
-className: "enyo-fit enyo-unselectable",
 layoutKind: "VBoxLayout",
 target: "../../enyo/source",
 components: [ {
@@ -948,7 +1044,7 @@ height: 40,
 components: [ {
 name: "group",
 kind: "SimpleScroller",
-className: "tabbar",
+classes: "tabbar",
 style: "overflow: hidden; padding-bottom: 10px; background-color: #fff;",
 onmousedown: "tabbarSelect"
 }, {
@@ -971,7 +1067,7 @@ allowHtml: !0
 } ]
 } ],
 create: function() {
-this.inherited(arguments), this.selectViewByIndex(0), window.onhashchange = enyo.bind(this, "hashChange"), enyo.asyncMethod(this.$.doc, "walkEnyo", enyo.path.rewrite(this.target));
+this.inherited(arguments), this.addClasses("enyo-fit enyo-unselectable"), this.selectViewByIndex(0), window.onhashchange = enyo.bind(this, "hashChange"), enyo.asyncMethod(this.$.doc, "walkEnyo", enyo.path.rewrite(this.target));
 },
 report: function(a, b, c) {
 this.$.docs.setContent("<b>" + b + (c ? "</b>: <span style='color: green;'>" + c + "</span>" : ""));
@@ -1015,10 +1111,10 @@ c && (d = this.$.formatter.format(c)), this.$.docs.setContent(d), a = document.a
 }
 var e = null;
 enyo.forEach(this.$.group.getClientControls(), function(a) {
-a.topic == b && (e = a), a.addRemoveClass("active", a.topic == b);
+a.topic == b && (e = a), a.addRemoveClasses("active", a.topic == b);
 }), e || (e = this.$.group.createComponent({
 kind: "TopicTab",
-className: "active",
+classes: "active",
 topic: b,
 onclick: "topicClick",
 onClose: "closeTopicClick",
@@ -1035,45 +1131,23 @@ dragoverHandler: function(a, b) {
 this.hasNode().scrollLeft = this.x0 - b.dx, this.hasNode().scrollTop = this.y0 - b.dy;
 }
 }), enyo.kind({
-name: "Tabbar",
-kind: "Control",
-className: "tabbar",
-removeControl: function() {
-this.inherited(arguments), this.hasNode() && this.overflowAmount() <= 0 && (this.node.style.left = "0");
-},
-overflowAmount: function() {
-var a = this.hasNode();
-return a.clientWidth - a.scrollWidth;
-},
-dragstartHandler: function() {
-this.x0 = this.hasNode().offsetLeft;
-},
-dragoverHandler: function(a, b) {
-if (this.hasNode()) {
-var c = this.x0 + b.dx, d = this.overflowed();
-this.node.style.left = Math.min(0, Math.max(c, d)) + "px";
-}
-},
-dragfinishHandler: function(a, b) {}
-}), enyo.kind({
 name: "TopicTab",
 kind: "Control",
-className: "tab",
 events: {
 onClose: ""
 },
 components: [ {
-tagName: "span",
+tag: "span",
 name: "caption"
 }, {
-tagName: "img",
+tag: "img",
 style: "margin: 0; padding: 0 0 2px 6px; vertical-align: middle;",
 src: "images/close.png",
 onmousedown: "closeDown",
 onclick: "doClose"
 } ],
 create: function() {
-this.inherited(arguments), this.$.caption.setContent(this.topic);
+this.inherited(arguments), this.addClasses("tab"), this.$.caption.setContent(this.topic);
 },
 closeDown: function(a, b) {
 b.stopPropagation();

@@ -118,6 +118,7 @@
 
 /* endemic */
 
+/*
 html, body {
 	margin: 0;
 	height: 100%;
@@ -128,7 +129,7 @@ html, body {
 button {
 	font-size: inherit;
 }
-
+*/
 /*
 .enyo-fit {
 	position: absolute;
