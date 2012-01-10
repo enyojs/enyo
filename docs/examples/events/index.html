@@ -113,7 +113,7 @@
 	<script>
 		var content = '<p>Lorem ipsum dolor sit amet, nonummy ad, quia duis, vicis ingenium, hendrerit capio hendrerit esca roto.</p><input />&nbsp;<button>Cursor Testing</button>&nbsp;<a href="#top">Cursor Testing</a>&nbsp;<img src="resources/hp.png" style="vertical-align: middle;" alt="Cursor Testing" /><p>Singularis erat melior quod ullamcorper loquor.</p>';
 		new SimpleScroller({
-			className: "enyo-fit",
+			classes: "enyo-fit",
 			style: "padding: 8px;",
 			components: [
 				//
@@ -133,29 +133,29 @@
 					{name: "log", className: "log"}
 				]},
 				{kind: "h4", content: "Drag Events"},
-				{className: "border", layoutKind: "HLayout", style: "position: relative; text-align: right;", components: [
-					{className: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
-					{className: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
-					{className: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
-					{className: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
+				{classes: "border", layoutKind: "HLayout", style: "position: relative; text-align: right;", components: [
+					{classes: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
+					{classes: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
+					{classes: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
+					{classes: "dragSink", ondragover: "dragoverEvent", ondragout: "dragoutEvent", ondrop: "dropEvent", content: "Here!"},
 					{name: "dragOffsetCheckbox", kind: "input", attributes: {type: "checkbox"}, content: "offset"},
-					{name: "dragger", className: "dragSource dragSink", ontouchstart: "squelchEvent", onmousedown: "squelchEvent", ondragstart: "startdragEvent", ondrag: "dragEvent", ondragfinish: "dragfinishEvent", content: "Drag Me!"}
+					{name: "dragger", classes: "dragSource dragSink", ontouchstart: "squelchEvent", onmousedown: "squelchEvent", ondragstart: "startdragEvent", ondrag: "dragEvent", ondragfinish: "dragfinishEvent", content: "Drag Me!"}
 				]},
 				//
 				{kind: "h4", content: "Basic Text (Not Selectable)"},
-				{className: "border", content: content},
+				{classes: "border", content: content},
 				//
 				{kind: "h4", content: "Selectable Text"},
-				{className: "border enyo-selectable", content: content},
+				{classes: "border enyo-selectable", content: content},
 				//
 				{kind: "h4", content: "SimpleScroller"},
-				{kind: "SimpleScroller", className: "border", content: content + content + content, style: "height: 150px; border: 2px solid lightblue; padding: 4px;"},
+				{kind: "SimpleScroller", classes: "border", content: content + content + content, style: "height: 150px; border: 2px solid lightblue; padding: 4px;"},
 				//
 				{kind: "h4", content: "SimpleScroller (Selectable)"},
-				{kind: "SimpleScroller", className: "border enyo-selectable", content: content + content + content, style: "height: 150px; border: 2px solid lightblue; padding: 4px;"},
+				{kind: "SimpleScroller", classes: "border enyo-selectable", content: content + content + content, style: "height: 150px; border: 2px solid lightblue; padding: 4px;"},
 				//
 				{kind: "h4", content: "SimpleScroller (Selectable)"},
-				{kind: "SimpleScroller", className: "border enyo-selectable", content: content + content + content, style: "height: 150px; border: 2px solid lightblue; padding: 4px;"}
+				{kind: "SimpleScroller", classes: "border enyo-selectable", content: content + content + content, style: "height: 150px; border: 2px solid lightblue; padding: 4px;"}
 			],
 			squelchEvent: function(inSender, inEvent) {
 				inEvent.preventDefault();

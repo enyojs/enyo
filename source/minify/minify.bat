@@ -4,7 +4,7 @@ SET TOOLS=..\..\tools
 SET NODE=%TOOLS%\node.exe
 SET MINIFY=%TOOLS%\minifier\minify.js
 SET ENYO=..\..
-SET TARGET=..\..\build
+SET TARGET=.\build
 
 %NODE% %MINIFY% package.js -enyo %ENYO% -output enyo -no-alias
 
