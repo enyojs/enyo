@@ -4,11 +4,11 @@
 	//* @protected
 	constructor: function(inContainer) {
 		this.container = inContainer;
-		inContainer.addClasses(this.layoutClass);
+		inContainer.addClass(this.layoutClass);
 	},
 	destroy: function() {
 		if (this.container) {
-			this.container.removeClasses(this.layoutClass);
+			this.container.removeClass(this.layoutClass);
 		}
 	},
 	// static-y property based layout

@@ -39,11 +39,11 @@ enyo.kind({
 		this.showingChanged();
 		// Notes:
 		// - 'classes' does not reflect the complete set of classes on an object; the complete set is in
-		//   this.attributes.className. The '*Classes' apis affect this.attributes.className.
-		// - use addClasses instead of setClasses here, by convention 'classes' is reserved for instance objects
-		// - inheritors should 'addClasses' to add classes
-		// - setClasses removes the old classes and adds the new one, setClassNameAttribute replaces all classes
-		this.addClasses(this.classes);
+		//   this.attributes.class. The '*Class' apis affect this.attributes.class.
+		// - use addClass instead of setClasses here, by convention 'classes' is reserved for instance objects
+		// - inheritors should 'addClass' to add classes
+		// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
+		this.addClass(this.classes);
 		this.initProps(["id", "content", "src", "disabled"]);
 	},
 	destroy: function() {
@@ -70,8 +70,8 @@ enyo.kind({
 		}
 	},
 	classesChanged: function(inOld) {
-		this.removeClasses(inOld);
-		this.addClasses(this.classes);
+		this.removeClass(inOld);
+		this.addClass(this.classes);
 	},
 	//
 	//* @public
@@ -139,79 +139,79 @@ enyo.kind({
 		this.attributesChanged();
 	},
 	/**
-		Convenience function for setting the _className_ attribute. 
-		The _className_ attribute represents the CSS classes assigned to this object.
-		Note that _inClassName_ can be a string that contains multiple CSS classes separated by spaces.
+		Convenience function for setting the _class_ attribute. 
+		The _class_ attribute represents the CSS classes assigned to this object.
+		Note that _inClass_ can be a string that contains multiple CSS classes separated by spaces.
 
-			this.$.control.setClassNameAttribute("box blue-border highlighted");
+			this.$.control.setClassAttribute("box blue-border highlighted");
 	*/
-	setClassNameAttribute: function(inClassName) {
-		this.setAttribute("className", inClassName);
+	setClassAttribute: function(inClass) {
+		this.setAttribute("class", inClass);
 	},
 	/**
-		Convenience function for getting the _className_ attribute. 
-		The _className_ attribute represents the CSS classes assigned to this object.
-		Note that a _className_ can be a string that contains multiple CSS classes separated by spaces.
+		Convenience function for getting the _class_ attribute. 
+		The _class_ attribute represents the CSS classes assigned to this object.
+		Note that a _class_ can be a string that contains multiple CSS classes separated by spaces.
 
-			var cssClasses = this.$.control.getClassNameAttribute();
+			var cssClasses = this.$.control.getClassAttribute();
 	*/
-	getClassNameAttribute: function() {
-		return this.attributes.className || "";
+	getClassAttribute: function() {
+		return this.attributes["class"] || "";
 	},
 	/**
-		Returns true if the _className_ attribute contains a substring matching _inClasses_.
+		Returns true if the _class_ attribute contains a substring matching _inClass_.
 
-		The _className_ attribute is a string that can contain multiple CSS classes.
+		The _class_ attribute is a string that can contain multiple CSS classes.
 		This method tests if a particular class is part of the set of classes on this
 		Control.
 
-			// returns true if _className_ is "bar foo baz", but false for "barfoobaz"
-			var hasFooClass = this.$.control.hasClasses("foo");
+			// returns true if _class_ is "bar foo baz", but false for "barfoobaz"
+			var hasFooClass = this.$.control.hasClass("foo");
 	*/
-	hasClasses: function(inClasses) {
-		return inClasses && ((" " + this.getClassNameAttribute() + " ").indexOf(" " + inClasses + " ") >= 0);
+	hasClass: function(inClass) {
+		return inClass && ((" " + this.getClassAttribute() + " ").indexOf(" " + inClass + " ") >= 0);
 	},
 	/**
-		Adds CSS class names _inClasses_ to the _className_ attribute of this object.
+		Adds CSS class name _inClass_ to the _class_ attribute of this object.
 
 			// add the highlight class to this object
-			this.addClasses("highlight");
+			this.addClass("highlight");
 	*/
-	addClasses: function(inClasses) {
-		if (inClasses && !this.hasClasses(inClasses)) {
-			var c = this.getClassNameAttribute();
-			this.setClassNameAttribute(c + (c ? " " : "") + inClasses);
+	addClass: function(inClass) {
+		if (inClass && !this.hasClass(inClass)) {
+			var c = this.getClassAttribute();
+			this.setClassAttribute(c + (c ? " " : "") + inClass);
 		}
 	},
 	/**
-		Removes substring _inClasses_ from the _className_ attribute of this object.
+		Removes substring _inClass_ from the _class_ attribute of this object.
 
-		inClasses must have no leading or trailing spaces.
+		inClass must have no leading or trailing spaces.
 		
 		Using a compound class name is supported, but the name is treated atomically.
-		For example, given "a b c", removeClasses("a b") will produce "c", but removeClasses("a c") will produce "a b c".
+		For example, given "a b c", removeClass("a b") will produce "c", but removeClass("a c") will produce "a b c".
 
 			// remove the highlight class from this object
-			this.removeClasses("highlight");
+			this.removeClass("highlight");
 	*/
-	removeClasses: function(inClasses) {
-		if (inClasses && this.hasClasses(inClasses)) {
-			var c = this.getClassNameAttribute();
-			c = (" " + c + " ").replace(" " + inClasses + " ", " ").slice(1, -1);
-			this.setClassNameAttribute(c);
+	removeClass: function(inClass) {
+		if (inClass && this.hasClass(inClass)) {
+			var c = this.getClassAttribute();
+			c = (" " + c + " ").replace(" " + inClass + " ", " ").slice(1, -1);
+			this.setClassAttribute(c);
 		}
 	},
 	/**
-		Adds or removes substring _inClasses_ from the _className_ attribute of this object based
+		Adds or removes substring _inClass_ from the _class_ attribute of this object based
 		on the value of _inTrueToAdd_.
 
-		If _inTrueToAdd_ is truthy, then _inClasses_ is added, otherwise _inClasses_ is removed.
+		If _inTrueToAdd_ is truthy, then _inClass_ is added, otherwise _inClass_ is removed.
 
 			// add or remove the highlight class, depending on the "highlighted" property
-			this.addRemoveClasses("highlight", this.highlighted);
+			this.addRemoveClass("highlight", this.highlighted);
 	*/
-	addRemoveClasses: function(inClasses, inTrueToAdd) {
-		this[inTrueToAdd ? "addClasses" : "removeClasses"](inClasses);
+	addRemoveClass: function(inClass, inTrueToAdd) {
+		this[inTrueToAdd ? "addClass" : "removeClass"](inClass);
 	},
 	/**
 		Renders this object into DOM, generating a DOM node if needed.
@@ -243,11 +243,11 @@ enyo.kind({
 		/*
 		var cs = window.getComputedStyle(pn, null);
 		if (cs.height !== "auto" && cs.height !== "0px") {
-			this.addClasses("enyo-fit");
+			this.addClass("enyo-fit");
 		}
 		// 2: fit if rendering into body
 		else*/ if (pn == document.body) {
-			this.addClasses("enyo-fit");
+			this.addClass("enyo-fit");
 		}
 		// generate our HTML
 		pn.innerHTML = this.generateHtml();
@@ -474,9 +474,6 @@ enyo.kind({
 	},
 	// DOM, aka direct-to-node, rendering
 	attributeToNode: function(inName, inValue) {
-		if (inName == "className") {
-			inName = "class";
-		}
 		if (inValue === null) {
 			this.node.removeAttribute(inName);
 		} else {
@@ -637,9 +634,6 @@ enyo.kind({
 			for (n in inAttributeHash) {
 				v = inAttributeHash[n];
 				if (v !== null && v !== "") {
-					if (n == "className") {
-						n = "class";
-					}
 					h += ' ' + n + '="' + enyo.Control.escapeAttribute(v) + '"';
 				}
 			}

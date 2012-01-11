@@ -3,8 +3,8 @@
 <head>
 	<title>Enyo</title>
 	<script src="../../../enyo.js" type="text/javascript"></script>
-	<script src="../../../../lib/utils/fu/package.js" type="text/javascript"></script>
-	<script src="../../../../lib/utils/youtube/package.js" type="text/javascript"></script>
+	<script src="../../../../lib/fu/package.js" type="text/javascript"></script>
+	<script src="../../../../lib/extra/youtube/package.js" type="text/javascript"></script>
 	<script src="../../../../lib/aura/splitter/Splitter.js" type="text/javascript"></script>
 	<style>
 		body {
@@ -14,12 +14,12 @@
 </head>
 <body class="theme-fu">
 	<script type="text/javascript">
-		var app = new enyo.HBox({className: "enyo-fit enyo-unselectable", components: [
+		var app = new enyo.HBox({classes: "enyo-fit enyo-unselectable", components: [
 				{width: 300, kind: "VBox", components: [
 					{height: 100, style: "background-color: lightblue; padding: 16px; box-sizing: border-box; overflow: hidden;", components: [
 						{content: "Search Name"},
-						{name: "input", tagName: "input", attributes: {value: "sparta"}},
-						{tagName: "button", content: "Search", style: "margin-left: 8px;", onclick: "searchClick"}
+						{name: "input", tag: "input", attributes: {value: "sparta"}},
+						{tag: "button", content: "Search", style: "margin-left: 8px;", onclick: "searchClick"}
 					]},
 					{height: "fill", style: "overflow: auto;", components: [
 						{name: "list"}
@@ -44,7 +44,7 @@
 				this.$.list.destroyClientControls();
 				for (var i=0, g; g=inGoodies[i]; i++) {
 					this.createComponents([
-						{tagName: "img", src: g.thumbnail, style: "height: 120px;", onclick: "play", g: g},
+						{tag: "img", src: g.thumbnail, style: "height: 120px;", onclick: "play", g: g},
 						{style: "display: inline-block;", content: g.title.$t}
 					], {container: this.$.list});
 				}

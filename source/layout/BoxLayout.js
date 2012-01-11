@@ -12,7 +12,7 @@ enyo.kind({
 		for (var i=0; (c=c$[i]); i++) {
 			m += p;
 			c.applyStyle("position", "absolute");
-			//c.addClasses(boxClass + "-div");
+			//c.addClass(boxClass + "-div");
 			if (c[measure] == "fill") {
 				break;
 			}
@@ -26,7 +26,7 @@ enyo.kind({
 			var client = c, n = 0;
 			for (i=c$.length-1; c=c$[i]; i--) {
 				c.applyStyle("position", "absolute");
-				//c.addClasses(boxClass + "-div");
+				//c.addClass(boxClass + "-div");
 				n += p;
 				if (c == client) {
 					break;
