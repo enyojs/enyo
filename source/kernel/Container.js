@@ -129,6 +129,8 @@ enyo.kind({
 			this.layout.flow();
 		}
 	},
+	// CAVEAT: currently we use the entry point for both
+	// post-render layout work *and* post-resize layout work.
 	reflow: function() {
 		if (this.layout) {
 			this.layout.reflow();
