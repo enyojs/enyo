@@ -1,4 +1,4 @@
-Portions of this code are derived from the FOSS Opus-Js (opus-js.com) project.
+Portions of this code are derived from the FOSS Opus-Js (opusjs.com) project.
 
 The original code is licensed as follows.
 
