@@ -1,6 +1,6 @@
 enyo.kind({
 	name: "enyo.Control",
-	kind: enyo.Container,
+	kind: enyo.UiComponent,
 	events: {
 		onmousedown: "",
 		onmouseup: "",

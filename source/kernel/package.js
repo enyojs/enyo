@@ -4,7 +4,6 @@
 	"Oop.js",
 	"Object.js",
 	"Component.js",
-	"Containable.js",
-	"Container.js",
+	"UiComponent.js",
 	"Signals.js"
 );

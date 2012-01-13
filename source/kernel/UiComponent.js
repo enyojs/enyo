@@ -1,7 +1,14 @@
+/**
+	_enyo.UiComponent_ implements a container strategy suitable for presentation layers.
+
+	UiComponent itself is abstract. Concrete subkinds include <a href="#enyo.Control">enyo.Control</a> (for HTML/DOM) and _enyo.CanvasControl_ for Canvas contexts.
+*/
 enyo.kind({
-	name: "enyo.Container",
-	kind: enyo.Containable,
+	name: "enyo.UiComponent",
+	kind: enyo.Component,
 	published: {
+		container: null,
+		parent: null,
 		controlParentName: "client",
 		layoutKind: ""
 	},
@@ -9,11 +16,14 @@ enyo.kind({
 		this.controls = [];
 		this.children = [];
 		this.inherited(arguments);
+		this.containerChanged();
 		this.layoutKindChanged();
 	},
 	destroy: function() {
 		// destroys all non-chrome controls (regardless of owner)
 		this.destroyClientControls();
+		// remove us from our container
+		this.setContainer(null);
 		// destroys chrome controls owned by this
 		this.inherited(arguments);
 	},
@@ -41,8 +51,30 @@ enyo.kind({
 		this.inherited(arguments);
 		inProps.container = inProps.container || this;
 	},
-	// controls
+	// containment
+	containerChanged: function(inOldContainer) {
+		if (inOldContainer) {
+			inOldContainer.removeControl(this);
+		}
+		if (this.container) {
+			this.container.addControl(this);
+		}
+	},
+	// parentage
+	parentChanged: function(inOldParent) {
+		if (inOldParent && inOldParent != this.parent) {
+			inOldParent.removeChild(this);
+		}
+	},
 	//* @public
+	// Note: oddly, a Control is considered a descendant of itself
+	isDescendantOf: function(inAncestor) {
+		var p = this;
+		while (p && p!=inAncestor) {
+			p = p.parent;
+		}
+		return inAncestor && (p == inAncestor);
+	},
 	/**
 		Returns all non-chrome controls.
 	*/
@@ -109,7 +141,6 @@ enyo.kind({
 		}
 	},
 	removeChild: function(inChild) {
-		//inChild.parent = null;
 		return enyo.remove(inChild, this.children);
 	},
 	indexOfChild: function(inChild) {
@@ -134,15 +165,6 @@ enyo.kind({
 			this.layout.reflow();
 		}
 	},
-	/*
-	flowControls: function() {
-		if (this.controlParent) {
-			this.controlParent.flowControls();
-		} else {
-			this.flow();
-		}
-	},
-	*/
 	/**
 		Send a message to me and all my controls
 	*/
@@ -193,9 +215,9 @@ enyo.createFromKind = function(inKind, inParam) {
 };
 
 //
-// Default owner for ownerless Containers to allow notifying such Containers of important system events
+// Default owner for ownerless UiComponents to allow notifying such UiComponents of important system events
 // like window resize.
 //
-// NOTE: such Containers will not GC unless explicity destroyed as they will be referenced by this owner.
+// NOTE: such UiComponents will not GC unless explicity destroyed as they will be referenced by this owner.
 //
 enyo.master = new enyo.Component();
