@@ -1,6 +1,6 @@
 enyo.kind({
 	name: "enyo.Control",
-	kind: enyo.Container,
+	kind: enyo.UiComponent,
 	events: {
 		onmousedown: "",
 		onmouseup: "",
@@ -325,9 +325,9 @@ enyo.kind({
 		this.domStylesChanged();
 	},
 	//* @protected
-	/*
 	importProps: function(inProps) {
 		if (inProps) {
+			/*
 			// FIXME: there are some props that we handle specially and do not want to mix in directly.
 			if (inProps.style) {
 				this.addStyles(inProps.style);
@@ -339,6 +339,8 @@ enyo.kind({
 				enyo.mixin(this.domStyles, inProps.domStyles);
 				delete inProps.domStyles;
 			}
+			*/
+			// note: inProps is shallow copied so attributes is mixed in to avoid shared usage
 			if (inProps.attributes) {
 				enyo.mixin(this.attributes, inProps.attributes);
 				delete inProps.attributes;
@@ -346,7 +348,6 @@ enyo.kind({
 		}
 		this.inherited(arguments);
 	},
-	*/
 	initStyles: function() {
 		// 'domStyles' is the canonical style property
 		// 'style' is secondary if they compete

@@ -1,7 +1,7 @@
 
 // minifier: path aliases
 
-enyo.path.addPaths({test: "../../../lib/test/"});
+enyo.path.addPaths({});
 
 // TestRunner.js
 
@@ -83,6 +83,12 @@ clearTimer: function() {
 window.clearTimeout(this.timer);
 },
 finish: function(a) {
+var b = this, c = arguments;
+window.setTimeout(function() {
+b.reallyFinish.apply(b, c);
+}, 0);
+},
+reallyFinish: function(a) {
 if (this.results) {
 console.warn("Finish called more than once in test " + this.name);
 if (!this.results.passed || !a) return;
@@ -101,7 +107,7 @@ throw new Error("sample exception");
 this.results.exception = b;
 }
 }
-this.clearTimer(), this.doFinish(this.results);
+this.clearTimer();
 if (this.afterEach) {
 try {
 this.afterEach();
@@ -110,12 +116,13 @@ this.afterEach = null, this.finish(c);
 }
 this.afterEach = null;
 }
+this.doFinish(this.results);
 },
 childTestBegun: function(a) {
-this.doBegin(a.name);
+this.triggeredNextTest = !1, this.doBegin(a.name);
 },
 childTestFinished: function(a, b) {
-this.doFinish(b), this.next();
+this.doFinish(b), this.triggeredNextTest || (this.triggeredNextTest = !0, enyo.asyncMethod(this, "next"));
 }
 }), enyo.TestSuite.tests = [], enyo.TestSuite.subclass = function(a, b) {
 b.testBase || enyo.TestSuite.tests.push(a);
@@ -134,16 +141,15 @@ onFinishAll: ""
 },
 components: [ {
 name: "title",
-className: "enyo-testcase-title"
+classes: "enyo-testcase-title"
 }, {
 name: "group",
-className: "enyo-testcase-group",
+classes: "enyo-testcase-group",
 components: []
 } ],
 timeout: 3e3,
-className: "enyo-testcase",
 create: function(a) {
-this.inherited(arguments), this.$.title.setContent(this.name);
+this.inherited(arguments), this.addClass("enyo-testcase"), this.$.title.setContent(this.name);
 },
 initComponents: function() {
 this.inherited(arguments), this.createComponent({
@@ -160,7 +166,7 @@ this.$.testSuite.runAllTests();
 testBegun: function(a, b) {
 this.$.group.createComponent({
 name: b,
-className: "enyo-testcase-running",
+classes: "enyo-testcase-running",
 content: b + ": running"
 }).render();
 },
@@ -177,6 +183,6 @@ return c.join("<br/>");
 },
 updateTestDisplay: function(a, b) {
 var c = b.exception, d = this.$.group.$[b.name], e = "<b>" + b.name + "</b>: " + (b.passed ? "PASSED" : b.message);
-c && (c.stack ? e += this.formatStackTrace(c.stack) : c.sourceURL && c.line && (e += "<br/>" + c.sourceURL + ":" + c.line), b.failValue && (e += "<br/>" + enyo.json.stringify(b.failValue).replace(/\\n/g, "<br/>"))), !b.passed && b.logs && (e += "<br/>" + b.logs.join("<br/>")), d.setContent(e), d.setClassName("enyo-testcase-" + (b.passed ? "passed" : "failed"));
+c && (c.stack ? e += this.formatStackTrace(c.stack) : c.sourceURL && c.line && (e += "<br/>" + c.sourceURL + ":" + c.line), b.failValue && (e += "<br/>" + enyo.json.stringify(b.failValue).replace(/\\n/g, "<br/>"))), !b.passed && b.logs && (e += "<br/>" + b.logs.join("<br/>")), d.setContent(e), d.setClasses("enyo-testcase-" + (b.passed ? "passed" : "failed"));
 }
 });

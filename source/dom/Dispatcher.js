@@ -282,8 +282,6 @@ enyo.dispatcher.features.push(function(e) {
 });
 
 enyo.dispatcher.rootHandler = {
-	// ensures events handled by the rootHandler receive no special gesture treatment
-	requiresDomMousedown: true,
 	listeners: [],
 	addListener: function(inListener) {
 		this.listeners.push(inListener);

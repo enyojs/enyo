@@ -817,10 +817,10 @@ this.layout.orient = this.orient, this.hasNode() && this.layout.reflow();
 }
 });
 
-// Formatter.js
+// Formatlets.js
 
 enyo.kind({
-name: "Formatter",
+name: "Formatlets",
 kind: "Component",
 statics: {
 showdown: new Showdown.converter
@@ -912,7 +912,7 @@ break;
 }
 if (c) for (var d = 0, e; (e = b[d]) != null; d++) b[d] = e.slice(c);
 var f = b.join("\n");
-return "<p>" + Formatter.showdown.makeHtml(f) + "</p>";
+return "<p>" + Formatlets.showdown.makeHtml(f) + "</p>";
 },
 formatPropList: function(a, b) {
 var c = a.names, d = a.map, e = [];
@@ -927,6 +927,54 @@ return c;
 },
 formatPropItemList: function(a) {
 return "<ul>" + a.join("") + "</ul>";
+}
+});
+
+// Formatter.js
+
+enyo.kind({
+name: "Formatter",
+kind: "Formatlets",
+processKind: function(a) {
+var b = [];
+if (a.published && a.published.value.properties) {
+var c = a.published.value.properties.map;
+for (var d in c) c[d].group = "published", b.push(c[d]);
+}
+c = a.properties.map;
+for (var d in c) b.push(c[d]);
+return {
+name: a.name.value,
+props: b,
+comment: this.formatComment(a.comment),
+kindLink: a.kind && this.formatLinkName(a.kind.value)
+};
+},
+filterProps: function(a, b) {
+var c = [];
+for (var d = 0, e, f; e = a[d]; d++) e && (!b || b[e.group]) && c.push(e);
+return c;
+},
+dumpPropList: function(a, b, c) {
+if (b) {
+c.push("<h2>" + a + "</h2>");
+for (var d = 0, e; e = b[d]; d++) c.push(enyo.macroize("{$name} ({$group})<br/>", e));
+}
+},
+formatKind: function(a, b) {
+var c = this.processKind(a);
+b.push(enyo.macroize('<h1><a name="{$name}">{$name}</a></h1>', c)), b.push(c.comment), a.kind && (b.push("<h2>Extends</h2>"), b.push("<h4>" + c.kindLink + "</h4>"));
+var d = function(a, b) {
+return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+}, e = function(a, b) {
+var c = {
+published: 0,
+"public": 1,
+"protected": 2
+};
+return -(c[a.group] - c[b.group]);
+};
+c.props.sort(e), this.dumpPropList("Props", c.props, b), this.addProperties(a.published, "Published Properties", b), this.addProperties(a.events, "Published Events", b), this.addMethods(a.methods, "Methods", b), this.addInherited(a, "Inheritance", b);
 }
 });
 
@@ -1045,8 +1093,7 @@ components: [ {
 name: "group",
 kind: "SimpleScroller",
 classes: "tabbar",
-style: "overflow: hidden; padding-bottom: 10px; background-color: #fff;",
-onmousedown: "tabbarSelect"
+style: "overflow: hidden; padding-bottom: 10px; background-color: #fff;"
 }, {
 name: "status",
 content: "Status",
@@ -1067,7 +1114,7 @@ allowHtml: !0
 } ]
 } ],
 create: function() {
-this.inherited(arguments), this.addClasses("enyo-fit enyo-unselectable"), this.selectViewByIndex(0), window.onhashchange = enyo.bind(this, "hashChange"), enyo.asyncMethod(this.$.doc, "walkEnyo", enyo.path.rewrite(this.target));
+this.inherited(arguments), this.addClass("enyo-fit enyo-unselectable"), this.selectViewByIndex(0), window.onhashchange = enyo.bind(this, "hashChange"), enyo.asyncMethod(this.$.doc, "walkEnyo", enyo.path.rewrite(this.target));
 },
 report: function(a, b, c) {
 this.$.docs.setContent("<b>" + b + (c ? "</b>: <span style='color: green;'>" + c + "</span>" : ""));
@@ -1085,7 +1132,7 @@ this.$.docs.setShowing(!1), [ this.$.docs, this.$.index, this.$.toc ][a].setShow
 backClick: function() {
 window.history.back();
 },
-topicClick: function(a) {
+topicSelect: function(a) {
 var b = a;
 b.topic && (window.location.href = "#" + b.topic);
 },
@@ -1111,12 +1158,12 @@ c && (d = this.$.formatter.format(c)), this.$.docs.setContent(d), a = document.a
 }
 var e = null;
 enyo.forEach(this.$.group.getClientControls(), function(a) {
-a.topic == b && (e = a), a.addRemoveClasses("active", a.topic == b);
+a.topic == b && (e = a), a.addRemoveClass("active", a.topic == b);
 }), e || (e = this.$.group.createComponent({
 kind: "TopicTab",
 classes: "active",
 topic: b,
-onclick: "topicClick",
+ondown: "topicSelect",
 onClose: "closeTopicClick",
 owner: this
 }).render()), e.hasNode().scrollIntoView();
@@ -1127,7 +1174,7 @@ kind: "Control",
 dragstartHandler: function() {
 this.x0 = this.hasNode().scrollLeft, this.y0 = this.hasNode().scrollTop;
 },
-dragoverHandler: function(a, b) {
+dragHandler: function(a, b) {
 this.hasNode().scrollLeft = this.x0 - b.dx, this.hasNode().scrollTop = this.y0 - b.dy;
 }
 }), enyo.kind({
@@ -1147,7 +1194,7 @@ onmousedown: "closeDown",
 onclick: "doClose"
 } ],
 create: function() {
-this.inherited(arguments), this.addClasses("tab"), this.$.caption.setContent(this.topic);
+this.inherited(arguments), this.addClass("tab"), this.$.caption.setContent(this.topic);
 },
 closeDown: function(a, b) {
 b.stopPropagation();
