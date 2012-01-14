@@ -1,7 +1,0 @@
-﻿.enyo-hbox-div, .enyo-vbox-div{
-	position: absolute !important;
-	/*
-		platform specific
-	*/
-	-webkit-box-sizing: border-box;
-}
