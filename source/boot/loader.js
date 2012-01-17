@@ -151,7 +151,7 @@
 			if (path.slice(-3) == "css") {
 				this.verbose && console.log("+ stylesheet: [" + prefix + "][" + inPath + "]");
 				this.requireStylesheet(path);
-			} else if (path.slice(-2) == "js") {
+			} else if (path.slice(-2) == "js" && path.slice(-10) != "package.js") {
 				this.verbose && console.log("+ module: [" + prefix + "][" + inPath + "]");
 				this.requireScript(inPath, path);
 			} else {
@@ -186,29 +186,41 @@
 		aliasPackage: function(inPath) {
 			// package can encoded in two ways: 
 			//
-			//	[folder]/[name of package without extension]
-			//	[folder which will be name of package]
+			//	1. [folder]/[package file name (must end in "package" or "package.js")]
+			//	2. [folder]
 			//
-			// examples:
+			// example of #1:
+			//
 			//	"foo"
 			//
-			// the package name is 'foo', $foo points to "foo/", 
-			// and the dependency file is "foo/package.js"
+			// the package name is 'foo', $foo will point to "foo/", 
+			// the manifest file is "foo/package.js"
 			//
-			//	"foo/bar-depends"
+			// examples of #2:
 			//
-			// the package name is 'foo', $foo points to "foo/", 
-			// and the dependency file is "foo/foo-package.js"
+			//	"foo/package.js"
+			//
+			// the package name is 'foo', $foo will point to "foo/", 
+			// the manifest is "foo/package.js"
+			//
+			//	"foo/bar-package"
+			//
+			// the package name is 'foo', $foo will point to "foo/", 
+			// the manifest is "foo/bar-package.js"
 			//
 			var parts = inPath.split("/");
 			// the last string contains the package name
 			var name = parts.pop();
 			// reconstitute (at least part of) the folder
 			var folder = parts.length ? (parts.join("/") + "/") : "";
-			// if the name defines a package file explicitly...
+			// if the name defines a package file explicitly (without extension)
 			if (name.slice(-8) == "-package") {
 				// it is only missing ".js"
 				this.manifest = folder + name + ".js";
+			// if the name defines a package file explicitly (with extension)
+			} else if (name.slice(-10) == "package.js") {
+				// use that package
+				this.manifest = folder + name;
 			} else {
 				// otherwise, it's a folder, so rebuild the path (ensure trailling slash)
 				folder = folder + name + "/";
@@ -248,8 +260,8 @@
 				name = name.slice(0, -1);
 			}
 			//
-			// 'source' folder is magic: we omit it from the name, so we can depends from <package>/source
-			// but the alias is <package>
+			// 'source' folder is magic: we omit it from the name, so we can depend on <package>/source
+			// but alias only <package>
 			name = name.replace("-source", "")
 			var target = (folder.slice(-7) == "/source") ? folder.slice(0, -7) : folder;
 			//
