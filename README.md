@@ -1,6 +1,22 @@
 # Enyo
 
-# What Is It
+# Quick Info
+
+## Core
+
+This repository contains Enyo core. We've pared down the codebase to the essentials, so folks that like working at the metal can do that. Widget libraries, g11n code, and other optional bits are available as add-on packages.
+
+## Library
+
+Packages should go in a _lib_ folder (e.g. the _extra_ or _canvas_ repositories on GitHub). It's recommended you create a _lib_ folder as sibling to _enyo_ and keep your packages there, but you can make as many _lib_ folders as you like.
+
+## Api Viewer
+
+The Api Viewer application parses and renders documentation in real-time from the Enyo source. Run the application by loading _tools/api/index.html_. 
+
+_Note_: the Api Viewer will not work from file:// in Chrome. Run from a local http server or use the online version at http://enyojs.com/api.
+
+# What Is Enyo
 
 Enyo is an object-oriented JavaScript application framework emphasizing modularity and encapsulation.
 
