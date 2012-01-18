@@ -2,9 +2,9 @@
 
 ## Core
 
-This repository contains Enyo core. We've pared it down to the essentials, so folks can work at the metal. Widget libraries, g11n code, and other optional bits are available as add-on packages.
+This repository contains Enyo core. We've pared it down to the essentials, so folks can work at the metal. Widget libraries, g11n code, and other fancy bits are optional packages.
 
-## Library
+## Lib
 
 Packages should go in a folder named _lib_ (e.g. the _extra_ or _canvas_ repositories on GitHub). _lib_ is a magic name that enyo uses to work with add-on packages. It's recommended you create a _lib_ folder as sibling to _enyo_ and keep your packages there, but you can make as many _lib_ folders as you like and put them anywhere.
 
@@ -12,11 +12,11 @@ Packages should go in a folder named _lib_ (e.g. the _extra_ or _canvas_ reposit
 
 The Api Viewer application parses and renders documentation in real-time from the Enyo source. Run the application by loading _tools/api/index.html_. 
 
-_Note_: in Chrome, the Api Viewer will not work from file://. Run from a local http server or use the online version at http://enyojs.com/api.
+_Note_: in Chrome, the Api Viewer will not work from file:// because of Chrome's security policy. Run from a local http server, use the --allow-file-access-from-files in Chrome, or use the online version at http://enyojs.com/api.
 
 # What Is Enyo
 
-Enyo is an object-oriented JavaScript application framework emphasizing modularity and encapsulation.
+Enyo is an object-oriented JavaScript application framework emphasizing modularity and encapsulation. Enyo is suitable for small and large-scale applications.
 
 Enyo up to 1.x was the underlying framework used to develop applications for HP's TouchPad tablet. Enyo as shipped on the TouchPad included an complete set of user interface components and service wrappers. What you will find here is Enyo 2, what we informally call _core_: the primary infrastructure needed to support any number of Enyo-based libraries. Not to worry, Enyo 1.x itself is open-source licensed, and work is progressing on packaging up those controls and goodies to work with Enyo 2.
 
