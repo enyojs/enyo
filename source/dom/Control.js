@@ -423,7 +423,7 @@ enyo.kind({
 		this.setAttribute("disabled", this.disabled);
 	},
 	getValue: function() {
-		return this.getAttribute("value");
+		return this.hasNode() ? this.node.value : this.getAttribute("value");
 	},
 	valueChanged: function() {
 		this.setAttribute("value", this.value);
