@@ -127,6 +127,21 @@ enyo.kind({
 		this.domStylesChanged();
 	},
 	/**
+		Gets the value of an attribute on this object.
+
+		If this Control has a node, the attribute value is retrieved from the node, otherwise
+		it's read from the _attributes_ property of the Control itself.
+
+		Caveat: if the Control is rendered, the _attributes_ property is used to construct
+		the rendering, and values that have changed on the node itself are lost.
+
+			// Get the value attribute for this DomNode
+			var value = this.getAttribute("tabIndex");
+	*/
+	getAttribute: function(inName) {
+		return this.hasNode() ? this.node.getAttribute(inName) : this.attributes[inName];
+	},
+	/**
 		Sets the value of an attribute on this object. Pass null _inValue_ to remove an attribute.
 
 			// set the tabIndex attribute for this DomNode
