@@ -16,6 +16,7 @@ enyo.kind({
 		// convenience properties for common attributes
 		src: "",
 		disabled: "",
+		value: "",
 		// esoteric
 		canGenerate: true
 	},
@@ -394,11 +395,23 @@ enyo.kind({
 		this.invalidateTags();
 		this.renderStyles();
 	},
+	getSrc: function() {
+		return this.getAttribute("src");
+	},
 	srcChanged: function() {
 		this.setAttribute("src", this.src);
 	},
+	getDisabled: function() {
+		return this.getAttribute("disabled");
+	},
 	disabledChanged: function() {
 		this.setAttribute("disabled", this.disabled);
+	},
+	getValue: function() {
+		return this.getAttribute("value");
+	},
+	valueChanged: function() {
+		this.setAttribute("value", this.value);
 	},
 	attributesChanged: function() {
 		this.invalidateTags();
