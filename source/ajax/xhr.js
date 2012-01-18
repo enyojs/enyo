@@ -55,38 +55,3 @@ enyo.xhr = {
 		}
 	}
 };
-
-//* @public
-
-/**
-	Performs an XMLHttpRequest GET with features described as _inArgs_.
-	Supported properties for inArgs are:
-
-	* _url_: The URL to request (required).
-	* _load_: Called when request is completed.
-	* _body_: Specific contents for the request body for POST method.
-	* _headers_: Request headers.
-	* _username_: The optional user name to use for authentication purposes.
-	* _password_: The optional password to use for authentication purposes.
-*/
-enyo.xhrGet = function(inArgs) {
-	inArgs.callback = inArgs.load;
-	enyo.xhr.request(inArgs);
-};
-
-/**
-	Performs an XMLHttpRequest POST with features described as _inArgs_.
-	Supported properties for inArgs are:
-
-	* _url_: The URL to request (required).
-	* _load_: Called when request is completed.
-	* _body_: Specific contents for the request body for POST method.
-	* _headers_: Request headers.
-	* _username_: The optional user name to use for authentication purposes.
-	* _password_: The optional password to use for authentication purposes.
-*/
-enyo.xhrPost = function(inArgs) {
-	inArgs.callback = inArgs.load;
-	inArgs.method = "POST";
-	enyo.xhr.request(inArgs);
-};
