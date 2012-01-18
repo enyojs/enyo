@@ -1,20 +1,18 @@
-# Enyo
-
 # Quick Info
 
 ## Core
 
-This repository contains Enyo core. We've pared down the codebase to the essentials, so folks that like working at the metal can do that. Widget libraries, g11n code, and other optional bits are available as add-on packages.
+This repository contains Enyo core. We've pared it down to the essentials, so folks can work at the metal. Widget libraries, g11n code, and other optional bits are available as add-on packages.
 
 ## Library
 
-Packages should go in a _lib_ folder (e.g. the _extra_ or _canvas_ repositories on GitHub). It's recommended you create a _lib_ folder as sibling to _enyo_ and keep your packages there, but you can make as many _lib_ folders as you like.
+Packages should go in a folder named _lib_ (e.g. the _extra_ or _canvas_ repositories on GitHub). _lib_ is a magic name that enyo uses to work with add-on packages. It's recommended you create a _lib_ folder as sibling to _enyo_ and keep your packages there, but you can make as many _lib_ folders as you like and put them anywhere.
 
 ## Api Viewer
 
 The Api Viewer application parses and renders documentation in real-time from the Enyo source. Run the application by loading _tools/api/index.html_. 
 
-_Note_: the Api Viewer will not work from file:// in Chrome. Run from a local http server or use the online version at http://enyojs.com/api.
+_Note_: in Chrome, the Api Viewer will not work from file://. Run from a local http server or use the online version at http://enyojs.com/api.
 
 # What Is Enyo
 
