@@ -60,8 +60,7 @@
 	};
 
 	enyo.loaderFactory.prototype  = {
-		packageManifest: "package",
-		package: "",
+		packageName: "",
 		packageFolder: "",
 		verbose: false,
 		//
@@ -103,14 +102,13 @@
 			// A package is now complete. Pop the block that was interrupted for that package (if any).
 			var block = this.stack.pop();
 			if (block) {
-				// block.package is the name of the package that interrupted us
-				//this.report("finished package", block.package);
-				this.verbose && console.groupEnd("* finish package (" + (block.package || "anon") + ")");
-				//this.verbose && console.log("* finish package (" + (block.package || "anon") + ")");
+				// block.packageName is the name of the package that interrupted us
+				//this.report("finished package", block.packageName);
+				this.verbose && console.groupEnd("* finish package (" + (block.packageName || "anon") + ")");
 				// cache the folder for the currently processing package
 				this.packageFolder = block.folder;
 				// no current package
-				this.package = "";
+				this.packageName = "";
 				// process this new block
 				this.more(block);
 			} else {
@@ -177,7 +175,7 @@
 		requireScript: function(inRawPath, inPath) {
 			// script file
 			this.modules.push({
-				package: this.package,
+				packageName: this.packageName,
 				rawPath: inRawPath,
 				path: inPath
 			});
@@ -277,7 +275,7 @@
 				enyo.path.addPath(name, target);
 				//
 				// cache current name
-				this.package = name;
+				this.packageName = name;
 				// cache package information
 				this.packages.push({
 					name: name,
@@ -292,12 +290,12 @@
 			inBlock.folder = this.packageFolder;
 			this.aliasPackage(inPath);
 			// cache the name of the package 'inBlock' is loading now
-			inBlock.package = this.package;
+			inBlock.packageName = this.packageName;
 			// push inBlock on the continuation stack
 			this.stack.push(inBlock);
 			// console/user reporting
-			this.report("loading package", this.package);
-			this.verbose && console.group("* start package [" + this.package + "]");
+			this.report("loading package", this.packageName);
+			this.verbose && console.group("* start package [" + this.packageName + "]");
 			// load the actual package. the package MUST call a continuation function
 			// or the process will halt.
 			this.loadPackage(this.manifest);
