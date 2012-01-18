@@ -316,7 +316,17 @@ j.result != null && f.push(j.result), c = j.group || c;
 }
 default:
 }
-return f.length && (d.comment = f.join(" "), f = []), d;
+return f.length && (d.comment = this.joinComment(f), f = []), d;
+},
+joinComment: function(a) {
+if (!a || !a.length) return "";
+var b = a.join(" "), c = 0, d = b.split(/\r?\n/);
+for (var e = 0, f; (f = d[e]) != null; e++) if (f.length > 0) {
+c = f.search(/\S/), c < 0 && (c = f.length);
+break;
+}
+if (c) for (var e = 0, f; (f = d[e]) != null; e++) d[e] = f.slice(c);
+return d.join("\n");
 },
 makeFunction: function(a, b, c, d) {
 return {
@@ -344,7 +354,7 @@ return e.name = a, e;
 },
 makeThing: function(a, b, c, d) {
 var e = this.parseProperties(name, b);
-return e.type = a, e.comment = c.join(" "), e.group = d, e;
+return e.type = a, e.comment = this.joinComment(c), e.group = d, e;
 },
 extractPragmas: function(a) {
 var b = /^[*\s]*@[\S\s]*/g, c = {
@@ -484,9 +494,9 @@ var a = this.loader.modules[this.moduleIndex++];
 a ? this.loadModule(a.path) : this.modulesFinished();
 },
 loadModule: function(a) {
-enyo.xhrGet({
+enyo.xhr.request({
 url: a,
-load: enyo.bind(this, "moduleLoaded", a)
+callback: enyo.bind(this, "moduleLoaded", a)
 });
 },
 moduleLoaded: function(a, b) {
@@ -1500,7 +1510,6 @@ return "<div>" + (b.kind == a ? "" : '<span style="color:#6070FF; font-size: 70%
 enyo.kind({
 name: "App",
 kind: "Control",
-XlayoutKind: "VBoxLayout",
 target: "../../enyo/source",
 components: [ {
 kind: "Doc",
@@ -1518,19 +1527,16 @@ name: "header",
 style: "height: 50px",
 content: "Enyo API Viewer"
 }, {
-Xkind: "HBox",
 classes: "enyo-fit",
 style: "top: 50px;",
 components: [ {
 classes: "enyo-fit",
-style: "width: 350px; border-right: 1px solid silver;",
-Xkind: "VBox",
+style: "width: 350px; border-right: 1px dotted silver;",
 components: [ {
 classes: "enyo-fit",
-style: "height: 40px",
 kind: "SimpleScroller",
 classes: "tabbar",
-style: "overflow: hidden; padding-bottom: 10px; background-color: #fff;",
+style: "overflow: hidden; height: 40px; padding-bottom: 10px; background-color: #fff;",
 components: [ {
 classes: "active tab",
 content: "Objects",
@@ -1549,8 +1555,6 @@ content: "Search",
 ontap: "indexSelectorTap"
 } ]
 }, {
-xkind: "SimpleScroller",
-xheight: "fill",
 classes: "enyo-fit",
 style: "top: 40px; overflow: auto;",
 components: [ {
@@ -1579,7 +1583,7 @@ classes: "enyo-fit",
 style: "left: 350px;",
 components: [ {
 classes: "enyo-fit",
-style: "height: 92px; border-bottom: 1px solid red; box-sizing: border-box;",
+style: "height: 92px; border-bottom: 1px dotted silver; box-sizing: border-box;",
 components: [ {
 name: "group",
 kind: "SimpleScroller",
@@ -1622,7 +1626,6 @@ type: "checkbox"
 } ]
 }, {
 classes: "enyo-fit",
-xkind: "SimpleScroller",
 style: "padding: 10px; overflow: auto; top: 92px;",
 components: [ {
 name: "docs2",
@@ -1632,7 +1635,6 @@ allowHtml: !0
 } ]
 }, {
 classes: "enyo-fit",
-xkind: "SimpleScroller",
 style: "padding: 10px; overflow: auto;",
 showing: !1,
 components: [ {
