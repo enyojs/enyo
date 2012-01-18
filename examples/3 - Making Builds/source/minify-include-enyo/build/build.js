@@ -1,8 +1,4 @@
 
-// minifier: path aliases
-
-enyo.path.addPaths({source: "..\..\..\..\..\/source/", ..: "../"});
-
 // log.js
 
 enyo.logging = {
@@ -1033,7 +1029,7 @@ mouseOverOutEvents: {
 enter: 1,
 leave: 1
 },
-events: [ "mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel", "click", "dblclick", "change", "keydown", "keyup", "keypress", "input", "load" ],
+events: [ "mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel", "click", "dblclick", "change", "keydown", "keyup", "keypress", "input" ],
 windowEvents: [ "resize", "load", "unload", "message" ],
 connect: function() {
 if (document.addEventListener) var a = function() {

@@ -1,3 +1,3 @@
 enyo.depends(
-	".."
+	"../package.js"
 );

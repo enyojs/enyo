@@ -1,4 +1,45 @@
 
+/* ..\..\..\..\enyo/../lib/layout/HLayout.css */
+
+.enyo-hlayout {
+	white-space: nowrap;
+}
+
+.enyo-hlayout > * {
+	display: inline-block;
+}
+
+
+/* ..\..\..\..\enyo/../lib/layout/BoxLayout.css */
+
+﻿.enyo-box-div {
+	position: absolute !important;
+	/*
+		platform specific
+	*/
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+/* ..\..\..\..\enyo/../lib/layout/SnapLayout.css */
+
+.enyo-snap-scroll-layout {
+	overflow: hidden;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	/* compositify: makes ios happy */
+	-webkit-transform: translateZ(0);
+}
+
+.enyo-snap-scroll-layout > * {
+	position: absolute;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
 /* ..\..\..\..\enyo/../lib/fu/build/fu.css */
 
 
@@ -11,7 +52,7 @@
 
 .theme-fu button,
 .theme-fu .button {
-	Xposition: relative;
+	position: relative;
 	cursor: pointer;
 	/**/
 	color: #404040;
@@ -227,10 +268,7 @@ p {
 cite {
 	position: relative;
 	line-height: .9;
-	background: #36D2CF;
-	background: #00a9a7;
-	background: #2ecbbe;
-	background: #07c7c3;
+	background: #339966;
 	display: block;
 	text-align: right;
 	font-size: 120px;
@@ -317,11 +355,7 @@ blockquote code {
 
 h1 {
 	margin-top: 0;
- 	color: #3b5998;
-	color: #36D2CF;
-	color: #00a9a7;
-	color: #2ecbbe;
-	color: #07c7c3;
+	color: #00A400;
 	font-size: 38px;
 	font-weight: normal;
 	margin-bottom: 0;

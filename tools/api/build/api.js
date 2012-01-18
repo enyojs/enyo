@@ -1,7 +1,7 @@
 
 // minifier: path aliases
 
-enyo.path.addPaths({fu: "..\..\..\..\enyo/../lib/fu/", collapsing: "collapsing/"});
+enyo.path.addPaths({fu: "..\..\..\..\enyo/../lib/fu/", layout: "..\..\..\..\enyo/../lib/layout/", collapsing: "collapsing/"});
 
 // lexer.js
 
@@ -537,15 +537,242 @@ this.modules = this.$.reader.modules, this.doFinish();
 }
 });
 
-// $lib/extra/utils/macroize.js
+// HLayout.js
 
-enyo.macroize = function(a, b, c) {
-var d, e, f = a, g = c || enyo.macroize.pattern, h = function(a, c) {
-return e = !0, d = enyo.getObject(c, !1, b), d === undefined || d === null ? "{$" + c + "}" : d;
-}, i = 0;
-do e = !1, f = f.replace(g, h); while (e && i++ < 100);
-return f;
-}, enyo.macroize.pattern = /{\$([^{}]*)}/g;
+enyo.kind({
+name: "enyo.HLayout",
+kind: enyo.Layout,
+layoutClass: "enyo-hlayout",
+constructor: function(a) {
+this.inherited(arguments), a.align && (a.domStyles["text-align"] = a.align);
+}
+});
+
+// BoxLayout.js
+
+enyo.kind({
+name: "enyo.BoxLayout",
+kind: enyo.Layout,
+layoutClass: "",
+unit: "px",
+_flow: function(a, b, c, d, e, f) {
+var g, h = 0, i = {}, j = "pad" in this.container ? Number(this.container.pad) : 0, k;
+i[d] = j, i[e] = j;
+var l = this.container.children;
+for (var m = 0; k = l[m]; m++) {
+h += j, k.addClass(f + "-div");
+if (k.flex) break;
+i[a] = g = Number(k[a]) || 96, i[b] = h, k.setBounds(i, this.unit), h += g;
+}
+delete i[b];
+if (k) {
+var n = k, o = 0;
+for (m = l.length - 1; k = l[m]; m--) {
+k.addClass(f + "-div"), o += j;
+if (k == n) break;
+i[a] = g = Number(k[a]) || 96, i[c] = o, k.setBounds(i, this.unit), o += g;
+}
+delete i[a], i[b] = h, i[c] = o, n.setBounds(i, this.unit);
+}
+},
+flow: function() {
+this.orient == "h" ? this._flow("width", "left", "right", "top", "bottom", "enyo-box") : this._flow("height", "top", "bottom", "left", "right", "enyo-box");
+}
+}), enyo.kind({
+name: "enyo.HBoxLayout",
+kind: enyo.BoxLayout,
+orient: "h"
+}), enyo.kind({
+name: "enyo.VBoxLayout",
+kind: enyo.BoxLayout,
+orient: "v"
+}), enyo.kind({
+name: "enyo.HBox",
+kind: enyo.Control,
+layoutKind: "enyo.HBoxLayout"
+}), enyo.kind({
+name: "enyo.VBox",
+kind: enyo.Control,
+layoutKind: "enyo.VBoxLayout"
+});
+
+// MeasuredBoxLayout.js
+
+enyo.kind({
+name: "enyo.MeasuredBoxLayout",
+kind: "Layout",
+unit: "px",
+calcMetrics: function(a) {
+var b = {
+flex: 0,
+fixed: 0
+};
+for (var c = 0, d = this.container.children, e; e = d[c]; c++) b.flex += e.flex || 0, b.fixed += e[a] || 0;
+return b;
+},
+flow: function() {
+var a = this.container.children;
+for (var b = 0, c; c = a[b]; b++) c.addClass("enyo-box-div");
+},
+_reflow: function(a, b, c, d, e) {
+var f = this.calcMetrics(a), g = "pad" in this.container ? Number(this.container.pad) : 0, h = this.container.getBounds(), i = this.container.children, j = h[a] - f.fixed - g * (i.length + 1), k = {};
+k[d] = k[e] = g;
+for (var l = 0, m = 0, n, o; o = i[l]; l++) m += g, n = Math.round(o.flex ? o.flex / f.flex * j : Number(o[a]) || 96), k[a] = n, k[b] = m, o.setBounds(k, this.unit), m += n;
+},
+reflow: function() {
+this.orient == "h" ? this._reflow("width", "left", "right", "top", "bottom") : this._reflow("height", "top", "bottom", "left", "right");
+}
+}), enyo.kind({
+name: "enyo.HMeasuredBoxLayout",
+kind: enyo.MeasuredBoxLayout,
+orient: "h"
+}), enyo.kind({
+name: "enyo.VMeasuredBoxLayout",
+kind: enyo.MeasuredBoxLayout,
+orient: "v"
+}), enyo.kind({
+name: "MeasuredControl",
+reflowControls: function() {
+this.broadcastMessage("reflowControls");
+},
+reflowControlsHandler: function() {
+this.reflow(), this.broadcastToControls("reflowControls");
+}
+}), enyo.kind({
+name: "enyo.HMeasuredBox",
+kind: "Control",
+layoutKind: "enyo.HMeasuredBoxLayout"
+}), enyo.kind({
+name: "enyo.VMeasuredBox",
+kind: "Control",
+layoutKind: "enyo.VMeasuredBoxLayout"
+});
+
+// DynamicLayout.js
+
+enyo.kind({
+name: "enyo.DynamicLayout",
+kind: "Layout",
+strategyKind: "Layout",
+destroy: function() {
+this.destroyStrategy(), this.inherited(arguments);
+},
+destroyStrategy: function() {
+this.strategy && this.strategy.destroy();
+},
+calcStrategy: function() {
+var a = this.container.minLayout;
+if (a) {
+var b = this.container.getBounds().width;
+if (b < a && this.minStrategyKind) return this.minStrategyKind;
+}
+return this.strategyKind;
+},
+createStrategy: function(a) {
+return enyo.createFromKind(a, this.container);
+},
+validateStrategy: function() {
+var a = this.calcStrategy();
+a != this.currentStrategy && (this.destroyStrategy(), this.currentStrategy = a, this.strategy = this.createStrategy(a), this.strategy.flow());
+},
+flow: function() {
+this.validateStrategy(), this.strategy.flow();
+},
+reflow: function() {
+this.validateStrategy(), this.strategy.reflow();
+}
+});
+
+// SnapLayout.js
+
+enyo.kind({
+name: "enyo.SnappyLayout",
+kind: "DynamicLayout",
+strategyKind: "SnapLayout",
+minStrategyKind: "SnapFitLayout",
+orient: "h",
+createStrategy: function() {
+var a = this.inherited(arguments);
+return a.setOrient(this.orient), a;
+},
+measureControl: function(a) {
+return this.strategy.measureControl(a);
+}
+}), enyo.kind({
+name: "enyo.SnapLayout",
+kind: "Layout",
+layoutClass: "enyo-snap-scroll-layout",
+centered: !0,
+unit: "px",
+pad: 0,
+constructor: function(a) {
+this.inherited(arguments), this.orientChanged();
+},
+setOrient: function(a) {
+this.orient = a, this.orientChanged();
+},
+orientChanged: function() {
+var a = this.orient == "h";
+this.measure = a ? "width" : "height", this.transform = a ? "translateX" : "translateY", this.offExtent = a ? "bottom" : "right";
+},
+flow: function() {
+var a = (this.container.pad || 0) + this.unit, b = {
+top: a,
+left: a
+};
+b[this.offExtent] = a;
+for (var c = 0, d = this.container.children, e; e = d[c]; c++) this.applyTransform(e, "-200%"), b[this.measure] = this.calcMeasuredBound(e), e.setBounds(b, "");
+},
+calcMeasuredBound: function(a) {
+var b = a[this.measure];
+return Number(b) == b ? b + this.unit : b;
+},
+reflow: function() {
+var a = this.container.layoutOffset || 0, b = this.container.getBounds()[this.measure], c = this.container.layoutIndex || 0, d = this.centered ? (b - this.measureControl(this.container.children[c])) / 2 : 0, e = a + d;
+for (var f = c || 0, g = this.container.children, h; h = g[f]; f++) {
+this.applyTransform(h, e + "px", !0), e += this.measureControl(h);
+if (e > b) break;
+}
+e = a + d;
+if (e > 0) for (var f = c - 1, g = this.container.children, h; h = g[f]; f--) {
+e -= this.measureControl(h), this.applyTransform(h, e + "px", !0);
+if (e < 0) break;
+}
+},
+applyTransform: function(a, b, c) {
+var d = this.transform + "(" + b + ")", e = a.domStyles;
+e["-webkit-transform"] = e["-moz-transform"] = e["-ms-transform"] = e.transform = d;
+if (c && a.hasNode()) {
+var f = a.node.style;
+f.webkitTransform = f.MozTransform = f.msTransform = f.transform = d;
+}
+},
+measureControl: function(a) {
+return a.getBounds()[this.measure] + (this.container.pad || 0) * 2;
+}
+}), enyo.kind({
+name: "enyo.SnapFitLayout",
+kind: "SnapLayout",
+calcMeasuredBound: function(a) {
+return "100%";
+}
+}), enyo.kind({
+name: "enyo.HSnapLayout",
+kind: enyo.SnapLayout,
+orient: "h"
+}), enyo.kind({
+name: "enyo.VSnapLayout",
+kind: enyo.SnapLayout,
+orient: "v"
+}), enyo.kind({
+name: "HSnap",
+kind: "Control",
+layoutKind: "HSnapLayout"
+}), enyo.kind({
+name: "VSnap",
+kind: "Control",
+layoutKind: "VSnapLayout"
+});
 
 // showdown-v0.9/compressed/showdown.js
 
@@ -1055,40 +1282,304 @@ return f.join("");
 }
 });
 
+// InfoDb.js
+
+enyo.kind({
+name: "InfoDb",
+kind: "Component",
+dbify: function(a) {
+this.kinds = [], this.objects = [], this.modules = this.buildModuleList(a), this.packages = this.buildPackageList(this.modules), this.indexModules(), this.processKinds(), this.processInheritance();
+},
+hashToArray: function(a) {
+var b = [];
+for (var c in a) {
+var d = a[c];
+d.key = c, b.push(d);
+}
+return b;
+},
+buildModuleList: function(a) {
+return this.hashToArray(a);
+},
+buildPackageList: function(a) {
+var b = {};
+for (var c = 0, d, e, f, g; d = a[c]; c++) e = d.package || "unknown", f = e.toLowerCase(), b[f] || (b[f] = {
+"package": e,
+modules: []
+}), g = b[f], g.modules.push(d);
+return this.hashToArray(b);
+},
+indexModules: function() {
+for (var a = 0, b; b = this.modules[a]; a++) this.indexObjects(b.module.objects);
+},
+indexObjects: function(a) {
+for (var b = 0, c; c = a[b]; b++) if (c.name && c.type) {
+var d = c.type + "s";
+this[d] || (this[d] = []), this[d].push(c);
+}
+},
+processKinds: function() {
+for (var a = 0, b; b = this.kinds[a]; a++) this.kinds[a] = this.processKind(b);
+},
+processKind: function(a) {
+var b = {
+name: a.name.value,
+comment: a.comment,
+kind: !0,
+superkinds: this.listSuperkinds(a)
+};
+return b.properties = this.listKindProperties(a, b), b;
+},
+findByName: function(a, b) {
+for (var c = 0, d; d = a[c]; c++) if (d.name == b) return d;
+},
+kindByName: function(a) {
+return this.findByName(this.kinds, a);
+},
+listSuperkinds: function(a) {
+var b = [], c = a;
+while (c && c.kind) {
+var d = c.kind.value;
+if (!d) break;
+b.push(d);
+var e = Module.topicMap[d];
+c = e && e.kindByName(d);
+}
+return b;
+},
+listKindProperties: function(a, b) {
+var c = function(a, b) {
+var c = [];
+for (var d in a) {
+var e = a[d];
+e[b] = !0, c.push(e);
+}
+return c;
+}, d = c(a.methods.map, "method");
+d = d.concat(c(a.properties.map, "property")), a.published && a.published.value.properties && (d = d.concat(c(a.published.value.properties.map, "published")));
+for (var e = 0, f; f = d[e]; e++) f[f.group] = !0, f.kind = b;
+return d;
+},
+processInheritance: function() {},
+nameCompare: function(a, b) {
+return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+},
+listInheritedProperties: function(a) {
+var b = [], c = {};
+mergeProperties = function(a) {
+for (var d = 0, e; e = a[d]; d++) {
+var f = c.hasOwnProperty(e.name) && c[e.name];
+if (f) {
+e.overrides = f;
+var g = enyo.indexOf(f, b);
+b[g] = e;
+} else b.push(e);
+c[e.name] = e;
+}
+};
+for (var d = a.superkinds.length - 1, e; e = a.superkinds[d]; d--) {
+var f = this.kindByName(e);
+f && mergeProperties(f.properties);
+}
+return mergeProperties(a.properties), b.sort(this.nameCompare), a.allProperties = b, b;
+},
+listAllProperties: function() {
+var a = [], b = function(b) {
+for (var c = 0, d; d = b[c]; c++) a.push(d);
+};
+for (var c = 0, d; d = this.kinds[c]; c++) b(d.properties);
+return a.sort(this.nameCompare), a;
+},
+dumpPackages: function() {
+var a = "";
+for (var b = 0, c; c = this.packages[b]; b++) {
+a += c.package + "<br/>";
+for (var d = 0, e; e = c.modules[d]; d++) a += "&nbsp;&nbsp;&nbsp;&nbsp;" + e.rawPath + "<br/>";
+}
+return a;
+},
+dumpProperties: function(a) {
+var b = "";
+for (var c = 0, d; d = a[c]; c++) b += "&nbsp;&nbsp;&nbsp;&nbsp;" + d.name + " (" + this.formatLink(d.kind.name) + ")" + (d.method ? ' [<span style="color:blue">method</span>]' : "") + (d.overrides ? ' [<span style="color:red">overrides ' + this.formatLink(d.overrides.kind.name) + "</span>]" : "") + (d.published ? ' [<span style="color:green">published</span>]' : "") + (d.property ? ' [<span style="color:magenta">property</span>]' : "") + " *<b>" + d.group + "</b><br/>";
+return b;
+},
+dumpKinds: function() {
+var a = "";
+for (var b = 0, c; c = this.kinds[b]; b++) a += c.name + "<br/>" + "&nbsp;&nbsp;Superkinds:<br/>" + this.formatKindTree(c) + "&nbsp;&nbsp;Properties:<br/>" + this.dumpProperties(c);
+return a;
+},
+dumpObjects: function(a) {
+var b = "";
+for (var c = 0, d; d = a[c]; c++) b += d.name + "<br/>";
+return b;
+},
+formatLink: function(a) {
+return '<a href="#' + a + '">' + a + "</a>";
+},
+formatKindTree: function(a) {
+var b = "<div>", c = "";
+for (var d = 0, e; e = a.superkinds[d]; d++) b += "<ul><li>" + this.formatLink(e) + "</li>", c += "</ul>";
+return b + c + "</div>";
+},
+filterProperties: function(a, b) {
+var c = [];
+for (var d = 0, e; e = a[d]; d++) {
+for (var f = 0, g; g = b[f]; f++) if (!e[g]) break;
+g || c.push(e);
+}
+return c;
+}
+});
+
+// Formatter2.js
+
+enyo.kind({
+name: "CustomFormatter",
+kind: enyo.Component,
+statics: {
+showdown: new Showdown.converter
+},
+formatLink: function(a) {
+return '<a href="#' + a + '">' + a + "</a>";
+},
+filterProperties: function(a, b) {
+var c = [];
+for (var d = 0, e; e = a[d]; d++) {
+for (var f = 0, g; g = b[f]; f++) if (!e[g]) break;
+g || c.push(e);
+}
+return c;
+},
+formatKindProperties: function(a, b) {}
+}), enyo.kind({
+name: "Formatter2",
+kind: CustomFormatter,
+formatIndex: function(a) {
+var b = {};
+for (var c = 0, d; d = a[c]; c++) {
+var e = d.name, f = e.split(".");
+e = f[0] == "enyo" ? f[1] || f[0] : e;
+for (var g = 0, h; (h = e[g]) && (h < "a" || h > "z"); g++) ;
+b[h] || (b[h] = []), b[h].push(d);
+}
+var i = "";
+for (var c = 0; c < 26; c++) {
+var j = String.fromCharCode(97 + c), k = b[j];
+if (k) {
+i += "<h2>" + j.toUpperCase() + "</h2><ul>";
+for (var g = 0, d; d = k[g]; g++) i += '<li><a href="#' + d.kind.name + '">' + d.name + "</a>" + ' <span style="font-size: 70%">(' + d.kind.name + ")</span>" + "</li>";
+i += "</ul>";
+}
+}
+return i;
+},
+formatKind: function(a, b, c, d) {
+var e = d ? [] : [ "public" ], f = c ? b.listInheritedProperties(a) : a.properties, g = this.formatKindTree(a);
+return "<h1>" + a.name + "</h1>" + '<span style="background-color: lightgreen; font-size: small; italic; border-radius: 14px; padding: 3px 6px;">kind</span>' + (g == "" ? "" : "<h2>Extends</h2>" + g) + "<p>" + Formatlets.showdown.makeHtml(a.comment) + "</p>" + "<h2>Properties</h2>" + this.formatKindProperties(a, this.filterProperties(f, [ "property" ].concat(e))) + "<h2>Methods</h2>" + this.formatKindProperties(a, this.filterProperties(f, [ "method" ].concat(e)));
+},
+formatKindTree: function(a) {
+var b = "", c = "";
+for (var d = 0, e; e = a.superkinds[d]; d++) c += "<ul><li>" + this.formatLink(e) + "</li>", b += "</ul>";
+return c + b;
+},
+formatKindProperties: function(a, b) {
+var c = "";
+for (var d = 0, e; e = b[d]; d++) c += this[e.method ? "formatKindMethod" : "formatKindProperty"](a, e);
+return c || "(none)";
+},
+formatKindMethod: function(a, b) {
+return "<div>" + (b.kind == a ? b.overrides ? '<span style="color:#FF7060; font-size: 70%;">' + this.formatLink(b.overrides.kind.name) + "</span>::" : "" : '<span style="color:#6070FF; font-size: 70%;">' + this.formatLink(b.kind.name) + "</span>::") + (b.protected ? '<span style="color:#660033">' : "") + "<b>" + b.name + "</b>" + (b.protected ? "</span>" : "") + enyo.macroize(": <Xem>function</Xem>(<code><literal>{$args}</literal></code>)", b) + (b.comment ? '<div style="padding-left: 16px">' + CustomFormatter.showdown.makeHtml(b.comment) + "</div>" : "") + "</div>";
+},
+formatKindProperty: function(a, b) {
+return "<div>" + (b.kind == a ? "" : '<span style="color:#6070FF; font-size: 70%;">' + this.formatLink(b.kind.name) + "</span>::") + (b.protected ? '<span style="color:#660033">' : "") + "<b>" + b.name + "</b>" + (b.protected ? "</span>" : "") + (b.property ? ": " + b.value : "") + (b.comment ? '<div style="padding-left: 16px">' + CustomFormatter.showdown.makeHtml(b.comment) + "</div>" : "") + "</div>";
+}
+});
+
 // App.js
 
 enyo.kind({
 name: "App",
 kind: "Control",
-layoutKind: "VBoxLayout",
+XlayoutKind: "VBoxLayout",
 target: "../../enyo/source",
 components: [ {
 kind: "Doc",
 onFinish: "info",
 onReport: "report"
 }, {
+name: "db",
+kind: "InfoDb"
+}, {
 kind: "Formatter"
 }, {
+kind: "Formatter2"
+}, {
 name: "header",
-height: 50,
+style: "height: 50px",
 content: "Enyo API Viewer"
 }, {
-layoutKind: "HBoxLayout",
-height: "fill",
+Xkind: "HBox",
+classes: "enyo-fit",
+style: "top: 50px;",
 components: [ {
+classes: "enyo-fit",
+style: "width: 350px; border-right: 1px solid silver;",
+Xkind: "VBox",
+components: [ {
+classes: "enyo-fit",
+style: "height: 40px",
+kind: "SimpleScroller",
+classes: "tabbar",
+style: "overflow: hidden; padding-bottom: 10px; background-color: #fff;",
+components: [ {
+classes: "active tab",
+content: "Objects",
+ontap: "indexSelectorTap"
+}, {
+classes: "tab",
+content: "Modules",
+ontap: "indexSelectorTap"
+}, {
+classes: "tab",
+content: "Full Index",
+ontap: "indexSelectorTap"
+}, {
+classes: "tab",
+content: "Search",
+ontap: "indexSelectorTap"
+} ]
+}, {
 xkind: "SimpleScroller",
-width: 300,
-style: "overflow: auto;",
+xheight: "fill",
+classes: "enyo-fit",
+style: "top: 40px; overflow: auto;",
 components: [ {
 name: "index",
 allowHtml: !0,
-style: "padding: 10px;"
+style: "padding: 10px; white-space: nowrap"
+}, {
+name: "search",
+style: "font-size: 8pt; padding: 8px; background-color: white;",
+showing: !1,
+components: [ {
+name: "input",
+kind: "input"
+}, {
+kind: "Button",
+content: "Search",
+ontap: "searchTap"
+}, {
+name: "searchIndex",
+allowHtml: !0
+} ]
+} ]
 } ]
 }, {
-width: "fill",
-layoutKind: "VBoxLayout",
+classes: "enyo-fit",
+style: "left: 350px;",
 components: [ {
-height: 40,
+classes: "enyo-fit",
+style: "height: 92px; border-bottom: 1px solid red; box-sizing: border-box;",
 components: [ {
 name: "group",
 kind: "SimpleScroller",
@@ -1099,11 +1590,51 @@ name: "status",
 content: "Status",
 style: "background-color: black; color: yellow;",
 showing: !1
+}, {
+style: "padding: 4px",
+onchange: "refresh",
+components: [ {
+tag: "label",
+style: "margin-right: 16px;",
+components: [ {
+tag: "span",
+content: "inherited"
+}, {
+name: "inheritedOption",
+tag: "input",
+attributes: {
+type: "checkbox"
+}
 } ]
 }, {
+tag: "label",
+components: [ {
+tag: "span",
+content: "protected"
+}, {
+name: "protectedOption",
+tag: "input",
+attributes: {
+type: "checkbox"
+}
+} ]
+} ]
+} ]
+}, {
+classes: "enyo-fit",
+xkind: "SimpleScroller",
+style: "padding: 10px; overflow: auto; top: 92px;",
+components: [ {
+name: "docs2",
+content: "<b>Loading...</b>",
+onclick: "docClick",
+allowHtml: !0
+} ]
+}, {
+classes: "enyo-fit",
 xkind: "SimpleScroller",
 style: "padding: 10px; overflow: auto;",
-height: "fill",
+showing: !1,
 components: [ {
 name: "docs",
 content: "<b>Loading...</b>",
@@ -1114,13 +1645,46 @@ allowHtml: !0
 } ]
 } ],
 create: function() {
-this.inherited(arguments), this.addClass("enyo-fit enyo-unselectable"), this.selectViewByIndex(0), window.onhashchange = enyo.bind(this, "hashChange"), enyo.asyncMethod(this.$.doc, "walkEnyo", enyo.path.rewrite(this.target));
+this.inherited(arguments), this.addClass("enyo-fit enyo-unselectable"), this.selectViewByIndex(0), window.onhashchange = enyo.bind(this, "hashChange"), this.$.doc.walkEnyo(enyo.path.rewrite(this.target));
 },
 report: function(a, b, c) {
 this.$.docs.setContent("<b>" + b + (c ? "</b>: <span style='color: green;'>" + c + "</span>" : ""));
 },
 info: function() {
-this.$.index.setContent(this.$.doc.buildIndex()), this.selectTopic(window.location.hash.slice(1) || "enyo.Component");
+this.$.db.dbify(this.$.doc.$.walker.modules), this.propIndex = this.$.db.listAllProperties(), this.renderKindDocs(this.$.db.kinds[3]), this.$.index.setContent(this.$.doc.buildIndex()), this.selectTopic(window.location.hash.slice(1) || "enyo.Component");
+},
+renderKindDocs: function(a) {
+this.showInherited = this.$.inheritedOption.hasNode().checked, this.showProtected = this.$.protectedOption.hasNode().checked, this.$.docs2.setContent(this.$.formatter2.formatKind(a, this.$.db, this.showInherited, this.showProtected));
+},
+refresh: function() {
+this.selectTopic(this.topic);
+},
+indexSelectorTap: function(a) {
+enyo.forEach(a.container.getClientControls(), function(b) {
+b.addRemoveClass("active", b == a);
+});
+var b = a.container.indexOfClientControl(a);
+switch (b) {
+case 0:
+this.$.index.setContent(this.$.doc.buildIndex());
+break;
+case 1:
+this.$.index.setContent(this.$.db.dumpPackages());
+break;
+case 2:
+this.$.index.setContent(this.$.formatter2.formatIndex(this.$.formatter2.filterProperties(this.propIndex, [ "public" ])));
+break;
+case 3:
+this.$.index.setContent(this.$.db.dumpPackages());
+}
+this.$.index.setShowing(b != 3), this.$.search.setShowing(b == 3);
+},
+searchTap: function() {
+var a = "";
+this.$.input.hasNode() && (a = this.$.input.node.value.toLowerCase());
+var b = [];
+for (var c = 0, d; d = this.propIndex[c]; c++) d.name.toLowerCase().indexOf(a) >= 0 && b.push(d);
+this.$.searchIndex.setContent(b.length ? this.$.db.dumpProperties(b) : "no results");
 },
 hashChange: function(a) {
 var b = window.location.hash.slice(1);
@@ -1151,22 +1715,24 @@ this.selectTopic(b.target.parentNode.hash.slice(1));
 },
 selectTopic: function(b) {
 this.topic = b;
+var c = Module.topicMap2[b], d = c.name && c.name.value, e = this.$.db.kindByName(d);
+e && this.renderKindDocs(e);
 if (b == "toc") this.selectViewByIndex(0), this.$.docs.setContent(this.$.doc.buildToc()); else if (b == "index") this.selectViewByIndex(1); else {
 this.selectViewByIndex(0);
-var c = Module.topicMap2[b], d = "(no topic)";
-c && (d = this.$.formatter.format(c)), this.$.docs.setContent(d), a = document.anchors[b], !a;
+var c = Module.topicMap2[b], f = "(no topic)";
+c && (f = this.$.formatter.format(c)), this.$.docs.setContent(f), a = document.anchors[b], !a;
 }
-var e = null;
+var g = null;
 enyo.forEach(this.$.group.getClientControls(), function(a) {
-a.topic == b && (e = a), a.addRemoveClass("active", a.topic == b);
-}), e || (e = this.$.group.createComponent({
+a.topic == b && (g = a), a.addRemoveClass("active", a.topic == b);
+}), g || (g = this.$.group.createComponent({
 kind: "TopicTab",
 classes: "active",
 topic: b,
 ondown: "topicSelect",
 onClose: "closeTopicClick",
 owner: this
-}).render()), e.hasNode().scrollIntoView();
+}).render()), g.hasNode().scrollIntoView();
 }
 }), enyo.kind({
 name: "SimpleScroller",

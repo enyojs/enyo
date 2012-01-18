@@ -1,8 +1,4 @@
 
-// minifier: path aliases
-
-enyo.path.addPaths({..: "../"});
-
 // HelloWorld.js
 
 enyo.kind({

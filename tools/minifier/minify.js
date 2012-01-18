@@ -28,7 +28,8 @@ buildPathBlock = function(loader) {
 			p$.push(p.name + ': "' + p.folder + '"');
 		}
 	}
-	return "enyo.path.addPaths({" + p$.join(', ') + "});\n";
+	var p = p$.join(', ');
+	return !p ? "" : "\n// minifier: path aliases\n\nenyo.path.addPaths({" + p + "});\n";
 };
 
 compress = function(inCode) {
@@ -68,22 +69,17 @@ concatJs = function(loader) {
 	for (var i=0, m; m=loader.modules[i]; i++) {
 		if (!opt["no-alias"] && !opt.alias) {
 			w("* inserting path aliases");
-			blob += aliases(loader);
+			blob += buildPathBlock(loader);
 			opt["no-alias"] = true;
 		}
 		w(m.path);
 		blob += "\n// " + m.rawPath + "\n\n" + compressJsFile(m.path) + "\n";
 		if (opt.alias == m.rawPath) {
 			w("* inserting path aliases");
-			blob += aliases(loader);
+			blob += buildPathBlock(loader);
 		}
 	}
 	return blob;
-};
-
-aliases = function(loader) {
-	var blob = "\n// " + "minifier: path aliases" + "\n\n";
-	return blob + buildPathBlock(loader);
 };
 
 finish = function(loader) {
