@@ -67,7 +67,7 @@ enyo.gesture = {
 		ti.last = {x: inEvent.pageX, y: inEvent.pageY, time: new Date().getTime()};
 	},
 	endTracking: function(e) {
-		if (this.flickable) {
+		if (this.flickable && this.trackInfo) {
 			this.sendFlick(e);
 		}
 		this.trackInfo = null;
