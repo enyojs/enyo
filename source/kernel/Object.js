@@ -56,7 +56,7 @@ enyo.kind({
 		if (this[cf]) {
 			var old = this[n];
 			this[n] = v;
-			if (old != v) {
+			if (old !== v) {
 				this[cf](old);
 			}
 		} else {
