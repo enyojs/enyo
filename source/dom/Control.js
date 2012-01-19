@@ -310,7 +310,7 @@ enyo.kind({
 	/**
 		Returns an object describing the geometry of this object, like so:
 
-		{code}{left: _offsetLeft_, top: _offsetTop_, width: _offsetWidth_, height: _offsetHeight_}{code}
+			{left: _offsetLeft_, top: _offsetTop_, width: _offsetWidth_, height: _offsetHeight_}
 
 		Values returned are only valid if _hasNode()_ is truthy.
 
