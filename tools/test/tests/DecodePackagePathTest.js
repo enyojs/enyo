@@ -1,5 +1,5 @@
 enyo.kind({
-	name: "LoaderAliasTest",
+	name: "DecodePackagePathTest",
 	kind: enyo.TestSuite,
 	assert: function(inParts, inPart, inValue) {
 		if (inParts[inPart] != inValue) {
@@ -36,7 +36,6 @@ enyo.kind({
 		this.decodeTest("foo/bar/lib/baz", {folder: "foo/bar/lib/baz/", manifest: "foo/bar/lib/baz/package.js", alias: "baz", target: "foo/bar/lib/baz"});
 	},
 	testDecodeSource: function() {
-		debugger;
 		this.decodeTest("source", {folder: "source/", manifest: "source/package.js", alias: "", target: ""});
 	},
 	testDecodeFooBarSource: function() {
@@ -55,6 +54,6 @@ enyo.kind({
 		this.decodeTest("foo/package.js", {folder: "foo/", manifest: "foo/package.js", alias: "foo", target: "foo"});
 	},
 	testRemote: function() {
-		this.decodeTest("http://flarn.com/foo", {folder: "http://flarn.com/foo/", manifest: "http://flarn.com/foo/package.js", alias: "http://flarn.com/foo", target: "http://flarn.com/foo"});
+		this.decodeTest("http://flarn.com/lib/foo", {folder: "http://flarn.com/lib/foo/", manifest: "http://flarn.com/lib/foo/package.js", alias: "foo", target: "http://flarn.com/lib/foo"});
 	}
 });

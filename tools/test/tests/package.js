@@ -3,5 +3,5 @@ enyo.depends(
 	"KindTest.js",
 	"AsyncTest.js",
 	"AjaxTest.js",
-	"LoaderAliasTest.js"
+	"DecodePackagePathTest.js"
 );
