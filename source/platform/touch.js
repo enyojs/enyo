@@ -51,15 +51,26 @@ enyo.requiresWindow(function() {
 			//console.log("target for " + inEvent.type + " at " + e.pageX + ", " + e.pageY + " is " + (e.target ? e.target.id : "none"));
 			return e;
 		},
+		calcNodeOffset: function(inNode) {
+			if (inNode.getBoundingClientRect) {
+				var o = inNode.getBoundingClientRect();
+				return {
+					left: o.left + window.pageXOffset || document.body.scrollLeft,
+					top: o.top + window.pageYOffset || document.body.scrollTop,
+					width: o.width,
+					height: o.height
+				}
+			}
+		},
 		// NOTE: will find only 1 element under the touch and 
 		// will fail if an element is positioned outside the bounding box of its parent
 		findTarget: function(inNode, inX, inY) {
 			var n = inNode || document.body;
-			if (n.getBoundingClientRect && (n != this.excludedTarget)) {
-				var o = n.getBoundingClientRect();
+			var o = this.calcNodeOffset(n);
+			if (o && n != this.excludedTarget) {
 				var x = inX - o.left;
 				var y = inY - o.top;
-				//console.log("test: " + n.id + " (" + o.left + ", " + o.top + ")");
+				//console.log("test: " + n.id + " (left: " + o.left + ", top: " + o.top + ", width: " + o.width + ", height: " + o.height + ")");
 				if (x>0 && y>0 && x<=o.width && y<=o.height) {
 					//console.log("IN: " + n.id + " -> [" + x + "," + y + " in " + o.width + "x" + o.height + "] (children: " + n.childNodes.length + ")");
 					var target;

@@ -67,7 +67,7 @@ enyo.gesture = {
 		ti.last = {x: inEvent.pageX, y: inEvent.pageY, time: new Date().getTime()};
 	},
 	endTracking: function(e) {
-		if (this.flickable) {
+		if (this.flickable && this.trackInfo) {
 			this.sendFlick(e);
 		}
 		this.trackInfo = null;
@@ -91,12 +91,14 @@ enyo.gesture = {
 		e.holdTime = new Date().getTime() - this.holdStart;
 		enyo.dispatch(e);
 	},
-	sendTap: function(e) {
+	sendTap: function(inEvent) {
 		// The common ancestor for the down/up pair is the origin for the tap event
-		var p = this.findCommonAncestor(this.dispatchTarget, e.dispatchTarget);
+		var p = this.findCommonAncestor(this.dispatchTarget, inEvent.dispatchTarget);
 		var t = p && p.hasNode();
 		if (t) {
-			enyo.dispatch({type: "tap", target: t});
+			var e = this.makeEvent("tap", inEvent);
+			e.target = t;
+			enyo.dispatch(e);
 		}
 	},
 	findCommonAncestor: function(inA, inB) {
