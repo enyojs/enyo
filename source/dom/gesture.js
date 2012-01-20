@@ -7,7 +7,7 @@
 //* @public
 enyo.gesture = {
 	//* @protected
-	holdDelay: 200,
+	holdPulseDelay: 200,
 	minFlick: 0.1,
 	eventProps: ["target", "relatedTarget", "clientX", "clientY", "pageX", "pageY", "screenX", "screenY", "altKey", "ctrlKey", "metaKey", "shiftKey",
 		"detail", "identifier", "dispatchTarget"],
@@ -80,15 +80,32 @@ enyo.gesture = {
 	},
 	beginHold: function(inEvent) {
 		this.holdStart = new Date().getTime();
-		this.holdJob = setInterval(enyo.bind(this, "sendHold", inEvent), this.holdDelay);
+		this.holdJob = setInterval(enyo.bind(this, "sendHoldPulse", inEvent), this.holdPulseDelay);
 	},
 	cancelHold: function() {
 		clearInterval(this.holdJob);
 		this.holdJob = null;
+		if (this.sentHold) {
+			this.sentHold = false;
+			this.sendRelease(this.holdEvent);
+		}
+	},
+	sendHoldPulse: function(inEvent) {
+		if (!this.sentHold) {
+			this.sentHold = true;
+			this.sendHold(inEvent);
+		}
+		var e = this.makeEvent("holdpulse", inEvent);
+		e.holdTime = new Date().getTime() - this.holdStart;
+		enyo.dispatch(e);
 	},
 	sendHold: function(inEvent) {
+		this.holdEvent = inEvent;
 		var e = this.makeEvent("hold", inEvent);
-		e.holdTime = new Date().getTime() - this.holdStart;
+		enyo.dispatch(e);
+	},
+	sendRelease: function(inEvent) {
+		var e = this.makeEvent("release", inEvent);
 		enyo.dispatch(e);
 	},
 	sendTap: function(inEvent) {
