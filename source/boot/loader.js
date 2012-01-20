@@ -127,11 +127,6 @@
 							// continuation
 							return true;
 						}
-					/*
-					} else if ("paths" in d) {
-						enyo.path.addPaths(d.paths);
-					}
-					*/
 					} else {
 						enyo.path.addPaths(d);
 					}
@@ -181,109 +176,108 @@
 			});
 			this.loadScript(inPath);
 		},
+		decodePackagePath: function(inPath) {
+			// basic package can encoded in two ways: 
+			//
+			//	1. [folder]
+			//	2. [folder]/[package file name (must end in "package.js")]
+			//
+			var alias = '', target = '', folder = '', manifest = 'package.js';
+			// convert back slashes to forward slashes, remove double slashes, split on slash
+			var parts = inPath.replace(/\\/g, "/").replace(/\/\//g, "/").replace(/:\//, "://").split("/");
+			if (parts.length) {
+				// in inPath has a trailing slash, parts has an empty string which we pop off and ignore
+				var name = parts.pop() || parts.pop() || "";
+				if (name.slice(-manifest.length) !== manifest) {
+					// if not a manifest name, it's part of the folder path
+					parts.push(name);
+				} else {
+					// otherwise this is the manifest name
+					manifest = name;
+				}
+				//
+				folder = parts.join("/");
+				folder = (folder ? folder + "/" : "");
+				manifest = folder + manifest;
+				//
+				// build friendly aliasing:
+				//
+				for (var i=parts.length-1; i >= 0; i--) {
+					if (parts[i] == "source") {
+						parts.splice(i, 1);
+						break;
+					}
+				}
+				target = parts.join("/");
+				//
+				// portable aliasing:
+				//
+				// packages that are rooted at $enyo, $lib, or any folder named lib do not
+				// include the root path in their alias
+				//
+				//	remove */lib prefix
+				//
+				// e.g. foo/bar/baz/lib/zot -> zot package
+				//
+				for (var i=parts.length-1; i >= 0; i--) {
+					if (parts[i] == "lib") {
+						parts = parts.slice(i+1);
+						break;
+					}
+				}
+				alias = parts.join("/");
+				//
+				// remove $enyo, $lib prefixi
+				//
+				//	e.g. $enyo/knob -> knob package
+				//	e.g. $lib/flarn -> flarn package
+				var deprefix = function(prefix) {
+					if (alias.slice(0, prefix.length) == prefix) {
+						alias = alias.slice(prefix.length + 1); // assumes a trailing slash
+					}
+				};
+				var p$ = enyo.path.paths;
+				deprefix(p$.enyo);
+				deprefix(p$.lib);
+				//
+				// use "-" delimiter instead of "/" for aliasing
+				alias = alias.replace(/\//g, "-");
+			}
+			return {
+				alias: alias,
+				target: target,
+				folder: folder,
+				manifest: manifest
+			};
+		},
 		aliasPackage: function(inPath) {
-			// package can encoded in two ways: 
-			//
-			//	1. [folder]/[package file name (must end in "package" or "package.js")]
-			//	2. [folder]
-			//
-			// example of #1:
-			//
-			//	"foo"
-			//
-			// the package name is 'foo', $foo will point to "foo/", 
-			// the manifest file is "foo/package.js"
-			//
-			// examples of #2:
-			//
-			//	"foo/package.js"
-			//
-			// the package name is 'foo', $foo will point to "foo/", 
-			// the manifest is "foo/package.js"
-			//
-			//	"foo/bar-package.js"
-			//
-			// the package name is 'foo', $foo will point to "foo/", 
-			// the manifest is "foo/bar-package.js"
-			//
-			var parts = inPath.split("/");
-			// the last string contains the package name
-			var name = parts.pop();
-			// reconstitute (at least part of) the folder
-			var folder = parts.length ? (parts.join("/") + "/") : "";
-			// if the name defines a package file explicitly
-			if (name.slice(-10) == "package.js") {
-				// use the specified package
-				this.manifest = folder + name;
-				// name comes from the folder
-				name = parts.pop();
-			} else {
-				// otherwise, it's a folder, so rebuild the path (ensure trailling slash)
-				folder = folder + name + "/";
-				// this is the package path
-				this.manifest = folder + "package.js";
-			}
-			//
-			// construct an alias for this package based on it's path
-			// 1. replace known paths with aliases
-			// e.g. "../bar/zot/foo/zing" can become "$foo/zing", if "$foo" is registered
-			var n$ = enyo.path.unwrite(folder).split("/");
-			// 2. '$enyo' is magic, such that "enyo" is left out of the alias
-			// e.g. package at "$enyo/fu" is aliased simply as "$fu"
-			if (n$[0] == "$enyo") {
-				name = n$.slice(1).join("/");
-			}
-			// 3. '$lib' is magic, such "lib" is left out of the alias
-			// e.g. package at "$lib/fu" is aliased as "$fu" instead of "$lib-fu"
-			else if (n$[0] == "$lib") {
-				name = n$.slice(1).join("/");
-			}
-			// 4. 'lib' is magic, such that the entire path up to an including "lib" is left out of the alias,
-			//    allowing multiple lib folders to exist, and packages to be portable between lib folders,
-			//    as long as the package names are unique.
-			// e.g. package at "<any path>/lib/fu" is aliased as "$fu" instead of "$<any-path>-lib-fu"
-			for (var i=n$.length-1; i>=0; i--) {
-				if (n$[i] == "lib") {
-					name = n$.slice(i+1).join("/");
-					break;
-				}
-			}
-			//
-			// now clean the path a bit (remove "..", convert slashes to dashes)
-			// e.g. "../foo/bar/zot" becomes "foo-bar-zot"
-			name = name.replace(/\.\.\/?/g, "").replace(/\$/g, "").replace(/[\/]/g, "-");
-			if (name[name.length-1] == "-") {
-				name = name.slice(0, -1);
-			}
-			//
-			// 'source' folder is magic: we omit it from the name, so we can depend on <package>/source
-			// but alias only <package>
-			name = name.replace("-source", "").replace("source", "");
-			var target = (folder.slice(-7) == "/source") ? folder.slice(0, -7) : 
-				folder.slice(-6) == "source" ? folder.slice(0, -6) :
-					folder;
-			//
-			if (name) {
+			var parts = this.decodePackagePath(inPath);
+			// cache manifest path
+			this.manifest = parts.manifest;
+			// cache package info for named packages
+			if (parts.alias) {
 				// debug only
-				var old = enyo.path.paths[name];
-				if (old && old != folder) {
-					this.verbose && console.warn("mapping alias [" + name + "] to [" + folder + "] replacing [" + old + "]");
+				/*
+				var old = enyo.path.paths[parts.name];
+				if (old && old != parts.folder) {
+					this.verbose && console.warn("mapping alias [" + parts.name + "] to [" + parts.folder + "] replacing [" + old + "]");
 				}
-				this.verbose && console.log("mapping alias [" + name + "] to [" + folder + "]");
+				this.verbose && console.log("mapping alias [" + parts.name + "] to [" + parts.folder + "]");
+				*/
 				//
 				// create a path alias for this package
-				enyo.path.addPath(name, target);
+				enyo.path.addPath(parts.alias, parts.target);
 				//
 				// cache current name
-				this.packageName = name;
+				this.packageName = parts.alias;
 				// cache package information
 				this.packages.push({
-					name: name,
-					folder: folder
+					name: parts.alias,
+					folder: parts.folder
 				});
 			}
 			// cache current folder
-			this.packageFolder = folder;
+			this.packageFolder = parts.folder;
 		},
 		requirePackage: function(inPath, inBlock) {
 			// cache the interrupted packageFolder
