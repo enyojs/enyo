@@ -215,7 +215,9 @@
 				// packages that are rooted at $enyo, $lib, or any folder named lib do not
 				// include the root path in their alias
 				//
-				//	e.g. foo/bar/baz/lib/zot -> zot package
+				//	remove */lib prefix
+				//
+				// e.g. foo/bar/baz/lib/zot -> zot package
 				//
 				for (var i=parts.length-1; i >= 0; i--) {
 					if (parts[i] == "lib") {
@@ -225,15 +227,20 @@
 				}
 				alias = parts.join("/");
 				//
+				// remove $enyo, $lib prefixi
+				//
 				//	e.g. $enyo/knob -> knob package
 				//	e.g. $lib/flarn -> flarn package
-				var p$ = enyo.path.paths, $enyo = p$.enyo, $lib = p$.lib;
-				if (alias.slice(0, $enyo.length) == $enyo) {
-					alias = alias.slice($enyo.length);
-				} else if (alias.slice(0, $lib.length) == $lib) {
-					alias = alias.slice($enyo.length);
-				}
-				// use "-" delimiter for aliasing
+				var deprefix = function(prefix) {
+					if (alias.slice(0, prefix.length) == prefix) {
+						alias = alias.slice(prefix.length + 1); // assumes a trailing slash
+					}
+				};
+				var p$ = enyo.path.paths;
+				deprefix(p$.enyo);
+				deprefix(p$.lib);
+				//
+				// use "-" delimiter instead of "/" for aliasing
 				alias = alias.replace(/\//g, "-");
 			}
 			return {
@@ -262,7 +269,7 @@
 				enyo.path.addPath(parts.alias, parts.target);
 				//
 				// cache current name
-				this.packageName = parts.name;
+				this.packageName = parts.alias;
 				// cache package information
 				this.packages.push({
 					name: parts.alias,

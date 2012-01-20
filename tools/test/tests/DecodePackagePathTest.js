@@ -35,6 +35,10 @@ enyo.kind({
 	testDecodeFooBarLibBaz: function() {
 		this.decodeTest("foo/bar/lib/baz", {folder: "foo/bar/lib/baz/", manifest: "foo/bar/lib/baz/package.js", alias: "baz", target: "foo/bar/lib/baz"});
 	},
+	testDecodeEnyo: function() {
+		var $enyo = enyo.path.rewrite("$enyo");
+		this.decodeTest($enyo + "/foo", {folder: $enyo + "foo/", manifest: $enyo + "foo/package.js", alias: "foo", target: $enyo + "foo"});
+	},
 	testDecodeSource: function() {
 		this.decodeTest("source", {folder: "source/", manifest: "source/package.js", alias: "", target: ""});
 	},
