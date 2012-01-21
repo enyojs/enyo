@@ -9,6 +9,39 @@ or on a per instance basis by specifying a strategyKind of "TouchScrollStrategy.
 enyo.kind({
 	name: "enyo.Scroller",
 	kind: enyo.Control,
+	statics: {
+		osInfo: [
+			{os: "Android", version: 3},
+			{os: "iPhone", version: 5},
+			{os: "iPad", version: 5},
+			{os: "webos", version: 1e9}
+		],
+		calcOsVersion: function(inTest, inOs) {
+			var m = inTest.match(new RegExp(inOs + ".*?([0-9])", "i"));
+			if (m) {
+				return Number(m[1]);
+			}
+		},
+		hasTouchScrolling: function() {
+			var ua = navigator.userAgent;
+			console.log(ua);
+			for (var i=0, t, m; t=this.osInfo[i]; i++) {
+				console.log(t.os + ": " + t.version + "... " + this.calcOsVersion(ua, t.os));
+				if (this.calcOsVersion(ua, t.os) >= t.version) {
+					return true;
+				}
+			}
+		},
+		hasNativeScrolling: function() {
+			var ua = navigator.userAgent;
+			for (var i=0, t, m; t=this.osInfo[i]; i++) {
+				if (this.calcOsVersion(ua, t.os) < t.version) {
+					return true;
+				}
+			}
+			return true;
+		}
+	},
 	/**
 		If true, the scroller will not propagate dragstart events that cause it to start scrolling (defaults to true)
 	*/
@@ -54,7 +87,7 @@ enyo.kind({
 	importProps: function(inProps) {
 		this.inherited(arguments);
 		// allow global overriding of strategy kind
-		if (inProps.strategyKind === undefined && enyo.Scroller.enableTouchScrolling) {
+		if (inProps.strategyKind === undefined && enyo.Scroller.forceTouchScrolling) {
 			this.strategyKind = "TouchScrollStrategy";
 		}
 	},
@@ -123,7 +156,7 @@ enyo.kind({
 	}
 });
 
-// android 2 and webos have no default touch solution so use TouchScrolling
-if (/Android 2|webOS/i.test(navigator.userAgent)) {
+// provide a touch scrolling solution by default when the environment has no native scrolling.
+if (!enyo.Scroller.hasNativeScrolling()) {
 	enyo.Scroller.prototype.strategyKind =  "TouchScrollStrategy";
 }

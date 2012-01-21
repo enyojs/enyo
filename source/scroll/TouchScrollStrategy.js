@@ -24,7 +24,8 @@ enyo.kind({
 		dragstart: "dragstartHandler",
 		drag: "dragHandler",
 		dragfinish: "dragfinishHandler",
-		mousewheel: "mousewheelHandler"
+		mousewheel: "mousewheelHandler",
+		touchmove: "touchmoveHandler"
 	},
 	components: [
 		{name: "scroll", kind: "ScrollMath"},
@@ -71,6 +72,9 @@ enyo.kind({
 			this.$.scroll.stop(e);
 			return true;
 		}
+	},
+	touchmoveHandler: function(inSender, e) {
+		e.preventDefault();
 	},
 	// special synthetic DOM events served up by the Gesture system
 	dragstartHandler: function(inSender, inEvent) {
