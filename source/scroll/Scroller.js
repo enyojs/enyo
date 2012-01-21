@@ -24,9 +24,7 @@ enyo.kind({
 		},
 		hasTouchScrolling: function() {
 			var ua = navigator.userAgent;
-			console.log(ua);
 			for (var i=0, t, m; t=this.osInfo[i]; i++) {
-				console.log(t.os + ": " + t.version + "... " + this.calcOsVersion(ua, t.os));
 				if (this.calcOsVersion(ua, t.os) >= t.version) {
 					return true;
 				}
