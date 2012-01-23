@@ -68,7 +68,7 @@ enyo.kind({
 			var ua = navigator.userAgent;
 			for (var i=0, t, m; t=this.osInfo[i]; i++) {
 				if (this.calcOsVersion(ua, t.os) < t.version) {
-					return true;
+					return false;
 				}
 			}
 			return true;
