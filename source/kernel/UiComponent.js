@@ -119,10 +119,10 @@ enyo.kind({
 	indexOfClientControl: function(inControl) {
 		return enyo.indexOf(inControl, this.getClientControls());
 	},
-	getControlIndex: function() {
+	indexInContainer: function() {
 		return this.container.indexOfControl(this);
 	},
-	getClientIndex: function() {
+	clientIndexInContainer: function() {
 		return this.container.indexOfClientControl(this);
 	},
 	// children

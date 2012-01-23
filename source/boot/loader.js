@@ -33,18 +33,7 @@
 				result = result.replace(this.rewritePattern, fn);
 			} while (working);
 			return result;
-		}/*,
-		unwrite: function(inPath) {
-			for (var n in this.paths) {
-				var p = this.paths[n] || '';
-				var l = p.length;
-				// if inPath is rooted at path p, replace that path with n (p's alias)
-				if (inPath.slice(0, l) == p) {
-					return "$" + n + inPath.slice(l);
-				}
-			}
-			return inPath;
-		}*/
+		}
 	};
 
 	enyo.loaderFactory = function(inMachine) {
@@ -236,25 +225,6 @@
 				}
 				//
 				alias = parts.join("-");
-				/*
-				alias = parts.join("/");
-				//
-				// remove $enyo, $lib prefixi
-				//
-				//	e.g. $enyo/knob -> knob package
-				//	e.g. $lib/flarn -> flarn package
-				var deprefix = function(prefix) {
-					if (alias.slice(0, prefix.length) == prefix) {
-						alias = alias.slice(prefix.length + 1); // assumes a trailing slash
-					}
-				};
-				var p$ = enyo.path.paths;
-				deprefix(p$.enyo);
-				//deprefix(p$.lib);
-				//
-				// use "-" delimiter instead of "/" for aliasing
-				alias = alias.replace(/\//g, "-");
-				*/
 			}
 			return {
 				alias: alias,
