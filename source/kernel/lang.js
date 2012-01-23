@@ -122,8 +122,11 @@
 		var result = [];
 		if (inArray) {
 			var context = inContext || this;
-			for (var i=0, l=inArray.length; i<l; i++) {
-				result.push(inFunc.call(context, inArray[i], i, inArray));
+			for (var i=0, l=inArray.length, v; i<l; i++) {
+				v = inFunc.call(context, inArray[i], i, inArray);
+				if (v != undefined) {
+					result.push(v);
+				}
 			}
 		}
 		return result;
