@@ -124,7 +124,7 @@
 			var context = inContext || this;
 			for (var i=0, l=inArray.length, v; i<l; i++) {
 				v = inFunc.call(context, inArray[i], i, inArray);
-				if (v != undefined) {
+				if (v !== undefined) {
 					result.push(v);
 				}
 			}
