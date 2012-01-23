@@ -9,6 +9,40 @@ or on a per instance basis by specifying a strategyKind of "TouchScrollStrategy.
 enyo.kind({
 	name: "enyo.Scroller",
 	kind: enyo.Control,
+	published: {
+		/**
+			Set to false to prevent horizontal scrolling.
+		*/
+		horizontal: true,
+		/**
+			Set to false to prevent vertical scrolling.
+		*/
+		vertical: true,
+		/**
+			Sets the vertical scroll position.
+		*/
+		scrollTop: 0,
+		/**
+			Sets the horizontal scroll position.
+		*/
+		scrollLeft: 0,
+		/**
+			Specify a type of scrolling. The enyo Scroller will attempt to automatically select 
+			a strategy compatbile with the runtime environment. A specific strategy can also be chosen:
+			"ScrollStrategy" is the default and implements no scrolling, relying instead on the environment to scroll properly.
+			"TouchScrollStrategy" implements a touch scrolling mechanism.
+		*/
+		strategyKind: "ScrollStrategy"
+	},
+	events: {
+		onScrollStart: "",
+		onScroll: "",
+		onScrollStop: ""
+	},
+	/**
+		If true, the scroller will not propagate dragstart events that cause it to start scrolling (defaults to true)
+	*/
+	preventDragPropagation: true,
 	statics: {
 		osInfo: [
 			{os: "Android", version: 3},
@@ -39,40 +73,6 @@ enyo.kind({
 			}
 			return true;
 		}
-	},
-	/**
-		If true, the scroller will not propagate dragstart events that cause it to start scrolling (defaults to true)
-	*/
-	preventDragPropagation: true,
-	published: {
-		/**
-		Set to false to prevent horizontal scrolling.
-		*/
-		horizontal: true,
-		/**
-		Set to false to prevent vertical scrolling.
-		*/
-		vertical: true,
-		/**
-		Sets the vertical scroll position.
-		*/
-		scrollTop: 0,
-		/**
-		Sets the horizontal scroll position.
-		*/
-		scrollLeft: 0,
-		/**
-		Specify a type of scrolling. The enyo Scroller will attempt to automatically select 
-		a strategy compatbile with the runtime environment. A specific strategy can also be chosen:
-		"ScrollStrategy" is the default and implements no scrolling, relying instead on the environment to scroll properly.
-		"TouchScrollStragey" implements a touch scrolling mechanism.
-		*/
-		strategyKind: "ScrollStrategy"
-	},
-	events: {
-		onScrollStart: "",
-		onScroll: "",
-		onScrollStop: ""
 	},
 	//* @protected
 	controlParentName: "strategy",

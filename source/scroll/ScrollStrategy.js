@@ -17,7 +17,9 @@ enyo.kind({
 	},
 	create: function() {
 		this.inherited(arguments);
-		this.addClass("enyo-default-scroller");
+		this.addClass("enyo-scroller");
+		this.horizontalChanged();
+		this.verticalChanged();
 		this.setAttribute("onscroll", enyo.bubbler);
 	},
 	horizontalChanged: function() {
