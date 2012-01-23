@@ -102,7 +102,7 @@ logs: this.logMessages
 if (a) {
 typeof a == "string" ? this.results.message = a : a.message !== undefined ? (this.results.message = a.message, this.results.exception = a) : (this.results.message = a.errorText || a.toString(), this.results.failValue = a);
 if (!this.results.exception && a !== this.timeoutMessage) try {
-throw new Error("sample exception");
+throw new Error(a);
 } catch (b) {
 this.results.exception = b;
 }
