@@ -457,10 +457,10 @@ enyo.create = enyo.Component.create = function(inConfig) {
 
 enyo.Component.subclass = function(ctor, props) {
 	// Note: to reduce API surface area, sub-components are declared only as
-	// 'components' in both kind declarations and instance property-bags 
-	// (aka configurations).
+	// 'components' in both kind and instance declarations.
 	// However, 'components' from kind declarations must be handled separately
-	// at create-time. By renaming the property here we avoid having
+	// at create-time.
+	// We rename the property here to avoid having
 	// to interrogate the prototype at create-time.
 	if (props.components) {
 		ctor.prototype.kindComponents = props.components;

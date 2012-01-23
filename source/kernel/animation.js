@@ -2,7 +2,8 @@
 (function(){
 	// API is non-standard, so what enyo exposes may vary from 
 	// web documentation for various browsers
-	// in particular, requestAnimationFrame takes no arguments, and the callback receives no arguments
+	// in particular, enyo.requestAnimationFrame takes no arguments,
+	// and the callback receives no arguments
 	var builtin = window.webkitRequestAnimationFrame;
 	enyo.requestAnimationFrame = builtin ? enyo.bind(window, builtin) :
 		function(inCallback) {
