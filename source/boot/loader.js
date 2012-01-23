@@ -15,7 +15,8 @@
 			}
 		},
 		includeTrailingSlash: function(inPath) {
-			return inPath ? (inPath.charAt(inPath.length - 1) == "/" ? inPath : inPath + "/") : "";
+			return (inPath.slice(-1) !== "/") ? inPath + "/" : inPath;
+			//return inPath && (inPath.slice(-1) !== "/") ? inPath + "/" : inPath;
 		},
 		// match $name
 		rewritePattern: /\$([^\/\\]*)(\/)?/g,
@@ -32,19 +33,18 @@
 				result = result.replace(this.rewritePattern, fn);
 			} while (working);
 			return result;
-		},
+		}/*,
 		unwrite: function(inPath) {
 			for (var n in this.paths) {
 				var p = this.paths[n] || '';
 				var l = p.length;
 				// if inPath is rooted at path p, replace that path with n (p's alias)
 				if (inPath.slice(0, l) == p) {
-					//return this.includeTrailingSlash("$" + n) + inPath.slice(l);
 					return "$" + n + inPath.slice(l);
 				}
 			}
 			return inPath;
-		}
+		}*/
 	};
 
 	enyo.loaderFactory = function(inMachine) {
@@ -177,10 +177,12 @@
 			this.loadScript(inPath);
 		},
 		decodePackagePath: function(inPath) {
-			// basic package can encoded in two ways: 
+			// A package path can encoded in two ways: 
 			//
 			//	1. [folder]
-			//	2. [folder]/[package file name (must end in "package.js")]
+			//	2. [folder]/[*package.js]
+			//
+			// Note: manifest file name must end in "package.js"
 			//
 			var alias = '', target = '', folder = '', manifest = 'package.js';
 			// convert back slashes to forward slashes, remove double slashes, split on slash
@@ -188,6 +190,7 @@
 			if (parts.length) {
 				// in inPath has a trailing slash, parts has an empty string which we pop off and ignore
 				var name = parts.pop() || parts.pop() || "";
+				// test is name includes the manifest tag
 				if (name.slice(-manifest.length) !== manifest) {
 					// if not a manifest name, it's part of the folder path
 					parts.push(name);
@@ -212,19 +215,28 @@
 				//
 				// portable aliasing:
 				//
-				// packages that are rooted at $enyo, $lib, or any folder named lib do not
-				// include the root path in their alias
+				// packages that are rooted at a folder named "enyo" or "lib" do not
+				// include that root path in their alias
 				//
-				//	remove */lib prefix
+				//	remove */lib or */enyo prefix
 				//
 				// e.g. foo/bar/baz/lib/zot -> zot package
 				//
-				for (var i=parts.length-1; i >= 0; i--) {
-					if (parts[i] == "lib") {
+				for (var i=parts.length-1, p; p=parts[i]; i--) {
+					if (p == "lib" || p == "enyo") {
 						parts = parts.slice(i+1);
 						break;
 					}
 				}
+				// remove ".." and "."
+				for (var i=parts.length-1, p; p=parts[i]; i--) {
+					if (p == ".." || p == ".") {
+						parts.splice(i, 1);
+					}
+				}
+				//
+				alias = parts.join("-");
+				/*
 				alias = parts.join("/");
 				//
 				// remove $enyo, $lib prefixi
@@ -238,10 +250,11 @@
 				};
 				var p$ = enyo.path.paths;
 				deprefix(p$.enyo);
-				deprefix(p$.lib);
+				//deprefix(p$.lib);
 				//
 				// use "-" delimiter instead of "/" for aliasing
 				alias = alias.replace(/\//g, "-");
+				*/
 			}
 			return {
 				alias: alias,

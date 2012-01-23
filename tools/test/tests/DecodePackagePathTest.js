@@ -32,12 +32,19 @@ enyo.kind({
 	testDecodeFooBarBaz: function() {
 		this.decodeTest("foo/bar/baz", {folder: "foo/bar/baz/", manifest: "foo/bar/baz/package.js", alias: "foo-bar-baz", target: "foo/bar/baz"});
 	},
+	testDecodeParentFoo: function() {
+		this.decodeTest("../foo", {folder: "../foo/", manifest: "../foo/package.js", alias: "foo", target: "../foo"});
+	},
 	testDecodeFooBarLibBaz: function() {
 		this.decodeTest("foo/bar/lib/baz", {folder: "foo/bar/lib/baz/", manifest: "foo/bar/lib/baz/package.js", alias: "baz", target: "foo/bar/lib/baz"});
 	},
-	testDecodeEnyo: function() {
+	testDecodeEnyoFoo: function() {
 		var $enyo = enyo.path.rewrite("$enyo");
 		this.decodeTest($enyo + "/foo", {folder: $enyo + "foo/", manifest: $enyo + "foo/package.js", alias: "foo", target: $enyo + "foo"});
+	},
+	testDecodeAbsEnyoFoo: function() {
+		var $enyo = enyo.path.rewrite("$enyo") + "../enyo/";
+		this.decodeTest($enyo + "foo", {folder: $enyo + "foo/", manifest: $enyo + "foo/package.js", alias: "foo", target: $enyo + "foo"});
 	},
 	testDecodeSource: function() {
 		this.decodeTest("source", {folder: "source/", manifest: "source/package.js", alias: "", target: ""});
