@@ -76,6 +76,12 @@ enyo.kind({
 		return inAncestor && (p == inAncestor);
 	},
 	/**
+		Returns all controls.
+	*/
+	getControls: function() {
+		return this.controls;
+	},
+	/**
 		Returns all non-chrome controls.
 	*/
 	getClientControls: function() {
@@ -112,6 +118,12 @@ enyo.kind({
 	},
 	indexOfClientControl: function(inControl) {
 		return enyo.indexOf(inControl, this.getClientControls());
+	},
+	getControlIndex: function() {
+		return this.container.indexOfControl(this);
+	},
+	getClientIndex: function() {
+		return this.container.indexOfClientControl(this);
 	},
 	// children
 	addChild: function(inChild) {
