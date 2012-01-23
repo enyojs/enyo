@@ -15,8 +15,10 @@ enyo.kind({
 		showing: true,
 		// convenience properties for common attributes
 		src: "",
+		/*
 		disabled: "",
 		value: "",
+		*/
 		// esoteric
 		canGenerate: true
 	},
@@ -28,12 +30,12 @@ enyo.kind({
 		this.inherited(arguments);
 		// we need fresh instances of these hashes (that may otherwise be shared in a prototype)
 		this.attributes = enyo.clone(this.attributes);
-		this.domStyles = enyo.clone(this.domStyles);
+		//this.domStyles = enyo.clone(this.domStyles);
 	},
 	create: function() {
 		this.inherited(arguments);
-		// we have primary 'domStyles' and secondary 'style' to deal with
-		this.initStyles();
+		// propagate style to domStyles
+		this.styleChanged();
 		// 'showing' is tertiary method for modifying display style
 		// setting 'display: none;' style at initialization time will
 		// not work if 'showing' is true.
@@ -44,11 +46,22 @@ enyo.kind({
 		// - use addClass instead of setClasses here, by convention 'classes' is reserved for instance objects
 		// - inheritors should 'addClass' to add classes
 		// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
+		this.addClass(this.kindClasses);
 		this.addClass(this.classes);
 		this.initProps(["id", "content", "src", "disabled"]);
 	},
 	destroy: function() {
 		this.removeNodeFromDom();
+		this.inherited(arguments);
+	},
+	importProps: function(inProps) {
+		if (inProps) {
+			// note: inProps is shallow copied so attributes is mixed in to avoid shared usage
+			if (inProps.attributes) {
+				enyo.mixin(this.attributes, inProps.attributes);
+				delete inProps.attributes;
+			}
+		}
 		this.inherited(arguments);
 	},
 	initProps: function(inPropNames) {
@@ -63,6 +76,10 @@ enyo.kind({
 			}
 		}
 	},
+	initStyles: function() {
+		this.styleChanged();
+	},
+	/*
 	adjustComponentProps: function(inProps) {
 		this.inherited(arguments);
 		if (inProps.kind && !enyo.constructorForKind(inProps.kind)) {
@@ -70,6 +87,7 @@ enyo.kind({
 			inProps.kind = enyo.Control;
 		}
 	},
+	*/
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
 		this.addClass(this.classes);
@@ -341,38 +359,6 @@ enyo.kind({
 		this.domStylesChanged();
 	},
 	//* @protected
-	importProps: function(inProps) {
-		if (inProps) {
-			/*
-			// FIXME: there are some props that we handle specially and do not want to mix in directly.
-			if (inProps.style) {
-				this.addStyles(inProps.style);
-				// FIXME: needs review: this.style used to be kept in sync with domStyles but this is no longer the case
-				// therefore we lose user data if we delete the value here.
-				//delete inProps.style;
-			}
-			if (inProps.domStyles) {
-				enyo.mixin(this.domStyles, inProps.domStyles);
-				delete inProps.domStyles;
-			}
-			*/
-			// note: inProps is shallow copied so attributes is mixed in to avoid shared usage
-			if (inProps.attributes) {
-				enyo.mixin(this.attributes, inProps.attributes);
-				delete inProps.attributes;
-			}
-		}
-		this.inherited(arguments);
-	},
-	initStyles: function() {
-		// 'domStyles' is the canonical style property
-		// 'style' is secondary if they compete
-		if (this.style) {
-			this.styleChanged();
-		} else {
-			this.domStylesChanged();
-		}
-	},
 	// expensive, other methods do work to avoid calling here
 	findNodeById: function() {
 		return this.id && (this.node = enyo.dom.byId(this.id));
@@ -393,10 +379,11 @@ enyo.kind({
 		// it's not clear what API calls like 'applyStyle' would affect, and which concept would take
 		// precendence when there is a conflict.
 		// Perhaps we can separate 'style' completely from 'domStyles'. API methods like applyStyle 
-		// would affect domStyles, and the two style database would be combined at render-time.
+		// would affect domStyles, and the two style databases would be combined at render-time.
 		// Alternatively, we can disallow changing "style" string at runtime and allow it to be set 
 		// at init-time only (as it was in pre-ares enyo).
 		this.domStyles = {};
+		this.addStyles(this.kindStyle);
 		this.addStyles(this.style);
 	},
 	contentChanged: function() {
@@ -416,6 +403,7 @@ enyo.kind({
 	srcChanged: function() {
 		this.setAttribute("src", this.src);
 	},
+	/*
 	getDisabled: function() {
 		return this.getAttribute("disabled");
 	},
@@ -428,6 +416,7 @@ enyo.kind({
 	valueChanged: function() {
 		this.setAttribute("value", this.value);
 	},
+	*/
 	attributesChanged: function() {
 		this.invalidateTags();
 		this.renderAttributes();
@@ -670,3 +659,31 @@ enyo.kind({
 		}
 	}
 });
+
+enyo.Control.subclass = function(ctor, props) {
+	// Control classes may declare properties that are intended
+	// to stack with superclass properties.
+	// We resort to prototype magic to assemble thiese properties
+	// at kind declaration time, in the interest of efficiency
+	// and ease of use.
+	// The properties are no longer 'live' in prototypes because
+	// of this magic. I.e. changes to the prototype of a Control 
+	// subclass will not necesssarily be reflected in instances 
+	// of that Control (includes chained prototypes).
+	//
+	var proto = ctor.prototype;
+	//
+	// 'kc' comes either from our inheritance chain (e.g. proto's prototype chain) 
+	// or has been forced by a kind declaration.
+	//
+	var kc = proto.kindClasses;
+	if (proto.classes) {
+		proto.kindClasses = (kc ? kc + " " : "") + proto.classes;
+		proto.classes = "";
+	}
+	var ks = proto.kindStyle;
+	if (proto.style) {
+		proto.kindStyle = (ks ? ks + ";" : "") + proto.style;
+		proto.style = "";
+	}
+};
