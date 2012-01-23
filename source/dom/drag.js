@@ -1,17 +1,11 @@
-﻿// gesture feature
-/**
- enyo.gesture is an event filter for enyo dispatcher.
+﻿/**
+ Enyo supports a cross-platform set of drag events. These events are provide to allow a single set of event handlers to be
+ written for all supports platforms, desktop and mobile alike. The following events are provided:
  
- This filter monitors DOM events to provide special synthesized events.
+ * "dragstart", "dragfinish" - sent for pointer moves that exceed a certain threshhold
+ * "drag", "drop" - sent to the original target of the pointer move to inform it about the item being moved over or released over another element
+ * "dragover", "dragout" - sent in addition to over and out when there is an active drag
  
- * "back" - sent for the back gesture on webOS devices with a gesture area or on the ESC key in browsers
- * "click" - normally, you get the one sent by the system, but you can get a synthetic "click" when a drag has been initiated
- * "dragstart", "dragfinish" - sent for mouse moves that exceed a certain threshhold
- * "drag", "drop" - sent to the original target of the mousemove to inform it about the item being moved over or released over another element
- * "dragover", "dragout" - sent in place of mouseover and mouseout when there is an active drag
- * "mousehold", "mouseholdpulse", and "mouserelease" - sent for mouse moves that stay within the drag threshhold.  Used to implement hold actions.
- 
- There are no public methods defined here.
  */
 
 //* @protected
