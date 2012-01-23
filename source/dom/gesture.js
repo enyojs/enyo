@@ -1,10 +1,34 @@
-﻿// gesture feature
+﻿//* @public
 /**
- enyo.gesture is an event filter for enyo dispatcher.
- There are no public methods defined here.
- */
+ Enyo supports a set of cross-platform gesture events that work similarly on all supported platforms. These events are 
+ provided so that users can write a single set of event handlers for applications that run on both mobile and 
+ desktop platforms. They are needed because desktop and mobile platforms handle basic gestures differently.
+ For example, desktop platforms provide mouse events while mobile platforms support touch events and a limited 
+ set of mouse events for backward compatibility.
+ 
+ The following events are available:
 
-//* @public
+ * "down" - generated when the pointer is pressed down.
+ * "up" - generated when the pointer is released up.
+ * "tap" - genereted when the pointer is pressed down and released up. The target is the lowest dom element that received both 
+ the related down and up events.
+ * "move" - generated when the pointer moves.
+ * "enter" - generated when the pointer enters a dom node.
+ * "leave" - generated when the pointer leaves a dom node.
+ * "hold" - generated when the pointer is held down without moving for a short period (about 200ms).
+ * "release" - generated when the pointer is released after being held down. The target is the same as the hold event.
+ * "holdpulse" - generated when the pointer is held down without moving for a short period and periodically thereafter about every 200ms.
+ Use this event to trigger an action after an arbitrary period of time. The holdTime property provides the elapsed time.
+ * "flick" - generated when the user flicks the pointer quickly. This event provides flick velocity data: xVelocity is the velocity in the horizontal and
+ yVelocity is the vertical velocity.
+
+ These events are synthesized from the available dom events and contain these common properties, when available: "target", 
+ relatedTarget", "clientX", "clientY", "pageX", "pageY", "screenX", "screenY", "altKey", "ctrlKey", "metaKey", "shiftKey",
+"detail", "identifier."
+
+ Please note that enyo's gesture events are generated on enyo controls, not dom elements.
+
+ */
 enyo.gesture = {
 	//* @protected
 	holdPulseDelay: 200,
