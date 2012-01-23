@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # the folder this script is in (*/enyo/tools)
-TOOLS=$(dirname `realpath $0`)
+TOOLS=$(dirname `readlink -f $0`)
 # enyo location
 ENYO=$TOOLS/..
 # minify script location
