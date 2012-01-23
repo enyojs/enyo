@@ -2,9 +2,9 @@ enyo.kind({
 	name: "enyo.Control",
 	kind: enyo.UiComponent,
 	events: {
-		onmousedown: "",
-		onmouseup: "",
-		onclick: ""
+		ondown: "",
+		onup: "",
+		ontap: ""
 	},
 	published: {
 		tag: "div",
@@ -48,7 +48,7 @@ enyo.kind({
 		// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
 		this.addClass(this.kindClasses);
 		this.addClass(this.classes);
-		this.initProps(["id", "content", "src", "disabled"]);
+		this.initProps(["id", "content", "src"]);
 	},
 	destroy: function() {
 		this.removeNodeFromDom();
