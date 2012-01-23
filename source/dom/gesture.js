@@ -22,7 +22,7 @@ enyo.gesture = {
 		var e = this.makeEvent("down", inEvent);
 		enyo.dispatch(e);
 		this.startTracking(e);
-		this.downTarget = e.target;
+		this.target = e.target;
 		this.dispatchTarget = e.dispatchTarget;
 		this.beginHold(e);
 	},
@@ -110,8 +110,7 @@ enyo.gesture = {
 	},
 	sendTap: function(inEvent) {
 		// The common ancestor for the down/up pair is the origin for the tap event
-		var p = this.findCommonAncestor(this.dispatchTarget, inEvent.dispatchTarget);
-		var t = p && p.hasNode();
+		var t = this.findCommonAncestor(this.target, inEvent.target);
 		if (t) {
 			var e = this.makeEvent("tap", inEvent);
 			e.target = t;
@@ -121,10 +120,19 @@ enyo.gesture = {
 	findCommonAncestor: function(inA, inB) {
 		var p = inB;
 		while (p) {
-			if (inA.isDescendantOf(p)) {
+			if (this.isTargetDescendantOf(inA, p)) {
 				return p;
 			}
-			p = p.parent;
+			p = p.parentNode;
+		}
+	},
+	isTargetDescendantOf: function(inChild, inParent) {
+		var c = inChild;
+		while(c) {
+			if (c == inParent) {
+				return true;
+			}
+			c = c.parentNode;
 		}
 	},
 	sendFlick: function(inEvent) {
@@ -132,7 +140,7 @@ enyo.gesture = {
 		e.xVelocity = this.trackInfo.vx;
 		e.yVelocity = this.trackInfo.vy;
 		e.velocity = this.trackInfo.v;
-		e.target = this.downTarget;
+		e.target = this.target;
 		enyo.dispatch(e);
 	}
 };
