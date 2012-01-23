@@ -7,5 +7,6 @@
 	"Object.js",
 	"Component.js",
 	"UiComponent.js",
+	"Layout.js",
 	"Signals.js"
 );

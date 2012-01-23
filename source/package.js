@@ -3,6 +3,5 @@
 	"ajax",
 	"dom",
 	"scroll",
-	"platform",
-	"layout"
+	"platform"
 );
