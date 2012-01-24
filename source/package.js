@@ -2,6 +2,5 @@
 	"kernel",
 	"ajax",
 	"dom",
-	"scroll",
-	"platform"
+	"touch"
 );
