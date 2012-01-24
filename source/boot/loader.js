@@ -16,7 +16,6 @@
 		},
 		includeTrailingSlash: function(inPath) {
 			return (inPath.slice(-1) !== "/") ? inPath + "/" : inPath;
-			//return inPath && (inPath.slice(-1) !== "/") ? inPath + "/" : inPath;
 		},
 		// match $name
 		rewritePattern: /\$([^\/\\]*)(\/)?/g,
@@ -72,10 +71,6 @@
 				depends: arguments || []
 			});
 		},
-		finish: function() {
-			this.packageFolder = "";
-			this.verbose && console.log("-------------- fini");
-		},
 		more: function(inBlock) {
 			// a 'block' is a dependency list with a bookmark
 			// the bookmark (index) allows us to interrupt 
@@ -103,6 +98,10 @@
 			} else {
 				this.finish();
 			}
+		},
+		finish: function() {
+			this.packageFolder = "";
+			this.verbose && console.log("-------------- fini");
 		},
 		continueBlock: function(inBlock) {
 			while (inBlock.index < inBlock.depends.length) {
