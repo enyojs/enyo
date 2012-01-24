@@ -12,7 +12,9 @@ Packages should go in a folder named _lib_ (e.g. the _extra_ or _canvas_ reposit
 
 The Api Viewer application parses and renders documentation in real-time from the Enyo source. Run the application by loading _tools/api/index.html_. 
 
-_Note_: in Chrome, the Api Viewer will not work from file:// because of Chrome's security policy. Run from a local http server, use the --allow-file-access-from-files in Chrome, or use the online version at http://enyojs.com/api.
+## Warning about file://
+
+_Note_: in Chrome, various samples will not work from file:// because of Chrome's security policy. Run from a local http server, use the --allow-file-access-from-files in Chrome, or use the online versions at http://enyojs.com.
 
 # What Is Enyo
 
@@ -134,5 +136,3 @@ Enyo contains a constructor/prototype-generator that we call enyo.kind. Construc
 The code above creates a new kind called "Hello" derived from enyo.Control. It contains some components and some behavior. I can create as many "Hello" objects as I want, each instance is independent, and the user of a "Hello" doesn't need to know anything about it's internals.
 
 This ability to define encapsulated objects and behavior (Components) and to re-use those encapsulations as prototypes (kinds) is money.
-
-See [blah resources blah] for more information.
