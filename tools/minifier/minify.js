@@ -1,6 +1,6 @@
 var
-	walker = require("walker"),
 	fs = require("fs"),
+	walker = require("walker"),
 	jsp = require("uglify-js").parser,
 	pro = require("uglify-js").uglify
 	;
@@ -32,18 +32,6 @@ buildPathBlock = function(loader) {
 	return !p ? "" : "\n// minifier: path aliases\n\nenyo.path.addPaths({" + p + "});\n";
 };
 
-compress = function(inCode) {
-	var ast = jsp.parse(inCode); // parse code and get the initial AST
-	ast = pro.ast_mangle(ast); // get a new AST with mangled names
-	ast = pro.ast_squeeze(ast); // get an AST with compression optimizations
-	return pro.gen_code(ast, {indent_level:0, beautify: !opt.aggro, ascii_only:true}); // compressed code here
-};
-
-compressJsFile = function(inPath) {
-	var code = fs.readFileSync(inPath, "utf8");
-	return compress(code);
-};
-
 concatCss = function(loader) {
 	w("");
 	var blob = "";
@@ -51,14 +39,6 @@ concatCss = function(loader) {
 		w(s);
 		var code = fs.readFileSync(s, "utf8");
 		blob += "\n/* " + s + " */\n\n" + code + "\n";
-	}
-	return blob;
-};
-
-concatJs = function(loader) {
-	w("");
-	var blob = "";
-	for (var i=0, m; m=loader.modules[i]; i++) {
 	}
 	return blob;
 };
@@ -80,6 +60,18 @@ concatJs = function(loader) {
 		}
 	}
 	return blob;
+};
+
+compress = function(inCode) {
+	var ast = jsp.parse(inCode); // parse code and get the initial AST
+	ast = pro.ast_mangle(ast); // get a new AST with mangled names
+	ast = pro.ast_squeeze(ast); // get an AST with compression optimizations
+	return pro.gen_code(ast, {indent_level:0, beautify: !opt.aggro, ascii_only:true}); // compressed code here
+};
+
+compressJsFile = function(inPath) {
+	var code = fs.readFileSync(inPath, "utf8");
+	return compress(code);
 };
 
 finish = function(loader) {
@@ -112,6 +104,7 @@ finish = function(loader) {
 };
 
 w = console.log;
+
 opt = options(process.argv);
 w("");
 
