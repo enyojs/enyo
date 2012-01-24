@@ -27,24 +27,24 @@ enyo.kind({
 		mousewheel: "mousewheelHandler",
 		touchmove: "touchmoveHandler"
 	},
+	classes: "enyo-touch-scroller",
 	components: [
 		{name: "scroll", kind: "ScrollMath"},
-		{name: "client", classes: "enyo-fit enyo-touch-scroller"}
+		{name: "client", classes: "enyo-fit enyo-touch-scroller", attributes: {"onscroll": enyo.bubbler}}
 	],
-	create: function() {
-		this.inherited(arguments);
-		this.addClass("enyo-touch-scroller");
-	},
 	horizontalChanged: function() {
 		this.$.scroll.horizontal = this.horizontal;
 	},
 	verticalChanged: function() {
 		this.$.scroll.vertical = this.vertical;
 	},
+	calcScrollNode: function() {
+		return this.$.client.hasNode();
+	},
 	calcAutoScrolling: function() {
 		var v = this.vertical == "auto";
 		var h = this.horizontal == "auto";
-		if ((v || h) && this.hasNode()) {
+		if ((v || h) && this.scrollNode) {
 			var b = this.getBounds();
 			if (v) {
 				this.$.scroll.vertical = this.node.scrollHeight > b.height;
@@ -106,11 +106,10 @@ enyo.kind({
 		}
 	},
 	scrollStart: function(inSender) {
-		var n = this.$.client.hasNode();
-		if (n) {
+		if (this.scrollNode) {
 			var b = this.$.client.getBounds();
-			inSender.bottomBoundary = b.height - n.scrollHeight;
-			inSender.rightBoundary = b.width - n.scrollWidth;
+			inSender.bottomBoundary = b.height - this.scrollNode.scrollHeight;
+			inSender.rightBoundary = b.width - this.scrollNode.scrollWidth;
 			this.doScrollStart(inSender);
 		}
 	},
@@ -119,26 +118,36 @@ enyo.kind({
 		this.doScroll(inSender);
 	},
 	scrollStop: function(inSender) {
+		this.effectOverscroll(null, null);
 		this.doScrollStop(inSender);
 	},
+	setScrollLeft: function() {
+		this.inherited(arguments);
+		var s = this.$.scroll;
+		s.x = s.x0 = -this.getScrollLeft();
+	},
+	setScrollTop: function() {
+		this.inherited(arguments);
+		var s = this.$.scroll;
+		s.y = s.y0 = -this.getScrollTop();;
+	},
 	effectScroll: function(inX, inY) {
-		var n = this.$.client.hasNode();
-		if (n) {
-			n.scrollLeft = inX;
-			n.scrollTop = inY;
+		if (this.scrollNode) {
+			this.scrollNode.scrollLeft = inX;
+			this.scrollNode.scrollTop = inY;
 			this.effectOverscroll(inX, inY);
 		}
 	},
 	effectOverscroll: function(inX, inY) {
-		var n = this.$.client.node;
+		var n = this.scrollNode;
 		var o = "";
-		if (inY != n.scrollTop) {
+		if (inY != n.scrollTop && inY !== null) {
 			o += " translateY(" + (n.scrollTop - inY) + "px)";
 		}
-		if (inX != n.scrollLeft) {
+		if (inX != n.scrollLeft && inX !== null) {
 			o += " translateX(" + (n.scrollLeft - inX) + "px)";
 		}
-		if (o) {
+		if (n) {
 			var s = n.style;
 			s.webkitTransform = s.MozTransform = s.msTransform = s.transform = o;
 		}

@@ -1,10 +1,5 @@
 .enyo-scroller {
-	/*position: relative;*/
 	overflow: hidden;
-}
-
-.enyo-default-scroller {
-	-webkit-overflow-scrolling: touch;
 }
 
 .enyo-touch-scroller {

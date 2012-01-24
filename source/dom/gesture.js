@@ -33,6 +33,7 @@ enyo.gesture = {
 	//* @protected
 	holdPulseDelay: 200,
 	minFlick: 0.1,
+	minTrack: 8,
 	eventProps: ["target", "relatedTarget", "clientX", "clientY", "pageX", "pageY", "screenX", "screenY", "altKey", "ctrlKey", "metaKey", "shiftKey",
 		"detail", "identifier", "dispatchTarget"],
 	makeEvent: function(inType, inEvent) {
@@ -82,7 +83,8 @@ enyo.gesture = {
 		var s = ti.last;
 		if (s) {
 			// setting max hz to 120 helps avoid spaz data
-			var dt = ti.dt = Math.max(8, new Date().getTime() - s.time);
+			ti.time = new Date().getTime();
+			var dt = ti.dt = Math.max(this.minTrack, ti.time - s.time);
 			var x = ti.vx = (inEvent.pageX - s.x) / dt;
 			var y = ti.vy = (inEvent.pageY - s.y) / dt;
 			var v = ti.v = Math.sqrt(x*x + y*y);
@@ -91,7 +93,7 @@ enyo.gesture = {
 		ti.last = {x: inEvent.pageX, y: inEvent.pageY, time: new Date().getTime()};
 	},
 	endTracking: function(e) {
-		if (this.flickable && this.trackInfo) {
+		if (this.flickable && this.trackInfo && (new Date().getTime() - this.trackInfo.time < this.minTrack)) {
 			this.sendFlick(e);
 		}
 		this.trackInfo = null;

@@ -15,12 +15,23 @@ enyo.kind({
 	handlers: {
 		scroll: "scrollHandler"
 	},
+	classes: "enyo-scroller",
 	create: function() {
 		this.inherited(arguments);
-		this.addClass("enyo-scroller");
 		this.horizontalChanged();
 		this.verticalChanged();
 		this.setAttribute("onscroll", enyo.bubbler);
+	},
+	rendered: function() {
+		this.inherited(arguments);
+		this.scrollNode = this.calcScrollNode();
+	},
+	teardownRender: function() {
+		this.inherited(arguments);
+		this.scrollNode = null;
+	},
+	calcScrollNode: function() {
+		return this.hasNode();
 	},
 	horizontalChanged: function() {
 		this.applyStyle("overflow-x", this.horizontal ? "auto" : "hidden");
@@ -29,10 +40,15 @@ enyo.kind({
 		this.applyStyle("overflow-y", this.vertical ? "auto" : "hidden");
 	},
 	scrollHandler: function(inSender, e) {
+		// keep these properties up to date
+		if (this.scrollNode) {
+			this.scrollTop = this.scrollNode.scrollTop; 
+			this.scrollLeft = this.scrollNode.scrollLeft; 
+		}
 		return this.doScroll(e);
 	},
 	scrollTo: function(inX, inY) {
-		if (this.hasNode()) {
+		if (this.scrollNode) {
 			this.setScrollLeft(inX);
 			this.setScrollTop(inY);
 		}
@@ -42,20 +58,22 @@ enyo.kind({
 			inControl.node.scrollIntoView(inAlignWithTop);
 		}
 	},
-	scrollTopChanged: function() {
-		if (this.hasNode()) {
-			this.node.scrollTop = this.scrollTop;
+	setScrollTop: function(inTop) {
+		this.scrollTop = inTop;
+		if (this.scrollNode) {
+			this.scrollNode.scrollTop = this.scrollTop;
 		}
 	},
-	scrollLeftChanged: function() {
-		if (this.hasNode()) {
-			this.node.scrollLeft = this.scrollLeft;
+	setScrollLeft: function(inLeft) {
+		this.scrollLeft = inLeft;
+		if (this.scrollNode) {
+			this.scrollNode.scrollLeft = this.scrollLeft;
 		}
 	},
 	getScrollLeft: function() {
-		return this.hasNode() ? this.node.scrollLeft : this.scrollLeft;
+		return this.scrollNode ? this.scrollNode.scrollLeft : this.scrollLeft;
 	},
 	getScrollTop: function() {
-		return this.hasNode() ? this.node.scrollTop : this.scrollTop;
+		return this.scrollNode ? this.scrollNode.scrollTop : this.scrollTop;
 	}
 });

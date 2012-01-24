@@ -21,11 +21,11 @@ enyo.kind({
 		/**
 			Sets the vertical scroll position.
 		*/
-		scrollTop: 0,
+		scrollTop: null,
 		/**
 			Sets the horizontal scroll position.
 		*/
-		scrollLeft: 0,
+		scrollLeft: null,
 		/**
 			Specify a type of scrolling. The enyo Scroller will attempt to automatically select 
 			a strategy compatbile with the runtime environment. A specific strategy can also be chosen:
@@ -134,11 +134,15 @@ enyo.kind({
 	verticalChanged: function() {
 		this.$.strategy.setVertical(this.vertical);
 	},
-	scrollLeftChanged: function() {
+	// FIXME: these properties are virtual; property changed methods are fired only if 
+	// property value changes, not if getter changes.
+	setScrollLeft: function(inLeft) {
+		this.scrollLeft = inLeft;
 		this.$.strategy.setScrollLeft(this.scrollLeft);
 	},
-	scrollTopChanged: function() {
-		this.$.strategy.setScrollTop(this.scrollTop);
+	setScrollTop: function(inTop) {
+		this.scrollTop = inTop;
+		this.$.strategy.setScrollTop(inTop);
 	},
 	getScrollLeft: function() {
 		return this.$.strategy.getScrollLeft();
