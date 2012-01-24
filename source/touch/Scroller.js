@@ -21,11 +21,11 @@ enyo.kind({
 		/**
 			Sets the vertical scroll position.
 		*/
-		scrollTop: null,
+		scrollTop: 0,
 		/**
 			Sets the horizontal scroll position.
 		*/
-		scrollLeft: null,
+		scrollLeft: 0,
 		/**
 			Specify a type of scrolling. The enyo Scroller will attempt to automatically select 
 			a strategy compatbile with the runtime environment. A specific strategy can also be chosen:
