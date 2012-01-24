@@ -110,7 +110,7 @@
 		// 200 is returned if the file exists, 0 otherwise.  So we workaround this by treating 0 differently if
 		// the app running inside webos and the url is not http.
 		//return ((!window.PalmSystem || this.isHttpUrl()) && !inStatus) || (inStatus >= 200 && inStatus < 300);
-		return (inXhr.status < 200 || inXhr.status >= 300);
+		return (inXhr.status !== 0) && (inXhr.status < 200 || inXhr.status >= 300);
 	},
 	xmlHandler: function(inXhr) {
 		return inXhr.responseXML;
