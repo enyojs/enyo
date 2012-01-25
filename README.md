@@ -60,7 +60,7 @@ This is all part of our strategy to allow developers to focus on creativity and 
 
 # That's a Lot of Talk
 
-The Enyo design was to some degree vindicated by the complex applications HP developed for the TouchPad platform. We don't claim this was particularly easy, there were a lot of hardworking developers on the apps teams, but at least we are confident the Enyo principles are effective on a large scale.
+The core Enyo design was proven out by the complex applications HP developed for the TouchPad platform. We don't claim this was particularly easy, there were a lot of hardworking developers on the apps teams, but we are confident the Enyo principles are effective on a large scale.
 
 In any case, roll your sleeves up and try it for yourself.
 
