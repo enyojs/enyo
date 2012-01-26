@@ -16,8 +16,34 @@ enyo.kind({
 		});
 		var obj = new AClass();
 		var err = (typeof AClass !== 'function');
-		this.finish(err)
+		this.finish(err);
+	},
+	testisString: function() {
+
+		// Create alternate window context to write vars from
+		var iframe = document.createElement("iframe"),
+		iframeDoc, err;
+
+		document.body.appendChild(iframe);
+		iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+		iframeDoc.write("<script>parent.iString = new String('hello');</script>");
+		iframeDoc.close();
+
+		if (!enyo.isString("string")) {
+			err = "enyo.isString() cannot determine strings correctly";
+		}
+		// This will fail:
+		//  - instanceof from another context
+		//  - typeof (b/c it is a string instance)
+		// https://github.com/enyojs/enyo/issues/2
+		if (!enyo.isString(iString)) {
+			err = "enyo.isString() cannot determine strings written from other window contexts correctly";
+		}
+
+		document.body.removeChild(iframe);
+		this.finish(err);
 	}
+
 /*
 test("class-fn", function() {
 	ok = false;

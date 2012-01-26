@@ -16,7 +16,7 @@
 		Sets object _name_ to _value_. _name_ can use dot notation and intermediate objects are created as necessary.
 
 			// set foo.bar.baz to 3. If foo or foo.bar do not exist, they are created.
-			enyo.setObject("foo.bar.baz", 3); 
+			enyo.setObject("foo.bar.baz", 3);
 
 		Optionally, _name_ can be relative to object _context_.
 
@@ -34,19 +34,19 @@
 			// get the value of foo.bar, or undefined if foo doesn't exist.
  			var value = enyo.getObject("foo.bar");
 
-			// get the value of foo.bar. If foo.bar doesn't exist, 
+			// get the value of foo.bar. If foo.bar doesn't exist,
 			// it's assigned an empty object, which is returned
 			var value = enyo.getObject("foo.bar", true);
 
 		Optionally, _name_ can be relative to object _context_.
 
 			// get the value of foo.zot.zap, or undefined if foo.zot doesn't exist
-			var value = enyo.getObject("zot.zap", false, foo); 
+			var value = enyo.getObject("zot.zap", false, foo);
 	*/
 	enyo.getObject = function(name, create, context) {
 		return enyo._getProp(name.split("."), create, context);
 	};
-	
+
 	//* Returns a random Integer between 0 and inBound (0 <= results < inBound).
 	//
 	//		var randomLetter = String.fromCharCode(enyo.irand(26) + 97);
@@ -74,25 +74,27 @@
 		return template.replace(pattern, replacer);
 	};
 
+	var toString = Object.prototype.toString;
+
 	//* Returns true if _it_ is a string.
 	enyo.isString = function(it) {
-		return (typeof it == "string" || it instanceof String);
+		return toString.call(it) === "[object String]";
 	};
-	
+
 	//* Returns true if _it_ is a function.
 	enyo.isFunction = function(it) {
-		return typeof it == "function";
+		return toString.call(it) === "[object Function]";
 	};
-	
+
 	//* Returns true if _it_ is an array.
 	enyo.isArray = function(it) {
-		return Object.prototype.toString.apply(it) === '[object Array]';
+		return toString.call(it) === "[object Array]";
 	};
 
 	if (Array.isArray) {
 		enyo.isArray = Array.isArray;
 	}
-	
+
 	//* Returns the index of the element in _inArray_ that is equivalent (==) to _inElement_, or -1 if no element is found.
 	enyo.indexOf = function(inElement, inArray) {
 		for (var i=0, l=inArray.length, e; (e=inArray[i]) || (i<l); i++) {
@@ -135,13 +137,13 @@
 
 	/**
 		Clones an existing Array, or converts an array-like object into an Array.
-		
+
 		If _inOffset_ is non-zero, the cloning is started from that index in the source Array.
 		The clone may be appended to an existing Array by passing the existing Array as _inStartWith_.
 
 		Array-like objects have _length_ properties, and support square-bracket notation ([]).
 		Often array-like objects do not support Array methods, such as _push_ or _concat_, and
-		must be converted to Arrays before use. 
+		must be converted to Arrays before use.
 		The special _arguments_ variable is an example of an array-like object.
 	*/
 	enyo.cloneArray = function(inArrayLike, inOffset, inStartWith) {
@@ -184,7 +186,7 @@
 				}
 			}
 		}
-		return target; 
+		return target;
 	};
 
 	//* @protected
@@ -198,17 +200,17 @@
 			var fn = named ? (scope||enyo.global)[method] : method;
 			// invoke with collected args
 			return fn && fn.apply(scope || this, pre.concat(args));
-		} 
+		}
 	};
 
 	//* @public
 	/**
 		Returns a function closure that will call (and return the value of) function _method_, with _scope_ as _this_.
-		
+
 		Method can be a function or the string name of a function-valued property on _scope_.
 
 		Arguments to the closure are passed into the bound function.
-		
+
 			// a function that binds this to this.foo
 			var fn = enyo.bind(this, "foo");
 			// the value of this.foo(3)
@@ -249,10 +251,10 @@
 
 	/**
 		Calls method _inMethod_ on _inScope_ asynchronously.
-		
-		Uses _window.setTimeout_ with minimum delay, usually 
+
+		Uses _window.setTimeout_ with minimum delay, usually
 		around 10ms.
-	
+
 		Additional arguments are passed to _inMethod_ when
 		it is invoked.
 	*/
@@ -279,8 +281,8 @@
 
 	enyo.nop = function(){};
 	enyo.nob = {};
-	
-	// this name is reported in inspectors as the type of objects created via delegate, 
+
+	// this name is reported in inspectors as the type of objects created via delegate,
 	// otherwise we would just use enyo.nop
 	enyo.instance = function() {};
 
