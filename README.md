@@ -40,15 +40,7 @@ First is our emphasis on cross-platform: Enyo core works on both desktop and mob
 
 Second is Enyo's building block approach to applications. Each piece of an application is a Component, and Components are constructed out of other Components.
 
-For example, it's easy to define a combination of an 
-
-	<input> 
-
-tag with a 
-
-	<label>
-
-tag into one _LabeledInput_ Component. 
+For example, it's easy to define a combination of an `<input>` tag with a `<label>` tag into one _LabeledInput_ Component. 
 
 Now I can use (and re-use) LabeledInput as one atomic piece. 
 
