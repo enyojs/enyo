@@ -120,7 +120,7 @@ Enyo contains a constructor/prototype-generator that we call enyo.kind. Construc
 		helloTap: function() {
 			this.$.hello.addStyles("color: red");
 		}
-	};
+	});
 	// make two, they're small
 	new Hello().write();
 	new Hello().write();
