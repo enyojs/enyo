@@ -85,7 +85,7 @@ This example loads an enyo.js build from _enyojs/2.0/_. If you downloaded the SD
 
 The base enyo.Control works much like an HTML tag. You can assign _classes_ and _attributes_ and give it a _style_. E.g.
 
-	new enyo.Control({content: "Hello From Enyo", classes: "foo", style: "color: red", attributes: {tabIndex: 0}).write();
+	new enyo.Control({content: "Hello From Enyo", classes: "foo", style: "color: red", attributes: {tabIndex: 0}}).write();
 
 produces
 
