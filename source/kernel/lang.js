@@ -83,12 +83,12 @@
 
 	//* Returns true if _it_ is a function.
 	enyo.isFunction = function(it) {
-		return typeof it == "function";
+		return toString.call(it) === "[object Function]";
 	};
 
 	//* Returns true if _it_ is an array.
 	enyo.isArray = function(it) {
-		return toString.call(it) === '[object Array]';
+		return toString.call(it) === "[object Array]";
 	};
 
 	if (Array.isArray) {
