@@ -151,7 +151,7 @@ enyo.kind({
 		return this.$.strategy.getScrollTop();
 	},
 	scrollIntoView: function(inControl, inAlignWithTop) {
-		this.$.strategy.scrollIntoView(inX, inY, inToTop);
+		this.$.strategy.scrollIntoView(inControl, inAlignWithTop);
 	},
 	scrollTo: function(inX, inY) {
 		this.$.strategy.scrollTo(inX, inY);
