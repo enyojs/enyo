@@ -40,11 +40,6 @@ enyo.kind({
 		this.applyStyle("overflow-y", this.vertical ? "auto" : "hidden");
 	},
 	scrollHandler: function(inSender, e) {
-		// keep these properties up to date
-		if (this.scrollNode) {
-			this.scrollTop = this.scrollNode.scrollTop; 
-			this.scrollLeft = this.scrollNode.scrollLeft; 
-		}
 		return this.doScroll(e);
 	},
 	scrollTo: function(inX, inY) {
