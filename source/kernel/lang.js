@@ -265,7 +265,7 @@
 	/**
 		Calls named method _inMethod_ (String) on _inObject_ with optional arguments _inArguments_ (Array), if the object and method exist.
 
-			enyo.call(window.Worker, "doWork", [3, "foo"]);
+			enyo.call(myWorkObject, "doWork", [3, "foo"]);
 	*/
 	enyo.call = function(inObject, inMethod, inArguments) {
 		var context = inObject || this;
