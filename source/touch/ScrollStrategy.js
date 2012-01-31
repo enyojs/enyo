@@ -70,5 +70,14 @@ enyo.kind({
 	},
 	getScrollTop: function() {
 		return this.scrollNode ? this.scrollNode.scrollTop : this.scrollTop;
+	},
+	getScrollBounds: function() {
+		var n = this.scrollNode;
+		return {
+			left: this.getScrollLeft(),
+			top: this.getScrollTop(),
+			height: n ? n.scrollHeight : 0,
+			width: n ? n.scrollWidth : 0
+		}
 	}
 });

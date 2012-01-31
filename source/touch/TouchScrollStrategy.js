@@ -145,15 +145,22 @@ enyo.kind({
 	effectOverscroll: function(inX, inY) {
 		var n = this.scrollNode;
 		var o = "";
-		if (inY !== null && inY - n.scrollTop > 1) {
+		if (inY !== null && Math.abs(inY - n.scrollTop) > 1) {
 			o += " translateY(" + (n.scrollTop - inY) + "px)";
 		}
-		if (inX !== null && inX - n.scrollLeft > 1) {
+		if (inX !== null && Math.abs(inX - n.scrollLeft) > 1) {
 			o += " translateX(" + (n.scrollLeft - inX) + "px)";
 		}
 		if (n) {
 			var s = n.style;
 			s.webkitTransform = s.MozTransform = s.msTransform = s.transform = o;
 		}
+	},
+	getScrollBounds: function() {
+		var r = this.inherited(arguments);
+		var m = this.$.scroll;
+		r.overleft = -Math.floor(this.getScrollLeft() + m.x);
+		r.overtop = -Math.floor(this.getScrollTop() + m.y);
+		return r;
 	}
 });

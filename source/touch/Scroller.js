@@ -150,6 +150,9 @@ enyo.kind({
 	getScrollTop: function() {
 		return this.$.strategy.getScrollTop();
 	},
+	getScrollBounds: function() {
+		return this.$.strategy.getScrollBounds();
+	},
 	scrollIntoView: function(inControl, inAlignWithTop) {
 		this.$.strategy.scrollIntoView(inControl, inAlignWithTop);
 	},
