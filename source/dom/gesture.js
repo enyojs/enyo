@@ -34,6 +34,7 @@ enyo.gesture = {
 	holdPulseDelay: 200,
 	minFlick: 0.1,
 	minTrack: 8,
+	maxTrack: 32,
 	eventProps: ["target", "relatedTarget", "clientX", "clientY", "pageX", "pageY", "screenX", "screenY", "altKey", "ctrlKey", "metaKey", "shiftKey",
 		"detail", "identifier", "dispatchTarget"],
 	makeEvent: function(inType, inEvent) {
@@ -93,7 +94,7 @@ enyo.gesture = {
 		ti.last = {x: inEvent.pageX, y: inEvent.pageY, time: new Date().getTime()};
 	},
 	endTracking: function(e) {
-		if (this.flickable && this.trackInfo && (new Date().getTime() - this.trackInfo.time < this.minTrack)) {
+		if (this.flickable && this.trackInfo && (new Date().getTime() - this.trackInfo.time < this.maxTrack)) {
 			this.sendFlick(e);
 		}
 		this.trackInfo = null;
