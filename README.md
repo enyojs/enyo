@@ -125,6 +125,6 @@ Enyo contains a constructor/prototype-generator that we call enyo.kind. Construc
 	new Hello().write();
 	new Hello().write();
 
-The code above creates a new kind called "Hello" derived from enyo.Control. It contains some components and some behavior. I can create as many "Hello" objects as I want, each instance is independent, and the user of a "Hello" doesn't need to know anything about it's internals.
+The code above creates a new kind called "Hello" derived from enyo.Control. It contains some components and some behavior. I can create as many "Hello" objects as I want, each instance is independent, and the user of a "Hello" doesn't need to know anything about its internals.
 
 This ability to define encapsulated objects and behavior (Components) and to re-use those encapsulations as prototypes (kinds) is money.
