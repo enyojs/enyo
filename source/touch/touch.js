@@ -16,6 +16,8 @@ enyo.requiresWindow(function() {
 			this.excludedTarget = null;
 			var e = this.makeEvent(inEvent);
 			gesture.down(e);
+			// generate a new event obect since over is a different event
+			e = this.makeEvent(inEvent);
 			this.overEvent = e;
 			gesture.over(e);
 		},
@@ -47,7 +49,7 @@ enyo.requiresWindow(function() {
 		},
 		makeEvent: function(inEvent) {
 			var e = enyo.clone(inEvent.changedTouches[0]);
-			e.target = this.findTarget(null, e.pageX, e.pageY);
+			e.target = this.findTarget(e.pageX, e.pageY);
 			//console.log("target for " + inEvent.type + " at " + e.pageX + ", " + e.pageY + " is " + (e.target ? e.target.id : "none"));
 			return e;
 		},
@@ -62,9 +64,16 @@ enyo.requiresWindow(function() {
 				}
 			}
 		},
+		findTarget: function(inX, inY) {
+			if (document.elementFromPoint) {
+				return document.elementFromPoint(inX, inY);
+			} else {
+				return this.findTargetTraverse(null, inX, inY);	
+			}
+		},
 		// NOTE: will find only 1 element under the touch and 
 		// will fail if an element is positioned outside the bounding box of its parent
-		findTarget: function(inNode, inX, inY) {
+		findTargetTraverse: function(inNode, inX, inY) {
 			var n = inNode || document.body;
 			var o = this.calcNodeOffset(n);
 			if (o && n != this.excludedTarget) {
@@ -75,7 +84,7 @@ enyo.requiresWindow(function() {
 					//console.log("IN: " + n.id + " -> [" + x + "," + y + " in " + o.width + "x" + o.height + "] (children: " + n.childNodes.length + ")");
 					var target;
 					for (var n$=n.childNodes, i=n$.length-1, c; c=n$[i]; i--) {
-						target = this.findTarget(c, inX, inY);
+						target = this.findTargetTraverse(c, inX, inY);
 						if (target) {
 							return target;
 						}
