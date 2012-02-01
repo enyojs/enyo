@@ -13,7 +13,7 @@ enyo.kind({
 		/**
 			Set to false to prevent horizontal scrolling.
 		*/
-		horizontal: true,
+		horizontal: "auto",
 		/**
 			Set to false to prevent vertical scrolling.
 		*/
@@ -48,7 +48,7 @@ enyo.kind({
 			{os: "Android", version: 3},
 			{os: "iPhone", version: 5},
 			{os: "iPad", version: 5},
-			{os: "webos", version: 1e9}
+			{os: "hpwOS", version: 1e9}
 		],
 		calcOsVersion: function(inTest, inOs) {
 			var m = inTest.match(new RegExp(inOs + ".*?([0-9])", "i"));
