@@ -177,9 +177,7 @@
 			var name, s, i;
 			for (name in source) {
 				// the "empty" conditional avoids copying properties in "source"
-				// inherited from Object.prototype.  For example, if target has a custom
-				// toString() method, don't overwrite it with the toString() method
-				// that source inherited from Object.prototype
+				// inherited from Object.prototype.
 				s = source[name];
 				if (empty[name] !== s) {
 					target[name] = s;
