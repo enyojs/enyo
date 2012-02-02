@@ -34,7 +34,6 @@ enyo.gesture = {
 	holdPulseDelay: 200,
 	minFlick: 0.1,
 	minTrack: 8,
-	maxTrack: 32,
 	eventProps: ["target", "relatedTarget", "clientX", "clientY", "pageX", "pageY", "screenX", "screenY", "altKey", "ctrlKey", "metaKey", "shiftKey",
 		"detail", "identifier", "dispatchTarget"],
 	makeEvent: function(inType, inEvent) {
@@ -75,27 +74,32 @@ enyo.gesture = {
 	},
 	startTracking: function(e) {
 		this.trackInfo = {};
-		this.flickable = false;
 		this.track(e);
 	},
 	track: function(inEvent) {
-		//this.flickable = false;
 		var ti = this.trackInfo;
-		var s = ti.last;
-		if (s) {
-			// setting max hz to 120 helps avoid spaz data
-			ti.time = new Date().getTime();
-			var dt = ti.dt = Math.max(this.minTrack, ti.time - s.time);
-			var x = ti.vx = (inEvent.pageX - s.x) / dt;
-			var y = ti.vy = (inEvent.pageY - s.y) / dt;
-			var v = ti.v = Math.sqrt(x*x + y*y);
-			this.flickable = v > this.minFlick;
+		if (ti.d1) {
+			ti.d0 = ti.d1;
 		}
-		ti.last = {x: inEvent.pageX, y: inEvent.pageY, time: new Date().getTime()};
+		ti.d1 = {
+			x: inEvent.pageX, 
+			y: inEvent.pageY, 
+			t: new Date().getTime()
+		};
 	},
 	endTracking: function(e) {
-		if (this.flickable && this.trackInfo && (new Date().getTime() - this.trackInfo.time < this.maxTrack)) {
-			this.sendFlick(e);
+		var ti = this.trackInfo;
+		if (ti && ti.d1 && ti.d0) {
+			var d1 = ti.d1, d0 = ti.d0;
+			// note: important to use up time to reduce flick 
+			// velocity based on time between move and up.
+			var dt = new Date().getTime() - d0.t;
+			var x = (d1.x - d0.x) / dt;
+			var y = (d1.y - d0.y) / dt;
+			var v = Math.sqrt(x*x + y*y);
+			if (v > this.minFlick) {
+				this.sendFlick(e, x, y, v);
+			}
 		}
 		this.trackInfo = null;
 	},
@@ -162,11 +166,11 @@ enyo.gesture = {
 			c = c.parentNode;
 		}
 	},
-	sendFlick: function(inEvent) {
+	sendFlick: function(inEvent, inX, inY, inV) {
 		var e = this.makeEvent("flick", inEvent);
-		e.xVelocity = this.trackInfo.vx;
-		e.yVelocity = this.trackInfo.vy;
-		e.velocity = this.trackInfo.v;
+		e.xVelocity = inX;
+		e.yVelocity = inY;
+		e.velocity = inV;
 		e.target = this.target;
 		enyo.dispatch(e);
 	}
