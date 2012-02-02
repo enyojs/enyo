@@ -22,6 +22,16 @@ options = function(args) {
 	return opts;
 };
 
+function printUsage() {
+	w("Enyo 2.0 Minifier");
+	w("Flags:")
+	w("-no-alias:", "Don't use path macros");
+	w("-alias ALIAS:", "Give paths a macroized alias");
+	w("-enyo ENYOPATH:", "Path to enyo loader (enyo/enyo.js)");
+	w("-output PATH/NAME:", "name of output file, prepend folder paths to change output directory");
+	w("-h, -?, -help:", "Show this message");
+}
+
 // make a relative path from source to target
 function makeRelPath(inSource, inTarget) {
 	// node 0.5 has this nice thing, 0.4 does not
@@ -150,6 +160,11 @@ w = console.log;
 
 opt = options(process.argv);
 w("");
+
+if (opt.help || opt.h || opt["?"]) {
+	printUsage();
+	process.exit();
+}
 
 walker.init(opt.enyo);
 walker.walk(opt.source, finish);
