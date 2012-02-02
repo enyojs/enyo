@@ -1,5 +1,6 @@
 var
 	fs = require("fs"),
+	path = require("path"),
 	walker = require("walker"),
 	jsp = require("uglify-js").parser,
 	pro = require("uglify-js").uglify
@@ -21,6 +22,31 @@ options = function(args) {
 	return opts;
 };
 
+// make a relative path from source to target
+function makeRelPath(inSource, inTarget) {
+	// node 0.5 has this nice thing, 0.4 does not
+	if (path.relative) {
+		return path.relative(inSource, inTarget);
+	}
+	var s,t;
+	s = pathSplit(path.resolve(inSource));
+	t = pathSplit(path.resolve(inTarget));
+	while (s.length && s[0] === t[0]){
+		s.shift();
+		t.shift();
+	}
+	for(var i = 0, l = s.length; i < l; i++) {
+		t.unshift("..");
+	}
+	return path.join.apply(null, t);
+}
+
+// properly split path based on platform
+function pathSplit(inPath) {
+	var sep = process.platform == "win32" ? "\\" : "/";
+	return inPath.split(sep);
+}
+
 buildPathBlock = function(loader) {
 	var p$ = [];
 	for (var i=0, p; p=loader.packages[i]; i++) {
@@ -38,6 +64,23 @@ concatCss = function(loader) {
 	for (var i=0, s; s=loader.sheets[i]; i++) {
 		w(s);
 		var code = fs.readFileSync(s, "utf8");
+		// fix url paths
+		code = code.replace(/url\([^)]*\)/g, function(inMatch) {
+			// find the url path, ignore quotes in url string
+			var urlPath = inMatch.replace(/["']/g, "").slice(4, -1);
+			// skip data urls
+			if (/^data:/.test(urlPath)) {
+				return "url(" + urlPath + ")";
+			}
+			// get absolute path to referenced asset
+			var normalizedUrlPath = path.join(s, "..", urlPath);
+			// Make relative asset path to built css
+			var relPath = makeRelPath(path.dirname(opt.output || "build"), normalizedUrlPath);
+			if (process.platform == "win32") {
+				relPath = pathSplit(relPath).join("/");
+			}
+			return "url(" + relPath + ")";
+		});
 		blob += "\n/* " + s + " */\n\n" + code + "\n";
 	}
 	return blob;
