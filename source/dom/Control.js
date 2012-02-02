@@ -79,15 +79,6 @@ enyo.kind({
 	initStyles: function() {
 		this.styleChanged();
 	},
-	/*
-	adjustComponentProps: function(inProps) {
-		this.inherited(arguments);
-		if (inProps.kind && !enyo.constructorForKind(inProps.kind)) {
-			inProps.tag = inProps.kind;
-			inProps.kind = enyo.Control;
-		}
-	},
-	*/
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
 		this.addClass(this.classes);
@@ -170,7 +161,10 @@ enyo.kind({
 	*/
 	setAttribute: function(inName, inValue) {
 		this.attributes[inName] = inValue;
-		this.attributesChanged();
+		if (this.hasNode()) {
+			this.attributeToNode(inName, inValue);
+		}
+		this.invalidateTags();
 	},
 	/**
 		Convenience function for setting the _class_ attribute. 
