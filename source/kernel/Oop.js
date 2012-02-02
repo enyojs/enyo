@@ -110,7 +110,7 @@ enyo.kind = function(inProps) {
 	delete inProps.isa;
 	// if we have an explicit kind property that is undefined, we probably tried
 	// to reference an kind that is not yet in scope
-	if ((kind === undefined) && ("kind" in inProps)) {
+	if (kind === undefined) {
 		throw "enyo.kind: Attempt to subclass an 'undefined' kind. Check dependencies for [" + name + "].";
 	}
 	// establish base class reference
