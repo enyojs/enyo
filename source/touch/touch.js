@@ -65,11 +65,7 @@ enyo.requiresWindow(function() {
 			}
 		},
 		findTarget: function(inX, inY) {
-			if (document.elementFromPoint) {
-				return document.elementFromPoint(inX, inY);
-			} else {
-				return this.findTargetTraverse(null, inX, inY);	
-			}
+			return document.elementFromPoint(inX, inY);
 		},
 		// NOTE: will find only 1 element under the touch and 
 		// will fail if an element is positioned outside the bounding box of its parent
@@ -100,6 +96,12 @@ enyo.requiresWindow(function() {
 			document.ongesturestart = enyo.dispatch;
 			document.ongesturechange = enyo.dispatch;
 			document.ongestureend = enyo.dispatch;
+			// use proper target finding technqiue based on feature detection.
+			if (!document.elementFromPoint) {
+				this.findTarget = function(inX, inY) {
+					return this.findTargetTraverse(null, inX, inY);
+				}
+			}
 		}
 	};
 	//
