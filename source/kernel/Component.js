@@ -392,8 +392,8 @@ enyo.kind({
 		}
 	},
 	//* Dispatch to owner an event that is named by this[inPropertyName] (if not empty).
-	dispatchIndirectly: function(inEventName, inArgs) {
-		return this.dispatch(this.owner, this[inEventName], inArgs);
+	dispatchIndirectly: function(inPropertyName, inArgs) {
+		return this.dispatch(this.owner, this[inPropertyName], inArgs);
 		/*
 		var fn = this.owner && this.owner[this[inPropertyName]];
 		// Violate DRY rule wrt dispatch in this one case for ease of debugging (reduce stack)
@@ -411,20 +411,25 @@ enyo.kind({
 		*/
 	},
 	// dispatcher sends DOM events here
-	dispatchCustomEvent: function(inEventName, inEvent, inSender) {
+	dispatchDomEvent: function(e) {
 		// call direct handlers first
 		//var fn = e.type + "Handler";
-		var fn = this.handlers[inEventName]; // || (e.type + "Handler");
+		var fn = this.handlers[e.type] || (e.type + "Handler");
 		// if e.g., this.clickHandler
 		if (fn && this[fn]) {
 			// propagate the return value from the handler, truthy return stops bubbling
-			return this[fn](inSender, inEvent);
+			return this[fn](e.dispatchTarget, e);
 		} else {
 			// dispatch the event (in)directly (even if it's not registered)
 			// propagate the return value from the indirect handler, truthy return stops bubbling
-			return this.dispatchIndirectly('on' + inEventName, arguments);
+			return this.dispatchIndirectly('on' + e.type, arguments);
 		}
 	},
+	/*
+	//* Optional capture phase event handler.
+	captureDomEvent: function(e) {
+	},
+	*/
 	//* @public
 	fire: function(inEventName/*, ...*/) {
 		// extract varargs
