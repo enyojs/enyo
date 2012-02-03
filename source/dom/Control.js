@@ -694,3 +694,5 @@ enyo.Control.subclass = function(ctor, props) {
 		proto.style = "";
 	}
 };
+
+enyo.defaultCtor = enyo.Control;

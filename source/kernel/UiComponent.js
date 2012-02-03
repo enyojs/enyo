@@ -185,6 +185,7 @@ enyo.kind({
 	// TODO: we probably need this functionality at the component level,
 	// but the Component-owner tree is different but overlapping with respect
 	// to the Control-parent tree.
+	/*
 	broadcastMessage: function(inMessageName, inArgs) {
 		var fn = this.handlers[inMessageName];
 		if (this[fn]) {
@@ -193,6 +194,7 @@ enyo.kind({
 		}
 		this.broadcastToControls(inMessageName, inArgs);
 	},
+	*/
 	/**
 		Call after this control has been resized to allow it to process the size change.
 		To respond to a resize, override "resizeHandler" instead.
@@ -204,7 +206,7 @@ enyo.kind({
 	//* @protected
 	resizeHandler: function() {
 		// FIXME: once we are the business of reflowing layouts on resize, then we have a 
-		// inside/outside problem: namely, some scenarios will need to reflow before child
+		// inside/outside problem: some scenarios will need to reflow before child
 		// controls reflow, and some will need to reflow after. Even more complex scenarios
 		// have circular dependencies, and can require multiple passes or other resolution.
 		// When we can rely on CSS to manage reflows we do not have these problems.
@@ -214,10 +216,27 @@ enyo.kind({
 	/**
 		Send a message to all my controls
 	*/
+	/*
 	broadcastToControls: function(inMessageName, inArgs) {
 		for (var i=0, cs=this.controls, c; c=cs[i]; i++) {
 			c.broadcastMessage(inMessageName, inArgs);
 		}
+	}
+	*/
+	/**
+		Send a message to all my descendents
+	*/
+	_broadcast: function(inMessageName, inArgs, inSender) {
+		for (var i=0, cs=this.children, c; c=cs[i]; i++) {
+			c.broadcastMessage(inMessageName, inArgs);
+		}
+	},
+	getBubbleTarget: function() {
+		return this.parent;
+	},
+	dispatchEvent2: function(inEventName, inArgs, inSender) {
+		// mouseover/out handling
+		return (inArgs && enyo.dispatcher.handleMouseOverOut(inArgs[0], inSender)) || this.inherited(arguments);
 	}
 });
 
@@ -232,6 +251,6 @@ enyo.createFromKind = function(inKind, inParam) {
 // Default owner for ownerless UiComponents to allow notifying such UiComponents of important system events
 // like window resize.
 //
-// NOTE: such UiComponents will not GC unless explicity destroyed as they will be referenced by this owner.
+// NOTE: ownerless UiComponents will not GC unless explicity destroyed as they will be referenced by enyo.master.
 //
-enyo.master = new enyo.Component();
+enyo.master = new enyo.Component({name: "master", notInstanceOwner: true});

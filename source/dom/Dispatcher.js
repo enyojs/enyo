@@ -140,23 +140,15 @@ enyo.dispatcher = {
 		}
 	},
 	dispatchBubble: function(e, c) {
-		/*
-		if (e.type == "mouseup") {
-			var t = enyo.dom.findTarget(c, e.pageX, e.pageY);
-			console.log(e.pageX + " x " + e.pageY + " c: " + c.id + " t: " + (t ? t.id : "no target"));
-		}
-		*/
+		return c.bubble("on" + e.type, [e], c);
+	},
+	/*
+	dispatchBubble: function(e, c) {
 		e.stopPropagation = function() {
 			this._handled = true;
 		};
 		// Bubble up through the control tree
 		while (c) {
-			/*
-			// NOTE: diagnostic only 
-			if (e.type == "click" && e.ctrlKey && e.altKey) {
-				console.log(e.type + ": " + c.name + " [" + c.kindName + "]");
-			}
-			*/
 			// Stop processing if dispatch returns true
 			if (this.dispatchToTarget(e, c) === true) {
 				return true;
@@ -182,6 +174,7 @@ enyo.dispatcher = {
 			return true;
 		//}
 	},
+	*/
 	handleMouseOverOut: function(e, c) {
 		if (this.mouseOverOutEvents[e.type]) {
 			if (this.isInternalMouseOverOut(e, c)) {
@@ -269,6 +262,7 @@ enyo.mixin(enyo.dispatcher, {
 	}
 });
 
+/*
 // key preview feature
 
 enyo.dispatcher.keyEvents = {keydown: 1, keyup: 1, keypress: 1};
@@ -278,6 +272,7 @@ enyo.dispatcher.features.push(function(e) {
 		this.dispatchToTarget(e, this.keyWatcher);
 	}
 });
+*/
 
 enyo.dispatcher.rootHandler = {
 	listeners: [],
@@ -286,6 +281,9 @@ enyo.dispatcher.rootHandler = {
 	},
 	removeListener: function(inListener) {
 		enyo.remove(inListener, this.listeners);
+	},
+	bubble: function(inEventName, inArgs, inSender) {
+		return this.dispatchCustomEvent(inEventName, inArgs[0], inSender);
 	},
 	dispatchCustomEvent: function(inEventName, inEvent, inSender) {
 		// note: some root events should be dispatched to all controls via enyo master

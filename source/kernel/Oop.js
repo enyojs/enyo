@@ -99,22 +99,21 @@
 	information about the executing function.
 */
 enyo.kind = function(inProps) {
+	// if we have an explicit kind property with value undefined, we probably tried
+	// to reference a kind that is not yet in scope
+	if ((inProps.kind === undefined) && ("kind" in inProps)) {
+		throw "enyo.kind: Attempt to subclass an 'undefined' kind. Check dependencies for [" + name + "].";
+	}
 	// kind-name to constructor map could be faulty now that a new kind exists, so we simply destroy the memoizations
 	enyo._kindCtors = {};
 	// extract 'name' property
 	var name = inProps.name || "";
 	delete inProps.name;
 	// extract 'kind' property
-	var kind = inProps.isa || inProps.kind;
+	var kind = inProps.kind;
 	delete inProps.kind;
-	delete inProps.isa;
-	// if we have an explicit kind property that is undefined, we probably tried
-	// to reference an kind that is not yet in scope
-	if ((kind === undefined) && ("kind" in inProps)) {
-		throw "enyo.kind: Attempt to subclass an 'undefined' kind. Check dependencies for [" + name + "].";
-	}
 	// establish base class reference
-	var base = kind && enyo.constructorForKind(kind);
+	var base = enyo.constructorForKind(kind);
 	var isa = base && base.prototype || null;
 	// make a boilerplate constructor
 	var ctor = enyo.kind.makeCtor();
@@ -177,7 +176,7 @@ enyo.kind.features.push(function(ctor, props) {
 		// decorate function properties to support inherited (do this ex post facto so that ctor.prototype is known, relies on elements in props being copied by reference)
 		for (var n in props) {
 			var p = props[n];
-			if (typeof p == "function") {
+			if (enyo.isFunction(p)) {
 				p._inherited = proto.base.prototype[n];
 				// FIXME: we used to need some extra values for inherited, then inherited got cleaner
 				// but in the meantime we used these values to support logging in Object. 
@@ -226,28 +225,27 @@ enyo.kind.statics = {
 enyo._kindCtors = {};
 
 enyo.constructorForKind = function(inKind) {
-	if (typeof inKind == "function") {
-		// in inKind is a function, then that's ctor, full stop.
-		var ctor = inKind;
-	} else if (inKind) {
-		// use memoized constructor if available
-		ctor = enyo._kindCtors[inKind];
-		if (!ctor) {
-			// otherwise look it up, then memoize it
-			// if inKind is an object in enyo, say "Control", then ctor = enyo["Control"]
-			// if inKind is a path under enyo, say "Heritage.Button", then ctor = enyo["Heritage.Button"] || enyo.Heritage.Button
-			// if inKind is a fully qualified path, say "enyo.Heritage.Button", then ctor = enyo["enyo.Heritage.Button"] || enyo.enyo.Heritage.Button || enyo.Heritage.Button
-			// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo". This is important or kinds like
-			// "Image" will map to built-in Image object, instead of enyo.Image control.
-			enyo._kindCtors[inKind] = ctor = enyo.Theme[inKind] || enyo[inKind] || enyo.getObject(inKind, false, enyo) || window[inKind] || enyo.getObject(inKind);
+	if (inKind === null || enyo.isFunction(inKind)) {
+		// in inKind is a function or explicitly null, then that's ctor, full stop.
+		return inKind;
+	}
+	if (inKind) {
+		// use memoized constructor if available...
+		var ctor = enyo._kindCtors[inKind];
+		if (ctor) {
+			return ctor;
 		}
+		// otherwise look it up and memoize what we find
+		//
+		// if inKind is an object in enyo, say "Control", then ctor = enyo["Control"]
+		// if inKind is a path under enyo, say "Heritage.Button", then ctor = enyo["Heritage.Button"] || enyo.Heritage.Button
+		// if inKind is a fully qualified path, say "enyo.Heritage.Button", then ctor = enyo["enyo.Heritage.Button"] || enyo.enyo.Heritage.Button || enyo.Heritage.Button
+		//
+		// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
+		// This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
+		return enyo._kindCtors[inKind] = enyo.Theme[inKind] || enyo[inKind] || enyo.getObject(inKind, false, enyo) || window[inKind] || enyo.getObject(inKind);
 	}
-	/*
-	if (!ctor) {
-		throw "Oop.js: Failed to find a constructor for kind [" + inKind + "]";
-	}
-	*/
-	return ctor;
+	return enyo.defaultCtor;
 };
 
 // 

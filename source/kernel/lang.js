@@ -7,7 +7,7 @@
 		for(var i=0, p; obj && (p=parts[i]); i++){
 			obj = (p in obj ? obj[p] : (create ? obj[p]={} : undefined));
 		}
-		return obj; // mixed
+		return obj;
 	};
 
 	//* @public
@@ -87,13 +87,9 @@
 	};
 
 	//* Returns true if _it_ is an array.
-	enyo.isArray = function(it) {
+	enyo.isArray = Array.isArray || function(it) {
 		return toString.call(it) === "[object Array]";
 	};
-
-	if (Array.isArray) {
-		enyo.isArray = Array.isArray;
-	}
 
 	//* Returns the index of the element in _inArray_ that is equivalent (==) to _inElement_, or -1 if no element is found.
 	enyo.indexOf = function(inElement, inArray) {
@@ -247,7 +243,7 @@
 	};
 
 	// alias for older code
-	enyo.hitch = enyo.bind;
+	//enyo.hitch = enyo.bind;
 
 	/**
 		Calls method _inMethod_ on _inScope_ asynchronously.
@@ -281,6 +277,7 @@
 
 	enyo.nop = function(){};
 	enyo.nob = {};
+	enyo.nar = [];
 
 	// this name is reported in inspectors as the type of objects created via delegate,
 	// otherwise we would just use enyo.nop

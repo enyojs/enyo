@@ -49,6 +49,8 @@ enyo.Object also provides some utility functions for its subkinds.
 enyo.kind({
 	name: "enyo.Object",
 	//* @protected
+	// has no base kind
+	kind: null,
 	constructor: function() {
 		enyo._objectCount++;
 	},
