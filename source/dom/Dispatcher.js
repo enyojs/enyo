@@ -2,6 +2,7 @@
 enyo.$ = {};
 
 enyo.dispatcher = {
+	handlerName: "dispatchDomEvent",
 	captureHandlerName: "captureDomEvent",
 	mouseOverOutEvents: {enter: 1, leave: 1},
 	// these events come from document
@@ -151,17 +152,16 @@ enyo.dispatcher = {
 		};
 		// Bubble up through the control tree
 		while (c) {
-			/*
 			// NOTE: diagnostic only 
 			if (e.type == "click" && e.ctrlKey && e.altKey) {
 				console.log(e.type + ": " + c.name + " [" + c.kindName + "]");
 			}
-			*/
 			// Stop processing if dispatch returns true
 			if (this.dispatchToTarget(e, c) === true) {
 				return true;
 			}
 			// Bubble up through parents
+			//c = c.container || c.owner;
 			c = c.parent || c.container || c.owner;
 		}
 		return false;
@@ -171,16 +171,18 @@ enyo.dispatcher = {
 		if (this.handleMouseOverOut(e, c)) {
 			return true;
 		}
-		// If this component implements custom events
-		//if (c.dispatchCustomEvent) {
+		// generic event handler name
+		var fn = this.handlerName;
+		// If this control implements event handlers...
+		if (c[fn]) {
 			// ...pass event to target's event handler, abort bubbling if handler returns true.
-			if (c.dispatchCustomEvent(e.type, e, e.dispatchTarget) !== true && !e._handled) {
+			if (c[fn](e) !== true && !e._handled) {
 				return false;
 			}
 			// cache the handler to help implement symmetric events (in/out)
 			e.handler = c;
 			return true;
-		//}
+		}
 	},
 	handleMouseOverOut: function(e, c) {
 		if (this.mouseOverOutEvents[e.type]) {
@@ -287,9 +289,9 @@ enyo.dispatcher.rootHandler = {
 	removeListener: function(inListener) {
 		enyo.remove(inListener, this.listeners);
 	},
-	dispatchCustomEvent: function(inEventName, inEvent, inSender) {
+	dispatchDomEvent: function(e) {
 		// note: some root events should be dispatched to all controls via enyo master
-		if (inEventName == "resize") {
+		if (e.type == "resize") {
 			this.broadcastMessage("resize");
 			// return before broadcasting resize as an event
 			return;
@@ -300,7 +302,7 @@ enyo.dispatcher.rootHandler = {
 			this.broadcastMessage("autoHide");
 		}
 		*/
-		this.broadcastEvent(inEvent);
+		this.broadcastEvent(e);
 	},
 	// messages go to enyo master
 	broadcastMessage: function(inMessage) {
@@ -314,7 +316,7 @@ enyo.dispatcher.rootHandler = {
 		for (var i=0, l; l=this.listeners[i]; i++) {
 			// we may need to do something with the return value
 			// and/or return some value ourselves
-			l.dispatchCustomEvent(e.type, e, e.dispatchTarget);
+			l.dispatchDomEvent(e);
 		}
 	},
 	// FIXME: we are implementing a subset of Component interface in an adhoc manner.
