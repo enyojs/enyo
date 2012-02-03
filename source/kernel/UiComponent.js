@@ -186,7 +186,8 @@ enyo.kind({
 	// but the Component-owner tree is different but overlapping with respect
 	// to the Control-parent tree.
 	broadcastMessage: function(inMessageName, inArgs) {
-		var fn = this.handlers[inMessageName];
+		//var fn = this.handlers[inMessageName];
+		var fn = inMessageName + "Handler";
 		if (this[fn]) {
 			//this.log(this.name + ": ", inMessageName);
 			return this[fn].apply(this, inArgs);
