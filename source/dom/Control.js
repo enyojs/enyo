@@ -166,6 +166,18 @@ enyo.kind({
 		}
 		this.invalidateTags();
 	},
+	getNodeProperty: function(inName, inDefault) {
+		if (this.hasNode()) {
+			return this.node[inName];
+		} else {
+			return inDefault;
+		}
+	},
+	setNodeProperty: function(inName, inValue) {
+		if (this.hasNode()) {
+			this.node[inName] = inValue;
+		}
+	},
 	/**
 		Convenience function for setting the _class_ attribute. 
 		The _class_ attribute represents the CSS classes assigned to this object.
@@ -486,7 +498,7 @@ enyo.kind({
 	},
 	// DOM, aka direct-to-node, rendering
 	attributeToNode: function(inName, inValue) {
-		if (inValue === null) {
+		if (inValue === null || inValue === false) {
 			this.node.removeAttribute(inName);
 		} else {
 			this.node.setAttribute(inName, inValue);
@@ -645,7 +657,8 @@ enyo.kind({
 			var n, v, h = '';
 			for (n in inAttributeHash) {
 				v = inAttributeHash[n];
-				if (v !== null && v !== "") {
+				if (v !== null && v !== false) {
+				//if (v !== null && v !== "") {
 					h += ' ' + n + '="' + enyo.Control.escapeAttribute(v) + '"';
 				}
 			}
