@@ -52,16 +52,17 @@ enyo.kind({
 	constructor: function() {
 		enyo._objectCount++;
 	},
-	_setProperty: function(n, v, cf) {
+	setPropertyValue: function(n, v, cf) {
 		if (this[cf]) {
 			var old = this[n];
 			this[n] = v;
-			if (old !== v) {
-				this[cf](old);
-			}
+			this[cf](old);
 		} else {
 			this[n] = v;
 		}
+	},
+	_setProperty: function(n, v, cf) {
+		this.setPropertyValue(n, v, (this[n] !== v) && cf);
 	},
 	//* @public
 	destroyObject: function(inName) {
