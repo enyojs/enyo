@@ -88,6 +88,10 @@ enyo.kind({
 		this.calcAutoScrolling();
 		this.dragging = this.shouldDrag(inEvent);
 		if (this.dragging) {
+			// note: needed because show/hide changes
+			// the position so sync'ing is required when 
+			// dragging begins (needed because dom scroll does not fire on show/hide)
+			this.syncScrollMath();
 			this.$.scroll.startDrag(inEvent);
 			if (this.preventDragPropagation) {
 				return true;

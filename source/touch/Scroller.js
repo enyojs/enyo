@@ -48,7 +48,10 @@ enyo.kind({
 			{os: "Android", version: 3},
 			{os: "iPhone", version: 5},
 			{os: "iPad", version: 5},
-			{os: "hpwOS", version: 1e9}
+			// for webos tablets
+			{os: "hpwOS", version: 1e9},
+			// for webos phones
+			{os: "webOS", version: 1e9}
 		],
 		calcOsVersion: function(inTest, inOs) {
 			var m = inTest.match(new RegExp(inOs + ".*?([0-9])", "i"));
