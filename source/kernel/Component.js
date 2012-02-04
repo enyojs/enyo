@@ -178,12 +178,19 @@ enyo.kind({
 		// finally call ready: 'ready' should only be defined in instances
 		this.ready();
 	},
-	//* @public
+	//* @protected
+	importProps: function(inProps) {
+		if (inProps) {
+			for (var n in inProps) {
+				this[n] = inProps[n];
+			}
+		}
+		this.handlers = enyo.mixin(enyo.clone(this.kindHandlers), this.handlers);
+	},
 	create: function() {
 		this.ownerChanged();
 		this.initComponents();
 	},
-	//* @protected
 	initComponents: function() {
 		// 'components' property in kind declarations is renamed to 'kindComponents'
 		// by the Component subclass mechanism, allowing us to distinguish them easily
@@ -236,14 +243,6 @@ enyo.kind({
 				c.destroy();
 			}
 		});
-	},
-	//* @protected
-	importProps: function(inProps) {
-		if (inProps) {
-			for (var n in inProps) {
-				this[n] = inProps[n];
-			}
-		}
 	},
 	makeId: function() {
 		var delim = "_", pre = this.owner && this.owner.getId();
@@ -507,14 +506,29 @@ enyo.create = enyo.Component.create = function(inConfig) {
 enyo.Component.subclass = function(ctor, props) {
 	// Note: to reduce API surface area, sub-components are declared only as
 	// 'components' in both kind and instance declarations.
+	//
 	// However, 'components' from kind declarations must be handled separately
 	// at create-time.
+	//
 	// We rename the property here to avoid having
 	// to interrogate the prototype at create-time.
+	//
+	var proto = ctor.prototype;
+	//
 	if (props.components) {
-		ctor.prototype.kindComponents = props.components;
-		delete ctor.prototype.components;
+		proto.kindComponents = props.components;
+		delete proto.components;
 	}
+	//
+	// handlers are merged with supertype handlers
+	// and kind time. 
+	//
+	if (props.handlers) {
+		var kh = proto.kindHandlers;
+		proto.kindHandlers = enyo.mixin(enyo.clone(kh), proto.handlers);
+		proto.handlers = null;
+	}
+	// events property defines published events for Component kinds
 	if (props.events) {
 		this.publishEvents(ctor, props);
 	}
@@ -546,9 +560,8 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 	inProto[inName] = v;
 	if (!inProto[fn]) {
 		inProto[fn] = function() {
-			// Allow object to dispatch this event to callback name mapped to event name.
-			return this.dispatchEvent2(inName, arguments);
-			//return this.dispatchIndirectly(inName, arguments);
+			// bubble this event
+			return this.bubble(inName, arguments);
 		}
 		// NOTE: Mark this function as a generated event handler to allow us to 
 		// do event chaining. Is this too complicated?

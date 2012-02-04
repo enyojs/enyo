@@ -3,7 +3,6 @@ enyo.$ = {};
 
 enyo.dispatcher = {
 	captureHandlerName: "captureDomEvent",
-	mouseOverOutEvents: {enter: 1, leave: 1},
 	// these events come from document
 	events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel", "click", "dblclick", "change", "keydown", "keyup", "keypress", "input"],
 	// thes events come from window
@@ -141,61 +140,6 @@ enyo.dispatcher = {
 	},
 	dispatchBubble: function(e, c) {
 		return c.bubble("on" + e.type, [e], c);
-	},
-	/*
-	dispatchBubble: function(e, c) {
-		e.stopPropagation = function() {
-			this._handled = true;
-		};
-		// Bubble up through the control tree
-		while (c) {
-			// Stop processing if dispatch returns true
-			if (this.dispatchToTarget(e, c) === true) {
-				return true;
-			}
-			// Bubble up through parents
-			c = c.parent || c.container || c.owner;
-		}
-		return false;
-	},
-	dispatchToTarget: function(e, c) {
-		// mouseover/out handling
-		if (this.handleMouseOverOut(e, c)) {
-			return true;
-		}
-		// If this component implements custom events
-		//if (c.dispatchCustomEvent) {
-			// ...pass event to target's event handler, abort bubbling if handler returns true.
-			if (c.dispatchCustomEvent(e.type, e, e.dispatchTarget) !== true && !e._handled) {
-				return false;
-			}
-			// cache the handler to help implement symmetric events (in/out)
-			e.handler = c;
-			return true;
-		//}
-	},
-	*/
-	handleMouseOverOut: function(e, c) {
-		if (this.mouseOverOutEvents[e.type]) {
-			if (this.isInternalMouseOverOut(e, c)) {
-				return true;
-			}
-		}
-	},
-	isInternalMouseOverOut: function(e, c) {
-		// cache original event node
-		var eventNode = c.eventNode;
-		// get control for related target, may set a new eventNode
-		var rdt = this.findDispatchTarget(e.relatedTarget);
-		// if the targets are the same, but the nodes are different, then cross-flyweight, and not internal
-		if (c == rdt && eventNode != c.eventNode) {
-			// this is the node responsible for the 'out'
-			c.eventNode = eventNode;
-			//console.log("cross-flyweight mouseover/out", e.type, c.id);
-			return false;
-		}
-		// if the relatedTarget is a decendant of the target, it's internal
-		return rdt && rdt.isDescendantOf(c);
 	}
 };
 

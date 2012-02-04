@@ -233,10 +233,6 @@ enyo.kind({
 	},
 	getBubbleTarget: function() {
 		return this.parent;
-	},
-	dispatchEvent2: function(inEventName, inArgs, inSender) {
-		// mouseover/out handling
-		return (inArgs && inArgs[0] && enyo.dispatcher.handleMouseOverOut(inArgs[0], inSender)) || this.inherited(arguments);
 	}
 });
 

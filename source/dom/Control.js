@@ -8,17 +8,13 @@ enyo.kind({
 	},
 	published: {
 		tag: "div",
-		attributes: {},
+		attributes: null,
 		classes: "",
 		style: "",
 		content: "",
 		showing: true,
 		// convenience properties for common attributes
 		src: "",
-		/*
-		disabled: "",
-		value: "",
-		*/
 		// esoteric
 		canGenerate: true
 	},
@@ -29,7 +25,7 @@ enyo.kind({
 	constructor: function() {
 		this.inherited(arguments);
 		// we need fresh instances of these hashes (that may otherwise be shared in a prototype)
-		this.attributes = enyo.clone(this.attributes);
+		//this.attributes = enyo.clone(this.attributes);
 		//this.domStyles = enyo.clone(this.domStyles);
 	},
 	create: function() {
@@ -55,14 +51,9 @@ enyo.kind({
 		this.inherited(arguments);
 	},
 	importProps: function(inProps) {
-		if (inProps) {
-			// note: inProps is shallow copied so attributes is mixed in to avoid shared usage
-			if (inProps.attributes) {
-				enyo.mixin(this.attributes, inProps.attributes);
-				delete inProps.attributes;
-			}
-		}
 		this.inherited(arguments);
+		// each instance has it's own attributes array, the union of the prototype attributes and user specified attributes
+		this.attributes = enyo.mixin(enyo.clone(this.kindAttributes), this.attributes);
 	},
 	initProps: function(inPropNames) {
 		// for each named property, trigger the *Changed handler if the property value is truthy
@@ -76,12 +67,22 @@ enyo.kind({
 			}
 		}
 	},
-	initStyles: function() {
-		this.styleChanged();
-	},
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
 		this.addClass(this.classes);
+	},
+	// event filter
+	dispatchEvent2: function(inEventName, inArgs, inSender) {
+		// prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
+		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inArgs[0])) {
+			return true;
+		}
+		return this.inherited(arguments);
+	},
+	strictlyInternalEvents: {onenter: 1, onleave: 1},
+	isInternalEvent: function(inEvent) {
+		var rdt = enyo.dispatcher.findDispatchTarget(inEvent.relatedTarget);
+		return rdt && rdt.isDescendantOf(this);
 	},
 	//
 	//* @public
@@ -398,8 +399,6 @@ enyo.kind({
 		}
 	},
 	domStylesChanged: function() {
-		//this.style = enyo.Control.domStylesToCssText(this.domStyles);
-		//this.getShowing();
 		this.invalidateTags();
 		this.renderStyles();
 	},
@@ -409,20 +408,6 @@ enyo.kind({
 	srcChanged: function() {
 		this.setAttribute("src", this.src);
 	},
-	/*
-	getDisabled: function() {
-		return this.getAttribute("disabled");
-	},
-	disabledChanged: function() {
-		this.setAttribute("disabled", this.disabled);
-	},
-	getValue: function() {
-		return this.hasNode() ? this.node.value : this.getAttribute("value");
-	},
-	valueChanged: function() {
-		this.setAttribute("value", this.value);
-	},
-	*/
 	attributesChanged: function() {
 		this.invalidateTags();
 		this.renderAttributes();
@@ -658,7 +643,6 @@ enyo.kind({
 			for (n in inAttributeHash) {
 				v = inAttributeHash[n];
 				if (v !== null && v !== false) {
-				//if (v !== null && v !== "") {
 					h += ' ' + n + '="' + enyo.Control.escapeAttribute(v) + '"';
 				}
 			}
@@ -670,28 +654,38 @@ enyo.kind({
 enyo.Control.subclass = function(ctor, props) {
 	// Control classes may declare properties that are intended
 	// to stack with superclass properties.
+	//
 	// We resort to prototype magic to assemble thiese properties
 	// at kind declaration time, in the interest of efficiency
 	// and ease of use.
-	// The properties are no longer 'live' in prototypes because
-	// of this magic. I.e. changes to the prototype of a Control 
-	// subclass will not necesssarily be reflected in instances 
-	// of that Control (includes chained prototypes).
+	//
+	// However, the properties are no longer 'live' in prototypes 
+	// because  of this magic. I.e. changes to the prototype of 
+	// a Control subclass will not necesssarily be reflected in
+	// instances of that Control (e.g. chained prototypes).
+	//
+	// These properties are also renamed to kind* to allow
+	// combining with instance properties.
 	//
 	var proto = ctor.prototype;
 	//
 	// 'kc' comes either from our inheritance chain (e.g. proto's prototype chain) 
 	// or has been forced by a kind declaration.
 	//
-	var kc = proto.kindClasses;
 	if (proto.classes) {
+		var kc = proto.kindClasses;
 		proto.kindClasses = (kc ? kc + " " : "") + proto.classes;
 		proto.classes = "";
 	}
-	var ks = proto.kindStyle;
 	if (proto.style) {
+		var ks = proto.kindStyle;
 		proto.kindStyle = (ks ? ks + ";" : "") + proto.style;
 		proto.style = "";
+	}
+	if (props.attributes) {
+		var ka = proto.kindAttributes;
+		proto.kindAttributes = enyo.mixin(enyo.clone(ka), proto.attributes);
+		proto.attributes = null;
 	}
 };
 

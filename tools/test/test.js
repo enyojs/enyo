@@ -1,8 +1,4 @@
 
-// minifier: path aliases
-
-enyo.path.addPaths({});
-
 // TestRunner.js
 
 enyo.kind({
@@ -32,7 +28,6 @@ onBegin: "",
 onFinish: "",
 onFinishAll: ""
 },
-components: [],
 timeout: 3e3,
 timeoutMessage: "timed out",
 resetTimeout: function(a) {
@@ -50,9 +45,6 @@ return;
 }
 this.testNames = this.getTestNames(), this.index = 0, this.autoRunNextTest = !0, this.next();
 },
-create: function(a) {
-this.inherited(arguments);
-},
 getTestNames: function() {
 var a = [];
 for (var b in this) /^test/.test(b) && a.push(b);
@@ -69,7 +61,7 @@ onFinish: "childTestFinished"
 }), this.$[a].runTest(a)) : (this.autoRunNextTest = !1, this.doFinishAll());
 },
 runTest: function(a) {
-this.resetTimeout(), this.doBegin();
+this.resetTimeout(), this.doBegin(a);
 try {
 this.beforeEach(), this[a]();
 } catch (b) {
@@ -83,10 +75,7 @@ clearTimer: function() {
 window.clearTimeout(this.timer);
 },
 finish: function(a) {
-var b = this, c = arguments;
-window.setTimeout(function() {
-b.reallyFinish.apply(b, c);
-}, 0);
+return enyo.asyncMethod(this, "reallyFinish", a), !0;
 },
 reallyFinish: function(a) {
 if (this.results) {
@@ -119,10 +108,10 @@ this.afterEach = null;
 this.doFinish(this.results);
 },
 childTestBegun: function(a) {
-this.triggeredNextTest = !1, this.doBegin(a.name);
+this.triggeredNextTest = !1;
 },
 childTestFinished: function(a, b) {
-this.doFinish(b), this.triggeredNextTest || (this.triggeredNextTest = !0, enyo.asyncMethod(this, "next"));
+this.triggeredNextTest || (this.triggeredNextTest = !0, enyo.asyncMethod(this, "next"));
 }
 }), enyo.TestSuite.tests = [], enyo.TestSuite.subclass = function(a, b) {
 b.testBase || enyo.TestSuite.tests.push(a);
@@ -144,20 +133,19 @@ name: "title",
 classes: "enyo-testcase-title"
 }, {
 name: "group",
-classes: "enyo-testcase-group",
-components: []
+classes: "enyo-testcase-group"
 } ],
+classes: "enyo-testcase",
 timeout: 3e3,
-create: function(a) {
-this.inherited(arguments), this.addClass("enyo-testcase"), this.$.title.setContent(this.name);
+create: function() {
+this.inherited(arguments), this.$.title.setContent(this.name);
 },
 initComponents: function() {
 this.inherited(arguments), this.createComponent({
 name: "testSuite",
 kind: this.name,
 onBegin: "testBegun",
-onFinish: "updateTestDisplay",
-onFinishAll: "suiteFinished"
+onFinish: "updateTestDisplay"
 });
 },
 runTests: function() {
@@ -169,9 +157,6 @@ name: b,
 classes: "enyo-testcase-running",
 content: b + ": running"
 }).render();
-},
-suiteFinished: function() {
-this.doFinishAll();
 },
 formatStackTrace: function(a) {
 var b = a.split("\n"), c = [ "" ];
