@@ -236,7 +236,7 @@ enyo.kind({
 	},
 	dispatchEvent2: function(inEventName, inArgs, inSender) {
 		// mouseover/out handling
-		return (inArgs && enyo.dispatcher.handleMouseOverOut(inArgs[0], inSender)) || this.inherited(arguments);
+		return (inArgs && inArgs[0] && enyo.dispatcher.handleMouseOverOut(inArgs[0], inSender)) || this.inherited(arguments);
 	}
 });
 
@@ -253,4 +253,10 @@ enyo.createFromKind = function(inKind, inParam) {
 //
 // NOTE: ownerless UiComponents will not GC unless explicity destroyed as they will be referenced by enyo.master.
 //
-enyo.master = new enyo.Component({name: "master", notInstanceOwner: true});
+enyo.master = new enyo.Component({
+	name: "master",
+	notInstanceOwner: true,
+	getId: function() {
+		return '';
+	}
+});

@@ -365,6 +365,67 @@ enyo.kind({
 		}
 	},
 	//* @protected
+	//
+	//
+	getBubbleTarget: function() {
+		return this.owner;
+	},
+	bubble: function(inEventName, inArgs, inSender) {
+		if ({ontap:1, Xonenter: 1, Xonleave: 1}[inEventName]) {
+			this.log(inEventName, (inSender || this).name, "=>", this.name);
+		}
+		// Try to dispatch from here, stop bubbling on truthy return value
+		if (this.dispatchEvent2(inEventName, inArgs, inSender)) {
+			return true;
+		}
+		// Bubble to next target
+		var next = this.getBubbleTarget();
+		if (next) {
+			return next.bubble(inEventName, inArgs, this);
+		}
+		return false;
+	},
+	dispatchEvent2: function(inEventName, inArgs, inSender) {
+		// try internal handler (from inSender)
+		if (this.dispatch2(this, this.handlers[inEventName], inArgs, inSender)) {
+			return true;
+		}
+		// try owner handler (from 'this')
+		return this.dispatch2(this.owner, this[inEventName], inArgs, this);
+	},
+	dispatch2: function(inObject, inMethodName, inArgs, inSender) {
+		var fn = inObject && inMethodName && inObject[inMethodName];
+		if (fn) {
+			// unless we are chaining to a dispatcher method, prepend inSender argument (or _this_)
+			var args = fn._dispatcher ? inArgs : this._prependArg(inSender || this, inArgs);
+			// call the delegate
+			return fn.apply(inObject, args || enyo.nar);
+		}
+	},
+	_prependArg: function(inPrepend, inArgs) {
+		var args = [inPrepend];
+		if (inArgs) {
+			Array.prototype.push.apply(args, inArgs);
+		}
+		return args;
+	},
+	/**
+		Send a message to myself and my descendents
+	*/
+	broadcastMessage: function(inMessageName, inArgs, inSender) {
+		this.log(inMessageName, (inSender || this).name, "=>", this.name);
+		if (this.dispatchEvent2(inMessageName, inArgs, inSender)) {
+			return true;
+		}
+		this._broadcast(inMessageName, inArgs, inSender);
+	},
+	_broadcast: function(inMessageName, inArgs, inSender) {
+		for (var n in this.$) {
+			this.$[n].broadcastMessage(inMessageName, inArgs, inSender);
+		}
+	}
+	//
+	//
 	/**
 		Calls named method in specified object, if it exists.
 		Prepends _this_ reference to arguments, so callee knows
@@ -378,6 +439,7 @@ enyo.kind({
 
 			obj.foo(this, a, b);
 	*/
+	/*
 	dispatch: function(inObject, inMethodName, inArgs) {
 		var fn = inObject && inMethodName && inObject[inMethodName];
 		if (fn) {
@@ -414,74 +476,15 @@ enyo.kind({
 		}
 	},
 	//* @public
-	fire: function(inEventName/*, ...*/) {
+	*/
+	//fire: function(inEventName/*, ...*/) {
+	/*
 		// extract varargs
 		var args = enyo.cloneArray(arguments, 1);
 		// indirect dispatch
 		return this.dispatch(this.owner, this[inEventName], args);
-	},
-	//
-	//
-	getBubbleTarget: function() {
-		return this.owner;
-	},
-	bubble: function(inEventName, inArgs, inSender) {
-		if ({ontap:1, Xonenter: 1, Xonleave: 1}[inEventName]) {
-			this.log(inEventName, (inSender || this).name, "=>", this.name);
-		}
-		// Try to dispatch from here, stop bubbling on truthy return value
-		if (this.dispatchEvent2(inEventName, inArgs, inSender)) {
-			return true;
-		}
-		// Bubble to next target
-		var next = this.getBubbleTarget();
-		if (next) {
-			return next.bubble(inEventName, inArgs, this);
-		}
-		return false;
-	},
-	dispatchEvent2: function(inEventName, inArgs, inSender) {
-		// identify internal handler
-		var target = this, fn = this.handlers[inEventName];
-		// if no internal handler, try for external handler
-		if (!fn || !this[fn]) {
-			target = this.owner;
-			fn = this[inEventName];
-		}
-		// propagate return value from the handler, truthy return stops bubbling
-		return this.dispatch2(target, fn, inArgs, inSender);
-	},
-	dispatch2: function(inObject, inMethodName, inArgs, inSender) {
-		var fn = inObject && inMethodName && inObject[inMethodName];
-		if (fn) {
-			// unless we are chaining to a dispatcher method, prepend inSender argument (or _this_)
-			var args = fn._dispatcher ? inArgs : this._prependArg(inSender || this, inArgs);
-			// call the delegate
-			return fn.apply(inObject, args || enyo.nar);
-		}
-	},
-	_prependArg: function(inPrepend, inArgs) {
-		var args = [inPrepend];
-		if (inArgs) {
-			Array.prototype.push.apply(args, inArgs);
-		}
-		return args;
-	},
-	/**
-		Send a message to me and my descendents
-	*/
-	broadcastMessage: function(inMessageName, inArgs, inSender) {
-		this.log(inMessageName, (inSender || this).name, "=>", this.name);
-		if (this.dispatchEvent2(inMessageName, inArgs, inSender)) {
-			return true;
-		}
-		this._broadcast(inMessageName, inArgs, inSender);
-	},
-	_broadcast: function(inMessageName, inArgs, inSender) {
-		for (var n in this.$) {
-			this.$[n].broadcastMessage(inMessageName, inArgs, inSender);
-		}
 	}
+	*/
 });
 
 //* @protected
@@ -544,7 +547,8 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 	if (!inProto[fn]) {
 		inProto[fn] = function() {
 			// Allow object to dispatch this event to callback name mapped to event name.
-			return this.dispatchIndirectly(inName, arguments);
+			return this.dispatchEvent2(inName, arguments);
+			//return this.dispatchIndirectly(inName, arguments);
 		}
 		// NOTE: Mark this function as a generated event handler to allow us to 
 		// do event chaining. Is this too complicated?

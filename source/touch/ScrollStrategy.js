@@ -13,7 +13,7 @@ enyo.kind({
 		scrollTop: 0
 	},
 	handlers: {
-		scroll: "scrollHandler"
+		onscroll: "scrollHandler"
 	},
 	classes: "enyo-scroller",
 	create: function() {

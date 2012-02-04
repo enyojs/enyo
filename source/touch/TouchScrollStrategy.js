@@ -19,13 +19,13 @@ enyo.kind({
 	},
 	//* @protected
 	handlers: {
-		flick: "flickHandler",
-		hold: "holdHandler",
-		dragstart: "dragstartHandler",
-		drag: "dragHandler",
-		dragfinish: "dragfinishHandler",
-		mousewheel: "mousewheelHandler",
-		touchmove: "touchmoveHandler"
+		onflick: "flickHandler",
+		onhold: "holdHandler",
+		ondragstart: "dragstartHandler",
+		ondrag: "dragHandler",
+		ondragfinish: "dragfinishHandler",
+		onmousewheel: "mousewheelHandler",
+		ontouchmove: "touchmoveHandler"
 	},
 	classes: "enyo-touch-scroller",
 	components: [

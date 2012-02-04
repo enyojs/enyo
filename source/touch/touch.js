@@ -90,12 +90,17 @@ enyo.requiresWindow(function() {
 			}
 		},
 		connect: function() {
+			enyo.forEach(['ontouchstart', 'ontouchmove', 'ontouchend', 'ongesturestart', 'ongesturechange', 'ongestureend'], function(e) {
+				document[e] = enyo.dispatch;
+			});
+			/*
 			document.ontouchstart = enyo.dispatch;
 			document.ontouchmove = enyo.dispatch;
 			document.ontouchend = enyo.dispatch;
 			document.ongesturestart = enyo.dispatch;
 			document.ongesturechange = enyo.dispatch;
 			document.ongestureend = enyo.dispatch;
+			*/
 			// use proper target finding technqiue based on feature detection.
 			if (!document.elementFromPoint) {
 				this.findTarget = function(inX, inY) {

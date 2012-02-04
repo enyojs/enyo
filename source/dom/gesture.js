@@ -177,6 +177,7 @@ enyo.gesture = {
 };
 
 //* @protected
+
 enyo.dispatcher.features.push(
 	function(e) {
 		// NOTE: beware of properties in enyo.gesture inadvertantly mapped to event types
@@ -202,4 +203,4 @@ enyo.gesture.events = {
 	mouseout:  function(e) {
 		enyo.gesture.out(e);
 	}
-}
+};
