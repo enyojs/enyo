@@ -22,12 +22,6 @@ enyo.kind({
 	node: null,
 	generated: false,
 	defaultKind: "Control",
-	constructor: function() {
-		this.inherited(arguments);
-		// we need fresh instances of these hashes (that may otherwise be shared in a prototype)
-		//this.attributes = enyo.clone(this.attributes);
-		//this.domStyles = enyo.clone(this.domStyles);
-	},
 	create: function() {
 		this.inherited(arguments);
 		// propagate style to domStyles
@@ -72,14 +66,14 @@ enyo.kind({
 		this.addClass(this.classes);
 	},
 	// event filter
-	dispatchEvent2: function(inEventName, inArgs, inSender) {
+	strictlyInternalEvents: {onenter: 1, onleave: 1},
+	dispatchEvent: function(inEventName, inEvent, inSender) {
 		// prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
-		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inArgs[0])) {
+		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
 			return true;
 		}
 		return this.inherited(arguments);
 	},
-	strictlyInternalEvents: {onenter: 1, onleave: 1},
 	isInternalEvent: function(inEvent) {
 		var rdt = enyo.dispatcher.findDispatchTarget(inEvent.relatedTarget);
 		return rdt && rdt.isDescendantOf(this);

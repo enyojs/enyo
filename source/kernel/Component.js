@@ -104,9 +104,9 @@
 	Note that the _webSuccess_ method takes an argument called _inSender_ which refers to the object that generated the event.
 	Different events may supply additional arguments, but they all supply _inSender_ as the first argument.
 
-	Component events are not exactly the same as the DOM events you may be used to. In particular, Component events do not bubble.
-	However, Enyo does make many DOM events available as Component events. Components do not in general represent DOM nodes,
-	but _Controls_ do; see the <a href="#enyo.Control">Control</a> documentation for more information.
+	Component events are much like DOM events. In fact, Enyo makes many DOM events available as Component events.
+	Remember that Components do not in general represent DOM nodes, but _Controls_ do; see the <a href="#enyo.Control">Control</a> 
+	documentation for more information.
 
 	## Create and Destroy
 
@@ -175,8 +175,6 @@ enyo.kind({
 		this.importProps(inProps);
 		// perform initialization
 		this.create();
-		// finally call ready: 'ready' should only be defined in instances
-		this.ready();
 	},
 	//* @protected
 	importProps: function(inProps) {
@@ -210,10 +208,6 @@ enyo.kind({
 	},
 	getInstanceOwner: function() {
 		return (!this.owner || this.owner.notInstanceOwner) ? this : this.owner;
-	},
-	ready: function() {
-		// DEPRECATED
-		// don't override, so instances can implement without needing inherited
 	},
 	//* @public
 	/**
@@ -364,126 +358,84 @@ enyo.kind({
 		}
 	},
 	//* @protected
-	//
-	//
 	getBubbleTarget: function() {
 		return this.owner;
 	},
-	bubble: function(inEventName, inArgs, inSender) {
+	//* @public
+	/**
+		Bubble an event up an object chain.
+
+		If a handler for this event returns true (aka _handled_)
+		bubbling is stopped.
+
+		Handlers always have this signature:
+
+			function(inSender, inEvent)
+
+		Where inSender refers to the Component that most recently 
+		propagated the event and inEvent is an object containing 
+		event information.
+
+		inEvent will have at least one property, _originator_ which
+		references the Component which triggered the event in the
+		first place.
+	*/
+	bubble: function(inEventName, inEvent, inSender) {
 		if ({ontap:1, Xonenter: 1, Xonleave: 1}[inEventName]) {
 			this.log(inEventName, (inSender || this).name, "=>", this.name);
 		}
+		var e = inEvent || {};
+		// FIXME: is this the right place?
+		if (!e.originator) {
+			e.originator = inSender || this;
+		}
 		// Try to dispatch from here, stop bubbling on truthy return value
-		if (this.dispatchEvent2(inEventName, inArgs, inSender)) {
+		if (this.dispatchEvent(inEventName, e, inSender)) {
 			return true;
 		}
 		// Bubble to next target
 		var next = this.getBubbleTarget();
 		if (next) {
-			return next.bubble(inEventName, inArgs, this);
+			return next.bubble(inEventName, e, this);
 		}
 		return false;
 	},
-	dispatchEvent2: function(inEventName, inArgs, inSender) {
+	//* @protected
+	dispatchEvent: function(inEventName, inEvent, inSender) {
 		// try internal handler (from inSender)
-		if (this.dispatch2(this, this.handlers[inEventName], inArgs, inSender)) {
+		if (this.dispatch(this, this.handlers[inEventName], inEvent, inSender)) {
 			return true;
 		}
 		// try owner handler (from 'this')
-		return this.dispatch2(this.owner, this[inEventName], inArgs, this);
+		return this.dispatch(this.owner, this[inEventName], inEvent, this);
 	},
-	dispatch2: function(inObject, inMethodName, inArgs, inSender) {
+	dispatch: function(inObject, inMethodName, inEvent, inSender) {
 		var fn = inObject && inMethodName && inObject[inMethodName];
 		if (fn) {
+			fn.call(inObject, inSender || this, inEvent);
+			/*
 			// unless we are chaining to a dispatcher method, prepend inSender argument (or _this_)
 			var args = fn._dispatcher ? inArgs : this._prependArg(inSender || this, inArgs);
 			// call the delegate
 			return fn.apply(inObject, args || enyo.nar);
+			*/
 		}
-	},
-	_prependArg: function(inPrepend, inArgs) {
-		var args = [inPrepend];
-		if (inArgs) {
-			Array.prototype.push.apply(args, inArgs);
-		}
-		return args;
 	},
 	/**
 		Send a message to myself and my descendents
 	*/
-	broadcastMessage: function(inMessageName, inArgs, inSender) {
+	broadcastMessage: function(inMessageName, inMessage, inSender) {
 		this.log(inMessageName, (inSender || this).name, "=>", this.name);
-		if (this.dispatchEvent2(inMessageName, inArgs, inSender)) {
+		if (this.dispatchEvent(inMessageName, inMessage, inSender)) {
 			return true;
 		}
-		this._broadcast(inMessageName, inArgs, inSender);
+		this._broadcast(inMessageName, inMessage, inSender || this);
 	},
-	_broadcast: function(inMessageName, inArgs, inSender) {
+	_broadcast: function(inMessageName, inMessage, inSender) {
 		for (var n in this.$) {
-			this.$[n].broadcastMessage(inMessageName, inArgs, inSender);
+			this.$[n].broadcastMessage(inMessageName, inMessage, inSender);
 		}
 	}
-	//
-	//
-	/**
-		Calls named method in specified object, if it exists.
-		Prepends _this_ reference to arguments, so callee knows
-		who dispatched the event (generally declared as _inSender_ in handlers).
-
-		Example:
-
-			dispatch(obj, "foo", [a, b])
-
-		will result in a call like this (if _obj.foo_ exists):
-
-			obj.foo(this, a, b);
-	*/
-	/*
-	dispatch: function(inObject, inMethodName, inArgs) {
-		var fn = inObject && inMethodName && inObject[inMethodName];
-		if (fn) {
-			// prepend 'this' as inSender argument, unless we are chaining to a dispatcher method
-			var args = fn._dispatcher ? inArgs : this._prependThis(inArgs);
-			// call the delegate
-			return fn.apply(inObject, args || []);
-		}
-	},
-	_prependThis: function(inArgs) {
-		var args = [this];
-		if (inArgs) {
-			Array.prototype.push.apply(args, inArgs);
-		}
-		return args;
-	},
-	//* Dispatch to owner an event that is named by this[inPropertyName] (if not empty).
-	dispatchIndirectly: function(inEventName, inArgs) {
-		return this.dispatch(this.owner, this[inEventName], inArgs);
-	},
-	// dispatcher sends DOM events here
-	dispatchCustomEvent: function(inEventName, inEvent, inSender) {
-		// call direct handlers first
-		//var fn = e.type + "Handler";
-		var fn = this.handlers[inEventName]; // || (e.type + "Handler");
-		// if e.g., this.clickHandler
-		if (fn && this[fn]) {
-			// propagate the return value from the handler, truthy return stops bubbling
-			return this[fn](inSender, inEvent);
-		} else {
-			// dispatch the event (in)directly (even if it's not registered)
-			// propagate the return value from the indirect handler, truthy return stops bubbling
-			return this.dispatchIndirectly('on' + inEventName, arguments);
-		}
-	},
-	//* @public
-	*/
-	//fire: function(inEventName/*, ...*/) {
-	/*
-		// extract varargs
-		var args = enyo.cloneArray(arguments, 1);
-		// indirect dispatch
-		return this.dispatch(this.owner, this[inEventName], args);
-	}
-	*/
 });
 
 //* @protected
@@ -559,13 +511,13 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 	}
 	inProto[inName] = v;
 	if (!inProto[fn]) {
-		inProto[fn] = function() {
+		inProto[fn] = function(inEvent) {
 			// bubble this event
-			return this.bubble(inName, arguments);
+			return this.bubble(inName, inEvent);
 		}
 		// NOTE: Mark this function as a generated event handler to allow us to 
 		// do event chaining. Is this too complicated?
-		inProto[fn]._dispatcher = true;
+		//inProto[fn]._dispatcher = true;
 	}
 };
 

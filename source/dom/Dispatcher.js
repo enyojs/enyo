@@ -8,30 +8,29 @@ enyo.dispatcher = {
 	// thes events come from window
 	windowEvents: ["resize", "load", "unload", "message"],
 	connect: function() {
-		if (document.addEventListener) {
-			var listen = function() {
-				document.addEventListener.apply(document, arguments);
+		var d = enyo.dispatcher;
+		for (var i=0, n; n=d.events[i]; i++) {
+			d.listen(document, n);
+		}
+		for (i=0, n; n=d.windowEvents[i]; i++) {
+			d.listen(window, n);
+		}
+	},
+	listen: function(inListener, inEventName) {
+		var d = enyo.dispatch;
+		if (inListener.addEventListener) {
+			this.listen = function(inListener, inEventName) {
+				inListener.addEventListener(inEventName, d, false);
 			}
 		} else {
-			listen = function(inEvent, inCb) {
-				document.attachEvent("on" + inEvent, function() {
-					//console.log("got an event");
+			this.listen = function(inListener, inEvent, inCb) {
+				inListener.attachEvent("on" + inEvent, function() {
 					event.target = event.srcElement;
-					return inCb(event);
+					return d(event);
 				});
 			}
 		}
-		//
-		var d = enyo.dispatcher;
-		for (var i=0, e; e=d.events[i]; i++) {
-			listen(e, enyo.dispatch, false);
-		}
-		//
-		var adder = document.addEventListener ? "addEventListener" : "attachEvent";
-		//console.log(adder);
-		for (i=0, e; e=d.windowEvents[i]; i++) {
-			window[adder](e, enyo.dispatch, false);
-		}
+		this.listen(inListener, inEventName);
 	},
 	//* Takes an Event.target and finds the corresponding enyo control
 	findDispatchTarget: function(inNode) {
@@ -57,8 +56,7 @@ enyo.dispatcher = {
 	},
 	//* Return the default enyo control for events
 	findDefaultTarget: function(e) {
-		return enyo.dispatcher.rootHandler;
-		//return enyo.master.getComponents()[0];
+		return enyo.master;
 	},
 	//* Fire an event for Enyo to listen for
 	dispatch: function(e) {
@@ -139,7 +137,7 @@ enyo.dispatcher = {
 		}
 	},
 	dispatchBubble: function(e, c) {
-		return c.bubble("on" + e.type, [e], c);
+		return c.bubble("on" + e.type, e, c);
 	}
 };
 
@@ -205,63 +203,3 @@ enyo.mixin(enyo.dispatcher, {
 		this.forwardEvents = inInfo && inInfo.forward;
 	}
 });
-
-/*
-// key preview feature
-
-enyo.dispatcher.keyEvents = {keydown: 1, keyup: 1, keypress: 1};
-
-enyo.dispatcher.features.push(function(e) {
-	if (this.keyWatcher && this.keyEvents[e.type]) {
-		this.dispatchToTarget(e, this.keyWatcher);
-	}
-});
-*/
-
-enyo.dispatcher.rootHandler = {
-	listeners: [],
-	addListener: function(inListener) {
-		this.listeners.push(inListener);
-	},
-	removeListener: function(inListener) {
-		enyo.remove(inListener, this.listeners);
-	},
-	bubble: function(inEventName, inArgs, inSender) {
-		return this.dispatchCustomEvent(inEventName, inArgs[0], inSender);
-	},
-	dispatchCustomEvent: function(inEventName, inEvent, inSender) {
-		// note: some root events should be dispatched to all controls via enyo master
-		if (inEventName == "resize") {
-			this.broadcastMessage("resize");
-			// return before broadcasting resize as an event
-			return;
-		}
-		/*
-		// send an "autoHide" message when window hides or deactivates
-		if (e.type == "windowDeactivated" || e.type == "windowHidden") {
-			this.broadcastMessage("autoHide");
-		}
-		*/
-		this.broadcastEvent(inEvent);
-	},
-	// messages go to enyo master
-	broadcastMessage: function(inMessage) {
-		for (var n in enyo.master.$) {
-			//console.log("broadcasting message", inMessage, "to", n);
-			enyo.master.$[n].broadcastMessage(inMessage);
-		}
-	},
-	// events go to listeners
-	broadcastEvent: function(e) {
-		for (var i=0, l; l=this.listeners[i]; i++) {
-			// we may need to do something with the return value
-			// and/or return some value ourselves
-			l.dispatchCustomEvent(e.type, e, e.dispatchTarget);
-		}
-	},
-	// FIXME: we are implementing a subset of Component interface in an adhoc manner.
-	// This much of the interface is required.
-	isDescendantOf: function() {
-		return false;
-	}
-};

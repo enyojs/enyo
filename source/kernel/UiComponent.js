@@ -12,6 +12,9 @@ enyo.kind({
 		controlParentName: "client",
 		layoutKind: ""
 	},
+	handlers: {
+		onresize: "resizeHandler"
+	},
 	create: function() {
 		this.controls = [];
 		this.children = [];
@@ -136,7 +139,7 @@ enyo.kind({
 			// It's the opposite for setContainer, where containerChanged (in Containable)
 			// drives addControl.
 			// Because of the way 'parent' is derived from 'container', this difference is
-			// helpful for implementing controlParent in Panel.
+			// helpful for implementing controlParent.
 			// By the same token, since 'parent' is derived from 'container', setParent is
 			// not intended to be called by client code. Therefore, the lack of parallelism
 			// should be private to this implementation.
@@ -180,22 +183,6 @@ enyo.kind({
 		}
 	},
 	/**
-		Send a message to me and all my controls
-	*/
-	// TODO: we probably need this functionality at the component level,
-	// but the Component-owner tree is different but overlapping with respect
-	// to the Control-parent tree.
-	/*
-	broadcastMessage: function(inMessageName, inArgs) {
-		var fn = this.handlers[inMessageName];
-		if (this[fn]) {
-			//this.log(this.name + ": ", inMessageName);
-			return this[fn].apply(this, inArgs);
-		}
-		this.broadcastToControls(inMessageName, inArgs);
-	},
-	*/
-	/**
 		Call after this control has been resized to allow it to process the size change.
 		To respond to a resize, override "resizeHandler" instead.
 	*/
@@ -211,24 +198,13 @@ enyo.kind({
 		// have circular dependencies, and can require multiple passes or other resolution.
 		// When we can rely on CSS to manage reflows we do not have these problems.
 		this.reflow();
-		this.broadcastToControls("resize");
 	},
-	/**
-		Send a message to all my controls
-	*/
-	/*
-	broadcastToControls: function(inMessageName, inArgs) {
-		for (var i=0, cs=this.controls, c; c=cs[i]; i++) {
-			c.broadcastMessage(inMessageName, inArgs);
-		}
-	}
-	*/
 	/**
 		Send a message to all my descendents
 	*/
 	_broadcast: function(inMessageName, inArgs, inSender) {
 		for (var i=0, cs=this.children, c; c=cs[i]; i++) {
-			c.broadcastMessage(inMessageName, inArgs);
+			c.broadcastMessage(inMessageName, inArgs, inSender);
 		}
 	},
 	getBubbleTarget: function() {
@@ -254,5 +230,15 @@ enyo.master = new enyo.Component({
 	notInstanceOwner: true,
 	getId: function() {
 		return '';
+	},
+	bubble: function(inEventName, inEvent, inSender) {
+		console.log("master event: " + inEventName);
+		if (inEventName == "onresize") {
+			// resize is special, waterfall this message
+			enyo.master.broadcastMessage("resize");
+		} else {
+			// all other top level events are sent only to interested Signal receivers
+			enyo.Signals.send(inEventName, inEvent);
+		}
 	}
 });
