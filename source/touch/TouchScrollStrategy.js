@@ -34,9 +34,11 @@ enyo.kind({
 	],
 	rendered: function() {
 		this.inherited(arguments);
+		this.calcBoundaries();
 		this.syncScrollMath();
 	},
 	scrollHandler: function() {
+		this.calcBoundaries();
 		this.syncScrollMath();
 	},
 	horizontalChanged: function() {
@@ -118,9 +120,7 @@ enyo.kind({
 	},
 	scrollStart: function(inSender) {
 		if (this.scrollNode) {
-			var b = this.$.client.getBounds();
-			inSender.bottomBoundary = b.height - this.scrollNode.scrollHeight;
-			inSender.rightBoundary = b.width - this.scrollNode.scrollWidth;
+			this.calcBoundaries();
 			this.doScrollStart(inSender);
 		}
 	},
@@ -131,6 +131,11 @@ enyo.kind({
 	scrollStop: function(inSender) {
 		this.effectOverscroll(null, null);
 		this.doScrollStop(inSender);
+	},
+	calcBoundaries: function() {
+		var s = this.$.scroll, b = this.$.client.getBounds();
+		s.bottomBoundary = b.height - this.scrollNode.scrollHeight;
+		s.rightBoundary = b.width - this.scrollNode.scrollWidth;
 	},
 	syncScrollMath: function() {
 		var s = this.$.scroll;
