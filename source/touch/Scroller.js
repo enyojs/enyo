@@ -96,9 +96,13 @@ enyo.kind({
 		this.strategyKindChanged();
 		this.inherited(arguments);
 	},
+	teardownChildren: function() {
+		this.cacheScrollPosition();
+		this.inherited(arguments);
+	},
 	rendered: function() {
 		this.inherited(arguments);
-		this.cachedPosition = null;
+		this.restoreScrollPosition();
 	},
 	strategyKindChanged: function() {
 		if (this.$.strategy) {
@@ -129,6 +133,7 @@ enyo.kind({
 		if (this.cachedPosition) {
 			this.setScrollLeft(this.cachedPosition.left);
 			this.setScrollTop(this.cachedPosition.top);
+			this.cachedPosition = null;
 		}
 	},
 	horizontalChanged: function() {
