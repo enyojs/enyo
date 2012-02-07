@@ -412,7 +412,7 @@ enyo.kind({
 	dispatch: function(inObject, inMethodName, inEvent, inSender) {
 		var fn = inObject && inMethodName && inObject[inMethodName];
 		if (fn) {
-			fn.call(inObject, inSender || this, inEvent);
+			return fn.call(inObject, inSender || this, inEvent);
 			/*
 			// unless we are chaining to a dispatcher method, prepend inSender argument (or _this_)
 			var args = fn._dispatcher ? inArgs : this._prependArg(inSender || this, inArgs);
