@@ -2,7 +2,10 @@
 	"dom.css",
 	"dom.js",
 	"Control.js",
-	"Dispatcher.js",
+	//"Dispatcher.js",
+	"dispatcher2.js",
+	"preview.js",
+	"modal.js",
 	"gesture.js",
 	"drag.js"
 );
