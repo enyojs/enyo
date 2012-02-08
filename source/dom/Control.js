@@ -1,11 +1,6 @@
 enyo.kind({
 	name: "enyo.Control",
 	kind: enyo.UiComponent,
-	events: {
-		ondown: "",
-		onup: "",
-		ontap: ""
-	},
 	published: {
 		tag: "div",
 		attributes: null,
@@ -17,6 +12,9 @@ enyo.kind({
 		src: "",
 		// esoteric
 		canGenerate: true
+	},
+	handlers: {
+		ontap: "tap"
 	},
 	//* @protected
 	node: null,
