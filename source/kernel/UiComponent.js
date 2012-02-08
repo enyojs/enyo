@@ -188,7 +188,7 @@ enyo.kind({
 	*/
 	// syntactic sugar for 'broadcastMessage("resize")'
 	resized: function() {
-		this.broadcastMessage("onresize");
+		this.waterfall("onresize");
 	},
 	//* @protected
 	resizeHandler: function() {
@@ -202,9 +202,9 @@ enyo.kind({
 	/**
 		Send a message to all my descendents
 	*/
-	_broadcast: function(inMessageName, inArgs, inSender) {
+	waterfallDown: function(inMessage, inPayload, inSender) {
 		for (var i=0, cs=this.children, c; c=cs[i]; i++) {
-			c.broadcastMessage(inMessageName, inArgs, inSender);
+			c.waterfall(inMessage, inPayload, inSender);
 		}
 	},
 	getBubbleTarget: function() {
@@ -232,10 +232,10 @@ enyo.master = new enyo.Component({
 		return '';
 	},
 	bubble: function(inEventName, inEvent, inSender) {
-		console.log("master event: " + inEventName);
+		//console.log("master event: " + inEventName);
 		if (inEventName == "onresize") {
 			// resize is special, waterfall this message
-			enyo.master.broadcastMessage("onresize");
+			enyo.master.waterfall("onresize");
 		} else {
 			// all other top level events are sent only to interested Signal receivers
 			enyo.Signals.send(inEventName, inEvent);

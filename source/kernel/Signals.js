@@ -10,7 +10,7 @@
 		this.inherited(arguments);
 	},
 	notify: function(inMsg, inPayload) {
-		this.dispatchIndirectly(inMsg, inPayload);
+		this.dispatch(this, this[inMsg], inPayload);
 	},
 	statics: {
 		listeners: [],
@@ -21,9 +21,8 @@
 			enyo.remove(inListener, this.listeners);
 		},
 		send: function(inMsg, inPayload) {
-			var signal = "on" + inMsg;
 			enyo.forEach(this.listeners, function(l) {
-				l.notify(signal, inPayload);
+				l.notify(inMsg, inPayload);
 			});
 		}
 	}
