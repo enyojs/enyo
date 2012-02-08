@@ -188,7 +188,7 @@ enyo.kind({
 	*/
 	// syntactic sugar for 'broadcastMessage("resize")'
 	resized: function() {
-		this.broadcastMessage("resize");
+		this.broadcastMessage("onresize");
 	},
 	//* @protected
 	resizeHandler: function() {
@@ -235,7 +235,7 @@ enyo.master = new enyo.Component({
 		console.log("master event: " + inEventName);
 		if (inEventName == "onresize") {
 			// resize is special, waterfall this message
-			enyo.master.broadcastMessage("resize");
+			enyo.master.broadcastMessage("onresize");
 		} else {
 			// all other top level events are sent only to interested Signal receivers
 			enyo.Signals.send(inEventName, inEvent);
