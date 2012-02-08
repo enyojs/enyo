@@ -363,7 +363,7 @@ enyo.kind({
 	},
 	//* @public
 	/**
-		Bubble an event up an object chain.
+		Bubble an event up an object chain, starting with _this_.
 
 		If a handler for this event returns true (aka _handled_)
 		bubbling is stopped.
@@ -381,22 +381,49 @@ enyo.kind({
 		first place.
 	*/
 	bubble: function(inEventName, inEvent, inSender) {
+		/*
 		if ({ontap:1, Xonenter: 1, Xonleave: 1}[inEventName]) {
 			this.log(inEventName, (inSender || this).name, "=>", this.name);
 		}
+		*/
 		var e = inEvent || {};
 		// FIXME: is this the right place?
-		if (!e.originator) {
-			e.originator = inSender || this;
+		if (!e.origin) {
+			e.origin = inSender || this;
 		}
+		return this.dispatchBubble(inEventName, e, inSender);
+	},
+	dispatchBubble: function(inEventName, inEvent, inSender) {
 		// Try to dispatch from here, stop bubbling on truthy return value
-		if (this.dispatchEvent(inEventName, e, inSender)) {
+		if (this.dispatchEvent(inEventName, inEvent, inSender)) {
 			return true;
 		}
 		// Bubble to next target
+		return this.bubbleUp(inEventName, inEvent, inSender);
+	},
+	/**
+		Bubble an event up an object chain, starting <b>above</b> _this_.
+
+		If a handler for this event returns true (aka _handled_)
+		bubbling is stopped.
+
+		Handlers always have this signature:
+
+			function(inSender, inEvent)
+
+		Where inSender refers to the Component that most recently 
+		propagated the event and inEvent is an object containing 
+		event information.
+
+		inEvent will have at least one property, _originator_ which
+		references the Component which triggered the event in the
+		first place.
+	*/
+	bubbleUp: function(inEventName, inEvent, inSender) {
+		// Bubble to next target
 		var next = this.getBubbleTarget();
 		if (next) {
-			return next.bubble(inEventName, e, this);
+			return next.dispatchBubble(inEventName, inEvent, this);
 		}
 		return false;
 	},
@@ -413,27 +440,24 @@ enyo.kind({
 		var fn = inObject && inMethodName && inObject[inMethodName];
 		if (fn) {
 			return fn.call(inObject, inSender || this, inEvent);
-			/*
-			// unless we are chaining to a dispatcher method, prepend inSender argument (or _this_)
-			var args = fn._dispatcher ? inArgs : this._prependArg(inSender || this, inArgs);
-			// call the delegate
-			return fn.apply(inObject, args || enyo.nar);
-			*/
 		}
 	},
 	/**
 		Send a message to myself and my descendents
 	*/
-	broadcastMessage: function(inMessageName, inMessage, inSender) {
-		this.log(inMessageName, (inSender || this).name, "=>", this.name);
+	waterfall: function(inMessageName, inMessage, inSender) {
+		//this.log(inMessageName, (inSender || this).name, "=>", this.name);
 		if (this.dispatchEvent(inMessageName, inMessage, inSender)) {
 			return true;
 		}
-		this._broadcast(inMessageName, inMessage, inSender || this);
+		this.waterfallDown(inMessageName, inMessage, inSender || this);
 	},
-	_broadcast: function(inMessageName, inMessage, inSender) {
+	/**
+		Send a message to my descendents
+	*/
+	waterfallDown: function(inMessageName, inMessage, inSender) {
 		for (var n in this.$) {
-			this.$[n].broadcastMessage(inMessageName, inMessage, inSender);
+			this.$[n].waterfall(inMessageName, inMessage, inSender);
 		}
 	}
 });
