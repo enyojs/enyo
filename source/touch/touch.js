@@ -49,7 +49,7 @@ enyo.requiresWindow(function() {
 		},
 		makeEvent: function(inEvent) {
 			var e = enyo.clone(inEvent.changedTouches[0]);
-			e.target = this.findTarget(e.pageX, e.pageY);
+			e.target = this.findTarget(e.clientX, e.clientY);
 			//console.log("target for " + inEvent.type + " at " + e.pageX + ", " + e.pageY + " is " + (e.target ? e.target.id : "none"));
 			return e;
 		},
@@ -57,8 +57,8 @@ enyo.requiresWindow(function() {
 			if (inNode.getBoundingClientRect) {
 				var o = inNode.getBoundingClientRect();
 				return {
-					left: o.left + window.pageXOffset || document.body.scrollLeft,
-					top: o.top + window.pageYOffset || document.body.scrollTop,
+					left: o.left,
+					top: o.top,
 					width: o.width,
 					height: o.height
 				}
@@ -93,14 +93,6 @@ enyo.requiresWindow(function() {
 			enyo.forEach(['ontouchstart', 'ontouchmove', 'ontouchend', 'ongesturestart', 'ongesturechange', 'ongestureend'], function(e) {
 				document[e] = enyo.dispatch;
 			});
-			/*
-			document.ontouchstart = enyo.dispatch;
-			document.ontouchmove = enyo.dispatch;
-			document.ontouchend = enyo.dispatch;
-			document.ongesturestart = enyo.dispatch;
-			document.ongesturechange = enyo.dispatch;
-			document.ongestureend = enyo.dispatch;
-			*/
 			// use proper target finding technqiue based on feature detection.
 			if (!document.elementFromPoint) {
 				this.findTarget = function(inX, inY) {
