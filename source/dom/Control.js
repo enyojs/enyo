@@ -1,4 +1,4 @@
-enyo.kind({
+enyo.defaultCtor = enyo.kind({
 	name: "enyo.Control",
 	kind: enyo.UiComponent,
 	published: {
@@ -8,18 +8,32 @@ enyo.kind({
 		style: "",
 		content: "",
 		showing: true,
+		//
 		// convenience properties for common attributes
+		//
 		src: "",
+		//
 		// esoteric
-		canGenerate: true
+		//
+		canGenerate: true,
+		//
+		// ad hoc properties:
+		//
+		// for layouts
+		fit: false,
+		// for ares
+		isContainer: false,
+		// for dangling comma
+		poon: 0
 	},
 	handlers: {
 		ontap: "tap"
 	},
+	defaultKind: "Control",
+	controlClasses: "",
 	//* @protected
 	node: null,
 	generated: false,
-	defaultKind: "Control",
 	create: function() {
 		this.inherited(arguments);
 		// propagate style to domStyles
@@ -62,6 +76,13 @@ enyo.kind({
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
 		this.addClass(this.classes);
+	},
+	// modify components we create ourselves
+	adjustComponentProps: function(inProps) {
+		if (this.controlClasses) {
+			inProps.classes = (inProps.classes ? inProps.classes + " " : "") + this.controlClasses;
+		}
+		this.inherited(arguments);
 	},
 	// event filter
 	strictlyInternalEvents: {onenter: 1, onleave: 1},
@@ -348,11 +369,12 @@ enyo.kind({
 			this.setBounds({width: "10em", right: "30pt"}); // adds style properties like "width: 10em; right: 30pt;"
 	*/
 	setBounds: function(inBounds, inUnit) {
-		var s = this.domStyles;
+		var s = this.domStyles, unit = inUnit || "px";
 		var extents = ["width", "height", "left", "top", "right", "bottom"];
-		for (var i=0, e; e=extents[i]; i++) {
-			if (inBounds[e] || inBounds[e] === 0) {
-				s[e] = inBounds[e] + inUnit;
+		for (var i=0, b, e; e=extents[i]; i++) {
+			b = inBounds[e];
+			if (b || b === 0) {
+				s[e] = b + (!enyo.isString(b) ? unit : '');
 			}
 		}
 		this.domStylesChanged();
@@ -581,6 +603,13 @@ enyo.kind({
 		// it simply reflects this state of this specific property as a convenience.
 		return this.showing = (this.domStyles.display != "none");
 	},
+	//
+	//
+	fitChanged: function(inOld) {
+		this.container.reflow();
+	},
+	//
+	//
 	statics: {
 		//* @protected
 		registerDomEvents: function(inId, inControl) {
@@ -680,5 +709,3 @@ enyo.Control.subclass = function(ctor, props) {
 		proto.attributes = null;
 	}
 };
-
-enyo.defaultCtor = enyo.Control;
