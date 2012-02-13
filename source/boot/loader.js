@@ -15,7 +15,7 @@
 			}
 		},
 		includeTrailingSlash: function(inPath) {
-			return (inPath.slice(-1) !== "/") ? inPath + "/" : inPath;
+			return (inPath && inPath.slice(-1) !== "/") ? inPath + "/" : inPath;
 		},
 		// match $name
 		rewritePattern: /\$([^\/\\]*)(\/)?/g,
@@ -24,7 +24,7 @@
 			var working, its = this.includeTrailingSlash, paths = this.paths;
 			var fn = function(macro, name) {
 				working = true;
-				return its(paths[name]);
+				return its(paths[name]) || '';
 			};
 			var result = inPath;
 			do {
