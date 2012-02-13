@@ -99,22 +99,22 @@
 	information about the executing function.
 */
 enyo.kind = function(inProps) {
-	// if we have an explicit kind property with value undefined, we probably tried
-	// to reference a kind that is not yet in scope
-	if ((inProps.kind === undefined) && ("kind" in inProps)) {
-		throw "enyo.kind: Attempt to subclass an 'undefined' kind. Check dependencies for [" + name + "].";
-	}
 	// kind-name to constructor map could be faulty now that a new kind exists, so we simply destroy the memoizations
 	enyo._kindCtors = {};
 	// extract 'name' property
 	var name = inProps.name || "";
 	delete inProps.name;
 	// extract 'kind' property
+	var hasKind = ("kind" in inProps);
 	var kind = inProps.kind;
 	delete inProps.kind;
 	// establish base class reference
 	var base = enyo.constructorForKind(kind);
 	var isa = base && base.prototype || null;
+	// if we have an explicit kind property with value undefined, we probably tried to reference a kind that is not yet in scope
+	if (hasKind && (kind !== null) && (base == null)) {
+		throw "enyo.kind: Attempt to subclass an undefined kind. Check dependencies for [" + name + "].";
+	}
 	// make a boilerplate constructor
 	var ctor = enyo.kind.makeCtor();
 	// semi-reserved word 'constructor' causes problems with Prototype and IE, so we rename it here
