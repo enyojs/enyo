@@ -4,9 +4,8 @@
 //* @protected
 enyo.dispatcher.features.push(function(e) {
 	var c = e.dispatchTarget;
-	// prevent capturing events that go to the rootHandler as these events do not target an enyo control
-	var wants = this.captureTarget && (c != enyo.dispatcher.rootHandler) && !this.noCaptureEvents[e.type];
-	var needs = wants && (!c || !c.isDescendantOf(this.captureTarget));
+	var wants = this.captureTarget && !this.noCaptureEvents[e.type];
+	var needs = wants && !(c && c.isDescendantOf && c.isDescendantOf(this.captureTarget));
 	if (needs) {
 		var c1 = e.captureTarget = this.captureTarget;
 		this.dispatchBubble(e, c1);
@@ -21,7 +20,7 @@ enyo.dispatcher.features.push(function(e) {
 //
 enyo.mixin(enyo.dispatcher, {
 	noCaptureEvents: {load: 1, unload:1, error: 1},
-	autoForwardEvents: {leave: 1},
+	autoForwardEvents: {leave: 1, resize: 1},
 	captures: [],
 	//* Capture events for `inTarget` and optionally forward them
 	capture: function(inTarget, inShouldForward) {
