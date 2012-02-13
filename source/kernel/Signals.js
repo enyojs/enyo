@@ -10,7 +10,7 @@
 		this.inherited(arguments);
 	},
 	notify: function(inMsg, inPayload) {
-		this.dispatch(this, this[inMsg], inPayload);
+		this.dispatchEvent(inMsg, inPayload);
 	},
 	statics: {
 		listeners: [],
