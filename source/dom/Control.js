@@ -607,7 +607,8 @@ enyo.kind({
 			enyo.$[inId] = null;
 		},
 		selfClosing: {
-			img: 1
+			img: 1,
+			br: 1
 		},
 		cssTextToDomStyles: function(inText, inStyleHash) {
 			if (inText) {
