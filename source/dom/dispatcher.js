@@ -1,6 +1,6 @@
 ﻿//* @protected
 enyo.$ = {};
-//
+
 enyo.dispatcher = {
 	// these events come from document
 	events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel", "click", "dblclick", "change", "keydown", "keyup", "keypress", "input"],
@@ -33,6 +33,22 @@ enyo.dispatcher = {
 		}
 		this.listen(inListener, inEventName);
 	},
+	//* Fire an event for Enyo to listen for
+	dispatch: function(e) {
+		// Find the control who maps to e.target, or the first control that maps to an ancestor of e.target.
+		var c = this.findDispatchTarget(e.target) || this.findDefaultTarget(e);
+		// Cache the original target
+		e.dispatchTarget = c;
+		// support pluggable features return true to abort immediately or set e.preventDispatch to avoid processing.
+		for (var i=0, fn; fn=this.features[i]; i++) {
+			if (fn.call(this, e) === true) {
+				return;
+			}
+		}
+		if (c && !e.preventDispatch) {
+			this.dispatchBubble(e, c);
+		}
+	},
 	//* Takes an Event.target and finds the corresponding enyo control
 	findDispatchTarget: function(inNode) {
 		var t, n = inNode;
@@ -59,38 +75,22 @@ enyo.dispatcher = {
 	findDefaultTarget: function(e) {
 		return enyo.master;
 	},
-	//* Fire an event for Enyo to listen for
-	dispatch: function(e) {
-		// Find the control who maps to e.target, or the first control that maps to an ancestor of e.target.
-		var c = this.findDispatchTarget(e.target) || this.findDefaultTarget(e);
-		// Cache the original target
-		e.dispatchTarget = c;
-		// support pluggable features return true to abort immediately or set e.preventDispatch to avoid processing.
-		for (var i=0, fn; fn=this.features[i]; i++) {
-			if (fn.call(this, e) === true) {
-				return;
-			}
-		}
-		if (c && !e.preventDispatch) {
-			this.dispatchBubble(e, c);
-		}
-	},
 	dispatchBubble: function(e, c) {
 		return c.bubble("on" + e.type, e, c);
 	}
 };
-//
+
 enyo.dispatch = function(inEvent) {
 	return enyo.dispatcher.dispatch(inEvent);
 };
-//
+
 enyo.bubble = function(e) {
 	if (e) {
 		enyo.dispatch(e);
 	}
 };
-//
+
 enyo.bubbler = 'enyo.bubble(arguments[0])';
-//
+
 // FIXME: we need to create and initialize dispatcher someplace else to allow overrides
 enyo.requiresWindow(enyo.dispatcher.connect);
