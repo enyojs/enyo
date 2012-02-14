@@ -35,9 +35,10 @@ enyo.defaultCtor = enyo.kind({
 	node: null,
 	generated: false,
 	create: function() {
+		// initialize style databases
+		this.initStyles();
+		// superkind initialization
 		this.inherited(arguments);
-		// propagate style to domStyles
-		this.styleChanged();
 		// 'showing' is tertiary method for modifying display style
 		// setting 'display: none;' style at initialization time will
 		// not work if 'showing' is true.
@@ -124,30 +125,6 @@ enyo.defaultCtor = enyo.kind({
 	*/
 	addContent: function(inAddendum) {
 		this.setContent(this.content + inAddendum);
-	},
-	/**
-		Applies a single style value to this object.
-
-			this.$.box.applyStyle("z-index", 4);
-
-		You can remove a style (restore it to default) by setting its value to null.
-
-			this.$.box.applyStyle("z-index", null);
-	*/
-	applyStyle: function(inStyle, inValue) {
-		this.domStyles[inStyle] = inValue;
-		this.domStylesChanged();
-	},
-	/**
-		Adds CSS styles to the set of styles assigned to this object.
-
-		_inCssText_ is a string containing CSS styles in text format.
-
-			this.$.box.addStyles("background-color: red; padding: 4px;");
-	*/
-	addStyles: function(inCssText) {
-		enyo.Control.cssTextToDomStyles(inCssText, this.domStyles);
-		this.domStylesChanged();
 	},
 	/**
 		Gets the value of an attribute on this object.
@@ -267,6 +244,65 @@ enyo.defaultCtor = enyo.kind({
 	addRemoveClass: function(inClass, inTrueToAdd) {
 		this[inTrueToAdd ? "addClass" : "removeClass"](inClass);
 	},
+	//
+	// styles
+	//
+	initStyles: function() {
+		this.domStyles = this.domStyles || {};
+		enyo.Control.cssTextToDomStyles(this.kindStyle, this.domStyles);
+		this.domCssText = enyo.Control.domStylesToCssText(this.domStyles);
+	},
+	styleChanged: function() {
+		// FIXME: stomping on domStyles is problematic, there may be styles on this object
+		// applied by layouts or other objects.
+		// We may need a 'runtimeStyles' concept separate from a 'userStyles' concept, although
+		// it's not clear what API calls like 'applyStyle' would affect, and which concept would take
+		// precendence when there is a conflict.
+		// Perhaps we can separate 'style' completely from 'domStyles'. API methods like applyStyle 
+		// would affect domStyles, and the two style databases would be combined at render-time.
+		// Alternatively, we can disallow changing "style" string at runtime and allow it to be set 
+		// at init-time only (as it was in pre-ares enyo).
+		//this.domStyles = {};
+		//this.addStyles(this.kindStyle);
+		//this.addStyles(this.style);
+		this.invalidateTags();
+		this.renderStyles();
+	},
+	/**
+		Applies a single style value to this object.
+
+			this.$.box.applyStyle("z-index", 4);
+
+		You can remove a style by setting its value to null.
+
+			this.$.box.applyStyle("z-index", null);
+	*/
+	applyStyle: function(inStyle, inValue) {
+		this.domStyles[inStyle] = inValue;
+		this.domStylesChanged();
+	},
+	/**
+		Adds CSS styles to the set of styles assigned to this object.
+
+		_inCssText_ is a string containing CSS styles in text format.
+
+			this.$.box.addStyles("background-color: red; padding: 4px;");
+	*/
+	addStyles: function(inCssText) {
+		enyo.Control.cssTextToDomStyles(inCssText, this.domStyles);
+		this.domStylesChanged();
+	},
+	domStylesChanged: function() {
+		this.domCssText = enyo.Control.domStylesToCssText(this.domStyles);
+		this.invalidateTags();
+		this.renderStyles();
+	},
+	stylesToNode: function() {
+		this.node.style.cssText = this.domCssText + this.style;
+	},
+	//
+	//
+	//
 	/**
 		Renders this object into DOM, generating a DOM node if needed.
 	*/
@@ -393,28 +429,10 @@ enyo.defaultCtor = enyo.kind({
 			enyo.Control.registerDomEvents(this.id, this);
 		}
 	},
-	styleChanged: function() {
-		// FIXME: stomping on domStyles is problematic, there may be styles on this object
-		// applied by layouts or other objects.
-		// We may need a 'runtimeStyles' concept separate from a 'userStyles' concept, although
-		// it's not clear what API calls like 'applyStyle' would affect, and which concept would take
-		// precendence when there is a conflict.
-		// Perhaps we can separate 'style' completely from 'domStyles'. API methods like applyStyle 
-		// would affect domStyles, and the two style databases would be combined at render-time.
-		// Alternatively, we can disallow changing "style" string at runtime and allow it to be set 
-		// at init-time only (as it was in pre-ares enyo).
-		this.domStyles = {};
-		this.addStyles(this.kindStyle);
-		this.addStyles(this.style);
-	},
 	contentChanged: function() {
 		if (this.hasNode()) {
 			this.renderContent();
 		}
-	},
-	domStylesChanged: function() {
-		this.invalidateTags();
-		this.renderStyles();
 	},
 	getSrc: function() {
 		return this.getAttribute("src");
@@ -426,13 +444,16 @@ enyo.defaultCtor = enyo.kind({
 		this.invalidateTags();
 		this.renderAttributes();
 	},
+	//
 	// HTML rendering
+	//
 	invalidateTags: function() {
 		this.tagsValid = false;
 	},
 	prepareTags: function() {
 		//this.log("(" + this.owner.name + ") " + this.name + ": " + this.id + " (" + this.attributes.id + ")");
-		var htmlStyle = enyo.Control.domStylesToCssText(this.domStyles);
+		//var htmlStyle = enyo.Control.domStylesToCssText(this.domStyles);
+		var htmlStyle = this.domCssText + this.style;
 		this._openTag = '<' 
 			+ this.tag
 			+ (htmlStyle ? ' style="' + htmlStyle + '"' : "")
@@ -507,9 +528,6 @@ enyo.defaultCtor = enyo.kind({
 		for (var n in this.attributes) {
 			this.attributeToNode(n, this.attributes[n]);
 		}
-	},
-	stylesToNode: function() {
-		this.node.style.cssText = enyo.Control.domStylesToCssText(this.domStyles);
 	},
 	getParentNode: function() {
 		return this.parentNode || (this.parent && this.parent.hasNode());
@@ -606,7 +624,7 @@ enyo.defaultCtor = enyo.kind({
 	//
 	//
 	fitChanged: function(inOld) {
-		this.container.reflow();
+		this.parent.reflow();
 	},
 	//
 	//
@@ -618,9 +636,7 @@ enyo.defaultCtor = enyo.kind({
 		unregisterDomEvents: function(inId) {
 			enyo.$[inId] = null;
 		},
-		selfClosing: {
-			img: 1
-		},
+		selfClosing: {img: 1, hr: 1, br: 1},
 		cssTextToDomStyles: function(inText, inStyleHash) {
 			if (inText) {
 				// remove spaces between rules, then split rules on delimiter (;)
@@ -690,7 +706,7 @@ enyo.Control.subclass = function(ctor, props) {
 	//
 	var proto = ctor.prototype;
 	//
-	// 'kc' comes either from our inheritance chain (e.g. proto's prototype chain) 
+	// 'kindClasses' comes either from our inheritance chain (e.g. proto's prototype chain) 
 	// or has been forced by a kind declaration.
 	//
 	if (proto.classes) {
