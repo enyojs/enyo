@@ -27,6 +27,10 @@ enyo.kind({
 		*/
 		scrollLeft: 0,
 		/**
+			Fit the scroller to the container. Set to false when container size depends on size of the content.
+		*/
+		fit: true,
+		/**
 			Specify a type of scrolling. The enyo Scroller will attempt to automatically select 
 			a strategy compatbile with the runtime environment. A specific strategy can also be chosen:
 			"ScrollStrategy" is the default and implements no scrolling, relying instead on the environment to scroll properly.
@@ -109,7 +113,7 @@ enyo.kind({
 			this.$.strategy.destroy();
 			this.controlParent = null;
 		}
-		this.createComponent({name: "strategy", classes: "enyo-fit", kind: this.strategyKind, preventDragPropagation: this.preventDragPropagation, isChrome: true});
+		this.createComponent({name: "strategy", fit: this.fit, kind: this.strategyKind, preventDragPropagation: this.preventDragPropagation, isChrome: true});
 		if (this.hasNode()) {
 			this.discoverControlParent();
 			this.render();

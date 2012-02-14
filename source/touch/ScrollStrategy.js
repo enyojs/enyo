@@ -10,7 +10,8 @@ enyo.kind({
 		vertical: true,
 		horizontal: true,
 		scrollLeft: 0,
-		scrollTop: 0
+		scrollTop: 0,
+		fit: true
 	},
 	handlers: {
 		onscroll: "scrollHandler"
@@ -20,7 +21,11 @@ enyo.kind({
 		this.inherited(arguments);
 		this.horizontalChanged();
 		this.verticalChanged();
+		this.fitChanged();
 		this.setAttribute("onscroll", enyo.bubbler);
+	},
+	fitChanged: function() {
+		this.addRemoveClass("enyo-fit", this.fit);
 	},
 	rendered: function() {
 		this.inherited(arguments);
