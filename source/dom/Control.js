@@ -372,6 +372,12 @@ enyo.kind({
 			enyo.Control.registerDomEvents(this.id, this);
 		}
 	},
+	layoutKindChanged: function() {
+		this.inherited(arguments);
+		if (this.generated) {
+			this.render();
+		}
+	},
 	styleChanged: function() {
 		// FIXME: stomping on domStyles is problematic, there may be styles on this object
 		// applied by layouts or other objects.
