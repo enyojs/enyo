@@ -30,12 +30,16 @@ enyo.kind({
 	classes: "enyo-touch-scroller",
 	components: [
 		{name: "scroll", kind: "ScrollMath"},
-		{name: "client", classes: "enyo-fit enyo-touch-scroller", attributes: {"onscroll": enyo.bubbler}}
+		{name: "client", classes: "enyo-touch-scroller", attributes: {"onscroll": enyo.bubbler}}
 	],
 	rendered: function() {
 		this.inherited(arguments);
 		this.calcBoundaries();
 		this.syncScrollMath();
+	},
+	fitChanged: function() {
+		this.inherited(arguments);
+		this.$.client.addRemoveClass("enyo-fit", this.fit);
 	},
 	scrollHandler: function() {
 		this.calcBoundaries();
