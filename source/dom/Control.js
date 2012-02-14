@@ -393,6 +393,12 @@ enyo.defaultCtor = enyo.kind({
 			enyo.Control.registerDomEvents(this.id, this);
 		}
 	},
+	layoutKindChanged: function() {
+		this.inherited(arguments);
+		if (this.generated) {
+			this.render();
+		}
+	},
 	styleChanged: function() {
 		// FIXME: stomping on domStyles is problematic, there may be styles on this object
 		// applied by layouts or other objects.
@@ -619,7 +625,8 @@ enyo.defaultCtor = enyo.kind({
 			enyo.$[inId] = null;
 		},
 		selfClosing: {
-			img: 1
+			img: 1,
+			br: 1
 		},
 		cssTextToDomStyles: function(inText, inStyleHash) {
 			if (inText) {

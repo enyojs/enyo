@@ -166,9 +166,6 @@ enyo.kind({
 			this.layout.destroy();
 		}
 		this.layout = enyo.createFromKind(this.layoutKind, this);
-		if (this.generated) {
-			this.render();
-		}
 	},
 	flow: function() {
 		if (this.layout) {
