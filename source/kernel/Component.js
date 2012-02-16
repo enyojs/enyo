@@ -388,8 +388,8 @@ enyo.kind({
 		*/
 		var e = inEvent || {};
 		// FIXME: is this the right place?
-		if (!e.origin) {
-			e.origin = inSender || this;
+		if (!e.originator) {
+			e.originator = inSender || this;
 		}
 		return this.dispatchBubble(inEventName, e, inSender);
 	},
