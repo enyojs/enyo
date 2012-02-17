@@ -225,7 +225,7 @@ enyo.createFromKind = function(inKind, inParam) {
 //
 // NOTE: ownerless UiComponents will not GC unless explicity destroyed as they will be referenced by enyo.master.
 //
-enyo.master = new enyo.Component({
+enyo.master = new enyo.UiComponent({
 	name: "master",
 	notInstanceOwner: true,
 	getId: function() {

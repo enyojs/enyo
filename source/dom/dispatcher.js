@@ -24,6 +24,7 @@ enyo.dispatcher = {
 				inListener.addEventListener(inEventName, d, false);
 			}
 		} else {
+			console.log("IE8 COMPAT: using 'attachEvent'");
 			this.listen = function(inListener, inEvent, inCb) {
 				inListener.attachEvent("on" + inEvent, function() {
 					event.target = event.srcElement;
@@ -86,11 +87,14 @@ enyo.dispatch = function(inEvent) {
 
 enyo.bubble = function(e) {
 	if (e) {
+		// FIXME: ad hoc
+		e.target = e.srcElement;
 		enyo.dispatch(e);
 	}
 };
 
-enyo.bubbler = 'enyo.bubble(arguments[0])';
+// '|| window.event' clause needed for IE8
+enyo.bubbler = 'enyo.bubble(arguments[0] || window.event)';
 
 // FIXME: we need to create and initialize dispatcher someplace else to allow overrides
 enyo.requiresWindow(enyo.dispatcher.connect);
