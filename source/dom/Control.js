@@ -518,7 +518,7 @@ enyo.defaultCtor = enyo.kind({
 	},
 	// DOM, aka direct-to-node, rendering
 	attributeToNode: function(inName, inValue) {
-		if (inValue === null || inValue === false) {
+		if (inValue === null || inValue === false || inValue === "") {
 			this.node.removeAttribute(inName);
 		} else {
 			this.node.setAttribute(inName, inValue);
@@ -673,13 +673,13 @@ enyo.defaultCtor = enyo.kind({
 			e.g. 'hello from "Me & She"' becomes 'hello from &amp;quot;Me &amp;amp; She&amp;quot;' 
 		*/
 		escapeAttribute: function(inText) {
-			return inText != null ? String(inText).replace(/&/g,'&amp;').replace(/"/g,'&quot;') : '';
+			return !enyo.isString(inText) ? inText : String(inText).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
 		},
 		attributesToHtml: function(inAttributeHash) {
 			var n, v, h = '';
 			for (n in inAttributeHash) {
 				v = inAttributeHash[n];
-				if (v !== null && v !== false) {
+				if (v !== null && v !== false && v !== "") {
 					h += ' ' + n + '="' + enyo.Control.escapeAttribute(v) + '"';
 				}
 			}
