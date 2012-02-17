@@ -28,6 +28,14 @@ enyo.requiresWindow(function() {
 			this.excludedTarget = de && de.dragInfo && de.dragInfo.node;
 			var e = this.makeEvent(inEvent);
 			gesture.move(e);
+			// Note: Android requires that preventDefault is called on touchmove in order to fire > 1 touchmove event.
+			// Therefore, we do this by default. The only known native action dictated by touchmove is scrolling.
+			// We expose an option in the onmove event allowing handlers to demand that preventDefault is NOT called on touchmove.
+			// Where need native scrolling is desired, the onmove event's allowTouchmove property must be set to true and
+			// enyo Scroller does this.
+			if (!e.allowTouchmove) {
+				inEvent.preventDefault();
+			}
 			// synthesize over and out (normally generated via mouseout)
 			if (this.overEvent && this.overEvent.target != e.target) {
 				this.overEvent.relatedTarget = e.target;

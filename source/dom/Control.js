@@ -79,11 +79,21 @@ enyo.defaultCtor = enyo.kind({
 		this.addClass(this.classes);
 	},
 	// modify components we create ourselves
+	/*
 	adjustComponentProps: function(inProps) {
 		if (this.controlClasses) {
 			inProps.classes = (inProps.classes ? inProps.classes + " " : "") + this.controlClasses;
 		}
 		this.inherited(arguments);
+	},
+	*/
+	addChild: function(inControl) {
+		inControl.addClass(this.controlClasses);
+		this.inherited(arguments);
+	},
+	removeChild: function(inControl) {
+		this.inherited(arguments);
+		inControl.removeClass(this.controlClasses);
 	},
 	// event filter
 	strictlyInternalEvents: {onenter: 1, onleave: 1},

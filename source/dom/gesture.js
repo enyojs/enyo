@@ -55,6 +55,8 @@ enyo.gesture = {
 		this.cancelHold();
 		var e = this.makeEvent("move", inEvent);
 		enyo.dispatch(e);
+		// propagate the allowTouchmove option to the touch event (see touch for more info)
+		inEvent.allowTouchmove = e.allowTouchmove;
 		if (this.trackInfo) {
 			this.track(e);
 		}

@@ -5,7 +5,9 @@
  * "dragstart", "dragfinish" - sent for pointer moves that exceed a certain threshhold
  * "drag", "drop" - sent to the original target of the pointer move to inform it about the item being moved over or released over another element
  * "dragover", "dragout" - sent in addition to over and out when there is an active drag
- 
+ * 
+ * Note: on Android, touchmove event must be prevented via inEvent.preventDefault() or will not fire more than once and enyo dragging system
+ * will not function correctly.
  */
 
 //* @protected
