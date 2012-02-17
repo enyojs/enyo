@@ -15,9 +15,8 @@ enyo.kind({
 	},
 	handlers: {
 		onscroll: "scrollHandler",
-		ontouchmove: "touchmoveHandler"
+		onmove: "moveHandler"
 	},
-	classes: "enyo-scroller",
 	create: function() {
 		this.inherited(arguments);
 		this.horizontalChanged();
@@ -45,10 +44,10 @@ enyo.kind({
 	verticalChanged: function() {
 		this.applyStyle("overflow-y", this.vertical ? "auto" : "hidden");
 	},
-	// mobile native scrollers need touchmove so prevent bubbling
-	// so the event is not inadvertently prevented.
-	touchmoveHandler: function() {
-		return true;
+	// mobile native scrollers need touchmove. Indicate this by 
+	// setting the allowTouchmove property of the onmove event to true.
+	moveHandler: function(inSender, inEvent) {
+		inEvent.allowTouchmove = true;
 	},
 	scrollHandler: function(inSender, e) {
 		return this.doScroll(e);

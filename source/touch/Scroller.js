@@ -5,10 +5,13 @@ In some mobile environments, a default scrolling solution is not implemented for
 a touch based scrolling solution. This can be opted into either globally by setting the flag enyo.Scroller.touchScrolling = true;
 or on a per instance basis by specifying a strategyKind of "TouchScrollStrategy."
 
+Note: If a scroller is fit: true, then it should have a position style set to a value other than the default of static.
+
 */
 enyo.kind({
 	name: "enyo.Scroller",
 	kind: enyo.Control,
+	classes: "enyo-scroller",
 	published: {
 		/**
 			Set to false to prevent horizontal scrolling.
@@ -85,7 +88,6 @@ enyo.kind({
 	controlParentName: "strategy",
 	create: function() {
 		this.inherited(arguments);
-		this.addClass("enyo-scroller");
 		this.horizontalChanged();
 		this.verticalChanged();
 	},
