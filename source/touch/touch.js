@@ -58,6 +58,8 @@ enyo.requiresWindow(function() {
 		makeEvent: function(inEvent) {
 			var e = enyo.clone(inEvent.changedTouches[0]);
 			e.target = this.findTarget(e.clientX, e.clientY);
+			// normalize "mouse button" info
+			e.which = 1;
 			//console.log("target for " + inEvent.type + " at " + e.pageX + ", " + e.pageY + " is " + (e.target ? e.target.id : "none"));
 			return e;
 		},

@@ -42,6 +42,14 @@ enyo.gesture.drag = {
 		if (this.tracking) {
 			this.dx = e.pageX - this.px0;
 			this.dy = e.pageY - this.py0;
+			// If the mouse is not down and we're tracking a drag, abort.
+			// this error condition can occur on IE/Webkit after interaction with a scrollbar.
+			if (!e.which) {
+				this.stopDragging(e);
+				this.tracking = false;
+				console.log("enyo.gesture.drag: mouse must be down to drag.");
+				return;
+			}
 			if (this.dragEvent) {
 				this.sendDrag(e);
 			} else if (Math.sqrt(this.dy*this.dy + this.dx*this.dx) >= this.hysteresis) {
