@@ -1,4 +1,4 @@
-enyo.defaultCtor = enyo.kind({
+enyo.kind({
 	name: "enyo.Control",
 	kind: enyo.UiComponent,
 	published: {
@@ -697,6 +697,8 @@ enyo.defaultCtor = enyo.kind({
 		}
 	}
 });
+
+enyo.defaultCtor = enyo.Control;
 
 enyo.Control.subclass = function(ctor, props) {
 	// Control classes may declare properties that are intended
