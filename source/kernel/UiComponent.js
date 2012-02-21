@@ -225,17 +225,21 @@ enyo.createFromKind = function(inKind, inParam) {
 //
 // NOTE: ownerless UiComponents will not GC unless explicity destroyed as they will be referenced by enyo.master.
 //
-enyo.master = new enyo.UiComponent({
+enyo.master = new enyo.Component({
 	name: "master",
+	/*
 	notInstanceOwner: true,
 	getId: function() {
 		return '';
 	},
+	*/
 	bubble: function(inEventName, inEvent, inSender) {
 		//console.log("master event: " + inEventName);
 		if (inEventName == "onresize") {
 			// resize is special, waterfall this message
-			enyo.master.waterfall("onresize");
+			// this works because master is a Component, so it' waterfalls
+			// to it's owned Components (i.e. master has no children)
+			enyo.master.waterfallDown("onresize");
 		} else {
 			// all other top level events are sent only to interested Signal receivers
 			enyo.Signals.send(inEventName, inEvent);
