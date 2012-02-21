@@ -227,12 +227,10 @@ enyo.createFromKind = function(inKind, inParam) {
 //
 enyo.master = new enyo.Component({
 	name: "master",
-	/*
 	notInstanceOwner: true,
 	getId: function() {
 		return '';
 	},
-	*/
 	bubble: function(inEventName, inEvent, inSender) {
 		//console.log("master event: " + inEventName);
 		if (inEventName == "onresize") {
