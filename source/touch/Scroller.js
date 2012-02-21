@@ -94,7 +94,7 @@ enyo.kind({
 	importProps: function(inProps) {
 		this.inherited(arguments);
 		// allow global overriding of strategy kind
-		if (inProps.strategyKind === undefined && enyo.Scroller.forceTouchScrolling) {
+		if (inProps && inProps.strategyKind === undefined && enyo.Scroller.forceTouchScrolling) {
 			this.strategyKind = "TouchScrollStrategy";
 		}
 	},
@@ -115,9 +115,9 @@ enyo.kind({
 			this.$.strategy.destroy();
 			this.controlParent = null;
 		}
-		this.createComponent({name: "strategy", fit: this.fit, kind: this.strategyKind, preventDragPropagation: this.preventDragPropagation, isChrome: true});
+		// note: createComponents automatically updates controlParent.
+		this.createComponents([{name: "strategy", fit: this.fit, kind: this.strategyKind, preventDragPropagation: this.preventDragPropagation, isChrome: true}]);
 		if (this.hasNode()) {
-			this.discoverControlParent();
 			this.render();
 		}
 	},
