@@ -32,7 +32,7 @@ enyo.kind({
 	name: "enyo.Option",
 	tag: "option",
 	published: {
-		value:"",
+		value: "",
 	},
 	create: function() {
 		this.inherited(arguments);
@@ -56,5 +56,5 @@ enyo.kind({
 	},
 	labelChanged: function() {
 		this.setAttribute("label", this.label);
-	},
+	}
 });
