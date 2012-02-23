@@ -2,5 +2,6 @@
 	"kernel",
 	"ajax",
 	"dom",
-	"touch"
+	"touch",
+	"ui"
 );

@@ -1,0 +1,11 @@
+﻿.enyo-inline {
+	display: inline-block;
+}
+
+.enyo-children-inline > * {
+	display: inline-block;
+}
+
+.enyo-children-middle > * {
+	vertical-align: middle;
+}
