@@ -23,7 +23,11 @@
 	}
 	//
 	builtin = window.webkitCancelRequestAnimationFrame || window.clearTimeout;
-	enyo.cancelRequestAnimationFrame = enyo.bind(window, builtin);
+	// Note: IE8 clearTimeout cannot be called via .apply so don't use enyo.bind.
+	//enyo.cancelRequestAnimationFrame = enyo.bind(window, builtin);
+	enyo.cancelRequestAnimationFrame = function(c) {
+		return builtin(c);
+	};
 })();
 
 enyo.easing = {
