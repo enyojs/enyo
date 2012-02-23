@@ -1,25 +1,60 @@
 enyo.kind({
 	name: "enyo.Select",
 	tag: "select",
-	create: function() {
+	defaultKind: "enyo.Option",
+	published: {
+		selected: 0,
+	},
+	handlers: {
+		onchange: "change"
+	},
+	rendered: function() {
 		this.inherited(arguments);
-		this.checkedChanged();
+		this.selectedChanged();
+	},
+	selectedChanged: function() {
+		this.setNodeProperty("selectedIndex", this.selected);
+	},
+	getSelected: function() {
+		return this.getNodeProperty("selectedIndex", this.selected);
+	},
+	change: function() {
+		this.selected = this.getSelected();
 	},
 	getValue: function() {
-		return Boolean(this.getNodeProperty("checked", this.checked));
+		if (this.hasNode()) {
+			return this.node.value;
+		}
+	}
+});
+
+enyo.kind({
+	name: "enyo.Option",
+	tag: "option",
+	published: {
+		value:"",
 	},
-	setChecked: function(inChecked) {
-		// default property mechanism can't track changed correctly for virtual properties
-		this.setPropertyValue("checked", inChecked, "checkedChanged");
-	},
-	checkedChanged: function() {
-		this.setAttribute("checked", this.checked ? "checked" : "");
-		this.setNodeProperty("checked", this.checked);
-	},
-	setValue: function(inValue) {
-		this.setChecked(inValue);
+	create: function() {
+		this.inherited(arguments);
+		this.valueChanged();
 	},
 	valueChanged: function() {
-		// cancel Input value handling
+		this.setAttribute("value", this.value);
 	}
+});
+
+enyo.kind({
+	name: "enyo.OptGroup",
+	tag: "optgroup",
+	defaultKind: "enyo.Option",
+	published: {
+		label: ""
+	},
+	create: function() {
+		this.inherited(arguments);
+		this.labelChanged();
+	},
+	labelChanged: function() {
+		this.setAttribute("label", this.label);
+	},
 });
