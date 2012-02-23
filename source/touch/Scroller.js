@@ -5,7 +5,7 @@ In some mobile environments, a default scrolling solution is not implemented for
 a touch based scrolling solution. This can be opted into either globally by setting the flag enyo.Scroller.touchScrolling = true;
 or on a per instance basis by specifying a strategyKind of "TouchScrollStrategy."
 
-Note: If a scroller is fit: true, then it should have a position style set to a value other than the default of static.
+Note: If a scroller is nofit: false, then it should have a position style set to a value other than the default of static.
 
 */
 enyo.kind({
@@ -30,9 +30,9 @@ enyo.kind({
 		*/
 		scrollLeft: 0,
 		/**
-			Fit the scroller to the container. Set to false when container size depends on size of the content.
+			Set to true when container size depends on size of the content.
 		*/
-		fit: true,
+		nofit: false,
 		/**
 			Specify a type of scrolling. The enyo Scroller will attempt to automatically select 
 			a strategy compatbile with the runtime environment. A specific strategy can also be chosen:
@@ -116,7 +116,7 @@ enyo.kind({
 			this.controlParent = null;
 		}
 		// note: createComponents automatically updates controlParent.
-		this.createComponents([{name: "strategy", fit: this.fit, kind: this.strategyKind, preventDragPropagation: this.preventDragPropagation, isChrome: true}]);
+		this.createComponents([{name: "strategy", fit: !this.nofit, kind: this.strategyKind, preventDragPropagation: this.preventDragPropagation, isChrome: true}]);
 		if (this.hasNode()) {
 			this.render();
 		}
