@@ -26,9 +26,9 @@ enyo.dispatcher = {
 		} else {
 			console.log("IE8 COMPAT: using 'attachEvent'");
 			this.listen = function(inListener, inEvent, inCb) {
-				inListener.attachEvent("on" + inEvent, function() {
-					event.target = event.srcElement;
-					return d(event);
+				inListener.attachEvent("on" + inEvent, function(e) {
+					e.target = e.srcElement
+					return d(e);
 				});
 			}
 		}
