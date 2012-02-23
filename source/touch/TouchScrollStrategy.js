@@ -37,9 +37,9 @@ enyo.kind({
 		this.calcBoundaries();
 		this.syncScrollMath();
 	},
-	fitChanged: function() {
+	nofitChanged: function() {
 		this.inherited(arguments);
-		this.$.client.addRemoveClass("enyo-fit", this.fit);
+		this.$.client.addRemoveClass("enyo-fit", !this.nofit);
 	},
 	scrollHandler: function() {
 		this.calcBoundaries();

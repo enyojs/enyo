@@ -116,7 +116,7 @@ enyo.kind({
 			this.controlParent = null;
 		}
 		// note: createComponents automatically updates controlParent.
-		this.createComponents([{name: "strategy", fit: !this.nofit, kind: this.strategyKind, preventDragPropagation: this.preventDragPropagation, isChrome: true}]);
+		this.createComponents([{name: "strategy", nofit: this.nofit, kind: this.strategyKind, preventDragPropagation: this.preventDragPropagation, isChrome: true}]);
 		if (this.hasNode()) {
 			this.render();
 		}
