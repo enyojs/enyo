@@ -6,7 +6,7 @@ enyo.requiresWindow(function() {
 	gesture.events.touchstart = function(e) {
 		gesture.events = touchGesture;
 		gesture.events.touchstart(e);
-	}
+	};
 	//
 	var touchGesture = {
 		// FIXME: for touchmove to fire on Android, must prevent touchstart event.
@@ -71,7 +71,7 @@ enyo.requiresWindow(function() {
 					top: o.top,
 					width: o.width,
 					height: o.height
-				}
+				};
 			}
 		},
 		findTarget: function(inX, inY) {
@@ -107,7 +107,7 @@ enyo.requiresWindow(function() {
 			if (!document.elementFromPoint) {
 				this.findTarget = function(inX, inY) {
 					return this.findTargetTraverse(null, inX, inY);
-				}
+				};
 			}
 		}
 	};

@@ -22,15 +22,15 @@ enyo.dispatcher = {
 		if (inListener.addEventListener) {
 			this.listen = function(inListener, inEventName) {
 				inListener.addEventListener(inEventName, d, false);
-			}
+			};
 		} else {
 			console.log("IE8 COMPAT: using 'attachEvent'");
 			this.listen = function(inListener, inEvent, inCb) {
 				inListener.attachEvent("on" + inEvent, function(e) {
-					e.target = e.srcElement
+					e.target = e.srcElement;
 					return d(e);
 				});
-			}
+			};
 		}
 		this.listen(inListener, inEventName);
 	},

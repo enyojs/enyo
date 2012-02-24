@@ -29,7 +29,7 @@ enyo.dom = {
 			'&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;'
 	*/
 	escape: function(inText) {
-		return inText != null ? String(inText).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
+		return inText !== null ? String(inText).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
 	},
 	//* @protected
 	getComputedStyle: function(inNode) {

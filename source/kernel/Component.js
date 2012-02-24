@@ -539,7 +539,7 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 		inProto[fn] = function(inEvent) {
 			// bubble this event
 			return this.bubble(inName, inEvent);
-		}
+		};
 		// NOTE: Mark this function as a generated event handler to allow us to 
 		// do event chaining. Is this too complicated?
 		//inProto[fn]._dispatcher = true;

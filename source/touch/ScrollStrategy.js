@@ -88,6 +88,6 @@ enyo.kind({
 			top: this.getScrollTop(),
 			height: n ? n.scrollHeight : 0,
 			width: n ? n.scrollWidth : 0
-		}
+		};
 	}
 });

@@ -24,7 +24,7 @@
 			}
 			return l;
 		}
-	}
+	};
 	//
 	enyo.dispatcher.features.push(function(e) {
 		preview.dispatch(e, e.dispatchTarget);

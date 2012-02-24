@@ -32,7 +32,7 @@
 		Gets object _name_. _name_ can use dot notation. Intermediate objects are created if _create_ argument is truthy.
 
 			// get the value of foo.bar, or undefined if foo doesn't exist.
- 			var value = enyo.getObject("foo.bar");
+			var value = enyo.getObject("foo.bar");
 
 			// get the value of foo.bar. If foo.bar doesn't exist,
 			// it's assigned an empty object, which is returned
@@ -196,7 +196,7 @@
 			var fn = named ? (scope||enyo.global)[method] : method;
 			// invoke with collected args
 			return fn && fn.apply(scope || this, pre.concat(args));
-		}
+		};
 	};
 
 	//* @public

@@ -52,6 +52,6 @@ enyo.xhr = {
 			if (inXhr.readyState == 4) {
 				inCallback && inCallback.apply(null, [inXhr.responseText, inXhr]);
 			}
-		}
+		};
 	}
 };

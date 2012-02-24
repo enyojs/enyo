@@ -319,7 +319,7 @@ enyo.kind({
 	render: function() {
 		if (this.parent) {
 			// allow the parent to flow
-			this.parent.beforeChildRender(this)
+			this.parent.beforeChildRender(this);
 		}
 		if (!this.hasNode()) {
 			this.renderNode();
@@ -676,7 +676,7 @@ enyo.kind({
 		},
 		stylesToHtml: function(inStyleHash) {
 			var cssText = enyo.Control.domStylesToCssText(inStyleHash);
-			return (cssText ? ' style="' + cssText + '"' : "")
+			return (cssText ? ' style="' + cssText + '"' : "");
 		},
 		/**
 			return string with ampersand and double quote characters replaced with HTML entities, 
