@@ -3,7 +3,7 @@ enyo.kind({
 	tag: "select",
 	defaultKind: "enyo.Option",
 	published: {
-		selected: 0,
+		selected: 0
 	},
 	handlers: {
 		onchange: "change"
@@ -36,7 +36,7 @@ enyo.kind({
 	name: "enyo.Option",
 	tag: "option",
 	published: {
-		value: "",
+		value: ""
 	},
 	create: function() {
 		this.inherited(arguments);

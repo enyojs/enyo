@@ -8,4 +8,4 @@ enyo.kind({
 		// (Boolean _false_ would remove the attribute)
 		draggable: "false"
 	}
-})
+});
