@@ -18,6 +18,12 @@ enyo.kind({
 			{content: "Stay or Go"},
 			{content: "Stay and Go"}
 		]},
+		{tag: "hr"},
+		//
+		{content: "Checkbox"},
+		{kind: "Checkbox", content: "Gas Valve"},
+		{kind: "Checkbox", content: "Main Power", checked: true, style: "margin: 0 0 0 10px;"},
+		{tag: "hr"},
 		//
 		{content: "Grouped Checkboxes"},
 		{kind: "Group", highlander: true, defaultKind: "Checkbox", components: [
@@ -37,7 +43,7 @@ enyo.kind({
 		{tag: "hr"},
 		//
 		{content: "enyo.Checkbox"},
-		{tag: "span", name: "checkDefault", content: "someValue", classes: "data"},
+		{tag: "span", name: "checkDefault", content: "true", classes: "data"},
 		{tag: "button", content: "value =>", ontap: "setCheckValueTap"},
 		{name: "valueCheckbox", kind: "Checkbox", checked: "true"},
 		{tag: "button", content: "value =>", ontap: "getCheckValueTap"},
