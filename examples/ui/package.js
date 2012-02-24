@@ -1,5 +1,5 @@
 enyo.depends(
-	"theme.css",
+	"uiexamples.css",
 	"SearchDecorator.js",
 	"UIExamples.js"
 );

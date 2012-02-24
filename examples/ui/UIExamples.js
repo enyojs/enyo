@@ -76,7 +76,7 @@ enyo.kind({
 		{tag: "span", name: "selectValue", content: "&nbsp;", classes: "data"},
 		{tag: "hr"},
 		//
-		{content: "SearchDecorator: An example of using InputDecorator and some fancy styling"},
+		{content: "SearchDecorator: An example of using ToolDecorator, an Input, and some fancy styling"},
 		{kind: "SearchDecorator", components: [
 			{kind: "Input", value: "Goodies and Bits"}
 		]}

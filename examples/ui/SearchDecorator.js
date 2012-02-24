@@ -1,6 +1,7 @@
 enyo.kind({
-	name: "enyo.SearchDecorator",
-	classes: "enyo-input-decorator enyo-inline enyo-children-inline enyo-children-middle",
+	name: "SearchDecorator",
+	kind: "enyo.ToolDecorator",
+	classes: "search-decorator",
 	components: [
 		{kind: "Image", src: "images/search.png", style: "padding: 4px;"},
 		{name: "client", style: "padding: 0 4px; position: relative;"},

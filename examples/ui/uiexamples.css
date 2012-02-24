@@ -1,4 +1,4 @@
-﻿.enyo-input-decorator,
+﻿.search-decorator,
 .roundy-box {
 	display: inline-block;
 	/**/
@@ -13,7 +13,7 @@
 	background-color: white;
 }
 
-.enyo-input-decorator {
+.search-decorator {
 	-webkit-transition: border linear 0.2s, box-shadow linear 0.3s;
 	-moz-transition: border linear 0.2s, box-shadow linear 0.3s;
 	-ms-transition: border linear 0.2s, box-shadow linear 0.3s;
