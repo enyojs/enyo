@@ -48,7 +48,7 @@ enyo.kind({
 });
 
 enyo.kind({
-	name: "enyo.OptGroup",
+	name: "enyo.OptionGroup",
 	tag: "optgroup",
 	defaultKind: "enyo.Option",
 	published: {

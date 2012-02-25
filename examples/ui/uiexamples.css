@@ -70,12 +70,14 @@ body {
 .data {
 	display: inline-block;
 	height: 16px;
-	width: 100px;
+	min-width: 100px;
 	padding: 2px;
 	border: 1px dotted gray;
 	background-color: #eee;
 	color: gray;
 	vertical-align: middle;
+	font-size: 12px;
+	font-family: Monospace;
 }
 
 button.active, button:active {

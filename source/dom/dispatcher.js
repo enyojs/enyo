@@ -87,8 +87,10 @@ enyo.dispatch = function(inEvent) {
 
 enyo.bubble = function(e) {
 	if (e) {
-		// FIXME: ad hoc
-		e.target = e.srcElement;
+		// We depend on e.target existing for event tracking and dispatching.
+		if (!e.target) {
+			e.target = e.srcElement;
+		}
 		enyo.dispatch(e);
 	}
 };
