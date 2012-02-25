@@ -521,6 +521,9 @@ enyo.kind({
 		return results;
 	},
 	generateOuterHtml: function(inContent) {
+		if (this.noDom) {
+			return inContent;
+		}
 		if (!this.tagsValid) {
 			this.prepareTags();
 		}

@@ -1,7 +1,7 @@
 enyo.kind({
 	name: "enyo.Group",
 	published: {
-		highlander: false,
+		highlander: true,
 		active: null
 	},
 	handlers: {
