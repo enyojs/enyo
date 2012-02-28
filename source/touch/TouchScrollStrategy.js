@@ -86,14 +86,12 @@ enyo.kind({
 			return true;
 		}
 	},
-	touchmoveHandler: function(inSender, e) {
-		e.preventDefault();
-	},
 	// special synthetic DOM events served up by the Gesture system
 	dragstartHandler: function(inSender, inEvent) {
 		this.calcAutoScrolling();
 		this.dragging = this.shouldDrag(inEvent);
 		if (this.dragging) {
+			inEvent.preventNativeDefault();
 			// note: needed because show/hide changes
 			// the position so sync'ing is required when 
 			// dragging begins (needed because dom scroll does not fire on show/hide)
@@ -106,6 +104,7 @@ enyo.kind({
 	},
 	dragHandler: function(inSender, inEvent) {
 		if (this.dragging) {
+			inEvent.preventNativeDefault();
 			this.$.scroll.drag(inEvent);
 		}
 	},

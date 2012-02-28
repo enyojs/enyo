@@ -4,14 +4,19 @@ enyo.requiresWindow(function() {
 	var gesture = enyo.gesture;
 	//
 	gesture.events.touchstart = function(e) {
+		// NOTE: in touch environments, we avoid drag hysteresis;
+		// this makes it easier to deal with an issue on Android:
+		// the first touchmove must be preventDefault'd or additional
+		// touchmoves are not sent.
+		// when drags start immediately, we can use the dragstart event
+		// to preventDefault on the first touchmove (via the dragstart's
+		// event.preventNativeDefault() method.
+		gesture.drag.hysteresis = 0;
 		gesture.events = touchGesture;
 		gesture.events.touchstart(e);
 	};
 	//
 	var touchGesture = {
-		// FIXME: for touchmove to fire on Android, must prevent touchstart event.
-		// However, it's problematic to systematize this because preventing touchstart
-		// stops native scrolling and prevents focus changes.
 		touchstart: function(inEvent) {
 			this.excludedTarget = null;
 			var e = this.makeEvent(inEvent);
@@ -28,12 +33,9 @@ enyo.requiresWindow(function() {
 			this.excludedTarget = de && de.dragInfo && de.dragInfo.node;
 			var e = this.makeEvent(inEvent);
 			gesture.move(e);
-			// Note: Android requires that preventDefault is called on touchmove in order to fire > 1 touchmove event.
-			// Therefore, we do this by default. The only known native action dictated by touchmove is scrolling.
-			// We expose an option in the onmove event allowing handlers to demand that preventDefault is NOT called on touchmove.
-			// Where need native scrolling is desired, the onmove event's allowTouchmove property must be set to true and
-			// enyo Scroller does this.
-			if (!e.allowTouchmove) {
+			// (1) prevent default document window scrolling by setting enyo.preventDocumentScrolling = true;
+			// (2) opt in to the touchmove event by specifying event.requireTouchmove = true;
+			if (enyo.preventDocumentScrolling && !e.requireTouchmove) {
 				inEvent.preventDefault();
 			}
 			// synthesize over and out (normally generated via mouseout)
@@ -57,6 +59,7 @@ enyo.requiresWindow(function() {
 		},
 		makeEvent: function(inEvent) {
 			var e = enyo.clone(inEvent.changedTouches[0]);
+			e.srcEvent = inEvent;
 			e.target = this.findTarget(e.clientX, e.clientY);
 			// normalize "mouse button" info
 			e.which = 1;
