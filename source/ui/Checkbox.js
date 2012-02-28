@@ -12,45 +12,60 @@ enyo.kind({
 		active: false
 	},
 	handlers: {
-		onchange: "change"
+		onchange: "change",
+		onclick: "click"
 	},
 	create: function() {
 		this.inherited(arguments);
 		this.checkedChanged();
 	},
-	// checkbox supports native 'checked' property
+	// instance 'checked' property is linked to DOM 'checked' property
 	getChecked: function() {
 		return Boolean(this.getNodeProperty("checked", this.checked));
 	},
-	setChecked: function(inChecked) {
-		// default property mechanism can't track changed correctly for virtual properties
-		this.setPropertyValue("checked", Boolean(inChecked), "checkedChanged");
-	},
 	checkedChanged: function() {
-		this.setAttribute("checked", this.checked ? "checked" : "");
 		this.setNodeProperty("checked", this.checked);
+		this.setAttribute("checked", this.checked ? "checked" : "");
 		this.setActive(this.checked);
 	},
-	// active property supports grouping containers
+	// active property, and onActivate event, are part of "GroupItem" interface
+	// that we support in this object
 	activeChanged: function() {
 		this.active = Boolean(this.active);
-		if (this.checked != this.active) {
-			this.setChecked(this.active);
-		}
+		this.setChecked(this.active);
 		this.bubble("onActivate");
 	},
 	// all input type controls support 'value' property
 	setValue: function(inValue) {
+		this.log();
 		this.setChecked(Boolean(inValue));
 	},
 	getValue: function() {
 		return this.getChecked();
 	},
 	valueChanged: function() {
-		// cancel Input value handling
+		// inherited behavior is to set "value" attribute and node-property
+		// which does not apply to checkbox (uses "checked") so 
+		// we squelch the inherited method
 	},
 	change: function() {
-		this.checked = this.getValue();
-		this.setActive(this.checked);
+		// Various versions of IE (notably IE8) do not fire 'onchange' for 
+		// checkboxes, so we discern change via 'click'.
+		// The click handler bubbles the 'click' event up as if it were 'onchange'
+		// for platform-compatibility (e.g. listeners for 'onchange'
+		// will receive messages on IE8).
+		// Therefore, we squelch the proper 'change' event.
+		return true;
+	},
+	click: function(inSender, inEvent) {
+		// Various versions of IE (notably IE8) do not fire 'onchange' for 
+		// checkboxes, so we discern change via 'click'.
+		// Note: keyboard interaction (e.g. pressing space when focused) fires
+		// a click event.
+		this.setActive(this.getChecked());
+		// We propagate 'click' on checkbox as 'change' for IE
+		// compatibility, as discussed in the 'change' method
+		// comments.
+		this.bubbleUp("onchange", inEvent);
 	}
 });

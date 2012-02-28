@@ -64,7 +64,7 @@ enyo.kind({
 		}
 	},
 	_setProperty: function(n, v, cf) {
-		this.setPropertyValue(n, v, (this[n] !== v) && cf);
+		this.setPropertyValue(n, v, (this.getProperty(n) !== v) && cf);
 	},
 	//* @public
 	destroyObject: function(inName) {
@@ -74,6 +74,10 @@ enyo.kind({
 		this[inName] = null;
 	},
 	getProperty: function(n) {
+		var getter = "get" + enyo.cap(n);
+		if (this[getter]) {
+			return this[getter]();
+		}
 		return this[n];
 	},
 	setProperty: function(n, v) {
@@ -146,7 +150,7 @@ enyo.Object.addGetterSetter = function(inName, inValue, inProto) {
 	var get_n = "get" + cap_n;
 	if (!inProto[get_n]) {
 		inProto[get_n] = function() { 
-			return this.getProperty(priv_n); 
+			return this[priv_n];
 		};
 	}
 	//

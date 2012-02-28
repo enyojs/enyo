@@ -32,11 +32,14 @@ enyo.logging = {
 		}
 		var fn = console[inMethod];
 		if (fn && fn.apply) {
-			// let some consoles be fancy
+			// some consoles support 'warn', 'info', and so on
 			fn.apply(console, a$);
+		} else if (console.log.apply) {
+			// some consoles support console.log.apply
+			console.log.apply(console, a$);
 		} else {
-			// let others be plain
-			console.log(a$);
+			// otherwise, do our own formatting
+			console.log(a$.join(" "));
 		}
 	},
 	log: function(inMethod, inArgs) {

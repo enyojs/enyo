@@ -18,8 +18,8 @@ enyo.kind({
 	create: function() {
 		this.controls = [];
 		this.children = [];
-		this.inherited(arguments);
 		this.containerChanged();
+		this.inherited(arguments);
 		this.layoutKindChanged();
 	},
 	destroy: function() {

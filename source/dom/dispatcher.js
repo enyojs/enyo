@@ -24,7 +24,7 @@ enyo.dispatcher = {
 				inListener.addEventListener(inEventName, d, false);
 			};
 		} else {
-			console.log("IE8 COMPAT: using 'attachEvent'");
+			//console.log("IE8 COMPAT: using 'attachEvent'");
 			this.listen = function(inListener, inEvent, inCb) {
 				inListener.attachEvent("on" + inEvent, function(e) {
 					e.target = e.srcElement;
@@ -85,7 +85,9 @@ enyo.dispatch = function(inEvent) {
 	return enyo.dispatcher.dispatch(inEvent);
 };
 
-enyo.bubble = function(e) {
+enyo.bubble = function(inEvent) {
+	// '|| window.event' clause needed for IE8
+	var e = inEvent || window.event;
 	if (e) {
 		// We depend on e.target existing for event tracking and dispatching.
 		if (!e.target) {
@@ -95,8 +97,7 @@ enyo.bubble = function(e) {
 	}
 };
 
-// '|| window.event' clause needed for IE8
-enyo.bubbler = 'enyo.bubble(arguments[0] || window.event)';
+enyo.bubbler = 'enyo.bubble(arguments[0])';
 
 // FIXME: we need to create and initialize dispatcher someplace else to allow overrides
 enyo.requiresWindow(enyo.dispatcher.connect);

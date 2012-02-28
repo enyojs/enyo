@@ -1,11 +1,11 @@
-﻿.enyo-inline {
+﻿.enyo-inline, .enyo-tool-decorator {
 	display: inline-block;
 }
 
-.enyo-children-inline > * {
+.enyo-children-inline > *, .enyo-tool-decorator > * {
 	display: inline-block;
 }
 
-.enyo-children-middle > * {
+.enyo-children-middle > *, .enyo-tool-decorator > * {
 	vertical-align: middle;
 }
