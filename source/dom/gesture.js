@@ -38,12 +38,13 @@ enyo.gesture = {
 	minFlick: 0.1,
 	minTrack: 8,
 	eventProps: ["target", "relatedTarget", "clientX", "clientY", "pageX", "pageY", "screenX", "screenY", "altKey", "ctrlKey", "metaKey", "shiftKey",
-		"detail", "identifier", "dispatchTarget", "which"],
+		"detail", "identifier", "dispatchTarget", "which", "srcEvent"],
 	makeEvent: function(inType, inEvent) {
 		var e = {type: inType};
 		for (var i=0, p; p=this.eventProps[i]; i++) {
 			e[p] = inEvent[p];
 		}
+		e.preventNativeDefault = this.preventNativeDefault;
 		//
 		// normalize event.which
 		// Note that while "which" works in IE9, it is broken for mousemove. Therefore, 
@@ -68,8 +69,8 @@ enyo.gesture = {
 		this.cancelHold();
 		var e = this.makeEvent("move", inEvent);
 		enyo.dispatch(e);
-		// propagate the allowTouchmove option to the touch event (see touch for more info)
-		inEvent.allowTouchmove = e.allowTouchmove;
+		// ad hoc: propagate setting to source event.
+		inEvent.requireTouchmove = e.requireTouchmove;
 		if (this.trackInfo) {
 			this.track(e);
 		}
@@ -192,6 +193,13 @@ enyo.gesture = {
 };
 
 //* @protected
+
+// installed on events and called in event context
+enyo.gesture.preventNativeDefault = function() {
+	if (this.srcEvent) {
+		this.srcEvent.preventDefault();
+	}
+}
 
 enyo.dispatcher.features.push(
 	function(e) {

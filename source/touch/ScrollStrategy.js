@@ -44,10 +44,10 @@ enyo.kind({
 	verticalChanged: function() {
 		this.applyStyle("overflow-y", this.vertical ? "auto" : "hidden");
 	},
-	// mobile native scrollers need touchmove. Indicate this by 
-	// setting the allowTouchmove property of the onmove event to true.
+	// NOTE: mobile native scrollers need touchmove. Indicate this by 
+	// setting the requireTouchmove property to true.
 	moveHandler: function(inSender, inEvent) {
-		inEvent.allowTouchmove = true;
+		inEvent.requireTouchmove = true;
 	},
 	scrollHandler: function(inSender, e) {
 		return this.doScroll(e);

@@ -79,7 +79,7 @@ enyo.gesture.drag = {
 		var h = adx > ady;
 		// suggest locking if off-axis < 22.5 degrees
 		var l = (h ? ady/adx : adx/ady) < 0.414;
-		return {
+		var e = {
 			type: inType,
 			dx: this.dx,
 			dy: this.dy,
@@ -93,8 +93,11 @@ enyo.gesture.drag = {
 			ctrlKey: inEvent.ctrlKey,
 			altKey: inEvent.altKey,
 			metaKey: inEvent.metaKey,
-			shiftKey: inEvent.shiftKey
+			shiftKey: inEvent.shiftKey,
+			srcEvent: inEvent.srcEvent
 		};
+		e.preventNativeDefault = enyo.gesture.preventNativeDefault;
+		return e;
 	},
 	sendDragStart: function(e) {
 		//console.log("dragstart");
