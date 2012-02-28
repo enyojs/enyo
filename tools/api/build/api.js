@@ -39,7 +39,10 @@ j == undefined && (j = "");
 var k = d, l = e, m = f.toLowerCase(), n = g, o = j;
 if (n == "") {
 m == "" && (m = l.toLowerCase().replace(/ ?\n/g, " ")), n = "#" + m;
-if (a[m] != undefined) n = a[m], b[m] != undefined && (o = b[m]); else if (k.search(/\(\s*\)$/m) > -1) n = ""; else return k;
+if (a[m] != undefined) n = a[m], b[m] != undefined && (o = b[m]); else {
+if (!(k.search(/\(\s*\)$/m) > -1)) return k;
+n = "";
+}
 }
 n = F(n, "*_");
 var p = '<a href="' + n + '"';
@@ -51,7 +54,8 @@ var k = d, l = e, m = f.toLowerCase(), n = g, o = j;
 o || (o = "");
 if (n == "") {
 m == "" && (m = l.toLowerCase().replace(/ ?\n/g, " ")), n = "#" + m;
-if (a[m] != undefined) n = a[m], b[m] != undefined && (o = b[m]); else return k;
+if (a[m] == undefined) return k;
+n = a[m], b[m] != undefined && (o = b[m]);
 }
 l = l.replace(/"/g, "&quot;"), n = F(n, "*_");
 var p = '<img src="' + n + '" alt="' + l + '"';
@@ -668,6 +672,7 @@ return a.getHtml(b);
 
 enyo.kind({
 name: "enyo.lexer.Base",
+kind: null,
 constructor: function(a) {
 a && this.start(a);
 },
@@ -779,6 +784,7 @@ this.pushToken("string", this.m[0].length);
 
 enyo.kind({
 name: "enyo.parser.Base",
+kind: null,
 i: 0,
 constructor: function(a) {
 this.a = [], this.html = [], this.lastToken = {}, this.nodes = a && this.parse(a);
@@ -949,6 +955,7 @@ this._continue();
 
 enyo.kind({
 name: "enyo.Documentor",
+kind: null,
 commentRx: /\/\*\*([\s\S]*)\*\/|\/\/\*(.*)/m,
 constructor: function(a) {
 this.translate(new enyo.parser.Js(new enyo.lexer.Js(a)));
@@ -1145,16 +1152,19 @@ walk: function(a) {
 this.loader = new enyo.loaderFactory(runtimeMachine), this.loader.loadScript = function() {}, this.loader.loadSheet = function() {}, this.loader.verbose = this.verbose, this.loader.report = enyo.bind(this, "walkReport"), this.loader.finish = enyo.bind(this, "walkFinish"), enyo.loader = this.loader, enyo.loader.load(a);
 },
 walkReport: function(a, b) {
-this.doProgress(a, b);
+this.doProgress({
+action: a,
+name: b
+});
 },
 walkFinish: function() {
-this.analyzeModules();
+return this.analyzeModules(), !0;
 },
 analyzeModules: function() {
 this.$.reader.loadModules(this.loader);
 },
 readerFinish: function() {
-this.modules = this.$.reader.modules, this.doFinish();
+this.modules = this.$.reader.modules;
 }
 });
 
@@ -1251,7 +1261,170 @@ name: a.name.value,
 comment: a.comment,
 type: a.type,
 kind: !0,
-superKind: a.kind && a.kind.value
+superKind: a.kind && a.kind.value != "null" && a.kind.value
+};
+return b.properties = this.listKindProperties(a, b), b;
+},
+listSuperkinds: function(a) {
+var b = [], c = a;
+while (c && c.superKind) b.push(c.superKind), c = this.findByName(c.superKind);
+return b;
+},
+listKindProperties: function(a, b) {
+var c = this.unmap(a.methods.map, "method");
+c = c.concat(this.unmap(a.properties.map, "property")), a.published && a.published.value.properties && (c = c.concat(this.unmap(a.published.value.properties.map, "published")));
+for (var d = 0, e; e = c[d]; d++) e[e.group] = !0, e.kind = b, e.topic = e.kind.name + "::" + e.name, e.type = e.method ? "method" : "property";
+return c.sort(this.nameCompare), c;
+},
+nameCompare: function(a, b) {
+return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+},
+indexInheritance: function() {
+for (var a = 0, b; b = this.objects[a]; a++) b.type == "kind" && (b.superkinds = this.listSuperkinds(b), b.allProperties = this.listInheritedProperties(b));
+},
+listInheritedProperties: function(a) {
+var b = [], c = {};
+mergeProperties = function(a) {
+for (var d = 0, e; e = a[d]; d++) {
+var f = c.hasOwnProperty(e.name) && c[e.name];
+f ? (e.overrides = f, b[enyo.indexOf(f, b)] = e) : b.push(e), c[e.name] = e;
+}
+};
+for (var d = a.superkinds.length - 1, e; e = a.superkinds[d]; d--) {
+var f = this.findByName(e);
+f && mergeProperties(f.properties);
+}
+return mergeProperties(a.properties), b.sort(this.nameCompare), b;
+},
+indexAllProperties: function() {
+for (var a = 0, b; b = this.objects[a]; a++) b.properties && enyo.forEach(b.properties, function(a) {
+this.objects.push(a);
+}, this);
+}
+});
+
+// PackageDb.js
+
+enyo.kind({
+name: "PackageDb",
+kind: "InfoDb",
+events: {
+onReport: "",
+onFinish: ""
+},
+components: [ {
+name: "walker",
+kind: "Walker",
+onReport: "walkerReport",
+onFinish: "walkerFinish"
+} ],
+walk: function(a) {
+this.$.walker.walk(enyo.path.rewrite(a));
+},
+walkerReport: function(a, b, c) {
+this.doReport(b, c);
+},
+walkerFinish: function() {
+this.dbify(this.$.walker.modules);
+}
+});
+
+// InfoDb.js
+
+enyo.kind({
+name: "InfoDb",
+kind: "Component",
+dbify: function(a) {
+this.objects = [], this.modules = this.buildModuleList(a), this.packages = this.buildPackageList(this.modules), this.indexModuleObjects(), this.cookObjects(), this.indexInheritance(), this.indexAllProperties(), this.objects.sort(this.nameCompare);
+},
+listByType: function(a) {
+var b = [];
+for (var c = 0, d; d = this.objects[c]; c++) d.type == a && b.push(d);
+return b;
+},
+filter: function(a) {
+return enyo.forEach(this.objects, a);
+},
+findByProperty: function(a, b, c) {
+for (var d = 0, e; e = a[d]; d++) if (e[b] == c) return e;
+},
+findByName: function(a) {
+return this.findByProperty(this.objects, "name", a);
+},
+findByTopic: function(a) {
+return this.findByProperty(this.objects, "topic", a);
+},
+unmap: function(a) {
+var b = [];
+for (var c in a) {
+var d = a[c];
+d.key = c;
+for (var e = 1, f; f = arguments[e]; e++) d[f] = !0;
+b.push(d);
+}
+return b;
+},
+buildModuleList: function(a) {
+return this.unmap(a);
+},
+buildPackageList: function(a) {
+var b = {};
+for (var c = 0, d, e, f, g; d = a[c]; c++) e = d.packageName || "unknown", f = e.toLowerCase(), b[f] || (b[f] = {
+packageName: e,
+modules: []
+}), g = b[f], g.modules.push(d);
+return this.unmap(b);
+},
+indexModuleObjects: function() {
+this.raw = [];
+for (var a = 0, b; b = this.modules[a]; a++) this.indexModule(b);
+},
+indexModule: function(a) {
+a.type = "module", this.raw.push(a);
+for (var b = 0, c = a.objects, d; d = c[b]; b++) d.name && d.type && (d.module = a, this.raw.push(d));
+a.objects = [];
+},
+cookObjects: function() {
+for (var a = 0, b, c; b = this.raw[a]; a++) c = this.cookObject(b), b.group && (c[b.group] = !0), c.module = b.module, c.topic || (c.topic = c.name), this.objects[a] = c, c.module && c.module.objects.push(c);
+},
+cookObject: function(a) {
+var b = "cook_" + a.type;
+return this[b] ? this[b](a) : a;
+},
+cook_kind: function(a) {
+return this.processKind(a);
+},
+cook_object: function(a) {
+return this.processObject(a);
+},
+cook_function: function(a) {
+return this.processFunction(a);
+},
+cook_module: function(a) {
+return this.processModule(a);
+},
+processModule: function(a) {
+return a.topic = a.rawPath, a.name = a.rawPath, a;
+},
+processFunction: function(a) {
+return a;
+},
+processObject: function(a) {
+var b = {
+name: a.name,
+comment: a.comment,
+type: a.type,
+object: !0
+};
+return b.properties = this.listKindProperties(a, b), b;
+},
+processKind: function(a) {
+var b = {
+name: a.name.value,
+comment: a.comment,
+type: a.type,
+kind: !0,
+superKind: a.kind && a.kind.value != "null" && a.kind.value
 };
 return b.properties = this.listKindProperties(a, b), b;
 },
@@ -1315,7 +1488,7 @@ walkerReport: function(a, b, c) {
 this.doReport(b, c);
 },
 walkerFinish: function() {
-this.dbify(this.$.walker.modules), this.doFinish();
+this.dbify(this.$.walker.modules);
 }
 });
 
@@ -1415,7 +1588,7 @@ return "" + this.formatTypeIcon(a) + '<span class="name">' + a.name + "</span>";
 },
 formatKind: function(a, b, c, d) {
 var e = this.formatKindTree(a), f = d ? [] : [ "public" ], g = c ? a.allProperties : a.properties;
-return "" + this.formatTitle(a) + '<div class="path">' + this.formatLink(a.module.rawPath) + "</div>" + (e == "" ? "" : "<h2>Extends</h2>" + e) + "<h2>Properties</h2>" + this.formatKindProperties(a, this.filterProperties(g, [ "property" ].concat(f))) + "<h2>Methods</h2>" + this.formatKindProperties(a, this.filterProperties(g, [ "method" ].concat(f))) + (a.comment ? "<h2>Summary</h2><p>" + this.markupToHtml(a.comment) + "</p>" : "");
+return "" + this.formatTitle(a) + '<div class="path">' + this.formatLink(a.module.rawPath) + "</div>" + (e == "" ? "" : "<h2>Extends</h2>" + e) + "<h2>Published</h2>" + this.formatKindProperties(a, this.filterProperties(g, [ "published" ].concat(f))) + "<h2>Properties</h2>" + this.formatKindProperties(a, this.filterProperties(g, [ "property" ].concat(f))) + "<h2>Methods</h2>" + this.formatKindProperties(a, this.filterProperties(g, [ "method" ].concat(f))) + (a.comment ? "<h2>Summary</h2><p>" + this.markupToHtml(a.comment) + "</p>" : "");
 },
 formatKindTree: function(a) {
 var b = "", c = "";
@@ -1431,7 +1604,7 @@ formatKindMethod: function(a, b) {
 return '<div><a href="#' + b.topic + '">' + this.formatSmallTypeIcon(b) + b.name + enyo.macroize(': <em style="color: black;">function</em>(<code>{$args}</code>)', b) + "</a>" + (b.protected ? '<span class="protected" title="protected"></span>' : "") + (b.kind && b.kind !== a ? '<span style="color:#6070FF; font-size: 80%; padding-left: 4px;">' + this.formatLink(b.kind.name) + "</span>" : "") + (b.kind == a && b.overrides ? '<span style="color:#FF7060; font-size: 80%;"> ' + this.formatLink(b.overrides.kind.name) + " override</span>" : "") + "</div>";
 },
 formatKindProperty: function(a, b) {
-return '<div><a href="#' + b.topic + '">' + this.formatSmallTypeIcon(b) + b.name + (b.property ? ': <span style="color: black;">' + b.value + "</span>" : "") + "</a>" + (!b.kind || b.kind == a ? "" : '<span style="color:#6070FF; font-size: 80%; padding-left: 8px;">' + this.formatLink(b.kind.name) + "</span >") + (b.protected ? '<span class="protected" title="protected"></span>' : "") + "</div>";
+return '<div><a href="#' + b.topic + '">' + this.formatSmallTypeIcon(b) + b.name + (!b.property && !b.published ? "" : ': <span style="color: black;">' + b.value + "</span>") + "</a>" + (!b.kind || b.kind == a ? "" : '<span style="color:#6070FF; font-size: 80%; padding-left: 8px;">' + this.formatLink(b.kind.name) + "</span >") + (b.protected ? '<span class="protected" title="protected"></span>' : "") + "</div>";
 },
 formatObject: function(a, b, c) {
 var d = c ? [] : [ "public" ], e = a.properties;
@@ -1602,7 +1775,10 @@ allowHtml: !0
 } ]
 } ],
 filterChange: function() {
-this.showInherited = this.$.inheritedOption.hasNode().checked, this.showProtected = this.$.protectedOption.hasNode().checked, this.doFilterChange(this.showInherited, this.showProtected);
+this.doFilterChange({
+showInherited: this.$.inheritedOption.hasNode().checked,
+showProtected: this.$.protectedOption.hasNode().checked
+});
 },
 setTopic: function(a) {
 if (!a) return;
@@ -1613,7 +1789,7 @@ c.topic == a && (b = c), c.addRemoveClass("active", c.topic == a);
 kind: "TopicTab",
 classes: "active",
 topic: a,
-ondown: "topicSelect",
+ontap: "topicSelect",
 onClose: "tabClose",
 container: this.$.tabs
 }).render()), b.hasNode().scrollIntoView();
@@ -1647,7 +1823,7 @@ create: function() {
 this.inherited(arguments), this.addClass("tab"), this.$.caption.setContent(this.topic);
 },
 closeDown: function(a, b) {
-b.stopPropagation();
+return !0;
 }
 });
 
@@ -1713,7 +1889,7 @@ onFilterChange: "filterChange"
 } ]
 } ],
 create: function() {
-this.inherited(arguments), this.topic = this.getHashTopic(), window.onhashchange = enyo.bind(this, "hashChange"), this.$.db.walk(enyo.path.rewrite(this.target));
+this.inherited(arguments), this.topic = this.getHashTopic() || this.topic, window.onhashchange = enyo.bind(this, "hashChange"), this.$.db.walk(enyo.path.rewrite(this.target));
 },
 dbReady: function() {
 this.refresh();
@@ -1721,8 +1897,8 @@ this.refresh();
 refresh: function() {
 this.selectIndex(this.$.indexTabs.index), this.selectTopic(this.topic), this.selectSearchString(this.searchString);
 },
-filterChange: function(a, b, c) {
-this.showInherited = b, this.showProtected = c, this.refresh();
+filterChange: function(a, b) {
+this.showInherited = b.showInherited, this.showProtected = b.showProtected, this.refresh();
 },
 indexTabsSelect: function(a, b) {
 this.selectIndex(b);

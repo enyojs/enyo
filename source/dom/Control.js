@@ -22,9 +22,7 @@ enyo.kind({
 		// for layouts
 		fit: false,
 		// for ares
-		isContainer: false,
-		// for dangling comma
-		poon: 0
+		isContainer: false
 	},
 	handlers: {
 		ontap: "tap"

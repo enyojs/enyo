@@ -353,7 +353,7 @@
 
 
 
-/* tab.css */
+/* css/tab.css */
 
 .tabbar {
 	background-color: #333;
@@ -399,7 +399,7 @@
 }
 
 
-/* app.css */
+/* css/app.css */
 
 body {
 	font-family: Arial, Verdana, Helvetica, sans-serif;
@@ -515,7 +515,7 @@ body {
 }
 */
 
-/* format.css */
+/* css/format.css */
 
 .name {
 	color: #00A400;
