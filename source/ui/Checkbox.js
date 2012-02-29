@@ -1,5 +1,9 @@
+/**
+	Implements an HTML checkbox input, with support for grouping
+*/
 enyo.kind({
 	name: "enyo.Checkbox",
+	//* @protected
 	kind: enyo.Input,
 	attributes: {
 		type: "checkbox"
@@ -7,10 +11,14 @@ enyo.kind({
 	events: {
 		onActivate: ""
 	},
+	//* @public
 	published: {
+		//* Value of the checkbox
 		checked: false,
+		//* Group API requirement for determining selected item
 		active: false
 	},
+	//* @protected
 	handlers: {
 		onchange: "change",
 		onclick: "click"
