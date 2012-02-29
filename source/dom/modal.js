@@ -9,7 +9,10 @@ enyo.dispatcher.features.push(function(e) {
 	if (needs) {
 		var c1 = e.captureTarget = this.captureTarget;
 		this.dispatchBubble(e, c1);
-		if (!(this.autoForwardEvents[e.type] || this.forwardEvents)) {
+		// only prevent normal dispatch if... there is still a captureTarget after 
+		// dispatching to the original capture target and we're not forwarding and 
+		// this is not this is an auto forward event
+		if (this.captureTarget && !this.autoForwardEvents[e.type] && !this.forwardEvents) {
 			e.preventDispatch = true;
 		}
 	}
