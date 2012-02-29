@@ -44,6 +44,7 @@ enyo.gesture = {
 		for (var i=0, p; p=this.eventProps[i]; i++) {
 			e[p] = inEvent[p];
 		}
+		e.srcEvent = e.srcEvent || inEvent;
 		e.preventNativeDefault = this.preventNativeDefault;
 		//
 		// normalize event.which
