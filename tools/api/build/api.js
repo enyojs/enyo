@@ -1256,14 +1256,14 @@ object: !0
 return b.properties = this.listKindProperties(a, b), b;
 },
 processKind: function(a) {
-var b = {
+var b = "enyo.Control", c = {
 name: a.name.value,
 comment: a.comment,
 type: a.type,
 kind: !0,
-superKind: a.kind && a.kind.value != "null" && a.kind.value
+superKind: a.kind ? a.kind.value != "null" && a.kind.value : b
 };
-return b.properties = this.listKindProperties(a, b), b;
+return c.properties = this.listKindProperties(a, c), c;
 },
 listSuperkinds: function(a) {
 var b = [], c = a;
@@ -1326,143 +1326,6 @@ this.doReport(b, c);
 },
 walkerFinish: function() {
 this.dbify(this.$.walker.modules);
-}
-});
-
-// InfoDb.js
-
-enyo.kind({
-name: "InfoDb",
-kind: "Component",
-dbify: function(a) {
-this.objects = [], this.modules = this.buildModuleList(a), this.packages = this.buildPackageList(this.modules), this.indexModuleObjects(), this.cookObjects(), this.indexInheritance(), this.indexAllProperties(), this.objects.sort(this.nameCompare);
-},
-listByType: function(a) {
-var b = [];
-for (var c = 0, d; d = this.objects[c]; c++) d.type == a && b.push(d);
-return b;
-},
-filter: function(a) {
-return enyo.forEach(this.objects, a);
-},
-findByProperty: function(a, b, c) {
-for (var d = 0, e; e = a[d]; d++) if (e[b] == c) return e;
-},
-findByName: function(a) {
-return this.findByProperty(this.objects, "name", a);
-},
-findByTopic: function(a) {
-return this.findByProperty(this.objects, "topic", a);
-},
-unmap: function(a) {
-var b = [];
-for (var c in a) {
-var d = a[c];
-d.key = c;
-for (var e = 1, f; f = arguments[e]; e++) d[f] = !0;
-b.push(d);
-}
-return b;
-},
-buildModuleList: function(a) {
-return this.unmap(a);
-},
-buildPackageList: function(a) {
-var b = {};
-for (var c = 0, d, e, f, g; d = a[c]; c++) e = d.packageName || "unknown", f = e.toLowerCase(), b[f] || (b[f] = {
-packageName: e,
-modules: []
-}), g = b[f], g.modules.push(d);
-return this.unmap(b);
-},
-indexModuleObjects: function() {
-this.raw = [];
-for (var a = 0, b; b = this.modules[a]; a++) this.indexModule(b);
-},
-indexModule: function(a) {
-a.type = "module", this.raw.push(a);
-for (var b = 0, c = a.objects, d; d = c[b]; b++) d.name && d.type && (d.module = a, this.raw.push(d));
-a.objects = [];
-},
-cookObjects: function() {
-for (var a = 0, b, c; b = this.raw[a]; a++) c = this.cookObject(b), b.group && (c[b.group] = !0), c.module = b.module, c.topic || (c.topic = c.name), this.objects[a] = c, c.module && c.module.objects.push(c);
-},
-cookObject: function(a) {
-var b = "cook_" + a.type;
-return this[b] ? this[b](a) : a;
-},
-cook_kind: function(a) {
-return this.processKind(a);
-},
-cook_object: function(a) {
-return this.processObject(a);
-},
-cook_function: function(a) {
-return this.processFunction(a);
-},
-cook_module: function(a) {
-return this.processModule(a);
-},
-processModule: function(a) {
-return a.topic = a.rawPath, a.name = a.rawPath, a;
-},
-processFunction: function(a) {
-return a;
-},
-processObject: function(a) {
-var b = {
-name: a.name,
-comment: a.comment,
-type: a.type,
-object: !0
-};
-return b.properties = this.listKindProperties(a, b), b;
-},
-processKind: function(a) {
-var b = {
-name: a.name.value,
-comment: a.comment,
-type: a.type,
-kind: !0,
-superKind: a.kind && a.kind.value != "null" && a.kind.value
-};
-return b.properties = this.listKindProperties(a, b), b;
-},
-listSuperkinds: function(a) {
-var b = [], c = a;
-while (c && c.superKind) b.push(c.superKind), c = this.findByName(c.superKind);
-return b;
-},
-listKindProperties: function(a, b) {
-var c = this.unmap(a.methods.map, "method");
-c = c.concat(this.unmap(a.properties.map, "property")), a.published && a.published.value.properties && (c = c.concat(this.unmap(a.published.value.properties.map, "published")));
-for (var d = 0, e; e = c[d]; d++) e[e.group] = !0, e.kind = b, e.topic = e.kind.name + "::" + e.name, e.type = e.method ? "method" : "property";
-return c.sort(this.nameCompare), c;
-},
-nameCompare: function(a, b) {
-return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
-},
-indexInheritance: function() {
-for (var a = 0, b; b = this.objects[a]; a++) b.type == "kind" && (b.superkinds = this.listSuperkinds(b), b.allProperties = this.listInheritedProperties(b));
-},
-listInheritedProperties: function(a) {
-var b = [], c = {};
-mergeProperties = function(a) {
-for (var d = 0, e; e = a[d]; d++) {
-var f = c.hasOwnProperty(e.name) && c[e.name];
-f ? (e.overrides = f, b[enyo.indexOf(f, b)] = e) : b.push(e), c[e.name] = e;
-}
-};
-for (var d = a.superkinds.length - 1, e; e = a.superkinds[d]; d--) {
-var f = this.findByName(e);
-f && mergeProperties(f.properties);
-}
-return mergeProperties(a.properties), b.sort(this.nameCompare), b;
-},
-indexAllProperties: function() {
-for (var a = 0, b; b = this.objects[a]; a++) b.properties && enyo.forEach(b.properties, function(a) {
-this.objects.push(a);
-}, this);
 }
 });
 
@@ -1601,10 +1464,10 @@ for (var d = 0, e; e = b[d]; d++) c += this[e.method ? "formatKindMethod" : "for
 return c || "(none)";
 },
 formatKindMethod: function(a, b) {
-return '<div><a href="#' + b.topic + '">' + this.formatSmallTypeIcon(b) + b.name + enyo.macroize(': <em style="color: black;">function</em>(<code>{$args}</code>)', b) + "</a>" + (b.protected ? '<span class="protected" title="protected"></span>' : "") + (b.kind && b.kind !== a ? '<span style="color:#6070FF; font-size: 80%; padding-left: 4px;">' + this.formatLink(b.kind.name) + "</span>" : "") + (b.kind == a && b.overrides ? '<span style="color:#FF7060; font-size: 80%;"> ' + this.formatLink(b.overrides.kind.name) + " override</span>" : "") + "</div>";
+return "<div>" + this.formatSmallTypeIcon(b) + '<a href="#' + b.topic + '">' + b.name + enyo.macroize(': <em style="color: black;">function</em>(<code>{$args}</code>)', b) + "</a>" + (b.protected ? '<span class="protected" title="protected"></span>' : "") + (b.kind && b.kind !== a ? '<span style="color:#6070FF; font-size: 80%; padding-left: 4px;">' + this.formatLink(b.kind.name) + "</span>" : "") + (b.kind == a && b.overrides ? '<span style="color:#FF7060; font-size: 80%;"> ' + this.formatLink(b.overrides.kind.name) + " override</span>" : "") + "</div>";
 },
 formatKindProperty: function(a, b) {
-return '<div><a href="#' + b.topic + '">' + this.formatSmallTypeIcon(b) + b.name + (!b.property && !b.published ? "" : ': <span style="color: black;">' + b.value + "</span>") + "</a>" + (!b.kind || b.kind == a ? "" : '<span style="color:#6070FF; font-size: 80%; padding-left: 8px;">' + this.formatLink(b.kind.name) + "</span >") + (b.protected ? '<span class="protected" title="protected"></span>' : "") + "</div>";
+return "<div>" + this.formatSmallTypeIcon(b) + '<a href="#' + b.topic + '">' + b.name + (!b.property && !b.published ? "" : ': <span style="color: black;">' + b.value + "</span>") + "</a>" + (!b.kind || b.kind == a ? "" : '<span style="color:#6070FF; font-size: 80%; padding-left: 8px;">' + this.formatLink(b.kind.name) + "</span >") + (b.protected ? '<span class="protected" title="protected"></span>' : "") + "</div>";
 },
 formatObject: function(a, b, c) {
 var d = c ? [] : [ "public" ], e = a.properties;
@@ -1614,13 +1477,13 @@ formatFunction: function(a) {
 return "" + this.formatTitle(a) + '<div class="path">' + this.formatLink(a.module.rawPath) + "</div>" + "<br/>" + this.formatKindMethod(null, a) + (a.comment ? '<div style="padding-left: 16px">' + this.markupToHtml(a.comment) + "</div>" : "");
 },
 formatMethod: function(a) {
-return '<span class="type ' + a.type + '-type">' + a.type + "</span>" + '<span class="name">' + this.formatLink(a.kind.name) + "::" + a.name + "</span>" + "<br/>" + "<b>" + a.name + "</b>" + enyo.macroize(": <Xem>function</Xem>(<code><literal>{$args}</literal></code>)", a) + (a.protected ? '<span class="protected" title="protected"></span>' : "") + (a.overrides ? '<div style="color:#FF7060;">overrides ' + this.formatLink(a.overrides.kind.name + "::" + a.name) + "</div>" : "") + (a.comment ? '<div style="padding-left: 16px">' + this.markupToHtml(a.comment) + "</div>" : "");
+return '<span class="type ' + a.type + '-type">' + a.type + "</span>" + '<span class="name">' + this.formatLink(a.kind.name) + "::" + a.name + "</span>" + "<br/><br/>" + "<b>" + a.name + "</b>" + enyo.macroize(": <Xem>function</Xem>(<code><literal>{$args}</literal></code>)", a) + (a.protected ? '<span class="protected" title="protected"></span>' : "") + (a.overrides ? '<div style="color:#FF7060;">overrides ' + this.formatLink(a.overrides.kind.name + "::" + a.name) + "</div>" : "") + (a.comment ? '<div style="padding-left: 16px">' + this.markupToHtml(a.comment) + "</div>" : "");
 },
 formatProperty: function(a) {
-return '<span class="type kind-property">property</span><span class="name">' + this.formatLink(a.kind.name) + "::" + a.name + "</span>" + "<br/>" + "<b>" + a.name + "</b>" + ": " + a.value + (a.protected ? '<span class="protected" title="protected"></span>' : "") + (a.comment ? '<div style="padding-left: 16px">' + this.markupToHtml(a.comment) + "</div>" : "");
+return '<span class="type kind-property">property</span><span class="name">' + this.formatLink(a.kind.name) + "::" + a.name + "</span>" + "<br/><br/>" + "<b>" + a.name + "</b>" + ": " + a.value + (a.protected ? '<span class="protected" title="protected"></span>' : "") + (a.comment ? '<div style="padding-left: 16px">' + this.markupToHtml(a.comment) + "</div>" : "");
 },
 formatModule: function(a, b) {
-var c = "" + this.formatTitle(a) + "<br/>", d = b ? a.objects : this.filterProperties(a.objects, [ "public" ]);
+var c = "" + this.formatTitle(a) + "<br/><br/>", d = b ? a.objects : this.filterProperties(a.objects, [ "public" ]);
 for (var e = 0, f; f = d[e]; e++) c += this.formatIndexItem(f, !0);
 return c;
 }
@@ -1672,7 +1535,9 @@ b.addRemoveClass("active", b == a);
 }), this.setIndex(a.indexInContainer());
 },
 indexChanged: function() {
-this.doSelect(this.index);
+this.doSelect({
+index: this.index
+});
 }
 });
 
@@ -1685,8 +1550,8 @@ events: {
 onSearch: ""
 },
 handlers: {
-keyup: "search",
-change: "search"
+onkeyup: "search",
+onchange: "search"
 },
 components: [ {
 name: "search",
@@ -1705,11 +1570,10 @@ style: "outline: none; border: none; left: 36px; right: 4px; background-color: i
 getValue: function() {
 if (this.$.input.hasNode()) return this.$.input.node.value;
 },
-keypress: function(a, b) {
-this.search();
-},
 search: function() {
-this.doSearch(this.getValue());
+this.doSearch({
+searchString: this.getValue()
+});
 }
 });
 
@@ -1901,7 +1765,7 @@ filterChange: function(a, b) {
 this.showInherited = b.showInherited, this.showProtected = b.showProtected, this.refresh();
 },
 indexTabsSelect: function(a, b) {
-this.selectIndex(b);
+this.selectIndex(b.index);
 },
 selectIndex: function(a) {
 var b = this.showProtected, c = this.$.db.objects;
@@ -1925,7 +1789,7 @@ case 2:
 this.$.indexBody.setContent(index), this.$.indexPanel.setShowing(a != 2), this.$.searchPanel.setShowing(a == 2);
 },
 search: function(a, b) {
-this.selectSearchString(b.toLowerCase());
+this.selectSearchString(b.searchString.toLowerCase());
 },
 selectSearchString: function(a) {
 this.searchString = a;

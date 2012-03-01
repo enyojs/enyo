@@ -1,14 +1,22 @@
+/**
+	Implements an HTML input element with cross platform support for change events
+*/
 enyo.kind({
 	name: "enyo.Input",
 	published: {
+		//* Default value of the input
 		value: "",
+		//* Text to display when the input is empty
 		placeholder: "",
 		disabled: false
 	},
 	events: {
+		//* Sent when the input's value has changed, support for IE included.
 		onInputChange: "",
+		//* Sent when the input's is disabled or enabled.
 		onDisabledChange: ""
 	},
+	//* @protected
 	tag: "input",
 	classes: "enyo-input",
 	attributes: {

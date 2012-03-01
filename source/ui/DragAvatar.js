@@ -1,4 +1,5 @@
-﻿enyo.kind({
+﻿//* @protected
+enyo.kind({
 	name: "enyo._DragAvatar",
 	style: "position: absolute; z-index: 10; pointer-events: none; cursor: move;",
 	showing: false,
@@ -8,12 +9,19 @@
 	}
 });
 
+//* @public
+/**
+	DragAvatar creates a control to follow the pointer when dragging.
+*/
 enyo.kind({
 	name: "enyo.DragAvatar",
-	published: {
-		showing: false
-	},
 	kind: enyo.Component,
+	published: {
+		showing: false,
+		offsetX: 20,
+		offsetY: 30
+	},
+	//* @protected
 	initComponents: function() {
 		this.avatarComponents = this.components;
 		this.components = null;
@@ -27,9 +35,14 @@ enyo.kind({
 			this.avatar = this.createComponent({kind: enyo._DragAvatar, parentNode: document.body, showing: false, components: this.avatarComponents}).render();
 		}
 	},
+	showingChanged: function() {
+		this.avatar.setShowing(this.showing);
+		document.body.style.cursor = this.showing ? "move" : null;
+	},
+	//* @public
 	drag: function(inEvent) {
 		this.requireAvatar();
-		this.avatar.setBounds({top: inEvent.pageY - 30, left: inEvent.pageX + 20});
+		this.avatar.setBounds({top: inEvent.pageY - this.offsetY, left: inEvent.pageX + this.offsetX});
 		this.show();
 	},
 	show: function() {
@@ -37,10 +50,6 @@ enyo.kind({
 	},
 	hide: function() {
 		this.setShowing(false);
-	},
-	showingChanged: function() {
-		this.avatar.setShowing(this.showing);
-		document.body.style.cursor = this.showing ? "move" : null;
 	}
 });
 

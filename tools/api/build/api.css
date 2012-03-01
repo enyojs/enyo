@@ -415,6 +415,8 @@ body {
 #app a {
 	color: #124252 !important;
 	text-decoration: none;
+	padding-bottom: 1px;
+	border-bottom: 2px dotted #ccc;
 }
 
 #app_header {

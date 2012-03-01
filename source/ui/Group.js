@@ -1,14 +1,17 @@
+/**
+	Provides a wrapper around multiple elements. Enables creation of radio groups from arbitrary components supporting the [GroupItem](#enyo.GroupItem) api.
+*/
 enyo.kind({
 	name: "enyo.Group",
 	published: {
+		//* Can there be only one?
 		highlander: true,
+		//* The control that is selected
 		active: null
 	},
+	//* @protected
 	handlers: {
 		onActivate: "activate"
-	},
-	create: function() {
-		this.inherited(arguments);
 	},
 	activate: function(inSender, inEvent) {
 		if (this.highlander) {

@@ -1,13 +1,35 @@
+/**
+	enyo.Select implements an HTML selection widget, using [enyo.Option](#enyo.Option) kinds by default.
+
+	Example:
+
+		{kind: "Select", onchange: "selectChanged", components: [
+			{content: "Descending", value: "d"},
+			{content: "Ascending", value: "a"}
+		]}
+
+		selectChanged: function(inSender, inEvent) {
+			var s = inSender.getSelected();
+			if (s == "d") {
+				this.sortListDescending();
+			} else {
+				this.sortListAscending();
+			}
+		}
+*/
+
 enyo.kind({
 	name: "enyo.Select",
-	tag: "select",
-	defaultKind: "enyo.Option",
 	published: {
+		//* Index of the selected option in the list
 		selected: 0
 	},
+	//* @protected
 	handlers: {
 		onchange: "change"
 	},
+	tag: "select",
+	defaultKind: "enyo.Option",
 	rendered: function() {
 		this.inherited(arguments);
 		this.selectedChanged();
@@ -25,6 +47,8 @@ enyo.kind({
 	change: function() {
 		this.selected = this.getSelected();
 	},
+	//* @public
+	//* Returns the value of the selected option
 	getValue: function() {
 		if (this.hasNode()) {
 			return this.node.value;
@@ -32,12 +56,16 @@ enyo.kind({
 	}
 });
 
+/**
+	enyo.Option implements the options in an HTML select widget
+*/
 enyo.kind({
 	name: "enyo.Option",
-	tag: "option",
 	published: {
 		value: ""
 	},
+	//* @protected
+	tag: "option",
 	create: function() {
 		this.inherited(arguments);
 		this.valueChanged();
@@ -47,13 +75,17 @@ enyo.kind({
 	}
 });
 
+/**
+	enyo.OptionGroup allows for grouping options in a select widget, and for blocks of options to be disabled
+*/
 enyo.kind({
 	name: "enyo.OptionGroup",
-	tag: "optgroup",
-	defaultKind: "enyo.Option",
 	published: {
 		label: ""
 	},
+	//* @protected
+	tag: "optgroup",
+	defaultKind: "enyo.Option",
 	create: function() {
 		this.inherited(arguments);
 		this.labelChanged();
