@@ -647,7 +647,7 @@ enyo.kind({
 		unregisterDomEvents: function(inId) {
 			enyo.$[inId] = null;
 		},
-		selfClosing: {img: 1, hr: 1, br: 1},
+		selfClosing: {img: 1, hr: 1, br: 1, area: 1, base: 1, basefont: 1, input: 1, link: 1, meta: 1},
 		cssTextToDomStyles: function(inText, inStyleHash) {
 			if (inText) {
 				// remove spaces between rules, then split rules on delimiter (;)
