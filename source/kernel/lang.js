@@ -278,7 +278,7 @@
 
 		Returned value is equivalent to new Date().getTime()
 	*/
-	enyo.now = function() {
+	enyo.now = Date.now || function() {
 		return new Date().getTime();
 	};
 
