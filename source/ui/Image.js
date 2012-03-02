@@ -2,7 +2,7 @@
 	Implements an HTML img element, and bubbles the onload, and onerror events
 */
 enyo.kind({
-	name: "Image",
+	name: "enyo.Image",
 	//* @protected
 	tag: "img",
 	attributes: {
