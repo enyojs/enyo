@@ -341,7 +341,8 @@ enyo.kind({
 		Creates Components as defined by the array of configurations _inInfo_. 
 		Each configuration in _inInfo_ is combined with _inCommonInfo_ as 
 		described in _createComponent_.
-		_createComponents_ has no return value.
+
+		_createComponents_ returns an array of references to the created components.
 
 			// ask foo to create components _bar_ and _zot_, but set the owner of 
 			// both components to _this_.
@@ -352,9 +353,11 @@ enyo.kind({
 	*/
 	createComponents: function(inInfos, inCommonInfo) {
 		if (inInfos) {
+			var cs = [];
 			for (var i=0, ci; (ci=inInfos[i]); i++) {
-				this._createComponent(ci, inCommonInfo);
+				cs.push(this._createComponent(ci, inCommonInfo));
 			}
+			return cs;
 		}
 	},
 	//* @protected
