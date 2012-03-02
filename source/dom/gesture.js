@@ -101,7 +101,7 @@ enyo.gesture = {
 		ti.d1 = {
 			x: inEvent.pageX, 
 			y: inEvent.pageY, 
-			t: new Date().getTime()
+			t: enyo.now()
 		};
 	},
 	endTracking: function(e) {
@@ -110,7 +110,7 @@ enyo.gesture = {
 			var d1 = ti.d1, d0 = ti.d0;
 			// note: important to use up time to reduce flick 
 			// velocity based on time between move and up.
-			var dt = new Date().getTime() - d0.t;
+			var dt = enyo.now() - d0.t;
 			var x = (d1.x - d0.x) / dt;
 			var y = (d1.y - d0.y) / dt;
 			var v = Math.sqrt(x*x + y*y);
@@ -127,7 +127,7 @@ enyo.gesture = {
 		enyo.dispatch(this.makeEvent("leave", inEvent));
 	},
 	beginHold: function(inEvent) {
-		this.holdStart = new Date().getTime();
+		this.holdStart = enyo.now();
 		this.holdJob = setInterval(enyo.bind(this, "sendHoldPulse", inEvent), this.holdPulseDelay);
 	},
 	cancelHold: function() {
@@ -144,7 +144,7 @@ enyo.gesture = {
 			this.sendHold(inEvent);
 		}
 		var e = this.makeEvent("holdpulse", inEvent);
-		e.holdTime = new Date().getTime() - this.holdStart;
+		e.holdTime = enyo.now() - this.holdStart;
 		enyo.dispatch(e);
 	},
 	sendHold: function(inEvent) {

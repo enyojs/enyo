@@ -53,6 +53,6 @@ enyo.easing = {
 };
 
 enyo.easedLerp = function(inT0, inDuration, inEasing) {
-	var lerp = (new Date().getTime() - inT0) / inDuration;
+	var lerp = (enyo.now() - inT0) / inDuration;
 	return lerp >= 1 ? 1 : inEasing(lerp);
 };

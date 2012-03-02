@@ -273,6 +273,15 @@
 		}
 	};
 
+	/**
+		Returns the current time.
+
+		Returned value is equivalent to new Date().getTime()
+	*/
+	enyo.now = function() {
+		return new Date().getTime();
+	};
+
 	//* @protected
 
 	enyo.nop = function(){};

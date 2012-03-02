@@ -133,13 +133,13 @@ enyo.kind({
 	animate: function() {
 		this.stop();
 		// time tracking
-		var t0 = new Date().getTime(), t = 0;
+		var t0 = enyo.now(), t = 0;
 		// delta tracking
 		var x0, y0;
 		// animation handler
 		var fn = enyo.bind(this, function() {
 			// wall-clock time
-			var t1 = new Date().getTime();
+			var t1 = enyo.now();
 			// schedule next frame
 			this.job = enyo.requestAnimationFrame(fn);
 			// delta from last wall clock time

@@ -45,7 +45,7 @@
 		}
 	},
 	startTimer: function() {
-		this.startTime = new Date().getTime();
+		this.startTime = enyo.now();
 		if (this.timeout) {
 			this.timeoutJob = setTimeout(enyo.bind(this, "timeoutComplete"), this.timeout);
 		}
