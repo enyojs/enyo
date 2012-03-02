@@ -15,7 +15,7 @@
 		routine.
 		<i>inJson</i> is the JSON string to be converted to a JavaScript object.
 	*/
-	parse: function(inJson) {
-		return inJson ? JSON.parse(inJson) : null;
+	parse: function(inJson, inReviver) {
+		return inJson ? JSON.parse(inJson, inReviver) : null;
 	}
 };
