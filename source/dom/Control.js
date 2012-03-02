@@ -8,6 +8,8 @@ enyo.kind({
 		style: "",
 		content: "",
 		showing: true,
+		//* If false, HTML codes in _content_ are escaped before rendering.
+		allowHtml: false,
 		//
 		// convenience properties for common attributes
 		//
@@ -502,7 +504,7 @@ enyo.kind({
 		if (this.children.length) {
 			return this.generateChildHtml();
 		} else {
-			return this.content;
+			return this.allowHtml ? this.content : enyo.Control.escapeHtml(this.content);
 		}
 	},
 	generateChildHtml: function() {
@@ -640,6 +642,13 @@ enyo.kind({
 	//
 	//
 	statics: {
+		/**
+			return string with ampersand, less-than, and greater-than characters replaced with HTML entities, 
+			e.g. '&lt;code&gt;"This &amp; That"&lt;/code&gt;' becomes '&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;' 
+		*/
+		escapeHtml: function(inText) {
+			return inText != null ? String(inText).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
+		},
 		//* @protected
 		registerDomEvents: function(inId, inControl) {
 			enyo.$[inId] = inControl;
