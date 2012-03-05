@@ -16,7 +16,7 @@
  * "enter" - generated when the pointer enters a dom node.
  * "leave" - generated when the pointer leaves a dom node.
  * "hold" - generated when the pointer is held down without moving for a short period (about 200ms).
- * "release" - generated when the pointer is released after being held down. The target is the same as the hold event.
+ * "release" - generated when the pointer is released after being held down, or the pointer is moved off of the node while still held down. The target is the same as the hold event.
  * "holdpulse" - generated when the pointer is held down without moving for a short period and periodically thereafter about every 200ms.
  Use this event to trigger an action after an arbitrary period of time. The holdTime property provides the elapsed time.
  * "flick" - generated when the user flicks the pointer quickly. This event provides flick velocity data: xVelocity is the velocity in the horizontal and
