@@ -1,10 +1,7 @@
 ﻿enyo.kind({
 	name: "enyo.BaseLayout",
 	kind: enyo.Layout,
-	constructor: function(inContainer) {
-		this.inherited(arguments);
-		inContainer.applyStyle("position", "relative");
-	},
+	layoutClass: "enyo-positioned",
 	reflow: function() {
 		enyo.forEach(this.container.children, function(c) {
 			if (c.fit !== null) {
