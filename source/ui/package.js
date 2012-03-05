@@ -1,6 +1,5 @@
 enyo.depends(
 	"BaseLayout.js",
-	"Panel.js",
 	"Image.js",
 	"Input.js",
 	"Select.js",
