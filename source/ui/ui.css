@@ -9,3 +9,13 @@
 .enyo-children-middle > *, .enyo-tool-decorator > * {
 	vertical-align: middle;
 }
+
+.enyo-positioned {
+	position: relative;
+}
+
+.enyo-fill {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
