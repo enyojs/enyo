@@ -92,8 +92,22 @@
 	};
 
 	//* Returns the index of the element in _inArray_ that is equivalent (==) to _inElement_, or -1 if no element is found.
-	enyo.indexOf = function(inElement, inArray) {
-		for (var i=0, l=inArray.length, e; (e=inArray[i]) || (i<l); i++) {
+	enyo.indexOf = function(inElement, inArray, fromIndex) {
+		if (inArray.indexOf) {
+			return inArray.indexOf(inElement, fromIndex);
+		}
+
+		if (fromIndex) {
+			if (fromIndex < 0) {
+				fromIndex = 0;
+			}
+
+			if (fromIndex > inArray.length) {
+				return -1;
+			}
+		}
+
+		for (var i=fromIndex || 0, l=inArray.length, e; (e=inArray[i]) || (i<l); i++) {
 			if (e == inElement) {
 				return i;
 			}

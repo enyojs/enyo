@@ -42,6 +42,14 @@ enyo.kind({
 
 		document.body.removeChild(iframe);
 		this.finish(err);
+	},
+	testindexOfRegular: function() {
+		var index = enyo.indexOf("foo", [,,,,"foo"]);
+		this.finish(index !== 4 ? "Incorrect index" : false);
+	},
+	testindexOfFromIndex: function() {
+		var index = enyo.indexOf("foo", [,,,,"foo"], 10);
+		this.finish(index !== -1 ? "if fromIndex is greater then array length, should return -1" : false);
 	}
 
 /*
