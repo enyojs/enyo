@@ -41,7 +41,7 @@ button {
 
 /* layout */
 
-.enyo-fit {
+body .enyo-fit {
 	position: absolute;
 	left: 0;
 	top: 0;
