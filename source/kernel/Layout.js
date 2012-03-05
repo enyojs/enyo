@@ -5,7 +5,9 @@
 	//* @protected
 	constructor: function(inContainer) {
 		this.container = inContainer;
-		inContainer.addClass(this.layoutClass);
+		if (inContainer) {
+			inContainer.addClass(this.layoutClass);
+		}
 	},
 	destroy: function() {
 		if (this.container) {
