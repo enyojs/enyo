@@ -52,7 +52,7 @@
 	},
 	endTimer: function() {
 		if (this.timeoutJob) {
-			this.endTime = new Date().getTime();
+			this.endTime = enyo.now();
 			clearTimeout(this.timeoutJob);
 			this.timeoutJob = null;
 			this.latency = this.endTime - this.startTime;
