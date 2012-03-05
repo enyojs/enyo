@@ -339,29 +339,31 @@ enyo.kind({
 		this.teardownRender();
 		// inParentNode can be a string id or a node reference
 		var pn = enyo.dom.byId(inParentNode);
-		// 1: fit to nodes with non-auto height (NOTE: webkit td's have "0px" when unsized)
-		/*
-		var cs = window.getComputedStyle(pn, null);
-		if (cs.height !== "auto" && cs.height !== "0px") {
-			this.addClass("enyo-fit");
-		}
-		// 2: fit if rendering into body
-		else*/ if (pn == document.body) {
+		if (pn == document.body) {
+			this.setupBodyFitting();
+		} else if (this.fit) {
 			this.addClass("enyo-fit");
 		}
 		// generate our HTML
 		pn.innerHTML = this.generateHtml();
 		// post-rendering tasks
 		this.rendered();
-		// return 'this' to support method chaining
+		// support method chaining
 		return this;
 	},
 	write: function() {
+		if (this.fit) {
+			this.setupBodyFitting();
+		}
 		document.write(this.generateHtml());
 		// post-rendering tasks
 		this.rendered();
 		// support method chaining
 		return this;
+	},
+	setupBodyFitting: function() {
+		this.addClass("enyo-fit");
+		// TODO: other steps to make a 'fitting' application x-plat
 	},
 	/**
 		Override to perform tasks that require access to the DOM node.
