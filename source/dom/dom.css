@@ -1,10 +1,9 @@
 /* for apps */
-
-html, body {
+.enyo-document-fit {
 	margin: 0;
 	height: 100%;
-	/* ios needs at least overflow: auto to scroll */
-	overflow: auto;
+	/*overflow: auto;*/
+	overflow: hidden;
 	position: relative;
 	-webkit-overflow-scrolling: touch;
 }

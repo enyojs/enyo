@@ -33,10 +33,25 @@ enyo.dom = {
 	},
 	//* @protected
 	getComputedStyle: function(inNode) {
-		return window.getComputedStyle(inNode, null);
+		return window.getComputedStyle && window.getComputedStyle(inNode, null);
 	},
 	getComputedStyleValue: function(inNode, inProperty, inComputedStyle) {
 		var s = inComputedStyle || this.getComputedStyle(inNode);
 		return s.getPropertyValue(inProperty);
+	},
+	getFirstElementByTagName: function(inTagName) {
+		var e = document.getElementsByTagName(inTagName);
+		return e && e[0];
+	},
+	applyBodyFit: function() {
+		var h = this.getFirstElementByTagName("html");
+		if (h) {
+			h.className += " enyo-document-fit";
+		}
+		var b = this.getFirstElementByTagName("body");
+		if (b) {
+			b.className += " enyo-document-fit";
+		}
+		enyo.bodyIsFitting = true;
 	}
 };

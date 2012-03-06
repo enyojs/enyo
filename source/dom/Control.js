@@ -362,8 +362,8 @@ enyo.kind({
 		return this;
 	},
 	setupBodyFitting: function() {
+		enyo.dom.applyBodyFit();
 		this.addClass("enyo-fit");
-		// TODO: other steps to make a 'fitting' application x-plat
 	},
 	/**
 		Override to perform tasks that require access to the DOM node.
