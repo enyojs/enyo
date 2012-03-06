@@ -1,13 +1,13 @@
 ﻿(function() {
-	var r, c;
-	if (c = window.webkitCancelRequestAnimationFrame){
+	var _requestFrame, _cancelFrame;
+	if (_cancelFrame = window.webkitCancelRequestAnimationFrame){
 		/*
 			API is non-standard, so what enyo exposes may vary from 
 			web documentation for various browsers
 			in particular, enyo.requestAnimationFrame takes no arguments,
 			and the callback receives no arguments
 		*/
-		r = window.webkitRequestAnimationFrame;
+		_requestFrame = window.webkitRequestAnimationFrame;
 		/*
 			Note: (we have requested to change the native implementation to do this)
 			first return value of webkitRequestAnimationFrame is 0 and a call 
@@ -16,14 +16,14 @@
 			make 1 bogus call so the first used return value of webkitRequestAnimationFrame is > 0.
 			(we choose to do this rather than wrapping the native function to avoid the overhead)
 		*/
-		c(r(enyo.nop));
+		_cancelFrame(_requestFrame(enyo.nop));
 	} else {
-		r = function(inCallback /*, inNode */) {
+		_requestFrame = function(inCallback /*, inNode */) {
 			return window.setTimeout(inCallback, Math.round(1000/60));
 		};
 		// Note: IE8 clearTimeout cannot be called via .apply so don't use enyo.bind.
-		c = function(inId) {
-			return window.clearTimeout(c);
+		_cancelFrame = function(inId) {
+			return window.clearTimeout(inId);
 		}
 	}
 	/**
@@ -34,13 +34,13 @@
 		Returns a request id to be used with [enyo.cancelRequestAnimationFrame](#enyo.cancelRequestAnimationFrame).
 	*/
 	enyo.requestAnimationFrame = function(inCallback, inNode) {
-		r.apply(window, arguments);
+		return _requestFrame(inCallback, inNode);
 	};
 	/**
 		Cancel a requested animation callback with the specified id.
 	*/
 	enyo.cancelRequestAnimationFrame = function(inId) {
-		c.apply(window, arguments);
+		return _cancelFrame(inId);
 	};
 })();
 
