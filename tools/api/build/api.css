@@ -1,5 +1,5 @@
 
-/* foss/syntaxhighlighter_3.0.83_fork/sh-min.css */
+/* ../source/foss/syntaxhighlighter_3.0.83_fork/sh-min.css */
 
 
 /* styles/shCoreEclipse.css */
@@ -353,7 +353,8 @@
 
 
 
-/* css/tab.css */
+/* ../source/css/tab.css */
+
 
 .tabbar {
 	background-color: #333;
@@ -378,10 +379,10 @@
 	cursor: pointer;
 	display: inline-block;
 	white-space: nowrap;
-	/**/
+
 	color: #454545;
 	background: #A5A6A7 url(../images/tab-gradient.png) left top repeat-x;
-	/**/
+
 	line-height: 38px;
 	padding: 0 12px 0 10px;
 	margin: 0;
@@ -399,7 +400,7 @@
 }
 
 
-/* css/app.css */
+/* ../source/css/app.css */
 
 body {
 	font-family: Arial, Verdana, Helvetica, sans-serif;
@@ -517,7 +518,7 @@ body {
 }
 */
 
-/* css/format.css */
+/* ../source/css/format.css */
 
 .name {
 	color: #00A400;

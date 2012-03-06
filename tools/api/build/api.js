@@ -1726,7 +1726,8 @@ name: "indexPanel",
 kind: "Scroller",
 classes: "enyo-fit",
 components: [ {
-name: "indexBody"
+name: "indexBody",
+allowHtml: !0
 } ]
 }, {
 name: "searchPanel",
@@ -1740,7 +1741,8 @@ name: "searchScroller",
 kind: "Scroller",
 classes: "enyo-fit",
 components: [ {
-name: "searchBody"
+name: "searchBody",
+allowHtml: !0
 } ]
 } ]
 } ]
