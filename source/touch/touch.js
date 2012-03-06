@@ -4,14 +4,6 @@ enyo.requiresWindow(function() {
 	var gesture = enyo.gesture;
 	//
 	gesture.events.touchstart = function(e) {
-		// NOTE: in touch environments, we avoid drag hysteresis;
-		// this makes it easier to deal with an issue on Android:
-		// the first touchmove must be preventDefault'd or additional
-		// touchmoves are not sent.
-		// when drags start immediately, we can use the dragstart event
-		// to preventDefault on the first touchmove (via the dragstart's
-		// event.preventNativeDefault() method.
-		gesture.drag.hysteresis = 0;
 		gesture.events = touchGesture;
 		gesture.events.touchstart(e);
 	};
@@ -33,9 +25,9 @@ enyo.requiresWindow(function() {
 			this.excludedTarget = de && de.dragInfo && de.dragInfo.node;
 			var e = this.makeEvent(inEvent);
 			gesture.move(e);
-			// (1) prevent default document window scrolling by setting enyo.preventDocumentScrolling = true;
-			// (2) opt in to the touchmove event by specifying event.requireTouchmove = true;
-			if (enyo.preventDocumentScrolling && !e.requireTouchmove) {
+			// (1) prevent default document scrolling if enyo.bodyIsFitting == true
+			// (2) opt in to the touchmove event by specifying event.requireTouchmove = true in onmove;
+			if (enyo.bodyIsFitting && !e.requireTouchmove) {
 				inEvent.preventDefault();
 			}
 			// synthesize over and out (normally generated via mouseout)
@@ -49,7 +41,7 @@ enyo.requiresWindow(function() {
 		},
 		touchend: function(inEvent) {
 			gesture.up(this.makeEvent(inEvent));
-			// FIXME: in touch land, there is no distinction between
+			// NOTE: in touch land, there is no distinction between
 			// a pointer enter/leave and a drag over/out.
 			// While it may make sense to send a leave event when a touch
 			// ends, it does not make sense to send a dragout.
