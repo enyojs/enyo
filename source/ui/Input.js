@@ -4,7 +4,10 @@
 enyo.kind({
 	name: "enyo.Input",
 	published: {
-		//* Default value of the input
+		/**
+			Value of the input. Use this property only to initialize the value. Use _getValue()_ and _setValue()_ to
+			manipulate the value at runtime.
+		*/
 		value: "",
 		//* Text to display when the input is empty
 		placeholder: "",
@@ -28,7 +31,7 @@ enyo.kind({
 		onclear: "clear"
 	},
 	create: function() {
-		// hack sniff
+		// FIXME: ad hoc sniff
 		if (navigator.userAgent.match("MSIE")) {
 			this.handlers.onkeyup = "keyup";
 		}
@@ -47,10 +50,6 @@ enyo.kind({
 	getValue: function() {
 		return this.getNodeProperty("value", this.value);
 	},
-	setValue: function(inValue) {
-		// default property mechanism can't track changed correctly for virtual properties
-		this.setPropertyValue("value", inValue, "valueChanged");
-	},
 	valueChanged: function() {
 		this.setAttribute("value", this.value);
 		this.setNodeProperty("value", this.value);
@@ -58,23 +57,15 @@ enyo.kind({
 	},
 	keyup: function() {
 		// ie only
-		//this.log();
 		this.notifyContainer();
 	},
 	input: function() {
-		//this.log();
-		//enyo.asyncMethod(this, "notifyContainer");
 		this.notifyContainer();
 	},
 	notifyContainer: function() {
-		// if our container is not our owner (i.e. if we are not RadioGroup chrome), she can't get this via normal dispatch
-		// send input Change directly
-		//this.container.dispatchCustomEvent("inputChange", null, this);
-		//this.dispatch(this.container, this.container.handlers.inputChange);
 		this.bubble("onInputChange");
 	},
 	clear: function() {
-		// respond to 'clear' event
 		this.setValue("");
 	},
 	focus: function() {
