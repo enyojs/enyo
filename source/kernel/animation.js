@@ -1,35 +1,56 @@
-﻿// TODOC
-(function(){
-	// API is non-standard, so what enyo exposes may vary from 
-	// web documentation for various browsers
-	// in particular, enyo.requestAnimationFrame takes no arguments,
-	// and the callback receives no arguments
-	var builtin = window.webkitRequestAnimationFrame;
-	enyo.requestAnimationFrame = builtin ? enyo.bind(window, builtin) :
-		function(inCallback) {
+﻿(function() {
+	var r, c;
+	if (c = window.webkitCancelRequestAnimationFrame){
+		/*
+			API is non-standard, so what enyo exposes may vary from 
+			web documentation for various browsers
+			in particular, enyo.requestAnimationFrame takes no arguments,
+			and the callback receives no arguments
+		*/
+		r = window.webkitRequestAnimationFrame;
+		/*
+			Note: (we have requested to change the native implementation to do this)
+			first return value of webkitRequestAnimationFrame is 0 and a call 
+			to webkitCancelRequestAnimationFrame with no arguments will cancel this.
+			To avoid this and to allow for a boolean test of the return value,
+			make 1 bogus call so the first used return value of webkitRequestAnimationFrame is > 0.
+			(we choose to do this rather than wrapping the native function to avoid the overhead)
+		*/
+		c(r(enyo.nop));
+	} else {
+		r = function(inCallback /*, inNode */) {
 			return window.setTimeout(inCallback, Math.round(1000/60));
 		};
-	//
-	// Note: (we have requested to change the native implementation to do this)
-	// first return value of webkitRequestAnimationFrame is 0 and a call 
-	// to webkitCancelRequestAnimationFrame with no arguments will cancel this.
-	// To avoid this and to allow for a boolean test of the return value,
-	// make 1 bogus call so the first used return value of webkitRequestAnimationFrame is > 0.
-	// (we choose to do this rather than wrapping the native function to avoid the overhead)
-	//
-	if (builtin) {
-		var f = webkitRequestAnimationFrame(enyo.nop);
-		webkitCancelRequestAnimationFrame(f);
+		// Note: IE8 clearTimeout cannot be called via .apply so don't use enyo.bind.
+		c = function(inId) {
+			return window.clearTimeout(c);
+		}
 	}
-	//
-	builtin = window.webkitCancelRequestAnimationFrame || window.clearTimeout;
-	// Note: IE8 clearTimeout cannot be called via .apply so don't use enyo.bind.
-	//enyo.cancelRequestAnimationFrame = enyo.bind(window, builtin);
-	enyo.cancelRequestAnimationFrame = function(c) {
-		return builtin(c);
+	/**
+		Request an animation callback.
+
+		On compatible browsers, if _inNode_ is defined, the callback will fire only if _inNode_ is visible.
+
+		Returns a request id to be used with [enyo.cancelRequestAnimationFrame](#enyo.cancelRequestAnimationFrame).
+	*/
+	enyo.requestAnimationFrame = function(inCallback, inNode) {
+		r.apply(window, arguments);
+	};
+	/**
+		Cancel a requested animation callback with the specified id.
+	*/
+	enyo.cancelRequestAnimationFrame = function(inId) {
+		c.apply(window, arguments);
 	};
 })();
 
+/**
+	An assortment of interpolation functions for animations.
+
+	Similar in function to CSS3 transitions.
+
+	Intended for use with [enyo.easedLerp](#enyo.easedLerp)
+*/
 enyo.easing = {
 	cubicIn: function(n) {
 		return Math.pow(n, 3);
@@ -52,6 +73,11 @@ enyo.easing = {
 	}
 };
 
+/**
+	Gives an interpolation of an animated transition's distance from 0 to 1.
+
+	Given a start time (_inT0_) and an animation duration (_inDuration_), applies the _inEasing_ function to the percentage of time elapsed / duration, capped at 100%. 
+*/
 enyo.easedLerp = function(inT0, inDuration, inEasing) {
 	var lerp = (enyo.now() - inT0) / inDuration;
 	return lerp >= 1 ? 1 : inEasing(lerp);
