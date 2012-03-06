@@ -4,7 +4,10 @@
 enyo.kind({
 	name: "enyo.Input",
 	published: {
-		//* Default value of the input
+		/**
+			Value of the input. Use this property only to initialize the value. Use _getValue()_ and _setValue()_ to
+			manipulate the value at runtime.
+		*/
 		value: "",
 		//* Text to display when the input is empty
 		placeholder: "",
