@@ -1,5 +1,10 @@
 .enyo-scroller {
+	position: relative;
 	overflow: hidden;
+}
+
+.enyo-fit.enyo-scroller {
+	position: absolute;
 }
 
 .enyo-touch-scroller {

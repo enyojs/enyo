@@ -10,17 +10,17 @@ Note: If a scroller is nofit: false, then it should have a position style set to
 */
 enyo.kind({
 	name: "enyo.Scroller",
-	kind: enyo.Control,
-	classes: "enyo-scroller",
 	published: {
 		/**
-			Set to false to prevent horizontal scrolling.
+			Specifies how to horizontally scroll. Acceptable values are "scroll", "auto," "hidden," and "default" The precise
+			effect of the setting is determined by the scroll strategy.
 		*/
-		horizontal: "auto",
+		horizontal: "default",
 		/**
-			Set to false to prevent vertical scrolling.
+			Specifies how to vertically scroll. Acceptable values are "scroll", "auto," "hidden," and "default" The precise
+			effect of the setting is determined by the scroll strategy.
 		*/
-		vertical: true,
+		vertical: "default",
 		/**
 			Sets the vertical scroll position.
 		*/
@@ -36,8 +36,9 @@ enyo.kind({
 		/**
 			Specify a type of scrolling. The enyo Scroller will attempt to automatically select 
 			a strategy compatbile with the runtime environment. A specific strategy can also be chosen:
-			"ScrollStrategy" is the default and implements no scrolling, relying instead on the environment to scroll properly.
-			"TouchScrollStrategy" implements a touch scrolling mechanism.
+
+			* <a href="#enyo.ScrollStrategy">ScrollStrategy</a> is the default and implements no scrolling, relying instead on the environment to scroll properly.
+			* <a href="#enyo.TouchScrollStrategy">TouchScrollStrategy</a> implements a touch scrolling mechanism.
 		*/
 		strategyKind: "ScrollStrategy"
 	},
@@ -50,6 +51,7 @@ enyo.kind({
 		If true, the scroller will not propagate dragstart events that cause it to start scrolling (defaults to true)
 	*/
 	preventDragPropagation: true,
+	//* @protected
 	statics: {
 		osInfo: [
 			{os: "Android", version: 3},
@@ -164,12 +166,16 @@ enyo.kind({
 	getScrollTop: function() {
 		return this.$.strategy.getScrollTop();
 	},
+	//* @public
+	//* returns an object describing the scroll boundaries with height and width properties.
 	getScrollBounds: function() {
 		return this.$.strategy.getScrollBounds();
 	},
+	//* scrolls the given control (inControl) into view. If inAlignWithTop is true, inControl is aligned with the top of the scroller.
 	scrollIntoView: function(inControl, inAlignWithTop) {
 		this.$.strategy.scrollIntoView(inControl, inAlignWithTop);
 	},
+	//* Scroll to the position given by inX and inY in pixel units.
 	scrollTo: function(inX, inY) {
 		this.$.strategy.scrollTo(inX, inY);
 	}

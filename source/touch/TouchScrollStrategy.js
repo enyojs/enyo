@@ -1,17 +1,38 @@
 ﻿/**
-enyo.TouchScroller is a touch based scroller that integrates the scrolling simulation provided
-by <a href="#enyo.ScrollMath">enyo.ScrollMath</a>
-into a Control.
+enyo.TouchScrollStrategy is a helper kind that implments a touch based scroller that integrates the scrolling simulation provided
+by <a href="#enyo.ScrollMath">enyo.ScrollMath</a> into an <a href="#enyo.Scroller">enyo.Scroller</a>.
 
-enyo.ScrollMath is not typically created in application code.
+enyo.TouchScrollStrategy is not typically created in application code.
 */
 enyo.kind({
 	name: "enyo.TouchScrollStrategy",
-	kind: enyo.ScrollStrategy,
+	kind: "ScrollStrategy",
 	/**
 		If true, the scroller will not propagate dragstart events that cause it to start scrolling (defaults to true)
 	*/
 	preventDragPropagation: true,
+	published: {
+		/**
+			Specifies how to horizontally scroll. Acceptable values are:
+			
+			* "scroll": Always scrolls.
+			* "auto":  Scroll only if the content overflows the scroller.
+			* "hidden": Never scroll.
+			* "default": In touch environments, the default vertical scrolling behavior is to always scroll. If the content does not
+			overflow the scroller, the scroller will overscroll and snap back.
+		*/
+		vertical: "default",
+		/**
+			Specifies how to vertically scroll. Acceptable values are:
+
+			* "scroll": Always scrolls.
+			* "auto":  Scroll only if the content overflows the scroller.
+			* "hidden": Never scroll.
+			* "default": Same as auto.
+		*/
+		horizontal: "default",
+		nofit: false
+	},
 	events: {
 		onScrollStart: "doScrollStart",
 		onScroll: "doScroll",
@@ -19,26 +40,28 @@ enyo.kind({
 	},
 	//* @protected
 	handlers: {
-		onflick: "flickHandler",
-		onhold: "holdHandler",
-		ondragstart: "dragstartHandler",
-		ondrag: "dragHandler",
-		ondragfinish: "dragfinishHandler",
-		onmousewheel: "mousewheelHandler",
-		ontouchmove: "touchmoveHandler"
+		onflick: "flick",
+		onhold: "hold",
+		ondragstart: "dragstart",
+		ondrag: "drag",
+		ondragfinish: "dragfinish",
+		onmousewheel: "mousewheel"
 	},
 	classes: "enyo-touch-scroller",
 	components: [
 		{name: "scroll", kind: "ScrollMath"},
 		{name: "client", classes: "enyo-touch-scroller", attributes: {"onscroll": enyo.bubbler}}
 	],
+	create: function() {
+		this.inherited(arguments);
+		this.nofitChanged();
+	},
 	rendered: function() {
 		this.inherited(arguments);
 		this.calcBoundaries();
 		this.syncScrollMath();
 	},
 	nofitChanged: function() {
-		this.inherited(arguments);
 		this.$.client.addRemoveClass("enyo-fit", !this.nofit);
 	},
 	scrollHandler: function() {
@@ -46,19 +69,19 @@ enyo.kind({
 		this.syncScrollMath();
 	},
 	horizontalChanged: function() {
-		this.$.scroll.horizontal = this.horizontal;
+		this.$.scroll.horizontal = (this.horizontal != "hidden");
 	},
 	verticalChanged: function() {
-		this.$.scroll.vertical = this.vertical;
+		this.$.scroll.vertical = (this.horizontal != "hidden");
 	},
 	calcScrollNode: function() {
 		return this.$.client.hasNode();
 	},
 	calcAutoScrolling: function() {
-		var v = this.vertical == "auto";
-		var h = this.horizontal == "auto";
+		var v = (this.vertical == "auto");
+		var h = (this.horizontal == "auto") || (this.horizontal == "default");
 		if ((v || h) && this.scrollNode) {
-			var b = this.getBounds();
+			var b = this.container.getBounds();
 			if (v) {
 				this.$.scroll.vertical = this.scrollNode.scrollHeight > b.height;
 			}
@@ -73,21 +96,21 @@ enyo.kind({
 		var canV = this.$.scroll.vertical;
 		return requestV && canV || !requestV && canH;
 	},
-	flickHandler: function(inSender, e) {
+	flick: function(inSender, e) {
 		var onAxis = Math.abs(e.xVelocity) > Math.abs(e.yVelocity) ? this.horizontal : this.vertical;
 		if (onAxis) {
 			this.$.scroll.flick(e);
 			return this.preventDragPropagation;
 		}
 	},
-	holdHandler: function(inSender, e) {
+	hold: function(inSender, e) {
 		if (this.$.scroll.isScrolling() && !this.$.scroll.isInOverScroll()) {
 			this.$.scroll.stop(e);
 			return true;
 		}
 	},
 	// special synthetic DOM events served up by the Gesture system
-	dragstartHandler: function(inSender, inEvent) {
+	dragstart: function(inSender, inEvent) {
 		this.calcAutoScrolling();
 		this.dragging = this.shouldDrag(inEvent);
 		if (this.dragging) {
@@ -102,20 +125,20 @@ enyo.kind({
 			}
 		}
 	},
-	dragHandler: function(inSender, inEvent) {
+	drag: function(inSender, inEvent) {
 		if (this.dragging) {
 			inEvent.preventNativeDefault();
 			this.$.scroll.drag(inEvent);
 		}
 	},
-	dragfinishHandler: function(inSender, inEvent) {
+	dragfinish: function(inSender, inEvent) {
 		if (this.dragging) {
 			inEvent.preventTap();
 			this.$.scroll.dragFinish();
 			this.dragging = false;
 		}
 	},
-	mousewheelHandler: function(inSender, e) {
+	mousewheel: function(inSender, e) {
 		if (!this.dragging && this.$.scroll.mousewheel(e)) {
 			e.preventDefault();
 			return true;

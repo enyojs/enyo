@@ -1,8 +1,8 @@
 ﻿/**
-enyo.ScrollStrategy implements scrolling dynamics simulation. It is a helper kind used
-by other scroller kinds.
+enyo.ScrollMath implements scrolling dynamics simulation. It is a helper kind used
+by other scroller kinds like <a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a>.
 
-enyo.ScrollStrategy is not typically created in application code.
+enyo.ScrollMath is not typically created in application code.
 */
 enyo.kind({
 	name: "enyo.ScrollMath",
