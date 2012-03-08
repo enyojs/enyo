@@ -112,7 +112,6 @@ enyo.kind({
 	// special synthetic DOM events served up by the Gesture system
 	dragstart: function(inSender, inEvent) {
 		this.calcAutoScrolling();
-		this.log(this.$.scroll.vertical, this.$.scroll.horizontal);
 		this.dragging = this.shouldDrag(inEvent);
 		if (this.dragging) {
 			inEvent.preventNativeDefault();
