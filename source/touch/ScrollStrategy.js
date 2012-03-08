@@ -1,18 +1,37 @@
 ﻿/**
+	enyo.ScrollStrategy is a helper kind which implements a default scrolling strategy for an <a href="#enyo.Scroller">enyo.Scroller</a>.
+	
+	enyo.ScrollStrategy is not typically created in application code.
 */
 enyo.kind({
 	name: "enyo.ScrollStrategy",
-	kind: enyo.Control,
+	noDom: true,
 	events: {
 		onScroll: "doScroll"
 	},
 	published: {
-		vertical: true,
-		horizontal: true,
+		/**
+			Specifies how to horizontally scroll. Acceptable values are:
+				
+			* "scroll": always shows a scrollbar; sets overflow: scroll
+			* "auto":  scrolls only if needed; sets overflow: auto
+			* "hidden": never scrolls;  sets overflow: hidden
+			* "default": same as auto.
+		*/
+		vertical: "default",
+		/**
+			Specifies how to vertically scroll. Acceptable values are:
+
+			* "scroll": always shows a scrollbar; sets overflow: scroll
+			* "auto":  scrolls only if needed; sets overflow: auto
+			* "hidden": never scrolls;  sets overflow: hidden
+			* "default": same as auto.
+		*/
+		horizontal: "default",
 		scrollLeft: 0,
-		scrollTop: 0,
-		nofit: false
+		scrollTop: 0
 	},
+	//* @protected
 	handlers: {
 		onscroll: "scrollHandler",
 		onmove: "moveHandler"
@@ -21,11 +40,7 @@ enyo.kind({
 		this.inherited(arguments);
 		this.horizontalChanged();
 		this.verticalChanged();
-		this.nofitChanged();
-		this.setAttribute("onscroll", enyo.bubbler);
-	},
-	nofitChanged: function() {
-		this.addRemoveClass("enyo-fit", !this.nofit);
+		this.container.setAttribute("onscroll", enyo.bubbler);
 	},
 	rendered: function() {
 		this.inherited(arguments);
@@ -36,18 +51,18 @@ enyo.kind({
 		this.scrollNode = null;
 	},
 	calcScrollNode: function() {
-		return this.hasNode();
+		return this.container.hasNode();
 	},
 	horizontalChanged: function() {
-		this.applyStyle("overflow-x", this.horizontal ? "auto" : "hidden");
+		this.container.applyStyle("overflow-x", this.horizontal == "default" ? "auto" : this.horizontal);
 	},
 	verticalChanged: function() {
-		this.applyStyle("overflow-y", this.vertical ? "auto" : "hidden");
+		this.container.applyStyle("overflow-y", this.vertical == "default" ? "auto" : this.vertical);
 	},
 	// NOTE: mobile native scrollers need touchmove. Indicate this by 
 	// setting the requireTouchmove property to true.
 	moveHandler: function(inSender, inEvent) {
-		inEvent.requireTouchmove = true;
+		inEvent.requireTouchmove = (this.vertical != "hidden") || (this.horizontal != "hidden");
 	},
 	scrollHandler: function(inSender, e) {
 		return this.doScroll(e);
