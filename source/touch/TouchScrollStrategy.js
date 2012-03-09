@@ -72,7 +72,7 @@ enyo.kind({
 		this.$.scroll.horizontal = (this.horizontal != "hidden");
 	},
 	verticalChanged: function() {
-		this.$.scroll.vertical = (this.horizontal != "hidden");
+		this.$.scroll.vertical = (this.vertical != "hidden");
 	},
 	calcScrollNode: function() {
 		return this.$.client.hasNode();
