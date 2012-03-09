@@ -1,0 +1,19 @@
+{
+    "name": "enyo",
+    "filename": "enyo.js",
+    "version": "2.0.0-beta.3",
+    "description":"Enyo is an open source object-oriented JavaScript framework emphasizing encapsulation and modularity. Enyo contains everything you need to create a fast, scalable mobile or web application.",
+    "homepage": "http://enyojs.com/",
+    "keywords": [ "framework", "toolkit", "components", "mobile", "webOS" ],
+    "maintainers": [{
+        "name": "Enyo JS Framework Team (HP)",
+        "web": "http://enyojs.com/"
+    }],
+    "licenses": [{
+        "type": "Apache-2.0", "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }],
+    "bugs": "https://github.com/enyojs/enyo/issues/",
+    "repositories": [{
+        "type": "git", "url": "http://github.com/enyojs/enyo"
+    }]
+}
