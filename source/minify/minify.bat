@@ -1,1 +1,1 @@
-@CALL ..\..\tools\minify.bat package.js -output build/enyo -no-alias
+@CALL ..\..\tools\minify.bat package.js -no-alias -output ..\..\build\enyo 

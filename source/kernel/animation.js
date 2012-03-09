@@ -1,6 +1,6 @@
 ﻿(function() {
 	var _requestFrame, _cancelFrame;
-	if (_cancelFrame = window.webkitCancelRequestAnimationFrame){
+	if (_cancelFrame = window.webkitCancelRequestAnimationFrame) {
 		/*
 			API is non-standard, so what enyo exposes may vary from 
 			web documentation for various browsers
