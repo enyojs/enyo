@@ -84,11 +84,19 @@
 					//
 					{tag: "hr"},
 					{content: "enyo.Input"},
-					{tag: "span", name: "defalt", content: "someValue", classes: "data"},
+					{tag: "span", name: "default", content: "someValue", classes: "data"},
 					{tag: "button", content: "value =>", ontap: "setValueTap"},
 					{kind: "Input", value: "initial"},
 					{tag: "button", content: "value =>", ontap: "getValueTap"},
-					{tag: "span", name: "value", content: "&nbsp;", classes: "data"},
+					{tag: "span", name: "value", content: "", classes: "data"},
+					{tag: "hr"},
+					//
+					{content: "enyo.TextArea"},
+					{tag: "span", name: "textAreaDefault", content: "someValue", classes: "data"},
+					{tag: "button", content: "value =>", ontap: "setTextAreaTap"},
+					{kind: "TextArea", rows: 2, value: "initial"},
+					{tag: "button", content: "value =>", ontap: "getTextAreaTap"},
+					{tag: "span", name: "textAreaValue", content: "", classes: "data"},
 					{tag: "hr"},
 					//
 					{content: "enyo.Checkbox"},
@@ -96,7 +104,7 @@
 					{tag: "button", content: "value =>", ontap: "setCheckValueTap"},
 					{name: "valueCheckbox", kind: "Checkbox", checked: "true"},
 					{tag: "button", content: "value =>", ontap: "getCheckValueTap"},
-					{tag: "span", name: "checkValue", content: "&nbsp;", classes: "data"},
+					{tag: "span", name: "checkValue", content: "", classes: "data"},
 					{tag: "hr"},
 					//
 					{content: "ToolDecorator"},
@@ -122,7 +130,7 @@
 						{value: "jquery", content: "jQuery"}
 					]},
 					{kind: "Button", content: "value =>", ontap: "getSelectedValue"},
-					{tag: "span", name: "selectValue", content: "&nbsp;", classes: "data"},
+					{tag: "span", name: "selectValue", content: "", classes: "data"},
 					{tag: "hr"}
 				],
 				//
@@ -130,16 +138,20 @@
 					this.$.value.setContent(this.$.input.getValue());
 				},
 				setValueTap: function() {
-					this.$.input.setValue(this.$.defalt.getContent());
+					this.$.input.setValue(this.$.default.getContent());
+				},
+				//
+				getTextAreaTap: function() {
+					this.$.textAreaValue.setContent(this.$.textArea.getValue());
+				},
+				setTextAreaTap: function() {
+					this.$.textArea.setValue(this.$.textAreaDefault.getContent());
 				},
 				//
 				getCheckValueTap: function(inSender) {
-					this.log("getCheckValueTap", inSender.id);
 					this.$.checkValue.setContent(this.$.valueCheckbox.getValue());
 				},
 				setCheckValueTap: function(inSender) {
-					this.log("setCheckValueTap", inSender.id);
-					this.log(this.$.checkDefault.getContent());
 					this.$.valueCheckbox.setValue(this.$.checkDefault.getContent());
 				},
 				selectEnyo: function() {

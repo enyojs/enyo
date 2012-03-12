@@ -2,6 +2,7 @@ enyo.depends(
 	"BaseLayout.js",
 	"Image.js",
 	"Input.js",
+	"TextArea.js",
 	"Select.js",
 	"Group.js",
 	"GroupItem.js",
