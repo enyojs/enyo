@@ -12,9 +12,6 @@ enyo.dispatcher.features.push(function(e) {
 		// the way the event propagates. Therefore decide if the event should forward
 		// before the capture target receives the event (since it may release capture).
 		var shouldForward = (this.autoForwardEvents[e.type] || this.forwardEvents);
-		if (e.type == "tap") {
-			console.log(shouldForward, this.forwardEvents);
-		}
 		this.dispatchBubble(e, c1);
 		if (!shouldForward) {
 			e.preventDispatch = true;
