@@ -47,6 +47,7 @@ enyo.kind({
 		onScroll: "",
 		onScrollStop: ""
 	},
+	classes: "enyo-scroller",
 	/**
 		If true, the scroller will not propagate dragstart events that cause it to start scrolling (defaults to true)
 	*/
@@ -96,7 +97,7 @@ enyo.kind({
 	importProps: function(inProps) {
 		this.inherited(arguments);
 		// allow global overriding of strategy kind
-		if (inProps && inProps.strategyKind === undefined && enyo.Scroller.forceTouchScrolling) {
+		if (inProps && inProps.strategyKind === undefined && enyo.Scroller.touchScrolling) {
 			this.strategyKind = "TouchScrollStrategy";
 		}
 	},

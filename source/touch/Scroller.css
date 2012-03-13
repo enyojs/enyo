@@ -1,6 +1,5 @@
 .enyo-scroller {
 	position: relative;
-	overflow: hidden;
 }
 
 .enyo-fit.enyo-scroller {

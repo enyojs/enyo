@@ -31,6 +31,7 @@ enyo.kind({
 			* "default": Same as auto.
 		*/
 		horizontal: "default",
+		//* set to true to prevent the scroll strategy from fitting to the size of the scroller
 		nofit: false
 	},
 	events: {
@@ -49,7 +50,7 @@ enyo.kind({
 	},
 	classes: "enyo-touch-scroller",
 	components: [
-		{name: "scroll", kind: "ScrollMath"},
+		{kind: "ScrollMath", onScrollStart: "scrollMathStart", onScroll: "scrollMathScroll", onScrollStop: "scrollMathStop"},
 		{name: "client", classes: "enyo-touch-scroller", attributes: {"onscroll": enyo.bubbler}}
 	],
 	create: function() {
@@ -64,15 +65,18 @@ enyo.kind({
 	nofitChanged: function() {
 		this.$.client.addRemoveClass("enyo-fit", !this.nofit);
 	},
-	scrollHandler: function() {
+	scroll: function() {
 		this.calcBoundaries();
 		this.syncScrollMath();
 	},
 	horizontalChanged: function() {
-		this.$.scroll.horizontal = (this.horizontal != "hidden");
+		this.$.scrollMath.horizontal = (this.horizontal != "hidden");
 	},
 	verticalChanged: function() {
-		this.$.scroll.vertical = (this.vertical != "hidden");
+		this.$.scrollMath.vertical = (this.vertical != "hidden");
+	},
+	scrollTo: function(inX, inY) {
+		this.$.scrollMath.scrollTo(inY || inY == 0 ? inY : null, inX);
 	},
 	calcScrollNode: function() {
 		return this.$.client.hasNode();
@@ -83,29 +87,29 @@ enyo.kind({
 		if ((v || h) && this.scrollNode) {
 			var b = this.container.getBounds();
 			if (v) {
-				this.$.scroll.vertical = this.scrollNode.scrollHeight > b.height;
+				this.$.scrollMath.vertical = this.scrollNode.scrollHeight > b.height;
 			}
 			if (h) {
-				this.$.scroll.horizontal = this.scrollNode.scrollWidth > b.width;
+				this.$.scrollMath.horizontal = this.scrollNode.scrollWidth > b.width;
 			}
 		}
 	},
 	shouldDrag: function(e) {
 		var requestV = e.vertical;
-		var canH = this.$.scroll.horizontal;
-		var canV = this.$.scroll.vertical;
+		var canH = this.$.scrollMath.horizontal;
+		var canV = this.$.scrollMath.vertical;
 		return requestV && canV || !requestV && canH;
 	},
 	flick: function(inSender, e) {
 		var onAxis = Math.abs(e.xVelocity) > Math.abs(e.yVelocity) ? this.horizontal : this.vertical;
 		if (onAxis) {
-			this.$.scroll.flick(e);
+			this.$.scrollMath.flick(e);
 			return this.preventDragPropagation;
 		}
 	},
 	hold: function(inSender, e) {
-		if (this.$.scroll.isScrolling() && !this.$.scroll.isInOverScroll()) {
-			this.$.scroll.stop(e);
+		if (this.$.scrollMath.isScrolling() && !this.$.scrollMath.isInOverScroll()) {
+			this.$.scrollMath.stop(e);
 			return true;
 		}
 	},
@@ -119,7 +123,7 @@ enyo.kind({
 			// the position so sync'ing is required when 
 			// dragging begins (needed because dom scroll does not fire on show/hide)
 			this.syncScrollMath();
-			this.$.scroll.startDrag(inEvent);
+			this.$.scrollMath.startDrag(inEvent);
 			if (this.preventDragPropagation) {
 				return true;
 			}
@@ -128,43 +132,43 @@ enyo.kind({
 	drag: function(inSender, inEvent) {
 		if (this.dragging) {
 			inEvent.preventNativeDefault();
-			this.$.scroll.drag(inEvent);
+			this.$.scrollMath.drag(inEvent);
 		}
 	},
 	dragfinish: function(inSender, inEvent) {
 		if (this.dragging) {
 			inEvent.preventTap();
-			this.$.scroll.dragFinish();
+			this.$.scrollMath.dragFinish();
 			this.dragging = false;
 		}
 	},
 	mousewheel: function(inSender, e) {
-		if (!this.dragging && this.$.scroll.mousewheel(e)) {
+		if (!this.dragging && this.$.scrollMath.mousewheel(e)) {
 			e.preventDefault();
 			return true;
 		}
 	},
-	scrollStart: function(inSender) {
+	scrollMathStart: function(inSender) {
 		if (this.scrollNode) {
 			this.calcBoundaries();
 			this.doScrollStart(inSender);
 		}
 	},
-	scroll: function(inSender) {
+	scrollMathScroll: function(inSender) {
 		this.effectScroll(-inSender.x, -inSender.y);
 		this.doScroll(inSender);
 	},
-	scrollStop: function(inSender) {
+	scrollMathStop: function(inSender) {
 		this.effectOverscroll(null, null);
 		this.doScrollStop(inSender);
 	},
 	calcBoundaries: function() {
-		var s = this.$.scroll, b = this.$.client.getBounds();
+		var s = this.$.scrollMath, b = this.$.client.getBounds();
 		s.bottomBoundary = b.height - this.scrollNode.scrollHeight;
 		s.rightBoundary = b.width - this.scrollNode.scrollWidth;
 	},
 	syncScrollMath: function() {
-		var s = this.$.scroll;
+		var s = this.$.scrollMath;
 		if (!s.isScrolling()) {
 			s.setScrollX(-this.getScrollLeft());
 			s.setScrollY(-this.getScrollTop());
@@ -193,7 +197,7 @@ enyo.kind({
 	},
 	getScrollBounds: function() {
 		var r = this.inherited(arguments);
-		var m = this.$.scroll;
+		var m = this.$.scrollMath;
 		r.overleft = -Math.floor(this.getScrollLeft() + m.x);
 		r.overtop = -Math.floor(this.getScrollTop() + m.y);
 		return r;
