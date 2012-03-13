@@ -55,32 +55,20 @@ enyo.kind({
 	//* @protected
 	statics: {
 		osInfo: [
-			{os: "Android", version: 3},
-			{os: "iPhone", version: 5},
-			{os: "iPad", version: 5},
-			// for webos tablets
-			{os: "hpwOS", version: 1e9},
-			// for webos phones
-			{os: "webOS", version: 1e9}
+			{os: "android", version: 3},
+			{os: "ios", version: 5},
+			{os: "webos", version: 1e9}
 		],
-		calcOsVersion: function(inTest, inOs) {
-			var m = inTest.match(new RegExp(inOs + ".*?([0-9])", "i"));
-			if (m) {
-				return Number(m[1]);
-			}
-		},
 		hasTouchScrolling: function() {
-			var ua = navigator.userAgent;
 			for (var i=0, t, m; t=this.osInfo[i]; i++) {
-				if (this.calcOsVersion(ua, t.os) >= t.version) {
+				if (enyo.platform[t.os] >= t.version) {
 					return true;
 				}
 			}
 		},
 		hasNativeScrolling: function() {
-			var ua = navigator.userAgent;
 			for (var i=0, t, m; t=this.osInfo[i]; i++) {
-				if (this.calcOsVersion(ua, t.os) < t.version) {
+				if (enyo.platform[t.os] < t.version) {
 					return false;
 				}
 			}

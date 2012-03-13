@@ -33,7 +33,6 @@ enyo.gesture = {
 	//* @protected
 	// FIXME: we browser sniff to normalize event mouse button information;
 	// need a module for browser info.
-	isIE: navigator.userAgent.match("MSIE"),
 	holdPulseDelay: 200,
 	minFlick: 0.1,
 	minTrack: 8,
@@ -50,7 +49,7 @@ enyo.gesture = {
 		// normalize event.which
 		// Note that while "which" works in IE9, it is broken for mousemove. Therefore, 
 		// in IE, use window.event.button
-		if (this.isIE) {
+		if (enyo.platform.ie) {
 			var b = window.event && window.event.button;
 			// multi-button not supported, priority: left, right, middle
 			// (note: IE bitmask is 1=left, 2=right, 4=center);

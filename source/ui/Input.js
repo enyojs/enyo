@@ -31,8 +31,7 @@ enyo.kind({
 		onclear: "clear"
 	},
 	create: function() {
-		// FIXME: ad hoc sniff
-		if (navigator.userAgent.match("MSIE")) {
+		if (enyo.platform.ie) {
 			this.handlers.onkeyup = "keyup";
 		}
 		this.inherited(arguments);

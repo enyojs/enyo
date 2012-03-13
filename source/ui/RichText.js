@@ -28,7 +28,7 @@ enyo.kind({
 		oninput: "input"
 	},
 	create: function() {
-		if (enyo.gesture.isIE) {
+		if (enyo.platform.ie) {
 			this.handlers.onkeyup = "keyup";
 		}
 		this.inherited(arguments);
