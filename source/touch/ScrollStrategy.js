@@ -35,8 +35,7 @@ enyo.kind({
 	handlers: {
 		onscroll: "scroll",
 		ondown: "down",
-		onmove: "move",
-		onup: "up"
+		onmove: "move"
 	},
 	create: function() {
 		this.inherited(arguments);
@@ -105,35 +104,34 @@ enyo.kind({
 		b.maxTop = Math.max(0, b.height - n.clientHeight);
 		return b;
 	},
-	// NOTE: down, move, up handlers are needed only for native touch scrollers
+	// NOTE: down, move handlers are needed only for native touch scrollers
+	// avoid allowing scroll when starting at a vertical boundary to prevent ios from window scrolling.
 	down: function(inSender, inEvent) {
-		this.cacheBounds = null;
-		this.mi = {
-			x: inEvent.pageX,
-			y: inEvent.pageY
-		}
+		// if we start on a boundary, need to check direction of first move
+		var y = this.getScrollTop();
+		this.atTopEdge = (y == 0);
+		this.atBottomEdge = !this.atTopEdge && (y == this.getScrollBounds().maxTop);
+		this.downY = inEvent.pageY;
 	},
 	// NOTE: mobile native scrollers need touchmove. Indicate this by 
 	// setting the requireTouchmove property to true (must do this in move event 
 	// becuase must respond to first move or native action fails).
-	// avoid allowing move event at a scroll boundary to prevent ios from window scrolling.
 	move: function(inSender, inEvent) {
 		var v = this.vertical != "hidden", h = this.horizontal != "hidden";
-		if ((v || h) && this.mi) {
-			var x = inEvent.pageX, y = inEvent.pageY;
-			var b = this.cacheBounds || (this.cacheBounds = this.getScrollBounds());
-			v = v && this.canScroll(this.getScrollTop(), b.maxTop, y - this.mi.y);
-			h = h && this.canScroll(this.getScrollLeft(), b.maxLeft, x - this.mi.x);
-			this.mi.x = x;
-			this.mi.y = y;
+		// abort scroll if dragging oob from vertical edge
+		if (v && (this.atTopEdge || this.atBottomEdge)) {
+			var dy = inEvent.pageY - this.downY;
+			var oob = (this.atTopEdge && (dy >= 0) || this.atBottomEdge && (dy <= 0));
+			// we only need to abort 1 event to prevent window native scrolling, but we
+			// perform oob check around a small radius because a small in bounds move may 
+			// not trigger scrolling for this scroller meaning the window might still scroll.
+			if (Math.abs(dy) > 25) {
+				this.atTopEdge = this.atBottomEdge = false;
+			}
+			if (oob) {
+				return;
+			}
 		}
 		inEvent.requireTouchmove = (v || h);
-	},
-	up: function() {
-		this.mi = null;
-	},
-	canScroll: function(inPosition, inMax, inDelta) {
-		var t = inPosition - inDelta;
-		return (t > 0 && t < inMax);
 	}
 });
