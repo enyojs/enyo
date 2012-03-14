@@ -38,7 +38,7 @@ enyo.platform = {};
 	}
 	// iOS 3 - 5
 	// Apple likes to make this complicated
-	ios = n.match(/iP(?:hone|ad;(?: U;) CPU) OS (\d+)/);
+	ios = n.match(/iP(?:hone|ad;(?: U;)? CPU) OS (\d+)/);
 	if (ios) {
 		ep.ios = Number(ios[1]);
 	}
