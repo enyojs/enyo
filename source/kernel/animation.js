@@ -17,6 +17,8 @@
 			(we choose to do this rather than wrapping the native function to avoid the overhead)
 		*/
 		_cancelFrame(_requestFrame(enyo.nop));
+	} else if (_cancelFrame = window.mozCancelRequestAnimationFrame) {
+		_requestFrame = window.mozRequestAnimationFrame;
 	} else {
 		_requestFrame = function(inCallback /*, inNode */) {
 			return window.setTimeout(inCallback, Math.round(1000/60));
