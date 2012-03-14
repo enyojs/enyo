@@ -26,22 +26,23 @@ enyo.platform = {};
 	var n = navigator.userAgent;
 	var ep = enyo.platform;
 	var ie, a, ios, w;
-	// MSIE 10.0
+	// IE 8 - 10
 	ie = n.match(/MSIE (\d+)/);
 	if (ie) {
 		ep.ie = Number(ie[1]);
 	}
-	// Android 2.3.7
+	// Android 2 - 4
 	a = n.match(/Android (\d+)/);
 	if (a) {
 		ep.android = Number(a[1]);
 	}
-	// iPad; U; CPU OS 5_1, iPhone OS 5_1, iPod OS 5_1
-	ios = n.match(/iP(?:[oa]d|hone)(?:; U; CPU)? OS (\d+)/);
+	// iOS 3 - 5
+	// Apple likes to make this complicated
+	ios = n.match(/iP(?:hone|ad;(?: U;) CPU) OS (\d+)/);
 	if (ios) {
 		ep.ios = Number(ios[1]);
 	}
-	// webOS/2.2.4, hpwOS/3.0.5
+	// webOS 1 - 3
 	w = n.match(/(?:web|hpw)OS\/(\d+)/);
 	if (w) {
 		ep.webos = Number(w[1]);
