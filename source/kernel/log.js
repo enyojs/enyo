@@ -25,10 +25,7 @@ enyo.logging = {
 	*/
 	_log: function(inMethod, inArgs) {
 		//var a$ = enyo.logging.formatArgs(inMethod, inArgs);
-		var a$ = [];
-		for (var i = 0, l = inArgs.length; i < l; i++) {
-			a$.push(inArgs[i]);
-		}
+		var a$ = enyo.toArray(inArgs);
 		if (enyo.dumbConsole) {
 			// at least in early versions of webos, console.* only accept a single argument
 			a$ = [a$.join(" ")];
