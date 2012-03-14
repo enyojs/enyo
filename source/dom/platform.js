@@ -33,7 +33,7 @@ enyo.platform = {};
 	if (a) {
 		enyo.platform.android = a[1];
 	}
-	ios = n.match(/iP(?:[oa]d|hone) OS (\d+)/);
+	ios = n.match(/iP(?:[oa]d|hone).*OS (\d+)/);
 	if (ios) {
 		enyo.platform.ios = ios[1];
 	}
