@@ -24,23 +24,28 @@ enyo.platform = {};
 //* @protected
 (function() {
 	var n = navigator.userAgent;
+	var ep = enyo.platform;
 	var ie, a, ios, w;
+	// MSIE 10.0
 	ie = n.match(/MSIE (\d+)/);
 	if (ie) {
-		enyo.platform.ie = ie[1];
+		ep.ie = Number(ie[1]);
 	}
+	// Android 2.3.7
 	a = n.match(/Android (\d+)/);
 	if (a) {
-		enyo.platform.android = a[1];
+		ep.android = Number(a[1]);
 	}
-	ios = n.match(/iP(?:[oa]d|hone).*OS (\d+)/);
+	// iPad; U; CPU OS 5_1, iPhone OS 5_1, iPod OS 5_1
+	ios = n.match(/iP(?:[oa]d|hone)(?:; U; CPU)? OS (\d+)/);
 	if (ios) {
-		enyo.platform.ios = ios[1];
+		ep.ios = Number(ios[1]);
 	}
+	// webOS/2.2.4, hpwOS/3.0.5
 	w = n.match(/(?:web|hpw)OS\/(\d+)/);
 	if (w) {
-		enyo.platform.webos = w[1];
+		ep.webos = Number(w[1]);
 	}
 	// these platforms only allow one argument for console.log
-	enyo.dumbConsole = Boolean(enyo.platform.android || enyo.platform.ios || enyo.platform.webos);
+	enyo.dumbConsole = Boolean(ep.android || ep.ios || ep.webos);
 })();
