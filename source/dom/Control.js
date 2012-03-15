@@ -559,7 +559,7 @@ enyo.kind({
 		inParentNode.appendChild(this.node);
 	},
 	insertNodeInParent: function(inParentNode, inBeforeNode) {
-		inParentNode.insertBefore(this.node, inBeforeNode || pn.firstChild);
+		inParentNode.insertBefore(this.node, inBeforeNode || inParentNode.firstChild);
 	},
 	removeNodeFromDom: function() {
 		if (this.hasNode() && this.node.parentNode) {
