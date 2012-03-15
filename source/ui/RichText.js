@@ -9,7 +9,7 @@
 */
 enyo.kind({
 	name: "enyo.RichText",
-	classes: "enyo-richtext",
+	classes: "enyo-richtext enyo-selectable",
 	published: {
 		disabled: false,
 		value: ""
