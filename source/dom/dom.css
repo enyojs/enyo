@@ -47,3 +47,11 @@ body .enyo-fit {
 	right: 0;
 	bottom: 0;
 }
+
+/* compositing */
+
+.enyo-composite {
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+}
