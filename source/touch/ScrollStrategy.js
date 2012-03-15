@@ -110,7 +110,7 @@ enyo.kind({
 		// if we start on a boundary, need to check direction of first move
 		var y = this.getScrollTop();
 		this.atTopEdge = (y == 0);
-		this.atBottomEdge = !this.atTopEdge && (y == this.getScrollBounds().maxTop);
+		this.atBottomEdge = y == this.getScrollBounds().maxTop;
 		this.downY = inEvent.pageY;
 	},
 	// NOTE: mobile native scrollers need touchmove. Indicate this by 
