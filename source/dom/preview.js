@@ -1,9 +1,15 @@
-﻿//* Dispatcher preview feature: allow control ancestors of the event
-//* target a chance (eldest first) to react via implementing "previewDomEvent."
+﻿/**
+	Dispatcher preview feature: allow control ancestors of the event
+	target a chance (eldest first) to react via implementing "previewDomEvent."
+*/
 //* @protected
 (function() {
 	var fn = "previewDomEvent";
+	//
 	var preview = {
+		feature: function(e) {
+			preview.dispatch(e, e.dispatchTarget);
+		},
 		dispatch: function(e, c) {
 			var l$ = this.buildLineage(c);
 			// handlers return true to abort preview and prevent default event processing.
@@ -26,7 +32,5 @@
 		}
 	};
 	//
-	enyo.dispatcher.features.push(function(e) {
-		preview.dispatch(e, e.dispatchTarget);
-	});
+	enyo.dispatcher.features.push(preview.feature);
 })();
