@@ -84,7 +84,7 @@
 					//
 					{tag: "hr"},
 					{content: "enyo.Input"},
-					{tag: "span", name: "default", content: "someValue", classes: "data"},
+					{tag: "span", name: "inputDefault", content: "someValue", classes: "data"},
 					{tag: "button", content: "value =>", ontap: "setValueTap"},
 					{kind: "Input", value: "initial"},
 					{tag: "button", content: "value =>", ontap: "getValueTap"},
@@ -138,7 +138,7 @@
 					this.$.value.setContent(this.$.input.getValue());
 				},
 				setValueTap: function() {
-					this.$.input.setValue(this.$.default.getContent());
+					this.$.input.setValue(this.$.inputDefault.getContent());
 				},
 				//
 				getTextAreaTap: function() {
