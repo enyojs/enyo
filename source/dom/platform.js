@@ -35,7 +35,7 @@ enyo.platform = {};
 		{platform: "ios", regex: /iP(?:hone|ad;(?: U;)? CPU) OS (\d+)/},
 		// webOS 1 - 3
 		{platform: "webos", regex: /(?:web|hpw)OS\/(\d+)/}
-	]
+	];
 	for (var i = 0, p, m; p = platforms[i]; i++) {
 		m = p.regex.exec(ua);
 		if (m) {
