@@ -8,8 +8,8 @@ enyo.logging = {
 	levels: {log: 20, warn: 10, error: 0},
 	// return true if logging level is lower than the current log level
 	shouldLog: function(inMethod) {
-		var ll = parseInt(enyo.logging.levels[inMethod]);
-		return (ll <= enyo.logging.level);
+		var ll = parseInt(this.levels[inMethod]);
+		return (ll <= this.level);
 	},
 	/*
 	formatArgs: function(inMethod, inArgs) {
@@ -44,7 +44,7 @@ enyo.logging = {
 	},
 	log: function(inMethod, inArgs) {
 		if (window.console) {
-			if (enyo.logging.shouldLog(inMethod)) {
+			if (this.shouldLog(inMethod)) {
 				this._log(inMethod, inArgs);
 			}
 		}
