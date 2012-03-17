@@ -163,7 +163,7 @@ enyo.kind({
 		this.doScrollStop(inSender);
 	},
 	calcBoundaries: function() {
-		var s = this.$.scrollMath, b = this.$.client.getBounds();
+		var s = this.$.scrollMath, b = this.container.getBounds();
 		s.bottomBoundary = b.height - this.scrollNode.scrollHeight;
 		s.rightBoundary = b.width - this.scrollNode.scrollWidth;
 	},
