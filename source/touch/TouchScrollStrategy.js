@@ -78,9 +78,6 @@ enyo.kind({
 	scrollTo: function(inX, inY) {
 		this.$.scrollMath.scrollTo(inY || inY == 0 ? inY : null, inX);
 	},
-	calcScrollNode: function() {
-		return this.$.client.hasNode();
-	},
 	calcAutoScrolling: function() {
 		var v = (this.vertical == "auto");
 		var h = (this.horizontal == "auto") || (this.horizontal == "default");
@@ -182,13 +179,14 @@ enyo.kind({
 		}
 	},
 	effectOverscroll: function(inX, inY) {
-		var n = this.scrollNode;
+		var c = this.scrollNode;
+		var n = this.$.client.hasNode();
 		var o = "";
-		if (inY !== null && Math.abs(inY - n.scrollTop) > 1) {
-			o += " translateY(" + (n.scrollTop - inY) + "px)";
+		if (inY !== null && Math.abs(inY - c.scrollTop) > 1) {
+			o += " translateY(" + (c.scrollTop - inY) + "px)";
 		}
-		if (inX !== null && Math.abs(inX - n.scrollLeft) > 1) {
-			o += " translateX(" + (n.scrollLeft - inX) + "px)";
+		if (inX !== null && Math.abs(inX - c.scrollLeft) > 1) {
+			o += " translateX(" + (c.scrollLeft - inX) + "px)";
 		}
 		if (n) {
 			var s = n.style;
