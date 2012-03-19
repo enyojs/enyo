@@ -56,6 +56,11 @@ enyo.kind({
 	create: function() {
 		this.inherited(arguments);
 		this.nofitChanged();
+		this.container.addClass("enyo-touch-strategy-container");
+	},
+	destroy: function() {
+		this.container.removeClass("enyo-touch-strategy-container");
+		this.inherited(arguments);
 	},
 	rendered: function() {
 		this.inherited(arguments);

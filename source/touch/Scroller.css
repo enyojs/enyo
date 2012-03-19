@@ -9,3 +9,7 @@
 .enyo-touch-scroller {
 	overflow: hidden;
 }
+
+.enyo-touch-strategy-container {
+	overflow: hidden;
+}
