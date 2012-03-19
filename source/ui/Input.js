@@ -11,6 +11,7 @@ enyo.kind({
 		value: "",
 		//* Text to display when the input is empty
 		placeholder: "",
+		type: "",
 		disabled: false
 	},
 	events: {
@@ -37,7 +38,11 @@ enyo.kind({
 		this.inherited(arguments);
 		this.disabledChanged();
 		this.placeholderChanged();
+		this.typeChanged();
 		this.valueChanged();
+	},
+	typeChanged: function() {
+		this.setAttribute("type", this.type);
 	},
 	placeholderChanged: function() {
 		this.setAttribute("placeholder", this.placeholder);

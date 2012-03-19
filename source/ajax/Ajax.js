@@ -94,10 +94,12 @@
 		});
 	},
 	receive: function(inText, inXhr) {
-		if (this.isFailure(inXhr)) {
-			this.fail(inXhr.status);
-		} else {
-			this.respond(this.xhrToResponse(inXhr));
+		if (!this.destroyed) {
+			if (this.isFailure(inXhr)) {
+				this.fail(inXhr.status);
+			} else {
+				this.respond(this.xhrToResponse(inXhr));
+			}
 		}
 	},
 	xhrToResponse: function(inXhr) {

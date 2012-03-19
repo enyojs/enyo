@@ -30,17 +30,36 @@
 enyo.macroize = function(inText, inMap, inPattern) {
 	var v, working, result = inText, pattern = inPattern || enyo.macroize.pattern;
 	var fn = function(macro, name) {
-		working = true;
 		v = enyo.getObject(name, false, inMap);
-		//v = inMap[name];
-		return (v === undefined || v === null) ? "{$" + name + "}" : v;
+		if (v === undefined || v === null) {
+			return "{$" + name + "}";
+		}
+		working = true;
+		return v;
 	};
 	var prevent = 0;
 	do {
 		working = false;
 		result = result.replace(pattern, fn);
-	// if iterating more than 100 times, we assume a recursion (we should throw probably)
-	} while (working && (prevent++ < 100));
+		// if iterating more than 20 times, we assume a recursion (we should probably throw)
+		if (++prevent >= 20) {
+			throw("enyo.macroize: recursion too deep");
+		}
+	} while (working);
+	return result;
+};
+
+enyo.quickMacroize = function(inText, inMap, inPattern) {
+	var v, working, result = inText, pattern = inPattern || enyo.macroize.pattern;
+	var fn = function(macro, name) {
+		if (name in inMap) {
+			v = inMap[name];
+		} else {
+			v = enyo.getObject(name, false, inMap);
+		}
+		return (v === undefined || v === null) ? "{$" + name + "}" : v;
+	};
+	result = result.replace(pattern, fn);
 	return result;
 };
 

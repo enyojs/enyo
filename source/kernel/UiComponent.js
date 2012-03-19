@@ -186,7 +186,7 @@ enyo.kind({
 		Call after this control has been resized to allow it to process the size change.
 		To respond to a resize, override "resizeHandler" instead.
 	*/
-	// syntactic sugar for 'broadcastMessage("resize")'
+	// syntactic sugar for 'waterfall("onresize")'
 	resized: function() {
 		this.waterfall("onresize");
 	},

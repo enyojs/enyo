@@ -28,8 +28,8 @@ enyo.kind({
 	},
 	//* @protected
 	initComponents: function() {
-		this.rowComponents = this.components;
-		this.components = null;
+		this.rowComponents = this.components || this.kindComponents;
+		this.components = this.kindComponents = null;
 		this.inherited(arguments);
 	},
 	//* @public
