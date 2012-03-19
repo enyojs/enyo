@@ -3,13 +3,15 @@
 
 	Use the value property to get or set the displayed text.
 
+	RichText is not supported on Android < 3.
+
 	Selection operations, and [insertAtCursor](#enyo.RichText::insertAtCursor) use the HTML Editing APIs
 
 	[HTML Editing APIs # Selection Reference](https://dvcs.w3.org/hg/editing/raw-file/tip/editing.html#selections)
 */
 enyo.kind({
 	name: "enyo.RichText",
-	classes: "enyo-richtext",
+	classes: "enyo-richtext enyo-selectable",
 	published: {
 		disabled: false,
 		value: ""
@@ -49,7 +51,6 @@ enyo.kind({
 	},
 	valueChanged: function() {
 		if (this.hasFocus()) {
-			this.log("focused!");
 			this.selectAll();
 			this.insertAtCursor(this.value);
 		} else {

@@ -17,5 +17,10 @@ enyo.kind({
 	},
 	rowsChanged: function() {
 		this.setAttribute("rows", this.rows);
+	},
+	// textarea does use value attribute, needs to be kicked when rendered
+	rendered: function() {
+		this.inherited(arguments);
+		this.valueChanged();
 	}
 });

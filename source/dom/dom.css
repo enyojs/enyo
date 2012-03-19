@@ -23,7 +23,7 @@ button {
 	-moz-user-select: -moz-none;
 }
 
-.enyo-unselectable ::selection {
+.enyo-unselectabe::selection,.enyo-unselectable ::selection {
 	color: transparent;
 }
 
@@ -33,7 +33,7 @@ button {
 	-moz-user-select: text;
 }
 
-.enyo-selectable ::selection {
+.enyo-selectable::selection, .enyo-selectable ::selection {
 	background: #3297FD;
 	color: #FFF;
 }

@@ -110,17 +110,24 @@ enyo.kind({
 		// if we start on a boundary, need to check direction of first move
 		var y = this.getScrollTop();
 		this.atTopEdge = (y == 0);
-		this.atBottomEdge = y == this.getScrollBounds().maxTop;
+		var sb = this.getScrollBounds();
+		this.atBottomEdge = y == sb.maxTop;
 		this.downY = inEvent.pageY;
+		this.downX = inEvent.pageX;
+		this.canVertical = sb.maxTop > 0 && this.vertical != "hidden";
+		this.canHorizontal = sb.maxLeft > 0 && this.horizontal != "hidden";
 	},
 	// NOTE: mobile native scrollers need touchmove. Indicate this by 
 	// setting the requireTouchmove property to true (must do this in move event 
 	// becuase must respond to first move or native action fails).
 	move: function(inSender, inEvent) {
-		var v = this.vertical != "hidden", h = this.horizontal != "hidden";
+		var dy = inEvent.pageY - this.downY;
+		var dx = inEvent.pageX - this.downX;
+		var v = this.canVertical, h = this.canHorizontal;
+		// check to see if it is dragging vertically which would trigger window scrolling
+		var isV = (Math.abs(dy) > 10) && (Math.abs(dy) > Math.abs(dx));
 		// abort scroll if dragging oob from vertical edge
-		if (v && (this.atTopEdge || this.atBottomEdge)) {
-			var dy = inEvent.pageY - this.downY;
+		if (isV && (v || h) && (this.atTopEdge || this.atBottomEdge)) {
 			var oob = (this.atTopEdge && (dy >= 0) || this.atBottomEdge && (dy <= 0));
 			// we only need to abort 1 event to prevent window native scrolling, but we
 			// perform oob check around a small radius because a small in bounds move may 

@@ -23,29 +23,25 @@ enyo.platform = {};
 
 //* @protected
 (function() {
-	var n = navigator.userAgent;
+	var ua = navigator.userAgent;
 	var ep = enyo.platform;
-	var ie, a, ios, w;
-	// IE 8 - 10
-	ie = n.match(/MSIE (\d+)/);
-	if (ie) {
-		ep.ie = Number(ie[1]);
-	}
-	// Android 2 - 4
-	a = n.match(/Android (\d+)/);
-	if (a) {
-		ep.android = Number(a[1]);
-	}
-	// iOS 3 - 5
-	// Apple likes to make this complicated
-	ios = n.match(/iP(?:hone|ad;(?: U;)? CPU) OS (\d+)/);
-	if (ios) {
-		ep.ios = Number(ios[1]);
-	}
-	// webOS 1 - 3
-	w = n.match(/(?:web|hpw)OS\/(\d+)/);
-	if (w) {
-		ep.webos = Number(w[1]);
+	var platforms = [
+		// Android 2 - 4
+		{platform: "android", regex: /Android (\d+)/},
+		// IE 8 - 10
+		{platform: "ie", regex: /MSIE (\d+)/},
+		// iOS 3 - 5
+		// Apple likes to make this complicated
+		{platform: "ios", regex: /iP(?:hone|ad;(?: U;)? CPU) OS (\d+)/},
+		// webOS 1 - 3
+		{platform: "webos", regex: /(?:web|hpw)OS\/(\d+)/}
+	];
+	for (var i = 0, p, m; p = platforms[i]; i++) {
+		m = p.regex.exec(ua);
+		if (m) {
+			ep[p.platform] = Number(m[1]);
+			break;
+		}
 	}
 	// these platforms only allow one argument for console.log
 	enyo.dumbConsole = Boolean(ep.android || ep.ios || ep.webos);
