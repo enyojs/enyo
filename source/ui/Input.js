@@ -12,7 +12,10 @@ enyo.kind({
 		//* Text to display when the input is empty
 		placeholder: "",
 		type: "",
-		disabled: false
+		disabled: false,
+		autocapitalize: "",
+		autocomplete: "",
+		autocorrect: ""
 	},
 	events: {
 		//* Sent when the input's value has changed, support for IE included.
@@ -40,6 +43,9 @@ enyo.kind({
 		this.placeholderChanged();
 		this.typeChanged();
 		this.valueChanged();
+		this.autocapitalizeChanged();
+		this.autocompleteChanged();
+		this.autocorrectChanged();
 	},
 	typeChanged: function() {
 		this.setAttribute("type", this.type);
@@ -58,6 +64,15 @@ enyo.kind({
 		this.setAttribute("value", this.value);
 		this.setNodeProperty("value", this.value);
 		this.notifyContainer();
+	},
+	autocapitalizeChanged: function() {
+		this.setAttribute("autocapitalize", this.autocapitalize);
+	},
+	autocompleteChanged: function() {
+		this.setAttribute("autocomplete", this.autocomplete);
+	},
+	autocorrectChanged: function() {
+		this.setAttribute("autocorrect", this.autocorrect);
 	},
 	keyup: function() {
 		// ie only
