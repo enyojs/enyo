@@ -119,7 +119,7 @@ enyo.kind({
 	},
 	// NOTE: mobile native scrollers need touchmove. Indicate this by 
 	// setting the requireTouchmove property to true (must do this in move event 
-	// becuase must respond to first move or native action fails).
+	// because must respond to first move or native action fails).
 	move: function(inSender, inEvent) {
 		var dy = inEvent.pageY - this.downY;
 		var dx = inEvent.pageX - this.downX;
