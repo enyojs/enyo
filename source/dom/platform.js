@@ -28,6 +28,9 @@ enyo.platform = {};
 	var platforms = [
 		// Android 2 - 4
 		{platform: "android", regex: /Android (\d+)/},
+		// Kindle Fire
+		// Force version to 2, (desktop mode does not list android version)
+		{platform: "android", regex: /Silk\//, forceVersion: 2},
 		// IE 8 - 10
 		{platform: "ie", regex: /MSIE (\d+)/},
 		// iOS 3 - 5
@@ -36,10 +39,15 @@ enyo.platform = {};
 		// webOS 1 - 3
 		{platform: "webos", regex: /(?:web|hpw)OS\/(\d+)/}
 	];
-	for (var i = 0, p, m; p = platforms[i]; i++) {
+	for (var i = 0, p, m, v; p = platforms[i]; i++) {
 		m = p.regex.exec(ua);
 		if (m) {
-			ep[p.platform] = Number(m[1]);
+			if (p.forceVersion) {
+				v = p.forceVersion;
+			} else {
+				v = Number(m[1]);
+			}
+			ep[p.platform] = v;
 			break;
 		}
 	}
