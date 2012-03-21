@@ -717,7 +717,7 @@ enyo.Control.subclass = function(ctor, props) {
 	// Control classes may declare properties that are intended
 	// to stack with superclass properties.
 	//
-	// We resort to prototype magic to assemble thiese properties
+	// We resort to prototype magic to assemble these properties
 	// at kind declaration time, in the interest of efficiency
 	// and ease of use.
 	//
