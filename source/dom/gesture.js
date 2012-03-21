@@ -15,12 +15,6 @@
  * "move" - generated when the pointer moves.
  * "enter" - generated when the pointer enters a dom node.
  * "leave" - generated when the pointer leaves a dom node.
- * "hold" - generated when the pointer is held down without moving for a short period (about 200ms).
- * "release" - generated when the pointer is released after being held down, or the pointer is moved off of the node while still held down. The target is the same as the hold event.
- * "holdpulse" - generated when the pointer is held down without moving for a short period and periodically thereafter about every 200ms.
- Use this event to trigger an action after an arbitrary period of time. The holdTime property provides the elapsed time.
- * "flick" - generated when the user flicks the pointer quickly. This event provides flick velocity data: xVelocity is the velocity in the horizontal and
- yVelocity is the vertical velocity.
 
  These events are synthesized from the available dom events and contain these common properties, when available: "target", 
  relatedTarget", "clientX", "clientY", "pageX", "pageY", "screenX", "screenY", "altKey", "ctrlKey", "metaKey", "shiftKey",
@@ -31,11 +25,6 @@
  */
 enyo.gesture = {
 	//* @protected
-	// FIXME: we browser sniff to normalize event mouse button information;
-	// need a module for browser info.
-	holdPulseDelay: 200,
-	minFlick: 0.1,
-	minTrack: 8,
 	eventProps: ["target", "relatedTarget", "clientX", "clientY", "pageX", "pageY", "screenX", "screenY", "altKey", "ctrlKey", "metaKey", "shiftKey",
 		"detail", "identifier", "dispatchTarget", "which", "srcEvent"],
 	makeEvent: function(inType, inEvent) {
@@ -58,102 +47,34 @@ enyo.gesture = {
 		return e;
 	},
 	down: function(inEvent) {
+		// cancel any hold since it's possible in corner cases to get a down without an up
 		var e = this.makeEvent("down", inEvent);
 		enyo.dispatch(e);
-		this.startTracking(e);
 		this.target = e.target;
-		this.dispatchTarget = e.dispatchTarget;
-		this.beginHold(e);
+		
 	},
 	move: function(inEvent) {
-		this.cancelHold();
 		var e = this.makeEvent("move", inEvent);
 		enyo.dispatch(e);
 		// ad hoc: propagate setting to source event.
 		inEvent.requireTouchmove = e.requireTouchmove;
-		if (this.trackInfo) {
-			this.track(e);
-		}
 	},
 	up: function(inEvent) {
-		this.cancelHold();
 		var e = this.makeEvent("up", inEvent);
 		var tapPrevented = false;
 		e.preventTap = function() {
 			tapPrevented = true;
 		};
-		this.endTracking(e);
 		enyo.dispatch(e);
 		if (!tapPrevented) {
 			this.sendTap(e);
 		}
-	},
-	startTracking: function(e) {
-		this.trackInfo = {};
-		this.track(e);
-	},
-	track: function(inEvent) {
-		var ti = this.trackInfo;
-		if (ti.d1) {
-			ti.d0 = ti.d1;
-		}
-		ti.d1 = {
-			x: inEvent.pageX, 
-			y: inEvent.pageY, 
-			t: enyo.now()
-		};
-	},
-	endTracking: function(e) {
-		var ti = this.trackInfo;
-		if (ti && ti.d1 && ti.d0) {
-			var d1 = ti.d1, d0 = ti.d0;
-			// note: important to use up time to reduce flick 
-			// velocity based on time between move and up.
-			var dt = enyo.now() - d0.t;
-			var x = (d1.x - d0.x) / dt;
-			var y = (d1.y - d0.y) / dt;
-			var v = Math.sqrt(x*x + y*y);
-			if (v > this.minFlick) {
-				this.sendFlick(e, x, y, v);
-			}
-		}
-		this.trackInfo = null;
 	},
 	over: function(inEvent) {
 		enyo.dispatch(this.makeEvent("enter", inEvent));
 	},
 	out: function(inEvent) {
 		enyo.dispatch(this.makeEvent("leave", inEvent));
-	},
-	beginHold: function(inEvent) {
-		this.holdStart = enyo.now();
-		this.holdJob = setInterval(enyo.bind(this, "sendHoldPulse", inEvent), this.holdPulseDelay);
-	},
-	cancelHold: function() {
-		clearInterval(this.holdJob);
-		this.holdJob = null;
-		if (this.sentHold) {
-			this.sentHold = false;
-			this.sendRelease(this.holdEvent);
-		}
-	},
-	sendHoldPulse: function(inEvent) {
-		if (!this.sentHold) {
-			this.sentHold = true;
-			this.sendHold(inEvent);
-		}
-		var e = this.makeEvent("holdpulse", inEvent);
-		e.holdTime = enyo.now() - this.holdStart;
-		enyo.dispatch(e);
-	},
-	sendHold: function(inEvent) {
-		this.holdEvent = inEvent;
-		var e = this.makeEvent("hold", inEvent);
-		enyo.dispatch(e);
-	},
-	sendRelease: function(inEvent) {
-		var e = this.makeEvent("release", inEvent);
-		enyo.dispatch(e);
 	},
 	sendTap: function(inEvent) {
 		// The common ancestor for the down/up pair is the origin for the tap event
@@ -181,14 +102,6 @@ enyo.gesture = {
 			}
 			c = c.parentNode;
 		}
-	},
-	sendFlick: function(inEvent, inX, inY, inV) {
-		var e = this.makeEvent("flick", inEvent);
-		e.xVelocity = inX;
-		e.yVelocity = inY;
-		e.velocity = inV;
-		e.target = this.target;
-		enyo.dispatch(e);
 	}
 };
 
