@@ -4,20 +4,9 @@
 enyo.kind({
 	name: "enyo.TextArea",
 	kind: enyo.Input,
-	published: {
-		//* Number of text rows displayed
-		rows: 2
-	},
 	//* @protected
 	tag: "textarea",
 	classes: "enyo-textarea",
-	create: function() {
-		this.inherited(arguments);
-		this.rowsChanged();
-	},
-	rowsChanged: function() {
-		this.setAttribute("rows", this.rows);
-	},
 	// textarea does use value attribute, needs to be kicked when rendered
 	rendered: function() {
 		this.inherited(arguments);
