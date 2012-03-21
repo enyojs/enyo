@@ -4,7 +4,7 @@ enyo.$ = {};
 enyo.dispatcher = {
 	// these events come from document
 	events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel", "click", "dblclick", "change", "keydown", "keyup", "keypress", "input"],
-	// thes events come from window
+	// these events come from window
 	windowEvents: ["resize", "load", "unload", "message"],
 	// feature plugins (aka filters)
 	features: [],
