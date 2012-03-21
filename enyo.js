@@ -11,7 +11,7 @@
 				src = s.getAttribute("src") || "";
 				if (src.slice(-l) == inName) {
 					s.located = true;
-					return {path: src.slice(0, -l -1), node: s};
+					return {path: src.slice(0, src.lastIndexOf("/")), node: s};
 				}
 			}
 		}

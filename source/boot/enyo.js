@@ -6,12 +6,12 @@
 
 	enyo.locateScript = function(inName) {
 		var scripts = document.getElementsByTagName("script");
-		for (var i=scripts.length-1, s, src, l=inName.length; (i>=0) && (s=scripts[i]); i--) {
+		for (var i=scripts.length-1, s, src, l=inName.length, p; (i>=0) && (s=scripts[i]); i--) {
 			if (!s.located) {
 				src = s.getAttribute("src") || "";
 				if (src.slice(-l) == inName) {
 					s.located = true;
-					return {path: src.slice(0, -l -1), node: s};
+					return {path: src.slice(0, src.lastIndexOf("/")), node: s};
 				}
 			}
 		}
