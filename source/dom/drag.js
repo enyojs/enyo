@@ -30,7 +30,7 @@ enyo.dispatcher.features.push(
 //* @public
 enyo.gesture.drag = {
 	//* @protected
-	hysteresis: 4,
+	hysteresisSquared: 16,
 	holdPulseDelay: 200,
 	minFlick: 0.1,
 	minTrack: 8,
@@ -59,7 +59,7 @@ enyo.gesture.drag = {
 			}
 			if (this.dragEvent) {
 				this.sendDrag(e);
-			} else if (Math.sqrt(this.dy*this.dy + this.dx*this.dx) >= this.hysteresis) {
+			} else if (this.dy*this.dy + this.dx*this.dx >= this.hysteresisSquared) {
 				this.sendDragStart(e);
 				this.cancelHold();
 			}

@@ -231,6 +231,7 @@ enyo.master = new enyo.Component({
 	getId: function() {
 		return '';
 	},
+	isDescendantOf: enyo.nop,
 	bubble: function(inEventName, inEvent, inSender) {
 		//console.log("master event: " + inEventName);
 		if (inEventName == "onresize") {
