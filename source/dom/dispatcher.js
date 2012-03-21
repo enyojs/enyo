@@ -87,10 +87,6 @@ enyo.dispatcher = {
 // called in the context of an event
 enyo.iePreventDefault = function() {
 	this.returnValue = false;
-	if (this.type == "mousedown") {
-		console.log(this);
-		console.log(this.returnValue);
-	}
 }
 
 enyo.dispatch = function(inEvent) {
