@@ -20,7 +20,7 @@
 //* @protected
 enyo.dispatcher.features.push(
 	function(e) {
-		// NOTE: beware of properties in enyo.gesture inadvertantly mapped to event types
+		// NOTE: beware of properties in enyo.gesture inadvertently mapped to event types
 		if (enyo.gesture.drag[e.type]) {
 			return enyo.gesture.drag[e.type](e);
 		}

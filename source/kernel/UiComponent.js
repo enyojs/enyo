@@ -223,7 +223,7 @@ enyo.createFromKind = function(inKind, inParam) {
 // Default owner for ownerless UiComponents to allow notifying such UiComponents of important system events
 // like window resize.
 //
-// NOTE: ownerless UiComponents will not GC unless explicity destroyed as they will be referenced by enyo.master.
+// NOTE: ownerless UiComponents will not GC unless explicitly destroyed as they will be referenced by enyo.master.
 //
 enyo.master = new enyo.Component({
 	name: "master",
