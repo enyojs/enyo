@@ -61,6 +61,7 @@ enyo.gesture.drag = {
 				this.sendDrag(e);
 			} else if (this.dy*this.dy + this.dx*this.dx >= this.hysteresisSquared) {
 				this.sendDragStart(e);
+				e.requireTouchmove = this.dragEvent.requireTouchmove;
 				this.cancelHold();
 			}
 		}
