@@ -132,6 +132,10 @@ finish = function(loader) {
 	//w('');
 	//
 	var output = opt.output || "build";
+	var outfolder = path.dirname(output);
+	if (outfolder != ".") {
+		fs.mkdirSync(outfolder);
+	}
 	//
 	var css = concatCss(loader);
 	if (css.length) {
