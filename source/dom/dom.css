@@ -1,11 +1,14 @@
+/* things we always want */
+body {
+	-webkit-overflow-scrolling: touch;
+}
+
 /* for apps */
 .enyo-document-fit {
 	margin: 0;
 	height: 100%;
-	/*overflow: auto;*/
 	overflow: hidden;
 	position: relative;
-	-webkit-overflow-scrolling: touch;
 }
 
 /* reset */
