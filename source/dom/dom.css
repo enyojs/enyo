@@ -48,6 +48,12 @@ body .enyo-fit {
 	bottom: 0;
 }
 
+.enyo-border-box {
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+
 /* compositing */
 
 .enyo-composite {
