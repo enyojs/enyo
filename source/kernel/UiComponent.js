@@ -189,6 +189,7 @@ enyo.kind({
 	// syntactic sugar for 'waterfall("onresize")'
 	resized: function() {
 		this.waterfall("onresize");
+		this.waterfall("onpostresize");
 	},
 	//* @protected
 	resizeHandler: function() {
@@ -223,7 +224,7 @@ enyo.createFromKind = function(inKind, inParam) {
 // Default owner for ownerless UiComponents to allow notifying such UiComponents of important system events
 // like window resize.
 //
-// NOTE: ownerless UiComponents will not GC unless explicity destroyed as they will be referenced by enyo.master.
+// NOTE: ownerless UiComponents will not GC unless explicitly destroyed as they will be referenced by enyo.master.
 //
 enyo.master = new enyo.Component({
 	name: "master",
@@ -239,6 +240,7 @@ enyo.master = new enyo.Component({
 			// this works because master is a Component, so it' waterfalls
 			// to it's owned Components (i.e. master has no children)
 			enyo.master.waterfallDown("onresize");
+			enyo.master.waterfallDown("onpostresize");
 		} else {
 			// all other top level events are sent only to interested Signal receivers
 			enyo.Signals.send(inEventName, inEvent);

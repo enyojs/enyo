@@ -165,7 +165,7 @@
 			this.loadScript(inPath);
 		},
 		decodePackagePath: function(inPath) {
-			// A package path can encoded in two ways: 
+			// A package path can be encoded in two ways:
 			//
 			//	1. [folder]
 			//	2. [folder]/[*package.js]
@@ -176,9 +176,9 @@
 			// convert back slashes to forward slashes, remove double slashes, split on slash
 			var parts = inPath.replace(/\\/g, "/").replace(/\/\//g, "/").replace(/:\//, "://").split("/");
 			if (parts.length) {
-				// in inPath has a trailing slash, parts has an empty string which we pop off and ignore
+				// if inPath has a trailing slash, parts has an empty string which we pop off and ignore
 				var name = parts.pop() || parts.pop() || "";
-				// test is name includes the manifest tag
+				// test if name includes the manifest tag
 				if (name.slice(-manifest.length) !== manifest) {
 					// if not a manifest name, it's part of the folder path
 					parts.push(name);

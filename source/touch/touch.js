@@ -13,7 +13,7 @@ enyo.requiresWindow(function() {
 			this.excludedTarget = null;
 			var e = this.makeEvent(inEvent);
 			gesture.down(e);
-			// generate a new event obect since over is a different event
+			// generate a new event object since over is a different event
 			e = this.makeEvent(inEvent);
 			this.overEvent = e;
 			gesture.over(e);
@@ -98,7 +98,7 @@ enyo.requiresWindow(function() {
 			enyo.forEach(['ontouchstart', 'ontouchmove', 'ontouchend', 'ongesturestart', 'ongesturechange', 'ongestureend'], function(e) {
 				document[e] = enyo.dispatch;
 			});
-			// use proper target finding technqiue based on feature detection.
+			// use proper target finding technique based on feature detection.
 			if (!document.elementFromPoint) {
 				this.findTarget = function(inX, inY) {
 					return this.findTargetTraverse(null, inX, inY);
