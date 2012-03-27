@@ -342,7 +342,7 @@ enyo.kind({
 		if (pn == document.body) {
 			this.setupBodyFitting();
 		} else if (this.fit) {
-			this.addClass("enyo-fit");
+			this.addClass("enyo-fit enyo-clip");
 		}
 		// generate our HTML
 		pn.innerHTML = this.generateHtml();
@@ -363,7 +363,7 @@ enyo.kind({
 	},
 	setupBodyFitting: function() {
 		enyo.dom.applyBodyFit();
-		this.addClass("enyo-fit");
+		this.addClass("enyo-fit enyo-clip");
 	},
 	/**
 		Override to perform tasks that require access to the DOM node.

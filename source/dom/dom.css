@@ -7,7 +7,8 @@ body {
 .enyo-document-fit {
 	margin: 0;
 	height: 100%;
-	overflow: hidden;
+	/* helps prevent ios page scroll */
+	overflow: auto;
 	position: relative;
 }
 
@@ -49,6 +50,10 @@ body .enyo-fit {
 	top: 0;
 	right: 0;
 	bottom: 0;
+}
+
+.enyo-clip {
+	overflow: hidden;
 }
 
 .enyo-border-box {
