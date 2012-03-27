@@ -47,6 +47,9 @@ enyo.kind({
 		onScroll: "",
 		onScrollStop: ""
 	},
+	handlers: {
+		onscroll: "scroll"
+	},
 	classes: "enyo-scroller",
 	/**
 		If true, the scroller will not propagate dragstart events that cause it to start scrolling (defaults to true)
@@ -167,6 +170,11 @@ enyo.kind({
 	//* Scroll to the position given by inX and inY in pixel units.
 	scrollTo: function(inX, inY) {
 		this.$.strategy.scrollTo(inX, inY);
+	},
+	// normalize scroll event to onScroll.
+	scroll: function(inSender, e) {
+		this.$.strategy.scroll(inSender, e);
+		return this.doScroll(e);
 	}
 });
 

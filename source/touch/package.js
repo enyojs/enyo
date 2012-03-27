@@ -3,6 +3,7 @@
 	"ScrollMath.js",
 	"ScrollStrategy.js",
 	"TouchScrollStrategy.js",
+	"TranslateScrollStrategy.js",
 	"Scroller.js",
 	"Scroller.css"
 );

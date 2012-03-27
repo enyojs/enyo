@@ -33,7 +33,8 @@ enyo.kind({
 	},
 	//* @protected
 	handlers: {
-		onscroll: "scroll",
+		ondragstart: "dragstart",
+		ondragfinish: "dragfinish",
 		ondown: "down",
 		onmove: "move"
 	},
@@ -59,9 +60,6 @@ enyo.kind({
 	},
 	verticalChanged: function() {
 		this.container.applyStyle("overflow-y", this.vertical == "default" ? "auto" : this.vertical);
-	},
-	scroll: function(inSender, e) {
-		return this.doScroll(e);
 	},
 	scrollTo: function(inX, inY) {
 		if (this.scrollNode) {
@@ -93,52 +91,57 @@ enyo.kind({
 		return this.scrollNode ? this.scrollNode.scrollTop : this.scrollTop;
 	},
 	getScrollBounds: function() {
-		var n = this.scrollNode;
+		var n = this.scrollNode, cn = this.container.hasNode();
 		var b = {
 			left: this.getScrollLeft(),
 			top: this.getScrollTop(),
+			clientHeight: cn ? cn.clientHeight : 0,
+			clientWidth: cn ? cn.clientWidth : 0,
 			height: n ? n.scrollHeight : 0,
 			width: n ? n.scrollWidth : 0
 		};
-		b.maxLeft = Math.max(0, b.width - n.clientWidth);
-		b.maxTop = Math.max(0, b.height - n.clientHeight);
+		b.maxLeft = Math.max(0, b.width - b.clientWidth);
+		b.maxTop = Math.max(0, b.height - b.clientHeight);
 		return b;
 	},
-	// NOTE: down, move handlers are needed only for native touch scrollers
-	// avoid allowing scroll when starting at a vertical boundary to prevent ios from window scrolling.
-	down: function(inSender, inEvent) {
-		// if we start on a boundary, need to check direction of first move
-		var y = this.getScrollTop();
-		this.atTopEdge = (y == 0);
+	calcStartInfo: function() {
 		var sb = this.getScrollBounds();
-		this.atBottomEdge = y == sb.maxTop;
-		this.downY = inEvent.pageY;
-		this.downX = inEvent.pageX;
+		var y = this.getScrollTop(), x = this.getScrollLeft();
 		this.canVertical = sb.maxTop > 0 && this.vertical != "hidden";
 		this.canHorizontal = sb.maxLeft > 0 && this.horizontal != "hidden";
+		this.startEdges = {
+			top: y == 0,
+			bottom: y == sb.maxTop,
+			left: x == 0,
+			right: x == sb.maxLeft
+		}
+	},
+	// NOTE: down, move, and drag handlers are needed only for native touch scrollers
+	shouldDrag: function(inEvent) {
+		var requestV = inEvent.vertical;
+		return (requestV && this.canVertical  || !requestV && this.canHorizontal) /*&& !this.isOobVerticalScroll(inEvent)*/;
+	},
+	dragstart: function(inSender, inEvent) {
+		this.dragging = this.shouldDrag(inEvent);
+		if (this.dragging) {
+			return this.preventDragPropagation;
+		}
+	},
+	dragfinish: function(inSender, inEvent) {
+		if (this.dragging) {
+			this.dragging = false;
+			inEvent.preventTap();
+		}
+	},
+	// avoid allowing scroll when starting at a vertical boundary to prevent ios from window scrolling.
+	down: function(inSender, inEvent) {
+		this.calcStartInfo();
 	},
 	// NOTE: mobile native scrollers need touchmove. Indicate this by 
-	// setting the requireTouchmove property to true (must do this in move event 
-	// because must respond to first move or native action fails).
+	// setting the requireTouchmove property to true.
 	move: function(inSender, inEvent) {
-		var dy = inEvent.pageY - this.downY;
-		var dx = inEvent.pageX - this.downX;
-		var v = this.canVertical, h = this.canHorizontal;
-		// check to see if it is dragging vertically which would trigger window scrolling
-		var isV = (Math.abs(dy) > 10) && (Math.abs(dy) > Math.abs(dx));
-		// abort scroll if dragging oob from vertical edge
-		if (isV && (v || h) && (this.atTopEdge || this.atBottomEdge)) {
-			var oob = (this.atTopEdge && (dy >= 0) || this.atBottomEdge && (dy <= 0));
-			// we only need to abort 1 event to prevent window native scrolling, but we
-			// perform oob check around a small radius because a small in bounds move may 
-			// not trigger scrolling for this scroller meaning the window might still scroll.
-			if (Math.abs(dy) > 25) {
-				this.atTopEdge = this.atBottomEdge = false;
-			}
-			if (oob) {
-				return;
-			}
+		if (inEvent.which && (this.canVertical && inEvent.vertical || this.canHorizontal && inEvent.horizontal)) {
+			inEvent.disablePrevention();
 		}
-		inEvent.requireTouchmove = (v || h);
 	}
 });

@@ -267,7 +267,7 @@ enyo.kind({
 		this.setScrollY(inPosition);
 	},
 	isScrolling: function() {
-		return this.job;
+		return Boolean(this.job);
 	},
 	isInOverScroll: function() {
 		return this.job && (this.x > this.leftBoundary || this.x < this.rightBoundary || this.y > this.topBoundary || this.y < this.bottomBoundary);
