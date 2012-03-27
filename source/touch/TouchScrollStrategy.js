@@ -84,7 +84,7 @@ enyo.kind({
 	},
 	maxHeightChanged: function() {
 		this.$.client.applyStyle("max-height", this.maxHeight);
-		this.$.client.addRemoveClass("enyo-fit", this.maxHeight == 0);
+		this.$.client.addRemoveClass("enyo-fit", !this.maxHeight);
 	},
 	scrollTo: function(inX, inY) {
 		this.$.scrollMath.scrollTo(inY || inY == 0 ? inY : null, inX);
