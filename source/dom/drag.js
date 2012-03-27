@@ -61,7 +61,6 @@ enyo.gesture.drag = {
 				this.sendDrag(e);
 			} else if (this.dy*this.dy + this.dx*this.dx >= this.hysteresisSquared) {
 				this.sendDragStart(e);
-				e.requireTouchmove = this.dragEvent.requireTouchmove;
 				this.cancelHold();
 			}
 		}
@@ -109,6 +108,7 @@ enyo.gesture.drag = {
 			srcEvent: inEvent.srcEvent
 		};
 		e.preventNativeDefault = enyo.gesture.preventNativeDefault;
+		e.disablePrevention = enyo.gesture.disablePrevention;
 		return e;
 	},
 	sendDragStart: function(e) {

@@ -34,6 +34,7 @@ enyo.gesture = {
 		}
 		e.srcEvent = e.srcEvent || inEvent;
 		e.preventNativeDefault = this.preventNativeDefault;
+		e.disablePrevention = this.disablePrevention;
 		//
 		// normalize event.which
 		// Note that while "which" works in IE9, it is broken for mousemove. Therefore, 
@@ -50,14 +51,19 @@ enyo.gesture = {
 		// cancel any hold since it's possible in corner cases to get a down without an up
 		var e = this.makeEvent("down", inEvent);
 		enyo.dispatch(e);
-		this.target = e.target;
-		
+		this.downEvent = e;
 	},
 	move: function(inEvent) {
 		var e = this.makeEvent("move", inEvent);
+		// include delta and direction v. down info in move event
+		e.dx = e.dy = e.horizontal = e.vertical = 0;
+		if (e.which && this.downEvent) {
+			e.dx = inEvent.clientX - this.downEvent.clientX;
+			e.dy = inEvent.clientY - this.downEvent.clientY;
+			e.horizontal = Math.abs(e.dx) > Math.abs(e.dy);
+			e.vertical = !e.horizontal;
+		}
 		enyo.dispatch(e);
-		// ad hoc: propagate setting to source event.
-		inEvent.requireTouchmove = e.requireTouchmove;
 	},
 	up: function(inEvent) {
 		var e = this.makeEvent("up", inEvent);
@@ -69,6 +75,7 @@ enyo.gesture = {
 		if (!tapPrevented) {
 			this.sendTap(e);
 		}
+		this.downEvent = null;
 	},
 	over: function(inEvent) {
 		enyo.dispatch(this.makeEvent("enter", inEvent));
@@ -78,7 +85,7 @@ enyo.gesture = {
 	},
 	sendTap: function(inEvent) {
 		// The common ancestor for the down/up pair is the origin for the tap event
-		var t = this.findCommonAncestor(this.target, inEvent.target);
+		var t = this.findCommonAncestor(this.downEvent.target, inEvent.target);
 		if (t) {
 			var e = this.makeEvent("tap", inEvent);
 			e.target = t;
@@ -111,6 +118,13 @@ enyo.gesture = {
 enyo.gesture.preventNativeDefault = function() {
 	if (this.srcEvent) {
 		this.srcEvent.preventDefault();
+	}
+}
+
+enyo.gesture.disablePrevention = function() {
+	this.preventNativeDefault = enyo.nop;
+	if (this.srcEvent) {
+		this.srcEvent.preventDefault = enyo.nop;
 	}
 }
 
