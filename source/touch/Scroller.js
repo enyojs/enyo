@@ -4,9 +4,6 @@ enyo.Scroller is scroller suitable for use in both desktop and mobile applicatio
 In some mobile environments, a default scrolling solution is not implemented for dom elements. In these cases, enyo.Scroller implements
 a touch based scrolling solution. This can be opted into either globally by setting the flag enyo.Scroller.touchScrolling = true;
 or on a per instance basis by specifying a strategyKind of "TouchScrollStrategy."
-
-Note: If a scroller is nofit: false, then it should have a position style set to a value other than the default of static.
-
 */
 enyo.kind({
 	name: "enyo.Scroller",
@@ -30,9 +27,9 @@ enyo.kind({
 		*/
 		scrollLeft: 0,
 		/**
-			Set to true when container size depends on size of the content.
+			Sets the maximum height of the scroll content.
 		*/
-		nofit: false,
+		maxHeight: null,
 		/**
 			Specify a type of scrolling. The enyo Scroller will attempt to automatically select 
 			a strategy compatbile with the runtime environment. A specific strategy can also be chosen:
@@ -110,10 +107,13 @@ enyo.kind({
 			this.controlParent = null;
 		}
 		// note: createComponents automatically updates controlParent.
-		this.createComponents([{name: "strategy", nofit: this.nofit, kind: this.strategyKind, preventDragPropagation: this.preventDragPropagation, isChrome: true}]);
+		this.createComponents([{name: "strategy", maxHeight: this.maxHeight, kind: this.strategyKind, preventDragPropagation: this.preventDragPropagation, isChrome: true}]);
 		if (this.hasNode()) {
 			this.render();
 		}
+	},
+	maxHeightChanged: function() {
+		this.$.strategy.setMaxHeight(this.maxHeight);
 	},
 	showingChanged: function() {
 		if (!this.showing) {
@@ -173,7 +173,9 @@ enyo.kind({
 	},
 	// normalize scroll event to onScroll.
 	scroll: function(inSender, e) {
-		this.$.strategy.scroll(inSender, e);
+		if (this.$.strategy.scroll) {
+			this.$.strategy.scroll(inSender, e);
+		}
 		return this.doScroll(e);
 	}
 });

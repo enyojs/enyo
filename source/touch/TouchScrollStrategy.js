@@ -30,9 +30,7 @@ enyo.kind({
 			* "hidden": Never scroll.
 			* "default": Same as auto.
 		*/
-		horizontal: "default",
-		//* set to true to prevent the scroll strategy from fitting to the size of the scroller
-		nofit: false
+		horizontal: "default"
 	},
 	events: {
 		onScrollStart: "doScrollStart",
@@ -59,7 +57,6 @@ enyo.kind({
 	],
 	create: function() {
 		this.inherited(arguments);
-		this.nofitChanged();
 		this.$.client.addClass(this.clientClasses);
 		this.container.addClass("enyo-touch-strategy-container");
 	},
@@ -71,9 +68,6 @@ enyo.kind({
 		this.inherited(arguments);
 		this.calcBoundaries();
 		this.syncScrollMath();
-	},
-	nofitChanged: function() {
-		this.$.client.addRemoveClass("enyo-fit", !this.nofit);
 	},
 	scroll: function() {
 		if (!this.$.scrollMath.isScrolling()) {
@@ -87,6 +81,10 @@ enyo.kind({
 	},
 	verticalChanged: function() {
 		this.$.scrollMath.vertical = (this.vertical != "hidden");
+	},
+	maxHeightChanged: function() {
+		this.$.client.applyStyle("max-height", this.maxHeight);
+		this.$.client.addRemoveClass("enyo-fit", this.maxHeight == 0);
 	},
 	scrollTo: function(inX, inY) {
 		this.$.scrollMath.scrollTo(inY || inY == 0 ? inY : null, inX);

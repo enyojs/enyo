@@ -29,7 +29,8 @@ enyo.kind({
 		*/
 		horizontal: "default",
 		scrollLeft: 0,
-		scrollTop: 0
+		scrollTop: 0,
+		maxHeight: null
 	},
 	//* @protected
 	handlers: {
@@ -42,6 +43,7 @@ enyo.kind({
 		this.inherited(arguments);
 		this.horizontalChanged();
 		this.verticalChanged();
+		this.maxHeightChanged();
 		this.container.setAttribute("onscroll", enyo.bubbler);
 	},
 	rendered: function() {
@@ -60,6 +62,9 @@ enyo.kind({
 	},
 	verticalChanged: function() {
 		this.container.applyStyle("overflow-y", this.vertical == "default" ? "auto" : this.vertical);
+	},
+	maxHeightChanged: function() {
+		this.container.applyStyle("max-height", this.maxHeight);
 	},
 	scrollTo: function(inX, inY) {
 		if (this.scrollNode) {
