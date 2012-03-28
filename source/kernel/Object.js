@@ -31,7 +31,7 @@ as noted in the comments.
 	myobj = new MyObject();
 	var x = myobj.getMyValue(); // x gets 3
 
-You may choose to declare a _changed_ method to observe set calls on a property. 
+You may choose to declare a _changed_ method to observe set calls on a property.
 The _myValueChanged_ method in the example above is called whenever _setMyValue_ is called.
 
 	myobj.setMyValue(7); // myValue becomes 7; myValueChanged side-effect sets delta to 4
@@ -55,7 +55,7 @@ enyo.kind({
 		enyo._objectCount++;
 	},
 	setPropertyValue: function(n, v, cf) {
-		if (this[cf]) {
+		if (this[cf] && this[cf] !== enyo.nop) {
 			var old = this[n];
 			this[n] = v;
 			this[cf](old);
@@ -146,10 +146,10 @@ enyo.Object.addGetterSetter = function(inName, inValue, inProto) {
 	var priv_n = inName;
 	inProto[priv_n] = inValue;
 	//
-	var cap_n = enyo.cap(priv_n); 
+	var cap_n = enyo.cap(priv_n);
 	var get_n = "get" + cap_n;
 	if (!inProto[get_n]) {
-		inProto[get_n] = function() { 
+		inProto[get_n] = function() {
 			return this[priv_n];
 		};
 	}
@@ -157,8 +157,11 @@ enyo.Object.addGetterSetter = function(inName, inValue, inProto) {
 	var set_n = "set" + cap_n;
 	var change_n = priv_n + "Changed";
 	if (!inProto[set_n]) {
-		inProto[set_n] = function(v) { 
-			this._setProperty(priv_n, v, change_n); 
+		inProto[set_n] = function(v) {
+			this._setProperty(priv_n, v, change_n);
 		};
+	}
+	if (!inProto[change_n]) {
+		inProto[change_n] = enyo.nop;
 	}
 };
