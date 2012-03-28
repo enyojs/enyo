@@ -113,6 +113,12 @@ enyo.kind({
 		this.stop();
 		this.inherited(arguments);
 	},
+	getScrollLeft: function() {
+		return this.$.scrollMath.isScrolling() ? this.scrollLeft : this.inherited(arguments);
+	},
+	getScrollTop: function() {
+		return this.$.scrollMath.isScrolling() ? this.scrollTop : this.inherited(arguments);
+	},
 	calcScrollNode: function() {
 		return this.$.client.hasNode();
 	},
