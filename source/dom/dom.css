@@ -1,6 +1,7 @@
 /* things we always want */
 body {
 	-webkit-overflow-scrolling: touch;
+	font-family: 'Helvetica Neue', 'Nimbus Sans L', Arial, sans-serif;
 }
 
 /* for apps */
