@@ -250,7 +250,7 @@ enyo.kind({
 	effectTransform: function(inNode, inTransform) {
 		if (inNode) {
 			var s = inNode.style;
-			s.webkitTransform = s.MozTransform = s.msTransform = s.transform = inTransform;
+			s.webkitTransform = s.MozTransform = s.msTransform = s.OTransform = s.transform = inTransform;
 		}
 	},
 	_getScrollBounds: function() {
