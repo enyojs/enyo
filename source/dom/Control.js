@@ -567,15 +567,15 @@ enyo.kind({
 		}
 	},
 	teardownRender: function() {
-		this.teardownChildren();
+		if (this.generated) {
+			this.teardownChildren();
+		}
 		this.node = null;
 		this.generated = false;
 	},
 	teardownChildren: function() {
-		if (this.generated) {
-			for (var i=0, c; c=this.children[i]; i++) {
-				c.teardownRender();
-			}
+		for (var i=0, c; c=this.children[i]; i++) {
+			c.teardownRender();
 		}
 	},
 	renderNode: function() {
@@ -590,7 +590,9 @@ enyo.kind({
 		this.renderContent();
 	},
 	renderContent: function() {
-		this.teardownChildren();
+		if (this.generated) {
+			this.teardownChildren();
+		}
 		this.node.innerHTML = this.generateInnerHtml();
 	},
 	renderStyles: function() {
