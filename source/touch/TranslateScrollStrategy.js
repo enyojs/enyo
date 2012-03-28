@@ -8,10 +8,18 @@ enyo.kind({
 	name: "enyo.TranslateScrollStrategy",
 	kind: "TouchScrollStrategy",
 	clientClasses: "enyo-composite",
-	nofitChanged: function() {
-	},
+	components: [
+		{name: "clientContainer", classes: "enyo-touch-scroller", attributes: {"onscroll": enyo.bubbler}, components: [
+			{name: "client"}
+		]}
+	],
 	calcScrollNode: function() {
-		return this.container.hasNode();
+		return this.$.clientContainer.hasNode();
+		//return this.container.hasNode();
+	},
+	maxHeightChanged: function() {
+		this.inherited(arguments);
+		this.$.clientContainer.addRemoveClass("enyo-fit", !this.maxHeight);
 	},
 	shouldDrag: function(inSender, inEvent) {
 		// stop and update drag info before checking drag status

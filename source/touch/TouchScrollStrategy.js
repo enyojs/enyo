@@ -51,14 +51,20 @@ enyo.kind({
 	},
 	classes: "enyo-touch-scroller",
 	clientClasses: "enyo-touch-scroller",
+	tools: [
+		{kind: "ScrollMath", onScrollStart: "scrollMathStart", onScroll: "scrollMathScroll", onScrollStop: "scrollMathStop"}
+	],
 	components: [
-		{kind: "ScrollMath", onScrollStart: "scrollMathStart", onScroll: "scrollMathScroll", onScrollStop: "scrollMathStop"},
 		{name: "client", attributes: {"onscroll": enyo.bubbler}}
 	],
 	create: function() {
 		this.inherited(arguments);
 		this.$.client.addClass(this.clientClasses);
 		this.container.addClass("enyo-touch-strategy-container");
+	},
+	initComponents: function() {
+		this.createChrome(this.tools);
+		this.inherited(arguments);
 	},
 	destroy: function() {
 		this.container.removeClass("enyo-touch-strategy-container");
