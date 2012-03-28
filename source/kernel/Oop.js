@@ -177,7 +177,7 @@ enyo.kind.features.push(function(ctor, props) {
 		for (var n in props) {
 			var p = props[n];
 			if (enyo.isFunction(p)) {
-				p._inherited = proto.base.prototype[n];
+				p._inherited = proto.base.prototype[n] || enyo.nop;
 				// FIXME: we used to need some extra values for inherited, then inherited got cleaner
 				// but in the meantime we used these values to support logging in Object. 
 				// For now we support this legacy situation, by suppling logging information here.
