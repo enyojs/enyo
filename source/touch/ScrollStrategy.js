@@ -95,7 +95,7 @@ enyo.kind({
 	getScrollTop: function() {
 		return this.scrollNode ? this.scrollNode.scrollTop : this.scrollTop;
 	},
-	getScrollBounds: function() {
+	_getScrollBounds: function() {
 		var n = this.scrollNode, cn = this.container.hasNode();
 		var b = {
 			left: this.getScrollLeft(),
@@ -108,6 +108,9 @@ enyo.kind({
 		b.maxLeft = Math.max(0, b.width - b.clientWidth);
 		b.maxTop = Math.max(0, b.height - b.clientHeight);
 		return b;
+	},
+	getScrollBounds: function() {
+		return this._getScrollBounds();
 	},
 	calcStartInfo: function() {
 		var sb = this.getScrollBounds();

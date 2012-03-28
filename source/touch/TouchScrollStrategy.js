@@ -86,8 +86,26 @@ enyo.kind({
 		this.$.client.applyStyle("max-height", this.maxHeight);
 		this.$.client.addRemoveClass("enyo-fit", !this.maxHeight);
 	},
+	stop: function() {
+		if (this.$.scrollMath.isScrolling()) {
+			this.$.scrollMath.stop(true);
+		}
+	},
 	scrollTo: function(inX, inY) {
+		this.stop();
 		this.$.scrollMath.scrollTo(inY || inY == 0 ? inY : null, inX);
+	},
+	scrollIntoView: function() {
+		this.stop();
+		this.inherited(arguments);
+	},
+	setScrollLeft: function() {
+		this.stop();
+		this.inherited(arguments);
+	},
+	setScrollTop: function() {
+		this.stop();
+		this.inherited(arguments);
 	},
 	calcScrollNode: function() {
 		return this.$.client.hasNode();
@@ -187,7 +205,7 @@ enyo.kind({
 		this.doScrollStop(inSender);
 	},
 	calcBoundaries: function() {
-		var s = this.$.scrollMath, b = this.getScrollBounds();
+		var s = this.$.scrollMath, b = this._getScrollBounds();
 		s.bottomBoundary = b.clientHeight - b.height;
 		s.rightBoundary = b.clientWidth - b.width;
 	},
@@ -198,8 +216,8 @@ enyo.kind({
 	},
 	effectScroll: function(inX, inY) {
 		if (this.scrollNode) {
-			this.scrollNode.scrollLeft = inX;
-			this.scrollNode.scrollTop = inY;
+			this.scrollLeft = this.scrollNode.scrollLeft = inX;
+			this.scrollTop = this.scrollNode.scrollTop = inY;
 			this.effectOverscroll(Math.round(inX), Math.round(inY));
 		}
 	},
@@ -223,11 +241,15 @@ enyo.kind({
 			s.webkitTransform = s.MozTransform = s.msTransform = s.transform = inTransform;
 		}
 	},
-	getScrollBounds: function() {
+	_getScrollBounds: function() {
 		var r = this.inherited(arguments);
 		var m = this.$.scrollMath;
 		r.overleft = -Math.floor(this.getScrollLeft() + m.x);
 		r.overtop = -Math.floor(this.getScrollTop() + m.y);
 		return r;
+	},
+	getScrollBounds: function() {
+		this.stop();
+		return this.inherited(arguments);
 	}
 });

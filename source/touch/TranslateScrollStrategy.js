@@ -15,7 +15,7 @@ enyo.kind({
 	},
 	shouldDrag: function(inSender, inEvent) {
 		// stop and update drag info before checking drag status
-		this.$.scrollMath.stop(true);
+		this.stop();
 		this.calcStartInfo();
 		return this.inherited(arguments);
 	},
@@ -42,9 +42,9 @@ enyo.kind({
 	},
 	// when stopped, we use scrollLeft/Top (makes cursor positioning automagic)
 	effectScrollStop: function() {
+		this.effectTransform(this.$.client.hasNode(), "translate3d(0, 0, 0)");
 		this.setScrollLeft(this.scrollLeft);
 		this.setScrollTop(this.scrollTop);
-		this.effectTransform(this.$.client.hasNode(), "translate3d(0, 0, 0)");
 	},
 	down: enyo.nop
 });
