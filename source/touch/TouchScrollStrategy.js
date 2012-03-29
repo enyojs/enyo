@@ -75,8 +75,14 @@ enyo.kind({
 		this.calcBoundaries();
 		this.syncScrollMath();
 	},
+	isScrolling: function() {
+		return this.$.scrollMath.isScrolling();
+	},
+	isOverscrolling: function() {
+		return this.$.scrollMath.isInOverscroll();
+	},
 	scroll: function() {
-		if (!this.$.scrollMath.isScrolling()) {
+		if (!this.isScrolling()) {
 			this.calcBoundaries();
 			this.syncScrollMath();
 		}
@@ -93,7 +99,7 @@ enyo.kind({
 		this.$.client.addRemoveClass("enyo-fit", !this.maxHeight);
 	},
 	stop: function() {
-		if (this.$.scrollMath.isScrolling()) {
+		if (this.isScrolling()) {
 			this.$.scrollMath.stop(true);
 		}
 	},
@@ -114,10 +120,10 @@ enyo.kind({
 		this.inherited(arguments);
 	},
 	getScrollLeft: function() {
-		return this.$.scrollMath.isScrolling() ? this.scrollLeft : this.inherited(arguments);
+		return this.isScrolling() ? this.scrollLeft : this.inherited(arguments);
 	},
 	getScrollTop: function() {
-		return this.$.scrollMath.isScrolling() ? this.scrollTop : this.inherited(arguments);
+		return this.isScrolling() ? this.scrollTop : this.inherited(arguments);
 	},
 	calcScrollNode: function() {
 		return this.$.client.hasNode();
@@ -161,7 +167,7 @@ enyo.kind({
 		}
 	},
 	hold: function(inSender, e) {
-		if (this.$.scrollMath.isScrolling() && !this.$.scrollMath.isInOverScroll()) {
+		if (this.isScrolling() && !this.isOverscrolling()) {
 			this.$.scrollMath.stop(e);
 			return true;
 		}
@@ -197,7 +203,7 @@ enyo.kind({
 		}
 	},
 	mousewheel: function(inSender, e) {
-		if (!this.dragging && this.$.scrollMath.mousewheel(e)) {
+		if (!this.dragging && !this.isScrolling() && this.$.scrollMath.mousewheel(e)) {
 			e.preventDefault();
 			return true;
 		}
@@ -253,11 +259,16 @@ enyo.kind({
 			s.webkitTransform = s.MozTransform = s.msTransform = s.OTransform = s.transform = inTransform;
 		}
 	},
+	getOverscrollBounds: function() {
+		var m = this.$.scrollMath;
+		return {
+			overleft: Math.floor(m.x > m.leftBoundary ? m.leftBoundary - m.x : m.rightBoundary - m.x),
+			overtop: Math.floor(m.y > m.topBoundary ? m.topBoundary - m.y : m.bottomBoundary - m.y)
+		}
+	},
 	_getScrollBounds: function() {
 		var r = this.inherited(arguments);
-		var m = this.$.scrollMath;
-		r.overleft = -Math.floor(this.getScrollLeft() + m.x);
-		r.overtop = -Math.floor(this.getScrollTop() + m.y);
+		enyo.mixin(r, this.getOverscrollBounds());
 		return r;
 	},
 	getScrollBounds: function() {
