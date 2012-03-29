@@ -25,7 +25,7 @@ enyo.kind({
 	//* Additional 'friction' damping applied when momentum carries the viewport into overscroll (lower provides MORE friction)
 	kSnapFriction: 0.9,
 	//* Scalar applied to 'flick' event velocity
-	kFlickScalar: 10,
+	kFlickScalar: 20,
 	//* the value used in friction() to determine if the delta (e.g. y - y0) is close enough to zero to consider as zero.
 	kFrictionEpsilon: 1e-2,
 	//* top snap boundary, generally 0
