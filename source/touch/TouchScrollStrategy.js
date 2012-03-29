@@ -55,8 +55,8 @@ enyo.kind({
 	clientClasses: "enyo-touch-scroller",
 	tools: [
 		{kind: "ScrollMath", onScrollStart: "scrollMathStart", onScroll: "scrollMathScroll", onScrollStop: "scrollMathStop"},
-		{name: "vthumb", kind: "ScrollThumb", axis: "v"},
-		{name: "hthumb", kind: "ScrollThumb", axis: "h"}
+		{name: "vthumb", kind: "ScrollThumb", axis: "v", showing: false},
+		{name: "hthumb", kind: "ScrollThumb", axis: "h", showing: false}
 	],
 	components: [
 		{name: "client", attributes: {"onscroll": enyo.bubbler}}
@@ -184,6 +184,9 @@ enyo.kind({
 		// note: allow drags to propagate to parent scrollers via data returned in the shouldDrag event.
 		this.doShouldDrag(inEvent);
 		this.dragging = (inEvent.dragger == this || (!inEvent.dragger && inEvent.boundaryDragger == this));
+		if (this.thumb) {
+			this.showThumbs();
+		}
 		if (this.dragging) {
 			inEvent.preventNativeDefault();
 			// note: needed because show/hide changes
@@ -218,9 +221,6 @@ enyo.kind({
 	scrollMathStart: function(inSender) {
 		if (this.scrollNode) {
 			this.calcBoundaries();
-			if (this.thumb) {
-				this.showThumbs();
-			}
 			this.doScrollStart(inSender);
 		}
 	},

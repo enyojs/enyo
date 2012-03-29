@@ -10,6 +10,7 @@
 		this.dimension = v ? "height" : "width";
 		this.offset = v ? "top" : "left";
 		this.addClass("enyo-" + this.axis + "thumb");
+		enyo.dom.transformValue(this, "translateZ", 0);
 	},
 	sync: function(inStrategy) {
 		this.scrollSize = inStrategy.container.getBounds();
