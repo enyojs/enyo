@@ -1,6 +1,7 @@
 ﻿enyo.depends(
 	"dom.css",
 	"dom.js",
+	"transform.js",
 	"Control.js",
 	"platform.js",
 	"dispatcher.js",
