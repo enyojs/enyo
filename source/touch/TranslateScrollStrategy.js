@@ -38,19 +38,22 @@ enyo.kind({
 		this.scrollLeft = -inSender.x;
 		this.scrollTop = -inSender.y;
 		// hmph, scroll called after stop
-		if (this.$.scrollMath.isScrolling()) {
+		if (this.isScrolling()) {
 			this.effectScroll(this.startX - this.scrollLeft, this.startY - this.scrollTop);
+		}
+		if (this.thumb) {
+			this.updateThumbs();
 		}
 		this.doScroll(inSender);
 	},
 	// while moving, scroller uses translate
 	effectScroll: function(inX, inY) {
-		var o = "translate3d(" + inX + "px, " + inY + "px," + "0)";
-		this.effectTransform(this.$.client.hasNode(), o);
+		var o = inX + "px, " + inY + "px, 0";
+		this.effectTransform({translate3d: o});
 	},
 	// when stopped, we use scrollLeft/Top (makes cursor positioning automagic)
 	effectScrollStop: function() {
-		this.effectTransform(this.$.client.hasNode(), "translate3d(0, 0, 0)");
+		this.effectTransform({translate3d: "0, 0, 0"});
 		this.setScrollLeft(this.scrollLeft);
 		this.setScrollTop(this.scrollTop);
 	},

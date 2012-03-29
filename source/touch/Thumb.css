@@ -1,0 +1,20 @@
+.enyo-thumb {
+	position: absolute;
+	border-radius: 4px;
+	background: #333;
+	border: 1px solid #666;
+	opacity: 0.75;
+	z-index: 1;
+}
+
+.enyo-vthumb {
+	top: 0;
+	right: 2px;
+	width: 4px;
+}
+
+.enyo-hthumb {
+	left: 0;
+	bottom: 2px;
+	height: 4px;
+}

@@ -30,7 +30,9 @@ enyo.kind({
 			* "hidden": Never scroll.
 			* "default": Same as auto.
 		*/
-		horizontal: "default"
+		horizontal: "default",
+		//* set to true to display a scroll thumb
+		thumb: true
 	},
 	events: {
 		onScrollStart: "doScrollStart",
@@ -52,7 +54,9 @@ enyo.kind({
 	classes: "enyo-touch-scroller",
 	clientClasses: "enyo-touch-scroller",
 	tools: [
-		{kind: "ScrollMath", onScrollStart: "scrollMathStart", onScroll: "scrollMathScroll", onScrollStop: "scrollMathStop"}
+		{kind: "ScrollMath", onScrollStart: "scrollMathStart", onScroll: "scrollMathScroll", onScrollStop: "scrollMathStop"},
+		{name: "vthumb", kind: "ScrollThumb", axis: "v"},
+		{name: "hthumb", kind: "ScrollThumb", axis: "h"}
 	],
 	components: [
 		{name: "client", attributes: {"onscroll": enyo.bubbler}}
@@ -74,12 +78,15 @@ enyo.kind({
 		this.inherited(arguments);
 		this.calcBoundaries();
 		this.syncScrollMath();
+		if (this.thumb) {
+			this.alertThumbs();
+		}
 	},
 	isScrolling: function() {
 		return this.$.scrollMath.isScrolling();
 	},
 	isOverscrolling: function() {
-		return this.$.scrollMath.isInOverscroll();
+		return this.$.scrollMath.isInOverScroll();
 	},
 	scroll: function() {
 		if (!this.isScrolling()) {
@@ -211,15 +218,24 @@ enyo.kind({
 	scrollMathStart: function(inSender) {
 		if (this.scrollNode) {
 			this.calcBoundaries();
+			if (this.thumb) {
+				this.showThumbs();
+			}
 			this.doScrollStart(inSender);
 		}
 	},
 	scrollMathScroll: function(inSender) {
 		this.effectScroll(-inSender.x, -inSender.y);
+		if (this.thumb) {
+			this.updateThumbs();
+		}
 		this.doScroll(inSender);
 	},
 	scrollMathStop: function(inSender) {
 		this.effectScrollStop();
+		if (this.thumb) {
+			this.hideThumbs(100);
+		}
 		this.doScrollStop(inSender);
 	},
 	calcBoundaries: function() {
@@ -244,35 +260,54 @@ enyo.kind({
 	},
 	effectOverscroll: function(inX, inY) {
 		var n = this.scrollNode;
-		var o = "";
+		var o = {};
 		if (inY !== null && Math.abs(inY - n.scrollTop) > 1) {
-			o += " translateY(" + (n.scrollTop - inY) + "px)";
+			o.translateY = (n.scrollTop - inY) + "px";
 		}
 		if (inX !== null && Math.abs(inX - n.scrollLeft) > 1) {
-			o += " translateX(" + (n.scrollLeft - inX) + "px)";
+			o.translateX = (n.scrollLeft - inX) + "px";
 		}
-		this.effectTransform(n, o);
+		this.effectTransform(o);
 	},
-	effectTransform: function(inNode, inTransform) {
-		if (inNode) {
-			var s = inNode.style;
-			s.webkitTransform = s.MozTransform = s.msTransform = s.OTransform = s.transform = inTransform;
-		}
+	effectTransform: function(inTransforms) {
+		enyo.dom.transform(this.$.client, inTransforms);
 	},
-	getOverscrollBounds: function() {
+	getOverScrollBounds: function() {
 		var m = this.$.scrollMath;
 		return {
 			overleft: Math.floor(m.x > m.leftBoundary ? m.leftBoundary - m.x : m.rightBoundary - m.x),
 			overtop: Math.floor(m.y > m.topBoundary ? m.topBoundary - m.y : m.bottomBoundary - m.y)
-		}
+		};
 	},
 	_getScrollBounds: function() {
 		var r = this.inherited(arguments);
-		enyo.mixin(r, this.getOverscrollBounds());
+		enyo.mixin(r, this.getOverScrollBounds());
 		return r;
 	},
 	getScrollBounds: function() {
 		this.stop();
 		return this.inherited(arguments);
+	},
+	// thumb processing
+	alertThumbs: function() {
+		this.showThumbs();
+		this.hideThumbs(500);
+	},
+	syncThumbs: function() {
+		this.$.vthumb.sync(this);
+		this.$.hthumb.sync(this);
+	},
+	updateThumbs: function() {
+		this.$.vthumb.update(this);
+		this.$.hthumb.update(this);
+	},
+	showThumbs: function() {
+		this.syncThumbs();
+		this.$.vthumb.show();
+		this.$.hthumb.show();
+	},
+	hideThumbs: function(inDelay) {
+		this.$.vthumb.delayHide(inDelay);
+		this.$.hthumb.delayHide(inDelay);
 	}
 });
