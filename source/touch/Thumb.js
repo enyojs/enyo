@@ -21,14 +21,13 @@
 	},
 	update: function(inStrategy) {
 		var d = this.dimension, o = this.offset;
-		var bd = this.scrollSize[d];
-		var sbd = this.scrollBounds[d], overs = 0, overp = 0;
-		var sbo;
-		if (o === "top") {
-			sbo = inStrategy.scrollTop;
-		} else {
-			sbo = inStrategy.scrollLeft;
+		var bd = this.scrollSize[d], sbd = this.scrollBounds[d];
+		var overs = 0, overp = 0;
+		if (bd >= sbd) {
+			this.hide();
+			return;
 		}
+		var sbo = o === "top" ? inStrategy.scrollTop : inStrategy.scrollLeft;
 		if (inStrategy.isOverscrolling()) {
 			var over = inStrategy.getOverScrollBounds()["over" + o];
 			overs = Math.abs(over);
@@ -36,8 +35,10 @@
 		}
 		// calc size & position
 		var bdc = bd - this.cornerSize;
-		var s = Math.round(Math.max(this.minSize, (bd * bd / sbd) - overs));
-		var p = Math.round(Math.max(0, Math.min(bdc - this.minSize, bdc * sbo / sbd + overp)));
+		var s = Math.floor((bd * bd / sbd) - overs);
+		s = Math.max(this.minSize, s);
+		var p = Math.floor((bdc * sbo / sbd) + overp);
+		p = Math.max(0, Math.min(bdc - this.minSize, p));
 		// apply thumb styling
 		this.needed = s < bd;
 		if (this.needed && this.hasNode()) {
