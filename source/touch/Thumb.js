@@ -46,10 +46,11 @@
 				this._pos = p;
 				var to = "";
 				if (o === "top") {
-					to = "0, ";
+					to = "translateY";
+				} else {
+					to = "translateX";
 				}
-				to += p;
-				enyo.dom.transformValue(this, "translate", to + "px");
+				enyo.dom.transformValue(this, to, p + "px");
 			}
 			if (this._size !== s) {
 				this._size = s;
@@ -62,6 +63,11 @@
 	// implement set because showing is not changed while 
 	// we delayHide but we want to cancel the hide.
 	setShowing: function(inShowing) {
+		if (inShowing && inShowing != this.showing) {
+			if (this.scrollSize[this.dimension] >= this.scrollBounds[this.dimension]) {
+				return;
+			}
+		}
 		if (this.hasNode()) {
 			this.cancelDelayHide();
 		}
@@ -73,10 +79,10 @@
 	},
 	delayHide: function(inDelay) {
 		if (this.showing) {
-			this.hideJob = setTimeout(enyo.bind(this, "hide"), inDelay || 0);
+			enyo.job(this.id + "hide", enyo.bind(this, "hide"), inDelay || 0);
 		}
 	},
 	cancelDelayHide: function() {
-		clearTimeout(this.hideJob);
+		enyo.job.stop(this.id + "hide");
 	}
 });
