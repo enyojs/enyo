@@ -55,8 +55,8 @@ enyo.kind({
 	//* @protected
 	statics: {
 		osInfo: [
-			{os: "android", version: 3},
-			{os: "ios", version: 5},
+			{os: "android", version: 1e9},
+			{os: "ios", version: 1e9},
 			{os: "webos", version: 1e9}
 		],
 		hasTouchScrolling: function() {
@@ -182,5 +182,5 @@ enyo.kind({
 
 // provide a touch scrolling solution by default when the environment has no native scrolling.
 if (!enyo.Scroller.hasNativeScrolling()) {
-	enyo.Scroller.prototype.strategyKind =  "TouchScrollStrategy";
+	enyo.Scroller.prototype.strategyKind = enyo.platform.android >= 3 ? "TranslateScrollStrategy" : "TouchScrollStrategy";
 }
