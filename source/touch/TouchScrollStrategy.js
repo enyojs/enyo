@@ -233,14 +233,14 @@ enyo.kind({
 	scrollMathScroll: function(inSender) {
 		this.effectScroll(-inSender.x, -inSender.y);
 		if (this.thumb) {
-			this.updateThumbs();
+			this.alertThumbs();
 		}
 		this.doScroll(inSender);
 	},
 	scrollMathStop: function(inSender) {
 		this.effectScrollStop();
 		if (this.thumb) {
-			this.hideThumbs(100);
+			this.hideThumbs(500);
 		}
 		this.doScrollStop(inSender);
 	},

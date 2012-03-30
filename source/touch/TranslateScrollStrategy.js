@@ -23,9 +23,7 @@ enyo.kind({
 	},
 	shouldDrag: function(inSender, inEvent) {
 		// stop and update drag info before checking drag status
-		this.dragStop = true;
 		this.stop();
-		this.dragStop = false;
 		this.calcStartInfo();
 		return this.inherited(arguments);
 	},
@@ -47,13 +45,6 @@ enyo.kind({
 			}
 		}
 		this.doScroll(inSender);
-	},
-	scrollMathStop: function(inSender) {
-		this.effectScrollStop();
-		if (this.thumb && !this.dragStop) {
-			this.hideThumbs(100);
-		}
-		this.doScrollStop(inSender);
 	},
 	// while moving, scroller uses translate
 	effectScroll: function(inX, inY) {
