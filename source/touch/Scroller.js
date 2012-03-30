@@ -73,6 +73,9 @@ enyo.kind({
 				}
 			}
 			return true;
+		},
+		getTouchStrategy: function() {
+			return enyo.platform.android >= 3 ? "TranslateScrollStrategy" : "TouchScrollStrategy";
 		}
 	},
 	//* @protected
@@ -86,7 +89,7 @@ enyo.kind({
 		this.inherited(arguments);
 		// allow global overriding of strategy kind
 		if (inProps && inProps.strategyKind === undefined && enyo.Scroller.touchScrolling) {
-			this.strategyKind = "TouchScrollStrategy";
+			this.strategyKind = enyo.Scroller.getTouchStrategy();
 		}
 	},
 	initComponents: function() {
@@ -182,5 +185,5 @@ enyo.kind({
 
 // provide a touch scrolling solution by default when the environment has no native scrolling.
 if (!enyo.Scroller.hasNativeScrolling()) {
-	enyo.Scroller.prototype.strategyKind = enyo.platform.android >= 3 ? "TranslateScrollStrategy" : "TouchScrollStrategy";
+	enyo.Scroller.prototype.strategyKind = enyo.Scroller.getTouchStrategy();
 }
