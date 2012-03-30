@@ -17,8 +17,24 @@ enyo.mixin(enyo.dom, {
 		}
 		return false;
 	},
-	domTransformProps: ["-webkit-transform", "-moz-transform", "-ms-transform", "-o-transform", "transform"],
-	cssTransformProps: ["webkitTransform", "MozTransform", "msTransform", "OTransform", "transform"],
+	cssTransformProps: ["-webkit-transform", "-moz-transform", "-ms-transform", "-o-transform", "transform"],
+	styleTransformProps: ["webkitTransform", "MozTransform", "msTransform", "OTransform", "transform"],
+	getCssTransformProp: function() {
+		if (this._cssTransformProp) {
+			return this._cssTransformProp;
+		}
+		return this._cssTransformProp = this.cssTransformProps[this.styleTransformProps.indexOf(this.getStyleTransformProp())];
+	},
+	getStyleTransformProp: function() {
+		if (this._styleTransformProp && document.body) {
+			return this._styleTransformProp;
+		}
+		for (var i = 0, p; p = this.styleTransformProps[i]; i++) {
+			if (typeof document.body.style[p] != "undefined") {
+				return this._styleTransformProp = p;
+			}
+		}
+	},
 	transformValue: function(inControl, inTransform, inValue) {
 		var d = inControl.domTransforms = inControl.domTransforms || {};
 		d[inTransform] = inValue;
@@ -48,14 +64,23 @@ enyo.mixin(enyo.dom, {
 	transformsToDom: function(inControl) {
 		var t = this.domTransformsToCss(inControl.domTransforms);
 		var ds = inControl.domStyles;
-		// FIXME: it'd be better to only set the supported property...
-		for (var i=0, p; (p=this.domTransformProps[i]); i++) {
+		var p = this.getCssTransformProp();
+		if (p) {
 			ds[p] = t;
+		} else {
+			for (var i=0, p; (p=this.CssTransformProps[i]); i++) {
+				ds[p] = t;
+			}
 		}
 		if (inControl.hasNode()) {
 			var s = inControl.node.style;
-			for (var i=0, p; (p=this.cssTransformProps[i]); i++) {
+			p = this.getStyleTransformProp();
+			if (p) {
 				s[p] = t;
+			} else {
+				for (var i=0, p; (p=this.styleTransformProps[i]); i++) {
+					s[p] = t;
+				}
 			}
 		} else {
 			inControl.domStylesChanged();
