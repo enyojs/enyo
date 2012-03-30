@@ -63,26 +63,24 @@ enyo.mixin(enyo.dom, {
 	},
 	transformsToDom: function(inControl) {
 		var t = this.domTransformsToCss(inControl.domTransforms);
+		var st = inControl.hasNode() ? inControl.node.style : null;
 		var ds = inControl.domStyles;
-		var p = this.getCssTransformProp();
-		if (p) {
-			ds[p] = t;
-		} else {
-			for (var i=0, p; (p=this.CssTransformProps[i]); i++) {
-				ds[p] = t;
+		var sp = this.getStyleTransformProp();
+		var cp = this.getCssTransformProp();
+		if (sp && cp) {
+			ds[cp] = t;
+			if (st) {
+				st[sp] = t;
 			}
-		}
-		if (inControl.hasNode()) {
-			var s = inControl.node.style;
-			p = this.getStyleTransformProp();
-			if (p) {
-				s[p] = t;
-			} else {
-				for (var i=0, p; (p=this.styleTransformProps[i]); i++) {
-					s[p] = t;
+		} else {
+			for (var i=0; (cp=this.cssTransformProps[i]) && (sp=this.styleTransformProps[i]); i++) {
+				ds[cp] = t;
+				if (st) {
+					st[sp] = t;
 				}
 			}
-		} else {
+		}
+		if (!st) {
 			inControl.domStylesChanged();
 		}
 	}
