@@ -120,10 +120,16 @@ enyo.kind({
 	},
 	setScrollLeft: function() {
 		this.stop();
+		if (this.thumb) {
+			this.alertThumbs();
+		}
 		this.inherited(arguments);
 	},
 	setScrollTop: function() {
 		this.stop();
+		if (this.thumb) {
+			this.alertThumbs();
+		}
 		this.inherited(arguments);
 	},
 	getScrollLeft: function() {
