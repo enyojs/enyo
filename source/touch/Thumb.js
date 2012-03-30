@@ -10,7 +10,7 @@
 		this.dimension = v ? "height" : "width";
 		this.offset = v ? "top" : "left";
 		this.addClass("enyo-" + this.axis + "thumb");
-		if (enyo.dom.canAcclerate()) {
+		if (enyo.dom.canAccelerate()) {
 			enyo.dom.transformValue(this, "translateZ", 0);
 		}
 	},
