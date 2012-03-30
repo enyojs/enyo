@@ -4,6 +4,10 @@ enyo.mixin(enyo.dom, {
 		return this.accelerando !== undefined ? this.accelerando: document.body && (this.accelerando = this.calcCanAccelerate());
 	},
 	calcCanAccelerate: function() {
+		/* Android 2 is a liar: it does NOT support 3D transforms, even though Perspective is the best check */
+		if (enyo.platform.android <= 2) {
+			return false;
+		}
 		var b = document.body;
 		var p$ = ["perspective", "msPerspective", "MozPerspective", "WebkitPerspective", "OPerspective"];
 		for (var i=0, p; p=p$[i]; i++) {
