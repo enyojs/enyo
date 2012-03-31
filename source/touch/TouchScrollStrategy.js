@@ -105,6 +105,9 @@ enyo.kind({
 		this.$.client.applyStyle("max-height", this.maxHeight);
 		this.$.client.addRemoveClass("enyo-fit", !this.maxHeight);
 	},
+	thumbChanged: function() {
+		this.hideThumbs(0);
+	},
 	stop: function() {
 		if (this.isScrolling()) {
 			this.$.scrollMath.stop(true);

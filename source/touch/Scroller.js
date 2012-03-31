@@ -37,7 +37,9 @@ enyo.kind({
 			* <a href="#enyo.ScrollStrategy">ScrollStrategy</a> is the default and implements no scrolling, relying instead on the environment to scroll properly.
 			* <a href="#enyo.TouchScrollStrategy">TouchScrollStrategy</a> implements a touch scrolling mechanism.
 		*/
-		strategyKind: "ScrollStrategy"
+		strategyKind: "ScrollStrategy",
+		//* set to true to display a scroll thumb in Touch scrollers.
+		thumb: true
 	},
 	events: {
 		onScrollStart: "",
@@ -110,7 +112,7 @@ enyo.kind({
 			this.controlParent = null;
 		}
 		// note: createComponents automatically updates controlParent.
-		this.createComponents([{name: "strategy", maxHeight: this.maxHeight, kind: this.strategyKind, preventDragPropagation: this.preventDragPropagation, isChrome: true}]);
+		this.createComponents([{name: "strategy", maxHeight: this.maxHeight, kind: this.strategyKind, thumb: this.thumb, preventDragPropagation: this.preventDragPropagation, isChrome: true}]);
 		if (this.hasNode()) {
 			this.render();
 		}
@@ -128,6 +130,9 @@ enyo.kind({
 		if (this.showing) {
 			this.restoreScrollPosition();
 		}
+	},
+	thumbChanged: function() {
+		this.$.strategy.setThumb(this.thumb);
 	},
 	cacheScrollPosition: function() {
 		this.cachedPosition = {left: this.getScrollLeft(), top: this.getScrollTop()};
