@@ -26,7 +26,7 @@ enyo.mixin(enyo.dom, {
 		return this._cssTransformProp = this.cssTransformProps[this.styleTransformProps.indexOf(this.getStyleTransformProp())];
 	},
 	getStyleTransformProp: function() {
-		if (this._styleTransformProp && document.body) {
+		if (this._styleTransformProp || !document.body) {
 			return this._styleTransformProp;
 		}
 		for (var i = 0, p; p = this.styleTransformProps[i]; i++) {
@@ -71,17 +71,9 @@ enyo.mixin(enyo.dom, {
 			ds[cp] = t;
 			if (st) {
 				st[sp] = t;
+			} else {
+				inControl.domStylesChanged();
 			}
-		} else {
-			for (var i=0; (cp=this.cssTransformProps[i]) && (sp=this.styleTransformProps[i]); i++) {
-				ds[cp] = t;
-				if (st) {
-					st[sp] = t;
-				}
-			}
-		}
-		if (!st) {
-			inControl.domStylesChanged();
 		}
 	}
 });
