@@ -13,6 +13,10 @@ enyo.kind({
 			{name: "client"}
 		]}
 	],
+	create: function() {
+		this.inherited(arguments);
+		this.accel = enyo.dom.canAccelerate();
+	},
 	calcScrollNode: function() {
 		return this.$.clientContainer.hasNode();
 		//return this.container.hasNode();
@@ -48,12 +52,23 @@ enyo.kind({
 	},
 	// while moving, scroller uses translate
 	effectScroll: function(inX, inY) {
-		var o = inX + "px, " + inY + "px, 0";
-		this.effectTransform({translate3d: o});
+		var t = {};
+		var o = inX + "px, " + inY + "px";
+		var to = "translate";
+		if (this.accel) {
+			to = "translate3d";
+			o += ", 0";
+		}
+		t[to] = o;
+		this.effectTransform(t);
 	},
 	// when stopped, we use scrollLeft/Top (makes cursor positioning automagic)
 	effectScrollStop: function() {
-		this.effectTransform({translate3d: "0, 0, 0"});
+		if (this.accel) {
+			this.effectTransform({translate3d: "0, 0, 0"});
+		} else {
+			this.effectTransform({translate: "0, 0"});
+		}
 		this.setScrollLeft(this.scrollLeft);
 		this.setScrollTop(this.scrollTop);
 	},
