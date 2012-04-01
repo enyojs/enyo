@@ -269,16 +269,12 @@ enyo.kind({
 	},
 	effectOverscroll: function(inX, inY) {
 		var n = this.scrollNode;
-		var o = {};
+		var o = {translateX: null, translateY: null};
 		if (inY !== null && Math.abs(inY - n.scrollTop) > 1) {
 			o.translateY = (n.scrollTop - inY) + "px";
-		} else {
-			o.translateY = null;
 		}
 		if (inX !== null && Math.abs(inX - n.scrollLeft) > 1) {
 			o.translateX = (n.scrollLeft - inX) + "px";
-		} else {
-			o.translateX = null;
 		}
 		this.effectTransform(o);
 	},

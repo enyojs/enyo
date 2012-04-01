@@ -45,32 +45,24 @@ enyo.kind({
 		if (this.isScrolling()) {
 			this.effectScroll(this.startX - this.scrollLeft, this.startY - this.scrollTop);
 			if (this.thumb) {
-				this.updateThumbs();
+				this.alertThumbs();
 			}
 		}
 		this.doScroll(inSender);
 	},
 	// while moving, scroller uses translate
 	effectScroll: function(inX, inY) {
-		var t = {};
 		var o = inX + "px, " + inY + "px";
-		var to = "translate";
-		if (this.accel) {
-			to = "translate3d";
-			o += ", 0";
-		}
-		t[to] = o;
-		this.effectTransform(t);
+		this.effectTransform(this.makeTransform(o));
 	},
 	// when stopped, we use scrollLeft/Top (makes cursor positioning automagic)
 	effectScrollStop: function() {
-		if (this.accel) {
-			this.effectTransform({translate3d: "0, 0, 0"});
-		} else {
-			this.effectTransform({translate: "0, 0"});
-		}
+		this.effectTransform(this.makeTransform("0, 0"));
 		this.setScrollLeft(this.scrollLeft);
 		this.setScrollTop(this.scrollTop);
 	},
-	down: enyo.nop
+	down: enyo.nop,
+	makeTransform: function(inProps) {
+		return this.accel ? {transform3d: inProps + ", 0"} : {transform: inProps};
+	}
 });
