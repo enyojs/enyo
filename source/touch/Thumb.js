@@ -9,30 +9,32 @@
 		var v = this.axis == "v";;
 		this.dimension = v ? "height" : "width";
 		this.offset = v ? "top" : "left";
+		this.translation = v ? "translateY" : "translateX";
+		this.positionMethod = v ? "getScrollTop" : "getScrollLeft";
+		this.sizeDimension = v ? "clientHeight" : "clientWidth";
 		this.addClass("enyo-" + this.axis + "thumb");
 		if (enyo.dom.canAccelerate()) {
 			enyo.dom.transformValue(this, "translateZ", 0);
 		}
 	},
 	sync: function(inStrategy) {
-		this.scrollSize = inStrategy.container.getBounds();
 		this.scrollBounds = inStrategy._getScrollBounds();
 		this.update(inStrategy);
 	},
 	update: function(inStrategy) {
 		var d = this.dimension, o = this.offset;
-		var bd = this.scrollSize[d], sbd = this.scrollBounds[d];
-		var overs = 0, overp = 0;
+		var bd = this.scrollBounds[this.sizeDimension], sbd = this.scrollBounds[d];
+		var overs = 0, overp = 0, over=0;
 		if (bd >= sbd) {
 			this.hide();
 			return;
 		}
-		var sbo = o === "top" ? inStrategy.scrollTop : inStrategy.scrollLeft;
 		if (inStrategy.isOverscrolling()) {
 			var over = inStrategy.getOverScrollBounds()["over" + o];
 			overs = Math.abs(over);
 			overp = Math.max(over, 0);
 		}
+		var sbo = inStrategy[this.positionMethod]() - over;
 		// calc size & position
 		var bdc = bd - this.cornerSize;
 		var s = Math.floor((bd * bd / sbd) - overs);
@@ -44,13 +46,7 @@
 		if (this.needed && this.hasNode()) {
 			if (this._pos !== p) {
 				this._pos = p;
-				var to = "";
-				if (o === "top") {
-					to = "translateY";
-				} else {
-					to = "translateX";
-				}
-				enyo.dom.transformValue(this, to, p + "px");
+				enyo.dom.transformValue(this, this.translation, p + "px");
 			}
 			if (this._size !== s) {
 				this._size = s;
@@ -64,7 +60,7 @@
 	// we delayHide but we want to cancel the hide.
 	setShowing: function(inShowing) {
 		if (inShowing && inShowing != this.showing) {
-			if (this.scrollSize[this.dimension] >= this.scrollBounds[this.dimension]) {
+			if (this.scrollBounds[this.sizeDimension] >= this.scrollBounds[this.dimension]) {
 				return;
 			}
 		}
