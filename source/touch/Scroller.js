@@ -36,6 +36,7 @@ enyo.kind({
 
 			* <a href="#enyo.ScrollStrategy">ScrollStrategy</a> is the default and implements no scrolling, relying instead on the environment to scroll properly.
 			* <a href="#enyo.TouchScrollStrategy">TouchScrollStrategy</a> implements a touch scrolling mechanism.
+			* <a href="#enyo.TranslateScrollStrategy">TranslateScrollStrategy</a> implements a touch scrolling mechanism using translations, recommended only for Android 3 and 4 currently.
 		*/
 		strategyKind: "ScrollStrategy",
 		//* set to true to display a scroll thumb in Touch scrollers.
@@ -57,17 +58,19 @@ enyo.kind({
 	//* @protected
 	statics: {
 		osInfo: [
-			{os: "android", version: 1e9},
-			{os: "ios", version: 1e9},
+			{os: "android", version: 3},
+			{os: "ios", version: 5},
 			{os: "webos", version: 1e9}
 		],
+		//* returns true if platform should have touch events
 		hasTouchScrolling: function() {
 			for (var i=0, t, m; t=this.osInfo[i]; i++) {
-				if (enyo.platform[t.os] >= t.version) {
+				if (enyo.platform[t.os]) {
 					return true;
 				}
 			}
 		},
+		//* returns true if the platform has native div scrollers, desktop browsers always have them
 		hasNativeScrolling: function() {
 			for (var i=0, t, m; t=this.osInfo[i]; i++) {
 				if (enyo.platform[t.os] < t.version) {
@@ -192,7 +195,7 @@ enyo.kind({
 	}
 });
 
-// provide a touch scrolling solution by default when the environment has no native scrolling.
-if (!enyo.Scroller.hasNativeScrolling()) {
+// provide a touch scrolling solution by default when the environment is mobile
+if (enyo.Scroller.hasTouchScrolling()) {
 	enyo.Scroller.prototype.strategyKind = enyo.Scroller.getTouchStrategy();
 }
