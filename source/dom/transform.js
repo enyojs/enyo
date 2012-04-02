@@ -23,7 +23,7 @@ enyo.mixin(enyo.dom, {
 		if (this._cssTransformProp) {
 			return this._cssTransformProp;
 		}
-		var i = enyo.indexOf(this.styleTransformProps, this.getStyleTransformProp());
+		var i = enyo.indexOf(this.getStyleTransformProp(), this.styleTransformProps);
 		return this._cssTransformProp = this.cssTransformProps[i];
 	},
 	getStyleTransformProp: function() {
