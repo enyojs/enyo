@@ -13,13 +13,8 @@ enyo.kind({
 			{name: "client"}
 		]}
 	],
-	create: function() {
-		this.inherited(arguments);
-		this.accel = enyo.dom.canAccelerate();
-	},
 	calcScrollNode: function() {
 		return this.$.clientContainer.hasNode();
-		//return this.container.hasNode();
 	},
 	maxHeightChanged: function() {
 		this.inherited(arguments);
@@ -33,36 +28,35 @@ enyo.kind({
 	},
 	scrollMathStart: function(inSender) {
 		this.inherited(arguments);
-		if (this.scrollNode) {
-			this.startX = this.getScrollLeft();
-			this.startY = this.getScrollTop();
-		}
+		this.scrollStarting = true;
 	},
 	scrollMathScroll: function(inSender) {
 		this.scrollLeft = -inSender.x;
 		this.scrollTop = -inSender.y;
-		// hmph, scroll called after stop
 		if (this.isScrolling()) {
-			this.effectScroll(this.startX - this.scrollLeft, this.startY - this.scrollTop);
+			// reset dom scroll position when starting to scroll and use transforms
+			if (this.scrollStarting && this.scrollNode) {
+				this.scrollStarting = false;
+				this.scrollNode.scrollTop = this.scrollNode.scrollLeft = 0;
+			}
+			this.effectScroll(-this.scrollLeft, -this.scrollTop);
 			if (this.thumb) {
-				this.alertThumbs();
+				this.updateThumbs();
 			}
 		}
 		this.doScroll(inSender);
 	},
 	// while moving, scroller uses translate
 	effectScroll: function(inX, inY) {
-		var o = inX + "px, " + inY + "px";
-		this.effectTransform(this.makeTransform(o));
+		var o = inX + "px, " + inY + "px" + (this.accel ? ",0" : "");
+		enyo.dom.transformValue(this.$.client, this.translation, o);
 	},
 	// when stopped, we use scrollLeft/Top (makes cursor positioning automagic)
 	effectScrollStop: function() {
-		this.effectTransform(this.makeTransform("0, 0"));
+		var t = "0,0" + (this.accel ? ",0" : "");
+		enyo.dom.transformValue(this.$.client, this.translation, t);
 		this.setScrollLeft(this.scrollLeft);
 		this.setScrollTop(this.scrollTop);
 	},
-	down: enyo.nop,
-	makeTransform: function(inProps) {
-		return this.accel ? {translate3d: inProps + ", 0"} : {translate: inProps};
-	}
+	down: enyo.nop
 });

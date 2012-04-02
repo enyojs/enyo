@@ -64,7 +64,11 @@ enyo.kind({
 	create: function() {
 		this.inherited(arguments);
 		this.$.client.addClass(this.clientClasses);
-		this.container.addClass("enyo-touch-strategy-container");
+		//
+		this.accel = enyo.dom.canAccelerate();
+		var containerClasses = "enyo-touch-strategy-container" + (this.accel ? " enyo-composite" : "");
+		this.container.addClass(containerClasses);
+		this.translation = this.accel ? "translate3d" : "translate";
 	},
 	initComponents: function() {
 		this.createChrome(this.tools);
@@ -92,6 +96,9 @@ enyo.kind({
 		if (!this.isScrolling()) {
 			this.calcBoundaries();
 			this.syncScrollMath();
+			if (this.thumb) {
+				this.alertThumbs();
+			}
 		}
 		return true;
 	},
@@ -123,16 +130,10 @@ enyo.kind({
 	},
 	setScrollLeft: function() {
 		this.stop();
-		if (this.thumb) {
-			this.alertThumbs();
-		}
 		this.inherited(arguments);
 	},
 	setScrollTop: function() {
 		this.stop();
-		if (this.thumb) {
-			this.alertThumbs();
-		}
 		this.inherited(arguments);
 	},
 	getScrollLeft: function() {
@@ -236,14 +237,16 @@ enyo.kind({
 	scrollMathScroll: function(inSender) {
 		this.effectScroll(-inSender.x, -inSender.y);
 		if (this.thumb) {
-			this.alertThumbs();
+			this.updateThumbs();
 		}
 		this.doScroll(inSender);
 	},
 	scrollMathStop: function(inSender) {
 		this.effectScrollStop();
 		if (this.thumb) {
-			this.hideThumbs(500);
+			// hide thumb on a short delay... it can disappear rather quickly 
+			// since it's come to rest slowly via friction
+			this.hideThumbs(100);
 		}
 		this.doScrollStop(inSender);
 	},
@@ -269,17 +272,14 @@ enyo.kind({
 	},
 	effectOverscroll: function(inX, inY) {
 		var n = this.scrollNode;
-		var o = {translateX: null, translateY: null};
+		var x = "0,", y = "0", z = this.accel ? ",0" : "";
 		if (inY !== null && Math.abs(inY - n.scrollTop) > 1) {
-			o.translateY = (n.scrollTop - inY) + "px";
+			y = (n.scrollTop - inY) + "px";
 		}
 		if (inX !== null && Math.abs(inX - n.scrollLeft) > 1) {
-			o.translateX = (n.scrollLeft - inX) + "px";
+			x = (n.scrollLeft - inX) + "px,";
 		}
-		this.effectTransform(o);
-	},
-	effectTransform: function(inTransforms) {
-		enyo.dom.transform(this.$.client, inTransforms);
+		enyo.dom.transformValue(this.$.client, this.translation, x + y + z);
 	},
 	getOverScrollBounds: function() {
 		var m = this.$.scrollMath;
