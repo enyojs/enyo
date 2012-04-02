@@ -63,6 +63,6 @@ enyo.kind({
 	},
 	down: enyo.nop,
 	makeTransform: function(inProps) {
-		return this.accel ? {transform3d: inProps + ", 0"} : {transform: inProps};
+		return this.accel ? {translate3d: inProps + ", 0"} : {translate: inProps};
 	}
 });
