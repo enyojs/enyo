@@ -19,6 +19,8 @@
 		_cancelFrame(_requestFrame(enyo.nop));
 	} else if (_cancelFrame = window.mozCancelRequestAnimationFrame) {
 		_requestFrame = window.mozRequestAnimationFrame;
+	} else if (_cancelFrame = window.msCancelRequestAnimationFrame) {
+		_requestFrame = window.msRequestAnimationFrame;
 	} else {
 		_requestFrame = function(inCallback /*, inNode */) {
 			return window.setTimeout(inCallback, Math.round(1000/60));
