@@ -72,11 +72,12 @@ enyo.kind({
 			this.setScrollTop(inY);
 		}
 	},
-	scrollToControl: function(inControl) {
+	scrollToControl: function(inControl, inAlignWithTop) {
 		var sb = this.getScrollBounds();
 		var b = inControl.getBounds();
-		this.setScrollTop(Math.min(sb.maxTop, b.top));
-		this.setScrollLeft(Math.min(sb.maxLeft, b.left));
+		// By default, the element is scrolled to align with the top of the scroll area.
+		this.setScrollTop(Math.min(sb.maxTop, inAlignWithTop === false ? b.top - sb.clientHeight + b.height : b.top));
+		this.setScrollLeft(Math.min(sb.maxLeft, inAlignWithTop === false ? b.left - sb.clientWidth + b.width : b.left));
 	},
 	scrollIntoView: function(inControl, inAlignWithTop) {
 		if (inControl.hasNode()) {
