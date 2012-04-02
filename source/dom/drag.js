@@ -107,7 +107,7 @@ enyo.gesture.drag = {
 			shiftKey: inEvent.shiftKey,
 			srcEvent: inEvent.srcEvent
 		};
-		e.preventNativeDefault = enyo.gesture.preventNativeDefault;
+		e.preventDefault = enyo.gesture.preventDefault;
 		e.disablePrevention = enyo.gesture.disablePrevention;
 		return e;
 	},
@@ -150,7 +150,7 @@ enyo.gesture.drag = {
 		// note: use clientX/Y to be compatible with ie8
 		this.px0 = e.clientX;
 		this.py0 = e.clientY;
-		this.flickInfo = {startEvent: e};
+		this.flickInfo = {startEvent: e, moves: []};
 		this.track(e);
 	},
 	track: function(e) {
@@ -185,6 +185,86 @@ enyo.gesture.drag = {
 		}
 		this.flickInfo = null;
 	},
+	/*
+	track: function(e) {
+		this.dx = e.clientX - this.px0;
+		this.dy = e.clientY - this.py0;
+		//
+		var ti = this.flickInfo;
+		// keep 10 points
+		var n = enyo.now();
+		ti.moves.push({
+			x: e.clientX, 
+			y: e.clientY, 
+			t: n
+		});
+		if (ti.moves.length > 10) {
+			ti.moves.shift();
+		}
+	},
+	// average
+	
+	endTracking: function(e) {
+		this.tracking = false;
+		var ti = this.flickInfo;
+		var moves = ti.moves;
+		if (moves.length > 1) {
+			// note: important to use up time to reduce flick 
+			// velocity based on time between move and up.
+			var l = moves[moves.length-1];
+			var n = enyo.now();
+			// average over last 150ms
+			for (var i=moves.length-1, dx=0, dy=0, dt=0, m; m=moves[i]; i--) {
+				dt = n - m.t;
+				dx = l.x - m.x;
+				dy = l.y - m.y;
+				if (dt > 150) {
+					break;
+				}
+			}
+			var x = dx / dt;
+			var y = dy / dt;
+			var v = Math.sqrt(x*x + y*y);
+			if (v > this.minFlick) {
+				// generate the flick using the start event so it has those coordinates
+				this.sendFlick(ti.startEvent, x, y, v);
+			}
+		}
+		this.flickInfo = null;
+	},
+	// greatest in time window
+	endTracking: function(e) {
+		this.tracking = false;
+		var ti = this.flickInfo;
+		var moves = ti.moves;
+		if (moves.length > 1) {
+			// note: important to use up time to reduce flick 
+			// velocity based on time between move and up.
+			var l = moves[moves.length-1];
+			var n = enyo.now();
+			l.t = n;
+			for (var i=moves.length-2, x=0, y=0, dt=0, x1=0, y1=0, m; m=moves[i]; i--) {
+				dt = l.t - m.t;
+				x1 = (l.x - m.x) / dt;
+				y1 = (l.y - m.y) / dt;
+				if (Math.abs(x1) > Math.abs(x) || Math.abs(y1) > Math.abs(y)) {
+					x = x1;
+					y = y1;
+				}
+				l = m;
+				if (n - m.t > 100) {
+					break;
+				}
+			}
+			var v = Math.sqrt(x*x + y*y);
+			if (v > this.minFlick) {
+				// generate the flick using the start event so it has those coordinates
+				this.sendFlick(ti.startEvent, x, y, v);
+			}
+		}
+		this.flickInfo = null;
+	},
+	*/
 	beginHold: function(e) {
 		this.holdStart = enyo.now();
 		this.holdJob = setInterval(enyo.bind(this, "sendHoldPulse", e), this.holdPulseDelay);

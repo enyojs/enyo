@@ -33,7 +33,7 @@ enyo.gesture = {
 			e[p] = inEvent[p];
 		}
 		e.srcEvent = e.srcEvent || inEvent;
-		e.preventNativeDefault = this.preventNativeDefault;
+		e.preventDefault = this.preventDefault;
 		e.disablePrevention = this.disablePrevention;
 		//
 		// normalize event.which
@@ -115,14 +115,14 @@ enyo.gesture = {
 //* @protected
 
 // installed on events and called in event context
-enyo.gesture.preventNativeDefault = function() {
+enyo.gesture.preventDefault = function() {
 	if (this.srcEvent) {
 		this.srcEvent.preventDefault();
 	}
 }
 
 enyo.gesture.disablePrevention = function() {
-	this.preventNativeDefault = enyo.nop;
+	this.preventDefault = enyo.nop;
 	if (this.srcEvent) {
 		this.srcEvent.preventDefault = enyo.nop;
 	}

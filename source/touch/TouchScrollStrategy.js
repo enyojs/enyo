@@ -195,7 +195,7 @@ enyo.kind({
 		this.doShouldDrag(inEvent);
 		this.dragging = (inEvent.dragger == this || (!inEvent.dragger && inEvent.boundaryDragger == this));
 		if (this.dragging) {
-			inEvent.preventNativeDefault();
+			inEvent.preventDefault();
 			// note: needed because show/hide changes
 			// the position so sync'ing is required when 
 			// dragging begins (needed because show/hide does not trigger onscroll)
@@ -208,7 +208,7 @@ enyo.kind({
 	},
 	drag: function(inSender, inEvent) {
 		if (this.dragging) {
-			inEvent.preventNativeDefault();
+			inEvent.preventDefault();
 			this.$.scrollMath.drag(inEvent);
 		}
 	},
