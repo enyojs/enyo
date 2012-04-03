@@ -31,6 +31,11 @@ enyo.kind({
 		*/
 		maxHeight: null,
 		/**
+			Set to true to make this scroller select a platform appropriate touch based scrolling strategy.
+			Please note that specifycing a scrollStrategy will take precedence over this setting.
+		*/
+		touch: false,
+		/**
 			Specify a type of scrolling. The enyo Scroller will attempt to automatically select 
 			a strategy compatbile with the runtime environment. A specific strategy can also be chosen:
 
@@ -93,7 +98,7 @@ enyo.kind({
 	importProps: function(inProps) {
 		this.inherited(arguments);
 		// allow global overriding of strategy kind
-		if (inProps && inProps.strategyKind === undefined && enyo.Scroller.touchScrolling) {
+		if (inProps && inProps.strategyKind === undefined && (enyo.Scroller.touchScrolling || this.touch)) {
 			this.strategyKind = enyo.Scroller.getTouchStrategy();
 		}
 	},
