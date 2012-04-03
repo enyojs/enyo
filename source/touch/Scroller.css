@@ -13,3 +13,7 @@
 .enyo-touch-strategy-container {
 	overflow: hidden;
 }
+
+.enyo-scrollee-fit {
+	height: 100%;
+}
