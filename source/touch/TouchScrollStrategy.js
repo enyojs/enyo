@@ -110,7 +110,7 @@ enyo.kind({
 	},
 	maxHeightChanged: function() {
 		this.$.client.applyStyle("max-height", this.maxHeight);
-		// note: we used to use enyo-fit here but IE would reset scroll position when the scroll thumb
+		// note: previously used enyo-fit here but IE would reset scroll position when the scroll thumb
 		// was hidden; in general IE resets scrollTop when there are 2 abs position siblings, one has
 		// scrollTop and the other is hidden.
 		this.$.client.addRemoveClass("enyo-scrollee-fit", !this.maxHeight);
