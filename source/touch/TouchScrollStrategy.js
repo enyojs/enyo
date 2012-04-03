@@ -287,8 +287,8 @@ enyo.kind({
 	getOverScrollBounds: function() {
 		var m = this.$.scrollMath;
 		return {
-			overleft: Math.floor(m.x > m.leftBoundary ? m.leftBoundary - m.x : m.rightBoundary - m.x),
-			overtop: Math.floor(m.y > m.topBoundary ? m.topBoundary - m.y : m.bottomBoundary - m.y)
+			overleft: Math.min(m.leftBoundary - m.x, 0) || Math.max(m.rightBoundary - m.x, 0),
+			overtop: Math.min(m.topBoundary - m.y, 0) || Math.max(m.bottomBoundary - m.y, 0)
 		};
 	},
 	_getScrollBounds: function() {
