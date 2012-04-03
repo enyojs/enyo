@@ -232,7 +232,7 @@ enyo.kind({
 		this.start();
 	},
 	mousewheel: function(e) {
-		var dy = this.vertical ? e.wheelDeltaY : 0;
+		var dy = this.vertical ? e.wheelDeltaY || e.wheelDelta: 0;
 		if ((dy > 0 && this.y < this.topBoundary) || (dy < 0 && this.y > this.bottomBoundary)) {
 			this.stop();
 			this.y = this.y0 = this.y0 + dy;
