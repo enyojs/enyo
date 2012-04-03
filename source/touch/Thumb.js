@@ -1,7 +1,7 @@
 ﻿enyo.kind({
 	name: "enyo.ScrollThumb",
 	minSize: 4,
-	cornerSize: 8,
+	cornerSize: 6,
 	classes: "enyo-thumb",
 	axis: "v",
 	create: function() {
