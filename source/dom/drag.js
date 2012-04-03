@@ -179,16 +179,14 @@ enyo.gesture.drag = {
 			var l = moves[moves.length-1];
 			var n = enyo.now();
 			// take the greatest of flick between each tracked move and last move
-			for (var i=moves.length-1, dx=0, dy=0, dt=0, x1=0, y1=0, x=0, y=0, sx=0, sy=0, m; m=moves[i]; i--) {
-				dt = n - m.t;
-				dx = l.x - m.x;
-				dy = l.y - m.y;
-				// establish move direction
-				sx = sx || (dx < 0 ? -1 : (dx > 0 ? 1 : 0));
-				sy = sy || (dy < 0 ? -1 : (dy > 0 ? 1 : 0));
+			for (var i=moves.length-2, dt=0, x1=0, y1=0, x=0, y=0, sx=0, sy=0, m; m=moves[i]; i--) {
 				// this flick (this move - last move) / (this time - last time)
-				x1 = dx / dt;
-				y1 = dy / dt;
+				dt = n - m.t;
+				x1 = (l.x - m.x) / dt;
+				y1 = (l.y - m.y) / dt;
+				// establish flick direction
+				sx = sx || (x1 < 0 ? -1 : (x1 > 0 ? 1 : 0));
+				sy = sy || (y1 < 0 ? -1 : (y1 > 0 ? 1 : 0));
 				// if either axis is a greater flick than previously recorded use this one
 				if ((x1 * sx > x * sx) || (y1 * sy > y * sy)) {
 					x = x1;
