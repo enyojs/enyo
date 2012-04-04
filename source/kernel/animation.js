@@ -1,33 +1,28 @@
 ﻿(function() {
-	var _requestFrame, _cancelFrame;
-	if (_cancelFrame = window.webkitCancelRequestAnimationFrame) {
-		/*
-			API is non-standard, so what enyo exposes may vary from 
-			web documentation for various browsers
-			in particular, enyo.requestAnimationFrame takes no arguments,
-			and the callback receives no arguments
-		*/
-		_requestFrame = window.webkitRequestAnimationFrame;
-		/*
-			Note: (we have requested to change the native implementation to do this)
-			first return value of webkitRequestAnimationFrame is 0 and a call 
-			to webkitCancelRequestAnimationFrame with no arguments will cancel this.
-			To avoid this and to allow for a boolean test of the return value,
-			make 1 bogus call so the first used return value of webkitRequestAnimationFrame is > 0.
-			(we choose to do this rather than wrapping the native function to avoid the overhead)
-		*/
-		_cancelFrame(_requestFrame(enyo.nop));
-	} else if (_cancelFrame = window.mozCancelRequestAnimationFrame) {
-		_requestFrame = window.mozRequestAnimationFrame;
-	} else if (_cancelFrame = window.msCancelRequestAnimationFrame) {
-		_requestFrame = window.msRequestAnimationFrame;
-	} else {
-		_requestFrame = function(inCallback /*, inNode */) {
-			return window.setTimeout(inCallback, Math.round(1000/60));
-		};
-		// Note: IE8 clearTimeout cannot be called via .apply so don't use enyo.bind.
-		_cancelFrame = function(inId) {
-			return window.clearTimeout(inId);
+	var ms = Math.round(1000/60);
+	var prefix = ["webkit", "moz", "ms", "o", ""];
+	var r = "requestAnimationFrame", c = "cancel" + enyo.cap(r);
+	var _requestFrame = function(inCallback) {
+		return window.setTimeout(inCallback, ms);
+	};
+	var _cancelFrame = function(inId) {
+		return window.clearTimeout(inId);
+	}
+	for (var i = 0, pl = prefix.length, p, wc, wr; (p = prefix[i]) || i < pl; i++) {
+		wc = p ? (p + enyo.cap(c)) : c;
+		wr = p ? (p + enyo.cap(r)) : r;
+		if (window[wc]) {
+			_cancelFrame = window[wc];
+			_requestFrame = window[wr];
+			if (p == "webkit") {
+				/*
+					Note: In Chrome, the first return value of webkitRequestAnimationFrame is 0.
+					We make 1 bogus call so the first used return value of webkitRequestAnimationFrame is > 0, as the spec requires.
+					(we choose to do this rather than wrapping the native function to avoid the overhead)
+				*/
+				_cancelFrame(_requestFrame(enyo.nop));
+			}
+			break;
 		}
 	}
 	/**
