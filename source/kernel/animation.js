@@ -2,6 +2,7 @@
 	var ms = Math.round(1000/60);
 	var prefix = ["webkit", "moz", "ms", "o", ""];
 	var r = "requestAnimationFrame", c = "cancel" + enyo.cap(r);
+	// fallback on setTimeout and clearTimeout
 	var _requestFrame = function(inCallback) {
 		return window.setTimeout(inCallback, ms);
 	};
@@ -9,6 +10,7 @@
 		return window.clearTimeout(inId);
 	}
 	for (var i = 0, pl = prefix.length, p, wc, wr; (p = prefix[i]) || i < pl; i++) {
+		// if prefixed, becomes Request and Cancel
 		wc = p ? (p + enyo.cap(c)) : c;
 		wr = p ? (p + enyo.cap(r)) : r;
 		if (window[wc]) {
