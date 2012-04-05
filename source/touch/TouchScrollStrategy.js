@@ -66,7 +66,12 @@ enyo.kind({
 		this.$.client.addClass(this.clientClasses);
 		//
 		this.accel = enyo.dom.canAccelerate();
-		var containerClasses = "enyo-touch-strategy-container" + (this.accel ? " enyo-composite" : "");
+		var containerClasses = "enyo-touch-strategy-container";
+		// note: needed for ios to avoid incorrect clipping of thumb
+		// and need to avoid on Android as it causes problems hiding the thumb
+		if (enyo.platform.ios && this.accel) {
+			containerClasses += " enyo-composite";
+		}
 		this.container.addClass(containerClasses);
 		this.translation = this.accel ? "translate3d" : "translate";
 	},
@@ -116,7 +121,7 @@ enyo.kind({
 		this.$.client.addRemoveClass("enyo-scrollee-fit", !this.maxHeight);
 	},
 	thumbChanged: function() {
-		this.hideThumbs(0);
+		this.hideThumbs();
 	},
 	stop: function() {
 		if (this.isScrolling()) {
@@ -247,9 +252,8 @@ enyo.kind({
 	scrollMathStop: function(inSender) {
 		this.effectScrollStop();
 		if (this.thumb) {
-			// hide thumb on a short delay... it can disappear rather quickly 
-			// since it's come to rest slowly via friction
-			this.hideThumbs(100);
+			// hide thumb immediately; addresses
+			this.hideThumbs();
 		}
 		this.doScrollStop(inSender);
 	},
@@ -303,7 +307,7 @@ enyo.kind({
 	// thumb processing
 	alertThumbs: function() {
 		this.showThumbs();
-		this.hideThumbs(500);
+		this.delayHideThumbs(500);
 	},
 	syncThumbs: function() {
 		this.$.vthumb.sync(this);
@@ -318,7 +322,11 @@ enyo.kind({
 		this.$.vthumb.show();
 		this.$.hthumb.show();
 	},
-	hideThumbs: function(inDelay) {
+	hideThumbs: function() {
+		this.$.vthumb.hide();
+		this.$.hthumb.hide();
+	},
+	delayHideThumbs: function(inDelay) {
 		this.$.vthumb.delayHide(inDelay);
 		this.$.hthumb.delayHide(inDelay);
 	}
