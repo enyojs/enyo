@@ -189,7 +189,11 @@ enyo.kind({
 	},
 	//* ensure that the given control is visible in the scroller's viewport.  Unlike scrollIntoView which uses DOM's scrollIntoView, this only affects the current scroller.
 	scrollToControl: function(inControl, inAlignWithTop) {
-		this.$.strategy.scrollToControl(inControl, inAlignWithTop);
+		this.scrollToNode(inControl.hasNode(), inAlignWithTop);
+	},
+	// ensure that the given node is visible in the scroller's viewport.
+	scrollToNode: function(inNode, inAlignWithTop) {
+		this.$.strategy.scrollToNode(inNode, inAlignWithTop);
 	},
 	// normalize scroll event to onScroll.
 	scroll: function(inSender, e) {
