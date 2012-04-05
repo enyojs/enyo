@@ -72,7 +72,7 @@ enyo.gesture = {
 			tapPrevented = true;
 		};
 		enyo.dispatch(e);
-		if (!tapPrevented) {
+		if (!tapPrevented && this.downEvent && this.downEvent.which == 1) {
 			this.sendTap(e);
 		}
 		this.downEvent = null;
