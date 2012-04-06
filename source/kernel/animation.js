@@ -13,6 +13,7 @@
 		// if prefixed, becomes Request and Cancel
 		wc = p ? (p + enyo.cap(c)) : c;
 		wr = p ? (p + enyo.cap(r)) : r;
+		// Test for cancelRequestAnimationFrame, because some browsers (Firefix 4-10) have a request without a cancel
 		if (window[wc]) {
 			_cancelFrame = window[wc];
 			_requestFrame = window[wr];
@@ -20,6 +21,7 @@
 				/*
 					Note: In Chrome, the first return value of webkitRequestAnimationFrame is 0.
 					We make 1 bogus call so the first used return value of webkitRequestAnimationFrame is > 0, as the spec requires.
+					This makes it so that the requestId is always truthy.
 					(we choose to do this rather than wrapping the native function to avoid the overhead)
 				*/
 				_cancelFrame(_requestFrame(enyo.nop));
