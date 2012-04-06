@@ -125,25 +125,42 @@
 
 	/**
 		Invokes _inFunc_ on each element of _inArray_.
-		Returns an array (map) of the return values from each invocation of _inFunc_.
 		If _inContext_ is specified, _inFunc_ is called with _inContext_ as _this_.
-
-		Aliased as _enyo.map_.
 	*/
 	enyo.forEach = function(inArray, inFunc, inContext) {
-		var result = [];
 		if (inArray) {
-			var context = inContext || this;
-			for (var i=0, l=inArray.length, v; i<l; i++) {
-				v = inFunc.call(context, inArray[i], i, inArray);
-				if (v !== undefined) {
-					result.push(v);
+			var c = inContext || this;
+			if (enyo.isArray(inArray) && inArray.forEach) {
+				inArray.forEach(inFunc, c);
+			} else {
+				var a = Object(inArray);
+				var al = a.length >>> 0;
+				for (var i = 0; i < al; i++) {
+					if (i in inArray) {
+						inFunc.call(c, inArray[i], i, inArray);
+					}
 				}
 			}
 		}
-		return result;
 	};
-	enyo.map = enyo.forEach;
+
+	/**
+		Invokes _inFunc_ on each element of _inArray_, and returns the results as an Array.
+		If _inContext_ is specified, _inFunc_ is called with _inContext_ as _this_.
+	*/
+	enyo.map = function(inArray, inFunc, inContext) {
+		var c = inContext || this;
+		if (enyo.isArray(inArray) && inArray.map) {
+			return inArray.map(inFunc, c);
+		} else {
+			var results = [];
+			var add = function(i, e, a) {
+				results.push(inFunc.call(c, i, e, a));
+			}
+			enyo.forEach(inArray, add, c);
+			return results;
+		}
+	};
 
 	/**
 		Clones an existing Array, or converts an array-like object into an Array.
