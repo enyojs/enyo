@@ -2,6 +2,7 @@ enyo.kind({
 	name: "enyo.Control",
 	kind: enyo.UiComponent,
 	published: {
+		//* HTML tag name to use for control. If its null, no tag is generated, only the contents are used.
 		tag: "div",
 		attributes: null,
 		classes: "",
@@ -523,7 +524,7 @@ enyo.kind({
 		return results;
 	},
 	generateOuterHtml: function(inContent) {
-		if (this.noDom) {
+		if (!this.tag) {
 			return inContent;
 		}
 		if (!this.tagsValid) {

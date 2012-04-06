@@ -5,7 +5,7 @@
 */
 enyo.kind({
 	name: "enyo.ScrollStrategy",
-	noDom: true,
+	tag: null,
 	events: {
 		onScroll: "doScroll"
 	},
