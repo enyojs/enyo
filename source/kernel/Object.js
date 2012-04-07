@@ -101,7 +101,9 @@ enyo.kind({
 			});
 	*/
 	log: function() {
-		enyo.logging.log("log", [(arguments.callee.caller.nom || "(instance method)") + ": "].concat(enyo.cloneArray(arguments)));
+		var acc = arguments.callee.caller;
+		var nom = ((acc ? acc.nom : "") || "(instance method)") + ":";
+		enyo.logging.log("log", [nom].concat(enyo.cloneArray(arguments)));
 	},
 	//* Same as _log_, except uses the console's warn method (if it exists).
 	warn: function() {
