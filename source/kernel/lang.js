@@ -216,20 +216,6 @@
 		return target;
 	};
 
-	//* @protected
-	enyo._hitchArgs = function(scope, method /*,...*/){
-		var pre = enyo.toArray(arguments, 2);
-		var named = enyo.isString(method);
-		return function(){
-			// arrayify "arguments"
-			var args = enyo.toArray(arguments);
-			// locate our method
-			var fn = named ? (scope||enyo.global)[method] : method;
-			// invoke with collected args
-			return fn && fn.apply(scope || this, pre.concat(args));
-		};
-	};
-
 	//* @public
 	/**
 		Returns a function closure that will call (and return the value of) function _method_, with _scope_ as _this_.
@@ -257,24 +243,34 @@
 			// the value of bar.call(foo);
 			var value = fn();
 	*/
-	enyo.bind  = function(scope, method/*, bound arguments*/){
-		if (arguments.length > 2) {
-			return enyo._hitchArgs.apply(enyo, arguments);
-		}
+	enyo.bind = function(scope, method/*, bound arguments*/){
 		if (!method) {
 			method = scope;
 			scope = null;
 		}
+		scope = scope || enyo.global;
 		if (enyo.isString(method)) {
-			scope = scope || enyo.global;
-			if(!scope[method]){ throw(['enyo.bind: scope["', method, '"] is null (scope="', scope, '")'].join('')); }
-			return function(){ return scope[method].apply(scope, arguments || []); };
+			if (scope[method]) {
+				method = scope[method];
+			} else {
+				throw(['enyo.bind: scope["', method, '"] is null (scope="', scope, '")'].join(''));
+			}
 		}
-		return !scope ? method : function(){ return method.apply(scope, arguments || []); };
+		if (enyo.isFunction(method)) {
+			var args = enyo.cloneArray(arguments, 2);
+			if (method.bind) {
+				return method.bind.apply(method, [scope].concat(args));
+			} else {
+				return function() {
+					var nargs = enyo.cloneArray(arguments);
+					// invoke with collected args
+					return method.apply(scope, args.concat(nargs));
+				};
+			}
+		} else {
+			throw(['enyo.bind: scope["', method, '"] is not a function (scope="', scope, '")'].join(''));
+		}
 	};
-
-	// alias for older code
-	//enyo.hitch = enyo.bind;
 
 	/**
 		Calls method _inMethod_ on _inScope_ asynchronously.
