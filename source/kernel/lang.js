@@ -136,8 +136,8 @@
 				var a = Object(inArray);
 				var al = a.length >>> 0;
 				for (var i = 0; i < al; i++) {
-					if (i in inArray) {
-						inFunc.call(c, inArray[i], i, inArray);
+					if (i in a) {
+						inFunc.call(c, a[i], i, a);
 					}
 				}
 			}
