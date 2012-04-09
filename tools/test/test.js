@@ -155,7 +155,8 @@ testBegun: function(a, b) {
 this.$.group.createComponent({
 name: b,
 classes: "enyo-testcase-running",
-content: b + ": running"
+content: b + ": running",
+allowHtml: true
 }).render();
 },
 formatStackTrace: function(a) {
