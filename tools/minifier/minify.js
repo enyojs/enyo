@@ -98,7 +98,7 @@ concatCss = function(loader) {
 
 concatJs = function(loader) {
 	w("");
-	var blob = "";
+	var blob = "enyo = window.enyo || {};";
 	for (var i=0, m; m=loader.modules[i]; i++) {
 		if (!opt["no-alias"] && !opt.alias) {
 			w("* inserting path aliases");
