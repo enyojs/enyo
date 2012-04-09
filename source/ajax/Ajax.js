@@ -90,7 +90,7 @@
 			url: url,
 			method: this.method,
 			callback: enyo.bind(this, "receive"),
-			body: body,
+			body: this.postBody || body,
 			headers: xhr_headers,
 			sync: window.PalmSystem ? false : this.sync,
 			username: this.username,
