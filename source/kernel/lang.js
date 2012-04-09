@@ -154,8 +154,8 @@
 			return inArray.map(inFunc, c);
 		} else {
 			var results = [];
-			var add = function(i, e, a) {
-				results.push(inFunc.call(c, i, e, a));
+			var add = function(e, i, a) {
+				results.push(inFunc.call(c, e, i, a));
 			}
 			enyo.forEach(inArray, add, c);
 			return results;
