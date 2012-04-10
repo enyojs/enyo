@@ -48,20 +48,16 @@ enyo.kind({
 		ondragfinish: "dragfinish",
 		onmousewheel: "mousewheel"
 	},
-	classes: "enyo-touch-scroller",
-	clientClasses: "enyo-touch-scroller",
 	tools: [
 		{kind: "ScrollMath", onScrollStart: "scrollMathStart", onScroll: "scrollMathScroll", onScrollStop: "scrollMathStop"},
 		{name: "vthumb", kind: "ScrollThumb", axis: "v", showing: false},
 		{name: "hthumb", kind: "ScrollThumb", axis: "h", showing: false}
 	],
 	components: [
-		{name: "client", attributes: {"onscroll": enyo.bubbler}}
+		{name: "client", attributes: {"onscroll": enyo.bubbler}, classes: "enyo-touch-scroller"}
 	],
 	create: function() {
 		this.inherited(arguments);
-		this.$.client.addClass(this.clientClasses);
-		//
 		this.accel = enyo.dom.canAccelerate();
 		var containerClasses = "enyo-touch-strategy-container";
 		// note: needed for ios to avoid incorrect clipping of thumb
