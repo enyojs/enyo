@@ -3,5 +3,6 @@
 	"json.js",
 	"cookie.js",
 	"xhr.js",
-	"Ajax.js"
+	"Ajax.js",
+	"Jsonp.js"
 );

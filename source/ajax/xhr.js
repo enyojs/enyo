@@ -10,6 +10,7 @@ enyo.xhr = {
 		- _headers_: Request headers.
 		- _username_: The optional user name to use for authentication purposes.
 		- _password_: The optional password to use for authentication purposes.
+		- _xhrFields_: Optional object containing name/value pairs to mix directly into the generated xhr object.
 	*/
 	request: function(inParams) {
 		var xhr = this.getXMLHttpRequest();
@@ -22,12 +23,16 @@ enyo.xhr = {
 		} else {
 			xhr.open(method, enyo.path.rewrite(inParams.url), async);
 		}
+		//
+		enyo.mixin(xhr, inParams.xhrFields);
+		//
 		this.makeReadyStateHandler(xhr, inParams.callback);
 		if (inParams.headers) {
 			for (var key in inParams.headers) {
 				xhr.setRequestHeader(key, inParams.headers[key]);
 			}
 		}
+		//
 		xhr.send(inParams.body || null);
 		if (!async) {
 			xhr.onreadystatechange(xhr);
@@ -35,6 +40,13 @@ enyo.xhr = {
 		return xhr;
 	},
 	//* @protected
+	makeReadyStateHandler: function(inXhr, inCallback) {
+		inXhr.onreadystatechange = function() {
+			if (inXhr.readyState == 4) {
+				inCallback && inCallback.apply(null, [inXhr.responseText, inXhr]);
+			}
+		};
+	},
 	getXMLHttpRequest: function() {
 		try {
 			return new XMLHttpRequest();
@@ -46,12 +58,5 @@ enyo.xhr = {
 			return new ActiveXObject('Microsoft.XMLHTTP');
 		} catch (e) {}
 		return null;
-	},
-	makeReadyStateHandler: function(inXhr, inCallback) {
-		inXhr.onreadystatechange = function() {
-			if (inXhr.readyState == 4) {
-				inCallback && inCallback.apply(null, [inXhr.responseText, inXhr]);
-			}
-		};
 	}
 };

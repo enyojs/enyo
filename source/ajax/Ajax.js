@@ -42,7 +42,11 @@
 		/**
 			The optional password to use for authentication purposes.
 		*/
-		password: ""
+		password: "",
+		/**
+			Optional object with fields to pass directly to the underlying XHR object
+		*/
+		xhrFields: null
 	},
 	//* @protected
 	constructor: function(inParams) {
@@ -90,7 +94,8 @@
 			headers: xhr_headers,
 			sync: window.PalmSystem ? false : this.sync,
 			username: this.username,
-			password: this.password
+			password: this.password,
+			xhrFields: this.xhrFields
 		});
 	},
 	receive: function(inText, inXhr) {
