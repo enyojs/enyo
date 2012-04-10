@@ -8,7 +8,6 @@ enyo.mixin(enyo.dom, {
 		if (enyo.platform.android <= 2) {
 			return false;
 		}
-		var b = document.body;
 		var p$ = ["perspective", "msPerspective", "MozPerspective", "WebkitPerspective", "OPerspective"];
 		for (var i=0, p; p=p$[i]; i++) {
 			if (typeof document.body.style[p] != "undefined") {

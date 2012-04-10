@@ -125,25 +125,42 @@
 
 	/**
 		Invokes _inFunc_ on each element of _inArray_.
-		Returns an array (map) of the return values from each invocation of _inFunc_.
 		If _inContext_ is specified, _inFunc_ is called with _inContext_ as _this_.
-
-		Aliased as _enyo.map_.
 	*/
 	enyo.forEach = function(inArray, inFunc, inContext) {
-		var result = [];
 		if (inArray) {
-			var context = inContext || this;
-			for (var i=0, l=inArray.length, v; i<l; i++) {
-				v = inFunc.call(context, inArray[i], i, inArray);
-				if (v !== undefined) {
-					result.push(v);
+			var c = inContext || this;
+			if (enyo.isArray(inArray) && inArray.forEach) {
+				inArray.forEach(inFunc, c);
+			} else {
+				var a = Object(inArray);
+				var al = a.length >>> 0;
+				for (var i = 0; i < al; i++) {
+					if (i in a) {
+						inFunc.call(c, a[i], i, a);
+					}
 				}
 			}
 		}
-		return result;
 	};
-	enyo.map = enyo.forEach;
+
+	/**
+		Invokes _inFunc_ on each element of _inArray_, and returns the results as an Array.
+		If _inContext_ is specified, _inFunc_ is called with _inContext_ as _this_.
+	*/
+	enyo.map = function(inArray, inFunc, inContext) {
+		var c = inContext || this;
+		if (enyo.isArray(inArray) && inArray.map) {
+			return inArray.map(inFunc, c);
+		} else {
+			var results = [];
+			var add = function(e, i, a) {
+				results.push(inFunc.call(c, e, i, a));
+			}
+			enyo.forEach(inArray, add, c);
+			return results;
+		}
+	};
 
 	/**
 		Clones an existing Array, or converts an array-like object into an Array.
@@ -199,20 +216,6 @@
 		return target;
 	};
 
-	//* @protected
-	enyo._hitchArgs = function(scope, method /*,...*/){
-		var pre = enyo.toArray(arguments, 2);
-		var named = enyo.isString(method);
-		return function(){
-			// arrayify "arguments"
-			var args = enyo.toArray(arguments);
-			// locate our method
-			var fn = named ? (scope||enyo.global)[method] : method;
-			// invoke with collected args
-			return fn && fn.apply(scope || this, pre.concat(args));
-		};
-	};
-
 	//* @public
 	/**
 		Returns a function closure that will call (and return the value of) function _method_, with _scope_ as _this_.
@@ -240,24 +243,34 @@
 			// the value of bar.call(foo);
 			var value = fn();
 	*/
-	enyo.bind  = function(scope, method/*, bound arguments*/){
-		if (arguments.length > 2) {
-			return enyo._hitchArgs.apply(enyo, arguments);
-		}
+	enyo.bind = function(scope, method/*, bound arguments*/){
 		if (!method) {
 			method = scope;
 			scope = null;
 		}
+		scope = scope || enyo.global;
 		if (enyo.isString(method)) {
-			scope = scope || enyo.global;
-			if(!scope[method]){ throw(['enyo.bind: scope["', method, '"] is null (scope="', scope, '")'].join('')); }
-			return function(){ return scope[method].apply(scope, arguments || []); };
+			if (scope[method]) {
+				method = scope[method];
+			} else {
+				throw(['enyo.bind: scope["', method, '"] is null (scope="', scope, '")'].join(''));
+			}
 		}
-		return !scope ? method : function(){ return method.apply(scope, arguments || []); };
+		if (enyo.isFunction(method)) {
+			var args = enyo.cloneArray(arguments, 2);
+			if (method.bind) {
+				return method.bind.apply(method, [scope].concat(args));
+			} else {
+				return function() {
+					var nargs = enyo.cloneArray(arguments);
+					// invoke with collected args
+					return method.apply(scope, args.concat(nargs));
+				};
+			}
+		} else {
+			throw(['enyo.bind: scope["', method, '"] is not a function (scope="', scope, '")'].join(''));
+		}
 	};
-
-	// alias for older code
-	//enyo.hitch = enyo.bind;
 
 	/**
 		Calls method _inMethod_ on _inScope_ asynchronously.

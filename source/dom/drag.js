@@ -172,8 +172,8 @@ enyo.gesture.drag = {
 	endTracking: function(e) {
 		this.tracking = false;
 		var ti = this.flickInfo;
-		var moves = ti.moves;
-		if (moves.length > 1) {
+		var moves = ti && ti.moves;
+		if (moves && moves.length > 1) {
 			// note: important to use up time to reduce flick 
 			// velocity based on time between move and up.
 			var l = moves[moves.length-1];

@@ -53,13 +53,20 @@ enyo.kind({
 		onScrollStop: ""
 	},
 	handlers: {
-		onscroll: "scroll"
+		onscroll: "scroll",
+		onScrollStart: "strategyScrollStart",
+		onScroll: "strategyScroll", 
+		onScrollStop: "strategyScrollStop"
 	},
 	classes: "enyo-scroller",
 	/**
 		If true, the scroller will not propagate dragstart events that cause it to start scrolling (defaults to true)
 	*/
 	preventDragPropagation: true,
+	/**
+		If true, the scroller will not propagate scroll events.
+	*/
+	preventScrollPropagation: true,
 	//* @protected
 	statics: {
 		osInfo: [
@@ -189,14 +196,36 @@ enyo.kind({
 	},
 	//* ensure that the given control is visible in the scroller's viewport.  Unlike scrollIntoView which uses DOM's scrollIntoView, this only affects the current scroller.
 	scrollToControl: function(inControl, inAlignWithTop) {
-		this.$.strategy.scrollToControl(inControl, inAlignWithTop);
+		this.scrollToNode(inControl.hasNode(), inAlignWithTop);
+	},
+	// ensure that the given node is visible in the scroller's viewport.
+	scrollToNode: function(inNode, inAlignWithTop) {
+		this.$.strategy.scrollToNode(inNode, inAlignWithTop);
 	},
 	// normalize scroll event to onScroll.
 	scroll: function(inSender, e) {
 		if (this.$.strategy.scroll) {
 			this.$.strategy.scroll(inSender, e);
 		}
-		return this.doScroll(e);
+		this.doScroll(e);
+		return true;
+	},
+	shouldStopScrollEvent: function(inEvent) {
+		return (this.preventScrollPropagation && inEvent.originator.owner != this.$.strategy);
+	},
+	strategyScrollStart: function(inSender, inEvent) {
+		return this.shouldStopScrollEvent(inEvent);
+	},
+	strategyScroll: function(inSender, inEvent) {
+		// note: scroll event can be native dom or generated.
+		if (inEvent.dispatchTarget) {
+			return this.preventScrollPropagation && inEvent.dispatchTarget != this;
+		} else {
+			return this.shouldStopScrollEvent(inEvent);
+		}
+	},
+	strategyScrollStop: function(inSender, inEvent) {
+		return this.shouldStopScrollEvent(inEvent);
 	}
 });
 

@@ -50,7 +50,7 @@ enyo.dom = {
 		}
 		var b = this.getFirstElementByTagName("body");
 		if (b) {
-			b.className += " enyo-document-fit";
+			b.className += " enyo-body-fit";
 		}
 		enyo.bodyIsFitting = true;
 	}

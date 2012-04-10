@@ -37,7 +37,7 @@ enyo.kind({
 	build: function() {
 		this.destroyClientControls();
 		for (var i=0; i<this.rows; i++) {
-			var c = this.createComponent({noDom: true, rowIndex: i});
+			var c = this.createComponent({tag: null, rowIndex: i});
 			// do this as a second step so 'c' is the owner of the created components
 			c.createComponents(this.rowComponents);
 			this.doSetupRow({index: i, row: c});

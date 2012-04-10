@@ -13,6 +13,12 @@ enyo.kind({
 	name: "enyo.RichText",
 	classes: "enyo-richtext enyo-selectable",
 	published: {
+		/**
+			_allowHtml_ is enabled by default in RichText to take advantage of all the rich editing properties.
+			However, this allows for **ANY** HTML to be inserted into the RichText, including _iframe_ and _script_ tags, which can be a secuity concern in some situations.
+			If set to false, inserted HTML will be escaped.
+		*/
+		allowHtml: true,
 		disabled: false,
 		value: ""
 	},

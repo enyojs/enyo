@@ -5,10 +5,7 @@
 */
 enyo.kind({
 	name: "enyo.ScrollStrategy",
-	noDom: true,
-	events: {
-		onScroll: "doScroll"
-	},
+	tag: null,
 	published: {
 		/**
 			Specifies how to horizontally scroll. Acceptable values are:
@@ -72,9 +69,15 @@ enyo.kind({
 			this.setScrollTop(inY);
 		}
 	},
-	scrollToControl: function(inControl, inAlignWithTop) {
+	scrollToNode: function(inNode, inAlignWithTop) {
 		var sb = this.getScrollBounds();
-		var b = inControl.getBounds();
+		var n = inNode;
+		var b = {height: n.offsetHeight, width: n.offsetWidth, top: 0, left: 0};
+		while (n && n.parentNode && n.id != this.scrollNode.id) {
+			b.top += n.offsetTop;
+			b.left += n.offsetLeft;
+			n = n.parentNode;
+		}
 		// By default, the element is scrolled to align with the top of the scroll area.
 		this.setScrollTop(Math.min(sb.maxTop, inAlignWithTop === false ? b.top - sb.clientHeight + b.height : b.top));
 		this.setScrollLeft(Math.min(sb.maxLeft, inAlignWithTop === false ? b.left - sb.clientWidth + b.width : b.left));

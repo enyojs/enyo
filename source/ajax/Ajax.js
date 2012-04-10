@@ -2,6 +2,10 @@
 	name: "enyo.Ajax",
 	kind: enyo.Async,
 	published: {
+		/**
+			When true, appends a random number as a parameter for GET requests
+			to try to force a new fetch of the resource instead of reusing a local cache.
+		*/
 		cacheBust: true,
 		/**
 			The URL for the service.  This can be a relative URL if used to fetch resources bundled with the application.
@@ -13,7 +17,7 @@
 		*/
 		method: "GET", // {value: "GET", options: ["GET", "POST", "PUT", "DELETE"]},
 		/**
-			How the response will be handled. 
+			How the response will be handled.
 			Supported values are: <code>"json", "text", "xml"</code>.
 		*/
 		handleAs: "json", // {value: "json", options: ["text", "json", "xml"]},
@@ -27,7 +31,7 @@
 		*/
 		sync: false,
 		/**
-			Optional additional request headers as a JS object, e.g. 
+			Optional additional request headers as a JS object, e.g.
 			<code>{ "X-My-Header": "My Value", "Mood": "Happy" }</code>, or null.
 		*/
 		headers: null,
@@ -90,7 +94,7 @@
 			url: url,
 			method: this.method,
 			callback: enyo.bind(this, "receive"),
-			body: body,
+			body: this.postBody || body,
 			headers: xhr_headers,
 			sync: window.PalmSystem ? false : this.sync,
 			username: this.username,

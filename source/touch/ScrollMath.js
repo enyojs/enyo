@@ -12,9 +12,9 @@ enyo.kind({
 		horizontal: true
 	},
 	events: {
-		onScrollStart: "scrollStart",
-		onScroll: "scroll",
-		onScrollStop: "scrollStop"
+		onScrollStart: "",
+		onScroll: "",
+		onScrollStop: ""
 	},
 	//* 'spring' damping returns the scroll position to a value inside the boundaries (lower provides FASTER snapback)
 	kSpringDamping: 0.93,
@@ -234,7 +234,7 @@ enyo.kind({
 	mousewheel: function(e) {
 		var dy = this.vertical ? e.wheelDeltaY || e.wheelDelta: 0;
 		if ((dy > 0 && this.y < this.topBoundary) || (dy < 0 && this.y > this.bottomBoundary)) {
-			this.stop();
+			this.stop(true);
 			this.y = this.y0 = this.y0 + dy;
 			this.start();
 			return true;
