@@ -225,7 +225,7 @@ enyo.kind({
 		}
 	},
 	mousewheel: function(inSender, e) {
-		if (!this.dragging && !this.isScrolling() && this.$.scrollMath.mousewheel(e)) {
+		if (!this.dragging && this.$.scrollMath.mousewheel(e)) {
 			e.preventDefault();
 			return true;
 		}
