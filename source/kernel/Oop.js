@@ -146,12 +146,15 @@ enyo.kind.makeCtor = function() {
 		// two-pass instantiation
 		if (this._constructor) {
 			// pure construction
-			this._constructor.apply(this, arguments);
+			var result = this._constructor.apply(this, arguments);
 		}
 		// defer initialization until entire constructor chain has finished
 		if (this.constructed) {
 			// post-constructor initialization
 			this.constructed.apply(this, arguments);
+		}
+		if (result) {
+			return result;
 		}
 	};
 };
