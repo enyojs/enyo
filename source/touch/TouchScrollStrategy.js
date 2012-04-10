@@ -35,9 +35,6 @@ enyo.kind({
 		thumb: true
 	},
 	events: {
-		onScrollStart: "doScrollStart",
-		onScroll: "doScroll",
-		onScrollStop: "doScrollStop",
 		onShouldDrag: ""
 	},
 	//* @protected
@@ -239,7 +236,6 @@ enyo.kind({
 			if (this.thumb) {
 				this.showThumbs();
 			}
-			this.doScrollStart(inSender);
 		}
 	},
 	scrollMathScroll: function(inSender) {
@@ -247,15 +243,12 @@ enyo.kind({
 		if (this.thumb) {
 			this.updateThumbs();
 		}
-		this.doScroll(inSender);
 	},
 	scrollMathStop: function(inSender) {
 		this.effectScrollStop();
 		if (this.thumb) {
-			// hide thumb immediately; addresses
-			this.hideThumbs();
+			this.delayHideThumbs(100);
 		}
-		this.doScrollStop(inSender);
 	},
 	calcBoundaries: function() {
 		var s = this.$.scrollMath, b = this._getScrollBounds();

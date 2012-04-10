@@ -12,9 +12,9 @@ enyo.kind({
 		horizontal: true
 	},
 	events: {
-		onScrollStart: "scrollStart",
-		onScroll: "scroll",
-		onScrollStop: "scrollStop"
+		onScrollStart: "",
+		onScroll: "",
+		onScrollStop: ""
 	},
 	//* 'spring' damping returns the scroll position to a value inside the boundaries (lower provides FASTER snapback)
 	kSpringDamping: 0.93,

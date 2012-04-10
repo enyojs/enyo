@@ -6,9 +6,6 @@
 enyo.kind({
 	name: "enyo.ScrollStrategy",
 	tag: null,
-	events: {
-		onScroll: "doScroll"
-	},
 	published: {
 		/**
 			Specifies how to horizontally scroll. Acceptable values are:

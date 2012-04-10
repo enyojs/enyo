@@ -17,8 +17,8 @@ enyo.kind({
 		return this.$.clientContainer.hasNode();
 	},
 	maxHeightChanged: function() {
-		this.inherited(arguments);
-		this.$.clientContainer.addRemoveClass("enyo-fit", !this.maxHeight);
+		this.$.client.applyStyle("max-height", this.maxHeight);
+		this.$.clientContainer.addRemoveClass("enyo-scrollee-fit", !this.maxHeight);
 	},
 	shouldDrag: function(inSender, inEvent) {
 		// stop and update drag info before checking drag status
@@ -44,7 +44,6 @@ enyo.kind({
 				this.updateThumbs();
 			}
 		}
-		this.doScroll(inSender);
 	},
 	// while moving, scroller uses translate
 	effectScroll: function(inX, inY) {
@@ -55,6 +54,7 @@ enyo.kind({
 	effectScrollStop: function() {
 		var t = "0,0" + (this.accel ? ",0" : "");
 		enyo.dom.transformValue(this.$.client, this.translation, t);
+		// note: this asynchronously triggers dom scroll event
 		this.setScrollLeft(this.scrollLeft);
 		this.setScrollTop(this.scrollTop);
 	},
