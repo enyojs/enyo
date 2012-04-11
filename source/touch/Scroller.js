@@ -53,10 +53,10 @@ enyo.kind({
 		onScrollStop: ""
 	},
 	handlers: {
-		onscroll: "scroll",
-		onScrollStart: "strategyScrollStart",
-		onScroll: "strategyScroll", 
-		onScrollStop: "strategyScrollStop"
+		onscroll: "domScroll",
+		onScrollStart: "scrollStart",
+		onScroll: "scroll", 
+		onScrollStop: "scrollStop"
 	},
 	classes: "enyo-scroller",
 	/**
@@ -203,8 +203,9 @@ enyo.kind({
 		this.$.strategy.scrollToNode(inNode, inAlignWithTop);
 	},
 	// normalize scroll event to onScroll.
-	scroll: function(inSender, e) {
-		if (this.$.strategy.scroll) {
+	domScroll: function(inSender, e) {
+		// if a scroll event originated here, pass it to our strategy to handle
+		if (this.$.strategy.domScroll && e.originator == this) {
 			this.$.strategy.scroll(inSender, e);
 		}
 		this.doScroll(e);
@@ -213,18 +214,19 @@ enyo.kind({
 	shouldStopScrollEvent: function(inEvent) {
 		return (this.preventScrollPropagation && inEvent.originator.owner != this.$.strategy);
 	},
-	strategyScrollStart: function(inSender, inEvent) {
+	scrollStart: function(inSender, inEvent) {
 		return this.shouldStopScrollEvent(inEvent);
 	},
-	strategyScroll: function(inSender, inEvent) {
+	scroll: function(inSender, inEvent) {
 		// note: scroll event can be native dom or generated.
 		if (inEvent.dispatchTarget) {
-			return this.preventScrollPropagation && inEvent.dispatchTarget != this;
+			// allow a dom event if it orignated with this scroller or its strategy
+			return this.preventScrollPropagation && !(inEvent.originator == this || inEvent.originator.owner == this.$.strategy);
 		} else {
 			return this.shouldStopScrollEvent(inEvent);
 		}
 	},
-	strategyScrollStop: function(inSender, inEvent) {
+	scrollStop: function(inSender, inEvent) {
 		return this.shouldStopScrollEvent(inEvent);
 	}
 });
