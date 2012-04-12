@@ -309,9 +309,8 @@ enyo.kind({
 		this.renderStyles();
 	},
 	stylesToNode: function() {
-		this.node.style.cssText = this.domCssText + this.style;
+		this.node.style.cssText = this.style + this.domCssText;
 	},
-	//
 	//
 	//
 	/**
