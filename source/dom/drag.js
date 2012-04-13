@@ -93,6 +93,8 @@ enyo.gesture.drag = {
 			type: inType,
 			dx: this.dx,
 			dy: this.dy,
+			xDirection: this.xDirection,
+			yDirection: this.yDirection,
 			pageX: inEvent.pageX,
 			pageY: inEvent.pageY,
 			clientX: inEvent.clientX,
@@ -155,8 +157,12 @@ enyo.gesture.drag = {
 		this.track(e);
 	},
 	track: function(e) {
+		this.lastDx = this.dx;
+		this.lastDy = this.dy;
 		this.dx = e.clientX - this.px0;
 		this.dy = e.clientY - this.py0;
+		this.xDirection = this.calcDirection(this.dx - this.lastDx);
+		this.yDirection = this.calcDirection(this.dy - this.lastDy);
 		//
 		var ti = this.flickInfo;
 		ti.moves.push({
@@ -200,6 +206,9 @@ enyo.gesture.drag = {
 			}
 		}
 		this.flickInfo = null;
+	},
+	calcDirection: function(inNum, inDefault) {
+		return inNum > 0 ? 1 : (inNum < 0 ? -1 : inDefault);
 	},
 	beginHold: function(e) {
 		this.holdStart = enyo.now();
