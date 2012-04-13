@@ -63,11 +63,11 @@
 	*/
 	go: function(inParams) {
 		this.startTimer();
-		this.xhr(inParams);
+		this.request(inParams);
 		return this;
 	},
 	//* @protected
-	xhr: function(inParams) {
+	request: function(inParams) {
 		var parts = this.url.split("?");
 		var uri = parts.shift() || "";
 		var args = parts.join("?").split("&");
@@ -90,7 +90,7 @@
 		};
 		enyo.mixin(xhr_headers, this.headers);
 		//
-		enyo.xhr.request({
+		this.xhr = enyo.xhr.request({
 			url: url,
 			method: this.method,
 			callback: enyo.bind(this, "receive"),

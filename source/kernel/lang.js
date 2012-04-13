@@ -163,6 +163,56 @@
 	};
 
 	/**
+		Creates a new array with all elements of _inArray_ that pass the test implemented by _inFunc_.
+		If _inContext_ is specified, _inFunc_ is called with _inContext_ as _this_.
+	*/
+	enyo.filter = function(inArray, inFunc, inContext) {
+		var c = inContext || this;
+		if (enyo.isArray(inArray) && inArray.filter) {
+			inArray.filter(inFunc, c);
+		} else {
+			var results = [];
+			var f = function(e, i, a) {
+				var eo = e;
+				if (inFunc.call(c, e, i, a)) {
+					results.push(eo);
+				}
+			};
+			enyo.forEach(inArray, f, c);
+			return results;
+		}
+	};
+
+	//* Returns an array of all own enumerable properties found on _inObject_
+	enyo.keys = Object.keys || function(inObject) {
+		var results = [];
+		var hop = Object.prototype.hasOwnProperty;
+		for (var prop in inObject) {
+			if (hop.call(inObject, prop)) {
+				results.push(prop);
+			}
+		}
+		// *sigh* IE 8
+		if (!({toString: null}).propertyIsEnumerable("toString")) {
+			var dontEnums = [
+				'toString',
+				'toLocaleString',
+				'valueOf',
+				'hasOwnProperty',
+				'isPrototypeOf',
+				'propertyIsEnumerable',
+				'constructor'
+			];
+			for (var i = 0, p; p = donEnums[i]; i++) {
+				if (hop.call(inObject, p)) {
+					results.push(p);
+				}
+			}
+		}
+		return results;
+	};
+
+	/**
 		Clones an existing Array, or converts an array-like object into an Array.
 
 		If _inOffset_ is non-zero, the cloning is started from that index in the source Array.

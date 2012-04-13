@@ -39,7 +39,7 @@ enyo.kind({
 	},
 	//* @protected
 	handlers: {
-		onscroll: "scroll",
+		onscroll: "domScroll",
 		onflick: "flick",
 		onhold: "hold",
 		ondragstart: "dragstart",
@@ -90,7 +90,7 @@ enyo.kind({
 	isOverscrolling: function() {
 		return this.$.scrollMath.isInOverScroll();
 	},
-	scroll: function() {
+	domScroll: function() {
 		if (!this.isScrolling()) {
 			this.calcBoundaries();
 			this.syncScrollMath();
@@ -98,7 +98,6 @@ enyo.kind({
 				this.alertThumbs();
 			}
 		}
-		return true;
 	},
 	horizontalChanged: function() {
 		this.$.scrollMath.horizontal = (this.horizontal != "hidden");
