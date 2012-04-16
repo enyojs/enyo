@@ -334,7 +334,7 @@ enyo.kind({
 	*/
 	createComponent: function(inInfo, inMoreInfo) {
 		// createComponent and createComponents both delegate to the protected method (_createComponent),
-		// allowing overrides to customize createComponents and createComponents separately.
+		// allowing overrides to customize createComponent and createComponents separately.
 		return this._createComponent(inInfo, inMoreInfo);
 	},
 	/**
