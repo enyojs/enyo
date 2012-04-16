@@ -21,6 +21,8 @@ enyo.kind({
 		return this.$.clientContainer.hasNode();
 	},
 	maxHeightChanged: function() {
+		// content should cover scroller at a minimum if there's no max-height.
+		this.$.client.applyStyle("min-height", this.maxHeight ? null : "100%");
 		this.$.client.applyStyle("max-height", this.maxHeight);
 		this.$.clientContainer.addRemoveClass("enyo-scrollee-fit", !this.maxHeight);
 	},
