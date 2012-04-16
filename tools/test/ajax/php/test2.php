@@ -1,6 +1,9 @@
 <?php
 $method = @$_SERVER['REQUEST_METHOD'];
 switch ($method) {
+	case 'GET':
+		get();
+		break;
 	case 'POST':
 		post();
 		break;
@@ -12,6 +15,11 @@ switch ($method) {
 		break;
 	default:
 		echo "invalid method";
+}
+
+function get() {
+	$result = array('status' => "get");
+	echo json_encode($result);
 }
 
 function post() {
@@ -29,7 +37,8 @@ function post() {
 }
 
 function put() {
-	$result = array('status' => "put");
+	$c = @$_SERVER["CONTENT_TYPE"];
+	$result = array('status' => "put", 'ctype' => $c);
 	echo json_encode($result);
 }
 
