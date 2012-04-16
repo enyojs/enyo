@@ -318,6 +318,10 @@ enyo.kind({
 	*/
 	render: function() {
 		if (this.parent) {
+			// don't render if the parent has not generated
+			if (!this.parent.generated) {
+				return this;
+			}
 			// allow the parent to flow
 			this.parent.beforeChildRender(this);
 		}
@@ -450,7 +454,7 @@ enyo.kind({
 		return this.getAttribute("src");
 	},
 	srcChanged: function() {
-		this.setAttribute("src", this.src);
+		this.setAttribute("src", enyo.path.rewrite(this.src));
 	},
 	attributesChanged: function() {
 		this.invalidateTags();
@@ -459,27 +463,6 @@ enyo.kind({
 	//
 	// HTML rendering
 	//
-	invalidateTags: function() {
-		this.tagsValid = false;
-	},
-	prepareTags: function() {
-		//this.log("(" + this.owner.name + ") " + this.name + ": " + this.id + " (" + this.attributes.id + ")");
-		//var htmlStyle = enyo.Control.domStylesToCssText(this.domStyles);
-		var htmlStyle = this.domCssText + this.style;
-		this._openTag = '<' 
-			+ this.tag
-			+ (htmlStyle ? ' style="' + htmlStyle + '"' : "")
-			+ enyo.Control.attributesToHtml(this.attributes)
-			;
-		if (enyo.Control.selfClosing[this.tag]) {
-			this._openTag += '/>';
-			this._closeTag =  '';
-		} else {
-			this._openTag += '>';
-			this._closeTag =  '</' + this.tag + '>';
-		}
-		this.tagsValid = true;
-	},
 	generateHtml: function() {
 		if (this.canGenerate === false) {
 			return '';
@@ -530,6 +513,27 @@ enyo.kind({
 			this.prepareTags();
 		}
 		return this._openTag + inContent + this._closeTag;
+	},
+	invalidateTags: function() {
+		this.tagsValid = false;
+	},
+	prepareTags: function() {
+		//this.log("(" + this.owner.name + ") " + this.name + ": " + this.id + " (" + this.attributes.id + ")");
+		//var htmlStyle = enyo.Control.domStylesToCssText(this.domStyles);
+		var htmlStyle = this.domCssText + this.style;
+		this._openTag = '<' 
+			+ this.tag
+			+ (htmlStyle ? ' style="' + htmlStyle + '"' : "")
+			+ enyo.Control.attributesToHtml(this.attributes)
+			;
+		if (enyo.Control.selfClosing[this.tag]) {
+			this._openTag += '/>';
+			this._closeTag =  '';
+		} else {
+			this._openTag += '>';
+			this._closeTag =  '</' + this.tag + '>';
+		}
+		this.tagsValid = true;
 	},
 	// DOM, aka direct-to-node, rendering
 	attributeToNode: function(inName, inValue) {
