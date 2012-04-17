@@ -54,11 +54,11 @@ enyo.logging = {
 //* @public
 
 /**
-Sets the log level for this window if the input is a real number.
+	Sets the log level for this window if the input is a real number.
 
-The log level is used as a watermark to control the amount of logging.
+	The log level is used as a watermark to control the amount of logging.
 
-Setting the log level lower will prevent logging functions with a higher level from being executed.
+	Setting the log level lower will prevent logging functions with a higher level from being executed.
 */
 enyo.setLogLevel = function(inLevel) {
 	var ll = parseInt(inLevel);
@@ -68,11 +68,11 @@ enyo.setLogLevel = function(inLevel) {
 };
 
 /**
-Sends a log message to the console, if the current log level allows for it.
+	Sends a log message to the console, if the current log level allows for it.
 
-Objects are converted to JSON automatically.
+	Objects are converted to JSON automatically.
 
-Multiple arguments are coerced to String and joined with spaces.
+	Multiple arguments are coerced to String and joined with spaces.
 */
 enyo.log = function() {
 	enyo.logging.log("log", arguments);
