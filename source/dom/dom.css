@@ -36,6 +36,8 @@ button {
 	cursor: default;
 	-webkit-user-select: none;
 	-moz-user-select: -moz-none;
+	-ms-user-select: -moz-none;
+	user-select: none;
 }
 
 .enyo-unselectabe::selection,.enyo-unselectable ::selection {
@@ -46,6 +48,8 @@ button {
 	cursor: auto;
 	-webkit-user-select: text;
 	-moz-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
 }
 
 .enyo-selectable::selection, .enyo-selectable ::selection {
@@ -68,9 +72,9 @@ body .enyo-fit {
 }
 
 .enyo-border-box {
-	box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 /* compositing */
@@ -79,4 +83,6 @@ body .enyo-fit {
 	-webkit-transform: translateZ(0);
 	-moz-transform: translateZ(0);
 	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
 }
