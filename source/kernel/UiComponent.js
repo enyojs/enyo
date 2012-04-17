@@ -51,8 +51,13 @@ enyo.kind({
 	},
 	// components we create have us as a container by default
 	adjustComponentProps: function(inProps) {
-		this.inherited(arguments);
-		inProps.container = inProps.container || this;
+		// if there is a specified container, let it adjust props
+		if (inProps.container) {
+			inProps.container.adjustComponentProps(inProps);
+		} else {
+			this.inherited(arguments);
+			inProps.container = inProps.container || this;
+		}
 	},
 	// containment
 	containerChanged: function(inOldContainer) {
@@ -204,6 +209,19 @@ enyo.kind({
 		Send a message to all my descendents
 	*/
 	waterfallDown: function(inMessage, inPayload, inSender) {
+		// Note: Controls will generally be both in a $ hash and a child list somewhere.
+		// Attempt to avoid duplicated messages by sending only to components that are not
+		// UiComponent, as those components are guaranteed not to be in a child list.
+		// May cause a problem if there is a scenario where a UiComponent owns a pure 
+		// Component that in turn owns Controls.
+		//
+		// waterfall to all pure components
+		for (var n in this.$) {
+			if (!(this.$[n]) instanceof UiComponent) {
+				this.$[n].waterfall(inMessageName, inMessage, inSender);
+			}
+		}
+		// waterfall to my children
 		for (var i=0, cs=this.children, c; c=cs[i]; i++) {
 			c.waterfall(inMessage, inPayload, inSender);
 		}
