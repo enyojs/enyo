@@ -119,14 +119,14 @@ enyo.gesture.preventDefault = function() {
 	if (this.srcEvent) {
 		this.srcEvent.preventDefault();
 	}
-}
+};
 
 enyo.gesture.disablePrevention = function() {
 	this.preventDefault = enyo.nop;
 	if (this.srcEvent) {
 		this.srcEvent.preventDefault = enyo.nop;
 	}
-}
+};
 
 enyo.dispatcher.features.push(
 	function(e) {

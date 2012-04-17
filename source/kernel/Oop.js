@@ -144,9 +144,10 @@ enyo.kind = function(inProps) {
 enyo.kind.makeCtor = function() {
 	return function() {
 		// two-pass instantiation
+		var result;
 		if (this._constructor) {
 			// pure construction
-			var result = this._constructor.apply(this, arguments);
+			result = this._constructor.apply(this, arguments);
 		}
 		// defer initialization until entire constructor chain has finished
 		if (this.constructed) {

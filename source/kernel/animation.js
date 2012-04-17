@@ -8,7 +8,7 @@
 	};
 	var _cancelFrame = function(inId) {
 		return window.clearTimeout(inId);
-	}
+	};
 	for (var i = 0, pl = prefix.length, p, wc, wr; (p = prefix[i]) || i < pl; i++) {
 		// if prefixed, becomes Request and Cancel
 		wc = p ? (p + enyo.cap(c)) : c;
@@ -79,7 +79,9 @@ enyo.easing = {
 /**
 	Gives an interpolation of an animated transition's distance from 0 to 1.
 
-	Given a start time (_inT0_) and an animation duration (_inDuration_), applies the _inEasing_ function to the percentage of time elapsed / duration, capped at 100%. 
+	Given a start time (_inT0_) and an animation duration (_inDuration_), applies
+	the _inEasing_ function to the percentage of time elapsed / duration, capped
+	at 100%.
 */
 enyo.easedLerp = function(inT0, inDuration, inEasing) {
 	var lerp = (enyo.now() - inT0) / inDuration;

@@ -5,8 +5,8 @@
 	classes: "enyo-thumb",
 	axis: "v",
 	create: function() {
-		this.inherited(arguments)
-		var v = this.axis == "v";;
+		this.inherited(arguments);
+		var v = this.axis == "v";
 		this.dimension = v ? "height" : "width";
 		this.offset = v ? "top" : "left";
 		this.translation = v ? "translateY" : "translateX";
@@ -24,13 +24,13 @@
 	update: function(inStrategy) {
 		var d = this.dimension, o = this.offset;
 		var bd = this.scrollBounds[this.sizeDimension], sbd = this.scrollBounds[d];
-		var overs = 0, overp = 0, over=0;
+		var overs = 0, overp = 0, over = 0;
 		if (bd >= sbd) {
 			this.hide();
 			return;
 		}
 		if (inStrategy.isOverscrolling()) {
-			var over = inStrategy.getOverScrollBounds()["over" + o];
+			over = inStrategy.getOverScrollBounds()["over" + o];
 			overs = Math.abs(over);
 			overp = Math.max(over, 0);
 		}

@@ -8,7 +8,7 @@ enyo.logging = {
 	levels: {log: 20, warn: 10, error: 0},
 	// return true if logging level is lower than the current log level
 	shouldLog: function(inMethod) {
-		var ll = parseInt(this.levels[inMethod]);
+		var ll = parseInt(this.levels[inMethod], 0);
 		return (ll <= this.level);
 	},
 	/*
@@ -61,7 +61,7 @@ The log level is used as a watermark to control the amount of logging.
 Setting the log level lower will prevent logging functions with a higher level from being executed.
 */
 enyo.setLogLevel = function(inLevel) {
-	var ll = parseInt(inLevel);
+	var ll = parseInt(inLevel, 0);
 	if (isFinite(ll)) {
 		enyo.logging.level = ll;
 	}
