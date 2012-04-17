@@ -257,10 +257,10 @@ enyo.kind({
 	nameComponent: function(inComponent) {
 		var prefix = enyo.Component.prefixFromKindName(inComponent.kindName);
 		// get last memoized name index
-		var i = this._componentNameMap[prefix] || 0;
+		var n, i = this._componentNameMap[prefix] || 0;
 		// find an available name
 		do {
-			var n = prefix + (++i > 1 ? String(i) : "");
+			n = prefix + (++i > 1 ? String(i) : "");
 		} while (this.$[n]);
 		// memoize next likely-unique id tag for this prefix
 		this._componentNameMap[prefix] = Number(i);

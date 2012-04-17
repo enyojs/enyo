@@ -66,4 +66,4 @@ enyo.quickMacroize = function(inText, inMap, inPattern) {
 //* @protected
 
 // matches macros of form {$name}
-enyo.macroize.pattern = /{\$([^{}]*)}/g;
+enyo.macroize.pattern = /\{\$([^{}]*)\}/g;

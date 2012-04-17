@@ -87,7 +87,7 @@ enyo.dispatcher = {
 // called in the context of an event
 enyo.iePreventDefault = function() {
 	this.returnValue = false;
-}
+};
 
 enyo.dispatch = function(inEvent) {
 	return enyo.dispatcher.dispatch(inEvent);

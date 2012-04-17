@@ -122,7 +122,7 @@ enyo.kind({
 	},
 	scrollTo: function(inX, inY) {
 		this.stop();
-		this.$.scrollMath.scrollTo(inY || inY == 0 ? inY : null, inX);
+		this.$.scrollMath.scrollTo(inY || inY === 0 ? inY : null, inX);
 	},
 	scrollIntoView: function() {
 		this.stop();

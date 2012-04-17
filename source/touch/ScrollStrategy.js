@@ -128,11 +128,11 @@ enyo.kind({
 		this.canVertical = sb.maxTop > 0 && this.vertical != "hidden";
 		this.canHorizontal = sb.maxLeft > 0 && this.horizontal != "hidden";
 		this.startEdges = {
-			top: y == 0,
-			bottom: y == sb.maxTop,
-			left: x == 0,
-			right: x == sb.maxLeft
-		}
+			top: y === 0,
+			bottom: y === sb.maxTop,
+			left: x === 0,
+			right: x === sb.maxLeft
+		};
 	},
 	// NOTE: down, move, and drag handlers are needed only for native touch scrollers
 	shouldDrag: function(inEvent) {

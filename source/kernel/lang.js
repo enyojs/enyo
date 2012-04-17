@@ -156,7 +156,7 @@
 			var results = [];
 			var add = function(e, i, a) {
 				results.push(inFunc.call(c, e, i, a));
-			}
+			};
 			enyo.forEach(inArray, add, c);
 			return results;
 		}

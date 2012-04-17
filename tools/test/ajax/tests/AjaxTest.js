@@ -2,7 +2,7 @@ enyo.kind({
 	name: "AjaxTest",
 	kind: enyo.TestSuite,
 	_testAjax: function(inProps, inParams, inAssertFn) {
-		new enyo.Ajax(inProps)
+		return new enyo.Ajax(inProps)
 			.response(this, function(inSender, inValue) {
 				this.finish(inAssertFn.call(null, inValue) ? "" : "bad response: " + inValue);
 			})
@@ -53,6 +53,22 @@ enyo.kind({
 	testPostBody: function() {
 		this._testAjax({url: "php/test2.php", method: "POST", postBody: "This is a test."}, null, function(inValue) {
 			return inValue.response == "This is a test.";
+		});
+	},
+	testContentType: function() {
+		var contentType = "text/plain"
+		this._testAjax({url: "php/test2.php", method: "PUT", contentType: contentType}, null, function(inValue) {
+			return inValue.ctype == contentType;
+		});
+	},
+	testXhrStatus: function() {
+		var ajax = this._testAjax({url: "php/test2.php"}, null, function(inValue) {
+			return ajax.xhr.status == 200;
+		});
+	},
+	testXhrFields: function() {
+		var ajax = this._testAjax({url: "php/test2.php", xhrFields: {withCredentials: true}}, null, function(inValue) {
+			return ajax.xhr.withCredentials;
 		});
 	},
 	// test CORS (Cross-Origin Resource Sharing) by testing against youtube api
