@@ -210,14 +210,14 @@
 				//
 				// e.g. foo/bar/baz/lib/zot -> zot package
 				//
-				for (i=parts.length-1, p; p=parts[i]; i--) {
+				for (var i=parts.length-1, p; p=parts[i]; i--) {
 					if (p == "lib" || p == "enyo") {
 						parts = parts.slice(i+1);
 						break;
 					}
 				}
 				// remove ".." and "."
-				for (i=parts.length-1, p; p=parts[i]; i--) {
+				for (var i=parts.length-1, p; p=parts[i]; i--) {
 					if (p == ".." || p == ".") {
 						parts.splice(i, 1);
 					}
