@@ -217,7 +217,7 @@ enyo.kind({
 		//
 		// waterfall to all pure components
 		for (var n in this.$) {
-			if (!(this.$[n]) instanceof UiComponent) {
+			if (!(this.$[n] instanceof enyo.UiComponent)) {
 				this.$[n].waterfall(inMessageName, inMessage, inSender);
 			}
 		}
