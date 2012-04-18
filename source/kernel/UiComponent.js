@@ -51,13 +51,13 @@ enyo.kind({
 	},
 	// components we create have us as a container by default
 	adjustComponentProps: function(inProps) {
-		// if there is a specified container, let it adjust props
-		if (inProps.container) {
-			inProps.container.adjustComponentProps(inProps);
+		var propMaster = inProps.container || this.controlParent || this;
+		if (propMaster != this) {
+			propMaster.adjustComponentProps(inProps);
 		} else {
 			this.inherited(arguments);
-			inProps.container = inProps.container || this;
 		}
+		inProps.container = inProps.container || this;
 	},
 	// containment
 	containerChanged: function(inOldContainer) {
