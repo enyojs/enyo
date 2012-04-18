@@ -230,7 +230,7 @@ enyo.kind({
 		// waterfall to all pure components
 		for (var n in this.$) {
 			if (!(this.$[n] instanceof enyo.UiComponent)) {
-				this.$[n].waterfall(inMessageName, inMessage, inSender);
+				this.$[n].waterfall(inMessage, inPayload, inSender);
 			}
 		}
 		// waterfall to my children
