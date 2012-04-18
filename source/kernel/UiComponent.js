@@ -49,15 +49,27 @@ enyo.kind({
 	discoverControlParent: function() {
 		this.controlParent = this.$[this.controlParentName] || this.controlParent;
 	},
-	// components we create have us as a container by default
 	adjustComponentProps: function(inProps) {
-		var propMaster = inProps.container || this.controlParent || this;
+		// components we create have us as a container by default
+		inProps.container = inProps.container || this;
+		/*
+		// the 'property master' is the object responsible for adjusting component props
+		// which may not be the object on which component creation was invoked
+		// the first-order property master is our container (this by default)
+		var propMaster = inProps.container;
+		// if we are the first-order property master, our control parent (if it exists) is the second-order master
+		if (propMaster == this) {
+			propMaster = this.controlParent || propMaster;
+		}
+		// if the property master is not us, delegate to him
 		if (propMaster != this) {
 			propMaster.adjustComponentProps(inProps);
-		} else {
-			this.inherited(arguments);
 		}
-		inProps.container = inProps.container || this;
+		// otherwise, do the usual
+		else {
+		*/
+			this.inherited(arguments);
+		//}
 	},
 	// containment
 	containerChanged: function(inOldContainer) {
