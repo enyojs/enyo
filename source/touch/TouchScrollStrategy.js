@@ -32,7 +32,10 @@ enyo.kind({
 		*/
 		horizontal: "default",
 		//* set to true to display a scroll thumb
-		thumb: true
+		thumb: true,
+		//* set to true to display a transparent overlay while scrolling; can help improve performance of complex, large scroll regions
+		//* on some platforms, notably Android.
+		scrim: false
 	},
 	events: {
 		onShouldDrag: ""
@@ -53,6 +56,7 @@ enyo.kind({
 		{name: "vthumb", kind: "ScrollThumb", axis: "v", showing: false},
 		{name: "hthumb", kind: "ScrollThumb", axis: "h", showing: false}
 	],
+	scrimTools: [{name: "scrim", classes: "enyo-fit", style: "z-index: 1;", showing: false}],
 	components: [
 		{name: "client", attributes: {"onscroll": enyo.bubbler}, classes: "enyo-touch-scroller"}
 	],
@@ -65,6 +69,7 @@ enyo.kind({
 		if (enyo.platform.ios && this.accel) {
 			containerClasses += " enyo-composite";
 		}
+		this.scrimChanged();
 		this.container.addClass(containerClasses);
 		this.translation = this.accel ? "translate3d" : "translate";
 	},
@@ -82,6 +87,27 @@ enyo.kind({
 		this.syncScrollMath();
 		if (this.thumb) {
 			this.alertThumbs();
+		}
+	},
+	scrimChanged: function() {
+		if (this.scrim && !this.$.scrim) {
+			this.makeScrim();
+		}
+		if (!this.scrim && this.$.scrim) {
+			this.$.scrim.destroy();
+		}
+	},
+	makeScrim: function() {
+		// reset control parent so scrim doesn't go into client.
+		var cp = this.controlParent;
+		this.controlParent = null;
+		this.createChrome(this.scrimTools);
+		this.controlParent = cp;
+		var cn = this.container.hasNode();
+		// render scrim in container, strategy has no dom.
+		if (cn) {
+			this.$.scrim.parentNode = cn;
+			this.$.scrim.render();
 		}
 	},
 	isScrolling: function() {
@@ -210,6 +236,9 @@ enyo.kind({
 		if (this.dragging) {
 			inEvent.preventDefault();
 			this.$.scrollMath.drag(inEvent);
+			if (this.scrim) {
+				this.$.scrim.show();
+			}
 		}
 	},
 	dragfinish: function(inSender, inEvent) {
@@ -217,6 +246,9 @@ enyo.kind({
 			inEvent.preventTap();
 			this.$.scrollMath.dragFinish();
 			this.dragging = false;
+			if (this.scrim) {
+				this.$.scrim.hide();
+			}
 		}
 	},
 	mousewheel: function(inSender, e) {

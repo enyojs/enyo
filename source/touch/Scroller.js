@@ -132,6 +132,9 @@ enyo.kind({
 			this.render();
 		}
 	},
+	getStrategy: function() {
+		return this.$.strategy;
+	},
 	maxHeightChanged: function() {
 		this.$.strategy.setMaxHeight(this.maxHeight);
 	},
