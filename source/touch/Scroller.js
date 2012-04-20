@@ -127,10 +127,13 @@ enyo.kind({
 			this.controlParent = null;
 		}
 		// note: createComponents automatically updates controlParent.
-		this.createComponents([{name: "strategy", maxHeight: this.maxHeight, kind: this.strategyKind, thumb: this.thumb, preventDragPropagation: this.preventDragPropagation, isChrome: true}]);
+		this.createStrategy();
 		if (this.hasNode()) {
 			this.render();
 		}
+	},
+	createStrategy: function() {
+		this.createComponents([{name: "strategy", maxHeight: this.maxHeight, kind: this.strategyKind, thumb: this.thumb, preventDragPropagation: this.preventDragPropagation, isChrome: true}]);
 	},
 	getStrategy: function() {
 		return this.$.strategy;
