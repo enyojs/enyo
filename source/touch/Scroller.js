@@ -235,11 +235,17 @@ enyo.kind({
 	scrollStop: function(inSender, inEvent) {
 		return this.shouldStopScrollEvent(inEvent);
 	},
+	scrollToTop: function() {
+		this.setScrollTop(0);
+	},
 	scrollToBottom: function() {
 		this.setScrollTop(this.getScrollBounds().maxTop);
 	},
 	scrollToRight: function() {
 		this.setScrollTop(this.getScrollBounds().maxLeft);
+	},
+	scrollToLeft: function() {
+		this.setScrollLeft(0);
 	}
 });
 
