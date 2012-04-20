@@ -318,12 +318,13 @@ enyo.kind({
 	*/
 	render: function() {
 		if (this.parent) {
+			// allow the parent to perform setup tasks
+			// note: ('parent.generated' may change here)
+			this.parent.beforeChildRender(this);
 			// don't render if the parent has not generated
 			if (!this.parent.generated) {
 				return this;
 			}
-			// allow the parent to flow
-			this.parent.beforeChildRender(this);
 		}
 		if (!this.hasNode()) {
 			this.renderNode();
