@@ -55,7 +55,7 @@ enyo.gesture.drag = {
 			if (!e.which) {
 				this.stopDragging(e);
 				this.tracking = false;
-				console.log("enyo.gesture.drag: mouse must be down to drag.");
+				//console.log("enyo.gesture.drag: mouse must be down to drag.");
 				return;
 			}
 			if (this.dragEvent) {
