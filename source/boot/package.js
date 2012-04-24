@@ -1,5 +1,5 @@
 enyo.depends(
 	"enyo.js",
-	"loader.js",
+	"../../loader.js",
 	"boot.js"
 );

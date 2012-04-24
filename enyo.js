@@ -35,7 +35,7 @@
 		document.write('<scri' + 'pt src="' + root + "/source/boot/" + inSrc + '"></scri' + 'pt>');
 	};
 
-	script("loader.js");
+	script("../../loader.js");
 	script("boot.js");
 	script("../package.js");
 })();
