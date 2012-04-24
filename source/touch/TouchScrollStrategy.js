@@ -215,6 +215,8 @@ enyo.kind({
 			return true;
 		}
 	},
+	move: function(inSender, inEvent) {
+	},
 	// special synthetic DOM events served up by the Gesture system
 	dragstart: function(inSender, inEvent) {
 		// note: allow drags to propagate to parent scrollers via data returned in the shouldDrag event.

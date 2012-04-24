@@ -26,6 +26,7 @@ enyo.kind({
 	kSnapFriction: 0.9,
 	//* Scalar applied to 'flick' event velocity
 	kFlickScalar: 15,
+	kMaxFlick: 4,
 	//* the value used in friction() to determine if the delta (e.g. y - y0) is close enough to zero to consider as zero.
 	kFrictionEpsilon: 1e-2,
 	//* top snap boundary, generally 0
@@ -223,11 +224,14 @@ enyo.kind({
 		this.dragging = false;
 	},
 	flick: function(e) {
+		var v;
 		if (this.vertical) {
-			this.y = this.y0 + e.yVelocity * this.kFlickScalar;
+			v = e.yVelocity > 0 ? Math.min(this.kMaxFlick, e.yVelocity) : Math.max(-this.kMaxFlick, e.yVelocity);
+			this.y = this.y0 + v * this.kFlickScalar;
 		}
 		if (this.horizontal) {
-			this.x = this.x0 + e.xVelocity * this.kFlickScalar;
+			v = e.xVelocity > 0 ? Math.min(this.kMaxFlick, e.xVelocity) : Math.max(-this.kMaxFlick, e.xVelocity);
+			this.x = this.x0 + v * this.kFlickScalar;
 		}
 		this.start();
 	},

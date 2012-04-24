@@ -1,7 +1,10 @@
-﻿//* Event modal capture feature: capture events to a specific
-// control via enyo.dispatcher.capture(inControl, inShouldForward)
-// release events via enyo.dispatcher.release()
-//* @protected
+﻿//* @protected
+
+/**
+	Event modal capture feature: capture events to a specific
+	control via enyo.dispatcher.capture(inControl, inShouldForward)
+	release events via enyo.dispatcher.release()
+*/
 enyo.dispatcher.features.push(function(e) {
 	var c = e.dispatchTarget;
 	var wants = this.captureTarget && !this.noCaptureEvents[e.type];
@@ -18,6 +21,7 @@ enyo.dispatcher.features.push(function(e) {
 		}
 	}
 });
+
 //
 //	NOTE: This object is a plug-in; these methods should 
 //	be called on _enyo.dispatcher_, and not on the plug-in itself.

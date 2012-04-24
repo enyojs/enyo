@@ -31,5 +31,5 @@ enyo.depends = function() {
 // predefined path aliases
 enyo.path.addPaths({
 	enyo: enyo.args.root,
-	lib: enyo.args.root + "/../lib"
+	lib: "$enyo/../lib"
 });

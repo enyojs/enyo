@@ -25,7 +25,7 @@
 		enyo.args.root = (enyo.args.root || tag.path); /*.replace("/source", "")*/;
 		// all attributes of the bootstrap script tag become enyo.args
 		for (var i=0, it; (it = tag.node.attributes.item(i)); i++) {
-			enyo.args[it.nodeName] = it.nodeValue;
+			enyo.args[it.nodeName] = it.value;
 		}
 	}
 
@@ -35,7 +35,7 @@
 		document.write('<scri' + 'pt src="' + root + "/source/boot/" + inSrc + '"></scri' + 'pt>');
 	};
 
-	script("loader.js");
+	script("../../loader.js");
 	script("boot.js");
 	script("../package.js");
 })();

@@ -318,12 +318,13 @@ enyo.kind({
 	*/
 	render: function() {
 		if (this.parent) {
+			// allow the parent to perform setup tasks
+			// note: ('parent.generated' may change here)
+			this.parent.beforeChildRender(this);
 			// don't render if the parent has not generated
 			if (!this.parent.generated) {
 				return this;
 			}
-			// allow the parent to flow
-			this.parent.beforeChildRender(this);
 		}
 		if (!this.hasNode()) {
 			this.renderNode();
@@ -702,7 +703,7 @@ enyo.kind({
 			e.g. 'hello from "Me & She"' becomes 'hello from &amp;quot;Me &amp;amp; She&amp;quot;' 
 		*/
 		escapeAttribute: function(inText) {
-			return !enyo.isString(inText) ? inText : String(inText).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+			return !enyo.isString(inText) ? inText : String(inText).replace(/&/g,'&amp;').replace(/\"/g,'&quot;');
 		},
 		attributesToHtml: function(inAttributeHash) {
 			var n, v, h = '';
