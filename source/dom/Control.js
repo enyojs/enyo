@@ -703,7 +703,7 @@ enyo.kind({
 			e.g. 'hello from "Me & She"' becomes 'hello from &amp;quot;Me &amp;amp; She&amp;quot;' 
 		*/
 		escapeAttribute: function(inText) {
-			return !enyo.isString(inText) ? inText : String(inText).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+			return !enyo.isString(inText) ? inText : String(inText).replace(/&/g,'&amp;').replace(/\"/g,'&quot;');
 		},
 		attributesToHtml: function(inAttributeHash) {
 			var n, v, h = '';
