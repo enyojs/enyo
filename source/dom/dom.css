@@ -36,11 +36,10 @@ button {
 	cursor: default;
 	-webkit-user-select: none;
 	-moz-user-select: -moz-none;
-	-ms-user-select: -moz-none;
 	user-select: none;
 }
 
-.enyo-unselectabe::selection,.enyo-unselectable ::selection {
+.enyo-unselectabe::selection, .enyo-unselectable ::selection {
 	color: transparent;
 }
 
@@ -48,7 +47,6 @@ button {
 	cursor: auto;
 	-webkit-user-select: text;
 	-moz-user-select: text;
-	-ms-user-select: text;
 	user-select: text;
 }
 
