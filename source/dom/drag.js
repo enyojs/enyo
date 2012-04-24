@@ -93,6 +93,8 @@ enyo.gesture.drag = {
 			type: inType,
 			dx: this.dx,
 			dy: this.dy,
+			ddx: this.dx - this.lastDx,
+			ddy: this.dy - this.lastDy,
 			xDirection: this.xDirection,
 			yDirection: this.yDirection,
 			pageX: inEvent.pageX,
@@ -161,8 +163,8 @@ enyo.gesture.drag = {
 		this.lastDy = this.dy;
 		this.dx = e.clientX - this.px0;
 		this.dy = e.clientY - this.py0;
-		this.xDirection = this.calcDirection(this.dx - this.lastDx);
-		this.yDirection = this.calcDirection(this.dy - this.lastDy);
+		this.xDirection = this.calcDirection(this.dx - this.lastDx, 0);
+		this.yDirection = this.calcDirection(this.dy - this.lastDy, 0);
 		//
 		var ti = this.flickInfo;
 		ti.moves.push({
