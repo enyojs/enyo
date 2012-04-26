@@ -13,7 +13,11 @@
 			var index = inEvent.index;
 			var rowControl = inEvent.row;
 			rowControl.$.image.setSrc(this.imageSources[index]);
+			return true;
 		}
+
+	Be sure to return true from your onSetupRow handler to avoid having other events
+	handlers further up the tree also try modify your row control.
 */
 enyo.kind({
 	name: "enyo.Repeater",
