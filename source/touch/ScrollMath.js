@@ -190,13 +190,10 @@ enyo.kind({
 		this.start();
 		var y = Math.min(this.topBoundary, Math.max(this.bottomBoundary, this.y));
 		var x = Math.min(this.leftBoundary, Math.max(this.rightBoundary, this.x));
-		// IFF needed, sync scroll to an in bounds position
-		if (y != this.y || x != this.x) {
-			this.y = this.y0 = y;
-			this.x = this.x0 = x;
-			this.scroll();
-			this.stop(true);
-		}
+		this.y = this.y0 = y;
+		this.x = this.x0 = x;
+		this.scroll();
+		this.stop(true);
 	},
 	startDrag: function(e) {
 		this.dragging = true;

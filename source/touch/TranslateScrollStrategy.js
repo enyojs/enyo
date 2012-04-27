@@ -51,7 +51,7 @@ enyo.kind({
 		if (this.translateOptimized) {
 			var m = this.$.scrollMath;
 			m.setScrollX(-inLeft);
-			m.start();
+			m.stabilize();
 		} else {
 			this.inherited(arguments);
 		}
@@ -61,7 +61,7 @@ enyo.kind({
 		if (this.translateOptimized) {
 			var m = this.$.scrollMath;
 			m.setScrollY(-inTop);
-			m.start();
+			m.stabilize();
 		} else {
 			this.inherited(arguments);
 		}
