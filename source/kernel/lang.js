@@ -169,7 +169,7 @@
 	enyo.filter = function(inArray, inFunc, inContext) {
 		var c = inContext || this;
 		if (enyo.isArray(inArray) && inArray.filter) {
-			inArray.filter(inFunc, c);
+			return inArray.filter(inFunc, c);
 		} else {
 			var results = [];
 			var f = function(e, i, a) {
