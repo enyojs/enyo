@@ -106,18 +106,22 @@ enyo.kind({
 		return this.scrollNode ? this.scrollNode.scrollTop : this.scrollTop;
 	},
 	_getScrollBounds: function() {
-		var n = this.scrollNode, cn = this.container.hasNode();
+		var s = this.getScrollSize(), cn = this.container.hasNode();
 		var b = {
 			left: this.getScrollLeft(),
 			top: this.getScrollTop(),
 			clientHeight: cn ? cn.clientHeight : 0,
 			clientWidth: cn ? cn.clientWidth : 0,
-			height: n ? n.scrollHeight : 0,
-			width: n ? n.scrollWidth : 0
+			height: s.height,
+			width: s.width
 		};
 		b.maxLeft = Math.max(0, b.width - b.clientWidth);
 		b.maxTop = Math.max(0, b.height - b.clientHeight);
 		return b;
+	},
+	getScrollSize: function() {
+		var n = this.scrollNode;
+		return {width: n ? n.scrollWidth : 0, height: n ? n.scrollHeight : 0};
 	},
 	getScrollBounds: function() {
 		return this._getScrollBounds();

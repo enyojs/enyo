@@ -146,6 +146,9 @@ enyo.kind({
 			this.$.scrollMath.stop(true);
 		}
 	},
+	stabilize: function() {
+		this.$.scrollMath.stabilize();
+	},
 	scrollTo: function(inX, inY) {
 		this.stop();
 		this.$.scrollMath.scrollTo(inY || inY === 0 ? inY : null, inX);

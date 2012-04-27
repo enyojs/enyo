@@ -26,7 +26,8 @@ enyo.kind({
 	kSnapFriction: 0.9,
 	//* Scalar applied to 'flick' event velocity
 	kFlickScalar: 15,
-	kMaxFlick: 4,
+	//* Limit the maximum allowable flick (note, on Android > 2, we limit this to prevent compositing artifacts)
+	kMaxFlick: enyo.platform.android > 2 ? 2 : 1e9,
 	//* the value used in friction() to determine if the delta (e.g. y - y0) is close enough to zero to consider as zero.
 	kFrictionEpsilon: 1e-2,
 	//* top snap boundary, generally 0
@@ -184,6 +185,18 @@ enyo.kind({
 	stop: function(inFireEvent) {
 		this.job = enyo.cancelRequestAnimationFrame(this.job);
 		inFireEvent && this.doScrollStop();
+	},
+	stabilize: function() {
+		this.start();
+		var y = Math.min(this.topBoundary, Math.max(this.bottomBoundary, this.y));
+		var x = Math.min(this.leftBoundary, Math.max(this.rightBoundary, this.x));
+		// IFF needed, sync scroll to an in bounds position
+		if (y != this.y || x != this.x) {
+			this.y = this.y0 = y;
+			this.x = this.x0 = x;
+			this.scroll();
+			this.stop(true);
+		}
 	},
 	startDrag: function(e) {
 		this.dragging = true;

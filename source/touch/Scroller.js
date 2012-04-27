@@ -246,6 +246,13 @@ enyo.kind({
 	},
 	scrollToLeft: function() {
 		this.setScrollLeft(0);
+	},
+	//* Ensure scroll position is in bounds.
+	stabilize: function() {
+		var s = this.getStrategy();
+		if (s.stabilize) {
+			s.stabilize();
+		}
 	}
 });
 
