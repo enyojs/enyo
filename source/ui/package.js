@@ -13,5 +13,7 @@ enyo.depends(
 	"Button.js",
 	"Checkbox.js",
 	"Repeater.js",
-	"DragAvatar.js"
+	"DragAvatar.js",
+	"FloatingLayer.js",
+	"Popup.js"
 );
