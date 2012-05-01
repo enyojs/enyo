@@ -22,6 +22,8 @@ enyo.kind({
 		disabled: false,
 		value: ""
 	},
+	//* Set to true to focus this control when it is rendered.
+	defaultFocus: false,
 	events: {
 		//* cross platform input change event (IE does not support oninput)
 		onInputChange: ""
@@ -42,6 +44,12 @@ enyo.kind({
 		this.inherited(arguments);
 		this.disabledChanged();
 		this.valueChanged();
+	},
+	rendered: function() {
+		this.inherited(arguments);
+		if (this.defaultFocus) {
+			this.focus();
+		}
 	},
 	keyup: function() {
 		this.notifyContainer();

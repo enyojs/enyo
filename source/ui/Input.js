@@ -20,6 +20,8 @@ enyo.kind({
 		//* Sent when the input's is disabled or enabled.
 		onDisabledChange: ""
 	},
+	//* Set to true to focus this control when it is rendered.
+	defaultFocus: false,
 	//* @protected
 	tag: "input",
 	classes: "enyo-input",
@@ -40,6 +42,12 @@ enyo.kind({
 		this.placeholderChanged();
 		this.typeChanged();
 		this.valueChanged();
+	},
+	rendered: function() {
+		this.inherited(arguments);
+		if (this.defaultFocus) {
+			this.focus();
+		}
 	},
 	typeChanged: function() {
 		this.setAttribute("type", this.type);
