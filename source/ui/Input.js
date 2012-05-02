@@ -38,7 +38,10 @@ enyo.kind({
 		this.inherited(arguments);
 		this.disabledChanged();
 		this.placeholderChanged();
-		this.typeChanged();
+		// prevent overriding a custom attribute with null
+		if (this.type) {
+			this.typeChanged();
+		}
 		this.valueChanged();
 	},
 	typeChanged: function() {
