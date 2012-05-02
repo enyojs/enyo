@@ -30,11 +30,18 @@ enyo.kind({
 		//* Sends the row index, and the row control, for decoration
 		onSetupRow: ""
 	},
+	create: function() {
+		this.inherited(arguments);
+		this.rowsChanged();
+	},
 	//* @protected
 	initComponents: function() {
 		this.rowComponents = this.components || this.kindComponents;
 		this.components = this.kindComponents = null;
 		this.inherited(arguments);
+	},
+	rowsChanged: function() {
+		this.build();
 	},
 	//* @public
 	//* Render the list
@@ -46,5 +53,6 @@ enyo.kind({
 			c.createComponents(this.rowComponents);
 			this.doSetupRow({index: i, row: c});
 		}
+		this.render();
 	}
 });
