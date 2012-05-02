@@ -1,7 +1,8 @@
 ﻿(function() {
 	var ms = Math.round(1000/60);
 	var prefix = ["webkit", "moz", "ms", "o", ""];
-	var r = "requestAnimationFrame", c = "cancel" + enyo.cap(r);
+	var r = "requestAnimationFrame";
+	var c = "cancel" + enyo.cap(r);
 	// fallback on setTimeout and clearTimeout
 	var _requestFrame = function(inCallback) {
 		return window.setTimeout(inCallback, ms);
