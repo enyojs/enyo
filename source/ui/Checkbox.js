@@ -59,8 +59,8 @@ enyo.kind({
 	change: function() {
 		// Various versions of IE (notably IE8) do not fire 'onchange' for 
 		// checkboxes, so we discern change via 'click'.
-		// The click handler bubbles the 'click' event up as if it were 'onchange'
-		// for platform-compatibility (e.g. listeners for 'onchange'
+		// The click handler bubbles a synthetic 'onchange' event
+		// for platform-compatibility (i.e. listeners for 'onchange'
 		// will receive messages on IE8).
 		// Therefore, we squelch the proper 'change' event.
 		return true;
