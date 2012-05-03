@@ -156,14 +156,16 @@ enyo.gesture.events = {
 
 // Firefox mousewheel handling
 enyo.requiresWindow(function() {
-	document.addEventListener("DOMMouseScroll", function(inEvent) {
-		var e = enyo.clone(inEvent);
-		e.preventDefault = function() {
-			inEvent.preventDefault();
-		};
-		e.type = "mousewheel";
-		var p = e.VERTICAL_AXIS == e.axis ? "wheelDeltaY" : "wheelDeltaX";
-		e[p] =  e.detail * -12;
-		enyo.dispatch(e);
-	}, false);
+	if (document.addEventListener) {
+		document.addEventListener("DOMMouseScroll", function(inEvent) {
+			var e = enyo.clone(inEvent);
+			e.preventDefault = function() {
+				inEvent.preventDefault();
+			};
+			e.type = "mousewheel";
+			var p = e.VERTICAL_AXIS == e.axis ? "wheelDeltaY" : "wheelDeltaX";
+			e[p] =  e.detail * -12;
+			enyo.dispatch(e);
+		}, false);
+	}
 });
