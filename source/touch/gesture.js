@@ -7,7 +7,7 @@
 */
 //* @protected
 (function() {
-	if (!("ongesturestart" in window)) {
+	if (!enyo.platform.gesture && enyo.platform.touch) {
 		enyo.dispatcher.features.push(function(e) {
 			if (handlers[e.type]) {
 				touchGestures[e.type](e);

@@ -19,7 +19,12 @@
 		}
 		this.applyStyle("-webkit-transform", t);
 */
-enyo.platform = {};
+enyo.platform = {
+	//* True if the platform has native single finger events
+	touch: Boolean(("ontouchstart" in window) || window.navigator.msPointerEnabled),
+	//* True if the platform has native double finger events
+	gesture: Boolean(("ongesturestart" in window) || window.navigator.msPointerEnabled)
+};
 
 //* @protected
 (function() {
