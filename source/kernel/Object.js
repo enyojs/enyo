@@ -1,9 +1,14 @@
 ﻿/**
-_enyo.Object_ implements the property publishing system.
-Published properties are declared by providing a _published_ property within a call to
-_enyo.kind_. Getter and setter methods are automatically generated for
-properties declared this way. Also, setters for published properties
-trigger _&lt;propertyName&gt;Changed_ methods by convention.
+_enyo.Object_ implements the Enyo framework's property publishing system.
+Published properties are declared in an array called _published_ within a call
+to _enyo.kind_. Getter and setter methods are automatically generated for
+properties declared this way.  Also, by convention, a setter for a published
+property will trigger an optional _&lt;propertyName&gt;Changed_ method when
+called.
+
+In the following example, _myValue_ becomes a regular property on the MyObject
+prototype (with a default value of 3), and the getter and setter methods are
+generated as noted in the comments:
 
 	enyo.kind({
 		name: "MyObject",
@@ -24,27 +29,27 @@ trigger _&lt;propertyName&gt;Changed_ methods by convention.
 		}
 	});
 
-In the above example, _myValue_ becomes a regular property on the MyObject
-prototype (with a default value of 3), and the getter and setter methods are generated
-as noted in the comments.
+Since we have declared a _changed_ method (i.e., _myValueChanged_) to observe
+set calls on the _myValue_ property, it will be called whenever _setMyValue_ is
+called, as illustrated by the following:
 
 	myobj = new MyObject();
 	var x = myobj.getMyValue(); // x gets 3
 
-You may choose to declare a _changed_ method to observe set calls on a property. 
-The _myValueChanged_ method in the example above is called whenever _setMyValue_ is called.
-
 	myobj.setMyValue(7); // myValue becomes 7; myValueChanged side-effect sets delta to 4
 
-_Changed_ methods are called whenever setters are invoked, whether the actual value has changed
-or not.
+_Changed_ methods are called whenever setters are invoked, whether or not the
+actual value has changed.
 
-Published properties are stored as regular properties on the object prototype, so it's possible
-to query or set their values directly (changed methods are not called if you set a property directly).
+Published properties are stored as regular properties on the object prototype,
+so it's possible to query or set their values directly:
 
 	var x = myobj.myValue;
 
-enyo.Object also provides some utility functions for its subkinds.
+Note that when you set a property's value directly, the _changed_ method is not
+called.
+
+_enyo.Object_ also provides some utility functions for its subkinds.
 */
 enyo.kind({
 	name: "enyo.Object",
@@ -89,7 +94,9 @@ enyo.kind({
 		}
 	},
 	/**
-		Sends a log message to the console, prepended with the name of the kind and method from which log was invoked. Multiple arguments are coerced to String and joined with spaces.
+		Sends a log message to the console, prepended with the name of the kind
+		and method from which _log_ was invoked.  Multiple arguments are coerced
+		to String and joined with spaces.
 
 			enyo.kind({
 				name: "MyObject",
