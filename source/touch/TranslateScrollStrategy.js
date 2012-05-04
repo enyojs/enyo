@@ -125,5 +125,10 @@ enyo.kind({
 			}
 		}
 	},
+	// FIXME: we can fix scrolling artifacts BUGS on Android 4.04 with this heinous incantation.
+	twiddle: function() {
+		this.scrollNode.scrollTop = 1;
+		this.scrollNode.scrollTop = 0;
+	},
 	down: enyo.nop
 });
