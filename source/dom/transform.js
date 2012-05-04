@@ -42,9 +42,7 @@ enyo.mixin(enyo.dom, {
 	},
 	accelerate: function(inControl, inValue) {
 		var v = inValue == "auto" ? this.canAccelerate() : inValue;
-		if (v) {
-			this.transformValue(inControl, "translateZ", 0);
-		}
+		this.transformValue(inControl, "translateZ", v ? 0 : null);
 	},
 	transform: function(inControl, inTransforms) {
 		var d = inControl.domTransforms = inControl.domTransforms || {};
