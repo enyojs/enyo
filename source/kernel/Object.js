@@ -1,6 +1,6 @@
 ﻿/**
 _enyo.Object_ implements the Enyo framework's property publishing system.
-Published properties are declared in an array called _published_ within a call
+Published properties are declared in a hash called _published_ within a call
 to _enyo.kind_. Getter and setter methods are automatically generated for
 properties declared this way.  Also, by convention, a setter for a published
 property will trigger an optional _&lt;propertyName&gt;Changed_ method when
