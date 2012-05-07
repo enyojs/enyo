@@ -1,38 +1,41 @@
 ﻿//* @public
 /**
-	Creates a JavaScript constructor function with a prototype defined by _inProps_.
+	Creates a JavaScript constructor function with a prototype defined by
+	_inProps_.
 
-	_enyo.kind_ makes it easy to build a constructor-with-prototype (like a class) that has advanced
-	features like prototype-chaining (inheritance).
+	_enyo.kind_ makes it easy to build a constructor-with-prototype (like a
+	class) that has advanced features like prototype-chaining (inheritance).
 	
-	A plug-in system is included for extending the abilities of the kind generator, and constructors
-	are allowed to perform custom operations when subclassed.
+	A plug-in system is included for extending the abilities of the kind
+	generator, and constructors	are allowed to perform custom operations when
+	subclassed.
 
 	Special Property Names
 	----------------------
 
-	Generally the properties defined in inProps are copied directly to the generated prototype, but certain
-	property names trigger special processing.
-	
+	Generally, the properties defined in _inProps_ are copied directly to the
+	generated prototype, but certain property names trigger special processing.
 	Examples of special properties are:
 	
-	* _name_: the _name_ property defines the name of the created constructor in the global namespace 
-	(intermediate objects are created automatically). _name_ is not copied directly to the prototype,
-	but is instead stored as _kindName_.
+	* _name_: the _name_ property defines the name of the created constructor in
+		the global namespace (intermediate objects are created automatically).
+		_name_ is not copied directly to the prototype,	but is instead stored as
+		_kindName_.
 
-			// Creates a function MyNamespace.MyKind with a prototype.
+			// Create a function MyNamespace.MyKind with a prototype.
 			// MyNamespace.MyKind.prototype.kindName is set to "MyNamespace.MyKind".
 			// MyNamespace.MyKind.prototype.plainProperty is set to "foo".
 			enyo.kind({
 				name: "MyNamespace.MyKind"
 				plainProperty: "foo"
 			});
-			// Make an instance of the new kind
+			// Make an instance of the new kind.
 			var myk = new MyNamespace.MyKind();
 
-	* _kind_: the name of or reference to a kind to derive from, like a super-class. The new constructor's prototype is 
-	chained to the prototype specified by _kind_, and the _base_ property in the new prototype is set to reference the
-	_kind_ constructor.
+	* _kind_: the name of or reference to a kind to derive from, like a
+		superclass. The new constructor's prototype is	chained to the prototype
+		specified by _kind_, and the _base_ property in the new prototype is set
+		to reference the _kind_ constructor.
 
 			// Create a function MyKind with a prototype, derived from enyo.Object.
 			// MyKind.prototype.kindName is set to "MyKind".
@@ -42,7 +45,8 @@
 				kind: enyo.Object
 			});
 
-	* _constructor_: a function to call when a new instance is created. Actually stored on the prototype as __constructor_.
+	* _constructor_: a function to call when a new instance is created.
+		Actually stored on the prototype as __constructor_.
 
 			// Create a function MyKind with a prototype, derived from enyo.Object.
 			// _constructor_ is called when an instance is created. 
@@ -51,12 +55,13 @@
 				kind: enyo.Object,
 				constructor: function() {
 					this.instanceArray = [];
-					// call the constructor inherited from Object
+					// Call the constructor inherited from Object
 					this.inherited(arguments);
 				}
 			});
 
-	* _statics_: properties from any _statics_ object are copied onto the constructor directly, instead of the prototype.
+	* _statics_: properties from any _statics_ object are copied onto the
+		constructor directly, instead of the prototype.
 
 			// Create a kind with a static method.
 			enyo.kind({
@@ -67,16 +72,18 @@
 					}
 				}
 			});
-			// invoke the static info() method of MyKind
+			// Invoke the static info() method of MyKind.
 			console.log(MyKind.info());
 
 	Certain kinds in the framework define their own special properties. 
-	For example, see the _published_ property supported by <a href="#enyo.Object">enyo.Object</a>.
+	For example, see the _published_ property supported by
+	<a href="#enyo.Object">enyo.Object</a>.
 
 	inherited
 	---------
 
-	The _inherited_ feature allows you to easily call the super-kind method for any method that has been overridden.
+	The _inherited_ feature allows you to easily call the superkind method for
+	any method that has been overridden.
 
 		enyo.kind({
 			name: "MyKind",
@@ -95,8 +102,9 @@
 			}
 		});
 
-	The first argument to _inherited_ is required to be the literal _arguments_, which is a special JavaScript variable that contains
-	information about the executing function.
+	The first argument to _inherited_ is required to be the literal _arguments_,
+	which is a special JavaScript variable containing information about the
+	executing function.
 */
 enyo.kind = function(inProps) {
 	// kind-name to constructor map could be faulty now that a new kind exists, so we simply destroy the memoizations
@@ -129,7 +137,7 @@ enyo.kind = function(inProps) {
 	enyo.mixin(ctor.prototype, inProps);
 	// alias class name as 'kind' in the prototype
 	ctor.prototype.kindName = name;
-	// cache super-class constructor
+	// cache superclass constructor
 	ctor.prototype.base = base;
 	// reference our real constructor
 	ctor.prototype.ctor = ctor;
