@@ -4,21 +4,23 @@
 	published: {
 		/**
 			When true, appends a random number as a parameter for GET requests
-			to try to force a new fetch of the resource instead of reusing a local cache.
+			to try to force a new fetch of the resource instead of reusing a
+			local cache.
 		*/
 		cacheBust: true,
 		/**
-			The URL for the service.  This can be a relative URL if used to fetch resources bundled with the application.
+			The URL for the service.  This can be a relative URL if used to
+			fetch resources bundled with the application.
 		*/
 		url: "",
 		/**
-			The HTTP method to use for the request, defaults to GET.  Supported values include
-			"GET", "POST", "PUT", and "DELETE".
+			The HTTP method to use for the request.  Defaults to GET.  Supported
+			values include "GET", "POST", "PUT", and "DELETE".
 		*/
 		method: "GET", // {value: "GET", options: ["GET", "POST", "PUT", "DELETE"]},
 		/**
 			How the response will be handled.
-			Supported values are: <code>"json", "text", "xml"</code>.
+			Supported values are "json", "text", and "xml".
 		*/
 		handleAs: "json", // {value: "json", options: ["text", "json", "xml"]},
 		/**
@@ -26,29 +28,31 @@
 		*/
 		contentType: "application/x-www-form-urlencoded",
 		/**
-			If true, makes a synchronous (blocking) call, if supported.  Synchronous requests
-			are not supported on HP webOS.
+			If true, makes a synchronous (blocking) call, if supported.
+			Synchronous requests are not supported on HP webOS.
 		*/
 		sync: false,
 		/**
-			Optional additional request headers as a JS object, e.g.
-			<code>{ "X-My-Header": "My Value", "Mood": "Happy" }</code>, or null.
+			Optional additional request headers as a JavaScript object, e.g.,
+			<code>{ "X-My-Header": "My Value", "Mood": "Happy" }</code> or null.
 		*/
 		headers: null,
 		/**
-			The content for the request body for POST method.  If this is not set, params will be used instead.
+			The content for the request body for POST method.  If this is not
+			set, params will be used instead.
 		*/
 		postBody: "",
 		/**
-			The optional user name to use for authentication purposes.
+			An optional user name to use for authentication purposes.
 		*/
 		username: "",
 		/**
-			The optional password to use for authentication purposes.
+			An optional password to use for authentication purposes.
 		*/
 		password: "",
 		/**
-			Optional object with fields to pass directly to the underlying XHR object
+			An optional object with fields to pass directly to the underlying
+			XHR object.
 		*/
 		xhrFields: null
 	},
@@ -59,7 +63,7 @@
 	},
 	//* @public
 	/**
-		Send the ajax request with parameters _inParams_.
+		Sends the ajax request with parameters _inParams_.
 	*/
 	go: function(inParams) {
 		this.startTimer();
