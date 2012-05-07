@@ -55,12 +55,12 @@
 		return Math.floor(Math.random() * inBound);
 	};
 
-	//* Returns inString with the first letter capitalized.
+	//* Returns _inString_ with the first letter capitalized.
 	enyo.cap = function(inString) {
 		return inString.slice(0, 1).toUpperCase() + inString.slice(1);
 	};
 
-	//* Returns inString with the first letter un-capitalized.
+	//* Returns _inString_ with the first letter un-capitalized.
 	enyo.uncap = function(inString) {
 		return inString.slice(0, 1).toLowerCase() + inString.slice(1);
 	};
@@ -183,7 +183,9 @@
 		}
 	};
 
-	//* Returns an array of all own enumerable properties found on _inObject_
+	/**
+		Returns an array of all own enumerable properties found on _inObject_.
+	*/
 	enyo.keys = Object.keys || function(inObject) {
 		var results = [];
 		var hop = Object.prototype.hasOwnProperty;
@@ -214,13 +216,14 @@
 
 	/**
 		Clones an existing Array, or converts an array-like object into an Array.
-
+		
 		If _inOffset_ is non-zero, the cloning is started from that index in the source Array.
 		The clone may be appended to an existing Array by passing the existing Array as _inStartWith_.
-
+		
 		Array-like objects have _length_ properties, and support square-bracket notation ([]).
 		Often array-like objects do not support Array methods, such as _push_ or _concat_, and
 		must be converted to Arrays before use.
+		
 		The special _arguments_ variable is an example of an array-like object.
 	*/
 	enyo.cloneArray = function(inArrayLike, inOffset, inStartWith) {
@@ -268,9 +271,11 @@
 
 	//* @public
 	/**
-		Returns a function closure that will call (and return the value of) function _method_, with _scope_ as _this_.
+		Returns a function closure that will call (and return the value of)
+		function _method_, with _scope_ as _this_.
 
-		Method can be a function or the string name of a function-valued property on _scope_.
+		_method_ can be a function or the string name of a function-valued
+		property on _scope_.
 
 		Arguments to the closure are passed into the bound function.
 
@@ -279,14 +284,14 @@
 			// the value of this.foo(3)
 			var value = fn(3);
 
-		Optionally, any number of arguments can be prefixed to the bound function.
+		Optionally, any number of arguments may be prefixed to the bound function.
 
 			// a function that binds this to this.bar, with arguments ("hello", 42)
 			var fn = enyo.bind(this, "bar", "hello", 42);
 			// the value of this.bar("hello", 42, "goodbye");
 			var value = fn("goodbye");
 
-		Functions can be bound to any scope.
+		Functions may be bound to any scope.
 
 			// binds function 'bar' to scope 'foo'
 			var fn = enyo.bind(foo, bar);
@@ -336,7 +341,8 @@
 	};
 
 	/**
-		Calls named method _inMethod_ (String) on _inObject_ with optional arguments _inArguments_ (Array), if the object and method exist.
+		Calls named method _inMethod_ (String) on _inObject_ with optional
+		arguments _inArguments_ (Array), if the object and method exist.
 
 			enyo.call(myWorkObject, "doWork", [3, "foo"]);
 	*/
@@ -353,7 +359,7 @@
 	/**
 		Returns the current time.
 
-		Returned value is equivalent to new Date().getTime()
+		The returned value is equivalent to _new Date().getTime()_.
 	*/
 	enyo.now = Date.now || function() {
 		return new Date().getTime();
