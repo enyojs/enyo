@@ -11,14 +11,15 @@ enyo.getCookie = function(inName) {
 /**
 	Sets a named value into the document cookie, with properties.
 
-	Properties in the optional inProps argument are attached to the cookie.
-	inProps may have an expires property, which can be a number of days, a Date object,
-	or a UTC time string.
+	Properties in the optional _inProps_ argument are attached to the cookie.
+	_inProps_ may have an _expires_ property, which can be a number of days, a
+	Date object, or a UTC time string.
 	
-	To remove a cookie, use a inProps value of <code>{ "Max-Age": 0 }</code>.
+	To remove a cookie, use an _inProps_ value of <code>{ "Max-Age": 0 }</code>.
 	
-	If developing in the Google Chrome browser with a local file as your application,
-	start chrome with the <code>--enable-file-cookies</code> switch to allow cookies to be set.
+	If developing in the Google Chrome browser with a local file as your
+	application, start Chrome with the <code>--enable-file-cookies</code> switch
+	to allow cookies to be set.
 */
 enyo.setCookie = function(inName, inValue, inProps) {
 	var cookie = inName + "=" + encodeURIComponent(inValue);
