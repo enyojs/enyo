@@ -42,6 +42,7 @@ enyo.kind({
 		this.active = Boolean(this.active);
 		this.setChecked(this.active);
 		this.bubble("onActivate");
+		this.notifyContainer();
 	},
 	// all input type controls support 'value' property
 	setValue: function(inValue) {
@@ -57,23 +58,15 @@ enyo.kind({
 		// we squelch the inherited method
 	},
 	change: function() {
-		// Various versions of IE (notably IE8) do not fire 'onchange' for 
-		// checkboxes, so we discern change via 'click'.
-		// The click handler bubbles a synthetic 'onchange' event
-		// for platform-compatibility (i.e. listeners for 'onchange'
-		// will receive messages on IE8).
-		// Therefore, we squelch the proper 'change' event.
-		return true;
+		this.setActive(this.getChecked());
 	},
 	click: function(inSender, inEvent) {
 		// Various versions of IE (notably IE8) do not fire 'onchange' for 
 		// checkboxes, so we discern change via 'click'.
 		// Note: keyboard interaction (e.g. pressing space when focused) fires
 		// a click event.
-		this.setActive(this.getChecked());
-		// We propagate 'click' on checkbox as 'change' for IE
-		// compatibility, as discussed in the 'change' method
-		// comments.
-		this.bubbleUp("onchange", inEvent);
+		if (enyo.platform.ie <= 8) {
+			this.bubble("onchange", inEvent);
+		}
 	}
 });
