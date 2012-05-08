@@ -1,7 +1,10 @@
 /**
-	_enyo.UiComponent_ implements a container strategy suitable for presentation layers.
+	_enyo.UiComponent_ implements a container strategy suitable for presentation
+	layers.
 
-	UiComponent itself is abstract. Concrete subkinds include <a href="#enyo.Control">enyo.Control</a> (for HTML/DOM) and _enyo.CanvasControl_ for Canvas contexts.
+	UiComponent itself is abstract.  Concrete subkinds include
+	<a href="#enyo.Control">enyo.Control</a> (for HTML/DOM) and
+	_enyo.CanvasControl_ for Canvas contexts.
 */
 enyo.kind({
 	name: "enyo.UiComponent",
@@ -23,11 +26,11 @@ enyo.kind({
 		this.layoutKindChanged();
 	},
 	destroy: function() {
-		// destroys all non-chrome controls (regardless of owner)
+		// Destroys all non-chrome controls (regardless of owner).
 		this.destroyClientControls();
-		// remove us from our container
+		// Removes us from our container.
 		this.setContainer(null);
-		// destroys chrome controls owned by this
+		// Destroys chrome controls owned by this.
 		this.inherited(arguments);
 	},
 	importProps: function(inProps) {
@@ -37,11 +40,13 @@ enyo.kind({
 			this.owner = enyo.master;
 		}
 	},
-	// As implemented, controlParentName only works to identify an owned control created via createComponents 
-	// (i.e. usually in our components block).
-	// To attach a controlParent via other means, one needs to call discoverControlParent 
-	// or set controlParent directly.
-	// We could discoverControlParent in addComponent, but it would cause a lot of useless checking.
+	// As implemented, _controlParentName_ only works to identify an owned
+	// control created via _createComponents_ (i.e., usually in our _components_
+	// block).  To attach a _controlParent_ via other means, one must call
+	// _discoverControlParent_ or set _controlParent_ directly.
+	//
+	// We could call _discoverControlParent_ in _addComponent_, but it would
+	// cause a lot of useless checking.
 	createComponents: function() {
 		this.inherited(arguments);
 		this.discoverControlParent();
@@ -50,7 +55,7 @@ enyo.kind({
 		this.controlParent = this.$[this.controlParentName] || this.controlParent;
 	},
 	adjustComponentProps: function(inProps) {
-		// components we create have us as a container by default
+		// Components we create have us as a container by default.
 		inProps.container = inProps.container || this;
 		/*
 		// the 'property master' is the object responsible for adjusting component props
@@ -87,7 +92,7 @@ enyo.kind({
 		}
 	},
 	//* @public
-	// Note: oddly, a Control is considered a descendant of itself
+	// Note: Oddly, a Control is considered a descendant of itself.
 	isDescendantOf: function(inAncestor) {
 		var p = this;
 		while (p && p!=inAncestor) {
@@ -114,7 +119,8 @@ enyo.kind({
 		return results;
 	},
 	/**
-		Destroys 'client controls', the same set of controls returned by getClientControls.
+		Destroys "client controls", the same set of controls returned by
+		_getClientControls_.
 	*/
 	destroyClientControls: function() {
 		var c$ = this.getClientControls();
@@ -125,11 +131,11 @@ enyo.kind({
 	//* @protected
 	addControl: function(inControl) {
 		this.controls.push(inControl);
-		// when we add a Control, we also establish a parent
+		// When we add a Control, we also establish a parent.
 		this.addChild(inControl);
 	},
 	removeControl: function(inControl) {
-		// when we remove a Control, we also remove it from it's parent
+		// When we remove a Control, we also remove it from its parent.
 		inControl.setParent(null);
 		return enyo.remove(inControl, this.controls);
 	},
@@ -201,7 +207,7 @@ enyo.kind({
 	},
 	/**
 		Call after this control has been resized to allow it to process the size change.
-		To respond to a resize, override "resizeHandler" instead.
+		To respond to a resize, override _resizeHandler_ instead.
 	*/
 	// syntactic sugar for 'waterfall("onresize")'
 	resized: function() {
@@ -210,7 +216,7 @@ enyo.kind({
 	},
 	//* @protected
 	resizeHandler: function() {
-		// FIXME: once we are the business of reflowing layouts on resize, then we have a 
+		// FIXME: once we are in the business of reflowing layouts on resize, then we have an 
 		// inside/outside problem: some scenarios will need to reflow before child
 		// controls reflow, and some will need to reflow after. Even more complex scenarios
 		// have circular dependencies, and can require multiple passes or other resolution.
@@ -218,7 +224,7 @@ enyo.kind({
 		this.reflow();
 	},
 	/**
-		Send a message to all my descendents
+		Sends a message to all my descendents.
 	*/
 	waterfallDown: function(inMessage, inPayload, inSender) {
 		// Note: Controls will generally be both in a $ hash and a child list somewhere.
@@ -251,10 +257,11 @@ enyo.createFromKind = function(inKind, inParam) {
 };
 
 //
-// Default owner for ownerless UiComponents to allow notifying such UiComponents of important system events
-// like window resize.
+// Default owner for ownerless UiComponents to allow notifying such UiComponents
+// of important system events like window resize.
 //
-// NOTE: ownerless UiComponents will not GC unless explicitly destroyed as they will be referenced by enyo.master.
+// NOTE: Ownerless UiComponents will not be garbage collected unless explicitly
+// destroyed, as they will be referenced by _enyo.master_.
 //
 enyo.master = new enyo.Component({
 	name: "master",
@@ -266,13 +273,14 @@ enyo.master = new enyo.Component({
 	bubble: function(inEventName, inEvent, inSender) {
 		//console.log("master event: " + inEventName);
 		if (inEventName == "onresize") {
-			// resize is special, waterfall this message
-			// this works because master is a Component, so it' waterfalls
-			// to it's owned Components (i.e. master has no children)
+			// Resize is special; waterfall this message.
+			// This works because master is a Component, so it waterfalls
+			// to its owned Components (i.e., master has no children).
 			enyo.master.waterfallDown("onresize");
 			enyo.master.waterfallDown("onpostresize");
 		} else {
-			// all other top level events are sent only to interested Signal receivers
+			// All other top-level events are sent only to interested Signal
+			// receivers.
 			enyo.Signals.send(inEventName, inEvent);
 		}
 	}
