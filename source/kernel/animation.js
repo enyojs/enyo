@@ -31,7 +31,7 @@
 		}
 	}
 	/**
-		Request an animation callback.
+		Requests an animation callback.
 
 		On compatible browsers, if _inNode_ is defined, the callback will fire only if _inNode_ is visible.
 
@@ -41,7 +41,7 @@
 		return _requestFrame(inCallback, inNode);
 	};
 	/**
-		Cancel a requested animation callback with the specified id.
+		Cancels a requested animation callback with the specified id.
 	*/
 	enyo.cancelRequestAnimationFrame = function(inId) {
 		return _cancelFrame(inId);

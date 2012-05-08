@@ -2,11 +2,12 @@
 	Invokes function _inJob_ after _inWait_ milliseconds have elapsed since the
 	last time _inJobName_ was referenced.
 
-	Jobs can be used to throttle behaviors. If some event can occur once or multiple
-	times, but we want a response to occur only once every so many seconds, we can use a job.
+	Jobs can be used to throttle behaviors.  If some event may occur once or
+	multiple times, but we want a response to occur only once every _n_	seconds,
+	we can use a job.
 
 		onscroll: function() {
-			// updateThumb will be called but only when 1s has elapsed since the 
+			// updateThumb will be called, but only when 1s has elapsed since the 
 			// last onscroll
 			enyo.job("updateThumb", enyo.bind(this, "updateThumb"), 1000);
 		}
