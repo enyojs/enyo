@@ -17,7 +17,7 @@ enyo.kind({
 	},
 	//* @public
 	/**
-		Send the ajax request with parameters _inParams_.
+		Sends the ajax request with parameters _inParams_.
 	*/
 	go: function(inParams) {
 		this.startTimer();

@@ -1,9 +1,9 @@
 /**
-	A specialized form of enyo.Async that is used for making JSONP requests to a
-	remote server. This differs from normal XmlHTTPRequest calls because the
-	external resource is loaded using a <script> tag. This allows bypassing same-
-	domain rules that normally apply to XHR since the browser will load scripts
-	from any address.
+	A specialized form of enyo.Async used for making JSONP requests to a remote
+	server. This differs from the normal XmlHTTPRequest call in that the external
+	resource is loaded using a &lt;script&gt; tag. This allows us to bypass the
+	same-domain rules that normally apply to XHR, since the browser will load
+	scripts	from any address.
 */
 enyo.kind({
 	name: "enyo.JsonpRequest",
@@ -12,7 +12,7 @@ enyo.kind({
 		//*	The URL for the service.
 		url: "",
 		/**
-			name of the argument that holds the callback name. For example, the
+			Name of the argument that holds the callback name. For example, the
 			Twitter search API uses "callback" as the parameter to hold the
 			name of the called function.  We will automatically add this to
 			the encoded arguments.
@@ -20,7 +20,7 @@ enyo.kind({
 		callbackName: "callback"
 	},
 	statics: {
-		// counter to allow creating unique names for each JSONP request
+		// Counter to allow creation of unique name for each JSONP request
 		nextCallbackID: 0,
 		// For the tested logic around adding a <script> tag at runtime, see the
 		// discussion at the URL below: 
@@ -42,7 +42,7 @@ enyo.kind({
 		this.inherited(arguments);
 	},
 	//* @public
-	//* starts the JSONP request
+	//* Starts the JSONP request.
 	go: function(inParams) {
 		this.startTimer();
 		this.jsonp(inParams);
