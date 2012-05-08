@@ -87,6 +87,14 @@ enyo.kind({
 			inControl.node.scrollIntoView(inAlignWithTop);
 		}
 	},
+	isInView: function(inNode) {
+		var sb = this.getScrollBounds();
+		var ot = inNode.offsetTop;
+		var oh = inNode.offsetHeight;
+		var ol = inNode.offsetLeft;
+		var ow = inNode.offsetWidth;
+		return (ot >= sb.top && ot + oh <= sb.top + sb.clientHeight) && (ol >= sb.left && ol + ow <= sb.left + sb.clientWidth);
+	},
 	setScrollTop: function(inTop) {
 		this.scrollTop = inTop;
 		if (this.scrollNode) {

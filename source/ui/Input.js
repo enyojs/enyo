@@ -16,7 +16,7 @@ enyo.kind({
 	},
 	events: {
 		//* Sent when the input's value has changed, support for IE included.
-		onInputChange: "",
+		onRealtimeChange: "",
 		//* Sent when the input's is disabled or enabled.
 		onDisabledChange: ""
 	},
@@ -35,7 +35,7 @@ enyo.kind({
 	},
 	create: function() {
 		if (enyo.platform.ie) {
-			this.handlers.onkeyup = "keyup";
+			this.handlers.onkeyup = "iekeyup";
 		}
 		this.inherited(arguments);
 		this.disabledChanged();
@@ -70,15 +70,18 @@ enyo.kind({
 		this.setNodeProperty("value", this.value);
 		this.notifyContainer();
 	},
-	keyup: function() {
-		// ie only
-		this.notifyContainer();
+	iekeyup: function(inSender, inEvent) {
+		var ie = enyo.platform.ie, kc = inEvent.keyCode;
+		// input event missing on ie 8, fails to fire on backspace and delete keys in ie 9
+		if (ie <= 8 || (ie == 9 && (kc == 8 || kc == 46))) {
+			this.bubble("oninput", inEvent);
+		}
 	},
 	input: function() {
 		this.notifyContainer();
 	},
 	notifyContainer: function() {
-		this.bubble("onInputChange");
+		this.bubble("onRealtimeChange");
 	},
 	clear: function() {
 		this.setValue("");
