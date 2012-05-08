@@ -1182,7 +1182,7 @@ for (var c = 0, d; d = this.objects[c]; c++) d.type == a && b.push(d);
 return b;
 },
 filter: function(a) {
-return enyo.forEach(this.objects, a);
+return enyo.filter(this.objects, a);
 },
 findByProperty: function(a, b, c) {
 for (var d = 0, e; e = a[d]; d++) if (e[b] == c) return e;

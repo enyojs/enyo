@@ -228,6 +228,9 @@ enyo.kind.statics = {
 	},
 	extend: function(props) {
 		enyo.mixin(this.prototype, props);
+		// support pluggable 'features'
+		var ctor = this;
+		enyo.forEach(enyo.kind.features, function(fn){ fn(ctor, props); });
 	}
 };
 

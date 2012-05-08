@@ -3,6 +3,8 @@
 	"json.js",
 	"cookie.js",
 	"xhr.js",
+	"AjaxProperties.js",
 	"Ajax.js",
-	"Jsonp.js"
+	"Jsonp.js",
+	"WebService.js"
 );
