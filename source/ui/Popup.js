@@ -87,10 +87,14 @@ enyo.kind({
 		}
 	},
 	updatePosition: function() {
-		if (this.centered) {
+		if( this.centered ) {
 			var d = this.calcViewportSize();
 			var b = this.getBounds();
-			this.addStyles("top: " + ((d.height-b.height)/2) + "px; left: " + ((d.width-b.width)/2) + "px;");
+
+			var l = ( ( d.width - b.width ) / 2 );
+			var t = ( ( d.height - b.height ) / 2 );
+
+			this.addStyles( "top: " + ( t >= 0 ? t : 0 ) + "px; left: " + ( l >= 0 ? l : 0 ) + "px;" );
 		}
 	},
 	showingChanged: function() {
