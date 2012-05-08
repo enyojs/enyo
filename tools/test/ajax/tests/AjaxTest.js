@@ -8,6 +8,7 @@ enyo.kind({
 			})
 			.error(this, function(inSender, inValue) {
 				this.finish("bad status: " + inValue);
+				console.error(inValue);
 			})
 			.go(inParams);
 	},
@@ -74,7 +75,7 @@ enyo.kind({
 	// test CORS (Cross-Origin Resource Sharing) by testing against youtube api
 	testCORS: function() {
 		this._testAjax({url: "http://gdata.youtube.com/feeds/api/videos/"}, {q: "waterfall", alt: "json", format: 5}, function(inValue) {
-			return inValue.feed.entry.length > 0;
+			return inValue && inValue.feed && inValue.feed.entry && inValue.feed.entry.length > 0;
 		});
 	}
 });

@@ -1,3 +1,4 @@
 enyo.depends(
-	"AjaxTest.js"
+	"AjaxTest.js",
+	"WebServiceTest.js"
 );
