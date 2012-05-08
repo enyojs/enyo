@@ -46,7 +46,6 @@ enyo.kind({
 	},
 	// all input type controls support 'value' property
 	setValue: function(inValue) {
-		this.log();
 		this.setChecked(Boolean(inValue));
 	},
 	getValue: function() {
