@@ -13,7 +13,7 @@
 
 	Example:
 
-		// returns "My name is Barney."
+		// Returns "My name is Barney."
 		enyo.macroize("My name is {$name}.", {name: "Barney"});
 
 	Dot notation is supported, like so:
@@ -24,7 +24,7 @@
 				weight: 3
 			}
 		}
-		// returns "Each Gizmo weighs 3 pounds."
+		// Returns "Each Gizmo weighs 3 pounds."
 		enyo.macroize("Each {$product_0.name} weighs {$product_0.weight} pounds.", info);
 */
 enyo.macroize = function(inText, inMap, inPattern) {

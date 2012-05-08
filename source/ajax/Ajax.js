@@ -1,13 +1,10 @@
 ﻿/**
-	IMPORTANT: Ajax implements the properties of the shared #enyo.AjaxPropertie object. 
-	The properties documented under AjaxProperties are published by enyo.Async.
+	IMPORTANT: Ajax implements the properties of the shared
+	<a href="#enyo.AjaxProperties">enyo.AjaxProperties</a> object. 
+	The properties documented under AjaxProperties are published by _enyo.Async_.
 */
 enyo.kind({
 	name: "enyo.Ajax",
-	/**
-		IMPORTANT: Ajax implements the properties of the shared #enyo.AjaxPropertie object. 
-		The properties documented under AjaxProperties are published by enyo.Async.
-	*/
 	kind: enyo.Async,
 	published: enyo.AjaxProperties,
 	//* @protected

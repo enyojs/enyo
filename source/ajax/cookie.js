@@ -9,7 +9,7 @@ enyo.getCookie = function(inName) {
 };
 
 /**
-	Sets a named value into the document cookie, with properties.
+	Sets a named value in the document cookie, with properties.
 
 	Properties in the optional _inProps_ argument are attached to the cookie.
 	_inProps_ may have an _expires_ property, which can be a number of days, a
