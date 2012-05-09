@@ -303,6 +303,13 @@ enyo.kind({
 		enyo.Control.cssTextToDomStyles(inCssText, this.domStyles);
 		this.domStylesChanged();
 	},
+	getComputedStyleValue: function(style, defaultValue) {
+		if (this.hasNode()) {
+			return enyo.dom.getComputedStyleValue(this.node, style);
+		} else {
+			return defaultValue;
+		}
+	},
 	domStylesChanged: function() {
 		this.domCssText = enyo.Control.domStylesToCssText(this.domStyles);
 		this.invalidateTags();
