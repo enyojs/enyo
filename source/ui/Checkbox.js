@@ -5,9 +5,6 @@ enyo.kind({
 	name: "enyo.Checkbox",
 	//* @protected
 	kind: enyo.Input,
-	attributes: {
-		type: "checkbox"
-	},
 	events: {
 		onActivate: ""
 	},
@@ -16,7 +13,9 @@ enyo.kind({
 		//* Value of the checkbox
 		checked: false,
 		//* Group API requirement for determining selected item
-		active: false
+		active: false,
+		//* @protected
+		type: "checkbox"
 	},
 	//* @protected
 	handlers: {
@@ -42,7 +41,6 @@ enyo.kind({
 		this.active = Boolean(this.active);
 		this.setChecked(this.active);
 		this.bubble("onActivate");
-		this.notifyContainer();
 	},
 	// all input type controls support 'value' property
 	setValue: function(inValue) {
