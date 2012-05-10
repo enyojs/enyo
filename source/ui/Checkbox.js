@@ -23,19 +23,15 @@ enyo.kind({
 		onchange: "change",
 		onclick: "click"
 	},
+	create: function() {
+		this.inherited(arguments);
+	},
 	rendered: function() {
 		this.inherited(arguments);
-		/*
-			We keep the active state before checkedChanged for this case:
-			{kind: "Checkbox", active: true}
-			this.checked is false, and checkedChanged would setActive false too.
-			The whole block is in rendered instead of create because activeChanged fires an event
-		*/
-		var before = this.active;
-		this.checkedChanged();
-		if (before) {
-			this.setActive(true);
+		if (this.active) {
+			this.activeChanged();
 		}
+		this.checkedChanged();
 	},
 	// instance 'checked' property is linked to DOM 'checked' property
 	getChecked: function() {
