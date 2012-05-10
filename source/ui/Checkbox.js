@@ -3,12 +3,11 @@
 */
 enyo.kind({
 	name: "enyo.Checkbox",
-	//* @protected
 	kind: enyo.Input,
+	classes: "enyo-checkbox",
 	events: {
 		onActivate: ""
 	},
-	//* @public
 	published: {
 		//* Value of the checkbox
 		checked: false,
@@ -18,13 +17,25 @@ enyo.kind({
 		type: "checkbox"
 	},
 	//* @protected
+	// disable classes inherited from enyo.Input
+	kindClasses: "",
 	handlers: {
 		onchange: "change",
 		onclick: "click"
 	},
-	create: function() {
+	rendered: function() {
 		this.inherited(arguments);
+		/*
+			We keep the active state before checkedChanged for this case:
+			{kind: "Checkbox", active: true}
+			this.checked is false, and checkedChanged would setActive false too.
+			The whole block is in rendered instead of create because activeChanged fires an event
+		*/
+		var before = this.active;
 		this.checkedChanged();
+		if (before) {
+			this.setActive(true);
+		}
 	},
 	// instance 'checked' property is linked to DOM 'checked' property
 	getChecked: function() {
