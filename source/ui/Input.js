@@ -15,8 +15,6 @@ enyo.kind({
 		disabled: false
 	},
 	events: {
-		//* Sent when the input's value has changed, support for IE included.
-		onRealtimeChange: "",
 		//* Sent when the input's is disabled or enabled.
 		onDisabledChange: ""
 	},
@@ -68,7 +66,6 @@ enyo.kind({
 	valueChanged: function() {
 		this.setAttribute("value", this.value);
 		this.setNodeProperty("value", this.value);
-		this.notifyContainer();
 	},
 	iekeyup: function(inSender, inEvent) {
 		var ie = enyo.platform.ie, kc = inEvent.keyCode;
@@ -76,12 +73,6 @@ enyo.kind({
 		if (ie <= 8 || (ie == 9 && (kc == 8 || kc == 46))) {
 			this.bubble("oninput", inEvent);
 		}
-	},
-	input: function() {
-		this.notifyContainer();
-	},
-	notifyContainer: function() {
-		this.bubble("onRealtimeChange");
 	},
 	clear: function() {
 		this.setValue("");

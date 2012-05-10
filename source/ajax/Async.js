@@ -99,9 +99,11 @@ enyo.kind({
 	recover: function() {
 		this.failed = false;
 	},
-	//* Starts the async activity.  Overridden in subkinds.
+	//* Starts the async activity. Overridden in subkinds.
 	go: function(inValue) {
-		this.respond(inValue);
+		enyo.asyncMethod(this, function() {
+			this.respond(inValue);
+		});
 		return this;
 	}
 });
