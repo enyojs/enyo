@@ -5,14 +5,14 @@
 
 	Example:
 
-		{kind: "Repeater", items: 2, onSetupItem: "setImageSource", components: [
+		{kind: "Repeater", count: 2, onSetupItem: "setImageSource", components: [
 			{kind: "Image"}
 		]}
 
 		setImageSource: function(inSender, inEvent) {
 			var index = inEvent.index;
-			var itemControl = inEvent.item;
-			itemControl.$.image.setSrc(this.imageSources[index]);
+			var item = inEvent.item;
+			item.$.image.setSrc(this.imageSources[index]);
 			return true;
 		}
 
@@ -23,7 +23,7 @@ enyo.kind({
 	name: "enyo.Repeater",
 	published: {
 		//* Number of items
-		items: 0
+		count: 0
 	},
 	events: {
 		//* Sends the item index, and the item control, for decoration
@@ -31,7 +31,7 @@ enyo.kind({
 	},
 	create: function() {
 		this.inherited(arguments);
-		this.itemsChanged();
+		this.countChanged();
 	},
 	//* @protected
 	initComponents: function() {
@@ -39,17 +39,17 @@ enyo.kind({
 		this.components = this.kindComponents = null;
 		this.inherited(arguments);
 	},
-	setItems: function(inItems) {
-		this.setPropertyValue("items", inItems, "itemsChanged");
+	seCount: function(inCount) {
+		this.setPropertyValue("count", inCount, "countChanged");
 	},
-	itemsChanged: function() {
+	countChanged: function() {
 		this.build();
 	},
 	//* @public
 	//* Render the list
 	build: function() {
 		this.destroyClientControls();
-		for (var i=0, c; i<this.items; i++) {
+		for (var i=0, c; i<this.count; i++) {
 			c = this.createComponent({kind: "enyo.OwnerProxy", index: i});
 			// do this as a second step so 'c' is the owner of the created components
 			c.createComponents(this.itemComponents);
