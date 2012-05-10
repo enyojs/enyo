@@ -5,7 +5,7 @@ enyo.kind({
 		active: false
 	},
 	//* @protected
-	create: function() {
+	rendered: function() {
 		this.inherited(arguments);
 		this.activeChanged();
 	},

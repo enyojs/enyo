@@ -36,7 +36,6 @@ enyo.kind({
 			this.handlers.onkeyup = "iekeyup";
 		}
 		this.inherited(arguments);
-		this.disabledChanged();
 		this.placeholderChanged();
 		// prevent overriding a custom attribute with null
 		if (this.type) {
@@ -46,6 +45,7 @@ enyo.kind({
 	},
 	rendered: function() {
 		this.inherited(arguments);
+		this.disabledChanged();
 		if (this.defaultFocus) {
 			this.focus();
 		}
