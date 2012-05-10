@@ -15,7 +15,7 @@
 	method: "GET", // {value: "GET", options: ["GET", "POST", "PUT", "DELETE"]},
 	/**
 		How the response will be handled.
-		Supported values are: <code>"json", "text", "xml"</code>.
+		Supported values are: <code>"json", "text", "xml"</code>
 	*/
 	handleAs: "json", // {value: "json", options: ["text", "json", "xml"]},
 	/**
@@ -29,7 +29,7 @@
 	sync: false,
 	/**
 		Optional additional request headers as a JS object, e.g.
-		<code>{ "X-My-Header": "My Value", "Mood": "Happy" }</code>, or null.
+		<code>{ "X-My-Header": "My Value", "Mood": "Happy" }</code> or null.
 	*/
 	headers: null,
 	/**
@@ -45,7 +45,7 @@
 	*/
 	password: "",
 	/**
-		Optional object with fields to pass directly to the underlying XHR object
+		Optional object with fields to pass directly to the underlying XHR object.
 	*/
 	xhrFields: null
 };
