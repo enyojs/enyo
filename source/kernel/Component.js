@@ -484,7 +484,7 @@ enyo.kind({
 		// try to delegate this event to our owner via event properties
 		//
 		if (this[inEventName]) {
-			return this.bubbleDelegation(this.owner, this[inEventName], inEventName, inEvent, inSender);
+			return this.bubbleDelegation(this.owner, this[inEventName], inEventName, inEvent, this);
 		}
 	},
 	decorateEvent: function(inEventName, inEvent, inSender) {
@@ -504,7 +504,7 @@ enyo.kind({
 		this.decorateEvent(inEventName, inEvent, inSender);
 		// by default, dispatch this event if we are in fact the delegate
 		if (inDelegate == this) {
-			return this.dispatch(inName, inEvent, inEvent.originator);
+			return this.dispatch(inName, inEvent, inSender);
 		}
 		return this.bubbleDelegation(inDelegate, inName, inEventName, inEvent, inSender);
 	},
