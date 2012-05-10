@@ -18,6 +18,11 @@
 
 	Be sure to return true from your onSetupItem handler to avoid having other events
 	handlers further up the tree also try modify your item control.
+
+	The repeater will always be rebuilt after a call to setCount, even if the count
+	didn't change.  This differs from most properties where no action happens when
+	a set-value call doesn't modify the value.  This is to accomodate changes to the
+	data model for the repeater which just happens to have the same item count.
 */
 enyo.kind({
 	name: "enyo.Repeater",
