@@ -59,6 +59,12 @@ enyo.kind({
 	constructor: function() {
 		enyo._objectCount++;
 	},
+	/**
+		Set property named 'n' with value 'v' and then invoke callback function
+		'cf' (if specified) with the original value of property 'n'.
+		All property setting should bottleneck here so that objects can
+		observe changes wlog.
+	*/
 	setPropertyValue: function(n, v, cf) {
 		if (this[cf]) {
 			var old = this[n];
