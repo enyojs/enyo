@@ -35,7 +35,6 @@ enyo.kind({
 			inOld.removeClass("active");
 		}
 		if (this.active) {
-			this.active.setActive(true);
 			this.active.addClass("active");
 		}
 	}
