@@ -29,13 +29,15 @@ enyo.kind({
 			}
 		}
 	},
+	// XXX: The indended functionality is to use <component>.setActive(true), not Group.setActive(<component>)
+	setActive: function() {
+	},
 	activeChanged: function(inOld) {
 		if (inOld) {
 			inOld.setActive(false);
 			inOld.removeClass("active");
 		}
 		if (this.active) {
-			this.active.setActive(true);
 			this.active.addClass("active");
 		}
 	}
