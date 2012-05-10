@@ -67,7 +67,9 @@ enyo.kind({
 	name: "enyo.OwnerProxy",
 	tag: null,
 	decorateEvent: function(inEventName, inEvent, inSender) {
-		inEvent.index = this.index;
+		if (inEvent) {
+			inEvent.index = this.index;
+		}
 		this.inherited(arguments);
 	},
 	delegateEvent: function(inDelegate, inName, inEventName, inEvent, inSender) {
