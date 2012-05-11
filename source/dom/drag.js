@@ -1,7 +1,7 @@
 ﻿/**
-	Enyo supports a cross-platform set of drag events.  These events allow us to
-	have a single set of event handlers for all supported platforms, whether
-	desktop or mobile.
+	Enyo supports a cross-platform set of drag events.  These events allow users
+	to write a single set of event handlers for applications that run on both
+	mobile and desktop platforms.
 
 	The following events are provided:
 

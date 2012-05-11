@@ -1,26 +1,49 @@
 ﻿//* @public
 /**
-	Enyo supports a set of cross-platform gesture events that work similarly on all supported platforms. These events are 
-	provided so that users can write a single set of event handlers for applications that run on both mobile and 
-	desktop platforms. They are needed because desktop and mobile platforms handle basic gestures differently.
-	For example, desktop platforms provide mouse events while mobile platforms support touch events and a limited 
-	set of mouse events for backward compatibility.
+	Enyo supports a set of cross-platform gesture events that work similarly on
+	all supported platforms. These events are provided so that users can write a
+	single set of event handlers for applications that run on both mobile and 
+	desktop platforms.  They are needed because desktop and mobile platforms
+	handle basic gestures differently.  For example, desktop platforms provide
+	mouse events, while mobile platforms support touch events and a limited set
+	of mouse events for backward compatibility.
 
 	The following events are available:
 
-	* "down" - generated when the pointer is pressed down.
-	* "up" - generated when the pointer is released up.
-	* "tap" - genereted when the pointer is pressed down and released up. The target is the lowest dom element that received both 
-	the related down and up events.
-	* "move" - generated when the pointer moves.
-	* "enter" - generated when the pointer enters a dom node.
-	* "leave" - generated when the pointer leaves a dom node.
+	* "down" is generated when the pointer is pressed down.
 
-	These events are synthesized from the available dom events and contain these common properties, when available: "target", 
-	relatedTarget", "clientX", "clientY", "pageX", "pageY", "screenX", "screenY", "altKey", "ctrlKey", "metaKey", "shiftKey",
-	"detail", "identifier."
+	* "up" is generated when the pointer is released up.
 
-	Please note that enyo's gesture events are generated on enyo controls, not dom elements.
+	* "tap" is generated when the pointer is pressed down and released up.  The
+		target is the lowest DOM element that received both	the related "down"
+		and	"up" events.
+
+	* "move" is generated when the pointer moves.
+
+	* "enter" is generated when the pointer enters a DOM node.
+
+	* "leave" is generated when the pointer leaves a DOM node.
+
+	These events are synthesized from the available DOM events and contain these
+	common properties, when available:
+
+	* target
+	* relatedTarget
+	* clientX
+	* clientY
+	* pageX
+	* pageY
+	* screenX
+	* screenY
+	* altKey
+	* ctrlKey
+	* metaKey
+	* shiftKey
+	* detail
+	* identifier
+
+	Please note that Enyo's gesture events are generated on Enyo controls, not
+	DOM elements.
 */
 enyo.gesture = {
 	//* @protected
