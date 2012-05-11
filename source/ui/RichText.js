@@ -24,44 +24,11 @@ enyo.kind({
 	},
 	//* Set to true to focus this control when it is rendered.
 	defaultFocus: false,
-	events: {
-		//* cross platform input change event (IE does not support oninput)
-		onInputChange: ""
-	},
 	//* @protected
+	kind: enyo.Input,
+	tag: "div",
 	attributes: {
 		contenteditable: true,
-		onfocus: enyo.bubbler,
-		onblur: enyo.bubbler
-	},
-	handlers: {
-		oninput: "input"
-	},
-	create: function() {
-		if (enyo.platform.ie) {
-			this.handlers.onkeyup = "keyup";
-		}
-		this.inherited(arguments);
-		this.disabledChanged();
-		this.valueChanged();
-	},
-	rendered: function() {
-		this.inherited(arguments);
-		if (this.defaultFocus) {
-			this.focus();
-		}
-	},
-	keyup: function() {
-		this.notifyContainer();
-	},
-	input: function() {
-		this.notifyContainer();
-	},
-	notifyContainer: function() {
-		this.bubble("onInputChange");
-	},
-	disabledChanged: function() {
-		this.setAttribute("disabled", this.disabled);
 	},
 	valueChanged: function() {
 		if (this.hasFocus()) {
@@ -77,19 +44,11 @@ enyo.kind({
 			return this.node.innerHTML;
 		}
 	},
-	focus: function() {
-		if (this.hasNode()) {
-			this.node.focus();
-		}
-	},
-	//* Returns true if the RichText is focused, using querySelector
+	//* Returns true if the RichText is focused
 	hasFocus: function() {
 		if (this.hasNode()) {
-			return Boolean(this.node.parentNode.querySelector("#" + this.id + ":focus"));
+			return document.activeElement === this.node;
 		}
-	},
-	clear: function() {
-		this.setValue("");
 	},
 	/**
 		Return the selection object
