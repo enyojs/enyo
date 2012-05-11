@@ -70,17 +70,19 @@ enyo.kind({
 		}
 	},
 	scrollToNode: function(inNode, inAlignWithTop) {
-		var sb = this.getScrollBounds();
-		var n = inNode;
-		var b = {height: n.offsetHeight, width: n.offsetWidth, top: 0, left: 0};
-		while (n && n.parentNode && n.id != this.scrollNode.id) {
-			b.top += n.offsetTop;
-			b.left += n.offsetLeft;
-			n = n.parentNode;
+		if (this.scrollNode) {
+			var sb = this.getScrollBounds();
+			var n = inNode;
+			var b = {height: n.offsetHeight, width: n.offsetWidth, top: 0, left: 0};
+			while (n && n.parentNode && n.id != this.scrollNode.id) {
+				b.top += n.offsetTop;
+				b.left += n.offsetLeft;
+				n = n.parentNode;
+			}
+			// By default, the element is scrolled to align with the top of the scroll area.
+			this.setScrollTop(Math.min(sb.maxTop, inAlignWithTop === false ? b.top - sb.clientHeight + b.height : b.top));
+			this.setScrollLeft(Math.min(sb.maxLeft, inAlignWithTop === false ? b.left - sb.clientWidth + b.width : b.left));
 		}
-		// By default, the element is scrolled to align with the top of the scroll area.
-		this.setScrollTop(Math.min(sb.maxTop, inAlignWithTop === false ? b.top - sb.clientHeight + b.height : b.top));
-		this.setScrollLeft(Math.min(sb.maxLeft, inAlignWithTop === false ? b.left - sb.clientWidth + b.width : b.left));
 	},
 	scrollIntoView: function(inControl, inAlignWithTop) {
 		if (inControl.hasNode()) {

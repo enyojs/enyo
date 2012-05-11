@@ -1,58 +1,86 @@
 ﻿/**
 	A simple control for making lists of items.
 
-	Components of Repeater are copied for each row created, wrapped in a control keeping state of the row index.
+	Components of Repeater are copied for each item created, wrapped in a control keeping state of the item index.
 
 	Example:
 
-		{kind: "Repeater", rows: 2, onSetupRow: "setImageSource", components: [
+		{kind: "Repeater", count: 2, onSetupItem: "setImageSource", components: [
 			{kind: "Image"}
 		]}
 
 		setImageSource: function(inSender, inEvent) {
 			var index = inEvent.index;
-			var rowControl = inEvent.row;
-			rowControl.$.image.setSrc(this.imageSources[index]);
+			var item = inEvent.item;
+			item.$.image.setSrc(this.imageSources[index]);
 			return true;
 		}
 
-	Be sure to return true from your onSetupRow handler to avoid having other events
-	handlers further up the tree also try modify your row control.
+	Be sure to return true from your onSetupItem handler to avoid having other events
+	handlers further up the tree also try modify your item control.
+
+	The repeater will always be rebuilt after a call to setCount, even if the count
+	didn't change.  This differs from most properties where no action happens when
+	a set-value call doesn't modify the value.  This is to accomodate changes to the
+	data model for the repeater which just happens to have the same item count.
 */
 enyo.kind({
 	name: "enyo.Repeater",
-	kind: enyo.Control,
 	published: {
-		//* How many rows to render
-		rows: 0
+		//* Number of items
+		count: 0
 	},
 	events: {
-		//* Sends the row index, and the row control, for decoration
-		onSetupRow: ""
+		//* Sends the item index, and the item control, for decoration
+		onSetupItem: ""
 	},
 	create: function() {
 		this.inherited(arguments);
-		this.rowsChanged();
+		this.countChanged();
 	},
 	//* @protected
 	initComponents: function() {
-		this.rowComponents = this.components || this.kindComponents;
+		this.itemComponents = this.components || this.kindComponents;
 		this.components = this.kindComponents = null;
 		this.inherited(arguments);
 	},
-	rowsChanged: function() {
+	seCount: function(inCount) {
+		this.setPropertyValue("count", inCount, "countChanged");
+	},
+	countChanged: function() {
 		this.build();
 	},
 	//* @public
 	//* Render the list
 	build: function() {
 		this.destroyClientControls();
-		for (var i=0; i<this.rows; i++) {
-			var c = this.createComponent({tag: null, rowIndex: i});
+		for (var i=0, c; i<this.count; i++) {
+			c = this.createComponent({kind: "enyo.OwnerProxy", index: i});
 			// do this as a second step so 'c' is the owner of the created components
-			c.createComponents(this.rowComponents);
-			this.doSetupRow({index: i, row: c});
+			c.createComponents(this.itemComponents);
+			// invoke user's setup code
+			this.doSetupItem({index: i, item: c});
 		}
 		this.render();
+	}
+});
+
+// sometimes client controls are intermediated with null-controls
+// these overrides reroute events from such controls to the nominal delegate,
+// as would happen if we hadn't intermediated
+enyo.kind({
+	name: "enyo.OwnerProxy",
+	tag: null,
+	decorateEvent: function(inEventName, inEvent, inSender) {
+		if (inEvent) {
+			inEvent.index = this.index;
+		}
+		this.inherited(arguments);
+	},
+	delegateEvent: function(inDelegate, inName, inEventName, inEvent, inSender) {
+		if (inDelegate == this) {
+			inDelegate = this.owner.owner;
+		}
+		this.inherited(arguments, [inDelegate, inName, inEventName, inEvent, inSender]);
 	}
 });

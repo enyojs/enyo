@@ -3,28 +3,34 @@
 */
 enyo.kind({
 	name: "enyo.Checkbox",
-	//* @protected
 	kind: enyo.Input,
-	attributes: {
-		type: "checkbox"
-	},
+	classes: "enyo-checkbox",
 	events: {
 		onActivate: ""
 	},
-	//* @public
 	published: {
 		//* Value of the checkbox
 		checked: false,
 		//* Group API requirement for determining selected item
-		active: false
+		active: false,
+		//* @protected
+		type: "checkbox"
 	},
 	//* @protected
+	// disable classes inherited from enyo.Input
+	kindClasses: "",
 	handlers: {
 		onchange: "change",
 		onclick: "click"
 	},
 	create: function() {
 		this.inherited(arguments);
+	},
+	rendered: function() {
+		this.inherited(arguments);
+		if (this.active) {
+			this.activeChanged();
+		}
 		this.checkedChanged();
 	},
 	// instance 'checked' property is linked to DOM 'checked' property
@@ -42,11 +48,9 @@ enyo.kind({
 		this.active = Boolean(this.active);
 		this.setChecked(this.active);
 		this.bubble("onActivate");
-		this.notifyContainer();
 	},
 	// all input type controls support 'value' property
 	setValue: function(inValue) {
-		this.log();
 		this.setChecked(Boolean(inValue));
 	},
 	getValue: function() {
