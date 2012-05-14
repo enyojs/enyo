@@ -11,7 +11,7 @@ enyo.kind({
 
 //* @public
 /**
-	DragAvatar creates a control to follow the pointer when dragging.
+	_enyo.DragAvatar_ creates a control to follow the pointer when dragging.
 */
 enyo.kind({
 	name: "enyo.DragAvatar",

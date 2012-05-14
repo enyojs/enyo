@@ -1,28 +1,29 @@
 ﻿/**
-	enyo.ScrollStrategy is a helper kind which implements a default scrolling strategy for an <a href="#enyo.Scroller">enyo.Scroller</a>.
+	_enyo.ScrollStrategy_ is a helper kind that implements a default scrolling
+	strategy for an <a href="#enyo.Scroller">enyo.Scroller</a>.
 	
-	enyo.ScrollStrategy is not typically created in application code.
+	_enyo.ScrollStrategy_ is not typically created in application code.
 */
 enyo.kind({
 	name: "enyo.ScrollStrategy",
 	tag: null,
 	published: {
 		/**
-			Specifies how to horizontally scroll. Acceptable values are:
+			Specifies how to vertically scroll.  Acceptable values are:
 				
-			* "scroll": always shows a scrollbar; sets overflow: scroll
-			* "auto":  scrolls only if needed; sets overflow: auto
-			* "hidden": never scrolls;  sets overflow: hidden
-			* "default": same as auto.
+			* "scroll": Always shows a scrollbar; sets _overflow: scroll_.
+			* "auto": Scrolls only if needed; sets _overflow: auto_.
+			* "hidden": Never scrolls; sets _overflow: hidden_.
+			* "default": Same as "auto".
 		*/
 		vertical: "default",
 		/**
-			Specifies how to vertically scroll. Acceptable values are:
+			Specifies how to horizontally scroll.  Acceptable values are:
 
-			* "scroll": always shows a scrollbar; sets overflow: scroll
-			* "auto":  scrolls only if needed; sets overflow: auto
-			* "hidden": never scrolls;  sets overflow: hidden
-			* "default": same as auto.
+			* "scroll": Always shows a scrollbar; sets _overflow: scroll_.
+			* "auto": Scrolls only if needed; sets _overflow: auto_.
+			* "hidden": Never scrolls; sets _overflow: hidden_.
+			* "default": Same as "auto".
 		*/
 		horizontal: "default",
 		scrollLeft: 0,

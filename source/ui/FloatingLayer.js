@@ -1,9 +1,10 @@
 /**
-	A control which provides a layer for controls which should be displayed above an application. 
-	The enyo.floatingLayer singleton can be set as a control parent to have the control float 
-	above an application. 
+	_enyo.FloatingLayer_ is a control that provides a layer for controls that
+	should be displayed above an application. 
+	The FloatingLayer singleton can be set as a control parent to have the
+	control float above an application. 
 
-	Note: it's not intended that users create an enyo.FloatingLayer.
+	Note: It's not intended that users create instances of _enyo.FloatingLayer_.
 
 		create: function() {
 			this.inherited(arguments);

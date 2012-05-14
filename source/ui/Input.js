@@ -1,12 +1,13 @@
 /**
-	Implements an HTML input element with cross platform support for change events
+	Implements an HTML &lt;input&gt; element with cross-platform support for
+	change events.
 */
 enyo.kind({
 	name: "enyo.Input",
 	published: {
 		/**
-			Value of the input. Use this property only to initialize the value. Use _getValue()_ and _setValue()_ to
-			manipulate the value at runtime.
+			Value of the input.  Use this property only to initialize the value.
+			Use _getValue()_ and _setValue()_ to manipulate the value at runtime.
 		*/
 		value: "",
 		//* Text to display when the input is empty
@@ -15,7 +16,7 @@ enyo.kind({
 		disabled: false
 	},
 	events: {
-		//* Sent when the input's is disabled or enabled.
+		//* Sent when the input is disabled or enabled.
 		onDisabledChange: ""
 	},
 	//* Set to true to focus this control when it is rendered.
