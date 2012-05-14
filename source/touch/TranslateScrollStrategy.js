@@ -1,8 +1,10 @@
 ﻿/**
-enyo.TranslateScrollStrategy is a helper kind that extends <a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a> 
-to be optimized for scrolling environments in which effecting scroll changes with transform is fastest.
+_enyo.TranslateScrollStrategy_ is a helper kind that extends
+<a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a>, optimizing it
+for scrolling environments in which effecting scroll changes with transform is
+fastest.
 
-enyo.TranslateScrollStrategy is not typically created in application code.
+_enyo.TranslateScrollStrategy_ is not typically created in application code.
 */
 enyo.kind({
 	name: "enyo.TranslateScrollStrategy",
@@ -14,7 +16,7 @@ enyo.kind({
 	],
 	//* Set to true to optimize the strategy to only use translation to scroll; this increases fluidity of
 	//* scrolling animation. It should not be used when the scroller contains controls that require keyboard
-	//* input. This is because when translateOptimized, it is possible to position inputs such that 
+	//* input. This is because when translateOptimized is true, it is possible to position inputs such that 
 	//* they will not become visibile when focused.
 	translateOptimized: false,
 	getScrollSize: function() {
@@ -94,12 +96,12 @@ enyo.kind({
 			}
 		}
 	},
-	// while moving, scroller uses translate
+	// While moving, scroller uses translate.
 	effectScroll: function(inX, inY) {
 		var o = inX + "px, " + inY + "px" + (this.accel ? ",0" : "");
 		enyo.dom.transformValue(this.$.client, this.translation, o);
 	},
-	// when stopped, we use scrollLeft/Top (makes cursor positioning automagic)
+	// When stopped, we use scrollLeft/Top (makes cursor positioning automagic).
 	effectScrollStop: function() {
 		if (!this.translateOptimized) {
 			var t = "0,0" + (this.accel ? ",0" : "");

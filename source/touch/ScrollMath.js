@@ -1,8 +1,9 @@
 ﻿/**
-enyo.ScrollMath implements scrolling dynamics simulation. It is a helper kind used
-by other scroller kinds like <a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a>.
+_enyo.ScrollMath_ implements a scrolling dynamics simulation.  It is a helper
+kind used by other scroller kinds, such as
+<a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a>.
 
-enyo.ScrollMath is not typically created in application code.
+_enyo.ScrollMath_ is not typically created in application code.
 */
 enyo.kind({
 	name: "enyo.ScrollMath",
@@ -16,31 +17,37 @@ enyo.kind({
 		onScroll: "",
 		onScrollStop: ""
 	},
-	//* 'spring' damping returns the scroll position to a value inside the boundaries (lower provides FASTER snapback)
+	//* 'spring' damping returns the scroll position to a value inside the
+	//* boundaries.  Lower values provide FASTER snapback.
 	kSpringDamping: 0.93,
-	//* 'drag' damping resists dragging the scroll position beyond the boundaries (lower provides MORE resistance)
+	//* 'drag' damping resists dragging the scroll position beyond the
+	//* boundaries.  Lower values provide MORE resistance.
 	kDragDamping: 0.5,
-	//* 'friction' damping reduces momentum over time (lower provides MORE friction)
+	//* 'friction' damping reduces momentum over time.  Lower values provide
+	//* MORE friction).
 	kFrictionDamping: 0.97,
-	//* Additional 'friction' damping applied when momentum carries the viewport into overscroll (lower provides MORE friction)
+	//* Additional 'friction' damping applied when momentum carries the viewport
+	//* into overscroll.  Lower values provide MORE friction.
 	kSnapFriction: 0.9,
 	//* Scalar applied to 'flick' event velocity
 	kFlickScalar: 15,
-	//* Limit the maximum allowable flick (note, on Android > 2, we limit this to prevent compositing artifacts)
+	//* Limits the maximum allowable flick.  On Android > 2, we limit this to
+	//* prevent compositing artifacts.
 	kMaxFlick: enyo.platform.android > 2 ? 2 : 1e9,
-	//* the value used in friction() to determine if the delta (e.g. y - y0) is close enough to zero to consider as zero.
+	//* The value used in friction() to determine if the delta (e.g., y - y0) is
+	//* close enough to zero to consider as zero.
 	kFrictionEpsilon: 1e-2,
-	//* top snap boundary, generally 0
+	//* Top snap boundary, generally 0.
 	topBoundary: 0,
-	//* right snap boundary, generally (viewport width - content width)
+	//* Right snap boundary, generally (viewport width - content width).
 	rightBoundary: 0,
-	//* bottom snap boundary, generally (viewport height - content height)
+	//* Bottom snap boundary, generally (viewport height - content height).
 	bottomBoundary: 0,
-	//* left snap boundary, generally 0
+	//* Left snap boundary, generally 0.
 	leftBoundary: 0,
-	//* animation time step
+	//* Animation time step
 	interval: 20,
-	//* flag to enable frame-based animation, otherwise use time-based animation
+	//* Flag to enable frame-based animation, otherwise use time-based animation.
 	fixedTime: true,
 	//* @protected
 	// simulation state
@@ -66,7 +73,7 @@ enyo.kind({
 	},
 	/**
 		Boundary damping function.
-		Return damped 'value' based on 'coeff' on one side of 'origin'.
+		Returns damped 'value' based on 'coeff' on one side of 'origin'.
 	*/
 	damping: function(value, origin, coeff, sign) {
 		var kEpsilon = 0.5;
@@ -85,7 +92,7 @@ enyo.kind({
 	},
 	/**
 		Dual-boundary damping function.
-		Return damped 'value' based on 'coeff' when exceeding either boundary.
+		Returns damped 'value' based on 'coeff' when exceeding either boundary.
 	*/
 	boundaryDamping: function(value, aBoundary, bBoundary, coeff) {
 		return this.damping(this.damping(value, aBoundary, coeff, 1), bBoundary, coeff, -1);
