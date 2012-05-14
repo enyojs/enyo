@@ -1,5 +1,6 @@
 /**
-	Implements an HTML img element, and bubbles the onload, and onerror events
+	Implements an HTML &lt;img&gt; element and bubbles the _onload_ and
+	_onerror_ events.
 */
 enyo.kind({
 	name: "enyo.Image",
