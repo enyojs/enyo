@@ -1,5 +1,6 @@
 /**
-	enyo.Select implements an HTML selection widget, using [enyo.Option](#enyo.Option) kinds by default.
+	_enyo.Select_ implements an HTML selection widget, using
+	[enyo.Option](#enyo.Option) kinds by default.
 
 	Example:
 
@@ -48,7 +49,7 @@ enyo.kind({
 		this.selected = this.getSelected();
 	},
 	//* @public
-	//* Returns the value of the selected option
+	//* Returns the value of the selected option.
 	getValue: function() {
 		if (this.hasNode()) {
 			return this.node.value;
@@ -57,7 +58,7 @@ enyo.kind({
 });
 
 /**
-	enyo.Option implements the options in an HTML select widget
+	enyo.Option implements the options in an HTML select widget.
 */
 enyo.kind({
 	name: "enyo.Option",
@@ -76,7 +77,8 @@ enyo.kind({
 });
 
 /**
-	enyo.OptionGroup allows for grouping options in a select widget, and for blocks of options to be disabled
+	enyo.OptionGroup allows for grouping options in a select widget, and for
+	blocks of options to be disabled.
 */
 enyo.kind({
 	name: "enyo.OptionGroup",
