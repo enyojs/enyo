@@ -1,15 +1,20 @@
 /**
-	A basic animation component. Call play to start the animation. The animation will run for
-	the period of its duration, measured in milliseconds. The onStep event will fire in quick 
-	succession and should be handled to do something based on the value property. The value 
-	property will progress from startValue to endValue during the animation based on a 
-	the specified function referenced by the easingFunction property. The stop method may
-	be called to manually stop an in-progress animation; calling it will fire the onStop event.
-	When the animation completes normally, the onEnd event is fired.
+	_enyo.Animator_ is a basic animation component.  Call _play_ to start the
+	animation. The animation will run for the period (in milliseconds) specified
+	by its _duration_ property.  The _onStep_ event will fire in quick 
+	succession and should be handled to do something based on the _value_
+	property.
+	
+	The _value_ property will progress from _startValue_ to _endValue_ during
+	the animation based on the function referenced by the _easingFunction_
+	property.  The _stop_ method may be called to manually stop an in-progress
+	animation; calling it will fire the _onStop_ event.  When an animation
+	completes normally, the _onEnd_ event is fired.
 
-	Event handlers may be specified as functions. If so the handler function will be used
-	to handle the event directly, without sending the event to its owner or bubbling it.
-	The context property can be used to call the supplied event functions in a particular "this" context.
+	Event handlers may be specified as functions.  If specified, the handler
+	function will be used to handle the event directly, without sending the
+	event to its owner or bubbling it.  The _context_ property can be used to
+	call the supplied event functions in a particular "this" context.
 */
 enyo.kind({
 	name: "enyo.Animator",
@@ -19,8 +24,8 @@ enyo.kind({
 		duration: 350, 
 		startValue: 0,
 		endValue: 1,
-		//* node which must be visible in order for the animation to continue
-		//* this reference is destroyed when animation ceases
+		//* Node that must be visible in order for the animation to continue.
+		//* This reference is destroyed when the animation ceases.
 		node: null,
 		easingFunction: enyo.easing.cubicOut
 	},
@@ -42,8 +47,8 @@ enyo.kind({
 		this.inherited(arguments);
 	},
 	//* @public
-	//* Play the animation
-	//* inProps {Object} for convenience inProps will be mixed directly into this object.
+	//* Plays the animation.
+	//* For convenience, _inProps_ will be mixed directly into this object.
 	play: function(inProps) {
 		this.stop();
 		if (inProps) {
@@ -55,7 +60,7 @@ enyo.kind({
 		this.requestNext();
 		return this;
 	},
-	//* Stop the animation; fires the onStop event.
+	//* Stops the animation and fires the _onStop_ event.
 	stop: function() {
 		if (this.isAnimating()) {
 			this.cancel();
@@ -63,7 +68,7 @@ enyo.kind({
 			return this;
 		}
 	},
-	//* Returns true if animation is in progress
+	//* Returns true if animation is in progress.
 	isAnimating: function() {
 		return Boolean(this.job);
 	},

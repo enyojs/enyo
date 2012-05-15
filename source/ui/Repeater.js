@@ -1,7 +1,8 @@
 ﻿/**
-	A simple control for making lists of items.
+	_enyo.Repeater_ is a simple control for making lists of items.
 
-	Components of Repeater are copied for each item created, wrapped in a control keeping state of the item index.
+	Components of a repeater are copied for each item created, and are wrapped
+	in a control that keeps the state of the item index.
 
 	Example:
 
@@ -16,13 +17,14 @@
 			return true;
 		}
 
-	Be sure to return true from your onSetupItem handler to avoid having other events
-	handlers further up the tree also try modify your item control.
+	Be sure to return true from your _onSetupItem_ handler to avoid having other
+	event handlers further up the tree try to modify your item control.
 
-	The repeater will always be rebuilt after a call to setCount, even if the count
-	didn't change.  This differs from most properties where no action happens when
-	a set-value call doesn't modify the value.  This is to accomodate changes to the
-	data model for the repeater which just happens to have the same item count.
+	The repeater will always be rebuilt after a call to _setCount_, even if the
+	count didn't change.  This differs from the behavior of most properties, in
+	which no action happens when a set-value call doesn't modify the value.
+	This is to accomodate potential changes to the data model for the repeater,
+	which may happen to have the same item count as before.
 */
 enyo.kind({
 	name: "enyo.Repeater",
@@ -31,7 +33,7 @@ enyo.kind({
 		count: 0
 	},
 	events: {
-		//* Sends the item index, and the item control, for decoration
+		//* Sends the item index, and the item control, for decoration.
 		onSetupItem: ""
 	},
 	create: function() {
@@ -65,9 +67,9 @@ enyo.kind({
 	}
 });
 
-// sometimes client controls are intermediated with null-controls
-// these overrides reroute events from such controls to the nominal delegate,
-// as would happen if we hadn't intermediated
+// Sometimes client controls are intermediated with null-controls.
+// These overrides reroute events from such controls to the nominal delegate,
+// as would happen in the absence of intermediation.
 enyo.kind({
 	name: "enyo.OwnerProxy",
 	tag: null,

@@ -1,40 +1,44 @@
 ﻿/**
-enyo.TouchScrollStrategy is a helper kind that implments a touch based scroller that integrates the scrolling simulation provided
-by <a href="#enyo.ScrollMath">enyo.ScrollMath</a> into an <a href="#enyo.Scroller">enyo.Scroller</a>.
+_enyo.TouchScrollStrategy_ is a helper kind implementing a touch-based scroller
+that integrates the scrolling simulation provided by
+<a href="#enyo.ScrollMath">enyo.ScrollMath</a> into an
+<a href="#enyo.Scroller">enyo.Scroller</a>.
 
-enyo.TouchScrollStrategy is not typically created in application code.
+_enyo.TouchScrollStrategy_ is not typically created in application code.
 */
 enyo.kind({
 	name: "enyo.TouchScrollStrategy",
 	kind: "ScrollStrategy",
 	/**
-		If true, the scroller will not propagate dragstart events that cause it to start scrolling (defaults to true)
+		If true, the scroller will not propagate _dragstart_ events that cause
+		it to start scrolling.  (Defaults to true.)
 	*/
 	preventDragPropagation: true,
 	published: {
 		/**
-			Specifies how to horizontally scroll. Acceptable values are:
+			Specifies how to vertically scroll.  Acceptable values are:
 			
 			* "scroll": Always scrolls.
-			* "auto":  Scroll only if the content overflows the scroller.
-			* "hidden": Never scroll.
-			* "default": In touch environments, the default vertical scrolling behavior is to always scroll. If the content does not
-			overflow the scroller, the scroller will overscroll and snap back.
+			* "auto": Scrolls only if the content overflows the scroller.
+			* "hidden": Never scrolls.
+			* "default": In touch environments, the default vertical scrolling
+				behavior is to always scroll. If the content does not overflow
+				the scroller, the scroller will overscroll and snap back.
 		*/
 		vertical: "default",
 		/**
-			Specifies how to vertically scroll. Acceptable values are:
+			Specifies how to horizontally scroll.  Acceptable values are:
 
 			* "scroll": Always scrolls.
-			* "auto":  Scroll only if the content overflows the scroller.
-			* "hidden": Never scroll.
-			* "default": Same as auto.
+			* "auto":  Scrolls only if the content overflows the scroller.
+			* "hidden": Never scrolls.
+			* "default": Same as "auto".
 		*/
 		horizontal: "default",
-		//* set to true to display a scroll thumb
+		//* Set to true to display a scroll thumb.
 		thumb: true,
-		//* set to true to display a transparent overlay while scrolling; can help improve performance of complex, large scroll regions
-		//* on some platforms, notably Android.
+		//* Set to true to display a transparent overlay while scrolling; can help
+		//* improve performance of complex, large scroll regions on some platforms, notably Android.
 		scrim: false
 	},
 	events: {
@@ -220,7 +224,7 @@ enyo.kind({
 	},
 	move: function(inSender, inEvent) {
 	},
-	// special synthetic DOM events served up by the Gesture system
+	// Special synthetic DOM events served up by the Gesture system
 	dragstart: function(inSender, inEvent) {
 		// note: allow drags to propagate to parent scrollers via data returned in the shouldDrag event.
 		this.doShouldDrag(inEvent);
