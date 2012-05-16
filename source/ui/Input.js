@@ -30,7 +30,8 @@ enyo.kind({
 	},
 	handlers: {
 		oninput: "input",
-		onclear: "clear"
+		onclear: "clear",
+		ondragstart: "dragstart"
 	},
 	create: function() {
 		if (enyo.platform.ie) {
@@ -82,5 +83,9 @@ enyo.kind({
 		if (this.hasNode()) {
 			this.node.focus();
 		}
+	},
+	// note: we disallow dragging of an input to allow text selection on all platforms
+	dragstart: function() {
+		return true;
 	}
 });
