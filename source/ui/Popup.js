@@ -162,7 +162,7 @@ enyo.kind({
 	},
 	// when something outside the popup focuses (e.g., due to tab key), focus our last focused control.
 	focus: function(inSender, inEvent) {
-		var dt = inEvent.dispa2tchTarget;
+		var dt = inEvent.dispatchTarget;
 		if (this.modal && !dt.isDescendantOf(this)) {
 			if (dt.hasNode()) {
 				dt.node.blur();
