@@ -1,14 +1,13 @@
 /**
-	Implements an HTML checkbox input, with support for grouping
+	Implements an HTML checkbox input, with support for grouping.
 */
 enyo.kind({
 	name: "enyo.Checkbox",
-	//* @protected
 	kind: enyo.Input,
+	classes: "enyo-checkbox",
 	events: {
 		onActivate: ""
 	},
-	//* @public
 	published: {
 		//* Value of the checkbox
 		checked: false,
@@ -18,12 +17,20 @@ enyo.kind({
 		type: "checkbox"
 	},
 	//* @protected
+	// disable classes inherited from enyo.Input
+	kindClasses: "",
 	handlers: {
 		onchange: "change",
 		onclick: "click"
 	},
 	create: function() {
 		this.inherited(arguments);
+	},
+	rendered: function() {
+		this.inherited(arguments);
+		if (this.active) {
+			this.activeChanged();
+		}
 		this.checkedChanged();
 	},
 	// instance 'checked' property is linked to DOM 'checked' property

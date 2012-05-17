@@ -25,13 +25,7 @@ enyo.requiresWindow(function() {
 			this.excludedTarget = de && de.dragInfo && de.dragInfo.node;
 			var e = this.makeEvent(inEvent);
 			gesture.move(e);
-			// (1) prevent default document scrolling if enyo.bodyIsFitting == true
-			// (2) opt in to the touchmove event by specifying event.requireTouchmove = true in onmove;
-			/*
-			if (enyo.bodyIsFitting && !e.requireTouchmove) {
-				inEvent.preventDefault();
-			}
-			*/
+			// prevent default document scrolling if enyo.bodyIsFitting == true
 			// avoid window scrolling by preventing default on this event
 			// note: this event can be made unpreventable (native scrollers do this)
 			if (enyo.bodyIsFitting) {

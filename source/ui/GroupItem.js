@@ -1,11 +1,11 @@
-//* Base kind for the Grouping api
+//* The base kind for the Grouping API.
 enyo.kind({
 	name: "enyo.GroupItem",
 	published: {
 		active: false
 	},
 	//* @protected
-	create: function() {
+	rendered: function() {
 		this.inherited(arguments);
 		this.activeChanged();
 	},

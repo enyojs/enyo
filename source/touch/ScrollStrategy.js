@@ -1,28 +1,29 @@
 ﻿/**
-	enyo.ScrollStrategy is a helper kind which implements a default scrolling strategy for an <a href="#enyo.Scroller">enyo.Scroller</a>.
+	_enyo.ScrollStrategy_ is a helper kind that implements a default scrolling
+	strategy for an <a href="#enyo.Scroller">enyo.Scroller</a>.
 	
-	enyo.ScrollStrategy is not typically created in application code.
+	_enyo.ScrollStrategy_ is not typically created in application code.
 */
 enyo.kind({
 	name: "enyo.ScrollStrategy",
 	tag: null,
 	published: {
 		/**
-			Specifies how to horizontally scroll. Acceptable values are:
+			Specifies how to vertically scroll.  Acceptable values are:
 				
-			* "scroll": always shows a scrollbar; sets overflow: scroll
-			* "auto":  scrolls only if needed; sets overflow: auto
-			* "hidden": never scrolls;  sets overflow: hidden
-			* "default": same as auto.
+			* "scroll": Always shows a scrollbar; sets _overflow: scroll_.
+			* "auto": Scrolls only if needed; sets _overflow: auto_.
+			* "hidden": Never scrolls; sets _overflow: hidden_.
+			* "default": Same as "auto".
 		*/
 		vertical: "default",
 		/**
-			Specifies how to vertically scroll. Acceptable values are:
+			Specifies how to horizontally scroll.  Acceptable values are:
 
-			* "scroll": always shows a scrollbar; sets overflow: scroll
-			* "auto":  scrolls only if needed; sets overflow: auto
-			* "hidden": never scrolls;  sets overflow: hidden
-			* "default": same as auto.
+			* "scroll": Always shows a scrollbar; sets _overflow: scroll_.
+			* "auto": Scrolls only if needed; sets _overflow: auto_.
+			* "hidden": Never scrolls; sets _overflow: hidden_.
+			* "default": Same as "auto".
 		*/
 		horizontal: "default",
 		scrollLeft: 0,
@@ -70,17 +71,19 @@ enyo.kind({
 		}
 	},
 	scrollToNode: function(inNode, inAlignWithTop) {
-		var sb = this.getScrollBounds();
-		var n = inNode;
-		var b = {height: n.offsetHeight, width: n.offsetWidth, top: 0, left: 0};
-		while (n && n.parentNode && n.id != this.scrollNode.id) {
-			b.top += n.offsetTop;
-			b.left += n.offsetLeft;
-			n = n.parentNode;
+		if (this.scrollNode) {
+			var sb = this.getScrollBounds();
+			var n = inNode;
+			var b = {height: n.offsetHeight, width: n.offsetWidth, top: 0, left: 0};
+			while (n && n.parentNode && n.id != this.scrollNode.id) {
+				b.top += n.offsetTop;
+				b.left += n.offsetLeft;
+				n = n.parentNode;
+			}
+			// By default, the element is scrolled to align with the top of the scroll area.
+			this.setScrollTop(Math.min(sb.maxTop, inAlignWithTop === false ? b.top - sb.clientHeight + b.height : b.top));
+			this.setScrollLeft(Math.min(sb.maxLeft, inAlignWithTop === false ? b.left - sb.clientWidth + b.width : b.left));
 		}
-		// By default, the element is scrolled to align with the top of the scroll area.
-		this.setScrollTop(Math.min(sb.maxTop, inAlignWithTop === false ? b.top - sb.clientHeight + b.height : b.top));
-		this.setScrollLeft(Math.min(sb.maxLeft, inAlignWithTop === false ? b.left - sb.clientWidth + b.width : b.left));
 	},
 	scrollIntoView: function(inControl, inAlignWithTop) {
 		if (inControl.hasNode()) {

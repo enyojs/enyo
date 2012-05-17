@@ -1,5 +1,6 @@
 ﻿enyo.depends(
 	"touch.js",
+	"msevents.js",
 	"gesture.js",
 	"ScrollMath.js",
 	"ScrollStrategy.js",

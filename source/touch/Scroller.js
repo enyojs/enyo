@@ -1,21 +1,26 @@
 ﻿/**
-enyo.Scroller is scroller suitable for use in both desktop and mobile applications.
+_enyo.Scroller_ is a scroller suitable for use in both desktop and mobile
+applications.
 
-In some mobile environments, a default scrolling solution is not implemented for dom elements. In these cases, enyo.Scroller implements
-a touch based scrolling solution. This can be opted into either globally by setting the flag enyo.Scroller.touchScrolling = true;
-or on a per instance basis by specifying a strategyKind of "TouchScrollStrategy."
+In some mobile environments, a default scrolling solution is not implemented for
+DOM elements.  In such cases, _enyo.Scroller_ implements a touch-based scrolling
+solution, which may be opted into either globally (by setting the flag
+_enyo.Scroller.touchScrolling = true;_) or on a per-instance basis (by
+specifying a _strategyKind_ of "TouchScrollStrategy").
 */
 enyo.kind({
 	name: "enyo.Scroller",
 	published: {
 		/**
-			Specifies how to horizontally scroll. Acceptable values are "scroll", "auto," "hidden," and "default" The precise
+			Specifies how to horizontally scroll.  Acceptable values are
+			"scroll", "auto," "hidden," and "default".  The precise
 			effect of the setting is determined by the scroll strategy.
 		*/
 		horizontal: "default",
 		/**
-			Specifies how to vertically scroll. Acceptable values are "scroll", "auto," "hidden," and "default" The precise
-			effect of the setting is determined by the scroll strategy.
+			Specifies how to vertically scroll.  Acceptable values are "scroll",
+			"auto," "hidden," and "default".  The precise effect of the setting
+			is determined by the scroll strategy.
 		*/
 		vertical: "default",
 		/**
@@ -31,20 +36,29 @@ enyo.kind({
 		*/
 		maxHeight: null,
 		/**
-			Set to true to make this scroller select a platform appropriate touch based scrolling strategy.
-			Please note that specifycing a scrollStrategy will take precedence over this setting.
+			Set to true to make this scroller select a platform-appropriate
+			touch-based scrolling strategy.  Please note that specifycing a
+			scrollStrategy will take precedence over this setting.
 		*/
 		touch: false,
 		/**
-			Specify a type of scrolling. The enyo Scroller will attempt to automatically select 
-			a strategy compatbile with the runtime environment. A specific strategy can also be chosen:
+			Specifies a type of scrolling.  The Enyo Scroller will attempt to
+			automatically select a strategy compatible with the runtime
+			environment.  A specific strategy may also be chosen:
 
-			* <a href="#enyo.ScrollStrategy">ScrollStrategy</a> is the default and implements no scrolling, relying instead on the environment to scroll properly.
-			* <a href="#enyo.TouchScrollStrategy">TouchScrollStrategy</a> implements a touch scrolling mechanism.
-			* <a href="#enyo.TranslateScrollStrategy">TranslateScrollStrategy</a> implements a touch scrolling mechanism using translations, recommended only for Android 3 and 4 currently.
+			* <a href="#enyo.ScrollStrategy">ScrollStrategy</a> is the default
+			    and implements no scrolling, relying instead on the environment
+			    to scroll properly.
+			
+			* <a href="#enyo.TouchScrollStrategy">TouchScrollStrategy</a>
+				implements a touch scrolling mechanism.
+			
+			* <a href="#enyo.TranslateScrollStrategy">TranslateScrollStrategy</a>
+				implements a touch scrolling mechanism using translations; it is
+				currently recommended only for Android 3 and 4.
 		*/
 		strategyKind: "ScrollStrategy",
-		//* set to true to display a scroll thumb in Touch scrollers.
+		//* Set to true to display a scroll thumb in Touch scrollers.
 		thumb: true
 	},
 	events: {
@@ -60,7 +74,8 @@ enyo.kind({
 	},
 	classes: "enyo-scroller",
 	/**
-		If true, the scroller will not propagate dragstart events that cause it to start scrolling (defaults to true)
+		If true, the scroller will not propagate _dragstart_ events that cause
+		it to start scrolling.  (Defaults to true.)
 	*/
 	preventDragPropagation: true,
 	/**
@@ -74,7 +89,7 @@ enyo.kind({
 			{os: "ios", version: 5},
 			{os: "webos", version: 1e9}
 		],
-		//* returns true if platform should have touch events
+		//* Returns true if platform should have touch events.
 		hasTouchScrolling: function() {
 			for (var i=0, t, m; t=this.osInfo[i]; i++) {
 				if (enyo.platform[t.os]) {
@@ -82,7 +97,7 @@ enyo.kind({
 				}
 			}
 		},
-		//* returns true if the platform has native div scrollers, desktop browsers always have them
+		//* Returns true if the platform has native div scrollers (desktop browsers always have them).
 		hasNativeScrolling: function() {
 			for (var i=0, t, m; t=this.osInfo[i]; i++) {
 				if (enyo.platform[t.os] < t.version) {
@@ -188,27 +203,27 @@ enyo.kind({
 		return this.$.strategy.getScrollTop();
 	},
 	//* @public
-	//* returns an object describing the scroll boundaries with height and width properties.
+	//* Returns an object describing the scroll boundaries with height and width properties.
 	getScrollBounds: function() {
 		return this.$.strategy.getScrollBounds();
 	},
-	//* scrolls the given control (inControl) into view. If inAlignWithTop is true, inControl is aligned with the top of the scroller.
+	//* Scrolls the given control (_inControl_) into view. If _inAlignWithTop_ is true, _inControl_ is aligned with the top of the scroller.
 	scrollIntoView: function(inControl, inAlignWithTop) {
 		this.$.strategy.scrollIntoView(inControl, inAlignWithTop);
 	},
-	//* Scroll to the position given by inX and inY in pixel units.
+	//* Scrolls to the position specified by _inX_ and _inY_ in pixel units.
 	scrollTo: function(inX, inY) {
 		this.$.strategy.scrollTo(inX, inY);
 	},
-	//* ensure that the given control is visible in the scroller's viewport.  Unlike scrollIntoView which uses DOM's scrollIntoView, this only affects the current scroller.
+	//* Ensures that the given control is visible in the scroller's viewport.  Unlike _scrollIntoView_, which uses DOM's _scrollIntoView_, this only affects the current scroller.
 	scrollToControl: function(inControl, inAlignWithTop) {
 		this.scrollToNode(inControl.hasNode(), inAlignWithTop);
 	},
-	// ensure that the given node is visible in the scroller's viewport.
+	// Ensures that the given node is visible in the scroller's viewport.
 	scrollToNode: function(inNode, inAlignWithTop) {
 		this.$.strategy.scrollToNode(inNode, inAlignWithTop);
 	},
-	// normalize scroll event to onScroll.
+	// Normalizes scroll event to onScroll.
 	domScroll: function(inSender, e) {
 		// if a scroll event originated here, pass it to our strategy to handle
 		if (this.$.strategy.domScroll && e.originator == this) {
@@ -247,7 +262,7 @@ enyo.kind({
 	scrollToLeft: function() {
 		this.setScrollLeft(0);
 	},
-	//* Ensure scroll position is in bounds.
+	//* Ensures scroll position is in bounds.
 	stabilize: function() {
 		var s = this.getStrategy();
 		if (s.stabilize) {
