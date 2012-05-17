@@ -52,6 +52,9 @@ enyo.kind({
 	countChanged: function() {
 		this.build();
 	},
+	itemAtIndex: function(inIndex) {
+		return this.controlAtIndex(inIndex);
+	},
 	//* @public
 	//* Render the list
 	build: function() {

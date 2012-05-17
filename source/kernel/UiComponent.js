@@ -151,6 +151,9 @@ enyo.kind({
 	clientIndexInContainer: function() {
 		return this.container.indexOfClientControl(this);
 	},
+	controlAtIndex: function(inIndex) {
+		return this.controls[inIndex];
+	},
 	// children
 	addChild: function(inChild) {
 		// allow delegating the child to a different container
