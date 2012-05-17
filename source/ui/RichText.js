@@ -32,6 +32,19 @@ enyo.kind({
 	attributes: {
 		contenteditable: true,
 	},
+	handlers: {
+		onfocus: "focusHandler",
+		onblur: "blurHandler"
+	},
+	// simulate onchange event that inputs expose
+	focusHandler: function() {
+		this._value = this.getValue();
+	},
+	blurHandler: function() {
+		if (this._value !== this.getValue()) {
+			this.bubble("onchange");
+		}
+	},
 	valueChanged: function() {
 		if (this.hasFocus()) {
 			this.selectAll();
