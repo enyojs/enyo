@@ -46,7 +46,7 @@ enyo.kind({
 		this.components = this.kindComponents = null;
 		this.inherited(arguments);
 	},
-	seCount: function(inCount) {
+	setCount: function(inCount) {
 		this.setPropertyValue("count", inCount, "countChanged");
 	},
 	countChanged: function() {
