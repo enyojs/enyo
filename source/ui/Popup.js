@@ -15,7 +15,7 @@
 	The _autoDismiss_ property controls how a popup may be dismissed.  If true
 	(the default), then tapping outside the popup or pressing the ESC key will
 	dismiss the popup.
-	
+
 	The _modal_ property may be set to true to prevent any
 	controls outside the popup from responding to events while the popup is
 	showing.
@@ -99,10 +99,7 @@ enyo.kind({
 			var d = this.calcViewportSize();
 			var b = this.getBounds();
 
-			var l = ( ( d.width - b.width ) / 2 );
-			var t = ( ( d.height - b.height ) / 2 );
-
-			this.addStyles( "top: " + Math.max( t, 0 ) + "px; left: " + Math.max( l, 0 ) + "px;" );
+			this.addStyles( "top: " + Math.max( ( ( d.height - b.height ) / 2 ), 0 ) + "px; left: " + Math.max( ( ( d.width - b.width ) / 2 ), 0 ) + "px;" );
 		}
 	},
 	showingChanged: function() {
