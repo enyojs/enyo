@@ -94,7 +94,7 @@ enyo.kind({
 			var l = ( ( d.width - b.width ) / 2 );
 			var t = ( ( d.height - b.height ) / 2 );
 
-			this.addStyles( "top: " + ( t >= 0 ? t : 0 ) + "px; left: " + ( l >= 0 ? l : 0 ) + "px;" );
+			this.addStyles( "top: " + Math.max( t, 0 ) + "px; left: " + Math.max( l, 0 ) + "px;" );
 		}
 	},
 	showingChanged: function() {
