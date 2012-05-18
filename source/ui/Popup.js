@@ -1,16 +1,24 @@
 /**
-	A popup is used to display content which should be displayed on top of other content.
+	A popup is used to display content that should be displayed on top of other
+	content.
 
-	It's initially hidden and can be shown by calling the show method and hidden with the hide method.
-	A popup can be centered with the centered property; otherwise, it should be given a specific position.
+	Popups are initially hidden on creation; they can be shown by calling the
+	_show_ method and re-hidden by calling _hide_.  Popups may be centered using
+	the	_centered_ property; if not centered, they should be given a specific
+	position.
 
-	A popup may be optionally floated above all application content by setting the floating property to true. This
-	has the advantage of guaranteeing the popup is displayed overtop of other content. This is appropriate when the
-	popup does not need to scroll with other content.
+	A popup may be optionally floated above all application content by setting
+	its _floating_ property to true.  This has the advantage of guaranteeing
+	that the popup will be displayed on top of other content.  This usage is
+	appropriate when the popup does not need to scroll with other content.
 
-	The autoDismiss property controls how a popup may be dismissed. If true, the default, then tapping outside the popup
-	or pressing the ESC key will dismiss the popup. The modal property may be set to true to prevent any controls outside
-	the popup from responding to events while the popup is showing.
+	The _autoDismiss_ property controls how a popup may be dismissed.  If true
+	(the default), then tapping outside the popup or pressing the ESC key will
+	dismiss the popup.
+	
+	The _modal_ property may be set to true to prevent any
+	controls outside the popup from responding to events while the popup is
+	showing.
 
 		{kind: "enyo.Popup", centered: true, modal: true, floating: true, components: [
 			{content: "Here's some information..."}
@@ -20,12 +28,12 @@ enyo.kind({
 	name: "enyo.Popup",
 	classes: "enyo-popup",
 	published: {
-		//* Set to true to prevent controls outside the popup from receiving events while the popup is showing
+		//* Set to true to prevent controls outside the popup from receiving events while the popup is showing.
 		modal: false,
-		//* By default the popup will hide when the user taps outside it or presses ESC. Set to false to prevent this.
+		//* By default, the popup will hide when the user taps outside it or presses ESC.  Set to false to prevent this behavior.
 		autoDismiss: true,
-		//* If true, the popup will be rendered in a floating layer outside other controls. This can be used to
-		//* guarantee the popup will be shown on top of other controls.
+		//* If true, the popup will be rendered in a floating layer outside of other controls.  This can be used to
+		//* guarantee that the popup will be shown on top of other controls.
 		floating: false,
 		//* Set to true to automatically center the popup in the middle of the viewport.
 		centered: false
@@ -133,7 +141,7 @@ enyo.kind({
 		enyo.dispatcher.release();
 	},
 	down: function(inSender, inEvent) {
-		// prevent focus shifting outside the poup when modal.
+		// prevent focus from shifting outside the popup when modal.
 		if (this.modal && !inEvent.dispatchTarget.isDescendantOf(this)) {
 			inEvent.preventDefault();
 		}
@@ -156,7 +164,7 @@ enyo.kind({
 			this.lastFocus = inEvent.originator;
 		}
 	},
-	// when something outside the popup focuses (e.g. due to tab key), focus our last focused control.
+	// when something outside the popup focuses (e.g., due to tab key), focus our last focused control.
 	focus: function(inSender, inEvent) {
 		var dt = inEvent.dispatchTarget;
 		if (this.modal && !dt.isDescendantOf(this)) {

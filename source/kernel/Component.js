@@ -412,16 +412,12 @@ enyo.kind({
 		references the component that triggered the event in the first place.
 	*/
 	bubble: function(inEventName, inEvent, inSender) {
-		/*
-		if ({ontap:1, Xonenter: 1, Xonleave: 1}[inEventName]) {
-			this.log(inEventName, (inSender || this).name, "=>", this.name);
-		}
-		*/
 		var e = inEvent || {};
-		e.originator = null;
 		// FIXME: is this the right place?
-		if (!e.originator) {
+		if (!("originator" in e)) {
 			e.originator = inSender || this;
+			// FIXME: use indirection here?
+			//e.delegate = e.originator.delegate || e.originator.owner;
 		}
 		return this.dispatchBubble(inEventName, e, inSender);
 	},
@@ -459,18 +455,70 @@ enyo.kind({
 		return false;
 	},
 	//* @protected
+	/**
+		Dispatch refers to sending an event to a named delegate.
+		This object may dispatch an event to itself via a handler, 
+		or to it's owner ia an event property.
+		e.g.
+			handlers {
+				// 'tap' events dispatched to this.tapHandler
+				ontap: "tapHandler"
+			}
+			// 'tap' dispatched to 'tapHandler' delegate in this.owner
+			ontap: "tapHandler",
+	*/
 	dispatchEvent: function(inEventName, inEvent, inSender) {
-		// try internal handler (from inSender)
-		if (this.dispatch(this, this.handlers[inEventName], inEvent, inSender)) {
+		// bottleneck event decoration
+		this.decorateEvent(inEventName, inEvent, inSender);
+		//
+		// Note: null checks and sub-expressions are unrolled in this
+		// high frequency method to reduce call stack in the 90% case.
+		// These expressions should fail early.
+		//
+		// try to dispatch this event directly via handlers
+		//
+		if (this.handlers[inEventName] && this.dispatch(this.handlers[inEventName], inEvent, inSender)) {
 			return true;
 		}
-		// try owner handler (from 'this')
-		return this.dispatch(this.owner, this[inEventName], inEvent, this);
+		//
+		// try to delegate this event to our owner via event properties
+		//
+		if (this[inEventName]) {
+			return this.bubbleDelegation(this.owner, this[inEventName], inEventName, inEvent, this);
+		}
 	},
-	dispatch: function(inObject, inMethodName, inEvent, inSender) {
-		var fn = inObject && inMethodName && inObject[inMethodName];
+	decorateEvent: function(inEventName, inEvent, inSender) {
+		// an event may float by us as part of a dispatchEvent chain or delegateEvent
+		// both call this method so intermediaries can decorate inEvent
+	},
+	bubbleDelegation: function(inDelegate, inName, inEventName, inEvent, inSender) {
+		// next target in bubble sequence
+		var next = this.getBubbleTarget();
+		if (next) {
+			return next.delegateEvent(inDelegate, inName, inEventName, inEvent, inSender);
+		}
+	},
+	delegateEvent: function(inDelegate, inName, inEventName, inEvent, inSender) {
+		// override this method to play tricks with delegation
+		// bottleneck event decoration
+		this.decorateEvent(inEventName, inEvent, inSender);
+		// by default, dispatch this event if we are in fact the delegate
+		if (inDelegate == this) {
+			return this.dispatch(inName, inEvent, inSender);
+		}
+		return this.bubbleDelegation(inDelegate, inName, inEventName, inEvent, inSender);
+	},
+	/**
+		Dispatch the event to named delegate inMethodName, if it exists.
+		Sub-kinds may re-route dispatches.
+		Note that both 'handlers' events and events delegated from owned controls
+		arrive here. If you need to handle these differently, you may 
+		need to also override dispatchEvent.
+	*/
+	dispatch: function(inMethodName, inEvent, inSender) {
+		var fn = inMethodName && this[inMethodName];
 		if (fn) {
-			return fn.call(inObject, inSender || this, inEvent);
+			return fn.call(this, inSender || this, inEvent);
 		}
 	},
 	/**

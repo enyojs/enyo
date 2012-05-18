@@ -1,12 +1,13 @@
 /**
-	Implements an HTML input element with cross platform support for change events
+	Implements an HTML &lt;input&gt; element with cross-platform support for
+	change events.
 */
 enyo.kind({
 	name: "enyo.Input",
 	published: {
 		/**
-			Value of the input. Use this property only to initialize the value. Use _getValue()_ and _setValue()_ to
-			manipulate the value at runtime.
+			Value of the input.  Use this property only to initialize the value.
+			Use _getValue()_ and _setValue()_ to manipulate the value at runtime.
 		*/
 		value: "",
 		//* Text to display when the input is empty
@@ -15,9 +16,7 @@ enyo.kind({
 		disabled: false
 	},
 	events: {
-		//* Sent when the input's value has changed, support for IE included.
-		onRealtimeChange: "",
-		//* Sent when the input's is disabled or enabled.
+		//* Sent when the input is disabled or enabled.
 		onDisabledChange: ""
 	},
 	//* Set to true to focus this control when it is rendered.
@@ -31,14 +30,14 @@ enyo.kind({
 	},
 	handlers: {
 		oninput: "input",
-		onclear: "clear"
+		onclear: "clear",
+		ondragstart: "dragstart"
 	},
 	create: function() {
 		if (enyo.platform.ie) {
 			this.handlers.onkeyup = "iekeyup";
 		}
 		this.inherited(arguments);
-		this.disabledChanged();
 		this.placeholderChanged();
 		// prevent overriding a custom attribute with null
 		if (this.type) {
@@ -48,6 +47,7 @@ enyo.kind({
 	},
 	rendered: function() {
 		this.inherited(arguments);
+		this.disabledChanged();
 		if (this.defaultFocus) {
 			this.focus();
 		}
@@ -68,7 +68,6 @@ enyo.kind({
 	valueChanged: function() {
 		this.setAttribute("value", this.value);
 		this.setNodeProperty("value", this.value);
-		this.notifyContainer();
 	},
 	iekeyup: function(inSender, inEvent) {
 		var ie = enyo.platform.ie, kc = inEvent.keyCode;
@@ -77,12 +76,6 @@ enyo.kind({
 			this.bubble("oninput", inEvent);
 		}
 	},
-	input: function() {
-		this.notifyContainer();
-	},
-	notifyContainer: function() {
-		this.bubble("onRealtimeChange");
-	},
 	clear: function() {
 		this.setValue("");
 	},
@@ -90,5 +83,9 @@ enyo.kind({
 		if (this.hasNode()) {
 			this.node.focus();
 		}
+	},
+	// note: we disallow dragging of an input to allow text selection on all platforms
+	dragstart: function() {
+		return true;
 	}
 });

@@ -2,7 +2,7 @@ enyo.kind({
 	name: "enyo.Control",
 	kind: enyo.UiComponent,
 	published: {
-		//* HTML tag name to use for control. If its null, no tag is generated, only the contents are used.
+		//* HTML tag name to use for control. If it's null, no tag is generated, only the contents are used.
 		tag: "div",
 		attributes: null,
 		classes: "",
@@ -60,7 +60,7 @@ enyo.kind({
 	},
 	importProps: function(inProps) {
 		this.inherited(arguments);
-		// each instance has it's own attributes array, the union of the prototype attributes and user specified attributes
+		// each instance has its own attributes array, the union of the prototype attributes and user-specified attributes
 		this.attributes = enyo.mixin(enyo.clone(this.kindAttributes), this.attributes);
 	},
 	initProps: function(inPropNames) {
@@ -113,15 +113,15 @@ enyo.kind({
 	//* @public
 	/**
 		Returns the DOM node representing the Control.
-		If the Control is not currently rendered, it returns null.
+		If the control is not currently rendered, returns null.
 		
 		If hasNode() returns a value, the _node_ property will be valid and 
 		can be checked directly.
 		
 		Once hasNode() is called, the returned value is made available in 
-		the _node_ property of this Control.
+		the _node_ property of this control.
 
-		A Control will only return a node if it has been rendered.
+		A control will only return a node if it has been rendered.
 
 			if (this.hasNode()) {
 				console.log(this.node.nodeType);
@@ -132,7 +132,7 @@ enyo.kind({
 		return this.generated && (this.node || this.findNodeById());
 	},
 	/**
-		Append the String value of _inAddendum_ to the _content_ of this Control.
+		Appends the String value of _inAddendum_ to the _content_ of this Control.
 	*/
 	addContent: function(inAddendum) {
 		this.setContent(this.content + inAddendum);
@@ -140,10 +140,10 @@ enyo.kind({
 	/**
 		Gets the value of an attribute on this object.
 
-		If this Control has a node, the attribute value is retrieved from the node, otherwise
-		it's read from the _attributes_ property of the Control itself.
+		If this Control has a node, the attribute value is retrieved from the node;
+		otherwise, it's read from the _attributes_ property of the control itself.
 
-		Caveat: if the Control is rendered, the _attributes_ property is used to construct
+		Caveat: If the control is rendered, the _attributes_ property is used to construct
 		the rendering, and values that have changed on the node itself are lost.
 
 			// Get the value attribute for this DomNode
@@ -182,8 +182,8 @@ enyo.kind({
 	},
 	/**
 		Convenience function for setting the _class_ attribute. 
-		The _class_ attribute represents the CSS classes assigned to this object.
-		Note that _inClass_ can be a string that contains multiple CSS classes separated by spaces.
+		The _class_ attribute represents the CSS classes assigned to this object;
+		it is a string that can contain multiple CSS classes separated by spaces.
 
 			this.$.control.setClassAttribute("box blue-border highlighted");
 	*/
@@ -192,8 +192,8 @@ enyo.kind({
 	},
 	/**
 		Convenience function for getting the _class_ attribute. 
-		The _class_ attribute represents the CSS classes assigned to this object.
-		Note that a _class_ can be a string that contains multiple CSS classes separated by spaces.
+		The _class_ attribute represents the CSS classes assigned to this object;
+		it is a string that can contain multiple CSS classes separated by spaces.
 
 			var cssClasses = this.$.control.getClassAttribute();
 	*/
@@ -204,8 +204,8 @@ enyo.kind({
 		Returns true if the _class_ attribute contains a substring matching _inClass_.
 
 		The _class_ attribute is a string that can contain multiple CSS classes.
-		This method tests if a particular class is part of the set of classes on this
-		Control.
+		This method tests whether a particular class is part of the set of
+		classes on this Control.
 
 			// returns true if _class_ is "bar foo baz", but false for "barfoobaz"
 			var hasFooClass = this.$.control.hasClass("foo");
@@ -228,7 +228,7 @@ enyo.kind({
 	/**
 		Removes substring _inClass_ from the _class_ attribute of this object.
 
-		inClass must have no leading or trailing spaces.
+		_inClass_ must have no leading or trailing spaces.
 		
 		Using a compound class name is supported, but the name is treated atomically.
 		For example, given "a b c", removeClass("a b") will produce "c", but removeClass("a c") will produce "a b c".
@@ -247,7 +247,7 @@ enyo.kind({
 		Adds or removes substring _inClass_ from the _class_ attribute of this object based
 		on the value of _inTrueToAdd_.
 
-		If _inTrueToAdd_ is truthy, then _inClass_ is added, otherwise _inClass_ is removed.
+		If _inTrueToAdd_ is truthy, then _inClass_ is added; otherwise, _inClass_ is removed.
 
 			// add or remove the highlight class, depending on the "highlighted" property
 			this.addRemoveClass("highlight", this.highlighted);
@@ -379,7 +379,7 @@ enyo.kind({
 			}
 	*/
 	rendered: function() {
-		// CAVEAT: currently we use one entry point ('reflow') for
+		// CAVEAT: Currently we use one entry point ('reflow') for
 		// post-render layout work *and* post-resize layout work.
 		this.reflow();
 		for (var i=0, c; c=this.children[i]; i++) {
@@ -413,9 +413,9 @@ enyo.kind({
 		return {left: n.offsetLeft, top: n.offsetTop, width: n.offsetWidth, height: n.offsetHeight};
 	},
 	/**
-		Set any or all of geometry style properties _width_, _height_, _left_, _top_, _right_ and _bottom_.
+		Sets any or all of geometry style properties _width_, _height_, _left_, _top_, _right_ and _bottom_.
 
-		Values can be specified as strings (already with units), or as numbers when a unit is provided in _inUnit_.
+		Values may be specified as strings (with units specified), or as numbers when a unit is provided in _inUnit_.
 
 			this.setBounds({width: 100, height: 100}, "px"); // adds style properties like "width: 100px; height: 100px;"
 			//
@@ -485,7 +485,7 @@ enyo.kind({
 	},
 	generateInnerHtml: function() {
 		// Flow can alter the way that html content is rendered inside
-		// the container regardless if there are children.
+		// the container regardless of whether there are children.
 		this.flow();
 		if (this.children.length) {
 			return this.generateChildHtml();
@@ -652,7 +652,7 @@ enyo.kind({
 	//
 	statics: {
 		/**
-			return string with ampersand, less-than, and greater-than characters replaced with HTML entities, 
+			Returns passed-in string with ampersand, less-than, and greater-than characters replaced by HTML entities, 
 			e.g. '&lt;code&gt;"This &amp; That"&lt;/code&gt;' becomes '&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;' 
 		*/
 		escapeHtml: function(inText) {
@@ -699,7 +699,7 @@ enyo.kind({
 			return (cssText ? ' style="' + cssText + '"' : "");
 		},
 		/**
-			return string with ampersand and double quote characters replaced with HTML entities, 
+			Returns passed-in string with ampersand and double quote characters replaced by HTML entities, 
 			e.g. 'hello from "Me & She"' becomes 'hello from &amp;quot;Me &amp;amp; She&amp;quot;' 
 		*/
 		escapeAttribute: function(inText) {
@@ -729,16 +729,16 @@ enyo.Control.subclass = function(ctor, props) {
 	// and ease of use.
 	//
 	// However, the properties are no longer 'live' in prototypes 
-	// because  of this magic. I.e. changes to the prototype of 
+	// because of this magic--i.e., changes to the prototype of 
 	// a Control subclass will not necessarily be reflected in
-	// instances of that Control (e.g. chained prototypes).
+	// instances of that control (e.g., chained prototypes).
 	//
 	// These properties are also renamed to kind* to allow
 	// combining with instance properties.
 	//
 	var proto = ctor.prototype;
 	//
-	// 'kindClasses' comes either from our inheritance chain (e.g. proto's prototype chain) 
+	// 'kindClasses' comes either from our inheritance chain (e.g., proto's prototype chain) 
 	// or has been forced by a kind declaration.
 	//
 	if (proto.classes) {
