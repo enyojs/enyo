@@ -309,7 +309,7 @@ enyo.kind({
 		this.renderStyles();
 	},
 	stylesToNode: function() {
-		this.node.style.cssText = this.style + this.domCssText;
+		this.node.style.cssText = this.style + (this.style[this.style.length-1] == ';' ? ' ' : '; ') + this.domCssText;
 	},
 	//
 	//
