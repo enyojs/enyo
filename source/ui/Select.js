@@ -48,6 +48,15 @@ enyo.kind({
 	change: function() {
 		this.selected = this.getSelected();
 	},
+	render: function() {
+		// work around IE bug with innerHTML setting of <select>, rerender parent instead
+		// http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
+		if (enyo.platform.ie) {
+			this.parent.render();
+		} else {
+			this.inherited(arguments);
+		}
+	},
 	//* @public
 	//* Returns the value of the selected option.
 	getValue: function() {
