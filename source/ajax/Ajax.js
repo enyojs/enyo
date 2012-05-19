@@ -1,11 +1,40 @@
 ﻿/**
-	IMPORTANT: Ajax implements the properties of the shared
-	<a href="#enyo.AjaxProperties">enyo.AjaxProperties</a> object. 
-	The properties documented under AjaxProperties are published by _enyo.Async_.
+	_enyo.Ajax_ is a wrapper for _XmlHttpRequest_ that uses
+	the <a href="#enyo.Async">enyo.Async</a> API.
+	
+	IMPORTANT: _enyo.Ajax_ publishes all the properties of the
+	<a href="#enyo.AjaxProperties">enyo.AjaxProperties</a>
+	object.
+
+	Like _enyo.Async_, _enyo.Ajax_ is an **Object** not a **Component**. 
+	Do not try to make _enyo.Ajax_ objects in a components block.
+
+	If you want to use _enyo.Ajax_ as a Component, you are probably
+	looking for <a href="#enyo.WebService">enyo.WebService</a>.
+
+	Example
+
+	getWoeid: function(inPlace) {
+		// setup <a href="#enyo.AjaxProperties">enyo.AjaxProperties</a> by sending them to the _enyo.Ajax_ constructor
+		var x = enyo.Ajax({url: "http://query.yahooapis.com/v1/public/yql?format=json"});
+		// send parameters the remote service using the 'go()' method
+		x.go({
+			q: 'select woeid from geo.placefinder where text="' + inPlace + '"'
+		});
+		// attach responders to the transaction object
+		x.response(this, function(inSender, inResponse) {
+			// extra information from response object
+			var woeid = inResponse.data.query.results.Result.woeid;
+			// do something with it
+			this.setWoeid(inPlace, woeid);
+		};
+	}
 */
 enyo.kind({
 	name: "enyo.Ajax",
 	kind: enyo.Async,
+	//* See <a href="#enyo.AjaxProperties">enyo.AjaxProperties</a> for the list of properties
+	//* published by _enyo.Ajax_.
 	published: enyo.AjaxProperties,
 	//* @protected
 	constructor: function(inParams) {

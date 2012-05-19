@@ -519,8 +519,6 @@ enyo.kind({
 		this.tagsValid = false;
 	},
 	prepareTags: function() {
-		//this.log("(" + this.owner.name + ") " + this.name + ": " + this.id + " (" + this.attributes.id + ")");
-		//var htmlStyle = enyo.Control.domStylesToCssText(this.domStyles);
 		var htmlStyle = this.domCssText + this.style;
 		this._openTag = '<' 
 			+ this.tag

@@ -1,7 +1,36 @@
-﻿enyo.kind({
-	name: "enyo.WebService",
+﻿//* @protected
+enyo.kind({
+	name: "enyo._AjaxComponent",
 	kind: enyo.Component,
-	published: enyo.AjaxProperties,
+	published: enyo.AjaxProperties
+});
+
+//* @public
+/**
+	_enyo.WebService_ is a Component that performs web requests (_XmlHttpRequest_).
+
+	Interally, _enyo.WebService_ uses _enyo.Async_ subkinds (namely, _enyo.Ajax_ 
+	and _enyo.JsonPRequest_) to manage transactions. The async instance for
+	a request is returned from the _send()_ method.
+
+	IMPORTANT: _enyo.Ajax_ publishes all the properties of the
+	<a href="#enyo.AjaxProperties">enyo.AjaxProperties</a>
+	object.
+*/
+enyo.kind({
+	name: "enyo.WebService",
+	kind: enyo._AjaxComponent,
+	published: {
+		//* Set true to use JSONP protocol.
+		jsonp: false,
+		/**
+			When using JSONP, the name of the callback parameter.
+			Note: this not the name of a callback function, but only
+			the name of the callback parameter. Enyo will create an
+			internal callback function as necessary.
+		*/
+		callback: "callback"
+	},
 	events: {
 		onResponse: "",
 		onError: ""
@@ -12,12 +41,25 @@
 	},
 	//* @public
 	send: function(inParams) {
+		return this.jsonp ? this.sendJsonp(inParams) : this.sendAjax(inParams);
+	},
+	//* @protected
+	sendJsonp: function(inParams) {
+		var jsonp = new enyo.JsonpRequest();
+		for (var n in ['url', 'callback']) {
+			jsonp[n] = this[n];
+		}
+		return this.sendAsync(ajax, inParams);
+	},
+	sendAjax: function(inParams) {
 		var ajax = new enyo.Ajax();
-		// hardcore
 		for (var n in enyo.AjaxProperties) {
 			ajax[n] = this[n];
 		}
-		return ajax.go(inParams).response(this, "response").error(this, "error");
+		return this.sendAsync(ajax, inParams);
+	},
+	sendAsync: function(inAjax, inParams) {
+		return inAjax.go(inParams).response(this, "response").error(this, "error");
 	},
 	response: function(inSender, inData) {
 		this.doResponse({ajax: inSender, data: inData});
