@@ -48,8 +48,9 @@ enyo.kind({
 	// We could call _discoverControlParent_ in _addComponent_, but it would
 	// cause a lot of useless checking.
 	createComponents: function() {
-		this.inherited(arguments);
+		var results = this.inherited(arguments);
 		this.discoverControlParent();
+		return results;
 	},
 	discoverControlParent: function() {
 		this.controlParent = this.$[this.controlParentName] || this.controlParent;
