@@ -14,21 +14,21 @@
 
 	Example
 
-	getWoeid: function(inPlace) {
-		// setup <a href="#enyo.AjaxProperties">enyo.AjaxProperties</a> by sending them to the _enyo.Ajax_ constructor
-		var x = enyo.Ajax({url: "http://query.yahooapis.com/v1/public/yql?format=json"});
-		// send parameters the remote service using the 'go()' method
-		x.go({
-			q: 'select woeid from geo.placefinder where text="' + inPlace + '"'
-		});
-		// attach responders to the transaction object
-		x.response(this, function(inSender, inResponse) {
-			// extra information from response object
-			var woeid = inResponse.data.query.results.Result.woeid;
-			// do something with it
-			this.setWoeid(inPlace, woeid);
-		};
-	}
+		getWoeid: function(inPlace) {
+			// setup <a href="#enyo.AjaxProperties">enyo.AjaxProperties</a> by sending them to the _enyo.Ajax_ constructor
+			var x = enyo.Ajax({url: "http://query.yahooapis.com/v1/public/yql?format=json"});
+			// send parameters the remote service using the 'go()' method
+			x.go({
+				q: 'select woeid from geo.placefinder where text="' + inPlace + '"'
+			});
+			// attach responders to the transaction object
+			x.response(this, function(inSender, inResponse) {
+				// extra information from response object
+				var woeid = inResponse.data.query.results.Result.woeid;
+				// do something with it
+				this.setWoeid(inPlace, woeid);
+			};
+		}
 */
 enyo.kind({
 	name: "enyo.Ajax",
