@@ -39,7 +39,7 @@ button {
 	user-select: none;
 }
 
-.enyo-unselectabe::selection, .enyo-unselectable ::selection {
+.enyo-unselectable::selection, .enyo-unselectable ::selection {
 	color: transparent;
 }
 
