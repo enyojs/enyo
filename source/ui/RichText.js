@@ -30,7 +30,7 @@ enyo.kind({
 	kind: enyo.Input,
 	tag: "div",
 	attributes: {
-		contenteditable: true,
+		contenteditable: true
 	},
 	handlers: {
 		onfocus: "focusHandler",
