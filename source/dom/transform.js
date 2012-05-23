@@ -59,6 +59,12 @@
 	}
 	//* @public
 	/**
+		Returns true if the platform supports CSS3 Transforms
+	*/
+	enyo.dom.canTransform = function() {
+		return Boolean(this.getStyleTransformProp());
+	};
+	/**
 		Returns true if platform supports CSS3 3D Transforms.
 
 		Typically used like this:
