@@ -128,6 +128,7 @@
 		d[inTransform] = inValue;
 		this.transformsToDom(inControl);
 	};
+	//* @protected
 	/**
 		Applies a transform that should trigger GPU compositing for _inControl_
 	*/
