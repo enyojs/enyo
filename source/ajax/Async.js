@@ -10,21 +10,21 @@
 	completes or encounters an error.
 	
 	To use it, create a new instance of _enyo.Async_ or a kind derived from it,
-	then register handlers with the _response()_ and _error()_ methods.
+	then register handlers with the `response()` and `error()` methods.
 	
-	Start the async operation by calling the _go()_ method.
+	Start the async operation by calling the `go()` method.
 
 	Handlers may either be methods with the signature _(asyncObject, value)_ or
-	new instances of _enyo.Async_ or its subkinds.  This allows for chaining of
+	new instances of _enyo.Async_ or its subkinds. This allows for chaining of
 	async objects (e.g., when calling a Web API).
 
 	If a response method returns a value (other than undefined) that value is 
 	sent to subsequent handlers in the chain, replacing the original value.
 
-	A failure method can call _recover()_ to undo the error condition and switch
+	A failure method can call `recover()` to undo the error condition and switch
 	to calling response methods.
 
-	The default implementation of _go_ causes all the response handlers 
+	The default implementation of `go()` causes all the response handlers 
 	to be called (asynchronously).
 
 	Here is a complicated example which demonstrates many of these features:
@@ -43,7 +43,7 @@
 			return async;
 		};
 
-	Users of the _transaction()_ function can add handlers to the Async object until all functions return (synchronously).
+	Users of the `transaction()` function can add handlers to the Async object until all functions return (synchronously).
 
 		// get a new transaction, it's been started, but we can add more handlers synchronously
 		var x = transaction();

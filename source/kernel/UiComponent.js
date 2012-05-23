@@ -4,7 +4,8 @@
 
 	UiComponent itself is abstract.  Concrete subkinds include
 	<a href="#enyo.Control">enyo.Control</a> (for HTML/DOM) and
-	_enyo.CanvasControl_ for Canvas contexts.
+	<a href="#enyo.canvas.Control">enyo.canvas.Control</a>
+	(for Canvas contexts).
 */
 enyo.kind({
 	name: "enyo.UiComponent",
