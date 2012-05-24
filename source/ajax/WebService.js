@@ -29,7 +29,9 @@ enyo.kind({
 			the name of the callback parameter. Enyo will create an
 			internal callback function as necessary.
 		*/
-		callback: "callback"
+		callback: "callback",
+		//* When using JSONP, optional character set to use to interpret the return data
+		charset: null
 	},
 	events: {
 		onResponse: "",
@@ -46,7 +48,7 @@ enyo.kind({
 	//* @protected
 	sendJsonp: function(inParams) {
 		var jsonp = new enyo.JsonpRequest();
-		for (var n in {'url':1, 'callback':1}) {
+		for (var n in {'url':1, 'callback':1, 'charset':1}) {
 			jsonp[n] = this[n];
 		}
 		return this.sendAsync(jsonp, inParams);
