@@ -8,10 +8,6 @@ This repository contains Enyo core. We've pared it down to the essentials, so fo
 
 Packages should go in a folder named _lib_ (e.g. the _extra_ or _canvas_ repositories on GitHub). _lib_ is a magic name that enyo uses to work with add-on packages. It's recommended you create a _lib_ folder as sibling to _enyo_ and keep your packages there, but you can make as many _lib_ folders as you like and put them anywhere.
 
-## Api Viewer
-
-The Api Viewer application parses and renders documentation in real-time from the Enyo source. Run the application by loading _tools/api/index.html_. 
-
 ## Warning about file://
 
 _Note_: in Chrome, various samples will not work from file:// because of Chrome's security policy. Run from a local http server, use the --allow-file-access-from-files in Chrome, or use the online versions at http://enyojs.com.
