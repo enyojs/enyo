@@ -62,19 +62,25 @@ enyo.kind({
 	],
 	create: function() {
 		this.inherited(arguments);
-		if (this.floating) {
+		/*if (this.floating) {
 			this.setParent(enyo.floatingLayer);
+		}*/
+		this.canGenerate = !this.floating;
+	},
+	render: function() {
+		if (this.floating) {
+			if (!enyo.floatingLayer.hasNode()) {
+				enyo.floatingLayer.render();
+			}
+			this.parentNode = enyo.floatingLayer.hasNode();
 		}
+		this.inherited(arguments);
 	},
 	destroy: function() {
 		if (this.showing) {
 			this.release();
 		}
 		this.inherited(arguments);
-	},
-	// bubble events to owner when floating
-	getBubbleTarget: function() {
-		return this.floating ? this.owner : this.inherited(arguments);
 	},
 	reflow: function() {
 		this.updatePosition();
