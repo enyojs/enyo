@@ -46,10 +46,10 @@ enyo.kind({
 	//* @protected
 	sendJsonp: function(inParams) {
 		var jsonp = new enyo.JsonpRequest();
-		for (var n in ['url', 'callback']) {
+		for (var n in {'url':1, 'callback':1}) {
 			jsonp[n] = this[n];
 		}
-		return this.sendAsync(ajax, inParams);
+		return this.sendAsync(jsonp, inParams);
 	},
 	sendAjax: function(inParams) {
 		var ajax = new enyo.Ajax();

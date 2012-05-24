@@ -12,7 +12,7 @@ enyo.kind({
 		this.finish("bad status: " + inValue.data);
 	},
 	_testResponse: function(inProps, inAssertFn) {
-		this._testWebService(enyo.mixin({url: "php/test1.php?format=" + inProps.handleAs}, inProps), null, inAssertFn);
+		this._testWebService(enyo.mixin({url: "php/test1.php?format=" + (inProps.format || inProps.handleAs)}, inProps), null, inAssertFn);
 	},
 	testJsonResponse: function() {
 		this._testResponse({handleAs: "json"}, 
@@ -78,5 +78,16 @@ enyo.kind({
 		this._testWebService({url: "http://gdata.youtube.com/feeds/api/videos/"}, {q: "waterfall", alt: "json", format: 5}, function(inValue) {
 			return inValue && inValue.feed && inValue.feed.entry && inValue.feed.entry.length > 0;
 		});
+	},
+	testJsonp: function() {
+		this._testResponse({jsonp: true, format: "jsonp"}, function(inValue) {
+			return inValue.response == "hello";
+		});
+	}/*,
+	testCharset: function() {
+		this._testResponse({charset: "utf8"}, function(inValue) {
+			return inValue.utf8 == "\u0412\u0438\u0301\u0445\u0440\u0438";
+		});
 	}
+	*/
 });

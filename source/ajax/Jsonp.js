@@ -9,7 +9,7 @@ enyo.kind({
 	name: "enyo.JsonpRequest",
 	kind: enyo.Async,
 	published: {
-		//*	The URL for the service.
+		//* The URL for the service.
 		url: "",
 		//* Optional character set to use to interpret the return data
 		charset: null,
