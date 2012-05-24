@@ -1,0 +1,9 @@
+[
+	{"name": "enyo", "path": "../../source"},
+	{"name": "fittable", "path": "../../../lib/layout/fittable"},
+	{"name": "list", "path": "../../../lib/layout/list"},
+	{"name": "panels", "path": "../../../lib/layout/panels"},
+	{"name": "slideable", "path": "../../../lib/layout/slideable"},
+	{"name": "tree", "path": "../../../lib/layout/tree"},
+	{"name": "onyx", "path": "../../../lib/onyx"}
+]

@@ -1,4 +1,141 @@
 
+/* E://www/enyojs/enyo/tools/../../lib/layout/fittable/source/FittableLayout.css */
+
+.enyo-fittable-rows-layout {
+	position: relative;
+}
+
+.enyo-fittable-rows-layout > * {
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	/* float when not stretched */
+	float: left;
+	clear: both;
+}
+
+/* non-floating when stretched */
+.enyo-fittable-rows-layout.enyo-stretch > * {
+	float: none;
+	clear: none;
+}
+
+/* setting to enforce margin collapsing */
+/* NOTE: rows cannot have margin left/right */
+.enyo-fittable-rows-layout.enyo-stretch.enyo-margin-expand > * {
+	float: left;
+	clear: both;
+	width: 100%;
+	/* note: harsh resets */
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+}
+
+.enyo-fittable-columns-layout {
+	position: relative;
+	text-align: left;
+	white-space: nowrap;
+}
+
+.enyo-fittable-columns-layout.enyo-center {
+	text-align: center;
+}
+
+.enyo-fittable-columns-layout > * {
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	vertical-align: top;
+	display: inline-block;
+	white-space: normal;
+}
+
+.enyo-fittable-columns-layout.enyo-tool-decorator > * {
+	vertical-align: middle;
+}
+
+/* repair clobbered white-space setting for pre, code */
+.enyo-fittable-columns-layout > pre, .enyo-fittable-columns-layout > code {
+	white-space: pre;
+}
+
+.enyo-fittable-columns-layout > .enyo-fittable-columns-layout, .enyo-fittable-columns-layout > .onyx-toolbar-inline {
+	white-space: nowrap;
+}
+
+/* NOTE: columns cannot have margin top/bottom */
+.enyo-fittable-columns-layout.enyo-stretch > * {
+	height: 100%;
+	/* note: harsh resets */
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+}
+
+/* E://www/enyojs/enyo/tools/../../lib/layout/list/source/List.css */
+
+.enyo-list {
+	position: relative;
+}
+
+.enyo-list-port {
+	overflow: hidden;
+	position: relative;
+	height: 10000000px;
+}
+
+.enyo-list-page {
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+/* E://www/enyojs/enyo/tools/../../lib/layout/panels/source/arrangers/Arranger.css */
+
+.enyo-arranger {
+	position: relative;
+	overflow: hidden;
+}
+
+.enyo-arranger.enyo-fit {
+	position: absolute;
+}
+
+.enyo-arranger > * {
+	position: absolute;
+	left: 0;
+	top: 0;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+
+.enyo-arranger-fit > * {
+	/*
+	override any width/height set on panels
+	*/
+	width: 100% !important;
+	height: 100% !important;
+	min-width: 0 !important;
+	max-width: auto !important;
+	min-height: 0 !important;
+	max-height: auto !important;
+}
+
+
+/* E://www/enyojs/enyo/tools/../../lib/layout/panels/source/Panels.css */
+
+.enyo-panels {
+}
+
+.enyo-panels-fit-narrow {
+}
+
+@media all and (max-width: 800px) {
+	.enyo-panels-fit-narrow > * {
+		min-width: 100%;
+	}
+}
+
 /* ../source/foss/syntaxhighlighter_3.0.83_fork/sh-min.css */
 
 
@@ -353,274 +490,245 @@
 
 
 
-/* ../source/css/tab.css */
-
-
-.tabbar {
-	background-color: #333;
-	white-space: nowrap;
-	position: relative;
-	z-index: 2;
-}
-
-.tabbar img {
-	display: none;
-}
-
-.tabbar .active img {
-	display: inline-block;
-}
-
-.tab.focus, .theme-fu .tab:focus {
-	outline: none;
-}
+/* ../source/App.css */
 
 .tab {
-	cursor: pointer;
-	display: inline-block;
-	white-space: nowrap;
-
-	color: #454545;
-	background: #A5A6A7 url(../images/tab-gradient.png) left top repeat-x;
-
-	line-height: 38px;
-	padding: 0 12px 0 10px;
+	background: whitesmoke;
+	border: 1px dotted silver;
+	padding: 8px;
 	margin: 0;
-	border: 3px solid #727373;
-}
-
-
-.tab.active, .active-tab-bg {
-	background: #0A8CAA url(../images/tab-active-gradient.png) left top repeat-x;
 }
 
 .tab.active {
-	border: 3px solid #0B5A74;
-	color: #D8F5FF;
+	background: lightblue;
 }
 
-
-/* ../source/css/app.css */
-
-body {
-	font-family: Arial, Verdana, Helvetica, sans-serif;
-	font-size: 12px;
-	line-height: 1.5;
-	background-color: #D7D7D7;
+.input-decorator {
+	padding: 6px 8px 10px 8px;
+	border-radius: 3px;
+	border: 1px solid;
+	border-color: rgba(0,0,0,0.1);
+	margin: 0;
 }
 
-#app {
-	background-color: #C6C8CB;
+.input-decorator > input {
+	/* reset */
+	margin: 0;
+	padding: 0;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	background-color: transparent;
+	font-size: 16px;
+	box-shadow: none;
+	/* FIXME: hack for styling reset on Android */
+	/* -webkit-appearance: caret;*/
 }
 
-#app a {
-	color: #124252 !important;
-	text-decoration: none;
-	padding-bottom: 1px;
-	border-bottom: 2px dotted #ccc;
+.packages-editor {
+	background: lightgrey;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+#app_left {
+	width: 300px;
+	border: 1px solid orange;
+}
+
+#app_left_tabs {
+	background: #eee;
+}
+
+#app_kinds {
+	padding: 8px;
+}
+
+#app_index {
+	padding: 8px;
+	font-size: smaller;
+}
+
+#app_modules {
+	padding: 8px;
+}
+
+#app_packages {
+	padding: 8px;
+}
+
+#app_doc {
+	padding: 8px 8px;
+}
+
+#app_scope {
+	padding: 8px;
+	border-bottom: 1px dotted silver;
 }
 
 #app_header {
-	cursor: pointer;
-	line-height: 50px;
-	height: 50px;
-	background: #0B0C0D url(../images/enyo-logo.png) 5px center no-repeat;
+	padding: 8px;
+}
+
+#app_tocFrame {
+	white-space: nowrap;
+}
+
+#app_toc {
+}
+
+#app_bodyFrame {
 }
 
 #app_body {
-	top: 50px;
-}
-
-#app_leftPanel {
-	width: 270px;
-}
-
-#app_docPanel {
-	left: 270px;
-	background-color: #F8F8F8;
-}
-
-#app_indexTabs {
-	height: 44px;
-}
-
-#app_indexTabPanels {
-	top: 44px;
-	border-right: 1px dotted gray;
-}
-
-#app_indexBody {
-	color: #124252;
-	padding: 8px 8px 0 8px;
-	white-space: nowrap;
-}
-
-#app_searchBar {
-	background-color: #E7E7E7;
-	height: 40px;
-	padding: 2px;
-}
-
-#app_searchScroller {
-	top: 44px;
-}
-
-#app_searchBody {
 	padding: 8px;
-	white-space: nowrap;
+	padding-bottom: 1024px;
 }
 
-#app_docPanel_tabs {
-	height: 44px;
+/* ../source/presentation.css */
+
+blockquote {
+	margin-top: 0;
+	margin-bottom: 0;
 }
 
-#app_docPanel_body {
-	min-width: 500px;
-	padding: 16px;
+blockquote hr {
+	border: 0;
+	Xmargin: 0;
 }
 
-.tab-icon {
-	display: inline-block;
-	height: 14px;
-	width: 14px;
-	margin-right: 6px;
-	vertical-align: middle;
+hr {
+	border-style: dotted;
+	border-bottom-style: none;
+	border-color: #ccc;
 }
 
-.api-tab-icon {
-	background: url(../images/icons.png) -14px -98px no-repeat;
+a {
+	text-decoration: none;
+	border-bottom: 1px dotted lightblue;
+	color: #3B5982;
+	line-height: 1.3em;
 }
 
-.modules-tab-icon {
-	background: url(../images/icons.png) -14px -28px no-repeat;
-}
-
-.index-tab-icon {
-	background: url(../images/icons.png) -14px -56px no-repeat;
-}
-
-.close-tab-img {
-	margin: 0;
-	padding: 4px 4px 5px 8px;
-	vertical-align: middle;
+a:hover {
+	text-decoration: none;
+	text-shadow: 0 0 2px orange;
+	-webkit-transition: text-shadow 0.5s;
 }
 
 /*
-.close-tab-icon {
-	width: 0;
-	margin: 0;
+a {
+	text-decoration: none;
+	background-color: #ddd;
+	padding: 3px 8px;
+	border-radius: 12px;
+	line-height: 2em;
+	color: #333;
 }
 
-.active .close-tab-icon {
-	width: 14px;
-	margin: 0 0 0 6px;
-	background: url(../images/icons.png) -14px -112px no-repeat;
+a:hover {
+	background-color: lightblue;
+	-webkit-transition: background-color 0.5s;
 }
 */
 
-/* ../source/css/format.css */
-
-.name {
-	color: #00A400;
-	font-size: 24px;
-	vertical-align: middle;
-	line-height: 36px;
-}
-
-.protected {
-	display: inline-block;
-	height: 16px;
-	width: 16px;
-	vertical-align: middle;
-	background: url(../images/protected-8.png) center no-repeat;
-}
-
-.path {
+comment {
+	/*border-left: 2px dotted silver;*/
+	background: whitesmoke;
+	display: block;
+	padding: 4px 0 4px 12px;
+	margin: 16px 0 4px;
+	/*
+	font-size: small;
+	padding: 8px;
 	font-style: italic;
+	color: green;
+	padding: 16px 0 8px;
+	*/
 }
 
-.index-divider {
-	border-bottom: 1px dotted #C2C4C6;
-	line-height: normal;
-	margin: 6px 0 2px 0;
+label {
+	font-weight: bold;
+	color: #D38628;
 }
 
-.index-item {
-	margin-left: 16px;
+public {
+	color: Orange;
+	padding-right: 6px;
+	display: none;
 }
 
-.small-type {
+protected {
+	color: Red;
+	padding-right: 6px;
+}
+
+published {
+	color: green;
+	padding-right: 6px;
+}
+
+kind {
+	font-size: x-large;
+	font-weight: bold;
+	display: block;
+}
+
+superkind {
+	color: #555;
+	display: block;
+}
+
+prototype {
+	font-style: italic;
+	/*
+	font-size: small;
+	color: blue;
+	*/
+	color: #888;
+}
+
+module {
+	text-decoration: underline;
+	color: #C39;
+	cursor: pointer;
+}
+
+topic {
+	/*
+	font-weight: bold;
+	text-decoration: underline;
+	color: #46E;
+	cursor: pointer;
+	*/
+}
+
+column {
 	display: inline-block;
-	box-sizing: border-box;
-	height: 14px;
-	width: 14px;
-	color: transparent;
-	margin: 0 5px 0 0;
-	vertical-align: middle;
-	background: url(../images/icons.png) 0px -14px no-repeat;
+	font-size: small;
+	padding: 16px;
+	/*border-right: 1px dotted silver;*/
+	vertical-align: top;
 }
 
-.small-kind-type {
-	background: url(../images/icons.png) 0px 0px no-repeat;
+divider {
+	display: block;
+	color: #0D0D0D;
+	font-size: 18px;
+	font-weight: bold;
+	margin-left: -1px;
+	margin-top: 1em;
+	margin-bottom: 5px;
+	/*border-bottom: 1px dotted silver;*/
 }
 
-.small-module-type {
-	background: url(../images/icons.png) 0px -28px no-repeat;
+code {
+	background-color: white;
+	padding: 2px;
 }
 
-.small-function-type {
-	background: url(../images/icons.png) 0px -42px no-repeat;
+arguments {
+	color: purple;
 }
-
-.small-method-type {
-	background: url(../images/icons.png) 0px -56px no-repeat;
-}
-
-.small-property-type {
-	background: url(../images/icons.png) 0px -70px no-repeat;
-}
-
-.small-package-type {
-	background: url(../images/icons.png) 0px -84px no-repeat;
-}
-
-.type {
-	display:inline-block;
-	box-sizing: border-box;
-	height: 24px;
-	width: 24px;
-	color:transparent;
-	margin: 0 8px 0 0;
-	vertical-align: middle;
-	background: url(../images/icons-24.png) 0px -24px no-repeat;
-}
-
-.object-type {
-}
-
-.kind-type {
-	background: url(../images/icons-24.png) 0px 0px no-repeat;
-}
-
-.module-type {
-	background: url(../images/icons-24.png) 0px -48px no-repeat;
-}
-
-.function-type {
-	background: url(../images/icons-24.png) 0px -72px no-repeat;
-}
-
-.method-type {
-	background: url(../images/icons-24.png) 0px -96px no-repeat;
-}
-
-.property-type {
-	background: url(../images/icons-24.png) 0px -120px no-repeat;
-}
-
-.package-type {
-	background: url(../images/icons-24.png) 0px -144px no-repeat;
-}
-
-
 
