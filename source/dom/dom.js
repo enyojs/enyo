@@ -53,5 +53,19 @@ enyo.dom = {
 			b.className += " enyo-body-fit";
 		}
 		enyo.bodyIsFitting = true;
+	},
+	getWindowWidth: function() {
+		if (window.innerWidth) {
+			return window.innerWidth;
+		}
+		if (document.body && document.body.offsetWidth) {
+			return document.body.offsetWidth;
+		}
+		if (document.compatMode=='CSS1Compat' &&
+			document.documentElement &&
+			document.documentElement.offsetWidth ) {
+			return document.documentElement.offsetWidth;
+		}
+		return 320;
 	}
 };
