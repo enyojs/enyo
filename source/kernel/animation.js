@@ -1,4 +1,4 @@
-﻿(function() {
+(function() {
 	var ms = Math.round(1000/60);
 	var prefix = ["webkit", "moz", "ms", "o", ""];
 	var r = "requestAnimationFrame";

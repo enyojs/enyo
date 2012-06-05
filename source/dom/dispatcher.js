@@ -1,4 +1,4 @@
-﻿//* @protected
+//* @protected
 enyo.$ = {};
 
 enyo.dispatcher = {

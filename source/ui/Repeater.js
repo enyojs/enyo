@@ -1,4 +1,4 @@
-﻿/**
+/**
 	_enyo.Repeater_ is a simple control for making lists of items.
 
 	Components of a repeater are copied for each item created, and are wrapped

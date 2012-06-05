@@ -1,4 +1,4 @@
-﻿/**
+/**
 	Invokes function _inJob_ after _inWait_ milliseconds have elapsed since the
 	last time _inJobName_ was referenced.
 

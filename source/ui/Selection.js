@@ -1,4 +1,4 @@
-﻿/** This is used to manage row selection state for lists. */
+/** This is used to manage row selection state for lists. */
 enyo.kind({
 	name: "enyo.Selection",
 	kind: enyo.Component,

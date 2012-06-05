@@ -1,4 +1,4 @@
-﻿//* @public
+//* @public
 
 /**
 	Allow bootstrapping in environments that do not have a window object right away.

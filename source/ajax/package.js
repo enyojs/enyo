@@ -1,4 +1,4 @@
-﻿enyo.depends(
+enyo.depends(
 	"Async.js",
 	"json.js",
 	"cookie.js",

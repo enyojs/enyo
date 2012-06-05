@@ -1,4 +1,4 @@
-﻿//* @public
+//* @public
 
 /**
 	Gets a named value from the document cookie.

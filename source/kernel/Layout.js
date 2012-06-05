@@ -1,4 +1,4 @@
-﻿enyo.kind({
+enyo.kind({
 	name: "enyo.Layout",
 	kind: null,
 	layoutClass: "",

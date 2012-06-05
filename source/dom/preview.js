@@ -1,4 +1,4 @@
-﻿/**
+/**
 	Dispatcher preview feature: allow control ancestors of the event
 	target a chance (eldest first) to react via implementing "previewDomEvent."
 */

@@ -1,4 +1,4 @@
-﻿//* @protected
+//* @protected
 enyo.requiresWindow(function() {
 	// add touch-specific gesture feature
 	var gesture = enyo.gesture;

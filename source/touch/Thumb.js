@@ -1,4 +1,4 @@
-﻿enyo.kind({
+enyo.kind({
 	name: "enyo.ScrollThumb",
 	minSize: 4,
 	cornerSize: 6,

@@ -1,4 +1,4 @@
-﻿enyo.kind({
+enyo.kind({
 	name: "enyo.BaseLayout",
 	kind: enyo.Layout,
 	layoutClass: "enyo-positioned",

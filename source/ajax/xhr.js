@@ -1,4 +1,4 @@
-﻿//* @protected
+//* @protected
 enyo.xhr = {
 	/**
 		<code>inParams</code> is an Object that may contain these properties:

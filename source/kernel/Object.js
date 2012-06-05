@@ -1,4 +1,4 @@
-﻿/**
+/**
 _enyo.Object_ implements the Enyo framework's property publishing system.
 Published properties are declared in a hash called _published_ within a call
 to _enyo.kind_. Getter and setter methods are automatically generated for

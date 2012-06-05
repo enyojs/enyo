@@ -1,4 +1,4 @@
-﻿enyo.depends(
+enyo.depends(
 	"log.js",
 	"lang.js",
 	"job.js",

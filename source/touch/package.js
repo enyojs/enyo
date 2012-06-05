@@ -1,4 +1,4 @@
-﻿enyo.depends(
+enyo.depends(
 	"touch.js",
 	"msevents.js",
 	"gesture.js",

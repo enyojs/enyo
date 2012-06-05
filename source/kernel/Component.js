@@ -1,4 +1,4 @@
-﻿/**
+/**
 	_enyo.Component_ is the fundamental building block for Enyo applications.
 	Components are designed to fit together, so that complex behaviors may be
 	fashioned from smaller bits of functionality.

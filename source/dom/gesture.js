@@ -1,4 +1,4 @@
-﻿//* @public
+//* @public
 /**
 	Enyo supports a set of cross-platform gesture events that work similarly on
 	all supported platforms. These events are provided so that users can write a

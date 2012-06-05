@@ -1,4 +1,4 @@
-﻿//* @protected
+//* @protected
 
 /**
 	Event modal capture feature: capture events to a specific

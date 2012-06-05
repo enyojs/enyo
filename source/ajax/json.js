@@ -1,4 +1,4 @@
-﻿enyo.json = {
+enyo.json = {
 	//* @public
 	/**
 		Returns a JSON string for a given object, using native stringify

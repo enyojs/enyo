@@ -1,4 +1,4 @@
-﻿//* @protected
+//* @protected
 enyo.kind({
 	name: "enyo._DragAvatar",
 	style: "position: absolute; z-index: 10; pointer-events: none; cursor: move;",

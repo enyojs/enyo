@@ -1,4 +1,4 @@
-﻿enyo.depends(
+enyo.depends(
 	"dom.css",
 	"dom.js",
 	"transform.js",

@@ -1,4 +1,4 @@
-﻿enyo.AjaxProperties = {
+enyo.AjaxProperties = {
 	/**
 		When true, appends a random number as a parameter for GET requests
 		to try to force a new fetch of the resource instead of reusing a local cache.

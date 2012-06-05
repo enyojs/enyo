@@ -1,4 +1,4 @@
-﻿/**
+/**
 	Signals components are used to listen to global messages.
 
 	An object with a Signals component can listen to messages sent from anywhere but declaring
