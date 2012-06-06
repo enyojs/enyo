@@ -1,4 +1,4 @@
-﻿/**
+/**
 _enyo.TouchScrollStrategy_ is a helper kind implementing a touch-based scroller
 that integrates the scrolling simulation provided by
 <a href="#enyo.ScrollMath">enyo.ScrollMath</a> into an
@@ -9,6 +9,10 @@ _enyo.TouchScrollStrategy_ is not typically created in application code.
 enyo.kind({
 	name: "enyo.TouchScrollStrategy",
 	kind: "ScrollStrategy",
+	/**
+		If true, the scroller will overscroll and bounce back at the edges (Defaults to true.)
+	*/
+	overscroll: true,
 	/**
 		If true, the scroller will not propagate _dragstart_ events that cause
 		it to start scrolling.  (Defaults to true.)
@@ -66,6 +70,13 @@ enyo.kind({
 	],
 	create: function() {
 		this.inherited(arguments);
+		this.transform = enyo.dom.canTransform();
+		if(!this.transform) {
+			if(this.overscroll) {
+				//so we can adjust top/left if browser can't handle translations
+				this.$.client.applyStyle("position", "relative");
+			}
+		}
 		this.accel = enyo.dom.canAccelerate();
 		var containerClasses = "enyo-touch-strategy-container";
 		// note: needed for ios to avoid incorrect clipping of thumb
@@ -118,7 +129,7 @@ enyo.kind({
 		return this.$.scrollMath.isScrolling();
 	},
 	isOverscrolling: function() {
-		return this.$.scrollMath.isInOverScroll();
+		return (this.overscroll) ? false : this.$.scrollMath.isInOverScroll();
 	},
 	domScroll: function() {
 		if (!this.isScrolling()) {
@@ -275,7 +286,12 @@ enyo.kind({
 		}
 	},
 	scrollMathScroll: function(inSender) {
-		this.effectScroll(-inSender.x, -inSender.y);
+		if(!this.overscroll) { //don't overscroll past edges
+			this.effectScroll(-Math.min(inSender.leftBoundary, Math.max(inSender.rightBoundary, inSender.x)),
+					-Math.min(inSender.topBoundary, Math.max(inSender.bottomBoundary, inSender.y)));
+		} else {
+			this.effectScroll(-inSender.x, -inSender.y);
+		}
 		if (this.thumb) {
 			this.updateThumbs();
 		}
@@ -310,12 +326,16 @@ enyo.kind({
 		var n = this.scrollNode;
 		var x = "0,", y = "0", z = this.accel ? ",0" : "";
 		if (inY !== null && Math.abs(inY - n.scrollTop) > 1) {
-			y = (n.scrollTop - inY) + "px";
+			y = (n.scrollTop - inY);
 		}
 		if (inX !== null && Math.abs(inX - n.scrollLeft) > 1) {
-			x = (n.scrollLeft - inX) + "px,";
+			x = (n.scrollLeft - inX);
 		}
-		enyo.dom.transformValue(this.$.client, this.translation, x + y + z);
+		if(!this.transform) { //adjust top/left if browser can't handle translations
+			this.$.client.setBounds({left:x + "px", top:y + "px"});
+		} else {
+			enyo.dom.transformValue(this.$.client, this.translation, x + "px, " + y + "px" + z);
+		}
 	},
 	getOverScrollBounds: function() {
 		var m = this.$.scrollMath;
