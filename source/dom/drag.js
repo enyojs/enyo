@@ -132,6 +132,11 @@ enyo.gesture.drag = {
 			shiftKey: inEvent.shiftKey,
 			srcEvent: inEvent.srcEvent
 		};
+		//Fix for IE8, which doesn't include pageX and pageY properties
+		if(enyo.platform.ie==8 && e.target) {
+			e.pageX = e.clientX + e.target.scrollLeft;
+			e.pageY = e.clientY + e.target.scrollTop;
+		}
 		e.preventDefault = enyo.gesture.preventDefault;
 		e.disablePrevention = enyo.gesture.disablePrevention;
 		return e;

@@ -1,4 +1,4 @@
-﻿/**
+/**
 _enyo.TranslateScrollStrategy_ is a helper kind that extends
 <a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a>, optimizing it
 for scrolling environments in which effecting scroll changes with transform is
@@ -85,8 +85,13 @@ enyo.kind({
 		}
 	},
 	scrollMathScroll: function(inSender) {
-		this.scrollLeft = -inSender.x;
-		this.scrollTop = -inSender.y;
+		if(!this.overscroll) { //don't overscroll past edges
+			this.scrollLeft = -Math.min(inSender.leftBoundary, Math.max(inSender.rightBoundary, inSender.x));
+			this.scrollTop = -Math.min(inSender.topBoundary, Math.max(inSender.bottomBoundary, inSender.y));
+		} else {
+			this.scrollLeft = -inSender.x;
+			this.scrollTop = -inSender.y;
+		}
 		if (this.isScrolling()) {
 			if (this.$.scrollMath.isScrolling()) {
 				this.effectScroll(this.startX - this.scrollLeft, this.startY - this.scrollTop);
