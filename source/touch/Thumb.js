@@ -13,6 +13,7 @@ enyo.kind({
 		this.positionMethod = v ? "getScrollTop" : "getScrollLeft";
 		this.sizeDimension = v ? "clientHeight" : "clientWidth";
 		this.addClass("enyo-" + this.axis + "thumb");
+		this.transform = enyo.dom.canTransform();
 		if (enyo.dom.canAccelerate()) {
 			enyo.dom.transformValue(this, "translateZ", 0);
 		}
@@ -47,7 +48,16 @@ enyo.kind({
 			if (this.needed && this.hasNode()) {
 				if (this._pos !== p) {
 					this._pos = p;
-					enyo.dom.transformValue(this, this.translation, p + "px");
+					if(!this.transform) {
+						//adjust top/left for browsers that don't support translations
+						if(this.axis=="v") {
+							this.setBounds({top:p + "px"});
+						} else {
+							this.setBounds({left:p + "px"});
+						}
+					} else {
+						enyo.dom.transformValue(this, this.translation, p + "px");
+					}
 				}
 				if (this._size !== s) {
 					this._size = s;

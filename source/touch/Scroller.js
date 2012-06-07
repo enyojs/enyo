@@ -1,4 +1,4 @@
-﻿/**
+/**
 _enyo.Scroller_ is a scroller suitable for use in both desktop and mobile
 applications.
 
@@ -74,6 +74,10 @@ enyo.kind({
 	},
 	classes: "enyo-scroller",
 	/**
+		If true and a touch scroller, the scroller will overscroll and bounce back at the edges (Defaults to true.)
+	*/
+	touchOverscroll: true,
+	/**
 		If true, the scroller will not propagate _dragstart_ events that cause
 		it to start scrolling.  (Defaults to true.)
 	*/
@@ -148,7 +152,7 @@ enyo.kind({
 		}
 	},
 	createStrategy: function() {
-		this.createComponents([{name: "strategy", maxHeight: this.maxHeight, kind: this.strategyKind, thumb: this.thumb, preventDragPropagation: this.preventDragPropagation, isChrome: true}]);
+		this.createComponents([{name: "strategy", maxHeight: this.maxHeight, kind: this.strategyKind, thumb: this.thumb, preventDragPropagation: this.preventDragPropagation, overscroll:this.touchOverscroll, isChrome: true}]);
 	},
 	getStrategy: function() {
 		return this.$.strategy;
