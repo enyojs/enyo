@@ -205,7 +205,7 @@
 				'propertyIsEnumerable',
 				'constructor'
 			];
-			for (var i = 0, p; p = donEnums[i]; i++) {
+			for (var i = 0, p; p = dontEnums[i]; i++) {
 				if (hop.call(inObject, p)) {
 					results.push(p);
 				}
