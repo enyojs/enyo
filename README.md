@@ -1,3 +1,8 @@
+### Looking for the issue tracker?  
+It's moved to [https://enyojs.atlassian.net](https://enyojs.atlassian.net).
+
+---
+
 # Quick Info
 
 ## Core
