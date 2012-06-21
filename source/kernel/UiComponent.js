@@ -131,21 +131,17 @@ enyo.kind({
 		}
 	},
 	//* @protected
-    /*
-     Called to add an already created control to the object's control list. It is
-      not used to create controls and should likely not be called directly.
-      It can be overridden to detect when when controls are added.
-     */
 	addControl: function(inControl) {
+		// Called to add an already created control to the object's control list. It is
+		// not used to create controls and should likely not be called directly.
+		// It can be overridden to detect when controls are added.
 		this.controls.push(inControl);
 		// When we add a Control, we also establish a parent.
 		this.addChild(inControl);
 	},
-    /*
-     Called to remove a control from the object's control list. As with addControl it
-      can be overridden to detect when controls are removed.
-     */
     removeControl: function(inControl) {
+		// Called to remove a control from the object's control list. As with addControl it
+		// can be overridden to detect when controls are removed.
 		// When we remove a Control, we also remove it from its parent.
 		inControl.setParent(null);
 		return enyo.remove(inControl, this.controls);
