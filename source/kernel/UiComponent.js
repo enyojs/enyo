@@ -143,7 +143,7 @@ enyo.kind({
 	},
     /*
      Called to remove a control from the object's control list. As with addControl it
-      can be overridden to
+      can be overridden to detect when controls are removed.
      */
     removeControl: function(inControl) {
 		// When we remove a Control, we also remove it from its parent.
