@@ -17,6 +17,10 @@
 				this.sortListAscending();
 			}
 		}
+
+	Note: this uses the `<select>` tag which isn't implemented
+	for native webOS applications, although it does work in the
+	webOS web browser.
 */
 
 enyo.kind({
