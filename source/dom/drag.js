@@ -74,6 +74,7 @@ enyo.gesture.drag = {
 			// this error condition can occur on IE/Webkit after interaction with a scrollbar.
 			if (!e.which) {
 				this.stopDragging(e);
+				this.cancelHold();
 				this.tracking = false;
 				//console.log("enyo.gesture.drag: mouse must be down to drag.");
 				return;
