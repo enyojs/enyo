@@ -27,10 +27,21 @@ enyo.kind({
 	//* Set to true to focus this control when it is rendered.
 	defaultFocus: false,
 	//* @protected
-	osInfo: [
-		{os: "android", version: 3},
-		{os: "ios", version: 5}
-	],
+	statics: {
+		osInfo: [
+			{os: "android", version: 3},
+			{os: "ios", version: 5}
+		],
+		//* Returns true if the platform has contenteditable attribute.
+		hasContentEditable: function() {
+			for (var i=0, t, m; t=enyo.RichText.osInfo[i]; i++) {
+				if (enyo.platform[t.os] < t.version) {
+					return false;
+				}
+			}
+			return true;
+		}
+	},
 	kind: enyo.Input,
 	attributes: {
 		contenteditable: true
@@ -41,7 +52,7 @@ enyo.kind({
 	},
 	// create RichText as a div if platform has contenteditable attribute, otherwise create it as a textarea
 	create: function() {
-		this.setTag(this.hasContentEditable()?"div":"textarea");
+		this.setTag(enyo.RichText.hasContentEditable()?"div":"textarea");
 		this.inherited(arguments);
 	},
 	// simulate onchange event that inputs expose
@@ -62,15 +73,6 @@ enyo.kind({
 		}
 	},
 	//* @public
-		//* Returns true if the platform has contenteditable attribute.
-	hasContentEditable: function() {
-		for (var i=0, t, m; t=this.osInfo[i]; i++) {
-			if (enyo.platform[t.os] < t.version) {
-				return false;
-			}
-		}
-		return true;
-	},
 	getValue: function() {
 		if (this.hasNode()) {
 			return this.node.innerHTML;
