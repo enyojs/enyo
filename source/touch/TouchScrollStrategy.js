@@ -286,7 +286,8 @@ enyo.kind({
 		}
 	},
 	scrollMathScroll: function(inSender) {
-		if(!this.overscroll) { //don't overscroll past edges
+		if(!this.overscroll) {
+			//don't overscroll past edges
 			this.effectScroll(-Math.min(inSender.leftBoundary, Math.max(inSender.rightBoundary, inSender.x)),
 					-Math.min(inSender.topBoundary, Math.max(inSender.bottomBoundary, inSender.y)));
 		} else {
@@ -324,14 +325,15 @@ enyo.kind({
 	},
 	effectOverscroll: function(inX, inY) {
 		var n = this.scrollNode;
-		var x = "0,", y = "0", z = this.accel ? ",0" : "";
+		var x = "0", y = "0", z = this.accel ? ",0" : "";
 		if (inY !== null && Math.abs(inY - n.scrollTop) > 1) {
 			y = (n.scrollTop - inY);
 		}
 		if (inX !== null && Math.abs(inX - n.scrollLeft) > 1) {
 			x = (n.scrollLeft - inX);
 		}
-		if(!this.transform) { //adjust top/left if browser can't handle translations
+		if(!this.transform) {
+			//adjust top/left if browser can't handle translations
 			this.$.client.setBounds({left:x + "px", top:y + "px"});
 		} else {
 			enyo.dom.transformValue(this.$.client, this.translation, x + "px, " + y + "px" + z);
