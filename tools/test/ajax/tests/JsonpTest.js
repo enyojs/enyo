@@ -13,7 +13,7 @@ enyo.kind({
 			.go(inParams);
 	},
 	_testResponse: function(inProps, inAssertFn) {
-		this._testJsonp(enyo.mixin({url: "php/test1.php?format=jsonp", callback: "callback"}, inProps), 
+		this._testJsonp(enyo.mixin({url: "php/test1.php?format=jsonp", callbackName: "callback"}, inProps), 
 			null, inAssertFn);
 	},
 	testJsonResponse: function() {
