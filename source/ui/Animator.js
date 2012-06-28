@@ -51,13 +51,14 @@ enyo.kind({
 	//* For convenience, _inProps_ will be mixed directly into this object.
 	play: function(inProps) {
 		this.stop();
+		this.reversed = false;
 		if (inProps) {
 			enyo.mixin(this, inProps);
 		}
 		this.t0 = this.t1 = enyo.now();
 		this.value = this.startValue;
 		this.job = true;
-		this.requestNext();
+		this.next();
 		return this;
 	},
 	//* Stops the animation and fires the _onStop_ event.
@@ -65,6 +66,21 @@ enyo.kind({
 		if (this.isAnimating()) {
 			this.cancel();
 			this.fire("onStop");
+			return this;
+		}
+	},
+	//* Reverse the direction of a running animation, returns self if animating
+	reverse: function() {
+		if (this.isAnimating()) {
+			this.reversed = !this.reversed;
+			var now = this.t1 = enyo.now();
+			// adjust start time (t0) to allow for animation done so far to replay
+			var elapsed = now - this.t0;
+			this.t0 = now + elapsed - this.duration;
+			// swap start and end values
+			var startValue = this.startValue;
+			this.startValue = this.endValue;
+			this.endValue = startValue;
 			return this;
 		}
 	},
@@ -88,7 +104,7 @@ enyo.kind({
 		this.t1 = enyo.now();
 		this.dt = this.t1 - this.t0;
 		// time independent
-		var f = this.fraction = enyo.easedLerp(this.t0, this.duration, this.easingFunction);
+		var f = this.fraction = enyo.easedLerp(this.t0, this.duration, this.easingFunction, this.reversed);
 		this.value = this.startValue + f * (this.endValue - this.startValue);
 		if (f >= 1 || this.shouldEnd()) {
 			this.value = this.endValue;
