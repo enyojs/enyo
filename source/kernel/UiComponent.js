@@ -129,11 +129,6 @@ enyo.kind({
 		}
 	},
 	//* @protected
-	/**
-		Adds an already-created control to the object's list of controls.  This
-		method is not used to create controls and, in most cases, should not be
-		called directly.  It may be overridden to detect when controls are added.
-	*/
 	addControl: function(inControl) {
 		this.controls.push(inControl);
 		// When we add a Control, we also establish a parent.
