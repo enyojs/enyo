@@ -10,7 +10,7 @@
 		]}
 
 		selectChanged: function(inSender, inEvent) {
-			var s = inSender.getSelected();
+			var s = inSender.getValue();
 			if (s == "d") {
 				this.sortListDescending();
 			} else {
