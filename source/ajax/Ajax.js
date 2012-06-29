@@ -1,7 +1,8 @@
 ﻿/**
 	IMPORTANT: Ajax implements the properties of the shared
 	<a href="#enyo.AjaxProperties">enyo.AjaxProperties</a> object. 
-	The properties documented under AjaxProperties are published by _enyo.Async_.
+	The properties documented under AjaxProperties are published by
+	<a href="#enyo.Async">enyo.Async</a>.
 */
 enyo.kind({
 	name: "enyo.Ajax",

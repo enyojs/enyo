@@ -1,8 +1,8 @@
 ﻿/**
 	_enyo.Repeater_ is a simple control for making lists of items.
 
-	Components of a repeater are copied for each item created, and are wrapped
-	in a control that keeps the state of the item index.
+	The components of a repeater are copied for each item created, and are
+	wrapped	in a control that keeps the state of the item index.
 
 	Example:
 
@@ -21,10 +21,10 @@
 	event handlers further up the tree try to modify your item control.
 
 	The repeater will always be rebuilt after a call to _setCount_, even if the
-	count didn't change.  This differs from the behavior of most properties, in
-	which no action happens when a set-value call doesn't modify the value.
-	This is to accomodate potential changes to the data model for the repeater,
-	which may happen to have the same item count as before.
+	count didn't change.  This behavior differs from that of most properties,
+	for which no action happens when a set-value call doesn't modify the value.
+	This is done to accomodate potential changes to the data model for the
+	repeater, which may happen to have the same item count as before.
 */
 enyo.kind({
 	name: "enyo.Repeater",
@@ -53,7 +53,7 @@ enyo.kind({
 		this.build();
 	},
 	//* @public
-	//* Render the list
+	//* Renders the list.
 	build: function() {
 		this.destroyClientControls();
 		for (var i=0, c; i<this.count; i++) {

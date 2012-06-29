@@ -1,6 +1,5 @@
 /**
-	A popup is used to display content that should be displayed on top of other
-	content.
+	A popup is used to display certain content on top of other content.
 
 	Popups are initially hidden on creation; they can be shown by calling the
 	_show_ method and re-hidden by calling _hide_.  Popups may be centered using
@@ -16,9 +15,8 @@
 	(the default), then tapping outside the popup or pressing the ESC key will
 	dismiss the popup.
 	
-	The _modal_ property may be set to true to prevent any
-	controls outside the popup from responding to events while the popup is
-	showing.
+	The _modal_ property may be set to true to prevent any controls outside the
+	popup from responding to events while the popup is showing:
 
 		{kind: "enyo.Popup", centered: true, modal: true, floating: true, components: [
 			{content: "Here's some information..."}
@@ -28,12 +26,15 @@ enyo.kind({
 	name: "enyo.Popup",
 	classes: "enyo-popup",
 	published: {
-		//* Set to true to prevent controls outside the popup from receiving events while the popup is showing.
+		//* Set to true to prevent controls outside the popup from receiving
+		//* events while the popup is showing.
 		modal: false,
-		//* By default, the popup will hide when the user taps outside it or presses ESC.  Set to false to prevent this behavior.
+		//* By default, the popup will hide when the user taps outside it or
+		//* presses ESC.  Set to false to prevent this behavior.
 		autoDismiss: true,
-		//* If true, the popup will be rendered in a floating layer outside of other controls.  This can be used to
-		//* guarantee that the popup will be shown on top of other controls.
+		//* Set to true to render the popup in a floating layer outside of other
+		//* controls.  This can be used to guarantee that the popup will be
+		//* shown on top of other controls.
 		floating: false,
 		//* Set to true to automatically center the popup in the middle of the viewport.
 		centered: false
@@ -51,9 +52,9 @@ enyo.kind({
 	captureEvents: true,
 	//* @public
 	events: {
-		//@ Event that fires after the popup is shown.
+		//@ Event that fires after the popup is shown
 		onShow: "",
-		//@ Event that fires after the popup is hidden.
+		//@ Event that fires after the popup is hidden
 		onHide: ""
 	},
 	//* @protected
@@ -72,7 +73,7 @@ enyo.kind({
 		}
 		this.inherited(arguments);
 	},
-	// bubble events to owner when floating
+	// Bubble events to owner when floating.
 	getBubbleTarget: function() {
 		return this.floating ? this.owner : this.inherited(arguments);
 	},
@@ -154,13 +155,13 @@ enyo.kind({
 			this.hide();
 		}
 	},
-	// if something inside the popup blurred, keep track of it
+	// If something inside the popup blurred, keep track of it
 	blur: function(inSender, inEvent) {
 		if (inEvent.dispatchTarget.isDescendantOf(this)) {
 			this.lastFocus = inEvent.originator;
 		}
 	},
-	// when something outside the popup focuses (e.g., due to tab key), focus our last focused control.
+	// When something outside the popup focuses (e.g., due to tab key), focus our last focused control.
 	focus: function(inSender, inEvent) {
 		var dt = inEvent.dispa2tchTarget;
 		if (this.modal && !dt.isDescendantOf(this)) {

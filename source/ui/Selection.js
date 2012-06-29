@@ -3,7 +3,7 @@ enyo.kind({
 	name: "enyo.Selection",
 	kind: enyo.Component,
 	published: {
-		//* if true, allow multiple selections
+		//* If true, multiple selections are allowed.
 		multi: false
 	},
 	events: {
@@ -23,7 +23,7 @@ enyo.kind({
 		*/
 		onSelect: "",
 		/**
-			Fires when an items is  deselected.
+			Fires when an item is deselected.
 
 				{kind: "Selection", onSelect: "deselectRow"...
 				...
@@ -58,15 +58,15 @@ enyo.kind({
 		}
 	},
 	//* @public
-	//* remove all selections
+	//* Removes all selections.
 	clear: function() {
 		this.selected = [];
 	},
-	//* returns true if the inKey row is selected
+	//* Returns true if the inKey row is selected.
 	isSelected: function(inKey) {
 		return this.selected[inKey];
 	},
-	//* manually set a row to selected or unselected
+	//* Manually sets a row's state to selected or unselected.
 	setByKey: function(inKey, inSelected, inData) {
 		if (inSelected) {
 			this.selected[inKey] = (inData || true);
@@ -79,13 +79,14 @@ enyo.kind({
 		}
 		this.doChange();
 	},
-	//* deselect a row
+	//* Deselects a row.
 	deselect: function(inKey) {
 		if (this.isSelected(inKey)) {
 			this.setByKey(inKey, false);
 		}
 	},
-	//* select a row. If the selection has the multi property set to false, it will also deselect the previous selection.
+	//* Selects a row. If the multi property is set to false,
+	//* it will also deselect the previous selection.
 	select: function(inKey, inData) {
 		if (this.multi) {
 			this.setByKey(inKey, !this.isSelected(inKey), inData);
@@ -94,14 +95,15 @@ enyo.kind({
 			this.setByKey(inKey, true, inData);
 		}
 	},
-	//* toggle selection for a row. If the multi is false, toggling a selection on will deselect the previous selection
+	//* Toggles selection state for a row. If the multi property is set to
+	//* false, toggling a selection on will deselect the previous selection.
 	toggle: function(inKey, inData) {
 		if (!this.multi && this.lastSelected != inKey) {
 			this.deselect(this.lastSelected);
 		}
 		this.setByKey(inKey, !this.isSelected(inKey), inData);
 	},
-	//* return the selection
+	//* Returns the selection.
 	getSelected: function() {
 		return this.selected;
 	}

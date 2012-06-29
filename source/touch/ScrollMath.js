@@ -24,7 +24,7 @@ enyo.kind({
 	//* boundaries.  Lower values provide MORE resistance.
 	kDragDamping: 0.5,
 	//* 'friction' damping reduces momentum over time.  Lower values provide
-	//* MORE friction).
+	//* MORE friction.
 	kFrictionDamping: 0.97,
 	//* Additional 'friction' damping applied when momentum carries the viewport
 	//* into overscroll.  Lower values provide MORE friction.
@@ -47,7 +47,7 @@ enyo.kind({
 	leftBoundary: 0,
 	//* Animation time step
 	interval: 20,
-	//* Flag to enable frame-based animation, otherwise use time-based animation.
+	//* Flag to enable frame-based animation; if false, time-based animation is used.
 	fixedTime: true,
 	//* @protected
 	// simulation state
