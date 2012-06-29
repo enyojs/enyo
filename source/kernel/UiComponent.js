@@ -11,9 +11,13 @@ enyo.kind({
 	name: "enyo.UiComponent",
 	kind: enyo.Component,
 	published: {
+		//* the UiComponent that physically contains this component in the DOM
 		container: null,
+		//* the UiComponent that owns this component for the purpose of event propogation
 		parent: null,
+		//* the UiComponent that will physically contain new items added using createComponent
 		controlParentName: "client",
+		//* a kind used to manage the size and placement of child components
 		layoutKind: ""
 	},
 	handlers: {
