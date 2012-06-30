@@ -251,7 +251,11 @@ enyo.kind({
 		}
 		// waterfall to my children
 		for (var i=0, cs=this.children, c; c=cs[i]; i++) {
-			c.waterfall(inMessage, inPayload, inSender);
+			if (c.showing || (inMessage !== "onresize" && inMessage !== "onpostresize")) {
+				c.waterfall(inMessage, inPayload, inSender);
+			} else {
+				//this.log("preventing waterfall of "+inMessage+" to "+c.id);
+			}
 		}
 	},
 	getBubbleTarget: function() {
