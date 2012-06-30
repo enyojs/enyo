@@ -6,9 +6,10 @@
 enyo.kind({
 	name: "enyo.Group",
 	published: {
-		//* Can there be only one?
+		/** Can there be only one? If true, allows only one GroupItem in the
+			component list to be active. */
 		highlander: true,
-		//* The control that is selected
+		//* The control that was last selected
 		active: null
 	},
 	//* @protected

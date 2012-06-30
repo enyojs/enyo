@@ -84,7 +84,11 @@ enyo.easing = {
 	the _inEasing_ function to the percentage of time elapsed / duration, capped
 	at 100%.
 */
-enyo.easedLerp = function(inT0, inDuration, inEasing) {
+enyo.easedLerp = function(inT0, inDuration, inEasing, reverse) {
 	var lerp = (enyo.now() - inT0) / inDuration;
-	return lerp >= 1 ? 1 : inEasing(lerp);
+	if (reverse) {
+		return lerp >= 1 ? 0 : (1 - inEasing(1 - lerp));
+	} else {
+		return lerp >= 1 ? 1 : inEasing(lerp);
+	}
 };

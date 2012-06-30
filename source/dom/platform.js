@@ -1,5 +1,5 @@
 /**
-	Determines OS versions of platforms that need special treatment
+	Determines OS versions of platforms that need special treatment.
 	Can have one of the following properties:
 
 	* android
@@ -7,7 +7,8 @@
 	* ios
 	* webos
 
-	If the property is defined, it will have the value of the major version number of the platform
+	If the property is defined, its value will be the major version	number
+	of the platform.
 
 	Example:
 

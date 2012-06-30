@@ -74,8 +74,8 @@ enyo.kind({
 	},
 	// test CORS (Cross-Origin Resource Sharing) by testing against youtube api
 	testCORS: function() {
-		this._testAjax({url: "http://gdata.youtube.com/feeds/api/videos/"}, {q: "waterfall", alt: "json", format: 5}, function(inValue) {
-			return inValue && inValue.feed && inValue.feed.entry && inValue.feed.entry.length > 0;
+		this._testAjax({url: "http://query.yahooapis.com/v1/public/yql/jonathan/weather/"}, {q:'select * from weather.forecast where location=94025', format: "json"}, function(inValue) {
+			return inValue && inValue.query && inValue.query.results && inValue.query.count > 0;
 		});
 	}
 });
