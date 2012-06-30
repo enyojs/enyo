@@ -255,10 +255,11 @@ enyo.kind({
 		}
 		// waterfall to my children
 		for (var i=0, cs=this.children, c; c=cs[i]; i++) {
+			// Do not send resize events to hidden controls. This saves a *lot* of unnecessary layout
+			// TODO: Maybe remember that we did this, and re-send these messages on setShowing(true)? 
+			// No obvious problems with it as-is, though
 			if (c.showing || (inMessage !== "onresize" && inMessage !== "onpostresize")) {
 				c.waterfall(inMessage, inPayload, inSender);
-			} else {
-				//this.log("preventing waterfall of "+inMessage+" to "+c.id);
 			}
 		}
 	},
