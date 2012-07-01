@@ -23,6 +23,9 @@ enyo.kind({
 	handlers: {
 		onresize: "resizeHandler"
 	},
+	statics: {
+		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
+	},
 	create: function() {
 		this.controls = [];
 		this.children = [];
@@ -225,8 +228,8 @@ enyo.kind({
 	*/
 	// syntactic sugar for 'waterfall("onresize")'
 	resized: function() {
-		this.waterfall("onresize");
-		this.waterfall("onpostresize");
+		this.waterfall("onresize", enyo.UiComponent._resizeFlags);
+		this.waterfall("onpostresize", enyo.UiComponent._resizeFlags);
 	},
 	//* @protected
 	resizeHandler: function() {
@@ -255,10 +258,11 @@ enyo.kind({
 		}
 		// waterfall to my children
 		for (var i=0, cs=this.children, c; c=cs[i]; i++) {
-			// Do not send resize events to hidden controls. This saves a *lot* of unnecessary layout
-			// TODO: Maybe remember that we did this, and re-send these messages on setShowing(true)? 
+			// Do not send {showingOnly: true} events to hidden controls. This flag is set for resize events 
+			// which are broadcast from within the framework. This saves a *lot* of unnecessary layout.
+			// TODO: Maybe remember that we did this, and re-send those messages on setShowing(true)? 
 			// No obvious problems with it as-is, though
-			if (c.showing || (inMessage !== "onresize" && inMessage !== "onpostresize")) {
+			if (c.showing || !(inPayload && inPayload.showingOnly)) {
 				c.waterfall(inMessage, inPayload, inSender);
 			}
 		}
@@ -285,6 +289,7 @@ enyo.createFromKind = function(inKind, inParam) {
 enyo.master = new enyo.Component({
 	name: "master",
 	notInstanceOwner: true,
+	eventFlags: {showingOnly: true}, // don't waterfall these events into hidden controls
 	getId: function() {
 		return '';
 	},
@@ -295,8 +300,8 @@ enyo.master = new enyo.Component({
 			// Resize is special; waterfall this message.
 			// This works because master is a Component, so it waterfalls
 			// to its owned Components (i.e., master has no children).
-			enyo.master.waterfallDown("onresize");
-			enyo.master.waterfallDown("onpostresize");
+			enyo.master.waterfallDown("onresize", this.eventFlags);
+			enyo.master.waterfallDown("onpostresize", this.eventFlags);
 		} else {
 			// All other top-level events are sent only to interested Signal
 			// receivers.
