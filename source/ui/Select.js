@@ -45,6 +45,7 @@ enyo.kind({
 	setSelected: function(inIndex) {
 		// default property mechanism can't track changed correctly for virtual properties
 		this.setPropertyValue("selected", Number(inIndex), "selectedChanged");
+		this.bubbleUp("onchange", {index: Number(inIndex)}, this); 
 	},
 	selectedChanged: function() {
 		this.setNodeProperty("selectedIndex", this.selected);
