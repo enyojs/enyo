@@ -52,9 +52,9 @@ enyo.kind({
 	captureEvents: true,
 	//* @public
 	events: {
-		//@ Event that fires after the popup is shown
+		//* Event that fires after the popup is shown
 		onShow: "",
-		//@ Event that fires after the popup is hidden
+		//* Event that fires after the popup is hidden
 		onHide: ""
 	},
 	//* @protected

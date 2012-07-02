@@ -11,7 +11,7 @@
 	
 	Note: It's not intended that users create instances of _enyo.FloatingLayer_.
 */
-//@ protected
+//* @protected
 enyo.kind({
 	name: "enyo.FloatingLayer",
 	//* @protected
