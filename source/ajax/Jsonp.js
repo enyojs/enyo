@@ -1,9 +1,9 @@
 /**
-	A specialized form of enyo.Async used for making JSONP requests to a remote
-	server. This differs from the normal XmlHTTPRequest call in that the external
-	resource is loaded using a &lt;script&gt; tag. This allows us to bypass the
-	same-domain rules that normally apply to XHR, since the browser will load
-	scripts	from any address.
+	A specialized form of <a href="#enyo.Async">enyo.Async</a> used for making
+	JSONP requests to a remote server. This differs from the normal
+	XmlHTTPRequest call in that the external resource is loaded using a
+	&lt;script&gt; tag. This allows us to bypass the same-domain rules that
+	normally apply to XHR, since the browser will load scripts from any address.
 */
 enyo.kind({
 	name: "enyo.JsonpRequest",

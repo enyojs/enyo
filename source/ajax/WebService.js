@@ -7,25 +7,25 @@ enyo.kind({
 
 //* @public
 /**
-	_enyo.WebService_ is a Component that performs web requests (_XmlHttpRequest_).
+	_enyo.WebService_ is a component that performs Web requests (_XmlHttpRequest_).
 
-	Interally, _enyo.WebService_ uses _enyo.Async_ subkinds (namely, _enyo.Ajax_ 
-	and _enyo.JsonPRequest_) to manage transactions. The async instance for
-	a request is returned from the _send()_ method.
+	Internally, _enyo.WebService_ uses _enyo.Async_ subkinds (namely,
+	<a href="#enyo.Ajax">enyo.Ajax</a> and
+	<a href="#enyo.JsonpRequest">enyo.JsonpRequest</a>) to manage transactions.
+	The Async instance for a request is returned from the _send_ method.
 
 	IMPORTANT: _enyo.Ajax_ publishes all the properties of the
-	<a href="#enyo.AjaxProperties">enyo.AjaxProperties</a>
-	object.
+	<a href="#enyo.AjaxProperties">enyo.AjaxProperties</a> object.
 */
 enyo.kind({
 	name: "enyo.WebService",
 	kind: enyo._AjaxComponent,
 	published: {
-		//* Set true to use JSONP protocol.
+		//* Set to true to use JSONP protocol.
 		jsonp: false,
 		/**
 			When using JSONP, the name of the callback parameter.
-			Note: this not the name of a callback function, but only
+			Note that this not the name of a callback function, but only
 			the name of the callback parameter. Enyo will create an
 			internal callback function as necessary.
 		*/
