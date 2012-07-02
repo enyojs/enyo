@@ -6,11 +6,11 @@
 	<a href="#enyo.AjaxProperties">enyo.AjaxProperties</a>
 	object.
 
-	Like _enyo.Async_, _enyo.Ajax_ is an **Object** not a **Component**. 
-	Do not try to make _enyo.Ajax_ objects in a components block.
+	Like _enyo.Async_, _enyo.Ajax_ is an **Object**, not a **Component**. 
+	Do not try to make _enyo.Ajax_ objects inside a _components_ block.
 
-	If you want to use _enyo.Ajax_ as a Component, you are probably
-	looking for <a href="#enyo.WebService">enyo.WebService</a>.
+	If you want to use _enyo.Ajax_ as a component, you should probably
+	be using <a href="#enyo.WebService">enyo.WebService</a> instead.
 
 	Example
 
