@@ -10,16 +10,16 @@ enyo.kind({
 		classes: "",
 		//* Style attribute to apply to the generated HTML tag.
 		style: "",
-		//* Content that will be generated inside the HTML tag, defaults to plain text unless allowHtml is true.
+		//* Content that will be generated inside the HTML tag; defaults to plain text unless _allowHtml_ is true.
 		content: "",
-		//* Boolean, indicates if the tag will be visible or hidden in the document.
+		//* Boolean indicating whether the tag will be visible or hidden in the document.
 		showing: true,
 		//* If false, HTML codes in _content_ are escaped before rendering.
 		allowHtml: false,
 		//
 		// convenience properties for common attributes
 		//
-		//* Shortcut for setting src attribute in attributes hash. Overrides that value.
+		//* Shortcut for setting _src_ attribute in _attributes_ hash. Overrides that value.
 		src: "",
 		//
 		// esoteric
@@ -38,7 +38,7 @@ enyo.kind({
 		isContainer: false
 	},
 	handlers: {
-		//* Controls will call a user-provided `tap` method when tapped upon.
+		//* Controls will call a user-provided _tap_ method when tapped upon.
 		ontap: "tap"
 	},
 	//* The default kind for controls created inside this control that don't specify their own kind.
@@ -380,8 +380,8 @@ enyo.kind({
 		return this;
 	},
 	/**
-		Use `document.write` to output the control into the document.
-		If control has `fit: true` defined, appropriate styles will be set
+		Uses _document.write_ to output the control into the document.
+		If control has _fit: true_ defined, appropriate styles will be set
 		to have it expand to fill its container.
 	*/
 	write: function() {
@@ -399,7 +399,7 @@ enyo.kind({
 		this.addClass("enyo-fit enyo-clip");
 	},
 	/**
-		Override to perform tasks that require access to the DOM node.
+		Override this method to perform tasks that require access to the DOM node.
 
 			rendered: function() {
 				this.inherited(arguments);
