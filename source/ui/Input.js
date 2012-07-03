@@ -16,7 +16,16 @@ enyo.kind({
 		value: "",
 		//* Text to display when the input is empty
 		placeholder: "",
+		/**
+			Type of input, if not specified, it's treated as "text".  It can
+			be anything specified for the _type_ attribute in the HTML
+			specification, including "url", "email", "search", or "number".
+		*/
 		type: "",
+		/**
+			When true, prevent input into the control. This maps to the 
+			_disabled_ DOM attribute.
+		*/
 		disabled: false
 	},
 	events: {
