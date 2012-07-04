@@ -1,6 +1,17 @@
+/**
+	Base kind for layout kinds.  These are used by _enyo.UiComponent_-based
+	controls to allow for arranging of the children by setting the _layoutKind_
+	property.
+
+	Derived kinds will usually provide their own _layoutClass_ property to affect
+	the CSS rules used, and may also implement the _flow_ and _reflow_ methods.
+	_flow_ is called during control rendering, while _reflow_ is called when the
+	associated control is resized.
+*/
 enyo.kind({
 	name: "enyo.Layout",
 	kind: null,
+	//* CSS class that's added to the control using this layout kind.
 	layoutClass: "",
 	//* @protected
 	constructor: function(inContainer) {
