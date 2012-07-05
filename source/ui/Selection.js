@@ -41,10 +41,10 @@ enyo.kind({
 					...
 
 			_inEvent.key_ is whatever key was used to register 
-			the selection, usually a row index.
+			the selection (usually a row index).
 
 			_inEvent.data_ references data registered
-			with this key by the code that made the selection.
+			with this key by the code that made the original selection.
 		*/
 		onSelect: "",
 		/**
@@ -56,11 +56,10 @@ enyo.kind({
 					...
 
 			_inEvent.key_ is whatever key was used to request
-			the deselection, usually a row index.
+			the deselection (usually a row index).
 
 			_inEvent.data_ references data registered
-			with this key by the code that made the original 
-			selection.
+			with this key by the code that made the selection.
 		*/
 		onDeselect: "",
 		//* Sent when selection changes (but not when the selection is cleared).
@@ -85,7 +84,7 @@ enyo.kind({
 	//* @public
 	//* Removes all selections.
 	clear: function() {
-		this.selected = [];
+		this.selected = {};
 	},
 	//* Returns true if the _inKey_ row is selected.
 	isSelected: function(inKey) {
@@ -138,5 +137,21 @@ enyo.kind({
 	*/
 	getSelected: function() {
 		return this.selected;
+	},
+	/**
+		Remove a row that's included in the selection set. If this row is
+		selected, it will be unselected.  Any rows above this row will
+		have their keys value reduced by one.
+	*/
+	remove: function(inKey) {
+		var newSelected = {};
+		for (var row in this.selected) {
+			if (row < inKey) {
+				newSelected[row] = this.selected[row];
+			} else if (row > inKey) {
+				newSelected[row - 1] = this.selected[row];
+			}
+		}
+		this.selected = newSelected;
 	}
 });
