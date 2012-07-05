@@ -11,9 +11,10 @@ enyo.kind({
 
 //* @public
 /**
-	_enyo.DragAvatar_ creates a control to follow the pointer when dragging. It automatically displays the
-	avatar control when the user drags and updates its position relative to the current pointer location.
-	
+	_enyo.DragAvatar_ creates a control to follow the pointer when dragging. It
+	automatically displays the avatar control when the user drags, and updates
+	its position relative to the current pointer location.
+
 		enyo.kind({
 			name: "App",
 			handlers: {

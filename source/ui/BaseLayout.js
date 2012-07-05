@@ -1,7 +1,8 @@
 /**
-	_BaseLayout_ provides a basic layout strategy, positioning contained components with the _enyo-positioned_ layoutClass.
-	Additionally it will adjust the layout when reflow is called, removing or adding the _enyo-fit_ class for components
-	that have set the _fit_ property.
+	_enyo.BaseLayout_ provides a basic layout strategy, positioning contained
+	components with the _enyo-positioned_ layoutClass. In addition, it adjusts
+	the layout when _reflow_ is called, removing or adding the _enyo-fit_ class
+	for components that have set the _fit_ property.
 */
 enyo.kind({
 	name: "enyo.BaseLayout",

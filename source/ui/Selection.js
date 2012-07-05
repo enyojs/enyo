@@ -1,7 +1,9 @@
-/** _enyo.Selection_ is used to manage row selection state for lists. It provides selection state management
-	for single and multiselect lists.
+/**
+	_enyo.Selection_ is used to manage row selection state for lists. It
+	provides selection state management	for both single-select and multi-select
+	lists.
 
-		//This is an excerpt from <a href="#enyo.FlyweightRepeater">enyo.FlyweightRepeater</a>:
+		// The following is an excerpt from enyo.FlyweightRepeater.
 		enyo.kind({
 			name: "enyo.FlyweightRepeater",
 			...
@@ -11,12 +13,12 @@
 			],
 			tap: function(inSender, inEvent) {
 				...
-				//mark the tapped row as selected
+				// mark the tapped row as selected
 				this.$.selection.select(inEvent.index);
 				...
 			},
 			selectDeselect: function(inSender, inEvent) {
-				//this is where a row selection highlight might be applied
+				// this is where a row selection highlight might be applied
 				this.renderRow(inEvent.key);
 			}
 			...
@@ -85,7 +87,7 @@ enyo.kind({
 	clear: function() {
 		this.selected = [];
 	},
-	//* Returns true if the inKey row is selected.
+	//* Returns true if the _inKey_ row is selected.
 	isSelected: function(inKey) {
 		return this.selected[inKey];
 	},
@@ -108,8 +110,10 @@ enyo.kind({
 			this.setByKey(inKey, false);
 		}
 	},
-	//* Selects a row. If the multi property is set to false,
-	//* it will also deselect the previous selection.
+	/**
+		Selects a row. If the _multi_ property is set to false, _select_ will
+		also deselect the previous selection.
+	*/
 	select: function(inKey, inData) {
 		if (this.multi) {
 			this.setByKey(inKey, !this.isSelected(inKey), inData);
@@ -118,15 +122,20 @@ enyo.kind({
 			this.setByKey(inKey, true, inData);
 		}
 	},
-	//* Toggles selection state for a row. If the multi property is set to
-	//* false, toggling a selection on will deselect the previous selection.
+	/**
+		Toggles selection state for a row. If the _multi_ property is set to
+		false, toggling a selection on will deselect the previous selection.
+	*/
 	toggle: function(inKey, inData) {
 		if (!this.multi && this.lastSelected != inKey) {
 			this.deselect(this.lastSelected);
 		}
 		this.setByKey(inKey, !this.isSelected(inKey), inData);
 	},
-	//* Returns the selection.
+	/**
+		Returns the selection as a hash in which each selected item has a value;
+		unselected items are undefined.
+	*/
 	getSelected: function() {
 		return this.selected;
 	}
