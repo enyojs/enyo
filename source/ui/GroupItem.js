@@ -1,4 +1,15 @@
-//* The base kind for the Grouping API.
+/** 
+	_GroupItem_ is the base kind for the Grouping API. Manages the active state of the component 
+	(or inheriting component). A sub-kind may call _setActive_ to set the _active_ property to the 
+	desired state which will additionally bubble an _onActivate_ event that can be handled as 
+	necessary by the containing components. This is useful for creating groups of items that 
+	require their state managed as a group.
+	
+	An example of using the _onActivate_ event can be seen in the <a href="#enyo.Group">enyo.Group</a>
+	kind, which enables the	creation of radio groups from arbitrary components that support the
+	Grouping API.
+*/
+
 enyo.kind({
 	name: "enyo.GroupItem",
 	published: {
