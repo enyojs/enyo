@@ -1,4 +1,27 @@
-/** This is used to manage row selection state for lists. */
+/** _enyo.Selection_ is used to manage row selection state for lists. It provides selection state management
+	for single and multiselect lists.
+
+		//This is an excerpt from <a href="#enyo.FlyweightRepeater">enyo.FlyweightRepeater</a>:
+		enyo.kind({
+			name: "enyo.FlyweightRepeater",
+			...
+			components: [
+				{kind: "Selection", onSelect: "selectDeselect", onDeselect: "selectDeselect"},
+				...
+			],
+			tap: function(inSender, inEvent) {
+				...
+				//mark the tapped row as selected
+				this.$.selection.select(inEvent.index);
+				...
+			},
+			selectDeselect: function(inSender, inEvent) {
+				//this is where a row selection highlight might be applied
+				this.renderRow(inEvent.key);
+			}
+			...
+		})
+*/
 enyo.kind({
 	name: "enyo.Selection",
 	kind: enyo.Component,
@@ -12,13 +35,13 @@ enyo.kind({
 
 				{kind: "Selection", onSelect: "selectRow"...
 				...
-				selectRow: function(inSender, inKey, inPrivateData) {
+				selectRow: function(inSender, inEvent) {
 					...
 
-			_inKey_ is whatever key was used to register 
+			_inEvent.key_ is whatever key was used to register 
 			the selection, usually a row index.
 
-			_inPrivateData_ references data registered
+			_inEvent.data_ references data registered
 			with this key by the code that made the selection.
 		*/
 		onSelect: "",
@@ -27,13 +50,13 @@ enyo.kind({
 
 				{kind: "Selection", onSelect: "deselectRow"...
 				...
-				deselectRow: function(inSender, inKey, inPrivateData)
+				deselectRow: function(inSender, inEvent)
 					...
 
-			_inKey_ is whatever key was used to request
+			_inEvent.key_ is whatever key was used to request
 			the deselection, usually a row index.
 
-			_inPrivateData_ references data registered
+			_inEvent.data_ references data registered
 			with this key by the code that made the original 
 			selection.
 		*/
@@ -71,11 +94,11 @@ enyo.kind({
 		if (inSelected) {
 			this.selected[inKey] = (inData || true);
 			this.lastSelected = inKey;
-			this.doSelect({key: inKey, wasSelected: this.selected[inKey]});
+			this.doSelect({key: inKey, data: this.selected[inKey]});
 		} else {
 			var was = this.isSelected(inKey);
 			delete this.selected[inKey];
-			this.doDeselect({key: inKey, wasSelected: was});
+			this.doDeselect({key: inKey, data: was});
 		}
 		this.doChange();
 	},
