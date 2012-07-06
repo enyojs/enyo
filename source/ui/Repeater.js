@@ -56,9 +56,11 @@ enyo.kind({
 		return this.controlAtIndex(inIndex);
 	},
 	//* @public
-	/** Render the collection of items. This will delete any existing items and recreate
-		the repeater if called after the repeater has been rendered.  This is called for
-		you automatically if _setCount_ is called, even if the count remains the same. */
+	/** Renders the collection of items. This will delete any existing items and
+		recreate the repeater if called after the repeater has been rendered.
+		This is called automatically if _setCount_ is called, even if the count
+		remains the same.
+	*/
 	build: function() {
 		this.destroyClientControls();
 		for (var i=0, c; i<this.count; i++) {
@@ -70,9 +72,11 @@ enyo.kind({
 		}
 		this.render();
 	},
-	/** Render a specific item in the collection.  This does not destroy the item, but
-		just calls the _onSetupItem_ event handler again for it, so any state stored in
-		the item is preserved. */
+	/**
+		Renders a specific item in the collection. This does not destroy the
+		item, but just calls the _onSetupItem_ event handler again for it, so
+		any state stored in	the item is preserved.
+	*/
 	renderRow: function(inIndex) {
 		var c = this.itemAtIndex(inIndex);
 		this.doSetupItem({index: inIndex, item: c});
