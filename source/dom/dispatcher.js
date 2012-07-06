@@ -105,6 +105,9 @@ enyo.bubble = function(inEvent) {
 	}
 };
 
+// This string is set on event handlers attributes for DOM elements that
+// don't normally bubble (like onscroll) so that they can participate in the
+// Enyo event system.
 enyo.bubbler = 'enyo.bubble(arguments[0])';
 
 // FIXME: we need to create and initialize dispatcher someplace else to allow overrides
