@@ -33,8 +33,8 @@
 	default namespaces. In this case, _kind: "Component"_ resolves to
 	_enyo.Component_.
 	
-	For more information, see the
-	[documentation on Components](https://github.com/enyojs/enyo/wiki/Creating-Components)
+	For more information, see the documentation on
+	[Components](https://github.com/enyojs/enyo/wiki/Creating-Components)
 	in the Enyo Developer Guide.
 */
 enyo.kind({
