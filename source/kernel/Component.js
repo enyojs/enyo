@@ -3,8 +3,6 @@
 	Components are designed to fit together, so that complex behaviors may be
 	fashioned from smaller bits of functionality.
 
-	## Configurations
-
 	Component constructors take a single argument (sometimes called a
 	_Component configuration_), a JavaScript object that defines various
 	properties to be initialized on the Component. For example:
@@ -35,141 +33,9 @@
 	default namespaces. In this case, _kind: "Component"_ resolves to
 	_enyo.Component_.
 	
-	## Ownership
-
-	The concept of ownership allows us to organize components into trees, e.g.:
-
-	* Component A
-		* Component B (owner: A)
-		* Component C (owner: A)
-			* Component E (owner: C)
-		* Component D (owner A)
-
-	Note that, when designing code, a component should only be concerned with
-	the components it owns (one level down). The coder never needs to worry
-	about the complex tree structure that exists at runtime. For example,
-	Component A will never reference Component E directly; it will only access
-	the interface supplied by Component C.
-
-	The ownership of a component is controlled by the _owner_ property. To 
-	change ownership of a component, use the _setOwner_ method.
-
-	Every component has a name, and its name must be unique among all the
-	components of its owner. In other words, a component can't own two
-	components with the same name. A component may access its owned components
-	by name using the _$_ hash.
-
-	For example, if a component owns components named 'componentB' and
-	'componentC', it can refer to them with code like this:
-
-		someMethod: function() {
-			this.$.componentB.doWork();
-			this.$.componentC.doWork();
-		}
-
-	Sometimes we refer to the set of objects in a component's _$_ hash as the
-	component's _scope_.
-
-	Note that all components visible in the _components_ property will be owned
-	by the top-level component. For example:
-
-		// create a new component, which owns several components
-		var c = new enyo.Component({
-			name: "me",
-			components: [
-				{name: "other", components: [
-					{name: "third"},
-					{name: "fourth"}
-				]}
-			]
-		});
-
-	Although the components _third_ and _fourth_ are nested inside the
-	configuration for _other_, they are still owned by _me_. This concept is
-	important; it means that whatever components you can see listed are in the
-	top-level component's scope.
-
-	The _me_ component might have a complex configuration, but we can see at a
-	glance that it has access to _other_, _third_, and _fourth_ to get its work
-	done. Those objects will be available in the _$_ hash.
-
-	## Events
-
-	A component can send a message to its owner using the _event_ mechanism. A
-	component exposes events as string properties whose	names begin with "on".
-	To listen to messages, a component may assign the name of one of its methods
-	to the event property of an owned component.
-	
-	For example, the _WebService_ component has an _onSuccess_ property. The
-	owner of a WebService can set _onSuccess_ to the name of a method to be
-	called when the WebService operation completes successfully.
-
-		// create a new component, which has a component of its own, and listens
-		// for an event
-		var c = new enyo.Component({
-			name: "MyComponent",
-			components: [
-				{kind: "WebService", onSuccess: "webSuccess"}
-			],
-			webSuccess: function(inSender) {
-				this.log(inSender.name, "was successful");
-			}
-		});
-
-	We call _webSuccess_ the _delegate_ for the _success_ event of the
-	WebService. Because the event properties take method names as values, we
-	call the event property values _named delegates_.
-
-	Note that the _webSuccess_ method takes an argument called _inSender_, which
-	refers to the object that generated the event. Different events may supply
-	additional arguments, but they all supply _inSender_ as the first argument.
-
-	Component events are much like DOM events. In fact, Enyo makes many DOM
-	events available as component events. Remember that Ccmponents do not, in
-	general, represent DOM nodes, but _Controls_ do; see the
-	<a href="#enyo.Control">Control</a> documentation for more information.
-
-	## Create and Destroy
-
-	When a component is instantiated, and after all constructors are executed,
-	the _create_ method is invoked. During _Component.create_, all owned
-	components are created.
-
-	Subclasses of Component often override _create_ to do initialization tasks.
-	If you override Component, make sure to call the inherited _create_ method,
-	and remember that owned components (and the _$_ hash) are only ready after
-	_this.inherited()_ has returned.
-
-		enyo.kind({
-			name: "MyComponent",
-			kind: enyo.Component,
-			create: function() {
-				// I can do tasks before my components are created
-				this.inherited(arguments);
-				// ... or I can do tasks after, my $ hash is ready now
-			}
-		});
-
-	To delete a component, use the _destroy_ method. Calling _destroy_ on a
-	component will remove it from all framework	bookkeeping, and in particular
-	will set its owner to _null_. Generally, this will be enough to allow the
-	object to be garbage-collected, unless you have maintained a reference to it
-	yourself.
-
-		allDone: function() {
-			// remove workComponent, and do any cleanup
-			this.$.workComponent.destroy();
-			// now this.$.workComponent is undefined
-		}
-
-	You may override the _destroy_ method to include custom cleanup code.
-	Again, you must make sure to call the inherited method before returning.
-
-	## Creating Components Dynamically
-
-	The _createComponent_ and _createComponents_ methods are included to create
-	components dynamically.	 Refer to the inline documentation for those methods
-	for more information.
+	For more information, see the
+	[documentation on Components](https://github.com/enyojs/enyo/wiki/Creating-Components)
+	in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Component",
