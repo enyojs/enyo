@@ -43,7 +43,9 @@ enyo.platform = {
 		// Apple likes to make this complicated
 		{platform: "ios", regex: /iP(?:hone|ad;(?: U;)? CPU) OS (\d+)/},
 		// webOS 1 - 3
-		{platform: "webos", regex: /(?:web|hpw)OS\/(\d+)/}
+		{platform: "webos", regex: /(?:web|hpw)OS\/(\d+)/},
+		// desktop safari
+		{platform: "safari", regex: /Version\/(\d+)[.\d]+\s+Safari/}
 	];
 	for (var i = 0, p, m, v; p = platforms[i]; i++) {
 		m = p.regex.exec(ua);
