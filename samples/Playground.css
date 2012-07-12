@@ -18,3 +18,12 @@
 	-moz-box-shadow: -4px 0px 4px rgba(0,0,0,0.3);
 	-webkit-box-shadow: -4px 0px 4px rgba(0,0,0,0.3);
 }
+
+.sample-output {
+	min-height: 200px;
+	border: 1px solid black;
+	margin: 10px;
+	padding: 10px;
+	border-radius: 10px;
+	text-align: center;
+}
