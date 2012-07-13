@@ -16,7 +16,7 @@ enyo.kind({
 	],
 	//* Set to true to optimize the strategy to only use translation to scroll; this increases fluidity of
 	//* scrolling animation. It should not be used when the scroller contains controls that require keyboard
-	//* input. This is because when translateOptimized is true, it is possible to position inputs such that 
+	//* input. This is because when _translateOptimized_ is true, it is possible to position inputs such that 
 	//* they will not become visibile when focused.
 	translateOptimized: false,
 	getScrollSize: function() {
@@ -48,7 +48,7 @@ enyo.kind({
 			this.inherited(arguments);
 		}
 	},
-	//* Sets the left scroll position within the scroller
+	//* Sets the left scroll position within the scroller.
 	setScrollLeft: function(inLeft) {
 		this.stop();
 		if (this.translateOptimized) {
@@ -59,7 +59,7 @@ enyo.kind({
 			this.inherited(arguments);
 		}
 	},
-	//* Sets the top scroll position within the scroller
+	//* Sets the top scroll position within the scroller.
 	setScrollTop: function(inTop) {
 		this.stop();
 		if (this.translateOptimized) {
@@ -70,11 +70,11 @@ enyo.kind({
 			this.inherited(arguments);
 		}
 	},
-	//* Gets the left scroll position within the scroller
+	//* Gets the left scroll position within the scroller.
 	getScrollLeft: function() {
 		return this.translateOptimized ? this.scrollLeft: this.inherited(arguments);
 	},
-	//* Gets the top scroll position within the scroller
+	//* Gets the top scroll position within the scroller.
 	getScrollTop: function() {
 		return this.translateOptimized ? this.scrollTop : this.inherited(arguments);
 	},

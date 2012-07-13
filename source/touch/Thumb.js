@@ -1,6 +1,8 @@
 /**
-_enyo.ScrollThumb_ is a helper kind used by <a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a>
-and <a href="#enyo.TranslateScrollStrategy">enyo.TranslateScrollStrategy</a>, creating small visual scroll indicator.
+_enyo.ScrollThumb_ is a helper kind used by
+<a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a> and
+<a href="#enyo.TranslateScrollStrategy">enyo.TranslateScrollStrategy</a> to
+display a small visual scroll indicator.
 
 _enyo.ScrollThumb_ is not typically created in application code.
 */
@@ -30,7 +32,7 @@ enyo.kind({
 		}
 	},
 	//* Syncs the scroll indicator bar to the scroller size and position,
-	//* as determined by the passed scroll strategy
+	//* as determined by the passed-in scroll strategy.
 	sync: function(inStrategy) {
 		this.scrollBounds = inStrategy._getScrollBounds();
 		this.update(inStrategy);
