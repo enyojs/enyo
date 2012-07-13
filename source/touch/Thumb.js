@@ -1,9 +1,20 @@
+/**
+_enyo.ScrollThumb_ is a helper kind used by <a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a>
+and <a href="#enyo.TranslateScrollStrategy">enyo.TranslateScrollStrategy</a>, creating small visual scroll indicator.
+
+_enyo.ScrollThumb_ is not typically created in application code.
+*/
+
 enyo.kind({
 	name: "enyo.ScrollThumb",
+	//* The orientation of the scroll indicator bar; "v" for vertical or "h" for horizontal
+	axis: "v",
+	//* @protected
+	//* Minimum size of the indicator
 	minSize: 4,
+	//* Size of the corners of the indicator
 	cornerSize: 6,
 	classes: "enyo-thumb",
-	axis: "v",
 	create: function() {
 		this.inherited(arguments);
 		var v = this.axis == "v";
@@ -18,6 +29,8 @@ enyo.kind({
 			enyo.dom.transformValue(this, "translateZ", 0);
 		}
 	},
+	//* Syncs the scroll indicator bar to the scroller size and position,
+	//* as determined by the passed scroll strategy
 	sync: function(inStrategy) {
 		this.scrollBounds = inStrategy._getScrollBounds();
 		this.update(inStrategy);
