@@ -6,7 +6,7 @@ enyo.kind({
 		{kind: "onyx.Toolbar", components: [
 			{kind: "onyx.PickerDecorator", components: [
 				{content:"Choose Scroller", style:"width:180px;"},
-				{kind: "onyx.Picker", floating:true, onChange:"sampleChanged", components: [
+				{kind: "onyx.Picker", floating:true, onSelect:"sampleChanged", components: [
 					{content:"Default scroller", active:true},
 					{content:"Force touch scroller"},
 					{content:"Horizontal only"},
