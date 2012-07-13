@@ -125,9 +125,11 @@ enyo.kind({
 			this.$.scrim.render();
 		}
 	},
+	//* Whether or not the scroller is actively moving
 	isScrolling: function() {
 		return this.$.scrollMath.isScrolling();
 	},
+	//* Whether or not the scroller is in overscrolling
 	isOverscrolling: function() {
 		return (this.overscroll) ? this.$.scrollMath.isInOverScroll() : false;
 	},
@@ -164,6 +166,7 @@ enyo.kind({
 	stabilize: function() {
 		this.$.scrollMath.stabilize();
 	},
+	//* Scrolls to specific x/y positions within the scroll area
 	scrollTo: function(inX, inY) {
 		this.stop();
 		this.$.scrollMath.scrollTo(inY || inY === 0 ? inY : null, inX);
@@ -172,17 +175,21 @@ enyo.kind({
 		this.stop();
 		this.inherited(arguments);
 	},
+	//* sets the left scroll position within the scroller
 	setScrollLeft: function() {
 		this.stop();
 		this.inherited(arguments);
 	},
+	//* sets the top scroll position within the scroller
 	setScrollTop: function() {
 		this.stop();
 		this.inherited(arguments);
 	},
+	//* gets the left scroll position within the scroller
 	getScrollLeft: function() {
 		return this.isScrolling() ? this.scrollLeft : this.inherited(arguments);
 	},
+	//* gets the top scroll position within the scroller
 	getScrollTop: function() {
 		return this.isScrolling() ? this.scrollTop : this.inherited(arguments);
 	},
@@ -339,6 +346,7 @@ enyo.kind({
 			enyo.dom.transformValue(this.$.client, this.translation, x + "px, " + y + "px" + z);
 		}
 	},
+	//* Returns the overleft and overtop, if any
 	getOverScrollBounds: function() {
 		var m = this.$.scrollMath;
 		return {
@@ -360,6 +368,7 @@ enyo.kind({
 		this.showThumbs();
 		this.delayHideThumbs(500);
 	},
+	//* Syncs the vertical and horizontal scroll indicators
 	syncThumbs: function() {
 		this.$.vthumb.sync(this);
 		this.$.hthumb.sync(this);
@@ -368,15 +377,18 @@ enyo.kind({
 		this.$.vthumb.update(this);
 		this.$.hthumb.update(this);
 	},
+	//* Syncs and shows both the vertical and horizontal scroll indicators
 	showThumbs: function() {
 		this.syncThumbs();
 		this.$.vthumb.show();
 		this.$.hthumb.show();
 	},
+	//* Hides the vertical and horizontal scroll indicators
 	hideThumbs: function() {
 		this.$.vthumb.hide();
 		this.$.hthumb.hide();
 	},
+	//* Hides the vertical and horizontal scroll indicators asynchronously
 	delayHideThumbs: function(inDelay) {
 		this.$.vthumb.delayHide(inDelay);
 		this.$.hthumb.delayHide(inDelay);

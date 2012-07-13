@@ -48,6 +48,7 @@ enyo.kind({
 			this.inherited(arguments);
 		}
 	},
+	//* Sets the left scroll position within the scroller
 	setScrollLeft: function(inLeft) {
 		this.stop();
 		if (this.translateOptimized) {
@@ -58,6 +59,7 @@ enyo.kind({
 			this.inherited(arguments);
 		}
 	},
+	//* Sets the top scroll position within the scroller
 	setScrollTop: function(inTop) {
 		this.stop();
 		if (this.translateOptimized) {
@@ -68,9 +70,11 @@ enyo.kind({
 			this.inherited(arguments);
 		}
 	},
+	//* Gets the left scroll position within the scroller
 	getScrollLeft: function() {
 		return this.translateOptimized ? this.scrollLeft: this.inherited(arguments);
 	},
+	//* Gets the top scroll position within the scroller
 	getScrollTop: function() {
 		return this.translateOptimized ? this.scrollTop : this.inherited(arguments);
 	},
