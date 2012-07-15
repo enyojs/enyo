@@ -25,6 +25,7 @@ enyo.kind({
 	},
 	create: function() {
 		this.inherited(arguments);
+		this.checkedChanged();
 	},
 	rendered: function() {
 		this.inherited(arguments);
