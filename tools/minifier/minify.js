@@ -133,7 +133,8 @@ finish = function(loader) {
 	//
 	var output = opt.output || "build";
 	var outfolder = path.dirname(output);
-	if (outfolder != "." && !path.existsSync(outfolder)) {
+	var exists = fs.existsSync || path.existsSync;
+	if (outfolder != "." && !exists(outfolder)) {
 		fs.mkdirSync(outfolder);
 	}
 	//
