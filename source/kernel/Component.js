@@ -481,6 +481,19 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 	inProto[inName] = v;
 	if (!inProto[fn]) {
 		inProto[fn] = function(inEvent) {
+			// Have to wrap this in a try clause because some events in
+			// Firefox like geolocation are immutable and will raise
+			// an exception if you try to modify them.
+			// Additionallly, some third-party library might pass a frozen 
+			// or sealed object to a callback
+			try {
+				inEvent.originator = this;
+			}
+			catch(ex) {
+				// can't change the original event, so clone it
+				inEvent = enyo.clone(inEvent);
+				inEvent.originator = this;
+			}
 			// bubble this event
 			return this.bubble(inName, inEvent);
 		};
