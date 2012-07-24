@@ -383,6 +383,11 @@ enyo.kind({
 		Uses _document.write_ to output the control into the document.
 		If control has _fit: true_ defined, appropriate styles will be set
 		to have it expand to fill its container.
+
+		Note: this has all the limitations that _document.write_ has.
+		It only works while the page is loading, so you can't call this
+		from an event handler.  Also, it will not work in some environments
+		like Chrome Packaged Apps or Windows 8.
 	*/
 	write: function() {
 		if (this.fit) {
