@@ -282,9 +282,13 @@ enyo.kind({
 		}
 	},
 	mousewheel: function(inSender, e) {
-		if (!this.dragging && this.$.scrollMath.mousewheel(e)) {
-			e.preventDefault();
-			return true;
+		if (!this.dragging) {
+			this.calcBoundaries();
+			this.syncScrollMath();
+			if (this.$.scrollMath.mousewheel(e)) {
+				e.preventDefault();
+				return true;
+			}
 		}
 	},
 	scrollMathStart: function(inSender) {
