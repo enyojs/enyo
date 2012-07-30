@@ -41,8 +41,24 @@ enyo.kind({
 	name: "enyo.Component",
 	kind: enyo.Object,
 	published: {
+		/**
+			a unique name for the component within its owner.  This is used to
+			set the access name in the owner's _$_ hash.  If not specified,
+			a default name will be provided based on the name of the object's
+			kind, optionally with a number suffix if more than one instance exists
+			in the owner.
+		*/
 		name: "",
+		/**
+			unique id for the component, usually automatically generated based on 
+			its position in the component hierarchy, but can be directly specified.
+			enyo.Control uses this id value for the DOM id attribute.
+		*/
 		id: "",
+		/**
+			what component owns this component. Usually implicitly defined during
+			creation based on the _createComponent_ call or _components_ hash.
+		*/
 		owner: null
 	},
 	//* @protected
