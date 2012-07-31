@@ -1,15 +1,13 @@
 /**
-	A multi-line text input that supports rich formatting, such as bold, italics,
-	and underlining.
+	_enyo.RichText_ is a multi-line text input that supports rich formatting,
+	such as bold, italics, and underlining.
 
-	Use the _value_ property to get or set the displayed text.
+	The content displayed in a RichText may be accessed at runtime via the
+	`getValue` and `setValue` methods.
 
-	RichText is not supported on Android < 3.
-
-	Selection operations and [insertAtCursor](#enyo.RichText::insertAtCursor)
-	use the HTML Editing APIs.
-
-	[HTML Editing APIs # Selection Reference](https://dvcs.w3.org/hg/editing/raw-file/tip/editing.html#selections)
+	For more information, see the documentation on
+	[Text Fields](https://github.com/enyojs/enyo/wiki/Text-Fields) in the Enyo
+	Developer Guide.
 */
 enyo.kind({
 	name: "enyo.RichText",

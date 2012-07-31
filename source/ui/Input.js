@@ -1,10 +1,14 @@
 /**
-	Implements an HTML &lt;input&gt; element with cross-platform support for
-	change events.
+	_enyo.Input_ implements an HTML &lt;input&gt; element with cross-platform
+	support for	change events.
 
 	You can listen for _oninput_ and _onchange_ DOM events from this control
-	to know when the text inside has been modified. _oninput_ fires immediately
+	to know when the text inside has been modified. _oninput_ fires immediately,
 	while _onchange_ fires when the text has changed and the input loses focus.
+
+	For more information, see the documentation on
+	[Text Fields](https://github.com/enyojs/enyo/wiki/Text-Fields) in the Enyo
+	Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Input",
