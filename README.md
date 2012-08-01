@@ -25,13 +25,13 @@ Enyo up to 1.x was the underlying framework used to develop applications for HP'
 
 Enyo was designed from the beginning to be highly extensible. This repository reflects a small working set of code, that can be expanded with any number of libraries or plugins. 
 
-Enyo 2 is lightweight (at the time of this writing, roughly 13k gzipped), easy to digest, and powerful. 
+Enyo 2 is lightweight, easy to digest, and powerful. 
 
 # What Do I Get
 
-The core code includes the Enyo kernel, the DOM extensions, and some Ajax (XHR) tools. These things are actually separable (it's easy to make micro-builds of Enyo), but we believe this is a useful working set. 
+The core code includes the Enyo kernel, the DOM extensions, some Ajax (XHR) tools, and basic wrapper kinds for a lot of DOM form elements. These things are actually separable (it's easy to make micro-builds of Enyo), but we believe this is a useful working set. 
 
-The Enyo 2 kernel provides a modularity concept (Component) and a view concept (UiComponent). The DOM aspect includes a widget concept (Control) and an extensible event system (Dispatcher). The Ajax package includes basic xhr functionality and an implementation of xhr as a Component (Ajax).
+The Enyo 2 kernel provides a modularity concept (Component) and a view concept (UiComponent). The DOM aspect includes a widget concept (Control) and an extensible event system (Dispatcher). The Ajax package includes basic xhr functionality and an implementation of xhr as a Component (Ajax).  The touch package provides platform-optimized scrollers, while the UI package provides base kinds for common controls like buttons and popups.
 
 Just these pieces are sufficient to create large applications using the Enyo encapsulation model. Developers that want only this low-level code are encouraged to roll-their-own. For those that want a richer set of tools, there are some pre-built libraries already available, and much more on the way.
 
@@ -66,10 +66,11 @@ Here is an Enyo Hello World:
 	<head>
 		<title>Enyo</title>
 		<script src="enyojs/2.0/enyo.js" type="text/javascript"></script>
+		<link href="enyojs/2.0/enyo.css" rel="stylesheet" type="text/css" />
 	</head>
 	<body>
 		<script type="text/javascript">
-			new enyo.Control({content: "Hello From Enyo"}).write();
+			new enyo.Control({content: "Hello From Enyo"}).renderInto(document.body);
 		</script>
 	</body>
 	</html>
@@ -78,7 +79,8 @@ This example loads an enyo.js build from _enyojs/2.0/_. If you downloaded the SD
 
 The base enyo.Control works much like an HTML tag. You can assign _classes_ and _attributes_ and give it a _style_. E.g.
 
-	new enyo.Control({content: "Hello From Enyo", classes: "foo", style: "color: red", attributes: {tabIndex: 0}}).write();
+	new enyo.Control({content: "Hello From Enyo", classes: "foo", style: "color: red", 
+        attributes: {tabIndex: 0}}).renderInto(document.body);
 
 produces
 
@@ -91,7 +93,7 @@ Now, the good parts start when you combine more than one Control, e.g.
 			{content: "Hello From Enyo"},
 			{tag: "hr"}
 		]
-	}).write();
+	}).renderInto(document.body);
 
 This Control now encapsulates two Controls into one scope (we can encapsulate any type of Component, that's why the property is called _components_. Controls are one kind of Component.) The outer Control is responsible for the encapsulated components: it manages their lifecycle, listens to their messages, and maintains references to them. For example:
 
@@ -103,9 +105,9 @@ This Control now encapsulates two Controls into one scope (we can encapsulate an
 		helloTap: function() {
 			this.$.hello.addStyles("color: red");
 		}
-	}).write();
+	}).renderInto(document.body);
 
-Here we've given one of the components a name ('hello') and told it to send a 'helloTap' message when it's tapped (tap is basically the same as the DOM click event, but it works in both mouse and touch environments). The _$_ property is a hash that references all the sub-components (we don't store these references directly on _this_ to avoid name conflicts). Btw, notice there is no add/remove machinery to listen to this event, that's all taken care of.
+Here we've given one of the components a name ('hello') and told it to send a 'helloTap' message when it's tapped (tap is basically the same as the DOM click event, but it works in both mouse and touch environments). The '$' property is a hash that references all the sub-components (we don't store these references directly on _this_ to avoid name conflicts). Notice there is no add/remove machinery to listen to this event, that's all taken care of.
 
 The main point is that 'hello' and the 'hr', their references and behavior, are completely contained inside the outer control. Now, to re-use this, we need to make it a prototype.
 
@@ -123,8 +125,9 @@ Enyo contains a constructor/prototype-generator that we call enyo.kind. Construc
 		}
 	});
 	// make two, they're small
-	new Hello().write();
-	new Hello().write();
+	new enyo.Control({
+        component: [ {kind: "Hello"}, {kind: "Hello"} ]
+    }).renderInto(document.body);
 
 The code above creates a new kind called "Hello" derived from enyo.Control. It contains some components and some behavior. I can create as many "Hello" objects as I want, each instance is independent, and the user of a "Hello" doesn't need to know anything about its internals.
 
