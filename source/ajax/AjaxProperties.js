@@ -47,5 +47,9 @@ enyo.AjaxProperties = {
 	/**
 		Optional object with fields to pass directly to the underlying XHR object.
 	*/
-	xhrFields: null
+	xhrFields: null,
+	/**
+		Optional string to override the MIME-Type.
+	*/
+	mimeType: null
 };

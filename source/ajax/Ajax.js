@@ -1,12 +1,12 @@
 ﻿/**
 	_enyo.Ajax_ is a wrapper for _XmlHttpRequest_ that uses
 	the <a href="#enyo.Async">enyo.Async</a> API.
-	
+
 	IMPORTANT: _enyo.Ajax_ publishes all the properties of the
 	<a href="#enyo.AjaxProperties">enyo.AjaxProperties</a>
 	object.
 
-	Like _enyo.Async_, _enyo.Ajax_ is an **Object**, not a **Component**. 
+	Like _enyo.Async_, _enyo.Ajax_ is an **Object**, not a **Component**.
 	Do not try to make _enyo.Ajax_ objects inside a _components_ block.
 
 	If you want to use _enyo.Ajax_ as a component, you should probably
@@ -83,7 +83,8 @@ enyo.kind({
 			sync: window.PalmSystem ? false : this.sync,
 			username: this.username,
 			password: this.password,
-			xhrFields: this.xhrFields
+			xhrFields: this.xhrFields,
+			mimeType:  this.mimeType
 		});
 	},
 	receive: function(inText, inXhr) {

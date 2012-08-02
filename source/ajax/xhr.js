@@ -11,6 +11,7 @@ enyo.xhr = {
 		- _username_: The optional user name to use for authentication purposes.
 		- _password_: The optional password to use for authentication purposes.
 		- _xhrFields_: Optional object containing name/value pairs to mix directly into the generated xhr object.
+		- _mimeType_: Optional string to override the MIME-Type.
 	*/
 	request: function(inParams) {
 		var xhr = this.getXMLHttpRequest();
@@ -31,6 +32,10 @@ enyo.xhr = {
 			for (var key in inParams.headers) {
 				xhr.setRequestHeader(key, inParams.headers[key]);
 			}
+		}
+		//
+		if(inParams.mimeType) {
+			xhr.overrideMimeType(inParams.mimeType);
 		}
 		//
 		xhr.send(inParams.body || null);
