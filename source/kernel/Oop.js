@@ -59,6 +59,10 @@ enyo.kind = function(inProps) {
 //* @protected
 enyo.kind.makeCtor = function() {
 	return function() {
+		if (!(this instanceof arguments.callee)) {
+			throw "enyo.kind: constructor called directly, not using 'new'";
+		}
+
 		// two-pass instantiation
 		var result;
 		if (this._constructor) {
