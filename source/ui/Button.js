@@ -8,7 +8,8 @@ enyo.kind({
 	tag: "button",
 	//* @public
 	published: {
-		//* When true, show the button as disabled and don't generate tap events.
+		//* When true, button is shown as disabled and does not generate tap
+		//* events
 		disabled: false
 	},
 	//* @protected

@@ -21,12 +21,16 @@ enyo.kind({
 	kind: "Component",
 	published: {
 		//* Animation duration in milliseconds
-		duration: 350, 
+		duration: 350,
+		//* Value of _value_ property at the beginning of an animation 
 		startValue: 0,
+		//* Value of _value_ property at the end of an animation
 		endValue: 1,
 		//* Node that must be visible in order for the animation to continue.
 		//* This reference is destroyed when the animation ceases.
 		node: null,
+		//* Function that determines how the animation progresses from
+		//* _startValue_ to _endValue_ 
 		easingFunction: enyo.easing.cubicOut
 	},
 	events: {
@@ -69,7 +73,7 @@ enyo.kind({
 			return this;
 		}
 	},
-	//* Reverse the direction of a running animation, returns self if animating
+	//* Reverses the direction of a running animation; returns self if animating.
 	reverse: function() {
 		if (this.isAnimating()) {
 			this.reversed = !this.reversed;
