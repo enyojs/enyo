@@ -13,13 +13,17 @@
 	More information on _Async_ and its usage is available in the
 	<a href="https://github.com/enyojs/enyo/wiki/Async">Async documentation</a>
 	in the Enyo Developer Guide.
-	
-
-
 */
 enyo.kind({
 	name: "enyo.Async",
 	kind: enyo.Object,
+	published: {
+		/**
+			if set to a non-0 value, this is the number of milliseconds to
+			wait after the _go_ call before failing with the "timeout" error.
+		*/
+		timeout: 0
+	},
 	//* @protected
 	failed: false,
 	context: null,
