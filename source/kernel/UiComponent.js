@@ -138,13 +138,13 @@ enyo.kind({
 		}
 	},
 	//* @protected
-	addControl: function(inControl) {
+	addControl: function(inControl, inBefore) {
 		// Called to add an already created control to the object's control list. It is
 		// not used to create controls and should likely not be called directly.
 		// It can be overridden to detect when controls are added.
 		this.controls.push(inControl);
 		// When we add a Control, we also establish a parent.
-		this.addChild(inControl);
+		this.addChild(inControl, inBefore);
 	},
     removeControl: function(inControl) {
 		// Called to remove a control from the object's control list. As with addControl it
@@ -169,10 +169,15 @@ enyo.kind({
 		return this.controls[inIndex];
 	},
 	// children
-	addChild: function(inChild) {
+	addChild: function(inChild, inBefore) {
+		// if inBefore is undefined, use the old behavior of adding to front
+		// or end of children based in this.prepend property. if it's null,
+		// add to end, otherwise add before the specified control.
+		//
 		// allow delegating the child to a different container
 		if (this.controlParent /*&& !inChild.isChrome*/) {
 			// this.controlParent might have a controlParent, and so on; seek the ultimate parent
+			// inBefore is not passed because that control won't be in the controlParent's scope
 			this.controlParent.addChild(inChild);
 		} else {
 			// NOTE: addChild drives setParent.
@@ -186,7 +191,15 @@ enyo.kind({
 			// Set the child's parent property to this
 			inChild.setParent(this);
 			// track in children array
-			this.children[this.prepend ? "unshift" : "push"](inChild);
+			if (inBefore === undefined) {
+				this.children[this.prepend ? "unshift" : "push"](inChild);
+			} else if (inBefore === null) {
+				// this case is needed to allow adding to end when this.prepend is true
+				this.children.push(inChild);
+			} else {
+				var idx = this.indexOfChild(inBefore);
+				this.children.splice(idx, 0, inChild);
+			}
 			/*
 			// FIXME: hacky, allows us to reparent a rendered control; we need better API for dynamic reparenting
 			if (inChild.hasNode()) {
