@@ -22,7 +22,7 @@ enyo.kind({
 	},
 	/**
 		Sets property named 'n' with value 'v' and then invokes callback
-		function 'cf' (if specified) with the original value of property 'n'.
+		function 'cf' (if specified), passing in the original value of 'n'.
 		All property setting should bottleneck here so that objects can
 		observe changes wlog.
 	*/
@@ -39,12 +39,14 @@ enyo.kind({
 		this.setPropertyValue(n, v, (this.getProperty(n) !== v) && cf);
 	},
 	//* @public
+	//* Destroys object with passed-in name.
 	destroyObject: function(inName) {
 		if (this[inName] && this[inName].destroy) {
 			this[inName].destroy();
 		}
 		this[inName] = null;
 	},
+	//* Gets value of property with passed-in name.
 	getProperty: function(n) {
 		var getter = "get" + enyo.cap(n);
 		if (this[getter]) {
@@ -52,6 +54,7 @@ enyo.kind({
 		}
 		return this[n];
 	},
+	//* Sets value of property named 'n' to 'v'.
 	setProperty: function(n, v) {
 		var setter = "set" + enyo.cap(n);
 		if (this[setter]) {

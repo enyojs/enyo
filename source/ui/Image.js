@@ -5,7 +5,7 @@
 */
 enyo.kind({
 	name: "enyo.Image",
-	//* When true, no onload or onerror event handlers will be created.
+	//* When true, no _onload_ or _onerror_ event handlers will be created
 	noEvents: false,
 	//* @protected
 	tag: "img",
