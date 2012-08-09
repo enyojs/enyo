@@ -175,6 +175,10 @@ enyo.kind({
 		// set and return
 		return inComponent.name = n;
 	},
+	/**
+		Adds _inComponent_ to the list of components owned by the current
+		component (i.e., _this.$_).
+	*/
 	addComponent: function(inComponent) {
 		var n = inComponent.getName();
 		if (!n) {
@@ -196,6 +200,8 @@ enyo.kind({
 		}
 		this.$[n] = inComponent;
 	},
+	//* Removes _inComponent_ from the list of components owned by the current
+	//* component (i.e., _this.$_).
 	removeComponent: function(inComponent) {
 		delete this.$[inComponent.getName()];
 	},
