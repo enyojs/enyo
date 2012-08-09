@@ -34,7 +34,9 @@ enyo.kind({
 		charset: null
 	},
 	events: {
+		//* Fires when a response is received.
 		onResponse: "",
+		//* Fires when an error is received.
 		onError: ""
 	},
 	//* @protected
@@ -42,6 +44,8 @@ enyo.kind({
 		this.inherited(arguments);
 	},
 	//* @public
+	//* Sends a Web request with the passed-in parameters, returning the
+	//* associated Async instance.
 	send: function(inParams) {
 		return this.jsonp ? this.sendJsonp(inParams) : this.sendAjax(inParams);
 	},

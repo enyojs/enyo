@@ -26,8 +26,11 @@ enyo.kind({
 			* "default": Same as "auto".
 		*/
 		horizontal: "default",
+		//* Scroll position along horizontal axis
 		scrollLeft: 0,
+		//* Scroll position along vertical axis
 		scrollTop: 0,
+		//* Maximum height of scroll content
 		maxHeight: null
 	},
 	//* @protected

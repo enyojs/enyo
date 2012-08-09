@@ -9,25 +9,30 @@ enyo.kind({
 	name: "enyo.ScrollMath",
 	kind: enyo.Component,
 	published: {
+		//* True if vertical scrolling is enabled
 		vertical: true,
+		//* True if horizontal scrolling is enabled
 		horizontal: true
 	},
 	events: {
+		//* Fires when scroll action starts.
 		onScrollStart: "",
+		//* Fires while scroll action is in progress.
 		onScroll: "",
+		//* Fires when scroll action stops.
 		onScrollStop: ""
 	},
-	//* 'spring' damping returns the scroll position to a value inside the
-	//* boundaries.  Lower values provide FASTER snapback.
+	//* 'Spring' damping returns the scroll position to a value inside the
+	//* boundaries.  Lower values provide _faster_ snapback.
 	kSpringDamping: 0.93,
-	//* 'drag' damping resists dragging the scroll position beyond the
-	//* boundaries.  Lower values provide MORE resistance.
+	//* 'Drag' damping resists dragging the scroll position beyond the
+	//* boundaries.  Lower values provide _more_ resistance.
 	kDragDamping: 0.5,
-	//* 'friction' damping reduces momentum over time.  Lower values provide
-	//* MORE friction.
+	//* 'Friction' damping reduces momentum over time.  Lower values provide
+	//* _more_ friction.
 	kFrictionDamping: 0.97,
 	//* Additional 'friction' damping applied when momentum carries the viewport
-	//* into overscroll.  Lower values provide MORE friction.
+	//* into overscroll.  Lower values provide _more_ friction.
 	kSnapFriction: 0.9,
 	//* Scalar applied to 'flick' event velocity
 	kFlickScalar: 15,
@@ -35,19 +40,19 @@ enyo.kind({
 	//* prevent compositing artifacts.
 	kMaxFlick: enyo.platform.android > 2 ? 2 : 1e9,
 	//* The value used in friction() to determine if the delta (e.g., y - y0) is
-	//* close enough to zero to consider as zero.
+	//* close enough to zero to consider as zero
 	kFrictionEpsilon: 1e-2,
-	//* Top snap boundary, generally 0.
+	//* Top snap boundary, generally 0
 	topBoundary: 0,
-	//* Right snap boundary, generally (viewport width - content width).
+	//* Right snap boundary, generally (viewport width - content width)
 	rightBoundary: 0,
-	//* Bottom snap boundary, generally (viewport height - content height).
+	//* Bottom snap boundary, generally (viewport height - content height)
 	bottomBoundary: 0,
-	//* Left snap boundary, generally 0.
+	//* Left snap boundary, generally 0
 	leftBoundary: 0,
 	//* Animation time step
 	interval: 20,
-	//* Flag to enable frame-based animation; if false, time-based animation is used.
+	//* Flag to enable frame-based animation; if false, time-based animation is used
 	fixedTime: true,
 	//* @protected
 	// simulation state
