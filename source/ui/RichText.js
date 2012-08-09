@@ -14,12 +14,16 @@ enyo.kind({
 	classes: "enyo-richtext enyo-selectable",
 	published: {
 		/**
-			_allowHtml_ is enabled by default in RichText to take advantage of all the rich editing properties.
-			However, this allows for **ANY** HTML to be inserted into the RichText, including _iframe_ and _script_ tags, which can be a secuity concern in some situations.
+			_allowHtml_ is enabled by default in RichText to take advantage of
+			all the rich editing properties. However, this allows for **ANY**
+			HTML to be inserted into the RichText, including _iframe_ and
+			_script_ tags, which can be a secuity concern in some situations.
 			If set to false, inserted HTML will be escaped.
 		*/
 		allowHtml: true,
+		//* If true, the RichText will not accept input or generate events
 		disabled: false,
+		//* Value of the text field
 		value: ""
 	},
 	//* Set to true to focus this control when it is rendered.
@@ -71,6 +75,7 @@ enyo.kind({
 		}
 	},
 	//* @public
+	//* Gets value of the RichText.
 	getValue: function() {
 		if (this.hasNode()) {
 			return this.node.innerHTML;
@@ -90,12 +95,14 @@ enyo.kind({
 			return window.getSelection();
 		}
 	},
+	//* Removes the selection object.
 	removeSelection: function(inStart) {
 		var s = this.getSelection();
 		if (s) {
 			s[inStart ? "collapseToStart" : "collapseToEnd"]();
 		}
 	},
+	//* Modifies the selection object.
 	modifySelection: function(inType, inDirection, inAmount) {
 		var s = this.getSelection();
 		if (s) {
@@ -106,12 +113,15 @@ enyo.kind({
 	moveCursor: function(inDirection, inAmount) {
 		this.modifySelection("move", inDirection, inAmount);
 	},
+	//* Moves the cursor to end of text field.
 	moveCursorToEnd: function() {
 		this.moveCursor("forward", "documentboundary");
 	},
+	//* Moves the cursor to start of text field.
 	moveCursorToStart: function() {
 		this.moveCursor("backward", "documentboundary");
 	},
+	//* Selects all content in text field.
 	selectAll: function() {
 		if (this.hasFocus()) {
 			document.execCommand("selectAll");

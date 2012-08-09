@@ -18,9 +18,9 @@
 			}
 		}
 
-	Note: this uses the `<select>` tag which isn't implemented
+	Note: This uses the `<select>` tag, which isn't implemented
 	for native webOS applications, although it does work in the
-	webOS web browser.
+	webOS Web browser.
 */
 
 enyo.kind({
@@ -71,11 +71,12 @@ enyo.kind({
 });
 
 /**
-	enyo.Option implements the options in an HTML select widget.
+	_enyo.Option_ implements the options in an HTML select widget.
 */
 enyo.kind({
 	name: "enyo.Option",
 	published: {
+		//* Value of the option
 		value: ""
 	},
 	//* @protected
@@ -90,8 +91,8 @@ enyo.kind({
 });
 
 /**
-	enyo.OptionGroup allows for grouping options in a select widget, and for
-	blocks of options to be disabled.
+	_enyo.OptionGroup_ allows for the grouping of options in a select widget,
+	and for the disabling of blocks of options.
 */
 enyo.kind({
 	name: "enyo.OptionGroup",
