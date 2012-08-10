@@ -146,14 +146,19 @@ enyo.kind({
 		enyo.dispatcher.release();
 	},
 	down: function(inSender, inEvent) {
+		//record the down event to verify in tap
+		this.downEvent = inEvent;
+		
 		// prevent focus from shifting outside the popup when modal.
 		if (this.modal && !inEvent.dispatchTarget.isDescendantOf(this)) {
 			inEvent.preventDefault();
 		}
 	},
 	tap: function(inSender, inEvent) {
-		// dismiss on tap if property is set and click was outside the popup
-		if (this.autoDismiss && (!inEvent.dispatchTarget.isDescendantOf(this))) {
+		// dismiss on tap if property is set and click started & ended outside the popup
+		if (this.autoDismiss && (!inEvent.dispatchTarget.isDescendantOf(this)) && this.downEvent &&
+			(!this.downEvent.dispatchTarget.isDescendantOf(this))) {
+			this.downEvent = null;
 			this.hide();
 			return true;
 		}
