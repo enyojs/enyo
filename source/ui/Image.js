@@ -1,7 +1,7 @@
 /**
-	Implements an HTML &lt;img&gt; element and, optionally, bubbles the 
-	_onload_ and _onerror_ events. This also suppresses image dragging
-	so images won't interfere with touch interfaces.
+	_enyo.Image_ implements an HTML &lt;img&gt; element and, optionally, bubbles
+	the _onload_ and _onerror_ events. Image dragging is suppressed by default,
+	so as not to interfere with touch interfaces.
 */
 enyo.kind({
 	name: "enyo.Image",
