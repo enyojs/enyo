@@ -1,20 +1,33 @@
+/**
+	An _enyo.Control_ is a component that controls a DOM node (i.e., an element
+	in the user interface). Controls are generally visible and the user often
+	interacts with them directly. While things like buttons and input boxes are
+	obviously controls, in Enyo, a control may become as complex as an entire
+	application.
+
+	For more information, see the
+	<a href="https://github.com/enyojs/enyo/wiki/Creating-Controls">documentation on Controls</a>
+	in the Enyo Developer Guide.
+*/
 enyo.kind({
 	name: "enyo.Control",
 	kind: enyo.UiComponent,
 	published: {
-		//* HTML tag name to use for control. If it's null, no tag is generated, only the contents are used.
+		//* HTML tag name to use for control. If null, no tag is generated; only
+		//* the contents are used.
 		tag: "div",
-		//* Hash of DOM attributes to apply to the generated HTML tag.
+		//* Hash of DOM attributes to apply to the generated HTML tag
 		attributes: null,
-		//* Space-delimited set of CSS classes to apply to the generated HTML tag.
+		//* Space-delimited set of CSS classes to apply to the generated HTML tag
 		classes: "",
-		//* Style attribute to apply to the generated HTML tag.
+		//* Style attribute to apply to the generated HTML tag
 		style: "",
-		//* Content that will be generated inside the HTML tag; defaults to plain text unless _allowHtml_ is true.
+		//* Content that will be generated inside the HTML tag; defaults to
+		//* plain text unless _allowHtml_ is true
 		content: "",
-		//* Boolean indicating whether the tag will be visible or hidden in the document.
+		//* Boolean indicating whether the tag will be visible or hidden in the document
 		showing: true,
-		//* If false, HTML codes in _content_ are escaped before rendering.
+		//* If false, HTML codes in _content_ are escaped before rendering
 		allowHtml: false,
 		//
 		// convenience properties for common attributes
@@ -25,25 +38,27 @@ enyo.kind({
 		// esoteric
 		//
 		/**
-			Set to false if the control should not generate any HTML. Used to inhibit generation 
-			of popups until they're shown at runtime.
+			Set to false if the control should not generate any HTML. Used to
+			inhibit generation of popups until they're shown at runtime.
 		*/
 		canGenerate: true,
 		//
 		// ad hoc properties:
 		//
-		//* Flag used by control layouts to pick which control will expand to fill area.
+		//* Flag used by control layouts to determine which control will expand
+		//* to fill the available space
 		fit: false,
-		//* Used by Ares design editor for design objects.
+		//* Used by Ares design editor for design objects
 		isContainer: false
 	},
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
 		ontap: "tap"
 	},
-	//* The default kind for controls created inside this control that don't specify their own kind.
+	//* The default kind for controls created inside this control that don't
+	//* specify their own kind
 	defaultKind: "Control",
-	//* A set of CSS classes that are applied to controls created inside this control.
+	//* A set of CSS classes that are applied to controls created inside this control
 	controlClasses: "",
 	//* @protected
 	node: null,
@@ -297,7 +312,7 @@ enyo.kind({
 
 			this.$.box.applyStyle("z-index", 4);
 
-		You can remove a style by setting its value to null.
+		You may remove a style by setting its value to null.
 
 			this.$.box.applyStyle("z-index", null);
 	*/
@@ -381,13 +396,13 @@ enyo.kind({
 	},
 	/**
 		Uses _document.write_ to output the control into the document.
-		If control has _fit: true_ defined, appropriate styles will be set
+		If the control has _fit: true_ defined, appropriate styles will be set
 		to have it expand to fill its container.
 
-		Note: this has all the limitations that _document.write_ has.
-		It only works while the page is loading, so you can't call this
-		from an event handler.  Also, it will not work in some environments
-		like Chrome Packaged Apps or Windows 8.
+		Note that this has all the limitations that _document.write_ has.
+		It only works while the page is loading, so you can't call this	from an
+		event handler. Also, it will not work in certain environments, such as
+		Chrome Packaged Apps or Windows 8.
 	*/
 	write: function() {
 		if (this.fit) {
