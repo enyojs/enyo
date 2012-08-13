@@ -1,5 +1,6 @@
 /**
-	Implements an HTML button, with support for grouping using _enyo.Group_.
+	_enyo.Button_ implements an HTML button, with support for grouping using
+	<a href="#enyo.Group">enyo.Group</a>.
 */
 enyo.kind({
 	name: "enyo.Button",
