@@ -1,5 +1,5 @@
 /**
-	The base kind for layout kinds.  These are used by
+	_enyo.Layout_ is the base kind for layout kinds.  These are used by
 	<a href="#enyo.UiComponent">enyo.UiComponent</a>-based controls to allow for
 	arranging of the children by setting the _layoutKind_ property.
 

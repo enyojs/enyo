@@ -1,5 +1,5 @@
 /**
-	Implements an HTML checkbox input, with support for grouping.
+	_enyo.Checkbox_ implements an HTML checkbox input, with support for grouping.
 */
 enyo.kind({
 	name: "enyo.Checkbox",

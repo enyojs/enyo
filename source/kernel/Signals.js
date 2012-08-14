@@ -1,5 +1,5 @@
 /**
-	_Signals_ components are used to listen to global messages.
+	_enyo.Signals_ components are used to listen to global messages.
 
 	An object with a Signals component can listen to messages sent from anywhere
 	by declaring handlers for them.

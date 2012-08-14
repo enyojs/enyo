@@ -1,4 +1,6 @@
-//* Lines up components in a row, centered vertically.
+/**
+	_enyo.ToolDecorator_ lines up components in a row, centered vertically.
+*/
 enyo.kind({
 	name: "enyo.ToolDecorator",
 	//* @protected
