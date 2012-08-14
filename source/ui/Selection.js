@@ -40,11 +40,10 @@ enyo.kind({
 				selectRow: function(inSender, inEvent) {
 					...
 
-			_inEvent.key_ is whatever key was used to register 
-			the selection (usually a row index).
-
-			_inEvent.data_ references data registered
-			with this key by the code that made the original selection.
+			The event's _key_ property is whatever key was used to register the
+			selection (usually a row index), while the _data_ property
+			references data registered with this key by the	code that made the
+			original selection.
 		*/
 		onSelect: "",
 		/**
@@ -55,11 +54,10 @@ enyo.kind({
 				deselectRow: function(inSender, inEvent)
 					...
 
-			_inEvent.key_ is whatever key was used to request
-			the deselection (usually a row index).
-
-			_inEvent.data_ references data registered
-			with this key by the code that made the selection.
+			The event's _key_ property is whatever key was used to request the
+			deselection (usually a row index), while the _data_ property
+			references data registered with this key by the	code that made the
+			selection.
 		*/
 		onDeselect: "",
 		//* Sent when selection changes (but not when the selection is cleared).

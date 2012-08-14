@@ -33,8 +33,11 @@ enyo.kind({
 		count: 0
 	},
 	events: {
-		//* Fires when each item is created, sending the item index, and the
-		//* item control, for decoration.
+		/**
+			Fires when each item is created. The _index_ property contains the
+			item index, and the _item_ property contains the item control, for
+			decoration.
+		*/
 		onSetupItem: ""
 	},
 	create: function() {

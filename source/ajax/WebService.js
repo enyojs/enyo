@@ -34,9 +34,17 @@ enyo.kind({
 		charset: null
 	},
 	events: {
-		//* Fires when a response is received.
+		/**
+			Fires when a response is received. The _ajax_ property contains the
+			associated Async instance, while the _data_ property contains the
+			response data.
+		*/
 		onResponse: "",
-		//* Fires when an error is received.
+		/**
+			Fires when an error is received. The _ajax_ property contains the
+			associated Async instance, while the _data_ property contains the
+			error data.
+		*/
 		onError: ""
 	},
 	//* @protected
