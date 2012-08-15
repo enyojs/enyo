@@ -21,7 +21,7 @@ enyo.kind({
 	name: "enyo.WebService",
 	kind: enyo._AjaxComponent,
 	published: {
-		//* Set to true to use JSONP protocol.
+		//* Set to true to use JSONP protocol
 		jsonp: false,
 		/**
 			When using JSONP, the name of the callback parameter.
@@ -30,20 +30,27 @@ enyo.kind({
 			internal callback function as necessary.
 		*/
 		callbackName: "callback",
-		//* When using JSONP, optional character set to use to interpret the return data
+		/**
+			When using JSONP, optional character set to use to interpret the
+			return data
+		*/
 		charset: null
 	},
 	events: {
 		/**
-			Fires when a response is received. The _ajax_ property contains the
-			associated Async instance, while the _data_ property contains the
-			response data.
+			Fires when a response is received.
+			
+			_inEvent.ajax_ contains the Async instance associated with the request.
+			
+			_inEvent.data_ contains the response data.
 		*/
 		onResponse: "",
 		/**
-			Fires when an error is received. The _ajax_ property contains the
-			associated Async instance, while the _data_ property contains the
-			error data.
+			Fires when an error is received.
+			
+			_inEvent.ajax_ contains the	Async instance associated with the request.
+			
+			_inEvent.data_ contains the error data.
 		*/
 		onError: ""
 	},
