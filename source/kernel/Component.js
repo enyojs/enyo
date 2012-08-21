@@ -238,7 +238,7 @@ enyo.kind({
 		The created Component passes through initialization machinery provided
 		by the creating component, which may supply special handling.
 		Unless the owner is explicitly specified, the new component will
-		be owned by _this_.
+		be owned by the instance on which _createComponents_ is called.
 		Properties in _inInfo_ override properties in _inMoreInfo_.
 
 			// Create a new component named _dynamic_ owned by _this_ 
