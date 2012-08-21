@@ -51,6 +51,7 @@ enyo.AjaxProperties = {
 	password: "",
 	/**
 		Optional object with fields to pass directly to the underlying XHR object.
+		One example is the _withCredentials_ flag used for cross-origin requests.
 	*/
 	xhrFields: null,
 	/**

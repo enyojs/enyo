@@ -54,7 +54,7 @@ enyo.kind({
 	request: function(inParams) {
 		var parts = this.url.split("?");
 		var uri = parts.shift() || "";
-		var args = parts.join("?").split("&");
+		var args = parts.length ? (parts.join("?").split("&")) : [];
 		//
 		var body = enyo.isString(inParams) ? inParams : enyo.Ajax.objectToQuery(inParams);
 		if (this.method == "GET") {
@@ -67,11 +67,12 @@ enyo.kind({
 			}
 		}
 		//
-		var url = [uri, args.join("&")].join("?");
+		var url = args.length ? [uri, args.join("&")].join("?") : uri;
 		//
-		var xhr_headers = {
-			"Content-Type": this.contentType
-		};
+		var xhr_headers = {};
+		if (this.method != "GET") {
+			xhr_headers["Content-Type"] = this.contentType;
+		}
 		enyo.mixin(xhr_headers, this.headers);
 		//
 		this.xhr = enyo.xhr.request({
@@ -84,7 +85,7 @@ enyo.kind({
 			username: this.username,
 			password: this.password,
 			xhrFields: this.xhrFields,
-			mimeType:  this.mimeType
+			mimeType: this.mimeType
 		});
 	},
 	receive: function(inText, inXhr) {
