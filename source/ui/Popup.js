@@ -44,6 +44,8 @@ enyo.kind({
 	handlers: {
 		ondown: "down",
 		onkeydown: "keydown",
+		onmousedown: "mousedown",
+		ondragstart: "dragstart",
 		onfocus: "focus",
 		onblur: "blur",
 		onRequestShow: "requestShow",
@@ -160,6 +162,19 @@ enyo.kind({
 			(!this.downEvent.dispatchTarget.isDescendantOf(this))) {
 			this.downEvent = null;
 			this.hide();
+			return true;
+		}
+	},
+	// suppress drag events for scrimmed popups
+	dragstart: function(inSender, inEvent) {
+		return true;
+
+	},
+	// make sure modal popups close any time the mouse is down outside of the popup and its children
+	mousedown: function(inSender, inEvent) {
+		var inScope = (inEvent.dispatchTarget === this || inEvent.dispatchTarget.isDescendantOf(this));
+		if (this.modal && !inScope) {
+			this.setShowing(false);
 			return true;
 		}
 	},
