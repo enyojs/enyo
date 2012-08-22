@@ -102,6 +102,9 @@
 		finish: function() {
 			this.packageFolder = "";
 			this.verbose && console.log("-------------- fini");
+			if (this.finishCallback) {
+				this.finishCallback();
+			}
 		},
 		continueBlock: function(inBlock) {
 			while (inBlock.index < inBlock.depends.length) {
