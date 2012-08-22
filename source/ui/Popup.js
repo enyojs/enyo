@@ -44,6 +44,7 @@ enyo.kind({
 	handlers: {
 		ondown: "down",
 		onkeydown: "keydown",
+		ondragstart: "dragstart",
 		onfocus: "focus",
 		onblur: "blur",
 		onRequestShow: "requestShow",
@@ -162,6 +163,14 @@ enyo.kind({
 			this.hide();
 			return true;
 		}
+	},
+	// if a drag event occurs outside a popup, hide
+	dragstart: function(inSender, inEvent) {
+		var inScope = (inEvent.dispatchTarget === this || inEvent.dispatchTarget.isDescendantOf(this));
+		if (inSender.autoDismiss && !inScope) {
+			inSender.setShowing(false);
+		}
+		return true;
 	},
 	keydown: function(inSender, inEvent) {
 		if (this.showing && this.autoDismiss && inEvent.keyCode == 27 /* escape */) {
