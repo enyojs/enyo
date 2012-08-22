@@ -171,7 +171,6 @@ enyo.kind({
 			inSender.setShowing(false);
 		}
 		return true;
-
 	},
 	keydown: function(inSender, inEvent) {
 		if (this.showing && this.autoDismiss && inEvent.keyCode == 27 /* escape */) {
