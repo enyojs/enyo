@@ -105,6 +105,6 @@ enyo.kind({
 		if (inDelegate == this) {
 			inDelegate = this.owner.owner;
 		}
-		this.inherited(arguments, [inDelegate, inName, inEventName, inEvent, inSender]);
+		return this.inherited(arguments, [inDelegate, inName, inEventName, inEvent, inSender]);
 	}
 });
