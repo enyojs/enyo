@@ -19,7 +19,7 @@ enyo.machine = {
 			var script = document.createElement('script');
 			script.src = inSrc;
 			script.onLoad = onLoad;
-			script.onLoad = onError;
+			script.onError = onError;
 			document.getElementsByTagName('head')[0].appendChild(script);
 		}
 	},
@@ -77,6 +77,7 @@ enyo._runtimeLoad = function(onLoad) {
 			});
 		}
 		enyo.loader.packageFolder = "./";
+		// Kick off next queued call to loader
 		enyo.depends.apply(this, dependsArg);
 	} else {
 		enyo.runtimeLoading = false;
