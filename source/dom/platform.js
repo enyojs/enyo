@@ -3,9 +3,12 @@
 	Can have one of the following properties:
 
 	* android
+	* androidChrome (Chrome on Android, standard starting in 4.1)
 	* ie
 	* ios
 	* webos
+	* safari (desktop version)
+	* chrome (desktop version)
 
 	If the property is defined, its value will be the major version	number
 	of the platform.
@@ -32,6 +35,8 @@ enyo.platform = {
 	var ua = navigator.userAgent;
 	var ep = enyo.platform;
 	var platforms = [
+		// Android 4+ using Chrome
+		{platform: "androidChrome", regex: /Android .* Chrome\/(\d+)[.\d]+/},
 		// Android 2 - 4
 		{platform: "android", regex: /Android (\d+)/},
 		// Kindle Fire
@@ -45,7 +50,9 @@ enyo.platform = {
 		// webOS 1 - 3
 		{platform: "webos", regex: /(?:web|hpw)OS\/(\d+)/},
 		// desktop safari
-		{platform: "safari", regex: /Version\/(\d+)[.\d]+\s+Safari/}
+		{platform: "safari", regex: /Version\/(\d+)[.\d]+\s+Safari/},
+		// desktop Chrome
+		{platform: "chrome", regex: /Chrome\/(\d+)[.\d]+/}
 	];
 	for (var i = 0, p, m, v; p = platforms[i]; i++) {
 		m = p.regex.exec(ua);

@@ -100,7 +100,9 @@ enyo.requiresWindow(function() {
 				document[e] = enyo.dispatch;
 			});
 			// use proper target finding technique based on feature detection.
-			if (!document.elementFromPoint) {
+			// HACK: on Chrome for Android v18 on devices with higher density displays,
+			// document.elementFromPoint fails because of an internal scaling problem.
+			if (!document.elementFromPoint || enyo.platform.androidChrome <= 18) {
 				this.findTarget = function(inX, inY) {
 					return this.findTargetTraverse(null, inX, inY);
 				};
