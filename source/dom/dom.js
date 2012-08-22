@@ -67,5 +67,61 @@ enyo.dom = {
 			return document.documentElement.offsetWidth;
 		}
 		return 320;
+	},
+	// moved from FittableLayout.js into common protected code
+	_ieCssToPixelValue: function(inNode, inValue) {
+		var v = inValue;
+		// From the awesome hack by Dean Edwards
+		// http://erik.eae.net/archives/2007/07/27/18.54.15/#comment-102291
+		var s = inNode.style;
+		// store style and runtime style values
+		var l = s.left;
+		var rl = inNode.runtimeStyle && inNode.runtimeStyle.left;
+		// then put current style in runtime style.
+		if (rl) {
+			inNode.runtimeStyle.left = inNode.currentStyle.left;
+		}
+		// apply given value and measure its pixel value
+		s.left = v;
+		v = s.pixelLeft;
+		// finally restore previous state
+		s.left = l;
+		if (rl) {
+			s.runtimeStyle.left = rl;
+		}
+		return v;
+	},
+	_pxMatch: /px/i,
+	getComputedBoxValue: function(inNode, inProp, inBoundary, inComputedStyle) {
+		var s = inComputedStyle || this.getComputedStyle(inNode);
+		if (s) {
+			return parseInt(s.getPropertyValue(inProp + "-" + inBoundary), 0);
+		} else if (inNode && inNode.currentStyle) {
+			var v = inNode.currentStyle[inProp + enyo.cap(inBoundary)];
+			if (!v.match(this._pxMatch)) {
+				v = this._ieCssToPixelValue(inNode, v);
+			}
+			return parseInt(v, 0);
+		}
+		return 0;
+	},
+	//* @public
+	//* Gets the boundaries of a node's margin or padding box.
+	calcBoxExtents: function(inNode, inBox) {
+		var s = this.getComputedStyle(inNode);
+		return {
+			top: this.getComputedBoxValue(inNode, inBox, "top", s),
+			right: this.getComputedBoxValue(inNode, inBox, "right", s),
+			bottom: this.getComputedBoxValue(inNode, inBox, "bottom", s),
+			left: this.getComputedBoxValue(inNode, inBox, "left", s)
+		};
+	},
+	//* Gets the calculated padding of a node.
+	calcPaddingExtents: function(inNode) {
+		return this.calcBoxExtents(inNode, "padding");
+	},
+	//* Gets the calculated margin of a node.
+	calcMarginExtents: function(inNode) {
+		return this.calcBoxExtents(inNode, "margin");
 	}
 };
