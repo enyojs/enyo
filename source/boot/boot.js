@@ -50,42 +50,44 @@ enyo.depends = function() {
 //  where - depends is string or array of string paths to package.js, script, or css to load
 //        - doneCallback is fired after file or package loading has completed
 // Only one file/package is loaded at a time; additional calls are queued and loading deferred
-enyo.runtimeLoadQueue = [];
-enyo.load = function(depends, onLoadCallback) {
-	enyo.runtimeLoadQueue.push(arguments);
-	if (!enyo.runtimeLoading) {
-		enyo.runtimeLoading = true;
-		enyo._runtimeLoad();
-	}
-}
-enyo._runtimeLoad = function(onLoad) {
-	if (onLoad) {
-		onLoad(); // Run user callback function
-	}
-	if (enyo.runtimeLoadQueue.length) {
-		var args = enyo.runtimeLoadQueue.shift();
-		var depends = args[0];
-		var dependsArg = enyo.isArray(depends) ? depends : [depends];
-		var onLoadCallback = args[1];
-		enyo.loader.finishCallback = function() {
-			// Once loader is done loading a package, we chain a call to _runtimeLoad(),
-			// which will call the onLoadCallback from the original load call, passing
-			// a reference to the depends argument from the original call for tracking,
-			// followed by kicking off any additionally queued load() calls
-			enyo._runtimeLoad(function() {
-				onLoadCallback && onLoadCallback(depends);
-			});
+(function() {
+	var enyo = window.enyo;
+	var runtimeLoadQueue = [];
+	enyo.load = function(depends, onLoadCallback) {
+		runtimeLoadQueue.push(arguments);
+		if (!enyo.runtimeLoading) {
+			enyo.runtimeLoading = true;
+			runtimeLoad();
 		}
-		enyo.loader.packageFolder = "./";
-		// Kick off next queued call to loader
-		enyo.depends.apply(this, dependsArg);
-	} else {
-		enyo.runtimeLoading = false;
-		enyo.loader.finishCallback = null;
-		enyo.loader.packageFolder = "";
 	}
-}
-
+	function runtimeLoad(onLoad) {
+		if (onLoad) {
+			onLoad(); // Run user callback function
+		}
+		if (runtimeLoadQueue.length) {
+			var args = runtimeLoadQueue.shift();
+			var depends = args[0];
+			var dependsArg = enyo.isArray(depends) ? depends : [depends];
+			var onLoadCallback = args[1];
+			enyo.loader.finishCallback = function() {
+				// Once loader is done loading a package, we chain a call to runtimeLoad(),
+				// which will call the onLoadCallback from the original load call, passing
+				// a reference to the depends argument from the original call for tracking,
+				// followed by kicking off any additionally queued load() calls
+				runtimeLoad(function() {
+					onLoadCallback && onLoadCallback(depends);
+				});
+			}
+			enyo.loader.packageFolder = "./";
+			// Kick off next queued call to loader
+			enyo.depends.apply(this, dependsArg);
+		} else {
+			enyo.runtimeLoading = false;
+			enyo.loader.finishCallback = null;
+			enyo.loader.packageFolder = "";
+		}
+	}
+})();
 
 // predefined path aliases
 enyo.path.addPaths({
