@@ -56,6 +56,33 @@ enyo.kind = function(inProps) {
 	return ctor;
 };
 
+/**
+	Creates a Singleton
+	
+		enyo.singleton({
+			kind: Control,
+			name: "app.MySingleton",
+			published: {
+				value: "foo"
+			},
+			makeSomething: function() {
+				//...
+			}
+		});
+		
+		app.MySingleton.makeSomething();
+		app.MySingleton.setValue("bar");
+*/
+enyo.singleton = function(conf, context) {
+	// extract 'name' property (the name of our singleton)
+	var name = conf.name;
+	delete(conf.name);
+	// create an unnamed kind and save its constructor's function
+	var kind = enyo.kind(conf);
+	// create the singleton with the previous name and constructor
+	enyo.setObject(name, new kind(), context);
+};
+
 //* @protected
 enyo.kind.makeCtor = function() {
 	return function() {
