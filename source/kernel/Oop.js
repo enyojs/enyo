@@ -73,14 +73,39 @@ enyo.kind = function(inProps) {
 		app.MySingleton.makeSomething();
 		app.MySingleton.setValue("bar");
 */
+enyo._singletonCtr = {};
+enyo._singletonInstance = {};
 enyo.singleton = function(conf, context) {
 	// extract 'name' property (the name of our singleton)
 	var name = conf.name;
 	delete(conf.name);
+
 	// create an unnamed kind and save its constructor's function
-	var kind = enyo.kind(conf);
-	// create the singleton with the previous name and constructor
-	enyo.setObject(name, new kind(), context);
+	enyo._singletonCtr[name] = enyo.kind(conf);
+
+	// extract path and kind name
+	var parts=name.split("."), p=parts.pop(), obj=enyo._getProp(parts, true, context);
+
+	// Lazy loader
+	var getFunc = function() {
+		// Check if the instance exist
+		if (!enyo._singletonInstance[name]) {
+			enyo._singletonInstance[name] = new enyo._singletonCtr[name]();
+		}
+		return enyo._singletonInstance[name];
+	};
+	if (Object.defineProperty) {
+		// ECMA-262 - ECMAScript 5
+		Object.defineProperty(obj, p, { get: getFunc});
+	}
+	else if (obj.__defineGetter__) {
+		// Often implemented (but not in IE)
+		obj.__defineGetter__(p, getFunc);
+	}
+	else {
+		// Last chance, don't make it lazy
+		enyo.setObject(name, new enyo._singletonCtr[name](), context);
+	}
 };
 
 //* @protected
