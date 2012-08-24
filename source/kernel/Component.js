@@ -42,22 +42,24 @@ enyo.kind({
 	kind: enyo.Object,
 	published: {
 		/**
-			a unique name for the component within its owner.  This is used to
-			set the access name in the owner's _$_ hash.  If not specified,
-			a default name will be provided based on the name of the object's
-			kind, optionally with a number suffix if more than one instance exists
-			in the owner.
+			A unique name for the component within its owner. This is used to
+			set the access name in the owner's _$_ hash.  If not specified, a
+			default name will be provided based on the name of the object's
+			kind, optionally with a number suffix if more than one instance
+			exists in the owner.
 		*/
 		name: "",
 		/**
-			unique id for the component, usually automatically generated based on 
-			its position in the component hierarchy, but can be directly specified.
-			enyo.Control uses this id value for the DOM id attribute.
+			A unique id for the component, usually automatically generated based
+			on its position within the component hierarchy, although it may also
+			be directly specified. _enyo.Control_ uses this id value for the DOM
+			id attribute.
 		*/
 		id: "",
 		/**
-			what component owns this component. Usually implicitly defined during
-			creation based on the _createComponent_ call or _components_ hash.
+			The component that owns this component. It is usually implicitly
+			defined	during creation based on the _createComponent_ call or
+			_components_ hash.
 		*/
 		owner: null
 	},
@@ -119,9 +121,9 @@ enyo.kind({
 	},
 	//* @public
 	/**
-		Removes this Component from its owner (sets owner to null) and does any
-		cleanup. The Component is flagged with a _destroyed: true_ property.
-		Usually the Component will be suitable for garbage collection after 
+		Removes this component from its owner (sets _owner_ to null) and does
+		any	cleanup. The component is flagged with a _destroyed: true_ property.
+		Usually the component will be suitable for garbage collection after 
 		being destroyed, unless user code keeps a reference to it.
 	*/
 	destroy: function() {
@@ -209,7 +211,7 @@ enyo.kind({
 	},
 	//* @public
 	/**
-		Returns an Array of owned components. In other words, converts the _$_
+		Returns an array of owned components; in other words, converts the _$_
 		hash into an array and returns the array.
 	*/
 	getComponents: function() {
@@ -235,13 +237,14 @@ enyo.kind({
 	},
 	//* @public
 	/**
-		Creates and returns a Component as defined by the combination of
-		_inInfo_ and _inMoreInfo_.
-		The created Component passes through initialization machinery provided
+		Creates and returns a component as defined by the combination of
+		_inInfo_ and _inMoreInfo_. Properties in _inInfo_ override properties in
+		_inMoreInfo_.
+		
+		The created component passes through initialization machinery provided
 		by the creating component, which may supply special handling.
-		Unless the owner is explicitly specified, the new component will
-		be owned by the instance on which _createComponents_ is called.
-		Properties in _inInfo_ override properties in _inMoreInfo_.
+		Unless the owner is explicitly specified, the new component will be
+		owned by the instance on which _createComponent_ is called.
 
 			// Create a new component named _dynamic_ owned by _this_ 
 			// (will be available as this.$.dynamic).
@@ -257,8 +260,8 @@ enyo.kind({
 		return this._createComponent(inInfo, inMoreInfo);
 	},
 	/**
-		Creates Components as defined by the array of configurations _inInfo_. 
-		Each configuration in _inInfo_ is combined with _inCommonInfo_ as 
+		Creates Components as defined by the array of configurations _inInfos_.
+		Each configuration in _inInfos_ is combined with _inCommonInfo_ as
 		described in _createComponent_.
 
 		_createComponents_ returns an array of references to the created components.
@@ -400,11 +403,11 @@ enyo.kind({
 		return this.bubbleDelegation(inDelegate, inName, inEventName, inEvent, inSender);
 	},
 	/**
-		Dispatch the event to named delegate inMethodName, if it exists.
-		Sub-kinds may re-route dispatches.
+		Dispatches the event to named delegate _inMethodName_, if it exists.
+		Subkinds may re-route dispatches.
 		Note that both 'handlers' events and events delegated from owned controls
 		arrive here. If you need to handle these differently, you may 
-		need to also override dispatchEvent.
+		need to also override _dispatchEvent_.
 	*/
 	dispatch: function(inMethodName, inEvent, inSender) {
 		var fn = inMethodName && this[inMethodName];
