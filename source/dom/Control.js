@@ -93,7 +93,7 @@ enyo.kind({
 	},
 	initProps: function(inPropNames) {
 		// for each named property, trigger the *Changed handler if the property value is truthy
-		for (var i=0, n, cf; n=inPropNames[i]; i++) {
+		for (var i=0, n, cf; (n=inPropNames[i]); i++) {
 			if (this[n]) {
 				// FIXME: awkward
 				cf = n + "Changed";
@@ -196,6 +196,11 @@ enyo.kind({
 		}
 		this.invalidateTags();
 	},
+	/**
+		Get the value of a property named _inName_ directly from the DOM node, with a
+		caller-specified default value, _inDefault_, returned when the DOM node has not
+		yet been created.
+	*/
 	getNodeProperty: function(inName, inDefault) {
 		if (this.hasNode()) {
 			return this.node[inName];
@@ -203,6 +208,11 @@ enyo.kind({
 			return inDefault;
 		}
 	},
+	/**
+		Set the propery _inName_ on the control's DOM node using value _inValue_
+		if and only if the DOM node has been rendered.  This method does not alter
+		any value cached in local properties of the enyo.Control instance.
+	*/
 	setNodeProperty: function(inName, inValue) {
 		if (this.hasNode()) {
 			this.node[inName] = inValue;
@@ -286,6 +296,7 @@ enyo.kind({
 	//
 	// styles
 	//
+	//* @protected
 	initStyles: function() {
 		this.domStyles = this.domStyles || {};
 		enyo.Control.cssTextToDomStyles(this.kindStyle, this.domStyles);
@@ -307,6 +318,7 @@ enyo.kind({
 		this.invalidateTags();
 		this.renderStyles();
 	},
+	//* @public
 	/**
 		Applies a single style value to this object.
 
@@ -331,6 +343,12 @@ enyo.kind({
 		enyo.Control.cssTextToDomStyles(inCssText, this.domStyles);
 		this.domStylesChanged();
 	},
+	/**
+		Return the computed value of a CSS style named from _inStyle_
+		for the DOM node of the enyo.Control.  If the node hasn't been generated,
+		return _inDefault_ as a default value.  This uses JS style property
+		names, not CSS style, so use "fontFamily" instead of "font-family".
+	*/
 	getComputedStyleValue: function(inStyle, inDefault) {
 		if (this.hasNode()) {
 			return enyo.dom.getComputedStyleValue(this.node, inStyle);
@@ -345,6 +363,10 @@ enyo.kind({
 	},
 	stylesToNode: function() {
 		this.node.style.cssText = this.style + (this.style[this.style.length-1] == ';' ? ' ' : '; ') + this.domCssText;
+	},
+	setupBodyFitting: function() {
+		enyo.dom.applyBodyFit();
+		this.addClass("enyo-fit enyo-clip");
 	},
 	//
 	//
@@ -414,10 +436,6 @@ enyo.kind({
 		// support method chaining
 		return this;
 	},
-	setupBodyFitting: function() {
-		enyo.dom.applyBodyFit();
-		this.addClass("enyo-fit enyo-clip");
-	},
 	/**
 		Override this method to perform tasks that require access to the DOM node.
 
@@ -430,7 +448,7 @@ enyo.kind({
 		// CAVEAT: Currently we use one entry point ('reflow') for
 		// post-render layout work *and* post-resize layout work.
 		this.reflow();
-		for (var i=0, c; c=this.children[i]; i++) {
+		for (var i=0, c; (c=this.children[i]); i++) {
 			c.rendered(); 
 		}
 	},
@@ -472,7 +490,7 @@ enyo.kind({
 	setBounds: function(inBounds, inUnit) {
 		var s = this.domStyles, unit = inUnit || "px";
 		var extents = ["width", "height", "left", "top", "right", "bottom"];
-		for (var i=0, b, e; e=extents[i]; i++) {
+		for (var i=0, b, e; (e=extents[i]); i++) {
 			b = inBounds[e];
 			if (b || b === 0) {
 				s[e] = b + (!enyo.isString(b) ? unit : '');
@@ -543,7 +561,7 @@ enyo.kind({
 	},
 	generateChildHtml: function() {
 		var results = '';
-		for (var i=0, c; c=this.children[i]; i++) {
+		for (var i=0, c; (c=this.children[i]); i++) {
 			var h = c.generateHtml();
 			if (c.prepend) {
 				// FIXME: does webkit's fast string-consing work in reverse?
@@ -568,11 +586,10 @@ enyo.kind({
 	},
 	prepareTags: function() {
 		var htmlStyle = this.domCssText + this.style;
-		this._openTag = '<' 
-			+ this.tag
-			+ (htmlStyle ? ' style="' + htmlStyle + '"' : "")
-			+ enyo.Control.attributesToHtml(this.attributes)
-			;
+		this._openTag = '<' +
+			this.tag +
+			(htmlStyle ? ' style="' + htmlStyle + '"' : "") +
+			enyo.Control.attributesToHtml(this.attributes);
 		if (enyo.Control.selfClosing[this.tag]) {
 			this._openTag += '/>';
 			this._closeTag =  '';
@@ -625,7 +642,7 @@ enyo.kind({
 		this.generated = false;
 	},
 	teardownChildren: function() {
-		for (var i=0, c; c=this.children[i]; i++) {
+		for (var i=0, c; (c=this.children[i]); i++) {
 			c.teardownRender();
 		}
 	},
@@ -718,7 +735,7 @@ enyo.kind({
 				// remove spaces between rules, then split rules on delimiter (;)
 				var rules = inText.replace(/; /g, ";").split(";");
 				// parse string styles into name/value pairs
-				for (var i=0, s, n, v, rule; rule=rules[i]; i++) {
+				for (var i=0, s, n, v, rule; (rule=rules[i]); i++) {
 					// "background-image: url(http://foo.com/foo.png)" => ["background-image", "url(http", "//foo.com/foo.png)"]
 					s = rule.split(":");
 					// n = "background-image", s = ["url(http", "//foo.com/foo.png)"]

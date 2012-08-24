@@ -146,6 +146,7 @@ enyo.kind({
 			}
 		});
 	},
+	//* @protected
 	makeId: function() {
 		var delim = "_", pre = this.owner && this.owner.getId();
 		return this.name ? (pre ? pre + delim : "") + this.name : "";
@@ -175,6 +176,7 @@ enyo.kind({
 		// set and return
 		return inComponent.name = n;
 	},
+	//* @public
 	/**
 		Adds _inComponent_ to the list of components owned by the current
 		component (i.e., _this.$_).
@@ -309,14 +311,6 @@ enyo.kind({
 		}
 		return this.dispatchBubble(inEventName, e, inSender);
 	},
-	dispatchBubble: function(inEventName, inEvent, inSender) {
-		// Try to dispatch from here, stop bubbling on truthy return value
-		if (this.dispatchEvent(inEventName, inEvent, inSender)) {
-			return true;
-		}
-		// Bubble to next target
-		return this.bubbleUp(inEventName, inEvent, inSender);
-	},
 	/**
 		Bubbles an event up an object chain, starting <b>above</b> _this_.
 
@@ -374,6 +368,15 @@ enyo.kind({
 		if (this[inEventName]) {
 			return this.bubbleDelegation(this.owner, this[inEventName], inEventName, inEvent, this);
 		}
+	},
+	// internal - try dispatching event to self, if that fails bubble it up the tree
+	dispatchBubble: function(inEventName, inEvent, inSender) {
+		// Try to dispatch from here, stop bubbling on truthy return value
+		if (this.dispatchEvent(inEventName, inEvent, inSender)) {
+			return true;
+		}
+		// Bubble to next target
+		return this.bubbleUp(inEventName, inEvent, inSender);
 	},
 	decorateEvent: function(inEventName, inEvent, inSender) {
 		// an event may float by us as part of a dispatchEvent chain or delegateEvent
