@@ -13,8 +13,10 @@ enyo.kind({
 	name: "enyo.Control",
 	kind: enyo.UiComponent,
 	published: {
-		//* HTML tag name to use for control. If null, no tag is generated; only
-		//* the contents are used.
+		/**
+			HTML tag name to use for the control. If null, no tag is generated;
+			only the contents are used.
+		*/
 		tag: "div",
 		//* Hash of DOM attributes to apply to the generated HTML tag
 		attributes: null,
@@ -22,10 +24,15 @@ enyo.kind({
 		classes: "",
 		//* Style attribute to apply to the generated HTML tag
 		style: "",
-		//* Content that will be generated inside the HTML tag; defaults to
-		//* plain text unless _allowHtml_ is true
+		/**
+			Content that will be generated inside the HTML tag; defaults to
+			plain text unless _allowHtml_ is true
+		*/
 		content: "",
-		//* Boolean indicating whether the tag will be visible or hidden in the document
+		/**
+			Boolean indicating whether the tag will be visible or hidden in the
+			document
+		*/
 		showing: true,
 		//* If false, HTML codes in _content_ are escaped before rendering
 		allowHtml: false,
@@ -140,7 +147,7 @@ enyo.kind({
 	//
 	//* @public
 	/**
-		Returns the DOM node representing the Control.
+		Returns the DOM node representing the control.
 		If the control is not currently rendered, returns null.
 		
 		If hasNode() returns a value, the _node_ property will be valid and 
@@ -168,11 +175,13 @@ enyo.kind({
 	/**
 		Gets the value of an attribute on this object.
 
-		If this Control has a node, the attribute value is retrieved from the node;
-		otherwise, it's read from the _attributes_ property of the control itself.
+		If this control has a node, the attribute value is retrieved from the
+		node; otherwise, it's read from the _attributes_ property of the control
+		itself.
 
-		Caveat: If the control is rendered, the _attributes_ property is used to construct
-		the rendering, and values that have changed on the node itself are lost.
+		Caveat: If the control is rendered, the _attributes_ property is used to
+		construct the rendering, and values that have changed on the node itself
+		are lost.
 
 			// Get the value attribute for this DomNode
 			var value = this.getAttribute("tabIndex");
@@ -181,7 +190,8 @@ enyo.kind({
 		return this.hasNode() ? this.node.getAttribute(inName) : this.attributes[inName];
 	},
 	/**
-		Sets the value of an attribute on this object. Pass null _inValue_ to remove an attribute.
+		Sets the value of an attribute on this object. Pass null _inValue_ to
+		remove an attribute.
 
 			// set the tabIndex attribute for this DomNode
 			this.setAttribute("tabIndex", 3);
@@ -197,9 +207,9 @@ enyo.kind({
 		this.invalidateTags();
 	},
 	/**
-		Get the value of a property named _inName_ directly from the DOM node, with a
-		caller-specified default value, _inDefault_, returned when the DOM node has not
-		yet been created.
+		Gets the value of a property named _inName_ directly from the DOM node.
+		A caller-specified default value, _inDefault_, is returned when the DOM
+		node has not yet been created.
 	*/
 	getNodeProperty: function(inName, inDefault) {
 		if (this.hasNode()) {
@@ -209,9 +219,10 @@ enyo.kind({
 		}
 	},
 	/**
-		Set the propery _inName_ on the control's DOM node using value _inValue_
-		if and only if the DOM node has been rendered.  This method does not alter
-		any value cached in local properties of the enyo.Control instance.
+		Sets the value of the _inName_ property on the control's DOM node to
+		_inValue_, if and only if the DOM node has been rendered.  This method
+		does not alter any values cached in local properties of the
+		_enyo.Control_ instance.
 	*/
 	setNodeProperty: function(inName, inValue) {
 		if (this.hasNode()) {
@@ -239,11 +250,12 @@ enyo.kind({
 		return this.attributes["class"] || "";
 	},
 	/**
-		Returns true if the _class_ attribute contains a substring matching _inClass_.
+		Returns true if the _class_ attribute contains a substring matching
+		_inClass_.
 
 		The _class_ attribute is a string that can contain multiple CSS classes.
 		This method tests whether a particular class is part of the set of
-		classes on this Control.
+		classes on this control.
 
 			// returns true if _class_ is "bar foo baz", but false for "barfoobaz"
 			var hasFooClass = this.$.control.hasClass("foo");
@@ -268,8 +280,9 @@ enyo.kind({
 
 		_inClass_ must have no leading or trailing spaces.
 		
-		Using a compound class name is supported, but the name is treated atomically.
-		For example, given "a b c", removeClass("a b") will produce "c", but removeClass("a c") will produce "a b c".
+		Using a compound class name is supported, but the name is treated
+		atomically. For example, given _"a b c"_, _removeClass("a b")_ will
+		produce _"c"_, but _removeClass("a c")_ will produce _"a b c"_.
 
 			// remove the highlight class from this object
 			this.removeClass("highlight");
@@ -282,10 +295,11 @@ enyo.kind({
 		}
 	},
 	/**
-		Adds or removes substring _inClass_ from the _class_ attribute of this object based
-		on the value of _inTrueToAdd_.
+		Adds or removes substring _inClass_ from the _class_ attribute of this
+		object based on the value of _inTrueToAdd_.
 
-		If _inTrueToAdd_ is truthy, then _inClass_ is added; otherwise, _inClass_ is removed.
+		If _inTrueToAdd_ is truthy, then _inClass_ is added; otherwise,
+		_inClass_ is removed.
 
 			// add or remove the highlight class, depending on the "highlighted" property
 			this.addRemoveClass("highlight", this.highlighted);
@@ -344,10 +358,11 @@ enyo.kind({
 		this.domStylesChanged();
 	},
 	/**
-		Return the computed value of a CSS style named from _inStyle_
-		for the DOM node of the enyo.Control.  If the node hasn't been generated,
-		return _inDefault_ as a default value.  This uses JS style property
-		names, not CSS style, so use "fontFamily" instead of "font-family".
+		Returns the computed value of a CSS style named from _inStyle_
+		for the DOM node of the control. If the node hasn't been generated,
+		returns _inDefault_ as a default value. This uses JavaScript-style
+		property names, not CSS-style names, so use "fontFamily" instead of
+		"font-family".
 	*/
 	getComputedStyleValue: function(inStyle, inDefault) {
 		if (this.hasNode()) {
@@ -479,9 +494,11 @@ enyo.kind({
 		return {left: n.offsetLeft, top: n.offsetTop, width: n.offsetWidth, height: n.offsetHeight};
 	},
 	/**
-		Sets any or all of geometry style properties _width_, _height_, _left_, _top_, _right_ and _bottom_.
+		Sets any or all of the geometry style properties _width_, _height_,
+		_left_, _top_, _right_ and _bottom_.
 
-		Values may be specified as strings (with units specified), or as numbers when a unit is provided in _inUnit_.
+		Values may be specified as strings (with units included), or as numbers
+		when a unit is provided in _inUnit_.
 
 			this.setBounds({width: 100, height: 100}, "px"); // adds style properties like "width: 100px; height: 100px;"
 			//
@@ -715,8 +732,10 @@ enyo.kind({
 	//
 	statics: {
 		/**
-			Returns passed-in string with ampersand, less-than, and greater-than characters replaced by HTML entities, 
-			e.g. '&lt;code&gt;"This &amp; That"&lt;/code&gt;' becomes '&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;' 
+			Returns passed-in string with ampersand, less-than, and greater-than
+			characters replaced by HTML entities, e.g.,
+			'&lt;code&gt;"This &amp; That"&lt;/code&gt;' becomes
+			'&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;' 
 		*/
 		escapeHtml: function(inText) {
 			return inText != null ? String(inText).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
@@ -762,8 +781,9 @@ enyo.kind({
 			return (cssText ? ' style="' + cssText + '"' : "");
 		},
 		/**
-			Returns passed-in string with ampersand and double quote characters replaced by HTML entities, 
-			e.g. 'hello from "Me & She"' becomes 'hello from &amp;quot;Me &amp;amp; She&amp;quot;' 
+			Returns passed-in string with ampersand and double quote characters
+			replaced by HTML entities, e.g., 'hello from "Me & She"' becomes
+			'hello from &amp;quot;Me &amp;amp; She&amp;quot;' 
 		*/
 		escapeAttribute: function(inText) {
 			return !enyo.isString(inText) ? inText : String(inText).replace(/&/g,'&amp;').replace(/\"/g,'&quot;');
