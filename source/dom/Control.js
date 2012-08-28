@@ -1,12 +1,12 @@
 /**
-	An _enyo.Control_ is a component that controls a DOM node (i.e., an element
-	in the user interface). Controls are generally visible and the user often
+	_enyo.Control_ is a component that controls a DOM node (i.e., an element in
+	the user interface). Controls are generally visible and the user often
 	interacts with them directly. While things like buttons and input boxes are
 	obviously controls, in Enyo, a control may become as complex as an entire
 	application.
 
-	For more information, see the
-	<a href="https://github.com/enyojs/enyo/wiki/Creating-Controls">documentation on Controls</a>
+	For more information, see the documentation on
+	<a href="https://github.com/enyojs/enyo/wiki/Creating-Controls">Controls</a>
 	in the Enyo Developer Guide.
 */
 enyo.kind({
@@ -29,10 +29,7 @@ enyo.kind({
 			plain text unless _allowHtml_ is true
 		*/
 		content: "",
-		/**
-			Boolean indicating whether the tag will be visible or hidden in the
-			document
-		*/
+		//*	Boolean indicating whether the tag will be visible in the document
 		showing: true,
 		//* If false, HTML codes in _content_ are escaped before rendering
 		allowHtml: false,
@@ -167,7 +164,8 @@ enyo.kind({
 		return this.generated && (this.node || this.findNodeById());
 	},
 	/**
-		Appends the String value of _inAddendum_ to the _content_ of this Control.
+		Appends the string value of _inAddendum_ to the _content_ of this
+		control.
 	*/
 	addContent: function(inAddendum) {
 		this.setContent(this.content + inAddendum);

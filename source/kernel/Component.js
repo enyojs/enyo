@@ -341,16 +341,17 @@ enyo.kind({
 	},
 	//* @protected
 	/**
-		Dispatch refers to sending an event to a named delegate.
+		Dispatching refers to sending an event to a named delegate.
 		This object may dispatch an event to itself via a handler, 
-		or to it's owner ia an event property.
-		e.g.
+		or to its owner via an event property, e.g.:
+		
 			handlers {
 				// 'tap' events dispatched to this.tapHandler
 				ontap: "tapHandler"
 			}
-			// 'tap' dispatched to 'tapHandler' delegate in this.owner
-			ontap: "tapHandler",
+			
+			// 'tap' events dispatched to 'tapHandler' delegate in this.owner
+			ontap: "tapHandler"
 	*/
 	dispatchEvent: function(inEventName, inEvent, inSender) {
 		// bottleneck event decoration
