@@ -88,6 +88,7 @@ enyo.kind({
 	},
 	destroy: function() {
 		this.removeNodeFromDom();
+		enyo.Control.unregisterDomEvents(this.id);
 		this.inherited(arguments);
 	},
 	importProps: function(inProps) {
