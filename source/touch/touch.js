@@ -100,9 +100,14 @@ enyo.requiresWindow(function() {
 				document[e] = enyo.dispatch;
 			});
 			// use proper target finding technique based on feature detection.
-			// HACK: on Chrome for Android v18 on devices with higher density displays,
-			// document.elementFromPoint fails because of an internal scaling problem.
-			if (!document.elementFromPoint || enyo.platform.androidChrome <= 18) {
+			if (enyo.platform.androidChrome <= 18) {
+				// HACK: on Chrome for Android v18 on devices with higher density displays,
+				// document.elementFromPoint uses wrong pixel system, so manually scale
+				var dpr = window.devicePixelRatio;
+				this.findTarget = function(inX, inY) {
+					return document.elementFromPoint(inX * dpr, inY * dpr);
+				};
+			} else if (!document.elementFromPoint) {
 				this.findTarget = function(inX, inY) {
 					return this.findTargetTraverse(null, inX, inY);
 				};
