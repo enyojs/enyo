@@ -56,8 +56,8 @@ enyo.dispatcher = {
 	//* Takes an Event.target and finds the corresponding Enyo control.
 	findDispatchTarget: function(inNode) {
 		var t, n = inNode;
-		// FIXME: Mozilla: try/catch is here to squelch "Permission denied to access property xxx from a non-chrome context" 
-		// which appears to happen for scrollbar nodes in particular. It's unclear why those nodes are valid targets if 
+		// FIXME: Mozilla: try/catch is here to squelch "Permission denied to access property xxx from a non-chrome context"
+		// which appears to happen for scrollbar nodes in particular. It's unclear why those nodes are valid targets if
 		// it is illegal to interrogate them. Would like to trap the bad nodes explicitly rather than using an exception block.
 		try {
 			while (n) {
@@ -108,7 +108,25 @@ enyo.bubble = function(inEvent) {
 // This string is set on event handlers attributes for DOM elements that
 // don't normally bubble (like onscroll) so that they can participate in the
 // Enyo event system.
-enyo.bubbler = 'enyo.bubble(arguments[0])';
+enyo.bubbler = function() {
+	enyo.bubble(arguments[0]);
+};
+
+/**
+ * Makes given events bubble on specified enyo contol
+ */
+enyo.makeBubble = function() {
+	var args = arguments.slice(0),
+		control = args.shift();
+
+	if(typeof(control) === "object" && typeof(control.hasNode) === "function") {
+		enyo.forEach(args, function(event) {
+			if(this.hasNode()) {
+				this.node.addEventListener(event, enyo.bubbler);
+			}
+		}, control);
+	}
+};
 
 // FIXME: we need to create and initialize dispatcher someplace else to allow overrides
 enyo.requiresWindow(enyo.dispatcher.connect);
