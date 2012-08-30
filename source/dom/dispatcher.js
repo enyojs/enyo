@@ -116,7 +116,7 @@ enyo.bubbler = function() {
  * Makes given events bubble on specified enyo contol
  */
 enyo.makeBubble = function() {
-	var args = arguments.slice(0),
+	var args = Array.prototype.slice.call(arguments, 0),
 		control = args.shift();
 
 	if(typeof(control) === "object" && typeof(control.hasNode) === "function") {
