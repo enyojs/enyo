@@ -445,7 +445,7 @@ enyo.defaultCtor = enyo.Component;
 
 enyo.create = enyo.Component.create = function(inConfig) {
 	if (!inConfig.kind && ("kind" in inConfig)) {
-		throw "enyo.create: Attempt to create a null kind. Check dependencies for [" + inConfig.name + "].";
+		throw "enyo.create: Attempt to create a null kind. Check dependencies for [" + (inConfig.name || "") + "].";
 	}
 	var kind = inConfig.kind || inConfig.isa || enyo.defaultCtor;
 	var ctor = enyo.constructorForKind(kind);
