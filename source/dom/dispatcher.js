@@ -14,6 +14,13 @@ enyo.dispatcher = {
 			d.listen(document, n);
 		}
 		for (i=0, n; n=d.windowEvents[i]; i++) {
+			// Chrome Packaged Apps don't like "unload"
+			if(n === "unload"
+					&& typeof(window.chrome) === "object"
+					&& window.chrome.extension) {
+				continue;
+			}
+
 			d.listen(window, n);
 		}
 	},
