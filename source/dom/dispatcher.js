@@ -115,25 +115,34 @@ enyo.bubble = function(inEvent) {
 // This string is set on event handlers attributes for DOM elements that
 // don't normally bubble (like onscroll) so that they can participate in the
 // Enyo event system.
-enyo.bubbler = function() {
-	enyo.bubble(arguments[0]);
-};
+enyo.bubbler = "enyo.bubble(arguments[0])";
 
-/**
- * Makes given events bubble on specified enyo contol
- */
-enyo.makeBubble = function() {
-	var args = Array.prototype.slice.call(arguments, 0),
-		control = args.shift();
+// The code below helps make Enyo compatible with Google Packages Apps
+// Content Security Policy(http://developer.chrome.com/extensions/contentSecurityPolicy.html)
+// which, among other things forbids use of inline scripts.
+// We replace online scripting with equivalent means, leaving enyo.bubbler
+// for backward compatibility.
+(function() {
+	var bubbleUp = function() {
+		enyo.bubble(arguments[0]);
+	};
 
-	if(typeof(control) === "object" && typeof(control.hasNode) === "function") {
-		enyo.forEach(args, function(event) {
-			if(this.hasNode()) {
-				this.node.addEventListener(event, enyo.bubbler);
-			}
-		}, control);
-	}
-};
+	/**
+	 * Makes given events bubble on specified enyo contol
+	 */
+	enyo.makeBubble = function() {
+		var args = Array.prototype.slice.call(arguments, 0),
+			control = args.shift();
+
+		if(typeof(control) === "object" && typeof(control.hasNode) === "function") {
+			enyo.forEach(args, function(event) {
+				if(this.hasNode()) {
+					this.node.addEventListener(event, bubbleUp);
+				}
+			}, control);
+		}
+	};
+})();
 
 // FIXME: we need to create and initialize dispatcher someplace else to allow overrides
 enyo.requiresWindow(enyo.dispatcher.connect);
