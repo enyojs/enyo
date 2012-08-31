@@ -17,7 +17,7 @@ enyo.dispatcher = {
 			// Chrome Packaged Apps don't like "unload"
 			if(n === "unload"
 					&& typeof(window.chrome) === "object"
-					&& window.chrome.extension) {
+					&& window.chrome.app) {
 				continue;
 			}
 
