@@ -23,6 +23,7 @@ enyo.kind({
 	handlers: {
 		onresize: "resizeHandler"
 	},
+	//* @protected
 	statics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
 	},
@@ -120,7 +121,7 @@ enyo.kind({
 	*/
 	getClientControls: function() {
 		var results = [];
-		for (var i=0, cs=this.controls, c; c=cs[i]; i++) {
+		for (var i=0, cs=this.controls, c; (c=cs[i]); i++) {
 			if (!c.isChrome) {
 				results.push(c);
 			}
@@ -133,7 +134,7 @@ enyo.kind({
 	*/
 	destroyClientControls: function() {
 		var c$ = this.getClientControls();
-		for (var i=0, c; c=c$[i]; i++) {
+		for (var i=0, c; (c=c$[i]); i++) {
 			c.destroy();
 		}
 	},
@@ -270,7 +271,7 @@ enyo.kind({
 			}
 		}
 		// waterfall to my children
-		for (var i=0, cs=this.children, c; c=cs[i]; i++) {
+		for (var i=0, cs=this.children, c; (c=cs[i]); i++) {
 			// Do not send {showingOnly: true} events to hidden controls. This flag is set for resize events 
 			// which are broadcast from within the framework. This saves a *lot* of unnecessary layout.
 			// TODO: Maybe remember that we did this, and re-send those messages on setShowing(true)? 

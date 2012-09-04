@@ -15,6 +15,7 @@
 enyo.kind({
 	name: "enyo.Signals",
 	kind: enyo.Component,
+	//* @protected
 	create: function() {
 		this.inherited(arguments);
 		enyo.Signals.addListener(this);
