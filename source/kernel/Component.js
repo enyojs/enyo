@@ -230,6 +230,9 @@ enyo.kind({
 		inProps.owner = inProps.owner || this;
 	},
 	_createComponent: function(inInfo, inMoreInfo) {
+		if (!inInfo.kind && ("kind" in inInfo)) {
+			throw "enyo.create: Attempt to create a null kind. Check dependencies for [" + inInfo.name + "].";
+		}
 		// CAVEAT: inInfo and inMoreInfo are copied before mutation, but it's only a shallow copy
 		var props = enyo.mixin(enyo.clone(inMoreInfo), inInfo);
 		this.adjustComponentProps(props);
@@ -442,7 +445,7 @@ enyo.defaultCtor = enyo.Component;
 
 enyo.create = enyo.Component.create = function(inConfig) {
 	if (!inConfig.kind && ("kind" in inConfig)) {
-		throw "enyo.create: Attempt to create a null kind. Check dependencies.";
+		throw "enyo.create: Attempt to create a null kind. Check dependencies for [" + (inConfig.name || "") + "].";
 	}
 	var kind = inConfig.kind || inConfig.isa || enyo.defaultCtor;
 	var ctor = enyo.constructorForKind(kind);
