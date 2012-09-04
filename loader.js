@@ -132,10 +132,10 @@
 			// assemble path
 			path = prefix + path;
 			// process path
-			if (path.slice(-3) == "css") {
+			if (path.slice(-4) == ".css") {
 				this.verbose && console.log("+ stylesheet: [" + prefix + "][" + inPath + "]");
 				this.requireStylesheet(path);
-			} else if (path.slice(-2) == "js" && path.slice(-10) != "package.js") {
+			} else if (path.slice(-3) == ".js" && path.slice(-10) != "package.js") {
 				this.verbose && console.log("+ module: [" + prefix + "][" + inPath + "]");
 				this.requireScript(inPath, path);
 			} else {
