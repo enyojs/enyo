@@ -3,30 +3,15 @@ var
 	path = require("path"),
 	walker = require("walker"),
 	jsp = require("uglify-js").parser,
-	pro = require("uglify-js").uglify
+	pro = require("uglify-js").uglify,
+	nopt = require("nopt")
 	;
-
-options = function(args) {
-	var opts = {};
-	for (var i=2; i<args.length; i++) {
-		var arg = args[i];
-		if (arg[0] == "-") {
-			var o = arg.slice(1);
-			opts[o] = {enyo: 1, output: 1, alias: 1}[o] ? args[++i] : true;
-		} else {
-			opts.source = arg;
-		}
-	}
-	w(opts);
-	w("");
-	return opts;
-};
 
 function printUsage() {
 	w("Enyo 2.0 Minifier");
 	w("Flags:");
 	w("-no-alias:", "Don't use path macros");
-	w("-alias ALIAS:", "Give paths a macroized alias");
+	w("-alias:", "Give paths a macroized alias");
 	w("-enyo ENYOPATH:", "Path to enyo loader (enyo/enyo.js)");
 	w("-output PATH/NAME:", "name of output file, prepend folder paths to change output directory");
 	w("-h, -?, -help:", "Show this message");
@@ -102,10 +87,10 @@ concatJs = function(loader) {
 	w("");
 	var blob = "";
 	for (var i=0, m; (m=loader.modules[i]); i++) {
-		if (!opt["no-alias"] && !opt.alias) {
+		if (typeof opt.alias === 'undefined' || opt.alias) {
 			w("* inserting path aliases");
 			blob += buildPathBlock(loader);
-			opt["no-alias"] = true;
+			opt.alias = false;
 		}
 		w(m.path);
 		blob += "\n// " + m.rawPath + "\n\n" + compressJsFile(m.path) + "\n";
@@ -165,10 +150,30 @@ finish = function(loader) {
 
 w = console.log;
 
-opt = options(process.argv);
+var knownOpts = {
+  "alias": Boolean,
+  "enyo": String,
+  "output": String,
+  "help": Boolean
+};
+
+var shortHands = {
+  "alias": ['--alias'],
+  "enyo": ['--enyo'],
+  "output": ['--output'],
+  "h": ['--help'],
+  "?": ['--help'],
+  "help": ['--help']
+};
+
+opt = nopt(knownOpts, shortHands, process.argv, 2);
+opt.source = opt.argv.remain[0];
+w(opt);
 w("");
 
-if (opt.help || opt.h || opt["?"]) {
+w("");
+
+if (opt.help) {
 	printUsage();
 	process.exit();
 }
