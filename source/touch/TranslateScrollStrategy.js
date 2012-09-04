@@ -9,16 +9,17 @@ _enyo.TranslateScrollStrategy_ is not typically created in application code.
 enyo.kind({
 	name: "enyo.TranslateScrollStrategy",
 	kind: "TouchScrollStrategy",
-	components: [
-		{name: "clientContainer", classes: "enyo-touch-scroller", attributes: {"onscroll": enyo.bubbler}, components: [
-			{name: "client"}
-		]}
-	],
 	//* Set to true to optimize the strategy to only use translation to scroll; this increases fluidity of
 	//* scrolling animation. It should not be used when the scroller contains controls that require keyboard
 	//* input. This is because when _translateOptimized_ is true, it is possible to position inputs such that 
 	//* they will not become visibile when focused.
 	translateOptimized: false,
+	//* @protected
+	components: [
+		{name: "clientContainer", classes: "enyo-touch-scroller", attributes: {"onscroll": enyo.bubbler}, components: [
+			{name: "client"}
+		]}
+	],
 	getScrollSize: function() {
 		var n = this.$.client.hasNode();
 		return {width: n ? n.scrollWidth : 0, height: n ? n.scrollHeight : 0};
@@ -48,6 +49,7 @@ enyo.kind({
 			this.inherited(arguments);
 		}
 	},
+	//* @public
 	//* Sets the left scroll position within the scroller.
 	setScrollLeft: function(inLeft) {
 		this.stop();
@@ -78,6 +80,7 @@ enyo.kind({
 	getScrollTop: function() {
 		return this.translateOptimized ? this.scrollTop : this.inherited(arguments);
 	},
+	//* @protected
 	scrollMathStart: function(inSender) {
 		this.inherited(arguments);
 		this.scrollStarting = true;
