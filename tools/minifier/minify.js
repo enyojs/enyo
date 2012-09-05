@@ -7,6 +7,11 @@ var
 	nopt = require("nopt")
 	;
 
+// Shimming path.relative with 0.8.8's version if it doesn't exist
+if(!path.relative){
+  path.relative = require('./path-relative-shim').relative;
+}
+
 function printUsage() {
 	w("Enyo 2.0 Minifier");
 	w("Flags:");
@@ -15,25 +20,6 @@ function printUsage() {
 	w("-enyo ENYOPATH:", "Path to enyo loader (enyo/enyo.js)");
 	w("-output PATH/NAME:", "name of output file, prepend folder paths to change output directory");
 	w("-h, -?, -help:", "Show this message");
-}
-
-// make a relative path from source to target
-function makeRelPath(inSource, inTarget) {
-	// node 0.5 has this nice thing, 0.4 does not
-	if (path.relative) {
-		return path.relative(inSource, inTarget);
-	}
-	var s,t;
-	s = pathSplit(path.resolve(inSource));
-	t = pathSplit(path.resolve(inTarget));
-	while (s.length && s[0] === t[0]){
-		s.shift();
-		t.shift();
-	}
-	for(var i = 0, l = s.length; i < l; i++) {
-		t.unshift("..");
-	}
-	return path.join.apply(null, t);
 }
 
 // properly split path based on platform
@@ -67,7 +53,7 @@ concatCss = function(loader) {
 		// get absolute path to referenced asset
 		var normalizedUrlPath = path.join(s, "..", urlPath);
 		// Make relative asset path to built css
-		var relPath = makeRelPath(path.dirname(opt.output || "build"), normalizedUrlPath);
+		var relPath = path.relative(path.dirname(opt.output || "build"), normalizedUrlPath);
 		if (process.platform == "win32") {
 			relPath = pathSplit(relPath).join("/");
 		}
