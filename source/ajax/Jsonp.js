@@ -44,7 +44,6 @@ enyo.kind({
 		script.onerror = enyo.bind(this, function() {
 			// we don't get an error code, so we'll just use the generic 400 error status
 			this.fail(400);
-			this.removeScriptElement();
 		});
 		// add script before existing script to make sure it's in a valid part of document
 		// http://www.jspatterns.com/the-ridiculous-case-of-adding-a-script-element/
