@@ -33,6 +33,7 @@ enyo.kind({
 		this.containerChanged();
 		this.inherited(arguments);
 		this.layoutKindChanged();
+        this._setupObservers();
 	},
 	destroy: function() {
 		// Destroys all non-chrome controls (regardless of owner).

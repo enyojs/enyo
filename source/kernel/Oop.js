@@ -1,4 +1,41 @@
-﻿//* @public
+﻿
+//----------------------- CD: MOVE ME
+
+  /**
+    Functions on objects can have observers automatically
+    created for them during initialization by using this
+    method in their definition.
+
+    Ex.
+
+    enyo.kind({
+      name: "enyo.NewObjectKind",
+      published: {
+        someProperty: ""
+      },
+      somePropertyDidChange: function (property, oldVal, newVal) {
+        this.log("My someProperty changed to " + newVal + " from " + oldVal); 
+      }.observes("someProperty")
+    });
+  */
+  Function.prototype.observes = function () {
+    var a = enyo.toArray(arguments), f = this, i = 0;
+
+    // if the function already has observers, use that array
+    // otherwise we create one
+    f.events = f.events? f.events: [];
+
+    // simply keep track of what properties should fire this
+    // observer when changed
+    for (; i < a.length; ++i) f.events.push(a[i]);
+    return f;
+  };
+
+//-----------------------
+
+
+
+//* @public
 /**
 	Creates a JavaScript constructor function with a prototype defined by
 	_inProps_.
