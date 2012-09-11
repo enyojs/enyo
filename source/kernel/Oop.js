@@ -31,6 +31,14 @@
     return f;
   };
 
+  Function.prototype.computed = function () {
+    var a = enyo.toArray(arguments), f = this, i = 0;
+    f.properties = f.properties? f.properties: [];
+    for (; i < a.length; ++i) f.properties.push(a[i]);
+    f.isProperty = true;
+    return f;
+  };
+
 //-----------------------
 
 

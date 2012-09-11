@@ -20,8 +20,8 @@ enyo.kind({
 	constructor: function() {
 		enyo._objectCount++;
 
-        // setup observers and bindings
-        this._setupObservers();
+        // setup observers, bindings and computed properties
+        this._setup();
 	},
 	/**
 		Sets property named 'n' with value 'v' and then invokes callback
@@ -110,7 +110,7 @@ enyo.kind({
 
     // now sets observers and bindings properly in a single loop
     // instead of 2
-    _setupObservers: function () {
+    _setup: function () {
 	  var p, fn, i, e, b;
 
       //console.log("enyo.Object._setupObservers: ", this.kindName); 
@@ -124,7 +124,7 @@ enyo.kind({
       for (p in this) {
         if (!(fn = this[p])) continue;
         if (enyo.isFunction(fn)) {
-          if (fn.events && fn.events.length > 0) {
+          if (fn.events && fn.events.length > 0 && !fn.isSetup) {
 
             //console.log("enyo.Object._setupObservers: found function with events");
 
@@ -132,15 +132,22 @@ enyo.kind({
               e = fn.events[i];
               this.addObserver(e, fn);
             }
+            fn.isSetup = true;
+          } else if (fn.isProperty && !fn.isSetup) {
+            // LEFT OFF HERE!
+
+
           }
         } else if (fn.kindName && fn.kindName === "enyo._Binding") {
           //console.log("enyo.Object._setupObservers: found a binding for ", p);
+          if (!fn.isSetup);
           b[p] = fn;
           this[p] = "";
           if (!fn.target) fn.target = this;
           if (!fn.targetProp) fn.targetProp = p;
           fn._owner = this;
           fn.create();
+          fn.isSetup = true;
         }
       }
     },
@@ -309,7 +316,7 @@ enyo.Object.addGetterSetter = function(inName, inValue, inProto) {
     targetProp: "",
     source: null,
     sourceProp: null,
-    isOneWay: false,
+    _oneWay: false,
     isConnected: false,
     autoConnect: true,
     autoSync: true,
@@ -368,7 +375,7 @@ enyo.Object.addGetterSetter = function(inName, inValue, inProto) {
       if (!this.isCreated) return this.create();
 
       //console.log("enyo._Binding.connect");
-      var o = this.isOneWay, t, tp, s, sp;
+      var o = this._oneWay, t, tp, s, sp;
       if (this.isConnected) return this;
       if (!this.validate()) {
         return this;
@@ -421,7 +428,7 @@ enyo.Object.addGetterSetter = function(inName, inValue, inProto) {
     syncTarget: function () {
       //console.log("enyo._Binding.syncTarget");
 
-      var o = this.isOneWay, s, sp, v, c, fn, tr = this._transform;
+      var o = this._oneWay, s, sp, v, c, fn, tr = this._transform;
 
       // if its oneWay, changes this direction are ignored
       if (o) return;
@@ -440,10 +447,16 @@ enyo.Object.addGetterSetter = function(inName, inValue, inProto) {
       fn.call(s, tr? tr(v, "target"): v);
     },
     getSourceValue: function () {
-      return this.getSource()[this.sourceProp];
+      var s = this.getSource(), sp = this.sourceProp, n = "get" + enyo.cap(sp), v;
+      v = s[n];
+      if (enyo.isFunction(v)) return v.call(s)
+      else return s[sp];
     },
     getTargetValue: function () {
-      return this.getTarget()[this.targetProp];
+      var t = this.getTarget(), tp = this.targetProp, n = "get" + enyo.cap(tp), v;
+      v = t[n];
+      if (enyo.isFunction(v)) return v.call(t);
+      else return t[tp];
     },
     destroy: function () {
       this.source.removeObserver(this.sourceProp, this._sourceResponder);
@@ -464,11 +477,11 @@ enyo.Object.addGetterSetter = function(inName, inValue, inProto) {
       return this;
     },
     oneWay: function () {
-      this.isOneWay = true; 
+      this._oneWay = true; 
       return this;
     },
     twoWay: function () {
-      this.isOneWay = false;
+      this._oneWay = false;
       return this;
     },
     owner: function () {
