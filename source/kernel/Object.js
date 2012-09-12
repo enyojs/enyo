@@ -262,9 +262,15 @@ enyo.Object.addGetterSetter = function(inName, inValue, inProto) {
 	var cap_n = enyo.cap(priv_n); 
 	var get_n = "get" + cap_n;
 	if (!inProto[get_n]) {
-		inProto[get_n] = function() { 
-			return this[priv_n];
-		};
+	  
+	  // if the value is a function, use that instead
+	  if (enyo.isFunction(inValue) && inValue.isProperty) {
+	    inProto[get_n] = inValue;
+	  } else {
+		  inProto[get_n] = function() { 
+		  	return this[priv_n];
+		  };
+	  }
 	}
 	//
 	var set_n = "set" + cap_n;
