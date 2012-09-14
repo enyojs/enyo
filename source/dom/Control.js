@@ -629,7 +629,6 @@ enyo.kind({
 		}
 	},
 	getParentNode: function() {
-		//return this.parentNode || (this.parent && this.parent.hasNode()) || (this.parent && this.parent.getParentNode && this.parent.getParentNode());
 		return this.parentNode || (this.parent && (this.parent.hasNode() || this.parent.getParentNode()));
 	},
 	addNodeToParent: function() {
