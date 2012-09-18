@@ -14,7 +14,7 @@ enyo.xhr = {
 		- _mimeType_: Optional string to override the MIME-Type.
 	*/
 	request: function(inParams) {
-		var xhr = this.getXMLHttpRequest();
+		var xhr = this.getXMLHttpRequest(inParams.url);
 		//
 		var method = inParams.method || "GET";
 		var async = ("sync" in inParams) ? !inParams.sync : true;
@@ -46,21 +46,48 @@ enyo.xhr = {
 	},
 	//* @protected
 	makeReadyStateHandler: function(inXhr, inCallback) {
+		if (window.XDomainRequest && inXhr instanceof XDomainRequest) {
+			inXhr.onload = function() {
+				inCallback && inCallback.apply(null, [inXhr.responseText, inXhr]);
+			}
+		}
 		inXhr.onreadystatechange = function() {
 			if (inXhr.readyState == 4) {
 				inCallback && inCallback.apply(null, [inXhr.responseText, inXhr]);
 			}
 		};
 	},
-	getXMLHttpRequest: function() {
+	getXMLHttpRequest: function(inUrl) {
+		function inOrigin(inUrl) {
+			// TODO: This really needs better URL parsing/checking
+			var a = document.createElement("a"), result = false;
+			a.href = inUrl;
+			if (a.protocol === ":" || (a.protocol === window.location.protocol && a.hostname === window.location.hostname && a.port === window.location.port)) {
+				result = true;
+			}
+			delete a;
+			return result;
+		}
+		try {
+			if (window.XDomainRequest) {
+				if (/^http/.test(window.location.href)) {
+					if (!inOrigin(inUrl)) {
+						try {
+							return new XDomainRequest();
+						} catch (e) {}
+					}
+				} else if (/^file:\/\//.test(window.location.href)) {
+					try {
+						return new ActiveXObject('Msxml2.XMLHTTP');
+					} catch (e) {}
+					try {
+						return new ActiveXObject('Microsoft.XMLHTTP');
+					} catch (e) {}
+				}
+			}
+		} catch(e) {}
 		try {
 			return new XMLHttpRequest();
-		} catch (e) {}
-		try {
-			return new ActiveXObject('Msxml2.XMLHTTP');
-		} catch (e) {}
-		try {
-			return new ActiveXObject('Microsoft.XMLHTTP');
 		} catch (e) {}
 		return null;
 	}
