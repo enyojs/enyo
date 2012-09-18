@@ -65,18 +65,15 @@ enyo.xhr = {
 			if (a.protocol === ":" || (a.protocol === window.location.protocol && a.hostname === window.location.hostname && a.port === window.location.port)) {
 				result = true;
 			}
-			delete a;
 			return result;
 		}
 		try {
 			if (window.XDomainRequest) {
-				if (/^http/.test(window.location.href)) {
-					if (!inOrigin(inUrl)) {
-						try {
-							return new XDomainRequest();
-						} catch (e) {}
-					}
-				} else if (/^file:\/\//.test(window.location.href)) {
+				if (!inOrigin(inUrl) && !/^file:\/\//.test(inUrl)) {
+					try {
+						return new XDomainRequest();
+					} catch (e) {}
+				} else if (/^file:\/\//.test(inUrl) || (inOrigin(inUrl) && /^file:\/\//.test(window.location.href))) {
 					try {
 						return new ActiveXObject('Msxml2.XMLHTTP');
 					} catch (e) {}
