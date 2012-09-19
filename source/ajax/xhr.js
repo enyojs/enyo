@@ -57,23 +57,23 @@ enyo.xhr = {
 			}
 		};
 	},
-	getXMLHttpRequest: function(inUrl) {
-		function inOrigin(inUrl) {
-			// TODO: This really needs better URL parsing/checking
-			var a = document.createElement("a"), result = false;
-			a.href = inUrl;
-			if (a.protocol === ":" || (a.protocol === window.location.protocol && a.hostname === window.location.hostname && a.port === window.location.port)) {
-				result = true;
-			}
-			return result;
+	//* @protected
+	inOrigin: function(inUrl) {
+		var a = document.createElement("a"), result = false;
+		a.href = inUrl;
+		if (a.protocol === ":" || (a.protocol === window.location.protocol && a.hostname === window.location.hostname && a.port === window.location.port)) {
+			result = true;
 		}
+		return result;
+	},
+	getXMLHttpRequest: function(inUrl) {
 		try {
 			if (window.XDomainRequest) {
-				if (!inOrigin(inUrl) && !/^file:\/\//.test(inUrl)) {
+				if (!this.inOrigin(inUrl) && !/^file:\/\//.test(inUrl)) {
 					try {
 						return new XDomainRequest();
 					} catch (e) {}
-				} else if (/^file:\/\//.test(inUrl) || (inOrigin(inUrl) && /^file:\/\//.test(window.location.href))) {
+				} else if (/^file:\/\//.test(inUrl) || (this.inOrigin(inUrl) && /^file:\/\//.test(window.location.href))) {
 					try {
 						return new ActiveXObject('Msxml2.XMLHTTP');
 					} catch (e) {}
