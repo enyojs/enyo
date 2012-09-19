@@ -68,23 +68,18 @@ enyo.xhr = {
 	},
 	getXMLHttpRequest: function(inUrl) {
 		try {
-			if (window.XDomainRequest) {
-				if (!this.inOrigin(inUrl) && !/^file:\/\//.test(inUrl)) {
-					try {
-						return new XDomainRequest();
-					} catch (e) {}
-				} else if (/^file:\/\//.test(inUrl) || (this.inOrigin(inUrl) && /^file:\/\//.test(window.location.href))) {
-					try {
-						return new ActiveXObject('Msxml2.XMLHTTP');
-					} catch (e) {}
-					try {
-						return new ActiveXObject('Microsoft.XMLHTTP');
-					} catch (e) {}
-				}
+			if (window.XDomainRequest && !this.inOrigin(inUrl) && !/^file:\/\//.test(window.location.href)) {
+				return new XDomainRequest();
 			}
 		} catch(e) {}
 		try {
 			return new XMLHttpRequest();
+		} catch (e) {}
+		try {
+			return new ActiveXObject('Msxml2.XMLHTTP');
+		} catch(e) {}
+		try {
+			return new ActiveXObject('Microsoft.XMLHTTP');
 		} catch (e) {}
 		return null;
 	}
