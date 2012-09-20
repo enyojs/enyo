@@ -49,7 +49,7 @@ enyo.xhr = {
 		if (window.XDomainRequest && inXhr instanceof XDomainRequest) {
 			inXhr.onload = function() {
 				inCallback && inCallback.apply(null, [inXhr.responseText, inXhr]);
-			}
+			};
 		}
 		inXhr.onreadystatechange = function() {
 			if (inXhr.readyState == 4) {
@@ -57,7 +57,6 @@ enyo.xhr = {
 			}
 		};
 	},
-	//* @protected
 	inOrigin: function(inUrl) {
 		var a = document.createElement("a"), result = false;
 		a.href = inUrl;
@@ -74,13 +73,13 @@ enyo.xhr = {
 		} catch(e) {}
 		try {
 			return new XMLHttpRequest();
-		} catch (e) {}
+		} catch(e) {}
 		try {
 			return new ActiveXObject('Msxml2.XMLHTTP');
 		} catch(e) {}
 		try {
 			return new ActiveXObject('Microsoft.XMLHTTP');
-		} catch (e) {}
+		} catch(e) {}
 		return null;
 	}
 };
