@@ -1,14 +1,15 @@
 //* @public
 /**
-	Enyo supports a set of cross-platform gesture events that work similarly on
-	all supported platforms. These events are provided so that users can write a
+	Enyo supports a set of normalized events that work similarly across	all
+	supported platforms. These events are provided so that users can write a
 	single set of event handlers for applications that run on both mobile and
 	desktop platforms.  They are needed because desktop and mobile platforms
-	handle basic gestures differently.
+	handle basic input differently.
 
-	For more information on gesture events and their associated properties,	see
-	the documentation on [Gestures](https://github.com/enyojs/enyo/wiki/Gestures)
-	in the Enyo Developer Guide.
+	For more information on normalized input events and their associated
+	properties,	see	the documentation on
+	[User Input](https://github.com/enyojs/enyo/wiki/User-Input) in the Enyo
+	Developer Guide.
 */
 enyo.gesture = {
 	//* @protected
