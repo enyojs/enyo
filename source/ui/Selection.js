@@ -28,7 +28,7 @@ enyo.kind({
 	name: "enyo.Selection",
 	kind: enyo.Component,
 	published: {
-		//* If true, multiple selections are allowed.
+		//* If true, multiple selections are allowed
 		multi: false
 	},
 	events: {
@@ -40,11 +40,11 @@ enyo.kind({
 				selectRow: function(inSender, inEvent) {
 					...
 
-			_inEvent.key_ is whatever key was used to register 
-			the selection (usually a row index).
-
-			_inEvent.data_ references data registered
-			with this key by the code that made the original selection.
+			_inEvent.key_ is whatever key was used to register the selection
+			(usually a row index).
+			
+			_inEvent.data_ references data registered with this key by the code
+			that made the original selection.
 		*/
 		onSelect: "",
 		/**
@@ -55,14 +55,14 @@ enyo.kind({
 				deselectRow: function(inSender, inEvent)
 					...
 
-			_inEvent.key_ is whatever key was used to request
-			the deselection (usually a row index).
-
-			_inEvent.data_ references data registered
-			with this key by the code that made the selection.
+			_inEvent.key_ is whatever key was used to request the deselection
+			(usually a row index).
+			
+			_inEvent.data_ references data registered with this key by the code
+			that made the selection.
 		*/
 		onDeselect: "",
-		//* Sent when selection changes (but not when the selection is cleared).
+		//* Fires when selection changes (but not when selection is cleared).
 		onChange: ""
 	},
 	//* @protected
@@ -90,7 +90,13 @@ enyo.kind({
 	isSelected: function(inKey) {
 		return this.selected[inKey];
 	},
-	//* Manually sets a row's state to selected or unselected.
+	/**
+		Manually sets a row's state to selected or unselected.
+
+		_inData_ is an optional data object	to store in the selection for
+		that key that will be sent with the	_onSelect_ or _onDeselect_ events.
+		If not used, the data will be set to 'true'.
+	*/
 	setByKey: function(inKey, inSelected, inData) {
 		if (inSelected) {
 			this.selected[inKey] = (inData || true);
@@ -112,6 +118,10 @@ enyo.kind({
 	/**
 		Selects a row. If the _multi_ property is set to false, _select_ will
 		also deselect the previous selection.
+
+		_inData_ is an optional data object	to store in the selection for
+		that key that will be sent with the	_onSelect_ or _onDeselect_ events.
+		If not used, the data will be set to 'true'.
 	*/
 	select: function(inKey, inData) {
 		if (this.multi) {
@@ -124,6 +134,10 @@ enyo.kind({
 	/**
 		Toggles selection state for a row. If the _multi_ property is set to
 		false, toggling a selection on will deselect the previous selection.
+
+		_inData_ is an optional data object	to store in the selection for
+		that key that will be sent with the	_onSelect_ or _onDeselect_ events.
+		If not used, the data will be set to 'true'.
 	*/
 	toggle: function(inKey, inData) {
 		if (!this.multi && this.lastSelected != inKey) {

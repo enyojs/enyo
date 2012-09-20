@@ -27,9 +27,10 @@ enyo.kind = function(inProps) {
 	// establish base class reference
 	var base = enyo.constructorForKind(kind);
 	var isa = base && base.prototype || null;
-	// if we have an explicit kind property with value undefined, we probably tried to reference a kind that is not yet in scope
-	if (hasKind && (kind !== null) && (base == null)) {
-		throw "enyo.kind: Attempt to subclass an undefined kind. Check dependencies for [" + name + "].";
+	// if we have an explicit kind property with value undefined, we probably
+	// tried to reference  a kind that is not yet in scope
+	if (hasKind && kind === undefined || base === undefined) {
+		throw "enyo.kind: Attempt to subclass an undefined kind. Check dependencies for [" + (name || "<unnamed>") + "].";
 	}
 	// make a boilerplate constructor
 	var ctor = enyo.kind.makeCtor();
@@ -56,9 +57,40 @@ enyo.kind = function(inProps) {
 	return ctor;
 };
 
+/**
+	Creates a Singleton
+	
+		enyo.singleton({
+			kind: Control,
+			name: "app.MySingleton",
+			published: {
+				value: "foo"
+			},
+			makeSomething: function() {
+				//...
+			}
+		});
+		
+		app.MySingleton.makeSomething();
+		app.MySingleton.setValue("bar");
+*/
+enyo.singleton = function(conf, context) {
+	// extract 'name' property (the name of our singleton)
+	var name = conf.name;
+	delete(conf.name);
+	// create an unnamed kind and save its constructor's function
+	var kind = enyo.kind(conf);
+	// create the singleton with the previous name and constructor
+	enyo.setObject(name, new kind(), context);
+};
+
 //* @protected
 enyo.kind.makeCtor = function() {
 	return function() {
+		if (!(this instanceof arguments.callee)) {
+			throw "enyo.kind: constructor called directly, not using 'new'";
+		}
+
 		// two-pass instantiation
 		var result;
 		if (this._constructor) {

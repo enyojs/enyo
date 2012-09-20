@@ -1,20 +1,37 @@
+/**
+	_enyo.Control_ is a component that controls a DOM node (i.e., an element in
+	the user interface). Controls are generally visible and the user often
+	interacts with them directly. While things like buttons and input boxes are
+	obviously controls, in Enyo, a control may become as complex as an entire
+	application.
+
+	For more information, see the documentation on
+	<a href="https://github.com/enyojs/enyo/wiki/Creating-Controls">Controls</a>
+	in the Enyo Developer Guide.
+*/
 enyo.kind({
 	name: "enyo.Control",
 	kind: enyo.UiComponent,
 	published: {
-		//* HTML tag name to use for control. If it's null, no tag is generated, only the contents are used.
+		/**
+			HTML tag name to use for the control. If null, no tag is generated;
+			only the contents are used.
+		*/
 		tag: "div",
-		//* Hash of DOM attributes to apply to the generated HTML tag.
+		//* Hash of DOM attributes to apply to the generated HTML tag
 		attributes: null,
-		//* Space-delimited set of CSS classes to apply to the generated HTML tag.
+		//* Space-delimited set of CSS classes to apply to the generated HTML tag
 		classes: "",
-		//* Style attribute to apply to the generated HTML tag.
+		//* Style attribute to apply to the generated HTML tag
 		style: "",
-		//* Content that will be generated inside the HTML tag; defaults to plain text unless _allowHtml_ is true.
+		/**
+			Content that will be generated inside the HTML tag; defaults to
+			plain text unless _allowHtml_ is true
+		*/
 		content: "",
-		//* Boolean indicating whether the tag will be visible or hidden in the document.
+		//*	Boolean indicating whether the tag will be visible in the document
 		showing: true,
-		//* If false, HTML codes in _content_ are escaped before rendering.
+		//* If false, HTML codes in _content_ are escaped before rendering
 		allowHtml: false,
 		//
 		// convenience properties for common attributes
@@ -25,25 +42,27 @@ enyo.kind({
 		// esoteric
 		//
 		/**
-			Set to false if the control should not generate any HTML. Used to inhibit generation 
-			of popups until they're shown at runtime.
+			Set to false if the control should not generate any HTML. Used to
+			inhibit generation of popups until they're shown at runtime.
 		*/
 		canGenerate: true,
 		//
 		// ad hoc properties:
 		//
-		//* Flag used by control layouts to pick which control will expand to fill area.
+		//* Flag used by control layouts to determine which control will expand
+		//* to fill the available space
 		fit: false,
-		//* Used by Ares design editor for design objects.
+		//* Used by Ares design editor for design objects
 		isContainer: false
 	},
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
 		ontap: "tap"
 	},
-	//* The default kind for controls created inside this control that don't specify their own kind.
+	//* The default kind for controls created inside this control that don't
+	//* specify their own kind
 	defaultKind: "Control",
-	//* A set of CSS classes that are applied to controls created inside this control.
+	//* A set of CSS classes that are applied to controls created inside this control
 	controlClasses: "",
 	//* @protected
 	node: null,
@@ -69,6 +88,7 @@ enyo.kind({
 	},
 	destroy: function() {
 		this.removeNodeFromDom();
+		enyo.Control.unregisterDomEvents(this.id);
 		this.inherited(arguments);
 	},
 	importProps: function(inProps) {
@@ -78,7 +98,7 @@ enyo.kind({
 	},
 	initProps: function(inPropNames) {
 		// for each named property, trigger the *Changed handler if the property value is truthy
-		for (var i=0, n, cf; n=inPropNames[i]; i++) {
+		for (var i=0, n, cf; (n=inPropNames[i]); i++) {
 			if (this[n]) {
 				// FIXME: awkward
 				cf = n + "Changed";
@@ -125,7 +145,7 @@ enyo.kind({
 	//
 	//* @public
 	/**
-		Returns the DOM node representing the Control.
+		Returns the DOM node representing the control.
 		If the control is not currently rendered, returns null.
 		
 		If hasNode() returns a value, the _node_ property will be valid and 
@@ -145,7 +165,8 @@ enyo.kind({
 		return this.generated && (this.node || this.findNodeById());
 	},
 	/**
-		Appends the String value of _inAddendum_ to the _content_ of this Control.
+		Appends the string value of _inAddendum_ to the _content_ of this
+		control.
 	*/
 	addContent: function(inAddendum) {
 		this.setContent(this.content + inAddendum);
@@ -153,11 +174,13 @@ enyo.kind({
 	/**
 		Gets the value of an attribute on this object.
 
-		If this Control has a node, the attribute value is retrieved from the node;
-		otherwise, it's read from the _attributes_ property of the control itself.
+		If this control has a node, the attribute value is retrieved from the
+		node; otherwise, it's read from the _attributes_ property of the control
+		itself.
 
-		Caveat: If the control is rendered, the _attributes_ property is used to construct
-		the rendering, and values that have changed on the node itself are lost.
+		Caveat: If the control is rendered, the _attributes_ property is used to
+		construct the rendering, and values that have changed on the node itself
+		are lost.
 
 			// Get the value attribute for this DomNode
 			var value = this.getAttribute("tabIndex");
@@ -166,7 +189,8 @@ enyo.kind({
 		return this.hasNode() ? this.node.getAttribute(inName) : this.attributes[inName];
 	},
 	/**
-		Sets the value of an attribute on this object. Pass null _inValue_ to remove an attribute.
+		Sets the value of an attribute on this object. Pass null _inValue_ to
+		remove an attribute.
 
 			// set the tabIndex attribute for this DomNode
 			this.setAttribute("tabIndex", 3);
@@ -181,6 +205,11 @@ enyo.kind({
 		}
 		this.invalidateTags();
 	},
+	/**
+		Gets the value of a property named _inName_ directly from the DOM node.
+		A caller-specified default value, _inDefault_, is returned when the DOM
+		node has not yet been created.
+	*/
 	getNodeProperty: function(inName, inDefault) {
 		if (this.hasNode()) {
 			return this.node[inName];
@@ -188,6 +217,12 @@ enyo.kind({
 			return inDefault;
 		}
 	},
+	/**
+		Sets the value of the _inName_ property on the control's DOM node to
+		_inValue_, if and only if the DOM node has been rendered.  This method
+		does not alter any values cached in local properties of the
+		_enyo.Control_ instance.
+	*/
 	setNodeProperty: function(inName, inValue) {
 		if (this.hasNode()) {
 			this.node[inName] = inValue;
@@ -214,11 +249,12 @@ enyo.kind({
 		return this.attributes["class"] || "";
 	},
 	/**
-		Returns true if the _class_ attribute contains a substring matching _inClass_.
+		Returns true if the _class_ attribute contains a substring matching
+		_inClass_.
 
 		The _class_ attribute is a string that can contain multiple CSS classes.
 		This method tests whether a particular class is part of the set of
-		classes on this Control.
+		classes on this control.
 
 			// returns true if _class_ is "bar foo baz", but false for "barfoobaz"
 			var hasFooClass = this.$.control.hasClass("foo");
@@ -243,8 +279,9 @@ enyo.kind({
 
 		_inClass_ must have no leading or trailing spaces.
 		
-		Using a compound class name is supported, but the name is treated atomically.
-		For example, given "a b c", removeClass("a b") will produce "c", but removeClass("a c") will produce "a b c".
+		Using a compound class name is supported, but the name is treated
+		atomically. For example, given _"a b c"_, _removeClass("a b")_ will
+		produce _"c"_, but _removeClass("a c")_ will produce _"a b c"_.
 
 			// remove the highlight class from this object
 			this.removeClass("highlight");
@@ -257,10 +294,11 @@ enyo.kind({
 		}
 	},
 	/**
-		Adds or removes substring _inClass_ from the _class_ attribute of this object based
-		on the value of _inTrueToAdd_.
+		Adds or removes substring _inClass_ from the _class_ attribute of this
+		object based on the value of _inTrueToAdd_.
 
-		If _inTrueToAdd_ is truthy, then _inClass_ is added; otherwise, _inClass_ is removed.
+		If _inTrueToAdd_ is truthy, then _inClass_ is added; otherwise,
+		_inClass_ is removed.
 
 			// add or remove the highlight class, depending on the "highlighted" property
 			this.addRemoveClass("highlight", this.highlighted);
@@ -271,6 +309,7 @@ enyo.kind({
 	//
 	// styles
 	//
+	//* @protected
 	initStyles: function() {
 		this.domStyles = this.domStyles || {};
 		enyo.Control.cssTextToDomStyles(this.kindStyle, this.domStyles);
@@ -292,12 +331,13 @@ enyo.kind({
 		this.invalidateTags();
 		this.renderStyles();
 	},
+	//* @public
 	/**
 		Applies a single style value to this object.
 
 			this.$.box.applyStyle("z-index", 4);
 
-		You can remove a style by setting its value to null.
+		You may remove a style by setting its value to null.
 
 			this.$.box.applyStyle("z-index", null);
 	*/
@@ -316,6 +356,13 @@ enyo.kind({
 		enyo.Control.cssTextToDomStyles(inCssText, this.domStyles);
 		this.domStylesChanged();
 	},
+	/**
+		Returns the computed value of a CSS style named from _inStyle_
+		for the DOM node of the control. If the node hasn't been generated,
+		returns _inDefault_ as a default value. This uses JavaScript-style
+		property names, not CSS-style names, so use "fontFamily" instead of
+		"font-family".
+	*/
 	getComputedStyleValue: function(inStyle, inDefault) {
 		if (this.hasNode()) {
 			return enyo.dom.getComputedStyleValue(this.node, inStyle);
@@ -330,6 +377,10 @@ enyo.kind({
 	},
 	stylesToNode: function() {
 		this.node.style.cssText = this.style + (this.style[this.style.length-1] == ';' ? ' ' : '; ') + this.domCssText;
+	},
+	setupBodyFitting: function() {
+		enyo.dom.applyBodyFit();
+		this.addClass("enyo-fit enyo-clip");
 	},
 	//
 	//
@@ -381,8 +432,13 @@ enyo.kind({
 	},
 	/**
 		Uses _document.write_ to output the control into the document.
-		If control has _fit: true_ defined, appropriate styles will be set
+		If the control has _fit: true_ defined, appropriate styles will be set
 		to have it expand to fill its container.
+
+		Note that this has all the limitations that _document.write_ has.
+		It only works while the page is loading, so you can't call this	from an
+		event handler. Also, it will not work in certain environments, such as
+		Chrome Packaged Apps or Windows 8.
 	*/
 	write: function() {
 		if (this.fit) {
@@ -393,10 +449,6 @@ enyo.kind({
 		this.rendered();
 		// support method chaining
 		return this;
-	},
-	setupBodyFitting: function() {
-		enyo.dom.applyBodyFit();
-		this.addClass("enyo-fit enyo-clip");
 	},
 	/**
 		Override this method to perform tasks that require access to the DOM node.
@@ -410,7 +462,7 @@ enyo.kind({
 		// CAVEAT: Currently we use one entry point ('reflow') for
 		// post-render layout work *and* post-resize layout work.
 		this.reflow();
-		for (var i=0, c; c=this.children[i]; i++) {
+		for (var i=0, c; (c=this.children[i]); i++) {
 			c.rendered(); 
 		}
 	},
@@ -441,9 +493,11 @@ enyo.kind({
 		return {left: n.offsetLeft, top: n.offsetTop, width: n.offsetWidth, height: n.offsetHeight};
 	},
 	/**
-		Sets any or all of geometry style properties _width_, _height_, _left_, _top_, _right_ and _bottom_.
+		Sets any or all of the geometry style properties _width_, _height_,
+		_left_, _top_, _right_ and _bottom_.
 
-		Values may be specified as strings (with units specified), or as numbers when a unit is provided in _inUnit_.
+		Values may be specified as strings (with units included), or as numbers
+		when a unit is provided in _inUnit_.
 
 			this.setBounds({width: 100, height: 100}, "px"); // adds style properties like "width: 100px; height: 100px;"
 			//
@@ -452,7 +506,7 @@ enyo.kind({
 	setBounds: function(inBounds, inUnit) {
 		var s = this.domStyles, unit = inUnit || "px";
 		var extents = ["width", "height", "left", "top", "right", "bottom"];
-		for (var i=0, b, e; e=extents[i]; i++) {
+		for (var i=0, b, e; (e=extents[i]); i++) {
 			b = inBounds[e];
 			if (b || b === 0) {
 				s[e] = b + (!enyo.isString(b) ? unit : '');
@@ -523,7 +577,7 @@ enyo.kind({
 	},
 	generateChildHtml: function() {
 		var results = '';
-		for (var i=0, c; c=this.children[i]; i++) {
+		for (var i=0, c; (c=this.children[i]); i++) {
 			var h = c.generateHtml();
 			if (c.prepend) {
 				// FIXME: does webkit's fast string-consing work in reverse?
@@ -548,11 +602,10 @@ enyo.kind({
 	},
 	prepareTags: function() {
 		var htmlStyle = this.domCssText + this.style;
-		this._openTag = '<' 
-			+ this.tag
-			+ (htmlStyle ? ' style="' + htmlStyle + '"' : "")
-			+ enyo.Control.attributesToHtml(this.attributes)
-			;
+		this._openTag = '<' +
+			this.tag +
+			(htmlStyle ? ' style="' + htmlStyle + '"' : "") +
+			enyo.Control.attributesToHtml(this.attributes);
 		if (enyo.Control.selfClosing[this.tag]) {
 			this._openTag += '/>';
 			this._closeTag =  '';
@@ -576,7 +629,7 @@ enyo.kind({
 		}
 	},
 	getParentNode: function() {
-		return this.parentNode || (this.parent && this.parent.hasNode());
+		return this.parentNode || (this.parent && (this.parent.hasNode() || this.parent.getParentNode()));
 	},
 	addNodeToParent: function() {
 		if (this.node) {
@@ -605,7 +658,7 @@ enyo.kind({
 		this.generated = false;
 	},
 	teardownChildren: function() {
-		for (var i=0, c; c=this.children[i]; i++) {
+		for (var i=0, c; (c=this.children[i]); i++) {
 			c.teardownRender();
 		}
 	},
@@ -678,8 +731,10 @@ enyo.kind({
 	//
 	statics: {
 		/**
-			Returns passed-in string with ampersand, less-than, and greater-than characters replaced by HTML entities, 
-			e.g. '&lt;code&gt;"This &amp; That"&lt;/code&gt;' becomes '&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;' 
+			Returns passed-in string with ampersand, less-than, and greater-than
+			characters replaced by HTML entities, e.g.,
+			'&lt;code&gt;"This &amp; That"&lt;/code&gt;' becomes
+			'&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;' 
 		*/
 		escapeHtml: function(inText) {
 			return inText != null ? String(inText).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
@@ -698,7 +753,7 @@ enyo.kind({
 				// remove spaces between rules, then split rules on delimiter (;)
 				var rules = inText.replace(/; /g, ";").split(";");
 				// parse string styles into name/value pairs
-				for (var i=0, s, n, v, rule; rule=rules[i]; i++) {
+				for (var i=0, s, n, v, rule; (rule=rules[i]); i++) {
 					// "background-image: url(http://foo.com/foo.png)" => ["background-image", "url(http", "//foo.com/foo.png)"]
 					s = rule.split(":");
 					// n = "background-image", s = ["url(http", "//foo.com/foo.png)"]
@@ -725,8 +780,9 @@ enyo.kind({
 			return (cssText ? ' style="' + cssText + '"' : "");
 		},
 		/**
-			Returns passed-in string with ampersand and double quote characters replaced by HTML entities, 
-			e.g. 'hello from "Me & She"' becomes 'hello from &amp;quot;Me &amp;amp; She&amp;quot;' 
+			Returns passed-in string with ampersand and double quote characters
+			replaced by HTML entities, e.g., 'hello from "Me & She"' becomes
+			'hello from &amp;quot;Me &amp;amp; She&amp;quot;' 
 		*/
 		escapeAttribute: function(inText) {
 			return !enyo.isString(inText) ? inText : String(inText).replace(/&/g,'&amp;').replace(/\"/g,'&quot;');

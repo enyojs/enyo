@@ -1,15 +1,16 @@
 /**
-	Implements an HTML checkbox input, with support for grouping.
+	_enyo.Checkbox_ implements an HTML checkbox input, with support for grouping.
 */
 enyo.kind({
 	name: "enyo.Checkbox",
 	kind: enyo.Input,
 	classes: "enyo-checkbox",
 	events: {
+		//* Fires when checkbox is tapped.
 		onActivate: ""
 	},
 	published: {
-		//* Value of the checkbox
+		//* Value of checkbox; true if checked 
 		checked: false,
 		//* Group API requirement for determining selected item
 		active: false,

@@ -1,46 +1,47 @@
 /**
-	Implements an HTML &lt;input&gt; element with cross-platform support for
-	change events.
+	_enyo.Input_ implements an HTML &lt;input&gt; element with cross-platform
+	support for	change events.
 
 	You can listen for _oninput_ and _onchange_ DOM events from this control
-	to know when the text inside has been modified. _oninput_ fires immediately
-	while _onchange_ fires when the text has changed and the input loses focus.
+	to know when the text inside has been modified. _oninput_ fires immediately,
+	while _onchange_ fires when the text has changed and the input subsequently
+	loses focus.
+
+	For more information, see the documentation on
+	[Text Fields](https://github.com/enyojs/enyo/wiki/Text-Fields) in the Enyo
+	Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Input",
 	published: {
 		/**
 			Value of the input.  Use this property only to initialize the value.
-			Use _getValue()_ and _setValue()_ to manipulate the value at runtime.
+			Call _getValue_ and _setValue_ to manipulate the value at runtime.
 		*/
 		value: "",
 		//* Text to display when the input is empty
 		placeholder: "",
 		/**
-			Type of input, if not specified, it's treated as "text".  It can
+			Type of input; if not specified, it's treated as "text". It can
 			be anything specified for the _type_ attribute in the HTML
 			specification, including "url", "email", "search", or "number".
 		*/
 		type: "",
 		/**
-			When true, prevent input into the control. This maps to the 
+			When true, prevents input into the control. This maps to the
 			_disabled_ DOM attribute.
 		*/
 		disabled: false
 	},
 	events: {
-		//* Sent when the input is disabled or enabled.
+		//* Fires when the input is disabled or enabled.
 		onDisabledChange: ""
 	},
-	//* Set to true to focus this control when it is rendered.
+	//* Set to true to focus this control when it is rendered
 	defaultFocus: false,
 	//* @protected
 	tag: "input",
 	classes: "enyo-input",
-	attributes: {
-		onfocus: enyo.bubbler,
-		onblur: enyo.bubbler
-	},
 	handlers: {
 		oninput: "input",
 		onclear: "clear",
@@ -60,6 +61,9 @@ enyo.kind({
 	},
 	rendered: function() {
 		this.inherited(arguments);
+
+		enyo.makeBubble(this, "focus", "blur");
+
 		this.disabledChanged();
 		if (this.defaultFocus) {
 			this.focus();

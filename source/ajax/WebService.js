@@ -21,7 +21,7 @@ enyo.kind({
 	name: "enyo.WebService",
 	kind: enyo._AjaxComponent,
 	published: {
-		//* Set to true to use JSONP protocol.
+		//* Set to true to use JSONP protocol
 		jsonp: false,
 		/**
 			When using JSONP, the name of the callback parameter.
@@ -30,11 +30,28 @@ enyo.kind({
 			internal callback function as necessary.
 		*/
 		callbackName: "callback",
-		//* When using JSONP, optional character set to use to interpret the return data
+		/**
+			When using JSONP, optional character set to use to interpret the
+			return data
+		*/
 		charset: null
 	},
 	events: {
+		/**
+			Fires when a response is received.
+			
+			_inEvent.ajax_ contains the Async instance associated with the request.
+			
+			_inEvent.data_ contains the response data.
+		*/
 		onResponse: "",
+		/**
+			Fires when an error is received.
+			
+			_inEvent.ajax_ contains the	Async instance associated with the request.
+			
+			_inEvent.data_ contains the error data.
+		*/
 		onError: ""
 	},
 	//* @protected
@@ -42,6 +59,8 @@ enyo.kind({
 		this.inherited(arguments);
 	},
 	//* @public
+	//* Sends a Web request with the passed-in parameters, returning the
+	//* associated Async instance.
 	send: function(inParams) {
 		return this.jsonp ? this.sendJsonp(inParams) : this.sendAjax(inParams);
 	},

@@ -1,14 +1,15 @@
 //* @public
 /**
-	Enyo supports a set of cross-platform gesture events that work similarly on
-	all supported platforms. These events are provided so that users can write a
-	single set of event handlers for applications that run on both mobile and 
+	Enyo supports a set of normalized events that work similarly across	all
+	supported platforms. These events are provided so that users can write a
+	single set of event handlers for applications that run on both mobile and
 	desktop platforms.  They are needed because desktop and mobile platforms
-	handle basic gestures differently.
-	
-	For more information on gesture events and their associated properties,	see
-	the documentation on [Gestures](https://github.com/enyojs/enyo/wiki/Gestures)
-	in the Enyo Developer Guide.
+	handle basic input differently.
+
+	For more information on normalized input events and their associated
+	properties,	see	the documentation on
+	[User Input](https://github.com/enyojs/enyo/wiki/User-Input) in the Enyo
+	Developer Guide.
 */
 enyo.gesture = {
 	//* @protected
@@ -23,10 +24,15 @@ enyo.gesture = {
 		e.preventDefault = this.preventDefault;
 		e.disablePrevention = this.disablePrevention;
 		//
-		// normalize event.which
-		// Note that while "which" works in IE9, it is broken for mousemove. Therefore, 
+		// normalize event.which and event.pageX/event.pageY
+		// Note that while "which" works in IE9, it is broken for mousemove. Therefore,
 		// in IE, use window.event.button
 		if (enyo.platform.ie) {
+			//Fix for IE8, which doesn't include pageX and pageY properties
+			if(enyo.platform.ie==8 && e.target) {
+				e.pageX = e.clientX + e.target.scrollLeft;
+				e.pageY = e.clientY + e.target.scrollTop;
+			}
 			var b = window.event && window.event.button;
 			// multi-button not supported, priority: left, right, middle
 			// (note: IE bitmask is 1=left, 2=right, 4=center);

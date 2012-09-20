@@ -1,3 +1,8 @@
+/**
+	Common set of published properties used in both
+	<a href="#enyo.Ajax">enyo.Ajax</a> and 
+	<a href="#enyo.WebService">enyo.WebService</a>.
+*/
 enyo.AjaxProperties = {
 	/**
 		When true, appends a random number as a parameter for GET requests
@@ -46,6 +51,11 @@ enyo.AjaxProperties = {
 	password: "",
 	/**
 		Optional object with fields to pass directly to the underlying XHR object.
+		One example is the _withCredentials_ flag used for cross-origin requests.
 	*/
-	xhrFields: null
+	xhrFields: null,
+	/**
+		Optional string to override the MIME-Type.
+	*/
+	mimeType: null
 };

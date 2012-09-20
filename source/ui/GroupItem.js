@@ -14,6 +14,7 @@
 enyo.kind({
 	name: "enyo.GroupItem",
 	published: {
+		//* True if the item is currently selected
 		active: false
 	},
 	//* @protected

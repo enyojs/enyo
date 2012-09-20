@@ -38,8 +38,17 @@ enyo.kind({
 	name: "enyo.DragAvatar",
 	kind: enyo.Component,
 	published: {
+		//* Current visibility state of the DragAvatar
 		showing: false,
+		/**
+			Distance (in pixels) along the horizontal axis between the current
+			drag position and where the avatar control is displayed.
+		*/
 		offsetX: 20,
+		/**
+			Distance (in pixels) along the vertical axis between the current
+			drag position and where the avatar control is displayed.
+		*/
 		offsetY: 30
 	},
 	//* @protected
@@ -61,16 +70,21 @@ enyo.kind({
 		document.body.style.cursor = this.showing ? "move" : null;
 	},
 	//* @public
+	/**
+		Instantiates the avatar control (if necessary), determines correct
+		position, and calls _show_ to make it visible.
+	*/
 	drag: function(inEvent) {
 		this.requireAvatar();
 		this.avatar.setBounds({top: inEvent.pageY - this.offsetY, left: inEvent.pageX + this.offsetX});
 		this.show();
 	},
+	//* Shows the DragAvatar.
 	show: function() {
 		this.setShowing(true);
 	},
+	//* Hides the DragAvatar.
 	hide: function() {
 		this.setShowing(false);
 	}
 });
-

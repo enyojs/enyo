@@ -1,12 +1,12 @@
 ﻿/**
 	_enyo.Ajax_ is a wrapper for _XmlHttpRequest_ that uses
 	the <a href="#enyo.Async">enyo.Async</a> API.
-	
+
 	IMPORTANT: _enyo.Ajax_ publishes all the properties of the
 	<a href="#enyo.AjaxProperties">enyo.AjaxProperties</a>
 	object.
 
-	Like _enyo.Async_, _enyo.Ajax_ is an **Object**, not a **Component**. 
+	Like _enyo.Async_, _enyo.Ajax_ is an **Object**, not a **Component**.
 	Do not try to make _enyo.Ajax_ objects inside a _components_ block.
 
 	If you want to use _enyo.Ajax_ as a component, you should probably
@@ -16,7 +16,7 @@
 
 		getWoeid: function(inPlace) {
 			// setup <a href="#enyo.AjaxProperties">enyo.AjaxProperties</a> by sending them to the _enyo.Ajax_ constructor
-			var x = enyo.Ajax({url: "http://query.yahooapis.com/v1/public/yql?format=json"});
+			var x = new enyo.Ajax({url: "http://query.yahooapis.com/v1/public/yql?format=json"});
 			// send parameters the remote service using the 'go()' method
 			x.go({
 				q: 'select woeid from geo.placefinder where text="' + inPlace + '"'
@@ -54,7 +54,7 @@ enyo.kind({
 	request: function(inParams) {
 		var parts = this.url.split("?");
 		var uri = parts.shift() || "";
-		var args = parts.join("?").split("&");
+		var args = parts.length ? (parts.join("?").split("&")) : [];
 		//
 		var body = enyo.isString(inParams) ? inParams : enyo.Ajax.objectToQuery(inParams);
 		if (this.method == "GET") {
@@ -62,16 +62,18 @@ enyo.kind({
 				args.push(body);
 				body = null;
 			}
-			if (this.cacheBust) {
+			// don't use cacheBust on file URLs, can cause problems in Android 4
+			if (this.cacheBust && !/^file:/i.test(uri)) {
 				args.push(Math.random());
 			}
 		}
 		//
-		var url = [uri, args.join("&")].join("?");
+		var url = args.length ? [uri, args.join("&")].join("?") : uri;
 		//
-		var xhr_headers = {
-			"Content-Type": this.contentType
-		};
+		var xhr_headers = {};
+		if (this.method != "GET") {
+			xhr_headers["Content-Type"] = this.contentType;
+		}
 		enyo.mixin(xhr_headers, this.headers);
 		//
 		this.xhr = enyo.xhr.request({
@@ -83,7 +85,8 @@ enyo.kind({
 			sync: window.PalmSystem ? false : this.sync,
 			username: this.username,
 			password: this.password,
-			xhrFields: this.xhrFields
+			xhrFields: this.xhrFields,
+			mimeType: this.mimeType
 		});
 	},
 	receive: function(inText, inXhr) {

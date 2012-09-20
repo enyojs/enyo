@@ -3,52 +3,23 @@ var
 	path = require("path"),
 	walker = require("walker"),
 	jsp = require("uglify-js").parser,
-	pro = require("uglify-js").uglify
+	pro = require("uglify-js").uglify,
+	nopt = require("nopt")
 	;
 
-options = function(args) {
-	var opts = {};
-	for (var i=2; i<args.length; i++) {
-		var arg = args[i];
-		if (arg[0] == "-") {
-			var o = arg.slice(1);
-			opts[o] = {enyo: 1, output: 1, alias: 1}[o] ? args[++i] : true;
-		} else {
-			opts.source = arg;
-		}
-	}
-	w(opts);
-	w("");
-	return opts;
-};
+// Shimming path.relative with 0.8.8's version if it doesn't exist
+if(!path.relative){
+  path.relative = require('./path-relative-shim').relative;
+}
 
 function printUsage() {
 	w("Enyo 2.0 Minifier");
-	w("Flags:")
+	w("Flags:");
 	w("-no-alias:", "Don't use path macros");
-	w("-alias ALIAS:", "Give paths a macroized alias");
+	w("-alias:", "Give paths a macroized alias");
 	w("-enyo ENYOPATH:", "Path to enyo loader (enyo/enyo.js)");
 	w("-output PATH/NAME:", "name of output file, prepend folder paths to change output directory");
 	w("-h, -?, -help:", "Show this message");
-}
-
-// make a relative path from source to target
-function makeRelPath(inSource, inTarget) {
-	// node 0.5 has this nice thing, 0.4 does not
-	if (path.relative) {
-		return path.relative(inSource, inTarget);
-	}
-	var s,t;
-	s = pathSplit(path.resolve(inSource));
-	t = pathSplit(path.resolve(inTarget));
-	while (s.length && s[0] === t[0]){
-		s.shift();
-		t.shift();
-	}
-	for(var i = 0, l = s.length; i < l; i++) {
-		t.unshift("..");
-	}
-	return path.join.apply(null, t);
 }
 
 // properly split path based on platform
@@ -59,38 +30,40 @@ function pathSplit(inPath) {
 
 buildPathBlock = function(loader) {
 	var p$ = [];
-	for (var i=0, p; p=loader.packages[i]; i++) {
+	for (var i=0, p; (p=loader.packages[i]); i++) {
 		if (p.name.indexOf("-") == -1) {
 			p$.push(p.name + ': "' + p.folder + '"');
 		}
 	}
-	var p = p$.join(', ');
+	p = p$.join(', ');
 	return !p ? "" : "\n// minifier: path aliases\n\nenyo.path.addPaths({" + p + "});\n";
 };
 
 concatCss = function(loader) {
 	w("");
 	var blob = "";
-	for (var i=0, s; s=loader.sheets[i]; i++) {
+	var repl = function(inMatch) {
+		// find the url path, ignore quotes in url string
+		var matches = /url\s*\(\s*(('([^']*)')|("([^"]*)")|([^'"]*))\s*\)/.exec(inMatch);
+		var urlPath = matches[3] || matches[5] || matches[6];
+		// skip data urls
+		if (/^data:/.test(urlPath)) {
+			return "url(" + urlPath + ")";
+		}
+		// get absolute path to referenced asset
+		var normalizedUrlPath = path.join(s, "..", urlPath);
+		// Make relative asset path to built css
+		var relPath = path.relative(path.dirname(opt.output || "build"), normalizedUrlPath);
+		if (process.platform == "win32") {
+			relPath = pathSplit(relPath).join("/");
+		}
+		return "url(" + relPath + ")";
+	};
+	for (var i=0, s; (s=loader.sheets[i]); i++) {
 		w(s);
 		var code = fs.readFileSync(s, "utf8");
 		// fix url paths
-		code = code.replace(/url\([^)]*\)/g, function(inMatch) {
-			// find the url path, ignore quotes in url string
-			var urlPath = inMatch.replace(/["']/g, "").slice(4, -1);
-			// skip data urls
-			if (/^data:/.test(urlPath)) {
-				return "url(" + urlPath + ")";
-			}
-			// get absolute path to referenced asset
-			var normalizedUrlPath = path.join(s, "..", urlPath);
-			// Make relative asset path to built css
-			var relPath = makeRelPath(path.dirname(opt.output || "build"), normalizedUrlPath);
-			if (process.platform == "win32") {
-				relPath = pathSplit(relPath).join("/");
-			}
-			return "url(" + relPath + ")";
-		});
+		code = code.replace(/url\([^)]*\)/g, repl);
 		blob += "\n/* " + s + " */\n\n" + code + "\n";
 	}
 	return blob;
@@ -99,11 +72,11 @@ concatCss = function(loader) {
 concatJs = function(loader) {
 	w("");
 	var blob = "";
-	for (var i=0, m; m=loader.modules[i]; i++) {
-		if (!opt["no-alias"] && !opt.alias) {
+	for (var i=0, m; (m=loader.modules[i]); i++) {
+		if (typeof opt.alias === 'undefined' || opt.alias) {
 			w("* inserting path aliases");
 			blob += buildPathBlock(loader);
-			opt["no-alias"] = true;
+			opt.alias = false;
 		}
 		w(m.path);
 		blob += "\n// " + m.rawPath + "\n\n" + compressJsFile(m.path) + "\n";
@@ -163,10 +136,30 @@ finish = function(loader) {
 
 w = console.log;
 
-opt = options(process.argv);
+var knownOpts = {
+  "alias": Boolean,
+  "enyo": String,
+  "output": String,
+  "help": Boolean
+};
+
+var shortHands = {
+  "alias": ['--alias'],
+  "enyo": ['--enyo'],
+  "output": ['--output'],
+  "h": ['--help'],
+  "?": ['--help'],
+  "help": ['--help']
+};
+
+opt = nopt(knownOpts, shortHands, process.argv, 2);
+opt.source = opt.argv.remain[0];
+w(opt);
 w("");
 
-if (opt.help || opt.h || opt["?"]) {
+w("");
+
+if (opt.help) {
 	printUsage();
 	process.exit();
 }

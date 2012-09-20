@@ -12,7 +12,7 @@
     "licenses": [{
         "type": "Apache-2.0", "url": "http://www.apache.org/licenses/LICENSE-2.0"
     }],
-    "bugs": "https://github.com/enyojs/enyo/issues/",
+    "bugs": "https://enyojs.atlassian.net/",
     "repositories": [{
         "type": "git", "url": "http://github.com/enyojs/enyo"
     }]

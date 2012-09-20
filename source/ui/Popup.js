@@ -1,5 +1,5 @@
 /**
-	A popup is used to display certain content on top of other content.
+	_enyo.Popup_ is used to display certain content on top of other content.
 
 	Popups are initially hidden on creation; they can be shown by calling the
 	_show_ method and re-hidden by calling _hide_.  Popups may be centered using
@@ -7,16 +7,16 @@
 	position.
 
 	A popup may be optionally floated above all application content by setting
-	its _floating_ property to true.  This has the advantage of guaranteeing
+	its _floating_ property to _true_.  This has the advantage of guaranteeing
 	that the popup will be displayed on top of other content.  This usage is
-	appropriate when the popup does not need to scroll with other content.
+	appropriate when the popup does not need to scroll along with other content.
 
-	The _autoDismiss_ property controls how a popup may be dismissed.  If true
+	The _autoDismiss_ property controls how a popup may be dismissed.  If _true_
 	(the default), then tapping outside the popup or pressing the ESC key will
 	dismiss the popup.
 
-	The _modal_ property may be set to true to prevent any controls outside the
-	popup from responding to events while the popup is showing:
+	The _modal_ property may be set to _true_ to prevent any controls outside
+	the	popup from responding to events while the popup is showing, e.g.:
 
 		{kind: "enyo.Popup", centered: true, modal: true, floating: true, components: [
 			{content: "Here's some information..."}
@@ -27,7 +27,7 @@ enyo.kind({
 	classes: "enyo-popup",
 	published: {
 		//* Set to true to prevent controls outside the popup from receiving
-		//* events while the popup is showing.
+		//* events while the popup is showing
 		modal: false,
 		//* By default, the popup will hide when the user taps outside it or
 		//* presses ESC.  Set to false to prevent this behavior.
@@ -36,7 +36,7 @@ enyo.kind({
 		//* controls.  This can be used to guarantee that the popup will be
 		//* shown on top of other controls.
 		floating: false,
-		//* Set to true to automatically center the popup in the middle of the viewport.
+		//* Set to true to automatically center the popup in the middle of the viewport
 		centered: false
 	},
 	//* @protected
@@ -44,6 +44,7 @@ enyo.kind({
 	handlers: {
 		ondown: "down",
 		onkeydown: "keydown",
+		ondragstart: "dragstart",
 		onfocus: "focus",
 		onblur: "blur",
 		onRequestShow: "requestShow",
@@ -52,9 +53,9 @@ enyo.kind({
 	captureEvents: true,
 	//* @public
 	events: {
-		//* Event that fires after the popup is shown
+		//* Fires after the popup is shown.
 		onShow: "",
-		//* Event that fires after the popup is hidden
+		//* Fires after the popup is hidden.
 		onHide: ""
 	},
 	//* @protected
@@ -146,24 +147,37 @@ enyo.kind({
 		enyo.dispatcher.release();
 	},
 	down: function(inSender, inEvent) {
+		//record the down event to verify in tap
+		this.downEvent = inEvent;
+		
 		// prevent focus from shifting outside the popup when modal.
 		if (this.modal && !inEvent.dispatchTarget.isDescendantOf(this)) {
 			inEvent.preventDefault();
 		}
 	},
 	tap: function(inSender, inEvent) {
-		// dismiss on tap if property is set and click was outside the popup
-		if (this.autoDismiss && (!inEvent.dispatchTarget.isDescendantOf(this))) {
+		// dismiss on tap if property is set and click started & ended outside the popup
+		if (this.autoDismiss && (!inEvent.dispatchTarget.isDescendantOf(this)) && this.downEvent &&
+			(!this.downEvent.dispatchTarget.isDescendantOf(this))) {
+			this.downEvent = null;
 			this.hide();
 			return true;
 		}
+	},
+	// if a drag event occurs outside a popup, hide
+	dragstart: function(inSender, inEvent) {
+		var inScope = (inEvent.dispatchTarget === this || inEvent.dispatchTarget.isDescendantOf(this));
+		if (inSender.autoDismiss && !inScope) {
+			inSender.setShowing(false);
+		}
+		return true;
 	},
 	keydown: function(inSender, inEvent) {
 		if (this.showing && this.autoDismiss && inEvent.keyCode == 27 /* escape */) {
 			this.hide();
 		}
 	},
-	// If something inside the popup blurred, keep track of it
+	// If something inside the popup blurred, keep track of it.
 	blur: function(inSender, inEvent) {
 		if (inEvent.dispatchTarget.isDescendantOf(this)) {
 			this.lastFocus = inEvent.originator;

@@ -24,27 +24,28 @@ enyo.kind({
 		*/
 		vertical: "default",
 		/**
-			Sets the vertical scroll position.
+			The vertical scroll position
 		*/
 		scrollTop: 0,
 		/**
-			Sets the horizontal scroll position.
+			The horizontal scroll position
 		*/
 		scrollLeft: 0,
 		/**
-			Sets the maximum height of the scroll content.
+			Maximum height of the scroll content
 		*/
 		maxHeight: null,
 		/**
 			Set to true to make this scroller select a platform-appropriate
-			touch-based scrolling strategy.  Please note that specifycing a
-			scrollStrategy will take precedence over this setting.
+			touch-based scrolling strategy. Note that if you specify a value for
+			_strategyKind_, that will take precedence over this setting.
 		*/
 		touch: false,
 		/**
-			Specifies a type of scrolling.  The Enyo Scroller will attempt to
+			Specifies a type of scrolling. The scroller will attempt to
 			automatically select a strategy compatible with the runtime
-			environment.  A specific strategy may also be chosen:
+			environment. Alternatively, you may choose to use a specific
+			strategy:
 
 			* <a href="#enyo.ScrollStrategy">ScrollStrategy</a> is the default
 			    and implements no scrolling, relying instead on the environment
@@ -58,12 +59,15 @@ enyo.kind({
 				currently recommended only for Android 3 and 4.
 		*/
 		strategyKind: "ScrollStrategy",
-		//* Set to true to display a scroll thumb in Touch scrollers.
+		//* Set to true to display a scroll thumb in touch scrollers
 		thumb: true
 	},
 	events: {
+		//* Fires when a scrolling action starts.
 		onScrollStart: "",
+		//* Fires while a scrolling action is in progress.
 		onScroll: "",
+		//* Fires when a scrolling action stops.
 		onScrollStop: ""
 	},
 	handlers: {
@@ -74,16 +78,17 @@ enyo.kind({
 	},
 	classes: "enyo-scroller",
 	/**
-		If true and a touch scroller, the scroller will overscroll and bounce back at the edges (Defaults to true.)
+		If true (the default) and a touch scroller, the scroller will overscroll
+		and bounce back at the edges
 	*/
 	touchOverscroll: true,
 	/**
-		If true, the scroller will not propagate _dragstart_ events that cause
-		it to start scrolling.  (Defaults to true.)
+		If true (the default), the scroller will not propagate _dragstart_
+		events that cause it to start scrolling
 	*/
 	preventDragPropagation: true,
 	/**
-		If true, the scroller will not propagate scroll events.
+		If true, the scroller will not propagate scroll events
 	*/
 	preventScrollPropagation: true,
 	//* @protected
@@ -101,7 +106,10 @@ enyo.kind({
 				}
 			}
 		},
-		//* Returns true if the platform has native div scrollers (desktop browsers always have them).
+		/**
+			Returns true if the platform has native div scrollers (desktop
+			browsers always have them).
+		*/
 		hasNativeScrolling: function() {
 			for (var i=0, t, m; t=this.osInfo[i]; i++) {
 				if (enyo.platform[t.os] < t.version) {
@@ -192,26 +200,36 @@ enyo.kind({
 	},
 	// FIXME: these properties are virtual; property changed methods are fired only if 
 	// property value changes, not if getter changes.
+	//* Sets scroll position along horizontal axis.
 	setScrollLeft: function(inLeft) {
 		this.scrollLeft = inLeft;
 		this.$.strategy.setScrollLeft(this.scrollLeft);
 	},
+	//* Sets scroll position along vertical axis.
 	setScrollTop: function(inTop) {
 		this.scrollTop = inTop;
 		this.$.strategy.setScrollTop(inTop);
 	},
+	//* Gets scroll position along horizontal axis.
 	getScrollLeft: function() {
 		return this.$.strategy.getScrollLeft();
 	},
+	//* Gets scroll position along vertical axis.
 	getScrollTop: function() {
 		return this.$.strategy.getScrollTop();
 	},
 	//* @public
-	//* Returns an object describing the scroll boundaries with height and width properties.
+	/**
+		Returns an object describing the scroll boundaries with _height_ and
+		_width_ properties.
+	*/
 	getScrollBounds: function() {
 		return this.$.strategy.getScrollBounds();
 	},
-	//* Scrolls the given control (_inControl_) into view. If _inAlignWithTop_ is true, _inControl_ is aligned with the top of the scroller.
+	/**
+		Scrolls the given control (_inControl_) into view. If _inAlignWithTop_
+		is true, _inControl_ is aligned with the top of the scroller.
+	*/
 	scrollIntoView: function(inControl, inAlignWithTop) {
 		this.$.strategy.scrollIntoView(inControl, inAlignWithTop);
 	},
@@ -219,15 +237,19 @@ enyo.kind({
 	scrollTo: function(inX, inY) {
 		this.$.strategy.scrollTo(inX, inY);
 	},
-	//* Ensures that the given control is visible in the scroller's viewport.  Unlike _scrollIntoView_, which uses DOM's _scrollIntoView_, this only affects the current scroller.
+	/**
+		Ensures that the given control is visible in the scroller's viewport.
+		Unlike _scrollIntoView_, which uses DOM's _scrollIntoView_, this only
+		affects the current scroller.
+	*/
 	scrollToControl: function(inControl, inAlignWithTop) {
 		this.scrollToNode(inControl.hasNode(), inAlignWithTop);
 	},
-	// Ensures that the given node is visible in the scroller's viewport.
+	//* Ensures that the given node is visible in the scroller's viewport.
 	scrollToNode: function(inNode, inAlignWithTop) {
 		this.$.strategy.scrollToNode(inNode, inAlignWithTop);
 	},
-	// Normalizes scroll event to onScroll.
+	//* Normalizes scroll event to _onScroll_.
 	domScroll: function(inSender, e) {
 		// if a scroll event originated here, pass it to our strategy to handle
 		if (this.$.strategy.domScroll && e.originator == this) {
@@ -236,12 +258,21 @@ enyo.kind({
 		this.doScroll(e);
 		return true;
 	},
+	/**
+		Returns true if the current scroll event should be stopped; false if it
+		should be allowed to propagate.
+	*/
 	shouldStopScrollEvent: function(inEvent) {
 		return (this.preventScrollPropagation && inEvent.originator.owner != this.$.strategy);
 	},
+	/**
+		Calls _shouldStopScrollEvent_ to determine whether current scroll event
+		should be stopped.
+	*/
 	scrollStart: function(inSender, inEvent) {
 		return this.shouldStopScrollEvent(inEvent);
 	},
+	//* Either propagates or stops the current scroll event.
 	scroll: function(inSender, inEvent) {
 		// note: scroll event can be native dom or generated.
 		if (inEvent.dispatchTarget) {
@@ -251,6 +282,10 @@ enyo.kind({
 			return this.shouldStopScrollEvent(inEvent);
 		}
 	},
+	/**
+		Calls _shouldStopScrollEvent_ to determine whether current scroll event
+		should be stopped.
+	*/
 	scrollStop: function(inSender, inEvent) {
 		return this.shouldStopScrollEvent(inEvent);
 	},

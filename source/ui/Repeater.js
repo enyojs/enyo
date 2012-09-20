@@ -17,8 +17,8 @@
 			return true;
 		}
 
-	Be sure to return true from your _onSetupItem_ handler to avoid having other
-	event handlers further up the tree try to modify your item control.
+	Be sure to return _true_ from your _onSetupItem_ handler to avoid having
+	other event handlers further up the tree try to modify your item control.
 
 	The repeater will always be rebuilt after a call to _setCount_, even if the
 	count didn't change.  This behavior differs from that of most properties,
@@ -33,7 +33,13 @@ enyo.kind({
 		count: 0
 	},
 	events: {
-		//* Sends the item index, and the item control, for decoration.
+		/**
+			Fires when each item is created.
+			
+			_inEvent.index_ contains the item's index.
+			
+			_inEvent.item_ contains the item control, for decoration.
+		*/
 		onSetupItem: ""
 	},
 	create: function() {
@@ -99,6 +105,6 @@ enyo.kind({
 		if (inDelegate == this) {
 			inDelegate = this.owner.owner;
 		}
-		this.inherited(arguments, [inDelegate, inName, inEventName, inEvent, inSender]);
+		return this.inherited(arguments, [inDelegate, inName, inEventName, inEvent, inSender]);
 	}
 });

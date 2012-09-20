@@ -13,13 +13,17 @@
 	More information on _Async_ and its usage is available in the
 	<a href="https://github.com/enyojs/enyo/wiki/Async">Async documentation</a>
 	in the Enyo Developer Guide.
-	
-
-
 */
 enyo.kind({
 	name: "enyo.Async",
 	kind: enyo.Object,
+	published: {
+		/**
+			If set to a non-zero value, the number of milliseconds to
+			wait after the _go_ call before failing with the "timeout" error
+		*/
+		timeout: 0
+	},
 	//* @protected
 	failed: false,
 	context: null,
@@ -34,7 +38,7 @@ enyo.kind({
 	//* @public
 	/**
 		Registers a response function.
-		First parameter is an optional this context for the response method.
+		First parameter is an optional _this_ context for the response method.
 		Second (or only) parameter is the function object. 
 	*/
 	response: function(/* [inContext], inResponder */) {
@@ -43,7 +47,7 @@ enyo.kind({
 	},
 	/**
 		Registers an error handler.
-		First parameter is an optional this context for the response method.
+		First parameter is an optional _this_ context for the response method.
 		Second (or only) parameter is the function object. 
 	*/
 	error: function(/* [inContext], inResponder */) {
@@ -96,7 +100,7 @@ enyo.kind({
 		this.fail("timeout");
 	},
 	//* @protected
-	//* Called as part of the async implementation, triggers the handler chain.
+	//* Called as part of the async implementation; triggers the handler chain.
 	respond: function(inValue) {
 		this.failed = false;
 		this.endTimer();
@@ -109,8 +113,8 @@ enyo.kind({
 		this.endTimer();
 		this.handle(inError, this.errorHandlers);
 	},
-	//* Called from an error handler, this method clears the error
-	// condition and resumes calling handler methods.
+	//* Called from an error handler; clears the error condition and resumes
+	//* calling handler methods.
 	recover: function() {
 		this.failed = false;
 	},
