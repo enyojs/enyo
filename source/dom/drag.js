@@ -5,36 +5,20 @@
 
 	The following events are provided:
 
-	* "dragstart" and "dragfinish" are sent for pointer moves that exceed a
-		certain threshhold.
+	* "dragstart"
+	* "dragfinish"
+	* "drag"
+	* "drop"
+	* "dragover"
+	* "dragout"
+	* "hold"
+	* "release"
+	* "holdpulse"
+	* "flick"
 
-	* "drag" and "drop" are sent to the original target of the pointer move, to
-		provide information about the item being moved over (or released over)
-		another element.
-
-	* "dragover" and "dragout" are sent in addition to "over" and "out" while
-		there is an active drag.
-
-	* "hold" is generated when the pointer is held down without moving for a
-		short period of time (about 200ms).
-
-	* "release" is generated when the pointer is released after being held down,
-		or is moved off of the node while still held down, but before any potential dragstart event.  
-		The target is the same as that of the "hold" event.
-
-	* "holdpulse" is generated when the pointer is held down without moving for
-		a short period of time; it repeats periodically about once every 200ms.
-		Use	this event to trigger an action after a given period of time.  The
-		elapsed time is available in the _holdTime_ property.
-
-	* "flick" is generated when the user flicks the pointer quickly.  This event
-		provides flick velocity data through the properties _xVelocity_
-		(velocity with respect to the horizontal axis) and _yVelocity_ (velocity
-		with respect to the vertical axis).
-
-	Note: On the Android platform, the "touchmove" event must be prevented via
-	_inEvent.preventDefault()_, or the Enyo dragging system will not function
-	correctly.
+	For more information on these events, see the documentation on
+	[User Input](https://github.com/enyojs/enyo/wiki/User-Input) in the Enyo
+	Developer Guide.
 */
 
 //* @protected
