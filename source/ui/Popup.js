@@ -1,5 +1,6 @@
 /**
-	_enyo.Popup_ is used to display certain content on top of other content.
+	_enyo.Popup_ is a control used to display certain content on top of other
+	content.
 
 	Popups are initially hidden on creation; they can be shown by calling the
 	_show_ method and re-hidden by calling _hide_.  Popups may be centered using
@@ -11,16 +12,9 @@
 	that the popup will be displayed on top of other content.  This usage is
 	appropriate when the popup does not need to scroll along with other content.
 
-	The _autoDismiss_ property controls how a popup may be dismissed.  If _true_
-	(the default), then tapping outside the popup or pressing the ESC key will
-	dismiss the popup.
-
-	The _modal_ property may be set to _true_ to prevent any controls outside
-	the	popup from responding to events while the popup is showing, e.g.:
-
-		{kind: "enyo.Popup", centered: true, modal: true, floating: true, components: [
-			{content: "Here's some information..."}
-		]}
+	For more information, see the documentation on
+	[Popups](https://github.com/enyojs/enyo/wiki/Popups) in the Enyo Developer
+	Guide.
  */
 enyo.kind({
 	name: "enyo.Popup",
