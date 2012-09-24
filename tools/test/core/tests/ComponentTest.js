@@ -9,10 +9,10 @@ enyo.kind({
 				{ 
 					name: "parentComponent", 
 					components: [
-					    {
-					    	name: "nestedComponent", 
-					    	kind: undefined
-					    }
+						{
+							name: "nestedComponent", 
+							kind: undefined
+						}
 					]
 				}
 			);

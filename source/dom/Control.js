@@ -579,12 +579,7 @@ enyo.kind({
 		var results = '';
 		for (var i=0, c; (c=this.children[i]); i++) {
 			var h = c.generateHtml();
-			if (c.prepend) {
-				// FIXME: does webkit's fast string-consing work in reverse?
-				results = h + results;
-			} else {
-				results += h; 
-			}
+			results += h; 
 		}
 		return results;
 	},
@@ -635,7 +630,11 @@ enyo.kind({
 		if (this.node) {
 			var pn = this.getParentNode();
 			if (pn) {
-				this[this.prepend ? "insertNodeInParent" : "appendNodeToParent"](pn);
+				if (this.addBefore !== undefined) {
+					this.insertNodeInParent(pn, this.addBefore && this.addBefore.hasNode());
+				} else {
+					this.appendNodeToParent(pn);
+				}
 			}
 		}
 	},
