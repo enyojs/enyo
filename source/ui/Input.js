@@ -28,7 +28,7 @@ enyo.kind({
 		*/
 		type: "",
 		/**
-			When true, prevents input into the control. This maps to the 
+			When true, prevents input into the control. This maps to the
 			_disabled_ DOM attribute.
 		*/
 		disabled: false,
@@ -44,10 +44,6 @@ enyo.kind({
 	//* @protected
 	tag: "input",
 	classes: "enyo-input",
-	attributes: {
-		onfocus: enyo.bubbler,
-		onblur: enyo.bubbler
-	},
 	handlers: {
 		onfocus: "focused",
 		oninput: "input",
@@ -68,6 +64,9 @@ enyo.kind({
 	},
 	rendered: function() {
 		this.inherited(arguments);
+
+		enyo.makeBubble(this, "focus", "blur");
+
 		this.disabledChanged();
 		if (this.defaultFocus) {
 			this.focus();

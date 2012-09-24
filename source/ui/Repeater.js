@@ -20,11 +20,9 @@
 	Be sure to return _true_ from your _onSetupItem_ handler to avoid having
 	other event handlers further up the tree try to modify your item control.
 
-	The repeater will always be rebuilt after a call to _setCount_, even if the
-	count didn't change.  This behavior differs from that of most properties,
-	for which no action happens when a set-value call doesn't modify the value.
-	This is done to accomodate potential changes to the data model for the
-	repeater, which may happen to have the same item count as before.
+	For more information, see the documentation on
+	[Lists](https://github.com/enyojs/enyo/wiki/Lists) in the Enyo Developer
+	Guide.
 */
 enyo.kind({
 	name: "enyo.Repeater",
