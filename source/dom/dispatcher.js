@@ -3,21 +3,22 @@ enyo.$ = {};
 
 enyo.dispatcher = {
 	// these events come from document
-	events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel", "click", "dblclick", "change", "keydown", "keyup", "keypress", "input"],
+	events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel", 
+		"click", "dblclick", "change", "keydown", "keyup", "keypress", "input"],
 	// these events come from window
 	windowEvents: ["resize", "load", "unload", "message"],
 	// feature plugins (aka filters)
 	features: [],
 	connect: function() {
-		var d = enyo.dispatcher;
-		for (var i=0, n; n=d.events[i]; i++) {
+		var d = enyo.dispatcher, i, n;
+		for (i=0; (n=d.events[i]); i++) {
 			d.listen(document, n);
 		}
-		for (i=0, n; n=d.windowEvents[i]; i++) {
+		for (i=0; (n=d.windowEvents[i]); i++) {
 			// Chrome Packaged Apps don't like "unload"
-			if(n === "unload"
-					&& typeof(window.chrome) === "object"
-					&& window.chrome.app) {
+			if(n === "unload" && 
+				typeof(window.chrome) === "object" &&
+				window.chrome.app) {
 				continue;
 			}
 
@@ -51,7 +52,7 @@ enyo.dispatcher = {
 		// Cache the original target
 		e.dispatchTarget = c;
 		// support pluggable features return true to abort immediately or set e.preventDispatch to avoid processing.
-		for (var i=0, fn; fn=this.features[i]; i++) {
+		for (var i=0, fn; (fn=this.features[i]); i++) {
 			if (fn.call(this, e) === true) {
 				return;
 			}
@@ -68,7 +69,7 @@ enyo.dispatcher = {
 		// it is illegal to interrogate them. Would like to trap the bad nodes explicitly rather than using an exception block.
 		try {
 			while (n) {
-				if (t = enyo.$[n.id]) {
+				if ((t = enyo.$[n.id])) {
 					// there could be multiple nodes with this id, the relevant node for this event is n
 					// we don't push this directly to t.node because sometimes we are just asking what
 					// the target 'would be' (aka, calling findDispatchTarget from handleMouseOverOut)
