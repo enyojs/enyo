@@ -9,16 +9,21 @@ _enyo.TranslateScrollStrategy_ is not typically created in application code.
 enyo.kind({
 	name: "enyo.TranslateScrollStrategy",
 	kind: "TouchScrollStrategy",
+	//* Set to true to optimize the strategy to only use translation to scroll; this increases fluidity of
+	//* scrolling animation. It should not be used when the scroller contains controls that require keyboard
+	//* input. This is because when _translateOptimized_ is true, it is possible to position inputs such that
+	//* they will not become visibile when focused.
+	translateOptimized: false,
+	//* @protected
 	components: [
-		{name: "clientContainer", classes: "enyo-touch-scroller", attributes: {"onscroll": enyo.bubbler}, components: [
+		{name: "clientContainer", classes: "enyo-touch-scroller", components: [
 			{name: "client"}
 		]}
 	],
-	//* Set to true to optimize the strategy to only use translation to scroll; this increases fluidity of
-	//* scrolling animation. It should not be used when the scroller contains controls that require keyboard
-	//* input. This is because when _translateOptimized_ is true, it is possible to position inputs such that 
-	//* they will not become visibile when focused.
-	translateOptimized: false,
+	rendered: function() {
+		this.inherited(arguments);
+		enyo.makeBubble(this.$.clientContainer, "scroll");
+	},
 	getScrollSize: function() {
 		var n = this.$.client.hasNode();
 		return {width: n ? n.scrollWidth : 0, height: n ? n.scrollHeight : 0};
@@ -48,6 +53,7 @@ enyo.kind({
 			this.inherited(arguments);
 		}
 	},
+	//* @public
 	//* Sets the left scroll position within the scroller.
 	setScrollLeft: function(inLeft) {
 		this.stop();
@@ -78,6 +84,7 @@ enyo.kind({
 	getScrollTop: function() {
 		return this.translateOptimized ? this.scrollTop : this.inherited(arguments);
 	},
+	//* @protected
 	scrollMathStart: function(inSender) {
 		this.inherited(arguments);
 		this.scrollStarting = true;
@@ -115,15 +122,15 @@ enyo.kind({
 		if (!this.translateOptimized) {
 			var t = "0,0" + (this.accel ? ",0" : "");
 			// FIXME: normally translate3d changes not effect scrollHeight; however
-			// there appear to be some dom changes (e.g. showing a node inside the scroller, 
+			// there appear to be some dom changes (e.g. showing a node inside the scroller,
 			// which do cause the scrollHeight to be changed from the translate3d.
 			// In this case setting the translate3d back to 0 does not restore scrollHeight.
-			// This causes a problem because setting scrollTop can produced an unexpected result if 
+			// This causes a problem because setting scrollTop can produced an unexpected result if
 			// scrollHeight is less than expected.
 			// We detect this fault by validating scroll bounds and (1) un-apply the translate3d,
 			// (2) update scrollTop/Left, and (3) re-apply a 0,0,0 translate3d to ensure compositing.
-			// Luckily this corrects the problem (which appears to be a webkit bug). Note that 
-			// it's important to maintain a composited state (translate3d 0,0,0) or Android 4 is 
+			// Luckily this corrects the problem (which appears to be a webkit bug). Note that
+			// it's important to maintain a composited state (translate3d 0,0,0) or Android 4 is
 			// slow to start scrolling.
 			var m = this.$.scrollMath, sb = this._getScrollBounds();
 			var needsBoundsFix = Boolean((sb.maxTop + m.bottomBoundary) || (sb.maxLeft + m.rightBoundary));

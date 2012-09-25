@@ -21,7 +21,7 @@ enyo.kind({
 	published: {
 		/**
 			Specifies how to vertically scroll.  Acceptable values are:
-			
+
 			* "scroll": Always scroll.
 			* "auto": Scroll only if the content overflows the scroller.
 			* "hidden": Never scroll.
@@ -69,7 +69,7 @@ enyo.kind({
 	],
 	scrimTools: [{name: "scrim", classes: "enyo-fit", style: "z-index: 1;", showing: false}],
 	components: [
-		{name: "client", attributes: {"onscroll": enyo.bubbler}, classes: "enyo-touch-scroller"}
+		{name: "client", classes: "enyo-touch-scroller"}
 	],
 	create: function() {
 		this.inherited(arguments);
@@ -101,6 +101,7 @@ enyo.kind({
 	},
 	rendered: function() {
 		this.inherited(arguments);
+		enyo.makeBubble(this.$.client, "scroll");
 		this.calcBoundaries();
 		this.syncScrollMath();
 		if (this.thumb) {
@@ -253,7 +254,7 @@ enyo.kind({
 		if (this.dragging) {
 			inEvent.preventDefault();
 			// note: needed because show/hide changes
-			// the position so sync'ing is required when 
+			// the position so sync'ing is required when
 			// dragging begins (needed because show/hide does not trigger onscroll)
 			this.syncScrollMath();
 			this.$.scrollMath.startDrag(inEvent);
