@@ -25,25 +25,25 @@ enyo.dispatcher = {
 			d.listen(window, n);
 		}
 	},
-	listen: function(inListener, inEventName) {
+	listen: function(inListener, inEventName, inHandler) {
 		var d = enyo.dispatch;
 		if (inListener.addEventListener) {
-			this.listen = function(inListener, inEventName) {
-				inListener.addEventListener(inEventName, d, false);
+			this.listen = function(inListener, inEventName, inHandler) {
+				inListener.addEventListener(inEventName, inHandler || d, false);
 			};
 		} else {
 			//console.log("IE8 COMPAT: using 'attachEvent'");
-			this.listen = function(inListener, inEvent, inCb) {
+			this.listen = function(inListener, inEvent, inHandler) {
 				inListener.attachEvent("on" + inEvent, function(e) {
 					e.target = e.srcElement;
 					if (!e.preventDefault) {
 						e.preventDefault = enyo.iePreventDefault;
 					}
-					return d(e);
+					return (inHandler || d)(e);
 				});
 			};
 		}
-		this.listen(inListener, inEventName);
+		this.listen(inListener, inEventName, inHandler);
 	},
 	//* Fires an event for Enyo to listen for.
 	dispatch: function(e) {
@@ -138,7 +138,7 @@ enyo.bubbler = "enyo.bubble(arguments[0])";
 		if(typeof(control) === "object" && typeof(control.hasNode) === "function") {
 			enyo.forEach(args, function(event) {
 				if(this.hasNode()) {
-					this.node.addEventListener(event, bubbleUp);
+					enyo.dispatcher.listen(this.node, event, bubbleUp);
 				}
 			}, control);
 		}
