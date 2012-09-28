@@ -7,6 +7,7 @@ enyo.depends(
 	"ComponentTest.js",
 	"ComponentDispatchTest.js",
 	"ComponentHandlersTest.js",
+	"ControlTest.js",
 	"ControlPropsTest.js",
 	"DecodePackagePathTest.js"
 );

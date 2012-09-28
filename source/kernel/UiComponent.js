@@ -23,6 +23,13 @@ enyo.kind({
 	handlers: {
 		onresize: "resizeHandler"
 	},
+	//* when set, provides a control reference that's used to indicate where
+	//* the component is added in the UIComponent's childern array.  This
+	//* usually isn't used at design time, but instead used when dynamically
+	//* creating children. If set to null, control will be added at beginning.
+	//* If left undefined, the default is to add the control to the end of the
+	//* array.
+	addBefore: undefined,
 	//* @protected
 	statics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
@@ -67,24 +74,7 @@ enyo.kind({
 	adjustComponentProps: function(inProps) {
 		// Components we create have us as a container by default.
 		inProps.container = inProps.container || this;
-		/*
-		// the 'property master' is the object responsible for adjusting component props
-		// which may not be the object on which component creation was invoked
-		// the first-order property master is our container (this by default)
-		var propMaster = inProps.container;
-		// if we are the first-order property master, our control parent (if it exists) is the second-order master
-		if (propMaster == this) {
-			propMaster = this.controlParent || propMaster;
-		}
-		// if the property master is not us, delegate to him
-		if (propMaster != this) {
-			propMaster.adjustComponentProps(inProps);
-		}
-		// otherwise, do the usual
-		else {
-		*/
-			this.inherited(arguments);
-		//}
+		this.inherited(arguments);
 	},
 	// containment
 	containerChanged: function(inOldContainer) {
@@ -92,7 +82,7 @@ enyo.kind({
 			inOldContainer.removeControl(this);
 		}
 		if (this.container) {
-			this.container.addControl(this);
+			this.container.addControl(this, this.addBefore);
 		}
 	},
 	// parentage
@@ -171,9 +161,9 @@ enyo.kind({
 	},
 	// children
 	addChild: function(inChild, inBefore) {
-		// if inBefore is undefined, use the old behavior of adding to front
-		// or end of children based in this.prepend property. if it's null,
-		// add to end, otherwise add before the specified control.
+		// if inBefore is undefined, add to the end of the child list.
+		// If it's null, add to front of list, otherwise add before the
+		// specified control.
 		//
 		// allow delegating the child to a different container
 		if (this.controlParent /*&& !inChild.isChrome*/) {
@@ -192,21 +182,12 @@ enyo.kind({
 			// Set the child's parent property to this
 			inChild.setParent(this);
 			// track in children array
-			if (inBefore === undefined) {
-				this.children[this.prepend ? "unshift" : "push"](inChild);
-			} else if (inBefore === null) {
-				// this case is needed to allow adding to end when this.prepend is true
-				this.children.push(inChild);
-			} else {
-				var idx = this.indexOfChild(inBefore);
+			if (inBefore !== undefined) {
+				var idx = (inBefore === null) ? 0 : this.indexOfChild(inBefore);
 				this.children.splice(idx, 0, inChild);
+			} else {
+				this.children.push(inChild);
 			}
-			/*
-			// FIXME: hacky, allows us to reparent a rendered control; we need better API for dynamic reparenting
-			if (inChild.hasNode()) {
-				inChild[this.prepend ? "_prepend" : "_append"]();
-			}
-			*/
 		}
 	},
 	removeChild: function(inChild) {
