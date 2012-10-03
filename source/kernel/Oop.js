@@ -1,42 +1,46 @@
 ﻿
 //----------------------- CD: MOVE ME
 
+  //* @public
   /**
-    Functions on objects can have observers automatically
-    created for them during initialization by using this
-    method in their definition.
-
-    Ex.
-
-    enyo.kind({
-      name: "enyo.NewObjectKind",
-      published: {
-        someProperty: ""
-      },
-      somePropertyDidChange: function (property, oldVal, newVal) {
-        this.log("My someProperty changed to " + newVal + " from " + oldVal); 
-      }.observes("someProperty")
-    });
+    Takes a function followed by 1 or more string parameters that are
+    targets for the observer. Returns a method with the appropriate properties
+    to allow the system to notify it when the named properites have been
+    modified.
   */
-  Function.prototype.observes = function () {
-    var a = enyo.toArray(arguments), f = this, i = 0;
-
-    // if the function already has observers, use that array
-    // otherwise we create one
-    f.events = f.events? f.events: [];
-
-    // simply keep track of what properties should fire this
-    // observer when changed
-    for (; i < a.length; ++i) f.events.push(a[i]);
-    return f;
+  enyo.Observer = function () {
+    var args = enyo.toArray(arguments), fn, i = 0;
+    fn = args.length > 0? args.shift(): null;
+    if (!fn || !enyo.isFunction(fn) || args.length <= 0) {
+      enyo.warn("enyo.Observer: could not return a valid observer method, " +
+        "must supply a function and at least one property to observer");
+      return enyo.isFunction(fn)? fn: enyo.nop;
+    }
+    fn.isObserver = true;
+    fn.events = fn.events? fn.events: [];
+    for (; i < args.length; ++i) fn.events.push(args[i]);
+    return fn;
   };
 
-  Function.prototype.computed = function () {
-    var a = enyo.toArray(arguments), f = this, i = 0;
-    f.properties = f.properties? f.properties: [];
-    for (; i < a.length; ++i) f.properties.push(a[i]);
-    f.isProperty = true;
-    return f;
+  //* @public
+  /**
+    Takes a function followed by 0 or more string parameters that
+    are dependencies of the computed property. Returns the method
+    with the appropriate properties to allow the system to use it
+    as a normal property.
+  */
+  enyo.Computed = function () {
+    var args = enyo.toArray(arguments), fn, i = 0;
+    fn = args.length > 0? args.shift(): null;
+    if (!fn || !enyo.isFunction(fn)) {
+      enyo.warn("enyo.Computed: could not return a valid computed property " +
+        "as no method was supplied");
+      return enyo.nop;
+    }
+    fn.isProperty = true;
+    fn.properties = fn.properties? fn.properties: [];
+    for (; i < args.length; ++i) fn.properties.push(args[i]);
+    return fn;
   };
 
 //-----------------------

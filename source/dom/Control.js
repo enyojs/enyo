@@ -53,7 +53,9 @@ enyo.kind({
 		//* to fill the available space
 		fit: false,
 		//* Used by Ares design editor for design objects
-		isContainer: false
+		isContainer: false,
+		
+		controller: ""
 	},
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
@@ -84,7 +86,8 @@ enyo.kind({
 		// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
 		this.addClass(this.kindClasses);
 		this.addClass(this.classes);
-		this.initProps(["id", "content", "src"]);
+		this.initProps(["id", "content", "src", "controller"]);
+		this._setup();
 	},
 	destroy: function() {
 		this.removeNodeFromDom();
@@ -108,6 +111,24 @@ enyo.kind({
 			}
 		}
 	},
+	
+	controllerChanged: function () {
+	  var cs = this.controller, c;
+	  if (cs && enyo.isString(cs)) {
+	    if (cs[0] === "." || !(c = enyo._getPath(cs))) c = enyo._getPath.call(this, cs); 
+	  } else if (cs && enyo.isFunction(cs) && !(cs instanceof enyo.Controller)) {
+	    c = new cs();
+	  } else if (cs instanceof enyo.Controller) {
+	    c = cs;
+	  }
+	  if (!c) {
+	    console.warn("Could not find requested controller instance or class ", this.kindName, cs);
+	    return;
+	  }
+	  c.owner = this;
+	  this.controller = c;
+	},
+	
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
 		this.addClass(this.classes);
@@ -169,7 +190,7 @@ enyo.kind({
 		control.
 	*/
 	addContent: function(inAddendum) {
-		this.setContent(this.content + inAddendum);
+		this.setContent(this.get("content") + inAddendum);
 	},
 	/**
 		Gets the value of an attribute on this object.
@@ -572,7 +593,7 @@ enyo.kind({
 		if (this.children.length) {
 			return this.generateChildHtml();
 		} else {
-			return this.allowHtml ? this.content : enyo.Control.escapeHtml(this.content);
+			return this.allowHtml ? this.get("content") : enyo.Control.escapeHtml(this.get("content"));
 		}
 	},
 	generateChildHtml: function() {

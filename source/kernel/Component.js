@@ -129,6 +129,7 @@ enyo.kind({
 	destroy: function() {
 		this.destroyComponents();
 		this.setOwner(null);
+		this.clearBindings();
 		// JS objects are never truly destroyed (GC'd) until all references are gone,
 		// we might have some delayed action on this object that needs to have access
 		// to this flag.
@@ -359,6 +360,16 @@ enyo.kind({
 	dispatchEvent: function(inEventName, inEvent, inSender) {
 		// bottleneck event decoration
 		this.decorateEvent(inEventName, inEvent, inSender);
+		
+		// delegate to view controller if it exists and can handle the event
+		// stop propagation if it is the exclusive handler
+		
+		if (this.controller && this.controller instanceof enyo.Component) {
+		  if (this.controller.dispatchEvent(inEventName, inEvent, inSender)) {
+		    return true;
+	    }
+    }
+		
 		//
 		// Note: null checks and sub-expressions are unrolled in this
 		// high frequency method to reduce call stack in the 90% case.
@@ -366,6 +377,7 @@ enyo.kind({
 		//
 		// try to dispatch this event directly via handlers
 		//
+		
 		if (this.handlers[inEventName] && this.dispatch(this.handlers[inEventName], inEvent, inSender)) {
 			return true;
 		}

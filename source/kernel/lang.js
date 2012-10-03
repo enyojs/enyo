@@ -2,6 +2,77 @@
 	//* @protected
 	enyo.global = this;
 
+  enyo.start = function () {
+    // TODO: this needs to be revisited but is a placeholder for now
+    if (enyo._app) {
+      enyo._app.start();
+    } else console.warn("No application found");
+  };
+
+  enyo._getPath = function () {
+    var args, cur, path, i = 0, val, part;
+    if (arguments.length === 0) return undefined;  
+    if (!enyo.isString(arguments[0])) return undefined;
+    args = arguments;
+    path = args[0];
+    cur = this === enyo? window: this;
+    while (path[i] === ".") ++i;
+    if (i > 0) path = path.slice(i);
+    i = path.indexOf(".");
+    if (i === -1) val = cur[path];
+    else {
+      part = path.substring(0, i);
+      path = path.slice(i);
+      if (typeof cur[part] === "object") {
+        val = enyo._getPath.call(cur[part], path, true);
+      } else return undefined;
+    }
+    if (enyo.isFunction(val) && val.isProperty === true) {
+      if (!args[1]) return val.call(this);
+    }
+    return val;
+  };
+
+  enyo._setPath = function () {
+    var args, cur, val, path, i = 0, parts, tmp, prev;
+    if (arguments.length < 2) return this;
+    args = arguments;
+    path = args[0];
+    val = args[1];
+    cur = this;
+    while (path[i] === ".") ++i;
+    if (i > 0) path = path.slice(i);
+    i = path.indexOf(".");
+    if (i === -1) {
+      if (this[path] && enyo.isFunction(this[path]) && this[path].isProperty) {
+        prev = this[path].call(this);
+        this[path].call(this, val);
+      } else {
+        prev = this[path];
+        this[path] = val;
+      }
+    } else {
+      parts = path.split(".");
+      while (parts.length > 0) {
+        tmp = parts.shift();
+        if (parts.length === 0) {
+          if (cur[tmp] && enyo.isFunction(cur[tmp]) && cur[tmp].isProperty) {
+            prev = cur[tmp].call(this);
+            cur[tmp].call(this, val);
+          } else {
+            prev = cur[tmp];
+            cur[tmp] = val;
+          }
+        } else {
+          if (!cur[tmp]) cur[tmp] = {};
+          cur = cur[tmp];
+        }
+      }
+    }
+    if (this.notifyObservers) this.notifyObservers(path, prev, val);
+    return this;
+  };
+
 	enyo._getProp = function(parts, create, context) {
 		var obj = context || enyo.global;
 		for(var i=0, p; obj && (p=parts[i]); i++){
