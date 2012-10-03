@@ -222,10 +222,64 @@ enyo.kind({
 
           // TODO: for now this cannot be asynchronous without destroying
           // two-way bindings
-          fn.call(this, inProp, oldVal, newVal);
+          if (!this._allowNotifications) {
+            this.addNotificationToQueue(inProp, fn, [inProp, oldVal, newVal]);
+          } else { fn.call(this, inProp, oldVal, newVal); }
           //enyo.asyncMethod(this, fn, inProp, oldVal, newVal);
         }
       }
+    },
+    
+    _notificationQueue: null,
+    _allowNotifications: true,
+    
+    addNotificationToQueue: function (prop, fn, params) {
+      console.log("addNotificationToQueue", arguments);
+      var q = this._notificationQueue || (this._notificationQueue = {}), e = q[prop];
+      if (!e) {
+        e = (q[prop] = [params || [], fn]);
+      } else {
+        // we update the params to whatever is most current in case
+        // they have been updated more than once while notifications
+        // are off...
+        if (params) e.splice(0, 1, params);
+        e.push(fn);
+      }
+    },
+    
+    stopNotifications: function () {
+      console.log("stopNotifications");
+      // TODO: this may not be desirable to assume a reset of the
+      // queue EVERY time this is called...
+      this._notificationQueue = {};
+      this._allowNotifications = false;
+    },
+    
+    startNotifications: function () {
+      console.log("startNotifications");
+      this._allowNotifications = true;
+      this.flushNotifications();
+    },
+    
+    flushNotifications: function () {
+      console.log("flushNotifications");
+      var q = this._notificationQueue || {}, fn, p, n, params;
+      for (p in q) {
+        console.log("notifications for ", p);
+        n = q[p];
+        if (n && enyo.isArray(n)) {
+          params = n.length > 1? n.shift(): [];
+          console.log("params ", params);
+          while (n.length) {
+            fn = n.shift();
+            if (fn && enyo.isFunction(fn)) {
+              // async?
+              fn.apply(this, params);
+            }
+          }
+        }
+      }
+      console.log("done flushing");
     },
 
     binding: function () {
