@@ -90,6 +90,10 @@ enyo.kind({
 		this._setup();
 	},
 	destroy: function() {
+	  if (this.controller) {
+	    this.constroller.destroy();
+	    this.constroller = null;
+    }
 		this.removeNodeFromDom();
 		enyo.Control.unregisterDomEvents(this.id);
 		this.inherited(arguments);
