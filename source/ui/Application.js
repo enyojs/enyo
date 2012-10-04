@@ -18,8 +18,10 @@
       router: false,
       controller: null
     },
+    _eventQueue: null,
     constructor: function (inProps) {
       var c = inProps.classes || "";
+      this._eventQueue = [];
       c = inProps.name.toLowerCase() + "-app" + c;
       inProps.classes = c;
       enyo.mixin(this, inProps);
@@ -54,7 +56,20 @@
       r.set("controller", c);
     },
     dispatchEvent: function () {
+      if (!this.controller || !this.controller.handle) {
+        // queue these...
+        this._eventQueue.push(arguments);
+        return;
+      }
       this.controller.handle.apply(this.controller, arguments);
+    },
+    controllerChanged: function () {
+      this.inherited(arguments);
+      var q = this._eventQueue || [], args;
+      while (q.length) {
+        args = q.shift();
+        this.dispatchEvent.apply(this, args);
+      }
     },
     handle: function () {
       return enyo._handle.apply(this, arguments);
