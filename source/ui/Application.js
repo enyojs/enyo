@@ -43,15 +43,7 @@
       if (this.router) this.router.start();
     },
     setup: function () {
-      this.setupAppController();
       this.setupRouter();
-    },
-    setupAppController: function () {
-      var c = this.controller;
-      if (enyo.isString(c)) c = enyo._getPath(c);
-      if (!c) return (this.controller = this);
-      c = this.controller = new c();
-      c.set("owner", this);
     },
     setupRouter: function () {
       var r = this.router, c = this.controller;
