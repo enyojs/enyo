@@ -119,11 +119,11 @@ enyo.kind({
 	controllerChanged: function () {
 	  var cs = this.controller, c;
 	  if (cs && enyo.isString(cs)) {
-	    if (cs[0] === "." || !(c = enyo._getPath(cs))) c = enyo._getPath.call(this, cs); 
-	  } else if (cs && enyo.isFunction(cs) && !(cs instanceof enyo.Controller)) {
-	    c = new cs();
-	  } else if (cs instanceof enyo.Controller) {
-	    c = cs;
+	    if (cs[0] === "." || !(c = enyo._getPath(cs))) c = enyo._getPath.call(this, cs);
+	    if (!c) throw new Error("Control.controllerChanged: could not find " + cs);
+	  } else { c = cs; }
+	  if (c && enyo.isFunction(c) && !(c instanceof enyo.Controller)) {
+	    c = new c();
 	  }
 	  if (!c) {
 	    console.warn("Could not find requested controller instance or class ", this.kindName, cs);
