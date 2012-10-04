@@ -167,7 +167,7 @@ enyo.kind({
       // if no observer array has already been created for this
       // property, go ahead and create it
       if (!(t = o[inProp])) t = o[inProp] = [];
-      t.push(f);
+      if (t.indexOf(f) === -1) t.push(f);
 
       // allow chaining
       return this; 
@@ -211,8 +211,9 @@ enyo.kind({
           ch_name = inProp[0].toLowerCase() + inProp.slice(1) + "Changed";
       
       if (this[ch_name] && enyo.isFunction(this[ch_name])) {
-        //enyo.asyncMethod(this, this[ch_name], oldVal, newVal);
-        this[ch_name].call(this, oldVal, newVal);
+        if (!this._allowNotifications) {
+          this.addNotificationToQueue(inProp, this[ch_name], [oldVal, newVal]);
+        } else { this[ch_name].call(this, oldVal, newVal); }
       }
 
       if (t) {
@@ -242,7 +243,7 @@ enyo.kind({
         // they have been updated more than once while notifications
         // are off...
         if (params) e.splice(0, 1, params);
-        e.push(fn);
+        if (e.indexOf(fn) === -1) e.push(fn);
       }
     },
     
