@@ -157,8 +157,8 @@
     oneWay: false,
     ignoreOnce: false,
     
-    sync: function () {
-      if (this.isSynced) return;
+    sync: function (force) {
+      if (this.isSynced && force !== true) return;
       this._syncFromSource();
       this.isSynced = true;
       return;
