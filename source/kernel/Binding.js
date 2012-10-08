@@ -31,6 +31,7 @@
   };
   
   getBindingsId = function () {
+    // TODO: possible source of failure?
     return String(enyo.bindingsId++);
   };
   
@@ -59,6 +60,7 @@
     _setup: function () {
       if (!this._setupSource() || !this._setupTarget()) return;
       if (this.autoConnect === true) this.connect();
+      if (this.autoSync === true) this.sync();
     },
     _setupSource: function () {
       var parts = getParts.call(this, this.from, this.source), b, p, c;
@@ -153,9 +155,9 @@
     source: null,
     owner: null,
     autoConnect: false,
+    autoSync: true,
     transform: null,
     oneWay: false,
-    ignoreOnce: false,
     
     sync: function (force) {
       if (this.isSynced && force !== true) return;
@@ -169,7 +171,6 @@
       this._connectSource();
       this._connectTarget();
       this.isConnected = true;
-      this.sync();
     },
     
     disconnect: function () {
@@ -202,6 +203,7 @@
     
     setTargetValue: function (inValue) {
       var v = this.transform && enyo.isFunction(this.transform)? this.transform(inValue, "target"): inValue;
+      this.isSynced = true;
       return this._target.set(this._targetProperty, v);
     },
     
