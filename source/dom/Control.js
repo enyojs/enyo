@@ -87,8 +87,25 @@ enyo.kind({
 		this.addClass(this.kindClasses);
 		this.addClass(this.classes);
 		this.initProps(["id", "content", "src", "controller"]);
-		this._setup();
+		this._setup(true);
 	},
+	
+	// TODO: this is a hack to keep the lower level _setup (on enyo.Object) from
+	// setting up bindings/observers on display properties that have not
+	// yet been initialized...
+	_setup: function (ready) {
+    if (!ready) {
+      if (!this._controlBindings && this.bindings) {
+        this._controlBindings = enyo.clone(this.bindings);
+        this.bindings = null;
+      }
+      this.inherited(arguments);
+    } else {
+      this.bindings = this._controlBindings;
+      this.inherited(arguments);
+    }
+	},
+	
 	destroy: function() {
 	  if (this.controller) {
 	    this.constroller.destroy();
