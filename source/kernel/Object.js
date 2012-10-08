@@ -207,6 +207,7 @@ enyo.kind({
     },
 
     notifyObservers: function (inProp, oldVal, newVal, force) {
+      
       var o = this._observers, c = this._computed, t = o[inProp], i = 0, fn,
           ch_name = inProp[0].toLowerCase() + inProp.slice(1) + "Changed";
       

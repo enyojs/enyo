@@ -68,8 +68,8 @@
           cur = cur[tmp];
         }
       }
-    }
-    if (this.notifyObservers) this.notifyObservers(path, prev, val);
+    } 
+    if (this.notifyObservers && (prev !== val)) this.notifyObservers(path, prev, val);
     return this;
   };
 
