@@ -4,7 +4,8 @@ var
 	walker = require("walker"),
 	jsp = require("uglify-js").parser,
 	pro = require("uglify-js").uglify,
-	nopt = require("nopt")
+	nopt = require("nopt"),
+	less = require("less")
 	;
 
 // Shimming path.relative with 0.8.8's version if it doesn't exist
@@ -15,6 +16,7 @@ if(!path.relative){
 function printUsage() {
 	w("Enyo 2.0 Minifier");
 	w("Flags:");
+	w("-no-less:", "Don't compile less; instad substitute css for less");
 	w("-no-alias:", "Don't use path macros");
 	w("-alias:", "Give paths a macroized alias");
 	w("-enyo ENYOPATH:", "Path to enyo loader (enyo/enyo.js)");
@@ -39,34 +41,62 @@ buildPathBlock = function(loader) {
 	return !p ? "" : "\n// minifier: path aliases\n\nenyo.path.addPaths({" + p + "});\n";
 };
 
-concatCss = function(loader) {
+concatCss = function(loader, doneCB) {
 	w("");
 	var blob = "";
-	var repl = function(inMatch) {
-		// find the url path, ignore quotes in url string
-		var matches = /url\s*\(\s*(('([^']*)')|("([^"]*)")|([^'"]*))\s*\)/.exec(inMatch);
-		var urlPath = matches[3] || matches[5] || matches[6];
-		// skip data urls
-		if (/^data:/.test(urlPath)) {
-			return "url(" + urlPath + ")";
-		}
-		// get absolute path to referenced asset
-		var normalizedUrlPath = path.join(s, "..", urlPath);
-		// Make relative asset path to built css
-		var relPath = path.relative(path.dirname(opt.output || "build"), normalizedUrlPath);
-		if (process.platform == "win32") {
-			relPath = pathSplit(relPath).join("/");
-		}
-		return "url(" + relPath + ")";
-	};
-	for (var i=0, s; (s=loader.sheets[i]); i++) {
-		w(s);
-		var code = fs.readFileSync(s, "utf8");
+	var addToBlob = function(sheet, code) {
 		// fix url paths
-		code = code.replace(/url\([^)]*\)/g, repl);
-		blob += "\n/* " + s + " */\n\n" + code + "\n";
+		code = code.replace(/url\([^)]*\)/g, function(inMatch) {
+			// find the url path, ignore quotes in url string
+			var matches = /url\s*\(\s*(('([^']*)')|("([^"]*)")|([^'"]*))\s*\)/.exec(inMatch);
+			var urlPath = matches[3] || matches[5] || matches[6];
+			// skip data urls
+			if (/^data:/.test(urlPath)) {
+				return "url(" + urlPath + ")";
+			}
+			// get absolute path to referenced asset
+			var normalizedUrlPath = path.join(sheet, "..", urlPath);
+			// Make relative asset path to built css
+			var relPath = path.relative(path.dirname(opt.output || "build"), normalizedUrlPath);
+			if (process.platform == "win32") {
+				relPath = pathSplit(relPath).join("/");
+			}
+			return "url(" + relPath + ")";
+		});
+		blob += "\n/* " + sheet + " */\n\n" + code + "\n";
 	}
-	return blob;
+	// Pops one sheet off the sheets[] array, reads (and parses if less), and then
+	// recurses again from the async callback until no sheets left, then calls doneCB
+	var readAndParse = function(sheets) {
+		var sheet = sheets.shift();
+		if (sheet) {
+			w(sheet);
+			var isLess = (sheet.slice(-4) == "less");
+			if (isLess && (opt.less !== undefined)) {
+				sheet = sheet.slice(0, sheet.length-4) + "css";
+				isLess = false;
+				w(" (Substituting CSS: " + sheet + ")");
+			}
+			var code = fs.readFileSync(sheet, "utf8");
+			if (isLess) {
+				var parser = new(less.Parser)({filename:sheet, paths:[path.dirname(sheet)]});
+				parser.parse(code, function (err, tree) {
+					if (err) {
+						console.error(err);
+					} else {
+						addToBlob(sheet, tree.toCSS());
+					}
+					readAndParse(sheets);
+				});
+			} else {
+				addToBlob(sheet, code);
+				readAndParse(sheets);
+			}
+		} else {
+			doneCB(blob);
+		}
+	}
+	readAndParse(loader.sheets);
 };
 
 concatJs = function(loader) {
@@ -110,28 +140,29 @@ finish = function(loader) {
 	if (outfolder != "." && !exists(outfolder)) {
 		fs.mkdirSync(outfolder);
 	}
-	//
-	var css = concatCss(loader);
-	if (css.length) {
+	// Unfortunately, less parsing is asynchronous, so concatCSS is now as well
+	concatCss(loader, function(css) {
+		if (css.length) {
+			w("");
+			fs.writeFileSync(output + ".css", css, "utf8");
+		}
+		//
+		var js = concatJs(loader);
+		/*
+		if (css.length) {
+			js += "\n// " + "minifier: load css" + "\n\n";
+			js += 'enyo.machine.sheet("' + output + '.css");\n';
+		}
+		*/
+		if (js.length) {
+			w("");
+			fs.writeFileSync(output + ".js", js, "utf8");
+		}
+		//
 		w("");
-		fs.writeFileSync(output + ".css", css, "utf8");
-	}
-	//
-	var js = concatJs(loader);
-	/*
-	if (css.length) {
-		js += "\n// " + "minifier: load css" + "\n\n";
-		js += 'enyo.machine.sheet("' + output + '.css");\n';
-	}
-	*/
-	if (js.length) {
+		w("done.");
 		w("");
-		fs.writeFileSync(output + ".js", js, "utf8");
-	}
-	//
-	w("");
-	w("done.");
-	w("");
+	});
 };
 
 w = console.log;
