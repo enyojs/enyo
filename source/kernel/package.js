@@ -15,6 +15,5 @@ enyo.depends(
 	"Controller.js",
 	"AppController.js",
 	"ArrayController.js",
-	"ObjectController.js",
 	"Extension.js"
 );
