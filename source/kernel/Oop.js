@@ -130,7 +130,7 @@ enyo.singleton = function(conf, context) {
 	// create an unnamed kind and save its constructor's function
 	var kind = enyo.kind(conf);
 	// create the singleton with the previous name and constructor
-	enyo.setObject(name, new kind(), context);
+	return enyo.setObject(name, new kind(), context);
 };
 
 //* @protected
