@@ -2,12 +2,10 @@
 	//* @protected
 	enyo.global = this;
 
-  enyo.start = function () {
-    // TODO: this needs to be revisited but is a placeholder for now
-    if (enyo._app) {
-      enyo._app.start();
-    } else console.warn("No application found");
-  };
+
+  // TODO: there are some significant improvements that can be made
+  // to both of these methods enyo._getPath/enyo._setPath and both
+  // should be renamed without the underscore...
 
   enyo._getPath = function () {
     var args, cur, path, i = 0, val, part;
