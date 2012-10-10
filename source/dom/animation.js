@@ -11,6 +11,11 @@
 		return window.clearTimeout(inId);
 	};
 	for (var i = 0, pl = prefix.length, p, wc, wr; (p = prefix[i]) || i < pl; i++) {
+		// if we're on ios 6 just use setTimeout, requestAnimationFrame has some kinks currently
+		if (enyo.platform.ios >= 6) {
+			break;
+		}
+		
 		// if prefixed, becomes Request and Cancel
 		wc = p ? (p + enyo.cap(c)) : c;
 		wr = p ? (p + enyo.cap(r)) : r;
