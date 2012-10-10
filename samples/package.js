@@ -11,5 +11,7 @@ enyo.depends(
 	"RepeaterSample.css",
 	"RepeaterSample.js",
 	"ScrollerSample.css",
-	"ScrollerSample.js"
+	"ScrollerSample.js",
+	"GestureSample.css",
+	"GestureSample.js"
 );

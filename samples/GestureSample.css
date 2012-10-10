@@ -1,0 +1,57 @@
+.gesture-sample {
+	padding: 15px;
+}
+
+.gesture-sample > * {
+	margin-bottom:10px;
+}
+
+.gesture-sample-pad {
+	border-radius: 5px;
+	background-color: #888;
+	color: #686868;
+ 	text-shadow:#AAA 0px 1px 0, #000 0 -1px 0;
+ 	text-align:center;
+	padding-top:15%;
+	font-size:30px;
+	overflow:hidden;
+}
+
+.gesture-sample-note {
+	font-size:15px; 
+	text-shadow:none;
+}
+
+.gesture-sample-padded > * {
+	padding:5px;
+}
+
+.gesture-sample-left > * {
+	text-align:left;
+}
+
+.gesture-sample-setting {
+	font-size: 15px;
+	padding: 10px;
+	min-height: 30px;
+	line-height: 30px;
+}
+.gesture-sample-setting > * {
+	display: inline-block;
+}
+
+.gesture-sample-setting > :last-child {
+	float: right;
+}
+
+@media all and (max-height:600px) {
+	.gesture-sample-truncate {
+		width:100%;
+		word-wrap:normal;
+		white-space:nowrap;
+		overflow:hidden;
+		-o-text-overflow:ellipsis;
+		text-overflow:ellipsis;
+	}
+}
+
