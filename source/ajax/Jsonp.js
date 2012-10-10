@@ -5,6 +5,10 @@
 	external resource is loaded using a	&lt;script&gt; tag. This allows us to
 	bypass the same-domain rules that normally apply to XHR, since the browser
 	will load scripts from any address.
+
+	For more information, see the documentation on
+	[Consuming Web Services](https://github.com/enyojs/enyo/wiki/Consuming-Web-Services)
+	in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.JsonpRequest",

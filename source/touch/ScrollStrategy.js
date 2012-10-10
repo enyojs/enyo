@@ -1,7 +1,7 @@
 ﻿/**
 	_enyo.ScrollStrategy_ is a helper kind that implements a default scrolling
 	strategy for an <a href="#enyo.Scroller">enyo.Scroller</a>.
-	
+
 	_enyo.ScrollStrategy_ is not typically created in application code.
 */
 enyo.kind({
@@ -10,7 +10,7 @@ enyo.kind({
 	published: {
 		/**
 			Specifies how to vertically scroll.  Acceptable values are:
-				
+
 			* "scroll": Always shows a scrollbar; sets _overflow: scroll_.
 			* "auto": Scrolls only if needed; sets _overflow: auto_.
 			* "hidden": Never scrolls; sets _overflow: hidden_.
@@ -45,10 +45,10 @@ enyo.kind({
 		this.horizontalChanged();
 		this.verticalChanged();
 		this.maxHeightChanged();
-		this.container.setAttribute("onscroll", enyo.bubbler);
 	},
 	rendered: function() {
 		this.inherited(arguments);
+		enyo.makeBubble(this.container, "scroll");
 		this.scrollNode = this.calcScrollNode();
 	},
 	teardownRender: function() {
@@ -173,7 +173,7 @@ enyo.kind({
 	down: function(inSender, inEvent) {
 		this.calcStartInfo();
 	},
-	// NOTE: mobile native scrollers need touchmove. Indicate this by 
+	// NOTE: mobile native scrollers need touchmove. Indicate this by
 	// setting the requireTouchmove property to true.
 	move: function(inSender, inEvent) {
 		if (inEvent.which && (this.canVertical && inEvent.vertical || this.canHorizontal && inEvent.horizontal)) {

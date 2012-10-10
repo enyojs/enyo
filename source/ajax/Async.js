@@ -1,17 +1,17 @@
 ﻿/**
 	_enyo.Async_ is the base kind for handling asynchronous operations.
-	
+
 	_enyo.Async_ is an **Object**, not a **Component**; thus, you may not declare
 	an _Async_ in a _components_ block. If you want to use _Async_ as a
 	component, you should probably be using
 	<a href="#enyo.WebService">enyo.WebService</a> instead.
-	
+
 	An Async object represents a task that has not yet completed. You may attach
 	callback functions to an Async, to be called when the task completes or
 	encounters an error.
-	
-	More information on _Async_ and its usage is available in the
-	<a href="https://github.com/enyojs/enyo/wiki/Async">Async documentation</a>
+
+	More information on _Async_ and its usage is available in the documentation	on
+	<a href="https://github.com/enyojs/enyo/wiki/Consuming-Web-Services">Consuming Web Services</a>
 	in the Enyo Developer Guide.
 */
 enyo.kind({

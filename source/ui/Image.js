@@ -10,8 +10,6 @@ enyo.kind({
 	//* @protected
 	tag: "img",
 	attributes: {
-		onload: enyo.bubbler,
-		onerror: enyo.bubbler,
 		// note: draggable attribute takes one of these String values: "true", "false", "auto"
 		// (Boolean _false_ would remove the attribute)
 		draggable: "false"
@@ -22,5 +20,9 @@ enyo.kind({
 			delete this.attributes.onerror;
 		}
 		this.inherited(arguments);
+	},
+	rendered: function() {
+		this.inherited(arguments);
+		enyo.makeBubble(this, "load", "error");
 	}
 });
