@@ -8,10 +8,12 @@
   var getParts, copyTransform, getBindingId;
   
   getParts = function (path, context) {
-    var o = context? context: this.owner, i, b, bt, p, c;
+    var o = context? context: this.owner, i, b, bt, p, c, r;
     i = path.lastIndexOf(".");
-    if (i === 0) return {base: o, property: path.slice(1)};
-    if (i === -1) return {base: o, property: path};
+    //if (i === 0) return {base: o, property: path.slice(1)};
+    if (i === 0) r = {base: o, property: path.slice(1)};
+    //if (i === -1) return {base: o, property: path};
+    if (i === -1) r = {base: o, property: path};
     bt = path.slice(0, i);
     p = path.slice(i + 1);
     if (bt[0] === "." || !(b = enyo._getPath(bt))) b = enyo._getPath.call(o, bt);
@@ -23,11 +25,14 @@
       if (bt[0] === "." || !(b = enyo._getPath(bt))) b = enyo._getPath.call(o, bt);
       if (b) {
         if (b[c] && enyo.isFunction(b[c]) && b[c].isProperty) {
-          return {base: b, property: p, computed: c};
+          //return {base: b, property: p, computed: c};
+          r = {base: b, property: p, computed: c};
         }
       }
     }
-    return {base: b, property: p};
+    r = r? r: {base: b, property: p};
+    if (!r.base) r.base = o;
+    return r;
   };
   
   getBindingsId = function () {
@@ -58,7 +63,8 @@
     _sourceComputedProperty: null,
     _waiting: null,
     _setup: function () {
-      if (!this._setupSource() || !this._setupTarget()) return;
+      var s = this._setupSource(), t = this._setupTarget();
+      if (!s || !t) return;
       if (this.autoConnect === true) this.connect();
       if (this.autoSync === true) this.sync();
     },
@@ -67,7 +73,8 @@
       b = parts.base;
       p = parts.property;
       c = parts.computed;
-      if (!b || (b[p] === undefined && !c)) {
+      //if (!b || (b[p] === undefined && !c)) {
+      if (!b) {
         // this case is USUALLY ok because it means that a binding was
         // created BEFORE one the the source/target was not available yet
         // but the object will attempt again at a more appropriate time
@@ -83,7 +90,7 @@
       var parts = getParts.call(this, this.to, this.target), b, p;
       b = parts.base;
       p = parts.property;
-      if (!b || b[p] === undefined) {
+      if (!b) {
         return false;
       }
       this._target = b;
@@ -110,6 +117,7 @@
       }
       
       sr.bindId = this.bindId;
+      var o = sr;
       
       // if it is a computed property it can only be one way!
       if (sc) this.oneWay = true;
@@ -196,7 +204,8 @@
     },
     
     getTargetValue: function () {
-      var r = enyo._getPath.call(this._target, this._targetProperty);
+      //var r = enyo._getPath.call(this._target, this._targetProperty);
+      var r = this._target.get(this._targetProperty);
       if (r instanceof Object) r = copyTransform(r);
       return r;
     },
@@ -209,8 +218,10 @@
     
     getSourceValue: function () {
       var r, sp = this._sourceProperty, sc = this._sourceComputedProperty;
-      if (sc) r = enyo._getPath.call(this._source, sc)[sp];
-      else r = enyo._getPath.call(this._source, this._sourceProperty);
+      //if (sc) r = enyo._getPath.call(this._source, sc)[sp];
+      //else r = enyo._getPath.call(this._source, this._sourceProperty);
+      if (sc) r = this._source.get(sc)[sp];
+      else r = this._source.get(this._sourceProperty);
       if (r instanceof Object) r = copyTransform(r);
       return r;
     },
