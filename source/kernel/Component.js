@@ -66,7 +66,9 @@ enyo.kind({
 	//* @protected
 	statics: {
 		// for memoizing kind-prefix names in nameComponent
-		_kindPrefixi: {}
+		_kindPrefixi: {},
+		// for naming the unnamed
+		_unnamedKindNumber: 0
 	},
 	defaultKind: "Component",
 	handlers: {},
@@ -151,7 +153,8 @@ enyo.kind({
 	//* @protected
 	makeId: function() {
 		var delim = "_", pre = this.owner && this.owner.getId();
-		return this.name ? (pre ? pre + delim : "") + this.name : "";
+		var baseName = this.name || ("@@" + (++enyo.Component._unnamedKindNumber));
+		return (pre ? pre + delim : "") + baseName;
 	},
 	ownerChanged: function(inOldOwner) {
 		if (inOldOwner) {
@@ -230,6 +233,9 @@ enyo.kind({
 		inProps.owner = inProps.owner || this;
 	},
 	_createComponent: function(inInfo, inMoreInfo) {
+		if (!inInfo.kind && ("kind" in inInfo)) {
+			throw "enyo.create: Attempt to create a null kind. Check dependencies for [" + inInfo.name + "].";
+		}
 		// CAVEAT: inInfo and inMoreInfo are copied before mutation, but it's only a shallow copy
 		var props = enyo.mixin(enyo.clone(inMoreInfo), inInfo);
 		this.adjustComponentProps(props);
@@ -403,6 +409,7 @@ enyo.kind({
 		}
 		return this.bubbleDelegation(inDelegate, inName, inEventName, inEvent, inSender);
 	},
+	//* @public
 	/**
 		Dispatches the event to named delegate _inMethodName_, if it exists.
 		Subkinds may re-route dispatches.
@@ -417,7 +424,10 @@ enyo.kind({
 		}
 	},
 	/**
-		Sends a message to myself and my descendants.
+		Sends a message to myself and all of my components.
+		You can stop a waterfall into components owned by a
+		receiving object by returning a truthy value from
+		the event handler.
 	*/
 	waterfall: function(inMessageName, inMessage, inSender) {
 		//this.log(inMessageName, (inSender || this).name, "=>", this.name);
@@ -427,7 +437,10 @@ enyo.kind({
 		this.waterfallDown(inMessageName, inMessage, inSender || this);
 	},
 	/**
-		Sends a message to my descendants.
+		Sends a message to all of my components, but not myself.
+		You can stop a waterfall into components owned by a
+		receiving object by returning a truthy value from
+		the event handler.
 	*/
 	waterfallDown: function(inMessageName, inMessage, inSender) {
 		for (var n in this.$) {
@@ -440,9 +453,11 @@ enyo.kind({
 
 enyo.defaultCtor = enyo.Component;
 
+// a method to create new instances from config objects.  It handles looking up the proper
+// constructor based on the provided kind attribute.
 enyo.create = enyo.Component.create = function(inConfig) {
 	if (!inConfig.kind && ("kind" in inConfig)) {
-		throw "enyo.create: Attempt to create a null kind. Check dependencies.";
+		throw "enyo.create: Attempt to create a null kind. Check dependencies for [" + (inConfig.name || "") + "].";
 	}
 	var kind = inConfig.kind || inConfig.isa || enyo.defaultCtor;
 	var ctor = enyo.constructorForKind(kind);

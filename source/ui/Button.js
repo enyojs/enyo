@@ -26,6 +26,12 @@ enyo.kind({
 		this.setAttribute("disabled", this.disabled);
 	},
 	tap: function() {
-		this.setActive(true);
+		if (this.disabled) {
+			// work around for platforms like Chrome on Android or Opera that send
+			// mouseup to disabled form controls
+			return true;
+		} else {
+			this.setActive(true);
+		}
 	}
 });
