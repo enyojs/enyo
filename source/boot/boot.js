@@ -21,11 +21,9 @@ enyo.machine = {
 			link.media = "screen";
 			link.rel = rel;
 			link.type = type;
-		}
-		if (!enyo.runtimeLoading) {
-			document.write('<link href="' + inPath + '" media="screen" rel="' + rel + '" type="' + type + '" />');
-		} else {
 			document.getElementsByTagName('head')[0].appendChild(link);
+		} else {
+			document.write('<link href="' + inPath + '" media="screen" rel="' + rel + '" type="' + type + '" />');
 		}
 		if (isLess && window.less) {
 			less.sheets.push(link);
