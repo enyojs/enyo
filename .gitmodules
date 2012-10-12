@@ -1,3 +1,0 @@
-[submodule "tools/minifier/node_modules/less"]
-	path = tools/minifier/node_modules/less
-	url = https://github.com/enyojs/less.js.git
