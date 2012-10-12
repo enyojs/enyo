@@ -52,8 +52,9 @@
 			ds[cp] = t;
 			if (st) {
 				st[sp] = t;
+			} else {
+				inControl.domStylesChanged();
 			}
-			inControl.domStylesChanged();
 		}
 	}
 	//* @public
