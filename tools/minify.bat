@@ -14,4 +14,4 @@ REM node location
 SET NODE=node.exe
 
 REM use node to invoke minify with a known path to enyo and imported parameters
-%NODE% "%MINIFY%" -enyo "%ENYO%" %1 %2 %3 %4 %5 %6
+%NODE% "%MINIFY%" -enyo "%ENYO%" %*
