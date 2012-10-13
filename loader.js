@@ -51,6 +51,7 @@
 		packageName: "",
 		packageFolder: "",
 		verbose: false,
+		finishCallbacks: {},
 		//
 		loadScript: function(inScript) {
 			this.machine.script(inScript);
@@ -102,8 +103,11 @@
 		finish: function() {
 			this.packageFolder = "";
 			this.verbose && console.log("-------------- fini");
-			if (this.finishCallback) {
-				this.finishCallback();
+			for (var i in this.finishCallbacks) {
+				if (this.finishCallbacks[i]) {
+					this.finishCallbacks[i]();
+					this.finishCallbacks[i] = null;
+				}
 			}
 		},
 		continueBlock: function(inBlock) {
@@ -132,7 +136,7 @@
 			// assemble path
 			path = prefix + path;
 			// process path
-			if (path.slice(-4) == ".css") {
+			if ((path.slice(-4) == ".css") || (path.slice(-5) == ".less")) {
 				this.verbose && console.log("+ stylesheet: [" + prefix + "][" + inPath + "]");
 				this.requireStylesheet(path);
 			} else if (path.slice(-3) == ".js" && path.slice(-10) != "package.js") {
