@@ -32,7 +32,7 @@ enyo.kind({
 			_disabled_ DOM attribute.
 		*/
 		disabled: false,
-		//* Selects the contents of the input when it gains focus
+		//* When true, select the contents of the input when it gains focus.
 		selectOnFocus: false
 	},
 	events: {
@@ -108,17 +108,17 @@ enyo.kind({
 	dragstart: function() {
 		return true;
 	},
-	focused:function() {
-		if(this.selectOnFocus) {
-			enyo.job(null, enyo.bind(this, "selectContents"), 10);
+	focused: function() {
+		if (this.selectOnFocus) {
+			enyo.asyncMethod(this, "selectContents");
 		}
 	},
-	selectContents:function() {
+	selectContents: function() {
 		var n = this.hasNode();
 
-		if(n && n.setSelectionRange) {
+		if (n && n.setSelectionRange) {
 			n.setSelectionRange(0, n.value.length);
-		} else if(n && n.createTextRange) {
+		} else if (n && n.createTextRange) {
 			var r = n.createTextRange();
 			r.expand("textedit");
 			r.select();
