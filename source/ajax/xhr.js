@@ -63,7 +63,7 @@ enyo.xhr = {
 		if (a.protocol === ":" ||
 				(a.protocol === window.location.protocol &&
 					a.hostname === window.location.hostname &&
-					a.port === (window.location.port || 80))) {
+					a.port === (window.location.port || "80"))) {
 			result = true;
 		}
 		return result;
