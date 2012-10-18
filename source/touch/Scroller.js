@@ -52,8 +52,8 @@ enyo.kind({
 			strategy:
 
 			* <a href="#enyo.ScrollStrategy">ScrollStrategy</a> is the default
-			    and implements no scrolling, relying instead on the environment
-			    to scroll properly.
+				and implements no scrolling, relying instead on the environment
+				to scroll properly.
 			
 			* <a href="#enyo.TouchScrollStrategy">TouchScrollStrategy</a>
 				implements a touch scrolling mechanism.
@@ -104,7 +104,7 @@ enyo.kind({
 		],
 		//* Returns true if platform should have touch events.
 		hasTouchScrolling: function() {
-			for (var i=0, t, m; t=this.osInfo[i]; i++) {
+			for (var i=0, t, m; (t=this.osInfo[i]); i++) {
 				if (enyo.platform[t.os]) {
 					return true;
 				}
@@ -115,7 +115,7 @@ enyo.kind({
 			browsers always have them).
 		*/
 		hasNativeScrolling: function() {
-			for (var i=0, t, m; t=this.osInfo[i]; i++) {
+			for (var i=0, t, m; (t=this.osInfo[i]); i++) {
 				if (enyo.platform[t.os] < t.version) {
 					return false;
 				}

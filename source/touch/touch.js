@@ -85,7 +85,7 @@ enyo.requiresWindow(function() {
 				if (x>0 && y>0 && x<=o.width && y<=o.height) {
 					//console.log("IN: " + n.id + " -> [" + x + "," + y + " in " + o.width + "x" + o.height + "] (children: " + n.childNodes.length + ")");
 					var target;
-					for (var n$=n.childNodes, i=n$.length-1, c; c=n$[i]; i--) {
+					for (var n$=n.childNodes, i=n$.length-1, c; (c=n$[i]); i--) {
 						target = this.findTargetTraverse(c, inX, inY);
 						if (target) {
 							return target;
