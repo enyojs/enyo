@@ -2,8 +2,11 @@
 enyo.requiresWindow(function() {
 	// add touch-specific gesture feature
 	var gesture = enyo.gesture;
+	var oldevents = gesture.events;
 	//
 	gesture.events.touchstart = function(e) {
+		// for duration of this touch, only handle touch events.  Old event
+		// structure will be restored during touchend.
 		gesture.events = touchGesture;
 		gesture.events.touchstart(e);
 	};
@@ -49,6 +52,11 @@ enyo.requiresWindow(function() {
 			// We avoid this by processing out after up, but
 			// this ordering is ad hoc.
 			gesture.out(this.overEvent);
+			// revert events in the next mouseup -- for environments where touch and
+			// mouse can co-exist like Windows 7 touchscreen devices
+			gesture.events.mouseup = function() {
+				gesture.events = oldevents;
+			};
 		},
 		makeEvent: function(inEvent) {
 			var e = enyo.clone(inEvent.changedTouches[0]);
