@@ -13,7 +13,7 @@
     if (!enyo.isString(arguments[0])) return undefined;
     args = arguments;
     path = args[0];
-    cur = this === enyo? window: this;
+    cur = this === enyo && args[1] !== true? window: this;
     while (path[i] === ".") ++i;
     if (i > 0) path = path.slice(i);
     i = path.indexOf(".");

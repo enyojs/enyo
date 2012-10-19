@@ -305,6 +305,21 @@ enyo.kind({
     
     set: function () {
       return enyo._setPath.apply(this, arguments);
+    },
+    
+    extend: function () {
+      var args = enyo.toArray(arguments), ext, prop;
+      while (args.length) {
+        ext = args.shift();
+        for (prop in ext) {
+          if (!ext.hasOwnProperty(prop)) continue;
+          if (this[prop]) {
+            if (!this._stored) this._stored = {};
+            // can manually call this method...
+            this._stored[prop] = ext[prop];
+          } else this[prop] = ext[prop];
+        }
+      }
     }
     
 });
