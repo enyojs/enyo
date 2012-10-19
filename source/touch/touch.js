@@ -12,7 +12,10 @@ enyo.requiresWindow(function() {
 	};
 	//
 	var touchGesture = {
+		_touchCount: 0,
 		touchstart: function(inEvent) {
+			enyo.job.stop("resetGestureEvents");
+			this._touchCount++;
 			this.excludedTarget = null;
 			var e = this.makeEvent(inEvent);
 			gesture.down(e);
@@ -22,6 +25,7 @@ enyo.requiresWindow(function() {
 			gesture.over(e);
 		},
 		touchmove: function(inEvent) {
+			enyo.job.stop("resetGestureEvents");
 			// NOTE: allow user to supply a node to exclude from event 
 			// target finding via the drag event.
 			var de = gesture.drag.dragEvent;
@@ -52,11 +56,15 @@ enyo.requiresWindow(function() {
 			// We avoid this by processing out after up, but
 			// this ordering is ad hoc.
 			gesture.out(this.overEvent);
-			// revert events in the next mouseup -- for environments where touch and
-			// mouse can co-exist like Windows 7 touchscreen devices
-			gesture.events.mouseup = function() {
-				gesture.events = oldevents;
-			};
+			// reset the event handlers back to the mouse-friendly ones after
+			// a short timeout.  We can't do this directly in this handler
+			// because it messes up Android to handle the mouseup event.
+			this._touchCount--;
+			if (this._touchCount === 0) {
+				enyo.job("resetGestureEvents", function() {
+					gesture.events = oldevents;
+				}, 10);
+			}
 		},
 		makeEvent: function(inEvent) {
 			var e = enyo.clone(inEvent.changedTouches[0]);
