@@ -99,6 +99,8 @@ enyo.kind({
 	statics: {
 		osInfo: [
 			{os: "android", version: 3},
+			{os: "androidChrome", version: 18},
+			{os: "androidFirefox", version: 16},
 			{os: "ios", version: 5},
 			{os: "webos", version: 1e9}
 		],
