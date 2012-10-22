@@ -49,10 +49,14 @@ enyo.platform = {
 		{platform: "ios", regex: /iP(?:hone|ad;(?: U;)? CPU) OS (\d+)/},
 		// webOS 1 - 3
 		{platform: "webos", regex: /(?:web|hpw)OS\/(\d+)/},
-		// desktop safari
+		// desktop Safari
 		{platform: "safari", regex: /Version\/(\d+)[.\d]+\s+Safari/},
 		// desktop Chrome
-		{platform: "chrome", regex: /Chrome\/(\d+)[.\d]+/}
+		{platform: "chrome", regex: /Chrome\/(\d+)[.\d]+/},
+		// Firefox on Android
+		{platform: "androidFirefox", regex: /Android;.*Firefox\/(\d+)/},
+		// desktop Firefox
+		{platform: "firefox", regex: /Firefox\/(\d+)/}
 	];
 	for (var i = 0, p, m, v; p = platforms[i]; i++) {
 		m = p.regex.exec(ua);
