@@ -15,7 +15,7 @@ enyo.requiresWindow(function() {
 		_touchCount: 0,
 		touchstart: function(inEvent) {
 			enyo.job.stop("resetGestureEvents");
-			this._touchCount++;
+			this._touchCount += inEvent.changedTouches.length;
 			this.excludedTarget = null;
 			var e = this.makeEvent(inEvent);
 			gesture.down(e);
@@ -57,10 +57,13 @@ enyo.requiresWindow(function() {
 			// this ordering is ad hoc.
 			gesture.out(this.overEvent);
 			// reset the event handlers back to the mouse-friendly ones after
-			// a short timeout.  We can't do this directly in this handler
+			// a short timeout. We can't do this directly in this handler
 			// because it messes up Android to handle the mouseup event.
-			this._touchCount--;
-			if (this._touchCount === 0) {
+			// FIXME: for 2.1 release, conditional on platform being
+			// desktop Chrome, since we're seeing issues in PhoneGap with this
+			// code.
+			this._touchCount -= inEvent.changedTouches.length;
+			if (enyo.platform.chrome && this._touchCount === 0) {
 				enyo.job("resetGestureEvents", function() {
 					gesture.events = oldevents;
 				}, 10);
