@@ -72,7 +72,7 @@ enyo.requiresWindow(function() {
 		makeEvent: function(inEvent) {
 			var e = enyo.clone(inEvent.changedTouches[0]);
 			e.srcEvent = inEvent;
-			e.target = this.findTarget(e.clientX, e.clientY);
+			e.target = this.findTarget(e);
 			// normalize "mouse button" info
 			e.which = 1;
 			//console.log("target for " + inEvent.type + " at " + e.pageX + ", " + e.pageY + " is " + (e.target ? e.target.id : "none"));
@@ -89,8 +89,8 @@ enyo.requiresWindow(function() {
 				};
 			}
 		},
-		findTarget: function(inX, inY) {
-			return document.elementFromPoint(inX, inY);
+		findTarget: function(e) {
+			return document.elementFromPoint(e.clientX, e.clientY);
 		},
 		// NOTE: will find only 1 element under the touch and 
 		// will fail if an element is positioned outside the bounding box of its parent
@@ -121,14 +121,13 @@ enyo.requiresWindow(function() {
 			// use proper target finding technique based on feature detection.
 			if (enyo.platform.androidChrome <= 18) {
 				// HACK: on Chrome for Android v18 on devices with higher density displays,
-				// document.elementFromPoint uses wrong pixel system, so manually scale
-				var dpr = window.devicePixelRatio;
-				this.findTarget = function(inX, inY) {
-					return document.elementFromPoint(inX * dpr, inY * dpr);
+				// document.elementFromPoint expects screen coordinates, not document ones
+				this.findTarget = function(e) {
+					return document.elementFromPoint(e.screenX, e.screenY);
 				};
 			} else if (!document.elementFromPoint) {
-				this.findTarget = function(inX, inY) {
-					return this.findTargetTraverse(null, inX, inY);
+				this.findTarget = function(e) {
+					return this.findTargetTraverse(null, e.clientX, e.clientY);
 				};
 			}
 		}
