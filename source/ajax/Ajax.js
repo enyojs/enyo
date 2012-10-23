@@ -106,7 +106,7 @@ enyo.kind({
 		try {
 			return r && enyo.json.parse(r);
 		} catch (x) {
-			console.warn("Ajax request set to handleAs JSON but data was not in JSON format");
+			enyo.warn("Ajax request set to handleAs JSON but data was not in JSON format");
 			return r;
 		}
 	},
