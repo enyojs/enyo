@@ -41,7 +41,10 @@ enyo.platform = {
 		{platform: "android", regex: /Android (\d+)/},
 		// Kindle Fire
 		// Force version to 2, (desktop mode does not list android version)
-		{platform: "android", regex: /Silk\//, forceVersion: 2},
+		{platform: "android", regex: /Silk\/1./, forceVersion: 2},
+		// Kindle Fire HD
+		// Force version to 4
+		{platform: "android", regex: /Silk\/2./, forceVersion: 4},
 		// IE 8 - 10
 		{platform: "ie", regex: /MSIE (\d+)/},
 		// iOS 3 - 5
