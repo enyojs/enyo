@@ -46,7 +46,9 @@ enyo.kind({
 			can help improve performance of complex, large scroll regions on
 			some platforms (e.g., Android).
 		*/
-		scrim: false
+		scrim: false,
+		//	Allow drag events sent when gesture events are happening simultaneously
+		dragDuringGesture: true
 	},
 	events: {
 		onShouldDrag: ""
@@ -248,6 +250,10 @@ enyo.kind({
 	},
 	// Special synthetic DOM events served up by the Gesture system
 	dragstart: function(inSender, inEvent) {
+		// Ignore drags sent from multi-touch events
+		if(!this.dragDuringGesture && inEvent.srcEvent.touches && inEvent.srcEvent.touches.length > 1) {
+			return true;
+		}
 		// note: allow drags to propagate to parent scrollers via data returned in the shouldDrag event.
 		this.doShouldDrag(inEvent);
 		this.dragging = (inEvent.dragger == this || (!inEvent.dragger && inEvent.boundaryDragger == this));
