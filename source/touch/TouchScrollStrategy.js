@@ -47,7 +47,7 @@ enyo.kind({
 			some platforms (e.g., Android).
 		*/
 		scrim: false,
-		//	Allow drag events sent when gesture events are happening simultaneously
+		//*	Allow drag events sent when gesture events are happening simultaneously
 		dragDuringGesture: true
 	},
 	events: {
