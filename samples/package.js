@@ -1,5 +1,7 @@
 enyo.depends(
 	"$lib/extra/exampler",
+	"PlatformSample.css",
+	"PlatformSample.js",
 	"Playground.css",
 	"Playground.js",
 	"AjaxSample.css",
