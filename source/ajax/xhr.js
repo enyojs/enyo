@@ -14,7 +14,7 @@ enyo.xhr = {
 		- _mimeType_: Optional string to override the MIME-Type.
 	*/
 	request: function(inParams) {
-		var xhr = this.getXMLHttpRequest(inParams.url);
+		var xhr = this.getXMLHttpRequest(inParams);
 		//
 		var method = inParams.method || "GET";
 		var async = ("sync" in inParams) ? !inParams.sync : true;
@@ -28,7 +28,7 @@ enyo.xhr = {
 		enyo.mixin(xhr, inParams.xhrFields);
 		//
 		this.makeReadyStateHandler(xhr, inParams.callback);
-		if (inParams.headers) {
+		if (inParams.headers && xhr.setRequestHeader) {
 			for (var key in inParams.headers) {
 				xhr.setRequestHeader(key, inParams.headers[key]);
 			}
@@ -77,9 +77,9 @@ enyo.xhr = {
 		}
 		return result;
 	},
-	getXMLHttpRequest: function(inUrl) {
+	getXMLHttpRequest: function(inParams) {
 		try {
-			if (window.XDomainRequest && !this.inOrigin(inUrl) && !/^file:\/\//.test(window.location.href)) {
+			if (window.XDomainRequest && !inParams.headers && !this.inOrigin(inParams.url) && !/^file:\/\//.test(window.location.href)) {
 				return new XDomainRequest();
 			}
 		} catch(e) {}
