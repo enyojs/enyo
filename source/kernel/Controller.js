@@ -9,6 +9,7 @@ enyo.kind({
 		if (this.handlers[inEventName] && this.dispatch(this.handlers[inEventName], inEvent, inSender)) {
 			return true;
 		}
+		return false;
 	},
 	destroy: function () {
 	  this.set("isDestroyed", true);

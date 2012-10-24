@@ -366,7 +366,7 @@ enyo.kind({
 		
 		// delegate to view controller if it exists and can handle the event
 		// stop propagation if it is the exclusive handler
-		
+
 		if (this.controller && this.controller instanceof enyo.Component) {
 		  if (this.controller.dispatchEvent(inEventName, inEvent, inSender)) {
 		    return true;
@@ -429,11 +429,16 @@ enyo.kind({
 		arrive here. If you need to handle these differently, you may 
 		need to also override _dispatchEvent_.
 	*/
-	dispatch: function(inMethodName, inEvent, inSender) {
-		var fn = inMethodName && this[inMethodName];
-		if (fn) {
-			return fn.call(this, inSender || this, inEvent);
-		}
+  dispatch: function(inMethodName, inEvent, inSender) {
+    var fn, c = this.controller;
+    if (c && c instanceof enyo.Component) {
+      if (c[inMethodName] && enyo.isFunction(c[inMethodName]))
+        return c[inMethodName].call(c, inSender || this, inEvent);
+    }
+    fn = inMethodName && this[inMethodName];
+    if (fn) {
+      return fn.call(this, inSender || this, inEvent);
+    }
 	},
 	/**
 		Sends a message to myself and all of my components.

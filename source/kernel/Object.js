@@ -226,8 +226,11 @@ enyo.kind({
           // two-way bindings
           if (!this._allowNotifications) {
             this.addNotificationToQueue(inProp, fn, [inProp, oldVal, newVal]);
-          } else { fn.call(this, inProp, oldVal, newVal); }
+          //} else { fn.call(this, inProp, oldVal, newVal); }
           //enyo.asyncMethod(this, fn, inProp, oldVal, newVal);
+          } else {
+            enyo.asyncMethod(this, fn, inProp, oldVal, newVal);
+          }
         }
       }
     },
@@ -316,6 +319,9 @@ enyo.kind({
           if (this[prop]) {
             if (!this._stored) this._stored = {};
             // can manually call this method...
+            // NOTE: the intention is not perfect preservation
+            // of any extension/base, as common properties
+            // will be overwritten by the last one to be found
             this._stored[prop] = ext[prop];
           } else this[prop] = ext[prop];
         }
