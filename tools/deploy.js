@@ -37,7 +37,7 @@ the `-o` flag).
 
 // Load dependencies
 
-var optimist = require('optimist'),
+var nopt = require("nopt"),
     path = require('path'),
     fs = require('fs'),
     util = require('util'),
@@ -48,53 +48,64 @@ var stat, ppwd, lib, script, scripts = {};
 // Parse arguments
 
 var node = process.argv[0],
+    deploy = process.argv[1],
     sourceDir = process.cwd(),
     packageJs = path.resolve(sourceDir, "package.js"),
     enyoDir = path.resolve(__dirname, '..'),
     buildDir = path.resolve(sourceDir, "build"),
     name = path.basename(sourceDir),
-    outDir = path.resolve(sourceDir, 'deploy', name);
+    outDir = path.resolve(sourceDir, 'deploy', name),
+    less = true;		// LESS compilation, turned on by default
 
-var argv = optimist.usage("Usage: $0 [-c][-e enyo_dir][-b build_dir][-o out_dir][-p package_js]", {
-	'b': {
-		description: "alternate build directory",
-		required: false,
-		default: buildDir
-	},
-	'c': {
-		description: "do not run the LESS compiler",
-		boolean: true,
-		required: false,
-		default: false
-	},
-	'e': {
-		description: "location of the enyo framework",
-		required: false,
-		default: enyoDir
-	},
-	'o': {
-		description: "alternate output directory",
-		required: false,
-		default: outDir
-	},
-	'p': {
-		description: "location of the main package.js file",
-		required: false,
-		default: packageJs
-	},
-}).argv;
+function printUsage() {
+	// format generated using node-optimist...
+	console.log('\n'
+		    + 'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-b build_dir][-o out_dir][-p package_js]\n'
+		    + '\n'
+		    + 'Options:\n'
+		    + '  -b  alternate build directory             [default: "' + buildDir + '"]\n'
+		    + '  -c  do not run the LESS compiler          [boolean]  [default: ' + less + ']\n'
+		    + '  -e  location of the enyo framework        [default: "' + enyoDir + '"]\n'
+		    + '  -o  alternate output directory            [default: "' + outDir + '"]\n'
+		    + '  -p  location of the main package.js file  [default: "' + packageJs + '"]\n'
+		    + '\n');
+}
 
-if (argv.h) {
-	debugger;
-	optimist.showHelp();
+var opt = nopt(/*knownOpts*/ {
+	"build":	path,
+	"less":		Boolean,
+	"enyo":		path,
+	"out":		path,
+	"packagejs":	path,
+	"help":		Boolean
+}, /*shortHands*/ {
+	"b": "--build",
+	"c": "--no-less",
+	"e": "--enyo",
+	"o": "--out",
+	"p": "--packagejs",
+	"h": "--help",
+	"?": "--help"
+}, process.argv /*args*/, 2 /*slice*/);
+		    
+if (opt.help) {
+	printUsage();
 	process.exit(1);
 }
 
-var minifier = path.resolve(argv.e, 'tools', 'minifier', 'minify.js');
-console.log("Using: enyo_dir=" + argv.e);
-console.log("Using: build_dir=" + argv.b);
-console.log("Using: out_dir=" + argv.o);
-console.log("Using: package_js=" + argv.p);
+// nopt has not default values system
+buildDir = opt.build || buildDir;
+enyoDir = opt.enyo || enyoDir;
+outDir = opt.out || outDir;
+packageJs = opt.packagejs || packageJs;
+less = !(opt.less === false) && less;
+
+var minifier = path.resolve(enyoDir, 'tools', 'minifier', 'minify.js');
+console.log("Using: build_dir=" + buildDir);
+console.log("Using: enyo_dir=" + enyoDir);
+console.log("Using: out_dir=" + outDir);
+console.log("Using: packagejs=" + packageJs);
+console.log("Using: less=" + less);
 
 // utils
 
@@ -108,40 +119,40 @@ function run(args) {
 
 // Prepare target directory
 
-shell.rm('-rf', path.resolve(argv.o));
-shell.rm('-rf', path.resolve(argv.o));
-shell.mkdir('-p', path.join(argv.o));
+shell.rm('-rf', path.resolve(outDir));
+shell.rm('-rf', path.resolve(outDir));
+shell.mkdir('-p', path.join(outDir));
 
 // Build / Minify
 
 console.log("Minify-ing the embedded Enyo...");
-process.chdir(path.resolve(argv.e, 'minify'));
+process.chdir(path.resolve(enyoDir, 'minify'));
 run([node, minifier,
      '-no-alias',
-     '-enyo', argv.e,
+     '-enyo', enyoDir,
      // XXX generates $buildDir/enyo.(js|css)' so this is
-     // XXX rather a 'prefix' than an 'output'...
-     '-output', path.join(argv.b, 'enyo'),
+     // XXX rather an 'output_prefix' than an 'output'...
+     '-output', path.join(buildDir, 'enyo'),
      'package.js']);
 
 console.log("Minify-ing the application");
 process.chdir(sourceDir);
-process.chdir(path.dirname(argv.p));
+process.chdir(path.dirname(packageJs));
 run([node, minifier,
-     '-enyo', argv.e,
-     '-output', path.join(argv.b, 'app'),
-     (argv.c ? '-no-less' : ''),
+     '-enyo', enyoDir,
+     '-output', path.join(buildDir, 'app'),
+     (less ? '-less' : '-no-less'),
      'package.js']);
 process.chdir(sourceDir);
 
 // Deploy / Copy
 
-shell.mkdir('-p', path.join(argv.o, 'lib'));
-shell.cp(path.join(sourceDir, 'index.html'), path.join(sourceDir, 'icon.png'), argv.o);
-shell.cp('-r', path.join(sourceDir, 'assets'), argv.b, argv.o);
+shell.mkdir('-p', path.join(outDir, 'lib'));
+shell.cp(path.join(sourceDir, 'index.html'), path.join(sourceDir, 'icon.png'), outDir);
+shell.cp('-r', path.join(sourceDir, 'assets'), buildDir, outDir);
 
 shell.ls(path.join(sourceDir, 'lib')).forEach(function(lib) {
-	var libOutdir = path.join(argv.o, 'lib', lib);
+	var libOutdir = path.join(outDir, 'lib', lib);
 	// load & execute sub-'deploy.js'
 	try {
 		script = path.join(sourceDir, 'lib', lib, 'deploy.js');
@@ -160,7 +171,7 @@ shell.ls(path.join(sourceDir, 'lib')).forEach(function(lib) {
 			run([script, libOutdir]);
 		} catch(e) {
 			// no deploy.(js|bat|js): copy everything
-			shell.cp('-r', path.join(sourceDir, 'lib', lib), path.join(argv.o, 'lib'));
+			shell.cp('-r', path.join(sourceDir, 'lib', lib), path.join(outDir, 'lib'));
 		}
 	}
 });
