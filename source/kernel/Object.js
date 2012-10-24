@@ -107,44 +107,61 @@ enyo.kind({
 		}
 	},
 
-    //----------------------- CD: Binding methods
-    _setup: function () {
-	    var p, prop, i, e, b, c;
+  _setupBindings: function () {
+    var p, prop, i, b;
+    this.clearBindings();
+    b = this._bindings = [];
+    for (p in this) {
+      if (!(prop = this[p])) continue;
+      if ("bindings" === p && enyo.isArray(prop)) {
+        for (i = 0; i < prop.length; ++i) {
+          b.push(new enyo.Binding({owner: this, autoConnect: true}, prop[i]))
+        }
+      }
+    }
+  },
 
-      // need to MAKE SURE since this is called multiple times that
-      // we aren't bleeding bindings...
-      this.clearBindings();
-
-      this._observers = {};
-      c = this._computed = {};
-      b = this._bindings = [];
-      for (p in this) {
-        if (!(prop = this[p])) continue;
-        if (enyo.isFunction(prop)) {
-          if (prop.isObserver && prop.events && prop.events.length > 0) {
-            for (i = 0; i < prop.events.length; ++i) {
-              e = prop.events[i];
-              this.addObserver(e, prop);
-            }
-          } else if (prop.isProperty) {
-            c[p] = prop;
-            for (i = 0; i < prop.properties.length; ++i) {
-              this.addObserver(prop.properties[i], 
-                enyo.bind(this, function (prop) {
-                  this.notifyObservers(prop, null, this.get(prop), true);
-                }, p));
-            }
-          }
-        } else if (p === "bindings" && enyo.isArray(prop)) {
-          for (i = 0; i < prop.length; ++i) {
-            b.push(new enyo.Binding({owner: this, autoConnect: true}, prop[i]))
+  _setupComputed: function () {
+    var p, prop, i, c;
+    c = this._computed = {};
+    for (p in this) {
+      if (!(prop = this[p])) continue;
+      if (enyo.isFunction(prop)) {
+        if (prop.isProperty) {
+          c[p] = prop;
+          for (i = 0; i < prop.properties.length; ++i) {
+            this.addObserver(prop.properties[i],
+              enyo.bind(this, function (prop) {
+                this.notifyObservers(prop, null, this.get(prop), true);
+              }, p));
           }
         }
       }
-    },
+    }
+  },
+  
+  _setupObservers: function () {
+    var p, prop, i, e;
+    this._observers = {};
+    for (p in this) {
+      if (!(prop = this[p])) continue;
+      if (enyo.isFunction(prop)) {
+        if (prop.isObserver && prop.events && prop.events.length) {
+          for (i = 0; i < prop.events.length; ++i) {
+            e = prop.events[i];
+            this.addObserver(e, prop);
+          }
+        }
+      }
+    }
+  },
 
-    //----------------------- CD: Observer methods
-
+  _setup: function () {
+    this._setupObservers();
+    this._setupComputed();
+    this._setupBindings();
+  },
+  
     
     addObserver: function (inProp, inFunc, inContext) {
       var o = this._observers, t, f;
