@@ -41,7 +41,8 @@
   };
   
   copyTransform = function (data) {
-    return enyo.clone(data);
+    //return enyo.clone(data);
+    return data;
   };
   
   function Binding () {
