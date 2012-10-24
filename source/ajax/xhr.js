@@ -60,7 +60,10 @@ enyo.xhr = {
 	inOrigin: function(inUrl) {
 		var a = document.createElement("a"), result = false;
 		a.href = inUrl;
-		if (a.protocol === ":" || (a.protocol === window.location.protocol && a.hostname === window.location.hostname && a.port === window.location.port)) {
+		if (a.protocol === ":" ||
+				(a.protocol === window.location.protocol &&
+					a.hostname === window.location.hostname &&
+					a.port === (window.location.port || "80"))) {
 			result = true;
 		}
 		return result;

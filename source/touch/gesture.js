@@ -62,14 +62,14 @@
 			}
 		},
 		findIdentifiedTouch: function(inTouches, inId) {
-			for (var i = 0, t; t = inTouches[i]; i++) {
+			for (var i = 0, t; (t = inTouches[i]); i++) {
 				if (t.identifier === inId) {
 					return t;
 				}
 			}
 		},
 		gesturePositions: function(inEvent) {
-			var first = this.findIdentifiedTouch(inEvent.touches, this.orderedTouches[0])
+			var first = this.findIdentifiedTouch(inEvent.touches, this.orderedTouches[0]);
 			var last = this.findIdentifiedTouch(inEvent.touches, this.orderedTouches[this.orderedTouches.length - 1]);
 			var fx = first.pageX, lx = last.pageX, fy = first.pageY, ly = last.pageY;
 			// center the first touch as 0,0
@@ -101,7 +101,7 @@
 			return {
 				magnitude: p.h,
 				xcenter: Math.abs(Math.round(p.fx + (p.x / 2))),
-				ycenter: Math.abs(Math.round(p.fy + (p.y / 2))),
+				ycenter: Math.abs(Math.round(p.fy + (p.y / 2)))
 			};
 		},
 		makeGesture: function(inType, inEvent, inCache) {
@@ -126,5 +126,5 @@
 				rotation: rotation
 			});
 		}
-	}
+	};
 })();

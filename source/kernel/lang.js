@@ -456,4 +456,22 @@
 		enyo.setPrototype(enyo.instance, obj);
 		return new enyo.instance();
 	};
+	
+	//* @public
+
+	/**
+		Provides a stub function for _g11n_ string translation. This allows
+		strings to be wrapped in preparation for localization. If the _g11n_
+		library is not loaded, this function will return the string as is.
+
+			$L('Welcome')
+
+		If the _g11n_ library is loaded, this function will be replaced by the
+		_g11n_ library version, which translates wrapped strings to strings from
+		a developer-provided resource file corresponding to the current user
+		locale.
+	*/
+	$L = function(string) {
+		return string;
+	}
 })();

@@ -3,7 +3,6 @@ enyo.depends(
 	"lang.js",
 	"job.js",
 	"macroize.js",
-	"animation.js",
 	"Oop.js",
   "Binding.js",
 	"Object.js",

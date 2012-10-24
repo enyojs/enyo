@@ -2,14 +2,20 @@
 enyo.requiresWindow(function() {
 	// add touch-specific gesture feature
 	var gesture = enyo.gesture;
+	var oldevents = gesture.events;
 	//
 	gesture.events.touchstart = function(e) {
+		// for duration of this touch, only handle touch events.  Old event
+		// structure will be restored during touchend.
 		gesture.events = touchGesture;
 		gesture.events.touchstart(e);
 	};
 	//
 	var touchGesture = {
+		_touchCount: 0,
 		touchstart: function(inEvent) {
+			enyo.job.stop("resetGestureEvents");
+			this._touchCount += inEvent.changedTouches.length;
 			this.excludedTarget = null;
 			var e = this.makeEvent(inEvent);
 			gesture.down(e);
@@ -19,6 +25,7 @@ enyo.requiresWindow(function() {
 			gesture.over(e);
 		},
 		touchmove: function(inEvent) {
+			enyo.job.stop("resetGestureEvents");
 			// NOTE: allow user to supply a node to exclude from event 
 			// target finding via the drag event.
 			var de = gesture.drag.dragEvent;
@@ -49,11 +56,23 @@ enyo.requiresWindow(function() {
 			// We avoid this by processing out after up, but
 			// this ordering is ad hoc.
 			gesture.out(this.overEvent);
+			// reset the event handlers back to the mouse-friendly ones after
+			// a short timeout. We can't do this directly in this handler
+			// because it messes up Android to handle the mouseup event.
+			// FIXME: for 2.1 release, conditional on platform being
+			// desktop Chrome, since we're seeing issues in PhoneGap with this
+			// code.
+			this._touchCount -= inEvent.changedTouches.length;
+			if (enyo.platform.chrome && this._touchCount === 0) {
+				enyo.job("resetGestureEvents", function() {
+					gesture.events = oldevents;
+				}, 10);
+			}
 		},
 		makeEvent: function(inEvent) {
 			var e = enyo.clone(inEvent.changedTouches[0]);
 			e.srcEvent = inEvent;
-			e.target = this.findTarget(e.clientX, e.clientY);
+			e.target = this.findTarget(e);
 			// normalize "mouse button" info
 			e.which = 1;
 			//console.log("target for " + inEvent.type + " at " + e.pageX + ", " + e.pageY + " is " + (e.target ? e.target.id : "none"));
@@ -70,8 +89,8 @@ enyo.requiresWindow(function() {
 				};
 			}
 		},
-		findTarget: function(inX, inY) {
-			return document.elementFromPoint(inX, inY);
+		findTarget: function(e) {
+			return document.elementFromPoint(e.clientX, e.clientY);
 		},
 		// NOTE: will find only 1 element under the touch and 
 		// will fail if an element is positioned outside the bounding box of its parent
@@ -85,7 +104,7 @@ enyo.requiresWindow(function() {
 				if (x>0 && y>0 && x<=o.width && y<=o.height) {
 					//console.log("IN: " + n.id + " -> [" + x + "," + y + " in " + o.width + "x" + o.height + "] (children: " + n.childNodes.length + ")");
 					var target;
-					for (var n$=n.childNodes, i=n$.length-1, c; c=n$[i]; i--) {
+					for (var n$=n.childNodes, i=n$.length-1, c; (c=n$[i]); i--) {
 						target = this.findTargetTraverse(c, inX, inY);
 						if (target) {
 							return target;
@@ -102,14 +121,13 @@ enyo.requiresWindow(function() {
 			// use proper target finding technique based on feature detection.
 			if (enyo.platform.androidChrome <= 18) {
 				// HACK: on Chrome for Android v18 on devices with higher density displays,
-				// document.elementFromPoint uses wrong pixel system, so manually scale
-				var dpr = window.devicePixelRatio;
-				this.findTarget = function(inX, inY) {
-					return document.elementFromPoint(inX * dpr, inY * dpr);
+				// document.elementFromPoint expects screen coordinates, not document ones
+				this.findTarget = function(e) {
+					return document.elementFromPoint(e.screenX, e.screenY);
 				};
 			} else if (!document.elementFromPoint) {
-				this.findTarget = function(inX, inY) {
-					return this.findTargetTraverse(null, inX, inY);
+				this.findTarget = function(e) {
+					return this.findTargetTraverse(null, e.clientX, e.clientY);
 				};
 			}
 		}
