@@ -305,8 +305,8 @@ enyo.kind({
       return b;
     },
 
-    clearBindings: function () {
-      var b = this._bindings, i = 0, bnd;
+    clearBindings: function (inBindings) {
+      var b = inBindings || this._bindings, i = 0, bnd;
       if (b && b.length > 0) {
         while (b.length) {
           bnd = b.shift();
