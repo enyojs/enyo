@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "AjaxTest",
 	kind: enyo.TestSuite,
+	timeout: 10000,
 	_testAjax: function(inProps, inParams, inAssertFn) {
 		return new enyo.Ajax(inProps)
 			.response(this, function(inSender, inValue) {
@@ -57,7 +58,7 @@ enyo.kind({
 		});
 	},
 	testContentType: function() {
-		var contentType = "text/plain"
+		var contentType = "text/plain";
 		this._testAjax({url: "php/test2.php", method: "PUT", contentType: contentType}, null, function(inValue) {
 			return inValue.ctype == contentType;
 		});
@@ -77,5 +78,16 @@ enyo.kind({
 		this._testAjax({url: "http://query.yahooapis.com/v1/public/yql/jonathan/weather/"}, {q:'select * from weather.forecast where location=94025', format: "json"}, function(inValue) {
 			return inValue && inValue.query && inValue.query.results && inValue.query.count > 0;
 		});
+	},
+	// server is set to respond after 3 seconds, so make sure timeout fires first
+	testAjaxTimeout: function() {
+		new enyo.Ajax({url: "php/test3.php", timeout: 500})
+			.response(this, function(inSender, inValue) {
+				this.finish("did not timeout");
+			})
+			.error(this, function(inSender, inValue) {
+				enyo.job("timeouttest", enyo.bind(this, function() {this.finish("");}), 4000);
+			})
+			.go();
 	}
 });

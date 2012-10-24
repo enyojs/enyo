@@ -75,13 +75,20 @@ enyo.kind({
 		});
 	},
 	receive: function(inText, inXhr) {
-		if (!this.destroyed) {
+		if (!this.failed && !this.destroyed) {
 			if (this.isFailure(inXhr)) {
 				this.fail(inXhr.status);
 			} else {
 				this.respond(this.xhrToResponse(inXhr));
 			}
 		}
+	},
+	fail: function(inError) {
+		// on failure, explicitly cancel the XHR to 
+		// prevent further responses
+		enyo.xhr.cancel(this.xhr);
+		this.xhr = null;
+		this.inherited(arguments);
 	},
 	xhrToResponse: function(inXhr) {
 		if (inXhr) {

@@ -44,6 +44,15 @@ enyo.xhr = {
 		}
 		return xhr;
 	},
+	//* remove any callbacks that might be set from Enyo code for an existing XHR.
+	cancel: function(inXhr) {
+		if (inXhr.onload) {
+			inXhr.onload = null;
+		}
+		if (inXhr.onreadystatechange) {
+			inXhr.onreadystatechange = null;
+		}
+	},
 	//* @protected
 	makeReadyStateHandler: function(inXhr, inCallback) {
 		if (window.XDomainRequest && inXhr instanceof XDomainRequest) {
