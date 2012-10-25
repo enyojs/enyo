@@ -138,7 +138,8 @@ enyo.kind({
 	    console.warn("Could not find requested controller instance or class ", this.kindName, cs);
 	    return;
 	  }
-	  c.owner = this;
+	  //c.owner = this;
+	  c.set("owner", this);
 	  this.controller = c;
 	},
 	

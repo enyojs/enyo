@@ -107,7 +107,7 @@
       }
       
       if (!s) {
-        // TODO: this needs to be monitored because they case where it showed up
+        // TODO: this needs to be monitored because the case where it showed up
         // was "ok" but there are probably times when this indicates a problem
         // NOTE: it was occuring when a row of a list-element was directly bound
         // to a property of its controller, a status change would take place, and
@@ -167,12 +167,19 @@
     autoSync: true,
     transform: null,
     oneWay: false,
+    allowRefresh: true,
     
     sync: function (force) {
       if (this.isSynced && force !== true) return;
       this._syncFromSource();
       this.isSynced = true;
       return;
+    },
+    
+    refresh: function () {
+      if (!this.allowRefresh) return false;
+      this.disconnect();
+      this._setup();
     },
     
     connect: function () {
@@ -206,6 +213,11 @@
     
     getTargetValue: function () {
       //var r = enyo._getPath.call(this._target, this._targetProperty);
+      
+      if (!this._target) {
+        enyo.error("no target", this);
+      }
+      
       var r = this._target.get(this._targetProperty);
       if (r instanceof Object) r = copyTransform(r);
       return r;
@@ -240,6 +252,10 @@
       this._targetResponder = null;
       this.isDestroyed = true;
       enyo.bindingCount--;
+      
+      if (this.owner) {
+        this.owner.removeBinding(this);
+      }
       //console.log("REMOVED A BINDING: ", enyo.bindingCount);
     }
   };

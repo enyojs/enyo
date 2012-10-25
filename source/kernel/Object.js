@@ -17,6 +17,9 @@ enyo.kind({
 	//* @protected
 	// has no base kind
 	kind: null,
+	//* @public
+	// concatenated properties (default)
+	concat: enyo.concat,
 	constructor: function() {
 		enyo._objectCount++;
 
@@ -108,15 +111,12 @@ enyo.kind({
 	},
 
   _setupBindings: function () {
-    var p, prop, i, b;
+    var prop, i = 0, b;
     this.clearBindings();
     b = this._bindings = [];
-    for (p in this) {
-      if (!(prop = this[p])) continue;
-      if ("bindings" === p && enyo.isArray(prop)) {
-        for (i = 0; i < prop.length; ++i) {
-          b.push(new enyo.Binding({owner: this, autoConnect: true}, prop[i]))
-        }
+    if ((prop = this["bindings"])) {
+      for (; i < prop.length; ++i) {
+        b.push(new enyo.Binding({owner: this, autoConnect: true}, prop[i]));
       }
     }
   },
@@ -227,12 +227,6 @@ enyo.kind({
       
       var o = this._observers, c = this._computed, t = o[inProp], i = 0, fn,
           ch_name = inProp[0].toLowerCase() + inProp.slice(1) + "Changed";
-      
-      if (this[ch_name] && enyo.isFunction(this[ch_name])) {
-        if (!this._allowNotifications) {
-          this.addNotificationToQueue(inProp, this[ch_name], [oldVal, newVal]);
-        } else { this[ch_name].call(this, oldVal, newVal); }
-      }
 
       if (t) {
         for (; i < t.length; ++i) {
@@ -243,13 +237,18 @@ enyo.kind({
           // two-way bindings
           if (!this._allowNotifications) {
             this.addNotificationToQueue(inProp, fn, [inProp, oldVal, newVal]);
-          //} else { fn.call(this, inProp, oldVal, newVal); }
-          //enyo.asyncMethod(this, fn, inProp, oldVal, newVal);
           } else {
             enyo.asyncMethod(this, fn, inProp, oldVal, newVal);
           }
         }
       }
+      
+      if (this[ch_name] && enyo.isFunction(this[ch_name])) {
+        if (!this._allowNotifications) {
+          this.addNotificationToQueue(inProp, this[ch_name], [oldVal, newVal]);
+        } else { enyo.asyncMethod(this, ch_name, oldVal, newVal); }
+      }
+      
     },
     
     _notificationQueue: null,
@@ -281,7 +280,7 @@ enyo.kind({
     },
     
     flushNotifications: function () {
-      var q = this._notificationQueue || {}, fn, p, n, params;
+      var q = this._notificationQueue || {}, fn, p, n, params, t;
       for (p in q) {
         n = q[p];
         if (n && enyo.isArray(n)) {
@@ -290,7 +289,9 @@ enyo.kind({
             fn = n.shift();
             if (fn && enyo.isFunction(fn)) {
               // async?
-              fn.apply(this, params);
+              //fn.apply(this, params);
+              t = enyo.bind(this, function () {fn.apply(this, params)});
+              enyo.asyncMethod(this, t);
             }
           }
         }
@@ -306,13 +307,26 @@ enyo.kind({
     },
 
     clearBindings: function (inBindings) {
-      var b = inBindings || this._bindings, i = 0, bnd;
+      var b = inBindings || this._bindings, i, bnd;
       if (b && b.length > 0) {
         while (b.length) {
           bnd = b.shift();
           bnd.destroy();
         }
       }
+    },
+    
+    refreshBindings: function (inBindings) {
+      var b = inBindings || this._bindings, bnd, i = 0;
+      for (; i < b.length; ++i) {
+        bnd = b[i];
+        bnd.refresh();
+      }
+    },
+    
+    removeBinding: function (inBinding) {
+      var b, i = (b = this._bindings || []).indexOf(inBinding);
+      if (i !== -1) b.splice(i, 1);
     },
 
     //-----------------------
