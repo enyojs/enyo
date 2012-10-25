@@ -60,7 +60,7 @@ var node = process.argv[0],
 function printUsage() {
 	// format generated using node-optimist...
 	console.log('\n'
-		    + 'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-b build_dir][-o out_dir][-p package_js]\n'
+		    + 'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir]\n'
 		    + '\n'
 		    + 'Options:\n'
 		    + '  -b  alternate build directory             [default: "' + buildDir + '"]\n'
@@ -68,6 +68,7 @@ function printUsage() {
 		    + '  -e  location of the enyo framework        [default: "' + enyoDir + '"]\n'
 		    + '  -o  alternate output directory            [default: "' + outDir + '"]\n'
 		    + '  -p  location of the main package.js file  [default: "' + packageJs + '"]\n'
+		    + '  -s  source code root directory            [default: "' + sourceDir + '"]\n'
 		    + '\n');
 }
 
@@ -77,6 +78,7 @@ var opt = nopt(/*knownOpts*/ {
 	"enyo":		path,
 	"out":		path,
 	"packagejs":	path,
+	"source":	path,
 	"help":		Boolean
 }, /*shortHands*/ {
 	"b": "--build",
@@ -84,6 +86,7 @@ var opt = nopt(/*knownOpts*/ {
 	"e": "--enyo",
 	"o": "--out",
 	"p": "--packagejs",
+	"s": "--source",
 	"h": "--help",
 	"?": "--help"
 }, process.argv /*args*/, 2 /*slice*/);
@@ -97,7 +100,12 @@ if (opt.help) {
 buildDir = opt.build || buildDir;
 enyoDir = opt.enyo || enyoDir;
 outDir = opt.out || outDir;
-packageJs = opt.packagejs || packageJs;
+packageJs = opt.packagejs
+	|| (opt.source ? path.join(opt.source, 'package.js') : undefined)
+	|| packageJs;
+sourceDir = opt.source
+	|| (opt.packagejs ? path.dirname(opt.packagejs) : undefined)
+	|| sourceDir;
 less = !(opt.less === false) && less;
 
 var minifier = path.resolve(enyoDir, 'tools', 'minifier', 'minify.js');
@@ -105,6 +113,7 @@ console.log("Using: build_dir=" + buildDir);
 console.log("Using: enyo_dir=" + enyoDir);
 console.log("Using: out_dir=" + outDir);
 console.log("Using: packagejs=" + packageJs);
+console.log("Using: source_dir=" + sourceDir);
 console.log("Using: less=" + less);
 
 // utils
