@@ -45,6 +45,26 @@ var nopt = require("nopt"),
 
 var stat, ppwd, lib, script, scripts = {};
 
+// Send message to parent node process, if any
+process.on('uncaughtException', function (err) {
+	console.error(err.stack);
+	if (process.send) {
+		// only available if parent process is node
+		process.send({error: err});
+	}
+	process.exit(1);
+});
+// receive error messages from child node processes
+process.on('message', function(msg) {
+	console.dir(basename, msg);
+	if (msg.error && msg.error.stack) {
+		console.error(basename, msg.error.stack);
+	}
+	if (process.send) {
+		process.send(msg);
+	}
+});
+
 // Parse arguments
 
 var node = process.argv[0],
@@ -120,7 +140,7 @@ console.log("Using: less=" + less);
 
 function run(args) {
 	var command = args.join(' ');
-	console.log("Running: '"+ command + "'");
+	console.log("Running: '", command, "' from '", process.cwd(), "'");
 	if (shell.exec(command).code !== 0) {
 		throw new Error("*** Fail: '" + command + "'");
 	}
@@ -140,7 +160,7 @@ run([node, minifier,
      '-no-alias',
      '-enyo', enyoDir,
      // XXX generates $buildDir/enyo.(js|css)' so this is
-     // XXX rather an 'output_prefix' than an 'output'...
+     // XXX rather an 'output_prefix' than an 'out_dir'...
      '-output', path.join(buildDir, 'enyo'),
      'package.js']);
 
@@ -160,7 +180,12 @@ shell.mkdir('-p', path.join(outDir, 'lib'));
 shell.cp(path.join(sourceDir, 'index.html'), path.join(sourceDir, 'icon.png'), outDir);
 shell.cp('-r', path.join(sourceDir, 'assets'), buildDir, outDir);
 
-shell.ls(path.join(sourceDir, 'lib')).forEach(function(lib) {
+var libSrcDir = path.join(sourceDir, 'lib');
+if(shell.test('-d', libSrcDir)) {
+	shell.ls(libSrcDir).forEach(deployLib(lib));
+}
+
+function deployLib(lib) {
 	var libOutdir = path.join(outDir, 'lib', lib);
 	// load & execute sub-'deploy.js'
 	try {
@@ -183,4 +208,9 @@ shell.ls(path.join(sourceDir, 'lib')).forEach(function(lib) {
 			shell.cp('-r', path.join(sourceDir, 'lib', lib), path.join(outDir, 'lib'));
 		}
 	}
-});
+}
+
+console.log("Success");
+process.exit(0);
+
+
