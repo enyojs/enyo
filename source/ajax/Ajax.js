@@ -86,8 +86,10 @@ enyo.kind({
 	fail: function(inError) {
 		// on failure, explicitly cancel the XHR to 
 		// prevent further responses
-		enyo.xhr.cancel(this.xhr);
-		this.xhr = null;
+		if (this.xhr) {
+			enyo.xhr.cancel(this.xhr);
+			this.xhr = null;
+		}
 		this.inherited(arguments);
 	},
 	xhrToResponse: function(inXhr) {
@@ -96,11 +98,28 @@ enyo.kind({
 		}
 	},
 	isFailure: function(inXhr) {
-		// Usually we will treat status code 0 and 2xx as success.  But in webos, if url is a local file,
-		// 200 is returned if the file exists, 0 otherwise.  So we workaround this by treating 0 differently if
-		// the app running inside webos and the url is not http.
-		//return ((!window.PalmSystem || this.isHttpUrl()) && !inStatus) || (inStatus >= 200 && inStatus < 300);
-		return (inXhr.status !== 0) && (inXhr.status < 200 || inXhr.status >= 300);
+		// if any exceptions are thrown while checking fields in the xhr,
+		// assume a failure.
+		try {
+			var text = "";
+			// work around IE8-9 bug where accessing responseText will thrown error
+			// for binary requests.
+			if (typeof inXhr.responseText === "string") {
+				text = inXhr.responseText;
+			}
+			// Follow same failure policy as jQuery's Ajax code
+			// CORS failures on FireFox will have status 0 and no responseText,
+			// so treat that as failure.
+			if (inXhr.status === 0 && text === "") {
+				return true;
+			}
+			// Otherwise, status 0 may be good for local file access.  We treat the range
+			// 1-199 and 300+ as failure (only 200-series code are OK).
+			return (inXhr.status !== 0) && (inXhr.status < 200 || inXhr.status >= 300);
+		}
+		catch (e) {
+			return true;
+		}
 	},
 	xmlHandler: function(inXhr) {
 		return inXhr.responseXML;

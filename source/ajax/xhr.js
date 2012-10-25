@@ -44,13 +44,17 @@ enyo.xhr = {
 		}
 		return xhr;
 	},
-	//* remove any callbacks that might be set from Enyo code for an existing XHR.
+	//* remove any callbacks that might be set from Enyo code for an existing XHR
+	//* and stop the XHR from completing.
 	cancel: function(inXhr) {
 		if (inXhr.onload) {
 			inXhr.onload = null;
 		}
 		if (inXhr.onreadystatechange) {
 			inXhr.onreadystatechange = null;
+		}
+		if (inXhr.abort) {
+			inXhr.abort();
 		}
 	},
 	//* @protected

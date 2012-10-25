@@ -79,6 +79,17 @@ enyo.kind({
 			return inValue && inValue.query && inValue.query.results && inValue.query.count > 0;
 		});
 	},
+	// test CORS failure
+	testCORSFailure: function() {
+		new enyo.Ajax({url: "https://dev.virtualearth.net/REST/v1/Locations/47.64054,-122.12934"})
+			.response(this, function(inSender, inValue) {
+				this.finish("CORS failure flagged as success");
+			})
+			.error(this, function(inSender, inValue) {
+				this.finish("");
+			})
+			.go();
+	},
 	// server is set to respond after 3 seconds, so make sure timeout fires first
 	testAjaxTimeout: function() {
 		new enyo.Ajax({url: "php/test3.php", timeout: 500})
