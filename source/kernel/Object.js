@@ -246,7 +246,9 @@ enyo.kind({
       if (this[ch_name] && enyo.isFunction(this[ch_name])) {
         if (!this._allowNotifications) {
           this.addNotificationToQueue(inProp, this[ch_name], [oldVal, newVal]);
-        } else { enyo.asyncMethod(this, ch_name, oldVal, newVal); }
+        //} else { enyo.asyncMethod(this, ch_name, oldVal, newVal); }
+        // TODO: apparently these are required to be executed as synchronous?
+        } else { this[ch_name].call(this, oldVal, newVal); }
       }
       
     },
@@ -291,6 +293,8 @@ enyo.kind({
               // async?
               //fn.apply(this, params);
               t = enyo.bind(this, function () {fn.apply(this, params)});
+              // FIXME: for the {propName}Changed function pattern it needs
+              // to be execued synchronously?
               enyo.asyncMethod(this, t);
             }
           }
