@@ -587,6 +587,7 @@ enyo.kind({
 		return this.getAttribute("src");
 	},
 	srcChanged: function() {
+	  if (!this.src) return;
 		this.setAttribute("src", enyo.path.rewrite(this.src));
 	},
 	attributesChanged: function() {
