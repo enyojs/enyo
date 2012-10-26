@@ -231,6 +231,27 @@
 		}
 	};
 
+  enyo.only = function (inProps, inObject) {
+    var r = [], k;
+    if (!inProps || !inObject) return r;
+    if (!enyo.isArray(inProps) && inProps) inProps = [inProps];
+    for (k in inObject)
+      if (!inObject.hasOwnProperty(k)) continue;
+      else if (inProps.indexOf(k) !== -1 && r.indexOf(k) === -1)
+        r.push(inObject[k]);
+    return r;
+  };
+
+  enyo.pluck = function (inProp, inArray) {
+    var r = [], i = 0, a;
+    a = enyo.isArray(inArray)? inArray: [inArray];
+    for (; i < a.length; ++i) {
+      if (!a[i]) continue;
+      if (a[i][inProp]) r.push(a[i][inProp]);
+    }
+    return r;
+  };
+
 	/**
 		Creates a new array with all elements of _inArray_ that pass the test implemented by _inFunc_.
 		If _inContext_ is specified, _inFunc_ is called with _inContext_ as _this_.
