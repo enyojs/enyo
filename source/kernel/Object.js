@@ -238,7 +238,8 @@ enyo.kind({
           if (!this._allowNotifications) {
             this.addNotificationToQueue(inProp, fn, [inProp, oldVal, newVal]);
           } else {
-            enyo.asyncMethod(this, fn, inProp, oldVal, newVal);
+            //enyo.asyncMethod(this, fn, inProp, oldVal, newVal);
+            fn.call(this, inProp, oldVal, newVal);
           }
         }
       }
@@ -295,7 +296,8 @@ enyo.kind({
               t = enyo.bind(this, function () {fn.apply(this, params)});
               // FIXME: for the {propName}Changed function pattern it needs
               // to be execued synchronously?
-              enyo.asyncMethod(this, t);
+              //enyo.asyncMethod(this, t);
+              t.call(this);
             }
           }
         }
