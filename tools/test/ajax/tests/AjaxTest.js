@@ -32,6 +32,11 @@ enyo.kind({
 			return r == "hello";
 		});
 	},
+	testSyncTextResponse: function() {
+		this._testResponse({handleAs: "text", sync: true}, function(inValue) {
+			return inValue == "hello";
+		});
+	},
 	testPostRequest: function() {
 		this._testAjax({url: "php/test2.php", method: "POST"}, {query: "enyo"}, function(inValue) {
 			return inValue.response == "enyo";

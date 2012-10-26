@@ -61,18 +61,25 @@ enyo.kind({
 		}
 		enyo.mixin(xhr_headers, this.headers);
 		//
-		this.xhr = enyo.xhr.request({
-			url: url,
-			method: this.method,
-			callback: enyo.bind(this, "receive"),
-			body: this.postBody || body,
-			headers: xhr_headers,
-			sync: window.PalmSystem ? false : this.sync,
-			username: this.username,
-			password: this.password,
-			xhrFields: this.xhrFields,
-			mimeType: this.mimeType
-		});
+		try {
+			this.xhr = enyo.xhr.request({
+				url: url,
+				method: this.method,
+				callback: enyo.bind(this, "receive"),
+				body: this.postBody || body,
+				headers: xhr_headers,
+				sync: window.PalmSystem ? false : this.sync,
+				username: this.username,
+				password: this.password,
+				xhrFields: this.xhrFields,
+				mimeType: this.mimeType
+			});
+		}
+		catch (e) {
+			// IE can throw errors here if the XHR would fail CORS checks,
+			// so catch and turn into a failure.
+			this.fail(e);
+		}
 	},
 	receive: function(inText, inXhr) {
 		if (!this.failed && !this.destroyed) {
