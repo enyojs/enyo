@@ -161,7 +161,7 @@ enyo.kind({
 		if (inOldOwner) {
 			inOldOwner.removeComponent(this);
 		}
-		if (this.owner) {
+		if (this.owner && this.owner.addComponent) {
 			this.owner.addComponent(this);
 		}
 		if (!this.id) {

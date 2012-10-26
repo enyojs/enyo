@@ -1,6 +1,6 @@
 enyo.kind({
   name: "enyo.Extension",
-  kind: "enyo.Object",
+  kind: "enyo.Component",
   published: {
     extendFrom: null
   },
