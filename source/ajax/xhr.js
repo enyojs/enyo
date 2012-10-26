@@ -17,7 +17,7 @@ enyo.xhr = {
 		var xhr = this.getXMLHttpRequest(inParams.url);
 		//
 		var method = inParams.method || "GET";
-		var async = ("sync" in inParams) ? !inParams.sync : true;
+		var async = !inParams.sync;
 		//
 		if (inParams.username) {
 			xhr.open(method, enyo.path.rewrite(inParams.url), async, inParams.username, inParams.password);
@@ -26,8 +26,10 @@ enyo.xhr = {
 		}
 		//
 		enyo.mixin(xhr, inParams.xhrFields);
-		//
-		this.makeReadyStateHandler(xhr, inParams.callback);
+		// only setup handler when we have a callback
+		if (inParams.callback) {
+			this.makeReadyStateHandler(xhr, inParams.callback);
+		}
 		if (inParams.headers) {
 			for (var key in inParams.headers) {
 				xhr.setRequestHeader(key, inParams.headers[key]);
@@ -39,12 +41,13 @@ enyo.xhr = {
 		}
 		//
 		xhr.send(inParams.body || null);
-		if (!async) {
+		if (!async && inParams.callback) {
 			xhr.onreadystatechange(xhr);
 		}
 		return xhr;
 	},
-	//* remove any callbacks that might be set from Enyo code for an existing XHR.
+	//* remove any callbacks that might be set from Enyo code for an existing XHR
+	//* and stop the XHR from completing.
 	cancel: function(inXhr) {
 		if (inXhr.onload) {
 			inXhr.onload = null;
@@ -52,27 +55,32 @@ enyo.xhr = {
 		if (inXhr.onreadystatechange) {
 			inXhr.onreadystatechange = null;
 		}
+		if (inXhr.abort) {
+			inXhr.abort();
+		}
 	},
 	//* @protected
 	makeReadyStateHandler: function(inXhr, inCallback) {
 		if (window.XDomainRequest && inXhr instanceof XDomainRequest) {
 			inXhr.onload = function() {
-				inCallback && inCallback.apply(null, [inXhr.responseText, inXhr]);
+				inCallback.apply(null, [inXhr.responseText, inXhr]);
 			};
 		}
 		inXhr.onreadystatechange = function() {
 			if (inXhr.readyState == 4) {
-				inCallback && inCallback.apply(null, [inXhr.responseText, inXhr]);
+				inCallback.apply(null, [inXhr.responseText, inXhr]);
 			}
 		};
 	},
 	inOrigin: function(inUrl) {
 		var a = document.createElement("a"), result = false;
 		a.href = inUrl;
+		// protocol is ":" for relative URLs
 		if (a.protocol === ":" ||
 				(a.protocol === window.location.protocol &&
 					a.hostname === window.location.hostname &&
-					a.port === (window.location.port || "80"))) {
+					a.port === (window.location.port || 
+						(window.location.protocol === "https:" ? "443" : "80")))) {
 			result = true;
 		}
 		return result;
@@ -85,12 +93,6 @@ enyo.xhr = {
 		} catch(e) {}
 		try {
 			return new XMLHttpRequest();
-		} catch(e) {}
-		try {
-			return new ActiveXObject('Msxml2.XMLHTTP');
-		} catch(e) {}
-		try {
-			return new ActiveXObject('Microsoft.XMLHTTP');
 		} catch(e) {}
 		return null;
 	}

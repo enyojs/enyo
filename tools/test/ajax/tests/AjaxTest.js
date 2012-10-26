@@ -32,6 +32,11 @@ enyo.kind({
 			return r == "hello";
 		});
 	},
+	testSyncTextResponse: function() {
+		this._testResponse({handleAs: "text", sync: true}, function(inValue) {
+			return inValue == "hello";
+		});
+	},
 	testPostRequest: function() {
 		this._testAjax({url: "php/test2.php", method: "POST"}, {query: "enyo"}, function(inValue) {
 			return inValue.response == "enyo";
@@ -78,6 +83,17 @@ enyo.kind({
 		this._testAjax({url: "http://query.yahooapis.com/v1/public/yql/jonathan/weather/"}, {q:'select * from weather.forecast where location=94025', format: "json"}, function(inValue) {
 			return inValue && inValue.query && inValue.query.results && inValue.query.count > 0;
 		});
+	},
+	// test CORS failure
+	testCORSFailure: function() {
+		new enyo.Ajax({url: "https://dev.virtualearth.net/REST/v1/Locations/47.64054,-122.12934"})
+			.response(this, function(inSender, inValue) {
+				this.finish("CORS failure flagged as success");
+			})
+			.error(this, function(inSender, inValue) {
+				this.finish("");
+			})
+			.go();
 	},
 	// server is set to respond after 3 seconds, so make sure timeout fires first
 	testAjaxTimeout: function() {
