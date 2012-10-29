@@ -23,6 +23,8 @@ enyo.kind({
 	constructor: function() {
 		enyo._objectCount++;
 
+    this._bindings = [];
+
     // setup observers, bindings and computed properties
     this._setup();
 	},
