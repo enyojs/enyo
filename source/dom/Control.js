@@ -126,8 +126,9 @@ enyo.kind({
 	},
 	
 	controllerChanged: function () {
-	  var cs = this.controller, c;
+	  var cs = this.controller, c, k;
 	  if (cs && enyo.isString(cs)) {
+	    k = cs;
 	    if (cs[0] === "." || !(c = enyo._getPath(cs))) c = enyo._getPath.call(this, cs);
 	    if (!c) throw new Error("Control.controllerChanged: could not find " + cs);
 	  } else { c = cs; }
@@ -138,9 +139,14 @@ enyo.kind({
 	    console.warn("Could not find requested controller instance or class ", this.kindName, cs);
 	    return;
 	  }
+	  k = c.kind || c.kindName;
 	  //c.owner = this;
 	  c.set("owner", this);
+	  this.controllerClass = k;
 	  this.controller = c;
+	  
+	  // questionable?
+	  this.refreshBindings();
 	},
 	
 	classesChanged: function(inOld) {
