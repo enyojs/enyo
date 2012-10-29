@@ -158,7 +158,7 @@ enyo.kind({
 		return (pre ? pre + delim : "") + baseName;
 	},
 	ownerChanged: function(inOldOwner) {
-		if (inOldOwner) {
+		if (inOldOwner && inOldOwner.removeComponent) {
 			inOldOwner.removeComponent(this);
 		}
 		if (this.owner && this.owner.addComponent) {
