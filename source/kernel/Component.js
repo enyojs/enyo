@@ -198,8 +198,8 @@ enyo.kind({
 			try { 
 				throw new Error('Duplicate component name "' + n + '" violates unique-name-under-owner rule, replacing existing component in the hash and continuing, but this is an error condition and should be fixed.');
 			} catch(x) {
-				console.warn(x);
-				console.log(x.stack);
+				enyo.warn(x);
+				enyo.log(x.stack);
 			}
 			*/
 			/*this.warn() &&*/ //console.warn('Duplicate component name "' + n + '" violates unique-name-under-owner rule, replacing existing component in the hash and continuing, but this is an error condition and should be fixed.');
@@ -516,7 +516,7 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 		fn = inValue.caller;
 	} else {
 		if (inName.slice(0, 2) != 'on') {
-			console.warn("enyo.Component.addEvent: event names must start with 'on'. " + inProto.kindName + " event '" + inName + "' was auto-corrected to 'on" + inName + "'.");
+			enyo.warn("enyo.Component.addEvent: event names must start with 'on'. " + inProto.kindName + " event '" + inName + "' was auto-corrected to 'on" + inName + "'.");
 			inName = "on" + inName;
 		}
 		v = inValue;

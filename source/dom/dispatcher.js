@@ -79,7 +79,7 @@ enyo.dispatcher = {
 				n = n.parentNode;
 			}
 		} catch(x) {
-			console.log(x, n);
+			enyo.log(x, n);
 		}
 		return t;
 	},

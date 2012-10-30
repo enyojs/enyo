@@ -9,7 +9,7 @@ enyo.kind({
 			})
 			.error(this, function(inSender, inValue) {
 				this.finish("bad status: " + inValue);
-				console.error(inValue);
+				enyo.error(inValue);
 			})
 			.go(inParams);
 	},
@@ -102,6 +102,7 @@ enyo.kind({
 				this.finish("did not timeout");
 			})
 			.error(this, function(inSender, inValue) {
+				// extra timeout is to make sure that timeout fail code cancels XHR
 				enyo.job("timeouttest", enyo.bind(this, function() {this.finish("");}), 4000);
 			})
 			.go();
