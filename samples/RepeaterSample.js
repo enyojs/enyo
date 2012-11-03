@@ -2,6 +2,7 @@ enyo.kind({
 	name: "enyo.sample.RepeaterSample",
 	classes: "enyo-fit repeater-sample",
 	components: [
+		{kind: "Button", content: "Add Name", ontap: "addName"},
 		{kind: "Repeater", onSetupItem:"setupItem", components: [
 			{name:"item", classes:"repeater-sample-item", components: [
 				{tag:"span", name: "personNumber"},
@@ -16,10 +17,13 @@ enyo.kind({
 	setupItem: function(inSender, inEvent) {
 		var index = inEvent.index;
 		var item = inEvent.item;
-		var person = this.people[index];
+		var person = this.people[index % this.people.length];
 		item.$.personNumber.setContent((index+1) + ". ");
 		item.$.personName.setContent(person.name);
 		item.$.personName.applyStyle("color", person.sex == "male" ? "dodgerblue" : "deeppink");
+	},
+	addName: function() {
+		this.$.repeater.addItems(1);
 	},
 	people: [
 		{name: "Andrew", sex:"male"},
