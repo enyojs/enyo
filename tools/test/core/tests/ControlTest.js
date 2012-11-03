@@ -54,6 +54,25 @@ enyo.kind({
 			if (kn.firstChild !== aaa.hasNode()) {
 				throw("added a child not first node");
 			}
+			// add a node with tag: null with a child
+			var n = k.createComponent({tag: null, components: [{name: "inner"}]});
+			var inner = k.$.inner;
+			n.render();
+			if (kn.lastChild !== inner.hasNode()) {
+				throw("child of 'tag: null' component not added to end");
+			}
+			var n2 = k.createComponent({tag: null, addBefore: null, components: [{name: "inner2"}]});
+			var inner2 = k.$.inner2;
+			n2.render();
+			if (kn.firstChild !== inner2.hasNode()) {
+				throw("child of 'tag: null' component not added to start");
+			}
+			var n3 = k.createComponent({tag: null, addBefore: inner2, components: [{name: "inner3"}]});
+			var inner3 = k.$.inner3;
+			n3.render();
+			if (kn.firstChild !== inner3.hasNode()) {
+				throw("child of 'tag: null' component not added before other component");
+			}
 		} finally {
 			// clean up after our test
 			k.destroy();

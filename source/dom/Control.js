@@ -409,12 +409,16 @@ enyo.kind({
 				return this;
 			}
 		}
-		if (!this.hasNode()) {
-			this.renderNode();
-		}
-		if (this.hasNode()) {
-			this.renderDom();
-			this.rendered();
+		if (this.tag) {
+			if (!this.hasNode()) {
+				this.renderNode();
+			}
+			if (this.hasNode()) {
+				this.renderDom();
+				this.rendered();
+			}
+		} else {
+			this.renderNullTag();
 		}
 		// return 'this' to support method chaining
 		return this;
@@ -676,10 +680,33 @@ enyo.kind({
 			c.teardownRender();
 		}
 	},
+	renderNullTag: function() {
+		this.teardownRender();
+		var html = this.generateHtml();
+		var pn = this.getParentNode();
+		if (pn && pn.insertAdjacentHTML) {
+			if (this.addBefore === undefined) {
+				// if undefined, add to end of parent
+				pn.insertAdjacentHTML("beforeend", html);
+			} else if (this.addBefore === null) {
+				// if defined as null, add to start of parent
+				pn.insertAdjacentHTML("afterbegin", html);
+			} else {
+				// otherwise, add before the sibling
+				var sibling = this.addBefore.hasNode();
+				if (sibling) {
+					sibling.insertAdjacentHTML("beforebegin", html);
+				}
+			}
+		}
+		this.generated = true;
+	},
 	renderNode: function() {
 		this.teardownRender();
-		this.node = document.createElement(this.tag);
-		this.addNodeToParent();
+		if (this.tag) {
+			this.node = document.createElement(this.tag);
+			this.addNodeToParent();
+		}
 		this.generated = true;
 	},
 	renderDom: function() {
