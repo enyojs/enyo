@@ -5,16 +5,16 @@ enyo.xhr = {
 
 		- _url_: The URL to request (required).
 		- _method_: The HTTP method to use for the request. Defaults to GET.
-		- _callback_: Called when request is completed.
-		- _body_: Specific contents for the request body for POST method.
-		- _headers_: Request headers.
+		- _callback_: Called when request is completed. (Optional)
+		- _body_: Specific contents for the request body for POST method. (Optional)
+		- _headers_: Additional request headers. (Optional)
 		- _username_: The optional user name to use for authentication purposes.
 		- _password_: The optional password to use for authentication purposes.
 		- _xhrFields_: Optional object containing name/value pairs to mix directly into the generated xhr object.
 		- _mimeType_: Optional string to override the MIME-Type.
 	*/
 	request: function(inParams) {
-		var xhr = this.getXMLHttpRequest(inParams.url);
+		var xhr = this.getXMLHttpRequest(inParams);
 		//
 		var method = inParams.method || "GET";
 		var async = !inParams.sync;
@@ -30,7 +30,7 @@ enyo.xhr = {
 		if (inParams.callback) {
 			this.makeReadyStateHandler(xhr, inParams.callback);
 		}
-		if (inParams.headers) {
+		if (inParams.headers && xhr.setRequestHeader) {
 			for (var key in inParams.headers) {
 				xhr.setRequestHeader(key, inParams.headers[key]);
 			}
@@ -85,9 +85,12 @@ enyo.xhr = {
 		}
 		return result;
 	},
-	getXMLHttpRequest: function(inUrl) {
+	getXMLHttpRequest: function(inParams) {
 		try {
-			if (window.XDomainRequest && !this.inOrigin(inUrl) && !/^file:\/\//.test(window.location.href)) {
+			// only use XDomainRequest when it exists, no extra headers were set, and the
+			// target URL maps to a domain other than the document origin.
+			if (window.XDomainRequest && !inParams.headers &&
+				!this.inOrigin(inParams.inUrl) && !/^file:\/\//.test(window.location.href)) {
 				return new XDomainRequest();
 			}
 		} catch(e) {}
