@@ -56,8 +56,13 @@ enyo.kind({
 		var url = args.length ? [uri, args.join("&")].join("?") : uri;
 		//
 		var xhr_headers = {};
+		body = this.postBody || body;
 		if (this.method != "GET") {
-			xhr_headers["Content-Type"] = this.contentType;
+			if (this.method === "POST" && window.FormData && body instanceof FormData) {
+				// Nothing to do as the content-type will be automagically set according to the FormData
+			} else {
+				xhr_headers["Content-Type"] = this.contentType;
+			}
 		}
 		enyo.mixin(xhr_headers, this.headers);
 		//
@@ -66,7 +71,7 @@ enyo.kind({
 				url: url,
 				method: this.method,
 				callback: enyo.bind(this, "receive"),
-				body: this.postBody || body,
+				body: body,
 				headers: xhr_headers,
 				sync: window.PalmSystem ? false : this.sync,
 				username: this.username,
