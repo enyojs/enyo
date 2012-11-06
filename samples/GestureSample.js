@@ -47,7 +47,7 @@ enyo.kind({
 						{name:"eventPicker", kind:"onyx.Picker", classes:"gesture-sample-left"}
 					]}
 				]}
-			]},
+			]}
 		]}
 	],
 	create: function() {
@@ -92,7 +92,7 @@ enyo.kind({
 		this.eventCount--;
 		this.eventList[inEvent.type].destroy();
 		delete this.eventList[inEvent.type];
-		if (this.eventCount == 0) {
+		if (this.eventCount === 0) {
 			this.$.waiting.show();
 		}
 		this.reflow();
@@ -179,12 +179,15 @@ enyo.kind({
 	getPropsString: function() {
 		var props = [];
 		for (var i in this.event) {
-			if ((this.event[i] != undefined) &&
-				(this.event[i] != null) &&
+			if ((this.event[i] !== undefined) &&
+				(this.event[i] !== null) &&
 				!(this.event[i] instanceof Object) && 
 				(i != "type")) {
 				props.push(i + ": " + this.event[i]);
 			}
+		}
+		if (this.event.srcEvent && this.event.srcEvent.type) {
+			props.push("srcEvent.type: " + this.event.srcEvent.type);
 		}
 		return "<b>" + this.event.type + "</b>: { " + props.join(", ") + " }";
 	}
