@@ -19,11 +19,18 @@ enyo.kind({
 			{name: "enyoPlatformJSON", content: "", style: "padding: 8px;"}
 		]}
 	],
+	updateWindowSize: function() {
+		this.$.windowAttr.setContent("size: " + window.innerWidth + "x" + window.innerHeight +
+			", devicePixelRatio: " + window.devicePixelRatio);
+	},
 	create: function() {
 		this.inherited(arguments);
 		this.$.uaString.setContent(navigator.userAgent);
-		this.$.windowAttr.setContent("size: " + window.innerWidth + "x" + window.innerHeight +
-			", devicePixelRatio: " + window.devicePixelRatio);
 		this.$.enyoPlatformJSON.setContent(JSON.stringify(enyo.platform));
+		this.updateWindowSize();
+	},
+	resizeHandler: function() {
+		this.inherited(arguments);
+		this.updateWindowSize();
 	}
 });
