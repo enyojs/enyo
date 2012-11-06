@@ -87,7 +87,8 @@ enyo.xhr = {
 	},
 	getXMLHttpRequest: function(inUrl) {
 		try {
-			if (window.XDomainRequest && !this.inOrigin(inUrl) && !/^file:\/\//.test(window.location.href)) {
+			if (enyo.platform.ie < 10 && window.XDomainRequest && 
+				!this.inOrigin(inUrl) && !/^file:\/\//.test(window.location.href)) {
 				return new XDomainRequest();
 			}
 		} catch(e) {}
