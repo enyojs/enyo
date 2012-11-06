@@ -7,7 +7,6 @@
 }
 
 .enyo-touch-scroller {
-	-ms-touch-action: none;
 	overflow: hidden;
 }
 

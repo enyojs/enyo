@@ -27,6 +27,10 @@ body.webkitOverflowScrolling {
 	position: relative;
 }
 
+.enyo-no-touch-action {
+	-ms-touch-action: none;
+}
+
 /* reset */
 
 button {

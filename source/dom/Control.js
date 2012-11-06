@@ -434,6 +434,8 @@ enyo.kind({
 		} else if (this.fit) {
 			this.addClass("enyo-fit enyo-clip");
 		}
+		// for IE10 support, we want full support over touch actions in Enyo-rendered areas
+		this.addClass("enyo-no-touch-action");
 		// add css to enable hw-accelerated scrolling on non-Android platforms (ENYO-900, ENYO-901)
 		this.setupOverflowScrolling();
 		// generate our HTML
@@ -457,6 +459,8 @@ enyo.kind({
 		if (this.fit) {
 			this.setupBodyFitting();
 		}
+		// for IE10 support, we want full support over touch actions in Enyo-rendered areas
+		this.addClass("enyo-no-touch-action");
 		// add css to enable hw-accelerated scrolling on non-Android platforms (ENYO-900, ENYO-901)
 		this.setupOverflowScrolling();
 		document.write(this.generateHtml());
