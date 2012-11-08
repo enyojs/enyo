@@ -16,3 +16,8 @@ The last parameter in the output path, if not ending in a `/`, will be used as t
 The `package.js` file must be in the same directory as the invocation.
 
 For convenience, packages should include a `minify` folder with both a Windows batch and Unix shell script that runs the minifier.
+
+## Running tests
+1. You first need to install an http server handling php (MANP or WAMP, ...)
+2. Configure your http server to server the files of the enyo project
+3. Point your browser to enyo/tools/... to run the various testcases.
