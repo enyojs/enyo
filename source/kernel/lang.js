@@ -4,7 +4,7 @@
 
 
   // TODO: there are some significant improvements that can be made
-  // to both of these methods enyo.getPath/enyo._setPath and both
+  // to both of these methods enyo.getPath/enyo.setPath and both
   // should be renamed without the underscore...
 
   enyo.getPath = function () {
@@ -31,7 +31,7 @@
     return val;
   };
 
-  enyo._setPath = function () {
+  enyo.setPath = function () {
     var args, cur, val, path, i = 0, parts, tmp, prev;
     if (arguments.length < 2) return this;
     args = arguments;

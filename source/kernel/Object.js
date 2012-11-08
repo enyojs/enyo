@@ -346,7 +346,7 @@ enyo.kind({
     },
     
     set: function () {
-      return enyo._setPath.apply(this, arguments);
+      return enyo.setPath.apply(this, arguments);
     },
     
     extend: function () {
