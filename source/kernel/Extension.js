@@ -7,7 +7,7 @@ enyo.kind({
   _base: null,
   constructor: function () {
     var b = this.extendFrom;
-    if (enyo.isString(b)) b = this._base = enyo._getPath(b);
+    if (enyo.isString(b)) b = this._base = enyo.getPath(b);
     if (!b) enyo.error("enyo.Extension: cannot find base to " +
       "extend from "+ this.extendFrom);
     
@@ -17,7 +17,7 @@ enyo.kind({
     // be obvious nor convenient to automatically call the _stored `get`
     // on extensions and only call the native get if it failed...could
     // always call published getters...
-    this._get = function () {return enyo._getPath.apply(this, arguments)};
+    this._get = function () {return enyo.getPath.apply(this, arguments)};
     this.inherited(arguments);
 
     b.apply(this, arguments);

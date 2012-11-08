@@ -129,7 +129,7 @@ enyo.kind({
 	  var cs = this.controller, c, k;
 	  if (cs && enyo.isString(cs)) {
 	    k = cs;
-	    if (cs[0] === "." || !(c = enyo._getPath(cs))) c = enyo._getPath.call(this, cs);
+	    if (cs[0] === "." || !(c = enyo.getPath(cs))) c = enyo.getPath.call(this, cs);
 	    if (!c) throw new Error("Control.controllerChanged: could not find " + cs);
 	  } else { c = cs; }
 	  if (c && enyo.isFunction(c) && !(c instanceof enyo.Controller)) {

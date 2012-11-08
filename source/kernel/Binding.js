@@ -16,13 +16,13 @@
     if (i === -1) r = {base: o, property: path};
     bt = path.slice(0, i);
     p = path.slice(i + 1);
-    if (bt[0] === "." || !(b = enyo._getPath(bt))) b = enyo._getPath.call(o, bt);
+    if (bt[0] === "." || !(b = enyo.getPath(bt))) b = enyo.getPath.call(o, bt);
     if (b && !b.addObserver) {
       // try to find if the target is a computed property...
       i = bt.lastIndexOf(".");
       c = bt.substring(i+1, bt.length);
       bt = bt.substring(0, i);
-      if (bt[0] === "." || !(b = enyo._getPath(bt))) b = enyo._getPath.call(o, bt);
+      if (bt[0] === "." || !(b = enyo.getPath(bt))) b = enyo.getPath.call(o, bt);
       if (b) {
         if (b[c] && enyo.isFunction(b[c]) && b[c].isProperty) {
           //return {base: b, property: p, computed: c};
@@ -212,7 +212,7 @@
     },
     
     getTargetValue: function () {
-      //var r = enyo._getPath.call(this._target, this._targetProperty);
+      //var r = enyo.getPath.call(this._target, this._targetProperty);
       
       if (!this._target) {
         enyo.error("no target", this);
@@ -231,8 +231,8 @@
     
     getSourceValue: function () {
       var r, sp = this._sourceProperty, sc = this._sourceComputedProperty;
-      //if (sc) r = enyo._getPath.call(this._source, sc)[sp];
-      //else r = enyo._getPath.call(this._source, this._sourceProperty);
+      //if (sc) r = enyo.getPath.call(this._source, sc)[sp];
+      //else r = enyo.getPath.call(this._source, this._sourceProperty);
       if (sc) r = this._source.get(sc)[sp];
       else r = this._source.get(this._sourceProperty);
       if (r instanceof Object) r = copyTransform(r);

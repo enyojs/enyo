@@ -4,10 +4,10 @@
 
 
   // TODO: there are some significant improvements that can be made
-  // to both of these methods enyo._getPath/enyo._setPath and both
+  // to both of these methods enyo.getPath/enyo._setPath and both
   // should be renamed without the underscore...
 
-  enyo._getPath = function () {
+  enyo.getPath = function () {
     var args, cur, path, i = 0, val, part;
     if (arguments.length === 0) return undefined;  
     if (!enyo.isString(arguments[0])) return undefined;
@@ -22,7 +22,7 @@
       part = path.substring(0, i);
       path = path.slice(i);
       if (typeof cur[part] === "object") {
-        val = enyo._getPath.call(cur[part], path, true);
+        val = enyo.getPath.call(cur[part], path, true);
       } else return undefined;
     }
     if (enyo.isFunction(val) && val.isProperty === true) {

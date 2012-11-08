@@ -342,7 +342,7 @@ enyo.kind({
     get: function () {
       var get_n = "get" + enyo.cap(arguments[0]);
       if (this[get_n] && this[get_n].overloaded === true) return this[get_n]();
-      return enyo._getPath.apply(this, arguments);
+      return enyo.getPath.apply(this, arguments);
     },
     
     set: function () {
