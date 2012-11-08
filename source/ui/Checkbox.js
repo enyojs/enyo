@@ -47,7 +47,6 @@ enyo.kind({
 	// that we support in this object
 	activeChanged: function() {
 		this.active = Boolean(this.active);
-		//if (this.getChecked() !== this.active) this.setChecked(this.active);
 		this.setChecked(this.active);
 		this.bubble("onActivate");
 	},
