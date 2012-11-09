@@ -6,11 +6,12 @@
 	The following events are provided:
 
 	* "dragstart"
-	* "dragfinish"
 	* "drag"
-	* "drop"
+	* "dragenter"
 	* "dragover"
-	* "dragout"
+	* "dragout/dragleave"
+	* "drop"
+	* "dragfinish/dragend"
 	* "hold"
 	* "release"
 	* "holdpulse"
@@ -75,6 +76,13 @@ enyo.gesture.drag = {
 		this.endTracking(e);
 		this.stopDragging(e);
 		this.cancelHold();
+	},
+	enter: function(e) {
+		if (this.dragEvent) {
+			// send dragenter to new target
+			var synth = this.makeDragEvent("dragenter", e.target, e, this.dragEvent.dragInfo);
+			enyo.dispatch(synth);
+		}
 	},
 	leave: function(e) {
 		if (this.dragEvent) {
@@ -148,9 +156,18 @@ enyo.gesture.drag = {
 			e.preventTap && e.preventTap();
 		};
 		enyo.dispatch(synth);
+		// HTML5-stlye event names
+		var synth = this.makeDragEvent("dragend", this.dragEvent.target, e, this.dragEvent.dragInfo);
+		synth.preventTap = function() {
+			e.preventTap && e.preventTap();
+		};
+		enyo.dispatch(synth);
 	},
 	sendDragOut: function(e) {
 		var synth = this.makeDragEvent("dragout", e.target, e, this.dragEvent.dragInfo);
+		enyo.dispatch(synth);
+		// HTML5 names for events
+		var synth = this.makeDragEvent("dragleave", e.target, e, this.dragEvent.dragInfo);
 		enyo.dispatch(synth);
 	},
 	sendDrop: function(e) {
