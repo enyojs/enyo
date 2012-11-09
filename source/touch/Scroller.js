@@ -111,6 +111,10 @@ enyo.kind({
 					return true;
 				}
 			}
+			// special detection for IE10+ on touch devices
+			if (enyo.platform.ie >= 10 && enyo.platform.touch) {
+				return true;
+			}
 		},
 		/**
 			Returns true if the platform has native div scrollers (desktop

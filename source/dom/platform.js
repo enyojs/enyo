@@ -25,9 +25,9 @@
 */
 enyo.platform = {
 	//* True if the platform has native single finger events
-	touch: Boolean(("ontouchstart" in window) || window.navigator.msPointerEnabled),
+	touch: Boolean(("ontouchstart" in window) || window.navigator.msMaxTouchPoints),
 	//* True if the platform has native double finger events
-	gesture: Boolean(("ongesturestart" in window) || window.navigator.msPointerEnabled)
+	gesture: Boolean(("ongesturestart" in window) || window.navigator.msMaxTouchPoints)
 };
 
 //* @protected

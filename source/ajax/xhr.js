@@ -89,7 +89,7 @@ enyo.xhr = {
 		try {
 			// only use XDomainRequest when it exists, no extra headers were set, and the
 			// target URL maps to a domain other than the document origin.
-			if (window.XDomainRequest && !inParams.headers &&
+			if (enyo.platform.ie < 10 && window.XDomainRequest && !inParams.headers &&
 				!this.inOrigin(inParams.inUrl) && !/^file:\/\//.test(window.location.href)) {
 				return new XDomainRequest();
 			}
