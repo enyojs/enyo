@@ -30,7 +30,7 @@ enyo.machine = {
 			if (!enyo.loader.finishCallbacks.lessRefresh) {
 				enyo.loader.finishCallbacks.lessRefresh = function() {
 					less.refresh(true);
-				}
+				};
 			}
 		}
 	},
@@ -81,7 +81,7 @@ enyo.depends = function() {
 			enyo.runtimeLoading = true;
 			runtimeLoad();
 		}
-	}
+	};
 	function runtimeLoad(onLoad) {
 		if (onLoad) {
 			onLoad(); // Run user callback function
@@ -99,7 +99,7 @@ enyo.depends = function() {
 				runtimeLoad(function() {
 					onLoadCallback && onLoadCallback(depends);
 				});
-			}
+			};
 			enyo.loader.packageFolder = "./";
 			// Kick off next queued call to loader
 			enyo.depends.apply(this, dependsArg);

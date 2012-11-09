@@ -56,7 +56,7 @@
 				inControl.domStylesChanged();
 			}
 		}
-	}
+	};
 	//* @public
 	/**
 		Returns true if the platform supports CSS3 Transforms

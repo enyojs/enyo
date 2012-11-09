@@ -5,6 +5,9 @@
 	obviously controls, in Enyo, a control may become as complex as an entire
 	application.
 
+	If you make changes to _enyo.Control_, be sure to add or update the	appropriate
+	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
+
 	For more information, see the documentation on
 	<a href="https://github.com/enyojs/enyo/wiki/Creating-Controls">Controls</a>
 	in the Enyo Developer Guide.
@@ -475,6 +478,8 @@ enyo.kind({
 		} else if (this.fit) {
 			this.addClass("enyo-fit enyo-clip");
 		}
+		// for IE10 support, we want full support over touch actions in Enyo-rendered areas
+		this.addClass("enyo-no-touch-action");
 		// add css to enable hw-accelerated scrolling on non-Android platforms (ENYO-900, ENYO-901)
 		this.setupOverflowScrolling();
 		// generate our HTML
@@ -498,6 +503,8 @@ enyo.kind({
 		if (this.fit) {
 			this.setupBodyFitting();
 		}
+		// for IE10 support, we want full support over touch actions in Enyo-rendered areas
+		this.addClass("enyo-no-touch-action");
 		// add css to enable hw-accelerated scrolling on non-Android platforms (ENYO-900, ENYO-901)
 		this.setupOverflowScrolling();
 		document.write(this.generateHtml());

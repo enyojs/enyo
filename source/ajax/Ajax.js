@@ -11,6 +11,9 @@
 	If you want to use _enyo.Ajax_ as a component, you should probably
 	be using <a href="#enyo.WebService">enyo.WebService</a> instead.
 
+	If you make changes to _enyo.Ajax_, be sure to add or update the appropriate
+	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/ajax/tests).
+	
 	For more information, see the documentation on
 	[Consuming Web Services](https://github.com/enyojs/enyo/wiki/Consuming-Web-Services)
 	in the Enyo Developer Guide.
@@ -56,8 +59,13 @@ enyo.kind({
 		var url = args.length ? [uri, args.join("&")].join("?") : uri;
 		//
 		var xhr_headers = {};
+		body = this.postBody || body;
 		if (this.method != "GET") {
-			xhr_headers["Content-Type"] = this.contentType;
+			if (this.method === "POST" && window.FormData && body instanceof FormData) {
+				// Nothing to do as the content-type will be automagically set according to the FormData
+			} else {
+				xhr_headers["Content-Type"] = this.contentType;
+			}
 		}
 		enyo.mixin(xhr_headers, this.headers);
 		//
@@ -66,7 +74,7 @@ enyo.kind({
 				url: url,
 				method: this.method,
 				callback: enyo.bind(this, "receive"),
-				body: this.postBody || body,
+				body: body,
 				headers: xhr_headers,
 				sync: window.PalmSystem ? false : this.sync,
 				username: this.username,

@@ -494,5 +494,5 @@
 	*/
 	$L = function(string) {
 		return string;
-	}
+	};
 })();

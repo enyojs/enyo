@@ -18,7 +18,7 @@
  */
 enyo.kind({
 	name: "enyo.Popup",
-	classes: "enyo-popup",
+	classes: "enyo-popup enyo-no-touch-action",
 	published: {
 		//* Set to true to prevent controls outside the popup from receiving
 		//* events while the popup is showing

@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "WebServiceTest",
 	kind: enyo.TestSuite,
+	timeout: 10000,
 	_testWebService: function(inProps, inParams, inAssertFn) {
 		var ws = this.createComponent({kind: enyo.WebService, onResponse: "_response", onError: "_error", assertFn: inAssertFn}, inProps);
 		return ws.send(inParams);
@@ -58,7 +59,7 @@ enyo.kind({
 		});
 	},
 	testContentType: function() {
-		var contentType = "text/plain"
+		var contentType = "text/plain";
 		this._testWebService({url: "php/test2.php", method: "PUT", contentType: contentType}, null, function(inValue) {
 			return inValue.ctype == contentType;
 		});
@@ -75,19 +76,37 @@ enyo.kind({
 	},
 	// test CORS (Cross-Origin Resource Sharing) by testing against youtube api
 	testCORS: function() {
-		this._testWebService({url: "http://query.yahooapis.com/v1/public/yql/jonathan/weather/"}, {q: 'select * from weather.forecast where location=94025', format: "json"}, function(inValue) {console.log(inValue)
-			return inValue && inValue.query && inValue.query.results && inValue.query.count > 0;
+		this._testWebService({
+				url: "http://query.yahooapis.com/v1/public/yql/jonathan/weather/"}, 
+				{q: 'select * from weather.forecast where location=94025', format: "json"},
+				function(inValue) {
+					enyo.log(inValue);
+					return inValue && inValue.query && inValue.query.results && inValue.query.count > 0;
 		});
 	},
 	testJsonp: function() {
 		this._testResponse({jsonp: true, format: "jsonp"}, function(inValue) {
 			return inValue.response == "hello";
 		});
-	}/*,
-	testCharset: function() {
+	},
+	/*testCharset: function() {
 		this._testResponse({charset: "utf8"}, function(inValue) {
 			return inValue.utf8 == "\u0412\u0438\u0301\u0445\u0440\u0438";
 		});
 	}
 	*/
+	// server is set to respond after 3 seconds, so make sure timeout fires first
+	_timeoutResponse: function(inSender, inEvent) {
+		this.finish("did not timeout");
+	},
+	_timeoutError: function(inSender, inEvent) {
+		// extra timeout is to make sure that timeout fail code cancels XHR
+		enyo.job("wstimeouttest", enyo.bind(this, function() {this.finish("");}), 4000);
+	},
+	testTimeout: function() {
+		var ws = this.createComponent({kind: enyo.WebService, 
+			onResponse: "_timeoutResponse", onError: "_timeoutError"}, 
+			{url: "php/test3.php", timeout: 500});
+		ws.send();
+	}
 });

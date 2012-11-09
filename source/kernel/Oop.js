@@ -100,10 +100,13 @@ enyo.handleConcatenatedProperties = function (ctor, proto) {
 
 	_enyo.kind_ makes it easy to build a constructor-with-prototype (like a
 	class) that has advanced features like prototype-chaining (inheritance).
-	
+
 	A plug-in system is included for extending the abilities of the kind
 	generator, and constructors	are allowed to perform custom operations when
 	subclassed.
+
+	If you make changes to _enyo.kind_, be sure to add or update the appropriate
+	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
 
 	For more information, see the documentation on
 	[Creating Kinds](https://github.com/enyojs/enyo/wiki/Creating-Kinds)

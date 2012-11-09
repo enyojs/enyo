@@ -107,7 +107,7 @@ enyo.kind({
 				throw new Error();
 			} catch(x) {
 				enyo.logging._log(inMethod, [inArgs.callee.caller.nom + ": "].concat(enyo.cloneArray(inArgs)));
-				//console.log(x.stack);
+				enyo.log(x.stack);
 			}
 		}
 	},
