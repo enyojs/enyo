@@ -27,6 +27,10 @@ body.webkitOverflowScrolling {
 	position: relative;
 }
 
+.enyo-no-touch-action {
+	-ms-touch-action: none;
+}
+
 /* reset */
 
 button {
@@ -38,6 +42,7 @@ button {
 
 .enyo-unselectable {
 	cursor: default;
+	-ms-user-select: none;
 	-webkit-user-select: none;
 	-moz-user-select: -moz-none;
 	user-select: none;
@@ -49,6 +54,7 @@ button {
 
 .enyo-selectable {
 	cursor: auto;
+	-ms-user-select: element;
 	-webkit-user-select: text;
 	-moz-user-select: text;
 	user-select: text;
