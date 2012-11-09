@@ -5,6 +5,9 @@
 	obviously controls, in Enyo, a control may become as complex as an entire
 	application.
 
+	If you make changes to _enyo.Control_, be sure to add or update the	appropriate
+	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
+
 	For more information, see the documentation on
 	<a href="https://github.com/enyojs/enyo/wiki/Creating-Controls">Controls</a>
 	in the Enyo Developer Guide.

@@ -32,7 +32,10 @@
 	kinds. Kind names that	do not resolve directly to kinds are looked up in
 	default namespaces. In this case, _kind: "Component"_ resolves to
 	_enyo.Component_.
-	
+
+	If you make changes to _enyo.Component_, be sure to add or update the
+	appropriate	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
+
 	For more information, see the documentation on
 	[Components](https://github.com/enyojs/enyo/wiki/Creating-Components)
 	in the Enyo Developer Guide.
