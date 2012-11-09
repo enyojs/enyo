@@ -11,6 +11,9 @@
 	If you want to use _enyo.Ajax_ as a component, you should probably
 	be using <a href="#enyo.WebService">enyo.WebService</a> instead.
 
+	If you make changes to _enyo.Ajax_, be sure to add or update the appropriate
+	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/ajax/tests).
+	
 	For more information, see the documentation on
 	[Consuming Web Services](https://github.com/enyojs/enyo/wiki/Consuming-Web-Services)
 	in the Enyo Developer Guide.

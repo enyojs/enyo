@@ -1,4 +1,8 @@
 //* @protected
+/**
+	If you make changes to _enyo.xhr_, be sure to add or update the appropriate
+	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/ajax/tests).
+*/
 enyo.xhr = {
 	/**
 		<code>inParams</code> is an Object that may contain these properties:
