@@ -89,7 +89,7 @@ enyo.kind({
 	receive: function(inText, inXhr) {
 		if (!this.failed && !this.destroyed) {
 			if (this.isFailure(inXhr)) {
-				this.fail(inXhr.status);
+				this.fail(this.xhrToResponse(inXhr));
 			} else {
 				this.respond(this.xhrToResponse(inXhr));
 			}
