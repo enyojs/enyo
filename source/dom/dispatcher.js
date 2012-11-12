@@ -17,7 +17,7 @@ enyo.dispatcher = {
 		for (i=0; (n=d.windowEvents[i]); i++) {
 			// Chrome Packaged Apps don't like "unload"
 			if(n === "unload" && 
-				typeof(window.chrome) === "object" &&
+				(typeof window.chrome === "object") &&
 				window.chrome.app) {
 				continue;
 			}
@@ -135,7 +135,7 @@ enyo.bubbler = "enyo.bubble(arguments[0])";
 		var args = Array.prototype.slice.call(arguments, 0),
 			control = args.shift();
 
-		if(typeof(control) === "object" && typeof(control.hasNode) === "function") {
+		if((typeof control === "object") && (typeof control.hasNode === "function")) {
 			enyo.forEach(args, function(event) {
 				if(this.hasNode()) {
 					enyo.dispatcher.listen(this.node, event, bubbleUp);

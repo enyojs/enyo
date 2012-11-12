@@ -40,7 +40,7 @@ enyo.xhr = {
 			}
 		}
 		//
-		if(typeof(xhr.overrideMimeType) == "function" && inParams.mimeType) {
+		if((typeof xhr.overrideMimeType == "function") && inParams.mimeType) {
 			xhr.overrideMimeType(inParams.mimeType);
 		}
 		//
