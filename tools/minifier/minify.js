@@ -9,7 +9,8 @@ var
 	;
 
 var basename = path.basename(__filename),
-    w = console.log;
+    w = console.log,
+    e = console.error;
 
 // Shimming path.relative with 0.8.8's version if it doesn't exist
 if(!path.relative){
