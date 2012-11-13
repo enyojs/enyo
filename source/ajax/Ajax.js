@@ -52,7 +52,9 @@ enyo.kind({
         }
         else{
             //If inParams parameter is not a string, build a query from it
-            args.push(enyo.Ajax.objectToQuery(inParams))
+            if(inParams){
+                args.push(enyo.Ajax.objectToQuery(inParams));
+            }
         }
         //
 		if (this.method == "GET") {
