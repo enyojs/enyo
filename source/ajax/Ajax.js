@@ -44,7 +44,17 @@ enyo.kind({
 		var uri = parts.shift() || "";
 		var args = parts.length ? (parts.join("?").split("&")) : [];
 		//
-		var body = enyo.isString(inParams) ? inParams : enyo.Ajax.objectToQuery(inParams);
+        var body = null;
+        //
+        if(enyo.isString(inParams)){
+            //If inParams parameter is a string, use it as request body
+            body = inParams;
+        }
+        else{
+            //If inParams parameter is not a string, build a query from it
+            args.push(enyo.Ajax.objectToQuery(inParams))
+        }
+        //
 		if (this.method == "GET") {
 			if (body) {
 				args.push(body);
