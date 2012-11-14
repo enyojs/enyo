@@ -68,6 +68,11 @@ enyo.kind({
 			}
 		}
 		enyo.mixin(xhr_headers, this.headers);
+		// don't pass in headers structure if there are no headers defined as this messes
+		// up CORS code for IE8-9
+		if (enyo.keys(xhr_headers).length === 0) {
+			xhr_headers = undefined;
+		}
 		//
 		try {
 			this.xhr = enyo.xhr.request({
@@ -91,10 +96,14 @@ enyo.kind({
 	},
 	receive: function(inText, inXhr) {
 		if (!this.failed && !this.destroyed) {
+			var text;
+			if (typeof inXhr.responseText === "string") {
+				text = inXhr.responseText;
+			}
 			this.xhrResponse = {
 				status: inXhr.status,
 				headers: enyo.Ajax.parseResponseHeaders(inXhr),
-				body: inXhr.response
+				body: text
 			};
 			if (this.isFailure(inXhr)) {
 				this.fail(inXhr.status);
@@ -179,11 +188,13 @@ enyo.kind({
 		},
 		parseResponseHeaders: function(xhr) {
 			var headers = {};
-			var headersStr = xhr.getAllResponseHeaders()
-				    .split('\u000a'); // .split('\n');
+			var headersStr = [];
+			if (xhr.getAllResponseHeaders) {
+				headersStr = xhr.getAllResponseHeaders().split('\r\n');
+			}
 			for (var i = 0; i < headersStr.length; i++) {
-				var headerStr = headersStr[i].replace(/\u000d*\u000a*$/, ''); // .replace(/\r*\n*/,''); 
-				var index = headerStr.indexOf('\u003a\u0020' /*': '*/);
+				var headerStr = headersStr[i];
+				var index = headerStr.indexOf(': ');
 				if (index > 0) {
 					var key = headerStr.substring(0, index);
 					var val = headerStr.substring(index + 2);

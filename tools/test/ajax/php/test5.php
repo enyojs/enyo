@@ -8,7 +8,9 @@ switch ($method) {
 		//http_response_code(500); // php >= 5.4
 		header('X-PHP-Response-Code: 500', true, 500); // php >= 4.3
 
-		header('Content-Type: text/plain; charset=x-user-unparseable');
+		// can't use odd charset due to IE exception throwing
+		//header('Content-Type: text/plain; charset=x-user-unparseable');
+		header('Content-Type: text/plain; charset=utf-8');
 
 		echo "my error description";
 		break;
