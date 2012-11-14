@@ -2,14 +2,18 @@ enyo.kind({
 	name: "AjaxTest",
 	kind: enyo.TestSuite,
 	timeout: 10000,
-	_testAjax: function(inProps, inParams, inAssertFn) {
+	_testAjax: function(inProps, inParams, inAssertFn, inAssertErrFn) {
 		return new enyo.Ajax(inProps)
 			.response(this, function(inSender, inValue) {
 				this.finish(inAssertFn.call(null, inValue) ? "" : "bad response: " + inValue);
 			})
-			.error(this, function(inSender, inValue) {
-				this.finish("bad status: " + inValue);
-				enyo.error(inValue);
+			.error(this, function(inSender, inError) {
+				if (!inAssertErrFn) {
+					this.finish("bad status: " + inError.toString());
+					enyo.error(inError);
+				} else {
+					this.finish(inAssertErrFn.call(null, inError) ? "" : "bad response: " + inError);
+				}
 			})
 			.go(inParams);
 	},
@@ -72,7 +76,7 @@ enyo.kind({
 		var contentType = "application/x-www-form-urlencoded";
 		this._testAjax({url: "php/test4.php", method: "POST", postBody: "data"}, null, function(inValue) {
 			var status = (inValue.ctype.indexOf(contentType) === 0);
-			if (status) {
+			if (!status) {
 				enyo.log("Bad CT: " + inValue.ctype + " expected: " + contentType);
 			}
 			return status;
@@ -84,9 +88,9 @@ enyo.kind({
 			formData.append('token', "data");
 			var contentType = "multipart/form-data";
 			this._testAjax({url: "php/test4.php", method: "POST", postBody: formData}, null, function(inValue) {
-				var status = (inValue.ctype.indexOf(contentType) === 0)
-								&& (inValue.ctype.indexOf("boundary=--") > 10);
-				if ( ! status) {
+				var status = (inValue.ctype.indexOf(contentType) === 0) &&
+								(inValue.ctype.indexOf("boundary=--") > 10);
+				if (!status) {
 					enyo.log("Bad CT: " + inValue.ctype + " expected: " + contentType);
 				}
 				return status;
@@ -135,5 +139,18 @@ enyo.kind({
 				enyo.job("timeouttest", enyo.bind(this, function() {this.finish("");}), 4000);
 			})
 			.go();
+	},
+	// expected to fail
+	testErrorResponse: function() {
+		var req = this._testAjax({url: "php/test5.php"}, null, function(inValue) {
+			// getting success means server sent wrong response
+			return false;
+		}, function(inError) {
+			return (inError === 500) && 
+				req.xhrResponse && 
+				(req.xhrResponse.status === 500) &&
+				(req.xhrResponse.headers['Content-Type'] === "text/plain; charset=utf-8") &&
+				(req.xhrResponse.body === "my error description");
+		});
 	}
 });
