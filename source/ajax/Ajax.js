@@ -68,6 +68,11 @@ enyo.kind({
 			}
 		}
 		enyo.mixin(xhr_headers, this.headers);
+		// don't pass in headers structure if there are no headers defined as this messes
+		// up CORS code for IE8-9
+		if (enyo.keys(xhr_headers).length === 0) {
+			xhr_headers = undefined;
+		}
 		//
 		try {
 			this.xhr = enyo.xhr.request({
@@ -91,6 +96,15 @@ enyo.kind({
 	},
 	receive: function(inText, inXhr) {
 		if (!this.failed && !this.destroyed) {
+			var text;
+			if (typeof inXhr.responseText === "string") {
+				text = inXhr.responseText;
+			}
+			this.xhrResponse = {
+				status: inXhr.status,
+				headers: enyo.Ajax.parseResponseHeaders(inXhr),
+				body: text
+			};
 			if (this.isFailure(inXhr)) {
 				this.fail(inXhr.status);
 			} else {
@@ -99,8 +113,9 @@ enyo.kind({
 		}
 	},
 	fail: function(inError) {
-		// on failure, explicitly cancel the XHR to 
-		// prevent further responses
+		// on failure, explicitly cancel the XHR to prevent
+		// further responses.  cancellation also resets the
+		// response headers & body, 
 		if (this.xhr) {
 			enyo.xhr.cancel(this.xhr);
 			this.xhr = null;
@@ -170,6 +185,23 @@ enyo.kind({
 				}
 			}
 			return pairs.join("&");
+		},
+		parseResponseHeaders: function(xhr) {
+			var headers = {};
+			var headersStr = [];
+			if (xhr.getAllResponseHeaders) {
+				headersStr = xhr.getAllResponseHeaders().split('\r\n');
+			}
+			for (var i = 0; i < headersStr.length; i++) {
+				var headerStr = headersStr[i];
+				var index = headerStr.indexOf(': ');
+				if (index > 0) {
+					var key = headerStr.substring(0, index);
+					var val = headerStr.substring(index + 2);
+					headers[key] = val;
+				}
+			}
+			return headers;
 		}
 	}
 });
