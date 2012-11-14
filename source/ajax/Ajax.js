@@ -190,7 +190,7 @@ enyo.kind({
 			var headers = {};
 			var headersStr = [];
 			if (xhr.getAllResponseHeaders) {
-				headersStr = xhr.getAllResponseHeaders().split('\r\n');
+				headersStr = xhr.getAllResponseHeaders().split(/\r?\n/);
 			}
 			for (var i = 0; i < headersStr.length; i++) {
 				var headerStr = headersStr[i];
