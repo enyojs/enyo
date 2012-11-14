@@ -129,7 +129,11 @@ enyo.kind({
 			return true;
 		},
 		getTouchStrategy: function() {
-			return enyo.platform.android >= 3 ? "TranslateScrollStrategy" : "TouchScrollStrategy";
+			return (enyo.platform.android >= 3)
+				? "TranslateScrollStrategy"
+				: (enyo.platform.ios >= 5)
+					? "TransitionScrollStrategy"
+					: "TouchScrollStrategy";
 		}
 	},
 	//* @protected
