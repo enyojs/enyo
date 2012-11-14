@@ -31,7 +31,18 @@ enyo.kind({
 	},
 	//* @public
 	/**
-		Sends the ajax request with parameters _inParams_.
+		Sends the ajax request with parameters _inParams_. _inParams_ values can be either a **String** or an **Object**.
+
+     _inParams_ as an **Object** is converted into the url query string. For instance passing <code>{q: "searchTerm"}</code>
+      would result in the addition of the string **q="searchTerm"** to the current url query string.
+
+     _inParams_ as a **String** is used as the request body and trigger various behaviors depending on query **method**.
+     - GET method, as it has no body, translates it to a parameter. Thus <code>'q="searchTerm"'</code> translates into
+     **q="searchTerm** in the url query string.
+     - POST method uses the provided string as its body. But this one **will be overrided** by postBody value if it is set.
+
+     Use of _inParams_ as **String** is discouraged. Set **postBody** value to ensure the request body content and _inParams_
+     as an **Object** to set the query string.
 	*/
 	go: function(inParams) {
 		this.startTimer();
