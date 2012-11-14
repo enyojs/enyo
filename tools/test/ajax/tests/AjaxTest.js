@@ -2,14 +2,18 @@ enyo.kind({
 	name: "AjaxTest",
 	kind: enyo.TestSuite,
 	timeout: 10000,
-	_testAjax: function(inProps, inParams, inAssertFn) {
+	_testAjax: function(inProps, inParams, inAssertFn, inAssertErrFn) {
 		return new enyo.Ajax(inProps)
 			.response(this, function(inSender, inValue) {
 				this.finish(inAssertFn.call(null, inValue) ? "" : "bad response: " + inValue);
 			})
-			.error(this, function(inSender, inValue) {
-				this.finish("bad status: " + inValue);
-				enyo.error(inValue);
+			.error(this, function(inSender, inError) {
+				if (!inAssertErrFn) {
+					this.finish("bad status: " + inError.toString());
+					enyo.error(inError);
+				} else {
+					this.finish(inAssertErrFn.call(null, inError) ? "" : "bad response: " + inError);
+				}
 			})
 			.go(inParams);
 	},
@@ -135,5 +139,22 @@ enyo.kind({
 				enyo.job("timeouttest", enyo.bind(this, function() {this.finish("");}), 4000);
 			})
 			.go();
+	},
+	// expected to fail
+	testErrorResponse: function() {
+			enyo.log("testErrorResponse: starting");
+		var req = this._testAjax({url: "php/test5.php"}, null, function(inValue) {
+			enyo.log("testErrorResponse: FAIL inValue=", inValue);
+			return false;
+		}, function(inError) {
+			enyo.log("testErrorResponse: inError=", inError);
+			enyo.log(inError === 500);
+			enyo.log("testErrorResponse: req.xhrResponse=", req.xhrResponse);
+			enyo.log(req.xhrResponse.status === 500);
+			enyo.log("Content-Type='"+ req.xhrResponse.headers['Content-Type'] + "'");
+			enyo.log(req.xhrResponse.headers['Content-Type'] === "text/plain; charset=x-user-unparseable");
+			enyo.log(req.xhrResponse.body === "my error description");
+			return (inError === 500) && req.xhrResponse && (req.xhrResponse.status === 500) && (req.xhrResponse.headers['Content-Type'] === "text/plain; charset=x-user-unparseable") && (req.xhrResponse.body === "my error description");
+		});
 	}
 });

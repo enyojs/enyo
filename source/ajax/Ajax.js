@@ -91,6 +91,11 @@ enyo.kind({
 	},
 	receive: function(inText, inXhr) {
 		if (!this.failed && !this.destroyed) {
+			this.xhrResponse = {
+				status: inXhr.status,
+				headers: enyo.Ajax.parseResponseHeaders(inXhr),
+				body: inXhr.response
+			};
 			if (this.isFailure(inXhr)) {
 				this.fail(inXhr.status);
 			} else {
@@ -99,8 +104,9 @@ enyo.kind({
 		}
 	},
 	fail: function(inError) {
-		// on failure, explicitly cancel the XHR to 
-		// prevent further responses
+		// on failure, explicitly cancel the XHR to prevent
+		// further responses.  cancellation also resets the
+		// response headers & body, 
 		if (this.xhr) {
 			enyo.xhr.cancel(this.xhr);
 			this.xhr = null;
@@ -170,6 +176,21 @@ enyo.kind({
 				}
 			}
 			return pairs.join("&");
+		},
+		parseResponseHeaders: function(xhr) {
+			var headers = {};
+			var headersStr = xhr.getAllResponseHeaders()
+				    .split('\u000a'); // .split('\n');
+			for (var i = 0; i < headersStr.length; i++) {
+				var headerStr = headersStr[i].replace(/\u000d*\u000a*$/, ''); // .replace(/\r*\n*/,''); 
+				var index = headerStr.indexOf('\u003a\u0020' /*': '*/);
+				if (index > 0) {
+					var key = headerStr.substring(0, index);
+					var val = headerStr.substring(index + 2);
+					headers[key] = val;
+				}
+			}
+			return headers;
 		}
 	}
 });
