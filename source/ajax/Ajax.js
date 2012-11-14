@@ -106,7 +106,7 @@ enyo.kind({
 				body: text
 			};
 			if (this.isFailure(inXhr)) {
-				this.fail(inXhr.status);
+				this.fail(this.xhrToResponse(inXhr));
 			} else {
 				this.respond(this.xhrToResponse(inXhr));
 			}
