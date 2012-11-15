@@ -182,7 +182,7 @@ shell.cp('-r', path.join(sourceDir, 'assets'), buildDir, outDir);
 
 var libSrcDir = path.join(sourceDir, 'lib');
 if(shell.test('-d', libSrcDir)) {
-	shell.ls(libSrcDir).forEach(deployLib(lib));
+	shell.ls(libSrcDir).forEach(deployLib);
 }
 
 function deployLib(lib) {
