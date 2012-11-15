@@ -262,9 +262,10 @@ enyo.kind({
 	/**
 		Open at the location of a mouse event (_inEvent_). The popup's
 		position is automatically constrained so that it does not
-		display outside the viewport.
+		display outside the viewport, and defaults to anchoring the top
+		left corner of the popup to the mouse event.
 		
-		_inOffset_ is an object which may contain left and top
+		_inOffset_ is an optional object which may contain left and top
 		properties to specify an offset relative to the location the
 		popup would otherwise be positioned.
 	*/
@@ -279,8 +280,22 @@ enyo.kind({
 			p.top += inOffset.top || 0;
 		}
 		
+		this.showAtPosition(p);
+	},
+	
+	/**
+		Open the popup at a specific position. The final location
+		of the popup will be automatically constrained so that it does not
+		display outside the viewport.
+		
+		_inPosition_ is an object which may contain left, top, bottom,
+		and right properties to specify where the popup will be anchored.
+		If both left and right are included, the popup will preference left
+		(same for top vs. bottom).
+	*/
+	showAtPosition: function(inPosition) {
 		// Save our target position for later processing
-		this.targetPosition = p;
+		this.targetPosition = inPosition;
 		
 		// Show the dialog
 		this.show();
