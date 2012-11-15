@@ -47,10 +47,11 @@ var stat, ppwd, lib, script, scripts = {};
 
 // Send message to parent node process, if any
 process.on('uncaughtException', function (err) {
-	console.error(err.stack);
+	var errMsg = err.toString() + err.stack;
+	console.error(errMsg);
 	if (process.send) {
 		// only available if parent process is node
-		process.send({error: err.toString()});
+		process.send({error: errMsg});
 	}
 	process.exit(1);
 });
