@@ -79,17 +79,17 @@ var node = process.argv[0],
 
 function printUsage() {
 	// format generated using node-optimist...
-	console.log('\n'
-		    + 'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir]\n'
-		    + '\n'
-		    + 'Options:\n'
-		    + '  -b  alternate build directory             [default: "' + buildDir + '"]\n'
-		    + '  -c  do not run the LESS compiler          [boolean]  [default: ' + less + ']\n'
-		    + '  -e  location of the enyo framework        [default: "' + enyoDir + '"]\n'
-		    + '  -o  alternate output directory            [default: "' + outDir + '"]\n'
-		    + '  -p  location of the main package.js file  [default: "' + packageJs + '"]\n'
-		    + '  -s  source code root directory            [default: "' + sourceDir + '"]\n'
-		    + '\n');
+	console.log('\n' +
+		    'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir]\n' +
+		    '\n' +
+		    'Options:\n' +
+		    '  -b  alternate build directory             [default: "' + buildDir + '"]\n' +
+		    '  -c  do not run the LESS compiler          [boolean]  [default: ' + less + ']\n' +
+		    '  -e  location of the enyo framework        [default: "' + enyoDir + '"]\n' +
+		    '  -o  alternate output directory            [default: "' + outDir + '"]\n' +
+		    '  -p  location of the main package.js file  [default: "' + packageJs + '"]\n' +
+		    '  -s  source code root directory            [default: "' + sourceDir + '"]\n' +
+		    '\n');
 }
 
 var opt = nopt(/*knownOpts*/ {
@@ -120,13 +120,13 @@ if (opt.help) {
 buildDir = opt.build || buildDir;
 enyoDir = opt.enyo || enyoDir;
 outDir = opt.out || outDir;
-packageJs = opt.packagejs
-	|| (opt.source ? path.join(opt.source, 'package.js') : undefined)
-	|| packageJs;
-sourceDir = opt.source
-	|| (opt.packagejs ? path.dirname(opt.packagejs) : undefined)
-	|| sourceDir;
-less = !(opt.less === false) && less;
+packageJs = opt.packagejs ||
+	(opt.source ? path.join(opt.source, 'package.js') : undefined) ||
+	packageJs;
+sourceDir = opt.source ||
+	(opt.packagejs ? path.dirname(opt.packagejs) : undefined) ||
+	sourceDir;
+less = (opt.less !== false) && less;
 
 var minifier = path.resolve(enyoDir, 'tools', 'minifier', 'minify.js');
 console.log("Using: build_dir=" + buildDir);
@@ -203,8 +203,8 @@ function deployLib(lib) {
 			if (!stat.isFile())
 				throw new Error("*** Not a file: '" + script + "'");
 			run([script, libOutdir]);
-		} catch(e) {
-			// no deploy.(js|bat|js): copy everything
+		} catch(e2) {
+			// no deploy.(js|bat|sh): copy everything
 			shell.cp('-r', path.join(sourceDir, 'lib', lib), path.join(outDir, 'lib'));
 		}
 	}
