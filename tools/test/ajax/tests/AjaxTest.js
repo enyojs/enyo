@@ -41,11 +41,21 @@ enyo.kind({
 			return inValue == "hello";
 		});
 	},
-	testPostRequest: function() {
-		this._testAjax({url: "php/test2.php", method: "POST"}, {query: "enyo"}, function(inValue) {
-			return inValue.response == "enyo";
-		});
-	},
+    testPostRequestQuery: function() {
+        this._testAjax({url: "php/test2.php", method: "POST"}, {query: "enyo"}, function(inValue) {
+            return inValue.response == "query.enyo";
+        });
+    },
+    testPostRequestQueryWithPayload: function() {
+        this._testAjax({url: "php/test2.php", method: "POST", postBody:"data"}, {query: "enyo"}, function(inValue) {
+            return inValue.response == "query.enyo";
+        });
+    },
+    testPostRequestPayload: function() {
+        this._testAjax({url: "php/test2.php", method: "POST", postBody:"query=enyo"}, null, function(inValue) {
+            return inValue.response == "post.enyo";
+        });
+    },
 	testPutRequest: function() {
 		this._testAjax({url: "php/test2.php", method: "PUT"}, null, function(inValue) {
 			return inValue.status == "put";

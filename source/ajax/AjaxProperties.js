@@ -39,6 +39,7 @@ enyo.AjaxProperties = {
 	headers: null,
 	/**
 		The content for the request body for POST method.  If this is not set, params will be used instead.
+        When both params and postBody are set, postBody override any data provided as params thus destroying them.
 	*/
 	postBody: "",
 	/**
