@@ -8,7 +8,7 @@
   // should be renamed without the underscore...
 
   enyo.getPath = function () {
-    var args, cur, path, i = 0, val, part;
+    var args, cur, path, i = 0, val, part, def;
     if (arguments.length === 0) return undefined;  
     if (!enyo.isString(arguments[0])) return undefined;
     args = arguments;
@@ -17,8 +17,10 @@
     while (path[i] === ".") ++i;
     if (i > 0) path = path.slice(i);
     i = path.indexOf(".");
-    if (i === -1) val = cur[path];
-    else {
+    if (i === -1) {
+      def = "get" + enyo.cap(path);
+      val = cur && cur[def] && cur[def].overloaded? cur[def].call(this): cur[path];
+    } else {
       part = path.substring(0, i);
       path = path.slice(i);
       if (typeof cur[part] === "object") {
@@ -38,27 +40,25 @@
     path = args[0];
     val = args[1];
     cur = this;
+    prev = enyo.getPath.call(this, path);
     while (path[i] === ".") ++i;
     if (i > 0) path = path.slice(i);
     i = path.indexOf(".");
     if (i === -1) {
       if (this[path] && enyo.isFunction(this[path]) && this[path].isProperty) {
-        prev = this[path].call(this);
         this[path].call(this, val);
       } else {
-        prev = this[path];
         this[path] = val;
       }
     } else {
       parts = path.split(".");
       while (parts.length > 0) {
         tmp = parts.shift();
+        if (tmp === "enyo" && this === enyo) continue;
         if (parts.length === 0) {
           if (cur[tmp] && enyo.isFunction(cur[tmp]) && cur[tmp].isProperty) {
-            prev = cur[tmp].call(this);
             cur[tmp].call(this, val);
           } else {
-            prev = cur[tmp];
             cur[tmp] = val;
           }
         } else {
@@ -66,7 +66,7 @@
           cur = cur[tmp];
         }
       }
-    } 
+    }
     if (this.notifyObservers && (prev !== val)) this.notifyObservers(path, prev, val);
     return this;
   };
@@ -231,6 +231,42 @@
 		}
 	};
 
+
+  /**
+    Concatenate any number of arrays but only the unique entries
+    relative to the base (first) array.
+  */
+  enyo.merge = function () {
+    var r = [], args = enyo.toArray(arguments), a, i = 0, j;
+    for (; args.length; ++i) {
+      a = args.shift();
+      if (!enyo.isArray(a)) continue;
+      if (i === 0) r = enyo.clone(a);
+      else {
+        for (j = 0; j < a.length; ++j)
+          if (r.indexOf(a[j]) > -1) continue;
+          else r.push(a[j]);
+      }
+    }
+    return r;
+  };
+  
+  /**
+    Return a union of any number of arrays.
+    
+    TODO: come back to this off the cuff atrocity
+  */
+  enyo.union = function () {
+    var c = Array.prototype.concat.apply([], arguments), s = [], r = [];
+    enyo.forEach(c, function (v, i) {
+      if (!~s.indexOf(v)) {
+        s.push(v);
+        if (i === c.lastIndexOf(v)) r.push(v);
+      }
+    });
+    return r;
+  };
+  
   enyo.only = function (inProps, inObject) {
     var r = [], k;
     if (!inProps || !inObject) return r;
@@ -239,6 +275,41 @@
       if (!inObject.hasOwnProperty(k)) continue;
       else if (inProps.indexOf(k) !== -1 && r.indexOf(k) === -1)
         r.push(inObject[k]);
+    return r;
+  };
+  
+  enyo.except = function (inProps, inObject) {
+    var r = {}, keep = enyo.union(inProps, enyo.keys(inObject));
+    enyo.forEach(keep, function (k) {r[k] = inObject[k]});
+    return r;
+  };
+  
+  /**
+    Take an array of objects of a common structure and return
+    a hash of those objects keyed by the unique value _inProp_.
+    An optional filter/resolution method may be provided to
+    handle exception cases. It receives parameters in the order:
+    the property, the current object in the array, a reference to
+    the return object, and a copy of the original array.
+    
+    TODO: This should be capable of a few other things...
+  */
+  enyo.indexBy = function (inProp, inArray, inFilter) {
+    var k = inProp, a = inArray, r = {}, v, c = enyo.clone(inArray),
+        fn = enyo.isFunction(inFilter)? inFilter: undefined, i = 0;
+    for (; i < a.length; ++i) {
+      v = a[i];
+      if (v && v[k]) {
+        if (fn) fn(k, v, r, c);
+        else r[v[k]] = v;
+      }
+    }
+    return r;
+  };
+  
+  enyo.allKeys = function (inObj) {
+    var k, o = inObj, r = [];
+    for (k in inObj) r.push(k);
     return r;
   };
 

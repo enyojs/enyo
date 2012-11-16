@@ -112,6 +112,11 @@ enyo.kind({
 		}
 	},
 
+  //*@protected
+  _bindings: null,
+  _computed: null,
+  _observers: null,
+
   _setupBindings: function () {
     var prop, i = 0, b;
     this.clearBindings();
@@ -183,7 +188,7 @@ enyo.kind({
 
       // TODO: this is probably ok but this does not have any
       // check to see if the property even exists for the object
-      // if no observer array has already been created for this
+      // if no observer array has already been  d for this
       // property, go ahead and create it
       if (!(t = o[inProp])) t = o[inProp] = [];
       if (t.indexOf(f) === -1) t.push(f);
@@ -323,7 +328,7 @@ enyo.kind({
         }
       }
     },
-    
+    //*@public
     refreshBindings: function (inBindings) {
       var b = inBindings || this._bindings, bnd, i = 0;
       for (; i < b.length; ++i) {
@@ -331,40 +336,97 @@ enyo.kind({
         bnd.refresh();
       }
     },
-    
+    //*@public
     removeBinding: function (inBinding) {
       var b, i = (b = this._bindings || []).indexOf(inBinding);
       if (i !== -1) b.splice(i, 1);
     },
-
-    //-----------------------
-    
+    //*@public
     get: function () {
       var get_n = "get" + enyo.cap(arguments[0]);
       if (this[get_n] && this[get_n].overloaded === true) return this[get_n]();
       return enyo.getPath.apply(this, arguments);
     },
-    
+    //*@public
     set: function () {
       return enyo.setPath.apply(this, arguments);
     },
     
+    //*@public
+    /**
+      Extend an instance of an _enyo.Object_ (or any subclass) with any
+      of the properties and functions in a hash or _enyo.Mixin_ that is
+      passed in. Takes a variable number of arguments.
+      
+      Common static properties are not preserved and will be overwritten.
+      
+      Methods are handled various ways depending on some options. For any
+      hash or _enyo.Mixin_ that has a _name_ property (assumed to be unique!)
+      and a _preserve_ property that is set to _true_ will have their method
+      inserted into the _stored_ hash of the _enyo.Object_ being extended if
+      the base class already has a method with that name.They are keyed by 
+      the _name_ property of the hash or _enyo.Mixin_ and refereced by their 
+      property name.
+      
+      Ex.
+      
+      TODO: Show example...
+      
+      Normally, common methods are inserted at the front of the inheritance
+      chain. If _this.inherited(arguments)_ is called from within one of these
+      methods it will call the original as expected.
+      
+      A _preserveAll_ property set to true on the extension will force the
+      _extend_ method to push all functions into the _stored_ hash of the
+      _enyo.Object_ being extended.
+    */
     extend: function () {
-      var args = enyo.toArray(arguments), ext, prop;
-      while (args.length) {
-        ext = args.shift();
-        for (prop in ext) {
-          if (!ext.hasOwnProperty(prop)) continue;
-          if (this[prop]) {
-            if (!this._stored) this._stored = {};
-            // can manually call this method...
-            // NOTE: the intention is not perfect preservation
-            // of any extension/base, as common properties
-            // will be overwritten by the last one to be found
-            this._stored[prop] = ext[prop];
-          } else this[prop] = ext[prop];
+      var args = enyo.toArray(arguments), ext, k, prop;
+      while (args.length && (ext = args.shift())) {
+        // if the extension is a mixin, send it straight to
+        // the special handler
+        if (ext.isMixin || enyo.isFunction(ext)) {
+          this._extendMixin(ext);
+        } else {
+          for (k in ext) {
+            if (!ext.hasOwnProperty(k)) continue;
+            prop = ext[k];
+            if (enyo.isString(prop)) {
+              // simply apply the property
+              this[k] = prop;
+            } else if (enyo.isFunction(prop)) {
+              this._extendMethod(k, prop, ext);
+            }
+          }
         }
       }
+    },
+    
+    //*@protected
+    _extendMethod: function (name, fn, ext) {
+      var s = this.stored || (this.stored = {}), base;
+      if (ext.name && ext.preserve && (this[name] || ext.preserveAll)) {
+        // store the method and do not insert into inheritance
+        enyo.setPath.call(s, enyo.format("%..%.", ext.name, name), enyo.bind(this, fn));
+      } else {
+        if (this[name]) {
+          // at the very least the new method can call inherited
+          base = this[name];
+          this[name] = fn;
+          fn._inherited = base;
+        } else {
+          // there was no known method of this name so
+          // simply add it
+          this[name] = fn;
+          // but just in case there's an extra inherited call
+          fn._inherited = enyo.nop;
+        }
+      }
+    },
+    //*@protected
+    _extendMixin: function (mixin) {
+      // allow the mixin to register itself the way it should
+      mixin.apply(this);
     }
     
 });

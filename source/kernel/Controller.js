@@ -14,5 +14,8 @@ enyo.kind({
 	destroy: function () {
 	  this.set("isDestroyed", true);
 	  this.inherited(arguments);
+	},
+	ownerChanged: function () {
+	  if (!this.id) this.id = this.makeId();
 	}
 });

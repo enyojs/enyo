@@ -1,37 +1,28 @@
+//*@public
+/**
+  _enyo.Extension_ aids in exposing third-party/non-Enyo objects
+  through an _enyo.Component_. It does this by essentially inheriting
+  all 
+*/
 enyo.kind({
   name: "enyo.Extension",
   kind: "enyo.Component",
   published: {
-    extendFrom: null
+    extendFrom: null,
+    preserve: true,
+    preserveAll: false
   },
   _base: null,
   constructor: function () {
-    var b = this.extendFrom;
+    var b = this.extendFrom, from, name;
     if (enyo.isString(b)) b = this._base = enyo.getPath(b);
     if (!b) enyo.error("enyo.Extension: cannot find base to " +
       "extend from "+ this.extendFrom);
-    
-    this.extend(b.prototype);
-    
-    // TODO: this needs to be reconsidered as a fallback, it may/may not
-    // be obvious nor convenient to automatically call the _stored `get`
-    // on extensions and only call the native get if it failed...could
-    // always call published getters...
-    this._get = function () {return enyo.getPath.apply(this, arguments)};
+    name = this.name || (this.name = this.makeId());
+    from = enyo.mixin(b.prototype, {preserve: this.preserve, preserveAll: this.preserveAll, name: name});
+    this.extend(from);
     this.inherited(arguments);
-
+    // call the base constructor
     b.apply(this, arguments);
-  },
-
-  get: function () {
-    var r;
-    if (this._stored && this._stored.get) {
-      r = this._stored.get.apply(this, arguments);
-    }
-    if (r === undefined) {
-      r = this.inherited(arguments);
-      return r;
-    } else return r;
   }
-
 });

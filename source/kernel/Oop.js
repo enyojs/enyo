@@ -56,28 +56,6 @@
 */
 enyo.concat = ["concat", "bindings"];
 
-//* @public
-// TODO: move me to lang.js
-// TODO: implement recursive array merge utility
-/**
-  Non-recursive merge of as many unique entries in any
-  number of arrays.
-*/
-enyo.merge = function () {
-  var r = [], args = enyo.toArray(arguments), a, i = 0, j;
-  for (; args.length; ++i) {
-    a = args.shift();
-    if (!enyo.isArray(a)) continue;
-    if (i === 0) r = enyo.clone(a);
-    else {
-      for (j = 0; j < a.length; ++j)
-        if (r.indexOf(a[j]) > -1) continue;
-        else r.push(a[j]);
-    }
-  }
-  return r;
-}
-
 enyo.handleConcatenatedProperties = function (ctor, proto) {
   var cprops = enyo.merge(ctor.concat, proto.concat), prop, right, left;
   while (cprops.length) {
