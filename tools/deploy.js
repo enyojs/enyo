@@ -173,7 +173,6 @@ run([node, minifier,
      'package.js']);
 
 console.log("Minify-ing the application...");
-process.chdir(sourceDir);
 process.chdir(path.dirname(packageJs));
 run([node, minifier,
      '-enyo', enyoDir,
