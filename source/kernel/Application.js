@@ -102,7 +102,7 @@
   */
   enyo.kind({
     name: "enyo.Application",
-    kind: "enyo.Component",
+    kind: "enyo.UiComponent",
     //*@protected
     constructor: function (inControl) {
       var c = inControl || enyo.defaultRootView;
@@ -133,7 +133,7 @@
       // setup the root view
       r = this.rootView = new r();
       r.set("owner", this);
-      r.set("parent", this);
+      this.addChild(r);
       r.renderInto(document.body);
     }
   });
