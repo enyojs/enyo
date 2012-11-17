@@ -35,15 +35,16 @@ enyo.kind({
 		observe changes wlog.
 	*/
 	setPropertyValue: function(n, v, cf) {
-	    var old = this[n];
-		if (this[cf]) {
-			this[n] = v;
-			this[cf](old);
-		} else {
-			this[n] = v;
-		}
-        //console.log("setProperty: ", n, old, v, this);
-        if (old !== v) this.notifyObservers(n, old, v);
+	  this.set(n, v);
+	  //  var old = this[n];
+		//if (this[cf]) {
+		//	this[n] = v;
+		//	this[cf](old);
+		//} else {
+		//	this[n] = v;
+		//}
+    //    //console.log("setProperty: ", n, old, v, this);
+    //    if (old !== v) this.notifyObservers(n, old, v);
 	},
 	_setProperty: function(n, v, cf) {
 		this.setPropertyValue(n, v, (this.getProperty(n) !== v) && cf);
@@ -66,12 +67,13 @@ enyo.kind({
 	},
 	//* Sets value of property named 'n' to 'v'.
 	setProperty: function(n, v) {
-		var setter = "set" + enyo.cap(n);
-		if (this[setter]) {
-			this[setter](v);
-		} else {
-			this._setProperty(n, v, n + "Changed");
-		}
+	  this.set(n, v);
+		//var setter = "set" + enyo.cap(n);
+		//if (this[setter]) {
+		//	this[setter](v);
+		//} else {
+		//	this._setProperty(n, v, n + "Changed");
+		//}
 	},
 	/**
 		Sends a log message to the console, prepended with the name of the kind
