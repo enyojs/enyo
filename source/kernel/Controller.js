@@ -17,5 +17,6 @@ enyo.kind({
 	},
 	ownerChanged: function () {
 	  if (!this.id) this.id = this.makeId();
+	  if (this._bindings && this._bindings.length) this.refreshBindings();
 	}
 });
