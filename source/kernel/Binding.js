@@ -136,15 +136,6 @@
       t.addObserver(tp, tr);
     },
     
-    // TODO: the following only works because observer notification has
-    // been implemented as synchronously executed, it also creates
-    // significant overhead that may/may-not be necessary if other pieces
-    // of the puzzle are added
-    
-    // NOTE: two-way bindings without an arbitrary runloop AND/OR while
-    // depending on the notification of registered observers is a complete
-    // PITA!!!
-    
     _syncFromSource: function () {
       if (!this.oneWay) this._disconnectTarget();
       this.setTargetValue(this.getSourceValue());
@@ -226,7 +217,7 @@
     setTargetValue: function (inValue) {
       var v = this.transform && enyo.isFunction(this.transform)? this.transform(inValue, "target"): inValue;
       this.isSynced = true;
-      return this._target.set(this._targetProperty, v);
+      return this._target.set(this._targetProperty, v, enyo.isArray(v));
     },
     
     getSourceValue: function () {

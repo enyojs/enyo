@@ -78,7 +78,7 @@ enyo.kind({
 	toString: function() {
 		return this.kindName;
 	},
-	constructor: function() {
+	constructor: function(props) {
 		// initialize instance objects
 		this._componentNameMap = {};
 		this.$ = {};
