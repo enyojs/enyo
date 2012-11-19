@@ -13,5 +13,7 @@ enyo.depends(
 	"Router.js",
 	"Controller.js",
 	"ArrayController.js",
-	"Extension.js"
+	"Extension.js",
+	"Application.js",
+	"Mixin.js"
 );
