@@ -217,7 +217,7 @@
     setTargetValue: function (inValue) {
       var v = this.transform && enyo.isFunction(this.transform)? this.transform(inValue, "target"): inValue;
       this.isSynced = true;
-      return this._target.set(this._targetProperty, v);
+      return this._target.set(this._targetProperty, v, enyo.isArray(v));
     },
     
     getSourceValue: function () {

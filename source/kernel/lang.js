@@ -39,6 +39,7 @@
     args = arguments;
     path = args[0];
     val = args[1];
+    force = args[2];
     cur = this;
     prev = enyo.getPath.call(this, path);
     while (path[i] === ".") ++i;
@@ -67,7 +68,7 @@
         }
       }
     }
-    if (this.notifyObservers && (prev !== val)) this.notifyObservers(path, prev, val);
+    if (this.notifyObservers && (prev !== val || force)) this.notifyObservers(path, prev, val);
     return this;
   };
 
