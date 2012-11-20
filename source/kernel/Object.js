@@ -20,6 +20,12 @@ enyo.kind({
 	//* @public
 	// concatenated properties (default)
 	concat: enyo.concat,
+	//*@public
+	/**
+	  An array of strings that represent a mixin to be applied
+	  to this class at the end of the construction routine.
+	*/
+	mixins: null,
 	constructor: function() {
 		enyo._objectCount++;
 
@@ -27,6 +33,7 @@ enyo.kind({
 
     // setup observers, bindings and computed properties
     this._setup();
+    this.initMixins();
 	},
 	/**
 		Sets property named 'n' with value 'v' and then invokes callback
@@ -119,6 +126,16 @@ enyo.kind({
   _computed: null,
   _observers: null,
 
+  //*@protected
+  initMixins: function () {
+    var exts = this.mixins, fn;
+    if (!exts) return;
+    enyo.forEach(exts, this.prepareMixin, this);
+  },
+  //*@protected
+  prepareMixin: function (mixin) {
+    this.extend(enyo.isString(mixin)? enyo.getPath(mixin): mixin);
+  },
   _setupBindings: function () {
     var prop, i = 0, b;
     this.clearBindings();

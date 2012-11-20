@@ -15,5 +15,6 @@ enyo.depends(
 	"ArrayController.js",
 	"Extension.js",
 	"Application.js",
-	"Mixin.js"
+	"Mixin.js",
+	"MultipleDispatchMixin.js"
 );

@@ -4,6 +4,8 @@
   base classes while (optionally) preserving common methods
   of the prototypes. This allows the various methods to be
   called programmatically at runtime or dismissed entirely.
+  If you try to extend another _enyo.kind_ it will most likely
+  not work as intended.
 */
 enyo.kind({
   name: "enyo.Extension",
@@ -21,10 +23,9 @@ enyo.kind({
     preserve: null,
     preserveAll: null
   },
-  _base: null,
   constructor: function () {
-    this.inherited(arguments);
     this.initSubclasses(arguments);
+    this.inherited(arguments);
   },
   //*@protected
   initSubclasses: function () {
@@ -36,13 +37,17 @@ enyo.kind({
   //*@protected
   subclass: function (args, options) {
     options = enyo.clone(options);
-    var b = this.constructorFrom(options.base), p = b.prototype || {};
+    var b = this.constructorFrom(options.base), p = b.prototype || {}, t;
+    if (b.isMixin) {
+      return this.extend(b);
+    }
     options.preserve = this.defined(this.preserve, options.preserve);
     options.preserveAll = this.defined(this.preserveAll, options.preserveAll);
-    options.name = options.name || p.name || p.kindName || b.name || b.kindName;
+    options.name = options.name || p.name || b.name;
     options.id = this.makeId();
+    delete options.base;
     this.extend(enyo.mixin(p, options));
-    b.apply(this, args);
+    if (!p.kindName) b.apply(this, args);
   },
   //*@protected
   defined: function (override, def) {

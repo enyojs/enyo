@@ -168,7 +168,7 @@ enyo.singleton = function(conf, context) {
 
 //* @protected
 enyo.kind.makeCtor = function() {
-	return function() {
+  return function() {;
 		if (!(this instanceof arguments.callee)) {
 			throw "enyo.kind: constructor called directly, not using 'new'";
 		}

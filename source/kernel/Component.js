@@ -367,15 +367,6 @@ enyo.kind({
 		// bottleneck event decoration
 		this.decorateEvent(inEventName, inEvent, inSender);
 		
-		// delegate to view controller if it exists and can handle the event
-		// stop propagation if it is the exclusive handler
-
-		if (this.controller && this.controller instanceof enyo.Component) {
-		  if (this.controller.dispatchEvent(inEventName, inEvent, inSender)) {
-		    return true;
-	    }
-    }
-		
 		//
 		// Note: null checks and sub-expressions are unrolled in this
 		// high frequency method to reduce call stack in the 90% case.
@@ -433,12 +424,7 @@ enyo.kind({
 		need to also override _dispatchEvent_.
 	*/
   dispatch: function(inMethodName, inEvent, inSender) {
-    var fn, c = this.controller;
-    if (c && c instanceof enyo.Component) {
-      if (c[inMethodName] && enyo.isFunction(c[inMethodName]))
-        return c[inMethodName].call(c, inSender || this, inEvent);
-    }
-    fn = inMethodName && this[inMethodName];
+    var fn = inMethodName && this[inMethodName];
     if (fn) {
       return fn.call(this, inSender || this, inEvent);
     }

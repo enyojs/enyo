@@ -151,7 +151,26 @@ enyo.kind({
 	  // questionable?
 	  this.refreshBindings();
 	},
-	
+	//*@protected
+	dispatchEvent: function (inEventName, inEvent, inSender) {
+	  // if we have a controller attempt to dispatch the event there
+	  // and if it returns true, stop the dispatch
+	  if (this.controller && this.controller.dispatchEvent(inEventName, inEvent, inSender)) {
+	    return true;
+	  }
+	  return this.inherited(arguments);
+	},
+	//*@protected
+	dispatch: function (inMethodName, inEvent, inSender) {
+	  // allow a controller to handle the delegated named event from
+	  // a child
+	  var c = this.controller;
+    if (c) {
+      if (c[inMethodName] && enyo.isFunction(c[inMethodName]))
+        return c[inMethodName].call(c, inSender || this, inEvent);
+    }
+    return this.inherited(arguments);
+	},
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
 		this.addClass(this.classes);
