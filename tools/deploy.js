@@ -47,10 +47,11 @@ var stat, ppwd, lib, script, scripts = {};
 
 // Send message to parent node process, if any
 process.on('uncaughtException', function (err) {
-	console.error(err.stack);
+	var errMsg = err.toString() + err.stack;
+	console.error(errMsg);
 	if (process.send) {
 		// only available if parent process is node
-		process.send({error: err});
+		process.send({error: errMsg});
 	}
 	process.exit(1);
 });
@@ -75,21 +76,23 @@ var node = process.argv[0],
     buildDir = path.resolve(sourceDir, "build"),
     name = path.basename(sourceDir),
     outDir = path.resolve(sourceDir, 'deploy', name),
-    less = true;		// LESS compilation, turned on by default
+    less = true,	     // LESS compilation, turned on by default
+    verbose = false;
 
 function printUsage() {
 	// format generated using node-optimist...
-	console.log('\n'
-		    + 'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir]\n'
-		    + '\n'
-		    + 'Options:\n'
-		    + '  -b  alternate build directory             [default: "' + buildDir + '"]\n'
-		    + '  -c  do not run the LESS compiler          [boolean]  [default: ' + less + ']\n'
-		    + '  -e  location of the enyo framework        [default: "' + enyoDir + '"]\n'
-		    + '  -o  alternate output directory            [default: "' + outDir + '"]\n'
-		    + '  -p  location of the main package.js file  [default: "' + packageJs + '"]\n'
-		    + '  -s  source code root directory            [default: "' + sourceDir + '"]\n'
-		    + '\n');
+	console.log('\n' +
+		    'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir]\n' +
+		    '\n' +
+		    'Options:\n' +
+		    '  -v  verbose operation                     [boolean]  [default: ' + verbose + ']\n' +
+		    '  -b  alternate build directory             [default: "' + buildDir + '"]\n' +
+		    '  -c  do not run the LESS compiler          [boolean]  [default: ' + less + ']\n' +
+		    '  -e  location of the enyo framework        [default: "' + enyoDir + '"]\n' +
+		    '  -o  alternate output directory            [default: "' + outDir + '"]\n' +
+		    '  -p  location of the main package.js file  [default: "' + packageJs + '"]\n' +
+		    '  -s  source code root directory            [default: "' + sourceDir + '"]\n' +
+		    '\n');
 }
 
 var opt = nopt(/*knownOpts*/ {
@@ -99,6 +102,7 @@ var opt = nopt(/*knownOpts*/ {
 	"out":		path,
 	"packagejs":	path,
 	"source":	path,
+	"verbose":	Boolean,
 	"help":		Boolean
 }, /*shortHands*/ {
 	"b": "--build",
@@ -107,6 +111,7 @@ var opt = nopt(/*knownOpts*/ {
 	"o": "--out",
 	"p": "--packagejs",
 	"s": "--source",
+	"v": "--verbose",
 	"h": "--help",
 	"?": "--help"
 }, process.argv /*args*/, 2 /*slice*/);
@@ -120,29 +125,32 @@ if (opt.help) {
 buildDir = opt.build || buildDir;
 enyoDir = opt.enyo || enyoDir;
 outDir = opt.out || outDir;
-packageJs = opt.packagejs
-	|| (opt.source ? path.join(opt.source, 'package.js') : undefined)
-	|| packageJs;
-sourceDir = opt.source
-	|| (opt.packagejs ? path.dirname(opt.packagejs) : undefined)
-	|| sourceDir;
-less = !(opt.less === false) && less;
+packageJs = opt.packagejs ||
+	(opt.source ? path.join(opt.source, 'package.js') : undefined) ||
+	packageJs;
+sourceDir = opt.source ||
+	(opt.packagejs ? path.dirname(opt.packagejs) : undefined) ||
+	sourceDir;
+less = (opt.less !== false) && less;
+verbose = opt.verbose;
 
 var minifier = path.resolve(enyoDir, 'tools', 'minifier', 'minify.js');
-console.log("Using: build_dir=" + buildDir);
-console.log("Using: enyo_dir=" + enyoDir);
-console.log("Using: out_dir=" + outDir);
-console.log("Using: packagejs=" + packageJs);
-console.log("Using: source_dir=" + sourceDir);
-console.log("Using: less=" + less);
+if (verbose) console.log("Using: build_dir=" + buildDir);
+if (verbose) console.log("Using: enyo_dir=" + enyoDir);
+if (verbose) console.log("Using: out_dir=" + outDir);
+if (verbose) console.log("Using: packagejs=" + packageJs);
+if (verbose) console.log("Using: source_dir=" + sourceDir);
+if (verbose) console.log("Using: less=" + less);
 
 // utils
 
 function run(args) {
 	var command = args.join(' ');
-	console.log("Running: '", command, "' from '", process.cwd(), "'");
-	if (shell.exec(command).code !== 0) {
-		throw new Error("*** Fail: '" + command + "'");
+	var report;
+	if (verbose) console.log("Running: '", command, "' from '", process.cwd(), "'");
+	report = shell.exec(command, { silent: true });
+	if (report.code !== 0) {
+		throw new Error("Fail: '" + command + "'\n" + report.output);
 	}
 }
 
@@ -154,7 +162,7 @@ shell.mkdir('-p', path.join(outDir));
 
 // Build / Minify
 
-console.log("Minify-ing the embedded Enyo...");
+console.log("Minify-ing Enyo...");
 process.chdir(path.resolve(enyoDir, 'minify'));
 run([node, minifier,
      '-no-alias',
@@ -164,8 +172,7 @@ run([node, minifier,
      '-output', path.join(buildDir, 'enyo'),
      'package.js']);
 
-console.log("Minify-ing the application");
-process.chdir(sourceDir);
+console.log("Minify-ing the application...");
 process.chdir(path.dirname(packageJs));
 run([node, minifier,
      '-enyo', enyoDir,
@@ -178,11 +185,16 @@ process.chdir(sourceDir);
 
 shell.mkdir('-p', path.join(outDir, 'lib'));
 shell.cp(path.join(sourceDir, 'index.html'), path.join(sourceDir, 'icon.png'), outDir);
-shell.cp('-r', path.join(sourceDir, 'assets'), buildDir, outDir);
+shell.cp('-r', buildDir, outDir);
+
+var assetsSrcDir = path.join(sourceDir, 'assets');
+if(shell.test('-d', assetsSrcDir)) {
+	shell.cp('-r', assetsSrcDir, outDir);
+}
 
 var libSrcDir = path.join(sourceDir, 'lib');
 if(shell.test('-d', libSrcDir)) {
-	shell.ls(libSrcDir).forEach(deployLib(lib));
+	shell.ls(libSrcDir).forEach(deployLib);
 }
 
 function deployLib(lib) {
@@ -203,14 +215,14 @@ function deployLib(lib) {
 			if (!stat.isFile())
 				throw new Error("*** Not a file: '" + script + "'");
 			run([script, libOutdir]);
-		} catch(e) {
-			// no deploy.(js|bat|js): copy everything
+		} catch(e2) {
+			// no deploy.(js|bat|sh): copy everything
 			shell.cp('-r', path.join(sourceDir, 'lib', lib), path.join(outDir, 'lib'));
 		}
 	}
 }
 
-console.log("Success");
+console.log("Success:  the deployable application is available in: ", outDir);
 process.exit(0);
 
 
