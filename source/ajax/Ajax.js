@@ -31,7 +31,26 @@ enyo.kind({
 	},
 	//* @public
 	/**
-		Sends the ajax request with parameters _inParams_.
+    Sends the Ajax request with parameters _inParams_. _inParams_ values may be
+    either Strings or Objects.
+
+    _inParams_ as an Object is converted into the url query string. For
+    instance, passing <code>{q: "searchTerm"}</code> will result in the addition
+    of the string `q="searchTerm"` to the current url query string.
+
+    _inParams_ as a String is used as the request body, and triggers various
+    behaviors depending on the query method.
+
+    * The GET method, since it has no body, translates the string into a
+        parameter. Thus `'q="searchTerm"'` translates into `q=searchTerm` in the
+        url query string.
+
+    * The POST method uses the provided string as its body. However, this will
+        be overridden by the value of _postBody_, if set.
+
+    The use of _inParams_ as a String is discouraged. Instead, set the request
+    body content via _postBody_ and use _inParams_ as an Object to set the query
+    string.
 	*/
 	go: function(inParams) {
 		this.startTimer();
@@ -44,7 +63,19 @@ enyo.kind({
 		var uri = parts.shift() || "";
 		var args = parts.length ? (parts.join("?").split("&")) : [];
 		//
-		var body = enyo.isString(inParams) ? inParams : enyo.Ajax.objectToQuery(inParams);
+        var body = null;
+        //
+        if(enyo.isString(inParams)){
+            //If inParams parameter is a string, use it as request body
+            body = inParams;
+        }
+        else{
+            //If inParams parameter is not a string, build a query from it
+            if(inParams){
+                args.push(enyo.Ajax.objectToQuery(inParams));
+            }
+        }
+        //
 		if (this.method == "GET") {
 			if (body) {
 				args.push(body);
@@ -68,6 +99,11 @@ enyo.kind({
 			}
 		}
 		enyo.mixin(xhr_headers, this.headers);
+		// don't pass in headers structure if there are no headers defined as this messes
+		// up CORS code for IE8-9
+		if (enyo.keys(xhr_headers).length === 0) {
+			xhr_headers = undefined;
+		}
 		//
 		try {
 			this.xhr = enyo.xhr.request({
@@ -91,6 +127,15 @@ enyo.kind({
 	},
 	receive: function(inText, inXhr) {
 		if (!this.failed && !this.destroyed) {
+			var text;
+			if (typeof inXhr.responseText === "string") {
+				text = inXhr.responseText;
+			}
+			this.xhrResponse = {
+				status: inXhr.status,
+				headers: enyo.Ajax.parseResponseHeaders(inXhr),
+				body: text
+			};
 			if (this.isFailure(inXhr)) {
 				this.fail(inXhr.status);
 			} else {
@@ -99,8 +144,9 @@ enyo.kind({
 		}
 	},
 	fail: function(inError) {
-		// on failure, explicitly cancel the XHR to 
-		// prevent further responses
+		// on failure, explicitly cancel the XHR to prevent
+		// further responses.  cancellation also resets the
+		// response headers & body, 
 		if (this.xhr) {
 			enyo.xhr.cancel(this.xhr);
 			this.xhr = null;
@@ -170,6 +216,23 @@ enyo.kind({
 				}
 			}
 			return pairs.join("&");
+		},
+		parseResponseHeaders: function(xhr) {
+			var headers = {};
+			var headersStr = [];
+			if (xhr.getAllResponseHeaders) {
+				headersStr = xhr.getAllResponseHeaders().split(/\r?\n/);
+			}
+			for (var i = 0; i < headersStr.length; i++) {
+				var headerStr = headersStr[i];
+				var index = headerStr.indexOf(': ');
+				if (index > 0) {
+					var key = headerStr.substring(0, index);
+					var val = headerStr.substring(index + 2);
+					headers[key] = val;
+				}
+			}
+			return headers;
 		}
 	}
 });

@@ -52,12 +52,12 @@ enyo.kind({
 	],
 	create: function() {
 		this.inherited(arguments);
+		this.eventList = {};
+		this.eventCount = 0;
 		enyo.forEach(["All events","down","up","tap","move","enter","leave","dragstart","drag","dragover","hold","release","holdpulse","flick","gesturestart","gesturechange","gestureend"], enyo.bind(this, function(event) {
 			this.$.eventPicker.createComponent({content:event, style:"text-align:left"});
 		}));
 	},
-	eventList:{},
-	eventCount:0,
 	handleEvent: function(inSender, inEvent) {
 		var event = enyo.clone(inEvent);
 		if (this.monitorEvent && (event.type != this.monitorEvent)) {
@@ -146,6 +146,10 @@ enyo.kind({
 	},
 	truncateChanged: function() {
 		this.$.eventProps.addRemoveClass("gesture-sample-truncate", this.truncate);
+	},
+	// since event is an object, force set
+	setEvent: function(inEvent) {
+		this.setPropertyValue("event", inEvent, "eventChanged");
 	},
 	eventChanged: function(inOld) {
 		if (this.event) {

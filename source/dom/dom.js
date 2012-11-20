@@ -14,7 +14,7 @@ enyo.dom = {
 		parameter.
 
 			// find 'node' if it's a string id, or return it unchanged if it's already a node reference
-			var domNode = enyo.byId(node);
+			var domNode = enyo.dom.byId(node);
 	*/
 	byId: function(id, doc){
 		return (typeof id == "string") ? (doc || document).getElementById(id) : id; 
