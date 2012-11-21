@@ -159,7 +159,7 @@ enyo.kind({
 			return (inError === 500) && 
 				req.xhrResponse && 
 				(req.xhrResponse.status === 500) &&
-				(req.xhrResponse.headers['Content-Type'] === "text/plain; charset=utf-8") &&
+				(req.xhrResponse.headers['content-type'] === "text/plain; charset=utf-8") &&
 				(req.xhrResponse.body === "my error description");
 		});
 	}

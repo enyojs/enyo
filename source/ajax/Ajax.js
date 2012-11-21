@@ -51,6 +51,12 @@ enyo.kind({
     The use of _inParams_ as a String is discouraged. Instead, set the request
     body content via _postBody_ and use _inParams_ as an Object to set the query
     string.
+
+    When the request is completed, the code will set a `xhrResponse` property
+    in the `enyo.Ajax` object with the subproperties `status`, `headers`, and
+    `body`.  These cache the results from the XHR for later use.  The keys for
+    the `headers` object have been converted to all lower case as HTTP headers
+    are case-insensitive.
 	*/
 	go: function(inParams) {
 		this.startTimer();
@@ -227,7 +233,7 @@ enyo.kind({
 				var headerStr = headersStr[i];
 				var index = headerStr.indexOf(': ');
 				if (index > 0) {
-					var key = headerStr.substring(0, index);
+					var key = headerStr.substring(0, index).toLowerCase();
 					var val = headerStr.substring(index + 2);
 					headers[key] = val;
 				}
