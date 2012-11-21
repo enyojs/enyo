@@ -39,6 +39,11 @@ enyo.xhr = {
 				xhr.setRequestHeader(key, inParams.headers[key]);
 			}
 		}
+		// work around iOS 6 bug where non-GET requests are cached
+		// see http://www.einternals.com/blog/web-development/ios6-0-caching-ajax-post-requests
+		if (method !== "GET") {
+			xhr.setRequestHeader("cache-control", "no-cache");
+		}
 		//
 		if((typeof xhr.overrideMimeType == "function") && inParams.mimeType) {
 			xhr.overrideMimeType(inParams.mimeType);
