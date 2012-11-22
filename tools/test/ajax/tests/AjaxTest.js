@@ -93,23 +93,17 @@ enyo.kind({
 		});
 	},
 	testContentTypeFormData: function() {
-		if (window.FormData) {
-			var formData = new FormData();
-			formData.append('token', "data");
-			var contentType = "multipart/form-data";
-			this._testAjax({url: "php/test4.php", method: "POST", postBody: formData}, null, function(inValue) {
-				var status = (inValue.ctype.indexOf(contentType) === 0) &&
-								(inValue.ctype.indexOf("boundary=--") > 10);
-				if (!status) {
-					enyo.log("Bad CT: " + inValue.ctype + " expected: " + contentType);
-				}
-				return status;
-			});
-		} else {
-			// We are probably on IE which does not support XHR2 and FormData before IE 10
-			// See http://caniuse.com/#search=xhr2
-			this.finish("");
-		}
+		var formData = new enyo.FormData();
+		formData.append('token', "data");
+		var contentType = "multipart/form-data";
+		this._testAjax({url: "php/test4.php", method: "POST", postBody: formData}, null, function(inValue) {
+			var status = (inValue.ctype.indexOf(contentType) === 0) &&
+				    (inValue.ctype.indexOf("boundary=--") > 10);
+			if (!status) {
+				enyo.log("Bad CT: " + inValue.ctype + " expected: " + contentType);
+			}
+			return status;
+		});
 	},
 	testXhrStatus: function() {
 		var ajax = this._testAjax({url: "php/test2.php"}, null, function(inValue) {
