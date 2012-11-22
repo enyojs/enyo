@@ -106,6 +106,22 @@ enyo.kind({
 			return status;
 		});
 	},
+	testContentTypeFormDataFile: function() {
+		var formData = new enyo.FormData();
+		var file = new enyo.Blob("Some Random File Content!", {
+		    name: "myFile"
+		});
+		formData.append('file', file);
+		var contentType = "multipart/form-data";
+		this._testAjax({url: "php/test4.php", method: "POST", postBody: formData}, null, function(inValue) {
+			var status = (inValue.ctype.indexOf(contentType) === 0) &&
+				    (inValue.ctype.indexOf("boundary=--") > 10);
+			if (!status) {
+				enyo.log("Bad CT: " + inValue.ctype + " expected: " + contentType);
+			}
+			return status;
+		});
+	},
 	testXhrStatus: function() {
 		var ajax = this._testAjax({url: "php/test2.php"}, null, function(inValue) {
 			return ajax.xhr.status == 200;

@@ -141,14 +141,17 @@ enyo.kind({
 	},
 	receive: function(inText, inXhr) {
 		if (!this.failed && !this.destroyed) {
-			var text;
+			var body;
 			if (typeof inXhr.responseText === "string") {
-				text = inXhr.responseText;
+				body = inXhr.responseText;
+			} else {
+				// IE carrying a binary
+				body = inXhr.responseBody;
 			}
 			this.xhrResponse = {
 				status: inXhr.status,
 				headers: enyo.Ajax.parseResponseHeaders(inXhr),
-				body: text
+				body: body
 			};
 			if (this.isFailure(inXhr)) {
 				this.fail(inXhr.status);
