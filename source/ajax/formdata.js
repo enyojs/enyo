@@ -1,9 +1,10 @@
 /**
 
-_enyo.FormData_ is a portable [XHR2]() implementation made to send
-`multipart/form-data` Ajax requests.
+_enyo.FormData_ is an [XHR2](http://www.w3.org/TR/XMLHttpRequest/)
+`FormData` implementation.  It is used to send `multipart/form-data`
+Ajax requests.
 
-It is largally inspired by From
+It is inspired by
 [html5-formdata](https://github.com/francois2metz/html5-formdata/blob/master/formdata.js)
 
     Emulate FormData for some browsers
@@ -27,6 +28,9 @@ It is largally inspired by From
 			this.boundary += Math.floor(Math.random() * 10).toString(16);
 		}
 	}
+	FormData.prototype.getContentType = function() {
+		return "multipart/form-data; boundary=" + this.boundary;
+	};
 	FormData.prototype.append = function(key, value) {
 		this._fields.push([key, value]);
 	};
@@ -35,13 +39,14 @@ It is largally inspired by From
 		var body = "";
 		this._fields.forEach(function(field) {
 			body += "--" + boundary + "\r\n";
-			// file upload
 			if (field[1].name) {
+				// file upload
 				var file = field[1];
 				body += "Content-Disposition: form-data; name=\""+ field[0] +"\"; filename=\""+ file.name +"\"\r\n";
 				body += "Content-Type: "+ file.type +"\r\n\r\n";
 				body += file.getAsBinary() + "\r\n";
 			} else {
+				// key-value field
 				body += "Content-Disposition: form-data; name=\""+ field[0] +"\";\r\n\r\n";
 				body += field[1] + "\r\n";
 			}

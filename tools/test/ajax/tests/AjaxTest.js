@@ -11,6 +11,7 @@ enyo.kind({
 				if (!inAssertErrFn) {
 					this.finish("bad status: " + inError.toString());
 					enyo.error(inError);
+					enyo.error(inError.stack);
 				} else {
 					this.finish(inAssertErrFn.call(null, inError) ? "" : "bad response: " + inError);
 				}
@@ -92,7 +93,7 @@ enyo.kind({
 			return status;
 		});
 	},
-	testContentTypeFormData: function() {
+	testContentTypeFormDataField: function() {
 		var formData = new enyo.FormData();
 		formData.append('token', "data");
 		var contentType = "multipart/form-data";
