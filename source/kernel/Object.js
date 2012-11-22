@@ -122,6 +122,11 @@ enyo.kind({
 	},
 
   //*@protected
+  findAndInstance: function (prop, fn) {
+    enyo._findAndInstance.call(this, prop, fn? enyo.bind(this, fn): null);
+  },
+
+  //*@protected
   _bindings: null,
   _computed: null,
   _observers: null,
