@@ -2,7 +2,8 @@
 
 _enyo.FormData_ is an [XHR2](http://www.w3.org/TR/XMLHttpRequest/)
 `FormData` implementation.  It is used to send `multipart/form-data`
-Ajax requests.
+Ajax requests.  _enyo.Blob_ is the associated content provider for
+file-parts.
 
 It is inspired by
 [html5-formdata](https://github.com/francois2metz/html5-formdata/blob/master/formdata.js)
@@ -15,6 +16,7 @@ It is inspired by
 (function(w) {
 	if (w.FormData) {
 		enyo.FormData = w.FormData;
+		enyo.Blob = w.Blob;
 		return;
 	}
 	function FormData() {
@@ -56,13 +58,17 @@ It is inspired by
 	};
 	enyo.FormData = FormData;
 
-	function Blob(inContent, inOpts) {
-	    this.name = inOpts.name;
-	    this.type = inOpts.type || 'application/octet-stream';
-	    this._buf = inContent; // leave byte array un-touched
-	};
+	function Blob(inBufs, inOpts) {
+		this.name = inOpts.name;
+		this.type = inOpts.type || 'application/octet-stream';
+		this._bufs = inBufs; // leave byte arrays un-touched
+	}
 	Blob.prototype.getAsBinary = function() {
-	    return this._buf; // leave byte array un-touched
+		if (this._bufs instanceof String) {
+			return ''.concat.apply(null, this._bufs);
+		} else {
+			throw new Error('enyo.Blob only handles Strings');
+		}
 	};
 	enyo.Blob = Blob;
 

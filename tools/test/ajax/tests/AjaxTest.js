@@ -108,7 +108,7 @@ enyo.kind({
 	},
 	testContentTypeFormDataFile: function() {
 		var formData = new enyo.FormData();
-		var file = new enyo.Blob("Some Random File Content!", {
+		var file = new enyo.Blob(["Some Random File Content!", "And some more..."], {
 		    name: "myFile"
 		});
 		formData.append('file', file);
