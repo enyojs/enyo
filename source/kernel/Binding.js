@@ -39,6 +39,7 @@
   getParts = function (path, context) {
     // goal is to split the path and iterate over the parts
     // analyzing each piece until we reach the end
+    path = path[0] === "."? path.slice(1): path;
     var parts = path.split("."), idx = 0, ret = {}, root, cur, prop, base, part;
     // the root is either the context passed in or the owner
     // of this method's caller
