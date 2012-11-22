@@ -129,27 +129,18 @@ enyo.kind({
 	},
 	
 	controllerChanged: function () {
-	  var cs = this.controller, c, k;
-	  if (cs && enyo.isString(cs)) {
-	    k = cs;
-	    if (cs[0] === "." || !(c = enyo.getPath(cs))) c = enyo.getPath.call(this, cs);
-	    if (!c) throw new Error("Control.controllerChanged: could not find " + cs);
-	  } else { c = cs; }
-	  if (c && enyo.isFunction(c) && !(c instanceof enyo.Controller)) {
-	    c = new c();
-	  }
-	  if (!c) {
-	    console.warn("Could not find requested controller instance or class ", this.kindName, cs);
-	    return;
-	  }
-	  k = c.kind || c.kindName;
-	  //c.owner = this;
-	  c.set("owner", this);
-	  this.controllerClass = k;
-	  this.controller = c;
-	  
-	  // questionable?
-	  this.refreshBindings();
+	  // first attempt to find the controller from the
+	  // information we've been handed
+    this.findAndInstance("controller", function (ctor, inst) {
+      // if there is no constructor or instance it was not found
+      if (!(ctor || inst)) return;
+      // if a constructor exists we instanced the class and can
+      // claim it as our own
+      if (ctor) inst.set("owner", this);
+
+      // either way we need to refresh our bindings
+      this.refreshBindings();
+    });
 	},
 	//*@protected
 	dispatchEvent: function (inEventName, inEvent, inSender) {
@@ -158,6 +149,12 @@ enyo.kind({
 	  if (this.controller && this.controller.dispatchEvent(inEventName, inEvent, inSender)) {
 	    return true;
 	  }
+	  
+	  // prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
+		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
+			return true;
+		}
+	  
 	  return this.inherited(arguments);
 	},
 	//*@protected
@@ -194,13 +191,6 @@ enyo.kind({
 	},
 	// event filter
 	strictlyInternalEvents: {onenter: 1, onleave: 1},
-	dispatchEvent: function(inEventName, inEvent, inSender) {
-		// prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
-		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
-			return true;
-		}
-		return this.inherited(arguments);
-	},
 	isInternalEvent: function(inEvent) {
 		var rdt = enyo.dispatcher.findDispatchTarget(inEvent.relatedTarget);
 		return rdt && rdt.isDescendantOf(this);
