@@ -102,7 +102,8 @@ enyo.kind({
 			{os: "androidChrome", version: 18},
 			{os: "androidFirefox", version: 16},
 			{os: "ios", version: 5},
-			{os: "webos", version: 1e9}
+			{os: "webos", version: 1e9},
+			{os: "blackberry", version:1e9}
 		],
 		//* Returns true if platform should have touch events.
 		hasTouchScrolling: function() {

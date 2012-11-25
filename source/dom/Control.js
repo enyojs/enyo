@@ -390,9 +390,11 @@ enyo.kind({
 		the css rule -webkit-overflow-scrolling: touch, as it is
 		not supported in Android and leads to overflow issues
 		(ENYO-900 and ENYO-901)
+		Similarly, BB10 has issues repainting out-of-viewport content
+		when -webkit-overflow-scrolling is used (ENYO-1396)
 	*/
 	setupOverflowScrolling: function() {
-		if(enyo.platform.android || enyo.platform.androidChrome)
+		if(enyo.platform.android || enyo.platform.androidChrome || enyo.platform.blackberry)
 			return;
 		document.getElementsByTagName("body")[0].className += " webkitOverflowScrolling";
 	},
