@@ -32,7 +32,7 @@ the `-o` flag).
 * `icon.png`, the application icon
 * `assets/`holds the static application assets, such as images,
   videos... etc.
- 
+
  */
 
 // Load dependencies
@@ -76,7 +76,7 @@ var node = process.argv[0],
     buildDir = path.resolve(sourceDir, "build"),
     name = path.basename(sourceDir),
     outDir = path.resolve(sourceDir, 'deploy', name),
-    less = true,	     // LESS compilation, turned on by default
+    less = true, // LESS compilation, turned on by default
     verbose = false;
 
 function printUsage() {
@@ -115,7 +115,7 @@ var opt = nopt(/*knownOpts*/ {
 	"h": "--help",
 	"?": "--help"
 }, process.argv /*args*/, 2 /*slice*/);
-		    
+
 if (opt.help) {
 	printUsage();
 	process.exit(1);
@@ -145,7 +145,7 @@ if (verbose) console.log("Using: less=" + less);
 // utils
 
 function run(args) {
-	var command = args.join(' ');
+	var command = '"' + args.join('" "') + '"';
 	var report;
 	if (verbose) console.log("Running: '", command, "' from '", process.cwd(), "'");
 	report = shell.exec(command, { silent: true });
