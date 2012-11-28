@@ -98,8 +98,16 @@ enyo.kind({
 		var xhr_headers = {};
 		body = this.postBody || body;
 		if (this.method != "GET") {
-			if (this.method === "POST" && window.FormData && body instanceof FormData) {
-				// Nothing to do as the content-type will be automagically set according to the FormData
+			if (this.method === "POST" && body instanceof enyo.FormData) {
+				if (body.fake) {
+					xhr_headers["Content-Type"] = body.getContentType();
+					body = body.toString();
+				} else {
+					// Nothing to do as the
+					// content-type will be
+					// automagically set according
+					// to the FormData
+				}
 			} else {
 				xhr_headers["Content-Type"] = this.contentType;
 			}
@@ -133,14 +141,17 @@ enyo.kind({
 	},
 	receive: function(inText, inXhr) {
 		if (!this.failed && !this.destroyed) {
-			var text;
+			var body;
 			if (typeof inXhr.responseText === "string") {
-				text = inXhr.responseText;
+				body = inXhr.responseText;
+			} else {
+				// IE carrying a binary
+				body = inXhr.responseBody;
 			}
 			this.xhrResponse = {
 				status: inXhr.status,
 				headers: enyo.Ajax.parseResponseHeaders(inXhr),
-				body: text
+				body: body
 			};
 			if (this.isFailure(inXhr)) {
 				this.fail(inXhr.status);
