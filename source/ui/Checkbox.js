@@ -36,7 +36,7 @@ enyo.kind({
 	},
 	// instance 'checked' property is linked to DOM 'checked' property
 	getChecked: function() {
-		return Boolean(this.getNodeProperty("checked", this.checked));
+		return enyo.isTrue(this.getNodeProperty("checked", this.checked));
 	},
 	checkedChanged: function() {
 		this.setNodeProperty("checked", this.checked);
@@ -46,13 +46,13 @@ enyo.kind({
 	// active property, and onActivate event, are part of "GroupItem" interface
 	// that we support in this object
 	activeChanged: function() {
-		this.active = Boolean(this.active);
+		this.active = enyo.isTrue(this.active);
 		this.setChecked(this.active);
 		this.bubble("onActivate");
 	},
 	// all input type controls support 'value' property
 	setValue: function(inValue) {
-		this.setChecked(Boolean(inValue));
+		this.setChecked(enyo.isTrue(inValue));
 	},
 	getValue: function() {
 		return this.getChecked();
