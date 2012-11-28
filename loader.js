@@ -1,9 +1,11 @@
 (function() {
 	enyo = window.enyo || {};
 
-	enyo.path = {
-		paths: {
-		},
+	enyo.pathResolverFactory = function() {
+		this.paths = {};
+	};
+
+	enyo.pathResolverFactory.prototype = {
 		addPath: function(inName, inPath) {
 			return this.paths[inName] = inPath;
 		},
@@ -35,7 +37,9 @@
 		}
 	};
 
-	enyo.loaderFactory = function(inMachine) {
+	enyo.path = new enyo.pathResolverFactory();
+
+	enyo.loaderFactory = function(inMachine, inPathResolver) {
 		this.machine = inMachine;
 		// package information
 		this.packages = [];
@@ -45,14 +49,14 @@
 		this.sheets = [];
 		// (protected) internal dependency stack
 		this.stack = [];
+		this.pathResolver = inPathResolver || enyo.path;
+		this.packageName = "";
+		this.packageFolder = "";
+		this.finishCallbacks = {};
 	};
 
 	enyo.loaderFactory.prototype  = {
-		packageName: "",
-		packageFolder: "",
 		verbose: false,
-		finishCallbacks: {},
-		//
 		loadScript: function(inScript) {
 			this.machine.script(inScript);
 		},
@@ -123,14 +127,14 @@
 							return true;
 						}
 					} else {
-						enyo.path.addPaths(d);
+						this.pathResolver.addPaths(d);
 					}
 				}
 			}
 		},
 		require: function(inPath, inBlock) {
 			// process aliases
-			var path = enyo.path.rewrite(inPath);
+			var path = this.pathResolver.rewrite(inPath);
 			// get path root
 			var prefix = this.getPathPrefix(inPath);
 			// assemble path
@@ -145,7 +149,7 @@
 			} else {
 				// package
 				this.requirePackage(path, inBlock);
-				// return true to indicate a package was located and 
+				// return true to indicate a package was located and
 				// we need to interrupt further processing until it's completed
 				return true;
 			}
@@ -247,7 +251,7 @@
 			if (parts.alias) {
 				// debug only
 				/*
-				var old = enyo.path.paths[parts.name];
+				var old = this.pathResolver.paths[parts.name];
 				if (old && old != parts.folder) {
 					this.verbose && console.warn("mapping alias [" + parts.name + "] to [" + parts.folder + "] replacing [" + old + "]");
 				}
@@ -255,7 +259,7 @@
 				*/
 				//
 				// create a path alias for this package
-				enyo.path.addPath(parts.alias, parts.target);
+				this.pathResolver.addPath(parts.alias, parts.target);
 				//
 				// cache current name
 				this.packageName = parts.alias;
