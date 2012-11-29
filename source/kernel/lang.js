@@ -1,7 +1,8 @@
 (function(){
 	//* @protected
 	enyo.global = this;
-
+  //*@protected
+  enyo._idCounter = 0;
 
   // TODO: there are some significant improvements that can be made
   // to both of these methods enyo.getPath/enyo.setPath and both
@@ -109,6 +110,15 @@
     fn(ctor, inst);
   };
 
+  //*@public
+  /**
+    Create a unique id with an optional prefix.
+  */
+  enyo.uid = function (prefix) {
+    var id = enyo._idCounter++;
+    return prefix? prefix + id: id;
+  };
+  
 	enyo._getProp = function(parts, create, context) {
 		var obj = context || enyo.global;
 		for(var i=0, p; obj && (p=parts[i]); i++){
