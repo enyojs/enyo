@@ -43,7 +43,7 @@
     var parts = path.split("."), idx = 0, ret = {}, root, cur, prop, base, part;
     // the root is either the context passed in or the owner
     // of this method's caller
-    root = context || this.owner;
+    root = context || (function (root) {return root[parts[0]]? root: undefined})(enyo.global) || this.owner;
     // initial starting place for the cur pointer
     base = root;
     // the property is assumed to be the last part of path
