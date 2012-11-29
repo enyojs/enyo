@@ -124,5 +124,38 @@ enyo.dom = {
 	//* Gets the calculated margin of a node.
 	calcMarginExtents: function(inNode) {
 		return this.calcBoxExtents(inNode, "margin");
+	},
+	//* Returns an object like `{top: 0, left: 0, bottom: 100, right: 100, height: 10, width: 10}` that represents the object's position within the viewport. Negative values mean part of the object is not visible.
+	calcViewportPositionForNode: function(inNode) {
+		// Parse upward and grab our positioning relative to the viewport
+		var left = top = 0,
+			node = inNode,
+			width = node.offsetWidth,
+			height = node.offsetHeight,
+			docHeight = document.body.offsetHeight,
+			docWidth = document.body.offsetWidth,
+			transformProp = enyo.dom.getStyleTransformProp(),
+			xregex = /translateX\((-?\d+)px\)/i,
+			yregex = /translateY\((-?\d+)px\)/i;
+		if (node.offsetParent) {
+			do {
+				left += node.offsetLeft - (node.offsetParent ? node.offsetParent.scrollLeft : 0);
+				if (transformProp && xregex.test(node.style[transformProp])) {
+					left += parseInt(node.style[transformProp].replace(xregex, '$1'));
+				}
+				top += node.offsetTop - (node.offsetParent ? node.offsetParent.scrollTop : 0);
+				if (transformProp && yregex.test(node.style[transformProp])) {
+					top += parseInt(node.style[transformProp].replace(yregex, '$1'));
+				}
+			} while (node = node.offsetParent);
+		}
+		return {
+			'top': top,
+			'left': left,
+			'bottom': docHeight - top - height,
+			'right': docWidth - left - width,
+			'height': height,
+			'width': width
+		};
 	}
 };
