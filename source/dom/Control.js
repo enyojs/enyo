@@ -137,7 +137,8 @@ enyo.kind({
       // if a constructor exists we instanced the class and can
       // claim it as our own
       if (ctor) inst.set("owner", this);
-
+      // lets add ourselves as a dispatch listener
+      else inst.addDispatchTarget(this);
       // either way we need to refresh our bindings
       this.refreshBindings();
     });
