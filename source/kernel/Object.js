@@ -493,10 +493,12 @@ enyo.Object.addGetterSetter = function(inName, inValue, inProto) {
   }
 	//
 	var set_n = "set" + cap_n;
-	var change_n = priv_n + "Changed";
 	if (!inProto[set_n]) {
 	  inProto[set_n] = function () {
 	    return this.set(priv_n, arguments[0]);
 	  }
+	  inProto[set_n].overloaded = false;
+	} else if (inProto[set_n].overloaded !== false) {
+	  inProto[set_n].overloaded = true;
 	}
 };

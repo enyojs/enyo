@@ -230,10 +230,25 @@
       return r;
     },
     
-    setTargetValue: function (inValue) {
-      var v = this.transform && enyo.isFunction(this.transform)? this.transform(inValue, "target"): inValue;
+    setTargetValue: function (value) {
+      //var v = this.transform && enyo.isFunction(this.transform)? this.transform(inValue, "target"): inValue;
+      //this.isSynced = true;
+      //return this._target.set(this._targetProperty, v, enyo.isArray(v));
       this.isSynced = true;
-      return this._target.set(this._targetProperty, v, enyo.isArray(v));
+      return this._target.set(this._targetProperty, this._transform(value, "target"), enyo.isArray(value));
+    },
+    
+    _transform: function (value, direction) {
+      var trans = this.transform;
+      if (trans === undefined || trans === null) return value;
+      else if ("string" === typeof trans) {
+        trans = (this.owner && this.owner[trans]) || enyo.getPath(trans);
+        if (trans && "function" === typeof trans) return trans(value, direction);
+      } else if ("function" === typeof trans) return trans(value, direction);
+      else {
+        enyo.warn("enyo.Binding: invalid transform applied to binding");
+        return value;
+      }
     },
     
     getSourceValue: function () {
@@ -246,9 +261,10 @@
       return r;
     },
     
-    setSourceValue: function (inValue) {
-      var v = this.transform && enyo.isFunction(this.transform)? this.transform(inValue, "source"): inValue;
-      return this._source.set(this._sourceProperty, v);
+    setSourceValue: function (value) {
+      //var v = this.transform && enyo.isFunction(this.transform)? this.transform(inValue, "source"): inValue;
+      return this._source.set(this._sourceProperty, this._transform(value, "source"));
+      //return this._source.set(this._sourceProperty, v);
     },
     
     destroy: function () {
