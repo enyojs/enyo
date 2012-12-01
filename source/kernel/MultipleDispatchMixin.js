@@ -11,6 +11,9 @@ enyo.Mixin({
   initMixin: function () {
     // initialize the dispatch targets arrays
     this.dispatchTargets = [];
+    // this will attempt to keep circular events
+    // from propagating...
+    this.seenEvents = [];
   },
   //*@public
   /**
@@ -29,13 +32,15 @@ enyo.Mixin({
   */
   addDispatchTarget: function (target) {
     var targets = this.dispatchTargets;
-    if (targets.indexOf(target) === -1) targets.push(target);
+    if (targets.indexOf(target) === -1 && target !== this) targets.push(target);
     this.inherited(arguments);
   },
   //*@protected
   bubbleUp: function (name, event, sender) {
     if (this.defaultDispatch) return this.inherited(arguments);
-    var targets = this.get("dispatchTargets");
+    var targets = this.get("dispatchTargets"), id = enyo.uid("event");
+    event.seenId = id;
+    this.seenEvents.push(id);
     enyo.forEach(enyo.clone(targets), function (target) {
       if (target) {
         if (target.destroyed) {
@@ -45,6 +50,11 @@ enyo.Mixin({
         }
       }
     }, this);
+  },
+  //*@protected
+  dispatch: function (name, event, sender) {
+    if (-1 !== this.seenEvents.indexOf(event.seenId)) return true;
+    return this.inherited(arguments);
   },
   //*@protected
   bubbleDelegation: function (delegate, prop, name, event, sender) {
