@@ -37,6 +37,10 @@ enyo.kind({
 	defaultKind: "enyo.Option",
 	rendered: function() {
 		this.inherited(arguments);
+		//Trick to force IE8 onchange event bubble
+		if(enyo.platform.ie == 8){
+			this.setAttribute("onchange", enyo.bubbler);
+		}
 		this.selectedChanged();
 	},
 	getSelected: function() {
