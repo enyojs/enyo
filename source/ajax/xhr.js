@@ -16,6 +16,7 @@ enyo.xhr = {
 		- _password_: The optional password to use for authentication purposes.
 		- _xhrFields_: Optional object containing name/value pairs to mix directly into the generated xhr object.
 		- _mimeType_: Optional string to override the MIME-Type.
+		- _noCacheControl_: Optional string to *not* set the `cache-control: no-cache` HTTP header in non-GET requests.  This especially useful when dealing with servers whose CORS settings disallow this header.
 	*/
 	request: function(inParams) {
 		var xhr = this.getXMLHttpRequest(inParams);
@@ -41,7 +42,7 @@ enyo.xhr = {
 		}
 		// work around iOS 6 bug where non-GET requests are cached
 		// see http://www.einternals.com/blog/web-development/ios6-0-caching-ajax-post-requests
-		if (method !== "GET") {
+		if (method !== "GET" && !inParams.noCacheControl) {
 			xhr.setRequestHeader("cache-control", "no-cache");
 		}
 		//
