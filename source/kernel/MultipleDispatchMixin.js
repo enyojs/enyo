@@ -53,7 +53,7 @@ enyo.Mixin({
   },
   //*@protected
   dispatch: function (name, event, sender) {
-    if (-1 !== this.seenEvents.indexOf(event.seenId)) return true;
+    if (-1 !== this.seenEvents.indexOf(event.seenId)) return false;
     return this.inherited(arguments);
   },
   //*@protected
