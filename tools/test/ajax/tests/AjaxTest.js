@@ -83,26 +83,6 @@ enyo.kind({
 			return inValue.ctype == contentType;
 		});
 	},
-	testCacheControlOn: function() {
-		var contentType = "application/x-www-form-urlencoded";
-		this._testAjax({url: "php/test4.php", method: "POST", postBody: "data"}, null, function(inValue) {
-			var status = inValue.cacheCtrl && (inValue.cacheCtrl.indexOf('no-cache') === 0);
-			if (!status) {
-				enyo.log("Bad Cache-Control: " + inValue.cacheCtrl + " expected: " + "no-cache");
-			}
-			return status;
-		});
-	},
-	testCacheControlOff: function() {
-		var contentType = "application/x-www-form-urlencoded";
-		this._testAjax({url: "php/test4.php", method: "POST", postBody: "data", noCacheControl: true }, null, function(inValue) {
-			var status = (inValue.cacheCtrl === null);
-			if (!status) {
-				enyo.log("Bad Cache-Control: " + inValue.cacheCtrl + " expected: " + undefined);
-			}
-			return status;
-		});
-	},
 	testContentTypeDefault: function() {
 		var contentType = "application/x-www-form-urlencoded";
 		this._testAjax({url: "php/test4.php", method: "POST", postBody: "data"}, null, function(inValue) {

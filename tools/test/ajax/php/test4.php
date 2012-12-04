@@ -9,14 +9,8 @@ switch ($method) {
 }
 
 function post() {
-	$ctype = @$_SERVER["CONTENT_TYPE"];
-	$cacheCtrl = @$_SERVER["HTTP_CACHE_CONTROL"];
-	$result = array('status' => "post" , 'ctype' => $ctype , 'cacheCtrl' => $cacheCtrl);
+	$c = @$_SERVER["CONTENT_TYPE"];
+	$result = array('status' => "post", 'ctype' => $c);
 	echo json_encode($result);
-
-	# useful for test setup...
-	#foreach ($_SERVER as $name => $value) {
-	#	echo "$name: $value\n";
-	#}
 }
 ?>

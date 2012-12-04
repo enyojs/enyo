@@ -130,8 +130,7 @@ enyo.kind({
 				username: this.username,
 				password: this.password,
 				xhrFields: this.xhrFields,
-				mimeType: this.mimeType,
-				noCacheControl: this.noCacheControl
+				mimeType: this.mimeType
 			});
 		}
 		catch (e) {
