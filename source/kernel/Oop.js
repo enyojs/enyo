@@ -54,7 +54,7 @@
   TODO: is it possible to move this perparation to the constructor
         so it can programatically be manipulated?
 */
-enyo.concat = ["concat", "bindings"];
+enyo.concat = ["concat", "bindings", "mixins"];
 
 enyo.handleConcatenatedProperties = function (ctor, proto) {
   var cprops = enyo.merge(ctor.concat, proto.concat), prop, right, left;
