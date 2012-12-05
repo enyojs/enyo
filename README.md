@@ -66,8 +66,8 @@ Here is an Enyo Hello World:
 <html>
 <head>
 	<title>Enyo</title>
-	<script src="enyojs/2.0/enyo.js" type="text/javascript"></script>
-	<link href="enyojs/2.0/enyo.css" rel="stylesheet" type="text/css" />
+	<script src="enyojs/2.1.1/enyo.js" type="text/javascript"></script>
+	<link href="enyojs/2.1.1/enyo.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 	<script type="text/javascript">
@@ -77,7 +77,7 @@ Here is an Enyo Hello World:
 </html>
 ```
 
-This example loads an enyo.js build from _enyojs/2.0/_. If you downloaded the SDK you have a versioned build file. If you pulled from GitHub, you can either make your own build using a minify script in _enyo/source/minify_ (requires Node), or you can load directly from the source (_enyo/source/enyo.js_). Loading from source is also called 'debug loading' because the modules are loaded as individual files, which is easier for debugging, but much less efficient.
+This example loads an enyo.js build from _enyojs/2.1.1/_. If you downloaded the SDK you have a versioned build file. If you pulled from GitHub, you can either make your own build using a minify script in _enyo/source/minify_ (requires Node), or you can load directly from the source (_enyo/source/enyo.js_). Loading from source is also called 'debug loading' because the modules are loaded as individual files, which is easier for debugging, but much less efficient.
 
 The base enyo.Control works much like an HTML tag. You can assign _classes_ and _attributes_ and give it a _style_. E.g.
 
