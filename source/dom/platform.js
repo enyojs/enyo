@@ -4,11 +4,14 @@
 
 	* android
 	* androidChrome (Chrome on Android, standard starting in 4.1)
+	* androidFirefox
 	* ie
 	* ios
 	* webos
+	* blackberry
 	* safari (desktop version)
 	* chrome (desktop version)
+	* firefox (desktop version)
 
 	If the property is defined, its value will be the major version	number
 	of the platform.
@@ -63,7 +66,7 @@ enyo.platform = {
 		// Blackberry 10+
 		{platform: "blackberry", regex: /BB1\d;.*Version\/(\d+\.\d+)/}
 	];
-	for (var i = 0, p, m, v; p = platforms[i]; i++) {
+	for (var i = 0, p, m, v; (p = platforms[i]); i++) {
 		m = p.regex.exec(ua);
 		if (m) {
 			if (p.forceVersion) {
