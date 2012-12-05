@@ -83,6 +83,30 @@ enyo.kind({
 			return inValue.ctype == contentType;
 		});
 	},
+	testCacheControlOn: function() {
+		var contentType = "application/x-www-form-urlencoded";
+		this._testAjax({url: "php/test4.php", method: "POST", postBody: "data"}, null, function(inValue) {
+			if (enyo.platform.ios && enyo.platform.ios >= 6) {
+				var status = inValue.cacheCtrl && (inValue.cacheCtrl.indexOf('no-cache') === 0);
+				if (!status) {
+					enyo.log("Bad Cache-Control: " + inValue.cacheCtrl + " expected: " + "no-cache");
+				}
+				return status;
+			} else {
+				return true;
+			}
+		});
+	},
+	testCacheControlOff: function() {
+		var contentType = "application/x-www-form-urlencoded";
+		this._testAjax({url: "php/test4.php", method: "POST", postBody: "data", headers: {'cache-control': null} }, null, function(inValue) {
+			var status = (inValue.cacheCtrl === null);
+			if (!status) {
+				enyo.log("Bad Cache-Control: " + inValue.cacheCtrl + " expected: " + undefined);
+			}
+			return status;
+		});
+	},
 	testContentTypeDefault: function() {
 		var contentType = "application/x-www-form-urlencoded";
 		this._testAjax({url: "php/test4.php", method: "POST", postBody: "data"}, null, function(inValue) {
