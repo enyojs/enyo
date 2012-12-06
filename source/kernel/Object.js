@@ -173,7 +173,7 @@ enyo.kind({
   
   _setupObservers: function () {
     var p, prop, i, e;
-    this._observers = {};
+    this._observers = this._observers || {};
     for (p in this) {
       if (!(prop = this[p])) continue;
       if (enyo.isFunction(prop)) {
@@ -210,10 +210,6 @@ enyo.kind({
                             // or is manually removed
       }
 
-      // TODO: this is probably ok but this does not have any
-      // check to see if the property even exists for the object
-      // if no observer array has already been  d for this
-      // property, go ahead and create it
       if (!(t = o[inProp])) t = o[inProp] = [];
       if (t.indexOf(f) === -1) t.push(f);
 
