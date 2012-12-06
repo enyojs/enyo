@@ -56,8 +56,26 @@
        },
        at: function (index) {
            var ret = this.data[index];
-           this.update();
            return ret;
+       },
+       /**
+           Attempt to find a particular entry based on the method
+           passed in as _fn_. The callback will be executed under
+           the context of the _enyo.ArrayController_ unless a context
+           is specified as the optional second parameter. If it
+           successfully matches a result of the callback to Boolean true
+           it will return a hash with a _value_ and _index_ property
+           where _value_ is the actual result and _index_ is the index
+           of the value in the array. If no result is found it will
+           return false.
+       */
+       find: function (fn, context) {
+           var i = 0, len = this.length, val, ctx = context || this;
+           for (; i < len; ++i) {
+               val = this.at(i);
+               if (fn.call(ctx, val) === true) return {value: val, index: i};
+           }
+           return false;
        },
        //*@protected
        update: function () {
