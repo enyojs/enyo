@@ -2,7 +2,6 @@
 (function() {
 	// add touch-specific gesture feature
 	var gesture = enyo.gesture;
-
 	if (window.navigator.msPointerEnabled) {
 		var msEvents = [
 			"MSPointerDown",
@@ -21,28 +20,16 @@
 		enyo.forEach(msEvents, function(e) {
 			enyo.dispatcher.listen(document, e);
 		});
-
 		// add our own MSPointer event handler
 		enyo.dispatcher.features.push(function(e) {
 			if (handlers[e.type] && e.isPrimary) {
 				handlers[e.type](e);
 			}
 		});
-
 		// remove the default mouse event handlers
 		enyo.gesture.events = {};
 	}
-	var touchNormalize = function(inType, inEvent) {
-		var e = enyo.clone(inEvent);
-		e = enyo.mixin(e, {
-			type: inType,
-			srcEvent: inEvent,
-			preventDefault: gesture.preventDefault,
-			disablePrevention: gesture.disablePrevention
-		});
-		// add in changedTouches array
 
-	};
 	var gestureNormalize = function(inType, inEvent) {
 		var e = enyo.clone(inEvent);
 		return enyo.mixin(e, {
@@ -59,7 +46,6 @@
 	var makeEvent = function(inEvent) {
 		var e = enyo.clone(inEvent);
 		e.srcEvent = inEvent;
-		e.target = document.elementFromPoint(e.clientX, e.clientY);
 		// normalize "mouse button" info
 		e.which = 1;
 		return e;
