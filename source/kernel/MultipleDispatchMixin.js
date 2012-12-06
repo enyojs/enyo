@@ -24,6 +24,7 @@ enyo.Mixin({
     this.inherited(arguments);
     if (this.owner && this.owner instanceof enyo.Control) {
       this.defaultDispatch = true;
+      this._bubbleTarget = this.owner;
     }
   },
   //*@public

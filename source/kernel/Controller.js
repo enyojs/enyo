@@ -46,7 +46,7 @@ enyo.kind({
 	  the _enyo.MultipleDispatchMixin_.
 	*/
 	getBubbleTarget: function () {
-	  return null;
+	  return this._bubbleTarget;
 	},
 	//*@protected
 	/**
@@ -61,6 +61,8 @@ enyo.kind({
 	  // refresh any bindings we have that target our owner
 	  if (this._bindings && this._bindings.length) this.refreshBindings();
 	},
+    //*@protected
+    _bubbleTarget: null,
 	//*@protected
   create: function () {
     this.inherited(arguments);

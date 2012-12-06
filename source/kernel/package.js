@@ -4,7 +4,7 @@ enyo.depends(
 	"job.js",
 	"macroize.js",
 	"Oop.js",
-  "Binding.js",
+    "Binding.js",
 	"Object.js",
 	"Component.js",
 	"UiComponent.js",
