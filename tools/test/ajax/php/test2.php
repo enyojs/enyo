@@ -25,9 +25,14 @@ function get() {
 function post() {
 	$q = @$_POST['query'];
 	if ($q) {
-		$result = array('response' => $q);
+		$result = array('response' => "post.".$q);
 	} else {
-		$result = array('response' => file_get_contents('php://input'));
+	    $q = @$_GET['query'];
+        if ($q) {
+            $result = array('response' => "query.".$q);
+        }else{
+		    $result = array('response' => file_get_contents('php://input'));
+		}
 	}
 	$requested_with = @$_SERVER['HTTP_X_REQUESTED_WITH'];
 	if ($requested_with == 'XMLHttpRequest') {

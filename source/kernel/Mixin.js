@@ -58,7 +58,7 @@
       if (this.destroyMixin && enyo.isFunction(this.destroyMixin)) {
         this.injectDestroy();
       }
-      this.initMixin.call(t);
+      if (this.initMixin) this.initMixin.call(t);
       (function (a, m) {a.push(m.name)})((t._mixins || (t._mixins = [])), this);
       this.target = null;
     },

@@ -1,38 +1,70 @@
-// for now it looks like enyo.Binding cannot inherit from
-// enyo.Object since enyo.Object is dependent on enyo.Binding...
 (function () {
+  
+  //*@public
+  /**
+    An _enyo.Binding_ is a versatile object that creates an
+    automatic propagation of changes between properties of
+    a designated source or sources. Typically this object is
+    exercised by a helper from _enyo.Object_ but can be
+    instantiated independently if care is used to release
+    object references and prevent memory leaks.
+    
+    TODO: complete docs
+  */
+  enyo.Binding = Binding;
+  
+  //*@protected
+  function Binding () {
+    var args = enyo.toArray(arguments), i = 0;
+    for (; i < args.length; ++i) enyo.mixin(this, args[i]);
+    enyo.bindingCount++;
+    this.bindId = getBindingsId();
+    this._setup();
+  }
   
   enyo.bindingCount = 0;
   enyo.bindingsId = 0;
   
   var getParts, copyTransform, getBindingId;
   
+  //*@protected
+  /**
+    The goal of this _enyo.Binding_ secure method is to
+    take a given path (relative to optional _context_ which
+    defaults to the _enyo.Binding_ _owner_ property if not
+    provided in the definition), determine the object reference
+    and the property on that reference as well as whether or
+    not the target property is a _enyo.Computed_ property.
+  */
   getParts = function (path, context) {
-    var o = context? context: this.owner, i, b, bt, p, c, r;
-    i = path.lastIndexOf(".");
-    //if (i === 0) return {base: o, property: path.slice(1)};
-    if (i === 0) r = {base: o, property: path.slice(1)};
-    //if (i === -1) return {base: o, property: path};
-    if (i === -1) r = {base: o, property: path};
-    bt = path.slice(0, i);
-    p = path.slice(i + 1);
-    if (bt[0] === "." || !(b = enyo.getPath(bt))) b = enyo.getPath.call(o, bt);
-    if (b && !b.addObserver) {
-      // try to find if the target is a computed property...
-      i = bt.lastIndexOf(".");
-      c = bt.substring(i+1, bt.length);
-      bt = bt.substring(0, i);
-      if (bt[0] === "." || !(b = enyo.getPath(bt))) b = enyo.getPath.call(o, bt);
-      if (b) {
-        if (b[c] && enyo.isFunction(b[c]) && b[c].isProperty) {
-          //return {base: b, property: p, computed: c};
-          r = {base: b, property: p, computed: c};
-        }
+    // goal is to split the path and iterate over the parts
+    // analyzing each piece until we reach the end
+    path = path[0] === "."? path.slice(1): path;
+    var parts = path.split("."), idx = 0, ret = {}, root, cur, prop, base, part;
+    // the root is either the context passed in or the owner
+    // of this method's caller
+    root = context || (function (root) {return root[parts[0]]? root: undefined})(enyo.global) || this.owner;
+    // initial starting place for the cur pointer
+    base = root;
+    // the property is assumed to be the last part of path
+    // (or the entire path if no '.' is found)
+    ret.property = prop = parts.length > 1? parts.pop(): path;
+    if (prop === path) {
+      ret.base = base;
+    } else {
+      for (; idx < parts.length; ++idx) {
+        part = parts[idx];
+        if (!part) continue;
+        // update pointer
+        cur = base[part];
+        // if we can't find part of the path 
+        if (!cur || "string" === typeof cur) return ret;
+        // update base pointer
+        if (part !== path) base = cur;
+        ret.base = base;
       }
     }
-    r = r? r: {base: b, property: p};
-    if (!r.base) r.base = o;
-    return r;
+    return ret;
   };
   
   getBindingsId = function () {
@@ -44,15 +76,6 @@
     //return enyo.clone(data);
     return data;
   };
-  
-  function Binding () {
-    var args = enyo.toArray(arguments), i = 0;
-    for (; i < args.length; ++i) enyo.mixin(this, args[i]);
-    enyo.bindingCount++;
-    this.bindId = getBindingsId();
-    this._setup();
-    //console.warn("ADDED A BINDING: ", enyo.bindingCount, this);
-  }
    
   Binding.prototype = {
     _target: null,
@@ -61,7 +84,6 @@
     _source: null,
     _sourceProperty: null,
     _sourceResponder: null,
-    _sourceComputedProperty: null,
     _waiting: null,
     _setup: function () {
       var s = this._setupSource(), t = this._setupTarget();
@@ -70,11 +92,9 @@
       if (this.autoSync === true) this.sync();
     },
     _setupSource: function () {
-      var parts = getParts.call(this, this.from, this.source), b, p, c;
+      var parts = getParts.call(this, this.from, this.source), b, p;
       b = parts.base;
       p = parts.property;
-      c = parts.computed;
-      //if (!b || (b[p] === undefined && !c)) {
       if (!b) {
         // this case is USUALLY ok because it means that a binding was
         // created BEFORE one the the source/target was not available yet
@@ -84,7 +104,6 @@
       }
       this._source = b;
       this._sourceProperty = p;
-      this._sourceComputedProperty = c;
       return true;
     },
     _setupTarget: function () {
@@ -99,8 +118,7 @@
       return true;
     },
     _connectSource: function () {
-      var s = this._source, sp = this._sourceProperty, sr = this._sourceResponder,
-        sc = this._sourceComputedProperty;
+      var s = this._source, sp = this._sourceProperty, sr = this._sourceResponder;
         
       if (!sr || !enyo.isFunction(sr)) {
         sr = this._sourceResponder = enyo.bind(this, this._syncFromSource);
@@ -120,9 +138,7 @@
       sr.bindId = this.bindId;
       var o = sr;
       
-      // if it is a computed property it can only be one way!
-      if (sc) this.oneWay = true;
-      s.addObserver(sc || sp, sr);
+      s.addObserver(sp, sr);
     },
     _connectTarget: function () {
       var t = this._target, tp = this._targetProperty, tr = this._targetResponder;
@@ -157,7 +173,7 @@
     autoConnect: false,
     autoSync: true,
     transform: null,
-    oneWay: false,
+    oneWay: true,
     allowRefresh: true,
     
     sync: function (force) {
@@ -214,10 +230,25 @@
       return r;
     },
     
-    setTargetValue: function (inValue) {
-      var v = this.transform && enyo.isFunction(this.transform)? this.transform(inValue, "target"): inValue;
+    setTargetValue: function (value) {
+      //var v = this.transform && enyo.isFunction(this.transform)? this.transform(inValue, "target"): inValue;
+      //this.isSynced = true;
+      //return this._target.set(this._targetProperty, v, enyo.isArray(v));
       this.isSynced = true;
-      return this._target.set(this._targetProperty, v, enyo.isArray(v));
+      return this._target.set(this._targetProperty, this._transform(value, "target"), enyo.isArray(value));
+    },
+    
+    _transform: function (value, direction) {
+      var trans = this.transform;
+      if (trans === undefined || trans === null) return value;
+      else if ("string" === typeof trans) {
+        trans = (this.owner && this.owner[trans]) || enyo.getPath(trans);
+        if (trans && "function" === typeof trans) return trans(value, direction);
+      } else if ("function" === typeof trans) return trans(value, direction);
+      else {
+        enyo.warn("enyo.Binding: invalid transform applied to binding");
+        return value;
+      }
     },
     
     getSourceValue: function () {
@@ -230,9 +261,10 @@
       return r;
     },
     
-    setSourceValue: function (inValue) {
-      var v = this.transform && enyo.isFunction(this.transform)? this.transform(inValue, "source"): inValue;
-      return this._source.set(this._sourceProperty, v);
+    setSourceValue: function (value) {
+      //var v = this.transform && enyo.isFunction(this.transform)? this.transform(inValue, "source"): inValue;
+      return this._source.set(this._sourceProperty, this._transform(value, "source"));
+      //return this._source.set(this._sourceProperty, v);
     },
     
     destroy: function () {
@@ -250,7 +282,5 @@
       //console.log("REMOVED A BINDING: ", enyo.bindingCount);
     }
   };
-  
-  enyo.Binding = Binding;
   
 }());

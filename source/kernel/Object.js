@@ -20,6 +20,12 @@ enyo.kind({
 	//* @public
 	// concatenated properties (default)
 	concat: enyo.concat,
+	//*@public
+	/**
+	  An array of strings that represent a mixin to be applied
+	  to this class at the end of the construction routine.
+	*/
+	mixins: null,
 	constructor: function() {
 		enyo._objectCount++;
 
@@ -27,6 +33,7 @@ enyo.kind({
 
     // setup observers, bindings and computed properties
     this._setup();
+    this.initMixins();
 	},
 	/**
 		Sets property named 'n' with value 'v' and then invokes callback
@@ -115,10 +122,25 @@ enyo.kind({
 	},
 
   //*@protected
+  findAndInstance: function (prop, fn) {
+    enyo._findAndInstance.call(this, prop, fn? enyo.bind(this, fn): null);
+  },
+
+  //*@protected
   _bindings: null,
   _computed: null,
   _observers: null,
 
+  //*@protected
+  initMixins: function () {
+    var exts = this.mixins, fn;
+    if (!exts) return;
+    enyo.forEach(exts, this.prepareMixin, this);
+  },
+  //*@protected
+  prepareMixin: function (mixin) {
+    this.extend(enyo.isString(mixin)? enyo.getPath(mixin): mixin);
+  },
   _setupBindings: function () {
     var prop, i = 0, b;
     this.clearBindings();
@@ -151,7 +173,7 @@ enyo.kind({
   
   _setupObservers: function () {
     var p, prop, i, e;
-    this._observers = {};
+    this._observers = this._observers || {};
     for (p in this) {
       if (!(prop = this[p])) continue;
       if (enyo.isFunction(prop)) {
@@ -188,10 +210,6 @@ enyo.kind({
                             // or is manually removed
       }
 
-      // TODO: this is probably ok but this does not have any
-      // check to see if the property even exists for the object
-      // if no observer array has already been  d for this
-      // property, go ahead and create it
       if (!(t = o[inProp])) t = o[inProp] = [];
       if (t.indexOf(f) === -1) t.push(f);
 
@@ -471,10 +489,12 @@ enyo.Object.addGetterSetter = function(inName, inValue, inProto) {
   }
 	//
 	var set_n = "set" + cap_n;
-	var change_n = priv_n + "Changed";
 	if (!inProto[set_n]) {
 	  inProto[set_n] = function () {
 	    return this.set(priv_n, arguments[0]);
 	  }
+	  inProto[set_n].overloaded = false;
+	} else if (inProto[set_n].overloaded !== false) {
+	  inProto[set_n].overloaded = true;
 	}
 };

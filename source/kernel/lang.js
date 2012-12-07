@@ -1,7 +1,8 @@
 (function(){
 	//* @protected
 	enyo.global = this;
-
+  //*@protected
+  enyo._idCounter = 0;
 
   // TODO: there are some significant improvements that can be made
   // to both of these methods enyo.getPath/enyo.setPath and both
@@ -72,6 +73,52 @@
     return this;
   };
 
+  //*@protected
+  /**
+    For any property of an object that can be implemented with a
+    _String_ representation of the class, _String_ representation of
+    an instance, a _Function_/_Constructor_ for a class or a reference
+    to an instance. They call this function using call/apply so the
+    method may use _this_ and the name of the _property_ to inspect and
+    qualify. It follows a strict pattern to ensure a normalized behavior.
+    Typically not called directly.
+  */
+  enyo._findAndInstance = function (property, fn) {
+    var ident, ctor, inst, klass = property.toLowerCase() + "Class",
+        name = klass + "Name";
+    ident = this[property];
+    if (!ident) return fn(ctor, inst);
+    if ("string" === typeof ident) {
+      ctor = enyo.getPath(ident);
+      if (!ctor) {
+        this[name] = ident;
+        this[property] = undefined;
+      } else if ("function" !== typeof ctor) {
+        inst = ctor;
+        ctor = null;
+      }
+    } else if ("function" === typeof ident) {
+      ctor = ident;
+      this[klass] = ctor;
+    } else {
+      inst = ident;
+      this[name] = inst.kindName || inst.kind;
+      this[property] = inst;
+    }
+    if (ctor && !inst) inst = new ctor();
+    this[property] = inst;
+    fn(ctor, inst);
+  };
+
+  //*@public
+  /**
+    Create a unique id with an optional prefix.
+  */
+  enyo.uid = function (prefix) {
+    var id = enyo._idCounter++;
+    return prefix? prefix + id: id;
+  };
+  
 	enyo._getProp = function(parts, create, context) {
 		var obj = context || enyo.global;
 		for(var i=0, p; obj && (p=parts[i]); i++){

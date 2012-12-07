@@ -67,12 +67,20 @@ enyo.xhr = {
 	makeReadyStateHandler: function(inXhr, inCallback) {
 		if (window.XDomainRequest && inXhr instanceof XDomainRequest) {
 			inXhr.onload = function() {
-				inCallback.apply(null, [inXhr.responseText, inXhr]);
+				var text;
+				if (typeof inXhr.responseText === "string") {
+					text = inXhr.responseText;
+				}
+				inCallback.apply(null, [text, inXhr]);
 			};
 		}
 		inXhr.onreadystatechange = function() {
 			if (inXhr.readyState == 4) {
-				inCallback.apply(null, [inXhr.responseText, inXhr]);
+				var text;
+				if (typeof inXhr.responseText === "string") {
+					text = inXhr.responseText;
+				}
+				inCallback.apply(null, [text, inXhr]);
 			}
 		};
 	},
@@ -94,7 +102,7 @@ enyo.xhr = {
 			// only use XDomainRequest when it exists, no extra headers were set, and the
 			// target URL maps to a domain other than the document origin.
 			if (enyo.platform.ie < 10 && window.XDomainRequest && !inParams.headers &&
-				!this.inOrigin(inParams.inUrl) && !/^file:\/\//.test(window.location.href)) {
+				!this.inOrigin(inParams.url) && !/^file:\/\//.test(window.location.href)) {
 				return new XDomainRequest();
 			}
 		} catch(e) {}
