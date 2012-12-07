@@ -13,7 +13,7 @@
 
 	If you make changes to _enyo.Ajax_, be sure to add or update the appropriate
 	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/ajax/tests).
-	
+
 	For more information, see the documentation on
 	[Consuming Web Services](https://github.com/enyojs/enyo/wiki/Consuming-Web-Services)
 	in the Enyo Developer Guide.
@@ -78,7 +78,7 @@ enyo.kind({
         else{
             //If inParams parameter is not a string, build a query from it
             if(inParams){
-                args.push(enyo.Ajax.objectToQuery(inParams));
+                body = enyo.Ajax.objectToQuery(inParams);
             }
         }
         //
@@ -163,7 +163,7 @@ enyo.kind({
 	fail: function(inError) {
 		// on failure, explicitly cancel the XHR to prevent
 		// further responses.  cancellation also resets the
-		// response headers & body, 
+		// response headers & body,
 		if (this.xhr) {
 			enyo.xhr.cancel(this.xhr);
 			this.xhr = null;
