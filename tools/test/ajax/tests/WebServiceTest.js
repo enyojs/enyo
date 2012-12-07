@@ -35,7 +35,7 @@ enyo.kind({
 	},
 	testPostRequest: function() {
 		this._testWebService({url: "php/test2.php", method: "POST"}, {query: "enyo"}, function(inValue) {
-			return inValue.response == "enyo";
+			return inValue.response == "query.enyo";
 		});
 	},
 	testPutRequest: function() {
