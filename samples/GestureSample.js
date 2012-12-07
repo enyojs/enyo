@@ -47,17 +47,17 @@ enyo.kind({
 						{name:"eventPicker", kind:"onyx.Picker", classes:"gesture-sample-left"}
 					]}
 				]}
-			]},
+			]}
 		]}
 	],
 	create: function() {
 		this.inherited(arguments);
+		this.eventList = {};
+		this.eventCount = 0;
 		enyo.forEach(["All events","down","up","tap","move","enter","leave","dragstart","drag","dragover","hold","release","holdpulse","flick","gesturestart","gesturechange","gestureend"], enyo.bind(this, function(event) {
 			this.$.eventPicker.createComponent({content:event, style:"text-align:left"});
 		}));
 	},
-	eventList:{},
-	eventCount:0,
 	handleEvent: function(inSender, inEvent) {
 		var event = enyo.clone(inEvent);
 		if (this.monitorEvent && (event.type != this.monitorEvent)) {
@@ -92,7 +92,7 @@ enyo.kind({
 		this.eventCount--;
 		this.eventList[inEvent.type].destroy();
 		delete this.eventList[inEvent.type];
-		if (this.eventCount == 0) {
+		if (this.eventCount === 0) {
 			this.$.waiting.show();
 		}
 		this.reflow();
@@ -147,6 +147,10 @@ enyo.kind({
 	truncateChanged: function() {
 		this.$.eventProps.addRemoveClass("gesture-sample-truncate", this.truncate);
 	},
+	// since event is an object, force set
+	setEvent: function(inEvent) {
+		this.setPropertyValue("event", inEvent, "eventChanged");
+	},
 	eventChanged: function(inOld) {
 		if (this.event) {
 			if (this.timeout) {
@@ -179,12 +183,15 @@ enyo.kind({
 	getPropsString: function() {
 		var props = [];
 		for (var i in this.event) {
-			if ((this.event[i] != undefined) &&
-				(this.event[i] != null) &&
+			if ((this.event[i] !== undefined) &&
+				(this.event[i] !== null) &&
 				!(this.event[i] instanceof Object) && 
 				(i != "type")) {
 				props.push(i + ": " + this.event[i]);
 			}
+		}
+		if (this.event.srcEvent && this.event.srcEvent.type) {
+			props.push("srcEvent.type: " + this.event.srcEvent.type);
 		}
 		return "<b>" + this.event.type + "</b>: { " + props.join(", ") + " }";
 	}

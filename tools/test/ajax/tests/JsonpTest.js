@@ -8,7 +8,7 @@ enyo.kind({
 			})
 			.error(this, function(inSender, inValue) {
 				this.finish("bad status: " + inValue);
-				console.error(inValue);
+				enyo.error(inValue);
 			})
 			.go(inParams);
 	},

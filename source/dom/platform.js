@@ -4,11 +4,14 @@
 
 	* android
 	* androidChrome (Chrome on Android, standard starting in 4.1)
+	* androidFirefox
 	* ie
 	* ios
 	* webos
+	* blackberry
 	* safari (desktop version)
 	* chrome (desktop version)
+	* firefox (desktop version)
 
 	If the property is defined, its value will be the major version	number
 	of the platform.
@@ -25,9 +28,9 @@
 */
 enyo.platform = {
 	//* True if the platform has native single finger events
-	touch: Boolean(("ontouchstart" in window) || window.navigator.msPointerEnabled),
+	touch: Boolean(("ontouchstart" in window) || window.navigator.msMaxTouchPoints),
 	//* True if the platform has native double finger events
-	gesture: Boolean(("ongesturestart" in window) || window.navigator.msPointerEnabled)
+	gesture: Boolean(("ongesturestart" in window) || window.navigator.msMaxTouchPoints)
 };
 
 //* @protected
@@ -41,10 +44,10 @@ enyo.platform = {
 		{platform: "android", regex: /Android (\d+)/},
 		// Kindle Fire
 		// Force version to 2, (desktop mode does not list android version)
-		{platform: "android", regex: /Silk\/1./, forceVersion: 2},
+		{platform: "android", regex: /Silk\/1./, forceVersion: 2, extra: {silk: 1}},
 		// Kindle Fire HD
 		// Force version to 4
-		{platform: "android", regex: /Silk\/2./, forceVersion: 4},
+		{platform: "android", regex: /Silk\/2./, forceVersion: 4, extra: {silk: 2}},
 		// IE 8 - 10
 		{platform: "ie", regex: /MSIE (\d+)/},
 		// iOS 3 - 5
@@ -59,9 +62,11 @@ enyo.platform = {
 		// Firefox on Android
 		{platform: "androidFirefox", regex: /Android;.*Firefox\/(\d+)/},
 		// desktop Firefox
-		{platform: "firefox", regex: /Firefox\/(\d+)/}
+		{platform: "firefox", regex: /Firefox\/(\d+)/},
+		// Blackberry 10+
+		{platform: "blackberry", regex: /BB1\d;.*Version\/(\d+\.\d+)/}
 	];
-	for (var i = 0, p, m, v; p = platforms[i]; i++) {
+	for (var i = 0, p, m, v; (p = platforms[i]); i++) {
 		m = p.regex.exec(ua);
 		if (m) {
 			if (p.forceVersion) {
@@ -70,6 +75,9 @@ enyo.platform = {
 				v = Number(m[1]);
 			}
 			ep[p.platform] = v;
+			if (p.extra) {
+				enyo.mixin(ep, p.extra);
+			}
 			break;
 		}
 	}

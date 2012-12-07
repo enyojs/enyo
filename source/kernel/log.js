@@ -57,8 +57,12 @@ enyo.logging = {
 	Sets the log level for this window if the input is a real number.
 
 	The log level is used as a watermark to control the amount of logging.
+	Setting the log level lower will prevent logging functions with a higher
+	level from being executed.
 
-	Setting the log level lower will prevent logging functions with a higher level from being executed.
+	The default log level is 99.  <a href="#enyo.log">enyo.log</a> will output
+	if the level is 20 or above, <a href="#enyo.warn">enyo.warn</a> at 10, and
+	<a href="#enyo.error">enyo.error</a> at 0.
 */
 enyo.setLogLevel = function(inLevel) {
 	var ll = parseInt(inLevel, 0);

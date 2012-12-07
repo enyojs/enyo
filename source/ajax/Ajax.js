@@ -11,6 +11,9 @@
 	If you want to use _enyo.Ajax_ as a component, you should probably
 	be using <a href="#enyo.WebService">enyo.WebService</a> instead.
 
+	If you make changes to _enyo.Ajax_, be sure to add or update the appropriate
+	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/ajax/tests).
+
 	For more information, see the documentation on
 	[Consuming Web Services](https://github.com/enyojs/enyo/wiki/Consuming-Web-Services)
 	in the Enyo Developer Guide.
@@ -28,7 +31,32 @@ enyo.kind({
 	},
 	//* @public
 	/**
-		Sends the ajax request with parameters _inParams_.
+    Sends the Ajax request with parameters _inParams_. _inParams_ values may be
+    either Strings or Objects.
+
+    _inParams_ as an Object is converted into the url query string. For
+    instance, passing <code>{q: "searchTerm"}</code> will result in the addition
+    of the string `q="searchTerm"` to the current url query string.
+
+    _inParams_ as a String is used as the request body, and triggers various
+    behaviors depending on the query method.
+
+    * The GET method, since it has no body, translates the string into a
+        parameter. Thus `'q="searchTerm"'` translates into `q=searchTerm` in the
+        url query string.
+
+    * The POST method uses the provided string as its body. However, this will
+        be overridden by the value of _postBody_, if set.
+
+    The use of _inParams_ as a String is discouraged. Instead, set the request
+    body content via _postBody_ and use _inParams_ as an Object to set the query
+    string.
+
+    When the request is completed, the code will set a `xhrResponse` property
+    in the `enyo.Ajax` object with the subproperties `status`, `headers`, and
+    `body`.  These cache the results from the XHR for later use.  The keys for
+    the `headers` object have been converted to all lower case as HTTP headers
+    are case-insensitive.
 	*/
 	go: function(inParams) {
 		this.startTimer();
@@ -41,7 +69,19 @@ enyo.kind({
 		var uri = parts.shift() || "";
 		var args = parts.length ? (parts.join("?").split("&")) : [];
 		//
-		var body = enyo.isString(inParams) ? inParams : enyo.Ajax.objectToQuery(inParams);
+        var body = null;
+        //
+        if(enyo.isString(inParams)){
+            //If inParams parameter is a string, use it as request body
+            body = inParams;
+        }
+        else{
+            //If inParams parameter is not a string, build a query from it
+            if(inParams){
+                body = enyo.Ajax.objectToQuery(inParams);
+            }
+        }
+        //
 		if (this.method == "GET") {
 			if (body) {
 				args.push(body);
@@ -56,17 +96,35 @@ enyo.kind({
 		var url = args.length ? [uri, args.join("&")].join("?") : uri;
 		//
 		var xhr_headers = {};
+		body = this.postBody || body;
 		if (this.method != "GET") {
-			xhr_headers["Content-Type"] = this.contentType;
+			if (this.method === "POST" && body instanceof enyo.FormData) {
+				if (body.fake) {
+					xhr_headers["Content-Type"] = body.getContentType();
+					body = body.toString();
+				} else {
+					// Nothing to do as the
+					// content-type will be
+					// automagically set according
+					// to the FormData
+				}
+			} else {
+				xhr_headers["Content-Type"] = this.contentType;
+			}
 		}
 		enyo.mixin(xhr_headers, this.headers);
+		// don't pass in headers structure if there are no headers defined as this messes
+		// up CORS code for IE8-9
+		if (enyo.keys(xhr_headers).length === 0) {
+			xhr_headers = undefined;
+		}
 		//
 		try {
 			this.xhr = enyo.xhr.request({
 				url: url,
 				method: this.method,
 				callback: enyo.bind(this, "receive"),
-				body: this.postBody || body,
+				body: body,
 				headers: xhr_headers,
 				sync: window.PalmSystem ? false : this.sync,
 				username: this.username,
@@ -83,6 +141,18 @@ enyo.kind({
 	},
 	receive: function(inText, inXhr) {
 		if (!this.failed && !this.destroyed) {
+			var body;
+			if (typeof inXhr.responseText === "string") {
+				body = inXhr.responseText;
+			} else {
+				// IE carrying a binary
+				body = inXhr.responseBody;
+			}
+			this.xhrResponse = {
+				status: inXhr.status,
+				headers: enyo.Ajax.parseResponseHeaders(inXhr),
+				body: body
+			};
 			if (this.isFailure(inXhr)) {
 				this.fail(inXhr.status);
 			} else {
@@ -91,8 +161,9 @@ enyo.kind({
 		}
 	},
 	fail: function(inError) {
-		// on failure, explicitly cancel the XHR to 
-		// prevent further responses
+		// on failure, explicitly cancel the XHR to prevent
+		// further responses.  cancellation also resets the
+		// response headers & body,
 		if (this.xhr) {
 			enyo.xhr.cancel(this.xhr);
 			this.xhr = null;
@@ -162,6 +233,23 @@ enyo.kind({
 				}
 			}
 			return pairs.join("&");
+		},
+		parseResponseHeaders: function(xhr) {
+			var headers = {};
+			var headersStr = [];
+			if (xhr.getAllResponseHeaders) {
+				headersStr = xhr.getAllResponseHeaders().split(/\r?\n/);
+			}
+			for (var i = 0; i < headersStr.length; i++) {
+				var headerStr = headersStr[i];
+				var index = headerStr.indexOf(': ');
+				if (index > 0) {
+					var key = headerStr.substring(0, index).toLowerCase();
+					var val = headerStr.substring(index + 2);
+					headers[key] = val;
+				}
+			}
+			return headers;
 		}
 	}
 });

@@ -9,18 +9,19 @@ enyo.requiresWindow = function(inFunction) {
 
 enyo.dom = {
 	/**
-		
-		Shortcut for _document.getElementById_ if _id_ is a string, otherwise returns _id_. Uses _window.document_ unless a document is specified in the (optional) _doc_ parameter.
+		Shortcut for _document.getElementById_ if _id_ is a string, otherwise returns _id_. 
+		Uses _window.document_ unless a document is specified in the (optional) _doc_
+		parameter.
 
 			// find 'node' if it's a string id, or return it unchanged if it's already a node reference
-			var domNode = enyo.byId(node);
+			var domNode = enyo.dom.byId(node);
 	*/
 	byId: function(id, doc){
 		return (typeof id == "string") ? (doc || document).getElementById(id) : id; 
 	},
 	/**
-		return string with ampersand, less-than, and greater-than characters replaced with HTML entities, 
-		e.g. 
+		return string with ampersand, less-than, and greater-than characters
+		replaced with HTML entities, e.g. 
 
 			'&lt;code&gt;"This &amp; That"&lt;/code&gt;' 
 

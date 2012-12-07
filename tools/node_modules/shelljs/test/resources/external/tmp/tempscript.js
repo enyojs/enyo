@@ -1,0 +1,1 @@
+throw __dirname; require('../../global.js'); silent(false); exec('node -e "console.log(1234);"', {silent:false})

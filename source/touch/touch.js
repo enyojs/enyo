@@ -14,7 +14,6 @@ enyo.requiresWindow(function() {
 	var touchGesture = {
 		_touchCount: 0,
 		touchstart: function(inEvent) {
-			enyo.job.stop("resetGestureEvents");
 			this._touchCount += inEvent.changedTouches.length;
 			this.excludedTarget = null;
 			var e = this.makeEvent(inEvent);
@@ -26,7 +25,7 @@ enyo.requiresWindow(function() {
 		},
 		touchmove: function(inEvent) {
 			enyo.job.stop("resetGestureEvents");
-			// NOTE: allow user to supply a node to exclude from event 
+			// NOTE: allow user to supply a node to exclude from event
 			// target finding via the drag event.
 			var de = gesture.drag.dragEvent;
 			this.excludedTarget = de && de.dragInfo && de.dragInfo.node;
@@ -63,10 +62,13 @@ enyo.requiresWindow(function() {
 			// desktop Chrome, since we're seeing issues in PhoneGap with this
 			// code.
 			this._touchCount -= inEvent.changedTouches.length;
-			if (enyo.platform.chrome && this._touchCount === 0) {
-				enyo.job("resetGestureEvents", function() {
-					gesture.events = oldevents;
-				}, 10);
+		},
+		// use mouseup after touches are done to reset event handling back to default
+		// --this works as long as no one did a preventDefault on the touch events
+		mouseup: function(e) {
+			if (this._touchCount === 0) {
+				this.sawMousedown = false;
+				gesture.events = oldevents;
 			}
 		},
 		makeEvent: function(inEvent) {
@@ -92,7 +94,7 @@ enyo.requiresWindow(function() {
 		findTarget: function(e) {
 			return document.elementFromPoint(e.clientX, e.clientY);
 		},
-		// NOTE: will find only 1 element under the touch and 
+		// NOTE: will find only 1 element under the touch and
 		// will fail if an element is positioned outside the bounding box of its parent
 		findTargetTraverse: function(inNode, inX, inY) {
 			var n = inNode || document.body;
@@ -118,10 +120,10 @@ enyo.requiresWindow(function() {
 			enyo.forEach(['ontouchstart', 'ontouchmove', 'ontouchend', 'ongesturestart', 'ongesturechange', 'ongestureend'], function(e) {
 				document[e] = enyo.dispatch;
 			});
-			// use proper target finding technique based on feature detection.
-			if (enyo.platform.androidChrome <= 18) {
+			if (enyo.platform.androidChrome <= 18 || enyo.platform.silk === 2) {
 				// HACK: on Chrome for Android v18 on devices with higher density displays,
 				// document.elementFromPoint expects screen coordinates, not document ones
+				// bug also appears on Kindle Fire HD
 				this.findTarget = function(e) {
 					return document.elementFromPoint(e.screenX, e.screenY);
 				};

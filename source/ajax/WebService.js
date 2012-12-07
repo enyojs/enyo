@@ -20,6 +20,9 @@ enyo.kind({
 	
 	To use `enyo.JsonpRequest` instead of `enyo.Ajax`, set `json` to `true`. 
 
+	If you make changes to _enyo.WebService_, be sure to add or update the
+	appropriate [unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/ajax/tests).
+	
 	For more information, see the documentation on
 	[Consuming Web Services](https://github.com/enyojs/enyo/wiki/Consuming-Web-Services)
 	in the Enyo Developer Guide.	
@@ -41,7 +44,12 @@ enyo.kind({
 			When using JSONP, optional character set to use to interpret the
 			return data
 		*/
-		charset: null
+		charset: null,
+		/**
+			If set to a non-zero value, the number of milliseconds to
+			wait after the _send_ call before failing with a "timeout" error
+		*/
+		timeout: 0
 	},
 	events: {
 		/**
@@ -74,7 +82,7 @@ enyo.kind({
 	//* @protected
 	sendJsonp: function(inParams) {
 		var jsonp = new enyo.JsonpRequest();
-		for (var n in {'url':1, 'callbackName':1, 'charset':1}) {
+		for (var n in {'url':1, 'callbackName':1, 'charset':1, 'timeout':1}) {
 			jsonp[n] = this[n];
 		}
 		return this.sendAsync(jsonp, inParams);
@@ -84,6 +92,7 @@ enyo.kind({
 		for (var n in enyo.AjaxProperties) {
 			ajax[n] = this[n];
 		}
+		ajax.timeout = this.timeout;
 		return this.sendAsync(ajax, inParams);
 	},
 	sendAsync: function(inAjax, inParams) {

@@ -5,6 +5,9 @@
 	obviously controls, in Enyo, a control may become as complex as an entire
 	application.
 
+	If you make changes to _enyo.Control_, be sure to add or update the	appropriate
+	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
+
 	For more information, see the documentation on
 	<a href="https://github.com/enyojs/enyo/wiki/Creating-Controls">Controls</a>
 	in the Enyo Developer Guide.
@@ -147,11 +150,11 @@ enyo.kind({
 	/**
 		Returns the DOM node representing the control.
 		If the control is not currently rendered, returns null.
-		
-		If hasNode() returns a value, the _node_ property will be valid and 
+
+		If hasNode() returns a value, the _node_ property will be valid and
 		can be checked directly.
-		
-		Once hasNode() is called, the returned value is made available in 
+
+		Once hasNode() is called, the returned value is made available in
 		the _node_ property of this control.
 
 		A control will only return a node if it has been rendered.
@@ -229,7 +232,7 @@ enyo.kind({
 		}
 	},
 	/**
-		Convenience function for setting the _class_ attribute. 
+		Convenience function for setting the _class_ attribute.
 		The _class_ attribute represents the CSS classes assigned to this object;
 		it is a string that can contain multiple CSS classes separated by spaces.
 
@@ -239,7 +242,7 @@ enyo.kind({
 		this.setAttribute("class", inClass);
 	},
 	/**
-		Convenience function for getting the _class_ attribute. 
+		Convenience function for getting the _class_ attribute.
 		The _class_ attribute represents the CSS classes assigned to this object;
 		it is a string that can contain multiple CSS classes separated by spaces.
 
@@ -278,7 +281,7 @@ enyo.kind({
 		Removes substring _inClass_ from the _class_ attribute of this object.
 
 		_inClass_ must have no leading or trailing spaces.
-		
+
 		Using a compound class name is supported, but the name is treated
 		atomically. For example, given _"a b c"_, _removeClass("a b")_ will
 		produce _"c"_, but _removeClass("a c")_ will produce _"a b c"_.
@@ -321,9 +324,9 @@ enyo.kind({
 		// We may need a 'runtimeStyles' concept separate from a 'userStyles' concept, although
 		// it's not clear what API calls like 'applyStyle' would affect, and which concept would take
 		// precedence when there is a conflict.
-		// Perhaps we can separate 'style' completely from 'domStyles'. API methods like applyStyle 
+		// Perhaps we can separate 'style' completely from 'domStyles'. API methods like applyStyle
 		// would affect domStyles, and the two style databases would be combined at render-time.
-		// Alternatively, we can disallow changing "style" string at runtime and allow it to be set 
+		// Alternatively, we can disallow changing "style" string at runtime and allow it to be set
 		// at init-time only (as it was in pre-ares enyo).
 		//this.domStyles = {};
 		//this.addStyles(this.kindStyle);
@@ -387,9 +390,11 @@ enyo.kind({
 		the css rule -webkit-overflow-scrolling: touch, as it is
 		not supported in Android and leads to overflow issues
 		(ENYO-900 and ENYO-901)
+		Similarly, BB10 has issues repainting out-of-viewport content
+		when -webkit-overflow-scrolling is used (ENYO-1396)
 	*/
 	setupOverflowScrolling: function() {
-		if(enyo.platform.android || enyo.platform.androidChrome)
+		if(enyo.platform.android || enyo.platform.androidChrome || enyo.platform.blackberry)
 			return;
 		document.getElementsByTagName("body")[0].className += " webkitOverflowScrolling";
 	},
@@ -415,10 +420,15 @@ enyo.kind({
 			}
 			if (this.hasNode()) {
 				this.renderDom();
-				this.rendered();
+				if (this.generated) {
+					this.rendered();
+				}
 			}
 		} else {
 			this.renderNullTag();
+			if (this.generated) {
+				this.rendered();
+			}
 		}
 		// return 'this' to support method chaining
 		return this;
@@ -438,12 +448,16 @@ enyo.kind({
 		} else if (this.fit) {
 			this.addClass("enyo-fit enyo-clip");
 		}
+		// for IE10 support, we want full support over touch actions in Enyo-rendered areas
+		this.addClass("enyo-no-touch-action");
 		// add css to enable hw-accelerated scrolling on non-Android platforms (ENYO-900, ENYO-901)
 		this.setupOverflowScrolling();
 		// generate our HTML
 		pn.innerHTML = this.generateHtml();
 		// post-rendering tasks
-		this.rendered();
+		if (this.generated) {
+			this.rendered();
+		}
 		// support method chaining
 		return this;
 	},
@@ -461,11 +475,15 @@ enyo.kind({
 		if (this.fit) {
 			this.setupBodyFitting();
 		}
+		// for IE10 support, we want full support over touch actions in Enyo-rendered areas
+		this.addClass("enyo-no-touch-action");
 		// add css to enable hw-accelerated scrolling on non-Android platforms (ENYO-900, ENYO-901)
 		this.setupOverflowScrolling();
 		document.write(this.generateHtml());
 		// post-rendering tasks
-		this.rendered();
+		if (this.generated) {
+			this.rendered();
+		}
 		// support method chaining
 		return this;
 	},
@@ -482,7 +500,9 @@ enyo.kind({
 		// post-render layout work *and* post-resize layout work.
 		this.reflow();
 		for (var i=0, c; (c=this.children[i]); i++) {
-			c.rendered(); 
+			if (c.generated) {
+				c.rendered();
+			}
 		}
 	},
 	/**
@@ -579,7 +599,7 @@ enyo.kind({
 		// but that has not actually happened at this point.
 		// We set 'generated = true' here anyway to avoid having to walk the
 		// control tree a second time (to set it later).
-		// The contract is that insertion in DOM will happen synchronously 
+		// The contract is that insertion in DOM will happen synchronously
 		// to generateHtml() and before anybody should be calling hasNode().
 		this.generated = true;
 		return h;
@@ -598,7 +618,7 @@ enyo.kind({
 		var results = '';
 		for (var i=0, c; (c=this.children[i]); i++) {
 			var h = c.generateHtml();
-			results += h; 
+			results += h;
 		}
 		return results;
 	},
@@ -775,7 +795,7 @@ enyo.kind({
 			Returns passed-in string with ampersand, less-than, and greater-than
 			characters replaced by HTML entities, e.g.,
 			'&lt;code&gt;"This &amp; That"&lt;/code&gt;' becomes
-			'&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;' 
+			'&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;'
 		*/
 		escapeHtml: function(inText) {
 			return inText != null ? String(inText).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
@@ -823,7 +843,7 @@ enyo.kind({
 		/**
 			Returns passed-in string with ampersand and double quote characters
 			replaced by HTML entities, e.g., 'hello from "Me & She"' becomes
-			'hello from &amp;quot;Me &amp;amp; She&amp;quot;' 
+			'hello from &amp;quot;Me &amp;amp; She&amp;quot;'
 		*/
 		escapeAttribute: function(inText) {
 			return !enyo.isString(inText) ? inText : String(inText).replace(/&/g,'&amp;').replace(/\"/g,'&quot;');
@@ -851,8 +871,8 @@ enyo.Control.subclass = function(ctor, props) {
 	// at kind declaration time, in the interest of efficiency
 	// and ease of use.
 	//
-	// However, the properties are no longer 'live' in prototypes 
-	// because of this magic--i.e., changes to the prototype of 
+	// However, the properties are no longer 'live' in prototypes
+	// because of this magic--i.e., changes to the prototype of
 	// a Control subclass will not necessarily be reflected in
 	// instances of that control (e.g., chained prototypes).
 	//
@@ -861,7 +881,7 @@ enyo.Control.subclass = function(ctor, props) {
 	//
 	var proto = ctor.prototype;
 	//
-	// 'kindClasses' comes either from our inheritance chain (e.g., proto's prototype chain) 
+	// 'kindClasses' comes either from our inheritance chain (e.g., proto's prototype chain)
 	// or has been forced by a kind declaration.
 	//
 	if (proto.classes) {
