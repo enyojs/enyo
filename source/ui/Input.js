@@ -67,6 +67,11 @@ enyo.kind({
 
 		enyo.makeBubble(this, "focus", "blur");
 
+		//Force onchange event to be bubbled inside Enyo for IE8
+		if(enyo.platform.ie == 8){
+      		this.setAttribute("onchange", enyo.bubbler);
+      	}
+
 		this.disabledChanged();
 		if (this.defaultFocus) {
 			this.focus();
