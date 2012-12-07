@@ -11,7 +11,7 @@ enyo.xhr = {
 		- _method_: The HTTP method to use for the request. Defaults to GET.
 		- _callback_: Called when request is completed. (Optional)
 		- _body_: Specific contents for the request body for POST method. (Optional)
-		- _headers_: Additional request headers. (Optional)
+		- _headers_: Additional request headers. (Optional).  Given headers override the ones that Enyo may set by default (`null` explictly removing the header from the AJAX request).
 		- _username_: The optional user name to use for authentication purposes.
 		- _password_: The optional password to use for authentication purposes.
 		- _xhrFields_: Optional object containing name/value pairs to mix directly into the generated xhr object.
@@ -34,9 +34,22 @@ enyo.xhr = {
 		if (inParams.callback) {
 			this.makeReadyStateHandler(xhr, inParams.callback);
 		}
-		if (inParams.headers && xhr.setRequestHeader) {
+		//
+		inParams.headers = inParams.headers || {};
+		// work around iOS 6 bug where non-GET requests are cached
+		// see http://www.einternals.com/blog/web-development/ios6-0-caching-ajax-post-requests
+		// not sure (yet) wether this will be required for later ios releases
+		if (method !== "GET" && enyo.platform.ios && enyo.platform.ios >= 6) {
+			if (inParams.headers["cache-control"] !== null) {
+				inParams.headers["cache-control"] = inParams.headers['cache-control'] || "no-cache";
+			}
+		}
+		// user-set headers override any platform-default
+		if (xhr.setRequestHeader) {
 			for (var key in inParams.headers) {
-				xhr.setRequestHeader(key, inParams.headers[key]);
+				if (inParams.headers[key]) {
+					xhr.setRequestHeader(key, inParams.headers[key]);
+				}
 			}
 		}
 		//

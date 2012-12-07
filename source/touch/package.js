@@ -8,6 +8,7 @@ enyo.depends(
 	"Thumb.js",
 	"TouchScrollStrategy.js",
 	"TranslateScrollStrategy.js",
+	"TransitionScrollStrategy.js",
 	"Scroller.js",
 	"Scroller.css"
 );

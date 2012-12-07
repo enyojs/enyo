@@ -24,7 +24,7 @@
 		// infer the framework path from the document, unless the user has specified one explicitly
 		enyo.args.root = (enyo.args.root || tag.path).replace("/source", "");
 		// all attributes of the bootstrap script tag become enyo.args
-		for (var i=0, it; (it = tag.node.attributes.item(i)); i++) {
+		for (var i=0, al = tag.node.attributes.length, it; (i < al) && (it = tag.node.attributes.item(i)); i++) {
 			enyo.args[it.nodeName] = it.value;
 		}
 	}

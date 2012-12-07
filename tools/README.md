@@ -1,6 +1,6 @@
 # Enyo Minifier
 
-The enyo minifier uses NodeJS, [UglifyJS](http://github.com/mishoo/uglifyjs) and the enyo dependency loader to compress any enyo package into a minimized form.
+The enyo minifier uses Node.js, [UglifyJS](http://github.com/mishoo/uglifyjs) and the enyo dependency loader to compress any enyo package into a minimized form.
 
 ## Invocation
 For convenience, there are both Windows and Unix versions of the script that invokes the node tool.
@@ -19,5 +19,5 @@ For convenience, packages should include a `minify` folder with both a Windows b
 
 ## Running tests
 1. You first need to install an http server handling php (MANP or WAMP, ...)
-2. Configure your http server to server the files of the enyo project
-3. Point your browser to enyo/tools/... to run the various testcases.
+2. Configure your http server to serve the files of the enyo project
+3. Point your browser to enyo/tools/... to run the various testcases

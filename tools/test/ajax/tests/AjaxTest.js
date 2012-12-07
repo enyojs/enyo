@@ -11,6 +11,7 @@ enyo.kind({
 				if (!inAssertErrFn) {
 					this.finish("bad status: " + inError.toString());
 					enyo.error(inError);
+					enyo.error(inError.stack);
 				} else {
 					this.finish(inAssertErrFn.call(null, inError) ? "" : "bad response: " + inError);
 				}
@@ -82,6 +83,30 @@ enyo.kind({
 			return inValue.ctype == contentType;
 		});
 	},
+	testCacheControlOn: function() {
+		var contentType = "application/x-www-form-urlencoded";
+		this._testAjax({url: "php/test4.php", method: "POST", postBody: "data"}, null, function(inValue) {
+			if (enyo.platform.ios && enyo.platform.ios >= 6) {
+				var status = inValue.cacheCtrl && (inValue.cacheCtrl.indexOf('no-cache') === 0);
+				if (!status) {
+					enyo.log("Bad Cache-Control: " + inValue.cacheCtrl + " expected: " + "no-cache");
+				}
+				return status;
+			} else {
+				return true;
+			}
+		});
+	},
+	testCacheControlOff: function() {
+		var contentType = "application/x-www-form-urlencoded";
+		this._testAjax({url: "php/test4.php", method: "POST", postBody: "data", headers: {'cache-control': null} }, null, function(inValue) {
+			var status = (inValue.cacheCtrl === null);
+			if (!status) {
+				enyo.log("Bad Cache-Control: " + inValue.cacheCtrl + " expected: " + undefined);
+			}
+			return status;
+		});
+	},
 	testContentTypeDefault: function() {
 		var contentType = "application/x-www-form-urlencoded";
 		this._testAjax({url: "php/test4.php", method: "POST", postBody: "data"}, null, function(inValue) {
@@ -92,24 +117,34 @@ enyo.kind({
 			return status;
 		});
 	},
-	testContentTypeFormData: function() {
-		if (window.FormData) {
-			var formData = new FormData();
-			formData.append('token', "data");
-			var contentType = "multipart/form-data";
-			this._testAjax({url: "php/test4.php", method: "POST", postBody: formData}, null, function(inValue) {
-				var status = (inValue.ctype.indexOf(contentType) === 0) &&
-								(inValue.ctype.indexOf("boundary=--") > 10);
-				if (!status) {
-					enyo.log("Bad CT: " + inValue.ctype + " expected: " + contentType);
-				}
-				return status;
-			});
-		} else {
-			// We are probably on IE which does not support XHR2 and FormData before IE 10
-			// See http://caniuse.com/#search=xhr2
-			this.finish("");
-		}
+	testContentTypeFormDataField: function() {
+		var formData = new enyo.FormData();
+		formData.append('token', "data");
+		var contentType = "multipart/form-data";
+		this._testAjax({url: "php/test4.php", method: "POST", postBody: formData}, null, function(inValue) {
+			var status = (inValue.ctype.indexOf(contentType) === 0) &&
+				    (inValue.ctype.indexOf("boundary=--") > 10);
+			if (!status) {
+				enyo.log("Bad CT: " + inValue.ctype + " expected: " + contentType);
+			}
+			return status;
+		});
+	},
+	testContentTypeFormDataFile: function() {
+		var formData = new enyo.FormData();
+		var file = new enyo.Blob(["Some Random File Content!", "And some more..."], {
+		    name: "myFile"
+		});
+		formData.append('file', file);
+		var contentType = "multipart/form-data";
+		this._testAjax({url: "php/test4.php", method: "POST", postBody: formData}, null, function(inValue) {
+			var status = (inValue.ctype.indexOf(contentType) === 0) &&
+				    (inValue.ctype.indexOf("boundary=--") > 10);
+			if (!status) {
+				enyo.log("Bad CT: " + inValue.ctype + " expected: " + contentType);
+			}
+			return status;
+		});
 	},
 	testXhrStatus: function() {
 		var ajax = this._testAjax({url: "php/test2.php"}, null, function(inValue) {
@@ -159,7 +194,7 @@ enyo.kind({
 			return (inError === 500) && 
 				req.xhrResponse && 
 				(req.xhrResponse.status === 500) &&
-				(req.xhrResponse.headers['Content-Type'] === "text/plain; charset=utf-8") &&
+				(req.xhrResponse.headers['content-type'] === "text/plain; charset=utf-8") &&
 				(req.xhrResponse.body === "my error description");
 		});
 	}
