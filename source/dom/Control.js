@@ -103,8 +103,8 @@ enyo.kind({
 	
 	destroy: function() {
 	  if (this.controller) {
-	    this.constroller.destroy();
-	    this.constroller = null;
+	    this.controller.destroy();
+	    this.controller = null;
     }
 		this.removeNodeFromDom();
 		enyo.Control.unregisterDomEvents(this.id);
