@@ -11,7 +11,7 @@
   enyo.getPath = function () {
     var args, cur, path, i = 0, val, part, def;
     if (arguments.length === 0) return undefined;  
-    if (!enyo.isString(arguments[0])) return undefined;
+    if (!enyo.isString(arguments[0])) return arguments[0];
     args = arguments;
     path = args[0];
     cur = this === enyo && args[1] !== true? window: this;
