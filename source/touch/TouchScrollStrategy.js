@@ -179,7 +179,7 @@ enyo.kind({
 	//* Scrolls to specific x/y positions within the scroll area.
 	scrollTo: function(inX, inY) {
 		this.stop();
-		this.$.scrollMath.scrollTo(inY || inY === 0 ? inY : null, inX);
+		this.$.scrollMath.scrollTo(inX, inY || inY === 0 ? inY : null);
 	},
 	scrollIntoView: function() {
 		this.stop();
