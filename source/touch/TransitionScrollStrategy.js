@@ -518,5 +518,11 @@ enyo.kind({
 		} else {
 			this.stop();
 		}
+	},
+	//* Scroll to the specified x and y coordinates
+	scrollTo: function(inX, inY) {
+		this.setScrollTop(-1*inY);
+		this.setScrollLeft(-1*inX);
+		this.start();
 	}
 });
