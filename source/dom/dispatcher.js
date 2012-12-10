@@ -32,7 +32,7 @@ enyo.dispatcher = {
 				inListener.addEventListener(inEventName, inHandler || d, false);
 			};
 		} else {
-			//console.log("IE8 COMPAT: using 'attachEvent'");
+			//enyo.log("IE8 COMPAT: using 'attachEvent'");
 			this.listen = function(inListener, inEvent, inHandler) {
 				inListener.attachEvent("on" + inEvent, function(e) {
 					e.target = e.srcElement;
