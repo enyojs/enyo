@@ -5,7 +5,7 @@
 	<!-- -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<!-- -->
-	<script src="../enyo.js" type="text/javascript"></script>
+	<script src="../../enyo/enyo.js" type="text/javascript"></script>
 	<script src="../../lib/canvas/package.js" type="text/javascript"></script>
 	<script src="../../lib/layout/package.js" type="text/javascript"></script>
 	<script src="../../lib/onyx/package.js" type="text/javascript"></script>
@@ -15,9 +15,9 @@
 	<script src="Playground.js" type="text/javascript"></script>
 	<!-- -->
 </head>
-<body>
+<body class="onyx">
 <script type="text/javascript">
-	new enyo.sample.Playground().write();
+	new enyo.sample.Playground().renderInto(document.body);
 </script>
 </body>
 </html>
