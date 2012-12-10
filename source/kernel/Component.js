@@ -205,7 +205,7 @@ enyo.kind({
 				enyo.log(x.stack);
 			}
 			*/
-			/*this.warn() &&*/ //console.warn('Duplicate component name "' + n + '" violates unique-name-under-owner rule, replacing existing component in the hash and continuing, but this is an error condition and should be fixed.');
+			/*this.warn() &&*/ //enyo.warn('Duplicate component name "' + n + '" violates unique-name-under-owner rule, replacing existing component in the hash and continuing, but this is an error condition and should be fixed.');
 			//}
 		}
 		this.$[n] = inComponent;
@@ -465,7 +465,7 @@ enyo.create = enyo.Component.create = function(inConfig) {
 	var kind = inConfig.kind || inConfig.isa || enyo.defaultCtor;
 	var ctor = enyo.constructorForKind(kind);
 	if (!ctor) {
-		console.error('no constructor found for kind "' + kind + '"');
+		enyo.error('no constructor found for kind "' + kind + '"');
 		ctor = enyo.Component;
 	}
 	return new ctor(inConfig);

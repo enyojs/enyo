@@ -160,7 +160,7 @@ enyo.kind({
 		A control will only return a node if it has been rendered.
 
 			if (this.hasNode()) {
-				console.log(this.node.nodeType);
+				enyo.log(this.node.nodeType);
 			}
 	*/
 	hasNode: function() {
@@ -518,7 +518,7 @@ enyo.kind({
 		Values returned are only valid if _hasNode()_ is truthy.
 
 			var bounds = this.getBounds();
-			console.log(bounds.width);
+			enyo.log(bounds.width);
 	*/
 	getBounds: function() {
 		var n = this.node || this.hasNode() || 0;
