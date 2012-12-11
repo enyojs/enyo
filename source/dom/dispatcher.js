@@ -7,6 +7,8 @@ enyo.dispatcher = {
 		"click", "dblclick", "change", "keydown", "keyup", "keypress", "input"],
 	// these events come from window
 	windowEvents: ["resize", "load", "unload", "message"],
+	// these events come from css
+	cssEvents: ["webkitTransitionEnd"],
 	// feature plugins (aka filters)
 	features: [],
 	connect: function() {
@@ -23,6 +25,9 @@ enyo.dispatcher = {
 			}
 
 			d.listen(window, n);
+		}
+		for (i=0; (n=d.cssEvents[i]); i++) {
+			d.listen(document, n);
 		}
 	},
 	listen: function(inListener, inEventName, inHandler) {
