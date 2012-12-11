@@ -51,7 +51,7 @@ enyo.kind({
 	//* X Distance to scroll into overscroll space before bouncing back
 	deltaX:0,
 	//* Y Distance to scroll into overscroll space before bouncing back
-	deltaY:0,
+	boundaryY:0,
 	//* Timeout used to stop scrolling on mousedown
 	stopTimeout: null,
 	//* MS delay used to stop scrolling on mousedown
@@ -77,6 +77,9 @@ enyo.kind({
 		this.stop();
 		this.scrollTop = inTop;
 		this.effectScroll();
+	},
+	setScrollY: function(inTop) {
+		this.scrollTop = -1*inTop;
 	},
 	
 	//* Gets the left scroll position within the scroller.
@@ -143,7 +146,13 @@ enyo.kind({
 		return (x > this.leftBoundary || x < this.rightBoundary);
 	},
 	isInOverScrollY: function() {
-		return (this.scrollTop < this.topBoundary || this.scrollTop*-1 < this.bottomBoundary);
+		return (this.isInTopOverScrollY() || this.isInBottomOverScrollY());
+	},
+	isInTopOverScrollY: function() {
+		return (this.scrollTop < this.topBoundary);
+	},
+	isInBottomOverScrollY: function() {
+		return (this.scrollTop*-1 < this.bottomBoundary);
 	},
 	calcStartInfo: function() {
 		var sb = this.getScrollBounds(), y = this.getScrollTop(), x = this.getScrollLeft();
@@ -380,12 +389,12 @@ enyo.kind({
 	},
 	// Determine if we're overscrolled on the y axis and if so return proper edge value
 	correctOverflowY: function() {
-		if(this.scrollTop < this.topBoundary) {
-			if(this.beyondBoundary(this.scrollTop, this.topBoundary, this.deltaY)) {
+		if(this.isInTopOverScrollY()) {
+			if(this.beyondBoundary(this.scrollTop, this.topBoundary, this.boundaryY)) {
 				return this.topBoundary;
 			}
-		} else if(this.scrollTop*-1 < this.bottomBoundary) {
-			if(this.beyondBoundary(this.scrollTop, this.bottomBoundary, this.deltaY)) {
+		} else if(this.isInBottomOverScrollY()) {
+			if(this.beyondBoundary(this.scrollTop, this.bottomBoundary, this.boundaryY)) {
 				return -1*this.bottomBoundary;
 			}
 		}
@@ -402,22 +411,20 @@ enyo.kind({
 			this.scrollTop = this.vertical ? this.calculateFlickDistance(this.scrollTop, -1*e.yVelocity) : this.scrollTop;
 			this.scrollleft = this.horizontal ? this.calculateFlickDistance(this.scrollLeft, -1*e.xVelocity) : this.scrollLeft;
 			this.deltaX = null;
-			this.deltaY = null;
+			this.boundaryY = null;
 			// if flick will put the x axis into overscroll, figure where we should bounce back (deltaX)
 			if(this.isInOverScrollX()) {
 				if(this.x < this.leftBoundary) {
-					this.deltaX = this.figureDelta(this.leftBoundary - this.x);
+					this.deltaX = this.figureBoundary(this.leftBoundary - this.x);
 				} else {
-					this.deltaX = this.figureDelta(this.x);
+					this.deltaX = this.figureBoundary(this.x);
 				}
 			}
-			// if flick will put the y axis into overscroll, figure where we should bounce back (deltaY)
-			if(this.isInOverScrollY()) {
-				if(this.scrollTop < this.bottomBoundary) {
-					this.deltaY = this.figureDelta(this.bottomBoundary - this.scrollTop);
-				} else {
-					this.deltaY = this.figureDelta(this.scrollTop);
-				}
+			// if flick will put the y axis into overscroll, figure where we should bounce back (boundary)
+			if(this.isInTopOverScrollY()) {
+				this.boundaryY = this.figureBoundary(this.scrollTop);
+			} else if(this.isInBottomOverScrollY()) {
+				this.boundaryY = this.figureBoundary(-1*this.bottomBoundary - this.scrollTop);
 			}
 			// kickoff scrolling animation
 			this.startScrolling();
@@ -496,10 +503,11 @@ enyo.kind({
 		this.effectScroll();
 	},
 	// Figure how far into the overscroll region we should go before bouncing back
-	figureDelta: function(target) {
-		var kLimit = 200;
-		var kMultiplier = 5;
-		return kLimit - -1*target*kLimit*kMultiplier/Math.pow(-1*target,1);
+	figureBoundary: function(target) {
+		var absTarget = Math.abs(target);
+		var retVal = absTarget - absTarget/Math.pow(absTarget,0.02);
+		retVal = target < 0 ? -1*retVal : retVal;
+		return retVal;
 	},
 	// When transition animation is complete, check if we need to bounce back from overscroll
 	// region. If not, stop.
