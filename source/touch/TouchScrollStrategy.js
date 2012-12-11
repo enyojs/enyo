@@ -73,6 +73,8 @@ enyo.kind({
 	components: [
 		{name: "client", classes: "enyo-touch-scroller"}
 	],
+	// flag telling us whether the list is currently reordering
+	listReordering: false,
 	create: function() {
 		this.inherited(arguments);
 		this.transform = enyo.dom.canTransform();
@@ -275,6 +277,10 @@ enyo.kind({
 		}
 	},
 	drag: function(inSender, inEvent) {
+		// if the list is doing a reorder, don't scroll
+		if(this.listReordering) {
+			return false;
+		}
 		if (this.dragging) {
 			inEvent.preventDefault();
 			this.$.scrollMath.drag(inEvent);
