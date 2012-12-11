@@ -26,7 +26,7 @@ enyo.kind({
 	create: function() {
 		this.inherited(arguments);
 		this.$.uaString.setContent(navigator.userAgent);
-		this.$.enyoPlatformJSON.setContent(JSON.stringify(enyo.platform));
+		this.$.enyoPlatformJSON.setContent(JSON.stringify(enyo.platform, null, 1));
 		this.updateWindowSize();
 	},
 	resizeHandler: function() {
