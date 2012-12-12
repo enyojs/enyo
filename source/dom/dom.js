@@ -69,6 +69,20 @@ enyo.dom = {
 		}
 		return 320;
 	},
+	getWindowHeight: function() {
+		if (window.innerHeight) {
+			return window.innerHeight;
+		}
+		if (document.body && document.body.offsetHeight) {
+			return document.body.offsetHeight;
+		}
+		if (document.compatMode=='CSS1Compat' &&
+			document.documentElement &&
+			document.documentElement.offsetHeight ) {
+			return document.documentElement.offsetHeight;
+		}
+		return 480;
+	},
 	// moved from FittableLayout.js into common protected code
 	_ieCssToPixelValue: function(inNode, inValue) {
 		var v = inValue;
@@ -132,8 +146,8 @@ enyo.dom = {
 			node = inNode,
 			width = node.offsetWidth,
 			height = node.offsetHeight,
-			docHeight = document.body.offsetHeight,
-			docWidth = document.body.offsetWidth,
+			docHeight = (document.body.parentNode.offsetHeight > this.getWindowHeight() ? this.getWindowHeight() - document.body.parentNode.scrollTop : document.body.parentNode.offsetHeight),
+			docWidth = (document.body.parentNode.offsetWidth > this.getWindowWidth() ? this.getWindowWidth() - document.body.parentNode.scrollLeft : document.body.parentNode.offsetWidth),
 			transformProp = enyo.dom.getStyleTransformProp(),
 			xregex = /translateX\((-?\d+)px\)/i,
 			yregex = /translateY\((-?\d+)px\)/i;
