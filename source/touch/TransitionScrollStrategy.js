@@ -144,13 +144,21 @@ enyo.kind({
 		return (this.getScrollLeft() < this.leftBoundary);
 	},
 	isInRightOverScroll: function() {
-		return (this.getScrollLeft()*-1 < this.rightBoundary);
+		if(this.getScrollLeft <= 0) {
+			return false;
+		} else {
+			return (this.getScrollLeft()*-1 < this.rightBoundary);
+		}
 	},
 	isInTopOverScroll: function() {
 		return (this.getScrollTop() < this.topBoundary);
 	},
 	isInBottomOverScroll: function() {
-		return (this.getScrollTop()*-1 < this.bottomBoundary);
+		if(this.getScrollTop() <= 0) {
+			return false;
+		} else {
+			return (this.getScrollTop()*-1 < this.bottomBoundary);
+		}
 	},
 	calcStartInfo: function() {
 		var sb = this.getScrollBounds(), y = this.getScrollTop(), x = this.getScrollLeft();
