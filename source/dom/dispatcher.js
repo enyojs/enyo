@@ -16,6 +16,9 @@ enyo.dispatcher = {
 		for (i=0; (n=d.events[i]); i++) {
 			d.listen(document, n);
 		}
+		for (i=0; (n=d.cssEvents[i]); i++) {
+			d.listen(document, n);
+		}
 		for (i=0; (n=d.windowEvents[i]); i++) {
 			// Chrome Packaged Apps don't like "unload"
 			if(n === "unload" && 
