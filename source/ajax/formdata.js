@@ -51,7 +51,7 @@ _enyo.FormData_ is inspired by
 	FormData.prototype.toString = function() {
 		var boundary = this.boundary;
 		var body = "";
-		this._fields.forEach(function(field) {
+		enyo.forEach(this._fields, function(field) {
 			body += "--" + boundary + "\r\n";
 			if (field[2] || field[1].name) {
 				// file upload
