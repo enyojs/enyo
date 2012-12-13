@@ -53,13 +53,18 @@
       if (!(t instanceof enyo.Object))
         return enyo.warn("enyo.Mixin: cannot apply mixin to non-object");
       this.target = t; // this is here for a reason!
+      
+      var mixins = t._appliedMixins;
+      if (-1 !== mixins.indexOf(this.name)) return;
+      else mixins.push(this.name);
+      
       // extend the object by the appropriate methods and properties
       t.extend(this.get("extension"));
       if (this.destroyMixin && enyo.isFunction(this.destroyMixin)) {
         this.injectDestroy();
       }
       if (this.initMixin) this.initMixin.call(t);
-      (function (a, m) {a.push(m.name)})((t._mixins || (t._mixins = [])), this);
+      //(function (a, m) {a.push(m.name)})((t._mixins || (t._mixins = [])), this);
       this.target = null;
     },
     injectDestroy: function () {

@@ -130,10 +130,12 @@ enyo.kind({
   _bindings: null,
   _computed: null,
   _observers: null,
+  _appliedMixins: null,
 
   //*@protected
   initMixins: function () {
     var exts = this.mixins, fn;
+    this._appliedMixins = [];
     if (!exts) return;
     enyo.forEach(exts, this.prepareMixin, this);
   },
@@ -372,54 +374,30 @@ enyo.kind({
       return enyo.setPath.apply(this, arguments);
     },
     
+    
     //*@public
     /**
-      Extend an instance of an _enyo.Object_ (or any subclass) with any
-      of the properties and functions in a hash or _enyo.Mixin_ that is
-      passed in. Takes a variable number of arguments.
-      
-      Common static properties are not preserved and will be overwritten.
-      
-      Methods are handled various ways depending on some options. For any
-      hash or _enyo.Mixin_ that has a _name_ property (assumed to be unique!)
-      and a _preserve_ property that is set to _true_ will have their method
-      inserted into the _stored_ hash of the _enyo.Object_ being extended if
-      the base class already has a method with that name.They are keyed by 
-      the _name_ property of the hash or _enyo.Mixin_ and refereced by their 
-      property name.
-      
-      Ex.
-      
-      TODO: Show example...
-      
-      Normally, common methods are inserted at the front of the inheritance
-      chain. If _this.inherited(arguments)_ is called from within one of these
-      methods it will call the original as expected.
-      
-      A _preserveAll_ property set to true on the extension will force the
-      _extend_ method to push all functions into the _stored_ hash of the
-      _enyo.Object_ being extended.
     */
     extend: function () {
-      var args = enyo.toArray(arguments), ext, k, prop;
-      while (args.length && (ext = args.shift())) {
-        // if the extension is a mixin, send it straight to
-        // the special handler
-        if (ext.isMixin || enyo.isFunction(ext)) {
-          this._extendMixin(ext);
-        } else {
-          for (k in ext) {
-            if (!ext.hasOwnProperty(k)) continue;
-            prop = ext[k];
-            if (enyo.isString(prop)) {
-              // simply apply the property
-              this[k] = prop;
-            } else if (enyo.isFunction(prop)) {
-              this._extendMethod(k, prop, ext);
+        var args = enyo.toArray(arguments);
+        var ext;
+        var key;
+        var prop;
+        while (args.length && (ext = args.shift())) {
+            if (ext.isMixin || "function" === typeof ext) {
+                this._extendMixin(ext);
+            } else {
+                for (key in ext) {
+                    if (!ext.hasOwnProperty(key)) continue;
+                    prop = ext[key];
+                    if ("string" === typeof prop) {
+                        this[key] = prop;
+                    } else if ("function" === typeof prop) {
+                        this._extendMethod(key, prop, ext);
+                    }
+                }
             }
-          }
         }
-      }
     },
     
     //*@protected

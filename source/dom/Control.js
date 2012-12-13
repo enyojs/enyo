@@ -91,14 +91,17 @@ enyo.kind({
 		this.addClass(this.classes);
 		this.initProps(["id", "content", "src", "controller"]);
 		this._setupBindings();
+		// because when mixins are initially checked it would not catch
+		// mixins set on component-block definitions we check again
+		this.initMixins();
 	},
 	
-  // overload to keep the enyo.Object._setup method from attempting
-  // to create bindings to view properties that are not yet
-  // initialized/setup
+    // overload to keep the enyo.Object._setup method from attempting
+    // to create bindings to view properties that are not yet
+    // initialized/setup
 	_setup: function () {
-    this._setupObservers();
-    this._setupComputed();
+        this._setupObservers();
+        this._setupComputed();
 	},
 	
 	destroy: function() {
