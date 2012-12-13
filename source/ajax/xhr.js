@@ -19,14 +19,15 @@ enyo.xhr = {
 	*/
 	request: function(inParams) {
 		var xhr = this.getXMLHttpRequest(inParams);
+		var url = enyo.path.rewrite(this.simplifyFileURL(inParams.url));
 		//
 		var method = inParams.method || "GET";
 		var async = !inParams.sync;
 		//
 		if (inParams.username) {
-			xhr.open(method, enyo.path.rewrite(inParams.url), async, inParams.username, inParams.password);
+			xhr.open(method, url, async, inParams.username, inParams.password);
 		} else {
-			xhr.open(method, enyo.path.rewrite(inParams.url), async);
+			xhr.open(method, url, async);
 		}
 		//
 		enyo.mixin(xhr, inParams.xhrFields);
@@ -104,11 +105,23 @@ enyo.xhr = {
 		if (a.protocol === ":" ||
 				(a.protocol === window.location.protocol &&
 					a.hostname === window.location.hostname &&
-					a.port === (window.location.port || 
+					a.port === (window.location.port ||
 						(window.location.protocol === "https:" ? "443" : "80")))) {
 			result = true;
 		}
 		return result;
+	},
+	simplifyFileURL: function(inUrl) {
+		var a = document.createElement("a"), result = false;
+		a.href = inUrl;
+		// protocol is ":" for relative URLs
+		if (a.protocol === "file:" ||
+			a.protocol === ":" && window.location.protocol === "file:") {
+			// leave off search and hash parts of the URL
+			return a.protocol + '//' + a.host + a.pathname;
+		} else {
+			return inUrl;
+		}
 	},
 	getXMLHttpRequest: function(inParams) {
 		try {

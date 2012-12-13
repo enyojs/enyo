@@ -79,10 +79,6 @@ enyo.kind({
 			args.push(query);
 			query = null;
 		}
-		// don't use cacheBust on file URLs, can cause problems in Android 4
-		if (this.cacheBust && !/^file:/i.test(uri)) {
-			args.push(Math.random());
-		}
 		//
 		var url = args.length ? [uri, args.join("&")].join("?") : uri;
 		//
