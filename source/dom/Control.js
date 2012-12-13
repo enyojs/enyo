@@ -52,8 +52,12 @@ enyo.kind({
 		//
 		// ad hoc properties:
 		//
-		//* Flag used by control layouts to determine which control will expand
-		//* to fill the available space
+		/**
+			Flag used by control layouts to determine which control will expand
+			to fill the available space. This only has meaning when the control
+			is being used as a child of a control with a version of FittableLayout
+			as its layoutKind.
+		*/
 		fit: false,
 		//* Used by Ares design editor for design objects
 		isContainer: false
