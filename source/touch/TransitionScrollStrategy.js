@@ -40,16 +40,12 @@ enyo.kind({
 	bottomBoundary: 0,
 	//* Left snap boundary, generally 0
 	leftBoundary: 0,
-	//* X value used in addition to scrollLeft to determine scrolling behavior
-	x:0,
-	//* Y value used in addition to scrollTop to determine scrolling behavior
-	y:0,
 	//* Flag to specify whether scrolling is in progress
 	scrolling: false,
 	//* Event listener for webkit transition completion
 	listener: null,
 	//* X Distance to scroll into overscroll space before bouncing back
-	deltaX:0,
+	boundaryX:0,
 	//* Y Distance to scroll into overscroll space before bouncing back
 	boundaryY:0,
 	//* Timeout used to stop scrolling on mousedown
@@ -72,11 +68,20 @@ enyo.kind({
 	
 	//* @public
 	
+	//* Sets the left scroll position within the scroller.
+	setScrollLeft: function(inLeft) {
+		this.stop();
+		this.scrollLeft = inLeft;
+		this.effectScroll();
+	},
 	//* Sets the top scroll position within the scroller.
 	setScrollTop: function(inTop) {
 		this.stop();
 		this.scrollTop = inTop;
 		this.effectScroll();
+	},
+	setScrollX: function(inLeft) {
+		this.scrollLeft = -1*inLeft;
 	},
 	setScrollY: function(inTop) {
 		this.scrollTop = -1*inTop;
@@ -98,23 +103,19 @@ enyo.kind({
 		this.inherited(arguments);
 		enyo.dom.transformValue(this.$.client, this.translation, "0,0,0");
 	},
-	rendered: function() {
-		this.inherited(arguments);
-		this.setupListener();
-	},
-	// setup webkitTransitionEnd listener
-	setupListener: function() {
-		//this.listener = this.$.client.node.addEventListener('webkitTransitionEnd', enyo.bind(this,"transitionComplete"), false);
-	},
 	getScrollSize: function() {
 		var n = this.$.client.hasNode();
 		return {width: n ? n.scrollWidth : 0, height: n ? n.scrollHeight : 0};
 	},
 	horizontalChanged: function() {
-		this.horizontal = (this.horizontal != "hidden");
+		if(this.horizontal == "hidden") {
+			this.horizontal = false;
+		}
 	},
 	verticalChanged: function() {
-		this.vertical = (this.vertical != "hidden");
+		if(this.vertical == "hidden") {
+			this.vertical = false;
+		}
 	},
 	calcScrollNode: function() {
 		return this.$.clientContainer.hasNode();
@@ -126,33 +127,30 @@ enyo.kind({
 		this.$.clientContainer.addRemoveClass("enyo-scrollee-fit", !this.maxHeight);
 	},
 	calcAutoScrolling: function() {
-		var v = (this.vertical != "hidden");
-		var h = (this.horizontal != "hidden");
-		if ((v || h) && this.scrollNode) {
+		if((this.vertical || this.horizontal) && this.scrollNode) {
 			var b = this.getScrollBounds();
-			if (v) {
+			if(this.vertical) {
 				this.vertical = b.height > b.clientHeight;
 			}
-			if (h) {
+			if(this.horizontal) {
 				this.horizontal = b.width > b.clientWidth;
 			}
 		}
 	},
-	isInOverScroll: function(x,y) {
-		return (this.isInOverScrollX() || this.isInOverScrollY());
+	isInOverScroll: function() {
+		return (this.isInTopOverScroll() || this.isInBottomOverScroll() || this.isInLeftOverScroll() || this.isInRightOverScroll());
 	},
-	isInOverScrollX: function(x) {
-		x = x || this.x;
-		return (x > this.leftBoundary || x < this.rightBoundary);
+	isInLeftOverScroll: function() {
+		return (this.getScrollLeft() < this.leftBoundary);
 	},
-	isInOverScrollY: function() {
-		return (this.isInTopOverScrollY() || this.isInBottomOverScrollY());
+	isInRightOverScroll: function() {
+		return (this.getScrollLeft()*-1 < this.rightBoundary);
 	},
-	isInTopOverScrollY: function() {
-		return (this.scrollTop < this.topBoundary);
+	isInTopOverScroll: function() {
+		return (this.getScrollTop() < this.topBoundary);
 	},
-	isInBottomOverScrollY: function() {
-		return (this.scrollTop*-1 < this.bottomBoundary);
+	isInBottomOverScroll: function() {
+		return (this.getScrollTop()*-1 < this.bottomBoundary);
 	},
 	calcStartInfo: function() {
 		var sb = this.getScrollBounds(), y = this.getScrollTop(), x = this.getScrollLeft();
@@ -168,11 +166,10 @@ enyo.kind({
 			this.calcBoundaries();
 			this.syncScrollMath();
 			var dy = this.vertical ? e.wheelDeltaY || e.wheelDelta : 0;
-			var y = parseFloat(this.scrollTop) + parseFloat(dy);
-			y = (y < this.bottomBoundary) ? this.bottomBoundary : (y > this.topBoundary) ? this.topBoundary : y;
-			this.stop();
-			this.effectScroll(this.x,y);
-			this.setScrollX(this.x);
+			var y = parseFloat(this.getScrollTop()) + -1*parseFloat(dy);
+			y = (y*-1 < this.bottomBoundary) ? -1*this.bottomBoundary : (y < this.topBoundary) ? this.topBoundary : y;
+			this.setScrollTop(y);
+			this.doScroll();
 			e.preventDefault();
 			return true;
 		}
@@ -205,7 +202,7 @@ enyo.kind({
 	updateX: function() {
 		var x = window.getComputedStyle(this.$.client.node,null).getPropertyValue("-webkit-transform").split('(')[1];
 		x = (x == undefined) ? 0 : x.split(')')[0].split(',')[4];
-		this.setScrollX(parseFloat(x));
+		this.scrollLeft = -1*parseFloat(x);
 	},
 	// Set scroll y value to the current computed style
 	updateY: function() {
@@ -213,14 +210,9 @@ enyo.kind({
 		y = (y == undefined) ? 0 : y.split(')')[0].split(',')[5];
 		this.scrollTop = -1*parseFloat(y);
 	},
-	// Set scroll x and scroll left values
-	setScrollX: function(inX) {
-		this.scrollLeft = inX;
-		this.x = -1*inX;
-	},
 	// Apply transform to scroll the scroller
 	effectScroll: function() {
-		var o = this.x + "px, " + (-1*this.scrollTop) + "px" + (this.accel ? ",0" : "");
+		var o = (-1*this.scrollLeft) + "px, " + (-1*this.scrollTop) + "px" + (this.accel ? ",0" : "");
 		enyo.dom.transformValue(this.$.client, this.translation, o);
 	},
 	// On touch, stop transition by setting transform values to current computed style, and
@@ -254,7 +246,6 @@ enyo.kind({
 			inEvent.preventDefault();
 			this.prevY = inEvent.pageY;
 			this.prevX = inEvent.pageX;
-			this.x = -1*(this.scrollLeft);
 			if (this.preventDragPropagation) {
 				return true;
 			}
@@ -324,30 +315,36 @@ enyo.kind({
 		if(this.dragging) {
 			e.preventDefault();
 			// calculate new scroll values
-			this.x = this.horizontal ? this.calculateDragDistance(this.scrollLeft, (-1*(e.pageX-this.prevX)), this.leftBoundary, this.rightBoundary) : this.x;
-			this.scrollTop = this.vertical ? this.calculateDragDistance(this.scrollTop, (-1*(e.pageY-this.prevY)), this.topBoundary, this.bottomBoundary) : this.scrollTop;
-			// update scrolltop and scrollleft values
-			this.setScrollLeft(-1*this.x);
+			this.scrollLeft = this.horizontal ? this.calculateDragDistance(parseInt(this.getScrollLeft()), (-1*(e.pageX-this.prevX)), this.leftBoundary, this.rightBoundary) : this.getScrollLeft();
+			this.scrollTop = this.vertical ? this.calculateDragDistance(this.getScrollTop(), (-1*(e.pageY-this.prevY)), this.topBoundary, this.bottomBoundary) : this.getScrollTop();
 			// apply new scroll values
 			this.effectScroll();
 			this.scroll();
 			// save values for next drag
 			this.prevY = e.pageY;
 			this.prevX = e.pageX;
+			this.setBoundaryX();
+			this.setBoundaryY();
 		}
 	},
 	//* Figure how far the drag should go based on pointer movement (delta)
 	calculateDragDistance: function(currentPosition, delta, aBoundary, bBoundary) {
 		var newPosition = currentPosition + delta;
-		return this.overscrollDragDamping(newPosition,delta,aBoundary,bBoundary);
+		return this.overscrollDragDamping(currentPosition, newPosition,delta,aBoundary,bBoundary);
 	},
 	//* Provides resistance against dragging into overscroll
-	overscrollDragDamping: function(value, delta, aBoundary, bBoundary) {
-		if(value < aBoundary || value*-1 < bBoundary) {
+	overscrollDragDamping: function(currentPosition, newPosition, delta, aBoundary, bBoundary) {
+		if(newPosition < aBoundary || newPosition*-1 < bBoundary) {
 			delta /= 2;
-			value = this.scrollTop + delta;
+			newPosition = currentPosition + delta;
 		}
-		return value;
+		return newPosition;
+	},
+	setBoundaryX: function() {
+		this.boundaryX = (this.isInLeftOverScroll()) ? this.leftBoundary : (this.isInRightOverScroll()) ? this.rightBoundary : null;
+	},
+	setBoundaryY: function() {
+		this.boundaryY = (this.isInTopOverScroll()) ? this.topBoundary : (this.isInBottomOverScroll()) ? this.bottomBoundary : null;
 	},
 	// When user releases the drag, set this.dragging to false, bounce overflow back, and hide scrim.
 	dragfinish: function(inSender, inEvent) {
@@ -363,38 +360,44 @@ enyo.kind({
 		}
 	},
 	// Bounce back from overscroll region
-	correctOverflow: function(overflowY) {
+	correctOverflow: function() {
 		if(this.isInOverScroll()) {
-			var x = (this.horizontal) ? this.correctOverflowX() : this.x;
-			var y = (this.vertical) ? this.correctOverflowY() : this.scrollTop;
+			var x = (this.horizontal) ? this.correctOverflowX() : false;
+			var y = (this.vertical) ? this.correctOverflowY() : false;
 			if(x !== false && y !== false) {
-				this.scrollLeft = (x !== false) ? x : this.scrollLeft;
-				this.scrollTop = (y !== false) ? y : this.scrollTop;
+				this.scrollLeft = (x !== false) ? x : this.getScrollLeft();
+				this.scrollTop = (y !== false) ? y : this.getScrollTop();
+				this.startOverflowScrolling();
+			} else if(x !== false) {
+				this.scrollLeft = x;
+				this.startOverflowScrolling();
+			} else if(y !== false) {
+				this.scrollTop = y;
 				this.startOverflowScrolling();
 			}
 		}
 	},
 	// Determine if we're overscrolled on the x axis and if so return proper edge value
 	correctOverflowX: function() {
-		if(this.x > this.rightBoundary) {
-			if(this.beyondBoundary(this.x, this.rightBoundary, this.deltaX)) {
-				return this.rightBoundary;
-			}
-		} else if(this.x < this.leftBoundary) {
-			if(this.beyondBoundary(this.x, this.leftBoundary, this.deltaX)) {
+		if(this.isInLeftOverScroll()) {
+			if(this.beyondBoundary(this.getScrollLeft(), this.leftBoundary, this.boundaryX)) {
 				return this.leftBoundary;
+			}
+		} else if(this.isInRightOverScroll()) {
+			if(this.beyondBoundary(this.getScrollLeft(), this.rightBoundary, this.boundaryX)) {
+				return -1*this.rightBoundary;
 			}
 		}	
 		return false;
 	},
 	// Determine if we're overscrolled on the y axis and if so return proper edge value
 	correctOverflowY: function() {
-		if(this.isInTopOverScrollY()) {
-			if(this.beyondBoundary(this.scrollTop, this.topBoundary, this.boundaryY)) {
+		if(this.isInTopOverScroll()) {
+			if(this.beyondBoundary(this.getScrollTop(), this.topBoundary, this.boundaryY)) {
 				return this.topBoundary;
 			}
-		} else if(this.isInBottomOverScrollY()) {
-			if(this.beyondBoundary(this.scrollTop, this.bottomBoundary, this.boundaryY)) {
+		} else if(this.isInBottomOverScroll()) {
+			if(this.beyondBoundary(this.getScrollTop(), this.bottomBoundary, this.boundaryY)) {
 				return -1*this.bottomBoundary;
 			}
 		}
@@ -408,23 +411,21 @@ enyo.kind({
 	// in the overscroll region.
 	flick: function(inSender, e) {
 		if(this.dragging && this.flickOnEnabledAxis(e)) {
-			this.scrollTop = this.vertical ? this.calculateFlickDistance(this.scrollTop, -1*e.yVelocity) : this.scrollTop;
-			this.scrollleft = this.horizontal ? this.calculateFlickDistance(this.scrollLeft, -1*e.xVelocity) : this.scrollLeft;
-			this.deltaX = null;
+			this.scrollLeft = this.horizontal ? this.calculateFlickDistance(this.scrollLeft, -1*e.xVelocity) : this.getScrollLeft();
+			this.scrollTop = this.vertical ? this.calculateFlickDistance(this.scrollTop, -1*e.yVelocity) : this.getScrollTop();
+			this.boundaryX = null;
 			this.boundaryY = null;
-			// if flick will put the x axis into overscroll, figure where we should bounce back (deltaX)
-			if(this.isInOverScrollX()) {
-				if(this.x < this.leftBoundary) {
-					this.deltaX = this.figureBoundary(this.leftBoundary - this.x);
-				} else {
-					this.deltaX = this.figureBoundary(this.x);
-				}
+			// if flick will put the x axis into overscroll, figure where we should bounce back (boundary)
+			if(this.isInLeftOverScroll()) {
+				this.boundaryX = this.figureBoundary(this.getScrollLeft());
+			} else if(this.isInRightOverScroll()) {
+				this.boundaryX = this.figureBoundary(-1*this.bottomBoundary - this.getScrollLeft());
 			}
 			// if flick will put the y axis into overscroll, figure where we should bounce back (boundary)
-			if(this.isInTopOverScrollY()) {
-				this.boundaryY = this.figureBoundary(this.scrollTop);
-			} else if(this.isInBottomOverScrollY()) {
-				this.boundaryY = this.figureBoundary(-1*this.bottomBoundary - this.scrollTop);
+			if(this.isInTopOverScroll()) {
+				this.boundaryY = this.figureBoundary(this.getScrollTop());
+			} else if(this.isInBottomOverScroll()) {
+				this.boundaryY = this.figureBoundary(-1*this.bottomBoundary - this.getScrollTop());
 			}
 			// kickoff scrolling animation
 			this.startScrolling();
@@ -498,7 +499,7 @@ enyo.kind({
 	resetCSSTranslationVals: function() {
 		var transformStyle = getComputedStyle(this.$.client.node,null).getPropertyValue("-webkit-transform").split('(')[1].split(')')[0].split(',');
 		this.applyTransition("none");
-		this.scrollLeft = transformStyle[4];
+		this.scrollLeft = -1*transformStyle[4];
 		this.scrollTop = -1*transformStyle[5];
 		this.effectScroll();
 	},
@@ -511,25 +512,29 @@ enyo.kind({
 	},
 	// When transition animation is complete, check if we need to bounce back from overscroll
 	// region. If not, stop.
-	transitionComplete: function() {
-		if(parseInt(this.scrollTop) < this.topBoundary) {
-			if(Math.abs(this.scrollTop - this.topBoundary) < 10) { // TODO - why is the overflow correction coming up short?
-				this.stop();
-				this.scrollTop = this.topBoundary;
-				this.effectScroll();
-			} else {
-				this.scrollTop = this.topBoundary;
-				this.startOverflowScrolling();
-			}
-		} else if (-1*this.scrollTop < this.bottomBoundary) {
-			if(Math.abs(-1*this.scrollTop - this.bottomBoundary) < 10) { // TODO - why is the overflow correction coming up short?
-				this.stop();
-				this.scrollTop = -1*this.bottomBoundary;
-				this.effectScroll();
-			} else {
-				this.scrollTop = -1*this.bottomBoundary;
-				this.startOverflowScrolling();
-			}
+	transitionComplete: function(inSender, inEvent) {
+		// Only process transition complete if sent from this container
+		if(inSender !== this.$.clientContainer) {
+			return;
+		}
+		var posChanged = false;
+		if(this.isInTopOverScroll()) {
+			posChanged = true;
+			this.scrollTop = this.topBoundary;
+		} else if (this.isInBottomOverScroll()) {
+			posChanged = true;
+			this.scrollTop = -1*this.bottomBoundary;
+		}
+		if(this.isInLeftOverScroll()) {
+			posChanged = true;
+			this.scrollLeft = this.leftBoundary;
+		} else if (this.isInRightOverScroll()) {
+			posChanged = true;
+			this.scrollLeft = -1*this.rightBoundary;
+		}
+		
+		if(posChanged) {
+			this.startOverflowScrolling();
 		} else {
 			this.stop();
 		}
