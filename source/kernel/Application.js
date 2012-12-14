@@ -23,7 +23,15 @@ enyo.kind({
     target: enyo.Computed(function () {
         var target = this.renderTarget;
         if ("string" === typeof target) {
-            target = enyo.getPath(target);
+            if ("#" === target[0]) {
+                target = target.slice(1);
+                target = enyo.dom.byId(target);
+            } else {
+                target = enyo.getPath(target);
+            }
+            if (!target) {
+                target = enyo.dom.byId(target);
+            }
         }
         if (!target) {
             throw "Cannot find requested render target!";
@@ -67,14 +75,22 @@ enyo.kind({
     },
     controllersChanged: function () {
         var controllers = this.controllers;
-        enyo.forEach(controllers, function (kind) {
+        enyo.forEach(controllers, function (props) {
+            var kind;
+            var name;
+            if ("string" === typeof props) {
+                kind = props;
+                name = this.instanceNameFromKind(kind);
+            } else {
+                kind = props.kind;
+                name = props.name || this.instanceFromKind(kind);
+            }
             var ctor = enyo.constructorForKind(kind);
-            var instName = this.instanceNameFrom(kind, ctor);
             var namespace = this.get("namespace");
             if (!ctor) return enyo.warn("enyo.Application: " +
                 "could not find a constructor for the requested " +
                 "controller kind - " + kind);
-            namespace[instName] = new ctor();
+            namespace[name] = new ctor();
         }, this);
     },
     namespace: enyo.Computed(function () {
@@ -83,11 +99,13 @@ enyo.kind({
         var ns = parts[0];
         return enyo.getPath(ns);
     }),
-    instanceNameFrom: function (name, ctor) {
-        var instanceName = ctor.prototype.instanceName;
-        if ("string" === typeof instanceName) return instanceName;
+    instanceNameFrom: function (name) {
+        var orig = name;
+        name = name && name.length? name: "";
         name = name.indexOf(".") > -1? name.split(".")[1]: name;
         name = enyo.uncap(name);
-        return (ctor.prototype.instanceName = name);
+        if (!name.length) throw "enyo.Application: cannot determine any " +
+            "name for the requested kind '" + orig + "'";
+        return name;
     }
 });
