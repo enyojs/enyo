@@ -79,6 +79,9 @@ enyo.kind({
 			args.push(query);
 			query = null;
 		}
+		if (this.cacheBust) {
+			args.push(Math.random());
+		}
 		//
 		var url = args.length ? [uri, args.join("&")].join("?") : uri;
 		//
