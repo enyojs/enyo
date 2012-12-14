@@ -78,12 +78,14 @@ enyo.kind({
         enyo.forEach(controllers, function (props) {
             var kind;
             var name;
+            var global;
             if ("string" === typeof props) {
                 kind = props;
                 name = this.instanceNameFromKind(kind);
             } else {
                 kind = props.kind;
                 name = props.name || this.instanceFromKind(kind);
+                global = props.global? Boolean(props.global): undefined;
             }
             var ctor = enyo.constructorForKind(kind);
             var namespace = this.get("namespace");
@@ -100,13 +102,19 @@ enyo.kind({
         var ns = parts[0];
         return enyo.getPath(ns);
     }),
-    instanceNameFrom: function (name) {
+    instanceNameFrom: function (name, global) {
         var orig = name;
+        var namespace;
+        var parts;
         name = name && name.length? name: "";
-        name = name.indexOf(".") > -1? name.split(".")[1]: name;
+        if (!~name.indexOf(".")) {
+            parts = name.split(".");
+            namespace = parts.shift();
+            name = parts.join(".");
+        }
         name = enyo.uncap(name);
         if (!name.length) throw "enyo.Application: cannot determine any " +
             "name for the requested kind '" + orig + "'";
-        return name;
+        return global? namespace + "." + name: name;
     }
 });
