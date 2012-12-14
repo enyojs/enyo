@@ -378,10 +378,22 @@ enyo.kind({
 				this.startOverflowScrolling();
 			} else if(x !== false) {
 				this.scrollLeft = x;
-				this.startOverflowScrolling();
+				this.scrollTop = this.targetScrollTop;
+				this.targetScrollLeft = this.getScrollLeft();
+				if(!this.vertical) {
+					this.startOverflowScrolling();
+				} else {
+					this.startScrolling();
+				}
 			} else if(y !== false) {
 				this.scrollTop = y;
-				this.startOverflowScrolling();
+				this.scrollLeft = this.targetScrollLeft;
+				this.targetScrollTop = this.getScrollTop();
+				if(!this.horizontal) {
+					this.startOverflowScrolling();
+				} else {
+					this.startScrolling();
+				}
 			}
 		}
 	},
@@ -421,6 +433,8 @@ enyo.kind({
 		if(this.dragging && this.flickOnEnabledAxis(e)) {
 			this.scrollLeft = this.horizontal ? this.calculateFlickDistance(this.scrollLeft, -1*e.xVelocity) : this.getScrollLeft();
 			this.scrollTop = this.vertical ? this.calculateFlickDistance(this.scrollTop, -1*e.yVelocity) : this.getScrollTop();
+			this.targetScrollLeft = this.scrollLeft;
+			this.targetScrollTop = this.scrollTop;
 			this.boundaryX = null;
 			this.boundaryY = null;
 			// if flick will put the x axis into overscroll, figure where we should bounce back (boundary)
