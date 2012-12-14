@@ -38,12 +38,11 @@ enyo.kind({
 	instance, passing <code>{q: "searchTerm"}</code> will result in the addition
 	of the string `q="searchTerm"` to the current url query string.
 
-	_inParams_ as a String is used as the query part of the URL.  This is the same
-	no matter what HTTP method is used.
+	_inParams_ as a String is used as the query part of the URL directly.
 
-	The use of _inParams_ as a String is discouraged. Instead, set the request
-	body content via _postBody_ and use _inParams_ as an Object to set the query
-	string.
+	_inParams_ will not be converted into a POST body, it will always be used as
+	part of the URL query string if provided.  Use the `postBody` property for
+	specifying a body.
 
 	When the request is completed, the code will set a `xhrResponse` property
 	in the `enyo.Ajax` object with the subproperties `status`, `headers`, and
