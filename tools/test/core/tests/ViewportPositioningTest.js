@@ -17,6 +17,7 @@ enyo.kind({
 		div.style.left = '0px';
 		div.style.width = '100%';
 		div.style.height = '100%';
+		div.style.boxSizing = 'border-box';
 
 		var k = new K();
 		k.renderInto(div);
@@ -32,16 +33,42 @@ enyo.kind({
 			this.log('left failed with value: ' + p.left + ' (should be 10)');
 		}
 		if (p.bottom !== fromBottom) {
-			this.log('bottom measurement failed with value: ' + p.bottom + ' (should be ' + fromBottom + ')');
+			this.log('bottom failed with value: ' + p.bottom + ' (should be ' + fromBottom + ')');
 		}
 		if (p.right !== fromRight) {
-			this.log('right measurement failed with value: ' + p.right + ' (should be ' + fromRight + ')');
+			this.log('right failed with value: ' + p.right + ' (should be ' + fromRight + ')');
 		}
 		if (p.width !== 10) {
 			this.log('width failed with value: ' + p.width + ' (should be 10)');
 		}
 		if (p.height !== 10) {
 			this.log('height failed with value: ' + p.height + ' (should be 10)');
+		}
+		
+		// Now test measuring the element when a parent has a border
+		div.style.border = "1px solid transparent";
+		k.hasNode().style.border = "1px solid transparent"
+		p = enyo.dom.calcViewportPositionForNode(k.hasNode()),
+			// We don't count the right border on the element itself because that is taken into account automatically by the element's width measurement
+			fromBottom -= 3,
+			fromRight -= 3;
+		if (p.top !== 11) {
+			this.log('top with border failed with value: ' + p.top + ' (should be 11)');
+		}
+		if (p.left !== 11) {
+			this.log('left with border failed with value: ' + p.left + ' (should be 11)');
+		}
+		if (p.bottom !== fromBottom) {
+			this.log('bottom with border failed with value: ' + p.bottom + ' (should be ' + fromBottom + ')');
+		}
+		if (p.right !== fromRight) {
+			this.log('right with border failed with value: ' + p.right + ' (should be ' + fromRight + ')');
+		}
+		if (p.width !== 12) {
+			this.log('width with border failed with value: ' + p.width + ' (should be 12)');
+		}
+		if (p.height !== 12) {
+			this.log('height with border failed with value: ' + p.height + ' (should be 12)');
 		}
 			
 		// Clean up

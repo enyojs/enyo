@@ -142,16 +142,17 @@ enyo.dom = {
 	//* Returns an object like `{top: 0, left: 0, bottom: 100, right: 100, height: 10, width: 10}` that represents the object's position within the viewport. Negative values mean part of the object is not visible.
 	calcViewportPositionForNode: function(inNode) {
 		// Parse upward and grab our positioning relative to the viewport
-		var top = 0;
-		var left = 0;
-		var node = inNode;
-		var width = node.offsetWidth;
-		var height = node.offsetHeight;
-		var docHeight = (document.body.parentNode.offsetHeight > this.getWindowHeight() ? this.getWindowHeight() - document.body.parentNode.scrollTop : document.body.parentNode.offsetHeight);
-		var docWidth = (document.body.parentNode.offsetWidth > this.getWindowWidth() ? this.getWindowWidth() - document.body.parentNode.scrollLeft : document.body.parentNode.offsetWidth);
-		var transformProp = enyo.dom.getStyleTransformProp();
-		var xregex = /translateX\((-?\d+)px\)/i;
-		var yregex = /translateY\((-?\d+)px\)/i;
+		var top = 0,
+			left = 0,
+			node = inNode,
+			width = node.offsetWidth,
+			height = node.offsetHeight,
+			docHeight = (document.body.parentNode.offsetHeight > this.getWindowHeight() ? this.getWindowHeight() - document.body.parentNode.scrollTop : document.body.parentNode.offsetHeight),
+			docWidth = (document.body.parentNode.offsetWidth > this.getWindowWidth() ? this.getWindowWidth() - document.body.parentNode.scrollLeft : document.body.parentNode.offsetWidth),
+			transformProp = enyo.dom.getStyleTransformProp(),
+			xregex = /translateX\((-?\d+)px\)/i,
+			yregex = /translateY\((-?\d+)px\)/i,
+			borderLeft = 0, borderTop = 0;
 		if (node.offsetParent) {
 			do {
 				left += node.offsetLeft - (node.offsetParent ? node.offsetParent.scrollLeft : 0);
@@ -161,6 +162,27 @@ enyo.dom = {
 				top += node.offsetTop - (node.offsetParent ? node.offsetParent.scrollTop : 0);
 				if (transformProp && yregex.test(node.style[transformProp])) {
 					top += parseInt(node.style[transformProp].replace(yregex, '$1'), 10);
+				}
+				// Need to correct for borders if any exist on parent elements
+				if (node !== inNode) {
+					if (node.currentStyle) {
+						// Oh IE, we do so love working around your incompatibilities
+						borderLeft = parseInt(node.currentStyle.borderLeftWidth, 10);
+						borderTop = parseInt(node.currentStyle.borderTopWidth, 10);
+					} else if (window.getComputedStyle) {
+						borderLeft = parseInt(window.getComputedStyle(node, '').getPropertyValue('border-left-width'), 10);
+						borderTop = parseInt(window.getComputedStyle(node, '').getPropertyValue('border-top-width'), 10);
+					} else {
+						// No computed style options, so try the normal style object (much less robust)
+						borderLeft = parseInt(node.style.borderLeftWidth, 10);
+						borderTop = parseInt(node.style.borderTopWidth, 10);
+					}
+					if (borderLeft) {
+						left += borderLeft;
+					}
+					if (borderTop) {
+						top += borderTop;
+					}
 				}
 			} while ((node = node.offsetParent));
 		}
