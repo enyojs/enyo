@@ -46,8 +46,8 @@
     };
     
     remove = function (event, fn) {
-        var name = doc.addEventListener? "addEventListener": "attachEvent";
-        var on = name === "attachEvent"? "on": "";
+        var name = doc.addEventListener? "removeEventListener": "detachEvent";
+        var on = name === "detachEvent"? "on": "";
         doc[name](on + event, fn, false);
     };
     
