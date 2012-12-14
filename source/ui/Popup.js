@@ -121,8 +121,8 @@ enyo.kind({
 					p.right = null;
 				}
 			} else if (typeof p.right === 'number') {
-				if (p.right - b.width < 0) {
-					if (p.right + b.width <= d.width) {
+				if (p.right + b.width > d.width) {
+					if (p.right - b.width >= 0) {
 						p.left = d.width - p.right;
 					} else {
 						p.left = 0;
@@ -135,7 +135,7 @@ enyo.kind({
 			
 			if (typeof p.top === 'number') {
 				if (p.top + b.height > d.height) {
-					if (p.top - b.height > 0) {
+					if (p.top - b.height >= 0) {
 						p.bottom = d.height - p.top;
 					} else {
 						p.bottom = 0;
@@ -145,8 +145,8 @@ enyo.kind({
 					p.bottom = null;
 				}
 			} else if (typeof p.bottom === 'number') {
-				if (p.bottom - b.height < 0) {
-					if (p.bottom + b.height <= d.height) {
+				if (p.bottom + b.height > d.height) {
+					if (p.bottom - b.height >= 0) {
 						p.top = d.height - p.bottom;
 					} else {
 						p.top = 0;
