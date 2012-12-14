@@ -90,7 +90,8 @@ enyo.kind({
             if (!ctor) return enyo.warn("enyo.Application: " +
                 "could not find a constructor for the requested " +
                 "controller kind - " + kind);
-            namespace[name] = new ctor();
+            //namespace[name] = new ctor();
+            enyo.setPath.call(namespace, name, new ctor());
         }, this);
     },
     namespace: enyo.Computed(function () {
