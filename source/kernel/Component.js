@@ -22,7 +22,7 @@
 				{kind: "Component", name: "other"}
 			]
 		});
-	
+
 	In this case, when _me_ is created, _other_ is also created, and we say that
 	_me owns other_. In other words, the _owner_ property of _other_ equals
 	_me_. Notice that you can specify the _kind_ of _other_ explicitly in its
@@ -32,6 +32,9 @@
 	kinds. Kind names that	do not resolve directly to kinds are looked up in
 	default namespaces. In this case, _kind: "Component"_ resolves to
 	_enyo.Component_.
+
+	To move a component, use the _setOwner_ method to change the component's owner.
+	If you want to make a component unowned, use _setOwner(null)_.
 
 	If you make changes to _enyo.Component_, be sure to add or update the
 	appropriate	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
@@ -128,7 +131,7 @@ enyo.kind({
 	/**
 		Removes this component from its owner (sets _owner_ to null) and does
 		any	cleanup. The component is flagged with a _destroyed: true_ property.
-		Usually the component will be suitable for garbage collection after 
+		Usually the component will be suitable for garbage collection after
 		being destroyed, unless user code keeps a reference to it.
 	*/
 	destroy: function() {
@@ -145,7 +148,7 @@ enyo.kind({
 	destroyComponents: function() {
 		enyo.forEach(this.getComponents(), function(c) {
 			// This local components list may be stale as components
-			// we owned when the loop started could have been destroyed 
+			// we owned when the loop started could have been destroyed
 			// by containers. Avoid redestroying components by testing
 			// destroyed flag.
 			if (!c.destroyed) {
@@ -184,7 +187,6 @@ enyo.kind({
 		// set and return
 		return inComponent.name = n;
 	},
-	//* @public
 	/**
 		Adds _inComponent_ to the list of components owned by the current
 		component (i.e., _this.$_).
@@ -198,14 +200,14 @@ enyo.kind({
 			this.warn('Duplicate component name "' + n + '" in owner "' + this.id + '" violates unique-name-under-owner rule, replacing existing component in the hash and continuing, but this is an error condition and should be fixed.');
 			//if (this.shouldWarn()) {
 			/*
-			try { 
+			try {
 				throw new Error('Duplicate component name "' + n + '" violates unique-name-under-owner rule, replacing existing component in the hash and continuing, but this is an error condition and should be fixed.');
 			} catch(x) {
 				enyo.warn(x);
 				enyo.log(x.stack);
 			}
 			*/
-			/*this.warn() &&*/ //console.warn('Duplicate component name "' + n + '" violates unique-name-under-owner rule, replacing existing component in the hash and continuing, but this is an error condition and should be fixed.');
+			/*this.warn() &&*/ //enyo.warn('Duplicate component name "' + n + '" violates unique-name-under-owner rule, replacing existing component in the hash and continuing, but this is an error condition and should be fixed.');
 			//}
 		}
 		this.$[n] = inComponent;
@@ -222,8 +224,8 @@ enyo.kind({
 	*/
 	getComponents: function() {
 		var results = [];
-		for (var n in this.$) { 
-			results.push(this.$[n]); 
+		for (var n in this.$) {
+			results.push(this.$[n]);
 		}
 		return results;
 	},
@@ -249,17 +251,17 @@ enyo.kind({
 		Creates and returns a component as defined by the combination of
 		_inInfo_ and _inMoreInfo_. Properties in _inInfo_ override properties in
 		_inMoreInfo_.
-		
+
 		The created component passes through initialization machinery provided
 		by the creating component, which may supply special handling.
 		Unless the owner is explicitly specified, the new component will be
 		owned by the instance on which _createComponent_ is called.
 
-			// Create a new component named _dynamic_ owned by _this_ 
+			// Create a new component named _dynamic_ owned by _this_
 			// (will be available as this.$.dynamic).
 			this.createComponent({name: "dynamic"});
 
-			// Create a new component named _another_ owned by _other_ 
+			// Create a new component named _another_ owned by _other_
 			// (will be available as other.$.another).
 			this.createComponent({name: "another"}, {owner: other});
 	*/
@@ -275,7 +277,7 @@ enyo.kind({
 
 		_createComponents_ returns an array of references to the created components.
 
-			// ask foo to create components _bar_ and _zot_, but set the owner of 
+			// ask foo to create components _bar_ and _zot_, but set the owner of
 			// both components to _this_.
 			this.$.foo.createComponents([
 				{name: "bar"},
@@ -306,8 +308,8 @@ enyo.kind({
 
 			function(inSender, inEvent)
 
-		where _inSender_ refers to the Component that most recently 
-		propagated the event and _inEvent_ is an object containing 
+		where _inSender_ refers to the Component that most recently
+		propagated the event and _inEvent_ is an object containing
 		event information.
 
 		_inEvent_ will have at least one property, _originator_, which
@@ -333,8 +335,8 @@ enyo.kind({
 
 			function(inSender, inEvent)
 
-		where _inSender_ refers to the Component that most recently 
-		propagated the event and _inEvent_ is an object containing 
+		where _inSender_ refers to the Component that most recently
+		propagated the event and _inEvent_ is an object containing
 		event information.
 
 		_inEvent_ will have at least one property, _originator_, which
@@ -351,14 +353,14 @@ enyo.kind({
 	//* @protected
 	/**
 		Dispatching refers to sending an event to a named delegate.
-		This object may dispatch an event to itself via a handler, 
+		This object may dispatch an event to itself via a handler,
 		or to its owner via an event property, e.g.:
-		
+
 			handlers {
 				// 'tap' events dispatched to this.tapHandler
 				ontap: "tapHandler"
 			}
-			
+
 			// 'tap' events dispatched to 'tapHandler' delegate in this.owner
 			ontap: "tapHandler"
 	*/
@@ -417,7 +419,7 @@ enyo.kind({
 		Dispatches the event to named delegate _inMethodName_, if it exists.
 		Subkinds may re-route dispatches.
 		Note that both 'handlers' events and events delegated from owned controls
-		arrive here. If you need to handle these differently, you may 
+		arrive here. If you need to handle these differently, you may
 		need to also override _dispatchEvent_.
 	*/
 	dispatch: function(inMethodName, inEvent, inSender) {
@@ -465,7 +467,7 @@ enyo.create = enyo.Component.create = function(inConfig) {
 	var kind = inConfig.kind || inConfig.isa || enyo.defaultCtor;
 	var ctor = enyo.constructorForKind(kind);
 	if (!ctor) {
-		console.error('no constructor found for kind "' + kind + '"');
+		enyo.error('no constructor found for kind "' + kind + '"');
 		ctor = enyo.Component;
 	}
 	return new ctor(inConfig);
@@ -489,7 +491,7 @@ enyo.Component.subclass = function(ctor, props) {
 	}
 	//
 	// handlers are merged with supertype handlers
-	// and kind time. 
+	// and kind time.
 	//
 	if (props.handlers) {
 		var kh = proto.kindHandlers;
@@ -531,7 +533,7 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 			// bubble this event
 			return this.bubble(inName, inEvent);
 		};
-		// NOTE: Mark this function as a generated event handler to allow us to 
+		// NOTE: Mark this function as a generated event handler to allow us to
 		// do event chaining. Is this too complicated?
 		//inProto[fn]._dispatcher = true;
 	}

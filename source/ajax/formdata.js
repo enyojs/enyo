@@ -19,9 +19,17 @@ _enyo.FormData_ is inspired by
  */
 (function(w) {
 	if (w.FormData) {
-		enyo.FormData = w.FormData;
-		enyo.Blob = w.Blob;
-		return;
+		try {
+			var t1 = new w.FormData();
+			var t2 = new w.Blob();
+			// Android Chrome 18 will throw an error trying to create these
+			enyo.FormData = w.FormData;
+			enyo.Blob = w.Blob;
+			return;
+		}
+		catch (e) {
+			// ignore error and fall through to fake FormData code
+		}
 	}
 	function FormData() {
 		this.fake = true;
@@ -43,7 +51,7 @@ _enyo.FormData_ is inspired by
 	FormData.prototype.toString = function() {
 		var boundary = this.boundary;
 		var body = "";
-		this._fields.forEach(function(field) {
+		enyo.forEach(this._fields, function(field) {
 			body += "--" + boundary + "\r\n";
 			if (field[2] || field[1].name) {
 				// file upload

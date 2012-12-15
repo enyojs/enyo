@@ -52,8 +52,12 @@ enyo.kind({
 		//
 		// ad hoc properties:
 		//
-		//* Flag used by control layouts to determine which control will expand
-		//* to fill the available space
+		/**
+			Flag used by control layouts to determine which control will expand
+			to fill the available space. This only has meaning when the control
+			is being used as a child of a control with a version of FittableLayout
+			as its layoutKind.
+		*/
 		fit: false,
 		//* Used by Ares design editor for design objects
 		isContainer: false
@@ -160,7 +164,7 @@ enyo.kind({
 		A control will only return a node if it has been rendered.
 
 			if (this.hasNode()) {
-				console.log(this.node.nodeType);
+				enyo.log(this.node.nodeType);
 			}
 	*/
 	hasNode: function() {
@@ -525,7 +529,7 @@ enyo.kind({
 		Values returned are only valid if _hasNode()_ is truthy.
 
 			var bounds = this.getBounds();
-			console.log(bounds.width);
+			enyo.log(bounds.width);
 	*/
 	getBounds: function() {
 		var n = this.node || this.hasNode() || 0;

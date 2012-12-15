@@ -58,6 +58,10 @@ concatCss = function(loader, doneCB) {
 			if (/^data:/.test(urlPath)) {
 				return "url(" + urlPath + ")";
 			}
+			// skip an external link
+			if (/^http(:?s)?:/.test(urlPath)) {
+			    return "url(" + urlPath + ")";
+			}
 			// get absolute path to referenced asset
 			var normalizedUrlPath = path.join(sheet, "..", urlPath);
 			// Make relative asset path to built css

@@ -77,7 +77,7 @@ enyo.requiresWindow(function() {
 			e.target = this.findTarget(e);
 			// normalize "mouse button" info
 			e.which = 1;
-			//console.log("target for " + inEvent.type + " at " + e.pageX + ", " + e.pageY + " is " + (e.target ? e.target.id : "none"));
+			//enyo.log("target for " + inEvent.type + " at " + e.pageX + ", " + e.pageY + " is " + (e.target ? e.target.id : "none"));
 			return e;
 		},
 		calcNodeOffset: function(inNode) {
@@ -102,9 +102,9 @@ enyo.requiresWindow(function() {
 			if (o && n != this.excludedTarget) {
 				var x = inX - o.left;
 				var y = inY - o.top;
-				//console.log("test: " + n.id + " (left: " + o.left + ", top: " + o.top + ", width: " + o.width + ", height: " + o.height + ")");
+				//enyo.log("test: " + n.id + " (left: " + o.left + ", top: " + o.top + ", width: " + o.width + ", height: " + o.height + ")");
 				if (x>0 && y>0 && x<=o.width && y<=o.height) {
-					//console.log("IN: " + n.id + " -> [" + x + "," + y + " in " + o.width + "x" + o.height + "] (children: " + n.childNodes.length + ")");
+					//enyo.log("IN: " + n.id + " -> [" + x + "," + y + " in " + o.width + "x" + o.height + "] (children: " + n.childNodes.length + ")");
 					var target;
 					for (var n$=n.childNodes, i=n$.length-1, c; (c=n$[i]); i--) {
 						target = this.findTargetTraverse(c, inX, inY);
