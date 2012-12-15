@@ -70,7 +70,11 @@
     injectDestroy: function () {
       var t = this.target, base, d = this.destroyMixin;
       if ((base = t.destroy)) {
-        d = t.destroy = enyo.bind(t, d);
+        d = t.destroy = (function (fn, sc) {
+            return function () {
+                return fn.apply(sc, arguments);
+            };
+        })(d, t);
         d._inherited = base;
       } else t.destroy = d;
     },

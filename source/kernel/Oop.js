@@ -222,7 +222,13 @@ enyo.kind.features.push(function(ctor, props) {
 });
 
 enyo.kind.inherited = function(args, newArgs) {
-	return args.callee._inherited.apply(this, newArgs || args);
+	var cur = args.callee;
+	var fn = cur._inherited;
+	if (!fn || "function" !== typeof fn) {
+	    cur = cur.caller;
+	    fn = cur? cur._inherited: undefined;
+	}
+    if ("function" === typeof fn) return fn.apply(this, newArgs || args);
 };
 
 //

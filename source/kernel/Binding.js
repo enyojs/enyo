@@ -58,7 +58,12 @@
         // update pointer
         cur = base[part];
         // if we can't find part of the path 
-        if (!cur || "string" === typeof cur) return ret;
+        if (!cur || "string" === typeof cur) {
+            if (part !== prop) {
+                ret.base = null;
+            }
+            return ret;
+        }
         // update base pointer
         if (part !== path) base = cur;
         ret.base = base;

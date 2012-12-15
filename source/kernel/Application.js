@@ -69,6 +69,7 @@ enyo.kind({
     },
     start: function () {
         this.initComponents();
+        this._setupBindings();
         if (true === this.renderOnStart) {
             this.render();
         }
@@ -96,11 +97,11 @@ enyo.kind({
             enyo.setPath.call(namespace, name, new ctor());
         }, this);
     },
-    namespace: enyo.Computed(function () {
+    namespace: enyo.Computed(function (path) {
         var kindName = this.kindName;
         var parts = kindName.split(".");
         var ns = parts[0];
-        return enyo.getPath(ns);
+        return path? ns: enyo.getPath(ns);
     }),
     instanceNameFrom: function (name, global) {
         var orig = name;
@@ -116,5 +117,39 @@ enyo.kind({
         if (!name.length) throw "enyo.Application: cannot determine any " +
             "name for the requested kind '" + orig + "'";
         return global? namespace + "." + name: name;
+    },
+    
+    
+    
+    _setupBindings: function () {
+        var defs;
+        var config;
+        var idx = 0;
+        var bindings;
+        var binding;
+        var ns = this.namespace(true);
+        var props = ["to", "from"];
+        var regex = /[a-z]/;
+        this.clearBindings();
+        bindings = this._bindings = [];
+        if ((defs = this.bindings)) {
+            for (len = defs.length; idx < len; ++idx) {
+                config = defs[idx];
+                enyo.forEach(props, function (prop) {
+                    var def = config[prop];
+                    var parts;
+                    if (!def) return;
+                    if (!!~def.indexOf(".")) {
+                        parts = def.split(".");
+                        if (regex.test(parts[0][0]) && parts[0] !== ns) {
+                            parts.unshift(ns);
+                            config[prop] = parts.join(".");
+                        }
+                    }
+                });
+                binding = new enyo.Binding({owner: this, autoConnect: true}, config);
+                bindings.push(binding);
+            }
+        }
     }
 });
