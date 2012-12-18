@@ -91,6 +91,11 @@
 		return toString.call(it) === "[object Array]";
 	};
 
+	//* Returns true if the argument is true
+	enyo.isTrue = function(it) {
+		return !(it === "false" || it === false || it === 0 || it === null || it === undefined)
+	}
+
 	//* Returns the index of the element in _inArray_ that is equivalent (==) to _inElement_, or -1 if no element is found.
 	enyo.indexOf = function(inElement, inArray, fromIndex) {
 		if (inArray.indexOf) {
@@ -386,5 +391,23 @@
 	enyo.delegate = function(obj) {
 		enyo.setPrototype(enyo.instance, obj);
 		return new enyo.instance();
+	};
+	
+	//* @public
+
+	/**
+		Provides a stub function for _g11n_ string translation. This allows
+		strings to be wrapped in preparation for localization. If the _g11n_
+		library is not loaded, this function will return the string as is.
+
+			$L('Welcome')
+
+		If the _g11n_ library is loaded, this function will be replaced by the
+		_g11n_ library version, which translates wrapped strings to strings from
+		a developer-provided resource file corresponding to the current user
+		locale.
+	*/
+	$L = function(string) {
+		return string;
 	};
 })();

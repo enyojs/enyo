@@ -4,16 +4,16 @@ enyo.kind({
 	_testJsonp: function(inProps, inParams, inAssertFn) {
 		return new enyo.JsonpRequest(inProps)
 			.response(this, function(inSender, inValue) {
-				this.finish(inAssertFn.call(null, inValue) ? "" : "bad response: " + inValue);
+				this.finish(inAssertFn.call(null, inValue) ? "" : "bad response: " + JSON.stringify(inValue));
 			})
 			.error(this, function(inSender, inValue) {
 				this.finish("bad status: " + inValue);
-				console.error(inValue);
+				enyo.error(inValue);
 			})
 			.go(inParams);
 	},
 	_testResponse: function(inProps, inAssertFn) {
-		this._testJsonp(enyo.mixin({url: "php/test1.php?format=jsonp", callbackName: "callback"}, inProps), 
+		this._testJsonp(enyo.mixin({url: "php/test1.php?format=jsonp", callbackName: "callback"}, inProps),
 			null, inAssertFn);
 	},
 	testJsonResponse: function() {

@@ -7,6 +7,8 @@ enyo.dispatcher = {
 		"click", "dblclick", "change", "keydown", "keyup", "keypress", "input"],
 	// these events come from window
 	windowEvents: ["resize", "load", "unload", "message"],
+	// these events come from css
+	cssEvents: ["webkitTransitionEnd"],
 	// feature plugins (aka filters)
 	features: [],
 	connect: function() {
@@ -14,15 +16,21 @@ enyo.dispatcher = {
 		for (i=0; (n=d.events[i]); i++) {
 			d.listen(document, n);
 		}
+		for (i=0; (n=d.cssEvents[i]); i++) {
+			d.listen(document, n);
+		}
 		for (i=0; (n=d.windowEvents[i]); i++) {
 			// Chrome Packaged Apps don't like "unload"
 			if(n === "unload" && 
-				typeof(window.chrome) === "object" &&
+				(typeof window.chrome === "object") &&
 				window.chrome.app) {
 				continue;
 			}
 
 			d.listen(window, n);
+		}
+		for (i=0; (n=d.cssEvents[i]); i++) {
+			d.listen(document, n);
 		}
 	},
 	listen: function(inListener, inEventName, inHandler) {
@@ -32,7 +40,7 @@ enyo.dispatcher = {
 				inListener.addEventListener(inEventName, inHandler || d, false);
 			};
 		} else {
-			//console.log("IE8 COMPAT: using 'attachEvent'");
+			//enyo.log("IE8 COMPAT: using 'attachEvent'");
 			this.listen = function(inListener, inEvent, inHandler) {
 				inListener.attachEvent("on" + inEvent, function(e) {
 					e.target = e.srcElement;
@@ -79,7 +87,7 @@ enyo.dispatcher = {
 				n = n.parentNode;
 			}
 		} catch(x) {
-			console.log(x, n);
+			enyo.log(x, n);
 		}
 		return t;
 	},
@@ -135,7 +143,7 @@ enyo.bubbler = "enyo.bubble(arguments[0])";
 		var args = Array.prototype.slice.call(arguments, 0),
 			control = args.shift();
 
-		if(typeof(control) === "object" && typeof(control.hasNode) === "function") {
+		if((typeof control === "object") && (typeof control.hasNode === "function")) {
 			enyo.forEach(args, function(event) {
 				if(this.hasNode()) {
 					enyo.dispatcher.listen(this.node, event, bubbleUp);
@@ -147,3 +155,18 @@ enyo.bubbler = "enyo.bubble(arguments[0])";
 
 // FIXME: we need to create and initialize dispatcher someplace else to allow overrides
 enyo.requiresWindow(enyo.dispatcher.connect);
+
+// generate a tapped event for a raw-click event
+enyo.dispatcher.features.push(
+    function (e) {
+        if ("click" === e.type) {
+            if (e.clientX === 0 && e.clientY === 0) {
+                // this allows the click to dispatch as well
+                // but note the tap event will fire first
+                var cp = enyo.clone(e);
+                cp.type = "tap";
+                enyo.dispatch(cp);
+            }
+        }
+    }
+);

@@ -45,6 +45,6 @@ enyo.setCookie = function(inName, inValue, inProps) {
 		}
 	}
 	//
-	//console.log(cookie);
+	//enyo.log(cookie);
 	document.cookie = cookie;
 };

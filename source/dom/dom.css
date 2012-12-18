@@ -1,7 +1,11 @@
 /* things we always want */
 body {
-	-webkit-overflow-scrolling: touch;
 	font-family: 'Helvetica Neue', 'Nimbus Sans L', Arial, sans-serif;
+}
+
+/* allow hw-accelerated scrolling on platforms that support it */
+body.webkitOverflowScrolling {
+	-webkit-overflow-scrolling: touch;
 }
 
 /* for apps */
@@ -23,17 +27,26 @@ body {
 	position: relative;
 }
 
+.enyo-no-touch-action {
+	-ms-touch-action: none;
+}
+
 /* reset */
 
 button {
 	font-size: inherit;
 	font-family: inherit;
 }
+button::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
 
 /* user selection */
 
 .enyo-unselectable {
 	cursor: default;
+	-ms-user-select: none;
 	-webkit-user-select: none;
 	-moz-user-select: -moz-none;
 	user-select: none;
@@ -45,6 +58,7 @@ button {
 
 .enyo-selectable {
 	cursor: auto;
+	-ms-user-select: element;
 	-webkit-user-select: text;
 	-moz-user-select: text;
 	user-select: text;

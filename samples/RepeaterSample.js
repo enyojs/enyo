@@ -47,6 +47,6 @@ enyo.kind({
 		{name: "Wendy", sex:"female"},
 		{name: "Xin", sex:"male"},
 		{name: "Yulia", sex:"female"},
-		{name: "Zoltan"},
+		{name: "Zoltan"}
 	]
 });

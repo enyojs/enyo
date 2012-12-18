@@ -5,10 +5,13 @@
 
 	_enyo.kind_ makes it easy to build a constructor-with-prototype (like a
 	class) that has advanced features like prototype-chaining (inheritance).
-	
+
 	A plug-in system is included for extending the abilities of the kind
 	generator, and constructors	are allowed to perform custom operations when
 	subclassed.
+
+	If you make changes to _enyo.kind_, be sure to add or update the appropriate
+	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
 
 	For more information, see the documentation on
 	[Creating Kinds](https://github.com/enyojs/enyo/wiki/Creating-Kinds)
@@ -164,7 +167,7 @@ enyo.kind.features.push(function(ctor, props) {
 
 enyo.kind.statics = {
 	subclass: function(ctor, props) {
-		//console.log("subclassing [" + ctor.prototype.kind + "] from [", this.prototype.kind + "]");
+		//enyo.log("subclassing [" + ctor.prototype.kind + "] from [", this.prototype.kind + "]");
 	},
 	extend: function(props) {
 		enyo.mixin(this.prototype, props);

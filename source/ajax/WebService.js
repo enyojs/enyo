@@ -17,12 +17,15 @@ enyo.kind({
 	_enyo.WebService_ uses _enyo.Ajax_ by default and, like _enyo.Ajax_, it
 	publishes all the properties of the
 	<a href="#enyo.AjaxProperties">enyo.AjaxProperties</a> object.
-	
-	To use `enyo.JsonpRequest` instead of `enyo.Ajax`, set `json` to `true`. 
+
+	To use `enyo.JsonpRequest` instead of `enyo.Ajax`, set `json` to `true`.
+
+	If you make changes to _enyo.WebService_, be sure to add or update the
+	appropriate [unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/ajax/tests).
 
 	For more information, see the documentation on
 	[Consuming Web Services](https://github.com/enyojs/enyo/wiki/Consuming-Web-Services)
-	in the Enyo Developer Guide.	
+	in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.WebService",
@@ -41,22 +44,27 @@ enyo.kind({
 			When using JSONP, optional character set to use to interpret the
 			return data
 		*/
-		charset: null
+		charset: null,
+		/**
+			If set to a non-zero value, the number of milliseconds to
+			wait after the _send_ call before failing with a "timeout" error
+		*/
+		timeout: 0
 	},
 	events: {
 		/**
 			Fires when a response is received.
-			
+
 			_inEvent.ajax_ contains the Async instance associated with the request.
-			
+
 			_inEvent.data_ contains the response data.
 		*/
 		onResponse: "",
 		/**
 			Fires when an error is received.
-			
+
 			_inEvent.ajax_ contains the	Async instance associated with the request.
-			
+
 			_inEvent.data_ contains the error data.
 		*/
 		onError: ""
@@ -66,24 +74,32 @@ enyo.kind({
 		this.inherited(arguments);
 	},
 	//* @public
-	//* Sends a Web request with the passed-in parameters, returning the
-	//* associated Async instance.
-	send: function(inParams) {
-		return this.jsonp ? this.sendJsonp(inParams) : this.sendAjax(inParams);
+	/**
+		Sends a Web request with the passed-in parameters, returning the
+		associated Async instance.
+
+		_inProps_ is an optional object parameterthat  can be used to override some
+		of the AJAX properties for this request, such as setting a _postBody_.
+	*/
+	send: function(inParams, inProps) {
+		return this.jsonp ? this.sendJsonp(inParams, inProps) : this.sendAjax(inParams, inProps);
 	},
 	//* @protected
-	sendJsonp: function(inParams) {
+	sendJsonp: function(inParams, inProps) {
 		var jsonp = new enyo.JsonpRequest();
-		for (var n in {'url':1, 'callbackName':1, 'charset':1}) {
+		for (var n in {'url':1, 'callbackName':1, 'charset':1, 'timeout':1}) {
 			jsonp[n] = this[n];
 		}
+		enyo.mixin(jsonp, inProps);
 		return this.sendAsync(jsonp, inParams);
 	},
-	sendAjax: function(inParams) {
-		var ajax = new enyo.Ajax();
+	sendAjax: function(inParams, inProps) {
+		var ajax = new enyo.Ajax(inProps);
 		for (var n in enyo.AjaxProperties) {
 			ajax[n] = this[n];
 		}
+		ajax.timeout = this.timeout;
+		enyo.mixin(ajax, inProps);
 		return this.sendAsync(ajax, inParams);
 	},
 	sendAsync: function(inAjax, inParams) {

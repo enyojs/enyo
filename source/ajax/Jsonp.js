@@ -6,6 +6,9 @@
 	bypass the same-domain rules that normally apply to XHR, since the browser
 	will load scripts from any address.
 
+	If you make changes to _enyo.JsonpRequest_, be sure to add or update the
+	appropriate [unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/ajax/tests).
+
 	For more information, see the documentation on
 	[Consuming Web Services](https://github.com/enyojs/enyo/wiki/Consuming-Web-Services)
 	in the Enyo Developer Guide.

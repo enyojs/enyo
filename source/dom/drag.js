@@ -41,7 +41,7 @@ enyo.gesture.drag = {
 	minTrack: 8,
 	down: function(e) {
 		// tracking if the mouse is down
-		//console.log("tracking ON");
+		//enyo.log("tracking ON");
 		// Note: 'tracking' flag indicates interest in mousemove, it's turned off
 		// on mouseup
 		// make sure to stop dragging in case the up event was not received.
@@ -60,7 +60,7 @@ enyo.gesture.drag = {
 				this.stopDragging(e);
 				this.cancelHold();
 				this.tracking = false;
-				//console.log("enyo.gesture.drag: mouse must be down to drag.");
+				//enyo.log("enyo.gesture.drag: mouse must be down to drag.");
 				return;
 			}
 			if (this.dragEvent) {
@@ -127,12 +127,12 @@ enyo.gesture.drag = {
 		return e;
 	},
 	sendDragStart: function(e) {
-		//console.log("dragstart");
+		//enyo.log("dragstart");
 		this.dragEvent = this.makeDragEvent("dragstart", this.target, e);
 		enyo.dispatch(this.dragEvent);
 	},
 	sendDrag: function(e) {
-		//console.log("sendDrag to " + this.dragEvent.target.id + ", over to " + e.target.id);
+		//enyo.log("sendDrag to " + this.dragEvent.target.id + ", over to " + e.target.id);
 		// send dragOver event to the standard event target
 		var synth = this.makeDragEvent("dragover", e.target, e, this.dragEvent.dragInfo);
 		enyo.dispatch(synth);
@@ -142,7 +142,7 @@ enyo.gesture.drag = {
 		enyo.dispatch(synth);
 	},
 	sendDragFinish: function(e) {
-		//console.log("dragfinish");
+		//enyo.log("dragfinish");
 		var synth = this.makeDragEvent("dragfinish", this.dragEvent.target, e, this.dragEvent.dragInfo);
 		synth.preventTap = function() {
 			e.preventTap && e.preventTap();
