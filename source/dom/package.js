@@ -10,5 +10,6 @@ enyo.depends(
 	"preview.js",
 	"modal.js",
 	"gesture.js",
-	"drag.js"
+	"drag.js",
+	"transition.js"
 );
