@@ -139,20 +139,34 @@ enyo.dom = {
 	calcMarginExtents: function(inNode) {
 		return this.calcBoxExtents(inNode, "margin");
 	},
-	//* Returns an object like `{top: 0, left: 0, bottom: 100, right: 100, height: 10, width: 10}` that represents the object's position within the viewport. Negative values mean part of the object is not visible.
-	calcViewportPositionForNode: function(inNode) {
+	/**
+		Returns an object like `{top: 0, left: 0, bottom: 100, right: 100, height: 10, width: 10}`
+		that represents the object's position relative to `relativeToNode` (suitable for absolute
+		positioning within that parent node). Negative values mean part of the object is not visible.
+		If you leave `relativeToNode` undefined (or it is not a parent element), then the position
+		will be relative to the viewport and suitable for absolute positioning in a floating layer.
+	*/
+	calcNodePosition: function(inNode, relativeToNode) {
 		// Parse upward and grab our positioning relative to the viewport
 		var top = 0,
 			left = 0,
 			node = inNode,
 			width = node.offsetWidth,
 			height = node.offsetHeight,
-			docHeight = (document.body.parentNode.offsetHeight > this.getWindowHeight() ? this.getWindowHeight() - document.body.parentNode.scrollTop : document.body.parentNode.offsetHeight),
-			docWidth = (document.body.parentNode.offsetWidth > this.getWindowWidth() ? this.getWindowWidth() - document.body.parentNode.scrollLeft : document.body.parentNode.offsetWidth),
 			transformProp = enyo.dom.getStyleTransformProp(),
 			xregex = /translateX\((-?\d+)px\)/i,
 			yregex = /translateY\((-?\d+)px\)/i,
-			borderLeft = 0, borderTop = 0;
+			borderLeft = 0, borderTop = 0,
+			totalHeight = 0, totalWidth = 0;
+		
+		if (relativeToNode) {
+			totalHeight = relativeToNode.offsetHeight;
+			totalWidth = relativeToNode.offsetWidth;
+		} else {
+			totalHeight = (document.body.parentNode.offsetHeight > this.getWindowHeight() ? this.getWindowHeight() - document.body.parentNode.scrollTop : document.body.parentNode.offsetHeight);
+			totalWidth = (document.body.parentNode.offsetWidth > this.getWindowWidth() ? this.getWindowWidth() - document.body.parentNode.scrollLeft : document.body.parentNode.offsetWidth); 
+		}
+		
 		if (node.offsetParent) {
 			do {
 				left += node.offsetLeft - (node.offsetParent ? node.offsetParent.scrollLeft : 0);
@@ -184,13 +198,13 @@ enyo.dom = {
 						top += borderTop;
 					}
 				}
-			} while ((node = node.offsetParent));
+			} while ((node = node.offsetParent) && node !== relativeToNode);
 		}
 		return {
 			'top': top,
 			'left': left,
-			'bottom': docHeight - top - height,
-			'right': docWidth - left - width,
+			'bottom': totalHeight - top - height,
+			'right': totalWidth - left - width,
 			'height': height,
 			'width': width
 		};
