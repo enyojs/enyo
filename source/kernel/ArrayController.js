@@ -20,41 +20,43 @@ enyo.kind({
     name: "enyo.ArrayController",
     kind: "enyo.Controller",
     published: {
-        length: 0,
-        data: null
+        length: 0
     },
     //*@protected
     create: function () {
         this.inherited(arguments);
-        this.data = [];
     },
+    //*@protected
+    data: enyo.Computed(function () {
+        return this.array || (this.array = []);
+    }),
     //*@public
     push: function (value) {
-        var ret = this.data.push(value);
+        var ret = this.get("data").push(value);
         this.update();
         this.bubble("didadd", {value: value});
         return ret;
     },
     pop: function () {
-        var ret = this.data.pop();
+        var ret = this.get("data").pop();
         this.update();
         this.bubble("didremove", {value: ret});
         return ret;
     },
     shift: function () {
-        var ret = this.data.shift();
+        var ret = this.get("data").shift();
         this.update();
         this.bubble("didremove", {value: ret});
         return ret;
     },
     unshift: function (value) {
-        var ret = this.data.unshift(value);
+        var ret = this.get("data").unshift(value);
         this.update();
         this.bubble("didadd", {value: value});
         return ret;
     },
     at: function (index) {
-        var ret = this.data[index];
+        var ret = this.get("data")[index];
         return ret;
     },
     /**
@@ -81,16 +83,16 @@ enyo.kind({
     },
     // TODO: this is a placeholder
     lastIndexOf: function (value) {
-        if ("function" === typeof this.data.lastIndexOf) {
-            return this.data.lastIndexOf(value);
+        if ("function" === typeof this.get("data").lastIndexOf) {
+            return this.get("data").lastIndexOf(value);
         }
     },
     splice: function () {
-        var data = this.data;
+        var data = this.get("data");
         return data.splice.apply(data, arguments);
     },
     //*@protected
     update: function () {
-        if (this.length !== this.data.length) this.set("length", this.data.length);
+        if (this.length !== this.get("data").length) this.set("length", this.get("data").length);
     }
 });
