@@ -139,7 +139,13 @@ enyo.dom = {
 	calcMarginExtents: function(inNode) {
 		return this.calcBoxExtents(inNode, "margin");
 	},
-	//* Returns an object like `{top: 0, left: 0, bottom: 100, right: 100, height: 10, width: 10}` that represents the object's position relative to `relativeToNode` (suitable for absolute positioning within that parent node). Negative values mean part of the object is not visible. If you leave `relativeToNode` undefined (or it is not a parent element), then the position will be relative to the viewport and suitable for absolute positioning in a floating layer.
+	/**
+		Returns an object like `{top: 0, left: 0, bottom: 100, right: 100, height: 10, width: 10}`
+		that represents the object's position relative to `relativeToNode` (suitable for absolute
+		positioning within that parent node). Negative values mean part of the object is not visible.
+		If you leave `relativeToNode` undefined (or it is not a parent element), then the position
+		will be relative to the viewport and suitable for absolute positioning in a floating layer.
+	*/
 	calcNodePosition: function(inNode, relativeToNode) {
 		// Parse upward and grab our positioning relative to the viewport
 		var top = 0,
