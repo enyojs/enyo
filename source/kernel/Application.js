@@ -88,7 +88,10 @@ enyo.kind({
                 name = props.name || this.instanceFromKind(kind);
                 global = props.global? Boolean(props.global): undefined;
             }
-            var ctor = enyo.constructorForKind(kind);
+            delete props["name"];
+            delete props["global"];
+            //var ctor = enyo.constructorForKind(kind);
+            var ctor = enyo.kind(props);
             var namespace = this.get("namespace");
             if (!ctor) return enyo.warn("enyo.Application: " +
                 "could not find a constructor for the requested " +
