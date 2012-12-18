@@ -61,23 +61,31 @@ enyo.kind({
 		//* None - used for dragging, etc.
 		none   : "",
 		//* Scroll - basic scrolling behavior
-		scroll : "-webkit-transform 3.8s cubic-bezier(.19,1,.28,1.0) 0s",
+		scroll : "3.8s cubic-bezier(.19,1,.28,1.0) 0s",
 		//* Bounce - overscroll bounceback behavior
-		bounce : "-webkit-transform 0.5s cubic-bezier(0.06,.5,.5,.94) 0s"
+		bounce : "0.5s cubic-bezier(0.06,.5,.5,.94) 0s"
 	},
 	
 	//* @public
 	
 	//* Sets the left scroll position within the scroller.
 	setScrollLeft: function(inLeft) {
+		var prevLeft = this.scrollLeft;
 		this.stop();
 		this.scrollLeft = inLeft;
+		if(this.isInLeftOverScroll() || this.isInRightOverScroll()) {
+			this.scrollLeft = prevLeft;
+		}
 		this.effectScroll();
 	},
 	//* Sets the top scroll position within the scroller.
 	setScrollTop: function(inTop) {
+		var prevTop = this.scrollTop;
 		this.stop();
 		this.scrollTop = inTop;
+		if(this.isInTopOverScroll() || this.isInBottomOverScroll()) {
+			this.scrollTop = prevTop;
+		}
 		this.effectScroll();
 	},
 	setScrollX: function(inLeft) {
@@ -103,22 +111,31 @@ enyo.kind({
 		this.inherited(arguments);
 		enyo.dom.transformValue(this.$.client, this.translation, "0,0,0");
 	},
+	destroy: function() {
+		this.clearCSSTransitionInterval();
+		this.inherited(arguments);
+	},
 	getScrollSize: function() {
 		var n = this.$.client.hasNode();
 		return {width: n ? n.scrollWidth : 0, height: n ? n.scrollHeight : 0};
 	},
 	horizontalChanged: function() {
 		if(this.horizontal == "hidden") {
-			this.horizontal = false;
+			this.scrollHorizontal = false;
 		}
 	},
 	verticalChanged: function() {
 		if(this.vertical == "hidden") {
-			this.vertical = false;
+			this.scrollVertical = false;
 		}
 	},
 	calcScrollNode: function() {
 		return this.$.clientContainer.hasNode();
+	},
+	calcBoundaries: function() {
+		var b = this._getScrollBounds();
+		this.bottomBoundary = b.clientHeight - b.height;
+		this.rightBoundary = b.clientWidth - b.width;
 	},
 	maxHeightChanged: function() {
 		// content should cover scroller at a minimum if there's no max-height.
@@ -127,14 +144,12 @@ enyo.kind({
 		this.$.clientContainer.addRemoveClass("enyo-scrollee-fit", !this.maxHeight);
 	},
 	calcAutoScrolling: function() {
-		if((this.vertical || this.horizontal) && this.scrollNode) {
-			var b = this.getScrollBounds();
-			if(this.vertical) {
-				this.vertical = b.height > b.clientHeight;
-			}
-			if(this.horizontal) {
-				this.horizontal = b.width > b.clientWidth;
-			}
+		var b = this.getScrollBounds();
+		if(this.vertical) {
+			this.scrollVertical = b.height > b.clientHeight;
+		}
+		if(this.horizontal) {
+			this.scrollHorizontal = b.width > b.clientWidth;
 		}
 	},
 	isInOverScroll: function() {
@@ -208,19 +223,27 @@ enyo.kind({
 	
 	// Set scroll x value to the current computed style
 	updateX: function() {
-		var x = window.getComputedStyle(this.$.client.node,null).getPropertyValue("-webkit-transform").split('(')[1];
+		var x = window.getComputedStyle(this.$.client.node,null).getPropertyValue(enyo.dom.getCssTransformProp()).split('(')[1];
 		x = (x == undefined) ? 0 : x.split(')')[0].split(',')[4];
+		if(-1*parseFloat(x) === this.scrollTop) {
+			return false;
+		}
 		this.scrollLeft = -1*parseFloat(x);
+		return true;
 	},
 	// Set scroll y value to the current computed style
 	updateY: function() {
-		var y = window.getComputedStyle(this.$.client.node,null).getPropertyValue("-webkit-transform").split('(')[1];
+		var y = window.getComputedStyle(this.$.client.node,null).getPropertyValue(enyo.dom.getCssTransformProp()).split('(')[1];
 		y = (y == undefined) ? 0 : y.split(')')[0].split(',')[5];
+		if(-1*parseFloat(y) === this.scrollTop) {
+			return false;
+		}
 		this.scrollTop = -1*parseFloat(y);
+		return true;
 	},
 	// Apply transform to scroll the scroller
 	effectScroll: function() {
-		var o = (-1*this.scrollLeft) + "px, " + (-1*this.scrollTop) + "px" + (this.accel ? ",0" : "");
+		var o = (-1*this.scrollLeft) + "px, " + (-1*this.scrollTop) + "px" + (this.accel ? ", 0" : "");
 		enyo.dom.transformValue(this.$.client, this.translation, o);
 	},
 	// On touch, stop transition by setting transform values to current computed style, and
@@ -241,7 +264,6 @@ enyo.kind({
 		if(!this.dragDuringGesture && inEvent.srcEvent.touches && inEvent.srcEvent.touches.length > 1) {
 			return true;
 		}
-		// note: allow drags to propagate to parent scrollers via data returned in the shouldDrag event.
 		this.shouldDrag(inEvent);
 		this.dragging = (inEvent.dragger == this || (!inEvent.dragger && inEvent.boundaryDragger == this));
 		if (this.dragging) {
@@ -262,11 +284,12 @@ enyo.kind({
 	// Determine if we should allow dragging
 	shouldDrag: function(e) {
 		this.calcStartInfo();
+		this.calcBoundaries();
 		this.calcAutoScrolling();
-		if(!this.horizontal) {
+		if(!this.scrollHorizontal) {
 			return this.shouldDragVertical(e);
 		} else {
-			if(!this.vertical) {
+			if(!this.scrollVertical) {
 				return this.shouldDragHorizontal(e);
 			} else {
 				return (this.shouldDragVertical(e) || this.shouldDragHorizontal(e));
@@ -300,10 +323,10 @@ enyo.kind({
 		}
 	},
 	canDragVertical: function(e) {
-		return (this.vertical && e.vertical);
+		return (this.scrollVertical && e.vertical);
 	},
 	canDragHorizontal: function(e) {
-		return (this.horizontal && !e.vertical);
+		return (this.scrollHorizontal && !e.vertical);
 	},
 	oobVertical: function(e) {
 		var down = e.dy < 0;
@@ -323,8 +346,8 @@ enyo.kind({
 		if(this.dragging) {
 			e.preventDefault();
 			// calculate new scroll values
-			this.scrollLeft = this.horizontal ? this.calculateDragDistance(parseInt(this.getScrollLeft()), (-1*(e.pageX-this.prevX)), this.leftBoundary, this.rightBoundary) : this.getScrollLeft();
-			this.scrollTop = this.vertical ? this.calculateDragDistance(this.getScrollTop(), (-1*(e.pageY-this.prevY)), this.topBoundary, this.bottomBoundary) : this.getScrollTop();
+			this.scrollLeft = this.scrollHorizontal ? this.calculateDragDistance(parseInt(this.getScrollLeft()), (-1*(e.pageX-this.prevX)), this.leftBoundary, this.rightBoundary) : this.getScrollLeft();
+			this.scrollTop = this.scrollVertical ? this.calculateDragDistance(this.getScrollTop(), (-1*(e.pageY-this.prevY)), this.topBoundary, this.bottomBoundary) : this.getScrollTop();
 			// apply new scroll values
 			this.effectScroll();
 			this.scroll();
@@ -370,15 +393,15 @@ enyo.kind({
 	// Bounce back from overscroll region
 	correctOverflow: function() {
 		if(this.isInOverScroll()) {
-			var x = (this.horizontal) ? this.correctOverflowX() : false;
-			var y = (this.vertical) ? this.correctOverflowY() : false;
+			var x = (this.scrollHorizontal) ? this.correctOverflowX() : false;
+			var y = (this.scrollVertical) ? this.correctOverflowY() : false;
 			if(x !== false && y !== false) {
 				this.scrollLeft = (x !== false) ? x : this.getScrollLeft();
 				this.scrollTop = (y !== false) ? y : this.getScrollTop();
 				this.startOverflowScrolling();
 			} else if(x !== false) {
 				this.scrollLeft = x;
-				this.scrollTop = this.targetScrollTop;
+				this.scrollTop = this.targetScrollTop || this.scrollTop;
 				this.targetScrollLeft = this.getScrollLeft();
 				if(!this.vertical) {
 					this.startOverflowScrolling();
@@ -387,9 +410,9 @@ enyo.kind({
 				}
 			} else if(y !== false) {
 				this.scrollTop = y;
-				this.scrollLeft = this.targetScrollLeft;
+				this.scrollLeft = this.targetScrollLeft || this.scrollLeft;
 				this.targetScrollTop = this.getScrollTop();
-				if(!this.horizontal) {
+				if(!this.scrollHorizontal) {
 					this.startOverflowScrolling();
 				} else {
 					this.startScrolling();
@@ -431,8 +454,8 @@ enyo.kind({
 	// in the overscroll region.
 	flick: function(inSender, e) {
 		if(this.dragging && this.flickOnEnabledAxis(e)) {
-			this.scrollLeft = this.horizontal ? this.calculateFlickDistance(this.scrollLeft, -1*e.xVelocity) : this.getScrollLeft();
-			this.scrollTop = this.vertical ? this.calculateFlickDistance(this.scrollTop, -1*e.yVelocity) : this.getScrollTop();
+			this.scrollLeft = this.scrollHorizontal ? this.calculateFlickDistance(this.scrollLeft, -1*e.xVelocity) : this.getScrollLeft();
+			this.scrollTop = this.scrollVertical ? this.calculateFlickDistance(this.scrollTop, -1*e.yVelocity) : this.getScrollTop();
 			this.targetScrollLeft = this.scrollLeft;
 			this.targetScrollTop = this.scrollTop;
 			this.boundaryX = null;
@@ -455,7 +478,7 @@ enyo.kind({
 		}
 	},
 	flickOnEnabledAxis: function(e) {
-		return Math.abs(e.xVelocity) > Math.abs(e.yVelocity) ? this.horizontal : this.vertical;
+		return Math.abs(e.xVelocity) > Math.abs(e.yVelocity) ? this.scrollHorizontal : this.scrollVertical;
 	},
 	calculateFlickDistance: function(currentPosition, flickVelocity) {
 		return (currentPosition + (flickVelocity * this.kFlickScalar));
@@ -478,6 +501,7 @@ enyo.kind({
 	},
 	// Apply the given transition to this.$.client
 	applyTransition: function(which) {
+		var transform = this.translation+": "+this.transitions[which];
 		this.$.client.applyStyle("-webkit-transition",this.transitions[which]);
 	},
 	// Turn off CSS transition and clear this.scrollInterval
@@ -505,9 +529,12 @@ enyo.kind({
 	},
 	// Save current x/y position and bubble scroll event
 	updateScrollPosition: function() {
-		this.updateY();
-		this.updateX();
+		var yChanged = this.updateY();
+		var xChanged = this.updateX();
 		this.scroll();
+		if(!yChanged && !xChanged) {
+			this.stop();
+		}
 	},
 	// Clear this.scrollInterval
 	clearCSSTransitionInterval: function() {
@@ -519,7 +546,8 @@ enyo.kind({
 	// Set scroller translation to current position and turn transition off. This effectively
 	// stops scrolling
 	resetCSSTranslationVals: function() {
-		var transformStyle = getComputedStyle(this.$.client.node,null).getPropertyValue("-webkit-transform").split('(')[1].split(')')[0].split(',');
+		var prop = enyo.dom.getCssTransformProp();
+		var transformStyle = window.getComputedStyle(this.$.client.node,null).getPropertyValue(prop).split('(')[1].split(')')[0].split(',');
 		this.applyTransition("none");
 		this.scrollLeft = -1*transformStyle[4];
 		this.scrollTop = -1*transformStyle[5];
