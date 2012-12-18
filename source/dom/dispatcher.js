@@ -8,7 +8,7 @@ enyo.dispatcher = {
 	// these events come from window
 	windowEvents: ["resize", "load", "unload", "message"],
 	// these events come from css
-	cssEvents: ["webkitTransitionEnd", "mozTransitionEnd", "transitionend"],
+	cssEvents: ["webkitTransitionEnd", "transitionend"],
 	// feature plugins (aka filters)
 	features: [],
 	connect: function() {
