@@ -5,12 +5,12 @@ _enyo.FormData_ is an [XHR2](http://www.w3.org/TR/XMLHttpRequest/)
 Ajax requests.  _enyo.Blob_ is the associated content provider for
 file-parts.
 
-*Note:* On IE < 10, both _enyo.FormData_ and _enyo.Blob_ are limited
-to `String` content: an _enyo.Blob_ can be instanciated only using an
+Note that in IE<10, both _enyo.FormData_ and _enyo.Blob_ are limited
+to `String` content--an _enyo.Blob_ may only be instantiated using an
 `Array` or `String`.
 
 _enyo.FormData_ is inspired by
-[html5-formdata](https://github.com/francois2metz/html5-formdata/blob/master/formdata.js)
+[html5-formdata](https://github.com/francois2metz/html5-formdata/blob/master/formdata.js).
 
     Emulate FormData for some browsers
     MIT License
