@@ -225,7 +225,7 @@ enyo.kind({
 	updateX: function() {
 		var x = window.getComputedStyle(this.$.client.node,null).getPropertyValue(enyo.dom.getCssTransformProp()).split('(')[1];
 		x = (x == undefined) ? 0 : x.split(')')[0].split(',')[4];
-		if(-1*parseFloat(x) === this.scrollTop) {
+		if(-1*parseFloat(x) === this.scrollLeft) {
 			return false;
 		}
 		this.scrollLeft = -1*parseFloat(x);
@@ -354,8 +354,8 @@ enyo.kind({
 			// save values for next drag
 			this.prevY = e.pageY;
 			this.prevX = e.pageX;
-			this.setBoundaryX();
-			this.setBoundaryY();
+			this.resetBoundaryX();
+			this.resetBoundaryY();
 		}
 	},
 	//* Figure how far the drag should go based on pointer movement (delta)
@@ -371,11 +371,11 @@ enyo.kind({
 		}
 		return newPosition;
 	},
-	setBoundaryX: function() {
-		this.boundaryX = (this.isInLeftOverScroll()) ? this.leftBoundary : (this.isInRightOverScroll()) ? this.rightBoundary : null;
+	resetBoundaryX: function() {
+		this.boundaryX = 0;
 	},
-	setBoundaryY: function() {
-		this.boundaryY = (this.isInTopOverScroll()) ? this.topBoundary : (this.isInBottomOverScroll()) ? this.bottomBoundary : null;
+	resetBoundaryY: function() {
+		this.boundaryY = 0;
 	},
 	// When user releases the drag, set this.dragging to false, bounce overflow back, and hide scrim.
 	dragfinish: function(inSender, inEvent) {
@@ -594,5 +594,12 @@ enyo.kind({
 		this.setScrollTop(-1*inY);
 		this.setScrollLeft(-1*inX);
 		this.start();
-	}
+	},
+	//* Returns the values of _overleft_ and _overtop_, if any.
+	getOverScrollBounds: function() {
+		return {
+			overleft: Math.min(this.leftBoundary - -1*this.scrollLeft, 0) || Math.max(this.rightBoundary - -1*this.scrollLeft, 0),
+			overtop: Math.min(this.topBoundary - -1*this.scrollTop, 0) || Math.max(this.bottomBoundary - -1*this.scrollTop, 0)
+		};
+	},
 });
