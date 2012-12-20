@@ -7,7 +7,7 @@ enyo.kind({
 		return ws.send(inParams);
 	},
 	_response: function(inSender, inValue) {
-		this.finish(inSender.assertFn(inValue.data) ? "" : "bad response: " + inValue.data);
+		this.finish(inSender.assertFn(inValue.data) ? "" : "bad response: " + JSON.stringify(inValue.data));
 	},
 	_error: function(inSender, inValue) {
 		this.finish("bad status: " + inValue.data);

@@ -275,7 +275,7 @@ enyo.kind({
 	/**
 		Animates a scroll to the specified position.
 	*/
-	scrollTo: function(inY, inX) {
+	scrollTo: function(inX, inY) {
 		if (inY !== null) {
 			this.y = this.y0 - (inY + this.y0) * (1 - this.kFrictionDamping);
 		}

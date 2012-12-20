@@ -252,7 +252,7 @@ enyo.kind.features.push(function(ctor, props) {
 
 enyo.kind.statics = {
 	subclass: function(ctor, props) {
-		//console.log("subclassing [" + ctor.prototype.kind + "] from [", this.prototype.kind + "]");
+		//enyo.log("subclassing [" + ctor.prototype.kind + "] from [", this.prototype.kind + "]");
 	},
 	extend: function(props) {
 		enyo.mixin(this.prototype, props);

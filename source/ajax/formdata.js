@@ -5,12 +5,12 @@ _enyo.FormData_ is an [XHR2](http://www.w3.org/TR/XMLHttpRequest/)
 Ajax requests.  _enyo.Blob_ is the associated content provider for
 file-parts.
 
-*Note:* On IE < 10, both _enyo.FormData_ and _enyo.Blob_ are limited
-to `String` content: an _enyo.Blob_ can be instanciated only using an
+Note that in IE<10, both _enyo.FormData_ and _enyo.Blob_ are limited
+to `String` content--an _enyo.Blob_ may only be instantiated using an
 `Array` or `String`.
 
 _enyo.FormData_ is inspired by
-[html5-formdata](https://github.com/francois2metz/html5-formdata/blob/master/formdata.js)
+[html5-formdata](https://github.com/francois2metz/html5-formdata/blob/master/formdata.js).
 
     Emulate FormData for some browsers
     MIT License
@@ -19,9 +19,17 @@ _enyo.FormData_ is inspired by
  */
 (function(w) {
 	if (w.FormData) {
-		enyo.FormData = w.FormData;
-		enyo.Blob = w.Blob;
-		return;
+		try {
+			var t1 = new w.FormData();
+			var t2 = new w.Blob();
+			// Android Chrome 18 will throw an error trying to create these
+			enyo.FormData = w.FormData;
+			enyo.Blob = w.Blob;
+			return;
+		}
+		catch (e) {
+			// ignore error and fall through to fake FormData code
+		}
 	}
 	function FormData() {
 		this.fake = true;
@@ -43,7 +51,7 @@ _enyo.FormData_ is inspired by
 	FormData.prototype.toString = function() {
 		var boundary = this.boundary;
 		var body = "";
-		this._fields.forEach(function(field) {
+		enyo.forEach(this._fields, function(field) {
 			body += "--" + boundary + "\r\n";
 			if (field[2] || field[1].name) {
 				// file upload

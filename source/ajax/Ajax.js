@@ -13,7 +13,7 @@
 
 	If you make changes to _enyo.Ajax_, be sure to add or update the appropriate
 	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/ajax/tests).
-	
+
 	For more information, see the documentation on
 	[Consuming Web Services](https://github.com/enyojs/enyo/wiki/Consuming-Web-Services)
 	in the Enyo Developer Guide.
@@ -31,32 +31,24 @@ enyo.kind({
 	},
 	//* @public
 	/**
-    Sends the Ajax request with parameters _inParams_. _inParams_ values may be
-    either Strings or Objects.
+	Sends the Ajax request with parameters _inParams_. _inParams_ values may be
+	either Strings or Objects.
 
-    _inParams_ as an Object is converted into the url query string. For
-    instance, passing <code>{q: "searchTerm"}</code> will result in the addition
-    of the string `q="searchTerm"` to the current url query string.
+	_inParams_ as an Object is converted into the url query string. For
+	instance, passing <code>{q: "searchTerm"}</code> will result in the addition
+	of the string `q="searchTerm"` to the current url query string.
 
-    _inParams_ as a String is used as the request body, and triggers various
-    behaviors depending on the query method.
+	_inParams_ as a String is used as the query part of the URL directly.
 
-    * The GET method, since it has no body, translates the string into a
-        parameter. Thus `'q="searchTerm"'` translates into `q=searchTerm` in the
-        url query string.
+	_inParams_ will not be converted into a POST body, it will always be used as
+	part of the URL query string if provided.  Use the `postBody` property for
+	specifying a body.
 
-    * The POST method uses the provided string as its body. However, this will
-        be overridden by the value of _postBody_, if set.
-
-    The use of _inParams_ as a String is discouraged. Instead, set the request
-    body content via _postBody_ and use _inParams_ as an Object to set the query
-    string.
-
-    When the request is completed, the code will set a `xhrResponse` property
-    in the `enyo.Ajax` object with the subproperties `status`, `headers`, and
-    `body`.  These cache the results from the XHR for later use.  The keys for
-    the `headers` object have been converted to all lower case as HTTP headers
-    are case-insensitive.
+	When the request is completed, the code will set a `xhrResponse` property
+	in the `enyo.Ajax` object with the subproperties `status`, `headers`, and
+	`body`.  These cache the results from the XHR for later use.  The keys for
+	the `headers` object have been converted to all lower case as HTTP headers
+	are case-insensitive.
 	*/
 	go: function(inParams) {
 		this.startTimer();
@@ -69,35 +61,33 @@ enyo.kind({
 		var uri = parts.shift() || "";
 		var args = parts.length ? (parts.join("?").split("&")) : [];
 		//
-        var body = null;
-        //
-        if(enyo.isString(inParams)){
-            //If inParams parameter is a string, use it as request body
-            body = inParams;
-        }
-        else{
-            //If inParams parameter is not a string, build a query from it
-            if(inParams){
-                args.push(enyo.Ajax.objectToQuery(inParams));
-            }
-        }
-        //
-		if (this.method == "GET") {
-			if (body) {
-				args.push(body);
-				body = null;
+		var query = null;
+		//
+		if(enyo.isString(inParams)){
+			//If inParams parameter is a string, use it as request body
+			query = inParams;
+		}
+		else{
+			//If inParams parameter is not a string, build a query from it
+			if(inParams){
+				query = enyo.Ajax.objectToQuery(inParams);
 			}
-			// don't use cacheBust on file URLs, can cause problems in Android 4
-			if (this.cacheBust && !/^file:/i.test(uri)) {
-				args.push(Math.random());
-			}
+		}
+		//
+		if (query) {
+			args.push(query);
+			query = null;
+		}
+		if (this.cacheBust) {
+			args.push(Math.random());
 		}
 		//
 		var url = args.length ? [uri, args.join("&")].join("?") : uri;
 		//
 		var xhr_headers = {};
-		body = this.postBody || body;
+		var body;
 		if (this.method != "GET") {
+			body = this.postBody;
 			if (this.method === "POST" && body instanceof enyo.FormData) {
 				if (body.fake) {
 					xhr_headers["Content-Type"] = body.getContentType();
@@ -110,6 +100,16 @@ enyo.kind({
 				}
 			} else {
 				xhr_headers["Content-Type"] = this.contentType;
+				if (body instanceof Object) {
+					if (this.contentType === "application/json") {
+						body = JSON.stringify(body);
+					} else if (this.contentType === "application/x-www-form-urlencoded") {
+						body = enyo.Ajax.objectToQuery(body);
+					}
+					else {
+						body = body.toString();
+					}
+				}
 			}
 		}
 		enyo.mixin(xhr_headers, this.headers);
@@ -163,7 +163,7 @@ enyo.kind({
 	fail: function(inError) {
 		// on failure, explicitly cancel the XHR to prevent
 		// further responses.  cancellation also resets the
-		// response headers & body, 
+		// response headers & body,
 		if (this.xhr) {
 			enyo.xhr.cancel(this.xhr);
 			this.xhr = null;

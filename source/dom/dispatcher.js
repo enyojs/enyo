@@ -7,11 +7,16 @@ enyo.dispatcher = {
 		"click", "dblclick", "change", "keydown", "keyup", "keypress", "input"],
 	// these events come from window
 	windowEvents: ["resize", "load", "unload", "message"],
+	// these events come from css
+	cssEvents: ["webkitTransitionEnd", "transitionend"],
 	// feature plugins (aka filters)
 	features: [],
 	connect: function() {
 		var d = enyo.dispatcher, i, n;
 		for (i=0; (n=d.events[i]); i++) {
+			d.listen(document, n);
+		}
+		for (i=0; (n=d.cssEvents[i]); i++) {
 			d.listen(document, n);
 		}
 		for (i=0; (n=d.windowEvents[i]); i++) {
@@ -24,6 +29,9 @@ enyo.dispatcher = {
 
 			d.listen(window, n);
 		}
+		for (i=0; (n=d.cssEvents[i]); i++) {
+			d.listen(document, n);
+		}
 	},
 	listen: function(inListener, inEventName, inHandler) {
 		var d = enyo.dispatch;
@@ -32,7 +40,7 @@ enyo.dispatcher = {
 				inListener.addEventListener(inEventName, inHandler || d, false);
 			};
 		} else {
-			//console.log("IE8 COMPAT: using 'attachEvent'");
+			//enyo.log("IE8 COMPAT: using 'attachEvent'");
 			this.listen = function(inListener, inEvent, inHandler) {
 				inListener.attachEvent("on" + inEvent, function(e) {
 					e.target = e.srcElement;
@@ -147,3 +155,18 @@ enyo.bubbler = "enyo.bubble(arguments[0])";
 
 // FIXME: we need to create and initialize dispatcher someplace else to allow overrides
 enyo.requiresWindow(enyo.dispatcher.connect);
+
+// generate a tapped event for a raw-click event
+enyo.dispatcher.features.push(
+    function (e) {
+        if ("click" === e.type) {
+            if (e.clientX === 0 && e.clientY === 0) {
+                // this allows the click to dispatch as well
+                // but note the tap event will fire first
+                var cp = enyo.clone(e);
+                cp.type = "tap";
+                enyo.dispatch(cp);
+            }
+        }
+    }
+);

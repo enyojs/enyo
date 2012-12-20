@@ -301,7 +301,7 @@ enyo.master = new enyo.Component({
 	},
 	isDescendantOf: enyo.nop,
 	bubble: function(inEventName, inEvent, inSender) {
-		//console.log("master event: " + inEventName);
+		//enyo.log("master event: " + inEventName);
 		if (inEventName == "onresize") {
 			// Resize is special; waterfall this message.
 			// This works because master is a Component, so it waterfalls
