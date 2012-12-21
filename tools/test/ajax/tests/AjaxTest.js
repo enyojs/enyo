@@ -2,6 +2,38 @@ enyo.kind({
 	name: "AjaxTest",
 	kind: enyo.TestSuite,
 	timeout: 10000,
+	testContextSuccess: function (){
+		var self = this,
+		    context = {testStatus: 'success'};
+		return new enyo.Ajax({url: "php/test1.php?format=test"})
+			.response(context, function(inSender, inValue) {
+				if (this.testStatus && this.testStatus === 'success') {
+					self.finish("");
+				} else {
+					self.finish("response context not correctly bound");
+				}
+			})
+			.error(context, function(inSender, inError) {
+				self.finish("simple request failed");
+			})
+			.go();
+	},
+	testContextFailure: function (){
+		var self = this,
+		    context = {testStatus: 'success'};
+		return new enyo.Ajax({url: "php/nowhere.php"})
+			.response(context, function(inSender, inValue) {
+				self.finish("simple request failed");
+			})
+			.error(context, function(inSender, inError) {
+				if (this.testStatus && this.testStatus === 'success') {
+					self.finish("");
+				} else {
+					self.finish("failure context not correctly bound");
+				}
+			})
+			.go();
+	},
 	_testAjax: function(inProps, inParams, inAssertFn, inAssertErrFn) {
 		return new enyo.Ajax(inProps)
 			.response(this, function(inSender, inValue) {
