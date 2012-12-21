@@ -154,10 +154,10 @@ enyo.kind({
 	/**
 		Returns the DOM node representing the control.
 		If the control is not currently rendered, returns null.
-		
+
 		If hasNode() returns a value, the _node_ property will be valid and
 		can be checked directly.
-		
+
 		Once hasNode() is called, the returned value is made available in
 		the _node_ property of this control.
 
@@ -285,7 +285,7 @@ enyo.kind({
 		Removes substring _inClass_ from the _class_ attribute of this object.
 
 		_inClass_ must have no leading or trailing spaces.
-		
+
 		Using a compound class name is supported, but the name is treated
 		atomically. For example, given _"a b c"_, _removeClass("a b")_ will
 		produce _"c"_, but _removeClass("a c")_ will produce _"a b c"_.
@@ -520,13 +520,14 @@ enyo.kind({
 			{left: _offsetLeft_, top: _offsetTop_, width: _offsetWidth_, height: _offsetHeight_}
 
 		Values returned are only valid if _hasNode()_ is truthy.
+		If there's no DOM node for the object, this returns _null_.
 
 			var bounds = this.getBounds();
 			enyo.log(bounds.width);
 	*/
 	getBounds: function() {
-		var n = this.node || this.hasNode() || 0;
-		return {left: n.offsetLeft, top: n.offsetTop, width: n.offsetWidth, height: n.offsetHeight};
+		var n = this.node || this.hasNode();
+		return enyo.dom.getBounds(n);
 	},
 	/**
 		Sets any or all of the geometry style properties _width_, _height_,
