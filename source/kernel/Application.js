@@ -1,72 +1,58 @@
 
+//*@public
+/**
+    An _enyo.Application_ can be used to coordinate execution of
+    a given collection of _enyo_ objects. There can be one or more
+    _enyo.Applications_ running (with some limitation such as which is
+    rendered into the _document.body_ - no limitation if they are each
+    rendered into separate DOM nodes or nested). It also provides the
+    ability to namespace and automatically initialize any _controllers_
+    of the application.
+*/
 enyo.kind({
-    name: "enyo.ViewController",
-    kind: "enyo.Controller",
-    view: null,
-    renderTarget: "document.body",
-    constructor: function () {
-        this.inherited(arguments);
-    },
-    create: function () {
-        var view = this.view;
-    },
-    render: function () {
-        var target = this.get("target");
-        var ctor = this.get("viewKind");
-        var view = this.view = new ctor();
-        view.renderInto(target);
-    },
-    renderInto: function (target) {
-        this.set("renderTarget", target);
-        this.render();
-    },
-    target: enyo.Computed(function () {
-        var target = this.renderTarget;
-        if ("string" === typeof target) {
-            if ("#" === target[0]) {
-                target = target.slice(1);
-                target = enyo.dom.byId(target);
-            } else {
-                target = enyo.getPath(target);
-            }
-            if (!target) {
-                target = enyo.dom.byId(target);
-            }
-        }
-        if (!target) {
-            throw "Cannot find requested render target!";
-        }
-        return target;
-    }, "renderTarget"),
-    viewKind: enyo.Computed(function () {
-        var view = this.view;
-        if ("string" === typeof view) {
-            view = enyo.getPath(view);
-        }
-        if (!view) {
-            throw "Cannot find the requested view!";
-        }
-        return view;
-    }, "view")
-});
-
-enyo.kind({
+    //*@public
     name: "enyo.Application",
+    //*@public
     kind: "enyo.ViewController",
+    //*@public
+    /**
+        This flag designates if the application will automatically
+        execute its _start_ method when its constructor is called.
+    */
     autoStart: true,
+    //*@public
+    /**
+        This flag designates if the application will automatically
+        render its _view_ into the _renderTarget_ when its _start_
+        method es called.
+    */
     renderOnStart: false,
+    //*@public
+    /**
+        This can be set to an array of _controller_s, much like the
+        _components_ block of an _enyo.Component_.
+    */
     controllers: null,
+    //*@protected
     concat: ["controllers"],
+    //*@protected
     constructor: function () {
         this.inherited(arguments);
         if (true === this.autoStart) this.start();
     },
+    //*@protected
     initComponents: function () {
         enyo.forEach(["controllers"], function (prop) {
             var fn = prop + "Changed";
             if ("function" === typeof this[fn]) this[fn]();
         }, this);
     },
+    //*@public
+    /**
+        If the _autoStart_ flag is set to true this will automatically
+        be executed when the constructor is called. Otherwise it can
+        be executed whenever the application should begin execution.
+    */
     start: function () {
         this.initComponents();
         this._setupBindings();
@@ -74,6 +60,7 @@ enyo.kind({
             this.render();
         }
     },
+    //*@protected
     controllersChanged: function () {
         var controllers = this.controllers;
         enyo.forEach(controllers, function (props) {
@@ -100,12 +87,14 @@ enyo.kind({
             enyo.setPath.call(namespace, name, new ctor());
         }, this);
     },
+    //*@protected
     namespace: enyo.Computed(function (path) {
         var kindName = this.kindName;
         var parts = kindName.split(".");
         var ns = parts[0];
         return path? ns: enyo.getPath(ns);
     }),
+    //*@protected
     instanceNameFrom: function (name, global) {
         var orig = name;
         var namespace;
@@ -123,7 +112,7 @@ enyo.kind({
     },
     
     
-    
+    //*@protected
     _setupBindings: function () {
         var defs;
         var config;

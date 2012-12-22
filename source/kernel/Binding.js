@@ -92,7 +92,14 @@
     _waiting: null,
     _setup: function () {
       var s = this._setupSource(), t = this._setupTarget();
-      if (!s || !t) return;
+      if (!s || !t) {
+          if (true === this.refreshing) {
+              if (t) {
+                  this._setTargetValue(null);
+              }
+          }
+          return;
+      }
       if (this.autoConnect === true) this.connect();
       if (this.autoSync === true) this.sync();
     },
@@ -190,8 +197,10 @@
     
     refresh: function () {
       if (!this.allowRefresh) return false;
+      this.refreshing = true;
       this.disconnect();
       this._setup();
+      this.refreshing = false;
     },
     
     connect: function () {

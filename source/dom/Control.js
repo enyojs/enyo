@@ -108,11 +108,13 @@ enyo.kind({
         this._setupComputed();
 	},
 	
-	destroy: function() {
-	  if (this.controller) {
-	    this.controller.destroy();
-	    this.controller = null;
-    }
+    destroy: function() {
+	    if (this.controller) {
+	        if (this.controller.owner && this === this.controller.owner) {
+	            this.controller.destroy();
+	        }
+	        this.controller = null;
+        }
 		this.removeNodeFromDom();
 		enyo.Control.unregisterDomEvents(this.id);
 		this.inherited(arguments);

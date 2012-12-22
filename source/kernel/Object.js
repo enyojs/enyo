@@ -403,6 +403,8 @@ enyo.kind({
     //*@protected
     _extendMethod: function (name, fn, ext) {
       var s = this.stored || (this.stored = {}), base;
+      
+      var computed = !!fn.isProperty;
       if (ext.name && ext.preserve && (this[name] || ext.preserveAll)) {
         // store the method and do not insert into inheritance
         enyo.setPath.call(s, enyo.format("%..%.", ext.name, name), enyo.bind(this, fn));
@@ -410,14 +412,27 @@ enyo.kind({
         if (this[name]) {
           // at the very least the new method can call inherited
           base = this[name];
-          this[name] = fn;
+          fn = this[name] = (function (fn, context) {
+              return function () {
+                  return fn.apply(context, arguments);
+              }
+          }(fn, this));
           fn._inherited = base;
         } else {
           // there was no known method of this name so
           // simply add it
-          this[name] = fn;
+          //this[name] = enyo.bind(this, fn);
+          fn = this[name] = (function (fn, context) {
+              return function () {
+                  return fn.apply(context, arguments);
+              }
+          }(fn, this));
           // but just in case there's an extra inherited call
           fn._inherited = enyo.nop;
+        }
+        if (true === computed) {
+            fn.isProperty = true;
+            fn.properties = base? base.properties: [];
         }
       }
     },

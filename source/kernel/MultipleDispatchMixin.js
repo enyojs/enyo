@@ -77,7 +77,15 @@ enyo.Mixin({
     },
     //*@protected
     bubbleDelegation: function (delegate, prop, name, event, sender) {
-        if (this.defaultDispatch) return this.inherited(arguments);
+        if (this.defaultDispatch) {
+            if (this.proxiedController) {
+                debugger
+                if (this.proxiedController.delegateEvent(delegate, prop, name, event, sender)) {
+                    return true;
+                }
+            }
+            return this.inherited(arguments);
+        }
         var targets = this.get("dispatchTargets");
         enyo.forEach(enyo.clone(targets), function (target) {
             if (target) {
