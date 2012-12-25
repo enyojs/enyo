@@ -29,11 +29,10 @@
     
     //*@public
     /**
-        Simple test condition to determine if a target is not undefined or
-        isNaN.
+        Simple test condition to determine if a target is undefined.
     */
     var exists = enyo.exists = function (target) {
-        return !(undefined === target || isNaN(target));
+        return !(undefined === target);
     };
     
     //*@protected
@@ -150,8 +149,7 @@
         the context from which the method was executed. Unlike its getter
         counter-part this is not a recursive method.
     */
-    enyo._setPath = function (path, value, force) {
-        debugger
+    enyo.setPath = function (path, value, force) {
         // if there are less than 2 parameters we can't do anything
         if(!(exists(path) && exists(value)) || "string" !== typeof path) return this;
         var cur = this;
@@ -226,46 +224,6 @@
         // return the callee
         return this;
     };
-
-
-  enyo.setPath = function () {
-    var args, cur, val, path, i = 0, parts, tmp, prev;
-    if (arguments.length < 2) return this;
-    args = arguments;
-    path = args[0];
-    val = args[1];
-    force = args[2];
-    cur = this;
-    prev = enyo.getPath.call(this, path);
-    while (path[i] === ".") ++i;
-    if (i > 0) path = path.slice(i);
-    i = path.indexOf(".");
-    if (i === -1) {
-      if (this[path] && enyo.isFunction(this[path]) && this[path].isProperty) {
-        this[path].call(this, val);
-      } else {
-        this[path] = val;
-      }
-    } else {
-      parts = path.split(".");
-      while (parts.length > 0) {
-        tmp = parts.shift();
-        if (tmp === "enyo" && this === enyo) continue;
-        if (parts.length === 0) {
-          if (cur[tmp] && enyo.isFunction(cur[tmp]) && cur[tmp].isProperty) {
-            cur[tmp].call(this, val);
-          } else {
-            cur[tmp] = val;
-          }
-        } else {
-          if (!cur[tmp]) cur[tmp] = {};
-          cur = cur[tmp];
-        }
-      }
-    }
-    if (this.notifyObservers && (prev !== val || force)) this.notifyObservers(path, prev, val);
-    return this;
-  };
 
   //*@protected
   /**
