@@ -506,29 +506,49 @@
     enyo.forEach(keep, function (k) {r[k] = inObject[k]});
     return r;
   };
+
   
-  /**
-    Take an array of objects of a common structure and return
-    a hash of those objects keyed by the unique value _inProp_.
-    An optional filter/resolution method may be provided to
-    handle exception cases. It receives parameters in the order:
-    the property, the current object in the array, a reference to
-    the return object, and a copy of the original array.
-    
-    TODO: This should be capable of a few other things...
-  */
-  enyo.indexBy = function (inProp, inArray, inFilter) {
-    var k = inProp, a = inArray, r = {}, v, c = enyo.clone(inArray),
-        fn = enyo.isFunction(inFilter)? inFilter: undefined, i = 0;
-    for (; i < a.length; ++i) {
-      v = a[i];
-      if (v && v[k]) {
-        if (fn) fn(k, v, r, c);
-        else r[v[k]] = v;
-      }
-    }
-    return r;
-  };
+    //*@public
+    /**
+        A helper method that can take an array of objects and return
+        a map of those objects indexed by the specified property. If a filter 
+        is provided it should accept four parameters: the key, the value 
+        (object), the current mutable map reference, and an immutable 
+        copy of the original array of objects for comparison.
+    */
+    var indexBy = enyo.indexBy = function (property, array, filter) {
+        // the return value - indexed map from the given array
+        var map = {};
+        var value;
+        var len;
+        var idx = 0;
+        // sanity check for the array with an efficient native array check
+        if (!exists(array) || "object" !== typeof array && array.slice) return map;
+        // sanity check the property as a string
+        if (!exists(property) || "string" !== typeof property) return map;
+        // the immutable copy of the array
+        var copy = enyo.clone(array);
+        // test to see if filter actually exsits
+        filter = exists(filter) && "function" === typeof filter? filter: undefined;
+        for (len = array.length; idx < len; ++idx) {
+            // grab the value from the array
+            value = array[idx];
+            // make sure that it exists and has the requested property at all
+            if (exists(value) && exists(value[property])) {
+                if (filter) {
+                    // if there was a filter use it - it is responsible for
+                    // updating the map accordingly
+                    filter(property, value, map, copy);
+                } else {
+                    // use the default behavior - check to see if the key
+                    // already exists on the map it will be overwritten
+                    map[value[property]] = value;
+                }
+            }
+        }
+        // go ahead and return our modified map
+        return map;
+    };
 
     //*@public
     /**
