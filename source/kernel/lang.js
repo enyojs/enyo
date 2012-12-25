@@ -231,6 +231,15 @@
 
     //*@protected
     /**
+        Called by enyo.Objects in their own context via their local
+        version of this method. Attempts to find the given property of
+        the current context and instance the property if it is not
+        already an instance. If it is a string it will attempt to find
+        the constructor for the named kind or the instance at the given
+        path. It will use the callback method when it is complete and
+        pass it two parameters the first being the constructor if it
+        was found and the second being the instance if it could be
+        determined.
     */
     enyo.findAndInstance = function (property, fn) {
         var ctor;
@@ -270,43 +279,6 @@
         // now use the calback and pass it the correct parameters
         return fn(ctor, inst);
     };
-
-  //*@protected
-  /**
-    For any property of an object that can be implemented with a
-    _String_ representation of the class, _String_ representation of
-    an instance, a _Function_/_Constructor_ for a class or a reference
-    to an instance. They call this function using call/apply so the
-    method may use _this_ and the name of the _property_ to inspect and
-    qualify. It follows a strict pattern to ensure a normalized behavior.
-    Typically not called directly.
-  */
-  enyo.__findAndInstance = function (property, fn) {
-    var ident, ctor, inst, klass = property.toLowerCase() + "Class",
-        name = klass + "Name";
-    ident = this[property];
-    if (!ident) return fn(ctor, inst);
-    if ("string" === typeof ident) {
-      ctor = enyo.getPath(ident);
-      if (!ctor) {
-        this[name] = ident;
-        this[property] = undefined;
-      } else if ("function" !== typeof ctor) {
-        inst = ctor;
-        ctor = null;
-      }
-    } else if ("function" === typeof ident) {
-      ctor = ident;
-      this[klass] = ctor;
-    } else {
-      inst = ident;
-      this[name] = inst.kindName || inst.kind;
-      this[property] = inst;
-    }
-    if (ctor && !inst) inst = new ctor();
-    this[property] = inst;
-    fn(ctor, inst);
-  };
 
     //*@public
     /**
