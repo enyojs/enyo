@@ -1,38 +1,232 @@
 (function(){
 	//* @protected
 	enyo.global = this;
-  //*@protected
-  enyo._idCounter = 0;
+    //*@protected
+    enyo._idCounter = 0;
 
-  // TODO: there are some significant improvements that can be made
-  // to both of these methods enyo.getPath/enyo.setPath and both
-  // should be renamed without the underscore...
 
-  enyo.getPath = function () {
-    var args, cur, path, i = 0, val, part, def;
-    if (arguments.length === 0) return undefined;  
-    if (!enyo.isString(arguments[0])) return arguments[0];
-    args = arguments;
-    path = args[0];
-    cur = this === enyo && args[1] !== true? window: this;
-    while (path[i] === ".") ++i;
-    if (i > 0) path = path.slice(i);
-    i = path.indexOf(".");
-    if (i === -1) {
-      def = "get" + enyo.cap(path);
-      val = cur && cur[def] && cur[def].overloaded? cur[def].call(this): cur[path];
-    } else {
-      part = path.substring(0, i);
-      path = path.slice(i);
-      if (typeof cur[part] === "object") {
-        val = enyo.getPath.call(cur[part], path, true);
-      } else return undefined;
-    }
-    if (enyo.isFunction(val) && val.isProperty === true) {
-      if (!args[1]) return val.call(this);
-    }
-    return val;
-  };
+    //*@public
+    /**
+        An IE8 compatible polyfill-replacement for the String object's
+        indexOf method. If that method exists it will be used instead.
+        Accepts the string to search and the needle (string) to search
+        for within that string. Returns the index at which the needle
+        was first encountered and -1 if it could not be found.
+    */
+    var stringIndexOf = enyo.stringIndexOf = function (haystack, needle) {
+        var idx = -1;
+        if ("string" === typeof haystack) {
+            if (haystack.indexOf) return haystack.indexOf(needle);
+            else {
+                // TODO: need to test the performance of a string
+                // brute-force walk/search versus a regular expression
+                // test/fallback
+            }
+        }
+
+        return -1;
+    };
+    
+    //*@public
+    /**
+        Simple test condition to determine if a target is not undefined or
+        isNaN.
+    */
+    var exists = enyo.exists = function (target) {
+        return !(undefined === target || isNaN(target));
+    };
+    
+    //*@protected
+    /**
+        Internally used method to strip leading '.' from string paths.
+    */
+    var preparePath = function (path) {
+        var idx = 0;
+        while ("." === path[idx]) ++idx;
+        if (0 !== idx) path = path.slice(idx);
+        return path;
+    };
+    
+    //*@protected
+    /**
+        Internally used method to detect if the given value exists,
+        is a function and a computed property. Returns true if these
+        tests are successful false otherwise.
+    */
+    var isComputed = function (target) {
+        return target && "function" === typeof target && true === target.isProperty;
+    };
+    
+    //*@protected
+    /**
+        Internally used method to detect if the given value exists,
+        is a function and an overloaded getter. Returns true if these
+        tests are successful false otherwise.
+    */
+    var isOverloaded = function (target) {
+        return target && "function" === typeof target && true === target.overloaded;
+    };
+
+    //*@public
+    /**
+        A fast-path enabled global getter that takes a string path that
+        can be a full-path (from context window/enyo) or a relative path
+        (to the execution context of the method). It knows how to check for
+        and call the backwards-compatible generated getters as well as
+        handle computed properties. This is an optimized recursive-search.
+        Will return undefined if the object at the given path could not be
+        found. Can safely be called on non-existent paths.
+    */
+    enyo.getPath = function (path, recursive) {
+        // if we don't have a path or it isn't a string we can't do anything
+        if (!exists(path) || "string" !== typeof path) return undefined;
+        // on rare occasions this method would be called under the context
+        // of enyo itself, the problem is detecting when this is intended since
+        // under normal circumstances a general call would assume a window
+        // context - here we see the _recursive_ parameter taking a double
+        // meaning as enyo should _never be used as a reference on another object_
+        // and as long as that is true this will never fail - so if enyo is to be
+        // used as the context root and not window pass the second parameter as true
+        // knowing during recursion enyo should never be the context and its normal
+        // use case would prevail
+        var cur = this === enyo && true !== recursive? window: this;
+        var idx = 0;
+        var val;
+        var part;
+        var fn;
+        // clear any leading periods
+        path = preparePath(path);
+        // find the initial period if any from our ie8 safe polyfill
+        idx = stringIndexOf(path, ".");
+        // if there isn't any try and find the path relative to our
+        // current context, this is the fast path
+        if (-1 === idx) {
+            // figure out what our default/backwards-compatible getter
+            // function would be
+            fn = "get" + enyo.cap(path);
+            // if that path exists relative to our context check to see
+            // if it is an overloaded getter and call that if it is otherwise
+            // just grab that path knowing if we get undefined that is ok
+            val = isOverloaded(cur[fn])? cur[fn].call(this): cur[path];
+        } else {
+            // begin our recursive search
+            part = path.substring(0, idx);
+            path = path.slice(idx);
+            if ("object" === typeof cur[part]) {
+                // if we can find the given part of the string path
+                // we recursively call the getPath method using that
+                // as the new context
+                val = enyo.getPath.call(cur[part], path, true);
+            } else {
+                // we have no idea what we could do because we can't find
+                // anything useful
+                return undefined;
+            }
+        }
+        // if the return value is a function check to see if it is
+        // a computed property and if this is _not a recursive search_
+        // go ahead and call it, otherwise return it as a function
+        if ("function" === typeof val && true === val.isProperty) {
+            if (true !== recursive) return val.call(this);
+        }
+        // otherwise we've reached the end so return whatever we have
+        return val;
+    };
+    
+    //*@public
+    /**
+        A global setter that takes a string path (relative to the methods
+        execution context) or a full-path (relative to window). It attempts
+        to automatically retrieve any previous value if it exists to supply
+        to any observers. If the context is an enyo.Object or subkind it will
+        use the notifyObservers method to trigger listeners for the path
+        being set. If the previous value is the equivalent of the newly set
+        value observers will not be triggered by default. If the third
+        parameter is present and an explicit boolean true it will trigger
+        the observers regardless. Optionally the third parameter can be a
+        function-comparator that accepts two parameters, left and right
+        respectively that is expected to return a truthy-falsy value to
+        determine whether or not the notifications will be fired. Returns
+        the context from which the method was executed. Unlike its getter
+        counter-part this is not a recursive method.
+    */
+    enyo._setPath = function (path, value, force) {
+        debugger
+        // if there are less than 2 parameters we can't do anything
+        if(!(exists(path) && exists(value)) || "string" !== typeof path) return this;
+        var cur = this;
+        var target;
+        var parts;
+        var notify = true === force? true: false;
+        var comparator = "function" === typeof force? force: undefined;
+        // attempt to retrieve the previous value if it exists
+        var prev = enyo.getPath.call(this, path);
+        // clear any leading periods
+        path = preparePath(path);
+        // find the inital index of any period in the path
+        idx = stringIndexOf(path, ".");
+        // if there wasn't one we can attempt to fast-path this setter
+        if (-1 === idx) {
+            target = this[path];
+            // if the target path leads us to a function and it is a computed
+            // property we will actually call the computed property passing it
+            // the value
+            if (true === isComputed(target)) {
+                target.call(this, value);
+            } else {
+                // otherwise we just plain overwrite the method, this is the
+                // expected behavior
+                this[path] = value;
+            }
+        } else {
+            // we have to walk the path until we find the end
+            parts = path.split(".");
+            // while we have any other parts to inspect
+            while (parts.length) {
+                target = parts.shift();
+                // the rare case where the path could specify enyo
+                // and is executed under the context of enyo
+                if ("enyo" === target && enyo === this) continue;
+                // if this is the last piece we test to see if it is a computed
+                // property and if it is we call it with the new value
+                // as in the fast path
+                if (0 === parts.length) {
+                    if (true === isComputed(target)) {
+                        target.call(this, value);
+                    } else {
+                        // otherwise we overwrite it just like in the fast-path
+                        cur[target] = value;
+                    }
+                } else {
+                    // we update our current reference context and if it does
+                    // not exist at the requested path it will be created
+                    if ("object" !== typeof cur[target]) cur[target] = {};
+                    cur = cur[target];
+                }
+            }
+        }
+        // now we need to determine if we are going to issue notifications
+        // first check to see if notify is already forced true
+        if (true !== notify) {
+            // now check to see if we have a comparator and if so use it
+            // to determine if we're going to trigger observers
+            if (comparator) {
+                notify = comparator(prev, value);
+            } else {
+                // do the default which is to test the previous value
+                // versus the new value
+                notify = !(prev === value);
+            }
+        }
+        if (true === notify) {
+            if (this.notifyObservers) {
+                this.notifyObservers(path, prev, value);
+            }
+        }
+        // return the callee
+        return this;
+    };
+
 
   enyo.setPath = function () {
     var args, cur, val, path, i = 0, parts, tmp, prev;
