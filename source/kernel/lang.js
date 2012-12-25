@@ -80,19 +80,19 @@
         Will return undefined if the object at the given path could not be
         found. Can safely be called on non-existent paths.
     */
-    enyo.getPath = function (path, recursive) {
+    enyo.getPath = function (path, recursing) {
         // if we don't have a path or it isn't a string we can't do anything
         if (!exists(path) || "string" !== typeof path) return undefined;
         // on rare occasions this method would be called under the context
         // of enyo itself, the problem is detecting when this is intended since
         // under normal circumstances a general call would assume a window
-        // context - here we see the _recursive_ parameter taking a double
+        // context - here we see the _recursing_ parameter taking a double
         // meaning as enyo should _never be used as a reference on another object_
         // and as long as that is true this will never fail - so if enyo is to be
         // used as the context root and not window pass the second parameter as true
         // knowing during recursion enyo should never be the context and its normal
         // use case would prevail
-        var cur = this === enyo && true !== recursive? window: this;
+        var cur = this === enyo && true !== recursing? window: this;
         var idx = 0;
         var val;
         var part;
@@ -130,7 +130,7 @@
         // a computed property and if this is _not a recursive search_
         // go ahead and call it, otherwise return it as a function
         if ("function" === typeof val && true === val.isProperty) {
-            if (true !== recursive) return val.call(this);
+            if (true !== recursing) return val.call(this);
         }
         // otherwise we've reached the end so return whatever we have
         return val;
