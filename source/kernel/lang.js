@@ -1,9 +1,13 @@
 (function(){
 	//* @protected
 	enyo.global = this;
-    //*@protected
-    enyo._idCounter = 0;
 
+    //*@protected
+    /**
+        Used internally by the enyo.uid method to be able to produce
+        a runtime unique identifier.
+    */
+    var uidCounter = 0;
 
     //*@public
     /**
@@ -262,14 +266,14 @@
     fn(ctor, inst);
   };
 
-  //*@public
-  /**
-    Create a unique id with an optional prefix.
-  */
-  enyo.uid = function (prefix) {
-    var id = enyo._idCounter++;
-    return prefix? prefix + id: id;
-  };
+    //*@public
+    /**
+        Create a unique identifier with an optional prefix.
+        Returns a string.
+    */
+    var uid = enyo.uid = function (prefix) {
+        return String(prefix? prefix: "" + uidCounter++);
+    };
   
 	enyo._getProp = function(parts, create, context) {
 		var obj = context || enyo.global;
