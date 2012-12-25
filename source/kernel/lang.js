@@ -529,22 +529,36 @@
     }
     return r;
   };
-  
-  enyo.allKeys = function (inObj) {
-    var k, o = inObj, r = [];
-    for (k in inObj) r.push(k);
-    return r;
-  };
 
-  enyo.pluck = function (inProp, inArray) {
-    var r = [], i = 0, a;
-    a = enyo.isArray(inArray)? inArray: [inArray];
-    for (; i < a.length; ++i) {
-      if (!a[i]) continue;
-      if (a[i][inProp]) r.push(a[i][inProp]);
-    }
-    return r;
-  };
+    //*@public
+    /**
+        Expects a string property and an array of objects that may
+        have the named property. Returns an array of all the values of
+        property in the objects in the array.
+    */
+    var pluck = enyo.pluck = function (property, array) {
+        var ret = [];
+        var idx = 0;
+        var len;
+        // if we don't have a property to look for or an array of
+        // objects to search through we have to return an empty array
+        if (!(exists(property) && exists(array))) return ret;
+        // if it isn't actually an array return an empty array
+        if (!(array instanceof Array)) return ret;
+        // if property isn't a string then return an empty array
+        if ("string" !== typeof property) return ret;
+        // now that sanity is established to some extent, lets get
+        // to work
+        for (len = array.length; idx < len; ++idx) {
+            // if the object in the array is actually undefined, skip
+            if (!exists(array[idx])) continue;
+            // if it was found then check to see if the property
+            // exists on it
+            if (exists(array[idx][property])) ret.push(array[idx][property]);
+        }
+        // return whatever we found if anything
+        return ret;
+    };
 
 	/**
 		Creates a new array with all elements of _inArray_ that pass the test implemented by _inFunc_.
