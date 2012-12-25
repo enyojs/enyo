@@ -454,26 +454,6 @@
 		}
 	};
 
-
-  /**
-    Concatenate any number of arrays but only the unique entries
-    relative to the base (first) array.
-  */
-  enyo.merge = function () {
-    var r = [], args = enyo.toArray(arguments), a, i = 0, j;
-    for (; args.length; ++i) {
-      a = args.shift();
-      if (!enyo.isArray(a)) continue;
-      if (i === 0) r = enyo.clone(a);
-      else {
-        for (j = 0; j < a.length; ++j)
-          if (r.indexOf(a[j]) > -1) continue;
-          else r.push(a[j]);
-      }
-    }
-    return r;
-  };
-
     //*@public
     /**
         Concatenate a variable number of arrays removing any duplicate
@@ -529,22 +509,44 @@
         Returns only the unique values of an array or arrays.
     */
     var unique = enyo.unique = union;
-  
-  enyo.only = function (inProps, inObject) {
-    var r = [], k;
-    if (!inProps || !inObject) return r;
-    if (!enyo.isArray(inProps) && inProps) inProps = [inProps];
-    for (k in inObject)
-      if (!inObject.hasOwnProperty(k)) continue;
-      else if (inProps.indexOf(k) !== -1 && r.indexOf(k) === -1)
-        r.push(inObject[k]);
-    return r;
-  };
-
     
     //*@public
     /**
-        Convenience method that take an array of properties and an object.
+        Reduce an array or arrays removing any duplicate entries
+        amongst them.
+    */
+    var reduce = enyo.reduce = merge;
+  
+    //*@public
+    /**
+        Convenience method that takes an array of properties and an object.
+        Will return an array of values as retrieved from the given properties
+        of the object if they exist.
+    */
+    var only = enyo.only = function (properties, object) {
+        var ret = [];
+        var idx = 0;
+        var len;
+        var property;
+        // sanity check the properties array
+        if (!exists(properties) || "object" !== typeof properties) return ret;
+        // sanity check the object
+        if (!exists(object) || "object" !== typeof object) return ret;
+        // reduce the properties array to just unique entries
+        properties = unique(properties);
+        // iterate over the properties given and if the property exists on
+        // the object copy its value to the return array
+        for (len = properties.length; idx < len; ++idx) {
+            property = properties[idx];
+            if (property in object) ret.push(object[property]);
+        }
+        // return the array of values we found for the given properties
+        return ret;
+    };
+    
+    //*@public
+    /**
+        Convenience method that takes an array of properties and an object.
         Will return a new object with all of the keys in the object except
         those specified in the _properties_ array. The values are shallow
         copies.
