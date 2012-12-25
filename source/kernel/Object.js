@@ -121,10 +121,26 @@ enyo.kind({
 		}
 	},
 
-  //*@protected
-  findAndInstance: function (prop, fn) {
-    enyo._findAndInstance.call(this, prop, fn? enyo.bind(this, fn): null);
-  },
+    //*@protected
+    /**
+        For any property on the given object this method will offload
+        the work of determining the property from its string path,
+        whether or not it can find an instance or constructor for the
+        given kind and pass what it finds back to the callback. The
+        callback can expect to receive two parameters the first being the
+        constructor if it could be determined and the second being an
+        instance of the requested kind if the constructor was found.
+        Most often if the constructor could be determined the instance's
+        owner property will be set to this object (in the callback).
+    */
+    findAndInstance: function (property, fn) {
+        // if we have a callback bind it to the given object so that
+        // it will be called under the correct context, if it has
+        // already been bound this is pretty harmless
+        fn = enyo.exists(fn) && "function" === typeof fn? enyo.bind(this, fn): null;
+        // go ahead and call the enyo scoped version of this method
+        return enyo.findAndInstance.call(this, property, fn);
+    },
 
   //*@protected
   _bindings: null,

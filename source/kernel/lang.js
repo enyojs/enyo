@@ -229,6 +229,48 @@
         return this;
     };
 
+    //*@protected
+    /**
+    */
+    enyo.findAndInstance = function (property, fn) {
+        var ctor;
+        var inst;
+        var path;
+        fn = exists(fn) && "function" === typeof fn? fn: enyo.nop;
+        // attempt to find the string path identifier on the kind
+        // definition if possible
+        path = this[property];
+        // if there is nothing at the given property fast-path out
+        // and return undefined everything
+        if (!exists(path)) return fn();
+        // if the path is a string (as in most cases) go ahead and
+        // attempt to get the kind definition or instance at the
+        // given path
+        if ("string" === typeof path) {
+            ctor = enyo.getPath(path);
+            // if it isn't a function we assume it is an instance
+            if (exists(ctor) && "function" !== typeof ctor) {
+                inst = ctor;
+                ctor = undefined;
+            }
+        } else if ("function" === typeof path) {
+            // instead of a string we were handed a constructor
+            // so reassign that
+            ctor = path;
+        } else {
+            // the assumption here is that we were handed an
+            // instance of the given object
+            inst = path;
+        }
+        // if we have a constructor and no instance we need to
+        // create an instance of the obejct
+        if (exists(ctor) && !exists(inst)) inst = new ctor();
+        // if we do have an instance assign it to the base object
+        if (exists(inst)) this[property] = inst;
+        // now use the calback and pass it the correct parameters
+        return fn(ctor, inst);
+    };
+
   //*@protected
   /**
     For any property of an object that can be implemented with a
@@ -239,7 +281,7 @@
     qualify. It follows a strict pattern to ensure a normalized behavior.
     Typically not called directly.
   */
-  enyo._findAndInstance = function (property, fn) {
+  enyo.__findAndInstance = function (property, fn) {
     var ident, ctor, inst, klass = property.toLowerCase() + "Class",
         name = klass + "Name";
     ident = this[property];
