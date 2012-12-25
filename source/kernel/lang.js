@@ -473,22 +473,62 @@
     }
     return r;
   };
+
+    //*@public
+    /**
+        Concatenate a variable number of arrays removing any duplicate
+        entries.
+    */
+    var merge = enyo.merge = function (/* _arrays_ */) {
+        var merger = Array.prototype.concat.apply([], arguments);
+        return unique(merger);
+    };
   
-  /**
-    Return a union of any number of arrays.
+    //*@public
+    /**
+        Takes a variable number of arrays and returns an array of
+        only those values that are unique amongst all of the arrays.
+        Note this is not a particularly cheap method and should never
+        be called recursively.
+        
+        TODO: test in IE8
+        TODO: figure out why the one-hit reversal wasn't working
+    */
+    var union = enyo.union = function (/* _arrays_ */) {
+        // create one large array of all of the arrays passed to
+        // the method for comparison
+        var values = Array.prototype.concat.apply([], arguments);
+        // the array of seen values
+        var seen = [];
+        // the array of values actually to be returned
+        var ret = [];
+        var idx = 0;
+        var len = values.length;
+        var value;
+        for (; idx < len; ++idx) {
+            value = values[idx];
+            // if we haven't seen this value before go ahead and
+            // push it to the seen array
+            if (!~seen.indexOf(value)) {
+                seen.push(value);
+                // here we check against the entirety of any other values
+                // in the values array starting from the end
+                if (idx === values.lastIndexOf(value)) {
+                    // if this turned out to be true then it is a unique entry
+                    // so go ahead and push it to our union array
+                    ret.push(value);
+                }
+            }
+        }
+        // we should have a flattened/unique array now, return it
+        return ret;
+    };
     
-    TODO: come back to this off the cuff atrocity
-  */
-  enyo.union = function () {
-    var c = Array.prototype.concat.apply([], arguments), s = [], r = [];
-    enyo.forEach(c, function (v, i) {
-      if (!~s.indexOf(v)) {
-        s.push(v);
-        if (i === c.lastIndexOf(v)) r.push(v);
-      }
-    });
-    return r;
-  };
+    //*@public
+    /**
+        Returns only the unique values of an array or arrays.
+    */
+    var unique = enyo.unique = union;
   
   enyo.only = function (inProps, inObject) {
     var r = [], k;
@@ -500,13 +540,41 @@
         r.push(inObject[k]);
     return r;
   };
-  
-  enyo.except = function (inProps, inObject) {
-    var r = {}, keep = enyo.union(inProps, enyo.keys(inObject));
-    enyo.forEach(keep, function (k) {r[k] = inObject[k]});
-    return r;
-  };
 
+    
+    //*@public
+    /**
+        Convenience method that take an array of properties and an object.
+        Will return a new object with all of the keys in the object except
+        those specified in the _properties_ array. The values are shallow
+        copies.
+    */
+    var except = enyo.except = function (properties, object) {
+        // the new object to return with just the requested keys
+        var ret = {};
+        var keep;
+        var idx = 0;
+        var len;
+        var key;
+        // sanity check the properties array
+        if (!exists(properties) || "object" !== typeof properties) return ret;
+        // sanity check the object
+        if (!exists(object) || "object" !== typeof object) return ret;
+        // we want to only use the union of the properties and the
+        // available keys on the object
+        keep = union(properties, keys(object));
+        // for every property in the keep array now copy that to the new
+        // hash
+        for (len = keep.length; idx < len; ++idx) {
+            key = keep[idx];
+            // if the key was specified in the properties array but does not
+            // exist in the object ignore it
+            if (!(key in object)) continue;
+            ret[key] = object[key];
+        }
+        // return the new hash
+        return ret;
+    };
   
     //*@public
     /**
@@ -604,7 +672,7 @@
 	/**
 		Returns an array of all own enumerable properties found on _inObject_.
 	*/
-	enyo.keys = Object.keys || function(inObject) {
+	var keys = enyo.keys = Object.keys || function(inObject) {
 		var results = [];
 		var hop = Object.prototype.hasOwnProperty;
 		for (var prop in inObject) {
