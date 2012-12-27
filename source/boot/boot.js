@@ -40,8 +40,8 @@ enyo.machine = {
 		} else {
 			var script = document.createElement('script');
 			script.src = inSrc;
-			script.onLoad = onLoad;
-			script.onError = onError;
+			script.onload = onLoad;
+			script.onerror = onError;
 			document.getElementsByTagName('head')[0].appendChild(script);
 		}
 	},
