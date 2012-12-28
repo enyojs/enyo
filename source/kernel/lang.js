@@ -136,6 +136,20 @@
         return val;
     };
     
+    //*@protected
+    /**
+        An internally used method to proxy functions (similar to but not exactly
+        the same as binding) such that they will be called under the correct context
+        but with a reference to the correct arguments at the time they are called.
+        Accepts two parameters the function to be called and the context under
+        which to call it.
+    */
+    var proxyMethod = enyo.proxyMethod = function (fn, context) {
+        return function () {
+            return fn.apply(context, arguments);
+        };
+    };
+    
     //*@public
     /**
         A global setter that takes a string path (relative to the methods
@@ -529,7 +543,7 @@
         var len;
         var property;
         // sanity check the properties array
-        if (!exists(properties) || "object" !== typeof properties) return ret;
+        if (!exists(properties) || !(properties instanceof Array)) return ret;
         // sanity check the object
         if (!exists(object) || "object" !== typeof object) return ret;
         // reduce the properties array to just unique entries
@@ -559,7 +573,7 @@
         var len;
         var key;
         // sanity check the properties array
-        if (!exists(properties) || "object" !== typeof properties) return ret;
+        if (!exists(properties) || !(properties instanceof Array)) return ret;
         // sanity check the object
         if (!exists(object) || "object" !== typeof object) return ret;
         // we want to only use the union of the properties and the
@@ -593,7 +607,7 @@
         var len;
         var idx = 0;
         // sanity check for the array with an efficient native array check
-        if (!exists(array) || "object" !== typeof array && array.slice) return map;
+        if (!exists(array) || !(array instanceof Array)) return map;
         // sanity check the property as a string
         if (!exists(property) || "string" !== typeof property) return map;
         // the immutable copy of the array
