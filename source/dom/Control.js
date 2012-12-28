@@ -520,14 +520,15 @@ enyo.kind({
 			{left: _offsetLeft_, top: _offsetTop_, width: _offsetWidth_, height: _offsetHeight_}
 
 		Values returned are only valid if _hasNode()_ is truthy.
-		If there's no DOM node for the object, this returns _null_.
+		If there's no DOM node for the object, this a structure with _undefined_ for all fields.
 
 			var bounds = this.getBounds();
 			enyo.log(bounds.width);
 	*/
 	getBounds: function() {
 		var n = this.node || this.hasNode();
-		return enyo.dom.getBounds(n);
+		var b = enyo.dom.getBounds(n);
+		return b || { return {left: undefined, top: undefined, width: undefined, height: undefined};
 	},
 	/**
 		Sets any or all of the geometry style properties _width_, _height_,
