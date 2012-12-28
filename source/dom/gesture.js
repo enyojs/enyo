@@ -165,7 +165,7 @@ enyo.requiresWindow(function() {
 			};
 			e.type = "mousewheel";
 			var p = e.VERTICAL_AXIS == e.axis ? "wheelDeltaY" : "wheelDeltaX";
-			e[p] =  e.detail * -12;
+			e[p] =  e.detail * -40;
 			enyo.dispatch(e);
 		}, false);
 	}
