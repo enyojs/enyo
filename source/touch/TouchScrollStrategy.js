@@ -303,6 +303,7 @@ enyo.kind({
 		if (!this.dragging) {
 			this.calcBoundaries();
 			this.syncScrollMath();
+			this.stabilize();
 			if (this.$.scrollMath.mousewheel(e)) {
 				e.preventDefault();
 				return true;
