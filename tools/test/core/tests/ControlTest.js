@@ -60,5 +60,33 @@ enyo.kind({
 			document.body.removeChild(div);
 		}
 		this.finish();
+	},
+	testGetBounds: function() {
+		var K = enyo.kind({
+			style: "position: absolute; top: 10px; height: 30px; left: 15px; width: 35px;"
+		});
+		// create new div, attach to start of body, delete at end
+		// needed because we need live DOM with getElementById working
+		var div = document.createElement("div");
+		document.body.appendChild(div);
+
+		var k = new K();
+		var b;
+		b = k.getBounds();
+			if (b.top !== undefined || b.left !== undefined || b.height !== undefined || b.width !== undefined) {
+				throw("bad bounds, expected all undefined, got " + JSON.stringify(b));
+			}
+		k.renderInto(div);
+		try {
+			b = k.getBounds();
+			if (b.top !== 10 || b.left !== 15 || b.height !== 30 || b.width !== 35) {
+				throw("bad bounds, expected {top: 10, left: 15, height: 30, width: 35}, got " + JSON.stringify(b));
+			}
+		} finally {
+			// clean up after our test
+			k.destroy();
+			document.body.removeChild(div);
+		}
+		this.finish();
 	}
 });
