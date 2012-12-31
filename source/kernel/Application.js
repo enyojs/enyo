@@ -34,6 +34,8 @@ enyo.kind({
     */
     controllers: null,
     //*@protected
+    initBindings: false,
+    //*@protected
     concat: ["controllers"],
     //*@protected
     constructor: function () {
@@ -55,7 +57,8 @@ enyo.kind({
     */
     start: function () {
         this.initComponents();
-        this._setupBindings();
+        this.initBindings = true;
+        this.setup();
         if (true === this.renderOnStart) {
             this.render();
         }
@@ -67,6 +70,8 @@ enyo.kind({
             var kind;
             var name;
             var global;
+            var ctor;
+            var namespace;
             if ("string" === typeof props) {
                 kind = props;
                 name = this.instanceNameFromKind(kind);
@@ -77,9 +82,8 @@ enyo.kind({
             }
             delete props["name"];
             delete props["global"];
-            //var ctor = enyo.constructorForKind(kind);
-            var ctor = enyo.kind(props);
-            var namespace = this.get("namespace");
+            ctor = enyo.kind(props);
+            namespace = this.get("namespace");
             if (!ctor) return enyo.warn("enyo.Application: " +
                 "could not find a constructor for the requested " +
                 "controller kind - " + kind);
@@ -113,7 +117,7 @@ enyo.kind({
     
     
     //*@protected
-    _setupBindings: function () {
+    setupBindings: function () {
         var defs;
         var config;
         var idx = 0;
