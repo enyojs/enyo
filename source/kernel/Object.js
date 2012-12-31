@@ -660,7 +660,7 @@ enyo.kind({
         // insert the newly proxied method onto our object and setup
         // the inheritance chain
         this[property] = method;
-        method._inherited(base);
+        method._inherited = base;
         // if it is a computed property make sure to copy the
         // dependencies to the proxied method
         if (true === computed) {

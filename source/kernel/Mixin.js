@@ -13,7 +13,7 @@
     
     //*@protected
     function Mixin (properties) {
-        var store = enyo.mixin(properties, Mixin.defaults);
+        var store = enyo.mixin(Mixin.defaults, properties);
         var keys = enyo.union(Mixin.ignore, enyo.keys(store));
         var name = properties.name;
         enyo.setPath(name, this);
@@ -23,9 +23,9 @@
   
     //*@protected
     Mixin.defaults = {
-        initMixin: null,
-        destroyMixin: null,
-        name: null
+        initMixin: enyo.nop,
+        destroyMixin: enyo.nop,
+        name: ""
     };
     
     //*@protected
@@ -33,6 +33,8 @@
   
     //*@protected
     Mixin.prototype = {
+        //*@protected
+        isMixin: true,
         //*@public
         apply: function (target) {
             var mixins = target.appliedMixins || (target.appliedMixins = []);
