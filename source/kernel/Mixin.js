@@ -1,93 +1,68 @@
 (function () {
   
-  //*@public
-  /**
-  */
-  enyo.Mixin = function (inProps, inConfig) {
-    return (new _Mixin(inProps, inConfig));
-  };
-  
-  //*@protected
-  function _Mixin (inProps, inConfig) {
-    var p = enyo.mixin(enyo.Mixin.detaults, (inProps || {})),
-        c = enyo.mixin(enyo.Mixin.defaultCongif, (inConfig || {})),
-        name = p.name || enyo.Mixin.generateId();
-    this.name = name;
-    this.properties = enyo.union(enyo.Mixin.ignore, enyo.keys(p));
-    enyo.mixin(this, c);
-    enyo.mixin(this, p);
-    if (this.autoInit && this.target) this.apply();
-    else this.autoInit = false;
-    enyo.Mixin.mixins[name] = this;
-    if (!enyo.getPath(name)) enyo.setPath(name, this);
-  }
-  
-  enyo.Mixin.deftaults = {
-    destroyMixin: null
-  };
-  
-  enyo.Mixin.defaultConfig = {
-    autoInit: true,
-    target: null,
-    initMixin: enyo.nop
-  };
-  
-  enyo.Mixin.counter = 0;
-  
-  enyo.Mixin.mixins = {};
-  
-  enyo.Mixin.ignore = ["name", "initMixin", "destroyMixin"];
-  
-  enyo.Mixin.getMixin = function (inName) {
-    return enyo.Mixin.mixins[inName];
-  };
-  
-  enyo.Mixin.generateId = function () {
-    return "@@" + (this.counter++) + "_Mixin";
-  };
-  
-  _Mixin.prototype = {
-    isMixin: true,
-    apply: function (inTarget) {
-      var t = inTarget || this.target;
-      if (!(t instanceof enyo.Object))
-        return enyo.warn("enyo.Mixin: cannot apply mixin to non-object");
-      this.target = t; // this is here for a reason!
-      
-      var mixins = t._appliedMixins;
-      if (-1 !== mixins.indexOf(this.name)) return;
-      else mixins.push(this.name);
-      
-      // extend the object by the appropriate methods and properties
-      t.extend(this.get("extension"));
-      if (this.destroyMixin && enyo.isFunction(this.destroyMixin)) {
-        this.injectDestroy();
-      }
-      if (this.initMixin) this.initMixin.call(t);
-      //(function (a, m) {a.push(m.name)})((t._mixins || (t._mixins = [])), this);
-      this.target = null;
-    },
-    injectDestroy: function () {
-      var t = this.target, base, d = this.destroyMixin;
-      if ((base = t.destroy)) {
-        d = t.destroy = (function (fn, sc) {
-            return function () {
-                return fn.apply(sc, arguments);
-            };
-        })(d, t);
-        d._inherited = base;
-      } else t.destroy = d;
-    },
-    extension: enyo.Computed(function () {
-      var r = {}, p = this.properties;
-      enyo.forEach(p, function (prop) {
-        r[prop] = this[prop];
-      }, this);
-      return r;
-    }),
-    get: function () {
-      return enyo.getPath.apply(this, arguments);
+    //*@public
+    /**
+        The mixin-pattern allows the creation of a mixin pseudo-kind
+        with properties that are added to another kind, allows a separate
+        initialization and destructor. The purpose of enyo.Mixin is
+        similar to allowing multiple inheritance.
+    */
+    enyo.Mixin = function (properties) {
+        return new Mixin(properties);
+    };
+    
+    //*@protected
+    function Mixin (properties) {
+        var store = enyo.mixin(properties, Mixin.defaults);
+        var keys = enyo.union(Mixin.ignore, enyo.keys(store));
+        var name = properties.name;
+        enyo.setPath(name, this);
+        enyo.mixin(this, store);
+        this.properties = keys;
     }
-  }
+  
+    //*@protected
+    Mixin.defaults = {
+        initMixin: null,
+        destroyMixin: null,
+        name: null
+    };
+    
+    //*@protected
+    Mixin.ignore = ["initMixin", "destroyMixin", "name"]
+  
+    //*@protected
+    Mixin.prototype = {
+        //*@public
+        apply: function (target) {
+            var mixins = target.appliedMixins || (target.appliedMixins = []);
+            if (!!~mixins.indexOf(this)) return;
+            else mixins.push(this.name);
+            target.extend(this.get("extension"));
+            this.injectDestructor(target);
+            if (this.initMixin) this.initMixin.call(target);
+        },
+        //*@protected
+        get: function () {
+            return enyo.getPath.apply(this, arguments);
+        },
+        //*@protected
+        extension: enyo.Computed(function () {
+            var ret = {};
+            var properties = this.properties;
+            enyo.forEach(properties, function (property) {
+                ret[property] = this[property];
+            }, this);
+            return ret;
+        }),
+        //*@protected
+        injectDestructor: function (target) {
+            var base = target.destroy || enyo.nop;
+            var fn = this.destroyMixin;
+            if ("function" !== typeof fn) return;
+            fn = target.destroy = enyo.proxyMethod(fn, target);
+            fn._inherited = base;
+        }
+    };
  
 }());
