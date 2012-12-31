@@ -18,10 +18,10 @@
 enyo.kind({
     //*@public
     name: "enyo.ArrayController",
+    //*@protected
     kind: "enyo.Controller",
-    published: {
-        length: 0
-    },
+    //*@public
+    length: 0,
     //*@protected
     create: function () {
         this.inherited(arguments);
@@ -37,28 +37,33 @@ enyo.kind({
         this.bubble("didadd", {value: value});
         return ret;
     },
+    //*@public
     pop: function () {
         var ret = this.get("data").pop();
         this.update();
         this.bubble("didremove", {value: ret});
         return ret;
     },
+    //*@public
     shift: function () {
         var ret = this.get("data").shift();
         this.update();
         this.bubble("didremove", {value: ret});
         return ret;
     },
+    //*@public
     unshift: function (value) {
         var ret = this.get("data").unshift(value);
         this.update();
         this.bubble("didadd", {value: value});
         return ret;
     },
+    //*@public
     at: function (index) {
         var ret = this.get("data")[index];
         return ret;
     },
+    //*@public
     /**
         Attempt to find a particular entry based on the method
         passed in as _fn_. The callback will be executed under
@@ -78,15 +83,18 @@ enyo.kind({
         }
         return false;
     },
+    //*@public
     indexOf: function (value) {
         return this.data.indexOf(value);
     },
+    //*@public
     // TODO: this is a placeholder
     lastIndexOf: function (value) {
         if ("function" === typeof this.get("data").lastIndexOf) {
             return this.get("data").lastIndexOf(value);
         }
     },
+    //*@public
     splice: function () {
         var data = this.get("data");
         return data.splice.apply(data, arguments);
