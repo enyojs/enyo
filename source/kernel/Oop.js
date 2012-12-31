@@ -57,7 +57,7 @@
 enyo.concat = ["concat", "bindings", "mixins"];
 
 enyo.handleConcatenatedProperties = function (ctor, proto) {
-  var cprops = enyo.merge(ctor.concat, proto.concat), prop, right, left;
+  var cprops = enyo.merge(ctor.concat || [], proto.concat), prop, right, left;
   while (cprops.length) {
     prop = cprops.shift();
     left = ctor[prop];

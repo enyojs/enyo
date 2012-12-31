@@ -156,6 +156,8 @@ enyo.kind({
         owner property will be set to this object (in the callback).
     */
     findAndInstance: function (property, fn) {
+        // if there isn't a property do nothing
+        if (!enyo.exists(property)) return;
         // if we have a callback bind it to the given object so that
         // it will be called under the correct context, if it has
         // already been bound this is pretty harmless
@@ -257,10 +259,12 @@ enyo.kind({
         and only those bindings will be destroyed.
     */
     clearBindings: function (subset) {
-        var bindings = subset || this.bindings || [];
+        var bindings = enyo.cloneArray(subset || this.bindings || []);
         var binding;
         while (bindings.length) {
             binding = bindings.shift();
+            // this will force the binding to be removed from the real
+            // bindings array of the object
             binding.destroy();
         }
     },
@@ -271,7 +275,7 @@ enyo.kind({
         is not necessary and will automatically be called.
     */
     refreshBindings: function (subset) {
-        var bindings = subset || this.bindings || [];
+        var bindings = enyo.cloneArray(subset || this.bindings || []);
         var binding;
         while (bindings.length) {
             binding = bindings.shift();
@@ -321,7 +325,7 @@ enyo.kind({
                     // keep a reference to the it on the hash
                     computed[key] = prop;
                     dependents = prop.properties || [];
-                    for (idx = 0, len = depedents.length; idx < len; ++idx) {
+                    for (idx = 0, len = dependents.length; idx < len; ++idx) {
                         dependent = dependents[idx];
                         // create the method that will respond
                         fn = enyo.bind(this, function (prop) {
@@ -388,6 +392,7 @@ enyo.kind({
         // if there are no registered handlers for this event
         // go ahead and create an array for them
         if (!enyo.exists(observers[property])) handlers = observers[property] = [];
+        else handlers = observers[property];
         // only add it if it isn't already in the array
         if (!~handlers.indexOf(fn)) handlers.push(fn);
         // allow chaining
@@ -438,7 +443,7 @@ enyo.kind({
         also notifying other observers.
     */
     notifyObservers: function (property, prev, value) {
-        var observers = this.observers;
+        var observers = this.observers || {};
         var handlers = observers[property];
         var idx = 0;
         var fn;

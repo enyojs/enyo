@@ -44,13 +44,17 @@ enyo.kind({
 	statics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
 	},
+	
 	create: function() {
 		this.controls = [];
 		this.children = [];
 		this.containerChanged();
 		this.inherited(arguments);
 		this.layoutKindChanged();
-        this._setup(); // because new properties will not have been setup
+		
+		
+		
+        //this._setup(); // because new properties will not have been setup
 	},
 	destroy: function() {
 		// Destroys all non-chrome controls (regardless of owner).

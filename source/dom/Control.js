@@ -61,7 +61,14 @@ enyo.kind({
 		fit: false,
 		//* Used by Ares design editor for design objects
 		isContainer: false,
-		
+		//*@public
+		/**
+		    The controller can be a reference to a kind, an instance or a string
+		    to either. Is assumed to be an enyo.Controller or subclass and will act
+		    as a delegate of the view. If the controller is resolved to be a kind
+		    (literally a constructor as opposed to an instance) it will be owned by
+		    this enyo.Control.
+		*/
 		controller: ""
 	},
 	handlers: {
@@ -76,6 +83,14 @@ enyo.kind({
 	//* @protected
 	node: null,
 	generated: false,
+	
+	
+	initBindings: false,
+	initObservers: false,
+	initMixins: false,
+	initComputed: false,
+	
+	
 	create: function() {
 		// initialize style databases
 		this.initStyles();
@@ -94,20 +109,14 @@ enyo.kind({
 		this.addClass(this.kindClasses);
 		this.addClass(this.classes);
 		this.initProps(["id", "content", "src", "controller"]);
-		this._setupBindings();
-		// because when mixins are initially checked it would not catch
-		// mixins set on component-block definitions we check again
-		this.initMixins();
+        // we can now set these setup flags to true
+        this.initMixins = true;
+        this.initObservers = true;
+        this.initComputed = true;
+        this.initBindings = true;
+        // we now call setup knowing our children have been intitialized properly
+		this.setup();
 	},
-	
-    // overload to keep the enyo.Object._setup method from attempting
-    // to create bindings to view properties that are not yet
-    // initialized/setup
-	_setup: function () {
-        this._setupObservers();
-        this._setupComputed();
-	},
-	
     destroy: function() {
 	    if (this.controller) {
 	        if (this.controller.owner && this === this.controller.owner) {
@@ -136,21 +145,21 @@ enyo.kind({
 			}
 		}
 	},
-	
+	//*@protected
 	controllerChanged: function () {
-	  // first attempt to find the controller from the
-	  // information we've been handed
-    this.findAndInstance("controller", function (ctor, inst) {
-      // if there is no constructor or instance it was not found
-      if (!(ctor || inst)) return;
-      // if a constructor exists we instanced the class and can
-      // claim it as our own
-      if (ctor) inst.set("owner", this);
-      // lets add ourselves as a dispatch listener
-      else inst.addDispatchTarget(this);
-      // either way we need to refresh our bindings
-      this.refreshBindings();
-    });
+	    // first attempt to find the controller from the
+	    // information we've been handed
+        this.findAndInstance("controller", function (ctor, inst) {
+            // if there is no constructor or instance it was not found
+            if (!(ctor || inst)) return;
+            // if a constructor exists we instanced the class and can
+            // claim it as our own
+            if (ctor) inst.set("owner", this);
+            // lets add ourselves as a dispatch listener
+            else inst.addDispatchTarget(this);
+            // either way we need to refresh our bindings
+            this.refreshBindings();
+        });
 	},
 	//*@protected
 	dispatchEvent: function (inEventName, inEvent, inSender) {
