@@ -159,18 +159,18 @@ enyo.kind({
 	},
 	//*@protected
 	dispatchEvent: function (inEventName, inEvent, inSender) {
-	  // if we have a controller attempt to dispatch the event there
-	  // and if it returns true, stop the dispatch
-	  if (this.controller && this.controller.dispatchEvent(inEventName, inEvent, inSender)) {
-	    return true;
-	  }
+	    // if we have a controller attempt to dispatch the event there
+	    // and if it returns true, stop the dispatch
+	    if (this.controller && this.controller.dispatchEvent(inEventName, inEvent, inSender)) {
+	        return true;
+	    }
 	  
-	  // prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
+	    // prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
 		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
 			return true;
 		}
 	  
-	  return this.inherited(arguments);
+	    return this.inherited(arguments);
 	},
 	//*@protected
 	dispatch: function (inMethodName, inEvent, inSender) {
