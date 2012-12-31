@@ -172,8 +172,10 @@ enyo.kind({
         continue to execute if the _initMixins_ property of the object
         is set to false.
     */
-    setupMixins: function () {
-        if (false === this.initMixins) return;
+    setupMixins: function (force) {
+        if (false === this.initMixins && !force) return;
+        // prevent this from being run more than once
+        this.initMixins = false;
         if (!this.appliedMixins) this.appliedMixins = [];
         enyo.forEach(this.mixins || [], this.prepareMixin, this);
     },
@@ -205,8 +207,10 @@ enyo.kind({
         bindings array. It will not create the same binding twice. If
         the initBindings property is false it will not execute.
     */
-    setupBindings: function () {
-        if (false === this.initBindings) return;
+    setupBindings: function (force) {
+        if (false === this.initBindings && !force) return;
+        // prevent this from being executed again
+        this.initBindings = false;
         // to keep from attempting to setup bindings twice
         // just refresh them if we've been here before
         if (true === this.didSetupBindings) return this.refreshBindings();
@@ -302,8 +306,10 @@ enyo.kind({
         during initialization. This method will not run if the initComputed
         property is set to false.
     */
-    setupComputed: function () {
-        if (false === this.initComputed) return;
+    setupComputed: function (force) {
+        if (false === this.initComputed && !force) return;
+        // prevent this from being run again unless force is true
+        this.initComputed = false;
         var prop;
         var key;
         var idx;
@@ -346,8 +352,9 @@ enyo.kind({
         set to false. Observers cannot be added for the same event more
         than once.
     */
-    setupObservers: function () {
-        if (false === this.initObservers) return;
+    setupObservers: function (force) {
+        if (false === this.initObservers && !force) return;
+        this.initObservers = false;
         var key;
         var prop;
         var idx;

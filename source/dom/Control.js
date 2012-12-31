@@ -84,13 +84,12 @@ enyo.kind({
 	node: null,
 	generated: false,
 	
-	
+	//*@public
+	/**
+        It is important for bindings _not_ to be initialized until
+        after components/children have been fully created and initialized.
+	*/
 	initBindings: false,
-	initObservers: false,
-	initMixins: false,
-	initComputed: false,
-	
-	
 	create: function() {
 		// initialize style databases
 		this.initStyles();
@@ -110,9 +109,6 @@ enyo.kind({
 		this.addClass(this.classes);
 		this.initProps(["id", "content", "src", "controller"]);
         // we can now set these setup flags to true
-        this.initMixins = true;
-        this.initObservers = true;
-        this.initComputed = true;
         this.initBindings = true;
         // we now call setup knowing our children have been intitialized properly
 		this.setup();
