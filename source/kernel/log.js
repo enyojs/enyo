@@ -48,7 +48,7 @@ enyo.logging = {
 		}
 	},
 	log: function(inMethod, inArgs) {
-		if (window.console) {
+		if (typeof console !== "undefined") {
 			if (this.shouldLog(inMethod)) {
 				this._log(inMethod, inArgs);
 			}
