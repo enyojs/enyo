@@ -6,7 +6,7 @@
 			return false;
 		}
 		var p$ = ["perspective", "WebkitPerspective", "MozPerspective", "msPerspective", "OPerspective"];
-		for (var i=0, p; p=p$[i]; i++) {
+		for (var i=0, p; (p=p$[i]); i++) {
 			if (typeof document.body.style[p] != "undefined") {
 				return true;
 			}
@@ -26,7 +26,7 @@
 		if (this._styleTransformProp || !document.body) {
 			return this._styleTransformProp;
 		}
-		for (var i = 0, p; p = styleTransformProps[i]; i++) {
+		for (var i = 0, p; (p = styleTransformProps[i]); i++) {
 			if (typeof document.body.style[p] != "undefined") {
 				return this._styleTransformProp = p;
 			}

@@ -97,7 +97,9 @@ enyo.depends = function() {
 				// a reference to the depends argument from the original call for tracking,
 				// followed by kicking off any additionally queued load() calls
 				runtimeLoad(function() {
-					onLoadCallback && onLoadCallback(depends);
+					if (onLoadCallback) {
+						onLoadCallback(depends);
+					}
 				});
 			};
 			enyo.loader.packageFolder = "./";

@@ -54,10 +54,10 @@ enyo.kind({
 			* <a href="#enyo.ScrollStrategy">ScrollStrategy</a> is the default
 				and implements no scrolling, relying instead on the environment
 				to scroll properly.
-			
+
 			* <a href="#enyo.TouchScrollStrategy">TouchScrollStrategy</a>
 				implements a touch scrolling mechanism.
-			
+
 			* <a href="#enyo.TranslateScrollStrategy">TranslateScrollStrategy</a>
 				implements a touch scrolling mechanism using translations; it is
 				currently recommended only for Android 3 and 4.
@@ -92,7 +92,7 @@ enyo.kind({
 	handlers: {
 		onscroll: "domScroll",
 		onScrollStart: "scrollStart",
-		onScroll: "scroll", 
+		onScroll: "scroll",
 		onScrollStop: "scrollStop"
 	},
 	classes: "enyo-scroller",
@@ -174,7 +174,10 @@ enyo.kind({
 		}
 	},
 	createStrategy: function() {
-		this.createComponents([{name: "strategy", maxHeight: this.maxHeight, kind: this.strategyKind, thumb: this.thumb, preventDragPropagation: this.preventDragPropagation, overscroll:this.touchOverscroll, isChrome: true}]);
+		this.createComponents([{name: "strategy", maxHeight: this.maxHeight,
+			kind: this.strategyKind, thumb: this.thumb,
+			preventDragPropagation: this.preventDragPropagation,
+			overscroll:this.touchOverscroll, isChrome: true}]);
 	},
 	getStrategy: function() {
 		return this.$.strategy;
@@ -212,7 +215,7 @@ enyo.kind({
 	verticalChanged: function() {
 		this.$.strategy.setVertical(this.vertical);
 	},
-	// FIXME: these properties are virtual; property changed methods are fired only if 
+	// FIXME: these properties are virtual; property changed methods are fired only if
 	// property value changes, not if getter changes.
 	//* Sets scroll position along horizontal axis.
 	setScrollLeft: function(inLeft) {
@@ -278,7 +281,8 @@ enyo.kind({
 		should be allowed to propagate.
 	*/
 	shouldStopScrollEvent: function(inEvent) {
-		return (this.preventScrollPropagation && inEvent.originator.owner != this.$.strategy);
+		return (this.preventScrollPropagation &&
+			inEvent.originator.owner != this.$.strategy);
 	},
 	/**
 		Calls _shouldStopScrollEvent_ to determine whether current scroll event
@@ -292,7 +296,8 @@ enyo.kind({
 		// note: scroll event can be native dom or generated.
 		if (inEvent.dispatchTarget) {
 			// allow a dom event if it orignated with this scroller or its strategy
-			return this.preventScrollPropagation && !(inEvent.originator == this || inEvent.originator.owner == this.$.strategy);
+			return this.preventScrollPropagation && !(inEvent.originator == this ||
+				inEvent.originator.owner == this.$.strategy);
 		} else {
 			return this.shouldStopScrollEvent(inEvent);
 		}

@@ -65,9 +65,9 @@ enyo.kind({
 		//* Bounce - overscroll bounceback behavior
 		bounce : "0.5s cubic-bezier(0.06,.5,.5,.94) 0s"
 	},
-	
+
 	//* @public
-	
+
 	//* Sets the left scroll position within the scroller.
 	setScrollLeft: function(inLeft) {
 		var prevLeft = this.scrollLeft;
@@ -94,7 +94,7 @@ enyo.kind({
 	setScrollY: function(inTop) {
 		this.scrollTop = -1*inTop;
 	},
-	
+
 	//* Gets the left scroll position within the scroller.
 	getScrollLeft: function() {
 		return this.scrollLeft;
@@ -103,9 +103,9 @@ enyo.kind({
 	getScrollTop: function() {
 		return this.scrollTop;
 	},
-	
+
 	//* @protected
-	
+
 	// apply initial transform so we're always composited
 	create: function() {
 		this.inherited(arguments);
@@ -220,7 +220,7 @@ enyo.kind({
 		}
 		this.doScrollStop();
 	},
-	
+
 	// Set scroll x value to the current computed style
 	updateX: function() {
 		var x = window.getComputedStyle(this.$.client.node,null).getPropertyValue(enyo.dom.getCssTransformProp()).split('(')[1];
@@ -346,8 +346,12 @@ enyo.kind({
 		if(this.dragging) {
 			e.preventDefault();
 			// calculate new scroll values
-			this.scrollLeft = this.scrollHorizontal ? this.calculateDragDistance(parseInt(this.getScrollLeft()), (-1*(e.pageX-this.prevX)), this.leftBoundary, this.rightBoundary) : this.getScrollLeft();
-			this.scrollTop = this.scrollVertical ? this.calculateDragDistance(this.getScrollTop(), (-1*(e.pageY-this.prevY)), this.topBoundary, this.bottomBoundary) : this.getScrollTop();
+			this.scrollLeft = this.scrollHorizontal ?
+				this.calculateDragDistance(parseInt(this.getScrollLeft(), 10), (-1*(e.pageX-this.prevX)), this.leftBoundary, this.rightBoundary) :
+				this.getScrollLeft();
+			this.scrollTop = this.scrollVertical ?
+				this.calculateDragDistance(this.getScrollTop(), (-1*(e.pageY-this.prevY)), this.topBoundary, this.bottomBoundary) :
+				this.getScrollTop();
 			// apply new scroll values
 			this.effectScroll();
 			this.scroll();
@@ -430,7 +434,7 @@ enyo.kind({
 			if(this.beyondBoundary(this.getScrollLeft(), this.rightBoundary, this.boundaryX)) {
 				return -1*this.rightBoundary;
 			}
-		}	
+		}
 		return false;
 	},
 	// Determine if we're overscrolled on the y axis and if so return proper edge value
@@ -582,7 +586,7 @@ enyo.kind({
 			posChanged = true;
 			this.scrollLeft = -1*this.rightBoundary;
 		}
-		
+
 		if(posChanged) {
 			this.startOverflowScrolling();
 		} else {
@@ -598,8 +602,8 @@ enyo.kind({
 	//* Returns the values of _overleft_ and _overtop_, if any.
 	getOverScrollBounds: function() {
 		return {
-			overleft: Math.min(this.leftBoundary - -1*this.scrollLeft, 0) || Math.max(this.rightBoundary - -1*this.scrollLeft, 0),
-			overtop: Math.min(this.topBoundary - -1*this.scrollTop, 0) || Math.max(this.bottomBoundary - -1*this.scrollTop, 0)
+			overleft: Math.min(this.leftBoundary + this.scrollLeft, 0) || Math.max(this.rightBoundary + this.scrollLeft, 0),
+			overtop: Math.min(this.topBoundary + this.scrollTop, 0) || Math.max(this.bottomBoundary + this.scrollTop, 0)
 		};
-	},
+	}
 });

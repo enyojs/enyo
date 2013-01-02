@@ -15,7 +15,7 @@
 		if (enyo.platform.ios >= 6) {
 			break;
 		}
-		
+
 		// if prefixed, becomes Request and Cancel
 		wc = p ? (p + enyo.cap(c)) : c;
 		wr = p ? (p + enyo.cap(r)) : r;

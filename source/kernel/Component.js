@@ -197,18 +197,9 @@ enyo.kind({
 			n = this.nameComponent(inComponent);
 		}
 		if (this.$[n]) {
-			this.warn('Duplicate component name "' + n + '" in owner "' + this.id + '" violates unique-name-under-owner rule, replacing existing component in the hash and continuing, but this is an error condition and should be fixed.');
-			//if (this.shouldWarn()) {
-			/*
-			try {
-				throw new Error('Duplicate component name "' + n + '" violates unique-name-under-owner rule, replacing existing component in the hash and continuing, but this is an error condition and should be fixed.');
-			} catch(x) {
-				enyo.warn(x);
-				enyo.log(x.stack);
-			}
-			*/
-			/*this.warn() &&*/ //enyo.warn('Duplicate component name "' + n + '" violates unique-name-under-owner rule, replacing existing component in the hash and continuing, but this is an error condition and should be fixed.');
-			//}
+			this.warn('Duplicate component name "' + n + '" in owner "' + this.id + '" violates ' +
+				'unique-name-under-owner rule, replacing existing component in the hash and continuing, ' +
+				'but this is an error condition and should be fixed.');
 		}
 		this.$[n] = inComponent;
 	},
@@ -521,7 +512,8 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 		fn = inValue.caller;
 	} else {
 		if (inName.slice(0, 2) != 'on') {
-			enyo.warn("enyo.Component.addEvent: event names must start with 'on'. " + inProto.kindName + " event '" + inName + "' was auto-corrected to 'on" + inName + "'.");
+			enyo.warn("enyo.Component.addEvent: event names must start with 'on'. " + inProto.kindName +
+				" event '" + inName + "' was auto-corrected to 'on" + inName + "'.");
 			inName = "on" + inName;
 		}
 		v = inValue;

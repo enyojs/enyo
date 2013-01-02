@@ -93,8 +93,8 @@
 
 	//* Returns true if the argument is true
 	enyo.isTrue = function(it) {
-		return !(it === "false" || it === false || it === 0 || it === null || it === undefined)
-	}
+		return !(it === "false" || it === false || it === 0 || it === null || it === undefined);
+	};
 
 	//* Returns the index of the element in _inArray_ that is equivalent (==) to _inElement_, or -1 if no element is found.
 	enyo.indexOf = function(inElement, inArray, fromIndex) {
@@ -210,7 +210,7 @@
 				'propertyIsEnumerable',
 				'constructor'
 			];
-			for (var i = 0, p; p = dontEnums[i]; i++) {
+			for (var i = 0, p; (p = dontEnums[i]); i++) {
 				if (hop.call(inObject, p)) {
 					results.push(p);
 				}
@@ -221,14 +221,14 @@
 
 	/**
 		Clones an existing Array, or converts an array-like object into an Array.
-		
+
 		If _inOffset_ is non-zero, the cloning is started from that index in the source Array.
 		The clone may be appended to an existing Array by passing the existing Array as _inStartWith_.
-		
+
 		Array-like objects have _length_ properties, and support square-bracket notation ([]).
 		Often array-like objects do not support Array methods, such as _push_ or _concat_, and
 		must be converted to Arrays before use.
-		
+
 		The special _arguments_ variable is an example of an array-like object.
 	*/
 	enyo.cloneArray = function(inArrayLike, inOffset, inStartWith) {
@@ -392,7 +392,7 @@
 		enyo.setPrototype(enyo.instance, obj);
 		return new enyo.instance();
 	};
-	
+
 	//* @public
 
 	/**

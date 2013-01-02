@@ -1,6 +1,6 @@
 /**
 	Common set of published properties used in both
-	<a href="#enyo.Ajax">enyo.Ajax</a> and 
+	<a href="#enyo.Ajax">enyo.Ajax</a> and
 	<a href="#enyo.WebService">enyo.WebService</a>.
 */
 enyo.AjaxProperties = {

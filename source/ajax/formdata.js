@@ -76,14 +76,14 @@ _enyo.FormData_ is inspired by
 		if (!enyo.isArray(inBufs)) {
 			throw new Error('enyo.Blob only handles Arrays of Strings');
 		}
-		if ((inBufs.length > 0) && !(typeof inBufs[0] === 'string')) {
+		if ((inBufs.length > 0) && typeof inBufs[0] !== 'string') {
 			throw new Error('enyo.Blob only handles Arrays of Strings');
 		}
 		this._bufs = inBufs; // leave byte arrays un-touched
 	}
 	Blob.prototype.getAsBinary = function() {
 		var empty = '',
-		    content = empty.concat.apply(empty, this._bufs);
+			content = empty.concat.apply(empty, this._bufs);
 		return content;
 	};
 	enyo.Blob = Blob;
