@@ -64,16 +64,18 @@
     /**
         Used internally as part of the getParts method.
     */
-    var fromGlobal = function (root, parts) {
+    var fromRoot = function (root, parts) {
         return enyo.exists(root[(parts || [])[0]])? root: undefined;
     };
     
     //*@protected
     /**
         Used internally to determine from the given information what the
-        source and target paths and properties are.
+        source and target paths and properties are. There is one exception case
+        between determining parts for the source and the target in bindings so
+        the optional third parameter helps it to use the correct algorithm.
     */
-    var getParts = enyo.Binding.getParts = function (path, context) {
+    var getParts = enyo.Binding.getParts = function (path, context, direction) {
         var parts;
         var idx = 0;
         var ret = {};
@@ -82,9 +84,20 @@
         var prop;
         var base;
         var part;
+        var owner = this.owner;
+        var to = direction === "target";
         path = path[0] === "."? path.slice(1): path;
         parts = path.split(".");
-        root = context || fromGlobal(enyo.global, parts) || this.owner;
+        root = context || fromRoot(enyo.global, parts) || owner;
+        // this is the exception case for determining parts in the target direction -
+        // even if the property DID exist on the global object (e.g. _length_) if it
+        // is the target it doesn't have to exist and the target has to be a subclass
+        // of enyo.Object
+        if (true === to) {
+            if (enyo.global === root) {
+                root = owner;
+            }
+        }
         base = root;
         ret.property = prop = parts.length > 1? parts.pop(): path;
         if (prop === path) {
@@ -222,6 +235,7 @@
             its source (and target).
         */
         disconnect: function () {
+            if (false === this.isConnected) return;
             this.disconnectSource();
             this.disconnectTarget();
             this.isConnected = false;
@@ -250,7 +264,7 @@
             var property = this.targetProperty;
             var target = this.target;
             var to = this.to;
-            parts = getParts.call(this, to, target);
+            parts = getParts.call(this, to, target, "target");
             base = parts.base;
             property = parts.property;
             if (!base || "object" !== typeof base) {
@@ -265,6 +279,7 @@
             var source = this.source;
             var property = this.sourceProperty;
             var fn = this.sourceResponder;
+            if (!(source instanceof enyo.Object)) return (this.sourceConnected = false);
             // only create the responder if it doesn't already exist
             if (!enyo.exists(fn) || "function" !== typeof fn) {
                 fn = enyo.bind(this, this.syncFromSource);
@@ -285,6 +300,7 @@
             var property = this.targetProperty;
             var fn = this.targetResponder;
             var oneWay = this.oneWay;
+            if (!(target instanceof enyo.Object)) return (this.targetConnected = false);
             // if this is a one way binding there is nothing to do
             if (true === oneWay) return (this.targetConnected = true);
             // only create the responder if it doesn't already exist
@@ -361,6 +377,7 @@
         //*@protected
         setTargetValue: function (value) {
             var target = this.target;
+            if (target === window) debugger
             var property = this.targetProperty;
             target.set(property, value);
         },

@@ -114,38 +114,36 @@ enyo.kind({
             "name for the requested kind '" + orig + "'";
         return global? namespace + "." + name: name;
     },
-    
-    
     //*@protected
-    setupBindings: function () {
-        var defs;
-        var config;
-        var idx = 0;
-        var bindings;
-        var binding;
-        var ns = this.namespace(true);
-        var props = ["to", "from"];
-        var regex = /[a-z]/;
-        this.clearBindings();
-        bindings = this._bindings = [];
-        if ((defs = this.bindings)) {
-            for (len = defs.length; idx < len; ++idx) {
-                config = defs[idx];
-                enyo.forEach(props, function (prop) {
-                    var def = config[prop];
-                    var parts;
-                    if (!def) return;
-                    if (!!~def.indexOf(".")) {
-                        parts = def.split(".");
-                        if (regex.test(parts[0][0]) && parts[0] !== ns) {
-                            parts.unshift(ns);
-                            config[prop] = parts.join(".");
-                        }
-                    }
-                });
-                binding = new enyo.Binding({owner: this, autoConnect: true}, config);
-                bindings.push(binding);
-            }
-        }
-    }
+    //setupBindings: function () {
+    //    var defs;
+    //    var config;
+    //    var idx = 0;
+    //    var bindings;
+    //    var binding;
+    //    var ns = this.namespace(true);
+    //    var props = ["to", "from"];
+    //    var regex = /[a-z]/;
+    //    this.clearBindings();
+    //    bindings = this.bindings = [];
+    //    if ((defs = this.bindings)) {
+    //        for (len = defs.length; idx < len; ++idx) {
+    //            config = defs[idx];
+    //            enyo.forEach(props, function (prop) {
+    //                var def = config[prop];
+    //                var parts;
+    //                if (!def) return;
+    //                if (!!~def.indexOf(".")) {
+    //                    parts = def.split(".");
+    //                    if (regex.test(parts[0][0]) && parts[0] !== ns) {
+    //                        parts.unshift(ns);
+    //                        config[prop] = parts.join(".");
+    //                    }
+    //                }
+    //            });
+    //            binding = new enyo.Binding({owner: this, autoConnect: true}, config);
+    //            bindings.push(binding);
+    //        }
+    //    }
+    //}
 });

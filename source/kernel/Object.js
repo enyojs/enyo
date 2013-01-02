@@ -269,7 +269,7 @@ enyo.kind({
             binding = bindings.shift();
             // this will force the binding to be removed from the real
             // bindings array of the object
-            binding.destroy();
+            if (binding instanceof enyo.Binding) binding.destroy();
         }
     },
     //*@public
@@ -283,7 +283,7 @@ enyo.kind({
         var binding;
         while (bindings.length) {
             binding = bindings.shift();
-            binding.refresh();
+            if (binding instanceof enyo.Binding) binding.refresh();
         }
     },
     //*@public
@@ -711,22 +711,27 @@ enyo.Object.publish = function(ctor, props) {
 enyo.Object.addGetterSetter = function (property, value, proto) {
     var getter = "get" + enyo.cap(property);
     var setter = "set" + enyo.cap(property);
+    var fn;
     // set the initial value for the prototype
     proto[property] = value;
+    fn = proto[getter];
     // if there isn't already a getter provided create one
-    if ("function" !== typeof proto[getter]) {
-        proto[getter] = function () {return this.get(property)};
-    } else {
+    if ("function" !== typeof fn) {
+        fn = proto[getter] = function () {return this.get(property)};
+        fn.overloaded = false;
+    } else if (false !== fn.overloaded) {
         // otherwise we need to mark it as having been overloaded
         // so the global getter knows not to ignore it
-        proto[getter].overloaded = true;
+        fn.overloaded = true;
     }
     // if there isn't already a setter provided create one
-    if ("function" !== typeof proto[setter]) {
-        proto[setter] = function () {return this.set(property, arguments[0])};
-    } else {
+    fn = proto[setter];
+    if ("function" !== typeof fn) {
+        fn = proto[setter] = function () {return this.set(property, arguments[0])};
+        fn.overloaded = false;
+    } else if (false !== fn.overloaded) {
         // otherwise we need to mark it as having been overloaded
         // so the global setter knows not to ignore it
-        proto[setter].overloaded = true;
+        fn.overloaded = true;
     }
 };

@@ -114,7 +114,7 @@
         } else {
             // begin our recursive search
             part = path.substring(0, idx);
-            path = path.slice(idx);
+            path = path.slice(idx+1);
             if ("object" === typeof cur[part]) {
                 // if we can find the given part of the string path
                 // we recursively call the getPath method using that
@@ -171,6 +171,7 @@
         // if there are less than 2 parameters we can't do anything
         if(!(exists(path) && exists(value)) || "string" !== typeof path) return this;
         var cur = this;
+        var idx;
         var target;
         var parts;
         var notify = true === force? true: false;

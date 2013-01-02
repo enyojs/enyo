@@ -78,6 +78,12 @@ enyo.kind({
 	},
 	defaultKind: "Component",
 	handlers: {},
+	//*@protected
+	/**
+	    Components need to post-pone initializing mixins until after
+	    its _importProps_ method has been executed.
+	*/
+	initMixins: false,
 	toString: function() {
 		return this.kindName;
 	},
@@ -91,6 +97,8 @@ enyo.kind({
 		// entire constructor chain has fired, now start creation chain
 		// process instance properties
 		this.importProps(inProps);
+		this.initMixins = true;
+		this.setup();
 		// perform initialization
 		this.create();
 	},

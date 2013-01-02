@@ -936,3 +936,9 @@ enyo.Control.subclass = function(ctor, props) {
 		proto.attributes = null;
 	}
 };
+
+//*@public
+/**
+    Also usable as _enyo.View_.
+*/
+enyo.View = enyo.Control;
