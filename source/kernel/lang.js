@@ -170,30 +170,30 @@
     enyo.setPath = function (path, value, force) {
         // if there are less than 2 parameters we can't do anything
         if(!(exists(path) && exists(value)) || "string" !== typeof path) return this;
-        var cur = this;
+        var cur = enyo === this? enyo.global: this;
         var idx;
         var target;
         var parts;
         var notify = true === force? true: false;
         var comparator = "function" === typeof force? force: undefined;
         // attempt to retrieve the previous value if it exists
-        var prev = enyo.getPath.call(this, path);
+        var prev = enyo.getPath.call(cur, path);
         // clear any leading periods
         path = preparePath(path);
         // find the inital index of any period in the path
         idx = stringIndexOf(path, ".");
         // if there wasn't one we can attempt to fast-path this setter
         if (-1 === idx) {
-            target = this[path];
+            target = cur[path];
             // if the target path leads us to a function and it is a computed
             // property we will actually call the computed property passing it
             // the value
             if (true === isComputed(target)) {
-                target.call(this, value);
+                target.call(cur, value);
             } else {
                 // otherwise we just plain overwrite the method, this is the
                 // expected behavior
-                this[path] = value;
+                cur[path] = value;
             }
         } else {
             // we have to walk the path until we find the end
@@ -203,13 +203,13 @@
                 target = parts.shift();
                 // the rare case where the path could specify enyo
                 // and is executed under the context of enyo
-                if ("enyo" === target && enyo === this) continue;
+                if ("enyo" === target && enyo === cur) continue;
                 // if this is the last piece we test to see if it is a computed
                 // property and if it is we call it with the new value
                 // as in the fast path
                 if (0 === parts.length) {
                     if (true === isComputed(target)) {
-                        target.call(this, value);
+                        target.call(cur, value);
                     } else {
                         // otherwise we overwrite it just like in the fast-path
                         cur[target] = value;
@@ -236,12 +236,12 @@
             }
         }
         if (true === notify) {
-            if (this.notifyObservers) {
-                this.notifyObservers(path, prev, value);
+            if (cur.notifyObservers) {
+                cur.notifyObservers(path, prev, value);
             }
         }
         // return the callee
-        return this;
+        return cur;
     };
 
     //*@protected

@@ -65,7 +65,16 @@
         Used internally as part of the getParts method.
     */
     var fromRoot = function (root, parts) {
-        return enyo.exists(root[(parts || [])[0]])? root: undefined;
+        // check to see if the part of the path is relative to the root
+        var piece = root[(parts || [])[0]];
+        // if the root here is enyo.global then we need to ensure that
+        // the piece is actually an object
+        // this is very, very important
+        if (enyo.exists(piece)) {
+            if (enyo.global === root) {
+                return "object" === typeof piece? root: undefined;
+            } else return root;
+        }
     };
     
     //*@protected
@@ -377,7 +386,6 @@
         //*@protected
         setTargetValue: function (value) {
             var target = this.target;
-            if (target === window) debugger
             var property = this.targetProperty;
             target.set(property, value);
         },

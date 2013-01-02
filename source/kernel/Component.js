@@ -433,11 +433,11 @@ enyo.kind({
 		arrive here. If you need to handle these differently, you may
 		need to also override _dispatchEvent_.
 	*/
-  dispatch: function(inMethodName, inEvent, inSender) {
-    var fn = inMethodName && this[inMethodName];
-    if (fn) {
-      return fn.call(this, inSender || this, inEvent);
-    }
+    dispatch: function(inMethodName, inEvent, inSender) {
+        var fn = inMethodName && this[inMethodName];
+        if (fn) {
+            return fn.call(this, inSender || this, inEvent);
+        }
 	},
 	/**
 		Sends a message to myself and all of my components.

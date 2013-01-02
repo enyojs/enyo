@@ -231,6 +231,12 @@ enyo.kind({
         }
         // flag the object for having the bindings already setup
         this.didSetupBindings = true;
+        // if there are any listeners for this event notify them
+        this.notifyObservers("didSetupBindings");
+        // cleanup by removing all listeners on this event note that
+        // not passing the function/handler makes it remove any/all
+        // for that property!
+        this.removeObserver("didSetupBindings");
     },
     //*@public
     /**
@@ -409,17 +415,24 @@ enyo.kind({
     /**
         Attempts to remove the given listener/observer for the given
         property if it exists. Typically not called directly. Returns
-        a reference to this object for chaining.
+        a reference to this object for chaining. If not function is
+        supplied it will remove all listeners for the given property.
     */
     removeObserver: function (property, fn) {
         var observers = this.observers;
         var idx;
         var handlers;
         if (!enyo.exists((handlers = observers[property]))) return this;
-        idx = handlers.indexOf(fn);
-        if (!!~idx) {
-            // remove it from the array
-            handlers.splice(idx, 1);
+        if (enyo.exists(fn) && "function" === typeof fn) {
+            idx = handlers.indexOf(fn);
+            if (!!~idx) {
+                // remove it from the array
+                handlers.splice(idx, 1);
+            }
+        } else {
+            // we need to remove ALL the observers of this property
+            observers[property] = null;
+            delete observers[property];
         }
         return this;
     },

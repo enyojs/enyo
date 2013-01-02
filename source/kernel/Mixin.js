@@ -13,7 +13,7 @@
     
     //*@protected
     function Mixin (properties) {
-        var store = enyo.mixin(Mixin.defaults, properties);
+        var store = enyo.mixin(enyo.clone(Mixin.defaults), properties);
         var keys = enyo.union(Mixin.ignore, enyo.keys(store));
         var name = properties.name;
         enyo.setPath(name, this);
@@ -29,7 +29,7 @@
     };
     
     //*@protected
-    Mixin.ignore = ["initMixin", "destroyMixin", "name"]
+    Mixin.ignore = ["initMixin", "destroyMixin", "name"];
   
     //*@protected
     Mixin.prototype = {
@@ -38,11 +38,22 @@
         //*@public
         apply: function (target) {
             var mixins = target.appliedMixins || (target.appliedMixins = []);
+            var fn;
             if (!!~mixins.indexOf(this)) return;
             else mixins.push(this.name);
             target.extend(this.get("extension"));
             this.injectDestructor(target);
-            if (this.initMixin) this.initMixin.call(target);
+            // if the target has not setup its bindings it is always safer
+            // and sometimes mandatory to queue the mixin initialization 
+            if (this.initMixin) {
+                if (true === target.didSetupBindings) {
+                    this.initMixin.call(target);
+                } else {
+                    // this is a special case, usually try not to declare
+                    fn = enyo.proxyMethod(this.initMixin, target);
+                    target.addObserver("didSetupBindings", fn);
+                }
+            }
         },
         //*@protected
         get: function () {

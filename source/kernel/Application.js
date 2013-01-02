@@ -1,149 +1,225 @@
+(function () {
+    
+    //*@public
+    /**
+        In order to provide some convenience and debugging tools we track
+        the applications running at any given time. Here we collection them
+        for reference later. When _enyo.Application_s are destroyed they know
+        to remove themselves from this table.
+    */
+    var applications = enyo.applications = {};
 
-//*@public
-/**
-    An _enyo.Application_ can be used to coordinate execution of
-    a given collection of _enyo_ objects. There can be one or more
-    _enyo.Applications_ running (with some limitation such as which is
-    rendered into the _document.body_ - no limitation if they are each
-    rendered into separate DOM nodes or nested). It also provides the
-    ability to namespace and automatically initialize any _controllers_
-    of the application.
-*/
-enyo.kind({
-    //*@public
-    name: "enyo.Application",
-    //*@public
-    kind: "enyo.ViewController",
-    //*@public
-    /**
-        This flag designates if the application will automatically
-        execute its _start_ method when its constructor is called.
-    */
-    autoStart: true,
-    //*@public
-    /**
-        This flag designates if the application will automatically
-        render its _view_ into the _renderTarget_ when its _start_
-        method es called.
-    */
-    renderOnStart: false,
-    //*@public
-    /**
-        This can be set to an array of _controller_s, much like the
-        _components_ block of an _enyo.Component_.
-    */
-    controllers: null,
     //*@protected
-    initBindings: false,
-    //*@protected
-    concat: ["controllers"],
-    //*@protected
-    constructor: function () {
-        this.inherited(arguments);
-        if (true === this.autoStart) this.start();
-    },
-    //*@protected
-    initComponents: function () {
-        enyo.forEach(["controllers"], function (prop) {
-            var fn = prop + "Changed";
-            if ("function" === typeof this[fn]) this[fn]();
-        }, this);
-    },
-    //*@public
     /**
-        If the _autoStart_ flag is set to true this will automatically
-        be executed when the constructor is called. Otherwise it can
-        be executed whenever the application should begin execution.
+        Used internally to maintain registration of applications with
+        the framework.
     */
-    start: function () {
-        this.initComponents();
-        this.initBindings = true;
-        this.setup();
-        if (true === this.renderOnStart) {
-            this.render();
+    var register = function (app) {
+        var kind = app.kindName;
+        var kinds = applications[kind] || (applications[kind] = []);
+        kinds.push(app);
+    };
+    
+    //*@protected
+    /**
+        Used internally to unregister applications that have been destroyed.
+    */
+    var unregister = function (app) {
+        var kind = app.kindName;
+        var kinds = applications[kind] || [];
+        var idx = kinds.indexOf(app);
+        if (!~idx) {
+            kinds.splice(idx, 1);
         }
-    },
+    };
+
     //*@protected
-    controllersChanged: function () {
-        var controllers = this.controllers;
-        enyo.forEach(controllers, function (props) {
-            var kind;
-            var name;
-            var global;
-            var ctor;
-            var namespace;
-            if ("string" === typeof props) {
-                kind = props;
-                name = this.instanceNameFromKind(kind);
-            } else {
-                kind = props.kind;
-                name = props.name || this.instanceFromKind(kind);
-                global = props.global? Boolean(props.global): undefined;
-            }
-            delete props["name"];
-            delete props["global"];
-            ctor = enyo.kind(props);
-            namespace = this.get("namespace");
-            if (!ctor) return enyo.warn("enyo.Application: " +
-                "could not find a constructor for the requested " +
-                "controller kind - " + kind);
-            //namespace[name] = new ctor();
-            enyo.setPath.call(namespace, name, new ctor());
-        }, this);
-    },
-    //*@protected
-    namespace: enyo.Computed(function (path) {
-        var kindName = this.kindName;
-        var parts = kindName.split(".");
-        var ns = parts[0];
-        return path? ns: enyo.getPath(ns);
-    }),
-    //*@protected
-    instanceNameFrom: function (name, global) {
-        var orig = name;
-        var namespace;
+    /**
+        Used internally used to determine namespaces from pathnames.
+    */
+    var namespaceFrom = function (path) {
         var parts;
-        name = name && name.length? name: "";
-        if (!~name.indexOf(".")) {
-            parts = name.split(".");
-            namespace = parts.shift();
-            name = parts.join(".");
+        var ns;
+        // if it isn't a string or has no length we can't do anything
+        if ("string" !== typeof path || "" === path) return undefined;
+        // attempt to split the string to separate the path components
+        parts = path.split(".");
+        // if it only has one element then we know there isn't a namespace
+        if (1 === parts.length) return undefined;
+        ns = parts.shift();
+        // we assume we have a namespace now
+        return ns;
+    };
+    
+    //*@public
+    /**
+        An _enyo.Application_ can be used to coordinate execution of
+        a given collection of _enyo_ objects. There can be one or more
+        _enyo.Applications_ running (with some limitation such as which is
+        rendered into the _document.body_ - no limitation if they are each
+        rendered into separate DOM nodes or nested). It also provides the
+        ability to namespace and automatically initialize any _controllers_
+        of the application.
+        
+        Typically the namespace that the _enyo.Application_ is subclassed
+        into will be used as the namespace of any singleton controllers
+        implemented at initialization.
+        
+        For example, if you subclass _enyo.Application_ as the following:
+        
+        enyo.kind({
+            name: "MyApp.Application",
+            kind: "enyo.Application",
+            controllers: [
+                {name: "contactsController", kind: "MyApp.ContactsController"}
+            ]
+        })
+        
+        it will instantiate the singleton _contactsController_ as
+        _MyApp.contactsController_. Any bindings of the application object
+        or any other object in-or-outside-of the application can reference
+        this controller by that path as long as the application's _start_
+        method has been called.
+        
+        You can explicitly include a separate namespace for a controller in
+        its name property if necessary. The path is not restricted to existing
+        namespaces and can be as deep as needed, for example:
+        
+        {name: "My.Controllers.Namespace.That.Is.Stupidly.Deep.controller"...}
+    */
+    enyo.kind({
+        //*@public
+        name: "enyo.Application",
+        //*@public
+        kind: "enyo.ViewController",
+        //*@public
+        /**
+            This flag designates if the application will automatically
+            execute its _start_ method when its constructor is called.
+        */
+        autoStart: true,
+        //*@public
+        /**
+            This flag designates if the application will automatically
+            render its _view_ into the _renderTarget_ when its _start_
+            method es called.
+        */
+        renderOnStart: false,
+        //*@public
+        /**
+            This can be set to an array of _controller_s, much like the
+            _components_ block of an _enyo.Component_.
+        */
+        controllers: null,
+        //*@protected
+        initBindings: false,
+        //*@protected
+        concat: ["controllers"],
+        //*@protected
+        constructor: function () {
+            this.inherited(arguments);
+            if (true === this.autoStart) this.start();
+        },
+        //*@protected
+        initComponents: function () {
+            this.setupControllers();
+        },
+        //*@public
+        /**
+            If the _autoStart_ flag is set to true this will automatically
+            be executed when the constructor is called. Otherwise it can
+            be executed whenever the application should begin execution.
+        */
+        start: function () {
+            // we register kind of early in the process in case any controllers
+            // or other initialization assumes it will be there...
+            register(this);
+            this.initComponents();
+            // once the controllers have been initialized we can go ahead and
+            // hookup any bindings that were supplied to the application
+            this.initBindings = true;
+            this.setup();
+            if (true === this.renderOnStart) {
+                this.render();
+            }
+        },
+        //*@protected
+        setupControllers: function () {
+            // we need to be able to iterate over the controllers
+            // supplied to the application
+            var kinds = this.controllers;
+            // get the namespace of this application to use with
+            // controllers that need one
+            var ns = this.get("namespace");
+            // the reused formatting pattern
+            var pattern = "%..%.";
+            // we remove the array for tidyness...
+            this.controllers = null;
+            // we iterate over the controller definitions and attempt
+            // to create them according to the information provided
+            enyo.forEach(kinds, function (kind) {
+                var name = kind.name;
+                var global = Boolean(kind.global);
+                var ctor;
+                // the namespace (if any) defined for the controller
+                var pre;
+                // remove the name so it doesn't muck with the kind creation/
+                // constructor routine
+                delete kind.name;
+                // same with global
+                delete kind.global;
+                // check to see if we can get the namespace as defined for
+                // the controller from its definition
+                pre = namespaceFrom(name);
+                // try and get the constructor for the kind
+                ctor = enyo.kind(kind);
+                // now to instantiate the controller via the correct path
+                if (enyo.exists(pre)) {
+                    // we ignore it in the alternate case that they are the same
+                    if (ns !== pre) {
+                        // if there is a namespace and it isn't the same as
+                        // the application's namespace check to see if the
+                        // global flag is set
+                        if (true !== global) {
+                            // if it is not designated as global we will prepend
+                            // the path with our known namespace
+                            name = enyo.format(pattern, ns, name);
+                        }
+                    }
+                } else {
+                    // here we check the global flag to see if it is supposed to
+                    // be set in the global space even though it doesn't have a
+                    // namespace
+                    if (true !== global) {
+                        // ok, we need to prepend the path with our namespace
+                        name = enyo.format(pattern, ns, name);
+                    }
+                }
+                // now to actually set the object
+                enyo.setPath(name, new ctor());
+            });
+        },
+        //*@public
+        /**
+            Computed property that returns the string representation
+            of the namespace assigned to this application object's
+            kind-name (not instance). For example:
+            
+            enyo.kind({
+                name: "MyApp.Application",
+                kind: "enyo.Application"
+            })
+            
+            would return a namespace of "MyApp".
+        */
+        namespace: enyo.Computed(function () {
+            return namespaceFrom(this.kindName);
+        }),
+        //*@public
+        destroy: function () {
+            this.inherited(arguments);
+            unregister(this);
         }
-        name = enyo.uncap(name);
-        if (!name.length) throw "enyo.Application: cannot determine any " +
-            "name for the requested kind '" + orig + "'";
-        return global? namespace + "." + name: name;
-    },
-    //*@protected
-    //setupBindings: function () {
-    //    var defs;
-    //    var config;
-    //    var idx = 0;
-    //    var bindings;
-    //    var binding;
-    //    var ns = this.namespace(true);
-    //    var props = ["to", "from"];
-    //    var regex = /[a-z]/;
-    //    this.clearBindings();
-    //    bindings = this.bindings = [];
-    //    if ((defs = this.bindings)) {
-    //        for (len = defs.length; idx < len; ++idx) {
-    //            config = defs[idx];
-    //            enyo.forEach(props, function (prop) {
-    //                var def = config[prop];
-    //                var parts;
-    //                if (!def) return;
-    //                if (!!~def.indexOf(".")) {
-    //                    parts = def.split(".");
-    //                    if (regex.test(parts[0][0]) && parts[0] !== ns) {
-    //                        parts.unshift(ns);
-    //                        config[prop] = parts.join(".");
-    //                    }
-    //                }
-    //            });
-    //            binding = new enyo.Binding({owner: this, autoConnect: true}, config);
-    //            bindings.push(binding);
-    //        }
-    //    }
-    //}
-});
+    });
+    
+}());
