@@ -61,6 +61,10 @@ enyo.kind({
 			* <a href="#enyo.TranslateScrollStrategy">TranslateScrollStrategy</a>
 				implements a touch scrolling mechanism using translations; it is
 				currently recommended only for Android 3 and 4.
+
+			* <a href="#enyo.TransitionScrollStrategy">TransitionScrollStrategy</a>
+				implements a touch scrolling mechanism using CSS transitions; it is
+				currently recommended only for iOS 5 and later.
 		*/
 		strategyKind: "ScrollStrategy",
 		//* Set to true to display a scroll thumb in touch scrollers
@@ -132,9 +136,7 @@ enyo.kind({
 		getTouchStrategy: function() {
 			return (enyo.platform.android >= 3)
 				? "TranslateScrollStrategy"
-				: (enyo.platform.ios >= 5)
-					? "TransitionScrollStrategy"
-					: "TouchScrollStrategy";
+				: "TouchScrollStrategy";
 		}
 	},
 	controlParentName: "strategy",
