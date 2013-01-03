@@ -467,7 +467,7 @@ enyo.kind({
         var handlers = observers[property];
         var idx = 0;
         var fn;
-        var ch = property.toLowerCase() + "Changed";
+        var ch = enyo.uncap(property) + "Changed";
         if (handlers) {
             for (; idx < handlers.length; ++idx) {
                 fn = handlers[idx];
@@ -680,6 +680,8 @@ enyo.kind({
             method.isProperty = true;
             method.properties = fn.properties || [];
         }
+        // mark it as a method that was extended
+        method.isExtended = true;
     },
     //@protected
     /**

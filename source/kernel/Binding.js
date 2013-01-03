@@ -24,7 +24,7 @@
     //*@protected
     Transform.prototype = {
         stop: function () {
-            throw "transform:stop";
+            throw "stop";
         },
         transform: function (value, direction) {
             var fn = this.transformer;
@@ -102,11 +102,11 @@
         // even if the property DID exist on the global object (e.g. _length_) if it
         // is the target it doesn't have to exist and the target has to be a subclass
         // of enyo.Object
-        if (true === to) {
-            if (enyo.global === root) {
-                root = owner;
-            }
-        }
+        //if (true === to) {
+        //    if (enyo.global === root) {
+        //        root = owner;
+        //    }
+        //}
         base = root;
         ret.property = prop = parts.length > 1? parts.pop(): path;
         if (prop === path) {

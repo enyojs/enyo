@@ -148,6 +148,7 @@
             // we need to be able to iterate over the controllers
             // supplied to the application
             var kinds = this.controllers;
+            var inst;
             // get the namespace of this application to use with
             // controllers that need one
             var ns = this.get("namespace");
@@ -196,7 +197,11 @@
                     }
                 }
                 // now to actually set the object
-                enyo.setPath(name, new ctor());
+                inst = new ctor();
+                // set the name as a special property for debugging purposes
+                // of singleton controllers
+                inst.runtimePath = name;
+                enyo.setPath(name, inst);
             });
         },
         //*@public
