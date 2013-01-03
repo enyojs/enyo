@@ -84,6 +84,10 @@ enyo.kind({
 	    its _importProps_ method has been executed.
 	*/
 	initMixins: false,
+	//*@protected
+	/**
+	*/
+	initComputed: false,
 	toString: function() {
 		return this.kindName;
 	},
@@ -114,6 +118,8 @@ enyo.kind({
 	create: function() {
 		this.ownerChanged();
 		this.initComponents();
+		this.initComputed = true;
+		this.setup();
 	},
 	initComponents: function() {
 		// 'components' property in kind declarations is renamed to 'kindComponents'

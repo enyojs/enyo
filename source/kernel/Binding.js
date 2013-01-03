@@ -374,7 +374,7 @@
             var fn = this.targetResponder;
             var property = this.targetProperty;
             if (!enyo.exists(target)) return;
-            target.removeObserver(property, fn);
+            if ("function" === typeof fn) target.removeObserver(property, fn);
             this.targetConnected = false;
         },
         //*@protected
