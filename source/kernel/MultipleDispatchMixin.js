@@ -43,10 +43,12 @@ enyo.Mixin({
         } else if (sender === this) {
             event.dispatchedByController = true;
             event.dispatchController = this;
-            return true;
         }
         return false;
     },
+    //dispatchBubble: function (name, event, sender) {
+    //    
+    //},
     //*@protected
     bubbleUp: function (name, event, sender) {
         var targets;
@@ -66,7 +68,7 @@ enyo.Mixin({
     },
     //*@protected
     dispatch: function (name, event, sender) {
-        if (this.dispatchFrom(sender, event)) return false;
+        //if (this.dispatchFrom(sender, event)) return false;
         return this.inherited(arguments);
     },
     /**
