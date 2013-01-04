@@ -17,6 +17,23 @@
         return !(undefined === target);
     };
     
+    //*@public
+    /**
+        An IE8 safe fallback for the default _lastIndexOf_ method.
+        Takes an array or string as the haystack and a string as the
+        needle.
+    */
+    var lastIndexOf = enyo.lastIndexOf = function (haystack, needle) {
+        if (haystack.lastIndexOf) return haystack.lastIndexOf(needle);
+        // in IE8 there is no lastIndexOf for arrays or strings but we
+        // treat them slightly differently, this is written for minimal-
+        // code as a slight tradeoff in performance but should rarely be
+        // hit as it is
+        var string = ("string" === typeof haystack);
+        var rev = (string? haystack.split(""): haystack).reverse();
+        
+    };
+    
     //*@protected
     /**
         Internally used method to strip leading '.' from string paths.
@@ -486,7 +503,7 @@
                 seen.push(value);
                 // here we check against the entirety of any other values
                 // in the values array starting from the end
-                if (idx === values.lastIndexOf(value)) {
+                if (idx === lastIndexOf(values, value)) {
                     // if this turned out to be true then it is a unique entry
                     // so go ahead and push it to our union array
                     ret.push(value);
