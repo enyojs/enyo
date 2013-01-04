@@ -8,28 +8,6 @@
         a runtime unique identifier.
     */
     var uidCounter = 0;
-
-    //*@public
-    /**
-        An IE8 compatible polyfill-replacement for the String object's
-        indexOf method. If that method exists it will be used instead.
-        Accepts the string to search and the needle (string) to search
-        for within that string. Returns the index at which the needle
-        was first encountered and -1 if it could not be found.
-    */
-    var stringIndexOf = enyo.stringIndexOf = function (haystack, needle) {
-        var idx = -1;
-        if ("string" === typeof haystack) {
-            if (haystack.indexOf) return haystack.indexOf(needle);
-            else {
-                // TODO: need to test the performance of a string
-                // brute-force walk/search versus a regular expression
-                // test/fallback
-            }
-        }
-
-        return -1;
-    };
     
     //*@public
     /**
@@ -99,8 +77,8 @@
         var fn;
         // clear any leading periods
         path = preparePath(path);
-        // find the initial period if any from our ie8 safe polyfill
-        idx = stringIndexOf(path, ".");
+        // find the initial period if any
+        idx = path.indexOf(".");
         // if there isn't any try and find the path relative to our
         // current context, this is the fast path
         if (-1 === idx) {
@@ -181,7 +159,7 @@
         // clear any leading periods
         path = preparePath(path);
         // find the inital index of any period in the path
-        idx = stringIndexOf(path, ".");
+        idx = path.indexOf(".");
         // if there wasn't one we can attempt to fast-path this setter
         if (-1 === idx) {
             target = cur[path];
