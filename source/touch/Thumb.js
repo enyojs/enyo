@@ -83,7 +83,7 @@ enyo.kind({
 			}
 		}
 	},
-	// implement set because showing is not changed while 
+	// implement set because showing is not changed while
 	// we delayHide but we want to cancel the hide.
 	setShowing: function(inShowing) {
 		if (inShowing && inShowing != this.showing) {

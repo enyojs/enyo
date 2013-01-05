@@ -156,7 +156,7 @@
 		},
 		getPathPrefix: function(inPath) {
 			var delim = inPath.slice(0, 1);
-			if ((delim != "/") && (delim != "\\") && (delim != "$") && (inPath.slice(0, 5) != "http:")) {
+			if ((delim != "/") && (delim != "\\") && (delim != "$") && !/^https?:/i.test(inPath)) {
 				return this.packageFolder;
 			}
 			return "";

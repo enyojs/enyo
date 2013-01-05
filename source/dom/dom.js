@@ -9,7 +9,7 @@ enyo.requiresWindow = function(inFunction) {
 
 enyo.dom = {
 	/**
-		Shortcut for _document.getElementById_ if _id_ is a string, otherwise returns _id_. 
+		Shortcut for _document.getElementById_ if _id_ is a string, otherwise returns _id_.
 		Uses _window.document_ unless a document is specified in the (optional) _doc_
 		parameter.
 
@@ -17,20 +17,33 @@ enyo.dom = {
 			var domNode = enyo.dom.byId(node);
 	*/
 	byId: function(id, doc){
-		return (typeof id == "string") ? (doc || document).getElementById(id) : id; 
+		return (typeof id == "string") ? (doc || document).getElementById(id) : id;
 	},
 	/**
 		return string with ampersand, less-than, and greater-than characters
-		replaced with HTML entities, e.g. 
+		replaced with HTML entities, e.g.
 
-			'&lt;code&gt;"This &amp; That"&lt;/code&gt;' 
+			'&lt;code&gt;"This &amp; That"&lt;/code&gt;'
 
-		becomes 
+		becomes
 
 			'&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;'
 	*/
 	escape: function(inText) {
 		return inText !== null ? String(inText).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
+	},
+	/**
+		Returns an object describing the geometry of this node, like so:
+
+			{left: _offsetLeft_, top: _offsetTop_, width: _offsetWidth_, height: _offsetHeight_}
+	*/
+	getBounds: function(n) {
+		if (n) {
+			return {left: n.offsetLeft, top: n.offsetTop, width: n.offsetWidth, height: n.offsetHeight};
+		}
+		else {
+			return null;
+		}
 	},
 	//* @protected
 	getComputedStyle: function(inNode) {
@@ -158,15 +171,15 @@ enyo.dom = {
 			yregex = /translateY\((-?\d+)px\)/i,
 			borderLeft = 0, borderTop = 0,
 			totalHeight = 0, totalWidth = 0;
-		
+
 		if (relativeToNode) {
 			totalHeight = relativeToNode.offsetHeight;
 			totalWidth = relativeToNode.offsetWidth;
 		} else {
 			totalHeight = (document.body.parentNode.offsetHeight > this.getWindowHeight() ? this.getWindowHeight() - document.body.parentNode.scrollTop : document.body.parentNode.offsetHeight);
-			totalWidth = (document.body.parentNode.offsetWidth > this.getWindowWidth() ? this.getWindowWidth() - document.body.parentNode.scrollLeft : document.body.parentNode.offsetWidth); 
+			totalWidth = (document.body.parentNode.offsetWidth > this.getWindowWidth() ? this.getWindowWidth() - document.body.parentNode.scrollLeft : document.body.parentNode.offsetWidth);
 		}
-		
+
 		if (node.offsetParent) {
 			do {
 				left += node.offsetLeft - (node.offsetParent ? node.offsetParent.scrollLeft : 0);

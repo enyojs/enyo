@@ -38,7 +38,7 @@ List of PhoneGap events detailed on the [PhoneGap Docs](http://docs.phonegap.com
 			"volumedownbutton",
 			"volumeupbutton"
 		];
-		for (var i=0, e; e=pge[i]; i++) {
+		for (var i=0, e; (e=pge[i]); i++) {
 			// some phonegap events have no type, so enyo.dispatch fails
 			document.addEventListener(e, enyo.bind(enyo.Signals, "send", "on" + e), false);
 		}
