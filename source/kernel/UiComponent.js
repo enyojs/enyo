@@ -44,13 +44,13 @@ enyo.kind({
 	statics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
 	},
+	
 	create: function() {
 		this.controls = [];
 		this.children = [];
 		this.containerChanged();
 		this.inherited(arguments);
 		this.layoutKindChanged();
-    this._setup(); // because new properties will not have been setup
 	},
 	destroy: function() {
 		// Destroys all non-chrome controls (regardless of owner).
@@ -239,7 +239,7 @@ enyo.kind({
 	},
 	//* @protected
 	resizeHandler: function() {
-		// FIXME: once we are in the business of reflowing layouts on resize, then we have an 
+		// FIXME: once we are in the business of reflowing layouts on resize, then we have an
 		// inside/outside problem: some scenarios will need to reflow before child
 		// controls reflow, and some will need to reflow after. Even more complex scenarios
 		// have circular dependencies, and can require multiple passes or other resolution.
@@ -253,7 +253,7 @@ enyo.kind({
 		// Note: Controls will generally be both in a $ hash and a child list somewhere.
 		// Attempt to avoid duplicated messages by sending only to components that are not
 		// UiComponent, as those components are guaranteed not to be in a child list.
-		// May cause a problem if there is a scenario where a UiComponent owns a pure 
+		// May cause a problem if there is a scenario where a UiComponent owns a pure
 		// Component that in turn owns Controls.
 		//
 		// waterfall to all pure components
@@ -264,9 +264,9 @@ enyo.kind({
 		}
 		// waterfall to my children
 		for (var i=0, cs=this.children, c; (c=cs[i]); i++) {
-			// Do not send {showingOnly: true} events to hidden controls. This flag is set for resize events 
+			// Do not send {showingOnly: true} events to hidden controls. This flag is set for resize events
 			// which are broadcast from within the framework. This saves a *lot* of unnecessary layout.
-			// TODO: Maybe remember that we did this, and re-send those messages on setShowing(true)? 
+			// TODO: Maybe remember that we did this, and re-send those messages on setShowing(true)?
 			// No obvious problems with it as-is, though
 			if (c.showing || !(inPayload && inPayload.showingOnly)) {
 				c.waterfall(inMessage, inPayload, inSender);
@@ -301,7 +301,7 @@ enyo.master = new enyo.Component({
 	},
 	isDescendantOf: enyo.nop,
 	bubble: function(inEventName, inEvent, inSender) {
-		//console.log("master event: " + inEventName);
+		//enyo.log("master event: " + inEventName);
 		if (inEventName == "onresize") {
 			// Resize is special; waterfall this message.
 			// This works because master is a Component, so it waterfalls

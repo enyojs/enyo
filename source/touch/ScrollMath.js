@@ -85,7 +85,7 @@ enyo.kind({
 		//
 		// this is basically just value *= coeff (generally, coeff < 1)
 		//
-		// 'sign' and the conditional is to force the damping to only occur 
+		// 'sign' and the conditional is to force the damping to only occur
 		// on one side of the origin.
 		//
 		var dv = value - origin;
@@ -160,7 +160,7 @@ enyo.kind({
 			var dt = t1 - t0;
 			// record the time for next delta
 			t0 = t1;
-			// user drags override animation 
+			// user drags override animation
 			if (this.dragging) {
 				this.y0 = this.y = this.uy;
 				this.x0 = this.x = this.ux;
@@ -196,7 +196,9 @@ enyo.kind({
 	},
 	stop: function(inFireEvent) {
 		this.job = enyo.cancelRequestAnimationFrame(this.job);
-		inFireEvent && this.doScrollStop();
+		if (inFireEvent) {
+			this.doScrollStop();
+		}
 	},
 	stabilize: function() {
 		this.start();
@@ -275,7 +277,7 @@ enyo.kind({
 	/**
 		Animates a scroll to the specified position.
 	*/
-	scrollTo: function(inY, inX) {
+	scrollTo: function(inX, inY) {
 		if (inY !== null) {
 			this.y = this.y0 - (inY + this.y0) * (1 - this.kFrictionDamping);
 		}
@@ -297,6 +299,7 @@ enyo.kind({
 		return Boolean(this.job);
 	},
 	isInOverScroll: function() {
-		return this.job && (this.x > this.leftBoundary || this.x < this.rightBoundary || this.y > this.topBoundary || this.y < this.bottomBoundary);
+		return this.job && (this.x > this.leftBoundary || this.x < this.rightBoundary ||
+			this.y > this.topBoundary || this.y < this.bottomBoundary);
 	}
 });

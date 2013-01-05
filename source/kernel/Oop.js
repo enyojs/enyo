@@ -1,75 +1,72 @@
 ﻿
-//----------------------- CD: MOVE ME
-
-  //* @public
-  /**
+//*@public
+/**
     Takes a function followed by 1 or more string parameters that are
     targets for the observer. Returns a method with the appropriate properties
     to allow the system to notify it when the named properites have been
     modified.
-  */
-  enyo.Observer = function () {
-    var args = enyo.toArray(arguments), fn, i = 0;
-    fn = args.length > 0? args.shift(): null;
-    if (!fn || !enyo.isFunction(fn) || args.length <= 0) {
-      enyo.warn("enyo.Observer: could not return a valid observer method, " +
-        "must supply a function and at least one property to observer");
-      return enyo.isFunction(fn)? fn: enyo.nop;
+*/
+enyo.Observer = function (fn /* arguments */) {
+    var events = enyo.toArray(arguments).slice(1);
+    if (!enyo.exists(fn) || "function" !== typeof fn) {
+        // this is a necessary assert
+        throw "enyo.Observer: invalid observer, must have a function";
     }
     fn.isObserver = true;
-    fn.events = fn.events? fn.events: [];
-    for (; i < args.length; ++i) fn.events.push(args[i]);
+    fn.events = (fn.events? fn.events: []).concat(events);
     return fn;
-  };
+};
 
-  //* @public
-  /**
+//*@public
+/**
     Takes a function followed by 0 or more string parameters that
     are dependencies of the computed property. Returns the method
     with the appropriate properties to allow the system to use it
     as a normal property.
-  */
-  enyo.Computed = function () {
-    var args = enyo.toArray(arguments), fn, i = 0;
-    fn = args.length > 0? args.shift(): null;
-    if (!fn || !enyo.isFunction(fn)) {
-      enyo.warn("enyo.Computed: could not return a valid computed property " +
-        "as no method was supplied");
-      return enyo.nop;
+*/
+enyo.Computed = function (fn /* arguments */) {
+    var dependencies = enyo.toArray(arguments).slice(1);
+    if (!enyo.exists(fn) || "function" !== typeof fn) {
+        // this is a necessary assert
+        throw "enyo.Computed: invalid computed property, must have a function";
     }
     fn.isProperty = true;
-    fn.properties = fn.properties? fn.properties: [];
-    for (; i < args.length; ++i) fn.properties.push(args[i]);
+    fn.properties = (fn.properties? fn.properties: []).concat(dependencies);
     return fn;
-  };
+};
 
-//-----------------------
 
-//* @private
+//*@protected
 /**
-  Default properties of enyo kinds to concatenate as opposed to
-  overwriting. These are automatically used unless explicitly
-  removed.
-  
-  TODO: is it possible to move this perparation to the constructor
-        so it can programatically be manipulated?
+    Default properties of enyo kinds to concatenate as opposed to
+    overwriting. These are automatically used unless explicitly
+    removed.
 */
 enyo.concat = ["concat", "bindings", "mixins"];
 
+//*@protected
+/**
+    Is called during kind-initialization to make sure that any property
+    noted to be concatenated will be (must be an array) so that those values
+    will not be lost by subclasses overriding that property.
+*/
 enyo.handleConcatenatedProperties = function (ctor, proto) {
-  var cprops = enyo.merge(ctor.concat, proto.concat), prop, right, left;
-  while (cprops.length) {
-    prop = cprops.shift();
-    left = ctor[prop];
-    right = proto[prop];
-    if (enyo.isArray(left) && enyo.isArray(right)) {
-      ctor[prop] = enyo.merge(left, right);
-      // remove the reference to the property so it will not
-      // overwrite the newly computed-concatenated property value
-      delete proto[prop];
+    var properties = enyo.merge(ctor.concat || [], proto.concat || []);
+    var prop;
+    var right;
+    var left;
+    while (properties.length) {
+        prop = properties.shift();
+        left = ctor[prop];
+        right = proto[prop];
+        if ((left instanceof Array) && (right instanceof Array)) {
+            ctor[prop] = enyo.merge(left, right);
+            // remove the reference to the property to it will not
+            // conflict later
+            delete proto[prop];
+        }
     }
-  }
-}
+};
 
 //* @public
 /**
@@ -141,7 +138,7 @@ enyo.kind = function(inProps) {
 
 /**
 	Creates a Singleton
-	
+
 		enyo.singleton({
 			kind: Control,
 			name: "app.MySingleton",
@@ -152,7 +149,7 @@ enyo.kind = function(inProps) {
 				//...
 			}
 		});
-		
+
 		app.MySingleton.makeSomething();
 		app.MySingleton.setValue("bar");
 */
@@ -207,13 +204,14 @@ enyo.kind.features.push(function(ctor, props) {
 		proto.inherited = enyo.kind.inherited;
 	}
 	if (proto.base) {
-		// decorate function properties to support inherited (do this ex post facto so that ctor.prototype is known, relies on elements in props being copied by reference)
+		// decorate function properties to support inherited (do this ex post facto so that
+		// ctor.prototype is known, relies on elements in props being copied by reference)
 		for (var n in props) {
 			var p = props[n];
 			if (enyo.isFunction(p)) {
 				p._inherited = proto.base.prototype[n] || enyo.nop;
 				// FIXME: we used to need some extra values for inherited, then inherited got cleaner
-				// but in the meantime we used these values to support logging in Object. 
+				// but in the meantime we used these values to support logging in Object.
 				// For now we support this legacy situation, by suppling logging information here.
 				p.nom = proto.kindName + '.' + n + '()';
 			}
@@ -222,7 +220,13 @@ enyo.kind.features.push(function(ctor, props) {
 });
 
 enyo.kind.inherited = function(args, newArgs) {
-	return args.callee._inherited.apply(this, newArgs || args);
+	var cur = args.callee;
+	var fn = cur._inherited;
+	if (!fn || "function" !== typeof fn) {
+	    cur = cur.caller;
+	    fn = cur? cur._inherited: undefined;
+	}
+    if ("function" === typeof fn) return fn.apply(this, newArgs || args);
 };
 
 //
@@ -246,7 +250,7 @@ enyo.kind.features.push(function(ctor, props) {
 
 enyo.kind.statics = {
 	subclass: function(ctor, props) {
-		//console.log("subclassing [" + ctor.prototype.kind + "] from [", this.prototype.kind + "]");
+		//enyo.log("subclassing [" + ctor.prototype.kind + "] from [", this.prototype.kind + "]");
 	},
 	extend: function(props) {
 		enyo.mixin(this.prototype, props);
@@ -256,9 +260,9 @@ enyo.kind.statics = {
 	}
 };
 
-// 
+//
 // factory for kinds identified by strings
-// 
+//
 enyo._kindCtors = {};
 
 enyo.constructorForKind = function(inKind) {
@@ -285,9 +289,9 @@ enyo.constructorForKind = function(inKind) {
 	return enyo.defaultCtor;
 };
 
-// 
+//
 // namespace for current theme ("enyo.Theme.Button" references the Button specialization for the current theme)
-// 
+//
 enyo.Theme = {};
 
 enyo.registerTheme = function(inNamespace) {

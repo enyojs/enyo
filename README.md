@@ -1,4 +1,4 @@
-### Looking for the issue tracker?  
+### Looking for the issue tracker?
 It's moved to [https://enyojs.atlassian.net](https://enyojs.atlassian.net).
 
 ---
@@ -23,13 +23,13 @@ Enyo is an object-oriented JavaScript application framework emphasizing modulari
 
 Enyo up to 1.x was the underlying framework used to develop applications for HP's TouchPad tablet. Enyo as shipped on the TouchPad included an complete set of user interface components and service wrappers. What you will find here is Enyo 2, what we informally call _core_: the primary infrastructure needed to support any number of Enyo-based libraries. Not to worry, Enyo 1.x itself is open-source licensed, and work is progressing on packaging up those controls and goodies to work with Enyo 2.
 
-Enyo was designed from the beginning to be highly extensible. This repository reflects a small working set of code, that can be expanded with any number of libraries or plugins. 
+Enyo was designed from the beginning to be highly extensible. This repository reflects a small working set of code, that can be expanded with any number of libraries or plugins.
 
-Enyo 2 is lightweight, easy to digest, and powerful. 
+Enyo 2 is lightweight, easy to digest, and powerful.
 
 # What Do I Get
 
-The core code includes the Enyo kernel, the DOM extensions, some Ajax (XHR) tools, and basic wrapper kinds for a lot of DOM form elements. These things are actually separable (it's easy to make micro-builds of Enyo), but we believe this is a useful working set. 
+The core code includes the Enyo kernel, the DOM extensions, some Ajax (XHR) tools, and basic wrapper kinds for a lot of DOM form elements. These things are actually separable (it's easy to make micro-builds of Enyo), but we believe this is a useful working set.
 
 The Enyo 2 kernel provides a modularity concept (Component) and a view concept (UiComponent). The DOM aspect includes a widget concept (Control) and an extensible event system (Dispatcher). The Ajax package includes basic xhr functionality and an implementation of xhr as a Component (Ajax).  The touch package provides platform-optimized scrollers, while the UI package provides base kinds for common controls like buttons and popups.
 
@@ -41,9 +41,9 @@ First is our emphasis on cross-platform: Enyo core works on both desktop and mob
 
 Second is Enyo's building block approach to applications. Each piece of an application is a Component, and Components are constructed out of other Components.
 
-For example, it's easy to define a combination of an `<input>` tag with a `<label>` tag into one _LabeledInput_ Component. 
+For example, it's easy to define a combination of an `<input>` tag with a `<label>` tag into one _LabeledInput_ Component.
 
-Now I can use (and re-use) LabeledInput as one atomic piece. 
+Now I can use (and re-use) LabeledInput as one atomic piece.
 
 But that's just the beginning. Ultimately, large pieces of functionality can be exposed as single Components, for example a fancy report generator, or a color picker, or an entire painting application.
 
@@ -82,7 +82,7 @@ This example loads an enyo.js build from _enyojs/2.1.1/_. If you downloaded the 
 The base enyo.Control works much like an HTML tag. You can assign _classes_ and _attributes_ and give it a _style_. E.g.
 
 ```javascript
-new enyo.Control({content: "Hello From Enyo", classes: "foo", style: "color: red", 
+new enyo.Control({content: "Hello From Enyo", classes: "foo", style: "color: red",
       attributes: {tabIndex: 0}}).renderInto(document.body);
 ```
 

@@ -1,10 +1,10 @@
 /**
 	_enyo.Animator_ is a basic animation component.  Call _play_ to start the
 	animation. The animation will run for the period (in milliseconds) specified
-	by its _duration_ property.  The _onStep_ event will fire in quick 
+	by its _duration_ property.  The _onStep_ event will fire in quick
 	succession and should be handled to do something based on the _value_
 	property.
-	
+
 	The _value_ property will progress from _startValue_ to _endValue_ during
 	the animation based on the function referenced by the _easingFunction_
 	property.  The _stop_ method may be called to manually stop an in-progress
@@ -22,7 +22,7 @@ enyo.kind({
 	published: {
 		//* Animation duration in milliseconds
 		duration: 350,
-		//* Value of _value_ property at the beginning of an animation 
+		//* Value of _value_ property at the beginning of an animation
 		startValue: 0,
 		//* Value of _value_ property at the end of an animation
 		endValue: 1,
@@ -30,7 +30,7 @@ enyo.kind({
 		//* This reference is destroyed when the animation ceases.
 		node: null,
 		//* Function that determines how the animation progresses from
-		//* _startValue_ to _endValue_ 
+		//* _startValue_ to _endValue_
 		easingFunction: enyo.easing.cubicOut
 	},
 	events: {

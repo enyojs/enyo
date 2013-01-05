@@ -41,7 +41,7 @@ enyo.gesture.drag = {
 	minTrack: 8,
 	down: function(e) {
 		// tracking if the mouse is down
-		//console.log("tracking ON");
+		//enyo.log("tracking ON");
 		// Note: 'tracking' flag indicates interest in mousemove, it's turned off
 		// on mouseup
 		// make sure to stop dragging in case the up event was not received.
@@ -60,7 +60,7 @@ enyo.gesture.drag = {
 				this.stopDragging(e);
 				this.cancelHold();
 				this.tracking = false;
-				//console.log("enyo.gesture.drag: mouse must be down to drag.");
+				//enyo.log("enyo.gesture.drag: mouse must be down to drag.");
 				return;
 			}
 			if (this.dragEvent) {
@@ -127,12 +127,12 @@ enyo.gesture.drag = {
 		return e;
 	},
 	sendDragStart: function(e) {
-		//console.log("dragstart");
+		//enyo.log("dragstart");
 		this.dragEvent = this.makeDragEvent("dragstart", this.target, e);
 		enyo.dispatch(this.dragEvent);
 	},
 	sendDrag: function(e) {
-		//console.log("sendDrag to " + this.dragEvent.target.id + ", over to " + e.target.id);
+		//enyo.log("sendDrag to " + this.dragEvent.target.id + ", over to " + e.target.id);
 		// send dragOver event to the standard event target
 		var synth = this.makeDragEvent("dragover", e.target, e, this.dragEvent.dragInfo);
 		enyo.dispatch(synth);
@@ -142,10 +142,12 @@ enyo.gesture.drag = {
 		enyo.dispatch(synth);
 	},
 	sendDragFinish: function(e) {
-		//console.log("dragfinish");
+		//enyo.log("dragfinish");
 		var synth = this.makeDragEvent("dragfinish", this.dragEvent.target, e, this.dragEvent.dragInfo);
 		synth.preventTap = function() {
-			e.preventTap && e.preventTap();
+			if (e.preventTap) {
+				e.preventTap();
+			}
 		};
 		enyo.dispatch(synth);
 	},
@@ -156,7 +158,9 @@ enyo.gesture.drag = {
 	sendDrop: function(e) {
 		var synth = this.makeDragEvent("drop", e.target, e, this.dragEvent.dragInfo);
 		synth.preventTap = function() {
-			e.preventTap && e.preventTap();
+			if (e.preventTap) {
+				e.preventTap();
+			}
 		};
 		enyo.dispatch(synth);
 	},
@@ -178,8 +182,8 @@ enyo.gesture.drag = {
 		//
 		var ti = this.flickInfo;
 		ti.moves.push({
-			x: e.clientX, 
-			y: e.clientY, 
+			x: e.clientX,
+			y: e.clientY,
 			t: enyo.now()
 		});
 		// track specified # of points
@@ -192,12 +196,12 @@ enyo.gesture.drag = {
 		var ti = this.flickInfo;
 		var moves = ti && ti.moves;
 		if (moves && moves.length > 1) {
-			// note: important to use up time to reduce flick 
+			// note: important to use up time to reduce flick
 			// velocity based on time between move and up.
 			var l = moves[moves.length-1];
 			var n = enyo.now();
 			// take the greatest of flick between each tracked move and last move
-			for (var i=moves.length-2, dt=0, x1=0, y1=0, x=0, y=0, sx=0, sy=0, m; m=moves[i]; i--) {
+			for (var i=moves.length-2, dt=0, x1=0, y1=0, x=0, y=0, sx=0, sy=0, m; (m=moves[i]); i--) {
 				// this flick (this move - last move) / (this time - last time)
 				dt = n - m.t;
 				x1 = (l.x - m.x) / dt;
