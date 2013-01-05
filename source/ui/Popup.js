@@ -100,11 +100,11 @@ enyo.kind({
 	updatePosition: function() {
 		var d = this.calcViewportSize();
 		var b = this.getBounds();
-		
+
 		if (this.targetPosition) {
 			// For brevity's sake...
 			var p = this.targetPosition;
-			
+
 			// Test and optionally adjust our target bounds (only first is commented, because logic is effectively identical for all scenarios)
 			if (typeof p.left === 'number') {
 				// If popup will be outside window bounds, switch anchor
@@ -121,8 +121,8 @@ enyo.kind({
 					p.right = null;
 				}
 			} else if (typeof p.right === 'number') {
-				if (p.right - b.width < 0) {
-					if (p.right + b.width <= d.width) {
+				if (p.right + b.width > d.width) {
+					if (p.right - b.width >= 0) {
 						p.left = d.width - p.right;
 					} else {
 						p.left = 0;
@@ -132,10 +132,10 @@ enyo.kind({
 					p.left = null;
 				}
 			}
-			
+
 			if (typeof p.top === 'number') {
 				if (p.top + b.height > d.height) {
-					if (p.top - b.height > 0) {
+					if (p.top - b.height >= 0) {
 						p.bottom = d.height - p.top;
 					} else {
 						p.bottom = 0;
@@ -145,8 +145,8 @@ enyo.kind({
 					p.bottom = null;
 				}
 			} else if (typeof p.bottom === 'number') {
-				if (p.bottom - b.height < 0) {
-					if (p.bottom + b.height <= d.height) {
+				if (p.bottom + b.height > d.height) {
+					if (p.bottom - b.height >= 0) {
 						p.top = d.height - p.bottom;
 					} else {
 						p.top = 0;
@@ -156,7 +156,7 @@ enyo.kind({
 					p.top = null;
 				}
 			}
-			
+
 			// 'initial' values are necessary to override positioning rules in the CSS
 			this.addStyles('left: ' + (p.left !== null ? p.left + 'px' : 'initial') + '; right: ' + (p.right !== null ? p.right + 'px' : 'initial') + '; top: ' + (p.top !== null ? p.top + 'px' : 'initial') + '; bottom: ' + (p.bottom !== null ? p.bottom + 'px' : 'initial') + ';');
 		} else if (this.centered) {
@@ -202,7 +202,7 @@ enyo.kind({
 	down: function(inSender, inEvent) {
 		//record the down event to verify in tap
 		this.downEvent = inEvent;
-		
+
 		// prevent focus from shifting outside the popup when modal.
 		if (this.modal && !inEvent.dispatchTarget.isDescendantOf(this)) {
 			inEvent.preventDefault();
@@ -257,14 +257,14 @@ enyo.kind({
 		this.hide();
 		return true;
 	},
-	
+
 	//* @public
 	/**
 		Open at the location of a mouse event (_inEvent_). The popup's
 		position is automatically constrained so that it does not
 		display outside the viewport, and defaults to anchoring the top
 		left corner of the popup to the mouse event.
-		
+
 		_inOffset_ is an optional object which may contain left and top
 		properties to specify an offset relative to the location the
 		popup would otherwise be positioned.
@@ -279,15 +279,15 @@ enyo.kind({
 			p.left += inOffset.left || 0;
 			p.top += inOffset.top || 0;
 		}
-		
+
 		this.showAtPosition(p);
 	},
-	
+
 	/**
 		Open the popup at a specific position. The final location
 		of the popup will be automatically constrained so that it does not
 		display outside the viewport.
-		
+
 		_inPosition_ is an object which may contain left, top, bottom,
 		and right properties to specify where the popup will be anchored.
 		If both left and right are included, the popup will preference left
@@ -296,7 +296,7 @@ enyo.kind({
 	showAtPosition: function(inPosition) {
 		// Save our target position for later processing
 		this.targetPosition = inPosition;
-		
+
 		// Show the dialog
 		this.show();
 	}

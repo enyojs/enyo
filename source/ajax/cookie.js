@@ -14,9 +14,9 @@ enyo.getCookie = function(inName) {
 	Properties in the optional _inProps_ argument are attached to the cookie.
 	_inProps_ may have an _expires_ property, which can be a number of days, a
 	Date object, or a UTC time string.
-	
+
 	To remove a cookie, use an _inProps_ value of <code>{ "Max-Age": 0 }</code>.
-	
+
 	If developing in the Google Chrome browser with a local file as your
 	application, start Chrome with the <code>--enable-file-cookies</code> switch
 	to allow cookies to be set.
@@ -45,6 +45,6 @@ enyo.setCookie = function(inName, inValue, inProps) {
 		}
 	}
 	//
-	//console.log(cookie);
+	//enyo.log(cookie);
 	document.cookie = cookie;
 };

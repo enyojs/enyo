@@ -31,7 +31,7 @@ enyo.kind({
 			},
 			dragFinish: function(inSender, inEvent) {
 				this.$.dragAvatar.hide();
-			}			
+			}
 		});
 */
 enyo.kind({

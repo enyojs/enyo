@@ -39,7 +39,7 @@ enyo.kind({
 	/**
 		Registers a response function.
 		First parameter is an optional _this_ context for the response method.
-		Second (or only) parameter is the function object. 
+		Second (or only) parameter is the function object.
 	*/
 	response: function(/* [inContext], inResponder */) {
 		this.accumulate(this.responders, arguments);
@@ -48,7 +48,7 @@ enyo.kind({
 	/**
 		Registers an error handler.
 		First parameter is an optional _this_ context for the response method.
-		Second (or only) parameter is the function object. 
+		Second (or only) parameter is the function object.
 	*/
 	error: function(/* [inContext], inResponder */) {
 		this.accumulate(this.errorHandlers, arguments);

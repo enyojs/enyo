@@ -1,123 +1,311 @@
 (function(){
 	//* @protected
 	enyo.global = this;
-  //*@protected
-  enyo._idCounter = 0;
 
-  // TODO: there are some significant improvements that can be made
-  // to both of these methods enyo.getPath/enyo.setPath and both
-  // should be renamed without the underscore...
+    //*@protected
+    /**
+        Used internally by the enyo.uid method to be able to produce
+        a runtime unique identifier.
+    */
+    var uidCounter = 0;
+    
+    //*@public
+    /**
+        Simple test condition to determine if a target is undefined.
+    */
+    var exists = enyo.exists = function (target) {
+        return !(undefined === target);
+    };
+    
+    //*@public
+    /**
+        An IE8 safe fallback for the default _lastIndexOf_ method.
+        Takes an array or string as the haystack and a string as the
+        needle.
+    */
+    var lastIndexOf = enyo.lastIndexOf = function (haystack, needle) {
+        if (haystack.lastIndexOf) return haystack.lastIndexOf(needle);
+        // in IE8 there is no lastIndexOf for arrays or strings but we
+        // treat them slightly differently, this is written for minimal-
+        // code as a slight tradeoff in performance but should rarely be
+        // hit as it is
+        var string = ("string" === typeof haystack);
+        var rev = (string? haystack.split(""): haystack).reverse();
+        var cap = rev.length-1;
+        var idx;
+        // if it is a string we need to make it a string again for
+        // the indexOf method
+        if (string) rev = rev.join("");
+        idx = enyo.indexOf(needle, rev);
+        // put the array back the way it was
+        if (!string) rev.reverse();
+        return -1 === idx? idx: (cap - idx);
+    };
+    
+    //*@protected
+    /**
+        Internally used method to strip leading '.' from string paths.
+    */
+    var preparePath = function (path) {
+        var idx = 0;
+        while ("." === path[idx]) ++idx;
+        if (0 !== idx) path = path.slice(idx);
+        return path;
+    };
+    
+    //*@protected
+    /**
+        Internally used method to detect if the given value exists,
+        is a function and a computed property. Returns true if these
+        tests are successful false otherwise.
+    */
+    var isComputed = function (target) {
+        return target && "function" === typeof target && true === target.isProperty;
+    };
+    
+    //*@protected
+    /**
+        Internally used method to detect if the given value exists,
+        is a function and an overloaded getter. Returns true if these
+        tests are successful false otherwise.
+    */
+    var isOverloaded = function (target) {
+        return target && "function" === typeof target && true === target.overloaded;
+    };
 
-  enyo.getPath = function () {
-    var args, cur, path, i = 0, val, part, def;
-    if (arguments.length === 0) return undefined;  
-    if (!enyo.isString(arguments[0])) return undefined;
-    args = arguments;
-    path = args[0];
-    cur = this === enyo && args[1] !== true? window: this;
-    while (path[i] === ".") ++i;
-    if (i > 0) path = path.slice(i);
-    i = path.indexOf(".");
-    if (i === -1) {
-      def = "get" + enyo.cap(path);
-      val = cur && cur[def] && cur[def].overloaded? cur[def].call(this): cur[path];
-    } else {
-      part = path.substring(0, i);
-      path = path.slice(i);
-      if (typeof cur[part] === "object") {
-        val = enyo.getPath.call(cur[part], path, true);
-      } else return undefined;
-    }
-    if (enyo.isFunction(val) && val.isProperty === true) {
-      if (!args[1]) return val.call(this);
-    }
-    return val;
-  };
-
-  enyo.setPath = function () {
-    var args, cur, val, path, i = 0, parts, tmp, prev;
-    if (arguments.length < 2) return this;
-    args = arguments;
-    path = args[0];
-    val = args[1];
-    force = args[2];
-    cur = this;
-    prev = enyo.getPath.call(this, path);
-    while (path[i] === ".") ++i;
-    if (i > 0) path = path.slice(i);
-    i = path.indexOf(".");
-    if (i === -1) {
-      if (this[path] && enyo.isFunction(this[path]) && this[path].isProperty) {
-        this[path].call(this, val);
-      } else {
-        this[path] = val;
-      }
-    } else {
-      parts = path.split(".");
-      while (parts.length > 0) {
-        tmp = parts.shift();
-        if (tmp === "enyo" && this === enyo) continue;
-        if (parts.length === 0) {
-          if (cur[tmp] && enyo.isFunction(cur[tmp]) && cur[tmp].isProperty) {
-            cur[tmp].call(this, val);
-          } else {
-            cur[tmp] = val;
-          }
+    //*@public
+    /**
+        A fast-path enabled global getter that takes a string path that
+        can be a full-path (from context window/enyo) or a relative path
+        (to the execution context of the method). It knows how to check for
+        and call the backwards-compatible generated getters as well as
+        handle computed properties. This is an optimized recursive-search.
+        Will return undefined if the object at the given path could not be
+        found. Can safely be called on non-existent paths.
+    */
+    enyo.getPath = function (path, recursing) {
+        // if we don't have a path or it isn't a string we can't do anything
+        if (!exists(path) || "string" !== typeof path) return undefined;
+        // on rare occasions this method would be called under the context
+        // of enyo itself, the problem is detecting when this is intended since
+        // under normal circumstances a general call would assume a window
+        // context - here we see the _recursing_ parameter taking a double
+        // meaning as enyo should _never be used as a reference on another object_
+        // and as long as that is true this will never fail - so if enyo is to be
+        // used as the context root and not window pass the second parameter as true
+        // knowing during recursion enyo should never be the context and its normal
+        // use case would prevail
+        var cur = this === enyo && true !== recursing? window: this;
+        var idx = 0;
+        var val;
+        var part;
+        var fn;
+        // clear any leading periods
+        path = preparePath(path);
+        // find the initial period if any
+        idx = path.indexOf(".");
+        // if there isn't any try and find the path relative to our
+        // current context, this is the fast path
+        if (-1 === idx) {
+            // figure out what our default/backwards-compatible getter
+            // function would be
+            fn = "get" + enyo.cap(path);
+            // if that path exists relative to our context check to see
+            // if it is an overloaded getter and call that if it is otherwise
+            // just grab that path knowing if we get undefined that is ok
+            val = isOverloaded(cur[fn])? cur[fn].call(this): cur[path];
         } else {
-          if (!cur[tmp]) cur[tmp] = {};
-          cur = cur[tmp];
+            // begin our recursive search
+            part = path.substring(0, idx);
+            path = path.slice(idx+1);
+            if ("object" === typeof cur[part]) {
+                // if we can find the given part of the string path
+                // we recursively call the getPath method using that
+                // as the new context
+                val = enyo.getPath.call(cur[part], path, true);
+            } else {
+                // we have no idea what we could do because we can't find
+                // anything useful
+                return undefined;
+            }
         }
-      }
-    }
-    if (this.notifyObservers && (prev !== val || force)) this.notifyObservers(path, prev, val);
-    return this;
-  };
+        // if the return value is a function check to see if it is
+        // a computed property and if this is _not a recursive search_
+        // go ahead and call it, otherwise return it as a function
+        if ("function" === typeof val && true === val.isProperty) {
+            if (true !== recursing) return val.call(this);
+        }
+        // otherwise we've reached the end so return whatever we have
+        return val;
+    };
+    
+    //*@protected
+    /**
+        An internally used method to proxy functions (similar to but not exactly
+        the same as enyo.bind) such that they will be called under the correct context
+        but with a reference to the correct arguments at the time they are called.
+        Accepts two parameters the function to be called and the context under
+        which to call it.
+    */
+    var proxyMethod = enyo.proxyMethod = function (fn, context) {
+        return function () {
+            return fn.apply(context, arguments);
+        };
+    };
+    
+    //*@public
+    /**
+        A global setter that takes a string path (relative to the methods
+        execution context) or a full-path (relative to window). It attempts
+        to automatically retrieve any previous value if it exists to supply
+        to any observers. If the context is an enyo.Object or subkind it will
+        use the notifyObservers method to trigger listeners for the path
+        being set. If the previous value is the equivalent of the newly set
+        value observers will not be triggered by default. If the third
+        parameter is present and an explicit boolean true it will trigger
+        the observers regardless. Optionally the third parameter can be a
+        function-comparator that accepts two parameters, left and right
+        respectively that is expected to return a truthy-falsy value to
+        determine whether or not the notifications will be fired. Returns
+        the context from which the method was executed. Unlike its getter
+        counter-part this is not a recursive method.
+    */
+    enyo.setPath = function (path, value, force) {
+        // if there are less than 2 parameters we can't do anything
+        if(!exists(path) || "string" !== typeof path) return this;
+        var cur = enyo === this? enyo.global: this;
+        var idx;
+        var target;
+        var parts;
+        var notify = true === force? true: false;
+        var comparator = "function" === typeof force? force: undefined;
+        // attempt to retrieve the previous value if it exists
+        var prev = enyo.getPath.call(cur, path);
+        // clear any leading periods
+        path = preparePath(path);
+        // find the inital index of any period in the path
+        idx = path.indexOf(".");
+        // if there wasn't one we can attempt to fast-path this setter
+        if (-1 === idx) {
+            target = cur[path];
+            // if the target path leads us to a function and it is a computed
+            // property we will actually call the computed property passing it
+            // the value
+            if (true === isComputed(target)) {
+                target.call(cur, value);
+            } else {
+                // otherwise we just plain overwrite the method, this is the
+                // expected behavior
+                cur[path] = value;
+            }
+        } else {
+            // we have to walk the path until we find the end
+            parts = path.split(".");
+            // while we have any other parts to inspect
+            while (parts.length) {
+                target = parts.shift();
+                // the rare case where the path could specify enyo
+                // and is executed under the context of enyo
+                if ("enyo" === target && enyo === cur) continue;
+                // if this is the last piece we test to see if it is a computed
+                // property and if it is we call it with the new value
+                // as in the fast path
+                if (0 === parts.length) {
+                    if (true === isComputed(target)) {
+                        target.call(cur, value);
+                    } else {
+                        // otherwise we overwrite it just like in the fast-path
+                        cur[target] = value;
+                    }
+                } else {
+                    // we update our current reference context and if it does
+                    // not exist at the requested path it will be created
+                    if ("object" !== typeof cur[target]) cur[target] = {};
+                    cur = cur[target];
+                }
+            }
+        }
+        // now we need to determine if we are going to issue notifications
+        // first check to see if notify is already forced true
+        if (true !== notify) {
+            // now check to see if we have a comparator and if so use it
+            // to determine if we're going to trigger observers
+            if (comparator) {
+                notify = comparator(prev, value);
+            } else {
+                // do the default which is to test the previous value
+                // versus the new value
+                notify = !(prev === value);
+            }
+        }
+        if (true === notify) {
+            if (cur.notifyObservers) {
+                cur.notifyObservers(path, prev, value);
+            }
+        }
+        // return the callee
+        return cur;
+    };
 
-  //*@protected
-  /**
-    For any property of an object that can be implemented with a
-    _String_ representation of the class, _String_ representation of
-    an instance, a _Function_/_Constructor_ for a class or a reference
-    to an instance. They call this function using call/apply so the
-    method may use _this_ and the name of the _property_ to inspect and
-    qualify. It follows a strict pattern to ensure a normalized behavior.
-    Typically not called directly.
-  */
-  enyo._findAndInstance = function (property, fn) {
-    var ident, ctor, inst, klass = property.toLowerCase() + "Class",
-        name = klass + "Name";
-    ident = this[property];
-    if (!ident) return fn(ctor, inst);
-    if ("string" === typeof ident) {
-      ctor = enyo.getPath(ident);
-      if (!ctor) {
-        this[name] = ident;
-        this[property] = undefined;
-      } else if ("function" !== typeof ctor) {
-        inst = ctor;
-        ctor = null;
-      }
-    } else if ("function" === typeof ident) {
-      ctor = ident;
-      this[klass] = ctor;
-    } else {
-      inst = ident;
-      this[name] = inst.kindName || inst.kind;
-      this[property] = inst;
-    }
-    if (ctor && !inst) inst = new ctor();
-    this[property] = inst;
-    fn(ctor, inst);
-  };
+    //*@protected
+    /**
+        Called by enyo.Objects in their own context via their local
+        version of this method. Attempts to find the given property of
+        the current context and instance the property if it is not
+        already an instance. If it is a string it will attempt to find
+        the constructor for the named kind or the instance at the given
+        path. It will use the callback method when it is complete and
+        pass it two parameters the first being the constructor if it
+        was found and the second being the instance if it could be
+        determined.
+    */
+    enyo.findAndInstance = function (property, fn) {
+        var ctor;
+        var inst;
+        var path;
+        fn = exists(fn) && "function" === typeof fn? fn: enyo.nop;
+        // attempt to find the string path identifier on the kind
+        // definition if possible
+        path = this[property];
+        // if there is nothing at the given property fast-path out
+        // and return undefined everything
+        if (!exists(path)) return fn();
+        // if the path is a string (as in most cases) go ahead and
+        // attempt to get the kind definition or instance at the
+        // given path
+        if ("string" === typeof path) {
+            ctor = enyo.getPath(path);
+            // if it isn't a function we assume it is an instance
+            if (exists(ctor) && "function" !== typeof ctor) {
+                inst = ctor;
+                ctor = undefined;
+            }
+        } else if ("function" === typeof path) {
+            // instead of a string we were handed a constructor
+            // so reassign that
+            ctor = path;
+        } else {
+            // the assumption here is that we were handed an
+            // instance of the given object
+            inst = path;
+        }
+        // if we have a constructor and no instance we need to
+        // create an instance of the obejct
+        if (exists(ctor) && !exists(inst)) inst = new ctor();
+        // if we do have an instance assign it to the base object
+        if (exists(inst)) this[property] = inst;
+        // now use the calback and pass it the correct parameters
+        return fn(ctor, inst);
+    };
 
-  //*@public
-  /**
-    Create a unique id with an optional prefix.
-  */
-  enyo.uid = function (prefix) {
-    var id = enyo._idCounter++;
-    return prefix? prefix + id: id;
-  };
+    //*@public
+    /**
+        Create a unique identifier with an optional prefix.
+        Returns a string.
+    */
+    var uid = enyo.uid = function (prefix) {
+        return String((prefix? prefix: "") + uidCounter++);
+    };
   
 	enyo._getProp = function(parts, create, context) {
 		var obj = context || enyo.global;
@@ -210,8 +398,8 @@
 
 	//* Returns true if the argument is true
 	enyo.isTrue = function(it) {
-		return !(it === "false" || it === false || it === 0 || it === null || it === undefined)
-	}
+		return !(it === "false" || it === false || it === 0 || it === null || it === undefined);
+	};
 
 	//* Returns the index of the element in _inArray_ that is equivalent (==) to _inElement_, or -1 if no element is found.
 	enyo.indexOf = function(inElement, inArray, fromIndex) {
@@ -284,97 +472,201 @@
 		}
 	};
 
-
-  /**
-    Concatenate any number of arrays but only the unique entries
-    relative to the base (first) array.
-  */
-  enyo.merge = function () {
-    var r = [], args = enyo.toArray(arguments), a, i = 0, j;
-    for (; args.length; ++i) {
-      a = args.shift();
-      if (!enyo.isArray(a)) continue;
-      if (i === 0) r = enyo.clone(a);
-      else {
-        for (j = 0; j < a.length; ++j)
-          if (r.indexOf(a[j]) > -1) continue;
-          else r.push(a[j]);
-      }
-    }
-    return r;
-  };
+    //*@public
+    /**
+        Concatenate a variable number of arrays removing any duplicate
+        entries.
+    */
+    var merge = enyo.merge = function (/* _arrays_ */) {
+        var merger = Array.prototype.concat.apply([], arguments);
+        return unique(merger);
+    };
   
-  /**
-    Return a union of any number of arrays.
+    //*@public
+    /**
+        Takes a variable number of arrays and returns an array of
+        only those values that are unique amongst all of the arrays.
+        Note this is not a particularly cheap method and should never
+        be called recursively.
+        
+        TODO: test in IE8
+        TODO: figure out why the one-hit reversal wasn't working
+    */
+    var union = enyo.union = function (/* _arrays_ */) {
+        // create one large array of all of the arrays passed to
+        // the method for comparison
+        var values = Array.prototype.concat.apply([], arguments);
+        // the array of seen values
+        var seen = [];
+        // the array of values actually to be returned
+        var ret = [];
+        var idx = 0;
+        var len = values.length;
+        var value;
+        for (; idx < len; ++idx) {
+            value = values[idx];
+            // if we haven't seen this value before go ahead and
+            // push it to the seen array
+            if (!~seen.indexOf(value)) {
+                seen.push(value);
+                // here we check against the entirety of any other values
+                // in the values array starting from the end
+                if (idx === lastIndexOf(values, value)) {
+                    // if this turned out to be true then it is a unique entry
+                    // so go ahead and push it to our union array
+                    ret.push(value);
+                }
+            }
+        }
+        // we should have a flattened/unique array now, return it
+        return ret;
+    };
     
-    TODO: come back to this off the cuff atrocity
-  */
-  enyo.union = function () {
-    var c = Array.prototype.concat.apply([], arguments), s = [], r = [];
-    enyo.forEach(c, function (v, i) {
-      if (!~s.indexOf(v)) {
-        s.push(v);
-        if (i === c.lastIndexOf(v)) r.push(v);
-      }
-    });
-    return r;
-  };
-  
-  enyo.only = function (inProps, inObject) {
-    var r = [], k;
-    if (!inProps || !inObject) return r;
-    if (!enyo.isArray(inProps) && inProps) inProps = [inProps];
-    for (k in inObject)
-      if (!inObject.hasOwnProperty(k)) continue;
-      else if (inProps.indexOf(k) !== -1 && r.indexOf(k) === -1)
-        r.push(inObject[k]);
-    return r;
-  };
-  
-  enyo.except = function (inProps, inObject) {
-    var r = {}, keep = enyo.union(inProps, enyo.keys(inObject));
-    enyo.forEach(keep, function (k) {r[k] = inObject[k]});
-    return r;
-  };
-  
-  /**
-    Take an array of objects of a common structure and return
-    a hash of those objects keyed by the unique value _inProp_.
-    An optional filter/resolution method may be provided to
-    handle exception cases. It receives parameters in the order:
-    the property, the current object in the array, a reference to
-    the return object, and a copy of the original array.
+    //*@public
+    /**
+        Returns only the unique values of an array or arrays.
+    */
+    var unique = enyo.unique = union;
     
-    TODO: This should be capable of a few other things...
-  */
-  enyo.indexBy = function (inProp, inArray, inFilter) {
-    var k = inProp, a = inArray, r = {}, v, c = enyo.clone(inArray),
-        fn = enyo.isFunction(inFilter)? inFilter: undefined, i = 0;
-    for (; i < a.length; ++i) {
-      v = a[i];
-      if (v && v[k]) {
-        if (fn) fn(k, v, r, c);
-        else r[v[k]] = v;
-      }
-    }
-    return r;
-  };
+    //*@public
+    /**
+        Reduce an array or arrays removing any duplicate entries
+        amongst them.
+    */
+    var reduce = enyo.reduce = merge;
   
-  enyo.allKeys = function (inObj) {
-    var k, o = inObj, r = [];
-    for (k in inObj) r.push(k);
-    return r;
-  };
+    //*@public
+    /**
+        Convenience method that takes an array of properties and an object.
+        Will return an array of values as retrieved from the given properties
+        of the object if they exist.
+    */
+    var only = enyo.only = function (properties, object) {
+        var ret = [];
+        var idx = 0;
+        var len;
+        var property;
+        // sanity check the properties array
+        if (!exists(properties) || !(properties instanceof Array)) return ret;
+        // sanity check the object
+        if (!exists(object) || "object" !== typeof object) return ret;
+        // reduce the properties array to just unique entries
+        properties = unique(properties);
+        // iterate over the properties given and if the property exists on
+        // the object copy its value to the return array
+        for (len = properties.length; idx < len; ++idx) {
+            property = properties[idx];
+            if (property in object) ret.push(object[property]);
+        }
+        // return the array of values we found for the given properties
+        return ret;
+    };
+    
+    //*@public
+    /**
+        Convenience method that takes an array of properties and an object.
+        Will return a new object with all of the keys in the object except
+        those specified in the _properties_ array. The values are shallow
+        copies.
+    */
+    var except = enyo.except = function (properties, object) {
+        // the new object to return with just the requested keys
+        var ret = {};
+        var keep;
+        var idx = 0;
+        var len;
+        var key;
+        // sanity check the properties array
+        if (!exists(properties) || !(properties instanceof Array)) return ret;
+        // sanity check the object
+        if (!exists(object) || "object" !== typeof object) return ret;
+        // we want to only use the union of the properties and the
+        // available keys on the object
+        keep = union(properties, keys(object));
+        // for every property in the keep array now copy that to the new
+        // hash
+        for (len = keep.length; idx < len; ++idx) {
+            key = keep[idx];
+            // if the key was specified in the properties array but does not
+            // exist in the object ignore it
+            if (!(key in object)) continue;
+            ret[key] = object[key];
+        }
+        // return the new hash
+        return ret;
+    };
+  
+    //*@public
+    /**
+        A helper method that can take an array of objects and return
+        a map of those objects indexed by the specified property. If a filter 
+        is provided it should accept four parameters: the key, the value 
+        (object), the current mutable map reference, and an immutable 
+        copy of the original array of objects for comparison.
+    */
+    var indexBy = enyo.indexBy = function (property, array, filter) {
+        // the return value - indexed map from the given array
+        var map = {};
+        var value;
+        var len;
+        var idx = 0;
+        // sanity check for the array with an efficient native array check
+        if (!exists(array) || !(array instanceof Array)) return map;
+        // sanity check the property as a string
+        if (!exists(property) || "string" !== typeof property) return map;
+        // the immutable copy of the array
+        var copy = enyo.clone(array);
+        // test to see if filter actually exsits
+        filter = exists(filter) && "function" === typeof filter? filter: undefined;
+        for (len = array.length; idx < len; ++idx) {
+            // grab the value from the array
+            value = array[idx];
+            // make sure that it exists and has the requested property at all
+            if (exists(value) && exists(value[property])) {
+                if (filter) {
+                    // if there was a filter use it - it is responsible for
+                    // updating the map accordingly
+                    filter(property, value, map, copy);
+                } else {
+                    // use the default behavior - check to see if the key
+                    // already exists on the map it will be overwritten
+                    map[value[property]] = value;
+                }
+            }
+        }
+        // go ahead and return our modified map
+        return map;
+    };
 
-  enyo.pluck = function (inProp, inArray) {
-    var r = [], i = 0, a;
-    a = enyo.isArray(inArray)? inArray: [inArray];
-    for (; i < a.length; ++i) {
-      if (!a[i]) continue;
-      if (a[i][inProp]) r.push(a[i][inProp]);
-    }
-    return r;
-  };
+    //*@public
+    /**
+        Expects a string property and an array of objects that may
+        have the named property. Returns an array of all the values of
+        property in the objects in the array.
+    */
+    var pluck = enyo.pluck = function (property, array) {
+        var ret = [];
+        var idx = 0;
+        var len;
+        // if we don't have a property to look for or an array of
+        // objects to search through we have to return an empty array
+        if (!(exists(property) && exists(array))) return ret;
+        // if it isn't actually an array return an empty array
+        if (!(array instanceof Array)) return ret;
+        // if property isn't a string then return an empty array
+        if ("string" !== typeof property) return ret;
+        // now that sanity is established to some extent, lets get
+        // to work
+        for (len = array.length; idx < len; ++idx) {
+            // if the object in the array is actually undefined, skip
+            if (!exists(array[idx])) continue;
+            // if it was found then check to see if the property
+            // exists on it
+            if (exists(array[idx][property])) ret.push(array[idx][property]);
+        }
+        // return whatever we found if anything
+        return ret;
+    };
 
 	/**
 		Creates a new array with all elements of _inArray_ that pass the test implemented by _inFunc_.
@@ -400,7 +692,7 @@
 	/**
 		Returns an array of all own enumerable properties found on _inObject_.
 	*/
-	enyo.keys = Object.keys || function(inObject) {
+	var keys = enyo.keys = Object.keys || function(inObject) {
 		var results = [];
 		var hop = Object.prototype.hasOwnProperty;
 		for (var prop in inObject) {
@@ -419,7 +711,7 @@
 				'propertyIsEnumerable',
 				'constructor'
 			];
-			for (var i = 0, p; p = dontEnums[i]; i++) {
+			for (var i = 0, p; (p = dontEnums[i]); i++) {
 				if (hop.call(inObject, p)) {
 					results.push(p);
 				}
@@ -430,14 +722,14 @@
 
 	/**
 		Clones an existing Array, or converts an array-like object into an Array.
-		
+
 		If _inOffset_ is non-zero, the cloning is started from that index in the source Array.
 		The clone may be appended to an existing Array by passing the existing Array as _inStartWith_.
-		
+
 		Array-like objects have _length_ properties, and support square-bracket notation ([]).
 		Often array-like objects do not support Array methods, such as _push_ or _concat_, and
 		must be converted to Arrays before use.
-		
+
 		The special _arguments_ variable is an example of an array-like object.
 	*/
 	enyo.cloneArray = function(inArrayLike, inOffset, inStartWith) {
@@ -601,7 +893,7 @@
 		enyo.setPrototype(enyo.instance, obj);
 		return new enyo.instance();
 	};
-	
+
 	//* @public
 
 	/**

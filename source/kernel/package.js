@@ -10,11 +10,11 @@ enyo.depends(
 	"UiComponent.js",
 	"Layout.js",
 	"Signals.js",
-	"Router.js",
 	"Controller.js",
+	"Router.js",
 	"ArrayController.js",
-	"Extension.js",
-	"Application.js",
 	"Mixin.js",
-	"MultipleDispatchMixin.js"
+	"MultipleDispatchMixin.js",
+	"ViewController.js",
+	"Application.js"
 );

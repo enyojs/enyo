@@ -52,12 +52,23 @@ enyo.kind({
 		//
 		// ad hoc properties:
 		//
-		//* Flag used by control layouts to determine which control will expand
-		//* to fill the available space
+		/**
+			Flag used by control layouts to determine which control will expand
+			to fill the available space. This only has meaning when the control
+			is being used as a child of a control with a version of FittableLayout
+			as its layoutKind.
+		*/
 		fit: false,
 		//* Used by Ares design editor for design objects
 		isContainer: false,
-		
+		//*@public
+		/**
+		    The controller can be a reference to a kind, an instance or a string
+		    to either. Is assumed to be an enyo.Controller or subclass and will act
+		    as a delegate of the view. If the controller is resolved to be a kind
+		    (literally a constructor as opposed to an instance) it will be owned by
+		    this enyo.Control.
+		*/
 		controller: ""
 	},
 	handlers: {
@@ -72,6 +83,13 @@ enyo.kind({
 	//* @protected
 	node: null,
 	generated: false,
+	
+	//*@public
+	/**
+        It is important for bindings _not_ to be initialized until
+        after components/children have been fully created and initialized.
+	*/
+	initBindings: false,
 	create: function() {
 		// initialize style databases
 		this.initStyles();
@@ -90,22 +108,18 @@ enyo.kind({
 		this.addClass(this.kindClasses);
 		this.addClass(this.classes);
 		this.initProps(["id", "content", "src", "controller"]);
-		this._setupBindings();
+        // we can now set these setup flags to true
+        this.initBindings = true;
+        // we now call setup knowing our children have been intitialized properly
+		this.setup();
 	},
-	
-  // overload to keep the enyo.Object._setup method from attempting
-  // to create bindings to view properties that are not yet
-  // initialized/setup
-	_setup: function () {
-    this._setupObservers();
-    this._setupComputed();
-	},
-	
-	destroy: function() {
-	  if (this.controller) {
-	    this.constroller.destroy();
-	    this.constroller = null;
-    }
+    destroy: function() {
+	    if (this.controller) {
+	        if (this.controller.owner && this === this.controller.owner) {
+	            this.controller.destroy();
+	        }
+	        this.controller = null;
+        }
 		this.removeNodeFromDom();
 		enyo.Control.unregisterDomEvents(this.id);
 		this.inherited(arguments);
@@ -127,47 +141,47 @@ enyo.kind({
 			}
 		}
 	},
-	
+	//*@protected
 	controllerChanged: function () {
-	  // first attempt to find the controller from the
-	  // information we've been handed
-    this.findAndInstance("controller", function (ctor, inst) {
-      // if there is no constructor or instance it was not found
-      if (!(ctor || inst)) return;
-      // if a constructor exists we instanced the class and can
-      // claim it as our own
-      if (ctor) inst.set("owner", this);
-      // lets add ourselves as a dispatch listener
-      else inst.addDispatchTarget(this);
-      // either way we need to refresh our bindings
-      this.refreshBindings();
-    });
+	    // first attempt to find the controller from the
+	    // information we've been handed
+        this.findAndInstance("controller", function (ctor, inst) {
+            // if there is no constructor or instance it was not found
+            if (!(ctor || inst)) return;
+            // if a constructor exists we instanced the class and can
+            // claim it as our own
+            if (ctor) inst.set("owner", this);
+            // lets add ourselves as a dispatch listener
+            else inst.addDispatchTarget(this);
+            // either way we need to refresh our bindings
+            this.refreshBindings();
+        });
 	},
 	//*@protected
 	dispatchEvent: function (inEventName, inEvent, inSender) {
-	  // if we have a controller attempt to dispatch the event there
-	  // and if it returns true, stop the dispatch
-	  if (this.controller && this.controller.dispatchEvent(inEventName, inEvent, inSender)) {
-	    return true;
-	  }
+	    // if we have a controller attempt to dispatch the event there
+	    // and if it returns true, stop the dispatch
+	    if (this.controller && this.controller.dispatchEvent(inEventName, inEvent, inSender)) {
+	        return true;
+	    }
 	  
-	  // prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
+	    // prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
 		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
 			return true;
 		}
 	  
-	  return this.inherited(arguments);
+	    return this.inherited(arguments);
 	},
 	//*@protected
 	dispatch: function (inMethodName, inEvent, inSender) {
-	  // allow a controller to handle the delegated named event from
-	  // a child
-	  var c = this.controller;
-    if (c) {
-      if (c[inMethodName] && enyo.isFunction(c[inMethodName]))
-        return c[inMethodName].call(c, inSender || this, inEvent);
-    }
-    return this.inherited(arguments);
+	    // allow a controller to handle the delegated named event from
+	    // a child
+	    var c = this.controller;
+        if (c) {
+            if (c[inMethodName] && enyo.isFunction(c[inMethodName]))
+            return c[inMethodName].call(c, inSender || this, inEvent);
+        }
+        return this.inherited(arguments);
 	},
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
@@ -201,17 +215,17 @@ enyo.kind({
 	/**
 		Returns the DOM node representing the control.
 		If the control is not currently rendered, returns null.
-		
+
 		If hasNode() returns a value, the _node_ property will be valid and
 		can be checked directly.
-		
+
 		Once hasNode() is called, the returned value is made available in
 		the _node_ property of this control.
 
 		A control will only return a node if it has been rendered.
 
 			if (this.hasNode()) {
-				console.log(this.node.nodeType);
+				enyo.log(this.node.nodeType);
 			}
 	*/
 	hasNode: function() {
@@ -332,7 +346,7 @@ enyo.kind({
 		Removes substring _inClass_ from the _class_ attribute of this object.
 
 		_inClass_ must have no leading or trailing spaces.
-		
+
 		Using a compound class name is supported, but the name is treated
 		atomically. For example, given _"a b c"_, _removeClass("a b")_ will
 		produce _"c"_, but _removeClass("a c")_ will produce _"a b c"_.
@@ -567,13 +581,16 @@ enyo.kind({
 			{left: _offsetLeft_, top: _offsetTop_, width: _offsetWidth_, height: _offsetHeight_}
 
 		Values returned are only valid if _hasNode()_ is truthy.
+		If there's no DOM node for the object, this returns a bounds structure with
+		_undefined_ as the value of all fields.
 
 			var bounds = this.getBounds();
-			console.log(bounds.width);
+			enyo.log(bounds.width);
 	*/
 	getBounds: function() {
-		var n = this.node || this.hasNode() || 0;
-		return {left: n.offsetLeft, top: n.offsetTop, width: n.offsetWidth, height: n.offsetHeight};
+		var n = this.node || this.hasNode();
+		var b = enyo.dom.getBounds(n);
+		return b || {left: undefined, top: undefined, width: undefined, height: undefined};
 	},
 	/**
 		Sets any or all of the geometry style properties _width_, _height_,
@@ -922,3 +939,9 @@ enyo.Control.subclass = function(ctor, props) {
 		proto.attributes = null;
 	}
 };
+
+//*@public
+/**
+    Also usable as _enyo.View_.
+*/
+enyo.View = enyo.Control;
