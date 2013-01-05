@@ -32,10 +32,11 @@
         var string = ("string" === typeof haystack);
         var rev = (string? haystack.split(""): haystack).reverse();
         var cap = rev.length-1;
+        var idx;
         // if it is a string we need to make it a string again for
         // the indexOf method
         if (string) rev = rev.join("");
-        var idx = enyo.indexOf(needle, rev);
+        idx = enyo.indexOf(needle, rev);
         // put the array back the way it was
         if (!string) rev.reverse();
         return -1 === idx? idx: (cap - idx);
