@@ -78,7 +78,7 @@
 		},
 		more: function(inBlock) {
 			// a 'block' is a dependency list with a bookmark
-			// the bookmark (index) allows us to interrupt 
+			// the bookmark (index) allows us to interrupt
 			// processing and then continue asynchronously.
 			if (inBlock) {
 				// returns true if this block has asynchronous requirements
@@ -93,7 +93,9 @@
 			if (block) {
 				// block.packageName is the name of the package that interrupted us
 				//this.report("finished package", block.packageName);
-				this.verbose && console.groupEnd("* finish package (" + (block.packageName || "anon") + ")");
+				if (this.verbose) {
+					console.groupEnd("* finish package (" + (block.packageName || "anon") + ")");
+				}
 				// cache the folder for the currently processing package
 				this.packageFolder = block.folder;
 				// no current package
@@ -106,7 +108,9 @@
 		},
 		finish: function() {
 			this.packageFolder = "";
-			this.verbose && console.log("-------------- fini");
+			if (this.verbose) {
+				console.log("-------------- fini");
+			}
 			for (var i in this.finishCallbacks) {
 				if (this.finishCallbacks[i]) {
 					this.finishCallbacks[i]();
@@ -122,7 +126,7 @@
 						if (this.require(d, inBlock)) {
 							// return true to indicate we need to interrupt
 							// processing until asynchronous file load completes
-							// the load process itself must provide the 
+							// the load process itself must provide the
 							// continuation
 							return true;
 						}
@@ -141,10 +145,14 @@
 			path = prefix + path;
 			// process path
 			if ((path.slice(-4) == ".css") || (path.slice(-5) == ".less")) {
-				this.verbose && console.log("+ stylesheet: [" + prefix + "][" + inPath + "]");
+				if (this.verbose) {
+					console.log("+ stylesheet: [" + prefix + "][" + inPath + "]");
+				}
 				this.requireStylesheet(path);
 			} else if (path.slice(-3) == ".js" && path.slice(-10) != "package.js") {
-				this.verbose && console.log("+ module: [" + prefix + "][" + inPath + "]");
+				if (this.verbose) {
+					console.log("+ module: [" + prefix + "][" + inPath + "]");
+				}
 				this.requireScript(inPath, path);
 			} else {
 				// package
@@ -186,6 +194,7 @@
 			var alias = '', target = '', folder = '', manifest = 'package.js';
 			// convert back slashes to forward slashes, remove double slashes, split on slash
 			var parts = inPath.replace(/\\/g, "/").replace(/\/\//g, "/").replace(/:\//, "://").split("/");
+			var i, p;
 			if (parts.length) {
 				// if inPath has a trailing slash, parts has an empty string which we pop off and ignore
 				var name = parts.pop() || parts.pop() || "";
@@ -204,7 +213,7 @@
 				//
 				// build friendly aliasing:
 				//
-				for (var i=parts.length-1; i >= 0; i--) {
+				for (i=parts.length-1; i >= 0; i--) {
 					if (parts[i] == "source") {
 						parts.splice(i, 1);
 						break;
@@ -221,14 +230,14 @@
 				//
 				// e.g. foo/bar/baz/lib/zot -> zot package
 				//
-				for (var i=parts.length-1, p; p=parts[i]; i--) {
+				for (i=parts.length-1; (p=parts[i]); i--) {
 					if (p == "lib" || p == "enyo") {
 						parts = parts.slice(i+1);
 						break;
 					}
 				}
 				// remove ".." and "."
-				for (var i=parts.length-1, p; p=parts[i]; i--) {
+				for (i=parts.length-1; (p=parts[i]); i--) {
 					if (p == ".." || p == ".") {
 						parts.splice(i, 1);
 					}
@@ -282,7 +291,9 @@
 			this.stack.push(inBlock);
 			// console/user reporting
 			this.report("loading package", this.packageName);
-			this.verbose && console.group("* start package [" + this.packageName + "]");
+			if (this.verbose) {
+				console.group("* start package [" + this.packageName + "]");
+			}
 			// load the actual package. the package MUST call a continuation function
 			// or the process will halt.
 			this.loadPackage(this.manifest);
