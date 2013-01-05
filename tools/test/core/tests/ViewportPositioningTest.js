@@ -1,7 +1,7 @@
 enyo.kind({
 	name: "ViewportPositioningTest",
 	kind: enyo.TestSuite,
-	
+
 	testMeasuringViewportCoordinates: function() {
 		var K = enyo.kind({
 			kind: enyo.Control,
@@ -21,7 +21,7 @@ enyo.kind({
 
 		var k = new K();
 		k.renderInto(div);
-		
+
 		var p = enyo.dom.calcNodePosition(k.hasNode()),
 			// Bottom and right require calculating viewport size
 			fromBottom = (document.body.parentNode.offsetHeight > enyo.dom.getWindowHeight() ? enyo.dom.getWindowHeight() - document.body.parentNode.scrollTop : document.body.parentNode.offsetHeight) - 20,
@@ -44,7 +44,7 @@ enyo.kind({
 		if (p.height !== 10) {
 			this.log('height failed with value: ' + p.height + ' (should be 10)');
 		}
-		
+
 		// Now test measuring the element when a parent has a border
 		div.style.border = "1px solid transparent";
 		k.hasNode().style.border = "1px solid transparent";
@@ -70,7 +70,7 @@ enyo.kind({
 		if (p.height !== 12) {
 			this.log('height with border failed with value: ' + p.height + ' (should be 12)');
 		}
-		
+
 		// And finally, test positioning relative to another node
 		p = enyo.dom.calcNodePosition(k.hasNode(), div),
 			// Reset to div size - node height
@@ -94,11 +94,11 @@ enyo.kind({
 		if (p.height !== 12) {
 			this.log('height relative to div failed with value: ' + p.height + ' (should be 12)');
 		}
-			
+
 		// Clean up
 		k.destroy();
 		document.body.removeChild(div);
-		
+
 		this.finish(this.logMessages && this.logMessages.length ? 'Following measurements failed:' : '');
 	}
 });

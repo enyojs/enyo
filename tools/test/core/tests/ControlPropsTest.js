@@ -26,7 +26,7 @@ enyo.kind({
 			||
 			(!t.domStyles.a && "bad a style") || (!t.domStyles.b && "bad b style") /*|| (!t.domStyles.c && "bad c style")*/
 			||
-			(t.attributes.class !== "a b c" && "bad class, expected [a b c] got [" + t.attributes.class + "]")
+			(t.attributes['class'] !== "a b c" && "bad classes, expected [a b c] got [" + t.attributes['class'] + "]")
 		);
 	}
 });
