@@ -83,9 +83,17 @@
         Will return undefined if the object at the given path could not be
         found. Can safely be called on non-existent paths.
     */
-    enyo.getPath = function (path, recursing) {
-        // if we don't have a path or it isn't a string we can't do anything
-        if (!exists(path) || "string" !== typeof path) return undefined;
+    enyo.getPath = function (path) {
+        // if we don't have a path we can't do anything
+        if (!exists(path)) return undefined;
+        var idx = 0;
+        var val;
+        var part;
+        var fn;
+        // args are only used in computed properties and we only
+        // do the work to remap them when necessary
+        var args;
+        var recursing = ("object" === typeof path && path.recursing)? true: false;
         // on rare occasions this method would be called under the context
         // of enyo itself, the problem is detecting when this is intended since
         // under normal circumstances a general call would assume a window
@@ -96,10 +104,13 @@
         // knowing during recursion enyo should never be the context and its normal
         // use case would prevail
         var cur = this === enyo && true !== recursing? window: this;
-        var idx = 0;
-        var val;
-        var part;
-        var fn;
+        // if we were recursing then we reassign path to the string part of the
+        // object/parameter passed in
+        if ("object" === typeof path) {
+            if (path.path && "string" === typeof path.path) path = path.path;
+            // otherwise it was an invalid request
+            else return undefined;
+        }
         // clear any leading periods
         path = preparePath(path);
         // find the initial period if any
@@ -122,7 +133,7 @@
                 // if we can find the given part of the string path
                 // we recursively call the getPath method using that
                 // as the new context
-                val = enyo.getPath.call(cur[part], path, true);
+                val = enyo.getPath.call(cur[part], {path: path, recursing: true});
             } else {
                 // we have no idea what we could do because we can't find
                 // anything useful
@@ -133,7 +144,12 @@
         // a computed property and if this is _not a recursive search_
         // go ahead and call it, otherwise return it as a function
         if ("function" === typeof val && true === val.isProperty) {
-            if (true !== recursing) return val.call(this);
+            if (true !== recursing) {
+                // this allows computed properties to be used as
+                // true computed getters/setters
+                args = enyo.toArray(arguments).slice(1);
+                return val.apply(this, args);
+            }
         }
         // otherwise we've reached the end so return whatever we have
         return val;
@@ -176,6 +192,7 @@
         var cur = enyo === this? enyo.global: this;
         var idx;
         var target;
+        var args;
         var parts;
         var notify = true === force? true: false;
         var comparator = "function" === typeof force? force: undefined;
@@ -192,7 +209,8 @@
             // property we will actually call the computed property passing it
             // the value
             if (true === isComputed(target)) {
-                target.call(cur, value);
+                args = enyo.toArray(arguments).slice(1);
+                target.apply(cur, args);
             } else {
                 // otherwise we just plain overwrite the method, this is the
                 // expected behavior
@@ -212,7 +230,8 @@
                 // as in the fast path
                 if (0 === parts.length) {
                     if (true === isComputed(target)) {
-                        target.call(cur, value);
+                        args = enyo.toArray(arguments).slice(1);
+                        target.apply(cur, args);
                     } else {
                         // otherwise we overwrite it just like in the fast-path
                         cur[target] = value;
