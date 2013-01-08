@@ -1,5 +1,5 @@
 (function() {
-  enyo = window.enyo || {};
+	enyo = window.enyo || {};
 
 	enyo.pathResolverFactory = function() {
 		this.paths = {};
@@ -153,7 +153,6 @@
 				if (this.verbose) {
 					console.log("+ module: [" + prefix + "][" + inPath + "]");
 				}
-
 				return this.requireScript(inPath, path, inBlock);
 			} else {
 				// package
