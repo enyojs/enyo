@@ -17,8 +17,9 @@
     enyo.Transform = Transform;
     
     //*@protected
-    function Transform (fn) {
+    function Transform (fn, binding) {
         this.transformer = fn;
+        this.binding = binding;
     }
     
     //*@protected
@@ -28,7 +29,13 @@
         },
         transform: function (value, direction) {
             var fn = this.transformer;
-            return fn.call(this, value, direction);
+            var binding = this.binding;
+            var context = binding.owner || enyo.global;
+            return fn.call(context, value, direction, binding);
+        },
+        destroy: function () {
+            this.transformer = null;
+            this.binding = null;
         }
     };
     
@@ -284,6 +291,10 @@
             return true;
         },
         //*@protected
+        stop: function () {
+            throw "stop-binding";
+        },
+        //*@protected
         connectSource: function () {
             var source = this.source;
             var property = this.sourceProperty;
@@ -336,9 +347,10 @@
             // costly in general...
             try {
                 value = transformer.transform(value, "source");
-            } catch (e) { 
+            } catch (err) { 
                 // the transform was interrupted, do not complete
-                return;
+                if ("stop-binding" === err) return;
+                else throw err;
             }
             if (twoWay) this.disconnectTarget();
             this.setTargetValue(value);
@@ -351,9 +363,10 @@
             // TODO: same as for syncFromSource
             try {
                 value = transformer.transform(value, "target");
-            } catch (e) {
+            } catch (err) {
                 // the transform was interrupted, do not complete
-                return;
+                if ("stop-binding" === err) return;
+                else throw err;
             }
             this.disconnectSource();
             this.setSourceValue(value);
@@ -418,7 +431,7 @@
                 transform = this.transform = function(value) {return value};
             }
             if (!(transform instanceof Transform)) {
-                this.transform = new Transform(transform);
+                this.transform = new Transform(transform, this);
             }
         },
         //*@public
@@ -432,9 +445,12 @@
             this.target = null;
             this.sourceResponder = null;
             this.targetResponder = null;
-            this.transform = null;
             this.isDestroyed = true;
             enyo.Binding.bindingCount--;
+            if (this.transform) {
+                this.transform.destroy();
+                this.transform = null;
+            }
             if (this.owner) this.owner.removeBinding(this);
         }
     };
