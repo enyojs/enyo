@@ -24,5 +24,17 @@ enyo.kind({
 				}
 			}
 		));
+	},
+	testMultipleLoadWith404: function() {
+		enyo.load(["tests/loader2b.js", "tests/loader2a.js", "tests/anotherfilethatdoesnotexist.js"],
+			enyo.bind(this, function(block) {
+				if (window.LOADER_TEST === "loader2a" && block.failed.length === 1 && block.failed[0] === 2) {
+					this.finish();
+				}
+				else {
+					this.finish("callback called before load complete");
+				}
+			}
+		));
 	}
 });

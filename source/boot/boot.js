@@ -91,14 +91,14 @@ enyo.depends = function() {
 			var depends = args[0];
 			var dependsArg = enyo.isArray(depends) ? depends : [depends];
 			var onLoadCallback = args[1];
-			enyo.loader.finishCallbacks.runtimeLoader = function() {
+			enyo.loader.finishCallbacks.runtimeLoader = function(inBlock) {
 				// Once loader is done loading a package, we chain a call to runtimeLoad(),
 				// which will call the onLoadCallback from the original load call, passing
 				// a reference to the depends argument from the original call for tracking,
 				// followed by kicking off any additionally queued load() calls
 				runtimeLoad(function() {
 					if (onLoadCallback) {
-						onLoadCallback(depends);
+						onLoadCallback(inBlock);
 					}
 				});
 			};
