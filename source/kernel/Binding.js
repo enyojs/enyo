@@ -101,10 +101,11 @@
         var base;
         var part;
         var owner = this.owner;
+        var local = path[0] === "."? true: false;
         var to = direction === "target";
         path = path[0] === "."? path.slice(1): path;
         parts = path.split(".");
-        root = context || fromRoot(enyo.global, parts) || owner;
+        root = local? owner: context || fromRoot(enyo.global, parts) || owner;
         // this is the exception case for determining parts in the target direction -
         // even if the property DID exist on the global object (e.g. _length_) if it
         // is the target it doesn't have to exist and the target has to be a subclass
