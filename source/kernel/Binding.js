@@ -17,8 +17,9 @@
     enyo.Transform = Transform;
     
     //*@protected
-    function Transform (fn) {
+    function Transform (fn, binding) {
         this.transformer = fn;
+        this.binding = binding;
     }
     
     //*@protected
@@ -28,7 +29,13 @@
         },
         transform: function (value, direction) {
             var fn = this.transformer;
-            return fn.call(this, value, direction);
+            var binding = this.binding;
+            var context = binding.owner || enyo.global;
+            return fn.call(context, value, direction, binding);
+        },
+        destroy: function () {
+            this.transformer = null;
+            this.binding = null;
         }
     };
     
@@ -84,7 +91,7 @@
         between determining parts for the source and the target in bindings so
         the optional third parameter helps it to use the correct algorithm.
     */
-    var getParts = enyo.Binding.getParts = function (path, context, direction) {
+    var getParts = enyo.Binding.getParts = function (path, context) {
         var parts;
         var idx = 0;
         var ret = {};
@@ -94,19 +101,10 @@
         var base;
         var part;
         var owner = this.owner;
-        var to = direction === "target";
+        var local = path[0] === "."? true: false;
         path = path[0] === "."? path.slice(1): path;
         parts = path.split(".");
-        root = context || fromRoot(enyo.global, parts) || owner;
-        // this is the exception case for determining parts in the target direction -
-        // even if the property DID exist on the global object (e.g. _length_) if it
-        // is the target it doesn't have to exist and the target has to be a subclass
-        // of enyo.Object
-        //if (true === to) {
-        //    if (enyo.global === root) {
-        //        root = owner;
-        //    }
-        //}
+        root = local? context || owner: context || fromRoot(enyo.global, parts) || owner;
         base = root;
         ret.property = prop = parts.length > 1? parts.pop(): path;
         if (prop === path) {
@@ -273,7 +271,7 @@
             var property = this.targetProperty;
             var target = this.target;
             var to = this.to;
-            parts = getParts.call(this, to, target, "target");
+            parts = getParts.call(this, to, target);
             base = parts.base;
             property = parts.property;
             if (!base || "object" !== typeof base) {
@@ -282,6 +280,10 @@
             this.target = base;
             this.targetProperty = property;
             return true;
+        },
+        //*@protected
+        stop: function () {
+            throw "stop-binding";
         },
         //*@protected
         connectSource: function () {
@@ -336,9 +338,10 @@
             // costly in general...
             try {
                 value = transformer.transform(value, "source");
-            } catch (e) { 
+            } catch (err) { 
                 // the transform was interrupted, do not complete
-                return;
+                if ("stop-binding" === err) return;
+                else throw err;
             }
             if (twoWay) this.disconnectTarget();
             this.setTargetValue(value);
@@ -351,9 +354,10 @@
             // TODO: same as for syncFromSource
             try {
                 value = transformer.transform(value, "target");
-            } catch (e) {
+            } catch (err) {
                 // the transform was interrupted, do not complete
-                return;
+                if ("stop-binding" === err) return;
+                else throw err;
             }
             this.disconnectSource();
             this.setSourceValue(value);
@@ -418,7 +422,7 @@
                 transform = this.transform = function(value) {return value};
             }
             if (!(transform instanceof Transform)) {
-                this.transform = new Transform(transform);
+                this.transform = new Transform(transform, this);
             }
         },
         //*@public
@@ -432,9 +436,12 @@
             this.target = null;
             this.sourceResponder = null;
             this.targetResponder = null;
-            this.transform = null;
             this.isDestroyed = true;
             enyo.Binding.bindingCount--;
+            if (this.transform) {
+                this.transform.destroy();
+                this.transform = null;
+            }
             if (this.owner) this.owner.removeBinding(this);
         }
     };
