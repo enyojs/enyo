@@ -91,7 +91,7 @@
         between determining parts for the source and the target in bindings so
         the optional third parameter helps it to use the correct algorithm.
     */
-    var getParts = enyo.Binding.getParts = function (path, context, direction) {
+    var getParts = enyo.Binding.getParts = function (path, context) {
         var parts;
         var idx = 0;
         var ret = {};
@@ -102,19 +102,9 @@
         var part;
         var owner = this.owner;
         var local = path[0] === "."? true: false;
-        var to = direction === "target";
         path = path[0] === "."? path.slice(1): path;
         parts = path.split(".");
-        root = local? owner: context || fromRoot(enyo.global, parts) || owner;
-        // this is the exception case for determining parts in the target direction -
-        // even if the property DID exist on the global object (e.g. _length_) if it
-        // is the target it doesn't have to exist and the target has to be a subclass
-        // of enyo.Object
-        //if (true === to) {
-        //    if (enyo.global === root) {
-        //        root = owner;
-        //    }
-        //}
+        root = local? context || owner: context || fromRoot(enyo.global, parts) || owner;
         base = root;
         ret.property = prop = parts.length > 1? parts.pop(): path;
         if (prop === path) {
@@ -281,7 +271,7 @@
             var property = this.targetProperty;
             var target = this.target;
             var to = this.to;
-            parts = getParts.call(this, to, target, "target");
+            parts = getParts.call(this, to, target);
             base = parts.base;
             property = parts.property;
             if (!base || "object" !== typeof base) {
