@@ -108,13 +108,15 @@ enyo.kind({
 		this.initComponents();
 	},
 	initComponents: function() {
-		// 'components' property in kind declarations is renamed to 'kindComponents'
-		// by the Component subclass mechanism, allowing us to distinguish them easily
-		// from this.components, without the code-writer having to worry about the
-		// difference.
-		// Specifically, the difference is that kindComponents are constructed
-		// as owned by this control (and this.components are not).
-		// Also, kindComponents are marked with isChrome true flag.
+		// The _components_ property in kind declarations is renamed to
+		// _kindComponents_ by the Component subclass mechanism.  This makes it
+		// easy to distinguish kindComponents from the components in
+		// _this.components_, without the code writer's having to worry about the
+		// actual difference.
+		//
+		// Specifically, the difference is that kindComponents are constructed as
+		// owned by this control (whereas components in _this.components_ are not).
+		// In addition, kindComponents are marked with the _isChrome: true_ flag.
 		this.createChrome(this.kindComponents);
 		this.createClientComponents(this.components);
 	},
