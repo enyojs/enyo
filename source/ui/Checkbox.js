@@ -34,10 +34,6 @@ enyo.kind({
 		}
 		this.checkedChanged();
 	},
-	// instance 'checked' property is linked to DOM 'checked' property
-	getChecked: function() {
-		return enyo.isTrue(this.getNodeProperty("checked", this.checked));
-	},
 	checkedChanged: function() {
 		this.setNodeProperty("checked", this.checked);
 		this.setAttribute("checked", this.checked ? "checked" : "");
@@ -63,7 +59,8 @@ enyo.kind({
 		// we squelch the inherited method
 	},
 	change: function() {
-		this.setActive(this.getChecked());
+		var nodeChecked = enyo.isTrue(this.getNodeProperty("checked"));
+		this.setActive(nodeChecked);
 	},
 	click: function(inSender, inEvent) {
 		// Various versions of IE (notably IE8) do not fire 'onchange' for 
