@@ -13,7 +13,7 @@
 		dispatch: function(e, c) {
 			var l$ = this.buildLineage(c);
 			// handlers return true to abort preview and prevent default event processing.
-			for (var i=0, l; l=l$[i]; i++) {
+			for (var i=0, l; (l=l$[i]); i++) {
 				if (l[fn] && l[fn](e) === true) {
 					e.preventDispatch = true;
 					return;

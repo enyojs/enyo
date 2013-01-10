@@ -5,6 +5,8 @@ scroller, integrates the scrolling simulation provided by
 <a href="#enyo.Scroller">enyo.Scroller</a>.
 
 _enyo.TouchScrollStrategy_ is not typically created in application code.
+Instead, it is specified as the `strategyKind` property for a `enyo.Scroller` or
+`enyo.List` or implicitly used by the framework.
 */
 enyo.kind({
 	name: "enyo.TouchScrollStrategy",

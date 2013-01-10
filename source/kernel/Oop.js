@@ -138,7 +138,7 @@ enyo.kind = function(inProps) {
 
 /**
 	Creates a Singleton
-	
+
 		enyo.singleton({
 			kind: Control,
 			name: "app.MySingleton",
@@ -149,7 +149,7 @@ enyo.kind = function(inProps) {
 				//...
 			}
 		});
-		
+
 		app.MySingleton.makeSomething();
 		app.MySingleton.setValue("bar");
 */
@@ -204,13 +204,14 @@ enyo.kind.features.push(function(ctor, props) {
 		proto.inherited = enyo.kind.inherited;
 	}
 	if (proto.base) {
-		// decorate function properties to support inherited (do this ex post facto so that ctor.prototype is known, relies on elements in props being copied by reference)
+		// decorate function properties to support inherited (do this ex post facto so that
+		// ctor.prototype is known, relies on elements in props being copied by reference)
 		for (var n in props) {
 			var p = props[n];
 			if (enyo.isFunction(p)) {
 				p._inherited = proto.base.prototype[n] || enyo.nop;
 				// FIXME: we used to need some extra values for inherited, then inherited got cleaner
-				// but in the meantime we used these values to support logging in Object. 
+				// but in the meantime we used these values to support logging in Object.
 				// For now we support this legacy situation, by suppling logging information here.
 				p.nom = proto.kindName + '.' + n + '()';
 			}
@@ -259,9 +260,9 @@ enyo.kind.statics = {
 	}
 };
 
-// 
+//
 // factory for kinds identified by strings
-// 
+//
 enyo._kindCtors = {};
 
 enyo.constructorForKind = function(inKind) {
@@ -288,9 +289,9 @@ enyo.constructorForKind = function(inKind) {
 	return enyo.defaultCtor;
 };
 
-// 
+//
 // namespace for current theme ("enyo.Theme.Button" references the Button specialization for the current theme)
-// 
+//
 enyo.Theme = {};
 
 enyo.registerTheme = function(inNamespace) {

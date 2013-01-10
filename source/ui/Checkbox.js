@@ -10,7 +10,7 @@ enyo.kind({
 		onActivate: ""
 	},
 	published: {
-		//* Value of checkbox; true if checked 
+		//* Value of checkbox; true if checked
 		checked: false,
 		//* Group API requirement for determining selected item
 		active: false,
@@ -55,7 +55,7 @@ enyo.kind({
 	},
 	valueChanged: function() {
 		// inherited behavior is to set "value" attribute and node-property
-		// which does not apply to checkbox (uses "checked") so 
+		// which does not apply to checkbox (uses "checked") so
 		// we squelch the inherited method
 	},
 	change: function() {
@@ -63,7 +63,7 @@ enyo.kind({
 		this.setActive(nodeChecked);
 	},
 	click: function(inSender, inEvent) {
-		// Various versions of IE (notably IE8) do not fire 'onchange' for 
+		// Various versions of IE (notably IE8) do not fire 'onchange' for
 		// checkboxes, so we discern change via 'click'.
 		// Note: keyboard interaction (e.g. pressing space when focused) fires
 		// a click event.

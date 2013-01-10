@@ -381,7 +381,7 @@ enyo.kind({
                     for (idx = 0, len = events.length; idx < len; ++idx) {
                         event = events[idx];
                         // wire up the real observer for this method
-                        this.addObserver(event, prop);
+                        this.addObserver(event, prop, this);
                     }
                 }
             }

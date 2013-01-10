@@ -8,28 +8,6 @@
         a runtime unique identifier.
     */
     var uidCounter = 0;
-
-    //*@public
-    /**
-        An IE8 compatible polyfill-replacement for the String object's
-        indexOf method. If that method exists it will be used instead.
-        Accepts the string to search and the needle (string) to search
-        for within that string. Returns the index at which the needle
-        was first encountered and -1 if it could not be found.
-    */
-    var stringIndexOf = enyo.stringIndexOf = function (haystack, needle) {
-        var idx = -1;
-        if ("string" === typeof haystack) {
-            if (haystack.indexOf) return haystack.indexOf(needle);
-            else {
-                // TODO: need to test the performance of a string
-                // brute-force walk/search versus a regular expression
-                // test/fallback
-            }
-        }
-
-        return -1;
-    };
     
     //*@public
     /**
@@ -37,6 +15,31 @@
     */
     var exists = enyo.exists = function (target) {
         return !(undefined === target);
+    };
+    
+    //*@public
+    /**
+        An IE8 safe fallback for the default _lastIndexOf_ method.
+        Takes an array or string as the haystack and a string as the
+        needle.
+    */
+    var lastIndexOf = enyo.lastIndexOf = function (haystack, needle) {
+        if (haystack.lastIndexOf) return haystack.lastIndexOf(needle);
+        // in IE8 there is no lastIndexOf for arrays or strings but we
+        // treat them slightly differently, this is written for minimal-
+        // code as a slight tradeoff in performance but should rarely be
+        // hit as it is
+        var string = ("string" === typeof haystack);
+        var rev = (string? haystack.split(""): haystack).reverse();
+        var cap = rev.length-1;
+        var idx;
+        // if it is a string we need to make it a string again for
+        // the indexOf method
+        if (string) rev = rev.join("");
+        idx = enyo.indexOf(needle, rev);
+        // put the array back the way it was
+        if (!string) rev.reverse();
+        return -1 === idx? idx: (cap - idx);
     };
     
     //*@protected
@@ -80,9 +83,17 @@
         Will return undefined if the object at the given path could not be
         found. Can safely be called on non-existent paths.
     */
-    enyo.getPath = function (path, recursing) {
-        // if we don't have a path or it isn't a string we can't do anything
-        if (!exists(path) || "string" !== typeof path) return undefined;
+    enyo.getPath = function (path) {
+        // if we don't have a path we can't do anything
+        if (!exists(path)) return undefined;
+        var idx = 0;
+        var val;
+        var part;
+        var fn;
+        // args are only used in computed properties and we only
+        // do the work to remap them when necessary
+        var args;
+        var recursing = ("object" === typeof path && path.recursing)? true: false;
         // on rare occasions this method would be called under the context
         // of enyo itself, the problem is detecting when this is intended since
         // under normal circumstances a general call would assume a window
@@ -93,14 +104,17 @@
         // knowing during recursion enyo should never be the context and its normal
         // use case would prevail
         var cur = this === enyo && true !== recursing? window: this;
-        var idx = 0;
-        var val;
-        var part;
-        var fn;
+        // if we were recursing then we reassign path to the string part of the
+        // object/parameter passed in
+        if ("object" === typeof path) {
+            if (path.path && "string" === typeof path.path) path = path.path;
+            // otherwise it was an invalid request
+            else return undefined;
+        }
         // clear any leading periods
         path = preparePath(path);
-        // find the initial period if any from our ie8 safe polyfill
-        idx = stringIndexOf(path, ".");
+        // find the initial period if any
+        idx = path.indexOf(".");
         // if there isn't any try and find the path relative to our
         // current context, this is the fast path
         if (-1 === idx) {
@@ -119,7 +133,7 @@
                 // if we can find the given part of the string path
                 // we recursively call the getPath method using that
                 // as the new context
-                val = enyo.getPath.call(cur[part], path, true);
+                val = enyo.getPath.call(cur[part], {path: path, recursing: true});
             } else {
                 // we have no idea what we could do because we can't find
                 // anything useful
@@ -130,7 +144,12 @@
         // a computed property and if this is _not a recursive search_
         // go ahead and call it, otherwise return it as a function
         if ("function" === typeof val && true === val.isProperty) {
-            if (true !== recursing) return val.call(this);
+            if (true !== recursing) {
+                // this allows computed properties to be used as
+                // true computed getters/setters
+                args = enyo.toArray(arguments).slice(1);
+                return val.apply(this, args);
+            }
         }
         // otherwise we've reached the end so return whatever we have
         return val;
@@ -173,6 +192,7 @@
         var cur = enyo === this? enyo.global: this;
         var idx;
         var target;
+        var args;
         var parts;
         var notify = true === force? true: false;
         var comparator = "function" === typeof force? force: undefined;
@@ -181,7 +201,7 @@
         // clear any leading periods
         path = preparePath(path);
         // find the inital index of any period in the path
-        idx = stringIndexOf(path, ".");
+        idx = path.indexOf(".");
         // if there wasn't one we can attempt to fast-path this setter
         if (-1 === idx) {
             target = cur[path];
@@ -189,7 +209,8 @@
             // property we will actually call the computed property passing it
             // the value
             if (true === isComputed(target)) {
-                target.call(cur, value);
+                args = enyo.toArray(arguments).slice(1);
+                target.apply(cur, args);
             } else {
                 // otherwise we just plain overwrite the method, this is the
                 // expected behavior
@@ -209,7 +230,8 @@
                 // as in the fast path
                 if (0 === parts.length) {
                     if (true === isComputed(target)) {
-                        target.call(cur, value);
+                        args = enyo.toArray(arguments).slice(1);
+                        target.apply(cur, args);
                     } else {
                         // otherwise we overwrite it just like in the fast-path
                         cur[target] = value;
@@ -395,8 +417,8 @@
 
 	//* Returns true if the argument is true
 	enyo.isTrue = function(it) {
-		return !(it === "false" || it === false || it === 0 || it === null || it === undefined)
-	}
+		return !(it === "false" || it === false || it === 0 || it === null || it === undefined);
+	};
 
 	//* Returns the index of the element in _inArray_ that is equivalent (==) to _inElement_, or -1 if no element is found.
 	enyo.indexOf = function(inElement, inArray, fromIndex) {
@@ -508,7 +530,7 @@
                 seen.push(value);
                 // here we check against the entirety of any other values
                 // in the values array starting from the end
-                if (idx === values.lastIndexOf(value)) {
+                if (idx === lastIndexOf(values, value)) {
                     // if this turned out to be true then it is a unique entry
                     // so go ahead and push it to our union array
                     ret.push(value);
@@ -708,7 +730,7 @@
 				'propertyIsEnumerable',
 				'constructor'
 			];
-			for (var i = 0, p; p = dontEnums[i]; i++) {
+			for (var i = 0, p; (p = dontEnums[i]); i++) {
 				if (hop.call(inObject, p)) {
 					results.push(p);
 				}
@@ -719,14 +741,14 @@
 
 	/**
 		Clones an existing Array, or converts an array-like object into an Array.
-		
+
 		If _inOffset_ is non-zero, the cloning is started from that index in the source Array.
 		The clone may be appended to an existing Array by passing the existing Array as _inStartWith_.
-		
+
 		Array-like objects have _length_ properties, and support square-bracket notation ([]).
 		Often array-like objects do not support Array methods, such as _push_ or _concat_, and
 		must be converted to Arrays before use.
-		
+
 		The special _arguments_ variable is an example of an array-like object.
 	*/
 	enyo.cloneArray = function(inArrayLike, inOffset, inStartWith) {
@@ -890,7 +912,7 @@
 		enyo.setPrototype(enyo.instance, obj);
 		return new enyo.instance();
 	};
-	
+
 	//* @public
 
 	/**
