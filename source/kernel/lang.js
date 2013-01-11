@@ -575,7 +575,7 @@
     //*@public
     /**
         A helper method that can take an array of objects and return
-        a map of those objects indexed by the specified property. If a filter 
+        a hash of those objects indexed by the specified property. If a filter 
         is provided it should accept four parameters: the key, the value 
         (object), the current mutable map reference, and an immutable 
         copy of the original array of objects for comparison.
