@@ -33,7 +33,37 @@ enyo.ready(function () {
         interpret changes in the url as well as set changes to the url
         in a cross-browser compatible way. With defined route handling
         state of the application can be managed more closely with the
-        location state of the browser.
+        location state of the browser. There can be more than one router
+        active at any time. Routers _only interact with the hash portion
+        of the browser location and will not force a reload of the current
+        page_.
+        
+        Routes can be defined one of several ways and can be added at
+        startup and/or later programmatically.
+        
+        A route is a declarative hash that has the following structure:
+        
+        {path: "some/path", handler: "function", context: "context"}
+        
+        The path is a string that can be static (explicitly matched) or
+        dynamic (matched based on dynamic placeholders). Dynamic paths
+        can name elements that will be matched, e.g. {path: ":user/:id"}
+        and the handler would be called with 2 parameters filled with the values
+        matched by that structure. It is important to note that dynamic
+        routes will apply the first match it finds so care must be used to ensure
+        the correct route will always be matched (e.g. /users/:user/:id is
+        more exact because of the static 'users' portion of the path).
+        
+        The handler can be a function reference or a string that will be
+        mapped to a function first by checking the existence of the function
+        on the router, then on any provided context and then in the global
+        scope. If a context is provided, the function will be executed under
+        that context regardless of where the function was found.
+        
+        The context property can be an object, an instance or a string that will
+        be mapped to an object if possible.
+        
+        NOTE: Because we support IE8 we do not currently support _pushState_.
     */
     enyo.kind({
         //*@public
@@ -41,16 +71,39 @@ enyo.ready(function () {
         //*@protected
         kind: "enyo.Controller",
         //*@public
+        /**
+            If the router is listening it will respond to hash changes or
+            internal events. If this flag is set to false it will stop
+            responding. This can be changed at any time.
+        */
         listening: true,
         //*@public
+        /**
+            If this is set to true it will not respond to hash changes in
+            the browser or be able to trigger them. Instead it could be
+            used internally to maintain or trigger state changes in an
+            application without changing location.
+        */
         internalOnly: false,
         //*@protected
         staticRoutes: null,
         //*@protected
         dynamicRoutes: null,
         //*@public
+        /**
+            The _defaultRoute_ should have the same structure as a normal
+            route (hash). It can be arbitrarily assigned to this property
+            or mixed in to the routes array with a special _default: true_
+            flag set. For any unmatched hash changes this route will be
+            executed and passed the path that was not matched.
+        */
         defaultRoute: null,
         //*@public
+        /**
+            By default a router will attempt to trigger the correct route
+            for the current browser location when it is created. Set this
+            to false to keep it from performing this startup routine.
+        */
         triggerOnStart: true,
         //*@protected
         current: "",
@@ -62,6 +115,20 @@ enyo.ready(function () {
         */
         routes: null,
         //*@public
+        /**
+            Trigger a change without necessarily requiring a change to
+            occur. If called without a parameter it will force the
+            route that matches the current browser location to fire.
+            If a string is passed to this method it will trigger an
+            internal only event (will not change the browser location).
+            If it is passed a hash, it will try to use a _location_ property
+            while looking for optional _change_ and _global_ properties.
+            If the _change_ property is present and true it will force a
+            _location.hash_ change in the browser (this is always global).
+            If the _global_ property is present and true and _change_ is
+            not present or false, it will trigger an internal event that
+            all routers will respond to (not just this instance).
+        */
         trigger: function (params) {
             if (!params) {
                 params = {location: this.get("current")};
