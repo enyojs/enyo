@@ -501,7 +501,8 @@ enyo.kind({
 		this.teardownRender();
 		// inParentNode can be a string id or a node reference
 		var pn = enyo.dom.byId(inParentNode);
-		if (pn == document.body) {
+		var noFit = typeof this.fit !== "undefined" && this.fit === false;
+		if (pn == document.body && !noFit) {
 			this.setupBodyFitting();
 		} else if (this.fit) {
 			this.addClass("enyo-fit enyo-clip");
