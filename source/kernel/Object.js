@@ -398,7 +398,7 @@ enyo.kind({
         var observers = this.observers;
         var idx;
         var handlers;
-        if (!enyo.exists((handlers = observers[property]))) return this;
+        if (!(handlers = observers[property])) return this;
         if (enyo.exists(fn) && "function" === typeof fn) {
             idx = handlers.indexOf(fn);
             if (!!~idx) {
@@ -437,7 +437,7 @@ enyo.kind({
                 // this is a proactive check - it has a failsafe if this
                 // didn't take place
                 if (observer.bindingId) {
-                    binding = enyo.Bindings.map[observer.bindingId];
+                    binding = enyo.Binding.map[observer.bindingId];
                     if (binding && binding instanceof enyo.Binding) binding.destroy();
                 }
             }
