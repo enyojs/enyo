@@ -420,11 +420,27 @@ enyo.kind({
     */
     removeAllObservers: function () {
         var observers = this.observers;
+        var handlers;
+        var observer;
+        var binding;
         var prop;
+        var idx;
         for (prop in observers) {
             if (!observers.hasOwnProperty(prop)) continue;
+            handlers = observers[prop];
             // orphan the array so it will be cleaned up by the GC
             observers[prop] = null;
+            for (idx = 0, len = handlers.length; idx < len; ++idx) {
+                observer = handlers[idx];
+                // check to see if the observer is associated with a binding
+                // if it is we need to notify it that we are being destroyed
+                // this is a proactive check - it has a failsafe if this
+                // didn't take place
+                if (observer.bindingId) {
+                    binding = enyo.Bindings.map[observer.bindingId];
+                    if (binding && binding instanceof enyo.Binding) binding.destroy();
+                }
+            }
         }
         // reset our observers hash
         this.observers = {};
@@ -670,6 +686,8 @@ enyo.kind({
     destroy: function () {
         // destroy all bindings owned by this object
         this.clearBindings();
+        // remove any observers that may still be attached
+        this.removeAllObservers();
         // JS objects are never truly destroyed (GC'd) until all references are gone,
 		// we might have some delayed action on this object that needs to have access
 		// to this flag.

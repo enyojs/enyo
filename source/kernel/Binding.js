@@ -273,6 +273,7 @@
         */
         connect: function () {
             if (true === this.isConnected) return;
+            if (true === this.destroyed) return;
             this.connectSource();
             this.connectTarget();
             if (this.sourceConnected && this.targetConnected) {
