@@ -407,7 +407,6 @@ enyo.kind({
             }
         } else {
             // we need to remove ALL the observers of this property
-            observers[property] = null;
             delete observers[property];
         }
         return this;
@@ -666,6 +665,15 @@ enyo.kind({
     extendMixin: function (mixin) {
         // this is a convenience method, mixins actually apply themselves
         if (enyo.exists(mixin) && mixin.apply) mixin.apply(this);
+    },
+    //*@protected
+    destroy: function () {
+        // destroy all bindings owned by this object
+        this.clearBindings();
+        // JS objects are never truly destroyed (GC'd) until all references are gone,
+		// we might have some delayed action on this object that needs to have access
+		// to this flag.
+		this.destroyed = true;
     }
 });
 

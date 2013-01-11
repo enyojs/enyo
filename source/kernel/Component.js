@@ -153,11 +153,7 @@ enyo.kind({
 	destroy: function() {
 		this.destroyComponents();
 		this.setOwner(null);
-		this.clearBindings();
-		// JS objects are never truly destroyed (GC'd) until all references are gone,
-		// we might have some delayed action on this object that needs to have access
-		// to this flag.
-		this.destroyed = true;
+		this.inherited(arguments);
 	},
 	/**
 		Destroys all owned components.
