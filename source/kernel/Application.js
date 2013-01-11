@@ -116,9 +116,9 @@
         //*@protected
         concat: ["controllers"],
         //*@protected
-        constructor: function (inProps) {
-            if (typeof inProps.name !== "undefined") {
-                enyo.setPath(inProps.name, this);
+        constructor: function (props) {
+            if (props && enyo.exists(props.name)) {
+                enyo.setPath(props.name, this);
             }
             this.inherited(arguments);
             if (true === this.autoStart) this.start();
