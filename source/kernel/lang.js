@@ -336,41 +336,6 @@
 
 	//* @public
 
-	/**
-		Sets object _name_ to _value_. _name_ can use dot notation and intermediate objects are created as necessary.
-
-			// set foo.bar.baz to 3. If foo or foo.bar do not exist, they are created.
-			enyo.setObject("foo.bar.baz", 3);
-
-		Optionally, _name_ can be relative to object _context_.
-
-			// create foo.zot and sets foo.zot.zap to null.
-			enyo.setObject("zot.zap", null, foo);
-	*/
-	enyo.setObject = function(name, value, context) {
-		var parts=name.split("."), p=parts.pop(), obj=enyo._getProp(parts, true, context);
-		return obj && p ? (obj[p]=value) : undefined;
-	};
-
-	/**
-		Gets object _name_. _name_ can use dot notation. Intermediate objects are created if _create_ argument is truthy.
-
-			// get the value of foo.bar, or undefined if foo doesn't exist.
-			var value = enyo.getObject("foo.bar");
-
-			// get the value of foo.bar. If foo.bar doesn't exist,
-			// it's assigned an empty object, which is returned
-			var value = enyo.getObject("foo.bar", true);
-
-		Optionally, _name_ can be relative to object _context_.
-
-			// get the value of foo.zot.zap, or undefined if foo.zot doesn't exist
-			var value = enyo.getObject("zot.zap", false, foo);
-	*/
-	enyo.getObject = function(name, create, context) {
-		return enyo._getProp(name.split("."), create, context);
-	};
-
 	//* Returns a random Integer between 0 and inBound (0 <= results < inBound).
 	//
 	//		var randomLetter = String.fromCharCode(enyo.irand(26) + 97);
