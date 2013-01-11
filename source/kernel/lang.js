@@ -99,10 +99,7 @@
         // under normal circumstances a general call would assume a window
         // context - here we see the _recursing_ parameter taking a double
         // meaning as enyo should _never be used as a reference on another object_
-        // and as long as that is true this will never fail - so if enyo is to be
-        // used as the context root and not window pass the second parameter as true
-        // knowing during recursion enyo should never be the context and its normal
-        // use case would prevail
+        // and as long as that is true this will never fail
         var cur = this === enyo && true !== recursing? window: this;
         // if we were recursing then we reassign path to the string part of the
         // object/parameter passed in
