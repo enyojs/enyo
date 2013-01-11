@@ -116,7 +116,10 @@
         //*@protected
         concat: ["controllers"],
         //*@protected
-        constructor: function () {
+        constructor: function (inProps) {
+            if (typeof inProps.name !== "undefined") {
+                enyo.setPath(inProps.name, this);
+            }
             this.inherited(arguments);
             if (true === this.autoStart) this.start();
         },
