@@ -80,7 +80,7 @@ concatCss = function(loader, doneCB) {
 		if (sheet) {
 			w(sheet);
 			var isLess = (sheet.slice(-4) == "less");
-			if (isLess && (opt.less !== undefined)) {
+			if (isLess && (opt.less !== true)) {
 				sheet = sheet.slice(0, sheet.length-4) + "css";
 				isLess = false;
 				w(" (Substituting CSS: " + sheet + ")");
