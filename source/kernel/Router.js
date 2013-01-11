@@ -64,6 +64,7 @@ enyo.ready(function () {
         be mapped to an object if possible.
         
         NOTE: Because we support IE8 we do not currently support _pushState_.
+        NOTE: Dynamic routes currently only support letters and numbers.
     */
     enyo.kind({
         //*@public
@@ -289,7 +290,7 @@ enyo.ready(function () {
             var regex;
             for (; idx < len; ++idx) {
                 route = routes[idx];
-                if (!route || !route.path) continue;
+                if (!route) continue;
                 this.addRoute(route);
             }
         },
