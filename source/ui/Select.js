@@ -46,10 +46,6 @@ enyo.kind({
 	getSelected: function() {
 		return Number(this.getNodeProperty("selectedIndex", this.selected));
 	},
-	setSelected: function(inIndex) {
-		// default property mechanism can't track changed correctly for virtual properties
-		this.setPropertyValue("selected", Number(inIndex), "selectedChanged");
-	},
 	selectedChanged: function() {
 		this.setNodeProperty("selectedIndex", this.selected);
 	},

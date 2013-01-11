@@ -73,18 +73,6 @@ enyo.kind({
         // set the flag to true and re-call the setup method
         this.setup();
     },
-    /**
-        Sets property named 'n' with value 'v' and then invokes callback
-        function 'cf' (if specified), passing in the original value of 'n'.
-        All property setting should bottleneck here so that objects can
-        observe changes wlog.
-    */
-    setPropertyValue: function(n, v, cf) {
-        this.set(n, v);
-    },
-    _setProperty: function(n, v, cf) {
-        this.setPropertyValue(n, v, (this.getProperty(n) !== v) && cf);
-    },
     //* @public
     //* Destroys object with passed-in name.
     destroyObject: function(inName) {
@@ -92,18 +80,6 @@ enyo.kind({
             this[inName].destroy();
         }
         this[inName] = null;
-    },
-    //* Gets value of property with passed-in name.
-    getProperty: function(n) {
-        var getter = "get" + enyo.cap(n);
-        if (this[getter]) {
-            return this[getter]();
-        }
-        return this[n];
-    },
-    //* Sets value of property named 'n' to 'v'.
-    setProperty: function(n, v) {
-        this.set(n, v);
     },
     /**
         Sends a log message to the console, prepended with the name of the kind
