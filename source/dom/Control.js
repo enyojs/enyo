@@ -57,8 +57,12 @@ enyo.kind({
 			to fill the available space. This only has meaning when the control
 			is being used as a child of a control with a version of FittableLayout
 			as its layoutKind.
+			
+			TODO: We would like to be able to test for the existence of the fit
+			property without setting a default (of null) since it is a boolean
+			flag. This is a temporary fix.
 		*/
-		fit: false,
+		fit: null,
 		//* Used by Ares design editor for design objects
 		isContainer: false,
 		//*@public
@@ -501,7 +505,8 @@ enyo.kind({
 		this.teardownRender();
 		// inParentNode can be a string id or a node reference
 		var pn = enyo.dom.byId(inParentNode);
-		var noFit = typeof this.fit !== "undefined" && this.fit === false;
+        var noFit = enyo.exists(this.fit) && this.fit === false;
+        //console.log(noFit);
 		if (pn == document.body && !noFit) {
 			this.setupBodyFitting();
 		} else if (this.fit) {
