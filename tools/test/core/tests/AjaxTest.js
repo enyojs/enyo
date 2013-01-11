@@ -43,7 +43,7 @@ enyo.kind({
 		//
 		// request triggers 'index' request when it completes
 		new enyo.Ajax({url: "index.html", handleAs: "text"})
-			.response(index) 
+			.response(index)
 			.response(this, function() {
 				// finish clean if 'ready'
 				this.finish(ready ? "" : "requests failed to complete in order");

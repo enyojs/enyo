@@ -103,7 +103,8 @@ enyo.kind = function(inProps) {
 	// if we have an explicit kind property with value undefined, we probably
 	// tried to reference  a kind that is not yet in scope
 	if (hasKind && kind === undefined || base === undefined) {
-		throw "enyo.kind: Attempt to subclass an undefined kind. Check dependencies for [" + (name || "<unnamed>") + "].";
+		var problem = kind === undefined ? 'undefined kind' : 'unknown kind (' + kind + ')';
+		throw "enyo.kind: Attempt to subclass an " + problem + ". Check dependencies for [" + (name || "<unnamed>") + "].";
 	}
 	// make a boilerplate constructor
 	var ctor = enyo.kind.makeCtor();
