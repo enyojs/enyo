@@ -30,7 +30,7 @@
 enyo.macroize = function(inText, inMap, inPattern) {
 	var v, working, result = inText, pattern = inPattern || enyo.macroize.pattern;
 	var fn = function(macro, name) {
-		v = enyo.getObject(name, false, inMap);
+		v = enyo.getPath.call(inMap, name);
 		if (v === undefined || v === null) {
 			return "{$" + name + "}";
 		}
@@ -60,7 +60,7 @@ enyo.quickMacroize = function(inText, inMap, inPattern) {
 		if (name in inMap) {
 			v = inMap[name];
 		} else {
-			v = enyo.getObject(name, false, inMap);
+			v = enyo.getPath.call(inMap, name);
 		}
 		return (v === undefined || v === null) ? "{$" + name + "}" : v;
 	};

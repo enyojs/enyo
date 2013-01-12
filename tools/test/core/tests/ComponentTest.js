@@ -6,11 +6,11 @@ enyo.kind({
 		// should throw exception as this is an error
 		try {
 			var a = enyo.kind(
-				{ 
-					name: "parentComponent", 
+				{
+					name: "parentComponent",
 					components: [
 						{
-							name: "nestedComponent", 
+							name: "nestedComponent",
 							kind: undefined
 						}
 					]
