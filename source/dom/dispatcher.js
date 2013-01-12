@@ -6,7 +6,7 @@ enyo.dispatcher = {
 	events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel",
 		"click", "dblclick", "change", "keydown", "keyup", "keypress", "input"],
 	// these events come from window
-	windowEvents: ["resize", "load", "unload", "message"],
+	windowEvents: ["resize", "load", "unload", "message", "hashchange"],
 	// these events come from css
 	cssEvents: ["webkitTransitionEnd", "transitionend"],
 	// feature plugins (aka filters)

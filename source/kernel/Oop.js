@@ -103,7 +103,8 @@ enyo.kind = function(inProps) {
 	// if we have an explicit kind property with value undefined, we probably
 	// tried to reference  a kind that is not yet in scope
 	if (hasKind && kind === undefined || base === undefined) {
-		throw "enyo.kind: Attempt to subclass an undefined kind. Check dependencies for [" + (name || "<unnamed>") + "].";
+		var problem = kind === undefined ? 'undefined kind' : 'unknown kind (' + kind + ')';
+		throw "enyo.kind: Attempt to subclass an " + problem + ". Check dependencies for [" + (name || "<unnamed>") + "].";
 	}
 	// make a boilerplate constructor
 	var ctor = enyo.kind.makeCtor();
@@ -132,7 +133,7 @@ enyo.kind = function(inProps) {
 	// support pluggable 'features'
 	enyo.forEach(enyo.kind.features, function(fn){ fn(ctor, inProps); });
 	// put reference into namespace
-	enyo.setObject(name, ctor);
+	enyo.setPath(name, ctor);
 	return ctor;
 };
 
@@ -160,7 +161,7 @@ enyo.singleton = function(conf, context) {
 	// create an unnamed kind and save its constructor's function
 	var kind = enyo.kind(conf);
 	// create the singleton with the previous name and constructor
-	return enyo.setObject(name, new kind(), context);
+	return enyo.setPath.call(context, name, new kind());
 };
 
 //* @protected
@@ -284,7 +285,7 @@ enyo.constructorForKind = function(inKind) {
 		//
 		// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
 		// This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
-		return enyo._kindCtors[inKind] = enyo.Theme[inKind] || enyo[inKind] || enyo.getObject(inKind, false, enyo) || window[inKind] || enyo.getObject(inKind);
+		return enyo._kindCtors[inKind] = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath.call(enyo, inKind) || window[inKind] || enyo.getPath(inKind);
 	}
 	return enyo.defaultCtor;
 };

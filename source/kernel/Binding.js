@@ -41,6 +41,31 @@
     
     //*@protected
     /**
+        Used internally to track bindings.
+    */
+    var map = enyo.Binding.map = {};
+    
+    //*@protected
+    /**
+        Used internally to track references to bindings to allow for
+        several different events to occur that will still cleanup
+        bindings.
+    */
+    var register = function (binding) {
+        map[binding.id] = binding;
+    };
+    
+    //*@protected
+    /**
+        Used internally to remove references to bindings.
+    */
+    var unregister = function (id) {
+        id = id.isBinding? id.id: id;
+        if (map[id]) delete map[id];
+    };
+    
+    //*@protected
+    /**
         The constructor for a binding takes a variable number of parameters
         that are object/hashes with properties to be set on the binding. When
         multiple option-sets are provided and there are common properties the
@@ -55,7 +80,7 @@
         // to this binding instance
         for (; idx < len; ++idx) enyo.mixin(this, arguments[idx]);
         // generate a new id for this binding
-        this.bindingId = enyo.uid("binding");
+        this.id = enyo.uid("binding");
         // run our initialization routines
         this.setup();
     }
@@ -173,6 +198,12 @@
         transform: null,
         //*@protected
         oneWay: true,
+        //*@public
+        isBinding: true,
+        //*@public
+        destroyed: false,
+        //*@public
+        synchronizing: false,
         //*@protected
         /**
             Initially called during construction to setup the properties
@@ -186,6 +217,8 @@
             var source = this.setupSource();
             var target = this.setupTarget();
             var refreshing = this.isRefreshing;
+            // register the binding globally for cleanup purposes
+            register(this);
             // setup the transform if we can
             this.setupTransform();
             // if we are refreshing and cannot find
@@ -204,7 +237,15 @@
             }
             // this will fail silently if setup went aury for
             // either the target or source
-            if (connect || refreshing) this.connect();
+            // we allow the process of connecting the ends to be
+            // interrupted if either end has been destroyed, we
+            // self-destruct
+            try {
+                if (connect || refreshing) this.connect();
+            } catch (err) {
+                if ("binding-destroyed" === err) return;
+                else throw err;
+            }
             if (sync || refreshing) this.sync();
         },
         //*@protected
@@ -230,6 +271,7 @@
         */
         connect: function () {
             if (true === this.isConnected) return;
+            if (true === this.destroyed) return;
             this.connectSource();
             this.connectTarget();
             if (this.sourceConnected && this.targetConnected) {
@@ -254,6 +296,7 @@
             var property = this.sourceProperty;
             var source = this.source;
             var from = this.from;
+            if (!from) return false;
             parts = getParts.call(this, from, source);
             base = parts.base;
             property = parts.property;
@@ -271,6 +314,7 @@
             var property = this.targetProperty;
             var target = this.target;
             var to = this.to;
+            if (!to) return false;
             parts = getParts.call(this, to, target);
             base = parts.base;
             property = parts.property;
@@ -296,11 +340,17 @@
                 fn = enyo.bind(this, this.syncFromSource);
                 this.sourceResponder = fn;
             }
+            // in the event that the source actually exists but has been destroyed
+            if (true === source.destroyed) {
+                // we need to be destroyed so we can also be cleaned up
+                this.destroy();
+                throw "binding-destroyed";
+            }
             // if it is already connected don't do anything
             if (true === this.sourceConnected) return true;
             if (!enyo.exists(source)) return (this.sourceConnected = false);
             // assign the binding's id to the responder for debugging
-            fn.bindingId = this.bindingId;
+            fn.bindingId = this.id;
             // add the observer for the property on the source object
             source.addObserver(property, fn);
             return (this.sourceConnected = true);
@@ -312,6 +362,12 @@
             var fn = this.targetResponder;
             var oneWay = this.oneWay;
             if (!(target instanceof enyo.Object)) return (this.targetConnected = false);
+            // in the event that the target actually exists but has been destroyed
+            if (true === target.destroyed) {
+                // we need to be destroyed so we can also be cleaned up
+                this.destroy();
+                throw "binding-destroyed";
+            }
             // if this is a one way binding there is nothing to do
             if (true === oneWay) return (this.targetConnected = true);
             // only create the responder if it doesn't already exist
@@ -322,7 +378,7 @@
             // if it is already connected don't do anything else
             if (true === this.targetConnected) return true;
             if (!enyo.exists(target)) return (this.targetConnected = false);
-            fn.bindingId = this.bindingId;
+            fn.bindingId = this.id;
             target.addObserver(property, fn);
             return (this.targetConnected = true);
         },
@@ -343,9 +399,15 @@
                 if ("stop-binding" === err) return;
                 else throw err;
             }
-            if (twoWay) this.disconnectTarget();
+            if (twoWay) {
+                this.synchronizing = true;
+                this.disconnectTarget();
+            }
             this.setTargetValue(value);
-            if (twoWay) this.connectTarget();
+            if (twoWay) {
+                this.connectTarget();
+                this.synchronizing = false;
+            }
         },
         //*@protected
         syncFromTarget: function () {
@@ -412,7 +474,7 @@
             // if it is a string we try and locate it on the owner
             // or as a global method
             if ("string" === typeof transform) {
-                transform = owner[transform] || enyo.getPath(transform);
+                transform = owner[transform] || enyo.getPath.call(enyo.global, transform);
             } else if ("function" === typeof transform) {
                 transform = this.transform;
             }
@@ -431,18 +493,23 @@
             cleaned up by the garbage collector.
         */
         destroy: function () {
+            if (true === this.destroyed) return;
+            // we set this right away so that we don't wind up
+            // in an infinite loop
+            this.destroyed = true;
             this.disconnect();
             this.source = null;
             this.target = null;
             this.sourceResponder = null;
             this.targetResponder = null;
-            this.isDestroyed = true;
             enyo.Binding.bindingCount--;
             if (this.transform) {
                 this.transform.destroy();
                 this.transform = null;
             }
             if (this.owner) this.owner.removeBinding(this);
+            // make sure to unregister the binding reference
+            unregister(this);
         }
     };
     

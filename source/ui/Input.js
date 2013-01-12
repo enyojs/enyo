@@ -87,12 +87,11 @@ enyo.kind({
 		this.setAttribute("disabled", this.disabled);
 		this.bubble("onDisabledChange");
 	},
-	getValue: function() {
-		return this.getNodeProperty("value", this.value);
-	},
 	valueChanged: function() {
 		this.setAttribute("value", this.value);
-		this.setNodeProperty("value", this.value);
+		if (this.getNodeProperty("value", this.value) !== this.value) {
+			this.setNodeProperty("value", this.value);
+		}
 	},
 	iekeyup: function(inSender, inEvent) {
 		var ie = enyo.platform.ie, kc = inEvent.keyCode;
@@ -134,5 +133,9 @@ enyo.kind({
 			r.expand("textedit");
 			r.select();
 		}
+	},
+	input: function() {
+		var val = this.getNodeProperty("value");
+		this.setValue(val);
 	}
 });

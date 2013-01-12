@@ -31,7 +31,9 @@ enyo.kind({
     },
     //*@protected
     create: function () {
-        var view = this.view;
+        var ctor = this.get("viewKind");
+        this.view = new ctor();
+        this.inherited(arguments);
     },
     //*@public
     /**
@@ -40,8 +42,7 @@ enyo.kind({
     */
     render: function () {
         var target = this.get("target");
-        var ctor = this.get("viewKind");
-        var view = this.view = new ctor();
+        var view = this.get("view");
         view.renderInto(target);
     },
     //*@public

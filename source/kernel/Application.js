@@ -116,7 +116,10 @@
         //*@protected
         concat: ["controllers"],
         //*@protected
-        constructor: function () {
+        constructor: function (props) {
+            if (props && enyo.exists(props.name)) {
+                enyo.setPath(props.name, this);
+            }
             this.inherited(arguments);
             if (true === this.autoStart) this.start();
         },

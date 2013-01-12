@@ -99,10 +99,7 @@
         // under normal circumstances a general call would assume a window
         // context - here we see the _recursing_ parameter taking a double
         // meaning as enyo should _never be used as a reference on another object_
-        // and as long as that is true this will never fail - so if enyo is to be
-        // used as the context root and not window pass the second parameter as true
-        // knowing during recursion enyo should never be the context and its normal
-        // use case would prevail
+        // and as long as that is true this will never fail
         var cur = this === enyo && true !== recursing? window: this;
         // if we were recursing then we reassign path to the string part of the
         // object/parameter passed in
@@ -325,51 +322,8 @@
     var uid = enyo.uid = function (prefix) {
         return String((prefix? prefix: "") + uidCounter++);
     };
-  
-	enyo._getProp = function(parts, create, context) {
-		var obj = context || enyo.global;
-		for(var i=0, p; obj && (p=parts[i]); i++){
-			obj = (p in obj ? obj[p] : (create ? obj[p]={} : undefined));
-		}
-		return obj;
-	};
 
 	//* @public
-
-	/**
-		Sets object _name_ to _value_. _name_ can use dot notation and intermediate objects are created as necessary.
-
-			// set foo.bar.baz to 3. If foo or foo.bar do not exist, they are created.
-			enyo.setObject("foo.bar.baz", 3);
-
-		Optionally, _name_ can be relative to object _context_.
-
-			// create foo.zot and sets foo.zot.zap to null.
-			enyo.setObject("zot.zap", null, foo);
-	*/
-	enyo.setObject = function(name, value, context) {
-		var parts=name.split("."), p=parts.pop(), obj=enyo._getProp(parts, true, context);
-		return obj && p ? (obj[p]=value) : undefined;
-	};
-
-	/**
-		Gets object _name_. _name_ can use dot notation. Intermediate objects are created if _create_ argument is truthy.
-
-			// get the value of foo.bar, or undefined if foo doesn't exist.
-			var value = enyo.getObject("foo.bar");
-
-			// get the value of foo.bar. If foo.bar doesn't exist,
-			// it's assigned an empty object, which is returned
-			var value = enyo.getObject("foo.bar", true);
-
-		Optionally, _name_ can be relative to object _context_.
-
-			// get the value of foo.zot.zap, or undefined if foo.zot doesn't exist
-			var value = enyo.getObject("zot.zap", false, foo);
-	*/
-	enyo.getObject = function(name, create, context) {
-		return enyo._getProp(name.split("."), create, context);
-	};
 
 	//* Returns a random Integer between 0 and inBound (0 <= results < inBound).
 	//
@@ -618,7 +572,7 @@
     //*@public
     /**
         A helper method that can take an array of objects and return
-        a map of those objects indexed by the specified property. If a filter 
+        a hash of those objects indexed by the specified property. If a filter 
         is provided it should accept four parameters: the key, the value 
         (object), the current mutable map reference, and an immutable 
         copy of the original array of objects for comparison.
@@ -863,22 +817,6 @@
 	*/
 	enyo.asyncMethod = function(inScope, inMethod/*, inArgs*/) {
 		return setTimeout(enyo.bind.apply(enyo, arguments), 1);
-	};
-
-	/**
-		Calls named method _inMethod_ (String) on _inObject_ with optional
-		arguments _inArguments_ (Array), if the object and method exist.
-
-			enyo.call(myWorkObject, "doWork", [3, "foo"]);
-	*/
-	enyo.call = function(inObject, inMethod, inArguments) {
-		var context = inObject || this;
-		if (inMethod) {
-			var fn = context[inMethod] || inMethod;
-			if (fn && fn.apply) {
-				return fn.apply(context, inArguments || []);
-			}
-		}
 	};
 
 	/**

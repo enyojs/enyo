@@ -11,7 +11,7 @@
 	},
 	testJsonParseSimple: function() {
 		var obj = enyo.json.parse('{"foo":"bar"}'), err;
-		if (!obj.foo || !(obj.foo === "bar")) {
+		if (!obj.foo || obj.foo !== "bar") {
 			err = "JSON string did not parse correctly";
 		}
 		this.finish(err);

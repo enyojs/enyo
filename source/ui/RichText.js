@@ -71,7 +71,7 @@ enyo.kind({
 			this.selectAll();
 			this.insertAtCursor(this.value);
 		} else {
-			this.setPropertyValue("content", this.value, "contentChanged");
+			this.set("content", this.get("value"));
 		}
 	},
 	//* @public
