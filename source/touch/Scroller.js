@@ -120,6 +120,10 @@ enyo.kind({
 			if (enyo.platform.ie >= 10 && enyo.platform.touch) {
 				return true;
 			}
+			// special detection for FirefoxOS
+			if (enyo.platform.firefox && enyo.platform.touch) {
+				return true;
+			}
 		},
 		/**
 			Returns true if the platform has native div scrollers (desktop
