@@ -322,6 +322,14 @@
     var uid = enyo.uid = function (prefix) {
         return String((prefix? prefix: "") + uidCounter++);
     };
+  
+	enyo._getProp = function(parts, create, context) {
+		var obj = context || enyo.global;
+		for(var i=0, p; obj && (p=parts[i]); i++){
+			obj = (p in obj ? obj[p] : (create ? obj[p]={} : undefined));
+		}
+		return obj;
+	};
 
 	//* @public
 
@@ -817,6 +825,22 @@
 	*/
 	enyo.asyncMethod = function(inScope, inMethod/*, inArgs*/) {
 		return setTimeout(enyo.bind.apply(enyo, arguments), 1);
+	};
+
+	/**
+		Calls named method _inMethod_ (String) on _inObject_ with optional
+		arguments _inArguments_ (Array), if the object and method exist.
+
+			enyo.call(myWorkObject, "doWork", [3, "foo"]);
+	*/
+	enyo.call = function(inObject, inMethod, inArguments) {
+		var context = inObject || this;
+		if (inMethod) {
+			var fn = context[inMethod] || inMethod;
+			if (fn && fn.apply) {
+				return fn.apply(context, inArguments || []);
+			}
+		}
 	};
 
 	/**
