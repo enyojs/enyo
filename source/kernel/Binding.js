@@ -114,6 +114,7 @@
         the optional third parameter helps it to use the correct algorithm.
     */
     var getParts = enyo.Binding.getParts = function (path, context) {
+        if (this.debug) debugger
         var parts;
         var idx = 0;
         var ret = {};
@@ -129,7 +130,7 @@
         root = local? context || owner: context || fromRoot(enyo.global, parts) || owner;
         base = root;
         ret.property = prop = parts.length > 1? parts.pop(): path;
-        if (prop === path) {
+        if (prop === path || (!local && context)) {
             ret.base = base;
         } else {
             cur = base;
@@ -209,12 +210,15 @@
             determined or found.
         */
         setup: function () {
+            var debug = this.debug;
+            // for browsers that support this kind of debugging
+            if (true === debug) debugger
+            // register the binding globally for cleanup purposes
             var connect = this.autoConnect;
             var sync = this.autoSync;
             var source = this.setupSource();
             var target = this.setupTarget();
             var refreshing = this.isRefreshing;
-            // register the binding globally for cleanup purposes
             register(this);
             // setup the transform if we can
             this.setupTransform();
@@ -230,7 +234,8 @@
                         // the source
                         this.setTargetValue(null);
                     }
-                } else return;
+                }
+                return;
             }
             // this will fail silently if setup went aury for
             // either the target or source
