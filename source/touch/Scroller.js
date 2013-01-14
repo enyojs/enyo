@@ -105,9 +105,10 @@ enyo.kind({
 			{os: "android", version: 3},
 			{os: "androidChrome", version: 18},
 			{os: "androidFirefox", version: 16},
+			{os: "firefoxOS", version: 16},
 			{os: "ios", version: 5},
 			{os: "webos", version: 1e9},
-			{os: "blackberry", version:1e9}
+			{os: "blackberry", version:1e9},
 		],
 		//* Returns true if platform should have touch events.
 		hasTouchScrolling: function() {
@@ -118,10 +119,6 @@ enyo.kind({
 			}
 			// special detection for IE10+ on touch devices
 			if (enyo.platform.ie >= 10 && enyo.platform.touch) {
-				return true;
-			}
-			// special detection for FirefoxOS
-			if (enyo.platform.firefox && enyo.platform.touch) {
 				return true;
 			}
 		},
