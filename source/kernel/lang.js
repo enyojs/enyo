@@ -322,14 +322,6 @@
     var uid = enyo.uid = function (prefix) {
         return String((prefix? prefix: "") + uidCounter++);
     };
-  
-	enyo._getProp = function(parts, create, context) {
-		var obj = context || enyo.global;
-		for(var i=0, p; obj && (p=parts[i]); i++){
-			obj = (p in obj ? obj[p] : (create ? obj[p]={} : undefined));
-		}
-		return obj;
-	};
 
 	//* @public
 
