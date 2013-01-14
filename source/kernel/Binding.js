@@ -24,9 +24,6 @@
     
     //*@protected
     Transform.prototype = {
-        stop: function () {
-            throw "stop";
-        },
         transform: function (value, direction) {
             var fn = this.transformer;
             var binding = this.binding;
