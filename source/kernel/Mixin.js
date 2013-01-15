@@ -23,8 +23,8 @@
   
     //*@protected
     Mixin.defaults = {
-        initMixin: enyo.nop,
-        destroyMixin: enyo.nop,
+        initMixin: null,
+        destroyMixin: null,
         name: ""
     };
     
