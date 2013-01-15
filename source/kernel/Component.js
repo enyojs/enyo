@@ -110,9 +110,8 @@ enyo.kind({
 	initComponents: function() {
 		// The _components_ property in kind declarations is renamed to
 		// _kindComponents_ by the Component subclass mechanism.  This makes it
-		// easy to distinguish kindComponents from the components in
-		// _this.components_, without the code writer's having to worry about the
-		// actual difference.
+		// easy for the developer to distinguish kindComponents from the components
+		// in _this.components_, without having to worry about the actual difference.
 		//
 		// Specifically, the difference is that kindComponents are constructed as
 		// owned by this control (whereas components in _this.components_ are not).
