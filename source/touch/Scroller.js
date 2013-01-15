@@ -322,7 +322,7 @@ enyo.kind({
 	},
 	//* Scroll to the right edge of the scrolling region.
 	scrollToRight: function() {
-		this.setScrollTop(this.getScrollBounds().maxLeft);
+		this.setScrollLeft(this.getScrollBounds().maxLeft);
 	},
 	//* Scroll to the left edge of the scrolling region.
 	scrollToLeft: function() {
