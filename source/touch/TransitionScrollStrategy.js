@@ -571,10 +571,12 @@ enyo.kind({
 	// region. If not, stop.
 	transitionComplete: function(inSender, inEvent) {
 		// Only process transition complete if sent from this container
-		if(inSender !== this.$.clientContainer) {
+		if(inEvent.originator !== this.$.client) {
 			return;
 		}
+		
 		var posChanged = false;
+		
 		if(this.isInTopOverScroll()) {
 			posChanged = true;
 			this.scrollTop = this.topBoundary;
@@ -582,6 +584,7 @@ enyo.kind({
 			posChanged = true;
 			this.scrollTop = -1*this.bottomBoundary;
 		}
+		
 		if(this.isInLeftOverScroll()) {
 			posChanged = true;
 			this.scrollLeft = this.leftBoundary;
@@ -598,8 +601,8 @@ enyo.kind({
 	},
 	//* Scroll to the specified x and y coordinates
 	scrollTo: function(inX, inY) {
-		this.setScrollTop(-1*inY);
-		this.setScrollLeft(-1*inX);
+		this.setScrollTop(inY);
+		this.setScrollLeft(inX);
 		this.start();
 	},
 	//* Returns the values of _overleft_ and _overtop_, if any.
