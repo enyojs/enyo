@@ -247,7 +247,6 @@ enyo.kind({
 	// Apply transform to scroll the scroller
 	effectScroll: function() {
 		var o = (-1*this.scrollLeft) + "px, " + (-1*this.scrollTop) + "px" + (this.accel ? ", 0" : "");
-		this.log(o);
 		enyo.dom.transformValue(this.$.client, this.translation, o);
 	},
 	// On touch, stop transition by setting transform values to current computed style, and
