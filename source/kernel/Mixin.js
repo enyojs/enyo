@@ -65,6 +65,9 @@
             var properties = this.properties;
             enyo.forEach(properties, function (property) {
                 ret[property] = this[property];
+                if ("function" === typeof this[property]) {
+                    ret[property].nom = this.name + "." + property;
+                }
             }, this);
             return ret;
         }),

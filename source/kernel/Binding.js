@@ -449,13 +449,13 @@
         setSourceValue: function (value) {
             var source = this.source;
             var property = this.sourceProperty;
-            source.set(property, value);
+            source.set(property, value, true);
         },
         //*@protected
         setTargetValue: function (value) {
             var target = this.target;
             var property = this.targetProperty;
-            target.set(property, value);
+            target.set(property, value, true);
         },
         //*@protected
         getSourceValue: function () {

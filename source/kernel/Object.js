@@ -369,8 +369,8 @@ enyo.kind({
         are registered via this method by passing in the property that should
         trigger the listener/observer and an optional context for the method
         to be executed under when it is triggered. Observers cannot be added
-        for the same event more than once. Returns a reference to this object
-        for chaining.
+        for the same event more than once. Returns a reference to the function
+        that was registered so it can be stored for later removal.
     */
     addObserver: function (property, fn, context) {
         var observers = this.observers || (this.observers = {});
@@ -385,13 +385,12 @@ enyo.kind({
         // only add it if it isn't already in the array
         if (!~handlers.indexOf(fn)) handlers.push(fn);
         // allow chaining
-        return this;
+        return fn;
     },
     //*@public
     /**
         Attempts to remove the given listener/observer for the given
-        property if it exists. Typically not called directly. Returns
-        a reference to this object for chaining. If not function is
+        property if it exists. Typically not called directly. If no function is
         supplied it will remove all listeners for the given property.
     */
     removeObserver: function (property, fn) {
@@ -409,7 +408,6 @@ enyo.kind({
             // we need to remove ALL the observers of this property
             delete observers[property];
         }
-        return this;
     },
     //*@public
     /**
@@ -455,10 +453,11 @@ enyo.kind({
     */
     notifyObservers: function (property, prev, value) {
         var observers = this.observers || {};
-        var handlers = observers[property];
+        var handlers = (observers[property] || []);
         var idx = 0;
         var fn;
         var ch = enyo.uncap(property) + "Changed";
+        if ("*" !== property) handlers = enyo.merge(handlers, observers["*"] || []);
         if (handlers) {
             for (; idx < handlers.length; ++idx) {
                 fn = handlers[idx];

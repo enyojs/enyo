@@ -24,83 +24,114 @@ enyo.kind({
     length: 0,
     //*@protected
     create: function () {
+        this.array = this.array || [];
         this.inherited(arguments);
     },
-    //*@protected
-    data: enyo.Computed(function () {
-        return this.array || (this.array = []);
+    //*@public
+    data: enyo.Computed(function (data) {
+        if (data) {
+            this.data = data;
+        } else return this.array;
     }),
     //*@public
     push: function (value) {
-        var ret = this.get("data").push(value);
+        var data = this.get("data");
+        var len = data.length;
+        var ret = data.push(value);
+        this.stopNotifications();
+        this.set("data", data, this.comparator(len));
         this.update();
-        this.bubble("didadd", {value: value});
+        this.startNotifications();
+        this.dispatchBubble("didadd", {value: value}, this);
         return ret;
     },
     //*@public
     pop: function () {
-        var ret = this.get("data").pop();
+        var data = this.get("data");
+        var len = data.length;
+        var ret = data.pop();
+        this.stopNotifications();
+        this.set("data", data, this.comparator(len));
         this.update();
-        this.bubble("didremove", {value: ret});
+        this.startNotifications();
+        this.dispatchBubble("didremove", {value: ret}, this);
         return ret;
     },
     //*@public
+    contains: function (value) {
+        return !~enyo.indexOf(this.get("data"), value)? true: false;
+    },
+    //*@public
     shift: function () {
-        var ret = this.get("data").shift();
+        var data = this.get("data");
+        var len = data.length;
+        var ret = data.shift();
+        this.stopNotifications();
+        this.set("data", data, this.comparator(len));
         this.update();
-        this.bubble("didremove", {value: ret});
+        this.startNotifications();
+        this.dispatchBubble("didremove", {value: ret}, this);
         return ret;
     },
     //*@public
     unshift: function (value) {
-        var ret = this.get("data").unshift(value);
+        var data = this.get("data");
+        var len = data.length;
+        var ret = data.unshift(value);
+        this.stopNotifications();
+        this.set("data", data, this.comparator(len));
         this.update();
-        this.bubble("didadd", {value: value});
+        this.startNotifications();
+        this.dispatchBubble("didadd", {value: value}, this);
         return ret;
     },
     //*@public
     at: function (index) {
-        var ret = this.get("data")[index];
-        return ret;
+        return this.get("data")[index];
     },
     //*@public
     /**
-        Attempt to find a particular entry based on the method
-        passed in as _fn_. The callback will be executed under
-        the context of the _enyo.ArrayController_ unless a context
-        is specified as the optional second parameter. If it
-        successfully matches a result of the callback to Boolean true
-        it will return a hash with a _value_ and _index_ property
-        where _value_ is the actual result and _index_ is the index
-        of the value in the array. If no result is found it will
-        return false.
+        Detects the presence of value in the array. Accepts an iterator
+        and an optional context for that iterator to be called under. Will
+        break and return if the iterator returns a truthy value otherwise
+        it will return false. On truthy value it returns the value.
     */
     find: function (fn, context) {
-        var i = 0, len = this.length, val, ctx = context || this;
-        for (; i < len; ++i) {
-            val = this.at(i);
-            if (fn.call(ctx, val) === true) return {value: val, index: i};
+        var idx = 0;
+        var len = this.length;
+        var val;
+        for (; idx < len; ++idx) {
+            val = this.at(idx);
+            if (fn.call(context || this, val)) return val;
         }
         return false;
     },
     //*@public
     indexOf: function (value) {
-        return this.data.indexOf(value);
+        return enyo.indexOf(this.get("data"), value);
     },
     //*@public
-    // TODO: this is a placeholder
     lastIndexOf: function (value) {
-        if ("function" === typeof this.get("data").lastIndexOf) {
-            return this.get("data").lastIndexOf(value);
-        }
+        return enyo.lastIndexOf(value, this.get("data"));
     },
     //*@public
     splice: function () {
         var data = this.get("data");
-        return data.splice.apply(data, arguments);
+        var len = data.length;
+        data.splice.apply(data, arguments);
+        this.stopNotifications();
+        this.set("data", data, this.comparator(len));
+        this.update();
+        this.startNotifications();
     },
     //*@protected
-    update: function () {
-        if (this.length !== this.get("data").length) this.set("length", this.get("data").length);
+    update: enyo.Observer(function () {
+        this.set("length", this.get("data").length);
+    }, "data"),
+    //*@protected
+    comparator: function (len) {
+        return function (left, right) {
+            return !(right.length === len);
+        }
     }
 });

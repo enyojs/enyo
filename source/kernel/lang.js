@@ -282,10 +282,10 @@
         fn = exists(fn) && "function" === typeof fn? fn: enyo.nop;
         // attempt to find the string path identifier on the kind
         // definition if possible
-        path = this[property];
+        path = enyo.getPath.call(this, property);
         // if there is nothing at the given property fast-path out
         // and return undefined everything
-        if (!exists(path)) return fn();
+        if (!path) return fn();
         // if the path is a string (as in most cases) go ahead and
         // attempt to get the kind definition or instance at the
         // given path
