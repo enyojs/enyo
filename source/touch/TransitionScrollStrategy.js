@@ -191,6 +191,7 @@ enyo.kind({
 		if (!this.dragging) {
 			this.calcBoundaries();
 			this.syncScrollMath();
+			this.stabilize();
 			var dy = this.vertical ? e.wheelDeltaY || e.wheelDelta : 0;
 			var y = parseFloat(this.getScrollTop()) + -1*parseFloat(dy);
 			y = (y*-1 < this.bottomBoundary) ? -1*this.bottomBoundary : (y < this.topBoundary) ? this.topBoundary : y;
