@@ -611,7 +611,7 @@ enyo.kind({
 		if (this.children.length) {
 			return this.generateChildHtml();
 		} else {
-			return this.allowHtml ? this.content : enyo.Control.escapeHtml(this.content);
+			return this.allowHtml ? enyo.sanitizeHtml(this.content) : enyo.Control.escapeHtml(this.content);
 		}
 	},
 	generateChildHtml: function() {
@@ -620,7 +620,7 @@ enyo.kind({
 			var h = c.generateHtml();
 			results += h;
 		}
-		return results;
+		return enyo.sanitizeHtml(results);
 	},
 	generateOuterHtml: function(inContent) {
 		if (!this.tag) {
