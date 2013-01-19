@@ -1,23 +1,46 @@
+//*@public
+/**
+    The _enyo.ObjectController_ is a sophisticated proxy for
+    underlying data. Other objects may observe or bind to its
+    properties as if they were that of the underlying data object.
+    This abstraction allows for the underlying data to be changed
+    or modified without the other objects needing to rebind or
+    be aware of the change. It can be subclassed to deal with
+    specific data object implementations and special needs. This
+    particular controller can handle native data hashes or any
+    _enyo.Object_ or sub-kind. While data is being proxied by the
+    controller, access to its properties should use the _get_ and
+    _set_ method of the controller.
+*/
 enyo.kind({
-    name: "enyo.ObjectController",
-    kind: "enyo.Controller",
-    //*@protected
-    isGetting: false,
-    //*@protected
-    alwaysUseData: false,
-    //*@protected
-    registeredListenerOnData: null,
+    
+    // ...........................
+    // PUBLIC PROPERTIES
+    
     //*@public
-    /**
-        Set this property to a method that will be called when
-        the _findAndInstace_ on _data_ is called.
-    */
-    foundData: null,
+    name: "enyo.ObjectController",
+    
+    //*@public
+    kind: "enyo.Controller",
+        
+    // ...........................
+    // PROTECTED PROPERTIES
+    
     //*@protected
-    create: function () {
-        this.inherited(arguments);
-        this.dataDidChange();
-    },
+    _getting: false,
+    
+    //*@protected
+    _useData: false,
+    
+    //*@protected
+    _listener: null,
+    
+    //*@protected
+    _last: null,
+        
+    // ...........................
+    // PUBLIC METHODS
+    
     //*@public
     get: function (prop) {
         var ret;
@@ -25,21 +48,23 @@ enyo.kind({
         // or if the property is data - data is a reserved word
         // in this case otherwise we can't get a reference to the
         // object
-        if (true === this.isGetting || "data" === prop) return this.inherited(arguments);
+        if (true === this._getting || "data" === prop) return this.inherited(arguments);
         // to avoid infinite recursion
-        this.isGetting = true;
+        this._getting = true;
         if (false === (ret = this.getDataProperty(prop))) {
             ret = this.inherited(arguments);
         }
-        this.isGetting = false;
+        this._getting = false;
         return ret;
     },
+    
     //*@public
     set: function (prop, value) {
         if (!this.setDataProperty(prop, value)) {
             return this.inherited(arguments);
         }
     },
+    
     //*@public
     /**
         This method is called by the object-controller's _set_ method
@@ -55,7 +80,7 @@ enyo.kind({
     */
     setDataProperty: function (prop, value) {
         var data = this.get("data");
-        var always = this.alwaysUseData;
+        var always = this._useData;
         var prev;
         if (data && (true === always || data.hasOwnProperty(prop))) {
             // if the data object is a native object then we need to make
@@ -79,6 +104,7 @@ enyo.kind({
         // under any other circumstances return false
         return false;
     },
+    
     //*@public
     /**
         This method is called by the object-controller's _get_ method
@@ -93,30 +119,37 @@ enyo.kind({
     */
     getDataProperty: function (prop) {
         var data = this.get("data");
-        var always = this.alwaysUseData;
+        var always = this._useData;
         if (data && (true === always || data.hasOwnProperty(prop))) {
             return enyo.getPath.call(data, prop);
         }
         // under any other circumstance return false explicitly
         return false;
     },
-    //*@protected
+    
+    //*@public
     /**
-        This method is intended to fire only when the _data_ property is
-        arbitrarily set on the object-controller.
+        Takes a string parameter and returns a boolean true|false
+        depending on whether or not the parameter is an attribute
+        of the data object. If no data is present it will always return
+        false. If the object has its own _isAttribute_ method it will
+        return the the execute method. For more complex implementations
+        overload this method.
     */
-    dataDidChange: enyo.Observer(function () {
-        if (this.lastData) this.releaseData(this.lastData);
-        this.findAndInstance("data", this.foundData || function (ctor, inst) {
-            if (inst) {
-                if (inst instanceof enyo.Object) {
-                    this.initData(inst);
-                }
+    isAttribute: function (prop) {
+        var data = this.get("data");
+        // if the object exists and has its own isAttribute method
+        // use that otherwise use our default
+        if (data) {
+            if ("function" === typeof data.isAttribute) {
+                return data.isAttribute(prop);
+            } else if (data.hasOwnProperty(prop)) {
+                return true;
             }
-        });
-        this.lastData = this.get("data");
-        this.notifyAll();
-    }, "data"),
+        }
+        return false;
+    },
+    
     //*@public
     releaseData: function (data) {
         var data = data || this.get("data");
@@ -124,15 +157,16 @@ enyo.kind({
         // and is a valid enyo object instance
         if (!data || !(data instanceof enyo.Object)) return;
         // reset our always flag
-        this.alwaysUseData = false;
+        this._useData = false;
         // if we had a listener registered on the previous data we
         // need to remove it
-        if (this.registeredListenerOnData) {
-            data.removeObservers("*", this.registeredListenerOnData);
+        if (this._listener) {
+            data.removeObserver("*", this._listener);
         }
         // clear any reference
-        this.lastData = null;
+        this._last = null;
     },
+    
     //*@public
     initData: function (data) {
         // if no data was passed in we try and grab the property
@@ -142,13 +176,32 @@ enyo.kind({
         // and is a valid enyo object instance
         if (!data || !(data instanceof enyo.Object)) return;
         // ok lets go ahead and set our always flag
-        this.alwaysUseData = true;
+        this._useData = true;
         // register ourselves as a global listener on the object
         // via the special attribute '*'
-        this.registeredListenerOnData = data.addObserver("*", this.notifyObservers, this);
+        this._listener = data.addObserver("*", this.notifyObservers, this);
         // go ahead and setup our last reference for the future
-        this.lastData = data;
+        this._last = data;
     },
+    
+    // ...........................
+    // PROTECTED METHODS    
+    
+    //*@protected
+    create: function () {
+        this.inherited(arguments);
+        this.dataDidChange();
+    },
+
+    //*@protected
+    dataFindAndInstance: function (ctor, inst) {
+        if (inst) {
+            if (inst instanceof enyo.Object) {
+                this.initData(inst);
+            }
+        }
+    },
+    
     //*@protected
     /**
         This method attempts to find the correct target(s) and
@@ -172,26 +225,20 @@ enyo.kind({
             }, this);
         }
     },
-    //*@public
+
+    // ...........................
+    // OBSERVERS METHODS    
+
+    //*@protected
     /**
-        Takes a string parameter and returns a boolean true|false
-        depending on whether or not the parameter is an attribute
-        of the data object. If no data is present it will always return
-        false. If the object has its own _isAttribute_ method it will
-        return the the execute method. For more complex implementations
-        overload this method.
+        This method is intended to fire only when the _data_ property is
+        arbitrarily set on the object-controller.
     */
-    isAttribute: function (prop) {
-        var data = this.get("data");
-        // if the object exists and has its own isAttribute method
-        // use that otherwise use our default
-        if (data) {
-            if ("function" === typeof data.isAttribute) {
-                return data.isAttribute(prop);
-            } else if (data.hasOwnProperty(prop)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    dataDidChange: enyo.Observer(function () {
+        if (this._last) this.releaseData(this._last);
+        this.findAndInstance("data");
+        this._last = this.get("data");
+        this.notifyAll();
+    }, "data")
+
 });

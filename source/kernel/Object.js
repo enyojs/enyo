@@ -73,6 +73,15 @@ enyo.kind({
         // set the flag to true and re-call the setup method
         this.setup();
     },
+    //*@protected
+    constructed: function (props) {
+        if (props) {
+            for (var key in props) {
+                if (!props.hasOwnProperty(key)) continue;
+                this[key] = props[key];
+            }
+        }
+    },
     //* @public
     //* Destroys object with passed-in name.
     destroyObject: function(inName) {
@@ -121,22 +130,25 @@ enyo.kind({
     },
     //*@protected
     /**
-        For any property on the given object this method will offload
-        the work of determining the property from its string path,
-        whether or not it can find an instance or constructor for the
-        given kind and pass what it finds back to the callback. The
-        callback can expect to receive two parameters the first being the
-        constructor if it could be determined and the second being an
-        instance of the requested kind if the constructor was found.
-        Most often if the constructor could be determined the instance's
-        owner property will be set to this object (in the callback).
+        This method accepts a string property as its only parameter.
+        The value of this property will be evaluated and if it is itself
+        a string the object will attempt to be resolved. The goal is
+        to determine of the the property is a constructor, an instance or
+        nothing. See _lang.js#enyo.findAndInstance_ for more information.
+        
+        If a method exists of the form `{property}FindAndInstance` it will
+        be used as the callback accepting two parameters, the constructor
+        if it was found and the instance if it was found or created,
+        respectively. This allows for those methods to be overloaded by
+        subkinds.
     */
-    findAndInstance: function (property, fn) {
+    findAndInstance: function (property) {
         // if there isn't a property do nothing
         if (!enyo.exists(property)) return;
+        var fn = this[property + "FindAndInstance"];
         // if we have a callback bind it to the given object so that
         // it will be called under the correct context, if it has
-        // already been bound this is pretty harmless
+        // already been bound this is harmless
         fn = enyo.exists(fn) && "function" === typeof fn? enyo.bind(this, fn): null;
         // go ahead and call the enyo scoped version of this method
         return enyo.findAndInstance.call(this, property, fn);
@@ -337,6 +349,7 @@ enyo.kind({
     setupObservers: function (force) {
         if (false === this.initObservers && !force) return;
         this.initObservers = false;
+        this.didSetupObservers = true;
         var key;
         var prop;
         var idx;
@@ -650,6 +663,7 @@ enyo.kind({
     extendMethod: function (property, fn, ext) {
         var base = this[property];
         var computed = !!fn.isProperty;
+        var observer = !!fn.isObserver;
         var method;
         // proxy the method once so it will be applied to the
         // correct context (not the same as binding as enyo.bind)
@@ -669,6 +683,9 @@ enyo.kind({
         if (true === computed) {
             method.isProperty = true;
             method.properties = fn.properties || [];
+        } else if (true === observer) {
+            method.isObserver = true;
+            method.events = fn.events || [];
         }
         // mark it as a method that was extended
         method.isExtended = true;

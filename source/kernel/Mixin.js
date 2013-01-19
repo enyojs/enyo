@@ -43,6 +43,9 @@
             else mixins.push(this.name);
             target.extend(this.get("extension"));
             this.injectDestructor(target);
+            if (true === target.didSetupObservers) {
+                target.setupObservers(true);
+            }
             // if the target has not setup its bindings it is always safer
             // and sometimes mandatory to queue the mixin initialization 
             if (this.initMixin) {

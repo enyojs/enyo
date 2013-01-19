@@ -320,6 +320,7 @@ enyo.kind({
 		references the component that triggered the event in the first place.
 	*/
 	bubble: function(inEventName, inEvent, inSender) {
+        if (this._locked) return;
 		var e = inEvent || {};
 		// FIXME: is this the right place?
 		if (!("originator" in e)) {
@@ -347,6 +348,7 @@ enyo.kind({
 		references the component that triggered the event in the first place.
 	*/
 	bubbleUp: function(inEventName, inEvent, inSender) {
+        if (this._locked) return;
 		// Bubble to next target
 		var next = this.getBubbleTarget();
 		if (next) {
@@ -369,6 +371,7 @@ enyo.kind({
 			ontap: "tapHandler"
 	*/
 	dispatchEvent: function(inEventName, inEvent, inSender) {
+        if (this._locked) return;
 		// bottleneck event decoration
 		this.decorateEvent(inEventName, inEvent, inSender);
 		
@@ -392,6 +395,7 @@ enyo.kind({
 	},
 	// internal - try dispatching event to self, if that fails bubble it up the tree
 	dispatchBubble: function(inEventName, inEvent, inSender) {
+        if (this._locked) return;
 		// Try to dispatch from here, stop bubbling on truthy return value
 		if (this.dispatchEvent(inEventName, inEvent, inSender)) {
 			return true;
@@ -404,6 +408,7 @@ enyo.kind({
 		// both call this method so intermediaries can decorate inEvent
 	},
 	bubbleDelegation: function(inDelegate, inName, inEventName, inEvent, inSender) {
+        if (this._locked) return;
 		// next target in bubble sequence
 		var next = this.getBubbleTarget();
 		if (next) {
@@ -411,6 +416,7 @@ enyo.kind({
 		}
 	},
 	delegateEvent: function(inDelegate, inName, inEventName, inEvent, inSender) {
+        if (this._locked) return;
 		// override this method to play tricks with delegation
 		// bottleneck event decoration
 		this.decorateEvent(inEventName, inEvent, inSender);
@@ -429,6 +435,7 @@ enyo.kind({
 		need to also override _dispatchEvent_.
 	*/
     dispatch: function(inMethodName, inEvent, inSender) {
+        if (this._locked) return;
         var fn = inMethodName && this[inMethodName];
         if (fn) {
             return fn.call(this, inSender || this, inEvent);
@@ -441,6 +448,7 @@ enyo.kind({
 		the event handler.
 	*/
 	waterfall: function(inMessageName, inMessage, inSender) {
+        if (this._locked) return;
 		//this.log(inMessageName, (inSender || this).name, "=>", this.name);
 		if (this.dispatchEvent(inMessageName, inMessage, inSender)) {
 			return true;
@@ -454,10 +462,20 @@ enyo.kind({
 		the event handler.
 	*/
 	waterfallDown: function(inMessageName, inMessage, inSender) {
+        if (this._locked) return;
 		for (var n in this.$) {
 			this.$[n].waterfall(inMessageName, inMessage, inSender);
 		}
-	}
+	},
+    
+    
+    _locked: false,
+    lock: function () {
+        this._locked = true;
+    },
+    unlock: function () {
+        this._locked = false;
+    }
 });
 
 //* @protected

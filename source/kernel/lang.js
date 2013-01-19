@@ -23,8 +23,8 @@
         Takes an array or string as the haystack and a string as the
         needle.
     */
-    var lastIndexOf = enyo.lastIndexOf = function (haystack, needle) {
-        if (haystack.lastIndexOf) return haystack.lastIndexOf(needle);
+    var lastIndexOf = enyo.lastIndexOf = function (needle, haystack, index) {
+        if (haystack.lastIndexOf) return haystack.lastIndexOf(needle, index || haystack.length);
         // in IE8 there is no lastIndexOf for arrays or strings but we
         // treat them slightly differently, this is written for minimal-
         // code as a slight tradeoff in performance but should rarely be
@@ -32,11 +32,12 @@
         var string = ("string" === typeof haystack);
         var rev = (string? haystack.split(""): haystack).reverse();
         var cap = rev.length-1;
+        var len = haystack.length;
         var idx;
         // if it is a string we need to make it a string again for
         // the indexOf method
         if (string) rev = rev.join("");
-        idx = enyo.indexOf(needle, rev);
+        idx = enyo.indexOf(needle, rev, len - (index || len));
         // put the array back the way it was
         if (!string) rev.reverse();
         return -1 === idx? idx: (cap - idx);
@@ -85,7 +86,7 @@
     */
     enyo.getPath = function (path) {
         // if we don't have a path we can't do anything
-        if (!exists(path)) return undefined;
+        if (!exists(path) || null === path) return undefined;
         var idx = 0;
         var val;
         var part;
@@ -141,12 +142,12 @@
         // a computed property and if this is _not a recursive search_
         // go ahead and call it, otherwise return it as a function
         if ("function" === typeof val && true === val.isProperty) {
-            if (true !== recursing) {
+            //if (true !== recursing) {
                 // this allows computed properties to be used as
                 // true computed getters/setters
                 args = enyo.toArray(arguments).slice(1);
                 return val.apply(this, args);
-            }
+            //}
         }
         // otherwise we've reached the end so return whatever we have
         return val;
@@ -484,7 +485,7 @@
                 seen.push(value);
                 // here we check against the entirety of any other values
                 // in the values array starting from the end
-                if (idx === lastIndexOf(values, value)) {
+                if (idx === lastIndexOf(value, values)) {
                     // if this turned out to be true then it is a unique entry
                     // so go ahead and push it to our union array
                     ret.push(value);
@@ -511,11 +512,11 @@
     //*@public
     /**
         Convenience method that takes an array of properties and an object.
-        Will return an array of values as retrieved from the given properties
-        of the object if they exist.
+        Will return a new object with just those properties named in the
+        array if they exist on the base object.
     */
     var only = enyo.only = function (properties, object) {
-        var ret = [];
+        var ret = {};
         var idx = 0;
         var len;
         var property;
@@ -529,9 +530,31 @@
         // the object copy its value to the return array
         for (len = properties.length; idx < len; ++idx) {
             property = properties[idx];
-            if (property in object) ret.push(object[property]);
+            if (property in object) ret[property] = object[property];
         }
         // return the array of values we found for the given properties
+        return ret;
+    };
+    
+    //*@public
+    /**
+        Convenience method that takes 2 objects. The keys of the first objects
+        will be mapped to their values in the returned object should they exist
+        on the second object. It will return
+        a new object with the properties (should they exist) of the first array
+        and the provided object to its equivalent indexed property-name in the
+        second array on the new object. This merely maps the properties named in
+        the first array to the named properties in the second array.
+    */
+    var remap = enyo.remap = function (map, obj) {
+        var ret = {};
+        var key;
+        var val;
+        for (key in map) {
+            if (!obj.hasOwnProperty(key)) continue;
+            val = map[key];
+            if (key in obj) ret[val] = obj[key];
+        }
         return ret;
     };
     

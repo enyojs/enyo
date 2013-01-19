@@ -149,18 +149,20 @@ enyo.kind({
 	controllerChanged: function () {
 	    // first attempt to find the controller from the
 	    // information we've been handed
-        this.findAndInstance("controller", function (ctor, inst) {
-            // if there is no constructor or instance it was not found
-            if (!(ctor || inst)) return;
-            // if a constructor exists we instanced the class and can
-            // claim it as our own
-            if (ctor) inst.set("owner", this);
-            // lets add ourselves as a dispatch listener
-            else inst.addDispatchTarget(this);
-            // either way we need to refresh our bindings
-            this.refreshBindings();
-        });
+        this.findAndInstance("controller");
 	},
+    //*@protected
+    controllerFindAndInstance: function (ctor, inst) {
+        // if there is no constructor or instance it was not found
+        if (!(ctor || inst)) return;
+        // if a constructor exists we instanced the class and can
+        // claim it as our own
+        if (ctor) inst.set("owner", this);
+        // lets add ourselves as a dispatch listener
+        else inst.addDispatchTarget(this);
+        // either way we need to refresh our bindings
+        this.refreshBindings();   
+    },
 	//*@protected
 	dispatchEvent: function (inEventName, inEvent, inSender) {
 	    // if we have a controller attempt to dispatch the event there
