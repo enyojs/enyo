@@ -1,14 +1,13 @@
-// HTML sanitization for platforms that require it
-enyo.sanitizeHtml = function(inContent) {
-	// Querying {toStaticHTML} object - Windows 8
-	return typeof toStaticHTML === "undefined" ? inContent : toStaticHTML(inContent);
-}
-
 // Used when a certain platform restricts functionality due to security
 enyo.execUnsafeLocalFunction = function(e) {
 	// Querying {MSApp} object - Windows 8
-	typeof MSApp === "undefined" ? e() : MSApp.execUnsafeLocalFunction(e);
-}
+	if (typeof MSApp === "undefined") {
+		e();
+	}
+	else {
+		MSApp.execUnsafeLocalFunction(e);
+	}
+};
 
 // machine for a loader instance
 enyo.machine = {
@@ -37,7 +36,7 @@ enyo.machine = {
 		} else {
 			link = function() {
 				document.write('<link href="' + inPath + '" media="screen" rel="' + rel + '" type="' + type + '" />');
-			}
+			};
 			enyo.execUnsafeLocalFunction(link);
 		}
 		if (isLess && window.less) {
@@ -51,7 +50,7 @@ enyo.machine = {
 	},
 	script: function(inSrc, onLoad, onError) {
 		if (!enyo.runtimeLoading) {
-			document.write(enyo.sanitizeHtml('<scri' + 'pt src="' + inSrc + '"' + (onLoad ? ' onload="' + onLoad + '"' : '') + (onError ? ' onerror="' + onError + '"' : '') + '></scri' + 'pt>'));
+			document.write('<scri' + 'pt src="' + inSrc + '"' + (onLoad ? ' onload="' + onLoad + '"' : '') + (onError ? ' onerror="' + onError + '"' : '') + '></scri' + 'pt>');
 		} else {
 			var script = document.createElement('script');
 			script.src = inSrc;
@@ -61,7 +60,7 @@ enyo.machine = {
 		}
 	},
 	inject: function(inCode) {
-		document.write(enyo.sanitizeHtml('<script type="text/javascript">' + inCode + "</script>"));
+		document.write('<scri' + 'pt type="text/javascript">' + inCode + "</scri" + "pt>");
 	}
 };
 
