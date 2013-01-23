@@ -469,7 +469,8 @@ enyo.kind({
 	},
     
     //*@protected
-    _silenced: false,;
+    _silenced: false,
+    
     //*@public
     /**
         This method will keep any events from propagating from or into this
