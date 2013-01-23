@@ -91,6 +91,12 @@
 			// A package is now complete. Pop the block that was interrupted for that package (if any).
 			var block = this.stack.pop();
 			if (block) {
+				// propagate failed scripts to queued block
+				if(enyo.runtimeLoading && inBlock.failed) {
+					block.failed = block.failed || [];
+					block.failed.push.apply(block.failed, inBlock.failed);
+				}
+
 				// block.packageName is the name of the package that interrupted us
 				//this.report("finished package", block.packageName);
 				if (this.verbose) {
@@ -153,6 +159,7 @@
 				if (this.verbose) {
 					console.log("+ module: [" + prefix + "][" + inPath + "]");
 				}
+
 				return this.requireScript(inPath, path, inBlock);
 			} else {
 				// package
@@ -190,8 +197,7 @@
 
 				var failure = function() {
 					inBlock.failed = inBlock.failed || [];
-					// index has to be decremented because it's incremented after reference in continueBlock
-					inBlock.failed.push(inBlock.index-1);
+					inBlock.failed.push(inPath);
 					_this.more(inBlock);
 				}
 
