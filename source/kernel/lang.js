@@ -551,7 +551,6 @@
         var key;
         var val;
         for (key in map) {
-            if (!obj.hasOwnProperty(key)) continue;
             val = map[key];
             if (key in obj) ret[val] = obj[key];
         }
