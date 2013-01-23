@@ -48,7 +48,7 @@ enyo.kind({
         if (value instanceof Array) {
             var removed = {};
             var index;
-            this.lock();
+            this.silence();
             removed.multiple = true;
             removed.value = {};
             for (var idx = 0, len = value.length; idx < len; ++idx) {
@@ -57,7 +57,7 @@ enyo.kind({
                 this.remove(value[idx]);
             }
             
-            this.unlock();
+            this.unsilence();
             this.dispatchBubble("didremove", removed, this);
             return;
         }
@@ -79,14 +79,14 @@ enyo.kind({
         var val2 = data[to];
         data[index] = val2;
         data[to] = val1;
-        this.lock();
+        this.silence();
         this.set("data", data);
-        this.unlock();
+        this.unsilence();
         this.dispatchBubble("didswap", {from: index, to: to}, this);
     },
     
     move: function (index, to) {
-        this.lock();
+        this.silence();
         var value;
         var max = this.get("length")-1;
         if (max < index) index = max;
@@ -101,7 +101,7 @@ enyo.kind({
         if (0 === to) this.unshift(value);
         else this.splice(to, 0, value);
         
-        this.unlock();
+        this.unsilence();
         this.dispatchBubble("didmove", {from: index, to: to}, this);
     },
     
@@ -305,7 +305,7 @@ enyo.kind({
         return function (left, right) {
             return !(right.length === len);
         }
-    }
+    },
 
     // ...........................
     // OBSERVERS METHODS
