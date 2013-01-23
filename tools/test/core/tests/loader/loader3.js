@@ -1,0 +1,1 @@
+window.PACKAGE_TEST = "loaded";
