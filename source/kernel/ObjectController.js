@@ -168,6 +168,29 @@ enyo.kind({
     },
     
     //*@public
+    sync: function () {
+        var observers = this.observers;
+        var observer;
+        var prop;
+        var handlers;
+        var idx = 0;
+        var len;
+        var bnd;
+        for (prop in observers) {
+            handlers = observers[prop];
+            if (!handlers || !handlers.length) continue;
+            for (idx = 0, len = handlers.length; idx < len; ++idx) {
+                observer = handlers[idx];
+                if (observer.bindingId) {
+                    bnd = enyo.Binding.map[observer.bindingId];
+                    if (!bnd) continue;
+                    bnd.sync();
+                }
+            }
+        }
+    },
+    
+    //*@public
     initData: function (data) {
         // if no data was passed in we try and grab the property
         // on our own
