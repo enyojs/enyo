@@ -527,22 +527,38 @@ enyo.kind({
         The queue can be arbitrarily flushed or cleared when ready. If a
         boolean true is passed to this method it will disable the queue as
         well. Disabling the queue will immediately clear (not flush) it as well.
+        Increments an internal counter that requires the _startNotifications_
+        method to be called the same number of times before notifications will
+        be enabled again. The queue, if any, cannot be flushed if the counter
+        is not 0.
     */
     stopNotifications: function (disableQueue) {
         this.allowNotifications = false;
+        this._stop_count += 1;
         if (true === disableQueue) {
             this.disableNotificationQueue();
         }
     },
+    //*@protected
+    _stop_count: 0,
     //*@public
     /**
         Call this method to enable notifications for this object and immediately
-        flush the notification queue. If notifications were already enabled it
-        will have no effect.
+        flush the notification queue if the internal counter is 0. If notifications 
+        were already enabled it will have no effect. Otherwise it will decrement the
+        internal counter. If the counter becomes 0 it will allow notifications and
+        attempt to flush the queue if there is one and it is enabled. This method
+        must be called once for each time the _stopNotifications_ method was called.
+        Passing a boolean true to this method will reenable the notification queue
+        if it was disabled.
     */
-    startNotifications: function () {
-        this.allowNotifications = true;
-        this.flushNotifications();
+    startNotifications: function (enableQueue) {
+        if (0 !== this._stop_count) --this._stop_count;
+        if (0 === this._stop_count) {
+            this.allowNotifications = true;
+            this.flushNotifications();
+        }
+        if (true === enableQueue) this.enableNotificationQueue();
     },
     //*@public
     /**
@@ -570,6 +586,7 @@ enyo.kind({
         queued.
     */
     flushNotifications: function () {
+        if (0 !== this._stop_count) return;
         var queue = this.notificationQueue;
         var fn;
         var property;
