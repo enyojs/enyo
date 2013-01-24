@@ -456,11 +456,6 @@ enyo.kind({
             this._init_values = init;
         }
     },
-    
-    //*@protected
-    comparator: function (left, right) {
-
-    },
 
     // ...........................
     // OBSERVERS METHODS
