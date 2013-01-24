@@ -343,15 +343,12 @@ enyo.kind({
     },
     
     swap: function (index, to) {
-        var data = this.get("data");
-        var val1 = data[index];
-        var val2 = data[to];
-        data[index] = val2;
-        data[to] = val1;
-        this.silence();
-        this.set("data", data);
-        this.unsilence();
-        this.dispatchBubble("didswap", {from: index, to: to}, this);
+        var changeset = {};
+        var from = this[index];
+        var target = this[to];
+        changeset[index] = this[index] = target;
+        changeset[to] = this[to] = from;
+        this.dispatchBubble("didchange", {values: changeset}, this);
     },
     
     //*@public
