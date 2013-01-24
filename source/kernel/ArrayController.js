@@ -270,13 +270,12 @@ enyo.kind({
     
     //*@public
     join: function (separator) {
-        var data = this.get("data");
-        return data.join(separator);
+        this.get("data").join(separator);
     },
     
     //*@public
-    map: function () {
-        
+    map: function (fn, context) {
+        return enyo.map(this.get("data"), fn, context);
     },
     
     //*@public
@@ -330,8 +329,17 @@ enyo.kind({
     },
     
     //*@public
-    reset: function () {
-        
+    reset: function (values) {
+        this.silence();
+        this.stopNotifications(true);
+        if (values) {
+            this.splice.apply(this, [0, this.length].concat(values));
+        } else {
+            this.splice(0, this.length);
+        }
+        this.unsilence();
+        this.startNotifications(true);
+        this.dispatchBubble("didreset", {values: this}, this);
     },
     
     swap: function (index, to) {
