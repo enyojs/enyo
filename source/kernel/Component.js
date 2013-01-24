@@ -467,29 +467,34 @@ enyo.kind({
 			this.$[n].waterfall(inMessageName, inMessage, inSender);
 		}
 	},
-    
     //*@protected
     _silenced: false,
-    
+    //*@protected
+    _silence_count: 0,
     //*@public
     /**
-        This method will keep any events from propagating from or into this
-        component. Calling unsilence will remove this restriction. Calling
-        this method when it is already silenced will do nothing. This will
-        _not_ queue events.
+        Sets a flag that will disable event propagation for this
+        component. Increments the internal counter ensuring that the
+        _unsilence_ method must be called that many times before
+        event propagation will continue.
     */
     silence: function () {
         this._silenced = true;
+        this._silence_count += 1;
     },
     
     //*@public
     /**
-        This method will allow events to propagate from/into this component
-        if they were previously dissalowed via a call to the _silence_ method.
-        Calling this method when it is already unsilenced does nothing.
+        If the internal silence counter is 0 this method will allow
+        event propagation for this component. It will decrement the counter
+        by one otherwise. This method must be called one-time for each
+        _silence_ call.
     */
     unsilence: function () {
-        this._silenced = false;
+        if (0 !== this._silence_count) --this._silence_count;
+        if (0 === this._silence_count) {
+            this._silenced = false;
+        }
     }
 });
 
