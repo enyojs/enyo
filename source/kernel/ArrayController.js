@@ -193,97 +193,101 @@ enyo.kind({
         var elements = enyo.toArray(arguments).slice(2);
         var elen = elements.length;
         var len = this.length;
+        var max = len - 1;
         var ret = [];
-        var changeset = {added: {}, removed: {}, changed: {}};
+        var changeset = {added: {len:0}, removed: {len:0}, changed: {len:0}};
         var pos = 0;
         var idx;
         var count;
-        var val;
+        var range;
         var diff;
         var num;
-        // make sure index is within our valid bounds
         index = index < 0? 0: index >= len? len: index;
-        // make sure many is an actual number to use
-        many = many && !isNaN(many) && many + index < len? many: 0;
-        // if we have to remove any elements we need to keep the values
-        // in the return array but also in the removed changeset
+        many = many && !isNaN(many) && many + index <= len? many: 0;
         if (many) {
-            for (idx = index, count = index + many; idx < count; ++idx, ++pos) {
-                // first we grab the value for convenience
-                val = this[idx];
-                // we need to make sure it is in the return array and the changeset
-                changeset.changed[idx] = changeset.removed[idx] = ret[pos] = val;
-                // remove the reference
-                delete this[idx];
+            range = index + many - elen;
+            // special note here about the count variable, the minus one is because
+            // the index in this operation is included in the many variable amount
+            for (idx = index, count = index + many - 1 ; idx <= count; ++idx, ++pos) {
+                ret[pos] = this[idx];
+                if (elen && elen >= many) {
+                    changeset.changed[idx] = this[idx];
+                    changeset.changed.len++;
+                } else if (elen && elen < many && idx < range) {
+                    changeset.changed[idx] = this[idx];
+                    changeset.changed.len++;
+                } else {
+                    num = max - (count - idx);
+                    changeset.removed[num] = this[num];
+                    changeset.removed.len++;
+                }
             }
         }
-        // now we need to figure out if we need to add elements back in
-        if (elen) {
-            // if the count of new elements is greater than the number of removed
-            // elements then we need to reindex the remaining elements to the end
-            // of the new elements before adding them
-            if (elen > many) {
-                diff = elen - many;
-                pos = len - 1;
-                //for (; pos < len; ++pos) this[pos + diff] = this[pos];
-                for (; pos >= index; --pos) this[pos + diff] = this[pos];
-                // we added more than we removed so we will not be notifying
-                // of a removal
-                changeset.removed = null;
-                // update our length
-                this.length = len + diff;
-            }
-            // if there were the same we don't do anything
-            // now we instert the new elements
-            pos = index;
-            num = pos + elen;
-            idx = 0;
-            if (pos >= num) changeset.changed = null;
-            for (; pos < num; ++pos, ++idx) {
-                changeset.changed[pos] = changeset.added[pos] = this[pos] = elements[idx];
-            }
-        } else if (!elen || elen < many) {
-            // if the number of elements to add are less than the number removed
-            // the we need to reindex everything after where the elements are added
-            // by shifting them up the difference
+        if (elen && elen > many) {
+            diff = elen - many;
+            pos = max;
+            for (; pos >= index && pos < len; --pos) this[pos+diff] = this[pos];
+            this.length += diff;
+        } else {
             diff = many - (elen? elen: 0);
-            pos = index + diff;
-            for (; pos < len; ++pos) this[pos - diff] = this[pos];
-            for (pos = len - diff; pos < len; ++pos) delete this[pos];
-            changeset.added = null;
-            // update our length
-            this.length = len - diff;
+            pos = index + many;
+            for (; pos < len; ++pos) {
+                this[pos-diff] = this[pos];
+                changeset.changed[pos-diff] = this[pos-diff];
+                changeset.changed.len++;
+            }
+            idx = this.length -= diff;
+            for (; idx < len; ++idx) delete this[idx];
         }
-        // update our last modified time
-        this._modified = enyo.bench();
-        // this is an arbitrary ordering
-        if (changeset.changed) {
-            this.dispatchBubble("didchange", {values: changeset.changed}, this);
+        if (elen) {
+            pos = 0;
+            idx = index;
+            diff = many? many > elen? many - elen: elen - many: 0;
+            for (; pos < elen; ++idx, ++pos) {
+                this[idx] = elements[pos];
+                if (len && idx < len) {
+                    changeset.changed[idx] = this[idx];
+                    changeset.changed.len++;
+                }
+                if (!len || (diff && pos >= diff) || !many) {
+                    changeset.added[len+pos-diff] = this[len+pos-diff];
+                    changeset.added.len++;
+                }
+            }
         }
-        if (changeset.added) {
+        if (changeset.removed.len) {
+            delete changeset.removed.len;
+            this.dispatchBubble("didremove", {values: changeset.removed}, this);
+        }
+        if (changeset.added.len) {
+            delete changeset.added.len;
             this.dispatchBubble("didadd", {values: changeset.added}, this);
         }
-        if (changeset.removed) {
-            this.dispatchBubble("didremove", {values: changeset.removed}, this);
+        if (changeset.changed.len) {
+            delete changeset.changed.len;
+            this.dispatchBubble("didchange", {values: changeset.changed}, this);
         }
         return ret;
     },
     
-    join: function (by) {
+    //*@public
+    join: function (separator) {
         var data = this.get("data");
-        return data.join(by || "");
+        return data.join(separator);
     },
     
+    //*@public
     map: function () {
         
     },
     
-    filter: function (fn, data) {
-        return enyo.filter(data || this.get("data"), fn);
+    //*@public
+    filter: function (fn, context) {
+        return enyo.filter(this.get("data"), fn, context);
     },
     
     // ...........................
-    // CUSTOM MUTATORS
+    // CUSTOM API
     
     //*@public
     add: function (value, at) {
@@ -336,26 +340,42 @@ enyo.kind({
         this.dispatchBubble("didswap", {from: index, to: to}, this);
     },
     
+    //*@public
     move: function (index, to) {
+        var val;
+        var len = this.length;
+        var max = len - 1;
+        // normalize the index to be the min or max
+        index = index < 0? 0: index >= len? max: index;
+        // same for the target index
+        to = to < 0? 0: to >= len? max: to;
+        // if they are the same there's nothing to do
+        if (index === to) return;
+        // capture the value at index so we can set the new
+        // index to the appropriate value
+        val = this[index];
+        // we need to make sure any operations we do don't
+        // communicate the changes until we are done
+        // and because this is a special operation we have our
+        // own event they must respond to not a global change
+        // although this will cause the cache to need to
+        // be updated
         this.silence();
-        var value;
-        var max = this.get("length")-1;
-        if (max < index) index = max;
-        if (0 > index) index = 0;
-        if (max < to) to = max;
-        if (0 > to) to = 0;
-        
-        value = this.at(index);
-        
-        if (max === index) this.pop();
+        this.stopNotifications(true);
+        // if the index is the top we don't want to do extra
+        // calculations or indexing on this step so just
+        // pop the value
+        if (index === max) this.pop();
+        // unforunately we need to splice the value out of the
+        // dataset before reinserting it at the appropriate spot
         else this.splice(index, 1);
-        if (0 === to) this.unshift(value);
-        else this.splice(to, 0, value);
-        
+        // we turn events and notifications back on here so that
+        // they can produce the final changeset appropriately
         this.unsilence();
-        this.dispatchBubble("didmove", {from: index, to: to}, this);
+        this.startNotifications(true);
+        // readd the value at the correct index
+        this.splice(to, 0, val);
     },
-    
     
     //*@public
     contains: function (value) {
@@ -364,12 +384,8 @@ enyo.kind({
 
     //*@public
     at: function (index) {
-        return this.get("data")[index];
+        return this[index];
     },
-    
-    // ...........................
-    // ECMAScript
-    
 
     //*@public
     /**
