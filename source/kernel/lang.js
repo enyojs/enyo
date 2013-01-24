@@ -9,6 +9,18 @@
     */
     var uidCounter = 0;
     
+    //*@protected
+    /**
+        Used internally for benchmarking or for internal time comparison
+        without the overhead of the Date object's _now_ method.
+    */
+    enyo.ready(function () {
+        var perf = window.performance = window.performance || {};
+        perf.now = perf.now || perf.mozNow || perf.msNow || perf.oNow || perf.webkitNow || enyo.now;
+        // now allow this to be accessed via the enyo namespace
+        enyo.bench = function () {return perf.now()};
+    });
+    
     //*@public
     /**
         Simple test condition to determine if a target is undefined.
