@@ -416,6 +416,71 @@ enyo.kind({
         return false;
     },
     
+    //*@public
+    /**
+        Because the controller cannot detect reassignment to its
+        indices (e.g. myvar[3] = "touché") you can do your own custom
+        assignment and call this method once when you are finished -
+        __if the changes need to be acknowledged in order for notifications
+        and events to be sent__. Otherwise, there is no need to call the
+        method. There are two ways to call it, without any parameters or
+        with an array (or hash whose keys will be used as an array) of the
+        indices that have changed. When called
+        without parameters it will search for changed indeces against
+        its cached dataset using direct comparison (or if a _comparator_
+        method exists on the controller it will use the result from that
+        to determine equality). On larger datasets this is less than ideal.
+        If possible, keep track of the indices that have changed and pass those
+        to this method so it can simply update its cache and notify observers
+        and listeners of the changes to those indices.
+        
+        It is important to note that, when using native JavaScript objects
+        the reference is shared. If a property on the has is directly set
+        and this method is called it will be impossible for it to detect changes
+        since the references in the comparator are the same. If using native
+        objects as your data container it is imperative that you provide the
+        indices that have changed to this method. The alternative (and advisable
+        path) is to use an _enyo.ObjectController_ to proxy the data of the underlying
+        hash and use the setter/getter of that controller that will automatically
+        trigger the correct updates when a property has changed.
+    */
+    changed: function (changed) {
+        var changeset = {};
+        var pos = 0;
+        var len;
+        var indices;
+        var idx;
+        var dataset;
+        var val;
+        if (changed) {
+            if (changed instanceof Array) indices = changed.slice();
+            else indices = enyo.keys(changed);
+        } else {
+            indices = [];
+            len = this.length;
+            dataset = this.get("data");
+            for (; pos < len; ++pos) {
+                val = dataset[pos];
+                if (!this.comparator(this[pos], val)) {
+                    changeset[pos] = this[pos];
+                    indices.push(pos);
+                }
+            }
+        }
+        if (!indices.length) return;
+        for (len = indices.length; pos < len; ++pos) {
+            idx = indices[pos];
+            changeset[idx] = this[idx];
+        }
+        this._modified = enyo.bench();
+        this.dispatchBubble("didchange", {values: changeset}, this);
+    },
+    
+    //*@public
+    comparator: function (left, right) {
+        return left === right;
+    },
+    
     // ...........................
     // PROTECTED METHODS
      
@@ -455,14 +520,6 @@ enyo.kind({
             }
             this._init_values = init;
         }
-    },
-
-    // ...........................
-    // OBSERVERS METHODS
-    
-    //*@protected
-    update: enyo.Observer(function () {
-        this.set("length", this.get("data").length);
-    }, "data")
+    }
 
 });
