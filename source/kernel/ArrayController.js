@@ -216,11 +216,9 @@ enyo.kind({
                 } else if (elen && elen < many && idx < range) {
                     changeset.changed[idx] = this[idx];
                     changeset.changed.len++;
-                } else {
-                    num = max - (count - idx);
-                    changeset.removed[num] = this[num];
-                    changeset.removed.len++;
                 }
+                changeset.removed[idx] = this[idx];
+                changeset.removed.len++;
             }
         }
         if (elen && elen > many) {
@@ -300,26 +298,34 @@ enyo.kind({
     
     //*@public
     remove: function (value, index) {
+        var changeset;
+        var idx;
+        var len;
+        var start = 0;
         if (value instanceof Array) {
-            var removed = {};
-            var index;
+            changeset = {removed: {}, changed: {}};
+            idx = 0;
+            len = value.length;
             this.silence();
-            removed.multiple = true;
-            removed.value = {};
-            for (var idx = 0, len = value.length; idx < len; ++idx) {
+            this.stopNotifications(true);
+            for (; idx < len; ++idx) {
                 index = this.indexOf(value[idx]);
-                removed.value[index] = value[idx];
-                this.remove(value[idx]);
+                if (index < start) start = index;
+                changeset.removed[idx] = value[idx];
+                this.remove(value[idx], index);
             }
-            
+            // we need to create the changeset for any indeces below
+            // the lowest index we found
+            for (idx = start, len = this.length; idx < len; ++idx) {
+                changeset.changed[idx] = this[idx];
+            }
             this.unsilence();
-            this.dispatchBubble("didremove", removed, this);
-            return;
-        }
-        
-        var idx = index || this.indexOf(value);
-        if (!!~idx) {
-            this.splice(idx, 1);
+            this.startNotifications(true);
+            this.dispatchBubble("didremove", {values: changeset.removed}, this);
+            this.dispatchBubble("didchange", {values: changeset.changed}, this);
+        } else {
+            idx = !isNaN(index)? index: this.indexOf(value);
+            if (!!~idx) this.splice(idx, 1);
         }
     },
     
