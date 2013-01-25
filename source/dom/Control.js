@@ -784,18 +784,12 @@ enyo.kind({
 	},
 	//* Return true if this and all parents are showing
 	getAbsoluteShowing: function() {
-		var b = this.getBounds();
-		var c = this;
-		
-		if(!b) {
-			return true;
-		}
-		else if(b.height !== 0 && b.width !== 0) {
-			return true;
-		}
-		
+		var c = this,
+			b;
+
 		while(c) {
-			if(c.getShowing() === false) {
+			b = c.getBounds();
+			if(c.getShowing() === false || (b.height === 0 && b.width === 0)) {
 				return false;
 			}
 			c = c.parent;
