@@ -260,7 +260,6 @@ enyo.kind({
     dataDidChange: enyo.Observer(function () {
         if (this._last) this.releaseData(this._last);
         this.findAndInstance("data");
-        this._last = this.get("data");
         this.notifyAll();
     }, "data")
 
