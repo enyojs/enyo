@@ -476,7 +476,8 @@
             // if it is a string we try and locate it on the owner
             // or as a global method
             if ("string" === typeof transform) {
-                transform = owner[transform] || enyo.getPath.call(enyo.global, transform);
+                transform = owner[transform] || enyo.getPath.call(owner, transform)
+                    || enyo.getPath.call(enyo.global, transform);
             } else if ("function" === typeof transform) {
                 transform = this.transform;
             }
