@@ -55,16 +55,6 @@ enyo.kind({
             return store;
         }
     }, "length"),
-    
-    //*@public
-    /**
-        If the _store_ property is set to a mixin the array controller
-        will use an internal array object. For large datasets this is
-        advised as it will enhance performance. It will, however, also
-        require the use of the _at_ accessor method as opposed to the
-        bracket index-accessor operators.
-    */
-    store: null,
    
     // ...........................
     // PROTECTED PROPERTIES
@@ -486,16 +476,10 @@ enyo.kind({
      
     //*@protected
     create: function () {
-        // if the store property is true this controller will apply
-        // a special mixin that replaces its default methods with those
-        // designed to work with an underlying array structure
-        if (this.store) this.extend(this.store);
-        else {
-            // initialize the cached and modified times
-            this._cached = this._modified = enyo.bench();
-            // initialize the internal store array
-            this._store = [];
-        }
+        // initialize the cached and modified times
+        this._cached = this._modified = enyo.bench();
+        // initialize the internal store array
+        this._store = [];
         this.inherited(arguments);
         // if there were values waiting to be initialized they couldn't
         // have been until now
