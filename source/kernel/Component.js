@@ -383,7 +383,7 @@ enyo.kind({
 		// try to dispatch this event directly via handlers
 		//
 		
-		if (this.handlers[inEventName] && this.dispatch(this.handlers[inEventName], inEvent, inSender)) {
+		if (this.handlers && this.handlers[inEventName] && this.dispatch(this.handlers[inEventName], inEvent, inSender)) {
 			return true;
 		}
 		//
