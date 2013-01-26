@@ -23,8 +23,8 @@
   
     //*@protected
     Mixin.defaults = {
-        initMixin: enyo.nop,
-        destroyMixin: enyo.nop,
+        initMixin: null,
+        destroyMixin: null,
         name: ""
     };
     
@@ -43,6 +43,9 @@
             else mixins.push(this.name);
             target.extend(this.get("extension"));
             this.injectDestructor(target);
+            if (true === target.didSetupObservers) {
+                target.setupObservers(true);
+            }
             // if the target has not setup its bindings it is always safer
             // and sometimes mandatory to queue the mixin initialization 
             if (this.initMixin) {
@@ -65,6 +68,9 @@
             var properties = this.properties;
             enyo.forEach(properties, function (property) {
                 ret[property] = this[property];
+                if ("function" === typeof this[property]) {
+                    ret[property].nom = this.name + "." + property;
+                }
             }, this);
             return ret;
         }),

@@ -105,6 +105,7 @@ enyo.kind({
 			{os: "android", version: 3},
 			{os: "androidChrome", version: 18},
 			{os: "androidFirefox", version: 16},
+			{os: "firefoxOS", version: 16},
 			{os: "ios", version: 5},
 			{os: "webos", version: 1e9},
 			{os: "blackberry", version:1e9}
@@ -322,7 +323,7 @@ enyo.kind({
 	},
 	//* Scroll to the right edge of the scrolling region.
 	scrollToRight: function() {
-		this.setScrollTop(this.getScrollBounds().maxLeft);
+		this.setScrollLeft(this.getScrollBounds().maxLeft);
 	},
 	//* Scroll to the left edge of the scrolling region.
 	scrollToLeft: function() {

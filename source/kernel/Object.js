@@ -73,6 +73,15 @@ enyo.kind({
         // set the flag to true and re-call the setup method
         this.setup();
     },
+    //*@protected
+    constructed: function (props) {
+        if (props) {
+            for (var key in props) {
+                if (!props.hasOwnProperty(key)) continue;
+                this[key] = props[key];
+            }
+        }
+    },
     //* @public
     //* Destroys object with passed-in name.
     destroyObject: function(inName) {
@@ -121,22 +130,25 @@ enyo.kind({
     },
     //*@protected
     /**
-        For any property on the given object this method will offload
-        the work of determining the property from its string path,
-        whether or not it can find an instance or constructor for the
-        given kind and pass what it finds back to the callback. The
-        callback can expect to receive two parameters the first being the
-        constructor if it could be determined and the second being an
-        instance of the requested kind if the constructor was found.
-        Most often if the constructor could be determined the instance's
-        owner property will be set to this object (in the callback).
+        This method accepts a string property as its only parameter.
+        The value of this property will be evaluated and if it is itself
+        a string the object will attempt to be resolved. The goal is
+        to determine of the the property is a constructor, an instance or
+        nothing. See _lang.js#enyo.findAndInstance_ for more information.
+        
+        If a method exists of the form `{property}FindAndInstance` it will
+        be used as the callback accepting two parameters, the constructor
+        if it was found and the instance if it was found or created,
+        respectively. This allows for those methods to be overloaded by
+        subkinds.
     */
-    findAndInstance: function (property, fn) {
+    findAndInstance: function (property) {
         // if there isn't a property do nothing
         if (!enyo.exists(property)) return;
+        var fn = this[property + "FindAndInstance"];
         // if we have a callback bind it to the given object so that
         // it will be called under the correct context, if it has
-        // already been bound this is pretty harmless
+        // already been bound this is harmless
         fn = enyo.exists(fn) && "function" === typeof fn? enyo.bind(this, fn): null;
         // go ahead and call the enyo scoped version of this method
         return enyo.findAndInstance.call(this, property, fn);
@@ -337,6 +349,7 @@ enyo.kind({
     setupObservers: function (force) {
         if (false === this.initObservers && !force) return;
         this.initObservers = false;
+        this.didSetupObservers = true;
         var key;
         var prop;
         var idx;
@@ -369,8 +382,8 @@ enyo.kind({
         are registered via this method by passing in the property that should
         trigger the listener/observer and an optional context for the method
         to be executed under when it is triggered. Observers cannot be added
-        for the same event more than once. Returns a reference to this object
-        for chaining.
+        for the same event more than once. Returns a reference to the function
+        that was registered so it can be stored for later removal.
     */
     addObserver: function (property, fn, context) {
         var observers = this.observers || (this.observers = {});
@@ -385,13 +398,12 @@ enyo.kind({
         // only add it if it isn't already in the array
         if (!~handlers.indexOf(fn)) handlers.push(fn);
         // allow chaining
-        return this;
+        return fn;
     },
     //*@public
     /**
         Attempts to remove the given listener/observer for the given
-        property if it exists. Typically not called directly. Returns
-        a reference to this object for chaining. If not function is
+        property if it exists. Typically not called directly. If no function is
         supplied it will remove all listeners for the given property.
     */
     removeObserver: function (property, fn) {
@@ -409,7 +421,6 @@ enyo.kind({
             // we need to remove ALL the observers of this property
             delete observers[property];
         }
-        return this;
     },
     //*@public
     /**
@@ -455,10 +466,11 @@ enyo.kind({
     */
     notifyObservers: function (property, prev, value) {
         var observers = this.observers || {};
-        var handlers = observers[property];
+        var handlers = (observers[property] || []);
         var idx = 0;
         var fn;
         var ch = enyo.uncap(property) + "Changed";
+        if ("*" !== property) handlers = enyo.merge(handlers, observers["*"] || []);
         if (handlers) {
             for (; idx < handlers.length; ++idx) {
                 fn = handlers[idx];
@@ -515,22 +527,38 @@ enyo.kind({
         The queue can be arbitrarily flushed or cleared when ready. If a
         boolean true is passed to this method it will disable the queue as
         well. Disabling the queue will immediately clear (not flush) it as well.
+        Increments an internal counter that requires the _startNotifications_
+        method to be called the same number of times before notifications will
+        be enabled again. The queue, if any, cannot be flushed if the counter
+        is not 0.
     */
     stopNotifications: function (disableQueue) {
         this.allowNotifications = false;
+        this._stop_count += 1;
         if (true === disableQueue) {
             this.disableNotificationQueue();
         }
     },
+    //*@protected
+    _stop_count: 0,
     //*@public
     /**
         Call this method to enable notifications for this object and immediately
-        flush the notification queue. If notifications were already enabled it
-        will have no effect.
+        flush the notification queue if the internal counter is 0. If notifications 
+        were already enabled it will have no effect. Otherwise it will decrement the
+        internal counter. If the counter becomes 0 it will allow notifications and
+        attempt to flush the queue if there is one and it is enabled. This method
+        must be called once for each time the _stopNotifications_ method was called.
+        Passing a boolean true to this method will reenable the notification queue
+        if it was disabled.
     */
-    startNotifications: function () {
-        this.allowNotifications = true;
-        this.flushNotifications();
+    startNotifications: function (enableQueue) {
+        if (0 !== this._stop_count) --this._stop_count;
+        if (0 === this._stop_count) {
+            this.allowNotifications = true;
+            this.flushNotifications();
+        }
+        if (true === enableQueue) this.enableNotificationQueue();
     },
     //*@public
     /**
@@ -558,6 +586,7 @@ enyo.kind({
         queued.
     */
     flushNotifications: function () {
+        if (0 !== this._stop_count) return;
         var queue = this.notificationQueue;
         var fn;
         var property;
@@ -651,6 +680,7 @@ enyo.kind({
     extendMethod: function (property, fn, ext) {
         var base = this[property];
         var computed = !!fn.isProperty;
+        var observer = !!fn.isObserver;
         var method;
         // proxy the method once so it will be applied to the
         // correct context (not the same as binding as enyo.bind)
@@ -670,6 +700,9 @@ enyo.kind({
         if (true === computed) {
             method.isProperty = true;
             method.properties = fn.properties || [];
+        } else if (true === observer) {
+            method.isObserver = true;
+            method.events = fn.events || [];
         }
         // mark it as a method that was extended
         method.isExtended = true;

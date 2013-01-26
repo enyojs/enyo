@@ -121,6 +121,10 @@
                 enyo.setPath(props.name, this);
             }
             this.inherited(arguments);
+        },
+        create: function () {
+            this.initComponents();
+            this.inherited(arguments);
             if (true === this.autoStart) this.start();
         },
         //*@protected
@@ -137,7 +141,6 @@
             // we register kind of early in the process in case any controllers
             // or other initialization assumes it will be there...
             register(this);
-            this.initComponents();
             // once the controllers have been initialized we can go ahead and
             // hookup any bindings that were supplied to the application
             this.initBindings = true;

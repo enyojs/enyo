@@ -68,15 +68,12 @@ enyo.kind({
 	},
 	handle: function(inValue, inHandlers) {
 		var r = inHandlers.shift();
-		var fn;
-		var v;
 		if (r) {
 			if (r instanceof enyo.Async) {
 				this.route(r, inValue);
 			} else {
 				// handler can return a new 'value'
-				fn = "function" === typeof r? r: enyo.nop;
-				v = fn.apply(this.context || this, [this, inValue]);
+				var v = enyo.call(this.context || this, r, [this, inValue]);
 				// ... but only if it returns something other than undefined
 				v = (v !== undefined) ? v : inValue;
 				// next handler
