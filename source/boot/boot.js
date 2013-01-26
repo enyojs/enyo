@@ -1,3 +1,14 @@
+// Used when a certain platform restricts functionality due to security
+enyo.execUnsafeLocalFunction = function(e) {
+	// Querying {MSApp} object - Windows 8
+	if (typeof MSApp === "undefined") {
+		e();
+	}
+	else {
+		MSApp.execUnsafeLocalFunction(e);
+	}
+};
+
 // machine for a loader instance
 enyo.machine = {
 	sheet: function(inPath) {
@@ -23,7 +34,10 @@ enyo.machine = {
 			link.type = type;
 			document.getElementsByTagName('head')[0].appendChild(link);
 		} else {
-			document.write('<link href="' + inPath + '" media="screen" rel="' + rel + '" type="' + type + '" />');
+			link = function() {
+				document.write('<link href="' + inPath + '" media="screen" rel="' + rel + '" type="' + type + '" />');
+			};
+			enyo.execUnsafeLocalFunction(link);
 		}
 		if (isLess && window.less) {
 			less.sheets.push(link);
@@ -46,7 +60,7 @@ enyo.machine = {
 		}
 	},
 	inject: function(inCode) {
-		document.write('<script type="text/javascript">' + inCode + "</script>");
+		document.write('<scri' + 'pt type="text/javascript">' + inCode + "</scri" + "pt>");
 	}
 };
 

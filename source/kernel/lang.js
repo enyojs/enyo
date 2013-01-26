@@ -337,7 +337,6 @@
     };
 
 	//* @public
-
 	//* Returns a random Integer between 0 and inBound (0 <= results < inBound).
 	//
 	//		var randomLetter = String.fromCharCode(enyo.irand(26) + 97);
