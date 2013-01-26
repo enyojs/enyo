@@ -73,7 +73,7 @@ enyo.kind({
 		    (literally a constructor as opposed to an instance) it will be owned by
 		    this enyo.Control.
 		*/
-		controller: ""
+		controller: null
 	},
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
@@ -95,6 +95,7 @@ enyo.kind({
 	*/
 	initBindings: false,
 	create: function() {
+        this.silence();
 		// initialize style databases
 		this.initStyles();
 		// superkind initialization
@@ -116,6 +117,7 @@ enyo.kind({
         this.initBindings = true;
         // we now call setup knowing our children have been intitialized properly
 		this.setup();
+        this.unsilence();
 	},
     destroy: function() {
 	    if (this.controller) {
