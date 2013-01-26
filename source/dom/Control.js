@@ -73,7 +73,7 @@ enyo.kind({
 		    (literally a constructor as opposed to an instance) it will be owned by
 		    this enyo.Control.
 		*/
-		controller: ""
+		controller: null
 	},
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
@@ -95,6 +95,7 @@ enyo.kind({
 	*/
 	initBindings: false,
 	create: function() {
+        this.silence();
 		// initialize style databases
 		this.initStyles();
 		// superkind initialization
@@ -116,6 +117,7 @@ enyo.kind({
         this.initBindings = true;
         // we now call setup knowing our children have been intitialized properly
 		this.setup();
+        this.unsilence();
 	},
     destroy: function() {
 	    if (this.controller) {
@@ -149,18 +151,20 @@ enyo.kind({
 	controllerChanged: function () {
 	    // first attempt to find the controller from the
 	    // information we've been handed
-        this.findAndInstance("controller", function (ctor, inst) {
-            // if there is no constructor or instance it was not found
-            if (!(ctor || inst)) return;
-            // if a constructor exists we instanced the class and can
-            // claim it as our own
-            if (ctor) inst.set("owner", this);
-            // lets add ourselves as a dispatch listener
-            else inst.addDispatchTarget(this);
-            // either way we need to refresh our bindings
-            this.refreshBindings();
-        });
+        this.findAndInstance("controller");
 	},
+    //*@protected
+    controllerFindAndInstance: function (ctor, inst) {
+        // if there is no constructor or instance it was not found
+        if (!(ctor || inst)) return;
+        // if a constructor exists we instanced the class and can
+        // claim it as our own
+        if (ctor) inst.set("owner", this);
+        // lets add ourselves as a dispatch listener
+        else inst.addDispatchTarget(this);
+        // either way we need to refresh our bindings
+        this.refreshBindings();   
+    },
 	//*@protected
 	dispatchEvent: function (inEventName, inEvent, inSender) {
 	    // if we have a controller attempt to dispatch the event there
@@ -517,7 +521,7 @@ enyo.kind({
 		// add css to enable hw-accelerated scrolling on non-Android platforms (ENYO-900, ENYO-901)
 		this.setupOverflowScrolling();
 		// generate our HTML
-		pn.innerHTML = this.generateHtml();
+		enyo.dom.setInnerHtml(pn, this.generateHtml());
 		// post-rendering tasks
 		if (this.generated) {
 			this.rendered();
@@ -783,7 +787,7 @@ enyo.kind({
 		if (this.generated) {
 			this.teardownChildren();
 		}
-		this.node.innerHTML = this.generateInnerHtml();
+		enyo.dom.setInnerHtml(this.node, this.generateInnerHtml());
 	},
 	renderStyles: function() {
 		if (this.hasNode()) {

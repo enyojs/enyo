@@ -124,9 +124,8 @@ enyo.kind({
 	initComponents: function() {
 		// The _components_ property in kind declarations is renamed to
 		// _kindComponents_ by the Component subclass mechanism.  This makes it
-		// easy to distinguish kindComponents from the components in
-		// _this.components_, without the code writer's having to worry about the
-		// actual difference.
+		// easy for the developer to distinguish kindComponents from the components
+		// in _this.components_, without having to worry about the actual difference.
 		//
 		// Specifically, the difference is that kindComponents are constructed as
 		// owned by this control (whereas components in _this.components_ are not).
@@ -320,6 +319,7 @@ enyo.kind({
 		references the component that triggered the event in the first place.
 	*/
 	bubble: function(inEventName, inEvent, inSender) {
+        if (this._silenced) return;
 		var e = inEvent || {};
 		// FIXME: is this the right place?
 		if (!("originator" in e)) {
@@ -347,6 +347,7 @@ enyo.kind({
 		references the component that triggered the event in the first place.
 	*/
 	bubbleUp: function(inEventName, inEvent, inSender) {
+        if (this._silenced) return;
 		// Bubble to next target
 		var next = this.getBubbleTarget();
 		if (next) {
@@ -369,6 +370,7 @@ enyo.kind({
 			ontap: "tapHandler"
 	*/
 	dispatchEvent: function(inEventName, inEvent, inSender) {
+        if (this._silenced) return;
 		// bottleneck event decoration
 		this.decorateEvent(inEventName, inEvent, inSender);
 		
@@ -380,7 +382,7 @@ enyo.kind({
 		// try to dispatch this event directly via handlers
 		//
 		
-		if (this.handlers[inEventName] && this.dispatch(this.handlers[inEventName], inEvent, inSender)) {
+		if (this.handlers && this.handlers[inEventName] && this.dispatch(this.handlers[inEventName], inEvent, inSender)) {
 			return true;
 		}
 		//
@@ -392,6 +394,7 @@ enyo.kind({
 	},
 	// internal - try dispatching event to self, if that fails bubble it up the tree
 	dispatchBubble: function(inEventName, inEvent, inSender) {
+        if (this._silenced) return;
 		// Try to dispatch from here, stop bubbling on truthy return value
 		if (this.dispatchEvent(inEventName, inEvent, inSender)) {
 			return true;
@@ -404,6 +407,7 @@ enyo.kind({
 		// both call this method so intermediaries can decorate inEvent
 	},
 	bubbleDelegation: function(inDelegate, inName, inEventName, inEvent, inSender) {
+        if (this._silenced) return;
 		// next target in bubble sequence
 		var next = this.getBubbleTarget();
 		if (next) {
@@ -411,6 +415,7 @@ enyo.kind({
 		}
 	},
 	delegateEvent: function(inDelegate, inName, inEventName, inEvent, inSender) {
+        if (this._silenced) return;
 		// override this method to play tricks with delegation
 		// bottleneck event decoration
 		this.decorateEvent(inEventName, inEvent, inSender);
@@ -429,6 +434,7 @@ enyo.kind({
 		need to also override _dispatchEvent_.
 	*/
     dispatch: function(inMethodName, inEvent, inSender) {
+        if (this._silenced) return;
         var fn = inMethodName && this[inMethodName];
         if (fn) {
             return fn.call(this, inSender || this, inEvent);
@@ -441,6 +447,7 @@ enyo.kind({
 		the event handler.
 	*/
 	waterfall: function(inMessageName, inMessage, inSender) {
+        if (this._silenced) return;
 		//this.log(inMessageName, (inSender || this).name, "=>", this.name);
 		if (this.dispatchEvent(inMessageName, inMessage, inSender)) {
 			return true;
@@ -454,10 +461,40 @@ enyo.kind({
 		the event handler.
 	*/
 	waterfallDown: function(inMessageName, inMessage, inSender) {
+        if (this._silenced) return;
 		for (var n in this.$) {
 			this.$[n].waterfall(inMessageName, inMessage, inSender);
 		}
-	}
+	},
+    //*@protected
+    _silenced: false,
+    //*@protected
+    _silence_count: 0,
+    //*@public
+    /**
+        Sets a flag that will disable event propagation for this
+        component. Increments the internal counter ensuring that the
+        _unsilence_ method must be called that many times before
+        event propagation will continue.
+    */
+    silence: function () {
+        this._silenced = true;
+        this._silence_count += 1;
+    },
+    
+    //*@public
+    /**
+        If the internal silence counter is 0 this method will allow
+        event propagation for this component. It will decrement the counter
+        by one otherwise. This method must be called one-time for each
+        _silence_ call.
+    */
+    unsilence: function () {
+        if (0 !== this._silence_count) --this._silence_count;
+        if (0 === this._silence_count) {
+            this._silenced = false;
+        }
+    }
 });
 
 //* @protected

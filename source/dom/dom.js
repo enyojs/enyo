@@ -221,5 +221,11 @@ enyo.dom = {
 			'height': height,
 			'width': width
 		};
+	},
+	//* use to modify innerHTML in a manner that's safe for Win8 applications
+	setInnerHtml: function(node, html) {
+		enyo.execUnsafeLocalFunction(function() {
+			node.innerHTML = html;
+		});
 	}
 };

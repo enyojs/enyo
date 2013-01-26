@@ -1,4 +1,4 @@
-enyo.ready(function () {
+(function () {
     
     //*@protected
     // each router registers with this list
@@ -25,7 +25,7 @@ enyo.ready(function () {
         For the browsers we actively support, they all support this
         method of registering for hashchange events.
     */
-    enyo.dispatcher.listen(window, "hashchange", hashDidChange);
+    enyo.ready(function () {enyo.dispatcher.listen(window, "hashchange", hashDidChange)});
     
     //*@public
     /**
@@ -308,4 +308,4 @@ enyo.ready(function () {
         }
     });
 
-});
+}());

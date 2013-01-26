@@ -61,6 +61,8 @@ enyo.platform = {
 		{platform: "chrome", regex: /Chrome\/(\d+)[.\d]+/},
 		// Firefox on Android
 		{platform: "androidFirefox", regex: /Android;.*Firefox\/(\d+)/},
+		// FirefoxOS
+		{platform: "firefoxOS", regex: /Mobile;.*Firefox\/(\d+)/},
 		// desktop Firefox
 		{platform: "firefox", regex: /Firefox\/(\d+)/},
 		// Blackberry 10+

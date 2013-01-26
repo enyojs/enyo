@@ -16,5 +16,6 @@ enyo.depends(
 	"Mixin.js",
 	"MultipleDispatchMixin.js",
 	"ViewController.js",
-	"Application.js"
+	"Application.js",
+    "ObjectController.js"
 );
