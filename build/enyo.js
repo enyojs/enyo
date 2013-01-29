@@ -308,7 +308,7 @@ if ("enyo" === a && enyo === o) continue;
 0 === l.length ? !0 === i(a) ? (f = enyo.toArray(arguments).slice(1), a.apply(o, f)) : o[a] = n : ("object" != typeof o[a] && (o[a] = {}), o = o[a]);
 }
 }
-return !0 !== c && (h ? c = h(p, n) : c = p !== n), !0 === c && o.notifyObservers && o.notifyObservers(e, p, n), o;
+return !0 !== c && (h ? c = h(p, n) : c = p !== n), !0 === c && o.notifyObservers && (o.notifyObservers(e, p, n), o.notifyObservers("set:" + e, p, n)), o;
 }, enyo.findAndInstance = function(e, n) {
 var r, i, s;
 return n = t(n) && "function" == typeof n ? n : enyo.nop, s = enyo.getPath.call(this, e), s ? ("string" == typeof s ? (r = enyo.getPath(s), t(r) && "function" != typeof r && (i = r, r = undefined)) : "function" == typeof s ? r = s : i = s, t(r) && !t(i) && (i = new r), t(i) && (this[e] = i), n(r, i)) : n();
@@ -1857,23 +1857,22 @@ enyo.kind({
 name: "enyo.ObjectController",
 kind: "enyo.Controller",
 _getting: !1,
-_useData: !1,
 _listener: null,
 _last: null,
 get: function(e) {
 var t;
-return !0 === this._getting || "data" === e ? this.inherited(arguments) : (this._getting = !0, !1 === (t = this.getDataProperty(e)) && (t = this.inherited(arguments)), this._getting = !1, t);
+return "data" === e ? this.inherited(arguments) : (!1 === (t = this.getDataProperty(e)) && (t = this.inherited(arguments)), t);
 },
 set: function(e, t) {
 if (!this.setDataProperty(e, t)) return this.inherited(arguments);
 },
 setDataProperty: function(e, t) {
-var n = this.get("data"), r = this._useData, i;
-return n && (!0 === r || n.hasOwnProperty(e)) ? (!0 !== r && (i = enyo.getPath.call(n, e), this.stopNotifications(), this.notifyObservers(e, i, t)), enyo.setPath.call(n, e, t), this.startNotifications(), !0) : !1;
+var n = this.get("data");
+return n && this.isAttribute(e) ? (enyo.setPath.call(n, e, t), this.startNotifications(), !0) : !1;
 },
 getDataProperty: function(e) {
-var t = this.get("data"), n = this._useData;
-return t && (!0 === n || t.hasOwnProperty(e)) ? enyo.getPath.call(t, e) : !1;
+var t = this.get("data");
+return t && this.isAttribute(e) ? enyo.getPath.call(t, e) : !1;
 },
 isAttribute: function(e) {
 var t = this.get("data");
@@ -1886,7 +1885,7 @@ return !1;
 releaseData: function(e) {
 var e = e || this.get("data");
 if (!e || !(e instanceof enyo.Object)) return;
-this._useData = !1, this._listener && e.removeObserver("*", this._listener), this._last = null;
+this._listener && e.removeObserver("*", this._listener), this._last = null;
 },
 sync: function() {
 var e = this.observers, t, n, r, i = 0, s, o;
@@ -1906,13 +1905,10 @@ o.sync();
 initData: function(e) {
 var e = e || this.get("data");
 if (!e || !(e instanceof enyo.Object)) return;
-this._useData = !0, this._listener = e.addObserver("*", this.notifyObservers, this), this._last = e;
+this._use_data = !0, this._listener = e.addObserver("*", this.notifyObservers, this), this._last = e;
 },
 create: function() {
 this.inherited(arguments), this.dataDidChange();
-},
-dataFindAndInstance: function(e, t) {
-t && t instanceof enyo.Object && this.initData(t);
 },
 notifyAll: function() {
 var e = this.observers, t, n;
@@ -1925,7 +1921,7 @@ t = e[n], enyo.forEach(t, function(e) {
 }
 },
 dataDidChange: enyo.Observer(function() {
-this._last && this.releaseData(this._last), this.findAndInstance("data"), this.notifyAll();
+this._last && this.releaseData(this._last), this.initData(), this.notifyAll();
 }, "data")
 });
 
