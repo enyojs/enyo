@@ -270,6 +270,7 @@
         if (true === notify) {
             if (cur.notifyObservers) {
                 cur.notifyObservers(path, prev, value);
+                cur.notifyObservers("set:" + path, prev, value);
             }
         }
         // return the callee
