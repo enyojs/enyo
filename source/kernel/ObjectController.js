@@ -178,8 +178,6 @@ enyo.kind({
         // we need to go ahead and double check that the data exists
         // and is a valid enyo object instance
         if (!data || !(data instanceof enyo.Object)) return;
-        // ok lets go ahead and set our always flag
-        this._use_data = true;
         // register ourselves as a global listener on the object
         // via the special attribute '*'
         this._listener = data.addObserver("*", this.notifyObservers, this);
