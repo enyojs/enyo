@@ -51,7 +51,7 @@
 
 	/**
 		Returns a random Integer between 0 and _inBound_ (0 <= random integer < _inBound_).
-	
+
 			var randomLetter = String.fromCharCode(enyo.irand(26) + 97);
 	*/
 	enyo.irand = function(inBound) {

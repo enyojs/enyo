@@ -78,6 +78,7 @@ enyo.kind({
 	},
 	defaultKind: "Component",
 	handlers: {},
+	__jobs: {},
 	toString: function() {
 		return this.kindName;
 	},
@@ -138,6 +139,7 @@ enyo.kind({
 	destroy: function() {
 		this.destroyComponents();
 		this.setOwner(null);
+		this.stopAllJobs();
 		// JS objects are never truly destroyed (GC'd) until all references are gone,
 		// we might have some delayed action on this object that needs to have access
 		// to this flag.
@@ -406,6 +408,11 @@ enyo.kind({
 		}
 		return this.bubbleDelegation(inDelegate, inName, inEventName, inEvent, inSender);
 	},
+	stopAllJobs: function() {
+		for (var jobName in this.__jobs) {
+			this.stopJob(jobName);
+		}
+	},
 	//* @public
 	/**
 		Dispatches the event to named delegate _inMethodName_, if it exists.
@@ -442,6 +449,34 @@ enyo.kind({
 	waterfallDown: function(inMessageName, inMessage, inSender) {
 		for (var n in this.$) {
 			this.$[n].waterfall(inMessageName, inMessage, inSender);
+		}
+	},
+	/**
+		Create a new job tied to this instance of the component. If the component is
+		destroyed, any jobs associated it will also be stopped.  If you start a job
+		that is pending with the same name, the original job will be stopped, making this
+		useful for timeouts that need to be reset.
+	*/
+	startJob: function(inJobName, inJob, inWait) {
+		// allow strings as job names, they map to local method names
+		if (enyo.isString(inJob)) {
+			inJob = this[inJob];
+		}
+		// stop any existing jobs with same name
+		this.stopJob(inJobName);
+		this.__jobs[inJobName] = setTimeout(enyo.bind(this, function() {
+			this.stopJob(inJobName);
+			// call "inJob" with this bound to the component.
+			inJob.call(this);
+		}), inWait);
+	},
+	/**
+		Stop a component-specific job before it has been activated.
+	*/
+	stopJob: function(inJobName) {
+		if (this.__jobs[inJobName]) {
+			clearTimeout(this.__jobs[inJobName]);
+			delete this.__jobs[inJobName];
 		}
 	}
 });
