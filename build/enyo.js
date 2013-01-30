@@ -695,11 +695,11 @@ this.disconnectSource(), this.disconnectTarget(), this.isConnected = !1;
 },
 setupSource: function() {
 var e, t, n = this.sourceProperty, r = this.source, i = this.from;
-return i ? (e = o.call(this, i, r), t = e.base, n = e.property, !t || "object" != typeof t ? !1 : (this.source = t, this.sourceProperty = n, !0)) : !1;
+return r && n ? !0 : i ? (e = o.call(this, i, r), t = e.base, n = e.property, !t || "object" != typeof t ? !1 : (this.source = t, this.sourceProperty = n, !0)) : !1;
 },
 setupTarget: function() {
 var e, t, n = this.targetProperty, r = this.target, i = this.to;
-return i ? (e = o.call(this, i, r), t = e.base, n = e.property, !t || "object" != typeof t ? !1 : (this.target = t, this.targetProperty = n, !0)) : !1;
+return r && n ? !0 : i ? (e = o.call(this, i, r), t = e.base, n = e.property, !t || "object" != typeof t ? !1 : (this.target = t, this.targetProperty = n, !0)) : !1;
 },
 stop: function() {
 throw "stop-binding";
