@@ -518,4 +518,14 @@
         }
     };
     
+    Binding.extend = function (props) {
+        props = props || {};
+        var ctor = function (){Binding.apply(this, arguments)};
+        var name = props.name;
+        delete props.name;
+        ctor.prototype = enyo.mixin(Object.create(Binding.prototype), props);
+        if (name) enyo.setPath(name, ctor);
+        return ctor;
+    }
+    
 }());

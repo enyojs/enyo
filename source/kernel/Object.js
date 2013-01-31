@@ -242,8 +242,15 @@ enyo.kind({
         var binding;
         var properties = {};
         var bindings = this.bindings;
+        var ctor;
+        var kind;
         for (; idx < len; ++idx) enyo.mixin(properties, definitions[idx]);
-        binding = new enyo.Binding({owner: this, autoConnect: true}, properties);
+        if ((kind = properties.kind)) {
+            if ("string" === typeof kind) ctor = enyo.getPath(properties.kind);
+            else if ("function" === typeof kind) ctor = kind;
+        }
+        if (!ctor || "function" !== typeof ctor) ctor = enyo.Binding;
+        binding = new ctor({owner: this, autoConnect: true}, properties);
         bindings.push(binding);
         return binding;
     },
