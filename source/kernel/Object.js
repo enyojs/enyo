@@ -63,6 +63,10 @@ enyo.kind({
     //*@public
     // the computed properties object
     computed: null,
+    //*@public
+    // The deafult binding kind to use unless overridden by
+    // an individual binding definition
+    defaultBindingKind: "enyo.Binding",
     constructor: function() {
         enyo._objectCount++;
         // while this setup initializes the object's bindings
@@ -242,6 +246,7 @@ enyo.kind({
         var binding;
         var properties = {};
         var bindings = this.bindings;
+        var def = enyo.getPath(this.defaultBindingKind);
         var ctor;
         var kind;
         for (; idx < len; ++idx) enyo.mixin(properties, definitions[idx]);
@@ -249,7 +254,7 @@ enyo.kind({
             if ("string" === typeof kind) ctor = enyo.getPath(properties.kind);
             else if ("function" === typeof kind) ctor = kind;
         }
-        if (!ctor || "function" !== typeof ctor) ctor = enyo.Binding;
+        if (!ctor || "function" !== typeof ctor) ctor = def;
         binding = new ctor({owner: this, autoConnect: true}, properties);
         bindings.push(binding);
         return binding;
