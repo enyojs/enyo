@@ -779,6 +779,12 @@ destroy: function() {
 if (!0 === this.destroyed) return;
 this.destroyed = !0, this.disconnect(), this.source = null, this.target = null, this.sourceResponder = null, this.targetResponder = null, enyo.Binding.bindingCount--, this.transform && (this.transform.destroy(), this.transform = null), this.owner && this.owner.removeBinding(this), r(this);
 }
+}, i.extend = function(e) {
+e = e || {};
+var t = function() {
+i.apply(this, arguments);
+}, n = e.name;
+return delete e.name, t.prototype = enyo.mixin(Object.create(i.prototype), e), n && enyo.setPath(n, t), t;
 };
 })();
 
@@ -797,6 +803,7 @@ initComputed: !0,
 bindings: null,
 observers: null,
 computed: null,
+defaultBindingKind: "enyo.Binding",
 constructor: function() {
 enyo._objectCount++, this.setup();
 },
@@ -851,9 +858,11 @@ for (r = t.length; n < r; ++n) i = t[n], this.binding(i);
 this.didSetupBindings = !0, this.notifyObservers("didSetupBindings"), this.removeObserver("didSetupBindings");
 },
 binding: function() {
-var e = arguments, t = 0, n = e.length, r, i = {}, s = this.bindings;
+var e = arguments, t = 0, n = e.length, r, i = {}, s = this.bindings, o = enyo.getPath(this.defaultBindingKind), u, a;
 for (; t < n; ++t) enyo.mixin(i, e[t]);
-return r = new enyo.Binding({
+if (a = i.kind) "string" == typeof a ? u = enyo.getPath(i.kind) : "function" == typeof a && (u = a);
+if (!u || "function" != typeof u) u = o;
+return r = new u({
 owner: this,
 autoConnect: !0
 }, i), s.push(r), r;
@@ -1120,7 +1129,7 @@ dispatchEvent: function(e, t, n) {
 if (this._silenced) return;
 this.decorateEvent(e, t, n);
 if (this.handlers && this.handlers[e] && this.dispatch(this.handlers[e], t, n)) return !0;
-if (this[e]) return this.bubbleDelegation(this.owner, this[e], e, t, this);
+if (this[e]) return "function" == typeof this[e] ? this.dispatch(e, t, n) : this.dispatchBubble(this[e], t, n);
 },
 dispatchBubble: function(e, t, n) {
 if (this._silenced) return;
@@ -1139,7 +1148,7 @@ return this.decorateEvent(n, r, i), e == this ? this.dispatch(t, r, i) : this.bu
 dispatch: function(e, t, n) {
 if (this._silenced) return;
 var r = e && this[e];
-if (r) return r.call(this, n || this, t);
+if (r && "function" == typeof r) return r.call(this, n || this, t);
 },
 waterfall: function(e, t, n) {
 if (this._silenced) return;
@@ -1733,7 +1742,10 @@ var t = this.dispatchTargets;
 t.indexOf(e) === -1 && e !== this && t.push(e), this.inherited(arguments);
 },
 dispatchFrom: function(e, t) {
-return t.dispatchedByController ? t.dispatchController === this ? !0 : !1 : (e === this && (t.dispatchedByController = !0, t.dispatchController = this), !1);
+if (t.dispatchedByController) {
+if (t.dispatchController === this) return !0;
+} else e === this && (t.dispatchedByController = !0, t.dispatchController = this);
+return !1;
 },
 bubbleUp: function(e, t, n) {
 var r;
@@ -1749,13 +1761,7 @@ dispatchEvent: function(e, t, n) {
 return this.dispatchFrom(n, t) ? !1 : this.inherited(arguments);
 },
 bubbleDelegation: function(e, t, n, r, i) {
-if (this.defaultDispatch) {
-if (this.proxiedController) {
-debugger;
-if (this.proxiedController.delegateEvent(e, t, n, r, i)) return !0;
-}
-return this.inherited(arguments);
-}
+this.defaultDispatch && this.inherited(arguments);
 var s = this.get("dispatchTargets");
 enyo.forEach(enyo.clone(s), function(s) {
 s && (s.destroyed ? this.removeDispatchTarget(s) : s.delegateEvent(e, t, n, r, i));
@@ -1821,10 +1827,11 @@ kind: "enyo.ViewController",
 autoStart: !0,
 renderOnStart: !1,
 controllers: null,
+instanceName: "",
 initBindings: !1,
 concat: [ "controllers" ],
 constructor: function(e) {
-e && enyo.exists(e.name) && enyo.setPath(e.name, this), this.inherited(arguments);
+e && enyo.exists(e.name) && (enyo.setPath(e.name, this), this.instanceName = e.name), this.inherited(arguments);
 },
 create: function() {
 this.initComponents(), this.inherited(arguments), !0 === this.autoStart && this.start();
@@ -1843,7 +1850,7 @@ delete e.name, delete e.global, a = r(s), u = enyo.kind(e), enyo.exists(a) ? n !
 });
 },
 namespace: enyo.Computed(function() {
-return r(this.kindName);
+return r(this.instanceName || this.kindName);
 }),
 destroy: function() {
 this.inherited(arguments), n(this);
