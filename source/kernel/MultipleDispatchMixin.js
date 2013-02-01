@@ -39,7 +39,6 @@ enyo.Mixin({
     dispatchFrom: function (sender, event) {
         if (event.dispatchedByController) {
             if (event.dispatchController === this) return true;
-            else return false;
         } else if (sender === this) {
             event.dispatchedByController = true;
             event.dispatchController = this;
