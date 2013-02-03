@@ -75,6 +75,10 @@ enyo.kind({
     setDataProperty: function (prop, value) {
         var data = this.get("data");
         if (data && this.isAttribute(prop)) {
+            if (!(data instanceof enyo.Object)) {
+                this.stopNotifications();
+                this.notifyObservers(prop, this.get(prop), value);
+            }
             // if the object is an enyo object instance its notifications will
             // automatically fire
             enyo.setPath.call(data, prop, value);
