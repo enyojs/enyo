@@ -257,7 +257,7 @@
                     // we update our current reference context and if it does
                     // not exist at the requested path it will be created
                     if ("object" !== typeof cur[target]) cur[target] = {};
-                    cur = cur[target];
+                    cur = isComputed(cur[target])? enyo.getPath.call(cur, target): cur[target];
                 }
             }
         }
