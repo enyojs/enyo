@@ -144,6 +144,13 @@
                 // we recursively call the getPath method using that
                 // as the new context
                 val = enyo.getPath.call(cur[part], {path: path, recursing: true});
+            } else if ("function" === typeof cur[part] && cur[part].isProperty) {
+                // if it is a computed property, we should assume the caller
+                // knows what its doing
+                val = enyo.getPath.call(enyo.getPath.call(cur, part), {
+                    path: path,
+                    recursing: true
+                });
             } else {
                 // we have no idea what we could do because we can't find
                 // anything useful
