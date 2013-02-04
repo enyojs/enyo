@@ -188,6 +188,7 @@ enyo.kind({
         properties.
     */
     setup: function () {
+        this.setupHooks();
         this.setupMixins();
         this.setupObservers();
         this.setupComputed();
@@ -622,6 +623,51 @@ enyo.kind({
             }
         }
     },
+    
+    //*@protected
+    _get_hooks: null,
+    //*@protected
+    _set_hooks: null,
+    //*@protected
+    _did_setup_hooks: false,
+    //*@protected
+    setupHooks: function () {
+        if (true === this._did_setup_hooks) return;
+        this._get_hooks = [];
+        this._set_hooks = [];
+        this._did_setup_hooks = true;
+    },
+    //*@public
+    hook: function (which, how, what) {
+        var hooks = this["_"+which+"_hooks"];
+        hooks.push({path: how, method: what});
+    },
+    
+    //*@protected
+    _check_hooks: function (which, path, value) {
+        var hooks = this["_"+which+"_hooks"];
+        var idx = 0;
+        var len = hooks.length;
+        var hook;
+        for (; idx < len; ++idx) {
+            hook = hooks[idx];
+            if ("string" === typeof hook.path) {
+                if (path === hook.path) {
+                    return hook.method.call(this, path, value);
+                }
+            } else if ("function" === typeof hook.path) {
+                if (true === hook.path(path)) {
+                    return hook.method.call(this, path, value);
+                }
+            } else if (hook.path instanceof RegExp) {
+                if (hook.path.test(path)) {
+                    return hook.method.call(this, path, value);
+                }
+            }
+        }
+        return false;
+    },
+    
     //*@public
     /**
         Call this method with the name (or path) to the desired property or
@@ -636,7 +682,7 @@ enyo.kind({
         forward.
     */
     get: function (path) {
-        return enyo.getPath.apply(this, arguments);
+        return this._check_hooks("get", path) || enyo.getPath.apply(this, arguments);
     },
     //*@public
     /**
@@ -651,7 +697,7 @@ enyo.kind({
         computed properties or observers where necessary.
     */
     set: function (path, value) {
-        return enyo.setPath.apply(this, arguments);
+        return this._check_hooks("set", path, value) || enyo.setPath.apply(this, arguments);
     },
     //*@public
     /**
