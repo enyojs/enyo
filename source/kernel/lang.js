@@ -125,6 +125,13 @@
         path = preparePath(path);
         // find the initial period if any
         idx = path.indexOf(".");
+        
+        
+        if (this._check_hooks) {
+            if (false !== (val = this._check_hooks("get", path))) return val;
+        }
+        
+        
         // if there isn't any try and find the path relative to our
         // current context, this is the fast path
         if (-1 === idx) {
@@ -144,6 +151,13 @@
                 // we recursively call the getPath method using that
                 // as the new context
                 val = enyo.getPath.call(cur[part], {path: path, recursing: true});
+            } else if ("function" === typeof cur[part] && cur[part].isProperty) {
+                // if it is a computed property, we should assume the caller
+                // knows what its doing
+                val = enyo.getPath.call(enyo.getPath.call(cur, part), {
+                    path: path,
+                    recursing: true
+                });
             } else {
                 // we have no idea what we could do because we can't find
                 // anything useful
@@ -203,6 +217,7 @@
         var idx;
         var target;
         var args;
+        var check;
         var parts;
         var notify = true === force? true: false;
         var comparator = "function" === typeof force? force: undefined;
@@ -210,6 +225,13 @@
         var prev = enyo.getPath.call(cur, path);
         // clear any leading periods
         path = preparePath(path);
+        
+        
+        if (this._check_hooks) {
+            if (false !== (check = this._check_hooks("set", path, value))) return check;
+        }
+        
+        
         // find the inital index of any period in the path
         idx = path.indexOf(".");
         // if there wasn't one we can attempt to fast-path this setter
@@ -250,7 +272,7 @@
                     // we update our current reference context and if it does
                     // not exist at the requested path it will be created
                     if ("object" !== typeof cur[target]) cur[target] = {};
-                    cur = cur[target];
+                    cur = isComputed(cur[target])? enyo.getPath.call(cur, target): cur[target];
                 }
             }
         }
@@ -270,6 +292,7 @@
         if (true === notify) {
             if (cur.notifyObservers) {
                 cur.notifyObservers(path, prev, value);
+                cur.notifyObservers("set:" + path, prev, value);
             }
         }
         // return the callee

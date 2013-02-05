@@ -389,7 +389,27 @@ enyo.kind({
 		// try to delegate this event to our owner via event properties
 		//
 		if (this[inEventName]) {
-			return this.bubbleDelegation(this.owner, this[inEventName], inEventName, inEvent, this);
+            // so the original idea with this remapping from a component was to a named
+            // handler on the _owner_, it would bubble up to and stop at the owner, with
+            // the introduction of controllers being able to handle these named events
+            // along the way this bypasses their usefulness and their ability to respond
+            // to the remapping to a specific handler name for that event, so, now we
+            // hijack the original event and bubble a new event with this remapped name
+            // that will do 2 things, 1) the same thing in the end (with the knowledge that
+            // if the handler does not return true it will keep bubbling) and 2) allow
+            // controllers up the chain (above the owner or inbetween the originator and
+            // the owner) to respond and kill it as in normal bubbling
+            // ORIGINAL ----
+			// return this.bubbleDelegation(this.owner, this[inEventName], inEventName, inEvent, this);
+            // -------------
+            
+            // if we've reached an actual handler, then we dispatch it
+            if ("function" === typeof this[inEventName]) {
+                return this.dispatch(inEventName, inEvent, inSender);
+            } else {
+                // otherwise we dispatch it up because it is a remap of another event
+                return this.dispatchBubble(this[inEventName], inEvent, inSender);
+            }
 		}
 	},
 	// internal - try dispatching event to self, if that fails bubble it up the tree
@@ -436,7 +456,7 @@ enyo.kind({
     dispatch: function(inMethodName, inEvent, inSender) {
         if (this._silenced) return;
         var fn = inMethodName && this[inMethodName];
-        if (fn) {
+        if (fn && "function" === typeof fn) {
             return fn.call(this, inSender || this, inEvent);
         }
 	},

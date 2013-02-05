@@ -30,9 +30,6 @@ enyo.kind({
     _getting: false,
     
     //*@protected
-    _useData: false,
-    
-    //*@protected
     _listener: null,
     
     //*@protected
@@ -48,13 +45,10 @@ enyo.kind({
         // or if the property is data - data is a reserved word
         // in this case otherwise we can't get a reference to the
         // object
-        if (true === this._getting || "data" === prop) return this.inherited(arguments);
-        // to avoid infinite recursion
-        this._getting = true;
+        if ("data" === prop) return this.inherited(arguments);
         if (false === (ret = this.getDataProperty(prop))) {
             ret = this.inherited(arguments);
         }
-        this._getting = false;
         return ret;
     },
     
@@ -80,17 +74,10 @@ enyo.kind({
     */
     setDataProperty: function (prop, value) {
         var data = this.get("data");
-        var always = this._useData;
-        var prev;
-        if (data && (true === always || data.hasOwnProperty(prop))) {
-            // if the data object is a native object then we need to make
-            // sure to fire our own notifications, we retrieve the previous
-            // value early and setup the notification to fire once the new
-            // value has been set
-            if (true !== always) {
-                prev = enyo.getPath.call(data, prop);
+        if (data && this.isAttribute(prop)) {
+            if (!(data instanceof enyo.Object)) {
                 this.stopNotifications();
-                this.notifyObservers(prop, prev, value);
+                this.notifyObservers(prop, this.get(prop), value);
             }
             // if the object is an enyo object instance its notifications will
             // automatically fire
@@ -119,8 +106,7 @@ enyo.kind({
     */
     getDataProperty: function (prop) {
         var data = this.get("data");
-        var always = this._useData;
-        if (data && (true === always || data.hasOwnProperty(prop))) {
+        if (data && this.isAttribute(prop)) {
             return enyo.getPath.call(data, prop);
         }
         // under any other circumstance return false explicitly
@@ -156,8 +142,6 @@ enyo.kind({
         // we need to go ahead and double check that the data exists
         // and is a valid enyo object instance
         if (!data || !(data instanceof enyo.Object)) return;
-        // reset our always flag
-        this._useData = false;
         // if we had a listener registered on the previous data we
         // need to remove it
         if (this._listener) {
@@ -198,8 +182,6 @@ enyo.kind({
         // we need to go ahead and double check that the data exists
         // and is a valid enyo object instance
         if (!data || !(data instanceof enyo.Object)) return;
-        // ok lets go ahead and set our always flag
-        this._useData = true;
         // register ourselves as a global listener on the object
         // via the special attribute '*'
         this._listener = data.addObserver("*", this.notifyObservers, this);
@@ -214,15 +196,6 @@ enyo.kind({
     create: function () {
         this.inherited(arguments);
         this.dataDidChange();
-    },
-
-    //*@protected
-    dataFindAndInstance: function (ctor, inst) {
-        if (inst) {
-            if (inst instanceof enyo.Object) {
-                this.initData(inst);
-            }
-        }
     },
     
     //*@protected
@@ -259,7 +232,7 @@ enyo.kind({
     */
     dataDidChange: enyo.Observer(function () {
         if (this._last) this.releaseData(this._last);
-        this.findAndInstance("data");
+        this.initData();
         this.notifyAll();
     }, "data")
 

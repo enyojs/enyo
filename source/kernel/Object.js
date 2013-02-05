@@ -63,6 +63,10 @@ enyo.kind({
     //*@public
     // the computed properties object
     computed: null,
+    //*@public
+    // The deafult binding kind to use unless overridden by
+    // an individual binding definition
+    defaultBindingKind: "enyo.Binding",
     constructor: function() {
         enyo._objectCount++;
         // while this setup initializes the object's bindings
@@ -184,6 +188,7 @@ enyo.kind({
         properties.
     */
     setup: function () {
+        this.setupHooks();
         this.setupMixins();
         this.setupObservers();
         this.setupComputed();
@@ -242,8 +247,16 @@ enyo.kind({
         var binding;
         var properties = {};
         var bindings = this.bindings;
+        var def = enyo.getPath(this.defaultBindingKind);
+        var ctor;
+        var kind;
         for (; idx < len; ++idx) enyo.mixin(properties, definitions[idx]);
-        binding = new enyo.Binding({owner: this, autoConnect: true}, properties);
+        if ((kind = properties.kind)) {
+            if ("string" === typeof kind) ctor = enyo.getPath(properties.kind);
+            else if ("function" === typeof kind) ctor = kind;
+        }
+        if (!ctor || "function" !== typeof ctor) ctor = def;
+        binding = new ctor({owner: this, autoConnect: true}, properties);
         bindings.push(binding);
         return binding;
     },
@@ -610,6 +623,52 @@ enyo.kind({
             }
         }
     },
+    
+    //*@protected
+    _get_hooks: null,
+    //*@protected
+    _set_hooks: null,
+    //*@protected
+    _did_setup_hooks: false,
+    //*@protected
+    setupHooks: function () {
+        if (true === this._did_setup_hooks) return;
+        this._get_hooks = [];
+        this._set_hooks = [];
+        this._did_setup_hooks = true;
+    },
+    //*@public
+    hook: function (which, how, what) {
+        var hooks = this["_"+which+"_hooks"];
+        hooks.push({path: how, method: what});
+    },
+    
+    //*@protected
+    _check_hooks: function (which, path, value) {
+        if (!this._did_setup_hooks) return false;
+        var hooks = this["_"+which+"_hooks"];
+        var idx = 0;
+        var len = hooks.length;
+        var hook;
+        for (; idx < len; ++idx) {
+            hook = hooks[idx];
+            if ("string" === typeof hook.path) {
+                if (path === hook.path) {
+                    return hook.method.call(this, path, value);
+                }
+            } else if ("function" === typeof hook.path) {
+                if (true === hook.path(path)) {
+                    return hook.method.call(this, path, value);
+                }
+            } else if (hook.path instanceof RegExp) {
+                if (hook.path.test(path)) {
+                    return hook.method.call(this, path, value);
+                }
+            }
+        }
+        return false;
+    },
+    
     //*@public
     /**
         Call this method with the name (or path) to the desired property or
