@@ -125,6 +125,13 @@
         path = preparePath(path);
         // find the initial period if any
         idx = path.indexOf(".");
+        
+        
+        if (this._check_hooks) {
+            if (false !== (val = this._check_hooks("get", path))) return val;
+        }
+        
+        
         // if there isn't any try and find the path relative to our
         // current context, this is the fast path
         if (-1 === idx) {
@@ -210,6 +217,7 @@
         var idx;
         var target;
         var args;
+        var check;
         var parts;
         var notify = true === force? true: false;
         var comparator = "function" === typeof force? force: undefined;
@@ -217,6 +225,13 @@
         var prev = enyo.getPath.call(cur, path);
         // clear any leading periods
         path = preparePath(path);
+        
+        
+        if (this._check_hooks) {
+            if (false !== (check = this._check_hooks("set", path, value))) return check;
+        }
+        
+        
         // find the inital index of any period in the path
         idx = path.indexOf(".");
         // if there wasn't one we can attempt to fast-path this setter

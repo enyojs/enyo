@@ -645,6 +645,7 @@ enyo.kind({
     
     //*@protected
     _check_hooks: function (which, path, value) {
+        if (!this._did_setup_hooks) return false;
         var hooks = this["_"+which+"_hooks"];
         var idx = 0;
         var len = hooks.length;
@@ -682,7 +683,7 @@ enyo.kind({
         forward.
     */
     get: function (path) {
-        return this._check_hooks("get", path) || enyo.getPath.apply(this, arguments);
+        return enyo.getPath.apply(this, arguments);
     },
     //*@public
     /**
@@ -697,7 +698,7 @@ enyo.kind({
         computed properties or observers where necessary.
     */
     set: function (path, value) {
-        return this._check_hooks("set", path, value) || enyo.setPath.apply(this, arguments);
+        return enyo.setPath.apply(this, arguments);
     },
     //*@public
     /**
