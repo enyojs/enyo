@@ -4,9 +4,18 @@ enyo.depends(
 	"job.js",
 	"macroize.js",
 	"Oop.js",
+    "Binding.js",
 	"Object.js",
 	"Component.js",
 	"UiComponent.js",
 	"Layout.js",
-	"Signals.js"
+	"Signals.js",
+	"Controller.js",
+	"Router.js",
+	"ArrayController.js",
+	"Mixin.js",
+	"MultipleDispatchMixin.js",
+	"ViewController.js",
+	"Application.js",
+    "ObjectController.js"
 );

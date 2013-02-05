@@ -1,4 +1,74 @@
-﻿//* @public
+﻿
+//*@public
+/**
+    Takes a function followed by 1 or more string parameters that are
+    targets for the observer. Returns a method with the appropriate properties
+    to allow the system to notify it when the named properites have been
+    modified.
+*/
+enyo.Observer = function (fn /* arguments */) {
+    var events = enyo.toArray(arguments).slice(1);
+    if (!enyo.exists(fn) || "function" !== typeof fn) {
+        // this is a necessary assert
+        throw "enyo.Observer: invalid observer, must have a function";
+    }
+    fn.isObserver = true;
+    fn.events = (fn.events? fn.events: []).concat(events);
+    return fn;
+};
+
+//*@public
+/**
+    Takes a function followed by 0 or more string parameters that
+    are dependencies of the computed property. Returns the method
+    with the appropriate properties to allow the system to use it
+    as a normal property.
+*/
+enyo.Computed = function (fn /* arguments */) {
+    var dependencies = enyo.toArray(arguments).slice(1);
+    if (!enyo.exists(fn) || "function" !== typeof fn) {
+        // this is a necessary assert
+        throw "enyo.Computed: invalid computed property, must have a function";
+    }
+    fn.isProperty = true;
+    fn.properties = (fn.properties? fn.properties: []).concat(dependencies);
+    return fn;
+};
+
+
+//*@protected
+/**
+    Default properties of enyo kinds to concatenate as opposed to
+    overwriting. These are automatically used unless explicitly
+    removed.
+*/
+enyo.concat = ["concat", "bindings", "mixins"];
+
+//*@protected
+/**
+    Is called during kind-initialization to make sure that any property
+    noted to be concatenated will be (must be an array) so that those values
+    will not be lost by subclasses overriding that property.
+*/
+enyo.handleConcatenatedProperties = function (ctor, proto) {
+    var properties = enyo.merge(ctor.concat || [], proto.concat || []);
+    var prop;
+    var right;
+    var left;
+    while (properties.length) {
+        prop = properties.shift();
+        left = ctor[prop];
+        right = proto[prop];
+        if ((left instanceof Array) && (right instanceof Array)) {
+            ctor[prop] = enyo.merge(left, right);
+            // remove the reference to the property to it will not
+            // conflict later
+            delete proto[prop];
+        }
+    }
+};
+
+//* @public
 /**
 	Creates a JavaScript constructor function with a prototype defined by
 	_inProps_.
@@ -46,6 +116,12 @@ enyo.kind = function(inProps) {
 	// create our prototype
 	//ctor.prototype = isa ? enyo.delegate(isa) : {};
 	enyo.setPrototype(ctor, isa ? enyo.delegate(isa) : {});
+	
+	// there are special cases where a base class has a property
+	// that may need to be concatenated with a subclasses implementation
+	// as opposed to completely overwriting it...
+	enyo.handleConcatenatedProperties(ctor.prototype, inProps);
+	
 	// put in our props
 	enyo.mixin(ctor.prototype, inProps);
 	// alias class name as 'kind' in the prototype
@@ -57,7 +133,7 @@ enyo.kind = function(inProps) {
 	// support pluggable 'features'
 	enyo.forEach(enyo.kind.features, function(fn){ fn(ctor, inProps); });
 	// put reference into namespace
-	enyo.setObject(name, ctor);
+	enyo.setPath(name, ctor);
 	return ctor;
 };
 
@@ -84,13 +160,15 @@ enyo.singleton = function(conf, context) {
 	delete(conf.name);
 	// create an unnamed kind and save its constructor's function
 	var kind = enyo.kind(conf);
+    var inst;
 	// create the singleton with the previous name and constructor
-	enyo.setObject(name, new kind(), context);
+	enyo.setPath.call(context || enyo.global, name, (inst = new kind()));
+    return inst;
 };
 
 //* @protected
 enyo.kind.makeCtor = function() {
-	return function() {
+  return function() {;
 		if (!(this instanceof arguments.callee)) {
 			throw "enyo.kind: constructor called directly, not using 'new'";
 		}
@@ -145,7 +223,13 @@ enyo.kind.features.push(function(ctor, props) {
 });
 
 enyo.kind.inherited = function(args, newArgs) {
-	return args.callee._inherited.apply(this, newArgs || args);
+	var cur = args.callee;
+	var fn = cur._inherited;
+	if (!fn || "function" !== typeof fn) {
+	    cur = cur.caller;
+	    fn = cur? cur._inherited: undefined;
+	}
+    if ("function" === typeof fn) return fn.apply(this, newArgs || args);
 };
 
 //
@@ -203,7 +287,7 @@ enyo.constructorForKind = function(inKind) {
 		//
 		// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
 		// This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
-		return enyo._kindCtors[inKind] = enyo.Theme[inKind] || enyo[inKind] || enyo.getObject(inKind, false, enyo) || window[inKind] || enyo.getObject(inKind);
+		return enyo._kindCtors[inKind] = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath.call(enyo, inKind) || window[inKind] || enyo.getPath(inKind);
 	}
 	return enyo.defaultCtor;
 };

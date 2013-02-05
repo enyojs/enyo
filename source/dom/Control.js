@@ -57,10 +57,23 @@ enyo.kind({
 			to fill the available space. This only has meaning when the control
 			is being used as a child of a control with a version of FittableLayout
 			as its layoutKind.
+			
+			TODO: We would like to be able to test for the existence of the fit
+			property without setting a default (of null) since it is a boolean
+			flag. This is a temporary fix.
 		*/
-		fit: false,
+		fit: null,
 		//* Used by Ares design editor for design objects
-		isContainer: false
+		isContainer: false,
+		//*@public
+		/**
+		    The controller can be a reference to a kind, an instance or a string
+		    to either. Is assumed to be an enyo.Controller or subclass and will act
+		    as a delegate of the view. If the controller is resolved to be a kind
+		    (literally a constructor as opposed to an instance) it will be owned by
+		    this enyo.Control.
+		*/
+		controller: null
 	},
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
@@ -74,7 +87,15 @@ enyo.kind({
 	//* @protected
 	node: null,
 	generated: false,
+	
+	//*@public
+	/**
+        It is important for bindings _not_ to be initialized until
+        after components/children have been fully created and initialized.
+	*/
+	initBindings: false,
 	create: function() {
+        this.silence();
 		// initialize style databases
 		this.initStyles();
 		// superkind initialization
@@ -91,9 +112,20 @@ enyo.kind({
 		// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
 		this.addClass(this.kindClasses);
 		this.addClass(this.classes);
-		this.initProps(["id", "content", "src"]);
+		this.initProps(["id", "content", "src", "controller"]);
+        // we can now set these setup flags to true
+        this.initBindings = true;
+        // we now call setup knowing our children have been intitialized properly
+		this.setup();
+        this.unsilence();
 	},
-	destroy: function() {
+    destroy: function() {
+	    if (this.controller) {
+	        if (this.controller.owner && this === this.controller.owner) {
+	            this.controller.destroy();
+	        }
+	        this.controller = null;
+        }
 		this.removeNodeFromDom();
 		enyo.Control.unregisterDomEvents(this.id);
 		this.inherited(arguments);
@@ -114,6 +146,50 @@ enyo.kind({
 				}
 			}
 		}
+	},
+	//*@protected
+	controllerChanged: function () {
+	    // first attempt to find the controller from the
+	    // information we've been handed
+        this.findAndInstance("controller");
+	},
+    //*@protected
+    controllerFindAndInstance: function (ctor, inst) {
+        // if there is no constructor or instance it was not found
+        if (!(ctor || inst)) return;
+        // if a constructor exists we instanced the class and can
+        // claim it as our own
+        if (ctor) inst.set("owner", this);
+        // lets add ourselves as a dispatch listener
+        else inst.addDispatchTarget(this);
+        // either way we need to refresh our bindings
+        this.refreshBindings();   
+    },
+	//*@protected
+	dispatchEvent: function (inEventName, inEvent, inSender) {
+	    // if we have a controller attempt to dispatch the event there
+	    // and if it returns true, stop the dispatch
+	    if (this.controller && this.controller.dispatchEvent(inEventName, inEvent, inSender)) {
+	        return true;
+	    }
+	  
+	    // prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
+		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
+			return true;
+		}
+	  
+	    return this.inherited(arguments);
+	},
+	//*@protected
+	dispatch: function (inMethodName, inEvent, inSender) {
+	    // allow a controller to handle the delegated named event from
+	    // a child
+	    var c = this.controller;
+        if (c) {
+            if (c[inMethodName] && enyo.isFunction(c[inMethodName]))
+            return c[inMethodName].call(c, inSender || this, inEvent);
+        }
+        return this.inherited(arguments);
 	},
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
@@ -138,13 +214,6 @@ enyo.kind({
 	},
 	// event filter
 	strictlyInternalEvents: {onenter: 1, onleave: 1},
-	dispatchEvent: function(inEventName, inEvent, inSender) {
-		// prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
-		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
-			return true;
-		}
-		return this.inherited(arguments);
-	},
 	isInternalEvent: function(inEvent) {
 		var rdt = enyo.dispatcher.findDispatchTarget(inEvent.relatedTarget);
 		return rdt && rdt.isDescendantOf(this);
@@ -176,7 +245,7 @@ enyo.kind({
 		control.
 	*/
 	addContent: function(inAddendum) {
-		this.setContent(this.content + inAddendum);
+		this.setContent(this.get("content") + inAddendum);
 	},
 	/**
 		Gets the value of an attribute on this object.
@@ -440,7 +509,9 @@ enyo.kind({
 		this.teardownRender();
 		// inParentNode can be a string id or a node reference
 		var pn = enyo.dom.byId(inParentNode);
-		if (pn == document.body) {
+        var noFit = enyo.exists(this.fit) && this.fit === false;
+        //console.log(noFit);
+		if (pn == document.body && !noFit) {
 			this.setupBodyFitting();
 		} else if (this.fit) {
 			this.addClass("enyo-fit enyo-clip");
@@ -576,6 +647,7 @@ enyo.kind({
 		return this.getAttribute("src");
 	},
 	srcChanged: function() {
+	  if (!this.src) return;
 		this.setAttribute("src", enyo.path.rewrite(this.src));
 	},
 	attributesChanged: function() {
@@ -611,7 +683,7 @@ enyo.kind({
 		if (this.children.length) {
 			return this.generateChildHtml();
 		} else {
-			return this.allowHtml ? this.content : enyo.Control.escapeHtml(this.content);
+			return this.allowHtml ? this.get("content") : enyo.Control.escapeHtml(this.get("content"));
 		}
 	},
 	generateChildHtml: function() {
@@ -877,3 +949,9 @@ enyo.Control.subclass = function(ctor, props) {
 		proto.attributes = null;
 	}
 };
+
+//*@public
+/**
+    Also usable as _enyo.View_.
+*/
+enyo.View = enyo.Control;

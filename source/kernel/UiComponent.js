@@ -44,6 +44,7 @@ enyo.kind({
 	statics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
 	},
+	
 	create: function() {
 		this.controls = [];
 		this.children = [];

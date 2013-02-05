@@ -12,5 +12,7 @@ enyo.depends(
 	"ControlPropsTest.js",
 	"DecodePackagePathTest.js",
 	"PathResolverTest.js",
-	"ViewportPositioningTest.js"
+	"ViewportPositioningTest.js",
+	"BindingTest.js",
+    "ObjectControllerTest.js"
 );
