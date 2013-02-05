@@ -112,6 +112,8 @@
         */
         controllers: null,
         //*@protected
+        instanceName: "",
+        //*@protected
         initBindings: false,
         //*@protected
         concat: ["controllers"],
@@ -119,6 +121,7 @@
         constructor: function (props) {
             if (props && enyo.exists(props.name)) {
                 enyo.setPath(props.name, this);
+                this.instanceName = props.name;
             }
             this.inherited(arguments);
         },
@@ -224,7 +227,7 @@
             would return a namespace of "MyApp".
         */
         namespace: enyo.Computed(function () {
-            return namespaceFrom(this.kindName);
+            return namespaceFrom(this.instanceName || this.kindName);
         }),
         //*@public
         destroy: function () {

@@ -243,6 +243,12 @@ enyo.kind({
                 }
             }
         }
+        
+        // we HAVE to update the length if it changed to notify observers/bindings
+        // to data that it may have been updated or bindings to data will still
+        // have the cached dataset
+        if (len !== this.length) this.notifyObservers("length", len, this.length);
+        
         if (changeset.removed.len) {
             delete changeset.removed.len;
             this.dispatchBubble("didremove", {values: changeset.removed}, this);
@@ -416,7 +422,7 @@ enyo.kind({
         method. There are two ways to call it, without any parameters or
         with an array (or hash whose keys will be used as an array) of the
         indices that have changed. When called
-        without parameters it will search for changed indeces against
+        without parameters it will search for changed indices against
         its cached dataset using direct comparison (or if a _comparator_
         method exists on the controller it will use the result from that
         to determine equality). On larger datasets this is less than ideal.
@@ -425,7 +431,7 @@ enyo.kind({
         and listeners of the changes to those indices.
         
         It is important to note that, when using native JavaScript objects
-        the reference is shared. If a property on the has is directly set
+        the reference is shared. If a property on the hash is directly set
         and this method is called it will be impossible for it to detect changes
         since the references in the comparator are the same. If using native
         objects as your data container it is imperative that you provide the

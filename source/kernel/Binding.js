@@ -298,6 +298,7 @@
             var property = this.sourceProperty;
             var source = this.source;
             var from = this.from;
+            if (source && property) return true;
             if (!from) return false;
             parts = getParts.call(this, from, source);
             base = parts.base;
@@ -316,6 +317,7 @@
             var property = this.targetProperty;
             var target = this.target;
             var to = this.to;
+            if (target && property) return true;
             if (!to) return false;
             parts = getParts.call(this, to, target);
             base = parts.base;
@@ -515,5 +517,15 @@
             unregister(this);
         }
     };
+    
+    Binding.extend = function (props) {
+        props = props || {};
+        var ctor = function (){Binding.apply(this, arguments)};
+        var name = props.name;
+        delete props.name;
+        ctor.prototype = enyo.mixin(Object.create(Binding.prototype), props);
+        if (name) enyo.setPath(name, ctor);
+        return ctor;
+    }
     
 }());
