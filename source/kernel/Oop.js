@@ -61,7 +61,7 @@ enyo.handleConcatenatedProperties = function (ctor, proto) {
         right = proto[prop];
         if ((left instanceof Array) && (right instanceof Array)) {
             ctor[prop] = enyo.merge(left, right);
-            // remove the reference to the property to it will not
+            // remove the reference to the property so it will not
             // conflict later
             delete proto[prop];
         }
@@ -256,6 +256,9 @@ enyo.kind.statics = {
 		//enyo.log("subclassing [" + ctor.prototype.kind + "] from [", this.prototype.kind + "]");
 	},
 	extend: function(props) {
+        // make sure to allow concatenated properties to function
+        // as expected
+        enyo.handleConcatenatedProperites(this.prototype, props);
 		enyo.mixin(this.prototype, props);
 		// support pluggable 'features'
 		var ctor = this;
