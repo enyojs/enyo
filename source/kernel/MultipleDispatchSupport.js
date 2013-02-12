@@ -47,7 +47,6 @@ enyo.kind({
     addDispatchTarget: function (target) {
         var targets = this._dispatch_targets;
         if (targets.indexOf(target) === -1 && target !== this) targets.push(target);
-        this.inherited(arguments);
     },
     
     // ...........................
