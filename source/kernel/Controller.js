@@ -13,7 +13,7 @@ enyo.kind({
     // and waterfall systems
     kind: "enyo.Component",
     //*@protected
-    mixins: ["enyo.MultipleDispatchMixin"],
+    mixins: ["enyo.MultipleDispatchSupport"],
     //*@public
     /**
         For all _enyo.Controller_s and subkinds the default source of information
@@ -36,7 +36,7 @@ enyo.kind({
         Typically controllers don't wish to bubble (component-owned controllers)
         but controllers with multiple event targets might.
     */
-    controllerBubbleTarget: null,
+    _controller_bubble_target: null,
     //*@protected
     // for now this is for backwards compatibility, soon to be removed
     // and instead call the normal getter
@@ -49,6 +49,6 @@ enyo.kind({
         events.
     */
     bubbleTarget: enyo.Computed(function () {
-        return this.get("controllerBubbleTarget");
-    }, "controllerBubbleTarget")
+        return this.get("_controller_bubble_target");
+    }, "_controller_bubble_target")
 });

@@ -717,16 +717,16 @@ enyo.kind({
         var key;
         var prop;
         while (args.length && (ext = args.shift())) {
-            if (ext.isMixin || "function" === typeof ext) {
+            if ("function" === typeof ext) {
                 this.extendMixin(ext);
             } else {
                 for (key in ext) {
                     if (!ext.hasOwnProperty(key)) continue;
                     prop = ext[key];
-                    if ("string" === typeof prop) {
-                        this[key] = prop;
-                    } else if ("function" === typeof prop) {
+                    if ("function" === typeof prop) {
                         this.extendMethod(key, prop, ext);
+                    } else {
+                        this[key] = prop;
                     }
                 }
             }
@@ -772,7 +772,11 @@ enyo.kind({
     */
     extendMixin: function (mixin) {
         // this is a convenience method, mixins actually apply themselves
-        if (enyo.exists(mixin) && mixin.apply) mixin.apply(this);
+        if (enyo.exists(mixin)) {
+            // once the mixin is applied it immediately releases references
+            // so it can be cleaned up by the GC
+            new mixin({target: this});
+        }
     },
     //*@protected
     destroy: function () {
