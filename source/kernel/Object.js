@@ -744,12 +744,6 @@ enyo.kind({
         // proxy the method once so it will be applied to the
         // correct context (not the same as binding as enyo.bind)
         method = enyo.proxyMethod(fn, this);
-        // if there wasn't already a method for this property than
-        // create the inherited method as enyo.nop to avoid
-        // unnecessary errors if _this.inherited_ is called
-        if (!enyo.exists(base) || "function" !== typeof base) {
-            base = enyo.nop;
-        }
         // insert the newly proxied method onto our object and setup
         // the inheritance chain
         this[property] = method;

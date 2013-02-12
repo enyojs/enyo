@@ -105,7 +105,7 @@
                 target.setupObservers(true);
             }
             // we need to inject our destructor
-            base = target.destroy || enyo.nop;
+            base = target.destroy;
             fn = target.destroy = enyo.proxyMethod(this.destroy, target);
             fn._inherit = base;
             // if for some reason binding initialization has been postponed
