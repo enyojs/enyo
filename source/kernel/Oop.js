@@ -222,14 +222,37 @@ enyo.kind.features.push(function(ctor, props) {
 	}
 });
 
-enyo.kind.inherited = function(args, newArgs) {
-	var cur = args.callee;
-	var fn = cur._inherited;
-	if (!fn || "function" !== typeof fn) {
-	    cur = cur.caller;
-	    fn = cur? cur._inherited: undefined;
-	}
-    if ("function" === typeof fn) return fn.apply(this, newArgs || args);
+//*@protected
+/**
+    This method is called by enyo.Object's attempting to
+    access super-methods of a parent class (kind) by calling
+    _this.inherited(arguments)_ from within a kind method. This
+    can only be done safely when there is known to be a super
+    class with the same method.
+*/
+enyo.kind.inherited = function (originals, replacements) {
+    // one-off methods are the fast track
+    var target = originals.callee;
+    var fn = target._inherited;
+    // the possible exception are proxied methods being
+    // executed from within a container under a different
+    // context (shared methods) so we have to check one
+    // level up in these cases to ensure we find the correct
+    // method
+    if (!fn || "function" !== typeof fn) {
+        target = target.caller || {};
+        fn = target._inherited;
+    }
+    // regardless of how we got here, just ensure we actually
+    // have a function to call or else we throw a console
+    // warning to notify developers they are calling a
+    // super method that doesn't exist
+    if ("function" === typeof fn) {
+        return fn.apply(this, replacements || originals);
+    } else {
+        enyo.warn("enyo.kind.inherited: unable to find requested " +
+            "super-method from -> " + originals.callee.nom);
+    }
 };
 
 //
