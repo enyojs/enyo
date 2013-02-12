@@ -258,7 +258,7 @@ enyo.kind.statics = {
 	extend: function(props) {
         // make sure to allow concatenated properties to function
         // as expected
-        enyo.handleConcatenatedProperites(this.prototype, props);
+        enyo.handleConcatenatedProperties(this.prototype, props);
 		enyo.mixin(this.prototype, props);
 		// support pluggable 'features'
 		var ctor = this;
