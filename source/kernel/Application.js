@@ -104,7 +104,7 @@
             render its _view_ into the _renderTarget_ when its _start_
             method es called.
         */
-        renderOnStart: false,
+        renderOnStart: true,
         //*@public
         /**
             This can be set to an array of _controller_s, much like the

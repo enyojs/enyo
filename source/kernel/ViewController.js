@@ -26,10 +26,6 @@ enyo.kind({
     */
     renderTarget: "document.body",
     //*@protected
-    constructor: function () {
-        this.inherited(arguments);
-    },
-    //*@protected
     create: function () {
         var ctor = this.get("viewKind");
         this.view = new ctor();
@@ -76,7 +72,9 @@ enyo.kind({
     //*@protected
     viewKind: enyo.Computed(function () {
         var view = this.view;
-        if ("string" === typeof view) {
+        if ("object" === typeof view && view.kind) {
+            view = enyo.kind(view);
+        } else if ("string" === typeof view) {
             view = enyo.getPath(view);
         }
         if (!view) {
