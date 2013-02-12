@@ -72,7 +72,7 @@ enyo.kind({
     //*@protected
     viewKind: enyo.Computed(function () {
         var view = this.view;
-        if ("object" === typeof view && view.kind) {
+        if ("object" === typeof view) {
             view = enyo.kind(view);
         } else if ("string" === typeof view) {
             view = enyo.getPath(view);
