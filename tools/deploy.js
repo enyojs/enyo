@@ -217,7 +217,7 @@ function deployLib(lib) {
 				throw new Error("*** Not a file: '" + script + "'");
 			run([script, libOutdir]);
 		} catch(e2) {
-			// no deploy.(js|bat|sh): copy everything (then remove ".git" dir, if any)
+			// no deploy.(js|bat|sh): copy everything (then remove ".git", if any)
 			shell.cp('-r', path.join(sourceDir, 'lib', lib), path.join(outDir, 'lib'));
 			shell.rm('-rf', path.join(outDir, 'lib', lib, '.git'));
 		}
