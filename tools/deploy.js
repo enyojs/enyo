@@ -22,6 +22,7 @@ When you application has library dependencies (for example
 `lib/mylib`), this script uses the `lib/mylib/manifest.json` (if
 present) or the old-fashioned deployment scripts `lib/mylib/deploy.sh`
 (on Linux & Mac OSX) or `lib/mylib/deploy.bat` (on Windows).
+If neither exist, then the entire library is copied (except for .git dir).
 
 This script also expects to find the following files & folders in the
 application root directory.  Each of them is copied verbatim in the
@@ -216,8 +217,9 @@ function deployLib(lib) {
 				throw new Error("*** Not a file: '" + script + "'");
 			run([script, libOutdir]);
 		} catch(e2) {
-			// no deploy.(js|bat|sh): copy everything
+			// no deploy.(js|bat|sh): copy everything (then remove ".git", if any)
 			shell.cp('-r', path.join(sourceDir, 'lib', lib), path.join(outDir, 'lib'));
+			shell.rm('-rf', path.join(outDir, 'lib', lib, '.git'));
 		}
 	}
 }
