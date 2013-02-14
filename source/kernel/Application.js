@@ -88,52 +88,60 @@
         {name: "My.Controllers.Namespace.That.Is.Stupidly.Deep.controller"...}
     */
     enyo.kind({
+    
+        // ...........................
+        // PUBLIC PROPERTIES
+        
         //*@public
         name: "enyo.Application",
+        
         //*@public
         kind: "enyo.ViewController",
+        
         //*@public
-        /**
-            This flag designates if the application will automatically
-            execute its _start_ method when its constructor is called.
-        */
         autoStart: true,
+        
         //*@public
-        /**
-            This flag designates if the application will automatically
-            render its _view_ into the _renderTarget_ when its _start_
-            method es called.
-        */
         renderOnStart: true,
+        
+        //*@public
+        controllers: null,
+        
+        //*@public
+        initBindings: false,
+        
+        //*@public
+        concat: ["controllers"],
+    
+        // ...........................
+        // PROTECTED PROPERTIES
+    
+        //*@protected
+        _instance_name: "",
+    
+        // ...........................
+        // COMPUTED PROPERTIES
+        
         //*@public
         /**
-            This can be set to an array of _controller_s, much like the
-            _components_ block of an _enyo.Component_.
+            Computed property that returns the string representation
+            of the namespace assigned to this application object's
+            kind-name (not instance). For example:
+            
+            enyo.kind({
+                name: "MyApp.Application",
+                kind: "enyo.Application"
+            })
+            
+            would return a namespace of "MyApp".
         */
-        controllers: null,
-        //*@protected
-        instanceName: "",
-        //*@protected
-        initBindings: false,
-        //*@protected
-        concat: ["controllers"],
-        //*@protected
-        constructor: function (props) {
-            if (props && enyo.exists(props.name)) {
-                enyo.setPath(props.name, this);
-                this.instanceName = props.name;
-            }
-            this.inherited(arguments);
-        },
-        create: function () {
-            this.initComponents();
-            this.inherited(arguments);
-            if (true === this.autoStart) this.start();
-        },
-        //*@protected
-        initComponents: function () {
-            this.setupControllers();
-        },
+        namespace: enyo.Computed(function () {
+            return namespaceFrom(this._instance_name || this.kindName);
+        }),
+    
+        // ...........................
+        // PUBLIC METHODS
+        
         //*@public
         /**
             If the _autoStart_ flag is set to true this will automatically
@@ -152,6 +160,37 @@
                 this.render();
             }
         },
+        
+        //*@public
+        destroy: function () {
+            this.inherited(arguments);
+            unregister(this);
+        },
+    
+        // ...........................
+        // PROTECTED METHODS
+        
+        //*@protected
+        constructor: function (props) {
+            if (props && enyo.exists(props.name)) {
+                enyo.setPath(props.name, this);
+                this._instance_name = props.name;
+            }
+            this.inherited(arguments);
+        },
+        
+        //*@protected
+        create: function () {
+            this.initComponents();
+            this.inherited(arguments);
+            if (true === this.autoStart) this.start();
+        },
+        
+        //*@protected
+        initComponents: function () {
+            this.setupControllers();
+        },
+    
         //*@protected
         setupControllers: function () {
             // we need to be able to iterate over the controllers
@@ -212,28 +251,11 @@
                 inst.runtimePath = name;
                 enyo.setPath(name, inst);
             });
-        },
-        //*@public
-        /**
-            Computed property that returns the string representation
-            of the namespace assigned to this application object's
-            kind-name (not instance). For example:
-            
-            enyo.kind({
-                name: "MyApp.Application",
-                kind: "enyo.Application"
-            })
-            
-            would return a namespace of "MyApp".
-        */
-        namespace: enyo.Computed(function () {
-            return namespaceFrom(this.instanceName || this.kindName);
-        }),
-        //*@public
-        destroy: function () {
-            this.inherited(arguments);
-            unregister(this);
         }
+    
+        // ...........................
+        // OBSERVERS
+
     });
     
 }());
