@@ -37,12 +37,6 @@ enyo.kind({
         but controllers with multiple event targets might.
     */
     _controller_bubble_target: null,
-    //*@protected
-    // for now this is for backwards compatibility, soon to be removed
-    // and instead call the normal getter
-    getBubbleTarget: function () {
-        return this.get("bubbleTarget");
-    },
     //*@public
     /**
         The preferred retreival mechanism for the _bubbleTargeT_ for
