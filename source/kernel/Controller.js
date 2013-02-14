@@ -6,14 +6,16 @@
     and far more likely to need _enyo.ArrayController_ or subclasses.
 */
 enyo.kind({
+    
+    // ...........................
+    // PUBLIC PROPERTIES
+    
     //*@public
     name: "enyo.Controller",
-    //*@protected
-    // we inherit from component because we need to be able to use the bubble
-    // and waterfall systems
+    
+    //*@public
     kind: "enyo.Component",
-    //*@protected
-    mixins: ["enyo.MultipleDispatchSupport"],
+    
     //*@public
     /**
         For all _enyo.Controller_s and subkinds the default source of information
@@ -21,22 +23,23 @@ enyo.kind({
         easier overloading. Can be any type of data.
     */
     data: null,
+    
+    // ...........................
+    // PROTECTED PROPERTIES
+    
     //*@protected
-    create: function () {
-        this.inherited(arguments);
-        // make sure we have some type of id
-        this.id = this.makeId();
-    },
-    //*@protected
-    ownerChanged: function () {
-        this.refreshBindings();
-    },
+    mixins: ["enyo.MultipleDispatchSupport"],
+
     //*@protected
     /**
         Typically controllers don't wish to bubble (component-owned controllers)
         but controllers with multiple event targets might.
     */
     _controller_bubble_target: null,
+    
+    // ...........................
+    // COMPUTED PROPERTIES
+    
     //*@public
     /**
         The preferred retreival mechanism for the _bubbleTargeT_ for
@@ -44,5 +47,27 @@ enyo.kind({
     */
     bubbleTarget: enyo.Computed(function () {
         return this.get("_controller_bubble_target");
-    }, "_controller_bubble_target")
+    }, "_controller_bubble_target"),
+    
+    // ...........................
+    // PUBLIC METHODS
+    
+    // ...........................
+    // PROTECTED METHODS
+    
+    //*@protected
+    create: function () {
+        this.inherited(arguments);
+        // make sure we have some type of id
+        this.id = this.makeId();
+    },
+    
+    //*@protected
+    ownerChanged: function () {
+        this.refreshBindings();
+    }
+    
+    // ...........................
+    // OBSERVERS
+
 });
