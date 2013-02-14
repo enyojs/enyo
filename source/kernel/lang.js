@@ -547,9 +547,10 @@
     /**
         Convenience method that takes an array of properties and an object.
         Will return a new object with just those properties named in the
-        array if they exist on the base object.
+        array if they exist on the base object. If the third parameter is
+        true it will ignore falsy values.
     */
-    var only = enyo.only = function (properties, object) {
+    var only = enyo.only = function (properties, object, ignore) {
         var ret = {};
         var idx = 0;
         var len;
@@ -564,7 +565,10 @@
         // the object copy its value to the return array
         for (len = properties.length; idx < len; ++idx) {
             property = properties[idx];
-            if (property in object) ret[property] = object[property];
+            if (property in object) {
+                if (true === ignore && !object[property]) continue;
+                ret[property] = object[property];
+            }
         }
         // return the array of values we found for the given properties
         return ret;
