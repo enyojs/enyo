@@ -50,7 +50,7 @@
             var keys = enyo.keys(defaults);
             if (ctor !== enyo.Binding) {
                 cache.defaults = enyo.mixin(enyo.clone(defaults), 
-                    enyo.only(keys, ctor.prototype));
+                    enyo.only(keys, ctor.prototype, true));
             } else cache.defaults = defaults;
             this.setupAutoBindings();
         },
