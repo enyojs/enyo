@@ -105,10 +105,10 @@ enyo.kind({
 		}
 	},
 	iekeydown: function(inSender, inEvent) {
-		var wp = enyo.platform.windowsPhone, kc = inEvent.keyCode;
-		// on input controls, onchange event fails to fire on enter key for Windows Phone 8
-		if (wp <= 8 && kc == 13 && this.tag == "input") {
-			this.bubble("onchange", inEvent);
+		var wp = enyo.platform.windowsPhone, kc = inEvent.keyCode, dt = inEvent.dispatchTarget;
+		// onchange event fails to fire on enter key for Windows Phone 8, so we force blur
+		if (wp <= 8 && kc == 13 && this.tag == "input" && dt.hasNode()) {
+			dt.node.blur();
 		}
 	},
 	clear: function() {
