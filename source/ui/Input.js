@@ -54,8 +54,7 @@ enyo.kind({
 		if (enyo.platform.ie) {
 			this.handlers.onkeyup = "iekeyup";
 		}
-		// adding onkeydown handler for WP8, as there is no onkeyup event for the enter key
-		if (enyo.platform.ie && window.location.protocol === "x-wmapp0:") {
+		if (enyo.platform.windowsPhone) {
 			this.handlers.onkeydown = "iekeydown";
 		}
 		this.inherited(arguments);
@@ -106,10 +105,9 @@ enyo.kind({
 		}
 	},
 	iekeydown: function(inSender, inEvent) {
-		var ie = enyo.platform.ie, kc = inEvent.keyCode;
-		// input event fails to fire on enter key for Windows Phone 8
-		// this event only happens once, as the keyboard becomes hidden when the enter key is pressed
-		if (ie == 10 && kc == 13) {
+		var wp = enyo.platform.windowsPhone, kc = inEvent.keyCode;
+		// on input controls, onchange event fails to fire on enter key for Windows Phone 8
+		if (wp <= 8 && kc == 13 && this.tag == "input") {
 			this.bubble("onchange", inEvent);
 		}
 	},
