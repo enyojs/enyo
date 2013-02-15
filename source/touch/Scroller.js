@@ -60,7 +60,7 @@ enyo.kind({
 
 			* <a href="#enyo.TranslateScrollStrategy">TranslateScrollStrategy</a>
 				implements a touch scrolling mechanism using translations; it is
-				currently recommended only for Android 3 and 4.
+				currently recommended only for Android 3 and 4 & Windows Phone 8.
 
 			* <a href="#enyo.TransitionScrollStrategy">TransitionScrollStrategy</a>
 				implements a touch scrolling mechanism using CSS transitions; it is
@@ -118,7 +118,7 @@ enyo.kind({
 				}
 			}
 			// special detection for IE10+ on touch devices
-			if (enyo.platform.ie >= 10 && enyo.platform.touch) {
+			if ((enyo.platform.ie >= 10 || enyo.platform.windowsPhone >= 8) && enyo.platform.touch) {
 				return true;
 			}
 		},
@@ -135,7 +135,7 @@ enyo.kind({
 			return true;
 		},
 		getTouchStrategy: function() {
-			return (enyo.platform.android >= 3)
+			return (enyo.platform.android >= 3) || (enyo.platform.windowsPhone === 8)
 				? "TranslateScrollStrategy"
 				: "TouchScrollStrategy";
 		}
