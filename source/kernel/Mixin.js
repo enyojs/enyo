@@ -14,11 +14,11 @@
         //*@public
         name: "enyo.Mixin",
         
+        //*@public
+        kind: null,
+        
         // ...........................
         // PROTECTED PROPERTIES
-        
-        //*@protected
-        kind: null,
     
         //*@protected
         _target: null,
