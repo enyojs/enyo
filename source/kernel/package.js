@@ -2,7 +2,6 @@ enyo.depends(
 	"log.js",
 	"lang.js",
 	"job.js",
-	"macroize.js",
 	"Oop.js",
     "Binding.js",
 	"Object.js",
@@ -14,9 +13,6 @@ enyo.depends(
 	"Router.js",
 	"ArrayController.js",
 	"Mixin.js",
-	"MultipleDispatchSupport.js",
-    "ControllerSupport.js",
-    "AutoBindingSupport.js",
 	"ViewController.js",
 	"Application.js",
     "ObjectController.js"
