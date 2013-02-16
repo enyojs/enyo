@@ -212,7 +212,7 @@
     */
     enyo.setPath = function (path, value, force) {
         // if there are less than 2 parameters we can't do anything
-        if(!exists(path) || "string" !== typeof path) return this;
+        if(!exists(path) || "string" !== typeof path || path.length === 0) return this;
         var cur = enyo === this? enyo.global: this;
         var idx;
         var target;
