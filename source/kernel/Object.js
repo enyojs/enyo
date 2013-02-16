@@ -69,14 +69,9 @@ enyo.kind({
     defaultBindingKind: "enyo.Binding",
     constructor: function() {
         enyo._objectCount++;
-        // while this setup initializes the object's bindings
-        // and observers, often this level of inspection needs
-        // to be re-run later in the routine by subkinds, to do
-        // this arbitrarily they can set the appropriate flag
-        // for any of the given steps to false and when appropriate
-        // set the flag to true and re-call the setup method
-        this.setup();
     },
+    //*@protected
+    _post_init: true,
     //*@protected
     constructed: function (props) {
         if (props) {
@@ -85,6 +80,20 @@ enyo.kind({
                 this[key] = props[key];
             }
         }
+        // while this setup initializes the object's bindings
+        // and observers, often this level of inspection needs
+        // to be re-run later in the routine by subkinds, to do
+        // this arbitrarily they can set the appropriate flag
+        // for any of the given steps to false and when appropriate
+        // set the flag to true and re-call the setup method
+        this.setup();
+        if (true === this._post_init) this.postIntitialization();
+    },
+    //*@protected
+    postInitialization: function () {
+        if (true !== this._post_init) return;
+        this.execMixins();
+        this._post_init = false;
     },
     //* @public
     //* Destroys object with passed-in name.
@@ -157,6 +166,9 @@ enyo.kind({
         // go ahead and call the enyo scoped version of this method
         return enyo.findAndInstance.call(this, property, fn);
     },
+    
+    //*@protected
+    _mixin_init_routines: null,
     //*@protected
     /**
         Initialize any mixins that were set in the mixins array for
@@ -169,7 +181,15 @@ enyo.kind({
         // prevent this from being run more than once
         this.initMixins = false;
         if (!this.appliedMixins) this.appliedMixins = [];
+        if (!this._mixin_init_routines) this._mixin_init_routines = [];
         enyo.forEach(this.mixins || [], this.prepareMixin, this);
+    },
+    //*@protected
+    execMixins: function () {
+        var inits = this._mixin_init_routines || [];
+        enyo.forEach(inits, function (fn) {
+            if ("function" === typeof fn) fn.call(this);
+        }, this);
     },
     //*@protected
     /**
@@ -769,7 +789,7 @@ enyo.kind({
         if (enyo.exists(mixin)) {
             // once the mixin is applied it immediately releases references
             // so it can be cleaned up by the GC
-            new mixin({target: this});
+            new mixin({_target: this});
         }
     },
     //*@protected

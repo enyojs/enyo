@@ -98,6 +98,8 @@
             applied.push(this.kindName);
             // all enyo objects know how to extend themselves with hashes
             target.extend(props);
+            this.create.fromMixin = this.kindName;
+            target._mixin_init_routines.push(this.create);
             // if the target has already setup their observers force them
             // to reevaluate them again in case we have any that need to
             // be initialized
@@ -108,19 +110,13 @@
             base = target.destroy;
             fn = target.destroy = enyo.proxyMethod(this.destroy, target);
             fn._inherit = base;
-            // if for some reason binding initialization has been postponed
-            // we need to wait for them to have been setup before we call
-            // our create method
-            if (true !== target.didSetupBindings) {
-                fn = enyo.proxyMethod(this.create, target);
-                target.addObserver("didSetupBindings", fn);
-            } else this.create.call(target);
+            this.applied();
         },
         
         //*@protected
         constructor: function (props) {
             var props = props || {};
-            this._target = props.target;
+            this._target = props.target || props._target;
         },
         
         //*@protected

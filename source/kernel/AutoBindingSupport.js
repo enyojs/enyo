@@ -34,6 +34,9 @@
         //*@protected
         _did_setup_auto_bindings: false,
     
+        //*@protected
+        _did_run_init: false,
+    
         // ...........................
         // COMPUTED PROPERTIES
     
@@ -45,6 +48,7 @@
     
         //*@protected
         create: function () {
+            this._did_run_init = true;
             var cache = this._auto_cache = {};
             var ctor = this._binding_ctor = enyo.getPath(this.defaultBindingKind);
             var keys = enyo.keys(defaults);
@@ -72,6 +76,7 @@
         setupAutoBindings: function () {
             if (this._did_setup_auto_bindings) return;
             if (!this.controller) return;
+            if (!this._did_run_init) return;
             var controls = this.get("bindableControls");
             var idx = 0;
             var len = controls.length;
