@@ -92,23 +92,13 @@ enyo.kind({
 		this.$ = {};
 		this.inherited(arguments);
 	},
-	constructed: function(inProps) {
-		// entire constructor chain has fired, now start creation chain
-		// process instance properties
-		this.importProps(inProps);
-		//this.initMixins = true;
+	constructed: function(inProps) {      
+		this.handlers = enyo.mixin(enyo.clone(this.kindHandlers), this.handlers);
+		this.initMixins = true;
 		this.setup();
 		// perform initialization
 		this.create();
-	},
-	//* @protected
-	importProps: function(inProps) {
-		if (inProps) {
-			for (var n in inProps) {
-				this[n] = inProps[n];
-			}
-		}
-		this.handlers = enyo.mixin(enyo.clone(this.kindHandlers), this.handlers);
+        this.inherited(arguments);
 	},
 	create: function() {
 		this.ownerChanged();

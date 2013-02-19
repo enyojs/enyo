@@ -67,19 +67,14 @@ enyo.kind({
     // The deafult binding kind to use unless overridden by
     // an individual binding definition
     defaultBindingKind: "enyo.Binding",
-    constructor: function() {
+    constructor: function(props) {
         enyo._objectCount++;
+        this.importProps(props);
     },
     //*@protected
     _post_init: true,
     //*@protected
     constructed: function (props) {
-        if (props) {
-            for (var key in props) {
-                if (!props.hasOwnProperty(key)) continue;
-                this[key] = props[key];
-            }
-        }
         // while this setup initializes the object's bindings
         // and observers, often this level of inspection needs
         // to be re-run later in the routine by subkinds, to do
@@ -87,8 +82,18 @@ enyo.kind({
         // for any of the given steps to false and when appropriate
         // set the flag to true and re-call the setup method
         this.setup();
-        if (true === this._post_init) this.postIntitialization();
+        if (true === this._post_init) this.postInitialization();
     },
+    
+    importProps: function (props) {
+        if (props) {
+            for (var key in props) {
+                if (!props.hasOwnProperty(key)) continue;
+                this[key] = props[key];
+            }
+        }
+    },
+    
     //*@protected
     postInitialization: function () {
         if (true !== this._post_init) return;
