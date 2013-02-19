@@ -13,7 +13,7 @@ enyo.kind({
     kind: "enyo.Binding",
     
     //*@public
-    oneWay: false,
+    twoWay: true,
     
     // ...........................
     // PROTECTED PROPERTIES
