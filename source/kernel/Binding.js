@@ -199,6 +199,9 @@
         oneWay: true,
         
         //*@public
+        twoWay: false,
+        
+        //*@public
         destroyed: false,
         
         //*@public
@@ -533,6 +536,8 @@
         constructor: function () {
             var idx = 0;
             var len = arguments.length;
+            var oneWay;
+            var twoWay;
             // increment our binding counter for debugging purposes
             count++;
             // take any properties that were passed in and apply them
@@ -540,6 +545,16 @@
             for (; idx < len; ++idx) enyo.mixin(this, arguments[idx]);
             // generate a new id for this binding
             this.id = enyo.uid("binding");
+            // we need to make sure the binding's setup understands if
+            // this is a one-way or two-way binding
+            oneWay = this.oneWay;
+            twoWay = this.twoWay;
+            // regardless of what the oneWay flag is set to, priority
+            // resolution defers to the twoWay flag initially
+            if (true === twoWay) this.oneWay = false;
+            // now we check our deferred flag to see if this is a two-way
+            // binding having been set via the oneWay flag
+            else if (false === oneWay) this.twoWay = true;
             // run our initialization routines
             setup.call(this);
         }

@@ -5,6 +5,7 @@
         bindTo: "to",
         bindTransform: "transform",
         bindOneWay: "oneWay",
+        bindTwoWay: "twoWay",
         bindAutoSync: "autoSync",
         bindDebug: "debug"
     };
@@ -13,6 +14,7 @@
         to: ".content",
         transform: null,
         oneWay: true,
+        twoWay: false,
         autoSync: false,
         debug: false
     };
