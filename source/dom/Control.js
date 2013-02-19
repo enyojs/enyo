@@ -97,8 +97,6 @@ enyo.kind({
 		this.addClass(this.kindClasses);
 		this.addClass(this.classes);
 		this.initProps(["id", "content", "src"]);
-        // we now call setup knowing our children have been intitialized properly
-		this.setup();
 	},
     destroy: function() {
 		this.removeNodeFromDom();
