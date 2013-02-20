@@ -109,7 +109,7 @@
         var refreshing = this._refreshing;
         register(this);
         // setup the transform if we can
-        this.setupTransform();
+        if (true !== refreshing) this.setupTransform();
         // if we are refreshing and cannot find
         // one of these parts we need to reset the targets
         // value if possible (happens frequently in proxy/model-
@@ -257,9 +257,6 @@
         //*@protected
         refresh: function () {
             this._refreshing = true;
-            // TODO: this needs to be reevaluated because refreshing
-            // a binding as of now does more work than it should be
-            this.disconnect();
             setup.call(this);
             this._refreshing = false;
         },
@@ -394,7 +391,7 @@
         
         //*@protected
         syncFromSource: function () {
-            var twoWay = !this.oneWay;
+            var twoWay = this.twoWay;
             var value = this.getSourceValue();
             var transformer = this.transform;
             // if this is a two way binding we need to
