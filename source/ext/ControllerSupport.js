@@ -17,8 +17,6 @@ enyo.kind({
         It is important for bindings _not_ to be initialized until
         after components/children have been fully created and initialized.
 	*/
-	initBindings: false,
-    initObservers: false,
     
     // ...........................
     // PROTECTED PROPERTIES
@@ -34,11 +32,11 @@ enyo.kind({
     
     //*@protected
     create: function () {
+        // need to ensure we re-evaluate our observers so notifications
+        // will be able to respond as expected
         this.initObservers = true;
         this.setup();
         this.notifyObservers("controller");
-        this.initBindings = true;
-        this.setup();
     },
     
     //*protected
