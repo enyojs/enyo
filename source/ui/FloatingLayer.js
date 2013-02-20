@@ -35,4 +35,4 @@ enyo.kind({
 	}
 });
 
-enyo.floatingLayer = new enyo.FloatingLayer();
+enyo.ready(function () {enyo.floatingLayer = new enyo.FloatingLayer()});
