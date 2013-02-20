@@ -180,14 +180,13 @@
         },
         
         //*@protected
-        create: function () {
-            this.initComponents();
+        constructed: function () {
             this.inherited(arguments);
-            if (true === this.autoStart) this.start();
+            if (true === this.autoStart) this.start();              
         },
         
-        //*@protected
-        initComponents: function () {
+        postInitialization: function () {
+            this.inherited(arguments);
             this.setupControllers();
         },
     

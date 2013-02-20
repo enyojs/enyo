@@ -3,6 +3,7 @@ enyo.depends(
 	"lang.js",
 	"job.js",
 	"Oop.js",
+    "ComputedPropertySupport.js",
     "Binding.js",
 	"Object.js",
 	"Component.js",

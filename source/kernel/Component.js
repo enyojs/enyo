@@ -77,12 +77,7 @@ enyo.kind({
 		_unnamedKindNumber: 0
 	},
 	defaultKind: "Component",
-    _post_init: false,
 	handlers: {},
-	//*@protected
-	/**
-	*/
-	initComputed: false,
 	toString: function() {
 		return this.kindName;
 	},
@@ -94,19 +89,17 @@ enyo.kind({
 	},
 	constructed: function(inProps) {      
 		this.handlers = enyo.mixin(enyo.clone(this.kindHandlers), this.handlers);
-		this.initMixins = true;
-		this.setup();
 		// perform initialization
-		this.create();
         this.inherited(arguments);
+		this.create();
 	},
 	create: function() {
 		this.ownerChanged();
 		this.initComponents();
-		this.initComputed = true;
-		this.setup();
-        this._post_init = true;
-        this.postInitialization();
+        // refresh the bindings now that the child components have been
+        // created
+        this.initBindings = true;
+        this.setup();
 	},
 	initComponents: function() {
 		// The _components_ property in kind declarations is renamed to

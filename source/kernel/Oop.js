@@ -6,7 +6,7 @@
     to allow the system to notify it when the named properites have been
     modified.
 */
-enyo.Observer = function (fn /* arguments */) {
+var observer = enyo.Observer = enyo.observer = function (fn /* arguments */) {
     var events = enyo.toArray(arguments).slice(1);
     if (!enyo.exists(fn) || "function" !== typeof fn) {
         // this is a necessary assert
@@ -17,24 +17,7 @@ enyo.Observer = function (fn /* arguments */) {
     return fn;
 };
 
-//*@public
-/**
-    Takes a function followed by 0 or more string parameters that
-    are dependencies of the computed property. Returns the method
-    with the appropriate properties to allow the system to use it
-    as a normal property.
-*/
-enyo.Computed = function (fn /* arguments */) {
-    var dependencies = enyo.toArray(arguments).slice(1);
-    if (!enyo.exists(fn) || "function" !== typeof fn) {
-        // this is a necessary assert
-        throw "enyo.Computed: invalid computed property, must have a function";
-    }
-    fn.isProperty = true;
-    fn.properties = (fn.properties? fn.properties: []).concat(dependencies);
-    return fn;
-};
-
+enyo.observer.keys = ["isObserver", "events"];
 
 //*@protected
 /**
@@ -125,7 +108,7 @@ enyo.kind = function(inProps) {
 	// put in our props
 	enyo.mixin(ctor.prototype, inProps);
 	// alias class name as 'kind' in the prototype
-	ctor.prototype.kindName = name;
+	ctor.prototype.kindName = name.length? name: kind;
 	// cache superclass constructor
 	ctor.prototype.base = base;
 	// reference our real constructor

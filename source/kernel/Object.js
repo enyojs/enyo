@@ -97,6 +97,7 @@ enyo.kind({
     //*@protected
     postInitialization: function () {
         if (true !== this._post_init) return;
+        this.execComputed();
         this.execMixins();
         this._post_init = false;
     },
@@ -188,13 +189,16 @@ enyo.kind({
         if (!this.appliedMixins) this.appliedMixins = [];
         if (!this._mixin_init_routines) this._mixin_init_routines = [];
         enyo.forEach(this.mixins || [], this.prepareMixin, this);
+        this._did_setup_mixins = true;
     },
     //*@protected
     execMixins: function () {
         var inits = this._mixin_init_routines || [];
-        enyo.forEach(inits, function (fn) {
+        var fn;
+        while (inits.length) {
+            fn = inits.shift();
             if ("function" === typeof fn) fn.call(this);
-        }, this);
+        }
     },
     //*@protected
     /**
@@ -229,32 +233,35 @@ enyo.kind({
         if (false === this.initBindings && !force) return;
         // prevent this from being executed again
         this.initBindings = false;
-        // to keep from attempting to setup bindings twice
-        // just refresh them if we've been here before
-        if (true === this.didSetupBindings) return this.refreshBindings();
         // first grab the bindings block/array for the kind
         // remap those definitions to a different variable
         var kindBindings = this.bindings || [];
         var idx = 0;
         var len;
         var def;
-        // initialize our new bindings array for the object
-        // where we will store the actual binding references
-        this.bindings = [];
-        for (len = kindBindings.length; idx < len; ++idx) {
-            def = kindBindings[idx];
-            // this method already adds the bindings to our
-            // bindings array
-            this.binding(def);
+        if (true === this._did_setup_bindings) {
+            // this isn't the first time we've been here so we need
+            // to refresh the bindings
+            this.refreshBindings();
+        } else {
+            // initialize our new bindings array for the object
+            // where we will store the actual binding references
+            this.bindings = [];
+            for (len = kindBindings.length; idx < len; ++idx) {
+                def = kindBindings[idx];
+                // this method already adds the bindings to our
+                // bindings array
+                this.binding(def);
+            }
+            // flag the object for having the bindings already setup
+            this._did_setup_bindings = true;
         }
-        // flag the object for having the bindings already setup
-        this.didSetupBindings = true;
         // if there are any listeners for this event notify them
-        this.notifyObservers("didSetupBindings");
+        this.notifyObservers("_did_setup_bindings");
         // cleanup by removing all listeners on this event note that
         // not passing the function/handler makes it remove any/all
         // for that property!
-        this.removeObserver("didSetupBindings");
+        //this.removeObserver("_did_setup_bindings");
     },
     //*@public
     /**
@@ -266,6 +273,12 @@ enyo.kind({
         this object's bindings array.
     */
     binding: function (/* _binding definitions_ */) {
+        
+        if (!this.bindings) {
+            enyo.warn(this.kindName + ".binding: instance binding requested but " +
+                "initialization not completed");
+        }
+        
         var definitions = arguments;
         var idx = 0;
         var len = definitions.length;
@@ -349,6 +362,7 @@ enyo.kind({
         var dependents;
         var dependent;
         var fn;
+        var kind = this.kindName;
         // find any previously setup computed properties or reset the
         // hash
         var computed = this.computed || (this.computed = {});
@@ -360,20 +374,38 @@ enyo.kind({
                 // and even then we only care if it is marked as a computed
                 // property
                 if (true === prop.isProperty) {
+                    if (!kind || kind.length === 0) console.log(this);
+                    prop.computedName = kind + "." + key;
                     // keep a reference to the it on the hash
                     computed[key] = prop;
                     dependents = prop.properties || [];
                     for (idx = 0, len = dependents.length; idx < len; ++idx) {
                         dependent = dependents[idx];
                         // create the method that will respond
-                        fn = enyo.bind(this, function (prop) {
-                            this.notifyObservers(prop, null, this.get(prop), true);
-                        }, key);
+                        fn = enyo.bind(this, function (name, prop) {
+                            prop.dirty = enyo.bench();
+                            this.notifyObservers(name);
+                        }, key, prop);
                         // add an observer for this dependent and have the listener
                         // trigger the notification for the parent property
                         this.addObserver(dependent, fn);
                     }
+                    prop.owner = this;
                 }
+            }
+        }
+        this._did_setup_computed = true;
+    },
+    //*@protected
+    execComputed: function () {
+        if (true !== this._did_setup_computed) return;
+        var comps = this.computed;
+        var name;
+        var prop;
+        for (name in comps) {
+            prop = comps[name];
+            if (true === prop.cached) {
+                prop.update();
             }
         }
     },
@@ -387,7 +419,7 @@ enyo.kind({
     setupObservers: function (force) {
         if (false === this.initObservers && !force) return;
         this.initObservers = false;
-        this.didSetupObservers = true;
+        this._did_setup_observers = true;
         var key;
         var prop;
         var idx;
@@ -766,6 +798,10 @@ enyo.kind({
         var computed = !!fn.isProperty;
         var observer = !!fn.isObserver;
         var method;
+        var keys;
+        if (computed || observer) {
+            keys = computed? enyo.computed.keys: enyo.observer.keys;
+        }
         // proxy the method once so it will be applied to the
         // correct context (not the same as binding as enyo.bind)
         method = enyo.proxyMethod(fn, this);
@@ -775,12 +811,15 @@ enyo.kind({
         method._inherited = base;
         // if it is a computed property make sure to copy the
         // dependencies to the proxied method
-        if (true === computed) {
-            method.isProperty = true;
-            method.properties = fn.properties || [];
-        } else if (true === observer) {
-            method.isObserver = true;
-            method.events = fn.events || [];
+        //if (true === computed) {
+        //    method.isProperty = true;
+        //    method.properties = fn.properties || [];
+        //} else if (true === observer) {
+        //    method.isObserver = true;
+        //    method.events = fn.events || [];
+        //}
+        if (keys) {
+            enyo.forEach(keys, function (key) {method[key] = fn[key]});
         }
         // mark it as a method that was extended
         method.isExtended = true;
@@ -803,10 +842,24 @@ enyo.kind({
         this.clearBindings();
         // remove any observers that may still be attached
         this.removeAllObservers();
+        // breakdown all computed properties
+        this.destroyComputed();
         // JS objects are never truly destroyed (GC'd) until all references are gone,
 		// we might have some delayed action on this object that needs to have access
 		// to this flag.
 		this.destroyed = true;
+    },
+    //*@protected
+    destroyComputed: function () {
+        var computed = this.computed;
+        var name;
+        var prop;
+        if (computed) {
+            for (name in computed) {
+                prop = computed[name];
+                prop.destroy(name);
+            }
+        }
     }
 });
 

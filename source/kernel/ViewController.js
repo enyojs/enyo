@@ -26,10 +26,11 @@ enyo.kind({
     */
     renderTarget: "document.body",
     //*@protected
-    create: function () {
-        var ctor = this.get("viewKind");
-        this.view = new ctor();
+    constructed: function () {
+        var ctor;
         this.inherited(arguments);
+        ctor = this.get("viewKind");
+        this.view = new ctor();
     },
     //*@public
     /**

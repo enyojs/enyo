@@ -117,6 +117,9 @@
         constructor: function (props) {
             var props = props || {};
             this._target = props.target || props._target;
+            // this is a hack because we want the setup functionality
+            // without having to subclass the kind
+            enyo.Object.prototype.setupComputed.call(this, true);
         },
         
         //*@protected
