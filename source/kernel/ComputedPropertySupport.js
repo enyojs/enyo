@@ -24,60 +24,29 @@
                 will evaluate once each time any dependent triggers an update, if
                 there are no dependents this computed property will only ever
                 be evaluated once unless an arbitrary call is made to update it
+                
+            defer - boolean, defaults to true and only matters if _cached_ is
+                set to true, will defer an initial evaluation (default behavior
+                for cached computed properties) until the first time it is requested
+                otherwise it will execute the evaluation during initialization
+                of the object
             
     */
     
     //*@protected
     var defaults = {
-        isProperty: true,
         volatile: true,
         cached: false,
         updated: null,
         value: null,
         owner: null,
-        update: null,
-        destroy: null,
         properties: null,
-        dirty: false
+        dirty: false,
+        defer: true
     };
     
     //*@protected
-    var _keys = enyo.keys(defaults);
-    
-    //*@protected
-    var evaluate = function (comp, args) {
-        var owner = comp.owner || enyo.global;
-        var last = comp.value;
-        var value = comp.apply(owner, args);
-        comp.value = value;
-        comp.last = last;
-        comp.updated = enyo.bench();
-        comp.dirty = false;
-        return value;
-    };
-    
-    //@protected
-    var destroy = function (comp, name) {
-        var owner = comp.owner || {};
-        var props = owner.computed;
-        enyo.forEach(_keys, function (key) {delete comp[key]});
-        delete props[name];
-    };
-    
-    //*@protected
-    var update = function (comp, args) {
-        var updated = comp.updated;
-        var dirty = comp.dirty;
-        if (!updated || (dirty && dirty > updated) || (true === comp.volatile)) {
-            if (dirty) console.log("evaluating dirty computed property: " + comp.computedName);
-            else if (!updated) console.log("evaluating previously un-executed computed property: " + comp.computedName);
-            else if (true === comp.volatile) console.log("evaluating volatile computed property: " + comp.computedName);
-            return evaluate(comp, args);
-        } else {
-            console.log("using cached value: " + comp.computedName);
-            return comp.value;
-        }
-    };
+    var _keys = ["isProperty", "config", "property", "nom"];
     
     //*@public
     /**
@@ -99,14 +68,52 @@
                 enyo.mixin(config, dep);
             }
         });
-        config.update = function (args) {return update(this, args)};
-        config.destroy = function (name) {destroy(this, name)};
         config.properties = properties;
-        config.evaluate = function (args) {return evaluate(this, args)};
         if (false === config.volatile) config.cached = true;
         else if (true === config.cached) config.volatile = false;
-        enyo.mixin(fn, config);
+        fn.config = config;
+        fn.isProperty = true;
         return fn;
+    };
+    
+    //*@protected
+    var evaluate = function (config, args) {
+        var owner = config.owner;
+        var prev = config.value;
+        var props = owner.computed;
+        var key = config.property;
+        var method = props[key];
+        config.value = method.apply(owner, args);
+        config.last = prev;
+        config.updated = enyo.bench();
+        config.dirty = false;
+        return config.value;
+    };
+    
+    //@protected
+    var destroy = computed.destroy = function (config) {
+        var owner = config.owner || {};
+        var props = owner.computed;
+        var cache = props["_cache_"];
+        var name = config.property;
+        enyo.forEach(_keys, function (key) {delete config[key]});
+        delete props[name];
+        delete cache[name];
+    };
+    
+    //*@protected
+    var update = computed.update = function (config, args) {
+        var updated = config.updated;
+        var dirty = config.dirty;
+        if (!updated || (dirty && dirty > updated) || (true === config.volatile)) {
+            if (dirty) console.log("evaluating dirty computed property: " + config.computedName);
+            else if (!updated) console.log("evaluating previously un-executed computed property: " + config.computedName);
+            else if (true === config.volatile) console.log("evaluating volatile computed property: " + config.computedName);
+            return evaluate(config, args);
+        } else {
+            console.log("using cached value: " + config.computedName);
+            return config.value;
+        }
     };
     
     //*@protected

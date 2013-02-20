@@ -35,8 +35,8 @@ enyo.kind({
     ownerChanged: function () {
         this.inherited(arguments);
         if (this.owner && this.owner instanceof enyo.Control) {
-            this._default_dispatch = true;
-            this._controller_bubble_target = this.owner;
+            this.set("_default_dispatch", true);
+            this.set("_controller_bubble_target", this.owner);
         }
     },
     

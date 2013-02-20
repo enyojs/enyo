@@ -47,7 +47,7 @@ enyo.kind({
     */
     bubbleTarget: enyo.Computed(function () {
         return this.get("_controller_bubble_target");
-    }, "_controller_bubble_target"),
+    }, "_controller_bubble_target", {cached: true}),
     
     // ...........................
     // PUBLIC METHODS

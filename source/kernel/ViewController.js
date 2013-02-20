@@ -69,7 +69,7 @@ enyo.kind({
             throw "Cannot find requested render target!";
         }
         return target;
-    }, "renderTarget"),
+    }, "renderTarget", {cached: true}),
     //*@protected
     viewKind: enyo.Computed(function () {
         var view = this.view;
@@ -82,5 +82,5 @@ enyo.kind({
             throw "Cannot find the requested view!";
         }
         return view;
-    }, "view")
+    }, "view", {cached: true})
 });

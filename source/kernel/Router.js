@@ -158,7 +158,7 @@
             } else {
                 return prepare(this.get("current"));
             }
-        }, "current"),
+        }, "current", {cached: true}),
         //*@protected
         constructor: function () {
             this.staticRoutes = {};

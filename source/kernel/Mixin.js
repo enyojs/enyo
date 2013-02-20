@@ -15,13 +15,16 @@
         name: "enyo.Mixin",
         
         //*@public
-        kind: null,
+        kind: "enyo.Object",
+        
+        //*@public
+        target: null,
         
         // ...........................
         // PROTECTED PROPERTIES
     
         //*@protected
-        _target: null,
+        _post_init: false,
     
         // ...........................
         // COMPUTED PROPERTIES
@@ -29,7 +32,7 @@
         //*@protected
         properties: enyo.Computed(function () {
             // the original keys stored by the kind creation feature
-            var keys = enyo.clone(this.ctor.prototype._mixin_properties);
+            var keys = enyo.clone(this._mixin_properties);
             // the return properties
             var props;
             // the property as we iterate over them
@@ -45,7 +48,7 @@
                 }
             }
             return props;
-        }),
+        }, {cached: true, defer: false}),
     
         // ...........................
         // PUBLIC METHODS
@@ -77,21 +80,10 @@
         // PROTECTED METHODS
         
         //*@protected
-        /**
-            This is protected because it should never be accessible
-            or used externally by the nature of how mixins function.
-        */
-        get: function () {
-            return enyo.getPath.apply(this, arguments);
-        },
-        
-        //*@protected
         apply: function () {
-            var target = this._target;
+            var target = this.target;
             var applied = target.appliedMixins || (target.appliedMixins = []);
             var props = this.get("properties");
-            var base;
-            var fn;
             // we won't allow the same mixin to be applied more than once
             if (!!~applied.indexOf(this.kindName)) return;
             // go ahead and add our name to the list
@@ -103,34 +95,33 @@
             // if the target has already setup their observers force them
             // to reevaluate them again in case we have any that need to
             // be initialized
-            if (target.didSetupObservers) {
+            if (true === target._did_setup_observers) {
                 target.setupObservers(true);
             }
-            // we need to inject our destructor
-            base = target.destroy;
-            fn = target.destroy = enyo.proxyMethod(this.destroy, target);
-            fn._inherit = base;
-            this.applied();
-        },
-        
-        //*@protected
-        constructor: function (props) {
-            var props = props || {};
-            this._target = props.target || props._target;
-            // this is a hack because we want the setup functionality
-            // without having to subclass the kind
-            enyo.Object.prototype.setupComputed.call(this, true);
+            this._post_init = true;
         },
         
         //*@protected
         constructed: function () {
+            this.inherited(arguments);
             this.apply();
+            this.postInitialization();
+        },
+        
+        //*@protected
+        postInitialization: function () {
+            this.inherited(arguments);
+            this.applied();
+            this.base.prototype.destroy.call(this);
         },
         
         //*@protected
         applied: function () {
-            this._target = null;
-        }
+            delete this.target;
+        },
+        
+        //*@protected
+        setupBindings: function () {}
     
         // ...........................
         // OBSERVERS

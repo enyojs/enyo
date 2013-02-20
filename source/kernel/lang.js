@@ -103,6 +103,8 @@
         var val;
         var part;
         var fn;
+        var cache;
+        var config;
         // args are only used in computed properties and we only
         // do the work to remap them when necessary
         var args;
@@ -169,7 +171,12 @@
         // go ahead and call it, otherwise return it as a function
         if (isComputed(val)) {
             args = enyo.toArray(arguments).slice(1);
-            return val.update(args);
+            cache = (cur.computed || {})["_cache_"] || {};
+            config = cache[val.property];
+            if (config) return enyo.computed.update(config, args);
+            else {
+                throw "enyo.getPath: unable to evaluate incomplete computed property";
+            }
         }
         // otherwise we've reached the end so return whatever we have
         return val;
@@ -185,7 +192,7 @@
     */
     var proxyMethod = enyo.proxyMethod = function (fn, context) {
         return function () {
-            return fn.apply(context, arguments);
+            return fn.apply(context || this, arguments);
         };
     };
     

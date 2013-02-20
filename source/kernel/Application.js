@@ -137,7 +137,7 @@
         */
         namespace: enyo.Computed(function () {
             return namespaceFrom(this._instance_name || this.kindName);
-        }),
+        }, {cached: true}),
     
         // ...........................
         // PUBLIC METHODS

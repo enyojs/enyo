@@ -51,7 +51,7 @@ enyo.kind({
     },
     
 	//*@protected
-	controllerDidChange: enyo.Observer(function () {
+	_cs_controller_changed: enyo.Observer(function () {
 	    // first attempt to find the controller from the
 	    // information we've been handed
         this.findAndInstance("controller");

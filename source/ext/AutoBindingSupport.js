@@ -34,13 +34,37 @@
         // PROTECTED PROPERTIES
     
         //*@protected
-        _did_setup_auto_bindings: false,
-    
+        _ab_did_setup: false,
+        
         //*@protected
-        _did_run_init: false,
+        _ab_did_init: false,
     
         // ...........................
         // COMPUTED PROPERTIES
+    
+        //*@protected
+        _ab_bindable_controls: enyo.Computed(function (control) {
+            var bindable = [];
+            var control = control || this;
+            var controls = control.controls || [];
+            var idx = 0;
+            var len = controls.length;
+            for (; idx < len; ++idx) {
+                bindable = bindable.concat(this._ab_bindable_controls(controls[idx]));
+            }
+            if ("bindFrom" in control) bindable.push(control);
+            return bindable;
+        }, {cached: true}),
+    
+        //*@protected
+        _ab_defaults: enyo.Computed(function () {
+            var ctor = this.get("_binding_constructor");
+            var keys = enyo.keys(defaults);
+            if (enyo.Binding !== ctor) {
+                return enyo.mixin(enyo.clone(defaults),
+                    enyo.only(keys, ctor.prototype, true));
+            } else return enyo.clone(defaults);
+        }, {cached: true, defer: false}),
     
         // ...........................
         // PUBLIC METHODS
@@ -50,15 +74,8 @@
     
         //*@protected
         create: function () {
-            this._did_run_init = true;
-            var cache = this._auto_cache = {};
-            var ctor = this._binding_ctor = enyo.getPath(this.defaultBindingKind);
-            var keys = enyo.keys(defaults);
-            if (ctor !== enyo.Binding) {
-                cache.defaults = enyo.mixin(enyo.clone(defaults), 
-                    enyo.only(keys, ctor.prototype, true));
-            } else cache.defaults = defaults;
             this.setupAutoBindings();
+            this._ab_did_init = true;
         },
         
         //*@protected
@@ -72,14 +89,13 @@
             return enyo.filter(this.bindings || [], function (bind) {
                 return bind && bind.autoBindingId;
             });
-        }),
+        }, "_ab_did_setup", {cached: true}),
         
         //*@protected
         setupAutoBindings: function () {
-            if (this._did_setup_auto_bindings) return;
-            if (!this.controller) return;
-            if (!this._did_run_init) return;
-            var controls = this.get("bindableControls");
+            if (true === this._ab_did_setup) return;
+            if (!this.controller || !(this.controller instanceof enyo.Controller)) return;
+            var controls = this.get("_ab_bindable_controls");
             var idx = 0;
             var len = controls.length;
             var controller = this.controller;
@@ -90,44 +106,26 @@
                 props = this.bindProperties(control);
                 this.autoBinding(props, {source: controller, target: control});
             }
-            this._did_setup_auto_bindings = true;
+            this.set("_ab_did_setup", true);
         },
         
         //*@protected
         bindProperties: function (control) {
-            var cache = this._auto_cache.defaults;
-            return enyo.mixin(enyo.clone(cache), enyo.remap(remapped, control));
+            var props = this.get("_ab_defaults");
+            return enyo.mixin(enyo.clone(props), enyo.remap(remapped, control));
         },
-        
+    
+        // ...........................
+        // OBSERVERS
+
         //*@protected
-        bindableControls: enyo.Computed(function (control) {
-            var cache = this._auto_cache["bindableControls"];
-            if (cache) return enyo.clone(cache);
-            var bindable = [];
-            var control = control || this;
-            var controls = control.controls || [];
-            var idx = 0;
-            var len = controls.length;
-            for (; idx < len; ++idx) {
-                bindable = bindable.concat(this.bindableControls(controls[idx]));
-            }
-            if ("bindFrom" in control) bindable.push(control);
-            if (this === control) this._auto_cache["bindableControls"] = enyo.clone(bindable);
-            return bindable;
-        }),
-        
-        //*@protected
-        controllerDidChange: enyo.Observer(function () {
-            this.inherited(arguments);
-            if (this.controller) {
-                if (!this._did_setup_auto_bindings) {
+        _ab_controller_changed: enyo.Observer(function () {
+            if (this.controller instanceof enyo.Controller) {
+                if (!this._ab_did_setup) {
                     this.setupAutoBindings();
                 }
             }
         }, "controller")
-    
-        // ...........................
-        // OBSERVERS
 
     });
     

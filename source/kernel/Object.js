@@ -298,6 +298,12 @@ enyo.kind({
         bindings.push(binding);
         return binding;
     },
+    
+    //*@protected
+    _binding_constructor: enyo.Computed(function () {
+        return enyo.getPath(this.defaultBindingKind);
+    }, {cached: true, defer: false}),
+    
     //*@public
     /**
         Usually called when the object's destroy method is executed but can
@@ -356,6 +362,7 @@ enyo.kind({
         // prevent this from being run again unless force is true
         this.initComputed = false;
         var prop;
+        var config;
         var key;
         var idx;
         var len;
@@ -363,9 +370,13 @@ enyo.kind({
         var dependent;
         var fn;
         var kind = this.kindName;
+        var keys = enyo.computed.keys;
+        var cache;
         // find any previously setup computed properties or reset the
         // hash
         var computed = this.computed || (this.computed = {});
+        if (!("_cache_" in computed)) computed["_cache_"] = {};
+        cache = computed["_cache_"];
         for (key in this) {
             if (!enyo.exists((prop = this[key]))) continue;
             // we only care if it is a function since thats what a
@@ -374,23 +385,27 @@ enyo.kind({
                 // and even then we only care if it is marked as a computed
                 // property
                 if (true === prop.isProperty) {
-                    if (!kind || kind.length === 0) console.log(this);
-                    prop.computedName = kind + "." + key;
+                    config = prop.config;
+                    if (!(key in cache)) cache[key] = config = enyo.clone(config);
+                    config.computedName = kind + "." + key;
+                    config.__cuid = enyo.uid("_computed_");
                     // keep a reference to the it on the hash
                     computed[key] = prop;
-                    dependents = prop.properties || [];
+                    dependents = config.properties || [];
                     for (idx = 0, len = dependents.length; idx < len; ++idx) {
                         dependent = dependents[idx];
                         // create the method that will respond
-                        fn = enyo.bind(this, function (name, prop) {
-                            prop.dirty = enyo.bench();
+                        fn = enyo.bind(this, function (name) {
+                            var config = this.computed["_cache_"][name];
+                            config.dirty = enyo.bench();
                             this.notifyObservers(name);
-                        }, key, prop);
+                        }, key);
                         // add an observer for this dependent and have the listener
                         // trigger the notification for the parent property
                         this.addObserver(dependent, fn);
                     }
-                    prop.owner = this;
+                    config.owner = this;
+                    config.property = prop.property = key;
                 }
             }
         }
@@ -399,13 +414,13 @@ enyo.kind({
     //*@protected
     execComputed: function () {
         if (true !== this._did_setup_computed) return;
-        var comps = this.computed;
-        var name;
+        var cache = this.computed["_cache_"];
         var prop;
-        for (name in comps) {
-            prop = comps[name];
-            if (true === prop.cached) {
-                prop.update();
+        var config;
+        for (prop in cache) {
+            config = cache[prop];
+            if (true === config.cached && !config.defer) {
+                enyo.computed.update(config);
             }
         }
     },
@@ -833,7 +848,7 @@ enyo.kind({
         if (enyo.exists(mixin)) {
             // once the mixin is applied it immediately releases references
             // so it can be cleaned up by the GC
-            new mixin({_target: this});
+            new mixin({target: this});
         }
     },
     //*@protected
@@ -852,12 +867,14 @@ enyo.kind({
     //*@protected
     destroyComputed: function () {
         var computed = this.computed;
+        var cache;
         var name;
         var prop;
         if (computed) {
-            for (name in computed) {
-                prop = computed[name];
-                prop.destroy(name);
+            cache = computed["_cache_"];
+            for (name in cache) {
+                prop = cache[name];
+                enyo.computed.destroy(prop);
             }
         }
     }
