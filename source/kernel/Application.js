@@ -30,24 +30,6 @@
             kinds.splice(idx, 1);
         }
     };
-
-    //*@protected
-    /**
-        Used internally used to determine namespaces from pathnames.
-    */
-    var namespaceFrom = function (path) {
-        var parts;
-        var ns;
-        // if it isn't a string or has no length we can't do anything
-        if ("string" !== typeof path || "" === path) return undefined;
-        // attempt to split the string to separate the path components
-        parts = path.split(".");
-        // if it only has one element then we know there isn't a namespace
-        if (1 === parts.length) return undefined;
-        ns = parts.shift();
-        // we assume we have a namespace now
-        return ns;
-    };
     
     //*@public
     /**
@@ -58,32 +40,6 @@
         rendered into separate DOM nodes or nested). It also provides the
         ability to namespace and automatically initialize any _controllers_
         of the application.
-        
-        Typically the namespace that the _enyo.Application_ is subclassed
-        into will be used as the namespace of any singleton controllers
-        implemented at initialization.
-        
-        For example, if you subclass _enyo.Application_ as the following:
-        
-        enyo.kind({
-            name: "MyApp.Application",
-            kind: "enyo.Application",
-            controllers: [
-                {name: "contactsController", kind: "MyApp.ContactsController"}
-            ]
-        })
-        
-        it will instantiate the singleton _contactsController_ as
-        _MyApp.contactsController_. Any bindings of the application object
-        or any other object in-or-outside-of the application can reference
-        this controller by that path as long as the application's _start_
-        method has been called.
-        
-        You can explicitly include a separate namespace for a controller in
-        its name property if necessary. The path is not restricted to existing
-        namespaces and can be as deep as needed, for example:
-        
-        {name: "My.Controllers.Namespace.That.Is.Stupidly.Deep.controller"...}
     */
     enyo.kind({
     
@@ -119,23 +75,6 @@
     
         // ...........................
         // COMPUTED PROPERTIES
-        
-        //*@public
-        /**
-            Computed property that returns the string representation
-            of the namespace assigned to this application object's
-            kind-name (not instance). For example:
-            
-            enyo.kind({
-                name: "MyApp.Application",
-                kind: "enyo.Application"
-            })
-            
-            would return a namespace of "MyApp".
-        */
-        namespace: enyo.Computed(function () {
-            return namespaceFrom(this._instance_name || this.kindName);
-        }, {cached: true}),
     
         // ...........................
         // PUBLIC METHODS
@@ -192,25 +131,8 @@
     
         //*@protected
         setupControllers: function () {
-            
-            /**
-                controller options
-                
-                can be global
-                    - with/without namespace
-                    - this means it is not an application specific instance
-                      of the controller
-                
-                can be app-specific instance
-                    - only referenceable within the context of the application
-                    - ignores namespace and uses base-name from the application-instance's
-                      controllers property
-                    - must have unique name
-            */
-            
             var kinds = this.controllers || [];
             var controllers = this.controllers = {};
-            
             enyo.forEach(kinds, function (kind) {
                 // we need the name of the instance whether the controller is global
                 // or app-specific
