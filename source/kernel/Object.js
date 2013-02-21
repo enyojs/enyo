@@ -798,6 +798,14 @@ enyo.kind({
                     if ("function" === typeof prop) {
                         this.extendMethod(key, prop, ext);
                     } else {
+                        // TODO: here we make difficult assumption (but one we have to
+                        // make for now...) if the default value coming from the
+                        // mixin is falsy but there already exists a truthy value
+                        // on the base object we default to the base object as this
+                        // solves the issue where a property was imported via the
+                        // constructor prior to the mixin being applied - this will
+                        // not always work but is an interim fix for that issue
+                        if (this[key] && !prop) continue;
                         this[key] = prop;
                     }
                 }

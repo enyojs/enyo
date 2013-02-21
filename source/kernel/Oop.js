@@ -231,7 +231,7 @@ enyo.kind.inherited = function (originals, replacements) {
     // warning to notify developers they are calling a
     // super method that doesn't exist
     if ("function" === typeof fn) {
-        return fn.apply(this, replacements || originals);
+        return fn.apply(this, replacements? enyo.mixin(originals, replacements): originals);
     } else {
         enyo.warn("enyo.kind.inherited: unable to find requested " +
             "super-method from -> " + originals.callee.nom);

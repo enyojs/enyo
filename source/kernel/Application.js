@@ -15,9 +15,7 @@
         the framework.
     */
     var register = function (app) {
-        var kind = app.kindName;
-        var kinds = applications[kind] || (applications[kind] = []);
-        kinds.push(app);
+        applications[app._instance_name] = app;
     };
     
     //*@protected
@@ -160,12 +158,6 @@
                 this.render();
             }
         },
-        
-        //*@public
-        destroy: function () {
-            this.inherited(arguments);
-            unregister(this);
-        },
     
         // ...........................
         // PROTECTED METHODS
@@ -175,6 +167,7 @@
             if (props && enyo.exists(props.name)) {
                 enyo.setPath(props.name, this);
                 this._instance_name = props.name;
+                delete props.name;
             }
             this.inherited(arguments);
         },
@@ -185,6 +178,13 @@
             if (true === this.autoStart) this.start();              
         },
         
+        //*@protected
+        createView: function () {
+            var ctor = this.get("_view_kind");
+            this.set("view", new ctor({app: this, _bubble_target: this}));
+        },
+        
+        //*@protected
         postInitialization: function () {
             this.inherited(arguments);
             this.setupControllers();
@@ -192,64 +192,74 @@
     
         //*@protected
         setupControllers: function () {
-            // we need to be able to iterate over the controllers
-            // supplied to the application
-            var kinds = this.controllers;
-            var inst;
-            // get the namespace of this application to use with
-            // controllers that need one
-            var ns = this.get("namespace");
-            // the reused formatting pattern
-            var pattern = "%..%.";
-            // we remove the array for tidyness...
-            this.controllers = null;
-            // we iterate over the controller definitions and attempt
-            // to create them according to the information provided
+            
+            /**
+                controller options
+                
+                can be global
+                    - with/without namespace
+                    - this means it is not an application specific instance
+                      of the controller
+                
+                can be app-specific instance
+                    - only referenceable within the context of the application
+                    - ignores namespace and uses base-name from the application-instance's
+                      controllers property
+                    - must have unique name
+            */
+            
+            var kinds = this.controllers || [];
+            var controllers = this.controllers = {};
+            
             enyo.forEach(kinds, function (kind) {
+                // we need the name of the instance whether the controller is global
+                // or app-specific
                 var name = kind.name;
+                // there is the optional global flag that indicates if the controller
+                // is to be instanced outside the scope of the application
                 var global = Boolean(kind.global);
                 var ctor;
-                // the namespace (if any) defined for the controller
-                var pre;
-                // remove the name so it doesn't muck with the kind creation/
-                // constructor routine
-                delete kind.name;
-                // same with global
+                var inst;
+                // cleanup
                 delete kind.global;
-                // check to see if we can get the namespace as defined for
-                // the controller from its definition
-                pre = namespaceFrom(name);
-                // try and get the constructor for the kind
+                delete kind.name;
+                // if the definition does not supply a controller kind we add one
+                if (!("kind" in kind)) kind.kind = "enyo.Controller";
+                // create a kind constructor for the controller with all of the given
+                // properties
                 ctor = enyo.kind(kind);
-                // now to instantiate the controller via the correct path
-                if (enyo.exists(pre)) {
-                    // we ignore it in the alternate case that they are the same
-                    if (ns !== pre) {
-                        // if there is a namespace and it isn't the same as
-                        // the application's namespace check to see if the
-                        // global flag is set
-                        if (true !== global) {
-                            // if it is not designated as global we will prepend
-                            // the path with our known namespace
-                            name = enyo.format(pattern, ns, name);
-                        }
-                    }
+                inst = new ctor({owner: this, app: this});
+                // if the controller is not a global controller we create it as part
+                // of our applications controller store
+                if (false === global) {
+                    controllers[name] = inst;
                 } else {
-                    // here we check the global flag to see if it is supposed to
-                    // be set in the global space even though it doesn't have a
-                    // namespace
-                    if (true !== global) {
-                        // ok, we need to prepend the path with our namespace
-                        name = enyo.format(pattern, ns, name);
-                    }
+                    enyo.setPath(name, inst);
                 }
-                // now to actually set the object
-                inst = new ctor();
-                // set the name as a special property for debugging purposes
-                // of singleton controllers
-                inst.runtimePath = name;
-                enyo.setPath(name, inst);
-            });
+            }, this);
+        },
+        
+        //*@protected
+        destroy: function () {
+            this.inherited(arguments);
+            this.destroyControllers();
+            unregister(this);
+        },
+        
+        //*@protected
+        destroyControllers: function () {
+            var constrollers = this.controllers;
+            var controller;
+            var name;
+            for (name in controllers) {
+                if (!controllers.hasOwnProperty(name)) continue;
+                controller = controllers[name];
+                if (controller.owner && this === controller.owner) {
+                    controller.destroy();
+                }
+                delete controllers[name];
+            }
+            delete this.controllers;
         }
     
         // ...........................

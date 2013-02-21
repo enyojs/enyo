@@ -78,6 +78,7 @@ enyo.kind({
 	},
 	defaultKind: "Component",
 	handlers: {},
+    mixins: ["enyo.ApplicationSupport"],
 	toString: function() {
 		return this.kindName;
 	},
@@ -278,7 +279,7 @@ enyo.kind({
 	},
 	//* @protected
 	getBubbleTarget: function() {
-		return this.owner;
+		return this._bubble_target || this.owner;
 	},
 	//* @public
 	/**

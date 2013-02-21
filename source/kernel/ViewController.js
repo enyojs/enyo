@@ -27,11 +27,16 @@ enyo.kind({
     renderTarget: "document.body",
     //*@protected
     constructed: function () {
-        var ctor;
         this.inherited(arguments);
-        ctor = this.get("viewKind");
-        this.view = new ctor();
+        this.createView();
     },
+    
+    //*@protected
+    createView: function () {
+        var ctor = this.get("_view_kind");
+        this.set("view", new ctor());
+    },
+    
     //*@public
     /**
         Call this method to render the selected _view_ into the
@@ -71,7 +76,7 @@ enyo.kind({
         return target;
     }, "renderTarget", {cached: true}),
     //*@protected
-    viewKind: enyo.Computed(function () {
+    _view_kind: enyo.Computed(function () {
         var view = this.view;
         if ("object" === typeof view) {
             view = enyo.kind(view);

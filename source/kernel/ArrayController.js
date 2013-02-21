@@ -33,36 +33,18 @@ enyo.kind({
         not__ modify the array structure of this controller.
     */
     data: enyo.Computed(function (data) {
-        var moded = this._modified;
-        var cached = this._cached;
-        var store = this._store;
+        if (data) return this.reset(data);
+        var store = [];
         var idx = 0;
         var len = this.length;
-        // if data is provided we need to update to this new
-        // dataset
-        if (data) {
-            // use the overloadable reset data method
-            this.reset(data);
-        } else {
-            // we can't use the cached version of our dataset so
-            // we start over
-            if (moded > cached || !store || len !== store.length) {
-                store = this._store = [];
-                for (; idx < len; ++idx) store[idx] = this[idx];
-                // update our cached time
-                this._cached = enyo.bench();
-            }
-            return store;
-        }
-    }, "length"),
+        for (; idx < len; ++idx) store[idx] = this[idx];
+        return store;
+    }, "length", {cached: true}),
    
     // ...........................
     // PROTECTED PROPERTIES
     
     //*@protected
-    _modified: null,
-    _cached: null,
-    _store: null,
     _init_values: null,
     
     // ...........................
@@ -85,7 +67,6 @@ enyo.kind({
                 changeset[pos] = this[pos] = values[idx];
             }
             this.length = num;
-            this._modified = enyo.bench();
             this.notifyObservers("length", len, this.length);
             this.dispatchBubble("didadd", {values: changeset}, this);
             return this.length;
@@ -105,8 +86,6 @@ enyo.kind({
             this.length = pos;
             // set our changeset parameter
             changeset[pos] = val;
-            // reset our modified time
-            this._modified = enyo.bench();
             this.notifyObservers("length", pos + 1, pos);
             this.dispatchBubble("didremove", {values: changeset}, this);
             return val;
@@ -130,8 +109,6 @@ enyo.kind({
             this.length = len - 1;
             // set the changeset
             changeset[0] = val;
-            // update the modified time
-            this._modified = enyo.bench();
             this.notifyObservers("length", len, this.length);
             this.dispatchBubble("didremove", {values: changeset}, this);
             return val;
@@ -160,8 +137,6 @@ enyo.kind({
             }
             // update our length
             this.length = len + arguments.length;
-            // update our modified time
-            this._modified = enyo.bench();
             this.notifyObservers("length", len, this.length);
             this.dispatchBubble("didadd", {values: changeset}, this);
             return this.length;
@@ -468,7 +443,6 @@ enyo.kind({
             idx = indices[pos];
             changeset[idx] = this[idx];
         }
-        this._modified = enyo.bench();
         this.dispatchBubble("didchange", {values: changeset}, this);
     },
     
@@ -482,10 +456,6 @@ enyo.kind({
      
     //*@protected
     create: function () {
-        // initialize the cached and modified times
-        this._cached = this._modified = enyo.bench();
-        // initialize the internal store array
-        this._store = [];
         this.inherited(arguments);
         // if there were values waiting to be initialized they couldn't
         // have been until now
@@ -506,7 +476,6 @@ enyo.kind({
             var len = arguments.length;
             for (; idx < len; ++idx) {
                 if (arguments[idx] instanceof Array) init = init.concat(arguments[idx]);
-                else init.push(arguments[idx]);
             }
             this._init_values = init;
         }

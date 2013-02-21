@@ -29,19 +29,6 @@ enyo.kind({
     
     //*@public
     /**
-        If we have an owner and it is a view we need to use our
-        default bubbling scheme.
-    */
-    ownerChanged: function () {
-        this.inherited(arguments);
-        if (this.owner && this.owner instanceof enyo.Control) {
-            this.set("_default_dispatch", true);
-            this.set("_controller_bubble_target", this.owner);
-        }
-    },
-    
-    //*@public
-    /**
         Add an instance listener for dispatched and delegated events.
     */
     addDispatchTarget: function (target) {
@@ -51,6 +38,15 @@ enyo.kind({
     
     // ...........................
     // PROTECTED METHODS
+    
+    //*@protected
+    ownerChanged: function () {
+        this.inherited(arguments);
+        if (this.owner && this.owner instanceof enyo.Component) {
+            this.set("_default_dispatch", true);
+            this.set("_controller_bubble_target", this.owner);
+        }
+    },
     
     //*@protected
     dispatchFrom: function (sender, event) {
@@ -66,9 +62,18 @@ enyo.kind({
     //*@protected
     bubbleUp: function (name, event, sender) {
         var targets;
+        
+        // TODO: for now, this is solving a problem that is not obvious
+        // whether or not this change will make a difference for
+        // solely owned controllers this can potentially cause top
+        // level application-instances to receive the same bubbled event
+        // twice if it is not explicitly handled and has a truthy value
+        // returned somewhere to stop propagation
+        
         if (this._default_dispatch) {
-            return this.inherited(arguments);
+            this.inherited(arguments);
         }
+        
         targets = this._dispatch_targets;
         enyo.forEach(enyo.clone(targets), function (target) {
             if (target) {
