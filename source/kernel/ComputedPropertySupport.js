@@ -108,7 +108,6 @@
         if (!updated || (dirty && dirty > updated) || (true === config.volatile)) {
             return evaluate(config, args);
         } else {
-            console.log("using cached value: " + config.computedName);
             return config.value;
         }
     };
