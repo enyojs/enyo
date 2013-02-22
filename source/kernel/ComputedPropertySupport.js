@@ -106,9 +106,6 @@
         var updated = config.updated;
         var dirty = config.dirty;
         if (!updated || (dirty && dirty > updated) || (true === config.volatile)) {
-            if (dirty) console.log("evaluating dirty computed property: " + config.computedName);
-            else if (!updated) console.log("evaluating previously un-executed computed property: " + config.computedName);
-            else if (true === config.volatile) console.log("evaluating volatile computed property: " + config.computedName);
             return evaluate(config, args);
         } else {
             console.log("using cached value: " + config.computedName);
