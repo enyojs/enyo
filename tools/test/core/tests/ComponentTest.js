@@ -24,5 +24,43 @@ enyo.kind({
 			throw("no exception for explicitly undefined kind in a nested component");
 		}
 		this.finish();
+	},
+	testStartJob: function() {
+		var finish = enyo.bind(this, "finish");
+		var c = new enyo.Component();
+		c.startJob("testStartJob", function() {
+			finish();
+		}, 10);
+	},
+	testStartJobStringName: function() {
+		var finish = enyo.bind(this, "finish");
+		var c = new enyo.Component({
+			pass: function() {
+				finish();
+			}
+		});
+		c.startJob("testStartJobStringName", "pass", 10);
+	},
+	testStopJob: function() {
+		var finish = enyo.bind(this, "finish");
+		var c = new enyo.Component();
+		c.startJob("testStopJob", function() {
+			finish("job wasn't stopped");
+		}, 10);
+		c.stopJob("testStopJob");
+		setTimeout(function() {
+			finish();
+		}, 30);
+	},
+	testDestroyJob: function() {
+		var finish = enyo.bind(this, "finish");
+		var c = new enyo.Component();
+		c.startJob("testDestroyJob", function() {
+			finish("job wasn't stopped on destroy");
+		}, 10);
+		c.destroy();
+		setTimeout(function() {
+			finish();
+		}, 30);
 	}
 });
