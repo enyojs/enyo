@@ -366,9 +366,9 @@ enyo.kind({
 	/**
 		Returns the computed value of a CSS style named from _inStyle_
 		for the DOM node of the control. If the node hasn't been generated,
-		returns _inDefault_ as a default value. This uses JavaScript-style
-		property names, not CSS-style names, so use "fontFamily" instead of
-		"font-family".
+		returns _inDefault_ as a default value. This uses CSS-style property
+		names, not JavaScript-style names, so use "font-family" instead of
+		"fontFamily".
 	*/
 	getComputedStyleValue: function(inStyle, inDefault) {
 		if (this.hasNode()) {

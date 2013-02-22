@@ -47,7 +47,16 @@ enyo.dom = {
 	},
 	//* @protected
 	getComputedStyle: function(inNode) {
-		return window.getComputedStyle && inNode && window.getComputedStyle(inNode, null);
+		if(enyo.platform.ie<9 && inNode && inNode.currentStyle) {
+			//simple window.getComputedStyle polyfill for IE8
+			var computedStyle = enyo.clone(inNode.currentStyle);
+			computedStyle.getPropertyValue = inNode.currentStyle.getAttribute;
+			computedStyle.setProperty = inNode.currentStyle.setExpression;
+			computedStyle.removeProperty = inNode.currentStyle.removeAttribute;
+			return computedStyle;
+		} else {
+			return window.getComputedStyle && inNode && window.getComputedStyle(inNode, null);
+		}
 	},
 	getComputedStyleValue: function(inNode, inProperty, inComputedStyle) {
 		var s = inComputedStyle || this.getComputedStyle(inNode);
