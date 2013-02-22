@@ -57,8 +57,8 @@
 
 	enyo.loaderFactory.prototype  = {
 		verbose: false,
-		loadScript: function(inScript) {
-			this.machine.script(inScript);
+		loadScript: function(inScript, success, failure) {
+			this.machine.script(inScript, success, failure);
 		},
 		loadSheet: function(inSheet) {
 			this.machine.sheet(inSheet);
@@ -91,6 +91,12 @@
 			// A package is now complete. Pop the block that was interrupted for that package (if any).
 			var block = this.stack.pop();
 			if (block) {
+				// propagate failed scripts to queued block
+				if(enyo.runtimeLoading && inBlock.failed) {
+					block.failed = block.failed || [];
+					block.failed.push.apply(block.failed, inBlock.failed);
+				}
+
 				// block.packageName is the name of the package that interrupted us
 				//this.report("finished package", block.packageName);
 				if (this.verbose) {
@@ -103,17 +109,17 @@
 				// process this new block
 				this.more(block);
 			} else {
-				this.finish();
+				this.finish(inBlock);
 			}
 		},
-		finish: function() {
+		finish: function(inBlock) {
 			this.packageFolder = "";
 			if (this.verbose) {
 				console.log("-------------- fini");
 			}
 			for (var i in this.finishCallbacks) {
 				if (this.finishCallbacks[i]) {
-					this.finishCallbacks[i]();
+					this.finishCallbacks[i](inBlock);
 					this.finishCallbacks[i] = null;
 				}
 			}
@@ -153,7 +159,8 @@
 				if (this.verbose) {
 					console.log("+ module: [" + prefix + "][" + inPath + "]");
 				}
-				this.requireScript(inPath, path);
+
+				return this.requireScript(inPath, path, inBlock);
 			} else {
 				// package
 				this.requirePackage(path, inBlock);
@@ -174,14 +181,32 @@
 			this.sheets.push(inPath);
 			this.loadSheet(inPath);
 		},
-		requireScript: function(inRawPath, inPath) {
+		requireScript: function(inRawPath, inPath, inBlock) {
 			// script file
 			this.modules.push({
 				packageName: this.packageName,
 				rawPath: inRawPath,
 				path: inPath
 			});
-			this.loadScript(inPath);
+
+			if(enyo.runtimeLoading) {
+				var _this = this;
+				var success = function() {
+					_this.more(inBlock);
+				};
+
+				var failure = function() {
+					inBlock.failed = inBlock.failed || [];
+					inBlock.failed.push(inPath);
+					_this.more(inBlock);
+				}
+
+				this.loadScript(inPath, success, failure);
+			} else {
+				this.loadScript(inPath);
+			}
+
+			return enyo.runtimeLoading;
 		},
 		decodePackagePath: function(inPath) {
 			// A package path can be encoded in two ways:
