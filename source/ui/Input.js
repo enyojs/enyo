@@ -114,9 +114,16 @@ enyo.kind({
 	clear: function() {
 		this.setValue("");
 	},
+	//* Focus on this input
 	focus: function() {
 		if (this.hasNode()) {
 			this.node.focus();
+		}
+	},
+	//* Blur this input
+	blur: function() {
+		if (this.hasNode()) {
+			this.node.blur();
 		}
 	},
 	//* Returns true if the Input is focused.
