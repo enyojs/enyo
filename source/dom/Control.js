@@ -514,6 +514,24 @@ enyo.kind({
 	hide: function() {
 		this.setShowing(false);
 	},
+	//* Focus on this control
+	focus: function() {
+		if (this.hasNode()) {
+			this.node.focus();
+		}
+	},
+	//* Blur this control
+	blur: function() {
+		if (this.hasNode()) {
+			this.node.blur();
+		}
+	},
+	//* Returns true if the control is focused.
+	hasFocus: function() {
+		if (this.hasNode()) {
+			return document.activeElement === this.node;
+		}
+	},
 	/**
 		Returns an object describing the geometry of this object, like so:
 
