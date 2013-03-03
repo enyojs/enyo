@@ -73,7 +73,7 @@ enyo.kind({
 			this.createComponent(tr);
 		}
 
-		numCols = this.columns.length || this.rows[0].length || 0;
+		numCols = this.columns.length || ((this.rows[0]) ? this.rows[0].length : 0);
 		var numRows = this.rows.length;
 		for (i=0; i<numCols; i++) {
 			row = this.rows[i];
