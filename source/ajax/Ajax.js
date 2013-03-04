@@ -216,11 +216,11 @@ enyo.kind({
 			return r;
 		}
 	},
-    //* @protected
-    //* Handler for ajax progress events. Updates the currentProgress property.
-    updateProgress: function(event) {
-		this.setProperty('currentProgress', event.total ? event.loaded / event.total : 0);
-    },
+	//* @protected
+	//* Handler for ajax progress events. Updates the currentProgress property.
+	updateProgress: function(event) {
+	this.setProperty('currentProgress', event.total ? event.loaded / event.total : 0);
+	},
 	statics: {
 		objectToQuery: function(/*Object*/ map) {
 			var enc = encodeURIComponent;
