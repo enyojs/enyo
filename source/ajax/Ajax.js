@@ -219,7 +219,7 @@ enyo.kind({
 	//* @protected
 	//* Handler for ajax progress events. Updates the currentProgress property.
 	updateProgress: function(event) {
-	this.setProperty('currentProgress', event.total ? event.loaded / event.total : 0);
+		this.setProperty('currentProgress', event.total ? event.loaded / event.total : 0);
 	},
 	statics: {
 		objectToQuery: function(/*Object*/ map) {
