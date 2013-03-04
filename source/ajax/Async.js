@@ -22,7 +22,11 @@ enyo.kind({
 			If set to a non-zero value, the number of milliseconds to
 			wait after the _go_ call before failing with the "timeout" error
 		*/
-		timeout: 0
+		timeout: 0,
+        /**
+            This property reflects the current progress of the request as a number between 0 and 1
+         */
+        currentProgress: 0
 	},
 	//* @protected
 	failed: false,
@@ -30,6 +34,7 @@ enyo.kind({
 	constructor: function() {
 		this.responders = [];
 		this.errorHandlers = [];
+        this.progressHandlers = [];
 	},
 	accumulate: function(inArray, inMethodArgs) {
 		var fn = (inMethodArgs.length < 2) ? inMethodArgs[0] : enyo.bind(inMethodArgs[0], inMethodArgs[1]);
@@ -103,6 +108,7 @@ enyo.kind({
 	//* Called as part of the async implementation; triggers the handler chain.
 	respond: function(inValue) {
 		this.failed = false;
+        this.setCurrentProgress(1);
 		this.endTimer();
 		this.handle(inValue, this.responders);
 	},
@@ -110,6 +116,7 @@ enyo.kind({
 	//* Can be called from any handler to trigger the error chain.
 	fail: function(inError) {
 		this.failed = true;
+        this.setCurrentProgress(1);
 		this.endTimer();
 		this.handle(inError, this.errorHandlers);
 	},
@@ -118,8 +125,26 @@ enyo.kind({
 	recover: function() {
 		this.failed = false;
 	},
+    //* @public
+    /**
+        Registers a progress handler.
+        First parameter is an optional _this_ context for the response method.
+        Second (or only) parameter is the function object.
+     */
+    progress: function(/* [inContext], inResponder */) {
+        this.accumulate(this.progressHandlers, arguments);
+        return this;
+    },
+    //* @protected
+    //* Notifies the progress handlers
+    currentProgressChanged: function(progress) {
+        for (var i = 0; i < this.progressHandlers.length; i++) {
+            enyo.call(this.context || this, this.progressHandlers[i], [this, this.currentProgress]);
+        }
+    },
 	//* Starts the async activity. Overridden in subkinds.
 	go: function(inValue) {
+        this.setCurrentProgress(0);
 		enyo.asyncMethod(this, function() {
 			this.respond(inValue);
 		});
