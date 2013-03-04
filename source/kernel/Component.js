@@ -78,6 +78,7 @@ enyo.kind({
 	},
 	defaultKind: "Component",
 	handlers: {},
+	__jobs: {},
 	toString: function() {
 		return this.kindName;
 	},
@@ -108,13 +109,14 @@ enyo.kind({
 		this.initComponents();
 	},
 	initComponents: function() {
-		// 'components' property in kind declarations is renamed to 'kindComponents'
-		// by the Component subclass mechanism, allowing us to distinguish them easily
-		// from this.components, without the code-writer having to worry about the
-		// difference.
-		// Specifically, the difference is that kindComponents are constructed
-		// as owned by this control (and this.components are not).
-		// Also, kindComponents are marked with isChrome true flag.
+		// The _components_ property in kind declarations is renamed to
+		// _kindComponents_ by the Component subclass mechanism.  This makes it
+		// easy for the developer to distinguish kindComponents from the components
+		// in _this.components_, without having to worry about the actual difference.
+		//
+		// Specifically, the difference is that kindComponents are constructed as
+		// owned by this control (whereas components in _this.components_ are not).
+		// In addition, kindComponents are marked with the _isChrome: true_ flag.
 		this.createChrome(this.kindComponents);
 		this.createClientComponents(this.components);
 	},
@@ -137,6 +139,7 @@ enyo.kind({
 	destroy: function() {
 		this.destroyComponents();
 		this.setOwner(null);
+		this.stopAllJobs();
 		// JS objects are never truly destroyed (GC'd) until all references are gone,
 		// we might have some delayed action on this object that needs to have access
 		// to this flag.
@@ -197,18 +200,9 @@ enyo.kind({
 			n = this.nameComponent(inComponent);
 		}
 		if (this.$[n]) {
-			this.warn('Duplicate component name "' + n + '" in owner "' + this.id + '" violates unique-name-under-owner rule, replacing existing component in the hash and continuing, but this is an error condition and should be fixed.');
-			//if (this.shouldWarn()) {
-			/*
-			try {
-				throw new Error('Duplicate component name "' + n + '" violates unique-name-under-owner rule, replacing existing component in the hash and continuing, but this is an error condition and should be fixed.');
-			} catch(x) {
-				enyo.warn(x);
-				enyo.log(x.stack);
-			}
-			*/
-			/*this.warn() &&*/ //enyo.warn('Duplicate component name "' + n + '" violates unique-name-under-owner rule, replacing existing component in the hash and continuing, but this is an error condition and should be fixed.');
-			//}
+			this.warn('Duplicate component name "' + n + '" in owner "' + this.id + '" violates ' +
+				'unique-name-under-owner rule, replacing existing component in the hash and continuing, ' +
+				'but this is an error condition and should be fixed.');
 		}
 		this.$[n] = inComponent;
 	},
@@ -414,6 +408,11 @@ enyo.kind({
 		}
 		return this.bubbleDelegation(inDelegate, inName, inEventName, inEvent, inSender);
 	},
+	stopAllJobs: function() {
+		for (var jobName in this.__jobs) {
+			this.stopJob(jobName);
+		}
+	},
 	//* @public
 	/**
 		Dispatches the event to named delegate _inMethodName_, if it exists.
@@ -450,6 +449,34 @@ enyo.kind({
 	waterfallDown: function(inMessageName, inMessage, inSender) {
 		for (var n in this.$) {
 			this.$[n].waterfall(inMessageName, inMessage, inSender);
+		}
+	},
+	/**
+		Create a new job tied to this instance of the component. If the component is
+		destroyed, any jobs associated it will also be stopped.  If you start a job
+		that is pending with the same name, the original job will be stopped, making this
+		useful for timeouts that need to be reset.
+	*/
+	startJob: function(inJobName, inJob, inWait) {
+		// allow strings as job names, they map to local method names
+		if (enyo.isString(inJob)) {
+			inJob = this[inJob];
+		}
+		// stop any existing jobs with same name
+		this.stopJob(inJobName);
+		this.__jobs[inJobName] = setTimeout(enyo.bind(this, function() {
+			this.stopJob(inJobName);
+			// call "inJob" with this bound to the component.
+			inJob.call(this);
+		}), inWait);
+	},
+	/**
+		Stop a component-specific job before it has been activated.
+	*/
+	stopJob: function(inJobName) {
+		if (this.__jobs[inJobName]) {
+			clearTimeout(this.__jobs[inJobName]);
+			delete this.__jobs[inJobName];
 		}
 	}
 });
@@ -521,7 +548,8 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 		fn = inValue.caller;
 	} else {
 		if (inName.slice(0, 2) != 'on') {
-			enyo.warn("enyo.Component.addEvent: event names must start with 'on'. " + inProto.kindName + " event '" + inName + "' was auto-corrected to 'on" + inName + "'.");
+			enyo.warn("enyo.Component.addEvent: event names must start with 'on'. " + inProto.kindName +
+				" event '" + inName + "' was auto-corrected to 'on" + inName + "'.");
 			inName = "on" + inName;
 		}
 		v = inValue;

@@ -154,10 +154,10 @@ enyo.kind({
 	/**
 		Returns the DOM node representing the control.
 		If the control is not currently rendered, returns null.
-		
+
 		If hasNode() returns a value, the _node_ property will be valid and
 		can be checked directly.
-		
+
 		Once hasNode() is called, the returned value is made available in
 		the _node_ property of this control.
 
@@ -285,7 +285,7 @@ enyo.kind({
 		Removes substring _inClass_ from the _class_ attribute of this object.
 
 		_inClass_ must have no leading or trailing spaces.
-		
+
 		Using a compound class name is supported, but the name is treated
 		atomically. For example, given _"a b c"_, _removeClass("a b")_ will
 		produce _"c"_, but _removeClass("a c")_ will produce _"a b c"_.
@@ -366,9 +366,9 @@ enyo.kind({
 	/**
 		Returns the computed value of a CSS style named from _inStyle_
 		for the DOM node of the control. If the node hasn't been generated,
-		returns _inDefault_ as a default value. This uses JavaScript-style
-		property names, not CSS-style names, so use "fontFamily" instead of
-		"font-family".
+		returns _inDefault_ as a default value. This uses CSS-style property
+		names, not JavaScript-style names, so use "font-family" instead of
+		"fontFamily".
 	*/
 	getComputedStyleValue: function(inStyle, inDefault) {
 		if (this.hasNode()) {
@@ -450,7 +450,7 @@ enyo.kind({
 		// add css to enable hw-accelerated scrolling on non-Android platforms (ENYO-900, ENYO-901)
 		this.setupOverflowScrolling();
 		// generate our HTML
-		pn.innerHTML = this.generateHtml();
+		enyo.dom.setInnerHtml(pn, this.generateHtml());
 		// post-rendering tasks
 		if (this.generated) {
 			this.rendered();
@@ -520,13 +520,16 @@ enyo.kind({
 			{left: _offsetLeft_, top: _offsetTop_, width: _offsetWidth_, height: _offsetHeight_}
 
 		Values returned are only valid if _hasNode()_ is truthy.
+		If there's no DOM node for the object, this returns a bounds structure with
+		_undefined_ as the value of all fields.
 
 			var bounds = this.getBounds();
 			enyo.log(bounds.width);
 	*/
 	getBounds: function() {
-		var n = this.node || this.hasNode() || 0;
-		return {left: n.offsetLeft, top: n.offsetTop, width: n.offsetWidth, height: n.offsetHeight};
+		var n = this.node || this.hasNode();
+		var b = enyo.dom.getBounds(n);
+		return b || {left: undefined, top: undefined, width: undefined, height: undefined};
 	},
 	/**
 		Sets any or all of the geometry style properties _width_, _height_,
@@ -712,7 +715,7 @@ enyo.kind({
 		if (this.generated) {
 			this.teardownChildren();
 		}
-		this.node.innerHTML = this.generateInnerHtml();
+		enyo.dom.setInnerHtml(this.node, this.generateInnerHtml());
 	},
 	renderStyles: function() {
 		if (this.hasNode()) {

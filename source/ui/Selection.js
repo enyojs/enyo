@@ -42,7 +42,7 @@ enyo.kind({
 
 			_inEvent.key_ is whatever key was used to register the selection
 			(usually a row index).
-			
+
 			_inEvent.data_ references data registered with this key by the code
 			that made the original selection.
 		*/
@@ -57,7 +57,7 @@ enyo.kind({
 
 			_inEvent.key_ is whatever key was used to request the deselection
 			(usually a row index).
-			
+
 			_inEvent.data_ references data registered with this key by the code
 			that made the selection.
 		*/

@@ -1,10 +1,13 @@
 /**
-_enyo.TouchScrollStrategy_, a helper kind for implementing a touch-based
-scroller, integrates the scrolling simulation provided by
-<a href="#enyo.ScrollMath">enyo.ScrollMath</a> into an
-<a href="#enyo.Scroller">enyo.Scroller</a>.
+	_enyo.TouchScrollStrategy_ is a helper kind for implementing a touch-based
+	scroller. It integrates the scrolling simulation provided by
+	<a href="#enyo.ScrollMath">enyo.ScrollMath</a> into an
+	<a href="#enyo.Scroller">enyo.Scroller</a>.
 
-_enyo.TouchScrollStrategy_ is not typically created in application code.
+	_enyo.TouchScrollStrategy_ is not typically created in application code.
+	Instead, it is specified as the value of the `strategyKind` property of an
+	`enyo.Scroller` or <a href="#enyo.List">enyo.List</a>, or is used by the
+	framework implicitly.
 */
 enyo.kind({
 	name: "enyo.TouchScrollStrategy",
@@ -303,6 +306,7 @@ enyo.kind({
 		if (!this.dragging) {
 			this.calcBoundaries();
 			this.syncScrollMath();
+			this.stabilize();
 			if (this.$.scrollMath.mousewheel(e)) {
 				e.preventDefault();
 				return true;

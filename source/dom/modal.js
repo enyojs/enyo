@@ -23,7 +23,7 @@ enyo.dispatcher.features.push(function(e) {
 });
 
 //
-//	NOTE: This object is a plug-in; these methods should 
+//	NOTE: This object is a plug-in; these methods should
 //	be called on _enyo.dispatcher_, and not on the plug-in itself.
 //
 enyo.mixin(enyo.dispatcher, {

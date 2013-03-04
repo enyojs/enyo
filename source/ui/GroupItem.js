@@ -1,4 +1,4 @@
-/** 
+/**
 	_enyo.GroupItem_ is the base kind for the Grouping API. It manages the
 	active state of the component (or the inheriting component). A subkind may
 	call _setActive_ to set the _active_ property to the desired state; this

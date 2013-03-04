@@ -13,12 +13,12 @@
 */
 enyo.gesture = {
 	//* @protected
-	eventProps: ["target", "relatedTarget", "clientX", "clientY", "pageX", "pageY", 
+	eventProps: ["target", "relatedTarget", "clientX", "clientY", "pageX", "pageY",
 		"screenX", "screenY", "altKey", "ctrlKey", "metaKey", "shiftKey",
 		"detail", "identifier", "dispatchTarget", "which", "srcEvent"],
 	makeEvent: function(inType, inEvent) {
 		var e = {type: inType};
-		for (var i=0, p; p=this.eventProps[i]; i++) {
+		for (var i=0, p; (p=this.eventProps[i]); i++) {
 			e[p] = inEvent[p];
 		}
 		e.srcEvent = e.srcEvent || inEvent;
@@ -165,7 +165,7 @@ enyo.requiresWindow(function() {
 			};
 			e.type = "mousewheel";
 			var p = e.VERTICAL_AXIS == e.axis ? "wheelDeltaY" : "wheelDeltaX";
-			e[p] =  e.detail * -12;
+			e[p] =  e.detail * -40;
 			enyo.dispatch(e);
 		}, false);
 	}

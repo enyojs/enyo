@@ -13,14 +13,15 @@
 	//* @public
 
 	/**
-		Sets object _name_ to _value_. _name_ can use dot notation and intermediate objects are created as necessary.
+		Sets object _name_ to _value_. _name_ may use dot notation, and
+		intermediate objects are created as necessary.
 
-			// set foo.bar.baz to 3. If foo or foo.bar do not exist, they are created.
+			// set foo.bar.baz to 3; if foo or foo.bar do not exist, they are created
 			enyo.setObject("foo.bar.baz", 3);
 
-		Optionally, _name_ can be relative to object _context_.
+		Optionally, _name_ may be relative to object _context_.
 
-			// create foo.zot and sets foo.zot.zap to null.
+			// create foo.zot and set foo.zot.zap to null
 			enyo.setObject("zot.zap", null, foo);
 	*/
 	enyo.setObject = function(name, value, context) {
@@ -29,16 +30,17 @@
 	};
 
 	/**
-		Gets object _name_. _name_ can use dot notation. Intermediate objects are created if _create_ argument is truthy.
+		Gets object _name_. _name_ may use dot notation. Intermediate objects
+		are created if the _create_ argument is truthy.
 
-			// get the value of foo.bar, or undefined if foo doesn't exist.
+			// get the value of foo.bar, or undefined if foo doesn't exist
 			var value = enyo.getObject("foo.bar");
 
-			// get the value of foo.bar. If foo.bar doesn't exist,
-			// it's assigned an empty object, which is returned
+			// get the value of foo.bar; if foo.bar doesn't exist,
+			// it's assigned an empty object, which is then returned
 			var value = enyo.getObject("foo.bar", true);
 
-		Optionally, _name_ can be relative to object _context_.
+		Optionally, _name_ may be relative to object _context_.
 
 			// get the value of foo.zot.zap, or undefined if foo.zot doesn't exist
 			var value = enyo.getObject("zot.zap", false, foo);
@@ -47,10 +49,11 @@
 		return enyo._getProp(name.split("."), create, context);
 	};
 
-	//* Returns a random Integer between 0 and inBound (0 <= results < inBound).
-	//
-	//		var randomLetter = String.fromCharCode(enyo.irand(26) + 97);
-	//
+	/**
+		Returns a random Integer between 0 and _inBound_ (0 <= random integer < _inBound_).
+
+			var randomLetter = String.fromCharCode(enyo.irand(26) + 97);
+	*/
 	enyo.irand = function(inBound) {
 		return Math.floor(Math.random() * inBound);
 	};
@@ -93,8 +96,8 @@
 
 	//* Returns true if the argument is true
 	enyo.isTrue = function(it) {
-		return !(it === "false" || it === false || it === 0 || it === null || it === undefined)
-	}
+		return !(it === "false" || it === false || it === 0 || it === null || it === undefined);
+	};
 
 	//* Returns the index of the element in _inArray_ that is equivalent (==) to _inElement_, or -1 if no element is found.
 	enyo.indexOf = function(inElement, inArray, fromIndex) {
@@ -210,7 +213,7 @@
 				'propertyIsEnumerable',
 				'constructor'
 			];
-			for (var i = 0, p; p = dontEnums[i]; i++) {
+			for (var i = 0, p; (p = dontEnums[i]); i++) {
 				if (hop.call(inObject, p)) {
 					results.push(p);
 				}
@@ -221,14 +224,14 @@
 
 	/**
 		Clones an existing Array, or converts an array-like object into an Array.
-		
+
 		If _inOffset_ is non-zero, the cloning is started from that index in the source Array.
 		The clone may be appended to an existing Array by passing the existing Array as _inStartWith_.
-		
+
 		Array-like objects have _length_ properties, and support square-bracket notation ([]).
 		Often array-like objects do not support Array methods, such as _push_ or _concat_, and
 		must be converted to Arrays before use.
-		
+
 		The special _arguments_ variable is an example of an array-like object.
 	*/
 	enyo.cloneArray = function(inArrayLike, inOffset, inStartWith) {
@@ -392,7 +395,7 @@
 		enyo.setPrototype(enyo.instance, obj);
 		return new enyo.instance();
 	};
-	
+
 	//* @public
 
 	/**

@@ -6,7 +6,7 @@
 	Returns a copy of _inText_, with macros defined by _inPattern_ replaced by
 	named values in _inMap_.
 
-	_inPattern_ may be omitted, in which case the default macro pattern is used. 
+	_inPattern_ may be omitted, in which case the default macro pattern is used.
 	The default pattern matches macros of the form
 
 		{$name}

@@ -1,10 +1,13 @@
 /**
-_enyo.TranslateScrollStrategy_ is a helper kind that extends
-<a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a>, optimizing it
-for scrolling environments in which effecting scroll changes with transform is
-fastest.
+	_enyo.TranslateScrollStrategy_ is a helper kind that extends
+	<a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a>, optimizing
+	it for scrolling environments in which effecting scroll changes with
+	transforms is fastest.
 
-_enyo.TranslateScrollStrategy_ is not typically created in application code.
+	_enyo.TranslateScrollStrategy_ is not typically created in application code.
+	Instead, it is specified as the value of the `strategyKind` property of an
+	`enyo.Scroller` or <a href="#enyo.List">enyo.List</a>, or is used by the
+	framework implicitly.
 */
 enyo.kind({
 	name: "enyo.TranslateScrollStrategy",

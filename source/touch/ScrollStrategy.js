@@ -3,6 +3,9 @@
 	strategy for an <a href="#enyo.Scroller">enyo.Scroller</a>.
 
 	_enyo.ScrollStrategy_ is not typically created in application code.
+	Instead, it is specified as the value of the `strategyKind` property of an
+	`enyo.Scroller` or <a href="#enyo.List">enyo.List</a>, or is used by the
+	framework implicitly.
 */
 enyo.kind({
 	name: "enyo.ScrollStrategy",

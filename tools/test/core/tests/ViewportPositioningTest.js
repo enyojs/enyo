@@ -1,7 +1,7 @@
 enyo.kind({
 	name: "ViewportPositioningTest",
 	kind: enyo.TestSuite,
-	
+
 	testMeasuringViewportCoordinates: function() {
 		var K = enyo.kind({
 			kind: enyo.Control,
@@ -21,8 +21,8 @@ enyo.kind({
 
 		var k = new K();
 		k.renderInto(div);
-		
-		var p = enyo.dom.calcViewportPositionForNode(k.hasNode()),
+
+		var p = enyo.dom.calcNodePosition(k.hasNode()),
 			// Bottom and right require calculating viewport size
 			fromBottom = (document.body.parentNode.offsetHeight > enyo.dom.getWindowHeight() ? enyo.dom.getWindowHeight() - document.body.parentNode.scrollTop : document.body.parentNode.offsetHeight) - 20,
 			fromRight = (document.body.parentNode.offsetWidth > enyo.dom.getWindowWidth() ? enyo.dom.getWindowWidth() - document.body.parentNode.scrollLeft : document.body.parentNode.offsetWidth) - 20;
@@ -44,11 +44,11 @@ enyo.kind({
 		if (p.height !== 10) {
 			this.log('height failed with value: ' + p.height + ' (should be 10)');
 		}
-		
+
 		// Now test measuring the element when a parent has a border
 		div.style.border = "1px solid transparent";
-		k.hasNode().style.border = "1px solid transparent"
-		p = enyo.dom.calcViewportPositionForNode(k.hasNode()),
+		k.hasNode().style.border = "1px solid transparent";
+		p = enyo.dom.calcNodePosition(k.hasNode()),
 			// We don't count the right border on the element itself because that is taken into account automatically by the element's width measurement
 			fromBottom -= 3,
 			fromRight -= 3;
@@ -70,11 +70,35 @@ enyo.kind({
 		if (p.height !== 12) {
 			this.log('height with border failed with value: ' + p.height + ' (should be 12)');
 		}
-			
+
+		// And finally, test positioning relative to another node
+		p = enyo.dom.calcNodePosition(k.hasNode(), div),
+			// Reset to div size - node height
+			fromBottom = div.offsetHeight - 22,
+			fromRight = div.offsetWidth - 22;
+		if (p.top !== 10) {
+			this.log('top relative to div failed with value: ' + p.top + ' (should be 10)');
+		}
+		if (p.left !== 10) {
+			this.log('left relative to div failed with value: ' + p.left + ' (should be 10)');
+		}
+		if (p.bottom !== fromBottom) {
+			this.log('bottom relative to div failed with value: ' + p.bottom + ' (should be ' + fromBottom + ')');
+		}
+		if (p.right !== fromRight) {
+			this.log('right relative to div failed with value: ' + p.right + ' (should be ' + fromRight + ')');
+		}
+		if (p.width !== 12) {
+			this.log('width relative to div failed with value: ' + p.width + ' (should be 12)');
+		}
+		if (p.height !== 12) {
+			this.log('height relative to div failed with value: ' + p.height + ' (should be 12)');
+		}
+
 		// Clean up
 		k.destroy();
 		document.body.removeChild(div);
-		
+
 		this.finish(this.logMessages && this.logMessages.length ? 'Following measurements failed:' : '');
 	}
 });

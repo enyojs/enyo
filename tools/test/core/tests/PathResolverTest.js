@@ -2,12 +2,34 @@ enyo.kind({
 	name: "PathResolverTest",
 	kind: enyo.TestSuite,
 	rewriteTest: function(inResolver, inPath, inExpected) {
-		var result = inResolver.rewrite(inPath);
+		var pf= enyo.loader.packageFolder;
+		enyo.loader.packageFolder = "./source/";
+
+		var result = enyo.loader.getPathPrefix(inPath) + inResolver.rewrite(inPath);
+
 		if (result === inExpected) {
 			this.finish();
 		} else {
 			this.finish("Expected: '" + inExpected + "' Got: '" + result + "'");
 		}
+
+		enyo.loader.packageFolder = pf;
+	},
+	testNormalPath: function() {
+		var resolver = new enyo.pathResolverFactory();
+		this.rewriteTest(resolver, "my/folder", "./source/my/folder");
+	},
+	testLeadingSlashPath: function() {
+		var resolver = new enyo.pathResolverFactory();
+		this.rewriteTest(resolver, "/my/folder", "/my/folder");
+	},
+	testRewriteHttps: function() {
+		var resolver = new enyo.pathResolverFactory();
+		this.rewriteTest(resolver, "https://my.server/file.js", "https://my.server/file.js");
+	},
+	testRewriteHttpMixedCase: function() {
+		var resolver = new enyo.pathResolverFactory();
+		this.rewriteTest(resolver, "hTtP://my.server/file.js", "hTtP://my.server/file.js");
 	},
 	testRewriteUnknown: function() {
 		var resolver = new enyo.pathResolverFactory();

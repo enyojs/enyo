@@ -9,7 +9,7 @@ enyo.requiresWindow = function(inFunction) {
 
 enyo.dom = {
 	/**
-		Shortcut for _document.getElementById_ if _id_ is a string, otherwise returns _id_. 
+		Shortcut for _document.getElementById_ if _id_ is a string, otherwise returns _id_.
 		Uses _window.document_ unless a document is specified in the (optional) _doc_
 		parameter.
 
@@ -17,24 +17,46 @@ enyo.dom = {
 			var domNode = enyo.dom.byId(node);
 	*/
 	byId: function(id, doc){
-		return (typeof id == "string") ? (doc || document).getElementById(id) : id; 
+		return (typeof id == "string") ? (doc || document).getElementById(id) : id;
 	},
 	/**
 		return string with ampersand, less-than, and greater-than characters
-		replaced with HTML entities, e.g. 
+		replaced with HTML entities, e.g.
 
-			'&lt;code&gt;"This &amp; That"&lt;/code&gt;' 
+			'&lt;code&gt;"This &amp; That"&lt;/code&gt;'
 
-		becomes 
+		becomes
 
 			'&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;'
 	*/
 	escape: function(inText) {
 		return inText !== null ? String(inText).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
 	},
+	/**
+		Returns an object describing the geometry of this node, like so:
+
+			{left: _offsetLeft_, top: _offsetTop_, width: _offsetWidth_, height: _offsetHeight_}
+	*/
+	getBounds: function(n) {
+		if (n) {
+			return {left: n.offsetLeft, top: n.offsetTop, width: n.offsetWidth, height: n.offsetHeight};
+		}
+		else {
+			return null;
+		}
+	},
 	//* @protected
 	getComputedStyle: function(inNode) {
-		return window.getComputedStyle && inNode && window.getComputedStyle(inNode, null);
+		if(enyo.platform.ie<9 && inNode && inNode.currentStyle) {
+			//simple window.getComputedStyle polyfill for IE8
+			var computedStyle = enyo.clone(inNode.currentStyle);
+			computedStyle.getPropertyValue = inNode.currentStyle.getAttribute;
+			computedStyle.setProperty = inNode.currentStyle.setExpression;
+			computedStyle.removeProperty = inNode.currentStyle.removeAttribute;
+			return computedStyle;
+		} else {
+			return window.getComputedStyle && inNode && window.getComputedStyle(inNode, null);
+		}
 	},
 	getComputedStyleValue: function(inNode, inProperty, inComputedStyle) {
 		var s = inComputedStyle || this.getComputedStyle(inNode);
@@ -139,20 +161,34 @@ enyo.dom = {
 	calcMarginExtents: function(inNode) {
 		return this.calcBoxExtents(inNode, "margin");
 	},
-	//* Returns an object like `{top: 0, left: 0, bottom: 100, right: 100, height: 10, width: 10}` that represents the object's position within the viewport. Negative values mean part of the object is not visible.
-	calcViewportPositionForNode: function(inNode) {
+	/**
+		Returns an object like `{top: 0, left: 0, bottom: 100, right: 100, height: 10, width: 10}`
+		that represents the object's position relative to `relativeToNode` (suitable for absolute
+		positioning within that parent node). Negative values mean part of the object is not visible.
+		If you leave `relativeToNode` undefined (or it is not a parent element), then the position
+		will be relative to the viewport and suitable for absolute positioning in a floating layer.
+	*/
+	calcNodePosition: function(inNode, relativeToNode) {
 		// Parse upward and grab our positioning relative to the viewport
 		var top = 0,
 			left = 0,
 			node = inNode,
 			width = node.offsetWidth,
 			height = node.offsetHeight,
-			docHeight = (document.body.parentNode.offsetHeight > this.getWindowHeight() ? this.getWindowHeight() - document.body.parentNode.scrollTop : document.body.parentNode.offsetHeight),
-			docWidth = (document.body.parentNode.offsetWidth > this.getWindowWidth() ? this.getWindowWidth() - document.body.parentNode.scrollLeft : document.body.parentNode.offsetWidth),
 			transformProp = enyo.dom.getStyleTransformProp(),
 			xregex = /translateX\((-?\d+)px\)/i,
 			yregex = /translateY\((-?\d+)px\)/i,
-			borderLeft = 0, borderTop = 0;
+			borderLeft = 0, borderTop = 0,
+			totalHeight = 0, totalWidth = 0;
+
+		if (relativeToNode) {
+			totalHeight = relativeToNode.offsetHeight;
+			totalWidth = relativeToNode.offsetWidth;
+		} else {
+			totalHeight = (document.body.parentNode.offsetHeight > this.getWindowHeight() ? this.getWindowHeight() - document.body.parentNode.scrollTop : document.body.parentNode.offsetHeight);
+			totalWidth = (document.body.parentNode.offsetWidth > this.getWindowWidth() ? this.getWindowWidth() - document.body.parentNode.scrollLeft : document.body.parentNode.offsetWidth);
+		}
+
 		if (node.offsetParent) {
 			do {
 				left += node.offsetLeft - (node.offsetParent ? node.offsetParent.scrollLeft : 0);
@@ -184,15 +220,21 @@ enyo.dom = {
 						top += borderTop;
 					}
 				}
-			} while ((node = node.offsetParent));
+			} while ((node = node.offsetParent) && node !== relativeToNode);
 		}
 		return {
 			'top': top,
 			'left': left,
-			'bottom': docHeight - top - height,
-			'right': docWidth - left - width,
+			'bottom': totalHeight - top - height,
+			'right': totalWidth - left - width,
 			'height': height,
 			'width': width
 		};
+	},
+	//* use to modify innerHTML in a manner that's safe for Win8 applications
+	setInnerHtml: function(node, html) {
+		enyo.execUnsafeLocalFunction(function() {
+			node.innerHTML = html;
+		});
 	}
 };
