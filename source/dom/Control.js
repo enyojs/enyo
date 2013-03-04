@@ -553,6 +553,28 @@ enyo.kind({
 		}
 		this.domStylesChanged();
 	},
+	getAbsoluteBounds: function() {
+		var l = 0,
+			t = 0,
+			n = this.hasNode(),
+			w = n ? n.offsetWidth : 0,
+			h = n ? n.offsetHeight : 0;
+
+		while(n) {
+			l += n.offsetLeft - (n.offsetParent ? n.offsetParent.scrollLeft : 0);
+			t += n.offsetTop  - (n.offsetParent ? n.offsetParent.scrollTop  : 0);
+			n = n.offsetParent;
+		}
+		
+		return {
+			top		: t,
+			left	: l,
+			bottom	: document.body.offsetHeight - t - h,
+			right	: document.body.offsetWidth  - l - w,
+			height	: h,
+			width	: w
+		};
+	},
 	//* @protected
 	// expensive, other methods do work to avoid calling here
 	findNodeById: function() {
@@ -759,6 +781,20 @@ enyo.kind({
 		// 'showing' does not imply the node is actually visible or even rendered in DOM,
 		// it simply reflects this state of this specific property as a convenience.
 		return this.showing = (this.domStyles.display != "none");
+	},
+	//* Return true if this and all parents are showing
+	getAbsoluteShowing: function() {
+		var b = this.getBounds();
+		
+		if(this.getShowing() === false || (b.height === 0 && b.width === 0)) {
+			return false;
+		}
+		
+		if(this.parent && this.parent.getAbsoluteShowing) {
+			return this.parent.getAbsoluteShowing();
+		} else {
+			return true;
+		}
 	},
 	//
 	//
