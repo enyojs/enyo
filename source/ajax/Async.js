@@ -130,6 +130,7 @@ enyo.kind({
 		Registers a progress handler.
 		First parameter is an optional _this_ context for the response method.
 		Second (or only) parameter is the function object.
+		Progress handlers are called with the sender as the first argument and the current progress as the second argument.
 	*/
 	progress: function(/* [inContext], inResponder */) {
 		this.accumulate(this.progressHandlers, arguments);
