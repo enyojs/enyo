@@ -126,22 +126,22 @@ enyo.kind({
 		this.failed = false;
 	},
     //* @public
-    /**
-        Registers a progress handler.
-        First parameter is an optional _this_ context for the response method.
-        Second (or only) parameter is the function object.
-     */
-    progress: function(/* [inContext], inResponder */) {
-        this.accumulate(this.progressHandlers, arguments);
-        return this;
-    },
-    //* @protected
-    //* Notifies the progress handlers
-    currentProgressChanged: function(progress) {
-        for (var i = 0; i < this.progressHandlers.length; i++) {
-            enyo.call(this.context || this, this.progressHandlers[i], [this, this.currentProgress]);
-        }
-    },
+	/**
+		Registers a progress handler.
+		First parameter is an optional _this_ context for the response method.
+		Second (or only) parameter is the function object.
+	 */
+	progress: function(/* [inContext], inResponder */) {
+		this.accumulate(this.progressHandlers, arguments);
+		return this;
+	},
+	//* @protected
+	//* Notifies the progress handlers
+	currentProgressChanged: function(progress) {
+		for (var i = 0; i < this.progressHandlers.length; i++) {
+			enyo.call(this.context || this, this.progressHandlers[i], [this, this.currentProgress]);
+		}
+	},
 	//* Starts the async activity. Overridden in subkinds.
 	go: function(inValue) {
         this.setCurrentProgress(0);

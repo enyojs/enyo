@@ -26,9 +26,9 @@ enyo.kind({
 	published: enyo.AjaxProperties,
 	//* @protected
 	constructor: function(inParams) {
-        this.xhrFields = {};
+		this.xhrFields = {};
 		enyo.mixin(this, inParams);
-        this.xhrFields.onprogress =  enyo.bind(this, this.updateProgress);
+		this.xhrFields.onprogress =  enyo.bind(this, this.updateProgress);
 		this.inherited(arguments);
 	},
 	//* @public
@@ -219,7 +219,7 @@ enyo.kind({
     //* @protected
     //* Handler for ajax progress events. Updates the currentProgress property.
     updateProgress: function(event) {
-        this.setProperty('currentProgress', event.total ? event.loaded / event.total : 0);
+		this.setProperty('currentProgress', event.total ? event.loaded / event.total : 0);
     },
 	statics: {
 		objectToQuery: function(/*Object*/ map) {
