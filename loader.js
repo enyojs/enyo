@@ -47,6 +47,8 @@
 		this.modules = [];
 		// stylesheet paths
 		this.sheets = [];
+		// designer metadata paths
+		this.designs = [];
 		// (protected) internal dependency stack
 		this.stack = [];
 		this.pathResolver = inPathResolver || enyo.path;
@@ -161,6 +163,11 @@
 				}
 
 				return this.requireScript(inPath, path, inBlock);
+			} else if (path.slice(-7) == ".design") {
+				if (this.verbose) {
+					console.log("+ design metadata: [" + prefix + "][" + inPath + "]");
+				}
+				this.requireDesign(path);
 			} else {
 				// package
 				this.requirePackage(path, inBlock);
@@ -207,6 +214,13 @@
 			}
 
 			return enyo.runtimeLoading;
+		},
+		requireDesign: function(inPath) {
+			// designer metadata (no loading here)
+			this.designs.push({
+				packageName: this.packageName,
+				path: inPath
+			});
 		},
 		decodePackagePath: function(inPath) {
 			// A package path can be encoded in two ways:
