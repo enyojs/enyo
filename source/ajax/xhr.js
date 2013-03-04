@@ -119,6 +119,9 @@ enyo.xhr = {
 			a.protocol === ":" && window.location.protocol === "file:") {
 			// leave off search and hash parts of the URL
 			return a.protocol + '//' + a.host + a.pathname;
+		} else if (a.protocol === ":" && window.location.protocol === "x-wmapp0:") {
+			// explicitly return absolute URL for Windows Phone 8, as an absolute path is required for local files
+			return window.location.protocol + "//" + window.location.pathname.split('/')[0] + "/" + a.host + a.pathname;
 		} else {
 			return inUrl;
 		}

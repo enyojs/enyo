@@ -54,6 +54,9 @@ enyo.kind({
 		if (enyo.platform.ie) {
 			this.handlers.onkeyup = "iekeyup";
 		}
+		if (enyo.platform.windowsPhone) {
+			this.handlers.onkeydown = "iekeydown";
+		}
 		this.inherited(arguments);
 		this.placeholderChanged();
 		// prevent overriding a custom attribute with null
@@ -98,6 +101,13 @@ enyo.kind({
 		// input event missing on ie 8, fails to fire on backspace and delete keys in ie 9
 		if (ie <= 8 || (ie == 9 && (kc == 8 || kc == 46))) {
 			this.bubble("oninput", inEvent);
+		}
+	},
+	iekeydown: function(inSender, inEvent) {
+		var wp = enyo.platform.windowsPhone, kc = inEvent.keyCode, dt = inEvent.dispatchTarget;
+		// onchange event fails to fire on enter key for Windows Phone 8, so we force blur
+		if (wp <= 8 && kc == 13 && this.tag == "input" && dt.hasNode()) {
+			dt.node.blur();
 		}
 	},
 	clear: function() {
