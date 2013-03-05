@@ -15,79 +15,128 @@ enyo.kind({
 	tag: "table",
 	create: function() {
 		this.inherited(arguments);
+		if (this.rowData.length && !this.rowCount) this.rowCount = this.rowData.length;
+		this._rowData = [];
+		this._headerData = null;
+		this._footerData = null;
 		this.genTable();
 	},
 	published: {
+		//* The number of rows in this 
+		//* _setTitles()_ is called because enyo cannot tell when an array
+		//* has been mutated
+		rowCount: undefined,
 		//* Array of row data. Each item in the rows array
 		//* corresponds to one row in the table. row data can be
-		//* represented in any way you like. Use `columns` array
-		//* to tell table how to parse data in each row. if each row
-		//* is an array, then `columns` is not required.
-		rows: [],
-		//* array of titles.
+		//* represented in any way you like. By default, enyo.Table can render
+		//* an array of arrays. rowData is optional. You can write a _genRow_
+		//* function that pulls its data from anywhere. If you do set _rowData_,
+		//* rowCount will be set to _rowData.length_. If you do not want this
+		//* behavior, set _rowData_ and _rowCount_ at the same time with _setRows_.
+		//*  _rowDataChanged()_ is called every time 
+		//* _setRowData()_ is called because enyo cannot tell when an array
+		//* has been mutated
+		rowData: [],
+		//* array of titles. _titlesChanged()_ is called every time 
+		//* _setTitles()_ is called because enyo cannot tell when an array
+		//* has been mutated
 		titles: [],
-		//* instructions for how to render each column in a row. It can be one of three things: (1)
-		//* undefined (pull directly from row array). (2) function(row, rows, rowIndex, colIndex)
-		//* (3) key to get value from row hash.
-		//* To get the contents for
-		//* the cell at row i, column j, the genTable first looks at this.columns:
-		//*  * if this.columns[j] is undefined, this.rows[i] must be an array and contents will
-		//*  * be pulled from this.rows[i][j]
-		//*  * if this.columns[j] is a function, then the function's return value will be the
-		//*    cell contents. function is called this.columns[j](this.rows[i], this.rows, i, j)
-		//*  * otherwise, this.columns[j] is assumed to be a key for a hash at rows[i],
-		//*    so the cell value will be this.rows[i][this.columns[j]]. if the value is a function
-		//*    it will be called with (this.rows, i, j).
-		//* columns must be empty or the exact length of each row. If you want most cells
-		//* to default to the row index, but want to modify some, instantiate an empty array
-		//* of the proper length: `this.columns=Array(len)` then insert your modification
-		//* functions as needed.
-		columns: [],
 		//* whether to display table header row
 		displayHeader: true
 	},
-	rowsChanged: function() {
-		this.rows = enyo.clone(this.rows);
+	//* set row data and row count at the same time to avoid double table render
+	setRows: function(inRowData, inRowCount) {
+		this.rowData = enyo.clone(inRowData);
+		this.rowDataChanged();
+		this.setRowCount(inRowCount);
+	},
+	//* generate the header. Defaults to creating table headers from the data in _this.titles_
+	//* if _displayHeader==true_ and _this.titles_ is not empty.
+	genHeader: function() {
+		if (!this.displayHeader || !this.titles.length) return null;
+		var out = [];
+		for (var i=0; i<this.titles.length; i++) {
+			out.push({ tag: "th", content: this.titles[i], allowHtml: this.allowHtml });
+		}
+		return out;
+	},
+	//* generate data for the inRowCount row of the table. must return an array, each element corresponding
+	//* to one cell. If the element is an object, it will be mixed into the kind definition, otherwise it 
+	//* will be placed in cell contents. So the returned element 
+	//* { class: "negative", content: "-350" } will create a td element with class _genative_ and content of
+	//* _-350_; similarly { tag: "th" content: "total" } will create a header cell with the content _total_.
+	//* Defalts to simply returning the unmodified array at _inRowCount_ of _this.rowData_.
+	genRow: function(inRowCount) {
+		return this.rowData[inRowCount] || [];
+	},
+	//* Generate a table footer. Defaults to null.
+	genFooter: function() {
+		return null;
+	},
+	//* get an array of the contents of every cell in the _inRowCount_ row
+	getRow: function(inRowCount) {
+		return enyo.map(this._rowData[inRowCount], function(cell) { return (cell instanceof Object) ? cell.content : cell; });
+	},
+	//* get an array of the contents of every cell in the inColCount column
+	getCol: function(inColCount) {
+		return enyo.map(this._rowData, function(row) { var cell = row[inColCount]; return (cell instanceof Object) ? cell.content : cell; });
+	},
+	//* get the content of the cell at inRowCount, inColCount
+	getCell: function(inRowCount, inColCount) {
+		if (inRowCount >= this._rowData.length) return undefined;
+		var cell = this._rowData[inRowCount][inColCount];
+		return (cell instanceof Object) ? cell.content : cell;
+	},
+	//* @protected
+	// results from genRow are pushed here. useful for calculating column sums and such
+	genTable: function() {
+		var i,  row, key, content;
+		this.destroyComponents();
+		this._rowData = [];
+		if (this.rowCount < 1) return;
+		var that = this;
+		// generate a row and each cell given row data.
+		var genRow = function(row) {
+			if (!row) return;
+			var cell, td, tr = { tag: "tr", components: [] };
+			for (var i=0; i< row.length; i++) {
+				cell = row[i];
+				td = { tag: "td", allowHtml: that.allowHtml };
+				if (cell instanceof Object) {
+					enyo.mixin(td, cell);
+				} else {
+					td.content = cell;
+				}
+				tr.components.push(td);
+			}
+			that.createComponent(tr);
+			return row;
+		};
+
+		this._headerData = genRow(this.genHeader());
+		for (i=0; i<this.rowCount; i++) {
+			that._rowData.push(genRow(this.genRow(i)));
+		}
+		if (this.rowCount > 2) this._footerData = genRow(this.genFooter(this.rowCount-1));
+		this.render();
+	},
+	setRowData: function(inRowData) {
+		inRowData = enyo.clone(this.rowData);
+		this.setPropertyValue("rowData", inRowData, "rowDataChanged");
+		this.setRowCount(inRowData.length);
+	},
+	setRowCount: function (inRowCount) {
+		this.setPropertyValue("rowCount", inRowCount, "rowCountChanged");
+	},
+	rowCountChanged: function() {
 		this.genTable();
 	},
-	titlesChanged: function() {
-		this.titles = enyo.clone(this.titles);
-		this.genTable();
-	},
-	columnsChanged: function() {
+	setTitles: function(inTitles) {
+		inTitles = enyo.clone(inTitles);
+		this.setPropertyValue("titles", inTitles, "titlesChanged");
 		this.genTable();
 	},
 	displayHeaderChanged: function() {
 		this.genTable();
-	},
-	genTable: function() {
-		var i, tr, th, td, row, key, content;
-		this.destroyComponents();
-		var numCols = this.titles.length;
-		if (numCols && this.displayHeader) {
-			tr = { tag: "tr", components: [] };
-			for (i=0; i<numCols; i++) {
-				th = { tag: "th", content: this.titles[i], allowHtml: this.allowHtml };
-				tr.components.push(th);
-			}
-			this.createComponent(tr);
-		}
-
-		numCols = this.columns.length || ((this.rows[0]) ? this.rows[0].length : 0);
-		var numRows = this.rows.length;
-		for (i=0; i<numCols; i++) {
-			row = this.rows[i];
-			tr = { tag: "tr", components: [] };
-			for (var j=0; j<numCols; j++) {
-				var col = this.columns[j];
-				content =   (col instanceof Function) ? col.call(this, row, this.rows, i, j) :
-							(col !== undefined) ? row[col] : row[j];
-				if (content instanceof Function) content = content.call(row, this.rows, i, j);
-				td = { tag: "td", content: content, allowHtml: this.allowHtml };
-				tr.components.push(td);
-			}
-			this.createComponent(tr);
-		}
-		this.render();
 	}
 });
