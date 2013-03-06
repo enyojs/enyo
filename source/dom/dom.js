@@ -179,7 +179,8 @@ enyo.dom = {
 			xregex = /translateX\((-?\d+)px\)/i,
 			yregex = /translateY\((-?\d+)px\)/i,
 			borderLeft = 0, borderTop = 0,
-			totalHeight = 0, totalWidth = 0;
+			totalHeight = 0, totalWidth = 0,
+			offsetAdjustLeft = 0, offsetAdjustTop = 0;
 
 		if (relativeToNode) {
 			totalHeight = relativeToNode.offsetHeight;
@@ -191,11 +192,17 @@ enyo.dom = {
 
 		if (node.offsetParent) {
 			do {
-				left += node.offsetLeft - (node.offsetParent ? node.offsetParent.scrollLeft : 0);
+				// Adjust the offset if relativeToNode is a child of the offsetParent
+				if (relativeToNode && relativeToNode.compareDocumentPosition(node.offsetParent) & Node.DOCUMENT_POSITION_CONTAINS) {
+					offsetAdjustLeft = relativeToNode.offsetLeft;
+					offsetAdjustTop = relativeToNode.offsetTop;
+				}
+				// Ajust our top and left properties based on the position relative to the parent
+				left += node.offsetLeft - (node.offsetParent ? node.offsetParent.scrollLeft : 0) - offsetAdjustLeft;
 				if (transformProp && xregex.test(node.style[transformProp])) {
 					left += parseInt(node.style[transformProp].replace(xregex, '$1'), 10);
 				}
-				top += node.offsetTop - (node.offsetParent ? node.offsetParent.scrollTop : 0);
+				top += node.offsetTop - (node.offsetParent ? node.offsetParent.scrollTop : 0) - offsetAdjustTop;
 				if (transformProp && yregex.test(node.style[transformProp])) {
 					top += parseInt(node.style[transformProp].replace(yregex, '$1'), 10);
 				}
@@ -220,7 +227,8 @@ enyo.dom = {
 						top += borderTop;
 					}
 				}
-			} while ((node = node.offsetParent) && node !== relativeToNode);
+				// Continue if we have an additional offsetParent, and either don't have a relativeToNode or the offsetParent is contained by the relativeToNode (if offsetParent contains relativeToNode, then we have already calculated up to the node, and can safely exit)
+			} while ((node = node.offsetParent) && (!relativeToNode || relativeToNode.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_CONTAINED_BY));
 		}
 		return {
 			'top': top,
