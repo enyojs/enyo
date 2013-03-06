@@ -5,10 +5,8 @@
 	_rows_ is an array of objects where each object corresponds to one row. The
 	simplest use is for each object to itself be an array. each item in the
 	row array corresponds to a cell in the row. Alternatively, each row can
-	be a hash. You must then set then set the ith item in _columns_ to be the
-	key for the ith cell in the final table row. Finally, each row can be an
-	arbitrary object. You then define the ith item in _columns to be a function
-	that, given the row, returns the content of the ith cell.
+	be an arbitrary object. You can override _genRow(inRowCount)_ to return
+	an array corresponding to each cell in the row.
 */
 enyo.kind({
 	name: "enyo.Table",
