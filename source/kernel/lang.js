@@ -106,7 +106,7 @@
         // args are only used in computed properties and we only
         // do the work to remap them when necessary
         var args;
-        var recursing = ("object" === typeof path && path.recursing)? true: false;
+        var recursing = (true === arguments[1]) || ("object" === typeof path && path.recursing)? true: false;
         // on rare occasions this method would be called under the context
         // of enyo itself, the problem is detecting when this is intended since
         // under normal circumstances a general call would assume a window

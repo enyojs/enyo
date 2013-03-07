@@ -296,7 +296,7 @@ enyo.constructorForKind = function(inKind) {
 		//
 		// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
 		// This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
-		return enyo._kindCtors[inKind] = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath.call(enyo, inKind) || window[inKind] || enyo.getPath(inKind);
+		return enyo._kindCtors[inKind] = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath.call(enyo, inKind, true) || window[inKind] || enyo.getPath(inKind);
 	}
 	return enyo.defaultCtor;
 };

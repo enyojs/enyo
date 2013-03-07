@@ -592,12 +592,14 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 	}
 	inProto[inName] = v;
 	if (!inProto[fn]) {
-		inProto[fn] = function(inEvent) {
+		inProto[fn] = function(payload) {
 			// bubble this event
 			//return this.bubble(inName, enyo.except(["delegate"], inEvent || {}));
-            var payload = enyo.clone(inEvent || {});
+            payload = payload || {};
+            var delegate = payload.delegate;
             delete payload.delegate;
             this.bubble(inName, payload);
+            if (delegate) payload.delegate = delegate;
 		};
 		// NOTE: Mark this function as a generated event handler to allow us to
 		// do event chaining. Is this too complicated?
