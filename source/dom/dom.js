@@ -105,6 +105,21 @@ enyo.dom = {
 		}
 		return 480;
 	},
+	// Workaround for lack of compareDocumentPosition support in IE8
+	// Code MIT Licensed, John Resig; source: http://ejohn.org/blog/comparing-document-position/
+	compareDocumentPosition: function(a, b) {
+		return a.compareDocumentPosition ?
+		a.compareDocumentPosition(b) :
+		a.contains ?
+			(a != b && a.contains(b) && 16) +
+			(a != b && b.contains(a) && 8) +
+			(a.sourceIndex >= 0 && b.sourceIndex >= 0 ?
+				(a.sourceIndex < b.sourceIndex && 4) +
+				(a.sourceIndex > b.sourceIndex && 2) :
+				1) +
+			0 :
+			0;
+	},
 	// moved from FittableLayout.js into common protected code
 	_ieCssToPixelValue: function(inNode, inValue) {
 		var v = inValue;
@@ -193,7 +208,8 @@ enyo.dom = {
 		if (node.offsetParent) {
 			do {
 				// Adjust the offset if relativeToNode is a child of the offsetParent
-				if (relativeToNode && relativeToNode.compareDocumentPosition(node.offsetParent) & Node.DOCUMENT_POSITION_CONTAINS) {
+				// For IE 8 compatibility, have to use integer 8 instead of Node.DOCUMENT_POSITION_CONTAINS
+				if (relativeToNode && this.compareDocumentPosition(relativeToNode, node.offsetParent) & 8) {
 					offsetAdjustLeft = relativeToNode.offsetLeft;
 					offsetAdjustTop = relativeToNode.offsetTop;
 				}
@@ -228,7 +244,8 @@ enyo.dom = {
 					}
 				}
 				// Continue if we have an additional offsetParent, and either don't have a relativeToNode or the offsetParent is contained by the relativeToNode (if offsetParent contains relativeToNode, then we have already calculated up to the node, and can safely exit)
-			} while ((node = node.offsetParent) && (!relativeToNode || relativeToNode.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_CONTAINED_BY));
+				// For IE 8 compatibility, have to use integer 16 instead of Node.DOCUMENT_POSITION_CONTAINED_BY
+			} while ((node = node.offsetParent) && (!relativeToNode || this.compareDocumentPosition(relativeToNode, node) & 16));
 		}
 		return {
 			'top': top,
