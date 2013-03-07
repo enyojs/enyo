@@ -249,7 +249,8 @@ enyo.kind({
 	/**
 		Sends a message to all my descendents.
 	*/
-	waterfallDown: function(inMessage, inPayload, inSender) {
+	waterfallDown: function(name, event, sender) {
+        event = event || {};
 		// Note: Controls will generally be both in a $ hash and a child list somewhere.
 		// Attempt to avoid duplicated messages by sending only to components that are not
 		// UiComponent, as those components are guaranteed not to be in a child list.
@@ -259,7 +260,7 @@ enyo.kind({
 		// waterfall to all pure components
 		for (var n in this.$) {
 			if (!(this.$[n] instanceof enyo.UiComponent)) {
-				this.$[n].waterfall(inMessage, inPayload, inSender);
+				this.$[n].waterfall(name, event, sender);
 			}
 		}
 		// waterfall to my children
@@ -268,8 +269,8 @@ enyo.kind({
 			// which are broadcast from within the framework. This saves a *lot* of unnecessary layout.
 			// TODO: Maybe remember that we did this, and re-send those messages on setShowing(true)?
 			// No obvious problems with it as-is, though
-			if (c.showing || !(inPayload && inPayload.showingOnly)) {
-				c.waterfall(inMessage, inPayload, inSender);
+			if (c.showing || !(event && event.showingOnly)) {
+				c.waterfall(name, event, sender);
 			}
 		}
 	},

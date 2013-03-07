@@ -29,6 +29,9 @@ enyo.kind({
     
     //*@protected
     mixins: ["enyo.MultipleDispatchSupport"],
+    
+    //*@protected
+    _is_controller: true,
 
     //*@protected
     /**

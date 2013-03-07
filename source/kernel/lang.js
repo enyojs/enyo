@@ -14,12 +14,10 @@
         Used internally for benchmarking or for internal time comparison
         without the overhead of the Date object's _now_ method.
     */
-    enyo.ready(function () {
-        var perf = window.performance = window.performance || {};
-        perf.now = perf.now || perf.mozNow || perf.msNow || perf.oNow || perf.webkitNow || enyo.now;
-        // now allow this to be accessed via the enyo namespace
-        enyo.bench = function () {return perf.now()};
-    });
+    var perf = window.performance = window.performance || {};
+    perf.now = perf.now || perf.mozNow || perf.msNow || perf.oNow || perf.webkitNow || enyo.now;
+    // now allow this to be accessed via the enyo namespace
+    enyo.bench = function () {return perf.now()};
     
     //*@public
     /**
@@ -191,6 +189,7 @@
         which to call it.
     */
     var proxyMethod = enyo.proxyMethod = function (fn, context) {
+        delete fn._inherited;
         return function () {
             return fn.apply(context || this, arguments);
         };
@@ -329,7 +328,10 @@
         // attempt to get the kind definition or instance at the
         // given path
         if ("string" === typeof path) {
-            ctor = enyo.getPath(path);
+            // we can fast-track this for relative paths that explicitly state
+            // it is relative with a "." prefix, otherwise we have to guess
+            ctor = "." === path[0]? enyo.getPath.call(this, path): 
+                enyo.getPath(path) || enyo.getPath.call(this, path);
             // if it isn't a function we assume it is an instance
             if (exists(ctor) && "function" !== typeof ctor) {
                 inst = ctor;

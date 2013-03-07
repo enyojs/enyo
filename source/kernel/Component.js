@@ -136,10 +136,6 @@ enyo.kind({
 		this.setOwner(null);
 		this.inherited(arguments);
 		this.stopAllJobs();
-		// JS objects are never truly destroyed (GC'd) until all references are gone,
-		// we might have some delayed action on this object that needs to have access
-		// to this flag.
-		this.destroyed = true;
 	},
 	/**
 		Destroys all owned components.
@@ -314,7 +310,7 @@ enyo.kind({
 			// FIXME: use indirection here?
 			//e.delegate = e.originator.delegate || e.originator.owner;
 		}
-		return this.dispatchBubble(inEventName, e, inSender);
+		return this.dispatchBubble(inEventName, e, inSender || this);
 	},
 	/**
 		Bubbles an event up an object chain, starting <b>above</b> _this_.
@@ -337,8 +333,9 @@ enyo.kind({
         if (this._silenced) return;
 		// Bubble to next target
 		var next = this.getBubbleTarget();
+        var delegate = inEvent.delegate;
 		if (next) {
-			return next.dispatchBubble(inEventName, inEvent, this);
+			return next.dispatchBubble(inEventName, inEvent, delegate || this);
 		}
 		return false;
 	},
@@ -356,46 +353,27 @@ enyo.kind({
 			// 'tap' events dispatched to 'tapHandler' delegate in this.owner
 			ontap: "tapHandler"
 	*/
-	dispatchEvent: function(inEventName, inEvent, inSender) {
+	dispatchEvent: function(name, event, sender) {
         if (this._silenced) return;
+        // if the event has a delegate associated with it we grab that
+        // for reference
+        var delegate = event.delegate;
 		// bottleneck event decoration
-		this.decorateEvent(inEventName, inEvent, inSender);
-		
-		//
-		// Note: null checks and sub-expressions are unrolled in this
-		// high frequency method to reduce call stack in the 90% case.
-		// These expressions should fail early.
-		//
-		// try to dispatch this event directly via handlers
-		//
-		
-		if (this.handlers && this.handlers[inEventName] && this.dispatch(this.handlers[inEventName], inEvent, inSender)) {
+		this.decorateEvent(name, event, sender);
+        // dispatch via the handlers block if possible
+		if (this.handlers && this.handlers[name] &&
+            this.dispatch(this.handlers[name], event, sender)) {
 			return true;
 		}
-		//
-		// try to delegate this event to our owner via event properties
-		//
-		if (this[inEventName]) {
-            // so the original idea with this remapping from a component was to a named
-            // handler on the _owner_, it would bubble up to and stop at the owner, with
-            // the introduction of controllers being able to handle these named events
-            // along the way this bypasses their usefulness and their ability to respond
-            // to the remapping to a specific handler name for that event, so, now we
-            // hijack the original event and bubble a new event with this remapped name
-            // that will do 2 things, 1) the same thing in the end (with the knowledge that
-            // if the handler does not return true it will keep bubbling) and 2) allow
-            // controllers up the chain (above the owner or inbetween the originator and
-            // the owner) to respond and kill it as in normal bubbling
-            // ORIGINAL ----
-			// return this.bubbleDelegation(this.owner, this[inEventName], inEventName, inEvent, this);
-            // -------------
-            
-            // if we've reached an actual handler, then we dispatch it
-            if ("function" === typeof this[inEventName]) {
-                return this.dispatch(inEventName, inEvent, inSender);
+
+		if (this[name]) {
+            if ("function" === typeof this[name] &&(true === this._is_view && delegate
+                && this === delegate.owner)) {
+                        return this.dispatch(name, event, sender);
             } else {
                 // otherwise we dispatch it up because it is a remap of another event
-                return this.dispatchBubble(this[inEventName], inEvent, inSender);
+                if (!delegate) event.delegate = this;
+                return this.bubbleUp(this[name], event, sender);
             }
 		}
 	},
@@ -449,7 +427,7 @@ enyo.kind({
         if (this._silenced) return;
         var fn = inMethodName && this[inMethodName];
         if (fn && "function" === typeof fn) {
-            return fn.call(this, inSender || this, inEvent);
+            return fn.call(this, inSender, inEvent);
         }
 	},
 	/**
@@ -458,13 +436,14 @@ enyo.kind({
 		receiving object by returning a truthy value from
 		the event handler.
 	*/
-	waterfall: function(inMessageName, inMessage, inSender) {
+	waterfall: function(name, event, sender) {
         if (this._silenced) return;
-		//this.log(inMessageName, (inSender || this).name, "=>", this.name);
-		if (this.dispatchEvent(inMessageName, inMessage, inSender)) {
+        event = event || {};
+		//this.log(name, (sender || this).name, "=>", this.name);
+		if (this.dispatchEvent(name, event, sender)) {
 			return true;
 		}
-		this.waterfallDown(inMessageName, inMessage, inSender || this);
+		this.waterfallDown(name, event, sender || this);
 	},
 	/**
 		Sends a message to all of my components, but not myself.
@@ -472,10 +451,10 @@ enyo.kind({
 		receiving object by returning a truthy value from
 		the event handler.
 	*/
-	waterfallDown: function(inMessageName, inMessage, inSender) {
+	waterfallDown: function(name, event, sender) {
         if (this._silenced) return;
 		for (var n in this.$) {
-			this.$[n].waterfall(inMessageName, inMessage, inSender);
+			this.$[n].waterfall(name, event, sender);
 		}
 	},
     //*@protected
@@ -615,7 +594,10 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 	if (!inProto[fn]) {
 		inProto[fn] = function(inEvent) {
 			// bubble this event
-			return this.bubble(inName, inEvent);
+			//return this.bubble(inName, enyo.except(["delegate"], inEvent || {}));
+            var payload = enyo.clone(inEvent || {});
+            delete payload.delegate;
+            this.bubble(inName, payload);
 		};
 		// NOTE: Mark this function as a generated event handler to allow us to
 		// do event chaining. Is this too complicated?
