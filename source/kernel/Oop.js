@@ -1,24 +1,4 @@
 ﻿
-//*@public
-/**
-    Takes a function followed by 1 or more string parameters that are
-    targets for the observer. Returns a method with the appropriate properties
-    to allow the system to notify it when the named properites have been
-    modified.
-*/
-var observer = enyo.Observer = enyo.observer = function (fn /* arguments */) {
-    var events = enyo.toArray(arguments).slice(1);
-    if (!enyo.exists(fn) || "function" !== typeof fn) {
-        // this is a necessary assert
-        throw "enyo.Observer: invalid observer, must have a function";
-    }
-    fn.isObserver = true;
-    fn.events = (fn.events? fn.events: []).concat(events);
-    return fn;
-};
-
-enyo.observer.keys = ["isObserver", "events"];
-
 //*@protected
 /**
     Default properties of enyo kinds to concatenate as opposed to

@@ -6,7 +6,14 @@
         instanced immediately as a singleton to be reused by any other
         kind that cares to apply it.
     */
-    var store = {};
+    var store = enyo.mixins = {};
+    
+    //*@protected
+    /**
+        Internally used to keep a more clear abstraction between mixins
+        knowledge of available features of the framework.
+    */
+    var features = enyo.mixins.features = [];
     
     //*@protected
     var register = function (name, mixin) {
@@ -89,6 +96,8 @@
         }
         // add the name of this mixin to the applied mixins array
         applied.push(name);
+        // give each available mixin feature the opportunity to handle properties
+        enyo.forEach(features, function (fn) {fn(proto, mixin)});
     };
     
     //*@protected

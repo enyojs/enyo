@@ -25,7 +25,7 @@ enyo.kind({
         An array of strings that represent a mixin to be applied
         to this class at the end of the constructor routine.
     */
-    mixins: null,
+    mixins: ["enyo.ObserverSupport"],
     //*@public
     /**
         Set this flag to false to delay or keep this portion
@@ -33,36 +33,8 @@ enyo.kind({
     */
     initBindings: true,
     //*@public
-    /**
-        Set this flag to false to delay or keep this portion
-        of the object setup from executing.
-    */
-    initMixins: true,
-    //*@public
-    /**
-        Set this flag to false to delay or keep this portion
-        of the object setup from executing.
-    */
-    initObservers: true,
-    //*@public
-    // any mixins that have been applied to this object will have
-    // their name in this array
-    appliedMixins: null,
-    //*@public
-    /**
-        Set this flag to false to delay or keep this portion
-        of the object setup from executing.
-    */
-    initComputed: true,
-    //*@public
     // the bindings for the object
     bindings: null,
-    //*@public
-    // the observers object
-    observers: null,
-    //*@public
-    // the computed properties object
-    computed: null,
     //*@public
     // The deafult binding kind to use unless overridden by
     // an individual binding definition
@@ -190,7 +162,6 @@ enyo.kind({
     */
     setup: function () {
         this.setupHooks();
-        this.setupObservers();
         this.setupComputed();
         this.setupBindings();
     },
@@ -395,277 +366,6 @@ enyo.kind({
             }
         }
     },
-    //*@protected
-    /**
-        This method is responsible for initializing any observers on
-        the object. Will not execute if the initObservers property is
-        set to false. Observers cannot be added for the same event more
-        than once.
-    */
-    setupObservers: function (force) {
-        if (false === this.initObservers && !force) return;
-        this.initObservers = false;
-        this._did_setup_observers = true;
-        var key;
-        var prop;
-        var idx;
-        var len;
-        // grab the observers hash or create a new one if this is
-        // the first pass
-        var observers = this.observers || (this.observers = {});
-        var events;
-        var event;
-        for (key in this) {
-            if (!enyo.exists((prop = this[key]))) continue;
-            // we only really care if it is a function
-            if ("function" === typeof (prop)) {
-                // and even then we only really care if it is an observer
-                if (true === prop.isObserver) {
-                    events = prop.events || [];
-                    if (!events.length) continue;
-                    for (idx = 0, len = events.length; idx < len; ++idx) {
-                        event = events[idx];
-                        // wire up the real observer for this method
-                        this.addObserver(event, prop, this);
-                    }
-                }
-            }
-        }
-    },
-    //*@public
-    /**
-        For any property on the object an observer can be added. Observers
-        are registered via this method by passing in the property that should
-        trigger the listener/observer and an optional context for the method
-        to be executed under when it is triggered. Observers cannot be added
-        for the same event more than once. Returns a reference to the function
-        that was registered so it can be stored for later removal.
-    */
-    addObserver: function (property, fn, context) {
-        var observers = this.observers || (this.observers = {});
-        var handlers;
-        // if a context is provided for the listener we bind it
-        // to that context now
-        fn = context? enyo.bind(context, fn): fn;
-        // if there are no registered handlers for this event
-        // go ahead and create an array for them
-        if (!enyo.exists(observers[property])) handlers = observers[property] = [];
-        else handlers = observers[property];
-        // only add it if it isn't already in the array
-        if (!~handlers.indexOf(fn)) handlers.push(fn);
-        // allow chaining
-        return fn;
-    },
-    //*@public
-    /**
-        Attempts to remove the given listener/observer for the given
-        property if it exists. Typically not called directly. If no function is
-        supplied it will remove all listeners for the given property.
-    */
-    removeObserver: function (property, fn) {
-        var observers = this.observers;
-        var idx;
-        var handlers;
-        if (!(handlers = observers[property])) return this;
-        if (enyo.exists(fn) && "function" === typeof fn) {
-            idx = handlers.indexOf(fn);
-            if (!!~idx) {
-                // remove it from the array
-                handlers.splice(idx, 1);
-            }
-        } else {
-            // we need to remove ALL the observers of this property
-            delete observers[property];
-        }
-    },
-    //*@public
-    /**
-        Convenience method to remove all observers on all properties.
-        Returns reference to this object for chaining. This will almost
-        never need to be called by anything but the destroy method. Returns
-        a reference to this object for chaining.
-    */
-    removeAllObservers: function () {
-        var observers = this.observers;
-        var handlers;
-        var observer;
-        var binding;
-        var prop;
-        var idx;
-        for (prop in observers) {
-            if (!observers.hasOwnProperty(prop)) continue;
-            handlers = observers[prop];
-            // orphan the array so it will be cleaned up by the GC
-            observers[prop] = null;
-            for (idx = 0, len = handlers.length; idx < len; ++idx) {
-                observer = handlers[idx];
-                // check to see if the observer is associated with a binding
-                // if it is we need to notify it that we are being destroyed
-                // this is a proactive check - it has a failsafe if this
-                // didn't take place
-                if (observer.bindingId) {
-                    binding = enyo.Binding.map[observer.bindingId];
-                    if (binding && binding instanceof enyo.Binding) binding.destroy();
-                }
-            }
-        }
-        // reset our observers hash
-        this.observers = {};
-        return this;
-    },
-    //*@public
-    /**
-        Notifies any observers for a given property. Accepts the previous
-        value, the current value. Looks for a backwards compatible function
-        of the _propertyChanged_ form and will call that if it exists while
-        also notifying other observers.
-    */
-    notifyObservers: function (property, prev, value) {
-        var observers = this.observers || {};
-        var handlers = (observers[property] || []);
-        var idx = 0;
-        var fn;
-        var ch = enyo.uncap(property) + "Changed";
-        if ("*" !== property) handlers = enyo.merge(handlers, observers["*"] || []);
-        if (handlers) {
-            for (; idx < handlers.length; ++idx) {
-                fn = handlers[idx];
-                if (!enyo.exists(fn) || "function" !== typeof fn) continue;
-                if (false === this.allowNotifications) {
-                    this.addNotificationToQueue(property, fn, [property, prev, value]);
-                } else {
-                    fn.call(this, property, prev, value);
-                }
-            }
-        }
-        
-        if (enyo.exists(this[ch]) && "function" === typeof this[ch]) {
-            if (false === this.allowNotifications) {
-                this.addNotificationToQueue(property, this[ch], [prev, value]);
-            } else {
-                this[ch].call(this, prev, value);
-            }
-        }
-    },
-    //*@protected
-    notificationQueue: null,
-    //*@protected
-    allowNotifications: true,
-    //*@protected
-    allowNotificationQueue: true,
-    //*@protected
-    /**
-        This is used internally when a notification is queued.
-    */
-    addNotificationToQueue: function (property, fn, params) {
-        var queue = this.notificationQueue || (this.notificationQueue = {});
-        var handlers = queue[property];
-        params = params || [];
-        if (false === this.allowNotificationQueue) return;
-        if (!enyo.exists(handlers)) {
-            // create an entry for this property note that the queue for
-            // every property uses the first array index as the parameters
-            queue[property] = [params, fn];
-        } else {
-            // update the properties for this entry so if the value has
-            // been updated before the queue is flushed it uses the most
-            // recent values
-            // TODO: replace me with something that will actually work!
-            if (handlers[0] !== params) handlers.splice(0, 1, params);
-            if (!~handlers.indexOf(fn)) handlers.push(fn);
-        }
-    },
-    //*@public
-    /**
-        Call this method in order to keep all notifications on this object
-        from firing. This does not clear/flush the queue. Any notifications
-        fired during the time they are disabled will be added to the queue.
-        The queue can be arbitrarily flushed or cleared when ready. If a
-        boolean true is passed to this method it will disable the queue as
-        well. Disabling the queue will immediately clear (not flush) it as well.
-        Increments an internal counter that requires the _startNotifications_
-        method to be called the same number of times before notifications will
-        be enabled again. The queue, if any, cannot be flushed if the counter
-        is not 0.
-    */
-    stopNotifications: function (disableQueue) {
-        this.allowNotifications = false;
-        this._stop_count += 1;
-        if (true === disableQueue) {
-            this.disableNotificationQueue();
-        }
-    },
-    //*@protected
-    _stop_count: 0,
-    //*@public
-    /**
-        Call this method to enable notifications for this object and immediately
-        flush the notification queue if the internal counter is 0. If notifications 
-        were already enabled it will have no effect. Otherwise it will decrement the
-        internal counter. If the counter becomes 0 it will allow notifications and
-        attempt to flush the queue if there is one and it is enabled. This method
-        must be called once for each time the _stopNotifications_ method was called.
-        Passing a boolean true to this method will reenable the notification queue
-        if it was disabled.
-    */
-    startNotifications: function (enableQueue) {
-        if (0 !== this._stop_count) --this._stop_count;
-        if (0 === this._stop_count) {
-            this.allowNotifications = true;
-            this.flushNotifications();
-        }
-        if (true === enableQueue) this.enableNotificationQueue();
-    },
-    //*@public
-    /**
-        Call this method to enable the notification queue. If it was already
-        enabled it will have no effect. If notifications are currently enabled
-        this will have no effect until they are disabled.
-    */
-    enableNotificationQueue: function () {
-        this.allowNotificationQueue = true;
-    },
-    //*@public
-    /**
-        Call this method to disable the notification queue. If it was already
-        disabled it will have no effect. If notifications are currently enabled
-        this will have no effect. If they are disabled future notifications will
-        not be queued and any in the queue will be cleared (not flushed).
-    */
-    disableNotificationQueue: function () {
-        this.allowNotificationQueue = false;
-        this.notificationQueue = {};
-    },
-    //*@protected
-    /**
-        This method is used internally to flush any notifications that have been
-        queued.
-    */
-    flushNotifications: function () {
-        if (0 !== this._stop_count) return;
-        var queue = this.notificationQueue;
-        var fn;
-        var property;
-        var handlers;
-        var params;
-        if (!enyo.exists(queue) || false === this.allowNotificationQueue) return;
-        for (property in queue) {
-            if (!queue.hasOwnProperty(property)) continue;
-            handlers = queue[property];
-            params = handlers.shift();
-            // if an entry just so happens to be added improperly by someone
-            // trying to bypass the default means by which to add something to
-            // the queue...
-            if ("function" === typeof params) {
-                handlers.unshift(params);
-                params = [];
-            }
-            while (handlers.length) {
-                fn = handlers.shift();
-                fn.apply(this, params);
-            }
-        }
-    },
     
     //*@protected
     _get_hooks: null,
@@ -748,8 +448,6 @@ enyo.kind({
     destroy: function () {
         // destroy all bindings owned by this object
         this.clearBindings();
-        // remove any observers that may still be attached
-        this.removeAllObservers();
         // breakdown all computed properties
         this._destroy_computed();
         // ensure we call all mixin destructors

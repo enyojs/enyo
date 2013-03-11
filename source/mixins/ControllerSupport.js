@@ -29,10 +29,6 @@ enyo.createMixin({
     
     //*@protected
     create: function () {
-        // need to ensure we re-evaluate our observers so notifications
-        // will be able to respond as expected
-        this.initObservers = true;
-        this.setup();
         this.notifyObservers("controller");
     },
     
