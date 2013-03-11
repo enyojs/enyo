@@ -1,16 +1,13 @@
 //*@public
 /**
 */
-enyo.kind({
+enyo.createMixin({
     
     // ...........................
     // PUBLIC PROPERTIES
     
     //*@public
     name: "enyo.MultipleDispatchSupport",
-    
-    //*@public
-    kind: "enyo.Mixin",
     
     // ...........................
     // PROTECTED PROPERTIES

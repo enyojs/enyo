@@ -98,7 +98,7 @@ enyo.kind({
     postInitialization: function () {
         if (true !== this._post_init) return;
         this.execComputed();
-        this.execMixins();
+        this._create_mixins();
         this._post_init = false;
     },
     //* @public
@@ -174,42 +174,14 @@ enyo.kind({
     },
     
     //*@protected
-    _mixin_init_routines: null,
-    //*@protected
-    /**
-        Initialize any mixins that were set in the mixins array for
-        the kind. Mixins are never applied more than once. Will not
-        continue to execute if the _initMixins_ property of the object
-        is set to false.
-    */
-    setupMixins: function (force) {
-        if (false === this.initMixins && !force) return;
-        // prevent this from being run more than once
-        this.initMixins = false;
-        if (!this.appliedMixins) this.appliedMixins = [];
-        if (!this._mixin_init_routines) this._mixin_init_routines = [];
-        enyo.forEach(this.mixins || [], this.prepareMixin, this);
-        this._did_setup_mixins = true;
+    _create_mixins: function () {
+        enyo.forEach(this._mixin_create, function (fn) {fn.call(this)}, this);
     },
     //*@protected
-    execMixins: function () {
-        var inits = this._mixin_init_routines || [];
-        var fn;
-        while (inits.length) {
-            fn = inits.shift();
-            if ("function" === typeof fn) fn.call(this);
-        }
+    _destroy_mixins: function () {
+        enyo.forEach(this._mixin_destroy, function (fn) {fn.call(this)}, this);
     },
-    //*@protected
-    /**
-        Prepares the given mixin that can be a reference or a
-        string to the mixin object and then applies it to the
-        object using the instance _extend_ method.
-    */
-    prepareMixin: function (mixin) {
-        if ("string" === typeof mixin) mixin = enyo.getPath(mixin);
-        if (mixin) this.extend(mixin);
-    },
+
     //*@protected
     /**
         This method is responsible for calling each of the startup
@@ -218,7 +190,6 @@ enyo.kind({
     */
     setup: function () {
         this.setupHooks();
-        this.setupMixins();
         this.setupObservers();
         this.setupComputed();
         this.setupBindings();
@@ -772,93 +743,7 @@ enyo.kind({
     set: function (path, value) {
         return enyo.setPath.apply(this, arguments);
     },
-    //*@public
-    /**
-        This method is an instance method that extends an active instance
-        of a kind and not the kind base. This can be passed an object or a string-
-        path that can be resolved to an object or an _enyo.Mixin_. Non-function
-        properties of the object will overwrite the current value on object. Functions
-        will be bound to the current object. This method differs from _enyo.mixin_ in
-        that _enyo.mixin_ will not overwrite methods nor can it handle _enyo.Mixin_
-        objects. This method accepts a variable number of objects/_enyo.Mixins_ to be
-        applied to this kind instance.
-    */
-    extend: function () {
-        var args = enyo.toArray(arguments);
-        var ext;
-        var key;
-        var prop;
-        while (args.length && (ext = args.shift())) {
-            if ("function" === typeof ext) {
-                this.extendMixin(ext);
-            } else {
-                for (key in ext) {
-                    if (!ext.hasOwnProperty(key)) continue;
-                    prop = ext[key];
-                    if ("function" === typeof prop) {
-                        this.extendMethod(key, prop, ext);
-                    } else {
-                        // TODO: here we make difficult assumption (but one we have to
-                        // make for now...) if the default value coming from the
-                        // mixin is falsy but there already exists a truthy value
-                        // on the base object we default to the base object as this
-                        // solves the issue where a property was imported via the
-                        // constructor prior to the mixin being applied - this will
-                        // not always work but is an interim fix for that issue
-                        if (this[key] && !prop) continue;
-                        this[key] = prop;
-                    }
-                }
-            }
-        }
-    },
-    //*@protected
-    /**
-        Used internally to properly extend methods.
-    */
-    extendMethod: function (property, fn, ext) {
-        var base = this[property];
-        var computed = !!fn.isProperty;
-        var observer = !!fn.isObserver;
-        var method;
-        var keys;
-        if (computed || observer) {
-            keys = computed? enyo.computed.keys: enyo.observer.keys;
-        }
-        // proxy the method once so it will be applied to the
-        // correct context (not the same as binding as enyo.bind)
-        method = enyo.proxyMethod(fn, this);
-        // insert the newly proxied method onto our object and setup
-        // the inheritance chain
-        this[property] = method;
-        method._inherited = base;
-        // if it is a computed property make sure to copy the
-        // dependencies to the proxied method
-        //if (true === computed) {
-        //    method.isProperty = true;
-        //    method.properties = fn.properties || [];
-        //} else if (true === observer) {
-        //    method.isObserver = true;
-        //    method.events = fn.events || [];
-        //}
-        if (keys) {
-            enyo.forEach(keys, function (key) {method[key] = fn[key]});
-        }
-        // mark it as a method that was extended
-        method.isExtended = true;
-    },
-    //@protected
-    /**
-        Used internally to extend the instance of the kind by an _enyo.Mixin_.
-    */
-    extendMixin: function (mixin) {
-        // this is a convenience method, mixins actually apply themselves
-        if (enyo.exists(mixin)) {
-            // once the mixin is applied it immediately releases references
-            // so it can be cleaned up by the GC
-            new mixin({target: this});
-        }
-    },
+
     //*@protected
     destroy: function () {
         // destroy all bindings owned by this object
@@ -866,14 +751,17 @@ enyo.kind({
         // remove any observers that may still be attached
         this.removeAllObservers();
         // breakdown all computed properties
-        this.destroyComputed();
+        this._destroy_computed();
+        // ensure we call all mixin destructors
+        this._destroy_mixins();
+        
         // JS objects are never truly destroyed (GC'd) until all references are gone,
 		// we might have some delayed action on this object that needs to have access
 		// to this flag.
 		this.destroyed = true;
     },
     //*@protected
-    destroyComputed: function () {
+    _destroy_computed: function () {
         var computed = this.computed;
         var cache;
         var name;

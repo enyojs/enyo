@@ -19,16 +19,13 @@
         debug: false
     };
     
-    enyo.kind({
+    enyo.createMixin({
     
         // ...........................
         // PUBLIC PROPERTIES
         
         //*@public
         name: "enyo.AutoBindingSupport",
-    
-        //*@public
-        kind: "enyo.Mixin",
     
         // ...........................
         // PROTECTED PROPERTIES

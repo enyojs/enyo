@@ -1,16 +1,13 @@
 //*@public
 /**
 */
-enyo.kind({
+enyo.createMixin({
     
     // ...........................
     // PUBLIC PROPERTIES
     
     //*@public
     name: "enyo.ControllerSupport",
-    
-    //*@public
-    kind: "enyo.Mixin",
     
 	//*@public
 	/**
@@ -47,7 +44,6 @@ enyo.kind({
 	        }
 	        this.controller = null;
         }
-        this.inherited(arguments);
     },
     
 	//*@protected

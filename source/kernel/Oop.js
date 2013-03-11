@@ -25,7 +25,7 @@ enyo.observer.keys = ["isObserver", "events"];
     overwriting. These are automatically used unless explicitly
     removed.
 */
-enyo.concat = ["concat", "bindings", "mixins"];
+enyo.concat = ["concat", "bindings"];
 
 //*@protected
 /**
@@ -234,7 +234,7 @@ enyo.kind.inherited = function (originals, replacements) {
         return fn.apply(this, replacements? enyo.mixin(originals, replacements): originals);
     } else {
         enyo.warn("enyo.kind.inherited: unable to find requested " +
-            "super-method from -> " + originals.callee.nom);
+            "super-method from -> " + originals.callee.nom + " in " + this.kindName);
     }
 };
 

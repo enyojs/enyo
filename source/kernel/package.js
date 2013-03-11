@@ -5,6 +5,8 @@ enyo.depends(
 	"job.js",
 	"Oop.js",
     "ComputedPropertySupport.js",
+	"Mixin.js",
+    "../mixins",
     "Binding.js",
 	"Object.js",
 	"Component.js",
@@ -14,7 +16,6 @@ enyo.depends(
 	"Controller.js",
 	"Router.js",
 	"ArrayController.js",
-	"Mixin.js",
 	"ViewController.js",
 	"Application.js",
     "ObjectController.js"

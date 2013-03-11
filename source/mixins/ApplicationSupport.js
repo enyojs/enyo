@@ -1,16 +1,13 @@
 //*@public
 /**
 */
-enyo.kind({
+enyo.createMixin({
     
     // ...........................
     // PUBLIC PROPERTIES
     
     //*@public
     name: "enyo.ApplicationSupport",
-    
-    //*@public
-    kind: "enyo.Mixin",
     
     //*@public
     app: null,
@@ -36,7 +33,6 @@ enyo.kind({
     //*@protected
     destroy: function () {
         delete this.app;
-        this.inherited(arguments);
     }
     
     // ...........................
