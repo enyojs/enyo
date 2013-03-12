@@ -28,21 +28,10 @@ enyo.kind({
     mixins: [
         "enyo.MixinSupport",
         "enyo.ObserverSupport",
-        "enyo.ComputedSupport"
+        "enyo.ComputedSupport",
+        "enyo.BindingSupport"
     ],
-    //*@public
-    /**
-        Set this flag to false to delay or keep this portion
-        of the object setup from executing.
-    */
-    initBindings: true,
-    //*@public
-    // the bindings for the object
-    bindings: null,
-    //*@public
-    // The deafult binding kind to use unless overridden by
-    // an individual binding definition
-    defaultBindingKind: "enyo.Binding",
+
     constructor: function(props) {
         enyo._objectCount++;
         this.importProps(props);
@@ -141,135 +130,6 @@ enyo.kind({
     */
     setup: function () {
         this.setupHooks();
-        this.setupBindings();
-    },
-    //*@protected
-    /**
-        This method attempts to setup any bindings from the given
-        bindings array. It will not create the same binding twice. If
-        the initBindings property is false it will not execute.
-    */
-    setupBindings: function (force) {
-        if (false === this.initBindings && !force) return;
-        // prevent this from being executed again
-        this.initBindings = false;
-        // first grab the bindings block/array for the kind
-        // remap those definitions to a different variable
-        var kindBindings = this.bindings || [];
-        var idx = 0;
-        var len;
-        var def;
-        if (true === this._did_setup_bindings) {
-            // this isn't the first time we've been here so we need
-            // to refresh the bindings
-            this.refreshBindings();
-        } else {
-            // initialize our new bindings array for the object
-            // where we will store the actual binding references
-            this.bindings = [];
-            for (len = kindBindings.length; idx < len; ++idx) {
-                def = kindBindings[idx];
-                // this method already adds the bindings to our
-                // bindings array
-                this.binding(def);
-            }
-            // flag the object for having the bindings already setup
-            this._did_setup_bindings = true;
-        }
-        // if there are any listeners for this event notify them
-        this.notifyObservers("_did_setup_bindings");
-        // cleanup by removing all listeners on this event note that
-        // not passing the function/handler makes it remove any/all
-        // for that property!
-        //this.removeObserver("_did_setup_bindings");
-    },
-    //*@public
-    /**
-        This method accepts any number of hashes to be used to
-        create a binding who's owner is this object by default.
-        Any binding who's owner has their destroy method called
-        will also cleanup the binding. Returns a reference to
-        the newly created binding and also adds the binding to
-        this object's bindings array.
-    */
-    binding: function (/* _binding definitions_ */) {
-        
-        if (!this.bindings) {
-            enyo.warn(this.kindName + ".binding: instance binding requested but " +
-                "initialization not completed");
-        }
-        
-        var definitions = arguments;
-        var idx = 0;
-        var len = definitions.length;
-        var binding;
-        var properties = {};
-        var bindings = this.bindings;
-        var def = enyo.getPath(this.defaultBindingKind);
-        var ctor;
-        var kind;
-        for (; idx < len; ++idx) enyo.mixin(properties, definitions[idx]);
-        if ((kind = properties.kind)) {
-            if ("string" === typeof kind) ctor = enyo.getPath(properties.kind);
-            else if ("function" === typeof kind) ctor = kind;
-        }
-        if (!ctor || "function" !== typeof ctor) ctor = def;
-        binding = new ctor({owner: this, autoConnect: true}, properties);
-        bindings.push(binding);
-        return binding;
-    },
-    
-    //*@protected
-    _binding_constructor: enyo.Computed(function () {
-        return enyo.getPath(this.defaultBindingKind);
-    }, {cached: true, defer: false}),
-    
-    //*@public
-    /**
-        Usually called when the object's destroy method is executed but can
-        be called anytime to properly cleanup any bindings associated with
-        this object (have their owner property set to this object). Does
-        not remove bindings whose origin is from another object but are bound
-        to a property of this object. Can be given an array of bindings instead
-        and only those bindings will be destroyed.
-    */
-    clearBindings: function (subset) {
-        var bindings = enyo.cloneArray(subset || this.bindings || []);
-        var binding;
-        while (bindings.length) {
-            binding = bindings.shift();
-            // this will force the binding to be removed from the real
-            // bindings array of the object
-            if (binding instanceof enyo.Binding) binding.destroy();
-        }
-    },
-    //*@public
-    /**
-        This method will take an array of bindings or the bindings associated
-        with this object and call their refresh method. In most scenarios this
-        is not necessary and will automatically be called.
-    */
-    refreshBindings: function (subset) {
-        var bindings = enyo.cloneArray(subset || this.bindings || []);
-        var binding;
-        while (bindings.length) {
-            binding = bindings.shift();
-            if (binding instanceof enyo.Binding) binding.refresh();
-        }
-    },
-    //*@public
-    /**
-        Typically not called directly as this method is called by the binding
-        when it is destroyed. Accepts a single binding as its parameter and
-        removes the binding from its bindings array if it exists there. This
-        does not destroy the binding or dereference its owner property.
-    */
-    removeBinding: function (binding) {
-        // sanity check on binding
-        if (!enyo.exists(binding) || !(binding instanceof enyo.Binding)) return;
-        var bindings = this.bindings || [];
-        var idx = bindings.indexOf(binding);
-        if (!!~idx) bindings.splice(idx, 1);
     },
     
     //*@protected
@@ -351,8 +211,6 @@ enyo.kind({
 
     //*@protected
     destroy: function () {
-        // destroy all bindings owned by this object
-        this.clearBindings();
         // JS objects are never truly destroyed (GC'd) until all references are gone,
 		// we might have some delayed action on this object that needs to have access
 		// to this flag.
