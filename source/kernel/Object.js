@@ -25,7 +25,11 @@ enyo.kind({
         An array of strings that represent a mixin to be applied
         to this class at the end of the constructor routine.
     */
-    mixins: ["enyo.ObserverSupport", "enyo.ComputedSupport"],
+    mixins: [
+        "enyo.MixinSupport",
+        "enyo.ObserverSupport",
+        "enyo.ComputedSupport"
+    ],
     //*@public
     /**
         Set this flag to false to delay or keep this portion
@@ -44,17 +48,8 @@ enyo.kind({
         this.importProps(props);
     },
     //*@protected
-    _post_init: true,
-    //*@protected
     constructed: function (props) {
-        // while this setup initializes the object's bindings
-        // and observers, often this level of inspection needs
-        // to be re-run later in the routine by subkinds, to do
-        // this arbitrarily they can set the appropriate flag
-        // for any of the given steps to false and when appropriate
-        // set the flag to true and re-call the setup method
         this.setup();
-        if (true === this._post_init) this.postInitialization();
     },
     
     importProps: function (props) {
@@ -65,13 +60,7 @@ enyo.kind({
             }
         }
     },
-    
-    //*@protected
-    postInitialization: function () {
-        if (true !== this._post_init) return;
-        this._create_mixins();
-        this._post_init = false;
-    },
+
     //* @public
     //* Destroys object with passed-in name.
     destroyObject: function(inName) {
@@ -142,15 +131,6 @@ enyo.kind({
         fn = enyo.exists(fn) && "function" === typeof fn? enyo.bind(this, fn): null;
         // go ahead and call the enyo scoped version of this method
         return enyo.findAndInstance.call(this, property, fn);
-    },
-    
-    //*@protected
-    _create_mixins: function () {
-        enyo.forEach(this._mixin_create, function (fn) {fn.call(this)}, this);
-    },
-    //*@protected
-    _destroy_mixins: function () {
-        enyo.forEach(this._mixin_destroy, function (fn) {fn.call(this)}, this);
     },
 
     //*@protected

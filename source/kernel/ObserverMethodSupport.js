@@ -27,7 +27,7 @@
         for the same event more than once. Returns a reference to the function
         that was registered so it can be stored for later removal.
     */
-    var addObserver = enyo.observer.addObserver = function (base, property, fn, context) {
+    var addObserver = function (base, property, fn, context) {
         var observers = base._observers || (base._observers = {});
         var handlers;
         // if a context is provided for the listener we bind it
@@ -49,7 +49,7 @@
         property if it exists. Typically not called directly. If no function is
         supplied it will remove all listeners for the given property.
     */
-    var removeObserver = enyo.observer.removeObserver = function (base, property, fn) {
+    var removeObserver = function (base, property, fn) {
         var observers = base._observers;
         var idx;
         var handlers;
@@ -73,7 +73,7 @@
         never need to be called by anything but the destroy method. Returns
         a reference to this object for chaining.
     */
-    var removeAllObservers = enyo.observer.removeAllObservers = function (base) {
+    var removeAllObservers = function (base) {
         var observers = base._observers;
         var handlers;
         var observer;
@@ -109,7 +109,7 @@
         of the _propertyChanged_ form and will call that if it exists while
         also notifying other observers.
     */
-    var notifyObservers = enyo.observer.notifyObservers = function (base, property, prev, value) {
+    var notifyObservers = function (base, property, prev, value) {
         var observers = base._observers || {};
         var handlers = (observers[property] || []);
         var idx = 0;
@@ -142,7 +142,7 @@
     /**
         This is used internally when a notification is queued.
     */
-    var addNotificationToQueue = enyo.observer.addNotificationToQueue = function (base, property, fn, params) {
+    var addNotificationToQueue = function (base, property, fn, params) {
         var queue = base._notification_queue || (base._notification_queue = {});
         var handlers = queue[property];
         params = params || [];
@@ -174,7 +174,7 @@
         be enabled again. The queue, if any, cannot be flushed if the counter
         is not 0.
     */
-    var stopNotifications = enyo.observer.stopNotifications = function (base, disableQueue) {
+    var stopNotifications = function (base, disableQueue) {
         base._allow_notifications = false;
         base._stop_count += 1;
         if (true === disableQueue) {
@@ -193,7 +193,7 @@
         Passing a boolean true to this method will reenable the notification queue
         if it was disabled.
     */
-    var startNotifications = enyo.observer.startNotifications = function (base, enableQueue) {
+    var startNotifications = function (base, enableQueue) {
         if (0 !== base._stop_count) --base._stop_count;
         if (0 === base._stop_count) {
             base._allow_notifications = true;
@@ -208,7 +208,7 @@
         enabled it will have no effect. If notifications are currently enabled
         this will have no effect until they are disabled.
     */
-    var enableNotificationQueue = enyo.observer.enableNotificationsQueue = function (base) {
+    var enableNotificationQueue = function (base) {
         base._allow_notification_queue = true;
     };
     
@@ -217,7 +217,7 @@
         This method is used internally to flush any notifications that have been
         queued.
     */
-    var flushNotifications = enyo.observer.flushNotifications = function (base) {
+    var flushNotifications = function (base) {
         if (0 !== base._stop_count) return;
         var queue = base._notification_queue;
         var fn;
@@ -250,7 +250,7 @@
         this will have no effect. If they are disabled future notifications will
         not be queued and any in the queue will be cleared (not flushed).
     */
-    var disableNotificationQueue = enyo.observer.disableNotificationQueue = function (base) {
+    var disableNotificationQueue = function (base) {
         base._allow_notification_queue = false;
         base._notification_queue = {};
     };
@@ -284,6 +284,9 @@
     
         // ...........................
         // PROTECTED PROPERTIES
+        
+        //*@protected
+        _supports_observers: true,
         
         //*@protected
         _stop_count: 0,

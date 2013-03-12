@@ -18,6 +18,9 @@ enyo.createMixin({
     // ...........................
     // PROTECTED PROPERTIES
     
+    //*@protected
+    _supports_controllers: true,
+    
     // ...........................
     // COMPUTED PROPERTIES
     

@@ -15,6 +15,9 @@ enyo.createMixin({
     // ...........................
     // PROTECTED PROPERTIES
     
+    //*@protected
+    _supports_applications: true,
+    
     // ...........................
     // COMPUTED PROPERTIES
     

@@ -122,7 +122,7 @@
     //*@protected
     var _find_computed = function (proto, props) {
         // no need to bother if this does not support computed properties
-        if (!proto._supports_computed_properties) return;
+        if (!proto._supports_computed) return;
         // otherwise we know it does and we need to make sure it has some
         // intial storage properties
         proto._computed = proto._computed || {};
@@ -196,6 +196,7 @@
         any cacheables that don't have _defer_ set to true.
     */
     var _post_constructor = function () {
+        if (!this._supports_computed) return;
         // look for the special property created by the feature hook
         // for any cacheable non-deferred computed properties if
         // the kind even supports computed properties
@@ -264,7 +265,7 @@
         // PROTECTED PROPERTIES
         
         //*@protected
-        _supports_computed_properties: true,
+        _supports_computed: true,
         
         // ...........................
         // COMPUTED PROPERTIES

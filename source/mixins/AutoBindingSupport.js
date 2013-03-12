@@ -29,6 +29,9 @@
     
         // ...........................
         // PROTECTED PROPERTIES
+        
+        //*@protected
+        _supports_autobindings: true,
     
         //*@protected
         _ab_did_setup: false,

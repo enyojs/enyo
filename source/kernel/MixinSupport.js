@@ -51,7 +51,7 @@
         var mixin = store[name];
         var ctors = proto._mixin_create || (proto._mixin_create = []);
         var dtors = proto._mixin_destroy || (proto._mixin_destroy = []);
-        var applied = proto._applied_mixins || (proto._applied_mixins = []);
+        var applied = proto._applied_mixins = enyo.clone(proto._applied_mixins || []);
         var ctor;
         var dtor;
         var key;
@@ -81,23 +81,31 @@
                 fn = proto[key];
                 proto[key] = prop;
                 prop._inherited = fn;
-                prop.nom = name + "." + key;
+                prop.nom = name + "." + key + "()";
             } else proto[key] = prop;
         }
         // if there was a constructor plop it in the init routines
         if (ctor && "function" === typeof ctor) {
             ctors.push(ctor);
-            ctor.nom = name + ".create";
+            ctor.nom = name + ".create()";
         }
         // if there was a destructor plop it in the destuctor routines
         if (dtor && "function" === typeof dtor) {
             dtors.push(dtor);
-            dtor.nom = name + ".destroy";
+            dtor.nom = name + ".destroy()";
         }
         // add the name of this mixin to the applied mixins array
         applied.push(name);
         // give each available mixin feature the opportunity to handle properties
         enyo.forEach(features, function (fn) {fn(proto, mixin)});
+    };
+    
+    //*@protected
+    var _post_constructor = function () {
+        if (!this._supports_mixins) return;
+        // we need to initialize all of the mixins registered to this
+        // kind
+        this._create_mixins();
     };
     
     //*@protected
@@ -113,6 +121,53 @@
         delete proto.mixins;
         // if there are any, we apply them to the constructor now
         enyo.forEach(mixins, function (name) {applyMixin(name, proto)});
+    });
+    
+    //*@protected
+    enyo.kind.postConstructors.push(_post_constructor);
+    
+    //*@protected
+    createMixin({
+        
+        // ...........................
+        // PUBLIC PROPERTIES
+        
+        //*@public
+        name: "enyo.MixinSupport",
+        
+        // ...........................
+        // PROTECTED PROPERTIES
+        
+        //*@protected
+        _supports_mixins: true,
+    
+        // ...........................
+        // COMPUTED PROPERTIES
+    
+        // ...........................
+        // PUBLIC METHODS
+    
+        // ...........................
+        // PROTECTED METHODS
+    
+        //*@protected
+        _create_mixins: function () {
+            enyo.forEach(this._mixin_create, function (fn) {fn.call(this)}, this);
+        },
+        
+        //*@protected
+        _destroy_mixins: function () {
+            enyo.forEach(this._mixin_destroy, function (fn) {fn.call(this)}, this);
+        },
+        
+        //*@protected
+        destroy: function () {
+            this._destroy_mixins();
+        }
+    
+        // ...........................
+        // OBSERVERS
+        
     });
  
 }());

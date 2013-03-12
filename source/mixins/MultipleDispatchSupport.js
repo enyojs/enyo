@@ -13,6 +13,9 @@ enyo.createMixin({
     // PROTECTED PROPERTIES
     
     //*@protected
+    _supports_multiple_dispatch: true,
+    
+    //*@protected
     _dispatch_targets: null,
     
     //*@protected
