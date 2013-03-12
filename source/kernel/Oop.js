@@ -138,6 +138,7 @@ enyo.kind.makeCtor = function() {
 
 		// two-pass instantiation
 		var result;
+        var cargs = arguments;
 		if (this._constructor) {
 			// pure construction
 			result = this._constructor.apply(this, arguments);
@@ -147,6 +148,9 @@ enyo.kind.makeCtor = function() {
 			// post-constructor initialization
 			this.constructed.apply(this, arguments);
 		}
+        
+        enyo.forEach(enyo.kind.postConstructors, function (fn) {fn.apply(this, cargs)}, this);
+        
 		if (result) {
 			return result;
 		}
@@ -160,6 +164,13 @@ enyo.kind.defaultNamespace = "enyo";
 // feature hooks for the oop system
 //
 enyo.kind.features = [];
+
+
+//*@protected
+/**
+    Post-initialize functions (after constructor has completed).
+*/
+enyo.kind.postConstructors = [];
 
 //
 // 'inherited' feature
@@ -230,6 +241,7 @@ enyo.kind.features.push(function(ctor, props) {
 		delete ctor.prototype.statics;
 	}
 	// allow superclass customization
+
 	var base = ctor.prototype.base;
 	while (base) {
 		base.subclass(ctor, props);

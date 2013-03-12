@@ -25,7 +25,7 @@ enyo.kind({
         An array of strings that represent a mixin to be applied
         to this class at the end of the constructor routine.
     */
-    mixins: ["enyo.ObserverSupport"],
+    mixins: ["enyo.ObserverSupport", "enyo.ComputedSupport"],
     //*@public
     /**
         Set this flag to false to delay or keep this portion
@@ -69,7 +69,6 @@ enyo.kind({
     //*@protected
     postInitialization: function () {
         if (true !== this._post_init) return;
-        this.execComputed();
         this._create_mixins();
         this._post_init = false;
     },
@@ -162,7 +161,6 @@ enyo.kind({
     */
     setup: function () {
         this.setupHooks();
-        this.setupComputed();
         this.setupBindings();
     },
     //*@protected
@@ -293,79 +291,6 @@ enyo.kind({
         var idx = bindings.indexOf(binding);
         if (!!~idx) bindings.splice(idx, 1);
     },
-    //*@protected
-    /**
-        Used to find and setup any computed properties on this object
-        during initialization. This method will not run if the initComputed
-        property is set to false.
-    */
-    setupComputed: function (force) {
-        if (false === this.initComputed && !force) return;
-        // prevent this from being run again unless force is true
-        this.initComputed = false;
-        var prop;
-        var config;
-        var key;
-        var idx;
-        var len;
-        var dependents;
-        var dependent;
-        var fn;
-        var kind = this.kindName;
-        var keys = enyo.computed.keys;
-        var cache;
-        // find any previously setup computed properties or reset the
-        // hash
-        var computed = this.computed || (this.computed = {});
-        if (!("_cache_" in computed)) computed["_cache_"] = {};
-        cache = computed["_cache_"];
-        for (key in this) {
-            if (!enyo.exists((prop = this[key]))) continue;
-            // we only care if it is a function since thats what a
-            // computed property is
-            if ("function" === typeof prop) {
-                // and even then we only care if it is marked as a computed
-                // property
-                if (true === prop.isProperty) {
-                    config = prop.config;
-                    if (!(key in cache)) cache[key] = config = enyo.clone(config);
-                    config.computedName = kind + "." + key;
-                    config.__cuid = enyo.uid("_computed_");
-                    // keep a reference to the it on the hash
-                    computed[key] = prop;
-                    dependents = config.properties || [];
-                    for (idx = 0, len = dependents.length; idx < len; ++idx) {
-                        dependent = dependents[idx];
-                        // create the method that will respond
-                        fn = enyo.bind(this, function (name) {
-                            var config = this.computed["_cache_"][name];
-                            config.dirty = enyo.bench();
-                            this.notifyObservers(name);
-                        }, key);
-                        // add an observer for this dependent and have the listener
-                        // trigger the notification for the parent property
-                        this.addObserver(dependent, fn);
-                    }
-                    config.owner = this;
-                    config.property = prop.property = key;
-                }
-            }
-        }
-        this._did_setup_computed = true;
-    },
-    //*@protected
-    execComputed: function () {
-        if (true !== this._did_setup_computed) return;
-        var cache = this.computed["_cache_"];
-        var prop;
-        var config;
-        for (prop in cache) {
-            config = cache[prop];
-            if (true === config.cached && !config.defer) {
-                enyo.computed.update(config);
-            }
-        }
-    },
     
     //*@protected
     _get_hooks: null,
@@ -448,29 +373,10 @@ enyo.kind({
     destroy: function () {
         // destroy all bindings owned by this object
         this.clearBindings();
-        // breakdown all computed properties
-        this._destroy_computed();
-        // ensure we call all mixin destructors
-        this._destroy_mixins();
-        
         // JS objects are never truly destroyed (GC'd) until all references are gone,
 		// we might have some delayed action on this object that needs to have access
 		// to this flag.
 		this.destroyed = true;
-    },
-    //*@protected
-    _destroy_computed: function () {
-        var computed = this.computed;
-        var cache;
-        var name;
-        var prop;
-        if (computed) {
-            cache = computed["_cache_"];
-            for (name in cache) {
-                prop = cache[name];
-                enyo.computed.destroy(prop);
-            }
-        }
     }
 });
 

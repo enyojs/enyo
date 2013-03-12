@@ -293,28 +293,27 @@ enyo.createFromKind = function(inKind, inParam) {
 // NOTE: Ownerless UiComponents will not be garbage collected unless explicitly
 // destroyed, as they will be referenced by _enyo.master_.
 //
-enyo.ready(function () {
-    enyo.master = new enyo.Component({
-    	name: "master",
-    	notInstanceOwner: true,
-    	eventFlags: {showingOnly: true}, // don't waterfall these events into hidden controls
-    	getId: function() {
-    		return '';
-    	},
-    	isDescendantOf: enyo.nop,
-    	bubble: function(inEventName, inEvent, inSender) {
-    		//enyo.log("master event: " + inEventName);
-    		if (inEventName == "onresize") {
-    			// Resize is special; waterfall this message.
-    			// This works because master is a Component, so it waterfalls
-    			// to its owned Components (i.e., master has no children).
-    			enyo.master.waterfallDown("onresize", this.eventFlags);
-    			enyo.master.waterfallDown("onpostresize", this.eventFlags);
-    		} else {
-    			// All other top-level events are sent only to interested Signal
-    			// receivers.
-    			enyo.Signals.send(inEventName, inEvent);
-    		}
-    	}
-    });
+enyo.master = new enyo.Component({
+	name: "master",
+	notInstanceOwner: true,
+	eventFlags: {showingOnly: true}, // don't waterfall these events into hidden controls
+	getId: function() {
+		return '';
+	},
+	isDescendantOf: enyo.nop,
+	bubble: function(inEventName, inEvent, inSender) {
+		//enyo.log("master event: " + inEventName);
+		if (inEventName == "onresize") {
+			// Resize is special; waterfall this message.
+			// This works because master is a Component, so it waterfalls
+			// to its owned Components (i.e., master has no children).
+			enyo.master.waterfallDown("onresize", this.eventFlags);
+			enyo.master.waterfallDown("onpostresize", this.eventFlags);
+		} else {
+			// All other top-level events are sent only to interested Signal
+			// receivers.
+			enyo.Signals.send(inEventName, inEvent);
+		}
+	}
 });
+

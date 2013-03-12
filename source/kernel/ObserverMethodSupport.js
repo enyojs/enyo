@@ -256,8 +256,7 @@
     };
     
     var findObservers = function (proto, props) {
-        var prop;
-        for (prop in props) {
+        for (var prop in props) {
             if ("function" === typeof props[prop] && true === props[prop].isObserver) {
                 enyo.forEach(props[prop].events, function (event) {
                     addObserver(proto, event, props[prop]);
