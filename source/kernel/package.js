@@ -4,9 +4,6 @@ enyo.depends(
     "dev.js",
 	"job.js",
 	"Oop.js",
-	"MixinSupport.js",
-    "ComputedPropertySupport.js",
-    "ObserverMethodSupport.js",
     // TODO: for right now there does not seem to be another
     // obvious way to include these at the correct time
     "../mixins",
