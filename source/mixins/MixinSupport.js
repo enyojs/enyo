@@ -96,8 +96,10 @@
         }
         // add the name of this mixin to the applied mixins array
         applied.push(name);
-        // give each available mixin feature the opportunity to handle properties
-        enyo.forEach(features, function (fn) {fn(proto, mixin)});
+        // give each available mixin feature the opportunity to handle properties        
+        for (var idx = 0; idx < features.length; ++idx) {
+            features[idx](proto, mixin);
+        }
     };
     
     //*@protected
@@ -116,11 +118,14 @@
     enyo.kind.features.push(function (ctor, props) {
         // see if there is a mixins array being applied to the kind
         var proto = ctor.prototype;
-        var mixins = proto.mixins;
+        var $mixins = proto.mixins || [];
+        var len = $mixins.length;
+        var idx = 0;
         // remove the array if it existed
         delete proto.mixins;
-        // if there are any, we apply them to the constructor now
-        enyo.forEach(mixins, function (name) {applyMixin(name, proto)});
+        for (; idx < len; ++idx) {
+            applyMixin($mixins[idx], proto);
+        }
     });
     
     //*@protected
@@ -151,13 +156,27 @@
         // PROTECTED METHODS
     
         //*@protected
-        _create_mixins: function () {
-            enyo.forEach(this._mixin_create, function (fn) {fn.call(this)}, this);
+        _create_mixins: function () {            
+            var $mixins = this._mixin_create;
+            var len = $mixins.length;
+            var idx = 0;
+            var fn;
+            for (; idx < len; ++idx) {
+                fn = $mixins[idx];
+                fn.call(this);
+            }
         },
         
         //*@protected
         _destroy_mixins: function () {
-            enyo.forEach(this._mixin_destroy, function (fn) {fn.call(this)}, this);
+            var $mixins = this._mixin_destroy;
+            var len = $mixins.length;
+            var idx = 0;
+            var fn;
+            for (; idx < len; ++idx) {
+                fn = $mixins[idx];
+                fn.call(this);
+            }
         },
         
         //*@protected

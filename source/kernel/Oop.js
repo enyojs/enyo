@@ -149,7 +149,9 @@ enyo.kind.makeCtor = function() {
 			this.constructed.apply(this, arguments);
 		}
         
-        enyo.forEach(enyo.kind.postConstructors, function (fn) {fn.apply(this, cargs)}, this);
+        for (var idx = 0; idx < enyo.kind.postConstructors.length; ++idx) {
+            enyo.kind.postConstructors[idx].apply(this, cargs);
+        }
         
 		if (result) {
 			return result;
