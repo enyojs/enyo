@@ -30,7 +30,7 @@ enyo.createMixin({
     //*@protected
     adjustComponentProps: function (props) {
         props.app = this.app;
-        this.inherited(arguments, props);
+        return this.inherited(arguments, props);
     },
     
     //*@protected
