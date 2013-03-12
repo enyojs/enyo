@@ -156,7 +156,9 @@ enyo.kind({
 		// we might have some delayed action on this object that needs to have access
 		// to this flag.
 		this.destroyed = true;
-    }
+    },
+    
+    _is_object: true
 });
 
 //* @protected

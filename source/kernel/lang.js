@@ -57,16 +57,6 @@
     //*@protected
     /**
         Internally used method to detect if the given value exists,
-        is a function and a computed property. Returns true if these
-        tests are successful false otherwise.
-    */
-    var isComputed = function (target) {
-        return target && "function" === typeof target && true === target.isProperty;
-    };
-    
-    //*@protected
-    /**
-        Internally used method to detect if the given value exists,
         is a function and an overloaded getter. Returns true if these
         tests are successful false otherwise.
     */
@@ -130,36 +120,16 @@
             // begin our recursive search
             part = path.substring(0, idx);
             path = path.slice(idx+1);
+            
             if ("object" === typeof cur[part]) {
-                // if we can find the given part of the string path
-                // we recursively call the getPath method using that
-                // as the new context
-                val = enyo.getPath.call(cur[part], {path: path, recursing: true});
-            } else if (isComputed(cur[part])) {
-                // if it is a computed property, we should assume the caller
-                // knows what its doing
-                val = enyo.getPath.call(enyo.getPath.call(cur, part), {
-                    path: path,
-                    recursing: true
-                });
-            } else {
-                // we have no idea what we could do because we can't find
-                // anything useful
-                return undefined;
+                if (cur[part]._is_object) {
+                    return cur[part].get(path);
+                } else {
+                    val = enyo.getPath.call(cur[part], {path: path, recursing: true});
+                }
             }
         }
-        // if the return value is a function check to see if it is
-        // a computed property and if this is _not a recursive search_
-        // go ahead and call it, otherwise return it as a function
-        if (isComputed(val)) {
-            args = enyo.toArray(arguments).slice(1);
-            cache = (cur.computed || {})["_cache_"] || {};
-            config = cache[val.property];
-            if (config) return enyo.computed.update(config, args);
-            else {
-                throw "enyo.getPath: unable to evaluate incomplete computed property";
-            }
-        }
+        
         // otherwise we've reached the end so return whatever we have
         return val;
     };
@@ -211,29 +181,13 @@
         var prev = enyo.getPath.call(cur, path);
         // clear any leading periods
         path = preparePath(path);
-        
-        
-        if (this._check_hooks) {
-            if (false !== (check = this._check_hooks("set", path, value))) return check;
-        }
-        
-        
         // find the inital index of any period in the path
         idx = path.indexOf(".");
         // if there wasn't one we can attempt to fast-path this setter
         if (-1 === idx) {
-            target = cur[path];
-            // if the target path leads us to a function and it is a computed
-            // property we will actually call the computed property passing it
-            // the value
-            if (true === isComputed(target)) {
-                args = enyo.toArray(arguments).slice(1);
-                target.apply(cur, args);
-            } else {
-                // otherwise we just plain overwrite the method, this is the
-                // expected behavior
-                cur[path] = value;
-            }
+            // otherwise we just plain overwrite the method, this is the
+            // expected behavior
+            cur[path] = value;
         } else {
             // we have to walk the path until we find the end
             parts = path.split(".");
@@ -247,18 +201,16 @@
                 // property and if it is we call it with the new value
                 // as in the fast path
                 if (0 === parts.length) {
-                    if (true === isComputed(target)) {
-                        args = enyo.toArray(arguments).slice(1);
-                        target.apply(cur, args);
-                    } else {
-                        // otherwise we overwrite it just like in the fast-path
-                        cur[target] = value;
-                    }
+                    // otherwise we overwrite it just like in the fast-path
+                    cur[target] = value;
                 } else {
                     // we update our current reference context and if it does
                     // not exist at the requested path it will be created
                     if ("object" !== typeof cur[target]) cur[target] = {};
-                    cur = isComputed(cur[target])? enyo.getPath.call(cur, target): cur[target];
+                    if (true === cur[target]._is_object) {
+                        return cur[target].set(parts.join("."), value);
+                    }
+                    cur = cur[target];
                 }
             }
         }
