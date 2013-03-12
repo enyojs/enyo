@@ -188,7 +188,7 @@ enyo.kind({
 		};
 	},
 	mousewheel: function(inSender, e) {
-		if (!this.dragging) {
+		if (!this.dragging && this.useMouseWheel) {
 			this.calcBoundaries();
 			this.syncScrollMath();
 			this.stabilize();
