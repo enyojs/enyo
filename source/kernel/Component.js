@@ -92,16 +92,11 @@ enyo.kind({
 	constructed: function(inProps) {      
 		this.handlers = enyo.mixin(enyo.clone(this.kindHandlers), this.handlers);
 		// perform initialization
-        this.inherited(arguments);
 		this.create();
 	},
 	create: function() {
 		this.ownerChanged();
 		this.initComponents();
-        // refresh the bindings now that the child components have been
-        // created
-        this.initBindings = true;
-        this.setup();
 	},
 	initComponents: function() {
 		// The _components_ property in kind declarations is renamed to

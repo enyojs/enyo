@@ -116,12 +116,6 @@
         // find the initial period if any
         idx = path.indexOf(".");
         
-        
-        if (this._check_hooks) {
-            if (false !== (val = this._check_hooks("get", path))) return val;
-        }
-        
-        
         // if there isn't any try and find the path relative to our
         // current context, this is the fast path
         if (-1 === idx) {
