@@ -62,9 +62,6 @@
         controllers: null,
         
         //*@public
-        initBindings: false,
-        
-        //*@public
         concat: ["controllers"],
     
         // ...........................
@@ -89,10 +86,6 @@
             // we register kind of early in the process in case any controllers
             // or other initialization assumes it will be there...
             register(this);
-            // once the controllers have been initialized we can go ahead and
-            // hookup any bindings that were supplied to the application
-            this.initBindings = true;
-            this.setup();
             if (true === this.renderOnStart) {
                 this.render();
             }

@@ -49,8 +49,8 @@
     var applyMixin = enyo.applyMixin = function (name, proto) {
         // retrieve the requested mixin
         var mixin = store[name];
-        var ctors = proto._mixin_create || (proto._mixin_create = []);
-        var dtors = proto._mixin_destroy || (proto._mixin_destroy = []);
+        var ctors = proto._mixin_create = enyo.clone(proto._mixin_create || []);
+        var dtors = proto._mixin_destroy = enyo.clone(proto._mixin_destroy || []);
         var applied = proto._applied_mixins = enyo.clone(proto._applied_mixins || []);
         var ctor;
         var dtor;

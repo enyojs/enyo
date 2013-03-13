@@ -120,14 +120,14 @@
     };
     
     //*@protected
-    var _find_computed = function (proto, props) {
+    var _find_computed = function (proto, props, kind) {
         // no need to bother if this does not support computed properties
         if (!proto._supports_computed) return;
         // otherwise we know it does and we need to make sure it has some
         // intial storage properties
-        proto._computed = proto._computed || {};
-        proto._computed_map = proto._computed_map || {};
-        proto._computed_cacheable = proto._computed_cacheable || [];
+        proto._computed = kind? enyo.clone(proto._computed || {}): proto._computed || {};
+        proto._computed_map = kind? enyo.clone(proto._computed_map || {}) : proto._computed_map || {};
+        proto._computed_cacheable = kind? enyo.clone(proto._computed_cacheable || []): proto._computed_cacheable || [];
         // now we iterate over only the properties defined on this new
         // kind definition (or ones being added by a mixin) and check to
         // see if they are computed properties so we only have to do this
@@ -154,9 +154,10 @@
         if (true === $config.volatile) {
             return fn.call(this);
         } else if (true === $config.cached) {
-            if ($config.dirty) {
+            if ($config.dirty || $config.defer) {
                 $config.dirty = 0;
                 $config.value = fn.call(this);
+                $config.defer = null;
                 return $config.value;
             } else return $config.value;
         }
@@ -221,12 +222,14 @@
         not exposed...it should only ever be executed pre computation of
         any cacheable values.
     */
-    var _computed_clone = function ($computed) {
+    var _computed_clone = function ($computed, recursing) {
         var copy = {};
         var prop;
         for (prop in $computed) {
             if (!$computed.hasOwnProperty(prop)) continue;
-            if ("object" === typeof $computed[prop]) copy[prop] = _computed_clone($computed[prop]);
+            if ("object" === typeof $computed[prop]
+                && null !== $computed[prop]
+                && !recursing) copy[prop] = _computed_clone($computed[prop], true);
             else copy[prop] = $computed[prop];
         }
         return copy;
@@ -237,7 +240,7 @@
         Hook the kind features to automate handling of computing when
         the kind is created.
     */
-    enyo.kind.features.push(function (ctor, props) {_find_computed(ctor.prototype, props)});
+    enyo.kind.features.push(function (ctor, props) {_find_computed(ctor.prototype, props, true)});
     
     //*@protected
     /**
