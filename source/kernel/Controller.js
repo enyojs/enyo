@@ -58,18 +58,6 @@ enyo.kind({
     // ...........................
     // PROTECTED METHODS
     
-    //*@protected
-    create: function () {
-        this.inherited(arguments);
-        // make sure we have some type of id
-        this.id = this.makeId();
-    },
-    
-    //*@protected
-    ownerChanged: function () {
-        this.refreshBindings();
-    }
-    
     // ...........................
     // OBSERVERS
 

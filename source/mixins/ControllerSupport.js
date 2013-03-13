@@ -9,12 +9,6 @@ enyo.createMixin({
     //*@public
     name: "enyo.ControllerSupport",
     
-	//*@public
-	/**
-        It is important for bindings _not_ to be initialized until
-        after components/children have been fully created and initialized.
-	*/
-    
     // ...........................
     // PROTECTED PROPERTIES
     
@@ -46,7 +40,7 @@ enyo.createMixin({
     },
     
 	//*@protected
-	_cs_controller_changed: enyo.Observer(function () {
+	_controller_changed: enyo.Observer(function () {
 	    // first attempt to find the controller from the
 	    // information we've been handed
         this.findAndInstance("controller");
@@ -72,7 +66,6 @@ enyo.createMixin({
 	    if (this.controller && this.controller.dispatchEvent(name, event, sender)) {
 	        return true;
 	    }
-        
         return this.inherited(arguments);
     },
     

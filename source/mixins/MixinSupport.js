@@ -1,4 +1,4 @@
-(function () {
+(function (enyo) {
     
     //*@protected
     /**
@@ -103,11 +103,35 @@
     };
     
     //*@protected
+    var _create_mixins = function () {            
+        var $mixins = this._mixin_create;
+        var len = $mixins.length;
+        var idx = 0;
+        var fn;
+        for (; idx < len; ++idx) {
+            fn = $mixins[idx];
+            fn.call(this);
+        }
+    };
+        
+    //*@protected
+    var _destroy_mixins = function () {
+        var $mixins = this._mixin_destroy;
+        var len = $mixins.length;
+        var idx = 0;
+        var fn;
+        for (; idx < len; ++idx) {
+            fn = $mixins[idx];
+            fn.call(this);
+        }
+    };
+    
+    //*@protected
     var _post_constructor = function () {
         if (!this._supports_mixins) return;
         // we need to initialize all of the mixins registered to this
         // kind
-        this._create_mixins();
+        _create_mixins.call(this);
     };
     
     //*@protected
@@ -131,7 +155,13 @@
     //*@protected
     enyo.kind.postConstructors.push(_post_constructor);
     
-    //*@protected
+    //*@public
+    /**
+        The _enyo.MixinSupport_ mixin allows _enyo.Object_s and
+        sub-kinds to properly have mixin support applied at kind
+        initialization and appropriate cleanup when the object is
+        destroyed.
+    */
     createMixin({
         
         // ...........................
@@ -147,46 +177,13 @@
         _supports_mixins: true,
     
         // ...........................
-        // COMPUTED PROPERTIES
-    
-        // ...........................
-        // PUBLIC METHODS
-    
-        // ...........................
         // PROTECTED METHODS
-    
-        //*@protected
-        _create_mixins: function () {            
-            var $mixins = this._mixin_create;
-            var len = $mixins.length;
-            var idx = 0;
-            var fn;
-            for (; idx < len; ++idx) {
-                fn = $mixins[idx];
-                fn.call(this);
-            }
-        },
-        
-        //*@protected
-        _destroy_mixins: function () {
-            var $mixins = this._mixin_destroy;
-            var len = $mixins.length;
-            var idx = 0;
-            var fn;
-            for (; idx < len; ++idx) {
-                fn = $mixins[idx];
-                fn.call(this);
-            }
-        },
         
         //*@protected
         destroy: function () {
-            this._destroy_mixins();
+            _destroy_mixins.call(this);
         }
-    
-        // ...........................
-        // OBSERVERS
         
     });
  
-}());
+}(enyo));

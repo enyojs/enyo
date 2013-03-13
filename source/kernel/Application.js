@@ -1,4 +1,4 @@
-(function () {
+(function (enyo) {
     
     //*@public
     /**
@@ -15,7 +15,7 @@
         the framework.
     */
     var register = function (app) {
-        applications[app._instance_name] = app;
+        applications[app.id] = app;
     };
     
     //*@protected
@@ -30,6 +30,77 @@
             kinds.splice(idx, 1);
         }
     };
+        
+    //*@protected
+    var _destroy_controllers = function () {
+        var name;
+        // we iterate over the controllers that are stored in
+        // the application hash
+        for (name in this.controllers) {
+            // we can't know that all of those controllers were placed
+            // there by this application or that its owner hasn't been
+            // set to something else (owner implying this application
+            // instanced the controller and thus is responsible for its
+            // life-cycle) so we test for that and destroy it if it is
+            if (this === this.controllers[name].owner) {
+                if ("function" === typeof this.controllers[name].destroy) {
+                    this.controllers[name].destroy();
+                }
+            }
+            // regardless of ownership we release the controller reference
+            // and hope whoever was responsible for the controller will
+            // clean it up
+            delete this.controllers[name];
+        }
+        // remove the reference to the object entirely
+        delete this.controllers;
+    };
+    
+    //*@protected
+    var _setup_controllers = function () {
+        var kinds = this.controllers || [];
+        var controllers = this.controllers = {};
+        var len = kinds.length;
+        var idx = 0;
+        var kind;
+        for (; idx < len; ++idx) {
+            var kind = kinds[idx];
+            // we need the name of the instance whether the controller is global
+            // or app-specific
+            var name = kind.name;
+            // there is the optional global flag that indicates if the controller
+            // is to be instanced outside the scope of the application
+            var global = Boolean(kind.global);
+            var ctor;
+            var inst;
+            // cleanup
+            delete kind.global;
+            delete kind.name;
+            // if the definition does not supply a controller kind we add one
+            if (!("kind" in kind)) kind.kind = "enyo.Controller";
+            // create a kind constructor for the controller with all of the given
+            // properties
+            ctor = enyo.kind(kind);
+            inst = new ctor({owner: this, app: this});
+            // if the controller is not a global controller we create it as part
+            // of our applications controller store
+            if (false === global) {
+                controllers[name] = inst;
+            } else {
+                enyo.setPath(name, inst);
+            }
+        }
+    };
+    
+    //*@protected
+    enyo.kind.postConstructors.push(function () {
+        if (!this._is_application) return;
+        
+        // now that any controllers for the application have been
+        // initialized we test to see if we're supposed to
+        // automatically start
+        if (true === this.autoStart) this.start();
+    });
     
     //*@public
     /**
@@ -66,12 +137,9 @@
     
         // ...........................
         // PROTECTED PROPERTIES
-    
+        
         //*@protected
-        _instance_name: "",
-    
-        // ...........................
-        // COMPUTED PROPERTIES
+        _is_application: true,
     
         // ...........................
         // PUBLIC METHODS
@@ -83,9 +151,6 @@
             be executed whenever the application should begin execution.
         */
         start: function () {
-            // we register kind of early in the process in case any controllers
-            // or other initialization assumes it will be there...
-            register(this);
             if (true === this.renderOnStart) {
                 this.render();
             }
@@ -98,88 +163,56 @@
         constructor: function (props) {
             if (props && enyo.exists(props.name)) {
                 enyo.setPath(props.name, this);
-                this._instance_name = props.name;
+                this.id = props.name;
                 delete props.name;
+            } else {
+                this.id = enyo.uid("_application_");
             }
             this.inherited(arguments);
+            // we register kind of early in the process in case any controllers
+            // or other initialization assumes it will be there...
+            register(this);
         },
         
         //*@protected
         constructed: function () {
+            // we need to make sure that the controllers are already initialized
+            // before we create our view according to the view controller's API
+            _setup_controllers.call(this);
+            // now we let it continue as usual
             this.inherited(arguments);
-            if (true === this.autoStart) this.start();              
         },
         
         //*@protected
-        createView: function () {
+        /**
+            The overloaded \_create_view method to ensure we supply the
+            appropriate values to the new view instance.
+        */
+        _create_view: function () {
+            // this is the constructor for the view kind
             var ctor = this.get("_view_kind");
+            // the properties we want to supply to the view are the
+            // app (the reference to this application instance) and the
+            // \_bubble_target so events are bubbled to us
             this.set("view", new ctor({app: this, _bubble_target: this}));
         },
         
         //*@protected
-        postInitialization: function () {
-            this.inherited(arguments);
-            this.setupControllers();
-        },
-    
-        //*@protected
-        setupControllers: function () {
-            var kinds = this.controllers || [];
-            var controllers = this.controllers = {};
-            enyo.forEach(kinds, function (kind) {
-                // we need the name of the instance whether the controller is global
-                // or app-specific
-                var name = kind.name;
-                // there is the optional global flag that indicates if the controller
-                // is to be instanced outside the scope of the application
-                var global = Boolean(kind.global);
-                var ctor;
-                var inst;
-                // cleanup
-                delete kind.global;
-                delete kind.name;
-                // if the definition does not supply a controller kind we add one
-                if (!("kind" in kind)) kind.kind = "enyo.Controller";
-                // create a kind constructor for the controller with all of the given
-                // properties
-                ctor = enyo.kind(kind);
-                inst = new ctor({owner: this, app: this});
-                // if the controller is not a global controller we create it as part
-                // of our applications controller store
-                if (false === global) {
-                    controllers[name] = inst;
-                } else {
-                    enyo.setPath(name, inst);
-                }
-            }, this);
+        _make_view_name: function () {
+            return enyo.uid("_application_view_");
         },
         
         //*@protected
         destroy: function () {
+            // release/destroy all controllers associated with
+            // this instance of the application
+            _destroy_controllers.call(this);
+            // do the normal breakdown
             this.inherited(arguments);
-            this.destroyControllers();
+            // unregister this as an active application
             unregister(this);
-        },
-        
-        //*@protected
-        destroyControllers: function () {
-            var constrollers = this.controllers;
-            var controller;
-            var name;
-            for (name in controllers) {
-                if (!controllers.hasOwnProperty(name)) continue;
-                controller = controllers[name];
-                if (controller.owner && this === controller.owner) {
-                    controller.destroy();
-                }
-                delete controllers[name];
-            }
-            delete this.controllers;
         }
-    
-        // ...........................
-        // OBSERVERS
 
     });
     
-}());
+}(enyo));
