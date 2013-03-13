@@ -103,11 +103,11 @@
             is not necessary and will automatically be called.
         */
         refreshBindings: function (subset) {
-            var bindings = enyo.cloneArray(subset || this.bindings || []);
-            var binding;
-            while (bindings.length) {
-                binding = bindings.shift();
-                if (binding instanceof enyo.Binding) binding.refresh();
+            var $bindings = subset || this.bindings;
+            var len = $bindings.length;
+            var idx = 0;
+            for (; idx < len; ++idx) {
+                $bindings[idx].refresh();
             }
         },
         
