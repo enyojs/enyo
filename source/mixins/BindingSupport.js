@@ -41,7 +41,7 @@
         //*@protected
         _binding_constructor: enyo.Computed(function () {
             return enyo.getPath(this.defaultBindingKind);
-        }, {cached: true, defer: false}),
+        }, {cached: true}),
     
         // ...........................
         // PUBLIC METHODS
@@ -86,14 +86,11 @@
             and only those bindings will be destroyed.
         */
         clearBindings: function (subset) {
-            var bindings = enyo.cloneArray(subset || this.bindings || []);
-            var binding;
-            while (bindings.length) {
-                binding = bindings.shift();
-                // this will force the binding to be removed from the real
-                // bindings array of the object
-                if (binding instanceof enyo.Binding) binding.destroy();
-            }
+            var $bindings = subset || this.bindings;
+            if (!$bindings.length) return;
+            do {
+                $bindings.shift().destroy();
+            } while ($bindings.length);
         },
         
         //*@public
