@@ -129,6 +129,12 @@
 
         //*@protected
         _controller_changed: enyo.Observer(function () {
+            // we are intentionally overriding controller supports implementation
+            // of this observer so we can call this.inherited, this observer
+            // removed the previous observer
+            this.inherited(arguments);
+            // now that the controller should be set (if possible) we go ahead
+            // and setup any auto bindings
             _setup_auto_bindings.call(this);
         }, "controller")
 

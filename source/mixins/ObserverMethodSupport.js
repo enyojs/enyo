@@ -30,6 +30,14 @@
     var addObserver = function (base, property, fn, context) {
         var observers = base._observers || (base._observers = {});
         var handlers;
+        // when there is name collision in an observer where one class
+        // subclasses another while while overloaded an observer method
+        // it can call this.inherited as usual but we need to remove the
+        // previous version of the method from observing the notifications
+        // so it won't be handled twice
+        if (fn._inherited && fn._inherited.isObserver) {
+            removeObserver(base, property, fn._inherited);
+        }
         // if a context is provided for the listener we bind it
         // to that context now
         fn = context? enyo.bind(context, fn): fn;
@@ -255,7 +263,9 @@
         base._notification_queue = {};
     };
     
-    var findObservers = function (proto, props) {
+    //*@protected
+    var _find_observers = function (proto, props, kind) {
+        proto._observers = kind? _observer_clone(proto._observers || {}): proto._observers || {};
         for (var prop in props) {
             if ("function" === typeof props[prop] && true === props[prop].isObserver) {
                 enyo.forEach(props[prop].events, function (event) {
@@ -265,14 +275,26 @@
         }
     };
     
-    enyo.kind.features.push(function (ctor, props) {findObservers(ctor.prototype, props)});
+    //*@protected
+    /**
+        Strictly used internally to copy observer hashes for kinds.
+    */
+    var _observer_clone = function ($observed, recursing) {
+        var array_copy = function (orig) {return [].concat(orig)};
+        var copy = {};
+        var prop;
+        for (prop in $observed) copy[prop] = array_copy($observed[prop]);
+        return copy;
+    };
+    
+    enyo.kind.features.push(function (ctor, props) {_find_observers(ctor.prototype, props, true)});
     
     //*@protected
     /**
         Add a special handler for mixins to be aware of how to handle
         observer properties of a kind.
     */
-    enyo.mixins.features.push(findObservers);
+    enyo.mixins.features.push(_find_observers);
     
     //*@protected
     enyo.createMixin({
@@ -423,7 +445,10 @@
     
         //*@protected
         create: function () {
-            this._observers = this._observers? enyo.clone(this._observers): {};
+            // it is unfortunate but we cannot share the observers block we inherited
+            // from the kind since as an instance we can modify it at runtime so we're
+            // forced to deep copy it
+            this._observers = _observer_clone(this._observers);
         },
     
         //*protected
