@@ -63,7 +63,7 @@
         if (!enyo.exists(fn) || "function" !== typeof fn) {
             throw "enyo.Computed: a computed property must be a function";
         }
-        properties = fn.properties || [];
+        properties = fn.properties || (fn.properties = []);
         config = fn.config || enyo.clone(defaults);
         enyo.forEach(deps, function (dep) {
             if ("string" === typeof dep) properties.push(dep);
@@ -77,6 +77,7 @@
         else if (true === config.cached) config.volatile = false;
         fn.config = config;
         fn.isProperty = true;
+        config.properties = properties;
         return fn;
     };
     
@@ -187,7 +188,17 @@
             // is cachable and needs updating just do this as it
             // should be harmless otherwise
             ++$config.dirty;
+            this._computed_queue.push(prop);
         }
+    };
+    
+    //*@protected
+    var _flush_queue = function () {
+        var $queue = this._computed_queue;
+        if (!$queue.length) return;
+        do {
+            this.notifyObservers($queue.shift());
+        } while ($queue.length);
     };
     
     //*@protected
@@ -305,27 +316,38 @@
             notifications are being sent to handle them the way we
             need to for computed properties.
         */
-        notifyObservers: function (property, prev, value) {
+        notifyObservers: function (prop, prev, value) {
             // any of the possible notifications we want to map
             // to computed property (by name)
             var $map = this._computed_map;
-            if ($map[property]) {
-                enyo.forEach($map[property], _update_computed, this);
-            }
-            return this.inherited(arguments);
+            var len;
+            var idx;
+            if ($map[prop]) {
+                len = $map[prop].length;
+                idx = 0;
+                // iterate over each of the dependent properties
+                // and mark them as dirty note that the update method
+                // will queue the property to notify its own listeners
+                // of its state change
+                for (; idx < len; ++idx) {
+                    _update_computed.call(this, $map[prop][idx]);
+                }
+                // if there was anything queued lets flush it now
+                _flush_queue.call(this);
+            } else return this.inherited(arguments);
         },
     
         // ...........................
         // PROTECTED METHODS
 
         //*@protected
-        create: function () {
-            // NOTE: this is called before the post-initialization code
-            // for kinds
+        _constructor: function () {
             // we need to make sure that we have unique property hashes
             // for each computed property (something we cannot do when
             // applying them to prototypes)
             this._computed = _computed_clone(this._computed);
+            this._computed_queue = [];
+            return this.inherited(arguments);
         },
         
         //*@protected

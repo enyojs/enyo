@@ -362,9 +362,17 @@ enyo.kind({
 		}
 
 		if (this[name]) {
-            if ("function" === typeof this[name] &&(true === this._is_view && delegate
-                && this === delegate.owner)) {
-                        return this.dispatch(name, event, sender);
+            if ("function" === typeof this[name]) {
+                if (
+                    this._is_controller
+                    || (
+                        true === this._is_view
+                        && delegate
+                        && this === delegate.owner
+                    )
+                ) {
+                    return this.dispatch(name, event, sender);
+                }
             } else {
                 // otherwise we dispatch it up because it is a remap of another event
                 if (!delegate) event.delegate = this;
