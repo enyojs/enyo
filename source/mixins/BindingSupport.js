@@ -145,6 +145,7 @@
             // we simply iterate over and destroy each of the bindings
             // in our bindings array
             var $bindings = this.bindings;
+            if (!$bindings.length) return;
             do { 
                 $bindings.pop().destroy();
             } while ($bindings.length);
