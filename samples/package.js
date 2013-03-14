@@ -15,5 +15,7 @@ enyo.depends(
 	"ScrollerSample.css",
 	"ScrollerSample.js",
 	"GestureSample.css",
-	"GestureSample.js"
+	"GestureSample.js",
+	"DrawerSample.css",
+	"DrawerSample.js"
 );
