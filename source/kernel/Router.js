@@ -1,4 +1,4 @@
-(function () {
+(function (enyo) {
     
     //*@protected
     // each router registers with this list
@@ -306,4 +306,4 @@
         }
     });
 
-}());
+}(enyo));
