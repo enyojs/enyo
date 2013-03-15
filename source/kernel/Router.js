@@ -7,12 +7,10 @@
     // this method is registered as the handler for occasions when
     // the hash change event is fired
     var hashDidChange = function (hash) {
-        var list = enyo.cloneArray(listeners);
-        var router;
-        while (list.length) {
-            router = list.shift();
-            router.hashChanged(hash);
-        }
+        var list = listeners;
+        var len = list.length;
+        var idx = 0;
+        for (; idx < len; ++idx) list[idx].hashChanged(hash);
     };
     //*@protected
     var token = /\:[a-zA-Z0-9]*/g;
