@@ -4,9 +4,7 @@ enyo.depends(
     "dev.js",
 	"job.js",
 	"Oop.js",
-    // TODO: for right now there does not seem to be another
-    // obvious way to include these at the correct time
-    "../mixins",
+    "mixins",
     "Binding.js",
 	"Object.js",
 	"Component.js",

@@ -62,7 +62,7 @@
             var binding;
             var properties = {};
             var bindings = this.bindings;
-            var def = enyo.getPath(this.defaultBindingKind);
+            var def = this.get("_binding_constructor");
             var ctor;
             var kind;
             for (; idx < len; ++idx) enyo.mixin(properties, definitions[idx]);
