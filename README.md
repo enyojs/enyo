@@ -137,7 +137,7 @@ enyo.kind({
 });
 // make two, they're small
 new enyo.Control({
-      component: [ {kind: "Hello"}, {kind: "Hello"} ]
+      components: [ {kind: "Hello"}, {kind: "Hello"} ]
   }).renderInto(document.body);
 ```
 
