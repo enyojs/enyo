@@ -259,7 +259,7 @@ enyo.kind({
     
     //*@public
     add: function (value, at) {
-        var value = value.length? value: [value];
+        var value = value && ("length" in value)? value: [value];
         var len = this.length;
         var idx = at && !isNaN(at) && at >= 0 && at < len? at: len;
         var args = [idx, 0].concat(value);
@@ -460,7 +460,7 @@ enyo.kind({
         // if there were values waiting to be initialized they couldn't
         // have been until now
         if (this._init_values) {
-            this.push.apply(this, this._init_values);
+            this.add.call(this, this._init_values);
             this._init_values = null;
         }
     },
