@@ -332,9 +332,10 @@
                 for (; idx < len; ++idx) {
                     _update_computed.call(this, $map[prop][idx]);
                 }
-                // if there was anything queued lets flush it now
-                _flush_queue.call(this);
-            } else return this.inherited(arguments);
+            }
+            this.inherited(arguments);
+            // if there was anything queued lets flush it now
+            _flush_queue.call(this);
         },
     
         // ...........................
