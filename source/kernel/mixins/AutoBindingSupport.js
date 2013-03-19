@@ -50,9 +50,6 @@
         }
     };
     
-    //*@protected
-    enyo.kind.postConstructors.push(_setup_auto_bindings);
-    
     //*@public
     /**
         The _enyo.AutoBindingSupport_ mixin provides the ability to
