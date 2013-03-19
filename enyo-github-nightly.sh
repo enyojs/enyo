@@ -142,7 +142,9 @@ chmod -R ug+rwX,o+rX ${SDK_DIRNAME}
 
 # and finally zip and scp the files to DreamHost
 zip -qr ${SDK_DIRNAME}.zip ${SDK_DIRNAME} -x \*.git \*.gitignore \*.gitmodules
-zip -qr ${BOOTPLATE_DIRNAME}.zip ${SDK_DIRNAME}/bootplate -x \*.git \*.gitignore \*.gitmodules
+pushd ${SDK_DIRNAME}
+zip -qr ../${BOOTPLATE_DIRNAME}.zip bootplate -x \*.git \*.gitignore \*.gitmodules
+popd ## ${SDK_DIRNAME}
 ssh enyojs@boxwood.dreamhost.com "mkdir -p ~/nightly"
 ssh enyojs@boxwood.dreamhost.com "find ~/nightly/ -maxdepth 1 -type d -mtime +14 -exec echo \"Removing Directory => {}\" \; -exec rm -rf \"{}\" \;"
 scp ${SDK_DIRNAME}.zip enyojs@boxwood.dreamhost.com:nightly/
