@@ -167,14 +167,19 @@
     //*@protected
     /**
         We pass the requested value into the computed property which
-        may/may-not handle the value. It is important to note that setting
-        a computed property __does not mark it as dirty or automatically
-        update its value__.
+        may/may-not handle the value.
     */
     var _set_computed = function (path, value) {
         // and a reference to the method because we will need it
         var fn = this[path];
-        return fn.call(this, value);
+        // we merely execute the computed property and pass it the
+        // value, if it was capable of setting the value it will
+        // handle it otherwise it will recompute
+        fn.call(this, value);
+        // mark it as dirty and push it to the queue
+        _update_computed.call(this, path);
+        // flush the queue immediately
+        _flush_queue.call(this);
     };
     
     //*@protected
