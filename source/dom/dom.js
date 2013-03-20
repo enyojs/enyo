@@ -105,6 +105,21 @@ enyo.dom = {
 		}
 		return 480;
 	},
+	// Workaround for lack of compareDocumentPosition support in IE8
+	// Code MIT Licensed, John Resig; source: http://ejohn.org/blog/comparing-document-position/
+	compareDocumentPosition: function(a, b) {
+		return a.compareDocumentPosition ?
+		a.compareDocumentPosition(b) :
+		a.contains ?
+			(a != b && a.contains(b) && 16) +
+			(a != b && b.contains(a) && 8) +
+			(a.sourceIndex >= 0 && b.sourceIndex >= 0 ?
+				(a.sourceIndex < b.sourceIndex && 4) +
+				(a.sourceIndex > b.sourceIndex && 2) :
+				1) +
+			0 :
+			0;
+	},
 	// moved from FittableLayout.js into common protected code
 	_ieCssToPixelValue: function(inNode, inValue) {
 		var v = inValue;
@@ -179,7 +194,8 @@ enyo.dom = {
 			xregex = /translateX\((-?\d+)px\)/i,
 			yregex = /translateY\((-?\d+)px\)/i,
 			borderLeft = 0, borderTop = 0,
-			totalHeight = 0, totalWidth = 0;
+			totalHeight = 0, totalWidth = 0,
+			offsetAdjustLeft = 0, offsetAdjustTop = 0;
 
 		if (relativeToNode) {
 			totalHeight = relativeToNode.offsetHeight;
@@ -191,11 +207,18 @@ enyo.dom = {
 
 		if (node.offsetParent) {
 			do {
-				left += node.offsetLeft - (node.offsetParent ? node.offsetParent.scrollLeft : 0);
+				// Adjust the offset if relativeToNode is a child of the offsetParent
+				// For IE 8 compatibility, have to use integer 8 instead of Node.DOCUMENT_POSITION_CONTAINS
+				if (relativeToNode && this.compareDocumentPosition(relativeToNode, node.offsetParent) & 8) {
+					offsetAdjustLeft = relativeToNode.offsetLeft;
+					offsetAdjustTop = relativeToNode.offsetTop;
+				}
+				// Ajust our top and left properties based on the position relative to the parent
+				left += node.offsetLeft - (node.offsetParent ? node.offsetParent.scrollLeft : 0) - offsetAdjustLeft;
 				if (transformProp && xregex.test(node.style[transformProp])) {
 					left += parseInt(node.style[transformProp].replace(xregex, '$1'), 10);
 				}
-				top += node.offsetTop - (node.offsetParent ? node.offsetParent.scrollTop : 0);
+				top += node.offsetTop - (node.offsetParent ? node.offsetParent.scrollTop : 0) - offsetAdjustTop;
 				if (transformProp && yregex.test(node.style[transformProp])) {
 					top += parseInt(node.style[transformProp].replace(yregex, '$1'), 10);
 				}
@@ -220,7 +243,9 @@ enyo.dom = {
 						top += borderTop;
 					}
 				}
-			} while ((node = node.offsetParent) && node !== relativeToNode);
+				// Continue if we have an additional offsetParent, and either don't have a relativeToNode or the offsetParent is contained by the relativeToNode (if offsetParent contains relativeToNode, then we have already calculated up to the node, and can safely exit)
+				// For IE 8 compatibility, have to use integer 16 instead of Node.DOCUMENT_POSITION_CONTAINED_BY
+			} while ((node = node.offsetParent) && (!relativeToNode || this.compareDocumentPosition(relativeToNode, node) & 16));
 		}
 		return {
 			'top': top,
