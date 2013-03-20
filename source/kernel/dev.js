@@ -1,6 +1,6 @@
 (function () {
 	"use strict";
-	
+
 	//*@protected
 	/**
 		When available, supply a high-precision, high performance
@@ -9,7 +9,7 @@
 	enyo.bench = (function () {
 		// we have to check whether or not the browser has supplied a valid
 		// method to use
-		var perf = window.performance = window.performance || {};
+		var perf = window.performance || {};
 		// test against all known vender-specific implementations but use
 		// a fallback just in case
 		perf.now = perf.now || perf.mozNow || perf.msNow || perf.oNow || perf.webkitNow || enyo.now;
@@ -23,11 +23,11 @@
 					"skewing the results."
 				);
 				return perf.now();
-			}
+			};
 		// otherwise we now have a pointer to the performant benchmark method
-		} else return function () {return perf.now()};
+		} else return function () {return perf.now();};
 	}());
-	
+
 	//*@protected
 	/**
 		This is a collection of methods to assist in simple benchmarking.
@@ -37,42 +37,42 @@
 		when using potentially nested benchmark series (benchmarking a method that
 		executes other benchmarked methods).
 	*/
-	
+
 	// track the active tests
 	var tests = {};
 	// track averages
 	var averages = {};
-	
+
 	// default report template string
 	var report_template = "- - - - - - - - - - - - - - - - -\n" +
-						  "BENCHMARK REPORT (%.): %.\n" +
-						  "TOTAL TIME: %.\n" +
-						  "AVERAGE TIME: %.\n" +
-						  "NUMBER OF ENTRIES: %.\n" +
-						  "- - - - - - - - - - - - - - - - -\n";
-	
+					"BENCHMARK REPORT (%.): %.\n" +
+					"TOTAL TIME: %.\n" +
+					"AVERAGE TIME: %.\n" +
+					"NUMBER OF ENTRIES: %.\n" +
+					"- - - - - - - - - - - - - - - - -\n";
+
 	// calculates average and basic statistics
 	var calc = function (numbers) {
 		var total = 0;
 		var number = numbers.length;
 		var stats = {total: null, average: null, number: number};
-		enyo.forEach(numbers, function (num) {total += num});
+		enyo.forEach(numbers, function (num) {total += num;});
 		stats.total = total;
 		stats.average = Math.abs(total/(number || 1));
 		return stats;
 	};
-	
+
 	enyo.dev = {
-		
+
 		enabled: true,
-		
+
 		bench: function (opts) {
 			if (true !== this.enabled) return false;
 			var options = opts || {name: enyo.uid("bench")};
 			if (true === options.analyze) return new Suite(options);
 			else return new Benchmark(options);
 		},
-		
+
 		report: function (name) {
 			var bench = averages[name] || tests[name];
 			if (!bench) return false;
@@ -92,7 +92,7 @@
 				);
 			}
 		},
-		
+
 		clear: function (name) {
 			var source = tests[name]? tests: averages[name]? averages: null;
 			if (!source) return false;
@@ -103,7 +103,7 @@
 		}
 
 	};
-	
+
 	function Benchmark (options) {
 		enyo.mixin(this, options);
 		if (true === this.average && !averages[this.name]) {
@@ -112,39 +112,40 @@
 		if (averages[this.name] && false !== this.average) this._averaging = true;
 		if (true === this.autoStart) this.start();
 	}
-	
+
 	function Suite (options) {
 		enyo.mixin(this, options);
 	}
-	
+
 	//*@protected
 	Benchmark.prototype = {
-		
+
 		// ...........................
 		// PUBLIC PROPERTIES
-	
+
 		logging: true,
 		autoStart: true,
-	
+
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		_started: false,
 		_averaging: false,
 		_begin: null,
 		_end: null,
 		_time: null,
-	
+
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		start: function () {
 			if (true === this._started) return false;
 			this._log("starting benchmark");
 			this._begin = enyo.bench();
-			return (this._started = true);
+			this._started = true;
+			return true;
 		},
-		
+
 		stop: function () {
 			if (!this._started) return false;
 			this._end = enyo.bench();
@@ -153,45 +154,46 @@
 			if (true === this._averaging) averages[this.name].push(this._time);
 			return !(this._started = false);
 		},
-	
+
 		// ...........................
 		// PROTECTED METHODS
-		
+
 		_log: function (message) {
 			if (!this.logging) return false;
 			enyo.log("bench (" + this.name + "): " + message);
 		}
 
 	};
-	
+
 	//*@protected
 	Suite.prototype = {
-		
+
 		// ...........................
 		// PUBLIC PROPERTIES
-	
+
 		logging: true,
 		autoStart: true,
-	
+
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		_started: false,
 		_averaging: false,
 		_begin: null,
 		_end: null,
 		_time: null,
-	
+
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		start: function () {
 			if (true === this._started) return false;
 			this._log("starting benchmark");
 			this._begin = enyo.bench();
-			return (this._started = true);
+			this._started = true;
+			return true;
 		},
-		
+
 		stop: function () {
 			if (!this._started) return false;
 			this._end = enyo.bench();
@@ -200,15 +202,15 @@
 			if (true === this._averaging) averages[this.name].push(this._time);
 			return !(this._started = false);
 		},
-	
+
 		// ...........................
 		// PROTECTED METHODS
-		
+
 		_log: function (message) {
 			if (!this.logging) return false;
 			enyo.log("bench (" + this.name + "): " + message);
 		}
 
 	};
-	
+
 }());
