@@ -11,7 +11,7 @@
         var events = enyo.toArray(arguments).slice(1);
         if (!enyo.exists(fn) || "function" !== typeof fn) {
             // this is a necessary assert
-            throw "enyo.Observer: invalid observer, must have a function";
+            throw "enyo.observer: invalid observer, must have a function";
         }
         fn.isObserver = true;
         fn.events = (fn.events? fn.events: []).concat(events);

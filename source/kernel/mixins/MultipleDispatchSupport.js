@@ -46,7 +46,7 @@ enyo.createMixin({
     /**
         Overload the bubble target.
     */
-    bubbleTarget: enyo.Computed(function () {
+    bubbleTarget: enyo.computed(function () {
         // if we have a valid dispatch target and default dispatching enabled
         // we go head and return that object otherwise nothing so it will
         // not propagate an event

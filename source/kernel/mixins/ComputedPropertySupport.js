@@ -46,22 +46,22 @@
     
     //*@public
     /**
-        Wrapping a class method in _enyo.computed_ or _enyo.Computed_ will
+        Wrapping a class method in _enyo.computed_ will
         allow that method to be interpreted as a static property and is bindable
         by _enyo.Binding_s. Computed properties accept a configuration hash as
-        an optional parameter to the _enyo.Computed_ call and any number of string
+        an optional parameter to the _enyo.computed_ call and any number of string
         parameters that will be evaluated as dependencies of the property. Notifications
         of changes to any of those properties will flag the computed property as
         needing to be reevaluated the next time it is requested (if it is cached).
         Computed properties are _volatile_ by default and will be evaluated on each
         request unless marked otherwise.
     */
-    var computed = enyo.Computed = enyo.computed = function (fn /*, arguments */) {
+    var computed = enyo.computed = function (fn /*, arguments */) {
         var deps = enyo.toArray(arguments).slice(1);
         var config;
         var properties;
         if (!enyo.exists(fn) || "function" !== typeof fn) {
-            throw "enyo.Computed: a computed property must be a function";
+            throw "enyo.computed: a computed property must be a function";
         }
         properties = fn.properties || (fn.properties = []);
         config = fn.config || enyo.clone(defaults);

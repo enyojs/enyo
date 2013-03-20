@@ -147,7 +147,7 @@
         //*@public
         /**
         */
-        location: enyo.Computed(function (loc) {
+        location: enyo.computed(function (loc) {
             if (loc) {
                 loc = prepare(loc);
                 if (!this.internalOnly) {

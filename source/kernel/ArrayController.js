@@ -32,7 +32,7 @@ enyo.kind({
         underlying data. This is an immutable array as changes __will
         not__ modify the array structure of this controller.
     */
-    data: enyo.Computed(function (data) {
+    data: enyo.computed(function (data) {
         if (data) return this.reset(data);
         var store = [];
         var idx = 0;

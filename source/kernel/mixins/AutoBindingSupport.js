@@ -76,7 +76,7 @@
         // COMPUTED PROPERTIES
     
         //*@protected
-        _bindable_controls: enyo.Computed(function (control) {
+        _bindable_controls: enyo.computed(function (control) {
             var bindable = [];
             var control = control || this;
             var controls = control.controls || [];
@@ -90,7 +90,7 @@
         }, {cached: true}),
     
         //*@protected
-        _binding_defaults: enyo.Computed(function () {
+        _binding_defaults: enyo.computed(function () {
             var ctor = this.get("_binding_constructor");
             var keys = enyo.keys(defaults);
             if (enyo.Binding !== ctor) {
@@ -100,7 +100,7 @@
         }, {cached: true}),
         
         //*@protected
-        _auto_bindings: enyo.Computed(function () {
+        _auto_bindings: enyo.computed(function () {
             return enyo.filter(this.bindings || [], function (bind) {
                 return bind && bind._auto_binding_id;
             });
@@ -125,7 +125,7 @@
         // OBSERVERS
 
         //*@protected
-        _controller_changed: enyo.Observer(function () {
+        _controller_changed: enyo.observer(function () {
             // we are intentionally overriding controller supports implementation
             // of this observer so we can call this.inherited, this observer
             // removed the previous observer

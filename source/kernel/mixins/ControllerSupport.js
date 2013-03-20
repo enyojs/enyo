@@ -40,7 +40,7 @@ enyo.createMixin({
     },
     
 	//*@protected
-	_controller_changed: enyo.Observer(function () {
+	_controller_changed: enyo.observer(function () {
 	    // first attempt to find the controller from the
 	    // information we've been handed
         this.findAndInstance("controller");

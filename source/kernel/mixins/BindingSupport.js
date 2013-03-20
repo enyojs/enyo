@@ -39,7 +39,7 @@
         // COMPUTED PROPERTIES
     
         //*@protected
-        _binding_constructor: enyo.Computed(function () {
+        _binding_constructor: enyo.computed(function () {
             return enyo.getPath(this.defaultBindingKind);
         }, {cached: true}),
     

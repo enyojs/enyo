@@ -230,7 +230,7 @@ enyo.kind({
         This method is intended to fire only when the _data_ property is
         arbitrarily set on the object-controller.
     */
-    dataDidChange: enyo.Observer(function () {
+    dataDidChange: enyo.observer(function () {
         if (this._last) this.releaseData(this._last);
         this.initData();
         this.notifyAll();

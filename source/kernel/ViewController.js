@@ -51,7 +51,7 @@
             On object initialization finds or creates the appropriate
             kind for the view of this controller.
         */
-        _view_kind: enyo.Computed(function () {
+        _view_kind: enyo.computed(function () {
             // the original definition as supplied by the controllers
             // own definition
             var view = this.view;
@@ -82,7 +82,7 @@
         /**
             Finds the appropriate form of the render target.
         */
-        _render_target: enyo.Computed(function () {
+        _render_target: enyo.computed(function () {
             // the original supplied variable for the render target
             var target = this.renderTarget;
             // we attempt to find the actual target node
