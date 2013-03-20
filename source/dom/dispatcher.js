@@ -6,7 +6,7 @@ enyo.dispatcher = {
 	events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel",
 		"click", "dblclick", "change", "keydown", "keyup", "keypress", "input"],
 	// these events come from window
-	windowEvents: ["resize", "load", "unload", "message"],
+	windowEvents: ["resize", "load", "unload", "message", "hashchange"],
 	// these events come from css
 	cssEvents: ["webkitTransitionEnd", "transitionend"],
 	// feature plugins (aka filters)
@@ -163,15 +163,15 @@ enyo.requiresWindow(enyo.dispatcher.connect);
 
 // generate a tapped event for a raw-click event
 enyo.dispatcher.features.push(
-    function (e) {
-        if ("click" === e.type) {
-            if (e.clientX === 0 && e.clientY === 0) {
-                // this allows the click to dispatch as well
-                // but note the tap event will fire first
-                var cp = enyo.clone(e);
-                cp.type = "tap";
-                enyo.dispatch(cp);
-            }
-        }
-    }
+	function (e) {
+		if ("click" === e.type) {
+			if (e.clientX === 0 && e.clientY === 0) {
+				// this allows the click to dispatch as well
+				// but note the tap event will fire first
+				var cp = enyo.clone(e);
+				cp.type = "tap";
+				enyo.dispatch(cp);
+			}
+		}
+	}
 );
