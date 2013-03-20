@@ -68,7 +68,9 @@ enyo.kind({
 		*/
 		strategyKind: "ScrollStrategy",
 		//* Set to true to display a scroll thumb in touch scrollers
-		thumb: true
+		thumb: true,
+		//* Use mouse wheel to move scroller
+		useMouseWheel: true
 	},
 	events: {
 		//* Fires when a scrolling action starts.
@@ -145,6 +147,7 @@ enyo.kind({
 		this.inherited(arguments);
 		this.horizontalChanged();
 		this.verticalChanged();
+		this.useMouseWheelChanged();
 	},
 	importProps: function(inProps) {
 		this.inherited(arguments);
@@ -335,6 +338,10 @@ enyo.kind({
 		if (s.stabilize) {
 			s.stabilize();
 		}
+	},
+	//* Send the useMouseWheel propert to the scroll strategy
+	useMouseWheelChanged: function() {
+		this.$.strategy.setUseMouseWheel(this.useMouseWheel);
 	}
 });
 
