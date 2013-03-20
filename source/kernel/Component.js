@@ -37,7 +37,7 @@
 	If you want to make a component unowned, use _setOwner(null)_.
 
 	If you make changes to _enyo.Component_, be sure to add or update the
-	appropriate	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
+	appropriate [unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
 
 	For more information, see the documentation on
 	[Components](https://github.com/enyojs/enyo/wiki/Creating-Components)
@@ -64,7 +64,7 @@ enyo.kind({
 		id: "",
 		/**
 			The component that owns this component. It is usually implicitly
-			defined	during creation based on the _createComponent_ call or
+			defined during creation based on the _createComponent_ call or
 			_components_ hash.
 		*/
 		owner: null
@@ -78,7 +78,7 @@ enyo.kind({
 	},
 	defaultKind: "Component",
 	handlers: {},
-    mixins: ["enyo.ApplicationSupport"],
+	mixins: ["enyo.ApplicationSupport"],
 	__jobs: {},
 	toString: function() {
 		return this.kindName;
@@ -89,7 +89,7 @@ enyo.kind({
 		this.$ = {};
 		this.inherited(arguments);
 	},
-	constructed: function(inProps) {      
+	constructed: function(inProps) {
 		this.handlers = enyo.mixin(enyo.clone(this.kindHandlers), this.handlers);
 		// perform initialization
 		this.create();
@@ -122,7 +122,7 @@ enyo.kind({
 	//* @public
 	/**
 		Removes this component from its owner (sets _owner_ to null) and does
-		any	cleanup. The component is flagged with a _destroyed: true_ property.
+		any cleanup. The component is flagged with a _destroyed: true_ property.
 		Usually the component will be suitable for garbage collection after
 		being destroyed, unless user code keeps a reference to it.
 	*/
@@ -297,7 +297,7 @@ enyo.kind({
 		references the component that triggered the event in the first place.
 	*/
 	bubble: function(inEventName, inEvent, inSender) {
-        if (this._silenced) return;
+		if (this._silenced) return;
 		var e = inEvent || {};
 		// FIXME: is this the right place?
 		if (!("originator" in e)) {
@@ -325,10 +325,10 @@ enyo.kind({
 		references the component that triggered the event in the first place.
 	*/
 	bubbleUp: function(inEventName, inEvent, inSender) {
-        if (this._silenced) return;
+		if (this._silenced) return;
 		// Bubble to next target
 		var next = this.getBubbleTarget();
-        var delegate = inEvent.delegate;
+		var delegate = inEvent.delegate;
 		if (next) {
 			return next.dispatchBubble(inEventName, inEvent, delegate || this);
 		}
@@ -349,40 +349,40 @@ enyo.kind({
 			ontap: "tapHandler"
 	*/
 	dispatchEvent: function(name, event, sender) {
-        if (this._silenced) return;
-        // if the event has a delegate associated with it we grab that
-        // for reference
-        var delegate = event.delegate;
+		if (this._silenced) return;
+		// if the event has a delegate associated with it we grab that
+		// for reference
+		var delegate = event.delegate;
 		// bottleneck event decoration
 		this.decorateEvent(name, event, sender);
-        // dispatch via the handlers block if possible
+		// dispatch via the handlers block if possible
 		if (this.handlers && this.handlers[name] &&
-            this.dispatch(this.handlers[name], event, sender)) {
+			this.dispatch(this.handlers[name], event, sender)) {
 			return true;
 		}
 
 		if (this[name]) {
-            if ("function" === typeof this[name]) {
-                if (
-                    this._is_controller
-                    || (
-                        true === this._is_view
-                        && delegate
-                        && this === delegate.owner
-                    )
-                ) {
-                    return this.dispatch(name, event, sender);
-                }
-            } else {
-                // otherwise we dispatch it up because it is a remap of another event
-                if (!delegate) event.delegate = this;
-                return this.bubbleUp(this[name], event, sender);
-            }
+			if ("function" === typeof this[name]) {
+				if (
+					this._is_controller
+					|| (
+						true === this._is_view
+						&& delegate
+						&& this === delegate.owner
+					)
+				) {
+					return this.dispatch(name, event, sender);
+				}
+			} else {
+				// otherwise we dispatch it up because it is a remap of another event
+				if (!delegate) event.delegate = this;
+				return this.bubbleUp(this[name], event, sender);
+			}
 		}
 	},
 	// internal - try dispatching event to self, if that fails bubble it up the tree
 	dispatchBubble: function(inEventName, inEvent, inSender) {
-        if (this._silenced) return;
+		if (this._silenced) return;
 		// Try to dispatch from here, stop bubbling on truthy return value
 		if (this.dispatchEvent(inEventName, inEvent, inSender)) {
 			return true;
@@ -395,7 +395,7 @@ enyo.kind({
 		// both call this method so intermediaries can decorate inEvent
 	},
 	bubbleDelegation: function(inDelegate, inName, inEventName, inEvent, inSender) {
-        if (this._silenced) return;
+		if (this._silenced) return;
 		// next target in bubble sequence
 		var next = this.getBubbleTarget();
 		if (next) {
@@ -403,7 +403,7 @@ enyo.kind({
 		}
 	},
 	delegateEvent: function(inDelegate, inName, inEventName, inEvent, inSender) {
-        if (this._silenced) return;
+		if (this._silenced) return;
 		// override this method to play tricks with delegation
 		// bottleneck event decoration
 		this.decorateEvent(inEventName, inEvent, inSender);
@@ -426,12 +426,12 @@ enyo.kind({
 		arrive here. If you need to handle these differently, you may
 		need to also override _dispatchEvent_.
 	*/
-    dispatch: function(inMethodName, inEvent, inSender) {
-        if (this._silenced) return;
-        var fn = inMethodName && this[inMethodName];
-        if (fn && "function" === typeof fn) {
-            return fn.call(this, inSender, inEvent);
-        }
+	dispatch: function(inMethodName, inEvent, inSender) {
+		if (this._silenced) return;
+		var fn = inMethodName && this[inMethodName];
+		if (fn && "function" === typeof fn) {
+			return fn.call(this, inSender, inEvent);
+		}
 	},
 	/**
 		Sends a message to myself and all of my components.
@@ -440,8 +440,8 @@ enyo.kind({
 		the event handler.
 	*/
 	waterfall: function(name, event, sender) {
-        if (this._silenced) return;
-        event = event || {};
+		if (this._silenced) return;
+		event = event || {};
 		//this.log(name, (sender || this).name, "=>", this.name);
 		if (this.dispatchEvent(name, event, sender)) {
 			return true;
@@ -455,43 +455,43 @@ enyo.kind({
 		the event handler.
 	*/
 	waterfallDown: function(name, event, sender) {
-        if (this._silenced) return;
+		if (this._silenced) return;
 		for (var n in this.$) {
 			this.$[n].waterfall(name, event, sender);
 		}
 	},
-    //*@protected
-    _silenced: false,
-    //*@protected
-    _silence_count: 0,
-    //*@public
-    /**
-        Sets a flag that will disable event propagation for this
-        component. Increments the internal counter ensuring that the
-        _unsilence_ method must be called that many times before
-        event propagation will continue.
-    */
-    silence: function () {
-        this._silenced = true;
-        this._silence_count += 1;
-    },
-    
-    //*@public
-    /**
-        If the internal silence counter is 0 this method will allow
-        event propagation for this component. It will decrement the counter
-        by one otherwise. This method must be called one-time for each
-        _silence_ call.
-    */
-    unsilence: function () {
-        if (0 !== this._silence_count) --this._silence_count;
-        if (0 === this._silence_count) {
-            this._silenced = false;
-        }
-    },
+	//*@protected
+	_silenced: false,
+	//*@protected
+	_silence_count: 0,
+	//*@public
+	/**
+		Sets a flag that will disable event propagation for this
+		component. Increments the internal counter ensuring that the
+		_unsilence_ method must be called that many times before
+		event propagation will continue.
+	*/
+	silence: function () {
+		this._silenced = true;
+		this._silence_count += 1;
+	},
+	
+	//*@public
+	/**
+		If the internal silence counter is 0 this method will allow
+		event propagation for this component. It will decrement the counter
+		by one otherwise. This method must be called one-time for each
+		_silence_ call.
+	*/
+	unsilence: function () {
+		if (0 !== this._silence_count) --this._silence_count;
+		if (0 === this._silence_count) {
+			this._silenced = false;
+		}
+	},
 	/**
 		Create a new job tied to this instance of the component. If the component is
-		destroyed, any jobs associated it will also be stopped.  If you start a job
+		destroyed, any jobs associated it will also be stopped.	 If you start a job
 		that is pending with the same name, the original job will be stopped, making this
 		useful for timeouts that need to be reset.
 	*/
@@ -598,11 +598,11 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 		inProto[fn] = function(payload) {
 			// bubble this event
 			//return this.bubble(inName, enyo.except(["delegate"], inEvent || {}));
-            payload = payload || {};
-            var delegate = payload.delegate;
-            delete payload.delegate;
-            this.bubble(inName, payload);
-            if (delegate) payload.delegate = delegate;
+			payload = payload || {};
+			var delegate = payload.delegate;
+			delete payload.delegate;
+			this.bubble(inName, payload);
+			if (delegate) payload.delegate = delegate;
 		};
 		// NOTE: Mark this function as a generated event handler to allow us to
 		// do event chaining. Is this too complicated?

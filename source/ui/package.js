@@ -17,5 +17,5 @@ enyo.depends(
 	"FloatingLayer.js",
 	"Popup.js",
 	"Selection.js",
-    "Drawer.js"
+	"Drawer.js"
 );

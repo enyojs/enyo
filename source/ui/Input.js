@@ -1,6 +1,6 @@
 /**
 	_enyo.Input_ implements an HTML &lt;input&gt; element with cross-platform
-	support for	change events.
+	support for change events.
 
 	You can listen for _oninput_ and _onchange_ DOM events from this control
 	to know when the text inside has been modified. _oninput_ fires immediately,
@@ -15,7 +15,7 @@ enyo.kind({
 	name: "enyo.Input",
 	published: {
 		/**
-			Value of the input.  Use this property only to initialize the value.
+			Value of the input.	 Use this property only to initialize the value.
 			Call _getValue_ and _setValue_ to manipulate the value at runtime.
 		*/
 		value: "",
@@ -72,8 +72,8 @@ enyo.kind({
 
 		//Force onchange event to be bubbled inside Enyo for IE8
 		if(enyo.platform.ie == 8){
-      		this.setAttribute("onchange", enyo.bubbler);
-      	}
+			this.setAttribute("onchange", enyo.bubbler);
+		}
 
 		this.disabledChanged();
 		if (this.defaultFocus) {

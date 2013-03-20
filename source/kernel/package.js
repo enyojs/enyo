@@ -1,11 +1,11 @@
 enyo.depends(
 	"log.js",
 	"lang.js",
-    "dev.js",
+	"dev.js",
 	"job.js",
 	"Oop.js",
-    "mixins",
-    "Binding.js",
+	"mixins",
+	"Binding.js",
 	"Object.js",
 	"Component.js",
 	"UiComponent.js",
@@ -16,5 +16,5 @@ enyo.depends(
 	"ArrayController.js",
 	"ViewController.js",
 	"Application.js",
-    "ObjectController.js"
+	"ObjectController.js"
 );

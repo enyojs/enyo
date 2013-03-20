@@ -2,7 +2,7 @@
 	_enyo.UiComponent_ implements a container strategy suitable for presentation
 	layers.
 
-	UiComponent itself is abstract.  Concrete subkinds include
+	UiComponent itself is abstract.	 Concrete subkinds include
 	<a href="#enyo.Control">enyo.Control</a> (for HTML/DOM) and
 	<a href="#enyo.canvas.Control">enyo.canvas.Control</a>
 	(for Canvas contexts).
@@ -36,7 +36,7 @@ enyo.kind({
 		(rather than at design time). If set to null, the new control will be
 		added at the beginning of the array; if set to a specific existing
 		control, the new control will be added before the specified control. If
-		left undefined, the	default behavior is to add the new control at the
+		left undefined, the default behavior is to add the new control at the
 		end of the array.
 	*/
 	addBefore: undefined,
@@ -69,7 +69,7 @@ enyo.kind({
 	},
 	// As implemented, _controlParentName_ only works to identify an owned
 	// control created via _createComponents_ (i.e., usually in our _components_
-	// block).  To attach a _controlParent_ via other means, one must call
+	// block).	To attach a _controlParent_ via other means, one must call
 	// _discoverControlParent_ or set _controlParent_ directly.
 	//
 	// We could call _discoverControlParent_ in _addComponent_, but it would
@@ -148,7 +148,7 @@ enyo.kind({
 		// When we add a Control, we also establish a parent.
 		this.addChild(inControl, inBefore);
 	},
-    removeControl: function(inControl) {
+	removeControl: function(inControl) {
 		// Called to remove a control from the object's control list. As with addControl it
 		// can be overridden to detect when controls are removed.
 		// When we remove a Control, we also remove it from its parent.
@@ -250,7 +250,7 @@ enyo.kind({
 		Sends a message to all my descendents.
 	*/
 	waterfallDown: function(name, event, sender) {
-        event = event || {};
+		event = event || {};
 		// Note: Controls will generally be both in a $ hash and a child list somewhere.
 		// Attempt to avoid duplicated messages by sending only to components that are not
 		// UiComponent, as those components are guaranteed not to be in a child list.
@@ -316,4 +316,3 @@ enyo.master = new enyo.Component({
 		}
 	}
 });
-

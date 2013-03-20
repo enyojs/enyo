@@ -5,7 +5,7 @@
 	obviously controls, in Enyo, a control may become as complex as an entire
 	application.
 
-	If you make changes to _enyo.Control_, be sure to add or update the	appropriate
+	If you make changes to _enyo.Control_, be sure to add or update the appropriate
 	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
 
 	For more information, see the documentation on
@@ -32,7 +32,7 @@ enyo.kind({
 			plain text unless _allowHtml_ is true
 		*/
 		content: "",
-		//*	Boolean indicating whether the tag will be visible in the document
+		//* Boolean indicating whether the tag will be visible in the document
 		showing: true,
 		//* If false, HTML codes in _content_ are escaped before rendering
 		allowHtml: false,
@@ -70,9 +70,9 @@ enyo.kind({
 		//* Controls will call a user-provided _tap_ method when tapped upon.
 		ontap: "tap"
 	},
-    mixins: ["enyo.ControllerSupport"],
-    //*@protected
-    _is_view: true,
+	mixins: ["enyo.ControllerSupport"],
+	//*@protected
+	_is_view: true,
 	//* The default kind for controls created inside this control that don't
 	//* specify their own kind
 	defaultKind: "Control",
@@ -92,7 +92,7 @@ enyo.kind({
 		this.showingChanged();
 		// Notes:
 		// - 'classes' does not reflect the complete set of classes on an object; the complete set is in
-		//   this.attributes.class. The '*Class' apis affect this.attributes.class.
+		//	 this.attributes.class. The '*Class' apis affect this.attributes.class.
 		// - use addClass instead of setClasses here, by convention 'classes' is reserved for instance objects
 		// - inheritors should 'addClass' to add classes
 		// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
@@ -100,7 +100,7 @@ enyo.kind({
 		this.addClass(this.classes);
 		this.initProps(["id", "content", "src"]);
 	},
-    destroy: function() {
+	destroy: function() {
 		this.removeNodeFromDom();
 		enyo.Control.unregisterDomEvents(this.id);
 		this.inherited(arguments);
@@ -124,12 +124,12 @@ enyo.kind({
 	},
 	//*@protected
 	dispatchEvent: function (inEventName, inEvent, inSender) {
-	    // prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
+		// prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
 		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
 			return true;
 		}
 	  
-	    return this.inherited(arguments);
+		return this.inherited(arguments);
 	},
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
@@ -449,8 +449,8 @@ enyo.kind({
 		this.teardownRender();
 		// inParentNode can be a string id or a node reference
 		var pn = enyo.dom.byId(inParentNode);
-        var noFit = enyo.exists(this.fit) && this.fit === false;
-        //console.log(noFit);
+		var noFit = enyo.exists(this.fit) && this.fit === false;
+		//console.log(noFit);
 		if (pn == document.body && !noFit) {
 			this.setupBodyFitting();
 		} else if (this.fit) {
@@ -475,7 +475,7 @@ enyo.kind({
 		to have it expand to fill its container.
 
 		Note that this has all the limitations that _document.write_ has.
-		It only works while the page is loading, so you can't call this	from an
+		It only works while the page is loading, so you can't call this from an
 		event handler. Also, it will not work in certain environments, such as
 		Chrome Packaged Apps or Windows 8.
 	*/
@@ -573,7 +573,7 @@ enyo.kind({
 
 		while(n) {
 			l += n.offsetLeft - (n.offsetParent ? n.offsetParent.scrollLeft : 0);
-			t += n.offsetTop  - (n.offsetParent ? n.offsetParent.scrollTop  : 0);
+			t += n.offsetTop  - (n.offsetParent ? n.offsetParent.scrollTop	: 0);
 			n = n.offsetParent;
 		}
 		
@@ -581,7 +581,7 @@ enyo.kind({
 			top		: t,
 			left	: l,
 			bottom	: document.body.offsetHeight - t - h,
-			right	: document.body.offsetWidth  - l - w,
+			right	: document.body.offsetWidth	 - l - w,
 			height	: h,
 			width	: w
 		};
@@ -856,7 +856,7 @@ enyo.kind({
 			for (n in inStyleHash) {
 				v = inStyleHash[n];
 				if ((v !== null) && (v !== undefined) && (v !== "")) {
-					text +=  n + ':' + v + ';';
+					text +=	 n + ':' + v + ';';
 				}
 			}
 			return text;
@@ -928,6 +928,6 @@ enyo.Control.subclass = function(ctor, props) {
 
 //*@public
 /**
-    Also usable as _enyo.View_.
+	Also usable as _enyo.View_.
 */
 enyo.View = enyo.Control;

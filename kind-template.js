@@ -1,21 +1,21 @@
 enyo.kind({
-    
-    // ...........................
-    // PUBLIC PROPERTIES
-    
-    // ...........................
-    // PROTECTED PROPERTIES
-    
-    // ...........................
-    // COMPUTED PROPERTIES
-    
-    // ...........................
-    // PUBLIC METHODS
-    
-    // ...........................
-    // PROTECTED METHODS
-    
-    // ...........................
-    // OBSERVERS
+	
+	// ...........................
+	// PUBLIC PROPERTIES
+	
+	// ...........................
+	// PROTECTED PROPERTIES
+	
+	// ...........................
+	// COMPUTED PROPERTIES
+	
+	// ...........................
+	// PUBLIC METHODS
+	
+	// ...........................
+	// PROTECTED METHODS
+	
+	// ...........................
+	// OBSERVERS
 
 });
