@@ -1,8 +1,7 @@
 *~
+*.swp
 .DS_Store
 Thumbs.db
 /source/minify/build
 /examples/3 - Making Builds/source/minify/build
 /examples/3 - Making Builds/source/minify-include-enyo/build
-
-/tools/test/ajax/php/phplog.txt

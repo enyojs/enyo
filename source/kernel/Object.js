@@ -17,27 +17,35 @@ enyo.kind({
 	//* @protected
 	// has no base kind
 	kind: null,
-	constructor: function() {
-		enyo._objectCount++;
-	},
+	//*@public
+	// concatenated properties (default)
+	concat: enyo.concat,
+	//*@public
 	/**
-		Sets property named 'n' with value 'v' and then invokes callback
-		function 'cf' (if specified), passing in the original value of 'n'.
-		All property setting should bottleneck here so that objects can
-		observe changes wlog.
+		An array of strings that represent a mixin to be applied
+		to this class at the end of the constructor routine.
 	*/
-	setPropertyValue: function(n, v, cf) {
-		if (this[cf]) {
-			var old = this[n];
-			this[n] = v;
-			this[cf](old);
-		} else {
-			this[n] = v;
+	mixins: [
+		"enyo.MixinSupport",
+		"enyo.ObserverSupport",
+		"enyo.ComputedSupport",
+		"enyo.BindingSupport"
+	],
+
+	constructor: function(props) {
+		enyo._objectCount++;
+		this.importProps(props);
+	},
+	
+	importProps: function (props) {
+		if (props) {
+			for (var key in props) {
+				if (!props.hasOwnProperty(key)) continue;
+				this[key] = props[key];
+			}
 		}
 	},
-	_setProperty: function(n, v, cf) {
-		this.setPropertyValue(n, v, (this.getProperty(n) !== v) && cf);
-	},
+
 	//* @public
 	//* Destroys object with passed-in name.
 	destroyObject: function(inName) {
@@ -45,23 +53,6 @@ enyo.kind({
 			this[inName].destroy();
 		}
 		this[inName] = null;
-	},
-	//* Gets value of property with passed-in name.
-	getProperty: function(n) {
-		var getter = "get" + enyo.cap(n);
-		if (this[getter]) {
-			return this[getter]();
-		}
-		return this[n];
-	},
-	//* Sets value of property named 'n' to 'v'.
-	setProperty: function(n, v) {
-		var setter = "set" + enyo.cap(n);
-		if (this[setter]) {
-			this[setter](v);
-		} else {
-			this._setProperty(n, v, n + "Changed");
-		}
 	},
 	/**
 		Sends a log message to the console, prepended with the name of the kind
@@ -100,7 +91,74 @@ enyo.kind({
 				enyo.log(x.stack);
 			}
 		}
-	}
+	},
+	//*@protected
+	/**
+		This method accepts a string property as its only parameter.
+		The value of this property will be evaluated and if it is itself
+		a string the object will attempt to be resolved. The goal is
+		to determine of the the property is a constructor, an instance or
+		nothing. See _lang.js#enyo.findAndInstance_ for more information.
+		
+		If a method exists of the form `{property}FindAndInstance` it will
+		be used as the callback accepting two parameters, the constructor
+		if it was found and the instance if it was found or created,
+		respectively. This allows for those methods to be overloaded by
+		subkinds.
+	*/
+	findAndInstance: function (property) {
+		// if there isn't a property do nothing
+		if (!enyo.exists(property)) return;
+		var fn = this[property + "FindAndInstance"];
+		// if we have a callback bind it to the given object so that
+		// it will be called under the correct context, if it has
+		// already been bound this is harmless
+		fn = enyo.exists(fn) && "function" === typeof fn? enyo.bind(this, fn): null;
+		// go ahead and call the enyo scoped version of this method
+		return enyo.findAndInstance.call(this, property, fn);
+	},
+	
+	//*@public
+	/**
+		Call this method with the name (or path) to the desired property or
+		computed property. If it encounters a computed property it will return
+		the value of that property and not the function. If it cannot find
+		or resolve the requested path relative to the object it will return
+		undefined.
+		
+		This method is backwards compatible and will automatically call any
+		existing _getter_ method that uses the getProperty convention although
+		this convention ought to be replaced using a computed property moving
+		forward.
+	*/
+	get: function (path) {
+		return enyo.getPath.apply(this, arguments);
+	},
+	//*@public
+	/**
+		Call this method with a property (or path) and a value to be set. This
+		will automatically notify any listeners/observers that the property has
+		been changed if the values are not the same. If the property it finds
+		is a computed property it will pass the intended value to the computed
+		property (but will not return the value).
+		
+		This method is backwards compatible and will call any setter of the
+		setProperty convention although these methods should be replaced with
+		computed properties or observers where necessary.
+	*/
+	set: function (path, value) {
+		return enyo.setPath.apply(this, arguments);
+	},
+
+	//*@protected
+	destroy: function () {
+		// JS objects are never truly destroyed (GC'd) until all references are gone,
+		// we might have some delayed action on this object that needs to have access
+		// to this flag.
+		this.destroyed = true;
+	},
+	
+	_is_object: true
 });
 
 //* @protected
@@ -116,28 +174,47 @@ enyo.Object.publish = function(ctor, props) {
 	if (pp) {
 		var cp = ctor.prototype;
 		for (var n in pp) {
+			// need to make sure that even though a property is "published"
+			// it does not overwrite any computed properties
+			if (props[n] && enyo.isFunction(props[n]) && props[n].isProperty) continue;
 			enyo.Object.addGetterSetter(n, pp[n], cp);
 		}
 	}
 };
 
-enyo.Object.addGetterSetter = function(inName, inValue, inProto) {
-	var priv_n = inName;
-	inProto[priv_n] = inValue;
-	//
-	var cap_n = enyo.cap(priv_n);
-	var get_n = "get" + cap_n;
-	if (!inProto[get_n]) {
-		inProto[get_n] = function() {
-			return this[priv_n];
-		};
+//*@protected
+/**
+	This method creates a getter/setter for a published property of
+	an _enyo.Object_ but is deprecated. It is maintained for backwards
+	compatability purposes. The prefered method is to mark public and
+	protected (private) methods and properties using documentation or
+	other means and rely on the _get_ and _set_ methods of _enyo.Object_
+	instances.
+*/
+enyo.Object.addGetterSetter = function (property, value, proto) {
+	var getter = "get" + enyo.cap(property);
+	var setter = "set" + enyo.cap(property);
+	var fn;
+	// set the initial value for the prototype
+	proto[property] = value;
+	fn = proto[getter];
+	// if there isn't already a getter provided create one
+	if ("function" !== typeof fn) {
+		fn = proto[getter] = function () {return this.get(property)};
+		fn.overloaded = false;
+	} else if (false !== fn.overloaded) {
+		// otherwise we need to mark it as having been overloaded
+		// so the global getter knows not to ignore it
+		fn.overloaded = true;
 	}
-	//
-	var set_n = "set" + cap_n;
-	var change_n = priv_n + "Changed";
-	if (!inProto[set_n]) {
-		inProto[set_n] = function(v) {
-			this._setProperty(priv_n, v, change_n);
-		};
+	// if there isn't already a setter provided create one
+	fn = proto[setter];
+	if ("function" !== typeof fn) {
+		fn = proto[setter] = function () {return this.set(property, arguments[0])};
+		fn.overloaded = false;
+	} else if (false !== fn.overloaded) {
+		// otherwise we need to mark it as having been overloaded
+		// so the global setter knows not to ignore it
+		fn.overloaded = true;
 	}
 };
