@@ -21,7 +21,7 @@
 		Used internally to remove references to bindings.
 	*/
 	var unregister = function (id) {
-		id = id.isBinding? id.id: id;
+		id = id && id.id? id.id: id;
 		if (map[id]) delete map[id];
 	};
 	

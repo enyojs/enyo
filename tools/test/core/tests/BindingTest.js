@@ -79,7 +79,7 @@ enyo.kind({
 				testprop: "testvalue1"
 			});
 			binding.from = "my.object.testprop";
-			binding.setup();
+			binding.refresh();
 			if (binding.source === my.object) this.finish();
 			else this.finish("Expected source to be the global object instead it was: "+binding.source);
 		} finally {
@@ -127,11 +127,11 @@ enyo.kind({
 	},
 	testRegistration: function () {
 		try {
-			var map = enyo.Binding.map;
 			var binding = new enyo.Binding();
-			if (map[binding.id] !== binding) throw "Binding was not registered when created";
+			var id = binding.id;
+			if (enyo.Binding.find(id) !== binding) throw "Binding was not registered when created";
 			binding.destroy();
-			if (map[binding.id]) throw "Binding was not unregistered when destroyed";
+			if (enyo.Binding.find(id)) throw "Binding was not unregistered when destroyed";
 			this.finish();
 		} finally {
 			if (binding) binding.destroy();

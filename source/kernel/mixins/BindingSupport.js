@@ -34,6 +34,9 @@
 		
 		//*@protected
 		_supports_bindings: true,
+		
+		//*@protected
+		_bindings_from_observers: null,
 	
 		// ...........................
 		// COMPUTED PROPERTIES
@@ -122,6 +125,19 @@
 			var idx = bindings.indexOf(binding);
 			if (!!~idx) bindings.splice(idx, 1);
 		},
+		
+		//*@public
+		/**
+			We overload the observer supports _addObserver_ method
+			so we can track which observers belonged to bindings and we
+			can later clean them up appropriately.
+		*/
+		addObserver: function (property, fn, context) {
+			if (fn && fn.bindingId) {
+				this._bindings_from_observers.push(fn.bindingId);
+			}
+			return this.inherited(arguments);
+		},
 	
 		// ...........................
 		// PROTECTED METHODS
@@ -138,6 +154,8 @@
 			// this object
 			this.bindings = [];
 			for (; idx < len; ++idx) this.binding($bindings[idx]);
+			// initialize our bindings from observers array
+			this._bindings_from_observers = [];
 		},
 		
 		//*@protected
@@ -145,10 +163,25 @@
 			// we simply iterate over and destroy each of the bindings
 			// in our bindings array
 			var $bindings = this.bindings;
-			if (!$bindings.length) return;
-			do { 
-				$bindings.pop().destroy();
-			} while ($bindings.length);
+			var $ids = this._bindings_from_observers;
+			var $id;
+			var $bind;
+			if ($bindings.length) {
+				do { 
+					$bindings.pop().destroy();
+				} while ($bindings.length);
+			}
+			// check for any bindings associated with us that aren't
+			// destroyed yet
+			if ($ids.length) {
+				while ($ids.length) {
+					$id = $ids.pop();
+					$bind = enyo.Binding.find($id);
+					if ($bind && !$bind.destroyed) {
+						$bind.destroy();
+					}
+				}
+			}
 		}
 	
 		// ...........................
