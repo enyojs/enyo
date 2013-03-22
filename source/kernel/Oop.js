@@ -88,7 +88,10 @@ enyo.kind = function(inProps) {
 	// put in our props
 	enyo.mixin(ctor.prototype, inProps);
 	// alias class name as 'kind' in the prototype
-	ctor.prototype.kindName = name.length? name: kind;
+	if (!name && kind && "string" === typeof kind) name = kind;
+	// but we actually only need to set this if a new name was used
+	// not if it is inheriting from a kind anonymously
+	if (name) ctor.prototype.kindName = name;
 	// cache superclass constructor
 	ctor.prototype.base = base;
 	// reference our real constructor
