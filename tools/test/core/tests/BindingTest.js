@@ -127,11 +127,11 @@ enyo.kind({
 	},
 	testRegistration: function () {
 		try {
-			var map = enyo.Binding.map;
 			var binding = new enyo.Binding();
-			if (map[binding.id] !== binding) throw "Binding was not registered when created";
+			var id = binding.id;
+			if (enyo.Binding.find(id) !== binding) throw "Binding was not registered when created";
 			binding.destroy();
-			if (map[binding.id]) throw "Binding was not unregistered when destroyed";
+			if (enyo.Binding.find(id)) throw "Binding was not unregistered when destroyed";
 			this.finish();
 		} finally {
 			if (binding) binding.destroy();
