@@ -99,7 +99,7 @@ enyo.kind = function(inProps) {
 	// support pluggable 'features'
 	enyo.forEach(enyo.kind.features, function(fn){ fn(ctor, inProps); });
 	// put reference into namespace
-	enyo.setPath(name, ctor);
+	if (!enyo.getPath(name)) enyo.setPath(name, ctor);
 	return ctor;
 };
 
@@ -155,7 +155,7 @@ enyo.kind.makeCtor = function() {
 		for (var idx = 0; idx < enyo.kind.postConstructors.length; ++idx) {
 			enyo.kind.postConstructors[idx].apply(this, cargs);
 		}
-		
+
 		if (result) {
 			return result;
 		}
