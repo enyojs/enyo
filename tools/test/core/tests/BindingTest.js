@@ -79,7 +79,7 @@ enyo.kind({
 				testprop: "testvalue1"
 			});
 			binding.from = "my.object.testprop";
-			binding.setup();
+			binding.refresh();
 			if (binding.source === my.object) this.finish();
 			else this.finish("Expected source to be the global object instead it was: "+binding.source);
 		} finally {
