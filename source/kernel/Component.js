@@ -353,6 +353,7 @@ enyo.kind({
 		// if the event has a delegate associated with it we grab that
 		// for reference
 		var delegate = event.delegate;
+		var ret;
 		// bottleneck event decoration
 		this.decorateEvent(name, event, sender);
 		// dispatch via the handlers block if possible
@@ -364,20 +365,14 @@ enyo.kind({
 		if (this[name]) {
 			if ("function" === typeof this[name]) {
 				if (this._is_controller || (delegate && this === delegate.owner)) {
-				//if (
-				//	this._is_controller
-				//	|| (
-				//		true === this._is_view
-				//		&& delegate
-				//		&& this === delegate.owner
-				//	)
-				//) {
 					return this.dispatch(name, event, sender);
 				}
 			} else {
 				// otherwise we dispatch it up because it is a remap of another event
 				if (!delegate) event.delegate = this;
-				return this.bubbleUp(this[name], event, sender);
+				ret = this.bubbleUp(this[name], event, sender);
+				delete event.delegate;
+				return ret;
 			}
 		}
 	},
