@@ -352,7 +352,7 @@ enyo.kind({
 		if (this._silenced) return;
 		// if the event has a delegate associated with it we grab that
 		// for reference
-		var delegate = event.delegate;
+		var delegate = (event || (event = {})).delegate;
 		var ret;
 		// bottleneck event decoration
 		this.decorateEvent(name, event, sender);
@@ -426,7 +426,9 @@ enyo.kind({
 		if (this._silenced) return;
 		var fn = inMethodName && this[inMethodName];
 		if (fn && "function" === typeof fn) {
-			return fn.call(this, inSender, inEvent);
+			// TODO: we use inSender || this but the inSender argument
+			// to keep unit tests working will be deprecated in the future
+			return fn.call(this, inSender || this, inEvent);
 		}
 	},
 	/**
