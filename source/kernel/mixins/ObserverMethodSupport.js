@@ -95,14 +95,6 @@
 			observers[prop] = null;
 			for (idx = 0, len = handlers.length; idx < len; ++idx) {
 				observer = handlers[idx];
-				// check to see if the observer is associated with a binding
-				// if it is we need to notify it that we are being destroyed
-				// this is a proactive check - it has a failsafe if this
-				// didn't take place
-				if (observer.bindingId) {
-					binding = enyo.Binding.map[observer.bindingId];
-					if (binding && binding instanceof enyo.Binding) binding.destroy();
-				}
 			}
 		}
 		// reset our observers hash

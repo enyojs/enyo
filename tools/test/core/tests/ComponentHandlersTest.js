@@ -3,20 +3,22 @@ enyo.kind({
 	kind: enyo.TestSuite,
 	testHandlerUnion: function() {
 		enyo.kind({
-			name: "TestBase",
+			name: "tests.TestBase",
 			kind: enyo.Component,
 			handlers: {
 				onOk: "ok"
 			}
 		});
 		enyo.kind({
-			name: "TestSub",
-			kind: TestBase,
+			name: "tests.TestSub",
+			kind: tests.TestBase,
 			handlers: {
 				onMore: "more"
 			}
 		});
-		var h = new TestSub({handlers: {onFurther: "foo"}}).handlers;
+		var h = new tests.TestSub({handlers: {onFurther: "foo"}}).handlers;
+		delete tests.TestBase;
+		delete tests.TestSub;
 		this.finish((!h.onOk && "bad onOk") || (!h.onMore && "bad onMore") || (!h.onFurther && "bad onFurther"));
 	}
 });

@@ -88,7 +88,10 @@ enyo.kind = function(inProps) {
 	// put in our props
 	enyo.mixin(ctor.prototype, inProps);
 	// alias class name as 'kind' in the prototype
-	ctor.prototype.kindName = name.length? name: kind;
+	if (!name && kind && "string" === typeof kind) name = kind;
+	// but we actually only need to set this if a new name was used
+	// not if it is inheriting from a kind anonymously
+	if (name) ctor.prototype.kindName = name;
 	// cache superclass constructor
 	ctor.prototype.base = base;
 	// reference our real constructor
@@ -96,7 +99,7 @@ enyo.kind = function(inProps) {
 	// support pluggable 'features'
 	enyo.forEach(enyo.kind.features, function(fn){ fn(ctor, inProps); });
 	// put reference into namespace
-	enyo.setPath(name, ctor);
+	if (!enyo.getPath(name)) enyo.setPath(name, ctor);
 	return ctor;
 };
 
@@ -152,7 +155,7 @@ enyo.kind.makeCtor = function() {
 		for (var idx = 0; idx < enyo.kind.postConstructors.length; ++idx) {
 			enyo.kind.postConstructors[idx].apply(this, cargs);
 		}
-		
+
 		if (result) {
 			return result;
 		}

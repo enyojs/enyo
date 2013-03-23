@@ -84,6 +84,17 @@
 				prop.nom = name + "." + key + "()";
 			} else proto[key] = prop;
 		}
+		// special case if this is actually mixin support being applied
+		// because we need to inject a destructor
+		if ("enyo.MixinSupport" === name) {
+			fn = proto.destroy;
+			proto.destroy = function () {
+				_destroy_mixins.call(this);
+				return this.inherited(arguments);
+			};
+			proto.destroy._inherited = fn;
+			proto.destroy.nom = "enyo.MixinSupport.destroy()";
+		}
 		// if there was a constructor plop it in the init routines
 		if (ctor && "function" === typeof ctor) {
 			ctors.push(ctor);
@@ -174,15 +185,7 @@
 		// PROTECTED PROPERTIES
 		
 		//*@protected
-		_supports_mixins: true,
-	
-		// ...........................
-		// PROTECTED METHODS
-		
-		//*@protected
-		destroy: function () {
-			_destroy_mixins.call(this);
-		}
+		_supports_mixins: true
 		
 	});
  
