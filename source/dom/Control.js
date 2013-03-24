@@ -409,7 +409,12 @@ enyo.kind({
 	setupOverflowScrolling: function() {
 		if(enyo.platform.android || enyo.platform.androidChrome || enyo.platform.blackberry)
 			return;
-		document.getElementsByTagName("body")[0].className += " webkitOverflowScrolling";
+		var body = document.getElementsByTagName("body")[0];
+		if (typeof(body) === 'undefined') {
+			alert("Error: no <body> found in your html page. Main kind should be created within <body> tag") ;
+			return;
+		}
+		body.className += " webkitOverflowScrolling";
 	},
 	//
 	//
