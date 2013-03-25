@@ -110,12 +110,8 @@ enyo.kind({
 		// if there isn't a property do nothing
 		if (!enyo.exists(property)) return;
 		var fn = this[property + "FindAndInstance"];
-		// if we have a callback bind it to the given object so that
-		// it will be called under the correct context, if it has
-		// already been bound this is harmless
-		fn = enyo.exists(fn) && "function" === typeof fn? enyo.bind(this, fn): null;
 		// go ahead and call the enyo scoped version of this method
-		return enyo.findAndInstance.call(this, property, fn);
+		return enyo.findAndInstance.call(this, property, fn, this);
 	},
 	
 	//*@public
