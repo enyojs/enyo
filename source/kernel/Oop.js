@@ -34,7 +34,7 @@ enyo.handleConcatenatedProperties = function (ctor, proto) {
 //* @public
 /**
 	Creates a JavaScript constructor function with a prototype defined by
-	_inProps_.
+	_inProps_. __All constructors must have a unique name__.
 
 	_enyo.kind_ makes it easy to build a constructor-with-prototype (like a
 	class) that has advanced features like prototype-chaining (inheritance).
@@ -88,10 +88,11 @@ enyo.kind = function(inProps) {
 	// put in our props
 	enyo.mixin(ctor.prototype, inProps);
 	// alias class name as 'kind' in the prototype
-	if (!name && kind && "string" === typeof kind) name = kind;
 	// but we actually only need to set this if a new name was used
 	// not if it is inheriting from a kind anonymously
 	if (name) ctor.prototype.kindName = name;
+	// this is for anonymous constructors
+	else ctor.prototype.kindName = base && base.prototype? base.prototype.kindName: "";
 	// cache superclass constructor
 	ctor.prototype.base = base;
 	// reference our real constructor
@@ -99,12 +100,18 @@ enyo.kind = function(inProps) {
 	// support pluggable 'features'
 	enyo.forEach(enyo.kind.features, function(fn){ fn(ctor, inProps); });
 	// put reference into namespace
-	if (!enyo.getPath(name)) enyo.setPath(name, ctor);
+	if (name && !enyo.getPath(name)) enyo.setPath(name, ctor);
+	else if (name) {
+		enyo.warn("enyo.kind: " + name + " is already in use by another " +
+			"kind, all kind definitions must have unique names.");
+	}
 	return ctor;
 };
 
 /**
-	Creates a Singleton
+	Creates a Singleton of a given kind with a given definition.
+	__The name property will be the instance name of the singleton
+	and must be unique__.
 
 		enyo.singleton({
 			kind: Control,
