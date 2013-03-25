@@ -248,7 +248,7 @@
 		was found and the second being the instance if it could be
 		determined.
 	*/
-	enyo.findAndInstance = function (property, fn) {
+	enyo.findAndInstance = function (property, fn, context) {
 		var ctor;
 		var inst;
 		var path;
@@ -258,7 +258,7 @@
 		path = enyo.getPath.call(this, property);
 		// if there is nothing at the given property fast-path out
 		// and return undefined everything
-		if (!path) return fn();
+		if (!path) return fn.call(context || this);
 		// if the path is a string (as in most cases) go ahead and
 		// attempt to get the kind definition or instance at the
 		// given path
@@ -287,7 +287,7 @@
 		// if we do have an instance assign it to the base object
 		if (exists(inst)) this[property] = inst;
 		// now use the calback and pass it the correct parameters
-		return fn(ctor, inst);
+		return fn.call(context || this, ctor, inst);
 	};
 
 	//*@public
