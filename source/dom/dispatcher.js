@@ -184,7 +184,7 @@ enyo.bubbler = "enyo.bubble(arguments[0])";
 				}
 			}, control);
 		}
-        };
+	};
 })();
 
 // FIXME: we need to create and initialize dispatcher someplace else to allow overrides
