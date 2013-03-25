@@ -11,7 +11,7 @@
 	
 	//*@public
 	/**
-		Simple test condition to determine if a target is undefined.
+		Determines whether a target is undefined.
 	*/
 	var exists = enyo.exists = function (target) {
 		return !(undefined === target);
@@ -19,9 +19,8 @@
 	
 	//*@public
 	/**
-		An IE8 safe fallback for the default _lastIndexOf_ method.
-		Takes an array or string as the haystack and a string as the
-		needle.
+		Looks for last occurrence of a string _(needle)_ inside an array or string
+		_(haystack)_.	 An IE8-safe fallback for the default _lastIndexOf_ method.
 	*/
 	var lastIndexOf = enyo.lastIndexOf = function (needle, haystack, index) {
 		if (haystack.lastIndexOf) return haystack.lastIndexOf(needle, index || haystack.length);
@@ -45,7 +44,7 @@
 	
 	//*@protected
 	/**
-		Internally used method to strip leading '.' from string paths.
+		Internally-used method to strip leading '.' from string paths.
 	*/
 	var preparePath = function (path) {
 		var idx = 0;
@@ -56,9 +55,9 @@
 	
 	//*@protected
 	/**
-		Internally used method to detect if the given value exists,
+		Internally-used method to detect if the given value exists,
 		is a function and an overloaded getter. Returns true if these
-		tests are successful false otherwise.
+		tests are successful; false otherwise.
 	*/
 	var isOverloaded = function (target) {
 		return target && "function" === typeof target && true === target.overloaded;
@@ -67,11 +66,11 @@
 	//*@public
 	/**
 		A fast-path enabled global getter that takes a string path that
-		can be a full-path (from context window/enyo) or a relative path
+		can be a full path (from context window/Enyo) or a relative path
 		(to the execution context of the method). It knows how to check for
 		and call the backwards-compatible generated getters as well as
-		handle computed properties. This is an optimized recursive-search.
-		Will return undefined if the object at the given path could not be
+		handle computed properties. Performs an optimized recursive search.
+		Returns undefined if the object at the given path can not be
 		found. Can safely be called on non-existent paths.
 	*/
 	enyo.getPath = function (path) {
@@ -136,10 +135,10 @@
 	
 	//*@protected
 	/**
-		An internally used method to proxy functions (similar to but not exactly
+		An internally-used method to proxy functions (similar to but not exactly
 		the same as enyo.bind) such that they will be called under the correct context
 		but with a reference to the correct arguments at the time they are called.
-		Accepts two parameters the function to be called and the context under
+		Accepts two parameters--the function to be called and the context under
 		which to call it.
 	*/
 	var proxyMethod = enyo.proxyMethod = function (fn, context) {
@@ -151,20 +150,19 @@
 	
 	//*@public
 	/**
-		A global setter that takes a string path (relative to the methods
-		execution context) or a full-path (relative to window). It attempts
-		to automatically retrieve any previous value if it exists to supply
-		to any observers. If the context is an enyo.Object or subkind it will
-		use the notifyObservers method to trigger listeners for the path
+		A global setter that takes a string path (relative to the method's
+		execution context) or a full path (relative to window). Attempts
+		to automatically retrieve any previously existing value to supply
+		to any observers. If the context is an _enyo.Object_ or subkind,
+		the _notifyObservers_ method is used to notify listeners for the path's
 		being set. If the previous value is the equivalent of the newly set
-		value observers will not be triggered by default. If the third
-		parameter is present and an explicit boolean true it will trigger
-		the observers regardless. Optionally the third parameter can be a
-		function-comparator that accepts two parameters, left and right
-		respectively that is expected to return a truthy-falsy value to
-		determine whether or not the notifications will be fired. Returns
-		the context from which the method was executed. Unlike its getter
-		counter-part this is not a recursive method.
+		value, observers will not be triggered by default. If the third
+		parameter is present and is an explicit boolean true, it triggers
+		the observers regardless. Optionally, the third parameter may be a
+		function comparator that accepts two parameters and is expected to
+		return a truthy-falsy value indicating whether or not the notifications
+		will be fired. Returns the context from which the method was executed.
+		Unlike its getter	counterpart, this is not a recursive method.
 	*/
 	enyo.setPath = function (path, value, force) {
 		// if there are less than 2 parameters we can't do anything
@@ -238,15 +236,14 @@
 
 	//*@protected
 	/**
-		Called by enyo.Objects in their own context via their local
-		version of this method. Attempts to find the given property of
-		the current context and instance the property if it is not
-		already an instance. If it is a string it will attempt to find
-		the constructor for the named kind or the instance at the given
-		path. It will use the callback method when it is complete and
-		pass it two parameters the first being the constructor if it
-		was found and the second being the instance if it could be
-		determined.
+		Called by instances of _enyo.Object_ in their own context via their
+		local version of this method. Attempts to find the given property of
+		the current context and instance the property if it is not already an
+		instance. If it is a string, the method attempts to	find the
+		constructor for the named kind or the instance at the	given	path.
+		When complete, it calls the callback method, passingit two
+		parameters--the constructor (if it was found) and the instance (if it
+		could be determined).
 	*/
 	enyo.findAndInstance = function (property, fn, context) {
 		var ctor;
@@ -292,15 +289,16 @@
 
 	//*@public
 	/**
-		Create a unique identifier with an optional prefix.
-		Returns a string.
+		Creates a unique identifier (with an optional prefix) and returns
+		the identifier as a string.
 	*/
 	var uid = enyo.uid = function (prefix) {
 		return String((prefix? prefix: "") + uidCounter++);
 	};
 
 	//* @public
-	//* Returns a random Integer between 0 and inBound (0 <= results < inBound).
+	//* Returns a random integer between 0 and a specified upper boundary;
+	//* i.e., 0 <= return value < _inBound_.
 	//
 	//		var randomLetter = String.fromCharCode(enyo.irand(26) + 97);
 	//
@@ -313,7 +311,7 @@
 		return inString.slice(0, 1).toUpperCase() + inString.slice(1);
 	};
 
-	//* Returns _inString_ with the first letter un-capitalized.
+	//* Returns _inString_ with the first letter lower-cased.
 	enyo.uncap = function(inString) {
 		return inString.slice(0, 1).toLowerCase() + inString.slice(1);
 	};
@@ -344,12 +342,13 @@
 		return toString.call(it) === "[object Array]";
 	};
 
-	//* Returns true if the argument is true
+	//* Returns true if the argument is true.
 	enyo.isTrue = function(it) {
 		return !(it === "false" || it === false || it === 0 || it === null || it === undefined);
 	};
 
-	//* Returns the index of the element in _inArray_ that is equivalent (==) to _inElement_, or -1 if no element is found.
+	//* Returns the index of the element in _inArray_ that is equivalent
+	//* (==) to _inElement_, or -1 if no such element is found.
 	enyo.indexOf = function(inElement, inArray, fromIndex) {
 		if (inArray.indexOf) {
 			return inArray.indexOf(inElement, fromIndex);
@@ -373,7 +372,8 @@
 		return -1;
 	};
 
-	//* Removes the first element in _inArray_ that is equivalent (==) to _inElement_.
+	//* Removes the first element in the passed-in array that is equivalent
+	//* (==) to _inElement_.
 	enyo.remove = function(inElement, inArray) {
 		var i = enyo.indexOf(inElement, inArray);
 		if (i >= 0) {
@@ -422,7 +422,7 @@
 
 	//*@public
 	/**
-		Concatenate a variable number of arrays removing any duplicate
+		Concatenates a variable number of arrays, removing any duplicate
 		entries.
 	*/
 	var merge = enyo.merge = function (/* _arrays_ */) {
