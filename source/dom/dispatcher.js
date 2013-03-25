@@ -53,6 +53,20 @@ enyo.dispatcher = {
 		}
 		this.listen(inListener, inEventName, inHandler);
 	},
+	stopListening: function(inListener, inEventName, inHandler) {
+		var d = enyo.dispatch;
+		if (inListener.addEventListener) {
+			this.stopListening = function(inListener, inEventName, inHandler) {
+				inListener.removeEventListener(inEventName, inHandler || d, false);
+			};
+		} else {
+			//enyo.log("IE8 COMPAT: using 'detachEvent'");
+			this.stopListening = function(inListener, inEvent, inHandler) {
+				inListener.detachEvent("on" + inEvent, inHandler || d);
+			};
+		}
+		this.stopListening(inListener, inEventName, inHandler);
+	},
 	//* Fires an event for Enyo to listen for.
 	dispatch: function(e) {
 		// Find the control who maps to e.target, or the first control that maps to an ancestor of e.target.
@@ -152,6 +166,21 @@ enyo.bubbler = "enyo.bubble(arguments[0])";
 			enyo.forEach(args, function(event) {
 				if(this.hasNode()) {
 					enyo.dispatcher.listen(this.node, event, bubbleUp);
+				}
+			}, control);
+		}
+	};
+	/**
+	 * Removes the event listening and bubbling caused from enyo.makeBubble, on a specific control
+	 */
+	enyo.unmakeBubble = function() {
+		var args = Array.prototype.slice.call(arguments, 0),
+			control = args.shift();
+
+		if((typeof control === "object") && (typeof control.hasNode === "function")) {
+			enyo.forEach(args, function(event) {
+				if(this.hasNode()) {
+					enyo.dispatcher.stopListening(this.node, event, bubbleUp);
 				}
 			}, control);
 		}
