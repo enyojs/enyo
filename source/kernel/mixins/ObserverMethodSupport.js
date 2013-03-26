@@ -2,10 +2,10 @@
 
 	//*@public
 	/**
-		Takes a function followed by 1 or more string parameters that are
-		targets for the observer. Returns a method with the appropriate properties
-		to allow the system to notify it when the named properites have been
-		modified.
+		Accepts a function followed by one or more string parameters that are
+		targets for the observer; returns a method with the appropriate
+		properties to allow the system to notify it when the named properites
+		have been modified.
 	*/
 	var observer = enyo.Observer = enyo.observer = function (fn /* arguments */) {
 		var events = enyo.toArray(arguments).slice(1);
@@ -20,25 +20,28 @@
 		
 	//*@public
 	/**
-		For any property on the object an observer can be added. Observers
-		are registered via this method by passing in the property that should
-		trigger the listener/observer and an optional context for the method
-		to be executed under when it is triggered. Observers cannot be added
-		for the same event more than once. Returns a reference to the function
-		that was registered so it can be stored for later removal.
+		Registers an observer for the passed-in property, returning a reference
+		to the handler function being registered, so that it can be stored (and,
+		later, removed). In addition to the property that should trigger the
+		observer/handler when changed, this method accepts an optional context,
+		under which the handler function will be executed when triggered.
+		
+		An observer may be added for any property on the passed-in object
+		_(base)_, but an observer may not be added for the same event more
+		than once.
 	*/
 	var addObserver = function (base, property, fn, context) {
 		var observers = base._observers || (base._observers = {});
 		var handlers;
 		// when there is name collision in an observer where one class
-		// subclasses another while while overloaded an observer method
+		// subclasses another while overloaded an observer method
 		// it can call this.inherited as usual but we need to remove the
 		// previous version of the method from observing the notifications
 		// so it won't be handled twice
 		if (fn._inherited && fn._inherited.isObserver) {
 			removeObserver(base, property, fn._inherited);
 		}
-		// if a context is provided for the listener we bind it
+		// if a context is provided for the listener, we bind it
 		// to that context now
 		fn = context? enyo.bind(context, fn): fn;
 		// if there are no registered handlers for this event
@@ -53,9 +56,11 @@
 	
 	//*@public
 	/**
-		Attempts to remove the given listener/observer for the given
-		property if it exists. Typically not called directly. If no function is
-		supplied it will remove all listeners for the given property.
+		Attempts to remove the given listener/observer for the given property,
+		if it exists. If no function is supplied, all listeners for the given
+		property will be removed.
+		
+		Typically, this method will not be called directly. 
 	*/
 	var removeObserver = function (base, property, fn) {
 		var observers = base._observers;
@@ -77,9 +82,10 @@
 	//*@public
 	/**
 		Convenience method to remove all observers on all properties.
-		Returns reference to this object for chaining. This will almost
-		never need to be called by anything but the destroy method. Returns
-		a reference to this object for chaining.
+		Returns a reference to this object for chaining.
+		
+		This will almost never need to be called by anything other than
+		the _destroy_ method.
 	*/
 	var removeAllObservers = function (base) {
 		var observers = base._observers;
@@ -105,9 +111,10 @@
 	//*@public
 	/**
 		Notifies any observers for a given property. Accepts the previous
-		value, the current value. Looks for a backwards compatible function
-		of the _propertyChanged_ form and will call that if it exists while
-		also notifying other observers.
+		value and the current value as parameters. Looks for a
+		backwards-compatible function of the _propertyChanged_ form and
+		will call that function, if it exists, while also notifying other
+		observers.
 	*/
 	var notifyObservers = function (base, property, prev, value) {
 		var observers = base._observers || {};
@@ -140,7 +147,7 @@
 	
 	//*@protected
 	/**
-		This is used internally when a notification is queued.
+		Used internally when a notification is queued.
 	*/
 	var addNotificationToQueue = function (base, property, fn, params) {
 		var queue = base._notification_queue || (base._notification_queue = {});
@@ -163,16 +170,17 @@
 	
 	//*@public
 	/**
-		Call this method in order to keep all notifications on this object
-		from firing. This does not clear/flush the queue. Any notifications
-		fired during the time they are disabled will be added to the queue.
-		The queue can be arbitrarily flushed or cleared when ready. If a
-		boolean true is passed to this method it will disable the queue as
-		well. Disabling the queue will immediately clear (not flush) it as well.
-		Increments an internal counter that requires the _startNotifications_
-		method to be called the same number of times before notifications will
-		be enabled again. The queue, if any, cannot be flushed if the counter
-		is not 0.
+		Prevents all notifications on this object from firing. Does not
+		clear or flush the queue. Any new notifications fired while
+		notifications are disabled will be added to the queue, which may be
+		arbitrarily flushed or cleared when ready. To disable the queue, pass
+		a boolean true as the second argument. Note that disabling the queue
+		will immediately clear (but not flush) the queue.
+
+		Also increments an internal counter that requires the
+		_startNotifications_ method to be called an equal number of times
+		before notifications will be enabled again. The queue cannot be flushed
+		until the counter reaches 0.
 	*/
 	var stopNotifications = function (base, disableQueue) {
 		base._allow_notifications = false;
@@ -184,14 +192,15 @@
 	
 	//*@public
 	/**
-		Call this method to enable notifications for this object and immediately
-		flush the notification queue if the internal counter is 0. If notifications 
-		were already enabled it will have no effect. Otherwise it will decrement the
-		internal counter. If the counter becomes 0 it will allow notifications and
-		attempt to flush the queue if there is one and it is enabled. This method
-		must be called once for each time the _stopNotifications_ method was called.
-		Passing a boolean true to this method will reenable the notification queue
-		if it was disabled.
+		Enables notifications for this object and immediately flushes the
+		notification queue if the internal counter is 0. Has no effect if
+		notifications are already enabled; otherwise, decrements the
+		internal counter. If the counter reaches 0, will allow notifications
+		and attempt to flush the queue (if there is one and it is enabled).
+		
+		This method must be called once for each time the _stopNotifications_
+		method was called. Passing a boolean true as the second parameter
+		will reenable the notification queue if it was disabled.
 	*/
 	var startNotifications = function (base, enableQueue) {
 		if (0 !== base._stop_count) --base._stop_count;
@@ -204,9 +213,9 @@
 	
 	//*@public
 	/**
-		Call this method to enable the notification queue. If it was already
-		enabled it will have no effect. If notifications are currently enabled
-		this will have no effect until they are disabled.
+		Enables the notification queue. Has no effect if the queue is already
+		enabled. If notifications are currently enabled, this method will have
+		no effect until they are disabled.
 	*/
 	var enableNotificationQueue = function (base) {
 		base._allow_notification_queue = true;
@@ -214,8 +223,7 @@
 	
 	//*@protected
 	/**
-		This method is used internally to flush any notifications that have been
-		queued.
+		Used internally; flushes any notifications that have been queued.
 	*/
 	var flushNotifications = function (base) {
 		if (0 !== base._stop_count) return;
@@ -245,10 +253,10 @@
 	
 	//*@public
 	/**
-		Call this method to disable the notification queue. If it was already
-		disabled it will have no effect. If notifications are currently enabled
-		this will have no effect. If they are disabled future notifications will
-		not be queued and any in the queue will be cleared (not flushed).
+		Disables the notification queue. Has no effect if the queue is already
+		disabled, or if notifications are currently enabled. If notifications
+		are disabled, future notifications will not be queued and any items in
+		the queue will be cleared (not flushed).
 	*/
 	var disableNotificationQueue = function (base) {
 		base._allow_notification_queue = false;
@@ -269,7 +277,7 @@
 	
 	//*@protected
 	/**
-		Strictly used internally to copy observer hashes for kinds.
+		Strictly for internal use; copies observer hashes for kinds.
 	*/
 	var _observer_clone = function ($observed, recursing) {
 		var array_copy = function (orig) {return [].concat(orig)};
@@ -283,7 +291,7 @@
 	
 	//*@protected
 	/**
-		Add a special handler for mixins to be aware of how to handle
+		Adds a special handler for mixins to be aware of how to handle
 		observer properties of a kind.
 	*/
 	enyo.mixins.features.push(_find_observers);
@@ -319,12 +327,15 @@
 		
 		//*@public
 		/**
-			For any property on the object an observer can be added. Observers
-			are registered via this method by passing in the property that should
-			trigger the listener/observer and an optional context for the method
-			to be executed under when it is triggered. Observers cannot be added
-			for the same event more than once. Returns a reference to the function
-			that was registered so it can be stored for later removal.
+			Registers an observer for the passed-in property, returning a
+			reference to the handler function being registered, so that it
+			can be stored (and, later, removed). In addition to the property
+			that should trigger the observer/handler when changed, this
+			method accepts an optional context, under which the handler
+			function will be executed when triggered.
+					
+			An observer may be added for any property of the object, but an
+			observer may not be added for the same event more than once.
 		*/
 		addObserver: function (property, fn, context) {
 			return addObserver(this, property, fn, context);
@@ -332,9 +343,11 @@
 		
 		//*@public
 		/**
-			Attempts to remove the given listener/observer for the given
-			property if it exists. Typically not called directly. If no function is
-			supplied it will remove all listeners for the given property.
+			Attempts to remove the given listener/observer for the given property,
+			if it exists. If no function is supplied, all listeners for the given
+			property will be removed.
+			
+			Typically, this method will not be called directly. 
 		*/
 		removeObserver: function (property, fn) {
 			return removeObserver(this, property, fn);
@@ -343,9 +356,10 @@
 		//*@public
 		/**
 			Convenience method to remove all observers on all properties.
-			Returns reference to this object for chaining. This will almost
-			never need to be called by anything but the destroy method. Returns
-			a reference to this object for chaining.
+			Returns a reference to this object for chaining.
+			
+			This will almost never need to be called by anything other than
+			the _destroy_ method.
 		*/
 		removeAllObservers: function () {
 			return removeAllObservers(this);
@@ -354,9 +368,9 @@
 		//*@public
 		/**
 			Notifies any observers for a given property. Accepts the previous
-			value, the current value. Looks for a backwards compatible function
-			of the _propertyChanged_ form and will call that if it exists while
-			also notifying other observers.
+			value and the current value as parameters. Looks for a
+			backwards-compatible function of the _propertyChanged_ form and will
+			call that, if it exists, while also notifying other observers.
 		*/
 		notifyObservers: function (property, prev, value) {
 			return notifyObservers(this, property, prev, value);
@@ -364,16 +378,17 @@
 
 		//*@public
 		/**
-			Call this method in order to keep all notifications on this object
-			from firing. This does not clear/flush the queue. Any notifications
-			fired during the time they are disabled will be added to the queue.
-			The queue can be arbitrarily flushed or cleared when ready. If a
-			boolean true is passed to this method it will disable the queue as
-			well. Disabling the queue will immediately clear (not flush) it as well.
-			Increments an internal counter that requires the _startNotifications_
-			method to be called the same number of times before notifications will
-			be enabled again. The queue, if any, cannot be flushed if the counter
-			is not 0.
+			Prevents all notifications on this object from firing. Does not
+			clear or flush the queue. Any new notifications fired while
+			notifications are disabled will be added to the queue, which may be
+			arbitrarily flushed or cleared when ready. To disable the queue, pass
+			a boolean true as the second argument. Note that disabling the queue
+			will immediately clear (but not flush) the queue.
+
+			Also increments an internal counter that requires the
+			_startNotifications_ method to be called an equal number of times
+			before notifications will be enabled again. The queue cannot be
+			flushed until the counter reaches 0.
 		*/
 		stopNotifications: function (disableQueue) {
 			return stopNotifications(this, disableQueue);
@@ -381,14 +396,16 @@
 
 		//*@public
 		/**
-			Call this method to enable notifications for this object and immediately
-			flush the notification queue if the internal counter is 0. If notifications 
-			were already enabled it will have no effect. Otherwise it will decrement the
-			internal counter. If the counter becomes 0 it will allow notifications and
-			attempt to flush the queue if there is one and it is enabled. This method
-			must be called once for each time the _stopNotifications_ method was called.
-			Passing a boolean true to this method will reenable the notification queue
-			if it was disabled.
+			Enables notifications for this object and immediately flushes the
+			notification queue if the internal counter is 0. Has no effect if
+			notifications are already enabled; otherwise, decrements the
+			internal counter. If the counter reaches 0, will allow
+			notifications and attempt to flush the queue (if there is one and
+			it is enabled).
+		
+			This method must be called once for each time the _stopNotifications_
+			method was called. Passing a boolean true as the second parameter
+			will reenable the notification queue if it was disabled.
 		*/
 		startNotifications: function (enableQueue) {
 			return startNotifications(this, enableQueue);
@@ -396,9 +413,9 @@
 		
 		//*@public
 		/**
-			Call this method to enable the notification queue. If it was already
-			enabled it will have no effect. If notifications are currently enabled
-			this will have no effect until they are disabled.
+			Enables the notification queue. Has no effect if the queue is already
+			enabled. If notifications are currently enabled, this method will have
+			no effect until they are disabled.
 		*/
 		enableNotificationQueue: function () {
 			return enableNotificationQueue(this);
@@ -406,10 +423,10 @@
 		
 		//*@public
 		/**
-			Call this method to disable the notification queue. If it was already
-			disabled it will have no effect. If notifications are currently enabled
-			this will have no effect. If they are disabled future notifications will
-			not be queued and any in the queue will be cleared (not flushed).
+			Disables the notification queue. Has no effect if the queue is
+			already disabled, or if notifications are currently enabled. If
+			notifications are disabled, future notifications will not be queued
+			and any items in the queue will be cleared (not flushed).
 		*/
 		disableNotificationQueue: function () {
 			return disableNotificationQueue(this);
@@ -420,7 +437,7 @@
 		
 		//*@protected
 		/**
-			This is used internally when a notification is queued.
+			Used internally when a notification is queued
 		*/
 		addNotificationToQueue: function (property, fn, params) {
 			return addNotificationToQueue(this, property, fn, params);
@@ -428,8 +445,7 @@
 		
 		//*@protected
 		/**
-			This method is used internally to flush any notifications that have been
-			queued.
+			Used internally; flushes any notifications that have been queued.
 		*/
 		flushNotifications: function () {
 			return flushNotifications(this);
@@ -437,7 +453,7 @@
 	
 		//*@protected
 		create: function () {
-			// it is unfortunate but we cannot share the observers block we inherited
+			// it is unfortunate, but we cannot share the observers block we inherited
 			// from the kind since as an instance we can modify it at runtime so we're
 			// forced to deep copy it
 			this._observers = _observer_clone(this._observers);
