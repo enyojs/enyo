@@ -102,7 +102,7 @@ enyo.kind = function(inProps) {
 	// put reference into namespace
 	if (name && !enyo.getPath(name)) enyo.setPath(name, ctor);
 	else if (name) {
-		enyo.warn("enyo.kind: " + name + " is already in use by another " +
+		enyo.error("enyo.kind: " + name + " is already in use by another " +
 			"kind, all kind definitions must have unique names.");
 	}
 	return ctor;
