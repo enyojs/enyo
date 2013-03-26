@@ -20,7 +20,7 @@
 	//*@public
 	/**
 		Looks for last occurrence of a string _(needle)_ inside an array or string
-		_(haystack)_.	 An IE8-safe fallback for the default _lastIndexOf_ method.
+		_(haystack)_. An IE8-safe fallback for the default _lastIndexOf_ method.
 	*/
 	var lastIndexOf = enyo.lastIndexOf = function (needle, haystack, index) {
 		if (haystack.lastIndexOf) return haystack.lastIndexOf(needle, index || haystack.length);
@@ -162,7 +162,7 @@
 		function comparator that accepts two parameters and is expected to
 		return a truthy-falsy value indicating whether or not the notifications
 		will be fired. Returns the context from which the method was executed.
-		Unlike its getter	counterpart, this is not a recursive method.
+		Unlike its getter counterpart, this is not a recursive method.
 	*/
 	enyo.setPath = function (path, value, force) {
 		// if there are less than 2 parameters we can't do anything
@@ -239,9 +239,9 @@
 		Called by instances of _enyo.Object_ in their own context via their
 		local version of this method. Attempts to find the given property of
 		the current context and instance the property if it is not already an
-		instance. If it is a string, the method attempts to	find the
-		constructor for the named kind or the instance at the	given	path.
-		When complete, it calls the callback method, passingit two
+		instance. If it is a string, the method attempts to find the
+		constructor for the named kind or the instance at the given path.
+		When complete, it calls the callback method, passing it two
 		parameters--the constructor (if it was found) and the instance (if it
 		could be determined).
 	*/
@@ -809,11 +809,9 @@
 	/**
 		Calls method _inMethod_ on _inScope_ asynchronously.
 
-		Uses _window.setTimeout_ with minimum delay, usually
-		around 10ms.
+		Uses _window.setTimeout_ with minimum delay, usually around 10ms.
 
-		Additional arguments are passed to _inMethod_ when
-		it is invoked.
+		Additional arguments are passed to _inMethod_ when it is invoked.
 	*/
 	enyo.asyncMethod = function(inScope, inMethod/*, inArgs*/) {
 		return setTimeout(enyo.bind.apply(enyo, arguments), 1);
