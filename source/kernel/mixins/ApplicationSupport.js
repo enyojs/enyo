@@ -1,10 +1,11 @@
 //*@public
 /**
-	The _enyo.ApplicationSupport_ mixin adds generic support
-	to any _enyo.Component_ so that any time the _createComponent_
-	method(s) are called it will supply a reference to the
-	application instance it belongs to as the _app_ property for
-	relative pathing to application scoped controllers or state.
+	The _enyo.ApplicationSupport_ mixin adds generic support to any
+	_enyo.Component_ such that anytime the _createComponent_ (or
+	_createComponents_) method is called, it will supply a reference
+	to the application instance it belongs to as the _app_ property, for
+	use in determining relative paths to application-scoped controllers
+	or state.
 */
 enyo.createMixin({
 	
