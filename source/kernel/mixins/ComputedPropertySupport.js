@@ -2,7 +2,7 @@
 	
 	//*@public
 	/**
-		The possible/configurable options that can be passed in
+		The possible/configurable options that may be passed in
 		one or more hashes to the computed method when wrapping a
 		function as a computed property of an object.
 	*/
@@ -10,30 +10,32 @@
 		
 		//*@public
 		/**
-			If a computed property is marked as volatile it will
+			If a computed property is marked as volatile, it will
 			be executed on every request regardless of its dependencies.
-			If both _volatile_ and _cached_ are set to true it will
-			default to _cached_ and ignore _volatile_.
+			If both _volatile_ and _cached_ are set to true, the property
+			is treated as _cached_, and _volatile_ is ignored.
 		*/
 		volatile: true,
 		
 		//*@public
 		/**
-			If a computed property is marked as being cached, its
-			value will be computed once and reused unless one of its
-			dependencies has been flagged as being changed prior to
-			the request. If there are no dependencies it will only
-			ever execute once. If this setting is true it overrides
-			the _volatile_ configuration value.
+			If a computed property is marked as cached, its value will be
+			computed once and then reused, unless one of its dependencies
+			has been flagged as being changed prior to the request. If
+			there are no dependencies, the value will only ever be computed
+			once.
+			
+			If this setting is true, it overrides	the value of the _volatile_
+			property.
 		*/
 		cached: false,
 		
 		//*@public
 		/**
-			Most cacheable computed properties will not need to be
-			evaluated until the first time they are requested, however,
-			they can be evaluated immediately after instancing the
-			class if this flag is set to false.
+			Most cacheable computed properties will not need to be evaluated
+			until the first time their values are requested; however, you can
+			force evaluation immediately after the associated object is
+			instantiated by setting this flag to false.
 		*/
 		defer: true,
 		
@@ -46,15 +48,18 @@
 	
 	//*@public
 	/**
-		Wrapping a class method in _enyo.computed_ will
-		allow that method to be interpreted as a static property and is bindable
-		by _enyo.Binding_s. Computed properties accept a configuration hash as
-		an optional parameter to the _enyo.computed_ call and any number of string
-		parameters that will be evaluated as dependencies of the property. Notifications
-		of changes to any of those properties will flag the computed property as
-		needing to be reevaluated the next time it is requested (if it is cached).
-		Computed properties are _volatile_ by default and will be evaluated on each
-		request unless marked otherwise.
+		Wrapping a class method in _enyo.computed_ allows the method to be
+		interpreted as a static property, bindable by an instance of
+		_enyo.Binding_. The call to _enyo.computed_ accepts a configuration
+		hash as an optional parameter, as well as any number of string
+		parameters that will be evaluated as dependencies of the property.
+
+		Notifications of changes to any of the dependencies will cause the
+		computed property to be flagged as needing reevaluation the next
+		time it is requested (if it is cached).
+
+		Computed properties are _volatile_ by default and will be evaluated
+		on each request unless marked otherwise.
 	*/
 	var computed = enyo.computed = function (fn /*, arguments */) {
 		var deps = enyo.toArray(arguments).slice(1);
@@ -101,11 +106,11 @@
 	
 	//*@protected
 	/**
-		Simply adds an entry into the computed properties hash of
-		the object so that it can easily be referenced later. Also add
-		an entry for the property name of the computed property for
-		each of its dependent properties so when they are mapped they
-		can trigger the appropriate update.
+		Adds an entry in the computed properties hash of the object so that
+		it can be referenced easily later on. Also adds an entry for the
+		property name of the computed property for each of its dependent
+		properties, so that when they are mapped, the appropriate update
+		can be triggered.
 	*/
 	var _add_computed = function (proto, property, fn) {
 		var $computed = proto._computed;
@@ -143,7 +148,7 @@
 	//*@protected
 	/**
 		Called by the overloaded getter for objects using the mixin support
-		feature - is called under the context of the object.
+		feature; the object provides the context for the call.
 	*/
 	var _get_computed = function (path) {
 		// we grab the current configuration for the computed property
@@ -166,8 +171,8 @@
 	
 	//*@protected
 	/**
-		We pass the requested value into the computed property which
-		may/may-not handle the value.
+		We pass the requested value into the computed property, which
+		may or may not handle the value.
 	*/
 	var _set_computed = function (path, value) {
 		// and a reference to the method because we will need it
@@ -208,9 +213,9 @@
 	
 	//*@protected
 	/**
-		This method is called on every object, we simply detect if the
-		object supports computed properties and if it does we execute
-		any cacheables that don't have _defer_ set to true.
+		Called on every object, this method simply detects whether the
+		object supports computed properties; if it does, we execute any
+		cacheables that don't have _defer_ set to true.
 	*/
 	var _post_constructor = function () {
 		if (!this._supports_computed) return;
@@ -233,10 +238,10 @@
 	
 	//*@protected
 	/**
-		Strictly used internally as the assumption is the structure of
-		these protected properties will be safe and this method is
-		not exposed...it should only ever be executed pre computation of
-		any cacheable values.
+		Strictly for internal use, as the assumption is the structure of
+		these protected properties will be safe and this method is not
+		exposed. It should only ever be executed before the computation
+		of any cacheable values.
 	*/
 	var _computed_clone = function ($computed, recursing) {
 		var copy = {};
@@ -253,21 +258,21 @@
 	
 	//*@protected
 	/**
-		Hook the kind features to automate handling of computing when
+		Hooks the kind features to automate handling of computations when
 		the kind is created.
 	*/
 	enyo.kind.features.push(function (ctor, props) {_find_computed(ctor.prototype, props, true)});
 	
 	//*@protected
 	/**
-		Hook the kind post-initialize routines to make sure we can
-		setup our cached computed properties that need it.
+		Hooks the kind post-initialization routines to make sure we can
+		do setup for our cached computed properties that need it.
 	*/
 	enyo.kind.postConstructors.push(_post_constructor);
 	
 	//*@protected
 	/**
-		Add a special handler for mixins to be aware of computed properties.
+		Adds a special handler for mixins to be aware of computed properties.
 	*/
 	enyo.mixins.features.push(_find_computed);
 	
@@ -294,7 +299,7 @@
 		
 		//*@public
 		/**
-			We overload the getter so that it can retrieve computed
+			Overloads the getter so that it can retrieve computed
 			property values properly.
 		*/
 		get: function (path) {
@@ -305,9 +310,9 @@
 		
 		//*@public
 		/**
-			We overload the setter so that it can attempt to call
-			the computed property with the values if it supports
-			accepting parameters otherwise it may do nothing.
+			Overloads the setter so that it can attempt to call the
+			computed property with the specified parameters. If it doesn't
+			accept passed-in parameters, it may do nothing.
 		*/
 		set: function (path, value) {
 			if (_is_computed(this[path])) {
@@ -317,9 +322,9 @@
 		
 		//*@public
 		/**
-			We overload the observer support method to hook when
-			notifications are being sent to handle them the way we
-			need to for computed properties.
+			Overloads the observer support method to hook when notifications
+			are sent, so we can handle them the way we need to for computed
+			properties.
 		*/
 		notifyObservers: function (prop, prev, value) {
 			// any of the possible notifications we want to map
