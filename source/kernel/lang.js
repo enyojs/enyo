@@ -11,7 +11,7 @@
 	
 	//*@public
 	/**
-		Determines whether a target is undefined.
+		Returns a boolean value indicating whether a target is undefined.
 	*/
 	var exists = enyo.exists = function (target) {
 		return !(undefined === target);
@@ -327,17 +327,17 @@
 
 	var toString = Object.prototype.toString;
 
-	//* Returns true if _it_ is a string.
+	//* Returns true if the argument is a string.
 	enyo.isString = function(it) {
 		return toString.call(it) === "[object String]";
 	};
 
-	//* Returns true if _it_ is a function.
+	//* Returns true if the argument is a function.
 	enyo.isFunction = function(it) {
 		return toString.call(it) === "[object Function]";
 	};
 
-	//* Returns true if _it_ is an array.
+	//* Returns true if the argument is an array.
 	enyo.isArray = Array.isArray || function(it) {
 		return toString.call(it) === "[object Array]";
 	};
@@ -433,9 +433,9 @@
 	//*@public
 	/**
 		Takes a variable number of arrays and returns an array of
-		only those values that are unique amongst all of the arrays.
-		Note this is not a particularly cheap method and should never
-		be called recursively.
+		values that are unique across all of the arrays. Note that
+		this is not a particularly cheap method and should never be
+		called recursively.
 		
 		TODO: test in IE8
 		TODO: figure out why the one-hit reversal wasn't working
@@ -472,23 +472,23 @@
 	
 	//*@public
 	/**
-		Returns only the unique values of an array or arrays.
+		Returns the unique values found in one or more arrays.
 	*/
 	var unique = enyo.unique = union;
 	
 	//*@public
 	/**
-		Reduce an array or arrays removing any duplicate entries
-		amongst them.
+		Reduces one or more arrays, removing any duplicate entries
+		across them.
 	*/
 	var reduce = enyo.reduce = merge;
   
 	//*@public
 	/**
-		Convenience method that takes an array of properties and an object.
-		Will return a new object with just those properties named in the
-		array if they exist on the base object. If the third parameter is
-		true it will ignore falsy values.
+		Convenience method that takes an array of properties and an object
+		as parameters. Returns a new object with just those properties named
+		in the array that are found to exist on the base object. If the third
+		parameter is true, falsy values will be ignored.
 	*/
 	var only = enyo.only = function (properties, object, ignore) {
 		var ret = {};
@@ -516,13 +516,12 @@
 	
 	//*@public
 	/**
-		Convenience method that takes 2 objects. The keys of the first objects
-		will be mapped to their values in the returned object should they exist
-		on the second object. It will return
-		a new object with the properties (should they exist) of the first array
-		and the provided object to its equivalent indexed property-name in the
-		second array on the new object. This merely maps the properties named in
-		the first array to the named properties in the second array.
+		Convenience method that takes two objects as parameters. For each key
+		from the first object, if the key also exists in the second object, a
+		mapping of the key from the first object to the key from the second
+		object is added to a result object, which is eventually returned. In
+		other words, the returned object maps the named properties of the
+		first object to the named properties of the second object.
 	*/
 	var remap = enyo.remap = function (map, obj) {
 		var ret = {};
@@ -537,10 +536,10 @@
 	
 	//*@public
 	/**
-		Convenience method that takes an array of properties and an object.
-		Will return a new object with all of the keys in the object except
-		those specified in the _properties_ array. The values are shallow
-		copies.
+		Convenience method that takes an array of properties and an object
+		as parameters. Returns a new object with all of the keys in the
+		object except those specified in the _properties_ array. The values
+		are shallow copies.
 	*/
 	var except = enyo.except = function (properties, object) {
 		// the new object to return with just the requested keys
@@ -571,9 +570,9 @@
   
 	//*@public
 	/**
-		A helper method that can take an array of objects and return
+		Helper method that accepts an array of objects and returns
 		a hash of those objects indexed by the specified property. If a filter 
-		is provided it should accept four parameters: the key, the value 
+		is provided, it should accept four parameters: the key, the value 
 		(object), the current mutable map reference, and an immutable 
 		copy of the original array of objects for comparison.
 	*/
@@ -613,9 +612,9 @@
 
 	//*@public
 	/**
-		Expects a string property and an array of objects that may
-		have the named property. Returns an array of all the values of
-		property in the objects in the array.
+		Expects as parameters a string, _property_, and an array of objects
+		that may have the named property. Returns an array of all the values
+		of the named property in the objects in the array.
 	*/
 	var pluck = enyo.pluck = function (property, array) {
 		var ret = [];
@@ -624,26 +623,27 @@
 		// if we don't have a property to look for or an array of
 		// objects to search through we have to return an empty array
 		if (!(exists(property) && exists(array))) return ret;
-		// if it isn't actually an array return an empty array
+		// if it isn't actually an array, return an empty array
 		if (!(array instanceof Array)) return ret;
-		// if property isn't a string then return an empty array
+		// if property isn't a string, then return an empty array
 		if ("string" !== typeof property) return ret;
-		// now that sanity is established to some extent, lets get
+		// now that sanity is established to some extent, let's get
 		// to work
 		for (len = array.length; idx < len; ++idx) {
 			// if the object in the array is actually undefined, skip
 			if (!exists(array[idx])) continue;
-			// if it was found then check to see if the property
+			// if it was found, then check to see if the property
 			// exists on it
 			if (exists(array[idx][property])) ret.push(array[idx][property]);
 		}
-		// return whatever we found if anything
+		// return whatever we found, if anything
 		return ret;
 	};
 
 	/**
-		Creates a new array with all elements of _inArray_ that pass the test implemented by _inFunc_.
-		If _inContext_ is specified, _inFunc_ is called with _inContext_ as _this_.
+		Creates a new array with all elements of _inArray_ that pass the test
+		defined by _inFunc_. If _inContext_ is specified, _inFunc_ is called
+		with _inContext_ as _this_.
 	*/
 	enyo.filter = function(inArray, inFunc, inContext) {
 		var c = inContext || this;
@@ -696,12 +696,12 @@
 	/**
 		Clones an existing Array, or converts an array-like object into an Array.
 
-		If _inOffset_ is non-zero, the cloning is started from that index in the source Array.
+		If _inOffset_ is non-zero, the cloning starts from that index in the source Array.
 		The clone may be appended to an existing Array by passing the existing Array as _inStartWith_.
 
 		Array-like objects have _length_ properties, and support square-bracket notation ([]).
-		Often array-like objects do not support Array methods, such as _push_ or _concat_, and
-		must be converted to Arrays before use.
+		Often, array-like objects do not support Array methods, such as _push_ or _concat_, and
+		so must be converted to Arrays before use.
 
 		The special _arguments_ variable is an example of an array-like object.
 	*/
@@ -727,8 +727,8 @@
 	//* @public
 	/**
 		Copies custom properties from the _source_ object to the _target_ object.
-		If _target_ is falsey, an object is created.
-		If _source_ is falsey, the target or empty object is returned.
+		If _target_ is falsy, an object is created.
+		If _source_ is falsy, the target or empty object is returned.
 	*/
 	enyo.mixin = function(target, source) {
 		target = target || {};
@@ -753,7 +753,7 @@
 		Returns a function closure that will call (and return the value of)
 		function _method_, with _scope_ as _this_.
 
-		_method_ can be a function or the string name of a function-valued
+		_method_ may be a function or the string name of a function-valued
 		property on _scope_.
 
 		Arguments to the closure are passed into the bound function.
