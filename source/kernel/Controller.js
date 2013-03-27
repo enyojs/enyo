@@ -1,8 +1,8 @@
 //*@public
 /**
-	The base class for all controllers in enyo. The _enyo.Controller_
-	is a delegate/component that is designed to be a proxy of information.
-	This is an abstract class.
+	_enyo.Controller_ is the base kind for all controllers in Enyo. An
+	abstract kind, it is a delegate/component that is designed to be a
+	proxy of information.
 */
 enyo.kind({
 	
@@ -23,9 +23,10 @@ enyo.kind({
 	
 	//*@public
 	/**
-		For all _enyo.Controller_s and subkinds the default source of information
-		is the _data_ property. In some cases this is a computed property for
-		easier overloading. Can be any type of data.
+		The _data_ property is the default source of information for all
+		instances of _enyo.Controller_ and its subkinds. In some cases, this
+		will be a computed property for	easier overloading. It may contain
+		any type of data.
 	*/
 	data: null,
 	

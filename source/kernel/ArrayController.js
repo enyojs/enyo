@@ -1,12 +1,12 @@
 //*@public
 /**
-	The _enyo.ArrayController_ kind is designed to mimic the behavior
-	and API of an ECMAScript 5 Array object with additional functionality
-	specific to _enyo.Object_s. By default the object will index its values
-	so they are accessible via the bracket-accessor operators. On large datasets
-	it is advised that the _store_ property is set to _true_ and only the
-	_at_ accessor method is used instead. For small to medium datasets it is
-	not necessary.
+	_enyo.ArrayController_ is a kind designed to mimic the behavior and API
+	of an ECMAScript 5 Array object, with additional functionality specific
+	to _enyo.Object_. By default, the object will index its values so they
+	are accessible via the bracket-accessor operators. On large datasets,
+	we recommend setting the _store_ property to _true_ and only using the
+	_at_ accessor method. This is	not necessary for small-to-medium
+	datasets.
 */
 enyo.kind({
 	
@@ -21,16 +21,16 @@ enyo.kind({
 	
 	//*@public
 	/**
-		Represents the current length of the array. Setting the
-		length directly will have undesirable effects.
+		The current length of the array. Setting the length directly
+		will have undesirable effects.
 	*/
 	length: 0,
    
 	//*@public
 	/**
 		Computed property representing the array structure of the
-		underlying data. This is an immutable array as changes __will
-		not__ modify the array structure of this controller.
+		underlying data. This is an immutable array, as changes will
+		not modify the array structure of this controller.
 	*/
 	data: enyo.computed(function (data) {
 		if (data) return this.reset(data);
@@ -99,8 +99,8 @@ enyo.kind({
 			var idx = 1;
 			var len = this.length;
 			var changeset = {};
-			// unfortunately we have to reindex the entire dataset
-			// but even for large ones this is a generic reassignment
+			// unfortunately, we have to reindex the entire dataset,
+			// but even for large ones, this is a generic reassignment
 			// with little overhead
 			for (; idx < len; ++idx) this[idx-1] = this[idx];
 			// delete the reference to the previous last element
@@ -124,11 +124,11 @@ enyo.kind({
 			var pos = arguments.length;
 			var nix = idx + pos;
 			var changeset = {};
-			// unfortunately, like with unshift, we have some reindexing
+			// unfortunately, as with unshift, we have some reindexing
 			// to do, but regardless of the number of elements we're
-			// unshifting we can do this in a single pass but we start
+			// unshifting, we can do this in a single pass. we start
 			// from the end so we don't have to copy twice for every
-			// element in the dataset
+			// element in the dataset.
 			for (; nix >= pos; --nix, --idx) this[nix] = this[idx];
 			// now we start from the beginning since we should have just
 			// enough space to add these new elements
@@ -219,7 +219,7 @@ enyo.kind({
 			}
 		}
 		
-		// we HAVE to update the length if it changed to notify observers/bindings
+		// we have to update the length if it changed to notify observers/bindings
 		// to data that it may have been updated or bindings to data will still
 		// have the cached dataset
 		if (len !== this.length) this.notifyObservers("length", len, this.length);
@@ -284,7 +284,7 @@ enyo.kind({
 				changeset.removed[idx] = value[idx];
 				this.remove(value[idx], index);
 			}
-			// we need to create the changeset for any indeces below
+			// we need to create the changeset for any indices below
 			// the lowest index we found
 			for (idx = start, len = this.length; idx < len; ++idx) {
 				changeset.changed[idx] = this[idx];
@@ -331,7 +331,7 @@ enyo.kind({
 		index = index < 0? 0: index >= len? max: index;
 		// same for the target index
 		to = to < 0? 0: to >= len? max: to;
-		// if they are the same there's nothing to do
+		// if they are the same, there's nothing to do
 		if (index === to) return;
 		// capture the value at index so we can set the new
 		// index to the appropriate value
@@ -344,18 +344,18 @@ enyo.kind({
 		// be updated
 		this.silence();
 		this.stopNotifications(true);
-		// if the index is the top we don't want to do extra
-		// calculations or indexing on this step so just
+		// if the index is the top, we don't want to do extra
+		// calculations or indexing on this step, so just
 		// pop the value
 		if (index === max) this.pop();
-		// unforunately we need to splice the value out of the
+		// unfortunately, we need to splice the value out of the
 		// dataset before reinserting it at the appropriate spot
 		else this.splice(index, 1);
 		// we turn events and notifications back on here so that
 		// they can produce the final changeset appropriately
 		this.unsilence();
 		this.startNotifications(true);
-		// readd the value at the correct index
+		// re-add the value at the correct index
 		this.splice(to, 0, val);
 	},
 	
@@ -373,8 +373,8 @@ enyo.kind({
 	/**
 		Detects the presence of value in the array. Accepts an iterator
 		and an optional context for that iterator to be called under. Will
-		break and return if the iterator returns a truthy value otherwise
-		it will return false. On truthy value it returns the value.
+		break and return if the iterator returns a truthy value; otherwise,
+		it will return false. On a truthy value, it returns the value.
 	*/
 	find: function (fn, context) {
 		var idx = 0;
@@ -389,31 +389,33 @@ enyo.kind({
 	
 	//*@public
 	/**
-		Because the controller cannot detect reassignment to its
-		indices (e.g. myvar[3] = "touché") you can do your own custom
-		assignment and call this method once when you are finished -
-		__if the changes need to be acknowledged in order for notifications
-		and events to be sent__. Otherwise, there is no need to call the
-		method. There are two ways to call it, without any parameters or
-		with an array (or hash whose keys will be used as an array) of the
-		indices that have changed. When called
-		without parameters it will search for changed indices against
-		its cached dataset using direct comparison (or if a _comparator_
-		method exists on the controller it will use the result from that
-		to determine equality). On larger datasets this is less than ideal.
-		If possible, keep track of the indices that have changed and pass those
-		to this method so it can simply update its cache and notify observers
-		and listeners of the changes to those indices.
+		Because the controller cannot detect reassignment to its indices
+		(e.g., myvar[3] = "touché"), you can do your own custom assignment
+		and call this method once when you are finished--if the changes
+		need to be acknowledged in order for notifications and events to
+		be sent. Otherwise, there is no need to call the method.
 		
-		It is important to note that, when using native JavaScript objects
+		There are two ways to call this method--without any parameters, or
+		with an array (or a hash whose keys will be used as an array) of
+		the indices that have changed. When called without parameters, it
+		will search for changed indices against its cached dataset using
+		direct comparison (or if a _comparator_ method exists on the
+		controller, it will use the result from that to determine equality).
+		On larger datasets, this is less than ideal; if possible, keep track
+		of the indices that have changed and pass them to this method so it
+		can simply update its cache and notify observers and listeners of
+		the changes to those indices.
+		
+		It is important to note that, when using native JavaScript objects,
 		the reference is shared. If a property on the hash is directly set
-		and this method is called it will be impossible for it to detect changes
-		since the references in the comparator are the same. If using native
-		objects as your data container it is imperative that you provide the
-		indices that have changed to this method. The alternative (and advisable
-		path) is to use an _enyo.ObjectController_ to proxy the data of the underlying
-		hash and use the setter/getter of that controller that will automatically
-		trigger the correct updates when a property has changed.
+		and this method is called, it will be impossible to detect changes
+		since the references in the comparator are the same. If your data is
+		contained in native objects, it is imperative that you provide the
+		indices that have changed to this method. The alternative (and
+		recommended) approach is to use an _enyo.ObjectController_ to proxy
+		the data of the underlying hash and use that controller's setter and
+		getter, which will automatically trigger the correct updates when a
+		property has changed.
 	*/
 	changed: function (changed) {
 		var changeset = {};
@@ -457,7 +459,7 @@ enyo.kind({
 	//*@protected
 	create: function () {
 		this.inherited(arguments);
-		// if there were values waiting to be initialized they couldn't
+		// if there were values waiting to be initialized, they couldn't
 		// have been until now
 		if (this._init_values) {
 			this.add.call(this, this._init_values);
@@ -468,7 +470,7 @@ enyo.kind({
 	//*@protected
 	constructor: function () {
 		this.inherited(arguments);
-		// if there were any properties passed to the constructor we
+		// if there were any properties passed to the constructor, we
 		// automatically add them to the array
 		if (arguments.length) {
 			var init = [];
