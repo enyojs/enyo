@@ -2,8 +2,8 @@ enyo.kind({
 	name: "LoaderTest",
 	kind: enyo.TestSuite,
 	testSingleLoad: function() {
-		enyo.load("tests/loader/loader1.js", enyo.bind(this,
-			function() {
+		enyo.load("tests/loader/loader1.js",
+			this.bindSafely(function() {
 				if (window.LOADER_TEST === "loader1") {
 					this.finish();
 				}
@@ -15,7 +15,7 @@ enyo.kind({
 	},
 	testMultipleLoad: function() {
 		enyo.load(["tests/loader/loader2a.js", "tests/loader/loader2b.js"],
-			enyo.bind(this, function() {
+			this.bindSafely(function() {
 				if (window.LOADER_TEST === "loader2b") {
 					this.finish();
 				}
@@ -27,7 +27,7 @@ enyo.kind({
 	},
 	testMultipleLoadWith404: function() {
 		enyo.load(["tests/loader/loader2b.js", "tests/loader/loader2a.js", "tests/loader/anotherfilethatdoesnotexist.js"],
-			enyo.bind(this, function(block) {
+			this.bindSafely(function(block) {
 				if (window.LOADER_TEST === "loader2a" && block.failed.length === 1 && block.failed[0] === "./tests/loader/anotherfilethatdoesnotexist.js") {
 					this.finish();
 				}
@@ -40,7 +40,7 @@ enyo.kind({
 	testPackageLoad: function() {
 		// added a new folder (loader) with a package.js looking for a file setting window.PACKAGE_TEST and a file that doesn't exist
 		enyo.load(["tests/loader"],
-			enyo.bind(this, function(block) {
+			this.bindSafely(function(block) {
 				if (window.PACKAGE_TEST === "loaded" && block.failed.length === 1 && block.failed[0] === "./tests/loader/nothere.js") {
 					this.finish();
 				}

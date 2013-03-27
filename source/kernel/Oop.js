@@ -79,12 +79,12 @@ enyo.kind = function(inProps) {
 	// create our prototype
 	//ctor.prototype = isa ? enyo.delegate(isa) : {};
 	enyo.setPrototype(ctor, isa ? enyo.delegate(isa) : {});
-	
+
 	// there are special cases where a base class has a property
 	// that may need to be concatenated with a subclasses implementation
 	// as opposed to completely overwriting it...
 	enyo.handleConcatenatedProperties(ctor.prototype, inProps);
-	
+
 	// put in our props
 	enyo.mixin(ctor.prototype, inProps);
 	// alias class name as 'kind' in the prototype
@@ -141,7 +141,7 @@ enyo.singleton = function(conf, context) {
 
 //* @protected
 enyo.kind.makeCtor = function() {
-  return function() {;
+  return function() {
 		if (!(this instanceof arguments.callee)) {
 			throw "enyo.kind: constructor called directly, not using 'new'";
 		}
@@ -158,7 +158,7 @@ enyo.kind.makeCtor = function() {
 			// post-constructor initialization
 			this.constructed.apply(this, arguments);
 		}
-		
+
 		for (var idx = 0; idx < enyo.kind.postConstructors.length; ++idx) {
 			enyo.kind.postConstructors[idx].apply(this, cargs);
 		}
