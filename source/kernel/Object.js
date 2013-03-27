@@ -36,7 +36,7 @@ enyo.kind({
 		enyo._objectCount++;
 		this.importProps(props);
 	},
-	
+
 	importProps: function (props) {
 		if (props) {
 			for (var key in props) {
@@ -99,7 +99,7 @@ enyo.kind({
 		a string the object will attempt to be resolved. The goal is
 		to determine of the the property is a constructor, an instance or
 		nothing. See _lang.js#enyo.findAndInstance_ for more information.
-		
+
 		If a method exists of the form `{property}FindAndInstance` it will
 		be used as the callback accepting two parameters, the constructor
 		if it was found and the instance if it was found or created,
@@ -113,7 +113,7 @@ enyo.kind({
 		// go ahead and call the enyo scoped version of this method
 		return enyo.findAndInstance.call(this, property, fn, this);
 	},
-	
+
 	//*@public
 	/**
 		Call this method with the name (or path) to the desired property or
@@ -121,7 +121,7 @@ enyo.kind({
 		the value of that property and not the function. If it cannot find
 		or resolve the requested path relative to the object it will return
 		undefined.
-		
+
 		This method is backwards compatible and will automatically call any
 		existing _getter_ method that uses the getProperty convention although
 		this convention ought to be replaced using a computed property moving
@@ -137,7 +137,7 @@ enyo.kind({
 		been changed if the values are not the same. If the property it finds
 		is a computed property it will pass the intended value to the computed
 		property (but will not return the value).
-		
+
 		This method is backwards compatible and will call any setter of the
 		setProperty convention although these methods should be replaced with
 		computed properties or observers where necessary.
@@ -146,6 +146,34 @@ enyo.kind({
 		return enyo.setPath.apply(this, arguments);
 	},
 
+	//*@public
+	/**
+		Bind a callback to this object. The bound method will be aborted cleanly with no
+		return value if the object has been destroyed. This usually should be used instead
+		of `enyo.bind` for running code in the context of a enyo.Object-derivative.
+	*/
+	bindSafely: function(method/*, bound arguments*/) {
+		var scope = this;
+		if (enyo.isString(method)) {
+			if (this[method]) {
+				method = this[method];
+			} else {
+				throw(['enyo.Object.bindSafely: this["', method, '"] is null (this="', this, '")'].join(''));
+			}
+		}
+		if (enyo.isFunction(method)) {
+			var args = enyo.cloneArray(arguments, 2);
+			return function() {
+				if (scope.destroyed) {
+					return;
+				}
+				var nargs = enyo.cloneArray(arguments);
+				return method.apply(scope, args.concat(nargs));
+			};
+		} else {
+			throw(['enyo.Object.bindSafely: this["', method, '"] is not a function (this="', this, '")'].join(''));
+		}
+	},
 	//*@protected
 	destroy: function () {
 		// JS objects are never truly destroyed (GC'd) until all references are gone,
@@ -153,7 +181,7 @@ enyo.kind({
 		// to this flag.
 		this.destroyed = true;
 	},
-	
+
 	_is_object: true
 });
 
@@ -219,7 +247,7 @@ enyo.Object.addGetterSetter = function (property, value, proto) {
 	fn = proto[getter];
 	// if there isn't already a getter provided create one
 	if ("function" !== typeof fn) {
-		fn = proto[getter] = function () {return this.get(property)};
+		fn = proto[getter] = function () {return this.get(property);};
 		fn.overloaded = false;
 	} else if (false !== fn.overloaded) {
 		// otherwise we need to mark it as having been overloaded
@@ -229,7 +257,7 @@ enyo.Object.addGetterSetter = function (property, value, proto) {
 	// if there isn't already a setter provided create one
 	fn = proto[setter];
 	if ("function" !== typeof fn) {
-		fn = proto[setter] = function () {return this.set(property, arguments[0])};
+		fn = proto[setter] = function () {return this.set(property, arguments[0]);};
 		fn.overloaded = false;
 	} else if (false !== fn.overloaded) {
 		// otherwise we need to mark it as having been overloaded

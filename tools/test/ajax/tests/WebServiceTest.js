@@ -16,7 +16,7 @@ enyo.kind({
 		this._testWebService(enyo.mixin({url: "php/test1.php?format=" + (inProps.format || inProps.handleAs)}, inProps), null, inAssertFn);
 	},
 	testJsonResponse: function() {
-		this._testResponse({handleAs: "json"}, 
+		this._testResponse({handleAs: "json"},
 			function(inValue) {
 				return inValue.response == "hello";
 			}
@@ -77,7 +77,7 @@ enyo.kind({
 	// test CORS (Cross-Origin Resource Sharing) by testing against youtube api
 	testCORS: function() {
 		this._testWebService({
-				url: "http://query.yahooapis.com/v1/public/yql/jonathan/weather/"}, 
+				url: "http://query.yahooapis.com/v1/public/yql/jonathan/weather/"},
 				{q: 'select * from weather.forecast where location=94025', format: "json"},
 				function(inValue) {
 					enyo.log(inValue);
@@ -101,11 +101,11 @@ enyo.kind({
 	},
 	_timeoutError: function(inSender, inEvent) {
 		// extra timeout is to make sure that timeout fail code cancels XHR
-		enyo.job("wstimeouttest", enyo.bind(this, function() {this.finish("");}), 4000);
+		enyo.job("wstimeouttest", this.bindSafely(function() {this.finish("");}), 4000);
 	},
 	testTimeout: function() {
-		var ws = this.createComponent({kind: enyo.WebService, 
-			onResponse: "_timeoutResponse", onError: "_timeoutError"}, 
+		var ws = this.createComponent({kind: enyo.WebService,
+			onResponse: "_timeoutResponse", onError: "_timeoutError"},
 			{url: "php/test3.php", timeout: 500});
 		ws.send();
 	}
