@@ -163,6 +163,7 @@ enyo._objectCount = 0;
 
 enyo.Object.subclass = function(ctor, props) {
 	this.publish(ctor, props);
+	this.overload(ctor, props);
 };
 
 enyo.Object.publish = function(ctor, props) {
@@ -174,6 +175,28 @@ enyo.Object.publish = function(ctor, props) {
 			// it does not overwrite any computed properties
 			if (props[n] && enyo.isFunction(props[n]) && props[n].isProperty) continue;
 			enyo.Object.addGetterSetter(n, pp[n], cp);
+		}
+	}
+};
+
+//*@protected
+/**
+	We need to find special cases and ensure that the overloaded
+	getter of a published property of a parent kind is flagged for
+	the global getter and setter.
+*/
+enyo.Object.overload = function (ctor, props) {
+	var proto = ctor.prototype.base? ctor.prototype.base.prototype: {};
+	var regex = /^(get|set).*/;
+	var name;
+	var prop;
+	for (name in props) {
+		if (!regex.test(name)) continue;
+		prop = props[name];
+		if ("function" === typeof prop) {
+			if (proto[name]) {
+				prop.overloaded = true;
+			}
 		}
 	}
 };
