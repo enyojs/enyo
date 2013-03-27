@@ -522,7 +522,7 @@ enyo.kind({
 	// crossing into the overflow region, and bubble a scroll event
 	setCSSTransitionInterval: function() {
 		this.clearCSSTransitionInterval();
-		this.scrollInterval = setInterval(enyo.bind(this, function() {
+		this.scrollInterval = setInterval(this.bindSafely(function() {
 			this.updateScrollPosition();
 			this.correctOverflow();
 		}), this.scrollIntervalMS);
@@ -531,7 +531,7 @@ enyo.kind({
 	// a scroll event (don't check for crossing into overflow since we're there already)
 	setOverflowTransitionInterval: function() {
 		this.clearCSSTransitionInterval();
-		this.scrollInterval = setInterval(enyo.bind(this, function() {
+		this.scrollInterval = setInterval(this.bindSafely(function() {
 			this.updateScrollPosition();
 		}), this.scrollIntervalMS);
 	},
@@ -575,9 +575,9 @@ enyo.kind({
 		if(inEvent.originator !== this.$.client) {
 			return;
 		}
-		
+
 		var posChanged = false;
-		
+
 		if(this.isInTopOverScroll()) {
 			posChanged = true;
 			this.scrollTop = this.topBoundary;
@@ -585,7 +585,7 @@ enyo.kind({
 			posChanged = true;
 			this.scrollTop = -1*this.bottomBoundary;
 		}
-		
+
 		if(this.isInLeftOverScroll()) {
 			posChanged = true;
 			this.scrollLeft = this.leftBoundary;

@@ -151,7 +151,7 @@ enyo.kind({
 		// delta tracking
 		var x0, y0;
 		// animation handler
-		var fn = enyo.bind(this, function() {
+		var fn = this.bindSafely(function() {
 			// wall-clock time
 			var t1 = enyo.now();
 			// schedule next frame

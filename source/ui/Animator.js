@@ -44,7 +44,7 @@ enyo.kind({
 	//* @protected
 	constructed: function() {
 		this.inherited(arguments);
-		this._next = enyo.bind(this, "next");
+		this._next = this.bindSafely("next");
 	},
 	destroy: function() {
 		this.stop();
