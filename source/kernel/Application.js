@@ -2,17 +2,17 @@
 	
 	//*@public
 	/**
-		In order to provide some convenience and debugging tools we track
-		the applications running at any given time. Here we collection them
-		for reference later. When _enyo.Application_s are destroyed they know
-		to remove themselves from this table.
+		Tracks the applications running at any given time. In order to provide
+		some convenience and debugging tools, we collect the running apps here
+		for later reference. When _enyo.Application_ instances are destroyed,
+		they know to remove themselves from this table.
 	*/
 	var applications = enyo.applications = {};
 
 	//*@protected
 	/**
-		Used internally to maintain registration of applications with
-		the framework.
+		Used internally; maintains registration of applications with the
+		framework.
 	*/
 	var register = function (app) {
 		applications[app.id] = app;
@@ -20,7 +20,7 @@
 	
 	//*@protected
 	/**
-		Used internally to unregister applications that have been destroyed.
+		Used internally; unregisters applications that have been destroyed.
 	*/
 	var unregister = function (app) {
 		var kind = app.kindName;
@@ -76,13 +76,13 @@
 			// cleanup
 			delete kind.global;
 			delete kind.name;
-			// if the definition does not supply a controller kind we add one
+			// if the definition does not supply a controller kind, we add one
 			if (!("kind" in kind)) kind.kind = "enyo.Controller";
 			// create a kind constructor for the controller with all of the given
 			// properties
 			ctor = enyo.kind(kind);
 			inst = new ctor({owner: this, app: this});
-			// if the controller is not a global controller we create it as part
+			// if the controller is not a global controller, we create it as part
 			// of our applications controller store
 			if (false === global) {
 				controllers[name] = inst;
@@ -97,20 +97,22 @@
 		if (!this._is_application) return;
 		
 		// now that any controllers for the application have been
-		// initialized we test to see if we're supposed to
+		// initialized, we test to see if we're supposed to
 		// automatically start
 		if (true === this.autoStart) this.start();
 	});
 	
 	//*@public
 	/**
-		An _enyo.Application_ can be used to coordinate execution of
-		a given collection of _enyo_ objects. There can be one or more
-		_enyo.Applications_ running (with some limitation such as which is
-		rendered into the _document.body_ - no limitation if they are each
-		rendered into separate DOM nodes or nested). It also provides the
-		ability to namespace and automatically initialize any _controllers_
-		of the application.
+		_enyo.Application_ is a kind used to coordinate execution of a given
+		collection of _enyo_ objects. There may be one or more
+		_enyo.Application_ instances running--with certain limitations, such
+		as which one is rendered into the _document.body_. (There is no
+		limitation if the instances are each rendered into separate DOM nodes
+		or nested.)
+		
+		This kind also provides the ability to namespace and automatically
+		initialize any controllers of the application.
 	*/
 	enyo.kind({
 	
@@ -146,9 +148,9 @@
 		
 		//*@public
 		/**
-			If the _autoStart_ flag is set to true this will automatically
-			be executed when the constructor is called. Otherwise it can
-			be executed whenever the application should begin execution.
+			If the _autoStart_ flag is set to true, this method is
+			automatically executed when the constructor is called. Otherwise,
+			it may be executed whenever the application should begin execution.
 		*/
 		start: function () {
 			if (true === this.renderOnStart) {
@@ -185,8 +187,8 @@
 		
 		//*@protected
 		/**
-			The overloaded \_create_view method to ensure we supply the
-			appropriate values to the new view instance.
+			The overloaded \_create_view method ensures that the appropriate
+			values are supplied to the new view instance.
 		*/
 		_create_view: function () {
 			// this is the constructor for the view kind
