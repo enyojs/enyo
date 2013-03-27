@@ -120,7 +120,7 @@
 			part = path.substring(0, idx);
 			path = path.slice(idx+1);
 			
-			if ("object" === typeof cur[part]) {
+			if (typeof cur[part] in {"object":"","function":""}) {
 				if (cur[part]._is_object) {
 					return cur[part].get(path);
 				} else {
@@ -204,7 +204,7 @@
 				} else {
 					// we update our current reference context and if it does
 					// not exist at the requested path it will be created
-					if ("object" !== typeof cur[target]) cur[target] = {};
+					if (!(typeof cur[target] in {"object":"","function":""})) cur[target] = {};
 					if (true === cur[target]._is_object) {
 						return cur[target].set(parts.join("."), value);
 					}
