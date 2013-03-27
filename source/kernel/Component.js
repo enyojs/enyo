@@ -473,7 +473,7 @@ enyo.kind({
 		this._silenced = true;
 		this._silence_count += 1;
 	},
-	
+
 	//*@public
 	/**
 		If the internal silence counter is 0 this method will allow
@@ -500,7 +500,7 @@ enyo.kind({
 		}
 		// stop any existing jobs with same name
 		this.stopJob(inJobName);
-		this.__jobs[inJobName] = setTimeout(enyo.bind(this, function() {
+		this.__jobs[inJobName] = setTimeout(this.bindSafely(function() {
 			this.stopJob(inJobName);
 			// call "inJob" with this bound to the component.
 			inJob.call(this);

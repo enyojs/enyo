@@ -226,7 +226,7 @@ enyo.kind({
 			})
 			.error(this, function(inSender, inValue) {
 				// extra timeout is to make sure that timeout fail code cancels XHR
-				enyo.job("timeouttest", enyo.bind(this, function() {this.finish("");}), 4000);
+				enyo.job("timeouttest", this.bindSafely(function() {this.finish("");}), 4000);
 			})
 			.go();
 	},
@@ -236,8 +236,8 @@ enyo.kind({
 			// getting success means server sent wrong response
 			return false;
 		}, function(inError) {
-			return (inError === 500) && 
-				req.xhrResponse && 
+			return (inError === 500) &&
+				req.xhrResponse &&
 				(req.xhrResponse.status === 500) &&
 				(req.xhrResponse.headers['content-type'] === "text/plain; charset=utf-8") &&
 				(req.xhrResponse.body === "my error description");

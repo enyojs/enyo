@@ -123,7 +123,7 @@ enyo.kind({
 			this.xhr = enyo.xhr.request({
 				url: url,
 				method: this.method,
-				callback: enyo.bind(this, "receive"),
+				callback: this.bindSafely("receive"),
 				body: body,
 				headers: xhr_headers,
 				sync: window.PalmSystem ? false : this.sync,

@@ -48,7 +48,7 @@ enyo.kind({
 			script.charset = this.charset;
 		}
 		// most modern browsers also have an onerror handler
-		script.onerror = enyo.bind(this, function() {
+		script.onerror = this.bindSafely(function() {
 			// we don't get an error code, so we'll just use the generic 400 error status
 			this.fail(400);
 		});
@@ -84,10 +84,10 @@ enyo.kind({
 		this.src = this.buildUrl(inParams, callbackFunctionName);
 		this.addScriptElement();
 		//
-		window[callbackFunctionName] = enyo.bind(this, this.respond);
+		window[callbackFunctionName] = this.bindSafely(this.respond);
 		//
 		// setup cleanup handlers for JSONP completion and failure
-		var cleanup = enyo.bind(this, function() {
+		var cleanup = this.bindSafely(function() {
 			this.removeScriptElement();
 			window[callbackFunctionName] = null;
 		});
