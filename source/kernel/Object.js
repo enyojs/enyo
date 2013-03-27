@@ -183,19 +183,18 @@ enyo.Object.publish = function(ctor, props) {
 /**
 	We need to find special cases and ensure that the overloaded
 	getter of a published property of a parent kind is flagged for
-	the global getter.
+	the global getter and setter.
 */
 enyo.Object.overload = function (ctor, props) {
 	var proto = ctor.prototype.base? ctor.prototype.base.prototype: {};
-	var regex = /(get|set).*/;
+	var regex = /^(get|set).*/;
 	var name;
 	var prop;
-	var base;
 	for (name in props) {
 		if (!regex.test(name)) continue;
 		prop = props[name];
 		if ("function" === typeof prop) {
-			if ((base = proto[name])) {
+			if (proto[name]) {
 				prop.overloaded = true;
 			}
 		}
