@@ -10,21 +10,21 @@
 		// we have to check whether or not the browser has supplied a valid
 		// method to use
 		var perf = window.performance || {};
-		// test against all known vender-specific implementations but use
+		// test against all known vendor-specific implementations, but use
 		// a fallback just in case
 		perf.now = perf.now || perf.mozNow || perf.msNow || perf.oNow || perf.webkitNow || enyo.now;
-		// while we do supply the fallback it forces a warning to indicate it
+		// while we do supply the fallback, it forces a warning to indicate it
 		// should not be trusted
 		if (perf.now === enyo.now) {
 			return function () {
 				enyo.warn(
 					"Performance benchmarking requested but was not available, " +
-					"the tests using the method cause considerable overhead thus " +
+					"the tests using the method cause considerable overhead, thus " +
 					"skewing the results."
 				);
 				return perf.now();
 			};
-		// otherwise we now have a pointer to the performant benchmark method
+		// otherwise, we now have a pointer to the performant benchmark method
 		} else return function () {return perf.now();};
 	}());
 
@@ -32,18 +32,18 @@
 	/**
 		This is a collection of methods to assist in simple benchmarking.
 		The goal was to supply useful functionality while impacting the results
-		as little as possible (the more calculations we do during benchmarking
+		as little as possible (the more calculations we do during benchmarking,
 		the greater the opportunity to skew results). This is particularly important
-		when using potentially nested benchmark series (benchmarking a method that
-		executes other benchmarked methods).
+		when using potentially-nested benchmark series (i.e., benchmarking a method
+		that executes other benchmarked methods).
 	*/
 
-	// track the active tests
+	// Track the active tests
 	var tests = {};
-	// track averages
+	// Track averages
 	var averages = {};
 
-	// default report template string
+	// Default report template string
 	var report_template = "- - - - - - - - - - - - - - - - -\n" +
 					"BENCHMARK REPORT (%.): %.\n" +
 					"TOTAL TIME: %.\n" +
@@ -51,7 +51,7 @@
 					"NUMBER OF ENTRIES: %.\n" +
 					"- - - - - - - - - - - - - - - - -\n";
 
-	// calculates average and basic statistics
+	// Calculates average and basic statistics.
 	var calc = function (numbers) {
 		var total = 0;
 		var number = numbers.length;

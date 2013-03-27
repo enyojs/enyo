@@ -1,16 +1,16 @@
 //*@public
 /**
-	The _enyo.ObjectController_ is a sophisticated proxy for
-	underlying data. Other objects may observe or bind to its
-	properties as if they were that of the underlying data object.
-	This abstraction allows for the underlying data to be changed
-	or modified without the other objects needing to rebind or
-	be aware of the change. It can be subclassed to deal with
-	specific data object implementations and special needs. This
-	particular controller can handle native data hashes or any
-	_enyo.Object_ or sub-kind. While data is being proxied by the
-	controller, access to its properties should use the _get_ and
-	_set_ method of the controller.
+	_enyo.ObjectController_ is a sophisticated proxy for underlying data.
+	Other objects may observe or bind to its properties as if they belonged
+	to the underlying data object. This abstraction allows the underlying
+	data to be modified without the other objects' needing to rebind or be
+	aware of the change. It can be subclassed to deal with specific data
+	object implementations and special needs.
+	
+	This particular controller can handle native data hashes or any
+	instances of _enyo.Object_ or its subkinds. While data is being proxied
+	by the controller, its properties should be accessed using the
+	controller's _get_ and _set_ methods.
 */
 enyo.kind({
 	
@@ -41,7 +41,7 @@ enyo.kind({
 	//*@public
 	get: function (prop) {
 		var ret;
-		// it we are recursing we go straight to the default
+		// if we are recursing, we go straight to the default
 		// or if the property is data - data is a reserved word
 		// in this case otherwise we can't get a reference to the
 		// object
@@ -61,16 +61,18 @@ enyo.kind({
 	
 	//*@public
 	/**
-		This method is called by the object-controller's _set_ method
-		to allow this portion to be overloaded cleanly in cases where
-		there is a non-normative behavior required. Accepts the same
-		parameters as the normal _set_ method but is expected to return
-		a truthy/falsy value to indicate its success. The default behavior
-		is to check to see if the _data_ property exists and if the property
-		being set is a top-level property of that object. If not it returns
-		false. Notification __is__ handled by this method to allow that
-		behavior to be overloaded as well. It is responsible for determining
-		the previous value and passing that to the notification method.
+		Accepts the same parameters as the normal _set_ method, but returns
+		a truthy/falsy value to indicate its success.  This method is called
+		by the object controller's _set_ method to allow this portion to be
+		overloaded cleanly in cases where non-normative behavior is required.
+		
+		The default behavior is to check to see whether the _data_ property
+		exists and whether the property being set is a top-level property of
+		the object. If not, the method returns false. 
+		
+		Notification is handled by this method, allowing that behavior to be
+		overloaded as well. This method is responsible for determining the
+		previous value and passing it to the notification method.
 	*/
 	setDataProperty: function (prop, value) {
 		var data = this.get("data");
@@ -79,37 +81,39 @@ enyo.kind({
 				this.stopNotifications();
 				this.notifyObservers(prop, this.get(prop), value);
 			}
-			// if the object is an enyo object instance its notifications will
+			// if the object is an enyo object instance, its notifications will
 			// automatically fire
 			enyo.setPath.call(data, prop, value);
 			// if it is instead a native object, we have already queued the
-			// the notification so this will flush it, otherwise, it will do
+			// the notification, so this will flush it; otherwise, it will do
 			// nothing
 			this.startNotifications();
 			return true;
 		}
-		// under any other circumstances return false
+		// under any other circumstances, return false
 		return false;
 	},
 	
 	//*@public
 	/**
-		This method is called by the object-controller's _get_ method
-		to allow this portion to be overloaded cleanly in cases where
-		there is a non-normative behavior required. Accepts the same
-		parameters as the normal _get_ method but is expected to return
-		a truthy/explicit-boolean-false value to indicate its success. The
-		default behavior is to check to see if the _data_ property exists
-		and if the requested property is a first-level property of the object.
-		If it is it will return the value. The default getter of the object-
-		controller will only execute if this method returns an explicit false.
+		Accepts the same parameters as the normal _get_ method, but returns
+		a truthy or explicit-boolean-false value to indicate its success.
+		This method is called by the object controller's _get_ method to
+		allow this portion to be overloaded cleanly in cases where
+		non-normative behavior is required.
+		
+		The default behavior is to check whether the _data_ property exists
+		and whether the requested property is a first-level property of the
+		object. If it is, the value is returned. The object controller's
+		default getter will only execute if this method explicitly returns
+		false.
 	*/
 	getDataProperty: function (prop) {
 		var data = this.get("data");
 		if (data && this.isAttribute(prop)) {
 			return enyo.getPath.call(data, prop);
 		}
-		// under any other circumstance return false explicitly
+		// under any other circumstances, return false explicitly
 		return false;
 	},
 	
@@ -117,9 +121,9 @@ enyo.kind({
 	/**
 		Takes a string parameter and returns a boolean true|false
 		depending on whether or not the parameter is an attribute
-		of the data object. If no data is present it will always return
-		false. If the object has its own _isAttribute_ method it will
-		return the the execute method. For more complex implementations
+		of the data object. If no data is present, it will always return
+		false. If the object has its own _isAttribute_ method, it will
+		return the execute method. For more complex implementations,
 		overload this method.
 	*/
 	isAttribute: function (prop) {
@@ -142,7 +146,7 @@ enyo.kind({
 		// we need to go ahead and double check that the data exists
 		// and is a valid enyo object instance
 		if (!data || !(data instanceof enyo.Object)) return;
-		// if we had a listener registered on the previous data we
+		// if we had a listener registered on the previous data, we
 		// need to remove it
 		if (this._listener) {
 			data.removeObserver("*", this._listener);
@@ -176,7 +180,7 @@ enyo.kind({
 	
 	//*@public
 	initData: function (data) {
-		// if no data was passed in we try and grab the property
+		// if no data was passed in, we try to grab the property
 		// on our own
 		var data = data || this.get("data");
 		// we need to go ahead and double check that the data exists
@@ -185,7 +189,7 @@ enyo.kind({
 		// register ourselves as a global listener on the object
 		// via the special attribute '*'
 		this._listener = data.addObserver("*", this.notifyObservers, this);
-		// go ahead and setup our last reference for the future
+		// go ahead and set up our last reference for the future
 		this._last = data;
 	},
 	
@@ -200,14 +204,14 @@ enyo.kind({
 	
 	//*@protected
 	/**
-		This method attempts to find the correct target(s) and
-		notify them of any/all the possible properties to force
-		them to synchronize to the current values.
+		Attempts to find the correct target(s) and notify them of any/all
+		possible properties to force them to be synchronized to their
+		current values.
 	*/
 	notifyAll: function () {
-		// we will try and trick our bindings into firing by simply
-		// triggering all of our registered observers since at this
-		// moment it is the only way to be sure we get all bindings
+		// we will try to trick our bindings into firing by simply
+		// triggering all of our registered observers, since at this
+		// moment that is the only way to be sure we get all bindings,
 		// not just our dispatch targets or owner
 		var observers = this._observers;
 		var handlers;
@@ -227,8 +231,8 @@ enyo.kind({
 
 	//*@protected
 	/**
-		This method is intended to fire only when the _data_ property is
-		arbitrarily set on the object-controller.
+		Fires only when the _data_ property is arbitrarily set on the
+		object controller.
 	*/
 	dataDidChange: enyo.observer(function () {
 		if (this._last) this.releaseData(this._last);
