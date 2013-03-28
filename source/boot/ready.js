@@ -1,7 +1,7 @@
 (function (scope) {
 	
 	// we need to register appropriately to know when
-	// the document is officially ready to ensure
+	// the document is officially ready, to ensure that
 	// client code is only going to execute at the
 	// appropriate time
 	
@@ -24,7 +24,7 @@
 	};
 	
 	init = function (event) {
-		// if we're interactive it should be safe to move
+		// if we're interactive, it should be safe to move
 		// forward because the content has been parsed
 		if ((ready = ("interactive" === doc.readyState))) {
 			if (!~["DOMContentLoaded", "readystatechange"].indexOf(event.type)) {
@@ -59,7 +59,7 @@
 		}
 	};
 	
-	// ok, lets hook this nonsense up
+	// ok, let's hook this up
 	add("DOMContentLoaded", init);
 	add("readystatechange", init);
 

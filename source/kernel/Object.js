@@ -101,10 +101,9 @@ enyo.kind({
 		_lang.js#enyo.findAndInstance_ for more information.
 
 		If a method exists of the form `{property}FindAndInstance`, it will
-		be used as the callback accepting two parameters, the constructor
-		(if it was found) and the instance (if it was found or created),
-		respectively. This allows for those methods to be overloaded by
-		subkinds.
+		be used as the callback, with two parameters accepted--the constructor
+		(if it was found) and the instance (if it was found or created). This
+		allows for those methods to be overloaded by subkinds.
 	*/
 	findAndInstance: function (property) {
 		// if there isn't a property, do nothing
