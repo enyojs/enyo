@@ -83,7 +83,7 @@ enyo.dispatcher = {
 			this.dispatchBubble(e, c);
 		}
 	},
-	//* Takes an Event.target and finds the corresponding Enyo control.
+	//* Takes an event target and finds the corresponding Enyo control.
 	findDispatchTarget: function(inNode) {
 		var t, n = inNode;
 		// FIXME: Mozilla: try/catch is here to squelch "Permission denied to access property xxx from a non-chrome context"
@@ -114,7 +114,7 @@ enyo.dispatcher = {
 	}
 };
 
-// called in the context of an event
+// Called in the context of an event
 enyo.iePreventDefault = function() {
 	try {
 		this.returnValue = false;
@@ -145,9 +145,9 @@ enyo.bubble = function(inEvent) {
 // Enyo event system.
 enyo.bubbler = "enyo.bubble(arguments[0])";
 
-// The code below helps make Enyo compatible with Google Packages Apps
-// Content Security Policy(http://developer.chrome.com/extensions/contentSecurityPolicy.html)
-// which, among other things forbids use of inline scripts.
+// The code below helps make Enyo compatible with Google Packaged Apps
+// Content Security Policy(http://developer.chrome.com/extensions/contentSecurityPolicy.html),
+// which, among other things, forbids the use of inline scripts.
 // We replace online scripting with equivalent means, leaving enyo.bubbler
 // for backward compatibility.
 (function() {
@@ -156,8 +156,8 @@ enyo.bubbler = "enyo.bubble(arguments[0])";
 	};
 
 	/**
-	 * Makes given events bubble on specified enyo contol
-	 */
+		Makes given events bubble on a specified Enyo control.
+	*/
 	enyo.makeBubble = function() {
 		var args = Array.prototype.slice.call(arguments, 0),
 			control = args.shift();
@@ -171,7 +171,8 @@ enyo.bubbler = "enyo.bubble(arguments[0])";
 		}
 	};
 	/**
-	 * Removes the event listening and bubbling caused from enyo.makeBubble, on a specific control
+		Removes the event listening and bubbling initiated by _enyo.makeBubble()_
+		on a specific control.
 	 */
 	enyo.unmakeBubble = function() {
 		var args = Array.prototype.slice.call(arguments, 0),

@@ -1,5 +1,5 @@
 /**
-	enyo.Drawer_ is a control that appears or disappears based on its _open_
+	_enyo.Drawer_ is a control that appears or disappears based on its _open_
 	property. By default, the drawer appears or disappears with a sliding
 	animation whose direction is determined by the _orient_ property.
 
@@ -18,7 +18,7 @@ enyo.kind({
 			or "h" for horizontal
 		*/
 		orient: "v",
-		//* If true, the opening/closing transition will be animated.
+		//* If true, the opening/closing transition will be animated
 		animated: true
 	},
 	//* @protected
