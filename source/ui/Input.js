@@ -113,17 +113,6 @@ enyo.kind({
 	clear: function() {
 		this.setValue("");
 	},
-	focus: function() {
-		if (this.hasNode()) {
-			this.node.focus();
-		}
-	},
-	//* Returns true if the Input is focused.
-	hasFocus: function() {
-		if (this.hasNode()) {
-			return document.activeElement === this.node;
-		}
-	},
 	// note: we disallow dragging of an input to allow text selection on all platforms
 	dragstart: function() {
 		return this.hasFocus();
