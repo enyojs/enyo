@@ -4,7 +4,7 @@
 	Other objects may observe or bind to its properties as if they belonged
 	to the underlying data object. This abstraction allows the underlying
 	data to be modified without the other objects' needing to rebind or be
-	aware of the change. It can be subclassed to deal with specific data
+	aware of the change. It may be extended to deal with specific data
 	object implementations and special needs.
 	
 	This particular controller can handle native data hashes or any
@@ -63,15 +63,15 @@ enyo.kind({
 	/**
 		Accepts the same parameters as the normal _set_ method, but returns
 		a truthy/falsy value to indicate its success.  This method is called
-		by the object controller's _set_ method to allow this portion to be
-		overloaded cleanly in cases where non-normative behavior is required.
+		by the object controller's _set_ method to allow for clean
+		overloading in cases where non-normative behavior is required.
 		
-		The default behavior is to check to see whether the _data_ property
+		By default, this method checks to see whether the _data_ property
 		exists and whether the property being set is a top-level property of
-		the object. If not, the method returns false. 
+		the object. If these conditions are not met, the method returns false. 
 		
-		Notification is handled by this method, allowing that behavior to be
-		overloaded as well. This method is responsible for determining the
+		Notifications are handled by this method, allowing that behavior to
+		be overloaded as well. This method is responsible for determining the
 		previous value and passing it to the notification method.
 	*/
 	setDataProperty: function (prop, value) {
@@ -99,14 +99,14 @@ enyo.kind({
 		Accepts the same parameters as the normal _get_ method, but returns
 		a truthy or explicit-boolean-false value to indicate its success.
 		This method is called by the object controller's _get_ method to
-		allow this portion to be overloaded cleanly in cases where
-		non-normative behavior is required.
+		allow for clean overloading cleanly in cases where non-normative
+		behavior is required.
 		
-		The default behavior is to check whether the _data_ property exists
+		By default, this method checks whether the _data_ property exists
 		and whether the requested property is a first-level property of the
-		object. If it is, the value is returned. The object controller's
-		default getter will only execute if this method explicitly returns
-		false.
+		object. If these conditions are met, the value is returned. The
+		object controller's default getter will only execute if this method
+		explicitly returns false.
 	*/
 	getDataProperty: function (prop) {
 		var data = this.get("data");
@@ -119,17 +119,16 @@ enyo.kind({
 	
 	//*@public
 	/**
-		Takes a string parameter and returns a boolean true|false
-		depending on whether or not the parameter is an attribute
-		of the data object. If no data is present, it will always return
-		false. If the object has its own _isAttribute_ method, it will
-		return the execute method. For more complex implementations,
-		overload this method.
+		Accepts a string parameter and returns a boolean true or false
+		depending on whether that parameter is an attribute of the data
+		object. Returns false if no data is present. If the object has
+		its own _isAttribute_ method, the executed method is returned.
+		For more complex implementations, overload this method.
 	*/
 	isAttribute: function (prop) {
 		var data = this.get("data");
 		// if the object exists and has its own isAttribute method
-		// use that otherwise use our default
+		// use that; otherwise, use our default
 		if (data) {
 			if ("function" === typeof data.isAttribute) {
 				return data.isAttribute(prop);
@@ -204,9 +203,9 @@ enyo.kind({
 	
 	//*@protected
 	/**
-		Attempts to find the correct target(s) and notify them of any/all
-		possible properties to force them to be synchronized to their
-		current values.
+		Attempts to find the correct targets and notify them of any/all
+		possible properties to forciby synchronize them to their current
+		values.
 	*/
 	notifyAll: function () {
 		// we will try to trick our bindings into firing by simply
