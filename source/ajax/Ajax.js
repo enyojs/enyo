@@ -101,7 +101,7 @@ enyo.kind({
 			} else {
 				xhr_headers["Content-Type"] = this.contentType;
 				if (body instanceof Object) {
-					if (this.contentType.indexOf("application/json") === 0) {
+					if (this.contentType.match(/^application\/json(;.*)?$/) !== null) {
 						body = JSON.stringify(body);
 					} else if (this.contentType === "application/x-www-form-urlencoded") {
 						body = enyo.Ajax.objectToQuery(body);
