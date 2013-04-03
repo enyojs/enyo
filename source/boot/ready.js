@@ -1,10 +1,10 @@
 (function (scope) {
-	
+
 	// we need to register appropriately to know when
 	// the document is officially ready, to ensure that
 	// client code is only going to execute at the
 	// appropriate time
-	
+
 	var doc = scope.document;
 	var queue = [];
 	var ready = ("complete" === doc.readyState);
@@ -13,16 +13,20 @@
 	var remove;
 	var add;
 	var flush;
-	
+
 	enyo.ready = function (fn, context) {
-		if (ready) run(fn, context);
-		else queue.push([fn, context]);
+		if (ready) {
+			run(fn, context);
+		}
+		else {
+			queue.push([fn, context]);
+		}
 	};
-	
+
 	run = function (fn, context) {
 		fn.call(context || enyo.global);
 	};
-	
+
 	init = function (event) {
 		// if we're interactive, it should be safe to move
 		// forward because the content has been parsed
@@ -38,19 +42,19 @@
 			flush();
 		}
 	};
-	
+
 	add = function (event, fn) {
 		var name = doc.addEventListener? "addEventListener": "attachEvent";
 		var on = name === "attachEvent"? "on": "";
 		doc[name](on + event, fn, false);
 	};
-	
+
 	remove = function (event, fn) {
 		var name = doc.addEventListener? "removeEventListener": "detachEvent";
 		var on = name === "detachEvent"? "on": "";
 		doc[name](on + event, fn, false);
 	};
-	
+
 	flush = function () {
 		if (ready && queue.length) {
 			while (queue.length) {
@@ -58,7 +62,7 @@
 			}
 		}
 	};
-	
+
 	// ok, let's hook this up
 	add("DOMContentLoaded", init);
 	add("readystatechange", init);

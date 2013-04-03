@@ -1,3 +1,4 @@
+/* global tests */
 enyo.kind({
 	name: "ControlPropsTest",
 	kind: enyo.TestSuite,

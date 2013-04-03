@@ -77,12 +77,14 @@ enyo.kind({
 	// test CORS (Cross-Origin Resource Sharing) by testing against youtube api
 	testCORS: function() {
 		this._testWebService({
-				url: "http://query.yahooapis.com/v1/public/yql/jonathan/weather/"},
-				{q: 'select * from weather.forecast where location=94025', format: "json"},
-				function(inValue) {
-					enyo.log(inValue);
-					return inValue && inValue.query && inValue.query.results && inValue.query.count > 0;
-		});
+				url: "http://query.yahooapis.com/v1/public/yql/jonathan/weather/"
+			}, {
+				q: 'select * from weather.forecast where location=94025',
+				format: "json"
+			}, function(inValue) {
+				enyo.log(inValue);
+				return inValue && inValue.query && inValue.query.results && inValue.query.count > 0;
+			});
 	},
 	testJsonp: function() {
 		this._testResponse({jsonp: true, format: "jsonp"}, function(inValue) {

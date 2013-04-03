@@ -26,6 +26,7 @@ enyo.logging = {
 	_log: function(inMethod, inArgs) {
 		// avoid trying to use console on IE instances where the object hasn't been
 		// created due to the developer tools being unopened
+		var console = window.console;
 		if (typeof console === "undefined") {
             return;
         }
@@ -48,6 +49,7 @@ enyo.logging = {
 		}
 	},
 	log: function(inMethod, inArgs) {
+		var console = window.console;
 		if (typeof console !== "undefined") {
 			if (this.shouldLog(inMethod)) {
 				this._log(inMethod, inArgs);

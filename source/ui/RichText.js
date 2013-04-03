@@ -36,7 +36,7 @@ enyo.kind({
 		],
 		//* Returns true if the platform has contenteditable attribute.
 		hasContentEditable: function() {
-			for (var i=0, t, m; t=enyo.RichText.osInfo[i]; i++) {
+			for (var i=0, t; (t=enyo.RichText.osInfo[i]); i++) {
 				if (enyo.platform[t.os] < t.version) {
 					return false;
 				}

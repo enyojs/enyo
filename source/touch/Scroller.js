@@ -114,7 +114,7 @@ enyo.kind({
 		],
 		//* Returns true if platform should have touch events.
 		hasTouchScrolling: function() {
-			for (var i=0, t, m; (t=this.osInfo[i]); i++) {
+			for (var i=0, t; (t=this.osInfo[i]); i++) {
 				if (enyo.platform[t.os]) {
 					return true;
 				}
@@ -129,7 +129,7 @@ enyo.kind({
 			browsers always have them).
 		*/
 		hasNativeScrolling: function() {
-			for (var i=0, t, m; (t=this.osInfo[i]); i++) {
+			for (var i=0, t; (t=this.osInfo[i]); i++) {
 				if (enyo.platform[t.os] < t.version) {
 					return false;
 				}

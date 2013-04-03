@@ -40,7 +40,9 @@ enyo.kind({
 	importProps: function (props) {
 		if (props) {
 			for (var key in props) {
-				if (!props.hasOwnProperty(key)) continue;
+				if (!props.hasOwnProperty(key)) {
+					continue;
+				}
 				this[key] = props[key];
 			}
 		}
@@ -107,7 +109,9 @@ enyo.kind({
 	*/
 	findAndInstance: function (property) {
 		// if there isn't a property, do nothing
-		if (!enyo.exists(property)) return;
+		if (!enyo.exists(property)) {
+			return;
+		}
 		var fn = this[property + "FindAndInstance"];
 		// go ahead and call the enyo-scoped version of this method
 		return enyo.findAndInstance.call(this, property, fn, this);
@@ -135,7 +139,7 @@ enyo.kind({
 		and the value to be set. If the value is different from the previous
 		value, any listeners/observers of the property will be automatically
 		notified of the change.
-		
+
 		If the property is a computed property, the intended value will be
 		passed to the computed property (but will not be returned).
 
@@ -152,7 +156,7 @@ enyo.kind({
 	/**
 		Binds a callback to this object. If the object has been destroyed, the
 		bound method will be aborted cleanly with no value returned.
-		
+
 		This method should generally be used instead of `enyo.bind` for running
 		code in the context of an instance of _enyo.Object_ or one of its
 		subkinds.
@@ -206,7 +210,9 @@ enyo.Object.publish = function(ctor, props) {
 		for (var n in pp) {
 			// need to make sure that even though a property is "published"
 			// it does not overwrite any computed properties
-			if (props[n] && enyo.isFunction(props[n]) && props[n].isProperty) continue;
+			if (props[n] && enyo.isFunction(props[n]) && props[n].isProperty) {
+				continue;
+			}
 			enyo.Object.addGetterSetter(n, pp[n], cp);
 		}
 	}
@@ -224,7 +230,9 @@ enyo.Object.overload = function (ctor, props) {
 	var name;
 	var prop;
 	for (name in props) {
-		if (!regex.test(name)) continue;
+		if (!regex.test(name)) {
+			continue;
+		}
 		prop = props[name];
 		if ("function" === typeof prop) {
 			if (proto[name]) {

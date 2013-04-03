@@ -5,7 +5,7 @@ enyo.kind({
 		var pass = false;
 		// should throw exception as this is an error
 		try {
-			var a = enyo.kind(
+			var A = enyo.kind(
 				{
 					name: "parentComponent",
 					components: [
@@ -16,7 +16,7 @@ enyo.kind({
 					]
 				}
 			);
-			new a({});
+			new A({});
 		} catch(e) {
 			pass = true;
 		}

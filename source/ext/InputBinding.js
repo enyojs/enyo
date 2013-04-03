@@ -2,31 +2,31 @@
 /**
 */
 enyo.kind({
-	
+
 	// ...........................
 	// PUBLIC PROPERTIES
-	
+
 	//*@public
 	name: "enyo.InputBinding",
-	
+
 	//*@public
 	kind: "enyo.Binding",
-	
+
 	//*@public
 	twoWay: true,
-	
+
 	// ...........................
 	// PROTECTED PROPERTIES
-	
+
 	// ...........................
 	// COMPUTED PROPERTIES
-	
+
 	// ...........................
 	// PUBLIC METHODS
-	
+
 	// ...........................
 	// PROTECTED METHODS
-	
+
 	//*@protected
 	transform: function (value, direction, binding) {
 		var source = binding.source || {};
@@ -34,9 +34,11 @@ enyo.kind({
 		var ph = source.placholder || target.placeholder || "";
 		if (!enyo.exists(value) || null === value || value.length === 0) {
 			return ph;
-		} else return value;
+		} else {
+			return value;
+		}
 	}
-	
+
 	// ...........................
 	// OBSERVERS
 

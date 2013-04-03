@@ -55,7 +55,7 @@ enyo.macroize = function(inText, inMap, inPattern) {
 	avoids the extra processing needed to find recursive use.
 */
 enyo.quickMacroize = function(inText, inMap, inPattern) {
-	var v, working, result = inText, pattern = inPattern || enyo.macroize.pattern;
+	var v, result = inText, pattern = inPattern || enyo.macroize.pattern;
 	var fn = function(macro, name) {
 		if (name in inMap) {
 			v = inMap[name];

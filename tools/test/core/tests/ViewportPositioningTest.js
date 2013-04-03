@@ -22,10 +22,10 @@ enyo.kind({
 		var k = new K();
 		k.renderInto(div);
 
-		var p = enyo.dom.calcNodePosition(k.hasNode()),
-			// Bottom and right require calculating viewport size
-			fromBottom = (document.body.parentNode.offsetHeight > enyo.dom.getWindowHeight() ? enyo.dom.getWindowHeight() - document.body.parentNode.scrollTop : document.body.parentNode.offsetHeight) - 20,
-			fromRight = (document.body.parentNode.offsetWidth > enyo.dom.getWindowWidth() ? enyo.dom.getWindowWidth() - document.body.parentNode.scrollLeft : document.body.parentNode.offsetWidth) - 20;
+		var p = enyo.dom.calcNodePosition(k.hasNode());
+		// Bottom and right require calculating viewport size
+		var fromBottom = (document.body.parentNode.offsetHeight > enyo.dom.getWindowHeight() ? enyo.dom.getWindowHeight() - document.body.parentNode.scrollTop : document.body.parentNode.offsetHeight) - 20;
+		var fromRight = (document.body.parentNode.offsetWidth > enyo.dom.getWindowWidth() ? enyo.dom.getWindowWidth() - document.body.parentNode.scrollLeft : document.body.parentNode.offsetWidth) - 20;
 		if (p.top !== 10) {
 			this.log('top failed with value: ' + p.top + ' (should be 10)');
 		}
@@ -48,10 +48,10 @@ enyo.kind({
 		// Now test measuring the element when a parent has a border
 		div.style.border = "1px solid transparent";
 		k.hasNode().style.border = "1px solid transparent";
-		p = enyo.dom.calcNodePosition(k.hasNode()),
-			// We don't count the right border on the element itself because that is taken into account automatically by the element's width measurement
-			fromBottom -= 3,
-			fromRight -= 3;
+		p = enyo.dom.calcNodePosition(k.hasNode());
+		// We don't count the right border on the element itself because that is taken into account automatically by the element's width measurement
+		fromBottom -= 3,
+		fromRight -= 3;
 		if (p.top !== 11) {
 			this.log('top with border failed with value: ' + p.top + ' (should be 11)');
 		}
@@ -72,10 +72,10 @@ enyo.kind({
 		}
 
 		// And finally, test positioning relative to another node
-		p = enyo.dom.calcNodePosition(k.hasNode(), div),
-			// Reset to div size - node height
-			fromBottom = div.offsetHeight - 22,
-			fromRight = div.offsetWidth - 22;
+		p = enyo.dom.calcNodePosition(k.hasNode(), div);
+		// Reset to div size - node height
+		fromBottom = div.offsetHeight - 22,
+		fromRight = div.offsetWidth - 22;
 		if (p.top !== 10) {
 			this.log('top relative to div failed with value: ' + p.top + ' (should be 10)');
 		}

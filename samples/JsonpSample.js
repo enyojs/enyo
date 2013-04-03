@@ -10,9 +10,9 @@ enyo.kind({
 		]},
 		{kind: "onyx.TextArea", fit:true, classes:"jsonp-sample-source"}
 	],
-	fetch: function() {    
+	fetch: function() {
 		var jsonp = new enyo.JsonpRequest({
-			url: "http://query.yahooapis.com/v1/public/yql?format=json", 
+			url: "http://query.yahooapis.com/v1/public/yql?format=json",
 			callbackName: "callback"
 		});
 		// send parameters the remote service using the 'go()' method

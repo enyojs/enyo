@@ -1,5 +1,5 @@
 (function () {
-	
+
 	//*@public
 	/**
 		The possible/configurable options that may be passed in
@@ -7,7 +7,7 @@
 		function as a computed property of an object.
 	*/
 	var defaults = {
-		
+
 		//*@public
 		/**
 			If a computed property is marked as volatile, it will
@@ -16,7 +16,7 @@
 			is treated as _cached_, and _volatile_ is ignored.
 		*/
 		volatile: true,
-		
+
 		//*@public
 		/**
 			If a computed property is marked as cached, its value will be
@@ -24,12 +24,12 @@
 			has been flagged as being changed prior to the request. If
 			there are no dependencies, the value will only ever be computed
 			once.
-			
+
 			If this setting is true, it overrides	the value of the _volatile_
 			property.
 		*/
 		cached: false,
-		
+
 		//*@public
 		/**
 			Most cacheable computed properties will not need to be evaluated
@@ -38,14 +38,14 @@
 			instantiated by setting this flag to false.
 		*/
 		defer: true,
-		
+
 		//*@protected
 		value: null,
-		
+
 		//*@protected
 		dirty: 0
 	};
-	
+
 	//*@public
 	/**
 		Wrapping a class method in _enyo.computed_ allows the method to be
@@ -61,7 +61,7 @@
 		Computed properties are _volatile_ by default and will be evaluated
 		on each request unless marked otherwise.
 	*/
-	var computed = enyo.computed = function (fn /*, arguments */) {
+	enyo.computed = function (fn /*, arguments */) {
 		var deps = enyo.toArray(arguments).slice(1);
 		var config;
 		var properties;
@@ -71,39 +71,47 @@
 		properties = fn.properties || (fn.properties = []);
 		config = fn.config || enyo.clone(defaults);
 		enyo.forEach(deps, function (dep) {
-			if ("string" === typeof dep) properties.push(dep);
+			if ("string" === typeof dep) {
+				properties.push(dep);
+			}
 			else if ("object" === typeof dep) {
 				// the assumption here is it must be a configuration
 				// hash
 				enyo.mixin(config, dep);
 			}
 		});
-		if (false === config.volatile) config.cached = true;
-		else if (true === config.cached) config.volatile = false;
+		if (false === config.volatile) {
+			config.cached = true;
+		}
+		else if (true === config.cached) {
+			config.volatile = false;
+		}
 		fn.config = config;
 		fn.isProperty = true;
 		config.properties = properties;
 		return fn;
 	};
-	
+
 	//*@protected
 	var _is_computed = function (fn) {
 		return fn && "function" === typeof fn && true === fn.isProperty;
 	};
-	
+
 	//*@protected
 	var _add_dependent = function (proto, property, dependent) {
 		var $map = proto._computed_map;
-		if (!$map[dependent]) $map[dependent] = [];
+		if (!$map[dependent]) {
+			$map[dependent] = [];
+		}
 		$map[dependent].push(property);
 	};
-	
+
 	//*@protected
 	var _add_cacheable = function (proto, property) {
 		var $cacheable = proto._computed_cacheable;
 		$cacheable.push(property);
 	};
-	
+
 	//*@protected
 	/**
 		Adds an entry in the computed properties hash of the object so that
@@ -120,15 +128,21 @@
 		var $config = $computed[property] = fn.config;
 		// if the property is configured as cacheable and not deferred
 		// we add it to a special object to speed up initialization
-		if ($config.cached && !$config.defer) _add_cacheable(proto, property);
+		if ($config.cached && !$config.defer) {
+			_add_cacheable(proto, property);
+		}
 		// for every dependency we need to add it to the object
-		enyo.forEach(fn.properties, function (dep) {_add_dependent(proto, property, dep)});
+		enyo.forEach(fn.properties, function (dep) {
+			_add_dependent(proto, property, dep);
+		});
 	};
-	
+
 	//*@protected
 	var _find_computed = function (proto, props, kind) {
 		// no need to bother if this does not support computed properties
-		if (!proto._supports_computed) return;
+		if (!proto._supports_computed) {
+			return;
+		}
 		// otherwise we know it does and we need to make sure it has some
 		// intial storage properties
 		proto._computed = kind? enyo.clone(proto._computed || {}): proto._computed || {};
@@ -144,7 +158,7 @@
 			}
 		}
 	};
-	
+
 	//*@protected
 	/**
 		Called by the overloaded getter for objects using the mixin support
@@ -165,10 +179,12 @@
 				$config.value = fn.call(this);
 				$config.defer = null;
 				return $config.value;
-			} else return $config.value;
+			} else {
+				return $config.value;
+			}
 		}
 	};
-	
+
 	//*@protected
 	/**
 		We pass the requested value into the computed property, which
@@ -186,7 +202,7 @@
 		// flush the queue immediately
 		_flush_queue.call(this);
 	};
-	
+
 	//*@protected
 	var _update_computed = function (prop) {
 		var $computed = this._computed;
@@ -201,16 +217,18 @@
 			this._computed_queue.push(prop);
 		}
 	};
-	
+
 	//*@protected
 	var _flush_queue = function () {
 		var $queue = this._computed_queue;
-		if (!$queue.length) return;
+		if (!$queue.length) {
+			return;
+		}
 		do {
 			this.notifyObservers($queue.shift());
 		} while ($queue.length);
 	};
-	
+
 	//*@protected
 	/**
 		Called on every object, this method simply detects whether the
@@ -218,13 +236,16 @@
 		cacheables that don't have _defer_ set to true.
 	*/
 	var _post_constructor = function () {
-		if (!this._supports_computed) return;
+		if (!this._supports_computed) {
+			return;
+		}
 		// look for the special property created by the feature hook
 		// for any cacheable non-deferred computed properties if
 		// the kind even supports computed properties
 		var $computed = this._computed_cacheable;
 		var prop;
 		var idx;
+		var len;
 		// for each property that needs updating we arbitrarily flag
 		// it as dirty and force it to be evaluated and cached
 		for (idx = 0, len = $computed.length; idx < len; ++idx) {
@@ -235,7 +256,7 @@
 			_get_computed.call(this, prop);
 		}
 	};
-	
+
 	//*@protected
 	/**
 		Strictly for internal use, as the assumption is the structure of
@@ -247,56 +268,62 @@
 		var copy = {};
 		var prop;
 		for (prop in $computed) {
-			if (!$computed.hasOwnProperty(prop)) continue;
-			if ("object" === typeof $computed[prop]
-				&& null !== $computed[prop]
-				&& !recursing) copy[prop] = _computed_clone($computed[prop], true);
-			else copy[prop] = $computed[prop];
+			if (!$computed.hasOwnProperty(prop)) {
+				continue;
+			}
+			if ("object" === typeof $computed[prop]	&& null !== $computed[prop]	&& !recursing) {
+				copy[prop] = _computed_clone($computed[prop], true);
+			}
+			else {
+				copy[prop] = $computed[prop];
+			}
 		}
 		return copy;
 	};
-	
+
 	//*@protected
 	/**
 		Hooks the kind features to automate handling of computations when
 		the kind is created.
 	*/
-	enyo.kind.features.push(function (ctor, props) {_find_computed(ctor.prototype, props, true)});
-	
+	enyo.kind.features.push(function (ctor, props) {
+		_find_computed(ctor.prototype, props, true);
+	});
+
 	//*@protected
 	/**
 		Hooks the kind post-initialization routines to make sure we can
 		do setup for our cached computed properties that need it.
 	*/
 	enyo.kind.postConstructors.push(_post_constructor);
-	
+
 	//*@protected
 	/**
 		Adds a special handler for mixins to be aware of computed properties.
 	*/
 	enyo.mixins.features.push(_find_computed);
-	
+
 	//*@protected
 	enyo.createMixin({
-		
+
 		// ...........................
 		// PUBLIC PROPERTIES
-		
+
 		//*@public
 		name: "enyo.ComputedSupport",
-	
+
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		//*@protected
 		_supports_computed: true,
-		
+
 		// ...........................
 		// COMPUTED PROPERTIES
-	
+
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		//*@public
 		/**
 			Overloads the getter so that it can retrieve computed
@@ -305,9 +332,11 @@
 		get: function (path) {
 			if (_is_computed(this[path])) {
 				return _get_computed.call(this, path);
-			} else return this.inherited(arguments);
+			} else {
+				return this.inherited(arguments);
+			}
 		},
-		
+
 		//*@public
 		/**
 			Overloads the setter so that it can attempt to call the
@@ -317,9 +346,11 @@
 		set: function (path, value) {
 			if (_is_computed(this[path])) {
 				return _set_computed.call(this, path, value);
-			} else return this.inherited(arguments);
+			} else {
+				return this.inherited(arguments);
+			}
 		},
-		
+
 		//*@public
 		/**
 			Overloads the observer support method to hook when notifications
@@ -347,7 +378,7 @@
 			// if there was anything queued lets flush it now
 			_flush_queue.call(this);
 		},
-	
+
 		// ...........................
 		// PROTECTED METHODS
 
@@ -360,7 +391,7 @@
 			this._computed_queue = [];
 			return this.inherited(arguments);
 		},
-		
+
 		//*@protected
 		destroy: function () {
 			var $computed = this._computed;
@@ -375,10 +406,10 @@
 				delete $computed[prop];
 			}
 		}
-	
+
 		// ...........................
 		// OBSERVERS
-		
+
 	});
 
 }());

@@ -57,7 +57,7 @@ enyo.kind({
 			to fill the available space. This only has meaning when the control
 			is being used as a child of a control with a version of FittableLayout
 			as its layoutKind.
-			
+
 			TODO: We would like to be able to test for the existence of the fit
 			property without setting a default (of null) since it is a boolean
 			flag. This is a temporary fix.
@@ -92,7 +92,7 @@ enyo.kind({
 		this.showingChanged();
 		// Notes:
 		// - 'classes' does not reflect the complete set of classes on an object; the complete set is in
-		//	 this.attributes.class. The '*Class' apis affect this.attributes.class.
+		//   this.attributes.class. The '*Class' apis affect this.attributes.class.
 		// - use addClass instead of setClasses here, by convention 'classes' is reserved for instance objects
 		// - inheritors should 'addClass' to add classes
 		// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
@@ -128,7 +128,7 @@ enyo.kind({
 		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
 			return true;
 		}
-	  
+
 		return this.inherited(arguments);
 	},
 	classesChanged: function(inOld) {
@@ -407,8 +407,9 @@ enyo.kind({
 		when -webkit-overflow-scrolling is used (ENYO-1396)
 	*/
 	setupOverflowScrolling: function() {
-		if(enyo.platform.android || enyo.platform.androidChrome || enyo.platform.blackberry)
+		if(enyo.platform.android || enyo.platform.androidChrome || enyo.platform.blackberry) {
 			return;
+		}
 		document.getElementsByTagName("body")[0].className += " webkitOverflowScrolling";
 	},
 	//
@@ -480,6 +481,7 @@ enyo.kind({
 		Chrome Packaged Apps or Windows 8.
 	*/
 	write: function() {
+		/* jshint evil:true */
 		if (this.fit) {
 			this.setupBodyFitting();
 		}
@@ -594,12 +596,12 @@ enyo.kind({
 			t += n.offsetTop  - (n.offsetParent ? n.offsetParent.scrollTop	: 0);
 			n = n.offsetParent;
 		}
-		
+
 		return {
 			top		: t,
 			left	: l,
 			bottom	: document.body.offsetHeight - t - h,
-			right	: document.body.offsetWidth	 - l - w,
+			right   : document.body.offsetWidth  - l - w,
 			height	: h,
 			width	: w
 		};
@@ -627,7 +629,9 @@ enyo.kind({
 		return this.getAttribute("src");
 	},
 	srcChanged: function() {
-	  if (!this.src) return;
+		if (!this.src) {
+			return;
+		}
 		this.setAttribute("src", enyo.path.rewrite(this.src));
 	},
 	attributesChanged: function() {
@@ -810,16 +814,17 @@ enyo.kind({
 		// 'showing' specifically means domStyles.display !== 'none'.
 		// 'showing' does not imply the node is actually visible or even rendered in DOM,
 		// it simply reflects this state of this specific property as a convenience.
-		return this.showing = (this.domStyles.display != "none");
+		this.showing = (this.domStyles.display != "none");
+		return this.showing;
 	},
 	//* Return true if this and all parents are showing
 	getAbsoluteShowing: function() {
 		var b = this.getBounds();
-		
+
 		if(this.getShowing() === false || (b.height === 0 && b.width === 0)) {
 			return false;
 		}
-		
+
 		if(this.parent && this.parent.getAbsoluteShowing) {
 			return this.parent.getAbsoluteShowing();
 		} else {
@@ -874,7 +879,7 @@ enyo.kind({
 			for (n in inStyleHash) {
 				v = inStyleHash[n];
 				if ((v !== null) && (v !== undefined) && (v !== "")) {
-					text +=	 n + ':' + v + ';';
+					text += n + ':' + v + ';';
 				}
 			}
 			return text;

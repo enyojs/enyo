@@ -228,7 +228,7 @@ enyo.kind({
 	// Set scroll x value to the current computed style
 	updateX: function() {
 		var x = window.getComputedStyle(this.$.client.node,null).getPropertyValue(enyo.dom.getCssTransformProp()).split('(')[1];
-		x = (x == undefined) ? 0 : x.split(')')[0].split(',')[4];
+		x = (x === undefined) ? 0 : x.split(')')[0].split(',')[4];
 		if(-1*parseFloat(x) === this.scrollLeft) {
 			return false;
 		}
@@ -238,7 +238,7 @@ enyo.kind({
 	// Set scroll y value to the current computed style
 	updateY: function() {
 		var y = window.getComputedStyle(this.$.client.node,null).getPropertyValue(enyo.dom.getCssTransformProp()).split('(')[1];
-		y = (y == undefined) ? 0 : y.split(')')[0].split(',')[5];
+		y = (y === undefined) ? 0 : y.split(')')[0].split(',')[5];
 		if(-1*parseFloat(y) === this.scrollTop) {
 			return false;
 		}
@@ -255,7 +255,9 @@ enyo.kind({
 	down: function(inSender, inEvent) {
 		var _this = this;
 		if (this.isScrolling() && !this.isOverscrolling()) {
-			this.stopTimeout = setTimeout(function() { _this.stop(); }, this.stopTimeoutMS);
+			this.stopTimeout = setTimeout(function() {
+				_this.stop();
+			}, this.stopTimeoutMS);
 			return true;
 		}
 	},
@@ -509,8 +511,7 @@ enyo.kind({
 	},
 	// Apply the given transition to this.$.client
 	applyTransition: function(which) {
-		var transform = this.translation+": "+this.transitions[which];
-		this.$.client.applyStyle("-webkit-transition",this.transitions[which]);
+		this.$.client.applyStyle("-webkit-transition", this.transitions[which]);
 	},
 	// Turn off CSS transition and clear this.scrollInterval
 	stopScrolling: function() {

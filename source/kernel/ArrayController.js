@@ -9,23 +9,23 @@
 	datasets.
 */
 enyo.kind({
-	
+
 	// ...........................
 	// PUBLIC PROPERTIES
-	
+
 	//*@public
 	name: "enyo.ArrayController",
-	
+
 	//*@public
 	kind: "enyo.Controller",
-	
+
 	//*@public
 	/**
 		The current length of the array. Setting the length directly
 		will have undesirable effects.
 	*/
 	length: 0,
-   
+
 	//*@public
 	/**
 		Computed property representing the array structure of the
@@ -33,26 +33,30 @@ enyo.kind({
 		not modify the array structure of this controller.
 	*/
 	data: enyo.computed(function (data) {
-		if (data) return this.reset(data);
+		if (data) {
+			return this.reset(data);
+		}
 		var store = [];
 		var idx = 0;
 		var len = this.length;
-		for (; idx < len; ++idx) store[idx] = this[idx];
+		for (; idx < len; ++idx) {
+			store[idx] = this[idx];
+		}
 		return store;
 	}, "length", {cached: true}),
-   
+
 	// ...........................
 	// PROTECTED PROPERTIES
-	
+
 	//*@protected
 	_init_values: null,
-	
+
 	// ...........................
 	// PUBLIC METHODS
-	
+
 	// ...........................
 	// ECMAScript 5 API METHODS
-	
+
 	//*@public
 	push: function (/* _values_ */) {
 		var values = arguments;
@@ -60,7 +64,6 @@ enyo.kind({
 		var num = values.length + pos;
 		var idx = 0;
 		var changeset = {};
-		var prev = this.get("data");
 		var len = this.length;
 		if (num) {
 			for (; pos < num; ++pos, ++idx) {
@@ -73,7 +76,7 @@ enyo.kind({
 		}
 		return 0;
 	},
-	
+
 	//*@public
 	pop: function () {
 		if (this.length) {
@@ -91,7 +94,7 @@ enyo.kind({
 			return val;
 		}
 	},
-	
+
 	//*@public
 	shift: function () {
 		if (this.length) {
@@ -102,7 +105,9 @@ enyo.kind({
 			// unfortunately, we have to reindex the entire dataset,
 			// but even for large ones, this is a generic reassignment
 			// with little overhead
-			for (; idx < len; ++idx) this[idx-1] = this[idx];
+			for (; idx < len; ++idx) {
+				this[idx-1] = this[idx];
+			}
 			// delete the reference to the previous last element
 			delete this[len-1];
 			// update the length
@@ -114,7 +119,7 @@ enyo.kind({
 			return val;
 		}
 	},
-	
+
 	//*@public
 	unshift: function (/* _values_ */) {
 		if (arguments.length) {
@@ -129,7 +134,9 @@ enyo.kind({
 			// unshifting, we can do this in a single pass. we start
 			// from the end so we don't have to copy twice for every
 			// element in the dataset.
-			for (; nix >= pos; --nix, --idx) this[nix] = this[idx];
+			for (; nix >= pos; --nix, --idx) {
+				this[nix] = this[idx];
+			}
 			// now we start from the beginning since we should have just
 			// enough space to add these new elements
 			for (idx = 0; idx < pos; ++idx) {
@@ -142,17 +149,17 @@ enyo.kind({
 			return this.length;
 		}
 	},
-	
+
 	//*@public
 	indexOf: function (value, pos) {
 		return enyo.indexOf(value, this.get("data"), pos);
 	},
-	
+
 	//*@public
 	lastIndexOf: function (value, pos) {
 		return enyo.lastIndexOf(value, this.get("data"), pos);
 	},
-	
+
 	//*@public
 	splice: function (index, many /* _values_ */) {
 		var elements = enyo.toArray(arguments).slice(2);
@@ -166,7 +173,6 @@ enyo.kind({
 		var count;
 		var range;
 		var diff;
-		var num;
 		index = index < 0? 0: index >= len? len: index;
 		many = many && !isNaN(many) && many + index <= len? many: 0;
 		if (many) {
@@ -189,7 +195,9 @@ enyo.kind({
 		if (elen && elen > many) {
 			diff = elen - many;
 			pos = max;
-			for (; pos >= index && pos < len; --pos) this[pos+diff] = this[pos];
+			for (; pos >= index && pos < len; --pos) {
+				this[pos+diff] = this[pos];
+			}
 			this.length += diff;
 		} else {
 			diff = many - (elen? elen: 0);
@@ -200,7 +208,9 @@ enyo.kind({
 				changeset.changed.len++;
 			}
 			idx = this.length -= diff;
-			for (; idx < len; ++idx) delete this[idx];
+			for (; idx < len; ++idx) {
+				delete this[idx];
+			}
 		}
 		if (elen) {
 			pos = 0;
@@ -218,12 +228,14 @@ enyo.kind({
 				}
 			}
 		}
-		
+
 		// we have to update the length if it changed to notify observers/bindings
 		// to data that it may have been updated or bindings to data will still
 		// have the cached dataset
-		if (len !== this.length) this.notifyObservers("length", len, this.length);
-		
+		if (len !== this.length) {
+			this.notifyObservers("length", len, this.length);
+		}
+
 		if (changeset.removed.len) {
 			delete changeset.removed.len;
 			this.dispatchBubble("didremove", {values: changeset.removed}, this);
@@ -238,34 +250,34 @@ enyo.kind({
 		}
 		return ret;
 	},
-	
+
 	//*@public
 	join: function (separator) {
 		this.get("data").join(separator);
 	},
-	
+
 	//*@public
 	map: function (fn, context) {
 		return enyo.map(this.get("data"), fn, context);
 	},
-	
+
 	//*@public
 	filter: function (fn, context) {
 		return enyo.filter(this.get("data"), fn, context);
 	},
-	
+
 	// ...........................
 	// CUSTOM API
-	
+
 	//*@public
 	add: function (value, at) {
-		var value = value && ("length" in value)? value: [value];
+		value = value && ("length" in value)? value: [value];
 		var len = this.length;
 		var idx = at && !isNaN(at) && at >= 0 && at < len? at: len;
 		var args = [idx, 0].concat(value);
 		this.splice.apply(this, args);
 	},
-	
+
 	//*@public
 	remove: function (value, index) {
 		var changeset;
@@ -280,7 +292,9 @@ enyo.kind({
 			this.stopNotifications(true);
 			for (; idx < len; ++idx) {
 				index = this.indexOf(value[idx]);
-				if (index < start) start = index;
+				if (index < start) {
+					start = index;
+				}
 				changeset.removed[idx] = value[idx];
 				this.remove(value[idx], index);
 			}
@@ -295,10 +309,12 @@ enyo.kind({
 			this.dispatchBubble("didchange", {values: changeset.changed}, this);
 		} else {
 			idx = !isNaN(index)? index: this.indexOf(value);
-			if (!!~idx) this.splice(idx, 1);
+			if (!!~idx) {
+				this.splice(idx, 1);
+			}
 		}
 	},
-	
+
 	//*@public
 	reset: function (values) {
 		this.silence();
@@ -312,7 +328,7 @@ enyo.kind({
 		this.startNotifications(true);
 		this.dispatchBubble("didreset", {values: this}, this);
 	},
-	
+
 	swap: function (index, to) {
 		var changeset = {};
 		var from = this[index];
@@ -321,7 +337,7 @@ enyo.kind({
 		changeset[to] = this[to] = from;
 		this.dispatchBubble("didchange", {values: changeset}, this);
 	},
-	
+
 	//*@public
 	move: function (index, to) {
 		var val;
@@ -332,7 +348,9 @@ enyo.kind({
 		// same for the target index
 		to = to < 0? 0: to >= len? max: to;
 		// if they are the same, there's nothing to do
-		if (index === to) return;
+		if (index === to) {
+			return;
+		}
 		// capture the value at index so we can set the new
 		// index to the appropriate value
 		val = this[index];
@@ -347,10 +365,14 @@ enyo.kind({
 		// if the index is the top, we don't want to do extra
 		// calculations or indexing on this step, so just
 		// pop the value
-		if (index === max) this.pop();
+		if (index === max) {
+			this.pop();
+		}
 		// unfortunately, we need to splice the value out of the
 		// dataset before reinserting it at the appropriate spot
-		else this.splice(index, 1);
+		else {
+			this.splice(index, 1);
+		}
 		// we turn events and notifications back on here so that
 		// they can produce the final changeset appropriately
 		this.unsilence();
@@ -358,7 +380,7 @@ enyo.kind({
 		// re-add the value at the correct index
 		this.splice(to, 0, val);
 	},
-	
+
 	//*@public
 	contains: function (value) {
 		return !!~enyo.indexOf(this.get("data"), value)? true: false;
@@ -382,11 +404,13 @@ enyo.kind({
 		var val;
 		for (; idx < len; ++idx) {
 			val = this.at(idx);
-			if (fn.call(context || this, val)) return val;
+			if (fn.call(context || this, val)) {
+				return val;
+			}
 		}
 		return false;
 	},
-	
+
 	//*@public
 	/**
 		Because the controller cannot detect reassignment to its indices
@@ -394,7 +418,7 @@ enyo.kind({
 		and call this method once when you are finished--if the changes
 		need to be acknowledged in order for notifications and events to
 		be sent. Otherwise, there is no need to call the method.
-		
+
 		There are two ways to call this method--without any parameters, or
 		with an array (or a hash whose keys will be used as an array) of
 		the indices that have changed. When called without parameters, it
@@ -405,7 +429,7 @@ enyo.kind({
 		of the indices that have changed and pass them to this method so it
 		can simply update its cache and notify observers and listeners of
 		the changes to those indices.
-		
+
 		It is important to note that, when using native JavaScript objects,
 		the reference is shared. If a property on the hash is directly set
 		and this method is called, it will be impossible to detect changes
@@ -426,8 +450,11 @@ enyo.kind({
 		var dataset;
 		var val;
 		if (changed) {
-			if (changed instanceof Array) indices = changed.slice();
-			else indices = enyo.keys(changed);
+			if (changed instanceof Array) {
+				indices = changed.slice();
+			} else {
+				indices = enyo.keys(changed);
+			}
 		} else {
 			indices = [];
 			len = this.length;
@@ -440,22 +467,24 @@ enyo.kind({
 				}
 			}
 		}
-		if (!indices.length) return;
+		if (!indices.length) {
+			return;
+		}
 		for (len = indices.length; pos < len; ++pos) {
 			idx = indices[pos];
 			changeset[idx] = this[idx];
 		}
 		this.dispatchBubble("didchange", {values: changeset}, this);
 	},
-	
+
 	//*@public
 	comparator: function (left, right) {
 		return left === right;
 	},
-	
+
 	// ...........................
 	// PROTECTED METHODS
-	 
+
 	//*@protected
 	create: function () {
 		this.inherited(arguments);
@@ -466,7 +495,7 @@ enyo.kind({
 			this._init_values = null;
 		}
 	},
-	
+
 	//*@protected
 	constructor: function () {
 		this.inherited(arguments);
@@ -477,7 +506,9 @@ enyo.kind({
 			var idx = 0;
 			var len = arguments.length;
 			for (; idx < len; ++idx) {
-				if (arguments[idx] instanceof Array) init = init.concat(arguments[idx]);
+				if (arguments[idx] instanceof Array) {
+					init = init.concat(arguments[idx]);
+				}
 			}
 			this._init_values = init;
 		}

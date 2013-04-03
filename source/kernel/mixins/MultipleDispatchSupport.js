@@ -8,29 +8,29 @@
 	of the kind, its _owner_ will automatically be set.
 */
 enyo.createMixin({
-	
+
 	// ...........................
 	// PUBLIC PROPERTIES
-	
+
 	//*@public
 	name: "enyo.MultipleDispatchSupport",
-	
+
 	// ...........................
 	// PROTECTED PROPERTIES
-	
+
 	//*@protected
 	_supports_multiple_dispatch: true,
-	
+
 	//*@protected
 	_dispatch_targets: null,
-	
+
 	//*@protected
 	/**
 		A boolean flag used internally to communicate how to
 		handle requests to bubble events
 	*/
 	_default_dispatch: false,
-	
+
 	//*@protected
 	/**
 		Controllers overload the event API and handle bubbling differently.
@@ -38,10 +38,10 @@ enyo.createMixin({
 		_owner_ under certain circumstances.
 	*/
 	_default_target: null,
-	
+
 	// ...........................
 	// COMPUTED PROPERTIES
-	
+
 	//*@protected
 	/**
 		Overloads the bubble target.
@@ -50,12 +50,14 @@ enyo.createMixin({
 		// if we have a valid dispatch target and default dispatching enabled,
 		// we go head and return that object; otherwise, nothing, so it will
 		// not propagate an event
-		if (this._default_target && this._default_dispatch) return this._default_target;
+		if (this._default_target && this._default_dispatch) {
+			return this._default_target;
+		}
 	}, "_default_target", "_default_dispatch", {cached: true}),
-	
+
 	// ...........................
 	// PUBLIC METHODS
-	
+
 	//*@public
 	/**
 		Sets as dispatch target an instance of _enyo.Component_ or a subkind
@@ -71,22 +73,24 @@ enyo.createMixin({
 			$dist.push(target);
 		}
 	},
-	
+
 	//*@public
 	/**
-		 Accepts an instance of a registered listener on this object as a
-		 parameter; if the passed-in listener is present the active dispatch
-		 targets, it is then removed.  
+		Accepts an instance of a registered listener on this object as a
+		parameter; if the passed-in listener is present the active dispatch
+		targets, it is then removed.
 	*/
 	removeDispatchTarget: function (target) {
 		var $dist = this._dispatch_targets;
 		var idx = $dist.indexOf(target);
-		if (-1 !== idx) $dist.splice(idx, 1);
+		if (-1 !== idx) {
+			$dist.splice(idx, 1);
+		}
 	},
-	
+
 	// ...........................
 	// PROTECTED METHODS
-	
+
 	//*@protected
 	/**
 		When the _owner_ changes, we have to check our state to make
@@ -106,33 +110,35 @@ enyo.createMixin({
 			this.set("_default_target", null);
 		}
 	},
-	
+
 	//*@protected
 	dispatchFrom: function (sender, event) {
 		if (event.dispatchedByController) {
-			if (event.dispatchController === this) return true;
+			if (event.dispatchController === this) {
+				return true;
+			}
 		} else if (sender === this) {
 			event.dispatchedByController = true;
 			event.dispatchController = this;
 		}
 		return false;
 	},
-	
+
 	//*@protected
 	bubbleUp: function (name, event, sender) {
 		var targets;
-		
+
 		// TODO: for now, this is solving a problem that is not obvious
 		// whether or not this change will make a difference for
 		// solely owned controllers this can potentially cause top
 		// level application-instances to receive the same bubbled event
 		// twice if it is not explicitly handled and has a truthy value
 		// returned somewhere to stop propagation
-		
+
 		if (this._default_dispatch) {
 			this.inherited(arguments);
 		}
-		
+
 		targets = this._dispatch_targets;
 		enyo.forEach(enyo.clone(targets), function (target) {
 			if (target) {
@@ -144,13 +150,15 @@ enyo.createMixin({
 			}
 		}, this);
 	},
-	
+
 	//*@protected
 	dispatchEvent: function (name, event, sender) {
-		if (this.dispatchFrom(sender, event)) return false;
+		if (this.dispatchFrom(sender, event)) {
+			return false;
+		}
 		return this.inherited(arguments);
 	},
-	
+
 	//*@protected
 	bubbleDelegation: function (delegate, prop, name, event, sender) {
 		if (this._default_dispatch) {
@@ -167,12 +175,12 @@ enyo.createMixin({
 			}
 		});
 	},
-	
+
 	//*@protected
 	create: function () {
 		this._dispatch_targets = [];
 	}
-	
+
 	// ...........................
 	// OBSERVERS
 

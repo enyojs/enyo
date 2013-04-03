@@ -30,19 +30,6 @@
 		enyo.gesture.events = {};
 	}
 
-	var gestureNormalize = function(inType, inEvent) {
-		var e = enyo.clone(inEvent);
-		return enyo.mixin(e, {
-			pageX: inEvent.translationX || 0,
-			pageY: inEvent.translationY || 0,
-			// rad -> deg
-			rotation: (inEvent.rotation * (180 / Math.PI)) || 0,
-			type: inType,
-			srcEvent: inEvent,
-			preventDefault: gesture.preventDefault,
-			disablePrevention: gesture.disablePrevention
-		});
-	};
 	var makeEvent = function(inEvent) {
 		var e = enyo.clone(inEvent);
 		e.srcEvent = inEvent;

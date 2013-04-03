@@ -7,13 +7,13 @@
 		property support and observer method support mixins.
 	*/
 	enyo.createMixin({
-	
+
 		// ...........................
 		// PUBLIC PROPERTIES
-	
+
 		//*@public
 		name: "enyo.BindingSupport",
-	
+
 		//*@public
 		/**
 			While binding kind may be overloaded on a per-binding basis
@@ -21,39 +21,39 @@
 			bindings, it may also be set here.
 		*/
 		defaultBindingKind: "enyo.Binding",
-	
+
 		//*@public
 		/**
 			An array of declared configurations for bindings that
 			will be created on object instantiation.
 		*/
 		bindings: null,
-	
+
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		//*@protected
 		_supports_bindings: true,
-		
+
 		//*@protected
 		_bindings_from_observers: null,
-	
+
 		// ...........................
 		// COMPUTED PROPERTIES
-	
+
 		//*@protected
 		_binding_constructor: enyo.computed(function () {
 			return enyo.getPath(this.defaultBindingKind);
 		}, {cached: true}),
-	
+
 		// ...........................
 		// PUBLIC METHODS
-	
+
 		//*@public
 		/**
 			Accepts any number of hashes to be used to create a binding whose
 			owner is this object by default.
-			
+
 			Returns a reference to the newly created binding and also adds the
 			binding to this object's _bindings_ array.
 
@@ -68,40 +68,50 @@
 			var properties = {};
 			var bindings = this.bindings;
 			var def = this.get("_binding_constructor");
-			var ctor;
+			var Ctor;
 			var kind;
-			for (; idx < len; ++idx) enyo.mixin(properties, definitions[idx]);
-			if ((kind = properties.kind)) {
-				if ("string" === typeof kind) ctor = enyo.getPath(properties.kind);
-				else if ("function" === typeof kind) ctor = kind;
+			for (; idx < len; ++idx) {
+				enyo.mixin(properties, definitions[idx]);
 			}
-			if (!ctor || "function" !== typeof ctor) ctor = def;
-			binding = new ctor({owner: this, autoConnect: true}, properties);
+			if ((kind = properties.kind)) {
+				if ("string" === typeof kind) {
+					Ctor = enyo.getPath(properties.kind);
+				}
+				else if ("function" === typeof kind) {
+					Ctor = kind;
+				}
+			}
+			if (!Ctor || "function" !== typeof Ctor) {
+				Ctor = def;
+			}
+			binding = new Ctor({owner: this, autoConnect: true}, properties);
 			bindings.push(binding);
 			return binding;
 		},
-		
+
 		//*@public
 		/**
 			Usually called when the object's `destroy` method is executed, but may
 			be called at any time to properly clean up any bindings associated with
 			this object (i.e., any bindings that have their _owner_ property set
 			to this object).
-			
+
 			This method does not remove bindings that originated from another object
 			but are	currently bound to a property on this object.
-			
+
 			If so desired, one may pass in an array of bindings, in which case only
 			those bindings specified in the array will be destroyed.
 		*/
 		clearBindings: function (subset) {
 			var $bindings = subset || this.bindings;
-			if (!$bindings.length) return;
+			if (!$bindings.length) {
+				return;
+			}
 			do {
 				$bindings.shift().destroy();
 			} while ($bindings.length);
 		},
-		
+
 		//*@public
 		/**
 			Calls the `refresh` method on the bindings associated with this
@@ -117,7 +127,7 @@
 				$bindings[idx].refresh();
 			}
 		},
-		
+
 		//*@public
 		/**
 			This method is typically not called directly, but is called by the
@@ -128,12 +138,16 @@
 		*/
 		removeBinding: function (binding) {
 			// sanity check on binding
-			if (!enyo.exists(binding) || !(binding instanceof enyo.Binding)) return;
+			if (!enyo.exists(binding) || !(binding instanceof enyo.Binding)) {
+				return;
+			}
 			var bindings = this.bindings || [];
 			var idx = bindings.indexOf(binding);
-			if (!!~idx) bindings.splice(idx, 1);
+			if (!!~idx) {
+				bindings.splice(idx, 1);
+			}
 		},
-		
+
 		//*@public
 		/**
 			We overload the _addObserver_ method from _ObserverMethodSupport_
@@ -146,10 +160,10 @@
 			}
 			return this.inherited(arguments);
 		},
-	
+
 		// ...........................
 		// PROTECTED METHODS
-	
+
 		//*@protected
 		create: function () {
 			// we do a single pass at each of the binding declarations
@@ -161,11 +175,13 @@
 			// binding method to store references to bindings owned by
 			// this object
 			this.bindings = [];
-			for (; idx < len; ++idx) this.binding($bindings[idx]);
+			for (; idx < len; ++idx) {
+				this.binding($bindings[idx]);
+			}
 			// initialize our bindings from observers array
 			this._bindings_from_observers = [];
 		},
-		
+
 		//*@protected
 		destroy: function () {
 			// we simply iterate over and destroy each of the bindings
@@ -175,7 +191,7 @@
 			var $id;
 			var $bind;
 			if ($bindings.length) {
-				do { 
+				do {
 					$bindings.pop().destroy();
 				} while ($bindings.length);
 			}
@@ -191,10 +207,10 @@
 				}
 			}
 		}
-	
+
 		// ...........................
 		// OBSERVERS
-		
+
 	});
-	
+
 }(enyo));

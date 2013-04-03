@@ -73,9 +73,9 @@ enyo.kind({
 		var k = new K();
 		var b;
 		b = k.getBounds();
-			if (b.top !== undefined || b.left !== undefined || b.height !== undefined || b.width !== undefined) {
-				throw("bad bounds, expected all undefined, got " + JSON.stringify(b));
-			}
+		if (b.top !== undefined || b.left !== undefined || b.height !== undefined || b.width !== undefined) {
+			throw("bad bounds, expected all undefined, got " + JSON.stringify(b));
+		}
 		k.renderInto(div);
 		try {
 			b = k.getBounds();

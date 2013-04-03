@@ -1,3 +1,4 @@
+/* global tests */
 enyo.kind({
 	name: "ComponentHandlersTest",
 	kind: enyo.TestSuite,

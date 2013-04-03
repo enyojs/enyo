@@ -2,7 +2,7 @@
 	_enyo.UiComponent_ implements a container strategy suitable for presentation
 	layers.
 
-	UiComponent itself is abstract.	 Concrete subkinds include
+	UiComponent itself is abstract. Concrete subkinds include
 	<a href="#enyo.Control">enyo.Control</a> (for HTML/DOM) and
 	<a href="#enyo.canvas.Control">enyo.canvas.Control</a>
 	(for Canvas contexts).
@@ -44,7 +44,7 @@ enyo.kind({
 	statics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
 	},
-	
+
 	create: function() {
 		this.controls = [];
 		this.children = [];
@@ -280,9 +280,9 @@ enyo.kind({
 });
 
 enyo.createFromKind = function(inKind, inParam) {
-	var ctor = inKind && enyo.constructorForKind(inKind);
-	if (ctor) {
-		return new ctor(inParam);
+	var Ctor = inKind && enyo.constructorForKind(inKind);
+	if (Ctor) {
+		return new Ctor(inParam);
 	}
 };
 

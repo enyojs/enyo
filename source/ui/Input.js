@@ -15,7 +15,7 @@ enyo.kind({
 	name: "enyo.Input",
 	published: {
 		/**
-			Value of the input.	 Use this property only to initialize the value.
+			Value of the input. Use this property only to initialize the value.
 			Call _getValue_ and _setValue_ to manipulate the value at runtime.
 		*/
 		value: "",

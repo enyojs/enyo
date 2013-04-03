@@ -1,5 +1,4 @@
-﻿
-//*@protected
+﻿//*@protected
 /**
 	Default properties of enyo kinds to concatenate as opposed to
 	overwriting. These are automatically used unless explicitly
@@ -90,9 +89,13 @@ enyo.kind = function(inProps) {
 	// alias class name as 'kind' in the prototype
 	// but we actually only need to set this if a new name was used
 	// not if it is inheriting from a kind anonymously
-	if (name) ctor.prototype.kindName = name;
+	if (name) {
+		ctor.prototype.kindName = name;
+	}
 	// this is for anonymous constructors
-	else ctor.prototype.kindName = base && base.prototype? base.prototype.kindName: "";
+	else {
+		ctor.prototype.kindName = base && base.prototype? base.prototype.kindName: "";
+	}
 	// cache superclass constructor
 	ctor.prototype.base = base;
 	// reference our real constructor
@@ -100,7 +103,9 @@ enyo.kind = function(inProps) {
 	// support pluggable 'features'
 	enyo.forEach(enyo.kind.features, function(fn){ fn(ctor, inProps); });
 	// put reference into namespace
-	if (name && !enyo.getPath(name)) enyo.setPath(name, ctor);
+	if (name && !enyo.getPath(name)) {
+		enyo.setPath(name, ctor);
+	}
 	else if (name) {
 		enyo.error("enyo.kind: " + name + " is already in use by another " +
 			"kind, all kind definitions must have unique names.");
@@ -132,16 +137,16 @@ enyo.singleton = function(conf, context) {
 	var name = conf.name;
 	delete(conf.name);
 	// create an unnamed kind and save its constructor's function
-	var kind = enyo.kind(conf);
+	var Kind = enyo.kind(conf);
 	var inst;
 	// create the singleton with the previous name and constructor
-	enyo.setPath.call(context || enyo.global, name, (inst = new kind()));
+	enyo.setPath.call(context || enyo.global, name, (inst = new Kind()));
 	return inst;
 };
 
 //* @protected
 enyo.kind.makeCtor = function() {
-  return function() {
+	return function() {
 		if (!(this instanceof arguments.callee)) {
 			throw "enyo.kind: constructor called directly, not using 'new'";
 		}
@@ -300,7 +305,8 @@ enyo.constructorForKind = function(inKind) {
 		//
 		// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
 		// This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
-		return enyo._kindCtors[inKind] = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath.call(enyo, inKind, true) || window[inKind] || enyo.getPath(inKind);
+		enyo._kindCtors[inKind] = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath.call(enyo, inKind, true) || window[inKind] || enyo.getPath(inKind);
+		return enyo._kindCtors[inKind];
 	}
 	return enyo.defaultCtor;
 };

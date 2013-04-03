@@ -8,25 +8,25 @@
 	or state.
 */
 enyo.createMixin({
-	
+
 	// ...........................
 	// PUBLIC PROPERTIES
-	
+
 	//*@public
 	name: "enyo.ApplicationSupport",
-	
+
 	//*@public
 	app: null,
-	
+
 	// ...........................
 	// PROTECTED PROPERTIES
-	
+
 	//*@protected
 	_supports_applications: true,
-	
+
 	// ...........................
 	// PROTECTED METHODS
-	
+
 	//*@protected
 	/**
 		Overload this method to add the _app_ property to
@@ -38,7 +38,7 @@ enyo.createMixin({
 		props.app = this.app;
 		return this.inherited(arguments, props);
 	},
-	
+
 	//*@protected
 	destroy: function () {
 		delete this.app;

@@ -1,5 +1,5 @@
 (function (enyo) {
-	
+
 	//*@public
 	/**
 		This hash contains a mapping of the auto binding API properties
@@ -14,7 +14,7 @@
 		bindAutoSync: "autoSync",
 		bindDebug: "debug"
 	};
-	
+
 	//*@public
 	/**
 		This hash contains the default properties applied to new bindings
@@ -30,11 +30,15 @@
 		autoSync: false,
 		debug: false
 	};
-	
+
 	//*@protected
 	var _setup_auto_bindings = function () {
-		if (!this._supports_autobindings) return;
-		if (!this.controller || !(this.controller instanceof enyo.Controller)) return;
+		if (!this._supports_autobindings) {
+			return;
+		}
+		if (!this.controller || !(this.controller instanceof enyo.Controller)) {
+			return;
+		}
 		var $bindings = this.get("_auto_bindings");
 		var controls = this.get("_bindable_controls");
 		var idx = 0;
@@ -42,14 +46,16 @@
 		var controller = this.controller;
 		var control;
 		var props;
-		if ($bindings && $bindings.length) this.clearBindings($bindings);
+		if ($bindings && $bindings.length) {
+			this.clearBindings($bindings);
+		}
 		for (; idx < len; ++idx) {
 			control = controls[idx];
 			props = this._bind_properties(control);
 			this._auto_binding(props, {source: controller, target: control});
 		}
 	};
-	
+
 	//*@public
 	/**
 		The _enyo.AutoBindingSupport_ mixin provides the ability to
@@ -59,36 +65,38 @@
 		be created accordingly.
 	*/
 	enyo.createMixin({
-	
+
 		// ...........................
 		// PUBLIC PROPERTIES
-		
+
 		//*@public
 		name: "enyo.AutoBindingSupport",
-	
+
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		//*@protected
 		_supports_autobindings: true,
-	
+
 		// ...........................
 		// COMPUTED PROPERTIES
-	
+
 		//*@protected
 		_bindable_controls: enyo.computed(function (control) {
+			control = control || this;
 			var bindable = [];
-			var control = control || this;
 			var controls = control.controls || [];
 			var idx = 0;
 			var len = controls.length;
 			for (; idx < len; ++idx) {
 				bindable = bindable.concat(this._bindable_controls(controls[idx]));
 			}
-			if ("bindFrom" in control) bindable.push(control);
+			if ("bindFrom" in control) {
+				bindable.push(control);
+			}
 			return bindable;
 		}, {cached: true}),
-	
+
 		//*@protected
 		_binding_defaults: enyo.computed(function () {
 			var ctor = this.get("_binding_constructor");
@@ -96,31 +104,33 @@
 			if (enyo.Binding !== ctor) {
 				return enyo.mixin(enyo.clone(defaults),
 					enyo.only(keys, ctor.prototype, true));
-			} else return enyo.clone(defaults);
+			} else {
+				return enyo.clone(defaults);
+			}
 		}, {cached: true}),
-		
+
 		//*@protected
 		_auto_bindings: enyo.computed(function () {
 			return enyo.filter(this.bindings || [], function (bind) {
 				return bind && bind._auto_binding_id;
 			});
 		}),
-	
+
 		// ...........................
 		// PROTECTED METHODS
-		
+
 		//*@protected
 		_auto_binding: function () {
 			var bind = this.binding.apply(this, arguments);
 			bind._auto_binding_id = enyo.uid("_auto_binding");
 		},
-		
+
 		//*@protected
 		_bind_properties: function (control) {
 			var props = this.get("_binding_defaults");
 			return enyo.mixin(enyo.clone(props), enyo.remap(remapped, control));
 		},
-	
+
 		// ...........................
 		// OBSERVERS
 
@@ -136,5 +146,5 @@
 		}, "controller")
 
 	});
-	
+
 }(enyo));

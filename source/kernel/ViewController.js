@@ -1,5 +1,5 @@
 (function (enyo) {
-	
+
 	//*@public
 	/**
 		_enyo.ViewController_ is an abstract kind designed for use in a
@@ -7,16 +7,16 @@
 		the view and maintains its state and lifecycle.
 	*/
 	enyo.kind({
-	
+
 		// ...........................
 		// PUBLIC PROPERTIES
-		
+
 		//*@public
 		name: "enyo.ViewController",
-		
+
 		//*@public
 		kind: "enyo.Controller",
-		
+
 		//*@public
 		/**
 			This may be a string representing a kind, a constructor for a kind,
@@ -25,7 +25,7 @@
 			be a reference to the instance of the view owned by this controller.
 		*/
 		view: null,
-		
+
 		//*@public
 		/**
 			A string that represents the target DOM element in which to render
@@ -34,16 +34,16 @@
 			element __id__ attribute.
 		*/
 		renderTarget: "document.body",
-	
+
 		// ...........................
 		// PROTECTED PROPERTIES
-	
+
 		//*@protected
 		_is_view_controller: true,
-	
+
 		// ...........................
 		// COMPUTED PROPERTIES
-		
+
 		//*@protected
 		/**
 			On object initialization, finds or creates the appropriate
@@ -75,7 +75,7 @@
 			// can't do anything
 			throw this.kindName + " cannot initialize without a valid view defined";
 		}, {cached: true}),
-		
+
 		//*@protected
 		/**
 			Finds the appropriate form of the render target.
@@ -90,10 +90,10 @@
 			// better to find out now
 			throw this.kindName + " cannot find the render target: " + this.renderTarget;
 		}, "renderTarget", {cached: true}),
-	
+
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		//*@public
 		/**
 			Renders the controller's view into the DOM. If the view is already
@@ -112,7 +112,7 @@
 				view.renderInto(target);
 			}
 		},
-		
+
 		//*@public
 		/**
 			Immediately renders the controller's view into the passed-in target
@@ -125,10 +125,10 @@
 			// now we render as usual
 			this.render();
 		},
-	
+
 		// ...........................
 		// PROTECTED METHODS
-		
+
 		//*@protected
 		constructed: function () {
 			this.inherited(arguments);
@@ -139,7 +139,7 @@
 			// method to control the flow
 			this._create_view();
 		},
-		
+
 		//*@protected
 		/**
 			Creates the actual instance of the controller's view. Should
@@ -151,12 +151,12 @@
 			// the reference for this new view
 			this.set("view", new this.get("_view_kind"));
 		},
-		
+
 		//*@protected
 		_make_view_name: function () {
 			return enyo.uid("_view_controller_view_");
 		}
 
 	});
-	
+
 }(enyo));

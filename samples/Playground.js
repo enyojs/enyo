@@ -18,7 +18,7 @@ enyo.kind({
 				]}
 			]},
 			{fit:true, style:"padding:15px;", components: [
-				{kind: "CodeEditor", fit:true, classes:"playground-sample-source"},
+				{kind: "CodeEditor", fit:true, classes:"playground-sample-source"}
 			]},
 			{kind: "FittableColumns", style:"margin:0px 15px 15px 15px", components: [
 				{fit:true}, // spacer

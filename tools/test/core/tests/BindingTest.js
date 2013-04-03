@@ -2,14 +2,18 @@ enyo.kind({
 	name: "BindingTest",
 	kind: enyo.TestSuite,
 	testCreate: function () {
-		var binding = new enyo.Binding();
+		new enyo.Binding();
 		this.finish();
 	},
 	testDestroy: function () {
 		var binding = new enyo.Binding();
 		binding.destroy();
-		if (binding.destroyed) this.finish();
-		else this.finish("Expected binding to be destroyed, it was not");
+		if (binding.destroyed) {
+			this.finish();
+		}
+		else {
+			this.finish("Expected binding to be destroyed, it was not");
+		}
 	},
 	finishWithError: function (val1, val2) {
 		var msg = "Expected values to be equal but instead they were: %. != %.";
@@ -33,8 +37,12 @@ enyo.kind({
 			binding.sync();
 			val1 = control1.get("testprop");
 			val2 = control2.get("testprop");
-			if (val1 !== val2) this.finishWithError(val1, val2);
-			else this.finish();
+			if (val1 !== val2) {
+				this.finishWithError(val1, val2);
+			}
+			else {
+				this.finish();
+			}
 		} finally {
 			control1.destroy();
 			control2.destroy();
@@ -58,11 +66,15 @@ enyo.kind({
 			});
 			val1 = control1.get("testprop");
 			val2 = control2.get("testprop");
-			if (val1 !== val2) this.finishWithError(val1, val2);
+			if (val1 !== val2) {
+				this.finishWithError(val1, val2);
+			}
 			control2.set("testprop", "testvalue3");
 			val1 = control1.get("testprop");
 			val2 = control2.get("testprop");
-			if (val1 !== val2) this.finishWithError(val1, val2);
+			if (val1 !== val2) {
+				this.finishWithError(val1, val2);
+			}
 			this.finish();
 		} finally {
 			control1.destroy();
@@ -70,8 +82,10 @@ enyo.kind({
 		}
 	},
 	testFindGlobal: function () {
+		var binding;
 		try {
-			var binding = new enyo.Binding();
+			binding = new enyo.Binding();
+			/* global my:true */
 			my = {};
 			enyo.singleton({
 				name: "my.object",
@@ -80,25 +94,36 @@ enyo.kind({
 			});
 			binding.from = "my.object.testprop";
 			binding.refresh();
-			if (binding.source === my.object) this.finish();
-			else this.finish("Expected source to be the global object instead it was: "+binding.source);
+			if (binding.source === my.object) {
+				this.finish();
+			}
+			else {
+				this.finish("Expected source to be the global object instead it was: "+binding.source);
+			}
 		} finally {
 			my.object.destroy();
-			binding.destroy();
+			if (binding) {
+				binding.destroy();
+			}
 		}
 	},
 	testCleanup: function () {
+		var control1;
+		var control2;
+		var binding;
 		try {
-			var control1 = new enyo.Control();
-			var control2 = new enyo.Control();
-			var binding = control1.binding({
+			control1 = new enyo.Control();
+			control2 = new enyo.Control();
+			binding = control1.binding({
 				from: ".testprop",
 				source: control1,
 				to: ".testprop",
 				target: control2
 			});
 			control1.destroy();
-			if (!binding.destroyed) throw "Binding was not destroyed when owner end was destroyed";
+			if (!binding.destroyed) {
+				throw "Binding was not destroyed when owner end was destroyed";
+			}
 			control1 = new enyo.Control();
 			binding = control1.binding({
 				from: ".testprop",
@@ -108,17 +133,21 @@ enyo.kind({
 				oneWay: false
 			});
 			control2.destroy();
-			if (!binding.destroyed) throw "When the non-owner end of a two-way binding was destroyed, "+
+			if (!binding.destroyed) {
+				throw "When the non-owner end of a two-way binding was destroyed, "+
 				"the binding was not destroyed";
+			}
 			binding = control1.binding({
 				from: ".testprop",
 				source: control1,
 				to: ".testprop",
 				target: control2
 			});
-			if (!binding.destroyed) throw "When the non-owner end of a one-way binding was destroyed "+
+			if (!binding.destroyed) {
+				throw "When the non-owner end of a one-way binding was destroyed "+
 				"and a connection attempt was made, it did not detect the end was destroyed and did not "+
 				"destroy the binding";
+			}
 			this.finish();
 		} finally {
 			control1.destroy();
@@ -126,34 +155,51 @@ enyo.kind({
 		}
 	},
 	testRegistration: function () {
+		var binding;
 		try {
-			var binding = new enyo.Binding();
+			binding = new enyo.Binding();
 			var id = binding.id;
-			if (enyo.Binding.find(id) !== binding) throw "Binding was not registered when created";
+			if (enyo.Binding.find(id) !== binding) {
+				throw "Binding was not registered when created";
+			}
 			binding.destroy();
-			if (enyo.Binding.find(id)) throw "Binding was not unregistered when destroyed";
+			if (enyo.Binding.find(id)) {
+				throw "Binding was not unregistered when destroyed";
+			}
 			this.finish();
 		} finally {
-			if (binding) binding.destroy();
+			if (binding) {
+				binding.destroy();
+			}
 		}
 	},
 	testTransform: function () {
+		var end;
+		var obj;
 		try {
 			var found = [];
 			var expected = ["xform1", "xform2", "inline"];
-			var end = new enyo.Object();
-			var obj;
+			end = new enyo.Object();
 			var xformtest = function (value, direction, binding, which) {
-				if ("testvalue1" !== value) throw which + " had the wrong value, expected testvalue1 got "+value;
-				if ("source" !== direction) throw which + " had the wrong direction expected source got "+direction;
-				if (end !== binding.source) throw which + " had the wrong source";
-				if (!(this instanceof enyo.TestObject)) throw which + " had the wrong context";
+				if ("testvalue1" !== value) {
+					throw which + " had the wrong value, expected testvalue1 got "+value;
+				}
+				if ("source" !== direction) {
+					throw which + " had the wrong direction expected source got "+direction;
+				}
+				if (end !== binding.source) {
+					throw which + " had the wrong source";
+				}
+				if (!(this instanceof enyo.TestObject)) {
+					throw which + " had the wrong context";
+				}
 				found.push(which);
 			};
+			/* global xform1:true */
 			xform1 = function (value, direction, binding) {
 				xformtest.call(this, value, direction, binding, "xform1");
 			};
-			var kind = enyo.kind({
+			enyo.kind({
 				name: "enyo.TestObject",
 				bindings: [
 					{from: ".testprop", source: end, to: ".testprop1", transform: "xform1"},
@@ -166,11 +212,13 @@ enyo.kind({
 				xform2: function (value, direction, binding) {
 					xformtest.call(this, value, direction, binding, "xform2");
 				}
-			})
+			});
 			end.testprop = "testvalue1";
 			obj = new enyo.TestObject();
-			if (found.length !== expected.length) throw "Not every transform was executed, missing "+
+			if (found.length !== expected.length) {
+				throw "Not every transform was executed, missing "+
 				enyo.union(found, expected).join(", ");
+			}
 			this.finish();
 		} finally {
 			end.destroy();
