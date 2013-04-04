@@ -165,6 +165,13 @@
 		// PROTECTED METHODS
 
 		//*@protected
+		_constructor: function () {
+			// initialize our bindings from observers array
+			this._bindings_from_observers = [];
+			return this.inherited(arguments);	
+		},
+
+		//*@protected
 		create: function () {
 			// we do a single pass at each of the binding declarations
 			// and pass them to our binding creation method
@@ -178,8 +185,6 @@
 			for (; idx < len; ++idx) {
 				this.binding($bindings[idx]);
 			}
-			// initialize our bindings from observers array
-			this._bindings_from_observers = [];
 		},
 
 		//*@protected
