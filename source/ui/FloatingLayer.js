@@ -19,6 +19,14 @@ enyo.kind({
 		this.inherited(arguments);
 		this.setParent(null);
 	},
+	// detect when node is detatched due to document.body being stomped
+	hasNode: function() {
+		this.inherited(arguments);
+		if (this.node && !this.node.parentNode) {
+			this.teardownRender();
+		}
+		return this.node;
+	},
 	render: function() {
 		this.parentNode = document.body;
 		return this.inherited(arguments);

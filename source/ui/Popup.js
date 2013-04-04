@@ -58,9 +58,6 @@ enyo.kind({
 	],
 	create: function() {
 		this.inherited(arguments);
-		/*if (this.floating) {
-			this.setParent(enyo.floatingLayer);
-		}*/
 		this.canGenerate = !this.floating;
 	},
 	render: function() {
