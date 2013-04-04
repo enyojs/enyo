@@ -171,7 +171,7 @@ enyo.kind({
 			}
 		}
 		if (enyo.isFunction(method)) {
-			var args = enyo.cloneArray(arguments, 2);
+			var args = enyo.cloneArray(arguments, 1);
 			return function() {
 				if (scope.destroyed) {
 					return;
