@@ -568,7 +568,7 @@
 			if ("string" === typeof transform) {
 				transform = owner[transform] || enyo.getPath.call(owner, transform)
 					|| enyo.getPath.call(enyo.global, transform);
-			};
+			}
 			// if we couldn't find anything go ahead and setup a default
 			// to simply return the value
 			if ("function" !== typeof transform) {
