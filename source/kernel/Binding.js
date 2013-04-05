@@ -14,6 +14,7 @@
 	*/
 	var register = function (binding) {
 		map[binding.id] = binding;
+		binding._registered = true;
 	};
 
 	//*@protected
@@ -121,7 +122,7 @@
 		var source = this.setupSource();
 		var target = this.setupTarget();
 		var refreshing = this._refreshing;
-		register(this);
+		if (!this._registered) register(this);
 		// setup the transform if we can
 		if (true !== refreshing) {
 			this.setupTransform();
@@ -261,6 +262,9 @@
 
 		//*@protected
 		_refreshing: false,
+		
+		//*@protected
+		_registered: false,
 
 		// ...........................
 		// COMPUTED PROPERTIES
@@ -564,9 +568,7 @@
 			if ("string" === typeof transform) {
 				transform = owner[transform] || enyo.getPath.call(owner, transform)
 					|| enyo.getPath.call(enyo.global, transform);
-			} else if ("function" === typeof transform) {
-				transform = this.transform;
-			}
+			};
 			// if we couldn't find anything go ahead and setup a default
 			// to simply return the value
 			if ("function" !== typeof transform) {
