@@ -2,10 +2,10 @@
 
 	//*@public
 	/**
-		Tracks the applications running at any given time. In order to provide
-		some convenience and debugging tools, we collect the running apps here
-		for later reference. When _enyo.Application_ instances are destroyed,
-		they know to remove themselves from this table.
+		Tracks the applications running at any given time. For the sake of
+		convenience, and in order to provide some debugging tools, we collect
+		the running apps here for later reference. When _enyo.Application_
+		instances are destroyed, they know to remove themselves from this table.
 	*/
 	var applications = enyo.applications = {};
 
@@ -111,11 +111,10 @@
 	//*@public
 	/**
 		_enyo.Application_ is a kind used to coordinate execution of a given
-		collection of _enyo_ objects. There may be one or more
-		_enyo.Application_ instances running--with certain limitations, such
-		as which one is rendered into the _document.body_. (There is no
-		limitation if the instances are each rendered into separate DOM nodes
-		or nested.)
+		collection of _enyo_ objects. There may be one or more instances
+		running--with certain limitations, such as which one is rendered into
+		the _document.body_. (There is no limitation if each instance is
+		rendered into a separate DOM node, or if the instances are nested.)
 
 		This kind also provides the ability to namespace and automatically
 		initialize any controllers of the application.
