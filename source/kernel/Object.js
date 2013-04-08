@@ -1,6 +1,8 @@
 /**
-_enyo.Object_ implements the Enyo framework's property publishing system, as
-well as providing several utility functions for its subkinds.
+_enyo.Object_ lies at the heart of the Enyo framework's implementations of
+property publishing, computed properties (via the _ComputedPropertySupport_
+mixin), and data binding (via the _BindingSupport_ mixin). It also provides
+several utility functions for its subkinds.
 
 Published properties are declared in a hash called _published_ within a call
 to _enyo.kind_. To get and set values for these properties, call
