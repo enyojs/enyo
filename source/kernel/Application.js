@@ -25,7 +25,7 @@
 	var unregister = function (app) {
 		var kind = app.kindName;
 		var kinds = applications[kind] || [];
-		var idx = kinds.indexOf(app);
+		var idx = enyo.indexOf(app, kinds);
 		if (!~idx) {
 			kinds.splice(idx, 1);
 		}

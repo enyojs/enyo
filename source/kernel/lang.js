@@ -479,7 +479,7 @@
 			value = values[idx];
 			// if we haven't seen this value before go ahead and
 			// push it to the seen array
-			if (!~seen.indexOf(value)) {
+			if (!~enyo.indexOf(value, seen)) {
 				seen.push(value);
 				// here we check against the entirety of any other values
 				// in the values array starting from the end

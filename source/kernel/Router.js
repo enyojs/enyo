@@ -289,7 +289,7 @@
 		
 		//*@protected
 		destroy: function () {
-			var idx = listeners.indexOf(this);
+			var idx = enyo.indexOf(this, listeners);
 			if (!~idx) {
 				listeners.splice(idx, 1);
 			}

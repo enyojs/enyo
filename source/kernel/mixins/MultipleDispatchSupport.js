@@ -67,7 +67,7 @@ enyo.createMixin({
 		var $dist = this._dispatch_targets;
 		// ensure that we have not already registered the target
 		// and that it is not ourselves or our owner if we have one
-		if (target && this !== target && !~$dist.indexOf(target)
+		if (target && this !== target && !~enyo.indexOf(target, $dist)
 			&& this.owner !== target) {
 			// should be safe to add the listener
 			$dist.push(target);
@@ -82,7 +82,7 @@ enyo.createMixin({
 	*/
 	removeDispatchTarget: function (target) {
 		var $dist = this._dispatch_targets;
-		var idx = $dist.indexOf(target);
+		var idx = enyo.indexOf(target, $dist);
 		if (-1 !== idx) {
 			$dist.splice(idx, 1);
 		}

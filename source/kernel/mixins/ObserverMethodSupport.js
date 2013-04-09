@@ -53,7 +53,7 @@
 			handlers = observers[property];
 		}
 		// only add it if it isn't already in the array
-		if (!~handlers.indexOf(fn)) {
+		if (!~enyo.indexOf(fn, handlers)) {
 			handlers.push(fn);
 		}
 		// allow chaining
@@ -76,7 +76,7 @@
 			return this;
 		}
 		if (enyo.exists(fn) && "function" === typeof fn) {
-			idx = handlers.indexOf(fn);
+			idx = enyo.indexOf(fn, handlers);
 			if (!!~idx) {
 				// remove it from the array
 				handlers.splice(idx, 1);
@@ -182,7 +182,7 @@
 			if (handlers[0] !== params) {
 				handlers.splice(0, 1, params);
 			}
-			if (!~handlers.indexOf(fn)) {
+			if (!~enyo.indexOf(fn, handlers)) {
 				handlers.push(fn);
 			}
 		}
