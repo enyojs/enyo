@@ -1,6 +1,3 @@
-@import "import-test-d.css";
-
-@import "../import-test-d.css";
 #import {
   color: #ff0000;
 }

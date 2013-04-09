@@ -61,10 +61,14 @@
 .jo.ki {
   background: none;
 }
+.amp.support {
+  color: orange;
+}
 .extended {
   width: 100%;
   border: 1px;
   background: none;
+  color: orange;
 }
 .foo .bar {
   width: 100%;
@@ -105,4 +109,13 @@ h3 + * {
 .error {
   background-image: "/a.png";
   background-position: center center;
+}
+.test-rec .recursion {
+  color: black;
+}
+.button {
+  padding-left: 44px;
+}
+.button.large {
+  padding-left: 40em;
 }

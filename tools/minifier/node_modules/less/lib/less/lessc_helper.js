@@ -23,7 +23,7 @@ var lessc_helper = {
 
     //Print command line options
     printUsage: function() {
-        sys.puts("usage: lessc [options] <source> [destination]");
+        sys.puts("usage: lessc [option option=parameter ...] <source> [destination]");
         sys.puts("");
         sys.puts("If source is set to `-' (dash or hyphen-minus), input is read from stdin.");
         sys.puts("");
@@ -36,7 +36,7 @@ var lessc_helper = {
         sys.puts("  --verbose               Be verbose.");
         sys.puts("  -v, --version           Print version number and exit.");
         sys.puts("  -x, --compress          Compress output by removing some whitespaces.");
-        sys.puts("  --yui-compress          Compress output using cssmin.js.");
+        sys.puts("  --yui-compress          Compress output using ycssmin");
         sys.puts("  -O0, -O1, -O2           Set the parser's optimization level. The lower");
         sys.puts("                          the number, the less nodes it will create in the");
         sys.puts("                          tree. This could matter for debugging, or if you");
@@ -47,6 +47,9 @@ var lessc_helper = {
         sys.puts("                          that will output the information within a fake");
         sys.puts("                          media query which is compatible with the SASS");
         sys.puts("                          format, and 'all' which will do both.");
+        sys.puts("  -rp, --rootpath         Set rootpath for url rewriting in relative imports and urls.");
+        sys.puts("                          Works with or withour the relative-urls option.");
+        sys.puts("  -ru, --relative-urls    re-write relative urls to the base less file.");
         sys.puts("");
         sys.puts("Report bugs to: http://github.com/cloudhead/less.js/issues");
         sys.puts("Home page: <http://lesscss.org/>");

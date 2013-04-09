@@ -23,10 +23,10 @@ less.tree.functions._color = function (str) {
 
 sys.puts("\n" + stylize("LESS", 'underline') + "\n");
 
-runTestSet();
+runTestSet({relativeUrls: true});
 
 runTestSet(null, "errors/", function(name, err, compiledLess, doReplacements) {
-    fs.readFile(path.join('test/less/', name) + '.txt', 'utf-8', function (e, expectedErr) {
+    fs.readFile(path.join('test/less/', name) + '.txt', 'utf8', function (e, expectedErr) {
         sys.print("- " + name + ": ");
         expectedErr = doReplacements(expectedErr, 'test/less/errors/');
         if (!err) {
@@ -57,10 +57,18 @@ runTestSet({dumpLineNumbers: 'mediaquery'}, "debug/", null,
            function(name) { return name + '-mediaquery'; });
 runTestSet({dumpLineNumbers: 'all'}, "debug/", null,
            function(name) { return name + '-all'; });
+runTestSet({relativeUrls: false, rootpath: "folder (1)/"}, "static-urls/");
 
 function globalReplacements(input, directory) {
-    return input.replace(/\{path\}/g, path.join(process.cwd(), directory))
-            .replace(/\{pathimport\}/g, path.join(process.cwd(), directory + "import/"))
+    var p = path.join(process.cwd(), directory),
+        pathimport = path.join(process.cwd(), directory + "import/"),
+        pathesc = p.replace(/[.:\/]/g, '\\$&'),
+        pathimportesc = pathimport.replace(/[.:\/]/g, '\\$&');
+
+    return input.replace(/\{path\}/g, p)
+            .replace(/\{pathesc\}/g, pathesc)
+            .replace(/\{pathimport\}/g, pathimport)
+            .replace(/\{pathimportesc\}/g, pathimportesc)
             .replace(/\r\n/g, '\n');
 }
 
@@ -86,7 +94,7 @@ function runTestSet(options, foldername, verifyFunction, nameModifier, doReplace
             }
             var css_name = name;
             if(nameModifier) css_name=nameModifier(name);
-            fs.readFile(path.join('test/css', css_name) + '.css', 'utf-8', function (e, css) {
+            fs.readFile(path.join('test/css', css_name) + '.css', 'utf8', function (e, css) {
                 sys.print("- " + css_name + ": ")
                 
                 css = css && doReplacements(css, 'test/less/' + foldername);
@@ -151,7 +159,7 @@ function endTest() {
 function toCSS(options, path, callback) {
     var tree, css;
     options = options || {};
-    fs.readFile(path, 'utf-8', function (e, str) {
+    fs.readFile(path, 'utf8', function (e, str) {
         if (e) { return callback(e) }
         
         options.paths = [require('path').dirname(path)];
