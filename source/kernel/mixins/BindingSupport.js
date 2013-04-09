@@ -142,7 +142,7 @@
 				return;
 			}
 			var bindings = this.bindings || [];
-			var idx = bindings.indexOf(binding);
+			var idx = enyo.indexOf(binding, bindings);
 			if (!!~idx) {
 				bindings.splice(idx, 1);
 			}

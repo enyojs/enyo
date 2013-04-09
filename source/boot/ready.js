@@ -31,7 +31,7 @@
 		// if we're interactive, it should be safe to move
 		// forward because the content has been parsed
 		if ((ready = ("interactive" === doc.readyState))) {
-			if (!~["DOMContentLoaded", "readystatechange"].indexOf(event.type)) {
+			if (!~enyo.indexOf(event.type, ["DOMContentLoaded", "readystatechange"])) {
 				remove(event.type, init);
 				flush();
 			}
@@ -67,4 +67,4 @@
 	add("DOMContentLoaded", init);
 	add("readystatechange", init);
 
-})(window);
+})(window, enyo);
