@@ -68,7 +68,7 @@
 			"(at the time of request available mixins are: " + enyo.keys(store).join(",") + ")");
 		}
 		// if this mixin is already applied, there is nothing we can do
-		if (!!~applied.indexOf(name)) {
+		if (!!~enyo.indexOf(name, applied)) {
 			return enyo.warn("enyo.applyMixin: " +
 			"attempt to apply mixin " + name + " to " + proto.kindName +
 			" multiple times");
