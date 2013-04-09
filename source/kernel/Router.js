@@ -204,10 +204,14 @@
 		},
 		//*@protected
 		hashChanged: function (hash) {
-			hash = hash || prepare(window.location.hash);
-			if ("string" !== typeof hash) {
-				hash = hash.newURL.split("#")[1];
-			}
+			hash = (function (prop) {
+				if ("string" !== typeof hash) {
+					// some browsers do not support the newUrl property
+					// so we're forced to look at the current hash
+					prop = hash.newUrl || window.location.hash;
+				}
+				return prepare(prop);
+			})(hash || {});
 			if (this.listening) {
 				this.set("current", hash);
 				this.handle(hash);
