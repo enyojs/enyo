@@ -1,24 +1,35 @@
 (function (enyo) {
 
 	//*@protected
-	// Each router registers with this list.
+	/**
+		Any instance of a router will be referenced here for the global
+		hash change handler.
+	*/
 	var listeners = [];
+	
 	//*@protected
-	// This method is registered as the handler for hashchange events.
+	/**
+		This is the intended global window.hashchange event handler. If
+		another handler is arbitrarily registered for this event then it
+		will not fire.
+	*/
 	var hashDidChange = function (hash) {
 		var list = listeners;
 		var len = list.length;
 		var idx = 0;
 		for (; idx < len; ++idx) {
-			list[idx].hashChanged(hash);
+			list[idx]._hash_changed(hash);
 		}
 	};
+	
 	//*@protected
 	var token = /\:[a-zA-Z0-9]*/g;
+	
 	//*@protected
 	var prepare = function (str) {
 		return str[0] === "#"? str.slice(1): str;
 	};
+	
 	//*@protected
 	/**
 		All of our actively-supported browsers support this method of
@@ -74,10 +85,13 @@
 		support _pushState_.
 	*/
 	enyo.kind({
+		
+		// ...........................
+		// PUBLIC PROPERTIES
+		
 		//*@public
 		name: "enyo.Router",
-		//*@protected
-		kind: "enyo.Controller",
+		
 		//*@public
 		/**
 			If true, the router will respond to hash changes or internal events.
@@ -85,6 +99,7 @@
 			changed at any time.
 		*/
 		listening: true,
+		
 		//*@public
 		/**
 			If true, the router will neither respond to hash changes in the
@@ -93,10 +108,7 @@
 			without changing location.
 		*/
 		internalOnly: false,
-		//*@protected
-		staticRoutes: null,
-		//*@protected
-		dynamicRoutes: null,
+
 		//*@public
 		/**
 			The _defaultRoute_ should have the same structure as a normal
@@ -106,6 +118,7 @@
 			executed and passed the path that was not matched.
 		*/
 		defaultRoute: null,
+		
 		//*@public
 		/**
 			By default, when a router is created, it will attempt to trigger
@@ -113,15 +126,62 @@
 			to false to prevent this from happening.
 		*/
 		triggerOnStart: true,
-		//*@protected
-		current: "",
+		
 		//*@public
 		/**
-			The _routes_ object constitutes the handlers for this router.
+			The _routes_ array constitutes the handlers for this router.
 			Routes are string paths, static or dynamic, that route particular
-			hash change events.
+			hash change events. They are defined in an array of hashes with
+			a _handler_ (function), _path_ (for static and dynamic paths), an
+			optional _context_ (for the handler), or a _default_ boolean true|false
+			where that handler will be used when no other route can handle the
+			hashchange event.
 		*/
 		routes: null,
+		
+		// ...........................
+		// PROTECTED PROPERTIES
+		
+		//*@protected
+		kind: "enyo.Controller",
+		
+		//*@protected
+		_static_routes: null,
+		
+		//*@protected
+		_dynamic_routes: null,
+
+		//*@protected
+		_current: "",
+		
+		// ...........................
+		// COMPUTED PROPERTIES
+		
+		//*@public
+		/**
+			A computed property that will return the location as
+			known by this router. This property will be synchronized
+			with _window.location.hash_ unless it's _internalOnly_
+			flag was set to true. Passing a string to this property
+			via _set("location", "mylocation")_ will update the inner
+			location known by this router.
+		*/
+		location: enyo.computed(function (loc) {
+			if (loc) {
+				loc = prepare(loc);
+				if (!this.internalOnly) {
+					window.location.hash = loc;
+				} else {
+					this.set("_current", loc);
+				}
+			} else {
+				return prepare(this.get("_current"));
+			}
+		}, "_current", {cached: true}),
+	
+		// ...........................
+		// PUBLIC METHODS
+
 		//*@public
 		/**
 			Triggers a change without necessarily requiring a change to	occur.
@@ -140,7 +200,7 @@
 		*/
 		trigger: function (params) {
 			if (!params) {
-				params = {location: this.get("current")};
+				params = {location: this.get("_current")};
 			} else if ("string" === typeof params) {
 				params = {location: params};
 			}
@@ -153,39 +213,71 @@
 				if (global) {
 					hashDidChange(loc);
 				} else {
-					this.hashChanged(loc);
+					this._hash_changed(loc);
 				}
 			}
 		},
+		
 		//*@public
 		/**
+			In very rare circumstances it may be useful to pass a path
+			to the routes without using trigger or global hash changes
+			with _path_ being a string that will be evaluated against
+			the routes owned by this router.
 		*/
-		location: enyo.computed(function (loc) {
-			if (loc) {
-				loc = prepare(loc);
-				if (!this.internalOnly) {
-					window.location.hash = loc;
-				} else {
-					this.set("current", loc);
-				}
-			} else {
-				return prepare(this.get("current"));
+		handle: function (path) {
+			// fast track is to check against static routes first
+			if (this._handle_static(path)) {
+				return;
 			}
-		}, "current", {cached: true}),
+			// then we check against dynamic paths in this simple scheme
+			else if (this._handle_dynamic(path)) {
+				/* do nothing */
+			}
+			else {
+				this._handle_default(path);
+			}
+		},
+
+		//*@public
+		/**
+			Can be used to programmatically add routes to the router
+			where _route_ is a hash as described by the _routes_ array.
+		*/
+		addRoute: function (route) {
+			var statics = this._static_routes;
+			var dynamic = this._dynamic_routes;
+			var regex;
+			if (true === route['default']) {
+				this.defaultRoute = route;
+			}
+			else if (token.test(route.path)) {
+				regex = new RegExp(route.path.replace(token, "([a-zA-Z0-9]*)"));
+				route.regex = regex;
+				dynamic.push(route);
+			} else {
+				statics[route.path] = route;
+			}
+		},
+	
+		// ...........................
+		// PROTECTED METHODS
+	
 		//*@protected
 		constructor: function () {
-			this.staticRoutes = {};
-			this.dynamicRoutes = [];
+			this._static_routes = {};
+			this._dynamic_routes = [];
 			this.inherited(arguments);
 		},
+		
 		//*@protected
 		create: function () {
 			this.inherited(arguments);
 			// make sure to initialize our routes prior
 			// to registering for events
-			this.setupRoutes();
+			this._setup_routes();
 			// make sure we're up to date
-			this.set("current", prepare(window.location.hash));
+			this.set("_current", prepare(window.location.hash));
 			// ok, register for events
 			listeners.push(this);
 			// ok, if we need to go ahead and route our current
@@ -194,6 +286,7 @@
 				this.trigger();
 			}
 		},
+		
 		//*@protected
 		destroy: function () {
 			var idx = listeners.indexOf(this);
@@ -202,33 +295,25 @@
 			}
 			this.inherited(arguments);
 		},
+		
 		//*@protected
-		hashChanged: function (hash) {
-			hash = hash || prepare(window.location.hash);
-			if ("string" !== typeof hash) {
-				hash = hash.newURL.split("#")[1];
-			}
+		_hash_changed: function (hash) {
+			hash = (function (prop) {
+				if ("string" !== typeof hash) {
+					// some browsers do not support the newUrl property
+					// so we're forced to look at the current hash
+					prop = hash.newUrl || window.location.hash;
+				}
+				return prepare(prop);
+			})(hash || {});
 			if (this.listening) {
-				this.set("current", hash);
+				this.set("_current", hash);
 				this.handle(hash);
 			}
 		},
-		//*@public
-		handle: function (path) {
-			// fast track is to check against static routes first
-			if (this.handleStatic(path)) {
-				return;
-			}
-			// then we check against dynamic paths in this simple scheme
-			else if (this.handleDynamic(path)) {
-				/* do nothing */
-			}
-			else {
-				this.handleDefault(path);
-			}
-		},
+		
 		//*@protected
-		execHandler: function (context, handler, args, route) {
+		_exec_handler: function (context, handler, args, route) {
 			var fn = handler;
 			// if the handler is defined as a string, we need to determine if
 			// it is relative to the router, relative to the context, or a named
@@ -261,22 +346,24 @@
 			// do here
 			return false;
 		},
+		
 		//*@protected
-		handleStatic: function (path) {
-			var statics = this.staticRoutes;
+		_handle_static: function (path) {
+			var statics = this._static_routes;
 			var route;
 			var handler;
 			var context;
 			if ((route = statics[path])) {
 				handler = route.handler;
 				context = route.context;
-				return this.execHandler(context, handler, [path], route);
+				return this._exec_handler(context, handler, [path], route);
 			}
 			return false;
 		},
+		
 		//*@protected
-		handleDynamic: function (path) {
-			var dynamic = this.dynamicRoutes;
+		_handle_dynamic: function (path) {
+			var dynamic = this._dynamic_routes;
 			var regex;
 			var route;
 			var handler;
@@ -293,20 +380,22 @@
 					matches = matches.slice(1);
 					handler = route.handler;
 					context = route.context;
-					return this.execHandler(context, handler, matches, route);
+					return this._exec_handler(context, handler, matches, route);
 				}
 			}
 			return false;
 		},
+		
 		//*@protected
-		handleDefault: function (path) {
+		_handle_default: function (path) {
 			var route = this.defaultRoute || {};
 			var context = route.context;
 			var handler = route.handler;
-			return this.execHandler(context, handler, [path], route);
+			return this._exec_handler(context, handler, [path], route);
 		},
+		
 		//*@protected
-		setupRoutes: function () {
+		_setup_routes: function () {
 			var routes = this.routes;
 			var idx = 0;
 			var len = routes.length;
@@ -318,23 +407,8 @@
 				}
 				this.addRoute(route);
 			}
-		},
-		//*@public
-		addRoute: function (route) {
-			var statics = this.staticRoutes;
-			var dynamic = this.dynamicRoutes;
-			var regex;
-			if (true === route['default']) {
-				this.defaultRoute = route;
-			}
-			else if (token.test(route.path)) {
-				regex = new RegExp(route.path.replace(token, "([a-zA-Z0-9]*)"));
-				route.regex = regex;
-				dynamic.push(route);
-			} else {
-				statics[route.path] = route;
-			}
 		}
+
 	});
 
 }(enyo));
