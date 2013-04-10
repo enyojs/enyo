@@ -83,7 +83,7 @@
 				try {
 					this.changedResponderTest(oc, key, oc.get(key), update[key]);
 				} catch (e) {
-					if ((idx = keys.indexOf(e)) > -1) {
+					if ((idx = enyo.indexOf(e, keys)) > -1) {
 						keys.splice(idx, 1);
 					} else {
 						throw e;
@@ -114,7 +114,7 @@
 						return this.finish("object controller reported change but " +
 							"data object did not have expected value");
 					}
-					if ((idx = keys.indexOf(e)) > -1) {
+					if ((idx = enyo.indexOf(e, keys)) > -1) {
 						keys.splice(idx, 1);
 					} else {
 						throw e;
