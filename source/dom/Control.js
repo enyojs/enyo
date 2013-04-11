@@ -527,13 +527,13 @@ enyo.kind({
 	hide: function() {
 		this.setShowing(false);
 	},
-	//* Focus on this control
+	//* Sets focus to this control.
 	focus: function() {
 		if (this.hasNode()) {
 			this.node.focus();
 		}
 	},
-	//* Blur this control
+	//* Blurs this control.
 	blur: function() {
 		if (this.hasNode()) {
 			this.node.blur();
