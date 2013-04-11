@@ -1,6 +1,6 @@
 /**
 	_enyo.Component_ is the fundamental building block for Enyo applications.
-	Components are designed to fit together, so that complex behaviors may be
+	Components are designed to fit together, allowing complex behaviors to be
 	fashioned from smaller bits of functionality.
 
 	Component constructors take a single argument (sometimes called a
@@ -122,9 +122,9 @@ enyo.kind({
 	//* @public
 	/**
 		Removes this component from its owner (sets _owner_ to null) and does
-		any cleanup. The component is flagged with a _destroyed: true_ property.
-		Usually the component will be suitable for garbage collection after
-		being destroyed, unless user code keeps a reference to it.
+		any necessary cleanup. The component is flagged with a _destroyed: true_
+		property. Usually, the component will be suitable for garbage collection
+		after being destroyed, unless user code keeps a reference to it.
 	*/
 	destroy: function() {
 		this.destroyComponents();
@@ -253,11 +253,11 @@ enyo.kind({
 		return this._createComponent(inInfo, inMoreInfo);
 	},
 	/**
-		Creates Components as defined by the array of configurations _inInfos_.
-		Each configuration in _inInfos_ is combined with _inCommonInfo_ as
-		described in _createComponent_.
+		Creates Component objects as defined by the array of configurations
+		_inInfos_. Each configuration in _inInfos_ is combined with _inCommonInfo_,
+		as described in _createComponent_.
 
-		_createComponents_ returns an array of references to the created components.
+		Returns an array of references to the created components.
 
 			// ask foo to create components _bar_ and _zot_, but set the owner of
 			// both components to _this_.
@@ -290,7 +290,7 @@ enyo.kind({
 
 			function(inSender, inEvent)
 
-		where _inSender_ refers to the Component that most recently
+		where _inSender_ refers to the component that most recently
 		propagated the event and _inEvent_ is an object containing
 		event information.
 
@@ -313,14 +313,14 @@ enyo.kind({
 	/**
 		Bubbles an event up an object chain, starting <b>above</b> _this_.
 
-		If a handler for this event returns true (aka _handled_),
+		If a handler for this event returns true (i.e., _handled_),
 		bubbling is stopped.
 
 		Handlers always have this signature:
 
 			function(inSender, inEvent)
 
-		where _inSender_ refers to the Component that most recently
+		where _inSender_ refers to the component that most recently
 		propagated the event and _inEvent_ is an object containing
 		event information.
 
@@ -341,9 +341,8 @@ enyo.kind({
 	},
 	//* @protected
 	/**
-		Dispatching refers to sending an event to a named delegate.
-		This object may dispatch an event to itself via a handler,
-		or to its owner via an event property, e.g.:
+		Sends an event to a named delegate. This object may dispatch an event
+		to itself via a handler, or to its owner via an event property, e.g.:
 
 			handlers {
 				// 'tap' events dispatched to this.tapHandler
@@ -434,8 +433,8 @@ enyo.kind({
 		Dispatches the event to named delegate _inMethodName_, if it exists.
 		Subkinds may re-route dispatches.
 		Note that both 'handlers' events and events delegated from owned controls
-		arrive here. If you need to handle these differently, you may
-		need to also override _dispatchEvent_.
+		arrive here. If you need to handle these differently, you may also need
+		to override _dispatchEvent_.
 	*/
 	dispatch: function(inMethodName, inEvent, inSender) {
 		if (this._silenced) {
@@ -485,10 +484,9 @@ enyo.kind({
 	_silence_count: 0,
 	//*@public
 	/**
-		Sets a flag that will disable event propagation for this
-		component. Increments the internal counter ensuring that the
-		_unsilence_ method must be called that many times before
-		event propagation will continue.
+		Sets a flag that disables event propagation for this component. Also
+		increments an internal counter that tracks the number of times the
+		_unsilence_ method must be called before event propagation will continue.
 	*/
 	silence: function () {
 		this._silenced = true;
@@ -497,10 +495,9 @@ enyo.kind({
 
 	//*@public
 	/**
-		If the internal silence counter is 0 this method will allow
-		event propagation for this component. It will decrement the counter
-		by one otherwise. This method must be called one-time for each
-		_silence_ call.
+		Allows event propagation for this component if the internal silence counter
+		is 0; otherwise, decrements the counter by one.  For event propagation to
+		resume, this method must be called one time for each call to _silence_.
 	*/
 	unsilence: function () {
 		if (0 !== this._silence_count) {
@@ -511,10 +508,11 @@ enyo.kind({
 		}
 	},
 	/**
-		Create a new job tied to this instance of the component. If the component is
-		destroyed, any jobs associated it will also be stopped. If you start a job
-		that is pending with the same name, the original job will be stopped, making this
-		useful for timeouts that need to be reset.
+		Creates a new job tied to this instance of the component. If the component
+		is destroyed, any jobs associated with it will be stopped.
+
+		If you start a job with the same name as a pending job, the original job
+		will be stopped; this can be useful for resetting timeouts.
 	*/
 	startJob: function(inJobName, inJob, inWait) {
 		// allow strings as job names, they map to local method names
@@ -530,7 +528,7 @@ enyo.kind({
 		}), inWait);
 	},
 	/**
-		Stop a component-specific job before it has been activated.
+		Stops a component-specific job before it has been activated.
 	*/
 	stopJob: function(inJobName) {
 		if (this.__jobs[inJobName]) {
@@ -544,8 +542,8 @@ enyo.kind({
 
 enyo.defaultCtor = enyo.Component;
 
-// a method to create new instances from config objects.  It handles looking up the proper
-// constructor based on the provided kind attribute.
+// Creates new instances from config objects. This method looks up the
+// proper constructor based on the provided _kind_ attribute.
 enyo.create = enyo.Component.create = function(inConfig) {
 	if (!inConfig.kind && ("kind" in inConfig)) {
 		throw "enyo.create: Attempt to create a null kind. Check dependencies for [" + (inConfig.name || "") + "].";
@@ -560,14 +558,14 @@ enyo.create = enyo.Component.create = function(inConfig) {
 };
 
 enyo.Component.subclass = function(ctor, props) {
-	// Note: to reduce API surface area, sub-components are declared only as
+	// Note: To reduce API surface area, sub-components are declared only as
 	// 'components' in both kind and instance declarations.
 	//
 	// However, 'components' from kind declarations must be handled separately
-	// at create-time.
+	// at creation time.
 	//
 	// We rename the property here to avoid having
-	// to interrogate the prototype at create-time.
+	// to interrogate the prototype at creation time.
 	//
 	var proto = ctor.prototype;
 	//
