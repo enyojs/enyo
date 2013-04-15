@@ -13,7 +13,7 @@
 			// this is a necessary assert
 			throw "enyo.observer: invalid observer, must have a function";
 		}
-		fn.isObserver = true;
+		fn._is_observer = true;
 		fn.events = (fn.events? fn.events: []).concat(events);
 		return fn;
 	};
@@ -38,7 +38,7 @@
 		// it can call this.inherited as usual but we need to remove the
 		// previous version of the method from observing the notifications
 		// so it won't be handled twice
-		if (fn._inherited && fn._inherited.isObserver) {
+		if (fn._inherited && fn._inherited._is_observer) {
 			removeObserver(base, property, fn._inherited);
 		}
 		// if a context is provided for the listener, we bind it
@@ -296,12 +296,18 @@
 	//*@protected
 	var _find_observers = function (proto, props, kind) {
 		proto._observers = kind? _observer_clone(proto._observers || {}): proto._observers || {};
-		function addPropObserver(event) {
-			addObserver(proto, event, props[prop]);
-		}
-		for (var prop in props) {
-			if ("function" === typeof props[prop] && true === props[prop].isObserver) {
-				enyo.forEach(props[prop].events, addPropObserver);
+		var addPropObserver = function (event, fn) {
+			addObserver(proto, event, fn);
+		};
+		var prop;
+		var idx;
+		for (prop in props) {
+			if ("function" === typeof props[prop] && true === props[prop]._is_observer) {
+				for (idx = 0; idx < props[prop].events.length; ++idx) {
+					// key note here, we use the function on the proto here
+					// because it might have been proxied already
+					addPropObserver(props[prop].events[idx], proto[prop]);
+				}
 			}
 		}
 	};
