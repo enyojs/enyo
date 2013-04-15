@@ -6,10 +6,10 @@
 	bypass the same-domain rules that normally apply to XHR, since the browser
 	will load scripts from any address.
 	
-	Because this uses a script tag to load the data, your data source must be
-	accessed via a HTTP GET request and must be able to dynamically add the
-	requested callback name as a function wrapper around the JSON data for this
-	to work.
+	At the same time, in order to successfully load data via the &lt;script&gt;
+	tag, your data source must be accessed via an HTTP GET request and must be
+	able to dynamically add the requested callback name as a function wrapper
+	around the JSON data.
 
 	If you make changes to _enyo.JsonpRequest_, be sure to add or update the
 	appropriate [unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/ajax/tests).
