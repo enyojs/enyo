@@ -50,7 +50,12 @@ enyo.kind({
 	},
 	handlers: {
 		onfocus: "focusHandler",
-		onblur: "blurHandler"
+		onblur: "blurHandler",
+		onkeyup: "updateValue",
+		oncut: "updateValueAsync",
+		onpaste: "updateValueAsync",
+		// prevent oninput handler from being called lower in the inheritance chain
+		oninput: null
 	},
 	// create RichText as a div if platform has contenteditable attribute, otherwise create it as a textarea
 	create: function() {
@@ -73,6 +78,13 @@ enyo.kind({
 		} else {
 			this.set("content", this.get("value"));
 		}
+	},
+	updateValue: function() {
+		var val = this.node.innerHTML;
+		this.setValue(val);
+	},
+	updateValueAsync: function() {
+		enyo.asyncMethod(this.bindSafely("updateValue"));
 	},
 	//* @public
 	//* Gets value of the RichText.
