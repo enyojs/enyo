@@ -36,10 +36,15 @@ enyo.mixin(enyo.dispatcher, {
 		this.captures.push(info);
 		this.setCaptureInfo(info);
 	},
-	//* Release the last captured event
-	release: function() {
-		this.captures.pop();
-		this.setCaptureInfo(this.captures[this.captures.length-1]);
+	//* Remove the specified target from the capture list
+	release: function(inTarget) {
+		for (var i = this.captures.length - 1; i >= 0; i--) {
+			if (this.captures[i].target === inTarget) {
+				this.captures.splice(i,1);
+				this.setCaptureInfo(this.captures[this.captures.length-1]);
+				break;
+			}
+		}
 	},
 	//* Set the information for a captured event
 	setCaptureInfo: function(inInfo) {
