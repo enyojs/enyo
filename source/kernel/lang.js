@@ -155,7 +155,6 @@
 		which to call it.
 	*/
 	enyo.proxyMethod = function (fn, context) {
-		delete fn._inherited;
 		return function () {
 			return fn.apply(context || this, arguments);
 		};
