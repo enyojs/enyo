@@ -91,7 +91,7 @@
 			// if it wants
 			if (proto[key] && "function" === typeof proto[key]) {
 				fn = proto[key];
-				proto[key] = prop;
+				prop = proto[key] = enyo.proxyMethod(prop);
 				prop._inherited = fn;
 				prop.nom = name + "." + key + "()";
 			} else {
