@@ -4,7 +4,8 @@ enyo.$ = {};
 enyo.dispatcher = {
 	// these events come from document
 	events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel",
-		"click", "dblclick", "change", "keydown", "keyup", "keypress", "input"],
+		"click", "dblclick", "change", "keydown", "keyup", "keypress", "input",
+		"paste", "copy", "cut"],
 	// these events come from window
 	windowEvents: ["resize", "load", "unload", "message", "hashchange"],
 	// these events come from css
