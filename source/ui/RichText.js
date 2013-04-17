@@ -64,19 +64,20 @@ enyo.kind({
 	},
 	// simulate onchange event that inputs expose
 	focusHandler: function() {
-		this._value = this.getValue();
+		this._value = this.get("value");
 	},
 	blurHandler: function() {
-		if (this._value !== this.getValue()) {
+		if (this._value !== this.get("value")) {
 			this.bubble("onchange");
 		}
 	},
 	valueChanged: function() {
+		var val = this.get("value");
 		if (this.hasFocus()) {
 			this.selectAll();
-			this.insertAtCursor(this.value);
+			this.insertAtCursor(val);
 		} else {
-			this.set("content", this.get("value"));
+			this.set("content", val);
 		}
 	},
 	updateValue: function() {
@@ -87,12 +88,6 @@ enyo.kind({
 		enyo.asyncMethod(this.bindSafely("updateValue"));
 	},
 	//* @public
-	//* Gets value of the RichText.
-	getValue: function() {
-		if (this.hasNode()) {
-			return this.node.innerHTML;
-		}
-	},
 	//* Returns true if the RichText is focused.
 	hasFocus: function() {
 		if (this.hasNode()) {
