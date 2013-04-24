@@ -1,5 +1,8 @@
 (function () {
 
+	// add bindings to the automatically concatenatable properties in enyo
+	enyo.concat.push("bindings");
+
 	//*@protected
 	/**
 		Used internally to track bindings.
