@@ -99,6 +99,8 @@
 
 	//*@protected
 	var _apply_properties = function (base, props, name) {
+		// the name of any concatenatable properties
+		var concat = base.concat || [];
 		// the name of the property to be applied
 		var key;
 		// the value for the property that will be applied
@@ -124,6 +126,12 @@
 				prop = base[key] = enyo.proxyMethod(prop);
 				prop._inherited = fn;
 				prop.nom = name + "." + key + "()";
+			} else if (!!~enyo.indexOf(key, concat)) {
+				// we need to concatenate instead of blowing away the property
+				// if they are both arrays
+				if (base[key] instanceof Array && props[key] instanceof Array) {
+					base[key] = enyo.merge(base[key], props[key]);
+				}
 			} else {
 				base[key] = prop;
 			}
