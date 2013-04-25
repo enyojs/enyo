@@ -59,7 +59,27 @@
 			props._mixin_handlers = props.handlers;
 			delete props.handlers;
 		}
+		if (enyo.exists(props["override"])) {
+			props._mixin_override = props.override;
+			delete props.override;
+		} else {
+			props._mixin_override = true;
+		}
 		return props;
+	};
+	
+	//*@public
+	/**
+		Determine if the kind or instance has the requested _mixin_.
+		The parameter must be a string representing the name of the mixin
+		in question.
+	*/
+	enyo.hasMixin = function (target, mixin) {
+		if (target && target.hasMixin) {
+			return target.hasMixin(mixin);
+		} else {
+			return !!~enyo.indexOf(mixin, target._applied_mixins || []);
+		}
 	};
 	
 	//*@protected
@@ -105,6 +125,9 @@
 	var _apply_properties = function (base, props, name) {
 		// the name of any concatenatable properties
 		var concat = base.concat || [];
+		// whether or not the mixin wishes to override defined
+		// properties (not functions) of the base if they exist
+		var override = props._mixin_override;
 		// the name of the property to be applied
 		var key;
 		// the value for the property that will be applied
@@ -162,9 +185,13 @@
 				// if they are both arrays
 				if (base[key] instanceof Array && props[key] instanceof Array) {
 					base[key] = enyo.merge(base[key], props[key]);
+				} else if (props[key] instanceof Array) {
+					base[key] = enyo.clone(prop);
 				}
 			} else {
-				base[key] = prop;
+				if (override || !enyo.exists(base[key])) {
+					base[key] = prop;
+				}
 			}
 		}
 	};
@@ -312,6 +339,16 @@
 		applyMixin: function (mixin) {
 			enyo.applyMixin(mixin, this, true);
 			return this;
+		},
+		
+		//*@public
+		/**
+			Returns a boolean true | false whether or not this instance
+			already has the requested _mixin_ applied to it. The parameter
+			must be a string representing the name of the mixin in question.
+		*/
+		hasMixin: function (mixin) {
+			return !!~enyo.indexOf(mixin, this._applied_mixins);
 		}
 
 	});
