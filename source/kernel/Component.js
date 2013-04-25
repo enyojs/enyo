@@ -379,22 +379,33 @@ enyo.kind({
 					event.delegate = this;
 				}
 				ret = this.bubbleUp(this[name], event, sender);
-				delete event.delegate;
+				event.delegate = undefined;
 				return ret;
 			}
 		}
 	},
 	// internal - try dispatching event to self, if that fails bubble it up the tree
 	dispatchBubble: function(inEventName, inEvent, inSender) {
-		if (this._silenced) {
-			return;
+		// adjust to be less recursive
+		var current = this;
+		while (current) {
+			if (current._silenced) {
+				return false;
+			}
+			// Try to dispatch from here, stop bubbling on truthy return value
+			if (current.dispatchEvent(inEventName, inEvent, inSender)) {
+				return true;
+			}
+
+			// Bubble to next target (adapted from bubbleUp)
+			var next = current.getBubbleTarget();
+			if (next) {
+				inSender = inEvent.delegate || current;
+				current = next;
+				continue;
+			}
+			return false;
 		}
-		// Try to dispatch from here, stop bubbling on truthy return value
-		if (this.dispatchEvent(inEventName, inEvent, inSender)) {
-			return true;
-		}
-		// Bubble to next target
-		return this.bubbleUp(inEventName, inEvent, inSender);
 	},
 	decorateEvent: function(inEventName, inEvent, inSender) {
 		// an event may float by us as part of a dispatchEvent chain or delegateEvent
@@ -619,7 +630,7 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 			//return this.bubble(inName, enyo.except(["delegate"], inEvent || {}));
 			payload = payload || {};
 			var delegate = payload.delegate;
-			delete payload.delegate;
+			payload.delegate = undefined;
 			this.bubble(inName, payload);
 			if (delegate) {
 				payload.delegate = delegate;

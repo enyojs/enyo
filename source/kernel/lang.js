@@ -146,20 +146,6 @@
 		return val;
 	};
 
-	//*@protected
-	/**
-		An internally-used method to proxy functions (similar to but not exactly
-		the same as enyo.bind) such that they will be called under the correct context
-		but with a reference to the correct arguments at the time they are called.
-		Accepts two parameters--the function to be called and the context under
-		which to call it.
-	*/
-	enyo.proxyMethod = function (fn, context) {
-		return function () {
-			return fn.apply(context || this, arguments);
-		};
-	};
-
 	//*@public
 	/**
 		A global setter that takes a string path (relative to the method's
