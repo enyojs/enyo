@@ -150,7 +150,7 @@
 			}
 			
 			// if the basetype has the property and it is a function, we
-			// insert the propss function but allow it to chain the original
+			// insert the props function but allow it to chain the original
 			// if it wants
 			if (base[key] && "function" === typeof base[key] && "function" === typeof prop) {
 				fn = base[key];
