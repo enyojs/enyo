@@ -24,6 +24,19 @@
 		store[name] = mixin;
 	};
 
+	var proxyInheritedMethod = function (fn, inherited, nom) {
+		return function () {
+			var oldInherited = fn._inherited;
+			var oldNom = fn.nom;
+			fn._inherited = inherited;
+			fn.nom = nom;
+			var ret = fn.apply(this, arguments);
+			fn._inherited =  oldInherited;
+			fn.nom = oldNom;
+			return ret;
+		};
+	};
+
 	//*@public
 	/**
 		Creates a reusable hash of the properties to be applied for the
@@ -67,7 +80,7 @@
 		}
 		return props;
 	};
-	
+
 	//*@public
 	/**
 		Determine if the kind or instance has the requested _mixin_.
@@ -81,7 +94,7 @@
 			return !!~enyo.indexOf(mixin, target._applied_mixins || []);
 		}
 	};
-	
+
 	//*@protected
 	var _apply_features = function (base, mixin) {
 		for (var idx = 0, len = features.length; idx < len; ++idx) {
@@ -91,14 +104,14 @@
 
 	//*@protected
 	var _add_mixin = function (proto, mixin, name) {
-		
+
 		// for the kind we clone the known mixin constructors
 		var ctors = proto._mixin_create = enyo.clone(proto._mixin_create || []);
 		// for the kind we clone the known mixin destructors
 		var dtors = proto._mixin_destroy = enyo.clone(proto._mixin_destroy || []);
 		// for the kind we clone the known applied mixins
 		var applied = proto._applied_mixins = enyo.clone(proto._applied_mixins || []);
-		
+
 		// if this mixin is already applied, there is nothing we can do
 		if (!!~enyo.indexOf(name, applied)) {
 			return enyo.warn("enyo.applyMixin: " +
@@ -145,9 +158,9 @@
 			if ("_create" === key || "_destroy" === key) {
 				continue;
 			}
-			
+
 			prop = props[key];
-			
+
 			if ("_mixin_handlers" === key) {
 				if (base._mixin_handlers) {
 					// deliberate reuse of the key variable from the outer
@@ -171,15 +184,13 @@
 			if ("function" === typeof prop && !prop.nom) {
 				prop.nom = name + "." + key + "()";
 			}
-			
+
 			// if the basetype has the property and it is a function, we
 			// insert the props function but allow it to chain the original
 			// if it wants
 			if (base[key] && "function" === typeof base[key] && "function" === typeof prop) {
 				fn = base[key];
-				prop = base[key] = enyo.proxyMethod(prop);
-				prop.nom = name + "." + key + "()";
-				prop._inherited = fn;
+				prop = base[key] = proxyInheritedMethod(prop, fn, name + "." + key + "()");
 			} else if (!!~enyo.indexOf(key, concat)) {
 				// we need to concatenate instead of blowing away the property
 				// if they are both arrays
@@ -195,7 +206,7 @@
 			}
 		}
 	};
-	
+
 	//*@public
 	/**
 		Used internally but made accessible to arbitrarily apply a mixin
@@ -204,17 +215,17 @@
 	var applyMixin = enyo.applyMixin = function (mixin, base) {
 		// attempt to determine a name
 		var name = "string" === typeof mixin? mixin: mixin.name || "unnamed";
-		
+
 		// determine the mixin from whether it is a string or a hash
 		// of properties known as a mixin
 		mixin = name !== "unnamed"? store[name]: mixin;
-		
+
 		// if there isn't a mixin we can't do anything
 		if (!mixin || "object" !== typeof mixin) {
 			return enyo.warn("enyo.applyMixin: could not find the requested mixin, '" +
 				name + "'");
 		}
-		
+
 		if ("function" === typeof base) {
 			_add_mixin(base.prototype, mixin, name);
 		} else {
@@ -256,7 +267,7 @@
 		// kind
 		_create_mixins.call(this);
 	};
-	
+
 	//*@protected
 	var _dispatch_event = function (name, event, sender) {
 		var $handlers = this._mixin_handlers || {};
@@ -324,10 +335,10 @@
 
 		//*@protected
 		_supports_mixins: true,
-		
+
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		//*@public
 		/**
 			Apply a mixin to an instance of an enyo.kind that supports
@@ -340,7 +351,7 @@
 			enyo.applyMixin(mixin, this, true);
 			return this;
 		},
-		
+
 		//*@public
 		/**
 			Returns a boolean true | false whether or not this instance
@@ -352,22 +363,22 @@
 		}
 
 	});
-	
+
 	//*@public
 	/**
 		A special mixin for supporting _enyo.Component_ events.
 	*/
 	enyo.createMixin({
-		
+
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		//*@public
 		name: "enyo.MixinComponentSupport",
-		
+
 		// ...........................
 		// PRIVATE METHODS
-		
+
 		//*@protected
 		dispatchEvent: function () {
 			if (_dispatch_event.apply(this, arguments)) {
@@ -375,7 +386,7 @@
 			}
 			return this.inherited(arguments);
 		}
-		
+
 	});
 
 }(enyo));
