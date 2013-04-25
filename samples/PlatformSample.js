@@ -20,7 +20,15 @@ enyo.kind({
 		]}
 	],
 	updateWindowSize: function() {
-		this.$.windowAttr.setContent("size: " + window.innerWidth + "x" + window.innerHeight +
+		var width = window.innerWidth;
+		if (width === undefined) {
+			width = document.documentElement.clientWidth;
+		}
+		var height = window.innerHeight;
+		if (height === undefined) {
+			height = document.documentElement.clientHeight;
+		}
+		this.$.windowAttr.setContent("size: " + width + "x" + height +
 			", devicePixelRatio: " + window.devicePixelRatio);
 	},
 	create: function() {

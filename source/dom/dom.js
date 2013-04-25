@@ -46,13 +46,29 @@ enyo.dom = {
 		}
 	},
 	//* @protected
+	// this is designed to be copied into the computedStyle object
+	_ie8GetComputedStyle: function(prop) {
+		var re = /(\-([a-z]){1})/g;
+		if (prop === 'float') {
+			prop = 'styleFloat';
+		} else if (re.test(prop)) {
+			prop = prop.replace(re, function () {
+				return arguments[2].toUpperCase();
+			});
+		}
+		return this[prop] !== undefined ? this[prop] : null;
+	},
 	getComputedStyle: function(inNode) {
-		if(enyo.platform.ie<9 && inNode && inNode.currentStyle) {
+		if(enyo.platform.ie < 9 && inNode && inNode.currentStyle) {
 			//simple window.getComputedStyle polyfill for IE8
 			var computedStyle = enyo.clone(inNode.currentStyle);
-			computedStyle.getPropertyValue = inNode.currentStyle.getAttribute;
-			computedStyle.setProperty = inNode.currentStyle.setExpression;
-			computedStyle.removeProperty = inNode.currentStyle.removeAttribute;
+			computedStyle.getPropertyValue = this._ie8GetComputedStyle;
+			computedStyle.setProperty = function() {
+				return inNode.currentStyle.setExpression.apply(inNode.currentStyle, arguments);
+			};
+			computedStyle.removeProperty = function() {
+				return inNode.currentStyle.removeAttribute.apply(inNode.currentStyle, arguments);
+			};
 			return computedStyle;
 		} else {
 			return window.getComputedStyle && inNode && window.getComputedStyle(inNode, null);
@@ -147,7 +163,8 @@ enyo.dom = {
 	getComputedBoxValue: function(inNode, inProp, inBoundary, inComputedStyle) {
 		var s = inComputedStyle || this.getComputedStyle(inNode);
 		if (s) {
-			return parseInt(s.getPropertyValue(inProp + "-" + inBoundary), 0);
+			var p = s.getPropertyValue(inProp + "-" + inBoundary);
+			return p === "auto" ? 0 : parseInt(p, 10);
 		} else if (inNode && inNode.currentStyle) {
 			var v = inNode.currentStyle[inProp + enyo.cap(inBoundary)];
 			if (!v.match(this._pxMatch)) {
