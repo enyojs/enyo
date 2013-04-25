@@ -55,6 +55,10 @@
 			delete props.destroy;
 			props._destroy.nom = name + ".destroy()";
 		}
+		if ("object" === typeof props.handlers) {
+			props._mixin_handlers = props.handlers;
+			delete props.handlers;
+		}
 		return props;
 	};
 	
@@ -108,6 +112,7 @@
 		// placeholder for functions if they already exist
 		// on the target base
 		var fn;
+		var prev;
 		// the name of the mixin or nothing
 		name = name || "unnamed";
 		for (key in props) {
@@ -117,15 +122,41 @@
 			if ("_create" === key || "_destroy" === key) {
 				continue;
 			}
+			
 			prop = props[key];
+			
+			if ("_mixin_handlers" === key) {
+				if (base._mixin_handlers) {
+					// deliberate reuse of the key variable from the outer
+					// for loop since we will be exiting this pass when we're
+					// done here
+					for (key in prop) {
+						if (base._mixin_handlers[key] instanceof Array) {
+							base._mixin_handlers.push(prop[key]);
+						} else if (enyo.exists(base._mixin_handlers[key])) {
+							prev = base._mixin_handlers[key];
+							base._mixin_handlers[key] = [prev, prop[key]];
+						} else {
+							base._mixin_handlers[key] = prop[key];
+						}
+					}
+				} else {
+					base._mixin_handlers = enyo.clone(prop);
+				}
+				continue;
+			}
+			if ("function" === typeof prop && !prop.nom) {
+				prop.nom = name + "." + key + "()";
+			}
+			
 			// if the basetype has the property and it is a function, we
 			// insert the propss function but allow it to chain the original
 			// if it wants
-			if (base[key] && "function" === typeof base[key]) {
+			if (base[key] && "function" === typeof base[key] && "function" === typeof prop) {
 				fn = base[key];
 				prop = base[key] = enyo.proxyMethod(prop);
-				prop._inherited = fn;
 				prop.nom = name + "." + key + "()";
+				prop._inherited = fn;
 			} else if (!!~enyo.indexOf(key, concat)) {
 				// we need to concatenate instead of blowing away the property
 				// if they are both arrays
@@ -198,6 +229,24 @@
 		// kind
 		_create_mixins.call(this);
 	};
+	
+	//*@protected
+	var _dispatch_event = function (name, event, sender) {
+		var $handlers = this._mixin_handlers || {};
+		var idx;
+		var len;
+		var ret = false;
+		if ($handlers[name]) {
+			if ($handlers[name] instanceof Array) {
+				for (idx = 0, len = $handlers[name].length; idx < len; ++idx) {
+					ret = ret || this.dispatch($handlers[name][idx], event, sender);
+				}
+			} else {
+				ret = this.dispatch($handlers[name], event, sender);
+			}
+		}
+		return ret;
+	};
 
 	//*@protected
 	/**
@@ -265,6 +314,31 @@
 			return this;
 		}
 
+	});
+	
+	//*@public
+	/**
+		A special mixin for supporting _enyo.Component_ events.
+	*/
+	enyo.createMixin({
+		
+		// ...........................
+		// PUBLIC METHODS
+		
+		//*@public
+		name: "enyo.MixinComponentSupport",
+		
+		// ...........................
+		// PRIVATE METHODS
+		
+		//*@protected
+		dispatchEvent: function () {
+			if (_dispatch_event.apply(this, arguments)) {
+				return true;
+			}
+			return this.inherited(arguments);
+		}
+		
 	});
 
 }(enyo));
