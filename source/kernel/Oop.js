@@ -4,7 +4,7 @@
 	overwriting. These are automatically used unless explicitly
 	removed.
 */
-enyo.concat = ["concat", "bindings"];
+enyo.concat = ["concat"];
 
 //*@protected
 /**
