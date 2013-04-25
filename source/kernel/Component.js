@@ -78,7 +78,7 @@ enyo.kind({
 	},
 	defaultKind: "Component",
 	handlers: {},
-	mixins: ["enyo.ApplicationSupport"],
+	mixins: ["enyo.MixinComponentSupport", "enyo.ApplicationSupport"],
 	__jobs: {},
 	toString: function() {
 		return this.kindName;
