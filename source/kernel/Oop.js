@@ -225,15 +225,7 @@ enyo.kind.inherited = function (originals, replacements) {
 	// one-off methods are the fast track
 	var target = originals.callee;
 	var fn = target._inherited;
-	// the possible exception are proxied methods being
-	// executed from within a container under a different
-	// context (shared methods) so we have to check one
-	// level up in these cases to ensure we find the correct
-	// method
-	if (!fn || "function" !== typeof fn) {
-		target = target.caller || {};
-		fn = target._inherited;
-	}
+
 	// regardless of how we got here, just ensure we actually
 	// have a function to call or else we throw a console
 	// warning to notify developers they are calling a
