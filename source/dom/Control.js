@@ -814,7 +814,7 @@ enyo.kind({
 		// 'showing' specifically means domStyles.display !== 'none'.
 		// 'showing' does not imply the node is actually visible or even rendered in DOM,
 		// it simply reflects this state of this specific property as a convenience.
-		var $style = this.domStyles;
+		var $style = this.domStyles.display;
 		this.showing = ($style !== "none" && $style !== undefined);
 		return this.showing;
 	},
