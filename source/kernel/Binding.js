@@ -548,7 +548,7 @@
 		setSourceValue: function (value) {
 			var source = this.source;
 			var property = this._source_property;
-			var force = _force_regex.test(value);
+			var force = !_force_regex.test(typeof value);
 			source.set(property, value, force);
 		},
 
@@ -556,7 +556,7 @@
 		setTargetValue: function (value) {
 			var target = this.target;
 			var property = this._target_property;
-			var force = _force_regex.test(value);
+			var force = !_force_regex.test(typeof value);
 			target.set(property, value, force);
 		},
 
