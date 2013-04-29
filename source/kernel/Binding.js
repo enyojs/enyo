@@ -52,6 +52,16 @@
 			}
 		}
 	};
+	
+	//*@protected
+	/**
+		Used by the binding's setter for both targets and sources
+		when determing whether or not to force a notification to fire.
+		We cannot easily determine this for types that are passed
+		by reference (e.g. arrays and native JavaScript objects). But
+		for these types it much clearer in nearly all cases.
+	*/
+	var _force_regex = /(string|number|boolean)/;
 
 	//*@protected
 	/**
@@ -538,14 +548,16 @@
 		setSourceValue: function (value) {
 			var source = this.source;
 			var property = this._source_property;
-			source.set(property, value, true);
+			var force = _force_regex.test(value);
+			source.set(property, value, force);
 		},
 
 		//*@protected
 		setTargetValue: function (value) {
 			var target = this.target;
 			var property = this._target_property;
-			target.set(property, value, true);
+			var force = _force_regex.test(value);
+			target.set(property, value, force);
 		},
 
 		//*@protected
