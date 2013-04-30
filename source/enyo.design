@@ -1,0 +1,21 @@
+{
+    "palette": [
+       {
+            "name": "Enyo",
+            "items": [
+                {
+                    "name": "enyo.Scroller",
+                    "kind": "enyo.Scroller",
+                    "description": "A scroller",
+                    "inline": {
+                        "kind": "enyo.Scroller"
+                    },
+                    "config": {
+                        "kind": "enyo.Scroller",
+                        "fit": true
+                    }
+                }
+            ]
+        }
+    ]
+}
