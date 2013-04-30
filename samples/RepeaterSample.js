@@ -20,7 +20,7 @@ enyo.kind({
 		item.$.personNumber.setContent((index+1) + ". ");
 		item.$.personName.setContent(person.name);
 		item.$.personName.applyStyle("color", person.sex == "male" ? "dodgerblue" : "deeppink");
-		/* stop propogation */
+		/* stop propagation */
 		return true;
 	},
 	people: [

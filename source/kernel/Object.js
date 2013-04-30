@@ -141,8 +141,12 @@ enyo.kind({
 	/**
 		Sets the value of a property (or path). Pass in the property (or path)
 		and the value to be set. If the value is different from the previous
-		value, any listeners/observers of the property will be automatically
-		notified of the change.
+		value, any observers of the property will be automatically notified of
+		the change.
+
+		The _force_ parameter is optional; if true, the property's value will be
+		updated even if the passed-in value is the same as the current value,
+		and observers will be notified of the update.
 
 		The force parameter is optional; if true, the value will be updated
 		even if it's the same as the current value, and observers will be
