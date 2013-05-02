@@ -1,4 +1,4 @@
-﻿/**
+﻿﻿/**
 	_enyo.Async_ is the base kind for handling asynchronous operations.
 
 	_enyo.Async_ is an **Object**, not a **Component**; thus, you may not declare
