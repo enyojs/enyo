@@ -70,7 +70,7 @@ enyo.kind({
 		onError: "",
 		/**
 			Fires when the request progresses.
-		 */
+		*/
 		onProgress: ""
 	},
 	//* @protected
