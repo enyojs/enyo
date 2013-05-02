@@ -1,9 +1,10 @@
+/* global tests */
 enyo.kind({
 	name: "ControlPropsTest",
 	kind: enyo.TestSuite,
 	testUnionAttributesStylesClasses: function() {
 		enyo.kind({
-			name: "TestBase",
+			name: "tests.TestBase",
 			kind: enyo.Control,
 			attributes: {
 				a: 1
@@ -12,15 +13,17 @@ enyo.kind({
 			classes: "a"
 		});
 		enyo.kind({
-			name: "TestSub",
-			kind: TestBase,
+			name: "tests.TestSub",
+			kind: tests.TestBase,
 			attributes: {
 				b: 1
 			},
 			style: "b:1",
 			classes: "b"
 		});
-		var t = new TestSub({attributes: {c: 1}, style: "c:1", classes: "c"});
+		var t = new tests.TestSub({attributes: {c: 1}, style: "c:1", classes: "c"});
+		delete tests.TestBase;
+		delete tests.TestSub;
 		this.finish(
 			(!t.attributes.a && "bad a attr") || (!t.attributes.b && "bad b attr") || (!t.attributes.c && "bad c attr")
 			||

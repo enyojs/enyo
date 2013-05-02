@@ -2,7 +2,7 @@
 	_enyo.UiComponent_ implements a container strategy suitable for presentation
 	layers.
 
-	UiComponent itself is abstract.  Concrete subkinds include
+	UiComponent itself is abstract. Concrete subkinds include
 	<a href="#enyo.Control">enyo.Control</a> (for HTML/DOM) and
 	<a href="#enyo.canvas.Control">enyo.canvas.Control</a>
 	(for Canvas contexts).
@@ -36,7 +36,7 @@ enyo.kind({
 		(rather than at design time). If set to null, the new control will be
 		added at the beginning of the array; if set to a specific existing
 		control, the new control will be added before the specified control. If
-		left undefined, the	default behavior is to add the new control at the
+		left undefined, the default behavior is to add the new control at the
 		end of the array.
 	*/
 	addBefore: undefined,
@@ -44,6 +44,7 @@ enyo.kind({
 	statics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
 	},
+
 	create: function() {
 		this.controls = [];
 		this.children = [];
@@ -68,7 +69,7 @@ enyo.kind({
 	},
 	// As implemented, _controlParentName_ only works to identify an owned
 	// control created via _createComponents_ (i.e., usually in our _components_
-	// block).  To attach a _controlParent_ via other means, one must call
+	// block).	To attach a _controlParent_ via other means, one must call
 	// _discoverControlParent_ or set _controlParent_ directly.
 	//
 	// We could call _discoverControlParent_ in _addComponent_, but it would
@@ -147,7 +148,7 @@ enyo.kind({
 		// When we add a Control, we also establish a parent.
 		this.addChild(inControl, inBefore);
 	},
-    removeControl: function(inControl) {
+	removeControl: function(inControl) {
 		// Called to remove a control from the object's control list. As with addControl it
 		// can be overridden to detect when controls are removed.
 		// When we remove a Control, we also remove it from its parent.
@@ -248,7 +249,8 @@ enyo.kind({
 	/**
 		Sends a message to all my descendents.
 	*/
-	waterfallDown: function(inMessage, inPayload, inSender) {
+	waterfallDown: function(name, event, sender) {
+		event = event || {};
 		// Note: Controls will generally be both in a $ hash and a child list somewhere.
 		// Attempt to avoid duplicated messages by sending only to components that are not
 		// UiComponent, as those components are guaranteed not to be in a child list.
@@ -258,7 +260,7 @@ enyo.kind({
 		// waterfall to all pure components
 		for (var n in this.$) {
 			if (!(this.$[n] instanceof enyo.UiComponent)) {
-				this.$[n].waterfall(inMessage, inPayload, inSender);
+				this.$[n].waterfall(name, event, sender);
 			}
 		}
 		// waterfall to my children
@@ -267,20 +269,20 @@ enyo.kind({
 			// which are broadcast from within the framework. This saves a *lot* of unnecessary layout.
 			// TODO: Maybe remember that we did this, and re-send those messages on setShowing(true)?
 			// No obvious problems with it as-is, though
-			if (c.showing || !(inPayload && inPayload.showingOnly)) {
-				c.waterfall(inMessage, inPayload, inSender);
+			if (c.showing || !(event && event.showingOnly)) {
+				c.waterfall(name, event, sender);
 			}
 		}
 	},
 	getBubbleTarget: function() {
-		return this.parent;
+		return this._bubble_target || this.parent;
 	}
 });
 
 enyo.createFromKind = function(inKind, inParam) {
-	var ctor = inKind && enyo.constructorForKind(inKind);
-	if (ctor) {
-		return new ctor(inParam);
+	var Ctor = inKind && enyo.constructorForKind(inKind);
+	if (Ctor) {
+		return new Ctor(inParam);
 	}
 };
 

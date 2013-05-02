@@ -1,10 +1,15 @@
 /**
 	_enyo.JsonpRequest_ is a specialized form of
 	<a href="#enyo.Async">enyo.Async</a> used for making JSONP requests to a
-	remote server. This differs from the normal	XmlHTTPRequest call in that the
-	external resource is loaded using a	&lt;script&gt; tag. This allows us to
+	remote server. This differs from the normal XMLHttpRequest call in that the
+	external resource is loaded using a &lt;script&gt; tag. This allows us to
 	bypass the same-domain rules that normally apply to XHR, since the browser
 	will load scripts from any address.
+	
+	At the same time, in order to successfully load data via the &lt;script&gt;
+	tag, your data source must be accessed via an HTTP GET request and must be
+	able to dynamically add the requested callback name as a function wrapper
+	around the JSON data.
 
 	If you make changes to _enyo.JsonpRequest_, be sure to add or update the
 	appropriate [unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/ajax/tests).
@@ -48,7 +53,7 @@ enyo.kind({
 			script.charset = this.charset;
 		}
 		// most modern browsers also have an onerror handler
-		script.onerror = enyo.bind(this, function() {
+		script.onerror = this.bindSafely(function() {
 			// we don't get an error code, so we'll just use the generic 400 error status
 			this.fail(400);
 		});
@@ -84,10 +89,10 @@ enyo.kind({
 		this.src = this.buildUrl(inParams, callbackFunctionName);
 		this.addScriptElement();
 		//
-		window[callbackFunctionName] = enyo.bind(this, this.respond);
+		window[callbackFunctionName] = this.bindSafely(this.respond);
 		//
 		// setup cleanup handlers for JSONP completion and failure
-		var cleanup = enyo.bind(this, function() {
+		var cleanup = this.bindSafely(function() {
 			this.removeScriptElement();
 			window[callbackFunctionName] = null;
 		});

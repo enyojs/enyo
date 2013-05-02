@@ -14,7 +14,8 @@ enyo.kind({
 		enyo.kind({
 			name: "AClass"
 		});
-		var obj = new AClass();
+		/* global AClass */
+		new AClass();
 		var err = (typeof AClass !== 'function');
 		this.finish(err);
 	},
@@ -36,6 +37,7 @@ enyo.kind({
 		//  - instanceof from another context
 		//  - typeof (b/c it is a string instance)
 		// https://github.com/enyojs/enyo/issues/2
+		/* global iString */
 		if (!enyo.isString(iString)) {
 			err = "enyo.isString() cannot determine strings written from other window contexts correctly";
 		}

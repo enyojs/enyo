@@ -44,7 +44,7 @@ enyo.kind({
 	//* @protected
 	constructed: function() {
 		this.inherited(arguments);
-		this._next = enyo.bind(this, "next");
+		this._next = this.bindSafely("next");
 	},
 	destroy: function() {
 		this.stop();
@@ -107,10 +107,16 @@ enyo.kind({
 	next: function() {
 		this.t1 = enyo.now();
 		this.dt = this.t1 - this.t0;
-		// time independent
-		var f = this.fraction = enyo.easedLerp(this.t0, this.duration, this.easingFunction, this.reversed);
-		this.value = this.startValue + f * (this.endValue - this.startValue);
-		if (f >= 1 || this.shouldEnd()) {
+		var args = this.easingFunction.length;
+
+		if (args === 1) {
+			// time independent
+			var f = this.fraction = enyo.easedLerp(this.t0, this.duration, this.easingFunction, this.reversed);
+			this.value = this.startValue + f * (this.endValue - this.startValue);
+		} else {
+			this.value = enyo.easedComplexLerp(this.t0, this.duration, this.easingFunction, this.reversed, this.dt, this.startValue, (this.endValue - this.startValue));
+		}
+		if (((f >= 1) && (args === 1)) || this.shouldEnd()) {
 			this.value = this.endValue;
 			this.fraction = 1;
 			this.fire("onStep");

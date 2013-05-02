@@ -58,9 +58,6 @@ enyo.kind({
 	],
 	create: function() {
 		this.inherited(arguments);
-		/*if (this.floating) {
-			this.setParent(enyo.floatingLayer);
-		}*/
 		this.canGenerate = !this.floating;
 	},
 	render: function() {
@@ -197,7 +194,7 @@ enyo.kind({
 		enyo.dispatcher.capture(this, !this.modal);
 	},
 	release: function() {
-		enyo.dispatcher.release();
+		enyo.dispatcher.release(this);
 	},
 	down: function(inSender, inEvent) {
 		//record the down event to verify in tap

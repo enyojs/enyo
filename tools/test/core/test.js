@@ -32,7 +32,7 @@ Test Package Wish list:
 Collapse success results for a suite, so large swaths of green don't hide the red.
 Expandable stack trace & logging for failures, so they can be collapsed by default.
 Support for async beforeEach & afterEach
-Jasmine style assert mechanism, so we can have fancy english text for failures 
+Jasmine style assert mechanism, so we can have fancy english text for failures
 	e.g., this.assert("spreadsheet total", total).equals(15) yields "Expected spreadsheet total 12 to equal 15"
 
 */
@@ -41,15 +41,15 @@ Jasmine style assert mechanism, so we can have fancy english text for failures
 /**
 	To implement a suite of unit tests, create a subkind of enyo.TestSuite.
 	Any methods in your subkind that begin with 'test' will be invoked as unit tests when the test runner executes.
-	
-	When each test is complete, it should call this.finish().  
+
+	When each test is complete, it should call this.finish().
 	Pass nothing for success, or something truthy for failure (usually an explanatory message or an exception object).
-	If you do not call finish(), your test will be failed after a 3-second timeout.  
+	If you do not call finish(), your test will be failed after a 3-second timeout.
 	This timeout can be customized for a given test by calling this.resetTimeout(ms).
-	
-	
+
+
 	See enyo-support/tests for example framework tests.
-	
+
 */
 enyo.kind({
 	name: "enyo.TestSuite",
@@ -62,14 +62,14 @@ enyo.kind({
 	timeout: 3000,
 	timeoutMessage: "timed out",
 	/** @public
-		Replaces the current test timeout with 
+		Replaces the current test timeout with
 		May be called by individual tests to reset/lengthen/shorten the test timeout.
-		Mostly good for unusually long-running tests, but can be used for shortening the timeout duration, or 
+		Mostly good for unusually long-running tests, but can be used for shortening the timeout duration, or
 		even for setting different timeouts for successive stages of a test.
 	*/
 	resetTimeout: function(timeout) {
 		this.clearTimer();
-		this.timer = window.setTimeout(enyo.bind(this, "timedout"), timeout || this.timeout);
+		this.timer = window.setTimeout(this.bindSafely("timedout"), timeout || this.timeout);
 	},
 	/** @public
 		Tests can call this.log() to print useful diagnostic information.
@@ -160,7 +160,7 @@ enyo.kind({
 		enyo.asyncMethod(this, "reallyFinish", inMessage);
 	},
 	reallyFinish: function(inMessage) {
-		// If finish has been called before, then we ignore it 
+		// If finish has been called before, then we ignore it
 		// unless we passed previously and now we're failing.
 		// We will send multiple finish events if we get a success and then a failure -- that counts as a failure.
 		if (this.results) {
@@ -219,7 +219,7 @@ enyo.kind({
 			enyo.asyncMethod(this, "next");
 		}
 	}
-	
+
 });
 
 enyo.TestSuite.tests = [];

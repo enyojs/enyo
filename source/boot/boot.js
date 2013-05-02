@@ -5,7 +5,7 @@ enyo.execUnsafeLocalFunction = function(e) {
 		e();
 	}
 	else {
-		MSApp.execUnsafeLocalFunction(e);
+		window.MSApp.execUnsafeLocalFunction(e);
 	}
 };
 
@@ -35,20 +35,22 @@ enyo.machine = {
 			document.getElementsByTagName('head')[0].appendChild(link);
 		} else {
 			link = function() {
+				/* jshint evil: true */
 				document.write('<link href="' + inPath + '" media="screen" rel="' + rel + '" type="' + type + '" />');
 			};
 			enyo.execUnsafeLocalFunction(link);
 		}
 		if (isLess && window.less) {
-			less.sheets.push(link);
+			window.less.sheets.push(link);
 			if (!enyo.loader.finishCallbacks.lessRefresh) {
 				enyo.loader.finishCallbacks.lessRefresh = function() {
-					less.refresh(true);
+					window.less.refresh(true);
 				};
 			}
 		}
 	},
 	script: function(inSrc, onLoad, onError) {
+		/* jshint evil: true */
 		if (!enyo.runtimeLoading) {
 			document.write('<scri' + 'pt src="' + inSrc + '"' + (onLoad ? ' onload="' + onLoad + '"' : '') + (onError ? ' onerror="' + onError + '"' : '') + '></scri' + 'pt>');
 		} else {
@@ -60,6 +62,7 @@ enyo.machine = {
 		}
 	},
 	inject: function(inCode) {
+		/* jshint evil: true */
 		document.write('<scri' + 'pt type="text/javascript">' + inCode + "</scri" + "pt>");
 	}
 };

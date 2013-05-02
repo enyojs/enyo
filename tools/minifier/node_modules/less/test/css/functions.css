@@ -24,6 +24,7 @@
   luma-yellow: 93%;
   luma-cyan: 79%;
   luma-white-alpha: 50%;
+  contrast-filter: contrast(30%);
   contrast-white: #000000;
   contrast-black: #ffffff;
   contrast-red: #ffffff;
@@ -42,6 +43,8 @@
   format-multiple: "hello earth 2";
   format-url-encode: "red is %23ff0000";
   eformat: rgb(32, 128, 64);
+  unitless: 12;
+  unit: 14em;
   hue: 98;
   saturation: 12%;
   lightness: 95%;
@@ -52,6 +55,9 @@
   rounded-two: 10.67;
   roundedpx: 3px;
   roundedpx-three: 3.333px;
+  rounded-percentage: 10%;
+  ceil: 11px;
+  floor: 12px;
   percentage: 20%;
   color: #ff0011;
   tint: #898989;
@@ -60,6 +66,8 @@
   shade: #686868;
   shade-full: #000000;
   shade-percent: #686868;
+  hsv: #4d2926;
+  hsva: rgba(77, 40, 38, 0.2);
   mix: #ff3300;
   mix-0: #ffff00;
   mix-100: #ff0000;

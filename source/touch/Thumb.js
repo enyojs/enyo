@@ -102,7 +102,7 @@ enyo.kind({
 	},
 	delayHide: function(inDelay) {
 		if (this.showing) {
-			enyo.job(this.id + "hide", enyo.bind(this, "hide"), inDelay || 0);
+			enyo.job(this.id + "hide", this.bindSafely("hide"), inDelay || 0);
 		}
 	},
 	cancelDelayHide: function() {

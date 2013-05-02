@@ -5,8 +5,8 @@ tree.functions = {
         return this.rgba(r, g, b, 1.0);
     },
     rgba: function (r, g, b, a) {
-        var rgb = [r, g, b].map(function (c) { return number(c) }),
-            a = number(a);
+        var rgb = [r, g, b].map(function (c) { return scaled(c, 256); });
+        a = number(a);
         return new(tree.Color)(rgb, a);
     },
     hsl: function (h, s, l) {
@@ -32,6 +32,36 @@ tree.functions = {
             else                return m1;
         }
     },
+
+    hsv: function(h, s, v) {
+        return this.hsva(h, s, v, 1.0);
+    },
+
+    hsva: function(h, s, v, a) {
+        h = ((number(h) % 360) / 360) * 360;
+        s = number(s); v = number(v); a = number(a);
+
+        var i, f;
+        i = Math.floor((h / 60) % 6);
+        f = (h / 60) - i;
+
+        var vs = [v,
+                  v * (1 - s),
+                  v * (1 - f * s),
+                  v * (1 - (1 - f) * s)];
+        var perm = [[0, 3, 1],
+                    [2, 0, 1],
+                    [1, 0, 3],
+                    [1, 2, 0],
+                    [3, 1, 0],
+                    [0, 1, 2]];
+
+        return this.rgba(vs[perm[i][0]] * 255,
+                         vs[perm[i][1]] * 255,
+                         vs[perm[i][2]] * 255,
+                         a);
+    },
+
     hue: function (color) {
         return new(tree.Dimension)(Math.round(color.toHSL().h));
     },
@@ -56,8 +86,8 @@ tree.functions = {
     luma: function (color) {
         return new(tree.Dimension)(Math.round((0.2126 * (color.rgb[0]/255) +
             0.7152 * (color.rgb[1]/255) +
-            0.0722 * (color.rgb[2]/255))
-            * color.alpha * 100), '%');
+            0.0722 * (color.rgb[2]/255)) *
+            color.alpha * 100), '%');
     },
     saturate: function (color, amount) {
         var hsl = color.toHSL();
@@ -143,6 +173,11 @@ tree.functions = {
         return this.desaturate(color, new(tree.Dimension)(100));
     },
     contrast: function (color, dark, light, threshold) {
+        // filter: contrast(3.2);
+        // should be kept as is, so check for color
+        if (!color.rgb) {
+            return null;
+        }
         if (typeof light === 'undefined') {
             light = this.rgba(255, 255, 255, 1.0);
         }
@@ -179,27 +214,24 @@ tree.functions = {
         str = str.replace(/%%/g, '%');
         return new(tree.Quoted)('"' + str + '"', str);
     },
+    unit: function (val, unit) {
+        return new(tree.Dimension)(val.value, unit ? unit.toCSS() : "");
+    },
     round: function (n, f) {
         var fraction = typeof(f) === "undefined" ? 0 : f.value;
-        if (n instanceof tree.Dimension) {
-            return new(tree.Dimension)(number(n).toFixed(fraction), n.unit);
-        } else if (typeof(n) === 'number') {
-            return n.toFixed(fraction);
-        } else {
-            throw { type: "Argument", message: "argument must be a number" };
-        }
+        return this._math(function(num) { return num.toFixed(fraction); }, n);
     },
     ceil: function (n) {
-        return this._math('ceil', n);
+        return this._math(Math.ceil, n);
     },
     floor: function (n) {
-        return this._math('floor', n);
+        return this._math(Math.floor, n);
     },
     _math: function (fn, n) {
         if (n instanceof tree.Dimension) {
-            return new(tree.Dimension)(Math[fn](number(n)), n.unit);
+            return new(tree.Dimension)(fn(parseFloat(n.value)), n.unit);
         } else if (typeof(n) === 'number') {
-            return Math[fn](n);
+            return fn(n);
         } else {
             throw { type: "Argument", message: "argument must be a number" };
         }
@@ -313,8 +345,16 @@ tree.functions = {
     }
 };
 
-function hsla(hsla) {
-    return tree.functions.hsla(hsla.h, hsla.s, hsla.l, hsla.a);
+function hsla(color) {
+    return tree.functions.hsla(color.h, color.s, color.l, color.a);
+}
+
+function scaled(n, size) {
+    if (n instanceof tree.Dimension && n.unit == '%') {
+        return parseFloat(n.value * size / 100);
+    } else {
+        return number(n);
+    }
 }
 
 function number(n) {

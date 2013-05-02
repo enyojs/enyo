@@ -20,7 +20,8 @@
 			return this._cssTransformProp;
 		}
 		var i = enyo.indexOf(this.getStyleTransformProp(), styleTransformProps);
-		return this._cssTransformProp = cssTransformProps[i];
+		this._cssTransformProp = cssTransformProps[i];
+		return this._cssTransformProp;
 	};
 	enyo.dom.getStyleTransformProp = function() {
 		if (this._styleTransformProp || !document.body) {
@@ -28,7 +29,8 @@
 		}
 		for (var i = 0, p; (p = styleTransformProps[i]); i++) {
 			if (typeof document.body.style[p] != "undefined") {
-				return this._styleTransformProp = p;
+				this._styleTransformProp = p;
+				return this._styleTransformProp;
 			}
 		}
 	};

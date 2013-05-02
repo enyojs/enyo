@@ -3,8 +3,8 @@ enyo.kind({
 	kind: enyo.TestSuite,
 	timeout: 10000,
 	testContextSuccess: function (){
-		var self = this,
-		    context = {testStatus: 'success'};
+		var self = this;
+		var context = {testStatus: 'success'};
 		return new enyo.Ajax({url: "php/test1.php?format=test"})
 			.response(context, function(inSender, inValue) {
 				if (this.testStatus && this.testStatus === 'success') {
@@ -19,8 +19,8 @@ enyo.kind({
 			.go();
 	},
 	testContextFailure: function (){
-		var self = this,
-		    context = {testStatus: 'success'};
+		var self = this;
+		var context = {testStatus: 'success'};
 		return new enyo.Ajax({url: "php/nowhere.php"})
 			.response(context, function(inSender, inValue) {
 				self.finish("simple request failed");
@@ -123,7 +123,6 @@ enyo.kind({
 			this.finish();
 			return;
 		}
-		var contentType = "application/x-www-form-urlencoded";
 		this._testAjax({url: "php/test4.php", method: "POST", postBody: "data"}, null, function(inValue) {
 			if (enyo.platform.ios && enyo.platform.ios >= 6) {
 				var status = inValue.cacheCtrl && (inValue.cacheCtrl.indexOf('no-cache') === 0);
@@ -143,7 +142,6 @@ enyo.kind({
 			this.finish();
 			return;
 		}
-		var contentType = "application/x-www-form-urlencoded";
 		this._testAjax({url: "php/test4.php", method: "POST", postBody: "data", headers: {'cache-control': null} }, null, function(inValue) {
 			var status = (inValue.cacheCtrl === null);
 			if (!status) {
@@ -226,7 +224,7 @@ enyo.kind({
 			})
 			.error(this, function(inSender, inValue) {
 				// extra timeout is to make sure that timeout fail code cancels XHR
-				enyo.job("timeouttest", enyo.bind(this, function() {this.finish("");}), 4000);
+				enyo.job("timeouttest", this.bindSafely(function() {this.finish("");}), 4000);
 			})
 			.go();
 	},
@@ -236,8 +234,8 @@ enyo.kind({
 			// getting success means server sent wrong response
 			return false;
 		}, function(inError) {
-			return (inError === 500) && 
-				req.xhrResponse && 
+			return (inError === 500) &&
+				req.xhrResponse &&
 				(req.xhrResponse.status === 500) &&
 				(req.xhrResponse.headers['content-type'] === "text/plain; charset=utf-8") &&
 				(req.xhrResponse.body === "my error description");

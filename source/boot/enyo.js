@@ -2,6 +2,7 @@
 	// enyo can use information from the script tag that loads this bootstrap file
 	var thisScript = "enyo.js";
 
+	/* global enyo:true */
 	enyo = window.enyo || {};
 
 	enyo.locateScript = function(inName) {

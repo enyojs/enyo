@@ -72,3 +72,24 @@ body {
   border: "{";
   width: "{";
 }
+.comma-vs-semi-colon {
+  one: a;
+  two: b, c;
+  one: d, e;
+  two: f;
+  one: g;
+  one: h;
+  one: i;
+  one: j;
+  one: k;
+  two: l;
+  one: m, n;
+  one: o, p;
+  two: q;
+  one: r, s;
+  two: t;
+}
+#named-conflict {
+  four: a, 11, 12, 13;
+  four: a, 21, 22, 23;
+}

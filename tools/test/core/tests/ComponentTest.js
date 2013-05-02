@@ -5,7 +5,7 @@ enyo.kind({
 		var pass = false;
 		// should throw exception as this is an error
 		try {
-			var a = enyo.kind(
+			var A = enyo.kind(
 				{
 					name: "parentComponent",
 					components: [
@@ -16,7 +16,7 @@ enyo.kind({
 					]
 				}
 			);
-			new a({});
+			new A({});
 		} catch(e) {
 			pass = true;
 		}
@@ -26,14 +26,14 @@ enyo.kind({
 		this.finish();
 	},
 	testStartJob: function() {
-		var finish = enyo.bind(this, "finish");
+		var finish = this.bindSafely("finish");
 		var c = new enyo.Component();
 		c.startJob("testStartJob", function() {
 			finish();
 		}, 10);
 	},
 	testStartJobStringName: function() {
-		var finish = enyo.bind(this, "finish");
+		var finish = this.bindSafely("finish");
 		var c = new enyo.Component({
 			pass: function() {
 				finish();
@@ -42,7 +42,7 @@ enyo.kind({
 		c.startJob("testStartJobStringName", "pass", 10);
 	},
 	testStopJob: function() {
-		var finish = enyo.bind(this, "finish");
+		var finish = this.bindSafely("finish");
 		var c = new enyo.Component();
 		c.startJob("testStopJob", function() {
 			finish("job wasn't stopped");
@@ -53,7 +53,7 @@ enyo.kind({
 		}, 30);
 	},
 	testDestroyJob: function() {
-		var finish = enyo.bind(this, "finish");
+		var finish = this.bindSafely("finish");
 		var c = new enyo.Component();
 		c.startJob("testDestroyJob", function() {
 			finish("job wasn't stopped on destroy");

@@ -79,7 +79,7 @@ enyo.xhr = {
 	},
 	//* @protected
 	makeReadyStateHandler: function(inXhr, inCallback) {
-		if (window.XDomainRequest && inXhr instanceof XDomainRequest) {
+		if (window.XDomainRequest && inXhr instanceof window.XDomainRequest) {
 			inXhr.onload = function() {
 				var text;
 				if (typeof inXhr.responseText === "string") {
@@ -112,7 +112,7 @@ enyo.xhr = {
 		return result;
 	},
 	simplifyFileURL: function(inUrl) {
-		var a = document.createElement("a"), result = false;
+		var a = document.createElement("a");
 		a.href = inUrl;
 		// protocol is ":" for relative URLs
 		if (a.protocol === "file:" ||
@@ -132,7 +132,7 @@ enyo.xhr = {
 			// target URL maps to a domain other than the document origin.
 			if (enyo.platform.ie < 10 && window.XDomainRequest && !inParams.headers &&
 				!this.inOrigin(inParams.url) && !/^file:\/\//.test(window.location.href)) {
-				return new XDomainRequest();
+				return new window.XDomainRequest();
 			}
 		} catch(e) {}
 		try {

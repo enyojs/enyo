@@ -303,7 +303,7 @@ enyo.kind({
 		}
 	},
 	mousewheel: function(inSender, e) {
-		if (!this.dragging) {
+		if (!this.dragging && this.useMouseWheel) {
 			this.calcBoundaries();
 			this.syncScrollMath();
 			this.stabilize();
@@ -411,10 +411,12 @@ enyo.kind({
 	//* Syncs and shows both the vertical and horizontal scroll indicators.
 	showThumbs: function() {
 		this.syncThumbs();
-		if (this.horizontal != "hidden")
+		if (this.horizontal != "hidden") {
 			this.$.hthumb.show();
-		if (this.vertical != "hidden")
+		}
+		if (this.vertical != "hidden") {
 			this.$.vthumb.show();
+		}
 	},
 	//* Hides the vertical and horizontal scroll indicators.
 	hideThumbs: function() {

@@ -1,3 +1,4 @@
+/* global enyo:true */
 (function() {
 	enyo = window.enyo || {};
 
@@ -7,7 +8,8 @@
 
 	enyo.pathResolverFactory.prototype = {
 		addPath: function(inName, inPath) {
-			return this.paths[inName] = inPath;
+			this.paths[inName] = inPath;
+			return inPath;
 		},
 		addPaths: function(inPaths) {
 			if (inPaths) {
@@ -102,7 +104,7 @@
 				// block.packageName is the name of the package that interrupted us
 				//this.report("finished package", block.packageName);
 				if (this.verbose) {
-					console.groupEnd("* finish package (" + (block.packageName || "anon") + ")");
+					window.console.groupEnd("* finish package (" + (block.packageName || "anon") + ")");
 				}
 				// cache the folder for the currently processing package
 				this.packageFolder = block.folder;
@@ -117,7 +119,7 @@
 		finish: function(inBlock) {
 			this.packageFolder = "";
 			if (this.verbose) {
-				console.log("-------------- fini");
+				window.console.log("-------------- fini");
 			}
 			for (var i in this.finishCallbacks) {
 				if (this.finishCallbacks[i]) {
@@ -154,18 +156,18 @@
 			// process path
 			if ((path.slice(-4) == ".css") || (path.slice(-5) == ".less")) {
 				if (this.verbose) {
-					console.log("+ stylesheet: [" + prefix + "][" + inPath + "]");
+					window.console.log("+ stylesheet: [" + prefix + "][" + inPath + "]");
 				}
 				this.requireStylesheet(path);
 			} else if (path.slice(-3) == ".js" && path.slice(-10) != "package.js") {
 				if (this.verbose) {
-					console.log("+ module: [" + prefix + "][" + inPath + "]");
+					window.console.log("+ module: [" + prefix + "][" + inPath + "]");
 				}
 
 				return this.requireScript(inPath, path, inBlock);
 			} else if (path.slice(-7) == ".design") {
 				if (this.verbose) {
-					console.log("+ design metadata: [" + prefix + "][" + inPath + "]");
+					window.console.log("+ design metadata: [" + prefix + "][" + inPath + "]");
 				}
 				this.requireDesign(path);
 			} else {
@@ -206,7 +208,7 @@
 					inBlock.failed = inBlock.failed || [];
 					inBlock.failed.push(inPath);
 					_this.more(inBlock);
-				}
+				};
 
 				this.loadScript(inPath, success, failure);
 			} else {
@@ -331,7 +333,7 @@
 			// console/user reporting
 			this.report("loading package", this.packageName);
 			if (this.verbose) {
-				console.group("* start package [" + this.packageName + "]");
+				window.console.group("* start package [" + this.packageName + "]");
 			}
 			// load the actual package. the package MUST call a continuation function
 			// or the process will halt.

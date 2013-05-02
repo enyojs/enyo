@@ -20,6 +20,7 @@ _enyo.FormData_ is inspired by
 (function(w) {
 	if (w.FormData) {
 		try {
+			/* jshint unused: false */
 			var t1 = new w.FormData();
 			var t2 = new w.Blob();
 			// Android Chrome 18 will throw an error trying to create these

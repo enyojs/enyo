@@ -97,3 +97,17 @@ enyo.easedLerp = function(inT0, inDuration, inEasing, reverse) {
 		return lerp >= 1 ? 1 : inEasing(lerp);
 	}
 };
+
+/**
+	Gives an interpolation of an animated transition's distance from startValue to inValueChange.
+
+	Applies the _inEasing_ function with a wider range of variables to allow for more complex animations
+*/
+enyo.easedComplexLerp = function(inT0, inDuration, inEasing, reverse, inTime, inStartValue, inValueChange) {
+	var lerp = (enyo.now() - inT0) / inDuration;
+	if (reverse) {
+		return inEasing(1 - lerp, inTime, inStartValue, inValueChange, inDuration);
+	} else {
+		return inEasing(lerp, inTime, inStartValue, inValueChange, inDuration);
+	}
+};

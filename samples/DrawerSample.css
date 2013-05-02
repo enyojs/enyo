@@ -1,0 +1,33 @@
+.drawer-sample {
+	padding: 10px;
+}
+.drawer-sample-divider {
+	color: #F49200;
+	text-transform: uppercase;
+	font-family: Segoe UI, Prelude Medium, Helvetica, Verdana, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	margin-bottom: 8px;
+}
+.drawer-sample-label {
+	color: #1879CD;
+	font-size: 18px;
+	text-transform: uppercase;
+}
+.drawer-sample-box {
+	border: 2px solid lightblue;
+	padding: 4px;
+	white-space: nowrap;
+	overflow:hidden;
+}
+.drawer-sample-mtb {
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
+.drawer-sample-mlr {
+	margin-left: 6px;
+	margin-right: 6px;
+}
+.drawer-sample-o {
+	border-color: orange;
+}

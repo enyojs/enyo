@@ -101,7 +101,7 @@ enyo.kind({
 			} else {
 				xhr_headers["Content-Type"] = this.contentType;
 				if (body instanceof Object) {
-					if (this.contentType === "application/json") {
+					if (this.contentType.match(/^application\/json(;.*)?$/) !== null) {
 						body = JSON.stringify(body);
 					} else if (this.contentType === "application/x-www-form-urlencoded") {
 						body = enyo.Ajax.objectToQuery(body);
@@ -123,7 +123,7 @@ enyo.kind({
 			this.xhr = enyo.xhr.request({
 				url: url,
 				method: this.method,
-				callback: enyo.bind(this, "receive"),
+				callback: this.bindSafely("receive"),
 				body: body,
 				headers: xhr_headers,
 				sync: window.PalmSystem ? false : this.sync,

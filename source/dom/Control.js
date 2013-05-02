@@ -5,7 +5,7 @@
 	obviously controls, in Enyo, a control may become as complex as an entire
 	application.
 
-	If you make changes to _enyo.Control_, be sure to add or update the	appropriate
+	If you make changes to _enyo.Control_, be sure to add or update the appropriate
 	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
 
 	For more information, see the documentation on
@@ -32,7 +32,7 @@ enyo.kind({
 			plain text unless _allowHtml_ is true
 		*/
 		content: "",
-		//*	Boolean indicating whether the tag will be visible in the document
+		//* Boolean indicating whether the tag will be visible in the document
 		showing: true,
 		//* If false, HTML codes in _content_ are escaped before rendering
 		allowHtml: false,
@@ -57,8 +57,12 @@ enyo.kind({
 			to fill the available space. This only has meaning when the control
 			is being used as a child of a control with a version of FittableLayout
 			as its layoutKind.
+
+			TODO: We would like to be able to test for the existence of the fit
+			property without setting a default (of null) since it is a boolean
+			flag. This is a temporary fix.
 		*/
-		fit: false,
+		fit: null,
 		//* Used by Ares design editor for design objects
 		isContainer: false
 	},
@@ -66,6 +70,9 @@ enyo.kind({
 		//* Controls will call a user-provided _tap_ method when tapped upon.
 		ontap: "tap"
 	},
+	mixins: ["enyo.ControllerSupport"],
+	//*@protected
+	_is_view: true,
 	//* The default kind for controls created inside this control that don't
 	//* specify their own kind
 	defaultKind: "Control",
@@ -115,6 +122,15 @@ enyo.kind({
 			}
 		}
 	},
+	//*@protected
+	dispatchEvent: function (inEventName, inEvent, inSender) {
+		// prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
+		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
+			return true;
+		}
+
+		return this.inherited(arguments);
+	},
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
 		this.addClass(this.classes);
@@ -138,13 +154,6 @@ enyo.kind({
 	},
 	// event filter
 	strictlyInternalEvents: {onenter: 1, onleave: 1},
-	dispatchEvent: function(inEventName, inEvent, inSender) {
-		// prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
-		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
-			return true;
-		}
-		return this.inherited(arguments);
-	},
 	isInternalEvent: function(inEvent) {
 		var rdt = enyo.dispatcher.findDispatchTarget(inEvent.relatedTarget);
 		return rdt && rdt.isDescendantOf(this);
@@ -176,7 +185,7 @@ enyo.kind({
 		control.
 	*/
 	addContent: function(inAddendum) {
-		this.setContent(this.content + inAddendum);
+		this.setContent(this.get("content") + inAddendum);
 	},
 	/**
 		Gets the value of an attribute on this object.
@@ -398,8 +407,9 @@ enyo.kind({
 		when -webkit-overflow-scrolling is used (ENYO-1396)
 	*/
 	setupOverflowScrolling: function() {
-		if(enyo.platform.android || enyo.platform.androidChrome || enyo.platform.blackberry)
+		if(enyo.platform.android || enyo.platform.androidChrome || enyo.platform.blackberry) {
 			return;
+		}
 		document.getElementsByTagName("body")[0].className += " webkitOverflowScrolling";
 	},
 	//
@@ -440,7 +450,9 @@ enyo.kind({
 		this.teardownRender();
 		// inParentNode can be a string id or a node reference
 		var pn = enyo.dom.byId(inParentNode);
-		if (pn == document.body) {
+		var noFit = enyo.exists(this.fit) && this.fit === false;
+		//console.log(noFit);
+		if (pn == document.body && !noFit) {
 			this.setupBodyFitting();
 		} else if (this.fit) {
 			this.addClass("enyo-fit enyo-clip");
@@ -464,11 +476,12 @@ enyo.kind({
 		to have it expand to fill its container.
 
 		Note that this has all the limitations that _document.write_ has.
-		It only works while the page is loading, so you can't call this	from an
+		It only works while the page is loading, so you can't call this from an
 		event handler. Also, it will not work in certain environments, such as
 		Chrome Packaged Apps or Windows 8.
 	*/
 	write: function() {
+		/* jshint evil:true */
 		if (this.fit) {
 			this.setupBodyFitting();
 		}
@@ -513,6 +526,24 @@ enyo.kind({
 	*/
 	hide: function() {
 		this.setShowing(false);
+	},
+	//* Sets focus to this control.
+	focus: function() {
+		if (this.hasNode()) {
+			this.node.focus();
+		}
+	},
+	//* Blurs this control.
+	blur: function() {
+		if (this.hasNode()) {
+			this.node.blur();
+		}
+	},
+	//* Returns true if the control is focused.
+	hasFocus: function() {
+		if (this.hasNode()) {
+			return document.activeElement === this.node;
+		}
 	},
 	/**
 		Returns an object describing the geometry of this object, like so:
@@ -562,15 +593,15 @@ enyo.kind({
 
 		while(n) {
 			l += n.offsetLeft - (n.offsetParent ? n.offsetParent.scrollLeft : 0);
-			t += n.offsetTop  - (n.offsetParent ? n.offsetParent.scrollTop  : 0);
+			t += n.offsetTop  - (n.offsetParent ? n.offsetParent.scrollTop	: 0);
 			n = n.offsetParent;
 		}
-		
+
 		return {
 			top		: t,
 			left	: l,
 			bottom	: document.body.offsetHeight - t - h,
-			right	: document.body.offsetWidth  - l - w,
+			right   : document.body.offsetWidth  - l - w,
 			height	: h,
 			width	: w
 		};
@@ -598,6 +629,9 @@ enyo.kind({
 		return this.getAttribute("src");
 	},
 	srcChanged: function() {
+		if (!this.src) {
+			return;
+		}
 		this.setAttribute("src", enyo.path.rewrite(this.src));
 	},
 	attributesChanged: function() {
@@ -633,7 +667,7 @@ enyo.kind({
 		if (this.children.length) {
 			return this.generateChildHtml();
 		} else {
-			return this.allowHtml ? this.content : enyo.Control.escapeHtml(this.content);
+			return this.allowHtml ? this.get("content") : enyo.Control.escapeHtml(this.get("content"));
 		}
 	},
 	generateChildHtml: function() {
@@ -780,16 +814,17 @@ enyo.kind({
 		// 'showing' specifically means domStyles.display !== 'none'.
 		// 'showing' does not imply the node is actually visible or even rendered in DOM,
 		// it simply reflects this state of this specific property as a convenience.
-		return this.showing = (this.domStyles.display != "none");
+		this.showing = (this.domStyles.display != "none");
+		return this.showing;
 	},
 	//* Return true if this and all parents are showing
 	getAbsoluteShowing: function() {
 		var b = this.getBounds();
-		
+
 		if(this.getShowing() === false || (b.height === 0 && b.width === 0)) {
 			return false;
 		}
-		
+
 		if(this.parent && this.parent.getAbsoluteShowing) {
 			return this.parent.getAbsoluteShowing();
 		} else {
@@ -844,7 +879,7 @@ enyo.kind({
 			for (n in inStyleHash) {
 				v = inStyleHash[n];
 				if ((v !== null) && (v !== undefined) && (v !== "")) {
-					text +=  n + ':' + v + ';';
+					text += n + ':' + v + ';';
 				}
 			}
 			return text;
@@ -913,3 +948,9 @@ enyo.Control.subclass = function(ctor, props) {
 		proto.attributes = null;
 	}
 };
+
+//*@public
+/**
+	Also usable as _enyo.View_.
+*/
+enyo.View = enyo.Control;

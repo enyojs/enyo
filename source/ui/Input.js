@@ -1,6 +1,6 @@
 /**
 	_enyo.Input_ implements an HTML &lt;input&gt; element with cross-platform
-	support for	change events.
+	support for change events.
 
 	You can listen for _oninput_ and _onchange_ DOM events from this control
 	to know when the text inside has been modified. _oninput_ fires immediately,
@@ -15,7 +15,7 @@ enyo.kind({
 	name: "enyo.Input",
 	published: {
 		/**
-			Value of the input.  Use this property only to initialize the value.
+			Value of the input. Use this property only to initialize the value.
 			Call _getValue_ and _setValue_ to manipulate the value at runtime.
 		*/
 		value: "",
@@ -72,8 +72,8 @@ enyo.kind({
 
 		//Force onchange event to be bubbled inside Enyo for IE8
 		if(enyo.platform.ie == 8){
-      		this.setAttribute("onchange", enyo.bubbler);
-      	}
+			this.setAttribute("onchange", enyo.bubbler);
+		}
 
 		this.disabledChanged();
 		if (this.defaultFocus) {
@@ -90,12 +90,11 @@ enyo.kind({
 		this.setAttribute("disabled", this.disabled);
 		this.bubble("onDisabledChange");
 	},
-	getValue: function() {
-		return this.getNodeProperty("value", this.value);
-	},
 	valueChanged: function() {
 		this.setAttribute("value", this.value);
-		this.setNodeProperty("value", this.value);
+		if (this.getNodeProperty("value", this.value) !== this.value) {
+			this.setNodeProperty("value", this.value);
+		}
 	},
 	iekeyup: function(inSender, inEvent) {
 		var ie = enyo.platform.ie, kc = inEvent.keyCode;
@@ -113,17 +112,6 @@ enyo.kind({
 	},
 	clear: function() {
 		this.setValue("");
-	},
-	focus: function() {
-		if (this.hasNode()) {
-			this.node.focus();
-		}
-	},
-	//* Returns true if the Input is focused.
-	hasFocus: function() {
-		if (this.hasNode()) {
-			return document.activeElement === this.node;
-		}
 	},
 	// note: we disallow dragging of an input to allow text selection on all platforms
 	dragstart: function() {
@@ -144,5 +132,9 @@ enyo.kind({
 			r.expand("textedit");
 			r.select();
 		}
+	},
+	input: function() {
+		var val = this.getNodeProperty("value");
+		this.setValue(val);
 	}
 });

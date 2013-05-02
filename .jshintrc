@@ -1,0 +1,19 @@
+{
+    "globals": {
+        "enyo": false,
+        "$L": false
+    },
+    "evil": false,
+    "regexdash": true,
+    "browser": true,
+    "wsh": false,
+    "trailing": false,
+    "sub": true,
+    "eqnull": true,
+    "laxbreak": true,
+    "curly": true,
+    "indent": 4,
+    "newcap": true,
+    "undef": true,
+    "unused": "vars"
+}

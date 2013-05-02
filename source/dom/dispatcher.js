@@ -4,9 +4,10 @@ enyo.$ = {};
 enyo.dispatcher = {
 	// these events come from document
 	events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel",
-		"click", "dblclick", "change", "keydown", "keyup", "keypress", "input"],
+		"click", "dblclick", "change", "keydown", "keyup", "keypress", "input",
+		"paste", "copy", "cut"],
 	// these events come from window
-	windowEvents: ["resize", "load", "unload", "message"],
+	windowEvents: ["resize", "load", "unload", "message", "hashchange"],
 	// these events come from css
 	cssEvents: ["webkitTransitionEnd", "transitionend"],
 	// feature plugins (aka filters)
@@ -53,6 +54,20 @@ enyo.dispatcher = {
 		}
 		this.listen(inListener, inEventName, inHandler);
 	},
+	stopListening: function(inListener, inEventName, inHandler) {
+		var d = enyo.dispatch;
+		if (inListener.addEventListener) {
+			this.stopListening = function(inListener, inEventName, inHandler) {
+				inListener.removeEventListener(inEventName, inHandler || d, false);
+			};
+		} else {
+			//enyo.log("IE8 COMPAT: using 'detachEvent'");
+			this.stopListening = function(inListener, inEvent, inHandler) {
+				inListener.detachEvent("on" + inEvent, inHandler || d);
+			};
+		}
+		this.stopListening(inListener, inEventName, inHandler);
+	},
 	//* Fires an event for Enyo to listen for.
 	dispatch: function(e) {
 		// Find the control who maps to e.target, or the first control that maps to an ancestor of e.target.
@@ -69,7 +84,7 @@ enyo.dispatcher = {
 			this.dispatchBubble(e, c);
 		}
 	},
-	//* Takes an Event.target and finds the corresponding Enyo control.
+	//* Takes an event target and finds the corresponding Enyo control.
 	findDispatchTarget: function(inNode) {
 		var t, n = inNode;
 		// FIXME: Mozilla: try/catch is here to squelch "Permission denied to access property xxx from a non-chrome context"
@@ -100,7 +115,7 @@ enyo.dispatcher = {
 	}
 };
 
-// called in the context of an event
+// Called in the context of an event
 enyo.iePreventDefault = function() {
 	try {
 		this.returnValue = false;
@@ -131,9 +146,9 @@ enyo.bubble = function(inEvent) {
 // Enyo event system.
 enyo.bubbler = "enyo.bubble(arguments[0])";
 
-// The code below helps make Enyo compatible with Google Packages Apps
-// Content Security Policy(http://developer.chrome.com/extensions/contentSecurityPolicy.html)
-// which, among other things forbids use of inline scripts.
+// The code below helps make Enyo compatible with Google Packaged Apps
+// Content Security Policy(http://developer.chrome.com/extensions/contentSecurityPolicy.html),
+// which, among other things, forbids the use of inline scripts.
 // We replace online scripting with equivalent means, leaving enyo.bubbler
 // for backward compatibility.
 (function() {
@@ -142,8 +157,8 @@ enyo.bubbler = "enyo.bubble(arguments[0])";
 	};
 
 	/**
-	 * Makes given events bubble on specified enyo contol
-	 */
+		Makes given events bubble on a specified Enyo control.
+	*/
 	enyo.makeBubble = function() {
 		var args = Array.prototype.slice.call(arguments, 0),
 			control = args.shift();
@@ -156,6 +171,22 @@ enyo.bubbler = "enyo.bubble(arguments[0])";
 			}, control);
 		}
 	};
+	/**
+		Removes the event listening and bubbling initiated by _enyo.makeBubble()_
+		on a specific control.
+	 */
+	enyo.unmakeBubble = function() {
+		var args = Array.prototype.slice.call(arguments, 0),
+			control = args.shift();
+
+		if((typeof control === "object") && (typeof control.hasNode === "function")) {
+			enyo.forEach(args, function(event) {
+				if(this.hasNode()) {
+					enyo.dispatcher.stopListening(this.node, event, bubbleUp);
+				}
+			}, control);
+		}
+	};
 })();
 
 // FIXME: we need to create and initialize dispatcher someplace else to allow overrides
@@ -163,15 +194,15 @@ enyo.requiresWindow(enyo.dispatcher.connect);
 
 // generate a tapped event for a raw-click event
 enyo.dispatcher.features.push(
-    function (e) {
-        if ("click" === e.type) {
-            if (e.clientX === 0 && e.clientY === 0) {
-                // this allows the click to dispatch as well
-                // but note the tap event will fire first
-                var cp = enyo.clone(e);
-                cp.type = "tap";
-                enyo.dispatch(cp);
-            }
-        }
-    }
+	function (e) {
+		if ("click" === e.type) {
+			if (e.clientX === 0 && e.clientY === 0) {
+				// this allows the click to dispatch as well
+				// but note the tap event will fire first
+				var cp = enyo.clone(e);
+				cp.type = "tap";
+				enyo.dispatch(cp);
+			}
+		}
+	}
 );
