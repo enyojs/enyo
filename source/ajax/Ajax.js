@@ -26,9 +26,7 @@ enyo.kind({
 	published: enyo.AjaxProperties,
 	//* @protected
 	constructor: function(inParams) {
-		this.xhrFields = {};
 		enyo.mixin(this, inParams);
-		this.xhrFields.onprogress =  enyo.bind(this, this.updateProgress);
 		this.inherited(arguments);
 	},
 	//* @public
@@ -131,7 +129,7 @@ enyo.kind({
 				sync: window.PalmSystem ? false : this.sync,
 				username: this.username,
 				password: this.password,
-				xhrFields: this.xhrFields,
+				xhrFields: enyo.mixin(this.xhrFields, {onprogress: enyo.bind(this, this.updateProgress)}),
 				mimeType: this.mimeType
 			});
 		}
@@ -217,9 +215,9 @@ enyo.kind({
 		}
 	},
 	//* @protected
-	//* Handler for ajax progress events. Updates the currentProgress property.
+	//* Handler for ajax progress events.
 	updateProgress: function(event) {
-		this.setProperty('currentProgress', event.total ? event.loaded / event.total : 0);
+        this.sendProgress(event.loaded, 0, event.total, event);
 	},
 	statics: {
 		objectToQuery: function(/*Object*/ map) {

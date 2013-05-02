@@ -70,10 +70,6 @@ enyo.kind({
 		onError: "",
 		/**
 			Fires when the request progresses.
-
-			_inEvent.ajax_ contains the Async instance associated with the request.
-
-			_inEvent.progress_ is the progress as a float between 0 and 1.
 		 */
 		onProgress: ""
 	},
@@ -119,7 +115,7 @@ enyo.kind({
 	error: function(inSender, inData) {
 		this.doError({ajax: inSender, data: inData});
 	},
-	progress: function(inSender, inProgress) {
-		this.doProgress({ajax: inSender, progress: inProgress});
+	progress: function(inSender, inProgressEvent) {
+		this.doProgress(inProgressEvent);
 	}
 });

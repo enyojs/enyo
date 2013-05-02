@@ -22,11 +22,7 @@ enyo.kind({
 			If set to a non-zero value, the number of milliseconds to
 			wait after the _go_ call before failing with the "timeout" error
 		*/
-		timeout: 0,
-		/**
-			This property reflects the current progress of the request as a number between 0 and 1
-		*/
-		currentProgress: 0
+		timeout: 0
 	},
 	//* @protected
 	failed: false,
@@ -108,7 +104,6 @@ enyo.kind({
 	//* Called as part of the async implementation; triggers the handler chain.
 	respond: function(inValue) {
 		this.failed = false;
-		this.setCurrentProgress(1);
 		this.endTimer();
 		this.handle(inValue, this.responders);
 	},
@@ -116,7 +111,6 @@ enyo.kind({
 	//* Can be called from any handler to trigger the error chain.
 	fail: function(inError) {
 		this.failed = true;
-		this.setCurrentProgress(1);
 		this.endTimer();
 		this.handle(inError, this.errorHandlers);
 	},
@@ -138,15 +132,26 @@ enyo.kind({
 	},
 	//* @protected
 	//* Notifies the progress handlers
-	currentProgressChanged: function(progress) {
+	sendProgress: function(current, min, max, sourceEvent) {
+        var event = enyo.mixin({}, sourceEvent);
+        event.type = 'progress';
+        event.current = current;
+        event.min = min;
+        event.max = max;
+        event.getProgress = enyo.bind(this, 'getProgress', event);
 		for (var i = 0; i < this.progressHandlers.length; i++) {
-			enyo.call(this.context || this, this.progressHandlers[i], [this, this.currentProgress]);
+			enyo.call(this.context || this, this.progressHandlers[i], [this, event]);
 		}
 	},
+    getProgress: function(inEvent) {
+        var length = (inEvent.max - inEvent.min);
+        return length ? inEvent.current / length : 0;
+    },
 	//* Starts the async activity. Overridden in subkinds.
 	go: function(inValue) {
-		this.setCurrentProgress(0);
+		this.sendProgress(0, 0, 1);
 		enyo.asyncMethod(this, function() {
+            this.sendProgres(1, 0, 1);
 			this.respond(inValue);
 		});
 		return this;
