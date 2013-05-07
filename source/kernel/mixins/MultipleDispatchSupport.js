@@ -104,6 +104,7 @@ enyo.createMixin({
 		// object
 		if (this.owner && true === (this.owner instanceof enyo.Component)) {
 			this.set("_default_target", this.owner);
+			this.set("_default_dispatch", true);
 		} else {
 			// otherwise we either don't have an owner or they cannot
 			// accept events so we remove our bubble target
