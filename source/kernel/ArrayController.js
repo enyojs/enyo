@@ -18,6 +18,9 @@
 		url: "",
 		
 		//*@public
+		autoFetch: false,
+		
+		//*@public
 		batchMode: true,
 
 		//*@public
@@ -85,6 +88,14 @@
 
 		// ...........................
 		// PROTECTED METHODS
+		
+		//*@protected
+		create: function () {
+			this.inherited(arguments);
+			if (true === this.autoFetch && this.url) {
+				enyo.asyncMethod(this, this.fetch);
+			}
+		},
 		
 		//*@protected
 		_did_add: function (items) {
