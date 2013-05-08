@@ -2,11 +2,11 @@
 	
 	//*@public
 	/**
-		The _enumerable_ kind is an array-like structure with
-		array-like behaviors. It allows for notifications to be
-		dispatched from changes within its indices.
+		_enyo.Enumerable_ is an array-like structure with array-like behaviors. It
+		allows for notifications to be dispatched in response to changes within its
+		indices.
 	
-		Any type of object can be stored as enumerable.
+		Any type of object may be stored in an enumerable.
 	*/
 	enyo.kind({
 		
@@ -23,26 +23,22 @@
 		events: {
 			
 			/**
-				When an individual index has been modified this event
-				is emitted.
+				Fires when an individual index has been modified.
 			*/
 			onIndexChanged: "",
 			
 			/**
-				When an item is added to the enumerable this event
-				is emitted.
+				Fires when an item is added to the enumerable.
 			*/
 			onItemAdded: "",
 			
 			/**
-				When an item is removed from the enumerable this event
-				is emitted.
+				Fires when an item is removed from the enumerable.
 			*/
 			onItemRemoved: "",
 			
 			/**
-				When the length of this enumerable changes this event
-				is emitted.
+				Fires when the length of the enumerable changes.
 			*/
 			onLengthChanged: ""
 		},
@@ -111,7 +107,7 @@
 			if (len !== (this.length = store.length)) {
 				this.notifyObservers("length", len, this.length);
 			}
-			// unshift requires a reindex of every entry which might
+			// unshift requires a reindex of every entry, which might
 			// be very unfortunate depending on who is interested
 			this._did_change_from(0);
 			this._did_add(values);
@@ -229,10 +225,10 @@
 		
 		//*@protected
 		/**
-			This is only necessary because of the way the component names are
-			generated from the public property "name" that creates the method
-			"getName" and this class/kind is broken down to "enumerable" but
-			this has a special meaning and acts strangely.
+			This is only necessary because of the way that component names are
+			generated from the public property _name_, which creates the method
+			"getName"; this class/kind is broken down to "enumerable", but this
+			has a special meaning and acts strangely.
 		*/
 		getName: function () {
 			return this.name || enyo.uid("enumerable");
