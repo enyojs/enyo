@@ -4,5 +4,6 @@ enyo.depends(
 	"ajax",
 	"dom",
 	"touch",
-	"ui"
+	"ui",
+	"enyo.design"
 );
