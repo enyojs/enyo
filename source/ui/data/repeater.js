@@ -77,7 +77,12 @@
 		
 		//*@public
 		refresh: function () {
-			var $controller = this.get("controller") || [];
+			var $controller = this.get("controller");
+			
+			if (!($controller instanceof enyo.Enumerable)) {
+				// can't use it
+				return;
+			}
 			
 			// destroy any views we currently have rendered
 			this.destroyClientControls();
@@ -150,7 +155,6 @@
 		//*@protected
 		create: function () {
 			this.inherited(arguments);
-			this.refresh();
 		},
 		
 		//*@protected
@@ -208,7 +212,17 @@
 				var $client = this.controlParent;
 				$client.render();
 			}
-		}, "_batching")
+		}, "_batching"),
+		
+		//*@protected
+		_controller_changed: enyo.observer(function (property, previous, value) {
+			if (value && (value instanceof enyo.Enumerable)) {
+				this.refresh();
+			}
+			if (this._controller_changed._inherited) {
+				this.inherited(arguments);
+			}
+		}, "controller")
 		
 	});
 	
