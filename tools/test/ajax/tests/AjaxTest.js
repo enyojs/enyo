@@ -240,5 +240,18 @@ enyo.kind({
 				(req.xhrResponse.headers['content-type'] === "text/plain; charset=utf-8") &&
 				(req.xhrResponse.body === "my error description");
 		});
+	},
+	testProgress: function() {
+		var progress = 0;
+		new enyo.Ajax({url: "php/test7.php"})
+			.progress(this, function(inSender, inEvent){
+				if (inEvent.max === 10) {
+					if (progress === 5 && inEvent.current === 10) {
+						this.finish();
+					}
+				}
+				progress = inEvent.current;
+			})
+			.go();
 	}
 });
