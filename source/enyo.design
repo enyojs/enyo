@@ -7,12 +7,22 @@
                     "name": "enyo.Scroller",
                     "kind": "enyo.Scroller",
                     "description": "A scroller",
-                    "inline": {
-                        "kind": "enyo.Scroller"
-                    },
+                    "inline": {},
                     "config": {
                         "kind": "enyo.Scroller",
                         "fit": true
+                    }
+                },
+                {
+                    "name": "enyo.Repeater",
+                    "kind": "enyo.Repeater",
+                    "description": "A repeater",
+                    "inline": {},
+                    "config": {
+                        "kind": "enyo.Repeater"
+                    },
+                    "options": {
+                        "isRepeater": true
                     }
                 }
             ]
