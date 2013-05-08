@@ -217,7 +217,13 @@ enyo.kind({
 	//* @protected
 	//* Handler for ajax progress events.
 	updateProgress: function(event) {
-  	this.sendProgress(event.loaded, 0, event.total, event);
+		var ev = {};
+		for (var k in event) {
+			if (k !== 'input') {
+				ev[k] = event[k];
+			}
+		}
+  		this.sendProgress(event.loaded, 0, event.total, event);
 	},
 	statics: {
 		objectToQuery: function(/*Object*/ map) {
