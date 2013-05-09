@@ -2,8 +2,8 @@
 	
 	//*@public
 	/**
-		This binding will only continue propagation if the value
-		being passed is an explicit boolean value.
+		_enyo.BooleanOnlyBinding_ is a binding that will only continue propagation
+		if the value being passed is an explicit boolean value.
 	*/
 	enyo.kind({
 
