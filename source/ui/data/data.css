@@ -1,0 +1,14 @@
+/* WARNING: This is a generated file for backward-compatibility.  Most      */
+/* usrs should instead modify LESS files.  If you choose to edit this CSS   */
+/* directly rather than LESS files, you should make sure less.xx.yy.min.js  */
+/* is commented out in your debug.html, and run deploy.sh/bat using the     */
+/* '-c' flag to disable LESS compilation.  This will force the loader and   */
+/* minifier to fall back to using CSS files in place of the same-name       */
+/* LESS file.                                                               */
+
+.enyo-data-list.enyo-data-list-rows-container.enyo-list-row {
+  position: relative;
+}
+.enyo-data-grid-list.enyo-data-grid-list-item {
+  display: inline-block;
+}

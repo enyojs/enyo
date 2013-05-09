@@ -15,5 +15,6 @@ enyo.depends(
 	"ViewportPositioningTest.js",
 	"BindingTest.js",
 	"ObjectControllerTest.js",
-	"InheritanceSanityTest.js"
+	"InheritanceSanityTest.js",
+	"Enumerable.js"
 );

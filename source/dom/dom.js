@@ -75,8 +75,24 @@ enyo.dom = {
 		}
 	},
 	getComputedStyleValue: function(inNode, inProperty, inComputedStyle) {
-		var s = inComputedStyle || this.getComputedStyle(inNode);
-		return s ? s.getPropertyValue(inProperty) : null;
+		var s   = inComputedStyle || this.getComputedStyle(inNode),
+			nIE = enyo.platform.ie;
+			
+		s = s ? s.getPropertyValue(inProperty) : null;
+			
+		if (nIE) {
+			var oConversion = {
+				'thin'   : (nIE > 8 ? 2 : 1) + 'px',
+				'medium' : (nIE > 8 ? 4 : 3) + 'px',
+				'thick'  : (nIE > 8 ? 6 : 5) + 'px',
+				'none'   : '0'
+			}
+			if (typeof oConversion[s] != 'undefined') {
+				s = oConversion[s];
+			}
+		}
+		
+		return s;
 	},
 	getFirstElementByTagName: function(inTagName) {
 		var e = document.getElementsByTagName(inTagName);
