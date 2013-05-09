@@ -18,5 +18,6 @@ enyo.depends(
 	"Popup.js",
 	"Selection.js",
 	"Drawer.js",
+	"Table.js",
 	"data"
 );
