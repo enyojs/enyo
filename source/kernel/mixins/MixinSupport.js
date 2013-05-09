@@ -140,7 +140,7 @@
 		var concat = base.concat || [];
 		// whether or not the mixin wishes to override defined
 		// properties (not functions) of the base if they exist
-		var override = props._mixin_override || true;
+		var override = !enyo.exists(props._mixin_override)? true: props._mixin_override;
 		// the name of the property to be applied
 		var key;
 		// the value for the property that will be applied
