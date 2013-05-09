@@ -140,7 +140,7 @@
 		var concat = base.concat || [];
 		// whether or not the mixin wishes to override defined
 		// properties (not functions) of the base if they exist
-		var override = props._mixin_override;
+		var override = !enyo.exists(props._mixin_override)? true: props._mixin_override;
 		// the name of the property to be applied
 		var key;
 		// the value for the property that will be applied
@@ -188,7 +188,7 @@
 			// if the basetype has the property and it is a function, we
 			// insert the props function but allow it to chain the original
 			// if it wants
-			if (base[key] && "function" === typeof base[key] && "function" === typeof prop) {
+			if (base[key] && "function" === typeof base[key] && "function" === typeof prop && override) {
 				fn = base[key];
 				prop = base[key] = proxyInheritedMethod(prop, fn, name + "." + key + "()");
 			} else if (!!~enyo.indexOf(key, concat)) {

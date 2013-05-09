@@ -51,6 +51,14 @@
 		
 		//*@protected
 		_store: null,
+		
+		// ...........................
+		// COMPUTED PROPERTIES
+
+		//*@public
+		data: enyo.computed(function () {
+			return this._store;
+		}, "length", {cached: true, defer: true}),
 
 		// ...........................
 		// PUBLIC METHODS

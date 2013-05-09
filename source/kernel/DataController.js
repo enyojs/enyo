@@ -9,13 +9,16 @@
 		// PUBLIC PROPERTIES
 
 		//*@public
-		name: "enyo.ArrayController",
+		name: "enyo.DataController",
 		
 		//*@public
 		kind: "enyo.Enumerable",
 		
 		//*@public
 		url: "",
+		
+		//*@public
+		autoFetch: false,
 		
 		//*@public
 		batchMode: true,
@@ -35,6 +38,9 @@
 
 		// ...........................
 		// PROTECTED PROPERTIES
+		
+		//*@protected
+		mixins: ["enyo.SelectionSupport"],
 
 		// ...........................
 		// COMPUTED PROPERTIES
@@ -87,6 +93,14 @@
 		// PROTECTED METHODS
 		
 		//*@protected
+		create: function () {
+			this.inherited(arguments);
+			if (true === this.autoFetch && this.url) {
+				enyo.asyncMethod(this, this.fetch);
+			}
+		},
+		
+		//*@protected
 		_did_add: function (items) {
 			if (this.batchMode) {
 				this.doItemsAdded({items: items});
@@ -101,6 +115,44 @@
 				this.doItemsRemoved({items: items});
 			} else {
 				this.inherited(arguments);
+			}
+		},
+		
+		//*@protected
+		/**
+			Override of enyo.SelectionSupport's method to ensure we
+			are selecting actual data in the store.
+		*/
+		_select_item: function (sender, event) {
+			var $item = event.item;
+			var $controller = $item.controller;
+			var $data;
+			if ($controller) {
+				$data = $controller.get("data");
+				if ($data) {
+					if (!!~this.indexOf($data)) {
+						this.select($data);
+					}
+				}
+			}
+		},
+		
+		//*@protected
+		/**
+			Override of enyo.SelectionSupport's method to ensure we
+			are deselecting actual data in the store.
+		*/
+		_deselect_item: function (sender, event) {
+			var $item = event.item;
+			var $controller = $item.controller;
+			var $data;
+			if ($controller) {
+				$data = $controller.get("data");
+				if ($data) {
+					if (!!~this.indexOf($data)) {
+						this.deselect($data);
+					}
+				}
 			}
 		}
 
