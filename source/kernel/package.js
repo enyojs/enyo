@@ -17,5 +17,5 @@ enyo.depends(
 	"Application.js",
 	"ObjectController.js",
 	"Enumerable.js",
-	"ArrayController.js"
+	"DataController.js"
 );

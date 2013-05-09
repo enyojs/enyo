@@ -65,7 +65,7 @@
 		mixins: ["enyo.SelectionSupport"],
 		
 		//*@protected
-		classes: "enyo-fill enyo-data-list",
+		classes: "enyo-data-list",
 		
 		//*@protected
 		_container: {
@@ -87,17 +87,6 @@
 
 		// ...........................
 		// PUBLIC METHODS
-		
-		//*@public
-		refresh: function () {
-			this.$.rows.destroyClientControls();
-			var $controller = this.get("controller");
-			var idx = 0;
-			var end = $controller.length;
-			for (; idx < end; ++idx) {
-				this.add($controller.at(idx));
-			}
-		},
 		
 		// ...........................
 		// PROTECTED METHODS

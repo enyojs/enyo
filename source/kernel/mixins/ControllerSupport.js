@@ -26,7 +26,9 @@ enyo.createMixin({
 
 	//*@protected
 	create: function () {
-		this.notifyObservers("controller");
+		if (this.controller) {
+			this.notifyObservers("controller");
+		}
 	},
 
 	//*protected
