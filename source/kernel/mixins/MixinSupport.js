@@ -188,7 +188,7 @@
 			// if the basetype has the property and it is a function, we
 			// insert the props function but allow it to chain the original
 			// if it wants
-			if (base[key] && "function" === typeof base[key] && "function" === typeof prop) {
+			if (base[key] && "function" === typeof base[key] && "function" === typeof prop && override) {
 				fn = base[key];
 				prop = base[key] = proxyInheritedMethod(prop, fn, name + "." + key + "()");
 			} else if (!!~enyo.indexOf(key, concat)) {
