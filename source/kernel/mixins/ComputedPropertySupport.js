@@ -1,4 +1,4 @@
-(function () {
+(function (enyo) {
 
 	//*@public
 	/**
@@ -87,14 +87,14 @@
 			config.volatile = false;
 		}
 		fn.config = config;
-		fn.isProperty = true;
+		fn._is_property = true;
 		config.properties = properties;
 		return fn;
 	};
 
 	//*@protected
 	var _is_computed = function (fn) {
-		return fn && "function" === typeof fn && true === fn.isProperty;
+		return fn && "function" === typeof fn && true === fn._is_property;
 	};
 
 	//*@protected
@@ -193,18 +193,19 @@
 	var _set_computed = function (path, value) {
 		// and a reference to the method because we will need it
 		var fn = this[path];
+		var prev = this.get(path);
 		// we merely execute the computed property and pass it the
 		// value, if it was capable of setting the value it will
 		// handle it otherwise it will recompute
 		fn.call(this, value);
 		// mark it as dirty and push it to the queue
-		_update_computed.call(this, path);
+		_update_computed.call(this, path, prev, value);
 		// flush the queue immediately
 		_flush_queue.call(this);
 	};
 
 	//*@protected
-	var _update_computed = function (prop) {
+	var _update_computed = function (prop, prev, value) {
 		var $computed = this._computed;
 		var $config = $computed[prop];
 		if ($config) {
@@ -214,18 +215,23 @@
 			// is cachable and needs updating just do this as it
 			// should be harmless otherwise
 			++$config.dirty;
-			this._computed_queue.push(prop);
+			this._computed_queue.push([prop, prev || $config.value, value]);
 		}
 	};
 
 	//*@protected
 	var _flush_queue = function () {
 		var $queue = this._computed_queue;
+		var values;
 		if (!$queue.length) {
 			return;
 		}
 		do {
-			this.notifyObservers($queue.shift());
+			values = $queue.shift();
+			if (!values[2]) {
+				values[2] = _get_computed.call(this, values[0]);
+			}
+			this.notifyObservers.apply(this, values);
 		} while ($queue.length);
 	};
 
@@ -412,4 +418,4 @@
 
 	});
 
-}());
+})(enyo);
