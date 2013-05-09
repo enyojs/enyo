@@ -49,6 +49,12 @@
 			from: ".controller.fetching",
 			to: ".loading",
 			kind: "enyo.BooleanOnlyBinding"
+		}, {
+			from: ".controller.length",
+			to: ".length"
+		}, {
+			from: ".controller.data",
+			to: ".data"
 		}],
 		
 		//*@protected
@@ -66,29 +72,20 @@
 		
 		// ...........................
 		// COMPUTED PROPERTIES
-		
-		//*@public
-		length: enyo.computed(function () {
-			return this.controller? this.controller.length: 0;
-		}, {cached: false}),
 
 		// ...........................
 		// PUBLIC METHODS
 		
 		//*@public
 		refresh: function () {
-			var $controller = this.get("controller");
-			
-			if (!($controller instanceof enyo.Enumerable)) {
-				// can't use it
-				return;
-			}
-			
+			var $data = this.get("data");
 			// destroy any views we currently have rendered
 			this.destroyClientControls();
-			
-			for (var idx = 0, len = $controller.length; idx < len; ++idx) {
-				this.add($controller.at(idx));
+			if (!$data) {
+				return;
+			}
+			for (var idx = 0, len = $data.length; idx < len; ++idx) {
+				this.add($data[idx]);
 			}
 		},
 		
@@ -103,7 +100,7 @@
 		
 		//*@public
 		remove: function (index) {
-			var $children = this.children || [];
+			var $children = this.get("_children");
 			var $child = $children[index || (Math.abs($children.length - 1))];
 			if ($child) {
 				$child.destroy();
@@ -112,13 +109,32 @@
 		
 		//*@public
 		update: function (index) {
-			var $controller = this.get("controller") || [];
-			var $children = this.children || [];
+			var $data = this.get("data");
+			var $children = this.get("_children");
 			var $child = $children[index];
-			if ($child && $child.controller) {
-				$child.controller.set("data", $controller.at(index));
+			if (!$data || !$child || !$child.controller) {
+				return;
+			}
+			$child.controller.set("data", $data[index]);
+		},
+		
+		//*@public
+		prune: function () {
+			var $children = this.get("_children");
+			var len = this.length;
+			var $extra = $children.slice(len);
+			for (var idx = 0; idx < $extra.length; ++idx) {
+				$extra[idx].destroy();
 			}
 		},
+		
+		// ...........................
+		// COMPUTED PROPERTIES
+		
+		//*@protected
+		_children: enyo.computed(function () {
+			return this.controlParent? this.controlParent.children: this.children;
+		}, {cached: false}),
 
 		// ...........................
 		// PROTECTED METHODS
@@ -222,7 +238,16 @@
 			if (this._controller_changed._inherited) {
 				this.inherited(arguments);
 			}
-		}, "controller")
+		}, "controller"),
+		
+		//*@protected
+		_length_changed: enyo.observer(function (property, previous, value) {
+			if (!isNaN(previous) && !isNaN(value)) {
+				if (previous > value) {
+					this.prune();
+				}
+			}
+		}, "length")
 		
 	});
 	

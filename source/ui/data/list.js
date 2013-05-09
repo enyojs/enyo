@@ -65,7 +65,7 @@
 		mixins: ["enyo.SelectionSupport"],
 		
 		//*@protected
-		classes: "enyo-fill enyo-data-list",
+		classes: "enyo-data-list",
 		
 		//*@protected
 		_container: {

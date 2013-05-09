@@ -9,7 +9,7 @@
 		// PUBLIC PROPERTIES
 
 		//*@public
-		name: "enyo.ArrayController",
+		name: "enyo.DataController",
 		
 		//*@public
 		kind: "enyo.Enumerable",
@@ -38,6 +38,9 @@
 
 		// ...........................
 		// PROTECTED PROPERTIES
+		
+		//*@protected
+		mixins: ["enyo.SelectionSupport"],
 
 		// ...........................
 		// COMPUTED PROPERTIES
@@ -112,6 +115,44 @@
 				this.doItemsRemoved({items: items});
 			} else {
 				this.inherited(arguments);
+			}
+		},
+		
+		//*@protected
+		/**
+			Override of enyo.SelectionSupport's method to ensure we
+			are selecting actual data in the store.
+		*/
+		_select_item: function (sender, event) {
+			var $item = event.item;
+			var $controller = $item.controller;
+			var $data;
+			if ($controller) {
+				$data = $controller.get("data");
+				if ($data) {
+					if (!!~this.indexOf($data)) {
+						this.select($data);
+					}
+				}
+			}
+		},
+		
+		//*@protected
+		/**
+			Override of enyo.SelectionSupport's method to ensure we
+			are deselecting actual data in the store.
+		*/
+		_deselect_item: function (sender, event) {
+			var $item = event.item;
+			var $controller = $item.controller;
+			var $data;
+			if ($controller) {
+				$data = $controller.get("data");
+				if ($data) {
+					if (!!~this.indexOf($data)) {
+						this.deselect($data);
+					}
+				}
 			}
 		}
 
