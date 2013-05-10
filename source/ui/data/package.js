@@ -1,6 +1,7 @@
 enyo.depends(
 	"data.less",
-	"repeater.js",
-	"list.js",
-	"gridlist.js"
+	"DataRepeater.js",
+	"DataList.js",
+	"DataGridList.js",
+	"DataTable.js"
 );
