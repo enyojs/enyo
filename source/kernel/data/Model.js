@@ -57,6 +57,16 @@
 		// PUBLIC METHODS
 		
 		//*@public
+		raw: function () {
+			return enyo.clone(this.attributes);
+		},
+		
+		//*@public
+		toJSON: function () {
+			return enyo.json.stringify(this.raw());
+		},
+		
+		//*@public
 		isAttribute: function (prop) {
 			return (prop = _strip_attributes(prop)) ? !!(prop in this.attributes): false;
 		},

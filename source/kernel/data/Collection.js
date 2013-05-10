@@ -59,6 +59,18 @@
 		// PUBLIC METHODS
 
 		//*@public
+		raw: function () {
+			return this.map(function (model) {
+				return model.raw();
+			});
+		},
+		
+		//*@public
+		toJSON: function () {
+			return enyo.json.stringify(this.raw());
+		},
+
+		//*@public
 		/**
 			An abstract method to fetch data. By default it attempts
 			to make an Ajax call via the url provided. Can be overloaded
@@ -120,12 +132,12 @@
 		
 		//*@public
 		map: function (fn, context) {
-			return enyo.map(this._store, fn, context);
+			return enyo.map(this._store, fn, context || this);
 		},
 		
 		//*@public
 		filter: function (fn, context) {
-			return enyo.filter(this._store, fn, context);
+			return enyo.filter(this._store, fn, context || this);
 		},
 		
 		//*@public
