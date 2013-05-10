@@ -19,7 +19,7 @@
 		bindings: [{
 			from: ".controller.selected",
 			to: ".selected",
-			oneWay: false,
+			twoWay: true,
 			transform: function (value, direction, binding) {
 				if (value === undefined || value === null) {
 					binding.stop();
@@ -48,8 +48,9 @@
 			Will select the item if it is not already selected.
 		*/
 		select: function () {
-			if (this.enableSelection) {
-				this.set("selected", true);
+			var $controller = this.controller;
+			if (this.enableSelection && $controller) {
+				$controller.set("selected", true);
 			}
 		},
 		
@@ -58,8 +59,9 @@
 			Will deselect the item if it is not already deselected.
 		*/
 		deselect: function () {
-			if (this.enableSelection) {
-				this.set("selected", false);
+			var $controller = this.controller;
+			if (this.enableSelection && $controller) {
+				$controller.set("selected", false);
 			}
 		},
 
@@ -68,8 +70,10 @@
 		
 		//*@protected
 		_tapped: function () {
-			if (this.enableSelection) {
-				this.set("selected", !this.get("selected"));
+			debugger
+			var $controller = this.controller;
+			if (this.enableSelection && $controller) {
+				$controller.set("selected", !$controller.get("selected"));
 			}
 		},
 
@@ -111,6 +115,9 @@
 		// PROTECTED PROPERTIES
 		
 		//*@protected
+		_supports_selection: true,
+		
+		//*@protected
 		/**
 			If the settings are already configured do not apply
 			the defaults.
@@ -120,7 +127,8 @@
 		//*@protected
 		handlers: {
 			onSelect: "_select_item",
-			onDeselect: "_deselect_item"
+			onDeselect: "_deselect_item",
+			onClear: "_clear_selection"
 		},
 		
 		//*@protected
@@ -141,7 +149,7 @@
 		//*@public
 		/**
 			If multiple selection is enabled it will return an
-			_enyo.Enumerable_ of the selection set. If only single
+			_enyo.Array_ of the selection set. If only single
 			selection is enabled it will return the item if there
 			is any selection.
 		*/
@@ -155,6 +163,21 @@
 
 		// ...........................
 		// PUBLIC METHODS
+		
+		//*@public
+		/**
+			Clears the selection, if any.
+		*/
+		clear: function () {
+			if (this.enableSelection) {
+				// clear bindings and release the array
+				if (this._selection) {
+					this._selection.destroy();
+				}
+				this.set("_selection", new enyo.Array(), true);
+				this.binding(this._selection_binding);
+			}
+		},
 		
 		//*@public
 		select: function (item) {
@@ -190,19 +213,24 @@
 		
 		//*@protected
 		_select_item: function (sender, event) {
+			debugger
 			this.select(event.item);
-			return true;
 		},
 		
 		//*@protected
 		_deselect_item: function (sender, event) {
+			debugger
 			this.deselect(event.item);
-			return true;
+		},
+		
+		//*@protected
+		_clear_selection: function (sender, event) {
+			this.clear();
 		},
 		
 		//*@protected
 		create: function () {
-			this.set("_selection", this._selection || new enyo.Enumerable());
+			this.set("_selection", this._selection || new enyo.Array());
 			this.binding(this.get("_selection_binding"));
 		}
 
