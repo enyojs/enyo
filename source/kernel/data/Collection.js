@@ -51,8 +51,13 @@
 		// COMPUTED PROPERTIES
 
 		//*@public
-		data: enyo.computed(function () {
-			return this._store;
+		data: enyo.computed(function (data) {
+			if (data) {
+				this.removeAll();
+				this.add(data);
+			} else {
+				return this._store;
+			}
 		}, "length", {cached: true, defer: true}),
 
 		// ...........................
@@ -227,6 +232,12 @@
 		},
 		
 		//*@public
+		removeAll: function () {
+			var $copy = enyo.clone(this._store);
+			this.remove($copy);
+		},
+		
+		//*@public
 		removeAt: function () {
 			enyo.warn("enyo.Collection.removeAt: not implemented yet");
 		},
@@ -261,6 +272,7 @@
 			// our starting properties
 			if (props && props instanceof Array) {
 				this._store = this._store? this._store.concat(props): props;
+				arguments[0] = undefined;
 			}
 			// initialize our store
 			this._store = this._store || [];

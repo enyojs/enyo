@@ -217,7 +217,7 @@
 		
 		//*@protected
 		_controller_changed: enyo.observer(function (property, previous, value) {
-			if (value && (value instanceof enyo.Array)) {
+			if (value && value._is_controller) {
 				this.refresh();
 			}
 			if (this._controller_changed._inherited) {
