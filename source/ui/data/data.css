@@ -9,6 +9,6 @@
 .enyo-data-list.enyo-data-list-rows-container.enyo-list-row {
   position: relative;
 }
-.enyo-data-grid-list.enyo-data-grid-list-item {
+.enyo-data-grid-list .enyo-data-grid-list-item {
   display: inline-block;
 }
