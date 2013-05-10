@@ -5,7 +5,7 @@
 enyo.kind({
     name: "enyo.DataTable",
     kind: "enyo.DataRepeater",
-    controller: "enyo.DataController",
+    controller: "enyo.Collection",
     defaultKind: "enyo.TableRow",
     style: "display: table;",
     _container: {
