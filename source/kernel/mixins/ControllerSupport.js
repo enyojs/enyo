@@ -52,6 +52,7 @@ enyo.createMixin({
 	controllerFindAndInstance: function (ctor, inst) {
 		// if there is no constructor or instance it was not found
 		if (!(ctor || inst)) {
+			enyo.error("cannot find controller: " + this.controller);
 			return;
 		}
 		// if a constructor exists we instanced the class and can
@@ -71,8 +72,18 @@ enyo.createMixin({
 	dispatchEvent: function (name, event, sender) {
 		// if we have a controller attempt to dispatch the event there
 		// and if it returns true, stop the dispatch
-		if (this.controller && this.controller.dispatchEvent(name, event, sender)) {
-			return true;
+		if (this.controller && this.controller._is_controller) {
+			if (this.controller.dispatchEvent(name, event, sender)) {
+				return true;
+			}
+			// this scenario is handled completely in the inherited method
+			// here we simply want to make sure that the controller has an
+			// opportunity to deal with the remapped event
+			if (this[name] && "string" === typeof this[name]) {
+				if (this.controller.dispatchEvent(this[name], event, sender)) {
+					return true;
+				}
+			}
 		}
 		return this.inherited(arguments);
 	},

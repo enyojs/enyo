@@ -62,9 +62,6 @@
 		controlParentName: "rows",
 		
 		//*@protected
-		mixins: ["enyo.SelectionSupport"],
-		
-		//*@protected
 		classes: "enyo-data-list",
 		
 		//*@protected
