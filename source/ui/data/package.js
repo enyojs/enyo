@@ -3,6 +3,5 @@ enyo.depends(
 	"repeater.js",
 	"list.js",
 	"gridlist.js",
-	"table.js",
-	"wip.js"
+	"table.js"
 );
