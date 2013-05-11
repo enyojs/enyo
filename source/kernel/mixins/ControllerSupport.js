@@ -42,7 +42,11 @@ enyo.createMixin({
 	},
 
 	//*@protected
-	_controller_changed: enyo.observer(function () {
+	_controller_changed: enyo.observer(function (property, previous, value) {
+		if (previous && value && previous === value) {
+			// seems to be the same controller we already had
+			return;
+		}
 		// first attempt to find the controller from the
 		// information we've been handed
 		this.findAndInstance("controller");
@@ -64,8 +68,10 @@ enyo.createMixin({
 		else {
 			inst.addDispatchTarget(this);
 		}
-		// either way we need to refresh our bindings
-		this.refreshBindings();
+		// we rebuild (rather than refresh) our bindings because
+		// they are now most likely connected to the previous controller.
+		// TODO: Avoid rebuilding bindings to objects other than the controller?
+		this.rebuildBindings();
 	},
 
 	//*@protected
