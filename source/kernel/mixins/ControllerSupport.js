@@ -68,8 +68,10 @@ enyo.createMixin({
 		else {
 			inst.addDispatchTarget(this);
 		}
-		// either way we need to refresh our bindings
-		this.refreshBindings();
+		// we rebuild (rather than refresh) our bindings because
+		// they are now most likely connected to the previous controller.
+		// TODO: Avoid rebuilding bindings to objects other than the controller?
+		this.rebuildBindings();
 	},
 
 	//*@protected
