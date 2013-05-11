@@ -302,6 +302,16 @@
 			this._refreshing = false;
 		},
 
+		//*@protected
+		rebuild: function() {
+			this.disconnect();
+			this.source = null;
+			this._source_property = null;
+			this.target = null;
+			this._target_property = null;
+			this.refresh();
+		},
+
 		//*@public
 		/**
 			Call this method to connect this binding to its

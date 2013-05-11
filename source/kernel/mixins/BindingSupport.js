@@ -115,9 +115,14 @@
 		//*@public
 		/**
 			Calls the `refresh` method on the bindings associated with this
-			object, or on a passed-in array of bindings. In most scenarios, this
-			method will be called automatically, with no need for explicit calls
-			from the developer.
+			object, or on a passed-in array of bindings.
+
+			Differs from _rebuildBindings_ in that, instead of
+			rediscovering the source and target of each binding, it
+			remembers them from the most recent setup.
+
+			In most scenarios, this method will be called automatically,
+			with no need for explicit calls from the developer.
 		*/
 		refreshBindings: function (subset) {
 			var $bindings = subset || this.bindings;
@@ -125,6 +130,27 @@
 			var idx = 0;
 			for (; idx < len; ++idx) {
 				$bindings[idx].refresh();
+			}
+		},
+
+		//*@public
+		/**
+			Calls the `rebuild` method on the bindings associated with this
+			object, or on a passed-in array of bindings.
+
+			Differs from _refreshBindings_ in that it forces the source and
+			target of each binding to be rediscovered using the specified
+			paths, rather than remembered from a previous setup.
+
+			In most scenarios, this method will be called automatically,
+			with no need for explicit calls from the developer.
+		*/
+		rebuildBindings: function (subset) {
+			var $bindings = subset || this.bindings;
+			var len = $bindings.length;
+			var idx = 0;
+			for (; idx < len; ++idx) {
+				$bindings[idx].rebuild();
 			}
 		},
 
