@@ -427,6 +427,11 @@ enyo.kind({
 			if (!this.parent.generated) {
 				return this;
 			}
+			if (this.tag === null) {
+				// can't render a null element, have to render parent instead
+				this.parent.render();
+				return this;
+			}
 		}
 		if (!this.hasNode()) {
 			this.renderNode();
