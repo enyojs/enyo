@@ -214,16 +214,17 @@
 				$client.render();
 			}
 		}, "_batching"),
-		
+
+		// this callback results from a call to this.findAndInstance("controller"),
+		// which occurs in the _controller_changed observer (which is implemented
+		// in the ControllerSupport mixin)
 		//*@protected
-		_controller_changed: enyo.observer(function (property, previous, value) {
-			if (value && value._is_controller) {
+		controllerFindAndInstance: function(ctor, inst) {
+			this.inherited(arguments);
+			if (inst && inst._is_controller) {
 				this.refresh();
 			}
-			if (this._controller_changed._inherited) {
-				this.inherited(arguments);
-			}
-		}, "controller"),
+		},
 		
 		//*@protected
 		_length_changed: enyo.observer(function (property, previous, value) {
