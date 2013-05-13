@@ -49,7 +49,9 @@ enyo.createMixin({
 		}
 		// first attempt to find the controller from the
 		// information we've been handed
-		this.findAndInstance("controller");
+		if (this.controller) {
+			this.findAndInstance("controller");
+		}
 	}, "controller"),
 
 	//*@protected
