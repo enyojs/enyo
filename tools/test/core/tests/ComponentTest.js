@@ -62,5 +62,31 @@ enyo.kind({
 		setTimeout(function() {
 			finish();
 		}, 30);
+	},
+	testThrottleJob: function() {
+		var finish = this.bindSafely("finish");
+		var c = new enyo.Component({
+			number: 0,
+			increment: function() {
+				this.number++;
+			}
+		});
+		c.throttleJob("testThrottleJob", "increment", 20);
+		setTimeout(function () {
+			c.throttleJob("testThrottleJob", c.increment, 20);
+		}, 5);
+		setTimeout(function () {
+			c.throttleJob("testThrottleJob", "increment", 20);
+		}, 15);
+		setTimeout(function () {
+			c.throttleJob("testThrottleJob", c.increment, 20);
+		}, 25);
+		setTimeout(function() {
+			if (c.number === 2) {
+				finish();
+			} else {
+				finish("too many or too few calls");
+			}
+		}, 30);
 	}
 });

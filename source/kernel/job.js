@@ -30,4 +30,24 @@ enyo.job.stop = function(inJobName) {
 	}
 };
 
+/**
+	Invoke _inJob_ immediately, then prevent any other calls to
+	enyo.job.throttle with the same _inJobName_ from running for
+	the next _inWait_ milliseconds.
+
+	This is used for throttling user events when you want an
+	immediate response, but later invocations might just be noise
+	if they arrive too often.
+*/
+enyo.job.throttle = function(inJobName, inJob, inWait) {
+	// if we still have a job with this name pending, return immediately
+	if (enyo.job._jobs[inJobName]) {
+		return;
+	}
+	inJob();
+	enyo.job._jobs[inJobName] = setTimeout(function() {
+		enyo.job.stop(inJobName);
+	}, inWait);
+};
+
 enyo.job._jobs = {};
