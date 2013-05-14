@@ -77,9 +77,9 @@ enyo.dom = {
 	getComputedStyleValue: function(inNode, inProperty, inComputedStyle) {
 		var s   = inComputedStyle || this.getComputedStyle(inNode),
 			nIE = enyo.platform.ie;
-			
+
 		s = s ? s.getPropertyValue(inProperty) : null;
-			
+
 		if (nIE) {
 			var oConversion = {
 				'thin'   : (nIE > 8 ? 2 : 1) + 'px',
@@ -91,7 +91,7 @@ enyo.dom = {
 				s = oConversion[s];
 			}
 		}
-		
+
 		return s;
 	},
 	getFirstElementByTagName: function(inTagName) {
