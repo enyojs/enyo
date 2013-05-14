@@ -123,8 +123,9 @@
 			}
 			for (var i in this.finishCallbacks) {
 				if (this.finishCallbacks[i]) {
-					this.finishCallbacks[i](inBlock);
+					var callback = this.finishCallbacks[i];
 					this.finishCallbacks[i] = null;
+					callback(inBlock);
 				}
 			}
 		},
