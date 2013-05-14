@@ -48,39 +48,62 @@
 	// Default report template string
 	var report_template = "- - - - - - - - - - - - - - - - -\n" +
 					"BENCHMARK REPORT (%.): %.\n" +
-					"TOTAL TIME: %.\n" +
-					"AVERAGE TIME: %.\n" +
+					"TOTAL TIME (ms): %.\n" +
+					"AVERAGE TIME (ms): %.\n" +
+					"MINIMUM TIME (ms): %.\n" +
+					"MAXIMUM TIME (ms): %.\n" +
 					"NUMBER OF ENTRIES: %.\n" +
 					"- - - - - - - - - - - - - - - - -\n";
 
 	// Calculates average and basic statistics.
 	var calc = function (numbers) {
 		var total = 0;
+		var min = Infinity;
+		var max = -Infinity;
 		var number = numbers.length;
-		var stats = {total: null, average: null, number: number};
-		enyo.forEach(numbers, function (num) {total += num;});
+		var stats = {total: null, average: null, number: number, min: null, max: null};
+		enyo.forEach(numbers, function (num) {
+			total += num;
+			min = Math.min(num, min);
+			max = Math.max(num, max);
+		});
 		stats.total = total;
+		stats.min = min;
+		stats.max = max;
 		stats.average = Math.abs(total/(number || 1));
 		return stats;
 	};
 
+	//*@public
 	enyo.dev = {
 
+		//*@public
+		//* can be set to false to disable all benchmarking code
 		enabled: true,
 
+		//*@public
+		/**
+			Create a new benchmark test.
+			The opts object passed in has the properties
+
+			* name: optional name for test
+			* average: if true, calculate an average of repeated start/stops for the test
+			* logging: if true, write start and stop messages to the console (defaults to true)
+			* autostart: if true, automatically start the benchmark (defaults to true)
+
+			This returns an object that has start and stop methods used
+			to track a test.
+		*/
 		bench: function (opts) {
 			if (true !== this.enabled) {
 				return false;
 			}
 			var options = opts || {name: enyo.uid("bench")};
-			if (true === options.analyze) {
-				return new Suite(options);
-			}
-			else {
-				return new Benchmark(options);
-			}
+			return new Benchmark(options);
 		},
 
+		//*@public
+		//* Output to the console information about a benchmark named _name_.
 		report: function (name) {
 			var bench = averages[name] || tests[name];
 			if (!bench) {
@@ -97,12 +120,16 @@
 						name,
 						stats.total,
 						stats.average,
+						stats.min,
+						stats.max,
 						stats.number
 					)
 				);
 			}
 		},
 
+		//*@public
+		//* Remove stored data for a benchmark named _name_.
 		clear: function (name) {
 			var source = tests[name]? tests: averages[name]? averages: null;
 			if (!source) {
@@ -122,8 +149,10 @@
 
 	};
 
+	//*@protected
 	function Benchmark (options) {
 		enyo.mixin(this, options);
+		tests[this.name] = this;
 		if (true === this.average && !averages[this.name]) {
 			averages[this.name] = [];
 		}
@@ -133,10 +162,6 @@
 		if (true === this.autoStart) {
 			this.start();
 		}
-	}
-
-	function Suite (options) {
-		enyo.mixin(this, options);
 	}
 
 	//*@protected
@@ -180,65 +205,10 @@
 			if (true === this._averaging) {
 				averages[this.name].push(this._time);
 			}
-			return !(this._started = false);
-		},
-
-		// ...........................
-		// PROTECTED METHODS
-
-		_log: function (message) {
-			if (!this.logging) {
-				return false;
-			}
-			enyo.log("bench (" + this.name + "): " + message);
-		}
-
-	};
-
-	//*@protected
-	Suite.prototype = {
-
-		// ...........................
-		// PUBLIC PROPERTIES
-
-		logging: true,
-		autoStart: true,
-
-		// ...........................
-		// PROTECTED PROPERTIES
-
-		_started: false,
-		_averaging: false,
-		_begin: null,
-		_end: null,
-		_time: null,
-
-		// ...........................
-		// PUBLIC METHODS
-
-		start: function () {
-			if (true === this._started) {
-				return false;
-			}
-			this._log("starting benchmark");
-			this._begin = enyo.bench();
-			this._started = true;
+			this._started = false;
 			return true;
 		},
 
-		stop: function () {
-			if (!this._started) {
-				return false;
-			}
-			this._end = enyo.bench();
-			this._time = this._end - this._begin;
-			this._log("benchmark complete: " + this._time);
-			if (true === this._averaging) {
-				averages[this.name].push(this._time);
-			}
-			return !(this._started = false);
-		},
-
 		// ...........................
 		// PROTECTED METHODS
 
@@ -250,5 +220,4 @@
 		}
 
 	};
-
 }());
