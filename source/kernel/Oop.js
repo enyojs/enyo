@@ -243,7 +243,12 @@ enyo.kind.inherited = function (originals, replacements) {
 //
 enyo.kind.features.push(function(ctor, props) {
 	// install common statics
-	enyo.mixin(ctor, enyo.kind.statics);
+	if (!ctor.subclass) {
+		ctor.subclass = enyo.kind.statics.subclass;
+	}
+	if (!ctor.extend) {
+		ctor.extend = enyo.kind.statics.extend;
+	}
 	// move props statics to constructor
 	if (props.statics) {
 		enyo.mixin(ctor, props.statics);
