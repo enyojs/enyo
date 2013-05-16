@@ -91,14 +91,15 @@ enyo.kind({
 	name: "enyo.OwnerProxy",
 	tag: null,
 	decorateEvent: function(inEventName, inEvent, inSender) {
-		if (inEvent) {
+	    if (inEvent && !("index" in inEvent)) {
 			inEvent.index = this.index;
-			// update delegate during bubbling to account for proxy
-			// by moving the delegate up to the repeater level
-			if (inEvent.delegate && inEvent.delegate.owner === this) {
-				inEvent.delegate = this.owner;
-			}
 		}
+        
+        // update delegate during bubbling to account for proxy
+        // by moving the delegate up to the repeater level
+        if (inEvent && inEvent.delegate && inEvent.delegate.owner === this) {
+			inEvent.delegate = this.owner;
+	    }
 		this.inherited(arguments);
 	},
 	delegateEvent: function(inDelegate, inName, inEventName, inEvent, inSender) {
