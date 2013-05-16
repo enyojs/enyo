@@ -204,6 +204,17 @@
 			// reset the the changed hash so as not to be misleading
 			this._changed = {};
 		},
+		
+		//*@protected
+		destroy: function () {
+			var $collections = this._collections;
+			var $collection;
+			while ($collections.length) {
+				$collection = $collections.pop();
+				this._remove_collection($collection);
+			}
+			this.inherited(arguments);
+		},
 
 		// ...........................
 		// OBSERVERS
