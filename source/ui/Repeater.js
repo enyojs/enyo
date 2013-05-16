@@ -91,17 +91,26 @@ enyo.kind({
 	name: "enyo.OwnerProxy",
 	tag: null,
 	decorateEvent: function(inEventName, inEvent, inSender) {
-	    if (inEvent && !("index" in inEvent)) {
-			inEvent.index = this.index;
+		if (inEvent) {
+			// preserve an existing index property.
+			if (enyo.exists(inEvent.index)) {
+				// if there are nested indices, store all of them in an array
+				// but leave the innermost one in the index property
+				inEvent.indices = inEvent.indices || [inEvent.index];
+				inEvent.indices.push(this.index);
+			} else {
+				// for a single level, just decorate the index property
+				inEvent.index = this.index;
+			}
+			// update delegate during bubbling to account for proxy
+			// by moving the delegate up to the repeater level
+			if (inEvent.delegate && inEvent.delegate.owner === this) {
+				inEvent.delegate = this.owner;
+			}
 		}
-        
-        // update delegate during bubbling to account for proxy
-        // by moving the delegate up to the repeater level
-        if (inEvent && inEvent.delegate && inEvent.delegate.owner === this) {
-			inEvent.delegate = this.owner;
-	    }
 		this.inherited(arguments);
 	},
+	// extending enyo.Component.delegateEvent
 	delegateEvent: function(inDelegate, inName, inEventName, inEvent, inSender) {
 		if (inDelegate == this) {
 			inDelegate = this.owner.owner;
