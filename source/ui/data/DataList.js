@@ -67,8 +67,6 @@
 
 	//*@public
 	/**
-		NOTE: The list is selection-aware but the magic happens in the
-		rows and their interaction with the dataset.
 	*/
 	enyo.kind({
 
