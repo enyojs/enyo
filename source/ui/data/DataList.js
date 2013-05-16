@@ -159,7 +159,7 @@
 				if (this.enableMultipleSelection) {
 					this._selection_set.push(row);
 					this.notifyObservers("_selection_state");
-					row.controllers.model.set("selected_" + this.getName(), true);
+					row.controller.model.set("selected_" + this.getName(), true);
 				} else if (!this.isSelected(row)) {
 					this.clearSelection();
 					this._selection_set.push(row);
