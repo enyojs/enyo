@@ -1,5 +1,7 @@
 (function (enyo) {
-
+	
+	var _selected = /^selected/;
+	
 	enyo.kind({
 
 		// ...........................
@@ -10,6 +12,12 @@
 
 		//*@public
 		model: null,
+		
+		//*@public
+		events: {
+			onModelSelected: "",
+			onModelDeselected: ""
+		},
 
 		// ...........................
 		// PROTECTED PROPERTIES
@@ -73,7 +81,7 @@
 			enyo.forEach(this.get("_attribute_keys"), function (key) {
 				this.notifyObservers(key, null, this.model.get(key));
 			}, this);
-		}
+		},
 
 		// ...........................
 		// PROTECTED METHODS
@@ -81,6 +89,16 @@
 		// ...........................
 		// OBSERVERS
 
+		_selection_spy: enyo.observer(function (property, previous, value) {
+			if (_selected.test(property)) {
+				if (true === value) {
+					this.doModelSelected();
+				} else if (false === value) {
+					this.doModelDeselected();
+				}
+			}
+		}, "*")
+		
 	});
 
 })(enyo);
