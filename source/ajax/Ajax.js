@@ -129,7 +129,7 @@ enyo.kind({
 				sync: window.PalmSystem ? false : this.sync,
 				username: this.username,
 				password: this.password,
-				xhrFields: this.xhrFields,
+				xhrFields: enyo.mixin(this.xhrFields, {onprogress: enyo.bind(this, this.updateProgress)}),
 				mimeType: this.mimeType
 			});
 		}
@@ -213,6 +213,17 @@ enyo.kind({
 			enyo.warn("Ajax request set to handleAs JSON but data was not in JSON format");
 			return r;
 		}
+	},
+	//* @protected
+	//* Handler for ajax progress events.
+	updateProgress: function(event) {
+		var ev = {};
+		for (var k in event) {
+			if (k !== 'input') {
+				ev[k] = event[k];
+			}
+		}
+  		this.sendProgress(event.loaded, 0, event.total, event);
 	},
 	statics: {
 		objectToQuery: function(/*Object*/ map) {
