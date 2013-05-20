@@ -86,19 +86,19 @@ enyo.dom = {
 				'medium' : (nIE > 8 ? 4 : 3) + 'px',
 				'thick'  : (nIE > 8 ? 6 : 5) + 'px',
 				'none'   : '0'
-			}
+			};
 			if (typeof oConversion[s] != 'undefined') {
 				s = oConversion[s];
 			}
-			
+
 			if (s == 'auto') {
 				switch (inProperty) {
-					case 'width':
-						s = inNode.offsetWidth;
-						break;
-					case 'height':
-						s = inNode.offsetHeight;
-						break;
+				case 'width':
+					s = inNode.offsetWidth;
+					break;
+				case 'height':
+					s = inNode.offsetHeight;
+					break;
 				}
 			}
 		}
