@@ -129,7 +129,7 @@ enyo.kind({
 				sync: window.PalmSystem ? false : this.sync,
 				username: this.username,
 				password: this.password,
-				xhrFields: enyo.mixin(this.xhrFields, {onprogress: enyo.bind(this, this.updateProgress)}),
+				xhrFields: enyo.mixin({onprogress: this.bindSafely(this.updateProgress)}, this.xhrFields),
 				mimeType: this.mimeType
 			});
 		}
@@ -223,7 +223,7 @@ enyo.kind({
 				ev[k] = event[k];
 			}
 		}
-  		this.sendProgress(event.loaded, 0, event.total, event);
+		this.sendProgress(event.loaded, 0, event.total, event);
 	},
 	statics: {
 		objectToQuery: function(/*Object*/ map) {
