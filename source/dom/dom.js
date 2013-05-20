@@ -90,6 +90,17 @@ enyo.dom = {
 			if (typeof oConversion[s] != 'undefined') {
 				s = oConversion[s];
 			}
+			
+			if (s == 'auto') {
+				switch (inProperty) {
+					case 'width':
+						s = inNode.offsetWidth;
+						break;
+					case 'height':
+						s = inNode.offsetHeight;
+						break;
+				}
+			}
 		}
 
 		return s;
