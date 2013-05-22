@@ -546,7 +546,7 @@
 		for (key in map) {
 			val = map[key];
 			if (key in obj) {
-				ret[val] = obj[key];
+				ret[val] = obj.get? obj.get(key): obj[key];
 			}
 		}
 		return ret;
