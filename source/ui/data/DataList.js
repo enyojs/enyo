@@ -169,6 +169,12 @@
 		
 		//*@public
 		deselect: function (row) {
+			// TODO: while this check should necessarily be here the reason it was
+			// added was because there is a breakdown when destroying all current
+			// rows - a row is being "deselected" here that does not have a controller...
+			if (!row || !row.controller || !row.controller.model) {
+				return;
+			}
 			var idx;
 			var $selection = this._selection_set;
 			if (this.enableSelection) {
@@ -183,7 +189,7 @@
 		//*@public
 		clearSelection: function () {
 			if (this.enableSelection) {
-				enyo.forEach(this._selection_set, this.deselect, this);
+				enyo.forEach(enyo.clone(this._selection_set), this.deselect, this);
 			}
 		},
 		
@@ -227,6 +233,14 @@
 			}
 		},
 
+		//*@protected
+		remove: function () {
+			this.inherited(arguments);
+			if (this.children.length === 0) {
+				this.clearSelection();
+			}
+		},
+		
 		//*@protected
 		adjustComponentProps: function (props) {
 			this.inherited(arguments);
