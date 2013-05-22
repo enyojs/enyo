@@ -1,14 +1,14 @@
 (function (enyo) {
-	
-	
+
+
 	enyo.kind({
-		
+
 		// ...........................
 		// PUBLIC PROPERTIES
 
 		//*@public
 		name: "enyo.Store",
-		
+
 		//*@public
 		kind: "enyo.Component",
 
@@ -17,13 +17,13 @@
 
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		//*@protected
 		_sources: null,
-		
+
 		// ...........................
 		// COMPUTED PROPERTIES
-		
+
 		//*@public
 		/**
 			Retrieve an array of all of the sources available
@@ -35,7 +35,7 @@
 
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		//*@public
 		/**
 			Add a source to the store. The _source_ parameter
@@ -47,7 +47,7 @@
 			var sources = this._sources;
 			sources[source.name] = this.createComponent(source);
 		},
-		
+
 		//*@public
 		/**
 			Synchronize data with the named source. The _source_
@@ -58,15 +58,15 @@
 		sync: function (source) {
 			this.log(source);
 		},
-		
+
 		//*@public
 		/**
 			This find method accepts a model _kind_ and an optional
 			parameter, _options_ that is a configuration hash to be
-			passed to the driver. 
+			passed to the driver.
 		*/
 		find: function (model, source, options) {
-			
+
 		},
 
 		// ...........................
@@ -80,8 +80,8 @@
 
 		// ...........................
 		// OBSERVERS
-		
+
 	});
-	
-	
+
+
 })(enyo);

@@ -1,5 +1,5 @@
 (function (enyo) {
-	
+
 	//*@public
 	/**
 		_enyo.BooleanOnlyBinding_ is a binding that will only continue propagation
@@ -21,10 +21,12 @@
 
 		//*@protected
 		transform: function (value, direction, binding) {
-			if (value !== true && value !== false) binding.stop();
+			if (value !== true && value !== false) {
+				binding.stop();
+			}
 			return value;
 		}
 
 	});
-	
+
 })(enyo);

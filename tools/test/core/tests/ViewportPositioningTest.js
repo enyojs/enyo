@@ -50,7 +50,7 @@ enyo.kind({
 		k.hasNode().style.border = "1px solid transparent";
 		p = enyo.dom.calcNodePosition(k.hasNode());
 		// We don't count the right border on the element itself because that is taken into account automatically by the element's width measurement
-		fromBottom -= 3,
+		fromBottom -= 3;
 		fromRight -= 3;
 		if (p.top !== 11) {
 			this.log('top with border failed with value: ' + p.top + ' (should be 11)');
@@ -74,7 +74,7 @@ enyo.kind({
 		// And finally, test positioning relative to another node
 		p = enyo.dom.calcNodePosition(k.hasNode(), div);
 		// Reset to div size - node height
-		fromBottom = div.offsetHeight - 22,
+		fromBottom = div.offsetHeight - 22;
 		fromRight = div.offsetWidth - 22;
 		if (p.top !== 10) {
 			this.log('top relative to div failed with value: ' + p.top + ' (should be 10)');
