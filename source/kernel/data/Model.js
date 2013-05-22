@@ -146,7 +146,9 @@
 		constructor: function (props) {
 			// if there are no attributes defined we create them as
 			// empty
-			if (!this.attributes) {
+			if (this.attributes) {
+				this.attributes = enyo.clone(this.attributes);
+			} else {
 				this.attributes = {};
 			}
 			if (props && "object" === typeof props) {
