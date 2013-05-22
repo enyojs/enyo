@@ -54,12 +54,16 @@
 			// own definition
 			var view = this.view;
 			// if it is a function, we assume it is a constructor
-			if ("function" === typeof view) return view;
+			if ("function" === typeof view) {
+				return view;
+			}
 			// if it is an object literal, we assume it is a definition
 			// and note that we create an anonymous kind for the view
 			// so it has all of the normal setup of a full kind
 			if ("object" === typeof view) {
-				if (!view.name) view.name = this._make_view_name();
+				if (!view.name) {
+					view.name = this._make_view_name();
+				}
 				return enyo.kind(view);
 			}
 			// if it is a string, we attempt to find the constructor
@@ -85,7 +89,9 @@
 			var target = this.renderTarget;
 			// we attempt to find the actual target node
 			target = enyo.dom.byId(target) || enyo.getPath(target);
-			if (target) return target;
+			if (target) {
+				return target;
+			}
 			// if we can't find the target, we can't render it into anything;
 			// better to find out now
 			throw this.kindName + " cannot find the render target: " + this.renderTarget;

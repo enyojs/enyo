@@ -1,14 +1,14 @@
 (function (enyo) {
-	
+
 	//*@public
 	enyo.kind({
-		
+
 		// ...........................
 		// PUBLIC PROPERTIES
 
 		//*@public
 		name: "enyo.Collection",
-		
+
 		//*@public
 		events: {
 			onModelChanged: "",
@@ -17,36 +17,36 @@
 			onModelRemoved: "",
 			onModelsRemoved: ""
 		},
-		
+
 		//*@public
 		length: 0,
-		
+
 		//*@public
 		model: "enyo.Model",
-		
+
 		//*@public
 		url: "",
-		
+
 		//*@public
 		fetching: false,
-		
+
 		//*@public
 		autoFetch: true,
 
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		//*@protected
 		kind: "enyo.Controller",
-		
+
 		//*@protected
 		handlers: {
 			onChange: "_model_changed"
 		},
-		
+
 		//*@protected
 		_store: null,
-		
+
 		// ...........................
 		// COMPUTED PROPERTIES
 
@@ -69,7 +69,7 @@
 				return model.raw();
 			});
 		},
-		
+
 		//*@public
 		toJSON: function () {
 			return enyo.json.stringify(this.raw());
@@ -88,7 +88,7 @@
 			xhr.response(this, this.didFetch);
 			xhr.go();
 		},
-		
+
 		//*@public
 		/**
 			An abstract method used for handling retrieved
@@ -104,47 +104,47 @@
 		push: function () {
 			enyo.warn("enyo.Collection.push: not currently implemented");
 		},
-		
+
 		//*@public
 		pop: function () {
 			enyo.warn("enyo.Collection.pop: not currently implemented");
 		},
-		
+
 		//*@public
 		shift: function () {
 			enyo.warn("enyo.Collection.shift: not currently implemented");
 		},
-		
+
 		//*@public
 		unshift: function () {
 			enyo.warn("enyo.Collection.unshift: not currently implemented");
 		},
-		
+
 		//*@public
 		indexOf: function (value, idx) {
 			return enyo.indexOf(value, this._store, idx);
 		},
-		
+
 		//*@public
 		lastIndexOf: function (value, idx) {
 			return enyo.lastIndexOf(value, this._store, idx);
 		},
-		
+
 		//*@public
 		splice: function () {
 			enyo.warn("enyo.Collection.splice: not currently implemented");
 		},
-		
+
 		//*@public
 		map: function (fn, context) {
 			return enyo.map(this._store, fn, context || this);
 		},
-		
+
 		//*@public
 		filter: function (fn, context) {
 			return enyo.filter(this._store, fn, context || this);
 		},
-		
+
 		//*@public
 		/**
 			Returns boolean true | false whether _value_ is contained
@@ -153,7 +153,7 @@
 		contains: function (value) {
 			return !!~enyo.indexOf(this._store, value);
 		},
-		
+
 		//*@public
 		/**
 			Returns the value at _index_.
@@ -161,7 +161,7 @@
 		at: function (index) {
 			return this._store[index];
 		},
-		
+
 		//*@public
 		add: function (record) {
 			var idx = this._store.length;
@@ -183,12 +183,12 @@
 			}
 			return idx;
 		},
-		
+
 		//*@public
 		addAt: function () {
 			enyo.warn("enyo.Collection.addAt: not implemented yet");
 		},
-		
+
 		//*@public
 		addMany: function (records) {
 			var added = [];
@@ -208,7 +208,7 @@
 				this.doModelsAdded({models: added});
 			}
 		},
-		
+
 		//*@public
 		remove: function (record) {
 			if (enyo.isArray(record)) {
@@ -230,18 +230,18 @@
 			}
 			return false;
 		},
-		
+
 		//*@public
 		removeAll: function () {
 			var $copy = enyo.clone(this._store);
 			this.remove($copy);
 		},
-		
+
 		//*@public
 		removeAt: function () {
 			enyo.warn("enyo.Collection.removeAt: not implemented yet");
 		},
-		
+
 		//*@public
 		removeMany: function (records) {
 			var removed = [];
@@ -264,7 +264,7 @@
 
 		// ...........................
 		// PROTECTED METHODS
-		
+
 		//*@protected
 		constructor: function (props) {
 			this.inherited(arguments);
@@ -272,7 +272,6 @@
 			// our starting properties
 			if (props && props instanceof Array) {
 				this._store = this._store? this._store.concat(props): props;
-				arguments[0] = undefined;
 			}
 			// initialize our store
 			this._store = this._store || [];
@@ -284,8 +283,8 @@
 				}, this);
 			}
 		},
-		
-		
+
+
 		//*@protected
 		create: function () {
 			this.inherited(arguments);
@@ -293,7 +292,7 @@
 				enyo.asyncMethod(this, this.fetch);
 			}
 		},
-		
+
 		//*@protected
 		_init_model: function () {
 			var $model = this.model;
@@ -302,7 +301,7 @@
 			}
 			this.model = $model;
 		},
-		
+
 		//*@protected
 		_model_changed: function (sender, event) {
 			var idx = this.indexOf(sender);
@@ -314,10 +313,10 @@
 				});
 			}
 		}
-		
+
 		// ...........................
 		// OBSERVERS
-		
+
 	});
-	
+
 })(enyo);
