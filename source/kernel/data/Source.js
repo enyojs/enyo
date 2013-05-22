@@ -1,14 +1,14 @@
 (function (enyo) {
-	
-	
+
+
 	enyo.kind({
-		
+
 		// ...........................
 		// PUBLIC PROPERTIES
 
 		//*@public
 		name: "enyo.Source",
-		
+
 		//*@public
 		kind: "enyo.Component",
 
@@ -20,23 +20,23 @@
 
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		fetch: function () {
-			
+
 		},
-		
+
 		push: function () {
-			
+
 		},
-		
+
 
 		// ...........................
 		// PROTECTED METHODS
 
 		// ...........................
 		// OBSERVERS
-		
+
 	});
-	
-	
+
+
 })(enyo);

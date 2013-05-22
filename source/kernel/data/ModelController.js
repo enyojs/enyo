@@ -1,19 +1,19 @@
 (function (enyo) {
-	
+
 	enyo.kind({
-		
+
 		// ...........................
 		// PUBLIC PROPERTIES
 
 		//*@public
 		name: "enyo.ModelController",
-		
+
 		//*@public
 		model: null,
 
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		//*@public
 		kind: "enyo.Controller",
 
@@ -27,12 +27,12 @@
 
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		//*@public
 		isAttribute: function (property) {
 			return this.model? this.model.isAttribute(property): false;
 		},
-		
+
 		//*@public
 		get: function (property) {
 			if ("model" === property || !this.isAttribute(property)) {
@@ -40,7 +40,7 @@
 			}
 			return this.model? this.model.get(property): undefined;
 		},
-		
+
 		//*@public
 		set: function (property, value) {
 			if ("model" !== property && !this.isAttribute(property)) {
@@ -64,7 +64,7 @@
 			}
 			return this.model? this.model.set(property, value): this;
 		},
-		
+
 		//*@public
 		sync: function () {
 			enyo.forEach(this.bindings, function (binding) {
@@ -80,7 +80,7 @@
 
 		// ...........................
 		// OBSERVERS
-		
+
 	});
-	
+
 })(enyo);
