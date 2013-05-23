@@ -1,242 +1,294 @@
 (function (enyo) {
 
-	//*@protected
-	var _strip_attributes = function (str) {
-		return (str || "").replace(/(\.)?attributes\./, "");
+	var isModel = enyo.isModel = function (obj) {
+		return !! (obj && obj._isModel);
 	};
-
+	
+	/**
+		TODO:
+		Relation Keys:
+			key
+			inverseKey
+			type
+			collectionKind
+			kind
+	*/
+	var findRelations = function (attributes) {
+		// we will store any of the properties that are defined
+		// as a relation here as our return value
+		var $relations = {};
+		var key, $prop;
+		for (key in attributes) {
+			$prop = attributes[key];
+			if ($prop.relation) {
+				$prop = $relations[key] = $prop.relation;
+				$prop.key = $prop.key || key;
+				$prop.inverseKey = $prop.inverseKey || $prop.key;
+				if (!$prop.kind) {
+					throw "enyo.Model: relations must have a kind defined";
+				}
+				$prop.type = $prop.type || "one";
+				if ("many" === $prop.type) {
+					$prop.collectionKind = $prop.collectionKind || enyo.kind({
+						name: enyo.uid("anonymous_collection"),
+						kind: enyo.Collection,
+						model: $prop.kind
+					});
+				}
+			}
+		}
+		return $relations;
+	};
+	
+	var makeAttributeMap = function (attributes) {
+		// we store a dual map for local and remote property matching
+		var $map = {local: {}, remote: {}};
+		var key, $prop;
+		for (key in attributes) {
+			$prop = attributes[key];
+			$map.local[key] = "string" === typeof $prop? $prop: $prop.key || key;
+			$map.remote["string" === typeof $prop? $prop: $prop.key || key] = key;
+		}
+		return $map;
+	};
+	
+	enyo.kind.features.push(function (ctor, props) {
+		if (!isModel(ctor.prototype)) {
+			return;
+		}
+		
+		// register this kind for use in a store
+		enyo.models.add(ctor);
+		
+		// the prototype of the given constructor
+		var $proto = ctor.prototype;
+		
+		// we break these operations for clarity
+		// first we handle the attributes
+		// if this is a subkind of another model the
+		// attributes hash will already exist and we
+		// we need to clone it for posterity
+		if ($proto._attributes) {
+			$proto._attributes = enyo.clone($proto._attributes);
+		} else {
+			// otherwise we need to create a new one to work with
+			$proto._attributes = {};
+		}
+		// the attributes serve as a way to preserve the original
+		// definition of a model
+		// TODO: this is probably not necessary to keep but for debugging
+		// and development is quite useful for now
+		// we take the new attributes and preserve them along with
+		// any current values
+		enyo.mixin($proto._attributes, props.attributes);
+		
+		// relations are reevaluated even for subkinds to ensure that
+		// if a particular known attribute was redefined we have the updated
+		// relationship definition
+		$proto._relations = findRelations($proto._attributes);
+		
+		// we update our attribute keys to mirror the changes we see in
+		// our modified attributes hash
+		$proto._attributeKeys = enyo.keys($proto._attributes);
+		
+		// we construct an attribute map for ease of converting between
+		// local property names and remote property names
+		$proto._attributeMap = makeAttributeMap($proto._attributes);
+		
+		// we are no longer concerned with the attributes property of the
+		// properties for this kind and do not wish them to be added to
+		// to the kind body so we remove it
+		delete $proto.attributes;
+	});
+	
 	//*@public
 	/**
-
-		STATUS VALUES:
-			NEW
-			DIRTY
-			CLEAN
-			ERROR
+		enyo.kind({
+			name: "My.ArtistModel",
+			kind: "enyo.Model",
+			attributes: {
+				id: {
+					key: "artist_id",
+					type: "Number"
+				},
+				name: {
+					key: "artist_name",
+					type: "String"
+				},
+				albums: {
+					relation: {
+						key: "id",
+						inverseKey: "artist_id",
+						type: "many",
+						kind: "My.AlbumModel"
+					}
+				}
+			}
+		});
 	*/
 	enyo.kind({
 
 		// ...........................
 		// PUBLIC PROPERTIES
 
-		//*@public
 		name: "enyo.Model",
-
-		//*@public
-		kind: "enyo.Component",
-
-		//*@public
+		kind: "enyo.Controller",
 		attributes: null,
-
-		//*@public
-		events: {
-			onChange: "",
-			onReady: "",
-			onFetch: ""
-		},
-
-		//*@public
+		// NEW CLEAN DIRTY ERROR LOADING COMMITTING
 		status: "NEW",
-
-		//*@public
-		url: "",
-
+		primaryKey: "id",
+		events: {
+			onChange: ""
+		},
+		
 		// ...........................
 		// PROTECTED PROPERTIES
-
-		//*@protected
-		mixins: ["enyo.MultipleDispatchSupport"],
-
-		//*@protected
+		
+		_isModel: true,
 		_collections: null,
+		_relations: null,
+		_attributes: null,
+		_attributeKeys: null,
+		_attributeMap: null,
+		_previous: null,
+		_changed: null,
+		_euuid: null,
 
 		// ...........................
 		// COMPUTED PROPERTIES
 
 		// ...........................
 		// PUBLIC METHODS
-
-		//*@public
-		raw: function () {
-			return enyo.clone(this.attributes);
+		
+		// ...........................
+		// ASYNCHRONOUS METHODS
+		
+		commit: function (fn) {
+			enyo.store.commit(this, fn);
 		},
-
-		//*@public
+		fetch: function (fn) {
+			enyo.store.fetch(this, fn);
+		},
+		destroy: function (fn) {
+			enyo.store.destroy(this, fn);
+		},
+		
+		// ............................
+		
+		didFetch: function () {
+			this.log();
+		},
+		didCommit: function () {
+			this.log();
+		},
+		didDestroy: function () {
+			this.log();
+		},
+		
+		raw: function () {
+			return enyo.only(this._attributeKeys, this);
+		},
 		toJSON: function () {
 			return enyo.json.stringify(this.raw());
 		},
-
-		//*@public
 		isAttribute: function (prop) {
-			return (prop = _strip_attributes(prop)) ? !!(prop in this.attributes): false;
+			return !!~enyo.indexOf(prop, this._attributeKeys);
 		},
-
-		//*@public
-		get: function (prop) {
-			if (this.isAttribute(prop)) {
-				return enyo.getPath.call(this.attributes, prop);
-			} else {
-				return this.inherited(arguments);
-			}
+		previous: function (prop) {
+			return this._previous[prop];
 		},
-
-		//*@public
-		/**
-			See _enyo.Object#set_. If the property is an attribute
-			it will be set in the attributes hash but the notification
-			will be emitted as if it were a property of the model. If the
-			_prop_ parameter is a hash for batch updates on the model
-			it will assume all of the properties of the hash are attributes
-			and wait until all have been updated before issuing the
-			notifications and events.
-		*/
-		set: function (prop, value) {
-			var prev;
-			var props;
-			var changed = false;
-
-			if ("string" === typeof prop) {
-				if (this.isAttribute(prop)) {
-					prev = this.get(prop);
-					this._previous[prop] = prev;
-					enyo.setPath.call(this.attributes, prop, value);
-					this.notifyObservers(prop, prev, value);
-					this._flush_changes();
-					changed = true;
-				} else {
-					this.inherited(arguments);
-				}
-			} else if ("object" === typeof prop) {
-				// reassign to make more sense
-				props = prop;
-				// we want to ensure that we are queueing the attribute
-				// change notifications but aren't flushing them until the end
-				this.stopNotifications();
-				// this will not let the attributes changed event to bubble
-				// until we're done with the batch operation
+		set: function (prop, val) {
+			if ("object" === typeof prop) {
 				this.silence();
-				// update all of the properties in the hash as attributes
-				for (prop in props) {
-					this.set(prop, props[prop]);
+				this.stopNotifications();
+				for (var key in prop) {
+					this.set(key, prop[key]);
 				}
-				// now we unsilence our events and fire that first
-				this.unsilence();
-				this._flush_changes();
-				// now we allow our notifications to flush automatically
 				this.startNotifications();
-				changed = true;
+				this.unsilence();
+				this._flushChanges();
+				return this;
 			}
-
-			// if something was updated we need to update our state
-			if (changed) {
-				this.status = "DIRTY";
-			}
-			return this;
+			return this.inherited(arguments);
 		},
-
-		//*@public
-		previous: function (property) {
-			return this._previous[property];
+		
+		constructor: function (values) {
+			// first we have a local reference to the original values
+			// passed into the object (if there were any)
+			var $values = values;
+			// we set the object to undefined so we can allow the constructor
+			// chain to continue without automatically applying these values
+			// to this record
+			values = undefined;
+			// allow the remaining constructors to complete their initialization
+			this.inherited(arguments);
+			// initialize our variables
+			this._collections = [];
+			this._previous = {};
+			this._changed = {};
+			// now we can safely apply any initial values if we have some
+			// note that if there are values we are no longer a new status
+			// we are clean because we aren't empty
+			if (values) {
+				// if we have a defined structure we adhere to the structure
+				// otherwise we implicitly derive the structure but no special
+				// relationships
+				if (this._attributeKeys.length) {
+					enyo.mixin(this, enyo.only(this._attributeKeys, values));
+				} else {
+					this._attributeKeys = enyo.keys(values);
+					enyo.mixin(this, values);
+				}
+				// we set our status to clean because we have values
+				this.status = "CLEAN";
+				// set our previous up initially
+				this._previous = enyo.only(this._attributeKeys, this);
+			}
+		},
+		
+		create: function () {
+			this.inherited(arguments);
+			enyo.store.init(this);
 		},
 
 		// ...........................
 		// PROTECTED METHODS
 
-		//*@protected
-		constructor: function (props) {
-			// if there are no attributes defined we create them as
-			// empty
-			if (this.attributes) {
-				this.attributes = enyo.clone(this.attributes);
-			} else {
-				this.attributes = {};
-			}
-			if (props && "object" === typeof props) {
-				var attrs = props;
-				if (props.attributes) {
-					attrs = props.attributes;
-					// might be slow but we need to ensure the
-					// property doesn't show up as enumerable
-					delete props.attributes;
-				}
-				// attempt to implicitly grab attribute keys
-				enyo.mixin(this.attributes, attrs);
-				// since we're not in strict mode, this will also affect
-				// the arguments array and be passed into this.inherited
-				props = {};
-			}
-			this.inherited(arguments);
-			// initialize internal properties
-			this._previous = {};
-			this._changed = {};
-			this._collections = [];
-		},
-
-		//*@protected
-		_add_collection: function (collection) {
-			var $collections = this._collections;
-			if (!~enyo.indexOf(collection, $collections)) {
-				$collections.push(collection);
-				this.addDispatchTarget(collection);
+		_addCollection: function (col) {
+			if (!~enyo.indexOf(col, this._collections)) {
+				this._collections.push(col);
+				this.addDispatchTarget(col);
 			}
 		},
 
-		//*@protected
-		_remove_collection: function (collection) {
-			var $collections = this._collections;
-			var idx = enyo.indexOf(collection, $collections);
+		_removeCollection: function (col) {
+			var idx = enyo.indexOf(col, this._collections);
 			if (!!~idx) {
-				$collections.splice(idx, 1);
-				this.removeDispatchTarget(collection);
+				this._collections.splice(idx, 1);
+				this.removeDispatchTarget(col);
 			}
 		},
 
-		//*@protected
-		_flush_changes: function () {
-			// it is possible this will be called when silenced during
-			// batch operations so we ignore those requests until the end
-			if (this._silenced) {
-				return;
+		_flushChanges: function () {
+			if (!this._silenced) {
+				this.doChange({
+					previous: this._previous,
+					changed: this._changed
+				});
+				this._changed = {};
 			}
-			// send the event out that we changed
-			this.doChange({
-				changed: this._changed,
-				previous: this._previous
-			});
-			// reset the the changed hash so as not to be misleading
-			this._changed = {};
-		},
-		
-		//*@protected
-		destroy: function () {
-			var $collections = this._collections;
-			var $collection;
-			while ($collections.length) {
-				$collection = $collections.pop();
-				this._remove_collection($collection);
-			}
-			this.inherited(arguments);
 		},
 
 		// ...........................
 		// OBSERVERS
 
-		//*@protected
-		/**
-			This observer spies on property updates and if the property
-			is an attribute its changed state is entered into the records
-			own changeset queue. When the changeset queue is complete it
-			is flushed (elsewhere) but this maintain the most recent changed
-			version of the property.
-		*/
-		_attribute_spy: enyo.observer(function (property, previous, value) {
-			if (this.isAttribute(property)) {
-				this._previous[property] = previous;
-				this._changed[property] = value;
+		_attributeSpy: enyo.observer(function (prop, prev, val) {
+			if (this.isAttribute(prop)) {
+				this._previous[prop] = prev;
+				this._changed[prop] = val;
 			}
 		}, "*")
 
 	});
-
 
 })(enyo);

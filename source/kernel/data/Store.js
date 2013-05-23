@@ -1,82 +1,105 @@
 (function (enyo) {
 
+	enyo.store = null;
+	enyo.models = {
+		kinds: [],
+		add: function (ctor) {
+			if (!~enyo.indexOf(ctor, this.kinds)) {
+				this.kinds.push(ctor);
+			}
+			if (enyo.store) {
+				enyo.store._addModelKind(ctor);
+			}
+		}
+	};
+
+	/**
+		As seen https://gist.github.com/jcxplorer/823878, by jcxplorer.
+		TODO: replace with faster implementation
+	*/
+	var uuid = function () {
+		var uuid = "", idx = 0, rand;
+		for (; idx < 32; ++idx) {
+			rand = Math.random() * 16 | 0;
+			if (idx == 8 || idx == 12 || idx == 16 || idx == 20) {
+				uuid += "-";
+			}
+			uuid += (idx == 12? 4: (idx == 16? (rand & 3 | 8): rand)).toString(16);
+		}
+		return uuid;
+	};
 
 	enyo.kind({
 
 		// ...........................
 		// PUBLIC PROPERTIES
 
-		//*@public
 		name: "enyo.Store",
-
-		//*@public
-		kind: "enyo.Component",
-
-		//*@public
-		mixins: ["enyo.MultipleDispatchSupport"],
-
+		kind: "enyo.Controller",
+		source: null,
+		
 		// ...........................
 		// PROTECTED PROPERTIES
-
-		//*@protected
-		_sources: null,
-
+		
+		_records: null,
+		
 		// ...........................
 		// COMPUTED PROPERTIES
 
-		//*@public
-		/**
-			Retrieve an array of all of the sources available
-			to this store.
-		*/
-		sources: enyo.computed(function () {
-			return enyo.toArray(this._sources);
-		}, "_sources", {cached: true, defer: true}),
-
 		// ...........................
 		// PUBLIC METHODS
-
-		//*@public
-		/**
-			Add a source to the store. The _source_ parameter
-			should be a hash with at least a _kind_ and a _name_
-			for identification. The _kind_ must be of the type
-			_enyo.Source_. The store can have multiple sources.
-		*/
-		source: function (source) {
-			var sources = this._sources;
-			sources[source.name] = this.createComponent(source);
+		
+		uuid: function () {
+			return uuid();
 		},
-
-		//*@public
-		/**
-			Synchronize data with the named source. The _source_
-			parameter is a string that can be matched to an initialized
-			_source_ of the store. If there is only one source for the
-			store then no _source_ parameter is required.
-		*/
-		sync: function (source) {
-			this.log(source);
+		find: function (ctor, options) {
+			
 		},
-
-		//*@public
-		/**
-			This find method accepts a model _kind_ and an optional
-			parameter, _options_ that is a configuration hash to be
-			passed to the driver.
-		*/
-		find: function (model, source, options) {
-
+		init: function (model) {
+			var id = model.euuid = this.uuid();
+			this._records[id] = model;
+			this._records[model.kindName].all.push(model);
+		},
+		fetch: function (model, fn) {
+			this.log(model);
+		},
+		commit: function (model, fn) {
+			this.log(model);
+		},
+		destroy: function (model, fn) {
+			this.log(model);
+		},
+		constructor: function () {
+			// there can only be one store executing at a time
+			if (enyo.store) {
+				throw "There can only be one enyo.Store active";
+			}
+			enyo.store = this;
+			this.inherited(arguments);
+			this._records = {};
+			enyo.forEach(enyo.models.kinds, this._addModelKind, this);
+		},
+		didFetch: function () {
+			
+		},
+		didCommit: function () {
+			
+		},
+		didDestroy: function () {
+			
 		},
 
 		// ...........................
 		// PROTECTED METHODS
 
-		constructor: function () {
-			this.inherited(arguments);
-			// initialize the sources hash
-			this._sources = {};
-		},
+		_addModelKind: function (ctor) {
+			if (!this._records[ctor.prototype.kindName]) {
+				this._records[ctor.prototype.kindName] = {
+					all: [],
+					byPrimaryKey: {}
+				};
+			}
+		}
 
 		// ...........................
 		// OBSERVERS

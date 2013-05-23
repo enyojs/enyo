@@ -41,7 +41,7 @@ enyo.createMixin({
 
 	//*@protected
 	destroy: function () {
-		delete this.app;
+		this.app = undefined;
 	}
 
 });
