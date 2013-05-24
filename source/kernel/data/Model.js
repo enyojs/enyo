@@ -107,6 +107,12 @@
 		delete $proto.attributes;
 	});
 	
+	enyo.kind.postConstructors.push(function () {
+		if (this._isModel) {
+			enyo.store.initModel(this);
+		}
+	});
+	
 	//*@public
 	/**
 		enyo.kind({
@@ -188,11 +194,9 @@
 			this.exec("destroy", options);
 		},
 		exec: function (action, options) {
-			var $options = "object" === typeof options? options: {};
-			var $success = $options.success;
-			var $fail = $options.fail;
-			$options.success = this.bindSafely("did" + enyo.cap(action), $success);
-			$options.error = this.bindSafely("didFail", action, $fail);
+			var $options = options? enyo.clone(options): {};
+			$options.success = this.bindSafely("did" + enyo.cap(action), options || {});
+			$options.error = this.bindSafely("didFail", action, options || {});
 			enyo.store[action](this, $options);
 		},
 		
@@ -233,8 +237,8 @@
 			}
 			return $ret;
 		},
-		toJSON: function () {
-			return enyo.json.stringify(this.raw());
+		toJSON: function (useLocalKeys) {
+			return enyo.json.stringify(this.raw(useLocalKeys));
 		},
 		isAttribute: function (prop) {
 			return !!~enyo.indexOf(prop, this._attributeKeys);
@@ -289,7 +293,10 @@
 				// otherwise we implicitly derive the structure but no special
 				// relationships
 				if (this._attributeKeys.length) {
-					enyo.mixin(this, enyo.only(this._attributeKeys, $values));
+					// TODO: it will add complexity but might be necessary to lift this
+					// arbitrary restriction/assumption - if you define a schema only use
+					// that schema and ignore extraneous fields...
+					enyo.mixin(this, enyo.only(this._attributeKeys, enyo.remap(this._attributeMap.remote, $values)));
 				} else {
 					this._attributeKeys = enyo.keys($values);
 					enyo.mixin(this, $values);
@@ -304,7 +311,6 @@
 		
 		create: function () {
 			this.inherited(arguments);
-			enyo.store.init(this);
 			this._initRelations();
 		},
 
@@ -355,7 +361,8 @@
 			if (!this._silenced) {
 				this.doChange({
 					previous: this._previous,
-					changed: this._changed
+					changed: this._changed,
+					model: this
 				});
 				this._changed = {};
 			}
@@ -369,6 +376,7 @@
 				this._previous[prop] = prev;
 				this._changed[prop] = val;
 				this.status = "DIRTY";
+				this._flushChanges();
 			}
 		}, "*")
 
