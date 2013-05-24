@@ -60,13 +60,17 @@
 			this._records[id] = model;
 			this._records[model.kindName].all.push(model);
 		},
-		fetch: function (model, fn) {
+		fetch: function (model, options) {
+			var $success = options.success;
+			var $fail = options.error;
+			options.success = this.bindSafely("didFetch", $success);
+			options.error = this.bindSafely("didFail", "fetch", $fail);
+			this.source.fetch(model, options);
+		},
+		commit: function (model, options) {
 			this.log(model);
 		},
-		commit: function (model, fn) {
-			this.log(model);
-		},
-		destroy: function (model, fn) {
+		destroy: function (model, options) {
 			this.log(model);
 		},
 		constructor: function () {
@@ -79,14 +83,26 @@
 			this._records = {};
 			enyo.forEach(enyo.models.kinds, this._addModelKind, this);
 		},
+		constructed: function () {
+			this.inherited(arguments);
+			this.findAndInstance("source");
+		},
+		sourceFindAndInstance: function (ctor, inst) {
+			if (inst) {
+				inst.set("owner", this);
+			}
+		},
 		didFetch: function () {
-			
+			this.log(arguments);
 		},
 		didCommit: function () {
 			
 		},
 		didDestroy: function () {
 			
+		},
+		didFail: function () {
+			this.log(arguments);
 		},
 
 		// ...........................
@@ -99,10 +115,16 @@
 					byPrimaryKey: {}
 				};
 			}
-		}
+		},
 
 		// ...........................
 		// OBSERVERS
+		
+		_sourceChanged: enyo.observer(function (prop, prev, val) {
+			if (val) {
+				val.set("owner", this);
+			}
+		}, "source")
 
 	});
 

@@ -10,10 +10,10 @@
 			key
 			inverseKey
 			type
-			collectionKind
 			kind
+			json
 	*/
-	var findRelations = function (attributes) {
+	var findRelations = function (proto, attributes) {
 		// we will store any of the properties that are defined
 		// as a relation here as our return value
 		var $relations = {};
@@ -23,17 +23,18 @@
 			if ($prop.relation) {
 				$prop = $relations[key] = $prop.relation;
 				$prop.key = $prop.key || key;
-				$prop.inverseKey = $prop.inverseKey || $prop.key;
+				$prop.inverseKey = $prop.inverseKey || proto.primaryKey;
 				if (!$prop.kind) {
 					throw "enyo.Model: relations must have a kind defined";
 				}
 				$prop.type = $prop.type || "one";
 				if ("many" === $prop.type) {
-					$prop.collectionKind = $prop.collectionKind || enyo.kind({
-						name: enyo.uid("anonymous_collection"),
-						kind: enyo.Collection,
+					$prop.kind = enyo.kind({
+						kind: "enyo.Collection",
 						model: $prop.kind
 					});
+				} else if ("one" === $prop.type) {
+					$prop.kind = $prop.kind || "enyo.Model";
 				}
 			}
 		}
@@ -46,8 +47,13 @@
 		var key, $prop;
 		for (key in attributes) {
 			$prop = attributes[key];
-			$map.local[key] = "string" === typeof $prop? $prop: $prop.key || key;
-			$map.remote["string" === typeof $prop? $prop: $prop.key || key] = key;
+			if ("string" === typeof $prop) {
+				$map.local[key] = $prop;
+				$map.remote[$prop] = key;
+			} else {
+				$map.local[key] = $prop.key || key;
+				$map.remote[$prop.key || key] = key;
+			}
 		}
 		return $map;
 	};
@@ -85,7 +91,7 @@
 		// relations are reevaluated even for subkinds to ensure that
 		// if a particular known attribute was redefined we have the updated
 		// relationship definition
-		$proto._relations = findRelations($proto._attributes);
+		$proto._relations = findRelations($proto, $proto._attributes);
 		
 		// we update our attribute keys to mirror the changes we see in
 		// our modified attributes hash
@@ -134,6 +140,7 @@
 		name: "enyo.Model",
 		kind: "enyo.Controller",
 		attributes: null,
+		url: "",
 		// NEW CLEAN DIRTY ERROR LOADING COMMITTING
 		status: "NEW",
 		primaryKey: "id",
@@ -157,42 +164,83 @@
 		// ...........................
 		// COMPUTED PROPERTIES
 
+		query: enyo.computed(function () {
+			return this.get("url") + "/" + this.get(this.primaryKey) || "";
+		}),
+
 		// ...........................
 		// PUBLIC METHODS
 		
 		// ...........................
 		// ASYNCHRONOUS METHODS
 		
-		commit: function (fn) {
-			enyo.store.commit(this, fn);
+		commit: function (options) {
+			this.exec("commit", options);
 		},
-		fetch: function (fn) {
-			enyo.store.fetch(this, fn);
+		fetch: function (options) {
+			if ("NEW" === this.get("status")) {
+				enyo.warn(this.kindName + ": cannot fetch new record");
+				return false;
+			}
+			this.exec("fetch", options);
 		},
-		destroy: function (fn) {
-			enyo.store.destroy(this, fn);
+		destroy: function (options) {
+			this.exec("destroy", options);
+		},
+		exec: function (action, options) {
+			var $options = "object" === typeof options? options: {};
+			var $success = $options.success;
+			var $fail = $options.fail;
+			$options.success = this.bindSafely("did" + enyo.cap(action), $success);
+			$options.error = this.bindSafely("didFail", action, $fail);
+			enyo.store[action](this, $options);
 		},
 		
 		// ............................
 		
-		didFetch: function () {
-			this.log();
+		didFetch: function (fn) {
+			this.log(arguments);
 		},
-		didCommit: function () {
-			this.log();
+		didCommit: function (fn) {
+			this.log(arguments);
 		},
-		didDestroy: function () {
-			this.log();
+		didDestroy: function (fn) {
+			this.log(arguments);
+		},
+		didFail: function (action, fn) {
+			this.log(arguments);
 		},
 		
-		raw: function () {
-			return enyo.only(this._attributeKeys, this);
+		raw: function (useLocalKeys) {
+			var $attrs = this._attributes;
+			var $ret = enyo.only(this._attributeKeys, this);
+			var $rels = this._relations;
+			var key, $rel, $kind, prop;
+			if (!useLocalKeys) {
+				$ret = enyo.remap(this._attributeMap.local, $ret);
+			}
+			for (key in $rels) {
+				$rel = $rels[key];
+				if (!enyo.exists(this[key])) {
+					continue;
+				}
+				if ($rel.json) {
+					// the key that will be included in the parent (return) raw
+					// data hash
+					prop = $rel.json.key || key; // if there wasn't a key designated
+					$ret[prop] = this[key].raw(useLocalKeys);
+				}
+			}
+			return $ret;
 		},
 		toJSON: function () {
 			return enyo.json.stringify(this.raw());
 		},
 		isAttribute: function (prop) {
 			return !!~enyo.indexOf(prop, this._attributeKeys);
+		},
+		isRelation: function (prop) {
+			return !! (prop in this._relations);
 		},
 		previous: function (prop) {
 			return this._previous[prop];
@@ -208,10 +256,17 @@
 				this.unsilence();
 				this._flushChanges();
 				return this;
+			} else if (this.isRelation(prop)) {
+				return this.setRelation(prop, val);
+			} else {
+				return this.inherited(arguments);
 			}
-			return this.inherited(arguments);
 		},
-		
+		setRelation: function (prop, val) {
+			var $relations = this._relations;
+			var $rel = $relations[rel];
+			// TODO: need to implement this functionality
+		},
 		constructor: function (values) {
 			// first we have a local reference to the original values
 			// passed into the object (if there were any)
@@ -229,26 +284,28 @@
 			// now we can safely apply any initial values if we have some
 			// note that if there are values we are no longer a new status
 			// we are clean because we aren't empty
-			if (values) {
+			if ($values) {
 				// if we have a defined structure we adhere to the structure
 				// otherwise we implicitly derive the structure but no special
 				// relationships
 				if (this._attributeKeys.length) {
-					enyo.mixin(this, enyo.only(this._attributeKeys, values));
+					enyo.mixin(this, enyo.only(this._attributeKeys, $values));
 				} else {
-					this._attributeKeys = enyo.keys(values);
-					enyo.mixin(this, values);
+					this._attributeKeys = enyo.keys($values);
+					enyo.mixin(this, $values);
 				}
 				// we set our status to clean because we have values
 				this.status = "CLEAN";
 				// set our previous up initially
 				this._previous = enyo.only(this._attributeKeys, this);
 			}
+			this.url = this.url || this.kindName.replace(/^(.*)\./, "").toLowerCase();
 		},
 		
 		create: function () {
 			this.inherited(arguments);
 			enyo.store.init(this);
+			this._initRelations();
 		},
 
 		// ...........................
@@ -259,6 +316,31 @@
 				this._collections.push(col);
 				this.addDispatchTarget(col);
 			}
+		},
+		//*@protected
+		/**
+			Will initialize the relationships for any data that was
+			handed to the model when it was created.
+		*/
+		_initRelations: function () {
+			var $relations = this._relations;
+			var $rel, key;
+			for (key in $relations) {
+				$rel = $relations[key];
+				if (enyo.exists(this[key])) {
+					this._createRelation(key, $rel);
+				}
+			}
+		},
+		_createRelation: function (key, relation) {
+			var type = relation.type;
+			var $kind = "string" === typeof relation.kind? (relation.kind = enyo.getPath(relation.kind)): relation.kind;
+			var $data = this.get(key);
+			var $prop = this[key] = new $kind($data);
+			// TODO: this is setting us up for direct notification
+			// inside relationships as opposed to letting the store
+			// dispatch these events...probably better, could get tricky
+			$prop.addDispatchTarget(this);
 		},
 
 		_removeCollection: function (col) {
@@ -283,9 +365,10 @@
 		// OBSERVERS
 
 		_attributeSpy: enyo.observer(function (prop, prev, val) {
-			if (this.isAttribute(prop)) {
+			if (this.isAttribute(prop) || this.isRelation(prop)) {
 				this._previous[prop] = prev;
 				this._changed[prop] = val;
+				this.status = "DIRTY";
 			}
 		}, "*")
 
