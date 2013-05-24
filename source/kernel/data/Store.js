@@ -37,6 +37,9 @@
 		name: "enyo.Store",
 		kind: "enyo.Controller",
 		source: null,
+		handlers: {
+			onChange: "_modelChanged"
+		},
 		
 		// ...........................
 		// PROTECTED PROPERTIES
@@ -52,20 +55,57 @@
 		uuid: function () {
 			return uuid();
 		},
+		/**
+			A simple find mechanism to query valid records in the store.
+			If the _options_ _remote_ property exists and is true it will
+			execute asynchronously and run the query against the combined
+			result set of records as returned from the remote source and
+			any existing local records. If no _remote_ property exists or
+			it is false (default) it will return synchronously resulting in
+			an array of records if any were found or false otherwise. The
+			first parameter can be either a string or constructor matching
+			the name or kind of the model being queried with an optional
+			_options_ parameter of an object literal. These options will be
+			passed to the _queryResolver_ method. This method can be overridden
+			to handle custom implementations for advanced querying needs.
+		
+			TODO: not implemented as stated
+		*/
 		find: function (ctor, options) {
-			
+			var ret = this._records["string" === typeof ctor? ctor: ctor.prototype.kindName];
+			if (!ret) {
+				return false;
+			}
+			return this.queryResolver(enyo.clone(ret.all), options);
 		},
-		init: function (model) {
+		/**
+			TODO: not implemented
+		*/
+		findRemote: function (ctor, options) {
+			// TODO: not implemented yet
+			enyo.warn("enyo.Store.findRemote: this method is not implemented yet");
+			return false;
+		},
+		/**
+			TODO: not implemented
+		*/
+		queryResolver: function (models, options) {
+			return models;
+		},
+		initModel: function (model) {
 			var id = model.euuid = this.uuid();
 			this._records[id] = model;
 			this._records[model.kindName].all.push(model);
+			model.addDispatchTarget(this);
+			if (model[model.primaryKey]) {
+				this._records[model.kindName].byPrimaryKey[model[model.primaryKey]] = model;
+			}
 		},
 		fetch: function (model, options) {
-			var $success = options.success;
-			var $fail = options.error;
-			options.success = this.bindSafely("didFetch", $success);
-			options.error = this.bindSafely("didFail", "fetch", $fail);
-			this.source.fetch(model, options);
+			var $options = options? enyo.clone(options): {};
+			$options.success = this.bindSafely("didFetch", model, options);
+			$options.error = this.bindSafely("didFail", "fetch", model, options);
+			this.source.fetch(model, $options);
 		},
 		commit: function (model, options) {
 			this.log(model);
@@ -92,8 +132,11 @@
 				inst.set("owner", this);
 			}
 		},
-		didFetch: function () {
-			this.log(arguments);
+		didFetch: function (model, options, result) {
+			// TODO: ...
+			if (options.success) {
+				options.success(result);
+			}
 		},
 		didCommit: function () {
 			
@@ -101,7 +144,7 @@
 		didDestroy: function () {
 			
 		},
-		didFail: function () {
+		didFail: function (which, model, options) {
 			this.log(arguments);
 		},
 
@@ -114,6 +157,23 @@
 					all: [],
 					byPrimaryKey: {}
 				};
+			}
+		},
+		_modelChanged: function (sender, event) {
+			if (event.model) {
+				var $model = event.model;
+				var $changed = event.changed;
+				var $prev = event.previous;
+				var key = $model.primaryKey;
+				var kind = $model.kindName;
+				if (key in $changed) {
+					// we have to remove the entry altogether
+					delete this._records[kind].byPrimaryKey[$prev[key]];
+					// only re-add it if there is actually a value
+					if ($changed[key]) {
+						this._records[kind].byPrimaryKey[$changed[key]] = $model;
+					}
+				}
 			}
 		},
 

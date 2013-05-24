@@ -11,6 +11,7 @@
 		fetching: false,
 		length: 0,
 		url: "",
+		dataKey: "",
 		events: {
 			onModelChanged: "",
 			onModelAdded: "",
@@ -44,20 +45,40 @@
 		// ...........................
 		// PUBLIC METHODS
 
-		raw: function () {
+		raw: function (useLocalKeys) {
 			return this.map(function (model) {
-				return model.raw();
+				return model.raw(useLocalKeys);
 			});
 		},
-		toJSON: function () {
-			return enyo.json.stringify(this.raw());
+		toJSON: function (useLocalKeys) {
+			return enyo.json.stringify(this.raw(useLocalKeys));
 		},
-		fetch: function () {
-
+		fetch: function (options) {
+			var $options = options? enyo.clone(options): {};
+			$options.success = this.bindSafely("didFetch", options || {});
+			$options.error = this.bindSafely("didFail", "fetch", options || {});
+			this.set("fetching", true);
+			enyo.store.fetch(this, $options);
 		},
-		didFetch: function (sender, response) {
-			this.add(response);
-			// all done fetching
+		didFetch: function (options, result) {
+			var data = result;
+			if (!enyo.isArray(result)) {
+				data = enyo.getPath.call(result, this.dataKey);
+				// since this is an object we remove the dataset key so as
+				// not to store it twice but will automatically apply the
+				// extraneous properties to the collection for reference if
+				// necessary
+				enyo.setPath.call(result, this.dataKey, undefined);
+				this.set(result);
+			}
+			this.add(data);
+			if (options.success) {
+				options.success(options, result);
+			}
+			this.set("fetching", false);
+		},
+		didFail: function (which, options) {
+			this.log(arguments);
 			this.set("fetching", false);
 		},
 		push: function () {
@@ -101,7 +122,7 @@
 			if (!(record instanceof this.model)) {
 				record = new this.model(record);
 			}
-			record._add_collection(this);
+			record._addCollection(this);
 			this._store.push(record);
 			this.set("length", this._store.length);
 			if (!this._silenced) {
@@ -142,7 +163,7 @@
 			if (!!~idx) {
 				this._store.splice(idx, 1);
 				this.set("length", this._store.length);
-				record._remove_collection(this);
+				record._removeCollection(this);
 				if (!this._silenced) {
 					this.doModelRemoved({
 						model: record,
@@ -177,6 +198,20 @@
 			this.unsilence();
 			if (removed.length) {
 				this.doModelsRemoved({models: removed});
+			}
+		},
+		set: function (prop, val) {
+			if ("object" === typeof prop) {
+				this.stopNotifications();
+				for (var key in prop) {
+					this.set(key, prop[key]);
+				}
+				this.startNotifications();
+				return this;
+			} else if (undefined === val) {
+				return;
+			} else {
+				return this.inherited(arguments);
 			}
 		},
 
@@ -216,6 +251,7 @@
 					collection: this
 				});
 			}
+			return true;
 		}
 
 		// ...........................
