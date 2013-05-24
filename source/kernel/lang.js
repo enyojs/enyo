@@ -109,8 +109,9 @@
 				path = path.path;
 			}
 			// otherwise it was an invalid request
+			// but we return the object that was passed in
 			else {
-				return undefined;
+				return path;
 			}
 		}
 		// clear any leading periods
@@ -768,8 +769,10 @@
 		Copies custom properties from the _source_ object to the _target_ object.
 		If _target_ is falsy, an object is created.
 		If _source_ is falsy, the target or empty object is returned.
+		If _ignore_ is true, any property in source that already has a truthy value
+		will not be overridden.
 	*/
-	enyo.mixin = function(target, source) {
+	enyo.mixin = function(target, source, ignore) {
 		target = target || {};
 		if (source) {
 			var name, s;
@@ -780,7 +783,9 @@
 				// that source inherited from Object.prototype
 				s = source[name];
 				if (empty[name] !== s) {
-					target[name] = s;
+					if (!ignore || !target[name]) {
+						target[name] = s;
+					}
 				}
 			}
 		}
