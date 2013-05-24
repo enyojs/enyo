@@ -6,7 +6,11 @@
 		// PUBLIC PROPERTIES
 
 		name: "enyo.Collection",
-
+		kind: "enyo.Controller",
+		model: "enyo.Model",
+		fetching: false,
+		length: 0,
+		url: "",
 		events: {
 			onModelChanged: "",
 			onModelAdded: "",
@@ -14,25 +18,11 @@
 			onModelRemoved: "",
 			onModelsRemoved: ""
 		},
-
-		length: 0,
-
-		model: "enyo.Model",
-
-		url: "",
-
-		fetching: false,
-
-		autoFetch: true,
-
+		handlers: {
+			onChange: "_modelChanged"
+		},		
 		// ...........................
 		// PROTECTED PROPERTIES
-
-		kind: "enyo.Controller",
-
-		handlers: {
-			onChange: "_model_changed"
-		},
 
 		_store: null,
 
@@ -47,6 +37,9 @@
 				return this._store;
 			}
 		}, "length", {cached: true, defer: true}),
+		query: enyo.computed(function () {
+			return this.url || this.model.prototype.get("query");
+		}),
 
 		// ...........................
 		// PUBLIC METHODS
@@ -56,70 +49,50 @@
 				return model.raw();
 			});
 		},
-
 		toJSON: function () {
 			return enyo.json.stringify(this.raw());
 		},
-
-
 		fetch: function () {
-			// set our fetching state to true
-			this.set("fetching", true);
-			var xhr = new enyo.Ajax({url: this.url});
-			xhr.response(this, this.didFetch);
-			xhr.go();
-		},
 
+		},
 		didFetch: function (sender, response) {
 			this.add(response);
 			// all done fetching
 			this.set("fetching", false);
 		},
-
 		push: function () {
 			enyo.warn("enyo.Collection.push: not currently implemented");
 		},
-
 		pop: function () {
 			enyo.warn("enyo.Collection.pop: not currently implemented");
 		},
-
 		shift: function () {
 			enyo.warn("enyo.Collection.shift: not currently implemented");
 		},
-
 		unshift: function () {
 			enyo.warn("enyo.Collection.unshift: not currently implemented");
 		},
-
 		indexOf: function (value, idx) {
 			return enyo.indexOf(value, this._store, idx);
 		},
-
 		lastIndexOf: function (value, idx) {
 			return enyo.lastIndexOf(value, this._store, idx);
 		},
-
 		splice: function () {
 			enyo.warn("enyo.Collection.splice: not currently implemented");
 		},
-
 		map: function (fn, context) {
 			return enyo.map(this._store, fn, context || this);
 		},
-
 		filter: function (fn, context) {
 			return enyo.filter(this._store, fn, context || this);
 		},
-
 		contains: function (value) {
 			return !!~enyo.indexOf(this._store, value);
 		},
-
 		at: function (index) {
 			return this._store[index];
 		},
-
 		add: function (record) {
 			var idx = this._store.length;
 			if (enyo.isArray(record)) {
@@ -140,11 +113,9 @@
 			}
 			return idx;
 		},
-
 		addAt: function () {
 			enyo.warn("enyo.Collection.addAt: not implemented yet");
 		},
-
 		addMany: function (records) {
 			var added = [];
 			this.silence();
@@ -163,7 +134,6 @@
 				this.doModelsAdded({models: added});
 			}
 		},
-
 		remove: function (record) {
 			if (enyo.isArray(record)) {
 				return this.removeMany.apply(this, arguments);
@@ -184,16 +154,13 @@
 			}
 			return false;
 		},
-
 		removeAll: function () {
 			var $copy = enyo.clone(this._store);
 			this.remove($copy);
 		},
-
 		removeAt: function () {
 			enyo.warn("enyo.Collection.removeAt: not implemented yet");
 		},
-
 		removeMany: function (records) {
 			var removed = [];
 			this.silence();
@@ -226,30 +193,21 @@
 			// initialize our store
 			this._store = this._store || [];
 			this.length = this._store.length;
-			this._init_model();
+			this._initModel();
 			if (this._store.length) {
 				this._store = this.map(function (record) {
 					return record instanceof this.model? record: new this.model(record);
 				}, this);
 			}
 		},
-
-		create: function () {
-			this.inherited(arguments);
-			if (true === this.autoFetch && this.url) {
-				enyo.asyncMethod(this, this.fetch);
-			}
-		},
-
-		_init_model: function () {
+		_initModel: function () {
 			var $model = this.model;
 			if ("string" === typeof $model) {
 				$model = enyo.getPath($model);
 			}
 			this.model = $model;
 		},
-
-		_model_changed: function (sender, event) {
+		_modelChanged: function (sender, event) {
 			var idx = this.indexOf(sender);
 			if (!!~idx) {
 				this.doModelChanged({
