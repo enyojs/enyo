@@ -126,7 +126,7 @@ enyo.kind({
 				callback: this.bindSafely("receive"),
 				body: body,
 				headers: xhr_headers,
-				sync: window.PalmSystem ? false : this.sync,
+				sync: this.sync,
 				username: this.username,
 				password: this.password,
 				xhrFields: enyo.mixin({onprogress: this.bindSafely(this.updateProgress)}, this.xhrFields),
