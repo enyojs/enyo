@@ -217,13 +217,15 @@ enyo.kind({
 	//* @protected
 	//* Handler for ajax progress events.
 	updateProgress: function(event) {
+		// filter out "input" as it causes exceptions on some Firefox versions
+		// due to unimplemented internal APIs
 		var ev = {};
 		for (var k in event) {
 			if (k !== 'input') {
 				ev[k] = event[k];
 			}
 		}
-		this.sendProgress(event.loaded, 0, event.total, event);
+		this.sendProgress(event.loaded, 0, event.total, ev);
 	},
 	statics: {
 		objectToQuery: function(/*Object*/ map) {
