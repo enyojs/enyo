@@ -45,6 +45,9 @@
 		// ...........................
 		// PUBLIC METHODS
 
+		buildQueryParams: function (model, options) {
+
+		},
 		raw: function (useLocalKeys) {
 			return this.map(function (model) {
 				return model.raw(useLocalKeys);
@@ -78,7 +81,6 @@
 			this.set("fetching", false);
 		},
 		didFail: function (which, options) {
-			this.log(arguments);
 			this.set("fetching", false);
 		},
 		push: function () {

@@ -105,13 +105,34 @@
 			var $options = options? enyo.clone(options): {};
 			$options.success = this.bindSafely("didFetch", model, options);
 			$options.error = this.bindSafely("didFail", "fetch", model, options);
+			
+			// if the model is NEW we generate an id for it only
+			if (model.status === "NEW") {
+				return this.fetchId(model, options);
+			}
+			
 			this.source.fetch(model, $options);
 		},
 		commit: function (model, options) {
-			this.log(model);
+			var $options = options? enyo.clone(options): {};
+			$options.success = this.bindSafely("didCommit", model, options);
+			$options.error = this.bindSafely("didFail", "commit", model, options);
+			this.source.commit(model, $options);
 		},
 		destroy: function (model, options) {
-			this.log(model);
+			var $options = options? enyo.clone(options): {};
+			$options.success = this.bindSafely("didDestroy", model, options);
+			$options.error = this.bindSafely("didFail", "destroy", model, options);
+			this.source.destroy($options);
+		},
+		fetchId: function (model, options) {
+			if (model.fetchId) {
+				return model.fetchId(options);
+			}
+			var $options = options? enyo.clone(options): {};
+			$options.success = this.bindSafely("didFetchId", model, options);
+			$options.error = this.bindSafely("didFail", "fetchId", model, options);
+			this.source.fetch(model, $options);
 		},
 		constructor: function () {
 			// there can only be one store executing at a time
@@ -138,14 +159,26 @@
 				options.success(result);
 			}
 		},
-		didCommit: function () {
-			
+		didCommit: function (model, options, result) {
+			// TODO: ...
+			if (options.success) {
+				options.success(result);
+			}
 		},
-		didDestroy: function () {
-			
+		didDestroy: function (model, options, result) {
+			// TODO: ...
+			if (options.success) {
+				options.success(result);
+			}
 		},
-		didFail: function (which, model, options) {
-			this.log(arguments);
+		didFetchId: function (model, options, result) {
+			this.log(model, options, result);
+		},
+		didFail: function (which, model, options, request, error) {
+			// TODO: ...
+			if (options.error) {
+				options.error(request, error);
+			}
 		},
 
 		// ...........................

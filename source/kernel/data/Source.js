@@ -1,6 +1,8 @@
 (function (enyo) {
 
-
+	var normalize = function (url) {
+		return url.replace(/([^:]\/)(\/+)/g, "$1");
+	};
 
 	enyo.kind({
 
@@ -11,10 +13,13 @@
 		kind: "enyo.Component",
 		requestKind: "enyo.Ajax",
 		domain: "",
+		urlPostfix: "",
 		port: null,
 		secure: false,
 		readOnly: false,
-		defaultOptions: null,
+		defaultOptions: {
+			cacheBust: false
+		},
 		defaultHeaders: null,
 
 		// ...........................
@@ -26,9 +31,14 @@
 		// ...........................
 		// PUBLIC METHODS
 		buildUrl: function (model, options) {
-			var url = "http" + (this.secure? "s": "") + "://" + this.domain;
-			url += (this.port? (":" + this.port): "") + "/" + model.get("query");
-			options.url = url;
+			if (!options.url) {
+				var url = "http" + (this.secure? "s": "") + "://" + this.domain;
+				if (this.port || location.port) {
+					url += (":" + (this.port? this.port: location.port) + "/");
+				}
+				url += "/" + this.urlPostfix + model.get("query");
+				options.url = normalize(url);
+			}
 		},
 		buildHeaders: function (model, options) {
 			options.headers = enyo.mixin(model.get("headers"), this.defaultHeaders, true);
@@ -36,6 +46,8 @@
 		buildQueryParams: function (model, options) {
 			// add property to options called queryParams as
 			// object literal to be appended to the query string
+			options.queryParams = options.queryParams || {};
+			model.buildQueryParams(model, options);
 		},
 		buildRequest: function (model, options) {
 			this.buildUrl(model, options);
@@ -53,22 +65,27 @@
 				options.method = "PUT";
 				break;
 			}
+			this.exec("commit", options);
 		},
 		fetch: function (model, options) {
-			this.buildRequest(model, options);
-			options.method = "GET";
-			this.exec(options);
+			if (arguments.length > 1) {
+				this.buildRequest(model, options);
+				options.method = "GET";
+			} else {
+				options = model;
+			}
+			this.exec("fetch", options);
 		},
 		destroy: function (model, options) {
 			this.buildRequest(model, options);
 			options.method = "DELETE";
-			this.exec(options);
+			this.exec("destroy", options);
 		},
-		exec: function (options) {
+		exec: function (which, options) {
 			var $req = this.requestKind;
 			var $options = enyo.only(this._ajaxOptions, options);
 			var $success = this.bindSafely("onSuccess", options);
-			var $fail = this.bindSafely("onFail", options);
+			var $fail = this.bindSafely("onFail", which, options);
 			var $com = new $req($options);
 			var $params = options.queryParams;
 			if (options.method !== "GET" && this.readOnly) {
@@ -76,6 +93,7 @@
 			}
 			$com.response($success);
 			$com.error($fail);
+			console.log("Requesting: ", options.url, $params);
 			$com.go($params);
 		},
 		filter: function (data) {
@@ -87,8 +105,10 @@
 				options.success(result);
 			}
 		},
-		onFail: function () {
-			this.log(arguments);
+		onFail: function (which, options, request, error) {
+			if (options.error) {
+				options.error(request, error);
+			}
 		},
 		
 		constructor: function () {
