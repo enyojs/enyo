@@ -50,4 +50,5 @@ enyo.job.throttle = function(inJobName, inJob, inWait) {
 	}, inWait);
 };
 
+//* @protected
 enyo.job._jobs = {};
