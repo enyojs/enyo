@@ -88,5 +88,47 @@ enyo.kind({
 				finish("too many or too few calls");
 			}
 		}, 30);
+	},
+	testStartJobPriorityNumber: function() {
+		var finish = this.bindSafely("finish");
+		var c = new enyo.Component({
+			number: 0,
+			increment: function() {
+				this.number++;
+			}
+		});
+		c.startJob("increment", "increment", 1); // number should be 1
+
+		setTimeout(function(){
+			if (c.number !== 1) {
+				finish("job did not execute even though its not blocked");
+			} else {
+				finish();
+			}
+		}, 20);
+	},
+	testStartJobPriorityNumberBlocked: function() {
+		var finish = this.bindSafely("finish");
+		var c = new enyo.Component({
+			number: 0,
+			increment: function() {
+				this.number++;
+			}
+		});
+		enyo.jobs.registerPriority(5, "testPriority");
+		c.startJob("incrementLow", "increment", 1, 1); // number should be 1
+		c.startJob("incrementHigh", "increment", 1, 6); // number should be 2
+
+		setTimeout(function(){
+			if (c.number !== 1) {
+				finish("High priority did not execute");
+			}
+			enyo.jobs.unregisterPriority("testPriority");
+			if (c.number !== 2) {
+				finish("Low priority did not execute");
+			} else {
+				finish();
+			}
+		}, 20);
 	}
 });
