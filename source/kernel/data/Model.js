@@ -121,7 +121,7 @@
 		// properties for this kind and do not wish them to be added to
 		// to the kind body so we remove it
 		delete $proto.attributes;
-		$proto.url = $proto.url || props.url || ($proto.name || $proto.kindName).replace(/^(.*)\./g, "").toLowerCase();
+		$proto.url = props.url || ($proto.name || $proto.kindName).replace(/^(.*)\./g, "").toLowerCase();
 	});
 	
 	enyo.kind.postConstructors.push(function () {
@@ -204,7 +204,9 @@
 		// ASYNCHRONOUS METHODS
 		
 		commit: function (options) {
-			this.exec("commit", options);
+			var $options = options? enyo.clone(options): {};
+			$options.postBody = this.raw();
+			this.exec("commit", $options);
 		},
 		fetch: function (options) {
 			this.exec("fetch", options);
