@@ -36,8 +36,8 @@
 				flush();
 			}
 		}
-		// for an IE8 fallback and assurance
-		if ((ready = ("complete" === doc.readyState))) {
+		// for an IE8 fallback and legacy WebKit (including webOS 3.x and less) and assurance
+		if ((ready = ("complete" === doc.readyState || "loaded" === doc.readyState))) {
 			remove(event.type, init);
 			flush();
 		}
