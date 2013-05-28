@@ -18,7 +18,8 @@
 		secure: false,
 		readOnly: false,
 		defaultOptions: {
-			cacheBust: false
+			cacheBust: false,
+			contentType: "application/json"
 		},
 		defaultHeaders: null,
 
@@ -62,6 +63,7 @@
 				options.method = "POST";
 				break;
 			case "CLEAN":
+			case "DIRTY": 
 				options.method = "PUT";
 				break;
 			}
