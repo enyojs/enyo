@@ -50,4 +50,42 @@ enyo.job.throttle = function(inJobName, inJob, inWait) {
 	}, inWait);
 };
 
+/**
+	Invokes function _inJob_ only if (or as soon as) no animation is in progress.
+	
+	This is useful for events that are computationally expensive and can be
+	deferred until all animations have completed to avoid dropped frames and
+	jittery animations.
+
+	    handleIncomingData: function(inData){
+	        enyo.job.defer("updateThumb", enyo.bind(this, "doExpensiveStuff", inData) );
+	    }
+*/
+enyo.job.defer = function(inJob) {
+	this._jobQueue.push(inJob);
+	this._runQueue();
+};
+
+//* @protected
+
+/**
+	run one queued job at a time to avoid blocking the threat with collected jobs
+ */
+enyo.job._runQueue = function(){
+	this._processQueue();
+	if(this._jobQueue.length){
+		enyo.job("runQueue", enyo.bind(this, "_runQueue"), 100);
+	}
+};
+
+/**
+	try to run a job from the queue if no animation is in progress
+ */
+enyo.job._processQueue = function(){
+	if(!enyo.isAnimating()){
+		( this._jobQueue.shift() )();
+	}
+};
+
+enyo.job._jobQueue = [];
 enyo.job._jobs = {};

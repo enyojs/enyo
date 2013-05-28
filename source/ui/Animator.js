@@ -16,6 +16,12 @@
 	event to its owner or bubbling it.  The _context_ property can be used to
 	call the supplied event functions in a particular "this" context.
 */
+
+enyo.animations = [];
+enyo.isAnimating = function(){
+	return !!enyo.animations.length;
+};
+
 enyo.kind({
 	name: "enyo.Animator",
 	kind: "Component",
@@ -61,6 +67,9 @@ enyo.kind({
 		}
 		this.t0 = this.t1 = enyo.now();
 		this.value = this.startValue;
+		if(enyo.indexOf(this.id, enyo.animations) === -1){
+			enyo.animations.push(this.id);
+		}
 		this.job = true;
 		this.next();
 		return this;
@@ -97,6 +106,10 @@ enyo.kind({
 		this.job = enyo.requestAnimationFrame(this._next, this.node);
 	},
 	cancel: function() {
+		var i = enyo.indexOf(this.id, enyo.animations);
+		if(i !== -1){
+			enyo.animations.splice(i, 1);
+		}
 		enyo.cancelRequestAnimationFrame(this.job);
 		this.node = null;
 		this.job = null;
