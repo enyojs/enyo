@@ -5,7 +5,7 @@ enyo.depends(
 	"Control.js",
 	"platform.js",
 	"animation.js",
-	"phonegap.js",
+	"cordova.js",
 	"dispatcher.js",
 	"preview.js",
 	"modal.js",
