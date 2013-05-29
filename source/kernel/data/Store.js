@@ -38,13 +38,15 @@
 		kind: "enyo.Controller",
 		source: null,
 		handlers: {
-			onChange: "_modelChanged"
+			onChange: "_modelChanged",
+			onDestroy: "_modelDestroyed"
 		},
 		
 		// ...........................
 		// PROTECTED PROPERTIES
 		
 		_records: null,
+		_noApplyMixinDestroy: true,
 		
 		// ...........................
 		// COMPUTED PROPERTIES
@@ -94,6 +96,13 @@
 		},
 		initModel: function (model) {
 			var id = model.euuid = this.uuid();
+			if (!model[model.primaryKey] && !model._didAttemptFetchId) {
+				model._didAttemptFetchId = true;
+				var $options = {
+					success: this.bindSafely("initModel", model)
+				};
+				return this.fetchId(model, $options);
+			}
 			this._records[id] = model;
 			this._records[model.kindName].all.push(model);
 			model.addDispatchTarget(this);
@@ -123,16 +132,18 @@
 			var $options = options? enyo.clone(options): {};
 			$options.success = this.bindSafely("didDestroy", model, options);
 			$options.error = this.bindSafely("didFail", "destroy", model, options);
-			this.source.destroy($options);
+			this.source.destroy(model, $options);
 		},
 		fetchId: function (model, options) {
-			if (model.fetchId) {
-				return model.fetchId(options);
-			}
 			var $options = options? enyo.clone(options): {};
 			$options.success = this.bindSafely("didFetchId", model, options);
-			$options.error = this.bindSafely("didFail", "fetchId", model, options);
-			this.source.fetch(model, $options);
+			if (model.fetchId) {
+				return model.fetchId($options);
+			}
+			// TODO: this may not be useful in and of itself since
+			// most backends will have their own scheme for generating
+			// an id via sequence etc.
+			$options.success(model.euuid);
 		},
 		constructor: function () {
 			// there can only be one store executing at a time
@@ -172,7 +183,10 @@
 			}
 		},
 		didFetchId: function (model, options, result) {
-			this.log(model, options, result);
+			model.set(model.primaryKey, result);
+			if (options.success) {
+				options.success(result);
+			}
 		},
 		didFail: function (which, model, options, request, error) {
 			// TODO: ...
@@ -208,6 +222,16 @@
 					}
 				}
 			}
+		},
+		_modelDestroyed: function (sender, event) {
+			var euuid = sender.euuid;
+			var id = sender[sender.primaryKey];
+			var kind = sender.kindName;
+			var idx = enyo.indexOf(sender, this._records[kind].all);
+			delete this._records[euuid];
+			delete this._records[kind].byPrimaryKey[id];
+			this._records[kind].all.splice(idx, 1);
+			return true;
 		},
 
 		// ...........................

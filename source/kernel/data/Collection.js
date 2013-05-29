@@ -17,10 +17,12 @@
 			onModelAdded: "",
 			onModelsAdded: "",
 			onModelRemoved: "",
-			onModelsRemoved: ""
+			onModelsRemoved: "",
+			onModelDestroyed: ""
 		},
 		handlers: {
-			onChange: "_modelChanged"
+			onChange: "_modelChanged",
+			onDestroy: "_modelDestroyed"
 		},		
 		// ...........................
 		// PROTECTED PROPERTIES
@@ -46,7 +48,6 @@
 		// PUBLIC METHODS
 
 		buildQueryParams: function (model, options) {
-
 		},
 		raw: function (useLocalKeys) {
 			return this.map(function (model) {
@@ -216,6 +217,14 @@
 				return this.inherited(arguments);
 			}
 		},
+		ownerChanged: function(inOldOwner) {
+			if (inOldOwner && inOldOwner.removeComponent) {
+				inOldOwner.removeComponent(this);
+			}
+			if (this.owner && this.owner.addComponent) {
+				this.owner.addComponent(this);
+			}
+		},
 
 		// ...........................
 		// PROTECTED METHODS
@@ -248,6 +257,18 @@
 			var idx = this.indexOf(sender);
 			if (!!~idx) {
 				this.doModelChanged({
+					model: sender,
+					index: idx,
+					collection: this
+				});
+			}
+			return true;
+		},
+		_modelDestroyed: function (sender, event) {
+			var idx = this.indexOf(sender);
+			if (!!~idx) {
+				this.remove(sender);
+				this.doModelDestroyed({
 					model: sender,
 					index: idx,
 					collection: this

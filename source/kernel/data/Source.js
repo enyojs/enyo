@@ -26,6 +26,8 @@
 		// ...........................
 		// PROTECTED PROPERTIES
 		
+		_noApplyMixinDestroy: true,
+		
 		// ...........................
 		// COMPUTED PROPERTIES
 
@@ -58,12 +60,11 @@
 		},
 		commit: function (model, options) {
 			this.buildRequest(model, options);
-			switch (model.status) {
-			case "NEW":
+			switch (model.isNew) {
+			case true:
 				options.method = "POST";
 				break;
-			case "CLEAN":
-			case "DIRTY": 
+			case false:
 				options.method = "PUT";
 				break;
 			}
