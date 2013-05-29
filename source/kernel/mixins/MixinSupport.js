@@ -304,12 +304,14 @@
 		}
 		// inject our special destructor that will enable the
 		// other mixins to execute their own when the time is right
-		_apply_properties(proto, {destroy: function () {
-			if (this._supports_mixins) {
-				_destroy_mixins.call(this);
-			}
-			return this.inherited(arguments);
-		}}, "enyo.MixinSupport");
+		if (!proto._noApplyMixinDestroy) {
+			_apply_properties(proto, {destroy: function () {
+				if (this._supports_mixins) {
+					_destroy_mixins.call(this);
+				}
+				return this.inherited(arguments);
+			}}, "enyo.MixinSupport");
+		}
 	});
 
 	//*@protected

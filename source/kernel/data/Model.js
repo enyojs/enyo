@@ -24,12 +24,12 @@
 				$prop = $relations[key] = $prop.relation;
 				$prop.key = $prop.key || key;
 				$prop.inverseKey = $prop.inverseKey || proto.primaryKey;
-				$prop.autoFetch = false === $prop.autoFetch? false: true;
+				$prop.autoFetch = true === $prop.autoFetch? true: false;
 				if (!$prop.kind && $prop.type !== "many") {
 					throw "enyo.Model: relations must have a kind defined";
 				}
-				$prop.type = $prop.type || "one";
-				if ("many" === $prop.type) {
+				$prop.type = $prop.type || "toOne";
+				if ("toMany" === $prop.type) {
 					if (!$prop.collection) {
 						$prop.kind = enyo.kind({
 							kind: "enyo.Collection",
@@ -38,7 +38,7 @@
 					} else {
 						$prop.kind = $prop.collection;
 					}
-				} else if ("one" === $prop.type) {
+				} else if ("toOne" === $prop.type) {
 					$prop.kind = $prop.kind || "enyo.Model";
 				}
 			}
@@ -89,6 +89,11 @@
 		// we take the new attributes and preserve them along with
 		// any current values
 		enyo.mixin($proto._attributes, props);
+		// we want to make sure that no matter what we include the primaryKey
+		// attribute in the payload
+		if (!($proto.primaryKey in $proto._attributes)) {
+			$proto._attributes[$proto.primaryKey] = null;
+		}
 		
 		// relations are reevaluated even for subkinds to ensure that
 		// if a particular known attribute was redefined we have the updated
@@ -148,7 +153,7 @@
 					relation: {
 						key: "id",
 						inverseKey: "artist_id",
-						type: "many",
+						type: "toMany",
 						kind: "My.AlbumModel"
 					}
 				}
@@ -164,12 +169,14 @@
 		kind: "enyo.Controller",
 		attributes: null,
 		url: "",
-		// NEW CLEAN DIRTY ERROR LOADING COMMITTING
+		// NEW CLEAN DIRTY ERROR FETCHING COMMITTING DESTROYING
 		status: "NEW",
+		isNew: true,
 		primaryKey: "id",
 		dataKey: "",
 		events: {
-			onChange: ""
+			onChange: "",
+			onDestroy: ""
 		},
 		
 		// ...........................
@@ -185,6 +192,7 @@
 		_changed: null,
 		_euuid: null,
 		_defaultModel: false,
+		_noApplyMixinDestroy: true,
 
 		// ...........................
 		// COMPUTED PROPERTIES
@@ -206,12 +214,15 @@
 		commit: function (options) {
 			var $options = options? enyo.clone(options): {};
 			$options.postBody = this.raw();
+			this.set("status", "COMMITTING");
 			this.exec("commit", $options);
 		},
 		fetch: function (options) {
+			this.set("status", "FETCHING");
 			this.exec("fetch", options);
 		},
 		destroy: function (options) {
+			this.set("status", "DESTROYING");
 			this.exec("destroy", options);
 		},
 		exec: function (action, options) {
@@ -229,18 +240,27 @@
 				data = enyo.getPath.call(result, this.dataKey);
 			}
 			this.set(data);
+			this.set("isNew", false);
+			this.set("staus", "CLEAN");
 			if (options.success) {
 				options.success(result);
 			}
+			this._changed = {};
 		},
 		didCommit: function (options, result) {
-			this.log(arguments);
+			if (result && "object" === typeof result) {
+				this.set(result);
+			}
+			this.set("isNew", false);
+			this.set("status", "CLEAN");
+			this._changed = {};
 		},
 		didDestroy: function (options, result) {
-			this.log(arguments);
+			this.set("status", "DESTROYED");
+			this.doDestroy();
 		},
 		didFail: function (action, options) {
-			this.log(arguments);
+			this.set("status", "ERROR");
 		},
 		
 		raw: function (useLocalKeys) {
@@ -320,7 +340,7 @@
 				// if we have a defined structure we adhere to the structure
 				// otherwise we implicitly derive the structure but no special
 				// relationships
-				if (this._attributeKeys.length) {
+				if (this._attributeKeys.length > 1) {
 					// TODO: it will add complexity but might be necessary to lift this
 					// arbitrary restriction/assumption - if you define a schema only use
 					// that schema and ignore extraneous fields...
@@ -341,6 +361,15 @@
 		create: function () {
 			this.inherited(arguments);
 			this._initRelations();
+		},
+
+		ownerChanged: function(inOldOwner) {
+			if (inOldOwner && inOldOwner.removeComponent) {
+				inOldOwner.removeComponent(this);
+			}
+			if (this.owner && this.owner.addComponent) {
+				this.owner.addComponent(this);
+			}
 		},
 
 		// ...........................
@@ -376,10 +405,10 @@
 			// inside relationships as opposed to letting the store
 			// dispatch these events...probably better, could get tricky
 			$prop.addDispatchTarget(this);
-			if (type === "many" && relation.autoFetch) {
-				$prop.fetch({
-					relation: enyo.mixin(enyo.clone(relation), {from: this})
-				});
+			$prop.set("owner", this);
+			$prop.relation = enyo.mixin(enyo.clone(relation), {from: this});
+			if (type === "toMany" && relation.autoFetch && !$data) {
+				$prop.fetch();
 			}
 		},
 
@@ -398,7 +427,6 @@
 					changed: this._changed,
 					model: this
 				});
-				this._changed = {};
 			}
 		},
 
