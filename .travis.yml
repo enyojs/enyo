@@ -2,4 +2,4 @@ language: node_js
 node_js:
   - "0.10"
 install: "npm -g install jshint"
-script: "jshint ."
+script: "jshint . && phantomjs tools/test/core/phantomjs-test.js"
