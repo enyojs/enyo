@@ -268,8 +268,10 @@ enyo.kind({
 	formatStackTrace: function(inStack) {
 		var stack = inStack.split("\n");
 		var out = [''];
-		for (var i=0, s; s=stack[i]; i++) {
-			if (s.indexOf("    at Object.do") == 0 || s.indexOf("    at Object.dispatch") == 0 || s.indexOf("TestSuite.js") != -1) {
+		for (var i=0, s; (s=stack[i]); i++) {
+			if (s.indexOf("    at Object.do") === 0 ||
+				s.indexOf("    at Object.dispatch") === 0 ||
+				s.indexOf("TestSuite.js") !== -1) {
 				continue;
 			}
 			out.push(s);
