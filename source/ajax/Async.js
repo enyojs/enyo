@@ -141,12 +141,12 @@ enyo.kind({
 		for (var i = 0; i < this.progressHandlers.length; i++) {
 			enyo.call(this.context || this, this.progressHandlers[i], [this, event]);
 		}
-  },
+	},
 	//* Starts the async activity. Overridden in subkinds.
 	go: function(inValue) {
 		this.sendProgress(0, 0, 1);
 		enyo.asyncMethod(this, function() {
-    	this.sendProgress(1, 0, 1);
+			this.sendProgress(1, 0, 1);
 			this.respond(inValue);
 		});
 		return this;
