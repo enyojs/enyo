@@ -1,5 +1,5 @@
 language: node_js
 node_js:
   - "0.10"
-install: "sudo npm -g install jshint"
+install: "npm -g install jshint"
 script: "jshint ."
