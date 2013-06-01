@@ -433,11 +433,18 @@ enyo.kind({
 				return this;
 			}
 		}
-		if (!this.hasNode()) {
-			this.renderNode();
-		}
-		if (this.hasNode()) {
-			this.renderDom();
+		if (this.tag) {
+			if (!this.hasNode()) {
+				this.renderNode();
+			}
+			if (this.hasNode()) {
+				this.renderDom();
+				if (this.generated) {
+					this.rendered();
+				}
+			}
+		} else {
+			this.renderNullTag();
 			if (this.generated) {
 				this.rendered();
 			}
@@ -761,10 +768,61 @@ enyo.kind({
 			c.teardownRender();
 		}
 	},
+	// returns the first DOM node actually rendered for control
+	firstRenderedNode: function() {
+		if (this.generated) {
+			// for generated null tags, find node in our children recursively
+			if (this.tag === null) {
+				var node;
+				for (var i=0, c; (c=this.children[i]); i++) {
+					node = c.firstRenderedNode();
+					if (node) {
+						return node;
+					}
+				}
+			}
+			// if generated and not a null tag, return our own node
+			else {
+				return this.hasNode();
+			}
+		}
+		// we get here if we're not generated or if all children have no nodes
+		return null;
+	},
+	renderNullTag: function() {
+		var addBefore = this.addBefore;
+		if (addBefore === undefined && this.generated && this.parent) {
+			// if this has already been generated, find where it was in
+			// the ordering and set an implicit addBefore so we can
+			// render the children to the proper location.
+			addBefore = this.findFollowingControl();
+		}
+		this.teardownRender();
+		var html = this.generateHtml();
+		var pn = this.getParentNode();
+		if (pn && pn.insertAdjacentHTML) {
+			if (addBefore === undefined) {
+				// if undefined, add to end of parent
+				pn.insertAdjacentHTML("beforeend", html);
+			} else if (addBefore === null) {
+				// if defined as null, add to start of parent
+				pn.insertAdjacentHTML("afterbegin", html);
+			} else {
+				// otherwise, add before the sibling
+				var sibling = addBefore.firstRenderedNode();
+				if (sibling) {
+					sibling.insertAdjacentHTML("beforebegin", html);
+				}
+			}
+		}
+		this.generated = true;
+	},
 	renderNode: function() {
 		this.teardownRender();
-		this.node = document.createElement(this.tag);
-		this.addNodeToParent();
+		if (this.tag) {
+			this.node = document.createElement(this.tag);
+			this.addNodeToParent();
+		}
 		this.generated = true;
 	},
 	renderDom: function() {

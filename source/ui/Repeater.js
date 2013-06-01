@@ -56,6 +56,14 @@ enyo.kind({
 	itemAtIndex: function(inIndex) {
 		return this.controlAtIndex(inIndex);
 	},
+	buildItem: function(inIndex) {
+		var c = this.createComponent({kind: "enyo.OwnerProxy", index: inIndex});
+		// do this as a second step so 'c' is the owner of the created components
+		c.createComponents(this.itemComponents);
+		// invoke user's setup code
+		this.doSetupItem({index: inIndex, item: c});
+		return c;
+	},
 	//* @public
 	/** Renders the collection of items. This will delete any existing items and
 		recreate the repeater if called after the repeater has been rendered.
@@ -64,12 +72,8 @@ enyo.kind({
 	*/
 	build: function() {
 		this.destroyClientControls();
-		for (var i=0, c; i<this.count; i++) {
-			c = this.createComponent({kind: "enyo.OwnerProxy", index: i});
-			// do this as a second step so 'c' is the owner of the created components
-			c.createComponents(this.itemComponents);
-			// invoke user's setup code
-			this.doSetupItem({index: i, item: c});
+		for (var i = 0; i < this.count; i++) {
+			this.buildItem(i);
 		}
 		this.render();
 	},
@@ -81,6 +85,21 @@ enyo.kind({
 	renderRow: function(inIndex) {
 		var c = this.itemAtIndex(inIndex);
 		this.doSetupItem({index: inIndex, item: c});
+	},
+	/**
+		Add _inCount_ items to the end of the repeater.  The _onSetupItem_
+		handler will be called for each, with the items being rendered
+		into the DOM one-by-one.
+	*/
+	addItems: function(inCount) {
+		var start = this.count;
+		this.count += inCount;
+		for (var i = start; i < this.count; i++) {
+			// render this node immediately because we don't want to 
+			// re-render the initial items by rendering the parent.
+			// This can be wasteful as the parent will reflow each time.
+			this.buildItem(i).render();
+		}
 	}
 });
 
