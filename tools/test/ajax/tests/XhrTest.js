@@ -24,10 +24,10 @@ enyo.kind({
 			xhrFields: {responseType: "arraybuffer"},
 			callback: function (inText, inXhr) {
 				if (inXhr.response instanceof ArrayBuffer) {
-                    self.finish("");
-                } else {
-				    self.finish("response is not an ArrayBuffer");
-                }
+					self.finish("");
+				} else {
+					self.finish("response is not an ArrayBuffer");
+				}
 			}
 		});
 	}
