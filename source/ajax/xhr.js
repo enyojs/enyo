@@ -81,20 +81,24 @@ enyo.xhr = {
 	makeReadyStateHandler: function(inXhr, inCallback) {
 		if (window.XDomainRequest && inXhr instanceof window.XDomainRequest) {
 			inXhr.onload = function() {
-				var text;
-				if (typeof inXhr.responseText === "string") {
-					text = inXhr.responseText;
+				var data;
+				if (inXhr.responseType === "arraybuffer") {
+					data = inXhr.response;
+				} else if (typeof inXhr.responseText === "string") {
+					data = inXhr.responseText;
 				}
-				inCallback.apply(null, [text, inXhr]);
+				inCallback.apply(null, [data, inXhr]);
 			};
 		}
 		inXhr.onreadystatechange = function() {
 			if (inXhr.readyState == 4) {
-				var text;
-				if (typeof inXhr.responseText === "string") {
-					text = inXhr.responseText;
+				var data;
+				if (inXhr.responseType === "arraybuffer") {
+					data = inXhr.response;
+				} else if (typeof inXhr.responseText === "string") {
+					data = inXhr.responseText;
 				}
-				inCallback.apply(null, [text, inXhr]);
+				inCallback.apply(null, [data, inXhr]);
 			}
 		};
 	},
