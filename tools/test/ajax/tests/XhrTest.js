@@ -15,7 +15,7 @@ enyo.kind({
 	},
 	testXhrArrayBuffer: function() {
 		var self = this;
-		var x = enyo.xhr.request({
+		enyo.xhr.request({
 			url: "php/test8.php",
 			method: "POST",
 			sync: false,
@@ -23,8 +23,11 @@ enyo.kind({
 			headers: {"Content-Type": "application/x-amf; charset=UTF-8"},
 			xhrFields: {responseType: "arraybuffer"},
 			callback: function (inText, inXhr) {
-				var body = new Uint8Array(inXhr.response);
-				self.finish("");
+				if (inXhr.response instanceof ArrayBuffer) {
+                    self.finish("");
+                } else {
+				    self.finish("response is not an ArrayBuffer");
+                }
 			}
 		});
 	}
