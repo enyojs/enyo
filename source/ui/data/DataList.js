@@ -157,12 +157,12 @@
 				if (this.enableMultipleSelection) {
 					this._selection_set.push(row);
 					this.notifyObservers("_selection_state");
-					row.controller.model.set("selected_" + this.getName(), true);
+					row.model.set("selected_" + this.getName(), true);
 				} else if (!this.isSelected(row)) {
 					this.clearSelection();
 					this._selection_set.push(row);
 					this.notifyObservers("_selection_state");
-					row.controller.model.set("selected_" + this.getName(), true);
+					row.model.set("selected_" + this.getName(), true);
 				}
 			}
 		},
@@ -181,7 +181,7 @@
 				if (!!~(idx = enyo.indexOf(row, $selection))) {
 					$selection.splice(idx, 1);
 					this.notifyObservers("_selection_state");
-					row.controller.model.set("selected_" + this.getName(), false);
+					row.model.set("selected_" + this.getName(), false);
 				}
 			}
 		},

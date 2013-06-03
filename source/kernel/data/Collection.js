@@ -1,5 +1,7 @@
 (function (enyo) {
 
+	var token = /\:[a-z]*/g;
+
 	enyo.kind({
 
 		// ...........................
@@ -40,8 +42,32 @@
 				return this._store;
 			}
 		}, "length", {cached: true, defer: true}),
+		// TODO: need to cache the dynamic portion of this after executing
+		// it one time
 		query: enyo.computed(function () {
-			return this.url || this.model.prototype.get("query");
+			//return this.url || this.model.prototype.get("query");
+			if (!this.url) {
+				return this.model.prototype.get("query");
+			}
+			var url = this.url;
+			// in cases where a collection is part of a relation we provide
+			// basic support for match/replace elements of the url based on
+			// the fields of the owner model type 
+			if (token.test(url) && enyo.isModel(this.owner) && this.relation) {
+				// TODO: if this ever becomes fixed this has to be removed
+				// but because of a glitch in the JavaScript RegEx engine
+				// we have to reset the test by running it again so we don't
+				// get a false negative next time
+				token.test(url);
+				var matches = url.match(token);
+				enyo.forEach(matches, function (match) {
+					url = url.replace(match, this.relation.from.get(match.slice(1)));
+				}, this);
+				// return the modified dynamic url
+				return url;
+			} else {
+				return url;
+			}
 		}),
 
 		// ...........................

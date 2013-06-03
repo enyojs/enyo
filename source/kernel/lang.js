@@ -356,6 +356,32 @@
 		return !(it === "false" || it === false || it === 0 || it === null || it === undefined);
 	};
 
+	//*@public
+	/**
+		Returns the index of any entry in _array_ whose _callback_ returns
+		a truthy value. Can pass an optional _context_ for the _callback_. Each _callback_
+		will receive 3 parameters, the _value_ at _index_ and an immutable copy
+		of the original array. If no _callback_ returns true or _array_ is not
+		an Array will return false.
+	*/
+	enyo.find = function (array, callback, context) {
+		var $source = enyo.isArray(array) && array;
+		var $ctx = context || enyo.global;
+		var $fn = callback;
+		var idx = 0, len, $copy, ret;
+		if ($source && $fn && enyo.isFunction($fn)) {
+			$copy = enyo.clone($source);
+			len = $source.length;
+			for (; idx < len; ++idx) {
+				ret = $fn.call($ctx, $source[idx], idx, $copy);
+				if (!! ret) {
+					return idx;
+				}
+			}
+		}
+		return false;
+	};
+
 	//* Returns the index of the element in _inArray_ that is equivalent
 	//* (==) to _inElement_, or -1 if no such element is found.
 	enyo.indexOf = function(inElement, inArray, fromIndex) {

@@ -74,11 +74,35 @@
 			TODO: not implemented as stated
 		*/
 		find: function (ctor, options) {
-			var ret = this._records["string" === typeof ctor? ctor: ctor.prototype.kindName];
+			var ret = this._recordsForType(ctor);
 			if (!ret) {
 				return false;
 			}
 			return this.queryResolver(enyo.clone(ret.all), options);
+		},
+		/**
+			TODO: not fully implemented
+		*/
+		findOne: function (ctor, options) {
+			var $options = options? enyo.clone(options): {};
+			var $models = this._recordsForType(ctor);
+			var pk = ("string" === typeof ctor? enyo.getPath(ctor): ctor).prototype.primaryKey;
+			var $ret, $def = {};
+			if (pk in $options) {
+				if (($ret = $models.byPrimaryKey[$options[pk]])) {
+					if (options.success) {
+						options.success($ret);
+					}
+					return;
+				}
+			}
+			$def[pk] = $options[pk];
+			$ret = new ctor($def);
+			$ret.fetch({success: function () {
+				if ($options.success) {
+					$options.success($ret);
+				}
+			}});
 		},
 		/**
 			TODO: not implemented
@@ -233,7 +257,10 @@
 			this._records[kind].all.splice(idx, 1);
 			return true;
 		},
-
+		_recordsForType: function (ctor) {
+			return this._records["string" === typeof ctor? ctor: ctor.prototype.kindName];
+		},
+		
 		// ...........................
 		// OBSERVERS
 		
