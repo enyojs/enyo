@@ -27,5 +27,16 @@
                 }
             ]
         }
+    ],
+    "inspector": [
+        {
+            "type": "kind",
+            "name": "enyo.Repeater",
+            "events": {
+                "onSetupItem": {
+                    "filterLevel": "useful"
+                }
+            }
+        }
     ]
 }
