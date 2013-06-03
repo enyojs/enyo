@@ -36,7 +36,7 @@
 		buildUrl: function (model, options) {
 			if (!options.url) {
 				var url = "http" + (this.secure? "s": "") + "://" + this.domain;
-				if (this.port || location.port) {
+				if (!this.ignorePort && (this.port || location.port)) {
 					url += (":" + (this.port? this.port: location.port) + "/");
 				}
 				url += "/" + this.urlPostfix + model.get("query");

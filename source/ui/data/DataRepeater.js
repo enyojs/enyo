@@ -22,11 +22,6 @@
 		//*@public
 		/**
 		*/
-		childControllerKind: "enyo.ModelController",
-
-		//*@public
-		/**
-		*/
 		childMixins: [],
 
 		// ...........................
@@ -96,7 +91,7 @@
 			var $kind = this._child_kind;
 			var $child = this.createComponent({kind: $kind});
 			var batching = this._batching;
-			$child.controller.set("model", model);
+			$child.set("model", model);
 			if (!batching) {
 				$child.render();
 			}
@@ -119,7 +114,7 @@
 			if (!$data || !$child || !$child.controller) {
 				return;
 			}
-			$child.controller.set("model", $data[index]);
+			$child.set("model", $data[index]);
 		},
 
 		//*@public
@@ -163,16 +158,6 @@
 		},
 
 		//*@protected
-		adjustComponentProps: function (props) {
-			this.inherited(arguments);
-			if (!((props.kind && props.kind.controller) || props.controller)) {
-				if (props.name !== this.controlParentName) {
-					props.controller = this.childControllerKind;
-				}
-			}
-		},
-
-		//*@protected
 		_init_container: function () {
 			var $container = this.get("_container");
 			this.createChrome([$container]);
@@ -181,12 +166,18 @@
 
 		//*@protected
 		_model_added: function (sender, event) {
+			if (sender !== this.controller) {
+				return;
+			}
 			var $model = event.model;
 			this.add($model);
 		},
 
 		//*@protected
 		_models_added: function (sender, event) {
+			if (sender !== this.controller) {
+				return;
+			}
 			this.set("_batching", true);
 			enyo.forEach(event.models, function (info) {
 				this.add(info.model);
@@ -196,11 +187,17 @@
 
 		//*@protected
 		_model_removed: function (sender, event) {
+			if (sender !== this.controller) {
+				return;
+			}
 			this.remove(event.index);
 		},
 
 		//*@protected
 		_models_removed: function (sender, event) {
+			if (sender !== this.controller) {
+				return;
+			}
 			enyo.forEach(event.models, function (info) {
 				this.remove(info.index);
 			}, this);

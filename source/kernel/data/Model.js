@@ -25,7 +25,7 @@
 				$prop.key = $prop.key || key;
 				$prop.inverseKey = $prop.inverseKey || proto.primaryKey;
 				$prop.autoFetch = true === $prop.autoFetch? true: false;
-				if (!$prop.kind && $prop.type !== "many") {
+				if (!$prop.kind && $prop.type !== "toMany") {
 					throw "enyo.Model: relations must have a kind defined";
 				}
 				$prop.type = $prop.type || "toOne";
@@ -238,10 +238,20 @@
 			var data = result;
 			if (this.dataKey) {
 				data = enyo.getPath.call(result, this.dataKey);
+				if (!data) {
+					data = result;
+				}
 			}
-			this.set(data);
+			if (enyo.isArray(data)) {
+				// TODO: this assumption is based on experience with
+				// several backend API's that return results in arrays
+				// even if there is only one
+				data = data[0];
+			}
+			// TODO: there needs to be a better way to determine 
+			this.set(enyo.remap(this._attributeMap.remote, data));
 			this.set("isNew", false);
-			this.set("staus", "CLEAN");
+			this.set("status", "CLEAN");
 			if (options.success) {
 				options.success(result);
 			}
@@ -309,15 +319,20 @@
 				this._flushChanges();
 				return this;
 			} else if (this.isRelation(prop)) {
+				this.status = "DIRTY";
 				return this.setRelation(prop, val);
 			} else {
+				this.status = "DIRTY";
 				return this.inherited(arguments);
 			}
 		},
 		setRelation: function (prop, val) {
 			var $relations = this._relations;
-			var $rel = $relations[rel];
-			// TODO: need to implement this functionality
+			var $rel = $relations[prop];
+			if (!enyo.exists(this[prop])) {
+				this[prop] = val;
+				return this.notifyObservers(prop);
+			}
 		},
 		constructor: function (values) {
 			// first we have a local reference to the original values
@@ -344,7 +359,16 @@
 					// TODO: it will add complexity but might be necessary to lift this
 					// arbitrary restriction/assumption - if you define a schema only use
 					// that schema and ignore extraneous fields...
-					enyo.mixin(this, enyo.only(this._attributeKeys, enyo.remap(this._attributeMap.remote, $values)));
+					this.silence();
+					this.stopNotifications();
+					if (enyo.merge(enyo.keys($values), this._attributeMap.remote).length) {
+						this.set(enyo.only(this._attributeKeys, enyo.remap(this._attributeMap.remote, $values)));
+					} else {
+						this.set(enyo.only(this._attributeKeys, $values));
+					}
+					// we reset it because it will think it has changed but it hasn't
+					this.unsilence();
+					this._changed = {};
 				} else {
 					//this._attributeKeys = enyo.keys($values);
 					this._defaultModel = true;
@@ -355,6 +379,8 @@
 				this.status = "CLEAN";
 				// set our previous up initially
 				this._previous = enyo.only(this._attributeKeys, this);
+				// we flush notifications
+				this.startNotifications();
 			}
 		},
 		
@@ -371,7 +397,7 @@
 				this.owner.addComponent(this);
 			}
 		},
-
+		
 		// ...........................
 		// PROTECTED METHODS
 
@@ -437,7 +463,6 @@
 			if (this.isAttribute(prop) || this.isRelation(prop)) {
 				this._previous[prop] = prev;
 				this._changed[prop] = val;
-				this.status = "DIRTY";
 				this._flushChanges();
 			}
 		}, "*")
