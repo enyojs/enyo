@@ -28,6 +28,7 @@ enyo.kind({
 	failed: false,
 	context: null,
 	constructor: function() {
+		this.inherited(arguments);
 		this.responders = [];
 		this.errorHandlers = [];
 		this.progressHandlers = [];
