@@ -103,7 +103,7 @@ enyo.kind = function(inProps) {
 	// support pluggable 'features'
 	enyo.forEach(enyo.kind.features, function(fn){ fn(ctor, inProps); });
 	// put reference into namespace
-	if (name && !enyo.getPath(name)) {
+	if ((name && !enyo.getPath(name)) || enyo.kind.allowOverride) {
 		enyo.setPath(name, ctor);
 	}
 	else if (name) {
