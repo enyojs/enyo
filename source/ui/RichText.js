@@ -82,7 +82,7 @@ enyo.kind({
 	},
 	updateValue: function() {
 		var val = this.node.innerHTML;
-		this.setValue(val);
+		this.value = val;
 	},
 	updateValueAsync: function() {
 		enyo.asyncMethod(this.bindSafely("updateValue"));
