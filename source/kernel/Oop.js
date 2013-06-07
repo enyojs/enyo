@@ -103,7 +103,7 @@ enyo.kind = function(inProps) {
 	// support pluggable 'features'
 	enyo.forEach(enyo.kind.features, function(fn){ fn(ctor, inProps); });
 	// put reference into namespace
-	if (name && !enyo.getPath(name)) {
+	if ((name && !enyo.getPath(name)) || enyo.kind.allowOverride) {
 		enyo.setPath(name, ctor);
 	}
 	else if (name) {
@@ -243,7 +243,12 @@ enyo.kind.inherited = function (originals, replacements) {
 //
 enyo.kind.features.push(function(ctor, props) {
 	// install common statics
-	enyo.mixin(ctor, enyo.kind.statics);
+	if (!ctor.subclass) {
+		ctor.subclass = enyo.kind.statics.subclass;
+	}
+	if (!ctor.extend) {
+		ctor.extend = enyo.kind.statics.extend;
+	}
 	// move props statics to constructor
 	if (props.statics) {
 		enyo.mixin(ctor, props.statics);

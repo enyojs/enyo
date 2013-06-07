@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+/* jshint node: true */
 /**
 # deploy.js - portable deployment script
 
@@ -37,14 +37,12 @@ the `-o` flag).
  */
 
 // Load dependencies
-
 var nopt = require("nopt"),
     path = require('path'),
     fs = require('fs'),
-    util = require('util'),
     shell = require('shelljs');
 
-var stat, ppwd, lib, script, scripts = {};
+var stat, script, scripts = {};
 
 // Send message to parent node process, if any
 process.on('uncaughtException', function (err) {
@@ -75,36 +73,36 @@ var node = process.argv[0],
     packageJs = path.resolve(sourceDir, "package.js"),
     enyoDir = path.resolve(__dirname, '..'),
     buildDir = path.resolve(sourceDir, "build"),
-    name = path.basename(sourceDir),
-    outDir = path.resolve(sourceDir, 'deploy', name),
+    basename = path.basename(sourceDir),
+    outDir = path.resolve(sourceDir, 'deploy', basename),
     less = true, // LESS compilation, turned on by default
     verbose = false;
 
 function printUsage() {
 	// format generated using node-optimist...
 	console.log('\n' +
-		    'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir]\n' +
-		    '\n' +
-		    'Options:\n' +
-		    '  -v  verbose operation                     [boolean]  [default: ' + verbose + ']\n' +
-		    '  -b  alternate build directory             [default: "' + buildDir + '"]\n' +
-		    '  -c  do not run the LESS compiler          [boolean]  [default: ' + less + ']\n' +
-		    '  -e  location of the enyo framework        [default: "' + enyoDir + '"]\n' +
-		    '  -o  alternate output directory            [default: "' + outDir + '"]\n' +
-		    '  -p  location of the main package.js file  [default: "' + packageJs + '"]\n' +
-		    '  -s  source code root directory            [default: "' + sourceDir + '"]\n' +
-		    '\n');
+		'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir]\n' +
+		'\n' +
+		'Options:\n' +
+		'  -v  verbose operation                     [boolean]  [default: ' + verbose + ']\n' +
+		'  -b  alternate build directory             [default: "' + buildDir + '"]\n' +
+		'  -c  do not run the LESS compiler          [boolean]  [default: ' + less + ']\n' +
+		'  -e  location of the enyo framework        [default: "' + enyoDir + '"]\n' +
+		'  -o  alternate output directory            [default: "' + outDir + '"]\n' +
+		'  -p  location of the main package.js file  [default: "' + packageJs + '"]\n' +
+		'  -s  source code root directory            [default: "' + sourceDir + '"]\n' +
+		'\n');
 }
 
 var opt = nopt(/*knownOpts*/ {
-	"build":	path,
-	"less":		Boolean,
-	"enyo":		path,
-	"out":		path,
-	"packagejs":	path,
-	"source":	path,
-	"verbose":	Boolean,
-	"help":		Boolean
+	"build": path,
+	"less": Boolean,
+	"enyo": path,
+	"out": path,
+	"packagejs": path,
+	"source": path,
+	"verbose": Boolean,
+	"help": Boolean
 }, /*shortHands*/ {
 	"b": "--build",
 	"c": "--no-less",
@@ -136,19 +134,23 @@ less = (opt.less !== false) && less;
 verbose = opt.verbose;
 
 var minifier = path.resolve(enyoDir, 'tools', 'minifier', 'minify.js');
-if (verbose) console.log("Using: build_dir=" + buildDir);
-if (verbose) console.log("Using: enyo_dir=" + enyoDir);
-if (verbose) console.log("Using: out_dir=" + outDir);
-if (verbose) console.log("Using: packagejs=" + packageJs);
-if (verbose) console.log("Using: source_dir=" + sourceDir);
-if (verbose) console.log("Using: less=" + less);
+if (verbose) {
+	console.log("Using: build_dir=" + buildDir);
+	console.log("Using: enyo_dir=" + enyoDir);
+	console.log("Using: out_dir=" + outDir);
+	console.log("Using: packagejs=" + packageJs);
+	console.log("Using: source_dir=" + sourceDir);
+	console.log("Using: less=" + less);
+}
 
 // utils
 
 function run(args) {
 	var command = '"' + args.join('" "') + '"';
 	var report;
-	if (verbose) console.log("Running: '", command, "' from '", process.cwd(), "'");
+	if (verbose) {
+		console.log("Running: '", command, "' from '", process.cwd(), "'");
+	}
 	report = shell.exec(command, { silent: true });
 	if (report.code !== 0) {
 		throw new Error("Fail: '" + command + "'\n" + report.output);
@@ -204,8 +206,9 @@ function deployLib(lib) {
 	try {
 		script = path.join(sourceDir, 'lib', lib, 'deploy.js');
 		stat = fs.statSync(script);
-		if (!stat.isFile())
+		if (!stat.isFile()) {
 			throw new Error("*** Not a file: '" + script + "'");
+		}
 		scripts[lib] = require(script);
 		scripts[lib].deploy(libOutdir);
 	} catch(e) {
@@ -213,8 +216,9 @@ function deployLib(lib) {
 		try {
 			script = path.join(sourceDir, 'lib', lib, 'deploy.' + (process.platform === 'win32' ? 'bat' : 'sh'));
 			stat = fs.statSync(script);
-			if (!stat.isFile())
+			if (!stat.isFile()) {
 				throw new Error("*** Not a file: '" + script + "'");
+			}
 			run([script, libOutdir]);
 		} catch(e2) {
 			// no deploy.(js|bat|sh): copy everything (then remove ".git", if any)
@@ -226,5 +230,3 @@ function deployLib(lib) {
 
 console.log("Success:  the deployable application is available in: ", outDir);
 process.exit(0);
-
-

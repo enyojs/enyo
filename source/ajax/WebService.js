@@ -67,7 +67,11 @@ enyo.kind({
 
 			_inEvent.data_ contains the error data.
 		*/
-		onError: ""
+		onError: "",
+		/**
+			Fires when the request progresses.
+		*/
+		onProgress: ""
 	},
 	//* @protected
 	constructor: function(inProps) {
@@ -103,12 +107,15 @@ enyo.kind({
 		return this.sendAsync(ajax, inParams);
 	},
 	sendAsync: function(inAjax, inParams) {
-		return inAjax.go(inParams).response(this, "response").error(this, "error");
+		return inAjax.go(inParams).response(this, "response").error(this, "error").progress(this, "progress");
 	},
 	response: function(inSender, inData) {
 		this.doResponse({ajax: inSender, data: inData});
 	},
 	error: function(inSender, inData) {
 		this.doError({ajax: inSender, data: inData});
+	},
+	progress: function(inSender, inProgressEvent) {
+		this.doProgress(inProgressEvent);
 	}
 });

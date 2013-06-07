@@ -6,7 +6,7 @@
 		hash change handler.
 	*/
 	var listeners = [];
-	
+
 	//*@protected
 	/**
 		This is the intended global window.hashchange event handler. If
@@ -21,15 +21,15 @@
 			list[idx]._hash_changed(hash);
 		}
 	};
-	
+
 	//*@protected
 	var token = /\:[a-zA-Z0-9]*/g;
-	
+
 	//*@protected
 	var prepare = function (str) {
 		return str[0] === "#"? str.slice(1): str;
 	};
-	
+
 	//*@protected
 	/**
 		All of our actively-supported browsers support this method of
@@ -85,13 +85,13 @@
 		support _pushState_.
 	*/
 	enyo.kind({
-		
+
 		// ...........................
 		// PUBLIC PROPERTIES
-		
+
 		//*@public
 		name: "enyo.Router",
-		
+
 		//*@public
 		/**
 			If true, the router will respond to hash changes or internal events.
@@ -99,7 +99,7 @@
 			changed at any time.
 		*/
 		listening: true,
-		
+
 		//*@public
 		/**
 			If true, the router will neither respond to hash changes in the
@@ -118,7 +118,7 @@
 			executed and passed the path that was not matched.
 		*/
 		defaultRoute: null,
-		
+
 		//*@public
 		/**
 			By default, when a router is created, it will attempt to trigger
@@ -126,7 +126,7 @@
 			to false to prevent this from happening.
 		*/
 		triggerOnStart: true,
-		
+
 		//*@public
 		/**
 			The _routes_ array constitutes the handlers for this router.
@@ -138,25 +138,25 @@
 			hashchange event.
 		*/
 		routes: null,
-		
+
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		//*@protected
 		kind: "enyo.Controller",
-		
+
 		//*@protected
 		_static_routes: null,
-		
+
 		//*@protected
 		_dynamic_routes: null,
 
 		//*@protected
 		_current: "",
-		
+
 		// ...........................
 		// COMPUTED PROPERTIES
-		
+
 		//*@public
 		/**
 			A computed property that will return the location as
@@ -178,7 +178,7 @@
 				return prepare(this.get("_current"));
 			}
 		}, "_current", {cached: true}),
-	
+
 		// ...........................
 		// PUBLIC METHODS
 
@@ -217,7 +217,7 @@
 				}
 			}
 		},
-		
+
 		//*@public
 		/**
 			In very rare circumstances it may be useful to pass a path
@@ -259,17 +259,17 @@
 				statics[route.path] = route;
 			}
 		},
-	
+
 		// ...........................
 		// PROTECTED METHODS
-	
+
 		//*@protected
 		constructor: function () {
 			this._static_routes = {};
 			this._dynamic_routes = [];
 			this.inherited(arguments);
 		},
-		
+
 		//*@protected
 		create: function () {
 			this.inherited(arguments);
@@ -286,7 +286,7 @@
 				this.trigger();
 			}
 		},
-		
+
 		//*@protected
 		destroy: function () {
 			var idx = enyo.indexOf(this, listeners);
@@ -295,7 +295,7 @@
 			}
 			this.inherited(arguments);
 		},
-		
+
 		//*@protected
 		_hash_changed: function (hash) {
 			hash = (function (prop) {
@@ -311,7 +311,7 @@
 				this.handle(hash);
 			}
 		},
-		
+
 		//*@protected
 		_exec_handler: function (context, handler, args, route) {
 			var fn = handler;
@@ -346,7 +346,7 @@
 			// do here
 			return false;
 		},
-		
+
 		//*@protected
 		_handle_static: function (path) {
 			var statics = this._static_routes;
@@ -360,7 +360,7 @@
 			}
 			return false;
 		},
-		
+
 		//*@protected
 		_handle_dynamic: function (path) {
 			var dynamic = this._dynamic_routes;
@@ -385,7 +385,7 @@
 			}
 			return false;
 		},
-		
+
 		//*@protected
 		_handle_default: function (path) {
 			var route = this.defaultRoute || {};
@@ -393,7 +393,7 @@
 			var handler = route.handler;
 			return this._exec_handler(context, handler, [path], route);
 		},
-		
+
 		//*@protected
 		_setup_routes: function () {
 			var routes = this.routes;

@@ -1,10 +1,10 @@
 (function (enyo) {
-	
+
 	//*@public
 	/**
 	*/
 	enyo.createMixin({
-		
+
 		// ...........................
 		// PUBLIC PROPERTIES
 
@@ -13,25 +13,25 @@
 
 		//*@public
 		classes: "enyo-data-list-row"
-		
+
 	});
-	
+
 	//*@public
 	/**
 		NOTE: The list is selection-aware but the magic happens in the
 		rows and their interaction with the dataset.
 	*/
 	enyo.kind({
-		
+
 		// ...........................
 		// PUBLIC PROPERTIES
 
 		//*@public
 		name: "enyo.DataList",
-		
+
 		//*@public
 		kind: "enyo.DataRepeater",
-		
+
 		//*@public
 		/**
 			The _enyo.DataList_ kind places its rows inside of a scroller. Any
@@ -41,13 +41,13 @@
 			settings are used.
 		*/
 		scrollerOptions: null,
-		
+
 		//*@public
 		enableSelection: true,
-		
+
 		//*@public
 		enableMultipleSelection: false,
-		
+
 		//*@public
 		statics: {
 			defaultScrollerOptions: {
@@ -57,13 +57,13 @@
 
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		//*@protected
 		controlParentName: "rows",
-		
+
 		//*@protected
 		classes: "enyo-data-list",
-		
+
 		//*@protected
 		_container: {
 			name: "scroller",
@@ -84,7 +84,7 @@
 
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		// ...........................
 		// PROTECTED METHODS
 
@@ -106,7 +106,7 @@
 				enyo.applyMixin("enyo.DataListRowSupport", $kind);
 			}
 		},
-		
+
 		//*@protected
 		_init_container: function () {
 			var $container = this.get("_container");
@@ -115,7 +115,7 @@
 			enyo.mixin($container, enyo.mixin($defaults, $options));
 			this.inherited(arguments);
 		}
-		
+
 	});
-	
+
 })(enyo);

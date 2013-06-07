@@ -1,5 +1,5 @@
 (function (enyo) {
-	
+
 	//*@public
 	/**
 		_enyo.BooleanBinding_ is a binding that will type-cast any truthy or falsey
@@ -25,5 +25,5 @@
 		}
 
 	});
-	
+
 })(enyo);

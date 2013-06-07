@@ -28,8 +28,7 @@ enyo.AjaxProperties = {
 	*/
 	contentType: "application/x-www-form-urlencoded",
 	/**
-		If true, makes a synchronous (blocking) call, if supported.  Synchronous requests
-		are not supported on HP webOS.
+		If true, makes a synchronous (blocking) call, if supported.
 	*/
 	sync: false,
 	/**
