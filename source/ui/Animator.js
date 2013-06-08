@@ -115,13 +115,15 @@ enyo.kind({
 		this.t1 = enyo.now();
 		this.dt = this.t1 - this.t0;
 		var args = this.easingFunction.length;
+		var f;
 
 		if (args === 1) {
 			// time independent
-			var f = this.fraction = enyo.easedLerp(this.t0, this.duration, this.easingFunction, this.reversed);
+			f = this.fraction = enyo.easedLerp(this.t0, this.duration, this.easingFunction, this.reversed);
 			this.value = this.startValue + f * (this.endValue - this.startValue);
 		} else {
-			this.value = enyo.easedComplexLerp(this.t0, this.duration, this.easingFunction, this.reversed, this.dt, this.startValue, (this.endValue - this.startValue));
+			this.value = enyo.easedComplexLerp(this.t0, this.duration, this.easingFunction, this.reversed,
+				this.dt, this.startValue, (this.endValue - this.startValue));
 		}
 		if (((f >= 1) && (args === 1)) || this.shouldEnd()) {
 			this.value = this.endValue;

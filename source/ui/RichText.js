@@ -73,16 +73,16 @@ enyo.kind({
 	},
 	valueChanged: function() {
 		var val = this.get("value");
-		if (this.hasFocus()) {
+		if (this.hasFocus() && val !== this.node.innerHTML) {
 			this.selectAll();
 			this.insertAtCursor(val);
-		} else {
+		} else if(!this.hasFocus()) {
 			this.set("content", val);
 		}
 	},
 	updateValue: function() {
 		var val = this.node.innerHTML;
-		this.setValue(val);
+		this.set("value", val);
 	},
 	updateValueAsync: function() {
 		enyo.asyncMethod(this.bindSafely("updateValue"));

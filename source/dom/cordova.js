@@ -1,5 +1,5 @@
 /**
-Listens for PhoneGap specific events
+Listens for Cordova specific events
 
 Events are exposed through the [Signals](#enyo.Signals) kind by adding callback handlers.
 
@@ -12,14 +12,14 @@ enyo.kind({
 		...
 		],
 	deviceready: function() {
-	// PhoneGap API exists at this point forward
+	// Cordova API exists at this point forward
 	}
 });
 
-List of PhoneGap events detailed on the [PhoneGap Docs](http://docs.phonegap.com/en/1.6.0/phonegap_events_events.md.html#Events)
+List of Cordova events detailed on the [PhoneGap Docs](http://docs.phonegap.com/en/1.6.0/phonegap_events_events.md.html#Events)
 */
 //* @protected
-(function(){
+enyo.ready(function(){
 	if (window.cordova || window.PhoneGap) {
 		var pge = [
 			"deviceready",
@@ -28,6 +28,7 @@ List of PhoneGap events detailed on the [PhoneGap Docs](http://docs.phonegap.com
 			"online",
 			"offline",
 			"backbutton",
+			"localechange",
 			"batterycritical",
 			"batterylow",
 			"batterystatus",
@@ -39,8 +40,8 @@ List of PhoneGap events detailed on the [PhoneGap Docs](http://docs.phonegap.com
 			"volumeupbutton"
 		];
 		for (var i=0, e; (e=pge[i]); i++) {
-			// some phonegap events have no type, so enyo.dispatch fails
+			// some cordova events have no type, so enyo.dispatch fails
 			document.addEventListener(e, enyo.bind(enyo.Signals, "send", "on" + e), false);
 		}
 	}
-})();
+});
