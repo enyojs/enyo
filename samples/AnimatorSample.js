@@ -13,7 +13,7 @@ enyo.kind({
 	/* an expensive operation: */
 	expensive: function(){
 		localStorage.test = 1E4;
-		while(localStorage.test--){};
+		while(localStorage.test--){}
 	},
 	animationEnded: function(){
 		this.doAnimation();
