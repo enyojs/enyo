@@ -41,37 +41,27 @@ enyo.kind({
 			}
 		}, 30);
 	},
-	testDeferedJob: function() {
+	testJobs: function() {
 		var finish = this.bindSafely("finish");
 		var number = 0;
-		var increment = function() {
+		function increment() {
 			number++;
-		};
-		enyo.job.defer(increment); // number should be 1
-		if (number !== 1) {
-			finish("defered job did not execute even though no animation is in progress");
 		}
-		// push bogus animation
-		enyo.animations.push("bogus_animation");
-		enyo.job.defer(increment); // number should still be 1
+		enyo.jobs.add(increment)
 		if (number !== 1) {
-			finish("defered job did execute even though an animation is in progress");
+			finish("High priority did not execute");
 		}
-		enyo.job.defer(increment); // number should still be 1
-		enyo.job.defer(increment); // number should still be 1
-		enyo.animations = [];
-		setTimeout(function(){
-			if (number !== 2) {
-				finish("one defered job should have been picked up");
-			}
-		}, 100);
-		setTimeout(function(){
-			if (number === 4) {
-				finish();
-			} else {
-				finish("not all defered jobs have been executed!");
-			}
-		}, 600);
+	
+		enyo.jobs.registerPriority(5, "testPriority");
+		enyo.jobs.add(7, increment)
 
+		setTimeout(function(){
+			enyo.jobs.unregisterPriority("testPriority");
+			if (number !== 2) {
+				finish("Low priority did not execute");
+			} else {
+				finish();
+			}
+		}, 20);
 	}
 });
