@@ -47,13 +47,13 @@ enyo.kind({
 		function increment() {
 			number++;
 		}
-		enyo.jobs.add(increment)
+		enyo.jobs.add(increment);
 		if (number !== 1) {
 			finish("High priority did not execute");
 		}
 	
 		enyo.jobs.registerPriority(5, "testPriority");
-		enyo.jobs.add(7, increment)
+		enyo.jobs.add(7, increment);
 
 		setTimeout(function(){
 			enyo.jobs.unregisterPriority("testPriority");
