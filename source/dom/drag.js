@@ -228,9 +228,10 @@ enyo.gesture.drag = {
 	},
 	beginHold: function(e) {
 		this.holdStart = enyo.now();
-		// clone the srcEvent to ensure it stays alive on IE upon returning to event loop
-		e.srcEvent = enyo.clone(e.srcEvent);
-		this.holdJob = setInterval(enyo.bind(this, "sendHoldPulse", e), this.holdPulseDelay);
+		// clone the event to ensure it stays alive on IE upon returning to event loop
+		var clonedEvent = enyo.clone(e);
+		clonedEvent.srcEvent = enyo.clone(e.srcEvent);
+		this.holdJob = setInterval(enyo.bind(this, "sendHoldPulse", clonedEvent), this.holdPulseDelay);
 	},
 	cancelHold: function() {
 		clearInterval(this.holdJob);

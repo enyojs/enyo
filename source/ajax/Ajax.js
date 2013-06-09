@@ -126,10 +126,10 @@ enyo.kind({
 				callback: this.bindSafely("receive"),
 				body: body,
 				headers: xhr_headers,
-				sync: window.PalmSystem ? false : this.sync,
+				sync: this.sync,
 				username: this.username,
 				password: this.password,
-				xhrFields: this.xhrFields,
+				xhrFields: enyo.mixin({onprogress: this.bindSafely(this.updateProgress)}, this.xhrFields),
 				mimeType: this.mimeType
 			});
 		}
@@ -213,6 +213,19 @@ enyo.kind({
 			enyo.warn("Ajax request set to handleAs JSON but data was not in JSON format");
 			return r;
 		}
+	},
+	//* @protected
+	//* Handler for ajax progress events.
+	updateProgress: function(event) {
+		// filter out "input" as it causes exceptions on some Firefox versions
+		// due to unimplemented internal APIs
+		var ev = {};
+		for (var k in event) {
+			if (k !== 'input') {
+				ev[k] = event[k];
+			}
+		}
+		this.sendProgress(event.loaded, 0, event.total, ev);
 	},
 	statics: {
 		objectToQuery: function(/*Object*/ map) {

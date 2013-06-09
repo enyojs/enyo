@@ -148,6 +148,10 @@ enyo.kind({
 		updated even if the passed-in value is the same as the current value,
 		and observers will be notified of the update.
 
+		The force parameter is optional; if true, the value will be updated
+		even if it's the same as the current value, and observers will be
+		notified of the update.
+
 		If the property is a computed property, the intended value will be
 		passed to the computed property (but will not be returned).
 

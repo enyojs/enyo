@@ -1,43 +1,43 @@
 (function (enyo) {
-	
+
 	//*@public
 	/**
 	*/
 	enyo.kind({
-		
+
 		// ...........................
 		// PUBLIC PROPERTIES
-		
+
 		//*@public
 		name: "enyo.DataRepeater",
 
 		//*@public
 		kind: "enyo.View",
-		
+
 		//*@public
 		/**
 		*/
 		loading: false,
-		
+
 		//*@public
 		/**
 		*/
 		childControllerKind: "enyo.ModelController",
-		
+
 		//*@public
 		/**
 		*/
 		childMixins: [],
-		
+
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		//*@protected
 		concat: ["childMixins"],
-		
+
 		//*@protected
 		controlParentName: "container",
-		
+
 		//*@protected
 		handlers: {
 			onModelAdded: "_model_added",
@@ -45,7 +45,7 @@
 			onModelRemoved: "_model_removed",
 			onModelsRemoved: "_models_removed"
 		},
-		
+
 		//*@protected
 		bindings: [{
 			from: ".controller.fetching",
@@ -58,26 +58,26 @@
 			from: ".controller.data",
 			to: ".data"
 		}],
-		
+
 		//*@protected
 		_child_kind: null,
-		
+
 		//*@protected
 		_batching: false,
-		
+
 		//*@protected
 		_container: {
 			name: "container",
 			kind: "enyo.View",
 			classes: "enyo-fill enyo-data-repeater-container",
 		},
-		
+
 		// ...........................
 		// COMPUTED PROPERTIES
 
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		//*@public
 		refresh: function () {
 			var $data = this.get("data");
@@ -90,16 +90,18 @@
 				this.add($data[idx]);
 			}
 		},
-		
+
 		//*@public
 		add: function (model) {
 			var $kind = this._child_kind;
 			var $child = this.createComponent({kind: $kind});
 			var batching = this._batching;
 			$child.controller.set("model", model);
-			if (!batching) $child.render();
+			if (!batching) {
+				$child.render();
+			}
 		},
-		
+
 		//*@public
 		remove: function (index) {
 			var $children = this.get("_children");
@@ -108,7 +110,7 @@
 				$child.destroy();
 			}
 		},
-		
+
 		//*@public
 		update: function (index) {
 			var $data = this.get("data");
@@ -119,7 +121,7 @@
 			}
 			$child.controller.set("model", $data[index]);
 		},
-		
+
 		//*@public
 		prune: function () {
 			var $children = this.get("_children");
@@ -129,10 +131,10 @@
 				$extra[idx].destroy();
 			}
 		},
-		
+
 		// ...........................
 		// COMPUTED PROPERTIES
-		
+
 		//*@protected
 		_children: enyo.computed(function () {
 			return this.controlParent? this.controlParent.children: this.children;
@@ -140,7 +142,7 @@
 
 		// ...........................
 		// PROTECTED METHODS
-		
+
 		//*@protected
 		initComponents: function () {
 			// we need to find the child definition and prepare it for
@@ -159,7 +161,7 @@
 			});
 			this._init_container();
 		},
-		
+
 		//*@protected
 		adjustComponentProps: function (props) {
 			this.inherited(arguments);
@@ -169,20 +171,20 @@
 				}
 			}
 		},
-		
+
 		//*@protected
 		_init_container: function () {
 			var $container = this.get("_container");
 			this.createChrome([$container]);
 			this.discoverControlParent();
 		},
-		
+
 		//*@protected
 		_model_added: function (sender, event) {
 			var $model = event.model;
 			this.add($model);
 		},
-		
+
 		//*@protected
 		_models_added: function (sender, event) {
 			this.set("_batching", true);
@@ -191,12 +193,12 @@
 			}, this);
 			this.set("_batching", false);
 		},
-		
+
 		//*@protected
 		_model_removed: function (sender, event) {
 			this.remove(event.index);
 		},
-		
+
 		//*@protected
 		_models_removed: function (sender, event) {
 			enyo.forEach(event.models, function (info) {
@@ -206,7 +208,7 @@
 
 		// ...........................
 		// OBSERVERS
-		
+
 		//*@protected
 		_batching_changed: enyo.observer(function (property, previous, value) {
 			if (false === value) {
@@ -225,7 +227,7 @@
 				this.refresh();
 			}
 		},
-		
+
 		//*@protected
 		_length_changed: enyo.observer(function (property, previous, value) {
 			if (!isNaN(previous) && !isNaN(value)) {
@@ -234,7 +236,7 @@
 				}
 			}
 		}, "length")
-		
+
 	});
-	
+
 })(enyo);

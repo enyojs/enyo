@@ -40,7 +40,7 @@
 		var p$ = [];
 		for (var i=0, p; (p=loader.packages[i]); i++) {
 			if (p.name.indexOf("-") == -1) {
-				p$.push(p.name + ': "' + p.folder + '"');
+				p$.push('"' + p.name + '": "' + p.folder + '"');
 			}
 		}
 		p = p$.join(', ');

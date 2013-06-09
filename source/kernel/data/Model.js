@@ -1,13 +1,13 @@
 (function (enyo) {
-	
+
 	//*@protected
 	var _strip_attributes = function (str) {
 		return (str || "").replace(/(\.)?attributes\./, "");
 	};
-	
+
 	//*@public
 	/**
-		
+
 		STATUS VALUES:
 			NEW
 			DIRTY
@@ -15,29 +15,29 @@
 			ERROR
 	*/
 	enyo.kind({
-	
+
 		// ...........................
 		// PUBLIC PROPERTIES
 
 		//*@public
 		name: "enyo.Model",
-		
+
 		//*@public
 		kind: "enyo.Component",
-		
+
 		//*@public
 		attributes: null,
-		
+
 		//*@public
 		events: {
 			onChange: "",
 			onReady: "",
 			onFetch: ""
 		},
-		
+
 		//*@public
 		status: "NEW",
-		
+
 		//*@public
 		url: "",
 
@@ -46,7 +46,7 @@
 
 		//*@protected
 		mixins: ["enyo.MultipleDispatchSupport"],
-		
+
 		//*@protected
 		_collections: null,
 
@@ -55,22 +55,22 @@
 
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		//*@public
 		raw: function () {
 			return enyo.clone(this.attributes);
 		},
-		
+
 		//*@public
 		toJSON: function () {
 			return enyo.json.stringify(this.raw());
 		},
-		
+
 		//*@public
 		isAttribute: function (prop) {
 			return (prop = _strip_attributes(prop)) ? !!(prop in this.attributes): false;
 		},
-		
+
 		//*@public
 		get: function (prop) {
 			if (this.isAttribute(prop)) {
@@ -79,7 +79,7 @@
 				return this.inherited(arguments);
 			}
 		},
-		
+
 		//*@public
 		/**
 			See _enyo.Object#set_. If the property is an attribute
@@ -126,12 +126,14 @@
 				this.startNotifications();
 				changed = true;
 			}
-			
+
 			// if something was updated we need to update our state
-			if (changed) this.status = "DIRTY";
+			if (changed) {
+				this.status = "DIRTY";
+			}
 			return this;
 		},
-		
+
 		//*@public
 		previous: function (property) {
 			return this._previous[property];
@@ -139,12 +141,14 @@
 
 		// ...........................
 		// PROTECTED METHODS
-		
+
 		//*@protected
 		constructor: function (props) {
 			// if there are no attributes defined we create them as
 			// empty
-			if (!this.attributes) this.attributes = {};
+			if (!this.attributes) {
+				this.attributes = {};
+			}
 			if (props && "object" === typeof props) {
 				var attrs = props;
 				if (props.attributes) {
@@ -155,7 +159,9 @@
 				}
 				// attempt to implicitly grab attribute keys
 				enyo.mixin(this.attributes, attrs);
-				arguments[0] = {};
+				// since we're not in strict mode, this will also affect
+				// the arguments array and be passed into this.inherited
+				props = {};
 			}
 			this.inherited(arguments);
 			// initialize internal properties
@@ -163,7 +169,7 @@
 			this._changed = {};
 			this._collections = [];
 		},
-		
+
 		//*@protected
 		_add_collection: function (collection) {
 			var $collections = this._collections;
@@ -172,7 +178,7 @@
 				this.addDispatchTarget(collection);
 			}
 		},
-		
+
 		//*@protected
 		_remove_collection: function (collection) {
 			var $collections = this._collections;
@@ -182,12 +188,14 @@
 				this.removeDispatchTarget(collection);
 			}
 		},
-		
+
 		//*@protected
 		_flush_changes: function () {
 			// it is possible this will be called when silenced during
 			// batch operations so we ignore those requests until the end
-			if (this._silenced) return;
+			if (this._silenced) {
+				return;
+			}
 			// send the event out that we changed
 			this.doChange({
 				changed: this._changed,
@@ -199,7 +207,7 @@
 
 		// ...........................
 		// OBSERVERS
-		
+
 		//*@protected
 		/**
 			This observer spies on property updates and if the property
@@ -214,8 +222,8 @@
 				this._changed[property] = value;
 			}
 		}, "*")
-		
+
 	});
-	
-	
+
+
 })(enyo);

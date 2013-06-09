@@ -1,23 +1,23 @@
 (function (enyo) {
-	
-	
+
+
 	//*@public
 	/**
 	*/
 	enyo.kind({
-		
+
 		// ...........................
 		// PUBLIC PROPERTIES
-		
+
 		//*@public
 		name: "enyo.DataGridList",
-		
+
 		//*@public
 		kind: "enyo.DataList",
 
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		//*@protected
 		classes: "enyo-data-grid-list",
 
@@ -29,7 +29,7 @@
 
 		// ...........................
 		// PROTECTED METHODS
-		
+
 		//*@protected
 		initComponents: function () {
 			this.inherited(arguments);
@@ -41,7 +41,7 @@
 
 		// ...........................
 		// OBSERVERS
-		
+
 	});
-	
+
 })(enyo);

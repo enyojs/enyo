@@ -133,7 +133,7 @@
 			part = path.substring(0, idx);
 			path = path.slice(idx+1);
 
-			if (typeof cur[part] in {"object":"","function":""}) {
+			if (cur[part] && typeof cur[part] in {"object":"","function":""}) {
 				if (cur[part]._is_object) {
 					return cur[part].get(path);
 				} else {

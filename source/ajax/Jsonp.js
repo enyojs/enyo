@@ -5,7 +5,7 @@
 	external resource is loaded using a &lt;script&gt; tag. This allows us to
 	bypass the same-domain rules that normally apply to XHR, since the browser
 	will load scripts from any address.
-	
+
 	At the same time, in order to successfully load data via the &lt;script&gt;
 	tag, your data source must be accessed via an HTTP GET request and must be
 	able to dynamically add the requested callback name as a function wrapper

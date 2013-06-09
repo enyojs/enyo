@@ -144,7 +144,12 @@ enyo.kind({
 		// Called to add an already created control to the object's control list. It is
 		// not used to create controls and should likely not be called directly.
 		// It can be overridden to detect when controls are added.
-		this.controls.push(inControl);
+		if (inBefore !== undefined) {
+			var idx = (inBefore === null) ? 0 : this.indexOfChild(inBefore);
+			this.controls.splice(idx, 0, inControl);
+		} else {
+			this.controls.push(inControl);
+		}
 		// When we add a Control, we also establish a parent.
 		this.addChild(inControl, inBefore);
 	},
@@ -275,7 +280,7 @@ enyo.kind({
 		}
 	},
 	getBubbleTarget: function() {
-		return this._bubble_target || this.parent;
+		return this._bubble_target || this.parent || this.owner;
 	}
 });
 
