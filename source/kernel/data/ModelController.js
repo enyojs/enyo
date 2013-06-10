@@ -57,8 +57,7 @@
 			if ("model" === property) {
 				var $model = this.model;
 				if ($model) {
-					$model.removeDispatchTarget(this);
-					$model.removeObserver("*", this.notifyObservers);
+					this._removeModel($model);
 				}
 				if (($model = value)) {
 					this.stopNotifications();
@@ -88,6 +87,14 @@
 			this.inherited(arguments);
 			if (this.model) {
 				this._initModel(this.model);
+			}
+		},
+		
+		_removeModel: function (model) {
+			var $model = model || this.model;
+			if ($model) {
+				$model.removeDispatchTarget(this);
+				$model.removeObserver("*", this.notifyObservers);
 			}
 		},
 		
