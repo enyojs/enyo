@@ -130,7 +130,7 @@
 	});
 	
 	enyo.kind.postConstructors.push(function () {
-		if (this._isModel) {
+		if (this._isModel && enyo.store) {
 			enyo.store.initModel(this);
 		}
 	});
