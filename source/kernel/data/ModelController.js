@@ -29,8 +29,8 @@
 		// COMPUTED PROPERTIES
 
 		//*@protected
-		_attribute_keys: enyo.computed(function () {
-			return this.model? enyo.keys(this.model.attributes): null;
+		_attributeKeys: enyo.computed(function () {
+			return this.model? this.model._attributeKeys: null;
 		}, "model", {cached: true, defer: true}),
 
 		// ...........................
@@ -55,17 +55,16 @@
 				return this.inherited(arguments);
 			}
 			if ("model" === property) {
+				debugger
 				var $model = this.model;
 				if ($model) {
 					$model.removeDispatchTarget(this);
 					$model.removeObserver("*", this.notifyObservers);
 				}
 				if (($model = value)) {
-					$model.addDispatchTarget(this);
-					$model.addObserver("*", this.notifyObservers, this);
 					this.stopNotifications();
+					this._initModel($model);
 					this.inherited(arguments);
-					this.sync();
 					this.startNotifications();
 					return this;
 				}
@@ -78,7 +77,7 @@
 			enyo.forEach(this.bindings, function (binding) {
 				binding.sync();
 			});
-			enyo.forEach(this.get("_attribute_keys"), function (key) {
+			enyo.forEach(this.get("_attributeKeys"), function (key) {
 				this.notifyObservers(key, null, this.model.get(key));
 			}, this);
 		},
@@ -86,10 +85,28 @@
 		// ...........................
 		// PROTECTED METHODS
 
+		create: function () {
+			this.inherited(arguments);
+			if (this.model) {
+				this._initModel(this.model);
+			}
+		},
+		
+		_initModel: function (model) {
+			var $model = model;
+			if ($model) {
+				$model.addDispatchTarget(this);
+				$model.addObserver("*", this.notifyObservers, this);
+				this.stopNotifications();
+				this.sync();
+				this.startNotifications();
+			}
+		},
+		
 		// ...........................
 		// OBSERVERS
 
-		_selection_spy: enyo.observer(function (property, previous, value) {
+		_selectionSpy: enyo.observer(function (property, previous, value) {
 			if (_selected.test(property)) {
 				if (true === value) {
 					this.doModelSelected();
