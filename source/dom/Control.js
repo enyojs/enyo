@@ -64,7 +64,8 @@ enyo.kind({
 		*/
 		fit: null,
 		//* Used by Ares design editor for design objects
-		isContainer: false
+		isContainer: false,
+		model: null
 	},
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
@@ -134,6 +135,11 @@ enyo.kind({
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
 		this.addClass(this.classes);
+	},
+	modelChanged: function () {
+		if (this.model && enyo.isModel(this.model)) {
+			this.rebuildBindings();
+		}
 	},
 	// modify components we create ourselves
 	/*
