@@ -55,7 +55,6 @@
 				return this.inherited(arguments);
 			}
 			if ("model" === property) {
-				debugger
 				var $model = this.model;
 				if ($model) {
 					$model.removeDispatchTarget(this);
