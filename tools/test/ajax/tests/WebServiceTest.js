@@ -82,7 +82,6 @@ enyo.kind({
 				q: 'select * from weather.forecast where location=94025',
 				format: "json"
 			}, function(inValue) {
-				enyo.log(inValue);
 				return inValue && inValue.query && inValue.query.results && inValue.query.count > 0;
 			});
 	},

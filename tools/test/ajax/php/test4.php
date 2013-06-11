@@ -10,6 +10,9 @@ switch ($method) {
 
 function post() {
 	$ctype = @$_SERVER["CONTENT_TYPE"];
+	if ($ctype == null) {
+		$ctype = @$_SERVER["HTTP_CONTENT_TYPE"];
+	}
 	$cacheCtrl = @$_SERVER["HTTP_CACHE_CONTROL"];
 	$result = array('status' => "post" , 'ctype' => $ctype , 'cacheCtrl' => $cacheCtrl);
 	echo json_encode($result);
