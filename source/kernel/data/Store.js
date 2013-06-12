@@ -1,5 +1,31 @@
 (function (enyo) {
 
+	//*@public
+	/**
+		The _enyo.Store_ kind is a singleton (when used) that aids in
+		managing localized data records at runtime. It tracks models and
+		is an interface for interacting with the data schema for any application.
+	
+		An _enyo.Store_ must have an _enyo.Source_ to be fully functional. The
+		_store_ is agnostic to how the _source_ retrieves or updates records. It
+		provides an abstraction API for finding particular records. It is always
+		accessible from the globally available _enyo.store_ variable.
+	
+		It is instantiated quite simply and would typically be done before instantiating
+		the _enyo.Application_ for your app.
+	
+		new enyo.Store({source: "enyo.Source"}); // now available from enyo.store
+	
+		NOTE: Much of the public API of _enyo.Store_ needn't be called directly except
+		in very complex remote-backend implementations requiring specialized handling.
+		Most of the API is called by _enyo.Model_ and _enyo.Collection_ for you.
+	
+		TODO: Much of the implementation is working but in some cases is either absent
+		or only partially completed. Please bear with us as we complete this moving
+		forward.
+	*/
+
+
 	enyo.store = null;
 	enyo.models = {
 		kinds: [],
@@ -85,6 +111,13 @@
 			return this.queryResolver(enyo.clone(ret.all), options);
 		},
 		/**
+			Pass a constructor and options to this asynchronous method to retrieve
+			a single record (will use locally if found) and will execute a fetch
+			if needed. If no _success_ method is provided but the record was found
+			locally it will be returned synchronously. The _options_ hash can have
+			a _success_ method, _error_ method and a _params_ object with the properties
+			used to find the correct record.
+		
 			TODO: not fully implemented
 		*/
 		findOne: function (ctor, options) {
