@@ -2,7 +2,6 @@ enyo.depends(
 	"log.js",
 	"lang.js",
 	"dev.js",
-	"job.js",
 	"Oop.js",
 	"mixins",
 	"Binding.js",
@@ -15,5 +14,6 @@ enyo.depends(
 	"Router.js",
 	"ViewController.js",
 	"Application.js",
+	"job.js",
 	"data"
 );

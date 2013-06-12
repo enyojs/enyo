@@ -40,5 +40,28 @@ enyo.kind({
 				finish("too many or too few calls");
 			}
 		}, 30);
+	},
+	testJobs: function() {
+		var finish = this.bindSafely("finish");
+		var number = 0;
+		function increment() {
+			number++;
+		}
+		enyo.jobs.add(increment);
+		if (number !== 1) {
+			finish("High priority did not execute");
+		}
+	
+		enyo.jobs.registerPriority(5, "testPriority");
+		enyo.jobs.add(7, increment);
+
+		setTimeout(function(){
+			enyo.jobs.unregisterPriority("testPriority");
+			if (number !== 2) {
+				finish("Low priority did not execute");
+			} else {
+				finish();
+			}
+		}, 20);
 	}
 });

@@ -61,6 +61,10 @@ enyo.kind({
 		}
 		this.t0 = this.t1 = enyo.now();
 		this.value = this.startValue;
+
+		// register this jobPriority to block less urgent tasks from executing
+		enyo.jobs.registerPriority(4, this.id);
+
 		this.job = true;
 		this.next();
 		return this;
@@ -100,6 +104,9 @@ enyo.kind({
 		enyo.cancelRequestAnimationFrame(this.job);
 		this.node = null;
 		this.job = null;
+
+		// unblock job queue
+		enyo.jobs.unregisterPriority(this.id);
 	},
 	shouldEnd: function() {
 		return (this.dt >= this.duration);
