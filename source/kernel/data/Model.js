@@ -126,7 +126,7 @@
 		// properties for this kind and do not wish them to be added to
 		// to the kind body so we remove it
 		delete $proto.attributes;
-		$proto.url = props.url || ($proto.name || $proto.kindName).replace(/^(.*)\./g, "").toLowerCase();
+		$proto.url = props.url || !$proto.noUrl? ($proto.name || $proto.kindName).replace(/^(.*)\./g, "").toLowerCase(): "";
 	});
 	
 	enyo.kind.postConstructors.push(function () {
@@ -174,6 +174,7 @@
 		isNew: true,
 		primaryKey: "id",
 		dataKey: "",
+		noUrl: false,
 		events: {
 			onChange: "",
 			onDestroy: ""
@@ -198,7 +199,7 @@
 		// COMPUTED PROPERTIES
 
 		query: enyo.computed(function () {
-			return this.get("url") + "/" + this.get(this.primaryKey) || "";
+			return !this.noUrl? this.get("url") + "/" + this.get(this.primaryKey) || "": "";
 		}),
 
 		// ...........................
@@ -295,11 +296,20 @@
 			}
 			return $ret;
 		},
+		localKeyFor: function (prop) {
+			return this._attributeMap.remote[prop];
+		},
+		remoteKeyFor: function (prop) {
+			return this._attributeMap.local[prop];
+		},
 		toJSON: function (useLocalKeys) {
 			return enyo.json.stringify(this.raw(useLocalKeys));
 		},
 		isAttribute: function (prop) {
 			return !!~enyo.indexOf(prop, this._attributeKeys);
+		},
+		isRemoteAttribute: function (prop) {
+			return !! this.localKeyFor(prop);
 		},
 		isRelation: function (prop) {
 			return !! (prop in this._relations);
@@ -321,6 +331,8 @@
 			} else if (this.isRelation(prop)) {
 				this.status = "DIRTY";
 				return this.setRelation(prop, val);
+			} else if (this.isRemoteAttribute(prop) && !this.isAttribute(prop)) {
+				return this.set(this.localKeyFor(prop), val);
 			} else {
 				this.status = "DIRTY";
 				return this.inherited(arguments);
@@ -332,6 +344,8 @@
 			if (!enyo.exists(this[prop])) {
 				this[prop] = val;
 				return this.notifyObservers(prop);
+			} else {
+				this[prop].didFetch({}, val);
 			}
 		},
 		constructor: function (values) {
@@ -361,11 +375,12 @@
 					// that schema and ignore extraneous fields...
 					this.silence();
 					this.stopNotifications();
-					if (enyo.merge(enyo.keys($values), this._attributeMap.remote).length) {
-						this.set(enyo.only(this._attributeKeys, enyo.remap(this._attributeMap.remote, $values)));
-					} else {
-						this.set(enyo.only(this._attributeKeys, $values));
-					}
+					//if (enyo.merge(enyo.keys($values), enyo.keys(this._attributeMap.remote)).length) {
+					//	this.set(enyo.only(this._attributeKeys, enyo.remap(this._attributeMap.remote, $values)));
+					//} else {
+					//	this.set(enyo.only(this._attributeKeys, $values));
+					//}
+					this.set($values);
 					// we reset it because it will think it has changed but it hasn't
 					this.unsilence();
 					this._changed = {};
@@ -426,6 +441,13 @@
 			var type = relation.type;
 			var $kind = "string" === typeof relation.kind? (relation.kind = enyo.getPath(relation.kind)): relation.kind;
 			var $data = this.get(key);
+			
+			if (relation.filter) {
+				if (enyo.isFunction(this[relation.filter])) {
+					$data = this[relation.filter]($data);
+				}
+			}
+			
 			var $prop = this[key] = new $kind($data);
 			// TODO: this is setting us up for direct notification
 			// inside relationships as opposed to letting the store

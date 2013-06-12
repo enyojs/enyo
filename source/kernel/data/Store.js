@@ -37,10 +37,14 @@
 		name: "enyo.Store",
 		kind: "enyo.Controller",
 		source: null,
+		fetching: false,
 		handlers: {
 			onChange: "_modelChanged",
 			onDestroy: "_modelDestroyed"
 		},
+		bindings: [
+			{from: ".source.fetching", to: ".fetching"}
+		],
 		
 		// ...........................
 		// PROTECTED PROPERTIES
@@ -85,19 +89,19 @@
 		*/
 		findOne: function (ctor, options) {
 			var $options = options? enyo.clone(options): {};
+			var $params = options.params || {};
 			var $models = this._recordsForType(ctor);
 			var pk = ("string" === typeof ctor? enyo.getPath(ctor): ctor).prototype.primaryKey;
-			var $ret, $def = {};
-			if (pk in $options) {
-				if (($ret = $models.byPrimaryKey[$options[pk]])) {
+			var $ret;
+			if (pk in $params) {
+				if (($ret = $models.byPrimaryKey[$params[pk]])) {
 					if (options.success) {
 						options.success($ret);
 					}
-					return;
+					return $ret;
 				}
 			}
-			$def[pk] = $options[pk];
-			$ret = new ctor($def);
+			$ret = new ctor($params);
 			$ret.fetch({success: function () {
 				if ($options.success) {
 					$options.success($ret);
@@ -267,6 +271,7 @@
 		_sourceChanged: enyo.observer(function (prop, prev, val) {
 			if (val) {
 				val.set("owner", this);
+				this.rebuildBindings();
 			}
 		}, "source")
 
