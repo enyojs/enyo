@@ -290,7 +290,36 @@
 		
 		//*@public
 		/**
-			Clears any history the router has currently stored.
+			To arbitrarily add history. Optional second parameter can be
+			a boolean true to place the location at the lowest (first) position
+			of the stack or an integer indicating its exact location in the
+			stack. If the index is out of bounds it will be added at the lowest
+			position (same as boolean true for second parameter). Returns callee
+			for chaining.
+		*/
+		addHistory: function (location, idx) {
+			if (this.useHistory) {
+				switch (typeof idx) {
+				case "undefined":
+					this._history.unshift(location);
+					break;
+				case "number":
+					if (idx >= 0 && idx < this._history.length) {
+						this._history.splice(idx, 0, location);
+						break;
+					}
+				case "boolean":
+					this._history.push(location);
+					break;
+				}
+			}
+			return this;
+		},
+		
+		//*@public
+		/**
+			Clears any history the router has currently stored. Returns
+			callee for chaining.
 		*/
 		clearHistory: function () {
 			this._history = [];
@@ -301,6 +330,7 @@
 		/**
 			Can be used to programmatically add routes to the router
 			where _route_ is a hash as described by the _routes_ array.
+			Returns callee for chaining.
 		*/
 		addRoute: function (route) {
 			var statics = this._staticRoutes;
@@ -310,12 +340,13 @@
 				this.defaultRoute = route;
 			}
 			else if (token.test(route.path)) {
-				regex = new RegExp(route.path.replace(token, "([a-zA-Z0-9]*)"));
+				regex = new RegExp(route.path.replace(token, "([a-zA-Z0-9\-]*)"));
 				route.regex = regex;
 				dynamic.push(route);
 			} else {
 				statics[route.path] = route;
 			}
+			return this;
 		},
 
 		// ...........................

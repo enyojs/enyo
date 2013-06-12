@@ -17,6 +17,7 @@
 		port: null,
 		secure: false,
 		readOnly: false,
+		fetching: false,
 		defaultOptions: {
 			cacheBust: false,
 			contentType: "application/json"
@@ -35,12 +36,14 @@
 		// PUBLIC METHODS
 		buildUrl: function (model, options) {
 			if (!options.url) {
-				var url = "http" + (this.secure? "s": "") + "://" + this.domain;
+				var url = !~this.domain.indexOf("http")? "http" + (this.secure? "s": "") + "://" + this.domain: this.domain;
 				if (!this.ignorePort && (this.port || location.port)) {
 					url += (":" + (this.port? this.port: location.port) + "/");
 				}
 				url += "/" + this.urlPostfix + model.get("query");
 				options.url = normalize(url);
+			} else {
+				options.urlProvided = true;
 			}
 		},
 		buildHeaders: function (model, options) {
@@ -77,6 +80,7 @@
 			} else {
 				options = model;
 			}
+			this.set("fetching", true);
 			this.exec("fetch", options);
 		},
 		destroy: function (model, options) {
@@ -87,7 +91,7 @@
 		exec: function (which, options) {
 			var $req = this.requestKind;
 			var $options = enyo.only(this._ajaxOptions, options);
-			var $success = this.bindSafely("onSuccess", options);
+			var $success = this.bindSafely("onSuccess", which, options);
 			var $fail = this.bindSafely("onFail", which, options);
 			var $com = new $req($options);
 			var $params = options.queryParams;
@@ -102,13 +106,19 @@
 		filter: function (data) {
 			return data;
 		},
-		onSuccess: function (options, request, response) {
+		onSuccess: function (which, options, request, response) {
+			if ("fetch" === which) {
+				this.set("fetching", false);
+			}
 			var result = this.filter(response);
 			if (options.success) {
 				options.success(result);
 			}
 		},
 		onFail: function (which, options, request, error) {
+			if ("fetch" === which) {
+				this.set("fetching", false);
+			}
 			if (options.error) {
 				options.error(request, error);
 			}

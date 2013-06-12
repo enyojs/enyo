@@ -90,6 +90,11 @@
 			this.set("fetching", true);
 			enyo.store.fetch(this, $options);
 		},
+		fetchAndReplace: function (options) {
+			var $options = options? enyo.clone(options): {};
+			$options.replace = true;
+			this.fetch($options);
+		},
 		didFetch: function (options, result) {
 			var data = result;
 			if (!enyo.isArray(result)) {
@@ -99,9 +104,14 @@
 				// extraneous properties to the collection for reference if
 				// necessary
 				enyo.setPath.call(result, this.dataKey, undefined);
+				this.stopNotifications();
 				this.set(result);
 			}
-			this.add(data);
+			if (options.replace) {
+				this.removeAll();
+			}
+			this.add(this.filterData(data));
+			this.startNotifications();
 			if (options.success) {
 				options.success(options, result);
 			}
@@ -136,6 +146,9 @@
 		},
 		filter: function (fn, context) {
 			return enyo.filter(this._store, fn, context || this);
+		},
+		filterData: function (data) {
+			return data;
 		},
 		contains: function (value) {
 			return !!~enyo.indexOf(this._store, value);
