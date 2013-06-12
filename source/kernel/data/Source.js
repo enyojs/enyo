@@ -1,4 +1,16 @@
 (function (enyo) {
+	
+	/**
+		The _enyo.Source_ kind is an pseudo-abstract API for communcating
+		with a backend (could be local or remote). _enyo.Store_ requires a
+		_source_ to function properly. An _enyo.Source_ can easily be overloaded
+		to work with specific backend implementations and data formats.
+	
+		The build-in implementation is designed to work with a remote REST API
+		relying on GET, POST, PUT and DELETE to communicate with (remote) source.
+		For _fetch_ requests it will use GET. See _enyo.Collection_ and _enyo.Model_
+		for specifics.
+	*/
 
 	var normalize = function (url) {
 		return url.replace(/([^:]\/)(\/+)/g, "$1");
@@ -11,17 +23,80 @@
 
 		name: "enyo.Source",
 		kind: "enyo.Component",
+		
+		//*@public
+		/**
+			The type of object to use for requests. As long as the kind has the
+			same API as _enyo.Async_ it should be possible to use it with _enyo.Source_.
+		*/
 		requestKind: "enyo.Ajax",
+		
+		//*@public
+		/**
+			The root domain for all requests. Does not need the _http_ but may
+			include it. For secure (_https_) see the _secure_ property.
+		*/
 		domain: "",
+		
+		//*@public
+		/**
+			An optional string to be appended after the _url_ is constructed.
+		*/
 		urlPostfix: "",
+		
+		//*@public
+		/**
+			The port to use when constructing the _url_. Only specify if the necessary
+			port is different than the current domain port (e.g. it will automatically use
+			document.location.port unless the _ignorePort_ option is set to _true_).
+		*/
 		port: null,
+		
+		//*@public
+		/**
+			If the current domain for the client is running on a _port_ different than
+			80 (e.g. http://localhost:8080) this will construct requests without the
+			port.
+		*/
+		ignorePort: false,
+		
+		//*@public
+		/**
+			If a secure url is necessary (_https_) set this to _true_.
+		*/
 		secure: false,
+		
+		//*@public
+		/**
+			If the (remote) backend is read-only set this to _true_ to dissallow any
+			calls to POST, PUT or DELETE.
+		*/
 		readOnly: false,
+		
+		//*@public
+		/**
+			A bindable property to know when a _fetch_ is taking place.
+		*/
 		fetching: false,
+		
+		//*@public
+		/**
+			The default options that are passed to the request object. Presedence is given
+			to _models_ or _collections_ that provide their own options that override any
+			default options.
+		
+			Defaults with cacheBust true and contentType application/json.
+		*/
 		defaultOptions: {
 			cacheBust: false,
 			contentType: "application/json"
 		},
+		
+		//*@public
+		/**
+			The default headers to be used in requests if they differ from those
+			in _enyo.AjaxProperties_.
+		*/
 		defaultHeaders: null,
 
 		// ...........................
