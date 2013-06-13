@@ -564,19 +564,20 @@
 		mapping of the key from the first object to the key from the second
 		object is added to a result object, which is eventually returned. In
 		other words, the returned object maps the named properties of the
-		first object to the named properties of the second object.
+		first object to the named properties of the second object. The optional
+		third parameter is a boolean designating whether to pass unknown key/value
+		pairs through to the new object. If true, those keys will exist on the
+		returned object.
 	*/
-	enyo.remap = function (map, obj) {
-		var ret = {};
-		var key;
-		var val;
+	enyo.remap = function (map, obj, pass) {
+		var key, $val, $ret = pass? enyo.clone(obj): {};
 		for (key in map) {
-			val = map[key];
+			$val = map[key];
 			if (key in obj) {
-				ret[val] = obj.get? obj.get(key): obj[key];
+				$ret[val] = obj.get? obj.get(key): obj[key];
 			}
 		}
-		return ret;
+		return $ret;
 	};
 
 	//*@public

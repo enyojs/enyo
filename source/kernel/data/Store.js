@@ -61,7 +61,7 @@
 		// PUBLIC PROPERTIES
 
 		name: "enyo.Store",
-		kind: "enyo.Controller",
+		kind: "enyo.MultipleDispatchComponent",
 		source: null,
 		fetching: false,
 		handlers: {
