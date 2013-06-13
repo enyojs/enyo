@@ -1,6 +1,6 @@
 (function (enyo) {
 
-	var token = /\:[a-z]*/g;
+	var collectionToken = /\:[a-z]*/g;
 
 	enyo.kind({
 
@@ -10,10 +10,10 @@
 		name: "enyo.Collection",
 		kind: "enyo.Controller",
 		model: "enyo.Model",
-		fetching: false,
+		busy: false,
 		length: 0,
 		url: "",
-		dataKey: "",
+		relation: null,
 		events: {
 			onModelChanged: "",
 			onModelAdded: "",
@@ -53,15 +53,15 @@
 			// in cases where a collection is part of a relation we provide
 			// basic support for match/replace elements of the url based on
 			// the fields of the owner model type 
-			if (token.test(url) && enyo.isModel(this.owner) && this.relation) {
+			if (collectionToken.test(url) && enyo.isModel(this.owner) && this.relationOwner) {
 				// TODO: if this ever becomes fixed this has to be removed
 				// but because of a glitch in the JavaScript RegEx engine
 				// we have to reset the test by running it again so we don't
 				// get a false negative next time
-				token.test(url);
-				var matches = url.match(token);
+				collectionToken.test(url);
+				var matches = url.match(collectionToken);
 				enyo.forEach(matches, function (match) {
-					url = url.replace(match, this.relation.from.get(match.slice(1)));
+					url = url.replace(match, this.relationOwner.get(match.slice(1)));
 				}, this);
 				// return the modified dynamic url
 				return url;
@@ -87,7 +87,7 @@
 			var $options = options? enyo.clone(options): {};
 			$options.success = this.bindSafely("didFetch", options || {});
 			$options.error = this.bindSafely("didFail", "fetch", options || {});
-			this.set("fetching", true);
+			this.set("busy", true);
 			enyo.store.fetch(this, $options);
 		},
 		fetchAndReplace: function (options) {
@@ -96,29 +96,20 @@
 			this.fetch($options);
 		},
 		didFetch: function (options, result) {
-			var data = result;
-			if (!enyo.isArray(result)) {
-				data = enyo.getPath.call(result, this.dataKey);
-				// since this is an object we remove the dataset key so as
-				// not to store it twice but will automatically apply the
-				// extraneous properties to the collection for reference if
-				// necessary
-				enyo.setPath.call(result, this.dataKey, undefined);
-				this.stopNotifications();
-				this.set(result);
-			}
+			var data = this.filterData(result);
+
 			if (options.replace) {
 				this.removeAll();
 			}
-			this.add(this.filterData(data));
+			this.add(data);
 			this.startNotifications();
 			if (options.success) {
 				options.success(options, result);
 			}
-			this.set("fetching", false);
+			this.set("busy", false);
 		},
 		didFail: function (which, options) {
-			this.set("fetching", false);
+			this.set("busy", false);
 		},
 		push: function () {
 			enyo.warn("enyo.Collection.push: not currently implemented");
@@ -284,6 +275,7 @@
 					return record instanceof this.model? record: new this.model(record);
 				}, this);
 			}
+			this._initRelation();
 		},
 		_initModel: function () {
 			var $model = this.model;
@@ -291,6 +283,31 @@
 				$model = enyo.getPath($model);
 			}
 			this.model = $model;
+		},
+		_initRelation: function () {
+			var key, $rel = this.relation;
+			if ($rel) {
+				if ((key = $rel.relationKey)) {
+					this.addObserver(key, this._relationObserver, this);
+				}
+			}
+		},
+		_relationObserver: function (prop, prev, val) {
+			var $rel = this.relation, key = $rel.inverseKey;
+			if (key === prop && val) {
+				this[$rel.relationKey].removeObserver(key, this._relationObserver);
+				if ($rel.autoFetch) {
+					this.fetch();
+				}
+			} else if ($rel.relationKey === prop) {
+				if (val && $rel.autoFetch) {
+					if (val[key]) {
+						this.fetch();
+					} else {
+						val.addObserver(key, this._relationObserver, this);
+					}
+				}
+			}
 		},
 		_modelChanged: function (sender, event) {
 			var idx = this.indexOf(sender);

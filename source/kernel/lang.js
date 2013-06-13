@@ -350,6 +350,11 @@
 	enyo.isArray = Array.isArray || function(it) {
 		return toString.call(it) === "[object Array]";
 	};
+	
+	//* Returns true if the argument is an object.
+	enyo.isObject = Object.isObject || function (it) {
+		return toString.call(it) === "[object Object]";
+	};
 
 	//* Returns true if the argument is true.
 	enyo.isTrue = function(it) {
@@ -572,7 +577,7 @@
 	enyo.remap = function (map, obj, pass) {
 		var key, $val, $ret = pass? enyo.clone(obj): {};
 		for (key in map) {
-			$val = map[key];
+			val = map[key];
 			if (key in obj) {
 				$ret[val] = obj.get? obj.get(key): obj[key];
 			}
@@ -795,9 +800,9 @@
 	/**
 		Copies custom properties from the _source_ object to the _target_ object.
 		If _target_ is falsy, an object is created.
-		If _source_ is falsy, the target or empty object is returned.
-		If _ignore_ is true, any property in source that already has a truthy value
-		will not be overridden.
+		If _source_ is falsy, the _target_ or empty object is returned.
+		If _ignore_ is true, any property in _source_ that already has a truthy value
+		in _target_ will not be overridden.
 	*/
 	enyo.mixin = function(target, source, ignore) {
 		target = target || {};
