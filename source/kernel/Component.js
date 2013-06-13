@@ -77,6 +77,7 @@ enyo.kind({
 		_unnamedKindNumber: 0
 	},
 	defaultKind: "Component",
+	noDefer: true,
 	handlers: {},
 	mixins: ["enyo.MixinComponentSupport", "enyo.ApplicationSupport"],
 	__jobs: {},
