@@ -42,8 +42,11 @@ function post() {
 }
 
 function put() {
-	$c = @$_SERVER["CONTENT_TYPE"];
-	$result = array('status' => "put", 'ctype' => $c);
+	$ctype = @$_SERVER["CONTENT_TYPE"];
+	if ($ctype == null) {
+		$ctype = @$_SERVER["HTTP_CONTENT_TYPE"];
+	}
+	$result = array('status' => "put", 'ctype' => $ctype);
 	echo json_encode($result);
 }
 
