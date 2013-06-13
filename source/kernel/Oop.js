@@ -67,18 +67,17 @@ enyo.kind = function(inProps) {
 				if (!(this instanceof DeferredCtor)) {
 					throw "enyo.kind: constructor called directly, not using 'new'";
 				}
-				enyo.setPath(name, undefined);
-				FinalCtor = enyo.kindFinish(inProps);
-				DeferredCtor._FinalCtor = FinalCtor;
+				FinalCtor = DeferredCtor._finishKindCreation();
 			}
-			var obj = Object.create(FinalCtor.prototype);
+			var obj = enyo.delegate(FinalCtor.prototype);
 			FinalCtor.apply(obj, arguments);
 			return obj;
 		};
 		ctor._finishKindCreation = function() {
 			enyo.setPath(name, undefined);
-			var FinalCtor = enyo.kindFinish(inProps);
+			var FinalCtor = enyo.kind.finish(inProps);
 			ctor._FinalCtor = FinalCtor;
+			inProps = null;
 			return FinalCtor;
 		};
 		if ((name && !enyo.getPath(name)) || enyo.kind.allowOverride) {
@@ -91,11 +90,11 @@ enyo.kind = function(inProps) {
 		return ctor;
 	} else {
 		// create anonymous kinds immediately
-		return enyo.kindFinish(inProps);
+		return enyo.kind.finish(inProps);
 	}
 };
 //* @protected
-enyo.kindFinish = function(inProps) {
+enyo.kind.finish = function(inProps) {
 	// kind-name to constructor map could be faulty now that a new kind exists, so we simply destroy the memoizations
 	enyo._kindCtors = {};
 	// extract 'name' property

@@ -899,8 +899,8 @@
 	}
 
 	// boodman/crockford delegation w/cornford optimization
-	enyo.delegate = function(obj) {
-		enyo.setPrototype(enyo.instance, obj);
+	enyo.delegate = function(proto) {
+		enyo.setPrototype(enyo.instance, proto);
 		return new enyo.instance();
 	};
 
