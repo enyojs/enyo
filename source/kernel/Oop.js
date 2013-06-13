@@ -332,7 +332,7 @@ enyo._kindCtors = {};
 
 enyo.constructorForKind = function(inKind) {
 	if (inKind === null) {
-		return inKind
+		return inKind;
 	} else if (enyo.isFunction(inKind)) {
 		// if a deferred enyo kind, finish that work first
 		if (inKind._FinalCtor) {
