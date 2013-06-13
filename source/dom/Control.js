@@ -73,6 +73,7 @@ enyo.kind({
 	mixins: ["enyo.ControllerSupport"],
 	//*@protected
 	_is_view: true,
+	noDefer: true,
 	//* The default kind for controls created inside this control that don't
 	//* specify their own kind
 	defaultKind: "Control",
