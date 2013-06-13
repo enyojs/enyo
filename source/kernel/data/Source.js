@@ -75,9 +75,9 @@
 		
 		//*@public
 		/**
-			A bindable property to know when a _fetch_ is taking place.
+			A bindable property to know when an asynchronous operation is taking place.
 		*/
-		fetching: false,
+		busy: false,
 		
 		//*@public
 		/**
@@ -155,7 +155,7 @@
 			} else {
 				options = model;
 			}
-			this.set("fetching", true);
+			this.set("busy", true);
 			this.exec("fetch", options);
 		},
 		destroy: function (model, options) {
@@ -178,21 +178,30 @@
 			console.log("Requesting: ", options.url, $params);
 			$com.go($params);
 		},
-		filter: function (data) {
+		filterData: function (data) {
 			return data;
 		},
 		onSuccess: function (which, options, request, response) {
 			if ("fetch" === which) {
-				this.set("fetching", false);
+				this.set("busy", false);
 			}
-			var result = this.filter(response);
+			var result = this.filterData(response), $fn;
+			
+			if (($fn = this["did" + enyo.cap(which)])) {
+				if (enyo.isFunction($fn)) {
+					if (!$fn.call(this, options, result)) {
+						return;
+					}
+				}
+			}
+			
 			if (options.success) {
 				options.success(result);
 			}
 		},
 		onFail: function (which, options, request, error) {
 			if ("fetch" === which) {
-				this.set("fetching", false);
+				this.set("busy", false);
 			}
 			if (options.error) {
 				options.error(request, error);

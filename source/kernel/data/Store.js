@@ -63,13 +63,13 @@
 		name: "enyo.Store",
 		kind: "enyo.MultipleDispatchComponent",
 		source: null,
-		fetching: false,
+		busy: false,
 		handlers: {
 			onChange: "_modelChanged",
 			onDestroy: "_modelDestroyed"
 		},
 		bindings: [
-			{from: ".source.fetching", to: ".fetching"}
+			{from: ".source.busy", to: ".busy"}
 		],
 		
 		// ...........................
