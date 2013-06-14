@@ -137,6 +137,12 @@
 			enyo.mixin(options, this.defaultOptions, true);
 		},
 		commit: function (model, options) {
+			if (this.readOnly) {
+				if (options && options.error) {
+					options.error({});
+				}
+				return;
+			}
 			this.buildRequest(model, options);
 			switch (model.isNew) {
 			case true:
@@ -159,6 +165,12 @@
 			this.exec("fetch", options);
 		},
 		destroy: function (model, options) {
+			if (this.readOnly) {
+				if (options && options.success) {
+					options.success({});
+				}
+				return;
+			}
 			this.buildRequest(model, options);
 			options.method = "DELETE";
 			this.exec("destroy", options);
@@ -175,7 +187,6 @@
 			}
 			$com.response($success);
 			$com.error($fail);
-			console.log("Requesting: ", options.url, $params);
 			$com.go($params);
 		},
 		filterData: function (data) {

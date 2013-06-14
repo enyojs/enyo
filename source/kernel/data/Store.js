@@ -135,11 +135,11 @@
 				}
 			}
 			$ret = new ctor($params);
-			$ret.fetch({success: function () {
-				if ($options.success) {
-					$options.success($ret);
+			$ret.fetch({success: this.bindSafely(function (options, model) {
+				if (options.success) {
+					options.success(model);
 				}
-			}});
+			}, $options, $ret)});
 		},
 		/**
 			TODO: not implemented
