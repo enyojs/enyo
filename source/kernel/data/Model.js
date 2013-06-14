@@ -344,6 +344,42 @@
 		}
 	};
 
+	//*@protected
+	/**
+		Used to breakdown a destroyed model.
+	*/
+	var breakdown = function (model) {
+		// make sure to cleanup any relations that have been instantiated
+		// for this where this model was the owner
+		var key, $rel, $rels = model._relations;
+		for (key in $rels) {
+			$rel = $rels[key];
+			if ($rel.isOwner) {
+				// TODO: For now we just orphan related models but possibly
+				// should determine a way to know whether or not to destroy
+				// them as well
+				// if the relation is a toMany than we should be looking at
+				// a collection, since we own that collection, we destroy it
+				// but the models will still exist
+				if ($rel._kind == "toMany") {
+					if (model[key]) {
+						model[key].destroy();
+						model[key] = null;
+					}
+				} else if ($rel._kind == "toOne") {
+					if (model[key]) {
+						model[key].removeDispatchTarget(model);
+						if ($rel.inverseKey) {
+							model[key].set($rel.inverseKey, null);
+						}
+						model[key] = null;
+					}
+				}
+			}
+		}
+		// continue the normal component breakdown for the rest
+		enyo.Component.prototype.destroy.call(model);
+	};
 	
 	//*@protected
 	/**
@@ -366,6 +402,9 @@
 		} else {
 			// otherwise we need to create a new one to work with
 			$proto._attributes = {};
+		}
+		if ($proto._relations) {
+			$proto._relations = enyo.clone($proto._relations);
 		}
 		// the attributes serve as a way to preserve the original
 		// definition of a model
@@ -953,14 +992,16 @@
 		didDestroy: function (options, result) {
 			this.set("status", "DESTROYED");
 			this.doDestroy({model: this});
+			breakdown(this);
 		},
 		
 		//*@public
 		/**
 			While this method should not be executed directly it is overloadable
-			in custom setups.
+			in custom setups. The `action` parameter is one of `"fetch"`, `"destroy"`,
+			`"commit"` or `"update"` depicting which action failed.
 		*/
-		didFail: function (action, options) {
+		didFail: function (action, options, result) {
 			this.set("status", "ERROR");
 		},
 		
