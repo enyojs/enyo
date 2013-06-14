@@ -31,6 +31,11 @@ enyo.kind({
 			Twitter search API uses "callback" as the parameter to hold the
 			name of the called function.  We will automatically add this to
 			the encoded arguments.
+
+			If this is null, we won't pass a callback name to the JSONP server.
+			That mode is usually only used if you also set the _overrideCallback_
+			parameter, since without this, there's no way for the server to know
+			what function wrapper to use.
 		*/
 		callbackName: "callback",
 		/**
@@ -38,7 +43,18 @@ enyo.kind({
 			to try to force a new fetch of the resource instead of reusing a
 			local cache
 		*/
-		cacheBust: true
+		cacheBust: true,
+		/**
+			When set, use this as the name of the callback method to pass
+			to the remote server. This is mainly useful when dealing with
+			servers that aren't flexible in how they specify callback names.
+
+			If you specify this, we will add a method to the global namespace
+			using the specified name, so this can easily stomp on a global
+			variable. You can't have multiple calls to a JSONP API alive at
+			the same time using the same callback method.
+		*/
+		overrideCallback: null
 	},
 	statics: {
 		// Counter to allow creation of unique name for each JSONP request
@@ -84,7 +100,8 @@ enyo.kind({
 	},
 	//* @protected
 	jsonp: function(inParams) {
-		var callbackFunctionName = "enyo_jsonp_callback_" + (enyo.JsonpRequest.nextCallbackID++);
+		var callbackFunctionName = this.overrideCallback ||
+			"enyo_jsonp_callback_" + (enyo.JsonpRequest.nextCallbackID++);
 		//
 		this.src = this.buildUrl(inParams, callbackFunctionName);
 		this.addScriptElement();
@@ -121,7 +138,9 @@ enyo.kind({
 			return inParams.replace("=?", "=" + inCallbackFunctionName);
 		} else {
 			var params = enyo.mixin({}, inParams);
-			params[this.callbackName] = inCallbackFunctionName;
+			if (this.callbackName) {
+				params[this.callbackName] = inCallbackFunctionName;
+			}
 			return enyo.Ajax.objectToQuery(params);
 		}
 	}

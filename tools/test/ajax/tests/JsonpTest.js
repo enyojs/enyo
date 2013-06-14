@@ -25,5 +25,21 @@ enyo.kind({
 		this._testResponse({charset: "utf8"}, function(inValue) {
 			return inValue.utf8 == "\u0412\u0438\u0301\u0445\u0440\u0438";
 		});
-	}
+	},
+	testOverrideCallbackName: function() {
+		var originalCallback = this.bindSafely(function() {
+			this.finish("didn't override callback method");
+		});
+		window.ONE_TIME_CALLBACK = originalCallback;
+		this._testJsonp({
+				url: "php/test1.php?format=jsonp",
+				overrideCallback: "ONE_TIME_CALLBACK"
+			},
+			null,
+			function(inValue) {
+				// verify that my original name was stomped on
+				return (window.ONE_TIME_CALLBACK !== originalCallback) && (inValue.response == "hello");
+			}
+		);
+	},
 });

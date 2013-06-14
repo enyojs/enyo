@@ -1,5 +1,7 @@
-language: node_js
-node_js:
-  - "0.10"
+language: php
+php:
+  - 5.4
 install: "npm -g install jshint"
-script: "jshint . && phantomjs tools/test/core/phantomjs-test.js"
+before_script:
+  - php -S localhost:8000 &
+script: "/bin/bash ./travis-ci.sh"
