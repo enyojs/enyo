@@ -215,12 +215,12 @@
 		}, "_batching"),
 
 		// this callback results from a call to this.findAndInstance("controller"),
-		// which occurs in the _controller_changed observer (which is implemented
+		// which occurs in the _controllerChanged observer (which is implemented
 		// in the ControllerSupport mixin)
 		//*@protected
 		controllerFindAndInstance: function(ctor, inst) {
 			this.inherited(arguments);
-			if (inst && inst._is_controller) {
+			if (inst && inst._isController) {
 				this.refresh();
 			}
 		},

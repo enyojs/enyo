@@ -247,9 +247,9 @@
 				return this.inherited(arguments);
 			}
 		},
-		ownerChanged: function(inOldOwner) {
-			if (inOldOwner && inOldOwner.removeComponent) {
-				inOldOwner.removeComponent(this);
+		ownerChanged: function(old) {
+			if (old && old.removeComponent) {
+				old.removeComponent(this);
 			}
 			if (this.owner && this.owner.addComponent) {
 				this.owner.addComponent(this);

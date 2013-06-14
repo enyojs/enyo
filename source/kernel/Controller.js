@@ -27,7 +27,7 @@ enyo.kind({
 	// PROTECTED PROPERTIES
 
 	//*@protected
-	_is_controller: true
+	_isController: true
 
 	// ...........................
 	// COMPUTED PROPERTIES

@@ -99,7 +99,7 @@
 
 		//*@protected
 		_binding_defaults: enyo.computed(function () {
-			var ctor = this.get("_binding_constructor");
+			var ctor = this.get("_bindingConstructor");
 			var keys = enyo.keys(defaults);
 			if (enyo.Binding !== ctor) {
 				return enyo.mixin(enyo.clone(defaults),
@@ -142,7 +142,7 @@
 		// OBSERVERS
 
 		//*@protected
-		//_controller_changed: enyo.observer(function () {
+		//_controllerChanged: enyo.observer(function () {
 		//	// we are intentionally overriding controller supports implementation
 		//	// of this observer so we can call this.inherited, this observer
 		//	// removed the previous observer
