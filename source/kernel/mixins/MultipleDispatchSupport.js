@@ -180,6 +180,11 @@ enyo.createMixin({
 	//*@protected
 	create: function () {
 		this._dispatchTargets = [];
+	},
+	
+	//*@protected
+	destroy: function () {
+		this._dispatchTargets = [];
 	}
 
 	// ...........................

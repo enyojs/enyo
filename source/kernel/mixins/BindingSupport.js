@@ -33,16 +33,16 @@
 		// PROTECTED PROPERTIES
 
 		//*@protected
-		_supports_bindings: true,
+		_supportsBindings: true,
 
 		//*@protected
-		_bindings_from_observers: null,
+		_bindingsFromObservers: null,
 
 		// ...........................
 		// COMPUTED PROPERTIES
 
 		//*@protected
-		_binding_constructor: enyo.computed(function () {
+		_bindingConstructor: enyo.computed(function () {
 			return enyo.getPath(this.defaultBindingKind);
 		}, {cached: true}),
 
@@ -67,7 +67,7 @@
 			var binding;
 			var properties = {};
 			var bindings = this.bindings;
-			var def = this.get("_binding_constructor");
+			var def = this.get("_bindingConstructor");
 			var Ctor;
 			var kind;
 			for (; idx < len; ++idx) {
@@ -182,7 +182,7 @@
 		*/
 		addObserver: function (property, fn, context) {
 			if (fn && fn.bindingId) {
-				this._bindings_from_observers.push(fn.bindingId);
+				this._bindingsFromObservers.push(fn.bindingId);
 			}
 			return this.inherited(arguments);
 		},
@@ -193,7 +193,7 @@
 		//*@protected
 		_constructor: function () {
 			// initialize our bindings from observers array
-			this._bindings_from_observers = [];
+			this._bindingsFromObservers = [];
 			return this.inherited(arguments);	
 		},
 
@@ -218,7 +218,7 @@
 			// we simply iterate over and destroy each of the bindings
 			// in our bindings array
 			var $bindings = this.bindings;
-			var $ids = this._bindings_from_observers;
+			var $ids = this._bindingsFromObservers;
 			var $id;
 			var $bind;
 			if ($bindings.length) {
