@@ -393,17 +393,17 @@
 
 		//*@protected
 		_hashChanged: function (hash) {
-			hash = (function (prop) {
-				if ("string" !== typeof hash) {
+			var $hash = (function (prop) {
+				if (!enyo.isString(prop)) {
 					// some browsers do not support the newUrl property
 					// so we're forced to look at the current hash
-					prop = hash.newUrl || window.location.hash;
+					prop = prop.newUrl || window.location.hash;
 				}
 				return prepare(prop);
-			})(hash || {});
+			})(hash);
 			if (this.listening) {
-				this.set("_current", hash);
-				this.handle(hash);
+				this.set("_current", $hash);
+				this.handle($hash);
 			}
 		},
 
