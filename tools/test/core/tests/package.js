@@ -15,5 +15,6 @@ enyo.depends(
 	"PathResolverTest.js",
 	"ViewportPositioningTest.js",
 	"BindingTest.js",
-	"InheritanceSanityTest.js"
+	"InheritanceSanityTest.js",
+	"DataModelingTest.js"
 );
