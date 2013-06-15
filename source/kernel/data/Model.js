@@ -1,7 +1,3 @@
-// INVERSEKEY AND RELATIONKEY IMPLEMENTATIONS
-// FILTER?
-// SETTER TYPE VALIDATION
-
 (function (enyo) {
 	
 	//*@public
@@ -307,7 +303,12 @@
 		better (internal) extensibility in the future and easier debugging.
 	*/
 	var normalizeAttributes = function (proto, attrs) {
-		var key, $prop, $keys = proto._attributeKeys || (proto._attributeKeys = []);
+		var key, $prop, $keys = proto._attributeKeys;
+		if ($keys) {
+			$keys = (proto._attributeKeys = enyo.clone($keys));
+		} else {
+			$keys = (proto._attributeKeys = []);
+		}
 		for (key in attrs) {
 			if (!~enyo.indexOf(key, $keys)) {
 				$keys.push(key);
@@ -1142,6 +1143,7 @@
 			// (incoming values and default values) at the same time
 			if (!recursing) {
 				if ($defaults) {
+					this.defaults = null;
 					// we go ahead and look for functions in the defaults and execute them
 					// now so we can keep all of this handling in one place
 					for (var key in $defaults) {
