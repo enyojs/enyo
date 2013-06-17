@@ -239,5 +239,33 @@
 
 	});
 
+	//*@protected
+	enyo.ready(function () {
+		enyo.singleton({
+			name: "enyo.Source.defaultSource",
+			kind: "enyo.Source",
+			fetch: function (model, options) {
+				if (options && options.error) {
+					var fn = options.error;
+					options.error = null;
+					fn(options);
+				}
+			},
+			commit: function (model, options) {
+				if (options && options.error) {
+					var fn = options.error;
+					options.error = null;
+					fn(options);
+				}
+			},
+			destroy: function (model, options) {
+				if (options && options.error) {
+					var fn = options.error;
+					options.error = null;
+					fn(options);
+				}
+			}
+		});
+	});
 
 })(enyo);

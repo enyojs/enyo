@@ -23,16 +23,15 @@
 				props.model = enyo.Model || "enyo.Model";
 			}
 		},
-		inCommit: function (props) {
-			if (!enyo.exists(props.inCommit)) {
-				props.inCommit = false;
-			}
-		},
 		isOwner: function (props) {
 			if (!enyo.exists(props.isOwner)) {
 				props.isOwner = true;
 			}
-			if (props.isOwner) {
+		},
+		inCommit: function (props) {
+			if (!props.isOwner && !enyo.exists(props.inCommit)) {
+				props.inCommit = true;
+			} else if (!enyo.exists(props.inCommit)) {
 				props.inCommit = false;
 			}
 		},
@@ -83,6 +82,7 @@
 				if (enyo.isObject(val)) {
 					val[rel.inverseKey] = this;
 					$rec = this[key] = new rel.model(val);
+					$rec._relationKey = key;
 				} else {
 					// have to ask the store to look for the correct record first
 					// just to be sure if it is already loaded that we use the same
@@ -98,6 +98,7 @@
 					// fetchable call fetch
 					if (!$rec) {
 						$rec = new rel.model();
+						$rec._relationKey = key;
 						$rec.set(rel.inverseKey, this);
 						if (rel.autoFetch) {
 							$rec.fetch();
@@ -127,10 +128,19 @@
 	var toManyHandler = function (key, rel, val) {
 		var $rec = this[key];
 		if (!$rec) {
-			$rec = this[key] = new rel.collection(val);
+			//$rec = this[key] = new rel.collection(val);
+			$rec = this[key] = enyo.singleton({kind: rel.collection, relation: enyo.clone(rel)});
+			$rec._relationKey = key;
 			$rec.addDispatchTarget(this);
 			if (rel.inverseKey) {
 				$rec.set(rel.inverseKey, this);
+			}
+			if (val) {
+				if (enyo.isArray(val)) {
+					$rec.add(val);
+				} else if (enyo.isObject(val)) {
+					$rec.didFetch({}, val);
+				}
 			}
 		} else {
 			if (val) {
@@ -461,6 +471,85 @@
 	});
 	
 	//*@public
+	var STATES = {};
+	
+	//*@public
+	/**
+		
+	*/
+	var ERROR = STATES.ERROR = {};
+	
+	/**
+		When an attribute with a defined `type` is `set` on a model and fails
+		to be or become (after being run through the `typeWrangler`) the correct
+		`type` the model enters this state.
+	*/
+	ERROR.TYPE =						0x01;
+	
+	/**
+		When an error occurs during initialization because the model could not
+		determine the _schema_ for attributes based on their definition or implied
+		from `defaults` or data supplied to the constructor the model enters this
+		state.
+	*/
+	ERROR.SCHEMA =						0x02;
+	
+	/**
+		When a model receives a bad response from the `enyo.Source` for the application
+		it will enter this state.
+	*/
+	ERROR.RESPONSE =					0x03;
+	
+	/**
+		When a model attempts to execute an action against a remote and the store does
+		not exist or the source is unavailable it will enter this state.
+	*/
+	ERROR.SOURCE =						0x04;
+	
+	//*@public
+	/**
+	
+	*/
+	var BUSY = STATES.BUSY = {};
+	
+	/**
+		When the model is in the process of fetching data from the `enyo.Source` for the
+		application it will enter this state.
+	*/
+	BUSY.FETCHING		=				0x11;
+	
+	/**
+		When the model is in the process of committing data to the `enyo.Source` for the
+		application it will enter this state.
+	*/
+	BUSY.COMMITTING		=				0x12;
+	
+	/**
+		When the model is in the process of being destroyed it will be in this state.
+	*/
+	BUSY.DESTROYING		=				0x13;
+	
+	//*@public
+	/**
+	*/
+	var CLEAN = STATES.CLEAN =			0x21;
+	
+	//*@public
+	/**
+	*/
+	var DESTROYED = STATES.DESTROYED =	0x31;
+	
+	//*@public
+	/**
+	*/
+	var NEW = STATES.NEW =				0x41;
+	
+	//*@public
+	/**
+	*/
+	var DIRTY = STATES.DIRTY =			0x51;
+	
+	//*@public
 	/**
 		The `enyo.Model` _kind_ is, simply put, an object that represents data. It
 		has a common and abstracted interface by which it can be manipulated and 
@@ -743,11 +832,10 @@
 		
 		//*@public
 		/**
-			The current state in a human-friendly form (_string_) of the _model_.
-			Will be one of `"NEW"`, `"CLEAN"`, `"DIRTY"`, `"ERROR"`, `"FETCHING"`,
-			`"COMMITTING"`, `"DESTROYING"`, `"DESTROYED"`.
+			The `status` of the model is defined by a fixed-set of enumerated
+			values. See documentation for `enyo.Model` states.
 		*/
-		status: "NEW",
+		status: NEW,
 		
 		//*@public
 		/**
@@ -786,8 +874,18 @@
 		*/
 		events: {
 			onChange: "",
-			onDestroy: ""
+			onDestroy: "",
+			onError: ""
 		},
+		
+		//*@public
+		handlers: {
+			onChange: "_relationChanged",
+			onModelChanged: "_relationChanged"
+		},
+		
+		//*@public
+		statics: STATES,
 		
 		// ...........................
 		// PROTECTED PROPERTIES
@@ -858,7 +956,7 @@
 		commit: function (options) {
 			var $options = options? enyo.clone(options): {};
 			$options.postBody = this.raw();
-			this.set("status", "COMMITTING");
+			this.set("status", BUSY.COMMITTING);
 			this.exec("commit", $options);
 		},
 		
@@ -869,7 +967,7 @@
 			appropriate result asynchronously.
 		*/
 		fetch: function (options) {
-			this.set("status", "FETCHING");
+			this.set("status", BUSY.FETCHING);
 			this.exec("fetch", options);
 		},
 		
@@ -881,7 +979,7 @@
 			be executed on the appropriate result asynchronously.
 		*/
 		destroy: function (options) {
-			this.set("status", "DESTROYING");
+			this.set("status", BUSY.DESTROYING);
 			this.exec("destroy", options);
 		},
 		
@@ -891,10 +989,14 @@
 			in custom setups.
 		*/
 		exec: function (action, options) {
-			var $options = options? enyo.clone(options): {};
-			$options.success = this.bindSafely("did" + enyo.cap(action), options || {});
-			$options.error = this.bindSafely("didFail", action, options || {});
-			enyo.store[action](this, $options);
+			if (enyo.store) {
+				var $options = options? enyo.clone(options): {};
+				$options.success = this.bindSafely("did" + enyo.cap(action), options || {});
+				$options.error = this.bindSafely("didFail", action, options || {});
+				enyo.store[action](this, $options);
+			} else {
+				this.set("status", ERROR.SOURCE);
+			}
 		},
 		
 		// ............................
@@ -962,7 +1064,7 @@
 			}
 			
 			this.set("isNew", false);
-			this.set("status", "CLEAN");
+			this.set("status", CLEAN);
 			this.unsilence();
 			this.startNotifications();
 			this._flushChanges();
@@ -981,8 +1083,15 @@
 				this.set(result);
 			}
 			this.set("isNew", false);
-			this.set("status", "CLEAN");
+			this.set("status", CLEAN);
 			this._changed = {};
+			for (var key in this._relations) {
+				if (this._relations[key].isOwner) {
+					if (this[key]) {
+						this[key].set("status", CLEAN);
+					}
+				}
+			}
 		},
 		
 		//*@public
@@ -991,7 +1100,7 @@
 			in custom setups.
 		*/
 		didDestroy: function (options, result) {
-			this.set("status", "DESTROYED");
+			this.set("status", DESTROYED);
 			this.doDestroy({model: this});
 			breakdown(this);
 		},
@@ -1003,7 +1112,7 @@
 			`"commit"` or `"update"` depicting which action failed.
 		*/
 		didFail: function (action, options, result) {
-			this.set("status", "ERROR");
+			this.set("status", ERROR.RESPONSE);
 		},
 		
 		//*@public
@@ -1019,19 +1128,26 @@
 		*/
 		raw: function (local) {
 			var $attrs = this._attributes;
-			var key, rem, $rel, $rels = this._relations, $ret = {};
+			var key, rem, $rel, $irel, $rels = this._relations, $ret = {}, $rkeys = enyo.keys($rels);
 			if (local) {
-				$ret = enyo.only(this._attributeKeys, enyo.except(enyo.keys(this._relationKeys), this)); 
+				$ret = enyo.only(this._attributeKeys, enyo.except($rkeys), this); 
 			} else {
 				for (key in $attrs) {
 					rem = $attrs[key].remoteKey || key;
+					if (!!~enyo.indexOf(key, $rkeys)) {
+						continue;
+					}
 					$ret[rem] = this.get(key);
 				}
 			}
 			// now to include any relations that are set to be included
 			for (key in $rels) {
 				$rel = $rels[key];
-				if (!enyo.exists(this[key]) || !$rel.inCommit) {
+				$irel = this[key] && $rel.inverseKey? this[key]._relations[$rel.inverseKey]: {};
+				if (!$rel.isOwner) {
+					continue;
+				}
+				if (!enyo.exists(this[key]) || (!$rel.inCommit && !$irel.inCommit)) {
 					continue;
 				}
 				$ret[local? key: $attrs[key].remoteKey || key] = this[key].raw(local);
@@ -1103,13 +1219,13 @@
 				this._flushChanges();
 				return this;
 			} else if (this.isRelation(prop)) {
-				this.status = "DIRTY";
 				return this.setRelation(prop, val);
 			} else {
-				if (this.isAttribute(prop)) {
-					this.status = "DIRTY";
+				this.inherited(arguments);
+				if (prop != this.primaryKey && this.isAttribute(prop)) {
+					this.set("status", DIRTY);
 				}
-				return this.inherited(arguments);
+				return this;
 			}
 		},
 		
@@ -1122,6 +1238,7 @@
 		setRelation: function (prop, val) {
 			var $rel = this._relations[prop];
 			$rel.handler.call(this, prop, $rel, val);
+			this.set("status", DIRTY);
 			return this;
 		},
 		
@@ -1180,7 +1297,7 @@
 				} else if (recursing) {
 					// this is an error state because we did not determine any
 					// schema for the values passed in
-					this.set("state", "ERROR");
+					this.set("state", ERROR.SCHEMA);
 					return;
 				} else {
 					// will attempt to figure out what our schema should be with
@@ -1200,7 +1317,9 @@
 					return this._constructor($values, true);
 				}
 				// we set our status to clean because we have values
-				this.status = "CLEAN";
+				this.status = CLEAN;
+				// clear our changed hash
+				this._changed = {};
 				// set our previous up initially
 				this._previous = enyo.only(this._attributeKeys, this);
 				// we flush notifications
@@ -1236,6 +1355,14 @@
 			if (!~enyo.indexOf(col, this._collections)) {
 				this._collections.push(col);
 				this.addDispatchTarget(col);
+				for (var key in this._relations) {
+					if (col[key]) {
+						this.stopNotifications(true);
+						this.set(key, col[key]);
+						this.set("status", CLEAN);
+						this.startNotifications(true);
+					}
+				}
 			}
 		},
 
@@ -1266,6 +1393,30 @@
 				});
 			}
 		},
+		
+		//*@protected
+		_relationChanged: function (sender, event) {
+			var $m = event.model || sender, key = $m._relationKey;
+			if (!key && event.collection) {
+				$m = event.collection;
+				key = $m._relationKey;
+			}
+			if (key) {
+				if (this[key] == $m) {
+					this._changed[key] = $m;
+					this.set("status", DIRTY);
+				}
+			}
+		},
+		
+		//*@protected
+		/**
+			Retrieves the attribute object for a given attribute `property`
+			if it exists.
+		*/
+		_attributeFor: function (prop) {
+			return this._attributes[prop];
+		},
 
 		// ...........................
 		// OBSERVERS
@@ -1277,12 +1428,41 @@
 			_onChange_ event if the _model_ isn't currently silenced.
 		*/
 		_attributeSpy: enyo.observer(function (prop, prev, val) {
-			if (this.isAttribute(prop) || this.isRelation(prop)) {
+			var attr;
+			if ((attr = this._attributeFor(prop)) || this.isRelation(prop)) {
+				if (attr) {
+					if (attr.type) {
+						if (val && !(val instanceof attr.type)) {
+							val = attr.typeWrangler(val);
+							if (!(val instanceof attr.type)) {
+								return this.set("status", ERROR.TYPE);
+							}
+						}
+					}
+				}
 				this._previous[prop] = prev;
 				this._changed[prop] = val;
 				this._flushChanges();
 			}
-		}, "*")
+		}, "*"),
+		
+		//*@protected
+		_statusChanged: enyo.observer(function (prop, prev, val) {
+			if (val == DIRTY) {
+				enyo.forEach(this._collections, function (col) {
+					if (!~enyo.indexOf(col._dirtyModels, this)) {
+						col._dirtyModels.push(this);
+					}
+				}, this);
+			} else if (val == CLEAN) {
+				enyo.forEach(this._collections, function (col) {
+					var idx = enyo.indexOf(col._dirtyModels, this);
+					if (idx >= 0) {
+						col._dirtyModels.splice(idx, 1);
+					}
+				}, this);
+			}
+		}, "status")
 
 	});
 
