@@ -81,7 +81,7 @@ var node = process.argv[0],
 function printUsage() {
 	// format generated using node-optimist...
 	console.log('\n' +
-		'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir]\n' +
+		'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir][-f map_from -t map_to ...]\n' +
 		'\n' +
 		'Options:\n' +
 		'  -v  verbose operation                     [boolean]  [default: ' + verbose + ']\n' +
@@ -91,6 +91,8 @@ function printUsage() {
 		'  -o  alternate output directory            [default: "' + outDir + '"]\n' +
 		'  -p  location of the main package.js file  [default: "' + packageJs + '"]\n' +
 		'  -s  source code root directory            [default: "' + sourceDir + '"]\n' +
+		'  -f  remote source mapping: from local path' +
+		'  -t  remote source mapping: to remote path' +
 		'\n');
 }
 
@@ -102,7 +104,9 @@ var opt = nopt(/*knownOpts*/ {
 	"packagejs": path,
 	"source": path,
 	"verbose": Boolean,
-	"help": Boolean
+	"help": Boolean,
+	"mapfrom": [String, Array],
+	"mapto": [String, Array]
 }, /*shortHands*/ {
 	"b": "--build",
 	"c": "--no-less",
@@ -112,6 +116,8 @@ var opt = nopt(/*knownOpts*/ {
 	"s": "--source",
 	"v": "--verbose",
 	"h": "--help",
+	"f": "--mapfrom",
+	"t": "--mapto",
 	"?": "--help"
 }, process.argv /*args*/, 2 /*slice*/);
 
@@ -132,6 +138,13 @@ sourceDir = opt.source ||
 	sourceDir;
 less = (opt.less !== false) && less;
 verbose = opt.verbose;
+
+if ((opt.mapfrom || opt.maptop) && (!opt.mapfrom || !opt.mapto || (opt.mapfrom.length != opt.mapto.length))) {
+	console.log("mapfrom:", opt.mapfrom);
+	console.log("mapto:", opt.mapto);
+	console.error("Error: The number of 'mapfrom' and 'mapto' arguments must match.");
+	process.exit(1);
+}
 
 var minifier = path.resolve(enyoDir, 'tools', 'minifier', 'minify.js');
 if (verbose) {
@@ -167,21 +180,33 @@ shell.mkdir('-p', path.join(outDir));
 
 console.log("Minify-ing Enyo...");
 process.chdir(path.resolve(enyoDir, 'minify'));
-run([node, minifier,
+var args = [node, minifier,
      '-no-alias',
      '-enyo', enyoDir,
      // XXX generates $buildDir/enyo.(js|css)' so this is
      // XXX rather an 'output_prefix' than an 'out_dir'...
      '-output', path.join(buildDir, 'enyo'),
-     'package.js']);
+     'package.js'];
+if (opt.mapfrom) {
+	for (var i=0; i<opt.mapfrom.length; i++) {
+		args.push("-f", opt.mapfrom[i], "-t", opt.mapto[i]);
+	}
+}
+run(args);
 
 console.log("Minify-ing the application...");
 process.chdir(path.dirname(packageJs));
-run([node, minifier,
+args = [node, minifier,
      '-enyo', enyoDir,
      '-output', path.join(buildDir, 'app'),
      (less ? '-less' : '-no-less'),
-     'package.js']);
+     'package.js'];
+if (opt.mapfrom) {
+	for (var i=0; i<opt.mapfrom.length; i++) {
+		args.push("-f", opt.mapfrom[i], "-t", opt.mapto[i]);
+	}
+}
+run(args);
 process.chdir(sourceDir);
 
 // Deploy / Copy
