@@ -215,6 +215,9 @@
 			this.inherited(arguments);
 			this._records = {};
 			enyo.forEach(enyo.models.kinds, this._addModelKind, this);
+			if (!this.source) {
+				this.source = enyo.Source.defaultSource;
+			}
 		},
 		constructed: function () {
 			this.inherited(arguments);
