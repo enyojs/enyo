@@ -128,8 +128,8 @@
 	var toManyHandler = function (key, rel, val) {
 		var $rec = this[key];
 		if (!$rec) {
-			//$rec = this[key] = new rel.collection(val);
-			$rec = this[key] = enyo.singleton({kind: rel.collection, relation: enyo.clone(rel)});
+			var $pr = rel.collection.prototype.relation || rel;
+			$rec = this[key] = enyo.singleton({kind: rel.collection, relation: enyo.clone($pr)});
 			$rec._relationKey = key;
 			$rec.addDispatchTarget(this);
 			if (rel.inverseKey) {
@@ -1430,16 +1430,8 @@
 		_attributeSpy: enyo.observer(function (prop, prev, val) {
 			var attr;
 			if ((attr = this._attributeFor(prop)) || this.isRelation(prop)) {
-				if (attr) {
-					if (attr.type) {
-						if (val && !(val instanceof attr.type)) {
-							val = attr.typeWrangler(val);
-							if (!(val instanceof attr.type)) {
-								return this.set("status", ERROR.TYPE);
-							}
-						}
-					}
-				}
+				// TODO: Type checking has been temporarily removed
+				// and should probably be added as validation instead
 				this._previous[prop] = prev;
 				this._changed[prop] = val;
 				this._flushChanges();

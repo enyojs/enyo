@@ -545,7 +545,11 @@
 			var key, $rel = this.relation;
 			if ($rel) {
 				if ((key = $rel.relationKey)) {
-					this.addObserver(key, this._relationObserver, this);
+					if (!this[key]) {
+						this.addObserver(key, this._relationObserver, this);
+					} else {
+						this._relationObserver(key, null, this[key]);
+					}
 				}
 			}
 		},
@@ -568,6 +572,13 @@
 				}
 			}
 		},
+		
+		//*@protected
+		_relationChanged: enyo.observer(function (prop, prev, val) {
+			if (val) {
+				this._initRelation();
+			}
+		}, "relation"),
 		
 		//*@protected
 		_modelChanged: function (sender, event) {
