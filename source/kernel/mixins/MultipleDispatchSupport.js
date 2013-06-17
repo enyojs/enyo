@@ -178,8 +178,9 @@ enyo.createMixin({
 	},
 
 	//*@protected
-	create: function () {
+	_constructor: function () {
 		this._dispatchTargets = [];
+		return this.inherited(arguments);
 	},
 	
 	//*@protected
