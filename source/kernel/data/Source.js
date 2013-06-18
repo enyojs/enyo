@@ -259,9 +259,9 @@
 				}
 			},
 			destroy: function (model, options) {
-				if (options && options.error) {
-					var fn = options.error;
-					options.error = null;
+				if (options && options.success) {
+					var fn = options.success;
+					options.success = null;
 					fn(options);
 				}
 			}
