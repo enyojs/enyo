@@ -88,6 +88,7 @@ enyo.kind({
 		if (this.container) {
 			this.container.resized();
 		}
+		return true;
 	},
 	animatorEnd: function() {
 		if (!this.open) {
@@ -112,5 +113,6 @@ enyo.kind({
 		if (this.container) {
 			this.container.resized();
 		}
+		return true;
 	}
 });
