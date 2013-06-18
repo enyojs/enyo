@@ -15,63 +15,73 @@
 		kind: "enyo.View",
 
 		//*@public
-		/**
-		*/
-		loading: false,
-
-		//*@public
-		/**
-		*/
 		childMixins: [],
-
-		// ...........................
-		// PROTECTED PROPERTIES
-
-		//*@protected
+		
+		//*@public
 		concat: ["childMixins"],
 
-		//*@protected
+		//*@public
 		controlParentName: "container",
-
-		//*@protected
-		handlers: {
-			onModelAdded: "_model_added",
-			onModelsAdded: "_models_added",
-			onModelRemoved: "_model_removed",
-			onModelsRemoved: "_models_removed"
-		},
-
-		//*@protected
-		bindings: [{
-			from: ".controller.fetching",
-			to: ".loading",
-			kind: "enyo.BooleanOnlyBinding"
-		}, {
-			from: ".controller.length",
-			to: ".length"
-		}, {
-			from: ".controller.data",
-			to: ".data"
-		}],
-
-		//*@protected
-		_child_kind: null,
-
-		//*@protected
-		_batching: false,
-
-		//*@protected
-		_container: {
+		
+		//*@public
+		containerOptions: {
 			name: "container",
 			kind: "enyo.View",
 			classes: "enyo-fill enyo-data-repeater-container",
 		},
 
+		//*@public
+		handlers: {
+			onModelAdded: "_modelAdded",
+			onModelsAdded: "_modelsAdded",
+			onModelRemoved: "_modelRemoved",
+			onModelsRemoved: "_modelsRemoved"
+		},
+
+		//*@public
+		bindings: [
+			{from: ".controller.length", to: ".length"},
+			{from: ".controller.data", to: ".data"}
+		],
+
 		// ...........................
-		// COMPUTED PROPERTIES
+		// PROTECTED PROPERTIES
+
+		//*@protected
+		_childKind: null,
+
+		//*@protected
+		_batching: false,
 
 		// ...........................
 		// PUBLIC METHODS
+		
+		//*@public
+		initComponents: function () {
+			// we need to find the child definition and prepare it for
+			// use in our repeater including adding auto binding support
+			var $components = this.kindComponents || this.components || [];
+			var $owner = this.components? this.owner: this;
+			this._childKind = enyo.kind({
+				// tag: null, // no need for the extra container
+				// TODO: it should be possible to use the above line but for
+				// now it is causing far too many issues
+				kind: "enyo.View",
+				mixins: ["enyo.AutoBindingSupport"].concat(this.childMixins || []),
+				components: $components,
+				defaultKind: this.defaultKind || "enyo.View",
+				defaultProps: {owner: $owner}
+			});
+			this._initContainer();
+		},
+
+		//*@public
+		controllerFindAndInstance: function(ctor, inst) {
+			this.inherited(arguments);
+			if (inst && inst._isController) {
+				this.refresh();
+			}
+		},
 
 		//*@public
 		refresh: function () {
@@ -88,7 +98,7 @@
 
 		//*@public
 		add: function (model) {
-			var $kind = this._child_kind;
+			var $kind = this._childKind;
 			var $child = this.createComponent({kind: $kind});
 			var batching = this._batching;
 			$child.set("model", model);
@@ -139,33 +149,14 @@
 		// PROTECTED METHODS
 
 		//*@protected
-		initComponents: function () {
-			// we need to find the child definition and prepare it for
-			// use in our repeater including adding auto binding support
-			var $components = this.kindComponents || this.components || [];
-			var $owner = this.components? this.owner: this;
-			this._child_kind = enyo.kind({
-				// tag: null, // no need for the extra container
-				// TODO: it should be possible to use the above line but for
-				// now it is causing far too many issues
-				kind: "enyo.View",
-				mixins: ["enyo.AutoBindingSupport"].concat(this.childMixins || []),
-				components: $components,
-				defaultKind: this.defaultKind || "enyo.View",
-				defaultProps: {owner: $owner}
-			});
-			this._init_container();
-		},
-
-		//*@protected
-		_init_container: function () {
-			var $container = this.get("_container");
+		_initContainer: function () {
+			var $container = this.get("containerOptions");
 			this.createChrome([$container]);
 			this.discoverControlParent();
 		},
 
 		//*@protected
-		_model_added: function (sender, event) {
+		_modelAdded: function (sender, event) {
 			if (sender !== this.controller) {
 				return;
 			}
@@ -174,7 +165,7 @@
 		},
 
 		//*@protected
-		_models_added: function (sender, event) {
+		_modelsAdded: function (sender, event) {
 			if (sender !== this.controller) {
 				return;
 			}
@@ -186,7 +177,7 @@
 		},
 
 		//*@protected
-		_model_removed: function (sender, event) {
+		_modelRemoved: function (sender, event) {
 			if (sender !== this.controller) {
 				return;
 			}
@@ -194,7 +185,7 @@
 		},
 
 		//*@protected
-		_models_removed: function (sender, event) {
+		_modelsRemoved: function (sender, event) {
 			if (sender !== this.controller) {
 				return;
 			}
@@ -207,28 +198,17 @@
 		// OBSERVERS
 
 		//*@protected
-		_batching_changed: enyo.observer(function (property, previous, value) {
-			if (false === value) {
+		_batchingChanged: function (prev, val) {
+			if (false === val) {
 				var $client = this.controlParent;
 				$client.render();
-			}
-		}, "_batching"),
-
-		// this callback results from a call to this.findAndInstance("controller"),
-		// which occurs in the _controllerChanged observer (which is implemented
-		// in the ControllerSupport mixin)
-		//*@protected
-		controllerFindAndInstance: function(ctor, inst) {
-			this.inherited(arguments);
-			if (inst && inst._isController) {
-				this.refresh();
 			}
 		},
 
 		//*@protected
-		_length_changed: enyo.observer(function (property, previous, value) {
-			if (!isNaN(previous) && !isNaN(value)) {
-				if (previous > value) {
+		_lengthChanged: enyo.observer(function (prop, prev, val) {
+			if (!isNaN(prev) && !isNaN(val)) {
+				if (prev > val) {
 					this.prune();
 				}
 			}

@@ -33,7 +33,7 @@
 		//*@protected
 		initComponents: function () {
 			this.inherited(arguments);
-			var $kind = this._child_kind;
+			var $kind = this._childKind;
 			$kind.extend({
 				classes: "enyo-data-grid-list-item"
 			});
