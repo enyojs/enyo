@@ -21,6 +21,7 @@ enyo.kind({
 	//* @protected
 	// has no base kind
 	kind: null,
+	noDefer: true,
 	//*@public
 	// concatenated properties (default)
 	concat: enyo.concat,
