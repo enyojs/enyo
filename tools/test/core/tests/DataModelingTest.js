@@ -356,8 +356,12 @@
 				return this.finish("Model was expected to have status NEW");
 			}
 			$m = new models.GenericDefaults();
-			if ($m.status !== enyo.Model.NEW) {
-				return this.finish("Model was expected to have status NEW");
+			if ($m.status !== enyo.Model.CLEAN) {
+				return this.finish("Model was expected to have status CLEAN");
+			}
+			$m = new models.GenericDefaults({"firstName": "Sandy"});
+			if ($m.status !== enyo.Model.CLEAN) {
+				return this.finish("Model was expected to have status CLEAN");
 			}
 			$m.set("firstName", "Ted");
 			if ($m.status !== enyo.Model.DIRTY) {
