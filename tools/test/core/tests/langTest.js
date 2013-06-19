@@ -52,5 +52,52 @@ enyo.kind({
 	testindexOfFromIndex: function() {
 		var index = enyo.indexOf("foo", [null, null, null, null,"foo"], 10);
 		this.finish(index !== -1 ? "if fromIndex is greater then array length, should return -1" : false);
+	},
+	// test the various configurations of enyo.mixin
+	testMixin: function () {
+		var $t, $s;
+		// test normal setup
+		$t = {}, $s = {one:"one",two:"two"};
+		enyo.mixin($t, $s);
+		if (enyo.union(enyo.keys($t),enyo.keys($s)).length) {
+			return this.finish("Expected keys to be the same");
+		}
+		// test with no passed in target
+		$t = null;
+		$t = enyo.mixin(null, $s);
+		if (!$t || enyo.union(enyo.keys($t),enyo.keys($s)).length) {
+			if (!$t) {
+				return this.finish("Expected new object to be created");
+			}
+			return this.finish("Expected keys to be the same");
+		}
+		// test with base and array of sources
+		$t = {};
+		$s = [{one:"one"},{two:"two"},{one:"three"}];
+		enyo.mixin($t, $s);
+		if (enyo.keys($t).length != 2) {
+			return this.finish("Expected result to have 2 keys");
+		}
+		if ($t.one != "three") {
+			return this.finish("Recursive mixin did not copy properly");
+		}
+		// test with no base and array of sources
+		$t = null;
+		$t = enyo.mixin($s);
+		if (!$t || enyo.keys($t).length != 2) {
+			if (!$t) {
+				return this.finish("Target was not created for array sources");
+			}
+			return this.finish("Recursive mixin did not copy properly for no base and " +
+				"array of sources");
+		}
+		// test for the ignore feature (if this works it should work for simply scenarios)
+		$t = {one: "ONE"};
+		$s = [{one: "one"}, {two:"two"}, {one:"three"},{three:"three"}];
+		enyo.mixin($t, $s, true);
+		if ($t.one != "ONE") {
+			return this.finish("The ignore flag was not used properly");
+		}
+		this.finish();
 	}
 });

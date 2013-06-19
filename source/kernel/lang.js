@@ -798,30 +798,58 @@
 
 	//* @public
 	/**
-		Copies custom properties from the _source_ object to the _target_ object.
-		If _target_ is falsy, an object is created.
-		If _source_ is falsy, the _target_ or empty object is returned.
-		If _ignore_ is true, any property in _source_ that already has a truthy value
-		in _target_ will not be overridden.
+		Will take a variety of options to ultimately mix a set of properties
+		from objects into single object. All configurations accept a boolean as
+		the final parameter to indicate whether or not to ignore _truthy_/_existing_
+		values on any _objects_ prior.
+	
+		If `target` exists and is an object will be the base for all properties
+		and the returned value. If the parameter is used but is _falsy_ a new
+		object will be created and returned. If no such parameter exists the first
+		parameter must be an array of objects and a new object will be created as
+		the `target`.
+	
+		The `source` parameter may be an object or an array of objects. If no `target`
+		parameter is provided `source` must be an array of objects.
+	
+		The `ignore` parameter is optional and if `true` any properties of `source`
+		will not be copied to `target` if there already exists a value for that
+		property.
 	*/
 	enyo.mixin = function(target, source, ignore) {
-		target = target || {};
-		if (source) {
-			var name, s;
-			for (name in source) {
-				// the "empty" conditional avoids copying properties in "source"
-				// inherited from Object.prototype. For example, if target has a custom
-				// toString() method, don't overwrite it with the toString() method
-				// that source inherited from Object.prototype
-				s = source[name];
-				if (empty[name] !== s) {
-					if (!ignore || !target[name]) {
-						target[name] = s;
+		// the return object/target
+		var $t;
+		// the source or sources to use
+		var $s;
+		// whether or not to override properties that exist in source
+		// the index in cases where source is an array the name for
+		// properties and the helper value for avoiding copying defaults
+		var i, idx, l, n, s;
+		if (enyo.isArray(target)) {
+			$t = {};
+			$s = target;
+			i = true == source? true: false;
+		} else {
+			$t = target || {};
+			$s = source;
+			i = ignore;
+		}
+		
+		if (enyo.isArray($s)) {
+			for (idx=0, l=$s.length; idx<l; ++idx) {
+				enyo.mixin($t, $s[idx], i);
+			}
+		} else {
+			for (n in $s) {
+				s = $s[n];
+				if (empty[n] !== s) {
+					if (!i || !$t[n]) {
+						$t[n] = s;
 					}
 				}
 			}
 		}
-		return target;
+		return $t;
 	};
 
 	//* @public
