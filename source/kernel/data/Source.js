@@ -1,11 +1,11 @@
 (function (enyo) {
-	
+
 	/**
 		The _enyo.Source_ kind is an pseudo-abstract API for communcating
 		with a backend (could be local or remote). _enyo.Store_ requires a
 		_source_ to function properly. An _enyo.Source_ can easily be overloaded
 		to work with specific backend implementations and data formats.
-	
+
 		The build-in implementation is designed to work with a remote REST API
 		relying on GET, POST, PUT and DELETE to communicate with (remote) source.
 		For _fetch_ requests it will use GET. See _enyo.Collection_ and _enyo.Model_
@@ -23,27 +23,27 @@
 
 		name: "enyo.Source",
 		kind: "enyo.Component",
-		
+
 		//*@public
 		/**
 			The type of object to use for requests. As long as the kind has the
 			same API as _enyo.Async_ it should be possible to use it with _enyo.Source_.
 		*/
 		requestKind: "enyo.Ajax",
-		
+
 		//*@public
 		/**
 			The root domain for all requests. Does not need the _http_ but may
 			include it. For secure (_https_) see the _secure_ property.
 		*/
 		domain: "",
-		
+
 		//*@public
 		/**
 			An optional string to be appended after the _url_ is constructed.
 		*/
 		urlPostfix: "",
-		
+
 		//*@public
 		/**
 			The port to use when constructing the _url_. Only specify if the necessary
@@ -51,7 +51,7 @@
 			document.location.port unless the _ignorePort_ option is set to _true_).
 		*/
 		port: null,
-		
+
 		//*@public
 		/**
 			If the current domain for the client is running on a _port_ different than
@@ -59,39 +59,39 @@
 			port.
 		*/
 		ignorePort: false,
-		
+
 		//*@public
 		/**
 			If a secure url is necessary (_https_) set this to _true_.
 		*/
 		secure: false,
-		
+
 		//*@public
 		/**
 			If the (remote) backend is read-only set this to _true_ to dissallow any
 			calls to POST, PUT or DELETE.
 		*/
 		readOnly: false,
-		
+
 		//*@public
 		/**
 			A bindable property to know when an asynchronous operation is taking place.
 		*/
 		busy: false,
-		
+
 		//*@public
 		/**
 			The default options that are passed to the request object. Presedence is given
 			to _models_ or _collections_ that provide their own options that override any
 			default options.
-		
+
 			Defaults with cacheBust true and contentType application/json.
 		*/
 		defaultOptions: {
 			cacheBust: false,
 			contentType: "application/json"
 		},
-		
+
 		//*@public
 		/**
 			The default headers to be used in requests if they differ from those
@@ -101,9 +101,9 @@
 
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		_noApplyMixinDestroy: true,
-		
+
 		// ...........................
 		// COMPUTED PROPERTIES
 
@@ -176,11 +176,10 @@
 			this.exec("destroy", options);
 		},
 		exec: function (which, options) {
-			var $req = this.requestKind;
 			var $options = enyo.only(this._ajaxOptions, options);
 			var $success = this.bindSafely("onSuccess", which, options);
 			var $fail = this.bindSafely("onFail", which, options);
-			var $com = new $req($options);
+			var $com = new this.requestKind($options);
 			var $params = options.queryParams;
 			if (options.method !== "GET" && this.readOnly) {
 				return $fail();
@@ -197,7 +196,7 @@
 				this.set("busy", false);
 			}
 			var result = this.filterData(response), $fn;
-			
+
 			if (($fn = this["did" + enyo.cap(which)])) {
 				if (enyo.isFunction($fn)) {
 					if (!$fn.call(this, options, result)) {
@@ -205,7 +204,7 @@
 					}
 				}
 			}
-			
+
 			if (options.success) {
 				options.success(result);
 			}
@@ -218,7 +217,7 @@
 				options.error(request, error);
 			}
 		},
-		
+
 		constructor: function () {
 			this.inherited(arguments);
 			this.defaultOptions = this.defaultOptions || {};
@@ -230,7 +229,7 @@
 			this.requestKind = "string" === typeof $kind? enyo.getPath($kind): $kind;
 			this._ajaxOptions = enyo.keys(enyo.AjaxProperties);
 		}
-		
+
 		// ...........................
 		// PROTECTED METHODS
 

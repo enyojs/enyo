@@ -107,7 +107,7 @@
 			without changing location.
 		*/
 		internalOnly: false,
-		
+
 		//*@public
 		/**
 			If the desire is to force the current browser location to a particular
@@ -133,7 +133,7 @@
 			to false to prevent this from happening.
 		*/
 		triggerOnStart: true,
-		
+
 		//*@public
 		/**
 			The router will attempt to track history based on the events
@@ -167,7 +167,7 @@
 
 		//*@protected
 		_current: "",
-		
+
 		//*@protected
 		_history: null,
 
@@ -195,7 +195,7 @@
 				return prepare(this.get("_current"));
 			}
 		}, "_current", {cached: true}),
-		
+
 		//*@public
 		/**
 			Returns the string for the default path (if any otherwise empty
@@ -269,7 +269,7 @@
 				this._handleDefault(path);
 			}
 		},
-		
+
 		//*@public
 		/**
 			If history is enabled and some history exists will attempt
@@ -287,7 +287,7 @@
 				}
 			}
 		},
-		
+
 		//*@public
 		/**
 			To arbitrarily add history. Optional second parameter can be
@@ -306,8 +306,8 @@
 				case "number":
 					if (idx >= 0 && idx < this._history.length) {
 						this._history.splice(idx, 0, location);
-						break;
 					}
+					break;
 				case "boolean":
 					this._history.push(location);
 					break;
@@ -315,7 +315,7 @@
 			}
 			return this;
 		},
-		
+
 		//*@public
 		/**
 			Clears any history the router has currently stored. Returns
@@ -340,7 +340,7 @@
 				this.defaultRoute = route;
 			}
 			else if (token.test(route.path)) {
-				regex = new RegExp(route.path.replace(token, "([a-zA-Z0-9\-]*)"));
+				regex = new RegExp(route.path.replace(token, "([a-zA-Z0-9-]*)"));
 				route.regex = regex;
 				dynamic.push(route);
 			} else {
@@ -496,7 +496,7 @@
 				this.addRoute(route);
 			}
 		},
-		
+
 		//*@protected
 		_currentChanged: function () {
 			if (this.useHistory) {
