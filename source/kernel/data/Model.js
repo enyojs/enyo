@@ -465,11 +465,16 @@
 	});
 
 	//*@public
+	/**
+		The _status_ of an `enyo.Model` will be one of those defined by values in
+		`enyo.Model`. They can be checked explicitly against these statuc globals
+		(e.g. `enyo.Model.ERROR.TYPE`).
+	*/
 	var STATES = {};
 
 	//*@public
 	/**
-
+		There are multiple error states each with a different meaning.
 	*/
 	var ERROR = STATES.ERROR = {};
 
@@ -502,7 +507,8 @@
 
 	//*@public
 	/**
-
+		When the model is attempting to fetch, commit or destroy it will be in a busy
+		state, one of the following.
 	*/
 	var BUSY = STATES.BUSY = {};
 
@@ -525,21 +531,35 @@
 
 	//*@public
 	/**
+		The CLEAN state implies that the model has had values applie to it but they
+		are synchronized with the given `source` and does not need to be committed.
+		This is also true of a model whose values were set during construction or if
+		it had default values defined and applied.
 	*/
 	var CLEAN = STATES.CLEAN =			0x21;
 
 	//*@public
 	/**
+		If a model has been destroyed it will no longer exist in the `enyo.store` or
+		in the remote. Changes will not be tracked.
 	*/
 	var DESTROYED = STATES.DESTROYED =	0x31;
 
 	//*@public
 	/**
+		A model will be in the NEW state if it is recently created and has had no
+		values applied to it that are in the defined schema (either via attributes
+		explicitly or defaults/initial values implicitly). If default values are used
+		during setup or values applied the model will not be in the NEW state.
 	*/
 	var NEW = STATES.NEW =				0x41;
 
 	//*@public
 	/**
+		A model will be in the DIRTY state if it has a defined schema and an attribute
+		of the schema has been modified and it needs to be synchronized. The only
+		exception is if a model is created and uses default values it will not be in
+		the DIRTY state until a modification takes place.
 	*/
 	var DIRTY = STATES.DIRTY =			0x51;
 
