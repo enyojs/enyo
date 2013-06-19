@@ -1,7 +1,9 @@
+/* globals models: true */
+
 (function (enyo) {
-	
+
 	// TODO: This is a work in progress.
-	
+
 	/**
 		A generic kind of model with not schema or defaults.
 	*/
@@ -9,7 +11,7 @@
 		name: "models.Generic",
 		kind: "enyo.Model"
 	});
-	
+
 	/**
 		A generic kind of model with basic schema declaration.
 	*/
@@ -31,7 +33,7 @@
 			}
 		}
 	});
-	
+
 	/**
 		A generic kind of model without a defined schema but
 		having defaults.
@@ -48,7 +50,7 @@
 			age: 45
 		}
 	});
-	
+
 	/**
 		A generic kind of model with a defined schema and defaults.
 	*/
@@ -78,7 +80,7 @@
 			age: 45
 		}
 	});
-	
+
 	/**
 		A generic kind of model with a toOne relationship with another model.
 	*/
@@ -95,7 +97,7 @@
 			}
 		}
 	});
-	
+
 	/**
 		Helper kind.
 	*/
@@ -113,7 +115,7 @@
 			}
 		}
 	});
-	
+
 	/**
 	*/
 	enyo.kind({
@@ -132,7 +134,7 @@
 			}
 		}
 	});
-	
+
 	enyo.kind({
 		name: "models.EmailAddress",
 		kind: "enyo.Model",
@@ -145,7 +147,7 @@
 			}
 		}
 	});
-	
+
 	enyo.kind({
 		name: "models.GenericWithFormatter",
 		kind: "enyo.Model",
@@ -166,8 +168,8 @@
 				}
 			}
 		}
-	})
-	
+	});
+
 	/**
 		A testing source designed to let otherwise asynchronous methods on models
 		to hang so we can test their state.
@@ -179,14 +181,14 @@
 		fetch: function () {},
 		destroy: function () {}
 	});
-	
+
 	/**
 		The `enyo.Model` kind is a very complex type that requires comprehensive
 		tests to ensure stability and reliability. The initial tests are without
 		relations and without tests against working relations and `enyo.Collection`s.
 		While it seems ridiculous to break them down into so many parts it is necessary
 		to be able to isolate possible breaking points.
-	
+
 		1. Create models
 			- no attributes or defaults
 			- with attributes
@@ -198,14 +200,14 @@
 			- defaults defined expect schema to reflect defaults structure
 			- attributes and defaults expect to match attributes
 			- test with defined schema and default values with values supplied
-			  to constructor
+				to constructor
 			- test with defined schema and defaults values with some values supplied
-			  to constructor but not all to ensure defaults are used correctly
+				to constructor but not all to ensure defaults are used correctly
 	*/
 	enyo.kind({
 		name: "ModelTests",
 		kind: enyo.TestSuite,
-		
+
 		/**
 			Test creating a model without any features.
 		*/
@@ -227,7 +229,7 @@
 			new models.GenericDefaults();
 			this.finish();
 		},
-		
+
 		/**
 			Test schema output for undefined schema structure.
 		*/
@@ -346,28 +348,32 @@
 		*/
 		testStatus: function () {
 			var $m = new models.Generic();
-			if (!$m.status == enyo.Model.NEW) {
+			if ($m.status !== enyo.Model.NEW) {
 				return this.finish("Model was expected to have status NEW");
 			}
 			$m = new models.GenericSchema();
-			if (!$m.status == enyo.Model.NEW) {
+			if ($m.status !== enyo.Model.NEW) {
 				return this.finish("Model was expected to have status NEW");
 			}
 			$m = new models.GenericDefaults();
-			if (!$m.status == enyo.Model.NEW) {
-				return this.finish("Model was expected to have status NEW");
+			if ($m.status !== enyo.Model.CLEAN) {
+				return this.finish("Model was expected to have status CLEAN");
+			}
+			$m = new models.GenericDefaults({"firstName": "Sandy"});
+			if ($m.status !== enyo.Model.CLEAN) {
+				return this.finish("Model was expected to have status CLEAN");
 			}
 			$m.set("firstName", "Ted");
-			if (!$m.status == enyo.Model.DIRTY) {
+			if ($m.status !== enyo.Model.DIRTY) {
 				return this.finish("Model was expected to have status DIRTY");
 			}
 			$m.commit();
-			if (!$m.status == enyo.Model.ERROR.SOURCE) {
+			if ($m.status !== enyo.Model.ERROR.SOURCE) {
 				return this.finish("Model was expected to have status ERROR.SOURCE");
 			}
 			new enyo.Store();
 			$m.commit();
-			if (!$m.status == enyo.Model.ERROR.RESPONSE) {
+			if ($m.status !== enyo.Model.ERROR.RESPONSE) {
 				return this.finish("Model was expected to have status ERROR.RESPONSE");
 			}
 			enyo.store = null;
@@ -375,29 +381,29 @@
 			$m = new models.GenericDefaults();
 			$m.set("firstName", "Billy");
 			$m.commit();
-			if (!$m.status == enyo.Model.BUSY.COMMITTING) {
+			if ($m.status !== enyo.Model.BUSY.COMMITTING) {
 				return this.finish("Model was expected to have status BUSY.COMMITTING");
 			}
 			$m.didCommit();
-			if (!$m.status == enyo.Model.CLEAN) {
+			if ($m.status !== enyo.Model.CLEAN) {
 				return this.finish("Model was expected to have status CLEAN after commit");
 			}
 			$m = new models.GenericSchema();
 			$m.fetch();
-			if (!$m.status == enyo.Model.BUSY.FETCHING) {
+			if ($m.status !== enyo.Model.BUSY.FETCHING) {
 				return this.finish("Model was expected to have status BUSY.FETCHING");
 			}
 			$m.didFetch();
-			if (!$m.status == enyo.Model.CLEAN) {
+			if ($m.status !== enyo.Model.CLEAN) {
 				return this.finish("Model was expected to have status CLEAN after fetch");
 			}
 			$m = new models.GenericSchema();
 			$m.destroy();
-			if (!$m.status == enyo.Model.BUSY.DESTROYING) {
+			if ($m.status !== enyo.Model.BUSY.DESTROYING) {
 				return this.finish("Model was expected to have status BUSY.DESTROYING");
 			}
 			$m.didDestroy();
-			if (!$m.status == enyo.Model.DESTROYED) {
+			if ($m.status !== enyo.Model.DESTROYED) {
 				return this.finish("Model was expected to have status DESTROYED");
 			}
 			enyo.store = null;
@@ -407,13 +413,14 @@
 			Test the formatter.
 		*/
 		testFormatter: function () {
-			var $m = new models.GenericWithFormatter();
 			// this test can't be executed due to an outstanding TODO in the `raw`
 			// method for `enyo.Model`
+			// var $m =
+			new models.GenericWithFormatter();
 			this.finish();
 		}
 	});
-	
+
 	enyo.kind({
 		name: "CollectionTests",
 		kind: enyo.TestSuite,
@@ -437,7 +444,7 @@
 				{name: "Joe"},
 				{name: "Joe"},
 				{name: "Jim"}
-			])
+			]);
 			if (!$c.length && $c.length == 11) {
 				return this.finish("Models not added correctly to collection");
 			}
@@ -452,11 +459,11 @@
 			this.finish();
 		}
 	});
-	
+
 	enyo.kind({
 		name: "RelationTests",
 		kind: enyo.TestSuite,
-		
+
 		testToOneRelation: function () {
 			var $m = new models.Person({
 				name: "Jake M.",
@@ -525,6 +532,6 @@
 			}
 			this.finish();
 		}
-	})
-	
+	});
+
 })(enyo);

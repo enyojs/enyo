@@ -1,5 +1,5 @@
 (function (enyo) {
-	
+
 	//*@public
 	/**
 		Takes an object and returns a _Boolean_ `true` | `false` if
@@ -10,7 +10,7 @@
 	};
 	//*@protected
 	var isModel = enyo.isModel;
-	
+
 	//*@protected
 	var relationInitializers = {
 		autoFetch: function (props) {
@@ -54,10 +54,10 @@
 			}
 		}
 	};
-	
+
 	//*@protected
 	var relationKeys = enyo.keys(relationInitializers);
-	
+
 	//*@protected
 	/**
 		Handles common features of all relations.
@@ -68,7 +68,7 @@
 			relationInitializers[fn]($props);
 		});
 	};
-	
+
 	//*@protected
 	/**
 		Executed in the context of the record.
@@ -120,7 +120,7 @@
 			}
 		}
 	};
-	
+
 	//*@protected
 	/**
 		Executed in the context of the record.
@@ -148,11 +148,11 @@
 			}
 		}
 	};
-	
+
 	// TODO: For the resulting documentation to properly organize these methods
 	// in association with enyo.Model we need a more powerful documentation tool,
 	// enyo.Model.toOne, etc. is ugly and cumbersome.
-	
+
 	//*@public
 	enyo.toOne = function (props) {
 		var $props = props;
@@ -161,7 +161,7 @@
 		initRelation($props);
 		return $props;
 	};
-	
+
 	//*@public
 	enyo.toMany = function (props) {
 		var $props = props;
@@ -170,12 +170,12 @@
 		initRelation($props);
 		return $props;
 	};
-	
+
 	//*@protected
 	var defaultFormatter = function (key, value, action, payload) {
 		return value;
 	};
-	
+
 	//*@protected
 	var defaultTypeWrangler = function (attr, key, value, action, payload) {
 		if (attr && attr.type && value) {
@@ -199,19 +199,13 @@
 					}
 				}
 				return value;
-				break;
-				
-				
-				return value instanceof attr.type? value: new attr.type(value);
-				break;
 			case "commit":
 				return value.toString();
-				break;
 			}
 		}
 		return value;
 	};
-	
+
 	//*@protected
 	var initializers = {
 		/**
@@ -262,7 +256,7 @@
 				if (enyo.isString(attr.formatter)) {
 					if (!(attr.formatter = proto[attr.formatter])) {
 						enyo.warn("enyo.Model: attribute defined with formatter but no " +
-							"such formatter was found on the model prototype -> " + 
+							"such formatter was found on the model prototype -> " +
 							key + " in " + proto.kindName + ", using the default formatter");
 					}
 				}
@@ -285,7 +279,7 @@
 			}
 		}
 	};
-	
+
 	//*@protected
 	/**
 		The known and available attribute keys. All others are ignored (removed).
@@ -295,7 +289,7 @@
 		entry there and it will automatically be handled.
 	*/
 	var attributeKeys = enyo.keys(initializers);
-	
+
 	//*@protected
 	var normalizeAttribute = function (proto, key, attr, attrs) {
 		var $prop = attrs[key] = attr? enyo.only(attributeKeys, attr): {};
@@ -305,7 +299,7 @@
 			initializers[fn]($proto, $key, $prop);
 		});
 	};
-	
+
 	//*@protected
 	/**
 		Attempt to do all the necessary setup on our attributes in a single
@@ -327,7 +321,7 @@
 			normalizeAttribute(proto, key, $prop, attrs);
 		}
 	};
-	
+
 	//*@protected
 
 	var initRelations = function () {
@@ -391,7 +385,7 @@
 		// continue the normal component breakdown for the rest
 		enyo.Component.prototype.destroy.call(model);
 	};
-	
+
 	//*@protected
 	/**
 		Initialization routine for all model kinds. Is abstracted such that
@@ -399,10 +393,10 @@
 		infer their own schemas from the data structure they encountered.
 	*/
 	var initModel = function (proto, props) {
-		
+
 		// the prototype of the given constructor
 		var $proto = proto;
-		
+
 		// we break these operations for clarity
 		// first we handle the attributes
 		// if this is a subkind of another model the
@@ -432,7 +426,7 @@
 		// in a single pass
 		normalizeAttributes($proto, $proto._attributes);
 	};
-	
+
 	//*@protected
 	/**
 		When the kind features chain comes across a model definition
@@ -447,17 +441,17 @@
 		// register this kind for use in a store
 		enyo.models.add(ctor);
 		initModel($proto, props.attributes || {});
-		
+
 		// we are no longer concerned with the attributes property of the
 		// properties for this kind and do not wish them to be added to
 		// to the kind body so we remove it
 		delete $proto.attributes;
-		
+
 		// we attempt to auto generate a url when necessary
 		$proto.url = props.url || !$proto.noUrl? ($proto.name || $proto.kindName)
 			.replace(/^(.*)\./g, "").toLowerCase(): "";
 	});
-	
+
 	//*@protected
 	/**
 		Without interfering with the construction chain we need to register
@@ -469,23 +463,23 @@
 			enyo.store.initModel(this);
 		}
 	});
-	
+
 	//*@public
 	var STATES = {};
-	
+
 	//*@public
 	/**
-		
+
 	*/
 	var ERROR = STATES.ERROR = {};
-	
+
 	/**
 		When an attribute with a defined `type` is `set` on a model and fails
 		to be or become (after being run through the `typeWrangler`) the correct
 		`type` the model enters this state.
 	*/
 	ERROR.TYPE =						0x01;
-	
+
 	/**
 		When an error occurs during initialization because the model could not
 		determine the _schema_ for attributes based on their definition or implied
@@ -493,67 +487,67 @@
 		state.
 	*/
 	ERROR.SCHEMA =						0x02;
-	
+
 	/**
 		When a model receives a bad response from the `enyo.Source` for the application
 		it will enter this state.
 	*/
 	ERROR.RESPONSE =					0x03;
-	
+
 	/**
 		When a model attempts to execute an action against a remote and the store does
 		not exist or the source is unavailable it will enter this state.
 	*/
 	ERROR.SOURCE =						0x04;
-	
+
 	//*@public
 	/**
-	
+
 	*/
 	var BUSY = STATES.BUSY = {};
-	
+
 	/**
 		When the model is in the process of fetching data from the `enyo.Source` for the
 		application it will enter this state.
 	*/
 	BUSY.FETCHING		=				0x11;
-	
+
 	/**
 		When the model is in the process of committing data to the `enyo.Source` for the
 		application it will enter this state.
 	*/
 	BUSY.COMMITTING		=				0x12;
-	
+
 	/**
 		When the model is in the process of being destroyed it will be in this state.
 	*/
 	BUSY.DESTROYING		=				0x13;
-	
+
 	//*@public
 	/**
 	*/
 	var CLEAN = STATES.CLEAN =			0x21;
-	
+
 	//*@public
 	/**
 	*/
 	var DESTROYED = STATES.DESTROYED =	0x31;
-	
+
 	//*@public
 	/**
 	*/
 	var NEW = STATES.NEW =				0x41;
-	
+
 	//*@public
 	/**
 	*/
 	var DIRTY = STATES.DIRTY =			0x51;
-	
+
 	//*@public
 	/**
 		The `enyo.Model` _kind_ is, simply put, an object that represents data. It
-		has a common and abstracted interface by which it can be manipulated and 
-		persisted. When used in tandem with `enyo.Collection`, `enyo.Store` and 
+		has a common and abstracted interface by which it can be manipulated and
+		persisted. When used in tandem with `enyo.Collection`, `enyo.Store` and
 		`enyo.Source` it can be a well defined _schema_ representing _objects_ that
 		in your application. They can have an implicitly derived _schema_ or an
 		explicitly defined _schema_ according to your implementation and needs.
@@ -651,7 +645,7 @@
 		([see enyo.Store](#))__
 
 		Relationships between _schemas_ (_models_) are defined by supplying _relation
-		options_ to the 2 known _relation types_ `enyo.toOne` and `enyo.toMany` and. 
+		options_ to the 2 known _relation types_ `enyo.toOne` and `enyo.toMany` and.
 		These _relation types_ are _functions_ that take your
 		_relation options_ and uses them to create an appropriate handler for the
 		`relation`.
@@ -791,10 +785,10 @@
 
 		//*@public
 		name: "enyo.Model",
-		
+
 		//*@public
 		kind: "enyo.MultipleDispatchComponent",
-		
+
 		//*@public
 		/**
 			The defined _schema_ for this _model_. If not defined the _model_
@@ -802,7 +796,7 @@
 			data passed to it at construction time.
 		*/
 		attributes: null,
-		
+
 		//*@public
 		/**
 			The `defaults` hash of _default_ values to be supplied to the
@@ -815,7 +809,7 @@
 			its assigned property__.
 		*/
 		defaults: null,
-		
+
 		//*@public
 		/**
 			The `url` property is a static root for this particular _model_.
@@ -829,14 +823,14 @@
 			name of the _model kind_.
 		*/
 		url: "",
-		
+
 		//*@public
 		/**
 			The `status` of the model is defined by a fixed-set of enumerated
 			values. See documentation for `enyo.Model` states.
 		*/
 		status: NEW,
-		
+
 		//*@public
 		/**
 			A simple _Boolean_ flag indicating whether or not the current _model_
@@ -844,14 +838,14 @@
 			or was _fetched_ this will be `false`.
 		*/
 		isNew: true,
-		
+
 		//*@public
 		/**
 			The _String_ representing which attribute to use as the indexable
 			primary key for this _model_. Default is `id`.
 		*/
 		primaryKey: "id",
-		
+
 		//*@public
 		/**
 			In some cases correct remote calls are generated by some other means
@@ -859,7 +853,7 @@
 			to be set to `true`. Default is `false`.
 		*/
 		noUrl: false,
-		
+
 		//*@public
 		/**
 			The `enyo.Model` will generate its own events. When a defined `attribute`
@@ -867,7 +861,7 @@
 			listeners with an event payload with the `changed` property with the
 			changeset, the `previous` property with the previous values of those in
 			the changeset and the `model` property that is a reference to this _model_.
-		
+
 			When the _model_ is destroyed it will also emit an event with the property
 			`model` that is a reference to this _model_ (even though it will already
 			have been destroyed).
@@ -877,19 +871,19 @@
 			onDestroy: "",
 			onError: ""
 		},
-		
+
 		//*@public
 		handlers: {
 			onChange: "_relationChanged",
 			onModelChanged: "_relationChanged"
 		},
-		
+
 		//*@public
 		statics: STATES,
-		
+
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		_isModel: true,
 		_collections: null,
 		_relations: null,
@@ -916,7 +910,7 @@
 
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		//*@public
 		/**
 			Overload the `filterData` method which takes a single parameter, the
@@ -928,7 +922,7 @@
 		filterData: function (data) {
 			return data;
 		},
-		
+
 		//*@public
 		/**
 			When the `enyo.Source` is constructing the request for this _model_
@@ -943,10 +937,10 @@
 			// that can be modified directly by adding properties or using
 			// enyo.mixin for example
 		},
-		
+
 		// ...........................
 		// ASYNCHRONOUS METHODS
-		
+
 		//*@public
 		/**
 			The model should execute a _commit_ of its current state. The optional
@@ -959,7 +953,7 @@
 			this.set("status", BUSY.COMMITTING);
 			this.exec("commit", $options);
 		},
-		
+
 		//*@public
 		/**
 			The model should execute a _fetch_. The optional _options_ hash can
@@ -970,7 +964,7 @@
 			this.set("status", BUSY.FETCHING);
 			this.exec("fetch", options);
 		},
-		
+
 		//*@public
 		/**
 			The model should execute a _destroy_ that destroys it in the client
@@ -982,7 +976,7 @@
 			this.set("status", BUSY.DESTROYING);
 			this.exec("destroy", options);
 		},
-		
+
 		//*@public
 		/**
 			While this method should not be executed directly it is overloadable
@@ -998,9 +992,9 @@
 				this.set("status", ERROR.SOURCE);
 			}
 		},
-		
+
 		// ............................
-		
+
 		//*@public
 		/**
 			While this method should not be executed directly it is overloadable
@@ -1013,7 +1007,6 @@
 		didFetch: function (options, result, noFilter) {
 			var $data = noFilter? (result || {}): this.filterData(result || {});
 			var $attrs = this._attributes;
-			var $remts = this._remoteKeys;
 			var rem, loc, $prop, $val, $rel, $rels = this._relations;
 			var queue = [], $fn;
 			// ensure that no events or notifications propagate while we are
@@ -1034,7 +1027,7 @@
 				$val = $prop.typeWrangler.call(this, loc, $val, "fetch", $data);
 				// note that validation of the type will take place when
 				// the value is set, not here (single entry point of failure)
-				
+
 				// if this attribute is a relation it needs to be handled
 				// separately and we need to postpone it until we have already
 				// set all of the local props to ensure if one is needed by the
@@ -1043,26 +1036,26 @@
 					queue.push(enyo.bind(this, $rel.handler, loc, $rel, $val));
 					continue;
 				}
-				
+
 				// otherwise we simply set the property directly
 				this.set(loc, $val);
 			}
-			
+
 			// now we need to make sure we are adding all of the extraneous data
 			// (if any) as well from the payload
-			for (rem in $data) { 
+			for (rem in $data) {
 				if (this.isAttribute(rem)) {
 					continue;
 				}
 				this.set(rem, $data[rem]);
 			}
-			
+
 			// now we execute any queued relation handlers
 			while (queue.length) {
 				$fn = queue.pop();
 				$fn();
 			}
-			
+
 			this.set("isNew", false);
 			this.set("status", CLEAN);
 			this.unsilence();
@@ -1072,7 +1065,7 @@
 				options.success(result);
 			}
 		},
-		
+
 		//*@public
 		/**
 			While this method should not be executed directly it is overloadable
@@ -1093,7 +1086,7 @@
 				}
 			}
 		},
-		
+
 		//*@public
 		/**
 			While this method should not be executed directly it is overloadable
@@ -1104,7 +1097,7 @@
 			this.doDestroy({model: this});
 			breakdown(this);
 		},
-		
+
 		//*@public
 		/**
 			While this method should not be executed directly it is overloadable
@@ -1114,7 +1107,7 @@
 		didFail: function (action, options, result) {
 			this.set("status", ERROR.RESPONSE);
 		},
-		
+
 		//*@public
 		/**
 			Returns an _Object_ literal that represents the JSON parsable form
@@ -1123,14 +1116,14 @@
 			to remote keys if they are defined such that it could be used as a
 			payload to the _source_. If no remote keys are defined it defaults to
 			using the local (client) keys.
-		
+
 			// TODO: Needs to use the typeWrangler and formatter
 		*/
 		raw: function (local) {
 			var $attrs = this._attributes;
 			var key, rem, $rel, $irel, $rels = this._relations, $ret = {}, $rkeys = enyo.keys($rels);
 			if (local) {
-				$ret = enyo.only(this._attributeKeys, enyo.except($rkeys), this); 
+				$ret = enyo.only(this._attributeKeys, enyo.except($rkeys), this);
 			} else {
 				for (key in $attrs) {
 					rem = $attrs[key].remoteKey || key;
@@ -1165,7 +1158,7 @@
 		toJSON: function (local) {
 			return enyo.json.stringify(this.raw(local));
 		},
-		
+
 		//*@public
 		/**
 			Returns _Boolean_ `true` or `false` for whether the _prop_
@@ -1174,7 +1167,7 @@
 		isAttribute: function (prop) {
 			return !!~enyo.indexOf(prop, this._attributeKeys);
 		},
-		
+
 		//*@public
 		/**
 			Returns _Boolean_ `true` or `false` for whether the _prop_
@@ -1183,7 +1176,7 @@
 		isRemoteAttribute: function (prop) {
 			return prop in this._remoteKeys;
 		},
-		
+
 		//*@public
 		/**
 			Returns _Boolean_ `true` or `false` for whether _prop_
@@ -1192,7 +1185,7 @@
 		isRelation: function (prop) {
 			return !! (prop in this._relations);
 		},
-		
+
 		//*@public
 		/**
 			Retrieve the previous value for _prop_ (when it exists).
@@ -1200,7 +1193,7 @@
 		previous: function (prop) {
 			return this._previous[prop];
 		},
-		
+
 		//*@public
 		/**
 			This is a specially overloaded version of `enyo.Object.set`. It
@@ -1228,7 +1221,7 @@
 				return this;
 			}
 		},
-		
+
 		//*@public
 		/**
 			Used to set values for a given (and defined) _relation_ for an _attribute_
@@ -1241,7 +1234,7 @@
 			this.set("status", DIRTY);
 			return this;
 		},
-		
+
 		//*@public
 		/**
 			The constructor needs to be able to properly initialize the
@@ -1341,7 +1334,7 @@
 				this.owner.addComponent(this);
 			}
 		},
-		
+
 		// ...........................
 		// PROTECTED METHODS
 
@@ -1393,7 +1386,7 @@
 				});
 			}
 		},
-		
+
 		//*@protected
 		_relationChanged: function (sender, event) {
 			var $m = event.model || sender, key = $m._relationKey;
@@ -1408,7 +1401,7 @@
 				}
 			}
 		},
-		
+
 		//*@protected
 		/**
 			Retrieves the attribute object for a given attribute `property`
@@ -1437,7 +1430,7 @@
 				this._flushChanges();
 			}
 		}, "*"),
-		
+
 		//*@protected
 		_statusChanged: enyo.observer(function (prop, prev, val) {
 			if (val == DIRTY) {

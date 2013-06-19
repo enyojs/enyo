@@ -5,21 +5,21 @@
 		The _enyo.Store_ kind is a singleton (when used) that aids in
 		managing localized data records at runtime. It tracks models and
 		is an interface for interacting with the data schema for any application.
-	
+
 		An _enyo.Store_ must have an _enyo.Source_ to be fully functional. The
 		_store_ is agnostic to how the _source_ retrieves or updates records. It
 		provides an abstraction API for finding particular records. It is always
 		accessible from the globally available _enyo.store_ variable.
-	
+
 		It is instantiated quite simply and would typically be done before instantiating
 		the _enyo.Application_ for your app.
-	
+
 		new enyo.Store({source: "enyo.Source"}); // now available from enyo.store
-	
+
 		NOTE: Much of the public API of _enyo.Store_ needn't be called directly except
 		in very complex remote-backend implementations requiring specialized handling.
 		Most of the API is called by _enyo.Model_ and _enyo.Collection_ for you.
-	
+
 		TODO: Much of the implementation is working but in some cases is either absent
 		or only partially completed. Please bear with us as we complete this moving
 		forward.
@@ -71,19 +71,19 @@
 		bindings: [
 			{from: ".source.busy", to: ".busy"}
 		],
-		
+
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		_records: null,
 		_noApplyMixinDestroy: true,
-		
+
 		// ...........................
 		// COMPUTED PROPERTIES
 
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		uuid: function () {
 			return uuid();
 		},
@@ -100,7 +100,7 @@
 			_options_ parameter of an object literal. These options will be
 			passed to the _queryResolver_ method. This method can be overridden
 			to handle custom implementations for advanced querying needs.
-		
+
 			TODO: not implemented as stated
 		*/
 		find: function (ctor, options) {
@@ -117,7 +117,7 @@
 			locally it will be returned synchronously. The _options_ hash can have
 			a _success_ method, _error_ method and a _params_ object with the properties
 			used to find the correct record.
-		
+
 			TODO: not fully implemented
 		*/
 		findOne: function (ctor, options) {
@@ -134,7 +134,9 @@
 					return $ret;
 				}
 			}
+			/* jshint -W055 */
 			$ret = new ctor($params);
+			/* jshint +W055 */
 			$ret.fetch({success: this.bindSafely(function (options, model) {
 				if (options.success) {
 					options.success(model);
@@ -175,12 +177,12 @@
 			var $options = options? enyo.clone(options): {};
 			$options.success = this.bindSafely("didFetch", model, options);
 			$options.error = this.bindSafely("didFail", "fetch", model, options);
-			
+
 			// if the model is NEW we generate an id for it only
 			if (model.status === "NEW") {
 				return this.fetchId(model, options);
 			}
-			
+
 			this.source.fetch(model, $options);
 		},
 		commit: function (model, options) {
@@ -300,10 +302,10 @@
 		_recordsForType: function (ctor) {
 			return this._records["string" === typeof ctor? ctor: ctor.prototype.kindName];
 		},
-		
+
 		// ...........................
 		// OBSERVERS
-		
+
 		_sourceChanged: enyo.observer(function (prop, prev, val) {
 			if (val) {
 				val.set("owner", this);
