@@ -350,7 +350,7 @@
 	enyo.isArray = Array.isArray || function(it) {
 		return toString.call(it) === "[object Array]";
 	};
-	
+
 	//* Returns true if the argument is an object.
 	enyo.isObject = Object.isObject || function (it) {
 		return toString.call(it) === "[object Object]";
@@ -575,11 +575,11 @@
 		returned object.
 	*/
 	enyo.remap = function (map, obj, pass) {
-		var key, $val, $ret = pass? enyo.clone(obj): {};
-		for (key in map) {
-			val = map[key];
-			if (key in obj) {
-				$ret[val] = obj.get? obj.get(key): obj[key];
+		var $key, $val, $ret = pass? enyo.clone(obj): {};
+		for ($key in map) {
+			$val = map[$key];
+			if ($key in obj) {
+				$ret[$val] = obj.get? obj.get($key): obj[$key];
 			}
 		}
 		return $ret;
