@@ -194,6 +194,7 @@
 		_constructor: function () {
 			// initialize our bindings from observers array
 			this._bindingsFromObservers = [];
+			this.bindings = this.bindings || [];
 			return this.inherited(arguments);	
 		},
 
