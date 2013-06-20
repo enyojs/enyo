@@ -20,5 +20,6 @@ enyo.depends(
 	"Drawer.js",
 	"Table.js",
 	"fullscreen.js",
+	"Audio.js",
 	"data"
 );
