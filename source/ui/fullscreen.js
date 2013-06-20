@@ -1,4 +1,7 @@
 enyo.fullscreen = {
+	
+	//* @protected
+	
 	//* Reference to the current fs control
 	fullscreenControl: null,
 	//* Reference to the current fs element (fallback for platforms w/o native support)
@@ -23,39 +26,21 @@ enyo.fullscreen = {
 		("mozCancelFullScreen" in document) ? "mozCancelFullScreen" :
 		("webkitCancelFullScreen" in document) ? "webkitCancelFullScreen" :
 		null,
+	
+	//* @public
+	
 	//* Return true if platform supports all of the fullscreen API
 	nativeSupport: function() {
-		return (this.elementAccessor && this.requestAccessor && this.cancelAccessor);
+		return (this.elementAccessor !== null && this.requestAccessor !== null && this.cancelAccessor !== null);
 	},
 	//* Normalize _getFullscreenElement()_
 	getFullscreenElement: function() {
 		return (this.nativeSupport()) ? document[this.elementAccessor] : this.fullscreenElement;
 	},
-	//* Fallback support for setting fullscreen element (done by browser on platforms with native support)
-	setFullscreenElement: function(inNode) {
-		this.fullscreenElement = inNode;
-	},
 	//* Return current fs control
 	getFullscreenControl: function() {
 		return this.fullscreenControl;
 	},
-	//* Set current fs control
-	setFullscreenControl: function(inControl) {
-		var fsControl = this.getFullscreenControl();
-
-		if (fsControl) {
-			fsControl.setFullscreen(false);
-		}
-
-		if (inControl) {
-			inControl.setFullscreen(true);
-		}
-
-		this.fullscreenControl = inControl;
-	},
-
-	//// Request Fullscreen ////
-
 	//* Normalize _requestFullscreen()_
 	requestFullscreen: function(inControl) {
 		if (this.getFullscreenControl() || !(inControl.hasNode())) {
@@ -73,9 +58,32 @@ enyo.fullscreen = {
 
 		return true;
 	},
+	//* Normalize _cancelFullscreen()_
+	cancelFullscreen: function() {
+		if (this.nativeSupport()) {
+			document[this.cancelAccessor]();
+		} else {
+			this.fallbackCancelFullscreen();
+		}
+	},
+	
+	//* @protected
+	
+	//* Fallback support for setting fullscreen element (done by browser on platforms with native support)
+	setFullscreenElement: function(inNode) {
+		this.fullscreenElement = inNode;
+	},
+	//* Set current fs control
+	setFullscreenControl: function(inControl) {
+		this.fullscreenControl = inControl;
+	},
 	//* Fallback fullscreen request for platforms without fullscreen support
 	fallbackRequestFullscreen: function() {
 		var control = this.requestor;
+		
+		if (!control) {
+			return;
+		}
 
 		// Get before node to allow us to exit floating layer to the proper position
 		control.prevAddBefore = control.parent.controlAtIndex(control.indexInContainer() + 1);
@@ -91,18 +99,6 @@ enyo.fullscreen = {
 
 		this.setFullscreenControl(control);
 		this.setFullscreenElement(control.hasNode());
-		control.setFullscreen(true);
-	},
-
-	//// Cancel Fullscreen ////
-
-	//* Normalize _cancelFullscreen()_
-	cancelFullscreen: function() {
-		if (this.nativeSupport()) {
-			document[this.cancelAccessor]();
-		} else {
-			this.fallbackCancelFullscreen();
-		}
 	},
 	//* Fallback cancel fullscreen for platforms without fullscreen support
 	fallbackCancelFullscreen: function() {
@@ -110,6 +106,10 @@ enyo.fullscreen = {
 			beforeNode,
 			parentNode
 		;
+
+		if (!control) {
+			return;
+		}
 
 		// Find beforeNode based on _this.addBefore_ and _this.prevAddBefore_
 		beforeNode = (control.prevAddBefore) ? control.prevAddBefore.hasNode() : null;
@@ -128,11 +128,7 @@ enyo.fullscreen = {
 
 		this.setFullscreenControl(null);
 		this.setFullscreenElement(null);
-		control.setFullscreen(false);
 	},
-
-	//// Detect Native Fullscreen Changes ////
-
 	//* Listen for fs change event and broadcast as normalized event
 	detectFullscreenChangeEvent: function() {
 		this.setFullscreenControl(this.requestor);
@@ -143,9 +139,20 @@ enyo.fullscreen = {
 	}
 };
 
+//* Normalize platform-specific fs change events
 enyo.ready(function() {
-	//* Normalize platform-specific fs change events
 	document.addEventListener("webkitfullscreenchange", enyo.bind(enyo.fullscreen, "detectFullscreenChangeEvent"), false);
 	document.addEventListener("mozfullscreenchange",    enyo.bind(enyo.fullscreen, "detectFullscreenChangeEvent"), false);
 	document.addEventListener("fullscreenchange",       enyo.bind(enyo.fullscreen, "detectFullscreenChangeEvent"), false);
 });
+
+//* If this platform doesn't have native support for fullscreen, add an escape handler to mimic native behavior
+if(!enyo.fullscreen.nativeSupport()) {
+	enyo.dispatcher.features.push(
+		function(e) {
+			if (e.type === "keydown" && e.keyCode === 27) {
+				enyo.fullscreen.cancelFullscreen();
+			}
+		}
+	);
+}

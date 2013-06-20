@@ -15,7 +15,7 @@ enyo.kind({
 		var targetControl = this.$.sampleContent;
 		
 		// If _targetControl_ is currently fullscreen, cancel fullscreen
-		if (targetControl.getFullscreen()) {
+		if (targetControl.isFullscreen()) {
 			targetControl.cancelFullscreen();
 		
 		// If _targetControl_ is not currently fullscreen, request fullscreen
