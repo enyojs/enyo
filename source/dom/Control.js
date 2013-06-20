@@ -64,7 +64,9 @@ enyo.kind({
 		*/
 		fit: null,
 		//* Used by Ares design editor for design objects
-		isContainer: false
+		isContainer: false,
+		//* If true, this control is currently displayed as fullscreen
+		fullscreen: false
 	},
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
@@ -840,6 +842,27 @@ enyo.kind({
 	//
 	fitChanged: function(inOld) {
 		this.parent.reflow();
+	},
+	//* Send request to make this control fullscreen
+	requestFullscreen: function() {
+		if (!this.hasNode()) {
+			return false;
+		}
+
+		if (enyo.fullscreen.requestFullscreen(this)) {
+			return true;
+		}
+
+		return false;
+	},
+	//* Send request to take this control out of fullscreen
+	cancelFullscreen: function() {
+		if (this.hasNode() && this.hasNode() === enyo.fullscreen.getFullscreenElement()) {
+			enyo.fullscreen.cancelFullscreen();
+			return true;
+		}
+
+		return false;
 	},
 	//
 	//
