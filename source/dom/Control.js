@@ -841,6 +841,31 @@ enyo.kind({
 	fitChanged: function(inOld) {
 		this.parent.reflow();
 	},
+	//* Return true if this control is the current fullscreen control
+	isFullscreen: function() {
+		return (this.hasNode() && this.hasNode() === enyo.fullscreen.getFullscreenElement());
+	},
+	//* Send request to make this control fullscreen
+	requestFullscreen: function() {
+		if (!this.hasNode()) {
+			return false;
+		}
+
+		if (enyo.fullscreen.requestFullscreen(this)) {
+			return true;
+		}
+
+		return false;
+	},
+	//* Send request to take this control out of fullscreen
+	cancelFullscreen: function() {
+		if (this.isFullscreen()) {
+			enyo.fullscreen.cancelFullscreen();
+			return true;
+		}
+
+		return false;
+	},
 	//
 	//
 	statics: {

@@ -14,5 +14,7 @@ enyo.depends(
 	"GestureSample.css",
 	"GestureSample.js",
 	"DrawerSample.css",
-	"DrawerSample.js"
+	"DrawerSample.js",
+	"FullscreenSample.css",
+	"FullscreenSample.js"
 );
