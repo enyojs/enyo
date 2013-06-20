@@ -98,3 +98,36 @@ body .enyo-fit {
 	-o-transform: translateZ(0);
 	transform: translateZ(0);
 }
+
+/* Fullscreen CSS */
+:-webkit-full-screen {
+	width: 100% !important;
+	height: 100% !important;
+}
+:-moz-full-screen {
+	width: 100% !important;
+	height: 100% !important;
+}
+:-ms-full-screen {
+	width: 100% !important;
+	height: 100% !important;
+}
+:-o-full-screen {
+	width: 100% !important;
+	height: 100% !important;
+}
+:full-screen {
+	width: 100% !important;
+	height: 100% !important;
+}
+/* Fallback Fullscreen CSS */
+body .enyo-fullscreen {
+	position: absolute !important;
+	left: 0 !important;
+	top: 0 !important;
+	right: 0 !important;
+	bottom: 0 !important;
+	width: 100% !important;
+	height: 100% !important;
+	box-sizing: border-box !important;
+}
