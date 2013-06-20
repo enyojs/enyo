@@ -11,6 +11,5 @@ enyo.depends(
 	"modal.js",
 	"gesture.js",
 	"drag.js",
-	"transition.js",
-	"fullscreen.js"
+	"transition.js"
 );
