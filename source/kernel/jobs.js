@@ -1,5 +1,4 @@
 /**
-
 	_enyo.Jobs_ are a mechanism to queue tasks (ie, functions) and invoke
 	them sorted by priority. It allows to programmatically block the
 	execution of the current job stack by setting a priority level (aka "run
@@ -13,8 +12,6 @@
 	_enyo.Jobs_ is not normally directly used in application code, the
 	<a href="#enyo.Component::startJob">Component</a> job methods should be
 	used instead.
-
-	Currently queued job cannot be stopped or deleted.
 */
 enyo.singleton({
 	name: "enyo.jobs",
@@ -22,9 +19,10 @@ enyo.singleton({
 		priorityLevel: 0
 	},
 	// Priority  1   2   3   4   5   6   7   8   9  10
-	jobs: [     [], [], [], [], [], [], [], [], [], [] ],
-	priorities: {},
-	magicWords: {
+	_jobs: [     [], [], [], [], [], [], [], [], [], [] ],
+	_priorities: {},
+	_namedJobs: {},
+	_magicWords: {
 		"low": 3,
 		"normal": 5,
 		"high": 7
@@ -34,15 +32,16 @@ enyo.singleton({
 		than this jobs priority, the job gets deferred until the job level
 		drops. If the priority level is lower, the job is run immediately.
 	*/
-	add: function(inPriority, inJob){
-		if(enyo.isFunction(inPriority)){
-			inJob = inPriority;
-			inPriority = 5;
-		}
+	add: function(inJob, inPriority, inName){
+		inPriority = inPriority || 5;
 
 		// magic words: low = 3, normal = 5, high = 7
-		if(enyo.isString(inPriority)){
-			inPriority = this.magicWords[inPriority];
+		inPriority = enyo.isString(inPriority) ? this._magicWords[inPriority] : inPriority;
+
+		// if a job of the same name exists, remove it first (replace it)
+		if(inName){
+			this.remove(inName);
+			this._namedJobs[inName] = inPriority;
 		}
 
 		// if the job is of higher priority than the current priority level than
@@ -50,7 +49,20 @@ enyo.singleton({
 		if(inPriority >= this.priorityLevel){
 			inJob();
 		} else {
-			this.jobs[inPriority - 1].push(inJob);
+			this._jobs[inPriority - 1].push({fkt: inJob, name: inName});
+		}
+	},
+	/**
+	 * Remove a job from the job queue
+	 */
+	remove: function(inJobName){
+		var jobs = this._jobs[this._namedJobs[inJobName] - 1];
+		if(jobs){
+			for(var j = jobs.length-1; j >= 0; j--){
+				if(jobs[j].name === inJobName){
+					return jobs.splice(j, 1);
+				}
+			}
 		}
 	},
 	/**
@@ -60,7 +72,7 @@ enyo.singleton({
 		the priority is removed (aka unregistered).
 	*/
 	registerPriority: function(inPriority, inId){
-		this.priorities[inId] = inPriority;
+		this._priorities[inId] = inPriority;
 		this.setPriorityLevel( Math.max(inPriority, this.priorityLevel) ); 
 	},
 	/**
@@ -72,10 +84,10 @@ enyo.singleton({
 		var highestPriority = 0;
 
 		// remove priority
-		delete this.priorities[inId];
+		delete this._priorities[inId];
 
 		// find new highest current priority
-		for( var priority in this.priorities ){
+		for( var priority in this._priorities ){
 			highestPriority = Math.max(highestPriority, priority);
 		}
 
@@ -94,17 +106,17 @@ enyo.singleton({
 		// find the job of highest priority above the current priority level
 		// and remove from the job list
 		for(var i = 9; i >= this.priorityLevel; i--){
-			if(this.jobs[i].length){
-				job = this.jobs[i].shift();
+			if(this._jobs[i].length){
+				job = this._jobs[i].shift();
 				break;
 			}
 		}
 
 		// allow other events to pass through
 		if(job){
-			job();
+			job.fkt();
+			delete this._namedJobs[job.name];
 			setTimeout(enyo.bind(this, "_doJob"), 10);
 		}
 	}
 });
-

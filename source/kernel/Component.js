@@ -528,22 +528,18 @@ enyo.kind({
 		// stop any existing jobs with same name
 		this.stopJob(inJobName);
 		this.__jobs[inJobName] = setTimeout(this.bindSafely(function() {
-			this.stopJob(inJobName);
-			enyo.jobs.add(inPriority, this.bindSafely(function(){
-				// call "inJob" with this bound to the component.
-				inJob.call(this);
-			}));
+			enyo.jobs.add(this.bindSafely(inJob), inPriority, inJobName);
 		}), inWait);
 	},
 	/**
-		Stops a component-specific job before it has been activated. A job
-		that has been deferred due to a low priority cannot be stopped.
+		Stops a component-specific job before it has been activated.
 	*/
 	stopJob: function(inJobName) {
 		if (this.__jobs[inJobName]) {
 			clearTimeout(this.__jobs[inJobName]);
 			delete this.__jobs[inJobName];
 		}
+		enyo.jobs.remove(inJobName);
 	},
 	/**
 		Execute the method _inJob_ immediately, then prevent

@@ -52,6 +52,21 @@ enyo.kind({
 			finish();
 		}, 30);
 	},
+	testStopDeferredJob: function() {
+		var finish = this.bindSafely("finish");
+		var c = new enyo.Component();
+		c.startJob("testStopJob", function() {
+			finish("job wasn't stopped");
+		}, 10);
+
+		enyo.jobs.registerPriority(8, "high");
+
+		setTimeout(function() {
+			c.stopJob("testStopJob");
+			enyo.jobs.unregisterPriority("high");
+			finish();
+		}, 20);
+	},
 	testDestroyJob: function() {
 		var finish = this.bindSafely("finish");
 		var c = new enyo.Component();
