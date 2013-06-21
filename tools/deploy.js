@@ -226,6 +226,10 @@ if(shell.test('-d', libSrcDir)) {
 }
 
 function deployLib(lib) {
+	if (opt.mapfrom && opt.mapfrom.indexOf("lib/" + lib) >= 0) {
+		// Don't deploy libraries that are loaded from elsewhere
+		return;
+	}
 	var libOutdir = path.join(outDir, 'lib', lib);
 	// load & execute sub-'deploy.js'
 	try {

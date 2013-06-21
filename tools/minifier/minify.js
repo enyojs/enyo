@@ -38,17 +38,6 @@
 		return inPath.split(sep);
 	}
 
-	function buildPathBlock(loader) {
-		var p$ = [];
-		for (var i=0, p; (p=loader.packages[i]); i++) {
-			if (p.name.indexOf("-") == -1) {
-				p$.push('"' + p.name + '": "' + p.folder + '"');
-			}
-		}
-		p = p$.join(', ');
-		return !p ? "" : "// minifier: path aliases\nenyo.path.addPaths({" + p + "});\n";
-	}
-
 	function concatCss(sheets, doneCB) {
 		w("");
 		var blob = "";
@@ -115,17 +104,8 @@
 		w("");
 		var blob = "";
 		for (var i=0, script; (script=scripts[i]); i++) {
-			// if (typeof opt.alias === 'undefined' || opt.alias) {
-			// 	w("* inserting path aliases");
-			// 	blob += buildPathBlock(loader);
-			// 	opt.alias = false;
-			// }
 			w(script);
 			blob += "\n// " + script + "\n" + compressJsFile(script) + "\n";
-			// if (opt.alias == m.rawPath) {
-			// 	w("* inserting path aliases");
-			// 	blob += buildPathBlock(loader);
-			// }
 		}
 		return blob;
 	};
@@ -194,11 +174,15 @@
 		}
 		processNextChunk(function() {
 			if (topDepends) {
-				var js = "enyo.depends(";
-				for (var i in topDepends) {
-					js = js + (i>0 ? "," : "") + "\n\t\"" + topDepends[i] + "\"";
+				var js = "";
+				// Add path aliases to the mapped sources
+				for (var i=0; i<opt.mapfrom.length; i++) {
+					js = js + "enyo.path.addPath(\"" + opt.mapfrom[i] + "\", \"" + opt.mapto[i] + "\");\n";
 				}
-				js = js + "\n);";
+				// Override the default rule that $lib lives next to $enyo, since enyo may be remote
+				js = js + "enyo.path.addPath(\"lib\", \"lib\");\n";
+				// Add depends for all of the top-level files
+				js = js + "enyo.depends(\n\t\"" + topDepends.join("\",\n\t\"") + "\"\n);";
 				fs.writeFileSync(output + ".js", js, "utf8");
 				fs.writeFileSync(output + ".css", "/* CSS loaded via enyo.depends() call in " + output + ".js */", "utf8");
 			}

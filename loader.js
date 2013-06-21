@@ -4,11 +4,16 @@
 
 	enyo.pathResolverFactory = function() {
 		this.paths = {};
+		this.pathNames = [];
 	};
 
 	enyo.pathResolverFactory.prototype = {
 		addPath: function(inName, inPath) {
 			this.paths[inName] = inPath;
+			this.pathNames.push(inName);
+			this.pathNames.sort(function(a, b) {
+				return b.length - a.length;
+			});
 			return inPath;
 		},
 		addPaths: function(inPaths) {
@@ -21,8 +26,6 @@
 		includeTrailingSlash: function(inPath) {
 			return (inPath && inPath.slice(-1) !== "/") ? inPath + "/" : inPath;
 		},
-		// match $name
-		rewritePattern: /\$([^\/\\]*)(\/)?/g,
 		// replace macros of the form $pathname with the mapped value of paths.pathname
 		rewrite: function (inPath) {
 			var working, its = this.includeTrailingSlash, paths = this.paths;
@@ -33,7 +36,10 @@
 			var result = inPath;
 			do {
 				working = false;
-				result = result.replace(this.rewritePattern, fn);
+				for (var i=0; i<this.pathNames.length; i++) {
+					var regex = new RegExp("\\$(" + this.pathNames[i] + ")(\\/)?", "g");
+					result = result.replace(regex, fn);
+				}
 			} while (working);
 			return result;
 		}
@@ -252,43 +258,8 @@
 				folder = parts.join("/");
 				folder = (folder ? folder + "/" : "");
 				manifest = folder + manifest;
-				//
-				// build friendly aliasing:
-				//
-				for (i=parts.length-1; i >= 0; i--) {
-					if (parts[i] == "source") {
-						parts.splice(i, 1);
-						break;
-					}
-				}
-				target = parts.join("/");
-				//
-				// portable aliasing:
-				//
-				// packages that are rooted at a folder named "enyo" or "lib" do not
-				// include that root path in their alias
-				//
-				//	remove */lib or */enyo prefix
-				//
-				// e.g. foo/bar/baz/lib/zot -> zot package
-				//
-				for (i=parts.length-1; (p=parts[i]); i--) {
-					if (p == "lib" || p == "enyo") {
-						parts = parts.slice(i+1);
-						break;
-					}
-				}
-				// remove ".." and "."
-				for (i=parts.length-1; (p=parts[i]); i--) {
-					if (p == ".." || p == ".") {
-						parts.splice(i, 1);
-					}
-				}
-				//
-				alias = parts.join("-");
 			}
 			return {
-				alias: alias,
 				target: target,
 				folder: folder,
 				manifest: manifest
