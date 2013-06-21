@@ -528,8 +528,8 @@ enyo.kind({
 		// stop any existing jobs with same name
 		this.stopJob(inJobName);
 		this.__jobs[inJobName] = setTimeout(this.bindSafely(function() {
+			this.stopJob(inJobName);
 			enyo.jobs.add(inPriority, this.bindSafely(function(){
-				this.stopJob(inJobName);
 				// call "inJob" with this bound to the component.
 				inJob.call(this);
 			}));
