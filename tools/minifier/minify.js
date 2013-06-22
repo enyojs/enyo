@@ -64,7 +64,7 @@
 				}
 				return "url(" + relPath + ")";
 			});
-			blob += "\n/* " + sheet + " */\n\n" + code + "\n";
+			blob += "\n/* " + path.relative(process.cwd(), sheet) + " */\n\n" + code + "\n";
 		};
 		// Pops one sheet off the sheets[] array, reads (and parses if less), and then
 		// recurses again from the async callback until no sheets left, then calls doneCB
@@ -105,7 +105,7 @@
 		var blob = "";
 		for (var i=0, script; (script=scripts[i]); i++) {
 			w(script);
-			blob += "\n// " + script + "\n" + compressJsFile(script) + "\n";
+			blob += "\n// " + path.relative(process.cwd(), script) + "\n" + compressJsFile(script) + "\n";
 		}
 		return blob;
 	};
