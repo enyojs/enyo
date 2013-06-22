@@ -184,7 +184,7 @@
 				// Add depends for all of the top-level files
 				js = js + "enyo.depends(\n\t\"" + topDepends.join("\",\n\t\"") + "\"\n);";
 				fs.writeFileSync(output + ".js", js, "utf8");
-				fs.writeFileSync(output + ".css", "/* CSS loaded via enyo.depends() call in " + output + ".js */", "utf8");
+				fs.writeFileSync(output + ".css", "/* CSS loaded via enyo.depends() call in " + path.relative(process.cwd(), output) + ".js */", "utf8");
 			}
 
 			w("");

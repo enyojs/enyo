@@ -239,7 +239,7 @@
 			//
 			// Note: manifest file name must end in "package.js"
 			//
-			var alias = '', target = '', folder = '', manifest = 'package.js';
+			var alias = '', folder = '', manifest = 'package.js';
 			// convert back slashes to forward slashes, remove double slashes, split on slash
 			var parts = inPath.replace(/\\/g, "/").replace(/\/\//g, "/").replace(/:\//, "://").split("/");
 			var i, p;
@@ -260,7 +260,6 @@
 				manifest = folder + manifest;
 			}
 			return {
-				target: target,
 				folder: folder,
 				manifest: manifest
 			};
@@ -269,35 +268,14 @@
 			var parts = this.decodePackagePath(inPath);
 			// cache manifest path
 			this.manifest = parts.manifest;
-			// cache package info for named packages
-			if (parts.alias) {
-				// debug only
-				/*
-				var old = this.pathResolver.paths[parts.name];
-				if (old && old != parts.folder) {
-					this.verbose && console.warn("mapping alias [" + parts.name + "] to [" + parts.folder + "] replacing [" + old + "]");
-				}
-				this.verbose && console.log("mapping alias [" + parts.name + "] to [" + parts.folder + "]");
-				*/
-				//
-				// create a path alias for this package
-				this.pathResolver.addPath(parts.alias, parts.target);
-				//
-				// cache current name
-				this.packageName = parts.alias;
-				// cache package information
-				this.packages.push({
-					name: parts.alias,
-					folder: parts.folder
-				});
-			}
-			// cache current folder
-			this.packageFolder = parts.folder;
 		},
 		requirePackage: function(inPath, inBlock) {
 			// cache the interrupted packageFolder
 			inBlock.folder = this.packageFolder;
-			this.aliasPackage(inPath);
+			// set new manifest/packageFolder
+			var parts = this.decodePackagePath(inPath)
+			this.manifest = parts.manifest;
+			this.packageFolder = parts.folder;
 			// cache the name of the package 'inBlock' is loading now
 			inBlock.packageName = this.packageName;
 			// push inBlock on the continuation stack
