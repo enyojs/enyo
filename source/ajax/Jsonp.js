@@ -56,7 +56,7 @@ enyo.kind({
 		*/
 		overrideCallback: null
 	},
-	statics: {
+	protectedStatics: {
 		// Counter to allow creation of unique name for each JSONP request
 		nextCallbackID: 0
 	},

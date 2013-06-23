@@ -300,8 +300,12 @@ enyo.kind.features.push(function(ctor, props) {
 		enyo.mixin(ctor, props.statics);
 		delete ctor.prototype.statics;
 	}
+	// also support protectedStatics which won't interfere with defer
+	if (props.protectedStatics) {
+		enyo.mixin(ctor, props.protectedStatics);
+		delete ctor.prototype.protectedStatics;
+	}
 	// allow superclass customization
-
 	var base = ctor.prototype.base;
 	while (base) {
 		base.subclass(ctor, props);

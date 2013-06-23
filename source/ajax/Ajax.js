@@ -246,7 +246,9 @@ enyo.kind({
 				}
 			}
 			return pairs.join("&");
-		},
+		}
+	},
+	protectedStatics: {
 		parseResponseHeaders: function(xhr) {
 			var headers = {};
 			var headersStr = [];

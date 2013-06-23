@@ -41,7 +41,7 @@ enyo.kind({
 	*/
 	addBefore: undefined,
 	//* @protected
-	statics: {
+	protectedStatics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
 	},
 

@@ -29,7 +29,7 @@ enyo.kind({
 	//* Set to true to focus this control when it is rendered.
 	defaultFocus: false,
 	//* @protected
-	statics: {
+	protectedStatics: {
 		osInfo: [
 			{os: "android", version: 3},
 			{os: "ios", version: 5}

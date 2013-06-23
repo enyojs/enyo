@@ -70,7 +70,7 @@ enyo.kind({
 		owner: null
 	},
 	//* @protected
-	statics: {
+	protectedStatics: {
 		// for memoizing kind-prefix names in nameComponent
 		_kindPrefixi: {},
 		// for naming the unnamed
