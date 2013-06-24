@@ -55,9 +55,8 @@ enyo.kind({
 	},
 	// test the various configurations of enyo.mixin
 	testMixin: function () {
-		var $t, $s;
+		var $t = {}, $s = {one:"one",two:"two"};
 		// test normal setup
-		$t = {}, $s = {one:"one",two:"two"};
 		enyo.mixin($t, $s);
 		if (enyo.union(enyo.keys($t),enyo.keys($s)).length) {
 			return this.finish("Expected keys to be the same");
