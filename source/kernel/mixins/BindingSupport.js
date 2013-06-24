@@ -37,6 +37,9 @@
 
 		//*@protected
 		_bindingsFromObservers: null,
+		
+		//*@protected
+		_didSetupBindings: false,
 
 		// ...........................
 		// COMPUTED PROPERTIES
@@ -212,6 +215,9 @@
 			for (; idx < len; ++idx) {
 				this.binding($bindings[idx]);
 			}
+			// in case something needs to check to see if bindings have
+			// already initialized
+			this._didSetupBindings = true;
 		},
 
 		//*@protected
