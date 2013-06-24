@@ -118,6 +118,10 @@
 		path = preparePath(path);
 		// find the initial period if any
 		idx = path.indexOf(".");
+		
+		if (path.length == 0) {
+			return cur;
+		}
 
 		// if there isn't any try and find the path relative to our
 		// current context, this is the fast path
