@@ -99,7 +99,7 @@ enyo.kind({
 		// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
 		this.addClass(this.kindClasses);
 		this.addClass(this.classes);
-		this.initProps(["id", "content", "src"]);
+		this.initProps(["id", "content", "src", "model"]);
 	},
 	destroy: function() {
 		this.removeNodeFromDom();
@@ -138,7 +138,11 @@ enyo.kind({
 	},
 	modelChanged: function () {
 		if (this.model && enyo.isModel(this.model)) {
-			this.rebuildBindings();
+			// if bindings haven't been initialized yet then this
+			// would be unnecessary
+			if (this._didSetupBindings) {
+				this.rebuildBindings();
+			}
 		}
 	},
 	// modify components we create ourselves
