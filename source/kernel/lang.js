@@ -109,8 +109,9 @@
 				path = path.path;
 			}
 			// otherwise it was an invalid request
+			// but we return the object that was passed in
 			else {
-				return undefined;
+				return path;
 			}
 		}
 		// clear any leading periods
@@ -350,9 +351,40 @@
 		return toString.call(it) === "[object Array]";
 	};
 
+	//* Returns true if the argument is an object.
+	enyo.isObject = Object.isObject || function (it) {
+		return toString.call(it) === "[object Object]";
+	};
+
 	//* Returns true if the argument is true.
 	enyo.isTrue = function(it) {
 		return !(it === "false" || it === false || it === 0 || it === null || it === undefined);
+	};
+
+	//*@public
+	/**
+		Returns the index of any entry in _array_ whose _callback_ returns
+		a truthy value. Can pass an optional _context_ for the _callback_. Each _callback_
+		will receive 3 parameters, the _value_ at _index_ and an immutable copy
+		of the original array. If no _callback_ returns true or _array_ is not
+		an Array will return false.
+	*/
+	enyo.find = function (array, callback, context) {
+		var $source = enyo.isArray(array) && array;
+		var $ctx = context || enyo.global;
+		var $fn = callback;
+		var idx = 0, len, $copy, ret;
+		if ($source && $fn && enyo.isFunction($fn)) {
+			$copy = enyo.clone($source);
+			len = $source.length;
+			for (; idx < len; ++idx) {
+				ret = $fn.call($ctx, $source[idx], idx, $copy);
+				if (!! ret) {
+					return idx;
+				}
+			}
+		}
+		return false;
 	};
 
 	//* Returns the index of the element in _inArray_ that is equivalent
@@ -537,19 +569,20 @@
 		mapping of the key from the first object to the key from the second
 		object is added to a result object, which is eventually returned. In
 		other words, the returned object maps the named properties of the
-		first object to the named properties of the second object.
+		first object to the named properties of the second object. The optional
+		third parameter is a boolean designating whether to pass unknown key/value
+		pairs through to the new object. If true, those keys will exist on the
+		returned object.
 	*/
-	enyo.remap = function (map, obj) {
-		var ret = {};
-		var key;
-		var val;
-		for (key in map) {
-			val = map[key];
-			if (key in obj) {
-				ret[val] = obj[key];
+	enyo.remap = function (map, obj, pass) {
+		var $key, $val, $ret = pass? enyo.clone(obj): {};
+		for ($key in map) {
+			$val = map[$key];
+			if ($key in obj) {
+				$ret[$val] = obj.get? obj.get($key): obj[$key];
 			}
 		}
-		return ret;
+		return $ret;
 	};
 
 	//*@public
@@ -765,26 +798,58 @@
 
 	//* @public
 	/**
-		Copies custom properties from the _source_ object to the _target_ object.
-		If _target_ is falsy, an object is created.
-		If _source_ is falsy, the target or empty object is returned.
+		Will take a variety of options to ultimately mix a set of properties
+		from objects into single object. All configurations accept a boolean as
+		the final parameter to indicate whether or not to ignore _truthy_/_existing_
+		values on any _objects_ prior.
+	
+		If `target` exists and is an object will be the base for all properties
+		and the returned value. If the parameter is used but is _falsy_ a new
+		object will be created and returned. If no such parameter exists the first
+		parameter must be an array of objects and a new object will be created as
+		the `target`.
+	
+		The `source` parameter may be an object or an array of objects. If no `target`
+		parameter is provided `source` must be an array of objects.
+	
+		The `ignore` parameter is optional and if `true` any properties of `source`
+		will not be copied to `target` if there already exists a value for that
+		property.
 	*/
-	enyo.mixin = function(target, source) {
-		target = target || {};
-		if (source) {
-			var name, s;
-			for (name in source) {
-				// the "empty" conditional avoids copying properties in "source"
-				// inherited from Object.prototype. For example, if target has a custom
-				// toString() method, don't overwrite it with the toString() method
-				// that source inherited from Object.prototype
-				s = source[name];
-				if (empty[name] !== s) {
-					target[name] = s;
+	enyo.mixin = function(target, source, ignore) {
+		// the return object/target
+		var $t;
+		// the source or sources to use
+		var $s;
+		// whether or not to override properties that exist in source
+		// the index in cases where source is an array the name for
+		// properties and the helper value for avoiding copying defaults
+		var i, idx, l, n, s;
+		if (enyo.isArray(target)) {
+			$t = {};
+			$s = target;
+			i = true == source? true: false;
+		} else {
+			$t = target || {};
+			$s = source;
+			i = ignore;
+		}
+		
+		if (enyo.isArray($s)) {
+			for (idx=0, l=$s.length; idx<l; ++idx) {
+				enyo.mixin($t, $s[idx], i);
+			}
+		} else {
+			for (n in $s) {
+				s = $s[n];
+				if (empty[n] !== s) {
+					if (!i || !$t[n]) {
+						$t[n] = s;
+					}
 				}
 			}
 		}
-		return target;
+		return $t;
 	};
 
 	//* @public

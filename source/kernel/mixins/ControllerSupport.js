@@ -13,7 +13,7 @@ enyo.createMixin({
 	// PROTECTED PROPERTIES
 
 	//*@protected
-	_supports_controllers: true,
+	_supportsControllers: true,
 
 	// ...........................
 	// COMPUTED PROPERTIES
@@ -42,7 +42,7 @@ enyo.createMixin({
 	},
 
 	//*@protected
-	_controller_changed: enyo.observer(function (property, previous, value) {
+	_controllerChanged: enyo.observer(function (property, previous, value) {
 		if (previous && value && previous === value) {
 			// seems to be the same controller we already had
 			return;
@@ -80,7 +80,7 @@ enyo.createMixin({
 	dispatchEvent: function (name, event, sender) {
 		// if we have a controller attempt to dispatch the event there
 		// and if it returns true, stop the dispatch
-		if (this.controller && this.controller._is_controller) {
+		if (this.controller && this.controller._isController) {
 			if (this.controller.dispatchEvent(name, event, sender)) {
 				return true;
 			}

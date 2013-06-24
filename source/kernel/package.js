@@ -11,6 +11,7 @@ enyo.depends(
 	"UiComponent.js",
 	"Layout.js",
 	"Signals.js",
+	"MultipleDispatchComponent.js",
 	"Controller.js",
 	"Router.js",
 	"ViewController.js",

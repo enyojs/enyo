@@ -18,7 +18,7 @@
 		var len = list.length;
 		var idx = 0;
 		for (; idx < len; ++idx) {
-			list[idx]._hash_changed(hash);
+			list[idx]._hashChanged(hash);
 		}
 	};
 
@@ -50,7 +50,7 @@
 		of the browser location and will not force a reload of the current
 		page.
 
-		Routes may be defined in several ways and may be added at	startup or
+		Routes may be defined in several ways and may be added at startup or
 		added programmatically at a later time.
 
 		A route is a declarative hash with the following structure:
@@ -81,8 +81,7 @@
 		will be mapped to an object if possible.
 
 		Note that, currently, only letters and numbers are supported in
-		dynamic routes.  Also, because we support IE8, we do not currently
-		support _pushState_.
+		dynamic routes.
 	*/
 	enyo.kind({
 
@@ -111,6 +110,14 @@
 
 		//*@public
 		/**
+			If the desire is to force the current browser location to a particular
+			path on startup set this value to true. Will be ignored if _triggerOnStart_
+			is false.
+		*/
+		defaultPathOnStart: false,
+
+		//*@public
+		/**
 			The _defaultRoute_ should have the same structure as a normal
 			route (hash). It may be arbitrarily assigned to this property
 			or mixed into the routes array with a special _default: true_
@@ -126,6 +133,13 @@
 			to false to prevent this from happening.
 		*/
 		triggerOnStart: true,
+
+		//*@public
+		/**
+			The router will attempt to track history based on the events
+			that have been generated through it.
+		*/
+		useHistory: false,
 
 		//*@public
 		/**
@@ -146,13 +160,16 @@
 		kind: "enyo.Controller",
 
 		//*@protected
-		_static_routes: null,
+		_staticRoutes: null,
 
 		//*@protected
-		_dynamic_routes: null,
+		_dynamicRoutes: null,
 
 		//*@protected
 		_current: "",
+
+		//*@protected
+		_history: null,
 
 		// ...........................
 		// COMPUTED PROPERTIES
@@ -170,7 +187,7 @@
 			if (loc) {
 				loc = prepare(loc);
 				if (!this.internalOnly) {
-					window.location.hash = loc;
+					enyo.asyncMethod(this, "trigger", {location: loc, change: true});
 				} else {
 					this.set("_current", loc);
 				}
@@ -178,6 +195,15 @@
 				return prepare(this.get("_current"));
 			}
 		}, "_current", {cached: true}),
+
+		//*@public
+		/**
+			Returns the string for the default path (if any otherwise empty
+			string).
+		*/
+		defaultPath: enyo.computed(function () {
+			return this.defaultRoute? this.defaultRoute.path: "";
+		}),
 
 		// ...........................
 		// PUBLIC METHODS
@@ -207,13 +233,18 @@
 			var loc = params.location;
 			var global = params.global;
 			var change = params.change;
+			var current = this.get("location");
 			if (change) {
-				window.location.hash = loc;
+				if (current !== loc) {
+					window.location.hash = loc;
+				} else {
+					this._hashChanged(loc);
+				}
 			} else {
 				if (global) {
 					hashDidChange(loc);
 				} else {
-					this._hash_changed(loc);
+					this._hashChanged(loc);
 				}
 			}
 		},
@@ -227,37 +258,95 @@
 		*/
 		handle: function (path) {
 			// fast track is to check against static routes first
-			if (this._handle_static(path)) {
+			if (this._handleStatic(path)) {
 				return;
 			}
 			// then we check against dynamic paths in this simple scheme
-			else if (this._handle_dynamic(path)) {
+			else if (this._handleDynamic(path)) {
 				/* do nothing */
 			}
 			else {
-				this._handle_default(path);
+				this._handleDefault(path);
 			}
+		},
+
+		//*@public
+		/**
+			If history is enabled and some history exists will attempt
+			to revert the current known location to the previous one in
+			the stack.
+		*/
+		back: function () {
+			if (this.useHistory) {
+				if (this._history.length >= 2) {
+					// we shift the current location off the stack
+					this._history.shift();
+					// we shift the requested location off the stack
+					// but reapply it
+					this.set("location", this._history.shift());
+				}
+			}
+		},
+
+		//*@public
+		/**
+			To arbitrarily add history. Optional second parameter can be
+			a boolean true to place the location at the lowest (first) position
+			of the stack or an integer indicating its exact location in the
+			stack. If the index is out of bounds it will be added at the lowest
+			position (same as boolean true for second parameter). Returns callee
+			for chaining.
+		*/
+		addHistory: function (location, idx) {
+			if (this.useHistory) {
+				switch (typeof idx) {
+				case "undefined":
+					this._history.unshift(location);
+					break;
+				case "number":
+					if (idx >= 0 && idx < this._history.length) {
+						this._history.splice(idx, 0, location);
+					}
+					break;
+				case "boolean":
+					this._history.push(location);
+					break;
+				}
+			}
+			return this;
+		},
+
+		//*@public
+		/**
+			Clears any history the router has currently stored. Returns
+			callee for chaining.
+		*/
+		clearHistory: function () {
+			this._history = [];
+			return this;
 		},
 
 		//*@public
 		/**
 			Can be used to programmatically add routes to the router
 			where _route_ is a hash as described by the _routes_ array.
+			Returns callee for chaining.
 		*/
 		addRoute: function (route) {
-			var statics = this._static_routes;
-			var dynamic = this._dynamic_routes;
+			var statics = this._staticRoutes;
+			var dynamic = this._dynamicRoutes;
 			var regex;
 			if (true === route['default']) {
 				this.defaultRoute = route;
 			}
 			else if (token.test(route.path)) {
-				regex = new RegExp(route.path.replace(token, "([a-zA-Z0-9]*)"));
+				regex = new RegExp(route.path.replace(token, "([a-zA-Z0-9-]*)"));
 				route.regex = regex;
 				dynamic.push(route);
 			} else {
 				statics[route.path] = route;
 			}
+			return this;
 		},
 
 		// ...........................
@@ -265,8 +354,10 @@
 
 		//*@protected
 		constructor: function () {
-			this._static_routes = {};
-			this._dynamic_routes = [];
+			this._staticRoutes = {};
+			this._dynamicRoutes = [];
+			this.routes = this.routes || [];
+			this._history = this._history || [];
 			this.inherited(arguments);
 		},
 
@@ -275,7 +366,7 @@
 			this.inherited(arguments);
 			// make sure to initialize our routes prior
 			// to registering for events
-			this._setup_routes();
+			this._setupRoutes();
 			// make sure we're up to date
 			this.set("_current", prepare(window.location.hash));
 			// ok, register for events
@@ -283,7 +374,11 @@
 			// ok, if we need to go ahead and route our current
 			// location, lets do it
 			if (this.triggerOnStart) {
-				this.trigger();
+				if (this.defaultPathOnStart) {
+					this.trigger({change: true, location: this.get("defaultPath")});
+				} else {
+					this.trigger();
+				}
 			}
 		},
 
@@ -297,49 +392,42 @@
 		},
 
 		//*@protected
-		_hash_changed: function (hash) {
-			hash = (function (prop) {
-				if ("string" !== typeof hash) {
+		_hashChanged: function (hash) {
+			var $hash = (function (prop) {
+				if (!enyo.isString(prop)) {
 					// some browsers do not support the newUrl property
 					// so we're forced to look at the current hash
-					prop = hash.newUrl || window.location.hash;
+					prop = prop.newUrl || window.location.hash;
 				}
 				return prepare(prop);
-			})(hash || {});
+			})(hash);
 			if (this.listening) {
-				this.set("_current", hash);
-				this.handle(hash);
+				this.set("_current", $hash);
+				this.handle($hash);
 			}
 		},
 
 		//*@protected
-		_exec_handler: function (context, handler, args, route) {
-			var fn = handler;
+		_execHandler: function (context, handler, args, route) {
+			var $fn = handler;
+			var $ctx = "string" === typeof context? enyo.getPath.call(this, context): context || this;
 			// if the handler is defined as a string, we need to determine if
 			// it is relative to the router, relative to the context, or a named
 			// function in the global scope
 			if ("string" === typeof handler) {
-				if (context) {
-					if ("string" === typeof context) {
-						context = enyo.getPath(context);
-					}
-				}
-				else {
-					context = this;
-				}
 				// first check to see if the handler is a named property
 				// on the router; otherwise, try the context itself
-				fn = this[handler] || context[handler];
-				if ("function" === typeof fn) {
+				$fn = this[handler] || $ctx[handler];
+				if ("function" === typeof $fn) {
 					// in case we actually found it, let's not go hunting
 					// next time
-					route.handler = fn;
-					route.context = context;
+					route.handler = $fn;
+					route.context = $ctx;
 				}
 			}
 			// if we have an actual handler, let's execute it now
-			if (fn && "function" === typeof fn) {
-				fn.apply(context, args);
+			if ($fn && "function" === typeof $fn) {
+				$fn.apply($ctx, args);
 				return true;
 			}
 			// otherwise we couldn't determine what we were supposed to
@@ -348,22 +436,22 @@
 		},
 
 		//*@protected
-		_handle_static: function (path) {
-			var statics = this._static_routes;
+		_handleStatic: function (path) {
+			var statics = this._staticRoutes;
 			var route;
 			var handler;
 			var context;
 			if ((route = statics[path])) {
 				handler = route.handler;
 				context = route.context;
-				return this._exec_handler(context, handler, [path], route);
+				return this._execHandler(context, handler, [path], route);
 			}
 			return false;
 		},
 
 		//*@protected
-		_handle_dynamic: function (path) {
-			var dynamic = this._dynamic_routes;
+		_handleDynamic: function (path) {
+			var dynamic = this._dynamicRoutes;
 			var regex;
 			var route;
 			var handler;
@@ -380,22 +468,22 @@
 					matches = matches.slice(1);
 					handler = route.handler;
 					context = route.context;
-					return this._exec_handler(context, handler, matches, route);
+					return this._execHandler(context, handler, matches, route);
 				}
 			}
 			return false;
 		},
 
 		//*@protected
-		_handle_default: function (path) {
+		_handleDefault: function (path) {
 			var route = this.defaultRoute || {};
 			var context = route.context;
 			var handler = route.handler;
-			return this._exec_handler(context, handler, [path], route);
+			return this._execHandler(context, handler, [path], route);
 		},
 
 		//*@protected
-		_setup_routes: function () {
+		_setupRoutes: function () {
 			var routes = this.routes;
 			var idx = 0;
 			var len = routes.length;
@@ -406,6 +494,13 @@
 					continue;
 				}
 				this.addRoute(route);
+			}
+		},
+
+		//*@protected
+		_currentChanged: function () {
+			if (this.useHistory) {
+				this._history.unshift(this.get("location"));
 			}
 		}
 

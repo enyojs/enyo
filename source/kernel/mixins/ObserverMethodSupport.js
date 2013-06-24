@@ -13,7 +13,7 @@
 			// this is a necessary assert
 			throw "enyo.observer: invalid observer, must have a function";
 		}
-		fn._is_observer = true;
+		fn._isObserver = true;
 		fn.events = (fn.events? fn.events: []).concat(events);
 		return fn;
 	};
@@ -38,7 +38,7 @@
 		// it can call this.inherited as usual but we need to remove the
 		// previous version of the method from observing the notifications
 		// so it won't be handled twice
-		if (fn._inherited && fn._inherited._is_observer) {
+		if (fn._inherited && fn._inherited._isObserver) {
 			removeObserver(base, property, fn._inherited);
 		}
 		// if a context is provided for the listener, we bind it
@@ -115,6 +115,7 @@
 		}
 		// reset our observers hash
 		base._observers = {};
+		base._notificationQueue = {};
 		return base;
 	};
 
@@ -141,7 +142,7 @@
 				if (!enyo.exists(fn) || "function" !== typeof fn) {
 					continue;
 				}
-				if (false === base._allow_notifications) {
+				if (false === base._allowNotifications) {
 					base.addNotificationToQueue(property, fn, [property, prev, value]);
 				} else {
 					fn.call(base, property, prev, value);
@@ -150,7 +151,7 @@
 		}
 
 		if (enyo.exists(base[ch]) && "function" === typeof base[ch]) {
-			if (false === base._allow_notifications) {
+			if (false === base._allowNotifications) {
 				base.addNotificationToQueue(property, base[ch], [prev, value]);
 			} else {
 				base[ch].call(base, prev, value);
@@ -164,10 +165,10 @@
 		Used internally when a notification is queued.
 	*/
 	var addNotificationToQueue = function (base, property, fn, params) {
-		var queue = base._notification_queue || (base._notification_queue = {});
+		var queue = base._notificationQueue || (base._notificationQueue = {});
 		var handlers = queue[property];
 		params = params || [];
-		if (false === base._allow_notification_queue) {
+		if (false === base._allowNotificationQueue) {
 			return;
 		}
 		if (!enyo.exists(handlers)) {
@@ -203,8 +204,8 @@
 		until the counter reaches 0.
 	*/
 	var stopNotifications = function (base, disableQueue) {
-		base._allow_notifications = false;
-		base._stop_count += 1;
+		base._allowNotifications = false;
+		base._stopCount += 1;
 		if (true === disableQueue) {
 			base.disableNotificationQueue();
 		}
@@ -223,11 +224,11 @@
 		will reenable the notification queue if it was disabled.
 	*/
 	var startNotifications = function (base, enableQueue) {
-		if (0 !== base._stop_count) {
-			--base._stop_count;
+		if (0 !== base._stopCount) {
+			--base._stopCount;
 		}
-		if (0 === base._stop_count) {
-			base._allow_notifications = true;
+		if (0 === base._stopCount) {
+			base._allowNotifications = true;
 			base.flushNotifications();
 		}
 		if (true === enableQueue) {
@@ -242,7 +243,7 @@
 		no effect until they are disabled.
 	*/
 	var enableNotificationQueue = function (base) {
-		base._allow_notification_queue = true;
+		base._allowNotificationQueue = true;
 	};
 
 	//*@protected
@@ -250,15 +251,15 @@
 		Used internally; flushes any notifications that have been queued.
 	*/
 	var flushNotifications = function (base) {
-		if (0 !== base._stop_count) {
+		if (0 !== base._stopCount) {
 			return;
 		}
-		var queue = base._notification_queue;
+		var queue = base._notificationQueue;
 		var fn;
 		var property;
 		var handlers;
 		var params;
-		if (!enyo.exists(queue) || false === base._allow_notification_queue) {
+		if (!enyo.exists(queue) || false === base._allowNotificationQueue) {
 			return;
 		}
 		for (property in queue) {
@@ -289,20 +290,20 @@
 		the queue will be cleared (not flushed).
 	*/
 	var disableNotificationQueue = function (base) {
-		base._allow_notification_queue = false;
-		base._notification_queue = {};
+		base._allowNotificationQueue = false;
+		base._notificationQueue = {};
 	};
 
 	//*@protected
-	var _find_observers = function (proto, props, kind) {
-		proto._observers = kind? _observer_clone(proto._observers || {}): proto._observers || {};
+	var _findObservers = function (proto, props, kind) {
+		proto._observers = kind? _observerClone(proto._observers || {}): proto._observers || {};
 		var addPropObserver = function (event, fn) {
 			addObserver(proto, event, fn);
 		};
 		var prop;
 		var idx;
 		for (prop in props) {
-			if ("function" === typeof props[prop] && true === props[prop]._is_observer) {
+			if ("function" === typeof props[prop] && true === props[prop]._isObserver) {
 				for (idx = 0; idx < props[prop].events.length; ++idx) {
 					// key note here, we use the function on the proto here
 					// because it might have been proxied already
@@ -316,19 +317,19 @@
 	/**
 		Strictly for internal use; copies observer hashes for kinds.
 	*/
-	var _observer_clone = function ($observed, recursing) {
-		var array_copy = function (orig) {
+	var _observerClone = function ($observed, recursing) {
+		var arrayCopy = function (orig) {
 			return [].concat(orig);
 		};
 		var copy = {};
 		for (var prop in $observed) {
-			copy[prop] = array_copy($observed[prop]);
+			copy[prop] = arrayCopy($observed[prop]);
 		}
 		return copy;
 	};
 
 	enyo.kind.features.push(function (ctor, props) {
-		_find_observers(ctor.prototype, props, true);
+		_findObservers(ctor.prototype, props, true);
 	});
 
 	//*@protected
@@ -336,7 +337,7 @@
 		Adds a special handler for mixins to be aware of how to handle
 		observer properties of a kind.
 	*/
-	enyo.mixins.features.push(_find_observers);
+	enyo.mixins.features.push(_findObservers);
 
 	//*@protected
 	enyo.createMixin({
@@ -350,19 +351,19 @@
 		// PROTECTED PROPERTIES
 
 		//*@protected
-		_supports_observers: true,
+		_supportsObservers: true,
 
 		//*@protected
-		_stop_count: 0,
+		_stopCount: 0,
 
 		//*@protected
-		_notification_queue: null,
+		_notificationQueue: null,
 
 		//*@protected
-		_allow_notifications: true,
+		_allowNotifications: true,
 
 		//*@protected
-		_allow_notification_queue: true,
+		_allowNotificationQueue: true,
 
 		// ...........................
 		// PUBLIC METHODS
@@ -494,11 +495,12 @@
 		},
 
 		//*@protected
-		create: function () {
+		_constructor: function () {
 			// it is unfortunate, but we cannot share the observers block we inherited
 			// from the kind since as an instance we can modify it at runtime so we're
 			// forced to deep copy it
-			this._observers = _observer_clone(this._observers);
+			this._observers = _observerClone(this._observers);
+			this.inherited(arguments);
 		},
 
 		//*protected
