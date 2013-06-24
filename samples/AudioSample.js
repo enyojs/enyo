@@ -45,10 +45,10 @@ enyo.kind({
 		this.$.console.setContent("Audio paused");
 	},
 	togglePlay: function(inSender, inResponse) {
-		if (this.$.audio.isPlaying) {
-			this.pauseAudio();
-		} else {
+		if (this.$.audio.getPaused()) {
 			this.playAudio();
+		} else {
+			this.pauseAudio();
 		}
 	},
 	ended: function(inSender, inResponse) {
