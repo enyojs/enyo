@@ -370,7 +370,7 @@ enyo.kind({
 
 		if (this[name]) {
 			if ("function" === typeof this[name]) {
-				if (this._is_controller || (delegate && this === delegate.owner)) {
+				if (this._isController || (delegate && this === delegate.owner)) {
 					return this.dispatch(name, event, sender);
 				}
 			} else {

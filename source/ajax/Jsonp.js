@@ -119,7 +119,7 @@ enyo.kind({
 	buildUrl: function(inParams, inCallbackFunctionName) {
 		var parts = this.url.split("?");
 		var uri = parts.shift() || "";
-		var args = parts.join("?").split("&");
+		var args = parts.length? parts.join("?").split("&"): [];
 		//
 		var bodyArgs = this.bodyArgsFromParams(inParams, inCallbackFunctionName);
 		args.push(bodyArgs);

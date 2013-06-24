@@ -22,7 +22,7 @@ enyo.createMixin({
 	// PROTECTED PROPERTIES
 
 	//*@protected
-	_supports_applications: true,
+	_supportsApplications: true,
 
 	// ...........................
 	// PROTECTED METHODS
@@ -41,7 +41,7 @@ enyo.createMixin({
 
 	//*@protected
 	destroy: function () {
-		delete this.app;
+		this.app = undefined;
 	}
 
 });

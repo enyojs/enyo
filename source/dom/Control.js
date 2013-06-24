@@ -64,7 +64,8 @@ enyo.kind({
 		*/
 		fit: null,
 		//* Used by Ares design editor for design objects
-		isContainer: false
+		isContainer: false,
+		model: null
 	},
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
@@ -72,7 +73,7 @@ enyo.kind({
 	},
 	mixins: ["enyo.ControllerSupport"],
 	//*@protected
-	_is_view: true,
+	_isView: true,
 	//* The default kind for controls created inside this control that don't
 	//* specify their own kind
 	defaultKind: "Control",
@@ -98,7 +99,7 @@ enyo.kind({
 		// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
 		this.addClass(this.kindClasses);
 		this.addClass(this.classes);
-		this.initProps(["id", "content", "src"]);
+		this.initProps(["id", "content", "src", "model"]);
 	},
 	destroy: function() {
 		this.removeNodeFromDom();
@@ -134,6 +135,15 @@ enyo.kind({
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
 		this.addClass(this.classes);
+	},
+	modelChanged: function () {
+		if (this.model && enyo.isModel(this.model)) {
+			// if bindings haven't been initialized yet then this
+			// would be unnecessary
+			if (this._didSetupBindings) {
+				this.rebuildBindings();
+			}
+		}
 	},
 	// modify components we create ourselves
 	/*

@@ -27,7 +27,7 @@
 		transform: null,
 		oneWay: true,
 		twoWay: false,
-		autoSync: false,
+		autoSync: true,
 		debug: false
 	};
 
@@ -36,14 +36,14 @@
 		if (!this._supports_autobindings) {
 			return;
 		}
-		if (!this.controller || !(this.controller instanceof enyo.Controller)) {
-			return;
-		}
+		//if (!this.controller || !(this.controller instanceof enyo.Controller)) {
+		//	return;
+		//}
 		var $bindings = this.get("_auto_bindings");
 		var controls = this.get("_bindable_controls");
 		var idx = 0;
 		var len = controls.length;
-		var controller = this.controller;
+		var bindSource = this.bindSource || this.model;
 		var control;
 		var props;
 		if ($bindings && $bindings.length) {
@@ -52,7 +52,7 @@
 		for (; idx < len; ++idx) {
 			control = controls[idx];
 			props = this._bind_properties(control);
-			this._auto_binding(props, {source: controller, target: control});
+			this._auto_binding(props, {source: bindSource, target: control});
 		}
 	};
 
@@ -99,7 +99,7 @@
 
 		//*@protected
 		_binding_defaults: enyo.computed(function () {
-			var ctor = this.get("_binding_constructor");
+			var ctor = this.get("_bindingConstructor");
 			var keys = enyo.keys(defaults);
 			if (enyo.Binding !== ctor) {
 				return enyo.mixin(enyo.clone(defaults),
@@ -123,6 +123,7 @@
 		_auto_binding: function () {
 			var bind = this.binding.apply(this, arguments);
 			bind._auto_binding_id = enyo.uid("_auto_binding");
+			return bind;
 		},
 
 		//*@protected
@@ -130,20 +131,26 @@
 			var props = this.get("_binding_defaults");
 			return enyo.mixin(enyo.clone(props), enyo.remap(remapped, control));
 		},
+		
+		//*@protected
+		create: function () {
+			var prop = this.bindSource || "model";
+			this.addObserver(prop, _setup_auto_bindings, this);
+		}
 
 		// ...........................
 		// OBSERVERS
 
 		//*@protected
-		_controller_changed: enyo.observer(function () {
-			// we are intentionally overriding controller supports implementation
-			// of this observer so we can call this.inherited, this observer
-			// removed the previous observer
-			this.inherited(arguments);
-			// now that the controller should be set (if possible) we go ahead
-			// and setup any auto bindings
-			_setup_auto_bindings.call(this);
-		}, "controller")
+		//_controllerChanged: enyo.observer(function () {
+		//	// we are intentionally overriding controller supports implementation
+		//	// of this observer so we can call this.inherited, this observer
+		//	// removed the previous observer
+		//	this.inherited(arguments);
+		//	// now that the controller should be set (if possible) we go ahead
+		//	// and setup any auto bindings
+		//	_setup_auto_bindings.call(this);
+		//}, "controller")
 
 	});
 
