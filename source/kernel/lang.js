@@ -119,7 +119,7 @@
 		// find the initial period if any
 		idx = path.indexOf(".");
 		
-		if (path.length == 0) {
+		if (path.length === 0) {
 			return cur;
 		}
 
@@ -832,7 +832,7 @@
 		if (enyo.isArray(target)) {
 			$t = {};
 			$s = target;
-			i = true == source? true: false;
+			i = true === source? true: false;
 		} else {
 			$t = target || {};
 			$s = source;
