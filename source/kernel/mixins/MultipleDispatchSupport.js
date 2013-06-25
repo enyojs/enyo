@@ -19,17 +19,17 @@ enyo.createMixin({
 	// PROTECTED PROPERTIES
 
 	//*@protected
-	_supports_multiple_dispatch: true,
+	_supportsMultipleDispatch: true,
 
 	//*@protected
-	_dispatch_targets: null,
+	_dispatchTargets: null,
 
 	//*@protected
 	/**
 		A boolean flag used internally to communicate how to
 		handle requests to bubble events
 	*/
-	_default_dispatch: false,
+	_defaultDispatch: false,
 
 	//*@protected
 	/**
@@ -37,7 +37,7 @@ enyo.createMixin({
 		All controllers support multiple dispatch and also bubbling to a single
 		_owner_ under certain circumstances.
 	*/
-	_default_target: null,
+	_defaultTarget: null,
 
 	// ...........................
 	// COMPUTED PROPERTIES
@@ -50,10 +50,10 @@ enyo.createMixin({
 		// if we have a valid dispatch target and default dispatching enabled,
 		// we go head and return that object; otherwise, nothing, so it will
 		// not propagate an event
-		if (this._default_target && this._default_dispatch) {
-			return this._default_target;
+		if (this._defaultTarget && this._defaultDispatch) {
+			return this._defaultTarget;
 		}
-	}, "_default_target", "_default_dispatch", {cached: true}),
+	}, "_defaultTarget", "_defaultDispatch", {cached: true}),
 
 	// ...........................
 	// PUBLIC METHODS
@@ -64,7 +64,7 @@ enyo.createMixin({
 		that supports the event API.
 	*/
 	addDispatchTarget: function (target) {
-		var $dist = this._dispatch_targets;
+		var $dist = this._dispatchTargets;
 		// ensure that we have not already registered the target
 		// and that it is not ourselves or our owner if we have one
 		if (target && this !== target && !~enyo.indexOf(target, $dist)
@@ -81,7 +81,7 @@ enyo.createMixin({
 		targets, it is then removed.
 	*/
 	removeDispatchTarget: function (target) {
-		var $dist = this._dispatch_targets;
+		var $dist = this._dispatchTargets;
 		var idx = enyo.indexOf(target, $dist);
 		if (-1 !== idx) {
 			$dist.splice(idx, 1);
@@ -103,12 +103,12 @@ enyo.createMixin({
 		// dispatch property to true to allow events to propagate to this
 		// object
 		if (this.owner && true === (this.owner instanceof enyo.Component)) {
-			this.set("_default_target", this.owner);
-			this.set("_default_dispatch", true);
+			this.set("_defaultTarget", this.owner);
+			this.set("_defaultDispatch", true);
 		} else {
 			// otherwise we either don't have an owner or they cannot
 			// accept events so we remove our bubble target
-			this.set("_default_target", null);
+			this.set("_defaultTarget", null);
 		}
 	},
 
@@ -136,11 +136,11 @@ enyo.createMixin({
 		// twice if it is not explicitly handled and has a truthy value
 		// returned somewhere to stop propagation
 
-		if (this._default_dispatch) {
+		if (this._defaultDispatch) {
 			this.inherited(arguments);
 		}
 
-		targets = this._dispatch_targets;
+		targets = this._dispatchTargets;
 		enyo.forEach(enyo.clone(targets), function (target) {
 			if (target) {
 				if (target.destroyed) {
@@ -162,10 +162,10 @@ enyo.createMixin({
 
 	//*@protected
 	bubbleDelegation: function (delegate, prop, name, event, sender) {
-		if (this._default_dispatch) {
+		if (this._defaultDispatch) {
 			this.inherited(arguments);
 		}
-		var targets = this.get("_dispatch_targets");
+		var targets = this.get("_dispatchTargets");
 		enyo.forEach(enyo.clone(targets), function (target) {
 			if (target) {
 				if (target.destroyed) {
@@ -178,8 +178,14 @@ enyo.createMixin({
 	},
 
 	//*@protected
-	create: function () {
-		this._dispatch_targets = [];
+	_constructor: function () {
+		this._dispatchTargets = [];
+		return this.inherited(arguments);
+	},
+	
+	//*@protected
+	destroy: function () {
+		this._dispatchTargets = [];
 	}
 
 	// ...........................

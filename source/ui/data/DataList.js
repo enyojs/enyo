@@ -3,24 +3,6 @@
 	//*@public
 	/**
 	*/
-	enyo.createMixin({
-
-		// ...........................
-		// PUBLIC PROPERTIES
-
-		//*@public
-		name: "enyo.DataListRowSupport",
-
-		//*@public
-		classes: "enyo-data-list-row"
-
-	});
-
-	//*@public
-	/**
-		NOTE: The list is selection-aware but the magic happens in the
-		rows and their interaction with the dataset.
-	*/
 	enyo.kind({
 
 		// ...........................
@@ -43,16 +25,17 @@
 		scrollerOptions: null,
 
 		//*@public
-		enableSelection: true,
-
-		//*@public
-		enableMultipleSelection: false,
-
-		//*@public
 		statics: {
 			defaultScrollerOptions: {
 				preventScrollPropagation: false
 			}
+		},
+		
+		//*@public
+		handlers: {
+			onScrollStart: "_didScrollStart",
+			onScroll: "_didScroll",
+			onScrollEnd: "_didScrollEnd"
 		},
 
 		// ...........................
@@ -63,58 +46,55 @@
 
 		//*@protected
 		classes: "enyo-data-list",
-
+		
 		//*@protected
-		_container: {
+		containerOptions: {
 			name: "scroller",
 			kind: "enyo.Scroller",
 			classes: "enyo-fill enyo-data-list-scroller",
-			components: [{
-				name: "upperBuffer"
-			}, {
-				name: "rows",
-				classes: "enyo-list-rows-container"
-			}, {
-				name: "lowerBuffer"
-			}]
+			components: [
+				{name: "upperBuffer"},
+				{name: "rows", classes: "enyo-list-rows-container"},
+				{name: "lowerBuffer"}
+			]
 		},
-
-		// ...........................
-		// COMPUTED PROPERTIES
 
 		// ...........................
 		// PUBLIC METHODS
-
+		
+		//*@public
+		adjustComponentProps: function (props) {
+			this.inherited(arguments);
+			props.list = this;
+		},
+		
 		// ...........................
 		// PROTECTED METHODS
-
+		
 		//*@protected
-		initComponents: function () {
-			// we need the base class to complete its normal
-			// init routine
-			this.inherited(arguments);
-			// now we can safely grab a reference to our new row-kind
-			var $kind = this._child_kind;
-			// we need to add selection support to the row kind if the
-			// option is set
-			if (false === enyo.hasMixin($kind, "enyo.SelectionRowSupport")) {
-				enyo.applyMixin("enyo.SelectionRowSupport", $kind);
-			}
-			// we also need to ensure that it has specific properties that
-			// every row needs to have such as the classes required
-			if (false === enyo.hasMixin($kind, "enyo.DataListRowSupport")) {
-				enyo.applyMixin("enyo.DataListRowSupport", $kind);
-			}
-		},
-
-		//*@protected
-		_init_container: function () {
-			var $container = this.get("_container");
-			var $options = this.get("scrollerOptions");
+		_initContainer: function () {
+			var $container = this.get("containerOptions");
+			var $options = this.get("scrollerOptions") || {};
 			var $defaults = enyo.DataList.defaultScrollerOptions;
+			// enyo.mixin($container, enyo.mixin($options, $defaults, true), true);
 			enyo.mixin($container, enyo.mixin($defaults, $options));
 			this.inherited(arguments);
-		}
+		},
+		
+		//_didScroll: function () {
+		//	this.log();
+		//	return true;
+		//},
+		//
+		//_didScrollStart: function () {
+		//	this.log();
+		//	return true;
+		//},
+		//
+		//_didScrollEnd: function () {
+		//	this.log();
+		//	return true;
+		//}
 
 	});
 

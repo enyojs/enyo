@@ -13,13 +13,7 @@ enyo.kind({
 	name: "enyo.Controller",
 
 	//*@public
-	kind: "enyo.Component",
-
-
-	//*@protected
-	mixins: [
-		"enyo.MultipleDispatchSupport"
-	],
+	kind: "enyo.MultipleDispatchComponent",
 
 	//*@public
 	/**
@@ -33,7 +27,7 @@ enyo.kind({
 	// PROTECTED PROPERTIES
 
 	//*@protected
-	_is_controller: true
+	_isController: true
 
 	// ...........................
 	// COMPUTED PROPERTIES
