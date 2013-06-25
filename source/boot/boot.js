@@ -52,12 +52,13 @@ enyo.machine = {
 	script: function(inSrc, onLoad, onError) {
 		/* jshint evil: true */
 		if (!enyo.runtimeLoading) {
-			document.write('<scri' + 'pt src="' + inSrc + '"' + (onLoad ? ' onload="' + onLoad + '"' : '') + (onError ? ' onerror="' + onError + '"' : '') + '></scri' + 'pt>');
+			document.write('<scri' + 'pt  charset="utf-8" src="' + inSrc + '"' + (onLoad ? ' onload="' + onLoad + '"' : '') + (onError ? ' onerror="' + onError + '"' : '') + '></scri' + 'pt>');
 		} else {
 			var script = document.createElement('script');
 			script.src = inSrc;
 			script.onload = onLoad;
 			script.onerror = onError;
+			script.charset = "utf-8";
 			document.getElementsByTagName('head')[0].appendChild(script);
 		}
 	},
