@@ -15,7 +15,7 @@ enyo.machine = {
 			}
 		}
 		var link;
-		if (enyo.runtimeLoading || isLess || typeof MSApp !== "undefined") {
+		if (enyo.runtimeLoading || isLess) {
 			link = document.createElement('link');
 			link.href = inPath;
 			link.media = "screen";
@@ -39,7 +39,7 @@ enyo.machine = {
 		}
 	},
 	script: function(inSrc, onLoad, onError) {
-		if (enyo.runtimeLoading || typeof MSApp !== "undefined") {
+		if (enyo.runtimeLoading) {
 			var script = document.createElement('script');
 			script.src = inSrc;
 			script.onload = onLoad;
