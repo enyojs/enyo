@@ -16,7 +16,7 @@
 */
 enyo.kind({
 	name: "enyo.Async",
-	kind: enyo.Object,
+	kind: "enyo.Object",
 	published: {
 		/**
 			If set to a non-zero value, the number of milliseconds to

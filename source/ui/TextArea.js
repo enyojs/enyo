@@ -8,7 +8,7 @@
 */
 enyo.kind({
 	name: "enyo.TextArea",
-	kind: enyo.Input,
+	kind: "enyo.Input",
 	//* @protected
 	tag: "textarea",
 	classes: "enyo-textarea",

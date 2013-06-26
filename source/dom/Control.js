@@ -14,7 +14,7 @@
 */
 enyo.kind({
 	name: "enyo.Control",
-	kind: enyo.UiComponent,
+	kind: "enyo.UiComponent",
 	published: {
 		/**
 			HTML tag name to use for the control. If null, no tag is generated;

@@ -9,7 +9,7 @@
 enyo.kind({
 	name: "enyo.Button",
 	//* @protected
-	kind: enyo.ToolDecorator,
+	kind: "enyo.ToolDecorator",
 	tag: "button",
 	attributes: {
 		// set to button, as default is "submit" which can cause unexpected

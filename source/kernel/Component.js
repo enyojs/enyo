@@ -45,7 +45,7 @@
 */
 enyo.kind({
 	name: "enyo.Component",
-	kind: enyo.Object,
+	kind: "enyo.Object",
 	published: {
 		/**
 			A unique name for the component within its owner. This is used to

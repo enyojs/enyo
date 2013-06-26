@@ -165,7 +165,7 @@ enyo.kind.finish = function(inProps) {
 	and must be unique__.
 
 		enyo.singleton({
-			kind: Control,
+			kind: "enyo.Control",
 			name: "app.MySingleton",
 			published: {
 				value: "foo"

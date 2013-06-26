@@ -44,7 +44,7 @@ enyo.kind({
 			return true;
 		}
 	},
-	kind: enyo.Input,
+	kind: "enyo.Input",
 	attributes: {
 		contenteditable: true
 	},

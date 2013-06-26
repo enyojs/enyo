@@ -20,7 +20,7 @@
 */
 enyo.kind({
 	name: "enyo.JsonpRequest",
-	kind: enyo.Async,
+	kind: "enyo.Async",
 	published: {
 		//* The URL for the service
 		url: "",

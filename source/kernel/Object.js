@@ -68,7 +68,7 @@ enyo.kind({
 
 			enyo.kind({
 				name: "MyObject",
-				kind: enyo.Object,
+				kind: "enyo.Object",
 				hello: function() {
 					this.log("says", "hi");
 					// shows in the console: MyObject.hello: says hi
