@@ -35,6 +35,7 @@
 	var script = function(inSrc) {
 		/* jshint evil: true */
 		document.write('<scri' + 'pt src="' + root + "/source/boot/" + inSrc + '"></scri' + 'pt>');
+		/* jshint evil: false */
 	};
 
 	script("ready.js");
