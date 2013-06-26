@@ -300,10 +300,16 @@ enyo.dom = {
 			'width': width
 		};
 	},
-	//* use to modify innerHTML in a manner that's safe for Win8 applications
 	setInnerHtml: function(node, html) {
-		enyo.execUnsafeLocalFunction(function() {
-			node.innerHTML = html;
-		});
+		node.innerHTML = html;
 	}
 };
+
+// override setInnerHtml for Windows 8 HTML applications
+if (typeof window.MSApp !== "undefined") {
+	enyo.dom.setInnerHtml = function(node, html) {
+		window.MSApp.execUnsafeLocalFunction(function() {
+			node.innerHTML = html;
+		});
+	};
+}
