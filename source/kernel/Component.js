@@ -644,7 +644,9 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 			if ($d) {
 				$e.delegate = $d;
 			}
-			enyo.pool.releaseObject($e)
+			if (!payload || !payload._pooled) {
+				enyo.pool.releaseObject($e)
+			}
 		};
 		// NOTE: Mark this function as a generated event handler to allow us to
 		// do event chaining. Is this too complicated?
