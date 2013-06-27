@@ -97,6 +97,13 @@ enyo.kind({
 		if ($t.one != "ONE") {
 			return this.finish("The ignore flag was not used properly");
 		}
+		// test for use of options hash
+		$t = {one: "ONE"};
+		$s = {one: "one", two: "TWO", three: null};
+		enyo.mixin($t, $s, {ignore: true, exists: true});
+		if ($t.one == "one" || enyo.exists($t.three)) {
+			return this.finish("The options hash was not applied correctly -> " + enyo.keys($t).join(","));
+		}
 		this.finish();
 	}
 });

@@ -118,7 +118,7 @@
 		path = preparePath(path);
 		// find the initial period if any
 		idx = path.indexOf(".");
-		
+
 		if (path.length === 0) {
 			return cur;
 		}
@@ -806,52 +806,67 @@
 		from objects into single object. All configurations accept a boolean as
 		the final parameter to indicate whether or not to ignore _truthy_/_existing_
 		values on any _objects_ prior.
-	
+
 		If `target` exists and is an object will be the base for all properties
 		and the returned value. If the parameter is used but is _falsy_ a new
 		object will be created and returned. If no such parameter exists the first
 		parameter must be an array of objects and a new object will be created as
 		the `target`.
-	
+
 		The `source` parameter may be an object or an array of objects. If no `target`
 		parameter is provided `source` must be an array of objects.
-	
-		The `ignore` parameter is optional and if `true` any properties of `source`
-		will not be copied to `target` if there already exists a value for that
-		property.
+
+		The `options` parameter allows you to set the `ignore` and/or `exists` flags
+		such that if `ignore` is true it will not override any truthy values in the
+		target and if `exists` is true it will only use truthy values from any of
+		the sources.
+
+		Setting `options` to true will set all options to true.
 	*/
-	enyo.mixin = function(target, source, ignore) {
+	enyo.mixin = function(target, source, options) {
 		// the return object/target
 		var $t;
 		// the source or sources to use
 		var $s;
-		// whether or not to override properties that exist in source
-		// the index in cases where source is an array the name for
-		// properties and the helper value for avoiding copying defaults
-		var i, idx, l, n, s;
+		var $o, $i, $n, s$;
 		if (enyo.isArray(target)) {
 			$t = {};
 			$s = target;
-			i = true === source? true: false;
+			if (source && enyo.isObject(source)) {
+				$o = source;
+			}
 		} else {
 			$t = target || {};
 			$s = source;
-			i = ignore;
+			$o = options;
 		}
-		
+		var release = false;
+		if (!enyo.isObject($o)) {
+			$o = enyo.pool.claimObject();
+			release = true;
+		}
+		if (true === options) {
+			$o.ignore = true;
+			$o.exists = true;
+		}
+		// here we handle the array of sources
 		if (enyo.isArray($s)) {
-			for (idx=0, l=$s.length; idx<l; ++idx) {
-				enyo.mixin($t, $s[idx], i);
+			for ($i=0; (s$=$s[$i]); ++$i) {
+				enyo.mixin($t, s$, $o);
 			}
 		} else {
-			for (n in $s) {
-				s = $s[n];
-				if (empty[n] !== s) {
-					if (!i || !$t[n]) {
-						$t[n] = s;
+		// otherwise we execute singularly
+			for ($n in $s) {
+				s$ = $s[$n];
+				if (empty[$n] !== s$) {
+					if ((!$o.exists || s$) && (!$o.ignore || !$t[$n])) {
+						$t[$n] = s$;
 					}
 				}
 			}
+		}
+		if (release) {
+			enyo.pool.releaseObject($o);
 		}
 		return $t;
 	};
