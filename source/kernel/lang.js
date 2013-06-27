@@ -840,8 +840,11 @@
 			$s = source;
 			$o = options;
 		}
-		$o = enyo.isObject($o)? $o: enyo.pool.claimObject();
-		// $o = enyo.isObject($o)? $o: {};
+		var release = false;
+		if (!enyo.isObject($o)) {
+			$o = enyo.pool.claimObject();
+			release = true;
+		}
 		if (true === options) {
 			$o.ignore = true;
 			$o.exists = true;
@@ -862,7 +865,9 @@
 				}
 			}
 		}
-		enyo.pool.releaseObject($o);
+		if (release) {
+			enyo.pool.releaseObject($o);
+		}
 		return $t;
 	};
 
