@@ -1,7 +1,7 @@
 ﻿//* @protected
 enyo.kind({
 	name: "enyo._AjaxComponent",
-	kind: enyo.Component,
+	kind: "enyo.Component",
 	published: enyo.AjaxProperties
 });
 
@@ -29,7 +29,7 @@ enyo.kind({
 */
 enyo.kind({
 	name: "enyo.WebService",
-	kind: enyo._AjaxComponent,
+	kind: "enyo._AjaxComponent",
 	published: {
 		//* Set to true to use JSONP protocol
 		jsonp: false,

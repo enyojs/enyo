@@ -25,7 +25,7 @@
 		scrollerOptions: null,
 
 		//*@public
-		statics: {
+		protectedStatics: {
 			defaultScrollerOptions: {
 				preventScrollPropagation: false
 			}

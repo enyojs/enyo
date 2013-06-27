@@ -9,7 +9,7 @@
 */
 enyo.kind({
 	name: "enyo.UiComponent",
-	kind: enyo.Component,
+	kind: "enyo.Component",
 	published: {
 		//* The UiComponent that physically contains this component in the DOM
 		container: null,
@@ -41,7 +41,7 @@ enyo.kind({
 	*/
 	addBefore: undefined,
 	//* @protected
-	statics: {
+	protectedStatics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
 	},
 

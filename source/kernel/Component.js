@@ -45,7 +45,7 @@
 */
 enyo.kind({
 	name: "enyo.Component",
-	kind: enyo.Object,
+	kind: "enyo.Object",
 	published: {
 		/**
 			A unique name for the component within its owner. This is used to
@@ -70,13 +70,14 @@ enyo.kind({
 		owner: null
 	},
 	//* @protected
-	statics: {
+	protectedStatics: {
 		// for memoizing kind-prefix names in nameComponent
 		_kindPrefixi: {},
 		// for naming the unnamed
 		_unnamedKindNumber: 0
 	},
 	defaultKind: "Component",
+	noDefer: true,
 	handlers: {},
 	mixins: ["enyo.MixinComponentSupport", "enyo.ApplicationSupport"],
 	__jobs: {},
