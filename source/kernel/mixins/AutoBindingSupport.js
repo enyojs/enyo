@@ -57,9 +57,8 @@
 			xtra.target = control;
 			enyo.mixin(props, xtra);
 			if ((b=control._autoBinding)) {
-				debugger
 				b.disconnect();
-				enyo.mixin(b, props);
+				enyo.mixin(b, props, {exists: true});
 				b.refresh();
 			} else {
 				b = this._autoBinding(props);
