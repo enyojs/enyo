@@ -20,7 +20,7 @@
 */
 enyo.kind({
 	name: "enyo.Ajax",
-	kind: enyo.Async,
+	kind: "enyo.Async",
 	//* See <a href="#enyo.AjaxProperties">enyo.AjaxProperties</a> for the list of properties
 	//* published by _enyo.Ajax_.
 	published: enyo.AjaxProperties,
@@ -246,7 +246,9 @@ enyo.kind({
 				}
 			}
 			return pairs.join("&");
-		},
+		}
+	},
+	protectedStatics: {
 		parseResponseHeaders: function(xhr) {
 			var headers = {};
 			var headersStr = [];

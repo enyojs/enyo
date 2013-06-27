@@ -14,7 +14,7 @@
 */
 enyo.kind({
 	name: "enyo.Signals",
-	kind: enyo.Component,
+	kind: "enyo.Component",
 	//* @protected
 	create: function() {
 		this.inherited(arguments);
@@ -27,7 +27,7 @@ enyo.kind({
 	notify: function(inMsg, inPayload) {
 		this.dispatchEvent(inMsg, inPayload);
 	},
-	statics: {
+	protectedStatics: {
 		listeners: [],
 		addListener: function(inListener) {
 			this.listeners.push(inListener);
@@ -35,6 +35,8 @@ enyo.kind({
 		removeListener: function(inListener) {
 			enyo.remove(inListener, this.listeners);
 		},
+	},
+	statics: {
 		send: function(inMsg, inPayload) {
 			enyo.forEach(this.listeners, function(l) {
 				l.notify(inMsg, inPayload);
