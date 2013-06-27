@@ -143,11 +143,33 @@
 			return enyo.mixin(enyo.remap(remapped, control), props, true);
 		},
 
+		//*@public
+		/**
+			This is overloaded so that we allow the default behavior for
+			any bindings that are not auto-bindings as a normal rebuild will
+			not work.
+		*/
+		rebuildBindings: function () {
+			var $b = enyo.filter(this.bindings || [], function (b) {
+				return b && !b._autoBinding;
+			});
+			var $t = enyo.pool.claimObject();
+			$t[0] = $b;
+			this.inherited(arguments, $t);
+			_setupAutoBindings.call(this);
+			enyo.pool.releaseObject($t);
+		},
+
 		//*@protected
 		create: function () {
 			var prop = this.bindSource || "model";
-			this.addObserver(prop, _setupAutoBindings, this);
-			if (this.model && this.model._isModel) {
+			// NOTE: We don't need to register for the model property as enyo.Control
+			// will automatically trigger the rebuildBindings call which we have modified
+			// to handle this properly
+			if (prop != "model") {
+				this.addObserver(prop, _setupAutoBindings, this);
+			}
+			if (prop == "model" && this.model && this.model._isModel) {
 				_setupAutoBindings.call(this);
 			}
 		}
