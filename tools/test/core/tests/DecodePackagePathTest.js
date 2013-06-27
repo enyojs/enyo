@@ -18,53 +18,53 @@ enyo.kind({
 		this.finish();
 	},
 	testDecodeEmpty: function() {
-		this.decodeTest("", {folder: "", manifest: "package.js", alias: "", target: ""});
+		this.decodeTest("", {folder: "", manifest: "package.js"});
 	},
 	testDecodeFoo: function() {
-		this.decodeTest("foo", {folder: "foo/", manifest: "foo/package.js", alias: "foo", target: "foo"});
+		this.decodeTest("foo", {folder: "foo/", manifest: "foo/package.js"});
 	},
 	testDecodeFooSlash: function() {
-		this.decodeTest("foo/", {folder: "foo/", manifest: "foo/package.js", alias: "foo", target: "foo"});
+		this.decodeTest("foo/", {folder: "foo/", manifest: "foo/package.js"});
 	},
 	testDecodeFooBackSlash: function() {
-		this.decodeTest("foo\\", {folder: "foo/", manifest: "foo/package.js", alias: "foo", target: "foo"});
+		this.decodeTest("foo\\", {folder: "foo/", manifest: "foo/package.js"});
 	},
 	testDecodeFooBarBaz: function() {
-		this.decodeTest("foo/bar/baz", {folder: "foo/bar/baz/", manifest: "foo/bar/baz/package.js", alias: "foo-bar-baz", target: "foo/bar/baz"});
+		this.decodeTest("foo/bar/baz", {folder: "foo/bar/baz/", manifest: "foo/bar/baz/package.js"});
 	},
 	testDecodeParentFoo: function() {
-		this.decodeTest("../foo", {folder: "../foo/", manifest: "../foo/package.js", alias: "foo", target: "../foo"});
+		this.decodeTest("../foo", {folder: "../foo/", manifest: "../foo/package.js"});
 	},
 	testDecodeFooBarLibBaz: function() {
-		this.decodeTest("foo/bar/lib/baz", {folder: "foo/bar/lib/baz/", manifest: "foo/bar/lib/baz/package.js", alias: "baz", target: "foo/bar/lib/baz"});
+		this.decodeTest("foo/bar/lib/baz", {folder: "foo/bar/lib/baz/", manifest: "foo/bar/lib/baz/package.js"});
 	},
 	testDecodeEnyoFoo: function() {
 		var $enyo = enyo.path.rewrite("$enyo");
-		this.decodeTest($enyo + "/foo", {folder: $enyo + "foo/", manifest: $enyo + "foo/package.js", alias: "foo", target: $enyo + "foo"});
+		this.decodeTest($enyo + "/foo", {folder: $enyo + "foo/", manifest: $enyo + "foo/package.js"});
 	},
 	testDecodeAbsEnyoFoo: function() {
 		var $enyo = enyo.path.rewrite("$enyo") + "../enyo/";
-		this.decodeTest($enyo + "foo", {folder: $enyo + "foo/", manifest: $enyo + "foo/package.js", alias: "foo", target: $enyo + "foo"});
+		this.decodeTest($enyo + "foo", {folder: $enyo + "foo/", manifest: $enyo + "foo/package.js"});
 	},
 	testDecodeSource: function() {
-		this.decodeTest("source", {folder: "source/", manifest: "source/package.js", alias: "", target: ""});
+		this.decodeTest("source", {folder: "source/", manifest: "source/package.js"});
 	},
 	testDecodeFooBarSource: function() {
-		this.decodeTest("foo/bar/source", {folder: "foo/bar/source/", manifest: "foo/bar/source/package.js", alias: "foo-bar", target: "foo/bar"});
+		this.decodeTest("foo/bar/source", {folder: "foo/bar/source/", manifest: "foo/bar/source/package.js"});
 	},
 	testDecodeFooBarSourceZot: function() {
-		this.decodeTest("foo/bar/source/zot", {folder: "foo/bar/source/zot/", manifest: "foo/bar/source/zot/package.js", alias: "foo-bar-zot", target: "foo/bar/zot"});
+		this.decodeTest("foo/bar/source/zot", {folder: "foo/bar/source/zot/", manifest: "foo/bar/source/zot/package.js"});
 	},
 	testDecodeSourceFoo: function() {
-		this.decodeTest("source/foo", {folder: "source/foo/", manifest: "source/foo/package.js", alias: "foo", target: "foo"});
+		this.decodeTest("source/foo", {folder: "source/foo/", manifest: "source/foo/package.js"});
 	},
 	testLocalPackage: function() {
-		this.decodeTest("package.js", {folder: "", manifest: "package.js", alias: "", target: ""});
+		this.decodeTest("package.js", {folder: "", manifest: "package.js"});
 	},
 	testFooPackage: function() {
-		this.decodeTest("foo/package.js", {folder: "foo/", manifest: "foo/package.js", alias: "foo", target: "foo"});
+		this.decodeTest("foo/package.js", {folder: "foo/", manifest: "foo/package.js"});
 	},
 	testRemote: function() {
-		this.decodeTest("http://flarn.com/lib/foo", {folder: "http://flarn.com/lib/foo/", manifest: "http://flarn.com/lib/foo/package.js", alias: "foo", target: "http://flarn.com/lib/foo"});
+		this.decodeTest("http://flarn.com/lib/foo", {folder: "http://flarn.com/lib/foo/"});
 	}
 });
