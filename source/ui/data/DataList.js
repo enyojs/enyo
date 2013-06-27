@@ -23,14 +23,14 @@
 			settings are used.
 		*/
 		scrollerOptions: null,
-		
+
 		//*@public
 		statics: {
 			defaultScrollerOptions: {
 				preventScrollPropagation: false
 			}
 		},
-		
+
 		//*@public
 		handlers: {
 			onScroll: "_didScroll",
@@ -42,7 +42,7 @@
 
 		//*@public
 		classes: "enyo-data-list",
-		
+
 		//*@public
 		containerOptions: {
 			name: "scroller",
@@ -56,19 +56,19 @@
 				{name: "buffer", style: "position: relative;"}
 			]
 		},
-		
+
 		overflow: null,
 		underflow: null,
-		
+
 		// ...........................
 		// PROTECTED PROPERTIES
-		
+
 		_resized: false,
 		_initialPosition: true,
 
 		// ...........................
 		// COMPUTED PROPERTIES
-		
+
 		averageBounds: enyo.computed(function () {
 			// reset our flag
 			this._resized = false;
@@ -89,10 +89,10 @@
 			}
 			return $t;
 		}, "_resized", "_reset", "_rendered", {cached: true, defer: true}),
-		
+
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		//*@public
 		reset: function () {
 			var $d = this.get("data");
@@ -117,17 +117,17 @@
 			this.discoverControlParent();
 			this.resetting = false;
 		},
-		
+
 		resetBuffer: function () {
 			this.$.buffer.applyStyle("height", "0");
 		},
-		
+
 		threshold: function () {
 			var $o = this.getBounds().height;
 			var $h = this.controlParent.getBounds().height;
 			return $h <= (2.5 * $o);
 		},
-		
+
 		updateBuffer: function () {
 			var $d = this.get("data"), $t = this.get("averageBounds");
 			if ($d) {
@@ -135,14 +135,14 @@
 				this.$.scroller.resized();
 			}
 		},
-		
+
 		destroyClientControls: function () {
 			for (var $i in {page1:"",page2:""}) {
 				this.controlParent = this.$[$i];
 				this.inherited(arguments);
 			}
 		},
-		
+
 		rendered: function () {
 			this.set("_rendered", true);
 			this.inherited(arguments);
@@ -151,7 +151,7 @@
 				this.movePageAfter(this.$.page2, this.$.page1);
 			}
 		},
-		
+
 		reflow: function () {
 			this.inherited(arguments);
 			this.updateBuffer();
@@ -163,9 +163,9 @@
 			// page when possible and maintain a reference to the overflow
 			// indices so when a page is pushed down it can know which models
 			// to use and when a page is pushed up it can know the same
-			
-			
-			
+
+
+
 			if (!this.threshold()) {
 				if (this.controlParentName == "page1") {
 					this.controlParentName = "page2";
@@ -178,7 +178,8 @@
 					if (!$o.start) {
 						$o.start = idx;
 					}
-					return $o.end = idx;
+					$o.end = idx;
+					return idx;
 				}
 			} else {
 				var $c = this.createComponent({kind: this._childKind, model: rec, index: idx});
@@ -217,7 +218,7 @@
 				c.destroy();
 			});
 		},
-		
+
 		//*@public
 		up: function () {
 			var $c = this.controlParent;
@@ -226,7 +227,7 @@
 			var $n = this.$.page1 == $c? this.$.page2: this.$.page1;
 			var $k = $n.getBounds();
 			var $o = this.getBounds();
-			if ($b.top < $k.top && $b.top != 0) {
+			if ($b.top < $k.top && $b.top !== 0) {
 				if ($k.top > ($o.height + $p) && ($k.height <= $p)) {
 					this.controlParentName = $n.name;
 					this.controlParent = $n;
@@ -234,14 +235,14 @@
 				}
 			} else {
 				if ($b.top > $o.height && $b.height <= $p) {
-					debugger
+					/* FIXME */
 					this.pageUp();
 					this.controlParentName = $n.name;
 					this.controlParent = $n;
 				}
 			}
 		},
-		
+
 		//*@public
 		down: function () {
 			var $p = this.$.scroller.getScrollTop();
@@ -250,23 +251,23 @@
 			var $n = this.$.page1 == $c? this.$.page2: this.$.page1;
 			var $k = $n.getBounds();
 			var $o = this.$.buffer.getBounds();
-			var $f = $b.top + $b.height
+			var $f = $b.top + $b.height;
 			if ($f < $p && ($o.height - $f) >= $k.height) {
 				this.pageDown();
 			}
 		},
-		
+
 		movePageAfter: function (p1, p2) {
 			var $p = p2.getBounds();
 			p1.setBounds({top: $p.top + $p.height}, "px");
 		},
-		
+
 		movePageBefore: function (p1, p2) {
 			var $p = p2.getBounds();
 			var $k = p1.getBounds();
 			p1.setBounds({top: $p.top - $k.height}, "px");
 		},
-		
+
 		pageDown: function () {
 			var $p1 = this.controlParent;
 			var $n = $p1.name == "page1"? "page2": "page1";
@@ -277,7 +278,7 @@
 			// enyo.asyncMethod(this, "updatePage", $p1, "down");
 			this.updatePage($p1, "down");
 		},
-		
+
 		updatePage: function (p, direction) {
 			var $o = this.overflow;
 			var $u = this.underflow;
@@ -304,21 +305,21 @@
 				$o.start = ++$idx;
 			}
 		},
-		
+
 		pageUp: function () {
 			var $p1 = this.controlParent;
 			var $n = $p1.name == "page1"? "page2": "page1";
 			var $p2 = this.$[$n];
 			this.movePageBefore($p1, $p2);
-			
+
 		},
-		
+
 		batchingChanged: function (prev, val) {
-			if (false == val) {
+			if (false === val) {
 				this.rendered();
 			}
 		},
-		
+
 		initComponents: function () {
 			this.inherited(arguments);
 			var $k = this._childKind;
@@ -326,10 +327,10 @@
 				enyo.applyMixin("enyo.RowSupport", $k);
 			}
 		},
-		
+
 		// ...........................
 		// PROTECTED METHODS
-		
+
 		//*@protected
 		_initContainer: function () {
 			var $c = enyo.clone(this.get("containerOptions"));
@@ -341,7 +342,7 @@
 			this.containerOptions = enyo.mixin(enyo.mixin([$c, $o]), $d, true);
 			this.inherited(arguments);
 		},
-		
+
 		_didScroll: function (sender, event) {
 			var $l = !isNaN(this._lastPos)? this._lastPost: 0;
 			var $p = this.$.scroller.getScrollTop();
@@ -357,7 +358,7 @@
 			this._lastPost = $p;
 			return true;
 		},
-		
+
 		_didResize: function () {
 			this.set("_resized", true);
 		}

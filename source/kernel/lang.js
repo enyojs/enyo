@@ -118,7 +118,7 @@
 		path = preparePath(path);
 		// find the initial period if any
 		idx = path.indexOf(".");
-		
+
 		if (path.length === 0) {
 			return cur;
 		}
@@ -806,21 +806,21 @@
 		from objects into single object. All configurations accept a boolean as
 		the final parameter to indicate whether or not to ignore _truthy_/_existing_
 		values on any _objects_ prior.
-	
+
 		If `target` exists and is an object will be the base for all properties
 		and the returned value. If the parameter is used but is _falsy_ a new
 		object will be created and returned. If no such parameter exists the first
 		parameter must be an array of objects and a new object will be created as
 		the `target`.
-	
+
 		The `source` parameter may be an object or an array of objects. If no `target`
 		parameter is provided `source` must be an array of objects.
-	
+
 		The `options` parameter allows you to set the `ignore` and/or `exists` flags
 		such that if `ignore` is true it will not override any truthy values in the
 		target and if `exists` is true it will only use truthy values from any of
 		the sources.
-	
+
 		Setting `options` to true will set all options to true.
 	*/
 	enyo.mixin = function(target, source, options) {
@@ -828,7 +828,7 @@
 		var $t;
 		// the source or sources to use
 		var $s;
-		var $o, $i, $e, $n, s$;
+		var $o, $i, $n, s$;
 		if (enyo.isArray(target)) {
 			$t = {};
 			$s = target;

@@ -645,7 +645,7 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 				$e.delegate = $d;
 			}
 			if (!payload || !payload._pooled) {
-				enyo.pool.releaseObject($e)
+				enyo.pool.releaseObject($e);
 			}
 		};
 		// NOTE: Mark this function as a generated event handler to allow us to

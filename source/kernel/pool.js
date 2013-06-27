@@ -1,5 +1,5 @@
 (function (enyo) {
-	
+
 	// internally maintain a pool of objects to reuse whenever possible
 	// to prevent the memory footprint expansion forcing the GC to execute more
 	// often
@@ -20,17 +20,17 @@
 			}
 		}
 	};
-	
+
 	// FOR DEBUGGING UNCOMMENT THIS
-	var it = setInterval(function () {
+	/* var it = setInterval(function () {
 		enyo.log(
 			"\n----------------------------\n" +
 			"POOL SIZE: " + pool.length + "\n" +
 			"CLAIMED SIZE: " + claimed.length + "\n" +
 			"----------------------------\n"
 		);
-	}, 5000);
-	
+	}, 5000); */
+
 	// add an object to the pool if it was encountered in a reusable
 	// way and return it or return an object from the pool, if none
 	// are available it will create a new one and return it
@@ -60,6 +60,6 @@
 			}
 		}
 	};
-	
-	
+
+
 })(enyo);

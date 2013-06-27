@@ -43,7 +43,6 @@
 		var bindSource = this.bindSource || this.model;
 		var control;
 		var props;
-		var source;
 		var b;
 		var xtra;
 		for (; idx < len; ++idx) {
@@ -143,7 +142,7 @@
 			var props = this.get("_bindingDefaults");
 			return enyo.mixin(enyo.remap(remapped, control), props, true);
 		},
-		
+
 		//*@protected
 		create: function () {
 			var prop = this.bindSource || "model";
