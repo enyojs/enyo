@@ -759,6 +759,34 @@ enyo.kind({
 			this.node.parentNode.removeChild(this.node);
 		}
 	},
+	disconnectDom: function () {
+		if (this.generated) {
+			this.disconnectChildrenDom();
+		}
+		this._node = this.node;
+		this.node = null;
+		this.generated = false;
+		this._domDisconnected = true;
+	},
+	disconnectChildrenDom: function () {
+		for (var i=0, c; (c=this.children[i]); ++i) {
+			c.disconnectDom();
+		}
+	},
+	connectChildrenDom: function () {
+		for (var i=0, c; (c=this.children[i]); ++i) {
+			c.connectDom();
+		}
+	},
+	connectDom: function () {
+		if (this._domDisconnected) {
+			this.connectChildrenDom();
+			this.node = this._node;
+			this._node = null;
+			this.generated = true;
+			this._domDisconnected = false;
+		}
+	},
 	teardownRender: function() {
 		if (this.generated) {
 			this.teardownChildren();
@@ -786,7 +814,20 @@ enyo.kind({
 		if (this.generated) {
 			this.teardownChildren();
 		}
-		enyo.dom.setInnerHtml(this.node, this.generateInnerHtml());
+		if (this.node) {
+			enyo.dom.setInnerHtml(this.node, this.generateInnerHtml());
+		}
+	},
+	renderReusingNode: function () {
+		if (this.children.length) {
+			for (var i=0, c; (c=this.children[i]); ++i) {
+				c.renderReusingNode();
+			}
+		} else {
+			if (this.generated && (this.node = this.hasNode())) {
+				enyo.dom.setInnerHtml(this.node, this.generateInnerHtml());
+			}
+		}
 	},
 	renderStyles: function() {
 		if (this.hasNode()) {
