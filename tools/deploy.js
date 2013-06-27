@@ -81,16 +81,19 @@ var node = process.argv[0],
 function printUsage() {
 	// format generated using node-optimist...
 	console.log('\n' +
-		'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir]\n' +
+		'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-l lib_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir][-f map_from -t map_to ...]\n' +
 		'\n' +
 		'Options:\n' +
 		'  -v  verbose operation                     [boolean]  [default: ' + verbose + ']\n' +
 		'  -b  alternate build directory             [default: "' + buildDir + '"]\n' +
 		'  -c  do not run the LESS compiler          [boolean]  [default: ' + less + ']\n' +
 		'  -e  location of the enyo framework        [default: "' + enyoDir + '"]\n' +
+		'  -l  location of the lib folder            [default: "' + enyoDir + '/../lib"]\n' +
 		'  -o  alternate output directory            [default: "' + outDir + '"]\n' +
 		'  -p  location of the main package.js file  [default: "' + packageJs + '"]\n' +
 		'  -s  source code root directory            [default: "' + sourceDir + '"]\n' +
+		'  -f  remote source mapping: from local path' +
+		'  -t  remote source mapping: to remote path' +
 		'\n');
 }
 
@@ -98,20 +101,26 @@ var opt = nopt(/*knownOpts*/ {
 	"build": path,
 	"less": Boolean,
 	"enyo": path,
+	"lib": path,
 	"out": path,
 	"packagejs": path,
 	"source": path,
 	"verbose": Boolean,
-	"help": Boolean
+	"help": Boolean,
+	"mapfrom": [String, Array],
+	"mapto": [String, Array]
 }, /*shortHands*/ {
 	"b": "--build",
 	"c": "--no-less",
 	"e": "--enyo",
+	"l": "--lib",
 	"o": "--out",
 	"p": "--packagejs",
 	"s": "--source",
 	"v": "--verbose",
 	"h": "--help",
+	"f": "--mapfrom",
+	"t": "--mapto",
 	"?": "--help"
 }, process.argv /*args*/, 2 /*slice*/);
 
@@ -132,6 +141,13 @@ sourceDir = opt.source ||
 	sourceDir;
 less = (opt.less !== false) && less;
 verbose = opt.verbose;
+
+if ((opt.mapfrom || opt.maptop) && (!opt.mapfrom || !opt.mapto || (opt.mapfrom.length != opt.mapto.length))) {
+	console.log("mapfrom:", opt.mapfrom);
+	console.log("mapto:", opt.mapto);
+	console.error("Error: The number of 'mapfrom' and 'mapto' arguments must match.");
+	process.exit(1);
+}
 
 var minifier = path.resolve(enyoDir, 'tools', 'minifier', 'minify.js');
 if (verbose) {
@@ -164,24 +180,43 @@ shell.rm('-rf', path.resolve(outDir));
 shell.mkdir('-p', path.join(outDir));
 
 // Build / Minify
-
-console.log("Minify-ing Enyo...");
-process.chdir(path.resolve(enyoDir, 'minify'));
-run([node, minifier,
-     '-no-alias',
-     '-enyo', enyoDir,
-     // XXX generates $buildDir/enyo.(js|css)' so this is
-     // XXX rather an 'output_prefix' than an 'out_dir'...
-     '-output', path.join(buildDir, 'enyo'),
-     'package.js']);
+var args;
+if (!opt.mapfrom || opt.mapfrom.indexOf("enyo") < 0) {
+	console.log("Minify-ing Enyo...");
+	process.chdir(path.resolve(enyoDir, 'minify'));
+	args = [node, minifier,
+		'-no-alias',
+		'-enyo', enyoDir,
+		// XXX generates $buildDir/enyo.(js|css)' so this is
+		// XXX rather an 'output_prefix' than an 'out_dir'...
+		'-output', path.join(buildDir, 'enyo'),
+		'package.js'];
+	if (opt.mapfrom) {
+		for (var i=0; i<opt.mapfrom.length; i++) {
+			args.push("-f", opt.mapfrom[i], "-t", opt.mapto[i]);
+		}
+	}
+	run(args);	
+} else {
+	console.log("Skipping Enyo minification (will be mapped to " + opt.mapto[opt.mapfrom.indexOf("enyo")] + ").");
+}
 
 console.log("Minify-ing the application...");
 process.chdir(path.dirname(packageJs));
-run([node, minifier,
+args = [node, minifier,
      '-enyo', enyoDir,
      '-output', path.join(buildDir, 'app'),
      (less ? '-less' : '-no-less'),
-     'package.js']);
+     'package.js'];
+if (opt.mapfrom) {
+	for (var i=0; i<opt.mapfrom.length; i++) {
+		args.push("-f", opt.mapfrom[i], "-t", opt.mapto[i]);
+	}
+}
+if (opt.lib) {
+	args.push("-lib", opt.lib);
+}
+run(args);
 process.chdir(sourceDir);
 
 // Deploy / Copy
@@ -201,6 +236,10 @@ if(shell.test('-d', libSrcDir)) {
 }
 
 function deployLib(lib) {
+	if (opt.mapfrom && opt.mapfrom.indexOf("lib/" + lib) >= 0) {
+		// Don't deploy libraries that are loaded from elsewhere
+		return;
+	}
 	var libOutdir = path.join(outDir, 'lib', lib);
 	// load & execute sub-'deploy.js'
 	try {
