@@ -303,7 +303,8 @@ enyo.kind({
 		}
 		var e = inEvent || {};
 		// FIXME: is this the right place?
-		if (!("originator" in e)) {
+		// if (!("originator" in e)) {
+		if (!enyo.exists(e.originator)) {
 			e.originator = inSender || this;
 			// FIXME: use indirection here?
 			//e.delegate = e.originator.delegate || e.originator.owner;
@@ -358,7 +359,7 @@ enyo.kind({
 		}
 		// if the event has a delegate associated with it we grab that
 		// for reference
-		var delegate = (event || (event = {})).delegate;
+		var delegate = (event || (event = enyo.pool.claimObject())).delegate;
 		var ret;
 		// bottleneck event decoration
 		this.decorateEvent(name, event, sender);
@@ -635,13 +636,16 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 	if (!inProto[fn]) {
 		inProto[fn] = function(payload) {
 			// bubble this event
-			//return this.bubble(inName, enyo.except(["delegate"], inEvent || {}));
-			payload = payload || {};
-			var delegate = payload.delegate;
-			delete payload.delegate;
-			this.bubble(inName, payload);
-			if (delegate) {
-				payload.delegate = delegate;
+			var $e = payload || enyo.pool.claimObject();
+			var $d = $e.delegate;
+			// delete payload.delegate;
+			$e.delegate = undefined;
+			this.bubble(inName, $e);
+			if ($d) {
+				$e.delegate = $d;
+			}
+			if (!payload || !payload._pooled) {
+				enyo.pool.releaseObject($e);
 			}
 		};
 		// NOTE: Mark this function as a generated event handler to allow us to

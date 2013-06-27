@@ -222,7 +222,11 @@
 			this.inherited(arguments);
 			this.defaultOptions = this.defaultOptions || {};
 			this.defaultHeaders = this.defaultHeaders || {};
-			this.domain = this.domain || document.domain;
+			this.domain = this.domain || (function () {
+				return location.pathname.length > 1
+					? location.href.split("/").slice(0,-1).join("/")
+					: location.origin;
+			}());
 		},
 		constructed: function () {
 			var $kind = this.requestKind || enyo.Ajax;

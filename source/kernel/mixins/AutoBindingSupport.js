@@ -12,7 +12,8 @@
 		bindOneWay: "oneWay",
 		bindTwoWay: "twoWay",
 		bindAutoSync: "autoSync",
-		bindDebug: "debug"
+		bindDebug: "debug",
+		bindSource: "source"
 	};
 
 	//*@public
@@ -32,27 +33,37 @@
 	};
 
 	//*@protected
-	var _setup_auto_bindings = function () {
-		if (!this._supports_autobindings) {
+	var _setupAutoBindings = function () {
+		if (!this._supportsAutoBindings) {
 			return;
 		}
-		//if (!this.controller || !(this.controller instanceof enyo.Controller)) {
-		//	return;
-		//}
-		var $bindings = this.get("_auto_bindings");
-		var controls = this.get("_bindable_controls");
+		var controls = this.get("_bindableControls");
 		var idx = 0;
 		var len = controls.length;
 		var bindSource = this.bindSource || this.model;
 		var control;
 		var props;
-		if ($bindings && $bindings.length) {
-			this.clearBindings($bindings);
-		}
+		var b;
+		var xtra;
 		for (; idx < len; ++idx) {
+			xtra = enyo.pool.claimObject();
 			control = controls[idx];
-			props = this._bind_properties(control);
-			this._auto_binding(props, {source: bindSource, target: control});
+			props = this._bindProperties(control);
+			if (props.source && enyo.isString(props.source)) {
+				props.source = enyo.getPath.call(control, props.source);
+			}
+			xtra.source = props.source || bindSource;
+			xtra.target = control;
+			enyo.mixin(props, xtra);
+			if ((b=control._autoBinding)) {
+				b.disconnect();
+				enyo.mixin(b, props, {exists: true});
+				b.refresh();
+			} else {
+				b = this._autoBinding(props);
+				control._autoBinding = b;
+			}
+			enyo.pool.releaseObject(xtra);
 		}
 	};
 
@@ -76,20 +87,20 @@
 		// PROTECTED PROPERTIES
 
 		//*@protected
-		_supports_autobindings: true,
+		_supportsAutoBindings: true,
 
 		// ...........................
 		// COMPUTED PROPERTIES
 
 		//*@protected
-		_bindable_controls: enyo.computed(function (control) {
+		_bindableControls: enyo.computed(function (control) {
 			control = control || this;
 			var bindable = [];
 			var controls = control.controls || [];
 			var idx = 0;
 			var len = controls.length;
 			for (; idx < len; ++idx) {
-				bindable = bindable.concat(this._bindable_controls(controls[idx]));
+				bindable = bindable.concat(this._bindableControls(controls[idx]));
 			}
 			if ("bindFrom" in control) {
 				bindable.push(control);
@@ -98,7 +109,7 @@
 		}, {cached: true}),
 
 		//*@protected
-		_binding_defaults: enyo.computed(function () {
+		_bindingDefaults: enyo.computed(function () {
 			var ctor = this.get("_bindingConstructor");
 			var keys = enyo.keys(defaults);
 			if (enyo.Binding !== ctor) {
@@ -110,9 +121,9 @@
 		}, {cached: true}),
 
 		//*@protected
-		_auto_bindings: enyo.computed(function () {
+		_autoBindings: enyo.computed(function () {
 			return enyo.filter(this.bindings || [], function (bind) {
-				return bind && bind._auto_binding_id;
+				return bind && bind._autoBindingId;
 			});
 		}),
 
@@ -120,37 +131,26 @@
 		// PROTECTED METHODS
 
 		//*@protected
-		_auto_binding: function () {
+		_autoBinding: function () {
 			var bind = this.binding.apply(this, arguments);
-			bind._auto_binding_id = enyo.uid("_auto_binding");
+			bind._autoBindingId = enyo.uid("_autoBinding");
 			return bind;
 		},
 
 		//*@protected
-		_bind_properties: function (control) {
-			var props = this.get("_binding_defaults");
-			return enyo.mixin(enyo.clone(props), enyo.remap(remapped, control));
+		_bindProperties: function (control) {
+			var props = this.get("_bindingDefaults");
+			return enyo.mixin(enyo.remap(remapped, control), props, true);
 		},
-		
+
 		//*@protected
 		create: function () {
 			var prop = this.bindSource || "model";
-			this.addObserver(prop, _setup_auto_bindings, this);
+			this.addObserver(prop, _setupAutoBindings, this);
+			if (this.model && this.model._isModel) {
+				_setupAutoBindings.call(this);
+			}
 		}
-
-		// ...........................
-		// OBSERVERS
-
-		//*@protected
-		//_controllerChanged: enyo.observer(function () {
-		//	// we are intentionally overriding controller supports implementation
-		//	// of this observer so we can call this.inherited, this observer
-		//	// removed the previous observer
-		//	this.inherited(arguments);
-		//	// now that the controller should be set (if possible) we go ahead
-		//	// and setup any auto bindings
-		//	_setup_auto_bindings.call(this);
-		//}, "controller")
 
 	});
 

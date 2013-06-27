@@ -43,15 +43,16 @@
 			{from: ".controller.length", to: ".length"},
 			{from: ".controller.data", to: ".data"}
 		],
+		
+
+		//*@public
+		batching: false,
 
 		// ...........................
 		// PROTECTED PROPERTIES
 
 		//*@protected
 		_childKind: null,
-
-		//*@protected
-		_batching: false,
 
 		// ...........................
 		// PUBLIC METHODS
@@ -79,71 +80,76 @@
 		controllerFindAndInstance: function(ctor, inst) {
 			this.inherited(arguments);
 			if (inst && inst._isController) {
-				this.refresh();
+				this.reset();
 			}
 		},
 
-		//*@public
-		refresh: function () {
-			var $data = this.get("data");
-			// destroy any views we currently have rendered
+		// TODO:
+		reset: function () {
+			var $d = this.get("data");
+			var $c = this.$.scroller;
 			this.destroyClientControls();
-			if (!$data) {
+			$c.resizeHandler();
+			if ($d) {
+				enyo.forEach($d, this.add, this);
+			}
+		},
+
+		render: function () {
+			this.reset();
+			this.inherited(arguments);
+		},
+
+		//*@public
+		add: function (rec) {
+			if (!this.generated) {
 				return;
 			}
-			for (var idx = 0, len = $data.length; idx < len; ++idx) {
-				this.add($data[idx]);
+			var $k = this._childKind;
+			var $c = this.createComponent({kind: $k});
+			var b = this.batching;
+			$c.set("model", rec);
+			if (!b) {
+				$c.render();
 			}
 		},
 
 		//*@public
-		add: function (model) {
-			var $kind = this._childKind;
-			var $child = this.createComponent({kind: $kind});
-			var batching = this._batching;
-			$child.set("model", model);
-			if (!batching) {
-				$child.render();
+		remove: function (idx) {
+			var $ch = this.get("active");
+			var $c = $ch[idx || (Math.abs($ch.length-1))];
+			if ($c) {
+				$c.destroy();
 			}
 		},
 
 		//*@public
-		remove: function (index) {
-			var $children = this.get("_children");
-			var $child = $children[index || (Math.abs($children.length - 1))];
-			if ($child) {
-				$child.destroy();
+		update: function (idx) {
+			var $d = this.get("data");
+			var $ch = this.get("active");
+			var $c = $ch[idx];
+			if ($d && $c) {
+				$c.set("model", $d[idx]);
 			}
-		},
-
-		//*@public
-		update: function (index) {
-			var $data = this.get("data");
-			var $children = this.get("_children");
-			var $child = $children[index];
-			if (!$data || !$child || !$child.controller) {
-				return;
-			}
-			$child.set("model", $data[index]);
 		},
 
 		//*@public
 		prune: function () {
-			var $children = this.get("_children");
-			var len = this.length;
-			var $extra = $children.slice(len);
-			for (var idx = 0; idx < $extra.length; ++idx) {
-				$extra[idx].destroy();
-			}
+			var $ch = this.get("active");
+			var l = this.length;
+			var $x = $ch.slice(l);
+			enyo.forEach($x, function (c) {
+				c.destroy();
+			});
 		},
 
 		// ...........................
 		// COMPUTED PROPERTIES
 
-		//*@protected
-		_children: enyo.computed(function () {
+		//*@public
+		active: enyo.computed(function () {
 			return this.controlParent? this.controlParent.children: this.children;
-		}, {cached: false}),
+		}, "controlParent", {cached: true, defer: true}),
 
 		// ...........................
 		// PROTECTED METHODS
@@ -151,8 +157,12 @@
 		//*@protected
 		_initContainer: function () {
 			var $container = this.get("containerOptions");
+			var name = $container.name || ($container.name = "scroller");
 			this.createChrome([$container]);
 			this.discoverControlParent();
+			if (name != "scroller") {
+				this.$.scroller = this.$[name];
+			}
 		},
 
 		//*@protected
@@ -161,7 +171,7 @@
 				return;
 			}
 			var $model = event.model;
-			this.add($model);
+			this.add($model, event.index);
 		},
 
 		//*@protected
@@ -169,11 +179,11 @@
 			if (sender !== this.controller) {
 				return;
 			}
-			this.set("_batching", true);
+			this.set("batching", true);
 			enyo.forEach(event.models, function (info) {
-				this.add(info.model);
+				this.add(info.model, info.index);
 			}, this);
-			this.set("_batching", false);
+			this.set("batching", false);
 		},
 
 		//*@protected
@@ -197,11 +207,10 @@
 		// ...........................
 		// OBSERVERS
 
-		//*@protected
-		_batchingChanged: function (prev, val) {
+		//*@public
+		batchingChanged: function (prev, val) {
 			if (false === val) {
-				var $client = this.controlParent;
-				$client.render();
+				this.render();
 			}
 		},
 
