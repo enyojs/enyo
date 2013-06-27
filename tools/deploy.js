@@ -81,7 +81,7 @@ var node = process.argv[0],
 function printUsage() {
 	// format generated using node-optimist...
 	console.log('\n' +
-		'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir][-f map_from -t map_to ...]\n' +
+		'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-l lib_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir][-f map_from -t map_to ...]\n' +
 		'\n' +
 		'Options:\n' +
 		'  -v  verbose operation                     [boolean]  [default: ' + verbose + ']\n' +
@@ -181,7 +181,7 @@ shell.mkdir('-p', path.join(outDir));
 
 // Build / Minify
 var args;
-if (!opt.mapfrom && opt.mapfrom.indexOf("enyo") < 0) {
+if (!opt.mapfrom || opt.mapfrom.indexOf("enyo") < 0) {
 	console.log("Minify-ing Enyo...");
 	process.chdir(path.resolve(enyoDir, 'minify'));
 	args = [node, minifier,
