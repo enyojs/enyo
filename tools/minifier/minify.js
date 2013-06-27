@@ -25,6 +25,7 @@
 		w("-no-alias:", "Don't use path macros");
 		w("-alias:", "Give paths a macroized alias");
 		w("-enyo ENYOPATH:", "Path to enyo loader (enyo/enyo.js)");
+		w("-lib LIBPATH:", "Path to lib folder (enyo/../lib)");
 		w("-output PATH/NAME:", "name of output file, prepend folder paths to change output directory");
 		w("--beautify:", "Output pretty version that's less compressed but has code on separate lines");
 		w("-f", "Remote source mapping: from local path");
@@ -201,6 +202,7 @@
 	var knownOpts = {
 		"alias": Boolean,
 		"enyo": String,
+		"lib": String,
 		"output": String,
 		"help": Boolean,
 		"beautify": Boolean,
@@ -211,6 +213,7 @@
 	var shortHands = {
 		"alias": ['--alias'],
 		"enyo": ['--enyo'],
+		"lib": ['--lib'],
 		"output": ['--output'],
 		"h": ['--help'],
 		"?": ['--help'],
@@ -252,7 +255,7 @@
 		}
 	});
 
-	walker.init(opt.enyo, opt.mapfrom, opt.mapto);
+	walker.init(opt.enyo, opt.lib || opt.enyo + "/../lib", opt.mapfrom, opt.mapto);
 	walker.walk(opt.source, walkerFinished);
 
 })();

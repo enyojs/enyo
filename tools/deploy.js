@@ -88,6 +88,7 @@ function printUsage() {
 		'  -b  alternate build directory             [default: "' + buildDir + '"]\n' +
 		'  -c  do not run the LESS compiler          [boolean]  [default: ' + less + ']\n' +
 		'  -e  location of the enyo framework        [default: "' + enyoDir + '"]\n' +
+		'  -l  location of the lib folder            [default: "' + enyoDir + '/../lib"]\n' +
 		'  -o  alternate output directory            [default: "' + outDir + '"]\n' +
 		'  -p  location of the main package.js file  [default: "' + packageJs + '"]\n' +
 		'  -s  source code root directory            [default: "' + sourceDir + '"]\n' +
@@ -100,6 +101,7 @@ var opt = nopt(/*knownOpts*/ {
 	"build": path,
 	"less": Boolean,
 	"enyo": path,
+	"lib": path,
 	"out": path,
 	"packagejs": path,
 	"source": path,
@@ -111,6 +113,7 @@ var opt = nopt(/*knownOpts*/ {
 	"b": "--build",
 	"c": "--no-less",
 	"e": "--enyo",
+	"l": "--lib",
 	"o": "--out",
 	"p": "--packagejs",
 	"s": "--source",
@@ -177,22 +180,26 @@ shell.rm('-rf', path.resolve(outDir));
 shell.mkdir('-p', path.join(outDir));
 
 // Build / Minify
-
-console.log("Minify-ing Enyo...");
-process.chdir(path.resolve(enyoDir, 'minify'));
-var args = [node, minifier,
-     '-no-alias',
-     '-enyo', enyoDir,
-     // XXX generates $buildDir/enyo.(js|css)' so this is
-     // XXX rather an 'output_prefix' than an 'out_dir'...
-     '-output', path.join(buildDir, 'enyo'),
-     'package.js'];
-if (opt.mapfrom) {
-	for (var i=0; i<opt.mapfrom.length; i++) {
-		args.push("-f", opt.mapfrom[i], "-t", opt.mapto[i]);
+var args;
+if (!opt.mapfrom && opt.mapfrom.indexOf("enyo") < 0) {
+	console.log("Minify-ing Enyo...");
+	process.chdir(path.resolve(enyoDir, 'minify'));
+	args = [node, minifier,
+		'-no-alias',
+		'-enyo', enyoDir,
+		// XXX generates $buildDir/enyo.(js|css)' so this is
+		// XXX rather an 'output_prefix' than an 'out_dir'...
+		'-output', path.join(buildDir, 'enyo'),
+		'package.js'];
+	if (opt.mapfrom) {
+		for (var i=0; i<opt.mapfrom.length; i++) {
+			args.push("-f", opt.mapfrom[i], "-t", opt.mapto[i]);
+		}
 	}
+	run(args);	
+} else {
+	console.log("Skipping Enyo minification (will be mapped to " + opt.mapto[opt.mapfrom.indexOf("enyo")] + ").");
 }
-run(args);
 
 console.log("Minify-ing the application...");
 process.chdir(path.dirname(packageJs));
@@ -205,6 +212,9 @@ if (opt.mapfrom) {
 	for (var i=0; i<opt.mapfrom.length; i++) {
 		args.push("-f", opt.mapfrom[i], "-t", opt.mapto[i]);
 	}
+}
+if (opt.lib) {
+	args.push("-lib", opt.lib);
 }
 run(args);
 process.chdir(sourceDir);
