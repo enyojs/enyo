@@ -172,7 +172,7 @@
 			} else {
 				done();
 			}
-		}
+		};
 		processNextChunk(function() {
 			if (topDepends) {
 				var js = "";

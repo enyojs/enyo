@@ -239,10 +239,9 @@
 			//
 			// Note: manifest file name must end in "package.js"
 			//
-			var alias = '', folder = '', manifest = 'package.js';
+			var folder = '', manifest = 'package.js';
 			// convert back slashes to forward slashes, remove double slashes, split on slash
 			var parts = inPath.replace(/\\/g, "/").replace(/\/\//g, "/").replace(/:\//, "://").split("/");
-			var i, p;
 			if (parts.length) {
 				// if inPath has a trailing slash, parts has an empty string which we pop off and ignore
 				var name = parts.pop() || parts.pop() || "";
@@ -273,7 +272,7 @@
 			// cache the interrupted packageFolder
 			inBlock.folder = this.packageFolder;
 			// set new manifest/packageFolder
-			var parts = this.decodePackagePath(inPath)
+			var parts = this.decodePackagePath(inPath);
 			this.manifest = parts.manifest;
 			this.packageFolder = parts.folder;
 			// cache the name of the package 'inBlock' is loading now
