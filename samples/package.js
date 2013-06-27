@@ -16,5 +16,7 @@ enyo.depends(
 	"DrawerSample.css",
 	"DrawerSample.js",
 	"FullscreenSample.css",
-	"FullscreenSample.js"
+	"FullscreenSample.js",
+	"AudioSample.css",
+	"AudioSample.js"
 );
