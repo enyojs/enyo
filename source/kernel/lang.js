@@ -139,7 +139,7 @@
 			path = path.slice(idx+1);
 
 			if (cur[part] && typeof cur[part] in {"object":"","function":""}) {
-				if (cur[part]._is_object) {
+				if (cur[part]._isObject) {
 					return cur[part].get(path);
 				} else {
 					val = enyo.getPath.call(cur[part], {path: path, recursing: true});
@@ -212,7 +212,7 @@
 					if (!(typeof cur[target] in {"object":"","function":""})) {
 						cur[target] = {};
 					}
-					if (true === cur[target]._is_object) {
+					if (true === cur[target]._isObject) {
 						return cur[target].set(parts.join("."), value);
 					}
 					cur = cur[target];
