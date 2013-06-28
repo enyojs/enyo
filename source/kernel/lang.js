@@ -75,6 +75,15 @@
 		return target && "function" === typeof target && true === target.overloaded;
 	};
 
+	//*@protected
+	/**
+		Internally-used method to detect deferred kind constructors.
+	*/
+	var isDeferredConstructor = function(target) {
+		return target && ("function" === typeof target) &&
+			(target._FinalCtor || target._finishKindCreation);
+	};
+
 	//*@public
 	/**
 		A fast-path enabled global getter that takes a string path that
@@ -138,15 +147,22 @@
 			part = path.substring(0, idx);
 			path = path.slice(idx+1);
 
-			if (cur[part] && typeof cur[part] in {"object":"","function":""}) {
-				if (cur[part]._is_object) {
-					return cur[part].get(path);
+			var root = cur[part];
+			if (isDeferredConstructor(root)) {
+				root = enyo.checkConstructor(root);
+			}
+			if (root && typeof root in {"object":"","function":""}) {
+				if (root._is_object) {
+					return root.get(path);
 				} else {
-					val = enyo.getPath.call(cur[part], {path: path, recursing: true});
+					val = enyo.getPath.call(root, {path: path, recursing: true});
 				}
 			}
 		}
 
+		if (isDeferredConstructor(val)) {
+			val = enyo.checkConstructor(val);
+		}
 		// otherwise we've reached the end so return whatever we have
 		return val;
 	};

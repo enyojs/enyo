@@ -527,7 +527,7 @@
 		_initModel: function () {
 			var $model = this.model;
 			if ("string" === typeof $model) {
-				$model = enyo.constructorForKind($model);
+				$model = enyo.getPath($model);
 			}
 			this.model = $model;
 			if ($model && this.relation) {

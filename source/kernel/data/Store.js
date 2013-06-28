@@ -124,7 +124,7 @@
 			var $options = options? enyo.clone(options): {};
 			var $params = options.params || {};
 			var $models = this._recordsForType(ctor);
-			var pk = ("string" === typeof ctor? enyo.constructorForKind(ctor): ctor).prototype.primaryKey;
+			var pk = ("string" === typeof ctor? enyo.getPath(ctor): ctor).prototype.primaryKey;
 			var $ret;
 			if (pk in $params) {
 				if (($ret = $models.byPrimaryKey[$params[pk]])) {

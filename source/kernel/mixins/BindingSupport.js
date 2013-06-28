@@ -46,7 +46,7 @@
 
 		//*@protected
 		_bindingConstructor: enyo.computed(function () {
-			return enyo.constructorForKind(this.defaultBindingKind);
+			return enyo.getPath(this.defaultBindingKind);
 		}, {cached: true}),
 
 		// ...........................
