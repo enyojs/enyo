@@ -1,6 +1,7 @@
 ﻿enyo.kind({
 	name: "JSONTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	testJsonStringifyExists: function() {
 		enyo.json.stringify();
 		this.finish();

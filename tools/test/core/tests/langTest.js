@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "langTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	testCallee: function() {
 		var err = "";
 		var fn = function() {

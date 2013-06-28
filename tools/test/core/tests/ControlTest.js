@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "ControlTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	testAddingComponents: function() {
 		var K = enyo.kind({
 			kind: enyo.Control,

@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "AjaxTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	testAjax200: function() {
 		new enyo.Ajax({url: "index.html", handleAs: "text"})
 			.response(this, function(inSender, inValue){

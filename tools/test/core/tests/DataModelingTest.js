@@ -207,6 +207,7 @@
 	enyo.kind({
 		name: "ModelTests",
 		kind: enyo.TestSuite,
+		noDefer: true,
 
 		/**
 			Test creating a model without any features.
@@ -424,6 +425,7 @@
 	enyo.kind({
 		name: "CollectionTests",
 		kind: enyo.TestSuite,
+		noDefer: true,
 		testCreate: function () {
 			var $c = new enyo.Collection();
 			if (!$c || $c.length) {
@@ -463,6 +465,7 @@
 	enyo.kind({
 		name: "RelationTests",
 		kind: enyo.TestSuite,
+		noDefer: true,
 
 		testToOneRelation: function () {
 			var $m = new models.Person({

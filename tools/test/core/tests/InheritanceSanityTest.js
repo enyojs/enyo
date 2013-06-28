@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "InheritanceSanityTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	testObject: function () {
 		this.finish(!(enyo.Object && enyo.Object instanceof Object));
 	},

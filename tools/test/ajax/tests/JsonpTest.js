@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "JsonpTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	_testJsonp: function(inProps, inParams, inAssertFn) {
 		return new enyo.JsonpRequest(inProps)
 			.response(this, function(inSender, inValue) {

@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "LoaderTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	testSingleLoad: function() {
 		enyo.load("tests/loader/loader1.js",
 			this.bindSafely(function() {

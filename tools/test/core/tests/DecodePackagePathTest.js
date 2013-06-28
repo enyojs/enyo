@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "DecodePackagePathTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	assert: function(inParts, inPart, inValue) {
 		if (inParts[inPart] != inValue) {
 			this.finish('bad ' + inPart + ', expected "' + inValue + '" got "' + inParts[inPart] + '"');

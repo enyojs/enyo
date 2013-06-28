@@ -68,7 +68,7 @@
 				// TODO: it should be possible to use the above line but for
 				// now it is causing far too many issues
 				kind: "enyo.View",
-				mixins: ["enyo.AutoBindingSupport"].concat(this.childMixins || []),
+				mixins: ["enyo.AutoBindingSupport", "enyo.RepeaterChildSupport"].concat(this.childMixins || []),
 				components: $components,
 				defaultKind: this.defaultKind || "enyo.View",
 				defaultProps: {owner: $owner}
