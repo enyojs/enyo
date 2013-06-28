@@ -37,7 +37,7 @@
 
 		//*@protected
 		_bindingsFromObservers: null,
-		
+
 		//*@protected
 		_didSetupBindings: false,
 
@@ -46,7 +46,7 @@
 
 		//*@protected
 		_bindingConstructor: enyo.computed(function () {
-			return enyo.getPath(this.defaultBindingKind);
+			return enyo.constructorForKind(this.defaultBindingKind);
 		}, {cached: true}),
 
 		// ...........................
@@ -198,7 +198,7 @@
 			// initialize our bindings from observers array
 			this._bindingsFromObservers = [];
 			this.bindings = this.bindings || [];
-			return this.inherited(arguments);	
+			return this.inherited(arguments);
 		},
 
 		//*@protected

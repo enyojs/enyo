@@ -8,20 +8,20 @@
 		its content. They have the ability of being used as an exposed _controller_ or an automatically
 		generated relational container depending on your need. Like the other components of the data
 		layer in _enyo_ it defaults to functioning with typical _REST_ requests.
-		
+
 		[see enyo.Model](#), [see enyo.Store](#), [see enyo.Source](#)
 	*/
 	enyo.kind({
 
 		// ...........................
 		// PUBLIC PROPERTIES
-		
+
 		//*@public
 		name: "enyo.Collection",
-		
+
 		//*@public
 		kind: "enyo.Controller",
-		
+
 		//*@public
 		/**
 			A collection uses the `model` property to know what constructor
@@ -31,30 +31,30 @@
 			or a _constructor_ directly.
 		*/
 		model: "enyo.Model",
-		
+
 		//*@public
 		/**
 			Like `enyo.Model` an `enyo.Collection` has several statuses it will
 			set depending on its current action. The following are the available
 			options for status.
-		
+
 			- BUSY.FETCHING
 			- BUSY.DESTROYING
 			- CLEAN
 			- ERROR.SOURCE
 			- ERROR.RESPONSE
 			- ERROR.TYPE
-		
+
 			[see enyo.Model.status](#)
 		*/
 		status: enyo.Model.CLEAN,
-		
+
 		//*@public
 		/**
 			The number of elements in the _collection_.
 		*/
 		length: 0,
-		
+
 		//*@public
 		/**
 			Used by the `enyo.Source` in the application to generate the appropriate
@@ -64,7 +64,7 @@
 			adding dynamic `url` handling possibilities.
 		*/
 		url: "",
-		
+
 		//*@public
 		/**
 			A `relation` is an optional _relational_ definition object and must be of
@@ -73,7 +73,7 @@
 			_value change_ notifications from the related _model_ and update accordingly.
 		*/
 		relation: null,
-		
+
 		//*@public
 		events: {
 			onModelChanged: "",
@@ -83,13 +83,13 @@
 			onModelsRemoved: "",
 			onModelDestroyed: ""
 		},
-		
+
 		//*@public
 		handlers: {
 			onChange: "_modelChanged",
 			onDestroy: "_modelDestroyed"
-		},		
-		
+		},
+
 		// ...........................
 		// PROTECTED PROPERTIES
 
@@ -116,7 +116,7 @@
 				return this._store;
 			}
 		}, "length", {cached: true, defer: true}),
-		
+
 		//*@public
 		/**
 			Used by `enyo.Source` to generate the appropriate request for
@@ -142,7 +142,7 @@
 		buildQueryParams: function (model, options) {
 			// look at options.queryParams for a hash to add-to or modify
 		},
-		
+
 		//*@public
 		/**
 			Returns an array of all of the raw datasets for any records
@@ -156,7 +156,7 @@
 				return model.raw(local);
 			});
 		},
-		
+
 		//*@public
 		/**
 			Returns a JSON stringified version of the _collection_ array.
@@ -166,7 +166,7 @@
 		toJSON: function (useLocalKeys) {
 			return enyo.json.stringify(this.raw(useLocalKeys));
 		},
-		
+
 		//*@public
 		/**
 			Fetch this _collection_. Accepts an options hash including a
@@ -182,7 +182,7 @@
 			this.set("status", enyo.Model.BUSY.FETCHING);
 			enyo.store.fetch(this, $options);
 		},
-		
+
 		//*@public
 		/**
 			By default `fetch` will add to the _collection_ and keep any existing
@@ -194,7 +194,7 @@
 			$options.replace = true;
 			this.fetch($options);
 		},
-		
+
 		//*@public
 		/**
 			Not typically called directly but overloadable for extensibility.
@@ -212,7 +212,7 @@
 			}
 			this.set("status", enyo.Model.CLEAN);
 		},
-		
+
 		//*@public
 		/**
 			Overload this method for handling fail-states. The `which`
@@ -221,7 +221,7 @@
 		didFail: function (which, options) {
 			this.set("status", enyo.Model.ERROR.RESPONSE);
 		},
-		
+
 		//*@public
 		/**
 			TODO: Not implemented
@@ -229,7 +229,7 @@
 		push: function () {
 			enyo.warn("enyo.Collection.push: not currently implemented");
 		},
-		
+
 		//*@public
 		/**
 			TODO: Not implemented
@@ -237,7 +237,7 @@
 		pop: function () {
 			enyo.warn("enyo.Collection.pop: not currently implemented");
 		},
-		
+
 		//*@public
 		/**
 			TODO: Not implemented
@@ -245,7 +245,7 @@
 		shift: function () {
 			enyo.warn("enyo.Collection.shift: not currently implemented");
 		},
-		
+
 		//*@public
 		/**
 			TODO: Not implemented
@@ -253,7 +253,7 @@
 		unshift: function () {
 			enyo.warn("enyo.Collection.unshift: not currently implemented");
 		},
-		
+
 		//*@public
 		/**
 			Returns the index of the requested `value` in the _collection_
@@ -262,7 +262,7 @@
 		indexOf: function (value, idx) {
 			return enyo.indexOf(value, this._store, idx);
 		},
-		
+
 		//*@public
 		/**
 			Returns the last index of the `value` in the _collection_ starting
@@ -271,7 +271,7 @@
 		lastIndexOf: function (value, idx) {
 			return enyo.lastIndexOf(value, this._store, idx);
 		},
-		
+
 		//*@public
 		/**
 			TODO: Not implemented
@@ -279,30 +279,30 @@
 		splice: function () {
 			enyo.warn("enyo.Collection.splice: not currently implemented");
 		},
-		
+
 		//*@public
 		/**
 			Returns a mapped array according to the return value of `fn` and
 			the optional `context` to execute `fn` with (default is the _collection_).
-		
+
 			[see enyo.map](#)
 		*/
 		map: function (fn, context) {
 			return enyo.map(this._store, fn, context || this);
 		},
-		
+
 		//*@public
 		/**
 			Returns a filtered array of _models_ from the _collection_ according
 			to the `true` or `false` return of `fn` and the optional `context`
 			(default is the _collection_).
-		
+
 			[see enyo.filter](#)
 		*/
 		filter: function (fn, context) {
 			return enyo.filter(this._store, fn, context || this);
 		},
-		
+
 		//*@public
 		/**
 			In implementations where the result of a `fetch` may not be the array
@@ -312,7 +312,7 @@
 		filterData: function (data) {
 			return data;
 		},
-		
+
 		//*@public
 		/**
 			Returns `true` or `false` whether the _collection_ contains `value`.
@@ -320,7 +320,7 @@
 		contains: function (value) {
 			return !!~enyo.indexOf(this._store, value);
 		},
-		
+
 		//*@public
 		/**
 			Returns the _model_ at `idx` in the _collection_.
@@ -328,7 +328,7 @@
 		at: function (idx) {
 			return this._store[idx];
 		},
-		
+
 		//*@public
 		/**
 			Add a single record to the _collection_. The `record` parameter
@@ -356,7 +356,7 @@
 			}
 			return idx;
 		},
-		
+
 		//*@public
 		/**
 			TODO: Not implemented
@@ -364,7 +364,7 @@
 		addAt: function () {
 			enyo.warn("enyo.Collection.addAt: not implemented yet");
 		},
-		
+
 		//*@public
 		/**
 			Accepts an array of records to be added to the _collection_. If the
@@ -389,7 +389,7 @@
 				this.doModelsAdded({models: added});
 			}
 		},
-		
+
 		//*@public
 		/**
 			Removed `record` from the _collection_ if it exists and emits
@@ -415,7 +415,7 @@
 			}
 			return false;
 		},
-		
+
 		//*@public
 		/**
 			Removes all models in the _collection_. Note these _models_ are not
@@ -425,7 +425,7 @@
 			var $copy = enyo.clone(this._store);
 			this.remove($copy);
 		},
-		
+
 		//*@public
 		/**
 			TODO: Not implemented
@@ -433,7 +433,7 @@
 		removeAt: function () {
 			enyo.warn("enyo.Collection.removeAt: not implemented yet");
 		},
-		
+
 		//*@public
 		/**
 			Removes all models in the `records` array if they are found in
@@ -458,7 +458,7 @@
 				this.doModelsRemoved({models: removed});
 			}
 		},
-		
+
 		//*@public
 		/**
 			Overloaded `setter` that accepts an object literal and
@@ -479,7 +479,7 @@
 				return this.inherited(arguments);
 			}
 		},
-		
+
 		//*@public
 		/**
 			Overloaded `ownerChanged` to prevent the normal handlers
@@ -527,7 +527,7 @@
 		_initModel: function () {
 			var $model = this.model;
 			if ("string" === typeof $model) {
-				$model = enyo.getPath($model);
+				$model = enyo.constructorForKind($model);
 			}
 			this.model = $model;
 			if ($model && this.relation) {
@@ -539,7 +539,7 @@
 				}
 			}
 		},
-		
+
 		//*@protected
 		_initRelation: function () {
 			var key, $rel = this.relation;
@@ -553,7 +553,7 @@
 				}
 			}
 		},
-		
+
 		//*@protected
 		_relationObserver: function (prop, prev, val) {
 			var $rel = this.relation, key = $rel.inverseKey;
@@ -572,14 +572,14 @@
 				}
 			}
 		},
-		
+
 		//*@protected
 		_relationChanged: enyo.observer(function (prop, prev, val) {
 			if (val) {
 				this._initRelation();
 			}
 		}, "relation"),
-		
+
 		//*@protected
 		_modelChanged: function (sender, event) {
 			var idx = this.indexOf(sender);
@@ -593,7 +593,7 @@
 			}
 			return true;
 		},
-		
+
 		//*@protected
 		_modelDestroyed: function (sender, event) {
 			var idx = this.indexOf(sender);
@@ -607,10 +607,10 @@
 			}
 			return true;
 		},
-		
+
 		// ...........................
 		// OBSERVERS
-		
+
 		_statusChanged: enyo.observer(function (prop, prev, val) {
 			if (prev == enyo.Model.DIRTY && val == enyo.Model.CLEAN) {
 				enyo.forEach(enyo.clone(this._dirtyModels), function (rec) {
