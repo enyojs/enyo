@@ -1,7 +1,7 @@
 enyo.kind({
 	name: "ViewportPositioningTest",
 	kind: enyo.TestSuite,
-
+	noDefer: true,
 	testMeasuringViewportCoordinates: function() {
 		var K = enyo.kind({
 			kind: enyo.Control,

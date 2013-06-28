@@ -74,6 +74,7 @@ enyo.kind = function(inProps) {
 			return obj;
 		};
 		ctor._finishKindCreation = function() {
+			ctor._finishKindCreation = undefined;
 			enyo.setPath(name, undefined);
 			var FinalCtor = enyo.kind.finish(inProps);
 			ctor._FinalCtor = FinalCtor;
@@ -328,6 +329,19 @@ enyo.kind.statics = {
 	}
 };
 
+enyo.checkConstructor = function(inKind) {
+	if (enyo.isFunction(inKind)) {
+		// if a deferred enyo kind, finish that work first
+		if (inKind._FinalCtor) {
+			return inKind._FinalCtor;
+		}
+		if (inKind._finishKindCreation) {
+			return inKind._finishKindCreation();
+		}
+	}
+	return inKind;
+};
+
 //
 // factory for kinds identified by strings
 //
@@ -336,40 +350,33 @@ enyo._kindCtors = {};
 enyo.constructorForKind = function(inKind) {
 	if (inKind === null) {
 		return inKind;
-	} else if (enyo.isFunction(inKind)) {
-		// if a deferred enyo kind, finish that work first
-		if (inKind._FinalCtor) {
-			return inKind._FinalCtor;
-		}
-		if (inKind._finishKindCreation) {
-			return inKind._finishKindCreation();
-		}
-		// in inKind is a function or explicitly null, then that's ctor, full stop.
-		return inKind;
+	} else if (inKind === undefined) {
+		return enyo.defaultCtor;
 	}
-	if (inKind) {
-		// use memoized constructor if available...
-		var ctor = enyo._kindCtors[inKind];
-		if (ctor) {
-			return ctor;
-		}
-		// otherwise look it up and memoize what we find
-		//
-		// if inKind is an object in enyo, say "Control", then ctor = enyo["Control"]
-		// if inKind is a path under enyo, say "Heritage.Button", then ctor = enyo["Heritage.Button"] || enyo.Heritage.Button
-		// if inKind is a fully qualified path, say "enyo.Heritage.Button", then ctor = enyo["enyo.Heritage.Button"] || enyo.enyo.Heritage.Button || enyo.Heritage.Button
-		//
-		// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
-		// This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
-		ctor = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath.call(enyo, inKind, true) || window[inKind] || enyo.getPath(inKind);
-		// if this is a deferred kind, run the follow-up code then refetch the kind's constructor
-		if (ctor && ctor._finishKindCreation) {
-			ctor = ctor._finishKindCreation();
-		}
-		enyo._kindCtors[inKind] = ctor;
+	else if (enyo.isFunction(inKind)) {
+		return enyo.checkConstructor(inKind);
+	}
+
+	// use memoized constructor if available...
+	var ctor = enyo._kindCtors[inKind];
+	if (ctor) {
 		return ctor;
 	}
-	return enyo.defaultCtor;
+	// otherwise look it up and memoize what we find
+	//
+	// if inKind is an object in enyo, say "Control", then ctor = enyo["Control"]
+	// if inKind is a path under enyo, say "Heritage.Button", then ctor = enyo["Heritage.Button"] || enyo.Heritage.Button
+	// if inKind is a fully qualified path, say "enyo.Heritage.Button", then ctor = enyo["enyo.Heritage.Button"] || enyo.enyo.Heritage.Button || enyo.Heritage.Button
+	//
+	// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
+	// This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
+	ctor = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath.call(enyo, inKind, true) || window[inKind] || enyo.getPath(inKind);
+	// if this is a deferred kind, run the follow-up code then refetch the kind's constructor
+	if (ctor && ctor._finishKindCreation) {
+		ctor = ctor._finishKindCreation();
+	}
+	enyo._kindCtors[inKind] = ctor;
+	return ctor;
 };
 
 //

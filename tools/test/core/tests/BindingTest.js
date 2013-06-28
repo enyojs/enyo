@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "BindingTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	testCreate: function () {
 		new enyo.Binding();
 		this.finish();

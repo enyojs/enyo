@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "PathResolverTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	rewriteTest: function(inResolver, inPath, inExpected) {
 		var pf= enyo.loader.packageFolder;
 		enyo.loader.packageFolder = "./source/";
