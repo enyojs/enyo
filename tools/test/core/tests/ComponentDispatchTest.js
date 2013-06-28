@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "ComponentDispatchTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	testDispatchEvent2NullArgs: function() {
 		var test = this;
 		var c = new enyo.Component({

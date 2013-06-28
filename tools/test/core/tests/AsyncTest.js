@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "AsyncTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	testAsyncExists: function() {
 		new enyo.Async();
 		this.finish();

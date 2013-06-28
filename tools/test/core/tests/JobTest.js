@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "JobTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	testStartJob: function() {
 		var finish = this.bindSafely("finish");
 		enyo.job("testStartJob", function() {

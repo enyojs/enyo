@@ -204,7 +204,7 @@ enyo.kind({
 		this.destroyed = true;
 	},
 
-	_is_object: true
+	_isObject: true
 });
 
 //* @protected

@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "KindTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	testNamespace: function() {
 		enyo.kind({name: "custom.Namespace"});
 		/* global custom */

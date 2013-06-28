@@ -56,6 +56,7 @@ Jasmine style assert mechanism, so we can have fancy english text for failures
 enyo.kind({
 	name: "enyo.TestSuite",
 	kind: enyo.Component,
+	noDefer: true,
 	events: {
 		onBegin: "", // sent with test name as each test begins running.
 		onFinish: "", // sent with result as each test completes.

@@ -2,6 +2,7 @@
 enyo.kind({
 	name: "ComponentHandlersTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	testHandlerUnion: function() {
 		enyo.kind({
 			name: "tests.TestBase",
