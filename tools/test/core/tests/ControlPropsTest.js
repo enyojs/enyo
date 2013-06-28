@@ -2,6 +2,7 @@
 enyo.kind({
 	name: "ControlPropsTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	testUnionAttributesStylesClasses: function() {
 		enyo.kind({
 			name: "tests.TestBase",
