@@ -4,10 +4,6 @@
 var page = require('webpage').create();
 
 page.onConsoleMessage = function (msg) {
-	// filter out webkit message
-	if (/^Performance benchmarking requested/.test(msg)) {
-		return;
-	}
 	console.log("JS: " + msg);
 	if (msg === "TEST RUNNER FINISHED") {
 		var pass = page.evaluate(function() {
