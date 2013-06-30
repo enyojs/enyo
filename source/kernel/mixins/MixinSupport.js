@@ -108,7 +108,7 @@
 		// for the kind we clone the known mixin constructors
 		var ctors = proto._mixinCreate = enyo.clone(proto._mixinCreate || []);
 		// for the kind we clone the known mixin destructors
-		var dtors = proto._mixin_destroy = enyo.clone(proto._mixin_destroy || []);
+		var dtors = proto._mixinDestroy = enyo.clone(proto._mixinDestroy || []);
 		// for the kind we clone the known applied mixins
 		var applied = proto._appliedMixins = enyo.clone(proto._appliedMixins || []);
 
@@ -249,7 +249,7 @@
 	//*@protected
 	var _destroyMixins = function () {
 		if (!this._mixinsDestroyed) {
-			var $mixins = this._mixin_destroy;
+			var $mixins = this._mixinDestroy;
 			var len = $mixins.length;
 			var idx = 0;
 			var fn;
