@@ -57,7 +57,7 @@
 	};
 
 	//*@protected
-	var _setup_controllers = function () {
+	var _setupControllers = function () {
 		var kinds = this.controllers || [];
 		var controllers = this.controllers = {};
 		var len = kinds.length;
@@ -185,7 +185,7 @@
 		constructed: function () {
 			// we need to make sure that the controllers are already initialized
 			// before we create our view according to the view controller's API
-			_setup_controllers.call(this);
+			_setupControllers.call(this);
 			// now we let it continue as usual
 			this.inherited(arguments);
 		},
