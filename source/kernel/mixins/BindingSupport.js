@@ -203,6 +203,9 @@
 
 		//*@protected
 		create: function () {
+			if (this._didSetupBindings) {
+				return;
+			}
 			// we do a single pass at each of the binding declarations
 			// and pass them to our binding creation method
 			var $bindings = this.bindings || (this.bindings = []);

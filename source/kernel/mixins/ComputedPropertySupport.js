@@ -125,7 +125,7 @@
 		// TODO: this is assuming the desirable end is to override
 		// any previous entry for a newer entry of the same property
 		// name
-		var $config = $computed[property] = fn.config;
+		var $config = $computed[property] = enyo.clone(fn.config);
 		// if the property is configured as cacheable and not deferred
 		// we add it to a special object to speed up initialization
 		if ($config.cached && !$config.defer) {

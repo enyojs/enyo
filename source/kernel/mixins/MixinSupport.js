@@ -230,12 +230,17 @@
 			_addMixin(base.prototype, mixin, name);
 		} else {
 			_addMixin(base, mixin, name);
-			_postConstructor.call(base);
 		}
 	};
 
 	//*@protected
 	var _createMixins = function () {
+		var $r = this._runtimeMixins;
+		if ($r) {
+			for (var i=0, r$; (r$=$r[i]); ++i) {
+				applyMixin(r$, this);
+			}
+		}
 		var $mixins = this._mixinCreate;
 		var len = $mixins.length;
 		var idx = 0;
