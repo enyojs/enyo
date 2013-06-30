@@ -103,6 +103,9 @@ enyo.kind({
 		this.initProps(["id", "content", "src", "model"]);
 	},
 	destroy: function() {
+		if (this.model && enyo.isModel(this.model)) {
+			this.model.removeDispatchTarget(this);
+		}
 		this.removeNodeFromDom();
 		enyo.Control.unregisterDomEvents(this.id);
 		this.inherited(arguments);
@@ -139,6 +142,7 @@ enyo.kind({
 	},
 	modelChanged: function () {
 		if (this.model && enyo.isModel(this.model)) {
+			this.model.addDispatchTarget(this);
 			// if bindings haven't been initialized yet then this
 			// would be unnecessary
 			if (this._didSetupBindings) {
