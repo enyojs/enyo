@@ -873,6 +873,13 @@
 			to be set to `true`. Default is `false`.
 		*/
 		noUrl: false,
+		
+		//*@public
+		/**
+			In cases where the url is arbitrarily set and needs to be used as-is set
+			this flag to true. This setting will ignore the `noUrl` property value.
+		*/
+		rawUrl: false,
 
 		//*@public
 		/**
@@ -925,7 +932,7 @@
 			Overload this method in custom setups.
 		*/
 		query: enyo.computed(function () {
-			return !this.noUrl? this.get("url") + "/" + this.get(this.primaryKey) || "": "";
+			return !this.noUrl && !this.rawUrl? this.get("url") + "/" + this.get(this.primaryKey) || "": this.rawUrl? this.get("url"): "";
 		}),
 
 		// ...........................
