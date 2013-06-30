@@ -15,6 +15,8 @@
 	var normalize = function (url) {
 		return url.replace(/([^:]\/)(\/+)/g, "$1");
 	};
+	
+	var http = /^http/;
 
 	enyo.kind({
 
@@ -111,12 +113,34 @@
 		// PUBLIC METHODS
 		buildUrl: function (model, options) {
 			if (!options.url) {
-				var url = !~this.domain.indexOf("http")? "http" + (this.secure? "s": "") + "://" + this.domain: this.domain;
-				if (!this.ignorePort && (this.port || location.port)) {
-					url += (":" + (this.port? this.port: location.port) + "/");
+				// initially we grab the model's query string
+				var $m = model.get("query");
+				// and create the url string we will build if we need to
+				var $u = "";
+				if (http.test($m)) {
+					// the assumption here is if the root is provided by the url of the model
+					// we default to using that
+					$m += "/";
+					return options.url = normalize($m);
+				} else if (!http.test(this.domain)) {
+					$u = "http" + (this.secure? "s": "") + "://";
 				}
-				url += "/" + this.urlPostfix + model.get("query");
-				options.url = normalize(url);
+				// now we add our root
+				$u += this.domain;
+				// ensure that our url from the model has the slash that will be normalized out
+				// if it was already present
+				$m = "/" + $m;
+				// determine if we need to include the given port (if any) from the current
+				// location
+				if (!this.ignorePort && (this.port || location.port)) {
+					$u += (":" + (this.port || location.port) + "/");
+				}
+				// include the trailing slash prior to any query being appended and any post
+				// fix if it exists
+				$u += "/" + this.urlPostfix + $m;
+				// now we normalize the whole thing to removing double slashes
+				// and we're done
+				options.url = normalize($u);
 			} else {
 				options.urlProvided = true;
 			}
