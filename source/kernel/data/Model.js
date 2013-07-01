@@ -1031,7 +1031,7 @@
 		*/
 		didFetch: function (options, result, noFilter) {
 			var $data = noFilter? (result || {}): this.filterData(result || {});
-			if (this._attributeKeys.length < 2) {
+			if (!this._attributeKeys.length) {
 				this.createSchemaFromData($data);
 			}
 			var $attrs = this._attributes;
@@ -1314,7 +1314,7 @@
 				// if we have a defined structure we adhere to the structure
 				// otherwise we implicitly derive the structure but no special
 				// relationships
-				if (this._attributeKeys.length > 1) {
+				if (this._attributeKeys.length) {
 					this.didFetch({}, $values, true);
 				} else if (recursing) {
 					// this is an error state because we did not determine any
