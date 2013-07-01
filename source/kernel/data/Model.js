@@ -417,11 +417,6 @@
 		// we take the new attributes and preserve them along with
 		// any current values
 		enyo.mixin($proto._attributes, props);
-		// we want to make sure that no matter what we include the primaryKey
-		// attribute in the payload
-		if (!($proto.primaryKey in $proto._attributes)) {
-			$proto._attributes[$proto.primaryKey] = null;
-		}
 		// do the rest of the initialization routine on the attributes
 		// in a single pass
 		normalizeAttributes($proto, $proto._attributes);
@@ -865,6 +860,9 @@
 			primary key for this _model_. Default is `id`.
 		*/
 		primaryKey: "id",
+		
+		//*@public
+		noFetchId: true,
 
 		//*@public
 		/**
