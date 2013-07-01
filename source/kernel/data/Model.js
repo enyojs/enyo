@@ -417,11 +417,6 @@
 		// we take the new attributes and preserve them along with
 		// any current values
 		enyo.mixin($proto._attributes, props);
-		// we want to make sure that no matter what we include the primaryKey
-		// attribute in the payload
-		if (!($proto.primaryKey in $proto._attributes)) {
-			$proto._attributes[$proto.primaryKey] = null;
-		}
 		// do the rest of the initialization routine on the attributes
 		// in a single pass
 		normalizeAttributes($proto, $proto._attributes);
@@ -865,6 +860,9 @@
 			primary key for this _model_. Default is `id`.
 		*/
 		primaryKey: "id",
+		
+		//*@public
+		noFetchId: true,
 
 		//*@public
 		/**
@@ -873,6 +871,13 @@
 			to be set to `true`. Default is `false`.
 		*/
 		noUrl: false,
+		
+		//*@public
+		/**
+			In cases where the url is arbitrarily set and needs to be used as-is set
+			this flag to true. This setting will ignore the `noUrl` property value.
+		*/
+		rawUrl: false,
 
 		//*@public
 		/**
@@ -925,7 +930,7 @@
 			Overload this method in custom setups.
 		*/
 		query: enyo.computed(function () {
-			return !this.noUrl? this.get("url") + "/" + this.get(this.primaryKey) || "": "";
+			return !this.noUrl && !this.rawUrl? this.get("url") + "/" + this.get(this.primaryKey) || "": this.rawUrl? this.get("url"): "";
 		}),
 
 		// ...........................
@@ -1026,9 +1031,13 @@
 		*/
 		didFetch: function (options, result, noFilter) {
 			var $data = noFilter? (result || {}): this.filterData(result || {});
+			if (!this._attributeKeys.length) {
+				this.createSchemaFromData($data);
+			}
 			var $attrs = this._attributes;
 			var rem, loc, $prop, $val, $rel, $rels = this._relations;
 			var queue = [], $fn;
+			
 			// ensure that no events or notifications propagate while we are
 			// iterating over these entries in the result set
 			this.silence();
@@ -1305,7 +1314,7 @@
 				// if we have a defined structure we adhere to the structure
 				// otherwise we implicitly derive the structure but no special
 				// relationships
-				if (this._attributeKeys.length > 1) {
+				if (this._attributeKeys.length) {
 					this.didFetch({}, $values, true);
 				} else if (recursing) {
 					// this is an error state because we did not determine any
@@ -1313,20 +1322,7 @@
 					this.set("state", ERROR.SCHEMA);
 					return;
 				} else {
-					// will attempt to figure out what our schema should be with
-					// all defaults
-					var $schema = {};
-					// we create an object with all of the keys but no values so
-					// it does not interfere with the initialization
-					enyo.forEach(enyo.keys($values), function (key) {
-						$schema[key] = null;
-					});
-					// in case it is useful later we denote this record as being a model
-					// whose schema was derived implicitly and not defined explicitly
-					this._defaultModel = true;
-					// run the new schema through initialization routine
-					initModel(this, $schema);
-					// now rerun this same constructor with the new schema already defined
+					this.createSchemaFromData($values);
 					return this._constructor($values, true);
 				}
 				// we set our status to clean because we have values
@@ -1338,6 +1334,20 @@
 				// we flush notifications
 				this.startNotifications();
 			}
+		},
+		
+		//*@public
+		/**
+			Attempts to generate a schema implicitly from a data structure.
+		*/
+		createSchemaFromData: function (data) {
+			var $s = enyo.pool.claimObject(true);
+			enyo.forEach(enyo.keys(data), function (k) {
+				$s[k] = null;
+			});
+			this._defaultModel = true;
+			initModel(this, $s);
+			enyo.pool.releaseObject($s);
 		},
 
 		//*@public

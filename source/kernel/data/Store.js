@@ -159,7 +159,7 @@
 		},
 		initModel: function (model) {
 			var id = model.euuid = this.uuid();
-			if (!model[model.primaryKey] && !model._didAttemptFetchId) {
+			if (!model[model.primaryKey] && !model._didAttemptFetchId && !model.noFetchId) {
 				model._didAttemptFetchId = true;
 				var $options = {
 					success: this.bindSafely("initModel", model)
