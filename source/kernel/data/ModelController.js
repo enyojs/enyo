@@ -1,7 +1,5 @@
 (function (enyo) {
 	
-	var _selected = /^selected/;
-	
 	enyo.kind({
 
 		// ...........................

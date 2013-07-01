@@ -121,7 +121,8 @@
 					// the assumption here is if the root is provided by the url of the model
 					// we default to using that
 					$m += "/";
-					return options.url = normalize($m);
+					options.url = normalize($m);
+					return;
 				} else if (!http.test(this.domain)) {
 					$u = "http" + (this.secure? "s": "") + "://";
 				}
