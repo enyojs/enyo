@@ -61,8 +61,8 @@
 				}
 				if (($model = value)) {
 					this.stopNotifications();
-					this._initModel($model);
 					this.inherited(arguments);
+					this._initModel($model);
 					this.startNotifications();
 					return this;
 				}
