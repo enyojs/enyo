@@ -45,6 +45,9 @@
 		var props;
 		var b;
 		var xtra;
+		if (enyo.isString(bindSource)) {
+			bindSource = this.get(bindSource) || enyo.getPath(bindSource);
+		}
 		for (; idx < len; ++idx) {
 			xtra = enyo.pool.claimObject();
 			control = controls[idx];

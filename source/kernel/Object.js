@@ -48,7 +48,12 @@ enyo.kind({
 				if (!props.hasOwnProperty(key)) {
 					continue;
 				}
-				this[key] = props[key];
+				if (key == "mixins" && enyo.isArray(props[key])) {
+					this._runtimeMixins = props.mixins;
+					props.mixins = undefined;
+				} else {
+					this[key] = props[key];
+				}
 			}
 		}
 	},

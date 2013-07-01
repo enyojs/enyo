@@ -1,7 +1,5 @@
 (function (enyo) {
 	
-	var _selected = /^selected/;
-	
 	enyo.kind({
 
 		// ...........................
@@ -12,12 +10,6 @@
 
 		//*@public
 		model: null,
-		
-		//*@public
-		events: {
-			onModelSelected: "",
-			onModelDeselected: ""
-		},
 
 		// ...........................
 		// PROTECTED PROPERTIES
@@ -61,8 +53,8 @@
 				}
 				if (($model = value)) {
 					this.stopNotifications();
-					this._initModel($model);
 					this.inherited(arguments);
+					this._initModel($model);
 					this.startNotifications();
 					return this;
 				}
@@ -107,20 +99,7 @@
 				this.sync();
 				this.startNotifications();
 			}
-		},
-		
-		// ...........................
-		// OBSERVERS
-
-		_selectionSpy: enyo.observer(function (property, previous, value) {
-			if (_selected.test(property)) {
-				if (true === value) {
-					this.doModelSelected();
-				} else if (false === value) {
-					this.doModelDeselected();
-				}
-			}
-		}, "*")
+		}
 		
 	});
 
