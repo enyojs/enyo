@@ -1033,9 +1033,13 @@
 		*/
 		didFetch: function (options, result, noFilter) {
 			var $data = noFilter? (result || {}): this.filterData(result || {});
+			if (this._attributeKeys.length < 2) {
+				this.createSchemaFromData($data);
+			}
 			var $attrs = this._attributes;
 			var rem, loc, $prop, $val, $rel, $rels = this._relations;
 			var queue = [], $fn;
+			
 			// ensure that no events or notifications propagate while we are
 			// iterating over these entries in the result set
 			this.silence();
@@ -1320,20 +1324,7 @@
 					this.set("state", ERROR.SCHEMA);
 					return;
 				} else {
-					// will attempt to figure out what our schema should be with
-					// all defaults
-					var $schema = {};
-					// we create an object with all of the keys but no values so
-					// it does not interfere with the initialization
-					enyo.forEach(enyo.keys($values), function (key) {
-						$schema[key] = null;
-					});
-					// in case it is useful later we denote this record as being a model
-					// whose schema was derived implicitly and not defined explicitly
-					this._defaultModel = true;
-					// run the new schema through initialization routine
-					initModel(this, $schema);
-					// now rerun this same constructor with the new schema already defined
+					this.createSchemaFromData($values);
 					return this._constructor($values, true);
 				}
 				// we set our status to clean because we have values
@@ -1345,6 +1336,20 @@
 				// we flush notifications
 				this.startNotifications();
 			}
+		},
+		
+		//*@public
+		/**
+			Attempts to generate a schema implicitly from a data structure.
+		*/
+		createSchemaFromData: function (data) {
+			var $s = enyo.pool.claimObject(true);
+			enyo.forEach(enyo.keys(data), function (k) {
+				$s[k] = null;
+			});
+			this._defaultModel = true;
+			initModel(this, $s);
+			enyo.pool.releaseObject($s);
 		},
 
 		//*@public
