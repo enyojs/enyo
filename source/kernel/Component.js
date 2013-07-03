@@ -334,10 +334,11 @@ enyo.kind({
 			return;
 		}
 		// Bubble to next target
+		var e = inEvent || {};
 		var next = this.getBubbleTarget();
 		var delegate = inEvent.delegate;
 		if (next) {
-			return next.dispatchBubble(inEventName, inEvent, delegate || this);
+			return next.dispatchBubble(inEventName, e, delegate || this);
 		}
 		return false;
 	},
