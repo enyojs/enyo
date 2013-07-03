@@ -482,20 +482,6 @@
 
 		//*@public
 		/**
-			Overloaded `ownerChanged` to prevent the normal handlers
-			from executing. Overload with care.
-		*/
-		ownerChanged: function(old) {
-			if (old && old.removeComponent) {
-				old.removeComponent(this);
-			}
-			if (this.owner && this.owner.addComponent) {
-				this.owner.addComponent(this);
-			}
-		},
-
-		//*@public
-		/**
 			Accepts an array of models to add to the _collection_ at creation.
 		*/
 		constructor: function (props) {
