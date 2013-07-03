@@ -155,7 +155,7 @@
 
 	//*@public
 	enyo.toOne = function (props) {
-		var $props = props;
+		var $props = props || {};
 		$props._kind = "toOne";
 		$props.handler = $props.handler || toOneHandler;
 		initRelation($props);
@@ -164,7 +164,7 @@
 
 	//*@public
 	enyo.toMany = function (props) {
-		var $props = props;
+		var $props = props || {};
 		$props._kind = "toMany";
 		$props.handler = $props.handler || toManyHandler;
 		initRelation($props);
