@@ -325,7 +325,7 @@
 	//*@protected
 
 	var initRelations = function () {
-		var key, $rel, $rels = this._relations;
+		var key, $rel, $rels = this._relations || (this._relations = {});
 		// since at load time we can't be sure all the constructors are loaded
 		// we have to resort to doing this at runtime
 		// TODO: Could register relations globally and have an enyo.ready call
