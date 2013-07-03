@@ -95,21 +95,12 @@
 			}
 		},
 
-		render: function () {
-			this.reset();
-			this.inherited(arguments);
-		},
-
 		//*@public
 		add: function (rec) {
-			if (!this.generated) {
-				return;
-			}
 			var $k = this._childKind;
 			var $c = this.createComponent({kind: $k});
-			var b = this.batching;
 			$c.set("model", rec);
-			if (!b) {
+			if (this.generated && !this.batching) {
 				$c.render();
 			}
 		},
