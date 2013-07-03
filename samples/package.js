@@ -3,6 +3,8 @@ enyo.depends(
 	"PlatformSample.js",
 	"AjaxSample.css",
 	"AjaxSample.js",
+	"DataRepeaterSample.css",
+	"DataRepeaterSample.js",
 	"JsonpSample.css",
 	"JsonpSample.js",
 	"WebServiceSample.css",

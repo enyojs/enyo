@@ -1,0 +1,9 @@
+.datarepeater-sample {
+	padding:15px;
+}
+.datarepeater-sample-item {
+	padding:4px;
+	margin:2px;
+	border:1px solid gray;
+	background-color: lightgray;
+}

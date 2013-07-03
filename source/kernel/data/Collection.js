@@ -497,10 +497,17 @@
 		//*@public
 		/**
 			Accepts an array of models to add to the _collection_ at creation.
+			Also accepts a hash of properties to initialize the collection
+			with an array of data as second parameter.
 		*/
-		constructor: function (props) {
+		constructor: function (props, data) {
 			this._dirtyModels = [];
 			this.inherited(arguments);
+			// if data parameter supplied, use that instead of props
+			// for initializing the store
+			if (data) {
+				props = data;
+			}
 			// if the initial parameter is an array we use that as
 			// our starting properties
 			if (props && props instanceof Array) {
