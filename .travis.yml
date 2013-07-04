@@ -5,10 +5,9 @@ install: "npm -g install jshint"
 before_script:
   - php -S localhost:8000 &
 script:
-  - echo -e "\x1b\x5b35;1m*** Running JSHint\x1b\x5b0m"
-  - jshint .
-  - echo -e "\x1b\x5b35;1m*** Running core tests with phantomjs\x1b\x5b0m"
-  - phantomjs tools/test/core/phantomjs-test.js
-  - echo -e "\x1b\x5b35;1m*** Running ajax tests with phantomjs\x1b\x5b0m"
-  - echo "(test failures ignored due to phantomjs XHR instability)"
-  - phantomjs tools/test/ajax/phantomjs-test.js || true
+  echo -e "\x1b\x5b35;1m*** Running JSHint\x1b\x5b0m" &&
+  jshint . &&
+  echo -e "\x1b\x5b35;1m*** Running core tests with phantomjs\x1b\x5b0m" &&
+  phantomjs tools/test/core/phantomjs-test.js &&
+  echo -e "\x1b\x5b35;1m*** Running ajax tests with phantomjs (failures ignored)\x1b\x5b0m" &&
+  (phantomjs tools/test/ajax/phantomjs-test.js || true)
