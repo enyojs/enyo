@@ -15,16 +15,20 @@ function failLog(msg) {
 // PhantomJS driver for loading Enyo Ajax tests and checking for failures
 var page = require('webpage').create();
 
+var totalMsgs = 0;
+
 page.onConsoleMessage = function (msg) {
+	++totalMsgs;
 	if (msg.match(/FAILED TEST/)) {
 		failLog(msg);
 	} else {
 		console.log("JS: " + msg);
 	}
 	if (msg === "TEST RUNNER FINISHED") {
-		var pass = page.evaluate(function() {
-			return (document.querySelector(".enyo-testcase-failed") === null);
-		});
+		var pass = totalMsgs > 1 &&
+			page.evaluate(function() {
+				return (document.querySelector(".enyo-testcase-failed") === null);
+			});
 		if (pass) {
 			passLog("Enyo Ajax tests passed!");
 			phantom.exit(0);
