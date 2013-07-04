@@ -1,19 +1,35 @@
 /* jshint phantom:true, devel: true */
 
+var RED   = "\x1b\x5b31;1m";
+var GREEN = "\x1b\x5b32;1m";
+var RESET = "\x1b\x5b0m";
+
+function passLog(msg) {
+	console.log(GREEN + "JS: " + msg + RESET);
+}
+
+function failLog(msg) {
+	console.log(RED + "JS: " + msg + RESET);
+}
+
 // PhantomJS driver for loading Enyo Ajax tests and checking for failures
 var page = require('webpage').create();
 
 page.onConsoleMessage = function (msg) {
-	console.log("JS: " + msg);
+	if (msg.match(/FAILED TEST/)) {
+		failLog(msg);
+	} else {
+		console.log("JS: " + msg);
+	}
 	if (msg === "TEST RUNNER FINISHED") {
 		var pass = page.evaluate(function() {
 			return (document.querySelector(".enyo-testcase-failed") === null);
 		});
 		if (pass) {
-			console.log("Enyo Ajax tests passed!");
+			passLog("Enyo Ajax tests passed!");
 			phantom.exit(0);
 		} else {
-			console.log("Enyo Ajax tests failed. :(");
+			failLog("Enyo Ajax tests failed. :(");
 			phantom.exit(1);
 		}
 	}
@@ -25,12 +41,12 @@ page.onError = function(msg, trace) {
 
 page.open("http://localhost:8000/tools/test/ajax/index.html", function(status) {
 	if (status !== "success") {
-		console.log("Error loading page, status: " + status);
+		failLog("Error loading page, status: " + status);
 		phantom.exit(1);
 	}
 });
 
 setTimeout(function() {
-	console.log("timed out after 1 minute");
+	failLog("timed out after 1 minute");
 	phantom.exit(1);
 }, 60 * 1000);
