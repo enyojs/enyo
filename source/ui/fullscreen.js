@@ -31,8 +31,7 @@ enyo.fullscreen = {
 	
 	//* Return true if platform supports all of the fullscreen API
 	nativeSupport: function() {
-		return (this.elementAccessor !== null && this.requestAccessor !== null && this.cancelAccessor !== null) &&
-			!window.PalmServiceBridge;	// FIXME: API exposed, but doesn't work
+		return (this.elementAccessor !== null && this.requestAccessor !== null && this.cancelAccessor !== null);
 	},
 	//* Normalize _getFullscreenElement()_
 	getFullscreenElement: function() {
