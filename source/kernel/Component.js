@@ -336,7 +336,7 @@ enyo.kind({
 		// Bubble to next target
 		var e = inEvent || {};
 		var next = this.getBubbleTarget();
-		var delegate = inEvent.delegate;
+		var delegate = e.delegate;
 		if (next) {
 			return next.dispatchBubble(inEventName, e, delegate || this);
 		}
