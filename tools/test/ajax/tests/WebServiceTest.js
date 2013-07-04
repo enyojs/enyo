@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "WebServiceTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	timeout: 10000,
 	_testWebService: function(inProps, inParams, inAssertFn) {
 		var ws = this.createComponent({kind: enyo.WebService, onResponse: "_response", onError: "_error", assertFn: inAssertFn}, inProps);

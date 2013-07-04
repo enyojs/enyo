@@ -69,14 +69,14 @@
 			props._destroy.nom = name + ".destroy()";
 		}
 		if ("object" === typeof props.handlers) {
-			props._mixin_handlers = props.handlers;
+			props._mixinHandlers = props.handlers;
 			delete props.handlers;
 		}
 		if (enyo.exists(props["override"])) {
-			props._mixin_override = props.override;
+			props._mixinOverride = props.override;
 			delete props.override;
 		} else {
-			props._mixin_override = true;
+			props._mixinOverride = true;
 		}
 		return props;
 	};
@@ -91,26 +91,26 @@
 		if (target && target.hasMixin) {
 			return target.hasMixin(mixin);
 		} else {
-			return !!~enyo.indexOf(mixin, target._applied_mixins || []);
+			return !!~enyo.indexOf(mixin, target._appliedMixins || []);
 		}
 	};
 
 	//*@protected
-	var _apply_features = function (base, mixin) {
+	var _applyFeatures = function (base, mixin) {
 		for (var idx = 0, len = features.length; idx < len; ++idx) {
 			features[idx](base, mixin);
 		}
 	};
 
 	//*@protected
-	var _add_mixin = function (proto, mixin, name) {
+	var _addMixin = function (proto, mixin, name) {
 
 		// for the kind we clone the known mixin constructors
-		var ctors = proto._mixin_create = enyo.clone(proto._mixin_create || []);
+		var ctors = proto._mixinCreate = enyo.clone(proto._mixinCreate || []);
 		// for the kind we clone the known mixin destructors
-		var dtors = proto._mixin_destroy = enyo.clone(proto._mixin_destroy || []);
+		var dtors = proto._mixinDestroy = enyo.clone(proto._mixinDestroy || []);
 		// for the kind we clone the known applied mixins
-		var applied = proto._applied_mixins = enyo.clone(proto._applied_mixins || []);
+		var applied = proto._appliedMixins = enyo.clone(proto._appliedMixins || []);
 
 		// if this mixin is already applied, there is nothing we can do
 		if (!!~enyo.indexOf(name, applied)) {
@@ -127,20 +127,20 @@
 			dtors.push(mixin._destroy);
 		}
 		// apply all of the properties and methods to the base kind prototype
-		_apply_properties(proto, mixin, name);
+		_applyProperties(proto, mixin, name);
 		// add the name of this mixin to the applied mixins array for the kind
 		applied.push(name);
 		// give each available mixin feature the opportunity to handle properties
-		_apply_features(proto, mixin);
+		_applyFeatures(proto, mixin);
 	};
 
 	//*@protected
-	var _apply_properties = function (base, props, name) {
+	var _applyProperties = function (base, props, name) {
 		// the name of any concatenatable properties
 		var concat = base.concat || [];
 		// whether or not the mixin wishes to override defined
 		// properties (not functions) of the base if they exist
-		var override = !enyo.exists(props._mixin_override)? true: props._mixin_override;
+		var override = !enyo.exists(props._mixinOverride)? true: props._mixinOverride;
 		// the name of the property to be applied
 		var key;
 		// the value for the property that will be applied
@@ -161,23 +161,23 @@
 
 			prop = props[key];
 
-			if ("_mixin_handlers" === key) {
-				if (base._mixin_handlers) {
+			if ("_mixinHandlers" === key) {
+				if (base._mixinHandlers) {
 					// deliberate reuse of the key variable from the outer
 					// for loop since we will be exiting this pass when we're
 					// done here
 					for (key in prop) {
-						if (base._mixin_handlers[key] instanceof Array) {
-							base._mixin_handlers.push(prop[key]);
-						} else if (enyo.exists(base._mixin_handlers[key])) {
-							prev = base._mixin_handlers[key];
-							base._mixin_handlers[key] = [prev, prop[key]];
+						if (base._mixinHandlers[key] instanceof Array) {
+							base._mixinHandlers.push(prop[key]);
+						} else if (enyo.exists(base._mixinHandlers[key])) {
+							prev = base._mixinHandlers[key];
+							base._mixinHandlers[key] = [prev, prop[key]];
 						} else {
-							base._mixin_handlers[key] = prop[key];
+							base._mixinHandlers[key] = prop[key];
 						}
 					}
 				} else {
-					base._mixin_handlers = enyo.clone(prop);
+					base._mixinHandlers = enyo.clone(prop);
 				}
 				continue;
 			}
@@ -227,16 +227,21 @@
 		}
 
 		if ("function" === typeof base) {
-			_add_mixin(base.prototype, mixin, name);
+			_addMixin(base.prototype, mixin, name);
 		} else {
-			_add_mixin(base, mixin, name);
-			_post_constructor.call(base);
+			_addMixin(base, mixin, name);
 		}
 	};
 
 	//*@protected
-	var _create_mixins = function () {
-		var $mixins = this._mixin_create;
+	var _createMixins = function () {
+		var $r = this._runtimeMixins;
+		if ($r) {
+			for (var i=0, r$; (r$=$r[i]); ++i) {
+				applyMixin(r$, this);
+			}
+		}
+		var $mixins = this._mixinCreate;
 		var len = $mixins.length;
 		var idx = 0;
 		var fn;
@@ -247,30 +252,33 @@
 	};
 
 	//*@protected
-	var _destroy_mixins = function () {
-		var $mixins = this._mixin_destroy;
-		var len = $mixins.length;
-		var idx = 0;
-		var fn;
-		for (; idx < len; ++idx) {
-			fn = $mixins[idx];
-			fn.call(this);
+	var _destroyMixins = function () {
+		if (!this._mixinsDestroyed) {
+			var $mixins = this._mixinDestroy;
+			var len = $mixins.length;
+			var idx = 0;
+			var fn;
+			for (; idx < len; ++idx) {
+				fn = $mixins[idx];
+				fn.call(this);
+			}
 		}
+		this._mixinsDestroyed = true;
 	};
 
 	//*@protected
-	var _post_constructor = function () {
-		if (!this._supports_mixins) {
+	var _postConstructor = function () {
+		if (!this._supportsMixins) {
 			return;
 		}
 		// we need to initialize all of the mixins registered to this
 		// kind
-		_create_mixins.call(this);
+		_createMixins.call(this);
 	};
 
 	//*@protected
-	var _dispatch_event = function (name, event, sender) {
-		var $handlers = this._mixin_handlers || {};
+	var _dispatchEvent = function (name, event, sender) {
+		var $handlers = this._mixinHandlers || {};
 		var idx;
 		var len;
 		var ret = false;
@@ -304,16 +312,18 @@
 		}
 		// inject our special destructor that will enable the
 		// other mixins to execute their own when the time is right
-		_apply_properties(proto, {destroy: function () {
-			if (this._supports_mixins) {
-				_destroy_mixins.call(this);
-			}
-			return this.inherited(arguments);
-		}}, "enyo.MixinSupport");
+		if (!proto._noApplyMixinDestroy) {
+			_applyProperties(proto, {destroy: function () {
+				if (this._supportsMixins) {
+					_destroyMixins.call(this);
+				}
+				return this.inherited(arguments);
+			}}, "enyo.MixinSupport");
+		}
 	});
 
 	//*@protected
-	enyo.kind.postConstructors.push(_post_constructor);
+	enyo.kind.postConstructors.push(_postConstructor);
 
 	//*@public
 	/**
@@ -334,7 +344,10 @@
 		// PROTECTED PROPERTIES
 
 		//*@protected
-		_supports_mixins: true,
+		_supportsMixins: true,
+		
+		//*@protected
+		_mixinsDestroyed: false,
 
 		// ...........................
 		// PUBLIC METHODS
@@ -359,7 +372,7 @@
 			must be a string representing the name of the mixin in question.
 		*/
 		hasMixin: function (mixin) {
-			return !!~enyo.indexOf(mixin, this._applied_mixins);
+			return !!~enyo.indexOf(mixin, this._appliedMixins);
 		}
 
 	});
@@ -381,7 +394,7 @@
 
 		//*@protected
 		dispatchEvent: function () {
-			if (_dispatch_event.apply(this, arguments)) {
+			if (_dispatchEvent.apply(this, arguments)) {
 				return true;
 			}
 			return this.inherited(arguments);

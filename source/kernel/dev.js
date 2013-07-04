@@ -13,21 +13,9 @@
 		// test against all known vendor-specific implementations, but use
 		// a fallback just in case
 		perf.now = perf.now || perf.mozNow || perf.msNow || perf.oNow || perf.webkitNow || enyo.now;
-		// while we do supply the fallback, it forces a warning to indicate it
-		// should not be trusted
-		if (perf.now === enyo.now) {
-			return function () {
-				enyo.warn(
-					"Performance benchmarking requested but was not available, " +
-					"the tests using the method cause considerable overhead, thus " +
-					"skewing the results."
-				);
-				return perf.now();
-			};
-		// otherwise, we now have a pointer to the performant benchmark method
-		} else {
-			return function () {return perf.now();};
-		}
+		return function () {
+			return perf.now();
+		};
 	}());
 
 	//*@protected

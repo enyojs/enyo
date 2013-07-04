@@ -7,7 +7,7 @@ _enyo.ScrollMath_ is not typically created in application code.
 */
 enyo.kind({
 	name: "enyo.ScrollMath",
-	kind: enyo.Component,
+	kind: "enyo.Component",
 	published: {
 		//* True if vertical scrolling is enabled
 		vertical: true,

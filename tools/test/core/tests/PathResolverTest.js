@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "PathResolverTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	rewriteTest: function(inResolver, inPath, inExpected) {
 		var pf= enyo.loader.packageFolder;
 		enyo.loader.packageFolder = "./source/";
@@ -33,7 +34,7 @@ enyo.kind({
 	},
 	testRewriteUnknown: function() {
 		var resolver = new enyo.pathResolverFactory();
-		this.rewriteTest(resolver, "$enyo/package.js", "package.js");
+		this.rewriteTest(resolver, "$enyo/package.js", "$enyo/package.js");
 	},
 	testRewriteEnyo: function() {
 		var resolver = new enyo.pathResolverFactory();
@@ -53,5 +54,10 @@ enyo.kind({
 		} else {
 			this.finish("Got: '" + result + "'");
 		}
+	},
+	testRewritePathPrefix: function() {
+		var resolver = new enyo.pathResolverFactory();
+		resolver.addPath("foo/bar", "/usr/palm/frameworks/foobar");
+		this.rewriteTest(resolver, "$foo/bar/sunday/funday", "/usr/palm/frameworks/foobar/sunday/funday");
 	}
 });

@@ -3,7 +3,7 @@
 */
 enyo.kind({
 	name: "enyo.Checkbox",
-	kind: enyo.Input,
+	kind: "enyo.Input",
 	classes: "enyo-checkbox",
 	events: {
 		//* Fires when checkbox is tapped.

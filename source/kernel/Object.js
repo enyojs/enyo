@@ -21,6 +21,7 @@ enyo.kind({
 	//* @protected
 	// has no base kind
 	kind: null,
+	noDefer: true,
 	//*@public
 	// concatenated properties (default)
 	concat: enyo.concat,
@@ -47,7 +48,12 @@ enyo.kind({
 				if (!props.hasOwnProperty(key)) {
 					continue;
 				}
-				this[key] = props[key];
+				if (key == "mixins" && enyo.isArray(props[key])) {
+					this._runtimeMixins = props.mixins;
+					props.mixins = undefined;
+				} else {
+					this[key] = props[key];
+				}
 			}
 		}
 	},
@@ -67,7 +73,7 @@ enyo.kind({
 
 			enyo.kind({
 				name: "MyObject",
-				kind: enyo.Object,
+				kind: "enyo.Object",
 				hello: function() {
 					this.log("says", "hi");
 					// shows in the console: MyObject.hello: says hi
@@ -203,7 +209,7 @@ enyo.kind({
 		this.destroyed = true;
 	},
 
-	_is_object: true
+	_isObject: true
 });
 
 //* @protected

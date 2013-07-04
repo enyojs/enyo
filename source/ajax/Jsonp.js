@@ -20,7 +20,7 @@
 */
 enyo.kind({
 	name: "enyo.JsonpRequest",
-	kind: enyo.Async,
+	kind: "enyo.Async",
 	published: {
 		//* The URL for the service
 		url: "",
@@ -56,7 +56,7 @@ enyo.kind({
 		*/
 		overrideCallback: null
 	},
-	statics: {
+	protectedStatics: {
 		// Counter to allow creation of unique name for each JSONP request
 		nextCallbackID: 0
 	},
@@ -119,7 +119,7 @@ enyo.kind({
 	buildUrl: function(inParams, inCallbackFunctionName) {
 		var parts = this.url.split("?");
 		var uri = parts.shift() || "";
-		var args = parts.join("?").split("&");
+		var args = parts.length? parts.join("?").split("&"): [];
 		//
 		var bodyArgs = this.bodyArgsFromParams(inParams, inCallbackFunctionName);
 		args.push(bodyArgs);

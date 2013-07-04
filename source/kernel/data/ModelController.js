@@ -1,5 +1,5 @@
 (function (enyo) {
-
+	
 	enyo.kind({
 
 		// ...........................
@@ -21,8 +21,8 @@
 		// COMPUTED PROPERTIES
 
 		//*@protected
-		_attribute_keys: enyo.computed(function () {
-			return this.model? enyo.keys(this.model.attributes): null;
+		_attributeKeys: enyo.computed(function () {
+			return this.model? this.model._attributeKeys: null;
 		}, "model", {cached: true, defer: true}),
 
 		// ...........................
@@ -49,15 +49,12 @@
 			if ("model" === property) {
 				var $model = this.model;
 				if ($model) {
-					$model.removeDispatchTarget(this);
-					$model.removeObserver("*", this.notifyObservers);
+					this._removeModel($model);
 				}
 				if (($model = value)) {
-					$model.addDispatchTarget(this);
-					$model.addObserver("*", this.notifyObservers, this);
 					this.stopNotifications();
 					this.inherited(arguments);
-					this.sync();
+					this._initModel($model);
 					this.startNotifications();
 					return this;
 				}
@@ -70,17 +67,40 @@
 			enyo.forEach(this.bindings, function (binding) {
 				binding.sync();
 			});
-			enyo.forEach(this.get("_attribute_keys"), function (key) {
+			enyo.forEach(this.get("_attributeKeys"), function (key) {
 				this.notifyObservers(key, null, this.model.get(key));
 			}, this);
-		}
+		},
 
 		// ...........................
 		// PROTECTED METHODS
 
-		// ...........................
-		// OBSERVERS
-
+		create: function () {
+			this.inherited(arguments);
+			if (this.model) {
+				this._initModel(this.model);
+			}
+		},
+		
+		_removeModel: function (model) {
+			var $model = model || this.model;
+			if ($model) {
+				$model.removeDispatchTarget(this);
+				$model.removeObserver("*", this.notifyObservers);
+			}
+		},
+		
+		_initModel: function (model) {
+			var $model = model;
+			if ($model) {
+				$model.addDispatchTarget(this);
+				$model.addObserver("*", this.notifyObservers, this);
+				this.stopNotifications();
+				this.sync();
+				this.startNotifications();
+			}
+		}
+		
 	});
 
 })(enyo);

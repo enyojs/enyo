@@ -45,7 +45,7 @@
 */
 enyo.kind({
 	name: "enyo.Component",
-	kind: enyo.Object,
+	kind: "enyo.Object",
 	published: {
 		/**
 			A unique name for the component within its owner. This is used to
@@ -70,13 +70,14 @@ enyo.kind({
 		owner: null
 	},
 	//* @protected
-	statics: {
+	protectedStatics: {
 		// for memoizing kind-prefix names in nameComponent
 		_kindPrefixi: {},
 		// for naming the unnamed
 		_unnamedKindNumber: 0
 	},
 	defaultKind: "Component",
+	noDefer: true,
 	handlers: {},
 	mixins: ["enyo.MixinComponentSupport", "enyo.ApplicationSupport"],
 	__jobs: {},
@@ -303,7 +304,8 @@ enyo.kind({
 		}
 		var e = inEvent || {};
 		// FIXME: is this the right place?
-		if (!("originator" in e)) {
+		// if (!("originator" in e)) {
+		if (!enyo.exists(e.originator)) {
 			e.originator = inSender || this;
 			// FIXME: use indirection here?
 			//e.delegate = e.originator.delegate || e.originator.owner;
@@ -332,10 +334,11 @@ enyo.kind({
 			return;
 		}
 		// Bubble to next target
+		var e = inEvent || {};
 		var next = this.getBubbleTarget();
-		var delegate = inEvent.delegate;
+		var delegate = e.delegate;
 		if (next) {
-			return next.dispatchBubble(inEventName, inEvent, delegate || this);
+			return next.dispatchBubble(inEventName, e, delegate || this);
 		}
 		return false;
 	},
@@ -358,7 +361,7 @@ enyo.kind({
 		}
 		// if the event has a delegate associated with it we grab that
 		// for reference
-		var delegate = (event || (event = {})).delegate;
+		var delegate = (event || (event = enyo.pool.claimObject())).delegate;
 		var ret;
 		// bottleneck event decoration
 		this.decorateEvent(name, event, sender);
@@ -370,7 +373,7 @@ enyo.kind({
 
 		if (this[name]) {
 			if ("function" === typeof this[name]) {
-				if (this._is_controller || (delegate && this === delegate.owner)) {
+				if (this._isController || (delegate && this === delegate.owner)) {
 					return this.dispatch(name, event, sender);
 				}
 			} else {
@@ -635,13 +638,16 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 	if (!inProto[fn]) {
 		inProto[fn] = function(payload) {
 			// bubble this event
-			//return this.bubble(inName, enyo.except(["delegate"], inEvent || {}));
-			payload = payload || {};
-			var delegate = payload.delegate;
-			delete payload.delegate;
-			this.bubble(inName, payload);
-			if (delegate) {
-				payload.delegate = delegate;
+			var $e = payload || enyo.pool.claimObject();
+			var $d = $e.delegate;
+			// delete payload.delegate;
+			$e.delegate = undefined;
+			this.bubble(inName, $e);
+			if ($d) {
+				$e.delegate = $d;
+			}
+			if (!payload || !payload._pooled) {
+				enyo.pool.releaseObject($e);
 			}
 		};
 		// NOTE: Mark this function as a generated event handler to allow us to

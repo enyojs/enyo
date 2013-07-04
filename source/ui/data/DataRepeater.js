@@ -15,192 +15,190 @@
 		kind: "enyo.View",
 
 		//*@public
-		/**
-		*/
-		loading: false,
-
-		//*@public
-		/**
-		*/
-		childControllerKind: "enyo.ModelController",
-
-		//*@public
-		/**
-		*/
 		childMixins: [],
-
-		// ...........................
-		// PROTECTED PROPERTIES
-
-		//*@protected
+		
+		//*@public
 		concat: ["childMixins"],
 
-		//*@protected
+		//*@public
 		controlParentName: "container",
-
-		//*@protected
-		handlers: {
-			onModelAdded: "_model_added",
-			onModelsAdded: "_models_added",
-			onModelRemoved: "_model_removed",
-			onModelsRemoved: "_models_removed"
-		},
-
-		//*@protected
-		bindings: [{
-			from: ".controller.fetching",
-			to: ".loading",
-			kind: "enyo.BooleanOnlyBinding"
-		}, {
-			from: ".controller.length",
-			to: ".length"
-		}, {
-			from: ".controller.data",
-			to: ".data"
-		}],
-
-		//*@protected
-		_child_kind: null,
-
-		//*@protected
-		_batching: false,
-
-		//*@protected
-		_container: {
+		
+		//*@public
+		containerOptions: {
 			name: "container",
 			kind: "enyo.View",
 			classes: "enyo-fill enyo-data-repeater-container",
 		},
 
+		//*@public
+		handlers: {
+			onModelAdded: "_modelAdded",
+			onModelsAdded: "_modelsAdded",
+			onModelRemoved: "_modelRemoved",
+			onModelsRemoved: "_modelsRemoved"
+		},
+
+		//*@public
+		bindings: [
+			{from: ".controller.length", to: ".length"},
+			{from: ".controller.data", to: ".data"}
+		],
+		
+
+		//*@public
+		batching: false,
+
 		// ...........................
-		// COMPUTED PROPERTIES
+		// PROTECTED PROPERTIES
+
+		//*@protected
+		_childKind: null,
 
 		// ...........................
 		// PUBLIC METHODS
-
+		
 		//*@public
-		refresh: function () {
-			var $data = this.get("data");
-			// destroy any views we currently have rendered
-			this.destroyClientControls();
-			if (!$data) {
-				return;
-			}
-			for (var idx = 0, len = $data.length; idx < len; ++idx) {
-				this.add($data[idx]);
-			}
-		},
-
-		//*@public
-		add: function (model) {
-			var $kind = this._child_kind;
-			var $child = this.createComponent({kind: $kind});
-			var batching = this._batching;
-			$child.controller.set("model", model);
-			if (!batching) {
-				$child.render();
-			}
-		},
-
-		//*@public
-		remove: function (index) {
-			var $children = this.get("_children");
-			var $child = $children[index || (Math.abs($children.length - 1))];
-			if ($child) {
-				$child.destroy();
-			}
-		},
-
-		//*@public
-		update: function (index) {
-			var $data = this.get("data");
-			var $children = this.get("_children");
-			var $child = $children[index];
-			if (!$data || !$child || !$child.controller) {
-				return;
-			}
-			$child.controller.set("model", $data[index]);
-		},
-
-		//*@public
-		prune: function () {
-			var $children = this.get("_children");
-			var len = this.length;
-			var $extra = $children.slice(len);
-			for (var idx = 0; idx < $extra.length; ++idx) {
-				$extra[idx].destroy();
-			}
-		},
-
-		// ...........................
-		// COMPUTED PROPERTIES
-
-		//*@protected
-		_children: enyo.computed(function () {
-			return this.controlParent? this.controlParent.children: this.children;
-		}, {cached: false}),
-
-		// ...........................
-		// PROTECTED METHODS
-
-		//*@protected
 		initComponents: function () {
 			// we need to find the child definition and prepare it for
 			// use in our repeater including adding auto binding support
 			var $components = this.kindComponents || this.components || [];
 			var $owner = this.components? this.owner: this;
-			this._child_kind = enyo.kind({
+			this._childKind = enyo.kind({
 				// tag: null, // no need for the extra container
 				// TODO: it should be possible to use the above line but for
 				// now it is causing far too many issues
 				kind: "enyo.View",
-				mixins: ["enyo.AutoBindingSupport"].concat(this.childMixins || []),
+				mixins: ["enyo.AutoBindingSupport", "enyo.RepeaterChildSupport"].concat(this.childMixins || []),
 				components: $components,
 				defaultKind: this.defaultKind || "enyo.View",
 				defaultProps: {owner: $owner}
 			});
-			this._init_container();
+			this._initContainer();
 		},
 
-		//*@protected
-		adjustComponentProps: function (props) {
+		//*@public
+		controllerFindAndInstance: function(ctor, inst) {
 			this.inherited(arguments);
-			if (!((props.kind && props.kind.controller) || props.controller)) {
-				if (props.name !== this.controlParentName) {
-					props.controller = this.childControllerKind;
-				}
+			if (inst && inst._isController) {
+				this.reset();
+			}
+		},
+
+		// TODO:
+		reset: function () {
+			var $d = this.get("data");
+			var $c = this.$.scroller;
+			this.destroyClientControls();
+			$c.resizeHandler();
+			if ($d) {
+				enyo.forEach($d, this.add, this);
+			}
+		},
+
+		render: function () {
+			this.reset();
+			this.inherited(arguments);
+		},
+
+		//*@public
+		add: function (rec) {
+			if (!this.generated) {
+				return;
+			}
+			var $k = this._childKind;
+			var $c = this.createComponent({kind: $k});
+			var b = this.batching;
+			$c.set("model", rec);
+			if (!b) {
+				$c.render();
+			}
+		},
+
+		//*@public
+		remove: function (idx) {
+			var $ch = this.get("active");
+			var $c = $ch[idx || (Math.abs($ch.length-1))];
+			if ($c) {
+				$c.destroy();
+			}
+		},
+
+		//*@public
+		update: function (idx) {
+			var $d = this.get("data");
+			var $ch = this.get("active");
+			var $c = $ch[idx];
+			if ($d && $c) {
+				$c.set("model", $d[idx]);
+			}
+		},
+
+		//*@public
+		prune: function () {
+			var $ch = this.get("active");
+			var l = this.length;
+			var $x = $ch.slice(l);
+			enyo.forEach($x, function (c) {
+				c.destroy();
+			});
+		},
+
+		// ...........................
+		// COMPUTED PROPERTIES
+
+		//*@public
+		active: enyo.computed(function () {
+			return this.controlParent? this.controlParent.children: this.children;
+		}, "controlParent", {cached: true, defer: true}),
+
+		// ...........................
+		// PROTECTED METHODS
+
+		//*@protected
+		_initContainer: function () {
+			var $container = this.get("containerOptions");
+			var name = $container.name || ($container.name = "scroller");
+			this.createChrome([$container]);
+			this.discoverControlParent();
+			if (name != "scroller") {
+				this.$.scroller = this.$[name];
 			}
 		},
 
 		//*@protected
-		_init_container: function () {
-			var $container = this.get("_container");
-			this.createChrome([$container]);
-			this.discoverControlParent();
-		},
-
-		//*@protected
-		_model_added: function (sender, event) {
+		_modelAdded: function (sender, event) {
+			if (sender !== this.controller) {
+				return;
+			}
 			var $model = event.model;
-			this.add($model);
+			this.add($model, event.index);
 		},
 
 		//*@protected
-		_models_added: function (sender, event) {
-			this.set("_batching", true);
+		_modelsAdded: function (sender, event) {
+			if (sender !== this.controller) {
+				return;
+			}
+			this.set("batching", true);
 			enyo.forEach(event.models, function (info) {
-				this.add(info.model);
+				this.add(info.model, info.index);
 			}, this);
-			this.set("_batching", false);
+			this.set("batching", false);
 		},
 
 		//*@protected
-		_model_removed: function (sender, event) {
+		_modelRemoved: function (sender, event) {
+			if (sender !== this.controller) {
+				return;
+			}
 			this.remove(event.index);
 		},
 
 		//*@protected
-		_models_removed: function (sender, event) {
+		_modelsRemoved: function (sender, event) {
+			if (sender !== this.controller) {
+				return;
+			}
 			enyo.forEach(event.models, function (info) {
 				this.remove(info.index);
 			}, this);
@@ -209,29 +207,17 @@
 		// ...........................
 		// OBSERVERS
 
-		//*@protected
-		_batching_changed: enyo.observer(function (property, previous, value) {
-			if (false === value) {
-				var $client = this.controlParent;
-				$client.render();
-			}
-		}, "_batching"),
-
-		// this callback results from a call to this.findAndInstance("controller"),
-		// which occurs in the _controller_changed observer (which is implemented
-		// in the ControllerSupport mixin)
-		//*@protected
-		controllerFindAndInstance: function(ctor, inst) {
-			this.inherited(arguments);
-			if (inst && inst._is_controller) {
-				this.refresh();
+		//*@public
+		batchingChanged: function (prev, val) {
+			if (false === val) {
+				this.render();
 			}
 		},
 
 		//*@protected
-		_length_changed: enyo.observer(function (property, previous, value) {
-			if (!isNaN(previous) && !isNaN(value)) {
-				if (previous > value) {
+		_lengthChanged: enyo.observer(function (prop, prev, val) {
+			if (!isNaN(prev) && !isNaN(val)) {
+				if (prev > val) {
 					this.prune();
 				}
 			}

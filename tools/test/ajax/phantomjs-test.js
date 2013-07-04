@@ -4,8 +4,8 @@
 var page = require('webpage').create();
 
 page.onConsoleMessage = function (msg) {
-    console.log("JS: " + msg);
-    if (msg === "TEST RUNNER FINISHED") {
+	console.log("JS: " + msg);
+	if (msg === "TEST RUNNER FINISHED") {
 		var pass = page.evaluate(function() {
 			return (document.querySelector(".enyo-testcase-failed") === null);
 		});
@@ -16,7 +16,7 @@ page.onConsoleMessage = function (msg) {
 			console.log("Enyo Ajax tests failed. :(");
 			phantom.exit(1);
 		}
-    }
+	}
 };
 
 page.onError = function(msg, trace) {

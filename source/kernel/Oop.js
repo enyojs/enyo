@@ -50,6 +50,52 @@ enyo.handleConcatenatedProperties = function (ctor, proto) {
 	in the Enyo Developer Guide.
 */
 enyo.kind = function(inProps) {
+	var name = inProps.name || "";
+	// cannot defer unnamed kinds, kinds with static sections, or ones with
+	// noDefer flag set
+	if (name && !inProps.noDefer && !inProps.statics) {
+		// make a deferred constructor to avoid a lot of kind
+		// processing if we're never used
+		var ctor = function DeferredCtor() {
+			var FinalCtor;
+			// check for cached final constructor first, used mainly when
+			// developers directly use kind names in their components instead of
+			// strings that are resolved at runtime.
+			if (DeferredCtor._FinalCtor) {
+				FinalCtor = DeferredCtor._FinalCtor;
+			} else {
+				if (!(this instanceof DeferredCtor)) {
+					throw "enyo.kind: constructor called directly, not using 'new'";
+				}
+				FinalCtor = DeferredCtor._finishKindCreation();
+			}
+			var obj = enyo.delegate(FinalCtor.prototype);
+			FinalCtor.apply(obj, arguments);
+			return obj;
+		};
+		ctor._finishKindCreation = function() {
+			ctor._finishKindCreation = undefined;
+			enyo.setPath(name, undefined);
+			var FinalCtor = enyo.kind.finish(inProps);
+			ctor._FinalCtor = FinalCtor;
+			inProps = null;
+			return FinalCtor;
+		};
+		if ((name && !enyo.getPath(name)) || enyo.kind.allowOverride) {
+			enyo.setPath(name, ctor);
+		}
+		else if (name) {
+			enyo.error("enyo.kind: " + name + " is already in use by another " +
+				"kind, all kind definitions must have unique names.");
+		}
+		return ctor;
+	} else {
+		// create anonymous kinds immediately
+		return enyo.kind.finish(inProps);
+	}
+};
+//* @protected
+enyo.kind.finish = function(inProps) {
 	// kind-name to constructor map could be faulty now that a new kind exists, so we simply destroy the memoizations
 	enyo._kindCtors = {};
 	// extract 'name' property
@@ -113,13 +159,14 @@ enyo.kind = function(inProps) {
 	return ctor;
 };
 
+//* @public
 /**
 	Creates a Singleton of a given kind with a given definition.
 	__The name property will be the instance name of the singleton
 	and must be unique__.
 
 		enyo.singleton({
-			kind: Control,
+			kind: "enyo.Control",
 			name: "app.MySingleton",
 			published: {
 				value: "foo"
@@ -146,8 +193,8 @@ enyo.singleton = function(conf, context) {
 
 //* @protected
 enyo.kind.makeCtor = function() {
-	return function() {
-		if (!(this instanceof arguments.callee)) {
+	return function ctor() {
+		if (!(this instanceof ctor)) {
 			throw "enyo.kind: constructor called directly, not using 'new'";
 		}
 
@@ -254,8 +301,12 @@ enyo.kind.features.push(function(ctor, props) {
 		enyo.mixin(ctor, props.statics);
 		delete ctor.prototype.statics;
 	}
+	// also support protectedStatics which won't interfere with defer
+	if (props.protectedStatics) {
+		enyo.mixin(ctor, props.protectedStatics);
+		delete ctor.prototype.protectedStatics;
+	}
 	// allow superclass customization
-
 	var base = ctor.prototype.base;
 	while (base) {
 		base.subclass(ctor, props);
@@ -278,34 +329,54 @@ enyo.kind.statics = {
 	}
 };
 
+enyo.checkConstructor = function(inKind) {
+	if (enyo.isFunction(inKind)) {
+		// if a deferred enyo kind, finish that work first
+		if (inKind._FinalCtor) {
+			return inKind._FinalCtor;
+		}
+		if (inKind._finishKindCreation) {
+			return inKind._finishKindCreation();
+		}
+	}
+	return inKind;
+};
+
 //
 // factory for kinds identified by strings
 //
 enyo._kindCtors = {};
 
 enyo.constructorForKind = function(inKind) {
-	if (inKind === null || enyo.isFunction(inKind)) {
-		// in inKind is a function or explicitly null, then that's ctor, full stop.
+	if (inKind === null) {
 		return inKind;
+	} else if (inKind === undefined) {
+		return enyo.defaultCtor;
 	}
-	if (inKind) {
-		// use memoized constructor if available...
-		var ctor = enyo._kindCtors[inKind];
-		if (ctor) {
-			return ctor;
-		}
-		// otherwise look it up and memoize what we find
-		//
-		// if inKind is an object in enyo, say "Control", then ctor = enyo["Control"]
-		// if inKind is a path under enyo, say "Heritage.Button", then ctor = enyo["Heritage.Button"] || enyo.Heritage.Button
-		// if inKind is a fully qualified path, say "enyo.Heritage.Button", then ctor = enyo["enyo.Heritage.Button"] || enyo.enyo.Heritage.Button || enyo.Heritage.Button
-		//
-		// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
-		// This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
-		enyo._kindCtors[inKind] = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath.call(enyo, inKind, true) || window[inKind] || enyo.getPath(inKind);
-		return enyo._kindCtors[inKind];
+	else if (enyo.isFunction(inKind)) {
+		return enyo.checkConstructor(inKind);
 	}
-	return enyo.defaultCtor;
+
+	// use memoized constructor if available...
+	var ctor = enyo._kindCtors[inKind];
+	if (ctor) {
+		return ctor;
+	}
+	// otherwise look it up and memoize what we find
+	//
+	// if inKind is an object in enyo, say "Control", then ctor = enyo["Control"]
+	// if inKind is a path under enyo, say "Heritage.Button", then ctor = enyo["Heritage.Button"] || enyo.Heritage.Button
+	// if inKind is a fully qualified path, say "enyo.Heritage.Button", then ctor = enyo["enyo.Heritage.Button"] || enyo.enyo.Heritage.Button || enyo.Heritage.Button
+	//
+	// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
+	// This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
+	ctor = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath.call(enyo, inKind, true) || window[inKind] || enyo.getPath(inKind);
+	// if this is a deferred kind, run the follow-up code then refetch the kind's constructor
+	if (ctor && ctor._finishKindCreation) {
+		ctor = ctor._finishKindCreation();
+	}
+	enyo._kindCtors[inKind] = ctor;
+	return ctor;
 };
 
 //

@@ -61,7 +61,7 @@
 		by reference (e.g. arrays and native JavaScript objects). But
 		for these types it much clearer in nearly all cases.
 	*/
-	var _force_regex = /(string|number|boolean)/;
+	var _forceRegex = /(string|number|boolean)/;
 
 	//*@protected
 	/**
@@ -258,19 +258,19 @@
 		// PROTECTED PROPERTIES
 
 		//*@protected
-		_source_property: null,
+		_sourceProperty: null,
 
 		//*@protected
-		_target_property: null,
+		_targetProperty: null,
 
 		//*@protected
-		_source_responder: null,
+		_sourceResponder: null,
 
 		//*@protected
-		_target_responder: null,
+		_targetResponder: null,
 
 		//*@protected
-		_is_connected: false,
+		_isConnected: false,
 
 		//*@protected
 		_synchronizing: false,
@@ -292,7 +292,7 @@
 
 		//*@protected
 		sync: function () {
-			if (true === this._is_connected) {
+			if (true === this._isConnected) {
 				this.syncFromSource();
 			}
 		},
@@ -308,9 +308,9 @@
 		rebuild: function() {
 			this.disconnect();
 			this.source = null;
-			this._source_property = null;
+			this._sourceProperty = null;
 			this.target = null;
-			this._target_property = null;
+			this._targetProperty = null;
 			this.refresh();
 		},
 
@@ -321,7 +321,7 @@
 			but does not automatically synchronize the values.
 		*/
 		connect: function () {
-			if (true === this._is_connected) {
+			if (true === this._isConnected) {
 				return;
 			}
 			if (true === this.destroyed) {
@@ -330,9 +330,9 @@
 			this.connectSource();
 			this.connectTarget();
 			if (this.sourceConnected && this.targetConnected) {
-				this._is_connected = true;
+				this._isConnected = true;
 			} else {
-				this._is_connected = false;
+				this._isConnected = false;
 			}
 		},
 
@@ -342,19 +342,19 @@
 			its source (and target).
 		*/
 		disconnect: function () {
-			if (false === this._is_connected) {
+			if (false === this._isConnected) {
 				return;
 			}
 			this.disconnectSource();
 			this.disconnectTarget();
-			this._is_connected = false;
+			this._isConnected = false;
 		},
 
 		//*@protected
 		setupSource: function () {
 			var parts;
 			var base;
-			var property = this._source_property;
+			var property = this._sourceProperty;
 			var source = this.source;
 			var from = this.from;
 			if (source && property) {
@@ -370,7 +370,7 @@
 				return false;
 			}
 			this.source = base;
-			this._source_property = property;
+			this._sourceProperty = property;
 			return true;
 		},
 
@@ -378,7 +378,7 @@
 		setupTarget: function () {
 			var parts;
 			var base;
-			var property = this._target_property;
+			var property = this._targetProperty;
 			var target = this.target;
 			var to = this.to;
 			if (target && property) {
@@ -394,7 +394,7 @@
 				return false;
 			}
 			this.target = base;
-			this._target_property = property;
+			this._targetProperty = property;
 			return true;
 		},
 
@@ -406,8 +406,8 @@
 		//*@protected
 		connectSource: function () {
 			var source = this.source;
-			var property = this._source_property;
-			var fn = this._source_responder;
+			var property = this._sourceProperty;
+			var fn = this._sourceResponder;
 			if (!(source instanceof enyo.Object)) {
 				this.sourceConnected = false;
 				return false;
@@ -415,7 +415,7 @@
 			// only create the responder if it doesn't already exist
 			if (!enyo.exists(fn) || "function" !== typeof fn) {
 				fn = enyo.bind(this, this.syncFromSource);
-				this._source_responder = fn;
+				this._sourceResponder = fn;
 			}
 			// in the event that the source actually exists but has been destroyed
 			if (true === source.destroyed) {
@@ -442,8 +442,8 @@
 		//*@protected
 		connectTarget: function () {
 			var target = this.target;
-			var property = this._target_property;
-			var fn = this._target_responder;
+			var property = this._targetProperty;
+			var fn = this._targetResponder;
 			var oneWay = this.oneWay;
 			if (!(target instanceof enyo.Object)) {
 				this.targetConnected = false;
@@ -463,7 +463,7 @@
 			// only create the responder if it doesn't already exist
 			if (!enyo.exists(fn) || "function" !== typeof fn) {
 				fn = enyo.bind(this, this.syncFromTarget);
-				this._target_responder = fn;
+				this._targetResponder = fn;
 			}
 			// if it is already connected don't do anything else
 			if (true === this.targetConnected) {
@@ -533,8 +533,8 @@
 		//*@protected
 		disconnectSource: function () {
 			var source = this.source;
-			var property = this._source_property;
-			var fn = this._source_responder;
+			var property = this._sourceProperty;
+			var fn = this._sourceResponder;
 			if (!enyo.exists(source)) {
 				return;
 			}
@@ -545,8 +545,8 @@
 		//*@protected
 		disconnectTarget: function () {
 			var target = this.target;
-			var fn = this._target_responder;
-			var property = this._target_property;
+			var fn = this._targetResponder;
+			var property = this._targetProperty;
 			if (!enyo.exists(target)) {
 				return;
 			}
@@ -559,30 +559,30 @@
 		//*@protected
 		setSourceValue: function (value) {
 			var source = this.source;
-			var property = this._source_property;
-			var force = !_force_regex.test(typeof value);
+			var property = this._sourceProperty;
+			var force = !_forceRegex.test(typeof value);
 			source.set(property, value, force);
 		},
 
 		//*@protected
 		setTargetValue: function (value) {
 			var target = this.target;
-			var property = this._target_property;
-			var force = !_force_regex.test(typeof value);
+			var property = this._targetProperty;
+			var force = !_forceRegex.test(typeof value);
 			target.set(property, value, force);
 		},
 
 		//*@protected
 		getSourceValue: function () {
 			var source = this.source;
-			var property = this._source_property;
+			var property = this._sourceProperty;
 			return source.get(property);
 		},
 
 		//*@protected
 		getTargetValue: function () {
 			var target = this.target;
-			var property = this._target_property;
+			var property = this._targetProperty;
 			return target.get(property);
 		},
 
@@ -623,8 +623,8 @@
 			this.disconnect();
 			this.source = null;
 			this.target = null;
-			this._source_responder = null;
-			this._target_responder = null;
+			this._sourceResponder = null;
+			this._targetResponder = null;
 			enyo.Binding.bindingCount--;
 			if (this.transform) {
 				this.transform.destroy();
