@@ -154,6 +154,7 @@
 		attributes: {
 			age: {
 				type: Number,
+				remoteKey: "my",
 				formatter: function (key, value, action, payload) {
 					if (this.status == enyo.Model.BUSY.COMMITTING) {
 						if (action != "commit") {
@@ -164,7 +165,7 @@
 							throw "Expecting action to be fetch during fetching";
 						}
 					}
-					return action == "commit"? this.age: payload.my.nested.age;
+					return action == "commit"? {nested: {age: value}}: value.nested.age;
 				}
 			}
 		}
@@ -181,6 +182,16 @@
 		fetch: function () {},
 		destroy: function () {}
 	});
+	
+	enyo.kind({
+		name: "models.DestroySource",
+		kind: "enyo.Source",
+		commit: function () {},
+		fetch: function () {},
+		destroy: function (model, options) {
+			options.success();
+		}
+	})
 
 	/**
 		The `enyo.Model` kind is a very complex type that requires comprehensive
@@ -354,11 +365,11 @@
 			}
 			$m = new models.GenericSchema();
 			if ($m.status !== enyo.Model.NEW) {
-				return this.finish("Model was expected to have status NEW");
+				return this.finish("Generic model was expected to have status NEW");
 			}
 			$m = new models.GenericDefaults();
 			if ($m.status !== enyo.Model.CLEAN) {
-				return this.finish("Model was expected to have status CLEAN");
+				return this.finish("Generic Defaults model was expected to have status CLEAN");
 			}
 			$m = new models.GenericDefaults({"firstName": "Sandy"});
 			if ($m.status !== enyo.Model.CLEAN) {
@@ -414,10 +425,25 @@
 			Test the formatter.
 		*/
 		testFormatter: function () {
-			// this test can't be executed due to an outstanding TODO in the `raw`
-			// method for `enyo.Model`
-			// var $m =
-			new models.GenericWithFormatter();
+			var $m = new models.GenericWithFormatter({
+				my: {
+					nested: {
+						age: 67
+					}
+				}
+			});
+			if ($m.get("age") !== 67) {
+				return this.finish("Expected local request for age to be 67 but got " + $m.get("age"));
+			}
+			$m.set("age", 99);
+			try {
+				if ($m.raw().my.nested.age !== 99) {
+					return this.finish("Structure was correct but value wasn't, expected 99 got " + $m.raw().my.nested.age);
+				}
+			} catch (e) {
+				return this.finish("Raw value was not in the correct format for the payload, " +
+					enyo.json.stringify($m.raw()), " expected structure my.nested.age");
+			}
 			this.finish();
 		}
 	});
@@ -532,6 +558,284 @@
 				$m.emails.at(0).status != enyo.Model.CLEAN
 			) {
 				return this.finish("status' not synched on CLEAN");
+			}
+			this.finish();
+		}
+	});
+	
+	enyo.kind({
+		name: "ModelCollectionAndModelControllerTest",
+		kind: enyo.TestSuite,
+		noDefer: true,
+		testModelSetup: function () {
+			var $c = new enyo.ModelController();
+			var $m = new enyo.Model({name: "Cole", job: "Test-Writer (apparently)", happiness: "Not happy."});
+			if ($c.model) {
+				return this.finish("There should not be a model yet");
+			}
+			$c.set("model", $m);
+			if (!$c.model) {
+				return this.finish("There should have been a model");
+			}
+			if (
+				$c.get("name") !== "Cole" ||
+				$c.get("job") !== "Test-Writer (apparently)" ||
+				$c.get("happiness") !== "Not happy."
+			) {
+				return this.finish("Could not derive expected values from model");
+			}
+			this.finish();
+		},
+		testChangeFromModelToController: function () {
+			var $c = new enyo.ModelController();
+			var $m = new enyo.Model({name: "Cole", job: "Test-Writer (apparently)", happiness: "Not happy."});
+			$c.set("model", $m);
+			$m.set("happiness", "A little happier.");
+			if ($c.get("happiness") !== "A little happier.") {
+				return this.finish("Changed attribute in model did not propagate to the controller");
+			}
+			this.finish();
+		},
+		testChangeFromControllerToModel: function () {
+			var $c = new enyo.ModelController();
+			var $m = new enyo.Model({name: "Cole", job: "Test-Writer (apparently)", happiness: "Not happy."});
+			$c.set("model", $m);
+			$c.set("happiness", "A little happier.");
+			if ($m.get("happiness") !== "A little happier.") {
+				return this.finish("Changed attribute in controller did not propagate to the model");
+			}
+			this.finish();
+		},
+		testChangeFromModelToBoundView: function () {
+			var $v = new (enyo.kind({
+				kind: "enyo.View",
+				mixins: ["enyo.AutoBindingSupport"],
+				bindSource: "model",
+				components: [
+					{name: "name", bindFrom: ".name"},
+					{name: "job", bindFrom: ".job"},
+					{name: "happiness", bindFrom: ".happiness"}
+				]
+			}));
+			var $m = new enyo.Model({name: "Cole", job: "Test-Writer (apparently)", happiness: "Not happy."});
+			$v.set("model", $m);
+			if (
+				$v.$.name.content != "Cole" ||
+				$v.$.job.content != "Test-Writer (apparently)" ||
+				$v.$.happiness.content != "Not happy."
+			) {
+				return this.finish("Values were not propagated from model to view correctly");
+			}
+			$m.set("happiness", "If this is always working, pretty happy.");
+			if ($v.$.happiness.content != "If this is always working, pretty happy.") {
+				return this.finish("Changed value did not match from model to view");
+			}
+			this.finish();
+		},
+		testChangeFromModelToControllerBoundView: function () {
+			var $v = new (enyo.kind({
+				kind: "enyo.View",
+				mixins: ["enyo.AutoBindingSupport"],
+				bindSource: "controller",
+				components: [
+					{name: "name", bindFrom: ".name"},
+					{name: "job", bindFrom: ".job"},
+					{name: "happiness", bindFrom: ".happiness"}
+				]
+			}));
+			var $c = new enyo.ModelController();
+			var $m = new enyo.Model({name: "Cole", job: "Test-Writer (apparently)", happiness: "Not happy."});
+			$v.set("controller", $c);
+			$c.set("model", $m);
+			if (
+				$v.$.name.content != "Cole" ||
+				$v.$.job.content != "Test-Writer (apparently)" ||
+				$v.$.happiness.content != "Not happy."
+			) {
+				return this.finish("Values were not propagated from model to view correctly");
+			}
+			$m.set("happiness", "If this is always working, pretty happy.");
+			if ($v.$.happiness.content != "If this is always working, pretty happy.") {
+				return this.finish("Changed value did not match from model to view");
+			}
+			this.finish();
+		},
+		testMultipleModelsToBoundView: function () {
+			var $v = new (enyo.kind({
+				kind: "enyo.View",
+				mixins: ["enyo.AutoBindingSupport"],
+				bindSource: "model",
+				components: [
+					{name: "name", bindFrom: ".name"},
+					{name: "job", bindFrom: ".job"},
+					{name: "happiness", bindFrom: ".happiness"}
+				]
+			}));
+			var $m1 = new enyo.Model({name: "Cole1", job: "Test-Writer (apparently)", happiness: "Not happy."});
+			var $m2 = new enyo.Model({name: "Cole2", job: "Not-Test-Writer (apparently)", happiness: "Very happy."});
+			$v.set("model", $m1);
+			if (
+				$v.$.name.content != "Cole1" ||
+				$v.$.job.content != "Test-Writer (apparently)" ||
+				$v.$.happiness.content != "Not happy."
+			) {
+				return this.finish("Values were not propagated from model to view correctly on first model");
+			}
+			$v.set("model", $m2);
+			if (
+				$v.$.name.content != "Cole2" ||
+				$v.$.job.content != "Not-Test-Writer (apparently)" ||
+				$v.$.happiness.content != "Very happy."
+			) {
+				return this.finish("Values were not propagated from model to view correctly on second model");
+			}
+			this.finish();
+		},
+		testMultipleModelsToControllerBoundView: function () {
+			var $v = new (enyo.kind({
+				kind: "enyo.View",
+				mixins: ["enyo.AutoBindingSupport"],
+				bindSource: "controller",
+				components: [
+					{name: "name", bindFrom: ".name"},
+					{name: "job", bindFrom: ".job"},
+					{name: "happiness", bindFrom: ".happiness"}
+				]
+			}));
+			var $m1 = new enyo.Model({name: "Cole1", job: "Test-Writer (apparently)", happiness: "Not happy."});
+			var $m2 = new enyo.Model({name: "Cole2", job: "Not-Test-Writer (apparently)", happiness: "Very happy."});
+			var $c = new enyo.ModelController();
+			$v.set("controller", $c);
+			$c.set("model", $m1);
+			if (
+				$v.$.name.content != "Cole1" ||
+				$v.$.job.content != "Test-Writer (apparently)" ||
+				$v.$.happiness.content != "Not happy."
+			) {
+				return this.finish("Values were not propagated from model to view correctly on first model");
+			}
+			$c.set("model", $m2);
+			if (
+				$v.$.name.content != "Cole2" ||
+				$v.$.job.content != "Not-Test-Writer (apparently)" ||
+				$v.$.happiness.content != "Very happy."
+			) {
+				return this.finish("Values were not propagated from model to view correctly on second model");
+			}
+			this.finish();
+		},
+		testEventsFromCollectionToView: function () {
+			new enyo.Store({source: "models.DestroySource"});
+			var $c = new enyo.Collection(), $d = [];
+			var $v = new (enyo.kind({
+				kind: "enyo.View",
+				handlers: {
+					onModelChanged: "modelChanged",
+					onModelAdded: "modelAdded",
+					onModelsAdded: "modelsAdded",
+					onModelRemoved: "modelRemoved",
+					onModelsRemoved: "modelsRemoved",
+					onModelDestroyed: "modelDestroyed"
+				},
+				modelChanged: function () {
+					throw "modelChanged";
+				},
+				modelAdded: function () {
+					throw "modelAdded";
+				},
+				modelsAdded: function () {
+					throw "modelsAdded";
+				},
+				modelRemoved: function () {
+					throw "modelRemoved";
+				},
+				modelsRemoved: function () {
+					throw "modelsRemoved";
+				},
+				modelDestroyed: function () {
+					throw "modelDestroyed";
+				}
+			}));
+			$v.set("controller", $c);
+			try {
+				$c.add(new enyo.Model({name: "Cole"}));
+			} catch (e) {
+				if (e == "modelAdded") {
+					$d.push("onModelAdded");
+				}
+			}
+			try {
+				$c.add([new enyo.Model({name: "Cole"}), new enyo.Model({name: "Cole"}), new enyo.Model({name: "Cole"})]);
+			} catch (e) {
+				if (e == "modelsAdded") {
+					$d.push("onModelsAdded");
+				}
+			}
+			try {
+				$c.at(0).set("name", "Ben");
+			} catch (e) {
+				if (e == "modelChanged") {
+					$d.push("onModelChanged");
+				}
+			}
+			try {
+				$c.remove($c.at(0));
+			} catch (e) {
+				if (e == "modelRemoved") {
+					$d.push("onModelRemoved");
+				}
+			}
+			try {
+				$c.remove([$c.at(0), $c.at(1)]);
+			} catch (e) {
+				if (e == "modelsRemoved") {
+					$d.push("onModelsRemoved");
+					// reset to nop so it does not throw an event later that
+					// disrupts the onModelDestroyed event
+					$c.remove = function (){};
+				}
+			}
+			try {
+				$c.at(0).destroy();
+			} catch (e) {
+				if (e == "modelDestroyed") {
+					$d.push("onModelDestroyed");
+				}
+			}
+			if ($d.length != 6) {
+				return this.finish("Did not receive all of the events, missing " +
+					enyo.unique(["onModelAdded","onModelsAdded","onModelRemoved","onModelsRemoved","onModelChanged","onModelDestroyed"], $d).join(", "));
+			}
+			this.finish();
+		},
+		testSettingData: function () {
+			var $c = new enyo.Collection(), $d = [];
+			var $v = new (enyo.kind({
+				kind: "enyo.View",
+				length: 0,
+				controller: $c,
+				handlers: {
+					onModelsAdded: "modelsAdded"
+				},
+				modelsAdded: function () {
+					throw "modelsAdded";
+				},
+				bindings: [
+					{from: ".controller.length", to: ".length"}
+				]
+			}));
+			try {
+				$c.set("data", [new enyo.Model({name: "Cole"}, new enyo.Model({name: "Cole"}))]);
+			} catch (e) {
+				if (e == "modelsAdded") {
+					$d.push("onModelsAdded");
+				}
+			}
+			if ($d.length != 1) {
+				return this.finish("Did not receive the onModelsAdded event when the computed property value was set");
+			}
+			if ($v.length != $c.length) {
+				return this.finish("Bindings apparently didn't fire as expected because length was incorrect");
 			}
 			this.finish();
 		}

@@ -177,36 +177,6 @@
 	};
 
 	//*@protected
-	var defaultTypeWrangler = function (attr, key, value, action, payload) {
-		if (attr && attr.type && value) {
-			if (enyo.isString(attr.type)) {
-				// it hasn't been resolved yet
-				var $type = enyo.getPath(attr.type);
-				if ($type) {
-					attr.type = $type;
-				}
-			}
-			switch (action) {
-			case "fetch":
-				// TODO: All native types need to be added here and tested
-				if (attr.type) {
-					if (String === attr.type) {
-						if (!enyo.isString(value)) {
-							value = value && value.toString? value.toString(): String(value);
-						}
-					} else if (!(value && value instanceof attr.type)) {
-						value = new attr.type(value);
-					}
-				}
-				return value;
-			case "commit":
-				return value.toString();
-			}
-		}
-		return value;
-	};
-
-	//*@protected
 	var initializers = {
 		/**
 			If there is a remote key defined we track that and create
@@ -222,29 +192,6 @@
 		},
 		type: function (proto, key, attr) {
 			// nop for now
-		},
-		/**
-			If a typeWrangler was defined as a string it is attempted to be
-			grabbed from the prototype for the model and if it isn't found
-			it uses the default.
-		*/
-		typeWrangler: function (proto, key, attr) {
-			if (attr.typeWrangler) {
-				if (enyo.isString(attr.typeWrangler)) {
-					if (!(attr.typeWrangler = proto[attr.typeWrangler])) {
-						enyo.warn("enyo.Model: attribute defined with typeWrangler but no " +
-							"such typeWrangler was found on the model prototype -> " +
-							key + " in " + proto.kindName + ", using the default typeWrangler");
-					}
-				}
-				if (enyo.isFunction(attr.typeWrangler)) {
-					return;
-				}
-			}
-			// we bind it including the attribute has so it can attempt to use
-			// the type if it was defined even if it couldn't be resolved at this
-			// moment during initialization
-			attr.typeWrangler = enyo.bind(null, defaultTypeWrangler, attr);
 		},
 		/**
 			If a formatter was defined as a string it is attempted to be
@@ -416,7 +363,7 @@
 
 		// we take the new attributes and preserve them along with
 		// any current values
-		enyo.mixin($proto._attributes, props);
+		enyo.mixin($proto._attributes, props, {ignore: true});
 		// do the rest of the initialization routine on the attributes
 		// in a single pass
 		normalizeAttributes($proto, $proto._attributes);
@@ -446,6 +393,17 @@
 		$proto.url = props.url || !$proto.noUrl? ($proto.name || $proto.kindName)
 			.replace(/^(.*)\./g, "").toLowerCase(): "";
 	});
+	
+	//*@protected
+	var isRemoteKey = function (k) {
+		var $a = this._attributes;
+		for (var $i in $a) {
+			if ($a[$i].remoteKey == k) {
+				return true;
+			}
+		}
+		return false;
+	};
 
 	//*@protected
 	/**
@@ -622,19 +580,6 @@
 				type: Date
 			}
 		}
-		```
-
-		##### [`typeWrangler`](id:typeWrangler) - _Function_ or _String_
-
-		The `typeWrangler` _method_ or _string_ representing the _method_ on the model
-		that, when supplied, will be called once for incoming data (via _fetch_) and
-		once for outgoing data (via _commit_). The _function_ takes the form of
-		`function (key, value, action, payload)` where `key` is the _attribute_ in the
-		schema, `value` is the entry for that `key` in the `payload`, `action` is either
-		"fetch" or "commit" where "fetch" means the data was just fetched and "commit"
-		means the _model_ is about to be committed, and `payload` is the mutable full
-		dataset (coming in or going out). In both cases it should return the data as
-		the _correct type_ (specified by the `type` [[see type](#type)] _schema option_).
 
 		##### [`formatter`](id:formatter) - _Function_ or _String_
 
@@ -752,29 +697,7 @@
 				// have been a string representing the name of the method
 				// on the model itself
 				name: {
-					type: String,
-					typeWrangler: function (field, action, payload) {
-						switch (action) {
-						case "fetch":
-							// field will be undefined on fetch since it
-							// isn't represented by an actual key in the dataset
-							return payload.first_name + " " + payload.last_name;
-							break;
-						case "commit":
-							// field will be defined as whatever the last state
-							// of the record was in the application but returning
-							// a value in this case will do nothing since we don't
-							// have an actual key called "name" so we modify the
-							// payload directly
-							var parts = field.split(" ");
-							payload.first_name = parts[0];
-							payload.last_name = parts[1];
-							// returning anything won't do anything but for clarity
-							// we return undefined
-							return undefined;
-							break;
-						}
-					}
+					type: String
 				},
 				// example of a meta association with other data that is
 				// not included in the payload associated with a fetch request
@@ -988,6 +911,7 @@
 		fetch: function (options) {
 			this.set("status", BUSY.FETCHING);
 			this.exec("fetch", options);
+			this._hasFetched = true;
 		},
 
 		//*@public
@@ -1031,7 +955,7 @@
 		*/
 		didFetch: function (options, result, noFilter) {
 			var $data = noFilter? (result || {}): this.filterData(result || {});
-			if (!this._attributeKeys.length) {
+			if (!this._hasFetched) {
 				this.createSchemaFromData($data);
 			}
 			var $attrs = this._attributes;
@@ -1051,9 +975,6 @@
 				// first we run it through its formatter to ensure it is
 				// of the appropriate structure
 				$val = $prop.formatter.call(this, loc, $val, "fetch", $data);
-				// now we run it through the typeWrangler to ensure that
-				// the type conversion takes place if necessary
-				$val = $prop.typeWrangler.call(this, loc, $val, "fetch", $data);
 				// note that validation of the type will take place when
 				// the value is set, not here (single entry point of failure)
 
@@ -1145,36 +1066,31 @@
 			to remote keys if they are defined such that it could be used as a
 			payload to the _source_. If no remote keys are defined it defaults to
 			using the local (client) keys.
-
-			// TODO: Needs to use the typeWrangler and formatter
 		*/
 		raw: function (local) {
-			var $attrs = this._attributes;
-			var key, rem, $rel, $irel, $rels = this._relations, $ret = {}, $rkeys = enyo.keys($rels);
+			var $a = this._attributes;
+			var $r = this._relations;
+			var $k = enyo.keys($r), $t, $l, $n, $i;
 			if (local) {
-				$ret = enyo.only(this._attributeKeys, enyo.except($rkeys), this);
+				$t = enyo.only(this._attributeKeys, enyo.except($k, this));
 			} else {
-				for (key in $attrs) {
-					rem = $attrs[key].remoteKey || key;
-					if (!!~enyo.indexOf(key, $rkeys)) {
-						continue;
+				$t = {};
+				for ($l in $a) {
+					$n = $a[$l].remoteKey || $l;
+					if (!~enyo.indexOf($l, $k)) {
+						$t[$n] = $a[$l].formatter($l, this.get($l), "commit", this);
 					}
-					$ret[rem] = this.get(key);
 				}
 			}
-			// now to include any relations that are set to be included
-			for (key in $rels) {
-				$rel = $rels[key];
-				$irel = this[key] && $rel.inverseKey? this[key]._relations[$rel.inverseKey]: {};
-				if (!$rel.isOwner) {
+			for ($l in $r) {
+				$n = $r[$l];
+				$i = this[$l] && $n.inverseKey? this[$l]._relations[$n.inverseKey]: null;
+				if (!$n.isOwner || (!enyo.exists(this[$l]) || (!$n.inCommit && ($i && !$i.inCommit)))) {
 					continue;
 				}
-				if (!enyo.exists(this[key]) || (!$rel.inCommit && !$irel.inCommit)) {
-					continue;
-				}
-				$ret[local? key: $attrs[key].remoteKey || key] = this[key].raw(local);
+				$t[local? $l: $a[$l].remoteKey || $l] = this[$l].raw(local);
 			}
-			return $ret;
+			return $t;
 		},
 
 		//*@public
@@ -1258,8 +1174,8 @@
 			non-standard use-cases.
 		*/
 		setRelation: function (prop, val) {
-			var $rel = this._relations[prop];
-			$rel.handler.call(this, prop, $rel, val);
+			var $r = this._relations[prop];
+			$r.handler.call(this, prop, $r, val);
 			this.set("status", DIRTY);
 			return this;
 		},
@@ -1273,67 +1189,37 @@
 			no _schema_ defined and no initial _values_ passed in much of
 			its functionality will not work as intended.
 		*/
-		constructor: function (values, recursing) {
-			// first we have a local reference to the original values
-			// passed into the object (if there were any)
-			var $values = values;
-			var $defaults = this.defaults;
-			// here we handle defaults so we can attempt both scenarios
-			// (incoming values and default values) at the same time
-			if (!recursing) {
-				if ($defaults) {
-					this.defaults = null;
-					// we go ahead and look for functions in the defaults and execute them
-					// now so we can keep all of this handling in one place
-					for (var key in $defaults) {
-						if (enyo.isFunction($defaults[key])) {
-							$defaults[key] = $defaults[key].call(this);
-						}
-					}
-					$values = $values? enyo.mixin($values, $defaults, true): $defaults;
+		constructor: function (values) {
+			var $v = values || enyo.pool.claimObject(true);
+			var $d = this.defaults || enyo.pool.claimObject(true);
+			var $t = enyo.pool.claimObject();
+			// default behavior of importing properties passed in will not
+			// work for our purposes
+			values = undefined;
+			this.inherited(arguments);
+			this._collections = [];
+			this._previous = {};
+			this._changed = {};
+			// handle our startup values and defaults
+			$t.ignore = true;
+			for (var $k in $d) {
+				if (enyo.isFunction($d[$k])) {
+					$d[$k] = $d[$k].call(this);
 				}
-				// initialize our relations (if any)
-				initRelations.call(this);
 			}
-			// we set the object to undefined so we can allow the constructor
-			// chain to continue without automatically applying these values
-			// to this record
-			if (!recursing) {
-				values = undefined;
-				// allow the remaining constructors to complete their initialization
-				this.inherited(arguments);
-				// initialize our variables
-				this._collections = [];
-				this._previous = {};
-				this._changed = {};
-			}
-			// now we can safely apply any initial values if we have some
-			// note that if there are values we are no longer a new status
-			// we are clean because we aren't empty
-			if ($values) {
-				// if we have a defined structure we adhere to the structure
-				// otherwise we implicitly derive the structure but no special
-				// relationships
-				if (this._attributeKeys.length) {
-					this.didFetch({}, $values, true);
-				} else if (recursing) {
-					// this is an error state because we did not determine any
-					// schema for the values passed in
-					this.set("state", ERROR.SCHEMA);
-					return;
-				} else {
-					this.createSchemaFromData($values);
-					return this._constructor($values, true);
-				}
-				// we set our status to clean because we have values
+			enyo.mixin($v, $d, $t);
+			initRelations.call(this);
+			this.didFetch($t, $v);
+			// because we arbitrarily called didFetch here we will reset our
+			// state properly to clean and reset anything that will have changed
+			if (enyo.keys($d).length || enyo.keys(enyo.except(enyo.keys($d), $v)).length) {
 				this.status = CLEAN;
-				// clear our changed hash
 				this._changed = {};
-				// set our previous up initially
 				this._previous = enyo.only(this._attributeKeys, this);
-				// we flush notifications
-				this.startNotifications();
+			} else {
+				this.status = NEW;
 			}
+			enyo.pool.releaseObject($v, $d, $t);
 		},
 		
 		//*@public
@@ -1342,9 +1228,11 @@
 		*/
 		createSchemaFromData: function (data) {
 			var $s = enyo.pool.claimObject(true);
-			enyo.forEach(enyo.keys(data), function (k) {
-				$s[k] = null;
-			});
+			for (var $k in data) {
+				if (!isRemoteKey.call(this, $k)) {
+					$s[$k] = null;
+				}
+			}
 			this._defaultModel = true;
 			initModel(this, $s);
 			enyo.pool.releaseObject($s);
