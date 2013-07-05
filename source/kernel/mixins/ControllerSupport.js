@@ -72,8 +72,11 @@ enyo.createMixin({
 		}
 		// we rebuild (rather than refresh) our bindings because
 		// they are now most likely connected to the previous controller.
-		// TODO: Avoid rebuilding bindings to objects other than the controller?
-		this.rebuildBindings();
+		for (var $i=0, b$; (b$=this.bindings[$i]); ++$i) {
+			if (b$.source == this || b$.from == "controller" || b$.from == ".controller") {
+				b$.rebuild();
+			}
+		}
 	},
 
 	//*@protected
