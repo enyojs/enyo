@@ -11,15 +11,13 @@
 	// we start with none so it will always create the fewest possible given
 	// a particular applications needs
 	var scrub = function (o, c) {
-		var $o = o;
-		if ($o && $o._pooled && $o._released) {
-			for (var k in $o) {
-				if ($o.hasOwnProperty(k) && (c || !~enyo.indexOf(k, ["_claimed","_pooled","_released"]))) {
-					if (c) {
-						delete $o[k];
-					} else {
-						$o[k] = undefined;
-					}
+		var $o = o, $k
+		for ($k in $o) {
+			if ($o.hasOwnProperty($k)) {
+				if (c) {
+					delete $o[$k];
+				} else {
+					$o[$k] = undefined;
 				}
 			}
 		}
@@ -49,22 +47,22 @@
 		}
 		if (true === o) {
 			scrub($o, true);
-		} else {
-			$o._pooled = true;
-			$o._claimed = enyo.bench();
-			$o._released = null;
 		}
 		return $o;
 	};
 	// when an object is done being used release it back to the pool
-	enyo.pool.releaseObject = function (o) {
-		var $o = o, $i;
-		if ($o) {
-			if (!!~($i = enyo.indexOf($o, claimed))) {
-				claimed.splice($i, 1);
-				pool.push($o);
-				$o._released = enyo.bench();
-				scrub($o);
+	// accepts a variable number of objects to be released in a single
+	// call
+	enyo.pool.releaseObject = function () {
+		var $o, $i, $k;
+		for ($k in arguments) {
+			$o = arguments[$k];
+			if ($o) {
+				if (!!~($i = enyo.indexOf($o, claimed))) {
+					claimed.splice($i, 1);
+					pool.push($o);
+					scrub($o);
+				}
 			}
 		}
 	};

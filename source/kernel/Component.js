@@ -638,7 +638,11 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 	if (!inProto[fn]) {
 		inProto[fn] = function(payload) {
 			// bubble this event
-			var $e = payload || enyo.pool.claimObject();
+			var $e = payload, $c = false;
+			if (!$e) {
+				$c = true;
+				$e = enyo.pool.claimObject();
+			}
 			var $d = $e.delegate;
 			// delete payload.delegate;
 			$e.delegate = undefined;
@@ -646,7 +650,7 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 			if ($d) {
 				$e.delegate = $d;
 			}
-			if (!payload || !payload._pooled) {
+			if ($c) {
 				enyo.pool.releaseObject($e);
 			}
 		};
