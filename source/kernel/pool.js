@@ -11,7 +11,7 @@
 	// we start with none so it will always create the fewest possible given
 	// a particular applications needs
 	var scrub = function (o, c) {
-		var $o = o, $k
+		var $o = o, $k;
 		for ($k in $o) {
 			if ($o.hasOwnProperty($k)) {
 				if (c) {

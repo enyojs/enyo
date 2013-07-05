@@ -191,7 +191,7 @@
 		destroy: function (model, options) {
 			options.success();
 		}
-	})
+	});
 
 	/**
 		The `enyo.Model` kind is a very complex type that requires comprehensive
@@ -616,7 +616,7 @@
 					{name: "job", bindFrom: ".job"},
 					{name: "happiness", bindFrom: ".happiness"}
 				]
-			}));
+			}))();
 			var $m = new enyo.Model({name: "Cole", job: "Test-Writer (apparently)", happiness: "Not happy."});
 			$v.set("model", $m);
 			if (
@@ -642,7 +642,7 @@
 					{name: "job", bindFrom: ".job"},
 					{name: "happiness", bindFrom: ".happiness"}
 				]
-			}));
+			}))();
 			var $c = new enyo.ModelController();
 			var $m = new enyo.Model({name: "Cole", job: "Test-Writer (apparently)", happiness: "Not happy."});
 			$v.set("controller", $c);
@@ -670,7 +670,7 @@
 					{name: "job", bindFrom: ".job"},
 					{name: "happiness", bindFrom: ".happiness"}
 				]
-			}));
+			}))();
 			var $m1 = new enyo.Model({name: "Cole1", job: "Test-Writer (apparently)", happiness: "Not happy."});
 			var $m2 = new enyo.Model({name: "Cole2", job: "Not-Test-Writer (apparently)", happiness: "Very happy."});
 			$v.set("model", $m1);
@@ -701,7 +701,7 @@
 					{name: "job", bindFrom: ".job"},
 					{name: "happiness", bindFrom: ".happiness"}
 				]
-			}));
+			}))();
 			var $m1 = new enyo.Model({name: "Cole1", job: "Test-Writer (apparently)", happiness: "Not happy."});
 			var $m2 = new enyo.Model({name: "Cole2", job: "Not-Test-Writer (apparently)", happiness: "Very happy."});
 			var $c = new enyo.ModelController();
@@ -755,7 +755,7 @@
 				modelDestroyed: function () {
 					throw "modelDestroyed";
 				}
-			}));
+			}))();
 			$v.set("controller", $c);
 			try {
 				$c.add(new enyo.Model({name: "Cole"}));
@@ -823,7 +823,7 @@
 				bindings: [
 					{from: ".controller.length", to: ".length"}
 				]
-			}));
+			}))();
 			try {
 				$c.set("data", [new enyo.Model({name: "Cole"}, new enyo.Model({name: "Cole"}))]);
 			} catch (e) {
