@@ -182,6 +182,7 @@
 			if (prop != "model" && prop != ".model" && prop != "controller" && prop != ".controller") {
 				this.addObserver(prop, _setupAutoBindings, this);
 			}
+			_setupAutoBindings.call(this);
 		}
 
 	});

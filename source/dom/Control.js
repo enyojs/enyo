@@ -140,7 +140,7 @@ enyo.kind({
 		this.removeClass(inOld);
 		this.addClass(this.classes);
 	},
-	_modelChanged: enyo.observer(function (prop, prev, val) {
+	modelChanged: function (prev, val) {
 		if (prev && val && prev === val) {
 			return;
 		}
@@ -150,7 +150,7 @@ enyo.kind({
 		if (prev && prev._isModel) {
 			prev.removeDispatchTarget(this);
 		}
-	}, "model"),
+	},
 	modelFindAndInstance: function (ctor, inst) {
 		if (!inst) {
 			return;
