@@ -16,21 +16,21 @@
 
 		//*@public
 		childMixins: [],
-		
+
 		//*@public
 		concat: ["childMixins"],
 
 		//*@public
 		controlParentName: "container",
-		
+
 		//*@public
 		containerOptions: {
 			name: "container",
 			kind: "enyo.View",
-			classes: "enyo-fill enyo-data-repeater-container",
+			classes: "enyo-fill enyo-data-repeater-container"
 		},
 
-		//*@public
+		//*@protected
 		handlers: {
 			onModelAdded: "_modelAdded",
 			onModelsAdded: "_modelsAdded",
@@ -38,12 +38,12 @@
 			onModelsRemoved: "_modelsRemoved"
 		},
 
-		//*@public
+		//*@protected
 		bindings: [
 			{from: ".controller.length", to: ".length"},
 			{from: ".controller.data", to: ".data"}
 		],
-		
+
 
 		//*@public
 		batching: false,
@@ -56,7 +56,7 @@
 
 		// ...........................
 		// PUBLIC METHODS
-		
+
 		//*@public
 		initComponents: function () {
 			// we need to find the child definition and prepare it for
@@ -84,46 +84,50 @@
 			}
 		},
 
-		// TODO:
+		//*@public
+		//* Reset the DataRepeater by destroying all existing items and re-rendering them
+		//* from the current model.
 		reset: function () {
 			var $d = this.get("data");
 			var $c = this.$.scroller;
 			this.destroyClientControls();
 			$c.resizeHandler();
 			if ($d) {
+				this.set("batching", true);
 				enyo.forEach($d, this.add, this);
+				this.set("batching", false);
 			}
-		},
-
-		render: function () {
-			this.reset();
-			this.inherited(arguments);
 		},
 
 		//*@public
+		//* Add an item to the end of the _DataRepeater_
+		//* without affecting the attached data model.
 		add: function (rec) {
-			if (!this.generated) {
-				return;
-			}
 			var $k = this._childKind;
 			var $c = this.createComponent({kind: $k});
 			var b = this.batching;
 			$c.set("model", rec);
-			if (!b) {
+			if (!b ) {
 				$c.render();
 			}
 		},
 
 		//*@public
+		//* Remove an item from the _DataRepeater_ by index. If no index is provided,
+		//* remove the last item. This doesn't change the attached data model.
 		remove: function (idx) {
 			var $ch = this.get("active");
-			var $c = $ch[idx || (Math.abs($ch.length-1))];
+			if (idx === undefined) {
+				idx = Math.abs($ch.length-1);
+			}
+			var $c = $ch[idx];
 			if ($c) {
 				$c.destroy();
 			}
 		},
 
 		//*@public
+		//* Regenerate the item at _idx_ based on the data from the attached model.
 		update: function (idx) {
 			var $d = this.get("data");
 			var $ch = this.get("active");
@@ -134,6 +138,7 @@
 		},
 
 		//*@public
+		//* Remove any generated items past the current length of the _DataRepeater_.
 		prune: function () {
 			var $ch = this.get("active");
 			var l = this.length;
@@ -208,6 +213,10 @@
 		// OBSERVERS
 
 		//*@public
+		//* Watches for changes to the batching property. When it's set,
+		//* rendering of changes to the _DataRepeater_ is suspended. When
+		//* it's unset, the _DataRepeater_ will re-render with its current
+		//* set of items.
 		batchingChanged: function (prev, val) {
 			if (false === val) {
 				this.render();
