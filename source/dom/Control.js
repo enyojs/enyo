@@ -140,13 +140,28 @@ enyo.kind({
 		this.removeClass(inOld);
 		this.addClass(this.classes);
 	},
-	modelChanged: function () {
-		if (this.model && enyo.isModel(this.model)) {
-			this.model.addDispatchTarget(this);
-			// if bindings haven't been initialized yet then this
-			// would be unnecessary
-			if (this._didSetupBindings) {
-				this.rebuildBindings();
+	modelChanged: function (prev, val) {
+		if (prev && val && prev === val) {
+			return;
+		}
+		if (this.model) {
+			this.findAndInstance("model");
+		}
+		if (prev && prev._isModel) {
+			prev.removeDispatchTarget(this);
+		}
+	},
+	modelFindAndInstance: function (ctor, inst) {
+		if (!inst) {
+			return;
+		}
+		inst.addDispatchTarget(this);
+		// we rebuild (rather than refresh) our bindings because
+		// they are now most likely connected to the previous model.
+		var $r = /^\.?model/;
+		for (var $i=0, b$; (b$=this.bindings[$i]); ++$i) {
+			if ($r.test(b$.from) || $r.test(b$.to)) {
+				b$.rebuild();
 			}
 		}
 	},
