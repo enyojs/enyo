@@ -73,7 +73,7 @@ enyo.createMixin({
 		// we rebuild (rather than refresh) our bindings because
 		// they are now most likely connected to the previous controller.
 		for (var $i=0, b$; (b$=this.bindings[$i]); ++$i) {
-			if (b$.source == this || b$.from == "controller" || b$.from == ".controller") {
+			if (b$.source == this || /^\.?controller(\.*)?/.test(b$.from)) {
 				b$.rebuild();
 			}
 		}
