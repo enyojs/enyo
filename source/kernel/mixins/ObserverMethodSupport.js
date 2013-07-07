@@ -380,8 +380,9 @@
 			An observer may be added for any property of the object, but an
 			observer may not be added for the same event more than once.
 		*/
-		addObserver: function (property, fn, context) {
-			return addObserver(this, property, fn, context);
+		addObserver: function (prop, fn, ctx) {
+			var $p = prop[0] == "."? prop.slice(1): prop;
+			return addObserver(this, $p, fn, ctx);
 		},
 
 		//*@public
@@ -392,8 +393,9 @@
 
 			Typically, this method will not be called directly.
 		*/
-		removeObserver: function (property, fn) {
-			return removeObserver(this, property, fn);
+		removeObserver: function (prop, fn) {
+			var $p = prop[0] == "."? prop.slice(1): prop;
+			return removeObserver(this, $p, fn);
 		},
 
 		//*@public
@@ -415,8 +417,9 @@
 			backwards-compatible function of the _propertyChanged_ form and will
 			call that, if it exists, while also notifying other observers.
 		*/
-		notifyObservers: function (property, prev, value) {
-			return notifyObservers(this, property, prev, value);
+		notifyObservers: function (prop, prev, value) {
+			var $p = prop[0] == "."? prop.slice(1): prop;
+			return notifyObservers(this, $p, prev, value);
 		},
 
 		//*@public
@@ -482,8 +485,8 @@
 		/**
 			Used internally when a notification is queued
 		*/
-		addNotificationToQueue: function (property, fn, params) {
-			return addNotificationToQueue(this, property, fn, params);
+		addNotificationToQueue: function (prop, fn, params) {
+			return addNotificationToQueue(this, prop, fn, params);
 		},
 
 		//*@protected
