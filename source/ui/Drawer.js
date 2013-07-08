@@ -21,6 +21,11 @@ enyo.kind({
 		//* If true, the opening/closing transition will be animated
 		animated: true
 	},
+	events: {
+		//* Fires when the the drawers are activated or deactived.
+		onExpand: "",
+		onCollapse: ""
+	},
 	//* @protected
 	style: "overflow: hidden; position: relative;",
 	tools: [
@@ -93,6 +98,7 @@ enyo.kind({
 	animatorEnd: function() {
 		if (!this.open) {
 			this.$.client.hide();
+			this.doCollapse();
 		}
 		else {
 			// save changes to this.domCssText --> see ENYO-1561
@@ -109,6 +115,7 @@ enyo.kind({
 			if (this.node) {
 				this.node.style[d] = this.domStyles[d] = null;
 			}
+			this.doExpand();
 		}
 		if (this.container) {
 			this.container.resized();
