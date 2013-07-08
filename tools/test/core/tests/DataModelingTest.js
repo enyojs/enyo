@@ -794,14 +794,14 @@
 			var $v = new (enyo.kind({
 				kind: "enyo.View",
 				handlers: {
-					onModelChanged: "modelChanged",
+					onModelChanged: "__modelChanged",
 					onModelAdded: "modelAdded",
 					onModelsAdded: "modelsAdded",
 					onModelRemoved: "modelRemoved",
 					onModelsRemoved: "modelsRemoved",
 					onModelDestroyed: "modelDestroyed"
 				},
-				modelChanged: function () {
+				__modelChanged: function () {
 					throw "modelChanged";
 				},
 				modelAdded: function () {
