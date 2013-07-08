@@ -162,6 +162,16 @@
 			_setupAutoBindings.call(this);
 			enyo.pool.releaseObject($t);
 		},
+		
+		controllerFindAndInstance: function (ctor, inst) {
+			this.inherited(arguments);
+			_setupAutoBindings.call(this);
+		},
+		
+		modelFindAndInstance: function (ctor, inst) {
+			this.inherited(arguments);
+			_setupAutoBindings.call(this);
+		},
 
 		//*@protected
 		create: function () {
@@ -169,12 +179,10 @@
 			// NOTE: We don't need to register for the model property as enyo.Control
 			// will automatically trigger the rebuildBindings call which we have modified
 			// to handle this properly
-			if (prop != "model") {
+			if (prop != "model" && prop != ".model" && prop != "controller" && prop != ".controller") {
 				this.addObserver(prop, _setupAutoBindings, this);
 			}
-			if (prop == "model" && this.model && this.model._isModel) {
-				_setupAutoBindings.call(this);
-			}
+			_setupAutoBindings.call(this);
 		}
 
 	});
