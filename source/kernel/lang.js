@@ -486,8 +486,14 @@
 		entries.
 	*/
 	enyo.merge = function (/* _arrays_ */) {
-		var merger = Array.prototype.concat.apply([], arguments);
-		return unique(merger);
+		var $m = Array.prototype.concat.apply([], arguments);
+		var $s = [];
+		for (var $i=0, v$; (v$=$m[$i]); ++$i) {
+			if (!~enyo.indexOf(v$, $s)) {
+				$s.push(v$);
+			}
+		}
+		return $s;
 	};
 	var merge = enyo.merge;
 

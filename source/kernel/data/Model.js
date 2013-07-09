@@ -801,6 +801,16 @@
 			this flag to true. This setting will ignore the `noUrl` property value.
 		*/
 		rawUrl: false,
+		
+		//*@public
+		/**
+			In cases where the commit body should be a subset of the attributes
+			explicitly or implicitly defined by the schema set this property to
+			an array of the keys that should be included. For a programmatic way
+			of filtering payload data use the `filterData` method and watch for
+			the second parameter to be `commit`.
+		*/
+		includeKeys: null,
 
 		//*@public
 		/**
@@ -861,13 +871,14 @@
 
 		//*@public
 		/**
-			Overload the `filterData` method which takes a single parameter, the
-			incoming payload from a _fetch_ request, and return it having made
-			any necessary modifications to it. __This method is executed on the
-			the top-level payload prior to individual formatters for defined
-			attributes in a known schema__.
+			Overload the `filterData` method to conditionally mutate data
+			for incoming and outgoing payloads. The `data` parameter is the
+			data to be mutated. The `direction` parameter will be one of `fetch`
+			or `commit`, for incoming data and outgoing data respectively. The
+			return value will be the data presented to the `didFetch` method and
+			the included payload in commits when appropriate.
 		*/
-		filterData: function (data) {
+		filterData: function (data, direction) {
 			return data;
 		},
 
@@ -897,8 +908,8 @@
 		*/
 		commit: function (options) {
 			var $options = options? enyo.clone(options): {};
-			$options.postBody = this.raw();
 			this.set("status", BUSY.COMMITTING);
+			$options.postBody = this.filterData(this.raw(), "commit");
 			this.exec("commit", $options);
 		},
 
@@ -954,66 +965,68 @@
 			through the filter.
 		*/
 		didFetch: function (options, result, noFilter) {
-			var $data = noFilter? (result || {}): this.filterData(result || {});
-			if (!this._hasFetched) {
-				this.createSchemaFromData($data);
-			}
-			var $attrs = this._attributes;
-			var rem, loc, $prop, $val, $rel, $rels = this._relations;
-			var queue = [], $fn;
-			
-			// ensure that no events or notifications propagate while we are
-			// iterating over these entries in the result set
-			this.silence();
-			this.stopNotifications();
-			for (loc in $attrs) {
-				$prop = $attrs[loc];
-				rem = $prop.remoteKey || loc;
-				$val = $data[rem] || $data[loc];
-				$rel = $rels[loc];
-
-				// first we run it through its formatter to ensure it is
-				// of the appropriate structure
-				$val = $prop.formatter.call(this, loc, $val, "fetch", $data);
-				// note that validation of the type will take place when
-				// the value is set, not here (single entry point of failure)
-
-				// if this attribute is a relation it needs to be handled
-				// separately and we need to postpone it until we have already
-				// set all of the local props to ensure if one is needed by the
-				// related model it will be available
-				if ($rel) {
-					queue.push(enyo.bind(this, $rel.handler, loc, $rel, $val));
-					continue;
+			var $o = enyo.pool.claimObject(true);
+			var $d = noFilter? (result || $o): this.filterData(result || $o, "fetch");
+			var $g = this.defaults;
+			var $k = enyo.merge(enyo.keys($d), enyo.keys($g));
+			// if we haven't fetched before we will run the data through the schema
+			// generator to ensure we have the full schema from the data structure
+			// but only trigger this if there is any data to begin with
+			if ($k.length) {
+				if (!this._hasFetched) {
+					this.createSchemaFromData(enyo.mixin([$d, $g], {ignore: true}));
 				}
-
-				// otherwise we simply set the property directly
-				this.set(loc, $val);
-			}
-
-			// now we need to make sure we are adding all of the extraneous data
-			// (if any) as well from the payload
-			for (rem in $data) {
-				if (this.isAttribute(rem)) {
-					continue;
+				var $a = this._attributes;
+				var $r = this._relations, $p, p$, k$, r$, v$, $q = [], $f;
+				for ($p in $a) {
+					p$ = $a[$p];
+					k$ = p$.remoteKey || $p;
+					v$ = $d[$p] || $d[k$];
+					// we do not run default data through the formatter
+					if (!v$ && !this._hasFetched && ($g[$p] || $g[k$])) {
+						v$ = $g[$p] || $g[k$];
+						if (enyo.isFunction(v$)) {
+							v$ = v$.call(this);
+						}
+					} else {
+						// run the data through the formatter but obviously this will
+						// only happen if it was in the payload to begin with to avoid
+						// having the formatter run against non-data
+						try {
+							v$ = p$.formatter.call(this, $p, v$, "fetch", $d);
+						} catch (e) {
+							v$ = null;
+						}
+					}
+					r$ = $r[$p];
+					// queue any relation actions until the rest as been completed
+					if (r$) {
+						$q.push(enyo.bind(this, r$.handler, $p, r$, v$));
+						// we continue because we do not want to trigger any notifications
+						// or changes for this attribute yet
+						continue;
+					}
+					this.set($p, v$);
 				}
-				this.set(rem, $data[rem]);
+				// now we run all of the relation functions in the queue
+				while ($q.length) {
+					$f = $q.pop();
+					$f();
+				}
 			}
-
-			// now we execute any queued relation handlers
-			while (queue.length) {
-				$fn = queue.pop();
-				$fn();
-			}
-
 			this.set("isNew", false);
 			this.set("status", CLEAN);
 			this.unsilence();
 			this.startNotifications();
 			this._flushChanges();
 			if (options && options.success) {
-				options.success(result);
+				options.success(result, this, options);
 			}
+			if (enyo.keys($d).length) {
+				this._hasFetched = true;
+			}
+			this._defaults = this.defaults;
+			enyo.pool.releaseObject($o);
 		},
 
 		//*@public
@@ -1035,6 +1048,9 @@
 					}
 				}
 			}
+			if (options && options.success) {
+				options.success(result, this, options);
+			}
 		},
 
 		//*@public
@@ -1046,6 +1062,9 @@
 			this.set("status", DESTROYED);
 			this.doDestroy({model: this});
 			breakdown(this);
+			if (options && options.success) {
+				options.success(result, this, options);
+			}
 		},
 
 		//*@public
@@ -1056,6 +1075,9 @@
 		*/
 		didFail: function (action, options, result) {
 			this.set("status", ERROR.RESPONSE);
+			if (options && options.error) {
+				options.error(result, this, options);
+			}
 		},
 
 		//*@public
@@ -1090,7 +1112,7 @@
 				}
 				$t[local? $l: $a[$l].remoteKey || $l] = this[$l].raw(local);
 			}
-			return $t;
+			return this.includeKeys.length? enyo.only(this.includeKeys, $t): $t;
 		},
 
 		//*@public
@@ -1191,8 +1213,9 @@
 		*/
 		constructor: function (values) {
 			var $v = values || enyo.pool.claimObject(true);
-			var $d = this.defaults || enyo.pool.claimObject(true);
 			var $t = enyo.pool.claimObject();
+			var $d = this.defaults || enyo.pool.claimObject(true);
+			var $c = $v;
 			// default behavior of importing properties passed in will not
 			// work for our purposes
 			values = undefined;
@@ -1200,16 +1223,21 @@
 			this._collections = [];
 			this._previous = {};
 			this._changed = {};
-			// handle our startup values and defaults
-			$t.ignore = true;
-			for (var $k in $d) {
-				if (enyo.isFunction($d[$k])) {
-					$d[$k] = $d[$k].call(this);
-				}
+			this.includeKeys = this.includeKeys || [];
+			this.defaults = this.defaults || $d;
+			// because we don't know whether data being passed in to the constructor
+			// will have the local format or the remote format and we want to be able
+			// to allow the filterData method to execute without always needing to know
+			// which case it is we catch errors and use the original structure if
+			// it fails and use the noFilter option for didFetch knowing we've already
+			// filtered it either way
+			try {
+				$v = this.filterData($v, "fetch");
+			} catch (e) {
+				$v = $c;
 			}
-			enyo.mixin($v, $d, $t);
 			initRelations.call(this);
-			this.didFetch($t, $v);
+			this.didFetch($t, $v, true);
 			// because we arbitrarily called didFetch here we will reset our
 			// state properly to clean and reset anything that will have changed
 			if (enyo.keys($d).length || enyo.keys(enyo.except(enyo.keys($d), $v)).length) {
