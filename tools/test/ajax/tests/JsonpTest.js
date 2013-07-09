@@ -42,5 +42,5 @@ enyo.kind({
 				return (window.ONE_TIME_CALLBACK !== originalCallback) && (inValue.response == "hello");
 			}
 		);
-	},
+	}
 });

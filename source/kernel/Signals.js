@@ -34,7 +34,7 @@ enyo.kind({
 		},
 		removeListener: function(inListener) {
 			enyo.remove(inListener, this.listeners);
-		},
+		}
 	},
 	statics: {
 		send: function(inMsg, inPayload) {

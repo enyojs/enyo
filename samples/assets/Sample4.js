@@ -6,7 +6,7 @@ enyo.kind({
 		{name: "input", tag: "input", attributes: {value: "Foo"}, style: "display: block;"},
 		{style: "padding: 10px 0;", components: [
 			{tag: "button", style: "margin-right: 10px;", content: "Add", ontap: "addTap"},
-			{tag: "button", content: "Clear", ontap: "clearTap"},
+			{tag: "button", content: "Clear", ontap: "clearTap"}
 		]},
 		{name: "output"}
 	],
