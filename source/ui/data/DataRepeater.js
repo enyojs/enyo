@@ -27,7 +27,7 @@
 		containerOptions: {
 			name: "container",
 			kind: "enyo.View",
-			classes: "enyo-fill enyo-data-repeater-container",
+			classes: "enyo-fill enyo-data-repeater-container"
 		},
 
 		//*@public

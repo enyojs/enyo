@@ -3,6 +3,7 @@
         "enyo": false,
         "$L": false
     },
+    "es3": true,
     "evil": false,
     "regexdash": true,
     "browser": true,
