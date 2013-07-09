@@ -22,9 +22,12 @@ enyo.kind({
 		animated: true
 	},
 	events: {
-		//* Fires when the the drawers are activated or deactived.
-		onExpand: "",
-		onCollapse: ""
+		/** 
+			Fires when the the drawers are activated or deactived.
+			Handler could distinguish whether drawer is opened or not using _open_ property.
+			If this.getOpen() returns true, drawer is opened. The other hand, it is closed.
+		*/
+		onDrawerAnimationEnd: ""
 	},
 	//* @protected
 	style: "overflow: hidden; position: relative;",
@@ -98,7 +101,6 @@ enyo.kind({
 	animatorEnd: function() {
 		if (!this.open) {
 			this.$.client.hide();
-			this.doCollapse();
 		}
 		else {
 			// save changes to this.domCssText --> see ENYO-1561
@@ -115,11 +117,11 @@ enyo.kind({
 			if (this.node) {
 				this.node.style[d] = this.domStyles[d] = null;
 			}
-			this.doExpand();
 		}
 		if (this.container) {
 			this.container.resized();
 		}
+		this.doDrawerAnimationEnd();
 		return true;
 	}
 });
