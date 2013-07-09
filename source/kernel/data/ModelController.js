@@ -1,106 +1,75 @@
-(function (enyo) {
+enyo.kind({
+
+	// ...........................
+	// PUBLIC PROPERTIES
+
+	//*@public
+	name: "enyo.ModelController",
 	
-	enyo.kind({
+	//*@public
+	mixins: ["enyo.ModelSupport"],
 
-		// ...........................
-		// PUBLIC PROPERTIES
+	//*@public
+	kind: "enyo.Controller",
+	
+	// ...........................
+	// PUBLIC METHODS
 
-		//*@public
-		name: "enyo.ModelController",
+	//*@public
+	isAttribute: function (prop) {
+		return this.model && enyo.isModel(this.model)? this.model.isAttribute(prop): false;
+	},
 
-		//*@public
-		model: null,
+	//*@public
+	get: function (prop) {
+		if (!this.isAttribute(prop)) {
+			return this.inherited(arguments);
+		}
+		return this.model && enyo.isModel(this.model)? this.model.get(prop): undefined;
+	},
 
-		// ...........................
-		// PROTECTED PROPERTIES
+	//*@public
+	set: function (prop, val) {
+		if (!this.isAttribute(prop)) {
+			return this.inherited(arguments);
+		}
+		return this.model.set(prop, val);
+	},
 
-		//*@public
-		kind: "enyo.Controller",
-
-		// ...........................
-		// COMPUTED PROPERTIES
-
-		//*@protected
-		_attributeKeys: enyo.computed(function () {
-			return this.model? this.model._attributeKeys: null;
-		}, "model", {cached: true, defer: true}),
-
-		// ...........................
-		// PUBLIC METHODS
-
-		//*@public
-		isAttribute: function (property) {
-			return this.model? this.model.isAttribute(property): false;
-		},
-
-		//*@public
-		get: function (property) {
-			if ("model" === property || !this.isAttribute(property)) {
-				return this.inherited(arguments);
-			}
-			return this.model? this.model.get(property): undefined;
-		},
-
-		//*@public
-		set: function (property, value) {
-			if ("model" !== property && !this.isAttribute(property)) {
-				return this.inherited(arguments);
-			}
-			if ("model" === property) {
-				var $model = this.model;
-				if ($model) {
-					this._removeModel($model);
+	//*@public
+	sync: function () {
+		var $m = this.model;
+		if ($m && enyo.isModel($m)) {
+			var $a = $m._attributeKeys, $b = this.bindings, $i, a$, b$;
+			for ($i=0; $i<$a.length || $i<$b.length; ++$i) {
+				if ((a$=$a[$i])) {
+					this.notifyObservers(a$, $m.previous(a$), $m.get(a$));
 				}
-				if (($model = value)) {
-					this.stopNotifications();
-					this.inherited(arguments);
-					this._initModel($model);
-					this.startNotifications();
-					return this;
+				if ((b$=$b[$i])) {
+					b$.sync();
 				}
-			}
-			return this.model? this.model.set(property, value): this;
-		},
-
-		//*@public
-		sync: function () {
-			enyo.forEach(this.bindings, function (binding) {
-				binding.sync();
-			});
-			enyo.forEach(this.get("_attributeKeys"), function (key) {
-				this.notifyObservers(key, null, this.model.get(key));
-			}, this);
-		},
-
-		// ...........................
-		// PROTECTED METHODS
-
-		create: function () {
-			this.inherited(arguments);
-			if (this.model) {
-				this._initModel(this.model);
-			}
-		},
-		
-		_removeModel: function (model) {
-			var $model = model || this.model;
-			if ($model) {
-				$model.removeDispatchTarget(this);
-				$model.removeObserver("*", this.notifyObservers);
-			}
-		},
-		
-		_initModel: function (model) {
-			var $model = model;
-			if ($model) {
-				$model.addDispatchTarget(this);
-				$model.addObserver("*", this.notifyObservers, this);
-				this.stopNotifications();
-				this.sync();
-				this.startNotifications();
 			}
 		}
-		
-	});
+	},
+	
+	modelChanged: function (prev, val) {
+		// TODO: This is a terrible fix for a bug there is no easy solution
+		// for in the long run. This will unfortunately be executed sometimes
+		// out of context because of the way our inherited scheme works and
+		// the synchronous execution of observers and events may cause an inherited
+		// check before the temporary inherited method (this method) is removed.
+		if (!this._isController) {
+			return;
+		}
+		if (prev && enyo.isModel(prev)) {
+			prev.removeObserver("*", this.notifyObservers);
+		}
+		if (val && enyo.isModel(val)) {
+			val.addObserver("*", this.notifyObservers, this);
+			this.stopNotifications();
+			this.sync();
+			this.startNotifications();
+		}
+	}
 
-})(enyo);
+});

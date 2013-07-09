@@ -407,7 +407,7 @@
 			}
 			$m.didFetch();
 			if ($m.status !== enyo.Model.CLEAN) {
-				return this.finish("Model was expected to have status CLEAN after fetch");
+				return this.finish("Model was expected to have status CLEAN after fetch, instead got " + $m.status);
 			}
 			$m = new models.GenericSchema();
 			$m.destroy();
@@ -445,6 +445,70 @@
 					enyo.json.stringify($m.raw()), " expected structure my.nested.age");
 			}
 			this.finish();
+		},
+		
+		testDataFilter: function () {
+			try {
+				var $s = this;
+				var $m = new (enyo.kind({
+					kind: "enyo.Model",
+					filterData: function (data, direction) {
+						// note the double check is because the status may not be BUSY.FETCHING if
+						// it was called directly from the constructor
+						if (this.status == enyo.Model.BUSY.FETCHING || "fetch" == direction) {
+							if (direction != "fetch") {
+								throw "Filtering did not have the correct direction provided for fetch";
+							}
+							return data.nested;
+						} else if (this.status == enyo.Model.BUSY.COMMITTING) {
+							if (direction != "commit") {
+								throw "Filtering did not have the correct direction provided for commit";
+							}
+							return {nested: data};
+						} else {
+							throw "Unknown state found in filterData";
+						}
+					}
+				}))();
+				new (enyo.kind({
+					kind: "enyo.Store",
+					fetch: function (model, options) {
+						options.success({
+							nested: {
+								name: "Cole Davis",
+								gender: "m"
+							}
+						});
+					},
+					commit: function (model, options) {
+						var $p = options.postBody.nested;
+						if (
+							(!$p.name || $p.name !== "Cole Davis") ||
+							(!$p.gender || $p.gender !== "m")
+						) {
+							throw "Commit payload was incorrect";
+						}
+						options.success();
+					}
+				}))();
+				$m.fetch({success: function (d, m, o) {
+					if (
+						m.name !== "Cole Davis" ||
+						m.gender !== "m"
+					) {
+						throw "Fetch returned invalid data, " + m.toJSON() + " " + enyo.json.stringify(d);
+					}
+					m.commit({
+						success: function () {
+							$s.finish();
+						}
+					});
+				}});
+			} catch (e) {
+				return this.finish(e);
+			} finally {
+				enyo.store = null;
+			}
 		}
 	});
 
@@ -730,14 +794,14 @@
 			var $v = new (enyo.kind({
 				kind: "enyo.View",
 				handlers: {
-					onModelChanged: "modelChanged",
+					onModelChanged: "__modelChanged",
 					onModelAdded: "modelAdded",
 					onModelsAdded: "modelsAdded",
 					onModelRemoved: "modelRemoved",
 					onModelsRemoved: "modelsRemoved",
 					onModelDestroyed: "modelDestroyed"
 				},
-				modelChanged: function () {
+				__modelChanged: function () {
 					throw "modelChanged";
 				},
 				modelAdded: function () {

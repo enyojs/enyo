@@ -64,14 +64,16 @@ enyo.kind({
 		*/
 		fit: null,
 		//* Used by Ares design editor for design objects
-		isContainer: false,
-		model: null
+		isContainer: false
 	},
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
 		ontap: "tap"
 	},
-	mixins: ["enyo.ControllerSupport"],
+	mixins: [
+		"enyo.ControllerSupport",
+		"enyo.ModelSupport"
+	],
 	//*@protected
 	_isView: true,
 	noDefer: true,
@@ -100,12 +102,9 @@ enyo.kind({
 		// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
 		this.addClass(this.kindClasses);
 		this.addClass(this.classes);
-		this.initProps(["id", "content", "src", "model"]);
+		this.initProps(["id", "content", "src"]);
 	},
 	destroy: function() {
-		if (this.model && enyo.isModel(this.model)) {
-			this.model.removeDispatchTarget(this);
-		}
 		this.removeNodeFromDom();
 		enyo.Control.unregisterDomEvents(this.id);
 		this.inherited(arguments);
@@ -139,31 +138,6 @@ enyo.kind({
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
 		this.addClass(this.classes);
-	},
-	modelChanged: function (prev, val) {
-		if (prev && val && prev === val) {
-			return;
-		}
-		if (this.model) {
-			this.findAndInstance("model");
-		}
-		if (prev && prev._isModel) {
-			prev.removeDispatchTarget(this);
-		}
-	},
-	modelFindAndInstance: function (ctor, inst) {
-		if (!inst) {
-			return;
-		}
-		inst.addDispatchTarget(this);
-		// we rebuild (rather than refresh) our bindings because
-		// they are now most likely connected to the previous model.
-		var $r = /^\.?model/;
-		for (var $i=0, b$; (b$=this.bindings[$i]); ++$i) {
-			if ($r.test(b$.from) || $r.test(b$.to)) {
-				b$.rebuild();
-			}
-		}
 	},
 	// modify components we create ourselves
 	/*
