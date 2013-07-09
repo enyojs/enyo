@@ -469,7 +469,7 @@
 							throw "Unknown state found in filterData";
 						}
 					}
-				}));
+				}))();
 				new (enyo.kind({
 					kind: "enyo.Store",
 					fetch: function (model, options) {
@@ -490,7 +490,7 @@
 						}
 						options.success();
 					}
-				}));
+				}))();
 				$m.fetch({success: function (d, m, o) {
 					if (
 						m.name !== "Cole Davis" ||
