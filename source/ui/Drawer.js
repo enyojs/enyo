@@ -22,7 +22,11 @@ enyo.kind({
 		animated: true
 	},
 	events: {
-		//* Fires when the the drawers are activated or deactived.
+		/** 
+			Fires when the the drawers are activated or deactived.
+			Handler could distinguish whether drawer is opened or not using _open_ property.
+			If this.getOpen() returns true, drawer is opened. The other hand, it is closed.
+		*/
 		onDrawerAnimationEnd: ""
 	},
 	//* @protected
