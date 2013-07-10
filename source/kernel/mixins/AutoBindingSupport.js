@@ -162,26 +162,13 @@
 			_setupAutoBindings.call(this);
 			enyo.pool.releaseObject($t);
 		},
-		
-		controllerFindAndInstance: function (ctor, inst) {
-			this.inherited(arguments);
-			_setupAutoBindings.call(this);
-		},
-		
-		modelFindAndInstance: function (ctor, inst) {
-			this.inherited(arguments);
-			_setupAutoBindings.call(this);
-		},
 
 		//*@protected
 		create: function () {
-			var prop = this.bindSource || "model";
-			// NOTE: We don't need to register for the model property as enyo.Control
-			// will automatically trigger the rebuildBindings call which we have modified
-			// to handle this properly
-			if (prop != "model" && prop != ".model" && prop != "controller" && prop != ".controller") {
-				this.addObserver(prop, _setupAutoBindings, this);
-			}
+			var $p = this.bindSource || "model";
+			this.addObserver($p, _setupAutoBindings, this);
+			// the observer won't fire the first time so we arbitrarily attempt
+			// to setup
 			_setupAutoBindings.call(this);
 		}
 
