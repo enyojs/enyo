@@ -60,10 +60,11 @@
 			enyo.mixin(props, xtra);
 			if ((b=control._autoBinding)) {
 				b.disconnect();
+				// DANGEROUS - will stomp on "transform" property
 				enyo.mixin(b, props, {exists: true});
 				b.refresh();
 			} else {
-				b = this._autoBinding(props);
+				b = this._makeAutoBinding(props);
 				control._autoBinding = b;
 			}
 			enyo.pool.releaseObject(xtra);
@@ -96,14 +97,27 @@
 		// COMPUTED PROPERTIES
 
 		//*@protected
-		_bindableControls: enyo.computed(function (control) {
+		// return an array of controls from the tree rooted at _this_
+		// that have the "bindFrom" property.
+		_bindableControls: enyo.computed(function (control, owner) {
 			control = control || this;
+			owner = owner || this;
+			var superOwner = owner.owner;
 			var bindable = [];
-			var controls = control.controls || [];
-			var idx = 0;
-			var len = controls.length;
-			for (; idx < len; ++idx) {
-				bindable = bindable.concat(this._bindableControls(controls[idx]));
+			if (control.controls) {
+				var controls = control.controls;
+				var idx = 0;
+				var len = controls.length;
+				for (; idx < len; ++idx) {
+					var controlOwner = controls[idx].owner;
+					// only search the tree of controls that are either owned
+					// by the root or by the root's owner. This will catch anything
+					// defined in a components block, but a component from another
+					// kind will have a owner we don't know.
+					if (controlOwner === owner || controlOwner === superOwner) {
+						bindable = bindable.concat(this._bindableControls(controls[idx], owner));
+					}
+				}
 			}
 			if ("bindFrom" in control) {
 				bindable.push(control);
@@ -134,7 +148,7 @@
 		// PROTECTED METHODS
 
 		//*@protected
-		_autoBinding: function () {
+		_makeAutoBinding: function () {
 			var bind = this.binding.apply(this, arguments);
 			bind._autoBindingId = enyo.uid("_autoBinding");
 			return bind;
