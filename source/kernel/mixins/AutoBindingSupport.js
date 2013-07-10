@@ -55,12 +55,20 @@
 			if (props.source && enyo.isString(props.source)) {
 				props.source = enyo.getPath.call(control, props.source);
 			}
+			// convert string "transform" values to hard function references
+			// to make sure proper scope when binding is created
+			if (props.transform && enyo.isString(props.transform)) {
+				var transform = props.transform;
+				var owner = control.owner;
+				props.transform = owner[transform]
+					|| enyo.getPath.call(owner, transform)
+					|| enyo.getPath.call(enyo.global, transform);
+			}
 			xtra.source = props.source || bindSource;
 			xtra.target = control;
 			enyo.mixin(props, xtra);
 			if ((b=control._autoBinding)) {
 				b.disconnect();
-				// DANGEROUS - will stomp on "transform" property
 				enyo.mixin(b, props, {exists: true});
 				b.refresh();
 			} else {
