@@ -225,5 +225,24 @@ enyo.kind({
 			end.destroy();
 			obj.destroy();
 		}
+	},
+	testBindingsBlock: function() {
+		var K1 = enyo.kind({
+			foo: 0,
+			bar: 0,
+			bindings: [
+				{from: ".foo", to: ".bar", transform: "add42"}
+			],
+			add42: function(inValue) {
+				return inValue + 42;
+			}
+		});
+		var k1 = new K1();
+		k1.set("foo", 7);
+		if (k1.get("bar") !== (7 + 42)) {
+			this.finish(".foo to .bar binding failed");
+		}
+		k1.destroy();
+		this.finish();
 	}
 });
