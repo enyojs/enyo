@@ -373,7 +373,8 @@
 
 	//* Returns true if the argument is an object.
 	enyo.isObject = Object.isObject || function (it) {
-		return toString.call(it) === "[object Object]";
+		// explicit null/undefined check for IE8 compatibility
+		return (it != null) && (toString.call(it) === "[object Object]");
 	};
 
 	//* Returns true if the argument is true.
