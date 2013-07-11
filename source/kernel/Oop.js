@@ -56,7 +56,7 @@ enyo.kind = function(inProps) {
 	if (name && !inProps.noDefer && !inProps.statics) {
 		// make a deferred constructor to avoid a lot of kind
 		// processing if we're never used
-		var ctor = function DeferredCtor() {
+		var DeferredCtor = function() {
 			var FinalCtor;
 			// check for cached final constructor first, used mainly when
 			// developers directly use kind names in their components instead of
@@ -73,22 +73,22 @@ enyo.kind = function(inProps) {
 			FinalCtor.apply(obj, arguments);
 			return obj;
 		};
-		ctor._finishKindCreation = function() {
-			ctor._finishKindCreation = undefined;
+		DeferredCtor._finishKindCreation = function() {
+			DeferredCtor._finishKindCreation = undefined;
 			enyo.setPath(name, undefined);
 			var FinalCtor = enyo.kind.finish(inProps);
-			ctor._FinalCtor = FinalCtor;
+			DeferredCtor._FinalCtor = FinalCtor;
 			inProps = null;
 			return FinalCtor;
 		};
 		if ((name && !enyo.getPath(name)) || enyo.kind.allowOverride) {
-			enyo.setPath(name, ctor);
+			enyo.setPath(name, DeferredCtor);
 		}
 		else if (name) {
 			enyo.error("enyo.kind: " + name + " is already in use by another " +
 				"kind, all kind definitions must have unique names.");
 		}
-		return ctor;
+		return DeferredCtor;
 	} else {
 		// create anonymous kinds immediately
 		return enyo.kind.finish(inProps);
@@ -193,8 +193,8 @@ enyo.singleton = function(conf, context) {
 
 //* @protected
 enyo.kind.makeCtor = function() {
-	return function ctor() {
-		if (!(this instanceof ctor)) {
+	var enyoConstructor = function() {
+		if (!(this instanceof enyoConstructor)) {
 			throw "enyo.kind: constructor called directly, not using 'new'";
 		}
 
@@ -219,6 +219,7 @@ enyo.kind.makeCtor = function() {
 			return result;
 		}
 	};
+	return enyoConstructor;
 };
 
 // classes referenced by name can omit this namespace (e.g. "Button" instead of "enyo.Button")
