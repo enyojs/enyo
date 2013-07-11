@@ -1,7 +1,7 @@
 enyo.fullscreen = {
-	
+
 	//* @protected
-	
+
 	//* Reference to the current fs control
 	fullscreenControl: null,
 	//* Reference to the current fs element (fallback for platforms w/o native support)
@@ -26,9 +26,9 @@ enyo.fullscreen = {
 		("mozCancelFullScreen" in document) ? "mozCancelFullScreen" :
 		("webkitCancelFullScreen" in document) ? "webkitCancelFullScreen" :
 		null,
-	
+
 	//* @public
-	
+
 	//* Return true if platform supports all of the fullscreen API
 	nativeSupport: function() {
 		return (this.elementAccessor !== null && this.requestAccessor !== null && this.cancelAccessor !== null);
@@ -66,9 +66,9 @@ enyo.fullscreen = {
 			this.fallbackCancelFullscreen();
 		}
 	},
-	
+
 	//* @protected
-	
+
 	//* Fallback support for setting fullscreen element (done by browser on platforms with native support)
 	setFullscreenElement: function(inNode) {
 		this.fullscreenElement = inNode;
@@ -80,7 +80,7 @@ enyo.fullscreen = {
 	//* Fallback fullscreen request for platforms without fullscreen support
 	fallbackRequestFullscreen: function() {
 		var control = this.requestor;
-		
+
 		if (!control) {
 			return;
 		}
@@ -141,9 +141,12 @@ enyo.fullscreen = {
 
 //* Normalize platform-specific fs change events
 enyo.ready(function() {
-	document.addEventListener("webkitfullscreenchange", enyo.bind(enyo.fullscreen, "detectFullscreenChangeEvent"), false);
-	document.addEventListener("mozfullscreenchange",    enyo.bind(enyo.fullscreen, "detectFullscreenChangeEvent"), false);
-	document.addEventListener("fullscreenchange",       enyo.bind(enyo.fullscreen, "detectFullscreenChangeEvent"), false);
+	// no need for IE8 fallback, since it won't ever send this event
+	if (document.addEventListener) {
+		document.addEventListener("webkitfullscreenchange", enyo.bind(enyo.fullscreen, "detectFullscreenChangeEvent"), false);
+		document.addEventListener("mozfullscreenchange",    enyo.bind(enyo.fullscreen, "detectFullscreenChangeEvent"), false);
+		document.addEventListener("fullscreenchange",       enyo.bind(enyo.fullscreen, "detectFullscreenChangeEvent"), false);
+	}
 });
 
 //* If this platform doesn't have native support for fullscreen, add an escape handler to mimic native behavior

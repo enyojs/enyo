@@ -54,6 +54,60 @@ enyo.kind({
 		var index = enyo.indexOf("foo", [null, null, null, null,"foo"], 10);
 		this.finish(index !== -1 ? "if fromIndex is greater then array length, should return -1" : false);
 	},
+	testIsObject: function() {
+		if (!enyo.isObject({})) {
+			this.finish("enyo.isObject failed on object");
+			return;
+		}
+		if (enyo.isObject(undefined)) {
+			this.finish("enyo.isObject failed on undefined");
+			return;
+		}
+		if (enyo.isObject(null)) {
+			this.finish("enyo.isObject failed on null");
+			return;
+		}
+		if (enyo.isObject([1,2,3])) {
+			this.finish("enyo.isObject failed on array");
+			return;
+		}
+		if (enyo.isObject(42)) {
+			this.finish("enyo.isObject failed on number");
+			return;
+		}
+		if (enyo.isObject("forty-two")) {
+			this.finish("enyo.isObject failed on string");
+			return;
+		}
+		this.finish();
+	},
+	testIsArray: function() {
+		if (enyo.isArray({})) {
+			this.finish("enyo.isArray failed on object");
+			return;
+		}
+		if (enyo.isArray(undefined)) {
+			this.finish("enyo.isArray failed on undefined");
+			return;
+		}
+		if (enyo.isArray(null)) {
+			this.finish("enyo.isArray failed on null");
+			return;
+		}
+		if (!enyo.isArray([1,2,3])) {
+			this.finish("enyo.isArray failed on array");
+			return;
+		}
+		if (enyo.isArray(42)) {
+			this.finish("enyo.isArray failed on number");
+			return;
+		}
+		if (enyo.isArray("forty-two")) {
+			this.finish("enyo.isArray failed on string");
+			return;
+		}
+		this.finish();
+	},
 	// test the various configurations of enyo.mixin
 	testMixin: function () {
 		var $t = {}, $s = {one:"one",two:"two"};
