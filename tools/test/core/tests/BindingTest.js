@@ -241,6 +241,7 @@ enyo.kind({
 		k1.set("foo", 7);
 		if (k1.get("bar") !== (7 + 42)) {
 			this.finish(".foo to .bar binding failed");
+			return;
 		}
 		k1.destroy();
 		this.finish();

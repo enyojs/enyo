@@ -85,10 +85,12 @@
 			var k1 = new K1();
 			if (k1.$.bar.get("value") !== (0 + 42)) {
 				this.finish("default autobinding failed");
+				return;
 			}
 			k1.set("foo", 23);
 			if (k1.$.bar.get("value") !== (23 + 42)) {
 				this.finish("synced autobinding failed");
+				return;
 			}
 			k1.destroy();
 			this.finish();
@@ -97,18 +99,22 @@
 			var k2 = new K2();
 			if (k2.$.bar.get("value") !== (42)) {
 				this.finish("default autobinding failed");
+				return;
 			}
 			k2.set("foo", 23);
 			if (k2.$.bar.get("value") !== (23 + 42)) {
 				this.finish("synced autobinding failed");
+				return;
 			}
 			// set property in second level and make sure binding runs
 			if (k2.$.baz.$.bar.get("value") !== (15 + 42)) {
 				this.finish("nested default autobinding failed");
+				return;
 			}
 			k2.$.baz.set("foo", 37);
 			if (k2.$.baz.$.bar.get("value") !== (37 + 42)) {
 				this.finish("nested synced autobinding failed");
+				return;
 			}
 			k2.destroy();
 			this.finish();
@@ -119,20 +125,24 @@
 			val = k3.$.m1.get("value");
 			if (val !== 15) {
 				this.finish("interior default autobinding failed");
+				return;
 			}
 			s1.set("foo", 77);
 			val = k3.$.m1.get("value");
 			if (val !== 77) {
 				this.finish("interior synced autobinding failed");
+				return;
 			}
 			val = k3.$.m2.get("value");
 			if (val !== (42 + 72)) {
 				this.finish("interior default transformed autobinding failed");
+				return;
 			}
 			s1.set("bar", 19);
 			val = k3.$.m2.get("value");
 			if (val !== (42 + 19)) {
 				this.finish("interior default transformed autobinding failed");
+				return;
 			}
 			k3.destroy();
 			this.finish();
