@@ -516,8 +516,14 @@ enyo.kind({
 
 		If you start a job with the same name as a pending job, the original job
 		will be stopped; this can be useful for resetting timeouts.
+
+		You can supply a priority (1-10) by which the job should be executed.
+		Default is 5. Set an priority lower than 5 (or "low") to defer the
+		job if an animation is in progress which can help to avoid stuttering.
 	*/
-	startJob: function(inJobName, inJob, inWait) {
+	startJob: function(inJobName, inJob, inWait, inPriority) {
+		inPriority = inPriority || 5;
+
 		// allow strings as job names, they map to local method names
 		if (enyo.isString(inJob)) {
 			inJob = this[inJob];
@@ -525,9 +531,7 @@ enyo.kind({
 		// stop any existing jobs with same name
 		this.stopJob(inJobName);
 		this.__jobs[inJobName] = setTimeout(this.bindSafely(function() {
-			this.stopJob(inJobName);
-			// call "inJob" with this bound to the component.
-			inJob.call(this);
+			enyo.jobs.add(this.bindSafely(inJob), inPriority, inJobName);
 		}), inWait);
 	},
 	/**
@@ -538,11 +542,12 @@ enyo.kind({
 			clearTimeout(this.__jobs[inJobName]);
 			delete this.__jobs[inJobName];
 		}
+		enyo.jobs.remove(inJobName);
 	},
 	/**
 		Execute the method _inJob_ immediately, then prevent
 		any other calls to throttleJob with the same _inJobName_ from running
-		for the	next _inWait_ milliseconds.
+		for the next _inWait_ milliseconds.
 	*/
 	throttleJob: function(inJobName, inJob, inWait) {
 		// if we still have a job with this name pending, return immediately
