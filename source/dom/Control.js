@@ -14,7 +14,7 @@
 */
 enyo.kind({
 	name: "enyo.Control",
-	kind: enyo.UiComponent,
+	kind: "enyo.UiComponent",
 	published: {
 		/**
 			HTML tag name to use for the control. If null, no tag is generated;
@@ -70,9 +70,13 @@ enyo.kind({
 		//* Controls will call a user-provided _tap_ method when tapped upon.
 		ontap: "tap"
 	},
-	mixins: ["enyo.ControllerSupport"],
+	mixins: [
+		"enyo.ControllerSupport",
+		"enyo.ModelSupport"
+	],
 	//*@protected
-	_is_view: true,
+	_isView: true,
+	noDefer: true,
 	//* The default kind for controls created inside this control that don't
 	//* specify their own kind
 	defaultKind: "Control",
@@ -749,6 +753,34 @@ enyo.kind({
 			this.node.parentNode.removeChild(this.node);
 		}
 	},
+	disconnectDom: function () {
+		if (this.generated) {
+			this.disconnectChildrenDom();
+		}
+		this._node = this.node;
+		this.node = null;
+		this.generated = false;
+		this._domDisconnected = true;
+	},
+	disconnectChildrenDom: function () {
+		for (var i=0, c; (c=this.children[i]); ++i) {
+			c.disconnectDom();
+		}
+	},
+	connectChildrenDom: function () {
+		for (var i=0, c; (c=this.children[i]); ++i) {
+			c.connectDom();
+		}
+	},
+	connectDom: function () {
+		if (this._domDisconnected) {
+			this.connectChildrenDom();
+			this.node = this._node;
+			this._node = null;
+			this.generated = true;
+			this._domDisconnected = false;
+		}
+	},
 	teardownRender: function() {
 		if (this.generated) {
 			this.teardownChildren();
@@ -776,7 +808,20 @@ enyo.kind({
 		if (this.generated) {
 			this.teardownChildren();
 		}
-		enyo.dom.setInnerHtml(this.node, this.generateInnerHtml());
+		if (this.node) {
+			enyo.dom.setInnerHtml(this.node, this.generateInnerHtml());
+		}
+	},
+	renderReusingNode: function () {
+		if (this.children.length) {
+			for (var i=0, c; (c=this.children[i]); ++i) {
+				c.renderReusingNode();
+			}
+		} else {
+			if (this.generated && (this.node = this.hasNode())) {
+				enyo.dom.setInnerHtml(this.node, this.generateInnerHtml());
+			}
+		}
 	},
 	renderStyles: function() {
 		if (this.hasNode()) {
@@ -840,6 +885,31 @@ enyo.kind({
 	//
 	fitChanged: function(inOld) {
 		this.parent.reflow();
+	},
+	//* Return true if this control is the current fullscreen control
+	isFullscreen: function() {
+		return (this.hasNode() && this.hasNode() === enyo.fullscreen.getFullscreenElement());
+	},
+	//* Send request to make this control fullscreen
+	requestFullscreen: function() {
+		if (!this.hasNode()) {
+			return false;
+		}
+
+		if (enyo.fullscreen.requestFullscreen(this)) {
+			return true;
+		}
+
+		return false;
+	},
+	//* Send request to take this control out of fullscreen
+	cancelFullscreen: function() {
+		if (this.isFullscreen()) {
+			enyo.fullscreen.cancelFullscreen();
+			return true;
+		}
+
+		return false;
 	},
 	//
 	//

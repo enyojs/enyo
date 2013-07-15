@@ -1,6 +1,7 @@
 enyo.depends(
 	"log.js",
 	"lang.js",
+	"pool.js",
 	"dev.js",
 	"job.js",
 	"Oop.js",
@@ -11,6 +12,7 @@ enyo.depends(
 	"UiComponent.js",
 	"Layout.js",
 	"Signals.js",
+	"MultipleDispatchComponent.js",
 	"Controller.js",
 	"Router.js",
 	"ViewController.js",

@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "AjaxTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	timeout: 10000,
 	testContextSuccess: function (){
 		var self = this;

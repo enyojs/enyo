@@ -26,7 +26,7 @@
 */
 enyo.kind({
 	name: "enyo.Selection",
-	kind: enyo.Component,
+	kind: "enyo.Component",
 	published: {
 		//* If true, multiple selections are allowed
 		multi: false

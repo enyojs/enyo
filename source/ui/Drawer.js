@@ -21,6 +21,15 @@ enyo.kind({
 		//* If true, the opening/closing transition will be animated
 		animated: true
 	},
+	events: {
+		/**
+			Fires when the drawer has been opened or closed. The handler can determine
+			whether the drawer was just opened or just closed based on the _open_
+			property. If _this.getOpen()_ returns true, the drawer was opened; if not,
+			it was closed.
+		*/
+		onDrawerAnimationEnd: ""
+	},
 	//* @protected
 	style: "overflow: hidden; position: relative;",
 	tools: [
@@ -88,6 +97,7 @@ enyo.kind({
 		if (this.container) {
 			this.container.resized();
 		}
+		return true;
 	},
 	animatorEnd: function() {
 		if (!this.open) {
@@ -112,5 +122,7 @@ enyo.kind({
 		if (this.container) {
 			this.container.resized();
 		}
+		this.doDrawerAnimationEnd();
+		return true;
 	}
 });

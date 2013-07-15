@@ -4,6 +4,6 @@
 enyo.kind({
 	name: "enyo.ToolDecorator",
 	//* @protected
-	kind: enyo.GroupItem,
+	kind: "enyo.GroupItem",
 	classes: "enyo-tool-decorator"
 });

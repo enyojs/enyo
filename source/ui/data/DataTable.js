@@ -8,13 +8,13 @@ enyo.kind({
 	controller: "enyo.Collection",
 	defaultKind: "enyo.TableRow",
 	style: "display: table;",
-	_container: {
+	containerOptions: {
 		kind: "enyo.Table",
 		name: "container",
 		style: "width: 100%;"
 	},
 	initComponents: function() {
 		this.inherited(arguments);
-		this._child_kind.prototype.tag = null;
+		this._childKind.prototype.tag = null;
 	}
 });

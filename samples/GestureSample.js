@@ -164,6 +164,7 @@ enyo.kind({
 	stepAnimation: function(inSender, inEvent) {
 		var v = Math.floor(inSender.value);
 		this.applyStyle("background-color", "rgb(" + v + ",255," + v + ");");
+		return true;
 	},
 	animationEnded: function() {
 		if (!this.persist) {
@@ -171,6 +172,7 @@ enyo.kind({
 				this.doDone({type:this.event.type});
 			}), 2000);
 		}
+		return true;
 	},
 	destroy: function() {
 		if (this.timeout) {

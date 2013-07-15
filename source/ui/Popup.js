@@ -31,7 +31,10 @@ enyo.kind({
 		//* shown on top of other controls.
 		floating: false,
 		//* Set to true to automatically center the popup in the middle of the viewport
-		centered: false
+		centered: false,
+		//* Set to true to be able to show transition on the style modifications otherwise
+		//* the transition is invisible (visibility: hidden)
+		showTransitions: false
 	},
 	//* @protected
 	showing: false,
@@ -167,7 +170,9 @@ enyo.kind({
 		}
 		// hide while sizing, and move to top corner for accurate sizing
 		if (this.centered || this.targetPosition) {
-			this.applyStyle("visibility", "hidden");
+			if (!this.showTransitions) {
+				this.applyStyle("visibility", "hidden");
+			}
 			this.addStyles("top: 0px; left: 0px; right: initial; bottom: initial;");
 		}
 		this.inherited(arguments);
@@ -182,7 +187,7 @@ enyo.kind({
 			}
 		}
 		// show after sizing
-		if (this.centered || this.targetPosition) {
+		if (this.centered || this.targetPosition && !this.showTransitions) {
 			this.applyStyle("visibility", null);
 		}
 		// events desired due to programmatic show/hide

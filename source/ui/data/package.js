@@ -3,5 +3,7 @@ enyo.depends(
 	"DataRepeater.js",
 	"DataList.js",
 	"DataGridList.js",
-	"DataTable.js"
+	"DataTable.js",
+	"RepeaterChildSupport.js",
+	"RowSupport.js"
 );

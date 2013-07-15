@@ -1,86 +1,75 @@
-(function (enyo) {
+enyo.kind({
 
-	enyo.kind({
+	// ...........................
+	// PUBLIC PROPERTIES
 
-		// ...........................
-		// PUBLIC PROPERTIES
+	//*@public
+	name: "enyo.ModelController",
+	
+	//*@public
+	mixins: ["enyo.ModelSupport"],
 
-		//*@public
-		name: "enyo.ModelController",
+	//*@public
+	kind: "enyo.Controller",
+	
+	// ...........................
+	// PUBLIC METHODS
 
-		//*@public
-		model: null,
+	//*@public
+	isAttribute: function (prop) {
+		return this.model && enyo.isModel(this.model)? this.model.isAttribute(prop): false;
+	},
 
-		// ...........................
-		// PROTECTED PROPERTIES
-
-		//*@public
-		kind: "enyo.Controller",
-
-		// ...........................
-		// COMPUTED PROPERTIES
-
-		//*@protected
-		_attribute_keys: enyo.computed(function () {
-			return this.model? enyo.keys(this.model.attributes): null;
-		}, "model", {cached: true, defer: true}),
-
-		// ...........................
-		// PUBLIC METHODS
-
-		//*@public
-		isAttribute: function (property) {
-			return this.model? this.model.isAttribute(property): false;
-		},
-
-		//*@public
-		get: function (property) {
-			if ("model" === property || !this.isAttribute(property)) {
-				return this.inherited(arguments);
-			}
-			return this.model? this.model.get(property): undefined;
-		},
-
-		//*@public
-		set: function (property, value) {
-			if ("model" !== property && !this.isAttribute(property)) {
-				return this.inherited(arguments);
-			}
-			if ("model" === property) {
-				var $model = this.model;
-				if ($model) {
-					$model.removeDispatchTarget(this);
-					$model.removeObserver("*", this.notifyObservers);
-				}
-				if (($model = value)) {
-					$model.addDispatchTarget(this);
-					$model.addObserver("*", this.notifyObservers, this);
-					this.stopNotifications();
-					this.inherited(arguments);
-					this.sync();
-					this.startNotifications();
-					return this;
-				}
-			}
-			return this.model? this.model.set(property, value): this;
-		},
-
-		//*@public
-		sync: function () {
-			enyo.forEach(this.bindings, function (binding) {
-				binding.sync();
-			});
-			enyo.forEach(this.get("_attribute_keys"), function (key) {
-				this.notifyObservers(key, null, this.model.get(key));
-			}, this);
+	//*@public
+	get: function (prop) {
+		if (!this.isAttribute(prop)) {
+			return this.inherited(arguments);
 		}
+		return this.model && enyo.isModel(this.model)? this.model.get(prop): undefined;
+	},
 
-		// ...........................
-		// PROTECTED METHODS
+	//*@public
+	set: function (prop, val) {
+		if (!this.isAttribute(prop)) {
+			return this.inherited(arguments);
+		}
+		return this.model.set(prop, val);
+	},
 
-		// ...........................
-		// OBSERVERS
+	//*@public
+	sync: function () {
+		var $m = this.model;
+		if ($m && enyo.isModel($m)) {
+			var $a = $m._attributeKeys, $b = this.bindings, $i, a$, b$;
+			for ($i=0; $i<$a.length || $i<$b.length; ++$i) {
+				if ((a$=$a[$i])) {
+					this.notifyObservers(a$, $m.previous(a$), $m.get(a$));
+				}
+				if ((b$=$b[$i])) {
+					b$.sync();
+				}
+			}
+		}
+	},
+	
+	modelChanged: function (prev, val) {
+		// TODO: This is a terrible fix for a bug there is no easy solution
+		// for in the long run. This will unfortunately be executed sometimes
+		// out of context because of the way our inherited scheme works and
+		// the synchronous execution of observers and events may cause an inherited
+		// check before the temporary inherited method (this method) is removed.
+		if (!this._isController) {
+			return;
+		}
+		if (prev && enyo.isModel(prev)) {
+			prev.removeObserver("*", this.notifyObservers);
+		}
+		if (val && enyo.isModel(val)) {
+			val.addObserver("*", this.notifyObservers, this);
+			this.stopNotifications();
+			this.sync();
+			this.startNotifications();
+		}
+	}
 
-	});
-
-})(enyo);
+});

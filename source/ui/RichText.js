@@ -29,7 +29,7 @@ enyo.kind({
 	//* Set to true to focus this control when it is rendered.
 	defaultFocus: false,
 	//* @protected
-	statics: {
+	protectedStatics: {
 		osInfo: [
 			{os: "android", version: 3},
 			{os: "ios", version: 5}
@@ -44,7 +44,7 @@ enyo.kind({
 			return true;
 		}
 	},
-	kind: enyo.Input,
+	kind: "enyo.Input",
 	attributes: {
 		contenteditable: true
 	},
@@ -61,6 +61,7 @@ enyo.kind({
 	create: function() {
 		this.setTag(enyo.RichText.hasContentEditable()?"div":"textarea");
 		this.inherited(arguments);
+		this.disabledChanged();
 	},
 	// simulate onchange event that inputs expose
 	focusHandler: function() {
@@ -78,6 +79,13 @@ enyo.kind({
 			this.insertAtCursor(val);
 		} else if(!this.hasFocus()) {
 			this.set("content", val);
+		}
+	},
+	disabledChanged: function() {
+		if(this.tag === "div") {
+			this.setAttribute("contenteditable", this.disabled ? null : "true");
+		} else {
+			this.setAttribute("disabled", this.disabled);
 		}
 	},
 	updateValue: function() {
