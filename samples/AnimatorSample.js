@@ -12,8 +12,10 @@ enyo.kind({
 	},
 	/* an expensive operation: */
 	expensive: function(){
-		localStorage.test = 1E4;
-		while(localStorage.test--){}
+		window.RANDSTRING = "";
+		for (var i = 1; i < 100000; ++i) {
+			window.RANDSTRING += Math.random();
+		}
 	},
 	animationEnded: function(){
 		this.doAnimation();
