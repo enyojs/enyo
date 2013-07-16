@@ -1,17 +1,16 @@
 /**
-	_enyo.Jobs_ are a mechanism to queue tasks (ie, functions) and invoke
-	them sorted by priority. It allows to programmatically block the
-	execution of the current job stack by setting a priority level (aka "run
-	level"), under which no job is executed.
+	_enyo.jobs_ provides a mechanism for queueing tasks (i.e., functions) for
+	execution in order of priority. The execution of the current job stack may be
+	blocked programmatically by setting a priority level ("run level") under which
+	no jobs are executed.
 
-	At the moment only <a href="#enyo.Animator">enyo.Animator</a> uses this
-	interface to set a priority of 4, therefore blocking all low priority
-	tasks from executing during animations. For backward compatibility jobs
-	get a priority of 5 by default and are thus not blocked by animations.
+	At the moment, only <a href="#enyo.Animator">enyo.Animator</a> uses this
+	interface, setting a priority of 4, which blocks all low priority tasks from
+	executing during animations. To maintain backward compatibility, jobs are
+	assigned a priority of 5 by default; thus they are not blocked by animations.
 
-	_enyo.Jobs_ is not normally directly used in application code, the
-	<a href="#enyo.Component::startJob">Component</a> job methods should be
-	used instead.
+	Normally, application code will not use _enyo.jobs_ directly, but will instead
+	use the job methods from <a href="#enyo.Component">enyo.Component</a>.
 */
 enyo.singleton({
 	name: "enyo.jobs",
@@ -28,9 +27,9 @@ enyo.singleton({
 		"high": 7
 	},
 	/**
-		Add a job to the job queue. If the current priority level is higher
-		than this jobs priority, the job gets deferred until the job level
-		drops. If the priority level is lower, the job is run immediately.
+		Adds a job to the job queue. If the current priority level is higher than
+		this job's priority, the job gets deferred until the job level drops; if it
+		is lower, the job is run immediately.
 	*/
 	add: function(inJob, inPriority, inName){
 		inPriority = inPriority || 5;
@@ -44,8 +43,8 @@ enyo.singleton({
 			this._namedJobs[inName] = inPriority;
 		}
 
-		// if the job is of higher priority than the current priority level than
-		// there's no point in enqueuing it
+		// if the job is of higher priority than the current priority level then
+		// there's no point in queueing it
 		if(inPriority >= this.priorityLevel){
 			inJob();
 		} else {
@@ -53,7 +52,7 @@ enyo.singleton({
 		}
 	},
 	/**
-	 * Remove a job from the job queue
+	 * Removes a job from the job queue.
 	 */
 	remove: function(inJobName){
 		var jobs = this._jobs[this._namedJobs[inJobName] - 1];
@@ -66,18 +65,18 @@ enyo.singleton({
 		}
 	},
 	/**
-		Add a new priority at which you want the jobs to be executed. If it
-		is higher than the highest current priority, the priority level
-		rises. Newly added jobs below that priority level are deferred until
-		the priority is removed (aka unregistered).
+		Adds a new priority level at which jobs will be executed. If it is higher
+		than the highest current priority, the priority level rises. Newly added
+		jobs below that priority level are deferred until the priority is removed
+		(i.e., unregistered).
 	*/
 	registerPriority: function(inPriority, inId){
 		this._priorities[inId] = inPriority;
 		this.setPriorityLevel( Math.max(inPriority, this.priorityLevel) ); 
 	},
 	/**
-		Remove a priority. If it had been the highest priority, the priority
-		level drops to the new highest priority and queued jobs with a
+		Removes a priority. If the removed priority had been the highest priority,
+		the priority level drops to the next highest priority and queued jobs with a
 		higher priority are executed.
 	*/
 	unregisterPriority: function(inId){
@@ -93,14 +92,19 @@ enyo.singleton({
 
 		this.setPriorityLevel( highestPriority ); 
 	},
-	// try to run next job if priority level has dropped
+	/**
+		Tries to run next job if priority level has dropped.
+	*/
 	priorityLevelChanged: function(inOldValue){
 		if(inOldValue > this.priorityLevel){
 			this._doJob();
 		}
 	},
-	// find and execute the job of highest priority
-	// ...and run all jobs with higher priority from high to low priority in order
+	/**
+		Finds and executes the job of highest priority; in this way, all jobs with
+		priority greater than or equal to the current level are run, in order of
+		their priority (highest to lowest).
+	*/
 	_doJob: function(){
 		var job;
 		// find the job of highest priority above the current priority level
