@@ -517,9 +517,10 @@ enyo.kind({
 		If you start a job with the same name as a pending job, the original job
 		will be stopped; this can be useful for resetting timeouts.
 
-		You can supply a priority (1-10) by which the job should be executed.
-		Default is 5. Set an priority lower than 5 (or "low") to defer the
-		job if an animation is in progress which can help to avoid stuttering.
+		You may supply a priority level (1-10) at which the job should be executed.
+		The default level is 5. Setting the priority lower than 5 (or setting it to
+		the string "low") will defer the job if an animation is in progress, which
+		can help to avoid stuttering.
 	*/
 	startJob: function(inJobName, inJob, inWait, inPriority) {
 		inPriority = inPriority || 5;

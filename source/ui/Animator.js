@@ -16,7 +16,7 @@
 	event to its owner or bubbling it.  The _context_ property can be used to
 	call the supplied event functions in a particular "this" context.
 
-	During animation a <a href="#enyo.jobs">enyo.jobs</a> priority of 5 is
+	During animation, an <a href="#enyo.jobs">enyo.jobs</a> priority of 5 is
 	registered to defer low priority tasks.
 */
 enyo.kind({
