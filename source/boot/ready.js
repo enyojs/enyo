@@ -1,4 +1,4 @@
-(function (scope) {
+(function (scope, enyo) {
 
 	// we need to register appropriately to know when
 	// the document is officially ready, to ensure that
@@ -18,21 +18,26 @@
 	var conditions = { domLoaded: true };
 	var numConditions = 1;
 
+	//*@public
 	/**
 		Register a callback (and optional "this" context) to run
 		after the DOM content has loaded and any other app preconditions
 		are cleared.  Multiple callbacks can be registered across several
 		calls to `enyo.ready`; they will be run in the order registered.
+
+		If called after system is in a ready state, run the supplied code
+		asynchronously at earliest opportunity.
 	*/
 	enyo.ready = function (fn, context) {
 		if (ready) {
-			run(fn, context);
+			enyo.asyncMethod(context || enyo.global, fn);
 		}
 		else {
 			queue.push([fn, context]);
 		}
 	};
 
+	//*@public
 	/**
 		Add a precondition to the set needed for `enyo.ready`-registered
 		callbacks to the be called. This is intended for use by libraries
@@ -48,6 +53,7 @@
 		}
 	};
 
+	//*@public
 	/**
 		Indicate that a precondition named _flag_ has been met. No
 		`enyo.ready`-registed callbacks will be run until all required
@@ -66,6 +72,7 @@
 		}
 	};
 
+	//*@protected
 	run = function (fn, context) {
 		fn.call(context || enyo.global);
 	};
