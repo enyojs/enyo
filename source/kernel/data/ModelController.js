@@ -64,7 +64,7 @@ enyo.kind({
 		if (prev && enyo.isModel(prev)) {
 			prev.removeObserver("*", this.notifyObservers);
 		}
-		if (val && enyo.isModel(val)) {
+		if (val || (val = this.model) && enyo.isModel(val)) {
 			val.addObserver("*", this.notifyObservers, this);
 			this.stopNotifications();
 			this.sync();
