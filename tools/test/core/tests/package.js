@@ -1,4 +1,5 @@
 enyo.depends(
+	"readyTest.js",
 	"langTest.js",
 	"JobTest.js",
 	"JobsTest.js",
