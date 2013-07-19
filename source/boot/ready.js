@@ -1,4 +1,4 @@
-(function (scope) {
+(function (scope, enyo) {
 
 	// we need to register appropriately to know when
 	// the document is officially ready, to ensure that
@@ -14,15 +14,25 @@
 	var add;
 	var flush;
 
+	//*@public
+	/**
+		Register a callback (and optional "this" context) to run
+		after all the enyo and library code has loaded and the DOMContentLoaded
+		(or equivalent on older browsers) event has been sent.
+
+		If called after system is in a ready state, run the supplied code
+		asynchronously at earliest opportunity.
+	*/
 	enyo.ready = function (fn, context) {
 		if (ready) {
-			run(fn, context);
+			enyo.asyncMethod(context || enyo.global, fn);
 		}
 		else {
 			queue.push([fn, context]);
 		}
 	};
 
+	//*@protected
 	run = function (fn, context) {
 		fn.call(context || enyo.global);
 	};
