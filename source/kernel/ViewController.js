@@ -155,7 +155,8 @@
 			// retrieve the constructor for the view and immediately
 			// instance it while also updating the _view_ property to
 			// the reference for this new view
-			this.set("view", new this.get("_view_kind"));
+			var Ctor = this.get("_view_kind");
+			this.set("view", new Ctor());
 		},
 
 		//*@protected
