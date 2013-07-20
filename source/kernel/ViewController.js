@@ -156,7 +156,7 @@
 			// instance it while also updating the _view_ property to
 			// the reference for this new view
 			var Ctor = this.get("_view_kind");
-			this.set("view", new Ctor());
+			this.set("view", new Ctor({_bubble_target: this}));
 		},
 
 		//*@protected
