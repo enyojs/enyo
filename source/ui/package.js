@@ -22,5 +22,6 @@ enyo.depends(
 	"fullscreen.js",
 	"Media.js",
 	"Audio.js",
+	"Video.js",
 	"data"
 );
