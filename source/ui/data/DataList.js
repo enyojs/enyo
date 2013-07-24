@@ -200,8 +200,13 @@
 			if (!$p) {
 				$p = this.pages[n] = {};
 			}
-			$p.height = this.getHeight(p);
-			$p.width = this.getWidth(p);
+			if ($r == "v") {
+				$p.height = this.getHeight(p);
+				$p.width = p.width = this.width;
+			} else {
+				$p.width = this.getWidth(p);
+				$p.height = p.height = this.height;
+			}
 			$p.start = $o;
 			$p.end = $o + ($i - 1);
 			if (!this.childSize) {
