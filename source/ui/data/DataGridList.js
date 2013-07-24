@@ -64,25 +64,20 @@
 		layoutPage: function (p) {
 			if (p.children.length) {
 				// spacing in pixels
-				var $s = this.spacing;
-				// current top
-				// var $t = this.indexInPage(0, p)? $s: 0;
-				$t = $s;
-				// current left
-				var $l = 0;
-				var $w = this.tileWidth;
-				var $h = this.tileHeight;
-				var $c = this.columns;
-				var t$;
-				var o$;
-				var r$ = -1;
+				var $s = this.spacing,
+					$t = $s,
+					$l = 0,
+					$w = this.tileWidth,
+					$h = this.tileHeight,
+					$c = this.columns,
+					r$ = -1, t$, o$;
 				for (var $i=0, c$, j$=0; (c$=p.children[$i]); ++$i) {
 					if (!c$.disabled) {
 						t$ = "";
 						o$ = j$ % $c;
-						r$ = o$ == 0? r$+1: r$;
-						$t = r$ == 0? $t: $s + (r$ * ($h + $s));
-						$l = o$ == 0? $s: $l + ($w + $s);
+						r$ = o$ === 0? r$+1: r$;
+						$t = r$ === 0? $t: $s + (r$ * ($h + $s));
+						$l = o$ === 0? $s: $l + ($w + $s);
 						if (c$.top != $t) {
 							t$ += "top: " + (c$.top = $t) + "px; ";
 						}
@@ -110,6 +105,7 @@
 		},
 		getHeight: function (n) {
 			if (n && (n.name == "page1" || n.name == "page2")) {
+				/*jshint boss:true*/
 				return (n.height = this.getPageHeight(n));
 			}
 			return this.inherited(arguments);
@@ -142,7 +138,7 @@
 			var $c = this.columns,
 				$p = this.controlsPerPage, m$;
 			m$ = $p % $c;
-			if (m$ != 0) {
+			if (m$ !== 0) {
 				m$ = ($c - ($p % $c));
 				if ($p + m$ > 50) {
 					m$ = -1 * (Math.abs(m$ - $c));
@@ -155,8 +151,7 @@
 				$h = this.tileHeight,
 				$c = this.columns,
 				$p = this.controlsPerPage,
-				$t = Math.floor($p / $c) * ($h + $s),
-				$y = Math.ceil(this.length / this.controlsPerPage);
+				$t = Math.floor($p / $c) * ($h + $s);
 			this.defaultPageSize = $t;
 			// invalidate all known sizes as their cached value is
 			// useless now
@@ -169,7 +164,7 @@
 				var $v = this.length,
 					$s = this.spacing,
 					$h = this.tileHeight,
-					$c = this.columns;
+					$c = this.columns,
 					$t = ((Math.floor($v / $c) + ($v % $c? 1: 0)) * ($h + $s)) + $s;
 				if (this.$.buffer.height != $t) {
 					this.$.buffer.applyStyle("height", (this.$.buffer.height = $t) + "px");
@@ -200,7 +195,7 @@
 		spacingChanged: function () {
 			// tile spacing needs to be an even number
 			var $t = this.spacing;
-			if ($t % 2 != 0) {
+			if ($t % 2 !== 0) {
 				this.spacing = $t > 0? $t-1: 0;
 			}
 			if (this.generated && this.$.scroller.canGenerate) {

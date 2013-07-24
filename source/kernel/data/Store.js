@@ -403,7 +403,7 @@
 		_recordsForType: function (ctor, options) {
 			var $r = this._records;
 			var $n = typeof ctor == "string"? ctor: ctor.prototype.kindName;
-			var $k = enyo.constructorForKind($n), $s = [], $o = options, k$, $c, c$;
+			var $k = enyo.constructorForKind($n), $s = [], $o = options, $c, c$;
 			if ($o && $o.subkinds) {
 				// we need to include subkinds as well
 				for (var $i in $r) {

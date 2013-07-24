@@ -2,42 +2,26 @@
 
 	//*@public
 	/**
+		A abstract kind that will repeate a defined `kind` for as many _records_
+		are in its `data` array (automatically bound from a `controller` of the kind
+		`enyo.Collection`).
 	*/
 	enyo.kind({
-
-		// ...........................
-		// PUBLIC PROPERTIES
-
-		//*@public
 		name: "enyo.DataRepeater",
-
-		//*@public
 		kind: "enyo.View",
-
-		//*@public
 		childMixins: [
 			"enyo.AutoBindingSupport",
 			"enyo.RepeaterChildSupport"
 		],
-		
 		selection: true,
 		multipleSelection: false,
-		
-		//*@public
 		concat: ["childMixins"],
-
-		//*@public
 		controlParentName: "container",
-		
 		containerName: "container",
-		
-		//*@public
 		containerOptions: {
 			name: "container",
-			classes: "enyo-fill enyo-data-repeater-container",
+			classes: "enyo-fill enyo-data-repeater-container"
 		},
-
-		//*@public
 		handlers: {
 			onModelAdded: "modelAdded",
 			onModelsAdded: "modelsAdded",
@@ -46,33 +30,18 @@
 			onSelected: "childSelected",
 			onDeselected: "childDeselected"
 		},
-
-		//*@public
 		bindings: [
 			{from: ".controller.length", to: ".length"},
 			{from: ".controller.data", to: ".data"}
 		],
-		
-
-		//*@public
 		batching: false,
-
-		// ...........................
-		// PROTECTED PROPERTIES
-		
 		__selection: null,
-
-		// ...........................
-		// PUBLIC METHODS
-		
-		//*@public
 		initComponents: function () {
 			this.initContainer();
 			// we need to find the child definition and prepare it for
 			// use in our repeater including adding auto binding support
-			var $c = this.kindComponents || this.components || [];
-			// var $o = this.components? this.owner: this, $p;
-			var $o = this.components? this.owner: this;
+			var $c = this.kindComponents || this.components || [],
+				$o = this.components? this.owner: this, $p;
 			// if there is a special definition in the components block we
 			// wrap it up in a new anonymous kind for reuse later
 			if ($c.length) {
@@ -96,20 +65,16 @@
 			$p.selection = this.selection;
 			$p.multipleSelection = this.multipleSelection;
 		},
-		
 		constructor: function () {
 			this.__selection = [];
 			return this.inherited(arguments);
 		},
-
-		//*@public
 		controllerFindAndInstance: function(ctor, inst) {
 			this.inherited(arguments);
 			if (inst && inst._isController) {
 				this.reset();
 			}
 		},
-
 		reset: function () {
 			var $d = this.get("data");
 			this.destroyClientControls();
@@ -117,16 +82,12 @@
 				this.add(d$, $i);
 			}
 		},
-
-		//*@public
 		add: function (record, idx) {
 			var $c = this.createComponent({model: record, index: idx});
 			if (this.generated && !this.batching) {
 				$c.render();
 			}
 		},
-
-		//*@public
 		remove: function (idx) {
 			var $g = this.getClientControls();
 			var $c = $g[idx || (Math.abs($g.length-1))];
@@ -134,7 +95,6 @@
 				$c.destroy();
 			}
 		},
-
 		update: function (idx) {
 			var $d = this.get("data");
 			var $g = this.getClientControls();
@@ -143,7 +103,6 @@
 				$c.set("model", $d[idx]);
 			}
 		},
-
 		prune: function () {
 			var $g = this.getClientControls();
 			var $x = $g.slice(this.length);
@@ -151,7 +110,6 @@
 				c$.destroy();
 			}
 		},
-
 		initContainer: function () {
 			var $c = this.get("containerOptions"), $n;
 			$n = $c.name || ($c.name = this.containerName);
@@ -167,7 +125,6 @@
 				this.add(event.model, event.index);
 			}
 		},
-
 		modelsAdded: function (sender, event) {
 			if (sender == this.controller) {
 				this.set("batching", true);
@@ -177,13 +134,11 @@
 				this.set("batching", false);
 			}
 		},
-
 		modelRemoved: function (sender, event) {
 			if (sender == this.controller) {
 				this.remove(event.index);
 			}
 		},
-
 		modelsRemoved: function (sender, event) {
 			if (sender == this.controller) {
 				for (var $i=0, m$; (m$=event.models[$i]); ++$i) {
@@ -191,17 +146,11 @@
 				}
 			}
 		},
-
-		// ...........................
-		// OBSERVERS
-
-		//*@public
 		batchingChanged: function (prev, val) {
 			if (this.generated && false === val) {
 				this.$[this.containerName].renderReusingNode();
 			}
 		},
-		
 		childSelected: function (sender, event) {
 			var $c = event.child;
 			var $s = this.__selection, $i, $t;

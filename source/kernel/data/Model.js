@@ -1347,12 +1347,13 @@
 
 		//*@protected
 		__statusChanged: enyo.observer(function (prop, prev, val) {
+			var $i, c$;
 			if (val === DIRTY) {
-				for (var $i=0, c$; (c$=this.__collections[$i]); ++$i) {
+				for ($i=0; (c$=this.__collections[$i]); ++$i) {
 					c$.addDirtyModel(this);
 				}
 			} else if (val === CLEAN) {
-				for (var $i=0, c$; (c$=this.__collections[$i]); ++$i) {
+				for ($i=0; (c$=this.__collections[$i]); ++$i) {
 					c$.removeDirtyModel(this);
 				}
 			}

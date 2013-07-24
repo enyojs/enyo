@@ -101,7 +101,7 @@
 					$s += "height: " + $h + "px; left: " + $t + "px; " + "top: 0px;";
 				}
 				c$.addStyles($s);
-				if ($t == 0) {
+				if ($t === 0) {
 					if ($r == "v") {
 						$t = $h;
 					} else {
@@ -144,15 +144,16 @@
 			return Math.max(1, $s);
 		},
 		reset: function () {
+			var $i, p$;
 			if (this.generated && this.$.scroller.generated) {
 				this.destroyClientControls();
-				for (var $i=1, p$; (p$=this.$.active.children[$i]); --$i) {
+				for ($i=1; (p$=this.$.active.children[$i]); --$i) {
 					this.resetPage(p$);
 					p$.index = $i;
 				}
 				this.resetMetrics();
 				if (this.length) {
-					for (var $i=0, p$; (p$=this.$.active.children[$i]); ++$i) {
+					for ($i=0; (p$=this.$.active.children[$i]); ++$i) {
 						this.generatePage(p$, $i);
 					}
 				}
@@ -169,7 +170,7 @@
 			this.discoverControlParent();
 			while (p.children.length < this.controlsPerPage) {
 				this.createComponent({});
-			};
+			}
 		},
 		generatePage: function (p, n) {
 			var $d = this.get("data"),
