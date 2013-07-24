@@ -278,7 +278,7 @@ enyo.kind({
 	},
 	//* @protected
 	getBubbleTarget: function() {
-		return this._bubble_target || this.owner;
+		return this._bubbleTarget || this.owner;
 	},
 	//* @public
 	/**
@@ -652,6 +652,9 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 			var $d = $e.delegate;
 			// delete payload.delegate;
 			$e.delegate = undefined;
+			if (!enyo.exists($e.type)) {
+				$e.type = inName;
+			}
 			this.bubble(inName, $e);
 			if ($d) {
 				$e.delegate = $d;

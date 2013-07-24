@@ -32,7 +32,7 @@
 	};
 
 	//*@protected
-	var _destroy_controllers = function () {
+	var _destroyControllers = function () {
 		var name;
 		// we iterate over the controllers that are stored in
 		// the application hash
@@ -96,7 +96,7 @@
 
 	//*@protected
 	enyo.kind.postConstructors.push(function () {
-		if (!this._is_application) {
+		if (!this._isApplication) {
 			return;
 		}
 
@@ -138,6 +138,8 @@
 
 		//*@public
 		controllers: null,
+		
+		viewReady: false,
 
 		//*@public
 		concat: ["controllers"],
@@ -146,7 +148,7 @@
 		// PROTECTED PROPERTIES
 
 		//*@protected
-		_is_application: true,
+		_isApplication: true,
 
 		// ...........................
 		// PUBLIC METHODS
@@ -189,31 +191,38 @@
 			// now we let it continue as usual
 			this.inherited(arguments);
 		},
-
-		//*@protected
-		/**
-			The overloaded \_create_view method ensures that the appropriate
-			values are supplied to the new view instance.
-		*/
-		_create_view: function () {
-			// this is the constructor for the view kind
-			var Ctor = this.get("_view_kind");
-			// the properties we want to supply to the view are the
-			// app (the reference to this application instance) and the
-			// \_bubble_target so events are bubbled to us
-			this.set("view", new Ctor({app: this, _bubble_target: this}));
+		
+		render: function () {
+			this.inherited(arguments);
+			if (this.view && this.view.generated) {
+				this.set("viewReady", true);
+			}
 		},
 
 		//*@protected
-		_make_view_name: function () {
-			return enyo.uid("_application_view_");
+		/**
+			The overloaded \_createView method ensures that the appropriate
+			values are supplied to the new view instance.
+		*/
+		_createView: function () {
+			// this is the constructor for the view kind
+			var Ctor = this.get("_viewKind");
+			// the properties we want to supply to the view are the
+			// app (the reference to this application instance) and the
+			// \_bubbleTarget so events are bubbled to us
+			this.set("view", new Ctor({app: this, _bubbleTarget: this}));
+		},
+
+		//*@protected
+		_makeViewName: function () {
+			return enyo.uid("_applicationView_");
 		},
 
 		//*@protected
 		destroy: function () {
 			// release/destroy all controllers associated with
 			// this instance of the application
-			_destroy_controllers.call(this);
+			_destroyControllers.call(this);
 			// do the normal breakdown
 			this.inherited(arguments);
 			// unregister this as an active application
