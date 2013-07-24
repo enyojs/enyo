@@ -76,6 +76,13 @@ enyo.kind({
 	],
 	//*@protected
 	_isView: true,
+	/**
+		When using the renderReusingNode path for updating a tree of views
+		this flag will be set to `true` or `false` depending on its state.
+		If the content of a control has changed while it was `disconnected`
+		it will be set to `true` and once a `generateHtml` or `renderContent`
+		is called it knows it has been updated and will be set back to false.
+	*/
 	_needsRender: true,
 	noDefer: true,
 	//* The default kind for controls created inside this control that don't
@@ -88,6 +95,8 @@ enyo.kind({
 	generated: false,
 	create: function() {
 		if (this.tag == null) {
+			// it initializes being set to true but if this is not a renderable
+			// control it is set to false
 			this._needsRender = false;
 		}
 		// initialize style databases
@@ -638,6 +647,7 @@ enyo.kind({
 		if (this.hasNode()) {
 			this.renderContent();
 		}
+		// our content has been updated thus setting this to true
 		this._needsRender = true;
 	},
 	getSrc: function() {
@@ -673,6 +683,7 @@ enyo.kind({
 		// The contract is that insertion in DOM will happen synchronously
 		// to generateHtml() and before anybody should be calling hasNode().
 		this.generated = true;
+		// because we just generated our html we can set this flag to false
 		this._needsRender = false;
 		return h;
 	},
@@ -832,8 +843,12 @@ enyo.kind({
 				}
 			} else {
 				if (this.generated && this.hasNode()) {
+					// only if the content was updated do we actually re-generate the
+					// html thus ensuring we're not parsing unnecessarily
 					if (this._needsRender) {
 						enyo.dom.setInnerHtml(this.node, this.generateInnerHtml());
+						// generateInnerHtml does not automatically set this to false
+						// so we do it here
 						this._needsRender = false;
 					}
 				}
