@@ -86,15 +86,15 @@
 
 		//*@public
 		handlers: {
-			onChange: "_modelChanged",
-			onDestroy: "_modelDestroyed"
+			onChange: "__modelChanged",
+			onDestroy: "__modelDestroyed"
 		},
 
 		// ...........................
 		// PROTECTED PROPERTIES
 
 		//*@protected
-		_store: null,
+		__store: null,
 
 		// ...........................
 		// COMPUTED PROPERTIES
@@ -113,7 +113,7 @@
 				this.removeAll();
 				this.add(data);
 			} else {
-				return this._store;
+				return this.__store;
 			}
 		}, "length", {cached: true, defer: true}),
 
@@ -200,17 +200,17 @@
 			Not typically called directly but overloadable for extensibility.
 		*/
 		didFetch: function (options, result) {
-			var data = this.filterData(result);
-
-			if (options.replace) {
+			var $d = this.filterData(result), $o = options || enyo.pool.claimObject();
+			if ($o.replace) {
 				this.removeAll();
 			}
-			this.add(data);
+			this.add($d);
 			this.startNotifications();
-			if (options.success) {
-				options.success(options, result);
+			if ($o.success) {
+				$o.success(options, result);
 			}
 			this.set("status", enyo.Model.CLEAN);
+			enyo.pool.releaseObject($o);
 		},
 
 		//*@public
@@ -260,7 +260,7 @@
 			starting from the optional `idx`.
 		*/
 		indexOf: function (value, idx) {
-			return enyo.indexOf(value, this._store, idx);
+			return enyo.indexOf(value, this.__store, idx);
 		},
 
 		//*@public
@@ -269,7 +269,7 @@
 			from the optional `idx`.
 		*/
 		lastIndexOf: function (value, idx) {
-			return enyo.lastIndexOf(value, this._store, idx);
+			return enyo.lastIndexOf(value, this.__store, idx);
 		},
 
 		//*@public
@@ -288,7 +288,7 @@
 			[see enyo.map](#)
 		*/
 		map: function (fn, context) {
-			return enyo.map(this._store, fn, context || this);
+			return enyo.map(this.__store, fn, context || this);
 		},
 
 		//*@public
@@ -300,7 +300,7 @@
 			[see enyo.filter](#)
 		*/
 		filter: function (fn, context) {
-			return enyo.filter(this._store, fn, context || this);
+			return enyo.filter(this.__store, fn, context || this);
 		},
 
 		//*@public
@@ -315,10 +315,10 @@
 
 		//*@public
 		/**
-			Returns `true` or `false` whether the _collection_ contains `value`.
+			Returns `true` or `false` whether the _collection_ contains `record`.
 		*/
-		contains: function (value) {
-			return !!~enyo.indexOf(this._store, value);
+		contains: function (record) {
+			return !!~enyo.indexOf(this.__store, record);
 		},
 
 		//*@public
@@ -326,35 +326,36 @@
 			Returns the _model_ at `idx` in the _collection_.
 		*/
 		at: function (idx) {
-			return this._store[idx];
+			return this.__store[idx];
 		},
 
 		//*@public
 		/**
-			Add a single record to the _collection_. The `record` parameter
-			may be an instance of `enyo.Model` or an object literal. If it is
-			an object literal it will be converted to the _kind_ defined by the
-			`model` property of this _collection_.
+			Add a record or an array of records to the existing dataset starting
+			at the end. If adding a single record it will return the index where the record was inserted
+			Otherwise it will return the value of `addMany` ([see addMany](#)). Note that it
+			accepts _enyo.Model_ instances or native objects that will be converted into the _kind_ indicated
+			by the `model` property. If adding a single record it will emit an `onModelAdded` event
+			with a reference to the model added at the `model` property, the index at which it
+			was inserted at the `index` property and a reference to the collection that emitted the
+			event (this) at the `collection` property of the event object.
 		*/
 		add: function (record) {
-			var idx = this._store.length;
+			// this allow us to call add for both a single record or an array
 			if (enyo.isArray(record)) {
-				return this.addMany.apply(this, arguments);
+				return this.addMany(record);
 			}
-			if (!(record instanceof this.model)) {
-				record = new this.model(record);
+			var $r = record, $i = this.length;
+			if ($r) {
+				if (!($r instanceof this.model)) {
+					$r = new this.model($r);
+				}
+				$r.addCollection(this);
+				this.__store.push($r);
+				this.set("length", this.__store.length);
+				this.doModelAdded({model: $r, index: $i, collection: this});
+				return $i;
 			}
-			record._addCollection(this);
-			this._store.push(record);
-			this.set("length", this._store.length);
-			if (!this._silenced) {
-				this.doModelAdded({
-					model: record,
-					index: idx,
-					collection: this
-				});
-			}
-			return idx;
 		},
 
 		//*@public
@@ -367,53 +368,53 @@
 
 		//*@public
 		/**
-			Accepts an array of records to be added to the _collection_. If the
-			records are object literals they will be converted to the _kind_ defined
-			by the `model` property of the _collection_.
+			Inserts an array of records into the _collection_ beginning at the
+			end of the current dataset. If there were any records added successfully
+			it will emit a single event `onModelsAdded` with a reference to the array
+			of records that were inserted at the property `models` of the event object.
+			Also if any records were inserted it will return a reference to the array
+			passed up by the event.
 		*/
 		addMany: function (records) {
-			var added = [];
+			var $t = [], $j;
 			this.silence();
-			enyo.forEach(records, function (record) {
-				var idx = this.add(record);
-				if (!isNaN(idx)) {
-					added.push({
-						model: this.at(idx),
-						index: idx,
-						collection: this
-					});
+			for (var $i=0, r$; (r$=records[$i]); ++$i) {
+				$j = this.add(r$);
+				if (!isNaN($j)) {
+					$t.push({model: this.at($j), index: $j, collection: this});
 				}
-			}, this);
+			}
 			this.unsilence();
-			if (added.length) {
-				this.doModelsAdded({models: added});
+			if ($t.length) {
+				this.doModelsAdded({models: $t});
+				return $t;
 			}
 		},
 
 		//*@public
 		/**
-			Removed `record` from the _collection_ if it exists and emits
-			a `onModelRemoved` event.
+			Remove a record or an array of records from the _collection_. If the record
+			does not exist within the _collection_ it will return `undefined`. Otherwise
+			it will return the index where the record was removed. Removing a single record
+			will emit the `onModelRemoved` event with a reference to the model at the `model`
+			property, the index where the model was removed at the `index` property and a
+			reference to the collection the model was removed from (this) at the `collection`
+			property of the event object. This will also trigger any observers of the `length`
+			property of the _collection_. [See removeMany](#) for details of how the _collection_
+			handles removing an array of records.
 		*/
 		remove: function (record) {
 			if (enyo.isArray(record)) {
-				return this.removeMany.apply(this, arguments);
+				return this.removeMany(record);
 			}
-			var idx = this.indexOf(record);
-			if (!!~idx) {
-				this._store.splice(idx, 1);
-				this.set("length", this._store.length);
-				record._removeCollection(this);
-				if (!this._silenced) {
-					this.doModelRemoved({
-						model: record,
-						index: idx,
-						collection: this
-					});
-				}
-				return idx;
+			var $r = record, $i = this.indexOf($r);
+			if (!!~$i) {
+				this.__store.splice($i, 1);
+				$r.removeCollection(this);
+				this.set("length", this.__store.length);
+				this.doModelRemoved({model: $r, index: $i, collection: this});
+				return $i;
 			}
-			return false;
 		},
 
 		//*@public
@@ -422,8 +423,7 @@
 			destroyed or removed from the `enyo.Store`.
 		*/
 		removeAll: function () {
-			var $copy = enyo.clone(this._store);
-			this.remove($copy);
+			this.removeMany(enyo.clone(this.__store));
 		},
 
 		//*@public
@@ -436,26 +436,28 @@
 
 		//*@public
 		/**
-			Removes all models in the `records` array if they are found in
-			the _collection_. Note these _models_ are not destroyed or removed
-			from the `enyo.Store`.
+			Remove an array of records from the _collection_. They do not need to be
+			in order for this to be achieved. A single `onModelsRemoved` event will
+			be emitted when the operation is complete with an array of all records removed
+			at the `models` property of the event object. Each entry of the `models` array
+			will be according to the structure of the `onModelRemoved` event emitted by
+			the `remove` method (for single records). This method safely ignores models that
+			are not found in this _collection_. If any records were removed a reference to the
+			array of those records will be returned.
 		*/
 		removeMany: function (records) {
-			var removed = [];
+			var $r = [], $j;
 			this.silence();
-			enyo.forEach(records, function (record) {
-				var idx = this.remove(record);
-				if (!isNaN(idx)) {
-					removed.push({
-						model: record,
-						index: idx,
-						collection: this
-					});
+			for (var $i=records.length-1, r$; (r$=records[$i]); --$i) {
+				$j = this.remove(r$);
+				if (!isNaN($j)) {
+					$r.push({model: r$, index: $j, collection: this});
 				}
-			}, this);
+			}
 			this.unsilence();
-			if (removed.length) {
-				this.doModelsRemoved({models: removed});
+			if ($r.length) {
+				this.doModelsRemoved({models: $r});
+				return $r;
 			}
 		},
 
@@ -466,14 +468,14 @@
 			normal key and value pair combination.
 		*/
 		set: function (prop, val) {
-			if ("object" === typeof prop) {
+			if (enyo.isObject(prop)) {
 				this.stopNotifications();
-				for (var key in prop) {
-					this.set(key, prop[key]);
+				for (var $k in prop) {
+					this.set($k, prop[$k]);
 				}
 				this.startNotifications();
 				return this;
-			} else if (undefined === val) {
+			} else if (!enyo.exists(val)) {
 				return;
 			} else {
 				return this.inherited(arguments);
@@ -492,6 +494,14 @@
 			if (this.owner && this.owner.addComponent) {
 				this.owner.addComponent(this);
 			}
+			if (this.owner && true === (this.owner instanceof enyo.Component)) {
+				this.set("_defaultTarget", this.owner);
+				this.set("_defaultDispatch", true);
+			} else {
+				// otherwise we either don't have an owner or they cannot
+				// accept events so we remove our bubble target
+				this.set("_defaultTarget", null);
+			}
 		},
 
 		//*@public
@@ -499,111 +509,118 @@
 			Accepts an array of models to add to the _collection_ at creation.
 		*/
 		constructor: function (props) {
-			this._dirtyModels = [];
+			this.__dirtyModels = [];
 			this.inherited(arguments);
 			// if the initial parameter is an array we use that as
 			// our starting properties
 			if (props && props instanceof Array) {
-				this._store = this._store? this._store.concat(props): props;
+				this.__store = this.__store? this.__store.concat(props): props;
 			}
 			// initialize our store
-			this._store = this._store || [];
-			this.length = this._store.length;
-			this._initModel();
-			if (this._store.length) {
-				this._store = this.map(function (record) {
-					var $rec = record instanceof this.model? record: new this.model(record);
-					$rec._addCollection(this);
-					return $rec;
-				}, this);
+			this.__store = this.__store || [];
+			this.length = this.__store.length;
+			this.initModel();
+			if (this.__store.length) {
+				for (var $i=0, r$; (r$=this.__store[$i]); ++$i) {
+					if (!(r$ instanceof this.model)) {
+						r$ = new this.model(r$);
+					}
+					r$.addCollection(this);
+					this.__store[$i] = r$;
+				}
 			}
-			this._initRelation();
+			this.initRelation();
 		},
 
 		// ...........................
 		// PROTECTED METHODS
 
 		//*@protected
-		_initModel: function () {
-			var $model = this.model;
-			if ("string" === typeof $model) {
-				$model = enyo.getPath($model);
+		initModel: function () {
+			var $m = this.model, $r = this.relation;
+			if (enyo.isString($m)) {
+				$m = enyo.getPath($m);
+				this.model = $m;
 			}
-			this.model = $model;
-			if ($model && this.relation) {
-				$model = $model.prototype;
-				if (this.relation.inverseKey) {
-					if ($model._relations[this.relation.inverseKey]) {
-						enyo.mixin(this.relation, $model._relations[this.relation.inverseKey]);
+			if ($m && $r) {
+				$m = $m.prototype;
+				if ($r.inverseKey) {
+					if ($m.__relations[$r.inverseKey]) {
+						enyo.mixin($r, $m.__relations[$r.inverseKey]);
 					}
 				}
 			}
 		},
 
 		//*@protected
-		_initRelation: function () {
-			var key, $rel = this.relation;
-			if ($rel) {
-				if ((key = $rel.relationKey)) {
-					if (!this[key]) {
-						this.addObserver(key, this._relationObserver, this);
+		initRelation: function () {
+			if (this.relation) {
+				var $r = this.relation, $k;
+				if (($k = $r.relationKey)) {
+					if (!this[$k]) {
+						this.addObserver($k, this.__relationObserver, this);
 					} else {
-						this._relationObserver(key, null, this[key]);
+						this.__relationObserver($k, null, this[$k]);
 					}
 				}
 			}
 		},
+		
+		addDirtyModel: function (r) {
+			if (!~enyo.indexOf(r, this.__dirtyModels)) {
+				this.__dirtyModels.push(r);
+			}
+		},
+		
+		removeDirtyModel: function (r) {
+			var $i = enyo.indexOf(r, this.__dirtyModels);
+			if (!!~$i) {
+				this.__dirtyModels.splice($i, 1);
+			}
+		},
 
 		//*@protected
-		_relationObserver: function (prop, prev, val) {
-			var $rel = this.relation, key = $rel.inverseKey;
-			if (key === prop && val) {
-				this[$rel.relationKey].removeObserver(key, this._relationObserver);
-				if ($rel.autoFetch) {
+		__relationObserver: function (prop, prev, val) {
+			var $r = this.relation, $k = $r.inverseKey;
+			if ($k == prop && val) {
+				this[$r.relationKey].removeObserver($k, this.__relationObserver);
+				if ($r.autoFetch) {
 					this.fetch();
 				}
-			} else if ($rel.relationKey === prop) {
-				if (val && $rel.autoFetch) {
-					if (val[key]) {
+			} else if ($r.relationKey === prop) {
+				if (val && $r.autoFetch) {
+					if (enyo.exists(val[$k])) {
 						this.fetch();
-					} else {
-						val.addObserver(key, this._relationObserver, this);
 					}
+				} else {
+					val.addObserver($k, this.__relationObserver, this);
 				}
 			}
 		},
 
 		//*@protected
-		_relationChanged: enyo.observer(function (prop, prev, val) {
+		__relationChanged: enyo.observer(function (prop, prev, val) {
 			if (val) {
-				this._initRelation();
+				this.initRelation();
 			}
 		}, "relation"),
 
 		//*@protected
-		_modelChanged: function (sender, event) {
-			var idx = this.indexOf(sender);
-			this.set("status", enyo.Model.DIRTY);
-			if (!!~idx) {
-				this.doModelChanged({
-					model: sender,
-					index: idx,
-					collection: this
-				});
+		__modelChanged: function (sender, event) {
+			var $i = this.indexOf(sender);
+			if (!!~$i) {
+				this.set("status", enyo.Model.DIRTY);
+				this.doModelChanged({model: sender, index: $i, collection: this});
 			}
 			return true;
 		},
 
 		//*@protected
-		_modelDestroyed: function (sender, event) {
-			var idx = this.indexOf(sender);
-			if (!!~idx) {
+		__modelDestroyed: function (sender, event) {
+			var $i = this.indexOf(sender);
+			if (!!~$i) {
 				this.remove(sender);
-				this.doModelDestroyed({
-					model: sender,
-					index: idx,
-					collection: this
-				});
+				this.doModelDestroyed({model: sender, index: $i, collection: this});
 			}
 			return true;
 		},
@@ -611,11 +628,12 @@
 		// ...........................
 		// OBSERVERS
 
-		_statusChanged: enyo.observer(function (prop, prev, val) {
-			if (prev == enyo.Model.DIRTY && val == enyo.Model.CLEAN) {
-				enyo.forEach(enyo.clone(this._dirtyModels), function (rec) {
-					rec.set("status", enyo.Model.CLEAN);
-				});
+		//*@protected
+		__statusChanged: enyo.observer(function (prop, prev, val) {
+			if (prev === enyo.Model.DIRTY && val === enyo.Model.CLEAN) {
+				for (var $i=0, r$; (r$=this.__dirtyModels[$i]); ++$i) {
+					r$.set("status", enyo.Model.CLEAN);
+				}
 			}
 		}, "status")
 

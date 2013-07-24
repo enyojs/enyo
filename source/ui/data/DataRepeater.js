@@ -15,7 +15,13 @@
 		kind: "enyo.View",
 
 		//*@public
-		childMixins: [],
+		childMixins: [
+			"enyo.AutoBindingSupport",
+			"enyo.RepeaterChildSupport"
+		],
+		
+		selection: true,
+		multipleSelection: false,
 		
 		//*@public
 		concat: ["childMixins"],
@@ -23,19 +29,22 @@
 		//*@public
 		controlParentName: "container",
 		
+		containerName: "container",
+		
 		//*@public
 		containerOptions: {
 			name: "container",
-			kind: "enyo.View",
-			classes: "enyo-fill enyo-data-repeater-container"
+			classes: "enyo-fill enyo-data-repeater-container",
 		},
 
 		//*@public
 		handlers: {
-			onModelAdded: "_modelAdded",
-			onModelsAdded: "_modelsAdded",
-			onModelRemoved: "_modelRemoved",
-			onModelsRemoved: "_modelsRemoved"
+			onModelAdded: "modelAdded",
+			onModelsAdded: "modelsAdded",
+			onModelRemoved: "modelRemoved",
+			onModelsRemoved: "modelsRemoved",
+			onSelected: "childSelected",
+			onDeselected: "childDeselected"
 		},
 
 		//*@public
@@ -50,30 +59,47 @@
 
 		// ...........................
 		// PROTECTED PROPERTIES
-
-		//*@protected
-		_childKind: null,
+		
+		__selection: null,
 
 		// ...........................
 		// PUBLIC METHODS
 		
 		//*@public
 		initComponents: function () {
+			this.initContainer();
 			// we need to find the child definition and prepare it for
 			// use in our repeater including adding auto binding support
-			var $components = this.kindComponents || this.components || [];
-			var $owner = this.components? this.owner: this;
-			this._childKind = enyo.kind({
-				// tag: null, // no need for the extra container
-				// TODO: it should be possible to use the above line but for
-				// now it is causing far too many issues
-				kind: "enyo.View",
-				mixins: ["enyo.AutoBindingSupport", "enyo.RepeaterChildSupport"].concat(this.childMixins || []),
-				components: $components,
-				defaultKind: this.defaultKind || "enyo.View",
-				defaultProps: {owner: $owner}
-			});
-			this._initContainer();
+			var $c = this.kindComponents || this.components || [];
+			// var $o = this.components? this.owner: this, $p;
+			var $o = this.components? this.owner: this;
+			// if there is a special definition in the components block we
+			// wrap it up in a new anonymous kind for reuse later
+			if ($c.length) {
+				$p = enyo.pool.claimObject(true);
+				$p.kind = this.defaultKind || "enyo.View";
+				if ($c.length > 1) {
+					$p.components = $c;
+				} else {
+					enyo.mixin($p, $c[0]);
+				}
+				this.defaultKind = enyo.kind($p);
+				enyo.pool.releaseObject($p);
+			} else {
+				// otherwise we use the defaultKind property value and assume
+				// it was set properly
+				this.defaultKind = enyo.constructorForKind(this.defaultKind);
+			}
+			$p = this.defaultProps || (this.defaultProps = {});
+			$p.owner = $o;
+			$p.mixins = this.childMixins;
+			$p.selection = this.selection;
+			$p.multipleSelection = this.multipleSelection;
+		},
+		
+		constructor: function () {
+			this.__selection = [];
+			return this.inherited(arguments);
 		},
 
 		//*@public
@@ -84,124 +110,86 @@
 			}
 		},
 
-		// TODO:
 		reset: function () {
 			var $d = this.get("data");
-			var $c = this.$.scroller;
 			this.destroyClientControls();
-			$c.resizeHandler();
-			if ($d) {
-				enyo.forEach($d, this.add, this);
+			for (var $i=0, d$; (d$=$d[$i]); ++$i) {
+				this.add(d$, $i);
 			}
-		},
-
-		render: function () {
-			this.reset();
-			this.inherited(arguments);
 		},
 
 		//*@public
-		add: function (rec) {
-			if (!this.generated) {
-				return;
-			}
-			var $k = this._childKind;
-			var $c = this.createComponent({kind: $k});
-			var b = this.batching;
-			$c.set("model", rec);
-			if (!b) {
+		add: function (record, idx) {
+			var $c = this.createComponent({model: record, index: idx});
+			if (this.generated && !this.batching) {
 				$c.render();
 			}
 		},
 
 		//*@public
 		remove: function (idx) {
-			var $ch = this.get("active");
-			var $c = $ch[idx || (Math.abs($ch.length-1))];
+			var $g = this.getClientControls();
+			var $c = $g[idx || (Math.abs($g.length-1))];
 			if ($c) {
 				$c.destroy();
 			}
 		},
 
-		//*@public
 		update: function (idx) {
 			var $d = this.get("data");
-			var $ch = this.get("active");
-			var $c = $ch[idx];
-			if ($d && $c) {
+			var $g = this.getClientControls();
+			var $c = $g[idx];
+			if ($d[idx] && $c) {
 				$c.set("model", $d[idx]);
 			}
 		},
 
-		//*@public
 		prune: function () {
-			var $ch = this.get("active");
-			var l = this.length;
-			var $x = $ch.slice(l);
-			enyo.forEach($x, function (c) {
-				c.destroy();
-			});
+			var $g = this.getClientControls();
+			var $x = $g.slice(this.length);
+			for (var $i=0, c$; (c$=$x[$i]); ++$i) {
+				c$.destroy();
+			}
 		},
 
-		// ...........................
-		// COMPUTED PROPERTIES
-
-		//*@public
-		active: enyo.computed(function () {
-			return this.controlParent? this.controlParent.children: this.children;
-		}, "controlParent", {cached: true, defer: true}),
-
-		// ...........................
-		// PROTECTED METHODS
-
-		//*@protected
-		_initContainer: function () {
-			var $container = this.get("containerOptions");
-			var name = $container.name || ($container.name = "scroller");
-			this.createChrome([$container]);
+		initContainer: function () {
+			var $c = this.get("containerOptions"), $n;
+			$n = $c.name || ($c.name = this.containerName);
+			this.createChrome([$c]);
 			this.discoverControlParent();
-			if (name != "scroller") {
-				this.$.scroller = this.$[name];
+			if ($n != this.containerName) {
+				this.$[this.containerName] = this.$[$n];
 			}
 		},
 
-		//*@protected
-		_modelAdded: function (sender, event) {
-			if (sender !== this.controller) {
-				return;
+		modelAdded: function (sender, event) {
+			if (sender == this.controller) {
+				this.add(event.model, event.index);
 			}
-			var $model = event.model;
-			this.add($model, event.index);
 		},
 
-		//*@protected
-		_modelsAdded: function (sender, event) {
-			if (sender !== this.controller) {
-				return;
+		modelsAdded: function (sender, event) {
+			if (sender == this.controller) {
+				this.set("batching", true);
+				for (var $i=0, m$; (m$=event.models[$i]); ++$i) {
+					this.add(m$.model, m$.index);
+				}
+				this.set("batching", false);
 			}
-			this.set("batching", true);
-			enyo.forEach(event.models, function (info) {
-				this.add(info.model, info.index);
-			}, this);
-			this.set("batching", false);
 		},
 
-		//*@protected
-		_modelRemoved: function (sender, event) {
-			if (sender !== this.controller) {
-				return;
+		modelRemoved: function (sender, event) {
+			if (sender == this.controller) {
+				this.remove(event.index);
 			}
-			this.remove(event.index);
 		},
 
-		//*@protected
-		_modelsRemoved: function (sender, event) {
-			if (sender !== this.controller) {
-				return;
+		modelsRemoved: function (sender, event) {
+			if (sender == this.controller) {
+				for (var $i=0, m$; (m$=event.models[$i]); ++$i) {
+					this.remove(m$.index);
+				}
 			}
-			enyo.forEach(event.models, function (info) {
-				this.remove(info.index);
-			}, this);
 		},
 
 		// ...........................
@@ -209,19 +197,41 @@
 
 		//*@public
 		batchingChanged: function (prev, val) {
-			if (false === val) {
-				this.render();
+			if (this.generated && false === val) {
+				this.$[this.containerName].renderReusingNode();
 			}
 		},
-
-		//*@protected
-		_lengthChanged: enyo.observer(function (prop, prev, val) {
-			if (!isNaN(prev) && !isNaN(val)) {
-				if (prev > val) {
-					this.prune();
+		
+		childSelected: function (sender, event) {
+			var $c = event.child;
+			var $s = this.__selection, $i, $t;
+			if (this.selection) {
+				$i = enyo.indexOf($c, $s);
+				if (this.multipleSelection) {
+					if (!~$i) {
+						$s.push($c);
+					}
+				} else {
+					while($s.length) {
+						$t = $s.pop();
+						$t.set("selected", false);
+					}
+					$s.push($c);
 				}
 			}
-		}, "length")
+			return true;
+		},
+		childDeselected: function (sender, event) {
+			var $c = event.child;
+			var $s = this.__selection, $i;
+			if (this.selection) {
+				$i = enyo.indexOf($c, $s);
+				if (!!~$i) {
+					$s.splice($i, 1);
+				}
+			}
+			return true;
+		}
 
 	});
 

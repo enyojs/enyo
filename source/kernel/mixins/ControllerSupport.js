@@ -59,7 +59,6 @@ enyo.createMixin({
 	controllerFindAndInstance: function (ctor, inst) {
 		// if there is no constructor or instance it was not found
 		if (!(ctor || inst)) {
-			enyo.error("cannot find controller: " + this.controller);
 			return;
 		}
 		// if a constructor exists we instanced the class and can

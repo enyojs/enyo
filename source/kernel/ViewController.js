@@ -3,7 +3,7 @@
 	//*@public
 	/**
 		_enyo.ViewController_ is an abstract kind designed for use in a
-		tightly-coupled controller and view, in which the controller owns
+		tightly-coupled controller and views, in which the controller owns
 		the view and maintains its state and lifecycle.
 	*/
 	enyo.kind({
@@ -39,7 +39,7 @@
 		// PROTECTED PROPERTIES
 
 		//*@protected
-		_is_view_controller: true,
+		_isViewController: true,
 
 		// ...........................
 		// COMPUTED PROPERTIES
@@ -49,7 +49,7 @@
 			On object initialization, finds or creates the appropriate
 			kind for the view of this controller.
 		*/
-		_view_kind: enyo.computed(function () {
+		_viewKind: enyo.computed(function () {
 			// the original definition as supplied by the controller's
 			// own definition
 			var view = this.view;
@@ -62,7 +62,7 @@
 			// so it has all of the normal setup of a full kind
 			if ("object" === typeof view) {
 				if (!view.name) {
-					view.name = this._make_view_name();
+					view.name = this._makeViewName();
 				}
 				return enyo.kind(view);
 			}
@@ -71,7 +71,7 @@
 			if ("string" === typeof view) {
 				view = enyo.getPath(view);
 				if (!view.prototype.kindName) {
-					view.prototype.kindName = this._make_view_name();
+					view.prototype.kindName = this._makeViewName();
 				}
 				return view;
 			}
@@ -143,7 +143,7 @@
 			// (which takes place after all construction is done)
 			// but this allows subkinds to overload the constructed
 			// method to control the flow
-			this._create_view();
+			this._createView();
 		},
 
 		//*@protected
@@ -151,17 +151,17 @@
 			Creates the actual instance of the controller's view. Should
 			be overloaded for special behaviors.
 		*/
-		_create_view: function () {
+		_createView: function () {
 			// retrieve the constructor for the view and immediately
 			// instance it while also updating the _view_ property to
 			// the reference for this new view
-			var Ctor = this.get("_view_kind");
-			this.set("view", new Ctor({_bubble_target: this}));
+			var Ctor = this.get("_viewKind");
+			this.set("view", new Ctor({_bubbleTarget: this}));
 		},
 
 		//*@protected
-		_make_view_name: function () {
-			return enyo.uid("_view_controller_view_");
+		_makeViewName: function () {
+			return enyo.uid("_viewControllerView_");
 		}
 
 	});

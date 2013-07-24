@@ -280,7 +280,7 @@ enyo.kind({
 		}
 	},
 	getBubbleTarget: function() {
-		return this._bubble_target || this.parent || this.owner;
+		return this._bubbleTarget || this.parent || this.owner;
 	}
 });
 

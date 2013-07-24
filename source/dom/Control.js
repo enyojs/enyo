@@ -76,6 +76,7 @@ enyo.kind({
 	],
 	//*@protected
 	_isView: true,
+	_needsRender: true,
 	noDefer: true,
 	//* The default kind for controls created inside this control that don't
 	//* specify their own kind
@@ -86,6 +87,9 @@ enyo.kind({
 	node: null,
 	generated: false,
 	create: function() {
+		if (this.tag == null) {
+			this._needsRender = false;
+		}
 		// initialize style databases
 		this.initStyles();
 		// superkind initialization
@@ -105,6 +109,7 @@ enyo.kind({
 		this.initProps(["id", "content", "src"]);
 	},
 	destroy: function() {
+		this.connectDom();
 		this.removeNodeFromDom();
 		enyo.Control.unregisterDomEvents(this.id);
 		this.inherited(arguments);
@@ -633,6 +638,7 @@ enyo.kind({
 		if (this.hasNode()) {
 			this.renderContent();
 		}
+		this._needsRender = true;
 	},
 	getSrc: function() {
 		return this.getAttribute("src");
@@ -667,6 +673,7 @@ enyo.kind({
 		// The contract is that insertion in DOM will happen synchronously
 		// to generateHtml() and before anybody should be calling hasNode().
 		this.generated = true;
+		this._needsRender = false;
 		return h;
 	},
 	generateInnerHtml: function() {
@@ -757,7 +764,7 @@ enyo.kind({
 		if (this.generated) {
 			this.disconnectChildrenDom();
 		}
-		this._node = this.node;
+		this._node = this.hasNode();
 		this.node = null;
 		this.generated = false;
 		this._domDisconnected = true;
@@ -777,7 +784,9 @@ enyo.kind({
 			this.connectChildrenDom();
 			this.node = this._node;
 			this._node = null;
-			this.generated = true;
+			if (this.node) {
+				this.generated = true;
+			}
 			this._domDisconnected = false;
 		}
 	},
@@ -813,14 +822,24 @@ enyo.kind({
 		}
 	},
 	renderReusingNode: function () {
-		if (this.children.length) {
-			for (var i=0, c; (c=this.children[i]); ++i) {
-				c.renderReusingNode();
+		if (!this.canGenerate) {
+			return;
+		}
+		if (this.tag === null || this.generated) {
+			if (this.children.length) {
+				for (var i=0, c; (c=this.children[i]); ++i) {
+					c.renderReusingNode();
+				}
+			} else {
+				if (this.generated && this.hasNode()) {
+					if (this._needsRender) {
+						enyo.dom.setInnerHtml(this.node, this.generateInnerHtml());
+						this._needsRender = false;
+					}
+				}
 			}
 		} else {
-			if (this.generated && (this.node = this.hasNode())) {
-				enyo.dom.setInnerHtml(this.node, this.generateInnerHtml());
-			}
+			this.render();
 		}
 	},
 	renderStyles: function() {

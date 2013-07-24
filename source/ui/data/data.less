@@ -1,9 +1,25 @@
-// for the active pages container
-.enyo-data-list-active {
-	position: relative;
+// DataList CSS
+.enyo-data-list {
+	overflow: hidden;
+	.enyo-data-list-active {
+		position: relative;
+		.enyo-data-list-page {
+			position: absolute;
+		}
+	}
+	.enyo-data-list-buffer {
+		height: 100%;
+	}
+}
+
+// DataGridList CSS
+.enyo-data-grid-list {
 	
-	// for pages
-	.enyo-data-list-page {
-		position: absolute;
+	.enyo-data-grid-list-item {
+		display: block;
+		position: absolute !important;
+
+		-webkit-transition: all 300ms ease-in-out;
+		-webkit-box-sizing: border-box;
 	}
 }
