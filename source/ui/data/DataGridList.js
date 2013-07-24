@@ -181,7 +181,9 @@
 			$i = this.getPagePosition(this.$.page1.index);
 			$k = this.getPagePosition(this.$.page2.index);
 			if ($s < Math.min($i, $k) || $s > Math.max($i, $k)) {
+				this._noScroll = true;
 				this.$.scroller.setScrollTop(Math.min($i, $k));
+				this._noScroll = false;
 			}
 		},
 		updateMetrics: function () {
@@ -201,6 +203,12 @@
 			if (this.generated && this.$.scroller.canGenerate) {
 				this.startJob("layoutPages", this.layoutPages, 100);
 			}
+		},
+		didScroll: function (sender, event) {
+			if (!this._noScroll) {
+				return this.inherited(arguments);
+			}
+			return true;
 		}
 	});
 
