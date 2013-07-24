@@ -41,16 +41,15 @@ enyo.createMixin({
 	
 	//*@public
 	modelFindAndInstance: function (ctor, inst) {
-		if (!inst) {
-			return;
-		}
-		inst.addDispatchTarget(this);
-		// we rebuild (rather than refresh) our bindings because
-		// they are now most likely connected to the previous model.
-		var $r = /^\.?model/;
-		for (var $i=0, b$; (b$=this.bindings[$i]); ++$i) {
-			if ($r.test(b$.from) || $r.test(b$.to)) {
-				b$.rebuild();
+		if (inst) {
+			inst.addDispatchTarget(this);
+			// we rebuild (rather than refresh) our bindings because
+			// they are now most likely connected to the previous model.
+			var $r = /^\.?model/;
+			for (var $i=0, b$; (b$=this.bindings[$i]); ++$i) {
+				if ($r.test(b$.from) || $r.test(b$.to)) {
+					b$.rebuild();
+				}
 			}
 		}
 		if (arguments.callee._inherited) {

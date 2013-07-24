@@ -6,7 +6,7 @@
 		the object is a `enyo.Model` or _subkind_.
 	*/
 	enyo.isModel = function (obj) {
-		return !! (obj && obj._isModel);
+		return !! (obj && obj.__isModel);
 	};
 	//*@protected
 	var isModel = enyo.isModel;
@@ -63,10 +63,9 @@
 		Handles common features of all relations.
 	*/
 	var initRelation = function (props) {
-		var $props = props;
-		enyo.forEach(relationKeys, function (fn) {
-			relationInitializers[fn]($props);
-		});
+		for (var $i=0, k$; (k$=relationKeys[$i]); ++$i) {
+			relationInitializers[k$](props);
+		}
 	};
 
 	//*@protected
@@ -74,51 +73,38 @@
 		Executed in the context of the record.
 	*/
 	var toOneHandler = function (key, rel, val) {
-		var $rec = this[key];
-		if (!$rec) {
-			if (rel.isOwner) {
-				// if the incoming value is an object it is assumed to be
-				// the property hash for the record so we create it in-place
-				if (enyo.isObject(val)) {
-					val[rel.inverseKey] = this;
-					$rec = this[key] = new rel.model(val);
-					$rec._relationKey = key;
+		var $k = key, $r = rel, $v = val;
+		var $m = this[$k], $o;
+		if (!$m) {
+			if ($r.isOwner) {
+				if (enyo.isObject($v)) {
+					$v[$r.inverseKey] = this;
+					$m = this[$k] = new $r.model($v);
+					$m.relationKey = $k;
 				} else {
-					// have to ask the store to look for the correct record first
-					// just to be sure if it is already loaded that we use the same
-					// one
-					var $opts = {};
-					$opts.params = {};
-					$opts.params[rel.inverseKey] = this[rel.relationKey];
-					// note this is a synchronous call because we don't supply
-					// the asynchronous success/error callbacks and that it is
-					// only a local find when executed this way
-					$rec = enyo.store.findOne(rel.model, $opts);
-					// if it isn't local already we create it and if its auto
-					// fetchable call fetch
-					if (!$rec) {
-						$rec = new rel.model();
-						$rec._relationKey = key;
-						$rec.set(rel.inverseKey, this);
-						if (rel.autoFetch) {
-							$rec.fetch();
+					$o = enyo.pool.claimObject(true);
+					$o.params = enyo.pool.claimObject(true);
+					$o.params[$r.inverseKey] = this[$r.relationKey];
+					$m = enyo.store.findOne($r.model, $o);
+					if (!$m) {
+						$m = new $r.model();
+						$m.relationKey = $k;
+						$m.set($r.inverseKey, this);
+						if ($r.autoFetch) {
+							$m.fetch();
 						}
 					}
 				}
 			} else {
-				// we aren't the owner but should have been handed the actual
-				// record
-				$rec = this[key] = val;
-				// since we aren't the owner of the relation we register the owner
-				// as a listener to our events
-				this.addDispatchTarget($rec);
+				$m = this[$k] = $v;
+				this.addDispatchTarget($m);
 			}
 		} else {
-			// well, this would be odd but possible
-			if (rel.isOwner) {
-				$rec.didFetch({}, val);
+			if ($r.isOwner) {
+				$m.didFetch(($o = enyo.pool.claimObject()), $v);
 			}
 		}
+		enyo.pool.releaseObject($o);
 	};
 
 	//*@protected
@@ -126,49 +112,47 @@
 		Executed in the context of the record.
 	*/
 	var toManyHandler = function (key, rel, val) {
-		var $rec = this[key];
-		if (!$rec) {
-			var $pr = rel.collection.prototype.relation || rel;
-			$rec = this[key] = enyo.singleton({kind: rel.collection, relation: enyo.clone($pr)});
-			$rec._relationKey = key;
-			$rec.addDispatchTarget(this);
-			if (rel.inverseKey) {
-				$rec.set(rel.inverseKey, this);
+		var $k = key, $r = rel, $v = val;
+		var $m = this[$k], $o, $c;
+		if (!$m) {
+			$c = $r.collection.prototype.relation || $r;
+			$m = this[$k] = enyo.singleton({kind: $r.collection, relation: enyo.clone($c)});
+			$m.relationKey = $k;
+			$m.addDispatchTarget(this);
+			if ($r.inverseKey) {
+				$m.set($r.inverseKey, this);
 			}
-			if (val) {
-				if (enyo.isArray(val)) {
-					$rec.add(val);
-				} else if (enyo.isObject(val)) {
-					$rec.didFetch({}, val);
+			if ($v) {
+				if (enyo.isArray($v)) {
+					$m.addMany($v);
+				} else if (enyo.isObject($v)) {
+					$m.didFetch(($o = enyo.pool.claimObject()), $v);
 				}
 			}
 		} else {
-			if (val) {
-				$rec.didFetch({}, val);
+			if ($v) {
+				$m.didFetch(($o = enyo.pool.claimObject()), $v);
 			}
 		}
+		enyo.pool.releaseObject($o);
 	};
-
-	// TODO: For the resulting documentation to properly organize these methods
-	// in association with enyo.Model we need a more powerful documentation tool,
-	// enyo.Model.toOne, etc. is ugly and cumbersome.
 
 	//*@public
 	enyo.toOne = function (props) {
-		var $props = props || {};
-		$props._kind = "toOne";
-		$props.handler = $props.handler || toOneHandler;
-		initRelation($props);
-		return $props;
+		var $p = props || {};
+		$p._kind = "toOne";
+		$p.handler = $p.handler || toOneHandler;
+		initRelation($p);
+		return $p;
 	};
 
 	//*@public
 	enyo.toMany = function (props) {
-		var $props = props || {};
-		$props._kind = "toMany";
-		$props.handler = $props.handler || toManyHandler;
-		initRelation($props);
-		return $props;
+		var $p = props || {};
+		$p._kind = "toMany";
+		$p.handler = $p.handler || toManyHandler;
+		initRelation($p);
+		return $p;
 	};
 
 	//*@protected
@@ -183,11 +167,9 @@
 			the appropriate map between the local and remote key.
 		*/
 		remoteKey: function (proto, key, attr) {
-			var $keys = proto._remoteKeys || (proto._remoteKeys = {});
-			if (attr.remoteKey) {
-				// so now we know it is a remote key and we have mapped
-				// it to the local key
-				$keys[attr.remoteKey] = key;
+			var $k = proto.__remoteKeys || (proto.__remoteKeys = {}), $a = attr;
+			if ($a.remoteKey) {
+				$k[$a.remoteKey] = key;
 			}
 		},
 		type: function (proto, key, attr) {
@@ -220,9 +202,9 @@
 			initialize what we can.
 		*/
 		relation: function (proto, key, attr) {
-			var $rels = proto._relations || (proto._relations = {});
-			if (attr.relation) {
-				$rels[key] = attr.relation;
+			var $r = proto.__relations || (proto.__relations = {}), $a = attr;
+			if ($a.relation) {
+				$r[key] = $a.relation;
 			}
 		}
 	};
@@ -239,12 +221,12 @@
 
 	//*@protected
 	var normalizeAttribute = function (proto, key, attr, attrs) {
-		var $prop = attrs[key] = attr? enyo.only(attributeKeys, attr): {};
-		var $proto = proto;
-		var $key = key;
-		enyo.forEach(attributeKeys, function (fn) {
-			initializers[fn]($proto, $key, $prop);
-		});
+		var $s = attrs, $a = attr, $k = key;
+		var $p = $s[$k] = $a? enyo.only(attributeKeys, $a): {};
+		var $r = proto;
+		for (var $i=0, f$; (f$=attributeKeys[$i]); ++$i) {
+			initializers[f$]($r, $k, $p);
+		}
 	};
 
 	//*@protected
@@ -254,42 +236,38 @@
 		better (internal) extensibility in the future and easier debugging.
 	*/
 	var normalizeAttributes = function (proto, attrs) {
-		var key, $prop, $keys = proto._attributeKeys;
-		if ($keys) {
-			$keys = (proto._attributeKeys = enyo.clone($keys));
+		var $k, $p = proto, $s = $p.__attributeKeys, $a = attrs, t$;
+		if ($s) {
+			$s = ($p.__attributeKeys = enyo.clone($s));
 		} else {
-			$keys = (proto._attributeKeys = []);
+			$s = ($p.__attributeKeys = []);
 		}
-		for (key in attrs) {
-			if (!~enyo.indexOf(key, $keys)) {
-				$keys.push(key);
+		for ($k in $a) {
+			if (!~enyo.indexOf($k, $s)) {
+				$s.push($k);
 			}
-			$prop = attrs[key] = enyo.clone(attrs[key]);
-			normalizeAttribute(proto, key, $prop, attrs);
+			t$ = $a[$k] = enyo.clone($a[$k]);
+			normalizeAttribute($p, $k, t$, $a);
 		}
 	};
 
 	//*@protected
-
 	var initRelations = function () {
-		var key, $rel, $rels = this._relations || (this._relations = {});
-		// since at load time we can't be sure all the constructors are loaded
-		// we have to resort to doing this at runtime
-		// TODO: Could register relations globally and have an enyo.ready call
-		// that does this once for all known relations as opposed to every time
-		// a new model is instanced (with potentially far more overhead)
-		for (key in $rels) {
-			$rel = $rels[key];
-			if ($rel.isOwner) {
-				switch ($rel._kind) {
+		// TODO: This could be improved to be far more performant without the
+		// requirement of doing it at runtime
+		var $k, r$, $s = this.__relations || (this.__relations = {});
+		for ($k in $s) {
+			r$ = $s[$k];
+			if (r$.isOwner) {
+				switch (r$._kind) {
 				case "toOne":
-					if (!enyo.isFunction($rel.model)) {
-						$rel.model = enyo.getPath($rel.model);
+					if (!enyo.isFunction(r$.model)) {
+						r$.model = enyo.getPath(r$.model);
 					}
 					break;
 				case "toMany":
-					if (!enyo.isFunction($rel.collection)) {
-						$rel.collection = enyo.getPath($rel.collection);
+					if (!enyo.isFunction(r$.collection)) {
+						r$.collection = enyo.getPath(r$.collection);
 					}
 				}
 			}
@@ -301,36 +279,29 @@
 		Used to breakdown a destroyed model.
 	*/
 	var breakdown = function (model) {
-		// make sure to cleanup any relations that have been instantiated
-		// for this where this model was the owner
-		var key, $rel, $rels = model._relations;
-		for (key in $rels) {
-			$rel = $rels[key];
-			if ($rel.isOwner) {
-				// TODO: For now we just orphan related models but possibly
-				// should determine a way to know whether or not to destroy
-				// them as well
-				// if the relation is a toMany than we should be looking at
-				// a collection, since we own that collection, we destroy it
-				// but the models will still exist
-				if ($rel._kind == "toMany") {
-					if (model[key]) {
-						model[key].destroy();
-						model[key] = null;
+		var $k, r$, $m = model, $r = $m.__relations;
+		for ($k in $r) {
+			r$ = $r[$k];
+			if (r$.isOwner) {
+				// TODO: We currently orphan related models but perhaps we
+				// should be destroying them as well
+				if (r$._kind == "toMany") {
+					if ($m[$k]) {
+						$m[$k].destroy();
+						$m[$k] = null;
 					}
-				} else if ($rel._kind == "toOne") {
-					if (model[key]) {
-						model[key].removeDispatchTarget(model);
-						if ($rel.inverseKey) {
-							model[key].set($rel.inverseKey, null);
+				} else if (r$._kind == "toOne") {
+					if ($m[$k]) {
+						$m[$k].removeDispatchTarget($m);
+						if (r$.inverseKey) {
+							$m[$k].set(r$.inverseKey, null);
 						}
-						model[key] = null;
+						$m[$k] = null;
 					}
 				}
 			}
 		}
-		// continue the normal component breakdown for the rest
-		enyo.Component.prototype.destroy.call(model);
+		enyo.Component.prototype.destroy.call($m);
 	};
 
 	//*@protected
@@ -340,33 +311,23 @@
 		infer their own schemas from the data structure they encountered.
 	*/
 	var initModel = function (proto, props) {
-
-		// the prototype of the given constructor
-		var $proto = proto;
-
-		// we break these operations for clarity
-		// first we handle the attributes
-		// if this is a subkind of another model the
-		// attributes hash will already exist and we
-		// we need to clone it for posterity
-		if ($proto._attributes) {
-			$proto._attributes = enyo.clone($proto._attributes);
+		var $p = proto;
+		// if the prototype already has attributes defined we want to preserve
+		// them - and ensure that modifications will not transcend the kind
+		if ($p.__attributes) {
+			$p.__attributes = enyo.clone($p.__attributes);
 		} else {
-			// otherwise we need to create a new one to work with
-			$proto._attributes = {};
+			// otherwise we have to create a new object hash
+			$p.__attributes = {};
 		}
-		if ($proto._relations) {
-			$proto._relations = enyo.clone($proto._relations);
+		// same deal with the relations
+		if ($p.__relations) {
+			$p.__relations = enyo.clone($p.__relations);
 		}
-		// the attributes serve as a way to preserve the original
-		// definition of a model
-
-		// we take the new attributes and preserve them along with
-		// any current values
-		enyo.mixin($proto._attributes, props, {ignore: true});
-		// do the rest of the initialization routine on the attributes
-		// in a single pass
-		normalizeAttributes($proto, $proto._attributes);
+		// FIXME: This will most likely break some inheritance
+		// between models...
+		enyo.mixin($p.__attributes, props, {ignore: true});
+		normalizeAttributes($p, $p.__attributes);
 	};
 
 	//*@protected
@@ -376,27 +337,24 @@
 		up front to be as efficient as possible.
 	*/
 	enyo.kind.features.push(function (ctor, props) {
-		if (!isModel(ctor.prototype)) {
-			return;
+		var $c = ctor, $s = props, $p = $c.prototype, $o;
+		if (isModel($p)) {
+			// this is part of the kind registration for a store
+			enyo.models.add($c);
+			// initialize the prototype
+			initModel($p, $s.attributes || ($o = enyo.pool.claimObject(true)));
+			// remote attributes completely as they have been moved
+			delete $p.attributes;
+			// if there isn't a url defined we attempt to make one for
+			// conventional purposes
+			$p.url = $s.url || !$p.noUrl? ($p.name || $p.kindName).replace(/^(.*)\./g,""): "";
+			enyo.pool.releaseObject($o);
 		}
-		var $proto = ctor.prototype;
-		// register this kind for use in a store
-		enyo.models.add(ctor);
-		initModel($proto, props.attributes || {});
-
-		// we are no longer concerned with the attributes property of the
-		// properties for this kind and do not wish them to be added to
-		// to the kind body so we remove it
-		delete $proto.attributes;
-
-		// we attempt to auto generate a url when necessary
-		$proto.url = props.url || !$proto.noUrl? ($proto.name || $proto.kindName)
-			.replace(/^(.*)\./g, "").toLowerCase(): "";
 	});
 	
 	//*@protected
 	var isRemoteKey = function (k) {
-		var $a = this._attributes;
+		var $a = this.__attributes;
 		for (var $i in $a) {
 			if ($a[$i].remoteKey == k) {
 				return true;
@@ -412,8 +370,8 @@
 		chain.
 	*/
 	enyo.kind.postConstructors.push(function () {
-		if (this._isModel && enyo.store) {
-			enyo.store.initModel(this);
+		if (this.__isModel) {
+			enyo.models.queue(this);
 		}
 	});
 
@@ -832,27 +790,33 @@
 
 		//*@public
 		handlers: {
-			onChange: "_relationChanged",
-			onModelChanged: "_relationChanged"
+			onChange: "__relationChanged",
+			onModelChanged: "__relationChanged"
 		},
 
 		//*@public
 		statics: STATES,
+		
+		//*@public
+		/**
+			Assigned by an enyo.Store at model instantiation. Unqiue identifier that
+			it uses for indexing but can also be used for local-only data instead of
+			creating a unique id.
+		*/
+		euuid: null,
 
 		// ...........................
 		// PROTECTED PROPERTIES
 
-		_isModel: true,
-		_collections: null,
-		_relations: null,
-		_attributes: null,
-		_attributeKeys: null,
-		_previous: null,
-		_changed: null,
-		_euuid: null,
-		_isChild: false,
-		_defaultModel: false,
-		_noApplyMixinDestroy: true,
+		__isModel: true,
+		__collections: null,
+		__relations: null,
+		__attributes: null,
+		__attributeKeys: null,
+		__previous: null,
+		__changed: null,
+		__defaultModel: false,
+		__noApplyMixinDestroy: true,
 
 		// ...........................
 		// COMPUTED PROPERTIES
@@ -922,7 +886,7 @@
 		fetch: function (options) {
 			this.set("status", BUSY.FETCHING);
 			this.exec("fetch", options);
-			this._hasFetched = true;
+			this.__hasFetched = true;
 		},
 
 		//*@public
@@ -969,21 +933,23 @@
 			var $d = noFilter? (result || $o): this.filterData(result || $o, "fetch");
 			var $g = this.defaults;
 			var $k = enyo.merge(enyo.keys($d), enyo.keys($g));
+			this.silence();
+			this.stopNotifications();
 			// if we haven't fetched before we will run the data through the schema
 			// generator to ensure we have the full schema from the data structure
 			// but only trigger this if there is any data to begin with
 			if ($k.length) {
-				if (!this._hasFetched) {
+				if (!this.__hasFetched) {
 					this.createSchemaFromData(enyo.mixin([$d, $g], {ignore: true}));
 				}
-				var $a = this._attributes;
-				var $r = this._relations, $p, p$, k$, r$, v$, $q = [], $f;
+				var $a = this.__attributes;
+				var $r = this.__relations, $p, p$, k$, r$, v$, $q = [], $f;
 				for ($p in $a) {
 					p$ = $a[$p];
 					k$ = p$.remoteKey || $p;
 					v$ = $d[$p] || $d[k$];
 					// we do not run default data through the formatter
-					if (!v$ && !this._hasFetched && ($g[$p] || $g[k$])) {
+					if (!v$ && !this.__hasFetched && enyo.exists(($g[$p] || $g[k$]))) {
 						v$ = $g[$p] || $g[k$];
 						if (enyo.isFunction(v$)) {
 							v$ = v$.call(this);
@@ -1016,14 +982,15 @@
 			}
 			this.set("isNew", false);
 			this.set("status", CLEAN);
-			this.unsilence();
+			// NOTE: This is carefully ordered here
 			this.startNotifications();
-			this._flushChanges();
+			this.unsilence();
+			this.flushChanges();
 			if (options && options.success) {
 				options.success(result, this, options);
 			}
 			if (enyo.keys($d).length) {
-				this._hasFetched = true;
+				this.__hasFetched = true;
 			}
 			this._defaults = this.defaults;
 			enyo.pool.releaseObject($o);
@@ -1040,9 +1007,9 @@
 			}
 			this.set("isNew", false);
 			this.set("status", CLEAN);
-			this._changed = {};
-			for (var key in this._relations) {
-				if (this._relations[key].isOwner) {
+			this.__changed = {};
+			for (var key in this.__relations) {
+				if (this.__relations[key].isOwner) {
 					if (this[key]) {
 						this[key].set("status", CLEAN);
 					}
@@ -1090,11 +1057,11 @@
 			using the local (client) keys.
 		*/
 		raw: function (local) {
-			var $a = this._attributes;
-			var $r = this._relations;
+			var $a = this.__attributes;
+			var $r = this.__relations;
 			var $k = enyo.keys($r), $t, $l, $n, $i;
 			if (local) {
-				$t = enyo.only(this._attributeKeys, enyo.except($k, this));
+				$t = enyo.only(this.__attributeKeys, enyo.except($k, this));
 			} else {
 				$t = {};
 				for ($l in $a) {
@@ -1106,7 +1073,7 @@
 			}
 			for ($l in $r) {
 				$n = $r[$l];
-				$i = this[$l] && $n.inverseKey? this[$l]._relations[$n.inverseKey]: null;
+				$i = this[$l] && $n.inverseKey? this[$l].__relations[$n.inverseKey]: null;
 				if (!$n.isOwner || (!enyo.exists(this[$l]) || (!$n.inCommit && ($i && !$i.inCommit)))) {
 					continue;
 				}
@@ -1132,7 +1099,7 @@
 			is an _attribute_ of the _schema_ for this _model_.
 		*/
 		isAttribute: function (prop) {
-			return !!~enyo.indexOf(prop, this._attributeKeys);
+			return !!~enyo.indexOf(prop, this.__attributeKeys);
 		},
 
 		//*@public
@@ -1141,7 +1108,7 @@
 			is known by the _model schema_ as a _remoteKey_.
 		*/
 		isRemoteAttribute: function (prop) {
-			return prop in this._remoteKeys;
+			return prop in this.__remoteKeys;
 		},
 
 		//*@public
@@ -1150,7 +1117,7 @@
 			is a _relation_ or not.
 		*/
 		isRelation: function (prop) {
-			return !! (prop in this._relations);
+			return !! (prop in this.__relations);
 		},
 
 		//*@public
@@ -1158,7 +1125,7 @@
 			Retrieve the previous value for _prop_ (when it exists).
 		*/
 		previous: function (prop) {
-			return this._previous[prop];
+			return this.__previous[prop];
 		},
 
 		//*@public
@@ -1176,7 +1143,7 @@
 				}
 				this.startNotifications();
 				this.unsilence();
-				this._flushChanges();
+				this.flushChanges();
 				return this;
 			} else if (this.isRelation(prop)) {
 				return this.setRelation(prop, val);
@@ -1196,7 +1163,7 @@
 			non-standard use-cases.
 		*/
 		setRelation: function (prop, val) {
-			var $r = this._relations[prop];
+			var $r = this.__relations[prop];
 			$r.handler.call(this, prop, $r, val);
 			this.set("status", DIRTY);
 			return this;
@@ -1220,9 +1187,9 @@
 			// work for our purposes
 			values = undefined;
 			this.inherited(arguments);
-			this._collections = [];
-			this._previous = {};
-			this._changed = {};
+			this.__collections = [];
+			this.__previous = {};
+			this.__changed = {};
 			this.includeKeys = this.includeKeys || [];
 			this.defaults = this.defaults || $d;
 			// because we don't know whether data being passed in to the constructor
@@ -1242,8 +1209,8 @@
 			// state properly to clean and reset anything that will have changed
 			if (enyo.keys($d).length || enyo.keys(enyo.except(enyo.keys($d), $v)).length) {
 				this.status = CLEAN;
-				this._changed = {};
-				this._previous = enyo.only(this._attributeKeys, this);
+				this.__changed = {};
+				this.__previous = enyo.only(this.__attributeKeys, this);
 			} else {
 				this.status = NEW;
 			}
@@ -1261,7 +1228,7 @@
 					$s[$k] = null;
 				}
 			}
-			this._defaultModel = true;
+			this.__defaultModel = true;
 			initModel(this, $s);
 			enyo.pool.releaseObject($s);
 		},
@@ -1279,6 +1246,14 @@
 			if (this.owner && this.owner.addComponent) {
 				this.owner.addComponent(this);
 			}
+			if (this.owner && true === (this.owner instanceof enyo.Component)) {
+				this.set("_defaultTarget", this.owner);
+				this.set("_defaultDispatch", true);
+			} else {
+				// otherwise we either don't have an owner or they cannot
+				// accept events so we remove our bubble target
+				this.set("_defaultTarget", null);
+			}
 		},
 
 		// ...........................
@@ -1290,14 +1265,14 @@
 			a reference to this model in it. Thus ensuring that each collection
 			will receive any events propagated from this _model_.
 		*/
-		_addCollection: function (col) {
-			if (!~enyo.indexOf(col, this._collections)) {
-				this._collections.push(col);
-				this.addDispatchTarget(col);
-				for (var key in this._relations) {
-					if (col[key]) {
+		addCollection: function (c) {
+			if (!~enyo.indexOf(c, this.__collections)) {
+				this.__collections.push(c);
+				this.addDispatchTarget(c);
+				for (var $k in this.__relations) {
+					if (c[$k]) {
 						this.stopNotifications(true);
-						this.set(key, col[key]);
+						this.set($k, c[$k]);
 						this.set("status", CLEAN);
 						this.startNotifications(true);
 					}
@@ -1309,11 +1284,11 @@
 		/**
 			Used internally to remove registered collections from the _model_.
 		*/
-		_removeCollection: function (col) {
-			var idx = enyo.indexOf(col, this._collections);
-			if (!!~idx) {
-				this._collections.splice(idx, 1);
-				this.removeDispatchTarget(col);
+		removeCollection: function (c) {
+			var $i = enyo.indexOf(c, this.__collections);
+			if (!!~$i) {
+				this.__collections.splice($i, 1);
+				this.removeDispatchTarget(c);
 			}
 		},
 
@@ -1323,26 +1298,20 @@
 			changeset, previous values and a reference to the model that changed
 			(this _model_).
 		*/
-		_flushChanges: function () {
-			if (!this._silenced) {
-				this.doChange({
-					previous: this._previous,
-					changed: this._changed,
-					model: this
-				});
-			}
+		flushChanges: function () {
+			this.doChange({previous: this.___previous, changed: this.__changed, model: this});
 		},
 
 		//*@protected
-		_relationChanged: function (sender, event) {
-			var $m = event.model || sender, key = $m._relationKey;
-			if (!key && event.collection) {
+		__relationChanged: function (sender, event) {
+			var $m = event.model || sender, $k = $m.relationKey;
+			if (!$k && event.collection) {
 				$m = event.collection;
-				key = $m._relationKey;
+				$k = $m.relationKey;
 			}
-			if (key) {
-				if (this[key] == $m) {
-					this._changed[key] = $m;
+			if ($k) {
+				if (this[$k] == $m) {
+					this.__changed[$k] = $m;
 					this.set("status", DIRTY);
 				}
 			}
@@ -1353,8 +1322,8 @@
 			Retrieves the attribute object for a given attribute `property`
 			if it exists.
 		*/
-		_attributeFor: function (prop) {
-			return this._attributes[prop];
+		__attributeFor: function (prop) {
+			return this.__attributes[prop];
 		},
 
 		// ...........................
@@ -1363,35 +1332,30 @@
 		//*@protected
 		/**
 			Spies on all change notifications and adds to the changeset for
-			the model. It will execute a _flushChanges_ that will emit the
+			the model. It will execute a flushChanges_ that will emit the
 			_onChange_ event if the _model_ isn't currently silenced.
 		*/
-		_attributeSpy: enyo.observer(function (prop, prev, val) {
-			var attr;
-			if ((attr = this._attributeFor(prop)) || this.isRelation(prop)) {
+		__attributeSpy: enyo.observer(function (prop, prev, val) {
+			if (this.__attributeFor(prop) || this.isRelation(prop)) {
 				// TODO: Type checking has been temporarily removed
 				// and should probably be added as validation instead
-				this._previous[prop] = prev;
-				this._changed[prop] = val;
-				this._flushChanges();
+				this.__previous[prop] = prev;
+				this.__changed[prop] = val;
+				this.flushChanges();
 			}
 		}, "*"),
 
 		//*@protected
-		_statusChanged: enyo.observer(function (prop, prev, val) {
-			if (val == DIRTY) {
-				enyo.forEach(this._collections, function (col) {
-					if (!~enyo.indexOf(col._dirtyModels, this)) {
-						col._dirtyModels.push(this);
-					}
-				}, this);
-			} else if (val == CLEAN) {
-				enyo.forEach(this._collections, function (col) {
-					var idx = enyo.indexOf(col._dirtyModels, this);
-					if (idx >= 0) {
-						col._dirtyModels.splice(idx, 1);
-					}
-				}, this);
+		__statusChanged: enyo.observer(function (prop, prev, val) {
+			var $i, c$;
+			if (val === DIRTY) {
+				for ($i=0; (c$=this.__collections[$i]); ++$i) {
+					c$.addDirtyModel(this);
+				}
+			} else if (val === CLEAN) {
+				for ($i=0; (c$=this.__collections[$i]); ++$i) {
+					c$.removeDirtyModel(this);
+				}
 			}
 		}, "status")
 

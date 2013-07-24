@@ -497,6 +497,22 @@
 		return $s;
 	};
 	var merge = enyo.merge;
+	
+	//*@public
+	/**
+		Returns an array of the values of all properties in an object.
+	*/
+	enyo.values = function (o) {
+		if (o) {
+			var $r = [];
+			for (var $k in o) {
+				if (o.hasOwnProperty($k)) {
+					$r.push(o[$k]);
+				}
+			}
+			return $r;
+		}
+	};
 
 	//*@public
 	/**

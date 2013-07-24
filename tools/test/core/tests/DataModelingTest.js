@@ -247,7 +247,7 @@
 		*/
 		testNoSchema: function () {
 			var $m = new models.Generic();
-			if ($m._attributes.length) {
+			if ($m.__attributes.length) {
 				this.finish("Expected no known attributes");
 			} else {
 				this.finish();
@@ -794,14 +794,14 @@
 			var $v = new (enyo.kind({
 				kind: "enyo.View",
 				handlers: {
-					onModelChanged: "__modelChanged",
+					onModelChanged: "___modelChanged",
 					onModelAdded: "modelAdded",
 					onModelsAdded: "modelsAdded",
 					onModelRemoved: "modelRemoved",
 					onModelsRemoved: "modelsRemoved",
-					onModelDestroyed: "modelDestroyed"
+					onModelDestroyed: "_modelDestroyed"
 				},
-				__modelChanged: function () {
+				___modelChanged: function () {
 					throw "modelChanged";
 				},
 				modelAdded: function () {
@@ -816,7 +816,7 @@
 				modelsRemoved: function () {
 					throw "modelsRemoved";
 				},
-				modelDestroyed: function () {
+				_modelDestroyed: function () {
 					throw "modelDestroyed";
 				}
 			}))();
