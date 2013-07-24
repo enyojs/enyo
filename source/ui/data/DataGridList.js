@@ -128,6 +128,11 @@
 				$s = this.spacing,
 				$m = this.minWidth,
 				$h = this.minHeight;
+			for (var $i=0, p$; (p$=this.$.active.children[$i]); ++$i) {
+				if (p$.width != $w) {
+					p$.applyStyle("width", $w + "px");
+				}
+			}
 			this.columns = Math.floor(($w - $s) / ($m + $s));
 			this.tileWidth = Math.floor(($w - (this.columns * $s) - $s) / this.columns);
 			this.tileHeight = Math.floor($h * (this.tileWidth / $m));
