@@ -23,6 +23,6 @@
 .enyo-data-grid-list .enyo-data-grid-list-item {
   display: block;
   position: absolute !important;
-  -webkit-transition: all 300ms ease-in-out;
+  -webkit-transition: top 300ms ease-in-out, left 300ms ease-in-out, width 300ms ease-in-out, height 300ms ease-in-out;
   -webkit-box-sizing: border-box;
 }
