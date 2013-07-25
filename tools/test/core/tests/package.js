@@ -1,6 +1,8 @@
 enyo.depends(
+	"readyTest.js",
 	"langTest.js",
 	"JobTest.js",
+	"JobsTest.js",
 	"LoaderTest.js",
 	"KindTest.js",
 	"JsonTest.js",
@@ -15,6 +17,8 @@ enyo.depends(
 	"PathResolverTest.js",
 	"ViewportPositioningTest.js",
 	"BindingTest.js",
+	"AutoBindingTest.js",
 	"InheritanceSanityTest.js",
-	"DataModelingTest.js"
+	"DataModelingTest.js",
+	"AnimatorTest.js"
 );

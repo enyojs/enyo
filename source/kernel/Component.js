@@ -278,7 +278,7 @@ enyo.kind({
 	},
 	//* @protected
 	getBubbleTarget: function() {
-		return this._bubble_target || this.owner;
+		return this._bubbleTarget || this.owner;
 	},
 	//* @public
 	/**
@@ -516,8 +516,15 @@ enyo.kind({
 
 		If you start a job with the same name as a pending job, the original job
 		will be stopped; this can be useful for resetting timeouts.
+
+		You may supply a priority level (1-10) at which the job should be executed.
+		The default level is 5. Setting the priority lower than 5 (or setting it to
+		the string "low") will defer the job if an animation is in progress, which
+		can help to avoid stuttering.
 	*/
-	startJob: function(inJobName, inJob, inWait) {
+	startJob: function(inJobName, inJob, inWait, inPriority) {
+		inPriority = inPriority || 5;
+
 		// allow strings as job names, they map to local method names
 		if (enyo.isString(inJob)) {
 			inJob = this[inJob];
@@ -525,9 +532,7 @@ enyo.kind({
 		// stop any existing jobs with same name
 		this.stopJob(inJobName);
 		this.__jobs[inJobName] = setTimeout(this.bindSafely(function() {
-			this.stopJob(inJobName);
-			// call "inJob" with this bound to the component.
-			inJob.call(this);
+			enyo.jobs.add(this.bindSafely(inJob), inPriority, inJobName);
 		}), inWait);
 	},
 	/**
@@ -538,11 +543,12 @@ enyo.kind({
 			clearTimeout(this.__jobs[inJobName]);
 			delete this.__jobs[inJobName];
 		}
+		enyo.jobs.remove(inJobName);
 	},
 	/**
 		Execute the method _inJob_ immediately, then prevent
 		any other calls to throttleJob with the same _inJobName_ from running
-		for the	next _inWait_ milliseconds.
+		for the next _inWait_ milliseconds.
 	*/
 	throttleJob: function(inJobName, inJob, inWait) {
 		// if we still have a job with this name pending, return immediately
@@ -638,15 +644,22 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 	if (!inProto[fn]) {
 		inProto[fn] = function(payload) {
 			// bubble this event
-			var $e = payload || enyo.pool.claimObject();
+			var $e = payload, $c = false;
+			if (!$e) {
+				$c = true;
+				$e = enyo.pool.claimObject();
+			}
 			var $d = $e.delegate;
 			// delete payload.delegate;
 			$e.delegate = undefined;
+			if (!enyo.exists($e.type)) {
+				$e.type = inName;
+			}
 			this.bubble(inName, $e);
 			if ($d) {
 				$e.delegate = $d;
 			}
-			if (!payload || !payload._pooled) {
+			if ($c) {
 				enyo.pool.releaseObject($e);
 			}
 		};

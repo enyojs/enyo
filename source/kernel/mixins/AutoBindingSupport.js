@@ -55,6 +55,15 @@
 			if (props.source && enyo.isString(props.source)) {
 				props.source = enyo.getPath.call(control, props.source);
 			}
+			// convert string "transform" values to hard function references
+			// to make sure proper scope when binding is created
+			if (props.transform && enyo.isString(props.transform)) {
+				var transform = props.transform;
+				var owner = control.owner;
+				props.transform = owner[transform]
+					|| enyo.getPath.call(owner, transform)
+					|| enyo.getPath.call(enyo.global, transform);
+			}
 			xtra.source = props.source || bindSource;
 			xtra.target = control;
 			enyo.mixin(props, xtra);
@@ -63,7 +72,7 @@
 				enyo.mixin(b, props, {exists: true});
 				b.refresh();
 			} else {
-				b = this._autoBinding(props);
+				b = this._makeAutoBinding(props);
 				control._autoBinding = b;
 			}
 			enyo.pool.releaseObject(xtra);
@@ -96,14 +105,27 @@
 		// COMPUTED PROPERTIES
 
 		//*@protected
-		_bindableControls: enyo.computed(function (control) {
+		// return an array of controls from the tree rooted at _this_
+		// that have the "bindFrom" property.
+		_bindableControls: enyo.computed(function (control, owner) {
 			control = control || this;
+			owner = owner || this;
+			var superOwner = owner.owner;
 			var bindable = [];
-			var controls = control.controls || [];
-			var idx = 0;
-			var len = controls.length;
-			for (; idx < len; ++idx) {
-				bindable = bindable.concat(this._bindableControls(controls[idx]));
+			if (control.controls) {
+				var controls = control.controls;
+				var idx = 0;
+				var len = controls.length;
+				for (; idx < len; ++idx) {
+					var controlOwner = controls[idx].owner;
+					// only search the tree of controls that are either owned
+					// by the root or by the root's owner. This will catch anything
+					// defined in a components block, but a component from another
+					// kind will have a owner we don't know.
+					if (controlOwner === owner || controlOwner === superOwner) {
+						bindable = bindable.concat(this._bindableControls(controls[idx], owner));
+					}
+				}
 			}
 			if ("bindFrom" in control) {
 				bindable.push(control);
@@ -134,7 +156,7 @@
 		// PROTECTED METHODS
 
 		//*@protected
-		_autoBinding: function () {
+		_makeAutoBinding: function () {
 			var bind = this.binding.apply(this, arguments);
 			bind._autoBindingId = enyo.uid("_autoBinding");
 			return bind;
@@ -165,16 +187,11 @@
 
 		//*@protected
 		create: function () {
-			var prop = this.bindSource || "model";
-			// NOTE: We don't need to register for the model property as enyo.Control
-			// will automatically trigger the rebuildBindings call which we have modified
-			// to handle this properly
-			if (prop != "model") {
-				this.addObserver(prop, _setupAutoBindings, this);
-			}
-			if (prop == "model" && this.model && this.model._isModel) {
-				_setupAutoBindings.call(this);
-			}
+			var $p = this.bindSource || "model";
+			this.addObserver($p, _setupAutoBindings, this);
+			// the observer won't fire the first time so we arbitrarily attempt
+			// to setup
+			_setupAutoBindings.call(this);
 		}
 
 	});

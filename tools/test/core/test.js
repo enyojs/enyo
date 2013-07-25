@@ -311,3 +311,7 @@ enyo.kind({
 		info.setClasses("enyo-testcase-" + (results.passed ? "passed" : "failed"));
 	}
 });
+
+enyo.ready(function() {
+	new enyo.TestRunner({fit: false}).renderInto(document.body);
+});

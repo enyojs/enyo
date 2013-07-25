@@ -373,7 +373,8 @@
 
 	//* Returns true if the argument is an object.
 	enyo.isObject = Object.isObject || function (it) {
-		return toString.call(it) === "[object Object]";
+		// explicit null/undefined check for IE8 compatibility
+		return (it != null) && (toString.call(it) === "[object Object]");
 	};
 
 	//* Returns true if the argument is true.
@@ -486,10 +487,32 @@
 		entries.
 	*/
 	enyo.merge = function (/* _arrays_ */) {
-		var merger = Array.prototype.concat.apply([], arguments);
-		return unique(merger);
+		var $m = Array.prototype.concat.apply([], arguments);
+		var $s = [];
+		for (var $i=0, v$; (v$=$m[$i]); ++$i) {
+			if (!~enyo.indexOf(v$, $s)) {
+				$s.push(v$);
+			}
+		}
+		return $s;
 	};
 	var merge = enyo.merge;
+	
+	//*@public
+	/**
+		Returns an array of the values of all properties in an object.
+	*/
+	enyo.values = function (o) {
+		if (o) {
+			var $r = [];
+			for (var $k in o) {
+				if (o.hasOwnProperty($k)) {
+					$r.push(o[$k]);
+				}
+			}
+			return $r;
+		}
+	};
 
 	//*@public
 	/**

@@ -6,9 +6,23 @@
 /* minifier to fall back to using CSS files in place of the same-name       */
 /* LESS file.                                                               */
 
-.enyo-data-list.enyo-data-list-rows-container.enyo-list-row {
+.enyo-data-list {
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+}
+.enyo-data-list .enyo-data-list-active {
   position: relative;
 }
+.enyo-data-list .enyo-data-list-active .enyo-data-list-page {
+  position: absolute;
+}
+.enyo-data-list .enyo-data-list-buffer {
+  height: 100%;
+}
 .enyo-data-grid-list .enyo-data-grid-list-item {
-  display: inline-block;
+  display: block;
+  position: absolute !important;
+  -webkit-transition: top 300ms ease-in-out, left 300ms ease-in-out, width 300ms ease-in-out, height 300ms ease-in-out;
+  -webkit-box-sizing: border-box;
 }

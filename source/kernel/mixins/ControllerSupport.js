@@ -42,15 +42,16 @@ enyo.createMixin({
 	},
 
 	//*@protected
-	_controllerChanged: enyo.observer(function (property, previous, value) {
-		if (previous && value && previous === value) {
+	_controllerChanged: enyo.observer(function (prop, prev, val) {
+		if (prev && val && prev === val) {
 			// seems to be the same controller we already had
 			return;
 		}
-		// first attempt to find the controller from the
-		// information we've been handed
 		if (this.controller) {
 			this.findAndInstance("controller");
+		}
+		if (prev && prev._isController) {
+			prev.removeDispatchTarget(this);
 		}
 	}, "controller"),
 
@@ -58,7 +59,6 @@ enyo.createMixin({
 	controllerFindAndInstance: function (ctor, inst) {
 		// if there is no constructor or instance it was not found
 		if (!(ctor || inst)) {
-			enyo.error("cannot find controller: " + this.controller);
 			return;
 		}
 		// if a constructor exists we instanced the class and can
@@ -72,8 +72,12 @@ enyo.createMixin({
 		}
 		// we rebuild (rather than refresh) our bindings because
 		// they are now most likely connected to the previous controller.
-		// TODO: Avoid rebuilding bindings to objects other than the controller?
-		this.rebuildBindings();
+		var $r = /^\.?controller/;
+		for (var $i=0, b$; (b$=this.bindings[$i]); ++$i) {
+			if ($r.test(b$.from) || $r.test(b$.to)) {
+				b$.rebuild();
+			}
+		}
 	},
 
 	//*@protected

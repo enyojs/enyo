@@ -15,6 +15,9 @@
 	function will be used to handle the event directly, without sending the
 	event to its owner or bubbling it.  The _context_ property can be used to
 	call the supplied event functions in a particular "this" context.
+
+	During animation, an <a href="#enyo.jobs">enyo.jobs</a> priority of 5 is
+	registered to defer low priority tasks.
 */
 enyo.kind({
 	name: "enyo.Animator",
@@ -61,6 +64,10 @@ enyo.kind({
 		}
 		this.t0 = this.t1 = enyo.now();
 		this.value = this.startValue;
+
+		// register this jobPriority to block less urgent tasks from executing
+		enyo.jobs.registerPriority(5, this.id);
+
 		this.job = true;
 		this.next();
 		return this;
@@ -100,6 +107,9 @@ enyo.kind({
 		enyo.cancelRequestAnimationFrame(this.job);
 		this.node = null;
 		this.job = null;
+
+		// unblock job queue
+		enyo.jobs.unregisterPriority(this.id);
 	},
 	shouldEnd: function() {
 		return (this.dt >= this.duration);
