@@ -27,7 +27,7 @@
 		w("-enyo ENYOPATH:", "Path to enyo loader (enyo/enyo.js)");
 		w("-lib LIBPATH:", "Path to lib folder (enyo/../lib)");
 		w("-output PATH/NAME:", "name of output file, prepend folder paths to change output directory");
-		w("--beautify:", "Output pretty version that's less compressed but has code on separate lines");
+		w("-beautify:", "Output pretty version that's less compressed but has code on separate lines");
 		w("-f", "Remote source mapping: from local path");
 		w("-t", "Remote source mapping: to remote path");
 		w("-h, -?, -help:", "Show this message");
