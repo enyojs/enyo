@@ -7,6 +7,8 @@
 /* LESS file.                                                               */
 
 .enyo-data-list {
+  overflow: hidden;
+  position: relative;
   height: 100%;
 }
 .enyo-data-list .enyo-data-list-active {
@@ -14,7 +16,6 @@
 }
 .enyo-data-list .enyo-data-list-active .enyo-data-list-page {
   position: absolute;
-  height: 100%;
 }
 .enyo-data-list .enyo-data-list-buffer {
   height: 100%;

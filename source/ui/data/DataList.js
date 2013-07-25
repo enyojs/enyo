@@ -40,7 +40,7 @@
 		*/
 		orientation: "vertical",
 		//*@public
-		classes: "enyo-fit enyo-data-list",
+		classes: "enyo-data-list",
 		//*@public
 		/**
 			The number of _controls_ to keep as _active_ per page. If the elements

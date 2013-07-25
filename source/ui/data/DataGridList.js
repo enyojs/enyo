@@ -128,6 +128,11 @@
 				$s = this.spacing,
 				$m = this.minWidth,
 				$h = this.minHeight;
+			for (var $i=0, p$; (p$=this.$.active.children[$i]); ++$i) {
+				if (p$.width != $w) {
+					p$.applyStyle("width", $w + "px");
+				}
+			}
 			this.columns = Math.floor(($w - $s) / ($m + $s));
 			this.tileWidth = Math.floor(($w - (this.columns * $s) - $s) / this.columns);
 			this.tileHeight = Math.floor($h * (this.tileWidth / $m));
@@ -136,14 +141,41 @@
 		},
 		adjustControlsPerPage: function () {
 			var $c = this.columns,
-				$p = this.controlsPerPage, m$;
+				$p = this.controlsPerPage,
+				$h = this.height,
+				$t = (this.tileHeight + this.spacing), m$, p$, u$ = false;
+			p$ = Math.ceil($p / $c) * $t;
 			m$ = $p % $c;
-			if (m$ !== 0) {
-				m$ = ($c - ($p % $c));
-				if ($p + m$ > 50) {
-					m$ = -1 * (Math.abs(m$ - $c));
+			if (p$ < $h) {
+				u$ = true;
+			}
+			while (!(m$ === 0 && p$ > $h)) {
+				// nomatter what if the total row-heights don't add up to the full
+				// size necessary to fill the page we have to increment this number
+				if (p$ < $h) {
+					++$p;
+					// we set this to true so that if for some reason decrementing it
+					// causes us to be too small again we won't get stuck in an infinite
+					// loop it will just increase the size properly to make it work
+					u$ = true;
+				} else if (m$ !== 0 && !u$) {
+					// we can decrement in this case because we have too many and
+					// we don't want to create anymore
+					--$p;
+				} else {
+					// here we may be the right number of rows but not the right number
+					// of children to fill those rows so we need to increment to match
+					// the number of columns
+					++$p;
 				}
-				this.controlsPerPage = $p + m$;
+				p$ = Math.ceil($p / $c) * $t;
+				m$ = $p % $c;
+			}
+			this.controlsPerPage = $p;
+			if ($p > this.$.page1.children.length) {
+				for (var $i=0; (p$=this.$.active.children[$i]); ++$i) {
+					this.resetPage(p$);
+				}
 			}
 		},
 		adjustDefaultPageSize: function () {

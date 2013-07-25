@@ -152,8 +152,8 @@
 			}
 		},
 		childSelected: function (sender, event) {
-			var $c = event.child;
-			var $s = this.__selection, $i, $t;
+			var $c = event.child,
+				$s = this.__selection, $i, $t;
 			if (this.selection) {
 				$i = enyo.indexOf($c, $s);
 				if (this.multipleSelection) {
@@ -171,8 +171,8 @@
 			return true;
 		},
 		childDeselected: function (sender, event) {
-			var $c = event.child;
-			var $s = this.__selection, $i;
+			var $c = event.child,
+				$s = this.__selection, $i;
 			if (this.selection) {
 				$i = enyo.indexOf($c, $s);
 				if (!!~$i) {
