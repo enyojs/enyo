@@ -2,9 +2,9 @@
 
 	//*@public
 	/**
-		A abstract kind that will repeate a defined `kind` for as many _records_
-		are in its `data` array (automatically bound from a `controller` of the kind
-		`enyo.Collection`).
+		_enyo.DataRepeater_ is an abstract kind that will repeate a defined kind for
+		as many records as are in its _data_ array (automatically bound from a
+		controller of the kind <a href="#enyo.Collection">enyo.Collection</a>).
 	*/
 	enyo.kind({
 		name: "enyo.DataRepeater",
@@ -39,7 +39,7 @@
 		initComponents: function () {
 			this.initContainer();
 			// we need to find the child definition and prepare it for
-			// use in our repeater including adding auto binding support
+			// use in our repeater, including adding auto binding support
 			var $c = this.kindComponents || this.components || [],
 				$o = this.components? this.owner: this, $p;
 			// if there is a special definition in the components block we

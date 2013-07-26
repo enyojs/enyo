@@ -2,9 +2,10 @@
 
 	//*@public
 	/**
-		A type of _enyo.DataRepeater_ designed to layout a grid from its
-		components according to the data supplied by its _enyo.Collection_. It employs
-		a paginated scrolling scheme to enhance performance in larger datasets.
+		_enyo.DataGridList_ is an <a href="#enyo.DataRepeater">enyo.DataRepeater</a>
+		designed to lay out a grid of its components according to the data supplied
+		by the associated <a href="#enyo.Collection">enyo.Collection</a>. It employs
+		a paginated scrolling scheme to enhance performance with larger datasets.
 	*/
 	enyo.kind({
 		
@@ -19,23 +20,23 @@
 		
 		//*@public
 		/**
-			This is the spacing (in pixels) between all elements in the grid list. It
-			should be an even number or will be coerced into one for consistency.
-			This is the exact spacing to be allocated between any item on all sides.
+			The spacing (in pixels) between elements in the grid list. It should be an
+			even number, or else it will be coerced into one for consistency.
+			This is the exact spacing to be allocated on all sides of each item.
 		*/
 		spacing: 10,
 		
 		//*@public
 		/**
-			This is the minimum width (in pixels) for the grid items. They will not
-			be collapsed beyond this size but they may be proportionally expanded.
+			The minimum width (in pixels) for each grid item. Grid items will not be
+			collapsed beyond this size, but they may be proportionally expanded.
 		*/
 		minWidth: 100,
 		
 		//*@public
 		/**
-			This is the minimum height (in pixels) for the grid items. They will not
-			be collapsed beyond this size but they may be proportionally expanded.
+			The minimum height (in pixels) for each grid item. Grid items will not be
+			collapsed beyond this size, but they may be proportionally expanded.
 		*/
 		minHeight: 100,
 		
@@ -150,21 +151,21 @@
 				u$ = true;
 			}
 			while (!(m$ === 0 && p$ > $h)) {
-				// nomatter what if the total row-heights don't add up to the full
-				// size necessary to fill the page we have to increment this number
+				// no matter what, if the total row-heights don't add up to the full
+				// size necessary to fill the page, we have to increment this number
 				if (p$ < $h) {
 					++$p;
 					// we set this to true so that if for some reason decrementing it
-					// causes us to be too small again we won't get stuck in an infinite
-					// loop it will just increase the size properly to make it work
+					// causes us to be too small again, we won't get stuck in an infinite
+					// loop; it will just increase the size properly to make it work
 					u$ = true;
 				} else if (m$ !== 0 && !u$) {
 					// we can decrement in this case because we have too many and
-					// we don't want to create anymore
+					// we don't want to create any more
 					--$p;
 				} else {
 					// here we may be the right number of rows but not the right number
-					// of children to fill those rows so we need to increment to match
+					// of children to fill those rows, so we need to increment to match
 					// the number of columns
 					++$p;
 				}
