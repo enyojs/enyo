@@ -18,5 +18,8 @@ enyo.depends(
 	"FullscreenSample.css",
 	"FullscreenSample.js",
 	"AudioSample.css",
-	"AudioSample.js"
+	"AudioSample.js",
+	"DataRepeaterSample.js",
+	"DataRepeaterSample.css",
+	"DataListSample.js"
 );
