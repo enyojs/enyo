@@ -2,25 +2,24 @@
 
 	//*@public
 	/**
-		A type of _enyo.DataRepeater_ that employs a paginated scrolling scheme
-		to enhance performance in larger datasets. All children will have the
-		`enyo.AutoBindingSupport` mixin applied automatically and can use its API
-		for convenience <a href="#enyo.AutoBindingSupport">enyo.AutoBindingSupport</a> for
-		details on how to use it.
+		_enyo.DataList_ is an <a href="#enyo.DataRepeater">enyo.DataRepeater</a>
+		that employs a paginated scrolling scheme to enhance performance with larger
+		datasets. All children will have the _enyo.AutoBindingSupport_ mixin applied
+		automatically and may use its API for convenience.  (See the
+		<a href="https://github.com/enyojs/enyo/blob/master/source/kernel/mixins/AutoBindingSupport.js">mixin
+		source code</a> for usage details.)
 
-		```
-		enyo.kind({
-			name: "MyView",
-			components: [
-				{name: "list", kind: "enyo.DataList", components: [
-					{bindFrom: ".firstName"},
-					{bindFrom: ".lastName"}
-				], controller: ".app.controllers.myController"}
-			]
-		});
-		```
+			enyo.kind({
+				name: "MyView",
+				components: [
+					{name: "list", kind: "enyo.DataList", components: [
+						{bindFrom: ".firstName"},
+						{bindFrom: ".lastName"}
+					], controller: ".app.controllers.myController"}
+				]
+			});
 
-		TODO: Currently does not support horizontal orientation.
+		Note that _enyo.DataList_ currently does not support horizontal orientation.
 	*/
 	enyo.kind({
 		name: "enyo.DataList",
@@ -28,24 +27,24 @@
 		//*@public
 		/**
 			The _enyo.DataList_ kind places its rows inside of a scroller. Any
-			configurable options associated with an _enyo.Scroller_ can be
+			configurable options associated with an _enyo.Scroller_ may be
 			placed in this hash and will be set accordingly on the scroller
-			for this list. If none are specified default _enyo.Scroller_
+			for this list. If no options are specified, the default _enyo.Scroller_
 			settings are used.
 		*/
 		scrollerOptions: null,
 		//*@public
 		/**
-			The paging orientation. It can be one of `vertical` or `horizontal`.
+			The paging orientation. Valid values are `vertical` and `horizontal`.
 		*/
 		orientation: "vertical",
 		//*@public
 		classes: "enyo-data-list",
 		//*@public
 		/**
-			The number of _controls_ to keep as _active_ per page. If the elements
-			are very small this number may need to be increased or decreased if they
-			are very large in metrics.
+			The number of _controls_ to keep as _active_ per page. If the individual
+			elements are very small, this number may need to be increased; likewise,
+			if they are very large, the number may need to be decreased.
 		*/
 		controlsPerPage: 50,
 		//*@protected
@@ -79,14 +78,14 @@
 			this.resetMetrics();
 		},
 		rendered: function () {
-			// the initial time the list is rendered we've only rendered the
-			// list node itself but now we know it should be safe to calculate
-			// some boundaries so there's not some ugly overlap in our absolutely
+			// the initial time the list is rendered, we've only rendered the
+			// list node itself, but now we know it should be safe to calculate
+			// some boundaries so there's no ugly overlap in our absolutely
 			// positioned elements and rows and we can also render the rows and
 			// correctly map them to corresponding pages
 			this.$.scroller.canGenerate = true;
 			this.$.scroller.render();
-			// lets position and size everything initially and it will be adjusted
+			// let's position and size everything initially and it will be adjusted
 			// as we go
 			this.updateSizing();
 			var $h = this.height,
@@ -254,7 +253,7 @@
 		},
 		indexInPage: function (i, p) {
 			// FIXME: This needs to be adjusted to make better guesses
-			// but for now its just brute force -- the issue being that
+			// but for now it's just brute force -- the issue being that
 			// the children are not always in order by index
 			var $f = false;
 			for (var $i=0, c$; (c$=p.children[$i]); ++$i) {
@@ -291,7 +290,7 @@
 			if (sender == this.controller) {
 				if (this.generated && this.$.scroller.canGenerate) {
 					this.set("batching", true);
-					// FIXME: This is a temporary implementation for this event
+					// FIXME: This is a temporary implementation for this event;
 					// ultimately it needs to only do anything if the current indices
 					// are affected by the indices that are removed
 					this.reset();
@@ -411,9 +410,9 @@
 			return $t;
 		},
 		/**
-			These are implemented in this way for efficiency purposes as they will be
-			called often and there is a memory penalty for returning an object with these
-			properties as opposed to the static value directly.
+			These getter methods are implemented in this way for efficiency, as they
+			will be called often and there is a memory penalty for returning an object
+			with these properties as opposed to returning the static value directly.
 		*/
 		getHeight: function (n) {
 			var $n = n || this;
@@ -552,8 +551,8 @@
 		dispatchEvent: function (n) {
 			// FIXME: This is only a partial solution to a larger issue of detecting
 			// size changes in the children and properly laying out the pages after
-			// this happens, this particular case we're guessing that if a page has had
-			// an image load we need to try and adjust if we need to
+			// this happens. In this particular case we're guessing that if a page has
+			// had an image load, we need to try and adjust if we need to.
 			if (n == "onload") {
 				this.startJob("layoutPages", this.layoutPages, 100);
 			}
