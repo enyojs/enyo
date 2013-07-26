@@ -2,8 +2,8 @@
 
 	//*@public
 	/**
-		Takes an object and returns a _Boolean_ `true` | `false` if
-		the object is a `enyo.Model` or _subkind_.
+		Takes an object and returns a Boolean true or false indicating whether the
+		the object is an _enyo.Model_ or a subkind of _enyo.Model_.
 	*/
 	enyo.isModel = function (obj) {
 		return !! (obj && obj.__isModel);
@@ -163,7 +163,7 @@
 	//*@protected
 	var initializers = {
 		/**
-			If there is a remote key defined we track that and create
+			If there is a remote key defined, we track that and create
 			the appropriate map between the local and remote key.
 		*/
 		remoteKey: function (proto, key, attr) {
@@ -176,9 +176,8 @@
 			// nop for now
 		},
 		/**
-			If a formatter was defined as a string it is attempted to be
-			grabbed from the prototype for the model and if it isn't found
-			it uses the default.
+			If a formatter was defined as a string, we attempt to obtain it from
+			the prototype for the model; if it isn't found, we use the default.
 		*/
 		formatter: function (proto, key, attr) {
 			if (attr.formatter) {
@@ -198,7 +197,7 @@
 			attr.formatter = defaultFormatter;
 		},
 		/**
-			If a relation is define for the attribute we go ahead and
+			If a relation is defined for the attribute, we go ahead and
 			initialize what we can.
 		*/
 		relation: function (proto, key, attr) {
@@ -212,10 +211,11 @@
 	//*@protected
 	/**
 		The known and available attribute keys. All others are ignored (removed).
-		A separate initializer is setup for each of these for modularity and
-		(internal) extensibility in the future and easier debugging. They are retrieved
-		from the initializers because for future options you only need to add the
-		entry there and it will automatically be handled.
+		A separate initializer is set up for each of these for the sake of
+		modularity, better (internal) extensibility in the future, and greater ease
+		of debugging. They are retrieved from the initializers because, for future
+		options, you only need to add the entry there and it will automatically be
+		handled.
 	*/
 	var attributeKeys = enyo.keys(initializers);
 
@@ -231,9 +231,10 @@
 
 	//*@protected
 	/**
-		Attempt to do all the necessary setup on our attributes in a single
-		pass as opposed to several. Actions are broken up for modularity,
-		better (internal) extensibility in the future and easier debugging.
+		Attempts to do all the necessary setup for our attributes in a single pass
+		as opposed to multiple passes. Actions are broken up for the sake of
+		modularity, better (internal) extensibility in the future, and greater ease
+		of debugging.
 	*/
 	var normalizeAttributes = function (proto, attrs) {
 		var $k, $p = proto, $s = $p.__attributeKeys, $a = attrs, t$;
@@ -276,14 +277,14 @@
 
 	//*@protected
 	/**
-		Used to breakdown a destroyed model.
+		Breaks down a destroyed model.
 	*/
 	var breakdown = function (model) {
 		var $k, r$, $m = model, $r = $m.__relations;
 		for ($k in $r) {
 			r$ = $r[$k];
 			if (r$.isOwner) {
-				// TODO: We currently orphan related models but perhaps we
+				// TODO: We currently orphan related models, but perhaps we
 				// should be destroying them as well
 				if (r$._kind == "toMany") {
 					if ($m[$k]) {
@@ -307,8 +308,8 @@
 	//*@protected
 	/**
 		Initialization routine for all model kinds. Is abstracted such that
-		it can be used at run-time for generic models that are attempting to
-		infer their own schemas from the data structure they encountered.
+		it can be used at runtime for generic models that are attempting to
+		infer their own schemas from the data structures they encounter.
 	*/
 	var initModel = function (proto, props) {
 		var $p = proto;
@@ -332,8 +333,8 @@
 
 	//*@protected
 	/**
-		When the kind features chain comes across a model definition
-		we need to ensure some setup so we do this once for any kind
+		When the kind features chain comes across a model definition,
+		we need to ensure some setup, so we do this once for any kind
 		up front to be as efficient as possible.
 	*/
 	enyo.kind.features.push(function (ctor, props) {
@@ -343,9 +344,9 @@
 			enyo.models.add($c);
 			// initialize the prototype
 			initModel($p, $s.attributes || ($o = enyo.pool.claimObject(true)));
-			// remote attributes completely as they have been moved
+			// remove attributes completely, as they have been moved
 			delete $p.attributes;
-			// if there isn't a url defined we attempt to make one for
+			// if there isn't a url defined, we attempt to make one for
 			// conventional purposes
 			$p.url = $s.url || !$p.noUrl? ($p.name || $p.kindName).replace(/^(.*)\./g,""): "";
 			enyo.pool.releaseObject($o);
@@ -365,8 +366,8 @@
 
 	//*@protected
 	/**
-		Without interfering with the construction chain we need to register
-		the record with the store. This cannot be done in during the construction
+		Without interfering with the construction chain, we need to register
+		the record with the store. This cannot be done during the construction
 		chain.
 	*/
 	enyo.kind.postConstructors.push(function () {
@@ -377,111 +378,111 @@
 
 	//*@public
 	/**
-		The _status_ of an `enyo.Model` will be one of those defined by values in
-		`enyo.Model`. They can be checked explicitly against these statuc globals
-		(e.g. `enyo.Model.ERROR.TYPE`).
+		The status of an _enyo.Model_ will be one of values defined in the _STATES_
+		hash. A Model's status may be checked explicitly against these status
+		globals (e.g., _enyo.Model.ERROR.TYPE_).
 	*/
 	var STATES = {};
 
 	//*@public
 	/**
-		There are multiple error states each with a different meaning.
+		There are multiple error states, each with a different meaning
 	*/
 	var ERROR = STATES.ERROR = {};
 
 	/**
-		When an attribute with a defined `type` is `set` on a model and fails
-		to be or become (after being run through the `typeWrangler`) the correct
-		`type` the model enters this state.
+		The state of a model when an attribute with a defined type is set and fails
+		to be or become (after being run through the typeWrangler) the correct
+		type
 	*/
 	ERROR.TYPE =						0x01;
 
 	/**
-		When an error occurs during initialization because the model could not
-		determine the _schema_ for attributes based on their definition or implied
-		from `defaults` or data supplied to the constructor the model enters this
-		state.
+		The state of a model when an error occurs during initialization because the
+		model cannot determine the schema for attributes directly from their
+		definition or by inference from defaults or data supplied to the constructor
 	*/
 	ERROR.SCHEMA =						0x02;
 
 	/**
-		When a model receives a bad response from the `enyo.Source` for the application
-		it will enter this state.
+		The state of a model that receives a bad response from the _enyo.Source_ for
+		the application
 	*/
 	ERROR.RESPONSE =					0x03;
 
 	/**
-		When a model attempts to execute an action against a remote and the store does
-		not exist or the source is unavailable it will enter this state.
+		The state of a model that attempts to execute an action against a remote
+		when the store does not exist or the source is unavailable
 	*/
 	ERROR.SOURCE =						0x04;
 
 	//*@public
 	/**
-		When the model is attempting to fetch, commit or destroy it will be in a busy
-		state, one of the following.
+		When the model is attempting to fetch, commit, or destroy, it will be in one
+		of the _BUSY_ states.
 	*/
 	var BUSY = STATES.BUSY = {};
 
 	/**
-		When the model is in the process of fetching data from the `enyo.Source` for the
-		application it will enter this state.
+		The state of a model that is in the process of fetching data from the
+		_enyo.Source_ for the application
 	*/
 	BUSY.FETCHING		=				0x11;
 
 	/**
-		When the model is in the process of committing data to the `enyo.Source` for the
-		application it will enter this state.
+		The state of a model that is in the process of committing data to the
+		_enyo.Source_ for the application
 	*/
 	BUSY.COMMITTING		=				0x12;
 
 	/**
-		When the model is in the process of being destroyed it will be in this state.
+		The state of a model that is in the process of being destroyed
 	*/
 	BUSY.DESTROYING		=				0x13;
 
 	//*@public
 	/**
-		The CLEAN state implies that the model has had values applie to it but they
-		are synchronized with the given `source` and does not need to be committed.
-		This is also true of a model whose values were set during construction or if
-		it had default values defined and applied.
+		The state of a model that has had values applied to it, but only values that
+		are synchronized with the given source and do not need to be committed.
+		This will be the state of a model whose values have just been set during
+		construction, or one to which default values have just been applied.
 	*/
 	var CLEAN = STATES.CLEAN =			0x21;
 
 	//*@public
 	/**
-		If a model has been destroyed it will no longer exist in the `enyo.store` or
-		in the remote. Changes will not be tracked.
+		The state of a model that has been destroyed.  It will no longer exist in
+		the	_enyo.Store_ or in the remote, and changes will not be tracked.
 	*/
 	var DESTROYED = STATES.DESTROYED =	0x31;
 
 	//*@public
 	/**
-		A model will be in the NEW state if it is recently created and has had no
-		values applied to it that are in the defined schema (either via attributes
-		explicitly or defaults/initial values implicitly). If default values are used
-		during setup or values applied the model will not be in the NEW state.
+		The state of a recently-created model, to which no values have been applied
+		(either explicitly via attributes or implicitly via	defaults/initial
+		values). If default values are used during setup or values are later
+		applied, the model will not be in the NEW state.
 	*/
 	var NEW = STATES.NEW =				0x41;
 
 	//*@public
 	/**
-		A model will be in the DIRTY state if it has a defined schema and an attribute
-		of the schema has been modified and it needs to be synchronized. The only
-		exception is if a model is created and uses default values it will not be in
+		The state of a model that has a defined schema with an attribute that has
+		been modified and needs to be synchronized. The only exception is a
+		recently-created model that still retains default values; it will not be in
 		the DIRTY state until a modification takes place.
 	*/
 	var DIRTY = STATES.DIRTY =			0x51;
 
 	//*@public
 	/**
-		The `enyo.Model` _kind_ is, simply put, an object that represents data. It
-		has a common and abstracted interface by which it can be manipulated and
-		persisted. When used in tandem with `enyo.Collection`, `enyo.Store` and
-		`enyo.Source` it can be a well defined _schema_ representing _objects_ that
-		in your application. They can have an implicitly derived _schema_ or an
-		explicitly defined _schema_ according to your implementation and needs.
+		The _enyo.Model_ kind is, simply put, an object that represents data. It
+		has a common and abstracted interface through which it may be manipulated
+		and persisted. When used in conjunction with _enyo.Collection_,
+		_enyo.Store_, and _enyo.Source_, it can be a well-defined schema
+		representing objects used in your application. The schema may be explicitly
+		defined or implicitly derived, depending on your specific implementation and
+		needs.
 
 		[see enyo.Collection](#), [see enyo.Store](#), [see enyo.Source](#)
 
@@ -632,8 +633,8 @@
 
 		---
 
-		Here is an example of a completed `enyo.Model` _schema_ definition. __Note not
-		every _model_ needs to use all of these features.__
+		Here is an example of a completed _enyo.Model_ schema definition. Note that
+		not every model will need to use all of these features.
 
 		```
 		enyo.kind({
@@ -687,58 +688,56 @@
 
 		//*@public
 		/**
-			The defined _schema_ for this _model_. If not defined the _model_
-			will attempt to infer the the _schema_ from the structure of the
-			data passed to it at construction time.
+			The defined schema for this model. If no schema is defined, the model will
+			attempt to infer the schema from the structure of the data passed to it at
+			creation time.
 		*/
 		attributes: null,
 
 		//*@public
 		/**
-			The `defaults` hash of _default_ values to be supplied to the
-			_model_ upon instantiation. When no _schema_ (attributes) are
-			explicitly defined but defaults are, the _schema_ will be infered
-			from these properties. They are in key-value pairs where the value
-			can be of any type, even a _function_. If the _value_ is a _function_
-			it will be executed during initialization under the context of the
-			model (as `this`) and is expected to __return the default value for
-			its assigned property__.
+			The hash of default values to be supplied to the model upon instantiation.
+			When no schema (attributes) are explicitly defined, but defaults are, the
+			schema will be inferred from these properties. They consist of key-value
+			pairs in which the value may be of any type, even a function. If the value
+			is a function, it will be executed during initialization under the context
+			of the model (as _this_) and is expected to return the default value for
+			its assigned property.
 		*/
 		defaults: null,
 
 		//*@public
 		/**
-			The `url` property is a static root for this particular _model_.
-			In a system with a simple REST backend with a 1 to 1 mapping of
-			client _model_ to backend server/service the `url` could be of
-			the form `/models/artist`. It can also be used in more complex
-			scenarios. Note this `url` property is appended to the _domain url_
-			genereated by the `enyo.Source` for the `enyo.Store` of the current
-			application. If the `noUrl` property is set to `false` and no
-			`url` is specified it will be automatically generated based on the
-			name of the _model kind_.
+			A static root for this particular model. In a system with a simple REST
+			backend with a 1 to 1 mapping of client model to backend server/service,
+			the _url_ could be of the form `/models/artist`. It may also be used in
+			more complex scenarios. Note that this property is appended to the domain
+			url generated by the _enyo.Source_ for the _enyo.Store_ of the current
+			application. If the _noUrl_ property is set to false and no _url_ is
+			specified, it will be automatically generated based on the name of the
+			model kind.
 		*/
 		url: "",
 
 		//*@public
 		/**
-			The `status` of the model is defined by a fixed-set of enumerated
-			values. See documentation for `enyo.Model` states.
+			The _status_ of the model is defined by a fixed set of enumerated
+			values. (See the documentation for _enyo.Model_ states).
 		*/
 		status: NEW,
 
 		//*@public
 		/**
-			A simple _Boolean_ flag indicating whether or not the current _model_
-			is a locally created _new_ record. Once a _model_ has been _committed_
-			or was _fetched_ this will be `false`.
+			A simple Boolean flag indicating whether or not the current model	is a
+			locally-created new record. Once a model has been committed (or fetched),
+			this value will be false.
 		*/
 		isNew: true,
 
 		//*@public
 		/**
-			The _String_ representing which attribute to use as the indexable
-			primary key for this _model_. Default is `id`.
+			String representing which attribute to use as the indexable
+			primary key for this model. The default is _"id"_.
 		*/
 		primaryKey: "id",
 		
@@ -747,40 +746,41 @@
 
 		//*@public
 		/**
-			In some cases correct remote calls are generated by some other means
-			than the normal url generation. In those cases this _Boolean_ flag needs
-			to be set to `true`. Default is `false`.
+			In some cases, correct remote calls are generated by some means other	than
+			the normal url generation. In these cases, this Boolean flag needs to be
+			set to true. The default is false.
 		*/
 		noUrl: false,
 		
 		//*@public
 		/**
-			In cases where the url is arbitrarily set and needs to be used as-is set
-			this flag to true. This setting will ignore the `noUrl` property value.
+			For cases in which the _url_ is arbitrarily set and must be used as-is,
+			set this flag to true. This setting will ignore the value of the _noUrl_
+			property.
 		*/
 		rawUrl: false,
 		
 		//*@public
 		/**
 			In cases where the commit body should be a subset of the attributes
-			explicitly or implicitly defined by the schema set this property to
+			explicitly or implicitly defined by the schema, set this property to
 			an array of the keys that should be included. For a programmatic way
-			of filtering payload data use the `filterData` method and watch for
-			the second parameter to be `commit`.
+			of filtering payload data, use the _filterData()_ method and watch for
+			the second parameter to be _commit_.
 		*/
 		includeKeys: null,
 
 		//*@public
 		/**
-			The `enyo.Model` will generate its own events. When a defined `attribute`
-			of the _model schema_ is modified an event will be emitted to any
-			listeners with an event payload with the `changed` property with the
-			changeset, the `previous` property with the previous values of those in
-			the changeset and the `model` property that is a reference to this _model_.
+			_enyo.Model_ generates its own events. When a defined attribute of the
+			model schema is modified, an event is fired to any listeners with a
+			payload object containing the changeset in its _changed_ property, the
+			previous values of the changeset in its _previous_ property, and a
+			reference to the current model in the _model_ property.
 
-			When the _model_ is destroyed it will also emit an event with the property
-			`model` that is a reference to this _model_ (even though it will already
-			have been destroyed).
+			When the model is destroyed, an event is fired with a payload object
+			containing a reference to the current model in its _model_ property (even
+			though it has already been destroyed).
 		*/
 		events: {
 			onChange: "",
@@ -799,9 +799,9 @@
 		
 		//*@public
 		/**
-			Assigned by an enyo.Store at model instantiation. Unqiue identifier that
-			it uses for indexing but can also be used for local-only data instead of
-			creating a unique id.
+			Assigned by an _enyo.Store_ at model instantiation. A unique identifier
+			used for indexing, but which may also be used for local-only data instead
+			of creating a unique id.
 		*/
 		euuid: null,
 
@@ -823,7 +823,7 @@
 
 		//*@public
 		/**
-			Used internally by `enyo.Source` to generate an appropriate request `url`.
+			Used internally by _enyo.Source_ to generate an appropriate request url.
 			Overload this method in custom setups.
 		*/
 		query: enyo.computed(function () {
@@ -835,12 +835,12 @@
 
 		//*@public
 		/**
-			Overload the `filterData` method to conditionally mutate data
-			for incoming and outgoing payloads. The `data` parameter is the
-			data to be mutated. The `direction` parameter will be one of `fetch`
-			or `commit`, for incoming data and outgoing data respectively. The
-			return value will be the data presented to the `didFetch` method and
-			the included payload in commits when appropriate.
+			Overload this method to conditionally mutate data for incoming and
+			outgoing payloads. The _data_ parameter is the data to be mutated. The
+			value of _direction_ will be either _"fetch"_ or "commit", denoting
+			incoming and outgoing data, respectively. Returns the data presented to
+			the _didFetch()_ method and the payload included in commits, when
+			appropriate.
 		*/
 		filterData: function (data, direction) {
 			return data;
@@ -848,12 +848,12 @@
 
 		//*@public
 		/**
-			When the `enyo.Source` is constructing the request for this _model_
-			(regardless of the action) it will call this method which you can
-			overload to add custom parameters to the `queryParams` hash of the
-			`options` parameter. These parameters are key-value pairs that are
-			used to generate the options in a query string in default setups. It
-			could also be used for other purposes in overloaded and custom setups.
+			When the _enyo.Source_ is constructing the request for this model
+			(regardless of the action), it calls this method. You may overload the
+			method to add custom parameters to the _queryParams_ hash of the
+			_options_ parameter. These parameters are key-value pairs used to generate
+			the options in a query string in default setups. They may also be used for
+			other purposes in overloaded and custom setups.
 		*/
 		buildQueryParams: function (model, options) {
 			// the options parameter will have a hash at property queryParams
@@ -866,9 +866,9 @@
 
 		//*@public
 		/**
-			The model should execute a _commit_ of its current state. The optional
-			_options_ hash can have a `success` method and/or an `error` method
-			to be executed on the appropriate result asynchronously.
+			Executes a commit of the model's current state. The optional _options_
+			hash may include _success()_ and/or _error()_ methods, to be executed
+			asynchronously in response to the respective results.
 		*/
 		commit: function (options) {
 			var $options = options? enyo.clone(options): {};
@@ -879,9 +879,9 @@
 
 		//*@public
 		/**
-			The model should execute a _fetch_. The optional _options_ hash can
-			have a `success` method and/or an `error` method to be executed on the
-			appropriate result asynchronously.
+			Executes a fetch. The optional _options_ hash may include _success()_
+			and/or _error()_ methods, to be executed asynchronously in response to the
+			respective results.
 		*/
 		fetch: function (options) {
 			this.set("status", BUSY.FETCHING);
@@ -891,10 +891,10 @@
 
 		//*@public
 		/**
-			The model should execute a _destroy_ that destroys it in the client
-			and also (by default) a _DELETE_ request to the _source_. The optional
-			_options_ hash may have a `success` method and/or an `error` method to
-			be executed on the appropriate result asynchronously.
+			Executes a destroy operation that destroys the model in the client and
+			also (by default) sends a _DELETE_ request to the source. The optional
+			_options_ hash may include _success()_ and/or _error()_ methods, to be
+			executed asynchronously in response to the respective results.
 		*/
 		destroy: function (options) {
 			this.set("status", BUSY.DESTROYING);
@@ -903,8 +903,8 @@
 
 		//*@public
 		/**
-			While this method should not be executed directly it is overloadable
-			in custom setups.
+			This method should not be executed directly, but may be overloaded in
+			custom setups.
 		*/
 		exec: function (action, options) {
 			if (enyo.store) {
@@ -921,12 +921,12 @@
 
 		//*@public
 		/**
-			While this method should not be executed directly it is overloadable
-			in custom setups. Note that many of the details of this implementation
-			make _models_ work properly and great care should be taken when modifying
-			it or you may encounter unexpected or unpredictable results. The third
-			parameter can be set to true if you do not wish the result to be passed
-			through the filter.
+			This method should not be executed directly, but may be overloaded in
+			custom setups. Note that many of the details of this implementation
+			are needed to make models work properly; great care should be taken when
+			making modifications, or you may encounter unexpected or unpredictable
+			results. Set the third parameter to true if you do not want the result to
+			be passed through the filter.
 		*/
 		didFetch: function (options, result, noFilter) {
 			var $o = enyo.pool.claimObject(true);
@@ -935,8 +935,8 @@
 			var $k = enyo.merge(enyo.keys($d), enyo.keys($g));
 			this.silence();
 			this.stopNotifications();
-			// if we haven't fetched before we will run the data through the schema
-			// generator to ensure we have the full schema from the data structure
+			// if we haven't fetched before, we will run the data through the schema
+			// generator to ensure we have the full schema from the data structure,
 			// but only trigger this if there is any data to begin with
 			if ($k.length) {
 				if (!this.__hasFetched) {
@@ -965,7 +965,7 @@
 						}
 					}
 					r$ = $r[$p];
-					// queue any relation actions until the rest as been completed
+					// queue any relation actions until the rest have been completed
 					if (r$) {
 						$q.push(enyo.bind(this, r$.handler, $p, r$, v$));
 						// we continue because we do not want to trigger any notifications
@@ -998,8 +998,8 @@
 
 		//*@public
 		/**
-			While this method should not be executed directly it is overloadable
-			in custom setups.
+			This method should not be executed directly, but may be overloaded in
+			custom setups.
 		*/
 		didCommit: function (options, result) {
 			if (result && "object" === typeof result) {
@@ -1022,8 +1022,8 @@
 
 		//*@public
 		/**
-			While this method should not be executed directly it is overloadable
-			in custom setups.
+			This method should not be executed directly, but may be overloaded in
+			custom setups.
 		*/
 		didDestroy: function (options, result) {
 			this.set("status", DESTROYED);
@@ -1036,9 +1036,9 @@
 
 		//*@public
 		/**
-			While this method should not be executed directly it is overloadable
-			in custom setups. The `action` parameter is one of `"fetch"`, `"destroy"`,
-			`"commit"` or `"update"` depicting which action failed.
+			This method should not be executed directly, but may be overloaded in
+			custom setups. The _action_ parameter will be one of _"fetch"_,
+			_"destroy"_, _"commit"_, or _"update"_, depending on which action failed.
 		*/
 		didFail: function (action, options, result) {
 			this.set("status", ERROR.RESPONSE);
@@ -1049,12 +1049,12 @@
 
 		//*@public
 		/**
-			Returns an _Object_ literal that represents the JSON parsable form
-			of the _model_ in its current state. Takes an optional _Boolean_ that
-			if `true` will return the hash with local (client) keys but defaults
-			to remote keys if they are defined such that it could be used as a
-			payload to the _source_. If no remote keys are defined it defaults to
-			using the local (client) keys.
+			Returns an _Object_ literal that represents the JSON-parseable form
+			of the model in its current state. Takes an optional Boolean parameter
+			that, if true, returns the hash with local (client) keys, but defaults to
+			remote keys if they are defined, such that it could be used as a payload
+			to the source. If no remote keys are defined, defaults to using the local
+			(client) keys.
 		*/
 		raw: function (local) {
 			var $a = this.__attributes;
@@ -1084,10 +1084,10 @@
 
 		//*@public
 		/**
-			Returns the JSON parsed _string_ value for this _model_ in its
-			current state as would be appropriate to send in a payload to the _source_.
-			If the optional _local_ is `true` then it will return with local keys
-			instead of remote keys (if any).
+			Returns the JSON parsed string value for this model in its current state,
+			as would be appropriate to send in a payload to the source.	If the
+			optional _local_ parameter is true, returns with local keys instead of
+			remote keys (if any).
 		*/
 		toJSON: function (local) {
 			return enyo.json.stringify(this.raw(local));
@@ -1095,8 +1095,8 @@
 
 		//*@public
 		/**
-			Returns _Boolean_ `true` or `false` for whether the _prop_
-			is an _attribute_ of the _schema_ for this _model_.
+			Returns Boolean true or false indicating whether the passed-in property
+			is an attribute of the schema for this model.
 		*/
 		isAttribute: function (prop) {
 			return !!~enyo.indexOf(prop, this.__attributeKeys);
@@ -1104,8 +1104,8 @@
 
 		//*@public
 		/**
-			Returns _Boolean_ `true` or `false` for whether the _prop_
-			is known by the _model schema_ as a _remoteKey_.
+			Returns Boolean true or false indicating whether the passed-in property
+			is known by the model schema as a remoteKey.
 		*/
 		isRemoteAttribute: function (prop) {
 			return prop in this.__remoteKeys;
@@ -1113,8 +1113,8 @@
 
 		//*@public
 		/**
-			Returns _Boolean_ `true` or `false` for whether _prop_
-			is a _relation_ or not.
+			Returns Boolean true or false indicating whether or not the passed-in
+			property is a relation.
 		*/
 		isRelation: function (prop) {
 			return !! (prop in this.__relations);
@@ -1122,7 +1122,7 @@
 
 		//*@public
 		/**
-			Retrieve the previous value for _prop_ (when it exists).
+			Retrieves the previous value for the passed-in property (when it exists).
 		*/
 		previous: function (prop) {
 			return this.__previous[prop];
@@ -1130,9 +1130,8 @@
 
 		//*@public
 		/**
-			This is a specially overloaded version of `enyo.Object.set`. It
-			takes either a _hash_ or a _string_ and _value_ combined as its
-			parameters.
+			This is a specially overloaded version of _enyo.Object.set()_. It accepts
+			either a hash or a string and value combined as its parameters.
 		*/
 		set: function (prop, val) {
 			if (enyo.isObject(prop)) {
@@ -1158,9 +1157,9 @@
 
 		//*@public
 		/**
-			Used to set values for a given (and defined) _relation_ for an _attribute_
-			of the _schema_. Do not call this method directly. It may be overloaded in
-			non-standard use-cases.
+			Used to set values for a given (and defined) relation for an attribute of
+			the schema. Do not call this method directly. It may be overloaded in
+			non-standard use cases.
 		*/
 		setRelation: function (prop, val) {
 			var $r = this.__relations[prop];
@@ -1172,11 +1171,11 @@
 		//*@public
 		/**
 			The constructor needs to be able to properly initialize the
-			internal (protected) properties but is also responsible for
-			determining if the _schema_ is defined and if not attempt to
-			implicitly derive it from the passed in values. If there is
-			no _schema_ defined and no initial _values_ passed in much of
-			its functionality will not work as intended.
+			internal (protected) properties, but is also responsible for
+			determining whether the _schema_ is defined and, if not,
+			attempting to derive it implicitly from the passed-in values.
+			If there is no schema defined and no initial _values_ are passed in,
+			much of its functionality will not work as intended.
 		*/
 		constructor: function (values) {
 			var $v = values || enyo.pool.claimObject(true);
@@ -1195,7 +1194,7 @@
 			// because we don't know whether data being passed in to the constructor
 			// will have the local format or the remote format and we want to be able
 			// to allow the filterData method to execute without always needing to know
-			// which case it is we catch errors and use the original structure if
+			// which case it is, we catch errors and use the original structure if
 			// it fails and use the noFilter option for didFetch knowing we've already
 			// filtered it either way
 			try {
@@ -1263,7 +1262,7 @@
 		/**
 			Used internally to register any collections that might have
 			a reference to this model in it. Thus ensuring that each collection
-			will receive any events propagated from this _model_.
+			will receive any events propagated from this model.
 		*/
 		addCollection: function (c) {
 			if (!~enyo.indexOf(c, this.__collections)) {
@@ -1282,7 +1281,7 @@
 
 		//*@protected
 		/**
-			Used internally to remove registered collections from the _model_.
+			Used internally to remove registered collections from the model.
 		*/
 		removeCollection: function (c) {
 			var $i = enyo.indexOf(c, this.__collections);
@@ -1294,9 +1293,9 @@
 
 		//*@protected
 		/**
-			Used at the appropriate time to emit a _onChange_ event with the
-			changeset, previous values and a reference to the model that changed
-			(this _model_).
+			Used at the appropriate time to emit an _onChange_ event with the
+			changeset, previous values, and a reference to the model that changed
+			(this model).
 		*/
 		flushChanges: function () {
 			this.doChange({previous: this.___previous, changed: this.__changed, model: this});
@@ -1319,7 +1318,7 @@
 
 		//*@protected
 		/**
-			Retrieves the attribute object for a given attribute `property`
+			Retrieves the attribute object for a given attribute property
 			if it exists.
 		*/
 		__attributeFor: function (prop) {
@@ -1332,8 +1331,8 @@
 		//*@protected
 		/**
 			Spies on all change notifications and adds to the changeset for
-			the model. It will execute a flushChanges_ that will emit the
-			_onChange_ event if the _model_ isn't currently silenced.
+			the model. Calls _flushChanges()_, which will emit an _onChange_
+			event if the model isn't currently silenced.
 		*/
 		__attributeSpy: enyo.observer(function (prop, prev, val) {
 			if (this.__attributeFor(prop) || this.isRelation(prop)) {
