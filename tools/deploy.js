@@ -5,7 +5,7 @@
 
 This portable Node.js script minifies both your application, its
 libraries & the Enyo framework it is using.  The resulting application
-is suitable for production usage, either hostet on a web-server or
+is suitable for production usage, either hosted on a web-server or
 embedded into a PhoneGap container.
 
 The script is intended to be run from the application's root directory
@@ -38,9 +38,9 @@ the `-o` flag).
 
 // Load dependencies
 var nopt = require("nopt"),
-    path = require('path'),
-    fs = require('fs'),
-    shell = require('shelljs');
+	path = require('path'),
+	fs = require('fs'),
+	shell = require('shelljs');
 
 var stat, script, scripts = {};
 
@@ -68,15 +68,16 @@ process.on('message', function(msg) {
 // Parse arguments
 
 var node = process.argv[0],
-    deploy = process.argv[1],
-    sourceDir = process.cwd(),
-    packageJs = path.resolve(sourceDir, "package.js"),
-    enyoDir = path.resolve(__dirname, '..'),
-    buildDir = path.resolve(sourceDir, "build"),
-    basename = path.basename(sourceDir),
-    outDir = path.resolve(sourceDir, 'deploy', basename),
-    less = true, // LESS compilation, turned on by default
-    verbose = false;
+	deploy = process.argv[1],
+	sourceDir = process.cwd(),
+	packageJs = path.resolve(sourceDir, "package.js"),
+	enyoDir = path.resolve(__dirname, '..'),
+	buildDir = path.resolve(sourceDir, "build"),
+	basename = path.basename(sourceDir),
+	outDir = path.resolve(sourceDir, 'deploy', basename),
+	less = true, // LESS compilation, turned on by default
+	verbose = false,
+	beautify = false;
 
 function printUsage() {
 	// format generated using node-optimist...
@@ -92,7 +93,8 @@ function printUsage() {
 		'  -o  alternate output directory            [default: "' + outDir + '"]\n' +
 		'  -p  location of the main package.js file  [default: "' + packageJs + '"]\n' +
 		'  -s  source code root directory            [default: "' + sourceDir + '"]\n' +
-		'  -f  remote source mapping: from local path' +
+		'  -B  pretty-print (beautify) JS output     [default: "' + beautify + '"]\n' +
+		'  -f  remote source mapping: from local path\n' +
 		'  -t  remote source mapping: to remote path' +
 		'\n');
 }
@@ -107,6 +109,7 @@ var opt = nopt(/*knownOpts*/ {
 	"source": path,
 	"verbose": Boolean,
 	"help": Boolean,
+	"beautify": Boolean,
 	"mapfrom": [String, Array],
 	"mapto": [String, Array]
 }, /*shortHands*/ {
@@ -119,6 +122,7 @@ var opt = nopt(/*knownOpts*/ {
 	"s": "--source",
 	"v": "--verbose",
 	"h": "--help",
+	"B": "--beautify",
 	"f": "--mapfrom",
 	"t": "--mapto",
 	"?": "--help"
@@ -140,6 +144,7 @@ sourceDir = opt.source ||
 	(opt.packagejs ? path.dirname(opt.packagejs) : undefined) ||
 	sourceDir;
 less = (opt.less !== false) && less;
+beautify = opt.beautify;
 verbose = opt.verbose;
 
 if ((opt.mapfrom || opt.maptop) && (!opt.mapfrom || !opt.mapto || (opt.mapfrom.length != opt.mapto.length))) {
@@ -157,6 +162,7 @@ if (verbose) {
 	console.log("Using: packagejs=" + packageJs);
 	console.log("Using: source_dir=" + sourceDir);
 	console.log("Using: less=" + less);
+	console.log("Using: beautify=" + beautify);
 }
 
 // utils
@@ -190,13 +196,14 @@ if (!opt.mapfrom || opt.mapfrom.indexOf("enyo") < 0) {
 		// XXX generates $buildDir/enyo.(js|css)' so this is
 		// XXX rather an 'output_prefix' than an 'out_dir'...
 		'-output', path.join(buildDir, 'enyo'),
+		(beautify ? '-beautify' : '-no-beautify'),
 		'package.js'];
 	if (opt.mapfrom) {
 		for (var i=0; i<opt.mapfrom.length; i++) {
 			args.push("-f", opt.mapfrom[i], "-t", opt.mapto[i]);
 		}
 	}
-	run(args);	
+	run(args);
 } else {
 	console.log("Skipping Enyo minification (will be mapped to " + opt.mapto[opt.mapfrom.indexOf("enyo")] + ").");
 }
@@ -204,10 +211,11 @@ if (!opt.mapfrom || opt.mapfrom.indexOf("enyo") < 0) {
 console.log("Minify-ing the application...");
 process.chdir(path.dirname(packageJs));
 args = [node, minifier,
-     '-enyo', enyoDir,
-     '-output', path.join(buildDir, 'app'),
-     (less ? '-less' : '-no-less'),
-     'package.js'];
+	'-enyo', enyoDir,
+	'-output', path.join(buildDir, 'app'),
+	(less ? '-less' : '-no-less'),
+	(beautify ? '-beautify' : '-no-beautify'),
+	'package.js'];
 if (opt.mapfrom) {
 	for (var i=0; i<opt.mapfrom.length; i++) {
 		args.push("-f", opt.mapfrom[i], "-t", opt.mapto[i]);
