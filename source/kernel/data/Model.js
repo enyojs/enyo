@@ -560,7 +560,7 @@
 		* _key_ is the attribute in the schema
 		* _value_ is the entry for the _key_ in the _payload_
 		* _action_ is either _"fetch"_ or _"commit"_, where _"fetch"_ means the data
-		    was just fetched and _"commit"_ means the model is about to be committed
+			was just fetched and _"commit"_ means the model is about to be committed
 		* _payload_ is the mutable full dataset (coming in or going out)
 
 		#### [_relation_](id:relation) - _Enum_
