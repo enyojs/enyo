@@ -1,15 +1,15 @@
 /**
-	_enyo.Audio_ implements an HTML 5 Media element by extending _enyo.Media_,
-	allowing you to play audio.
+	_enyo.Audio_ extends [enyo.Media](#enyo.Media) to implement an HTML 5 Media
+	element that allows you to play audio data.
 
 	Initialize an audio component as follows:
 
 		{kind: "enyo.Audio", src: "http://www.w3schools.com/tags/horse.mp3"}
 	
-	To play the audio, call 'this.$.audio.play()'.
+	To play the audio, call _this.$.audio.play()_.
 
 	To get a reference to the actual HTML 5 Media element, call
-	'this.$.audio.hasNode()'.
+	_this.$.audio.hasNode()_.
 */
 enyo.kind({
 	name: "enyo.Audio",
