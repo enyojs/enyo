@@ -244,8 +244,12 @@ enyo.kind({
 	},
 	//* @public
 	/**
-		Returns an object describing the scroll boundaries with _height_ and
-		_width_ properties.
+		Returns an object describing the scroll boundaries with these properties:
+
+		* _left_, _top_: current left/top scroll position
+		* _maxLeft_, _maxTop_: maximum value for left/top (minimum is always 0)
+		* _clientHeight_, _clientWidth_: size of the scroller on screen
+		* _width_, _height_: size of the full area of the scrolled region
 	*/
 	getScrollBounds: function() {
 		return this.$.strategy.getScrollBounds();
