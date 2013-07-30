@@ -15,7 +15,7 @@
 			If both _volatile_ and _cached_ are set to true, the property
 			is treated as _cached_, and _volatile_ is ignored.
 		*/
-		volatile: true,
+		'volatile': true,
 
 		//*@public
 		/**
@@ -80,11 +80,11 @@
 				enyo.mixin(config, dep);
 			}
 		});
-		if (false === config.volatile) {
+		if (false === config['volatile']) {
 			config.cached = true;
 		}
 		else if (true === config.cached) {
-			config.volatile = false;
+			config['volatile'] = false;
 		}
 		fn.config = config;
 		fn._isProperty = true;
@@ -171,7 +171,7 @@
 		var fn = this[path];
 		// the fast track is for computed properties that are volatile
 		// and do not cache we simply execute them and return the value
-		if (true === $config.volatile) {
+		if (true === $config['volatile']) {
 			return fn.call(this);
 		} else if (true === $config.cached) {
 			if ($config.dirty || $config.defer) {
