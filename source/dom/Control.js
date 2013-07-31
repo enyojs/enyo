@@ -196,7 +196,7 @@ enyo.kind({
 	*/
 	hasNode: function() {
 		// 'generated' is used to gate access to expensive findNodeById call
-		return this.generated && (this.node || this.findNodeById());
+		return (this.generated || this._domDisconnected) && (this.node || this._node || this.findNodeById());
 	},
 	/**
 		Appends the string value of _inAddendum_ to the _content_ of this
@@ -459,6 +459,7 @@ enyo.kind({
 			if (this.generated) {
 				this.rendered();
 			}
+			this.tagsValid = true;
 		}
 		// return 'this' to support method chaining
 		return this;
@@ -734,10 +735,11 @@ enyo.kind({
 	},
 	// DOM, aka direct-to-node, rendering
 	attributeToNode: function(inName, inValue) {
+		var n$ = this.node || this._node;
 		if (inValue === null || inValue === false || inValue === "") {
-			this.node.removeAttribute(inName);
+			n$.removeAttribute(inName);
 		} else {
-			this.node.setAttribute(inName, inValue);
+			n$.setAttribute(inName, inValue);
 		}
 	},
 	attributesToNode: function() {
