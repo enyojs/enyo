@@ -5,7 +5,7 @@ enyo.createMixin({
 	},
 	selected: false,
 	selectedChanged: function () {
-		if (this.selection) {
+		if (this.repeater.selection) {
 			this.addRemoveClass(this.selectionClass || "selected", this.selected);
 			if (this.selected) {
 				this.bubble("onSelected");
@@ -29,7 +29,7 @@ enyo.createMixin({
 		}
 	},
 	__selectionHandler: function (sender, event) {
-		if (this.selection) {
+		if (this.repeater.selection) {
 			this.set("selected", !this.selected);
 		}
 	}

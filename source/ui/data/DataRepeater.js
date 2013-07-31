@@ -62,8 +62,7 @@
 			$p = this.defaultProps || (this.defaultProps = {});
 			$p.owner = $o;
 			$p.mixins = this.childMixins;
-			$p.selection = this.selection;
-			$p.multipleSelection = this.multipleSelection;
+			$p.repeater = this;
 		},
 		constructor: function () {
 			this.__selection = [];
