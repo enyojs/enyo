@@ -53,7 +53,7 @@ enyo.kind = function(inProps) {
 	var name = inProps.name || "";
 	// cannot defer unnamed kinds, kinds with static sections, or ones with
 	// noDefer flag set
-	if (name && !inProps.noDefer && !inProps.statics) {
+	if (name && !inProps.noDefer) {
 		// make a deferred constructor to avoid a lot of kind
 		// processing if we're never used
 		var DeferredCtor = function() {
@@ -81,6 +81,13 @@ enyo.kind = function(inProps) {
 			inProps = null;
 			return FinalCtor;
 		};
+		// copy public statics into DeferredCtor; note, this means
+		// public static items will need to be read-only since the
+		// deferrred kind constructor will have a different copy of
+		// non-object values than the final kind constructor
+		if (inProps.statics) {
+			enyo.mixin(DeferredCtor, inProps.statics);
+		}
 		if ((name && !enyo.getPath(name)) || enyo.kind.allowOverride) {
 			enyo.setPath(name, DeferredCtor);
 		}
@@ -330,6 +337,9 @@ enyo.kind.statics = {
 	}
 };
 
+/**
+	Call this with a enyo.Kind constructor to make sure it's been undeferred.
+*/
 enyo.checkConstructor = function(inKind) {
 	if (enyo.isFunction(inKind)) {
 		// if a deferred enyo kind, finish that work first
