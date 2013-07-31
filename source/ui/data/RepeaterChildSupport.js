@@ -20,7 +20,7 @@ enyo.createMixin({
 		this.inherited(arguments);
 	},
 	create: function () {
-		this.__sbid = this.binding({from: ".model.selected", to: ".selected", twoWay: true, kind: "enyo.BooleanOnlyBinding"});
+		this.__sbid = this.binding({from: ".model.selected", to: ".selected", twoWay: true, kind: "enyo.BooleanBinding"}).id;
 	},
 	destroy: function () {
 		var $b = enyo.Binding.find(this.__sbid);
