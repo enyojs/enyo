@@ -236,7 +236,7 @@
 		},
 		selectAll: function () {
 			if (this.multipleSelection) {
-				var $s = this.__selection, c$;
+				var $s = this.__selection;
 				$s.length = 0;
 				for (var $i=0; $i<this.length; ++$i) {
 					this.select($i);
