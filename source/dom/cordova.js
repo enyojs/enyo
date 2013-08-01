@@ -25,6 +25,7 @@ enyo.ready(function(){
 			"deviceready",
 			"pause",
 			"resume",
+			"relaunch",
 			"online",
 			"offline",
 			"backbutton",
