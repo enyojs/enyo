@@ -145,7 +145,6 @@
 		reset: function () {
 			var $i, p$;
 			if (this.generated && this.$.scroller.generated) {
-				this.destroyClientControls();
 				for ($i=1; (p$=this.$.active.children[$i]); --$i) {
 					this.resetPage(p$);
 					p$.index = $i;
@@ -188,6 +187,7 @@
 				if (c$.model !== d$) {
 					c$.set("index", $j);
 					c$.set("model", d$);
+					c$.set("selected", this.isSelected(d$));
 				}
 			}
 			if ($i < p.children.length) {
@@ -562,6 +562,24 @@
 			this.adjustPageSize(this.$.page1);
 			this.adjustPageSize(this.$.page2);
 			this.adjustLastPage();
+		},
+		getChildForIndex: function (i) {
+			var p$ = this.pageForIndex(i);
+			if (this.$.page1.index == p$) {
+				p$ = this.$.page1;
+			} else if (this.$.page2.index == p$) {
+				p$ = this.$.page2;
+			} else {
+				p$ = false;
+			}
+			if (p$) {
+				for (var $i=0, c$; (c$=p$.children[$i]); ++$i) {
+					if (c$.index == i) {
+						return c$;
+					}
+				}
+			}
+			return false;
 		}
 
 	});

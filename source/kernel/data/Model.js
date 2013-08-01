@@ -1299,7 +1299,7 @@
 			(this model).
 		*/
 		flushChanges: function () {
-			this.doChange({previous: this.___previous, changed: this.__changed, model: this});
+			this.doChange({previous: this.__previous, changed: this.__changed, model: this});
 		},
 
 		//*@protected

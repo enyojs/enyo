@@ -9,12 +9,33 @@
 	enyo.kind({
 		name: "enyo.DataRepeater",
 		kind: "enyo.View",
+		//*@public
+		/**
+			Set this to true to allow selection support to be enabled. Default
+			is true for single-selection. Note that selection stores a reference to
+			the model that is selected.
+		*/
+		selection: true,
+		/**
+			Set this to true to allow multiple children to be selected simultaneously.
+			If this is true, then the `selection` property will be set to true even if
+			it is `false`.
+		*/
+		multipleSelection: false,
+		/**
+			In cases where selection should be detected from the state of the model
+			this property should be set to the property that the _enyo.Repeater_ should
+			observe and modify for changes. This would allow the model to be changed and
+			the _enyo.Repeater_ would show this change without direct interaction. Note that
+			this property must be a part of the _schema_ of the model or its changes will not
+			be detected properly.
+		*/
+		selectionProperty: "",
+		//*@protected
 		childMixins: [
 			"enyo.AutoBindingSupport",
 			"enyo.RepeaterChildSupport"
 		],
-		selection: true,
-		multipleSelection: false,
 		concat: ["childMixins"],
 		controlParentName: "container",
 		containerName: "container",
@@ -28,7 +49,8 @@
 			onModelRemoved: "modelRemoved",
 			onModelsRemoved: "modelsRemoved",
 			onSelected: "childSelected",
-			onDeselected: "childDeselected"
+			onDeselected: "childDeselected",
+			onModelChanged: "modelPropertyChanged"
 		},
 		bindings: [
 			{from: ".controller.length", to: ".length"},
@@ -62,12 +84,17 @@
 			$p = this.defaultProps || (this.defaultProps = {});
 			$p.owner = $o;
 			$p.mixins = this.childMixins;
-			$p.selection = this.selection;
-			$p.multipleSelection = this.multipleSelection;
+			$p.repeater = this;
 		},
 		constructor: function () {
 			this.__selection = [];
 			return this.inherited(arguments);
+		},
+		create: function () {
+			this.inherited(arguments);
+			if (this.multipleSelection) {
+				this.selection = true;
+			}
 		},
 		controllerFindAndInstance: function(ctor, inst) {
 			this.inherited(arguments);
@@ -119,7 +146,6 @@
 				this.$[this.containerName] = this.$[$n];
 			}
 		},
-
 		modelAdded: function (sender, event) {
 			if (sender == this.controller) {
 				this.add(event.model, event.index);
@@ -151,37 +177,83 @@
 				this.$[this.containerName].renderReusingNode();
 			}
 		},
+		getChildForIndex: function (i) {
+			return this.$.container.children[i];
+		},
 		childSelected: function (sender, event) {
-			var $c = event.child,
-				$s = this.__selection, $i, $t;
-			if (this.selection) {
-				$i = enyo.indexOf($c, $s);
-				if (this.multipleSelection) {
-					if (!~$i) {
-						$s.push($c);
-					}
-				} else {
-					while($s.length) {
-						$t = $s.pop();
-						$t.set("selected", false);
-					}
-					$s.push($c);
-				}
-			}
+			this.select(event.index);
 			return true;
 		},
 		childDeselected: function (sender, event) {
-			var $c = event.child,
-				$s = this.__selection, $i;
+			this.deselect(event.index);
+			return true;
+		},
+		select: function (i) {
+			var c$ = this.getChildForIndex(i),
+				m$ = this.controller.at(i),
+				$s = this.__selection, i$;
 			if (this.selection) {
-				$i = enyo.indexOf($c, $s);
-				if (!!~$i) {
-					$s.splice($i, 1);
+				if (this.multipleSelection) {
+					if (!~enyo.indexOf(m$, $s)) {
+						$s.push(m$);
+					}
+				} else {
+					if (!~enyo.indexOf(m$, $s)) {
+						while ($s.length) {
+							i$ = this.controller.indexOf($s.pop());
+							this.deselect(i$);
+						}
+						$s.push(m$);
+					}
+				}
+				if (c$) {
+					c$.set("selected", true);
+				}
+				if (this.selectionProperty) {
+					$s = this.selectionProperty;
+					m$.set($s, true);
 				}
 			}
-			return true;
+		},
+		deselect: function (i) {
+			var c$ = this.getChildForIndex(i),
+				m$ = this.controller.at(i),
+				$s = this.__selection, $i;
+			$i = enyo.indexOf(m$, $s);
+			if (!!~$i) {
+				$s.splice($i, 1);
+			}
+			if (c$) {
+				c$.set("selected", false);
+			}
+			if (this.selectionProperty) {
+				$s = this.selectionProperty;
+				m$.set($s, false);
+			}
+		},
+		isSelected: function (m) {
+			return !!~enyo.indexOf(m, this.__selection);
+		},
+		selectAll: function () {
+			if (this.multipleSelection) {
+				var $s = this.__selection;
+				$s.length = 0;
+				for (var $i=0; $i<this.length; ++$i) {
+					this.select($i);
+				}
+			}
+		},
+		deselectAll: function () {
+			if (this.selection) {
+				var $s = this.__selection, m$, i$;
+				while ($s.length) {
+					m$ = $s.pop();
+					i$ = this.controller.indexOf(m$);
+					this.deselect(i$);
+				}
+			}
 		}
-
+		
 	});
 
 })(enyo);
