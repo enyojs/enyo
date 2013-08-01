@@ -2,29 +2,29 @@
 
 	//*@public
 	/**
-		The _enyo.Store_ kind is a singleton (when used) that aids in
-		managing localized data records at runtime. It tracks models and
-		is an interface for interacting with the data schema for any application.
+		_enyo.Store_, when used, is a singleton that aids in managing localized data
+		records at runtime. It tracks models and is an interface for interacting
+		with the data schema for any application.
 
-		An _enyo.Store_ must have an _enyo.Source_ to be fully functional. The
-		_store_ is agnostic to how the _source_ retrieves or updates records. It
-		provides an abstraction API for finding particular records. It is always
-		accessible from the globally available _enyo.store_ variable.
+		An _enyo.Store_ must have an [enyo.Source](#enyo.Source) to be fully
+		functional. The store is agnostic to how the source retrieves or updates
+		records. It provides an abstraction API for finding particular records. It
+		is always accessible from the globally available _enyo.store_ variable.
 
-		It is instantiated quite simply and would typically be done before instantiating
-		the _enyo.Application_ for your app.
+		Its instantiation is quite simple and would typically be done before the
+		instantiation of your app's [enyo.Application](#enyo.Application).
 
-		new enyo.Store({source: "enyo.Source"}); // now available from enyo.store
+			new enyo.Store({source: "enyo.Source"}); // now available from enyo.store
 
-		NOTE: Much of the public API of _enyo.Store_ needn't be called directly except
-		in very complex remote-backend implementations requiring specialized handling.
-		Most of the API is called by _enyo.Model_ and _enyo.Collection_ for you.
+		NOTE: Much of the public API of _enyo.Store_ needn't be called directly
+		except in very complex remote-backend implementations requiring specialized
+		handling. Most of the API is called for you by [enyo.Model](#enyo.Model) and
+		[enyo.Collection](#enyo.Collection).
 
-		TODO: Much of the implementation is working but in some cases is either absent
-		or only partially completed. Please bear with us as we complete this moving
-		forward.
+		TODO: Much of the implementation is working, but some parts are either
+		absent or only partially completed. Please bear with us as we finish the
+		implementation.
 	*/
-
 
 	enyo.store = null;
 	enyo.models = {
@@ -48,7 +48,7 @@
 	};
 
 	/**
-		As seen https://gist.github.com/jcxplorer/823878, by jcxplorer.
+		As seen at https://gist.github.com/jcxplorer/823878, by jcxplorer.
 		TODO: replace with faster implementation
 	*/
 	var uuid = function () {
@@ -98,28 +98,30 @@
 
 		//*@public
 		/**
-			A simple find mechanism to query valid records in the store.
-			If the _options_ _remote_ property exists and is true it will
+			Provides a simple mechanism to query valid records in the store.
+			If the _options.remote_ property exists and is true, it will
 			execute asynchronously and run the query against the combined
-			result set of records as returned from the remote source and
+			result set of records returned from the remote source and
 			any existing local records. If no _remote_ property exists or
-			it is false (default) it will return synchronously resulting in
-			an array of records if any were found or false otherwise. The
-			first parameter can be either a string or constructor matching
-			the name or kind of the model being queried with an optional
+			it is false (the default), it will return synchronously with an
+			array of records (if any were found), or return false otherwise.
+
+			The first parameter may be either a string or constructor matching
+			the name or kind of the model being queried, with an optional
 			_options_ parameter of an object literal. These options will be
-			passed to the _queryResolver_ method. This method can be overridden
+			passed to the _queryResolver()_ method. This method may be overridden
 			to handle custom implementations for advanced querying needs.
-			If this is a _remote_ request it will return `true`. If it is a
-			synchronous _local only_ request it will return `false` if no
-			records were found for the type.
+			If this is a remote request, it will return true. If it is a
+			synchronous _local only_ request, it will return false if no
+			records are found for the type.
 
 			It is important to note that there is no built-in standard for querying
-			a remote source. The only default action is that the `options.queryParams`,
-			if it exists, will be used as options when making the request via
-			the `source`. In custom situations you should add your query parameters
-			that the backend needs to this _option_ and handle that accordingly.
-			Overload the `queryResolver` method for special handling.
+			a remote source. The only default action is that the
+			_options.queryParams_ property, if it exists, will be used to furnish
+			options when making the request via the source. In custom situations,
+			you should add the query parameters needed by the backend to this
+			property and handle that accordingly. Overload the _queryResolver()_
+			method for special handling.
 		*/
 		find: function (ctor, options) {
 			var $o = options? options: {}, $r = this._recordsForType(ctor, $o);
@@ -131,11 +133,11 @@
 
 		/**
 			Pass a constructor and options to this asynchronous method to retrieve
-			a single record (will use locally if found) and will execute a fetch
-			if needed. If no _success_ method is provided but the record was found
-			locally it will be returned synchronously. The _options_ hash can have
-			a _success_ method, _error_ method and a _params_ object with the properties
-			used to find the correct record.
+			a single record (will use locally if found) and it will execute a fetch
+			if needed. If no _success_ method is provided but the record is found
+			locally, it will be returned synchronously. The _options_ hash may
+			contain a _success_ method, an _error_ method, and a _params_ object with
+			the properties used to find the correct record.
 
 			TODO: not fully implemented
 		*/
@@ -174,18 +176,18 @@
 		//*@public
 		/**
 			Overload this method for special handling of query parameters and options
-			that need to be communicated to a backend. The default attempts to use
-			the `options.queryParams` property, should it exist, as the options to send.
-			How the backend interprets them is dependent on the _remotes_ implementation.
-			If no `remote` option exists in `options` this will return synchronously an
-			array of any models that match the requirements. The `models` parameter
+			that need to be communicated to a backend. By default, it attempts to use
+			the `options.queryParams` property (if it exists) as the options to send.
+			How the backend interprets them is dependent on the remote's implementation.
+			If no _remote_ option exists in _options_, this will return synchronously an
+			array of any models that match the requirements. The _models_ parameter
 			will contain any local records that were found according to the type. If the
-			`queryParams` option exists only records matching the parameters will be returned.
-			If this is a `remote` request it is expected that the backend will filter the
-			return-set accordingly but local records will be filtered.
+			_queryParams_ option exists, only records matching the parameters will be
+			returned. If this is a remote request, it is expected that the backend will
+			filter the return set accordingly, but local records will be filtered.
 
-			[see enyo.Source.find](#) to implement more specific features depending on the
-			driver source.
+			See [enyo.Source.find()](#enyo.Source::find) to implement more specific
+			features depending on the driver source.
 		*/
 		queryResolver: function (ctor, models, options) {
 			var $o = options? enyo.clone(options): enyo.pool.claimObject(true);
@@ -206,9 +208,9 @@
 		//*@public
 		/**
 			Filters an array of models by any properties and matching values
-			in the `params` parameter. By default to be included in the result set
-			a model must match all criteria in the `params` hash. For more complex
-			needs overload this method.
+			in the _params_ parameter. By default, to be included in the result set,
+			a model must match all criteria in the _params_ hash. For more complex
+			needs, overload this method.
 		*/
 		filterResults: function (models, params) {
 			return enyo.filter(models, function (r) {
@@ -269,7 +271,7 @@
 			}
 			// TODO: this may not be useful in and of itself since
 			// most backends will have their own scheme for generating
-			// an id via sequence etc.
+			// an id via sequence, etc.
 			$options.success(model.euuid);
 		},
 		constructor: function () {
@@ -304,11 +306,11 @@
 
 		//*@public
 		/**
-			This method is called by the source when a query has been submitted
-			and results have been retrieved. Here the `models` parameter is an
-			array of any _local_ records in the store were found according to the
-			requested kind of record. These will be concatenated and reduced across
-			the remote result set and then filtered by the `filterResults` method.
+			Called by the source when a query has been submitted and results have
+			been retrieved. Here the _models_ parameter is an array of any local
+			records in the store that were found according to the requested kind of
+			record. These will be concatenated and reduced across the remote result
+			set, and then filtered by the _filterResults_ method.
 		*/
 		didFetchQuery: function (models, options, result) {
 			var $m = models, $o = options, $r = result, $p = options.ctor.prototype.primaryKey;
@@ -395,9 +397,9 @@
 		//*@protected
 		/**
 			Accepts a constructor (name or function) and options and returns an
-			array of records if any were found and an empty array otherwise.
-			Used internally when looking up records by kind. If the option `subkinds`
-			is a truthy value in the optional `options` parameter then it will also
+			array of records if any were found, or an empty array otherwise.
+			Used internally when looking up records by kind. If _subkinds_ is a
+			truthy value in the optional _options_ parameter, then it will also
 			include records that are subkinds of the requested kind.
 		*/
 		_recordsForType: function (ctor, options) {
