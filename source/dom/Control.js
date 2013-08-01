@@ -459,7 +459,6 @@ enyo.kind({
 			if (this.generated) {
 				this.rendered();
 			}
-			this.tagsValid = true;
 		}
 		// return 'this' to support method chaining
 		return this;
