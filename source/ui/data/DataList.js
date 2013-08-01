@@ -187,11 +187,7 @@
 				if (c$.model !== d$) {
 					c$.set("index", $j);
 					c$.set("model", d$);
-					if (this.isSelected(d$)) {
-						c$.set("selected", true);
-					} else {
-						c$.set("selected", false);
-					}
+					c$.set("selected", this.isSelected(d$));
 				}
 			}
 			if ($i < p.children.length) {
