@@ -625,7 +625,7 @@
 			var $i = this.indexOf(sender);
 			if (!!~$i) {
 				this.set("status", enyo.Model.DIRTY);
-				this.doModelChanged({model: sender, index: $i, collection: this});
+				this.doModelChanged({model: sender, index: $i, collection: this, changed: event.changed, previous: event.previous});
 			}
 			return true;
 		},
