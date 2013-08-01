@@ -95,7 +95,7 @@
 		uuid: function () {
 			return uuid();
 		},
-		
+
 		//*@public
 		/**
 			A simple find mechanism to query valid records in the store.
@@ -113,7 +113,7 @@
 			If this is a _remote_ request it will return `true`. If it is a
 			synchronous _local only_ request it will return `false` if no
 			records were found for the type.
-		
+
 			It is important to note that there is no built-in standard for querying
 			a remote source. The only default action is that the `options.queryParams`,
 			if it exists, will be used as options when making the request via
@@ -128,7 +128,7 @@
 			}
 			return false;
 		},
-		
+
 		/**
 			Pass a constructor and options to this asynchronous method to retrieve
 			a single record (will use locally if found) and will execute a fetch
@@ -170,7 +170,7 @@
 			enyo.warn("enyo.Store.findRemote: this method is not implemented yet");
 			return false;
 		},
-		
+
 		//*@public
 		/**
 			Overload this method for special handling of query parameters and options
@@ -183,7 +183,7 @@
 			`queryParams` option exists only records matching the parameters will be returned.
 			If this is a `remote` request it is expected that the backend will filter the
 			return-set accordingly but local records will be filtered.
-		
+
 			[see enyo.Source.find](#) to implement more specific features depending on the
 			driver source.
 		*/
@@ -202,7 +202,7 @@
 			enyo.pool.releaseObject($o);
 			return $m;
 		},
-		
+
 		//*@public
 		/**
 			Filters an array of models by any properties and matching values
@@ -220,7 +220,7 @@
 				return true;
 			});
 		},
-		
+
 		initModel: function (model) {
 			var id = model.euuid = this.uuid();
 			if (!model[model.primaryKey] && !model._didAttemptFetchId && !model.noFetchId) {
@@ -283,7 +283,7 @@
 			enyo.forEach(enyo.models.kinds, this._addModelKind, this);
 			enyo.forEach(enyo.models.queued, this.initModel, this);
 			if (!this.source) {
-				this.source = enyo.Source.defaultSource;
+				this.source = enyo.Source.getDefaultSource();
 			}
 		},
 		constructed: function () {
@@ -301,7 +301,7 @@
 				options.success(result);
 			}
 		},
-		
+
 		//*@public
 		/**
 			This method is called by the source when a query has been submitted
@@ -327,7 +327,7 @@
 				$o.success($m);
 			}
 		},
-		
+
 		didCommit: function (model, options, result) {
 			// TODO: ...
 			if (options.success) {
@@ -391,7 +391,7 @@
 			this._records[kind].all.splice(idx, 1);
 			return true;
 		},
-		
+
 		//*@protected
 		/**
 			Accepts a constructor (name or function) and options and returns an

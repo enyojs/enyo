@@ -18,7 +18,10 @@
 </head>
 <body>
 <script type="text/javascript">
-	new enyo.sample.DataRepeaterSample({classes: "enyo-unselectable"}).renderInto(document.body);
+	new enyo.Scroller({
+		classes: "enyo-unselectable",
+		components: [ { kind: "enyo.sample.DataRepeaterSample" } ]
+	}).renderInto(document.body);
 </script>
 </body>
 </html>
