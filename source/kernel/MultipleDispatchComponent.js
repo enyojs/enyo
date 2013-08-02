@@ -2,8 +2,7 @@
 /**
 	_enyo.MultipleDispatchComponent_ is a purely abstract kind that simply
 	provides a common ancestor for [enyo.Component](#enyo.Component) objects that
-	need the [enyo.MultipleDispatchSupport](#enyo/source/kernel/mixins/MultipleDispatchSupport.js)
-	mixin.
+	need the _enyo.MultipleDispatchSupport_	mixin.
 */
 enyo.kind({
 	
