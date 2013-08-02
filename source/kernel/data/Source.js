@@ -2,7 +2,7 @@
 
 	/**
 		_enyo.Source_ is a pseudo-abstract API for communcating with a backend,
-		which may be either local or remote. [enyo.Store](#enyo.Source) requires a
+		which may be either local or remote. An [enyo.Store](#enyo.Store) requires a
 		source to function properly. An _enyo.Source_ may easily be overloaded to
 		work with specific backend implementations and data formats.
 
@@ -10,7 +10,7 @@
 		relying on GET, POST, PUT and DELETE to communicate with the (remote)
 		source.	For _fetch_ requests, it will use GET. See
 		[enyo.Collection](#enyo.Collection) and [enyo.Model](#enyo.Model) for
-		specifics.
+		details.
 	*/
 
 	var normalize = function (url) {
@@ -30,7 +30,8 @@
 		//*@public
 		/**
 			The type of object to use for requests. As long as the kind has the
-			same API as _enyo.Async_ it should be possible to use it with _enyo.Source_.
+			same API as [enyo.Async](#enyo.Async), it should be possible to use it
+			with _enyo.Source_.
 		*/
 		requestKind: "enyo.Ajax",
 
@@ -73,7 +74,7 @@
 
 		//*@public
 		/**
-			If the (remote) backend is read-only, set this to true to dissallow any
+			If the (remote) backend is read-only, set this to true to disallow any
 			calls to POST, PUT or DELETE.
 		*/
 		readOnly: false,
@@ -101,7 +102,7 @@
 		//*@public
 		/**
 			The default headers to be used in requests if they differ from those
-			in _enyo.AjaxProperties_.
+			in [enyo.AjaxProperties](#enyo/source/ajax/AjaxProperties.js).
 		*/
 		defaultHeaders: null,
 
