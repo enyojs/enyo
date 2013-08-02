@@ -469,7 +469,6 @@ enyo.kind({
 		be used to have it expand to fill the whole window.
 	*/
 	renderInto: function(inParentNode) {
-		console.log('RENDER');
 		// clean up render flags and memoizations
 		this.teardownRender();
 		// inParentNode can be a string id or a node reference
