@@ -126,6 +126,12 @@
 			in the DOM).
 		*/
 		renderInto: function (target) {
+			// Collect all component tree roots
+			if (typeof enyo.roots == 'undefined') {
+				enyo.roots = [];
+			}
+			enyo.roots.push(this);
+			
 			// update the render target for the controller
 			this.set("renderTarget", target);
 			// now we render as usual
