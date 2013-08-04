@@ -168,7 +168,7 @@
 					// done here
 					for (key in prop) {
 						if (base._mixinHandlers[key] instanceof Array) {
-							base._mixinHandlers.push(prop[key]);
+							base._mixinHandlers[key].push(prop[key]);
 						} else if (enyo.exists(base._mixinHandlers[key])) {
 							prev = base._mixinHandlers[key];
 							base._mixinHandlers[key] = [prev, prop[key]];
@@ -312,7 +312,7 @@
 		}
 		// inject our special destructor that will enable the
 		// other mixins to execute their own when the time is right
-		if (!proto._noApplyMixinDestroy) {
+		if (!proto.__noApplyMixinDestroy) {
 			_applyProperties(proto, {destroy: function () {
 				if (this._supportsMixins) {
 					_destroyMixins.call(this);

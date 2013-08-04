@@ -15,7 +15,7 @@
 	var normalize = function (url) {
 		return url.replace(/([^:]\/)(\/+)/g, "$1");
 	};
-	
+
 	var http = /^http/;
 
 	enyo.kind({
@@ -104,7 +104,7 @@
 		// ...........................
 		// PROTECTED PROPERTIES
 
-		_noApplyMixinDestroy: true,
+		__noApplyMixinDestroy: true,
 
 		// ...........................
 		// COMPUTED PROPERTIES
@@ -200,6 +200,16 @@
 			options.method = "DELETE";
 			this.exec("destroy", options);
 		},
+
+		//*@public
+		/**
+			Overload this method for specific needs with regards to requesting
+			a filtered query from the remote (or local) source. Accepts a constructor
+			for the kind of model being queried and any additional options.
+		*/
+		find: function (ctor, options) {
+			// TODO:
+		},
 		exec: function (which, options) {
 			var $options = enyo.only(this._ajaxOptions, options);
 			var $success = this.bindSafely("onSuccess", which, options);
@@ -257,6 +267,44 @@
 			var $kind = this.requestKind || enyo.Ajax;
 			this.requestKind = "string" === typeof $kind? enyo.getPath($kind): $kind;
 			this._ajaxOptions = enyo.keys(enyo.AjaxProperties);
+		},
+
+		// ...........................
+		// STATIC METHODS
+		statics: {
+			getDefaultSource: function() {
+				if (!enyo.Source.defaultSource) {
+					// make sure we create this on the finalized enyo.Source
+					enyo.checkConstructor(enyo.Source);
+					// create our singleton instance
+					enyo.singleton({
+						name: "enyo.Source.defaultSource",
+						kind: "enyo.Source",
+						fetch: function (model, options) {
+							if (options && options.error) {
+								var fn = options.error;
+								options.error = null;
+								fn(options);
+							}
+						},
+						commit: function (model, options) {
+							if (options && options.error) {
+								var fn = options.error;
+								options.error = null;
+								fn(options);
+							}
+						},
+						destroy: function (model, options) {
+							if (options && options.success) {
+								var fn = options.success;
+								options.success = null;
+								fn(options);
+							}
+						}
+					});
+				}
+				return enyo.Source.defaultSource;
+			}
 		}
 
 		// ...........................
@@ -265,35 +313,6 @@
 		// ...........................
 		// OBSERVERS
 
-	});
-
-	//*@protected
-	enyo.ready(function () {
-		enyo.singleton({
-			name: "enyo.Source.defaultSource",
-			kind: "enyo.Source",
-			fetch: function (model, options) {
-				if (options && options.error) {
-					var fn = options.error;
-					options.error = null;
-					fn(options);
-				}
-			},
-			commit: function (model, options) {
-				if (options && options.error) {
-					var fn = options.error;
-					options.error = null;
-					fn(options);
-				}
-			},
-			destroy: function (model, options) {
-				if (options && options.success) {
-					var fn = options.success;
-					options.success = null;
-					fn(options);
-				}
-			}
-		});
 	});
 
 })(enyo);

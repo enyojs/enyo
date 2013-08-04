@@ -2,11 +2,11 @@
 
 	//*@public
 	/**
-		Takes an object and returns a _Boolean_ `true` | `false` if
-		the object is a `enyo.Model` or _subkind_.
+		Returns a Boolean true or false indicating whether the passed-in object is
+		an _enyo.Model_ or a subkind of _enyo.Model_.
 	*/
 	enyo.isModel = function (obj) {
-		return !! (obj && obj._isModel);
+		return !! (obj && obj.__isModel);
 	};
 	//*@protected
 	var isModel = enyo.isModel;
@@ -63,10 +63,9 @@
 		Handles common features of all relations.
 	*/
 	var initRelation = function (props) {
-		var $props = props;
-		enyo.forEach(relationKeys, function (fn) {
-			relationInitializers[fn]($props);
-		});
+		for (var $i=0, k$; (k$=relationKeys[$i]); ++$i) {
+			relationInitializers[k$](props);
+		}
 	};
 
 	//*@protected
@@ -74,51 +73,38 @@
 		Executed in the context of the record.
 	*/
 	var toOneHandler = function (key, rel, val) {
-		var $rec = this[key];
-		if (!$rec) {
-			if (rel.isOwner) {
-				// if the incoming value is an object it is assumed to be
-				// the property hash for the record so we create it in-place
-				if (enyo.isObject(val)) {
-					val[rel.inverseKey] = this;
-					$rec = this[key] = new rel.model(val);
-					$rec._relationKey = key;
+		var $k = key, $r = rel, $v = val;
+		var $m = this[$k], $o;
+		if (!$m) {
+			if ($r.isOwner) {
+				if (enyo.isObject($v)) {
+					$v[$r.inverseKey] = this;
+					$m = this[$k] = new $r.model($v);
+					$m.relationKey = $k;
 				} else {
-					// have to ask the store to look for the correct record first
-					// just to be sure if it is already loaded that we use the same
-					// one
-					var $opts = {};
-					$opts.params = {};
-					$opts.params[rel.inverseKey] = this[rel.relationKey];
-					// note this is a synchronous call because we don't supply
-					// the asynchronous success/error callbacks and that it is
-					// only a local find when executed this way
-					$rec = enyo.store.findOne(rel.model, $opts);
-					// if it isn't local already we create it and if its auto
-					// fetchable call fetch
-					if (!$rec) {
-						$rec = new rel.model();
-						$rec._relationKey = key;
-						$rec.set(rel.inverseKey, this);
-						if (rel.autoFetch) {
-							$rec.fetch();
+					$o = enyo.pool.claimObject(true);
+					$o.params = enyo.pool.claimObject(true);
+					$o.params[$r.inverseKey] = this[$r.relationKey];
+					$m = enyo.store.findOne($r.model, $o);
+					if (!$m) {
+						$m = new $r.model();
+						$m.relationKey = $k;
+						$m.set($r.inverseKey, this);
+						if ($r.autoFetch) {
+							$m.fetch();
 						}
 					}
 				}
 			} else {
-				// we aren't the owner but should have been handed the actual
-				// record
-				$rec = this[key] = val;
-				// since we aren't the owner of the relation we register the owner
-				// as a listener to our events
-				this.addDispatchTarget($rec);
+				$m = this[$k] = $v;
+				this.addDispatchTarget($m);
 			}
 		} else {
-			// well, this would be odd but possible
-			if (rel.isOwner) {
-				$rec.didFetch({}, val);
+			if ($r.isOwner) {
+				$m.didFetch(($o = enyo.pool.claimObject()), $v);
 			}
 		}
+		enyo.pool.releaseObject($o);
 	};
 
 	//*@protected
@@ -126,49 +112,47 @@
 		Executed in the context of the record.
 	*/
 	var toManyHandler = function (key, rel, val) {
-		var $rec = this[key];
-		if (!$rec) {
-			var $pr = rel.collection.prototype.relation || rel;
-			$rec = this[key] = enyo.singleton({kind: rel.collection, relation: enyo.clone($pr)});
-			$rec._relationKey = key;
-			$rec.addDispatchTarget(this);
-			if (rel.inverseKey) {
-				$rec.set(rel.inverseKey, this);
+		var $k = key, $r = rel, $v = val;
+		var $m = this[$k], $o, $c;
+		if (!$m) {
+			$c = $r.collection.prototype.relation || $r;
+			$m = this[$k] = enyo.singleton({kind: $r.collection, relation: enyo.clone($c)});
+			$m.relationKey = $k;
+			$m.addDispatchTarget(this);
+			if ($r.inverseKey) {
+				$m.set($r.inverseKey, this);
 			}
-			if (val) {
-				if (enyo.isArray(val)) {
-					$rec.add(val);
-				} else if (enyo.isObject(val)) {
-					$rec.didFetch({}, val);
+			if ($v) {
+				if (enyo.isArray($v)) {
+					$m.addMany($v);
+				} else if (enyo.isObject($v)) {
+					$m.didFetch(($o = enyo.pool.claimObject()), $v);
 				}
 			}
 		} else {
-			if (val) {
-				$rec.didFetch({}, val);
+			if ($v) {
+				$m.didFetch(($o = enyo.pool.claimObject()), $v);
 			}
 		}
+		enyo.pool.releaseObject($o);
 	};
-
-	// TODO: For the resulting documentation to properly organize these methods
-	// in association with enyo.Model we need a more powerful documentation tool,
-	// enyo.Model.toOne, etc. is ugly and cumbersome.
 
 	//*@public
 	enyo.toOne = function (props) {
-		var $props = props || {};
-		$props._kind = "toOne";
-		$props.handler = $props.handler || toOneHandler;
-		initRelation($props);
-		return $props;
+		var $p = props || {};
+		$p._kind = "toOne";
+		$p.handler = $p.handler || toOneHandler;
+		initRelation($p);
+		return $p;
 	};
 
 	//*@public
 	enyo.toMany = function (props) {
-		var $props = props || {};
-		$props._kind = "toMany";
-		$props.handler = $props.handler || toManyHandler;
-		initRelation($props);
-		return $props;
+		var $p = props || {};
+		$p._kind = "toMany";
+		$p.handler = $p.handler || toManyHandler;
+		initRelation($p);
+		return $p;
 	};
 
 	//*@protected
@@ -179,24 +163,21 @@
 	//*@protected
 	var initializers = {
 		/**
-			If there is a remote key defined we track that and create
+			If there is a remote key defined, we track that and create
 			the appropriate map between the local and remote key.
 		*/
 		remoteKey: function (proto, key, attr) {
-			var $keys = proto._remoteKeys || (proto._remoteKeys = {});
-			if (attr.remoteKey) {
-				// so now we know it is a remote key and we have mapped
-				// it to the local key
-				$keys[attr.remoteKey] = key;
+			var $k = proto.__remoteKeys || (proto.__remoteKeys = {}), $a = attr;
+			if ($a.remoteKey) {
+				$k[$a.remoteKey] = key;
 			}
 		},
 		type: function (proto, key, attr) {
 			// nop for now
 		},
 		/**
-			If a formatter was defined as a string it is attempted to be
-			grabbed from the prototype for the model and if it isn't found
-			it uses the default.
+			If a formatter was defined as a string, we attempt to obtain it from
+			the prototype for the model; if it isn't found, we use the default.
 		*/
 		formatter: function (proto, key, attr) {
 			if (attr.formatter) {
@@ -216,13 +197,13 @@
 			attr.formatter = defaultFormatter;
 		},
 		/**
-			If a relation is define for the attribute we go ahead and
+			If a relation is defined for the attribute, we go ahead and
 			initialize what we can.
 		*/
 		relation: function (proto, key, attr) {
-			var $rels = proto._relations || (proto._relations = {});
-			if (attr.relation) {
-				$rels[key] = attr.relation;
+			var $r = proto.__relations || (proto.__relations = {}), $a = attr;
+			if ($a.relation) {
+				$r[key] = $a.relation;
 			}
 		}
 	};
@@ -230,66 +211,64 @@
 	//*@protected
 	/**
 		The known and available attribute keys. All others are ignored (removed).
-		A separate initializer is setup for each of these for modularity and
-		(internal) extensibility in the future and easier debugging. They are retrieved
-		from the initializers because for future options you only need to add the
-		entry there and it will automatically be handled.
+		A separate initializer is set up for each of these for the sake of
+		modularity, better (internal) extensibility in the future, and greater ease
+		of debugging. They are retrieved from the initializers because, for future
+		options, you only need to add the entry there and it will automatically be
+		handled.
 	*/
 	var attributeKeys = enyo.keys(initializers);
 
 	//*@protected
 	var normalizeAttribute = function (proto, key, attr, attrs) {
-		var $prop = attrs[key] = attr? enyo.only(attributeKeys, attr): {};
-		var $proto = proto;
-		var $key = key;
-		enyo.forEach(attributeKeys, function (fn) {
-			initializers[fn]($proto, $key, $prop);
-		});
+		var $s = attrs, $a = attr, $k = key;
+		var $p = $s[$k] = $a? enyo.only(attributeKeys, $a): {};
+		var $r = proto;
+		for (var $i=0, f$; (f$=attributeKeys[$i]); ++$i) {
+			initializers[f$]($r, $k, $p);
+		}
 	};
 
 	//*@protected
 	/**
-		Attempt to do all the necessary setup on our attributes in a single
-		pass as opposed to several. Actions are broken up for modularity,
-		better (internal) extensibility in the future and easier debugging.
+		Attempts to do all the necessary setup for our attributes in a single pass
+		as opposed to multiple passes. Actions are broken up for the sake of
+		modularity, better (internal) extensibility in the future, and greater ease
+		of debugging.
 	*/
 	var normalizeAttributes = function (proto, attrs) {
-		var key, $prop, $keys = proto._attributeKeys;
-		if ($keys) {
-			$keys = (proto._attributeKeys = enyo.clone($keys));
+		var $k, $p = proto, $s = $p.__attributeKeys, $a = attrs, t$;
+		if ($s) {
+			$s = ($p.__attributeKeys = enyo.clone($s));
 		} else {
-			$keys = (proto._attributeKeys = []);
+			$s = ($p.__attributeKeys = []);
 		}
-		for (key in attrs) {
-			if (!~enyo.indexOf(key, $keys)) {
-				$keys.push(key);
+		for ($k in $a) {
+			if (!~enyo.indexOf($k, $s)) {
+				$s.push($k);
 			}
-			$prop = attrs[key] = enyo.clone(attrs[key]);
-			normalizeAttribute(proto, key, $prop, attrs);
+			t$ = $a[$k] = enyo.clone($a[$k]);
+			normalizeAttribute($p, $k, t$, $a);
 		}
 	};
 
 	//*@protected
-
 	var initRelations = function () {
-		var key, $rel, $rels = this._relations || (this._relations = {});
-		// since at load time we can't be sure all the constructors are loaded
-		// we have to resort to doing this at runtime
-		// TODO: Could register relations globally and have an enyo.ready call
-		// that does this once for all known relations as opposed to every time
-		// a new model is instanced (with potentially far more overhead)
-		for (key in $rels) {
-			$rel = $rels[key];
-			if ($rel.isOwner) {
-				switch ($rel._kind) {
+		// TODO: This could be improved to be far more performant without the
+		// requirement of doing it at runtime
+		var $k, r$, $s = this.__relations || (this.__relations = {});
+		for ($k in $s) {
+			r$ = $s[$k];
+			if (r$.isOwner) {
+				switch (r$._kind) {
 				case "toOne":
-					if (!enyo.isFunction($rel.model)) {
-						$rel.model = enyo.getPath($rel.model);
+					if (!enyo.isFunction(r$.model)) {
+						r$.model = enyo.getPath(r$.model);
 					}
 					break;
 				case "toMany":
-					if (!enyo.isFunction($rel.collection)) {
-						$rel.collection = enyo.getPath($rel.collection);
+					if (!enyo.isFunction(r$.collection)) {
+						r$.collection = enyo.getPath(r$.collection);
 					}
 				}
 			}
@@ -298,105 +277,85 @@
 
 	//*@protected
 	/**
-		Used to breakdown a destroyed model.
+		Breaks down a destroyed model.
 	*/
 	var breakdown = function (model) {
-		// make sure to cleanup any relations that have been instantiated
-		// for this where this model was the owner
-		var key, $rel, $rels = model._relations;
-		for (key in $rels) {
-			$rel = $rels[key];
-			if ($rel.isOwner) {
-				// TODO: For now we just orphan related models but possibly
-				// should determine a way to know whether or not to destroy
-				// them as well
-				// if the relation is a toMany than we should be looking at
-				// a collection, since we own that collection, we destroy it
-				// but the models will still exist
-				if ($rel._kind == "toMany") {
-					if (model[key]) {
-						model[key].destroy();
-						model[key] = null;
+		var $k, r$, $m = model, $r = $m.__relations;
+		for ($k in $r) {
+			r$ = $r[$k];
+			if (r$.isOwner) {
+				// TODO: We currently orphan related models, but perhaps we
+				// should be destroying them as well
+				if (r$._kind == "toMany") {
+					if ($m[$k]) {
+						$m[$k].destroy();
+						$m[$k] = null;
 					}
-				} else if ($rel._kind == "toOne") {
-					if (model[key]) {
-						model[key].removeDispatchTarget(model);
-						if ($rel.inverseKey) {
-							model[key].set($rel.inverseKey, null);
+				} else if (r$._kind == "toOne") {
+					if ($m[$k]) {
+						$m[$k].removeDispatchTarget($m);
+						if (r$.inverseKey) {
+							$m[$k].set(r$.inverseKey, null);
 						}
-						model[key] = null;
+						$m[$k] = null;
 					}
 				}
 			}
 		}
-		// continue the normal component breakdown for the rest
-		enyo.Component.prototype.destroy.call(model);
+		enyo.Component.prototype.destroy.call($m);
 	};
 
 	//*@protected
 	/**
 		Initialization routine for all model kinds. Is abstracted such that
-		it can be used at run-time for generic models that are attempting to
-		infer their own schemas from the data structure they encountered.
+		it can be used at runtime for generic models that are attempting to
+		infer their own schemas from the data structures they encounter.
 	*/
 	var initModel = function (proto, props) {
-
-		// the prototype of the given constructor
-		var $proto = proto;
-
-		// we break these operations for clarity
-		// first we handle the attributes
-		// if this is a subkind of another model the
-		// attributes hash will already exist and we
-		// we need to clone it for posterity
-		if ($proto._attributes) {
-			$proto._attributes = enyo.clone($proto._attributes);
+		var $p = proto;
+		// if the prototype already has attributes defined, we want to preserve
+		// them - and ensure that modifications will not transcend the kind
+		if ($p.__attributes) {
+			$p.__attributes = enyo.clone($p.__attributes);
 		} else {
-			// otherwise we need to create a new one to work with
-			$proto._attributes = {};
+			// otherwise we have to create a new object hash
+			$p.__attributes = {};
 		}
-		if ($proto._relations) {
-			$proto._relations = enyo.clone($proto._relations);
+		// same deal with the relations
+		if ($p.__relations) {
+			$p.__relations = enyo.clone($p.__relations);
 		}
-		// the attributes serve as a way to preserve the original
-		// definition of a model
-
-		// we take the new attributes and preserve them along with
-		// any current values
-		enyo.mixin($proto._attributes, props, {ignore: true});
-		// do the rest of the initialization routine on the attributes
-		// in a single pass
-		normalizeAttributes($proto, $proto._attributes);
+		// FIXME: This will most likely break some inheritance
+		// between models...
+		enyo.mixin($p.__attributes, props, {ignore: true});
+		normalizeAttributes($p, $p.__attributes);
 	};
 
 	//*@protected
 	/**
-		When the kind features chain comes across a model definition
-		we need to ensure some setup so we do this once for any kind
+		When the kind features chain comes across a model definition,
+		we need to ensure some setup, so we do this once for any kind
 		up front to be as efficient as possible.
 	*/
 	enyo.kind.features.push(function (ctor, props) {
-		if (!isModel(ctor.prototype)) {
-			return;
+		var $c = ctor, $s = props, $p = $c.prototype, $o;
+		if (isModel($p)) {
+			// this is part of the kind registration for a store
+			enyo.models.add($c);
+			// initialize the prototype
+			initModel($p, $s.attributes || ($o = enyo.pool.claimObject(true)));
+			// remove attributes completely, as they have been moved
+			delete $p.attributes;
+			// if there isn't a url defined, we attempt to make one to follow
+			// convention
+			$p.url = $s.url || !$p.noUrl? ($p.name || $p.kindName).replace(/^(.*)\./g,""): "";
+			enyo.pool.releaseObject($o);
 		}
-		var $proto = ctor.prototype;
-		// register this kind for use in a store
-		enyo.models.add(ctor);
-		initModel($proto, props.attributes || {});
-
-		// we are no longer concerned with the attributes property of the
-		// properties for this kind and do not wish them to be added to
-		// to the kind body so we remove it
-		delete $proto.attributes;
-
-		// we attempt to auto generate a url when necessary
-		$proto.url = props.url || !$proto.noUrl? ($proto.name || $proto.kindName)
-			.replace(/^(.*)\./g, "").toLowerCase(): "";
 	});
 	
 	//*@protected
 	var isRemoteKey = function (k) {
-		var $a = this._attributes;
+		var $a = this.__attributes;
 		for (var $i in $a) {
 			if ($a[$i].remoteKey == k) {
 				return true;
@@ -407,314 +366,315 @@
 
 	//*@protected
 	/**
-		Without interfering with the construction chain we need to register
-		the record with the store. This cannot be done in during the construction
+		Without interfering with the construction chain, we need to register
+		the record with the store. This cannot be done during the construction
 		chain.
 	*/
 	enyo.kind.postConstructors.push(function () {
-		if (this._isModel && enyo.store) {
-			enyo.store.initModel(this);
+		if (this.__isModel) {
+			enyo.models.queue(this);
 		}
 	});
 
 	//*@public
 	/**
-		The _status_ of an `enyo.Model` will be one of those defined by values in
-		`enyo.Model`. They can be checked explicitly against these statuc globals
-		(e.g. `enyo.Model.ERROR.TYPE`).
+		The status of an _enyo.Model_ will be one of values defined in the _STATES_
+		hash. A Model's status may be checked explicitly against these status
+		globals (e.g., _enyo.Model.ERROR.TYPE_).
 	*/
 	var STATES = {};
 
 	//*@public
 	/**
-		There are multiple error states each with a different meaning.
+		There are multiple error states, each with a different meaning
 	*/
 	var ERROR = STATES.ERROR = {};
 
 	/**
-		When an attribute with a defined `type` is `set` on a model and fails
-		to be or become (after being run through the `typeWrangler`) the correct
-		`type` the model enters this state.
+		The state of a model when an attribute is set with a defined type, but fails
+		to be or become (after being run through the typeWrangler) the correct type
 	*/
 	ERROR.TYPE =						0x01;
 
 	/**
-		When an error occurs during initialization because the model could not
-		determine the _schema_ for attributes based on their definition or implied
-		from `defaults` or data supplied to the constructor the model enters this
-		state.
+		The state of a model when an error occurs during initialization because the
+		model cannot determine the schema for attributes directly from a definition
+		or by inference from defaults or data supplied to the constructor
 	*/
 	ERROR.SCHEMA =						0x02;
 
 	/**
-		When a model receives a bad response from the `enyo.Source` for the application
-		it will enter this state.
+		The state of a model that receives a bad response from the _enyo.Source_ for
+		the application
 	*/
 	ERROR.RESPONSE =					0x03;
 
 	/**
-		When a model attempts to execute an action against a remote and the store does
-		not exist or the source is unavailable it will enter this state.
+		The state of a model that attempts to execute an action against a remote
+		when the store does not exist or the source is unavailable
 	*/
 	ERROR.SOURCE =						0x04;
 
 	//*@public
 	/**
-		When the model is attempting to fetch, commit or destroy it will be in a busy
-		state, one of the following.
+		When the model is attempting to fetch, commit, or destroy, it will be in one
+		of the _BUSY_ states.
 	*/
 	var BUSY = STATES.BUSY = {};
 
 	/**
-		When the model is in the process of fetching data from the `enyo.Source` for the
-		application it will enter this state.
+		The state of a model that is in the process of fetching data from the
+		_enyo.Source_ for the application
 	*/
 	BUSY.FETCHING		=				0x11;
 
 	/**
-		When the model is in the process of committing data to the `enyo.Source` for the
-		application it will enter this state.
+		The state of a model that is in the process of committing data to the
+		_enyo.Source_ for the application
 	*/
 	BUSY.COMMITTING		=				0x12;
 
 	/**
-		When the model is in the process of being destroyed it will be in this state.
+		The state of a model that is in the process of being destroyed
 	*/
 	BUSY.DESTROYING		=				0x13;
 
 	//*@public
 	/**
-		The CLEAN state implies that the model has had values applie to it but they
-		are synchronized with the given `source` and does not need to be committed.
-		This is also true of a model whose values were set during construction or if
-		it had default values defined and applied.
+		The state of a model that has had values applied to it, but only values that
+		are synchronized with the given source and do not need to be committed. For
+		example, this will be the state of a model whose values have just been set
+		during construction, or one to which default values have just been applied.
 	*/
 	var CLEAN = STATES.CLEAN =			0x21;
 
 	//*@public
 	/**
-		If a model has been destroyed it will no longer exist in the `enyo.store` or
-		in the remote. Changes will not be tracked.
+		The state of a model that has been destroyed.  It will no longer exist in
+		the	_enyo.Store_ or in the remote, and changes will not be tracked.
 	*/
 	var DESTROYED = STATES.DESTROYED =	0x31;
 
 	//*@public
 	/**
-		A model will be in the NEW state if it is recently created and has had no
-		values applied to it that are in the defined schema (either via attributes
-		explicitly or defaults/initial values implicitly). If default values are used
-		during setup or values applied the model will not be in the NEW state.
+		The state of a recently-created model, to which no values have been applied
+		(either explicitly via attributes or implicitly via	defaults/initial
+		values). If default values are used during setup or values are applied
+		later, the model will not be in the _NEW_ state.
 	*/
 	var NEW = STATES.NEW =				0x41;
 
 	//*@public
 	/**
-		A model will be in the DIRTY state if it has a defined schema and an attribute
-		of the schema has been modified and it needs to be synchronized. The only
-		exception is if a model is created and uses default values it will not be in
-		the DIRTY state until a modification takes place.
+		The state of a model that has a defined schema with an attribute that has
+		been modified and needs to be synchronized. The only exception is a
+		recently-created model that still retains default values; it will not be in
+		the _DIRTY_ state until a modification takes place.
 	*/
 	var DIRTY = STATES.DIRTY =			0x51;
 
 	//*@public
 	/**
-		The `enyo.Model` _kind_ is, simply put, an object that represents data. It
-		has a common and abstracted interface by which it can be manipulated and
-		persisted. When used in tandem with `enyo.Collection`, `enyo.Store` and
-		`enyo.Source` it can be a well defined _schema_ representing _objects_ that
-		in your application. They can have an implicitly derived _schema_ or an
-		explicitly defined _schema_ according to your implementation and needs.
+		_enyo.Model_ is, simply put, an object that represents data. It
+		has a common and abstracted interface through which it may be manipulated
+		and persisted. When used in conjunction with
+		[enyo.Collection](#enyo.Collection), [enyo.Store](#enyo.Store), and
+		[enyo.Source](#enyo.Source), it can be a well-defined schema representing
+		objects used in your application. The schema may be explicitly defined or
+		implicitly derived, depending on your specific implementation and needs.
 
-		[see enyo.Collection](#), [see enyo.Store](#), [see enyo.Source](#)
+		See [enyo.Collection](#enyo.Collection), [enyo.Store](#enyo.Store), and
+		[enyo.Source](#enyo.Source).
 
-		__TODO: There are still features left to be implemented including but not
-		limited to the following:__
+		TODO: There are still features left to be implemented, including (but not
+		limited to) the following:
 
 		- field validators and error state based on validation
 		- optional change set commits (as opposed to every field on every commit)
 
-		A _schema_ for a _model_ is defined in the `attributes` property (hash). Each
-		key in this hash represents an entry in the _schema_. It can be better defined
-		with the _schema options_ hash. The _schema options_ are a set of properties
-		that describe what this _attribute_ is and in some cases how it interacts with
-		other _schemas_. The _schema options_ are as follows.
+		A schema for a model is defined in the _attributes_ property (hash). Each
+		key in this hash represents an entry in the schema. It can be better defined
+		with the _schema options_ hash. The schema options are a set of properties
+		that describe what this attribute is and, in some cases, how it interacts with
+		other schemas. The schema options are as follows.
 
-		###### [Schema Options](id:schema-options)
+		### [Schema Options](id:schema-options)
 
-		##### [`remoteKey`](id:remoteKey) - _String_
+		#### [_remoteKey_](id:remoteKey) - _String_
 
-		In cases where the remote key should differ from the local key specify what
-		`remoteKey` should be paired with this local key. For example, a table in your
-		RDBMS _schema_ has an index _my\_table\_id_ but this is ugly to reference in
-		the client-side source you could map it to (local) _id_.
+		In cases where the remote key should differ from the local key, specify what
+		_remoteKey_ should be paired with this local key. For example, a table in
+		your RDBMS schema may have an index of _my\_table\_id_, but because this is
+		ugly to reference in the client-side source, you could map it to (local) _id_.
 
-		```
-		attributes: {
-			// the key defined here is the attribute we want to use
-			// in our application
-			id: {
-				// here we tell it that the remote key it should use
-				// for this will have a different name
-				remoteKey: "my_table_id"
-			}
-		}
-		```
+        attributes: {
+            // the key defined here is the attribute we want to use
+            // in our application
+            id: {
+                // here we tell it that the remote key it should use
+                // for this will have a different name
+                remoteKey: "my_table_id"
+            }
+        }
 
-		##### [`type`](id:type) - _Function (object constructor)_ or _String_
+		#### [_type_](id:type) - _Function (object constructor)_ or _String_
 
-		When specified the incoming data will be passed to the constructor defined by
-		`type`. For example, if your database provides a value representing a date but
-		is stored as a unix timestamp you could specify `Date` as the `type` and when
-		data is retrieved/added for this key it will be passed to the _constructor_ for
-		the named `type`. This can be a constructor or a String placeholder for a
-		constructor. __If the `type` is a custom _kind_ that requires a different
-		approach than simply supplying the data to the constructor you will have to use
-		the `typeWrangler` ([see typeWrangler](#typeWrangler)) _schema option_ for type
-		coercion.__ Note that if a `type` is specified but coercion fails the _model_
-		will __throw an exception__. This should be used, however, as a sanity check and
-		can help to find flaws in _schema_ designs both local and remote.
+		When specified, the incoming data will be passed to the constructor defined
+		by _type_. For example, if your database provides a value representing a
+		date but is stored as a Unix timestamp, you could specify _Date_ as the
+		_type_ and when data is retrieved/added for this key, it will be passed to
+		the constructor for the named _type_. This may be a constructor or a String
+		placeholder for a constructor.
+		
+		If the _type_ is a custom kind that requires more work than simply supplying
+		the data to the constructor, you will have to use the typeWrangler schema
+		option for type coercion. Note that if a _type_ is specified but coercion
+		fails, the model will throw an exception. This should be used as a sanity
+		check and may help you to find flaws in schema designs, both local and
+		remote.
 
-		```
-		attributes: {
-			published: {
-				type: Date
-			}
-		}
+        attributes: {
+            published: {
+                type: Date
+            }
+        }
 
-		##### [`formatter`](id:formatter) - _Function_ or _String_
+		#### [_formatter_](id:formatter) - _Function_ or _String_
 
-		There are times when incoming data will be in an unuseful form or structure.
-		While both the `enyo.Source` and `enyo.Model` _kinds_ supply a generic `filter`
-		method for incoming data it may be more convenient to supply a separate data
-		formatter for a particular key. For example, if you're using a public API to
-		retrieve data and it comes back as a nested object in which the useful data is
-		deeper in the tree you can use this method to retrieve just the useful
-		information. This _method_ must return the desired data. If a `typeWrangler`
-		([see typeWrangler](#typeWrangler)) exists for this _schema option_ the
-		`formatter` will be executed first. The _function_ takes the form of
-		`function (key, value, action, payload)` where `key` is the _attribute_ in the
-		schema, `value` is the entry for that `key` in the `payload`, `action` is either
-		"fetch" or "commit" where "fetch" means the data was just fetched and "commit"
-		means the _model_ is about to be committed, and `payload` is the mutable full
-		dataset (coming in or going out).
+		Sometimes incoming data will be in a non-useful form or structure.
+		While both the _enyo.Source_ and _enyo.Model_ kinds supply a generic
+		_filter()_ method for incoming data, it may be more convenient to create a
+		separate data formatter for a particular key. For example, if you're using a
+		public API to retrieve data and it comes back as a nested object in which
+		the useful data is deep in the tree, you can use this method to retrieve
+		just the useful information. This method must return the desired data. If a
+		typeWrangler exists for this schema option, the _formatter_ will be executed
+		first.
+		
+		The function takes the form
+		
+        function (key, value, action, payload)
 
+		where
 
-		##### [`relation`](id:relation) - _Enum_
-		__TODO: While relationships do function their API is considered _volatile_ until
-		a future release and is only partially implemented in `enyo.Store`
-		([see enyo.Store](#))__
+		* _key_ is the attribute in the schema
+		* _value_ is the entry for the _key_ in the _payload_
+		* _action_ is either _"fetch"_ or _"commit"_, where _"fetch"_ means the data
+			was just fetched and _"commit"_ means the model is about to be committed
+		* _payload_ is the mutable full dataset (coming in or going out)
 
-		Relationships between _schemas_ (_models_) are defined by supplying _relation
-		options_ to the 2 known _relation types_ `enyo.toOne` and `enyo.toMany` and.
-		These _relation types_ are _functions_ that take your
-		_relation options_ and uses them to create an appropriate handler for the
-		`relation`.
+		#### [_relation_](id:relation) - _Enum_
 
-		```
-		attributes: {
-			comments: {
-				relation: enyo.toMany({
-					autoFetch: true,
-					inCommit: false,
-					inverseKey: "ownerId",
-					relationKey: "id",
-					model: "models.CommentModel"
-				})
-			}
-		}
-		```
+		TODO: While relationships do function, the API is considered volatile at
+		present, and is only partially implemented in [enyo.Store](#enyo.Store).
 
-		###### [Relation Options](id:relation-options)
+		Relationships between schemas (models) are defined by supplying _relation
+		options_ to the two known _relation types_, _enyo.toOne_ and _enyo.toMany_.
+		These relation types are _functions_ that take your relation options and use
+		them to create an appropriate handler for the relation.
 
-		##### [`autoFetch`](id:autoFetch) - _Boolean_ (_default_ `true`)
+        attributes: {
+            comments: {
+                relation: enyo.toMany({
+                    autoFetch: true,
+                    inCommit: false,
+                    inverseKey: "ownerId",
+                    relationKey: "id",
+                    model: "models.CommentModel"
+                })
+            }
+        }
+
+		### [Relation Options](id:relation-options)
+
+		#### [_autoFetch_](id:autoFetch) - _Boolean_ (default: true)
 
 		When the incoming data for a particular relation is not included in the
-		_dataset_ and needs to be _fetched_ separately this _relation option_ can be set
-		to `true`. Sometimes it is desirable to post-pone fetching of a relationship
-		that is not included in the original payload and in such a case `autoFetch`
-		should be explicitly set to `false`.
+		dataset and needs to be fetched separately, this relation option may be set
+		to _true_. Sometimes it is desirable to postpone fetching for a relationship
+		that is not included in the original payload; in such cases, _autoFetch_
+		should be explicitly set to _false_.
 
-		##### [`model`](id:model) - _Function (object constructor)_ or _String_
+		#### [_model_](id:model) - _Function (object constructor)_ or _String_
 
-		This is the _constructor_ or _string_ placeholder for the _constructor_ of the
-		_kind_ of _model_ to use for this `relation`. If `model` is supplied for a
-		`enyo.toMany` `relation` it will use a generic `enyo.Collection` with that
-		_model kind_. If there is a custom _collection kind_ use the `collection`
-		_relation option_ instead ([see collection](#collection)).
+		This is the constructor or String placeholder for the constructor of the
+		kind of model to use for this relation. If _model_ is supplied for an
+		_enyo.toMany_ relation, it will use a generic _enyo.Collection_ with that
+		model kind. If there is a custom collection kind, use the _collection_
+		relation option (below) instead.
 
-		##### [`collection`](id:collection) - _Function (object constructor)_ or _String_
+		#### [_collection_](id:collection) - _Function (object constructor)_ or _String_
 
-		This is only used in `enyo.toMany` `relations` and will be
-		ignored in `enyo.toOne` `relations`. This _constructor_ or _string_ placeholder
-		for the _constructor_ of the _kind_ of _collection_ to use for this `relation`.
-		When supplying a custom _collection kind_ that _kind_ is responsible for being
-		configured to use the correct _model kind_.
+		This is only used in _enyo.toMany_ relations; it will be ignored in
+		_enyo.toOne_ relations. This constructor or String placeholder for the
+		constructor of the kind of collection to use for this relation. When
+		you supply a custom _collection kind_, that kind is responsible for being
+		configured to use the correct model kind.
 
-		##### [`inCommit`](id:inCommit) - _Boolean_ (_default_ `false`)
+		#### [_inCommit_](id:inCommit) - _Boolean_ (default: false)
 
-		Set this _relation option_ to `true` to include this `relation` in a _commit_
-		payload to the _source_.
+		Set this relation option to _true_ to include this relation in a commit
+		payload to the source.
 
-		##### [`inverseKey`](id:inverseKey) - _String_
+		#### [_inverseKey_](id:inverseKey) - _String_
 
-		The _string_ representing the key on the _related model_ to designate the
+		The string representing the key on the related model to designate the
 		relationship (if any).
 
-		##### [`relationKey`](id:relationKey) - _String_ (_default_ `id`)
+		#### [_relationKey_](id:relationKey) - _String_ (default: "id")
 
-		The _string_ representing the key on this _model_ to compare against the
-		`inverseKey` (if any).
+		The string representing the key on this model to compare against the
+		_inverseKey_ (if any).
 
-		##### [`isOwner`](id:isOwner) - _Boolean_ (_default_ `true`)
+		#### [_isOwner_](id:isOwner) - _Boolean_ (default: true)
 
-		In relationships it is important to indicate the _direction of ownership_. The owner
-		of the relationship will receive the _change events_ of the related _model(s)_
-		whereas the _non-owner_ will not. Also note that if `isOwner` is `false` the `inCommit`
-		option is automatically set to `false` even if it was explicitly set to `true`.
+		In relationships, it is important to indicate the _direction of ownership_.
+		The owner of the relationship will receive the change events of the related
+		model(s), whereas the non-owner will not. Also note that, if _isOwner_ is
+		_false_, the _inCommit_ option will be automatically set to _false_, even if
+		it is explicitly set to _true_.
 
 		---
 
-		Here is an example of a completed `enyo.Model` _schema_ definition. __Note not
-		every _model_ needs to use all of these features.__
+		The following is an example of a completed _enyo.Model_ schema definition.
+		Note that not every model will need to use all of these features.
 
-		```
-		enyo.kind({
-			name: "models.Contact",
-			kind: "enyo.Model",
-			attributes: {
-				// example of mapping a remote key to a different
-				// local key and ensuring it will be a number
-				id: {
-					remoteKey: "contact_id",
-					type: Number
-				},
-				// example of creating a meta attribute that has no
-				// direct mapping to a remote key but combines two
-				// remote keys into one locally and on commit will
-				// parse them and map them back to the appropriate
-				// structure in the payload, here we have the method
-				// inlined in the attributes definition but it could
-				// have been a string representing the name of the method
-				// on the model itself
-				name: {
-					type: String
-				},
-				// example of a meta association with other data that is
-				// not included in the payload associated with a fetch request
-				// and note we do not wish to include it in a payload for commit
-				// on this model
-				comments: {
-					relation: enyo.toMany({
-						autoFetch: true,
-						inCommit: false,
-						inverseKey: "ownerId",
-						relationKey: "id",
-						model: "models.CommentModel"
-					})
-				}
-			}
-		});
-		```
+        enyo.kind({
+            name: "models.Contact",
+            kind: "enyo.Model",
+            attributes: {
+                // example of mapping a remote key to a different
+                // local key and ensuring it will be a number
+                id: {
+                    remoteKey: "contact_id",
+                    type: Number
+                },
+                // example of creating a meta attribute that has no
+                // direct mapping to a remote key, but combines two
+                // remote keys into one locally, and on commit will
+                // parse them and map them back to the appropriate
+                // structure in the payload. here we have the method
+                // inlined in the attributes definition but it could
+                // have been a string representing the name of the method
+                // on the model itself
+                name: {
+                    type: String
+                },
+                // example of a meta association with other data that is
+                // not included in the payload associated with a fetch request
+                // and note we do not wish to include it in a payload for commit
+                // on this model
+                comments: {
+                    relation: enyo.toMany({
+                        autoFetch: true,
+                        inCommit: false,
+                        inverseKey: "ownerId",
+                        relationKey: "id",
+                        model: "models.CommentModel"
+                    })
+                }
+            }
+        });
 	*/
 	enyo.kind({
 
@@ -729,58 +689,56 @@
 
 		//*@public
 		/**
-			The defined _schema_ for this _model_. If not defined the _model_
-			will attempt to infer the the _schema_ from the structure of the
-			data passed to it at construction time.
+			The defined schema for this model. If no schema is defined, the model will
+			attempt to infer the schema from the structure of the data passed to it at
+			creation time.
 		*/
 		attributes: null,
 
 		//*@public
 		/**
-			The `defaults` hash of _default_ values to be supplied to the
-			_model_ upon instantiation. When no _schema_ (attributes) are
-			explicitly defined but defaults are, the _schema_ will be infered
-			from these properties. They are in key-value pairs where the value
-			can be of any type, even a _function_. If the _value_ is a _function_
-			it will be executed during initialization under the context of the
-			model (as `this`) and is expected to __return the default value for
-			its assigned property__.
+			The hash of default values to be supplied to the model upon instantiation.
+			When no schema (attributes) are explicitly defined, but defaults are, the
+			schema will be inferred from these properties. They consist of key-value
+			pairs in which the value may be of any type, even a function. If the value
+			is a function, it will be executed during initialization under the context
+			of the model (as _this_) and is expected to return the default value for
+			its assigned property.
 		*/
 		defaults: null,
 
 		//*@public
 		/**
-			The `url` property is a static root for this particular _model_.
-			In a system with a simple REST backend with a 1 to 1 mapping of
-			client _model_ to backend server/service the `url` could be of
-			the form `/models/artist`. It can also be used in more complex
-			scenarios. Note this `url` property is appended to the _domain url_
-			genereated by the `enyo.Source` for the `enyo.Store` of the current
-			application. If the `noUrl` property is set to `false` and no
-			`url` is specified it will be automatically generated based on the
-			name of the _model kind_.
+			A static root for this particular model. In a system with a simple REST
+			backend with a 1 to 1 mapping of client model to backend server/service,
+			the _url_ could be of the form `/models/artist`. It may also be used in
+			more complex scenarios. Note that this property is appended to the domain
+			url generated by the _enyo.Source_ for the _enyo.Store_ of the current
+			application. If the _noUrl_ property is set to false and no _url_ is
+			specified, it will be automatically generated based on the name of the
+			model kind.
 		*/
 		url: "",
 
 		//*@public
 		/**
-			The `status` of the model is defined by a fixed-set of enumerated
-			values. See documentation for `enyo.Model` states.
+			The _status_ of the model is defined by a fixed set of enumerated
+			values. (See the documentation for _enyo.Model_ states).
 		*/
 		status: NEW,
 
 		//*@public
 		/**
-			A simple _Boolean_ flag indicating whether or not the current _model_
-			is a locally created _new_ record. Once a _model_ has been _committed_
-			or was _fetched_ this will be `false`.
+			A simple Boolean flag indicating whether or not the current model	is a
+			locally-created new record. Once a model has been committed (or fetched),
+			this value will be false.
 		*/
 		isNew: true,
 
 		//*@public
 		/**
-			The _String_ representing which attribute to use as the indexable
-			primary key for this _model_. Default is `id`.
+			String representing which attribute to use as the indexable
+			primary key for this model. The default is _"id"_.
 		*/
 		primaryKey: "id",
 		
@@ -789,40 +747,41 @@
 
 		//*@public
 		/**
-			In some cases correct remote calls are generated by some other means
-			than the normal url generation. In those cases this _Boolean_ flag needs
-			to be set to `true`. Default is `false`.
+			In some cases, correct remote calls are generated by some means other	than
+			the normal url generation. In these cases, this Boolean flag needs to be
+			set to true. The default is false.
 		*/
 		noUrl: false,
 		
 		//*@public
 		/**
-			In cases where the url is arbitrarily set and needs to be used as-is set
-			this flag to true. This setting will ignore the `noUrl` property value.
+			For cases in which the _url_ is arbitrarily set and must be used as-is,
+			set this flag to true. This setting will ignore the value of the _noUrl_
+			property.
 		*/
 		rawUrl: false,
 		
 		//*@public
 		/**
 			In cases where the commit body should be a subset of the attributes
-			explicitly or implicitly defined by the schema set this property to
+			explicitly or implicitly defined by the schema, set this property to
 			an array of the keys that should be included. For a programmatic way
-			of filtering payload data use the `filterData` method and watch for
-			the second parameter to be `commit`.
+			of filtering payload data, use the _filterData()_ method and watch for
+			the second parameter to be _commit_.
 		*/
 		includeKeys: null,
 
 		//*@public
 		/**
-			The `enyo.Model` will generate its own events. When a defined `attribute`
-			of the _model schema_ is modified an event will be emitted to any
-			listeners with an event payload with the `changed` property with the
-			changeset, the `previous` property with the previous values of those in
-			the changeset and the `model` property that is a reference to this _model_.
+			_enyo.Model_ generates its own events. When a defined attribute of the
+			model schema is modified, an event is fired to any listeners with a
+			payload object containing the changeset in its _changed_ property, the
+			previous values of the changeset in its _previous_ property, and a
+			reference to the current model in the _model_ property.
 
-			When the _model_ is destroyed it will also emit an event with the property
-			`model` that is a reference to this _model_ (even though it will already
-			have been destroyed).
+			When the model is destroyed, an event is fired with a payload object
+			containing a reference to the current model in its _model_ property (even
+			though it has already been destroyed).
 		*/
 		events: {
 			onChange: "",
@@ -832,34 +791,40 @@
 
 		//*@public
 		handlers: {
-			onChange: "_relationChanged",
-			onModelChanged: "_relationChanged"
+			onChange: "__relationChanged",
+			onModelChanged: "__relationChanged"
 		},
 
 		//*@public
 		statics: STATES,
+		
+		//*@public
+		/**
+			Assigned by an _enyo.Store_ at model instantiation. A unique identifier
+			used for indexing, but which may also be used for local-only data instead
+			of creating a unique id.
+		*/
+		euuid: null,
 
 		// ...........................
 		// PROTECTED PROPERTIES
 
-		_isModel: true,
-		_collections: null,
-		_relations: null,
-		_attributes: null,
-		_attributeKeys: null,
-		_previous: null,
-		_changed: null,
-		_euuid: null,
-		_isChild: false,
-		_defaultModel: false,
-		_noApplyMixinDestroy: true,
+		__isModel: true,
+		__collections: null,
+		__relations: null,
+		__attributes: null,
+		__attributeKeys: null,
+		__previous: null,
+		__changed: null,
+		__defaultModel: false,
+		__noApplyMixinDestroy: true,
 
 		// ...........................
 		// COMPUTED PROPERTIES
 
 		//*@public
 		/**
-			Used internally by `enyo.Source` to generate an appropriate request `url`.
+			Used internally by _enyo.Source_ to generate an appropriate request url.
 			Overload this method in custom setups.
 		*/
 		query: enyo.computed(function () {
@@ -871,12 +836,12 @@
 
 		//*@public
 		/**
-			Overload the `filterData` method to conditionally mutate data
-			for incoming and outgoing payloads. The `data` parameter is the
-			data to be mutated. The `direction` parameter will be one of `fetch`
-			or `commit`, for incoming data and outgoing data respectively. The
-			return value will be the data presented to the `didFetch` method and
-			the included payload in commits when appropriate.
+			Overload this method to conditionally mutate data for incoming and
+			outgoing payloads. The _data_ parameter is the data to be mutated. The
+			value of _direction_ will be either _"fetch"_ or "commit", denoting
+			incoming and outgoing data, respectively. Returns the data presented to
+			the _didFetch()_ method and the payload included in commits, when
+			appropriate.
 		*/
 		filterData: function (data, direction) {
 			return data;
@@ -884,12 +849,12 @@
 
 		//*@public
 		/**
-			When the `enyo.Source` is constructing the request for this _model_
-			(regardless of the action) it will call this method which you can
-			overload to add custom parameters to the `queryParams` hash of the
-			`options` parameter. These parameters are key-value pairs that are
-			used to generate the options in a query string in default setups. It
-			could also be used for other purposes in overloaded and custom setups.
+			When the _enyo.Source_ is constructing the request for this model
+			(regardless of the action), it calls this method. You may overload the
+			method to add custom parameters to the _queryParams_ hash of the
+			_options_ parameter. These parameters are key-value pairs used to generate
+			the options in a query string in default setups. They may also be used for
+			other purposes in overloaded and custom setups.
 		*/
 		buildQueryParams: function (model, options) {
 			// the options parameter will have a hash at property queryParams
@@ -902,9 +867,9 @@
 
 		//*@public
 		/**
-			The model should execute a _commit_ of its current state. The optional
-			_options_ hash can have a `success` method and/or an `error` method
-			to be executed on the appropriate result asynchronously.
+			Executes a commit of the model's current state. The optional _options_
+			hash may include _success()_ and/or _error()_ methods, to be executed
+			asynchronously in response to the respective results.
 		*/
 		commit: function (options) {
 			var $options = options? enyo.clone(options): {};
@@ -915,22 +880,22 @@
 
 		//*@public
 		/**
-			The model should execute a _fetch_. The optional _options_ hash can
-			have a `success` method and/or an `error` method to be executed on the
-			appropriate result asynchronously.
+			Executes a fetch. The optional _options_ hash may include _success()_
+			and/or _error()_ methods, to be executed asynchronously in response to the
+			respective results.
 		*/
 		fetch: function (options) {
 			this.set("status", BUSY.FETCHING);
 			this.exec("fetch", options);
-			this._hasFetched = true;
+			this.__hasFetched = true;
 		},
 
 		//*@public
 		/**
-			The model should execute a _destroy_ that destroys it in the client
-			and also (by default) a _DELETE_ request to the _source_. The optional
-			_options_ hash may have a `success` method and/or an `error` method to
-			be executed on the appropriate result asynchronously.
+			Executes a destroy operation that destroys the model in the client and
+			also (by default) sends a _DELETE_ request to the source. The optional
+			_options_ hash may include _success()_ and/or _error()_ methods, to be
+			executed asynchronously in response to the respective results.
 		*/
 		destroy: function (options) {
 			this.set("status", BUSY.DESTROYING);
@@ -939,8 +904,8 @@
 
 		//*@public
 		/**
-			While this method should not be executed directly it is overloadable
-			in custom setups.
+			This method should not be executed directly, but may be overloaded in
+			custom setups.
 		*/
 		exec: function (action, options) {
 			if (enyo.store) {
@@ -957,33 +922,35 @@
 
 		//*@public
 		/**
-			While this method should not be executed directly it is overloadable
-			in custom setups. Note that many of the details of this implementation
-			make _models_ work properly and great care should be taken when modifying
-			it or you may encounter unexpected or unpredictable results. The third
-			parameter can be set to true if you do not wish the result to be passed
-			through the filter.
+			This method should not be executed directly, but may be overloaded in
+			custom setups. Note that many of the details of this implementation
+			are needed to make models work properly; great care should be taken when
+			making modifications, or you may encounter unexpected or unpredictable
+			results. Set the third parameter to true if you do not want the result to
+			be passed through the filter.
 		*/
 		didFetch: function (options, result, noFilter) {
 			var $o = enyo.pool.claimObject(true);
 			var $d = noFilter? (result || $o): this.filterData(result || $o, "fetch");
 			var $g = this.defaults;
 			var $k = enyo.merge(enyo.keys($d), enyo.keys($g));
-			// if we haven't fetched before we will run the data through the schema
-			// generator to ensure we have the full schema from the data structure
+			this.silence();
+			this.stopNotifications();
+			// if we haven't fetched before, we will run the data through the schema
+			// generator to ensure we have the full schema from the data structure,
 			// but only trigger this if there is any data to begin with
 			if ($k.length) {
-				if (!this._hasFetched) {
+				if (!this.__hasFetched) {
 					this.createSchemaFromData(enyo.mixin([$d, $g], {ignore: true}));
 				}
-				var $a = this._attributes;
-				var $r = this._relations, $p, p$, k$, r$, v$, $q = [], $f;
+				var $a = this.__attributes;
+				var $r = this.__relations, $p, p$, k$, r$, v$, $q = [], $f;
 				for ($p in $a) {
 					p$ = $a[$p];
 					k$ = p$.remoteKey || $p;
 					v$ = $d[$p] || $d[k$];
 					// we do not run default data through the formatter
-					if (!v$ && !this._hasFetched && ($g[$p] || $g[k$])) {
+					if (!v$ && !this.__hasFetched && enyo.exists(($g[$p] || $g[k$]))) {
 						v$ = $g[$p] || $g[k$];
 						if (enyo.isFunction(v$)) {
 							v$ = v$.call(this);
@@ -999,7 +966,7 @@
 						}
 					}
 					r$ = $r[$p];
-					// queue any relation actions until the rest as been completed
+					// queue any relation actions until the rest have been completed
 					if (r$) {
 						$q.push(enyo.bind(this, r$.handler, $p, r$, v$));
 						// we continue because we do not want to trigger any notifications
@@ -1016,14 +983,15 @@
 			}
 			this.set("isNew", false);
 			this.set("status", CLEAN);
-			this.unsilence();
+			// NOTE: This is carefully ordered here
 			this.startNotifications();
-			this._flushChanges();
+			this.unsilence();
+			this.flushChanges();
 			if (options && options.success) {
 				options.success(result, this, options);
 			}
 			if (enyo.keys($d).length) {
-				this._hasFetched = true;
+				this.__hasFetched = true;
 			}
 			this._defaults = this.defaults;
 			enyo.pool.releaseObject($o);
@@ -1031,8 +999,8 @@
 
 		//*@public
 		/**
-			While this method should not be executed directly it is overloadable
-			in custom setups.
+			This method should not be executed directly, but may be overloaded in
+			custom setups.
 		*/
 		didCommit: function (options, result) {
 			if (result && "object" === typeof result) {
@@ -1040,9 +1008,9 @@
 			}
 			this.set("isNew", false);
 			this.set("status", CLEAN);
-			this._changed = {};
-			for (var key in this._relations) {
-				if (this._relations[key].isOwner) {
+			this.__changed = {};
+			for (var key in this.__relations) {
+				if (this.__relations[key].isOwner) {
 					if (this[key]) {
 						this[key].set("status", CLEAN);
 					}
@@ -1055,8 +1023,8 @@
 
 		//*@public
 		/**
-			While this method should not be executed directly it is overloadable
-			in custom setups.
+			This method should not be executed directly, but may be overloaded in
+			custom setups.
 		*/
 		didDestroy: function (options, result) {
 			this.set("status", DESTROYED);
@@ -1069,9 +1037,9 @@
 
 		//*@public
 		/**
-			While this method should not be executed directly it is overloadable
-			in custom setups. The `action` parameter is one of `"fetch"`, `"destroy"`,
-			`"commit"` or `"update"` depicting which action failed.
+			This method should not be executed directly, but may be overloaded in
+			custom setups. The _action_ parameter will be one of _"fetch"_,
+			_"destroy"_, _"commit"_, or _"update"_, depending on which action failed.
 		*/
 		didFail: function (action, options, result) {
 			this.set("status", ERROR.RESPONSE);
@@ -1082,19 +1050,19 @@
 
 		//*@public
 		/**
-			Returns an _Object_ literal that represents the JSON parsable form
-			of the _model_ in its current state. Takes an optional _Boolean_ that
-			if `true` will return the hash with local (client) keys but defaults
-			to remote keys if they are defined such that it could be used as a
-			payload to the _source_. If no remote keys are defined it defaults to
-			using the local (client) keys.
+			Returns an _Object_ literal that represents the JSON-parseable form
+			of the model in its current state. Takes an optional Boolean parameter
+			that, if true, returns the hash with local (client) keys, but defaults to
+			remote keys if they are defined, such that it could be used as a payload
+			to the source. If no remote keys are defined, defaults to using the local
+			(client) keys.
 		*/
 		raw: function (local) {
-			var $a = this._attributes;
-			var $r = this._relations;
+			var $a = this.__attributes;
+			var $r = this.__relations;
 			var $k = enyo.keys($r), $t, $l, $n, $i;
 			if (local) {
-				$t = enyo.only(this._attributeKeys, enyo.except($k, this));
+				$t = enyo.only(this.__attributeKeys, enyo.except($k, this));
 			} else {
 				$t = {};
 				for ($l in $a) {
@@ -1106,7 +1074,7 @@
 			}
 			for ($l in $r) {
 				$n = $r[$l];
-				$i = this[$l] && $n.inverseKey? this[$l]._relations[$n.inverseKey]: null;
+				$i = this[$l] && $n.inverseKey? this[$l].__relations[$n.inverseKey]: null;
 				if (!$n.isOwner || (!enyo.exists(this[$l]) || (!$n.inCommit && ($i && !$i.inCommit)))) {
 					continue;
 				}
@@ -1117,10 +1085,10 @@
 
 		//*@public
 		/**
-			Returns the JSON parsed _string_ value for this _model_ in its
-			current state as would be appropriate to send in a payload to the _source_.
-			If the optional _local_ is `true` then it will return with local keys
-			instead of remote keys (if any).
+			Returns the JSON parsed string value for this model in its current state,
+			as would be appropriate to send in a payload to the source.	If the
+			optional _local_ parameter is true, returns with local keys instead of
+			remote keys (if any).
 		*/
 		toJSON: function (local) {
 			return enyo.json.stringify(this.raw(local));
@@ -1128,44 +1096,43 @@
 
 		//*@public
 		/**
-			Returns _Boolean_ `true` or `false` for whether the _prop_
-			is an _attribute_ of the _schema_ for this _model_.
+			Returns Boolean true or false indicating whether the passed-in property
+			is an attribute of the schema for this model.
 		*/
 		isAttribute: function (prop) {
-			return !!~enyo.indexOf(prop, this._attributeKeys);
+			return !!~enyo.indexOf(prop, this.__attributeKeys);
 		},
 
 		//*@public
 		/**
-			Returns _Boolean_ `true` or `false` for whether the _prop_
-			is known by the _model schema_ as a _remoteKey_.
+			Returns Boolean true or false indicating whether the passed-in property
+			is known by the model schema as a remoteKey.
 		*/
 		isRemoteAttribute: function (prop) {
-			return prop in this._remoteKeys;
+			return prop in this.__remoteKeys;
 		},
 
 		//*@public
 		/**
-			Returns _Boolean_ `true` or `false` for whether _prop_
-			is a _relation_ or not.
+			Returns Boolean true or false indicating whether or not the passed-in
+			property is a relation.
 		*/
 		isRelation: function (prop) {
-			return !! (prop in this._relations);
+			return !! (prop in this.__relations);
 		},
 
 		//*@public
 		/**
-			Retrieve the previous value for _prop_ (when it exists).
+			Retrieves the previous value for the passed-in property (when it exists).
 		*/
 		previous: function (prop) {
-			return this._previous[prop];
+			return this.__previous[prop];
 		},
 
 		//*@public
 		/**
-			This is a specially overloaded version of `enyo.Object.set`. It
-			takes either a _hash_ or a _string_ and _value_ combined as its
-			parameters.
+			This is a specially overloaded version of _enyo.Object.set()_. It accepts
+			either a hash or a string and value combined as its parameters.
 		*/
 		set: function (prop, val) {
 			if (enyo.isObject(prop)) {
@@ -1176,7 +1143,7 @@
 				}
 				this.startNotifications();
 				this.unsilence();
-				this._flushChanges();
+				this.flushChanges();
 				return this;
 			} else if (this.isRelation(prop)) {
 				return this.setRelation(prop, val);
@@ -1191,12 +1158,12 @@
 
 		//*@public
 		/**
-			Used to set values for a given (and defined) _relation_ for an _attribute_
-			of the _schema_. Do not call this method directly. It may be overloaded in
-			non-standard use-cases.
+			Used to set values for a given (and defined) relation for an attribute of
+			the schema. Do not call this method directly. It may be overloaded in
+			non-standard use cases.
 		*/
 		setRelation: function (prop, val) {
-			var $r = this._relations[prop];
+			var $r = this.__relations[prop];
 			$r.handler.call(this, prop, $r, val);
 			this.set("status", DIRTY);
 			return this;
@@ -1205,11 +1172,11 @@
 		//*@public
 		/**
 			The constructor needs to be able to properly initialize the
-			internal (protected) properties but is also responsible for
-			determining if the _schema_ is defined and if not attempt to
-			implicitly derive it from the passed in values. If there is
-			no _schema_ defined and no initial _values_ passed in much of
-			its functionality will not work as intended.
+			internal (protected) properties, but is also responsible for
+			determining whether the _schema_ is defined and, if not,
+			attempting to derive it implicitly from the passed-in values.
+			If there is no schema defined and no initial _values_ are passed in,
+			much of its functionality will not work as intended.
 		*/
 		constructor: function (values) {
 			var $v = values || enyo.pool.claimObject(true);
@@ -1220,15 +1187,15 @@
 			// work for our purposes
 			values = undefined;
 			this.inherited(arguments);
-			this._collections = [];
-			this._previous = {};
-			this._changed = {};
+			this.__collections = [];
+			this.__previous = {};
+			this.__changed = {};
 			this.includeKeys = this.includeKeys || [];
 			this.defaults = this.defaults || $d;
 			// because we don't know whether data being passed in to the constructor
 			// will have the local format or the remote format and we want to be able
 			// to allow the filterData method to execute without always needing to know
-			// which case it is we catch errors and use the original structure if
+			// which case it is, we catch errors and use the original structure if
 			// it fails and use the noFilter option for didFetch knowing we've already
 			// filtered it either way
 			try {
@@ -1242,8 +1209,8 @@
 			// state properly to clean and reset anything that will have changed
 			if (enyo.keys($d).length || enyo.keys(enyo.except(enyo.keys($d), $v)).length) {
 				this.status = CLEAN;
-				this._changed = {};
-				this._previous = enyo.only(this._attributeKeys, this);
+				this.__changed = {};
+				this.__previous = enyo.only(this.__attributeKeys, this);
 			} else {
 				this.status = NEW;
 			}
@@ -1261,7 +1228,7 @@
 					$s[$k] = null;
 				}
 			}
-			this._defaultModel = true;
+			this.__defaultModel = true;
 			initModel(this, $s);
 			enyo.pool.releaseObject($s);
 		},
@@ -1279,6 +1246,14 @@
 			if (this.owner && this.owner.addComponent) {
 				this.owner.addComponent(this);
 			}
+			if (this.owner && true === (this.owner instanceof enyo.Component)) {
+				this.set("_defaultTarget", this.owner);
+				this.set("_defaultDispatch", true);
+			} else {
+				// otherwise we either don't have an owner or they cannot
+				// accept events so we remove our bubble target
+				this.set("_defaultTarget", null);
+			}
 		},
 
 		// ...........................
@@ -1288,16 +1263,16 @@
 		/**
 			Used internally to register any collections that might have
 			a reference to this model in it. Thus ensuring that each collection
-			will receive any events propagated from this _model_.
+			will receive any events propagated from this model.
 		*/
-		_addCollection: function (col) {
-			if (!~enyo.indexOf(col, this._collections)) {
-				this._collections.push(col);
-				this.addDispatchTarget(col);
-				for (var key in this._relations) {
-					if (col[key]) {
+		addCollection: function (c) {
+			if (!~enyo.indexOf(c, this.__collections)) {
+				this.__collections.push(c);
+				this.addDispatchTarget(c);
+				for (var $k in this.__relations) {
+					if (c[$k]) {
 						this.stopNotifications(true);
-						this.set(key, col[key]);
+						this.set($k, c[$k]);
 						this.set("status", CLEAN);
 						this.startNotifications(true);
 					}
@@ -1307,42 +1282,36 @@
 
 		//*@protected
 		/**
-			Used internally to remove registered collections from the _model_.
+			Used internally to remove registered collections from the model.
 		*/
-		_removeCollection: function (col) {
-			var idx = enyo.indexOf(col, this._collections);
-			if (!!~idx) {
-				this._collections.splice(idx, 1);
-				this.removeDispatchTarget(col);
+		removeCollection: function (c) {
+			var $i = enyo.indexOf(c, this.__collections);
+			if (!!~$i) {
+				this.__collections.splice($i, 1);
+				this.removeDispatchTarget(c);
 			}
 		},
 
 		//*@protected
 		/**
-			Used at the appropriate time to emit a _onChange_ event with the
-			changeset, previous values and a reference to the model that changed
-			(this _model_).
+			Used at the appropriate time to emit an _onChange_ event with the
+			changeset, previous values, and a reference to the model that changed
+			(this model).
 		*/
-		_flushChanges: function () {
-			if (!this._silenced) {
-				this.doChange({
-					previous: this._previous,
-					changed: this._changed,
-					model: this
-				});
-			}
+		flushChanges: function () {
+			this.doChange({previous: this.__previous, changed: this.__changed, model: this});
 		},
 
 		//*@protected
-		_relationChanged: function (sender, event) {
-			var $m = event.model || sender, key = $m._relationKey;
-			if (!key && event.collection) {
+		__relationChanged: function (sender, event) {
+			var $m = event.model || sender, $k = $m.relationKey;
+			if (!$k && event.collection) {
 				$m = event.collection;
-				key = $m._relationKey;
+				$k = $m.relationKey;
 			}
-			if (key) {
-				if (this[key] == $m) {
-					this._changed[key] = $m;
+			if ($k) {
+				if (this[$k] == $m) {
+					this.__changed[$k] = $m;
 					this.set("status", DIRTY);
 				}
 			}
@@ -1350,11 +1319,11 @@
 
 		//*@protected
 		/**
-			Retrieves the attribute object for a given attribute `property`
+			Retrieves the attribute object for a given attribute property
 			if it exists.
 		*/
-		_attributeFor: function (prop) {
-			return this._attributes[prop];
+		__attributeFor: function (prop) {
+			return this.__attributes[prop];
 		},
 
 		// ...........................
@@ -1363,35 +1332,30 @@
 		//*@protected
 		/**
 			Spies on all change notifications and adds to the changeset for
-			the model. It will execute a _flushChanges_ that will emit the
-			_onChange_ event if the _model_ isn't currently silenced.
+			the model. Calls _flushChanges()_, which will emit an _onChange_
+			event if the model isn't currently silenced.
 		*/
-		_attributeSpy: enyo.observer(function (prop, prev, val) {
-			var attr;
-			if ((attr = this._attributeFor(prop)) || this.isRelation(prop)) {
+		__attributeSpy: enyo.observer(function (prop, prev, val) {
+			if (this.__attributeFor(prop) || this.isRelation(prop)) {
 				// TODO: Type checking has been temporarily removed
 				// and should probably be added as validation instead
-				this._previous[prop] = prev;
-				this._changed[prop] = val;
-				this._flushChanges();
+				this.__previous[prop] = prev;
+				this.__changed[prop] = val;
+				this.flushChanges();
 			}
 		}, "*"),
 
 		//*@protected
-		_statusChanged: enyo.observer(function (prop, prev, val) {
-			if (val == DIRTY) {
-				enyo.forEach(this._collections, function (col) {
-					if (!~enyo.indexOf(col._dirtyModels, this)) {
-						col._dirtyModels.push(this);
-					}
-				}, this);
-			} else if (val == CLEAN) {
-				enyo.forEach(this._collections, function (col) {
-					var idx = enyo.indexOf(col._dirtyModels, this);
-					if (idx >= 0) {
-						col._dirtyModels.splice(idx, 1);
-					}
-				}, this);
+		__statusChanged: enyo.observer(function (prop, prev, val) {
+			var $i, c$;
+			if (val === DIRTY) {
+				for ($i=0; (c$=this.__collections[$i]); ++$i) {
+					c$.addDirtyModel(this);
+				}
+			} else if (val === CLEAN) {
+				for ($i=0; (c$=this.__collections[$i]); ++$i) {
+					c$.removeDirtyModel(this);
+				}
 			}
 		}, "status")
 

@@ -29,12 +29,20 @@
 	enyo.store = null;
 	enyo.models = {
 		kinds: [],
+		queued: [],
 		add: function (ctor) {
 			if (!~enyo.indexOf(ctor, this.kinds)) {
 				this.kinds.push(ctor);
 			}
 			if (enyo.store) {
 				enyo.store._addModelKind(ctor);
+			}
+		},
+		queue: function (m) {
+			if (enyo.store) {
+				enyo.store.initModel(m);
+			} else {
+				this.queued.push(m);
 			}
 		}
 	};
@@ -76,7 +84,7 @@
 		// PROTECTED PROPERTIES
 
 		_records: null,
-		_noApplyMixinDestroy: true,
+		__noApplyMixinDestroy: true,
 
 		// ...........................
 		// COMPUTED PROPERTIES
@@ -87,6 +95,8 @@
 		uuid: function () {
 			return uuid();
 		},
+
+		//*@public
 		/**
 			A simple find mechanism to query valid records in the store.
 			If the _options_ _remote_ property exists and is true it will
@@ -100,16 +110,25 @@
 			_options_ parameter of an object literal. These options will be
 			passed to the _queryResolver_ method. This method can be overridden
 			to handle custom implementations for advanced querying needs.
+			If this is a _remote_ request it will return `true`. If it is a
+			synchronous _local only_ request it will return `false` if no
+			records were found for the type.
 
-			TODO: not implemented as stated
+			It is important to note that there is no built-in standard for querying
+			a remote source. The only default action is that the `options.queryParams`,
+			if it exists, will be used as options when making the request via
+			the `source`. In custom situations you should add your query parameters
+			that the backend needs to this _option_ and handle that accordingly.
+			Overload the `queryResolver` method for special handling.
 		*/
 		find: function (ctor, options) {
-			var ret = this._recordsForType(ctor);
-			if (!ret) {
-				return false;
+			var $o = options? options: {}, $r = this._recordsForType(ctor, $o);
+			if ($r.length || $o.remote) {
+				return this.queryResolver(enyo.constructorForKind(ctor), $r, $o);
 			}
-			return this.queryResolver(enyo.clone(ret.all), options);
+			return false;
 		},
+
 		/**
 			Pass a constructor and options to this asynchronous method to retrieve
 			a single record (will use locally if found) and will execute a fetch
@@ -151,12 +170,57 @@
 			enyo.warn("enyo.Store.findRemote: this method is not implemented yet");
 			return false;
 		},
+
+		//*@public
 		/**
-			TODO: not implemented
+			Overload this method for special handling of query parameters and options
+			that need to be communicated to a backend. The default attempts to use
+			the `options.queryParams` property, should it exist, as the options to send.
+			How the backend interprets them is dependent on the _remotes_ implementation.
+			If no `remote` option exists in `options` this will return synchronously an
+			array of any models that match the requirements. The `models` parameter
+			will contain any local records that were found according to the type. If the
+			`queryParams` option exists only records matching the parameters will be returned.
+			If this is a `remote` request it is expected that the backend will filter the
+			return-set accordingly but local records will be filtered.
+
+			[see enyo.Source.find](#) to implement more specific features depending on the
+			driver source.
 		*/
-		queryResolver: function (models, options) {
-			return models;
+		queryResolver: function (ctor, models, options) {
+			var $o = options? enyo.clone(options): enyo.pool.claimObject(true);
+			var $m = models;
+			if ($o.remote) {
+				$o.success = this.bindSafely("didFetchQuery", $m, options);
+				$o.error = this.bindSafely("didFail", "query", null, options);
+				$o.ctor = ctor;
+				this.source.find(ctor, $o);
+				return true;
+			} else if ($o.queryParams) {
+				$m = this.filterResults($m, $o.queryParams);
+			}
+			enyo.pool.releaseObject($o);
+			return $m;
 		},
+
+		//*@public
+		/**
+			Filters an array of models by any properties and matching values
+			in the `params` parameter. By default to be included in the result set
+			a model must match all criteria in the `params` hash. For more complex
+			needs overload this method.
+		*/
+		filterResults: function (models, params) {
+			return enyo.filter(models, function (r) {
+				for (var $k in params) {
+					if (r[$k] != params[$k]) {
+						return false;
+					}
+				}
+				return true;
+			});
+		},
+
 		initModel: function (model) {
 			var id = model.euuid = this.uuid();
 			if (!model[model.primaryKey] && !model._didAttemptFetchId && !model.noFetchId) {
@@ -217,8 +281,9 @@
 			this.inherited(arguments);
 			this._records = {};
 			enyo.forEach(enyo.models.kinds, this._addModelKind, this);
+			enyo.forEach(enyo.models.queued, this.initModel, this);
 			if (!this.source) {
-				this.source = enyo.Source.defaultSource;
+				this.source = enyo.Source.getDefaultSource();
 			}
 		},
 		constructed: function () {
@@ -236,6 +301,33 @@
 				options.success(result);
 			}
 		},
+
+		//*@public
+		/**
+			This method is called by the source when a query has been submitted
+			and results have been retrieved. Here the `models` parameter is an
+			array of any _local_ records in the store were found according to the
+			requested kind of record. These will be concatenated and reduced across
+			the remote result set and then filtered by the `filterResults` method.
+		*/
+		didFetchQuery: function (models, options, result) {
+			var $m = models, $o = options, $r = result, $p = options.ctor.prototype.primaryKey;
+			if ($o.queryParams) {
+				$m = this.filterResults($m, $o.queryParams);
+			}
+			$m = enyo.filter($m.concat($r), function (r, i, a) {
+				for (; i<a.length; ++i) {
+					if (r[$p] == a[i][$p]) {
+						return false;
+					}
+				}
+				return true;
+			});
+			if ($o.success) {
+				$o.success($m);
+			}
+		},
+
 		didCommit: function (model, options, result) {
 			// TODO: ...
 			if (options.success) {
@@ -299,8 +391,31 @@
 			this._records[kind].all.splice(idx, 1);
 			return true;
 		},
-		_recordsForType: function (ctor) {
-			return this._records["string" === typeof ctor? ctor: ctor.prototype.kindName];
+
+		//*@protected
+		/**
+			Accepts a constructor (name or function) and options and returns an
+			array of records if any were found and an empty array otherwise.
+			Used internally when looking up records by kind. If the option `subkinds`
+			is a truthy value in the optional `options` parameter then it will also
+			include records that are subkinds of the requested kind.
+		*/
+		_recordsForType: function (ctor, options) {
+			var $r = this._records;
+			var $n = typeof ctor == "string"? ctor: ctor.prototype.kindName;
+			var $k = enyo.constructorForKind($n), $s = [], $o = options, $c, c$;
+			if ($o && $o.subkinds) {
+				// we need to include subkinds as well
+				for (var $i in $r) {
+					c$ = $r[$i];
+					$c = enyo.constructorForKind($i);
+					if ($c && $c.prototype && ($c.prototype instanceof $k || $c.prototype == $k.prototype)) {
+						$s = $s.concat(c$.all);
+					}
+				}
+				return $s;
+			}
+			return $r[$n]? $r[$n].all: [];
 		},
 
 		// ...........................

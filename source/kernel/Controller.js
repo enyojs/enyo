@@ -29,16 +29,4 @@ enyo.kind({
 	//*@protected
 	_isController: true
 
-	// ...........................
-	// COMPUTED PROPERTIES
-
-	// ...........................
-	// PUBLIC METHODS
-
-	// ...........................
-	// PROTECTED METHODS
-
-	// ...........................
-	// OBSERVERS
-
 });

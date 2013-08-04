@@ -40,7 +40,7 @@ enyo.kind({
 	sync: function () {
 		var $m = this.model;
 		if ($m && enyo.isModel($m)) {
-			var $a = $m._attributeKeys, $b = this.bindings, $i, a$, b$;
+			var $a = $m.__attributeKeys, $b = this.bindings, $i, a$, b$;
 			for ($i=0; $i<$a.length || $i<$b.length; ++$i) {
 				if ((a$=$a[$i])) {
 					this.notifyObservers(a$, $m.previous(a$), $m.get(a$));

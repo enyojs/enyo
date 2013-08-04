@@ -76,6 +76,14 @@ enyo.kind({
 	],
 	//*@protected
 	_isView: true,
+	/**
+		When using the _renderReusingNode()_ path for updating a tree of views,
+		this flag will be set to true or false depending on its state.
+		If the content of a control has changed while it was "disconnected",
+		the flag will be set to true; once _generateHtml()_ or _renderContent()_
+		is called, it knows it has been updated and will be set back to false.
+	*/
+	_needsRender: true,
 	noDefer: true,
 	//* The default kind for controls created inside this control that don't
 	//* specify their own kind
@@ -86,6 +94,11 @@ enyo.kind({
 	node: null,
 	generated: false,
 	create: function() {
+		if (this.tag == null) {
+			// initially set to true, but if this is not a renderable
+			// control, we set it to false.
+			this._needsRender = false;
+		}
 		// initialize style databases
 		this.initStyles();
 		// superkind initialization
@@ -105,6 +118,7 @@ enyo.kind({
 		this.initProps(["id", "content", "src"]);
 	},
 	destroy: function() {
+		this.connectDom();
 		this.removeNodeFromDom();
 		enyo.Control.unregisterDomEvents(this.id);
 		this.inherited(arguments);
@@ -168,10 +182,10 @@ enyo.kind({
 		Returns the DOM node representing the control.
 		If the control is not currently rendered, returns null.
 
-		If hasNode() returns a value, the _node_ property will be valid and
+		If _hasNode()_ returns a value, the _node_ property will be valid and
 		can be checked directly.
 
-		Once hasNode() is called, the returned value is made available in
+		Once _hasNode()_ is called, the returned value is made available in
 		the _node_ property of this control.
 
 		A control will only return a node if it has been rendered.
@@ -182,7 +196,7 @@ enyo.kind({
 	*/
 	hasNode: function() {
 		// 'generated' is used to gate access to expensive findNodeById call
-		return this.generated && (this.node || this.findNodeById());
+		return (this.generated || this._domDisconnected) && (this.node || this._node || this.findNodeById());
 	},
 	/**
 		Appends the string value of _inAddendum_ to the _content_ of this
@@ -404,11 +418,11 @@ enyo.kind({
 	},
 	/*
 		If the platform is Android or Android-Chrome, don't include
-		the css rule -webkit-overflow-scrolling: touch, as it is
+		the css rule _-webkit-overflow-scrolling: touch_, as it is
 		not supported in Android and leads to overflow issues
-		(ENYO-900 and ENYO-901)
+		(ENYO-900 and ENYO-901).
 		Similarly, BB10 has issues repainting out-of-viewport content
-		when -webkit-overflow-scrolling is used (ENYO-1396)
+		when _-webkit-overflow-scrolling_ is used (ENYO-1396).
 	*/
 	setupOverflowScrolling: function() {
 		if(enyo.platform.android || enyo.platform.androidChrome || enyo.platform.blackberry) {
@@ -633,6 +647,8 @@ enyo.kind({
 		if (this.hasNode()) {
 			this.renderContent();
 		}
+		// our content has been updated; thus we set this to true
+		this._needsRender = true;
 	},
 	getSrc: function() {
 		return this.getAttribute("src");
@@ -667,6 +683,8 @@ enyo.kind({
 		// The contract is that insertion in DOM will happen synchronously
 		// to generateHtml() and before anybody should be calling hasNode().
 		this.generated = true;
+		// because we just generated our html we can set this flag to false
+		this._needsRender = false;
 		return h;
 	},
 	generateInnerHtml: function() {
@@ -716,10 +734,11 @@ enyo.kind({
 	},
 	// DOM, aka direct-to-node, rendering
 	attributeToNode: function(inName, inValue) {
+		var n$ = this.node || this._node;
 		if (inValue === null || inValue === false || inValue === "") {
-			this.node.removeAttribute(inName);
+			n$.removeAttribute(inName);
 		} else {
-			this.node.setAttribute(inName, inValue);
+			n$.setAttribute(inName, inValue);
 		}
 	},
 	attributesToNode: function() {
@@ -757,7 +776,7 @@ enyo.kind({
 		if (this.generated) {
 			this.disconnectChildrenDom();
 		}
-		this._node = this.node;
+		this._node = this.hasNode();
 		this.node = null;
 		this.generated = false;
 		this._domDisconnected = true;
@@ -777,7 +796,9 @@ enyo.kind({
 			this.connectChildrenDom();
 			this.node = this._node;
 			this._node = null;
-			this.generated = true;
+			if (this.node) {
+				this.generated = true;
+			}
 			this._domDisconnected = false;
 		}
 	},
@@ -813,14 +834,28 @@ enyo.kind({
 		}
 	},
 	renderReusingNode: function () {
-		if (this.children.length) {
-			for (var i=0, c; (c=this.children[i]); ++i) {
-				c.renderReusingNode();
+		if (!this.canGenerate) {
+			return;
+		}
+		if (this.tag === null || this.generated) {
+			if (this.children.length) {
+				for (var i=0, c; (c=this.children[i]); ++i) {
+					c.renderReusingNode();
+				}
+			} else {
+				if (this.generated && this.hasNode()) {
+					// only if the content was updated do we actually regenerate the
+					// html; this ensures that we're not parsing unnecessarily
+					if (this._needsRender) {
+						enyo.dom.setInnerHtml(this.node, this.generateInnerHtml());
+						// generateInnerHtml does not automatically set this to false
+						// so we do it here
+						this._needsRender = false;
+					}
+				}
 			}
 		} else {
-			if (this.generated && (this.node = this.hasNode())) {
-				enyo.dom.setInnerHtml(this.node, this.generateInnerHtml());
-			}
+			this.render();
 		}
 	},
 	renderStyles: function() {
@@ -834,7 +869,7 @@ enyo.kind({
 		}
 	},
 	beforeChildRender: function() {
-		// if we are generated, we should flow before rendering a child
+		// if we are generated, we should flow before rendering a child;
 		// if not, the render context isn't ready anyway
 		if (this.generated) {
 			this.flow();
@@ -867,7 +902,7 @@ enyo.kind({
 		this.showing = (this.domStyles.display != "none");
 		return this.showing;
 	},
-	//* Return true if this and all parents are showing
+	//* Returns true if this and all parents are showing.
 	getAbsoluteShowing: function() {
 		var b = this.getBounds();
 
@@ -886,11 +921,11 @@ enyo.kind({
 	fitChanged: function(inOld) {
 		this.parent.reflow();
 	},
-	//* Return true if this control is the current fullscreen control
+	//* Returns true if this control is the current fullscreen control.
 	isFullscreen: function() {
 		return (this.hasNode() && this.hasNode() === enyo.fullscreen.getFullscreenElement());
 	},
-	//* Send request to make this control fullscreen
+	//* Sends request to make this control fullscreen.
 	requestFullscreen: function() {
 		if (!this.hasNode()) {
 			return false;
@@ -902,7 +937,7 @@ enyo.kind({
 
 		return false;
 	},
-	//* Send request to take this control out of fullscreen
+	//* Sends request to take this control out of fullscreen mode.
 	cancelFullscreen: function() {
 		if (this.isFullscreen()) {
 			enyo.fullscreen.cancelFullscreen();

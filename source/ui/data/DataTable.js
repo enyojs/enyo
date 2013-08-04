@@ -5,7 +5,6 @@
 enyo.kind({
 	name: "enyo.DataTable",
 	kind: "enyo.DataRepeater",
-	controller: "enyo.Collection",
 	defaultKind: "enyo.TableRow",
 	style: "display: table;",
 	containerOptions: {
@@ -15,6 +14,5 @@ enyo.kind({
 	},
 	initComponents: function() {
 		this.inherited(arguments);
-		this._childKind.prototype.tag = null;
 	}
 });

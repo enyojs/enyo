@@ -7,18 +7,20 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 	<meta name="format-detection" content="telephone=no"/>
 	<meta name="google" value="notranslate"/>
-	<title>Repeater Sample</title>
+	<title>DataRepeater Sample</title>
 	<!-- -->
 	<script src="../../enyo/enyo.js" type="text/javascript"></script>
+	<script src="../../lib/layout/package.js" type="text/javascript"></script>
 	<!-- -->
-	<link href="RepeaterSample.css" rel="stylesheet">
-	<script src="RepeaterSample.js" type="text/javascript"></script>
+	<link href="DataRepeaterSample.css" rel="stylesheet">
+	<script src="DataRepeaterSample.js" type="text/javascript"></script>
 	<!-- -->
 </head>
-<body class="onyx">
+<body>
 <script type="text/javascript">
 	new enyo.Scroller({
-		components: [ { kind: "enyo.sample.RepeaterSample" } ]
+		classes: "enyo-unselectable",
+		components: [ { kind: "enyo.sample.DataRepeaterSample" } ]
 	}).renderInto(document.body);
 </script>
 </body>
