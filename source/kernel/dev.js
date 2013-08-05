@@ -119,18 +119,11 @@
 		//*@public
 		//* Remove stored data for a benchmark named _name_.
 		clear: function (name) {
-			var source = tests[name]? tests: averages[name]? averages: null;
-			if (!source) {
-				return false;
+			if (tests[name]) {
+				delete tests[name];
 			}
-			if (source.complete) {
-				source.complete();
-			}
-			if (source[name] instanceof Array) {
-				source[name] = [];
-			}
-			else {
-				delete source[name];
+			if (averages[name]) {
+				averages[name] = [];
 			}
 			return true;
 		}
