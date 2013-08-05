@@ -118,6 +118,7 @@ enyo.kind({
 		this.initProps(["id", "content", "src"]);
 	},
 	destroy: function() {
+		this.removeFromRoots();
 		this.connectDom();
 		this.removeNodeFromDom();
 		enyo.Control.unregisterDomEvents(this.id);
@@ -487,16 +488,10 @@ enyo.kind({
 		// generate our HTML
 		enyo.dom.setInnerHtml(pn, this.generateHtml());
 		// post-rendering tasks
+		this.addToRoots();
 		if (this.generated) {
 			this.rendered();
 		}
-		
-		// Collect all component tree roots
-		if (typeof enyo.roots == 'undefined') {
-			enyo.roots = [];
-		}
-		enyo.roots.push(this);
-		
 		// support method chaining
 		return this;
 	},
@@ -521,6 +516,7 @@ enyo.kind({
 		this.setupOverflowScrolling();
 		document.write(this.generateHtml());
 		// post-rendering tasks
+		this.addToRoots();
 		if (this.generated) {
 			this.rendered();
 		}
@@ -953,6 +949,28 @@ enyo.kind({
 
 		return false;
 	},
+	//* Adds control to enyo.roots, called from write(), renderInto(), ViewController.renderInto()
+	addToRoots: function() {
+		// Collect all component tree roots
+		if (typeof enyo.roots == 'undefined') {	enyo.roots = []; }
+		enyo.roots.push(this);
+		this._isRoot = true;
+	},
+	//* Removes control from enyo.roots
+	removeFromRoots: function() {
+		if (this._isRoot) {
+			var n    = 0,
+				nLen = enyo.roots.length;
+			
+			for (; n<nLen; n++) {
+				if (enyo.roots[n] === this) {
+					enyo.roots.splice(n, 1);
+					break;
+				}
+			}
+		}
+	},
+	
 	//
 	//
 	statics: {

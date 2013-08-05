@@ -130,7 +130,7 @@
 			if (typeof enyo.roots == 'undefined') {
 				enyo.roots = [];
 			}
-			enyo.roots.push(this);
+			this.addToRoots();
 			
 			// update the render target for the controller
 			this.set("renderTarget", target);
