@@ -348,7 +348,7 @@
 			delete $p.attributes;
 			// if there isn't a url defined, we attempt to make one to follow
 			// convention
-			$p.url = $s.url || !$p.noUrl? ($p.name || $p.kindName).replace(/^(.*)\./g,""): "";
+			$p.url = $s.url || (!$p.noUrl? ($p.name || $p.kindName).replace(/^(.*)\./g,""): "");
 			enyo.pool.releaseObject($o);
 		}
 	});
