@@ -428,7 +428,7 @@ enyo.kind({
 		if(enyo.platform.android || enyo.platform.androidChrome || enyo.platform.blackberry) {
 			return;
 		}
-		document.getElementsByTagName("body")[0].className += " webkitOverflowScrolling";
+		enyo.dom.addClass(document.getElementsByTagName("body")[0], "webkitOverflowScrolling");
 	},
 	//
 	//
