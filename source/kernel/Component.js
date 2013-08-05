@@ -361,7 +361,9 @@ enyo.kind({
 		}
 		// if the event has a delegate associated with it we grab that
 		// for reference
-		var delegate = (event || (event = enyo.pool.claimObject())).delegate;
+		// NOTE: This is unfortunate but we can't use a pooled object here because
+		// we don't know where to release it
+		var delegate = (event || (event = {})).delegate;
 		var ret;
 		// bottleneck event decoration
 		this.decorateEvent(name, event, sender);
