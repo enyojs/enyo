@@ -1,12 +1,11 @@
 /**
 	_enyo.TouchScrollStrategy_ is a helper kind for implementing a touch-based
 	scroller. It integrates the scrolling simulation provided by
-	<a href="#enyo.ScrollMath">enyo.ScrollMath</a> into an
-	<a href="#enyo.Scroller">enyo.Scroller</a>.
+	[enyo.ScrollMath](#enyo.ScrollMath) into an [enyo.Scroller](#enyo.Scroller).
 
 	_enyo.TouchScrollStrategy_ is not typically created in application code.
-	Instead, it is specified as the value of the `strategyKind` property of an
-	`enyo.Scroller` or <a href="#enyo.List">enyo.List</a>, or is used by the
+	Instead, it is specified as the value of the _strategyKind_ property of an
+	_enyo.Scroller_ or [enyo.List](#enyo.List), or is used by the
 	framework implicitly.
 */
 enyo.kind({
@@ -25,9 +24,9 @@ enyo.kind({
 		/**
 			Specifies how to vertically scroll.  Acceptable values are:
 
-			* "scroll": Always scroll.
-			* "auto": Scroll only if the content overflows the scroller.
-			* "hidden": Never scroll.
+			* "scroll": Always scroll
+			* "auto": Scroll only if the content overflows the scroller
+			* "hidden": Never scroll
 			* "default": In touch environments, the default vertical scrolling
 				behavior is to always scroll. If the content does not overflow
 				the scroller, the scroller will overscroll and snap back.
@@ -36,10 +35,10 @@ enyo.kind({
 		/**
 			Specifies how to horizontally scroll.  Acceptable values are:
 
-			* "scroll": Always scroll.
-			* "auto":  Scroll only if the content overflows the scroller.
-			* "hidden": Never scroll.
-			* "default": Same as "auto".
+			* "scroll": Always scroll
+			* "auto":  Scroll only if the content overflows the scroller
+			* "hidden": Never scroll
+			* "default": Same as "auto"
 		*/
 		horizontal: "default",
 		//* Set to true to display a scroll thumb
