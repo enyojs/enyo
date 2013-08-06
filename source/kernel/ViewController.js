@@ -126,6 +126,8 @@
 			in the DOM).
 		*/
 		renderInto: function (target) {
+			this.addToRoots();
+			
 			// update the render target for the controller
 			this.set("renderTarget", target);
 			// now we render as usual
