@@ -951,23 +951,14 @@ enyo.kind({
 	},
 	//* Adds control to enyo.roots, called from write(), renderInto(), ViewController.renderInto()
 	addToRoots: function() {
-		// Collect all component tree roots
-		if (typeof enyo.roots == 'undefined') {	enyo.roots = []; }
+		if (!enyo.exists(enyo.roots)) { enyo.roots = []; }
 		enyo.roots.push(this);
 		this._isRoot = true;
 	},
 	//* Removes control from enyo.roots
 	removeFromRoots: function() {
 		if (this._isRoot) {
-			var n    = 0,
-				nLen = enyo.roots.length;
-			
-			for (; n<nLen; n++) {
-				if (enyo.roots[n] === this) {
-					enyo.roots.splice(n, 1);
-					break;
-				}
-			}
+			enyo.remove(this, enyo.roots);
 		}
 	},
 	
