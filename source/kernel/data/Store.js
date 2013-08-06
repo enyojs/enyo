@@ -47,22 +47,6 @@
 		}
 	};
 
-	/**
-		As seen at https://gist.github.com/jcxplorer/823878, by jcxplorer.
-		TODO: replace with faster implementation
-	*/
-	var uuid = function () {
-		var uuid = "", idx = 0, rand;
-		for (; idx < 32; ++idx) {
-			rand = Math.random() * 16 | 0;
-			if (idx == 8 || idx == 12 || idx == 16 || idx == 20) {
-				uuid += "-";
-			}
-			uuid += (idx == 12? 4: (idx == 16? (rand & 3 | 8): rand)).toString(16);
-		}
-		return uuid;
-	};
-
 	enyo.kind({
 
 		// ...........................
@@ -91,10 +75,6 @@
 
 		// ...........................
 		// PUBLIC METHODS
-
-		uuid: function () {
-			return uuid();
-		},
 
 		//*@public
 		/**
@@ -224,7 +204,7 @@
 		},
 
 		initModel: function (model) {
-			var id = model.euuid = this.uuid();
+			var id = model.euuid;
 			if (!model[model.primaryKey] && !model._didAttemptFetchId && !model.noFetchId) {
 				model._didAttemptFetchId = true;
 				var $options = {
