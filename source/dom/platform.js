@@ -59,6 +59,8 @@ enyo.platform = {
 		{platform: "ios", regex: /iP(?:hone|ad;(?: U;)? CPU) OS (\d+)/},
 		// webOS 1 - 3
 		{platform: "webos", regex: /(?:web|hpw)OS\/(\d+)/},
+		// webOS 4 / OpenWebOS
+		{platform: "webos", regex: /WebAppManager|Isis/, forceVersion: 4},
 		// desktop Safari
 		{platform: "safari", regex: /Version\/(\d+)[.\d]+\s+Safari/},
 		// desktop Chrome
