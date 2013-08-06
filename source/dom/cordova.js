@@ -25,7 +25,6 @@ enyo.ready(function(){
 			"deviceready",
 			"pause",
 			"resume",
-			"relaunch",
 			"online",
 			"offline",
 			"backbutton",
@@ -38,7 +37,9 @@ enyo.ready(function(){
 			"startcallbutton",
 			"endcallbutton",
 			"volumedownbutton",
-			"volumeupbutton"
+			"volumeupbutton",
+			"webOSLaunch",
+			"webOSRelaunch"
 		];
 		for (var i=0, e; (e=pge[i]); i++) {
 			// some cordova events have no type, so enyo.dispatch fails
