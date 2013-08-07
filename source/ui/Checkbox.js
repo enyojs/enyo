@@ -24,16 +24,15 @@ enyo.kind({
 		onchange: "change",
 		onclick: "click"
 	},
-	create: function() {
-		this.inherited(arguments);
-	},
-	rendered: function() {
-		this.inherited(arguments);
-		if (this.active) {
-			this.activeChanged();
-		}
-		this.checkedChanged();
-	},
+	rendered: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			if (this.active) {
+				this.activeChanged();
+			}
+			this.checkedChanged();
+		};
+	}),
 	checkedChanged: function() {
 		this.setNodeProperty("checked", this.checked);
 		this.setAttribute("checked", this.checked ? "checked" : "");

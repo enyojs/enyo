@@ -1,12 +1,12 @@
 /**
 	_enyo.TransitionScrollStrategy_ is a helper kind that extends
-	<a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a>, optimizing
-	it for scrolling environments in which effecting scroll changes with
-	transforms using CSS transitions is fastest.
+	[enyo.TouchScrollStrategy](#enyo.TouchScrollStrategy), optimizing it for
+	scrolling environments in which effecting scroll changes with transforms using
+	CSS transitions is fastest.
 
 	_enyo.TransitionScrollStrategy_ is not typically created in application code.
-	Instead, it is specified as the value of the `strategyKind` property of an
-	`enyo.Scroller` or <a href="#enyo.List">enyo.List</a>, or is used by the
+	Instead, it is specified as the value of the _strategyKind_ property of an
+	[enyo.Scroller](#enyo.Scroller) or [enyo.List](#enyo.List), or is used by the
 	framework implicitly.
 */
 enyo.kind({
@@ -110,14 +110,18 @@ enyo.kind({
 	//* @protected
 
 	// apply initial transform so we're always composited
-	create: function() {
-		this.inherited(arguments);
-		enyo.dom.transformValue(this.$.client, this.translation, "0,0,0");
-	},
-	destroy: function() {
-		this.clearCSSTransitionInterval();
-		this.inherited(arguments);
-	},
+	create: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			enyo.dom.transformValue(this.$.client, this.translation, "0,0,0");
+		};
+	}),
+	destroy: enyo.super(function (sup) {
+		return function() {
+			this.clearCSSTransitionInterval();
+			sup.apply(this, arguments);
+		};
+	}),
 	getScrollSize: function() {
 		var n = this.$.client.hasNode();
 		return {width: n ? n.scrollWidth : 0, height: n ? n.scrollHeight : 0};

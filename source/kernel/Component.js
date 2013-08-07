@@ -84,12 +84,14 @@ enyo.kind({
 	toString: function() {
 		return this.kindName;
 	},
-	constructor: function(props) {
-		// initialize instance objects
-		this._componentNameMap = {};
-		this.$ = {};
-		this.inherited(arguments);
-	},
+	constructor: enyo.super(function (sup) {
+		return function(props) {
+			// initialize instance objects
+			this._componentNameMap = {};
+			this.$ = {};
+			sup.apply(this, arguments);
+		};
+	}),
 	constructed: function(inProps) {
 		this.handlers = enyo.mixin(enyo.clone(this.kindHandlers), this.handlers);
 		// perform initialization
@@ -127,12 +129,14 @@ enyo.kind({
 		property. Usually, the component will be suitable for garbage collection
 		after being destroyed, unless user code keeps a reference to it.
 	*/
-	destroy: function() {
-		this.destroyComponents();
-		this.setOwner(null);
-		this.inherited(arguments);
-		this.stopAllJobs();
-	},
+	destroy: enyo.super(function (sup) {
+		return function() {
+			this.destroyComponents();
+			this.setOwner(null);
+			sup.apply(this, arguments);
+			this.stopAllJobs();
+		};
+	}),
 	/**
 		Destroys all owned components.
 	*/
@@ -361,7 +365,9 @@ enyo.kind({
 		}
 		// if the event has a delegate associated with it we grab that
 		// for reference
-		var delegate = (event || (event = enyo.pool.claimObject())).delegate;
+		// NOTE: This is unfortunate but we can't use a pooled object here because
+		// we don't know where to release it
+		var delegate = (event || (event = {})).delegate;
 		var ret;
 		// bottleneck event decoration
 		this.decorateEvent(name, event, sender);

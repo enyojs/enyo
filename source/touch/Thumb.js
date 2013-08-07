@@ -17,20 +17,22 @@ enyo.kind({
 	//* Size of the corners of the indicator
 	cornerSize: 6,
 	classes: "enyo-thumb",
-	create: function() {
-		this.inherited(arguments);
-		var v = this.axis == "v";
-		this.dimension = v ? "height" : "width";
-		this.offset = v ? "top" : "left";
-		this.translation = v ? "translateY" : "translateX";
-		this.positionMethod = v ? "getScrollTop" : "getScrollLeft";
-		this.sizeDimension = v ? "clientHeight" : "clientWidth";
-		this.addClass("enyo-" + this.axis + "thumb");
-		this.transform = enyo.dom.canTransform();
-		if (enyo.dom.canAccelerate()) {
-			enyo.dom.transformValue(this, "translateZ", 0);
-		}
-	},
+	create: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			var v = this.axis == "v";
+			this.dimension = v ? "height" : "width";
+			this.offset = v ? "top" : "left";
+			this.translation = v ? "translateY" : "translateX";
+			this.positionMethod = v ? "getScrollTop" : "getScrollLeft";
+			this.sizeDimension = v ? "clientHeight" : "clientWidth";
+			this.addClass("enyo-" + this.axis + "thumb");
+			this.transform = enyo.dom.canTransform();
+			if (enyo.dom.canAccelerate()) {
+				enyo.dom.transformValue(this, "translateZ", 0);
+			}
+		};
+	}),
 	//* Syncs the scroll indicator bar to the scroller size and position,
 	//* as determined by the passed-in scroll strategy.
 	sync: function(inStrategy) {

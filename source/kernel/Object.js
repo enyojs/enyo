@@ -82,7 +82,7 @@ enyo.kind({
 	*/
 	log: function() {
 		var acc = arguments.callee.caller;
-		var nom = ((acc ? acc.nom : "") || "(instance method)") + ":";
+		var nom = ((acc ? acc.displayName : "") || "(instance method)") + ":";
 		enyo.logging.log("log", [nom].concat(enyo.cloneArray(arguments)));
 	},
 	//* Same as _log_, except uses the console's warn method (if it exists).
@@ -99,7 +99,7 @@ enyo.kind({
 			try {
 				throw new Error();
 			} catch(x) {
-				enyo.logging._log(inMethod, [inArgs.callee.caller.nom + ": "].concat(enyo.cloneArray(inArgs)));
+				enyo.logging._log(inMethod, [inArgs.callee.caller.displayName + ": "].concat(enyo.cloneArray(inArgs)));
 				enyo.log(x.stack);
 			}
 		}

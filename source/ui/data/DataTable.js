@@ -11,8 +11,5 @@ enyo.kind({
 		kind: "enyo.Table",
 		name: "container",
 		style: "width: 100%;"
-	},
-	initComponents: function() {
-		this.inherited(arguments);
 	}
 });

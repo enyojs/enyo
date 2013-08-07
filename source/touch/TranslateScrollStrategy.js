@@ -1,12 +1,12 @@
 /**
 	_enyo.TranslateScrollStrategy_ is a helper kind that extends
-	<a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a>, optimizing
-	it for scrolling environments in which effecting scroll changes with
-	transforms is fastest.
+	[enyo.TouchScrollStrategy](#enyo.TouchScrollStrategy), optimizing it for
+	scrolling environments in which effecting scroll changes with transforms is
+	fastest.
 
 	_enyo.TranslateScrollStrategy_ is not typically created in application code.
-	Instead, it is specified as the value of the `strategyKind` property of an
-	`enyo.Scroller` or <a href="#enyo.List">enyo.List</a>, or is used by the
+	Instead, it is specified as the value of the _strategyKind_ property of an
+	[enyo.Scroller](#enyo.Scroller) or [enyo.List](#enyo.List), or is used by the
 	framework implicitly.
 */
 enyo.kind({
@@ -23,19 +23,23 @@ enyo.kind({
 			{name: "client"}
 		]}
 	],
-	rendered: function() {
-		this.inherited(arguments);
-		enyo.makeBubble(this.$.clientContainer, "scroll");
-	},
+	rendered: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			enyo.makeBubble(this.$.clientContainer, "scroll");
+		};
+	}),
 	getScrollSize: function() {
 		var n = this.$.client.hasNode();
 		return {width: n ? n.scrollWidth : 0, height: n ? n.scrollHeight : 0};
 	},
-	create: function() {
-		this.inherited(arguments);
-		// apply initial transform so we're always composited
-		enyo.dom.transformValue(this.$.client, this.translation, "0,0,0");
-	},
+	create: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			// apply initial transform so we're always composited
+			enyo.dom.transformValue(this.$.client, this.translation, "0,0,0");
+		};
+	}),
 	calcScrollNode: function() {
 		return this.$.clientContainer.hasNode();
 	},
@@ -45,59 +49,73 @@ enyo.kind({
 		this.$.client.applyStyle("max-height", this.maxHeight);
 		this.$.clientContainer.addRemoveClass("enyo-scrollee-fit", !this.maxHeight);
 	},
-	shouldDrag: function(inSender, inEvent) {
-		// stop and update drag info before checking drag status
-		this.stop();
-		this.calcStartInfo();
-		return this.inherited(arguments);
-	},
-	syncScrollMath: function() {
-		if (!this.translateOptimized) {
-			this.inherited(arguments);
-		}
-	},
+	shouldDrag: enyo.super(function (sup) {
+		return function(inSender, inEvent) {
+			// stop and update drag info before checking drag status
+			this.stop();
+			this.calcStartInfo();
+			return sup.apply(this, arguments);
+		};
+	}),
+	syncScrollMath: enyo.super(function (sup) {
+		return function() {
+			if (!this.translateOptimized) {
+				sup.apply(this, arguments);
+			}
+		};
+	}),
 	//* @public
 	//* Sets the left scroll position within the scroller.
-	setScrollLeft: function(inLeft) {
-		this.stop();
-		if (this.translateOptimized) {
-			var m = this.$.scrollMath;
-			m.setScrollX(-inLeft);
-			m.stabilize();
-		} else {
-			this.inherited(arguments);
-		}
-	},
+	setScrollLeft: enyo.super(function (sup) {
+		return function(inLeft) {
+			this.stop();
+			if (this.translateOptimized) {
+				var m = this.$.scrollMath;
+				m.setScrollX(-inLeft);
+				m.stabilize();
+			} else {
+				sup.apply(this, arguments);
+			}
+		};
+	}),
 	//* Sets the top scroll position within the scroller.
-	setScrollTop: function(inTop) {
-		this.stop();
-		if (this.translateOptimized) {
-			var m = this.$.scrollMath;
-			m.setScrollY(-inTop);
-			m.stabilize();
-		} else {
-			this.inherited(arguments);
-		}
-	},
+	setScrollTop: enyo.super(function (sup) {
+		return function(inTop) {
+			this.stop();
+			if (this.translateOptimized) {
+				var m = this.$.scrollMath;
+				m.setScrollY(-inTop);
+				m.stabilize();
+			} else {
+				sup.apply(this, arguments);
+			}
+		};
+	}),
 	//* Gets the left scroll position within the scroller.
-	getScrollLeft: function() {
-		return this.translateOptimized ? this.scrollLeft: this.inherited(arguments);
-	},
+	getScrollLeft: enyo.super(function (sup) {
+		return function() {
+			return this.translateOptimized ? this.scrollLeft: sup.apply(this, arguments);
+		};
+	}),
 	//* Gets the top scroll position within the scroller.
-	getScrollTop: function() {
-		return this.translateOptimized ? this.scrollTop : this.inherited(arguments);
-	},
+	getScrollTop: enyo.super(function (sup) {
+		return function() {
+			return this.translateOptimized ? this.scrollTop : sup.apply(this, arguments);
+		};
+	}),
 	//* @protected
-	scrollMathStart: function(inSender) {
-		this.inherited(arguments);
-		this.scrollStarting = true;
-		this.startX = 0;
-		this.startY = 0;
-		if (!this.translateOptimized && this.scrollNode) {
-			this.startX = this.getScrollLeft();
-			this.startY = this.getScrollTop();
-		}
-	},
+	scrollMathStart: enyo.super(function (sup) {
+		return function(inSender) {
+			sup.apply(this, arguments);
+			this.scrollStarting = true;
+			this.startX = 0;
+			this.startY = 0;
+			if (!this.translateOptimized && this.scrollNode) {
+				this.startX = this.getScrollLeft();
+				this.startY = this.getScrollTop();
+			}
+		};
+	}),
 	scrollMathScroll: function(inSender) {
 		if(!this.overscroll) { //don't overscroll past edges
 			this.scrollLeft = -Math.min(inSender.leftBoundary, Math.max(inSender.rightBoundary, inSender.x));
