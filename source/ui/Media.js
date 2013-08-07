@@ -115,42 +115,46 @@ enyo.kind({
 		onvolumechange: "_volumeChange",
 		onwaiting: "_waiting"
 	},
-	create: function() {
-		this.inherited(arguments);
-		this.autoplayChanged();
-		this.loopChanged();
-		this.preloadChanged();
-		this.showControlsChanged();
-		this.srcChanged();
-	},
-	rendered: function() {
-		this.inherited(arguments);
-		enyo.makeBubble(this, "abort");
-		enyo.makeBubble(this, "canplay");
-		enyo.makeBubble(this, "canplaythrough");
-		enyo.makeBubble(this, "durationchange");
-		enyo.makeBubble(this, "emptied");
-		enyo.makeBubble(this, "ended");
-		enyo.makeBubble(this, "error");
-		enyo.makeBubble(this, "loadeddata");
-		enyo.makeBubble(this, "loadedmetadata");
-		enyo.makeBubble(this, "loadstart");
-		enyo.makeBubble(this, "pause");
-		enyo.makeBubble(this, "play");
-		enyo.makeBubble(this, "playing");
-		enyo.makeBubble(this, "progress");
-		enyo.makeBubble(this, "ratechange");
-		enyo.makeBubble(this, "seeked");
-		enyo.makeBubble(this, "seeking");
-		enyo.makeBubble(this, "stalled");
-		enyo.makeBubble(this, "timeupdate");
-		enyo.makeBubble(this, "volumechange");
-		enyo.makeBubble(this, "waiting");
-		this.defaultPlaybackRateChanged();
-		this.mutedChanged();
-		this.playbackRateChanged();
-		this.volumeChanged();
-	},
+	create: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.autoplayChanged();
+			this.loopChanged();
+			this.preloadChanged();
+			this.showControlsChanged();
+			this.srcChanged();
+		}
+	}),
+	rendered: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			enyo.makeBubble(this, "abort");
+			enyo.makeBubble(this, "canplay");
+			enyo.makeBubble(this, "canplaythrough");
+			enyo.makeBubble(this, "durationchange");
+			enyo.makeBubble(this, "emptied");
+			enyo.makeBubble(this, "ended");
+			enyo.makeBubble(this, "error");
+			enyo.makeBubble(this, "loadeddata");
+			enyo.makeBubble(this, "loadedmetadata");
+			enyo.makeBubble(this, "loadstart");
+			enyo.makeBubble(this, "pause");
+			enyo.makeBubble(this, "play");
+			enyo.makeBubble(this, "playing");
+			enyo.makeBubble(this, "progress");
+			enyo.makeBubble(this, "ratechange");
+			enyo.makeBubble(this, "seeked");
+			enyo.makeBubble(this, "seeking");
+			enyo.makeBubble(this, "stalled");
+			enyo.makeBubble(this, "timeupdate");
+			enyo.makeBubble(this, "volumechange");
+			enyo.makeBubble(this, "waiting");
+			this.defaultPlaybackRateChanged();
+			this.mutedChanged();
+			this.playbackRateChanged();
+			this.volumeChanged();
+		}
+	}),
 	srcChanged: function() {
 		var path = enyo.path.rewrite(this.src);
 		this.setAttribute("src", path);

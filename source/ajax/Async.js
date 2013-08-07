@@ -27,12 +27,14 @@ enyo.kind({
 	//* @protected
 	failed: false,
 	context: null,
-	constructor: function() {
-		this.inherited(arguments);
-		this.responders = [];
-		this.errorHandlers = [];
-		this.progressHandlers = [];
-	},
+	constructor: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.responders = [];
+			this.errorHandlers = [];
+			this.progressHandlers = [];
+		}
+	}),
 	accumulate: function(inArray, inMethodArgs) {
 		var fn = (inMethodArgs.length < 2) ? inMethodArgs[0] : enyo.bind(inMethodArgs[0], inMethodArgs[1]);
 		inArray.push(fn);

@@ -60,10 +60,12 @@ enyo.kind({
 	x: 0,
 	y0: 0,
 	y: 0,
-	destroy: function() {
-		this.stop();
-		this.inherited(arguments);
-	},
+	destroy: enyo.super(function (sup) {
+		return function() {
+			this.stop();
+			sup.apply(this, arguments);
+		}
+	}),
 	/**
 		Simple Verlet integrator for simulating Newtonian motion.
 	*/

@@ -23,10 +23,12 @@ enyo.kind({
 		disabled: false
 	},
 	//* @protected
-	create: function() {
-		this.inherited(arguments);
-		this.disabledChanged();
-	},
+	create: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.disabledChanged();
+		}
+	}),
 	disabledChanged: function() {
 		this.setAttribute("disabled", this.disabled);
 	},

@@ -1140,27 +1140,29 @@
 			This is a specially overloaded version of _enyo.Object.set()_. It accepts
 			either a hash or a string and value combined as its parameters.
 		*/
-		set: function (prop, val) {
-			if (enyo.isObject(prop)) {
-				this.silence();
-				this.stopNotifications();
-				for (var key in prop) {
-					this.set(key, prop[key]);
+		set: enyo.super(function (sup) {
+			return function (prop, val) {
+				if (enyo.isObject(prop)) {
+					this.silence();
+					this.stopNotifications();
+					for (var key in prop) {
+						this.set(key, prop[key]);
+					}
+					this.startNotifications();
+					this.unsilence();
+					this.flushChanges();
+					return this;
+				} else if (this.isRelation(prop)) {
+					return this.setRelation(prop, val);
+				} else {
+					sup.apply(this, arguments);
+					if (prop != this.primaryKey && this.isAttribute(prop)) {
+						this.set("status", DIRTY);
+					}
+					return this;
 				}
-				this.startNotifications();
-				this.unsilence();
-				this.flushChanges();
-				return this;
-			} else if (this.isRelation(prop)) {
-				return this.setRelation(prop, val);
-			} else {
-				this.inherited(arguments);
-				if (prop != this.primaryKey && this.isAttribute(prop)) {
-					this.set("status", DIRTY);
-				}
-				return this;
 			}
-		},
+		}),
 
 		//*@public
 		/**
@@ -1184,44 +1186,46 @@
 			If there is no schema defined and no initial _values_ are passed in,
 			much of its functionality will not work as intended.
 		*/
-		constructor: function (values) {
-			var $v = values || enyo.pool.claimObject(true);
-			var $t = enyo.pool.claimObject();
-			var $d = this.defaults || enyo.pool.claimObject(true);
-			var $c = $v;
-			// default behavior of importing properties passed in will not
-			// work for our purposes
-			values = undefined;
-			this.inherited(arguments);
-			this.__collections = [];
-			this.__previous = {};
-			this.__changed = {};
-			this.includeKeys = this.includeKeys || [];
-			this.defaults = this.defaults || $d;
-			// because we don't know whether data being passed in to the constructor
-			// will have the local format or the remote format and we want to be able
-			// to allow the filterData method to execute without always needing to know
-			// which case it is, we catch errors and use the original structure if
-			// it fails and use the noFilter option for didFetch knowing we've already
-			// filtered it either way
-			try {
-				$v = this.filterData($v, "fetch");
-			} catch (e) {
-				$v = $c;
-			}
-			initRelations.call(this);
-			this.didFetch($t, $v, true);
-			// because we arbitrarily called didFetch here we will reset our
-			// state properly to clean and reset anything that will have changed
-			if (enyo.keys($d).length || enyo.keys(enyo.except(enyo.keys($d), $v)).length) {
-				this.status = CLEAN;
+		constructor: enyo.super(function (sup) {
+			return function (values) {
+				var $v = values || enyo.pool.claimObject(true);
+				var $t = enyo.pool.claimObject();
+				var $d = this.defaults || enyo.pool.claimObject(true);
+				var $c = $v;
+				// default behavior of importing properties passed in will not
+				// work for our purposes
+				values = undefined;
+				sup.apply(this, arguments);
+				this.__collections = [];
+				this.__previous = {};
 				this.__changed = {};
-				this.__previous = enyo.only(this.__attributeKeys, this);
-			} else {
-				this.status = NEW;
+				this.includeKeys = this.includeKeys || [];
+				this.defaults = this.defaults || $d;
+				// because we don't know whether data being passed in to the constructor
+				// will have the local format or the remote format and we want to be able
+				// to allow the filterData method to execute without always needing to know
+				// which case it is, we catch errors and use the original structure if
+				// it fails and use the noFilter option for didFetch knowing we've already
+				// filtered it either way
+				try {
+					$v = this.filterData($v, "fetch");
+				} catch (e) {
+					$v = $c;
+				}
+				initRelations.call(this);
+				this.didFetch($t, $v, true);
+				// because we arbitrarily called didFetch here we will reset our
+				// state properly to clean and reset anything that will have changed
+				if (enyo.keys($d).length || enyo.keys(enyo.except(enyo.keys($d), $v)).length) {
+					this.status = CLEAN;
+					this.__changed = {};
+					this.__previous = enyo.only(this.__attributeKeys, this);
+				} else {
+					this.status = NEW;
+				}
+				enyo.pool.releaseObject($v, $d, $t);
 			}
-			enyo.pool.releaseObject($v, $d, $t);
-		},
+		}),
 		
 		//*@public
 		/**

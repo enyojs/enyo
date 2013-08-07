@@ -50,36 +50,40 @@ enyo.kind({
 		onclear: "clear",
 		ondragstart: "dragstart"
 	},
-	create: function() {
-		if (enyo.platform.ie) {
-			this.handlers.onkeyup = "iekeyup";
+	create: enyo.super(function (sup) {
+		return function() {
+			if (enyo.platform.ie) {
+				this.handlers.onkeyup = "iekeyup";
+			}
+			if (enyo.platform.windowsPhone) {
+				this.handlers.onkeydown = "iekeydown";
+			}
+			sup.apply(this, arguments);
+			this.placeholderChanged();
+			// prevent overriding a custom attribute with null
+			if (this.type) {
+				this.typeChanged();
+			}
+			this.valueChanged();
 		}
-		if (enyo.platform.windowsPhone) {
-			this.handlers.onkeydown = "iekeydown";
-		}
-		this.inherited(arguments);
-		this.placeholderChanged();
-		// prevent overriding a custom attribute with null
-		if (this.type) {
-			this.typeChanged();
-		}
-		this.valueChanged();
-	},
-	rendered: function() {
-		this.inherited(arguments);
+	}),
+	rendered: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
 
-		enyo.makeBubble(this, "focus", "blur");
+			enyo.makeBubble(this, "focus", "blur");
 
-		//Force onchange event to be bubbled inside Enyo for IE8
-		if(enyo.platform.ie == 8){
-			this.setAttribute("onchange", enyo.bubbler);
-		}
+			//Force onchange event to be bubbled inside Enyo for IE8
+			if(enyo.platform.ie == 8){
+				this.setAttribute("onchange", enyo.bubbler);
+			}
 
-		this.disabledChanged();
-		if (this.defaultFocus) {
-			this.focus();
+			this.disabledChanged();
+			if (this.defaultFocus) {
+				this.focus();
+			}
 		}
-	},
+	}),
 	typeChanged: function() {
 		this.setAttribute("type", this.type);
 	},

@@ -16,14 +16,18 @@ enyo.kind({
 	name: "enyo.Signals",
 	kind: "enyo.Component",
 	//* @protected
-	create: function() {
-		this.inherited(arguments);
-		enyo.Signals.addListener(this);
-	},
-	destroy: function() {
-		enyo.Signals.removeListener(this);
-		this.inherited(arguments);
-	},
+	create: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			enyo.Signals.addListener(this);
+		}
+	}),
+	destroy: enyo.super(function (sup) {
+		return function() {
+			enyo.Signals.removeListener(this);
+			sup.apply(this, arguments);
+		}
+	}),
 	notify: function(inMsg, inPayload) {
 		this.dispatchEvent(inMsg, inPayload);
 	},

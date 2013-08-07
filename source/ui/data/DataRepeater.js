@@ -86,22 +86,28 @@
 			$p.mixins = this.childMixins;
 			$p.repeater = this;
 		},
-		constructor: function () {
-			this.__selection = [];
-			return this.inherited(arguments);
-		},
-		create: function () {
-			this.inherited(arguments);
-			if (this.multipleSelection) {
-				this.selection = true;
+		constructor: enyo.super(function (sup) {
+			return function () {
+				this.__selection = [];
+				sup.apply(this, arguments);
 			}
-		},
-		controllerFindAndInstance: function(ctor, inst) {
-			this.inherited(arguments);
-			if (inst && inst._isController) {
-				this.reset();
+		}),
+		create: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				if (this.multipleSelection) {
+					this.selection = true;
+				}
 			}
-		},
+		}),
+		controllerFindAndInstance: enyo.super(function (sup) {
+			return function(ctor, inst) {
+				sup.apply(this, arguments);
+				if (inst && inst._isController) {
+					this.reset();
+				}
+			}
+		}),
 		reset: function () {
 			var $d = this.get("data");
 			this.destroyClientControls();

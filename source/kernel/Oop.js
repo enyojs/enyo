@@ -259,7 +259,8 @@ enyo.kind.features.push(function(ctor, props) {
 			var p = props[n];
 			if (enyo.isSuper(p)) {
 				p = proto[n] = p.fn(proto.base.prototype[n]);
-			} else if (enyo.isFunction(p)) {
+			}
+			if (enyo.isFunction(p)) {
 				p._inherited = proto.base.prototype[n];
 				// FIXME: we used to need some extra values for inherited, then inherited got cleaner
 				// but in the meantime we used these values to support logging in Object.

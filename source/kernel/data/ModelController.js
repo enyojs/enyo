@@ -21,20 +21,24 @@ enyo.kind({
 	},
 
 	//*@public
-	get: function (prop) {
-		if (!this.isAttribute(prop)) {
-			return this.inherited(arguments);
+	get: enyo.super(function (sup) {
+		return function (prop) {
+			if (!this.isAttribute(prop)) {
+				sup.apply(this, arguments);
+			}
+			return this.model && enyo.isModel(this.model)? this.model.get(prop): undefined;
 		}
-		return this.model && enyo.isModel(this.model)? this.model.get(prop): undefined;
-	},
+	}),
 
 	//*@public
-	set: function (prop, val) {
-		if (!this.isAttribute(prop)) {
-			return this.inherited(arguments);
+	set: enyo.super(function (sup) {
+		return function (prop, val) {
+			if (!this.isAttribute(prop)) {
+				return sup.apply(this, arguments);
+			}
+			return this.model.set(prop, val);
 		}
-		return this.model.set(prop, val);
-	},
+	}),
 
 	//*@public
 	sync: function () {

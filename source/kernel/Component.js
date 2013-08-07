@@ -84,12 +84,14 @@ enyo.kind({
 	toString: function() {
 		return this.kindName;
 	},
-	constructor: function(props) {
-		// initialize instance objects
-		this._componentNameMap = {};
-		this.$ = {};
-		this.inherited(arguments);
-	},
+	constructor: enyo.super(function (sup) {
+		return function(props) {
+			// initialize instance objects
+			this._componentNameMap = {};
+			this.$ = {};
+			sup.apply(this, arguments);
+		}
+	}),
 	constructed: function(inProps) {
 		this.handlers = enyo.mixin(enyo.clone(this.kindHandlers), this.handlers);
 		// perform initialization
@@ -127,12 +129,14 @@ enyo.kind({
 		property. Usually, the component will be suitable for garbage collection
 		after being destroyed, unless user code keeps a reference to it.
 	*/
-	destroy: function() {
-		this.destroyComponents();
-		this.setOwner(null);
-		this.inherited(arguments);
-		this.stopAllJobs();
-	},
+	destroy: enyo.super(function (sup) {
+		return function() {
+			this.destroyComponents();
+			this.setOwner(null);
+			sup.apply(this, arguments);
+			this.stopAllJobs();
+		}
+	}),
 	/**
 		Destroys all owned components.
 	*/

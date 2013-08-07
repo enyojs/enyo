@@ -144,31 +144,41 @@ enyo.kind({
 		}
 	},
 	controlParentName: "strategy",
-	create: function() {
-		this.inherited(arguments);
-		this.horizontalChanged();
-		this.verticalChanged();
-		this.useMouseWheelChanged();
-	},
-	importProps: function(inProps) {
-		this.inherited(arguments);
-		// allow global overriding of strategy kind
-		if (inProps && inProps.strategyKind === undefined && (enyo.Scroller.touchScrolling || this.touch)) {
-			this.strategyKind = enyo.Scroller.getTouchStrategy();
+	create: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.horizontalChanged();
+			this.verticalChanged();
+			this.useMouseWheelChanged();
+		}	
+	}),
+	importProps: enyo.super(function (sup) {
+		return function(inProps) {
+			sup.apply(this, arguments);
+			// allow global overriding of strategy kind
+			if (inProps && inProps.strategyKind === undefined && (enyo.Scroller.touchScrolling || this.touch)) {
+				this.strategyKind = enyo.Scroller.getTouchStrategy();
+			}
 		}
-	},
-	initComponents: function() {
-		this.strategyKindChanged();
-		this.inherited(arguments);
-	},
-	teardownChildren: function() {
-		this.cacheScrollPosition();
-		this.inherited(arguments);
-	},
-	rendered: function() {
-		this.inherited(arguments);
-		this.restoreScrollPosition();
-	},
+	}),
+	initComponents: enyo.super(function (sup) {
+		return function() {
+			this.strategyKindChanged();
+			sup.apply(this, arguments);
+		}
+	}),
+	teardownChildren: enyo.super(function (sup) {
+		return function() {
+			this.cacheScrollPosition();
+			sup.apply(this, arguments);
+		}
+	}),
+	rendered: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.restoreScrollPosition();
+		}
+	}),
 	strategyKindChanged: function() {
 		if (this.$.strategy) {
 			this.$.strategy.destroy();
@@ -192,17 +202,19 @@ enyo.kind({
 	maxHeightChanged: function() {
 		this.$.strategy.setMaxHeight(this.maxHeight);
 	},
-	showingChanged: function() {
-		if (!this.showing) {
-			this.cacheScrollPosition();
-			this.setScrollLeft(0);
-			this.setScrollTop(0);
+	showingChanged: enyo.super(function (sup) {
+		return function() {
+			if (!this.showing) {
+				this.cacheScrollPosition();
+				this.setScrollLeft(0);
+				this.setScrollTop(0);
+			}
+			sup.apply(this, arguments);
+			if (this.showing) {
+				this.restoreScrollPosition();
+			}
 		}
-		this.inherited(arguments);
-		if (this.showing) {
-			this.restoreScrollPosition();
-		}
-	},
+	}),
 	thumbChanged: function() {
 		this.$.strategy.setThumb(this.thumb);
 	},

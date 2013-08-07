@@ -482,20 +482,22 @@
 			Overloaded setter that accepts an object literal and
 			applies all keys and values to the collection.
 		*/
-		set: function (prop, val) {
-			if (enyo.isObject(prop)) {
-				this.stopNotifications();
-				for (var $k in prop) {
-					this.set($k, prop[$k]);
+		set: enyo.super(function (sup) {
+			return function (prop, val) {
+				if (enyo.isObject(prop)) {
+					this.stopNotifications();
+					for (var $k in prop) {
+						this.set($k, prop[$k]);
+					}
+					this.startNotifications();
+					return this;
+				} else if (!enyo.exists(val)) {
+					return;
+				} else {
+					return sup.apply(this, arguments);
 				}
-				this.startNotifications();
-				return this;
-			} else if (!enyo.exists(val)) {
-				return;
-			} else {
-				return this.inherited(arguments);
 			}
-		},
+		}),
 
 		//*@public
 		/**
@@ -523,29 +525,31 @@
 		/**
 			Accepts an array of models to add to the collection at creation.
 		*/
-		constructor: function (props) {
-			this.__dirtyModels = [];
-			this.inherited(arguments);
-			// if the initial parameter is an array we use that as
-			// our starting properties
-			if (props && props instanceof Array) {
-				this.__store = this.__store? this.__store.concat(props): props;
-			}
-			// initialize our store
-			this.__store = this.__store || [];
-			this.length = this.__store.length;
-			this.initModel();
-			if (this.__store.length) {
-				for (var $i=0, r$; (r$=this.__store[$i]); ++$i) {
-					if (!(r$ instanceof this.model)) {
-						r$ = new this.model(r$);
-					}
-					r$.addCollection(this);
-					this.__store[$i] = r$;
+		constructor: enyo.super(function (sup) {
+			return function (props) {
+				this.__dirtyModels = [];
+				sup.apply(this, arguments);
+				// if the initial parameter is an array we use that as
+				// our starting properties
+				if (props && props instanceof Array) {
+					this.__store = this.__store? this.__store.concat(props): props;
 				}
+				// initialize our store
+				this.__store = this.__store || [];
+				this.length = this.__store.length;
+				this.initModel();
+				if (this.__store.length) {
+					for (var $i=0, r$; (r$=this.__store[$i]); ++$i) {
+						if (!(r$ instanceof this.model)) {
+							r$ = new this.model(r$);
+						}
+						r$.addCollection(this);
+						this.__store[$i] = r$;
+					}
+				}
+				this.initRelation();
 			}
-			this.initRelation();
-		},
+		}),
 
 		// ...........................
 		// PROTECTED METHODS

@@ -353,43 +353,49 @@
 		// PROTECTED METHODS
 
 		//*@protected
-		constructor: function () {
-			this._staticRoutes = {};
-			this._dynamicRoutes = [];
-			this.routes = this.routes || [];
-			this._history = this._history || [];
-			this.inherited(arguments);
-		},
+		constructor: enyo.super(function (sup) {
+			return function () {
+				this._staticRoutes = {};
+				this._dynamicRoutes = [];
+				this.routes = this.routes || [];
+				this._history = this._history || [];
+				sup.apply(this, arguments);
+			}
+		}),
 
 		//*@protected
-		create: function () {
-			this.inherited(arguments);
-			// make sure to initialize our routes prior
-			// to registering for events
-			this._setupRoutes();
-			// make sure we're up to date
-			this.set("_current", prepare(window.location.hash));
-			// ok, register for events
-			listeners.push(this);
-			// ok, if we need to go ahead and route our current
-			// location, lets do it
-			if (this.triggerOnStart) {
-				if (this.defaultPathOnStart) {
-					this.trigger({change: true, location: this.get("defaultPath")});
-				} else {
-					this.trigger();
+		create: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				// make sure to initialize our routes prior
+				// to registering for events
+				this._setupRoutes();
+				// make sure we're up to date
+				this.set("_current", prepare(window.location.hash));
+				// ok, register for events
+				listeners.push(this);
+				// ok, if we need to go ahead and route our current
+				// location, lets do it
+				if (this.triggerOnStart) {
+					if (this.defaultPathOnStart) {
+						this.trigger({change: true, location: this.get("defaultPath")});
+					} else {
+						this.trigger();
+					}
 				}
 			}
-		},
+		}),
 
 		//*@protected
-		destroy: function () {
-			var idx = enyo.indexOf(this, listeners);
-			if (!~idx) {
-				listeners.splice(idx, 1);
+		destroy: enyo.super(function (sup) {
+			return function () {
+				var idx = enyo.indexOf(this, listeners);
+				if (!~idx) {
+					listeners.splice(idx, 1);
+				}
+				sup.apply(this, arguments);
 			}
-			this.inherited(arguments);
-		},
+		}),
 
 		//*@protected
 		_hashChanged: function (hash) {
