@@ -68,15 +68,17 @@
 		controlParentName: "page1",
 		containerName: "scroller",
 		debugPageBoundaries: false,
-		create: function () {
-			this.inherited(arguments);
-			this.orientation = this.orientation[0] == "v"? "v": "h";
-			if (this.debugPageBoundaries) {
-				this.$.page1.applyStyle("background-color", "#d8d8d8");
-				this.$.page2.applyStyle("background-color", "#58d3f7");
-			}
-			this.resetMetrics();
-		},
+		create: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				this.orientation = this.orientation[0] == "v"? "v": "h";
+				if (this.debugPageBoundaries) {
+					this.$.page1.applyStyle("background-color", "#d8d8d8");
+					this.$.page2.applyStyle("background-color", "#58d3f7");
+				}
+				this.resetMetrics();
+			};
+		}),
 		rendered: function () {
 			// the initial time the list is rendered, we've only rendered the
 			// list node itself, but now we know it should be safe to calculate
@@ -521,15 +523,17 @@
 				this._lastPage = $b;
 			}
 		},
-		initContainer: function () {
-			var $o = enyo.clone(this.get("containerOptions")),
-				$s = this.get("scrollerOptions");
-			if ($s) {
-				enyo.mixin($o, $s, {exists: true});
-			}
-			this.set("containerOptions", $o);
-			this.inherited(arguments);
-		},
+		initContainer: enyo.super(function (sup) {
+			return function () {
+				var $o = enyo.clone(this.get("containerOptions")),
+					$s = this.get("scrollerOptions");
+				if ($s) {
+					enyo.mixin($o, $s, {exists: true});
+				}
+				this.set("containerOptions", $o);
+				sup.apply(this, arguments);
+			};
+		}),
 		batchingChanged: function (prev, val) {
 			if (this.generated && false === val) {
 				// this is happening so various scrollers that need to know the content
@@ -537,27 +541,31 @@
 				this.$.scroller.rendered();
 			}
 		},
-		resizeHandler: function () {
-			this.inherited(arguments);
-			this.updateSizing();
-			if (this.length) {
-				this.startJob("layoutPages", this.layoutPages, 100);
-			}
-		},
+		resizeHandler: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				this.updateSizing();
+				if (this.length) {
+					this.startJob("layoutPages", this.layoutPages, 100);
+				}
+			};
+		}),
 		updateSizing: function () {
 			this.width = this.getWidth();
 			this.height = this.getHeight();
 		},
-		dispatchEvent: function (n) {
-			// FIXME: This is only a partial solution to a larger issue of detecting
-			// size changes in the children and properly laying out the pages after
-			// this happens. In this particular case we're guessing that if a page has
-			// had an image load, we need to try and adjust if we need to.
-			if (n == "onload") {
-				this.startJob("layoutPages", this.layoutPages, 100);
-			}
-			return this.inherited(arguments);
-		},
+		dispatchEvent: enyo.super(function (sup) {
+			return function (n) {
+				// FIXME: This is only a partial solution to a larger issue of detecting
+				// size changes in the children and properly laying out the pages after
+				// this happens. In this particular case we're guessing that if a page has
+				// had an image load, we need to try and adjust if we need to.
+				if (n == "onload") {
+					this.startJob("layoutPages", this.layoutPages, 100);
+				}
+				return sup.apply(this, arguments);
+			};
+		}),
 		layoutPages: function () {
 			this.adjustPageSize(this.$.page1);
 			this.adjustPageSize(this.$.page2);

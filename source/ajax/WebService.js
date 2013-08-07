@@ -73,10 +73,6 @@ enyo.kind({
 		*/
 		onProgress: ""
 	},
-	//* @protected
-	constructor: function(inProps) {
-		this.inherited(arguments);
-	},
 	//* @public
 	/**
 		Sends a Web request with the passed-in parameters, returning the

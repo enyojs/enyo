@@ -66,10 +66,12 @@ enyo.kind({
 		onChange: ""
 	},
 	//* @protected
-	create: function() {
-		this.clear();
-		this.inherited(arguments);
-	},
+	create: enyo.super(function (sup) {
+		return function() {
+			this.clear();
+			sup.apply(this, arguments);
+		};
+	}),
 	multiChanged: function() {
 		if (!this.multi) {
 			this.clear();

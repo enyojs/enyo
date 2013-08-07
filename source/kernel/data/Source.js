@@ -258,16 +258,18 @@
 			}
 		},
 
-		constructor: function () {
-			this.inherited(arguments);
-			this.defaultOptions = this.defaultOptions || {};
-			this.defaultHeaders = this.defaultHeaders || {};
-			this.domain = this.domain || (function () {
-				return location.pathname.length > 1
-					? location.href.split("/").slice(0,-1).join("/")
-					: location.origin;
-			}());
-		},
+		constructor: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				this.defaultOptions = this.defaultOptions || {};
+				this.defaultHeaders = this.defaultHeaders || {};
+				this.domain = this.domain || (function () {
+					return location.pathname.length > 1
+						? location.href.split("/").slice(0,-1).join("/")
+						: location.origin;
+				}());
+			};
+		}),
 		constructed: function () {
 			var $kind = this.requestKind || enyo.Ajax;
 			this.requestKind = "string" === typeof $kind? enyo.getPath($kind): $kind;

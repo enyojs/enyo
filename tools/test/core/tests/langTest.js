@@ -5,9 +5,9 @@ enyo.kind({
 	testCallee: function() {
 		var err = "";
 		var fn = function() {
-			err = (arguments.callee.nom !== 'fn');
+			err = (arguments.callee.displayName !== 'fn');
 		};
-		fn.nom = "fn";
+		fn.displayName = "fn";
 		fn();
 		this.finish(err);
 	},

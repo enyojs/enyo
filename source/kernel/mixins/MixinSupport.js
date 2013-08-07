@@ -27,12 +27,12 @@
 	var proxyInheritedMethod = function (fn, inherited, nom) {
 		return function () {
 			var oldInherited = fn._inherited;
-			var oldNom = fn.nom;
+			var oldNom = fn.displayName;
 			fn._inherited = inherited;
-			fn.nom = nom;
+			fn.displayName = nom;
 			var ret = fn.apply(this, arguments);
 			fn._inherited =  oldInherited;
-			fn.nom = oldNom;
+			fn.displayName = oldNom;
 			return ret;
 		};
 	};
@@ -61,12 +61,12 @@
 		if ("function" === typeof props.create) {
 			props._create = props.create;
 			delete props.create;
-			props._create.nom = name + ".create()";
+			props._create.displayName = name + ".create()";
 		}
 		if ("function" === typeof props.destroy) {
 			props._destroy = props.destroy;
 			delete props.destroy;
-			props._destroy.nom = name + ".destroy()";
+			props._destroy.displayName = name + ".destroy()";
 		}
 		if ("object" === typeof props.handlers) {
 			props._mixinHandlers = props.handlers;
@@ -181,8 +181,8 @@
 				}
 				continue;
 			}
-			if ("function" === typeof prop && !prop.nom) {
-				prop.nom = name + "." + key + "()";
+			if ("function" === typeof prop && !prop.displayName) {
+				prop.displayName = name + "." + key + "()";
 			}
 
 			// if the basetype has the property and it is a function, we

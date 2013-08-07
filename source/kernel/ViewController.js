@@ -138,15 +138,17 @@
 		// PROTECTED METHODS
 
 		//*@protected
-		constructed: function () {
-			this.inherited(arguments);
-			// ensure we have created the view instance, note that
-			// this is done here _prior_ to mixin initialization
-			// (which takes place after all construction is done)
-			// but this allows subkinds to overload the constructed
-			// method to control the flow
-			this._createView();
-		},
+		constructed: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				// ensure we have created the view instance, note that
+				// this is done here _prior_ to mixin initialization
+				// (which takes place after all construction is done)
+				// but this allows subkinds to overload the constructed
+				// method to control the flow
+				this._createView();
+			};
+		}),
 
 		//*@protected
 		/**

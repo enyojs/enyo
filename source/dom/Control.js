@@ -93,42 +93,48 @@ enyo.kind({
 	//* @protected
 	node: null,
 	generated: false,
-	create: function() {
-		if (this.tag == null) {
-			// initially set to true, but if this is not a renderable
-			// control, we set it to false.
-			this._needsRender = false;
-		}
-		// initialize style databases
-		this.initStyles();
-		// superkind initialization
-		this.inherited(arguments);
-		// 'showing' is tertiary method for modifying display style
-		// setting 'display: none;' style at initialization time will
-		// not work if 'showing' is true.
-		this.showingChanged();
-		// Notes:
-		// - 'classes' does not reflect the complete set of classes on an object; the complete set is in
-		//   this.attributes.class. The '*Class' apis affect this.attributes.class.
-		// - use addClass instead of setClasses here, by convention 'classes' is reserved for instance objects
-		// - inheritors should 'addClass' to add classes
-		// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
-		this.addClass(this.kindClasses);
-		this.addClass(this.classes);
-		this.initProps(["id", "content", "src"]);
-	},
-	destroy: function() {
-		this.removeFromRoots();
-		this.connectDom();
-		this.removeNodeFromDom();
-		enyo.Control.unregisterDomEvents(this.id);
-		this.inherited(arguments);
-	},
-	importProps: function(inProps) {
-		this.inherited(arguments);
-		// each instance has its own attributes array, the union of the prototype attributes and user-specified attributes
-		this.attributes = enyo.mixin(enyo.clone(this.kindAttributes), this.attributes);
-	},
+	create: enyo.super(function (sup) {
+		return function() {
+			if (this.tag == null) {
+				// initially set to true, but if this is not a renderable
+				// control, we set it to false.
+				this._needsRender = false;
+			}
+			// initialize style databases
+			this.initStyles();
+			// superkind initialization
+			sup.apply(this, arguments);
+			// 'showing' is tertiary method for modifying display style
+			// setting 'display: none;' style at initialization time will
+			// not work if 'showing' is true.
+			this.showingChanged();
+			// Notes:
+			// - 'classes' does not reflect the complete set of classes on an object; the complete set is in
+			//   this.attributes.class. The '*Class' apis affect this.attributes.class.
+			// - use addClass instead of setClasses here, by convention 'classes' is reserved for instance objects
+			// - inheritors should 'addClass' to add classes
+			// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
+			this.addClass(this.kindClasses);
+			this.addClass(this.classes);
+			this.initProps(["id", "content", "src"]);
+		};
+	}),
+	destroy: enyo.super(function (sup) {
+		return function() {
+			this.removeFromRoots();
+			this.connectDom();
+			this.removeNodeFromDom();
+			enyo.Control.unregisterDomEvents(this.id);
+			sup.apply(this, arguments);
+		};
+	}),
+	importProps: enyo.super(function (sup) {
+		return function(inProps) {
+			sup.apply(this, arguments);
+			// each instance has its own attributes array, the union of the prototype attributes and user-specified attributes
+			this.attributes = enyo.mixin(enyo.clone(this.kindAttributes), this.attributes);
+		};
+	}),
 	initProps: function(inPropNames) {
 		// for each named property, trigger the *Changed handler if the property value is truthy
 		for (var i=0, n, cf; (n=inPropNames[i]); i++) {
@@ -142,14 +148,15 @@ enyo.kind({
 		}
 	},
 	//*@protected
-	dispatchEvent: function (inEventName, inEvent, inSender) {
-		// prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
-		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
-			return true;
-		}
-
-		return this.inherited(arguments);
-	},
+	dispatchEvent: enyo.super(function (sup) {
+		return function (inEventName, inEvent, inSender) {
+			// prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
+			if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
+				return true;
+			}
+			return sup.apply(this, arguments);
+		};
+	}),
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
 		this.addClass(this.classes);
@@ -160,17 +167,21 @@ enyo.kind({
 		if (this.controlClasses) {
 			inProps.classes = (inProps.classes ? inProps.classes + " " : "") + this.controlClasses;
 		}
-		this.inherited(arguments);
+		sup.apply(this, arguments);
 	},
 	*/
-	addChild: function(inControl) {
-		inControl.addClass(this.controlClasses);
-		this.inherited(arguments);
-	},
-	removeChild: function(inControl) {
-		this.inherited(arguments);
-		inControl.removeClass(this.controlClasses);
-	},
+	addChild: enyo.super(function (sup) {
+		return function(inControl) {
+			inControl.addClass(this.controlClasses);
+			sup.apply(this, arguments);
+		};
+	}),
+	removeChild: enyo.super(function (sup) {
+		return function(inControl) {
+			sup.apply(this, arguments);
+			inControl.removeClass(this.controlClasses);
+		};
+	}),
 	// event filter
 	strictlyInternalEvents: {onenter: 1, onleave: 1},
 	isInternalEvent: function(inEvent) {
@@ -526,10 +537,12 @@ enyo.kind({
 	/**
 		Override this method to perform tasks that require access to the DOM node.
 
-			rendered: function() {
-				this.inherited(arguments);
-				// do some task
-			}
+			rendered: enyo.super(function (sup) {
+				return function() {
+					sup.apply(this, arguments);
+					// do some task
+				}
+			})
 	*/
 	rendered: function() {
 		// CAVEAT: Currently we use one entry point ('reflow') for

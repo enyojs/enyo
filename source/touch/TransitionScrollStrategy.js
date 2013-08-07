@@ -110,14 +110,18 @@ enyo.kind({
 	//* @protected
 
 	// apply initial transform so we're always composited
-	create: function() {
-		this.inherited(arguments);
-		enyo.dom.transformValue(this.$.client, this.translation, "0,0,0");
-	},
-	destroy: function() {
-		this.clearCSSTransitionInterval();
-		this.inherited(arguments);
-	},
+	create: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			enyo.dom.transformValue(this.$.client, this.translation, "0,0,0");
+		};
+	}),
+	destroy: enyo.super(function (sup) {
+		return function() {
+			this.clearCSSTransitionInterval();
+			sup.apply(this, arguments);
+		};
+	}),
 	getScrollSize: function() {
 		var n = this.$.client.hasNode();
 		return {width: n ? n.scrollWidth : 0, height: n ? n.scrollHeight : 0};
