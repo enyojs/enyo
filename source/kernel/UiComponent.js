@@ -52,7 +52,7 @@ enyo.kind({
 			this.containerChanged();
 			sup.apply(this, arguments);
 			this.layoutKindChanged();
-		}
+		};
 	}),
 	destroy: enyo.super(function (sup) {
 		return function() {
@@ -62,7 +62,7 @@ enyo.kind({
 			this.setContainer(null);
 			// Destroys chrome controls owned by this.
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	importProps: enyo.super(function (sup) {
 		return function(inProps) {
@@ -71,7 +71,7 @@ enyo.kind({
 				//this.log("registering ownerless control [" + this.kindName + "] with enyo.master");
 				this.owner = enyo.master;
 			}
-		}
+		};
 	}),
 	// As implemented, _controlParentName_ only works to identify an owned
 	// control created via _createComponents_ (i.e., usually in our _components_
@@ -85,7 +85,7 @@ enyo.kind({
 			var results = sup.apply(this, arguments);
 			this.discoverControlParent();
 			return results;
-		}
+		};
 	}),
 	discoverControlParent: function() {
 		this.controlParent = this.$[this.controlParentName] || this.controlParent;
@@ -95,7 +95,7 @@ enyo.kind({
 			// Components we create have us as a container by default.
 			inProps.container = inProps.container || this;
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	// containment
 	containerChanged: function(inOldContainer) {

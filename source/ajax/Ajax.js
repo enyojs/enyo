@@ -29,7 +29,7 @@ enyo.kind({
 		return function(inParams) {
 			enyo.mixin(this, inParams);
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	//* @public
 	/**
@@ -172,7 +172,7 @@ enyo.kind({
 				this.xhr = null;
 			}
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	xhrToResponse: function(inXhr) {
 		if (inXhr) {

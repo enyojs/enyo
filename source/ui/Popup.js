@@ -63,7 +63,7 @@ enyo.kind({
 		return function() {
 			sup.apply(this, arguments);
 			this.canGenerate = !this.floating;
-		}
+		};
 	}),
 	render: enyo.super(function (sup) {
 		return function() {
@@ -74,7 +74,7 @@ enyo.kind({
 				this.parentNode = enyo.floatingLayer.hasNode();
 			}
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	destroy: enyo.super(function (sup) {
 		return function() {
@@ -82,14 +82,14 @@ enyo.kind({
 				this.release();
 			}
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 
 	reflow: enyo.super(function (sup) {
 		return function() {
 			this.updatePosition();
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	calcViewportSize: function() {
 		if (window.innerWidth) {
@@ -203,7 +203,7 @@ enyo.kind({
 			if (this.hasNode()) {
 				this[this.showing ? "doShow" : "doHide"]();
 			}
-		}
+		};
 	}),
 	capture: function() {
 		enyo.dispatcher.capture(this, !this.modal);

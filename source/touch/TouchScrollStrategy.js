@@ -97,19 +97,19 @@ enyo.kind({
 			this.scrimChanged();
 			this.container.addClass(containerClasses);
 			this.translation = this.accel ? "translate3d" : "translate";
-		}
+		};
 	}),
 	initComponents: enyo.super(function (sup) {
 		return function() {
 			this.createChrome(this.tools);
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	destroy: enyo.super(function (sup) {
 		return function() {
 			this.container.removeClass("enyo-touch-strategy-container");
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	rendered: enyo.super(function (sup) {
 		return function() {
@@ -120,7 +120,7 @@ enyo.kind({
 			if (this.thumb) {
 				this.alertThumbs();
 			}
-		}
+		};
 	}),
 	scrimChanged: function() {
 		if (this.scrim && !this.$.scrim) {
@@ -197,33 +197,33 @@ enyo.kind({
 		return function() {
 			this.stop();
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	//* Sets the left scroll position within the scroller.
 	setScrollLeft: enyo.super(function (sup) {
 		return function() {
 			this.stop();
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	//* Sets the top scroll position within the scroller.
 	setScrollTop: enyo.super(function (sup) {
 		return function() {
 			this.stop();
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	//* Gets the left scroll position within the scroller.
 	getScrollLeft: enyo.super(function (sup) {
 		return function() {
 			return this.isScrolling() ? this.scrollLeft : sup.apply(this, arguments);
-		}
+		};
 	}),
 	//* Gets the top scroll position within the scroller.
 	getScrollTop: enyo.super(function (sup) {
 		return function() {
 			return this.isScrolling() ? this.scrollTop : sup.apply(this, arguments);
-		}
+		};
 	}),
 	calcScrollNode: function() {
 		return this.$.client.hasNode();
@@ -407,13 +407,13 @@ enyo.kind({
 			var r = sup.apply(this, arguments);
 			enyo.mixin(r, this.getOverScrollBounds());
 			return r;
-		}
+		};
 	}),
 	getScrollBounds: enyo.super(function (sup) {
 		return function() {
 			this.stop();
 			return sup.apply(this, arguments);
-		}
+		};
 	}),
 	// Thumb processing
 	alertThumbs: function() {

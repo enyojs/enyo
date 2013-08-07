@@ -90,7 +90,7 @@
 			return function () {
 				this.__selection = [];
 				sup.apply(this, arguments);
-			}
+			};
 		}),
 		create: enyo.super(function (sup) {
 			return function () {
@@ -98,7 +98,7 @@
 				if (this.multipleSelection) {
 					this.selection = true;
 				}
-			}
+			};
 		}),
 		controllerFindAndInstance: enyo.super(function (sup) {
 			return function(ctor, inst) {
@@ -106,7 +106,7 @@
 				if (inst && inst._isController) {
 					this.reset();
 				}
-			}
+			};
 		}),
 		reset: function () {
 			var $d = this.get("data");

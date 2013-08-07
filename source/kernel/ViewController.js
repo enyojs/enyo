@@ -147,7 +147,7 @@
 				// but this allows subkinds to overload the constructed
 				// method to control the flow
 				this._createView();
-			}
+			};
 		}),
 
 		//*@protected

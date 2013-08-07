@@ -33,7 +33,7 @@ enyo.kind({
 			this.responders = [];
 			this.errorHandlers = [];
 			this.progressHandlers = [];
-		}
+		};
 	}),
 	accumulate: function(inArray, inMethodArgs) {
 		var fn = (inMethodArgs.length < 2) ? inMethodArgs[0] : enyo.bind(inMethodArgs[0], inMethodArgs[1]);

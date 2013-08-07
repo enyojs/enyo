@@ -63,7 +63,7 @@ enyo.kind({
 			this.setTag(enyo.RichText.hasContentEditable()?"div":"textarea");
 			sup.apply(this, arguments);
 			this.disabledChanged();
-		}
+		};
 	}),
 	// simulate onchange event that inputs expose
 	focusHandler: function() {

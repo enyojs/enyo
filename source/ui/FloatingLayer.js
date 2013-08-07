@@ -21,7 +21,7 @@ enyo.kind({
 		return function() {
 			sup.apply(this, arguments);
 			this.setParent(null);
-		}
+		};
 	}),
 	// detect when node is detatched due to document.body being stomped
 	hasNode: enyo.super(function (sup) {
@@ -31,13 +31,13 @@ enyo.kind({
 				this.teardownRender();
 			}
 			return this.node;
-		}
+		};
 	}),
 	render: enyo.super(function (sup) {
 		return function() {
 			this.parentNode = document.body;
 			return sup.apply(this, arguments);
-		}
+		};
 	}),
 	generateInnerHtml: function() {
 		return "";

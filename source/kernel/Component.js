@@ -90,7 +90,7 @@ enyo.kind({
 			this._componentNameMap = {};
 			this.$ = {};
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	constructed: function(inProps) {
 		this.handlers = enyo.mixin(enyo.clone(this.kindHandlers), this.handlers);
@@ -135,7 +135,7 @@ enyo.kind({
 			this.setOwner(null);
 			sup.apply(this, arguments);
 			this.stopAllJobs();
-		}
+		};
 	}),
 	/**
 		Destroys all owned components.

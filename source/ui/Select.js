@@ -43,7 +43,7 @@ enyo.kind({
 				this.setAttribute("onchange", enyo.bubbler);
 			}
 			this.selectedChanged();
-		}
+		};
 	}),
 	getSelected: function() {
 		return Number(this.getNodeProperty("selectedIndex", this.selected));
@@ -63,7 +63,7 @@ enyo.kind({
 			} else {
 				sup.apply(this, arguments);
 			}
-		}
+		};
 	}),
 	//* @public
 	//* Returns the value of the selected option.
@@ -89,7 +89,7 @@ enyo.kind({
 		return function() {
 			sup.apply(this, arguments);
 			this.valueChanged();
-		}
+		};
 	}),
 	valueChanged: function() {
 		this.setAttribute("value", this.value);
@@ -112,7 +112,7 @@ enyo.kind({
 		return function() {
 			sup.apply(this, arguments);
 			this.labelChanged();
-		}
+		};
 	}),
 	labelChanged: function() {
 		this.setAttribute("label", this.label);

@@ -150,7 +150,7 @@ enyo.kind({
 			this.horizontalChanged();
 			this.verticalChanged();
 			this.useMouseWheelChanged();
-		}	
+		};
 	}),
 	importProps: enyo.super(function (sup) {
 		return function(inProps) {
@@ -159,25 +159,25 @@ enyo.kind({
 			if (inProps && inProps.strategyKind === undefined && (enyo.Scroller.touchScrolling || this.touch)) {
 				this.strategyKind = enyo.Scroller.getTouchStrategy();
 			}
-		}
+		};
 	}),
 	initComponents: enyo.super(function (sup) {
 		return function() {
 			this.strategyKindChanged();
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	teardownChildren: enyo.super(function (sup) {
 		return function() {
 			this.cacheScrollPosition();
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	rendered: enyo.super(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.restoreScrollPosition();
-		}
+		};
 	}),
 	strategyKindChanged: function() {
 		if (this.$.strategy) {
@@ -213,7 +213,7 @@ enyo.kind({
 			if (this.showing) {
 				this.restoreScrollPosition();
 			}
-		}
+		};
 	}),
 	thumbChanged: function() {
 		this.$.strategy.setThumb(this.thumb);

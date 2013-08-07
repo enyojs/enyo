@@ -22,7 +22,7 @@ enyo.kind({
 		return function() {
 			sup.apply(this, arguments);
 			this.activeChanged();
-		}
+		};
 	}),
 	activeChanged: function() {
 		this.bubble("onActivate");

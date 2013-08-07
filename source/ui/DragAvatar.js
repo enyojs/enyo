@@ -7,7 +7,7 @@ enyo.kind({
 		return function() {
 			sup.apply(this, arguments);
 			document.body.style.cursor = this.showing ? "move" : null;
-		}
+		};
 	})
 });
 
@@ -59,7 +59,7 @@ enyo.kind({
 			this.avatarComponents = this.components;
 			this.components = null;
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	requireAvatar: function() {
 		// FIXME: there is nobody to call teardownRender on this.avatar

@@ -268,7 +268,7 @@
 						? location.href.split("/").slice(0,-1).join("/")
 						: location.origin;
 				}());
-			}
+			};
 		}),
 		constructed: function () {
 			var $kind = this.requestKind || enyo.Ajax;

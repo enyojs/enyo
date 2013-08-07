@@ -117,7 +117,7 @@ enyo.kind({
 			this.addClass(this.kindClasses);
 			this.addClass(this.classes);
 			this.initProps(["id", "content", "src"]);
-		}
+		};
 	}),
 	destroy: enyo.super(function (sup) {
 		return function() {
@@ -126,14 +126,14 @@ enyo.kind({
 			this.removeNodeFromDom();
 			enyo.Control.unregisterDomEvents(this.id);
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	importProps: enyo.super(function (sup) {
 		return function(inProps) {
 			sup.apply(this, arguments);
 			// each instance has its own attributes array, the union of the prototype attributes and user-specified attributes
 			this.attributes = enyo.mixin(enyo.clone(this.kindAttributes), this.attributes);
-		}
+		};
 	}),
 	initProps: function(inPropNames) {
 		// for each named property, trigger the *Changed handler if the property value is truthy
@@ -155,7 +155,7 @@ enyo.kind({
 				return true;
 			}
 			return sup.apply(this, arguments);
-		}
+		};
 	}),
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
@@ -174,13 +174,13 @@ enyo.kind({
 		return function(inControl) {
 			inControl.addClass(this.controlClasses);
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	removeChild: enyo.super(function (sup) {
 		return function(inControl) {
 			sup.apply(this, arguments);
 			inControl.removeClass(this.controlClasses);
-		}
+		};
 	}),
 	// event filter
 	strictlyInternalEvents: {onenter: 1, onleave: 1},

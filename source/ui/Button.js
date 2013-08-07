@@ -27,7 +27,7 @@ enyo.kind({
 		return function() {
 			sup.apply(this, arguments);
 			this.disabledChanged();
-		}
+		};
 	}),
 	disabledChanged: function() {
 		this.setAttribute("disabled", this.disabled);

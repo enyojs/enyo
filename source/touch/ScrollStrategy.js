@@ -52,20 +52,20 @@ enyo.kind({
 			this.horizontalChanged();
 			this.verticalChanged();
 			this.maxHeightChanged();
-		}
+		};
 	}),
 	rendered: enyo.super(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			enyo.makeBubble(this.container, "scroll");
 			this.scrollNode = this.calcScrollNode();
-		}
+		};
 	}),
 	teardownRender: enyo.super(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.scrollNode = null;
-		}
+		};
 	}),
 	calcScrollNode: function() {
 		return this.container.hasNode();

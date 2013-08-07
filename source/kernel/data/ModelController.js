@@ -27,7 +27,7 @@ enyo.kind({
 				sup.apply(this, arguments);
 			}
 			return this.model && enyo.isModel(this.model)? this.model.get(prop): undefined;
-		}
+		};
 	}),
 
 	//*@public
@@ -37,7 +37,7 @@ enyo.kind({
 				return sup.apply(this, arguments);
 			}
 			return this.model.set(prop, val);
-		}
+		};
 	}),
 
 	//*@public

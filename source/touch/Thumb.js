@@ -31,7 +31,7 @@ enyo.kind({
 			if (enyo.dom.canAccelerate()) {
 				enyo.dom.transformValue(this, "translateZ", 0);
 			}
-		}
+		};
 	}),
 	//* Syncs the scroll indicator bar to the scroller size and position,
 	//* as determined by the passed-in scroll strategy.

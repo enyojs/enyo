@@ -360,7 +360,7 @@
 				this.routes = this.routes || [];
 				this._history = this._history || [];
 				sup.apply(this, arguments);
-			}
+			};
 		}),
 
 		//*@protected
@@ -383,7 +383,7 @@
 						this.trigger();
 					}
 				}
-			}
+			};
 		}),
 
 		//*@protected
@@ -394,7 +394,7 @@
 					listeners.splice(idx, 1);
 				}
 				sup.apply(this, arguments);
-			}
+			};
 		}),
 
 		//*@protected

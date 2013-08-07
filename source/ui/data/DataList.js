@@ -77,7 +77,7 @@
 					this.$.page2.applyStyle("background-color", "#58d3f7");
 				}
 				this.resetMetrics();
-			}
+			};
 		}),
 		rendered: function () {
 			// the initial time the list is rendered, we've only rendered the
@@ -532,7 +532,7 @@
 				}
 				this.set("containerOptions", $o);
 				sup.apply(this, arguments);
-			}
+			};
 		}),
 		batchingChanged: function (prev, val) {
 			if (this.generated && false === val) {
@@ -548,7 +548,7 @@
 				if (this.length) {
 					this.startJob("layoutPages", this.layoutPages, 100);
 				}
-			}
+			};
 		}),
 		updateSizing: function () {
 			this.width = this.getWidth();
@@ -564,7 +564,7 @@
 					this.startJob("layoutPages", this.layoutPages, 100);
 				}
 				return sup.apply(this, arguments);
-			}
+			};
 		}),
 		layoutPages: function () {
 			this.adjustPageSize(this.$.page1);

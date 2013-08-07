@@ -41,13 +41,13 @@ enyo.kind({
 			sup.apply(this, arguments);
 			this.animatedChanged();
 			this.openChanged();
-		}
+		};
 	}),
 	initComponents: enyo.super(function (sup) {
 		return function() {
 			this.createChrome(this.tools);
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	animatedChanged: function() {
 		if (!this.animated && this.hasNode() && this.$.animator.isAnimating()) {

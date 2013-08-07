@@ -496,7 +496,7 @@
 				} else {
 					return sup.apply(this, arguments);
 				}
-			}
+			};
 		}),
 
 		//*@public
@@ -548,7 +548,7 @@
 					}
 				}
 				this.initRelation();
-			}
+			};
 		}),
 
 		// ...........................

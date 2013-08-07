@@ -114,13 +114,13 @@ enyo.kind({
 		return function() {
 			sup.apply(this, arguments);
 			enyo.dom.transformValue(this.$.client, this.translation, "0,0,0");
-		}
+		};
 	}),
 	destroy: enyo.super(function (sup) {
 		return function() {
 			this.clearCSSTransitionInterval();
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	getScrollSize: function() {
 		var n = this.$.client.hasNode();

@@ -91,7 +91,7 @@ enyo.kind({
 		return function(inParams) {
 			enyo.mixin(this, inParams);
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	//* @public
 	//* Starts the JSONP request.

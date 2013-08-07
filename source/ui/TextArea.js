@@ -17,6 +17,6 @@ enyo.kind({
 		return function() {
 			sup.apply(this, arguments);
 			this.valueChanged();
-		}
+		};
 	})
 });

@@ -46,7 +46,7 @@
 				sup.apply(this, arguments);
 				var $k = this.defaultKind;
 				$k.extend({classes: "enyo-data-grid-list-item"});
-			}
+			};
 		}),
 		create: enyo.super(function (sup) {
 			return function () {
@@ -54,7 +54,7 @@
 				// currently we don't allow anything else
 				this.orientation = "v";
 				this.spacingChanged();
-			}
+			};
 		}),
 		adjustPageSize: function (p) {
 			this.layoutPage(p);
@@ -108,7 +108,7 @@
 			return function (p, n) {
 				sup.apply(this, arguments);
 				this.adjustPageSize(p);
-			}
+			};
 		}),
 		getHeight: enyo.super(function (sup) {
 			return function (n) {
@@ -117,7 +117,7 @@
 					return (n.height = this.getPageHeight(n));
 				}
 				return sup.apply(this, arguments);
-			}
+			};
 		}),
 		getPageHeight: function (p) {
 			if (p.children.length) {
@@ -148,7 +148,7 @@
 				this.tileHeight = Math.floor($h * (this.tileWidth / $m));
 				this.adjustControlsPerPage();
 				this.adjustDefaultPageSize();
-			}
+			};
 		}),
 		adjustControlsPerPage: function () {
 			var $c = this.columns,
@@ -253,7 +253,7 @@
 					return sup.apply(this, arguments);
 				}
 				return true;
-			}
+			};
 		})
 	});
 

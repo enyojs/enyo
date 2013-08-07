@@ -65,7 +65,7 @@ enyo.kind({
 				this.typeChanged();
 			}
 			this.valueChanged();
-		}
+		};
 	}),
 	rendered: enyo.super(function (sup) {
 		return function() {
@@ -82,7 +82,7 @@ enyo.kind({
 			if (this.defaultFocus) {
 				this.focus();
 			}
-		}
+		};
 	}),
 	typeChanged: function() {
 		this.setAttribute("type", this.type);

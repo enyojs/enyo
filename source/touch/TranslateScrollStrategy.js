@@ -27,7 +27,7 @@ enyo.kind({
 		return function() {
 			sup.apply(this, arguments);
 			enyo.makeBubble(this.$.clientContainer, "scroll");
-		}
+		};
 	}),
 	getScrollSize: function() {
 		var n = this.$.client.hasNode();
@@ -38,7 +38,7 @@ enyo.kind({
 			sup.apply(this, arguments);
 			// apply initial transform so we're always composited
 			enyo.dom.transformValue(this.$.client, this.translation, "0,0,0");
-		}
+		};
 	}),
 	calcScrollNode: function() {
 		return this.$.clientContainer.hasNode();
@@ -55,14 +55,14 @@ enyo.kind({
 			this.stop();
 			this.calcStartInfo();
 			return sup.apply(this, arguments);
-		}
+		};
 	}),
 	syncScrollMath: enyo.super(function (sup) {
 		return function() {
 			if (!this.translateOptimized) {
 				sup.apply(this, arguments);
 			}
-		}
+		};
 	}),
 	//* @public
 	//* Sets the left scroll position within the scroller.
@@ -76,7 +76,7 @@ enyo.kind({
 			} else {
 				sup.apply(this, arguments);
 			}
-		}
+		};
 	}),
 	//* Sets the top scroll position within the scroller.
 	setScrollTop: enyo.super(function (sup) {
@@ -89,19 +89,19 @@ enyo.kind({
 			} else {
 				sup.apply(this, arguments);
 			}
-		}
+		};
 	}),
 	//* Gets the left scroll position within the scroller.
 	getScrollLeft: enyo.super(function (sup) {
 		return function() {
 			return this.translateOptimized ? this.scrollLeft: sup.apply(this, arguments);
-		}
+		};
 	}),
 	//* Gets the top scroll position within the scroller.
 	getScrollTop: enyo.super(function (sup) {
 		return function() {
 			return this.translateOptimized ? this.scrollTop : sup.apply(this, arguments);
-		}
+		};
 	}),
 	//* @protected
 	scrollMathStart: enyo.super(function (sup) {
@@ -114,7 +114,7 @@ enyo.kind({
 				this.startX = this.getScrollLeft();
 				this.startY = this.getScrollTop();
 			}
-		}
+		};
 	}),
 	scrollMathScroll: function(inSender) {
 		if(!this.overscroll) { //don't overscroll past edges

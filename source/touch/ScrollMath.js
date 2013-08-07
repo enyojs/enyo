@@ -64,7 +64,7 @@ enyo.kind({
 		return function() {
 			this.stop();
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	/**
 		Simple Verlet integrator for simulating Newtonian motion.

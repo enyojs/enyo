@@ -21,12 +21,12 @@ enyo.kind({
 				delete this.attributes.onerror;
 			}
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	rendered: enyo.super(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			enyo.makeBubble(this, "load", "error");
-		}
+		};
 	})
 });

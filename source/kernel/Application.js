@@ -182,7 +182,7 @@
 				// we register kind of early in the process in case any controllers
 				// or other initialization assumes it will be there...
 				register(this);
-			}
+			};
 		}),
 
 		//*@protected
@@ -193,7 +193,7 @@
 				_setupControllers.call(this);
 				// now we let it continue as usual
 				sup.apply(this, arguments);
-			}
+			};
 		}),
 		
 		render: enyo.super(function (sup) {
@@ -202,7 +202,7 @@
 				if (this.view && this.view.generated) {
 					this.set("viewReady", true);
 				}
-			}
+			};
 		}),
 
 		//*@protected
@@ -234,7 +234,7 @@
 				sup.apply(this, arguments);
 				// unregister this as an active application
 				unregister(this);
-			}
+			};
 		})
 
 	});

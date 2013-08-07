@@ -20,13 +20,13 @@ enyo.kind({
 		return function() {
 			sup.apply(this, arguments);
 			enyo.Signals.addListener(this);
-		}
+		};
 	}),
 	destroy: enyo.super(function (sup) {
 		return function() {
 			enyo.Signals.removeListener(this);
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	notify: function(inMsg, inPayload) {
 		this.dispatchEvent(inMsg, inPayload);

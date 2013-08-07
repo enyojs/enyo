@@ -31,7 +31,7 @@ enyo.kind({
 				this.activeChanged();
 			}
 			this.checkedChanged();
-		}
+		};
 	}),
 	checkedChanged: function() {
 		this.setNodeProperty("checked", this.checked);

@@ -1161,7 +1161,7 @@
 					}
 					return this;
 				}
-			}
+			};
 		}),
 
 		//*@public
@@ -1224,7 +1224,7 @@
 					this.status = NEW;
 				}
 				enyo.pool.releaseObject($v, $d, $t);
-			}
+			};
 		}),
 		
 		//*@public

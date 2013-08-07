@@ -288,13 +288,13 @@
 				if (!this.source) {
 					this.source = enyo.Source.getDefaultSource();
 				}
-			}
+			};
 		}),
 		constructed: enyo.super(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				this.findAndInstance("source");
-			}
+			};
 		}),
 		sourceFindAndInstance: function (ctor, inst) {
 			if (inst) {

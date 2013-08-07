@@ -70,7 +70,7 @@ enyo.kind({
 		return function() {
 			this.clear();
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	multiChanged: function() {
 		if (!this.multi) {

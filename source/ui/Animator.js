@@ -49,13 +49,13 @@ enyo.kind({
 		return function() {
 			sup.apply(this, arguments);
 			this._next = this.bindSafely("next");
-		}
+		};
 	}),
 	destroy: enyo.super(function (sup) {
 		return function() {
 			this.stop();
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	//* @public
 	//* Plays the animation.

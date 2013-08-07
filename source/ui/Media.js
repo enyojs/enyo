@@ -123,7 +123,7 @@ enyo.kind({
 			this.preloadChanged();
 			this.showControlsChanged();
 			this.srcChanged();
-		}
+		};
 	}),
 	rendered: enyo.super(function (sup) {
 		return function() {
@@ -153,7 +153,7 @@ enyo.kind({
 			this.mutedChanged();
 			this.playbackRateChanged();
 			this.volumeChanged();
-		}
+		};
 	}),
 	srcChanged: function() {
 		var path = enyo.path.rewrite(this.src);

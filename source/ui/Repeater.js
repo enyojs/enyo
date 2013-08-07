@@ -44,7 +44,7 @@ enyo.kind({
 		return function() {
 			sup.apply(this, arguments);
 			this.countChanged();
-		}
+		};
 	}),
 	//* @protected
 	initComponents: enyo.super(function (sup) {
@@ -52,7 +52,7 @@ enyo.kind({
 			this.itemComponents = this.components || this.kindComponents;
 			this.components = this.kindComponents = null;
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	countChanged: function() {
 		this.build();
@@ -114,7 +114,7 @@ enyo.kind({
 				}
 			}
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	// extending enyo.Component.delegateEvent
 	delegateEvent: enyo.super(function (sup) {
@@ -123,6 +123,6 @@ enyo.kind({
 				inDelegate = this.owner.owner;
 			}
 			sup.apply(this, arguments);
-		}
+		};
 	})
 });
