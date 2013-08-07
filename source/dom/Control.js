@@ -122,7 +122,6 @@ enyo.kind({
 	destroy: enyo.super(function (sup) {
 		return function() {
 			this.removeFromRoots();
-			this.connectDom();
 			this.removeNodeFromDom();
 			enyo.Control.unregisterDomEvents(this.id);
 			sup.apply(this, arguments);
@@ -785,36 +784,6 @@ enyo.kind({
 	removeNodeFromDom: function() {
 		if (this.hasNode() && this.node.parentNode) {
 			this.node.parentNode.removeChild(this.node);
-		}
-	},
-	disconnectDom: function () {
-		if (this.generated) {
-			this.disconnectChildrenDom();
-		}
-		this._node = this.hasNode();
-		this.node = null;
-		this.generated = false;
-		this._domDisconnected = true;
-	},
-	disconnectChildrenDom: function () {
-		for (var i=0, c; (c=this.children[i]); ++i) {
-			c.disconnectDom();
-		}
-	},
-	connectChildrenDom: function () {
-		for (var i=0, c; (c=this.children[i]); ++i) {
-			c.connectDom();
-		}
-	},
-	connectDom: function () {
-		if (this._domDisconnected) {
-			this.connectChildrenDom();
-			this.node = this._node;
-			this._node = null;
-			if (this.node) {
-				this.generated = true;
-			}
-			this._domDisconnected = false;
 		}
 	},
 	teardownRender: function() {
