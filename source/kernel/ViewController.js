@@ -41,6 +41,9 @@
 		//*@protected
 		_isViewController: true,
 
+		//*@protected
+		_savedView: null,
+
 		// ...........................
 		// COMPUTED PROPERTIES
 
@@ -132,6 +135,26 @@
 			this.render();
 		},
 
+		//*@public
+		/**
+			Destroy the current view and recreate it from either the
+			original description or a newly provided one. If a view
+			is provided, it will become the new base description for
+			future _resetView()_ calls.
+		*/
+		resetView: function(newView) {
+			this.view.destroy();
+			this.view = newView || this._savedView;
+			this._createView();
+		},
+
+		//*@public
+		destroy: function() {
+			this.view.destroy();
+			this.view = null;
+			this.inherited(arguments);
+		},
+
 		// ...........................
 		// PROTECTED METHODS
 
@@ -152,6 +175,10 @@
 			be overloaded for special behaviors.
 		*/
 		_createView: function () {
+			// keep a reference to the original view descriptor
+			// so it can be reused in the future if we destroy
+			// the view object
+			this._savedView = this.view;
 			// retrieve the constructor for the view and immediately
 			// instance it while also updating the _view_ property to
 			// the reference for this new view
@@ -163,7 +190,6 @@
 		_makeViewName: function () {
 			return enyo.uid("_viewControllerView_");
 		}
-
 	});
 
 }(enyo));
