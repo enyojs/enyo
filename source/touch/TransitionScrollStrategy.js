@@ -1,12 +1,12 @@
 /**
 	_enyo.TransitionScrollStrategy_ is a helper kind that extends
-	<a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a>, optimizing
-	it for scrolling environments in which effecting scroll changes with
-	transforms using CSS transitions is fastest.
+	[enyo.TouchScrollStrategy](#enyo.TouchScrollStrategy), optimizing it for
+	scrolling environments in which effecting scroll changes with transforms using
+	CSS transitions is fastest.
 
 	_enyo.TransitionScrollStrategy_ is not typically created in application code.
-	Instead, it is specified as the value of the `strategyKind` property of an
-	`enyo.Scroller` or <a href="#enyo.List">enyo.List</a>, or is used by the
+	Instead, it is specified as the value of the _strategyKind_ property of an
+	[enyo.Scroller](#enyo.Scroller) or [enyo.List](#enyo.List), or is used by the
 	framework implicitly.
 */
 enyo.kind({

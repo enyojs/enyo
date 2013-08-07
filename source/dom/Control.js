@@ -118,6 +118,7 @@ enyo.kind({
 		this.initProps(["id", "content", "src"]);
 	},
 	destroy: function() {
+		this.removeFromRoots();
 		this.connectDom();
 		this.removeNodeFromDom();
 		enyo.Control.unregisterDomEvents(this.id);
@@ -220,7 +221,8 @@ enyo.kind({
 			var value = this.getAttribute("tabIndex");
 	*/
 	getAttribute: function(inName) {
-		return this.hasNode() ? this.node.getAttribute(inName) : this.attributes[inName];
+		var n = this.hasNode();
+		return n? n.getAttribute(inName): this.attribuets[inName];
 	},
 	/**
 		Sets the value of an attribute on this object. Pass null _inValue_ to
@@ -245,8 +247,9 @@ enyo.kind({
 		node has not yet been created.
 	*/
 	getNodeProperty: function(inName, inDefault) {
-		if (this.hasNode()) {
-			return this.node[inName];
+		var n = this.hasNode();
+		if (n) {
+			return n[inName];
 		} else {
 			return inDefault;
 		}
@@ -258,8 +261,9 @@ enyo.kind({
 		_enyo.Control_ instance.
 	*/
 	setNodeProperty: function(inName, inValue) {
-		if (this.hasNode()) {
-			this.node[inName] = inValue;
+		var n = this.hasNode();
+		if (n) {
+			n[inName] = inValue;
 		}
 	},
 	/**
@@ -428,7 +432,7 @@ enyo.kind({
 		if(enyo.platform.android || enyo.platform.androidChrome || enyo.platform.blackberry) {
 			return;
 		}
-		document.getElementsByTagName("body")[0].className += " webkitOverflowScrolling";
+		enyo.dom.addClass(document.getElementsByTagName("body")[0], "webkitOverflowScrolling");
 	},
 	//
 	//
@@ -487,6 +491,7 @@ enyo.kind({
 		// generate our HTML
 		enyo.dom.setInnerHtml(pn, this.generateHtml());
 		// post-rendering tasks
+		this.addToRoots();
 		if (this.generated) {
 			this.rendered();
 		}
@@ -514,6 +519,7 @@ enyo.kind({
 		this.setupOverflowScrolling();
 		document.write(this.generateHtml());
 		// post-rendering tasks
+		this.addToRoots();
 		if (this.generated) {
 			this.rendered();
 		}
@@ -946,6 +952,19 @@ enyo.kind({
 
 		return false;
 	},
+	//* Adds control to enyo.roots, called from write(), renderInto(), ViewController.renderInto()
+	addToRoots: function() {
+		if (!enyo.exists(enyo.roots)) { enyo.roots = []; }
+		enyo.roots.push(this);
+		this._isRoot = true;
+	},
+	//* Removes control from enyo.roots
+	removeFromRoots: function() {
+		if (this._isRoot) {
+			enyo.remove(this, enyo.roots);
+		}
+	},
+	
 	//
 	//
 	statics: {
