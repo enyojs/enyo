@@ -257,12 +257,14 @@ enyo.kind.features.push(function(ctor, props) {
 		// ctor.prototype is known, relies on elements in props being copied by reference)
 		for (var n in props) {
 			var p = props[n];
-			if (enyo.isFunction(p)) {
+			if (enyo.isSuper(p)) {
+				p = proto[n] = p.fn(proto.base.prototype[n]);
+			} else if (enyo.isFunction(p)) {
 				p._inherited = proto.base.prototype[n];
 				// FIXME: we used to need some extra values for inherited, then inherited got cleaner
 				// but in the meantime we used these values to support logging in Object.
 				// For now we support this legacy situation, by suppling logging information here.
-				p.nom = proto.kindName + '.' + n + '()';
+				p.displayName = proto.kindName + '.' + n + '()';
 			}
 		}
 	}
@@ -289,9 +291,26 @@ enyo.kind.inherited = function (originals, replacements) {
 		return fn.apply(this, replacements? enyo.mixin(originals, replacements): originals);
 	} else {
 		enyo.warn("enyo.kind.inherited: unable to find requested " +
-			"super-method from -> " + originals.callee.nom + " in " + this.kindName);
+			"super-method from -> " + originals.callee.displayName + " in " + this.kindName);
 	}
 };
+
+// dcl inspired super-inheritance
+(function (enyo) {
+
+	var Super = function (fn) {
+		this.fn = fn;
+	};
+	
+	enyo.super = function (fn) {
+		return new Super(fn);
+	};
+	
+	enyo.isSuper = function (fn) {
+		return fn && (fn instanceof Super);
+	};
+
+})(enyo);
 
 //
 // 'statics' feature
