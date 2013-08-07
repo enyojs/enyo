@@ -14,15 +14,19 @@ enyo.kind({
 		// (Boolean _false_ would remove the attribute)
 		draggable: "false"
 	},
-	create: function() {
-		if (this.noEvents) {
-			delete this.attributes.onload;
-			delete this.attributes.onerror;
-		}
-		this.inherited(arguments);
-	},
-	rendered: function() {
-		this.inherited(arguments);
-		enyo.makeBubble(this, "load", "error");
-	}
+	create: enyo.super(function (sup) {
+		return function() {
+			if (this.noEvents) {
+				delete this.attributes.onload;
+				delete this.attributes.onerror;
+			}
+			sup.apply(this, arguments);
+		};
+	}),
+	rendered: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			enyo.makeBubble(this, "load", "error");
+		};
+	})
 });

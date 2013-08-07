@@ -36,15 +36,19 @@ enyo.kind({
 		{kind: "Animator", onStep: "animatorStep", onEnd: "animatorEnd"},
 		{name: "client", style: "position: relative;", classes: "enyo-border-box"}
 	],
-	create: function() {
-		this.inherited(arguments);
-		this.animatedChanged();
-		this.openChanged();
-	},
-	initComponents: function() {
-		this.createChrome(this.tools);
-		this.inherited(arguments);
-	},
+	create: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.animatedChanged();
+			this.openChanged();
+		};
+	}),
+	initComponents: enyo.super(function (sup) {
+		return function() {
+			this.createChrome(this.tools);
+			sup.apply(this, arguments);
+		};
+	}),
 	animatedChanged: function() {
 		if (!this.animated && this.hasNode() && this.$.animator.isAnimating()) {
 			this.$.animator.stop();

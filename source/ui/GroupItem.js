@@ -18,10 +18,12 @@ enyo.kind({
 		active: false
 	},
 	//* @protected
-	rendered: function() {
-		this.inherited(arguments);
-		this.activeChanged();
-	},
+	rendered: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.activeChanged();
+		};
+	}),
 	activeChanged: function() {
 		this.bubble("onActivate");
 	}

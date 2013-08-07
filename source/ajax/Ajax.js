@@ -25,10 +25,12 @@ enyo.kind({
 	//* published by _enyo.Ajax_.
 	published: enyo.AjaxProperties,
 	//* @protected
-	constructor: function(inParams) {
-		enyo.mixin(this, inParams);
-		this.inherited(arguments);
-	},
+	constructor: enyo.super(function (sup) {
+		return function(inParams) {
+			enyo.mixin(this, inParams);
+			sup.apply(this, arguments);
+		};
+	}),
 	//* @public
 	/**
 	Sends the Ajax request with parameters _inParams_. _inParams_ values may be
@@ -160,16 +162,18 @@ enyo.kind({
 			}
 		}
 	},
-	fail: function(inError) {
-		// on failure, explicitly cancel the XHR to prevent
-		// further responses.  cancellation also resets the
-		// response headers & body,
-		if (this.xhr) {
-			enyo.xhr.cancel(this.xhr);
-			this.xhr = null;
-		}
-		this.inherited(arguments);
-	},
+	fail: enyo.super(function (sup) {
+		return function(inError) {
+			// on failure, explicitly cancel the XHR to prevent
+			// further responses.  cancellation also resets the
+			// response headers & body,
+			if (this.xhr) {
+				enyo.xhr.cancel(this.xhr);
+				this.xhr = null;
+			}
+			sup.apply(this, arguments);
+		};
+	}),
 	xhrToResponse: function(inXhr) {
 		if (inXhr) {
 			return this[(this.handleAs || "text") + "Handler"](inXhr);
