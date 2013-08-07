@@ -248,6 +248,9 @@ function deployLib(lib) {
 		if (!stat.isFile()) {
 			throw new Error("*** Not a file: '" + script + "'");
 		}
+		if (verbose) {
+			console.log("Using '" + script + "'");
+		}
 		scripts[lib] = require(script);
 		scripts[lib].deploy(libOutdir);
 	} catch(e) {
@@ -258,9 +261,19 @@ function deployLib(lib) {
 			if (!stat.isFile()) {
 				throw new Error("*** Not a file: '" + script + "'");
 			}
-			run([script, libOutdir]);
+			if (verbose) {
+				console.log("Using '" + script + "'");
+			}
+			var command = [script, libOutdir];
+			if (process.platform !== 'win32') {
+				command.unshift("sh");
+			}
+			run(command);
 		} catch(e2) {
 			// no deploy.(js|bat|sh): copy everything (then remove ".git", if any)
+			if (verbose) {
+				console.log("Using 'cp -r lib/" + lib + " ...'");
+			}
 			shell.cp('-r', path.join(sourceDir, 'lib', lib), path.join(outDir, 'lib'));
 			shell.rm('-rf', path.join(outDir, 'lib', lib, '.git'));
 		}
