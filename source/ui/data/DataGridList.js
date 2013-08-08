@@ -77,7 +77,7 @@
 					$c = this.columns,
 					r$ = -1, t$, o$;
 				for (var $i=0, c$, j$=0; (c$=p.children[$i]); ++$i) {
-					if (!c$.disabled) {
+					if (!c$._listDisabledChild) {
 						t$ = "";
 						o$ = j$ % $c;
 						r$ = o$ === 0? r$+1: r$;
@@ -123,7 +123,7 @@
 			if (p.children.length) {
 				var $a = 0;
 				for (var $i=0, c$; (c$=p.children[$i]); ++$i) {
-					if (!c$.disabled) {
+					if (!c$._listDisabledChild) {
 						++$a;
 					}
 				}
