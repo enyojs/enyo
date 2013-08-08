@@ -8,25 +8,35 @@ enyo.concat = ["concat"];
 
 //*@protected
 /**
-	Is called during kind-initialization to make sure that any property
-	noted to be concatenated will be (must be an array) so that those values
-	will not be lost by subclasses overriding that property.
+	Internally used to normalize how we concatenate or maintain properties
+	in a chain. This uses the _concat_ array of the kind to determine which
+	properties should be handled. It will look for a conventional name for a
+	handler for the property based on its [kindName].[property]Concat (a method
+	on the constructor for the kind). Or it will default to looking internally
+	at the _enyo_ namespace. If it cannot find a handler it will issue a warning
+	for debugging purposes. The only exception is for _Arrays_ because they will
+	be handled automatically if no specific handler is found. The handler would
+	be handed two parameters, proto and props respectively. This method can also
+	accept an instance of a class not just a constructor (as it can be called by
+	importProps).
 */
-enyo.handleConcatenatedProperties = function (ctor, proto) {
-	var properties = enyo.merge(ctor.concat || [], proto.concat || []);
-	var prop;
-	var right;
-	var left;
-	while (properties.length) {
-		prop = properties.shift();
-		left = ctor[prop];
-		right = proto[prop];
-		if ((left instanceof Array) && (right instanceof Array)) {
-			ctor[prop] = enyo.merge(left, right);
-			// remove the reference to the property so it will not
-			// conflict later
-			delete proto[prop];
+enyo.handleConcatenatedProperties = function (ctor, props) {
+	var c = enyo.merge(ctor.concat, props.concat),
+		// can handle a constructor or an instance of a kind
+		proto = ctor.prototype || ctor,
+		fn, nom;
+	for (var i=0, p; (p=c[i]); ++i) {
+		nom = (proto.kindName? proto.kindName: "enyo") + "." + p + "Concat";
+		fn = enyo.getPath(nom);
+		if (enyo.isFunction(fn)) {
+			fn(proto, props);
+		} else if (enyo.isArray(proto[p])) {
+			proto[p] = enyo.merge(proto[p], props[p]);
+		} else {
+			enyo.warn("for " + proto.kindName + " could not find handler for requested " +
+				"concatenated property: " + p);
 		}
+		delete props[p];
 	}
 };
 
@@ -88,6 +98,12 @@ enyo.kind = function(inProps) {
 		if (inProps.statics) {
 			enyo.mixin(DeferredCtor, inProps.statics);
 		}
+		// always add the the extend capability for kinds even if they are
+		// deferred
+		DeferredCtor.extend = enyo.kind.statics.extend;
+		// if extend is called on a deferred constructor it needs to know that
+		// so it can resolve it at that time
+		DeferredCtor._deferred = true;
 		if ((name && !enyo.getPath(name)) || enyo.kind.allowOverride) {
 			enyo.setPath(name, DeferredCtor);
 		}
@@ -244,11 +260,14 @@ enyo.kind.features = [];
 */
 enyo.kind.postConstructors = [];
 
-//
-// 'inherited' feature
-//
-enyo.kind.features.push(function(ctor, props) {
-	var proto = ctor.prototype;
+//*@protected
+/**
+	This is used internally by several mechanisms to allow safe and normalized
+	handling for extending a kinds super-methods. It can take a constructor,
+	a prototype or an instance.
+*/
+enyo.kind.extendMethods = function(ctor, props) {
+	var proto = ctor.prototype || ctor;
 	if (!proto.inherited) {
 		proto.inherited = enyo.kind.inherited;
 	}
@@ -258,7 +277,10 @@ enyo.kind.features.push(function(ctor, props) {
 		for (var n in props) {
 			var p = props[n];
 			if (enyo.isSuper(p)) {
-				p = proto[n] = p.fn(proto.base.prototype[n]);
+				// ensure that if there isn't actually a super method to call it won't
+				// fail miserably - while this shouldn't happen often it is a sanity
+				// check for mixin-extensions for kinds
+				p = proto[n] = p.fn(proto.base.prototype[n] || enyo.nop);
 			}
 			if (enyo.isFunction(p)) {
 				p._inherited = proto.base.prototype[n];
@@ -269,7 +291,8 @@ enyo.kind.features.push(function(ctor, props) {
 			}
 		}
 	}
-});
+};
+enyo.kind.features.push(enyo.kind.extendMethods);
 
 //*@protected
 /**
@@ -343,17 +366,39 @@ enyo.kind.features.push(function(ctor, props) {
 });
 
 enyo.kind.statics = {
-	subclass: function(ctor, props) {
-		//enyo.log("subclassing [" + ctor.prototype.kind + "] from [", this.prototype.kind + "]");
-	},
-	extend: function(props) {
-		// make sure to allow concatenated properties to function
-		// as expected
-		enyo.handleConcatenatedProperties(this.prototype, props);
-		enyo.mixin(this.prototype, props);
-		// support pluggable 'features'
-		var ctor = this;
-		enyo.forEach(enyo.kind.features, function(fn){ fn(ctor, props); });
+	//*@public
+	/**
+		A kind can set its own _subclass_ method as a _static.method_ for its constructor. Whenever
+		it is subclassed the constructor and properties will be passed through this method for
+		special handling of important features.
+	*/
+	subclass: function(ctor, props) {},
+	//*@public
+	/**
+		This method is available on all constructors, although calling it on a deferred constructor
+		will force it to be resolved at that time. Call with a hash or array of hashes
+		to extend the current kind without creating a new kind. Properties will override prototype
+		properties. If a method already exists that is being added it will supercede the existing
+		method. The method can call this.inherited or be wrapped with enyo.super to call the original
+		method (this chains multiple methods tied to a single kind). In cases where an instance is to
+		be extended (not the class) it can be passed in as the second parameter. This method does not
+		re-run the _enyo.kind.features_ against the constructor or instance. Returns the constructor
+		or the instance.
+	*/
+	extend: function(props, target) {
+		var ctor = this,
+			exts = enyo.isArray(props)? props: [props],
+			proto;
+		if (!target && ctor._deferred) {
+			ctor = enyo.checkConstructor(ctor);
+		}
+		proto = target || ctor.prototype;
+		for (var i=0, p; (p=exts[i]); ++i) {
+			enyo.handleConcatenatedProperties(proto, p);
+			enyo.kind.extendMethods(proto, p);
+			enyo.mixin(proto, p, {exists: true, filter: function (k, v) { return !enyo.isFunction(v); }});
+		}
+		return target || ctor;
 	}
 };
 

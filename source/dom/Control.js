@@ -66,6 +66,9 @@ enyo.kind({
 		//* Used by Ares design editor for design objects
 		isContainer: false
 	},
+	//*@protected
+	concat: ["classes", "style", "attributes"],
+	//*@public
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
 		ontap: "tap"
@@ -114,7 +117,6 @@ enyo.kind({
 			// - use addClass instead of setClasses here, by convention 'classes' is reserved for instance objects
 			// - inheritors should 'addClass' to add classes
 			// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
-			this.addClass(this.kindClasses);
 			this.addClass(this.classes);
 			this.initProps(["id", "content", "src"]);
 		};
@@ -125,13 +127,6 @@ enyo.kind({
 			this.removeNodeFromDom();
 			enyo.Control.unregisterDomEvents(this.id);
 			sup.apply(this, arguments);
-		};
-	}),
-	importProps: enyo.super(function (sup) {
-		return function(inProps) {
-			sup.apply(this, arguments);
-			// each instance has its own attributes array, the union of the prototype attributes and user-specified attributes
-			this.attributes = enyo.mixin(enyo.clone(this.kindAttributes), this.attributes);
 		};
 	}),
 	initProps: function(inPropNames) {
@@ -1018,41 +1013,22 @@ enyo.kind({
 
 enyo.defaultCtor = enyo.Control;
 
-enyo.Control.subclass = function(ctor, props) {
-	// Control classes may declare properties that are intended
-	// to stack with superclass properties.
-	//
-	// We resort to prototype magic to assemble these properties
-	// at kind declaration time, in the interest of efficiency
-	// and ease of use.
-	//
-	// However, the properties are no longer 'live' in prototypes
-	// because of this magic--i.e., changes to the prototype of
-	// a Control subclass will not necessarily be reflected in
-	// instances of that control (e.g., chained prototypes).
-	//
-	// These properties are also renamed to kind* to allow
-	// combining with instance properties.
-	//
-	var proto = ctor.prototype;
-	//
-	// 'kindClasses' comes either from our inheritance chain (e.g., proto's prototype chain)
-	// or has been forced by a kind declaration.
-	//
-	if (proto.classes) {
-		var kc = proto.kindClasses;
-		proto.kindClasses = (kc ? kc + " " : "") + proto.classes;
-		proto.classes = "";
+enyo.Control.classesConcat = function (proto, props) {
+	if (props.classes) {
+		var c = proto.classes || "";
+		proto.classes = (c.length? (c + " "): c) + props.classes;
 	}
-	if (proto.style) {
-		var ks = proto.kindStyle;
-		proto.kindStyle = (ks ? ks + ";" : "") + proto.style;
-		proto.style = "";
+};
+enyo.Control.styleConcat = function (proto, props) {
+	if (props.style) {
+		var style = proto.style || "";
+		proto.style = (style.length? (style + ";"): style) + props.style;
 	}
+};
+enyo.Control.attributesConcat = function (proto, props) {
 	if (props.attributes) {
-		var ka = proto.kindAttributes;
-		proto.kindAttributes = enyo.mixin(enyo.clone(ka), proto.attributes);
-		proto.attributes = null;
+		var attrs = proto.attributes? enyo.clone(proto.attributes): {};
+		proto.attributes = enyo.mixin(attrs, props.attributes);
 	}
 };
 

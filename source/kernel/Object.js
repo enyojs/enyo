@@ -44,14 +44,9 @@ enyo.kind({
 
 	importProps: function (props) {
 		if (props) {
+			enyo.handleConcatenatedProperties(this, props);
 			for (var key in props) {
-				if (!props.hasOwnProperty(key)) {
-					continue;
-				}
-				if (key == "mixins" && enyo.isArray(props[key])) {
-					this._runtimeMixins = props.mixins;
-					props.mixins = undefined;
-				} else {
+				if (props.hasOwnProperty(key)) {
 					this[key] = props[key];
 				}
 			}

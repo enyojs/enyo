@@ -68,7 +68,6 @@ enyo.kind({
 		return function(inProps) {
 			sup.apply(this, arguments);
 			if (!this.owner) {
-				//this.log("registering ownerless control [" + this.kindName + "] with enyo.master");
 				this.owner = enyo.master;
 			}
 		};

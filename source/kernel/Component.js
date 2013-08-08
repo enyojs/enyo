@@ -80,6 +80,7 @@ enyo.kind({
 	noDefer: true,
 	handlers: {},
 	mixins: ["enyo.MixinComponentSupport", "enyo.ApplicationSupport"],
+	concat: ["handlers", "events"],
 	__jobs: {},
 	toString: function() {
 		return this.kindName;
@@ -93,7 +94,6 @@ enyo.kind({
 		};
 	}),
 	constructed: function(inProps) {
-		this.handlers = enyo.mixin(enyo.clone(this.kindHandlers), this.handlers);
 		// perform initialization
 		this.create(inProps);
 	},
@@ -607,25 +607,24 @@ enyo.Component.subclass = function(ctor, props) {
 		proto.kindComponents = props.components;
 		delete proto.components;
 	}
-	//
-	// handlers are merged with supertype handlers
-	// and kind time.
-	//
+};
+
+enyo.Component.handlersConcat = function (proto, props) {
 	if (props.handlers) {
-		var kh = proto.kindHandlers;
-		proto.kindHandlers = enyo.mixin(enyo.clone(kh), proto.handlers);
-		proto.handlers = null;
+		var h = proto.handlers? enyo.clone(proto.handlers): {};
+		proto.handlers = enyo.mixin(h, props.handlers);
 	}
-	// events property defines published events for Component kinds
+};
+enyo.Component.eventsConcat = function (proto, props) {
 	if (props.events) {
-		this.publishEvents(ctor, props);
+		this.publishEvents(proto, props);
 	}
 };
 
 enyo.Component.publishEvents = function(ctor, props) {
 	var es = props.events;
 	if (es) {
-		var cp = ctor.prototype;
+		var cp = ctor.prototype || ctor;
 		for (var n in es) {
 			this.addEvent(n, es[n], cp);
 		}
@@ -650,23 +649,23 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 	if (!inProto[fn]) {
 		inProto[fn] = function(payload) {
 			// bubble this event
-			var $e = payload, $c = false;
-			if (!$e) {
-				$c = true;
-				$e = enyo.pool.claimObject();
+			var e = payload, c = false;
+			if (!e) {
+				c = true;
+				e = enyo.pool.claimObject();
 			}
-			var $d = $e.delegate;
+			var d = e.delegate;
 			// delete payload.delegate;
-			$e.delegate = undefined;
-			if (!enyo.exists($e.type)) {
-				$e.type = inName;
+			e.delegate = undefined;
+			if (!enyo.exists(e.type)) {
+				e.type = inName;
 			}
-			this.bubble(inName, $e);
-			if ($d) {
-				$e.delegate = $d;
+			this.bubble(inName, e);
+			if (d) {
+				e.delegate = d;
 			}
-			if ($c) {
-				enyo.pool.releaseObject($e);
+			if (c) {
+				enyo.pool.releaseObject(e);
 			}
 		};
 		// NOTE: Mark this function as a generated event handler to allow us to

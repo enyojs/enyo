@@ -858,56 +858,58 @@
 		The `options` parameter allows you to set the `ignore` and/or `exists` flags
 		such that if `ignore` is true it will not override any truthy values in the
 		target and if `exists` is true it will only use truthy values from any of
-		the sources.
+		the sources. You can optionally add a `filter` method-option that returns a
+		`true` | `false` value to determine if the value should be used. It receives
+		parameters in the order _key_, _value_, _values_, _options_.
 
 		Setting `options` to true will set all options to true.
 	*/
 	enyo.mixin = function(target, source, options) {
 		// the return object/target
-		var $t;
+		var t;
 		// the source or sources to use
-		var $s;
-		var $o, $i, $n, s$;
+		var s;
+		var o, i, n, s$;
 		if (enyo.isArray(target)) {
-			$t = {};
-			$s = target;
+			t = {};
+			s = target;
 			if (source && enyo.isObject(source)) {
-				$o = source;
+				o = source;
 			}
 		} else {
-			$t = target || {};
-			$s = source;
-			$o = options;
+			t = target || {};
+			s = source;
+			o = options;
 		}
 		var release = false;
-		if (!enyo.isObject($o)) {
-			$o = enyo.pool.claimObject();
+		if (!enyo.isObject(o)) {
+			o = enyo.pool.claimObject();
 			release = true;
 		}
 		if (true === options) {
-			$o.ignore = true;
-			$o.exists = true;
+			o.ignore = true;
+			o.exists = true;
 		}
 		// here we handle the array of sources
-		if (enyo.isArray($s)) {
-			for ($i=0; (s$=$s[$i]); ++$i) {
-				enyo.mixin($t, s$, $o);
+		if (enyo.isArray(s)) {
+			for (i=0; (s$=s[i]); ++i) {
+				enyo.mixin(t, s$, o);
 			}
 		} else {
 		// otherwise we execute singularly
-			for ($n in $s) {
-				s$ = $s[$n];
-				if (empty[$n] !== s$) {
-					if ((!$o.exists || s$) && (!$o.ignore || !$t[$n])) {
-						$t[$n] = s$;
+			for (n in s) {
+				s$ = s[n];
+				if (empty[n] !== s$) {
+					if ((!o.exists || s$) && (!o.ignore || !t[n]) && (o.filter && enyo.isFunction(o.filter)? o.filter(n, s$, s, o): true)) {
+						t[n] = s$;
 					}
 				}
 			}
 		}
 		if (release) {
-			enyo.pool.releaseObject($o);
+			enyo.pool.releaseObject(o);
 		}
-		return $t;
+		return t;
 	};
 
 	//* @public

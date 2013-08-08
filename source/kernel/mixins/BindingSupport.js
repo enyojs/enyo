@@ -1,3 +1,121 @@
+//*@public
+/**
+	These properties provide the public API for using _enyo.Bindings_ with
+	any _enyo.Object_ kind or subclass.
+*/
+enyo.BindingSupport = {
+	name: "BindingSupport",
+	/**
+		While binding kind may be overloaded on a per-binding basis
+		for objects that intend to use a custom kind for all of their
+		bindings, it may also be set here.
+	*/
+	defaultBindingKind: enyo.Binding,
+	/**
+		Set this to an array of binding declarations that will be created
+		when the object is instantiated. Post-construction this array will
+		contain a reference to all available bindings on the instance of the kind.
+	*/
+	bindings: null,
+	/**
+		To create a binding on its own (as opposed to with the _bindings_ array
+		for the kind) pass the properties to this method. It accepts multiple
+		hashes of properties to apply to the binding. The binding will have its
+		_owner_ set to this instance and a reference to the newly created binding
+		will be returned. When this instance is destroyed, all bindings that it owns
+		will also be destroyed.
+	*/
+	binding: function () {
+		var	defs = enyo.toArray(arguments),
+			bs = this.bindings,
+			props = enyo.mixin(defs),
+			kind = props.kind || this.defaultBindingKind, bd;
+		bs.push((bd = this.createComponent({kind: kind, owner: this}, props)));
+		return bd;
+	},
+	/**
+		Usually called when the object's `destroy` method is executed, but may
+		be called at any time to properly clean up any bindings associated with
+		this object (i.e., any bindings that have their _owner_ property set
+		to this object).
+
+		This method does not remove bindings that originated from another object
+		but are currently bound to a property on this object.
+
+		If so desired, one may pass in an array of bindings, in which case only
+		those bindings specified in the array will be destroyed.
+	*/
+	clearBindings: function (subset) {
+		var bs = subset || this.bindings;
+		for (var i=0, b; (b=bs[i]); ++i) {
+			b.destroy();
+		}
+	},
+	/**
+		Calls the `refresh` method on the bindings associated with this
+		object, or on a passed-in array of bindings.
+
+		Differs from _rebuildBindings_ in that, instead of
+		rediscovering the source and target of each binding, it
+		remembers them from the most recent setup.
+
+		In most scenarios, this method will be called automatically,
+		with no need for explicit calls from the developer.
+	*/
+	refreshBindings: function (subset) {
+		var bs = subset || this.bindings;
+		for (var i=0, b; (b=bs[i]); ++i) {
+			b.refresh();
+		}
+	},
+	/**
+		Calls the `rebuild` method on the bindings associated with this
+		object, or on a passed-in array of bindings.
+
+		Differs from _refreshBindings_ in that it forces the source and
+		target of each binding to be rediscovered using the specified
+		paths, rather than remembered from a previous setup.
+
+		In most scenarios, this method will be called automatically,
+		with no need for explicit calls from the developer.
+	*/
+	rebuildBindings: function (subset) {
+		var bs = subset || this.bindings;
+		for (var i=0, b; (b=bs[i]); ++i) {
+			b.rebuild();
+		}
+	},
+	/**
+		This method is typically not called directly, but is called by the
+		binding when it is destroyed. It accepts a single binding as its
+		parameter; the binding is removed from the _bindings_ array if it
+		exists there. This method does not destroy the binding or dereference
+		its _owner_ property.
+	*/
+	removeBinding: function (binding) {
+		if (binding) {
+			var i = enyo.indexOf(binding, this.bindings);
+			if (!!~i) { this.bindings.splice(i, 1); }
+		}
+	},
+	//*@protected
+	constructor: enyo.super(function (sup) {
+		return function () {
+			this.bindings = this.bindings || [];
+			sup.apply(this, arguments);
+		};
+	}),
+	create: enyo.super(function (sup) {
+		return function () {
+			// we need to wait until the end of the create chain to ensure
+			// that the components have been built
+			sup.apply(this, arguments);
+		};
+	})
+};
+
+
+
 (function (enyo) {
 
 	//*@public
