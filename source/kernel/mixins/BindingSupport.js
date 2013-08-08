@@ -46,6 +46,12 @@ enyo.BindingSupport = {
 				props.kind = enyo.getPath(props.kind);
 			}
 			bs.push((bd = new props.kind(props)));
+			if (bd._sourcePath && bd.from[0] === ".") {
+				this.addObserver(bd._sourcePath, this._rebuildSource(bd));
+			}
+			if (bd._targetPath && bd.to[0] === ".") {
+				this.addObserver(bd._targetPath, this._rebuildTarget(bd));
+			}
 		}
 		return bd;
 	},
@@ -111,7 +117,17 @@ enyo.BindingSupport = {
 	removeBinding: function (binding) {
 		if (binding) {
 			var i = enyo.indexOf(binding, this.bindings);
-			if (!!~i) { this.bindings.splice(i, 1); }
+			if (!!~i) { 
+				this.bindings.splice(i, 1);
+				if (binding._rebuildTarget) {
+					this.removeObserver(binding._targetPath, binding._rebuildTarget);
+					binding._rebuildTarget = null;
+				}
+				if (binding._rebuildSource) {
+					this.removeObserver(binding._sourcePath, binding._rebuildSource);
+					binding._rebuildSource = null;
+				}
+			}
 		}
 	},
 	//*@public
@@ -167,5 +183,23 @@ enyo.BindingSupport = {
 			}
 			sup.apply(this, arguments);
 		};
+	},
+	_rebuildSource: function (binding) {
+		var fn = function () {
+			binding.source = null;
+			binding._sourceProperty = null;
+			binding.refresh();
+		};
+		binding._rebuildSource = fn;
+		return fn;
+	},
+	_rebuildTarget: function (binding) {
+		var fn = function () {
+			binding.target = null;
+			binding._targetProperty = null;
+			binding.refresh();
+		};
+		binding._rebuildTarget = fn;
+		return fn;
 	}
 };

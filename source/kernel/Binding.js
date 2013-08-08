@@ -187,9 +187,6 @@
 			this.setSourceValue(val);
 			this.connectSource();
 		},
-		stop: function () {
-			throw "binding-top";
-		},
 		initSource: function () {
 			var src = this.source,
 				fr = this.from,
@@ -199,20 +196,16 @@
 				path = this._sourcePath,
 				pr = (loc? fr.slice(1): fr).split(".");
 			if (!src && !path) {
+				path = pr.slice(-1).join(".");
 				if (loc) {
 					if (o) {
-						src = enyo.getPath.call(o, pr.slice(-1).join("."));
+						src = enyo.getPath.call(o, path);
 					}
 				} else {
-					src = enyo.getPath(pr.slice(-1).join("."));
+					src = enyo.getPath(path);
 				}
-				path = pr.shift();
 			} else if (!src && path) {
-				if (o) {
-					src = o[path];
-				} else {
-					src = enyo.global[path];
-				}
+				src = enyo.getPath.call(o || enyo.global, path);
 			}
 			if (!prop) {
 				prop = pr.pop();
@@ -230,20 +223,16 @@
 				path = this._targetPath,
 				pr = (loc? to.slice(1): to).split(".");
 			if (!tar && !path) {
+				path = pr.slice(-1).join(".");
 				if (loc) {
 					if (o) {
-						tar = enyo.getPath.call(o, pr.slice(-1).join("."));
+						tar = enyo.getPath.call(o, path);
 					}
 				} else {
-					tar = enyo.getPath(pr.slice(-1).join("."));
+					tar = enyo.getPath(path);
 				}
-				path = pr.pop();
 			} else if (!tar && path) {
-				if (o) {
-					tar = o[path];
-				} else {
-					tar = enyo.global[path];
-				}
+				tar = enyo.getPath.call(o || enyo.global, path);
 			}
 			if (!prop) {
 				prop = pr.pop();
@@ -349,7 +338,6 @@
 				this.sync();
 			}
 		},
-		//*@public
 		/**
 			This method will synchronize values from the _source_ to the _target_. This
 			usually will not need to be called manually. For two-way bindings they will
@@ -360,7 +348,6 @@
 				this.syncFromSource();
 			}
 		},
-		//*@public
 		/**
 			This method will disconnect from its ends (_source_ and _target_) if
 			it is _connected_ at either end. This method will most likely not need to
@@ -371,7 +358,26 @@
 			this.disconnectTarget();
 			this.isConnected();
 		},
-		//*@public
+		/**
+			Refresh the binding only rebuilding the parts that are missing. Will synchronize
+			if it is able to connect and the `autoSync` flag is true.
+		*/
+		refresh: function () {
+			this.initSource();
+			this.initTarget();
+			this.connect();
+		},
+		/**
+			Rebuild the entire binding. Will synchronize if it is able to connect and the `autoSync`
+			flag is true.
+		*/
+		rebuild: function () {
+			this.source = null;
+			this.target = null;
+			this._sourceProperty = null;
+			this._targetProperty = null;
+			this.refresh();
+		},
 		/**
 			This method is used to release all of its parts and unregister its observers.
 			Typically this method does not need to be called manually (unless created
@@ -393,6 +399,9 @@
 				this.owner =  null;
 			}
 			delete map[this.id];
+		},
+		stop: function () {
+			throw "binding-top";
 		},
 		//*@protected
 		initTransform: function () {
