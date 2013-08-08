@@ -19,6 +19,12 @@
 				]
 			});
 
+		Note that, when care should be taken when deciding how the children of the list
+		will be laid out. When updating the layout of child elements, when there are many,
+		can be taxing and non-performant for the browser. Do not use dynamicly updated
+		layouts that require many calculations whenever the data will be updated in a view.
+		Try using CSS whenever possible.
+
 		Note that _enyo.DataList_ currently does not support horizontal orientation.
 	*/
 	enyo.kind({
@@ -180,22 +186,22 @@
 				$r = this.orientation, $p;
 			this.controlParentName = p.name;
 			this.discoverControlParent();
-			p.disconnectDom();
 			p.index = n;
 			for (var $i=0, $j=$o, c$, d$; (c$ = p.children[$i]) && (d$=$d[$j]) && $j < $e; ++$i, ++$j) {
 				if (c$._listDisabledChild) {
 					this.enableChild(c$);
 				}
 				if (c$.model !== d$) {
+					c$.stopNotifications();
 					c$.set("index", $j);
 					c$.set("model", d$);
 					c$.set("selected", this.isSelected(d$));
+					c$.startNotifications();
 				}
 			}
 			if ($i < p.children.length) {
 				this.prune(p, $i);
 			}
-			p.connectDom();
 			p.renderReusingNode();
 			$p = this.pages[n];
 			if (!$p) {
@@ -330,7 +336,6 @@
 		},
 		disableChild: function (c$) {
 			if (!c$._listDisabledChild) {
-				c$.connectDom();
 				c$.setShowing(false);
 				c$.canGenerate = false;
 				c$._listDisabledChild = true;
@@ -340,7 +345,6 @@
 			if (c$._listDisabledChild) {
 				c$.canGenerate = true;
 				c$._listDisabledChild = false;
-				c$.connectDom();
 				c$.setShowing(true);
 			}
 		},

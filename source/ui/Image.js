@@ -7,6 +7,10 @@ enyo.kind({
 	name: "enyo.Image",
 	//* When true, no _onload_ or _onerror_ event handlers will be created
 	noEvents: false,
+	published: {
+		//* maps to the "alt" attribute of an img tag
+		alt: ""
+	},
 	//* @protected
 	tag: "img",
 	attributes: {
@@ -21,8 +25,12 @@ enyo.kind({
 				delete this.attributes.onerror;
 			}
 			sup.apply(this, arguments);
+			this.altChanged();
 		};
 	}),
+	altChanged: function() {
+		this.setAttribute("alt", this.alt);
+	},
 	rendered: enyo.super(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
