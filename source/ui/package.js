@@ -1,5 +1,6 @@
 enyo.depends(
 	"ui.css",
+	"Anchor.js",
 	"Animator.js",
 	"BaseLayout.js",
 	"Image.js",
