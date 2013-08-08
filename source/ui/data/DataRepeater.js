@@ -194,9 +194,13 @@
 			this.deselect(event.index);
 			return true;
 		},
-		select: function (i) {
-			var c$ = this.getChildForIndex(i),
-				m$ = this.controller.at(i),
+		//*@public
+		/**
+			Select the item at the given index.
+		*/
+		select: function (index) {
+			var c$ = this.getChildForIndex(index),
+				m$ = this.controller.at(index),
 				$s = this.__selection, i$;
 			if (this.selection) {
 				if (this.multipleSelection) {
@@ -219,11 +223,15 @@
 					$s = this.selectionProperty;
 					m$.set($s, true);
 				}
+				this.notifyObservers("selected");
 			}
 		},
-		deselect: function (i) {
-			var c$ = this.getChildForIndex(i),
-				m$ = this.controller.at(i),
+		/**
+			De-select the item at the given index.
+		*/
+		deselect: function (index) {
+			var c$ = this.getChildForIndex(index),
+				m$ = this.controller.at(index),
 				$s = this.__selection, $i;
 			$i = enyo.indexOf(m$, $s);
 			if (!!~$i) {
@@ -236,29 +244,50 @@
 				$s = this.selectionProperty;
 				m$.set($s, false);
 			}
+			this.notifyObservers("selected");
 		},
-		isSelected: function (m) {
-			return !!~enyo.indexOf(m, this.__selection);
+		/**
+			Returns whether the given model is selected or not.
+		*/
+		isSelected: function (model) {
+			return !!~enyo.indexOf(model, this.__selection);
 		},
+		/**
+			Selects all items (only takes action if _multipleSelection_ is true).
+		*/
 		selectAll: function () {
 			if (this.multipleSelection) {
+				this.stopNotifications();
 				var $s = this.__selection;
 				$s.length = 0;
 				for (var $i=0; $i<this.length; ++$i) {
 					this.select($i);
 				}
+				this.startNotifications();
 			}
 		},
+		/**
+			De-selects all items.
+		*/
 		deselectAll: function () {
 			if (this.selection) {
+				this.stopNotifications();
 				var $s = this.__selection, m$, i$;
 				while ($s.length) {
 					m$ = $s.pop();
 					i$ = this.controller.indexOf(m$);
 					this.deselect(i$);
 				}
+				this.startNotifications();
 			}
-		}
+		},
+		/**
+			Returns the currently selected model (if _multipleSelection_ is false),
+			or an array of all currently selected models (if _multipleSelection_ is true).
+		*/
+		selected: enyo.computed(function() {
+			return this.multipleSelection ? this.__selection : this.__selection[0];
+		})
 		
 	});
 

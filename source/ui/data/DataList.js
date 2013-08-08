@@ -183,7 +183,7 @@
 			p.disconnectDom();
 			p.index = n;
 			for (var $i=0, $j=$o, c$, d$; (c$ = p.children[$i]) && (d$=$d[$j]) && $j < $e; ++$i, ++$j) {
-				if (c$.disabled) {
+				if (c$._listDisabledChild) {
 					this.enableChild(c$);
 				}
 				if (c$.model !== d$) {
@@ -329,17 +329,17 @@
 			}
 		},
 		disableChild: function (c$) {
-			if (!c$.disabled) {
+			if (!c$._listDisabledChild) {
 				c$.connectDom();
 				c$.setShowing(false);
 				c$.canGenerate = false;
-				c$.disabled = true;
+				c$._listDisabledChild = true;
 			}
 		},
 		enableChild: function (c$) {
-			if (c$.disabled) {
+			if (c$._listDisabledChild) {
 				c$.canGenerate = true;
-				c$.disabled = false;
+				c$._listDisabledChild = false;
 				c$.connectDom();
 				c$.setShowing(true);
 			}

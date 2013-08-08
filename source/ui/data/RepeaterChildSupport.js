@@ -23,7 +23,7 @@ enyo.createMixin({
 		this.inherited(arguments);
 	},
 	__selectionHandler: function (sender, event) {
-		if (this.repeater.selection) {
+		if (this.repeater.selection && !this.get("disabled")) {
 			this.set("selected", !this.selected);
 		}
 	},
