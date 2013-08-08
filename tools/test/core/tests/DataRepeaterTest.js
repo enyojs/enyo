@@ -92,7 +92,7 @@ enyo.kind({
 			if (testControl.boundSelection != null) {
 				throw "Single selection (binding): Did not deselect all correctly.";
 			}
-			if (selected.content != "") {
+			if (selected.content !== "") {
 				throw "Single selection (bound control): Did not deselect all correctly.";
 			}
 
