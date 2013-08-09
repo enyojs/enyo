@@ -31,6 +31,7 @@ enyo.kind({
 		to this kind at the end of the constructor routine.
 	*/
 	mixins: [
+		enyo.MixinSupport,
 		enyo.ObserverSupport,
 		enyo.ComputedSupport,
 		enyo.BindingSupport

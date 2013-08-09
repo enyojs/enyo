@@ -33,9 +33,6 @@ enyo.handleConcatenatedProperties = function (ctor, props) {
 			fn(proto, props);
 		} else if (enyo.isArray(proto[p])) {
 			proto[p] = enyo.merge(proto[p], props[p]);
-		} else {
-			enyo.warn("for " + proto.kindName + " could not find handler for requested " +
-				"concatenated property: " + p);
 		}
 		delete props[p];
 	}
@@ -256,29 +253,33 @@ enyo.kind.features = [];
 	handling for extending a kinds super-methods. It can take a constructor,
 	a prototype or an instance.
 */
-enyo.kind.extendMethods = function(ctor, props) {
-	var proto = ctor.prototype || ctor;
+enyo.kind.extendMethods = function(ctor, props, add) {
+	var proto = ctor.prototype || ctor,
+		b = proto.base;
 	if (!proto.inherited) {
 		proto.inherited = enyo.kind.inherited;
 	}
-	if (proto.base) {
-		// decorate function properties to support inherited (do this ex post facto so that
-		// ctor.prototype is known, relies on elements in props being copied by reference)
-		for (var n in props) {
-			var p = props[n];
-			if (enyo.isSuper(p)) {
-				// handle special case where the constructor has actually been renamed
-				// but mixins or other objects for extending will use the actual name
-				if (n == "constructor") {
-					n = "_constructor";
-				}
-				// ensure that if there isn't actually a super method to call it won't
-				// fail miserably - while this shouldn't happen often it is a sanity
-				// check for mixin-extensions for kinds
-				p = proto[n] = p.fn(proto.base.prototype[n] || enyo.nop);
+	// decorate function properties to support inherited (do this ex post facto so that
+	// ctor.prototype is known, relies on elements in props being copied by reference)
+	for (var n in props) {
+		var p = props[n];
+		if (enyo.isSuper(p)) {
+			// handle special case where the constructor has actually been renamed
+			// but mixins or other objects for extending will use the actual name
+			if (n == "constructor") {
+				n = "_constructor";
 			}
-			if (enyo.isFunction(p)) {
-				p._inherited = proto.base.prototype[n];
+			// ensure that if there isn't actually a super method to call it won't
+			// fail miserably - while this shouldn't happen often it is a sanity
+			// check for mixin-extensions for kinds
+			p = proto[n] = p.fn(b? (b.prototype[n] || enyo.nop): enyo.nop);
+		}
+		if (enyo.isFunction(p)) {
+			if (add) {
+				proto[n] = p;
+				p.displayName = n + "()";
+			} else {
+				p._inherited = b? b.prototype[n]: null;
 				// FIXME: we used to need some extra values for inherited, then inherited got cleaner
 				// but in the meantime we used these values to support logging in Object.
 				// For now we support this legacy situation, by suppling logging information here.
@@ -390,8 +391,8 @@ enyo.kind.statics = {
 		proto = target || ctor.prototype;
 		for (var i=0, p; (p=exts[i]); ++i) {
 			enyo.handleConcatenatedProperties(proto, p);
-			enyo.kind.extendMethods(proto, p);
-			enyo.mixin(proto, p, {exists: true, filter: function (k, v) { return !enyo.isFunction(v); }});
+			enyo.kind.extendMethods(proto, p, true);
+			enyo.mixin(proto, p, {exists: true, filter: function (k, v) { return !(enyo.isFunction(v) || enyo.isSuper(v)); }});
 		}
 		return target || ctor;
 	}

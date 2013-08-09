@@ -58,6 +58,7 @@
 		_ObserverSupport_ in _enyo.Object_ and all of its subkinds.
 	*/
 	enyo.ObserverSupport = {
+		name: "ObserverSupport",
 		/**
 			Registers an observer for the passed-in property, returning a
 			reference to the handler function being registered, so that it
@@ -265,7 +266,7 @@
 				this.removeAllObservers();
 				sup.apply(this, arguments);
 			};
-		}
+		}),
 		_observerStopCount: 0,
 		_observerNotificationQueue: null,
 		_observerNotificationsEnabled: true,
@@ -348,7 +349,7 @@
 			}
 		}
 		// carry on
-		subclass(prop, value, proto);
+		subclass(ctor, props);
 	};
 
 })(enyo);

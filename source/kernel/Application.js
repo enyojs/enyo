@@ -94,19 +94,19 @@
 		}
 	};
 
-	//*@protected
-	enyo.kind.postConstructors.push(function () {
-		if (!this._isApplication) {
-			return;
-		}
-
-		// now that any controllers for the application have been
-		// initialized, we test to see if we're supposed to
-		// automatically start
-		if (true === this.autoStart) {
-			this.start();
-		}
-	});
+	// //*@protected
+	// enyo.kind.postConstructors.push(function () {
+	// 	if (!this._isApplication) {
+	// 		return;
+	// 	}
+	// 
+	// 	// now that any controllers for the application have been
+	// 	// initialized, we test to see if we're supposed to
+	// 	// automatically start
+	// 	if (true === this.autoStart) {
+	// 		this.start();
+	// 	}
+	// });
 
 	//*@public
 	/**

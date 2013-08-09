@@ -180,7 +180,7 @@ enyo.BindingSupport = {
 			}
 			sup.apply(this, arguments);
 		};
-	},
+	}),
 	_rebuildSource: function (binding) {
 		var fn = function () {
 			binding.source = null;

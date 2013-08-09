@@ -49,7 +49,7 @@
 		// we can't do anything if someone attempts to extend a kind with a mixin
 		// that does not have a name but all internal mixins should have names
 		if (m.name) {
-			if (!!~enyo.indexOf(m.name, mx)) {
+			if (!~enyo.indexOf(m.name, mx)) {
 				mx.push(m.name);
 			} else {
 				// we will not add the same mixin twice but we throw the warning
@@ -63,7 +63,7 @@
 		} else {
 			n = null;
 		}
-		enyo.kind.statics.extend(ctor, m);
+		enyo.kind.statics.extend(m, proto);
 		if (n) {
 			m.name = n;
 		}
@@ -83,6 +83,7 @@
 	enyo.kind.features.push(mixinsFeature);
 	//*@public
 	enyo.MixinSupport = {
+		name: "MixinSupport",
 		/**
 			Takes a single parameter a hash of properties to apply. To be considered
 			a _mixin_ it must have a _name_ property that is unique but will apply even

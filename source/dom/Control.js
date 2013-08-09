@@ -117,6 +117,14 @@ enyo.kind({
 			this.initProps(["id", "content", "src"]);
 		};
 	}),
+	//*@protected
+	constructor: enyo.super(function (sup) {
+		return function () {
+			this.attributes = enyo.clone(this.ctor.prototype.attributes);
+			sup.apply(this, arguments);
+		};
+	}),
+	//*@public
 	destroy: enyo.super(function (sup) {
 		return function() {
 			this.removeFromRoots();

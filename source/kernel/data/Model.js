@@ -370,11 +370,11 @@
 		the record with the store. This cannot be done during the construction
 		chain.
 	*/
-	enyo.kind.postConstructors.push(function () {
-		if (this.__isModel) {
-			enyo.models.queue(this);
-		}
-	});
+	// enyo.kind.postConstructors.push(function () {
+	// 	if (this.__isModel) {
+	// 		enyo.models.queue(this);
+	// 	}
+	// });
 
 	//*@public
 	/**

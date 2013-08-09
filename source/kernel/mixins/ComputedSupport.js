@@ -11,7 +11,7 @@
 		for (var k in obj) {
 			if (enyo.isArray(obj[k])) {
 				c[k] = enyo.cloneArray(obj[k]);
-			} else if (enyo.isObject(obj[k]) {
+			} else if (enyo.isObject(obj[k])) {
 				c[k] = enyo.clone(obj[k]);
 			} else {
 				c[k] = obj[k];
