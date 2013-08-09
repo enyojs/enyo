@@ -234,10 +234,6 @@ enyo.kind.makeCtor = function() {
 			this.constructed.apply(this, arguments);
 		}
 
-		for (var idx = 0; idx < enyo.kind.postConstructors.length; ++idx) {
-			enyo.kind.postConstructors[idx].apply(this, cargs);
-		}
-
 		if (result) {
 			return result;
 		}
@@ -252,13 +248,6 @@ enyo.kind.defaultNamespace = "enyo";
 // feature hooks for the oop system
 //
 enyo.kind.features = [];
-
-
-//*@protected
-/**
-	Post-initialize functions (after constructor has completed).
-*/
-enyo.kind.postConstructors = [];
 
 //*@protected
 /**
