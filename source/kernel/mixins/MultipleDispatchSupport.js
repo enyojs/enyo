@@ -42,18 +42,22 @@ enyo.createMixin({
 	// ...........................
 	// COMPUTED PROPERTIES
 
+	computed: {
+		bubbleTarget: ["_defaultTarget", "_defaultDispatch", {cached: true}]
+	},
+
 	//*@protected
 	/**
 		Overloads the bubble target.
 	*/
-	bubbleTarget: enyo.computed(function () {
+	bubbleTarget: function () {
 		// if we have a valid dispatch target and default dispatching enabled,
 		// we go head and return that object; otherwise, nothing, so it will
 		// not propagate an event
 		if (this._defaultTarget && this._defaultDispatch) {
 			return this._defaultTarget;
 		}
-	}, "_defaultTarget", "_defaultDispatch", {cached: true}),
+	},
 
 	// ...........................
 	// PUBLIC METHODS

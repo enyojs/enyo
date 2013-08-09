@@ -822,12 +822,16 @@
 		// ...........................
 		// COMPUTED PROPERTIES
 
+		computed: {
+			query: []
+		},
+
 		//*@public
 		/**
 			Used internally by _enyo.Source_ to generate an appropriate request url.
 			Overload this method in custom setups.
 		*/
-		query: enyo.computed(function () {
+		query: function () {
 			if (!this.noUrl && !this.rawUrl) {
 				return this.get("url") + "/" + this.get(this.primarykey);
 			} else if (this.rawUrl) {
@@ -835,7 +839,7 @@
 			} else {
 				return "";
 			}
-		}),
+		},
 
 		// ...........................
 		// PUBLIC METHODS
@@ -1345,18 +1349,18 @@
 			the model. Calls _flushChanges()_, which will emit an _onChange_
 			event if the model isn't currently silenced.
 		*/
-		__attributeSpy: enyo.observer(function (prop, prev, val) {
-			if (this.__attributeFor(prop) || this.isRelation(prop)) {
-				// TODO: Type checking has been temporarily removed
-				// and should probably be added as validation instead
-				this.__previous[prop] = prev;
-				this.__changed[prop] = val;
-				this.flushChanges();
-			}
-		}, "*"),
+		// __attributeSpy: enyo.observer(function (prop, prev, val) {
+		// 	if (this.__attributeFor(prop) || this.isRelation(prop)) {
+		// 		// TODO: Type checking has been temporarily removed
+		// 		// and should probably be added as validation instead
+		// 		this.__previous[prop] = prev;
+		// 		this.__changed[prop] = val;
+		// 		this.flushChanges();
+		// 	}
+		// }, "*"),
 
 		//*@protected
-		__statusChanged: enyo.observer(function (prop, prev, val) {
+		__statusChanged: function (prev, val, prop) {
 			var $i, c$;
 			if (val === DIRTY) {
 				for ($i=0; (c$=this.__collections[$i]); ++$i) {
@@ -1367,7 +1371,11 @@
 					c$.removeDirtyModel(this);
 				}
 			}
-		}, "status")
+		},
+		
+		observers: {
+			__statusChanged: ["status"]
+		}
 
 	});
 

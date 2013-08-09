@@ -105,6 +105,11 @@
 		// ...........................
 		// COMPUTED PROPERTIES
 
+		computed: {
+			data: ["length", {cached: true}],
+			query: []
+		},
+
 		//*@public
 		/**
 			A computed property representing the underlying array of models. This
@@ -115,23 +120,23 @@
 			This computed property may be overloaded in more complex scenarios
 			involving filtering and conditionally supplied datasets.
 		*/
-		data: enyo.computed(function (data) {
+		data: function (data) {
 			if (data) {
 				this.removeAll();
 				this.add(data);
 			} else {
 				return this.__store;
 			}
-		}, "length", {cached: true, defer: true}),
+		},
 
 		//*@public
 		/**
 			Used by _enyo.Source_ to generate the appropriate request for
 			fetching data. May be overloaded to produce dynamic queries.
 		*/
-		query: enyo.computed(function () {
+		query: function () {
 			return this.url || this.model.prototype.get("query");
-		}),
+		},
 
 		// ...........................
 		// PUBLIC METHODS
@@ -618,11 +623,11 @@
 		},
 
 		//*@protected
-		__relationChanged: enyo.observer(function (prop, prev, val) {
+		__relationChanged: function (prev, val, prop) {
 			if (val) {
 				this.initRelation();
 			}
-		}, "relation"),
+		},
 
 		//*@protected
 		__modelChanged: function (sender, event) {
@@ -648,13 +653,18 @@
 		// OBSERVERS
 
 		//*@protected
-		__statusChanged: enyo.observer(function (prop, prev, val) {
+		__statusChanged: function (prev, val, prop) {
 			if (prev === enyo.Model.DIRTY && val === enyo.Model.CLEAN) {
 				for (var $i=0, r$; (r$=this.__dirtyModels[$i]); ++$i) {
 					r$.set("status", enyo.Model.CLEAN);
 				}
 			}
-		}, "status")
+		},
+		
+		observers: {
+			__relationChanged: ["relation"],
+			__statusChanged: ["status"]
+		}
 
 	});
 

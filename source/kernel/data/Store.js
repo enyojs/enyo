@@ -426,13 +426,15 @@
 
 		// ...........................
 		// OBSERVERS
-
-		_sourceChanged: enyo.observer(function (prop, prev, val) {
+		observers: {
+			source: []
+		},
+		sourceChanged: function (prev, val, prop) {
 			if (val) {
 				val.set("owner", this);
 				this.rebuildBindings();
 			}
-		}, "source")
+		}
 
 	});
 
