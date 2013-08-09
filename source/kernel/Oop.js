@@ -272,7 +272,11 @@ enyo.kind.extendMethods = function(ctor, props, add) {
 			// ensure that if there isn't actually a super method to call it won't
 			// fail miserably - while this shouldn't happen often it is a sanity
 			// check for mixin-extensions for kinds
-			p = proto[n] = p.fn(b? (b.prototype[n] || enyo.nop): enyo.nop);
+			if (add) {
+				p = proto[n] = p.fn(proto[n] || enyo.nop);
+			} else {
+				p = proto[n] = p.fn(b? (b.prototype[n] || enyo.nop): enyo.nop);
+			}
 		}
 		if (enyo.isFunction(p)) {
 			if (add) {

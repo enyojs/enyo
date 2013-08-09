@@ -101,7 +101,7 @@
 		*/
 		importProps: enyo.super(function (sup) {
 			return function (props) {
-				mixinsFeature(this, props);
+				if (props) { mixinsFeature(this, props); }
 				sup.apply(this, arguments);
 			};
 		})

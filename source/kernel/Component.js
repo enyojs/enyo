@@ -619,7 +619,7 @@ enyo.Component.handlersConcat = function (proto, props) {
 };
 enyo.Component.eventsConcat = function (proto, props) {
 	if (props.events) {
-		this.publishEvents(proto, props);
+		enyo.Component.publishEvents(proto, props);
 	}
 };
 
@@ -628,7 +628,7 @@ enyo.Component.publishEvents = function(ctor, props) {
 	if (es) {
 		var cp = ctor.prototype || ctor;
 		for (var n in es) {
-			this.addEvent(n, es[n], cp);
+			enyo.Component.addEvent(n, es[n], cp);
 		}
 	}
 };
