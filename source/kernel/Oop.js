@@ -24,10 +24,11 @@ enyo.handleConcatenatedProperties = function (ctor, props) {
 	var c = enyo.merge(ctor.concat, props.concat),
 		// can handle a constructor or an instance of a kind
 		proto = ctor.prototype || ctor,
-		fn, nom;
+		fn, nom, g;
 	for (var i=0, p; (p=c[i]); ++i) {
 		nom = (proto.kindName? proto.kindName: "enyo") + "." + p + "Concat";
-		fn = enyo.getPath(nom);
+		g = "enyo." + p + "Concat";
+		fn = enyo.getPath(nom) || enyo.getPath(g);
 		if (enyo.isFunction(fn)) {
 			fn(proto, props);
 		} else if (enyo.isArray(proto[p])) {

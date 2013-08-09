@@ -34,33 +34,69 @@
 		for mixins and extend the kind accordingly, only applying any given mixin one time
 		to any kind base.
 	*/
-	enyo.kind.features.push(function (ctor, props) {
-		if (props.mixins) {
-			var cp = ctor.prototype,
-				mx = cp._appliedMixins? enyo.cloneArray(cp._appliedMixins): [];
-			for (var i=0, m; (m=props.mixins[i]); ++i) {
-				// if the mixin is a string we have to try to resolve it to an object
-				if (enyo.isString(m)) {
-					m = enyo.getPath(m);
-					if (!m) {
-						enyo.warn("could not find the requested mixin " + m.name);
-						// could not find the mixin
-						continue;
-					}
-				}
-				// we can't do anything if someone attempts to extend a kind with a mixin
-				// that does not have a name but all internal mixins should have names
-				if (m.name) {
-					if (!!~enyo.indexOf(m.name, mx)) {
-						mx.push(m.name);
-					} else {
-						// we will not add the same mixin twice
-						continue;
-					}
-				}
-				enyo.kind.statics.extend(ctor, m);
+	var applyMixin = function (proto, props) {
+		var mx = proto._appliedMixins,
+			m = props;
+		// if the mixin is a string we have to try to resolve it to an object
+		if (enyo.isString(m)) {
+			m = enyo.getPath(m);
+			if (!m) {
+				enyo.warn("could not find the requested mixin " + props);
+				// could not find the mixin
+				return;
 			}
 		}
-	});
+		// we can't do anything if someone attempts to extend a kind with a mixin
+		// that does not have a name but all internal mixins should have names
+		if (m.name) {
+			if (!!~enyo.indexOf(m.name, mx)) {
+				mx.push(m.name);
+			} else {
+				// we will not add the same mixin twice but we throw the warning
+				// to alert the developer of the attempt so it can be tracked down
+				enyo.warn("attempt to add the same mixin more than once, " +
+					m.name + " onto -> " + proto.kindName);
+				return;
+			}
+		}
+		enyo.kind.statics.extend(ctor, m);
+	};
+	var mixinsFeature = function (ctor, props) {
+		if (props.mixins) {
+			var cp = ctor.prototype || ctor,
+				pm = props.mixins;
+			cp._appliedMixins = cp._appliedMixins? enyo.cloneArray(cp._appliedMixins): [],
+			// prevent recursion
+			delete props.mixins;
+			for (var i=0, m; (m=pm[i]); ++i) {
+				applyMixin(cp, m);
+			}
+		}
+	};
+	enyo.kind.features.push(mixinsFeature);
+	//*@public
+	enyo.MixinSupport = {
+		/**
+			Takes a single parameter a hash of properties to apply. To be considered
+			a _mixin_ it must have a _name_ property that is unique but will apply even
+			non-mixins to the kind instance.
+		*/
+		extend: function (props) {
+			applyMixin(this, props);
+		},
+		/**
+			Extend the _importProps_ method to ensure we can handle run-time additions
+			of the _mixins_ properties since they can be added at any time, even by other
+			_mixins_. This will only be executed against mixins applied after the kind
+			has already been evaluated and is being initialized as an instance. However,
+			if a _mixin_ applies more _mixins_ at runtime it will have no affect.
+		*/
+		importProps: enyo.super(function (sup) {
+			return function (props) {
+				mixinsFeature(this, props);
+				sup.apply(this, arguments);
+			};
+		})
+	};
 
 }(enyo));
