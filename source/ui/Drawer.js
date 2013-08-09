@@ -12,14 +12,16 @@ enyo.kind({
 	name: "enyo.Drawer",
 	published: {
 		//* The visibility state of the drawer's associated control
-		open: true,
+		open : true,
 		/**
 			Direction of the opening/closing animation--either "v" for vertical
 			or "h" for horizontal
 		*/
-		orient: "v",
+		orient : "v",
 		//* If true, the opening/closing transition will be animated
-		animated: true
+		animated : true,
+		onStep   : null,
+		onEnd    : null
 	},
 	events: {
 		/**
@@ -36,19 +38,15 @@ enyo.kind({
 		{kind: "Animator", onStep: "animatorStep", onEnd: "animatorEnd"},
 		{name: "client", style: "position: relative;", classes: "enyo-border-box"}
 	],
-	create: enyo.super(function (sup) {
-		return function() {
-			sup.apply(this, arguments);
-			this.animatedChanged();
-			this.openChanged();
-		};
-	}),
-	initComponents: enyo.super(function (sup) {
-		return function() {
-			this.createChrome(this.tools);
-			sup.apply(this, arguments);
-		};
-	}),
+	create: function() {
+		this.inherited(arguments);
+		this.animatedChanged();
+		this.openChanged();
+	},
+	initComponents: function() {
+		this.createChrome(this.tools);
+		this.inherited(arguments);
+	},
 	animatedChanged: function() {
 		if (!this.animated && this.hasNode() && this.$.animator.isAnimating()) {
 			this.$.animator.stop();
@@ -101,6 +99,11 @@ enyo.kind({
 		if (this.container) {
 			this.container.resized();
 		}
+		
+		// Call this.onStep callback funciton
+		if (typeof this.owner[this.onStep] == 'function') {
+			this.owner[this.onStep].apply(this.owner, [inSender.value]);
+		}
 		return true;
 	},
 	animatorEnd: function() {
@@ -127,6 +130,11 @@ enyo.kind({
 			this.container.resized();
 		}
 		this.doDrawerAnimationEnd();
+		
+		// Call this.onEnd callback funciton
+		if (typeof this.owner[this.onEnd] == 'function') {
+			this.owner[this.onEnd].apply(this.owner, []);
+		}
 		return true;
 	}
 });
