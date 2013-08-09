@@ -194,7 +194,7 @@
 				path = this._sourcePath,
 				pr = (loc? fr.slice(1): fr).split(".");
 			if (!src && !path) {
-				path = pr.slice(-1).join(".");
+				path = pr.slice(0,-1).join(".");
 				if (loc) {
 					if (o) {
 						src = enyo.getPath.call(o, path);
@@ -221,7 +221,7 @@
 				path = this._targetPath,
 				pr = (loc? to.slice(1): to).split(".");
 			if (!tar && !path) {
-				path = pr.slice(-1).join(".");
+				path = pr.slice(0,-1).join(".");
 				if (loc) {
 					if (o) {
 						tar = enyo.getPath.call(o, path);
@@ -259,7 +259,7 @@
 			var tar = this.target,
 				prop = this._targetProperty,
 				fn = this._targetObserver;
-			if ((tar && prop) || this.oneWay) {
+			if ((tar && prop) || (this.oneWay && tar)) {
 				if (this.oneWay) {
 					this._targetConnected = true;
 				} else {

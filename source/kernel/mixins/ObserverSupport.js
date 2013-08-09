@@ -90,15 +90,15 @@
 		*/
 		removeObserver: function (prop, fn) {
 			var map = this._observerMap,
-				en = map[prop], fn;
+				en = map[prop];
 			if (en) {
 				if (enyo.isArray(en)) {
 					var i = enyo.indexOf(fn, en);
-					if (!~i) {
+					if (!!~i) {
+						fn = this[fn];
 						en.splice(i, 1);
-						fn = en[prop];
-						if (fn.observer) {
-							delete this[prop];
+						if (fn && fn.observer) {
+							delete this[fn];
 						}
 					}
 				}
@@ -112,14 +112,7 @@
 			the _destroy_ method.
 		*/
 		removeAllObservers: function () {
-			var map = this._observerMap;
-			if (map) {
-				for (var k in map) {
-					for (var i=0, o; (o=map[k]); ++i) {
-						this.removeObserver(k, o);
-					}
-				}
-			}
+			this._observerMap = {};
 			return this;
 		},
 		/**

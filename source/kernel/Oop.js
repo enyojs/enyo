@@ -404,7 +404,7 @@ enyo.kind.statics = {
 		for (var i=0, p; (p=exts[i]); ++i) {
 			enyo.handleConcatenatedProperties(proto, p);
 			enyo.kind.extendMethods(proto, p, true);
-			enyo.mixin(proto, p, {exists: true, filter: function (k, v) { return !(enyo.isFunction(v) || enyo.isSuper(v)); }});
+			enyo.mixin(proto, p, {filter: function (k, v) { return !(enyo.isFunction(v) || enyo.isSuper(v)); }});
 		}
 		return target || ctor;
 	}

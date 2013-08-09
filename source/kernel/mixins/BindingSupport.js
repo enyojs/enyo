@@ -144,15 +144,13 @@ enyo.BindingSupport = {
 	*/
 	initBindings: function () {
 		if (false === this._bindingsInitialized) {
-			// reduce object clutter and allow calls to this.binding to actually
-			// create the binding now
-			delete this._bindingsInitialized;
-			var os = this.bindings,
-				// we will now reused the property `bindings` with the actual binding
-				// references
-				bs = (this.bindings = []);
-			for (var i=0, b; (b=bs[i]); ++i) {
-				bs.push(this.binding(b));
+			this._bindingsInitialized = undefined;
+			var os = this.bindings;
+			// we will now reused the property `bindings` with the actual binding
+			// references
+			this.bindings = [];
+			for (var i=0, b; (b=os[i]); ++i) {
+				this.binding(b);
 			}
 		}
 	},
