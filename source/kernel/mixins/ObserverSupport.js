@@ -1,5 +1,4 @@
 (function (enyo) {
-	
 	//*@protected
 	// ensure observers will be handled by the concatenation handler
 	enyo.concat.push("observers");
@@ -276,7 +275,7 @@
 	/**
 		This method use used when handling concatenated properties.
 	*/
-	enyo.observersConcat = function (proto, props) {
+	enyo.concatHandler("observers", function (proto, props) {
 		if (props.observers) {
 			var po, ro, k, map, a, i, dep;
 			// unfortunately there are 2 steps here but its all for the better
@@ -319,12 +318,14 @@
 				proto._observerMap = map;
 			}
 		}
-	};
+	});
 	/**
 		We need to hijack the subclassing mechanism of enyo.Object that isn't
 		available at the time this source is evaluated so we will hijack the root
 		subclass mechanism and ensure we can look at published properties. Note that
-		subclassing takes place prior to the addition of mixins to the kind.
+		subclassing takes place prior to the addition of mixins to the kind. This is
+		necessary in this case so these observers will be evaluated and merged with
+		the core object's definition for observers (if any).
 	*/
 	var subclass = enyo.kind.statics.subclass;
 	var addChangedObservers = function (prop, proto) {
@@ -351,5 +352,4 @@
 		// carry on
 		subclass(ctor, props);
 	};
-
 })(enyo);

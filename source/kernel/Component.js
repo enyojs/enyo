@@ -381,7 +381,7 @@ enyo.kind({
 
 		if (this[name]) {
 			if ("function" === typeof this[name]) {
-				if (this._isController || (delegate && this === delegate.owner)) {
+				if (delegate && this === delegate.owner) {
 					return this.dispatch(name, event, sender);
 				}
 			} else {
@@ -611,18 +611,17 @@ enyo.Component.subclass = function(ctor, props) {
 	}
 };
 
-enyo.Component.handlersConcat = function (proto, props) {
+enyo.concatHandler("handlers", function (proto, props) {
 	if (props.handlers) {
 		var h = proto.handlers? enyo.clone(proto.handlers): {};
 		proto.handlers = enyo.mixin(h, props.handlers);
 	}
-};
-enyo.Component.eventsConcat = function (proto, props) {
+});
+enyo.concatHandler("events", function (proto, props) {
 	if (props.events) {
 		enyo.Component.publishEvents(proto, props);
 	}
-};
-
+});
 enyo.Component.publishEvents = function(ctor, props) {
 	var es = props.events;
 	if (es) {

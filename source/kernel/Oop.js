@@ -1,42 +1,59 @@
-﻿//*@protected
-/**
-	Default properties of enyo kinds to concatenate as opposed to
-	overwriting. These are automatically used unless explicitly
-	removed.
-*/
-enyo.concat = ["concat"];
-
-//*@protected
-/**
-	Internally used to normalize how we concatenate or maintain properties
-	in a chain. This uses the _concat_ array of the kind to determine which
-	properties should be handled. It will look for a conventional name for a
-	handler for the property based on its [kindName].[property]Concat (a method
-	on the constructor for the kind). Or it will default to looking internally
-	at the _enyo_ namespace. If it cannot find a handler it will issue a warning
-	for debugging purposes. The only exception is for _Arrays_ because they will
-	be handled automatically if no specific handler is found. The handler would
-	be handed two parameters, proto and props respectively. This method can also
-	accept an instance of a class not just a constructor (as it can be called by
-	importProps).
-*/
-enyo.handleConcatenatedProperties = function (ctor, props) {
-	var c = enyo.merge(ctor.concat, props.concat),
-		// can handle a constructor or an instance of a kind
-		proto = ctor.prototype || ctor,
-		fn, nom, g;
-	for (var i=0, p; (p=c[i]); ++i) {
-		nom = (proto.kindName? proto.kindName: "enyo") + "." + p + "Concat";
-		g = "enyo." + p + "Concat";
-		fn = enyo.getPath(nom) || enyo.getPath(g);
-		if (enyo.isFunction(fn)) {
-			fn(proto, props);
-		} else if (enyo.isArray(proto[p])) {
-			proto[p] = enyo.merge(proto[p], props[p]);
+﻿(function (enyo) {
+	//*@protected
+	/**
+		Default properties of enyo kinds to concatenate as opposed to
+		overwriting. These are automatically used unless explicitly
+		removed.
+	*/
+	enyo.concat = ["concat"];
+	/**
+		Internally used to map a concatenated property handler to the
+		property.
+	*/
+	var map = {};
+	enyo.concatHandler = function (prop, handler) {
+		map[prop] = handler;
+	};
+	/**
+		Concatenated properties are designated properties with special handling
+		required between subclassing and extending. Any property that when added
+		to a kind (either by subclassing or extending) needs to be manipulated
+		or merged with the base kinds value should use this mechanism. Simply add
+		the property name to the kinds _concat_ array (it too will be concatenated).
+		If the value is an array with no special needs it will be handled automatically.
+		If it is not an array or needs inspection a handler should be registered
+		for that property via the _enyo.concatHandler_ method.
+	
+		A special note as to why this is required as opposed to using subclassing
+		is due to the nature of _extending_ a kind and _extending_ an instance. These
+		special handlers need to be invoked on all occassions not just subclassing. This
+		is a normalized and performant handler that does the least amount of work possible.
+	*/
+	enyo.handleConcatenatedProperties = function (proto, props) {
+		var c = enyo.merge(proto.concat, props.concat), fn;
+		for (var i=0, p; (p=c[i]); ++i) {
+			// we can safely skip the concat property because we just merged it
+			// and will set it at the end
+			if (p == "concat") { continue; }
+			// if the property doesn't exist on the incoming props we don't need
+			// to mess with them
+			if (!props[p]) { continue; }
+			// if there is a registered handler, use it
+			if ((fn = map[p])) {
+				fn(proto, props);
+			} else if (enyo.isArray(proto[p])) {
+				// if there wasn't a special handler but it was an array on the base
+				// we assume it is an array coming in and we merge them
+				proto[p] = enyo.merge(proto[p], props[p]);
+			}
+			// we should be done with the property so we remove it so it won't
+			// blow the root property away -- this is a convention
+			delete props[p];
 		}
-		delete props[p];
-	}
-};
+		// all done, update the prototype to have the new concat array and we're done
+		proto.concat = c;
+	};
+})(enyo);
 
 //* @public
 /**
@@ -145,7 +162,6 @@ enyo.kind.finish = function(inProps) {
 	// create our prototype
 	//ctor.prototype = isa ? enyo.delegate(isa) : {};
 	enyo.setPrototype(ctor, isa ? enyo.delegate(isa) : {});
-
 	// there are special cases where a base class has a property
 	// that may need to be concatenated with a subclasses implementation
 	// as opposed to completely overwriting it...

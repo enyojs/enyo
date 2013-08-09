@@ -1,5 +1,4 @@
 (function (enyo) {
-
 	//*@public
 	/**
 		An _enyo.Mixin_ is a group of properties and/or methods to apply to
@@ -106,5 +105,4 @@
 			};
 		})
 	};
-
 }(enyo));

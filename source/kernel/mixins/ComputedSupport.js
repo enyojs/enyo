@@ -186,7 +186,7 @@
 	/**
 		This method use used when handling concatenated properties.
 	*/
-	enyo.computedConcat = function (proto, props) {
+	enyo.concatHandler("computed", function (proto, props) {
 		if (props.computed) {
 			var po, ro, k, map, a, i, dep, ca;
 			// unfortunately there are 2 steps here but its all for the better
@@ -244,6 +244,6 @@
 				proto._computedCached = enyo.merge(ca);
 			}
 		}
-	};
+	});
 
 })(enyo);

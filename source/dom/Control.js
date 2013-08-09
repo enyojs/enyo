@@ -1017,24 +1017,24 @@ enyo.kind({
 
 enyo.defaultCtor = enyo.Control;
 
-enyo.Control.classesConcat = function (proto, props) {
+enyo.concatHandler("classes", function (proto, props) {
 	if (props.classes) {
 		var c = proto.classes || "";
 		proto.classes = (c.length? (c + " "): c) + props.classes;
 	}
-};
-enyo.Control.styleConcat = function (proto, props) {
+});
+enyo.concatHandler("style", function (proto, props) {
 	if (props.style) {
 		var style = proto.style || "";
 		proto.style = (style.length? (style + ";"): style) + props.style;
 	}
-};
-enyo.Control.attributesConcat = function (proto, props) {
+});
+enyo.concatHandler("attributes", function (proto, props) {
 	if (props.attributes) {
 		var attrs = proto.attributes? enyo.clone(proto.attributes): {};
 		proto.attributes = enyo.mixin(attrs, props.attributes);
 	}
-};
+});
 
 //*@public
 /**
