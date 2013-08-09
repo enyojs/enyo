@@ -36,7 +36,7 @@
 	*/
 	var applyMixin = function (proto, props) {
 		var mx = proto._appliedMixins,
-			m = props;
+			m = props, n;
 		// if the mixin is a string we have to try to resolve it to an object
 		if (enyo.isString(m)) {
 			m = enyo.getPath(m);
@@ -58,8 +58,15 @@
 					m.name + " onto -> " + proto.kindName);
 				return;
 			}
+			n = m.name;
+			delete m.name;
+		} else {
+			n = null;
 		}
 		enyo.kind.statics.extend(ctor, m);
+		if (n) {
+			m.name = n;
+		}
 	};
 	var mixinsFeature = function (ctor, props) {
 		if (props.mixins) {
