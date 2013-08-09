@@ -82,6 +82,7 @@
 				map[prop] = id;
 			}
 			this[id] = ctx? enyo.bind(ctx, fn): fn;
+			this[id].observer = true;
 			return this[id];
 		},
 		/**
@@ -103,6 +104,9 @@
 				} else {
 					if (en === fn) {
 						delete map[prop];
+						if (en.observer) {
+							delete this[prop];
+						}
 					}
 				}
 			}
