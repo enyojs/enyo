@@ -356,7 +356,7 @@ enyo.kind({
 	//* @protected
 	initStyles: function() {
 		this.domStyles = this.domStyles || {};
-		enyo.Control.cssTextToDomStyles(this.kindStyle, this.domStyles);
+		enyo.Control.cssTextToDomStyles(this.style, this.domStyles);
 		this.domCssText = enyo.Control.domStylesToCssText(this.domStyles);
 	},
 	styleChanged: function() {
@@ -371,7 +371,7 @@ enyo.kind({
 		// at init-time only (as it was in pre-ares enyo).
 		//this.domStyles = {};
 		//this.addStyles(this.kindStyle);
-		//this.addStyles(this.style);
+		this.addStyles(this.style);
 		this.invalidateTags();
 		this.renderStyles();
 	},

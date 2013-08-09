@@ -8,7 +8,7 @@ enyo.depends(
 	"JsonTest.js",
 	"AsyncTest.js",
 	"AjaxTest.js",
-	"ComponentTest.js"/*,
+	"ComponentTest.js",
 	"ComponentDispatchTest.js",
 	"ComponentHandlersTest.js",
 	"ControlTest.js",
@@ -21,5 +21,5 @@ enyo.depends(
 	"InheritanceSanityTest.js",
 	"DataModelingTest.js",
 	"AnimatorTest.js",
-	"DataRepeaterTest.js"*/
+	"DataRepeaterTest.js"
 );
