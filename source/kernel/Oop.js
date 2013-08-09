@@ -32,9 +32,6 @@
 	enyo.handleConcatenatedProperties = function (proto, props) {
 		var c = enyo.merge(proto.concat, props.concat), fn;
 		for (var i=0, p; (p=c[i]); ++i) {
-			// we can safely skip the concat property because we just merged it
-			// and will set it at the end
-			if (p == "concat") { continue; }
 			// if the property doesn't exist on the incoming props we don't need
 			// to mess with them
 			if (!props[p]) { continue; }
@@ -50,8 +47,6 @@
 			// blow the root property away -- this is a convention
 			delete props[p];
 		}
-		// all done, update the prototype to have the new concat array and we're done
-		proto.concat = c;
 	};
 })(enyo);
 
