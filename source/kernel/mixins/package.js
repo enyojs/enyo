@@ -4,7 +4,6 @@ enyo.depends(
 	"ObserverSupport.js",
 	"BindingSupport.js",
 	"ApplicationSupport.js",
-	"AutoBindingSupport.js",
 	"ControllerSupport.js",
 	"ModelSupport.js",
 	"MultipleDispatchSupport.js"
