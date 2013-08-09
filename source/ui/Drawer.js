@@ -30,6 +30,7 @@ enyo.kind({
 			property. If _this.getOpen()_ returns true, the drawer was opened; if not,
 			it was closed.
 		*/
+		onDrawerAnimationStep: "",
 		onDrawerAnimationEnd: ""
 	},
 	//* @protected
@@ -103,11 +104,7 @@ enyo.kind({
 		if (this.container) {
 			this.container.resized();
 		}
-		
-		// Call this.onStep callback funciton
-		if (typeof this.owner[this.onStep] == 'function') {
-			this.owner[this.onStep].apply(this.owner, [inSender.value]);
-		}
+		this.doDrawerAnimationStep();
 		return true;
 	},
 	animatorEnd: function() {
@@ -134,11 +131,6 @@ enyo.kind({
 			this.container.resized();
 		}
 		this.doDrawerAnimationEnd();
-		
-		// Call this.onEnd callback funciton
-		if (typeof this.owner[this.onEnd] == 'function') {
-			this.owner[this.onEnd].apply(this.owner, []);
-		}
 		return true;
 	}
 });
