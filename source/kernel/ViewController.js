@@ -46,13 +46,18 @@
 
 		// ...........................
 		// COMPUTED PROPERTIES
+		
+		computed: {
+			_viewKind: [{cached: true}],
+			_render_target: ["renderTarget", {cached: true}]
+		},
 
 		//*@protected
 		/**
 			On object initialization, finds or creates the appropriate
 			kind for the view of this controller.
 		*/
-		_viewKind: enyo.computed(function () {
+		_viewKind: function () {
 			// the original definition as supplied by the controller's
 			// own definition
 			var view = this.view;
@@ -81,13 +86,13 @@
 			// if we get here, we had nothing, and in that case we
 			// can't do anything
 			throw this.kindName + " cannot initialize without a valid view defined";
-		}, {cached: true}),
+		},
 
 		//*@protected
 		/**
 			Finds the appropriate form of the render target.
 		*/
-		_render_target: enyo.computed(function () {
+		_render_target: function () {
 			// the original supplied variable for the render target
 			var target = this.renderTarget;
 			// we attempt to find the actual target node
@@ -98,7 +103,7 @@
 			// if we can't find the target, we can't render it into anything;
 			// better to find out now
 			throw this.kindName + " cannot find the render target: " + this.renderTarget;
-		}, "renderTarget", {cached: true}),
+		},
 
 		// ...........................
 		// PUBLIC METHODS

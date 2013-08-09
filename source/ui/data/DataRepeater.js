@@ -281,13 +281,16 @@
 				this.startNotifications();
 			}
 		},
+		computed: {
+			selected: []
+		},
 		/**
 			Returns the currently selected model (if _multipleSelection_ is false),
 			or an array of all currently selected models (if _multipleSelection_ is true).
 		*/
-		selected: enyo.computed(function() {
+		selected: function() {
 			return this.multipleSelection ? this.__selection : this.__selection[0];
-		})
+		}
 		
 	});
 
