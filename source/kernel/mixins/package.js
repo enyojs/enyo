@@ -1,7 +1,7 @@
 enyo.depends(
 	"MixinSupport.js",
-	"ComputedProperty.js",
-	"ObserverMethod.js",
+	"ComputedSupport.js",
+	"ObserverSupport.js",
 	"BindingSupport.js",
 	"ApplicationSupport.js",
 	"AutoBindingSupport.js",
