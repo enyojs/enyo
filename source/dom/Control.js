@@ -1021,18 +1021,21 @@ enyo.concatHandler("classes", function (proto, props) {
 	if (props.classes) {
 		var c = proto.classes || "";
 		proto.classes = (c.length? (c + " "): c) + props.classes;
+		delete props.classes;
 	}
 });
 enyo.concatHandler("style", function (proto, props) {
 	if (props.style) {
 		var style = proto.style || "";
 		proto.style = (style.length? (style + ";"): style) + props.style;
+		delete props.style;
 	}
 });
 enyo.concatHandler("attributes", function (proto, props) {
 	if (props.attributes) {
 		var attrs = proto.attributes? enyo.clone(proto.attributes): {};
 		proto.attributes = enyo.mixin(attrs, props.attributes);
+		delete props.attributes;
 	}
 });
 

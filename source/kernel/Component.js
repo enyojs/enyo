@@ -615,6 +615,7 @@ enyo.concatHandler("handlers", function (proto, props) {
 	if (props.handlers) {
 		var h = proto.handlers? enyo.clone(proto.handlers): {};
 		proto.handlers = enyo.mixin(h, props.handlers);
+		delete props.handlers;
 	}
 });
 enyo.concatHandler("events", function (proto, props) {

@@ -309,7 +309,8 @@
 						if (map[dep]) {
 							// ensure we only have unique entries so we don't accidently
 							// notify the same handler more than once
-							map[dep] = enyo.merge(map[dep].push(k));
+							map[dep].push(k);
+							map[dep] = enyo.merge(map[dep]);
 						} else {
 							map[dep] = [k];
 						}
@@ -317,21 +318,13 @@
 				}
 				proto._observerMap = map;
 			}
+			delete props.observers;
 		}
 	});
-	/**
-		We need to hijack the subclassing mechanism of enyo.Object that isn't
-		available at the time this source is evaluated so we will hijack the root
-		subclass mechanism and ensure we can look at published properties. Note that
-		subclassing takes place prior to the addition of mixins to the kind. This is
-		necessary in this case so these observers will be evaluated and merged with
-		the core object's definition for observers (if any).
-	*/
-	var subclass = enyo.kind.statics.subclass;
-	var addChangedObservers = function (prop, proto) {
-		var po = proto.observers || {},
+	var addChangedObservers = function (prop, proto, props) {
+		var po = props.observers || {},
 			n = prop + "Changed",
-			fn = proto[n];
+			fn = proto[n] || props[n];
 		if (fn) {
 			if (!po[n]) {
 				po[n] = [prop];
@@ -339,17 +332,15 @@
 				po[n] = enyo.merge(po[n].push(prop));
 			}
 		}
-		proto.observers = po;
+		props.observers = po;
 	};
-	enyo.kind.statics.subclass = function (ctor, props) {
+	enyo.concatHandler("published", function (proto, props) {
 		var pp = props.published;
 		if (pp) {
-			var cp = ctor.prototype;
+			var cp = proto;
 			for (var n in pp) {
-				addChangedObservers(n, cp);
+				addChangedObservers(n, cp, props);
 			}
 		}
-		// carry on
-		subclass(ctor, props);
-	};
+	});
 })(enyo);

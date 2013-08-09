@@ -10,9 +10,10 @@
 		Internally used to map a concatenated property handler to the
 		property.
 	*/
-	var map = {};
+	var map = enyo.concatMap = {};
 	enyo.concatHandler = function (prop, handler) {
-		map[prop] = handler;
+		if (map[prop]) { map[prop].push(handler); }
+		else { map[prop] = [handler]; }
 	};
 	/**
 		Concatenated properties are designated properties with special handling
@@ -32,20 +33,16 @@
 	enyo.handleConcatenatedProperties = function (proto, props) {
 		var c = enyo.merge(proto.concat, props.concat), fn;
 		for (var i=0, p; (p=c[i]); ++i) {
-			// if the property doesn't exist on the incoming props we don't need
-			// to mess with them
-			if (!props[p]) { continue; }
+			if (!props[p] && !proto[p]) { continue; }
 			// if there is a registered handler, use it
-			if ((fn = map[p])) {
-				fn(proto, props);
+			if (map[p]) {
+				for (var j=0; (fn=map[p][j]); ++j) { fn(proto, props); }
 			} else if (enyo.isArray(proto[p])) {
 				// if there wasn't a special handler but it was an array on the base
 				// we assume it is an array coming in and we merge them
 				proto[p] = enyo.merge(proto[p], props[p]);
+				delete props[p];
 			}
-			// we should be done with the property so we remove it so it won't
-			// blow the root property away -- this is a convention
-			delete props[p];
 		}
 	};
 })(enyo);

@@ -24,7 +24,10 @@ enyo.kind({
 	noDefer: true,
 	//*@public
 	// concatenated properties (default)
-	concat: enyo.concat,
+	concat: (function () {
+		enyo.concat.splice(1, 0, "published");
+		return enyo.concat;
+	})(),
 	//*@public
 	/**
 		An array of strings representing mixins to be applied
@@ -212,14 +215,13 @@ enyo.kind({
 enyo._objectCount = 0;
 
 enyo.Object.subclass = function(ctor, props) {
-	this.publish(ctor, props);
 	this.overload(ctor, props);
 };
 
-enyo.Object.publish = function(ctor, props) {
+enyo.concatHandler("published", function(proto, props) {
 	var pp = props.published;
 	if (pp) {
-		var cp = ctor.prototype;
+		var cp = proto;
 		for (var n in pp) {
 			// need to make sure that even though a property is "published"
 			// it does not overwrite any computed properties
@@ -229,7 +231,7 @@ enyo.Object.publish = function(ctor, props) {
 			enyo.Object.addGetterSetter(n, pp[n], cp);
 		}
 	}
-};
+});
 
 //*@protected
 /**
