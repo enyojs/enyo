@@ -129,8 +129,6 @@
 			in the DOM).
 		*/
 		renderInto: function (target) {
-			enyo.Control.prototype.addToRoots.call(this);
-
 			// update the render target for the controller
 			this.set("renderTarget", target);
 			// now we render as usual
