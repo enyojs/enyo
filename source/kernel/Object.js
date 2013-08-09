@@ -31,10 +31,9 @@ enyo.kind({
 		to this kind at the end of the constructor routine.
 	*/
 	mixins: [
-		"enyo.MixinSupport",
-		"enyo.ObserverSupport",
-		"enyo.ComputedSupport",
-		"enyo.BindingSupport"
+		enyo.ObserverSupport,
+		enyo.ComputedSupport,
+		enyo.BindingSupport
 	],
 
 	constructor: function(props) {
@@ -223,7 +222,7 @@ enyo.Object.publish = function(ctor, props) {
 		for (var n in pp) {
 			// need to make sure that even though a property is "published"
 			// it does not overwrite any computed properties
-			if (props[n] && enyo.isFunction(props[n]) && props[n].isProperty) {
+			if (props[n] && enyo.isFunction(props[n])) {
 				continue;
 			}
 			enyo.Object.addGetterSetter(n, pp[n], cp);

@@ -79,7 +79,9 @@ enyo.kind({
 	defaultKind: "Component",
 	noDefer: true,
 	handlers: {},
-	mixins: ["enyo.MixinComponentSupport", "enyo.ApplicationSupport"],
+	mixins: [
+		enyo.ApplicationSupport
+	],
 	concat: ["handlers", "events"],
 	__jobs: {},
 	toString: function() {

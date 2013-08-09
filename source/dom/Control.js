@@ -73,10 +73,6 @@ enyo.kind({
 		//* Controls will call a user-provided _tap_ method when tapped upon.
 		ontap: "tap"
 	},
-	mixins: [
-		"enyo.ControllerSupport",
-		"enyo.ModelSupport"
-	],
 	//*@protected
 	_isView: true,
 	/**

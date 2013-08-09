@@ -320,15 +320,13 @@
 		}
 	};
 	/**
-		We need to hijack the addGetterSetter for enyo.Object so we
-		can arbitrarily add entries for possible observers (changed methods
-		for published properties) for backwards compatibility. Now they will
-		simply be treated as all other observers and not need to be handled
-		separately. If there isn't an actual changed handler by the name then
-		it will be ignored.
+		We need to hijack the subclassing mechanism of enyo.Object that isn't
+		available at the time this source is evaluated so we will hijack the root
+		subclass mechanism and ensure we can look at published properties. Note that
+		subclassing takes place prior to the addition of mixins to the kind.
 	*/
-	var addGetterSetter = enyo.Object.addGetterSetter;
-	enyo.Object.addGetterSetter = function (prop, value, proto) {
+	var subclass = enyo.kind.statics.subclass;
+	var addChangedObservers = function (prop, proto) {
 		var po = proto.observers || {},
 			n = prop + "Changed",
 			fn = proto[n];
@@ -340,8 +338,17 @@
 			}
 		}
 		proto.observers = po;
+	};
+	enyo.kind.statics.subclass = function (ctor, props) {
+		var pp = props.published;
+		if (pp) {
+			var cp = ctor.prototype;
+			for (var n in pp) {
+				addChangedObservers(n, cp);
+			}
+		}
 		// carry on
-		addGetterSetter(prop, value, proto);
+		subclass(prop, value, proto);
 	};
 
 })(enyo);
