@@ -157,12 +157,6 @@ enyo.BindingSupport = {
 		}
 	},
 	//*@protected
-	/**
-		We have this flag to help indicate if bindings have been initialized
-		or not for this object. It is used as an explicit `false` test because
-		it is removed from the object instance once initialized to reduce object clutter.
-	*/
-	_bindingsInitialized: false,
 	constructor: enyo.super(function (sup) {
 		return function () {
 			// ensure we have at least an empty array here during
@@ -204,5 +198,11 @@ enyo.BindingSupport = {
 		};
 		binding._rebuildTarget = fn;
 		return fn;
-	}
+	},
+	/**
+		We have this flag to help indicate if bindings have been initialized
+		or not for this object. It is used as an explicit `false` test because
+		it is removed from the object instance once initialized to reduce object clutter.
+	*/
+	_bindingsInitialized: false,
 };

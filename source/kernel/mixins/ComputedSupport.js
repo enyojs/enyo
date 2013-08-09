@@ -109,7 +109,7 @@
 					sup.apply(this, arguments);
 					// now we flush the queue, knowing this could have been recursively
 					// executed
-					this._flushQueue();
+					this._flushComputedQueue();
 				} else {
 					// carry on
 					sup.apply(this, arguments);
@@ -154,7 +154,7 @@
 		_isComputed: function (path) {
 			return (this.computed? (!! this.computed[path]): false);
 		},
-		_flushQueue: function () {
+		_flushComputedQueue: function () {
 			// forced to throw away old queue object so we don't accidently
 			// use incorrect values later
 			// also for immutability of the queue we are forced to clone it

@@ -131,24 +131,16 @@
 		notifyObservers: function (prop, prev, value) {
 			var map = this._observerMap,
 				en = map[prop],
-				ch = prop + "Changed",
-				a = this._allowNotifications, fn;
+				a = this._observerNotificationsEnabled, fn, n;
 			if (en) {
-				for (var i=0; (fn=en[i]); ++i) {
-					if (!a) {
-						this.addNotificationToQueue(prop, fn, [prev, value, prop]);
-					} else {
-						fn.call(this, prev, value, prop);
+				for (var i=0; (n=en[i]); ++i) {
+					if ((fn = this[n])) {
+						if (!a) {
+							this._addObserverToQueue(prop, fn, [prev, value, prop]);
+						} else {
+							fn.call(this, prev, value, prop);
+						}
 					}
-				}
-			}
-			// now check for the backwards compatible changed handler
-			fn = this[ch];
-			if (fn && enyo.isFunction(fn)) {
-				if (!a) {
-					this.addNotificationToQueue(prop, fn, [prev, value, prop]);
-				} else {
-					fn.call(this, prev, value, prop);
 				}
 			}
 			return this;
@@ -167,8 +159,8 @@
 			flushed until the counter reaches 0.
 		*/
 		stopNotifications: function (disableQueue) {
-			this._allowNotifications = false;
-			this._stopCount += 1;
+			this._observerNotificationsEnabled = false;
+			this._observerStopCount += 1;
 			if (disableQueue) {
 				this.disableNotificationQueue();
 			}
@@ -186,12 +178,12 @@
 			will reenable the notification queue if it was disabled.
 		*/
 		startNotifications: function (enableQueue) {
-			if (this._stopCount !== 0) {
-				this._stopCount -= 1;
+			if (this._observerStopCount !== 0) {
+				this._observerStopCount -= 1;
 			}
-			if (this._stopCount === 0) {
-				this._allowNotifications = true;
-				this.flushNotifications();
+			if (this._observerStopCount === 0) {
+				this._observerNotificationsEnabled = true;
+				this._flushObserverQueue();
 			}
 			if (enableQueue) {
 				this.enableNotificationQueue();
@@ -203,7 +195,7 @@
 			no effect until they are disabled.
 		*/
 		enableNotificationQueue: function () {
-			this._allowNotificationQueue = true;
+			this._observerNotificationQueueEnabled = true;
 		},
 		/**
 			Disables the notification queue. Has no effect if the queue is
@@ -212,16 +204,16 @@
 			and any items in the queue will be cleared (not flushed).
 		*/
 		disableNotificationQueue: function () {
-			this._allowNotificationQueue = false;
-			this._notificationQueue = {};
+			this._observerNotificationQueueEnabled = false;
+			this._observerNotificationQueue = {};
 		},
 		//*@protected
 		/**
 			Used internally when a notification is queued
 		*/
-		addNotificationToQueue: function (prop, fn, params) {
-			if (this._allowNotificationQueue) {
-				var q = this._notificationQueue,
+		_addObserverToQueue: function (prop, fn, params) {
+			if (this._observerNotificationQueueEnabled) {
+				var q = this._observerNotificationQueue,
 					en = q[prop];
 				params || (params = []);
 				if (!en) {
@@ -235,20 +227,25 @@
 			}
 		},
 		/**
-			Used internally; flushes any notifications that have been queued.
+			Used to flush any queued notifications related to observers. Attempts
+			to use the stored parameters when possible. Disposes of the queue when
+			the action is complete.
 		*/
-		flushNotifications: function () {
-			var q = this._notificationQueue, fn, p, en, ps, tmp = [];
-			if (!q || !this._allowNotificationQueue || 0 !== this._stopCount) {
-				return;
-			}
-			for (p in q) {
-				en = q[p];
-				ps = enyo.isFunction(en[0])? tmp: en.shift();
-				for (var i=0, fn; (fn=en[i]); ++i) {
-					fn.apply(this, ps);
-				} 
-				q[p] = null;
+		_flushObserverQueue: function () {
+			if (this._observerStopCount === 0 && this._observerNotificationQueueEnabled) {
+				// we clone the queue for immutability since this is a synchronous
+				// and recursive method, it does not require a recursive clone however
+				var q = enyo.clone(this._observerNotificationQueue),
+					fn, p, en, ps, tmp = [];
+				// now we reset before we begin
+				this._observerNotificationQueue = {};
+				for (p in q) {
+					en = q[p];
+					ps = enyo.isFunction(en[0])? tmp: en.shift();
+					for (var i=0; (fn=en[i]); ++i) {
+						fn.apply(this, ps);
+					}
+				}
 			}
 		},
 		constructor: enyo.super(function (sup) {
@@ -259,7 +256,7 @@
 				// registered they will have to be added via the addObserver method with
 				// an anonymous function
 				this._observerMap = this._observerMap? _clone(this._observerMap): {};
-				this._notificationQueue = {};
+				this._observerNotificationQueue = {};
 				return sup.apply(this, arguments);
 			};
 		}),
@@ -269,10 +266,10 @@
 				sup.apply(this, arguments);
 			};
 		}
-		_stopCount: 0,
-		_notificationQueue: null,
-		_allowNotifications: true,
-		_allowNotificationQueue: true,
+		_observerStopCount: 0,
+		_observerNotificationQueue: null,
+		_observerNotificationsEnabled: true,
+		_observerNotificationQueueEnabled: true,
 		_observerMap: null
 	};
 	/**
@@ -321,6 +318,30 @@
 				proto._observerMap = map;
 			}
 		}
+	};
+	/**
+		We need to hijack the addGetterSetter for enyo.Object so we
+		can arbitrarily add entries for possible observers (changed methods
+		for published properties) for backwards compatibility. Now they will
+		simply be treated as all other observers and not need to be handled
+		separately. If there isn't an actual changed handler by the name then
+		it will be ignored.
+	*/
+	var addGetterSetter = enyo.Object.addGetterSetter;
+	enyo.Object.addGetterSetter = function (prop, value, proto) {
+		var po = proto.observers || {},
+			n = prop + "Changed",
+			fn = proto[n];
+		if (fn) {
+			if (!po[n]) {
+				po[n] = [prop];
+			} else {
+				po[n] = enyo.merge(po[n].push(prop));
+			}
+		}
+		proto.observers = po;
+		// carry on
+		addGetterSetter(prop, value, proto);
 	};
 
 })(enyo);

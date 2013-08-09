@@ -264,30 +264,30 @@ enyo.Object.overload = function (ctor, props) {
 	other means and rely on the _get_ and _set_ methods of _enyo.Object_
 	instances.
 */
-enyo.Object.addGetterSetter = function (property, value, proto) {
-	var getter = "get" + enyo.cap(property);
-	var setter = "set" + enyo.cap(property);
-	var fn;
+enyo.Object.addGetterSetter = function (prop, value, proto) {
+	var get = "get" + enyo.cap(prop),
+		set = "set" + enyo.cap(prop),
+		fn;
 	// set the initial value for the prototype
-	proto[property] = value;
-	fn = proto[getter];
+	proto[prop] = value;
+	fn = proto[get];
 	// if there isn't already a getter provided create one
-	if ("function" !== typeof fn) {
-		fn = proto[getter] = function () {return this.get(property);};
+	if (!enyo.isFunction(fn)) {
+		fn = proto[get] = function () { return this.get(prop); };
 		fn.overloaded = false;
 	} else if (false !== fn.overloaded) {
 		// otherwise we need to mark it as having been overloaded
 		// so the global getter knows not to ignore it
 		fn.overloaded = true;
 	}
-	// if there isn't already a setter provided, create one
-	fn = proto[setter];
+	// if there isn't already a set provided, create one
+	fn = proto[set];
 	if ("function" !== typeof fn) {
-		fn = proto[setter] = function () {return this.set(property, arguments[0]);};
+		fn = proto[set] = function () { return this.set(prop, arguments[0]); };
 		fn.overloaded = false;
 	} else if (false !== fn.overloaded) {
 		// otherwise we need to mark it as having been overloaded
-		// so the global setter knows not to ignore it
+		// so the global set knows not to ignore it
 		fn.overloaded = true;
 	}
 };
