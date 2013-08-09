@@ -1,8 +1,6 @@
 (function (enyo) {
 	
 	//*@protected
-	// ensure that bindings are a concatenated property for all kinds
-	enyo.concat.push("bindings");
 	// the internal store for bindings so they can be found by id later
 	var map = {},
 	/**
