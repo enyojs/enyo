@@ -267,6 +267,11 @@ enyo.kind.extendMethods = function(ctor, props) {
 		for (var n in props) {
 			var p = props[n];
 			if (enyo.isSuper(p)) {
+				// handle special case where the constructor has actually been renamed
+				// but mixins or other objects for extending will use the actual name
+				if (n == "constructor") {
+					n = "_constructor";
+				}
 				// ensure that if there isn't actually a super method to call it won't
 				// fail miserably - while this shouldn't happen often it is a sanity
 				// check for mixin-extensions for kinds
