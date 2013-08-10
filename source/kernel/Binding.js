@@ -309,12 +309,20 @@
 			var src = this.source,
 				prop = this._sourceProperty,
 				fc = !_force.test(typeof value);
+			if (!src || src.destroyed) {
+				this.destroy();
+				return;
+			}
 			src.set(prop, value, fc);
 		},
 		setTargetValue: function (value) {
 			var tar = this.target,
 				prop = this._targetProperty,
 				fc = !_force.test(typeof value);
+			if (!tar || tar.destroyed) {
+				this.destroy();
+				return;
+			}
 			tar.set(prop, value, fc);
 		},
 		//*@public
@@ -406,7 +414,7 @@
 		initTransform: function () {
 			var tf = this.transform;
 			if (tf && enyo.isString(tf)) {
-				tf = enyo.getPath.call(this.owner, tf);
+				tf = enyo.getPath.call(this.owner, tf) || enyo.getPath(tf);
 			}
 			this.transform = enyo.isFunction(tf)? tf: null;
 		}

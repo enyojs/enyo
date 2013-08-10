@@ -134,10 +134,14 @@ enyo.kind({
 				oneWay: false
 			});
 			control2.destroy();
+			// attempt to synchronize even though one of the ends was destroyed
+			binding.sync();
 			if (!binding.destroyed) {
 				throw "When the non-owner end of a two-way binding was destroyed, "+
 				"the binding was not destroyed";
 			}
+			// just by creating this binding with a destroyed end should force
+			// a test-sync and it should destroy the binding
 			binding = control1.binding({
 				from: ".testprop",
 				source: control1,

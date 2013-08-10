@@ -204,5 +204,5 @@ enyo.BindingSupport = {
 		or not for this object. It is used as an explicit `false` test because
 		it is removed from the object instance once initialized to reduce object clutter.
 	*/
-	_bindingsInitialized: false,
+	_bindingsInitialized: false
 };
