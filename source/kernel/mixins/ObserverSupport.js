@@ -91,14 +91,14 @@
 		removeObserver: function (prop, fn) {
 			var map = this._observerMap,
 				en = map[prop];
-			if (en) {
-				if (enyo.isArray(en)) {
-					var i = enyo.indexOf(fn, en);
-					if (!!~i) {
-						fn = this[fn];
+			if (en && fn) {
+				for (var i=0, id; (id=en[i]); ++i) {
+					if (this[id] === fn) {
 						en.splice(i, 1);
-						if (fn && fn.observer) {
-							delete this[fn];
+						// for methods that are anonymously added as an
+						// observer we need to remove them from the object completely
+						if (fn.observer) {
+							delete this[id];
 						}
 					}
 				}
