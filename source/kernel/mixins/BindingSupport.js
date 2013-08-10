@@ -118,17 +118,19 @@ enyo.BindingSupport = {
 		its _owner_ property.
 	*/
 	removeBinding: function (binding) {
-		if (binding) {
-			var i = enyo.indexOf(binding, this.bindings);
+		var b = binding,
+			bs = this.bindings;
+		if (b) {
+			var i = enyo.indexOf(b, bs);
 			if (!!~i) { 
-				this.bindings.splice(i, 1);
-				if (binding._rebuildTarget) {
-					this.removeObserver(binding._targetPath, binding._rebuildTarget);
-					binding._rebuildTarget = null;
+				bs.splice(i, 1);
+				if (b._rebuildTarget) {
+					this.removeObserver(b._targetPath, b._rebuildTarget);
+					b._rebuildTarget = null;
 				}
-				if (binding._rebuildSource) {
-					this.removeObserver(binding._sourcePath, binding._rebuildSource);
-					binding._rebuildSource = null;
+				if (b._rebuildSource) {
+					this.removeObserver(b._sourcePath, b._rebuildSource);
+					b._rebuildSource = null;
 				}
 			}
 		}

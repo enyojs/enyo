@@ -193,6 +193,7 @@
 				loc = fr[0] === ".",
 				path = this._sourcePath,
 				pr = (loc? fr.slice(1): fr).split(".");
+			if (!fr) { return; }
 			if (!src && !path) {
 				path = pr.slice(0,-1).join(".");
 				if (loc) {
@@ -220,6 +221,7 @@
 				loc = to[0] === ".",
 				path = this._targetPath,
 				pr = (loc? to.slice(1): to).split(".");
+			if (!to) { return; }
 			if (!tar && !path) {
 				path = pr.slice(0,-1).join(".");
 				if (loc) {
@@ -268,6 +270,8 @@
 						fn.id = this.id;
 						this._targetObserver = fn;
 					}
+					tar.addObserver(prop, fn);
+					this._targetConnected = true;
 				}
 			} else {
 				this._targetConnected = false;
@@ -388,10 +392,7 @@
 			this.target = null;
 			this._sourceObserver = null;
 			this._targetObserver = null;
-			if (this.transform) {
-				this.transform.destroy();
-				this.transform = null;
-			}
+			this.transform = null;
 			if (this.owner) {
 				this.owner.removeBinding(this);
 				this.owner =  null;
