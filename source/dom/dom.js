@@ -189,7 +189,7 @@ enyo.dom = {
 	_pxMatch: /px/i,
 	getComputedBoxValue: function(inNode, inProp, inBoundary, inComputedStyle) {
 		var s = inComputedStyle || this.getComputedStyle(inNode);
-		if (s) {
+		if (s && (!enyo.platform.ie || enyo.platform.ie >= 9)) {
 			var p = s.getPropertyValue(inProp + "-" + inBoundary);
 			return p === "auto" ? 0 : parseInt(p, 10);
 		} else if (inNode && inNode.currentStyle) {
