@@ -134,6 +134,10 @@
 			var map = this._observerMap,
 				en = map[prop],
 				a = this._observerNotificationsEnabled, fn, n;
+			// special handler case
+			if (map["*"]) {
+				en = en? en.concat(map["*"]): map["*"];
+			}
 			if (en) {
 				for (var i=0; (n=en[i]); ++i) {
 					if ((fn = this[n])) {
@@ -332,7 +336,8 @@
 		if (!po[fn]) {
 			po[fn] = [n];
 		} else {
-			po[fn] = enyo.merge(po[fn].push(n));
+			po[fn].push(n);
+			po[fn] = enyo.merge(po[fn]);
 		}
 		props.observers = po;
 

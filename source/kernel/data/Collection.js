@@ -517,12 +517,7 @@
 				this.owner.addComponent(this);
 			}
 			if (this.owner && true === (this.owner instanceof enyo.Component)) {
-				this.set("_defaultTarget", this.owner);
-				this.set("_defaultDispatch", true);
-			} else {
-				// otherwise we either don't have an owner or they cannot
-				// accept events so we remove our bubble target
-				this.set("_defaultTarget", null);
+				this.set("_dispatchDefaultPath", true);
 			}
 		},
 
@@ -582,7 +577,7 @@
 				var $r = this.relation, $k;
 				if (($k = $r.relationKey)) {
 					if (!this[$k]) {
-						this.addObserver($k, this.__relationObserver, this);
+						this.addObserver($k, this.__relationObserver);
 					} else {
 						this.__relationObserver($k, null, this[$k]);
 					}

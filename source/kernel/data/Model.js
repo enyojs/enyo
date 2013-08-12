@@ -1261,12 +1261,7 @@
 				this.owner.addComponent(this);
 			}
 			if (this.owner && true === (this.owner instanceof enyo.Component)) {
-				this.set("_defaultTarget", this.owner);
-				this.set("_defaultDispatch", true);
-			} else {
-				// otherwise we either don't have an owner or they cannot
-				// accept events so we remove our bubble target
-				this.set("_defaultTarget", null);
+				this.set("_dispatchDefaultPath", true);
 			}
 		},
 
@@ -1349,15 +1344,15 @@
 			the model. Calls _flushChanges()_, which will emit an _onChange_
 			event if the model isn't currently silenced.
 		*/
-		// __attributeSpy: enyo.observer(function (prop, prev, val) {
-		// 	if (this.__attributeFor(prop) || this.isRelation(prop)) {
-		// 		// TODO: Type checking has been temporarily removed
-		// 		// and should probably be added as validation instead
-		// 		this.__previous[prop] = prev;
-		// 		this.__changed[prop] = val;
-		// 		this.flushChanges();
-		// 	}
-		// }, "*"),
+		__attributeSpy: function (prev, val, prop) {
+			if (this.__attributeFor(prop) || this.isRelation(prop)) {
+				// TODO: Type checking has been temporarily removed
+				// and should probably be added as validation instead
+				this.__previous[prop] = prev;
+				this.__changed[prop] = val;
+				this.flushChanges();
+			}
+		},
 
 		//*@protected
 		__statusChanged: function (prev, val, prop) {
@@ -1374,7 +1369,8 @@
 		},
 		
 		observers: {
-			__statusChanged: ["status"]
+			__statusChanged: ["status"],
+			__attributeSpy: ["*"]
 		}
 
 	});

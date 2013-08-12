@@ -285,22 +285,25 @@
 				this._records = {};
 				enyo.forEach(enyo.models.kinds, this._addModelKind, this);
 				enyo.forEach(enyo.models.queued, this.initModel, this);
-				if (!this.source) {
-					this.source = enyo.Source.getDefaultSource();
+				this.notifyObservers("source");
+			};
+		}),
+		sourceChanged: function (p) {
+			var s = this.source;
+			if (s) {
+				if (enyo.isString(s)) {
+					s = this.source = enyo.getPath.call(s[0] == "."? this: enyo.global, s);
 				}
-			};
-		}),
-		constructed: enyo.super(function (sup) {
-			return function () {
-				sup.apply(this, arguments);
-				// this.findAndInstance("source");
-			};
-		}),
-		// sourceFindAndInstance: function (ctor, inst) {
-		// 	if (inst) {
-		// 		inst.set("owner", this);
-		// 	}
-		// },
+				if (s.prototype) {
+					s = this.source = new this.source();
+				}
+			} else {
+				s = this.source = enyo.Source.getDefaultSource();
+			}
+			if (s) {
+				s.set("owner", this);
+			}
+		},
 		didFetch: function (model, options, result) {
 			// TODO: ...
 			if (options.success) {
@@ -428,12 +431,6 @@
 		// OBSERVERS
 		observers: {
 			source: []
-		},
-		sourceChanged: function (prev, val, prop) {
-			if (val) {
-				val.set("owner", this);
-				this.rebuildBindings();
-			}
 		}
 
 	});
