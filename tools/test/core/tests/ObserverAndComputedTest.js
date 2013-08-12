@@ -152,5 +152,30 @@ enyo.kind({
 		o.set("testProp", 3);
 		allowed = true;
 		o.startNotifications();
+	},
+	testComputedWithBindings: function () {
+		var test = {}, o, t, s = this;
+		test.Object = enyo.kind({
+			kind: enyo.Object,
+			published: {
+				first: "",
+				last: ""
+			},
+			computed: {
+				fullName: ["first", "last"]
+			},
+			fullName: function () {
+				return this.get("first") + " " + this.get("last");
+			} 
+		});
+		o = new test.Object({first: "Polly", last: "Shore"});
+		t = new enyo.Object({
+			fullNameChanged: function () {
+				s.finish(
+					(this.fullName != "Polly Shore" && "name changed but was not correct")
+				);
+			}
+		});
+		o.binding({from: ".fullName", to: ".fullName", target: t});
 	}
 });
