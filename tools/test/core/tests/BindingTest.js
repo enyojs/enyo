@@ -93,7 +93,7 @@ enyo.kind({
 				kind: "enyo.Object",
 				testprop: "testvalue1"
 			});
-			binding.from = "my.object.testprop";
+			binding.from = "^my.object.testprop";
 			binding.refresh();
 			if (binding.source === my.object) {
 				this.finish();

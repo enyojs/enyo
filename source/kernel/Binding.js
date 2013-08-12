@@ -26,22 +26,23 @@
 		name: "enyo.Binding",
 		kind: null,
 		/**
-			When creating a binding set this string to the path of the _source_ end
-			and bindable property. If providing the _source_ property separately simply
-			set this to the property path relative to the _source_. If the string is
-			prefixed with a "." it is assumed to be relative from the _owner_ should it
-			exist or the global scope otherwise. When there is no _source_ property and this
-			string only has one part the _source_ of the property will be assumed to be the
-			_owner_.
+			The _from_ property designates a path from which the _property_ of the _source_
+			to bind from can be found. If the _source_ is explicitly provided and the path
+			is relative (beginning with a ".") it is relative to the _source_ otherwise it is
+			relative to the _owner_ of the binding. In order to have a binding evaluated from
+			the global scope prefix the path with a "^". If the _source_ and the "^" are used in
+			tandem the "^" will be ignored and the path will be assumed to be relative from the
+			provided _source_.
 		*/
 		from: "",
 		/**
-			When creating a binding set this string to the path of the _target_ end and
-			bindable property. If providing the _target_ property separately simply set this
-			to the property path relative to the _target_. If the string is prefixed with a "."
-			it is assumed to be relative from the _owner_ should it exist or the global scope
-			otherwise. When there is no _target_ property and this string only has one part
-			the _target_ of the property will be assumed to be the _owner_.
+			The _to_ property designates a path from which the _property_ of the _target_
+			to bind from can be found. If the _target_ is explicitly provided and the path
+			is relative (beginning with a ".") it is relative to the _target_ otherwise it is
+			relative to the _owner_ of the binding. In order to have a binding evaluated from
+			the global scope prefix the path with a "^". If the _target_ and the "^" are used in
+			tandem the "^" will be ignored and the path will be assumed to be relative from the
+			provided _target_.
 		*/
 		to: "",
 		/**
@@ -133,8 +134,8 @@
 			this.id = enyo.uid("binding");
 			map[this.id] = this;
 			this.initTransform();
-			this.initSource();
-			this.initTarget();
+			this.initPart("from", "source");
+			this.initPart("to", "target");
 			if (this.autoConnect) {
 				this.connect();
 			}
@@ -185,61 +186,41 @@
 			this.setSourceValue(val);
 			this.connectSource();
 		},
-		initSource: function () {
-			var src = this.source,
-				fr = this.from,
-				o = this.owner,
-				prop = this._sourceProperty,
-				loc = fr[0] === ".",
-				path = this._sourcePath,
-				pr = (loc? fr.slice(1): fr).split(".");
-			if (!fr) { return; }
-			if (!src && !path) {
-				path = pr.slice(0,-1).join(".");
-				if (loc) {
-					if (o) {
-						src = enyo.getPath.call(o, path);
-					}
-				} else {
-					src = enyo.getPath(path);
-				}
-			} else if (!src && path) {
-				src = enyo.getPath.call(o || enyo.global, path);
+		initPart: function (part, root) {
+			if (!this[part]) { return; }
+			var p$ = this[part].slice(1),
+				// the initial character must be . or ^
+				i = this[part][0],
+				parts = p$.split("."),
+				rh = "_" + root + "Path",
+				rp = "_" + root + "Property";
+			// if it isn't, we error so the developer can identify the issue
+			if (i != "." && i != "^") {
+				return enyo.error("enyo.Binding: binding `" + part + "` path must begin with `^` or `.` to signify " +
+					"relativity of the path");
 			}
-			if (!prop) {
-				prop = pr.pop();
+			i = (i == "."? true: false);
+			// if it is a relative path but we have no root or owner
+			// then we know we can't find it
+			if (i && !(this[root] || this.owner)) { return; }
+			// if there is no root or known/derived path we
+			// find the path and attempt to locate the root from that
+			if (!this[root] && !this[rh]) {
+				var p = parts.slice(0, -1).join(".");
+				// now we attempt to retrieve the source from this information
+				this[root] = enyo.getPath.call(i? this.owner: enyo.global, p);
+				this[rh] = p;
 			}
-			this._sourceProperty = prop;
-			this._sourcePath = path;
-			this.source = src;
-		},
-		initTarget: function () {
-			var tar = this.target,
-				to = this.to,
-				o = this.owner,
-				prop = this._targetProperty,
-				loc = to[0] === ".",
-				path = this._targetPath,
-				pr = (loc? to.slice(1): to).split(".");
-			if (!to) { return; }
-			if (!tar && !path) {
-				path = pr.slice(0,-1).join(".");
-				if (loc) {
-					if (o) {
-						tar = enyo.getPath.call(o, path);
-					}
-				} else {
-					tar = enyo.getPath(path);
-				}
-			} else if (!tar && path) {
-				tar = enyo.getPath.call(o || enyo.global, path);
+			// if we don't have a root but we've already found our path then we should
+			// be able to quickly try and find the root again
+			else if (!this[root] && this[rh]) {
+				this[root] = enyo.getPath.call(i? this.owner: enyo.global, this[rh]);
 			}
-			if (!prop) {
-				prop = pr.pop();
+			// if we don't know our actual root property to bind on we
+			// grab that as well
+			if (!this[rp]) {
+				this[rp] = parts.pop();
 			}
-			this._targetProperty = prop;
-			this._targetPath = path;
-			this.target = tar;
 		},
 		connectSource: function () {
 			var src = this.source,
@@ -373,8 +354,8 @@
 			if it is able to connect and the `autoSync` flag is true.
 		*/
 		refresh: function () {
-			this.initSource();
-			this.initTarget();
+			this.initPart("from", "source");
+			this.initPart("to", "target");
 			this.connect();
 		},
 		/**
