@@ -80,6 +80,9 @@
 		}
 	};
 	enyo.kind.features.push(mixinsFeature);
+	enyo.concatHandler("mixins", function (proto, props) {
+		proto.mixins = enyo.merge(proto.mixins, props.mixins);
+	});
 	//*@public
 	enyo.MixinSupport = {
 		name: "MixinSupport",
