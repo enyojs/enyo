@@ -11,9 +11,11 @@
 		property.
 	*/
 	var map = enyo.concatMap = {};
-	enyo.concatHandler = function (prop, handler) {
+	var forced = {};
+	enyo.concatHandler = function (prop, handler, force) {
 		if (map[prop]) { map[prop].push(handler); }
 		else { map[prop] = [handler]; }
+		forced[prop] = force;
 	};
 	/**
 		Concatenated properties are designated properties with special handling
@@ -33,7 +35,7 @@
 	enyo.handleConcatenatedProperties = function (proto, props) {
 		var c = enyo.merge(proto.concat, props.concat), fn;
 		for (var i=0, p; (p=c[i]); ++i) {
-			if (!props[p] && !proto[p]) { continue; }
+			if (!props[p] && !proto[p] && !forced[p]) { continue; }
 			// if there is a registered handler, use it
 			if (map[p]) {
 				for (var j=0; (fn=map[p][j]); ++j) { fn(proto, props); }

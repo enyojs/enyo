@@ -1,3 +1,6 @@
+//*@protected
+enyo.concat.push("published");
+//*@public
 /**
 _enyo.Object_ lies at the heart of the Enyo framework's implementations of
 property publishing, computed properties (via the _ComputedPropertySupport_
@@ -24,10 +27,7 @@ enyo.kind({
 	noDefer: true,
 	//*@public
 	// concatenated properties (default)
-	concat: (function () {
-		enyo.concat.splice(1, 0, "published");
-		return enyo.concat;
-	})(),
+	concat: enyo.concat,
 	//*@public
 	/**
 		An array of strings representing mixins to be applied
@@ -211,7 +211,6 @@ enyo.kind({
 });
 
 //* @protected
-
 enyo._objectCount = 0;
 
 enyo.Object.subclass = function(ctor, props) {

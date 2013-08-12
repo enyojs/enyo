@@ -1,7 +1,7 @@
 (function (enyo) {
 	//*@protected
 	// ensure observers will be handled by the concatenation handler
-	enyo.concat.push("observers");
+	enyo.concat.push("changedObservers", "observers");
 	/**
 		Used because when cloning objects with arrays we need to also
 		clone the arrays.
@@ -59,6 +59,10 @@
 	enyo.ObserverSupport = {
 		name: "ObserverSupport",
 		/**
+			Used to identify observers and map them to dependencies.
+		*/
+		observers: null,
+		/**
 			Registers an observer for the passed-in property, returning a
 			reference to the handler function being registered, so that it
 			can be stored (and, later, removed). In addition to the property
@@ -99,6 +103,11 @@
 						// observer we need to remove them from the object completely
 						if (fn.observer) {
 							delete this[id];
+						}
+						if (en.length === 0) {
+							// we completely remove the entry for the property in the map
+							// so we don't do extra work on updates and it isn't enumerable
+							delete map[prop];
 						}
 					}
 				}
@@ -250,6 +259,10 @@
 				// an anonymous function
 				this._observerMap = this._observerMap? _clone(this._observerMap): {};
 				this._observerNotificationQueue = {};
+				// we don't clone these observers as they have already been converted to the
+				// map used internally but for other reasons we ensure we have an object there
+				// once instanced observer support should not use this object anymore
+				this.observers || (this.observers = {});
 				return sup.apply(this, arguments);
 			};
 		}),
@@ -314,26 +327,23 @@
 			delete props.observers;
 		}
 	});
-	var addChangedObservers = function (prop, proto, props) {
-		var po = props.observers || {},
-			n = prop + "Changed",
-			fn = proto[n] || props[n];
-		if (fn) {
-			if (!po[n]) {
-				po[n] = [prop];
-			} else {
-				po[n] = enyo.merge(po[n].push(prop));
-			}
+	var addObserverForProperty = function (n, fn, proto, props) {
+		var po = props.observers || {};
+		if (!po[fn]) {
+			po[fn] = [n];
+		} else {
+			po[fn] = enyo.merge(po[fn].push(n));
 		}
 		props.observers = po;
+
 	};
-	enyo.concatHandler("published", function (proto, props) {
-		var pp = props.published;
-		if (pp) {
-			var cp = proto;
-			for (var n in pp) {
-				addChangedObservers(n, cp, props);
+	enyo.concatHandler("changedObservers", function (proto, props) {
+		var k, pr;
+		for (k in props) {
+			pr = k.split("Changed");
+			if (pr.length > 1) {
+				addObserverForProperty(pr[0], k, proto, props);
 			}
 		}
-	});
+	}, true);
 })(enyo);

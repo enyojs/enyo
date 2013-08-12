@@ -67,6 +67,10 @@
 	*/
 	enyo.ComputedSupport = {
 		name: "ComputedSupport",
+		/**
+			Used to identify computed methods and their dependencies (if any).
+		*/
+		computed: null,
 		//*@protected
 		get: enyo.super(function (sup) {
 			return function (path) {
@@ -99,12 +103,14 @@
 				var map = this._computedMap,
 					q = this._computedQueue, n;
 				if ((n = map[path])) {
-					// this is a dependency of one of our computed properties
-					// so we will flag it as being dirty and queue the notification
-					// for any of its dependents, we blow away any other entry for
-					// this property already in the queue always setting the _value_
-					// in the queue to the known previous value if it was cached or null
-					this._markComputed(n);
+					for (var i=0, p; (p=n[i]); ++i) {
+						// this is a dependency of one of our computed properties
+						// so we will flag it as being dirty and queue the notification
+						// for any of its dependents, we blow away any other entry for
+						// this property already in the queue always setting the _value_
+						// in the queue to the known previous value if it was cached or null
+						this._markComputed(p);
+					}
 					// continue with normal notification handling
 					sup.apply(this, arguments);
 					// now we flush the queue, knowing this could have been recursively
@@ -172,6 +178,9 @@
 		},
 		constructor: enyo.super(function (sup) {
 			return function () {
+				// we do not clone this object because one instanced we should not need it
+				// anymore as it has been converted to a map
+				this.computed || (this.computed = {});
 				this._computedMap = this._computedMap? _clone(this._computedMap): {};
 				this._computedCached || (this._computedCached = {});
 				this._computedQueue = {};
@@ -232,7 +241,8 @@
 							if (map[dep]) {
 								// ensure we only have unique entries so we don't accidently
 								// notify the same handler more than once
-								map[dep] = enyo.merge(map[dep].push(k));
+								map[dep].push(k);
+								map[dep] = enyo.merge(map[dep]);
 							} else {
 								map[dep] = [k];
 							}
@@ -240,8 +250,6 @@
 					}
 				}
 				proto._computedMap = map;
-				// remove redundant entries
-				proto._computedCached = enyo.merge(ca);
 			}
 		}
 	});
