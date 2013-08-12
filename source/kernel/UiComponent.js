@@ -44,7 +44,6 @@ enyo.kind({
 	protectedStatics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
 	},
-
 	create: enyo.super(function (sup) {
 		return function() {
 			this.controls = [];
@@ -52,6 +51,8 @@ enyo.kind({
 			this.containerChanged();
 			sup.apply(this, arguments);
 			this.layoutKindChanged();
+			this.notifyObservers("controller");
+			this.notifyObservers("model");
 		};
 	}),
 	destroy: enyo.super(function (sup) {
@@ -290,6 +291,34 @@ enyo.kind({
 	},
 	getBubbleTarget: function() {
 		return this._bubbleTarget || this.parent || this.owner;
+	},
+	controllerChanged: function (p) {
+		var c = this.controller;
+		if (c) {
+			if (enyo.isString(c)) {
+				c = this.controller = enyo.getPath.call(c[0] == "."? this: enyo.global, c);
+			}
+			if (c) {
+				c.addDispatchTarget(this);
+			}
+		}
+		if (p) {
+			p.removeDispatchTarget(this);
+		}
+	},
+	modelChanged: function (p) {
+		var m = this.model;
+		if (m) {
+			if (enyo.isString(m)) {
+				m = this.model = enyo.getPath.call(m[0] == "."? this: enyo.global, m);
+			}
+			if (m) {
+				m.addDispatchTarget(this);
+			}
+		}
+		if (p) {
+			p.removeDispatchTarget(this);
+		}
 	}
 });
 

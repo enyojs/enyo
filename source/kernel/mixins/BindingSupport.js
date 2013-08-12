@@ -1,3 +1,4 @@
+
 //*@protected
 // ensure that bindings are a concatenated property for all kinds
 enyo.concat.push("bindings");

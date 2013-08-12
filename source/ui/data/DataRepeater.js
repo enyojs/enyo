@@ -33,8 +33,7 @@
 		selectionProperty: "",
 		//*@protected
 		childMixins: [
-			"enyo.AutoBindingSupport",
-			"enyo.RepeaterChildSupport"
+			enyo.RepeaterChildSupport
 		],
 		concat: ["childMixins"],
 		controlParentName: "container",
@@ -53,11 +52,10 @@
 			onModelChanged: "modelPropertyChanged"
 		},
 		bindings: [
-			{from: ".controller.length", to: ".length"},
-			{from: ".controller.data", to: ".data"}
+			{from: ".controller.length", to: ".length"}
 		],
 		batching: false,
-		__selection: null,
+		_selection: null,
 		initComponents: function () {
 			this.initContainer();
 			// we need to find the child definition and prepare it for
@@ -88,7 +86,7 @@
 		},
 		constructor: enyo.super(function (sup) {
 			return function () {
-				this.__selection = [];
+				this._selection = [];
 				sup.apply(this, arguments);
 			};
 		}),
@@ -186,6 +184,13 @@
 			this.deselect(event.index);
 			return true;
 		},
+		data: function () {
+			var c = this.controller;
+			if (c && c.get) {
+				return c.get("data");
+			}
+			return null;
+		},
 		//*@public
 		/**
 			Select the item at the given index.
@@ -193,7 +198,7 @@
 		select: function (index) {
 			var c$ = this.getChildForIndex(index),
 				m$ = this.controller.at(index),
-				$s = this.__selection, i$;
+				$s = this._selection, i$;
 			if (this.selection) {
 				if (this.multipleSelection) {
 					if (!~enyo.indexOf(m$, $s)) {
@@ -224,7 +229,7 @@
 		deselect: function (index) {
 			var c$ = this.getChildForIndex(index),
 				m$ = this.controller.at(index),
-				$s = this.__selection, $i;
+				$s = this._selection, $i;
 			$i = enyo.indexOf(m$, $s);
 			if (!!~$i) {
 				$s.splice($i, 1);
@@ -242,7 +247,7 @@
 			Returns whether the given model is selected or not.
 		*/
 		isSelected: function (model) {
-			return !!~enyo.indexOf(model, this.__selection);
+			return !!~enyo.indexOf(model, this._selection);
 		},
 		/**
 			Selects all items (only takes action if _multipleSelection_ is true).
@@ -250,7 +255,7 @@
 		selectAll: function () {
 			if (this.multipleSelection) {
 				this.stopNotifications();
-				var $s = this.__selection;
+				var $s = this._selection;
 				$s.length = 0;
 				for (var $i=0; $i<this.length; ++$i) {
 					this.select($i);
@@ -264,7 +269,7 @@
 		deselectAll: function () {
 			if (this.selection) {
 				this.stopNotifications();
-				var $s = this.__selection, m$, i$;
+				var $s = this._selection, m$, i$;
 				while ($s.length) {
 					m$ = $s.pop();
 					i$ = this.controller.indexOf(m$);
@@ -273,15 +278,22 @@
 				this.startNotifications();
 			}
 		},
+		dataChanged: function () {
+			var c = this.controller;
+			if (c) {
+				this.reset();
+			}
+		},
 		computed: {
-			selected: []
+			selected: [],
+			data: ["controller"]
 		},
 		/**
 			Returns the currently selected model (if _multipleSelection_ is false),
 			or an array of all currently selected models (if _multipleSelection_ is true).
 		*/
 		selected: function() {
-			return this.multipleSelection ? this.__selection : this.__selection[0];
+			return this.multipleSelection ? this._selection : this._selection[0];
 		}
 		
 	});

@@ -49,7 +49,7 @@
 		
 		computed: {
 			_viewKind: [{cached: true}],
-			_render_target: ["renderTarget", {cached: true}]
+			_renderTarget: ["renderTarget", {cached: true}]
 		},
 
 		//*@protected
@@ -92,7 +92,7 @@
 		/**
 			Finds the appropriate form of the render target.
 		*/
-		_render_target: function () {
+		_renderTarget: function () {
 			// the original supplied variable for the render target
 			var target = this.renderTarget;
 			// we attempt to find the actual target node
@@ -116,7 +116,7 @@
 		render: function () {
 			// instance of the view
 			var view = this.view;
-			var target = this.get("_render_target");
+			var target = this.get("_renderTarget");
 			// if the view already has a DOM node, we don't need to
 			// attempt to re-insert it
 			if (view.hasNode()) {
