@@ -245,7 +245,7 @@
 			var src = this.source,
 				prop = this._sourceProperty,
 				fn = this._sourceObserver;
-			if (src && prop) {
+			if ((src && !enyo.isString(src)) && prop) {
 				if (!fn) {
 					fn = enyo.bind(this, this.syncFromSource);
 					fn.id = this.id;
@@ -261,7 +261,7 @@
 			var tar = this.target,
 				prop = this._targetProperty,
 				fn = this._targetObserver;
-			if ((tar && prop) || (this.oneWay && tar)) {
+			if (((tar && !enyo.isString(tar)) && prop) || (this.oneWay && tar)) {
 				if (this.oneWay) {
 					this._targetConnected = true;
 				} else {
