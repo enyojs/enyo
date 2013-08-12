@@ -20,5 +20,6 @@ enyo.depends(
 	"InheritanceSanityTest.js",
 	"DataModelingTest.js",
 	"AnimatorTest.js",
-	"DataRepeaterTest.js"
+	"DataRepeaterTest.js",
+	"MultipleDispatchTest.js"
 );

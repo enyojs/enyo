@@ -30,7 +30,7 @@ enyo.MultipleDispatchSupport = {
 	//*@protected
 	bubbleUp: enyo.super(function (sup) {
 		return function (name, event, sender) {
-			if (this._disptchDefaultPath) {
+			if (this._dispatchDefaultPath) {
 				sup.apply(this, arguments);
 			}
 			var dt = this._dispatchTargets;
@@ -43,7 +43,7 @@ enyo.MultipleDispatchSupport = {
 	}),
 	bubbleDelegation: enyo.super(function (sup) {
 		return function (delegate, prop, name, event, sender) {
-			if (this._disptchDefaultPath) {
+			if (this._dispatchDefaultPath) {
 				return sup.apply(this, arguments);
 			}
 		};
@@ -52,7 +52,7 @@ enyo.MultipleDispatchSupport = {
 		return function () {
 			sup.apply(this, arguments);
 			var o = this.owner;
-			this._disptchDefaultPath = !! o;
+			this._dispatchDefaultPath = !! o;
 		};
 	}),
 	constructor: enyo.super(function (sup) {
@@ -68,5 +68,5 @@ enyo.MultipleDispatchSupport = {
 		};
 	}),
 	_dispatchTargets: null,
-	_disptchDefaultPath: false
+	_dispatchDefaultPath: false
 };
