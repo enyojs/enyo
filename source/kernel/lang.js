@@ -257,65 +257,6 @@
 		return cur;
 	};
 
-	//*@protected
-	/**
-		Called by instances of _enyo.Object_ in their own context via their
-		local version of this method. Attempts to find the given property of
-		the current context and instance the property if it is not already an
-		instance. If it is a string, the method attempts to find the
-		constructor for the named kind or the instance at the given path.
-		When complete, it calls the callback method, passing it two
-		parameters--the constructor (if it was found) and the instance (if it
-		could be determined).
-	*/
-	enyo.findAndInstance = function (property, fn, context) {
-		var Ctor;
-		var inst;
-		var path;
-		fn = exists(fn) && "function" === typeof fn? fn: enyo.nop;
-		// attempt to find the string path identifier on the kind
-		// definition if possible
-		path = enyo.getPath.call(this, property);
-		// if there is nothing at the given property fast-path out
-		// and return undefined everything
-		if (!path) {
-			return fn.call(context || this);
-		}
-		// if the path is a string (as in most cases) go ahead and
-		// attempt to get the kind definition or instance at the
-		// given path
-		if ("string" === typeof path) {
-			// we can fast-track this for relative paths that explicitly state
-			// it is relative with a "." prefix, otherwise we have to guess
-			Ctor = "." === path[0]? enyo.getPath.call(this, path):
-				enyo.getPath(path) || enyo.getPath.call(this, path);
-			// if it isn't a function we assume it is an instance
-			if (exists(Ctor) && "function" !== typeof Ctor) {
-				inst = Ctor;
-				Ctor = undefined;
-			}
-		} else if ("function" === typeof path) {
-			// instead of a string we were handed a constructor
-			// so reassign that
-			Ctor = path;
-		} else {
-			// the assumption here is that we were handed an
-			// instance of the given object
-			inst = path;
-		}
-		// if we have a constructor and no instance we need to
-		// create an instance of the obejct
-		if (exists(Ctor) && !exists(inst)) {
-			inst = new Ctor();
-		}
-		// if we do have an instance assign it to the base object
-		if (exists(inst)) {
-			this[property] = inst;
-		}
-		// now use the calback and pass it the correct parameters
-		return fn.call(context || this, Ctor, inst);
-	};
-
 	//*@public
 	/**
 		Creates a unique identifier (with an optional prefix) and returns

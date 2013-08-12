@@ -100,14 +100,6 @@
 				}
 			};
 		}),
-		controllerFindAndInstance: enyo.super(function (sup) {
-			return function(ctor, inst) {
-				sup.apply(this, arguments);
-				if (inst && inst._isController) {
-					this.reset();
-				}
-			};
-		}),
 		reset: function () {
 			var $d = this.get("data");
 			this.destroyClientControls();

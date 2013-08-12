@@ -102,28 +102,6 @@ enyo.kind({
 			}
 		}
 	},
-	//*@protected
-	/**
-		Accepts a string property as its only parameter. Evaluates the
-		property and, if the value is itself a string, attempts to resolve
-		an object from the string. The goal is to determine whether the
-		property is a constructor, an instance, or neither. See
-		_lang.js#enyo.findAndInstance_ for more information.
-
-		If a method exists of the form `{property}FindAndInstance`, it will
-		be used as the callback, with two parameters accepted--the constructor
-		(if it was found) and the instance (if it was found or created). This
-		allows for those methods to be overloaded by subkinds.
-	*/
-	findAndInstance: function (property) {
-		// if there isn't a property, do nothing
-		if (!enyo.exists(property)) {
-			return;
-		}
-		var fn = this[property + "FindAndInstance"];
-		// go ahead and call the enyo-scoped version of this method
-		return enyo.findAndInstance.call(this, property, fn, this);
-	},
 
 	//*@public
 	/**

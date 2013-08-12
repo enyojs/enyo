@@ -293,14 +293,14 @@
 		constructed: enyo.super(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
-				this.findAndInstance("source");
+				// this.findAndInstance("source");
 			};
 		}),
-		sourceFindAndInstance: function (ctor, inst) {
-			if (inst) {
-				inst.set("owner", this);
-			}
-		},
+		// sourceFindAndInstance: function (ctor, inst) {
+		// 	if (inst) {
+		// 		inst.set("owner", this);
+		// 	}
+		// },
 		didFetch: function (model, options, result) {
 			// TODO: ...
 			if (options.success) {
