@@ -186,8 +186,26 @@
 			this.setSourceValue(val);
 			this.connectSource();
 		},
+		initRoot: function (part, root) {
+			var p = this[root];
+			if (enyo.isString(p)) {
+				var i = p[0];
+				if (i != "." && i != "^") {
+					return enyo.error("enyo.Binding: the `" + root + "` as a path must begin with " +
+						"`.` or `^` to signify relativity of the part");
+				}
+				i = (i == "."? true: false);
+				this[root] = enyo.getPath.call(i? this.owner: enyo.global, p);
+				if (!this[root]) {
+					// if this doesn't work then it was designed incorrectly and will
+					// fail like it should
+					this[part] = p + this[part];
+				}
+			}
+		},
 		initPart: function (part, root) {
 			if (!this[part]) { return; }
+			this.initRoot(part, root);
 			var p$ = this[part].slice(1),
 				// the initial character must be . or ^
 				i = this[part][0],

@@ -673,12 +673,18 @@
 		testChangeFromModelToBoundView: function () {
 			var $v = new (enyo.kind({
 				kind: "enyo.View",
-				mixins: ["enyo.AutoBindingSupport"],
-				bindSource: "model",
+				bindingDefaults: {
+					source: ".model"
+				},
+				bindings: [
+					{from: ".name", to: ".$.name.content"},
+					{from: ".job", to: ".$.job.content"},
+					{from: ".happiness", to: ".$.happiness.content"}
+				],
 				components: [
-					{name: "name", bindFrom: ".name"},
-					{name: "job", bindFrom: ".job"},
-					{name: "happiness", bindFrom: ".happiness"}
+					{name: "name"},
+					{name: "job"},
+					{name: "happiness"}
 				]
 			}))();
 			var $m = new enyo.Model({name: "Cole", job: "Test-Writer (apparently)", happiness: "Not happy."});
@@ -699,12 +705,19 @@
 		testChangeFromModelToControllerBoundView: function () {
 			var $v = new (enyo.kind({
 				kind: "enyo.View",
-				mixins: ["enyo.AutoBindingSupport"],
-				bindSource: "controller",
+				bindingDefaults: {
+					source: ".controller",
+					to: ".content"
+				},
+				bindings: [
+					{from: ".name", target: ".$.name"},
+					{from: ".job", target: ".$.job"},
+					{from: ".happiness", target: ".$.happiness"}
+				],
 				components: [
-					{name: "name", bindFrom: ".name"},
-					{name: "job", bindFrom: ".job"},
-					{name: "happiness", bindFrom: ".happiness"}
+					{name: "name"},
+					{name: "job"},
+					{name: "happiness"}
 				]
 			}))();
 			var $c = new enyo.ModelController();
@@ -727,12 +740,19 @@
 		testMultipleModelsToBoundView: function () {
 			var $v = new (enyo.kind({
 				kind: "enyo.View",
-				mixins: ["enyo.AutoBindingSupport"],
-				bindSource: "model",
+				bindingDefaults: {
+					source: ".model",
+					to: ".content"
+				},
+				bindings: [
+					{from: ".name", target: ".$.name"},
+					{from: ".job", target: ".$.job"},
+					{from: ".happiness", target: ".$.happiness"}
+				],
 				components: [
-					{name: "name", bindFrom: ".name"},
-					{name: "job", bindFrom: ".job"},
-					{name: "happiness", bindFrom: ".happiness"}
+					{name: "name"},
+					{name: "job"},
+					{name: "happiness"}
 				]
 			}))();
 			var $m1 = new enyo.Model({name: "Cole1", job: "Test-Writer (apparently)", happiness: "Not happy."});
@@ -758,12 +778,20 @@
 		testMultipleModelsToControllerBoundView: function () {
 			var $v = new (enyo.kind({
 				kind: "enyo.View",
-				mixins: ["enyo.AutoBindingSupport"],
 				bindSource: "controller",
+				bindingDefaults: {
+					source: ".controller",
+					to: ".content"
+				},
+				bindings: [
+					{from: ".name", target: ".$.name"},
+					{from: ".job", target: ".$.job"},
+					{from: ".happiness", target: ".$.happiness"}
+				],
 				components: [
-					{name: "name", bindFrom: ".name"},
-					{name: "job", bindFrom: ".job"},
-					{name: "happiness", bindFrom: ".happiness"}
+					{name: "name"},
+					{name: "job"},
+					{name: "happiness"}
 				]
 			}))();
 			var $m1 = new enyo.Model({name: "Cole1", job: "Test-Writer (apparently)", happiness: "Not happy."});
@@ -869,37 +897,6 @@
 			if ($d.length != 6) {
 				return this.finish("Did not receive all of the events, missing " +
 					enyo.unique(["onModelAdded","onModelsAdded","onModelRemoved","onModelsRemoved","onModelChanged","onModelDestroyed"], $d).join(", "));
-			}
-			this.finish();
-		},
-		testSettingData: function () {
-			var $c = new enyo.Collection(), $d = [];
-			var $v = new (enyo.kind({
-				kind: "enyo.View",
-				length: 0,
-				controller: $c,
-				handlers: {
-					onModelsAdded: "modelsAdded"
-				},
-				modelsAdded: function () {
-					throw "modelsAdded";
-				},
-				bindings: [
-					{from: ".controller.length", to: ".length"}
-				]
-			}))();
-			try {
-				$c.set("data", [new enyo.Model({name: "Cole"}, new enyo.Model({name: "Cole"}))]);
-			} catch (e) {
-				if (e == "modelsAdded") {
-					$d.push("onModelsAdded");
-				}
-			}
-			if ($d.length != 1) {
-				return this.finish("Did not receive the onModelsAdded event when the computed property value was set");
-			}
-			if ($v.length != $c.length) {
-				return this.finish("Bindings apparently didn't fire as expected because length was incorrect");
 			}
 			this.finish();
 		}
