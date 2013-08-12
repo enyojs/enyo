@@ -25,6 +25,12 @@ enyo.BindingSupport = {
 	*/
 	bindings: null,
 	/**
+		Set this to a hash of the available options to have supplied to all bindings
+		created by this object. These properties will only be used in the absence of the
+		specified property in the binding definition.
+	*/
+	bindingDefaults: null,
+	/**
 		To create a binding on its own (as opposed to with the _bindings_ array
 		for the kind) pass the properties to this method. It accepts multiple
 		hashes of properties to apply to the binding. The binding will have its
@@ -37,9 +43,13 @@ enyo.BindingSupport = {
 	binding: function () {
 		var	defs = enyo.toArray(arguments),
 			bs = this.bindings,
-			props = enyo.mixin(defs), bd;
+			props = enyo.mixin(defs),
+			defs = this.bindingDefaults, bd;
 		props.kind || (props.kind = this.defaultBindingKind);
 		props.owner || (props.owner = this);
+		if (defs) {
+			enyo.mixin(props, defs, {ignore: true});
+		}
 		if (this._bindingsInitialized === false) {
 			bs.push(props);
 		} else {
