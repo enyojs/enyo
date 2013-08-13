@@ -89,8 +89,8 @@ enyo.kind = function(inProps) {
 				FinalCtor = DeferredCtor._finishKindCreation();
 			}
 			var obj = enyo.delegate(FinalCtor.prototype);
-			FinalCtor.apply(obj, arguments);
-			return obj;
+			var retVal = FinalCtor.apply(obj, arguments);
+			return retVal? retVal: obj;
 		};
 		DeferredCtor._finishKindCreation = function() {
 			DeferredCtor._finishKindCreation = undefined;
