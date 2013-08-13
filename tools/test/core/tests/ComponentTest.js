@@ -149,8 +149,8 @@ enyo.kind({
 	},
 	testOverrideComponentProps: function() {
 		// Base kind
-		enyo.kind({
-			name: "componenttest.SampleKind",
+		var C1 = enyo.kind({
+			name: "componenttest.BaseKind",
 			components: [
 				{name:"red", content:"Red", components: [
 					{name:"orange", content:"Orange", components: [
@@ -162,27 +162,27 @@ enyo.kind({
 			]
 		});
 		// Subkind: override kind & content
-		enyo.kind({
-			name: "componenttest.SubSampleKind",
-			kind: "componenttest.SampleKind",
+		var C2 = enyo.kind({
+			name: "componenttest.SubKind",
+			kind: "componenttest.BaseKind",
 			componentOverrides: {
 				purple: {kind:"enyo.Button", content:"Overridden purple"},
 				green: {kind:"enyo.Button", content:"Overridden green"}
 			}
 		});
 		// Sub-sub kind: override kind & content again, 
-		enyo.kind({
-			name: "componenttest.SubSubSampleKind",
-			kind: "componenttest.SubSampleKind",
+		var C3 = enyo.kind({
+			name: "componenttest.SubSubKind",
+			kind: "componenttest.SubKind",
 			componentOverrides: {
 				purple: {kind:"enyo.Anchor", content:"Again purple"},
 				green: {kind:"enyo.Anchor", content:"Again green"}
 			}
 		});
 
-		var baseKind = new componenttest.SampleKind();
-		var subKind = new componenttest.SubSampleKind();
-		var subSubKind = new componenttest.SubSubSampleKind();
+		var baseKind = new C1();
+		var subKind = new C2();
+		var subSubKind = new C3();
 
 		if ((baseKind.$.purple.kindName != "enyo.Control") || 
 			(baseKind.$.purple.content != "Purple") ||

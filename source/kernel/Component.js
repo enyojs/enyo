@@ -639,7 +639,7 @@ enyo.Component.overrideComponents = function(components, overrides) {
 			enyo.Component.overrideComponents(c.components, overrides);
 		}
 	}
-}
+};
 
 enyo.Component.publishEvents = function(ctor, props) {
 	var es = props.events;
