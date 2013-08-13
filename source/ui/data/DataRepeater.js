@@ -2,9 +2,9 @@
 
 	//*@public
 	/**
-		_enyo.DataRepeater_ is an abstract kind that will repeate a defined kind for
+		_enyo.DataRepeater_ is an abstract kind that will repeat a defined kind for
 		as many records as are in its _data_ array (automatically bound from a
-		controller of the kind <a href="#enyo.Collection">enyo.Collection</a>).
+		controller of the kind [enyo.Collection](#enyo.Collection)).
 	*/
 	enyo.kind({
 		name: "enyo.DataRepeater",
@@ -18,17 +18,17 @@
 		selection: true,
 		/**
 			Set this to true to allow multiple children to be selected simultaneously.
-			If this is true, then the `selection` property will be set to true even if
-			it is `false`.
+			If this is true, then the _selection_ property will be set to true even if
+			it has previously been set to false.
 		*/
 		multipleSelection: false,
 		/**
-			In cases where selection should be detected from the state of the model
-			this property should be set to the property that the _enyo.Repeater_ should
-			observe and modify for changes. This would allow the model to be changed and
-			the _enyo.Repeater_ would show this change without direct interaction. Note that
-			this property must be a part of the _schema_ of the model or its changes will not
-			be detected properly.
+			In cases where selection should be detected from the state of the model,
+			this property should be set to the property that the repeater should
+			observe for changes. If the model changes, the repeater will reflect the
+			change without needing to interact directly with the model. Note that this
+			property must be a part of the model's schema or its changes will not be
+			detected properly.
 		*/
 		selectionProperty: "",
 		//*@protected
@@ -193,7 +193,7 @@
 		},
 		//*@public
 		/**
-			Select the item at the given index.
+			Selects the item at the given index.
 		*/
 		select: function (index) {
 			var c$ = this.getChildForIndex(index),
@@ -224,7 +224,7 @@
 			}
 		},
 		/**
-			De-select the item at the given index.
+			De-selects the item at the given index.
 		*/
 		deselect: function (index) {
 			var c$ = this.getChildForIndex(index),
@@ -244,13 +244,13 @@
 			this.notifyObservers("selected");
 		},
 		/**
-			Returns whether the given model is selected or not.
+			Returns a Boolean indicating whether the given model is selected.
 		*/
 		isSelected: function (model) {
 			return !!~enyo.indexOf(model, this._selection);
 		},
 		/**
-			Selects all items (only takes action if _multipleSelection_ is true).
+			Selects all items (if _multipleSelection_ is true).
 		*/
 		selectAll: function () {
 			if (this.multipleSelection) {
@@ -290,7 +290,7 @@
 		},
 		/**
 			Returns the currently selected model (if _multipleSelection_ is false),
-			or an array of all currently selected models (if _multipleSelection_ is true).
+			or an array of all currently selected models (if it is true).
 		*/
 		selected: function() {
 			return this.multipleSelection ? this._selection : this._selection[0];
