@@ -41,14 +41,14 @@ enyo.BindingSupport = {
 		and return `undefined`.
 	*/
 	binding: function () {
-		var	defs = enyo.toArray(arguments),
+		var defs = enyo.toArray(arguments),
 			bs = this.bindings,
 			props = enyo.mixin(defs),
-			defs = this.bindingDefaults, bd;
+			dl = this.bindingDefaults, bd;
 		props.kind || (props.kind = this.defaultBindingKind);
 		props.owner || (props.owner = this);
-		if (defs) {
-			enyo.mixin(props, defs, {ignore: true});
+		if (dl) {
+			enyo.mixin(props, dl, {ignore: true});
 		}
 		if (this._bindingsInitialized === false) {
 			bs.push(props);

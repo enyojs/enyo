@@ -12,7 +12,7 @@ enyo.kind({
 			accept: function () {
 				s.finish();
 			}
-		})
+		});
 		test.DispatchComponent = enyo.kind({
 			kind: "enyo.MultipleDispatchComponent",
 			events: {
@@ -75,11 +75,11 @@ enyo.kind({
 			},
 			accept: function () {
 				--ex;
-				if (ex == 0) {
+				if (ex === 0) {
 					s.finish();
 				}
 			}
-		})
+		});
 		test.DispatchComponent = enyo.kind({
 			kind: "enyo.MultipleDispatchComponent",
 			events: {
@@ -101,11 +101,11 @@ enyo.kind({
 			},
 			accept: function () {
 				--ex;
-				if (ex == 0) {
+				if (ex === 0) {
 					s.finish();
 				}
 			}
-		})
+		});
 		test.DispatchComponent = enyo.kind({
 			kind: "enyo.MultipleDispatchComponent",
 			events: {

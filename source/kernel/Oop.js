@@ -231,7 +231,6 @@ enyo.kind.makeCtor = function() {
 
 		// two-pass instantiation
 		var result;
-		var cargs = arguments;
 		if (this._constructor) {
 			// pure construction
 			result = this._constructor.apply(this, arguments);
@@ -398,7 +397,8 @@ enyo.kind.statics = {
 	extend: function(props, target) {
 		var ctor = this,
 			exts = enyo.isArray(props)? props: [props],
-			proto;
+			proto, fn;
+		fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isSuper(v)); };
 		if (!target && ctor._deferred) {
 			ctor = enyo.checkConstructor(ctor);
 		}
@@ -406,7 +406,7 @@ enyo.kind.statics = {
 		for (var i=0, p; (p=exts[i]); ++i) {
 			enyo.handleConcatenatedProperties(proto, p);
 			enyo.kind.extendMethods(proto, p, true);
-			enyo.mixin(proto, p, {filter: function (k, v) { return !(enyo.isFunction(v) || enyo.isSuper(v)); }});
+			enyo.mixin(proto, p, {filter: fn});
 		}
 		return target || ctor;
 	}

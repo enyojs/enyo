@@ -141,7 +141,8 @@
 			}
 		},
 		isConnected: function () {
-			return this.connected = (this._sourceConnected && this._targetConnected);
+			var c = this.connected = (this._sourceConnected && this._targetConnected);
+			return c;
 		},
 		syncFromSource: function () {
 			var val = this.getSourceValue(),

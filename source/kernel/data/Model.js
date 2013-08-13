@@ -364,18 +364,6 @@
 		return false;
 	};
 
-	//*@protected
-	/**
-		Without interfering with the construction chain, we need to register
-		the record with the store. This cannot be done during the construction
-		chain.
-	*/
-	// enyo.kind.postConstructors.push(function () {
-	// 	if (this.__isModel) {
-	// 		enyo.models.queue(this);
-	// 	}
-	// });
-
 	//*@public
 	/**
 		The status of an _enyo.Model_ will be one of values defined in the _STATES_
@@ -1228,6 +1216,13 @@
 					this.status = NEW;
 				}
 				enyo.pool.releaseObject($v, $d, $t);
+			};
+		}),
+		
+		constructed: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				enyo.models.queue(this);
 			};
 		}),
 		

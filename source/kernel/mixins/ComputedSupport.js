@@ -23,20 +23,18 @@
 	/**
 		The possible/configurable options that may be set with the options block
 		of a computed property declaration.
-	*/
-	var defaults = {
-		/**
-			If a computed property is marked as cached, its value will be
-			computed once and then reused, unless one of its dependencies
-			has been flagged as being changed prior to the request. If
-			there are no dependencies, the value will only ever be computed
-			once.
 
-			If this setting is true, it overrides	the value of the _volatile_
-			property.
-		*/
-		cached: false
-	};
+		If a computed property is marked as cached, its value will be
+		computed once and then reused, unless one of its dependencies
+		has been flagged as being changed prior to the request. If
+		there are no dependencies, the value will only ever be computed
+		once.
+
+		If this setting is true, it overrides	the value of the _volatile_
+		property.
+
+		`cached`
+	*/
 	/**
 		Computed properties are methods of _kinds_ that are named as dependent
 		on multiple properties (much like observers) except they themselves are
@@ -55,13 +53,12 @@
 		are configurable options you can add as well. Options are in the array of
 		dependencies of the computed property. See the defaults for options of
 		computed properties to see what options are available.
-	
+
 		enyo.kind({
 			name: "Sample",
 			computed: {
 				mood: ["expression", "posture", "volume", {cached: true}],
-				maxHours: [] // in this case, it has no dependencies and will be
-							 // reevaluated on every request
+				maxHours: []
 			}
 		})
 	*/
@@ -100,8 +97,7 @@
 		*/
 		notifyObservers: enyo.super(function (sup) {
 			return function (path, prev, value) {
-				var map = this._computedMap,
-					q = this._computedQueue, n;
+				var map = this._computedMap, n;
 				if ((n = map[path])) {
 					for (var i=0, p; (p=n[i]); ++i) {
 						// this is a dependency of one of our computed properties
