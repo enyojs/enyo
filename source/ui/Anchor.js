@@ -11,7 +11,7 @@ enyo.kind({
 	published: {
 		//* Maps to the _href_ attribute of the &lt;a&gt; tag
 		href: "",
-		//* Maps to the title attribute of the &lt;a&gt; tag
+		//* Maps to the _title_ attribute of the &lt;a&gt; tag
 		title: ""
 	},
 	//* @protected
