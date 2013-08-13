@@ -222,7 +222,7 @@ enyo.kind({
 	//* @protected
 	adjustComponentProps: function(inProps) {
 		if (this.defaultProps) {
-			enyo.mixin(inProps, this.defaultProps);
+			enyo.mixin(inProps, this.defaultProps, {ignore: true});
 		}
 		inProps.kind = inProps.kind || inProps.isa || this.defaultKind;
 		inProps.owner = inProps.owner || this;
