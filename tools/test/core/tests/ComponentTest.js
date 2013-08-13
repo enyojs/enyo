@@ -146,5 +146,65 @@ enyo.kind({
 				finish();
 			}
 		}, 20);
+	},
+	testOverrideComponentProps: function() {
+		// Base kind
+		enyo.kind({
+			name: "componenttest.SampleKind",
+			components: [
+				{name:"red", content:"Red", components: [
+					{name:"orange", content:"Orange", components: [
+						{kind:"enyo.Anchor", name:"green", content:"Green"}
+					]}
+				]},
+				{name:"purple", content:"Purple"},
+				{name:"blue", content:"Blue"}
+			]
+		});
+		// Subkind: override kind & content
+		enyo.kind({
+			name: "componenttest.SubSampleKind",
+			kind: "componenttest.SampleKind",
+			componentOverrides: {
+				purple: {kind:"enyo.Button", content:"Overridden purple"},
+				green: {kind:"enyo.Button", content:"Overridden green"}
+			}
+		});
+		// Sub-sub kind: override kind & content again, 
+		enyo.kind({
+			name: "componenttest.SubSubSampleKind",
+			kind: "componenttest.SubSampleKind",
+			componentOverrides: {
+				purple: {kind:"enyo.Anchor", content:"Again purple"},
+				green: {kind:"enyo.Anchor", content:"Again green"}
+			}
+		});
+
+		var baseKind = new componenttest.SampleKind();
+		var subKind = new componenttest.SubSampleKind();
+		var subSubKind = new componenttest.SubSubSampleKind();
+
+		if ((baseKind.$.purple.kindName != "enyo.Control") || 
+			(baseKind.$.purple.content != "Purple") ||
+			(baseKind.$.green.kindName != "enyo.Anchor") || 
+			(baseKind.$.green.content != "Green")) {
+			throw "Overrides should not modify base kind";
+		}
+
+		if ((subKind.$.purple.kindName != "enyo.Button") || 
+			(subKind.$.purple.content != "Overridden purple") ||
+			(subKind.$.green.kindName != "enyo.Button") || 
+			(subKind.$.green.content != "Overridden green")) {
+			throw "Subclass overrides were not applied properly";
+		}
+
+		if ((subSubKind.$.purple.kindName != "enyo.Anchor") || 
+			(subSubKind.$.purple.content != "Again purple") ||
+			(subSubKind.$.green.kindName != "enyo.Anchor") || 
+			(subSubKind.$.green.content != "Again green")) {
+			throw "Multiply-subclassed overrides were not applied properly";
+		}
+
+		this.finish();
 	}
 });

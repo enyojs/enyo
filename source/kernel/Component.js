@@ -606,6 +606,12 @@ enyo.Component.subclass = function(ctor, props) {
 	if (props.components) {
 		proto.kindComponents = props.components;
 		delete proto.components;
+	} else {
+		// Feature to mixin overrides of super-kind component properties from named hash
+		// (only applied when the sub-kind doesn't supply its own components block)
+		if (props.componentOverrides) {
+			enyo.Component.overrideComponents(proto.kindComponents, props.componentOverrides);
+		}
 	}
 	//
 	// handlers are merged with supertype handlers
@@ -621,6 +627,19 @@ enyo.Component.subclass = function(ctor, props) {
 		this.publishEvents(ctor, props);
 	}
 };
+
+enyo.Component.overrideComponents = function(components, overrides) {
+	for (var i=0; i<components.length; i++) {
+		var c = components[i];
+		var o = overrides[c.name];
+		if (o) {
+			enyo.mixin(c, o);
+		}
+		if (c.components) {
+			enyo.Component.overrideComponents(c.components, overrides);
+		}
+	}
+}
 
 enyo.Component.publishEvents = function(ctor, props) {
 	var es = props.events;
