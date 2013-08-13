@@ -19,9 +19,7 @@ enyo.kind({
 		*/
 		orient : "v",
 		//* If true, the opening/closing transition will be animated
-		animated : true,
-		onStep   : null,
-		onEnd    : null
+		animated : true
 	},
 	events: {
 		/**
