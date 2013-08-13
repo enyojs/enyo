@@ -42,6 +42,14 @@ enyo.RepeaterChildSupport = {
 			this.set("selected", !this.selected);
 		}
 	},
+	dispatchEvent: enyo.super(function (sup) {
+		return function (name, event, sender) {
+			if (name == "ontap") {
+				this._selectionHandler(sender, event);
+			}
+			return sup.apply(this, arguments);
+		};
+	}),
 	create: enyo.super(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
@@ -66,8 +74,5 @@ enyo.RepeaterChildSupport = {
 			sup.apply(this, arguments);
 		};
 	}),
-	handlers: {
-		ontap: "_selectionHandler"
-	},
 	_selectionBindingId: null
 };
