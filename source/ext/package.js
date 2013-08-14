@@ -3,5 +3,6 @@ enyo.depends(
 	"InputBinding.js",
 	"BooleanBinding.js",
 	"BooleanOnlyBinding.js",
-	"StringBinding.js"
+	"StringBinding.js",
+	"NoMacroBinding.js"
 );

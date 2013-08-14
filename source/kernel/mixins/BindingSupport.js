@@ -17,13 +17,22 @@ enyo.BindingSupport = {
 		for objects that intend to use a custom kind for all of their
 		bindings, it may also be set here.
 	*/
-	defaultBindingKind: enyo.Binding,
+	defaultBindingKind: null,
 	/**
 		Set this to an array of binding declarations that will be created
 		when the object is instantiated. Post-construction this array will
 		contain a reference to all available bindings on the instance of the kind.
 	*/
 	bindings: null,
+	/**
+		If the `expandMacros` flag is `true` for a _binding_ (`true` is the default)
+		then the _owner_ of the _binding_ has the opportunity to create custom expansion
+		rules for specific properties or override defaults if necessary. Add the macro
+		tokens you would like to expand to this hash and map them to either a property path
+		to use instead of the _macro_ or to a method that will return the correct path for
+		_macro_ expansion.
+	*/
+	bindingMacros: null,
 	/**
 		Set this to a hash of the available options to have supplied to all bindings
 		created by this object. These properties will only be used in the absence of the
@@ -45,12 +54,10 @@ enyo.BindingSupport = {
 			bs = this.bindings,
 			props = enyo.mixin(defs),
 			dl = this.bindingDefaults, bd;
-		props.kind || (props.kind = this.defaultBindingKind);
-		props.owner || (props.owner = this);
-		if (dl) {
-			enyo.mixin(props, dl, {ignore: true});
-		}
-		if (this._bindingsInitialized === false) {
+		props.kind = props.kind || this.defaultBindingKind || enyo.defaultBindingKind;
+		props.owner = props.owner || this;
+		if (dl) { enyo.mixin(props, dl, {ignore: true}); }
+		if (this._bindingSupportInitialized === false) {
 			bs.push(props);
 		} else {
 			// we only want to resolve the kind if it isn't already
@@ -156,8 +163,8 @@ enyo.BindingSupport = {
 		object becomes available and they will connect and synchronize then.
 	*/
 	initBindings: function () {
-		if (false === this._bindingsInitialized) {
-			this._bindingsInitialized = undefined;
+		if (false === this._bindingSupportInitialized) {
+			this._bindingSupportInitialized = undefined;
 			var os = this.bindings;
 			// we will now reused the property `bindings` with the actual binding
 			// references
@@ -167,7 +174,6 @@ enyo.BindingSupport = {
 			}
 		}
 	},
-	//*@protected
 	constructor: enyo.super(function (sup) {
 		return function () {
 			// ensure we have at least an empty array here during
@@ -213,9 +219,57 @@ enyo.BindingSupport = {
 		return fn;
 	},
 	/**
+		Used internally by _bindings_ to expand macros by exposing public API features
+		to aid in dynamic macro expansion. This will attempt to use special properties
+		if they were set to handle specific macros to override normal handling.
+	*/
+	_bindingExpandMacro: function (lex, token, macro, prop, binding) {
+		var ms = this.bindingMacros;
+		if (ms) {
+			var m = ms[lex];
+			if (m) {
+				var fn = this[m];
+				if (fn && enyo.isFunction(fn)) {
+					m = fn.call(this, lex, token, macro, prop, binding);
+				}
+				return m;
+			}
+		}
+		return token;
+	},
+	/**
 		We have this flag to help indicate if bindings have been initialized
 		or not for this object. It is used as an explicit `false` test because
 		it is removed from the object instance once initialized to reduce object clutter.
 	*/
-	_bindingsInitialized: false
+	_bindingSupportInitialized: false
 };
+//*@public
+/**
+	BindingSupport is available on _enyo.Objects_ but it is necessary to overload
+	a method that isn't available on _enyo.Object_ but is on _enyo.Component_ so
+	it is added as additional functionality.
+*/
+enyo.ComponentBindingSupport = {
+	name: "ComponentBindingSupport",
+	//*@protected
+	/**
+		There is a special property _bindingTransformOwner that needs to be chained
+		down into children to shortcut bindings work to find transforms.
+	*/
+	adjustComponentProps: enyo.super(function (sup) {
+		return function (props) {
+			sup.apply(this, arguments);
+			props._bindingTransformOwner = props._bindingTransformOwner || this.getInstanceOwner();
+		};
+	})
+};
+//*@protected
+enyo.concatHandler("bindingMacros", function (proto, props) {
+	if (props.bindingMacros) {
+		var pm = proto.bindingMacros || (proto.bindingMacros = {}),
+			rm = props.bindingMacros;
+		enyo.mixin(enyo.clone(pm), rm);
+		delete props.bindingMacros;
+	}
+});

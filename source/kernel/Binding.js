@@ -10,7 +10,14 @@
 		by reference (e.g. arrays and native JavaScript objects). But
 		for these types it much clearer in nearly all cases.
 	*/
-		_force = /(string|number|boolean)/;
+	_force = /(string|number|boolean)/,
+	/**
+		Used in macro expansion to determine the macro token unwrapped;
+		works in tandem with _enyo.macroize.pattern_ and always assumes
+		this is the pattern being used in _binding_ macro support - we
+		do not want to have to reset the sticky flag on every execution.
+	*/
+	_token = /\{\$([^{}]*)\}/;
 	
 	//*@public
 	/**
@@ -25,6 +32,7 @@
 	enyo.kind({
 		name: "enyo.Binding",
 		kind: null,
+		noDefer: true,
 		/**
 			The _from_ property designates a path from which the _property_ of the _source_
 			to bind from can be found. If the _source_ is explicitly provided and the path
@@ -77,6 +85,13 @@
 			synchronization and `false` if it is synchronized.
 		*/
 		dirty: true,
+		/**
+			By default bindings will attempt to expand macroized properties. If you do not use macros
+			it may be more efficient to set this flag to `false`, default is `true`. To turn off macro
+			expansion for an entire _kind_, simply set the `defaultBindingKind` to `enyo.NoMacroBinding`.
+			To turn it off throughout the framework, set `enyo.defaultBindingKind = enyo.NoMacroBinding`.
+		*/
+		expandMacros: true,
 		/**
 			Each _binding_ will have a unique _id_ which can be used with the global static
 			methid _enyo.Binding.find_ to retrieve a reference to that binding. It can also be used
@@ -188,36 +203,52 @@
 			this.connectSource();
 		},
 		initRoot: function (part, root) {
-			var p = this[root];
+			var p = this[root],
+				e = this.expandMacros,
+				o = this.owner, r;
+			// this resolving algorithm is only active if the root has not yet
+			// been resolved
 			if (enyo.isString(p)) {
+				if (e) { p = this._expandMacro(root, p); }
 				var i = p[0];
+				// or we fall back on normal handling as long as the string isn't a macro
+				// that couldn't be resolved
 				if (i != "." && i != "^") {
 					return enyo.error("enyo.Binding: the `" + root + "` as a path must begin with " +
 						"`.` or `^` to signify relativity of the part");
 				}
 				i = (i == "."? true: false);
-				this[root] = enyo.getPath.call(i? this.owner: enyo.global, p);
-				if (!this[root]) {
+				r = enyo.getPath.call(i? this.owner: enyo.global, p);
+				if (!r) {
 					// if this doesn't work then it was designed incorrectly and will
 					// fail like it should
-					this[part] = p + this[part];
+					this["_" + root + "Path"] = i? p.slice(1): p;
 				}
+				if (r || (p && p != this[root])) { this[root] = r || p; }
 			}
 		},
 		initPart: function (part, root) {
 			if (!this[part]) { return; }
-			this.initRoot(part, root);
-			var p$ = this[part].slice(1),
-				// the initial character must be . or ^
-				i = this[part][0],
-				parts = p$.split("."),
+			var e = this.expandMacros,
+				p$ = this[part],
 				rh = "_" + root + "Path",
-				rp = "_" + root + "Property";
+				rp = "_" + root + "Property", i, parts;
+			// try and handle macro expansion early if possible
+			if (e) {
+				var r = this._expandMacro(part, p$);
+				if (r && r != p$) { p$ = this[part] = r; }
+			}
+			this.initRoot(part, root);
+			p$ = p$.slice(1);
+			// the initial character must be . or ^
+			i = this[part][0];
+			parts = p$.split(".");
 			// if it isn't, we error so the developer can identify the issue
-			if (i != "." && i != "^") {
+			if (i != "." && i != "^" && e && i != "{") {
 				return enyo.error("enyo.Binding: binding `" + part + "` path must begin with `^` or `.` to signify " +
 					"relativity of the path");
 			}
+			
 			i = (i == "."? true: false);
 			// if it is a relative path but we have no root or owner
 			// then we know we can't find it
@@ -241,11 +272,48 @@
 				this[rp] = parts.pop();
 			}
 		},
+		_expandMacro: function (prop, macro) {
+			if (!macro) { return; }
+			var o = this.owner,
+				ms, m, ex, r;
+			// we hate to run this test unnecessarily but the overhead we'll
+			// save by this test outweighs the cons
+			ms = macro.match(enyo.macroize.pattern);
+			if (ms) {
+				m = {};
+				for (var i=0, e; (e=ms[i]); ++i) {
+					// retrieve the original macro and its extracted token for
+					// custom mapping
+					e = _token.exec(e);
+					r = e[0];
+					ex = e[1];
+					if (o) {
+						// this will either be expanded or the same thing, its a
+						// safe execution
+						m[r] = o._bindingExpandMacro(ex, r, macro, prop, this);
+					}
+					if (!m[r] || m[r] == r) {
+						// this is most likely a local property someone is short-cutting by
+						// the convention of their naming scheme so we test for the existence
+						// and validity of the property
+						if (this[ex] && enyo.isString(this[ex])) {
+							m[r] = this[ex];
+						}
+						// otherwise we ignore it because its invalid
+					}
+				}
+				// now we should have been able to expand any custom-added macros
+				// (usually meta properties to shortcut a different dynamic path)
+				// so we need to try and macroize the entire path now
+				return enyo.quickReplace(macro, m);
+			}
+			return macro;
+		},
 		connectSource: function () {
 			var src = this.source,
 				prop = this._sourceProperty,
 				fn = this._sourceObserver;
-			if ((src && !enyo.isString(src) && !src.prototype) && prop) {
+			if (!enyo.isString(src) && src && prop && !src.prototype) {
 				if (!fn) {
 					fn = enyo.bind(this, this.syncFromSource);
 					fn.id = this.id;
@@ -261,7 +329,7 @@
 			var tar = this.target,
 				prop = this._targetProperty,
 				fn = this._targetObserver;
-			if (((tar && !enyo.isString(tar) && !tar.prototype) && prop) || (this.oneWay && tar)) {
+			if (!enyo.isString(tar) && tar && prop && !tar.prototype) {
 				if (this.oneWay) {
 					this._targetConnected = true;
 				} else {
@@ -407,17 +475,29 @@
 			}
 			delete map[this.id];
 		},
+		/**
+			This is the method that will interrupt the binding if called from within
+			the scope of a transform. Do not call this method otherwise.
+		*/
 		stop: function () {
 			throw "binding-top";
 		},
 		//*@protected
 		initTransform: function () {
-			var tf = this.transform;
+			var tf = this.transform,
+				o = this.owner,
+				bo = o? o._bindingTransformOwner: null;
 			if (tf && enyo.isString(tf)) {
-				tf = enyo.getPath.call(this.owner, tf) || enyo.getPath(tf);
+				tf = (bo || o? enyo.getPath.call(bo || o, tf): enyo.getPath(tf));
 			}
 			this.transform = enyo.isFunction(tf)? tf: null;
 		}
 	});
+	/**
+		Use this framework property to control the default _kind_ of binding to
+		use for all _kinds_. It may be overridden at the _kind_ level if their
+		`defaultBindingKind` property is set to a different _kind_ of _binding_.
+	*/
+	enyo.defaultBindingKind = enyo.Binding;
 	
 })(enyo);

@@ -80,7 +80,8 @@ enyo.kind({
 	noDefer: true,
 	handlers: {},
 	mixins: [
-		enyo.ApplicationSupport
+		enyo.ApplicationSupport,
+		enyo.ComponentBindingSupport
 	],
 	concat: ["handlers", "events"],
 	__jobs: {},

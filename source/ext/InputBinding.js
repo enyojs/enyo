@@ -8,17 +8,16 @@
 */
 enyo.kind({
 	name: "enyo.InputBinding",
-	kind: "enyo.Binding",
+	kind: enyo.Binding,
 	oneWay: false,
 	//*@protected
 	transform: function (value, direction, binding) {
-		var source = binding.source || {};
-		var target = binding.target || {};
-		var ph = source.placholder || target.placeholder || "";
-		if (!enyo.exists(value) || null === value || value.length === 0) {
-			return ph;
-		} else {
-			return value;
-		}
+		if (value) { return value; }
+		var s = binding.source || {},
+			t = binding.target || {},
+			// we attempt to find the placeholder at either end prioritizing
+			// to checking the source 
+			ph = source.placeholder || t.placeholder || "";
+		return ph;
 	}
 });
