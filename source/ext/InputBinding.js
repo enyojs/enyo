@@ -16,8 +16,8 @@ enyo.kind({
 		var s = binding.source || {},
 			t = binding.target || {},
 			// we attempt to find the placeholder at either end prioritizing
-			// to checking the source 
-			ph = source.placeholder || t.placeholder || "";
+			// to checking the source
+			ph = s.placeholder || t.placeholder || "";
 		return ph;
 	}
 });
