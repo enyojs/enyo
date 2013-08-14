@@ -1,7 +1,7 @@
 /**
-	_enyo.Anchor implements an HTML anchor. Properties are provided for
-	the href and title attributes to allow for binding these to properties
-	when composing with other controls.
+	_enyo.Anchor_ implements an HTML anchor (&lt;a&gt;) tag. Published properties
+	allow you to bind the anchor's _href_ and _title_ attributes to appropriate
+	fields on data objects.
 */
 enyo.kind({
 	name: "enyo.Anchor",
@@ -9,9 +9,9 @@ enyo.kind({
 	tag: "a",
 	//* @public
 	published: {
-		//* maps to the href attribute of the "a" tag
+		//* Maps to the _href_ attribute of the &lt;a&gt; tag
 		href: "",
-		//* maps to the title attribute of the "a" tag
+		//* Maps to the _title_ attribute of the &lt;a&gt; tag
 		title: ""
 	},
 	//* @protected
