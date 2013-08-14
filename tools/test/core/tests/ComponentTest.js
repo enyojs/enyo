@@ -192,29 +192,29 @@ enyo.kind({
 			(baseKind.$.green.content != "Green")) {
 			throw "Overrides should not modify base kind: unexpected content";
 		}
-		if (!/purple$/.test(baseKind.$.purple.classes) ||
-			!/green$/.test(baseKind.$.green.classes)) {
+		if ((baseKind.$.purple.classes != "purple") ||
+			(baseKind.$.green.classes != "green")) {
 			throw "Overrides should not modify base kind: unexpected classes";
 		}
-		if (!/background:purple;$/.test(baseKind.$.purple.style) ||
-			!/background:green;$/.test(baseKind.$.green.style)) {
+		if ((baseKind.$.purple.kindStyle != "background: purple;") ||
+			(baseKind.$.green.kindStyle != "background: green;")) {
 			throw "Overrides should not modify base kind: unexpected style";
 		}
 
 		if ((subKind.$.purple.kindName != "enyo.Button") || 
 			(subKind.$.green.kindName != "enyo.Button")) {
 			throw "Subclass overrides were not applied properly: unexpected kindName";
-		} 
+		}
 		if ((subKind.$.purple.content != "Overridden purple") || 
 			(subKind.$.green.content != "Overridden green")) {
 			throw "Subclass overrides were not applied properly: unexpected content";
-		} 
-		if (!/purple over-purple$/.test(subKind.$.purple.classes) ||
-			!/green over-green$/.test(subKind.$.green.classes)) {
+		}
+		if (!/^.*purple over-purple$/.test(subKind.$.purple.classes) ||
+			!/^.*green over-green$/.test(subKind.$.green.classes)) {
 			throw "Subclass overrides were not applied properly: unexpected classes";
-		} 
-		if (!/background:purple;[; ]*background:over-purple;$/.test(subKind.$.purple.style) ||
-			!/background:green;[; ]*background:over-green;$/.test(subKind.$.green.style)) {
+		}
+		if ((subKind.$.purple.kindStyle != "background: over-purple;") ||
+			(subKind.$.green.kindStyle != "background: over-green;")) {
 			throw "Subclass overrides were not applied properly: unexpected style;";
 		}
 
@@ -226,12 +226,12 @@ enyo.kind({
 			(subSubKind.$.green.content != "Again green")) {
 			throw "Multiply-subclassed overrides were not applied properly: unexpeted content";
 		}
-		if (!/purple over-purple again-purple$/.test(subSubKind.$.purple.classes) ||
-			!/green over-green again-green$/.test(subSubKind.$.green.classes)) {
+		if (!/^.*purple over-purple again-purple$/.test(subSubKind.$.purple.classes) ||
+			!/^.*green over-green again-green$/.test(subSubKind.$.green.classes)) {
 			throw "Multiply-subclassed overrides were not applied properly: unexpeted classes: " + subSubKind.$.green.classes;
 		}
-		if (!/background:purple;[; ]*background:over-purple;[; ]*background:again-purple;$/.test(subSubKind.$.purple.style) ||
-			!/background:green;[; ]*background:over-green;[; ]*background:again-green;$/.test(subSubKind.$.green.style)) {
+		if ((subSubKind.$.purple.kindStyle != "background: again-purple;") ||
+			(subSubKind.$.green.kindStyle != "background: again-green;")) {
 			throw "Multiply-subclassed overrides were not applied properly: unexpeted style";
 		}
 
