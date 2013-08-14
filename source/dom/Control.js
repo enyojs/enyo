@@ -356,12 +356,13 @@ enyo.kind({
 	//* @protected
 	initStyles: function() {
 		this.domStyles = this.domStyles || {};
-		enyo.Control.cssTextToDomStyles(this.style, this.domStyles);
-		this.domCssText = enyo.Control.domStylesToCssText(this.domStyles);
 	},
-	styleChanged: function(oldStyle) {
-		enyo.Control.cssTextToDomStyles(oldStyle, this.domStyles, true);
-		enyo.Control.cssTextToDomStyles(this.style, this.domStyles);
+	styleChanged: function() {
+		// since we want to reset the style to the default kind styles and whatever
+		// the current new styles are it seems fastest to simply start over instead
+		// of scrubbing the old style off
+		this.domStyles = {};
+		enyo.Control.cssTextToDomStyles(this.kindStyle + this.style, this.domStyles);
 		this.domStylesChanged();
 	},
 	//* @public
@@ -979,10 +980,10 @@ enyo.kind({
 			for (n in inStyleHash) {
 				v = inStyleHash[n];
 				if ((v !== null) && (v !== undefined) && (v !== "")) {
-					text += n + ':' + v + ';';
+					text += n + ': ' + v + '; ';
 				}
 			}
-			return text;
+			return text.replace(/^\s+|\s+$/g, "");
 		},
 		stylesToHtml: function(inStyleHash) {
 			var cssText = enyo.Control.domStylesToCssText(inStyleHash);
@@ -1020,8 +1021,13 @@ enyo.concatHandler("classes", function (proto, props) {
 });
 enyo.concatHandler("style", function (proto, props) {
 	if (props.style) {
-		var style = proto.style || "";
-		proto.style = (style.length? (style + ";"): style) + props.style;
+		// in an attempt to keep from doing addtional unnecessary parsing over and
+		// over at runtime we do this here to remove redundant entries that we would
+		// otherwise see every time
+		var s = proto.domStyles? enyo.clone(proto.domStyles): {};
+		enyo.Control.cssTextToDomStyles(props.style, s);
+		proto.kindStyle = proto.domCssText = enyo.Control.domStylesToCssText(s);
+		proto.domStyles = s;
 		delete props.style;
 	}
 });
