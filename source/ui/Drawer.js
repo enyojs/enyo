@@ -12,14 +12,14 @@ enyo.kind({
 	name: "enyo.Drawer",
 	published: {
 		//* The visibility state of the drawer's associated control
-		open: true,
+		open : true,
 		/**
 			Direction of the opening/closing animation--either "v" for vertical
 			or "h" for horizontal
 		*/
-		orient: "v",
+		orient : "v",
 		//* If true, the opening/closing transition will be animated
-		animated: true
+		animated : true
 	},
 	events: {
 		/**
@@ -28,6 +28,7 @@ enyo.kind({
 			property. If _this.getOpen()_ returns true, the drawer was opened; if not,
 			it was closed.
 		*/
+		onDrawerAnimationStep: "",
 		onDrawerAnimationEnd: ""
 	},
 	//* @protected
@@ -101,6 +102,7 @@ enyo.kind({
 		if (this.container) {
 			this.container.resized();
 		}
+		this.doDrawerAnimationStep();
 		return true;
 	},
 	animatorEnd: function() {
