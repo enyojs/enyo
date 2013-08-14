@@ -103,7 +103,6 @@ enyo.kind({
 		var e = new K2({style: "height: 150px; text-color: blue; color: blue"});
 		e.renderInto(div);
 		try {
-			debugger
 			// note: there's no text-color CSS property, so we won't get it out of cssText
 			if (enyo.trim(e.hasNode().style.cssText) !== "background-color: green; height: 150px; width: 150px; color: blue;") {
 				throw("bad cssText property");
