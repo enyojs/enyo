@@ -89,5 +89,36 @@ enyo.kind({
 			document.body.removeChild(div);
 		}
 		this.finish();
+	},
+	testStyles: function() {
+		var div = document.createElement("div");
+		document.body.appendChild(div);
+		var K = enyo.kind({
+			style: "background-color: red; height: 100px"
+		});
+		var K2 = enyo.kind({
+			kind: K,
+			style: "background-color: green; width: 150px;"
+		});
+		var e = new K2({style: "height: 150px; text-color: blue; color: blue"});
+		e.renderInto(div);
+		try {
+			// note: there's no text-color CSS property, so we won't get it out of cssText
+			if (e.hasNode().style.cssText !== "background-color: green; height: 150px; width: 150px; color: blue;") {
+				throw("bad cssText property");
+			}
+			e.applyStyle("background-color", "white");
+			if (e.hasNode().style.cssText !== "background-color: white; height: 150px; width: 150px; color: blue;") {
+				throw("bad cssText property");
+			}
+			e.setStyle("height: 200px;");
+			if (e.hasNode().style.cssText !== "background-color: green; height: 200px; width: 150px; color: blue;") {
+				throw("bad cssText property");
+			}
+		} finally {
+			e.destroy();
+			document.body.removeChild(div);
+		}
+		this.finish();
 	}
 });

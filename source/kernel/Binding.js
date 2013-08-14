@@ -1,5 +1,5 @@
 (function (enyo) {
-	
+
 	//*@protected
 	// the internal store for bindings so they can be found by id later
 	var map = {},
@@ -18,7 +18,7 @@
 		do not want to have to reset the sticky flag on every execution.
 	*/
 	_token = /\{\$([^{}]*)\}/;
-	
+
 	//*@public
 	/**
 		A _enyo.Binding_ is used to keep properties synchronized. They can be
@@ -204,8 +204,7 @@
 		},
 		initRoot: function (part, root) {
 			var p = this[root],
-				e = this.expandMacros,
-				o = this.owner, r;
+				e = this.expandMacros, r;
 			// this resolving algorithm is only active if the root has not yet
 			// been resolved
 			if (enyo.isString(p)) {
@@ -248,7 +247,7 @@
 				return enyo.error("enyo.Binding: binding `" + part + "` path must begin with `^` or `.` to signify " +
 					"relativity of the path");
 			}
-			
+
 			i = (i == "."? true: false);
 			// if it is a relative path but we have no root or owner
 			// then we know we can't find it
@@ -488,7 +487,13 @@
 				o = this.owner,
 				bo = o? o._bindingTransformOwner: null;
 			if (tf && enyo.isString(tf)) {
-				tf = (bo || o? enyo.getPath.call(bo || o, tf): enyo.getPath(tf));
+				// test first against the common case which is that it is on the
+				// transform owner or the actual owner
+				if (bo || o) {
+					tf = enyo.getPath.call(bo || o, this.transform);
+				}
+				// only if that fails to we attempt to find the global
+				if (!tf) { tf = enyo.getPath(this.transform); }
 			}
 			this.transform = enyo.isFunction(tf)? tf: null;
 		}
@@ -499,5 +504,5 @@
 		`defaultBindingKind` property is set to a different _kind_ of _binding_.
 	*/
 	enyo.defaultBindingKind = enyo.Binding;
-	
+
 })(enyo);
