@@ -355,7 +355,7 @@ enyo.kind({
 	//
 	//* @protected
 	initStyles: function() {
-		this.domStyles = this.domStyles || {};
+		this.domStyles = this.domStyles? enyo.clone(this.domStyles): {};
 	},
 	styleChanged: function() {
 		// since we want to reset the style to the default kind styles and whatever
