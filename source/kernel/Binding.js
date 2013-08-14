@@ -487,7 +487,13 @@
 				o = this.owner,
 				bo = o? o._bindingTransformOwner: null;
 			if (tf && enyo.isString(tf)) {
-				tf = (bo || o? enyo.getPath.call(bo || o, tf): enyo.getPath(tf));
+				// test first against the common case which is that it is on the
+				// transform owner or the actual owner
+				if (bo || o) {
+					tf = enyo.getPath.call(bo || o, this.transform);
+				}
+				// only if that fails to we attempt to find the global
+				if (!tf) { tf = enyo.getPath(this.transform); }
 			}
 			this.transform = enyo.isFunction(tf)? tf: null;
 		}
