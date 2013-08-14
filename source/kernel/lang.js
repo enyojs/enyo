@@ -971,7 +971,14 @@
 	};
 
 	//* @public
-
+	/**
+		Takes a string and trims leading and trailing spaces. If the string
+		has no length, is not a string or is a falsy value it will be returned
+		without modification.
+	*/
+	enyo.trim = function (str) {
+		return str && str.replace? (str.replace(/^\s+|\s$/, "")): str;
+	};
 	/**
 		Provides a stub function for _g11n_ string translation. This allows
 		strings to be wrapped in preparation for localization. If the _g11n_
