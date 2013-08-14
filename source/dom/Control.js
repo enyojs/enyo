@@ -359,21 +359,10 @@ enyo.kind({
 		enyo.Control.cssTextToDomStyles(this.style, this.domStyles);
 		this.domCssText = enyo.Control.domStylesToCssText(this.domStyles);
 	},
-	styleChanged: function() {
-		// FIXME: stomping on domStyles is problematic, there may be styles on this object
-		// applied by layouts or other objects.
-		// We may need a 'runtimeStyles' concept separate from a 'userStyles' concept, although
-		// it's not clear what API calls like 'applyStyle' would affect, and which concept would take
-		// precedence when there is a conflict.
-		// Perhaps we can separate 'style' completely from 'domStyles'. API methods like applyStyle
-		// would affect domStyles, and the two style databases would be combined at render-time.
-		// Alternatively, we can disallow changing "style" string at runtime and allow it to be set
-		// at init-time only (as it was in pre-ares enyo).
-		//this.domStyles = {};
-		//this.addStyles(this.kindStyle);
-		this.addStyles(this.style);
-		this.invalidateTags();
-		this.renderStyles();
+	styleChanged: function(oldStyle) {
+		enyo.Control.cssTextToDomStyles(oldStyle, this.domStyles, true);
+		enyo.Control.cssTextToDomStyles(this.style, this.domStyles);
+		this.domStylesChanged();
 	},
 	//* @public
 	/**
@@ -420,7 +409,7 @@ enyo.kind({
 		this.renderStyles();
 	},
 	stylesToNode: function() {
-		this.node.style.cssText = this.style + (this.style[this.style.length-1] == ';' ? ' ' : '; ') + this.domCssText;
+		this.node.style.cssText = this.domCssText;
 	},
 	setupBodyFitting: function() {
 		enyo.dom.applyBodyFit();
@@ -732,7 +721,7 @@ enyo.kind({
 		this.tagsValid = false;
 	},
 	prepareTags: function() {
-		var htmlStyle = this.domCssText + this.style;
+		var htmlStyle = this.domCssText;
 		this._openTag = '<' +
 			this.tag +
 			(htmlStyle ? ' style="' + htmlStyle + '"' : "") +
@@ -941,7 +930,7 @@ enyo.kind({
 			enyo.remove(this, enyo.roots);
 		}
 	},
-	
+
 	//
 	//
 	statics: {
@@ -963,20 +952,25 @@ enyo.kind({
 		},
 		selfClosing: {img: 1, hr: 1, br: 1, area: 1, base: 1, basefont: 1, input: 1, link: 1, meta: 1,
 			command: 1, embed: 1, keygen: 1, wbr: 1, param: 1, source: 1, track: 1, col: 1},
-		cssTextToDomStyles: function(inText, inStyleHash) {
+		cssTextToDomStyles: function(inText, inStyleHash, remove) {
 			if (inText) {
-				// remove spaces between rules, then split rules on delimiter (;)
-				var rules = inText.replace(/; /g, ";").split(";");
+				// rules are separated by any number of spaces and semicolons
+				var rules = inText.split(/\s*;[\s;]*/);
 				// parse string styles into name/value pairs
 				for (var i=0, s, n, v, rule; (rule=rules[i]); i++) {
 					// "background-image: url(http://foo.com/foo.png)" => ["background-image", "url(http", "//foo.com/foo.png)"]
-					s = rule.split(":");
+					// remove whitespace around the color on split
+					s = rule.split(/\s*:\s*/);
 					// n = "background-image", s = ["url(http", "//foo.com/foo.png)"]
 					n = s.shift();
-					// v = ["url(http", "//foo.com/foo.png)"].join(':') = "url(http://foo.com/foo.png)"
-					v = s.join(':');
 					// store name/value pair
-					inStyleHash[n] = v;
+					if (remove) {
+						delete inStyleHash[n];
+					} else {
+						// v = ["url(http", "//foo.com/foo.png)"].join(':') = "url(http://foo.com/foo.png)"
+						v = s.join(':');
+						inStyleHash[n] = v;
+					}
 				}
 			}
 		},
