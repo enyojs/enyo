@@ -558,18 +558,6 @@
 			this.width = this.getWidth();
 			this.height = this.getHeight();
 		},
-		dispatchEvent: enyo.super(function (sup) {
-			return function (n) {
-				// FIXME: This is only a partial solution to a larger issue of detecting
-				// size changes in the children and properly laying out the pages after
-				// this happens. In this particular case we're guessing that if a page has
-				// had an image load, we need to try and adjust if we need to.
-				if (n == "onload") {
-					this.startJob("layoutPages", this.layoutPages, 100);
-				}
-				return sup.apply(this, arguments);
-			};
-		}),
 		layoutPages: function () {
 			this.adjustPageSize(this.$.page1);
 			this.adjustPageSize(this.$.page2);

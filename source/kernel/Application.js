@@ -94,20 +94,6 @@
 		}
 	};
 
-	//*@protected
-	enyo.kind.postConstructors.push(function () {
-		if (!this._isApplication) {
-			return;
-		}
-
-		// now that any controllers for the application have been
-		// initialized, we test to see if we're supposed to
-		// automatically start
-		if (true === this.autoStart) {
-			this.start();
-		}
-	});
-
 	//*@public
 	/**
 		_enyo.Application_ is a kind used to coordinate execution of a given
@@ -193,6 +179,9 @@
 				_setupControllers.call(this);
 				// now we let it continue as usual
 				sup.apply(this, arguments);
+				if (this.autoStart) {
+					this.start();
+				}
 			};
 		}),
 		

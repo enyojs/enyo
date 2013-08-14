@@ -364,18 +364,6 @@
 		return false;
 	};
 
-	//*@protected
-	/**
-		Without interfering with the construction chain, we need to register
-		the record with the store. This cannot be done during the construction
-		chain.
-	*/
-	enyo.kind.postConstructors.push(function () {
-		if (this.__isModel) {
-			enyo.models.queue(this);
-		}
-	});
-
 	//*@public
 	/**
 		The status of an _enyo.Model_ will be one of values defined in the _STATES_
@@ -822,12 +810,16 @@
 		// ...........................
 		// COMPUTED PROPERTIES
 
+		computed: {
+			query: []
+		},
+
 		//*@public
 		/**
 			Used internally by _enyo.Source_ to generate an appropriate request url.
 			Overload this method in custom setups.
 		*/
-		query: enyo.computed(function () {
+		query: function () {
 			if (!this.noUrl && !this.rawUrl) {
 				return this.get("url") + "/" + this.get(this.primarykey);
 			} else if (this.rawUrl) {
@@ -835,7 +827,7 @@
 			} else {
 				return "";
 			}
-		}),
+		},
 
 		// ...........................
 		// PUBLIC METHODS
@@ -1227,6 +1219,13 @@
 			};
 		}),
 		
+		constructed: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				enyo.models.queue(this);
+			};
+		}),
+		
 		//*@public
 		/**
 			Attempts to generate a schema implicitly from a data structure.
@@ -1257,12 +1256,7 @@
 				this.owner.addComponent(this);
 			}
 			if (this.owner && true === (this.owner instanceof enyo.Component)) {
-				this.set("_defaultTarget", this.owner);
-				this.set("_defaultDispatch", true);
-			} else {
-				// otherwise we either don't have an owner or they cannot
-				// accept events so we remove our bubble target
-				this.set("_defaultTarget", null);
+				this.set("_dispatchDefaultPath", true);
 			}
 		},
 
@@ -1345,7 +1339,7 @@
 			the model. Calls _flushChanges()_, which will emit an _onChange_
 			event if the model isn't currently silenced.
 		*/
-		__attributeSpy: enyo.observer(function (prop, prev, val) {
+		__attributeSpy: function (prev, val, prop) {
 			if (this.__attributeFor(prop) || this.isRelation(prop)) {
 				// TODO: Type checking has been temporarily removed
 				// and should probably be added as validation instead
@@ -1353,10 +1347,10 @@
 				this.__changed[prop] = val;
 				this.flushChanges();
 			}
-		}, "*"),
+		},
 
 		//*@protected
-		__statusChanged: enyo.observer(function (prop, prev, val) {
+		__statusChanged: function (prev, val, prop) {
 			var $i, c$;
 			if (val === DIRTY) {
 				for ($i=0; (c$=this.__collections[$i]); ++$i) {
@@ -1367,7 +1361,12 @@
 					c$.removeDirtyModel(this);
 				}
 			}
-		}, "status")
+		},
+		
+		observers: {
+			__statusChanged: ["status"],
+			__attributeSpy: ["*"]
+		}
 
 	});
 

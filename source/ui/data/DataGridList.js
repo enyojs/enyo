@@ -44,8 +44,9 @@
 		initComponents: enyo.super(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
-				var $k = this.defaultKind;
-				$k.extend({classes: "enyo-data-grid-list-item"});
+				var d = this.defaultProps,
+					c = " enyo-data-grid-list-item";
+				d.classes = (d.classes || "") + c;
 			};
 		}),
 		create: enyo.super(function (sup) {

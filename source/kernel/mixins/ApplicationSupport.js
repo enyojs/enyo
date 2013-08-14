@@ -1,47 +1,28 @@
 //*@public
 /**
-	The _enyo.ApplicationSupport_ mixin adds generic support to any
-	_enyo.Component_ such that anytime the _createComponent_ (or
-	_createComponents_) method is called, it will supply a reference
-	to the application instance it belongs to as the _app_ property, for
-	use in determining relative paths to application-scoped controllers
-	or state.
+	These properties are applied to all _enyo.Components_ and
+	ensures that, when created in the scope of an _enyo.Application_,
+	they will have a reference to their _owner-application_ via the
+	`app` property.
 */
-enyo.createMixin({
-
-	// ...........................
-	// PUBLIC PROPERTIES
-
-	//*@public
-	name: "enyo.ApplicationSupport",
-
-	//*@public
-	app: null,
-
-	// ...........................
-	// PROTECTED PROPERTIES
-
-	//*@protected
-	_supportsApplications: true,
-
-	// ...........................
-	// PROTECTED METHODS
-
-	//*@protected
+enyo.ApplicationSupport = {
+	name: "ApplicationSupport",
 	/**
-		Overload this method to add the _app_ property to
-		all child components.
+		This will be the reference to the _owner-application_ if the
+		_enyo.Component_ was created in the scope of an _enyo.Application_.
 	*/
-	adjustComponentProps: function (props) {
-		// copy the reference of this component to the child component
-		// properties hash
-		props.app = this.app;
-		return this.inherited(arguments, props);
-	},
-
-	//*@protected
-	destroy: function () {
-		this.app = undefined;
-	}
-
-});
+	app: null,
+	adjustComponentProps: enyo.super(function (sup) {
+		return function (props) {
+			props.app = this.app;
+			sup.apply(this, arguments);
+		};
+	}),
+	destroy: enyo.super(function (sup) {
+		return function () {
+			// release the reference to the application
+			this.app = null;
+			sup.apply(this, arguments);
+		};
+	})
+};

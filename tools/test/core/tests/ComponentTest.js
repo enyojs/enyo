@@ -59,9 +59,9 @@ enyo.kind({
 		c.startJob("testStopJob", function() {
 			finish("job wasn't stopped");
 		}, 10);
-
+	
 		enyo.jobs.registerPriority(8, "high");
-
+	
 		setTimeout(function() {
 			c.stopJob("testStopJob");
 			enyo.jobs.unregisterPriority("high");
@@ -114,7 +114,7 @@ enyo.kind({
 			}
 		});
 		c.startJob("increment", "increment", 1); // number should be 1
-
+	
 		setTimeout(function(){
 			if (c.number !== 1) {
 				finish("job did not execute even though its not blocked");
@@ -134,7 +134,7 @@ enyo.kind({
 		enyo.jobs.registerPriority(5, "testPriority");
 		c.startJob("incrementLow", "increment", 1, 1); // number should be 1
 		c.startJob("incrementHigh", "increment", 1, 6); // number should be 2
-
+	
 		setTimeout(function(){
 			if (c.number !== 1) {
 				finish("High priority did not execute");
