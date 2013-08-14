@@ -31,6 +31,14 @@
 			detected properly.
 		*/
 		selectionProperty: "",
+		/**
+			Use this hash to define `defaultBindingProperties` for _all_ children
+			(even children of children) for this _repeater_. This can be very convenient
+			to keep from needing to write the same paths many times. You can use any
+			binding macros as well. Any of the properties defined here will be superceded
+			by the same property defined for an individual binding.
+		*/
+		childBindingDefaults: null,
 		//*@protected
 		childMixins: [
 			enyo.RepeaterChildSupport,
@@ -64,6 +72,7 @@
 				d = this.defaultProps? enyo.clone(this.defaultProps): (this.defaultProps = {});
 			// ensure that children know who their binding owner is
 			d._bindingTransformOwner = this;
+			d.bindingDefaults = this.childBindingDefaults;
 			if (c) {
 				// if there are multiple components in the components block they will become nested
 				// children of the default kind set for the repeater

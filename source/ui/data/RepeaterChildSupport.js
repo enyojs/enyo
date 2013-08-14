@@ -33,6 +33,13 @@ enyo.RepeaterChildModelSupport = {
 	}),
 	adjustComponentProps: enyo.super(function (sup) {
 		return function (props) {
+			var bd = props.bindingDefaults;
+			if (bd) {
+				bd = this.bindingDefaults? enyo.mixin(enyo.clone(this.bindingDefaults), bd): bd;
+			} else {
+				bd = this.bindingDefaults;
+			}
+			props.bindingDefaults = bd;
 			sup.apply(this, arguments);
 			// if we have a model already we just set it
 			props.model = this.model;
@@ -47,12 +54,19 @@ enyo.RepeaterChildModelSupport = {
 		this.notifyObservers("model", p, c);
 	},
 	bindingMacros: {
-		index: "._modelOwner.index"
+		index: "_modelOwnerIndex"
 	},
 	/**
 		We have to store a reference to the bound method so we can correctly
 		remove it as an observer later.
 	*/
+	_modelOwnerIndex: function (lex, token, macro, prop, binding) {
+		// we will remove any given source as specified because
+		// this is a meta property in the chain
+		binding.source = null;
+		// now we return the expanded correct path
+		return "._modelOwner.index";
+	},
 	_modelOwnerObserver: null,
 	_modelOwner: null
 };
