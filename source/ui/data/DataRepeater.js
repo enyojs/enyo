@@ -33,7 +33,8 @@
 		selectionProperty: "",
 		//*@protected
 		childMixins: [
-			enyo.RepeaterChildSupport
+			enyo.RepeaterChildSupport,
+			enyo.RepeaterChildModelSupport
 		],
 		concat: ["childMixins"],
 		controlParentName: "container",
@@ -58,31 +59,25 @@
 		_selection: null,
 		initComponents: function () {
 			this.initContainer();
-			// we need to find the child definition and prepare it for
-			// use in our repeater, including adding auto binding support
-			var $c = this.kindComponents || this.components || [],
-				$o = this.components? this.owner: this, $p;
-			// if there is a special definition in the components block we
-			// wrap it up in a new anonymous kind for reuse later
-			if ($c.length) {
-				$p = enyo.pool.claimObject(true);
-				$p.kind = this.defaultKind || "enyo.View";
-				if ($c.length > 1) {
-					$p.components = $c;
-				} else {
-					enyo.mixin($p, $c[0]);
+			var c = this.kindComponents || this.components || [],
+				o = this.getInstanceOwner(),
+				d = this.defaultProps? enyo.clone(this.defaultProps): (this.defaultProps = {});
+			// ensure that children know who their binding owner is
+			d._bindingTransformOwner = this;
+			if (c) {
+				// if there are multiple components in the components block they will become nested
+				// children of the default kind set for the repeater
+				if (c.length > 1) {
+					d.components = c;
 				}
-				this.defaultKind = enyo.kind($p);
-				enyo.pool.releaseObject($p);
-			} else {
-				// otherwise we use the defaultKind property value and assume
-				// it was set properly
-				this.defaultKind = enyo.constructorForKind(this.defaultKind);
+				// if there is only one child the properties will be the default kind of the repeater
+				else {
+					enyo.mixin(d, c[0]);
+				}
+				d.repeater = this;
+				d.owner = o;
+				d.mixins = d.mixins? d.concat(this.childMixins): this.childMixins;
 			}
-			$p = this.defaultProps || (this.defaultProps = {});
-			$p.owner = $o;
-			$p.mixins = this.childMixins;
-			$p.repeater = this;
 		},
 		constructor: enyo.super(function (sup) {
 			return function () {
@@ -99,47 +94,47 @@
 			};
 		}),
 		reset: function () {
-			var $d = this.get("data");
+			var d = this.get("data");
 			this.destroyClientControls();
-			for (var $i=0, d$; (d$=$d[$i]); ++$i) {
-				this.add(d$, $i);
+			for (var i=0, d$; (d$=d[i]); ++i) {
+				this.add(d$, i);
 			}
 		},
 		add: function (record, idx) {
-			var $c = this.createComponent({model: record, index: idx});
+			var c = this.createComponent({model: record, index: idx});
 			if (this.generated && !this.batching) {
-				$c.render();
+				c.render();
 			}
 		},
 		remove: function (idx) {
-			var $g = this.getClientControls();
-			var $c = $g[idx || (Math.abs($g.length-1))];
-			if ($c) {
-				$c.destroy();
+			var g = this.getClientControls();
+			var c = g[idx || (Math.abs(g.length-1))];
+			if (c) {
+				c.destroy();
 			}
 		},
 		update: function (idx) {
-			var $d = this.get("data");
-			var $g = this.getClientControls();
-			var $c = $g[idx];
-			if ($d[idx] && $c) {
-				$c.set("model", $d[idx]);
+			var d = this.get("data"),
+				g = this.getClientControls(),
+				c = g[idx];
+			if (d[idx] && c) {
+				c.set("model", d[idx]);
 			}
 		},
 		prune: function () {
-			var $g = this.getClientControls();
-			var $x = $g.slice(this.length);
-			for (var $i=0, c$; (c$=$x[$i]); ++$i) {
+			var g = this.getClientControls(),
+				x = g.slice(this.length);
+			for (var i=0, c$; (c$=x[i]); ++i) {
 				c$.destroy();
 			}
 		},
 		initContainer: function () {
-			var $c = this.get("containerOptions"), $n;
-			$n = $c.name || ($c.name = this.containerName);
-			this.createChrome([$c]);
+			var ops = this.get("containerOptions"),
+				nom = ops.name || (ops.name = this.containerName);
+			this.createChrome([ops]);
 			this.discoverControlParent();
-			if ($n != this.containerName) {
-				this.$[this.containerName] = this.$[$n];
+			if (nom != this.containerName) {
+				this.$[this.containerName] = this.$[nom];
 			}
 		},
 		modelAdded: function (sender, event) {
@@ -150,7 +145,7 @@
 		modelsAdded: function (sender, event) {
 			if (sender == this.controller) {
 				this.set("batching", true);
-				for (var $i=0, m$; (m$=event.models[$i]); ++$i) {
+				for (var i=0, m$; (m$=event.models[i]); ++i) {
 					this.add(m$.model, m$.index);
 				}
 				this.set("batching", false);
@@ -163,7 +158,7 @@
 		},
 		modelsRemoved: function (sender, event) {
 			if (sender == this.controller) {
-				for (var $i=0, m$; (m$=event.models[$i]); ++$i) {
+				for (var i=0, m$; (m$=event.models[i]); ++i) {
 					this.remove(m$.index);
 				}
 			}
@@ -198,27 +193,27 @@
 		select: function (index) {
 			var c$ = this.getChildForIndex(index),
 				m$ = this.controller.at(index),
-				$s = this._selection, i$;
+				s = this._selection, i$;
 			if (this.selection) {
 				if (this.multipleSelection) {
-					if (!~enyo.indexOf(m$, $s)) {
-						$s.push(m$);
+					if (!~enyo.indexOf(m$, s)) {
+						s.push(m$);
 					}
 				} else {
-					if (!~enyo.indexOf(m$, $s)) {
-						while ($s.length) {
-							i$ = this.controller.indexOf($s.pop());
+					if (!~enyo.indexOf(m$, s)) {
+						while (s.length) {
+							i$ = this.controller.indexOf(s.pop());
 							this.deselect(i$);
 						}
-						$s.push(m$);
+						s.push(m$);
 					}
 				}
 				if (c$) {
 					c$.set("selected", true);
 				}
 				if (this.selectionProperty) {
-					$s = this.selectionProperty;
-					m$.set($s, true);
+					s = this.selectionProperty;
+					m$.set(s, true);
 				}
 				this.notifyObservers("selected");
 			}
@@ -229,17 +224,17 @@
 		deselect: function (index) {
 			var c$ = this.getChildForIndex(index),
 				m$ = this.controller.at(index),
-				$s = this._selection, $i;
-			$i = enyo.indexOf(m$, $s);
-			if (!!~$i) {
-				$s.splice($i, 1);
+				s = this._selection, i;
+			i = enyo.indexOf(m$, s);
+			if (!!~i) {
+				s.splice(i, 1);
 			}
 			if (c$) {
 				c$.set("selected", false);
 			}
 			if (this.selectionProperty) {
-				$s = this.selectionProperty;
-				m$.set($s, false);
+				s = this.selectionProperty;
+				m$.set(s, false);
 			}
 			this.notifyObservers("selected");
 		},
@@ -255,10 +250,10 @@
 		selectAll: function () {
 			if (this.multipleSelection) {
 				this.stopNotifications();
-				var $s = this._selection;
-				$s.length = 0;
-				for (var $i=0; $i<this.length; ++$i) {
-					this.select($i);
+				var s = this._selection;
+				s.length = 0;
+				for (var i=0; i<this.length; ++i) {
+					this.select(i);
 				}
 				this.startNotifications();
 			}
@@ -269,9 +264,9 @@
 		deselectAll: function () {
 			if (this.selection) {
 				this.stopNotifications();
-				var $s = this._selection, m$, i$;
-				while ($s.length) {
-					m$ = $s.pop();
+				var s = this._selection, m$, i$;
+				while (s.length) {
+					m$ = s.pop();
 					i$ = this.controller.indexOf(m$);
 					this.deselect(i$);
 				}

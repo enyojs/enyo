@@ -1,3 +1,61 @@
+//*@protected
+/**
+	This is used internally to add the recursive "model" feature for children of
+	_enyo.DataRepeaters_.
+*/
+enyo.RepeaterChildModelSupport = {
+	name: "RepeaterChildModelSupport",
+	constructed: enyo.super(function (sup) {
+		return function () {
+			// prior to create running which will begin the init components
+			// path we check to make sure we know what level we are -- if
+			// we have the repeater property we are the top level child of a
+			// repeater and we are our own _modelOwner otherwise this needs to be
+			// set to that top level repeater child
+			var mo = this._modelOwner = this.repeater? this: this.getInstanceOwner();
+			if (mo !== this) {
+				this._modelOwnerObserver = mo.addObserver("model", this.modelOwnerObserver, this);
+				this.notifyObservers("_modelOwner");
+			}
+			sup.apply(this, arguments);
+		};
+	}),
+	destroy: enyo.super(function (sup) {
+		return function () {
+			var mo = this._modelOwner;
+			if (mo !== this) {
+				mo.removeObserver("model", this._modelOwnerObserver);
+				this._modelOwnerObserver = null;
+			}
+			this._modelOwner = null;
+			sup.apply(this, arguments);
+		};
+	}),
+	adjustComponentProps: enyo.super(function (sup) {
+		return function (props) {
+			sup.apply(this, arguments);
+			// if we have a model already we just set it
+			props.model = this.model;
+			// we want to ensure that all children recursively have this mixin so
+			// they can register for model changed events without forcing a waterfall
+			// for each child (and subsequently their children) of the repeater
+			props.mixins = (props.mixins || []).concat([enyo.RepeaterChildModelSupport]);
+		};
+	}),
+	modelOwnerObserver: function (p, c) {
+		this.model = c;
+		this.notifyObservers("model", p, c);
+	},
+	bindingMacros: {
+		index: "._modelOwner.index"
+	},
+	/**
+		We have to store a reference to the bound method so we can correctly
+		remove it as an observer later.
+	*/
+	_modelOwnerObserver: null,
+	_modelOwner: null
+};
 //*@public
 /**
 	These methods and properties are automatically applied to all children
@@ -42,6 +100,21 @@ enyo.RepeaterChildSupport = {
 			this.set("selected", !this.selected);
 		}
 	},
+	/**
+		Deliberately used to supercede the default method and set owner
+		to this control so that there isn't name collision in the instance
+		owner and also so that bindings will be able to correctly map to
+		names.
+	*/
+	createClientComponents: enyo.super(function () {
+		return function (components) {
+			this.createComponents(components, {owner: this});
+		};
+	}),
+	/**
+		So we don't stomp on any built-in handlers for the ontap
+		event.
+	*/
 	dispatchEvent: enyo.super(function (sup) {
 		return function (name, event, sender) {
 			if (name == "ontap") {
