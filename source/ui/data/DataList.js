@@ -158,10 +158,8 @@
 					p$.index = $i;
 				}
 				this.resetMetrics();
-				if (this.length) {
-					for ($i=0; (p$=this.$.active.children[$i]); ++$i) {
-						this.generatePage(p$, $i);
-					}
+				for ($i=0; (p$=this.$.active.children[$i]); ++$i) {
+					this.generatePage(p$, $i);
 				}
 				this.updateMetrics();
 				// at this point there is most likely overlap of the pages but

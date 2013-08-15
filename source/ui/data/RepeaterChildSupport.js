@@ -89,7 +89,7 @@ enyo.RepeaterChildSupport = {
 	selectedChanged: enyo.super(function (sup) {
 		return function () {
 			if (this.repeater.selection) {
-				this.addRemoveClass(this.selectionClass || "selected", this.selected);
+				this.addRemoveClass(this.selectedClass || "selected", this.selected);
 				// for efficiency purposes we now directly call this method as opposed to
 				// forcing a synchronous event dispatch
 				if (this.selected && !this.repeater.isSelected(this.model)) {
