@@ -92,6 +92,7 @@ enyo.kind({
 	//* @protected
 	node: null,
 	generated: false,
+	kindStyle: "",
 	create: enyo.super(function (sup) {
 		return function() {
 			if (this.tag == null) {
