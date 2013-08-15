@@ -640,6 +640,7 @@ enyo.concatHandler("events", function (proto, props) {
 });
 
 enyo.Component.overrideComponents = function(components, overrides, defaultKind) {
+	var fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isSuper(v)); };
 	for (var i=0; i<components.length; i++) {
 		var c = components[i];
 		var o = overrides[c.name];
@@ -650,7 +651,7 @@ enyo.Component.overrideComponents = function(components, overrides, defaultKind)
 			enyo.handleConcatenatedProperties(c, o, true);
 			delete c.concat;
 			// All others just mix in
-			enyo.mixin(c, o, {filter: function (k, v) { return !(enyo.isFunction(v) || enyo.isSuper(v)); }});
+			enyo.mixin(c, o, {filter: fn});
 		}
 		if (c.components) {
 			enyo.Component.overrideComponents(c.components, overrides, ctor.prototype.defaultKind);
