@@ -136,8 +136,8 @@ enyo.kind({
 			this.value = this.endValue;
 			this.fraction = 1;
 			this.fire("onStep");
-			this.fire("onEnd");
 			this.cancel();
+			this.fire("onEnd");
 		} else {
 			this.fire("onStep");
 			this.requestNext();
