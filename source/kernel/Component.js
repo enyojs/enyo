@@ -67,7 +67,14 @@ enyo.kind({
 			defined during creation based on the _createComponent_ call or
 			_components_ hash.
 		*/
-		owner: null
+		owner: null,
+		/**
+			This can be a hash of features to apply to chrome components of the base
+			kind. They are matched by _name_ (if the component you wish to modify does not
+			have a _name_ this will not work). You can modify any properties of the component
+			except for _methods_. Setting this at runtime will have no affect.
+		*/
+		componentOverrides: null
 	},
 	//* @protected
 	protectedStatics: {
@@ -641,8 +648,9 @@ enyo.Component.overrideComponents = function(components, overrides, defaultKind)
 			// Special handling for concatenated properties
 			c.concat = ctor.prototype.concat;
 			enyo.handleConcatenatedProperties(c, o);
+			delete c.concat;
 			// All others just mix in
-			enyo.mixin(c, o);
+			enyo.mixin(c, o, {filter: function (k, v) { return !(enyo.isFunction(v) || enyo.isSuper(v)); }});
 		}
 		if (c.components) {
 			enyo.Component.overrideComponents(c.components, overrides, ctor.prototype.defaultKind);

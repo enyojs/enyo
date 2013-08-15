@@ -167,7 +167,7 @@ enyo.kind({
 			kind: "componenttest.BaseKind",
 			componentOverrides: {
 				purple: {kind:"enyo.Button", content:"Overridden purple", classes:"over-purple", style:"background:over-purple;"},
-				green: {kind:"enyo.Button", content:"Overridden green", classes:"over-green", style:"background:over-green;"}
+				green: {kind:"enyo.Button", newMethod: function () {throw "I EXIST";}, content:"Overridden green", classes:"over-green", style:"background:over-green;"}
 			}
 		});
 		// Sub-sub kind: override kind & content again, 
@@ -179,7 +179,6 @@ enyo.kind({
 				green: {kind:"enyo.Anchor", content:"Again green", classes:"again-green", style:"background:again-green;"}
 			}
 		});
-
 		var baseKind = new C1();
 		var subKind = new C2();
 		var subSubKind = new C3();
@@ -233,6 +232,14 @@ enyo.kind({
 		if ((subSubKind.$.purple.kindStyle != "background: again-purple;") ||
 			(subSubKind.$.green.kindStyle != "background: again-green;")) {
 			throw "Multiply-subclassed overrides were not applied properly: unexpeted style";
+		}
+
+		try {
+			subKind.$.green.newMethod();
+		} catch (e) {
+			if (e == "I EXIST") {
+				throw "Method should not be on child";
+			}
 		}
 
 		this.finish();
