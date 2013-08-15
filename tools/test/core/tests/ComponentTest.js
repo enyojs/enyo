@@ -146,5 +146,102 @@ enyo.kind({
 				finish();
 			}
 		}, 20);
+	},
+	testOverrideComponentProps: function() {
+		// Base kind
+		var C1 = enyo.kind({
+			name: "componenttest.BaseKind",
+			components: [
+				{name:"red", content:"Red", components: [
+					{name:"orange", content:"Orange", components: [
+						{kind:"enyo.Anchor", name:"green", content:"Green", classes:"green", style:"background:green;"}
+					]}
+				]},
+				{name:"purple", content:"Purple", classes:"purple", style:"background:purple;"},
+				{name:"blue", content:"Blue"}
+			]
+		});
+		// Subkind: override kind & content
+		var C2 = enyo.kind({
+			name: "componenttest.SubKind",
+			kind: "componenttest.BaseKind",
+			componentOverrides: {
+				purple: {kind:"enyo.Button", content:"Overridden purple", classes:"over-purple", style:"background:over-purple;"},
+				green: {kind:"enyo.Button", newMethod: function () {throw "I EXIST";}, content:"Overridden green", classes:"over-green", style:"background:over-green;"}
+			}
+		});
+		// Sub-sub kind: override kind & content again, 
+		var C3 = enyo.kind({
+			name: "componenttest.SubSubKind",
+			kind: "componenttest.SubKind",
+			componentOverrides: {
+				purple: {kind:"enyo.Anchor", content:"Again purple", classes:"again-purple", style:"background:again-purple;"},
+				green: {kind:"enyo.Anchor", content:"Again green", classes:"again-green", style:"background:again-green;"}
+			}
+		});
+		var baseKind = new C1();
+		var subKind = new C2();
+		var subSubKind = new C3();
+
+		if ((baseKind.$.purple.kindName != "enyo.Control") || 
+			(baseKind.$.green.kindName != "enyo.Anchor")) {
+			throw "Overrides should not modify base kind: unexpected kindName";
+		} 
+		if ((baseKind.$.purple.content != "Purple") ||
+			(baseKind.$.green.content != "Green")) {
+			throw "Overrides should not modify base kind: unexpected content";
+		}
+		if ((baseKind.$.purple.classes != "purple") ||
+			(baseKind.$.green.classes != "green")) {
+			throw "Overrides should not modify base kind: unexpected classes";
+		}
+		if ((baseKind.$.purple.kindStyle != "background: purple;") ||
+			(baseKind.$.green.kindStyle != "background: green;")) {
+			throw "Overrides should not modify base kind: unexpected style";
+		}
+
+		if ((subKind.$.purple.kindName != "enyo.Button") || 
+			(subKind.$.green.kindName != "enyo.Button")) {
+			throw "Subclass overrides were not applied properly: unexpected kindName";
+		}
+		if ((subKind.$.purple.content != "Overridden purple") || 
+			(subKind.$.green.content != "Overridden green")) {
+			throw "Subclass overrides were not applied properly: unexpected content";
+		}
+		if (!/^.*purple over-purple$/.test(subKind.$.purple.classes) ||
+			!/^.*green over-green$/.test(subKind.$.green.classes)) {
+			throw "Subclass overrides were not applied properly: unexpected classes";
+		}
+		if ((subKind.$.purple.kindStyle != "background: over-purple;") ||
+			(subKind.$.green.kindStyle != "background: over-green;")) {
+			throw "Subclass overrides were not applied properly: unexpected style;";
+		}
+
+		if ((subSubKind.$.purple.kindName != "enyo.Anchor") || 
+			(subSubKind.$.green.kindName != "enyo.Anchor")) {
+			throw "Multiply-subclassed overrides were not applied properly: unexpeted kindName";
+		}
+		if ((subSubKind.$.purple.content != "Again purple") ||
+			(subSubKind.$.green.content != "Again green")) {
+			throw "Multiply-subclassed overrides were not applied properly: unexpeted content";
+		}
+		if (!/^.*purple over-purple again-purple$/.test(subSubKind.$.purple.classes) ||
+			!/^.*green over-green again-green$/.test(subSubKind.$.green.classes)) {
+			throw "Multiply-subclassed overrides were not applied properly: unexpeted classes: " + subSubKind.$.green.classes;
+		}
+		if ((subSubKind.$.purple.kindStyle != "background: again-purple;") ||
+			(subSubKind.$.green.kindStyle != "background: again-green;")) {
+			throw "Multiply-subclassed overrides were not applied properly: unexpeted style";
+		}
+
+		try {
+			subKind.$.green.newMethod();
+		} catch (e) {
+			if (e == "I EXIST") {
+				throw "Method should not be on child";
+			}
+		}
+
+		this.finish();
 	}
 });

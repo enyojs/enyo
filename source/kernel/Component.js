@@ -67,7 +67,14 @@ enyo.kind({
 			defined during creation based on the _createComponent_ call or
 			_components_ hash.
 		*/
-		owner: null
+		owner: null,
+		/**
+			This can be a hash of features to apply to chrome components of the base
+			kind. They are matched by _name_ (if the component you wish to modify does not
+			have a _name_ this will not work). You can modify any properties of the component
+			except for _methods_. Setting this at runtime will have no affect.
+		*/
+		componentOverrides: null
 	},
 	//* @protected
 	protectedStatics: {
@@ -610,6 +617,12 @@ enyo.Component.subclass = function(ctor, props) {
 	if (props.components) {
 		proto.kindComponents = props.components;
 		delete proto.components;
+	} else {
+		// Feature to mixin overrides of super-kind component properties from named hash
+		// (only applied when the sub-kind doesn't supply its own components block)
+		if (props.componentOverrides) {
+			enyo.Component.overrideComponents(proto.kindComponents, props.componentOverrides, proto.defaultKind);
+		}
 	}
 };
 
@@ -625,6 +638,27 @@ enyo.concatHandler("events", function (proto, props) {
 		enyo.Component.publishEvents(proto, props);
 	}
 });
+
+enyo.Component.overrideComponents = function(components, overrides, defaultKind) {
+	var fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isSuper(v)); };
+	for (var i=0; i<components.length; i++) {
+		var c = components[i];
+		var o = overrides[c.name];
+		var ctor = enyo.constructorForKind(c.kind || defaultKind);
+		if (o) {
+			// Special handling for concatenated properties
+			c.concat = ctor.prototype.concat;
+			enyo.handleConcatenatedProperties(c, o, true);
+			delete c.concat;
+			// All others just mix in
+			enyo.mixin(c, o, {filter: fn});
+		}
+		if (c.components) {
+			enyo.Component.overrideComponents(c.components, overrides, ctor.prototype.defaultKind);
+		}
+	}
+};
+
 enyo.Component.publishEvents = function(ctor, props) {
 	var es = props.events;
 	if (es) {

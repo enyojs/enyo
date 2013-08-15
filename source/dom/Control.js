@@ -1019,15 +1019,21 @@ enyo.concatHandler("classes", function (proto, props) {
 		delete props.classes;
 	}
 });
-enyo.concatHandler("style", function (proto, props) {
+enyo.concatHandler("style", function (proto, props, noKind) {
 	if (props.style) {
-		// in an attempt to keep from doing addtional unnecessary parsing over and
-		// over at runtime we do this here to remove redundant entries that we would
-		// otherwise see every time
-		var s = proto.domStyles? enyo.clone(proto.domStyles): {};
-		enyo.Control.cssTextToDomStyles(props.style, s);
-		proto.kindStyle = proto.domCssText = enyo.Control.domStylesToCssText(s);
-		proto.domStyles = s;
+		if (!noKind) {
+			// in an attempt to keep from doing addtional unnecessary parsing over and
+			// over at runtime we do this here to remove redundant entries that we would
+			// otherwise see every time
+			var s = proto.domStyles? enyo.clone(proto.domStyles): {};
+			enyo.Control.cssTextToDomStyles(props.style, s);
+			proto.kindStyle = proto.domCssText = enyo.Control.domStylesToCssText(s);
+			proto.domStyles = s;
+		} else {
+			// here we don't have a real prototype to work with so we don't want to
+			// do the initialization parsing that will happen later
+			proto.style = ((proto.style? proto.style + ";": "") + props.style).replace(/;;/g, ";");
+		}
 		delete props.style;
 	}
 });
