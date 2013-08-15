@@ -108,7 +108,7 @@ enyo.kind({
 			// perform initialization
 			this.create(inProps);
 			sup.apply(this, arguments);
-		}
+		};
 	}),
 	create: function() {
 		this.ownerChanged();
