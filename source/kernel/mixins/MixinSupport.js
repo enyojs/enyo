@@ -62,7 +62,7 @@
 		} else {
 			n = null;
 		}
-		enyo.kind.statics.extend(m, proto);
+		enyo.kind.statics.extend(enyo.clone(m), proto);
 		if (n) {
 			m.name = n;
 		}
