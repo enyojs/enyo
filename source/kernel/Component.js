@@ -103,10 +103,13 @@ enyo.kind({
 			sup.apply(this, arguments);
 		};
 	}),
-	constructed: function(inProps) {
-		// perform initialization
-		this.create(inProps);
-	},
+	constructed: enyo.super(function (sup) {
+		return function(inProps) {
+			// perform initialization
+			this.create(inProps);
+			sup.apply(this, arguments);
+		}
+	}),
 	create: function() {
 		this.ownerChanged();
 		this.initComponents();
