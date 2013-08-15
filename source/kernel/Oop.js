@@ -32,13 +32,13 @@
 		special handlers need to be invoked on all occassions not just subclassing. This
 		is a normalized and performant handler that does the least amount of work possible.
 	*/
-	enyo.handleConcatenatedProperties = function (proto, props) {
+	enyo.handleConcatenatedProperties = function (proto, props, noKind) {
 		var c = enyo.merge(proto.concat, props.concat), fn;
 		for (var i=0, p; (p=c[i]); ++i) {
 			if (!props[p] && !proto[p] && !forced[p]) { continue; }
 			// if there is a registered handler, use it
 			if (map[p]) {
-				for (var j=0; (fn=map[p][j]); ++j) { fn(proto, props); }
+				for (var j=0; (fn=map[p][j]); ++j) { fn(proto, props, noKind); }
 			} else if (enyo.isArray(proto[p])) {
 				// if there wasn't a special handler but it was an array on the base
 				// we assume it is an array coming in and we merge them

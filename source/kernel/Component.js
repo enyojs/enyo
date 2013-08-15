@@ -647,7 +647,7 @@ enyo.Component.overrideComponents = function(components, overrides, defaultKind)
 		if (o) {
 			// Special handling for concatenated properties
 			c.concat = ctor.prototype.concat;
-			enyo.handleConcatenatedProperties(c, o);
+			enyo.handleConcatenatedProperties(c, o, true);
 			delete c.concat;
 			// All others just mix in
 			enyo.mixin(c, o, {filter: function (k, v) { return !(enyo.isFunction(v) || enyo.isSuper(v)); }});
