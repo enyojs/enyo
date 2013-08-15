@@ -89,5 +89,45 @@ enyo.kind({
 			document.body.removeChild(div);
 		}
 		this.finish();
+	},
+	testStyles: function() {
+		var div = document.createElement("div");
+		document.body.appendChild(div);
+		var K = enyo.kind({
+			style: "background-color: red; height: 100px"
+		});
+		var K2 = enyo.kind({
+			kind: K,
+			style: "background-color: green; width: 150px;"
+		});
+		var e = new K2({style: "height: 150px; color: blue"});
+		e.renderInto(div);
+		try {
+			var n = e.hasNode();
+			if (n.style.backgroundColor !== "green" ||
+				n.style.color !== "blue" ||
+				n.style.height !== "150px" ||
+				n.style.width !== "150px") {
+				throw("styles not set properly after creation");
+			}
+			e.applyStyle("background-color", "white");
+			if (n.style.backgroundColor !== "white" ||
+				n.style.color !== "blue" ||
+				n.style.height !== "150px" ||
+				n.style.width !== "150px") {
+				throw("styles not set properly after applyStyle");
+			}
+			e.setStyle("height: 200px;");
+			if (n.style.backgroundColor !== "green" ||
+				n.style.color !== "blue" ||
+				n.style.height !== "200px" ||
+				n.style.width !== "150px") {
+				throw("styles not set properly after setStyle");
+			}
+		} finally {
+			e.destroy();
+			document.body.removeChild(div);
+		}
+		this.finish();
 	}
 });

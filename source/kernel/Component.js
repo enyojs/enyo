@@ -79,7 +79,11 @@ enyo.kind({
 	defaultKind: "Component",
 	noDefer: true,
 	handlers: {},
-	mixins: ["enyo.MixinComponentSupport", "enyo.ApplicationSupport"],
+	mixins: [
+		enyo.ApplicationSupport,
+		enyo.ComponentBindingSupport
+	],
+	concat: ["handlers", "events"],
 	__jobs: {},
 	toString: function() {
 		return this.kindName;
@@ -93,7 +97,6 @@ enyo.kind({
 		};
 	}),
 	constructed: function(inProps) {
-		this.handlers = enyo.mixin(enyo.clone(this.kindHandlers), this.handlers);
 		// perform initialization
 		this.create(inProps);
 	},
@@ -198,6 +201,7 @@ enyo.kind({
 				'but this is an error condition and should be fixed.');
 		}
 		this.$[n] = inComponent;
+		this.notifyObservers("$." + n);
 	},
 	//* Removes _inComponent_ from the list of components owned by the current
 	//* component (i.e., _this.$_).
@@ -219,7 +223,7 @@ enyo.kind({
 	//* @protected
 	adjustComponentProps: function(inProps) {
 		if (this.defaultProps) {
-			enyo.mixin(inProps, this.defaultProps);
+			enyo.mixin(inProps, this.defaultProps, {ignore: true});
 		}
 		inProps.kind = inProps.kind || inProps.isa || this.defaultKind;
 		inProps.owner = inProps.owner || this;
@@ -379,7 +383,7 @@ enyo.kind({
 
 		if (this[name]) {
 			if ("function" === typeof this[name]) {
-				if (this._isController || (delegate && this === delegate.owner)) {
+				if (delegate && this === delegate.owner) {
 					return this.dispatch(name, event, sender);
 				}
 			} else {
@@ -607,27 +611,26 @@ enyo.Component.subclass = function(ctor, props) {
 		proto.kindComponents = props.components;
 		delete proto.components;
 	}
-	//
-	// handlers are merged with supertype handlers
-	// and kind time.
-	//
-	if (props.handlers) {
-		var kh = proto.kindHandlers;
-		proto.kindHandlers = enyo.mixin(enyo.clone(kh), proto.handlers);
-		proto.handlers = null;
-	}
-	// events property defines published events for Component kinds
-	if (props.events) {
-		this.publishEvents(ctor, props);
-	}
 };
 
+enyo.concatHandler("handlers", function (proto, props) {
+	if (props.handlers) {
+		var h = proto.handlers? enyo.clone(proto.handlers): {};
+		proto.handlers = enyo.mixin(h, props.handlers);
+		delete props.handlers;
+	}
+});
+enyo.concatHandler("events", function (proto, props) {
+	if (props.events) {
+		enyo.Component.publishEvents(proto, props);
+	}
+});
 enyo.Component.publishEvents = function(ctor, props) {
 	var es = props.events;
 	if (es) {
-		var cp = ctor.prototype;
+		var cp = ctor.prototype || ctor;
 		for (var n in es) {
-			this.addEvent(n, es[n], cp);
+			enyo.Component.addEvent(n, es[n], cp);
 		}
 	}
 };
@@ -650,23 +653,23 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 	if (!inProto[fn]) {
 		inProto[fn] = function(payload) {
 			// bubble this event
-			var $e = payload, $c = false;
-			if (!$e) {
-				$c = true;
-				$e = enyo.pool.claimObject();
+			var e = payload, c = false;
+			if (!e) {
+				c = true;
+				e = enyo.pool.claimObject();
 			}
-			var $d = $e.delegate;
+			var d = e.delegate;
 			// delete payload.delegate;
-			$e.delegate = undefined;
-			if (!enyo.exists($e.type)) {
-				$e.type = inName;
+			e.delegate = undefined;
+			if (!enyo.exists(e.type)) {
+				e.type = inName;
 			}
-			this.bubble(inName, $e);
-			if ($d) {
-				$e.delegate = $d;
+			this.bubble(inName, e);
+			if (d) {
+				e.delegate = d;
 			}
-			if ($c) {
-				enyo.pool.releaseObject($e);
+			if (c) {
+				enyo.pool.releaseObject(e);
 			}
 		};
 		// NOTE: Mark this function as a generated event handler to allow us to

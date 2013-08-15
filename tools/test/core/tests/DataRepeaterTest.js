@@ -16,13 +16,13 @@ enyo.kind({
 		document.body.appendChild(div);
 		var testControl = new enyo.Control({
 			bindings: [
-				{ from: "$.repeater.selected", to: "boundSelection" },
-				{ from: "$.repeater.selected", to: "$.selected.content", transform:function(val) { return val ? val.text : ""; } }
+				{ from: ".$.repeater.selected", to: ".boundSelection" },
+				{ from: ".$.repeater.selected", to: ".$.selected.content", transform:function(val) { return val ? val.text : ""; } }
 			],
 			boundSelection: null,
 			components: [
 				{name:"repeater", kind: kind, components: [
-					{content: "test", bindFrom: "text"}
+					{bindings: [{from: ".model.text", to: ".content"}]}
 				]},
 				{name: "selected"}
 			]

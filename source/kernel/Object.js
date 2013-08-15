@@ -1,3 +1,6 @@
+//*@protected
+enyo.concat.push("published");
+//*@public
 /**
 _enyo.Object_ lies at the heart of the Enyo framework's implementations of
 property publishing, computed properties (via the _ComputedPropertySupport_
@@ -31,10 +34,10 @@ enyo.kind({
 		to this kind at the end of the constructor routine.
 	*/
 	mixins: [
-		"enyo.MixinSupport",
-		"enyo.ObserverSupport",
-		"enyo.ComputedSupport",
-		"enyo.BindingSupport"
+		enyo.MixinSupport,
+		enyo.ObserverSupport,
+		enyo.ComputedSupport,
+		enyo.BindingSupport
 	],
 
 	constructor: function(props) {
@@ -44,14 +47,9 @@ enyo.kind({
 
 	importProps: function (props) {
 		if (props) {
+			enyo.handleConcatenatedProperties(this, props);
 			for (var key in props) {
-				if (!props.hasOwnProperty(key)) {
-					continue;
-				}
-				if (key == "mixins" && enyo.isArray(props[key])) {
-					this._runtimeMixins = props.mixins;
-					props.mixins = undefined;
-				} else {
+				if (props.hasOwnProperty(key)) {
 					this[key] = props[key];
 				}
 			}
@@ -103,28 +101,6 @@ enyo.kind({
 				enyo.log(x.stack);
 			}
 		}
-	},
-	//*@protected
-	/**
-		Accepts a string property as its only parameter. Evaluates the
-		property and, if the value is itself a string, attempts to resolve
-		an object from the string. The goal is to determine whether the
-		property is a constructor, an instance, or neither. See
-		_lang.js#enyo.findAndInstance_ for more information.
-
-		If a method exists of the form `{property}FindAndInstance`, it will
-		be used as the callback, with two parameters accepted--the constructor
-		(if it was found) and the instance (if it was found or created). This
-		allows for those methods to be overloaded by subkinds.
-	*/
-	findAndInstance: function (property) {
-		// if there isn't a property, do nothing
-		if (!enyo.exists(property)) {
-			return;
-		}
-		var fn = this[property + "FindAndInstance"];
-		// go ahead and call the enyo-scoped version of this method
-		return enyo.findAndInstance.call(this, property, fn, this);
 	},
 
 	//*@public
@@ -213,28 +189,26 @@ enyo.kind({
 });
 
 //* @protected
-
 enyo._objectCount = 0;
 
 enyo.Object.subclass = function(ctor, props) {
-	this.publish(ctor, props);
 	this.overload(ctor, props);
 };
 
-enyo.Object.publish = function(ctor, props) {
+enyo.concatHandler("published", function(proto, props) {
 	var pp = props.published;
 	if (pp) {
-		var cp = ctor.prototype;
+		var cp = proto;
 		for (var n in pp) {
 			// need to make sure that even though a property is "published"
 			// it does not overwrite any computed properties
-			if (props[n] && enyo.isFunction(props[n]) && props[n].isProperty) {
+			if (props[n] && enyo.isFunction(props[n])) {
 				continue;
 			}
 			enyo.Object.addGetterSetter(n, pp[n], cp);
 		}
 	}
-};
+});
 
 //*@protected
 /**
@@ -269,30 +243,30 @@ enyo.Object.overload = function (ctor, props) {
 	other means and rely on the _get_ and _set_ methods of _enyo.Object_
 	instances.
 */
-enyo.Object.addGetterSetter = function (property, value, proto) {
-	var getter = "get" + enyo.cap(property);
-	var setter = "set" + enyo.cap(property);
-	var fn;
+enyo.Object.addGetterSetter = function (prop, value, proto) {
+	var get = "get" + enyo.cap(prop),
+		set = "set" + enyo.cap(prop),
+		fn;
 	// set the initial value for the prototype
-	proto[property] = value;
-	fn = proto[getter];
+	proto[prop] = value;
+	fn = proto[get];
 	// if there isn't already a getter provided create one
-	if ("function" !== typeof fn) {
-		fn = proto[getter] = function () {return this.get(property);};
+	if (!enyo.isFunction(fn)) {
+		fn = proto[get] = function () { return this.get(prop); };
 		fn.overloaded = false;
 	} else if (false !== fn.overloaded) {
 		// otherwise we need to mark it as having been overloaded
 		// so the global getter knows not to ignore it
 		fn.overloaded = true;
 	}
-	// if there isn't already a setter provided, create one
-	fn = proto[setter];
+	// if there isn't already a set provided, create one
+	fn = proto[set];
 	if ("function" !== typeof fn) {
-		fn = proto[setter] = function () {return this.set(property, arguments[0]);};
+		fn = proto[set] = function () { return this.set(prop, arguments[0]); };
 		fn.overloaded = false;
 	} else if (false !== fn.overloaded) {
 		// otherwise we need to mark it as having been overloaded
-		// so the global setter knows not to ignore it
+		// so the global set knows not to ignore it
 		fn.overloaded = true;
 	}
 };

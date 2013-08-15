@@ -93,7 +93,7 @@ enyo.kind({
 				kind: "enyo.Object",
 				testprop: "testvalue1"
 			});
-			binding.from = "my.object.testprop";
+			binding.from = "^my.object.testprop";
 			binding.refresh();
 			if (binding.source === my.object) {
 				this.finish();
@@ -134,10 +134,14 @@ enyo.kind({
 				oneWay: false
 			});
 			control2.destroy();
+			// attempt to synchronize even though one of the ends was destroyed
+			binding.sync();
 			if (!binding.destroyed) {
 				throw "When the non-owner end of a two-way binding was destroyed, "+
 				"the binding was not destroyed";
 			}
+			// just by creating this binding with a destroyed end should force
+			// a test-sync and it should destroy the binding
 			binding = control1.binding({
 				from: ".testprop",
 				source: control1,
@@ -245,5 +249,26 @@ enyo.kind({
 		}
 		k1.destroy();
 		this.finish();
+	},
+	testDefaultProperties: function () {
+		var test = {}, o, b;
+		b = new enyo.Object({
+			prop1: "Joe",
+			prop2: "Smoe"
+		});
+		test.Object = enyo.kind({
+			kind: enyo.Object,
+			prop2: "Sully",
+			bindingDefaults: {
+				source: b
+			}
+		});
+		o = new test.Object();
+		o.binding({from: ".prop1", to: ".boundProp1"});
+		o.binding({from: ".prop2", to: ".boundProp2", source: o});
+		this.finish(
+			(o.boundProp1 != "Joe" && "first binding failed the source default") ||
+			(o.boundProp2 != "Sully" && "second binding failed the source default")
+		);
 	}
 });
