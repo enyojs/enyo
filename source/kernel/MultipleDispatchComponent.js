@@ -5,19 +5,10 @@
 	need the _enyo.MultipleDispatchSupport_	mixin.
 */
 enyo.kind({
-	
-	// ...........................
-	// PUBLIC PROPERTIES
-
 	//*@public
 	name: "enyo.MultipleDispatchComponent",
-	
-	//*@public
 	kind: "enyo.Component",
-	
-	//*@public
 	mixins: [
-		"enyo.MultipleDispatchSupport"
+		enyo.MultipleDispatchSupport
 	]
-	
 });

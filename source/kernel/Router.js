@@ -174,6 +174,11 @@
 		// ...........................
 		// COMPUTED PROPERTIES
 
+		computed: {
+			location: ["_current", {cached: true}],
+			defaultPath: []
+		},
+
 		//*@public
 		/**
 			A computed property that will return the location as
@@ -183,7 +188,7 @@
 			via _set("location", "mylocation")_ will update the inner
 			location known by this router.
 		*/
-		location: enyo.computed(function (loc) {
+		location: function (loc) {
 			if (loc) {
 				loc = prepare(loc);
 				if (!this.internalOnly) {
@@ -194,16 +199,16 @@
 			} else {
 				return prepare(this.get("_current"));
 			}
-		}, "_current", {cached: true}),
+		},
 
 		//*@public
 		/**
 			Returns the string for the default path (if any otherwise empty
 			string).
 		*/
-		defaultPath: enyo.computed(function () {
+		defaultPath: function () {
 			return this.defaultRoute? this.defaultRoute.path: "";
-		}),
+		},
 
 		// ...........................
 		// PUBLIC METHODS

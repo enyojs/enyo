@@ -50,6 +50,19 @@ enyo.macroize = function(inText, inMap, inPattern) {
 };
 
 /**
+	Uses the pattern to replace strings according to the pattern. Does not
+	follow paths or recurse the map.
+*/
+enyo.quickReplace = function (text, map, pattern) {
+	pattern = pattern || enyo.macroize.pattern;
+	var fn = function (token, lex) {
+		var r = map[token];
+		return r || token;
+	};
+	return text.replace(pattern, fn);
+};
+
+/**
 	Similar to _enyo.macroize_, but performs only one iteration of the _replace_
 	call. This means that recursive expansion of macros isn't possible, but it
 	avoids the extra processing needed to find recursive use.
