@@ -180,12 +180,16 @@ enyo.BindingSupport = {
 			// normal initialization
 			this.bindings = this.bindings || [];
 			// continue with the normal constructor chain
-			var r = sup.apply(this, arguments);
+			return sup.apply(this, arguments);
+		};
+	}),
+	constructed: enyo.super(function (sup) {
+		return function () {
 			// now we go ahead and create the bindings knowing that they
 			// will register for missing targets/sources if they become
 			// available later
 			this.initBindings();
-			return r;
+			sup.apply(this, arguments);
 		};
 	}),
 	destroy: enyo.super(function (sup) {

@@ -8,7 +8,6 @@
 	*/
 	enyo.kind({
 		name: "enyo.DataRepeater",
-		kind: "enyo.View",
 		//*@public
 		/**
 			Set this to true to allow selection support to be enabled. Default
@@ -22,6 +21,18 @@
 			it has previously been set to false.
 		*/
 		multipleSelection: false,
+		/**
+			This class will be applied to the _repeater_ when _selection_ is enabled.
+			The deafult is _selection-enabled_. If _multipleSelection_ is `true` this class
+			will also be applied.
+		*/
+		selectionClass: "selection-enabled",
+		/**
+			This class will be applied to the _repeater_ when the _multipleSelection_ is
+			`true`. The default is _multiple-selection-enabled_. If _multipleSelection_ is
+			`true` it will also apply the _selectionClass_.
+		*/
+		multipleSelectionClass: "multiple-selection-enabled",
 		/**
 			In cases where selection should be detected from the state of the model,
 			this property should be set to the property that the repeater should
@@ -85,7 +96,7 @@
 				}
 				d.repeater = this;
 				d.owner = o;
-				d.mixins = d.mixins? d.concat(this.childMixins): this.childMixins;
+				d.mixins = d.mixins? d.mixins.concat(this.childMixins): this.childMixins;
 			}
 		},
 		constructor: enyo.super(function (sup) {
@@ -97,11 +108,16 @@
 		create: enyo.super(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
-				if (this.multipleSelection) {
-					this.selection = true;
-				}
+				this.selectionChanged();
 			};
 		}),
+		observers: {
+			selectionChanged: ["multipleSelection"]
+		},
+		selectionChanged: function () {
+			this.addRemoveClass(this.selectionClass, this.selection);
+			this.addRemoveClass(this.multipleSelectionClass, this.multipleSelection && this.selection);
+		},
 		reset: function () {
 			var d = this.get("data");
 			this.destroyClientControls();

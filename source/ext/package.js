@@ -4,5 +4,6 @@ enyo.depends(
 	"BooleanBinding.js",
 	"BooleanOnlyBinding.js",
 	"StringBinding.js",
-	"NoMacroBinding.js"
+	"NoMacroBinding.js",
+	"InvertBooleanBinding.js"
 );
