@@ -19,7 +19,12 @@ enyo.kind({
 		*/
 		orient : "v",
 		//* If true, the opening/closing transition will be animated
-		animated : true
+		animated : true,
+		/**
+			If true, Drawer will resize it's container as it's animating, which is useful
+			when placed inside of a FittableLayout
+		*/
+		resizeContainer: true
 	},
 	events: {
 		/**
@@ -99,7 +104,7 @@ enyo.kind({
 			var o = (this.open ? inSender.endValue : inSender.startValue);
 			cn.style[p] = this.$.client.domStyles[p] = (inSender.value - o) + "px";
 		}
-		if (this.container) {
+		if (this.container && this.resizeContainer) {
 			this.container.resized();
 		}
 		this.doDrawerAnimationStep();
@@ -125,7 +130,7 @@ enyo.kind({
 				this.node.style[d] = this.domStyles[d] = null;
 			}
 		}
-		if (this.container) {
+		if (this.container && this.resizeContainer) {
 			this.container.resized();
 		}
 		this.doDrawerAnimationEnd();
