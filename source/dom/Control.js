@@ -64,7 +64,9 @@ enyo.kind({
 		*/
 		fit: null,
 		//* Used by Ares design editor for design objects
-		isContainer: false
+		isContainer: false,
+		//* Layout direction. Left-to-right (false) or right-to-left (true)
+		rtl: false
 	},
 	//*@protected
 	concat: ["classes", "style", "attributes"],
