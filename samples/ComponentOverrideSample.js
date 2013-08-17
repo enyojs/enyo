@@ -3,13 +3,16 @@ enyo.kind({
 	components: [
 		{kind:"enyo.sample.SampleKind"},
 		{style:"height:50px;"},
-		{kind:"enyo.sample.SubSampleKind"}
+		{kind:"enyo.sample.SubSampleKind"},
+		{style:"height:50px;"},
+		{kind:"enyo.sample.SampleKind"}
 	]
 });
 
 enyo.kind({
 	name: "enyo.sample.SampleKind",
 	components: [
+		{name: "title"},
 		{name:"red", style:"background:red; color:white; padding:10px;", content:"Red", components: [
 			{name:"orange", style:"background:orange; color:white; padding:10px;", content:"Orange", components: [
 				{name:"green", style:"background:green; color:white; padding:10px; border-radius:10px;", content:"Green"}
@@ -17,7 +20,11 @@ enyo.kind({
 		]},
 		{name:"purple", style:"background:purple; color:white; padding:10px;", content:"Purple"},
 		{name:"blue", style:"background:blue; color:white; padding:10px;", content:"Blue"}
-	]
+	],
+	create: function() {
+		this.inherited(arguments);
+		this.$.title.setContent(this.kindName);
+	}
 });
 
 enyo.kind({
