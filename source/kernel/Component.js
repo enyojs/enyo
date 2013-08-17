@@ -624,7 +624,7 @@ enyo.Component.subclass = function(ctor, props) {
 		// Feature to mixin overrides of super-kind component properties from named hash
 		// (only applied when the sub-kind doesn't supply its own components block)
 		if (props.componentOverrides) {
-			enyo.Component.overrideComponents(proto.kindComponents, props.componentOverrides, proto.defaultKind);
+			proto.kindComponents = enyo.Component.overrideComponents(proto.kindComponents, props.componentOverrides, proto.defaultKind);
 		}
 	}
 };
@@ -644,8 +644,9 @@ enyo.concatHandler("events", function (proto, props) {
 
 enyo.Component.overrideComponents = function(components, overrides, defaultKind) {
 	var fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isSuper(v)); };
+	components = enyo.clone(components);
 	for (var i=0; i<components.length; i++) {
-		var c = components[i];
+		var c = enyo.clone(components[i]);
 		var o = overrides[c.name];
 		var ctor = enyo.constructorForKind(c.kind || defaultKind);
 		if (o) {
@@ -657,9 +658,11 @@ enyo.Component.overrideComponents = function(components, overrides, defaultKind)
 			enyo.mixin(c, o, {filter: fn});
 		}
 		if (c.components) {
-			enyo.Component.overrideComponents(c.components, overrides, ctor.prototype.defaultKind);
+			c.components = enyo.Component.overrideComponents(c.components, overrides, ctor.prototype.defaultKind);
 		}
+		components[i] = c;
 	}
+	return components;
 };
 
 enyo.Component.publishEvents = function(ctor, props) {

@@ -179,10 +179,21 @@ enyo.kind({
 				green: {kind:"enyo.Anchor", content:"Again green", classes:"again-green", style:"background:again-green;"}
 			}
 		});
+
 		var baseKind = new C1();
 		var subKind = new C2();
 		var subSubKind = new C3();
+		this.checkOverrides(baseKind, subKind, subSubKind);
 
+		// Test a second set, to catch any possible differences with deferred constructor scheme
+		baseKind = new C1();
+		subKind = new C2();
+		subSubKind = new C3();
+		this.checkOverrides(baseKind, subKind, subSubKind);
+
+		this.finish();
+	},
+	checkOverrides: function(baseKind, subKind, subSubKind) {
 		if ((baseKind.$.purple.kindName != "enyo.Control") || 
 			(baseKind.$.green.kindName != "enyo.Anchor")) {
 			throw "Overrides should not modify base kind: unexpected kindName";
@@ -241,7 +252,5 @@ enyo.kind({
 				throw "Method should not be on child";
 			}
 		}
-
-		this.finish();
 	}
 });
