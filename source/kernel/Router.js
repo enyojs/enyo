@@ -174,6 +174,11 @@
 		// ...........................
 		// COMPUTED PROPERTIES
 
+		computed: {
+			location: ["_current", {cached: true}],
+			defaultPath: []
+		},
+
 		//*@public
 		/**
 			A computed property that will return the location as
@@ -183,7 +188,7 @@
 			via _set("location", "mylocation")_ will update the inner
 			location known by this router.
 		*/
-		location: enyo.computed(function (loc) {
+		location: function (loc) {
 			if (loc) {
 				loc = prepare(loc);
 				if (!this.internalOnly) {
@@ -194,16 +199,16 @@
 			} else {
 				return prepare(this.get("_current"));
 			}
-		}, "_current", {cached: true}),
+		},
 
 		//*@public
 		/**
 			Returns the string for the default path (if any otherwise empty
 			string).
 		*/
-		defaultPath: enyo.computed(function () {
+		defaultPath: function () {
 			return this.defaultRoute? this.defaultRoute.path: "";
-		}),
+		},
 
 		// ...........................
 		// PUBLIC METHODS
@@ -353,43 +358,49 @@
 		// PROTECTED METHODS
 
 		//*@protected
-		constructor: function () {
-			this._staticRoutes = {};
-			this._dynamicRoutes = [];
-			this.routes = this.routes || [];
-			this._history = this._history || [];
-			this.inherited(arguments);
-		},
+		constructor: enyo.super(function (sup) {
+			return function () {
+				this._staticRoutes = {};
+				this._dynamicRoutes = [];
+				this.routes = this.routes || [];
+				this._history = this._history || [];
+				sup.apply(this, arguments);
+			};
+		}),
 
 		//*@protected
-		create: function () {
-			this.inherited(arguments);
-			// make sure to initialize our routes prior
-			// to registering for events
-			this._setupRoutes();
-			// make sure we're up to date
-			this.set("_current", prepare(window.location.hash));
-			// ok, register for events
-			listeners.push(this);
-			// ok, if we need to go ahead and route our current
-			// location, lets do it
-			if (this.triggerOnStart) {
-				if (this.defaultPathOnStart) {
-					this.trigger({change: true, location: this.get("defaultPath")});
-				} else {
-					this.trigger();
+		create: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				// make sure to initialize our routes prior
+				// to registering for events
+				this._setupRoutes();
+				// make sure we're up to date
+				this.set("_current", prepare(window.location.hash));
+				// ok, register for events
+				listeners.push(this);
+				// ok, if we need to go ahead and route our current
+				// location, lets do it
+				if (this.triggerOnStart) {
+					if (this.defaultPathOnStart) {
+						this.trigger({change: true, location: this.get("defaultPath")});
+					} else {
+						this.trigger();
+					}
 				}
-			}
-		},
+			};
+		}),
 
 		//*@protected
-		destroy: function () {
-			var idx = enyo.indexOf(this, listeners);
-			if (!~idx) {
-				listeners.splice(idx, 1);
-			}
-			this.inherited(arguments);
-		},
+		destroy: enyo.super(function (sup) {
+			return function () {
+				var idx = enyo.indexOf(this, listeners);
+				if (!~idx) {
+					listeners.splice(idx, 1);
+				}
+				sup.apply(this, arguments);
+			};
+		}),
 
 		//*@protected
 		_hashChanged: function (hash) {

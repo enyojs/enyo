@@ -1,21 +1,22 @@
 (function (enyo) {
 
 	/**
-		The _enyo.Source_ kind is an pseudo-abstract API for communcating
-		with a backend (could be local or remote). _enyo.Store_ requires a
-		_source_ to function properly. An _enyo.Source_ can easily be overloaded
-		to work with specific backend implementations and data formats.
+		_enyo.Source_ is a pseudo-abstract API for communcating with a backend,
+		which may be either local or remote. An [enyo.Store](#enyo.Store) requires a
+		source to function properly. An _enyo.Source_ may easily be overloaded to
+		work with specific backend implementations and data formats.
 
-		The build-in implementation is designed to work with a remote REST API
-		relying on GET, POST, PUT and DELETE to communicate with (remote) source.
-		For _fetch_ requests it will use GET. See _enyo.Collection_ and _enyo.Model_
-		for specifics.
+		The built-in implementation is designed to work with a remote REST API
+		relying on GET, POST, PUT and DELETE to communicate with the (remote)
+		source.	For _fetch_ requests, it will use GET. See
+		[enyo.Collection](#enyo.Collection) and [enyo.Model](#enyo.Model) for
+		details.
 	*/
 
 	var normalize = function (url) {
 		return url.replace(/([^:]\/)(\/+)/g, "$1");
 	};
-	
+
 	var http = /^http/;
 
 	enyo.kind({
@@ -29,65 +30,69 @@
 		//*@public
 		/**
 			The type of object to use for requests. As long as the kind has the
-			same API as _enyo.Async_ it should be possible to use it with _enyo.Source_.
+			same API as [enyo.Async](#enyo.Async), it should be possible to use it
+			with _enyo.Source_.
 		*/
 		requestKind: "enyo.Ajax",
 
 		//*@public
 		/**
-			The root domain for all requests. Does not need the _http_ but may
-			include it. For secure (_https_) see the _secure_ property.
+			The root domain for all requests. The _"http"_ prefix is not required, but
+			may be included. For secure (_https_) connections, see the _secure_
+			property.
 		*/
 		domain: "",
 
 		//*@public
 		/**
-			An optional string to be appended after the _url_ is constructed.
+			An optional string to be appended after the url is constructed.
 		*/
 		urlPostfix: "",
 
 		//*@public
 		/**
-			The port to use when constructing the _url_. Only specify if the necessary
-			port is different than the current domain port (e.g. it will automatically use
-			document.location.port unless the _ignorePort_ option is set to _true_).
+			The port to use when constructing the url. Only specify a value if the
+			necessary port is different from the current domain port (it will
+			automatically use _document.location.port_ unless the _ignorePort_ option
+			is set to true).
 		*/
 		port: null,
 
 		//*@public
 		/**
-			If the current domain for the client is running on a _port_ different than
-			80 (e.g. http://localhost:8080) this will construct requests without the
-			port.
+			If the current domain for the client is running on a port other than 80
+			(e.g., http://localhost:8080), set this to true to construct requests
+			without the port number.
 		*/
 		ignorePort: false,
 
 		//*@public
 		/**
-			If a secure url is necessary (_https_) set this to _true_.
+			Set this to true if a secure (_https_) url is required.
 		*/
 		secure: false,
 
 		//*@public
 		/**
-			If the (remote) backend is read-only set this to _true_ to dissallow any
+			If the (remote) backend is read-only, set this to true to disallow any
 			calls to POST, PUT or DELETE.
 		*/
 		readOnly: false,
 
 		//*@public
 		/**
-			A bindable property to know when an asynchronous operation is taking place.
+			A bindable property that indicates whether an asynchronous operation is
+			taking place.
 		*/
 		busy: false,
 
 		//*@public
 		/**
-			The default options that are passed to the request object. Presedence is given
-			to _models_ or _collections_ that provide their own options that override any
-			default options.
+			The default options that are passed to the request object. Precedence is
+			given to models or collections that provide their own options that
+			override any default options.
 
-			Defaults with cacheBust true and contentType application/json.
+			Defaults to _cacheBust: false_ and _contentType: "application/json"_.
 		*/
 		defaultOptions: {
 			cacheBust: false,
@@ -97,7 +102,7 @@
 		//*@public
 		/**
 			The default headers to be used in requests if they differ from those
-			in _enyo.AjaxProperties_.
+			in [enyo.AjaxProperties](#enyo/source/ajax/AjaxProperties.js).
 		*/
 		defaultHeaders: null,
 
@@ -200,11 +205,11 @@
 			options.method = "DELETE";
 			this.exec("destroy", options);
 		},
-		
+
 		//*@public
 		/**
-			Overload this method for specific needs with regards to requesting
-			a filtered query from the remote (or local) source. Accepts a constructor
+			Overload this method for specific needs with respect to requesting a
+			filtered query from the remote (or local) source. Accepts a constructor
 			for the kind of model being queried and any additional options.
 		*/
 		find: function (ctor, options) {
@@ -253,20 +258,60 @@
 			}
 		},
 
-		constructor: function () {
-			this.inherited(arguments);
-			this.defaultOptions = this.defaultOptions || {};
-			this.defaultHeaders = this.defaultHeaders || {};
-			this.domain = this.domain || (function () {
-				return location.pathname.length > 1
-					? location.href.split("/").slice(0,-1).join("/")
-					: location.origin;
-			}());
-		},
+		constructor: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				this.defaultOptions = this.defaultOptions || {};
+				this.defaultHeaders = this.defaultHeaders || {};
+				this.domain = this.domain || (function () {
+					return location.pathname.length > 1
+						? location.href.split("/").slice(0,-1).join("/")
+						: location.origin;
+				}());
+			};
+		}),
 		constructed: function () {
 			var $kind = this.requestKind || enyo.Ajax;
 			this.requestKind = "string" === typeof $kind? enyo.getPath($kind): $kind;
 			this._ajaxOptions = enyo.keys(enyo.AjaxProperties);
+		},
+
+		// ...........................
+		// STATIC METHODS
+		statics: {
+			getDefaultSource: function() {
+				if (!enyo.Source.defaultSource) {
+					// make sure we create this on the finalized enyo.Source
+					enyo.checkConstructor(enyo.Source);
+					// create our singleton instance
+					enyo.singleton({
+						name: "enyo.Source.defaultSource",
+						kind: "enyo.Source",
+						fetch: function (model, options) {
+							if (options && options.error) {
+								var fn = options.error;
+								options.error = null;
+								fn(options);
+							}
+						},
+						commit: function (model, options) {
+							if (options && options.error) {
+								var fn = options.error;
+								options.error = null;
+								fn(options);
+							}
+						},
+						destroy: function (model, options) {
+							if (options && options.success) {
+								var fn = options.success;
+								options.success = null;
+								fn(options);
+							}
+						}
+					});
+				}
+				return enyo.Source.defaultSource;
+			}
 		}
 
 		// ...........................
@@ -275,35 +320,6 @@
 		// ...........................
 		// OBSERVERS
 
-	});
-
-	//*@protected
-	enyo.ready(function () {
-		enyo.singleton({
-			name: "enyo.Source.defaultSource",
-			kind: "enyo.Source",
-			fetch: function (model, options) {
-				if (options && options.error) {
-					var fn = options.error;
-					options.error = null;
-					fn(options);
-				}
-			},
-			commit: function (model, options) {
-				if (options && options.error) {
-					var fn = options.error;
-					options.error = null;
-					fn(options);
-				}
-			},
-			destroy: function (model, options) {
-				if (options && options.success) {
-					var fn = options.success;
-					options.success = null;
-					fn(options);
-				}
-			}
-		});
 	});
 
 })(enyo);

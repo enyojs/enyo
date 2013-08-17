@@ -19,6 +19,12 @@
 				]
 			});
 
+		Note that, when care should be taken when deciding how the children of the list
+		will be laid out. When updating the layout of child elements, when there are many,
+		can be taxing and non-performant for the browser. Do not use dynamicly updated
+		layouts that require many calculations whenever the data will be updated in a view.
+		Try using CSS whenever possible.
+
 		Note that _enyo.DataList_ currently does not support horizontal orientation.
 	*/
 	enyo.kind({
@@ -68,15 +74,17 @@
 		controlParentName: "page1",
 		containerName: "scroller",
 		debugPageBoundaries: false,
-		create: function () {
-			this.inherited(arguments);
-			this.orientation = this.orientation[0] == "v"? "v": "h";
-			if (this.debugPageBoundaries) {
-				this.$.page1.applyStyle("background-color", "#d8d8d8");
-				this.$.page2.applyStyle("background-color", "#58d3f7");
-			}
-			this.resetMetrics();
-		},
+		create: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				this.orientation = this.orientation[0] == "v"? "v": "h";
+				if (this.debugPageBoundaries) {
+					this.$.page1.applyStyle("background-color", "#d8d8d8");
+					this.$.page2.applyStyle("background-color", "#58d3f7");
+				}
+				this.resetMetrics();
+			};
+		}),
 		rendered: function () {
 			// the initial time the list is rendered, we've only rendered the
 			// list node itself, but now we know it should be safe to calculate
@@ -145,16 +153,13 @@
 		reset: function () {
 			var $i, p$;
 			if (this.generated && this.$.scroller.generated) {
-				this.destroyClientControls();
 				for ($i=1; (p$=this.$.active.children[$i]); --$i) {
 					this.resetPage(p$);
 					p$.index = $i;
 				}
 				this.resetMetrics();
-				if (this.length) {
-					for ($i=0; (p$=this.$.active.children[$i]); ++$i) {
-						this.generatePage(p$, $i);
-					}
+				for ($i=0; (p$=this.$.active.children[$i]); ++$i) {
+					this.generatePage(p$, $i);
 				}
 				this.updateMetrics();
 				// at this point there is most likely overlap of the pages but
@@ -179,21 +184,22 @@
 				$r = this.orientation, $p;
 			this.controlParentName = p.name;
 			this.discoverControlParent();
-			p.disconnectDom();
 			p.index = n;
 			for (var $i=0, $j=$o, c$, d$; (c$ = p.children[$i]) && (d$=$d[$j]) && $j < $e; ++$i, ++$j) {
-				if (c$.disabled) {
+				if (c$._listDisabledChild) {
 					this.enableChild(c$);
 				}
 				if (c$.model !== d$) {
+					c$.stopNotifications();
 					c$.set("index", $j);
 					c$.set("model", d$);
+					c$.set("selected", this.isSelected(d$));
+					c$.startNotifications();
 				}
 			}
 			if ($i < p.children.length) {
 				this.prune(p, $i);
 			}
-			p.connectDom();
 			p.renderReusingNode();
 			$p = this.pages[n];
 			if (!$p) {
@@ -327,18 +333,16 @@
 			}
 		},
 		disableChild: function (c$) {
-			if (!c$.disabled) {
-				c$.connectDom();
+			if (!c$._listDisabledChild) {
 				c$.setShowing(false);
 				c$.canGenerate = false;
-				c$.disabled = true;
+				c$._listDisabledChild = true;
 			}
 		},
 		enableChild: function (c$) {
-			if (c$.disabled) {
+			if (c$._listDisabledChild) {
 				c$.canGenerate = true;
-				c$.disabled = false;
-				c$.connectDom();
+				c$._listDisabledChild = false;
 				c$.setShowing(true);
 			}
 		},
@@ -521,15 +525,17 @@
 				this._lastPage = $b;
 			}
 		},
-		initContainer: function () {
-			var $o = enyo.clone(this.get("containerOptions")),
-				$s = this.get("scrollerOptions");
-			if ($s) {
-				enyo.mixin($o, $s, {exists: true});
-			}
-			this.set("containerOptions", $o);
-			this.inherited(arguments);
-		},
+		initContainer: enyo.super(function (sup) {
+			return function () {
+				var $o = enyo.clone(this.get("containerOptions")),
+					$s = this.get("scrollerOptions");
+				if ($s) {
+					enyo.mixin($o, $s, {exists: true});
+				}
+				this.set("containerOptions", $o);
+				sup.apply(this, arguments);
+			};
+		}),
 		batchingChanged: function (prev, val) {
 			if (this.generated && false === val) {
 				// this is happening so various scrollers that need to know the content
@@ -537,31 +543,41 @@
 				this.$.scroller.rendered();
 			}
 		},
-		resizeHandler: function () {
-			this.inherited(arguments);
-			this.updateSizing();
-			if (this.length) {
-				this.startJob("layoutPages", this.layoutPages, 100);
-			}
-		},
+		resizeHandler: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				this.updateSizing();
+				if (this.length) {
+					this.startJob("layoutPages", this.layoutPages, 100);
+				}
+			};
+		}),
 		updateSizing: function () {
 			this.width = this.getWidth();
 			this.height = this.getHeight();
-		},
-		dispatchEvent: function (n) {
-			// FIXME: This is only a partial solution to a larger issue of detecting
-			// size changes in the children and properly laying out the pages after
-			// this happens. In this particular case we're guessing that if a page has
-			// had an image load, we need to try and adjust if we need to.
-			if (n == "onload") {
-				this.startJob("layoutPages", this.layoutPages, 100);
-			}
-			return this.inherited(arguments);
 		},
 		layoutPages: function () {
 			this.adjustPageSize(this.$.page1);
 			this.adjustPageSize(this.$.page2);
 			this.adjustLastPage();
+		},
+		getChildForIndex: function (i) {
+			var p$ = this.pageForIndex(i);
+			if (this.$.page1.index == p$) {
+				p$ = this.$.page1;
+			} else if (this.$.page2.index == p$) {
+				p$ = this.$.page2;
+			} else {
+				p$ = false;
+			}
+			if (p$) {
+				for (var $i=0, c$; (c$=p$.children[$i]); ++$i) {
+					if (c$.index == i) {
+						return c$;
+					}
+				}
+			}
+			return false;
 		}
 
 	});

@@ -7,10 +7,14 @@ enyo.kind({
 	name: "enyo.ModelController",
 	
 	//*@public
-	mixins: ["enyo.ModelSupport"],
-
-	//*@public
 	kind: "enyo.Controller",
+	
+	create: enyo.super(function (sup) {
+		return function () {
+			sup.apply(this, arguments);
+			this.notifyObservers("model");
+		};
+	}),
 	
 	// ...........................
 	// PUBLIC METHODS
@@ -21,20 +25,24 @@ enyo.kind({
 	},
 
 	//*@public
-	get: function (prop) {
-		if (!this.isAttribute(prop)) {
-			return this.inherited(arguments);
-		}
-		return this.model && enyo.isModel(this.model)? this.model.get(prop): undefined;
-	},
+	get: enyo.super(function (sup) {
+		return function (prop) {
+			if (!this.isAttribute(prop)) {
+				sup.apply(this, arguments);
+			}
+			return this.model && enyo.isModel(this.model)? this.model.get(prop): undefined;
+		};
+	}),
 
 	//*@public
-	set: function (prop, val) {
-		if (!this.isAttribute(prop)) {
-			return this.inherited(arguments);
-		}
-		return this.model.set(prop, val);
-	},
+	set: enyo.super(function (sup) {
+		return function (prop, val) {
+			if (!this.isAttribute(prop)) {
+				return sup.apply(this, arguments);
+			}
+			return this.model.set(prop, val);
+		};
+	}),
 
 	//*@public
 	sync: function () {
@@ -51,25 +59,37 @@ enyo.kind({
 			}
 		}
 	},
-	
-	modelChanged: function (prev, val) {
-		// TODO: This is a terrible fix for a bug there is no easy solution
-		// for in the long run. This will unfortunately be executed sometimes
-		// out of context because of the way our inherited scheme works and
-		// the synchronous execution of observers and events may cause an inherited
-		// check before the temporary inherited method (this method) is removed.
-		if (!this._isController) {
-			return;
+	modelChanged: function (p) {
+		var m = this.model;
+		if (p) {
+			p.removeObserver("*", this._attributeSpy);
 		}
+		if (m) {
+			if (enyo.isString(m)) {
+				m = this.model = enyo.getPath.call(m[0] == "."? this: enyo.global, m);
+			}
+			if (m) {
+				this._attributeSpy = m.addObserver("*", this.attributeSpy, this);
+				this.stopNotifications();
+				this.sync();
+				this.startNotifications();
+			}
+		}
+	},
+	attributeSpy: function (prev, val, prop) {
+		this.notifyObservers(prop, prev, val);
+	}
+	/*
+	modelChanged: function (prev, val) {
 		if (prev && enyo.isModel(prev)) {
 			prev.removeObserver("*", this.notifyObservers);
 		}
 		if (val || (val = this.model) && enyo.isModel(val)) {
-			val.addObserver("*", this.notifyObservers, this);
+			val.addObserver("*", this.notifyObservers);
 			this.stopNotifications();
 			this.sync();
 			this.startNotifications();
 		}
-	}
+	}*/
 
 });

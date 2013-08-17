@@ -12,14 +12,19 @@ enyo.kind({
 	name: "enyo.Drawer",
 	published: {
 		//* The visibility state of the drawer's associated control
-		open: true,
+		open : true,
 		/**
 			Direction of the opening/closing animation--either "v" for vertical
 			or "h" for horizontal
 		*/
-		orient: "v",
+		orient : "v",
 		//* If true, the opening/closing transition will be animated
-		animated: true
+		animated : true,
+		/**
+			If true, Drawer will resize it's container as it's animating, which is useful
+			when placed inside of a FittableLayout
+		*/
+		resizeContainer: true
 	},
 	events: {
 		/**
@@ -28,6 +33,7 @@ enyo.kind({
 			property. If _this.getOpen()_ returns true, the drawer was opened; if not,
 			it was closed.
 		*/
+		onDrawerAnimationStep: "",
 		onDrawerAnimationEnd: ""
 	},
 	//* @protected
@@ -36,15 +42,19 @@ enyo.kind({
 		{kind: "Animator", onStep: "animatorStep", onEnd: "animatorEnd"},
 		{name: "client", style: "position: relative;", classes: "enyo-border-box"}
 	],
-	create: function() {
-		this.inherited(arguments);
-		this.animatedChanged();
-		this.openChanged();
-	},
-	initComponents: function() {
-		this.createChrome(this.tools);
-		this.inherited(arguments);
-	},
+	create: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.animatedChanged();
+			this.openChanged();
+		};
+	}),
+	initComponents: enyo.super(function (sup) {
+		return function() {
+			this.createChrome(this.tools);
+			sup.apply(this, arguments);
+		};
+	}),
 	animatedChanged: function() {
 		if (!this.animated && this.hasNode() && this.$.animator.isAnimating()) {
 			this.$.animator.stop();
@@ -94,9 +104,10 @@ enyo.kind({
 			var o = (this.open ? inSender.endValue : inSender.startValue);
 			cn.style[p] = this.$.client.domStyles[p] = (inSender.value - o) + "px";
 		}
-		if (this.container) {
+		if (this.container && this.resizeContainer) {
 			this.container.resized();
 		}
+		this.doDrawerAnimationStep();
 		return true;
 	},
 	animatorEnd: function() {
@@ -119,7 +130,7 @@ enyo.kind({
 				this.node.style[d] = this.domStyles[d] = null;
 			}
 		}
-		if (this.container) {
+		if (this.container && this.resizeContainer) {
 			this.container.resized();
 		}
 		this.doDrawerAnimationEnd();

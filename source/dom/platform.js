@@ -52,11 +52,15 @@ enyo.platform = {
 		{platform: "windowsPhone", regex: /Windows Phone (?:OS )?(\d+)[.\d]+/},
 		// IE 8 - 10
 		{platform: "ie", regex: /MSIE (\d+)/},
+		// IE 11
+		{platform: "ie", regex: /Trident\/.*; rv:(\d+)/},
 		// iOS 3 - 5
 		// Apple likes to make this complicated
 		{platform: "ios", regex: /iP(?:hone|ad;(?: U;)? CPU) OS (\d+)/},
 		// webOS 1 - 3
 		{platform: "webos", regex: /(?:web|hpw)OS\/(\d+)/},
+		// webOS 4 / OpenWebOS
+		{platform: "webos", regex: /WebAppManager|Isis/, forceVersion: 4},
 		// desktop Safari
 		{platform: "safari", regex: /Version\/(\d+)[.\d]+\s+Safari/},
 		// desktop Chrome
@@ -67,6 +71,8 @@ enyo.platform = {
 		{platform: "firefoxOS", regex: /Mobile;.*Firefox\/(\d+)/},
 		// desktop Firefox
 		{platform: "firefox", regex: /Firefox\/(\d+)/},
+		// Blackberry Playbook
+		{platform: "blackberry", regex: /PlayBook/i, forceVersion: 2},
 		// Blackberry 10+
 		{platform: "blackberry", regex: /BB1\d;.*Version\/(\d+\.\d+)/},
 		// Tizen

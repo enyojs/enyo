@@ -94,20 +94,6 @@
 		}
 	};
 
-	//*@protected
-	enyo.kind.postConstructors.push(function () {
-		if (!this._isApplication) {
-			return;
-		}
-
-		// now that any controllers for the application have been
-		// initialized, we test to see if we're supposed to
-		// automatically start
-		if (true === this.autoStart) {
-			this.start();
-		}
-	});
-
 	//*@public
 	/**
 		_enyo.Application_ is a kind used to coordinate execution of a given
@@ -169,35 +155,44 @@
 		// PROTECTED METHODS
 
 		//*@protected
-		constructor: function (props) {
-			if (props && enyo.exists(props.name)) {
-				enyo.setPath(props.name, this);
-				this.id = props.name;
-				delete props.name;
-			} else {
-				this.id = enyo.uid("_application_");
-			}
-			this.inherited(arguments);
-			// we register kind of early in the process in case any controllers
-			// or other initialization assumes it will be there...
-			register(this);
-		},
+		constructor: enyo.super(function (sup) {
+			return function (props) {
+				if (props && enyo.exists(props.name)) {
+					enyo.setPath(props.name, this);
+					this.id = props.name;
+					delete props.name;
+				} else {
+					this.id = enyo.uid("_application_");
+				}
+				sup.apply(this, arguments);
+				// we register kind of early in the process in case any controllers
+				// or other initialization assumes it will be there...
+				register(this);
+			};
+		}),
 
 		//*@protected
-		constructed: function () {
-			// we need to make sure that the controllers are already initialized
-			// before we create our view according to the view controller's API
-			_setupControllers.call(this);
-			// now we let it continue as usual
-			this.inherited(arguments);
-		},
+		constructed: enyo.super(function (sup) {
+			return function () {
+				// we need to make sure that the controllers are already initialized
+				// before we create our view according to the view controller's API
+				_setupControllers.call(this);
+				// now we let it continue as usual
+				sup.apply(this, arguments);
+				if (this.autoStart) {
+					this.start();
+				}
+			};
+		}),
 		
-		render: function () {
-			this.inherited(arguments);
-			if (this.view && this.view.generated) {
-				this.set("viewReady", true);
-			}
-		},
+		render: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				if (this.view && this.view.generated) {
+					this.set("viewReady", true);
+				}
+			};
+		}),
 
 		//*@protected
 		/**
@@ -219,15 +214,17 @@
 		},
 
 		//*@protected
-		destroy: function () {
-			// release/destroy all controllers associated with
-			// this instance of the application
-			_destroyControllers.call(this);
-			// do the normal breakdown
-			this.inherited(arguments);
-			// unregister this as an active application
-			unregister(this);
-		}
+		destroy: enyo.super(function (sup) {
+			return function () {
+				// release/destroy all controllers associated with
+				// this instance of the application
+				_destroyControllers.call(this);
+				// do the normal breakdown
+				sup.apply(this, arguments);
+				// unregister this as an active application
+				unregister(this);
+			};
+		})
 
 	});
 

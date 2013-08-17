@@ -2,9 +2,9 @@
 
 	//*@public
 	/**
-		_enyo.Collection_ is a kind designed to work with arrays of _enyo.Model_
-		objects. Out of the box, collections work with "toMany" relations between
-		models with a defined schema.
+		_enyo.Collection_ is a kind designed to work with arrays of
+		[enyo.Model](#enyo.Model) objects. Out of the box, collections
+		work with "toMany" relations between models with a defined schema.
 
 		Collections have their own default mechanisms for retrieving arrays of data
 		and filtering their content. You may use a collection as an exposed
@@ -49,7 +49,7 @@
 			- ERROR.RESPONSE
 			- ERROR.TYPE
 
-			[see enyo.Model.status](#)
+			See [enyo.Model.status](#enyo.Model::status)
 		*/
 		status: enyo.Model.CLEAN,
 
@@ -65,15 +65,16 @@
 			request. By default, it uses a simple REST scheme. The _url_ property is a
 			static string that will be appended to the root domain for the
 			_enyo.Source_.
-			In more complex setups, [see `query`](#) for overloading implications and
-			adding dynamic _url_ handling possibilities.
+
+			In more complex setups, see [query()](#enyoCollection::query) for
+			overloading implications and adding dynamic _url_ handling possibilities.
 		*/
 		url: "",
 
 		//*@public
 		/**
 			An optional relational definition object, which must be of the type
-			`enyo.toOne` as defined in _enyo.Model_. If a _relationKey_ is defined,
+			_enyo.toOne_ as defined in _enyo.Model_. If a _relationKey_ is defined,
 			the relation will know to watch for value change notifications from the
 			related model and update accordingly.
 		*/
@@ -104,32 +105,38 @@
 		// ...........................
 		// COMPUTED PROPERTIES
 
+		computed: {
+			data: ["length", {cached: true}],
+			query: []
+		},
+
 		//*@public
 		/**
-			A computed property representing the underlying array of models.
-			This property may be set directly, but doing so will automatically
-			replace all of the current content. Use _add()_ if you want to extend
-			(not replace) the current dataset. This computed property may be
-			overloaded in more complex scenarios involving filtering and
-			conditionally supplied datasets.
+			A computed property representing the underlying array of models. This
+			property may be set directly, but doing so will automatically replace all
+			of the current content. Use [add()](#enyo.Collection::add) if you want to
+			extend (not replace) the current dataset.
+			
+			This computed property may be overloaded in more complex scenarios
+			involving filtering and conditionally supplied datasets.
 		*/
-		data: enyo.computed(function (data) {
+		data: function (data) {
 			if (data) {
 				this.removeAll();
 				this.add(data);
 			} else {
 				return this.__store;
 			}
-		}, "length", {cached: true, defer: true}),
+		},
 
 		//*@public
 		/**
 			Used by _enyo.Source_ to generate the appropriate request for
 			fetching data. May be overloaded to produce dynamic queries.
 		*/
-		query: enyo.computed(function () {
+		query: function () {
 			return this.url || this.model.prototype.get("query");
-		}),
+		},
 
 		// ...........................
 		// PUBLIC METHODS
@@ -179,7 +186,7 @@
 			a _success()_ method, an _error()_ method, both, or neither. A fetch
 			request with results will add those results to the collection. If you want
 			to replace the contents, use the _replace_ options key or call
-			_fetchAndReplace()_.
+			[fetchAndReplace()](#enyo.Collection::fetchAndReplace).
 		*/
 		fetch: function (options) {
 			var $options = options? enyo.clone(options): {};
@@ -191,10 +198,10 @@
 
 		//*@public
 		/**
-			By default, _fetch()_ will add data to the collection while keeping any
-			existing content. If you wish to replace all existing content with the
-			results of the current fetch operation, call this method using the same
-			options as _fetch()_.
+			By default, [fetch()](#enyo.Collection::fetch) will add data to the
+			collection while keeping any existing content. If you wish to replace all
+			existing content with the results of the current fetch operation, call
+			this method using the same options as _fetch()_.
 		*/
 		fetchAndReplace: function (options) {
 			var $options = options? enyo.clone(options): {};
@@ -225,7 +232,7 @@
 		/**
 			Overload this method for handling fail-states. The _which_
 			parameter will be _"fail"_. Sets the _status_ value to
-			`ERROR.RESPONSE`.
+			_ERROR.RESPONSE_.
 		*/
 		didFail: function (which, options) {
 			this.set("status", enyo.Model.ERROR.RESPONSE);
@@ -294,7 +301,7 @@
 			Returns a mapped array according to the return value of _fn_ and
 			the optional _context_ to execute _fn_ with (default is the collection).
 
-			[see enyo.map](#)
+			See [enyo.map](#enyo.map).
 		*/
 		map: function (fn, context) {
 			return enyo.map(this.__store, fn, context || this);
@@ -306,7 +313,7 @@
 			to the (true or false) return value of _fn_ and the optional _context_
 			(default is the collection).
 
-			[see enyo.filter](#)
+			See [enyo.filter](#enyo.filter).
 		*/
 		filter: function (fn, context) {
 			return enyo.filter(this.__store, fn, context || this);
@@ -315,8 +322,8 @@
 		//*@public
 		/**
 			Overload this method in implementations where the result of a fetch may
-			not be the array of records and must first be filtered . Returns the
-			array of records supplied by a call to _didFetch()_.
+			not be the array of records and must first be filtered . Returns the array
+			of records supplied by a call to [didFetch()](#enyo.Collection::didFetch).
 		*/
 		filterData: function (data) {
 			return data;
@@ -343,13 +350,14 @@
 		/**
 			Adds a record or an array of records to the existing dataset, starting
 			at the end. If adding a single record, it returns the index where the
-			record was inserted. Otherwise it returns the value of _addMany()_. Note
-			that it accepts _enyo.Model_ instances or native objects that will be
-			converted into the kind indicated by the _model_ property. If adding a
-			single record, it will emit an _onModelAdded_ event with a reference to
-			the model added in the event object's _model_ property, the index at which
-			it was inserted in the _index_ property, and a reference to the collection
-			that emitted the event (_this_) in the _collection_ property.
+			record was inserted. Otherwise it returns the value of
+			[addMany()](#enyo.Collection::addMany). Note that this method accepts
+			_enyo.Model_ instances or native objects that will be converted into the
+			kind indicated by the _model_ property. If adding a single record, it will
+			emit an _onModelAdded_ event with a reference to the model added in the
+			event object's _model_ property, the index at which it was inserted in the
+			_index_ property, and a reference to the collection that emitted the event
+			(_this_) in the _collection_ property.
 		*/
 		add: function (record) {
 			// this allows us to call add for both a single record or an array
@@ -381,7 +389,7 @@
 		/**
 			Inserts an array of records into the collection beginning at the
 			end of the current dataset. If any records are added successfully,
-			it will emit a single event, `onModelsAdded`.  The _models_ property of
+			it will emit a single event, _onModelsAdded_.  The _models_ property of
 			the event object will have a reference to the array	of records that were
 			inserted. Also, if records were inserted, the method will return a
 			reference to the array passed up by the event.
@@ -407,13 +415,13 @@
 			Removes a record (or array of records) from the collection. Returns
 			_undefined_ if the record does not exist within the collection. Otherwise,
 			returns the index where the record was removed. When a single record is
-			removed, the `onModelRemoved` event is emitted.  The event object will
+			removed, the _onModelRemoved_ event is emitted.  The event object will
 			contain a reference to the model in its _model_ property, the index where
 			the model was removed in the _index_ property, and a reference to the
 			collection the model was removed from (_this_) in the _collection_
 			property. In addition, any observers of the collection's _length_ property
-			will be triggered. See _removeMany()_ for details of how the collection
-			handles the removal of an array of records.
+			will be triggered. See [removeMany()](#enyo.Collection::removeMany) for
+			details of how the collection handles the removal of an array of records.
 		*/
 		remove: function (record) {
 			if (enyo.isArray(record)) {
@@ -479,20 +487,22 @@
 			Overloaded setter that accepts an object literal and
 			applies all keys and values to the collection.
 		*/
-		set: function (prop, val) {
-			if (enyo.isObject(prop)) {
-				this.stopNotifications();
-				for (var $k in prop) {
-					this.set($k, prop[$k]);
+		set: enyo.super(function (sup) {
+			return function (prop, val) {
+				if (enyo.isObject(prop)) {
+					this.stopNotifications();
+					for (var $k in prop) {
+						this.set($k, prop[$k]);
+					}
+					this.startNotifications();
+					return this;
+				} else if (!enyo.exists(val)) {
+					return;
+				} else {
+					return sup.apply(this, arguments);
 				}
-				this.startNotifications();
-				return this;
-			} else if (!enyo.exists(val)) {
-				return;
-			} else {
-				return this.inherited(arguments);
-			}
-		},
+			};
+		}),
 
 		//*@public
 		/**
@@ -507,12 +517,7 @@
 				this.owner.addComponent(this);
 			}
 			if (this.owner && true === (this.owner instanceof enyo.Component)) {
-				this.set("_defaultTarget", this.owner);
-				this.set("_defaultDispatch", true);
-			} else {
-				// otherwise we either don't have an owner or they cannot
-				// accept events so we remove our bubble target
-				this.set("_defaultTarget", null);
+				this.set("_dispatchDefaultPath", true);
 			}
 		},
 
@@ -520,29 +525,31 @@
 		/**
 			Accepts an array of models to add to the collection at creation.
 		*/
-		constructor: function (props) {
-			this.__dirtyModels = [];
-			this.inherited(arguments);
-			// if the initial parameter is an array we use that as
-			// our starting properties
-			if (props && props instanceof Array) {
-				this.__store = this.__store? this.__store.concat(props): props;
-			}
-			// initialize our store
-			this.__store = this.__store || [];
-			this.length = this.__store.length;
-			this.initModel();
-			if (this.__store.length) {
-				for (var $i=0, r$; (r$=this.__store[$i]); ++$i) {
-					if (!(r$ instanceof this.model)) {
-						r$ = new this.model(r$);
-					}
-					r$.addCollection(this);
-					this.__store[$i] = r$;
+		constructor: enyo.super(function (sup) {
+			return function (props) {
+				this.__dirtyModels = [];
+				sup.apply(this, arguments);
+				// if the initial parameter is an array we use that as
+				// our starting properties
+				if (props && props instanceof Array) {
+					this.__store = this.__store? this.__store.concat(props): props;
 				}
-			}
-			this.initRelation();
-		},
+				// initialize our store
+				this.__store = this.__store || [];
+				this.length = this.__store.length;
+				this.initModel();
+				if (this.__store.length) {
+					for (var $i=0, r$; (r$=this.__store[$i]); ++$i) {
+						if (!(r$ instanceof this.model)) {
+							r$ = new this.model(r$);
+						}
+						r$.addCollection(this);
+						this.__store[$i] = r$;
+					}
+				}
+				this.initRelation();
+			};
+		}),
 
 		// ...........................
 		// PROTECTED METHODS
@@ -570,7 +577,7 @@
 				var $r = this.relation, $k;
 				if (($k = $r.relationKey)) {
 					if (!this[$k]) {
-						this.addObserver($k, this.__relationObserver, this);
+						this.addObserver($k, this.__relationObserver);
 					} else {
 						this.__relationObserver($k, null, this[$k]);
 					}
@@ -611,18 +618,18 @@
 		},
 
 		//*@protected
-		__relationChanged: enyo.observer(function (prop, prev, val) {
+		__relationChanged: function (prev, val, prop) {
 			if (val) {
 				this.initRelation();
 			}
-		}, "relation"),
+		},
 
 		//*@protected
 		__modelChanged: function (sender, event) {
 			var $i = this.indexOf(sender);
 			if (!!~$i) {
 				this.set("status", enyo.Model.DIRTY);
-				this.doModelChanged({model: sender, index: $i, collection: this});
+				this.doModelChanged({model: sender, index: $i, collection: this, changed: event.changed, previous: event.previous});
 			}
 			return true;
 		},
@@ -641,13 +648,18 @@
 		// OBSERVERS
 
 		//*@protected
-		__statusChanged: enyo.observer(function (prop, prev, val) {
+		__statusChanged: function (prev, val, prop) {
 			if (prev === enyo.Model.DIRTY && val === enyo.Model.CLEAN) {
 				for (var $i=0, r$; (r$=this.__dirtyModels[$i]); ++$i) {
 					r$.set("status", enyo.Model.CLEAN);
 				}
 			}
-		}, "status")
+		},
+		
+		observers: {
+			__relationChanged: ["relation"],
+			__statusChanged: ["status"]
+		}
 
 	});
 

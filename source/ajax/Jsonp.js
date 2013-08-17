@@ -87,10 +87,12 @@ enyo.kind({
 			script.parentNode.removeChild(script);
 		}
 	},
-	constructor: function(inParams) {
-		enyo.mixin(this, inParams);
-		this.inherited(arguments);
-	},
+	constructor: enyo.super(function (sup) {
+		return function(inParams) {
+			enyo.mixin(this, inParams);
+			sup.apply(this, arguments);
+		};
+	}),
 	//* @public
 	//* Starts the JSONP request.
 	go: function(inParams) {
