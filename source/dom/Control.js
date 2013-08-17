@@ -68,6 +68,10 @@ enyo.kind({
 	},
 	//*@protected
 	concat: ["classes", "style", "attributes"],
+	//*@protected, 
+	//* Layout direction. Left-to-right (false) or right-to-left (true)
+	//* Should only be read by widget developers (sub-kinders), and normally never set by end developers
+	rtl: false,
 	//*@public
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
