@@ -68,7 +68,7 @@ enyo.kind({
 	},
 	//*@protected
 	concat: ["classes", "style", "attributes"],
-	//*@protected, 
+	//*@protected
 	//* Layout direction. Left-to-right (false) or right-to-left (true)
 	//* Should only be read by widget developers (sub-kinders), and normally never set by end developers
 	rtl: false,
@@ -133,7 +133,9 @@ enyo.kind({
 	destroy: enyo.super(function (sup) {
 		return function() {
 			this.removeFromRoots();
-			this.removeNodeFromDom();
+			if (this.hasNode() && this.node.parentNode) {
+				this.node.parentNode.removeChild(this.node);
+			}
 			enyo.Control.unregisterDomEvents(this.id);
 			sup.apply(this, arguments);
 		};
@@ -456,13 +458,30 @@ enyo.kind({
 				return this;
 			}
 		}
-		if (!this.hasNode()) {
-			this.renderNode();
-		}
-		if (this.hasNode()) {
-			this.renderDom();
+		if (1) {
+			// generate all using document fragments
+			var oldNode = this.hasNode(), pn;
+			if (oldNode) {
+				pn = this.getParentNode();
+				this.teardownRender();
+			}
+			this.generateFragment();
+			if (oldNode) {
+				pn.removeChild(oldNode);
+			}
 			if (this.generated) {
+				this.addNodeToParent();
 				this.rendered();
+			}
+		} else {
+			if (!this.hasNode()) {
+				this.renderNode();
+			}
+			if (this.hasNode()) {
+				this.renderDom();
+				if (this.generated) {
+					this.rendered();
+				}
 			}
 		}
 		// return 'this' to support method chaining
@@ -703,7 +722,8 @@ enyo.kind({
 		if (this.children.length) {
 			return this.generateChildHtml();
 		} else {
-			return this.allowHtml ? this.get("content") : enyo.Control.escapeHtml(this.get("content"));
+			var content = this.get("content");
+			return this.allowHtml ? content : enyo.dom.escapeHtml(content);
 		}
 	},
 	generateChildHtml: function() {
@@ -741,6 +761,49 @@ enyo.kind({
 		}
 		this.tagsValid = true;
 	},
+	//* Alternate generate method that produces DocumentFragments instead of
+	//* text strings.
+	generateFragment: function() {
+		if (this.canGenerate === false) {
+			return null;
+		}
+		var fragment, content;
+		// Flow can alter the way that html content is rendered inside
+		// the container regardless of whether there are children.
+		this.flow();
+		if (this.children.length) {
+			for (var i = 0, c; (c = this.children[i]); ++i) {
+				var cn = c.generateFragment();
+				if (cn) {
+					fragment = fragment ||  document.createDocumentFragment();
+					fragment.insertBefore(cn, null);
+				}
+			}
+		} else {
+			content = this.get("content");
+		}
+		if (this.tag) {
+			this.node = document.createElement(this.tag);
+		}
+		if (this.node) {
+			this.attributesToNode();
+			this.stylesToNode();
+			if (fragment) {
+				this.node.insertBefore(fragment, null);
+			} else if (content != null && content !== "") {
+				if (this.allowHtml) {
+					enyo.dom.setInnerHtml(this.node, content);
+				} else {
+					enyo.dom.setInnerText(this.node, content);
+				}
+			}
+		}
+		this.generated = true;
+		// because we just generated our html we can set this flag to false
+		this._needsRender = false;
+		return this.node || fragment;
+	},
+
 	// DOM, aka direct-to-node, rendering
 	attributeToNode: function(inName, inValue) {
 		if (inValue === null || inValue === false || inValue === "") {
@@ -761,23 +824,16 @@ enyo.kind({
 		if (this.node) {
 			var pn = this.getParentNode();
 			if (pn) {
-				if (this.addBefore !== undefined) {
-					this.insertNodeInParent(pn, this.addBefore && this.addBefore.hasNode());
+				var addBefore;
+				if (this.addBefore && this.addBefore.hasNode()) {
+					addBefore = this.addBefore.node;
+				} else if (this.addBefore === null) {
+					addBefore = pn.firstChild;
 				} else {
-					this.appendNodeToParent(pn);
+					addBefore = null;
 				}
+				pn.insertBefore(this.node, addBefore);
 			}
-		}
-	},
-	appendNodeToParent: function(inParentNode) {
-		inParentNode.appendChild(this.node);
-	},
-	insertNodeInParent: function(inParentNode, inBeforeNode) {
-		inParentNode.insertBefore(this.node, inBeforeNode || inParentNode.firstChild);
-	},
-	removeNodeFromDom: function() {
-		if (this.hasNode() && this.node.parentNode) {
-			this.node.parentNode.removeChild(this.node);
 		}
 	},
 	teardownRender: function() {
@@ -807,7 +863,7 @@ enyo.kind({
 		if (this.generated) {
 			this.teardownChildren();
 		}
-		if (this.node) {
+		if (this.hasNode()) {
 			enyo.dom.setInnerHtml(this.node, this.generateInnerHtml());
 		}
 	},
@@ -940,15 +996,6 @@ enyo.kind({
 	//
 	//
 	statics: {
-		/**
-			Returns passed-in string with ampersand, less-than, and greater-than
-			characters replaced by HTML entities, e.g.,
-			'&lt;code&gt;"This &amp; That"&lt;/code&gt;' becomes
-			'&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;'
-		*/
-		escapeHtml: function(inText) {
-			return inText != null ? String(inText).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
-		},
 		//* @protected
 		registerDomEvents: function(inId, inControl) {
 			enyo.$[inId] = inControl;

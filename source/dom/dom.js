@@ -45,6 +45,15 @@ enyo.dom = {
 			return null;
 		}
 	},
+	/**
+		Returns passed-in string with ampersand, less-than, and greater-than
+		characters replaced by HTML entities, e.g.,
+		'&lt;code&gt;"This &amp; That"&lt;/code&gt;' becomes
+		'&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;'
+	*/
+	escapeHtml: function(inText) {
+		return inText != null ? String(inText).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
+	},
 	//* @protected
 	// this is designed to be copied into the computedStyle object
 	_ie8GetComputedStyle: function(prop) {
@@ -303,6 +312,9 @@ enyo.dom = {
 	setInnerHtml: function(node, html) {
 		node.innerHTML = html;
 	},
+	setInnerText: function(node, text) {
+		node.textContent = text;
+	},
 	//* check a DOM node for a specific CSS class
 	hasClass: function(node, s) {
 		if (!node || !node.className) { return; }
@@ -331,6 +343,19 @@ if (typeof window.MSApp !== "undefined") {
 			node.innerHTML = html;
 		});
 	};
+}
+
+// use best method for safely setting text content of a node
+if (document.head.textContent === undefined) {
+	if (document.head.innerText === undefined) {
+		enyo.dom.setInnerText = function(node, text) {
+			node.innerText = text;
+		};
+	} else {
+		enyo.dom.setInnerText = function(node, text) {
+			enyo.dom.setInnerHtml(node, enyo.dom.escapeHtml(text));
+		};
+	}
 }
 
 // use faster classList interface if it exists
