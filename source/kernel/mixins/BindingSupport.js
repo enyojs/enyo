@@ -266,6 +266,12 @@ enyo.ComponentBindingSupport = {
 			sup.apply(this, arguments);
 			props._bindingTransformOwner = props._bindingTransformOwner || this.getInstanceOwner();
 		};
+	}),
+	constructed: enyo.super(function (sup) {
+		return function () {
+			this.initBindings();
+			return sup.apply(this, arguments);
+		};
 	})
 };
 //*@protected
