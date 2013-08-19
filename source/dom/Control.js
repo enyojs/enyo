@@ -856,8 +856,8 @@ enyo.kind({
 	syncDisplayToShowing: function() {
 		var ds = this.domStyles;
 		if (this.showing) {
-			// note: only show a node if it's actually hidden
-			// this way we prevent overriding the value of domStyles.display
+			// note: only show a node if it's actually hidden;
+			// this way, we prevent overriding the value of domStyles.display
 			if (ds.display == "none") {
 				this.applyStyle("display", this._displayStyle || "");
 			}
@@ -924,7 +924,7 @@ enyo.kind({
 
 		return false;
 	},
-	//* Adds control to enyo.roots, called from write(), renderInto(), ViewController.renderInto()
+	//* Adds control to enyo.roots; called from write(), renderInto(), ViewController.renderInto()
 	addToRoots: function() {
 		if (!enyo.exists(enyo.roots)) { enyo.roots = []; }
 		enyo.roots.push(this);
@@ -1027,15 +1027,14 @@ enyo.concatHandler("classes", function (proto, props) {
 enyo.concatHandler("style", function (proto, props, noKind) {
 	if (props.style) {
 		if (!noKind) {
-			// in an attempt to keep from doing addtional unnecessary parsing over and
-			// over at runtime we do this here to remove redundant entries that we would
-			// otherwise see every time
+			// in an attempt to avoid repeated unnecessary parsing at runtime,
+			// we do this here to remove redundant entries
 			var s = proto.domStyles? enyo.clone(proto.domStyles): {};
 			enyo.Control.cssTextToDomStyles(props.style, s);
 			proto.kindStyle = proto.domCssText = enyo.Control.domStylesToCssText(s);
 			proto.domStyles = s;
 		} else {
-			// here we don't have a real prototype to work with so we don't want to
+			// here we don't have a real prototype to work with, so we don't want to
 			// do the initialization parsing that will happen later
 			proto.style = ((proto.style? proto.style + ";": "") + props.style).replace(/;;/g, ";");
 		}
