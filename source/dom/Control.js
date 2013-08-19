@@ -508,8 +508,19 @@ enyo.kind({
 		this.addClass("enyo-no-touch-action");
 		// add css to enable hw-accelerated scrolling on non-Android platforms (ENYO-900, ENYO-901)
 		this.setupOverflowScrolling();
-		// generate our HTML
-		enyo.dom.setInnerHtml(pn, this.generateHtml());
+
+		if (1) {
+			// clear out any current contents
+			enyo.dom.setInnerHtml(pn, "");
+			// generate all using document fragments
+			var fragment = this.generateFragment();
+			if (fragment) {
+				pn.insertBefore(fragment, null);
+			}
+		} else {
+			// generate our HTML
+			enyo.dom.setInnerHtml(pn, this.generateHtml());
+		}
 		// post-rendering tasks
 		this.addToRoots();
 		if (this.generated) {
