@@ -126,7 +126,7 @@
 		/**
 			The _owner_ property is used extensively for various purposes within a
 			binding. One primary purpose is to serve as a root object from which to
- 			search for its ends (the _source_ and/or _target_). If the owner created
+			search for its ends (the _source_ and/or _target_). If the owner created
 			the binding, it will also be responsible for destroying it
 			(automatically).
 		*/
