@@ -7,15 +7,15 @@
 		kinds:
 
 		- A property on a mixin will automatically override the same property on the
-		    kind or instance it is being applied to, should it already exist.
+			kind or instance it is being applied to, should it already exist.
 
 		- A method that already exists on the kind or instance will not
-		    automatically call the super-method. If the intention is to extend the
-		    kind's own method, make sure that you wrap the method with _enyo.super_.
+			automatically call the super-method. If the intention is to extend the
+			kind's own method, make sure that you wrap the method with _enyo.super_.
 
 		- Mixins must have a name so they can be identified when applied; otherwise,
-		    the same mixin may be applied multiple times to a given kind,
-		    potentially resulting in an infinite loop.
+			the same mixin may be applied multiple times to a given kind,
+			potentially resulting in an infinite loop.
 
 		An _enyo.Mixin_ is _not a kind_. It is simply a named collection of methods
 		and properties that may be reused with multiple kinds.
