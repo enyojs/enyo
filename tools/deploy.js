@@ -67,7 +67,7 @@ var nopt = require("nopt"),
 	fs = require('fs'),
 	shell = require('shelljs');
 
-var stat, script, scripts = {};
+var stat, script;
 
 // Send message to parent node process, if any
 process.on('uncaughtException', function (err) {
@@ -238,7 +238,7 @@ log("% mkdir -p " + outDir);
 shell.mkdir('-p', outDir);
 
 // Build / Minify
-var args, cwd;
+var args;
 if (!opt.mapfrom || opt.mapfrom.indexOf("enyo") < 0) {
 	console.log("Minify-ing Enyo...");
 	args = [node, minifier,
