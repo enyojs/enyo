@@ -3,9 +3,10 @@ enyo.concat.push("published");
 //*@public
 /**
 _enyo.Object_ lies at the heart of the Enyo framework's implementations of
-property publishing, computed properties (via the _ComputedPropertySupport_
-mixin), and data binding (via the _BindingSupport_ mixin). It also provides
-several utility functions for its subkinds.
+property publishing, computed properties (via the
+[ComputedSupport](#enyo/source/kernel/mixins/ComputedSupport.js) mixin), and
+data binding (via the [BindingSupport](#enyo/source/kernel/mixins/BindingSupport.js)
+mixin). It also provides several utility functions for its subkinds.
 
 Published properties are declared in a hash called _published_ within a call
 to _enyo.kind_. To get and set values for these properties, call
