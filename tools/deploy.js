@@ -18,13 +18,20 @@ This script comes along with Enyo.  It automatically uses & embeds the
 Enyo version it is shipped with, unless the user specifies another
 Enyo version using the `-e enyo_dir` flag.
 
-When you application has library dependencies (for example
-`lib/mylib`), this script uses the `lib/mylib/manifest.json` (if
-present) or the old-fashioned deployment scripts `lib/mylib/deploy.sh`
-(on Linux & Mac OSX) or `lib/mylib/deploy.bat` (on Windows).
-If neither exist, then the entire library is copied (except for .git dir).
+This script uses the application manifest `deploy.json` if found.  Here
+is a typical application manifest content:
 
-This script also expects to find the following files & folders in the
+```json
+{
+	"enyo": "enyo",
+	"source": ".",
+	"assets": ["icon.png", "index.html", "assets"],
+	"libs": ["lib/onyx", "lib/layout"]
+}
+```
+
+When the application does not have a root-level `deploy.json` manifest
+file, this script expects to find the following files & folders in the
 application root directory.  Each of them is copied verbatim in the
 output production/deployment folder (the one optionally given using
 the `-o` flag).
@@ -33,6 +40,24 @@ the `-o` flag).
 * `icon.png`, the application icon
 * `assets/`holds the static application assets, such as images,
   videos... etc.
+
+When you application has library dependencies (for example
+`lib/mylib`), this script uses the library manifest
+`lib/mylib/deploy.json` (if present) or the old-fashioned deployment
+scripts `lib/mylib/deploy.sh` (on Linux & Mac OSX) or
+`lib/mylib/deploy.bat` (on Windows).  If neither exist, then the
+entire library is copied (except for `.git`, `target` and `build`
+directories).
+
+Here is a typical library manifest content:
+
+```json
+{
+	"source": ".",
+	"assets": ["assets", "images"],
+	"libs": []
+}
+```
 
  */
 

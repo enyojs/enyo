@@ -20,6 +20,7 @@
 
 	function printUsage() {
 		w("Enyo 2.0 Minifier");
+		w("Usage: " + __filename + " [Flags] [path/to/package.js]");
 		w("Flags:");
 		w("-no-less:", "Don't compile less; instad substitute css for less");
 		w("-no-alias:", "Don't use path macros");
