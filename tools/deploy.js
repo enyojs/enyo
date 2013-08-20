@@ -185,7 +185,10 @@ log("Using: noexec=" + noexec);
 
 // utils
 
-function run(args) {
+function run(args, wd) {
+	var cwd = process.cwd();
+	log("% cd " + wd);
+	process.chdir(path.resolve(wd));
 	var command = '"' + args.join('" "') + '"';
 	var report;
 	log("% ", command);
@@ -193,6 +196,8 @@ function run(args) {
 	if (report.code !== 0) {
 		throw new Error("Fail: '" + command + "'\n" + report.output);
 	}
+	log("% cd " + cwd);
+	process.chdir(cwd);
 }
 
 // Prepare target directory
@@ -203,10 +208,9 @@ log("% mkdir -p " + outDir);
 shell.mkdir('-p', outDir);
 
 // Build / Minify
-var args;
+var args, cwd;
 if (!opt.mapfrom || opt.mapfrom.indexOf("enyo") < 0) {
 	console.log("Minify-ing Enyo...");
-	process.chdir(path.resolve(enyoDir, 'minify'));
 	args = [node, minifier,
 		'-no-alias',
 		'-enyo', enyoDir,
@@ -214,25 +218,24 @@ if (!opt.mapfrom || opt.mapfrom.indexOf("enyo") < 0) {
 		// XXX rather an 'output_prefix' than an 'out_dir'...
 		'-output', path.join(buildDir, 'enyo'),
 		(beautify ? '-beautify' : '-no-beautify'),
-		'package.js'];
+		path.join(enyoDir, 'minify', 'package.js')];
 	if (opt.mapfrom) {
 		for (var i=0; i<opt.mapfrom.length; i++) {
 			args.push("-f", opt.mapfrom[i], "-t", opt.mapto[i]);
 		}
 	}
-	run(args);
+	run(args, path.resolve(enyoDir, 'minify'));
 } else {
 	console.log("Skipping Enyo minification (will be mapped to " + opt.mapto[opt.mapfrom.indexOf("enyo")] + ").");
 }
 
 console.log("Minify-ing the application...");
-process.chdir(path.dirname(packageJs));
 args = [node, minifier,
 	'-enyo', enyoDir,
 	'-output', path.join(buildDir, 'app'),
 	(less ? '-less' : '-no-less'),
 	(beautify ? '-beautify' : '-no-beautify'),
-	'package.js'];
+	packageJs];
 if (opt.mapfrom) {
 	for (var i=0; i<opt.mapfrom.length; i++) {
 		args.push("-f", opt.mapfrom[i], "-t", opt.mapto[i]);
@@ -241,8 +244,7 @@ if (opt.mapfrom) {
 if (opt.lib) {
 	args.push("-lib", opt.lib);
 }
-run(args);
-process.chdir(sourceDir);
+run(args, path.resolve(sourceDir));
 
 // Deploy / Copy
 

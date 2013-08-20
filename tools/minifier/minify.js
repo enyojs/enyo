@@ -225,6 +225,10 @@
 
 	opt = nopt(knownOpts, shortHands, process.argv, 2);
 	opt.source = opt.argv.remain[0];
+	if (opt.source) {
+		process.chdir(path.dirname(opt.source));
+	}
+
 	w(opt);
 	w("");
 
@@ -256,6 +260,6 @@
 	});
 
 	walker.init(opt.enyo, opt.lib || opt.enyo + "/../lib", opt.mapfrom, opt.mapto);
-	walker.walk(opt.source, walkerFinished);
+	walker.walk('package.js', walkerFinished);
 
 })();
