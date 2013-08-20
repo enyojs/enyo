@@ -133,6 +133,20 @@ if (opt.help) {
 	process.exit(1);
 }
 
+// application default values may come from the manifest file: deploy.json
+
+var manifest;
+try {
+	manifest = JSON.parse(fs.readFileSync(path.join(sourceDir, "deploy.json")));
+} catch(e) {
+	manifest = {
+		_default: true
+	};
+}
+
+enyoDir = manifest.enyo ? path.join(process.cwd(), manifest.enyo) : enyoDir;
+packageJs = manifest.source ? path.join(process.cwd(), manifest.source, "package.js") : packageJs;
+
 // nopt has not default values system
 buildDir = opt.build || buildDir;
 enyoDir = opt.enyo || enyoDir;
@@ -183,9 +197,10 @@ function run(args) {
 
 // Prepare target directory
 
-shell.rm('-rf', path.resolve(outDir));
-shell.rm('-rf', path.resolve(outDir));
-shell.mkdir('-p', path.join(outDir));
+log("% rm -rf " + outDir);
+shell.rm('-rf', outDir);
+log("% mkdir -p " + outDir);
+shell.mkdir('-p', outDir);
 
 // Build / Minify
 var args;
@@ -231,61 +246,85 @@ process.chdir(sourceDir);
 
 // Deploy / Copy
 
-shell.mkdir('-p', path.join(outDir, 'lib'));
-shell.cp(path.join(sourceDir, 'index.html'), path.join(sourceDir, 'icon.png'), outDir);
-shell.cp('-r', buildDir, outDir);
+console.log("Copying assets...");
+if(!manifest._default) {
+	/* Pick the list of files & folders to copy from the application manifest */
+	deployDir(".", sourceDir, outDir);
+} else {
+	/* Use legacy built-in list of files & folders to copy */
+	shell.mkdir('-p', path.join(outDir, 'lib'));
+	shell.cp(path.join(sourceDir, 'index.html'), path.join(sourceDir, 'icon.png'), outDir);
+	shell.cp('-r', buildDir, outDir);
 
-var assetsSrcDir = path.join(sourceDir, 'assets');
-if(shell.test('-d', assetsSrcDir)) {
-	shell.cp('-r', assetsSrcDir, outDir);
-}
-
-var libSrcDir = path.join(sourceDir, 'lib');
-if(shell.test('-d', libSrcDir)) {
-	shell.ls(libSrcDir).forEach(deployLib);
-}
-
-function deployLib(lib) {
-	if (opt.mapfrom && opt.mapfrom.indexOf("lib/" + lib) >= 0) {
-		// Don't deploy libraries that are loaded from elsewhere
-		return;
+	var assetsSrcDir = path.join(sourceDir, 'assets');
+	if(shell.test('-d', assetsSrcDir)) {
+		shell.cp('-r', assetsSrcDir, outDir);
 	}
-	var libOutdir = path.join(outDir, 'lib', lib);
-	// load & execute sub-'deploy.js'
+
+	var libsSrcDir = path.join(sourceDir, 'lib');
+	if(shell.test('-d', libsSrcDir)) {
+		shell.ls(libsSrcDir).forEach(function(lib) {
+			var libDir = path.join("lib", lib);
+			if (opt.mapfrom && opt.mapfrom.indexOf(libDir) >= 0) {
+				// Don't deploy libraries that are loaded from elsewhere
+				console.log("Skipping:", libDir);
+			} else {
+				deployDir(libDir, sourceDir, outDir);
+			}
+		});
+	}
+}
+
+function deployDir(subDir, srcDir, dstDir) {
+	log("Deploying " + subDir + "...");
 	try {
-		script = path.join(sourceDir, 'lib', lib, 'deploy.js');
-		stat = fs.statSync(script);
-		if (!stat.isFile()) {
-			throw new Error("*** Not a file: '" + script + "'");
+		var manifest = JSON.parse(fs.readFileSync(path.join(srcDir, subDir, "deploy.json")));
+		if (Array.isArray(manifest.assets)) {
+			manifest.assets.forEach(function(asset) {
+				var dstAssetDir = path.dirname(path.join(dstDir, subDir, asset));
+				shell.mkdir('-p', dstAssetDir);
+				log("% cp -r " + path.join(subDir, asset) + "...");
+				shell.cp('-r', path.join(srcDir, subDir, asset), dstAssetDir);
+			});
 		}
-		if (verbose) {
-			console.log("Using '" + script + "'");
+		if (Array.isArray(manifest.libs)) {
+			manifest.libs.forEach(function(libDir) {
+				deployDir(path.join(subDir, libDir), srcDir, dstDir);
+			});
 		}
-		scripts[lib] = require(script);
-		scripts[lib].deploy(libOutdir);
 	} catch(e) {
 		// backward compatibility: run deploy.sh or deploy.bat
 		try {
-			script = path.join(sourceDir, 'lib', lib, 'deploy.' + (process.platform === 'win32' ? 'bat' : 'sh'));
+			if (noexec) {
+				console.warn("noexec: Skip execution of client-provided code");
+				throw new Error("noexec: Skip execution of client-provided code");
+			}
+			script = path.join(srcDir, subDir, 'deploy.' + (process.platform === 'win32' ? 'bat' : 'sh'));
 			stat = fs.statSync(script);
 			if (!stat.isFile()) {
 				throw new Error("*** Not a file: '" + script + "'");
 			}
-			if (verbose) {
-				console.log("Using '" + script + "'");
-			}
-			var command = [script, libOutdir];
+			var command = [script, path.join(dstDir, subDir)];
 			if (process.platform !== 'win32') {
 				command.unshift("sh");
 			}
 			run(command);
 		} catch(e2) {
-			// no deploy.(js|bat|sh): copy everything (then remove ".git", if any)
-			if (verbose) {
-				console.log("Using 'cp -r lib/" + lib + " ...'");
-			}
-			shell.cp('-r', path.join(sourceDir, 'lib', lib), path.join(outDir, 'lib'));
-			shell.rm('-rf', path.join(outDir, 'lib', lib, '.git'));
+			// no deploy.(js|bat|sh): copy everything...
+			var dd = path.dirname(path.join(dstDir, subDir));
+			log("% mkdir -p " + dd);
+			shell.mkdir('-p', dd);
+
+			var sd = path.join(srcDir, subDir);
+			log("% cp -r " + sd + " " + dd);
+			shell.cp('-r', sd, dd);
+
+			// ...then remove ".git" & others, if any
+			log("% rm -rf " + dd + "/(.git|target|build|deploy)");
+			shell.rm('-rf', path.join(dstDir, subDir, '.git'));
+			shell.rm('-rf', path.join(dstDir, subDir, 'target'));
+			shell.rm('-rf', path.join(dstDir, subDir, 'build'));
+			shell.rm('-rf', path.join(dstDir, subDir, 'deploy'));
 		}
 	}
 }
