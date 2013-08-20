@@ -71,7 +71,7 @@ var node = process.argv[0],
 	deploy = process.argv[1],
 	sourceDir = process.cwd(),
 	packageJs = path.resolve(sourceDir, "package.js"),
-	enyoDir = path.resolve(__dirname, '..'),
+	enyoDir = path.resolve(sourceDir, "enyo"),
 	buildDir = path.resolve(sourceDir, "build"),
 	basename = path.basename(sourceDir),
 	outDir = path.resolve(sourceDir, 'deploy', basename),
@@ -159,7 +159,7 @@ if ((opt.mapfrom || opt.maptop) && (!opt.mapfrom || !opt.mapto || (opt.mapfrom.l
 	process.exit(1);
 }
 
-var minifier = path.resolve(enyoDir, 'tools', 'minifier', 'minify.js');
+var minifier = path.resolve(__dirname, 'minifier', 'minify.js');
 log("Using: build_dir=" + buildDir);
 log("Using: enyo_dir=" + enyoDir);
 log("Using: out_dir=" + outDir);
