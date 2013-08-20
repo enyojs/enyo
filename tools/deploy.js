@@ -340,7 +340,7 @@ function deployDir(subDir, srcDir, dstDir) {
 			if (process.platform !== 'win32') {
 				command.unshift("sh");
 			}
-			run(command);
+			run(command, path.join(srcDir, subDir));
 		} catch(e2) {
 			// no deploy.(js|bat|sh): copy everything...
 			var dd = path.dirname(path.join(dstDir, subDir));
