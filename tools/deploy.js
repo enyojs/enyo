@@ -77,7 +77,8 @@ var node = process.argv[0],
 	outDir = path.resolve(sourceDir, 'deploy', basename),
 	less = true, // LESS compilation, turned on by default
 	verbose = false,
-	beautify = false;
+	beautify = false,
+	noexec = false;
 
 function printUsage() {
 	// format generated using node-optimist...
@@ -96,6 +97,7 @@ function printUsage() {
 		'  -B  pretty-print (beautify) JS output     [default: "' + beautify + '"]\n' +
 		'  -f  remote source mapping: from local path\n' +
 		'  -t  remote source mapping: to remote path' +
+		'  -E|--noexec disallow execution of application-provided scripts [default: false]' +
 		'\n');
 }
 
@@ -110,6 +112,7 @@ var opt = nopt(/*knownOpts*/ {
 	"verbose": Boolean,
 	"help": Boolean,
 	"beautify": Boolean,
+	"noexec": Boolean,
 	"mapfrom": [String, Array],
 	"mapto": [String, Array]
 }, /*shortHands*/ {
@@ -125,6 +128,7 @@ var opt = nopt(/*knownOpts*/ {
 	"B": "--beautify",
 	"f": "--mapfrom",
 	"t": "--mapto",
+	"E": "--noexec",
 	"?": "--help"
 }, process.argv /*args*/, 2 /*slice*/);
 
@@ -159,6 +163,7 @@ sourceDir = opt.source ||
 	sourceDir;
 less = (opt.less !== false) && less;
 beautify = opt.beautify;
+noexec = opt.noexec;
 verbose = opt.verbose;
 
 var log = function() {};
