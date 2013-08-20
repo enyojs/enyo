@@ -147,32 +147,34 @@ less = (opt.less !== false) && less;
 beautify = opt.beautify;
 verbose = opt.verbose;
 
+var log = function() {};
+if (verbose) {
+	log = console.log;
+}
+
 if ((opt.mapfrom || opt.maptop) && (!opt.mapfrom || !opt.mapto || (opt.mapfrom.length != opt.mapto.length))) {
-	console.log("mapfrom:", opt.mapfrom);
-	console.log("mapto:", opt.mapto);
+	log("mapfrom:", opt.mapfrom);
+	log("mapto:", opt.mapto);
 	console.error("Error: The number of 'mapfrom' and 'mapto' arguments must match.");
 	process.exit(1);
 }
 
 var minifier = path.resolve(enyoDir, 'tools', 'minifier', 'minify.js');
-if (verbose) {
-	console.log("Using: build_dir=" + buildDir);
-	console.log("Using: enyo_dir=" + enyoDir);
-	console.log("Using: out_dir=" + outDir);
-	console.log("Using: packagejs=" + packageJs);
-	console.log("Using: source_dir=" + sourceDir);
-	console.log("Using: less=" + less);
-	console.log("Using: beautify=" + beautify);
-}
+log("Using: build_dir=" + buildDir);
+log("Using: enyo_dir=" + enyoDir);
+log("Using: out_dir=" + outDir);
+log("Using: packagejs=" + packageJs);
+log("Using: source_dir=" + sourceDir);
+log("Using: less=" + less);
+log("Using: beautify=" + beautify);
+log("Using: noexec=" + noexec);
 
 // utils
 
 function run(args) {
 	var command = '"' + args.join('" "') + '"';
 	var report;
-	if (verbose) {
-		console.log("Running: '", command, "' from '", process.cwd(), "'");
-	}
+	log("% ", command);
 	report = shell.exec(command, { silent: true });
 	if (report.code !== 0) {
 		throw new Error("Fail: '" + command + "'\n" + report.output);
