@@ -252,7 +252,7 @@ enyo.Object.addGetterSetter = function (prop, value, proto) {
 	fn = proto[get];
 	// if there isn't already a getter provided create one
 	if (!enyo.isFunction(fn)) {
-		fn = proto[get] = function () { return this.get(prop); };
+		fn = proto[get] = function () { return enyo.getPath.fast.call(this, prop); };
 		fn.overloaded = false;
 	} else if (false !== fn.overloaded) {
 		// otherwise we need to mark it as having been overloaded
@@ -262,7 +262,7 @@ enyo.Object.addGetterSetter = function (prop, value, proto) {
 	// if there isn't already a set provided, create one
 	fn = proto[set];
 	if ("function" !== typeof fn) {
-		fn = proto[set] = function () { return this.set(prop, arguments[0]); };
+		fn = proto[set] = function () { return enyo.setPath.fast.call(this, prop, arguments[0]); };
 		fn.overloaded = false;
 	} else if (false !== fn.overloaded) {
 		// otherwise we need to mark it as having been overloaded
