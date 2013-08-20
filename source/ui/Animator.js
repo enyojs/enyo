@@ -45,14 +45,18 @@ enyo.kind({
 		onStop: ""
 	},
 	//* @protected
-	constructed: function() {
-		this.inherited(arguments);
-		this._next = this.bindSafely("next");
-	},
-	destroy: function() {
-		this.stop();
-		this.inherited(arguments);
-	},
+	constructed: enyo.super(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this._next = this.bindSafely("next");
+		};
+	}),
+	destroy: enyo.super(function (sup) {
+		return function() {
+			this.stop();
+			sup.apply(this, arguments);
+		};
+	}),
 	//* @public
 	//* Plays the animation.
 	//* For convenience, _inProps_ will be mixed directly into this object.
@@ -132,8 +136,8 @@ enyo.kind({
 			this.value = this.endValue;
 			this.fraction = 1;
 			this.fire("onStep");
-			this.fire("onEnd");
 			this.cancel();
+			this.fire("onEnd");
 		} else {
 			this.fire("onStep");
 			this.requestNext();

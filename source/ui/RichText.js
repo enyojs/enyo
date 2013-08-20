@@ -58,11 +58,13 @@ enyo.kind({
 		oninput: null
 	},
 	// create RichText as a div if platform has contenteditable attribute, otherwise create it as a textarea
-	create: function() {
-		this.setTag(enyo.RichText.hasContentEditable()?"div":"textarea");
-		this.inherited(arguments);
-		this.disabledChanged();
-	},
+	create: enyo.super(function (sup) {
+		return function() {
+			this.setTag(enyo.RichText.hasContentEditable()?"div":"textarea");
+			sup.apply(this, arguments);
+			this.disabledChanged();
+		};
+	}),
 	// simulate onchange event that inputs expose
 	focusHandler: function() {
 		this._value = this.get("value");

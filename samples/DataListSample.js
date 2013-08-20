@@ -5,12 +5,18 @@ enyo.kind({
 		{name: "repeater", classes: "data-repeater-sample", kind: "enyo.DataList", components: [
 			{classes: "data-repeater-sample-container", components: [
 				{classes: "data-repeater-sample-td-left", components: [
-					{classes: "data-repeater-sample-item-index", bindFrom: ".index"}
+					{name: "index", classes: "data-repeater-sample-item-index", bindFrom: ".index"}
 				]},
 				{components: [
-					{classes: "data-repeater-sample-item-hex", bindFrom: ".hex"}
+					{name: "hex", classes: "data-repeater-sample-item-hex"}
 				]}
-			]}
+			], bindings: [
+				{from: ".hex", target: ".$.hex"},
+				{from: ".index", target: ".$.index"}
+			], bindingDefaults: {
+				source: ".model",
+				to: ".content"
+			}}
 		]}
 	],
 	create: function () {

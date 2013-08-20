@@ -254,27 +254,34 @@
 			// an id via sequence, etc.
 			$options.success(model.euuid);
 		},
-		constructor: function () {
-			// there can only be one store executing at a time
-			if (enyo.store) {
-				throw "There can only be one enyo.Store active";
+		constructor: enyo.super(function (sup) {
+			return function () {
+				// there can only be one store executing at a time
+				if (enyo.store) {
+					throw "There can only be one enyo.Store active";
+				}
+				enyo.store = this;
+				sup.apply(this, arguments);
+				this._records = {};
+				enyo.forEach(enyo.models.kinds, this._addModelKind, this);
+				enyo.forEach(enyo.models.queued, this.initModel, this);
+				this.notifyObservers("source");
+			};
+		}),
+		sourceChanged: function (p) {
+			var s = this.source;
+			if (s) {
+				if (enyo.isString(s)) {
+					s = this.source = enyo.getPath.call(s[0] == "."? this: enyo.global, s);
+				}
+				if (s.prototype) {
+					s = this.source = new this.source();
+				}
+			} else {
+				s = this.source = enyo.Source.getDefaultSource();
 			}
-			enyo.store = this;
-			this.inherited(arguments);
-			this._records = {};
-			enyo.forEach(enyo.models.kinds, this._addModelKind, this);
-			enyo.forEach(enyo.models.queued, this.initModel, this);
-			if (!this.source) {
-				this.source = enyo.Source.getDefaultSource();
-			}
-		},
-		constructed: function () {
-			this.inherited(arguments);
-			this.findAndInstance("source");
-		},
-		sourceFindAndInstance: function (ctor, inst) {
-			if (inst) {
-				inst.set("owner", this);
+			if (s) {
+				s.set("owner", this);
 			}
 		},
 		didFetch: function (model, options, result) {
@@ -402,13 +409,9 @@
 
 		// ...........................
 		// OBSERVERS
-
-		_sourceChanged: enyo.observer(function (prop, prev, val) {
-			if (val) {
-				val.set("owner", this);
-				this.rebuildBindings();
-			}
-		}, "source")
+		observers: {
+			source: []
+		}
 
 	});
 

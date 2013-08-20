@@ -8,10 +8,13 @@
 	* ie
 	* ios
 	* webos
+	* windowsPhone
 	* blackberry
+	* tizen
 	* safari (desktop version)
 	* chrome (desktop version)
 	* firefox (desktop version)
+	* firefoxOS
 
 	If the property is defined, its value will be the major version	number
 	of the platform.
@@ -27,9 +30,9 @@
 		this.applyStyle("-webkit-transform", t);
 */
 enyo.platform = {
-	//* True if the platform has native single finger events
+	//* True if the platform has native single-finger events
 	touch: Boolean(("ontouchstart" in window) || window.navigator.msMaxTouchPoints),
-	//* True if the platform has native double finger events
+	//* True if the platform has native double-finger events
 	gesture: Boolean(("ongesturestart" in window) || window.navigator.msMaxTouchPoints)
 };
 
@@ -71,6 +74,8 @@ enyo.platform = {
 		{platform: "firefoxOS", regex: /Mobile;.*Firefox\/(\d+)/},
 		// desktop Firefox
 		{platform: "firefox", regex: /Firefox\/(\d+)/},
+		// Blackberry Playbook
+		{platform: "blackberry", regex: /PlayBook/i, forceVersion: 2},
 		// Blackberry 10+
 		{platform: "blackberry", regex: /BB1\d;.*Version\/(\d+\.\d+)/},
 		// Tizen

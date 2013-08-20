@@ -44,29 +44,43 @@ enyo.kind({
 	protectedStatics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
 	},
-
-	create: function() {
-		this.controls = [];
-		this.children = [];
-		this.containerChanged();
-		this.inherited(arguments);
-		this.layoutKindChanged();
-	},
-	destroy: function() {
-		// Destroys all non-chrome controls (regardless of owner).
-		this.destroyClientControls();
-		// Removes us from our container.
-		this.setContainer(null);
-		// Destroys chrome controls owned by this.
-		this.inherited(arguments);
-	},
-	importProps: function(inProps) {
-		this.inherited(arguments);
-		if (!this.owner) {
-			//this.log("registering ownerless control [" + this.kindName + "] with enyo.master");
-			this.owner = enyo.master;
-		}
-	},
+	create: enyo.super(function (sup) {
+		return function() {
+			this.controls = [];
+			this.children = [];
+			this.containerChanged();
+			sup.apply(this, arguments);
+			this.layoutKindChanged();
+			this.notifyObservers("controller");
+			this.notifyObservers("model");
+		};
+	}),
+	destroy: enyo.super(function (sup) {
+		return function() {
+			// Destroys all non-chrome controls (regardless of owner).
+			this.destroyClientControls();
+			// Removes us from our container.
+			this.setContainer(null);
+			// Destroys chrome controls owned by this.
+			sup.apply(this, arguments);
+			if (this.model) {
+				this.model.removeDispatchTarget(this);
+				this.model = null;
+			}
+			if (this.controller) {
+				this.controller.removeDispatchTarget(this);
+				this.controller = null;
+			}
+		};
+	}),
+	importProps: enyo.super(function (sup) {
+		return function(inProps) {
+			sup.apply(this, arguments);
+			if (!this.owner) {
+				this.owner = enyo.master;
+			}
+		};
+	}),
 	// As implemented, _controlParentName_ only works to identify an owned
 	// control created via _createComponents_ (i.e., usually in our _components_
 	// block).	To attach a _controlParent_ via other means, one must call
@@ -74,19 +88,23 @@ enyo.kind({
 	//
 	// We could call _discoverControlParent_ in _addComponent_, but it would
 	// cause a lot of useless checking.
-	createComponents: function() {
-		var results = this.inherited(arguments);
-		this.discoverControlParent();
-		return results;
-	},
+	createComponents: enyo.super(function (sup) {
+		return function() {
+			var results = sup.apply(this, arguments);
+			this.discoverControlParent();
+			return results;
+		};
+	}),
 	discoverControlParent: function() {
 		this.controlParent = this.$[this.controlParentName] || this.controlParent;
 	},
-	adjustComponentProps: function(inProps) {
-		// Components we create have us as a container by default.
-		inProps.container = inProps.container || this;
-		this.inherited(arguments);
-	},
+	adjustComponentProps: enyo.super(function (sup) {
+		return function(inProps) {
+			// Components we create have us as a container by default.
+			inProps.container = inProps.container || this;
+			sup.apply(this, arguments);
+		};
+	}),
 	// containment
 	containerChanged: function(inOldContainer) {
 		if (inOldContainer) {
@@ -281,6 +299,34 @@ enyo.kind({
 	},
 	getBubbleTarget: function() {
 		return this._bubbleTarget || this.parent || this.owner;
+	},
+	controllerChanged: function (p) {
+		var c = this.controller;
+		if (c) {
+			if (enyo.isString(c)) {
+				c = this.controller = enyo.getPath.call(c[0] == "."? this: enyo.global, c);
+			}
+			if (c) {
+				c.addDispatchTarget(this);
+			}
+		}
+		if (p) {
+			p.removeDispatchTarget(this);
+		}
+	},
+	modelChanged: function (p) {
+		var m = this.model;
+		if (m) {
+			if (enyo.isString(m)) {
+				m = this.model = enyo.getPath.call(m[0] == "."? this: enyo.global, m);
+			}
+			if (m) {
+				m.addDispatchTarget(this);
+			}
+		}
+		if (p) {
+			p.removeDispatchTarget(this);
+		}
 	}
 });
 

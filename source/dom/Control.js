@@ -66,14 +66,17 @@ enyo.kind({
 		//* Used by Ares design editor for design objects
 		isContainer: false
 	},
+	//*@protected
+	concat: ["classes", "style", "attributes"],
+	//*@protected, 
+	//* Layout direction. Left-to-right (false) or right-to-left (true)
+	//* Should only be read by widget developers (sub-kinders), and normally never set by end developers
+	rtl: false,
+	//*@public
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
 		ontap: "tap"
 	},
-	mixins: [
-		"enyo.ControllerSupport",
-		"enyo.ModelSupport"
-	],
 	//*@protected
 	_isView: true,
 	/**
@@ -93,42 +96,48 @@ enyo.kind({
 	//* @protected
 	node: null,
 	generated: false,
-	create: function() {
-		if (this.tag == null) {
-			// initially set to true, but if this is not a renderable
-			// control, we set it to false.
-			this._needsRender = false;
-		}
-		// initialize style databases
-		this.initStyles();
-		// superkind initialization
-		this.inherited(arguments);
-		// 'showing' is tertiary method for modifying display style
-		// setting 'display: none;' style at initialization time will
-		// not work if 'showing' is true.
-		this.showingChanged();
-		// Notes:
-		// - 'classes' does not reflect the complete set of classes on an object; the complete set is in
-		//   this.attributes.class. The '*Class' apis affect this.attributes.class.
-		// - use addClass instead of setClasses here, by convention 'classes' is reserved for instance objects
-		// - inheritors should 'addClass' to add classes
-		// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
-		this.addClass(this.kindClasses);
-		this.addClass(this.classes);
-		this.initProps(["id", "content", "src"]);
-	},
-	destroy: function() {
-		this.removeFromRoots();
-		this.connectDom();
-		this.removeNodeFromDom();
-		enyo.Control.unregisterDomEvents(this.id);
-		this.inherited(arguments);
-	},
-	importProps: function(inProps) {
-		this.inherited(arguments);
-		// each instance has its own attributes array, the union of the prototype attributes and user-specified attributes
-		this.attributes = enyo.mixin(enyo.clone(this.kindAttributes), this.attributes);
-	},
+	kindStyle: "",
+	create: enyo.super(function (sup) {
+		return function() {
+			if (this.tag == null) {
+				// initially set to true, but if this is not a renderable
+				// control, we set it to false.
+				this._needsRender = false;
+			}
+			// initialize style databases
+			this.initStyles();
+			// superkind initialization
+			sup.apply(this, arguments);
+			// 'showing' is tertiary method for modifying display style
+			// setting 'display: none;' style at initialization time will
+			// not work if 'showing' is true.
+			this.showingChanged();
+			// Notes:
+			// - 'classes' does not reflect the complete set of classes on an object; the complete set is in
+			//   this.attributes.class. The '*Class' apis affect this.attributes.class.
+			// - use addClass instead of setClasses here, by convention 'classes' is reserved for instance objects
+			// - inheritors should 'addClass' to add classes
+			// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
+			this.addClass(this.classes);
+			this.initProps(["id", "content", "src"]);
+		};
+	}),
+	//*@protected
+	constructor: enyo.super(function (sup) {
+		return function () {
+			this.attributes = enyo.clone(this.ctor.prototype.attributes);
+			sup.apply(this, arguments);
+		};
+	}),
+	//*@public
+	destroy: enyo.super(function (sup) {
+		return function() {
+			this.removeFromRoots();
+			this.removeNodeFromDom();
+			enyo.Control.unregisterDomEvents(this.id);
+			sup.apply(this, arguments);
+		};
+	}),
 	initProps: function(inPropNames) {
 		// for each named property, trigger the *Changed handler if the property value is truthy
 		for (var i=0, n, cf; (n=inPropNames[i]); i++) {
@@ -142,14 +151,15 @@ enyo.kind({
 		}
 	},
 	//*@protected
-	dispatchEvent: function (inEventName, inEvent, inSender) {
-		// prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
-		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
-			return true;
-		}
-
-		return this.inherited(arguments);
-	},
+	dispatchEvent: enyo.super(function (sup) {
+		return function (inEventName, inEvent, inSender) {
+			// prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
+			if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
+				return true;
+			}
+			return sup.apply(this, arguments);
+		};
+	}),
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
 		this.addClass(this.classes);
@@ -160,17 +170,21 @@ enyo.kind({
 		if (this.controlClasses) {
 			inProps.classes = (inProps.classes ? inProps.classes + " " : "") + this.controlClasses;
 		}
-		this.inherited(arguments);
+		sup.apply(this, arguments);
 	},
 	*/
-	addChild: function(inControl) {
-		inControl.addClass(this.controlClasses);
-		this.inherited(arguments);
-	},
-	removeChild: function(inControl) {
-		this.inherited(arguments);
-		inControl.removeClass(this.controlClasses);
-	},
+	addChild: enyo.super(function (sup) {
+		return function(inControl) {
+			inControl.addClass(this.controlClasses);
+			sup.apply(this, arguments);
+		};
+	}),
+	removeChild: enyo.super(function (sup) {
+		return function(inControl) {
+			sup.apply(this, arguments);
+			inControl.removeClass(this.controlClasses);
+		};
+	}),
 	// event filter
 	strictlyInternalEvents: {onenter: 1, onleave: 1},
 	isInternalEvent: function(inEvent) {
@@ -197,7 +211,7 @@ enyo.kind({
 	*/
 	hasNode: function() {
 		// 'generated' is used to gate access to expensive findNodeById call
-		return (this.generated || this._domDisconnected) && (this.node || this._node || this.findNodeById());
+		return this.generated && (this.node || this.findNodeById());
 	},
 	/**
 		Appends the string value of _inAddendum_ to the _content_ of this
@@ -349,25 +363,15 @@ enyo.kind({
 	//
 	//* @protected
 	initStyles: function() {
-		this.domStyles = this.domStyles || {};
-		enyo.Control.cssTextToDomStyles(this.kindStyle, this.domStyles);
-		this.domCssText = enyo.Control.domStylesToCssText(this.domStyles);
+		this.domStyles = this.domStyles? enyo.clone(this.domStyles): {};
 	},
 	styleChanged: function() {
-		// FIXME: stomping on domStyles is problematic, there may be styles on this object
-		// applied by layouts or other objects.
-		// We may need a 'runtimeStyles' concept separate from a 'userStyles' concept, although
-		// it's not clear what API calls like 'applyStyle' would affect, and which concept would take
-		// precedence when there is a conflict.
-		// Perhaps we can separate 'style' completely from 'domStyles'. API methods like applyStyle
-		// would affect domStyles, and the two style databases would be combined at render-time.
-		// Alternatively, we can disallow changing "style" string at runtime and allow it to be set
-		// at init-time only (as it was in pre-ares enyo).
-		//this.domStyles = {};
-		//this.addStyles(this.kindStyle);
-		//this.addStyles(this.style);
-		this.invalidateTags();
-		this.renderStyles();
+		// since we want to reset the style to the default kind styles and whatever
+		// the current new styles are it seems fastest to simply start over instead
+		// of scrubbing the old style off
+		this.domStyles = {};
+		enyo.Control.cssTextToDomStyles(this.kindStyle + this.style, this.domStyles);
+		this.domStylesChanged();
 	},
 	//* @public
 	/**
@@ -414,7 +418,7 @@ enyo.kind({
 		this.renderStyles();
 	},
 	stylesToNode: function() {
-		this.node.style.cssText = this.style + (this.style[this.style.length-1] == ';' ? ' ' : '; ') + this.domCssText;
+		this.node.style.cssText = this.domCssText;
 	},
 	setupBodyFitting: function() {
 		enyo.dom.applyBodyFit();
@@ -529,10 +533,12 @@ enyo.kind({
 	/**
 		Override this method to perform tasks that require access to the DOM node.
 
-			rendered: function() {
-				this.inherited(arguments);
-				// do some task
-			}
+			rendered: enyo.super(function (sup) {
+				return function() {
+					sup.apply(this, arguments);
+					// do some task
+				}
+			})
 	*/
 	rendered: function() {
 		// CAVEAT: Currently we use one entry point ('reflow') for
@@ -724,7 +730,7 @@ enyo.kind({
 		this.tagsValid = false;
 	},
 	prepareTags: function() {
-		var htmlStyle = this.domCssText + this.style;
+		var htmlStyle = this.domCssText;
 		this._openTag = '<' +
 			this.tag +
 			(htmlStyle ? ' style="' + htmlStyle + '"' : "") +
@@ -740,11 +746,10 @@ enyo.kind({
 	},
 	// DOM, aka direct-to-node, rendering
 	attributeToNode: function(inName, inValue) {
-		var n$ = this.node || this._node;
 		if (inValue === null || inValue === false || inValue === "") {
-			n$.removeAttribute(inName);
+			this.node.removeAttribute(inName);
 		} else {
-			n$.setAttribute(inName, inValue);
+			this.node.setAttribute(inName, inValue);
 		}
 	},
 	attributesToNode: function() {
@@ -776,36 +781,6 @@ enyo.kind({
 	removeNodeFromDom: function() {
 		if (this.hasNode() && this.node.parentNode) {
 			this.node.parentNode.removeChild(this.node);
-		}
-	},
-	disconnectDom: function () {
-		if (this.generated) {
-			this.disconnectChildrenDom();
-		}
-		this._node = this.hasNode();
-		this.node = null;
-		this.generated = false;
-		this._domDisconnected = true;
-	},
-	disconnectChildrenDom: function () {
-		for (var i=0, c; (c=this.children[i]); ++i) {
-			c.disconnectDom();
-		}
-	},
-	connectChildrenDom: function () {
-		for (var i=0, c; (c=this.children[i]); ++i) {
-			c.connectDom();
-		}
-	},
-	connectDom: function () {
-		if (this._domDisconnected) {
-			this.connectChildrenDom();
-			this.node = this._node;
-			this._node = null;
-			if (this.node) {
-				this.generated = true;
-			}
-			this._domDisconnected = false;
 		}
 	},
 	teardownRender: function() {
@@ -964,7 +939,7 @@ enyo.kind({
 			enyo.remove(this, enyo.roots);
 		}
 	},
-	
+
 	//
 	//
 	statics: {
@@ -986,20 +961,25 @@ enyo.kind({
 		},
 		selfClosing: {img: 1, hr: 1, br: 1, area: 1, base: 1, basefont: 1, input: 1, link: 1, meta: 1,
 			command: 1, embed: 1, keygen: 1, wbr: 1, param: 1, source: 1, track: 1, col: 1},
-		cssTextToDomStyles: function(inText, inStyleHash) {
+		cssTextToDomStyles: function(inText, inStyleHash, remove) {
 			if (inText) {
-				// remove spaces between rules, then split rules on delimiter (;)
-				var rules = inText.replace(/; /g, ";").split(";");
+				// rules are separated by any number of spaces and semicolons
+				var rules = inText.split(/\s*;[\s;]*/);
 				// parse string styles into name/value pairs
 				for (var i=0, s, n, v, rule; (rule=rules[i]); i++) {
 					// "background-image: url(http://foo.com/foo.png)" => ["background-image", "url(http", "//foo.com/foo.png)"]
-					s = rule.split(":");
+					// remove whitespace around the color on split
+					s = rule.split(/\s*:\s*/);
 					// n = "background-image", s = ["url(http", "//foo.com/foo.png)"]
 					n = s.shift();
-					// v = ["url(http", "//foo.com/foo.png)"].join(':') = "url(http://foo.com/foo.png)"
-					v = s.join(':');
 					// store name/value pair
-					inStyleHash[n] = v;
+					if (remove) {
+						delete inStyleHash[n];
+					} else {
+						// v = ["url(http", "//foo.com/foo.png)"].join(':') = "url(http://foo.com/foo.png)"
+						v = s.join(':');
+						inStyleHash[n] = v;
+					}
 				}
 			}
 		},
@@ -1008,10 +988,10 @@ enyo.kind({
 			for (n in inStyleHash) {
 				v = inStyleHash[n];
 				if ((v !== null) && (v !== undefined) && (v !== "")) {
-					text += n + ':' + v + ';';
+					text += n + ': ' + v + '; ';
 				}
 			}
-			return text;
+			return text.replace(/^\s+|\s+$/g, "");
 		},
 		stylesToHtml: function(inStyleHash) {
 			var cssText = enyo.Control.domStylesToCssText(inStyleHash);
@@ -1040,43 +1020,38 @@ enyo.kind({
 
 enyo.defaultCtor = enyo.Control;
 
-enyo.Control.subclass = function(ctor, props) {
-	// Control classes may declare properties that are intended
-	// to stack with superclass properties.
-	//
-	// We resort to prototype magic to assemble these properties
-	// at kind declaration time, in the interest of efficiency
-	// and ease of use.
-	//
-	// However, the properties are no longer 'live' in prototypes
-	// because of this magic--i.e., changes to the prototype of
-	// a Control subclass will not necessarily be reflected in
-	// instances of that control (e.g., chained prototypes).
-	//
-	// These properties are also renamed to kind* to allow
-	// combining with instance properties.
-	//
-	var proto = ctor.prototype;
-	//
-	// 'kindClasses' comes either from our inheritance chain (e.g., proto's prototype chain)
-	// or has been forced by a kind declaration.
-	//
-	if (proto.classes) {
-		var kc = proto.kindClasses;
-		proto.kindClasses = (kc ? kc + " " : "") + proto.classes;
-		proto.classes = "";
+enyo.concatHandler("classes", function (proto, props) {
+	if (props.classes) {
+		var c = proto.classes || "";
+		proto.classes = (c.length? (c + " "): c) + props.classes;
+		delete props.classes;
 	}
-	if (proto.style) {
-		var ks = proto.kindStyle;
-		proto.kindStyle = (ks ? ks + ";" : "") + proto.style;
-		proto.style = "";
+});
+enyo.concatHandler("style", function (proto, props, noKind) {
+	if (props.style) {
+		if (!noKind) {
+			// in an attempt to keep from doing addtional unnecessary parsing over and
+			// over at runtime we do this here to remove redundant entries that we would
+			// otherwise see every time
+			var s = proto.domStyles? enyo.clone(proto.domStyles): {};
+			enyo.Control.cssTextToDomStyles(props.style, s);
+			proto.kindStyle = proto.domCssText = enyo.Control.domStylesToCssText(s);
+			proto.domStyles = s;
+		} else {
+			// here we don't have a real prototype to work with so we don't want to
+			// do the initialization parsing that will happen later
+			proto.style = ((proto.style? proto.style + ";": "") + props.style).replace(/;;/g, ";");
+		}
+		delete props.style;
 	}
+});
+enyo.concatHandler("attributes", function (proto, props) {
 	if (props.attributes) {
-		var ka = proto.kindAttributes;
-		proto.kindAttributes = enyo.mixin(enyo.clone(ka), proto.attributes);
-		proto.attributes = null;
+		var attrs = proto.attributes? enyo.clone(proto.attributes): {};
+		proto.attributes = enyo.mixin(attrs, props.attributes);
+		delete props.attributes;
 	}
-};
+});
 
 //*@public
 /**

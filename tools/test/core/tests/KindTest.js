@@ -39,5 +39,26 @@ enyo.kind({
 			throw("no exception for misnamed kind");
 		}
 		this.finish();
+	},
+	testSuperCall: function() {
+		var Base = enyo.kind({
+			pass: function(ctx) {
+				return "base";
+			}
+		});
+		var Derived = enyo.kind({
+			kind: Base,
+			pass: enyo.super(function(sup) {
+				return (function(ctx) {
+					if (sup.apply(this, arguments) === "base") {
+						ctx.finish();
+					} else {
+						ctx.finish("super call failed");
+					}
+				});
+			})
+		});
+		var d = new Derived();
+		d.pass(this);
 	}
 });

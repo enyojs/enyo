@@ -41,17 +41,22 @@
 		minHeight: 100,
 		
 		//*@protected
-		initComponents: function () {
-			this.inherited(arguments);
-			var $k = this.defaultKind;
-			$k.extend({classes: "enyo-data-grid-list-item"});
-		},
-		create: function () {
-			this.inherited(arguments);
-			// currently we don't allow anything else
-			this.orientation = "v";
-			this.spacingChanged();
-		},
+		initComponents: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				var d = this.defaultProps,
+					c = " enyo-data-grid-list-item";
+				d.classes = (d.classes || "") + c;
+			};
+		}),
+		create: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				// currently we don't allow anything else
+				this.orientation = "v";
+				this.spacingChanged();
+			};
+		}),
 		adjustPageSize: function (p) {
 			this.layoutPage(p);
 			this.pages[p.index].height = this.getHeight(p);
@@ -73,7 +78,7 @@
 					$c = this.columns,
 					r$ = -1, t$, o$;
 				for (var $i=0, c$, j$=0; (c$=p.children[$i]); ++$i) {
-					if (!c$.disabled) {
+					if (!c$._listDisabledChild) {
 						t$ = "";
 						o$ = j$ % $c;
 						r$ = o$ === 0? r$+1: r$;
@@ -100,22 +105,26 @@
 				p.rows = r$ + 1;
 			}
 		},
-		generatePage: function (p, n) {
-			this.inherited(arguments);
-			this.adjustPageSize(p);
-		},
-		getHeight: function (n) {
-			if (n && (n.name == "page1" || n.name == "page2")) {
-				/*jshint boss:true*/
-				return (n.height = this.getPageHeight(n));
-			}
-			return this.inherited(arguments);
-		},
+		generatePage: enyo.super(function (sup) {
+			return function (p, n) {
+				sup.apply(this, arguments);
+				this.adjustPageSize(p);
+			};
+		}),
+		getHeight: enyo.super(function (sup) {
+			return function (n) {
+				if (n && (n.name == "page1" || n.name == "page2")) {
+					/*jshint boss:true*/
+					return (n.height = this.getPageHeight(n));
+				}
+				return sup.apply(this, arguments);
+			};
+		}),
 		getPageHeight: function (p) {
 			if (p.children.length) {
 				var $a = 0;
 				for (var $i=0, c$; (c$=p.children[$i]); ++$i) {
-					if (!c$.disabled) {
+					if (!c$._listDisabledChild) {
 						++$a;
 					}
 				}
@@ -123,23 +132,25 @@
 			}
 			return 0;
 		},
-		updateSizing: function () {
-			this.inherited(arguments);
-			var $w = this.width,
-				$s = this.spacing,
-				$m = this.minWidth,
-				$h = this.minHeight;
-			for (var $i=0, p$; (p$=this.$.active.children[$i]); ++$i) {
-				if (p$.width != $w) {
-					p$.applyStyle("width", $w + "px");
+		updateSizing: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				var $w = this.width,
+					$s = this.spacing,
+					$m = this.minWidth,
+					$h = this.minHeight;
+				for (var $i=0, p$; (p$=this.$.active.children[$i]); ++$i) {
+					if (p$.width != $w) {
+						p$.applyStyle("width", $w + "px");
+					}
 				}
-			}
-			this.columns = Math.floor(($w - $s) / ($m + $s));
-			this.tileWidth = Math.floor(($w - (this.columns * $s) - $s) / this.columns);
-			this.tileHeight = Math.floor($h * (this.tileWidth / $m));
-			this.adjustControlsPerPage();
-			this.adjustDefaultPageSize();
-		},
+				this.columns = Math.floor(($w - $s) / ($m + $s));
+				this.tileWidth = Math.floor(($w - (this.columns * $s) - $s) / this.columns);
+				this.tileHeight = Math.floor($h * (this.tileWidth / $m));
+				this.adjustControlsPerPage();
+				this.adjustDefaultPageSize();
+			};
+		}),
 		adjustControlsPerPage: function () {
 			var $c = this.columns,
 				$p = this.controlsPerPage,
@@ -237,12 +248,14 @@
 				this.startJob("layoutPages", this.layoutPages, 100);
 			}
 		},
-		didScroll: function (sender, event) {
-			if (!this._noScroll) {
-				return this.inherited(arguments);
-			}
-			return true;
-		}
+		didScroll: enyo.super(function (sup) {
+			return function (sender, event) {
+				if (!this._noScroll) {
+					return sup.apply(this, arguments);
+				}
+				return true;
+			};
+		})
 	});
 
 })(enyo);

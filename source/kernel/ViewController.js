@@ -41,15 +41,23 @@
 		//*@protected
 		_isViewController: true,
 
+		//*@protected
+		_savedView: null,
+
 		// ...........................
 		// COMPUTED PROPERTIES
+		
+		computed: {
+			_viewKind: [{cached: true}],
+			_renderTarget: ["renderTarget", {cached: true}]
+		},
 
 		//*@protected
 		/**
 			On object initialization, finds or creates the appropriate
 			kind for the view of this controller.
 		*/
-		_viewKind: enyo.computed(function () {
+		_viewKind: function () {
 			// the original definition as supplied by the controller's
 			// own definition
 			var view = this.view;
@@ -78,13 +86,13 @@
 			// if we get here, we had nothing, and in that case we
 			// can't do anything
 			throw this.kindName + " cannot initialize without a valid view defined";
-		}, {cached: true}),
+		},
 
 		//*@protected
 		/**
 			Finds the appropriate form of the render target.
 		*/
-		_render_target: enyo.computed(function () {
+		_renderTarget: function () {
 			// the original supplied variable for the render target
 			var target = this.renderTarget;
 			// we attempt to find the actual target node
@@ -95,7 +103,7 @@
 			// if we can't find the target, we can't render it into anything;
 			// better to find out now
 			throw this.kindName + " cannot find the render target: " + this.renderTarget;
-		}, "renderTarget", {cached: true}),
+		},
 
 		// ...........................
 		// PUBLIC METHODS
@@ -108,7 +116,7 @@
 		render: function () {
 			// instance of the view
 			var view = this.view;
-			var target = this.get("_render_target");
+			var target = this.get("_renderTarget");
 			// if the view already has a DOM node, we don't need to
 			// attempt to re-insert it
 			if (view.hasNode()) {
@@ -126,27 +134,47 @@
 			in the DOM).
 		*/
 		renderInto: function (target) {
-			this.addToRoots();
-			
 			// update the render target for the controller
 			this.set("renderTarget", target);
 			// now we render as usual
 			this.render();
 		},
 
+		//*@public
+		/**
+			Destroy the current view and recreate it from either the
+			original description or a newly provided one. If a view
+			is provided, it will become the new base description for
+			future _resetView()_ calls.
+		*/
+		resetView: function(newView) {
+			this.view.destroy();
+			this.view = newView || this._savedView;
+			this._createView();
+		},
+
+		//*@public
+		destroy: function() {
+			this.view.destroy();
+			this.view = null;
+			this.inherited(arguments);
+		},
+
 		// ...........................
 		// PROTECTED METHODS
 
 		//*@protected
-		constructed: function () {
-			this.inherited(arguments);
-			// ensure we have created the view instance, note that
-			// this is done here _prior_ to mixin initialization
-			// (which takes place after all construction is done)
-			// but this allows subkinds to overload the constructed
-			// method to control the flow
-			this._createView();
-		},
+		constructed: enyo.super(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				// ensure we have created the view instance, note that
+				// this is done here _prior_ to mixin initialization
+				// (which takes place after all construction is done)
+				// but this allows subkinds to overload the constructed
+				// method to control the flow
+				this._createView();
+			};
+		}),
 
 		//*@protected
 		/**
@@ -154,6 +182,10 @@
 			be overloaded for special behaviors.
 		*/
 		_createView: function () {
+			// keep a reference to the original view descriptor
+			// so it can be reused in the future if we destroy
+			// the view object
+			this._savedView = this.view;
 			// retrieve the constructor for the view and immediately
 			// instance it while also updating the _view_ property to
 			// the reference for this new view
@@ -165,7 +197,6 @@
 		_makeViewName: function () {
 			return enyo.uid("_viewControllerView_");
 		}
-
 	});
 
 }(enyo));
