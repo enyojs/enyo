@@ -4,50 +4,51 @@
 enyo.concat.push("bindings");
 //*@public
 /**
-	These properties provide the public API for using _enyo.Bindings_ with
-	any _enyo.Object_ kind or subclass. This support requires the _ObserverSupport_
-	and _ComputedPropertiesSupport_ _mixins_ to have been applied. This API is
-	available on __all__ _enyo.Objects_ and subkinds thus it does not need to be
-	added as a _mixin_ to any other _kind_.
+	These properties provide the public API for using [enyo.Binding](#enyo.Binding)
+	with any [enyo.Object](#enyo.Object) kind or subclass. This support requires
+	the [ObserverSupport](#enyo/source/kernel/mixins/ObserverSupport.js) and
+	[ComputedSupport](#enyo/source/kernel/mixins/ComputedSupport.js) mixins to
+	have been applied. This API is available on _all_ instances and subkinds of
+	_enyo.Object_; thus, it does not need to be added as a mixin to any other kind.
 */
 enyo.BindingSupport = {
 	name: "BindingSupport",
 	/**
-		While binding kind may be overloaded on a per-binding basis
+		While the binding kind may be overloaded on a per-binding basis
 		for objects that intend to use a custom kind for all of their
 		bindings, it may also be set here.
 	*/
 	defaultBindingKind: null,
 	/**
 		Set this to an array of binding declarations that will be created
-		when the object is instantiated. Post-construction this array will
+		when the object is instantiated. Post-construction, this array will
 		contain a reference to all available bindings on the instance of the kind.
 	*/
 	bindings: null,
 	/**
-		If the `expandMacros` flag is `true` for a _binding_ (`true` is the default)
-		then the _owner_ of the _binding_ has the opportunity to create custom expansion
-		rules for specific properties or override defaults if necessary. Add the macro
-		tokens you would like to expand to this hash and map them to either a property path
-		to use instead of the _macro_ or to a method that will return the correct path for
-		_macro_ expansion.
+		If the _expandMacros_ flag is true for a binding (the default), then the
+		owner of the binding may create custom expansion rules for specific
+		properties or override defaults if necessary. Add the macro tokens you would
+		like to expand to this hash and map them to either a property path to use
+		instead of the macro, or to a method that will return the correct path for
+		macro expansion.
 	*/
 	bindingMacros: null,
 	/**
-		Set this to a hash of the available options to have supplied to all bindings
-		created by this object. These properties will only be used in the absence of the
-		specified property in the binding definition.
+		Set this to a hash of the available options to supply to all bindings
+		created by this object. The defaults will only be used if the specified
+		properties are not found in the binding definition.
 	*/
 	bindingDefaults: null,
 	/**
-		To create a binding on its own (as opposed to with the _bindings_ array
-		for the kind) pass the properties to this method. It accepts multiple
-		hashes of properties to apply to the binding. The binding will have its
-		_owner_ set to this instance and a reference to the newly created binding
-		will be returned. When this instance is destroyed, all bindings that it owns
-		will also be destroyed. If this is called too early (before bindings have
-		been fully initialized) it will add the properties to the initialization queue
-		and return `undefined`.
+		To create a binding on its own (not with the _bindings_ array for the kind),
+		pass the properties to this method. It accepts multiple hashes of properties
+		to apply to the binding. The binding will have its owner set to this
+		instance and a reference to the newly created binding will be returned. When
+		this instance is destroyed, all the bindings that it owns will also be
+		destroyed. If this method is called too early (i.e., before bindings have
+		been fully initialized), it will add the properties to the initialization
+		queue and return _undefined_.
 	*/
 	binding: function () {
 		var defs = enyo.toArray(arguments),
@@ -77,16 +78,16 @@ enyo.BindingSupport = {
 		return bd;
 	},
 	/**
-		Usually called when the object's `destroy` method is executed, but may
-		be called at any time to properly clean up any bindings associated with
-		this object (i.e., any bindings that have their _owner_ property set
-		to this object).
+		Usually called when the object's _destroy()_ method is executed, but may be
+		called at any time to properly clean up the bindings associated with this
+		object (i.e., any bindings that have their _owner_ property set	to this
+		object).
 
 		This method does not remove bindings that originated from another object
 		but are currently bound to a property on this object.
 
-		If so desired, one may pass in an array of bindings, in which case only
-		those bindings specified in the array will be destroyed.
+		If desired, one may pass in an array of bindings, in which case only the
+		bindings specified in the array will be destroyed.
 	*/
 	clearBindings: function (subset) {
 		var bs = subset || this.bindings;
@@ -95,15 +96,15 @@ enyo.BindingSupport = {
 		}
 	},
 	/**
-		Calls the `refresh` method on the bindings associated with this
-		object, or on a passed-in array of bindings.
+		Calls the _refresh()_ method on the bindings associated with this object, or
+		on a passed-in array of bindings.
 
-		Differs from _rebuildBindings_ in that, instead of
-		rediscovering the source and target of each binding, it
-		remembers them from the most recent setup.
+		Differs from _rebuildBindings()_ in that, instead of rediscovering the
+		source and target of each binding, it remembers them from the most recent
+		setup.
 
-		In most scenarios, this method will be called automatically,
-		with no need for explicit calls from the developer.
+		In most scenarios, this method will be called automatically, with no need
+		for explicit calls from the developer.
 	*/
 	refreshBindings: function (subset) {
 		var bs = subset || this.bindings;
@@ -112,15 +113,15 @@ enyo.BindingSupport = {
 		}
 	},
 	/**
-		Calls the `rebuild` method on the bindings associated with this
-		object, or on a passed-in array of bindings.
+		Calls the _rebuild()_ method on the bindings associated with this object, or
+		on a passed-in array of bindings.
 
-		Differs from _refreshBindings_ in that it forces the source and
-		target of each binding to be rediscovered using the specified
-		paths, rather than remembered from a previous setup.
+		Differs from _refreshBindings()_ in that it forces the source and target of
+		each binding to be rediscovered using the specified paths, rather than
+		remembering them from a previous setup.
 
-		In most scenarios, this method will be called automatically,
-		with no need for explicit calls from the developer.
+		In most scenarios, this method will be called automatically, with no need
+		for explicit calls from the developer.
 	*/
 	rebuildBindings: function (subset) {
 		var bs = subset || this.bindings;
@@ -156,17 +157,17 @@ enyo.BindingSupport = {
 	//*@public
 	/**
 		This method is exposed for overloading purposes if necessary.
-		It us used to initialize bindings on an instance when it is
-		created. When _bindings_ are initialized they attempt to connect
-		(if the `autoConnect` flag is `true` which it is by default). If they
-		cannot they will register for notification if possible for when that
-		object becomes available and they will connect and synchronize then.
+		It is used to initialize bindings on an instance when it is
+		created. When bindings are initialized, they attempt to connect
+		(if the _autoConnect_ flag is true, which it is by default). If they
+		cannot connect, they will (if possible) register to be notified when that
+		object becomes available, and will connect and synchronize then.
 	*/
 	initBindings: function () {
 		if (false === this._bindingSupportInitialized) {
 			this._bindingSupportInitialized = undefined;
 			var os = this.bindings;
-			// we will now reused the property `bindings` with the actual binding
+			// we will now reuse the property `bindings` with the actual binding
 			// references
 			this.bindings = [];
 			for (var i=0, b; (b=os[i]); ++i) {
@@ -185,7 +186,7 @@ enyo.BindingSupport = {
 	}),
 	constructed: enyo.super(function (sup) {
 		return function () {
-			// now we go ahead and create the bindings knowing that they
+			// now we go ahead and create the bindings, knowing that they
 			// will register for missing targets/sources if they become
 			// available later
 			this.initBindings();
@@ -223,9 +224,9 @@ enyo.BindingSupport = {
 		return fn;
 	},
 	/**
-		Used internally by _bindings_ to expand macros by exposing public API features
-		to aid in dynamic macro expansion. This will attempt to use special properties
-		if they were set to handle specific macros to override normal handling.
+		Used internally by bindings to expand macros by exposing public API features
+		to aid in dynamic macro expansion. Attempts to use special properties (if
+		they were set) to handle specific macros, overriding normal handling.
 	*/
 	_bindingExpandMacro: function (lex, token, macro, prop, binding) {
 		var ms = this.bindingMacros;
@@ -242,24 +243,24 @@ enyo.BindingSupport = {
 		return token;
 	},
 	/**
-		We have this flag to help indicate if bindings have been initialized
-		or not for this object. It is used as an explicit `false` test because
-		it is removed from the object instance once initialized to reduce object clutter.
+		Flag that indicates whether bindings have been initialized for this object.
+		It is used as an explicit _false_ test because it is removed from the object
+		instance once initialized, to reduce object clutter.
 	*/
 	_bindingSupportInitialized: false
 };
 //*@public
 /**
-	BindingSupport is available on _enyo.Objects_ but it is necessary to overload
-	a method that isn't available on _enyo.Object_ but is on _enyo.Component_ so
-	it is added as additional functionality.
+	BindingSupport is available on instances of _enyo.Object_, but it is necessary
+	to overload methods that aren't available on _enyo.Object_ but are on
+	_enyo.Component_, so it is added as additional functionality.
 */
 enyo.ComponentBindingSupport = {
 	name: "ComponentBindingSupport",
 	//*@protected
 	/**
-		There is a special property _bindingTransformOwner that needs to be chained
-		down into children to shortcut bindings work to find transforms.
+		There is a special property, *_bindingTransformOwner*, that needs to be
+		chained	down into children to shortcut bindings work to find transforms.
 	*/
 	adjustComponentProps: enyo.super(function (sup) {
 		return function (props) {
