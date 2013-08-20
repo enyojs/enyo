@@ -95,11 +95,11 @@ process.on('message', function(msg) {
 var node = process.argv[0],
 	deploy = process.argv[1],
 	sourceDir = process.cwd(),
-	packageJs = path.resolve(sourceDir, "package.js"),
-	enyoDir = path.resolve(sourceDir, "enyo"),
-	buildDir = path.resolve(sourceDir, "build"),
+	packageJs = path.join(sourceDir, "package.js"),
+	enyoDir = path.join(sourceDir, "enyo"),
+	buildDir = path.join(sourceDir, "build"),
 	basename = path.basename(sourceDir),
-	outDir = path.resolve(sourceDir, 'deploy', basename),
+	outDir = path.join(sourceDir, 'deploy', basename),
 	less = true, // LESS compilation, turned on by default
 	verbose = false,
 	beautify = false,
@@ -254,7 +254,7 @@ if (!opt.mapfrom || opt.mapfrom.indexOf("enyo") < 0) {
 			args.push("-f", opt.mapfrom[i], "-t", opt.mapto[i]);
 		}
 	}
-	run(args, path.resolve(enyoDir, 'minify'));
+	run(args, path.join(enyoDir, 'minify'));
 } else {
 	console.log("Skipping Enyo minification (will be mapped to " + opt.mapto[opt.mapfrom.indexOf("enyo")] + ").");
 }
@@ -274,7 +274,7 @@ if (opt.mapfrom) {
 if (opt.lib) {
 	args.push("-lib", opt.lib);
 }
-run(args, path.resolve(sourceDir));
+run(args, sourceDir);
 
 // Deploy / Copy
 
