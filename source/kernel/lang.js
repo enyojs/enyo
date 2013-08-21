@@ -167,6 +167,25 @@
 		return val;
 	};
 
+	//*@protected
+	//* Simplified version of enyo.getPath used internally for get<Name> calls
+	enyo.getPath.fast = function (path) {
+		var val;
+		var fn;
+		var cur = this;
+		// figure out what our default/backwards-compatible getter
+		// function would be
+		fn = "get" + enyo.cap(path);
+		// if that path exists relative to our context check to see
+		// if it is an overloaded getter and call that if it is otherwise
+		// just grab that path knowing if we get undefined that is ok
+		val = isOverloaded(cur[fn])? cur[fn].call(this): cur[path];
+		if (isDeferredConstructor(val)) {
+			val = enyo.checkConstructor(val);
+		}
+		return val;
+	};
+
 	//*@public
 	/**
 		A global setter that takes a string path (relative to the method's
@@ -249,6 +268,28 @@
 			}
 		}
 		if (true === notify) {
+			if (cur.notifyObservers) {
+				cur.notifyObservers(path, prev, value);
+			}
+		}
+		// return the callee
+		return cur;
+	};
+
+	//*@protected
+	//* Simplified version of enyo.setPath used on set<Name> calls
+	enyo.setPath.fast = function (path, value) {
+		var cur = this;
+		// attempt to retrieve the previous value if it exists
+		var prev = enyo.getPath.fast.call(cur, path);
+		// otherwise we just plain overwrite the method, this is the
+		// expected behavior
+		cur[path] = value;
+		// now we need to determine if we are going to issue notifications
+		// first check to see if notify is already forced true
+		// do the default which is to test the previous value
+		// versus the new value
+		if (prev !== value) {
 			if (cur.notifyObservers) {
 				cur.notifyObservers(path, prev, value);
 			}
@@ -438,7 +479,7 @@
 		return $s;
 	};
 	var merge = enyo.merge;
-	
+
 	//*@public
 	/**
 		Returns an array of the values of all properties in an object.
