@@ -260,7 +260,9 @@ enyo.ComponentBindingSupport = {
 	//*@protected
 	/**
 		There is a special property, *_bindingTransformOwner*, that needs to be
-		chained	down into children to shortcut bindings work to find transforms.
+		chained down into children to shortcut bindings work to find transforms
+		for inlined bindings -- their owner is the component they are nested on
+		but the transform will most likely exist on the instance owner.
 	*/
 	adjustComponentProps: enyo.super(function (sup) {
 		return function (props) {
