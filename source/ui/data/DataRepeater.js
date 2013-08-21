@@ -55,7 +55,8 @@
 			enyo.RepeaterChildSupport,
 			enyo.RepeaterChildModelSupport
 		],
-		concat: ["childMixins"],
+		concat: ["childMixins", "_repeaterKinds"],
+		_repeaterKinds: ["enyo.DataRepeater"],
 		controlParentName: "container",
 		containerName: "container",
 		containerOptions: {
@@ -316,6 +317,19 @@
 			return this.multipleSelection ? this._selection : this._selection[0];
 		}
 		
+	});
+	
+	//*@protected
+	enyo.concatHandler("_repeaterKinds", function (proto, props) {
+		var rk = proto._repeaterKinds || (proto._repeaterKinds = []),
+			pk = props._repeaterKinds,
+			n = proto.kindName;
+		if (enyo.isArray(pk)) {
+			rk.push.apply(rk, pk);
+		}
+		if (!~enyo.indexOf(n, rk)) {
+			rk.push(n);
+		}
 	});
 
 })(enyo);
