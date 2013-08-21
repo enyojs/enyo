@@ -81,9 +81,9 @@ process.on('uncaughtException', function (err) {
 });
 // receive error messages from child node processes
 process.on('message', function(msg) {
-	console.dir(basename, msg);
+	console.dir(msg);
 	if (msg.error && msg.error.stack) {
-		console.error(basename, msg.error.stack);
+		console.error(msg.error.stack);
 	}
 	if (process.send) {
 		process.send(msg);
