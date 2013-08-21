@@ -61,11 +61,19 @@ enyo.BindingSupport = {
 		if (this._bindingSupportInitialized === false) {
 			bs.push(props);
 		} else {
+			var q, auto = false;
+			if (!this._bindingSyncAllowed) {
+				q = this._bindingSyncQueue || (this._bindingSyncQueue = []);
+			}
 			// we only want to resolve the kind if it isn't already
 			// the correct constructor -- note this forces the kind
 			// to be resolved at that time
 			if (!enyo.isFunction(props.kind)) {
 				props.kind = enyo.getPath(props.kind);
+			}
+			if (q && false !== props.autoSync) {
+				auto = true;
+				props.autoSync = false;
 			}
 			bs.push((bd = new props.kind(props)));
 			if (bd._sourcePath && bd.from[0] === ".") {
@@ -73,6 +81,9 @@ enyo.BindingSupport = {
 			}
 			if (bd._targetPath && bd.to[0] === ".") {
 				this.addObserver(bd._targetPath, this._rebuildTarget(bd));
+			}
+			if (q && auto) {
+				q.push(bd);
 			}
 		}
 		return bd;
@@ -164,14 +175,27 @@ enyo.BindingSupport = {
 		object becomes available, and will connect and synchronize then.
 	*/
 	initBindings: function () {
+		var i, b;
 		if (false === this._bindingSupportInitialized) {
 			this._bindingSupportInitialized = undefined;
 			var os = this.bindings;
 			// we will now reuse the property `bindings` with the actual binding
 			// references
 			this.bindings = [];
-			for (var i=0, b; (b=os[i]); ++i) {
+			for (i=0; (b=os[i]); ++i) {
 				this.binding(b);
+			}
+		}
+		if (this._bindingSyncAllowed) {
+			var q = this._bindingSyncQueue;
+			if (q && q.length) {
+				for (i=0; (b=q[i]); ++i) {
+					// we set this because that is the only option that would
+					// have allowed it to be in this queue
+					b.autoSync = true;
+					b.sync();
+				}
+				q = null;
 			}
 		}
 	},
@@ -247,7 +271,9 @@ enyo.BindingSupport = {
 		It is used as an explicit _false_ test because it is removed from the object
 		instance once initialized, to reduce object clutter.
 	*/
-	_bindingSupportInitialized: false
+	_bindingSupportInitialized: false,
+	_bindingSyncAllowed: true,
+	_bindingSyncQueue: null
 };
 //*@public
 /**
@@ -272,7 +298,12 @@ enyo.ComponentBindingSupport = {
 	}),
 	constructed: enyo.super(function (sup) {
 		return function () {
+			this._bindingSyncAllowed = false;
 			this.initBindings();
+			// the next time this is called later during initialization the bindings will
+			// have been created but this will allow them to be synchronized at the appropriate
+			// time
+			this._bindingSyncAllowed = true;
 			return sup.apply(this, arguments);
 		};
 	})
