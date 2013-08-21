@@ -33,20 +33,36 @@ enyo.RepeaterChildModelSupport = {
 	}),
 	adjustComponentProps: enyo.super(function (sup) {
 		return function (props) {
-			var bd = props.bindingDefaults;
-			if (bd) {
-				bd = this.bindingDefaults? enyo.mixin(enyo.clone(this.bindingDefaults), bd): bd;
-			} else {
-				bd = this.bindingDefaults;
+			// we need to not apply this to children if the children are of kind
+			// DataRepeater or sub-kinds so special handling had to be put here to ensure
+			// we could fairly conveniently figure this out
+			var skip = false;
+			if (props.kind) {
+				var k = props.kind;
+				if (enyo.isString(k)) {
+					// resolve any deferred constructor for the kind
+					k = enyo.constructorForKind(k);
+				}
+				if (enyo.isFunction(k) && k.prototype && k.prototype instanceof enyo.DataRepeater) {
+					skip = true;
+				}
 			}
-			props.bindingDefaults = bd;
-			sup.apply(this, arguments);
+			if (!skip) {
+				var bd = props.bindingDefaults;
+				if (bd) {
+					bd = this.bindingDefaults? enyo.mixin(enyo.clone(this.bindingDefaults), bd): bd;
+				} else {
+					bd = this.bindingDefaults;
+				}
+				props.bindingDefaults = bd;
+				// we want to ensure that all children recursively have this mixin so
+				// they can register for model changed events without forcing a waterfall
+				// for each child (and subsequently their children) of the repeater
+				props.mixins = (props.mixins || []).concat([enyo.RepeaterChildModelSupport]);
+			}
 			// if we have a model already we just set it
 			props.model = this.model;
-			// we want to ensure that all children recursively have this mixin so
-			// they can register for model changed events without forcing a waterfall
-			// for each child (and subsequently their children) of the repeater
-			props.mixins = (props.mixins || []).concat([enyo.RepeaterChildModelSupport]);
+			sup.apply(this, arguments);
 		};
 	}),
 	modelOwnerObserver: function (p, c) {
