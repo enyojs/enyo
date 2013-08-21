@@ -175,20 +175,21 @@ enyo.BindingSupport = {
 		object becomes available, and will connect and synchronize then.
 	*/
 	initBindings: function () {
+		var i, b;
 		if (false === this._bindingSupportInitialized) {
 			this._bindingSupportInitialized = undefined;
 			var os = this.bindings;
 			// we will now reuse the property `bindings` with the actual binding
 			// references
 			this.bindings = [];
-			for (var i=0, b; (b=os[i]); ++i) {
+			for (i=0; (b=os[i]); ++i) {
 				this.binding(b);
 			}
 		}
 		if (this._bindingSyncAllowed) {
 			var q = this._bindingSyncQueue;
 			if (q && q.length) {
-				for (var i=0, b; (b=q[i]); ++i) {
+				for (i=0; (b=q[i]); ++i) {
 					// we set this because that is the only option that would
 					// have allowed it to be in this queue
 					b.autoSync = true;
