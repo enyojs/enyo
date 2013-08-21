@@ -183,7 +183,7 @@ enyo.kind({
 		var obj;
 		try {
 			var found = [];
-			var expected = ["xform1", "xform2", "inline"];
+			var expected = ["xform1", "xform2", "xform3", "inline"];
 			end = new enyo.Object();
 			var xformtest = function (value, direction, binding, which) {
 				if ("testvalue1" !== value) {
@@ -195,7 +195,7 @@ enyo.kind({
 				if (end !== binding.source) {
 					throw which + " had the wrong source";
 				}
-				if (!(this instanceof enyo.TestObject)) {
+				if (!(this instanceof enyo.TestObject) && !(this instanceof enyo.NestedTestObject)) {
 					throw which + " had the wrong context";
 				}
 				found.push(which);
@@ -205,7 +205,18 @@ enyo.kind({
 				xformtest.call(this, value, direction, binding, "xform1");
 			};
 			enyo.kind({
+				name: "enyo.NestedTestObject",
+				kind: enyo.Component,
+				bindings: [
+					{from: ".testprop", source: end, to: ".testprop4", transform: "xform3"}
+				],
+				xform3: function (value, direction, binding) {
+					xformtest.call(this, value, direction, binding, "xform3");
+				}
+			});
+			enyo.kind({
 				name: "enyo.TestObject",
+				kind: enyo.Component,
 				bindings: [
 					{from: ".testprop", source: end, to: ".testprop1", transform: "xform1"},
 					{from: ".testprop", source: end, to: ".testprop2", transform: "xform2"},
@@ -213,6 +224,9 @@ enyo.kind({
 						transform: function (value, direction, binding) {
 							xformtest.call(this, value, direction, binding, "inline");
 						}}
+				],
+				components: [
+					{kind: "enyo.NestedTestObject"}
 				],
 				xform2: function (value, direction, binding) {
 					xformtest.call(this, value, direction, binding, "xform2");
@@ -226,8 +240,8 @@ enyo.kind({
 			}
 			this.finish();
 		} finally {
-			end.destroy();
-			obj.destroy();
+			if (end) { end.destroy(); }
+			if (obj) { obj.destroy(); }
 		}
 	},
 	testBindingsBlock: function() {
