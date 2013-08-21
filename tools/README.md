@@ -6,7 +6,7 @@ The enyo minifier uses Node.js, [UglifyJS](http://github.com/mishoo/uglifyjs) an
 For convenience, there are both Windows and Unix versions of the script that invokes the node tool.
 They follow the same invocation:
 
-	path/to/enyo/tools/minify/minify.sh package.js -output /relative/path/to/build/dir/buildfilename
+	path/to/enyo/tools/minify/minify.sh package.js -output relative/path/to/build/dir/buildfilename
 
 An example for lib/onyx, a UI widget set, run from `lib/onyx/minify/minify.sh`, building to `lib/onyx/build`
 
@@ -18,6 +18,7 @@ The `package.js` file must be in the same directory as the invocation.
 For convenience, packages should include a `minify` folder with both a Windows batch and Unix shell script that runs the minifier.
 
 ## Running tests
+
 1. You first need to install an http server handling php (MANP or WAMP, ...)
 2. Configure your http server to serve the files of the enyo project
 3. Point your browser to enyo/tools/... to run the various testcases
