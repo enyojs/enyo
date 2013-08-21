@@ -54,7 +54,7 @@ Here is a typical library manifest content:
 ```json
 {
 	"source": ".",
-	"assets": ["assets", "images"],
+	"assets": ["assets", "images", "README.txt", "LICENSE-2.0.txt"],
 	"libs": []
 }
 ```
@@ -94,12 +94,6 @@ process.on('message', function(msg) {
 
 var node = process.argv[0],
 	deploy = process.argv[1],
-	sourceDir = process.cwd(),
-	packageJs = path.join(sourceDir, "package.js"),
-	enyoDir = path.join(sourceDir, "enyo"),
-	buildDir = path.join(sourceDir, "build"),
-	basename = path.basename(sourceDir),
-	outDir = path.join(sourceDir, 'deploy', basename),
 	less = true, // LESS compilation, turned on by default
 	verbose = false,
 	beautify = false,
@@ -112,13 +106,13 @@ function printUsage() {
 		'\n' +
 		'Options:\n' +
 		'  -v  verbose operation                     [boolean]  [default: ' + verbose + ']\n' +
-		'  -b  alternate build directory             [default: "' + buildDir + '"]\n' +
+		'  -b  alternate relative build directory    [default: "./build"]\n' +
 		'  -c  do not run the LESS compiler          [boolean]  [default: ' + less + ']\n' +
-		'  -e  location of the enyo framework        [default: "' + enyoDir + '"]\n' +
-		'  -l  location of the lib folder            [default: "' + enyoDir + '/../lib"]\n' +
-		'  -o  alternate output directory            [default: "' + outDir + '"]\n' +
-		'  -p  location of the main package.js file  [default: "' + packageJs + '"]\n' +
-		'  -s  source code root directory            [default: "' + sourceDir + '"]\n' +
+		'  -e  location of the enyo framework        [default: "./enyo"]\n' +
+		'  -l  location of the lib folder            [default: "./lib"]\n' +
+		'  -o  alternate output directory            [default: "./deploy/APPNAME"]\n' +
+		'  -p  location of the main package.js file  [default: "./package.js"]\n' +
+		'  -s  source code root directory            [default: "."]\n' +
 		'  -B  pretty-print (beautify) JS output     [default: "' + beautify + '"]\n' +
 		'  -f  remote source mapping: from local path\n' +
 		'  -t  remote source mapping: to remote path' +
@@ -164,28 +158,30 @@ if (opt.help) {
 
 // application default values may come from the manifest file: deploy.json
 
+if (opt.packagejs && !opt.source) {
+	opt.source = path.dirname(opt.packagejs);
+	opt.packagejs = path.filename(opt.packagejs);
+}
+opt.source = opt.source || process.cwd();
+opt.app = opt.app || path.basename(opt.source);
+opt.out = opt.out ? path.resolve(process.cwd(), opt.out) : path.join(process.cwd(), 'deploy', opt.app);
+
+// deploy.js works only when running on top of the source tree...
+process.chdir(opt.source);
+
 var manifest;
 try {
-	manifest = JSON.parse(fs.readFileSync(path.join(sourceDir, "deploy.json")));
+	manifest = JSON.parse(fs.readFileSync("deploy.json"));
 } catch(e) {
 	manifest = {
 		_default: true
 	};
 }
 
-enyoDir = manifest.enyo ? path.join(process.cwd(), manifest.enyo) : enyoDir;
-packageJs = manifest.source ? path.join(process.cwd(), manifest.source, "package.js") : packageJs;
+opt.packagejs = opt.packagejs || manifest.source ? path.join(manifest.source, "package.js") : "package.js";
+opt.build = opt.build || manifest.build || "build";
+opt.enyo = opt.enyo || manifest.enyo || "enyo";
 
-// nopt has not default values system
-buildDir = opt.build || buildDir;
-enyoDir = opt.enyo || enyoDir;
-outDir = opt.out || outDir;
-packageJs = opt.packagejs ||
-	(opt.source ? path.join(opt.source, 'package.js') : undefined) ||
-	packageJs;
-sourceDir = opt.source ||
-	(opt.packagejs ? path.dirname(opt.packagejs) : undefined) ||
-	sourceDir;
 less = (opt.less !== false) && less;
 beautify = opt.beautify;
 noexec = opt.noexec;
@@ -204,124 +200,117 @@ if ((opt.mapfrom || opt.maptop) && (!opt.mapfrom || !opt.mapto || (opt.mapfrom.l
 }
 
 var minifier = path.resolve(__dirname, 'minifier', 'minify.js');
-log("Using: build_dir=" + buildDir);
-log("Using: enyo_dir=" + enyoDir);
-log("Using: out_dir=" + outDir);
-log("Using: packagejs=" + packageJs);
-log("Using: source_dir=" + sourceDir);
+log("Using: opt.source=" + opt.source);
+log("Using: opt.out=" + opt.out);
+log("Using: opt.build=" + opt.build);
+log("Using: opt.enyo=" + opt.enyo);
+log("Using: opt.packagejs=" + opt.packagejs);
 log("Using: less=" + less);
 log("Using: beautify=" + beautify);
 log("Using: noexec=" + noexec);
 
 // utils
 
-function run(args, wd) {
-	var cwd = process.cwd();
-	log("% cd " + wd);
-	process.chdir(path.resolve(wd));
+function run(args) {
 	var command = '"' + args.join('" "') + '"';
 	var report;
 	log("% ", command);
-	report = shell.exec(command, { silent: true });
+	report = shell.exec(command, { silent: !verbose });
 	if (report.code !== 0) {
 		throw new Error("Fail: '" + command + "'\n" + report.output);
 	}
-	log("% cd " + cwd);
-	process.chdir(cwd);
 }
 
 // Prepare target directory
 
-log("% rm -rf " + outDir);
-shell.rm('-rf', outDir);
-log("% mkdir -p " + outDir);
-shell.mkdir('-p', outDir);
+log("% rm -rf " + opt.out);
+shell.rm('-rf', opt.out);
+log("% mkdir -p " + opt.out + "/" + opt.build);
+shell.mkdir('-p', path.join(opt.out, opt.build));
 
 // Build / Minify
-var args;
+var args, i;
 if (!opt.mapfrom || opt.mapfrom.indexOf("enyo") < 0) {
 	console.log("Minify-ing Enyo...");
 	args = [node, minifier,
 		'-no-alias',
-		'-enyo', enyoDir,
-		// XXX generates $buildDir/enyo.(js|css)' so this is
-		// XXX rather an 'output_prefix' than an 'out_dir'...
-		'-output', path.join(buildDir, 'enyo'),
+		'-enyo', opt.enyo,
+		'-destdir', opt.out,
+		'-output', path.join(opt.build, 'enyo'),
 		(beautify ? '-beautify' : '-no-beautify'),
-		path.join(enyoDir, 'minify', 'package.js')];
+		path.join(opt.enyo, 'minify', 'package.js')];
 	if (opt.mapfrom) {
-		for (var i=0; i<opt.mapfrom.length; i++) {
+		for (i=0; i<opt.mapfrom.length; i++) {
 			args.push("-f", opt.mapfrom[i], "-t", opt.mapto[i]);
 		}
 	}
-	run(args, path.join(enyoDir, 'minify'));
+	run(args);
 } else {
 	console.log("Skipping Enyo minification (will be mapped to " + opt.mapto[opt.mapfrom.indexOf("enyo")] + ").");
 }
 
 console.log("Minify-ing the application...");
 args = [node, minifier,
-	'-enyo', enyoDir,
-	'-output', path.join(buildDir, 'app'),
+	'-enyo', opt.enyo,
+	'-destdir', opt.out,
+	'-output', path.join(opt.build, 'app'),
 	(less ? '-less' : '-no-less'),
 	(beautify ? '-beautify' : '-no-beautify'),
-	packageJs];
+	opt.packagejs];
 if (opt.mapfrom) {
-	for (var i=0; i<opt.mapfrom.length; i++) {
+	for (i=0; i<opt.mapfrom.length; i++) {
 		args.push("-f", opt.mapfrom[i], "-t", opt.mapto[i]);
 	}
 }
 if (opt.lib) {
 	args.push("-lib", opt.lib);
 }
-run(args, sourceDir);
+run(args);
 
 // Deploy / Copy
 
 console.log("Copying assets...");
 if(!manifest._default) {
 	/* Pick the list of files & folders to copy from the application manifest */
-	deployDir(".", sourceDir, outDir);
+	deployDir(".");
 } else {
 	/* Use legacy built-in list of files & folders to copy */
-	shell.mkdir('-p', path.join(outDir, 'lib'));
-	shell.cp(path.join(sourceDir, 'index.html'), path.join(sourceDir, 'icon.png'), outDir);
-	shell.cp('-r', buildDir, outDir);
+	shell.mkdir('-p', path.join(opt.out, 'lib'));
+	shell.cp('index.html', opt.out);
+	shell.cp('icon.png', opt.out);
 
-	var assetsSrcDir = path.join(sourceDir, 'assets');
-	if(shell.test('-d', assetsSrcDir)) {
-		shell.cp('-r', assetsSrcDir, outDir);
+	if(shell.test('-d', 'assets')) {
+		shell.cp('-r', 'assets', opt.out);
 	}
 
-	var libsSrcDir = path.join(sourceDir, 'lib');
-	if(shell.test('-d', libsSrcDir)) {
-		shell.ls(libsSrcDir).forEach(function(lib) {
+	if(shell.test('-d', 'lib')) {
+		shell.ls('lib').forEach(function(lib) {
 			var libDir = path.join("lib", lib);
 			if (opt.mapfrom && opt.mapfrom.indexOf(libDir) >= 0) {
 				// Don't deploy libraries that are loaded from elsewhere
 				console.log("Skipping:", libDir);
 			} else {
-				deployDir(libDir, sourceDir, outDir);
+				deployDir(libDir);
 			}
 		});
 	}
 }
 
-function deployDir(subDir, srcDir, dstDir) {
+function deployDir(subDir) {
 	log("Deploying " + subDir + "...");
 	try {
-		var manifest = JSON.parse(fs.readFileSync(path.join(srcDir, subDir, "deploy.json")));
+		var manifest = JSON.parse(fs.readFileSync(path.join(subDir, "deploy.json")));
 		if (Array.isArray(manifest.assets)) {
 			manifest.assets.forEach(function(asset) {
-				var dstAssetDir = path.dirname(path.join(dstDir, subDir, asset));
+				var dstAssetDir = path.dirname(path.join(opt.out, subDir, asset));
 				shell.mkdir('-p', dstAssetDir);
 				log("% cp -r " + path.join(subDir, asset) + "...");
-				shell.cp('-r', path.join(srcDir, subDir, asset), dstAssetDir);
+				shell.cp('-r', path.join(subDir, asset), dstAssetDir);
 			});
 		}
 		if (Array.isArray(manifest.libs)) {
 			manifest.libs.forEach(function(libDir) {
-				deployDir(path.join(subDir, libDir), srcDir, dstDir);
+				deployDir(path.join(subDir, libDir));
 			});
 		}
 	} catch(e) {
@@ -331,35 +320,35 @@ function deployDir(subDir, srcDir, dstDir) {
 				console.warn("noexec: Skip execution of client-provided code");
 				throw new Error("noexec: Skip execution of client-provided code");
 			}
-			script = path.join(srcDir, subDir, 'deploy.' + (process.platform === 'win32' ? 'bat' : 'sh'));
+			script = path.join(subDir, 'deploy.' + (process.platform === 'win32' ? 'bat' : 'sh'));
 			stat = fs.statSync(script);
 			if (!stat.isFile()) {
 				throw new Error("*** Not a file: '" + script + "'");
 			}
-			var command = [script, path.join(dstDir, subDir)];
+			var command = [script, path.join(opt.out, subDir)];
 			if (process.platform !== 'win32') {
 				command.unshift("sh");
 			}
-			run(command, path.join(srcDir, subDir));
+			run(command, path.join(subDir));
 		} catch(e2) {
 			// no deploy.(js|bat|sh): copy everything...
-			var dd = path.dirname(path.join(dstDir, subDir));
+			var dd = path.dirname(path.join(opt.out, subDir));
 			log("% mkdir -p " + dd);
 			shell.mkdir('-p', dd);
 
-			var sd = path.join(srcDir, subDir);
+			var sd = subDir;
 			log("% cp -r " + sd + " " + dd);
 			shell.cp('-r', sd, dd);
 
 			// ...then remove ".git" & others, if any
 			log("% rm -rf " + dd + "/(.git|target|build|deploy)");
-			shell.rm('-rf', path.join(dstDir, subDir, '.git'));
-			shell.rm('-rf', path.join(dstDir, subDir, 'target'));
-			shell.rm('-rf', path.join(dstDir, subDir, 'build'));
-			shell.rm('-rf', path.join(dstDir, subDir, 'deploy'));
+			shell.rm('-rf', path.join(opt.out, subDir, '.git'));
+			shell.rm('-rf', path.join(opt.out, subDir, 'target'));
+			shell.rm('-rf', path.join(opt.out, subDir, 'build'));
+			shell.rm('-rf', path.join(opt.out, subDir, 'deploy'));
 		}
 	}
 }
 
-console.log("Success:  the deployable application is available in: ", outDir);
+console.log("Success: the deployable application is available in: ", opt.out);
 process.exit(0);
