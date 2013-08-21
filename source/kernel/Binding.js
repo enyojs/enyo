@@ -503,6 +503,11 @@
 				// transform owner or the actual owner
 				if (bo || o) {
 					tf = enyo.getPath.call(bo || o, this.transform);
+					// worst case here is to check if there was a bo and that failed if there is an
+					// owner go ahead and check that too
+					if (!tf && bo && o) {
+						tf = enyo.getPath.call(o, this.transform);
+					}
 				}
 				// only if that fails to we attempt to find the global
 				if (!tf) { tf = enyo.getPath(this.transform); }
