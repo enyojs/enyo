@@ -22,15 +22,15 @@
 		*/
 		multipleSelection: false,
 		/**
-			This class will be applied to the _repeater_ when _selection_ is enabled.
-			The deafult is _selection-enabled_. If _multipleSelection_ is `true` this class
-			will also be applied.
+			This class will be applied to the repeater when _selection_ is enabled.
+			The default is _selection-enabled_. If _multipleSelection_ is true, this
+			class will also be applied.
 		*/
 		selectionClass: "selection-enabled",
 		/**
-			This class will be applied to the _repeater_ when the _multipleSelection_ is
-			`true`. The default is _multiple-selection-enabled_. If _multipleSelection_ is
-			`true` it will also apply the _selectionClass_.
+			This class will be applied to the repeater when _multipleSelection_ is
+			true. The default is _multiple-selection-enabled_. If _multipleSelection_
+			is true, the _selectionClass_ will also be applied.
 		*/
 		multipleSelectionClass: "multiple-selection-enabled",
 		/**
@@ -43,11 +43,11 @@
 		*/
 		selectionProperty: "",
 		/**
-			Use this hash to define `defaultBindingProperties` for _all_ children
-			(even children of children) for this _repeater_. This can be very convenient
-			to keep from needing to write the same paths many times. You can use any
-			binding macros as well. Any of the properties defined here will be superceded
-			by the same property defined for an individual binding.
+			Use this hash to define _defaultBindingProperties_ for _all_ children
+			(even children of children) of this repeater. This can be eliminate the
+			need to write the same paths many times. You can also use any	binding
+			macros. Any of the properties defined here will be superseded	by the
+			same property if defined for an individual binding.
 		*/
 		childBindingDefaults: null,
 		//*@protected
