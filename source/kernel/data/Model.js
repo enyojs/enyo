@@ -94,11 +94,32 @@
 		get: enyo.super(function (sup) {
 			return function (path) {
 				if (this.isAttribute(path)) {
+					if (this._isComputed(path)) { return this._getComputed(path, true); }
 					return this.attributes[path];
 				}
 				return sup.apply(this, arguments);
 			};
 		}),
+		//*@protected
+		_getComputed: function (path, attr) {
+			var ca = this._computedCached,
+				p = (attr || this.isAttribute(path)? ("attributes." + path): path), c;
+			if ((c = ca[path])) {
+				// if the cache says the computed property is dirty,
+				// we have to fetch a current value
+				if (c.dirty) {
+					c.value = this[p]();
+					c.dirty = false;
+				}
+				// return the value whether it was cached or
+				// the most recent
+				return c.value;
+			}
+			// if it is not a cacheable computed property, we
+			// have to execute it to get the current value
+			return this[p]();
+		},
+		//*@public
 		/**
 			Overloaded _setter_. Will accept either a _hash_ of properties to be set
 			or the default _path_ and _value_ parameters. Note that this _setter_ will
@@ -107,9 +128,25 @@
 		*/
 		set: enyo.super(function (sup) {
 			return function (path, value) {
-				
+				if (enyo.isObject(path)) { return this.setObject(path); }
+				if (this.isAttribute(path)) {
+					
+					var p = this.attributes[path];
+					this.attributes[path] = value;
+					p === value || this.notifyObservers(path, p, value);
+					return this;
+				} else { return sup.apply(this, arguments); }
 			};
 		}),
+		/**
+			A _setter_ that accepts a hash of _key_/_value_ pairs. Returns the _model_
+			for chaining (and consistency with `set`). All _keys_ in _props_ will be added
+			to the `attributes` schema when this method is used.
+		*/
+		setObject: function (props) {
+			
+			return this;
+		},
 		/**
 			Mostly used internally but can be used to determine if the given property (string)
 			is a known _attribute_ of the record.
