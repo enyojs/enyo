@@ -38,6 +38,7 @@
 		/* jshint evil: false */
 	};
 
+	script("version.js");
 	script("ready.js");
 	script("../../loader.js");
 	script("boot.js");
