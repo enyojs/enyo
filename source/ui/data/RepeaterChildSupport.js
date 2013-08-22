@@ -145,7 +145,7 @@ enyo.RepeaterChildSupport = {
 	*/
 	dispatchEvent: enyo.super(function (sup) {
 		return function (name, event, sender) {
-			if (name == "ontap") {
+			if (name == "ontap" && sender === this) {
 				this._selectionHandler(sender, event);
 			}
 			return sup.apply(this, arguments);
