@@ -20,13 +20,15 @@
 
 	function printUsage() {
 		w("Enyo 2.0 Minifier");
+		w("Usage: " + __filename + " [Flags] [path/to/package.js]");
 		w("Flags:");
 		w("-no-less:", "Don't compile less; instad substitute css for less");
 		w("-no-alias:", "Don't use path macros");
 		w("-alias:", "Give paths a macroized alias");
-		w("-enyo ENYOPATH:", "Path to enyo loader (enyo/enyo.js)");
-		w("-lib LIBPATH:", "Path to lib folder (enyo/../lib)");
-		w("-output PATH/NAME:", "name of output file, prepend folder paths to change output directory");
+		w("-enyo ENYOPATH:", "Relative path to enyo folder (enyo)");
+		w("-lib LIBPATH:", "Relative path to lib folder ($enyo/../lib)");
+		w("-destdir DESTDIR:", "Target directory, prepended to any output file but skipped within generated files (current dir)");
+		w("-output RELPATH/PREFIX:", "Folder + output file prefix, relative to DESTDIR (build/out)");
 		w("-beautify:", "Output pretty version that's less compressed but has code on separate lines");
 		w("-f", "Remote source mapping: from local path");
 		w("-t", "Remote source mapping: to remote path");
@@ -59,7 +61,7 @@
 				// get absolute path to referenced asset
 				var normalizedUrlPath = path.join(sheet, "..", urlPath);
 				// Make relative asset path to built css
-				var relPath = path.relative(path.dirname(opt.output || "build"), normalizedUrlPath);
+				var relPath = path.relative(path.dirname(opt.output), normalizedUrlPath);
 				if (process.platform == "win32") {
 					relPath = pathSplit(relPath).join("/");
 				}
@@ -126,8 +128,7 @@
 	};
 
 	var walkerFinished = function(loader, chunks) {
-		var output = opt.output || "build";
-		var outfolder = path.dirname(output);
+		var outfolder = path.dirname(path.join(opt.destdir, opt.output));
 		var exists = fs.existsSync || path.existsSync;
 		var currChunk = 1;
 		var topDepends;
@@ -150,19 +151,19 @@
 					concatCss(chunk.sheets, function(css) {
 						if (css.length) {
 							w("");
-							var cssFile = output + currChunk + ".css";
-							fs.writeFileSync(cssFile, css, "utf8");
+							var cssFile = opt.output + currChunk + ".css";
+							fs.writeFileSync(path.join(opt.destdir, cssFile), css, "utf8");
 							if (topDepends) {
-								topDepends.push(path.relative(process.cwd(), cssFile));
+								topDepends.push(cssFile);
 							}
 						}
 						var js = concatJs(loader, chunk.scripts);
 						if (js.length) {
 							w("");
-							var jsFile = output + currChunk + ".js";
-							fs.writeFileSync(jsFile, js, "utf8");
+							var jsFile = opt.output + currChunk + ".js";
+							fs.writeFileSync(path.join(opt.destdir, jsFile), js, "utf8");
 							if (topDepends) {
-								topDepends.push(path.relative(process.cwd(), jsFile));
+								topDepends.push(jsFile);
 							}
 						}
 						currChunk++;
@@ -184,8 +185,8 @@
 				js = js + "enyo.path.addPath(\"lib\", \"lib\");\n";
 				// Add depends for all of the top-level files
 				js = js + "enyo.depends(\n\t\"" + topDepends.join("\",\n\t\"") + "\"\n);";
-				fs.writeFileSync(output + ".js", js, "utf8");
-				fs.writeFileSync(output + ".css", "/* CSS loaded via enyo.depends() call in " + path.relative(process.cwd(), output) + ".js */", "utf8");
+				fs.writeFileSync(path.join(opt.destdir, opt.output + ".js"), js, "utf8");
+				fs.writeFileSync(path.join(opt.destdir, opt.output + ".css"), "/* CSS loaded via enyo.depends() call in " + opt.output + ".js */", "utf8");
 			}
 
 			w("");
@@ -203,6 +204,7 @@
 		"alias": Boolean,
 		"enyo": String,
 		"lib": String,
+		"destdir": path, // only path that needs to be revoved by nopt as an absolute one
 		"output": String,
 		"help": Boolean,
 		"beautify": Boolean,
@@ -214,6 +216,7 @@
 		"alias": ['--alias'],
 		"enyo": ['--enyo'],
 		"lib": ['--lib'],
+		"destdir": ['--destdir'],
 		"output": ['--output'],
 		"h": ['--help'],
 		"?": ['--help'],
@@ -224,7 +227,11 @@
 	};
 
 	opt = nopt(knownOpts, shortHands, process.argv, 2);
-	opt.source = opt.argv.remain[0];
+	opt.source = opt.argv.remain[0] || "package.js";
+	if (opt.source) {
+		process.chdir(path.dirname(opt.source));
+	}
+
 	w(opt);
 	w("");
 
@@ -255,7 +262,13 @@
 		}
 	});
 
+	opt.destdir = opt.destdir || process.cwd();
+	opt.output = opt.output || "build/out";
+	if (path.resolve(opt.output) === opt.output) {
+		throw new Error("-output must be a relative path prefix");
+	}
+
 	walker.init(opt.enyo, opt.lib || opt.enyo + "/../lib", opt.mapfrom, opt.mapto);
-	walker.walk(opt.source, walkerFinished);
+	walker.walk('package.js', walkerFinished);
 
 })();

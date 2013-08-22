@@ -1,14 +1,13 @@
 ﻿(function (enyo) {
 	//*@protected
 	/**
-		Default properties of enyo kinds to concatenate as opposed to
+		Default properties of Enyo kinds to concatenate as opposed to
 		overwriting. These are automatically used unless explicitly
 		removed.
 	*/
 	enyo.concat = ["concat"];
 	/**
-		Internally used to map a concatenated property handler to the
-		property.
+		Used internally to map a concatenated property handler to the property.
 	*/
 	var map = enyo.concatMap = {};
 	var forced = {};
@@ -19,18 +18,18 @@
 	};
 	/**
 		Concatenated properties are designated properties with special handling
-		required between subclassing and extending. Any property that when added
-		to a kind (either by subclassing or extending) needs to be manipulated
-		or merged with the base kinds value should use this mechanism. Simply add
-		the property name to the kinds _concat_ array (it too will be concatenated).
-		If the value is an array with no special needs it will be handled automatically.
-		If it is not an array or needs inspection a handler should be registered
-		for that property via the _enyo.concatHandler_ method.
+		required between subclassing and extending. Any property that, when added
+		to a kind (either by subclassing or extending), needs to be manipulated
+		or merged with the base kind's value should use this mechanism. Simply add
+		the property name to the kind's _concat_ array (it, too, will be
+		concatenated). If the value is an array with no special needs, it will be
+		handled automatically. If it is not an array, or needs inspection, a handler
+		should be registered for the property via _enyo.concatHandler()_.
 	
-		A special note as to why this is required as opposed to using subclassing
-		is due to the nature of _extending_ a kind and _extending_ an instance. These
-		special handlers need to be invoked on all occassions not just subclassing. This
-		is a normalized and performant handler that does the least amount of work possible.
+		This is required (as opposed to using subclassing) because of the nature of
+		extending a kind and extending an instance. These special handlers need to
+		be invoked on all occasions, not just when subclassing. This is a normalized
+		and performant handler that does the least amount of work possible.
 	*/
 	enyo.handleConcatenatedProperties = function (proto, props, noKind) {
 		var c = enyo.merge(proto.concat, props.concat), fn;
@@ -40,7 +39,7 @@
 			if (map[p]) {
 				for (var j=0; (fn=map[p][j]); ++j) { fn(proto, props, noKind); }
 			} else if (enyo.isArray(proto[p])) {
-				// if there wasn't a special handler but it was an array on the base
+				// if there wasn't a special handler, but it was an array on the base,
 				// we assume it is an array coming in and we merge them
 				proto[p] = enyo.merge(proto[p], props[p]);
 				delete props[p];
@@ -54,14 +53,14 @@
 	Creates a JavaScript constructor function with a prototype defined by
 	_inProps_. __All constructors must have a unique name__.
 
-	_enyo.kind_ makes it easy to build a constructor-with-prototype (like a
+	_enyo.kind()_ makes it easy to build a constructor-with-prototype (like a
 	class) that has advanced features like prototype-chaining (inheritance).
 
 	A plug-in system is included for extending the abilities of the kind
 	generator, and constructors are allowed to perform custom operations when
 	subclassed.
 
-	If you make changes to _enyo.kind_, be sure to add or update the appropriate
+	If you make changes to _enyo.kind()_, be sure to add or update the appropriate
 	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
 
 	For more information, see the documentation on
@@ -110,7 +109,7 @@ enyo.kind = function(inProps) {
 		// always add the the extend capability for kinds even if they are
 		// deferred
 		DeferredCtor.extend = enyo.kind.statics.extend;
-		// if extend is called on a deferred constructor it needs to know that
+		// if extend is called on a deferred constructor, it needs to know that
 		// so it can resolve it at that time
 		DeferredCtor._deferred = true;
 		if ((name && !enyo.getPath(name)) || enyo.kind.allowOverride) {
@@ -141,7 +140,7 @@ enyo.kind.finish = function(inProps) {
 	var base = enyo.constructorForKind(kind);
 	var isa = base && base.prototype || null;
 	// if we have an explicit kind property with value undefined, we probably
-	// tried to reference  a kind that is not yet in scope
+	// tried to reference a kind that is not yet in scope
 	if (hasKind && kind === undefined || base === undefined) {
 		var problem = kind === undefined ? 'undefined kind' : 'unknown kind (' + kind + ')';
 		throw "enyo.kind: Attempt to subclass an " + problem + ". Check dependencies for [" + (name || "<unnamed>") + "].";
@@ -164,7 +163,7 @@ enyo.kind.finish = function(inProps) {
 	// put in our props
 	enyo.mixin(ctor.prototype, inProps);
 	// alias class name as 'kind' in the prototype
-	// but we actually only need to set this if a new name was used
+	// but we actually only need to set this if a new name was used,
 	// not if it is inheriting from a kind anonymously
 	if (name) {
 		ctor.prototype.kindName = name;
@@ -192,7 +191,7 @@ enyo.kind.finish = function(inProps) {
 
 //* @public
 /**
-	Creates a Singleton of a given kind with a given definition.
+	Creates a singleton of a given kind with a given definition.
 	__The name property will be the instance name of the singleton
 	and must be unique__.
 
@@ -248,7 +247,7 @@ enyo.kind.makeCtor = function() {
 	return enyoConstructor;
 };
 
-// classes referenced by name can omit this namespace (e.g. "Button" instead of "enyo.Button")
+// classes referenced by name may omit this namespace (e.g., "Button" instead of "enyo.Button")
 enyo.kind.defaultNamespace = "enyo";
 
 //
@@ -258,9 +257,9 @@ enyo.kind.features = [];
 
 //*@protected
 /**
-	This is used internally by several mechanisms to allow safe and normalized
-	handling for extending a kinds super-methods. It can take a constructor,
-	a prototype or an instance.
+	Used internally by several mechanisms to allow safe and normalized handling
+	for extending a kind's super-methods. It can take a constructor, a prototype,
+	or an instance.
 */
 enyo.kind.extendMethods = function(ctor, props, add) {
 	var proto = ctor.prototype || ctor,
@@ -278,8 +277,8 @@ enyo.kind.extendMethods = function(ctor, props, add) {
 			if (n == "constructor") {
 				n = "_constructor";
 			}
-			// ensure that if there isn't actually a super method to call it won't
-			// fail miserably - while this shouldn't happen often it is a sanity
+			// ensure that if there isn't actually a super method to call, it won't
+			// fail miserably - while this shouldn't happen often, it is a sanity
 			// check for mixin-extensions for kinds
 			if (add) {
 				p = proto[n] = p.fn(proto[n] || enyo.nop);
@@ -305,7 +304,7 @@ enyo.kind.features.push(enyo.kind.extendMethods);
 
 //*@protected
 /**
-	This method is called by enyo.Object's attempting to
+	Called by _enyo.Object_ instances attempting to
 	access super-methods of a parent class (kind) by calling
 	_this.inherited(arguments)_ from within a kind method. This
 	can only be done safely when there is known to be a super
@@ -377,22 +376,24 @@ enyo.kind.features.push(function(ctor, props) {
 enyo.kind.statics = {
 	//*@public
 	/**
-		A kind can set its own _subclass_ method as a _static.method_ for its constructor. Whenever
-		it is subclassed the constructor and properties will be passed through this method for
-		special handling of important features.
+		A kind may set its own _subclass()_ method as a _static.method_ for its
+		constructor. Whenever it is subclassed, the constructor and properties will
+		be passed through this method for special handling of important features.
 	*/
 	subclass: function(ctor, props) {},
 	//*@public
 	/**
-		This method is available on all constructors, although calling it on a deferred constructor
-		will force it to be resolved at that time. Call with a hash or array of hashes
-		to extend the current kind without creating a new kind. Properties will override prototype
-		properties. If a method already exists that is being added it will supercede the existing
-		method. The method can call this.inherited or be wrapped with enyo.super to call the original
-		method (this chains multiple methods tied to a single kind). In cases where an instance is to
-		be extended (not the class) it can be passed in as the second parameter. This method does not
-		re-run the _enyo.kind.features_ against the constructor or instance. Returns the constructor
-		or the instance.
+		This method is available on all constructors, although calling it on a
+		deferred constructor will force it to be resolved at that time. Call with a
+		hash or array of hashes to extend the current kind without creating a new
+		kind. Properties will override prototype properties. If a method that is
+		being added already exists, the new method supersedes the existing one. The
+		method may call _this.inherited()_ or be wrapped with _enyo.super_ to call
+		the original method (this chains multiple methods tied to a single kind). In
+		cases where an instance (not the class) is to be extended, it may be passed
+		in as the second parameter. This method does not re-run the
+		_enyo.kind.features_ against the constructor or instance. Returns the
+		constructor or the instance.
 	*/
 	extend: function(props, target) {
 		var ctor = this,
@@ -413,7 +414,7 @@ enyo.kind.statics = {
 };
 
 /**
-	Call this with a enyo.Kind constructor to make sure it's been undeferred.
+	Call this with an _enyo.kind()_ constructor to make sure it's been undeferred.
 */
 enyo.checkConstructor = function(inKind) {
 	if (enyo.isFunction(inKind)) {

@@ -1,135 +1,147 @@
 (function (enyo) {
 
 	//*@protected
-	// the internal store for bindings so they can be found by id later
+	// The internal store for bindings so they can be found by id later
 	var map = {},
 	/**
 		Used by the binding's setter for both targets and sources
 		when determing whether or not to force a notification to fire.
 		We cannot easily determine this for types that are passed
-		by reference (e.g. arrays and native JavaScript objects). But
-		for these types it much clearer in nearly all cases.
+		by reference (e.g., arrays and native JavaScript objects). But
+		for these types it is much clearer in nearly all cases.
 	*/
 	_force = /(string|number|boolean)/,
 	/**
 		Used in macro expansion to determine the macro token unwrapped;
 		works in tandem with _enyo.macroize.pattern_ and always assumes
-		this is the pattern being used in _binding_ macro support - we
+		this is the pattern being used in binding macro support--we
 		do not want to have to reset the sticky flag on every execution.
 	*/
 	_token = /\{\$([^{}]*)\}/;
 
 	//*@public
 	/**
-		A _enyo.Binding_ is used to keep properties synchronized. They can be
-		used to link 2 properties on different objects or even the same objects.
-		Once a binding has been established it will wait for notification of changes
-		and then synchronize the value between its ends. Usually you will not need
-		to create an _enyo.Binding_ arbitrarily but instead rely on the public
-		_BindingSupport_ API that is applied to _enyo.Object_ and available on all
-		subkinds. Also note a _binding_ can be one-way or two-way (one-way by default).
+		_enyo.Binding_ is a mechanism used to keep properties synchronized. A
+		binding may be used to link two properties on different objects, or even two
+		properties on the same object. Once a binding has been established, it will
+		wait for change notifications; when a notification arrives, the binding will
+		synchronize the value between the two ends. Note that bindings may be
+		one-way (the default) or two-way.
+		
+		Usually, you will not need to create _enyo.Binding_ objects arbitrarily, but
+		will instead rely on the public [BindingSupport
+		API](#enyo/source/kernel/mixins/BindingSupport.js), which is applied to
+		[enyo.Object](#enyo.Object) and so is available on all of its subkinds. 
 	*/
 	enyo.kind({
 		name: "enyo.Binding",
 		kind: null,
 		noDefer: true,
 		/**
-			The _from_ property designates a path from which the _property_ of the _source_
-			to bind from can be found. If the _source_ is explicitly provided and the path
-			is relative (beginning with a ".") it is relative to the _source_ otherwise it is
-			relative to the _owner_ of the binding. In order to have a binding evaluated from
-			the global scope prefix the path with a "^". If the _source_ and the "^" are used in
-			tandem the "^" will be ignored and the path will be assumed to be relative from the
-			provided _source_.
+			The _from_ property designates a path in which the property of the source
+			to bind from may be found. If the source is explicitly provided and the
+			path is relative (i.e., it begins with a "."), it is relative to the
+			source; otherwise, it is relative to the owner of the binding. To have a
+			binding be evaluated from the global scope, prefix the path with a "^". If
+			the source and the "^" are used in tandem, the "^" will be ignored and the
+			path will be assumed to be relative to the provided source.
 		*/
 		from: "",
 		/**
-			The _to_ property designates a path from which the _property_ of the _target_
-			to bind from can be found. If the _target_ is explicitly provided and the path
-			is relative (beginning with a ".") it is relative to the _target_ otherwise it is
-			relative to the _owner_ of the binding. In order to have a binding evaluated from
-			the global scope prefix the path with a "^". If the _target_ and the "^" are used in
-			tandem the "^" will be ignored and the path will be assumed to be relative from the
-			provided _target_.
+			The _to_ property designates a path in which the property of the target to
+			bind from may be found. If the target is explicitly provided and the path
+			is relative (i.e., it begins with a "."), it is relative to the target;
+			otherwise, it is relative to the owner of the binding. To have a binding
+			be evaluated from the global scope, prefix the path with a "^". If the
+			target and the "^" are used in tandem, the "^" will be ignored and the
+			path will be assumed to be relative to the provided target.
 		*/
 		to: "",
 		/**
-			Set this only to a reference for an object to use as the _source_ for the _binding_.
-			If this is not a bindable object during initialization the _source_ will be derrived
-			from the _from_ property.
+			Set this only to a reference for an object to use as the source for the
+			binding. If this is not a bindable object, the source will be derived from
+			the _from_ property during initialization.
 		*/
 		source: null,
 		/**
-			Set this only to a reference for an object to use as the _target_ for the _binding_.
-			If this is not a bindable object during initialization the _target_ will be derrived
-			from the _to_ property.
+			Set this only to a reference for an object to use as the target for the
+			binding. If this is not a bindable object, the target will be derived from
+			the _to_ property during initialization.
 		*/
 		target: null,
 		/**
-			Set this to a function or the name of a method of the _owner_ of this _binding_. A
-			_transform_ method is used to programmatically modify the value being synchronized.
-			The method will be executed with three parameters, `value` being synchronized, the
-			`direction` (a string matching either "source" or "target" -- think "going to the source")
-			and a reference to this binding. In cases where the binding should be interrupted and
-			not propagate the synchronization at all call the `stop` method of the passed in _binding_
-			reference.
+			Set this to a function or the name of a method on the owner of this
+			binding. A transform method is used to programmatically modify the value
+			being synchronized. The method will be executed with three parameters, the
+			_value_ being synchronized, the _direction_ (a string matching either
+			"source" or "target", as in "going to the source") and a reference to this
+			binding. In cases where the binding should be interrupted and not
+			propagate the synchronization at all, call the _stop()_ method of the
+			passed-in binding reference.
 		*/
 		transform: "",
 		/**
-			If the binding was able to resolve both ends (its _target_ and _source_ objects) this
-			boolean will be `true`. Setting this manually will have undesirable affects.
+			If the binding was able to resolve both ends (i.e., its _source_ and
+			_target_ objects), this boolean will be true. Setting this manually will
+			have undesirable effects.
 		*/
 		connected: false,
 		/**
-			Primarily used internally but useful for debugging this value will be `true` if it needs
-			synchronization and `false` if it is synchronized.
+			This value will be true if the binding needs synchronization and false if
+			it does not. While it is primarily for internal use, this property may
+			also be useful for debugging. 
 		*/
 		dirty: true,
 		/**
-			By default bindings will attempt to expand macroized properties. If you do not use macros
-			it may be more efficient to set this flag to `false`, default is `true`. To turn off macro
-			expansion for an entire _kind_, simply set the `defaultBindingKind` to `enyo.NoMacroBinding`.
-			To turn it off throughout the framework, set `enyo.defaultBindingKind = enyo.NoMacroBinding`.
+			By default, bindings will attempt to expand macroized properties. If you
+			do not use macros, it may be more efficient to set this flag to false (the
+			default is true). To turn off macro expansion for an entire kind, set its
+			_defaultBindingKind_ to _enyo.NoMacroBinding_; to turn it off throughout
+			the framework, set _enyo.defaultBindingKind = enyo.NoMacroBinding_.
 		*/
 		expandMacros: true,
 		/**
-			Each _binding_ will have a unique _id_ which can be used with the global static
-			methid _enyo.Binding.find_ to retrieve a reference to that binding. It can also be used
-			to track registered listeners on objects back to their _binding_.
+			Each binding has a unique id that can be used with the global static
+			method _enyo.Binding.find()_ to retrieve a reference to that binding. It
+			can also be used to track registered listeners on objects back to their
+			bindings.
 		*/
 		id: "",
 		/**
-			If a binding is one-way this flag should be `true` (default). If this flag is set to
-			`false` this binding will be two-way.
+			If a binding is one-way, this flag should be true (the default). If this
+			flag is set to false, the binding will be two-way.
 		*/
 		oneWay: true,
 		/**
-			By default a _binding_ will attempt to connect to both ends (_source_ and _target_) but
-			if that process should be deferred set this flag to `false`.
+			By default, a binding will attempt to connect to both ends (_source_ and
+			_target_). If this process should be deferred, set this flag to false.
 		*/
 		autoConnect: true,
 		/**
-			By default a _binding_ will attempt to synchronize its values from its _source_ to its
-			_target_. If this process should be deferred set this flag to `false`.
+			By default, a binding will attempt to synchronize its values from its
+			_source_ to its	_target_. If this process should be deferred, set this
+			flag to false.
 		*/
 		autoSync: true,
 		/**
-			The _owner_ property is used extensively for various purposes within a _binding_. The primary
-			purposes include a root object from which to search for its ends (_source_ and/or _target_).
-			If the _owner_ created the _binding_ then it will also be responsible for destroying the
-			_binding_ (automatic).
+			The _owner_ property is used extensively for various purposes within a
+			binding. One primary purpose is to serve as a root object from which to
+			search for its ends (the _source_ and/or _target_). If the owner created
+			the binding, it will also be responsible for destroying it
+			(automatically).
 		*/
 		owner: null,
 		/**
-			Indicator of whether or not this _binding_ has been destroyed. Do not change this flag
-			arbitrarily.
+			Boolean indicating whether this binding has been destroyed. Do not change
+			this flag arbitrarily.
 		*/
 		destroyed: false,
 		statics: {
 			/**
-				This method can be used to retrieve a _binding_ by its id globally. Simply pass the
-				known _id_ string. If found it will return the reference to the _binding_, otherwise it
-				will return `undefined`.
+				This method may be used to retrieve a binding by its id globally. Simply
+				pass in the known _id_ string. If the id is found, the method will
+				return a reference to the binding; otherwise, it will return
+				_undefined_.
 			*/
 			find: function (id) {
 				return map[id];
@@ -249,10 +261,10 @@
 			}
 
 			i = (i == "."? true: false);
-			// if it is a relative path but we have no root or owner
+			// if it is a relative path but we have no root or owner,
 			// then we know we can't find it
 			if (i && !(this[root] || this.owner)) { return; }
-			// if there is no root or known/derived path we
+			// if there is no root or known/derived path, we
 			// find the path and attempt to locate the root from that
 			if (!this[root] && !this[rh]) {
 				var p = parts.slice(0, -1).join(".");
@@ -260,12 +272,12 @@
 				this[root] = enyo.getPath.call(i? this.owner: enyo.global, p);
 				this[rh] = p;
 			}
-			// if we don't have a root but we've already found our path then we should
+			// if we don't have a root but we've already found our path, then we should
 			// be able to quickly try and find the root again
 			else if (!this[root] && this[rh]) {
 				this[root] = enyo.getPath.call(i? this.owner: enyo.global, this[rh]);
 			}
-			// if we don't know our actual root property to bind on we
+			// if we don't know our actual root property to bind on, we
 			// grab that as well
 			if (!this[rp]) {
 				this[rp] = parts.pop();
@@ -275,7 +287,7 @@
 			if (!macro) { return; }
 			var o = this.owner,
 				ms, m, ex, r;
-			// we hate to run this test unnecessarily but the overhead we'll
+			// we hate to run this test unnecessarily, but the overhead we'll
 			// save by this test outweighs the cons
 			ms = macro.match(enyo.macroize.pattern);
 			if (ms) {
@@ -287,13 +299,13 @@
 					r = e[0];
 					ex = e[1];
 					if (o) {
-						// this will either be expanded or the same thing, its a
+						// this will either be expanded or the same thing; it's a
 						// safe execution
 						m[r] = o._bindingExpandMacro(ex, r, macro, prop, this);
 					}
 					if (!m[r] || m[r] == r) {
 						// this is most likely a local property someone is short-cutting by
-						// the convention of their naming scheme so we test for the existence
+						// the convention of their naming scheme, so we test for the existence
 						// and validity of the property
 						if (this[ex] && enyo.isString(this[ex])) {
 							m[r] = this[ex];
@@ -394,11 +406,11 @@
 		},
 		//*@public
 		/**
-			This method is used to connect the ends (_source_ and _target_) of
-			the _binding_. While typically you won't need to call this method it
-			can safely be called even when the ends are already established. Note that
-			if one or both of the ends does become connected and the `autoSync` flag
-			is `true`, it will automatically be synchronized.
+			Connects the ends (i.e., the _source_ and _target_) of the binding. While
+			you typically won't need to call this method, it is safe to call even when
+			the ends are already established. Note that if one or both of the ends
+			does become connected and the _autoSync_ flag is true, the ends will
+			automatically be synchronized.
 		*/
 		connect: function () {
 			var c = this.isConnected();
@@ -416,9 +428,9 @@
 			}
 		},
 		/**
-			This method will synchronize values from the _source_ to the _target_. This
-			usually will not need to be called manually. For two-way bindings they will
-			automatically synchronize from the _target_ end once they are connected.
+			Synchronizes values from the _source_ to the _target_. This usually will
+			not need to be called manually. Two-way bindings will automatically
+			synchronize from the _target_ end once they are connected.
 		*/
 		sync: function () {
 			if (this.connected) {
@@ -426,9 +438,9 @@
 			}
 		},
 		/**
-			This method will disconnect from its ends (_source_ and _target_) if
-			it is _connected_ at either end. This method will most likely not need to
-			be called manually.
+			Disconnects from the ends (i.e., _source_ and _target_) if a connection
+			exists at either end. This method will most likely not need to be called
+			directly.
 		*/
 		disconnect: function () {
 			this.disconnectSource();
@@ -436,8 +448,8 @@
 			this.isConnected();
 		},
 		/**
-			Refresh the binding only rebuilding the parts that are missing. Will synchronize
-			if it is able to connect and the `autoSync` flag is true.
+			Refreshes the binding, only rebuilding the parts that are missing. Will
+			synchronize if it is able to connect and the _autoSync_ flag is true.
 		*/
 		refresh: function () {
 			this.initPart("from", "source");
@@ -445,8 +457,8 @@
 			this.connect();
 		},
 		/**
-			Rebuild the entire binding. Will synchronize if it is able to connect and the `autoSync`
-			flag is true.
+			Rebuilds the entire binding. Will synchronize if it is able to connect and
+			the _autoSync_ flag is true.
 		*/
 		rebuild: function () {
 			this.source = null;
@@ -456,9 +468,9 @@
 			this.refresh();
 		},
 		/**
-			This method is used to release all of its parts and unregister its observers.
-			Typically this method does not need to be called manually (unless created
-			without an owner).
+			Releases all of the binding's parts and unregisters its observers.
+			Typically, this method will not need to be called directly unless the
+			binding was created without an owner.
 		*/
 		destroy: function () {
 			this.destroyed = true;
@@ -475,8 +487,8 @@
 			delete map[this.id];
 		},
 		/**
-			This is the method that will interrupt the binding if called from within
-			the scope of a transform. Do not call this method otherwise.
+			Interrupts the binding if called from within the scope of a transform. Do
+			not call this method otherwise.
 		*/
 		stop: function () {
 			throw "binding-top";
@@ -491,6 +503,11 @@
 				// transform owner or the actual owner
 				if (bo || o) {
 					tf = enyo.getPath.call(bo || o, this.transform);
+					// worst case here is to check if there was a bo and that failed if there is an
+					// owner go ahead and check that too
+					if (!tf && bo && o) {
+						tf = enyo.getPath.call(o, this.transform);
+					}
 				}
 				// only if that fails to we attempt to find the global
 				if (!tf) { tf = enyo.getPath(this.transform); }
@@ -499,9 +516,9 @@
 		}
 	});
 	/**
-		Use this framework property to control the default _kind_ of binding to
-		use for all _kinds_. It may be overridden at the _kind_ level if their
-		`defaultBindingKind` property is set to a different _kind_ of _binding_.
+		Use this framework property to control the default kind of binding to use
+		for all kinds. It may be overridden at the kind level by setting the
+		_defaultBindingKind_ property to a different kind of binding.
 	*/
 	enyo.defaultBindingKind = enyo.Binding;
 

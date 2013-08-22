@@ -60,5 +60,40 @@ enyo.kind({
 		});
 		var d = new Derived();
 		d.pass(this);
+	},
+	testPublished: function() {
+		var K = enyo.kind({
+			published: {
+				a: 42,
+				b: "",
+				c: null
+			},
+			d: 23
+		});
+		var k = new K({a: 16});
+		try {
+			if (!enyo.isFunction(k.setA) || !enyo.isFunction(k.getA) ||
+				!enyo.isFunction(k.setB) || !enyo.isFunction(k.getB) ||
+				!enyo.isFunction(k.setC) || !enyo.isFunction(k.getC)) {
+				throw "no getter or setter defined for published property";
+			}
+			if (k.getA() !== 16) {
+				throw "getA failed";
+			}
+			k.setB("testing");
+			if (k.b !== "testing") {
+				throw "setB failed";
+			}
+			k.set("c", "hello");
+			if (k.getC() !== "hello") {
+				throw "set('c') or getC() failed";
+			}
+		}
+		finally {
+			k.destroy();
+		}
+		this.finish();
 	}
+
+
 });

@@ -3,9 +3,10 @@ enyo.concat.push("published");
 //*@public
 /**
 _enyo.Object_ lies at the heart of the Enyo framework's implementations of
-property publishing, computed properties (via the _ComputedPropertySupport_
-mixin), and data binding (via the _BindingSupport_ mixin). It also provides
-several utility functions for its subkinds.
+property publishing, computed properties (via the
+[ComputedSupport](#enyo/source/kernel/mixins/ComputedSupport.js) mixin), and
+data binding (via the [BindingSupport](#enyo/source/kernel/mixins/BindingSupport.js)
+mixin). It also provides several utility functions for its subkinds.
 
 Published properties are declared in a hash called _published_ within a call
 to _enyo.kind_. To get and set values for these properties, call
@@ -252,7 +253,7 @@ enyo.Object.addGetterSetter = function (prop, value, proto) {
 	fn = proto[get];
 	// if there isn't already a getter provided create one
 	if (!enyo.isFunction(fn)) {
-		fn = proto[get] = function () { return this.get(prop); };
+		fn = proto[get] = function () { return enyo.getPath.fast.call(this, prop); };
 		fn.overloaded = false;
 	} else if (false !== fn.overloaded) {
 		// otherwise we need to mark it as having been overloaded
@@ -262,7 +263,7 @@ enyo.Object.addGetterSetter = function (prop, value, proto) {
 	// if there isn't already a set provided, create one
 	fn = proto[set];
 	if ("function" !== typeof fn) {
-		fn = proto[set] = function () { return this.set(prop, arguments[0]); };
+		fn = proto[set] = function () { return enyo.setPath.fast.call(this, prop, arguments[0]); };
 		fn.overloaded = false;
 	} else if (false !== fn.overloaded) {
 		// otherwise we need to mark it as having been overloaded
