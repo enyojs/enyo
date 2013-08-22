@@ -89,6 +89,21 @@
 	enyo.concatHandler("mixins", function (proto, props) {
 		proto.mixins = enyo.merge(proto.mixins, props.mixins);
 	});
+	enyo.kind.extendMethods(enyo.kind.statics, {
+		extend: enyo.super(function (sup) {
+			return function (props, target) {
+				var proto = target || this.prototype;
+				if (props.mixins) {
+					// cut-out the need for concatenated properties to handle
+					// this (and it won't be able to because we're removing the
+					// new mixins array)
+					proto.mixins = enyo.merge(proto.mixins, props.mixins);
+					mixinsFeature(proto, props);
+				}
+				return sup.apply(this, arguments);
+			};
+		})
+	}, true);
 	//*@public
 	enyo.MixinSupport = {
 		name: "MixinSupport",
