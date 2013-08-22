@@ -17,6 +17,49 @@
 	};
 	//*@public
 	/**
+		## Getting _enyo.Model_ values
+	
+		The default `get` method of _enyo.Model_ has been overloaded to handle a few different
+		scenarios. While schema _attributes_ are stored on an internal hash (`attributes`) you
+		don't need to call `get` with the `attributes` prefix. If the property is defined as part
+		of the schema it will be retrieved from the _attributes_ hash otherwise it will be retrieved
+		from the model instance.
+	
+		## Setting _enyo.Model_ values
+
+		The default `set` method of _enyo.Model_ has been overloaded to handle a few different
+		scenarios as well. It has the added benefit of accepting an object of keys and values as
+		opposed to simply a _path_ and a _value_ (as normal). When you use this new parameter
+		configuration, however, it assumes the _keys_ are _attributes_ of the schema - even if
+		they don't currently exist as such, and if they do, they will be updated to the new value.
+		If the default parameter configuration of _path_ and _value_ is used, it will attempt to
+		determine if the _path_ is a defined _attribute_ of the schema, and if so, set it, otherwise
+		it will use its default behavior. You can define the schema several ways using the `attributes`
+		hash for the model definition, the `defaults` hash for the model definition, passing in
+		`attributes` as the first parameter to the constructor of a new model, or by passing the
+		`set` method a hash instead of the _path_ and _value_.
+		
+		## Computed Properties and _enyo.Model_
+		
+		You can still use computed properties as you normally would for a _model_. The
+		difference is, instead of placing the function directly on the model definition
+		you place it on the _attributes_ schema hash. Its entry in the _computed_ block
+		doesn't need the `attributes` prefix, just name it like you would otherwise. Its
+		dependencies can be on the model definition (non-schema properties) and/or schema
+		properties (on the _attributes_ schema hash).
+	
+		```
+		computed: {
+			myComputed: ["multiplier", "multiplicand"]
+		},
+		attributes: {
+			myComputed: function () {
+				return this.get("multiplicand") * this.get("multiplier");
+			},
+			multiplier: 7
+		},
+		multiplicand: 8
+		```
 	*/
 	enyo.kind({
 		name: "enyo.Model",
