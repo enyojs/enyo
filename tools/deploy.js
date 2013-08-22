@@ -59,6 +59,14 @@ Here is a typical library manifest content:
 }
 ```
 
+**NOTE:** When you change the default value of the build folder name
+(using `--build` or `-b`) you must adapt the content of your
+`index.html` accordingly.
+
+**NOTE:** The test build folder (`./build` by default) and the output
+folder (`PWD/deploy` by default) are recusively deleted each time this
+command is run.  So do not store any source code here.
+
  */
 
 // Load dependencies
@@ -106,7 +114,7 @@ function printUsage() {
 		'\n' +
 		'Options:\n' +
 		'  -v  verbose operation                     [boolean]  [default: ' + verbose + ']\n' +
-		'  -b  alternate relative build directory    [default: "./build"]\n' +
+		'  -b  relative build directory              [default: "./build"]\n' +
 		'  -c  do not run the LESS compiler          [boolean]  [default: ' + less + ']\n' +
 		'  -e  location of the enyo framework        [default: "./enyo"]\n' +
 		'  -l  location of the lib folder            [default: "./lib"]\n' +
@@ -115,8 +123,9 @@ function printUsage() {
 		'  -s  source code root directory            [default: "."]\n' +
 		'  -B  pretty-print (beautify) JS output     [default: "' + beautify + '"]\n' +
 		'  -f  remote source mapping: from local path\n' +
-		'  -t  remote source mapping: to remote path' +
-		'  -E|--noexec disallow execution of application-provided scripts [default: false]' +
+		'  -t  remote source mapping: to remote path\n' +
+		'  -E|--noexec disallow execution of application-provided scripts [default: false]\n' +
+		'  -T|--test generate a build directory in the source tree for testing [default: false]\n' +
 		'\n');
 }
 
@@ -132,6 +141,7 @@ var opt = nopt(/*knownOpts*/ {
 	"help": Boolean,
 	"beautify": Boolean,
 	"noexec": Boolean,
+	"test": Boolean,
 	"mapfrom": [String, Array],
 	"mapto": [String, Array]
 }, /*shortHands*/ {
@@ -148,6 +158,7 @@ var opt = nopt(/*knownOpts*/ {
 	"f": "--mapfrom",
 	"t": "--mapto",
 	"E": "--noexec",
+	"T": "--test",
 	"?": "--help"
 }, process.argv /*args*/, 2 /*slice*/);
 
@@ -205,6 +216,7 @@ log("Using: opt.out=" + opt.out);
 log("Using: opt.build=" + opt.build);
 log("Using: opt.enyo=" + opt.enyo);
 log("Using: opt.packagejs=" + opt.packagejs);
+log("Using: opt.test=" + opt.test);
 log("Using: less=" + less);
 log("Using: beautify=" + beautify);
 log("Using: noexec=" + noexec);
@@ -221,14 +233,18 @@ function run(args) {
 	}
 }
 
-// Prepare target directory
+// Prepare target directories
 
 log("% rm -rf " + opt.out);
 shell.rm('-rf', opt.out);
 log("% mkdir -p " + opt.out + "/" + opt.build);
 shell.mkdir('-p', path.join(opt.out, opt.build));
 
+log("% rm -rf " + opt.build);
+shell.rm('-rf', opt.build);
+
 // Build / Minify
+
 var args, i;
 if (!opt.mapfrom || opt.mapfrom.indexOf("enyo") < 0) {
 	console.log("Minify-ing Enyo...");
@@ -269,7 +285,6 @@ run(args);
 
 // Deploy / Copy
 
-console.log("Copying assets...");
 if(!manifest._default) {
 	/* Pick the list of files & folders to copy from the application manifest */
 	deployDir(".");
@@ -296,8 +311,14 @@ if(!manifest._default) {
 	}
 }
 
+if (opt.test) {
+	log("Test build dir");
+	log("% cp -r " + path.join(opt.out, opt.build) + " .");
+	shell.cp('-r', path.join(opt.out, opt.build), ".");
+}
+
 function deployDir(subDir) {
-	log("Deploying " + subDir + "...");
+	log("Deploying '" + subDir + "'...");
 	try {
 		var manifest = JSON.parse(fs.readFileSync(path.join(subDir, "deploy.json")));
 		if (Array.isArray(manifest.assets)) {
