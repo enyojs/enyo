@@ -3,23 +3,23 @@
 /**
 # deploy.js - portable deployment script
 
-This portable Node.js script minifies both your application, its
-libraries & the Enyo framework it is using.  The resulting application
-is suitable for production usage, either hosted on a web-server or
+This portable Node.js script minifies your application, its libraries,
+and the Enyo framework it is using.  The resulting application
+is suitable for production usage, either hosted on a Web server or
 embedded into a PhoneGap container.
 
 The script is intended to be run from the application's root directory
-(This is unlike previous deprecated incarnations of the scripts
-`deploy.sh` and `deploy.bat` that shipped within the `bootplate`
-application), where it expects to find a file called `package.js`
-(unless the user specifies an alternate location using the `-p` flag).
+(unlike previous, deprecated incarnations of the scripts `deploy.sh` and
+`deploy.bat` that shipped within the `bootplate` application), where it
+expects to find a file called `package.js` (unless the user specifies an
+alternate location using the `-p` flag).
 
-This script comes along with Enyo.  It automatically uses & embeds the
+This script comes along with Enyo.  It automatically uses and embeds the
 Enyo version it is shipped with, unless the user specifies another
 Enyo version using the `-e enyo_dir` flag.
 
 This script uses the application manifest `deploy.json` if found.  Here
-is a typical application manifest content:
+is the content of a typical application manifest:
 
 ```json
 {
@@ -31,25 +31,25 @@ is a typical application manifest content:
 ```
 
 When the application does not have a root-level `deploy.json` manifest
-file, this script expects to find the following files & folders in the
-application root directory.  Each of them is copied verbatim in the
+file, this script expects to find the following files and folders in the
+application root directory.  Each of them is copied verbatim into the
 output production/deployment folder (the one optionally given using
 the `-o` flag).
 
 * `index.html`, the application startup page
 * `icon.png`, the application icon
 * `assets/`holds the static application assets, such as images,
-  videos... etc.
+  videos, etc.
 
-When you application has library dependencies (for example
+When your application has library dependencies (for example,
 `lib/mylib`), this script uses the library manifest
 `lib/mylib/deploy.json` (if present) or the old-fashioned deployment
-scripts `lib/mylib/deploy.sh` (on Linux & Mac OSX) or
-`lib/mylib/deploy.bat` (on Windows).  If neither exist, then the
-entire library is copied (except for `.git`, `target` and `build`
+scripts `lib/mylib/deploy.sh` (on Linux and Mac OSX) or
+`lib/mylib/deploy.bat` (on Windows).  If neither exists, then the
+entire library is copied (except for the `.git`, `target` and `build`
 directories).
 
-Here is a typical library manifest content:
+Here is the content of a typical library manifest:
 
 ```json
 {
@@ -64,8 +64,8 @@ Here is a typical library manifest content:
 `index.html` accordingly.
 
 **NOTE:** The test build folder (`./build` by default) and the output
-folder (`PWD/deploy` by default) are recusively deleted each time this
-command is run.  So do not store any source code here.
+folder (`PWD/deploy` by default) are recursively deleted each time this
+command is run, so do not store any source code in either location.
 
  */
 
