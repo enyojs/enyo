@@ -231,7 +231,6 @@ enyo.BindingSupport = {
 		var fn = function () {
 			binding.disconnectSource();
 			binding.source = null;
-			binding._sourceProperty = null;
 			binding.refresh();
 		};
 		binding._rebuildSource = fn;
@@ -241,7 +240,6 @@ enyo.BindingSupport = {
 		var fn = function () {
 			binding.disconnectTarget();
 			binding.target = null;
-			binding._targetProperty = null;
 			binding.refresh();
 		};
 		binding._rebuildTarget = fn;
