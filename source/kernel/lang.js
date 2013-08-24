@@ -90,7 +90,7 @@
 					// reducing the number of checks that need to be executed
 					(b && b._isObject && (
 						(b._getters && (fn = b._getters[r$]) && b[fn]()) ||
-						(b.get && b.computed && b.computed[r$] && b.get(r$)) ||
+						(b.get && b.computed && b.computed[r$] && b[r$]()) ||
 						("function" == typeof b && isDeferredConstructor(b) && enyo.checkConstructor(b))
 					)) || (b[r$])
 				);
