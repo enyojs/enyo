@@ -487,6 +487,7 @@
 				this.owner = null;
 			}
 			delete map[this.id];
+			enyo.BindingCount--;
 		},
 		/**
 			Interrupts the binding if called from within the scope of a transform. Do
