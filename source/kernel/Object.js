@@ -48,10 +48,22 @@ enyo.kind({
 
 	importProps: function (props) {
 		if (props) {
+			var k;
 			enyo.handleConcatenatedProperties(this, props);
-			for (var key in props) {
-				if (props.hasOwnProperty(key)) {
-					this[key] = props[key];
+			// if props is a default hash this is significantly faster than
+			// requiring the hasOwnProperty check every time
+			if (!props.kindName) {
+				for (k in props) {
+					this[k] = props[k];
+				}
+			}
+			// otherwise we need to do that check since we don't want to include
+			// anything in the prototype chain
+			else {
+				for (k in props) {
+					if (props.hasOwnProperty(k)) {
+						this[k] = props[k];
+					}
 				}
 			}
 		}

@@ -15,55 +15,54 @@
 		}
 		return uuid;
 	};
+	//*@protected
+	/**
+		We create this reusable object for properties passed to the mixin
+		method so as not to create and throw away a new object every time
+		a new model is created.
+	*/
+	var _mixinOpts = {ignore: true};
 	//*@public
 	/**
-		## Getting _enyo.Model_ values
+		## Getting and Setting _enyo.Model_ values
 	
-		The default `get` method of _enyo.Model_ has been overloaded to handle a few different
-		scenarios. While schema _attributes_ are stored on an internal hash (`attributes`) you
-		don't need to call `get` with the `attributes` prefix. If the property is defined as part
-		of the schema it will be retrieved from the _attributes_ hash otherwise it will be retrieved
-		from the model instance.
+		An _enyo.Model_ is a special object not derived from other enyo _kinds_. This is
+		for efficiency and simplicity. That being said, any `set` or `get` call on a _model_
+		will work only with the _schema_ of the _model_ and not as you would expect other
+		kinds based on _enyo.Object_. Any property set via the `set` method will be assumed
+		an `attribute` of the _model schema_. The `set` method also has the ability to accept
+		a hash of _keys_ and _values_ to apply at once. Even though the schema is tracked via
+		the `attributes` hash of the model it is __not necessary to prefix get/set paths with
+		"attributes" as this is assumed and redundant and will cause it to created a nested
+		schema object called `attributes`__. 
 	
-		## Setting _enyo.Model_ values
-
-		The default `set` method of _enyo.Model_ has been overloaded to handle a few different
-		scenarios as well. It has the added benefit of accepting an object of keys and values as
-		opposed to simply a _path_ and a _value_ (as normal). When you use this new parameter
-		configuration, however, it assumes the _keys_ are _attributes_ of the schema - even if
-		they don't currently exist as such, and if they do, they will be updated to the new value.
-		If the default parameter configuration of _path_ and _value_ is used, it will attempt to
-		determine if the _path_ is a defined _attribute_ of the schema, and if so, set it, otherwise
-		it will use its default behavior. You can define the schema several ways using the `attributes`
-		hash for the model definition, the `defaults` hash for the model definition, passing in
-		`attributes` as the first parameter to the constructor of a new model, or by passing the
-		`set` method a hash instead of the _path_ and _value_.
-		
+		TODO: add examples
+	
 		## Computed Properties and _enyo.Model_
-		
-		You can still use computed properties as you normally would for a _model_. The
-		difference is, instead of placing the function directly on the model definition
-		you place it on the _attributes_ schema hash. Its entry in the _computed_ block
-		doesn't need the `attributes` prefix, just name it like you would otherwise. Its
-		dependencies can be on the model definition (non-schema properties) and/or schema
-		properties (on the _attributes_ schema hash).
 	
-		```
-		computed: {
-			myComputed: ["multiplier", "multiplicand"]
-		},
-		attributes: {
-			myComputed: function () {
-				return this.get("multiplicand") * this.get("multiplier");
-			},
-			multiplier: 7
-		},
-		multiplicand: 8
-		```
+		A _computed property_ is nothing more than a property whose value is the return value
+		of a function. A _computed property_ of a _model_ is slightly different than that of
+		_enyo.Object_ in that it cannot be cached or dependent on other properties. You declare
+		a _computed property_ for a _model_ simply by setting the _attribute_ to a function. When
+		requested as a normal attribute it will be the return value of that function executed in
+		the context of the _model_ (the `this` value for that method). You cannot set the value of
+		a computed property.
+
+		## Bindings
+	
+		An _enyo.Model_ can be at the receiving end of a binding but bindings cannot be created
+		on the _model_ itself. A _bindings_ array will be ignored.
+	
+		## Observers and Notifications
+		
+		## Events
 	*/
 	enyo.kind({
 		name: "enyo.Model",
-		kind: enyo.Object,
+		//*@protected
+		kind: null,
+		noDefer: true,
+		//*@public
 		/**
 			This is a hash of attributes known as the record's _schema_. This is where
 			the values of any _attributes_ are stored for an active record.
@@ -87,78 +86,64 @@
 		*/
 		includeKeys: null,
 		/**
-			Overloaded _getter_ to allow the requested path to be an attribute in the
-			_attributes_ hash (without the `.attributes` prefix), otherwise it will return
-			the normal value.
+			The `primaryKey` is the attribute that will be used if present in the model for
+			reference in _enyo.Collections_ and in the _models_ _store_. It will also be used,
+			by default, when generating the _url_ for the _model_. The value and property for
+			`primaryKey` is stored on the attributes hash.
 		*/
-		get: enyo.super(function (sup) {
-			return function (path) {
-				if (this.isAttribute(path)) {
-					if (this._isComputed(path)) { return this._getComputed(path, true); }
-					return this.attributes[path];
-				}
-				return sup.apply(this, arguments);
-			};
-		}),
-		//*@protected
-		_getComputed: function (path, attr) {
-			var ca = this._computedCached,
-				p = (attr || this.isAttribute(path)? ("attributes." + path): path), c;
-			if ((c = ca[path])) {
-				// if the cache says the computed property is dirty,
-				// we have to fetch a current value
-				if (c.dirty) {
-					c.value = this[p]();
-					c.dirty = false;
-				}
-				// return the value whether it was cached or
-				// the most recent
-				return c.value;
-			}
-			// if it is not a cacheable computed property, we
-			// have to execute it to get the current value
-			return this[p]();
+		primaryKey: "id",
+		/**
+			The `euid` is an arbitrarily assigned value that every _model_ has and is unique.
+			Models can be requested via this property in _enyo.Collections_ and the _store_. This
+			property, unlike the `primaryKey`, is stored on the _model_ and not its attributes hash.
+		*/
+		euid: "",
+		/**
+			Retrieve the requested _model attribute_. Will return the current value or
+			undefined. If the attribute is a function it is assumed to be a computed property
+			and will be called in the context of the model and its return value will be returned.
+		*/
+		get: function (prop) {
+			var fn = this.attributes[prop];
+			return (fn && "function" == typeof fn && fn.call(this)) || fn;
 		},
 		//*@public
 		/**
-			Overloaded _setter_. Will accept either a _hash_ of properties to be set
-			or the default _path_ and _value_ parameters. Note that this _setter_ will
-			_only set attribute values_. Any property set via the _setter_ will be considered
-			part of the _attributes schema_ of the record.
+			Will set a property or properties of the _model attribute(s)_. Accepts a property
+			name and value or a single hash of _keys_ and _values_ to be set at once. Returns
+			the _model_ for chaining. If the attribute being set is a function in the schema
+			it will be ignored.
 		*/
-		set: enyo.super(function (sup) {
-			return function (path, value) {
-				if (enyo.isObject(path)) { return this.setObject(path); }
-				if (this.isAttribute(path)) {
-					
-					var p = this.attributes[path];
-					this.attributes[path] = value;
-					p === value || this.notifyObservers(path, p, value);
-					return this;
-				} else { return sup.apply(this, arguments); }
-			};
-		}),
+		set: function (prop, value) {
+			if (enyo.isObject(prop)) { return this.setObject(prop); }
+			var rv = this.attributes[prop];
+			if (rv && "function" == typeof rv) { return this; }
+			this.previous[prop] = rv;
+			this.changed[prop] = this.attributes[prop] = value;
+			this.notifyObservers();
+			return this;
+		},
 		/**
 			A _setter_ that accepts a hash of _key_/_value_ pairs. Returns the _model_
 			for chaining (and consistency with `set`). All _keys_ in _props_ will be added
 			to the `attributes` schema when this method is used.
 		*/
 		setObject: function (props) {
-			
+			var rv, k;
+			for (k in props) {
+				rv = this.attributes[k];
+				if (rv && "function" == typeof rv) { continue; }
+				this.previous[k] = rv;
+				this.changed[k] = this.attributes[k] = props[k];
+			}
+			this.notifyObservers();
 			return this;
-		},
-		/**
-			Mostly used internally but can be used to determine if the given property (string)
-			is a known _attribute_ of the record.
-		*/
-		isAttribute: function (p) {
-			return !! (p in this.attributes);
 		},
 		/**
 			While models should normally be instanced using _enyo.store.createRecord_,
 			the same applies to the _constructor_, the first parameter will be used as
 			attributes of the model, the second, optional parameter will be used as configuration
-			for the _model_. Note this method deliberately does not call its _super_ method.
+			for the _model_.
 		*/
 		constructor: function (attributes, opts) {
 			if (opts) { this.importProps(opts); }
@@ -170,12 +155,20 @@
 				enyo.mixin(a, x);
 			}
 			if (d) {
-				enyo.mixin(a, d, {ignore: true});
+				enyo.mixin(a, d, _mixinOpts);
 			}
 			this.attributes = a;
-			this.bindings = this.bindings || [];
-			enyo._ObjectCount++;
 		},
+		//*@protected
+		importProps: function (props) {
+			if (props) {
+				if (props.defaults || props.attributes) { enyo.Model.subclass(this, props); }
+				for (var k in props) {
+					this[key] = props[k];
+				}
+			}
+		},
+		//*@public
 		/**
 			Produces an immutable hash of the known attributes of this record. Will
 			be modified by the existence of the _includeKeys_ array otherwise it will
@@ -217,6 +210,9 @@
 		removeObserver: function () {
 			this.store.removeModelObserver(this, prop, fn, ctx);
 		},
+		notifyObservers: function () {
+			this.store.notifyModelObservers(this);
+		},
 		storeChanged: function () {
 			var s = this.store || enyo.store;
 			if (s) {
@@ -228,7 +224,29 @@
 					}
 				}
 			}
-			this.store = s || enyo.store;
+			s = this.store = s || enyo.store;
+			s.addRecord(this);
 		}
 	});
+	//*@protected
+	enyo.Model.subclass = function (ctor, props) {
+		var p  = ctor.prototype || ctor,
+			ra = props.attributes,
+			// only clone when we absolutely need to
+			pa = (p.attributes && (ra && enyo.clone(p.attributes)) || p.attributes) || {},
+			rd = props.defaults,
+			// only clone when we absolutely need to
+			pd = (p.defaults && (rd && enyo.clone(p.defaults)) || p.defaults) || {};
+			
+		// handle attributes of the kind so all subkinds will accurately
+		// have the mixture of the schema
+		if (ra) { enyo.mixin(pa, ra) && (delete props.attributes); }
+		// always assign the prototype's attributes
+		p.attributes = pa;
+		// handle defaults of the kind so all subkinds will accurately
+		// have the mixture of the defaults
+		if (rd) { enyo.mixin(pd, rd) && (delete props.defaults); }
+		// always assign the prototype's defaults
+		p.defaults = pd;
+	};
 })(enyo);
