@@ -21,27 +21,37 @@ List of Cordova events detailed on the [PhoneGap Docs](http://docs.phonegap.com/
 //* @protected
 enyo.ready(function(){
 	if (window.cordova || window.PhoneGap) {
-		var pge = [
-			"deviceready",
-			"pause",
-			"resume",
-			"online",
-			"offline",
-			"backbutton",
-			"localechange",
-			"batterycritical",
-			"batterylow",
-			"batterystatus",
-			"menubutton",
-			"searchbutton",
-			"startcallbutton",
-			"endcallbutton",
-			"volumedownbutton",
-			"volumeupbutton"
-		];
-		for (var i=0, e; (e=pge[i]); i++) {
-			// some cordova events have no type, so enyo.dispatch fails
-			document.addEventListener(e, enyo.bind(enyo.Signals, "send", "on" + e), false);
-		}
+
+		// deviceready is dispatched using DOM mechanisms, others need to be registered after
+		// that fires to use the Cordova-supplied addEventListener override
+		document.addEventListener("deviceready", function(inEvent) {
+
+			// setup the other signal repeaters for Cordova events
+			var pge = [
+				"pause",
+				"resume",
+				"online",
+				"offline",
+				"backbutton",
+				"localechange",
+				"batterycritical",
+				"batterylow",
+				"batterystatus",
+				"menubutton",
+				"searchbutton",
+				"startcallbutton",
+				"endcallbutton",
+				"volumedownbutton",
+				"volumeupbutton"
+			];
+			for (var i=0, e; (e=pge[i]); i++) {
+				// some cordova events have no type, so enyo.dispatch fails
+				document.addEventListener(e, enyo.bind(enyo.Signals, "send", "on" + e), false);
+			}
+
+			// go ahead and broadcast the signal for the "deviceready" event
+			enyo.Signals.send("ondeviceready", inEvent);
+
+		}, false);
 	}
 });
