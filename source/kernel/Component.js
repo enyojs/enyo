@@ -91,7 +91,6 @@ enyo.kind({
 		enyo.ComponentBindingSupport
 	],
 	concat: ["handlers", "events"],
-	__jobs: {},
 	toString: function() {
 		return this.kindName;
 	},
@@ -100,6 +99,7 @@ enyo.kind({
 			// initialize instance objects
 			this._componentNameMap = {};
 			this.$ = {};
+			this.__jobs = {};
 			sup.apply(this, arguments);
 		};
 	}),
@@ -211,7 +211,7 @@ enyo.kind({
 				'but this is an error condition and should be fixed.');
 		}
 		this.$[n] = inComponent;
-		this.notifyObservers("$." + n);
+		this.notifyObservers("$");
 	},
 	//* Removes _inComponent_ from the list of components owned by the current
 	//* component (i.e., _this.$_).
@@ -504,7 +504,7 @@ enyo.kind({
 	//*@protected
 	_silenced: false,
 	//*@protected
-	_silence_count: 0,
+	_silenceCount: 0,
 	//*@public
 	/**
 		Sets a flag that disables event propagation for this component. Also
@@ -513,7 +513,7 @@ enyo.kind({
 	*/
 	silence: function () {
 		this._silenced = true;
-		this._silence_count += 1;
+		this._silenceCount += 1;
 	},
 
 	//*@public
@@ -523,10 +523,10 @@ enyo.kind({
 		resume, this method must be called one time for each call to _silence_.
 	*/
 	unsilence: function () {
-		if (0 !== this._silence_count) {
-			--this._silence_count;
+		if (0 !== this._silenceCount) {
+			--this._silenceCount;
 		}
-		if (0 === this._silence_count) {
+		if (0 === this._silenceCount) {
 			this._silenced = false;
 		}
 	},

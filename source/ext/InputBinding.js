@@ -1,10 +1,9 @@
 //*@public
 /**
-	This binding is designed to work with its source or target
-	being an _input_ with an optional _placeholder_ value. This
-	will keep an input from showing an ugly undefined when there
-	is no content and instead propagate the _placeholder_ value
-	to the opposite end.
+	_enyo.InputBinding_ is a binding designed to have its source or target be an
+	_input_ with an optional _placeholder_ value. This keeps the input from
+	showing _undefined_ when there is no content, as the _placeholder_ value will
+	then be used for display.
 */
 enyo.kind({
 	name: "enyo.InputBinding",
@@ -15,7 +14,7 @@ enyo.kind({
 		if (value) { return value; }
 		var s = binding.source || {},
 			t = binding.target || {},
-			// we attempt to find the placeholder at either end prioritizing
+			// we attempt to find the placeholder at either end, prioritizing
 			// to checking the source
 			ph = s.placeholder || t.placeholder || "";
 		return ph;

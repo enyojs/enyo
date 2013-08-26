@@ -1,14 +1,14 @@
 //*@public
 /**
-	The purpose of these methods is to extend the capability of a _enyo.Component_
-	to have multiple dispatch targets instead of the default of just one. These are
-	synchronously executed event dispatches and they cannot be interrupted.
+	The purpose of these methods is to extend the capability of an
+	[enyo.Component](#enyo.Component) to have multiple dispatch targets instead of
+	the default of just one. These are synchronously executed event dispatches and
+	cannot be interrupted.
 */
 enyo.MultipleDispatchSupport = {
 	name: "MultipleDispatchSupport",
 	/**
-		Add an _enyo.Component_ as a target of events emitted by this
-		object.
+		Adds an _enyo.Component_ as a target of events emitted by this object.
 	*/
 	addDispatchTarget: function (c) {
 		var dt = this._dispatchTargets;

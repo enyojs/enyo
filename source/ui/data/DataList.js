@@ -4,20 +4,7 @@
 	/**
 		_enyo.DataList_ is an <a href="#enyo.DataRepeater">enyo.DataRepeater</a>
 		that employs a paginated scrolling scheme to enhance performance with larger
-		datasets. All children will have the _enyo.AutoBindingSupport_ mixin applied
-		automatically and may use its API for convenience.  (See the
-		<a href="https://github.com/enyojs/enyo/blob/master/source/kernel/mixins/AutoBindingSupport.js">mixin
-		source code</a> for usage details.)
-
-			enyo.kind({
-				name: "MyView",
-				components: [
-					{name: "list", kind: "enyo.DataList", components: [
-						{bindFrom: ".firstName"},
-						{bindFrom: ".lastName"}
-					], controller: ".app.controllers.myController"}
-				]
-			});
+		datasets.
 
 		Note that, when care should be taken when deciding how the children of the list
 		will be laid out. When updating the layout of child elements, when there are many,

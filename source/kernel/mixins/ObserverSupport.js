@@ -3,7 +3,7 @@
 	// ensure observers will be handled by the concatenation handler
 	enyo.concat.push("changedObservers", "observers");
 	/**
-		Used because when cloning objects with arrays we need to also
+		Used because, when cloning objects with arrays, we need to also
 		clone the arrays.
 	*/
 	var _clone = function (obj) {
@@ -20,41 +20,41 @@
 	//*@public
 	/**
 		Observers are methods that respond to changes in specific properties
-		of an object. Any method on a _kind_ can be an _observer_ and it can
-		be an _observer_ for multiple properties. Each time a dependent property
-		is modified via the `set` or `get` method of the kind with the _observer_
-		that method will be executed. The first parameter will be the previous value of
-		the property (when possible) followed by the current value of the modified
-		property (when possible) and finally the name of the property that changed
-		and forced the notification (this will be redundant if only one property
-		was a dependency).
+		of an object. Any method on a kind may be an observer for one or more
+		properties. Each time a dependent property is modified via the kind's
+		_set()_ or _get()_ method, the observer method will be executed. The first
+		parameter will be the previous value of the property (when possible),
+		followed by the current value of the modified property (when possible), and
+		finally the name of the property that changed	and forced the notification
+		(this will be redundant if there is only one dependent property).
 
-		To add a method as an observer for a property simply create or add to an
-		existing `observers` block for the kind with the name of the method as the
-		key and the value being an array with the name of the property it should
-		respond to.
+		To add a method as an observer for a property, simply add the method to the
+		kind's _observers_ block using _key: value_ notation, as in the example
+		below. The name of the method is the key, while the corresponding value is
+		an array containing the names of the properties to be observed.
 
-		Note that if you call `set` or have a published property and call its
-		_setter_ method and have a method of the form _propertyChanged_ the changed
-		method will automatically be called and the entry does not need to be made
-		in the `observers` block. It is harmless if you name it explicitly.
+			enyo.kind({
+				name: "Sample",
+				observers: {
+					nameChanged: ["firstName", "lastName"],
+					moodChanged: ["expression", "posture", "volume"]
+				},
+				nameChanged: function (previous, current, property) {
+					// handle the change notification
+				},
+				moodChanged: function (previous, current, property) {
+					// handle the change notification
+				}
+			})
 
-		enyo.kind({
-			name: "Sample",
-			observers: {
-				nameChanged: ["firstName", "lastName"],
-				moodChanged: ["expression", "posture", "volume"]
-			},
-			nameChanged: function (previous, current, property) {
-				// handle the change notification
-			},
-			moodChanged: function (previous, current, property) {
-				// handle the change notification
-			}
-		})
+		Note that if you call _set()_ to change the value of a published property
+		for which you've defined a _propertyChanged_ method (e.g., _nameChanged()_
+		and _moodChanged()_ above), the _propertyChanged_ method will	automatically
+		be called without your having to list the method in the _observers_ block.
+		However, it is harmless if you do list it there.
 
 		The following methods and properties are used by the public API for
-		_ObserverSupport_ in _enyo.Object_ and all of its subkinds.
+		_ObserverSupport_ in [enyo.Object](#enyo.Object) and all of its subkinds.
 	*/
 	enyo.ObserverSupport = {
 		name: "ObserverSupport",
@@ -118,7 +118,7 @@
 			Returns a reference to this object for chaining.
 
 			This will almost never need to be called by anything other than
-			the _destroy_ method.
+			the _destroy()_ method.
 		*/
 		removeAllObservers: function () {
 			this._observerMap = {};
@@ -127,7 +127,7 @@
 		/**
 			Notifies any observers for a given property. Accepts the previous
 			value and the current value as parameters. Looks for a
-			backwards-compatible function of the _propertyChanged_ form and will
+			backwards-compatible function of the form _propertyChanged_ and will
 			call that, if it exists, while also notifying other observers.
 		*/
 		notifyObservers: function (prop, prev, value) {
@@ -160,7 +160,7 @@
 			will immediately clear (but not flush) the queue.
 
 			Also increments an internal counter that requires the
-			_startNotifications_ method to be called an equal number of times
+			_startNotifications()_ method to be called an equal number of times
 			before notifications will be enabled again. The queue cannot be
 			flushed until the counter reaches 0.
 		*/
@@ -174,14 +174,13 @@
 		/**
 			Enables notifications for this object and immediately flushes the
 			notification queue if the internal counter is 0. Has no effect if
-			notifications are already enabled; otherwise, decrements the
-			internal counter. If the counter reaches 0, will allow
-			notifications and attempt to flush the queue (if there is one and
-			it is enabled).
+			notifications are already enabled; otherwise, decrements the internal
+			counter. If the counter reaches 0, will allow notifications and attempt
+			to flush the queue (if there is one and it is enabled).
 
-			This method must be called once for each time the _stopNotifications_
-			method was called. Passing a boolean true as the second parameter
-			will reenable the notification queue if it was disabled.
+			This method must be called once for each time the _stopNotifications()_
+			method was called. Passing a boolean true as the second parameter will
+			re-enable the notification queue if it was disabled.
 		*/
 		startNotifications: function (enableQueue) {
 			if (this._observerStopCount !== 0) {
@@ -215,7 +214,7 @@
 		},
 		//*@protected
 		/**
-			Used internally when a notification is queued
+			Used internally when a notification is queued.
 		*/
 		_addObserverToQueue: function (prop, fn, params) {
 			if (this._observerNotificationQueueEnabled) {
@@ -259,7 +258,7 @@
 				// we need an instance-specific observer table so runtime modifications
 				// are unique to the instance and not the kind, also note that once the
 				// kind is instanced modifications to the _observers_ block will not be
-				// registered they will have to be added via the addObserver method with
+				// registered; they will have to be added via the addObserver method with
 				// an anonymous function
 				this._observerMap = this._observerMap? _clone(this._observerMap): {};
 				this._observerNotificationQueue = {};
@@ -283,12 +282,12 @@
 		_observerMap: null
 	};
 	/**
-		This method use used when handling concatenated properties.
+		Used when handling concatenated properties.
 	*/
 	enyo.concatHandler("observers", function (proto, props) {
 		if (props.observers) {
 			var po, ro, k, map, a, i, dep;
-			// unfortunately there are 2 steps here but its all for the better
+			// unfortunately there are 2 steps here but it's all for the better
 			// good in terms of overall performance, we take this hit once per kind
 			// call and only if there are any observers to mess with anyways
 			// first step is to maintain the user-friendly observer declarations

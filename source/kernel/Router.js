@@ -9,8 +9,8 @@
 
 	//*@protected
 	/**
-		This is the intended global window.hashchange event handler. If
-		another handler is arbitrarily registered for this event then it
+		This is the intended global _window.hashchange_ event handler. If
+		another handler is arbitrarily registered for this event, then it
 		will not fire.
 	*/
 	var hashDidChange = function (hash) {
@@ -33,7 +33,7 @@
 	//*@protected
 	/**
 		All of our actively-supported browsers support this method of
-		registering for hashchange events.
+		registering for _hashchange_ events.
 	*/
 	enyo.ready(function () {
 		enyo.dispatcher.listen(window, "hashchange", hashDidChange);
@@ -67,8 +67,8 @@
 		filled with the values matched by that structure. It is important
 		to note that a dynamic route will apply the first match it finds,
 		so care must be used to ensure that the correct route is matched
-		(e.g., `/users/:user/:id` is more exact because of the static
-		`users` portion of the path).
+		(e.g., _/users/:user/:id_ is more exact because of the static
+		_users_ portion of the path).
 
 		The handler may be a function reference or a string that will be
 		mapped to a function. A check for the function's existence is
@@ -145,11 +145,11 @@
 		/**
 			The _routes_ array constitutes the handlers for this router.
 			Routes are string paths, static or dynamic, that route particular
-			hash change events. They are defined in an array of hashes with
+			_hashchange_ events. They are defined in an array of hashes with
 			a _handler_ (function), _path_ (for static and dynamic paths), an
 			optional _context_ (for the handler), or a _default_ boolean true|false
 			where that handler will be used when no other route can handle the
-			hashchange event.
+			_hashchange_ event.
 		*/
 		routes: null,
 
@@ -183,8 +183,8 @@
 		/**
 			A computed property that will return the location as
 			known by this router. This property will be synchronized
-			with _window.location.hash_ unless it's _internalOnly_
-			flag was set to true. Passing a string to this property
+			with _window.location.hash_ unless its _internalOnly_
+			flag is set to true. Passing a string to this property
 			via _set("location", "mylocation")_ will update the inner
 			location known by this router.
 		*/
@@ -203,7 +203,7 @@
 
 		//*@public
 		/**
-			Returns the string for the default path (if any otherwise empty
+			Returns the string for the default path (if any; otherwise, an empty
 			string).
 		*/
 		defaultPath: function () {
@@ -256,8 +256,8 @@
 
 		//*@public
 		/**
-			In very rare circumstances it may be useful to pass a path
-			to the routes without using trigger or global hash changes
+			In very rare circumstances, it may be useful to pass a path
+			to the routes without using _trigger()_ or global hash changes
 			with _path_ being a string that will be evaluated against
 			the routes owned by this router.
 		*/
@@ -277,7 +277,7 @@
 
 		//*@public
 		/**
-			If history is enabled and some history exists will attempt
+			If history is enabled and some history exists, attempts
 			to revert the current known location to the previous one in
 			the stack.
 		*/
@@ -295,10 +295,10 @@
 
 		//*@public
 		/**
-			To arbitrarily add history. Optional second parameter can be
+			Arbitrarily adds history. Optional second parameter can be
 			a boolean true to place the location at the lowest (first) position
-			of the stack or an integer indicating its exact location in the
-			stack. If the index is out of bounds it will be added at the lowest
+			of the stack, or an integer indicating its exact location in the
+			stack. If the index is out of bounds, it will be added at the lowest
 			position (same as boolean true for second parameter). Returns callee
 			for chaining.
 		*/
