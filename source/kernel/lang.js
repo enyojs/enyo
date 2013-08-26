@@ -71,7 +71,7 @@
 		// the intended scope
 		var b = (this === enyo? enyo.global: this),
 			// strip leading `.` without adding to the stack when possible
-			p = (path[0] == "."? path.replace(/^\.+/, ""): path)
+			p = (path[0] == "."? path.replace(/^\.+/, ""): path);
 		// break setting variables and doing work because if stripping all "."
 		// left us with nothing in the string then we just return the discovered scope object
 		if (!p) { return b; }
