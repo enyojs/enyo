@@ -91,7 +91,6 @@ enyo.kind({
 		enyo.ComponentBindingSupport
 	],
 	concat: ["handlers", "events"],
-	__jobs: {},
 	toString: function() {
 		return this.kindName;
 	},
@@ -100,6 +99,7 @@ enyo.kind({
 			// initialize instance objects
 			this._componentNameMap = {};
 			this.$ = {};
+			this.__jobs = {};
 			sup.apply(this, arguments);
 		};
 	}),
