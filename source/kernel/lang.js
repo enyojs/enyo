@@ -91,7 +91,7 @@
 					(b && b._isObject && (
 						(b._getters && (fn = b._getters[r$]) && b[fn]()) ||
 						(b.get && b.computed && b.computed[r$] && b[r$]()) ||
-						("function" == typeof b && isDeferredConstructor(b) && enyo.checkConstructor(b))
+						("function" == typeof b && enyo.constructorForKind(b))
 					)) || (b[r$])
 				);
 			if (!b) { break; }
@@ -103,7 +103,7 @@
 		// otherwise we grab the final property from the base we now have, check if its a
 		// deferred constructor, and return it
 		v = b[pr];
-		return (("function" == typeof v && isDeferredConstructor(v) && enyo.checkConstructor(v)) || v);
+		return (("function" == typeof v && enyo.constructorForKind(v)) || v);
 	};
 
 	//*@protected

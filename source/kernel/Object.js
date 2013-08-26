@@ -225,11 +225,13 @@ enyo.Object.addGetterSetter = function (prop, value, proto) {
 	// if there isn't already a getter we create one using the
 	// fast track getter
 	if (!(fn = proto[g]) || !enyo.isFunction(fn)) {
-		proto[g] = function () { return gfx.call(this, prop); };
-	} else { gs[prop] = g; }
+		fn = proto[g] = function () { return gfx.call(this, prop); };
+		fn.generated = true;
+	} else if (fn && "function" == typeof fn && !fn.generated) { gs[prop] = g; }
 	// if there isn't already a setter we create one using the
 	// fast track setter
 	if (!(fn = proto[s]) || !enyo.isFunction(fn)) {
-		proto[s] = function (v) { return sfx.call(this, prop, v); };
-	} else { ss[prop] = s; }
+		fn = proto[s] = function (v) { return sfx.call(this, prop, v); };
+		fn.generated = true;
+	} else if (fn && "function" == typeof fn && !fn.generated) { ss[prop] = s; }
 };
