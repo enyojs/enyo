@@ -61,7 +61,12 @@
 
 	//*@public
 	/**
-
+		A fast-path enabled global getter that takes a string path, which may be a
+		full path (from context window/Enyo) or a relative path (to the execution
+		context of the method). It knows how to check for and call the
+		backwards-compatible generated getters, as well as how to handle computed
+		properties. Returns _undefined_ if the object at the given path cannot be
+		found. May safely be called on non-existent paths.
 	*/
 	enyo.getPath = function (path) {
 		// in case nothing is passed or null, we return it to keep it from
@@ -114,12 +119,20 @@
 			// the final value to return
 			fn, v;
 		v = ((b._getters && (fn=b._getters[path]) && b[fn]()) || b[path]);
-		return (("function" == typeof v && isDeferredConstructor(v) && enyo.checkConstructor(v)) || v);
+		return (("function" == typeof v && enyo.constructorForKind(v)) || v);
 	};
 
 	//*@public
 	/**
-
+		A global setter that takes a string path (relative to the method's
+		execution context) or a full path (relative to window). Attempts
+		to automatically retrieve any previously existing value to supply
+		to any observers. If the context is an _enyo.Object_ or subkind,
+		the _notifyObservers()_ method is used to notify listeners for the path's
+		being set. If the previous value is equivalent to the newly set
+		value, observers will not be triggered by default. If the third
+		parameter is present and is an explicit boolean true, the observers
+		will be triggered regardless. Returns the context from which the method was executed.
 	*/
 	enyo.setPath = function (path, value, force) {
 		// in almost all cases when calling and enyo is the context global is
