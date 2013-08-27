@@ -5,17 +5,17 @@ enyo.kind({
 
 	//*@public
 	name: "enyo.ModelController",
-	
+
 	//*@public
 	kind: "enyo.Controller",
-	
-	create: enyo.super(function (sup) {
+
+	create: enyo.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
 			this.notifyObservers("model");
 		};
 	}),
-	
+
 	// ...........................
 	// PUBLIC METHODS
 
@@ -25,7 +25,7 @@ enyo.kind({
 	},
 
 	//*@public
-	get: enyo.super(function (sup) {
+	get: enyo.inherit(function (sup) {
 		return function (prop) {
 			if (!this.isAttribute(prop)) {
 				sup.apply(this, arguments);
@@ -35,7 +35,7 @@ enyo.kind({
 	}),
 
 	//*@public
-	set: enyo.super(function (sup) {
+	set: enyo.inherit(function (sup) {
 		return function (prop, val) {
 			if (!this.isAttribute(prop)) {
 				return sup.apply(this, arguments);

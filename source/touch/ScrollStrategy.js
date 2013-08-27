@@ -46,7 +46,7 @@ enyo.kind({
 		onmove: "move",
 		onmousewheel: "mousewheel"
 	},
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.horizontalChanged();
@@ -54,14 +54,14 @@ enyo.kind({
 			this.maxHeightChanged();
 		};
 	}),
-	rendered: enyo.super(function (sup) {
+	rendered: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			enyo.makeBubble(this.container, "scroll");
 			this.scrollNode = this.calcScrollNode();
 		};
 	}),
-	teardownRender: enyo.super(function (sup) {
+	teardownRender: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.scrollNode = null;

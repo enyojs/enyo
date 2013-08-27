@@ -40,14 +40,14 @@ enyo.kind({
 		*/
 		onSetupItem: ""
 	},
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.countChanged();
 		};
 	}),
 	//* @protected
-	initComponents: enyo.super(function (sup) {
+	initComponents: enyo.inherit(function (sup) {
 		return function() {
 			this.itemComponents = this.components || this.kindComponents;
 			this.components = this.kindComponents = null;
@@ -94,7 +94,7 @@ enyo.kind({
 enyo.kind({
 	name: "enyo.OwnerProxy",
 	tag: null,
-	decorateEvent: enyo.super(function (sup) {
+	decorateEvent: enyo.inherit(function (sup) {
 		return function(inEventName, inEvent, inSender) {
 			if (inEvent) {
 				// preserve an existing index property.
@@ -117,7 +117,7 @@ enyo.kind({
 		};
 	}),
 	// extending enyo.Component.delegateEvent
-	delegateEvent: enyo.super(function (sup) {
+	delegateEvent: enyo.inherit(function (sup) {
 		return function(inDelegate, inName, inEventName, inEvent, inSender) {
 			if (inDelegate == this) {
 				inDelegate = this.owner.owner;

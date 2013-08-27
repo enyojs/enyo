@@ -50,7 +50,7 @@ enyo.kind({
 		onclear: "clear",
 		ondragstart: "dragstart"
 	},
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			if (enyo.platform.ie) {
 				this.handlers.onkeyup = "iekeyup";
@@ -67,7 +67,7 @@ enyo.kind({
 			this.valueChanged();
 		};
 	}),
-	rendered: enyo.super(function (sup) {
+	rendered: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 

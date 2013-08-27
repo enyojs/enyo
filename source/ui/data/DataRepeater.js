@@ -100,13 +100,13 @@
 				d.mixins = d.mixins? d.mixins.concat(this.childMixins): this.childMixins;
 			}
 		},
-		constructor: enyo.super(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function () {
 				this._selection = [];
 				sup.apply(this, arguments);
 			};
 		}),
-		create: enyo.super(function (sup) {
+		create: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				this.selectionChanged();
@@ -316,9 +316,9 @@
 		selected: function() {
 			return this.multipleSelection ? this._selection : this._selection[0];
 		}
-		
+
 	});
-	
+
 	//*@protected
 	enyo.concatHandler("_repeaterKinds", function (proto, props) {
 		var rk = proto._repeaterKinds || (proto._repeaterKinds = []),

@@ -35,7 +35,7 @@ enyo.kind({
 	},
 	tag: "select",
 	defaultKind: "enyo.Option",
-	rendered: enyo.super(function (sup) {
+	rendered: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			//Trick to force IE8 onchange event bubble
@@ -54,7 +54,7 @@ enyo.kind({
 	change: function() {
 		this.selected = this.getSelected();
 	},
-	render: enyo.super(function (sup) {
+	render: enyo.inherit(function (sup) {
 		return function() {
 			// work around IE bug with innerHTML setting of <select>, rerender parent instead
 			// http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
@@ -85,7 +85,7 @@ enyo.kind({
 	},
 	//* @protected
 	tag: "option",
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.valueChanged();
@@ -108,7 +108,7 @@ enyo.kind({
 	//* @protected
 	tag: "optgroup",
 	defaultKind: "enyo.Option",
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.labelChanged();

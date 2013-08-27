@@ -1,5 +1,5 @@
 /**
-	_enyo.Media_ implements an HTML 5 Media element. It is not intended to 
+	_enyo.Media_ implements an HTML 5 Media element. It is not intended to
 	be used directly, but serves as the base kind for [enyo.Audio](#enyo.Audio)
 	and [enyo.Video](#enyo.Video).
 */
@@ -115,7 +115,7 @@ enyo.kind({
 		onvolumechange: "_volumeChange",
 		onwaiting: "_waiting"
 	},
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.autoplayChanged();
@@ -125,7 +125,7 @@ enyo.kind({
 			this.srcChanged();
 		};
 	}),
-	rendered: enyo.super(function (sup) {
+	rendered: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			enyo.makeBubble(this, "abort");

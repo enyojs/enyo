@@ -4,7 +4,7 @@
 	The FloatingLayer singleton can be set as a control's parent to have the
 	control float above an application, e.g.:
 
-		create: enyo.super(function (sup) {
+		create: enyo.inherit(function (sup) {
 			return function() {
 				sup.apply(this, arguments);
 				this.setParent(enyo.floatingLayer);
@@ -17,14 +17,14 @@
 enyo.kind({
 	name: "enyo.FloatingLayer",
 	//* @protected
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.setParent(null);
 		};
 	}),
 	// detect when node is detatched due to document.body being stomped
-	hasNode: enyo.super(function (sup) {
+	hasNode: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			if (this.node && !this.node.parentNode) {
@@ -33,7 +33,7 @@ enyo.kind({
 			return this.node;
 		};
 	}),
-	render: enyo.super(function (sup) {
+	render: enyo.inherit(function (sup) {
 		return function() {
 			this.parentNode = document.body;
 			return sup.apply(this, arguments);

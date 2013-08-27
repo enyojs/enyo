@@ -274,7 +274,7 @@
 			// an id via sequence, etc.
 			$options.success(model.euuid);
 		},
-		constructor: enyo.super(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function () {
 				// there can only be one store executing at a time
 				if (enyo.store) {

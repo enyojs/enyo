@@ -25,7 +25,7 @@
 		concatenated). If the value is an array with no special needs, it will be
 		handled automatically. If it is not an array, or needs inspection, a handler
 		should be registered for the property via _enyo.concatHandler()_.
-	
+
 		This is required (as opposed to using subclassing) because of the nature of
 		extending a kind and extending an instance. These special handlers need to
 		be invoked on all occasions, not just when subclassing. This is a normalized
@@ -271,7 +271,7 @@ enyo.kind.extendMethods = function(ctor, props, add) {
 	// ctor.prototype is known, relies on elements in props being copied by reference)
 	for (var n in props) {
 		var p = props[n];
-		if (enyo.isSuper(p)) {
+		if (enyo.isInherited(p)) {
 			// handle special case where the constructor has actually been renamed
 			// but mixins or other objects for extending will use the actual name
 			if (n == "constructor") {
@@ -330,16 +330,31 @@ enyo.kind.inherited = function (originals, replacements) {
 // dcl inspired super-inheritance
 (function (enyo) {
 
-	var Super = function (fn) {
+	//* @protected
+	var Inherited = function (fn) {
 		this.fn = fn;
 	};
-	
-	enyo.super = function (fn) {
-		return new Super(fn);
+
+	//* @public
+	/**
+		When defining a method that overrides an existing method in a kind,
+		you can wrap the definition in this function and it will decorate it
+		appropriately for inheritance to work. The _fn_ argument must be a
+		function that takes a single argument, usually named _sup_, and that
+		returns a function where _sup.apply(this, arguments)_ is used as a
+		mechanism to make the super-call.
+
+		The older _this.inherited(arguments)_ method still works, but this
+		version results in much faster code and is the only one supported for
+		kind mixins.
+	*/
+	enyo.inherit = function (fn) {
+		return new Inherited(fn);
 	};
-	
-	enyo.isSuper = function (fn) {
-		return fn && (fn instanceof Super);
+
+	//* @protected
+	enyo.isInherited = function (fn) {
+		return fn && (fn instanceof Inherited);
 	};
 
 })(enyo);
@@ -399,7 +414,7 @@ enyo.kind.statics = {
 		var ctor = this,
 			exts = enyo.isArray(props)? props: [props],
 			proto, fn;
-		fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isSuper(v)); };
+		fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isInherited(v)); };
 		if (!target && ctor._deferred) {
 			ctor = enyo.checkConstructor(ctor);
 		}

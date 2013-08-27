@@ -87,7 +87,7 @@ enyo.kind({
 			script.parentNode.removeChild(script);
 		}
 	},
-	constructor: enyo.super(function (sup) {
+	constructor: enyo.inherit(function (sup) {
 		return function(inParams) {
 			enyo.mixin(this, inParams);
 			sup.apply(this, arguments);
