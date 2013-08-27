@@ -11,11 +11,11 @@
 		name: "enyo.Store",
 		kind: enyo.Object,
 		/**
-			The hash of named _drivers_ that are available for use on this _store_.
-			The default _driver_ is _ajax_ but other may be added by providing
-			`enyo.defaultStoreProperties` with a _drivers_ hash of those to add.
+			The hash of named _sources_ that are available for use on this _store_.
+			The default _source_ is _ajax_ but other may be added by providing
+			`enyo.defaultStoreProperties` with a _sources_ hash of those to add.
 		*/
-		drivers: {ajax: "enyo.AjaxDriver"},
+		sources: {ajax: "enyo.AjaxSource"},
 		/**
 			These are special events that objects can register for, for a given
 			record. They are emitted at various times as a substitute for normal events
@@ -33,7 +33,7 @@
 		recordEvents: ["change", "didFetch", "didCommit", "didDestroy"],
 		//*@protected
 		records: null,
-		concat: ["drivers", "recordEvents"],
+		concat: ["sources", "recordEvents"],
 		//*@public
 		/**
 			Will create a new record of _kind_ (string or constructor) and accepts
@@ -41,10 +41,9 @@
 			to the constructor of the _enyo.Model_ (see enyo.Model.constructor).
 		*/
 		createRecord: function (kind, attrs, opts) {
-			var k = enyo.isString(kind)? enyo.getPath(kind): kind,
+			var Kind = enyo.isString(kind)? enyo.getPath(kind): kind,
 				opts = opts? enyo.mixin(opts, {store: this}): {store: this};
-			/*jshint newcap:false */
-			return new k(attrs, opts);
+			return new Kind(attrs, opts);
 		},
 		/**
 			Add a record by its _euid_ and if it has a value for its known
@@ -71,81 +70,140 @@
 			if (r.kn[rec.euid]) { delete r.kn[rec.euid]; }
 		},
 		/**
-			Requires a hash with _key_ _value_ pairs that are the driver's name by
+			Requires a hash with _key_ _value_ pairs that are the source's name by
 			which it can be referred to by this _store_ and the constructor, instance
 			or path to either in a string.
 		*/
-		addDrivers: function (props) {
-			var dd = this.drivers;
-			for (var k in props) {
-				dd[k] = props;
-			}
-			this._initDrivers();
+		addSources: function (props) {
+			var dd = this.sources;
+			for (var k in props) { dd[k] = props; }
+			this._initSources();
 		},
 		/**
-			Accepts the name of a driver of this _store_ to remove.
+			Accepts the name of a source of this _store_ to remove.
 		*/
-		removeDriver: function (name) {
-			delete this.drivers[name];
+		removeSource: function (name) {
+			delete this.sources[name];
 		},
 		/**
-			Accepts an array of drivers names to remove from the _store_.
+			Accepts an array of sources names to remove from the _store_.
 		*/
-		removeDrivers: function (drivers) {
-			var dd = this.drivers;
-			for (var i=0, k; (k=drivers[i]); ++i) {
-				delete dd[k];
-			}
+		removeSources: function (sources) {
+			var dd = this.sources;
+			for (var i=0, k; (k=sources[i]); ++i) { delete dd[k]; }
 		},
-		find: function () {
+		/**
+			This method is designed to query for a _record or records_ via a _source_ and can
+			use various strategies to perform compilation of the results in the current _store_.
+			This is an asynchronous method and requires 2 parameters, the kind of record to use
+			as a constructor or string, and an options hash that includes a _success_ method,
+			optionally a _fail_ method, a _source_ designating what source to use (or will use
+			record kind's default), a _strategy_ (explained below), and a _attributes_ hash of the
+			attributes to use in the query. How these _attributes_ are used in the query depends on
+			the _source_ being used. The _success_ method expects to receive the original options
+			hash passed into find followed by the result-set (returned by the _strategy_ explained below).
+		
+			There is a special use for this method if an _euid_ or _primaryKey_ value is provided, the
+			_euid_ directly on the options hash and the _primaryKey_ value in the _attributes_ hash of the
+			options. It will attempt to find the record locally first, and if found, call the
+			_success_ method without using the _source_. If it cannot be found, it will continue normally.
+			Whether the _source_ is used or not, in a case where the _euid_ or _primaryKey_ value are provided
+			the result will be a single _record_ or _undefined_, not an array.
 			
+			For queries against only runtime _records_ (in the _store_) see _findLocal_.
+				
+			When results are retrieved from the requested _source_ it will be handled according to
+			the requested _strategy_ (the default is `merge`). Strategies can easily be extended
+			or added to by creating a method on the _store_ of the form _[name]Strategy_ then setting
+			the _name_ as the _strategy_ option passed to this method. The strategy resolvers receive
+			two parameters, the current array of records for the kind in the original request and the
+			incoming results from the _source_ query. These methods are executed under the context of
+			the _store_. The available strategies with descriptions are below.
+				
+			Strategies:
+		
+			1. `replace` - all known _records_ are thrown away (not destroyed) and are replaced by the
+			   new results.
+			2. `merge` (the default) - any incoming _records_ with the same _primaryKey_ as records
+			   already in the _store_ will be updated with the values retrieved, and any new records
+			   will simply be added to the store.
+		*/
+		find: function (kind, opts) {
+			var c  = enyo.isString(kind)? enyo.constructorForKind(kind): kind,
+				p  = c.prototype,
+				o  = enyo.clone(opts),
+				pk = p.primaryKey,
+				rr = this.records,
+				dd = this.sources,
+				d  = enyo.isString(opts.source)? dd[opts.source]: opts.source, r;
+			if (!d) { return this.warn("could not find source `" + (o.source || p.defaultSource) + "`"); }
+			// check for the _euid_ to ensure we actually have to use the source, if the _euid_ or
+			// the _primaryKey_ value exists and we find the record there were no changes so we call the
+			// user provided _success_ method
+			if (opts.euid && (r=rr.euid[opts.euid])) { return opts.success(opts, r); }
+			if (opts.attributes[pk] && (r=rr.pk[opts.attributes[pk]])) { return opts.success(opts, r); }
+			// alright, couldn't find a single record locally so we go ahead and continue down the chain
+			o.success = enyo.bindSafely("didFind", opts);
+			o.fail = enyo.bindSafely("didFail", "find", opts);
+			d.find(c, o);
 		},
 		/**
-			Find a single record by the given criteria. The first parameter is the
-			_kind_ of the _record_, either a string or constructor, followed by the
-			options hash that can contain a _success_ and _fail_ method but also a
-			_driver_, _euid_, and _attributes_ hash of any properties to compare against.
-			It will attempt to find the record locally (runtime database) and make a fetch
-			request if any _driver_ is supplied. If no _success_ method is supplied the
-			_driver_ will be ignored and it will return synchronously only having searched
-			_locally_.
+			This method allows queries to be executed against the runtime database (in the _store_)
+			and will not query a _source_ even if it is provided. This is a synchronous method and
+			will return an array of _records_ or an empty array if none could be matched on the
+			criterion. As is explained below, if a _primaryKey_ value is provided or an _euid_ in the
+			options it will return a single _record_ or _undefined_, not an array as this is a
+			narrow search for a specific _record_.
+		
+			This method accepts two parameters, the kind as a constructor or string, and the
+			options to match against. Unlike _find_, there are no _success_ or _fail_ methods,
+			note that all _keys_ of the options will be used as criteria to match against. If you
+			provide an _euid_ key or a key matching the _primaryKey_ of the model kind it will not
+			query for any other values or scan the entire dataset.
+		
+			The filtering process is handled by the _filter_ method of the _store_. Overload this
+			method or provide an optional third parameter that can be a function or string name of a
+			method on the _store_. This filter method will receive the _options_ to match against and
+			the _record_ as the second parameter and should return `true` or `false` as to whether or
+			not it should be included in the result-set.
 		*/
-		findOne: function (kind, opts) {
-			var c  = enyo.isString(kind)? enyo.getPath(kind): kind,
-				k  = c.prototype.kindName,
-				o  = opts,
-				pk = c.prototype.primaryKey,
-				rr = this.records, rec;
-			// we try to shortcut the process if the euid is provided
-			if ((rec = rr.kn[o.euid])) {
-				if (o.success) { return o.success(rec); }
-				else { return rec; }
-			}
-			// if there are attributes and one is the primaryKey for the kind
-			// and we have that we will do the same thing
-			if (o.attributes && (pk = o.attributes[pk])) {
-				if ((rec = rr.pk[pk])) {
-					if (o.success) { return o.success(rec); }
-					else { return rec; }
-				}
-			}
-			// that didn't work so we will have to execute on the _driver_
-			// if one was provided
-			if (o.driver && o.success) {
-				var dd = this.drivers,
-					d  = dd[o.driver],
-					o  = enyo.clone(o);
-				o.success = enyo.bindSafely("didFindOne", opts);
-				o.fail = enyo.bindSafely("didFail", "findOne", opts);
-				if (!d) { return this.warn("could not find driver `" + (o.driver) + "`"); }
-				d.find(c, o);
-			}
+		findLocal: function (kind, opts, filter) {
+			var c  = enyo.isString(kind)? enyo.constructorForKind(kind): kind,
+				p  = c.prototype,
+				pk = p.primaryKey,
+				rr = this.records, fn, r;
+			// determine which filter to use
+			fn = (filter && (enyo.isString(filter)? this[filter]: filter)) || this.filter;
+			fn = enyo.bindSafely(fn, opts);
+			// first check for a provided euid to shortcut the search, we return
+			// a non-array here
+			if (opts.euid) { return rr.euid[opts.euid]; }
+			// if the options have a primary key value we do the same and do not
+			// return an array
+			if (opts[pk]) { return rr.pk[opts[pk]]; }
+			// ok we need to grab all of the _records_ for the given kind and search
+			// them for the features
+			rr = rr.kn[p.kindName] || [];
+			r = enyo.filter(rr, fn, this);
+			return r;
 		},
 		/**
-			This method responds asynchronously to calls from the _findOne_ method.
+			Overload this method to handle filtering data in special cases. The default
+			behavior simply matches a _record_ according to the options provided as attributes.
+			This method is used internally by other methods of the _store_. Overload this method
+			to handle special cases.
 		*/
-		didFindOne: function (opts, res) {
+		filter: function (opts, rec) {
+			for (var k in opts) { if (rec[k] !== opts[k]) return false; }
+			return true;
+		},
+		/**
+			Responds to _find_ requests asynchronously and executes the correct _strategy_
+			for the results before responding to user callbacks.
+		*/
+		didFind: function () {
 			// TODO:
+			this.log(arguments);
 		},
 		/**
 			Adds a _listener_ for a specific _event_ that any _records_ or the _store_
@@ -324,41 +382,41 @@
 		},
 		//*@protected
 		/**
-			Internal method called to find the requested driver and execute the correct
+			Internal method called to find the requested source and execute the correct
 			method. It also hooks the _stores_ own response mechanisms via the options hash.
 		*/
 		fetchRecord: function (rec, opts) {
-			var dd = this.drivers,
+			var dd = this.sources,
 				o  = opts? enyo.clone(opts): {},
-				d  = dd[o.driver || rec.defaultDriver];
-			if (!d) { return this.warn("could not find driver `" + (o.driver || rec.defaultDriver) + "`"); }
+				d  = dd[o.source || rec.defaultSource];
+			if (!d) { return this.warn("could not find source `" + (o.source || rec.defaultSource) + "`"); }
 			o.success = enyo.bindSafely("didFetch", rec, opts);
 			o.fail = enyo.bindSafely("didFail", "fetch", rec, opts);
 			d.fetch(rec, o);
 		},
 		/**
-			Internal method called to find the requested driver and execute the correct
+			Internal method called to find the requested source and execute the correct
 			method. It also hooks the _stores_ own response mechanisms via the options hash.
 		*/
 
 		commitRecord: function (rec, opts) {
-			var dd = this.drivers,
+			var dd = this.sources,
 				o  = opts? enyo.clone(opts): {},
-				d  = dd[oo.driver || rec.defaultDriver];
-			if (!d) { return this.warn("could not find driver `" + (o.driver || rec.defaultDriver) + "`"); }
+				d  = dd[o.source || rec.defaultSource];
+			if (!d) { return this.warn("could not find source `" + (o.source || rec.defaultSource) + "`"); }
 			o.success = enyo.bindSafely("didCommit", rec, opts);
 			o.fail = enyo.bindSafely("didFail", "commit", rec, opts);
 			d.commit(rec, o);
 		},
 		/**
-			Internal method called to find the requested driver and execute the correct
+			Internal method called to find the requested source and execute the correct
 			method. It also hooks the _stores_ own response mechanisms via the options hash.
 		*/
 		destroyRecord: function (rec, opts) {
-			var dd = this.drivers,
+			var dd = this.sources,
 				o  = opts? enyo.clone(opts): {},
-				d  = dd[oo.driver || rec.defaultDriver];
-			if (!d) { return this.warn("could not find driver `" + (o.driver || rec.defaultDriver) + "`"); }
+				d  = dd[o.source || rec.defaultSource];
+			if (!d) { return this.warn("could not find source `" + (o.source || rec.defaultSource) + "`"); }
 			o.success = enyo.bindSafely("didDestroy", rec, opts);
 			o.fail = enyo.bindSafely("didFail", "destroy", rec, opts);
 			d.destroy(rec, o);
@@ -370,28 +428,28 @@
 				r[k] = r[k] || {};
 			}
 		},
-		_initDrivers: function () {
-			var dd = this.drivers, d;
+		_initSources: function () {
+			var dd = this.sources,
+				Kind;
 			for (var k in dd) {
-				if ((d = dd[k]) && enyo.isString(d)) { d = enyo.getPath(d); }
-				if (d) {
-					if ("function" == typeof d && d.prototype) {
-						/*jshint newcap:false */ 
-						dd[k] = new d({store: this});
+				if ((Kind = dd[k]) && enyo.isString(Kind)) { Kind = enyo.getPath(Kind); }
+				if (Kind) {
+					if ("function" == typeof Kind && Kind.prototype) {
+						dd[k] = new Kind({store: this});
 					} else { 
-						dd[k] = d;
-						d.store = this;
+						dd[k] = Kind;
+						Kind.store = this;
 					}
-				} else if (!d && enyo.isString(dd[k])) { this.warn("could not find driver -> `" + dd[k] + "`"); }
+				} else if (!Kind && enyo.isString(dd[k])) { this.warn("could not find source -> `" + dd[k] + "`"); }
 			}
 		},
 		constructor: enyo.super(function (sup) {
 			return function (props) {
 				var r = sup.apply(this, arguments);
-				this.drivers = this.drivers || {};
+				this.sources = this.sources || {};
 				this.records = this.records || {};
 				this._initRecords();
-				this._initDrivers();
+				this._initSources();
 				this._recordObservers = {};
 				this._recordListeners = {};
 				return r;
@@ -402,15 +460,15 @@
 		_recordListeners: null
 	});
 	//*@protected
-	enyo.concatHandler("drivers", function (proto, props) {
-		if (props.drivers) {
-			var pd = proto.drivers? enyo.clone(proto.drivers): {},
-				rd = props.drivers;
-			// will deliberately override already defined drivers so they can
+	enyo.concatHandler("sources", function (proto, props) {
+		if (props.sources) {
+			var pd = proto.sources? enyo.clone(proto.sources): {},
+				rd = props.sources;
+			// will deliberately override already defined sources so they can
 			// be remapped by subkinds
-			proto.drivers = enyo.mixin(pd, rd);
+			proto.sources = enyo.mixin(pd, rd);
 			// we don't want this to whipeout what we just did
-			delete props.drivers;
+			delete props.sources;
 		}
 	});
 	//*@public

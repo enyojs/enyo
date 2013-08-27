@@ -88,7 +88,7 @@
 			but in cases where it isn't the default will be used. This is a string that should
 			be paired with a known driver for this _records store_.
 		*/
-		defaultDriver: "ajax",
+		defaultSource: "ajax",
 		/**
 			An optional array of strings as the only properties to include in
 			the _raw_ and _toJSON_ return values. By default it will use any properties
@@ -97,12 +97,19 @@
 		includeKeys: null,
 		/**
 			Set this property to the correct _url_ to be used when generating the request
-			for this _record_ from any specified _driver_ or the _defaultDriver_ of the _record_.
+			for this _record_ from any specified _source_ or the _defaultDriver_ of the _record_.
 			Note that, by default, the url for a _fetch_ will have the its _primaryKey_ appended
 			to the request. If a _getUrl_ method is provided for the kind it will be called
-			and expect the return value to be the _url_ for the request.
+			and expect the return value to be the _url_ for the request. Also see _urlRoot_.
 		*/
 		url: "",
+		/**
+			Optionally one could provide a value here for a base-kind of model (for models used
+			outside of collections) that share the same root but varying _urls_. If no _getUrl_
+			method is provided and the _url_ property does not contain a protocol identifier for
+			the _source_ it will assume this value exists and use it as the root instead.
+		*/
+		urlRoot: "",
 		/**
 			Boolean value indicating whether or not a change has occurred in the _record_
 			that needs to be committed.
@@ -121,6 +128,12 @@
 			property, unlike the `primaryKey`, is stored on the _model_ and not its attributes hash.
 		*/
 		euid: "",
+		/**
+			This is a boolean value that indicates whether the _record_ was created locally
+			or is pulled from a _source_. You should not modify this value. This will cause the
+			_source_ to change its behavior.
+		*/
+		isNew: true,
 		/**
 			Retrieve the requested _model attribute_. Will return the current value or
 			undefined. If the attribute is a function it is assumed to be a computed property
@@ -229,8 +242,8 @@
 			return enyo.json.stringify(this.raw());
 		},
 		/**
-			Commit the current state of the _record_ to either the specified _driver_
-			or the _records_ default _driver_. The _driver_ and any other options may be
+			Commit the current state of the _record_ to either the specified _source_
+			or the _records_ default _source_. The _source_ and any other options may be
 			specified in the _opts_ hash. May provied a _success_ and _fail_ method that
 			will be executed on those conditions. Its _success_ method will be called with
 			the same parameters as the build-in method `didCommit`.
@@ -244,7 +257,7 @@
 		/**
 			Using the state of the _record_ and any options passed in via the _opts_ hash
 			try and fetch the current model attributes from the specified (or default)
-			_driver_ for this _record_. May provied a _success_ and _fail_ method that
+			_source_ for this _record_. May provied a _success_ and _fail_ method that
 			will be executed on those conditions. Its _success_ method will be called with
 			the same parameters as the build-in method `didFetch`.
 		*/
@@ -256,7 +269,7 @@
 		},
 		/**
 			Requests a _destroy_ action for the given _record_ and the specified (or default)
-			_driver_ in the optional _opts_ hash. May provied a _success_ and _fail_ method that
+			_source_ in the optional _opts_ hash. May provied a _success_ and _fail_ method that
 			will be executed on those conditions. Its _success_ method will be called with
 			the same parameters as the build-in method `didDestroy`.
 		*/
@@ -269,7 +282,7 @@
 		/**
 			Overload this method to change the structure of the data as it is returned from
 			a _fetch_ or _commit_. By default it just returns the _data_ as it was retrieved
-			from the _driver_.
+			from the _source_.
 		*/
 		parse: function (data) {
 			return data;

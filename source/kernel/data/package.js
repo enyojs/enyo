@@ -1,7 +1,7 @@
 enyo.depends(
 	"Store.js",
 	"Source.js",
-	"drivers",
+	"sources",
 	"Model.js",
 	"RelationalModel.js",
 	"Collection.js",
