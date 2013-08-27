@@ -18,7 +18,7 @@ enyo.kind({
 		// (Boolean _false_ would remove the attribute)
 		draggable: "false"
 	},
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			if (this.noEvents) {
 				delete this.attributes.onload;
@@ -31,7 +31,7 @@ enyo.kind({
 	altChanged: function() {
 		this.setAttribute("alt", this.alt);
 	},
-	rendered: enyo.super(function (sup) {
+	rendered: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			enyo.makeBubble(this, "load", "error");

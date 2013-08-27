@@ -91,19 +91,19 @@ enyo.kind({
 		enyo.ComponentBindingSupport
 	],
 	concat: ["handlers", "events"],
-	__jobs: {},
 	toString: function() {
 		return this.kindName;
 	},
-	constructor: enyo.super(function (sup) {
+	constructor: enyo.inherit(function (sup) {
 		return function(props) {
 			// initialize instance objects
 			this._componentNameMap = {};
 			this.$ = {};
+			this.__jobs = {};
 			sup.apply(this, arguments);
 		};
 	}),
-	constructed: enyo.super(function (sup) {
+	constructed: enyo.inherit(function (sup) {
 		return function(inProps) {
 			// perform initialization
 			this.create(inProps);
@@ -142,7 +142,7 @@ enyo.kind({
 		property. Usually, the component will be suitable for garbage collection
 		after being destroyed, unless user code keeps a reference to it.
 	*/
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function() {
 			this.destroyComponents();
 			this.setOwner(null);
@@ -211,7 +211,7 @@ enyo.kind({
 				'but this is an error condition and should be fixed.');
 		}
 		this.$[n] = inComponent;
-		this.notifyObservers("$." + n);
+		this.notifyObservers("$");
 	},
 	//* Removes _inComponent_ from the list of components owned by the current
 	//* component (i.e., _this.$_).
@@ -504,7 +504,7 @@ enyo.kind({
 	//*@protected
 	_silenced: false,
 	//*@protected
-	_silence_count: 0,
+	_silenceCount: 0,
 	//*@public
 	/**
 		Sets a flag that disables event propagation for this component. Also
@@ -513,7 +513,7 @@ enyo.kind({
 	*/
 	silence: function () {
 		this._silenced = true;
-		this._silence_count += 1;
+		this._silenceCount += 1;
 	},
 
 	//*@public
@@ -523,10 +523,10 @@ enyo.kind({
 		resume, this method must be called one time for each call to _silence_.
 	*/
 	unsilence: function () {
-		if (0 !== this._silence_count) {
-			--this._silence_count;
+		if (0 !== this._silenceCount) {
+			--this._silenceCount;
 		}
-		if (0 === this._silence_count) {
+		if (0 === this._silenceCount) {
 			this._silenced = false;
 		}
 	},
@@ -643,7 +643,7 @@ enyo.concatHandler("events", function (proto, props) {
 });
 
 enyo.Component.overrideComponents = function(components, overrides, defaultKind) {
-	var fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isSuper(v)); };
+	var fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isInherited(v)); };
 	components = enyo.clone(components);
 	for (var i=0; i<components.length; i++) {
 		var c = enyo.clone(components[i]);

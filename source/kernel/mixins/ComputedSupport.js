@@ -1,9 +1,9 @@
 (function (enyo) {
-	
+
 	//*@protected
 	enyo.concat.push("computed");
 	/**
-		Used because when cloning objects with arrays we need to also
+		Used because, when cloning objects with arrays, we need to also
 		clone the arrays.
 	*/
 	var _clone = function (obj) {
@@ -21,46 +21,35 @@
 	};
 	//*@public
 	/**
-		The possible/configurable options that may be set with the options block
-		of a computed property declaration.
+		Computed properties are methods of kinds that are designated as being
+		dependent upon multiple properties--much like observers, except that they
+		themselves are treated as properties (not functions). An _enyo.Binding_
+		cannot be bound to a function directly, but a computed property can.
 
-		If a computed property is marked as cached, its value will be
-		computed once and then reused, unless one of its dependencies
-		has been flagged as being changed prior to the request. If
-		there are no dependencies, the value will only ever be computed
-		once.
+		Computed properties have the advantage of being cacheable (meaning that many
+		requests for the property won't require pointless recalculations) and will
+		notify observers when any of their own dependencies change. Computed
+		properties may be called directly, and will accept parameters just like other
+		functions, but be aware	that you cannot call any setter method for a
+		computed property. Also note that for any observers of a computed property,
+		there will never be a _previous_ value unless it is cached.
 
-		If this setting is true, it overrides	the value of the _volatile_
-		property.
+		Just as with [ObserverSupport](#enyo/source/kernel/mixins/ObserverSupport.js),
+		you can specify that a method is a computed property by including it within a
+		_computed_ block.
 
-		`cached`
-	*/
-	/**
-		Computed properties are methods of _kinds_ that are named as dependent
-		on multiple properties (much like observers) except they themselves are
-		treated as a property (not a function). _enyo.Bindings_ cannot be bound
-		to a function directly but if it is a computed property it can be. Computed
-		properties have the advantage of being cacheable (meaning many requests for
-		the property don't require meaningless recalculations) and will notifify
-		observers when any of their own dependencies change. Also be aware that you
-		cannot call any _setter_ for a computed property. They can be called directly
-		and handle parameters as any other function. Also note that for any observers
-		of a computed property there will never be a _previous_ value unless it is
-		cached.
-	
-		Just like with _ObserverSupport_, you can set methods as being computed
-		properties via a _computed_ block. An additional feature of computed properties
-		are configurable options you can add as well. Options are in the array of
-		dependencies of the computed property. See the defaults for options of
-		computed properties to see what options are available.
+			enyo.kind({
+				name: "Sample",
+				computed: {
+					mood: ["expression", "posture", "volume", {cached: true}],
+					maxHours: []
+				}
+			})
 
-		enyo.kind({
-			name: "Sample",
-			computed: {
-				mood: ["expression", "posture", "volume", {cached: true}],
-				maxHours: []
-			}
-		})
+		Another feature of computed properties is the ability to add configurable
+		options. Options are found in the computed property's array of dependencies.
+		Look at the defaults for options of computed properties to see what options
+		are available.
 	*/
 	enyo.ComputedSupport = {
 		name: "ComputedSupport",
@@ -69,7 +58,7 @@
 		*/
 		computed: null,
 		//*@protected
-		get: enyo.super(function (sup) {
+		get: enyo.inherit(function (sup) {
 			return function (path) {
 				if (this._isComputed(path)) {
 					return this._getComputed(path);
@@ -77,7 +66,7 @@
 				return sup.apply(this, arguments);
 			};
 		}),
-		set: enyo.super(function (sup) {
+		set: enyo.inherit(function (sup) {
 			return function (path, value) {
 				if (this._isComputed(path)) {
 					// there is no support for setting a value for a computed
@@ -90,12 +79,12 @@
 		/**
 			We hook notifyObservers to determine if the current property is
 			a dependency that would trigger an update to a computed property.
-			Keep in mind we need to do so knowing that multiple properties could
+			Keep in mind that we do so knowing that multiple properties could
 			trigger an update to the same computed property synchronously before
-			it has the opportunity to flush the queue so we will be mindful and
+			it has the opportunity to flush the queue, so we will be mindful to
 			never allow the same computed property into the queue more than once.
 		*/
-		notifyObservers: enyo.super(function (sup) {
+		notifyObservers: enyo.inherit(function (sup) {
 			return function (path, prev, value) {
 				var map = this._computedMap, n;
 				if ((n = map[path])) {
@@ -121,7 +110,7 @@
 		_getComputed: function (path) {
 			var ca = this._computedCached, c;
 			if ((c = ca[path])) {
-				// if the cache says the computed property is dirty
+				// if the cache says the computed property is dirty,
 				// we have to fetch a current value
 				if (c.dirty) {
 					c.value = this[path]();
@@ -131,14 +120,14 @@
 				// the most recent
 				return c.value;
 			}
-			// if it is not a cacheable computed property we
+			// if it is not a cacheable computed property, we
 			// have to execute it to get the current value
 			return this[path]();
 		},
 		/**
-			If the property is a cached computed property we update it
+			If the property is a cached computed property, we update it
 			as dirty, and then place it in the queue. The same method, if
-			it is already in the queue will be blown away so that it will never
+			it is already in the queue, will be blown away so that it will never
 			be entered more than once.
 		*/
 		_markComputed: function (path) {
@@ -157,11 +146,11 @@
 			return (this.computed? (!! this.computed[path]): false);
 		},
 		_flushComputedQueue: function () {
-			// forced to throw away old queue object so we don't accidently
+			// forced to throw away old queue object so we don't accidentally
 			// use incorrect values later
 			// also for immutability of the queue we are forced to clone it
 			// since the operation is synchronous and recursive
-			// TODO: If this causes too much overhead we may need to find an
+			// TODO: If this causes too much overhead, we may need to find an
 			// alternative way to do this
 			var q = enyo.clone(this._computedQueue);
 			this._computedQueue = {};
@@ -172,10 +161,10 @@
 				this.notifyObservers(k, q[k], this._getComputed(k));
 			}
 		},
-		constructor: enyo.super(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function () {
-				// we do not clone this object because one instanced we should not need it
-				// anymore as it has been converted to a map
+				// we do not clone this object because, once instanced, we should not need it
+				// anymore, as it has been converted to a map
 				this.computed || (this.computed = {});
 				this._computedMap = this._computedMap? _clone(this._computedMap): {};
 				this._computedCached || (this._computedCached = {});
@@ -189,7 +178,7 @@
 	};
 	//*@protected
 	/**
-		This method use used when handling concatenated properties.
+		Used when handling concatenated properties.
 	*/
 	enyo.concatHandler("computed", function (proto, props) {
 		if (props.computed) {
@@ -235,7 +224,7 @@
 							}
 						} else {
 							if (map[dep]) {
-								// ensure we only have unique entries so we don't accidently
+								// ensure we only have unique entries so we don't accidentally
 								// notify the same handler more than once
 								map[dep].push(k);
 								map[dep] = enyo.merge(map[dep]);

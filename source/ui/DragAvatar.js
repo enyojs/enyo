@@ -3,7 +3,7 @@ enyo.kind({
 	name: "enyo._DragAvatar",
 	style: "position: absolute; z-index: 10; pointer-events: none; cursor: move;",
 	showing: false,
-	showingChanged: enyo.super(function (sup) {
+	showingChanged: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			document.body.style.cursor = this.showing ? "move" : null;
@@ -54,7 +54,7 @@ enyo.kind({
 		offsetY: 30
 	},
 	//* @protected
-	initComponents: enyo.super(function (sup) {
+	initComponents: enyo.inherit(function (sup) {
 		return function() {
 			this.avatarComponents = this.components;
 			this.components = null;

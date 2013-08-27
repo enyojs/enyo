@@ -4,8 +4,8 @@
 
 	//*@protected
 	/**
-		Used internally by the enyo.uid method to be able to produce
-		a runtime unique identifier.
+		Used internally by the _enyo.uid()_ method to produce a runtime unique
+		identifier.
 	*/
 	var uidCounter = 0;
 
@@ -21,7 +21,7 @@
 	//*@public
 	/**
 		Looks for last occurrence of a string _(needle)_ inside an array or string
-		_(haystack)_. An IE8-safe fallback for the default _lastIndexOf_ method.
+		_(haystack)_. An IE8-safe fallback for the default _lastIndexOf()_ method.
 	*/
 	enyo.lastIndexOf = function (needle, haystack, index) {
 		if (haystack.lastIndexOf) {
@@ -52,31 +52,6 @@
 
 	//*@protected
 	/**
-		Internally-used method to strip leading '.' from string paths.
-	*/
-	var preparePath = function (path) {
-		var idx = 0;
-		while ("." === path[idx]) {
-			++idx;
-		}
-		if (0 !== idx) {
-			path = path.slice(idx);
-		}
-		return path;
-	};
-
-	//*@protected
-	/**
-		Internally-used method to detect if the given value exists,
-		is a function and an overloaded getter. Returns true if these
-		tests are successful; false otherwise.
-	*/
-	var isOverloaded = function (target) {
-		return target && "function" === typeof target && true === target.overloaded;
-	};
-
-	//*@protected
-	/**
 		Internally-used method to detect deferred kind constructors.
 	*/
 	var isDeferredConstructor = function(target) {
@@ -86,85 +61,64 @@
 
 	//*@public
 	/**
-		A fast-path enabled global getter that takes a string path that
-		can be a full path (from context window/Enyo) or a relative path
-		(to the execution context of the method). It knows how to check for
-		and call the backwards-compatible generated getters as well as
-		handle computed properties. Performs an optimized recursive search.
-		Returns undefined if the object at the given path can not be
-		found. Can safely be called on non-existent paths.
+		A fast-path enabled global getter that takes a string path, which may be a
+		full path (from context window/Enyo) or a relative path (to the execution
+		context of the method). It knows how to check for and call the
+		backwards-compatible generated getters, as well as how to handle computed
+		properties. Returns _undefined_ if the object at the given path cannot be
+		found. May safely be called on non-existent paths.
 	*/
 	enyo.getPath = function (path) {
-		// if we don't have a path we can't do anything
-		if (!exists(path) || null === path) {
-			return undefined;
+		// in case nothing is passed or null, we return it to keep it from
+		// failing the other cases
+		if (path === undefined || null === path) { return path; }
+		// in almost all cases when calling and enyo is the context global is
+		// the intended scope
+		var b = (this === enyo? enyo.global: this),
+			// strip leading `.` without adding to the stack when possible
+			p = (path[0] == "."? path.replace(/^\.+/, ""): path);
+		// break setting variables and doing work because if stripping all "."
+		// left us with nothing in the string then we just return the discovered scope object
+		if (!p) { return b; }
+		// simply split it on "." and try and run down the path without recursively
+		// executing the getter
+		var ps = p.split("."),
+			// the final property
+			pr = ps.pop(),
+			// ultimately the value we intend to return
+			v, fn;
+		for (var i=0, r$; (r$=ps[i]); ++i) {
+			// this will retrieve the requested element if it has a getter we call this
+			// to account for computed properties, default getters are used when present
+			b = (
+					// these are carefully ordered in terms of likeliness to encounter thus
+					// reducing the number of checks that need to be executed
+					(b && b._isObject && (
+						(b._getters && (fn = b._getters[r$]) && b[fn]()) ||
+						(b.get && b.computed && b.computed[r$] && b[r$]()) || b[r$]
+					)) || (("function" == typeof b && (b = enyo.checkConstructor(b)) && b[r$]) || b[r$])
+				);
+			if (!b) { break; }
 		}
-		var idx = 0;
-		var val;
-		var part;
-		var fn;
-		var recursing = (true === arguments[1]) || ("object" === typeof path && path.recursing)? true: false;
-		// on rare occasions this method would be called under the context
-		// of enyo itself, the problem is detecting when this is intended since
-		// under normal circumstances a general call would assume a window
-		// context - here we see the _recursing_ parameter taking a double
-		// meaning as enyo should _never be used as a reference on another object_
-		// and as long as that is true this will never fail
-		var cur = this === enyo && true !== recursing? window: this;
-		// if we were recursing then we reassign path to the string part of the
-		// object/parameter passed in
-		if ("object" === typeof path) {
-			if (path.path && "string" === typeof path.path) {
-				path = path.path;
-			}
-			// otherwise it was an invalid request
-			// but we return the object that was passed in
-			else {
-				return path;
-			}
-		}
-		// clear any leading periods
-		path = preparePath(path);
-		// find the initial period if any
-		idx = path.indexOf(".");
+		// if the index isn't the same as the length of parts (including the 0 case)
+		// then there was an error in the path and it couldn't be determined
+		// so we return undefined
+		if (i != ps.length) { return; }
+		// otherwise we grab the final property from the base we now have, check if its a
+		// deferred constructor, and return it
+		v = b[pr];
+		return (("function" == typeof v && enyo.checkConstructor(v)) || v);
+	};
 
-		if (path.length === 0) {
-			return cur;
-		}
-
-		// if there isn't any try and find the path relative to our
-		// current context, this is the fast path
-		if (-1 === idx) {
-			// figure out what our default/backwards-compatible getter
-			// function would be
-			fn = "get" + enyo.cap(path);
-			// if that path exists relative to our context check to see
-			// if it is an overloaded getter and call that if it is otherwise
-			// just grab that path knowing if we get undefined that is ok
-			val = isOverloaded(cur[fn])? cur[fn].call(this): cur[path];
-		} else {
-			// begin our recursive search
-			part = path.substring(0, idx);
-			path = path.slice(idx+1);
-
-			var root = cur[part];
-			if (isDeferredConstructor(root)) {
-				root = enyo.checkConstructor(root);
-			}
-			if (root && typeof root in {"object":"","function":""}) {
-				if (root._isObject) {
-					return root.get(path);
-				} else {
-					val = enyo.getPath.call(root, {path: path, recursing: true});
-				}
-			}
-		}
-
-		if (isDeferredConstructor(val)) {
-			val = enyo.checkConstructor(val);
-		}
-		// otherwise we've reached the end so return whatever we have
-		return val;
+	//*@protected
+	//* Simplified version of enyo.getPath used internally for get<Name> calls
+	enyo.getPath.fast = function (path) {
+		// the current context
+		var b = this,
+			// the final value to return
+			fn, v;
+		v = ((b._getters && (fn=b._getters[path]) && b[fn]()) || b[path]);
+		return (("function" == typeof v && enyo.checkConstructor(v)) || v);
 	};
 
 	//*@public
@@ -173,88 +127,86 @@
 		execution context) or a full path (relative to window). Attempts
 		to automatically retrieve any previously existing value to supply
 		to any observers. If the context is an _enyo.Object_ or subkind,
-		the _notifyObservers_ method is used to notify listeners for the path's
-		being set. If the previous value is the equivalent of the newly set
+		the _notifyObservers()_ method is used to notify listeners for the path's
+		being set. If the previous value is equivalent to the newly set
 		value, observers will not be triggered by default. If the third
-		parameter is present and is an explicit boolean true, it triggers
-		the observers regardless. Optionally, the third parameter may be a
-		function comparator that accepts two parameters and is expected to
-		return a truthy-falsy value indicating whether or not the notifications
-		will be fired. Returns the context from which the method was executed.
-		Unlike its getter counterpart, this is not a recursive method.
+		parameter is present and is an explicit boolean true, the observers
+		will be triggered regardless. Returns the context from which the method was executed.
 	*/
 	enyo.setPath = function (path, value, force) {
-		// if there are less than 2 parameters we can't do anything
-		if(!exists(path) || "string" !== typeof path || path.length === 0) {
-			return this;
+		// in almost all cases when calling and enyo is the context global is
+		// the intended scope
+		var b = (this === enyo? enyo.global: this), c = b;
+		// if the path is nothing, undefined or null, or an empty string even
+		// we can't do anything so we return this
+		if (!path) { return b; }
+		// strip leading `.` without adding to the stack when possible
+		var p = (path[0] == "."? path.replace(/^\.+/, ""): path);
+		// if the string is empty then we won't process anything else either
+		if (!p) { return b; }
+		// simply split it on "." and try and run down the path without recursively
+		// executing the getter
+		var ps = p.split("."),
+			// the final property
+			pr = ps.pop(),
+			// placeholder during iterations over the path,
+			// the previous value and a helper variable in case we find a computed property
+			tp, rv, fn;
+		for (var i=0, r$; (r$=ps[i]); ++i) {
+			// unfortunately it is possible to request the actual "enyo" object in
+			// a path so we have to test for this case or bad things happen
+			if (r$ == "enyo" && enyo === b) { continue; }
+			// its actually pretty simple, check to see if the next requested context exists and is an object
+			// or a function, if so, we use that and continue, otherwise we have to create it
+			b = (
+					((tp=b[r$]) && (
+						// if its just an object, use it straight up
+						(typeof tp == "object" && tp) ||
+						(typeof tp == "function" && (
+							// in the rare case that our path includes a computed property (as part of
+							// chain -- this really is rare but not impossible) we use the getter to retrieve
+							// it correctly
+							(b._isObject && b.computed && b.computed[r$] && b.get(r$)) ||
+							// ensure this isn't a constructor that needs to be undeferred
+							(isDeferredConstructor(tp) && enyo.checkConstructor(tp)) || tp
+						))
+						// if it wasn't present we instantiate the path and use that object
+					)) || (b[r$]={})
+				);
 		}
-		var cur = enyo === this? enyo.global: this;
-		var idx;
-		var target;
-		var parts;
-		var notify = true === force? true: false;
-		var comparator = "function" === typeof force? force: undefined;
-		// attempt to retrieve the previous value if it exists
-		var prev = enyo.getPath.call(cur, path);
-		// clear any leading periods
-		path = preparePath(path);
-		// find the inital index of any period in the path
-		idx = path.indexOf(".");
-		// if there wasn't one we can attempt to fast-path this setter
-		if (-1 === idx) {
-			// otherwise we just plain overwrite the method, this is the
-			// expected behavior
-			cur[path] = value;
-		} else {
-			// we have to walk the path until we find the end
-			parts = path.split(".");
-			// while we have any other parts to inspect
-			while (parts.length) {
-				target = parts.shift();
-				// the rare case where the path could specify enyo
-				// and is executed under the context of enyo
-				if ("enyo" === target && enyo === cur) {
-					continue;
-				}
-				// if this is the last piece we test to see if it is a computed
-				// property and if it is we call it with the new value
-				// as in the fast path
-				if (0 === parts.length) {
-					// otherwise we overwrite it just like in the fast-path
-					cur[target] = value;
-				} else {
-					// we update our current reference context and if it does
-					// not exist at the requested path it will be created
-					if (!(typeof cur[target] in {"object":"","function":""})) {
-						cur[target] = {};
-					}
-					if (true === cur[target]._isObject) {
-						return cur[target].set(parts.join("."), value);
-					}
-					cur = cur[target];
-				}
-			}
+		// now we can attempt to retrieve a previous value if it can be done in as
+		// efficient a manner as possible -- we will call an overloaded getter if necessary
+		rv = ((b && b._isObject && b._getters && (fn=b._getters[pr]) && b[fn]()) || b[pr]);
+		// now we set the new value, much simpler
+		b[pr] = value;
+		// now if the base is an enyo object then it can notify and we need to let it try
+		// if the values (previous and current) aren't equal
+		if (b._isObject) {
+			// we only want to notify if the values aren't the same
+			if (rv !== value) { b.notifyObservers(pr, rv, value); }
 		}
-		// now we need to determine if we are going to issue notifications
-		// first check to see if notify is already forced true
-		if (true !== notify) {
-			// now check to see if we have a comparator and if so use it
-			// to determine if we're going to trigger observers
-			if (comparator) {
-				notify = comparator(prev, value);
-			} else {
-				// do the default which is to test the previous value
-				// versus the new value
-				notify = (prev !== value);
-			}
-		}
-		if (true === notify) {
-			if (cur.notifyObservers) {
-				cur.notifyObservers(path, prev, value);
-			}
-		}
-		// return the callee
-		return cur;
+		// return the original base reference we made in the first line
+		return c;
+	};
+
+	//*@protected
+	//* Simplified version of enyo.setPath used on set<Name> calls
+	enyo.setPath.fast = function (path, value) {
+		// the current context
+		var b = this,
+			// the previous value and helper variable
+			rv, fn;
+		// we have to check and ensure that we're not setting a computed property
+		// and if we are, do nothing
+		if (b.computed && b.computed[path]) { return b; }
+		rv = ((b._getters && (fn=b._getters[path]) && b[fn]()) || b[path]);
+		// set the new value now that we can
+		b[path] = value;
+		// this method is only ever called from the context of enyo objects
+		// as a protected method
+		if (rv !== value) { b.notifyObservers(path, rv, value); }
+		// return the context
+		return b;
 	};
 
 	//*@public
@@ -326,10 +278,10 @@
 	//*@public
 	/**
 		Returns the index of any entry in _array_ whose _callback_ returns
-		a truthy value. Can pass an optional _context_ for the _callback_. Each _callback_
-		will receive 3 parameters, the _value_ at _index_ and an immutable copy
-		of the original array. If no _callback_ returns true or _array_ is not
-		an Array will return false.
+		a truthy value. Accepts an optional _context_ for the _callback_. Each
+		_callback_ will receive three parameters, the _value_ at _index_, and an
+		immutable copy of the original array. If no callback returns true, or
+		_array_ is not an Array, this method returns false.
 	*/
 	enyo.find = function (array, callback, context) {
 		var $source = enyo.isArray(array) && array;
@@ -438,7 +390,7 @@
 		return $s;
 	};
 	var merge = enyo.merge;
-	
+
 	//*@public
 	/**
 		Returns an array of the values of all properties in an object.
@@ -787,23 +739,23 @@
 		the final parameter to indicate whether or not to ignore _truthy_/_existing_
 		values on any _objects_ prior.
 
-		If `target` exists and is an object will be the base for all properties
-		and the returned value. If the parameter is used but is _falsy_ a new
-		object will be created and returned. If no such parameter exists the first
+		If _target_ exists and is an object, it will be the base for all properties
+		and the returned value. If the parameter is used but is _falsy_, a new
+		object will be created and returned. If no such parameter exists, the first
 		parameter must be an array of objects and a new object will be created as
-		the `target`.
+		the _target_.
 
-		The `source` parameter may be an object or an array of objects. If no `target`
-		parameter is provided `source` must be an array of objects.
+		The _source_ parameter may be an object or an array of objects. If no
+		_target_ parameter is provided, _source_ must be an array of objects.
 
-		The `options` parameter allows you to set the `ignore` and/or `exists` flags
-		such that if `ignore` is true it will not override any truthy values in the
-		target and if `exists` is true it will only use truthy values from any of
-		the sources. You can optionally add a `filter` method-option that returns a
-		`true` | `false` value to determine if the value should be used. It receives
-		parameters in the order _key_, _value_, _values_, _options_.
+		The _options_ parameter allows you to set the _ignore_ and/or _exists_ flags
+		such that if _ignore_ is true, it will not override any truthy values in the
+		target, and if _exists_ is true, it will only use truthy values from any of
+		the sources. You may optionally add a _filter_ method-option that returns a
+		true or false value to indicate whether the value should be used. It receives
+		parameters in this order: _key_, _value_, _values_, _options_.
 
-		Setting `options` to true will set all options to true.
+		Setting _options_ to true will set all options to true.
 	*/
 	enyo.mixin = function(target, source, options) {
 		// the return object/target
@@ -973,7 +925,7 @@
 	//* @public
 	/**
 		Takes a string and trims leading and trailing spaces. If the string
-		has no length, is not a string or is a falsy value it will be returned
+		has no length, is not a string, or is a falsy value, it will be returned
 		without modification.
 	*/
 	enyo.trim = function (str) {

@@ -22,15 +22,15 @@
 		*/
 		multipleSelection: false,
 		/**
-			This class will be applied to the _repeater_ when _selection_ is enabled.
-			The deafult is _selection-enabled_. If _multipleSelection_ is `true` this class
-			will also be applied.
+			This class will be applied to the repeater when _selection_ is enabled.
+			The default is _selection-enabled_. If _multipleSelection_ is true, this
+			class will also be applied.
 		*/
 		selectionClass: "selection-enabled",
 		/**
-			This class will be applied to the _repeater_ when the _multipleSelection_ is
-			`true`. The default is _multiple-selection-enabled_. If _multipleSelection_ is
-			`true` it will also apply the _selectionClass_.
+			This class will be applied to the repeater when _multipleSelection_ is
+			true. The default is _multiple-selection-enabled_. If _multipleSelection_
+			is true, the _selectionClass_ will also be applied.
 		*/
 		multipleSelectionClass: "multiple-selection-enabled",
 		/**
@@ -43,11 +43,11 @@
 		*/
 		selectionProperty: "",
 		/**
-			Use this hash to define `defaultBindingProperties` for _all_ children
-			(even children of children) for this _repeater_. This can be very convenient
-			to keep from needing to write the same paths many times. You can use any
-			binding macros as well. Any of the properties defined here will be superceded
-			by the same property defined for an individual binding.
+			Use this hash to define _defaultBindingProperties_ for _all_ children
+			(even children of children) of this repeater. This can be eliminate the
+			need to write the same paths many times. You can also use any	binding
+			macros. Any of the properties defined here will be superseded	by the
+			same property if defined for an individual binding.
 		*/
 		childBindingDefaults: null,
 		//*@protected
@@ -55,7 +55,8 @@
 			enyo.RepeaterChildSupport,
 			enyo.RepeaterChildModelSupport
 		],
-		concat: ["childMixins"],
+		concat: ["childMixins", "_repeaterKinds"],
+		_repeaterKinds: ["enyo.DataRepeater"],
 		controlParentName: "container",
 		containerName: "container",
 		containerOptions: {
@@ -99,13 +100,13 @@
 				d.mixins = d.mixins? d.mixins.concat(this.childMixins): this.childMixins;
 			}
 		},
-		constructor: enyo.super(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function () {
 				this._selection = [];
 				sup.apply(this, arguments);
 			};
 		}),
-		create: enyo.super(function (sup) {
+		create: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				this.selectionChanged();
@@ -315,7 +316,20 @@
 		selected: function() {
 			return this.multipleSelection ? this._selection : this._selection[0];
 		}
-		
+
+	});
+
+	//*@protected
+	enyo.concatHandler("_repeaterKinds", function (proto, props) {
+		var rk = proto._repeaterKinds || (proto._repeaterKinds = []),
+			pk = props._repeaterKinds,
+			n = proto.kindName;
+		if (enyo.isArray(pk)) {
+			rk.push.apply(rk, pk);
+		}
+		if (!~enyo.indexOf(n, rk)) {
+			rk.push(n);
+		}
 	});
 
 })(enyo);

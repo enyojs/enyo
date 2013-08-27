@@ -18,6 +18,10 @@
 		do not want to have to reset the sticky flag on every execution.
 	*/
 	_token = /\{\$([^{}]*)\}/;
+	/**
+		For tracking purposes we count bindings.
+	*/
+	enyo.BindingCount = 0;
 
 	//*@public
 	/**
@@ -156,16 +160,18 @@
 		_targetObserver: null,
 		_sourceConnected: false,
 		_targetConnected: false,
+		_rebuildSource: true,
+		_rebuildTarget: true,
 		constructor: function (props) {
-			enyo.mixin(this, props);
+			if (props) { enyo.mixin(this, props); }
 			this.id = enyo.uid("binding");
 			map[this.id] = this;
 			this.initTransform();
-			this.initPart("from", "source");
-			this.initPart("to", "target");
+			this.refresh();
 			if (this.autoConnect) {
 				this.connect();
 			}
+			enyo.BindingCount++;
 		},
 		isConnected: function () {
 			var c = this.connected = (this._sourceConnected && this._targetConnected);
@@ -173,8 +179,8 @@
 		},
 		syncFromSource: function () {
 			var val = this.getSourceValue(),
-				fn = this.transform,
-				o = this.owner;
+				fn  = this.transform,
+				o   = this.owner;
 			if (fn && enyo.isFunction(fn)) {
 				try {
 					val = fn.call(o || this, val, "source", this);
@@ -198,8 +204,8 @@
 		},
 		syncFromTarget: function () {
 			var val = this.getTargetValue(),
-				fn = this.transform,
-				o = this.owner;
+				fn  = this.transform,
+				o   = this.owner;
 			if (fn && enyo.isFunction(fn)) {
 				try {
 					val = fn.call(o || this, val, "target", this);
@@ -214,74 +220,71 @@
 			this.setSourceValue(val);
 			this.connectSource();
 		},
-		initRoot: function (part, root) {
-			var p = this[root],
-				e = this.expandMacros, r;
-			// this resolving algorithm is only active if the root has not yet
-			// been resolved
-			if (enyo.isString(p)) {
-				if (e) { p = this._expandMacro(root, p); }
-				var i = p[0];
-				// or we fall back on normal handling as long as the string isn't a macro
-				// that couldn't be resolved
-				if (i != "." && i != "^") {
-					return enyo.error("enyo.Binding: the `" + root + "` as a path must begin with " +
-						"`.` or `^` to signify relativity of the part");
+		_resolve: function (base, path) {
+			// three paths, we have the base resolved already, we have a base that is
+			// a string, or no base and we have to determine it from the path
+			var b  = this[base],
+				p  = this[path],
+				e  = this.expandMacros,
+				o  = this.owner,
+				bp = "_" + base + "Path",
+				b$ = this[bp],
+				pp = "_" + base + "Property",
+				p$ = this[pp],
+				bf = "_" + base + "From",
+				f$ = this[bf], i;
+			if (!p) { return; }
+			if (enyo.isString(b)) {
+				// if its a string we will let the path resolver handle it all as if it were
+				// the third case
+				this[path] = p = (b + "." + p).replace(/\.+/g, ".");
+				this[base] = b = null;
+			}
+			// we attempt to shortcut this method here so we don't do unnecessary work
+			// multiple times over the life of the binding
+			if (!(enyo.isString(b$) && p$)) {
+				// we need to verify that the path is of the correct form and expand any
+				// macros that might have been used
+				if (e) { p = this[path] = this._expandMacro(path, p); }
+				var parts = p.slice(1).split(".");
+				// verify we know if this is relative or not and decide what we can do with
+				// the information we have
+				if ((i=p[0]) && i != "." && i != "^") {
+					throw "enyo.Binding: binding `" + path + "` path must begin with `^` or `.` to signify " +
+						"relativity of the path";
+				} else { i = (i == "."); } // gives us a boolean for relativity
+				if (i && !(o || b)) {
+					throw "enyo.Binding: relative path requested for an un-owned binding";
 				}
-				i = (i == "."? true: false);
-				r = enyo.getPath.call(i? this.owner: enyo.global, p);
-				if (!r) {
-					// if this doesn't work then it was designed incorrectly and will
-					// fail like it should
-					this["_" + root + "Path"] = i? p.slice(1): p;
+				// first we can determine the final property from the path
+				if (!p$) { p$ = parts.pop(); }
+				// finding the path to the root here is a bit tricky in some cases because of the
+				// allowed mixing of specified information
+				if (b) {
+					// if we were handed the root as an object then we won't be able to resolve it
+					// again in the future so we set this flag so subsequent calls to rebuild the binding
+					// won't remove it
+					this["_rebuild" + enyo.cap(base)] = false;
 				}
-				if (r || (p && p != this[root])) { this[root] = r || p; }
+				// this will be a lengthless string if there is no additional path information
+				// we can derive
+				b$ = parts.shift() || "";
+				f$ = parts.join(".");
+			} else { i = (p[0] == "."); }
+			// if we need to resolve the root we're working on we attempt to do that now
+			b = b || (!b$ && (b || (i && o))) || (b$? enyo.getPath.call(b || (i? o: enyo.global), b$): null);
+			// this can only happen if we just now found the base otherwise it will
+			// happen relative to the base we already found and that is not correct
+			if (b && !this[base]) {
+				if (f$) {
+					b = enyo.getPath.call(b, f$);
+				}
 			}
-		},
-		initPart: function (part, root) {
-			if (!this[part]) { return; }
-			var e = this.expandMacros,
-				p$ = this[part],
-				rh = "_" + root + "Path",
-				rp = "_" + root + "Property", i, parts;
-			// try and handle macro expansion early if possible
-			if (e) {
-				var r = this._expandMacro(part, p$);
-				if (r && r != p$) { p$ = this[part] = r; }
-			}
-			this.initRoot(part, root);
-			p$ = p$.slice(1);
-			// the initial character must be . or ^
-			i = this[part][0];
-			parts = p$.split(".");
-			// if it isn't, we error so the developer can identify the issue
-			if (i != "." && i != "^" && e && i != "{") {
-				return enyo.error("enyo.Binding: binding `" + part + "` path must begin with `^` or `.` to signify " +
-					"relativity of the path");
-			}
-
-			i = (i == "."? true: false);
-			// if it is a relative path but we have no root or owner,
-			// then we know we can't find it
-			if (i && !(this[root] || this.owner)) { return; }
-			// if there is no root or known/derived path, we
-			// find the path and attempt to locate the root from that
-			if (!this[root] && !this[rh]) {
-				var p = parts.slice(0, -1).join(".");
-				// now we attempt to retrieve the source from this information
-				this[root] = enyo.getPath.call(i? this.owner: enyo.global, p);
-				this[rh] = p;
-			}
-			// if we don't have a root but we've already found our path, then we should
-			// be able to quickly try and find the root again
-			else if (!this[root] && this[rh]) {
-				this[root] = enyo.getPath.call(i? this.owner: enyo.global, this[rh]);
-			}
-			// if we don't know our actual root property to bind on, we
-			// grab that as well
-			if (!this[rp]) {
-				this[rp] = parts.pop();
-			}
+			// now store these values for later reuse and so we don't need to resolve them again
+			this[base] = b;
+			this[bp]   = b$;
+			this[bf]   = f$;
+			this[pp]   = p$;
 		},
 		_expandMacro: function (prop, macro) {
 			if (!macro) { return; }
@@ -321,9 +324,9 @@
 			return macro;
 		},
 		connectSource: function () {
-			var src = this.source,
+			var src  = this.source,
 				prop = this._sourceProperty,
-				fn = this._sourceObserver;
+				fn   = this._sourceObserver;
 			if (!enyo.isString(src) && src && prop && !src.prototype) {
 				if (!fn) {
 					fn = enyo.bind(this, this.syncFromSource);
@@ -337,9 +340,9 @@
 			}
 		},
 		connectTarget: function () {
-			var tar = this.target,
+			var tar  = this.target,
 				prop = this._targetProperty,
-				fn = this._targetObserver;
+				fn   = this._targetObserver;
 			if (!enyo.isString(tar) && tar && prop && !tar.prototype) {
 				if (this.oneWay) {
 					this._targetConnected = true;
@@ -357,37 +360,37 @@
 			}
 		},
 		disconnectSource: function () {
-			var src = this.source,
+			var src  = this.source,
 				prop = this._sourceProperty,
-				fn = this._sourceObserver;
+				fn   = this._sourceObserver;
 			if (src && fn) {
 				src.removeObserver(prop, fn);
 			}
 			this._sourceConnected = false;
 		},
 		disconnectTarget: function () {
-			var tar = this.target,
+			var tar  = this.target,
 				prop = this._targetProperty,
-				fn = this._targetObserver;
+				fn   = this._targetObserver;
 			if (tar && fn) {
 				tar.removeObserver(prop, fn);
 			}
 			this._targetConnected = false;
 		},
 		getSourceValue: function () {
-			var src = this.source,
+			var src  = this.source,
 				prop = this._sourceProperty;
 			return src.get(prop);
 		},
 		getTargetValue: function () {
-			var tar = this.target,
+			var tar  = this.target,
 				prop = this._targetProperty;
 			return tar.get(prop);
 		},
 		setSourceValue: function (value) {
-			var src = this.source,
+			var src  = this.source,
 				prop = this._sourceProperty,
-				fc = !_force.test(typeof value);
+				fc   = !_force.test(typeof value);
 			if (!src || src.destroyed) {
 				this.destroy();
 				return;
@@ -395,9 +398,9 @@
 			src.set(prop, value, fc);
 		},
 		setTargetValue: function (value) {
-			var tar = this.target,
+			var tar  = this.target,
 				prop = this._targetProperty,
-				fc = !_force.test(typeof value);
+				fc   = !_force.test(typeof value);
 			if (!tar || tar.destroyed) {
 				this.destroy();
 				return;
@@ -452,8 +455,9 @@
 			synchronize if it is able to connect and the _autoSync_ flag is true.
 		*/
 		refresh: function () {
-			this.initPart("from", "source");
-			this.initPart("to", "target");
+			for (var i=0, ops=[["source","from"],["target","to"]], p; (p=ops[i]); ++i) {
+				this._resolve.apply(this, p);
+			}
 			this.connect();
 		},
 		/**
@@ -461,10 +465,8 @@
 			the _autoSync_ flag is true.
 		*/
 		rebuild: function () {
-			this.source = null;
-			this.target = null;
-			this._sourceProperty = null;
-			this._targetProperty = null;
+			this.source = this._rebuildSource? null: this.source;
+			this.target = this._rebuildTarget? null: this.target;
 			this.refresh();
 		},
 		/**
@@ -482,9 +484,10 @@
 			this.transform = null;
 			if (this.owner) {
 				this.owner.removeBinding(this);
-				this.owner =  null;
+				this.owner = null;
 			}
 			delete map[this.id];
+			enyo.BindingCount--;
 		},
 		/**
 			Interrupts the binding if called from within the scope of a transform. Do
@@ -496,13 +499,18 @@
 		//*@protected
 		initTransform: function () {
 			var tf = this.transform,
-				o = this.owner,
+				o  = this.owner,
 				bo = o? o._bindingTransformOwner: null;
 			if (tf && enyo.isString(tf)) {
 				// test first against the common case which is that it is on the
 				// transform owner or the actual owner
 				if (bo || o) {
 					tf = enyo.getPath.call(bo || o, this.transform);
+					// worst case here is to check if there was a bo and that failed if there is an
+					// owner go ahead and check that too
+					if (!tf && bo && o) {
+						tf = enyo.getPath.call(o, this.transform);
+					}
 				}
 				// only if that fails to we attempt to find the global
 				if (!tf) { tf = enyo.getPath(this.transform); }

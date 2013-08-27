@@ -3,9 +3,10 @@ enyo.concat.push("published");
 //*@public
 /**
 _enyo.Object_ lies at the heart of the Enyo framework's implementations of
-property publishing, computed properties (via the _ComputedPropertySupport_
-mixin), and data binding (via the _BindingSupport_ mixin). It also provides
-several utility functions for its subkinds.
+property publishing, computed properties (via the
+[ComputedSupport](#enyo/source/kernel/mixins/ComputedSupport.js) mixin), and
+data binding (via the [BindingSupport](#enyo/source/kernel/mixins/BindingSupport.js)
+mixin). It also provides several utility functions for its subkinds.
 
 Published properties are declared in a hash called _published_ within a call
 to _enyo.kind_. To get and set values for these properties, call
@@ -145,7 +146,6 @@ enyo.kind({
 	set: function (path, value, force) {
 		return enyo.setPath.apply(this, arguments);
 	},
-
 	//*@public
 	/**
 		Binds a callback to this object. If the object has been destroyed, the
@@ -191,10 +191,6 @@ enyo.kind({
 //* @protected
 enyo._objectCount = 0;
 
-enyo.Object.subclass = function(ctor, props) {
-	this.overload(ctor, props);
-};
-
 enyo.concatHandler("published", function(proto, props) {
 	var pp = props.published;
 	if (pp) {
@@ -202,37 +198,11 @@ enyo.concatHandler("published", function(proto, props) {
 		for (var n in pp) {
 			// need to make sure that even though a property is "published"
 			// it does not overwrite any computed properties
-			if (props[n] && enyo.isFunction(props[n])) {
-				continue;
-			}
+			if (props[n] && enyo.isFunction(props[n])) { continue; }
 			enyo.Object.addGetterSetter(n, pp[n], cp);
 		}
 	}
 });
-
-//*@protected
-/**
-	We need to find special cases and ensure that the overloaded
-	getter of a published property of a parent kind is flagged for
-	the global getter and setter.
-*/
-enyo.Object.overload = function (ctor, props) {
-	var proto = ctor.prototype.base? ctor.prototype.base.prototype: {};
-	var regex = /^(get|set).*/;
-	var name;
-	var prop;
-	for (name in props) {
-		if (!regex.test(name)) {
-			continue;
-		}
-		prop = props[name];
-		if ("function" === typeof prop) {
-			if (proto[name]) {
-				prop.overloaded = true;
-			}
-		}
-	}
-};
 
 //*@protected
 /**
@@ -244,29 +214,24 @@ enyo.Object.overload = function (ctor, props) {
 	instances.
 */
 enyo.Object.addGetterSetter = function (prop, value, proto) {
-	var get = "get" + enyo.cap(prop),
-		set = "set" + enyo.cap(prop),
-		fn;
-	// set the initial value for the prototype
+	var p   = enyo.cap(prop),
+		gfx = enyo.getPath.fast,
+		sfx = enyo.setPath.fast,
+		s   = "set" + p,
+		g   = "get" + p,
+		gs  = (proto._getters || (proto._getters = {})),
+		ss  = (proto._setters || (proto._setters = {})), fn;
 	proto[prop] = value;
-	fn = proto[get];
-	// if there isn't already a getter provided create one
-	if (!enyo.isFunction(fn)) {
-		fn = proto[get] = function () { return this.get(prop); };
-		fn.overloaded = false;
-	} else if (false !== fn.overloaded) {
-		// otherwise we need to mark it as having been overloaded
-		// so the global getter knows not to ignore it
-		fn.overloaded = true;
-	}
-	// if there isn't already a set provided, create one
-	fn = proto[set];
-	if ("function" !== typeof fn) {
-		fn = proto[set] = function () { return this.set(prop, arguments[0]); };
-		fn.overloaded = false;
-	} else if (false !== fn.overloaded) {
-		// otherwise we need to mark it as having been overloaded
-		// so the global set knows not to ignore it
-		fn.overloaded = true;
-	}
+	// if there isn't already a getter we create one using the
+	// fast track getter
+	if (!(fn = proto[g]) || !enyo.isFunction(fn)) {
+		fn = proto[g] = function () { return gfx.call(this, prop); };
+		fn.generated = true;
+	} else if (fn && "function" == typeof fn && !fn.generated) { gs[prop] = g; }
+	// if there isn't already a setter we create one using the
+	// fast track setter
+	if (!(fn = proto[s]) || !enyo.isFunction(fn)) {
+		fn = proto[s] = function (v) { return sfx.call(this, prop, v); };
+		fn.generated = true;
+	} else if (fn && "function" == typeof fn && !fn.generated) { ss[prop] = s; }
 };

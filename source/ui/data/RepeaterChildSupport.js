@@ -1,17 +1,17 @@
 //*@protected
 /**
-	This is used internally to add the recursive "model" feature for children of
-	_enyo.DataRepeaters_.
+	_enyo.RepeaterChildModelSupport_ is used internally to add the recursive
+	"model" feature to children of [enyo.DataRepeater](#enyo.DataRepeater).
 */
 enyo.RepeaterChildModelSupport = {
 	name: "RepeaterChildModelSupport",
-	constructed: enyo.super(function (sup) {
+	constructed: enyo.inherit(function (sup) {
 		return function () {
 			// prior to create running which will begin the init components
-			// path we check to make sure we know what level we are -- if
-			// we have the repeater property we are the top level child of a
-			// repeater and we are our own _modelOwner otherwise this needs to be
-			// set to that top level repeater child
+			// path, we check to make sure we know what level we are -- if
+			// we have the repeater property, we are the top-level child of a
+			// repeater and we are our own _modelOwner; otherwise this needs to be
+			// set to that top-level repeater child
 			var mo = this._modelOwner = this.repeater? this: this.getInstanceOwner();
 			if (mo !== this) {
 				this._modelOwnerObserver = mo.addObserver("model", this.modelOwnerObserver, this);
@@ -20,7 +20,7 @@ enyo.RepeaterChildModelSupport = {
 			sup.apply(this, arguments);
 		};
 	}),
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function () {
 			var mo = this._modelOwner;
 			if (mo !== this) {
@@ -31,22 +31,38 @@ enyo.RepeaterChildModelSupport = {
 			sup.apply(this, arguments);
 		};
 	}),
-	adjustComponentProps: enyo.super(function (sup) {
+	adjustComponentProps: enyo.inherit(function (sup) {
 		return function (props) {
-			var bd = props.bindingDefaults;
-			if (bd) {
-				bd = this.bindingDefaults? enyo.mixin(enyo.clone(this.bindingDefaults), bd): bd;
-			} else {
-				bd = this.bindingDefaults;
+			// we need to not apply this to children if the children are of kind
+			// DataRepeater or sub-kinds so special handling had to be put here to ensure
+			// we could fairly conveniently figure this out
+			var skip = false;
+			if (props.kind) {
+				var k = props.kind;
+				if (enyo.isString(k)) {
+					// resolve any deferred constructor for the kind
+					k = enyo.constructorForKind(k);
+				}
+				if (enyo.isFunction(k) && k.prototype && k.prototype instanceof enyo.DataRepeater) {
+					skip = true;
+				}
 			}
-			props.bindingDefaults = bd;
-			sup.apply(this, arguments);
+			if (!skip) {
+				var bd = props.bindingDefaults;
+				if (bd) {
+					bd = this.bindingDefaults? enyo.mixin(enyo.clone(this.bindingDefaults), bd): bd;
+				} else {
+					bd = this.bindingDefaults;
+				}
+				props.bindingDefaults = bd;
+				// we want to ensure that all children recursively have this mixin so
+				// they can register for model changed events without forcing a waterfall
+				// for each child (and subsequently their children) of the repeater
+				props.mixins = (props.mixins || []).concat([enyo.RepeaterChildModelSupport]);
+			}
 			// if we have a model already we just set it
 			props.model = this.model;
-			// we want to ensure that all children recursively have this mixin so
-			// they can register for model changed events without forcing a waterfall
-			// for each child (and subsequently their children) of the repeater
-			props.mixins = (props.mixins || []).concat([enyo.RepeaterChildModelSupport]);
+			sup.apply(this, arguments);
 		};
 	}),
 	modelOwnerObserver: function (p, c) {
@@ -72,25 +88,25 @@ enyo.RepeaterChildModelSupport = {
 };
 //*@public
 /**
-	These methods and properties are automatically applied to all children
-	of _enyo.DataRepeaters_ for assistance in _selection support_. See the documentation
-	for _enyo.DataRepeater_ for more details on how to use _selection support_. It also
-	adds the _model_, _child_ (control instance), and _index_ property to all events
-	emitted from children of the _repeater_.
+	_enyo.RepeaterChildSupport_ contains methods and properties that are
+	automatically applied to all children of _enyo.DataRepeater_ to assist in
+	selection support. (See [enyo.DataRepeater](#enyo.DataRepeater) for details on
+	how to use selection support.) _enyo.RepeaterChildSupport_ also adds the
+	_model_, _child_ (control instance), and _index_ properties to all events
+	emitted from the repeater's children.
 */
 enyo.RepeaterChildSupport = {
 	name: "RepeaterChildSupport",
 	/**
-		This property is used to determine the selected state of the current
-		child in the _repeater_.
+		Indicates whether the current child is selected in the repeater.
 	*/
 	selected: false,
 	//*@protected
-	selectedChanged: enyo.super(function (sup) {
+	selectedChanged: enyo.inherit(function (sup) {
 		return function () {
 			if (this.repeater.selection) {
 				this.addRemoveClass(this.selectedClass || "selected", this.selected);
-				// for efficiency purposes we now directly call this method as opposed to
+				// for efficiency purposes, we now directly call this method as opposed to
 				// forcing a synchronous event dispatch
 				if (this.selected && !this.repeater.isSelected(this.model)) {
 					this.repeater.select(this.index);
@@ -101,7 +117,7 @@ enyo.RepeaterChildSupport = {
 			sup.apply(this, arguments);
 		};
 	}),
-	decorateEvent: enyo.super(function (sup) {
+	decorateEvent: enyo.inherit(function (sup) {
 		return function (sender, event) {
 			event.model = this.model;
 			event.child = this;
@@ -115,29 +131,28 @@ enyo.RepeaterChildSupport = {
 		}
 	},
 	/**
-		Deliberately used to supercede the default method and set owner
-		to this control so that there isn't name collision in the instance
-		owner and also so that bindings will be able to correctly map to
-		names.
+		Deliberately used to supersede the default method and set owner to this
+		control so that there are no name collisions in the instance owner, and also
+		so that bindings will correctly map to names.
 	*/
-	createClientComponents: enyo.super(function () {
+	createClientComponents: enyo.inherit(function () {
 		return function (components) {
 			this.createComponents(components, {owner: this});
 		};
 	}),
 	/**
-		So we don't stomp on any built-in handlers for the ontap
-		event.
+		Used so that we don't stomp on any built-in handlers for the _ontap_ event.
 	*/
-	dispatchEvent: enyo.super(function (sup) {
+	dispatchEvent: enyo.inherit(function (sup) {
 		return function (name, event, sender) {
-			if (name == "ontap") {
+			if (name == "ontap" && !event._fromRepeaterChild) {
 				this._selectionHandler(sender, event);
+				event._fromRepeaterChild = true;
 			}
 			return sup.apply(this, arguments);
 		};
 	}),
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
 			var r = this.repeater,
@@ -150,7 +165,7 @@ enyo.RepeaterChildSupport = {
 			}
 		};
 	}),
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function () {
 			if (this._selectionBindingId) {
 				var b$ = enyo.Binding.find(this._selectionBindingId);

@@ -13,7 +13,7 @@ enyo.kind({
 	tag: "textarea",
 	classes: "enyo-textarea",
 	// textarea does use value attribute; needs to be kicked when rendered.
-	rendered: enyo.super(function (sup) {
+	rendered: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.valueChanged();

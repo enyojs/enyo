@@ -46,7 +46,7 @@
 
 		// ...........................
 		// COMPUTED PROPERTIES
-		
+
 		computed: {
 			_viewKind: [{cached: true}],
 			_renderTarget: ["renderTarget", {cached: true}]
@@ -164,7 +164,7 @@
 		// PROTECTED METHODS
 
 		//*@protected
-		constructed: enyo.super(function (sup) {
+		constructed: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				// ensure we have created the view instance, note that

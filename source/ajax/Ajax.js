@@ -25,7 +25,7 @@ enyo.kind({
 	//* published by _enyo.Ajax_.
 	published: enyo.AjaxProperties,
 	//* @protected
-	constructor: enyo.super(function (sup) {
+	constructor: enyo.inherit(function (sup) {
 		return function(inParams) {
 			enyo.mixin(this, inParams);
 			sup.apply(this, arguments);
@@ -162,7 +162,7 @@ enyo.kind({
 			}
 		}
 	},
-	fail: enyo.super(function (sup) {
+	fail: enyo.inherit(function (sup) {
 		return function(inError) {
 			// on failure, explicitly cancel the XHR to prevent
 			// further responses.  cancellation also resets the
