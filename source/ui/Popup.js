@@ -59,13 +59,13 @@ enyo.kind({
 	tools: [
 		{kind: "Signals", onKeydown: "keydown"}
 	],
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.canGenerate = !this.floating;
 		};
 	}),
-	render: enyo.super(function (sup) {
+	render: enyo.inherit(function (sup) {
 		return function() {
 			if (this.floating) {
 				if (!enyo.floatingLayer.hasNode()) {
@@ -76,7 +76,7 @@ enyo.kind({
 			sup.apply(this, arguments);
 		};
 	}),
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function() {
 			if (this.showing) {
 				this.release();
@@ -85,7 +85,7 @@ enyo.kind({
 		};
 	}),
 
-	reflow: enyo.super(function (sup) {
+	reflow: enyo.inherit(function (sup) {
 		return function() {
 			this.updatePosition();
 			sup.apply(this, arguments);
@@ -171,7 +171,7 @@ enyo.kind({
 			this.addStyles( "top: " + Math.max( ( ( d.height - b.height ) / 2 ), 0 ) + "px; left: " + Math.max( ( ( d.width - b.width ) / 2 ), 0 ) + "px;" );
 		}
 	},
-	showingChanged: enyo.super(function (sup) {
+	showingChanged: enyo.inherit(function (sup) {
 		return function() {
 			// auto render when shown.
 			if (this.floating && this.showing && !this.hasNode()) {

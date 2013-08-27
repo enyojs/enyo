@@ -97,7 +97,7 @@ enyo.kind({
 	node: null,
 	generated: false,
 	kindStyle: "",
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			if (this.tag == null) {
 				// initially set to true, but if this is not a renderable
@@ -123,14 +123,14 @@ enyo.kind({
 		};
 	}),
 	//*@protected
-	constructor: enyo.super(function (sup) {
+	constructor: enyo.inherit(function (sup) {
 		return function () {
 			this.attributes = enyo.clone(this.ctor.prototype.attributes);
 			sup.apply(this, arguments);
 		};
 	}),
 	//*@public
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function() {
 			this.removeFromRoots();
 			this.removeNodeFromDom();
@@ -151,7 +151,7 @@ enyo.kind({
 		}
 	},
 	//*@protected
-	dispatchEvent: enyo.super(function (sup) {
+	dispatchEvent: enyo.inherit(function (sup) {
 		return function (inEventName, inEvent, inSender) {
 			// prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
 			if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
@@ -173,13 +173,13 @@ enyo.kind({
 		sup.apply(this, arguments);
 	},
 	*/
-	addChild: enyo.super(function (sup) {
+	addChild: enyo.inherit(function (sup) {
 		return function(inControl) {
 			inControl.addClass(this.controlClasses);
 			sup.apply(this, arguments);
 		};
 	}),
-	removeChild: enyo.super(function (sup) {
+	removeChild: enyo.inherit(function (sup) {
 		return function(inControl) {
 			sup.apply(this, arguments);
 			inControl.removeClass(this.controlClasses);
@@ -530,7 +530,7 @@ enyo.kind({
 	/**
 		Override this method to perform tasks that require access to the DOM node.
 
-			rendered: enyo.super(function (sup) {
+			rendered: enyo.inherit(function (sup) {
 				return function() {
 					sup.apply(this, arguments);
 					// do some task

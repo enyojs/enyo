@@ -358,7 +358,7 @@
 		// PROTECTED METHODS
 
 		//*@protected
-		constructor: enyo.super(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function () {
 				this._staticRoutes = {};
 				this._dynamicRoutes = [];
@@ -369,7 +369,7 @@
 		}),
 
 		//*@protected
-		create: enyo.super(function (sup) {
+		create: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				// make sure to initialize our routes prior
@@ -392,7 +392,7 @@
 		}),
 
 		//*@protected
-		destroy: enyo.super(function (sup) {
+		destroy: enyo.inherit(function (sup) {
 			return function () {
 				var idx = enyo.indexOf(this, listeners);
 				if (!~idx) {

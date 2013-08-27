@@ -1,5 +1,5 @@
 (function (enyo) {
-	
+
 	//*@protected
 	enyo.concat.push("computed");
 	/**
@@ -33,7 +33,7 @@
 		functions, but be aware	that you cannot call any setter method for a
 		computed property. Also note that for any observers of a computed property,
 		there will never be a _previous_ value unless it is cached.
-	
+
 		Just as with [ObserverSupport](#enyo/source/kernel/mixins/ObserverSupport.js),
 		you can specify that a method is a computed property by including it within a
 		_computed_ block.
@@ -45,7 +45,7 @@
 					maxHours: []
 				}
 			})
- 
+
 		Another feature of computed properties is the ability to add configurable
 		options. Options are found in the computed property's array of dependencies.
 		Look at the defaults for options of computed properties to see what options
@@ -58,7 +58,7 @@
 		*/
 		computed: null,
 		//*@protected
-		get: enyo.super(function (sup) {
+		get: enyo.inherit(function (sup) {
 			return function (path) {
 				if (this._isComputed(path)) {
 					return this._getComputed(path);
@@ -66,7 +66,7 @@
 				return sup.apply(this, arguments);
 			};
 		}),
-		set: enyo.super(function (sup) {
+		set: enyo.inherit(function (sup) {
 			return function (path, value) {
 				if (this._isComputed(path)) {
 					// there is no support for setting a value for a computed
@@ -84,7 +84,7 @@
 			it has the opportunity to flush the queue, so we will be mindful to
 			never allow the same computed property into the queue more than once.
 		*/
-		notifyObservers: enyo.super(function (sup) {
+		notifyObservers: enyo.inherit(function (sup) {
 			return function (path, prev, value) {
 				var map = this._computedMap, n;
 				if ((n = map[path])) {
@@ -161,7 +161,7 @@
 				this.notifyObservers(k, q[k], this._getComputed(k));
 			}
 		},
-		constructor: enyo.super(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function () {
 				// we do not clone this object because, once instanced, we should not need it
 				// anymore, as it has been converted to a map

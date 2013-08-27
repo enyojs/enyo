@@ -8,16 +8,16 @@
 		a paginated scrolling scheme to enhance performance with larger datasets.
 	*/
 	enyo.kind({
-		
+
 		//*@public
 		name: "enyo.DataGridList",
-		
+
 		//*@public
 		kind: "enyo.DataList",
-		
+
 		//*@public
 		classes: "enyo-data-grid-list",
-		
+
 		//*@public
 		/**
 			The spacing (in pixels) between elements in the grid list. It should be an
@@ -25,23 +25,23 @@
 			This is the exact spacing to be allocated on all sides of each item.
 		*/
 		spacing: 10,
-		
+
 		//*@public
 		/**
 			The minimum width (in pixels) for each grid item. Grid items will not be
 			collapsed beyond this size, but they may be proportionally expanded.
 		*/
 		minWidth: 100,
-		
+
 		//*@public
 		/**
 			The minimum height (in pixels) for each grid item. Grid items will not be
 			collapsed beyond this size, but they may be proportionally expanded.
 		*/
 		minHeight: 100,
-		
+
 		//*@protected
-		initComponents: enyo.super(function (sup) {
+		initComponents: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				var d = this.defaultProps,
@@ -49,7 +49,7 @@
 				d.classes = (d.classes || "") + c;
 			};
 		}),
-		create: enyo.super(function (sup) {
+		create: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				// currently we don't allow anything else
@@ -105,13 +105,13 @@
 				p.rows = r$ + 1;
 			}
 		},
-		generatePage: enyo.super(function (sup) {
+		generatePage: enyo.inherit(function (sup) {
 			return function (p, n) {
 				sup.apply(this, arguments);
 				this.adjustPageSize(p);
 			};
 		}),
-		getHeight: enyo.super(function (sup) {
+		getHeight: enyo.inherit(function (sup) {
 			return function (n) {
 				if (n && (n.name == "page1" || n.name == "page2")) {
 					/*jshint boss:true*/
@@ -132,7 +132,7 @@
 			}
 			return 0;
 		},
-		updateSizing: enyo.super(function (sup) {
+		updateSizing: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				var $w = this.width,
@@ -248,7 +248,7 @@
 				this.startJob("layoutPages", this.layoutPages, 100);
 			}
 		},
-		didScroll: enyo.super(function (sup) {
+		didScroll: enyo.inherit(function (sup) {
 			return function (sender, event) {
 				if (!this._noScroll) {
 					return sup.apply(this, arguments);

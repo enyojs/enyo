@@ -38,7 +38,7 @@
 
 		//*@public
 		/**
-			Like an _enyo.Model_, an _enyo.Collection_ has several possible _status_ 
+			Like an _enyo.Model_, an _enyo.Collection_ has several possible _status_
 			values, which will be set depending on the current action. The following
 			values are possible:
 
@@ -116,7 +116,7 @@
 			property may be set directly, but doing so will automatically replace all
 			of the current content. Use [add()](#enyo.Collection::add) if you want to
 			extend (not replace) the current dataset.
-			
+
 			This computed property may be overloaded in more complex scenarios
 			involving filtering and conditionally supplied datasets.
 		*/
@@ -487,7 +487,7 @@
 			Overloaded setter that accepts an object literal and
 			applies all keys and values to the collection.
 		*/
-		set: enyo.super(function (sup) {
+		set: enyo.inherit(function (sup) {
 			return function (prop, val) {
 				if (enyo.isObject(prop)) {
 					this.stopNotifications();
@@ -525,7 +525,7 @@
 		/**
 			Accepts an array of models to add to the collection at creation.
 		*/
-		constructor: enyo.super(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function (props) {
 				this.__dirtyModels = [];
 				sup.apply(this, arguments);
@@ -584,13 +584,13 @@
 				}
 			}
 		},
-		
+
 		addDirtyModel: function (r) {
 			if (!~enyo.indexOf(r, this.__dirtyModels)) {
 				this.__dirtyModels.push(r);
 			}
 		},
-		
+
 		removeDirtyModel: function (r) {
 			var $i = enyo.indexOf(r, this.__dirtyModels);
 			if (!!~$i) {
@@ -655,7 +655,7 @@
 				}
 			}
 		},
-		
+
 		observers: {
 			__relationChanged: ["relation"],
 			__statusChanged: ["status"]

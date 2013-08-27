@@ -19,10 +19,10 @@
 
 		An _enyo.Mixin_ is _not a kind_. It is simply a named collection of methods
 		and properties that may be reused with multiple kinds.
-	
+
 		To create an _enyo.Mixin_, simply create a hash of methods and properties,
 		and assign it to a referenceable namespace.
-	
+
 		To apply an _enyo.Mixin_ to a kind, simply add its name or a reference to it
 		in the special _mixins_ property in the kind definition. Alternatively, you
 		may call _extend()_ on the constructor for the kind, passing in the mixin
@@ -90,7 +90,7 @@
 		proto.mixins = enyo.merge(proto.mixins, props.mixins);
 	});
 	enyo.kind.extendMethods(enyo.kind.statics, {
-		extend: enyo.super(function (sup) {
+		extend: enyo.inherit(function (sup) {
 			return function (props, target) {
 				var proto = target || this.prototype;
 				if (props.mixins) {
@@ -122,7 +122,7 @@
 			has already been evaluated and it is being initialized as an instance.
 			However, if a mixin applies more mixins at runtime, it will have no effect.
 		*/
-		importProps: enyo.super(function (sup) {
+		importProps: enyo.inherit(function (sup) {
 			return function (props) {
 				if (props) { mixinsFeature(this, props); }
 				sup.apply(this, arguments);

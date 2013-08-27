@@ -352,7 +352,7 @@
 			enyo.pool.releaseObject($o);
 		}
 	});
-	
+
 	//*@protected
 	var isRemoteKey = function (k) {
 		var $a = this.__attributes;
@@ -513,7 +513,7 @@
 		_type_ and when data is retrieved/added for this key, it will be passed to
 		the constructor for the named _type_. This may be a constructor or a String
 		placeholder for a constructor.
-		
+
 		If the _type_ is a custom kind that requires more work than simply supplying
 		the data to the constructor, you will have to use the typeWrangler schema
 		option for type coercion. Note that if a _type_ is specified but coercion
@@ -538,9 +538,9 @@
 		just the useful information. This method must return the desired data. If a
 		typeWrangler exists for this schema option, the _formatter_ will be executed
 		first.
-		
+
 		The function takes the form
-		
+
         function (key, value, action, payload)
 
 		where
@@ -729,7 +729,7 @@
 			primary key for this model. The default is _"id"_.
 		*/
 		primaryKey: "id",
-		
+
 		//*@public
 		noFetchId: true,
 
@@ -740,7 +740,7 @@
 			set to true. The default is false.
 		*/
 		noUrl: false,
-		
+
 		//*@public
 		/**
 			For cases in which the _url_ is arbitrarily set and must be used as-is,
@@ -748,7 +748,7 @@
 			property.
 		*/
 		rawUrl: false,
-		
+
 		//*@public
 		/**
 			In cases where the commit body should be a subset of the attributes
@@ -785,7 +785,7 @@
 
 		//*@public
 		statics: STATES,
-		
+
 		//*@public
 		/**
 			Assigned by an _enyo.Store_ at model instantiation. A unique identifier
@@ -1132,7 +1132,7 @@
 			This is a specially overloaded version of _enyo.Object.set()_. It accepts
 			either a hash or a string and value combined as its parameters.
 		*/
-		set: enyo.super(function (sup) {
+		set: enyo.inherit(function (sup) {
 			return function (prop, val) {
 				if (enyo.isObject(prop)) {
 					this.silence();
@@ -1178,7 +1178,7 @@
 			If there is no schema defined and no initial _values_ are passed in,
 			much of its functionality will not work as intended.
 		*/
-		constructor: enyo.super(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function (values) {
 				var $v = values || enyo.pool.claimObject(true);
 				var $t = enyo.pool.claimObject();
@@ -1218,14 +1218,14 @@
 				enyo.pool.releaseObject($v, $d, $t);
 			};
 		}),
-		
-		constructed: enyo.super(function (sup) {
+
+		constructed: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				enyo.models.queue(this);
 			};
 		}),
-		
+
 		//*@public
 		/**
 			Attempts to generate a schema implicitly from a data structure.
@@ -1362,7 +1362,7 @@
 				}
 			}
 		},
-		
+
 		observers: {
 			__statusChanged: ["status"],
 			__attributeSpy: ["*"]

@@ -152,7 +152,7 @@ enyo.BindingSupport = {
 			bs = this.bindings;
 		if (b) {
 			var i = enyo.indexOf(b, bs);
-			if (!!~i) { 
+			if (!!~i) {
 				bs.splice(i, 1);
 				if (b._rebuildTarget) {
 					this.removeObserver(b._targetPath, b._rebuildTarget);
@@ -199,7 +199,7 @@ enyo.BindingSupport = {
 			}
 		}
 	},
-	constructor: enyo.super(function (sup) {
+	constructor: enyo.inherit(function (sup) {
 		return function () {
 			// ensure we have at least an empty array here during
 			// normal initialization
@@ -208,7 +208,7 @@ enyo.BindingSupport = {
 			return sup.apply(this, arguments);
 		};
 	}),
-	constructed: enyo.super(function (sup) {
+	constructed: enyo.inherit(function (sup) {
 		return function () {
 			// now we go ahead and create the bindings, knowing that they
 			// will register for missing targets/sources if they become
@@ -217,7 +217,7 @@ enyo.BindingSupport = {
 			sup.apply(this, arguments);
 		};
 	}),
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function () {
 			// destroy all bindings that belong to us
 			var bs = this.bindings;
@@ -288,13 +288,13 @@ enyo.ComponentBindingSupport = {
 		for inlined bindings -- their owner is the component they are nested on
 		but the transform will most likely exist on the instance owner.
 	*/
-	adjustComponentProps: enyo.super(function (sup) {
+	adjustComponentProps: enyo.inherit(function (sup) {
 		return function (props) {
 			sup.apply(this, arguments);
 			props._bindingTransformOwner = props._bindingTransformOwner || this.getInstanceOwner();
 		};
 	}),
-	constructed: enyo.super(function (sup) {
+	constructed: enyo.inherit(function (sup) {
 		return function () {
 			this._bindingSyncAllowed = false;
 			this.initBindings();

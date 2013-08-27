@@ -18,7 +18,7 @@ enyo.kind({
 		active: false
 	},
 	//* @protected
-	rendered: enyo.super(function (sup) {
+	rendered: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.activeChanged();

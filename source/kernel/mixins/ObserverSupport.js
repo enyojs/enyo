@@ -253,7 +253,7 @@
 				}
 			}
 		},
-		constructor: enyo.super(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function () {
 				// we need an instance-specific observer table so runtime modifications
 				// are unique to the instance and not the kind, also note that once the
@@ -269,7 +269,7 @@
 				return sup.apply(this, arguments);
 			};
 		}),
-		destroy: enyo.super(function (sup) {
+		destroy: enyo.inherit(function (sup) {
 			return function () {
 				this.removeAllObservers();
 				sup.apply(this, arguments);

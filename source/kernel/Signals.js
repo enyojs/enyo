@@ -16,13 +16,13 @@ enyo.kind({
 	name: "enyo.Signals",
 	kind: "enyo.Component",
 	//* @protected
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			enyo.Signals.addListener(this);
 		};
 	}),
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function() {
 			enyo.Signals.removeListener(this);
 			sup.apply(this, arguments);

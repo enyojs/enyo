@@ -60,7 +60,7 @@ enyo.kind({
 	x: 0,
 	y0: 0,
 	y: 0,
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function() {
 			this.stop();
 			sup.apply(this, arguments);

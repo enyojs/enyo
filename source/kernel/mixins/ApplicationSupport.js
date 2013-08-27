@@ -12,13 +12,13 @@ enyo.ApplicationSupport = {
 		_enyo.Component_ was created in the scope of an _enyo.Application_.
 	*/
 	app: null,
-	adjustComponentProps: enyo.super(function (sup) {
+	adjustComponentProps: enyo.inherit(function (sup) {
 		return function (props) {
 			props.app = this.app;
 			sup.apply(this, arguments);
 		};
 	}),
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function () {
 			// release the reference to the application
 			this.app = null;
