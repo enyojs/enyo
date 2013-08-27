@@ -48,7 +48,7 @@ enyo.kind({
 		});
 		var Derived = enyo.kind({
 			kind: Base,
-			pass: enyo.super(function(sup) {
+			pass: enyo.inherit(function(sup) {
 				return (function(ctx) {
 					if (sup.apply(this, arguments) === "base") {
 						ctx.finish();

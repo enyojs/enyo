@@ -28,7 +28,7 @@ enyo.MultipleDispatchSupport = {
 		}
 	},
 	//*@protected
-	bubbleUp: enyo.super(function (sup) {
+	bubbleUp: enyo.inherit(function (sup) {
 		return function (name, event, sender) {
 			if (this._dispatchDefaultPath) {
 				sup.apply(this, arguments);
@@ -41,27 +41,27 @@ enyo.MultipleDispatchSupport = {
 			}
 		};
 	}),
-	bubbleDelegation: enyo.super(function (sup) {
+	bubbleDelegation: enyo.inherit(function (sup) {
 		return function (delegate, prop, name, event, sender) {
 			if (this._dispatchDefaultPath) {
 				return sup.apply(this, arguments);
 			}
 		};
 	}),
-	ownerChanged: enyo.super(function (sup) {
+	ownerChanged: enyo.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
 			var o = this.owner;
 			this._dispatchDefaultPath = !! o;
 		};
 	}),
-	constructor: enyo.super(function (sup) {
+	constructor: enyo.inherit(function (sup) {
 		return function () {
 			this._dispatchTargets = [];
 			return sup.apply(this, arguments);
 		};
 	}),
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function () {
 			this._dispatchTargets = null;
 			sup.apply(this, arguments);

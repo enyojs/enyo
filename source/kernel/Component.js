@@ -94,7 +94,7 @@ enyo.kind({
 	toString: function() {
 		return this.kindName;
 	},
-	constructor: enyo.super(function (sup) {
+	constructor: enyo.inherit(function (sup) {
 		return function(props) {
 			// initialize instance objects
 			this._componentNameMap = {};
@@ -103,7 +103,7 @@ enyo.kind({
 			sup.apply(this, arguments);
 		};
 	}),
-	constructed: enyo.super(function (sup) {
+	constructed: enyo.inherit(function (sup) {
 		return function(inProps) {
 			// perform initialization
 			this.create(inProps);
@@ -142,7 +142,7 @@ enyo.kind({
 		property. Usually, the component will be suitable for garbage collection
 		after being destroyed, unless user code keeps a reference to it.
 	*/
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function() {
 			this.destroyComponents();
 			this.setOwner(null);
@@ -643,7 +643,7 @@ enyo.concatHandler("events", function (proto, props) {
 });
 
 enyo.Component.overrideComponents = function(components, overrides, defaultKind) {
-	var fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isSuper(v)); };
+	var fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isInherited(v)); };
 	components = enyo.clone(components);
 	for (var i=0; i<components.length; i++) {
 		var c = enyo.clone(components[i]);

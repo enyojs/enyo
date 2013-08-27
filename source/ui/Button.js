@@ -23,7 +23,7 @@ enyo.kind({
 		disabled: false
 	},
 	//* @protected
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.disabledChanged();

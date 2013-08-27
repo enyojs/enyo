@@ -17,7 +17,7 @@ enyo.kind({
 	//* Size of the corners of the indicator
 	cornerSize: 6,
 	classes: "enyo-thumb",
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			var v = this.axis == "v";

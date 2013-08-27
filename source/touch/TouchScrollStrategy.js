@@ -77,7 +77,7 @@ enyo.kind({
 	],
 	// flag telling us whether the list is currently reordering
 	listReordering: false,
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.transform = enyo.dom.canTransform();
@@ -99,19 +99,19 @@ enyo.kind({
 			this.translation = this.accel ? "translate3d" : "translate";
 		};
 	}),
-	initComponents: enyo.super(function (sup) {
+	initComponents: enyo.inherit(function (sup) {
 		return function() {
 			this.createChrome(this.tools);
 			sup.apply(this, arguments);
 		};
 	}),
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function() {
 			this.container.removeClass("enyo-touch-strategy-container");
 			sup.apply(this, arguments);
 		};
 	}),
-	rendered: enyo.super(function (sup) {
+	rendered: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			enyo.makeBubble(this.$.client, "scroll");
@@ -193,34 +193,34 @@ enyo.kind({
 		this.stop();
 		this.$.scrollMath.scrollTo(inX, inY || inY === 0 ? inY : null);
 	},
-	scrollIntoView: enyo.super(function (sup) {
+	scrollIntoView: enyo.inherit(function (sup) {
 		return function() {
 			this.stop();
 			sup.apply(this, arguments);
 		};
 	}),
 	//* Sets the left scroll position within the scroller.
-	setScrollLeft: enyo.super(function (sup) {
+	setScrollLeft: enyo.inherit(function (sup) {
 		return function() {
 			this.stop();
 			sup.apply(this, arguments);
 		};
 	}),
 	//* Sets the top scroll position within the scroller.
-	setScrollTop: enyo.super(function (sup) {
+	setScrollTop: enyo.inherit(function (sup) {
 		return function() {
 			this.stop();
 			sup.apply(this, arguments);
 		};
 	}),
 	//* Gets the left scroll position within the scroller.
-	getScrollLeft: enyo.super(function (sup) {
+	getScrollLeft: enyo.inherit(function (sup) {
 		return function() {
 			return this.isScrolling() ? this.scrollLeft : sup.apply(this, arguments);
 		};
 	}),
 	//* Gets the top scroll position within the scroller.
-	getScrollTop: enyo.super(function (sup) {
+	getScrollTop: enyo.inherit(function (sup) {
 		return function() {
 			return this.isScrolling() ? this.scrollTop : sup.apply(this, arguments);
 		};
@@ -402,14 +402,14 @@ enyo.kind({
 			overtop: Math.min(m.topBoundary - m.y, 0) || Math.max(m.bottomBoundary - m.y, 0)
 		};
 	},
-	_getScrollBounds: enyo.super(function (sup) {
+	_getScrollBounds: enyo.inherit(function (sup) {
 		return function() {
 			var r = sup.apply(this, arguments);
 			enyo.mixin(r, this.getOverScrollBounds());
 			return r;
 		};
 	}),
-	getScrollBounds: enyo.super(function (sup) {
+	getScrollBounds: enyo.inherit(function (sup) {
 		return function() {
 			this.stop();
 			return sup.apply(this, arguments);

@@ -45,13 +45,13 @@ enyo.kind({
 		onStop: ""
 	},
 	//* @protected
-	constructed: enyo.super(function (sup) {
+	constructed: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this._next = this.bindSafely("next");
 		};
 	}),
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function() {
 			this.stop();
 			sup.apply(this, arguments);

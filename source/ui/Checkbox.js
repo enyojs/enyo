@@ -24,7 +24,7 @@ enyo.kind({
 		onchange: "change",
 		onclick: "click"
 	},
-	rendered: enyo.super(function (sup) {
+	rendered: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			if (this.active) {

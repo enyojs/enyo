@@ -5,7 +5,7 @@
 */
 enyo.RepeaterChildModelSupport = {
 	name: "RepeaterChildModelSupport",
-	constructed: enyo.super(function (sup) {
+	constructed: enyo.inherit(function (sup) {
 		return function () {
 			// prior to create running which will begin the init components
 			// path, we check to make sure we know what level we are -- if
@@ -20,7 +20,7 @@ enyo.RepeaterChildModelSupport = {
 			sup.apply(this, arguments);
 		};
 	}),
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function () {
 			var mo = this._modelOwner;
 			if (mo !== this) {
@@ -31,7 +31,7 @@ enyo.RepeaterChildModelSupport = {
 			sup.apply(this, arguments);
 		};
 	}),
-	adjustComponentProps: enyo.super(function (sup) {
+	adjustComponentProps: enyo.inherit(function (sup) {
 		return function (props) {
 			// we need to not apply this to children if the children are of kind
 			// DataRepeater or sub-kinds so special handling had to be put here to ensure
@@ -102,7 +102,7 @@ enyo.RepeaterChildSupport = {
 	*/
 	selected: false,
 	//*@protected
-	selectedChanged: enyo.super(function (sup) {
+	selectedChanged: enyo.inherit(function (sup) {
 		return function () {
 			if (this.repeater.selection) {
 				this.addRemoveClass(this.selectedClass || "selected", this.selected);
@@ -117,7 +117,7 @@ enyo.RepeaterChildSupport = {
 			sup.apply(this, arguments);
 		};
 	}),
-	decorateEvent: enyo.super(function (sup) {
+	decorateEvent: enyo.inherit(function (sup) {
 		return function (sender, event) {
 			event.model = this.model;
 			event.child = this;
@@ -135,7 +135,7 @@ enyo.RepeaterChildSupport = {
 		control so that there are no name collisions in the instance owner, and also
 		so that bindings will correctly map to names.
 	*/
-	createClientComponents: enyo.super(function () {
+	createClientComponents: enyo.inherit(function () {
 		return function (components) {
 			this.createComponents(components, {owner: this});
 		};
@@ -143,7 +143,7 @@ enyo.RepeaterChildSupport = {
 	/**
 		Used so that we don't stomp on any built-in handlers for the _ontap_ event.
 	*/
-	dispatchEvent: enyo.super(function (sup) {
+	dispatchEvent: enyo.inherit(function (sup) {
 		return function (name, event, sender) {
 			if (name == "ontap" && !event._fromRepeaterChild) {
 				this._selectionHandler(sender, event);
@@ -152,7 +152,7 @@ enyo.RepeaterChildSupport = {
 			return sup.apply(this, arguments);
 		};
 	}),
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
 			var r = this.repeater,
@@ -165,7 +165,7 @@ enyo.RepeaterChildSupport = {
 			}
 		};
 	}),
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function () {
 			if (this._selectionBindingId) {
 				var b$ = enyo.Binding.find(this._selectionBindingId);

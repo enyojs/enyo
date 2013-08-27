@@ -66,7 +66,7 @@ enyo.kind({
 		onChange: ""
 	},
 	//* @protected
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			this.clear();
 			sup.apply(this, arguments);
