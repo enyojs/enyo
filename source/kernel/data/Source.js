@@ -13,6 +13,11 @@
 	*/
 	enyo.kind({
 		name: "enyo.Source",
-		kind: null
+		kind: null,
+		/**
+		*/
+		find: function () {
+			
+		}
 	});
 })(enyo);

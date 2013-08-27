@@ -104,6 +104,11 @@
 		*/
 		url: "",
 		/**
+			Boolean value indicating whether or not a change has occurred in the _record_
+			that needs to be committed.
+		*/
+		dirty: false,
+		/**
 			The `primaryKey` is the attribute that will be used if present in the model for
 			reference in _enyo.Collections_ and in the _models_ _store_. It will also be used,
 			by default, when generating the _url_ for the _model_. The value and property for
@@ -136,9 +141,13 @@
 			if (enyo.isObject(prop)) { return this.setObject(prop); }
 			var rv = this.attributes[prop];
 			if (rv && "function" == typeof rv) { return this; }
-			this.previous[prop] = rv;
-			this.changed[prop] = this.attributes[prop] = value;
-			this.notifyObservers();
+			if (rv !== value) {
+				this.previous[prop] = rv;
+				this.changed[prop] = this.attributes[prop] = value;
+				this.notifyObservers(prop);
+				this.changed = {};
+				this.dirty = true;
+			}
 			return this;
 		},
 		/**
@@ -147,14 +156,21 @@
 			to the `attributes` schema when this method is used.
 		*/
 		setObject: function (props) {
-			var rv, k;
+			var ch = false,
+				rv, k;
 			for (k in props) {
 				rv = this.attributes[k];
 				if (rv && "function" == typeof rv) { continue; }
+				if (rv === props[k]) { continue; }
 				this.previous[k] = rv;
 				this.changed[k] = this.attributes[k] = props[k];
+				ch = true;
 			}
-			this.notifyObservers();
+			if (ch) {
+				this.notifyObservers();
+				this.changed = {};
+				this.dirty = true;
+			}
 			return this;
 		},
 		/**
@@ -185,7 +201,7 @@
 			if (props) {
 				if (props.defaults || props.attributes) { enyo.Model.subclass(this, props); }
 				for (var k in props) {
-					this[key] = props[k];
+					this[k] = props[k];
 				}
 			}
 		},
@@ -251,12 +267,23 @@
 			this.store.fetchRecord(this, o);
 		},
 		/**
+			Overload this method to change the structure of the data as it is returned from
+			a _fetch_ or _commit_. By default it just returns the _data_ as it was retrieved
+			from the _driver_.
+		*/
+		parse: function (data) {
+			return data;
+		},
+		/**
 			When a _record_ is successfully fetched this method is called before any user
 			provided callbacks are executed. It will properly insert the incoming data
 			to the record and notify any observers of those properties that have changed.
 		*/
 		didFetch: function (rec, opts, res) {
-			// TODO:
+			this.setObject(this.parse(res));
+			// once notifications have taken place we clear the dirty status so the
+			// state of the model is now clean
+			this.dirty = false;
 			if (opts) {
 				if (opts.success) {
 					opts.success(rec, opts, res);
@@ -268,26 +295,75 @@
 			provided callbacks are executed.
 		*/
 		didCommit: function (rec, opts, res) {
+			this.setObject(this.parse(res));
+			// once notifications have taken place we clear the dirty status so the
+			// state of the model is now clean
+			this.dirty = false;
 			if (opts) {
 				if (opts.success) {
 					opts.success(rec, opts, res);
 				}
 			}
 		},
+		/**
+			When a _record_ is successfully destroyed this method is called before any user
+			provided callbacks are executed.
+		*/
 		didDestroy: function (rec, opts, res) {
 			this.store.removeRecord(this);
-			// TODO:
+			this.previous = null;
+			this.changed = null;
+			this.attributes = null;
+			this.defaults = null;
+			this.includeKeys = null;
+			this.destroyed = true;
+		},
+		/**
+			Adds an observer according to the the _enyo.ObserverSupport_ API.
+		*/
+		addObserver: function (prop, fn, ctx) {
+			return this.store.addRecordObserver(this, prop, fn, ctx);
+		},
+		/**
+			Removes an observer according to the the _enyo.ObserverSupport_ API.
+		*/
+		removeObserver: function (prop, fn) {
+			return this.store.removeRecordObserver(this, prop, fn);
+		},
+		/**
+			Notifies observers, but, unlike the _enyo.ObserverSupport_ API it accepts
+			only one, optional, parameter _prop_, otherwise any _changed_ properties
+			will be notified.
+		*/
+		notifyObservers: function (prop) {
+			this.store.notifyRecordObservers(this, prop);
+		},
+		/**
+			Add a listener for the given _event_. Callbacks will be executed with two
+			parameters of the form _record_, _event_ -- where _record_ is the _record_
+			that is firing the event and _event_ is the name (string) for the event
+			being fired. The _addListener_ method accepts parameters according to the
+			_enyo.ObserverSupport_ API but does not function the same way.
+		*/
+		addListener: function (prop, fn, ctx) {
+			return this.store.addListener(this, prop, fn, ctx);
+		},
+		/**
+			Removes a listener. Accepts the name of the _event_ that the listener is
+			registered on and the method returned from the _addListener_ call (if a
+			_ctx_ was provided otherwise just the method is fine). Returns `true` on
+			successful removal and `false` otherwise.
+		*/
+		removeListener: function (prop, fn) {
+			return this.store.removeListener(this, prop, fn);
+		},
+		/**
+			Triggers any _listeners_ for the _event_ of this _record_.
+		*/
+		triggerEvent: function (event) {
+			this.store.triggerEvent(this, event);
 		},
 		//*@protected
-		addObserver: function (prop, fn, ctx) {
-			this.store.addRecordObserver(this, prop, fn, ctx);
-		},
-		removeObserver: function (prop, fn) {
-			this.store.removeRecordObserver(this, prop, fn);
-		},
-		notifyObservers: function () {
-			this.store.notifyRecordObservers(this);
-		},
 		storeChanged: function () {
 			var s = this.store || enyo.store;
 			if (s) {
