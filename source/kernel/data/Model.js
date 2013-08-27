@@ -46,7 +46,8 @@
 		a _computed property_ for a _model_ simply by setting the _attribute_ to a function. When
 		requested as a normal attribute it will be the return value of that function executed in
 		the context of the _model_ (the `this` value for that method). You cannot set the value of
-		a computed property.
+		a computed property. When the _raw_ method or _toJSON_ methods are executed, if no _includeKeys_
+		are specified that exclude it, any computed properties return value will be included in the payload.
 
 		## Bindings
 	
@@ -56,6 +57,8 @@
 		## Observers and Notifications
 		
 		## Events
+	
+		## How Drivers Work With Models
 	*/
 	enyo.kind({
 		name: "enyo.Model",
@@ -80,11 +83,26 @@
 		*/
 		store: null,
 		/**
+			This is the fall-back driver to use when fetching, destroying, or comitting
+			a _model_. A driver can always be specified at the time of the method execution
+			but in cases where it isn't the default will be used. This is a string that should
+			be paired with a known driver for this _records store_.
+		*/
+		defaultDriver: "ajax",
+		/**
 			An optional array of strings as the only properties to include in
 			the _raw_ and _toJSON_ return values. By default it will use any properties
 			in the _attributes_ hash.
 		*/
 		includeKeys: null,
+		/**
+			Set this property to the correct _url_ to be used when generating the request
+			for this _record_ from any specified _driver_ or the _defaultDriver_ of the _record_.
+			Note that, by default, the url for a _fetch_ will have the its _primaryKey_ appended
+			to the request. If a _getUrl_ method is provided for the kind it will be called
+			and expect the return value to be the _url_ for the request.
+		*/
+		url: "",
 		/**
 			The `primaryKey` is the attribute that will be used if present in the model for
 			reference in _enyo.Collections_ and in the _models_ _store_. It will also be used,
@@ -147,6 +165,7 @@
 		*/
 		constructor: function (attributes, opts) {
 			if (opts) { this.importProps(opts); }
+			this.euid = uuid();
 			this.storeChanged();
 			var a = this.attributes? enyo.clone(this.attributes): {},
 				d = this.defaults,
@@ -158,6 +177,8 @@
 				enyo.mixin(a, d, _mixinOpts);
 			}
 			this.attributes = a;
+			this.changed = {};
+			this.previous = {};
 		},
 		//*@protected
 		importProps: function (props) {
@@ -176,8 +197,14 @@
 		*/
 		raw: function () {
 			var i = this.includeKeys,
-				a = this.attributes;
-			return i? enyo.only(i, a): enyo.clone(a);
+				a = this.attributes,
+				r = i? enyo.only(i, a): enyo.clone(a);
+			for (var k in r) {
+				if ("function" == typeof r[k]) {
+					r[k] = r[k].call(this);
+				}
+			}
+			return r;
 		},
 		/**
 			Will return the JSON stringified version of the output of _raw_ of this record.
@@ -185,33 +212,81 @@
 		toJSON: function () {
 			return enyo.json.stringify(this.raw());
 		},
-		commit: function () {
-		
+		/**
+			Commit the current state of the _record_ to either the specified _driver_
+			or the _records_ default _driver_. The _driver_ and any other options may be
+			specified in the _opts_ hash. May provied a _success_ and _fail_ method that
+			will be executed on those conditions. Its _success_ method will be called with
+			the same parameters as the build-in method `didCommit`.
+		*/
+		commit: function (opts) {
+			var o = opts? enyo.clone(opts): {};
+			o.success = this.bindSafely("didCommit", this, opts);
+			o.fail = this.bindSafely("didFail", "commit", this, opts);
+			this.store.commitRecord(this, o);
 		},
-		fetch: function () {
-		
+		/**
+			Using the state of the _record_ and any options passed in via the _opts_ hash
+			try and fetch the current model attributes from the specified (or default)
+			_driver_ for this _record_. May provied a _success_ and _fail_ method that
+			will be executed on those conditions. Its _success_ method will be called with
+			the same parameters as the build-in method `didFetch`.
+		*/
+		fetch: function (opts) {
+			var o = opts? enyo.clone(opts): {};
+			o.success = this.bindSafely("didFetch", this, opts);
+			o.fail = this.bindSafely("didFail", "fetch", this, opts);
+			this.store.fetchRecord(this, o);
 		},
-		destroy: function () {
-		
+		/**
+			Requests a _destroy_ action for the given _record_ and the specified (or default)
+			_driver_ in the optional _opts_ hash. May provied a _success_ and _fail_ method that
+			will be executed on those conditions. Its _success_ method will be called with
+			the same parameters as the build-in method `didDestroy`.
+		*/
+		destroy: function (opts) {
+			var o = opts? enyo.clone(opts): {};
+			o.success = this.bindSafely("didDestroy", this, opts);
+			o.fail = this.bindSafely("didFail", "destroy", this, opts);
+			this.store.fetchRecord(this, o);
 		},
-		didFetch: function () {
-		
+		/**
+			When a _record_ is successfully fetched this method is called before any user
+			provided callbacks are executed. It will properly insert the incoming data
+			to the record and notify any observers of those properties that have changed.
+		*/
+		didFetch: function (rec, opts, res) {
+			// TODO:
+			if (opts) {
+				if (opts.success) {
+					opts.success(rec, opts, res);
+				}
+			}
 		},
-		didCommit: function () {
-		
+		/**
+			When a _record_ is successfully committed this method is called before any user
+			provided callbacks are executed.
+		*/
+		didCommit: function (rec, opts, res) {
+			if (opts) {
+				if (opts.success) {
+					opts.success(rec, opts, res);
+				}
+			}
 		},
-		didDestroy: function () {
-		
+		didDestroy: function (rec, opts, res) {
+			this.store.removeRecord(this);
+			// TODO:
 		},
 		//*@protected
 		addObserver: function (prop, fn, ctx) {
-			this.store.addModelObserver(this, prop, fn, ctx);
+			this.store.addRecordObserver(this, prop, fn, ctx);
 		},
-		removeObserver: function () {
-			this.store.removeModelObserver(this, prop, fn, ctx);
+		removeObserver: function (prop, fn) {
+			this.store.removeRecordObserver(this, prop, fn);
 		},
 		notifyObservers: function () {
-			this.store.notifyModelObservers(this);
+			this.store.notifyRecordObservers(this);
 		},
 		storeChanged: function () {
 			var s = this.store || enyo.store;
