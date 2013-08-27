@@ -403,7 +403,7 @@ enyo.kind.statics = {
 		hash or array of hashes to extend the current kind without creating a new
 		kind. Properties will override prototype properties. If a method that is
 		being added already exists, the new method supersedes the existing one. The
-		method may call _this.inherited()_ or be wrapped with _enyo.super_ to call
+		method may call _this.inherited()_ or be wrapped with _enyo.inherit_ to call
 		the original method (this chains multiple methods tied to a single kind). In
 		cases where an instance (not the class) is to be extended, it may be passed
 		in as the second parameter. This method does not re-run the

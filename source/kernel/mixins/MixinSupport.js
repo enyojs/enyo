@@ -11,7 +11,7 @@
 
 		- A method that already exists on the kind or instance will not
 			automatically call the super-method. If the intention is to extend the
-			kind's own method, make sure that you wrap the method with _enyo.super_.
+			kind's own method, make sure that you wrap the method with _enyo.inherit_.
 
 		- Mixins must have a name so they can be identified when applied; otherwise,
 			the same mixin may be applied multiple times to a given kind,
