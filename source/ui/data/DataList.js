@@ -205,6 +205,10 @@
 				this.childSize = Math.floor(($r == "v"? $p.height: $p.width) / $c);
 				this.updateMetrics();
 			}
+			var s = enyo.Spotlight.getCurrent();
+			if(s && s.container === this){
+				enyo.Spotlight.unspot();
+			}
 		},
 		add: function (i) {
 			if (this.generated && this.$.scroller.canGenerate) {
