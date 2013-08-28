@@ -4,6 +4,14 @@
 		return url.replace(/([^:]\/)(\/+)/g, "$1");
 	};
 	var http = /^http/;
+	var getLocation = function () {
+		var u = location.protocol,
+			p = location.pathname.split("/");
+		u += ("//" + location.hostname);
+		if (p.length > 1 && p[p.length-1].match(/\./)) { p.pop(); }
+		u += ("/" + p.join("/"));
+		return u;
+	};
 	//*@public
 	/**
 	*/
@@ -16,9 +24,9 @@
 		requestKind: null,
 		/**
 			For _records_ that don't provide their own, you can supply a default
-			_rootUrl_ instead of using the current _location_.
+			_urlRoot_ instead of using the current _location_.
 		*/
-		rootUrl: "",
+		urlRoot: "",
 		/**
 			Attempts to build a url for the given _record_ and according
 			to the options if necessary. If the _url_ property already exists
@@ -30,11 +38,11 @@
 			// giving precedence to a _url_ in the options, check for a _getUrl_ method
 			// and default back to the _records_ own _url_ property
 			var u = opts.url || (enyo.isFunction(rec.getUrl) && rec.getUrl()) || rec.url;
-			// if the protocol is missing we check first for the _rootUrl_ of the _record_,
+			// if the protocol is missing we check first for the _urlRoot_ of the _record_,
 			// then this _source_, and then default to the current location.origin property
 			// TODO: this is crippling to use location this way, is there a safer alternative?
 			if (!http.test(u)) {
-				u = (rec.rootUrl || this.rootUrl || location.origin) + "/" + u;
+				u = (rec.urlRoot || this.urlRoot || getLocation()) + "/" + u;
 			}
 			return normalize(u);
 		},
@@ -79,6 +87,36 @@
 		kind: enyo.XHRSource,
 		//* Uses the _enyo.Ajax_ kind for requests
 		requestKind: enyo.Ajax,
+		//* Uses "GET" for the method
+		fetch: function (rec, opts) {
+			opts.method = "GET";
+			opts.url = this.buildUrl(rec, opts);
+			this.go(opts);
+		},
+		//* Uses "POST" if the _record_ is new, otherwise "PUT" for the method
+		commit: function (rec, opts) {
+			opts.method = rec.isNew? "POST": "PUT";
+			opts.url = this.buildUrl(rec, opts);
+			opts.postBody = rec.toJSON();
+			this.go(opts);
+		},
+		//* Uses "DELETE" for the method
+		destroy: function (rec, opts) {
+			opts.method = "DELETE";
+			opts.url = this.buildUrl(rec, opts);
+			this.go(opts);
+		}
+	});
+	/**
+		A generic _source_ for use with an jsonp-ready backend. It uses "GET"
+		for _fetch_, "POST" or "PUT" for _commit_ depending on if the the _record_
+		is _new_ (created locally) or not, and "DELETE".
+	*/
+	enyo.kind({
+		name: "enyo.JsonpSource",
+		kind: enyo.XHRSource,
+		//* Uses the _enyo.JsonpRequest_ kind for requests
+		requestKind: enyo.JsonpRequest,
 		//* Uses "GET" for the method
 		fetch: function (rec, opts) {
 			opts.method = "GET";

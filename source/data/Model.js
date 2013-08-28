@@ -99,8 +99,7 @@
 			Set this property to the correct _url_ to be used when generating the request
 			for this _record_ from any specified _source_ or the _defaultDriver_ of the _record_.
 			Note that, by default, the url for a _fetch_ will have the its _primaryKey_ appended
-			to the request. If a _getUrl_ method is provided for the kind it will be called
-			and expect the return value to be the _url_ for the request. Also see _urlRoot_.
+			to the request. Overload the _getUrl_ method for extending this behavior. Also see _urlRoot_.
 		*/
 		url: "",
 		/**
@@ -242,6 +241,18 @@
 			return enyo.json.stringify(this.raw());
 		},
 		/**
+			By default this method will use any _urlRoot_ with the _url_ property and
+			if the _record_ has a _primaryKey_ value (id by default) it will be added
+			at the end.
+		*/
+		getUrl: function () {
+			var pk = this.primaryKey,
+				id = this.get(pk),
+				u  = this.urlRoot + "/" + this.url;
+			if (id) { u += ("/" + id); }
+			return u;
+		},
+		/**
 			Commit the current state of the _record_ to either the specified _source_
 			or the _records_ default _source_. The _source_ and any other options may be
 			specified in the _opts_ hash. May provied a _success_ and _fail_ method that
@@ -250,8 +261,8 @@
 		*/
 		commit: function (opts) {
 			var o = opts? enyo.clone(opts): {};
-			o.success = this.bindSafely("didCommit", this, opts);
-			o.fail = this.bindSafely("didFail", "commit", this, opts);
+			o.success = enyo.bind(this, "didCommit", this, opts);
+			o.fail = enyo.bind(this, "didFail", "commit", this, opts);
 			this.store.commitRecord(this, o);
 		},
 		/**
@@ -263,8 +274,8 @@
 		*/
 		fetch: function (opts) {
 			var o = opts? enyo.clone(opts): {};
-			o.success = this.bindSafely("didFetch", this, opts);
-			o.fail = this.bindSafely("didFail", "fetch", this, opts);
+			o.success = enyo.bind(this, "didFetch", this, opts);
+			o.fail = enyo.bind(this, "didFail", "fetch", this, opts);
 			this.store.fetchRecord(this, o);
 		},
 		/**
@@ -275,8 +286,8 @@
 		*/
 		destroy: function (opts) {
 			var o = opts? enyo.clone(opts): {};
-			o.success = this.bindSafely("didDestroy", this, opts);
-			o.fail = this.bindSafely("didFail", "destroy", this, opts);
+			o.success = enyo.bind(this, "didDestroy", this, opts);
+			o.fail = enyo.bind(this, "didFail", "destroy", this, opts);
 			this.store.fetchRecord(this, o);
 		},
 		/**
@@ -330,6 +341,16 @@
 			this.defaults = null;
 			this.includeKeys = null;
 			this.destroyed = true;
+		},
+		/**
+			When a _record_ fails during a request this method is executed with the name of
+			the command that failed followed by the reference to the record, the original
+			options and the result (if any).
+		*/
+		didFail: function (which, rec, opts, res) {
+			if (opts && opts.fail) {
+				opts.fail(rec, opts, res);
+			}
 		},
 		/**
 			Adds an observer according to the the _enyo.ObserverSupport_ API.

@@ -135,7 +135,9 @@
 				pk = p.primaryKey,
 				rr = this.records,
 				dd = this.sources,
-				d  = enyo.isString(opts.source)? dd[opts.source]: opts.source, r;
+				// d  = enyo.isString(opts.source)? dd[opts.source]: opts.source,
+				d  = (o.source && ((enyo.isString(o.source) && dd[o.source]) || o.source)) || dd[p.defaultSource],
+				r;
 			if (!d) { return this.warn("could not find source `" + (o.source || p.defaultSource) + "`"); }
 			// check for the _euid_ to ensure we actually have to use the source, if the _euid_ or
 			// the _primaryKey_ value exists and we find the record there were no changes so we call the
@@ -143,8 +145,8 @@
 			if (opts.euid && (r=rr.euid[opts.euid])) { return opts.success(opts, r); }
 			if (opts.attributes[pk] && (r=rr.pk[opts.attributes[pk]])) { return opts.success(opts, r); }
 			// alright, couldn't find a single record locally so we go ahead and continue down the chain
-			o.success = enyo.bindSafely("didFind", opts);
-			o.fail = enyo.bindSafely("didFail", "find", opts);
+			o.success = this.bindSafely("didFind", opts);
+			o.fail = this.bindSafely("didFail", "find", opts);
 			d.find(c, o);
 		},
 		/**
@@ -174,7 +176,7 @@
 				rr = this.records, fn, r;
 			// determine which filter to use
 			fn = (filter && (enyo.isString(filter)? this[filter]: filter)) || this.filter;
-			fn = enyo.bindSafely(fn, opts);
+			fn = this.bindSafely(fn, opts);
 			// first check for a provided euid to shortcut the search, we return
 			// a non-array here
 			if (opts.euid) { return rr.euid[opts.euid]; }
@@ -339,7 +341,7 @@
 			method will be called before any success method supplie as an option to the
 			_record_ itself. Overload this method to handle other scenarios.
 		*/
-		didFetch: function (rec, opts, res) {
+		didFetch: function (rec, opts, xhr, res) {
 			if (opts) {
 				if (opts.success) { return opts.success(res); }
 			}
@@ -350,7 +352,7 @@
 			method will be called before any success method supplied as an option to the
 			_record_ itself. Overload this method to handle other scenarios.
 		*/
-		didCommit: function (rec, opts, res) {
+		didCommit: function (rec, opts, xhr, res) {
 			if (opts) {
 				if (opts.success) { return opts.success(res); }
 			}
@@ -361,7 +363,7 @@
 			this method will be called before any success method supplied as an option to
 			the _record_ itself. Overload this method to handle other scenarios.
 		*/
-		didDestroy: function (rec, opts, res) {
+		didDestroy: function (rec, opts, xhr, res) {
 			if (opts) {
 				if (opts.success) { return opts.success(res); }
 			}
@@ -375,7 +377,7 @@
 			By default it will look for and execute a "fail" method of the options should it
 			exist.
 		*/
-		didFail: function (action, rec, opts, res) {
+		didFail: function (action, rec, opts, xhr, res) {
 			if (opts) {
 				if (opts.fail) { return opts.fail(res); }
 			}
@@ -390,8 +392,8 @@
 				o  = opts? enyo.clone(opts): {},
 				d  = dd[o.source || rec.defaultSource];
 			if (!d) { return this.warn("could not find source `" + (o.source || rec.defaultSource) + "`"); }
-			o.success = enyo.bindSafely("didFetch", rec, opts);
-			o.fail = enyo.bindSafely("didFail", "fetch", rec, opts);
+			o.success = this.bindSafely("didFetch", rec, opts);
+			o.fail = this.bindSafely("didFail", "fetch", rec, opts);
 			d.fetch(rec, o);
 		},
 		/**
@@ -404,8 +406,8 @@
 				o  = opts? enyo.clone(opts): {},
 				d  = dd[o.source || rec.defaultSource];
 			if (!d) { return this.warn("could not find source `" + (o.source || rec.defaultSource) + "`"); }
-			o.success = enyo.bindSafely("didCommit", rec, opts);
-			o.fail = enyo.bindSafely("didFail", "commit", rec, opts);
+			o.success = this.bindSafely("didCommit", rec, opts);
+			o.fail = this.bindSafely("didFail", "commit", rec, opts);
 			d.commit(rec, o);
 		},
 		/**
@@ -417,8 +419,8 @@
 				o  = opts? enyo.clone(opts): {},
 				d  = dd[o.source || rec.defaultSource];
 			if (!d) { return this.warn("could not find source `" + (o.source || rec.defaultSource) + "`"); }
-			o.success = enyo.bindSafely("didDestroy", rec, opts);
-			o.fail = enyo.bindSafely("didFail", "destroy", rec, opts);
+			o.success = this.bindSafely("didDestroy", rec, opts);
+			o.fail = this.bindSafely("didFail", "destroy", rec, opts);
 			d.destroy(rec, o);
 		},
 		_initRecords: function () {
