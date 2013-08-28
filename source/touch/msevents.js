@@ -34,7 +34,8 @@
 		var e = enyo.clone(inEvent);
 		e.srcEvent = inEvent;
 		// normalize "mouse button" info
-		e.which = 1;
+		// 1: left, 2: right, 3: both left & right, 4: center
+		e.which = inEvent.buttons;
 		return e;
 	};
 
