@@ -39,7 +39,7 @@ function finish(loader) {
 					"\n" + tree.toCSS();
 				fs.writeFileSync(cssFile, css, "utf8");
 			}
-		}
+		};
 	};
 
 	for (i=0; (sheet=loader.sheets[i]); i++) {
