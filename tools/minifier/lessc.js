@@ -21,30 +21,34 @@ function printUsage() {
 }
 
 function finish(loader) {
-	var report = function (err, tree) {
-		if (err) {
-			console.error(err);
-		} else {
-			var css =
-				"/* WARNING: This is a generated file for backward-compatibility.  Most      */\n" +
-				"/* usrs should instead modify LESS files.  If you choose to edit this CSS   */\n" +
-				"/* directly rather than LESS files, you should make sure less.xx.yy.min.js  */\n" +
-				"/* is commented out in your debug.html, and run deploy.sh/bat using the     */\n" +
-				"/* '-c' flag to disable LESS compilation.  This will force the loader and   */\n" +
-				"/* minifier to fall back to using CSS files in place of the same-name       */\n" +
-				"/* LESS file.                                                               */\n" +
-				"\n" + tree.toCSS();
-			fs.writeFileSync(cssFile, css, "utf8");
-		}
+	var parser, code, cssFile, sheet, report, i;
+	
+	report = function(cssFile) {
+		return function(err, tree) {
+			if (err) {
+				console.error(err);
+			} else {
+				var css =
+					"/* WARNING: This is a generated file for backward-compatibility.  Most      */\n" +
+					"/* usrs should instead modify LESS files.  If you choose to edit this CSS   */\n" +
+					"/* directly rather than LESS files, you should make sure less.xx.yy.min.js  */\n" +
+					"/* is commented out in your debug.html, and run deploy.sh/bat using the     */\n" +
+					"/* '-c' flag to disable LESS compilation.  This will force the loader and   */\n" +
+					"/* minifier to fall back to using CSS files in place of the same-name       */\n" +
+					"/* LESS file.                                                               */\n" +
+					"\n" + tree.toCSS();
+				fs.writeFileSync(cssFile, css, "utf8");
+			}
+		};
 	};
 
-	for (var i=0, sheet; (sheet=loader.sheets[i]); i++) {
+	for (i=0; (sheet=loader.sheets[i]); i++) {
 		if (sheet.slice(-5) == ".less") {
 			w(sheet);
-			var code = fs.readFileSync(sheet, "utf8");
-			var parser = new(less.Parser)({filename:sheet, paths:[path.dirname(sheet)]});
-			var cssFile = sheet.slice(0,sheet.length-5) + ".css";
-			parser.parse(code, report);
+			code = fs.readFileSync(sheet, "utf8");
+			parser = new(less.Parser)({filename:sheet, paths:[path.dirname(sheet)]});
+			cssFile = sheet.slice(0,sheet.length-5) + ".css";
+			parser.parse(code, report(cssFile));
 		}
 	}
 }
