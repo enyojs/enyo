@@ -55,7 +55,7 @@ enyo.kind({
 });
 
 enyo.kind({
-	name: "Collection Tests",
+	name: "CollectionTests",
 	kind: enyo.TestSuite,
 	noDefer: true,
 	testCreate: function () {

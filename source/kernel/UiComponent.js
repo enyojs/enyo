@@ -63,14 +63,11 @@ enyo.kind({
 			this.setContainer(null);
 			// Destroys chrome controls owned by this.
 			sup.apply(this, arguments);
-			if (this.model) {
-				this.model.removeDispatchTarget(this);
-				this.model = null;
-			}
-			if (this.controller) {
+			this.model = null;
+			if (this.controller && this.controller.removeDispatchTarget) {
 				this.controller.removeDispatchTarget(this);
-				this.controller = null;
 			}
+			this.controller = null;
 		};
 	}),
 	importProps: enyo.inherit(function (sup) {
