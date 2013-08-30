@@ -575,7 +575,7 @@
 				if (this.records.pk[prev] === rec) { delete this.records.pk[prev]; }
 			}
 		},
-		constructor: enyo.super(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function (props) {
 				var r = sup.apply(this, arguments);
 				this.sources = this.sources || {};
