@@ -33,7 +33,6 @@ enyo.ready(function(){
 				"online",
 				"offline",
 				"backbutton",
-				"localechange",
 				"batterycritical",
 				"batterylow",
 				"batterystatus",
@@ -47,6 +46,11 @@ enyo.ready(function(){
 			for (var i=0, e; (e=pge[i]); i++) {
 				// some cordova events have no type, so enyo.dispatch fails
 				document.addEventListener(e, enyo.bind(enyo.Signals, "send", "on" + e), false);
+			}
+
+			// if enyo-ilib is present, it will trigger the localechange signal. If not, we need to take care of it.
+			if (!("enyo-ilib" in enyo.version)) {
+				document.addEventListener("localechange", enyo.bind(enyo.Signals, "send", "onlocalechange"), false);
 			}
 
 			// go ahead and broadcast the signal for the "deviceready" event
