@@ -138,20 +138,20 @@ enyo.kind({
 		// update the new length
 		this.length = rr.length;
 		// trigger the event with the indices
-		this.triggerEvent("add", {records: d});
+		if (d.length) { this.triggerEvent("add", {records: d}); }
 		// now alert any observers of the length change
-		this.notifyObservers("length", l, this.length);
+		if (l != this.length) { this.notifyObservers("length", l, this.length); }
 	},
 	/**
 		Accepts a _record_ or _records_ if an array to remove from the _collection_.
-		Returns an array of any records that were successfully removed. This emits
-		the "remove" event that will have an argument with the _records_ that were
+		Returns a hash of any records (and the index they were at) that were successfully removed.
+		This emits the "remove" event that will have an argument with the _records_ that were
 		removed. Unlike the "add" event that only has indices, this event has references
 		to the actual _records_.
 	*/
 	remove: function (rec) {
 		var rr = this.records,
-			d  = [],
+			d  = {},
 			l  = this.length;
 		// if not an array, make it one
 		rec = (enyo.isArray(rec) && rec) || [rec];
@@ -161,7 +161,7 @@ enyo.kind({
 				rr.splice(i, 1);
 				r.removeListener("change", this._recordChanged);
 				r.removeListener("destroy", this._recordDestroyed);
-				d.push(r);
+				d[i] = r;
 			}
 		}
 		// fix up our new length
@@ -300,6 +300,8 @@ enyo.kind({
 			o = opts || (data && !enyo.isArray(data) && data);
 		if (o) { this.importProps(o); }
 		this.records = d || [];
+		// itialized our length property
+		this.length = this.records.length;
 		// we bind this method to our collection so it can be reused as an event listener
 		// for many records
 		this._recordChanged = enyo.bind(this, this._recordChanged);
