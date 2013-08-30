@@ -17,21 +17,6 @@
 		*/
 		sources: {ajax: "enyo.AjaxSource"},
 		/**
-			These are special events that objects can register for, for a given
-			record. They are emitted at various times as a substitute for normal events
-			as would be used by _enyo.Components_. To add events to this array in
-			a subkind, simply set the value to an array with the new events your objects
-			will emit as notifications. This property is concatenated by default, so
-			setting this array will not overwrite the underlying events. These events are
-			registered for via the _addListener_, _removeListener_ and _triggerEvent_ API
-			of _enyo.Store_.
-		
-			- `change` is emitted when new values were set on a record
-			- `didFetch`, `didCommit` and `didDestroy` are emitted after their appropriate
-			  action has successfully completed
-		*/
-		recordEvents: ["change", "didFetch", "didCommit", "didDestroy"],
-		/**
 			By default, the store indexes records in several ways one of which is by its
 			_primaryKey_ value if it exists. This is intended to be unique and it will
 			complain when it finds multiple instances of the same _record_. Set this flag to
@@ -43,7 +28,7 @@
 		//*@protected
 		records: null,
 		collections: null,
-		concat: ["sources", "recordEvents"],
+		concat: ["sources"],
 		//*@public
 		/**
 			Will create a new record of _kind_ (string or constructor) and accepts
@@ -104,14 +89,20 @@
 		addRecord: function (rec) {
 			var rr = this.records,
 				pk = rec.primaryKey,
-				p  = null,
-				f  = false;
+				// this is the object storing the primary keys by instance of a kind
+				// since there could be overlap, have to create it if it doesn't already
+				// exist
+				kn = rr.pk[rec.kindName] || (rr.pk[rec.kindName] = {}),
+				f  = false, id, p;
+			// the one true universally unique identifier across all bounds at runtime
+			// is the simplest case
 			if (!rr.euid[rec.euid]) { (rr.euid[rec.euid]=rec) && (f=true); }
-			if (rec[pk]) {
+			// if there is a value for the primary key we need to add that
+			if (enyo.exists((id=rec.get(pk)))) {
 				// in this special indexing we ensure that a primary key does not
 				// have duplicate entry -- same primary key value but different euid
 				// indicates duplicates
-				if ((p=rr.pk[rec[pk]]) && p.euid != rec.euid) {
+				if ((p=kn[id]) && p.euid != rec.euid) {
 					// we have a duplicate
 					if (!this.ignoreDuplicates) {
 						this.warn("duplicate record added to store, euid's `" + p.euid + "` and `" + rec.euid + "`" +
@@ -121,8 +112,12 @@
 							"flag to true.");
 					}
 				}
-				f = (rr.pk[rec[pk]]=rec) && true;
+				f = (kn[id]=rec) && true;
 			}
+			// regardless of whether or not the record has a primary key now, that could be because
+			// it is delayed in retrieving one, doesn't have one and won't, or either way we want to
+			// know if it changes so mappings are accurate internally
+			rec.addObserver(pk, this._recordKeyChanged);
 			// for kind name registration we have to make sure that there are any entries
 			// for that kind already
 			if (!rr.kn[rec.kindName]) { rr.kn[rec.kindName] = {}; }
@@ -140,7 +135,10 @@
 			var cc = this.collections,
 				f  = false;
 			if (!cc[c.euid]) { (cc[c.euid]=c) && (f=true); }
-			if (f) { c.store = this; }
+			if (f) {
+				c.store = this;
+				c.addListener("destroy", this._collectionDestroyed);
+			}
 			return f;
 		},
 		/**
@@ -153,6 +151,7 @@
 				f  = false;
 			c = (enyo.isString(c) && cc[c]) || c;
 			delete cc[c.euid];
+			c.removeListener("destroy", this._collectionDestroyed);
 		},
 		/**
 			Will remove the reference for the given _record_ if it was in
@@ -161,9 +160,11 @@
 		removeRecord: function (rec) {
 			var rr  = this.records,
 				pk = rec.primaryKey;
-			if (rr.euid[rec.euid]) { delete rr.euid[rec.euid]; }
-			if (rec[pk] && rr.pk[rec[pk]]) { delete rr.pk[rec[pk]]; }
-			if (rr.kn[rec.euid]) { delete rr.kn[rec.euid]; }
+			delete rr.euid[rec.euid];
+			delete rr.pk[rec.kindName][rec.get(pk)];
+			delete rr.kn[rec.euid];
+			rec.removeListener("change", this._recordChanged);
+			rec.removeListener("destroy", this._recordDestroyed);
 		},
 		/**
 			Requires a hash with _key_ _value_ pairs that are the source's name by
@@ -225,6 +226,12 @@
 			   will simply be added to the store.
 		*/
 		find: function (kind, opts) {
+			// in cases where no kind is provided we assume enyo.Model which is consistent with
+			// other similar api's
+			if (arguments.length == 1) {
+				opts = kind;
+				kind = enyo.Model;
+			}
 			// first find the kind, get access to its prototype and the
 			// options so we can bind our own success and fail methods
 			var c  = enyo.isString(kind)? enyo.constructorForKind(kind): kind,
@@ -236,7 +243,7 @@
 				rr = this.records,
 				pk = p.primaryKey,
 				d  = (o.source && ((enyo.isString(o.source) && dd[o.source]) || o.source)) || dd[p.defaultSource],
-				r  = (o.euid && rr.euid[o.euid]) || (a && a[pk] && rr.pk[a[pk]]);
+				r  = (o.euid && rr.euid[o.euid]) || (a && a[pk] && rr.pk[p.kindName][a[pk]]);
 			// if we already found the record then we know that it was one of the cases where searching
 			// locally first worked so we return this value directly to the original success method
 			if (r) { return o.success(o, r); }
@@ -261,11 +268,13 @@
 			options it will return a single _record_ or _undefined_, not an array as this is a
 			narrow search for a specific _record_.
 		
-			This method accepts two parameters, the kind as a constructor or string, and the
-			options to match against. Unlike _find_, there are no _success_ or _fail_ methods,
-			note that all _keys_ of the options will be used as criteria to match against. If you
-			provide an _euid_ key or a key matching the _primaryKey_ of the model kind it will not
-			query for any other values or scan the entire dataset.
+			This method accepts three parameters, the kind as a constructor or string, the
+			options to match against and an optional _filter_ method. Unlike _find_, there are no
+			_success_ or _fail_ methods, note that all _keys_ of the options will be used as criteria
+			to match against. If you provide an _euid_ key, a key matching the _primaryKey_ of the
+			model kind, or a _kindName_ property it will not query for any other values or scan the entire
+			dataset. Using the _kindName_ property will return all records registered in this _store_
+			for that _kindName_.
 		
 			The filtering process is handled by the _filter_ method of the _store_. Overload this
 			method or provide an optional third parameter that can be a function or string name of a
@@ -274,19 +283,25 @@
 			not it should be included in the result-set.
 		*/
 		findLocal: function (kind, opts, filter) {
+			if (arguments.length < 3 && enyo.isObject(kind)) {
+				if (enyo.isFunction (opts)) { filter = opts; }
+				opts = kind;
+				kind = enyo.Model;
+			}
 			var c  = enyo.isString(kind)? enyo.constructorForKind(kind): kind,
 				p  = c.prototype,
 				pk = p.primaryKey,
 				rr = this.records, fn, r;
-			// determine which filter to use
-			fn = (filter && (enyo.isString(filter)? this[filter]: filter)) || this.filter;
-			fn = this.bindSafely(fn, opts);
 			// first check for a provided euid to shortcut the search, we return
 			// a non-array here
 			if (opts.euid) { return rr.euid[opts.euid]; }
 			// if the options have a primary key value we do the same and do not
 			// return an array
-			if (opts[pk]) { return rr.pk[opts[pk]]; }
+			if (enyo.exists(opts[pk])) { return rr.pk[p.kindName][opts[pk]]; }
+			if (opts.kindName) { return rr.kn[opts.kindName]; }
+			// determine which filter to use
+			fn = (filter && (enyo.isString(filter)? this[filter]: filter)) || this.filter;
+			fn = this.bindSafely(fn, opts);
 			// ok we need to grab all of the _records_ for the given kind and search
 			// them for the features
 			rr = rr.kn[p.kindName] || [];
@@ -300,7 +315,7 @@
 			to handle special cases.
 		*/
 		filter: function (opts, rec) {
-			for (var k in opts) { if (rec[k] !== opts[k]) return false; }
+			for (var k in opts) { if (rec.get(k) !== opts[k]) return false; }
 			return true;
 		},
 		/**
@@ -347,13 +362,30 @@
 			}
 		},
 		/**
+			Removes all listeners from a given _record_ or _collection_.
+		*/
+		removeAllListeners: function (rec) {
+			var rr = this.records,
+				r  = enyo.isString(rec)? rr.euid[rec]: rec,
+				ed = r.euid,
+				m  = this._recordListeners, hh; 
+			m = m[ed];
+			if (m) {
+				for (var e in m) {
+					hh = m[e];
+					for (var i=0, h; (h=hh[i]); ++i) { this.removeListener(r, e, h); }
+				}
+			}
+		},
+		/**
 			Triggers the given _event_ for the requested _record_ _rec_ passing optional
 			_args_ as a single parameter. Note _args_ is expected to be a mutable object literal
-			or instance of a _kind_.
+			or instance of a _kind_. Event listeners accept the _record_, the _event_ name and
+			the optional _args_ parameter.
 		*/
 		triggerEvent: function (rec, event, args) {
 			var m  = this._recordListeners,
-				ed = enyo.isString(rec)? rec: rec.euid;
+				ed = enyo.isString(rec)? rec: rec.euid,
 				r  = enyo.isString(rec)? this.records.euid[rec]: rec;
 			m = m[ed];
 			if (m) {
@@ -390,10 +422,25 @@
 				}
 			}
 		},
+		_removeAllObservers: function (rec) {
+			var m  = this._recordObservers,
+				ed = enyo.isString(rec)? rec: rec.euid, hh;
+			m = m[ed];
+			if (m) {
+				for (var p in m) {
+					hh = m[p];
+					if (hh) {
+						for (var i=0, h; (h=hh[i]); ++i) { this._removeObserver(rec, p, h); }
+					}
+				}
+			}
+		},
 		_notifyObservers: function (rec, prop, prev, val) {
 			var ro = this._recordObservers[rec.euid],
 				rh = ro && ro[prop];
-			for (var i=0, h; (h=rh[i]); ++i) { h(prev, val, prop, rec); }
+			if (rh) {
+				for (var i=0, h; (h=rh[i]); ++i) { h(prev, val, prop, rec); }
+			}
 		},
 		//*@public
 		/**
@@ -427,7 +474,8 @@
 			if (opts) {
 				if (opts.success) { return opts.success(res); }
 			}
-			this.triggerEvent(rec, "didDestroy");
+			// once that is done we can execute the remaining things to be done
+			this._recordDestroyed(rec);
 		},
 		/**
 			This method is executed when one of the primary actions as failed. It has the
@@ -504,6 +552,29 @@
 				} else if (!Kind && enyo.isString(dd[k])) { this.warn("could not find source -> `" + dd[k] + "`"); }
 			}
 		},
+		//* this cannot be handled in the didDestroy method because that happen before
+		//* the record has a chance to do its own notifications, this must happen last
+		_recordDestroyed: function (rec) {
+			this.removeRecord(rec);
+			this.removeAllListeners(rec);
+			this._removeAllObservers(rec);
+		},
+		_collectionDestroyed: function (col) {
+			this.removeCollection(col);
+			this.removeAllListeners(col);
+			this._removeAllObservers(col);
+		},
+		_recordKeyChanged: function (prev, val, prop, rec) {
+			// we use the same test for normalized addition via the _addRecord_ method
+			// that will warn if some other record already has this id or if the id somehow
+			// is now different for that particular record
+			this.addRecord(rec);
+			// in cases where this was update we check for a duplicate entry for the
+			// previous id
+			if (prev) {
+				if (this.records.pk[prev] === rec) { delete this.records.pk[prev]; }
+			}
+		},
 		constructor: enyo.super(function (sup) {
 			return function (props) {
 				var r = sup.apply(this, arguments);
@@ -514,6 +585,8 @@
 				this._initSources();
 				this._recordObservers = {};
 				this._recordListeners = {};
+				this._recordKeyChanged = this.bindSafely(this._recordKeyChanged);
+				this._collectionDestroyed = this.bindSafely(this._collectionDestroyed);
 				return r;
 			};
 		}),

@@ -44,10 +44,13 @@ enyo.kind({
 		will attempt to identify existing records with the same _primaryKey_
 		and update that record with the results. When using the _add_ strategy, if
 		incoming data from _fetch_ belongs to a _record_ already in the _collection_
-		this _record_ will be duplicated and have a unique _euid_.
+		this _record_ will be duplicated and have a unique _euid_. By default, _add_
+		is used unless specified otherwise.
 	*/
 	fetch: function (opts) {
 		var o = opts? enyo.clone(opts): {};
+		// ensure there is a strategy for the _didFetch_ method
+		(opts = opts || {}) && (opts.strategy = opts.strategy || "add");
 		o.success = enyo.bind(this, "didFetch", this, opts);
 		o.fail = enyo.bind(this, "didFail", "fetch", this, opts);
 		// this will need to be asynchronous to ensure that we
@@ -67,10 +70,16 @@ enyo.kind({
 	didFetch: function (rec, opts, res) {
 		var rr = this.records,
 			// the parsed result
-			r  = this.parse(res);
-		// since in cases where _replace_ was specified it will have already been
-		// executed we will always merge here
-		
+			r  = this.parse(res),
+			s  = opts.strategy;
+		if (r) {
+			// even if replace was requested it will have already taken place so we
+			// need only evaluate the strategy for merging the new results
+			switch (s) {
+			case "add":
+			
+			}
+		}
 	},
 	/**
 		When a _record_ fails during a request this method is executed with the name of
@@ -151,15 +160,16 @@ enyo.kind({
 			if (i > -1) {
 				rr.splice(i, 1);
 				r.removeListener("change", this._recordChanged);
+				r.removeListener("destroy", this._recordDestroyed);
 				d.push(r);
 			}
 		}
 		// fix up our new length
 		this.length = rr.length;
 		// trigger the event with the instances
-		this.triggerEvent("remove", {records: d});
+		if (d.length) { this.triggerEvent("remove", {records: d}); }
 		// now alert any observers of the length change
-		this.notifyObservers("length", l, this.length);
+		if (l != this.length) { this.notifyObservers("length", l, this.length); }
 		return d;
 	},
 	/**
@@ -169,13 +179,18 @@ enyo.kind({
 		returns an array with all of the removed _records_.
 	*/
 	removeAll: function () {
-		
+		return this.remove(this.records);
 	},
 	/**
-		Removes all _records_ from the _collection_ and _destroys_ them.
+		Removes all _records_ from the _collection_ and _destroys_ them. This will
+		still emit the _remove_ event, and any _records_ being destroyed will also
+		emit their own _destroy_ events.
 	*/
 	destroyAll: function () {
-		
+		var rr = this.removeAll();
+		this._destroyAll = true;
+		for (var i=0, r; (r=rr[i]); ++i) { r.destroy(); }
+		this._destroyAll = false;
 	},
 	/**
 		Returns the index of the given _record_ if it exists in this _collection_.
@@ -223,6 +238,7 @@ enyo.kind({
 		if (r && !(r instanceof this.model)) {
 			r = this.records[i] = this.store.createRecord(this.model, r);
 			r.addListener("change", this._recordChanged);
+			r.addListener("destroy", this._recordDestroyed);
 		}
 		return r;
 	},
@@ -287,6 +303,7 @@ enyo.kind({
 		// we bind this method to our collection so it can be reused as an event listener
 		// for many records
 		this._recordChanged = enyo.bind(this, this._recordChanged);
+		this._recordDestroyed = enyo.bind(this, this._recordDestroyed);
 		this.euid = enyo.uuid();
 		// attempt to resolve the kind of model if it is a string and not a constructor
 		// for the kind
@@ -296,6 +313,16 @@ enyo.kind({
 		}
 		// initialize the store
 		this.storeChanged();
+	},
+	/**
+		Destroys the _collection_ and removes all _records_. This does not destroy the
+		_records_.
+	*/
+	destroy: function () {
+		this.removeAll();
+		this.triggerEvent("destroy");
+		this.store = null;
+		this.destroyed = true;
 	},
 	/**
 		Retrieves _path_ from the _collection_ and returns its value or undefined.
@@ -330,7 +357,7 @@ enyo.kind({
 			if (enyo.isString(s)) {
 				s = enyo.getPath(s);
 				if (!s) {
-					this.warn("could not find the requested store -> ", this.store, ", using" +
+					enyo.warn("enyo.Collection: could not find the requested store -> ", this.store, ", using" +
 						"the default store");
 				}
 			}
@@ -341,5 +368,12 @@ enyo.kind({
 	_recordChanged: function () {
 		// TODO:
 		enyo.log("_recordChanged: ", arguments);
-	}
+	},
+	_recordDestroyed: function (rec) {
+		// if we're destroying all records we ignore this as the record
+		// will have already been removed, otherwise we remove the record
+		// from the collection
+		if (!this._destroyAll) { this.remove(rec); }
+	},
+	_destroyAll: false
 });

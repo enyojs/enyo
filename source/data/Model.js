@@ -182,7 +182,6 @@
 		constructor: function (attributes, opts) {
 			if (opts) { this.importProps(opts); }
 			this.euid = enyo.uuid();
-			this.storeChanged();
 			var a = this.attributes? enyo.clone(this.attributes): {},
 				d = this.defaults,
 				x = attributes;
@@ -195,6 +194,7 @@
 			this.attributes = a;
 			this.changed = {};
 			this.previous = {};
+			this.storeChanged();
 		},
 		//*@protected
 		importProps: function (p) {
@@ -274,7 +274,7 @@
 			var o = opts? enyo.clone(opts): {};
 			o.success = enyo.bind(this, "didDestroy", this, opts);
 			o.fail = enyo.bind(this, "didFail", "destroy", this, opts);
-			this.store.fetchRecord(this, o);
+			this.store.destroyRecord(this, o);
 		},
 		/**
 			Overload this method to change the structure of the data as it is returned from
@@ -290,13 +290,17 @@
 			to the record and notify any observers of those properties that have changed.
 		*/
 		didFetch: function (rec, opts, res) {
-			this.setObject(this.parse(res));
-			// once notifications have taken place we clear the dirty status so the
-			// state of the model is now clean
-			this.dirty = false;
-			if (opts) {
-				if (opts.success) {
-					opts.success(rec, opts, res);
+			// the actual result has to be checked post-parse
+			var r = this.parse(res);
+			if (r) {
+				this.setObject(r);
+				// once notifications have taken place we clear the dirty status so the
+				// state of the model is now clean
+				this.dirty = false;
+				if (opts) {
+					if (opts.success) {
+						opts.success(rec, opts, res);
+					}
 				}
 			}
 		},
@@ -305,15 +309,19 @@
 			provided callbacks are executed.
 		*/
 		didCommit: function (rec, opts, res) {
-			this.setObject(this.parse(res));
-			// once notifications have taken place we clear the dirty status so the
-			// state of the model is now clean
-			this.dirty = false;
-			// since this was successful this can no longer be considered a new record
-			this.isNew = false;
-			if (opts) {
-				if (opts.success) {
-					opts.success(rec, opts, res);
+			// the actual result has to be checked post-parse
+			var r = this.parse(res);
+			if (r) {
+				this.setObject(r);
+				// once notifications have taken place we clear the dirty status so the
+				// state of the model is now clean
+				this.dirty = false;
+				// since this was successful this can no longer be considered a new record
+				this.isNew = false;
+				if (opts) {
+					if (opts.success) {
+						opts.success(rec, opts, res);
+					}
 				}
 			}
 		},
@@ -322,7 +330,7 @@
 			provided callbacks are executed.
 		*/
 		didDestroy: function (rec, opts, res) {
-			this.store.removeRecord(this);
+			this.triggerEvent("destroy");
 			this.previous = null;
 			this.changed = null;
 			this.attributes = null;
@@ -403,7 +411,7 @@
 				if (enyo.isString(s)) {
 					s = enyo.getPath(s);
 					if (!s) {
-						this.warn("could not find the requested store -> ", this.store, ", using" +
+						enyo.warn("enyo.Model: could not find the requested store -> ", this.store, ", using" +
 							"the default store");
 					}
 				}

@@ -306,13 +306,9 @@ enyo.kind({
 			if (enyo.isString(c)) {
 				c = this.controller = enyo.getPath.call(c[0] == "."? this: enyo.global, c);
 			}
-			if (c) {
-				c.addDispatchTarget(this);
-			}
+			if (c && c.addDispatchTarget) { c.addDispatchTarget(this); }
 		}
-		if (p) {
-			p.removeDispatchTarget(this);
-		}
+		if (p && p.removeDispatchTarget) { p.removeDispatchTarget(this); }
 	},
 	modelChanged: function (p) {
 		var m = this.model;
