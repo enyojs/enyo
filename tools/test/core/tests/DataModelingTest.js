@@ -80,3 +80,45 @@ enyo.kind({
 		this.finish(c.length != 0 && "destroying a collection should remove all of its records");
 	}
 });
+
+enyo.kind({
+	name: "StoreTests",
+	kind: enyo.TestSuite,
+	noDefer: true,
+	testExists: function () {
+		this.finish(!enyo.store && "enyo.store did not exist as expected");
+	},
+	testCreateRecord: function () {
+		var m = enyo.store.createRecord({id: 70, name: "John"}, {propsWorks: true});
+		this.finish(
+			(!m && "did not create the record") ||
+			(m.get("id") != 70 && "did not get the attributes as expected") ||
+			(!m.propsWorks && "did not get the properties as expected")
+		);
+	},
+	testFindLocal: function () {
+		var m1   = enyo.store.findLocal({id: 70}),
+			m2   = enyo.store.findLocal(enyo.Model, {name: "John"})[0],
+			euid = m1 && m1.euid,
+			m3   = enyo.store.findLocal(enyo.Model, {euid: euid});
+		this.finish(
+			(!m1 && "could not find the record by id") ||
+			(!m2 && "could not find the record by attribute") ||
+			(!m3 && "could not find the record by euid")
+		);
+	},
+	testFindByEuid: function () {
+		var m    = enyo.store.findLocal({id: 70}),
+			euid = m.euid,
+			r    = enyo.store.getRecord(euid);
+		this.finish(r != m && "could not retrieve the record by its euid");
+	},
+	testCreateCollection: function () {
+		var c = enyo.store.createCollection([{id:71},{id:72}],{name: "MyCollection"});
+		this.finish(
+			(!c && "could not create the collection") ||
+			(c.name != "MyCollection" && "properties not applied as expected") ||
+			(c.length != 2 && "collection did not apply records as expected")
+		);
+	}
+})

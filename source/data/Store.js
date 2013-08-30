@@ -34,11 +34,16 @@
 			_store_.
 		*/
 		createRecord: function (kind, attrs, opts) {
+			if (arguments.length < 3) {
+				if (enyo.isObject(kind)) {
+					opts = attrs;
+					attrs = kind;
+					kind = enyo.Model;
+				}
+			}
 			var Kind = (enyo.isString(kind) && enyo.getPath(kind)) || (enyo.isFunction(kind) && kind);
-			// if the constructor wasn't found then we assume the initial parametr was the attributes
-			attrs = Kind? attrs: kind;
 			// test to see if opts are opts or attrs are opts
-			opts = arguments[2] || (!Kind && attrs == kind && arguments[1]) || {};
+			opts = opts || {};
 			enyo.mixin(opts, {store: this});
 			// if we didn't find the constructor we just use default
 			if (!Kind) { Kind = enyo.Model; }
@@ -64,11 +69,16 @@
 			_enyo.Collection_ will be used by default.
 		*/
 		createCollection: function (kind, records, opts) {
+			if (arguments.length < 3) {
+				if (enyo.isArray(kind)) {
+					opts = records;
+					records = kind;
+					kind = enyo.Collection;
+				}
+			}
 			var Kind = (enyo.isString(kind) && enyo.getPath(kind)) || (enyo.isFunction(kind) && kind);
-			// if the constructor wasn't found then we assume the initial parametr was the attributes
-			records = Kind? records: kind;
 			// test to see if opts are opts or records are opts
-			opts = arguments[2] || (!Kind && records == kind && arguments[1]) || {};
+			opts = opts || {};
 			enyo.mixin(opts, {store: this});
 			// if we didn't find the constructor we just use default
 			if (!Kind) { Kind = enyo.Collection; }
@@ -298,7 +308,7 @@
 			fn = this.bindSafely(fn, opts);
 			// ok we need to grab all of the _records_ for the given kind and search
 			// them for the features
-			rr = rr.kn[p.kindName] || [];
+			rr = enyo.values(rr.kn[p.kindName]) || [];
 			r = enyo.filter(rr, fn, this);
 			return r;
 		},
