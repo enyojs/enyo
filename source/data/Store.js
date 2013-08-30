@@ -1,10 +1,5 @@
 (function (enyo) {
-	//*public
-	/**
-		These properties will be applied to the global and automatically generated
-		_enyo.store_ object.
-	*/
-	enyo.defaultStoreProperties = {};
+	//*@public
 	/**
 	*/
 	enyo.kind({
@@ -611,9 +606,9 @@
 	});
 	//*@public
 	/**
-		This method will put-off instancing the global enyo.store until after client-source has
-		been loaded and evaluated so that if they modify the _enyo.DefaultStoreProperties_ hash
-		it can be applied. It will not generate a new _enyo.store_ if one has already been created.
+		There needs to always be an _enyo.store_ instance. If the default is not what you
+		need simply create a new instance and assign it to this variable or use it to create
+		your _collections_ and _models_ and they will not use this instance.
 	*/
-	enyo.ready(function () { enyo.store = enyo.store || new enyo.Store(enyo.defaultStoreProperties); });
+	enyo.store = new enyo.Store();
 })(enyo);
