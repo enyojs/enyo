@@ -48,11 +48,6 @@ enyo.ready(function(){
 				document.addEventListener(e, enyo.bind(enyo.Signals, "send", "on" + e), false);
 			}
 
-			// if enyo-ilib is present, it will trigger the localechange signal. If not, we need to take care of it.
-			if (!("enyo-ilib" in enyo.version)) {
-				document.addEventListener("localechange", enyo.bind(enyo.Signals, "send", "onlocalechange"), false);
-			}
-
 			// go ahead and broadcast the signal for the "deviceready" event
 			enyo.Signals.send("ondeviceready", inEvent);
 
