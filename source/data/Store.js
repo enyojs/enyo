@@ -298,7 +298,7 @@
 			// if the options have a primary key value we do the same and do not
 			// return an array
 			if (enyo.exists(opts[pk])) { return rr.pk[p.kindName][opts[pk]]; }
-			if (opts.kindName) { return rr.kn[opts.kindName]; }
+			if (opts.kindName) { return (r=rr.kn[opts.kindName]) && enyo.values(r); }
 			// determine which filter to use
 			fn = (filter && (enyo.isString(filter)? this[filter]: filter)) || this.filter;
 			fn = this.bindSafely(fn, opts);
@@ -529,6 +529,9 @@
 			o.success = this.bindSafely("didDestroy", rec, opts);
 			o.fail = this.bindSafely("didFail", "destroy", rec, opts);
 			d.destroy(rec, o);
+		},
+		destroyRecordLocal: function (rec, opts) {
+			this.didDestroy(rec, opts);
 		},
 		_initRecords: function () {
 			var r  = this.records,

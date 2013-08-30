@@ -277,6 +277,16 @@
 			this.store.destroyRecord(this, o);
 		},
 		/**
+			To destroy the _record_ but only locally (completely remove it locally) without
+			sending a request to any _source_ to destroy it you should call this method. This
+			is the correct method to destroy local-only _records_.
+		*/
+		destroyLocal: function () {
+			var o = {};
+			o.success = enyo.bind(this, "didDestroy", this, opts);
+			this.store.destroyRecordLocal(this, o);
+		},
+		/**
 			Overload this method to change the structure of the data as it is returned from
 			a _fetch_ or _commit_. By default it just returns the _data_ as it was retrieved
 			from the _source_.
