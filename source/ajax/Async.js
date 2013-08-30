@@ -27,7 +27,7 @@ enyo.kind({
 	//* @protected
 	failed: false,
 	context: null,
-	constructor: enyo.super(function (sup) {
+	constructor: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.responders = [];

@@ -44,7 +44,7 @@ enyo.kind({
 	protectedStatics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
 	},
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			this.controls = [];
 			this.children = [];
@@ -55,7 +55,7 @@ enyo.kind({
 			this.notifyObservers("model");
 		};
 	}),
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function() {
 			// Destroys all non-chrome controls (regardless of owner).
 			this.destroyClientControls();
@@ -73,7 +73,7 @@ enyo.kind({
 			}
 		};
 	}),
-	importProps: enyo.super(function (sup) {
+	importProps: enyo.inherit(function (sup) {
 		return function(inProps) {
 			sup.apply(this, arguments);
 			if (!this.owner) {
@@ -88,7 +88,7 @@ enyo.kind({
 	//
 	// We could call _discoverControlParent_ in _addComponent_, but it would
 	// cause a lot of useless checking.
-	createComponents: enyo.super(function (sup) {
+	createComponents: enyo.inherit(function (sup) {
 		return function() {
 			var results = sup.apply(this, arguments);
 			this.discoverControlParent();
@@ -98,7 +98,7 @@ enyo.kind({
 	discoverControlParent: function() {
 		this.controlParent = this.$[this.controlParentName] || this.controlParent;
 	},
-	adjustComponentProps: enyo.super(function (sup) {
+	adjustComponentProps: enyo.inherit(function (sup) {
 		return function(inProps) {
 			// Components we create have us as a container by default.
 			inProps.container = inProps.container || this;

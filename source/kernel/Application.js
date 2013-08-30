@@ -124,7 +124,7 @@
 
 		//*@public
 		controllers: null,
-		
+
 		viewReady: false,
 
 		//*@public
@@ -155,7 +155,7 @@
 		// PROTECTED METHODS
 
 		//*@protected
-		constructor: enyo.super(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function (props) {
 				if (props && enyo.exists(props.name)) {
 					enyo.setPath(props.name, this);
@@ -172,7 +172,7 @@
 		}),
 
 		//*@protected
-		constructed: enyo.super(function (sup) {
+		constructed: enyo.inherit(function (sup) {
 			return function () {
 				// we need to make sure that the controllers are already initialized
 				// before we create our view according to the view controller's API
@@ -184,8 +184,8 @@
 				}
 			};
 		}),
-		
-		render: enyo.super(function (sup) {
+
+		render: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				if (this.view && this.view.generated) {
@@ -214,7 +214,7 @@
 		},
 
 		//*@protected
-		destroy: enyo.super(function (sup) {
+		destroy: enyo.inherit(function (sup) {
 			return function () {
 				// release/destroy all controllers associated with
 				// this instance of the application

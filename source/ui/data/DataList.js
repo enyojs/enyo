@@ -61,7 +61,7 @@
 		controlParentName: "page1",
 		containerName: "scroller",
 		debugPageBoundaries: false,
-		create: enyo.super(function (sup) {
+		create: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				this.orientation = this.orientation[0] == "v"? "v": "h";
@@ -475,10 +475,10 @@
 			}
 		},
 		left: function () {
-			
+
 		},
 		right: function () {
-			
+
 		},
 		positionPageAfter: function (p) {
 			var $r = this.orientation,
@@ -512,7 +512,7 @@
 				this._lastPage = $b;
 			}
 		},
-		initContainer: enyo.super(function (sup) {
+		initContainer: enyo.inherit(function (sup) {
 			return function () {
 				var $o = enyo.clone(this.get("containerOptions")),
 					$s = this.get("scrollerOptions");
@@ -530,7 +530,7 @@
 				this.$.scroller.rendered();
 			}
 		},
-		resizeHandler: enyo.super(function (sup) {
+		resizeHandler: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				this.updateSizing();
