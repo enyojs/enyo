@@ -540,8 +540,8 @@
 			};
 		}),
 		updateSizing: function () {
-			this.width = this.getWidth();
-			this.height = this.getHeight();
+			this.width = this.$.scroller.clientWidth;
+			this.height = this.$.scroller.clientHeight;
 		},
 		layoutPages: function () {
 			this.adjustPageSize(this.$.page1);
