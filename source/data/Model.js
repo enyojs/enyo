@@ -343,7 +343,6 @@
 			this.triggerEvent("destroy");
 			this.previous = null;
 			this.changed = null;
-			this.attributes = null;
 			this.defaults = null;
 			this.includeKeys = null;
 			this.destroyed = true;

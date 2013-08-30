@@ -106,7 +106,7 @@
 					// we have a duplicate
 					if (!this.ignoreDuplicates) {
 						this.warn("duplicate record added to store, euid's `" + p.euid + "` and `" + rec.euid + "`" +
-							", for primary key `" + pk + ": " + rec[pk] + "`, previous submission being overwritten " +
+							", for primary key `" + pk + ": " + rec.get(pk) + "`, previous submission being overwritten " +
 							"by newer, be careful as you don't know which instance you may have in any given control; " +
 							"use strategies when possible to avoid this scenario or set enyo.store's `ignoreDuplicates` " +
 							"flag to true.");
@@ -158,12 +158,11 @@
 			the _store_. This is called automatically when a _record_ is destroyed.
 		*/
 		removeRecord: function (rec) {
-			var rr  = this.records,
-				pk = rec.primaryKey;
-			delete rr.euid[rec.euid];
-			delete rr.pk[rec.kindName][rec.get(pk)];
-			delete rr.kn[rec.euid];
-			rec.removeListener("change", this._recordChanged);
+			var rr = this.records,
+				pk = rec.primaryKey, id;
+			rec.euid && delete rr.euid[rec.euid];
+			(id=rec.get(pk)) && (delete rr.pk[rec.kindName][rec.get(pk)]);
+			rec.euid && delete rr.kn[rec.kindName][rec.euid];
 			rec.removeListener("destroy", this._recordDestroyed);
 		},
 		/**
@@ -407,7 +406,7 @@
 			// been tagged before
 			m = m[prop] = m[prop] || [];
 			fn = enyo.isString(fn)? (ctx? ctx[fn]: enyo.getPath(fn)): (ctx? enyo.bind(fn, ctx): fn);
-			m.push(fn);
+			!~enyo.indexOf(fn, m) && m.push(fn);
 			return fn;
 		},
 		_removeObserver: function (rec, prop, fn) {
@@ -472,7 +471,7 @@
 		*/
 		didDestroy: function (rec, opts, xhr, res) {
 			if (opts) {
-				if (opts.success) { return opts.success(res); }
+				if (opts.success) { opts.success(res); }
 			}
 			// once that is done we can execute the remaining things to be done
 			this._recordDestroyed(rec);
@@ -561,6 +560,7 @@
 			this.removeRecord(rec);
 			this.removeAllListeners(rec);
 			this._removeAllObservers(rec);
+			rec.store = null;
 		},
 		_collectionDestroyed: function (col) {
 			this.removeCollection(col);

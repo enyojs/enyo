@@ -154,20 +154,22 @@ enyo.kind({
 			d  = {},
 			l  = this.length;
 		// if not an array, make it one
-		rec = (enyo.isArray(rec) && rec) || [rec];
+		rec = (enyo.isArray(rec) && rec.slice()) || [rec];
 		for (var j=0, r, i; (r=rec[j]); ++j) {
 			i = this.indexOf(r);
 			if (i > -1) {
 				rr.splice(i, 1);
-				r.removeListener("change", this._recordChanged);
-				r.removeListener("destroy", this._recordDestroyed);
-				d[i] = r;
+				if (r instanceof this.model) {
+					r.removeListener("change", this._recordChanged);
+					r.removeListener("destroy", this._recordDestroyed);
+					d[i] = r;
+				}
 			}
 		}
 		// fix up our new length
 		this.length = rr.length;
 		// trigger the event with the instances
-		if (d.length) { this.triggerEvent("remove", {records: d}); }
+		if (enyo.keys(d).length) { this.triggerEvent("remove", {records: d}); }
 		// now alert any observers of the length change
 		if (l != this.length) { this.notifyObservers("length", l, this.length); }
 		return d;
