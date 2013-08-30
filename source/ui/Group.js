@@ -32,6 +32,7 @@ enyo.kind({
 			} else {
 				this.setActive(inEvent.originator);
 			}
+			return true;
 		}
 	},
 	activeChanged: function(inOld) {
