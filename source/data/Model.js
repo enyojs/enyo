@@ -283,7 +283,7 @@
 		*/
 		destroyLocal: function () {
 			var o = {};
-			o.success = enyo.bind(this, "didDestroy", this, opts);
+			o.success = enyo.bind(this, "didDestroy", this);
 			this.store.destroyRecordLocal(this, o);
 		},
 		/**

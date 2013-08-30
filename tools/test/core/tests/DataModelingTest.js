@@ -7,7 +7,6 @@ enyo.kind({
 		this.finish();
 	},
 	testDestroy: function () {
-		debugger
 		var m = enyo.store.findLocal({kindName: "enyo.Model"})[0];
 		m.destroyLocal();
 		this.finish();
