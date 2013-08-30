@@ -1,22 +1,6 @@
 (function (enyo) {
 	//*@protected
 	/**
-		As seen at https://gist.github.com/jcxplorer/823878, by jcxplorer.
-		TODO: replace with faster implementation
-	*/
-	var uuid = function () {
-		var uuid = "", idx = 0, rand;
-		for (; idx < 32; ++idx) {
-			rand = Math.random() * 16 | 0;
-			if (idx == 8 || idx == 12 || idx == 16 || idx == 20) {
-				uuid += "-";
-			}
-			uuid += (idx == 12? 4: (idx == 16? (rand & 3 | 8): rand)).toString(16);
-		}
-		return uuid;
-	};
-	//*@protected
-	/**
 		We create this reusable object for properties passed to the mixin
 		method so as not to create and throw away a new object every time
 		a new model is created.
@@ -156,7 +140,8 @@
 			if (rv !== value) {
 				this.previous[prop] = rv;
 				this.changed[prop] = this.attributes[prop] = value;
-				this.notifyObservers(prop);
+				this.notifyObservers(prop, rv, value);
+				this.triggerEvent("change");
 				this.changed = {};
 				this.dirty = true;
 			}
@@ -168,20 +153,23 @@
 			to the `attributes` schema when this method is used.
 		*/
 		setObject: function (props) {
-			var ch = false,
-				rv, k;
-			for (k in props) {
-				rv = this.attributes[k];
-				if (rv && "function" == typeof rv) { continue; }
-				if (rv === props[k]) { continue; }
-				this.previous[k] = rv;
-				this.changed[k] = this.attributes[k] = props[k];
-				ch = true;
-			}
-			if (ch) {
-				this.notifyObservers();
-				this.changed = {};
-				this.dirty = true;
+			if (props) {
+				var ch = false,
+					rv, k;
+				for (k in props) {
+					rv = this.attributes[k];
+					if (rv && "function" == typeof rv) { continue; }
+					if (rv === props[k]) { continue; }
+					this.previous[k] = rv;
+					this.changed[k] = this.attributes[k] = props[k];
+					ch = true;
+				}
+				if (ch) {
+					this.notifyObservers();
+					this.triggerEvent("change");
+					this.changed = {};
+					this.dirty = true;
+				}
 			}
 			return this;
 		},
@@ -193,7 +181,7 @@
 		*/
 		constructor: function (attributes, opts) {
 			if (opts) { this.importProps(opts); }
-			this.euid = uuid();
+			this.euid = enyo.uuid();
 			this.storeChanged();
 			var a = this.attributes? enyo.clone(this.attributes): {},
 				d = this.defaults,
@@ -209,12 +197,10 @@
 			this.previous = {};
 		},
 		//*@protected
-		importProps: function (props) {
-			if (props) {
-				if (props.defaults || props.attributes) { enyo.Model.subclass(this, props); }
-				for (var k in props) {
-					this[k] = props[k];
-				}
+		importProps: function (p) {
+			if (p) {
+				if (p.defaults || p.attributes) { enyo.Model.subclass(this, p); }
+				for (var k in p) { this[k] = p[k]; }
 			}
 		},
 		//*@public
@@ -323,6 +309,8 @@
 			// once notifications have taken place we clear the dirty status so the
 			// state of the model is now clean
 			this.dirty = false;
+			// since this was successful this can no longer be considered a new record
+			this.isNew = false;
 			if (opts) {
 				if (opts.success) {
 					opts.success(rec, opts, res);
@@ -356,21 +344,31 @@
 			Adds an observer according to the the _enyo.ObserverSupport_ API.
 		*/
 		addObserver: function (prop, fn, ctx) {
-			return this.store.addRecordObserver(this, prop, fn, ctx);
+			// check to see if the observer is being placed against a computed
+			// property on the attributes and throw a warning if it is
+			if (this.attributes[prop] && "function" == typeof this.attributes[prop]) {
+				return enyo.warn("enyo.Model: attempt to add observer for computed property `" + prop + "`");
+			}
+			return this.store._addObserver(this, prop, fn, ctx);
 		},
 		/**
 			Removes an observer according to the the _enyo.ObserverSupport_ API.
 		*/
 		removeObserver: function (prop, fn) {
-			return this.store.removeRecordObserver(this, prop, fn);
+			return this.store._removeObserver(this, prop, fn);
 		},
 		/**
-			Notifies observers, but, unlike the _enyo.ObserverSupport_ API it accepts
-			only one, optional, parameter _prop_, otherwise any _changed_ properties
-			will be notified.
+			Will notify any observers for the given property, accepts the previous
+			and current values to pass to observers. If no property is provided it
+			will notify any observers for any changed properties.
 		*/
-		notifyObservers: function (prop) {
-			this.store.notifyRecordObservers(this, prop);
+		notifyObservers: function (prop, prev, val) {
+			// if no prop is provided we call it once for each changed attribute
+			if (!prop) {
+				for (var k in this.changed) {
+					this.store._notifyObservers(this, k, this.previous[k], this.attributes[k]);
+				}
+			} else { this.store._notifyObservers(this, prop, prev, val); }
 		},
 		/**
 			Add a listener for the given _event_. Callbacks will be executed with two
@@ -392,10 +390,11 @@
 			return this.store.removeListener(this, prop, fn);
 		},
 		/**
-			Triggers any _listeners_ for the _event_ of this _record_.
+			Triggers any _listeners_ for the _event_ of this _record_ with optional
+			_args_.
 		*/
-		triggerEvent: function (event) {
-			this.store.triggerEvent(this, event);
+		triggerEvent: function (event, args) {
+			this.store.triggerEvent(this, event, args);
 		},
 		//*@protected
 		storeChanged: function () {

@@ -31,43 +31,139 @@
 			  action has successfully completed
 		*/
 		recordEvents: ["change", "didFetch", "didCommit", "didDestroy"],
+		/**
+			By default, the store indexes records in several ways one of which is by its
+			_primaryKey_ value if it exists. This is intended to be unique and it will
+			complain when it finds multiple instances of the same _record_. Set this flag to
+			`true` and it will no longer complain but __note__: having duplicate entries of the
+			same unique _primaryKey_ in a single _store_ means you cannot use _find_ or
+			_findLocal_ on that _primaryKey_, you would need to use _euid_.
+		*/
+		ignoreDuplicates: false,
 		//*@protected
 		records: null,
+		collections: null,
 		concat: ["sources", "recordEvents"],
 		//*@public
 		/**
 			Will create a new record of _kind_ (string or constructor) and accepts
 			an optional _attributes_ and _options_ parameter(s) that will be passed
-			to the constructor of the _enyo.Model_ (see enyo.Model.constructor).
+			to the constructor of the _enyo.Model_ (see enyo.Model.constructor). If
+			_kind_ is not provided _enyo.Model_ will be used by default. Returns the
+			newly created instance. Will set the _records_ _store_ property to this
+			_store_.
 		*/
 		createRecord: function (kind, attrs, opts) {
-			var Kind = enyo.isString(kind)? enyo.getPath(kind): kind,
-				opts = opts? enyo.mixin(opts, {store: this}): {store: this};
+			var Kind = (enyo.isString(kind) && enyo.getPath(kind)) || (enyo.isFunction(kind) && kind);
+			// if the constructor wasn't found then we assume the initial parametr was the attributes
+			attrs = Kind? attrs: kind;
+			// test to see if opts are opts or attrs are opts
+			opts = arguments[2] || (!Kind && attrs == kind && arguments[1]) || {};
+			enyo.mixin(opts, {store: this});
+			// if we didn't find the constructor we just use default
+			if (!Kind) { Kind = enyo.Model; }
 			return new Kind(attrs, opts);
+		},
+		/**
+			Retrieve a _record_ if it exists by its _euid_.
+		*/
+		getRecord: function (euid) {
+			return this.records.euid[euid];
+		},
+		/**
+			Retrieve a _collection_ if it exists by its _euid_.
+		*/
+		getCollection: function (euid) {
+			return this.collections[euid];
+		},
+		/**
+			Creates a _collection_ of _kind_ (string or constructor) and accepts
+			an optional _records_ array and options to be passed to the constructor
+			of the _collection_ as the second parameter. Will set the _store_ property
+			to this _store_. Returns the newly created instance. If _kind_ is omitted
+			_enyo.Collection_ will be used by default.
+		*/
+		createCollection: function (kind, records, opts) {
+			var Kind = (enyo.isString(kind) && enyo.getPath(kind)) || (enyo.isFunction(kind) && kind);
+			// if the constructor wasn't found then we assume the initial parametr was the attributes
+			records = Kind? records: kind;
+			// test to see if opts are opts or records are opts
+			opts = arguments[2] || (!Kind && records == kind && arguments[1]) || {};
+			enyo.mixin(opts, {store: this});
+			// if we didn't find the constructor we just use default
+			if (!Kind) { Kind = enyo.Collection; }
+			return new Kind(records, opts);
 		},
 		/**
 			Add a record by its _euid_ and if it has a value for its known
 			_primaryKey_ we index it by this value as well for quicker reference
 			later. This is mostly used internally as it is called automatically by
-			_models_ as they are created.
+			_models_ as they are created. Returns `true` on successful addition,
+			`false` otherwise.
 		*/
 		addRecord: function (rec) {
-			var r  = this.records,
-				pk = rec.primaryKey;
-			if (!r.euid[rec.euid]) { r.euid[rec.euid] = rec; }
-			if (rec[pk] && !r.pk[rec[pk]]) { r.pk[rec[pk]] = rec; }
-			if (!r.kn[rec.euid]) { r.kn[rec.euid] = rec; }
+			var rr = this.records,
+				pk = rec.primaryKey,
+				p  = null,
+				f  = false;
+			if (!rr.euid[rec.euid]) { (rr.euid[rec.euid]=rec) && (f=true); }
+			if (rec[pk]) {
+				// in this special indexing we ensure that a primary key does not
+				// have duplicate entry -- same primary key value but different euid
+				// indicates duplicates
+				if ((p=rr.pk[rec[pk]]) && p.euid != rec.euid) {
+					// we have a duplicate
+					if (!this.ignoreDuplicates) {
+						this.warn("duplicate record added to store, euid's `" + p.euid + "` and `" + rec.euid + "`" +
+							", for primary key `" + pk + ": " + rec[pk] + "`, previous submission being overwritten " +
+							"by newer, be careful as you don't know which instance you may have in any given control; " +
+							"use strategies when possible to avoid this scenario or set enyo.store's `ignoreDuplicates` " +
+							"flag to true.");
+					}
+				}
+				f = (rr.pk[rec[pk]]=rec) && true;
+			}
+			// for kind name registration we have to make sure that there are any entries
+			// for that kind already
+			if (!rr.kn[rec.kindName]) { rr.kn[rec.kindName] = {}; }
+			if (!rr.kn[rec.kindName][rec.euid]) { (rr.kn[rec.kindName][rec.euid]=rec) && (f=true); }
+			if (f) { rec.store = this; }
+			return f;
+		},
+		/**
+			Adds a collection to the _store_. This is typically done automatically
+			and does not need to be called. Accepts a reference to the _collection_.
+			Will set the _store_ to the _store_ property on the _collection_. Returns
+			`true` on successful addition, `false` otherwise.
+		*/
+		addCollection: function (c) {
+			var cc = this.collections,
+				f  = false;
+			if (!cc[c.euid]) { (cc[c.euid]=c) && (f=true); }
+			if (f) { c.store = this; }
+			return f;
+		},
+		/**
+			Removes a _collection_ from the _store_. Accepts a reference to the _collection_
+			or the euid of the _collection_ to remove. Returns `true` on successful removal,
+			`false` otherwise.
+		*/
+		removeCollection: function (c) {
+			var cc = this.collections,
+				f  = false;
+			c = (enyo.isString(c) && cc[c]) || c;
+			delete cc[c.euid];
 		},
 		/**
 			Will remove the reference for the given _record_ if it was in
 			the _store_. This is called automatically when a _record_ is destroyed.
 		*/
 		removeRecord: function (rec) {
-			var r  = this.records,
+			var rr  = this.records,
 				pk = rec.primaryKey;
-			if (r.euid[rec.euid]) { delete r.euid[rec.euid]; }
-			if (rec[pk] && r.pk[rec[pk]]) { delete r.pk[rec[pk]]; }
-			if (r.kn[rec.euid]) { delete r.kn[rec.euid]; }
+			if (rr.euid[rec.euid]) { delete rr.euid[rec.euid]; }
+			if (rec[pk] && rr.pk[rec[pk]]) { delete rr.pk[rec[pk]]; }
+			if (rr.kn[rec.euid]) { delete rr.kn[rec.euid]; }
 		},
 		/**
 			Requires a hash with _key_ _value_ pairs that are the source's name by
@@ -129,24 +225,32 @@
 			   will simply be added to the store.
 		*/
 		find: function (kind, opts) {
+			// first find the kind, get access to its prototype and the
+			// options so we can bind our own success and fail methods
 			var c  = enyo.isString(kind)? enyo.constructorForKind(kind): kind,
 				p  = c.prototype,
-				o  = enyo.clone(opts),
-				pk = p.primaryKey,
+				o  = opts,
+				a  = o.attributes;
+			// now we need to figure out what strategy, source, pk...
+			var dd = this.sources,
 				rr = this.records,
-				dd = this.sources,
-				// d  = enyo.isString(opts.source)? dd[opts.source]: opts.source,
+				pk = p.primaryKey,
 				d  = (o.source && ((enyo.isString(o.source) && dd[o.source]) || o.source)) || dd[p.defaultSource],
-				r;
+				r  = (o.euid && rr.euid[o.euid]) || (a && a[pk] && rr.pk[a[pk]]);
+			// if we already found the record then we know that it was one of the cases where searching
+			// locally first worked so we return this value directly to the original success method
+			if (r) { return o.success(o, r); }
+			// now we have to ensure we have a valid source
 			if (!d) { return this.warn("could not find source `" + (o.source || p.defaultSource) + "`"); }
-			// check for the _euid_ to ensure we actually have to use the source, if the _euid_ or
-			// the _primaryKey_ value exists and we find the record there were no changes so we call the
-			// user provided _success_ method
-			if (opts.euid && (r=rr.euid[opts.euid])) { return opts.success(opts, r); }
-			if (opts.attributes[pk] && (r=rr.pk[opts.attributes[pk]])) { return opts.success(opts, r); }
-			// alright, couldn't find a single record locally so we go ahead and continue down the chain
+			// otherwise we need to clone the options so we can now add our own success methods
+			o = enyo.clone(o);
+			// bind our methods
 			o.success = this.bindSafely("didFind", opts);
 			o.fail = this.bindSafely("didFail", "find", opts);
+			// set the strategy, note that we're setting this on the options being passed to the
+			// success method not our clone
+			opts.strategy = opts.strategy || "merge";
+			// and fire off the request assuming the source will be able to handle the request
 			d.find(c, o);
 		},
 		/**
@@ -243,9 +347,11 @@
 			}
 		},
 		/**
-			Triggers the given _event_ for the requested _record_ _rec_.
+			Triggers the given _event_ for the requested _record_ _rec_ passing optional
+			_args_ as a single parameter. Note _args_ is expected to be a mutable object literal
+			or instance of a _kind_.
 		*/
-		triggerEvent: function (rec, event) {
+		triggerEvent: function (rec, event, args) {
 			var m  = this._recordListeners,
 				ed = enyo.isString(rec)? rec: rec.euid;
 				r  = enyo.isString(rec)? this.records.euid[rec]: rec;
@@ -254,25 +360,13 @@
 				m = m[event];
 				if (m && m.length) {
 					for (var i=0, fn; (fn=m[i]); ++i) {
-						fn(rec, event);
+						fn(rec, event, args);
 					}
 				}
 			}
 		},
-		/**
-			Adds an observer for a particular event to a specific _record_. The
-			first property can be a reference to the desired _record_ or the _euid_
-			of the record. The _prop_ parameter is the string for the desired attribute
-			to watch, _fn_ can be a function reference, a string for the function of the
-			optional _ctx_ property or a path to resolve for the method. Returns the method
-			that can be used later to remove the observer. If the optional _ctx_ parameter
-			is provided the _fn_ will be bound to it via _enyo.bind_.
-		
-			Note that these observers are called according to the _enyo.ObserverSupport_ API
-			with the exception of the addition of a fourth parameter that is a reference to
-			the _record_ caused the observer to fire.
-		*/
-		addRecordObserver: function (rec, prop, fn, ctx) {
+		//*@protected
+		_addObserver: function (rec, prop, fn, ctx) {
 			var m  = this._recordObservers,
 				ed = enyo.isString(rec)? rec: rec.euid;
 			// add a new entry in map for this record if there isn't one already
@@ -284,11 +378,7 @@
 			m.push(fn);
 			return fn;
 		},
-		/**
-			Removes an observer for the given _rec_(its euid or instance) for the given _prop_
-			and matched on the provided _fn_.
-		*/
-		removeRecordObserver: function (rec, prop, fn) {
+		_removeObserver: function (rec, prop, fn) {
 			var m  = this._recordObservers,
 				ed = enyo.isString(rec)? rec: rec.euid, i;
 			m = m[ed];
@@ -300,40 +390,10 @@
 				}
 			}
 		},
-		/**
-			Will notify any observers of _rec_ for any properties of the _rec_ in the _changed_
-			hash. The optional _prop_ parameter will ensure that notifications are run for any
-			observers of the _prop_ for the given _rec_. No other properties will be fired. The
-			_rec_ parameter can be the record or its euid.
-		*/
-		notifyRecordObservers: function (rec, prop) {
-			var m  = this._recordObservers,
-				ed = enyo.isString(rec)? rec: rec.euid,
-				r  = enyo.isString(rec)? this.records.euid[rec]: rec,
-				ch = false;
-			m = m[ed];
-			if (m) {
-				if (prop) {
-					this._notifyObservers(r, m[prop], prop);
-				} else {
-					for (var k in r.changed) {
-						if (m[k] && m[k].length) {
-							this._notifyObservers(r, m[k], k);
-						}
-					}
-				}
-			}
-			// if something changed, we go ahead and notify listeners of the _change_ event
-			this.triggerEvent(rec, "change");
-		},
-		//*@protected
-		_notifyObservers: function (rec, lrs, prop) {
-			var rv = rec.previous[prop],
-				v  = rec.get(prop);
-			for (var i=0, o; (o=lrs[i]); ++i) {
-				// called according to the observer parameters, prev, current, prop
-				o(rv, v, prop, rec);
-			}
+		_notifyObservers: function (rec, prop, prev, val) {
+			var ro = this._recordObservers[rec.euid],
+				rh = ro && ro[prop];
+			for (var i=0, h; (h=rh[i]); ++i) { h(prev, val, prop, rec); }
 		},
 		//*@public
 		/**
@@ -400,7 +460,6 @@
 			Internal method called to find the requested source and execute the correct
 			method. It also hooks the _stores_ own response mechanisms via the options hash.
 		*/
-
 		commitRecord: function (rec, opts) {
 			var dd = this.sources,
 				o  = opts? enyo.clone(opts): {},
@@ -450,6 +509,7 @@
 				var r = sup.apply(this, arguments);
 				this.sources = this.sources || {};
 				this.records = this.records || {};
+				this.collections = this.collections || {};
 				this._initRecords();
 				this._initSources();
 				this._recordObservers = {};
@@ -477,7 +537,7 @@
 	/**
 		This method will put-off instancing the global enyo.store until after client-source has
 		been loaded and evaluated so that if they modify the _enyo.DefaultStoreProperties_ hash
-		it can be applied.
+		it can be applied. It will not generate a new _enyo.store_ if one has already been created.
 	*/
-	enyo.ready(function () { enyo.store = new enyo.Store(enyo.defaultStoreProperties); });
+	enyo.ready(function () { enyo.store = enyo.store || new enyo.Store(enyo.defaultStoreProperties); });
 })(enyo);

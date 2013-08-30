@@ -318,14 +318,8 @@ enyo.kind({
 		var m = this.model;
 		if (m) {
 			if (enyo.isString(m)) {
-				m = this.model = enyo.getPath.call(m[0] == "."? this: enyo.global, m);
+				this.model = enyo.getPath.call(m[0] == "."? this: enyo.global, m);
 			}
-			if (m) {
-				m.addDispatchTarget(this);
-			}
-		}
-		if (p) {
-			p.removeDispatchTarget(this);
 		}
 	}
 });
