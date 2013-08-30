@@ -172,7 +172,7 @@
 			this.controlParentName = p.name;
 			this.discoverControlParent();
 			p.index = n;
-			for (var $i=0, $j=$o, c$, d$; (c$ = p.children[$i]) && (d$=$d[$j]) && $j < $e; ++$i, ++$j) {
+			for (var $i=0, $j=$o, c$, d$; (c$ = p.children[$i]) && (d$=$d.at($j)) && $j < $e; ++$i, ++$j) {
 				if (c$._listDisabledChild) {
 					this.enableChild(c$);
 				}
@@ -257,30 +257,24 @@
 			}
 			return $f;
 		},
-		modelsAdded: function (sender, event) {
+		modelsAdded: function (e, c, props) {
 			// FIXME: This is a temporary implementation as it will continue to
 			// throw indices for pages already generated - but it would need to inspect
 			// them to ensure they are ordered and then group them so the page is only
 			// generated once
-			if (sender == this.controller) {
-				if (!this._hasReset) {
-					return this.reset();
-				}
-				// if these conditions are true then it hasn't reset yet so it
-				// is safe to ignore the event
+			if (c == this.controller) {
+				if (!this._hasReset) { return this.reset(); }
 				if (this.generated && this.$.scroller.canGenerate) {
 					this.set("batching", true);
-					for (var $i=0, r$; (r$=event.models[$i]); ++$i) {
-						this.add(r$.index);
-					}
+					for (var i=0, r; (r=props.records[i]); ++i) { this.add(r); }
 					this.updateMetrics();
 					this.adjustLastPage();
 					this.set("batching", false);
 				}
 			}
 		},
-		modelsRemoved: function (sender, event) {
-			if (sender == this.controller) {
+		modelsRemoved: function (e, c, props) {
+			if (c == this.controller) {
 				if (this.generated && this.$.scroller.canGenerate) {
 					this.set("batching", true);
 					// FIXME: This is a temporary implementation for this event;
@@ -291,23 +285,23 @@
 				}
 			}
 		},
-		modelAdded: function (sender, event) {
-			if (sender == this.controller) {
-				if (!this._hasReset && !this.batching) {
-					return this.reset();
-				}
-				if (this.generated && this.$.scroller.canGenerate) {
-					this.add(event.index);
-				}
-			}
-		},
-		modelRemoved: function (sender, event) {
-			if (sender == this.controller) {
-				if (this.generated && this.$.scroller.canGenerate) {
-					this.remove(event.index);
-				}
-			}
-		},
+		// modelAdded: function (sender, event) {
+		// 	if (sender == this.controller) {
+		// 		if (!this._hasReset && !this.batching) {
+		// 			return this.reset();
+		// 		}
+		// 		if (this.generated && this.$.scroller.canGenerate) {
+		// 			this.add(event.index);
+		// 		}
+		// 	}
+		// },
+		// modelRemoved: function (sender, event) {
+		// 	if (sender == this.controller) {
+		// 		if (this.generated && this.$.scroller.canGenerate) {
+		// 			this.remove(event.index);
+		// 		}
+		// 	}
+		// },
 		update: function (i) {
 			// TODO: This should never get called and should possibly be removed
 			// from the API altogether
