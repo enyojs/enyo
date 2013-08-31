@@ -112,10 +112,9 @@
 
 		//*@public
 		/**
-			A computed property representing the underlying array of models. This
-			property may be set directly, but doing so will automatically replace all
-			of the current content. Use [add()](#enyo.Collection::add) if you want to
-			extend (not replace) the current dataset.
+			A computed property representing the underlying array of models.
+			Use [add()](#enyo.Collection::add) if you want to extend (not
+			replace) the current dataset.
 
 			This computed property may be overloaded in more complex scenarios
 			involving filtering and conditionally supplied datasets.
