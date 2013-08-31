@@ -480,7 +480,7 @@ enyo.constructorForKind = function(inKind) {
 	}
 	// If what we found at this namespace isn't a function, it's definitely not a kind constructor
 	if (!enyo.isFunction(ctor)) {
-		return null;
+		throw "[" + inKind + "] is not the name of a valid kind.";
 	}
 	enyo._kindCtors[inKind] = ctor;
 	return ctor;
