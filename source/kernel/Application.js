@@ -136,6 +136,9 @@
 		//*@protected
 		_isApplication: true,
 
+		// Let events bubble to enyo.master, the top of the chain
+		owner: enyo.master,
+
 		// ...........................
 		// PUBLIC METHODS
 
