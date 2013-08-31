@@ -33,7 +33,6 @@ enyo.ready(function(){
 				"online",
 				"offline",
 				"backbutton",
-				"localechange",
 				"batterycritical",
 				"batterylow",
 				"batterystatus",
