@@ -267,16 +267,16 @@ enyo.kind.extendMethods = function(ctor, props, add) {
 	if (!proto.inherited) {
 		proto.inherited = enyo.kind.inherited;
 	}
+	// rename constructor to _constructor to work around IE8/Prototype problems
+	if (props.hasOwnProperty("constructor")) {
+		props._constructor = props.constructor;
+		delete props.constructor;
+	}
 	// decorate function properties to support inherited (do this ex post facto so that
 	// ctor.prototype is known, relies on elements in props being copied by reference)
 	for (var n in props) {
 		var p = props[n];
 		if (enyo.isInherited(p)) {
-			// handle special case where the constructor has actually been renamed
-			// but mixins or other objects for extending will use the actual name
-			if (n == "constructor") {
-				n = "_constructor";
-			}
 			// ensure that if there isn't actually a super method to call, it won't
 			// fail miserably - while this shouldn't happen often, it is a sanity
 			// check for mixin-extensions for kinds
