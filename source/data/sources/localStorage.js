@@ -2,6 +2,6 @@
 /**
 */
 enyo.kind({
-	name: "enyo.LocalStorageDriver",
+	name: "enyo.LocalStorageSource",
 	kind: enyo.Source
 });

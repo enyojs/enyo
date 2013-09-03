@@ -4,6 +4,7 @@
 enyo.kind({
 	name: "enyo.Collection",
 	kind: null,
+	noDefer: true,
 	/**
 		This represents the _kind_ of records the _collection_ will house. By
 		default it is simply _enyo.Model_ but can be set to any _kind_ of model.
@@ -53,13 +54,30 @@ enyo.kind({
 		(opts = opts || {}) && (opts.strategy = opts.strategy || "add");
 		o.success = enyo.bind(this, "didFetch", this, opts);
 		o.fail = enyo.bind(this, "didFail", "fetch", this, opts);
-		// this will need to be asynchronous to ensure that we
-		// to replace records when necessary
-		enyo.asyncMethod(this, function () { this.store.fetchRecord(this, o); });
 		// now if we need to lets remove the records and attempt to do this
 		// while any possible asynchronous remote (not always remote...) calls
 		// are made for efficiency
-		if (o.replace) { return this.removeAll(); }
+		enyo.asyncMethod(this, function () { this.store.fetchRecord(this, o); });
+		if (o.replace && !o.destroy) { this.removeAll(); }
+		else if (o.destroy) { this.destroyAll(); }
+	},
+	/**
+		Convenience method not requiring the callee to supply the _replace_
+		parameter of the options.
+	*/
+	fetchAndReplace: function (opts) {
+		var o = opts || {};
+		o.replace = true;
+		return this.fetch(o);
+	},
+	/**
+		Convenience method not requiring the callee to supply the _destroy_
+		parameter of the options.
+	*/
+	fetchAndDestroy: function (opts) {
+		var o = opts || {};
+		o.destroy = true;
+		return this.fetch(o);
 	},
 	/**
 		This method is executed after a successful _fetch_, asynchronously. It
@@ -71,14 +89,16 @@ enyo.kind({
 		var rr = this.records,
 			// the parsed result
 			r  = this.parse(res),
-			s  = opts.strategy;
+			s  = opts.strategy, fn;
 		if (r) {
 			// even if replace was requested it will have already taken place so we
 			// need only evaluate the strategy for merging the new results
-			switch (s) {
-			case "add":
-			
+			if ((fn=this[s]) && enyo.isFunction(fn)) {
+				fn.call(this, r);
 			}
+		}
+		if (opts) {
+			if (opts.success) { opts.success(rec, opts, res); }
 		}
 	},
 	/**
@@ -111,6 +131,46 @@ enyo.kind({
 	*/
 	toJSON: function () {
 		return enyo.json.stringify(this.raw());
+	},
+	/**
+		One of the strategies available after the _collection_ has retrieved data
+		from its _fetch_ method. It will attempt to find and update any record already
+		in the _collection_. If the _model kind_ associated with this _collection_ has
+		_mergeKeys_ they will be used to compare the records otherwise it will depend
+		on the _primaryKey_ value for comparison. Any unmerged records will be added at
+		the end of the _collection_. If a _primaryKey_ value exists on the incoming _records_
+		it will take precedence over _mergeKeys_.
+	*/
+	merge: function (rec) {
+		// TODO: with a little more time this could be optimized a bit better...
+		var p  = this.model.prototype,
+			pk = p.primaryKey,
+			mk = p.mergeKeys,
+			a  = [], r, f, k, m, w;
+		rec = (enyo.isArray(rec) && rec) || [rec];
+		for (var j=0, nr; (nr=rec[j]); ++j) {
+			if (enyo.exists(nr[pk]) || mk) {
+				f = false;
+				for (k=0; !f && (r=this.at(k)); ++k) {
+					if ((!isNaN(nr[pk]) || nr[pk]) && r.get(pk) == nr[pk]) {
+						// ensure that the incoming data is properly parsed
+						r.setObject(r.parse(nr));
+						f = true;
+					} else if (mk) {
+						w = false;
+						for (m=0; m<mk.length; ++m) {
+							if (!nr[m] == r.get(m)) { (w=false); break; }
+							else { w = true; }
+						}
+						if (w) { r.setObject(r.parse(nr)); }
+					}
+				}
+				if (!f) { a.push(nr); }
+			} else { a.push(nr); }
+		}
+		// for any records that didn't get merged we need to add them
+		// now as a group
+		if (a.length) { this.add(a); }
 	},
 	/**
 		Adds a _record_ or _records_ if an array to the _collection_. Optionally
@@ -150,26 +210,48 @@ enyo.kind({
 		to the actual _records_.
 	*/
 	remove: function (rec) {
-		var rr = this.records,
+		// in order to do this as efficiently as possible we have to find any
+		// record(s) that exist that we actually can remove and ensure that they
+		// are ordered so, in reverse order, we can remove them without the need
+		// to lookup their indices more than once or make copies of any arrays beyond
+		// the ordering array, unfortunately we have to make two passes against the
+		// records being removed
+		// TODO: there may be even faster ways...
+		var rr = [],
 			d  = {},
-			l  = this.length;
+			l  = this.length, x=0, m=0;
 		// if not an array, make it one
-		rec = (enyo.isArray(rec) && rec.slice()) || [rec];
-		for (var j=0, r, i; (r=rec[j]); ++j) {
-			i = this.indexOf(r);
-			if (i > -1) {
-				rr.splice(i, 1);
-				if (r instanceof this.model) {
-					r.removeListener("change", this._recordChanged);
-					r.removeListener("destroy", this._recordDestroyed);
-					d[i] = r;
+		rec = (enyo.isArray(rec) && rec) || [rec];
+		for (var j=0, r, i, k; (r=rec[j]); ++j) {
+			if ((i=this.indexOf(r)) > -1) {
+				if (i <= m) {
+					m=i;
+					rr.unshift(i);
+				} else if (i >= x) {
+					x=i;
+					rr.push(i);
+				} else {
+					k=0;
+					while (rr[k] < i) { ++k; }
+					rr.splice(k-1, 0, i);
 				}
+				d[i] = r;
+			}
+		}
+		// now we iterate over any indices we know we'll remove in reverse
+		// order safely being able to use the index we just found for both the
+		// splice and the return index
+		for (j=rr.length-1; !isNaN((i=rr[j])); --j) {
+			this.records.splice(i, 1);
+			if (d[i] instanceof this.model) {
+				d[i].removeListener("change", this._recordChanged);
+				d[i].removeListener("destroy", this._recordDestroyed);
 			}
 		}
 		// fix up our new length
-		this.length = rr.length;
+		this.length = this.records.length;
 		// trigger the event with the instances
-		if (enyo.keys(d).length) { this.triggerEvent("remove", {records: d}); }
+		if (rr.length) { this.triggerEvent("remove", {records: d}); }
 		// now alert any observers of the length change
 		if (l != this.length) { this.notifyObservers("length", l, this.length); }
 		return d;
@@ -189,9 +271,9 @@ enyo.kind({
 		emit their own _destroy_ events.
 	*/
 	destroyAll: function () {
-		var rr = this.removeAll();
+		var rr = this.removeAll(), r;
 		this._destroyAll = true;
-		for (var i=0, r; (r=rr[i]); ++i) { r.destroy(); }
+		for (var k in rr) { (r=rr[k]) && r.destroy(); }
 		this._destroyAll = false;
 	},
 	/**
@@ -238,7 +320,7 @@ enyo.kind({
 	at: function (i) {
 		var r = this.records[i];
 		if (r && !(r instanceof this.model)) {
-			r = this.records[i] = this.store.createRecord(this.model, r);
+			r = this.records[i] = this.store.createRecord(this.model, r, {parse: true, owner: this});
 			r.addListener("change", this._recordChanged);
 			r.addListener("destroy", this._recordDestroyed);
 		}
@@ -314,6 +396,8 @@ enyo.kind({
 		var m = this.model;
 		if (m && enyo.isString(m)) {
 			this.model = enyo.getPath(m);
+		} else {
+			this.model = enyo.checkConstructor(m);
 		}
 		// initialize the store
 		this.storeChanged();
@@ -323,7 +407,13 @@ enyo.kind({
 		_records_.
 	*/
 	destroy: function () {
-		this.removeAll();
+		var rr = this.removeAll(), r;
+		for (var k in rr) {
+			r = rr[k];
+			if (r.owner === this) {
+				r.destroy();
+			}
+		}
 		this.triggerEvent("destroy");
 		this.store = null;
 		this.destroyed = true;

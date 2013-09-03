@@ -52,8 +52,8 @@
 		childBindingDefaults: null,
 		//*@protected
 		childMixins: [
-			enyo.RepeaterChildSupport,
-			enyo.RepeaterChildModelSupport
+			enyo.RepeaterChildSupport//,
+			// enyo.RepeaterChildModelSupport
 		],
 		concat: ["childMixins", "_repeaterKinds"],
 		_repeaterKinds: ["enyo.DataRepeater"],
@@ -172,18 +172,20 @@
 				}
 			};
 		}),
-		modelsAdded: function (e, c, props) {
+		modelsAdded: function (c, e, props) {
 			if (c == this.controller) {
 				this.set("batching", true);
 				// note that these are indices when being added so they can be lazily
 				// instantiated
-				for (var i=0, r; (r=props.records[i]); ++i) { this.add(c.at(r), r); }
+				for (var i=0, r; (!isNaN(r=props.records[i])); ++i) { this.add(c.at(r), r); }
 				this.set("batching", false);
 			}
 		},
-		modelsRemoved: function (e, c, props) {
+		modelsRemoved: function (c, e, props) {
 			if (c == this.controller) {
-				for (var i in props.records) { this.remove(i); }
+				// unfortunately we need to remove these in reverse order
+				var idxs = enyo.keys(props.records);
+				for (var i=idxs.length-1, idx; (idx=idxs[i]); --i) { this.remove(idx); }
 			}
 		},
 		batchingChanged: function (prev, val) {

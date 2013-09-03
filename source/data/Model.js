@@ -24,14 +24,7 @@
 	
 		## Computed Properties and _enyo.Model_
 	
-		A _computed property_ is nothing more than a property whose value is the return value
-		of a function. A _computed property_ of a _model_ is slightly different than that of
-		_enyo.Object_ in that it cannot be cached or dependent on other properties. You declare
-		a _computed property_ for a _model_ simply by setting the _attribute_ to a function. When
-		requested as a normal attribute it will be the return value of that function executed in
-		the context of the _model_ (the `this` value for that method). You cannot set the value of
-		a computed property. When the _raw_ method or _toJSON_ methods are executed, if no _includeKeys_
-		are specified that exclude it, any computed properties return value will be included in the payload.
+
 
 		## Bindings
 	
@@ -61,6 +54,12 @@
 			on the _attributes schema_ will be ignored.
 		*/
 		defaults: null,
+		/**
+			Set this flag to `true` if this model is read-only and will not need to _commit_
+			or _destroy_ any changes via a _source_. This will cause a _destroy_ to safely
+			execute _destroyLocal_ by default.
+		*/
+		readOnly: false,
 		/**
 			All _models_ have a _store_ reference. You can set this to a specific _store_
 			instance in your application or use its default (the enyo.store global).
@@ -106,6 +105,11 @@
 		*/
 		primaryKey: "id",
 		/**
+			Set this to an array of _keys_ to use for comparative purposes when using the
+			_merge_ strategy in the _store_ or any _collection_.
+		*/
+		mergeKeys: null,
+		/**
 			The `euid` is an arbitrarily assigned value that every _model_ has and is unique.
 			Models can be requested via this property in _enyo.Collections_ and the _store_. This
 			property, unlike the `primaryKey`, is stored on the _model_ and not its attributes hash.
@@ -124,7 +128,7 @@
 		*/
 		get: function (prop) {
 			var fn = this.attributes[prop];
-			return (fn && "function" == typeof fn && fn.call(this)) || fn;
+			return (fn && "function" == typeof fn)? fn.call(this): fn;
 		},
 		//*@public
 		/**
@@ -141,6 +145,16 @@
 				this.previous[prop] = rv;
 				this.changed[prop] = this.attributes[prop] = value;
 				this.notifyObservers(prop, rv, value);
+				// if this is a dependent of a computed property we mark that
+				// as changed as well
+				if (this._computedMap) {
+					if (this._computedMap[prop]) {
+						var ps = this._computedMap[prop];
+						for (var i=0, p; (p=ps[i]); ++i) {
+							this.notifyObservers(p);
+						}
+					}
+				}
 				this.triggerEvent("change");
 				this.changed = {};
 				this.dirty = true;
@@ -166,6 +180,18 @@
 				}
 				if (ch) {
 					this.notifyObservers();
+					if (this._computedMap) {
+						for (var k in this.changed) {
+							// if this is a dependent of a computed property we mark that
+							// as changed as well
+							if (this._computedMap[k]) {
+								var ps = this._computedMap[k];
+								for (var i=0, p; (p=ps[i]); ++i) {
+									this.notifyObservers(p);
+								}
+							}
+						}
+					}
 					this.triggerEvent("change");
 					this.changed = {};
 					this.dirty = true;
@@ -180,17 +206,20 @@
 			for the _model_.
 		*/
 		constructor: function (attributes, opts) {
+			// collections will supply the parse option to ensure that
+			// data has the opportunity to be parsed as if the model had
+			// called fetch
+			var p = (opts && opts.parse) || false; 
 			if (opts) { this.importProps(opts); }
 			this.euid = enyo.uuid();
 			var a = this.attributes? enyo.clone(this.attributes): {},
 				d = this.defaults,
 				x = attributes;
-			if (x) {
-				enyo.mixin(a, x);
-			}
-			if (d) {
-				enyo.mixin(a, d, _mixinOpts);
-			}
+			// if we're created by a _collection_ the default behavior is
+			// to parse the incoming data as that data was retrieved
+			if (p) { x = this.parse(x); }
+			if (x) { enyo.mixin(a, x); }
+			if (d) { enyo.mixin(a, d, _mixinOpts); }
 			this.attributes = a;
 			this.changed = {};
 			this.previous = {};
@@ -199,8 +228,8 @@
 		//*@protected
 		importProps: function (p) {
 			if (p) {
-				if (p.defaults || p.attributes) { enyo.Model.subclass(this, p); }
-				for (var k in p) { this[k] = p[k]; }
+				if (p.defaults || p.attributes || p.computed) { enyo.Model.subclass(this, p); }
+				for (var k in p) { k != "parse" && (this[k] = p[k]); }
 			}
 		},
 		//*@public
@@ -216,6 +245,8 @@
 			for (var k in r) {
 				if ("function" == typeof r[k]) {
 					r[k] = r[k].call(this);
+				} else if (r[k] instanceof enyo.Collection) {
+					r[k] = r[k].raw();
 				}
 			}
 			return r;
@@ -271,6 +302,7 @@
 			the same parameters as the build-in method `didDestroy`.
 		*/
 		destroy: function (opts) {
+			if (this.readOnly) { return this.destroyLocal(); }
 			var o = opts? enyo.clone(opts): {};
 			o.success = enyo.bind(this, "didDestroy", this, opts);
 			o.fail = enyo.bind(this, "didFail", "destroy", this, opts);
@@ -340,6 +372,13 @@
 			provided callbacks are executed.
 		*/
 		didDestroy: function (rec, opts, res) {
+			for (var k in this.attributes) {
+				if (this.attributes[k] instanceof enyo.Model || this.attributes[k] instanceof enyo.Collection) {
+					if (this.attributes[k].owner === this) {
+						this.attributes[k].destroy();
+					}
+				}
+			}
 			this.triggerEvent("destroy");
 			this.previous = null;
 			this.changed = null;
@@ -361,11 +400,6 @@
 			Adds an observer according to the the _enyo.ObserverSupport_ API.
 		*/
 		addObserver: function (prop, fn, ctx) {
-			// check to see if the observer is being placed against a computed
-			// property on the attributes and throw a warning if it is
-			if (this.attributes[prop] && "function" == typeof this.attributes[prop]) {
-				return enyo.warn("enyo.Model: attempt to add observer for computed property `" + prop + "`");
-			}
 			return this.store._addObserver(this, prop, fn, ctx);
 		},
 		/**
@@ -427,7 +461,9 @@
 			}
 			s = this.store = s || enyo.store;
 			s.addRecord(this);
-		}
+		},
+		//*@protected
+		concat: ["mergeKeys"]
 	});
 	//*@protected
 	enyo.Model.subclass = function (ctor, props) {
@@ -437,7 +473,9 @@
 			pa = (p.attributes && (ra && enyo.clone(p.attributes)) || p.attributes) || {},
 			rd = props.defaults,
 			// only clone when we absolutely need to
-			pd = (p.defaults && (rd && enyo.clone(p.defaults)) || p.defaults) || {};
+			pd = (p.defaults && (rd && enyo.clone(p.defaults)) || p.defaults) || {},
+			rc = props.computed,
+			pc = (p.computed && (rc && enyo.clone(p.computed)) || p.computed) || {};
 			
 		// handle attributes of the kind so all subkinds will accurately
 		// have the mixture of the schema
@@ -449,5 +487,26 @@
 		if (rd) { enyo.mixin(pd, rd) && (delete props.defaults); }
 		// always assign the prototype's defaults
 		p.defaults = pd;
+		if (rc) { enyo.mixin(pc, rc) && (delete props.computed); }
+		p.computed = pc;
+		// if there are computed properties for this model we need to remap them
+		// now for fast access later
+		if (rc) {
+			// we only want to do this for new computed properties since its
+			// already been done for the kind's own
+			var m = (p._computedMap && enyo.clone(p._computedMap)) || {};
+			for (var k in rc) {
+				// this is any of the known dependents of the computed method
+				var ds = rc[k];
+				// iterate over those and map each of those to any computed methods
+				// dependent on it
+				for (var i=0, d; (d=ds[i]); ++i) {
+					// if we don't already have this in the map we have to create it
+					if (!m[d]) { m[d] = []; }
+					m[d].push(k);
+				}
+			}
+			p._computedMap = m;
+		}
 	};
 })(enyo);

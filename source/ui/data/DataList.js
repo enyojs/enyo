@@ -257,7 +257,7 @@
 			}
 			return $f;
 		},
-		modelsAdded: function (e, c, props) {
+		modelsAdded: function (c, e, props) {
 			// FIXME: This is a temporary implementation as it will continue to
 			// throw indices for pages already generated - but it would need to inspect
 			// them to ensure they are ordered and then group them so the page is only
@@ -273,7 +273,7 @@
 				}
 			}
 		},
-		modelsRemoved: function (e, c, props) {
+		modelsRemoved: function (c, e, props) {
 			if (c == this.controller) {
 				if (this.generated && this.$.scroller.canGenerate) {
 					this.set("batching", true);
@@ -285,23 +285,6 @@
 				}
 			}
 		},
-		// modelAdded: function (sender, event) {
-		// 	if (sender == this.controller) {
-		// 		if (!this._hasReset && !this.batching) {
-		// 			return this.reset();
-		// 		}
-		// 		if (this.generated && this.$.scroller.canGenerate) {
-		// 			this.add(event.index);
-		// 		}
-		// 	}
-		// },
-		// modelRemoved: function (sender, event) {
-		// 	if (sender == this.controller) {
-		// 		if (this.generated && this.$.scroller.canGenerate) {
-		// 			this.remove(event.index);
-		// 		}
-		// 	}
-		// },
 		update: function (i) {
 			// TODO: This should never get called and should possibly be removed
 			// from the API altogether

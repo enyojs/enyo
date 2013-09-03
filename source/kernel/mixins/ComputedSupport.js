@@ -235,6 +235,8 @@
 					}
 				}
 				proto._computedMap = map;
+				proto._computedCached = ca;
+				delete props.computed;
 			}
 		}
 	});

@@ -119,12 +119,14 @@
 		requestKind: enyo.JsonpRequest,
 		//* Uses "GET" for the method
 		fetch: function (rec, opts) {
+			opts.cacheBust = false;
 			opts.method = "GET";
 			opts.url = this.buildUrl(rec, opts);
 			this.go(opts);
 		},
 		//* Uses "POST" if the _record_ is new, otherwise "PUT" for the method
 		commit: function (rec, opts) {
+			opts.cacheBust = false;
 			opts.method = rec.isNew? "POST": "PUT";
 			opts.url = this.buildUrl(rec, opts);
 			opts.postBody = rec.toJSON();
@@ -132,6 +134,7 @@
 		},
 		//* Uses "DELETE" for the method
 		destroy: function (rec, opts) {
+			opts.cacheBust = false;
 			opts.method = "DELETE";
 			opts.url = this.buildUrl(rec, opts);
 			this.go(opts);
