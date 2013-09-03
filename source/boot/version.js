@@ -15,5 +15,5 @@
 */
 
 enyo.version = {
-	enyo: "2.3.0-pre.7"
+	enyo: "2.3.0-pre.8-dev"
 };

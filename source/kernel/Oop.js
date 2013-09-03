@@ -267,16 +267,16 @@ enyo.kind.extendMethods = function(ctor, props, add) {
 	if (!proto.inherited) {
 		proto.inherited = enyo.kind.inherited;
 	}
+	// rename constructor to _constructor to work around IE8/Prototype problems
+	if (props.hasOwnProperty("constructor")) {
+		props._constructor = props.constructor;
+		delete props.constructor;
+	}
 	// decorate function properties to support inherited (do this ex post facto so that
 	// ctor.prototype is known, relies on elements in props being copied by reference)
 	for (var n in props) {
 		var p = props[n];
 		if (enyo.isInherited(p)) {
-			// handle special case where the constructor has actually been renamed
-			// but mixins or other objects for extending will use the actual name
-			if (n == "constructor") {
-				n = "_constructor";
-			}
 			// ensure that if there isn't actually a super method to call, it won't
 			// fail miserably - while this shouldn't happen often, it is a sanity
 			// check for mixin-extensions for kinds
@@ -473,9 +473,14 @@ enyo.constructorForKind = function(inKind) {
 	// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
 	// This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
 	ctor = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath.call(enyo, inKind, true) || window[inKind] || enyo.getPath(inKind);
+
 	// if this is a deferred kind, run the follow-up code then refetch the kind's constructor
 	if (ctor && ctor._finishKindCreation) {
 		ctor = ctor._finishKindCreation();
+	}
+	// If what we found at this namespace isn't a function, it's definitely not a kind constructor
+	if (!enyo.isFunction(ctor)) {
+		throw "[" + inKind + "] is not the name of a valid kind.";
 	}
 	enyo._kindCtors[inKind] = ctor;
 	return ctor;

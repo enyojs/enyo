@@ -22,9 +22,10 @@
 	//*@public
 	/**
 		Computed properties are methods of kinds that are designated as being
-		dependent upon multiple properties--much like observers, except that they
-		themselves are treated as properties (not functions). An _enyo.Binding_
-		cannot be bound to a function directly, but a computed property can.
+		dependent upon multiple properties--much like observers, except that
+		they themselves are treated as properties (not functions). An
+		_enyo.Binding_ cannot be bound to a function directly, but it can be
+		bound to a computed property.
 
 		Computed properties have the advantage of being cacheable (meaning that many
 		requests for the property won't require pointless recalculations) and will

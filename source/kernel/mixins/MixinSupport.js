@@ -68,7 +68,13 @@
 		} else {
 			n = null;
 		}
-		enyo.kind.statics.extend(enyo.clone(m), proto);
+		var mc = enyo.clone(m);
+		// rename constructor to _constructor to work around IE8/Prototype problems
+		if (m.hasOwnProperty("constructor")) {
+			mc._constructor = m.constructor;
+			delete mc.constructor;
+		}
+		enyo.kind.statics.extend(mc, proto);
 		if (n) {
 			m.name = n;
 		}
