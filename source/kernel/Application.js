@@ -64,7 +64,7 @@
 		var idx = 0;
 		var kind;
 		for (; idx < len; ++idx) {
-			kind = kinds[idx];
+			kind = enyo.clone(kinds[idx]);
 			// we need the name of the instance whether the controller is global
 			// or app-specific
 			var name = kind.name;
@@ -117,14 +117,19 @@
 		kind: "enyo.ViewController",
 
 		//*@public
+		//* If true, call the start() method immediately after being created.
 		autoStart: true,
 
 		//*@public
+		//* If true, render the view as part of the default start() method.
 		renderOnStart: true,
 
 		//*@public
+		//* Array of controller definitions to be created along wih the application.
 		controllers: null,
 
+		//*@public
+		//* This is set to true when the associated view has been created.
 		viewReady: false,
 
 		//*@public

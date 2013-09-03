@@ -5,9 +5,7 @@ enyo.depends(
 	"JobsTest.js",
 	"LoaderTest.js",
 	"KindTest.js",
-	"JsonTest.js",
-	"AsyncTest.js",
-	"AjaxTest.js",
+	"ApplicationTest.js",
 	"ComponentTest.js",
 	"ComponentDispatchTest.js",
 	"ComponentHandlersTest.js",
@@ -22,5 +20,8 @@ enyo.depends(
 	"AnimatorTest.js",
 	"DataRepeaterTest.js",
 	"MultipleDispatchTest.js",
-	"ObserverAndComputedTest.js"
+	"ObserverAndComputedTest.js",
+	"JsonTest.js",
+	"AsyncTest.js",
+	"AjaxTest.js"
 );
