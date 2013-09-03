@@ -168,7 +168,7 @@
 				// anymore, as it has been converted to a map
 				this.computed || (this.computed = {});
 				this._computedMap = this._computedMap? _clone(this._computedMap): {};
-				this._computedCached || (this._computedCached = {});
+				this._computedCached = this._computedCached? _clone(this._computedCached): {};
 				this._computedQueue = {};
 				sup.apply(this, arguments);
 			};
