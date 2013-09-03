@@ -52,8 +52,7 @@
 		childBindingDefaults: null,
 		//*@protected
 		childMixins: [
-			enyo.RepeaterChildSupport//,
-			// enyo.RepeaterChildModelSupport
+			enyo.RepeaterChildSupport
 		],
 		concat: ["childMixins", "_repeaterKinds"],
 		_repeaterKinds: ["enyo.DataRepeater"],
