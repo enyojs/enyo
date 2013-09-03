@@ -3,7 +3,7 @@ enyo.kind({
 	kind: enyo.TestSuite,
 	noDefer: true,
 	testCreate: function () {
-		var m = new enyo.Model();
+		new enyo.Model();
 		this.finish();
 	},
 	testDestroy: function () {
@@ -29,7 +29,7 @@ enyo.kind({
 		this.finish(v !== true && "did not properly retrieve the attribute value");
 	},
 	testGetComputedAttribute: function () {
-		var m = new enyo.Model({greet: function () {return "Hi."}}),
+		var m = new enyo.Model({greet: function () {return "Hi.";}}),
 			v = m.get("greet");
 		m.destroyLocal();
 		this.finish(v != "Hi." && "did not retrieve the computed attribute properly");
@@ -81,7 +81,7 @@ enyo.kind({
 		this.finish(c.length != 29 && "did not remove single record from the collection");
 	},
 	testRemoveRecords: function () {
-		var c = new enyo.Collection();
+		var c = new enyo.Collection(), r;
 		for (var i=0; i<30; ++i) { c.add({id: i}); }
 		for (i=0, r=[]; i<15; ++i) { r.push(c.at(i)); }
 		c.remove(r);
@@ -91,14 +91,14 @@ enyo.kind({
 		var c = new enyo.Collection();
 		for (var i=0; i<30; ++i) { c.add({id: i}); }
 		c.removeAll();
-		this.finish(c.length != 0 && "did not remove all records from the collection as expected");
+		this.finish(c.length !== 0 && "did not remove all records from the collection as expected");
 	},
 	testThatDestroyedRecordIsRemovedFromCollection: function () {
 		var c = new enyo.Collection();
 		c.add({id: 1});
 		var r = c.at(0);
 		r.destroyLocal();
-		this.finish(c.length != 0 && "record destroyed but was not removed from collection");
+		this.finish(c.length !== 0 && "record destroyed but was not removed from collection");
 	},
 	testDestroyAll: function () {
 		var s = new enyo.Store(),
@@ -106,8 +106,8 @@ enyo.kind({
 		for (var i=0; i<15; ++i) { c.add(s.createRecord({id: i}, {readOnly: true})); }
 		c.destroyAll();
 		this.finish(
-			(c.length != 0 && "length was not zero as expected after destroyAll was called") ||
-			(enyo.keys(s.records.kn["enyo.Model"]).length != 0 && "records were not removed from the store")
+			(c.length !== 0 && "length was not zero as expected after destroyAll was called") ||
+			(enyo.keys(s.records.kn["enyo.Model"]).length !== 0 && "records were not removed from the store")
 		);
 	},
 	testMergeById: function () {
@@ -132,10 +132,9 @@ enyo.kind({
 		);
 	},
 	testEvents: function () {
-		var c  = new enyo.Collection();
-		var ev = null;
-		var fn = function (c, e) { throw e; }
-		var m;
+		var c  = new enyo.Collection(),
+			ev = null,
+			fn = function (c, e) { throw e; }, m;
 		for (var i=0, es=["add","remove","destroy"]; (ev=es[i]); ++i) {
 			try {
 				c.addListener(ev, fn);
@@ -157,7 +156,7 @@ enyo.kind({
 	testDestroy: function () {
 		var c = new enyo.Collection([{id:70},{id:71}]);
 		c.destroy();
-		this.finish(c.length != 0 && "destroying a collection should remove all of its records");
+		this.finish(c.length !== 0 && "destroying a collection should remove all of its records");
 	}
 });
 
@@ -201,4 +200,4 @@ enyo.kind({
 			(c.length != 2 && "collection did not apply records as expected")
 		);
 	}
-})
+});

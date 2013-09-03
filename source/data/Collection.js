@@ -100,10 +100,9 @@ enyo.kind({
 		the result (_res_).
 	*/
 	didFetch: function (rec, opts, res) {
-		var rr = this.records,
-			// the parsed result
-			r  = this.parse(res),
-			s  = opts.strategy, fn;
+		// the parsed result
+		var r = this.parse(res),
+			s = opts.strategy, fn;
 		if (r) {
 			// even if replace was requested it will have already taken place so we
 			// need only evaluate the strategy for merging the new results
@@ -351,9 +350,8 @@ enyo.kind({
 		of the newly created _record_.
 	*/
 	createRecord: function (attrs, props, i) {
-		var rr = this.records,
-			d  = {parse: true, owner: this},
-			r  = this.store.createRecord(this.model, attrs, props? enyo.mixin(d, props): d);
+		var d = {parse: true, owner: this},
+			r = this.store.createRecord(this.model, attrs, props? enyo.mixin(d, props): d);
 		i = false === i? -1: (!isNaN(i) && i >= 0? i: this.length);
 		r.addListener("change", this._recordChanged);
 		r.addListener("destroy", this._recordDestroyed);

@@ -163,8 +163,7 @@
 			`false` otherwise.
 		*/
 		removeCollection: function (c) {
-			var cc = this.collections,
-				f  = false;
+			var cc = this.collections;
 			c = (enyo.isString(c) && cc[c]) || c;
 			delete cc[c.euid];
 			c.removeListener("destroy", this._collectionDestroyed);
@@ -235,10 +234,10 @@
 			Strategies:
 		
 			1. `replace` - all known _records_ are thrown away (not destroyed) and are replaced by the
-			   new results.
+			new results.
 			2. `merge` (the default) - any incoming _records_ with the same _primaryKey_ as records
-			   already in the _store_ will be updated with the values retrieved, and any new records
-			   will simply be added to the store.
+			already in the _store_ will be updated with the values retrieved, and any new records
+			will simply be added to the store.
 		*/
 		find: function (kind, opts) {
 			// in cases where no kind is provided we assume enyo.Model which is consistent with
@@ -330,7 +329,7 @@
 			to handle special cases.
 		*/
 		filter: function (opts, rec) {
-			for (var k in opts) { if (rec.get(k) !== opts[k]) return false; }
+			for (var k in opts) { if (rec.get(k) !== opts[k]) { return false; } }
 			return true;
 		},
 		/**
@@ -407,7 +406,7 @@
 				m = m[event];
 				if (m && m.length) {
 					for (var i=0, fn; (fn=m[i]); ++i) {
-						fn(rec, event, args);
+						fn(r, event, args);
 					}
 				}
 			}

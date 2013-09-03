@@ -149,11 +149,11 @@
 		//*@protected
 		handlers: {
 			onSelected: "childSelected",
-			onDeselected: "childDeselected",
+			onDeselected: "childDeselected"
 		},
 		_handlers: {
 			"add": "modelsAdded",
-			"remove": "modelsRemoved",
+			"remove": "modelsRemoved"
 		},
 		controllerChanged: enyo.inherit(function (sup) {
 			return function (p) {

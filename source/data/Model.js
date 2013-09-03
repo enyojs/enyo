@@ -189,7 +189,7 @@
 				if (ch) {
 					this.notifyObservers();
 					if (this._computedMap) {
-						for (var k in this.changed) {
+						for (k in this.changed) {
 							// if this is a dependent of a computed property we mark that
 							// as changed as well
 							if (this._computedMap[k]) {
