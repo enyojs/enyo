@@ -949,18 +949,15 @@
 	
 	//*@public
 	/**
-		As seen at https://gist.github.com/jcxplorer/823878, by jcxplorer.
-		TODO: replace with faster implementation as this is very slow
+		This method is provided publicly by Slavik Meltser (slavik@meltser.info),
+		[here](http://slavik.meltser.info/?p=142). It generates a UUID string,
+		with good performance across browsers, according RFC4122.
 	*/
 	enyo.uuid = function () {
-		var uuid = "", idx = 0, rand;
-		for (; idx < 32; ++idx) {
-			rand = Math.random() * 16 | 0;
-			if (idx == 8 || idx == 12 || idx == 16 || idx == 20) {
-				uuid += "-";
-			}
-			uuid += (idx == 12? 4: (idx == 16? (rand & 3 | 8): rand)).toString(16);
-		}
-		return uuid;
+	    function _p8(s) {
+	        var p = (Math.random().toString(16)+"000000000").substr(2,8);
+	        return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
+	    }
+	    return _p8() + _p8(true) + _p8(true) + _p8();
 	};
 })();
