@@ -34,6 +34,8 @@
 		calls _enyo.updateLocale()_. The default implementation of _enyo.updateLocale()_ is
 		a stub, but a g11n library may override it to update its internal state before the
 		`onlocalechange` signal is broadcast.
+
+		This feature is not supported on IE8 which doesn't support addEventListener.
 	*/
 	enyo.updateLocale = function() {
 		// This is a stub, to be implemented by a g11n library as needed
@@ -42,5 +44,7 @@
 		enyo.updateLocale();
 		enyo.Signals.send("onlocalechange");
 	};
-	document.addEventListener("localechange", enyo.broadcastLocaleChange, false);
+	if (document.addEventListener) {
+		document.addEventListener("localechange", enyo.broadcastLocaleChange, false);
+	}
 })();
