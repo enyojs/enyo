@@ -1,6 +1,11 @@
 (function (enyo) {
 	//*@public
 	/**
+		The _enyo.Store_ object is a runtime database of _records_ as they are created.
+		While there can be multiple _stores_, there is always a top-level _store_ at
+		_enyo.store_ that is used by _enyo.Model_ and _enyo.Collection_. The _store serves
+		as a liason between _records_ and the requested _enyo.Source_ that dictates how they
+		are retrieved and/or persisted.
 	*/
 	enyo.kind({
 		name: "enyo.Store",
