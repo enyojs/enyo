@@ -172,10 +172,13 @@ enyo.kind({
 					} else if (mk) {
 						w = false;
 						for (m=0; m<mk.length; ++m) {
-							if (nr[mk[m]] != r.get(mk[m])) { (w=false); break; }
-							else { w = true; }
+							if (nr[mk[m]] != r.get(mk[m])) { w=false; break; }
+							else { w=true; }
 						}
-						if (w) { r.setObject(r.parse(nr)); }
+						if (w) {
+							r.setObject(r.parse(nr));
+							f = true;
+						}
 					}
 				}
 				if (!f) { a.push(nr); }
