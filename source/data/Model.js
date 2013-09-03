@@ -299,10 +299,12 @@
 			Requests a _destroy_ action for the given _record_ and the specified (or default)
 			_source_ in the optional _opts_ hash. May provied a _success_ and _fail_ method that
 			will be executed on those conditions. Its _success_ method will be called with
-			the same parameters as the build-in method `didDestroy`.
+			the same parameters as the built-in method `didDestroy`. If the _record_ is _readOnly_
+			or has its _isNew_ flag set to `true` it will call its synchronous _destroyLocal_
+			method instead and will not use any callbacks.
 		*/
 		destroy: function (opts) {
-			if (this.readOnly) { return this.destroyLocal(); }
+			if (this.readOnly || this.isNew) { return this.destroyLocal(); }
 			var o = opts? enyo.clone(opts): {};
 			o.success = enyo.bind(this, "didDestroy", this, opts);
 			o.fail = enyo.bind(this, "didFail", "destroy", this, opts);
