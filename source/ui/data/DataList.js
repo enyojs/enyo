@@ -159,9 +159,6 @@
 		resetPage: function (p) {
 			this.controlParentName = p.name;
 			this.discoverControlParent();
-			while (p.children.length < this.controlsPerPage) {
-				this.createComponent({});
-			}
 		},
 		generatePage: function (p, n) {
 			var $d = this.get("data"),
@@ -172,7 +169,7 @@
 			this.controlParentName = p.name;
 			this.discoverControlParent();
 			p.index = n;
-			for (var $i=0, $j=$o, c$, d$; (c$ = p.children[$i]) && (d$=$d.at($j)) && $j < $e; ++$i, ++$j) {
+			for (var $i=0, $j=$o, c$, d$; ((c$=p.children[$i]) || (p.children.length < $c && (c$=this.createComponent({})))) && (d$=$d.at($j)) && $j < $e; ++$i, ++$j) {
 				if (c$._listDisabledChild) {
 					this.enableChild(c$);
 				}
