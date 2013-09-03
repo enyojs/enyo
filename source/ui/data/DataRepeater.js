@@ -95,7 +95,7 @@
 				this._selection = [];
 				// we need to pre-bind these methods so they can easily be added
 				// and removed as listeners later
-				var h = this._handlers;
+				var h = this._handlers = enyo.clone(this._handlers);
 				for (var e in h) { h[e] = this.bindSafely(h[e]); }
 				sup.apply(this, arguments);
 			};
