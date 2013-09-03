@@ -5,7 +5,13 @@
 		While there can be multiple _stores_, there is always a top-level _store_ at
 		_enyo.store_ that is used by _enyo.Model_ and _enyo.Collection_. The _store serves
 		as a liason between _records_ and the requested _enyo.Source_ that dictates how they
-		are retrieved and/or persisted.
+		are retrieved and/or persisted. You can register _observers_ or _event listeners_ for
+		a _record_ or _collection_ through the _store_ or a reference to the object directly.
+		Every _record_ and every _collection_ has a reference to a _store_. If none is
+		explicitly provided it will resolve to _enyo.store_.
+	
+		The _enyo.store_ indexes _records_ internally for faster lookup. Explore the API
+		to see how these methods interact.
 	*/
 	enyo.kind({
 		name: "enyo.Store",
