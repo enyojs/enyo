@@ -949,15 +949,19 @@
 	
 	//*@public
 	/**
-		This method is provided publicly by Slavik Meltser (slavik@meltser.info),
-		[here](http://slavik.meltser.info/?p=142). It generates a UUID string,
-		with good performance across browsers, according RFC4122.
+		Efficient _uuid_ generator according to RFC4122 for the browser.
 	*/
 	enyo.uuid = function () {
-	    function _p8(s) {
-	        var p = (Math.random().toString(16)+"000000000").substr(2,8);
-	        return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
-	    }
-	    return _p8() + _p8(true) + _p8(true) + _p8();
+		// TODO: believe this can be even faster...
+		var t, p = (
+			(Math.random().toString(16).substr(2,8)) + "-" +
+			((t=Math.random().toString(16).substr(2,8)).substr(0,4)) + "-" +
+			(t.substr(4,4)) +
+			((t=Math.random().toString(16).substr(2,8)).substr(0,4)) + "-" +
+			(t.substr(4,4)) +
+			(Math.random().toString(16).substr(2,8))
+		);
+		return p;
 	};
+	
 })();
