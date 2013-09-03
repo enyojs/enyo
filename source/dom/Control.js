@@ -236,7 +236,7 @@ enyo.kind({
 	*/
 	getAttribute: function(inName) {
 		var n = this.hasNode();
-		return n? n.getAttribute(inName): this.attribuets[inName];
+		return n? n.getAttribute(inName): this.attributes[inName];
 	},
 	/**
 		Sets the value of an attribute on this object. Pass null _inValue_ to
