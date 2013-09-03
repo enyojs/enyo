@@ -345,7 +345,7 @@
 			// now add a new entry in the map for that record if this property hasn't
 			// been tagged before
 			m = m[event] = m[event] || [];
-			fn = enyo.isString(fn)? (ctx? ctx[fn]: enyo.getPath(fn)): (ctx? enyo.bind(fn, ctx): fn);
+			fn = enyo.isString(fn)? (ctx? ctx[fn]: enyo.getPath(fn)): (ctx? enyo.bind(ctx, fn): fn);
 			m.push(fn);
 			return fn;
 		},
@@ -410,7 +410,7 @@
 			// now add a new entry in the map for that record if this property hasn't
 			// been tagged before
 			m = m[prop] = m[prop] || [];
-			fn = enyo.isString(fn)? (ctx? ctx[fn]: enyo.getPath(fn)): (ctx? enyo.bind(fn, ctx): fn);
+			fn = enyo.isString(fn)? (ctx? ctx[fn]: enyo.getPath(fn)): (ctx? enyo.bind(ctx, fn): fn);
 			!~enyo.indexOf(fn, m) && m.push(fn);
 			return fn;
 		},
