@@ -166,7 +166,7 @@
 			var rr = this.records,
 				pk = rec.primaryKey, id;
 			rec.euid && delete rr.euid[rec.euid];
-			(id=rec.get(pk)) && (delete rr.pk[rec.kindName][rec.get(pk)]);
+			(enyo.exists(id=rec.get(pk))) && (delete rr.pk[rec.kindName][id]);
 			rec.euid && delete rr.kn[rec.kindName][rec.euid];
 			rec.removeListener("destroy", this._recordDestroyed);
 		},

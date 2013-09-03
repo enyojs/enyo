@@ -74,6 +74,86 @@ enyo.kind({
 		c.add([{id:70},{id:71}]);
 		this.finish(c.length != 2 && "did not add the records properly");
 	},
+	testRemoveRecord: function () {
+		var c = new enyo.Collection();
+		for (var i=0; i<30; ++i) { c.add({id: i}); }
+		c.remove(c.at(1));
+		this.finish(c.length != 29 && "did not remove single record from the collection");
+	},
+	testRemoveRecords: function () {
+		var c = new enyo.Collection();
+		for (var i=0; i<30; ++i) { c.add({id: i}); }
+		for (i=0, r=[]; i<15; ++i) { r.push(c.at(i)); }
+		c.remove(r);
+		this.finish(c.length != 15 && "did not correctly remove 15 records from the collection");
+	},
+	testRemoveAll: function () {
+		var c = new enyo.Collection();
+		for (var i=0; i<30; ++i) { c.add({id: i}); }
+		c.removeAll();
+		this.finish(c.length != 0 && "did not remove all records from the collection as expected");
+	},
+	testThatDestroyedRecordIsRemovedFromCollection: function () {
+		var c = new enyo.Collection();
+		c.add({id: 1});
+		var r = c.at(0);
+		r.destroyLocal();
+		this.finish(c.length != 0 && "record destroyed but was not removed from collection");
+	},
+	testDestroyAll: function () {
+		var s = new enyo.Store(),
+			c = new enyo.Collection({store: s});
+		for (var i=0; i<15; ++i) { c.add(s.createRecord({id: i}, {readOnly: true})); }
+		c.destroyAll();
+		this.finish(
+			(c.length != 0 && "length was not zero as expected after destroyAll was called") ||
+			(enyo.keys(s.records.kn["enyo.Model"]).length != 0 && "records were not removed from the store")
+		);
+	},
+	testMergeById: function () {
+		var c = new enyo.Collection();
+		c.add([{id: 0, name: "Jim"}, {id: 1, name: "Jack"}, {id: 2, name: "Jill"}]);
+		c.merge([{id: 0, name: "Jimmy"}, {id: 1, name: "Jacky"}, {id: 2, name: "Jillian"}]);
+		this.finish(
+			(c.at(0).get("name") != "Jimmy" && "first name wasn't changed") ||
+			(c.at(1).get("name") != "Jacky" && "second name wasn't changed") ||
+			(c.at(2).get("name") != "Jillian" && "third name wasn't changed")
+		);
+	},
+	testMergeByOther: function () {
+		var Kind = enyo.kind({kind: enyo.Model, mergeKeys: ["testProp"]}),
+			c    = new enyo.Collection({model: Kind});
+		for (var i=0; i<3; ++i) { c.add({testProp: i, testValue: i}); }
+		c.merge([{testProp: 0, testValue: 1},{testProp: 1, testValue:2},{testProp: 2, testValue: 3}]);
+		this.finish(
+			(c.at(0).get("testValue") != 1 && "first value wasn't updated") ||
+			(c.at(1).get("testValue") != 2 && "second value wasn't updated") ||
+			(c.at(2).get("testValue") != 3 && "third value wasn't updated")
+		);
+	},
+	testEvents: function () {
+		var c  = new enyo.Collection();
+		var ev = null;
+		var fn = function (c, e) { throw e; }
+		var m;
+		for (var i=0, es=["add","remove","destroy"]; (ev=es[i]); ++i) {
+			try {
+				c.addListener(ev, fn);
+				if ("add" == ev) {
+					m = enyo.store.createRecord();
+					c.add(m);
+				} else if ("remove" == ev) {
+					c.remove(m);
+				} else {
+					c.destroy();
+				}
+			} catch (e) {
+				if (e != ev) { break; }
+				c.removeListener(ev, fn);
+			}
+		}
+		this.finish(i != 3 && "did not receive all events as expected");
+	},
 	testDestroy: function () {
 		var c = new enyo.Collection([{id:70},{id:71}]);
 		c.destroy();

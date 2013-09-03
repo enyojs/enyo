@@ -106,6 +106,39 @@ enyo.kind({
 		o.set("testProp", 2);
 		allowed = true;
 		o.startNotifications();
+	},
+	testInheritedKindObservers: function () {
+		var test = {},
+			rs = "",
+			ex = "This message should be short and it should be stupid, but all's well that ends well, right?";
+		test.Object1 = enyo.kind({
+			kind: enyo.Object,
+			observers: {observer1: ["myProp1"]},
+			observer1: function () {
+				rs += "This message " + this.myProp1 + " short and it ";
+			}
+		});
+		test.Object2 = enyo.kind({
+			kind: test.Object1,
+			observers: {
+				observer3: ["myProp1"],
+				observer2: ["myProp2"]
+			},
+			observer1: function () {
+				this.inherited(arguments);
+				rs += this.myProp1 + " stupid, but";
+			},
+			observer2: function () {
+				rs += " that " + this.myProp2 + ", right?";
+			},
+			observer3: function () {
+				rs += " all's well";
+			}
+		});
+		test.i = new test.Object2();
+		test.i.set("myProp1", "should be");
+		test.i.set("myProp2", "ends well");
+		this.finish(rs != ex && "the sentences did not match, `" +rs+ "` should have read `" + ex + "`");
 	}
 });
 
@@ -177,5 +210,35 @@ enyo.kind({
 			}
 		});
 		o.binding({from: ".fullName", to: ".fullName", target: t});
+	},
+	testInheritedKindComputed: function () {
+		var test = {},
+			rs = "",
+			ex = "This message should be short and it should be stupid, but all's well that ends well, right?";
+		test.Object1 = enyo.kind({
+			kind: enyo.Object,
+			computed: {observer1: ["myProp1"]},
+			observer1: function () {
+				return "This message " + this.myProp1 + " short and it ";
+			}
+		});
+		test.Object2 = enyo.kind({
+			kind: test.Object1,
+			computed: {
+				observer2: ["myProp2"]
+			},
+			observer1: function () {
+				var r = this.inherited(arguments);
+				return (r += this.myProp1 + " stupid, but all's well");
+			},
+			observer2: function () {
+				return " that " + this.myProp2 + ", right?";
+			}
+		});
+		test.i = new test.Object2();
+		test.i.set("myProp1", "should be");
+		test.i.set("myProp2", "ends well");
+		rs = test.i.get("observer1") + test.i.get("observer2");
+		this.finish(rs != ex && "the sentences did not match, `" +rs+ "` should have read `" + ex + "`");
 	}
 });
