@@ -1,5 +1,13 @@
 //*@public
 /**
+	The _enyo.Collection_ kind is an array-like structure that houses collections
+	of _enyo.Models_. An _enyo.Collection_ can be set as the _controller_ property
+	of an _enyo.Control_ or the _controllers_ block of an _enyo.Application_. They
+	are read-only entities in terms of retrieving and setting data via an _enyo.Source_.
+	Their implementation of _observers_ and _events_ are the same as _enyo.Model_.
+
+	A _collection_ will lazily instantiate _records_ when they are requested. This
+	is important to be aware of depending on the order of operations.
 */
 enyo.kind({
 	name: "enyo.Collection",
@@ -14,6 +22,12 @@ enyo.kind({
 		Set this to the correct _url_ for requesting data for this _collection_.
 	*/
 	url: "",
+	/**
+		By default _collections_ will instantiate records only as needed, but if
+		the desired action is to create them all instantly as they are added set
+		this flag to true.
+	*/
+	instanceAllRecords: false,
 	/**
 		This is the default _source_ for requests made by this _collection_.
 	*/
@@ -182,7 +196,8 @@ enyo.kind({
 	add: function (rec, i) {
 		var rr = this.records,
 			d  = [],
-			l  = this.length;
+			l  = this.length,
+			f  = this.instanceAllRecords;
 		// figure out what the index we will be inserting them at
 		i = (!isNaN(i) && (i=Math.max(0,i)) && (i=Math.min(this.length, i))) || this.length;
 		// if this is not at array already we ensure that it is
@@ -191,7 +206,10 @@ enyo.kind({
 		if (!rec.length) { return d; }
 		// we will only provide the indices in the return and events so that we can lazily
 		// instantiate the records as they are needed
-		for (var j=0, r; (r=rec[j]); ++j) { d.push(j+i); }
+		for (var j=0, r; (r=rec[j]); ++j) {
+			if (f) { rec[j] = this.createRecord(r, null, false); }
+			d.push(j+i);
+		}
 		// rather than perform a splice over and over potentially we run it once
 		rec.unshift.apply(rec, [i, 0]);
 		rr.splice.apply(rr, rec);
@@ -320,12 +338,34 @@ enyo.kind({
 	at: function (i) {
 		var r = this.records[i];
 		if (r && !(r instanceof this.model)) {
-			r = this.records[i] = this.store.createRecord(this.model, r, {parse: true, owner: this});
-			r.addListener("change", this._recordChanged);
-			r.addListener("destroy", this._recordDestroyed);
+			r = this.records[i] = this.createRecord(r, null, false);
 		}
 		return r;
 	},
+	/**
+		To create an instance of a _record_ immediately in this _collection_ use this
+		method. This method is used internally when instantiating _records_ according to
+		its _model_ property. Accepts the _attrs_ to be used, the _props_ to apply and an
+		optional index at which to insert the record into the _collection_. If the index is
+		`false` it will not add the record to the _collection_ at all. Returns the instance
+		of the newly created _record_.
+	*/
+	createRecord: function (attrs, props, i) {
+		var rr = this.records,
+			d  = {parse: true, owner: this},
+			r  = this.store.createRecord(this.model, attrs, props? enyo.mixin(d, props): d);
+		i = false === i? -1: (!isNaN(i) && i >= 0? i: this.length);
+		r.addListener("change", this._recordChanged);
+		r.addListener("destroy", this._recordDestroyed);
+		if (i >= 0) { this.add(r, i); }
+		return r;
+	},
+	/**
+		Implement a method called _recordChanged_ that receives the _record_,
+		the _event_ and any additional properties passed along when any _record_
+		in the _collection_ emits its `change` event.
+	*/
+	recordChanged: null,
 	/**
 		Adds an observer according to the the _enyo.ObserverSupport_ API.
 	*/
@@ -459,9 +499,13 @@ enyo.kind({
 		s = this.store = s || enyo.store;
 		s.addCollection(this);
 	},
-	_recordChanged: function () {
-		// TODO:
-		enyo.log("_recordChanged: ", arguments);
+	_recordChanged: function (rec, e, p) {
+		// TODO: this will be used internally for relational data structures
+		// if the developer provided a _recordChanged_ method we need to call
+		// it now
+		if (this.recordChanged) {
+			this.recordChanged(rec, e, p);
+		}
 	},
 	_recordDestroyed: function (rec) {
 		// if we're destroying all records we ignore this as the record

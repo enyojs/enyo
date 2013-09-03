@@ -19,12 +19,14 @@
 		the `attributes` hash of the model it is __not necessary to prefix get/set paths with
 		"attributes" as this is assumed and redundant and will cause it to created a nested
 		schema object called `attributes`__. 
-	
-		TODO: add examples
-	
+		
 		## Computed Properties and _enyo.Model_
 	
-
+		Computed properties only exist for attributes of a _model_. Otherwise, they function
+		as you would expect from _ComputedSupport_ on _enyo.Object_. The only other exception
+		is that all _functions_ in the _attributes schema_ are considered to be a _computed
+		property_, they are fairly useless, however, without a declaration for any dependencies
+		they might have.
 
 		## Bindings
 	
@@ -32,10 +34,16 @@
 		on the _model_ itself. A _bindings_ array will be ignored.
 	
 		## Observers and Notifications
+	
+		There is no _observers_ block for _enyo.Model_. _Bindings_ can still be applied to _attributes_
+		of the _model_. Notifications for _observers_ works the same as with _enyo.Object_ except they
+		only apply to changes made on properties in the _attributes_.
 		
 		## Events
 	
-		## How Drivers Work With Models
+		Events are different than those in _enyo.Component_. There are no _bubbled_ or _waterfall_
+		events. Instead, you can use the registered listeners for events via the `addListener`,
+		`removeListener`, and `triggerEvent` API.
 	*/
 	enyo.kind({
 		name: "enyo.Model",
