@@ -931,4 +931,37 @@
 	enyo.trim = function (str) {
 		return str && str.replace? (str.replace(/^\s+|\s$/, "")): str;
 	};
+	/**
+		Provides a stub function for _g11n_ string translation. This allows
+		strings to be wrapped in preparation for localization. If the _g11n_
+		library is not loaded, this function will return the string as is.
+
+			$L('Welcome')
+
+		If the _g11n_ library is loaded, this function will be replaced by the
+		_g11n_ library version, which translates wrapped strings to strings from
+		a developer-provided resource file corresponding to the current user
+		locale.
+	*/
+	window.$L = function(string) {
+		return string;
+	};
+	
+	//*@public
+	/**
+		Efficient _uuid_ generator according to RFC4122 for the browser.
+	*/
+	enyo.uuid = function () {
+		// TODO: believe this can be even faster...
+		var t, p = (
+			(Math.random().toString(16).substr(2,8)) + "-" +
+			((t=Math.random().toString(16).substr(2,8)).substr(0,4)) + "-" +
+			(t.substr(4,4)) +
+			((t=Math.random().toString(16).substr(2,8)).substr(0,4)) + "-" +
+			(t.substr(4,4)) +
+			(Math.random().toString(16).substr(2,8))
+		);
+		return p;
+	};
+	
 })();

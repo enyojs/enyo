@@ -52,8 +52,8 @@
 		childBindingDefaults: null,
 		//*@protected
 		childMixins: [
-			enyo.RepeaterChildSupport,
-			enyo.RepeaterChildModelSupport
+			enyo.RepeaterChildSupport//,
+			// enyo.RepeaterChildModelSupport
 		],
 		concat: ["childMixins", "_repeaterKinds"],
 		_repeaterKinds: ["enyo.DataRepeater"],
@@ -62,15 +62,6 @@
 		containerOptions: {
 			name: "container",
 			classes: "enyo-fill enyo-data-repeater-container"
-		},
-		handlers: {
-			onModelAdded: "modelAdded",
-			onModelsAdded: "modelsAdded",
-			onModelRemoved: "modelRemoved",
-			onModelsRemoved: "modelsRemoved",
-			onSelected: "childSelected",
-			onDeselected: "childDeselected",
-			onModelChanged: "modelPropertyChanged"
 		},
 		bindings: [
 			{from: ".controller.length", to: ".length"}
@@ -103,6 +94,10 @@
 		constructor: enyo.inherit(function (sup) {
 			return function () {
 				this._selection = [];
+				// we need to pre-bind these methods so they can easily be added
+				// and removed as listeners later
+				var h = this._handlers;
+				for (var e in h) { h[e] = this.bindSafely(h[e]); }
 				sup.apply(this, arguments);
 			};
 		}),
@@ -120,39 +115,27 @@
 			this.addRemoveClass(this.multipleSelectionClass, this.multipleSelection && this.selection);
 		},
 		reset: function () {
-			var d = this.get("data");
+			// use the facaded dataset because this could be any
+			// collection of records
+			var dd = this.get("data");
+			// destroy the client controls we might already have
 			this.destroyClientControls();
-			for (var i=0, d$; (d$=d[i]); ++i) {
-				this.add(d$, i);
-			}
+			// and now we create new ones for each new record we have
+			for (var i=0, r; (r=dd.at(i)); ++i) { this.add(r, i); }
 		},
-		add: function (record, idx) {
-			var c = this.createComponent({model: record, index: idx});
-			if (this.generated && !this.batching) {
-				c.render();
-			}
+		add: function (rec, i) {
+			var c = this.createComponent({model: rec, index: i});
+			if (this.generated && !this.batching) { c.render(); }
 		},
-		remove: function (idx) {
-			var g = this.getClientControls();
-			var c = g[idx || (Math.abs(g.length-1))];
-			if (c) {
-				c.destroy();
-			}
-		},
-		update: function (idx) {
-			var d = this.get("data"),
-				g = this.getClientControls(),
-				c = g[idx];
-			if (d[idx] && c) {
-				c.set("model", d[idx]);
-			}
+		remove: function (i) {
+			var g = this.getClientControls(),
+				c = g[i || (Math.abs(g.length-1))];
+			if (c) { c.destroy(); }
 		},
 		prune: function () {
 			var g = this.getClientControls(),
 				x = g.slice(this.length);
-			for (var i=0, c$; (c$=x[i]); ++i) {
-				c$.destroy();
-			}
+			for (var i=0, c; (c=x[i]); ++i) { c.destroy(); }
 		},
 		initContainer: function () {
 			var ops = this.get("containerOptions"),
@@ -163,30 +146,46 @@
 				this.$[this.containerName] = this.$[nom];
 			}
 		},
-		modelAdded: function (sender, event) {
-			if (sender == this.controller) {
-				this.add(event.model, event.index);
-			}
+		//*@protected
+		handlers: {
+			onSelected: "childSelected",
+			onDeselected: "childDeselected"
 		},
-		modelsAdded: function (sender, event) {
-			if (sender == this.controller) {
-				this.set("batching", true);
-				for (var i=0, m$; (m$=event.models[i]); ++i) {
-					this.add(m$.model, m$.index);
+		_handlers: {
+			"add": "modelsAdded",
+			"remove": "modelsRemoved"
+		},
+		controllerChanged: enyo.inherit(function (sup) {
+			return function (p) {
+				sup.apply(this, arguments);
+				// if we have an instance of a controller then we need to register
+				// for its specific events
+				var c = this.controller,
+					h = this._handlers, e;
+				if (c && c.addListener) {
+					for (e in h) { c.addListener(e, h[e]); }
 				}
+				// if there was a different one before then we need to unregister for
+				// those events now
+				if (p && p.removeListener) {
+					for (e in h) { c.removeListener(e, h[e]); }
+				}
+			};
+		}),
+		modelsAdded: function (c, e, props) {
+			if (c == this.controller) {
+				this.set("batching", true);
+				// note that these are indices when being added so they can be lazily
+				// instantiated
+				for (var i=0, r; (!isNaN(r=props.records[i])); ++i) { this.add(c.at(r), r); }
 				this.set("batching", false);
 			}
 		},
-		modelRemoved: function (sender, event) {
-			if (sender == this.controller) {
-				this.remove(event.index);
-			}
-		},
-		modelsRemoved: function (sender, event) {
-			if (sender == this.controller) {
-				for (var i=0, m$; (m$=event.models[i]); ++i) {
-					this.remove(m$.index);
-				}
+		modelsRemoved: function (c, e, props) {
+			if (c == this.controller) {
+				// unfortunately we need to remove these in reverse order
+				var idxs = enyo.keys(props.records);
+				for (var i=idxs.length-1, idx; (idx=idxs[i]); --i) { this.remove(idx); }
 			}
 		},
 		batchingChanged: function (prev, val) {
@@ -206,41 +205,27 @@
 			return true;
 		},
 		data: function () {
-			var c = this.controller;
-			if (c && c.get) {
-				return c.get("data");
-			}
-			return null;
+			return this.controller;
 		},
 		//*@public
 		/**
 			Selects the item at the given index.
 		*/
 		select: function (index) {
-			var c$ = this.getChildForIndex(index),
-				m$ = this.controller.at(index),
-				s = this._selection, i$;
+			var c = this.getChildForIndex(index),
+				r = this.controller.at(index),
+				s = this._selection, i;
 			if (this.selection) {
-				if (this.multipleSelection) {
-					if (!~enyo.indexOf(m$, s)) {
-						s.push(m$);
+				if (this.multipleSelection && (!~enyo.indexOf(r, s))) { s.push(r); }
+				else if (!~enyo.indexOf(r, s)) {
+					while (s.length) {
+						i = this.controller.indexOf(s.pop());
+						this.deselect(i);
 					}
-				} else {
-					if (!~enyo.indexOf(m$, s)) {
-						while (s.length) {
-							i$ = this.controller.indexOf(s.pop());
-							this.deselect(i$);
-						}
-						s.push(m$);
-					}
+					s.push(r);
 				}
-				if (c$) {
-					c$.set("selected", true);
-				}
-				if (this.selectionProperty) {
-					s = this.selectionProperty;
-					m$.set(s, true);
-				}
+				if (c) { c.set("selected", true); }
+				if (this.selectionProperty) { (s=this.selectionProperty) && r.set(s, true); }
 				this.notifyObservers("selected");
 			}
 		},
@@ -248,20 +233,13 @@
 			De-selects the item at the given index.
 		*/
 		deselect: function (index) {
-			var c$ = this.getChildForIndex(index),
-				m$ = this.controller.at(index),
+			var c = this.getChildForIndex(index),
+				r = this.controller.at(index),
 				s = this._selection, i;
-			i = enyo.indexOf(m$, s);
-			if (!!~i) {
-				s.splice(i, 1);
-			}
-			if (c$) {
-				c$.set("selected", false);
-			}
-			if (this.selectionProperty) {
-				s = this.selectionProperty;
-				m$.set(s, false);
-			}
+			i = enyo.indexOf(r, s);
+			if (!!~i) { s.splice(i, 1); }
+			if (c) { c.set("selected", false); }
+			if (this.selectionProperty) { (s=this.selectionProperty) && r.set(s, false); }
 			this.notifyObservers("selected");
 		},
 		/**
@@ -278,9 +256,7 @@
 				this.stopNotifications();
 				var s = this._selection;
 				s.length = 0;
-				for (var i=0; i<this.length; ++i) {
-					this.select(i);
-				}
+				for (var i=0; i<this.length; ++i) { this.select(i); }
 				this.startNotifications();
 			}
 		},
@@ -290,20 +266,17 @@
 		deselectAll: function () {
 			if (this.selection) {
 				this.stopNotifications();
-				var s = this._selection, m$, i$;
+				var s = this._selection, m, i;
 				while (s.length) {
-					m$ = s.pop();
-					i$ = this.controller.indexOf(m$);
-					this.deselect(i$);
+					m = s.pop();
+					i = this.controller.indexOf(m);
+					this.deselect(i);
 				}
 				this.startNotifications();
 			}
 		},
 		dataChanged: function () {
-			var c = this.controller;
-			if (c) {
-				this.reset();
-			}
+			if (this.controller) { this.reset(); }
 		},
 		computed: {
 			selected: [],
@@ -316,20 +289,14 @@
 		selected: function() {
 			return this.multipleSelection ? this._selection : this._selection[0];
 		}
-
 	});
-
 	//*@protected
 	enyo.concatHandler("_repeaterKinds", function (proto, props) {
 		var rk = proto._repeaterKinds || (proto._repeaterKinds = []),
 			pk = props._repeaterKinds,
-			n = proto.kindName;
-		if (enyo.isArray(pk)) {
-			rk.push.apply(rk, pk);
-		}
-		if (!~enyo.indexOf(n, rk)) {
-			rk.push(n);
-		}
+			n  = proto.kindName;
+		if (enyo.isArray(pk)) { rk.push.apply(rk, pk); }
+		if (!~enyo.indexOf(n, rk)) { rk.push(n); }
 	});
 
 })(enyo);

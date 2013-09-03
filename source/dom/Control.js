@@ -235,7 +235,8 @@ enyo.kind({
 			var value = this.getAttribute("tabIndex");
 	*/
 	getAttribute: function(inName) {
-		return this.hasNode() ? this.node.getAttribute(inName) : this.attributes[inName];
+		var n = this.hasNode();
+		return n? n.getAttribute(inName): this.attributes[inName];
 	},
 	/**
 		Sets the value of an attribute on this object. Pass null _inValue_ to
@@ -260,8 +261,9 @@ enyo.kind({
 		node has not yet been created.
 	*/
 	getNodeProperty: function(inName, inDefault) {
-		if (this.hasNode()) {
-			return this.node[inName];
+		var n = this.hasNode();
+		if (n) {
+			return n[inName];
 		} else {
 			return inDefault;
 		}
@@ -273,8 +275,9 @@ enyo.kind({
 		_enyo.Control_ instance.
 	*/
 	setNodeProperty: function(inName, inValue) {
-		if (this.hasNode()) {
-			this.node[inName] = inValue;
+		var n = this.hasNode();
+		if (n) {
+			n[inName] = inValue;
 		}
 	},
 	/**

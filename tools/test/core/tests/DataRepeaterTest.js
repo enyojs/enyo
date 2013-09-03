@@ -17,7 +17,7 @@ enyo.kind({
 		var testControl = new enyo.Control({
 			bindings: [
 				{ from: ".$.repeater.selected", to: ".boundSelection" },
-				{ from: ".$.repeater.selected", to: ".$.selected.content", transform:function(val) { return val ? val.text : ""; } }
+				{ from: ".$.repeater.selected", to: ".$.selected.content", transform:function(val) { return val ? val.get("text") : ""; } }
 			],
 			boundSelection: null,
 			components: [
@@ -49,10 +49,10 @@ enyo.kind({
 			// Select one
 			repeater.set("selection", true);
 			repeater.select(15);
-			if (repeater.get("selected").text != "Item 15") {
+			if (repeater.get("selected").get("text") != "Item 15") {
 				throw "Single selection: Did not select correct item; selection.";
 			}
-			if (testControl.boundSelection.text != "Item 15") {
+			if (testControl.boundSelection.get("text") != "Item 15") {
 				throw "Single selection (binding): Did not select correct item; selection.";
 			}
 			if (selected.content != "Item 15") {
@@ -61,10 +61,10 @@ enyo.kind({
 
 			// Select another
 			repeater.select(199);
-			if (repeater.get("selected").text != "Item 199") {
+			if (repeater.get("selected").get("text") != "Item 199") {
 				throw "Single selection (change): Did not select correct item; selection.";
 			}
-			if (testControl.boundSelection.text != "Item 199") {
+			if (testControl.boundSelection.get("text") != "Item 199") {
 				throw "Single selection (binding): Did not select correct item; selection.";
 			}
 			if (selected.content != "Item 199") {
@@ -82,7 +82,7 @@ enyo.kind({
 
 			// Select, then deselect all
 			repeater.select(199);
-			if (repeater.get("selected").text != "Item 199") {
+			if (repeater.get("selected").get("text") != "Item 199") {
 				throw "Single selection: Did not select correct item; selection.";
 			}
 			repeater.deselectAll();
@@ -98,18 +98,20 @@ enyo.kind({
 
 			// Multi-select single
 			repeater.set("multipleSelection", true);
+			// destroy a binding that will not propagate the array
+			testControl.bindings[1].destroy();
 			repeater.select(25);
 			s = repeater.get("selected");
 			if (s.length != 1) {
 				throw "Multiple-selection (single): Selection length wrong." + JSON.stringify(s);
 			}
-			if (s[0].text != "Item 25") {
+			if (s[0].get("text") != "Item 25") {
 				throw "Multiple-selection (single): Did not select correct item; selection.";
 			}
 			if (testControl.boundSelection.length != 1) {
 				throw "Multiple-selection (single, binding): Selection length wrong." + JSON.stringify(s);
 			}
-			if (testControl.boundSelection[0].text != "Item 25") {
+			if (testControl.boundSelection[0].get("text") != "Item 25") {
 				throw "Multiple-selection (single, binding): Did not select correct item; selection.";
 			}
 
@@ -124,19 +126,19 @@ enyo.kind({
 			if (s.length != 4) {
 				throw "Multiple-selection (multiple): Selection length wrong." + JSON.stringify(s);
 			}
-			if ((s[0].text != "Item 25") ||
-				(s[1].text != "Item 35") ||
-				(s[2].text != "Item 125") ||
-				(s[3].text != "Item 135")) {
+			if ((s[0].get("text") != "Item 25") ||
+				(s[1].get("text") != "Item 35") ||
+				(s[2].get("text") != "Item 125") ||
+				(s[3].get("text") != "Item 135")) {
 				throw "Multiple-selection (multiple): Did not select correct items; selection.";
 			}
 			if (testControl.boundSelection.length != 4) {
 				throw "Multiple-selection (multiple): Selection length wrong." + JSON.stringify(s);
 			}
-			if ((testControl.boundSelection[0].text != "Item 25") ||
-				(testControl.boundSelection[1].text != "Item 35") ||
-				(testControl.boundSelection[2].text != "Item 125") ||
-				(testControl.boundSelection[3].text != "Item 135")) {
+			if ((testControl.boundSelection[0].get("text") != "Item 25") ||
+				(testControl.boundSelection[1].get("text") != "Item 35") ||
+				(testControl.boundSelection[2].get("text") != "Item 125") ||
+				(testControl.boundSelection[3].get("text") != "Item 135")) {
 				throw "Multiple-selection (multiple, binding): Did not select correct items; selection.";
 			}
 
@@ -151,19 +153,19 @@ enyo.kind({
 			if (repeater.get("selected").length !== 200) {
 				throw "Multiple selection: Did not select all correctly.";
 			}
-			if ((s[0].text != "Item 0") ||
-				(s[50].text != "Item 50") ||
-				(s[150].text != "Item 150") ||
-				(s[199].text != "Item 199")) {
+			if ((s[0].get("text") != "Item 0") ||
+				(s[50].get("text") != "Item 50") ||
+				(s[150].get("text") != "Item 150") ||
+				(s[199].get("text") != "Item 199")) {
 				throw "Multiple-selection (multiple): Did not select correct items; selection.";
 			}
 			if (testControl.boundSelection.length !== 200) {
 				throw "Multiple selection: Did not select all correctly.";
 			}
-			if ((testControl.boundSelection[0].text != "Item 0") ||
-				(testControl.boundSelection[50].text != "Item 50") ||
-				(testControl.boundSelection[150].text != "Item 150") ||
-				(testControl.boundSelection[199].text != "Item 199")) {
+			if ((testControl.boundSelection[0].get("text") != "Item 0") ||
+				(testControl.boundSelection[50].get("text") != "Item 50") ||
+				(testControl.boundSelection[150].get("text") != "Item 150") ||
+				(testControl.boundSelection[199].get("text") != "Item 199")) {
 				throw "Multiple-selection (multiple): Did not select correct items; selection.";
 			}
 

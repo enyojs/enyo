@@ -77,7 +77,7 @@
 			* name: optional name for test
 			* average: if true, calculate an average of repeated start/stops for the test
 			* logging: if true, write start and stop messages to the console (defaults to true)
-			* autostart: if true, automatically start the benchmark (defaults to true)
+			* autoStart: if true, automatically start the benchmark (defaults to true)
 
 			This returns an object that has start and stop methods used
 			to track a test.
@@ -119,18 +119,11 @@
 		//*@public
 		//* Remove stored data for a benchmark named _name_.
 		clear: function (name) {
-			var source = tests[name]? tests: averages[name]? averages: null;
-			if (!source) {
-				return false;
+			if (tests[name]) {
+				delete tests[name];
 			}
-			if (source.complete) {
-				source.complete();
-			}
-			if (source[name] instanceof Array) {
-				source[name] = [];
-			}
-			else {
-				delete source[name];
+			if (averages[name]) {
+				averages[name] = [];
 			}
 			return true;
 		}
@@ -160,6 +153,7 @@
 
 		logging: true,
 		autoStart: true,
+		average: true,
 
 		// ...........................
 		// PROTECTED PROPERTIES
