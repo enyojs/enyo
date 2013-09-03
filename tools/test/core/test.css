@@ -3,6 +3,13 @@
 	font-size: smaller;
 }
 
+.enyo-tests-header-running, .enyo-tests-header-complete, .enyo-tests-header-failed {
+	padding: 4px;
+	border-bottom: 1px dotted gray;
+	font-weight: bold;
+	text-align: center;
+}
+
 .enyo-testcase-title {
 	font-weight: bold;
 	padding: 4px;
@@ -11,23 +18,26 @@
 	text-align: center;
 }
 
-.enyo-testcase-group {
-}
-
 .enyo-testcase-running, .enyo-testcase-passed, .enyo-testcase-failed {
 	padding: 4px 4px 4px 36px;
 	border-bottom: 1px dotted gray;
 	white-space: pre;
 }
 
-.enyo-testcase-running {
+.enyo-testcase-running, .enyo-tests-header-running {
 	background-color: yellow;
 }
 
-.enyo-testcase-passed {
+.enyo-testcase-passed, .enyo-tests-header-complete {
 	background-color: #B0FFB0;
 }
 
-.enyo-testcase-failed {
+.enyo-testcase-failed, .enyo-tests-header-failed {
 	background-color: #FF8080;
+}
+
+.enyo-tests-header {
+	padding: 4px;
+	border-bottom: 1px dotted gray;
+	white-space: pre;
 }
