@@ -228,13 +228,12 @@
 
 	opt = nopt(knownOpts, shortHands, process.argv, 2);
 	opt.source = opt.argv.remain[0] || "package.js";
+	w(opt);
 	if (opt.source) {
 		process.chdir(path.dirname(opt.source));
 	}
 
-	w(opt);
 	w("");
-
 	w("");
 
 	if (opt.help) {

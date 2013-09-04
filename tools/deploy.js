@@ -23,10 +23,10 @@ is the content of a typical application manifest:
 
 ```json
 {
-	"enyo": "enyo",
-	"source": ".",
-	"assets": ["icon.png", "index.html", "assets"],
-	"libs": ["lib/onyx", "lib/layout"]
+	"enyo": "./enyo",
+	"packagejs": "./package.js",
+	"assets": ["./icon.png", "./index.html", "./assets"],
+	"libs": ["./lib/onyx", "./lib/layout"]
 }
 ```
 
@@ -114,13 +114,13 @@ function printUsage() {
 		'\n' +
 		'Options:\n' +
 		'  -v  verbose operation                     [boolean]  [default: ' + verbose + ']\n' +
-		'  -b  relative build directory              [default: "./build"]\n' +
+		'  -b  build directory sub-folder            [default: "./build"]\n' +
 		'  -c  do not run the LESS compiler          [boolean]  [default: ' + less + ']\n' +
-		'  -e  location of the enyo framework        [default: "./enyo"]\n' +
-		'  -l  location of the lib folder            [default: "./lib"]\n' +
-		'  -o  alternate output directory            [default: "./deploy/APPNAME"]\n' +
-		'  -p  location of the main package.js file  [default: "./package.js"]\n' +
-		'  -s  source code root directory            [default: "."]\n' +
+		'  -e  enyo framework sub-folder             [default: "./enyo"]\n' +
+		'  -l  libs sub-folder                       [default: "./lib"]\n' +
+		'  -o  alternate output directory            [default: "PWD/deploy/APPNAME"]\n' +
+		'  -p  main package.js file (relative)       [default: "./package.js"]\n' +
+		'  -s  source code root directory            [default: "PWD"]\n' +
 		'  -B  pretty-print (beautify) JS output     [default: "' + beautify + '"]\n' +
 		'  -f  remote source mapping: from local path\n' +
 		'  -t  remote source mapping: to remote path\n' +
@@ -130,13 +130,13 @@ function printUsage() {
 }
 
 var opt = nopt(/*knownOpts*/ {
-	"build": path,
+	"build": String,	// relative path
 	"less": Boolean,
-	"enyo": path,
-	"lib": path,
-	"out": path,
-	"packagejs": path,
-	"source": path,
+	"enyo": String,		// relative path
+	"lib": String,		// relative path
+	"out": path,		// absolute path
+	"packagejs": String,	// relative path
+	"source": path,		// absolute path
 	"verbose": Boolean,
 	"help": Boolean,
 	"beautify": Boolean,
@@ -162,16 +162,23 @@ var opt = nopt(/*knownOpts*/ {
 	"?": "--help"
 }, process.argv /*args*/, 2 /*slice*/);
 
+var log = function() {};
+if (opt.verbose) {
+	log = console.log;
+}
+
+log("opt:", opt);
+
 if (opt.help) {
 	printUsage();
 	process.exit(1);
 }
 
-// application default values may come from the manifest file: deploy.json
-
-if (opt.packagejs && !opt.source) {
+if (!opt.source && opt.packagejs) {
+	// backward compatibility: use top-level package.js folder as
+	// source folder if provided & if no source folder is provided
 	opt.source = path.dirname(opt.packagejs);
-	opt.packagejs = path.filename(opt.packagejs);
+	opt.packagejs = path.basename(opt.packagejs);
 }
 opt.source = opt.source || process.cwd();
 opt.app = opt.app || path.basename(opt.source);
@@ -180,6 +187,7 @@ opt.out = opt.out ? path.resolve(process.cwd(), opt.out) : path.join(process.cwd
 // deploy.js works only when running on top of the source tree...
 process.chdir(opt.source);
 
+// application default values may come from the manifest file: deploy.json
 var manifest;
 try {
 	manifest = JSON.parse(fs.readFileSync("deploy.json"));
@@ -189,19 +197,20 @@ try {
 	};
 }
 
-opt.packagejs = opt.packagejs || manifest.source ? path.join(manifest.source, "package.js") : "package.js";
+opt.packagejs = opt.packagejs || manifest.packagejs || "package.js";
+opt.packagejs = path.relative(process.cwd(), opt.packagejs);
+// top-level project folder, relative to top-level package.js
+var rootFolder = path.relative(path.dirname(opt.packagejs), ".");
+
 opt.build = opt.build || manifest.build || "build";
-opt.enyo = opt.enyo || manifest.enyo || "enyo";
+opt.enyo = opt.enyo || manifest.enyo || "enyo"; // from top-level folder
+
+log("opt:", opt);
 
 less = (opt.less !== false) && less;
 beautify = opt.beautify;
 noexec = opt.noexec;
 verbose = opt.verbose;
-
-var log = function() {};
-if (verbose) {
-	log = console.log;
-}
 
 if ((opt.mapfrom || opt.maptop) && (!opt.mapfrom || !opt.mapto || (opt.mapfrom.length != opt.mapto.length))) {
 	log("mapfrom:", opt.mapfrom);
@@ -267,7 +276,8 @@ if (!opt.mapfrom || opt.mapfrom.indexOf("enyo") < 0) {
 
 console.log("Minify-ing the application...");
 args = [node, minifier,
-	'-enyo', opt.enyo,
+	// ENYODIR, from the the top-level package.js
+	'-enyo', path.join(rootFolder, opt.enyo),
 	'-destdir', opt.out,
 	'-output', path.join(opt.build, 'app'),
 	(less ? '-less' : '-no-less'),
@@ -279,7 +289,8 @@ if (opt.mapfrom) {
 	}
 }
 if (opt.lib) {
-	args.push("-lib", opt.lib);
+	// LIBPATH, from the top-level package.js
+	args.push("-lib", path.join(rootFolder, opt.lib));
 }
 run(args);
 
