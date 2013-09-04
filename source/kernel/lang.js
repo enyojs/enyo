@@ -931,7 +931,7 @@
 	enyo.trim = function (str) {
 		return str && str.replace? (str.replace(/^\s+|\s$/, "")): str;
 	};
-	
+
 	//*@public
 	/**
 		Efficient _uuid_ generator according to RFC4122 for the browser.
@@ -948,5 +948,5 @@
 		);
 		return p;
 	};
-	
+
 })();

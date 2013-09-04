@@ -8,6 +8,9 @@
 
 	A _collection_ will lazily instantiate _records_ when they are requested. This
 	is important to be aware of depending on the order of operations.
+
+	An _enyo.Collection_ object can generate "add", "remove", and "destroy"
+	events that can be received using the _addListener_ method.
 */
 enyo.kind({
 	name: "enyo.Collection",
@@ -334,7 +337,7 @@ enyo.kind({
 	},
 	/**
 		Returns the _record_ at the requested index, `undefined` if none. Since records
-		may be stored an not of the correct form, this method will resolve them as they
+		may be stored or not of the correct form, this method will resolve them as they
 		are requested (lazily).
 	*/
 	at: function (i) {
@@ -425,7 +428,7 @@ enyo.kind({
 			o = opts || (data && !enyo.isArray(data) && data);
 		if (o) { this.importProps(o); }
 		this.records = d || [];
-		// itialized our length property
+		// initialized our length property
 		this.length = this.records.length;
 		// we bind this method to our collection so it can be reused as an event listener
 		// for many records

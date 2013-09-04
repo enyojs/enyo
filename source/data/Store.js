@@ -9,7 +9,7 @@
 		a _record_ or _collection_ through the _store_ or a reference to the object directly.
 		Every _record_ and every _collection_ has a reference to a _store_. If none is
 		explicitly provided it will resolve to _enyo.store_.
-	
+
 		The _enyo.store_ indexes _records_ internally for faster lookup. Explore the API
 		to see how these methods interact.
 	*/
@@ -213,16 +213,16 @@
 			attributes to use in the query. How these _attributes_ are used in the query depends on
 			the _source_ being used. The _success_ method expects to receive the original options
 			hash passed into find followed by the result-set (returned by the _strategy_ explained below).
-		
+
 			There is a special use for this method if an _euid_ or _primaryKey_ value is provided, the
 			_euid_ directly on the options hash and the _primaryKey_ value in the _attributes_ hash of the
 			options. It will attempt to find the record locally first, and if found, call the
 			_success_ method without using the _source_. If it cannot be found, it will continue normally.
 			Whether the _source_ is used or not, in a case where the _euid_ or _primaryKey_ value are provided
 			the result will be a single _record_ or _undefined_, not an array.
-			
+
 			For queries against only runtime _records_ (in the _store_) see _findLocal_.
-				
+
 			When results are retrieved from the requested _source_ it will be handled according to
 			the requested _strategy_ (the default is `merge`). Strategies can easily be extended
 			or added to by creating a method on the _store_ of the form _[name]Strategy_ then setting
@@ -230,9 +230,9 @@
 			two parameters, the current array of records for the kind in the original request and the
 			incoming results from the _source_ query. These methods are executed under the context of
 			the _store_. The available strategies with descriptions are below.
-				
+
 			Strategies:
-		
+
 			1. `replace` - all known _records_ are thrown away (not destroyed) and are replaced by the
 			new results.
 			2. `merge` (the default) - any incoming _records_ with the same _primaryKey_ as records
@@ -281,7 +281,7 @@
 			criterion. As is explained below, if a _primaryKey_ value is provided or an _euid_ in the
 			options it will return a single _record_ or _undefined_, not an array as this is a
 			narrow search for a specific _record_.
-		
+
 			This method accepts three parameters, the kind as a constructor or string, the
 			options to match against and an optional _filter_ method. Unlike _find_, there are no
 			_success_ or _fail_ methods, note that all _keys_ of the options will be used as criteria
@@ -289,7 +289,7 @@
 			model kind, or a _kindName_ property it will not query for any other values or scan the entire
 			dataset. Using the _kindName_ property will return all records registered in this _store_
 			for that _kindName_.
-		
+
 			The filtering process is handled by the _filter_ method of the _store_. Overload this
 			method or provide an optional third parameter that can be a function or string name of a
 			method on the _store_. This filter method will receive the _options_ to match against and
@@ -382,7 +382,7 @@
 			var rr = this.records,
 				r  = enyo.isString(rec)? rr.euid[rec]: rec,
 				ed = r.euid,
-				m  = this._recordListeners, hh; 
+				m  = this._recordListeners, hh;
 			m = m[ed];
 			if (m) {
 				for (var e in m) {
@@ -562,7 +562,7 @@
 				if (Kind) {
 					if ("function" == typeof Kind && Kind.prototype) {
 						dd[k] = new Kind({store: this});
-					} else { 
+					} else {
 						dd[k] = Kind;
 						Kind.store = this;
 					}
