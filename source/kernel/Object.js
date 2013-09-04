@@ -48,10 +48,22 @@ enyo.kind({
 
 	importProps: function (props) {
 		if (props) {
+			var k;
 			enyo.handleConcatenatedProperties(this, props);
-			for (var key in props) {
-				if (props.hasOwnProperty(key)) {
-					this[key] = props[key];
+			// if props is a default hash this is significantly faster than
+			// requiring the hasOwnProperty check every time
+			if (!props.kindName) {
+				for (k in props) {
+					this[k] = props[k];
+				}
+			}
+			// otherwise we need to do that check since we don't want to include
+			// anything in the prototype chain
+			else {
+				for (k in props) {
+					if (props.hasOwnProperty(k)) {
+						this[k] = props[k];
+					}
 				}
 			}
 		}
@@ -156,26 +168,8 @@ enyo.kind({
 		subkinds.
 	*/
 	bindSafely: function(method/*, bound arguments*/) {
-		var scope = this;
-		if (enyo.isString(method)) {
-			if (this[method]) {
-				method = this[method];
-			} else {
-				throw(['enyo.Object.bindSafely: this["', method, '"] is null (this="', this, '")'].join(''));
-			}
-		}
-		if (enyo.isFunction(method)) {
-			var args = enyo.cloneArray(arguments, 1);
-			return function() {
-				if (scope.destroyed) {
-					return;
-				}
-				var nargs = enyo.cloneArray(arguments);
-				return method.apply(scope, args.concat(nargs));
-			};
-		} else {
-			throw(['enyo.Object.bindSafely: this["', method, '"] is not a function (this="', this, '")'].join(''));
-		}
+		var args = Array.prototype.concat.apply([this], arguments);
+		return enyo.bindSafely.apply(enyo, args);
 	},
 	//*@protected
 	destroy: function () {
