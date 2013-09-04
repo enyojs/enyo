@@ -168,26 +168,8 @@ enyo.kind({
 		subkinds.
 	*/
 	bindSafely: function(method/*, bound arguments*/) {
-		var scope = this;
-		if (enyo.isString(method)) {
-			if (this[method]) {
-				method = this[method];
-			} else {
-				throw(['enyo.Object.bindSafely: this["', method, '"] is null (this="', this, '")'].join(''));
-			}
-		}
-		if (enyo.isFunction(method)) {
-			var args = enyo.cloneArray(arguments, 1);
-			return function() {
-				if (scope.destroyed) {
-					return;
-				}
-				var nargs = enyo.cloneArray(arguments);
-				return method.apply(scope, args.concat(nargs));
-			};
-		} else {
-			throw(['enyo.Object.bindSafely: this["', method, '"] is not a function (this="', this, '")'].join(''));
-		}
+		var args = Array.prototype.concat.apply([this], arguments);
+		return enyo.bindSafely.apply(enyo, args);
 	},
 	//*@protected
 	destroy: function () {
