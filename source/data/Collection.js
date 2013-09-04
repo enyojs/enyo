@@ -69,8 +69,8 @@ enyo.kind({
 		var o = opts? enyo.clone(opts): {};
 		// ensure there is a strategy for the _didFetch_ method
 		(opts = opts || {}) && (opts.strategy = opts.strategy || "add");
-		o.success = enyo.bind(this, "didFetch", this, opts);
-		o.fail = enyo.bind(this, "didFail", "fetch", this, opts);
+		o.success = enyo.bindSafely(this, "didFetch", this, opts);
+		o.fail = enyo.bindSafely(this, "didFail", "fetch", this, opts);
 		// now if we need to lets remove the records and attempt to do this
 		// while any possible asynchronous remote (not always remote...) calls
 		// are made for efficiency
@@ -432,8 +432,8 @@ enyo.kind({
 		this.length = this.records.length;
 		// we bind this method to our collection so it can be reused as an event listener
 		// for many records
-		this._recordChanged = enyo.bind(this, this._recordChanged);
-		this._recordDestroyed = enyo.bind(this, this._recordDestroyed);
+		this._recordChanged = enyo.bindSafely(this, this._recordChanged);
+		this._recordDestroyed = enyo.bindSafely(this, this._recordDestroyed);
 		this.euid = enyo.uuid();
 		// attempt to resolve the kind of model if it is a string and not a constructor
 		// for the kind

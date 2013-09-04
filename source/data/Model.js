@@ -288,8 +288,8 @@
 		*/
 		commit: function (opts) {
 			var o = opts? enyo.clone(opts): {};
-			o.success = enyo.bind(this, "didCommit", this, opts);
-			o.fail = enyo.bind(this, "didFail", "commit", this, opts);
+			o.success = enyo.bindSafely(this, "didCommit", this, opts);
+			o.fail = enyo.bindSafely(this, "didFail", "commit", this, opts);
 			this.store.commitRecord(this, o);
 		},
 		/**
@@ -301,8 +301,8 @@
 		*/
 		fetch: function (opts) {
 			var o = opts? enyo.clone(opts): {};
-			o.success = enyo.bind(this, "didFetch", this, opts);
-			o.fail = enyo.bind(this, "didFail", "fetch", this, opts);
+			o.success = enyo.bindSafely(this, "didFetch", this, opts);
+			o.fail = enyo.bindSafely(this, "didFail", "fetch", this, opts);
 			this.store.fetchRecord(this, o);
 		},
 		/**
@@ -316,8 +316,8 @@
 		destroy: function (opts) {
 			if (this.readOnly || this.isNew) { return this.destroyLocal(); }
 			var o = opts? enyo.clone(opts): {};
-			o.success = enyo.bind(this, "didDestroy", this, opts);
-			o.fail = enyo.bind(this, "didFail", "destroy", this, opts);
+			o.success = enyo.bindSafely(this, "didDestroy", this, opts);
+			o.fail = enyo.bindSafely(this, "didFail", "destroy", this, opts);
 			this.store.destroyRecord(this, o);
 		},
 		/**
@@ -327,7 +327,7 @@
 		*/
 		destroyLocal: function () {
 			var o = {};
-			o.success = enyo.bind(this, "didDestroy", this);
+			o.success = enyo.bindSafely(this, "didDestroy", this);
 			this.store.destroyRecordLocal(this, o);
 		},
 		/**
