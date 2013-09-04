@@ -5,7 +5,7 @@
 	Initialize an audio component as follows:
 
 		{kind: "enyo.Audio", src: "http://www.w3schools.com/tags/horse.mp3"}
-	
+
 	To play the audio, call _this.$.audio.play()_.
 
 	To get a reference to the actual HTML 5 Media element, call

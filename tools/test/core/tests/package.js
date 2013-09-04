@@ -23,5 +23,6 @@ enyo.depends(
 	"ObserverAndComputedTest.js",
 	"JsonTest.js",
 	"AsyncTest.js",
-	"AjaxTest.js"
+	"AjaxTest.js",
+	"ControllerTest.js"
 );
