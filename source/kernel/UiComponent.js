@@ -63,14 +63,11 @@ enyo.kind({
 			this.setContainer(null);
 			// Destroys chrome controls owned by this.
 			sup.apply(this, arguments);
-			if (this.model) {
-				this.model.removeDispatchTarget(this);
-				this.model = null;
-			}
-			if (this.controller) {
+			this.model = null;
+			if (this.controller && this.controller.removeDispatchTarget) {
 				this.controller.removeDispatchTarget(this);
-				this.controller = null;
 			}
+			this.controller = null;
 		};
 	}),
 	importProps: enyo.inherit(function (sup) {
@@ -306,26 +303,16 @@ enyo.kind({
 			if (enyo.isString(c)) {
 				c = this.controller = enyo.getPath.call(c[0] == "."? this: enyo.global, c);
 			}
-			if (c) {
-				c.addDispatchTarget(this);
-			}
+			if (c && c.addDispatchTarget) { c.addDispatchTarget(this); }
 		}
-		if (p) {
-			p.removeDispatchTarget(this);
-		}
+		if (p && p.removeDispatchTarget) { p.removeDispatchTarget(this); }
 	},
 	modelChanged: function (p) {
 		var m = this.model;
 		if (m) {
 			if (enyo.isString(m)) {
-				m = this.model = enyo.getPath.call(m[0] == "."? this: enyo.global, m);
+				this.model = enyo.getPath.call(m[0] == "."? this: enyo.global, m);
 			}
-			if (m) {
-				m.addDispatchTarget(this);
-			}
-		}
-		if (p) {
-			p.removeDispatchTarget(this);
 		}
 	}
 });

@@ -189,6 +189,14 @@ enyo.kind.finish = function(inProps) {
 	return ctor;
 };
 
+// if we've defined an enyo.options hash and the noDefer property is set to true,
+// revert kind behavior to old setup where all kind definitions were immediately
+// processed.
+if (enyo.options && enyo.options.noDefer) {
+	enyo.kind = enyo.kind.finish;
+	enyo.kind.finish = enyo.kind;
+}
+
 //* @public
 /**
 	Creates a singleton of a given kind with a given definition.

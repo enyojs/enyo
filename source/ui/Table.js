@@ -9,7 +9,7 @@
 
 /**
 	_enyo.Table_ implements an HTML &lt;table&gt; element.
-	This is a work in progress. 
+	This is a work in progress.
 */
 enyo.kind({
 	name: "enyo.Table",

@@ -844,7 +844,7 @@
 			if (scope[method]) {
 				method = scope[method];
 			} else {
-				throw(['enyo.bind: scope["', method, '"] is null (scope="', scope, '")'].join(''));
+				throw('enyo.bind: scope["' + method + '"] is null (scope="' + scope + '")');
 			}
 		}
 		if (enyo.isFunction(method)) {
@@ -859,9 +859,39 @@
 				};
 			}
 		} else {
-			throw(['enyo.bind: scope["', method, '"] is not a function (scope="', scope, '")'].join(''));
+			throw('enyo.bind: scope["' + method + '"] is not a function (scope="' + scope + '")');
 		}
 	};
+
+	//*@public
+	/**
+		Binds a callback to a scope.  If the object has a "destroyed" property that's truthy,
+		then the callback will not be run if called.  This can be used to implement both
+		enyo.Object.bindSafely and for enyo.Object-like objects like enyo.Model and enyo.Collection.
+	*/
+	enyo.bindSafely = function(scope, method/*, bound arguments*/) {
+		if (enyo.isString(method)) {
+			if (scope[method]) {
+				method = scope[method];
+			} else {
+				throw('enyo.bindSafely: scope["' + method + '"] is null (this="' + this + '")');
+			}
+		}
+		if (enyo.isFunction(method)) {
+			var args = enyo.cloneArray(arguments, 2);
+			return function() {
+				if (scope.destroyed) {
+					return;
+				}
+				var nargs = enyo.cloneArray(arguments);
+				return method.apply(scope, args.concat(nargs));
+			};
+		} else {
+			throw('enyo.bindSafely: scope["' + method + '"] is not a function (this="' + this + '")');
+		}
+	},
+
+
 
 	/**
 		Calls method _inMethod_ on _inScope_ asynchronously.
@@ -931,4 +961,22 @@
 	enyo.trim = function (str) {
 		return str && str.replace? (str.replace(/^\s+|\s$/, "")): str;
 	};
+
+	//*@public
+	/**
+		Efficient _uuid_ generator according to RFC4122 for the browser.
+	*/
+	enyo.uuid = function () {
+		// TODO: believe this can be even faster...
+		var t, p = (
+			(Math.random().toString(16).substr(2,8)) + "-" +
+			((t=Math.random().toString(16).substr(2,8)).substr(0,4)) + "-" +
+			(t.substr(4,4)) +
+			((t=Math.random().toString(16).substr(2,8)).substr(0,4)) + "-" +
+			(t.substr(4,4)) +
+			(Math.random().toString(16).substr(2,8))
+		);
+		return p;
+	};
+
 })();
