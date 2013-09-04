@@ -21,7 +21,7 @@
 			The default _source_ is _ajax_ but other may be added by providing
 			`enyo.defaultStoreProperties` with a _sources_ hash of those to add.
 		*/
-		sources: {ajax: "enyo.AjaxSource", jsonp: "enyo.JsonpSource", localStorage: "enyo.LocalStorageSource"},
+		sources: {ajax: "enyo.AjaxSource", jsonp: "enyo.JsonpSource"},
 		/**
 			By default, the store indexes records in several ways one of which is by its
 			_primaryKey_ value if it exists. This is intended to be unique and it will
