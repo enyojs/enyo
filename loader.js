@@ -161,18 +161,18 @@
 			// assemble path
 			path = prefix + path;
 			// process path
-			if ((path.slice(-4) == ".css") || (path.slice(-5) == ".less")) {
+			if ((path.slice(-4).toLowerCase() == ".css") || (path.slice(-5).toLowerCase() == ".less")) {
 				if (this.verbose) {
 					window.console.log("+ stylesheet: [" + prefix + "][" + inPath + "]");
 				}
 				this.requireStylesheet(path);
-			} else if (path.slice(-3) == ".js" && path.slice(-10) != "package.js") {
+			} else if (path.slice(-3).toLowerCase() == ".js" && path.slice(-10).toLowerCase() != "package.js") {
 				if (this.verbose) {
 					window.console.log("+ module: [" + prefix + "][" + inPath + "]");
 				}
 
 				return this.requireScript(inPath, path, inBlock);
-			} else if (path.slice(-7) == ".design") {
+			} else if (path.slice(-7).toLowerCase() == ".design") {
 				if (this.verbose) {
 					window.console.log("+ design metadata: [" + prefix + "][" + inPath + "]");
 				}
