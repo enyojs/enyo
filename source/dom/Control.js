@@ -436,7 +436,7 @@ enyo.kind({
 		if(enyo.platform.android || enyo.platform.androidChrome || enyo.platform.blackberry) {
 			return;
 		}
-		enyo.dom.addClass(document.getElementsByTagName("body")[0], "webkitOverflowScrolling");
+		enyo.dom.addBodyClass("webkitOverflowScrolling");
 	},
 	//
 	//
@@ -492,6 +492,9 @@ enyo.kind({
 		this.addClass("enyo-no-touch-action");
 		// add css to enable hw-accelerated scrolling on non-Android platforms (ENYO-900, ENYO-901)
 		this.setupOverflowScrolling();
+		if (enyo.dom._bodyClasses) {
+			enyo.dom.flushBodyClasses();
+		}
 		// generate our HTML
 		enyo.dom.setInnerHtml(pn, this.generateHtml());
 		// post-rendering tasks
@@ -514,6 +517,9 @@ enyo.kind({
 	*/
 	write: function() {
 		/* jshint evil:true */
+		if (enyo.dom._bodyClasses) {
+			enyo.dom.flushBodyClasses();
+		}
 		if (this.fit) {
 			this.setupBodyFitting();
 		}
@@ -929,8 +935,11 @@ enyo.kind({
 	},
 	//* Adds control to enyo.roots; called from write(), renderInto(), ViewController.renderInto()
 	addToRoots: function() {
-		if (!enyo.exists(enyo.roots)) { enyo.roots = []; }
-		enyo.roots.push(this);
+		if (!enyo.exists(enyo.roots)) {
+			enyo.roots = [ this ];
+		} else {
+			enyo.roots.push(this);
+		}
 		this._isRoot = true;
 	},
 	//* Removes control from enyo.roots

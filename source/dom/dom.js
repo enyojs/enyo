@@ -114,10 +114,7 @@ enyo.dom = {
 		if (h) {
 			this.addClass(h, "enyo-document-fit");
 		}
-		var b = this.getFirstElementByTagName("body");
-		if (b) {
-			this.addClass(b, "enyo-body-fit");
-		}
+		enyo.dom.addBodyClass("enyo-body-fit");
 		enyo.bodyIsFitting = true;
 	},
 	getWindowWidth: function() {
@@ -321,7 +318,33 @@ enyo.dom = {
 			var ss = node.className;
 			node.className = (' ' + ss + ' ').replace(' ' + s + ' ', ' ').slice(1, -1);
 		}
-	}
+	},
+	//*@public
+	//* add a class to document.body. This defers the actual class change
+	//* if nothing has been rendered into body yet.
+	addBodyClass: function(s) {
+		if (!enyo.exists(enyo.roots)) {
+			if (enyo.dom._bodyClasses) {
+				enyo.dom._bodyClasses.push(s);
+			} else {
+				enyo.dom._bodyClasses = [s];
+			}
+		}
+		else {
+			enyo.dom.addClass(document.body, s);
+		}
+	},
+	//*@protected
+	flushBodyClasses: function() {
+		if (enyo.dom._bodyClasses) {
+			for (var i = 0, c; (c=enyo.dom._bodyClasses[i]); ++i) {
+				enyo.dom.addClass(document.body, c);
+			}
+			enyo.dom._bodyClasses = null;
+		}
+	},
+	//*@protected
+	_bodyClasses: null
 };
 
 // override setInnerHtml for Windows 8 HTML applications
