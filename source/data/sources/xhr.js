@@ -7,7 +7,7 @@
 	var getLocation = function () {
 		var u = location.protocol,
 			p = location.pathname.split("/");
-		u += ("//" + location.hostname);
+		u += ("//" + location.host);
 		if (p.length > 1 && p[p.length-1].match(/\./)) { p.pop(); }
 		u += ("/" + p.join("/"));
 		return u;
