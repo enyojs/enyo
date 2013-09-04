@@ -35,9 +35,6 @@ enyo.kind({
 	processError: function(inSender, inResponse) {
 		var errorLog = "Error" + ": " + inResponse + "! " + (JSON.parse(inSender.xhrResponse.body)).error.description;
 		this.$.textArea.setValue(JSON.stringify(inSender.xhrResponse, null, 2));
-		this.showPopup(errorLog);
-	},
-	showPopup: function(errorLog) {
 		this.$.basicPopup.setContent(errorLog);
 		this.$.basicPopup.show();
 	}
