@@ -54,12 +54,12 @@ enyo.kind({
 		destroyed) before adding any results. If _replace_ is set this method
 		will return an array of any _records_ that were removed. The options can
 		also specify the strategy for how to add the received data, indicating
-		_strategy_ as _add_ or _merge_ where _add_ is the most efficient and will
+		_strategy_ as `add` or `merge` where `add` is the most efficient and will
 		place all incoming _records_ at the end of the _collection_ and _merge_
 		will attempt to identify existing records with the same _primaryKey_
-		and update that record with the results. When using the _add_ strategy, if
+		and update that record with the results. When using the `add` strategy, if
 		incoming data from _fetch_ belongs to a _record_ already in the _collection_
-		this _record_ will be duplicated and have a unique _euid_. By default, _add_
+		this _record_ will be duplicated and have a unique _euid_. By default, `add`
 		is used unless specified otherwise.
 	*/
 	fetch: function (opts) {
@@ -425,7 +425,7 @@ enyo.kind({
 			o = opts || (data && !enyo.isArray(data) && data);
 		if (o) { this.importProps(o); }
 		this.records = d || [];
-		// itialized our length property
+		// initialized our length property
 		this.length = this.records.length;
 		// we bind this method to our collection so it can be reused as an event listener
 		// for many records
