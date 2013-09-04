@@ -282,7 +282,7 @@
 		/**
 			Commit the current state of the _record_ to either the specified _source_
 			or the _records_ default _source_. The _source_ and any other options may be
-			specified in the _opts_ hash. May provied a _success_ and _fail_ method that
+			specified in the _opts_ hash. You may provide a _success_ and _fail_ method that
 			will be executed on those conditions. Its _success_ method will be called with
 			the same parameters as the build-in method `didCommit`.
 		*/
@@ -295,7 +295,7 @@
 		/**
 			Using the state of the _record_ and any options passed in via the _opts_ hash
 			try and fetch the current model attributes from the specified (or default)
-			_source_ for this _record_. May provied a _success_ and _fail_ method that
+			_source_ for this _record_. You may provide a _success_ and _fail_ method that
 			will be executed on those conditions. Its _success_ method will be called with
 			the same parameters as the build-in method `didFetch`.
 		*/
@@ -307,7 +307,7 @@
 		},
 		/**
 			Requests a _destroy_ action for the given _record_ and the specified (or default)
-			_source_ in the optional _opts_ hash. May provied a _success_ and _fail_ method that
+			_source_ in the optional _opts_ hash. You may provide _success_ and _fail_ methods that
 			will be executed on those conditions. Its _success_ method will be called with
 			the same parameters as the built-in method `didDestroy`. If the _record_ is _readOnly_
 			or has its _isNew_ flag set to `true` it will call its synchronous _destroyLocal_
@@ -435,7 +435,7 @@
 		},
 		/**
 			Add a listener for the given _event_. Callbacks will be executed with two
-			parameters of the form _record_, _event_ -- where _record_ is the _record_
+			parameters of the form (_record_, _event_) where _record_ is the _record_
 			that is firing the event and _event_ is the name (string) for the event
 			being fired. The _addListener_ method accepts parameters according to the
 			_enyo.ObserverSupport_ API but does not function the same way.
