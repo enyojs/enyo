@@ -72,7 +72,7 @@ enyo.singleton({
 	*/
 	registerPriority: function(inPriority, inId){
 		this._priorities[inId] = inPriority;
-		this.setPriorityLevel( Math.max(inPriority, this.priorityLevel) ); 
+		this.setPriorityLevel( Math.max(inPriority, this.priorityLevel) );
 	},
 	/**
 		Removes a priority. If the removed priority had been the highest priority,
@@ -90,7 +90,7 @@ enyo.singleton({
 			highestPriority = Math.max(highestPriority, priority);
 		}
 
-		this.setPriorityLevel( highestPriority ); 
+		this.setPriorityLevel( highestPriority );
 	},
 	/**
 		Tries to run next job if priority level has dropped.

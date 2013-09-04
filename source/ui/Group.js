@@ -13,7 +13,7 @@ enyo.kind({
 		highlander: true,
 		//* The control that was last selected
 		active: null,
-		/** 
+		/**
 			The `groupName` property is used to scope this group to a certain
 			set of controls.  When used, the group only controls activation of controls who
 			have the same `groupName` property set on them.

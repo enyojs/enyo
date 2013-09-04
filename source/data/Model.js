@@ -9,7 +9,7 @@
 	//*@public
 	/**
 		## Getting and Setting _enyo.Model_ values
-	
+
 		An _enyo.Model_ is a special object not derived from other enyo _kinds_. This is
 		for efficiency and simplicity. That being said, any `set` or `get` call on a _model_
 		will work only with the _schema_ of the _model_ and not as you would expect other
@@ -18,10 +18,10 @@
 		a hash of _keys_ and _values_ to apply at once. Even though the schema is tracked via
 		the `attributes` hash of the model it is __not necessary to prefix get/set paths with
 		"attributes" as this is assumed and redundant and will cause it to created a nested
-		schema object called `attributes`__. 
-		
+		schema object called `attributes`__.
+
 		## Computed Properties and _enyo.Model_
-	
+
 		Computed properties only exist for attributes of a _model_. Otherwise, they function
 		as you would expect from _ComputedSupport_ on _enyo.Object_. The only other exception
 		is that all _functions_ in the _attributes schema_ are considered to be a _computed
@@ -29,21 +29,23 @@
 		they might have.
 
 		## Bindings
-	
+
 		An _enyo.Model_ can be at the receiving end of a binding but bindings cannot be created
 		on the _model_ itself. A _bindings_ array will be ignored.
-	
+
 		## Observers and Notifications
-	
+
 		There is no _observers_ block for _enyo.Model_. _Bindings_ can still be applied to _attributes_
 		of the _model_. Notifications for _observers_ works the same as with _enyo.Object_ except they
 		only apply to changes made on properties in the _attributes_.
-		
+
 		## Events
-	
+
 		Events are different than those in _enyo.Component_. There are no _bubbled_ or _waterfall_
 		events. Instead, you can use the registered listeners for events via the `addListener`,
 		`removeListener`, and `triggerEvent` API.
+
+		For _enyo.Model_, generated events are "change" and "destroy".
 	*/
 	enyo.kind({
 		name: "enyo.Model",
@@ -217,7 +219,7 @@
 			// collections will supply the parse option to ensure that
 			// data has the opportunity to be parsed as if the model had
 			// called fetch
-			var p = (opts && opts.parse) || false; 
+			var p = (opts && opts.parse) || false;
 			if (opts) { this.importProps(opts); }
 			this.euid = enyo.uuid();
 			var a = this.attributes? enyo.clone(this.attributes): {},
@@ -280,32 +282,32 @@
 		/**
 			Commit the current state of the _record_ to either the specified _source_
 			or the _records_ default _source_. The _source_ and any other options may be
-			specified in the _opts_ hash. May provied a _success_ and _fail_ method that
+			specified in the _opts_ hash. You may provide a _success_ and _fail_ method that
 			will be executed on those conditions. Its _success_ method will be called with
 			the same parameters as the build-in method `didCommit`.
 		*/
 		commit: function (opts) {
 			var o = opts? enyo.clone(opts): {};
-			o.success = enyo.bind(this, "didCommit", this, opts);
-			o.fail = enyo.bind(this, "didFail", "commit", this, opts);
+			o.success = enyo.bindSafely(this, "didCommit", this, opts);
+			o.fail = enyo.bindSafely(this, "didFail", "commit", this, opts);
 			this.store.commitRecord(this, o);
 		},
 		/**
 			Using the state of the _record_ and any options passed in via the _opts_ hash
 			try and fetch the current model attributes from the specified (or default)
-			_source_ for this _record_. May provied a _success_ and _fail_ method that
+			_source_ for this _record_. You may provide a _success_ and _fail_ method that
 			will be executed on those conditions. Its _success_ method will be called with
 			the same parameters as the build-in method `didFetch`.
 		*/
 		fetch: function (opts) {
 			var o = opts? enyo.clone(opts): {};
-			o.success = enyo.bind(this, "didFetch", this, opts);
-			o.fail = enyo.bind(this, "didFail", "fetch", this, opts);
+			o.success = enyo.bindSafely(this, "didFetch", this, opts);
+			o.fail = enyo.bindSafely(this, "didFail", "fetch", this, opts);
 			this.store.fetchRecord(this, o);
 		},
 		/**
 			Requests a _destroy_ action for the given _record_ and the specified (or default)
-			_source_ in the optional _opts_ hash. May provied a _success_ and _fail_ method that
+			_source_ in the optional _opts_ hash. You may provide _success_ and _fail_ methods that
 			will be executed on those conditions. Its _success_ method will be called with
 			the same parameters as the built-in method `didDestroy`. If the _record_ is _readOnly_
 			or has its _isNew_ flag set to `true` it will call its synchronous _destroyLocal_
@@ -314,8 +316,8 @@
 		destroy: function (opts) {
 			if (this.readOnly || this.isNew) { return this.destroyLocal(); }
 			var o = opts? enyo.clone(opts): {};
-			o.success = enyo.bind(this, "didDestroy", this, opts);
-			o.fail = enyo.bind(this, "didFail", "destroy", this, opts);
+			o.success = enyo.bindSafely(this, "didDestroy", this, opts);
+			o.fail = enyo.bindSafely(this, "didFail", "destroy", this, opts);
 			this.store.destroyRecord(this, o);
 		},
 		/**
@@ -325,7 +327,7 @@
 		*/
 		destroyLocal: function () {
 			var o = {};
-			o.success = enyo.bind(this, "didDestroy", this);
+			o.success = enyo.bindSafely(this, "didDestroy", this);
 			this.store.destroyRecordLocal(this, o);
 		},
 		/**
@@ -433,7 +435,7 @@
 		},
 		/**
 			Add a listener for the given _event_. Callbacks will be executed with two
-			parameters of the form _record_, _event_ -- where _record_ is the _record_
+			parameters of the form (_record_, _event_) where _record_ is the _record_
 			that is firing the event and _event_ is the name (string) for the event
 			being fired. The _addListener_ method accepts parameters according to the
 			_enyo.ObserverSupport_ API but does not function the same way.
@@ -486,7 +488,7 @@
 			pd = (p.defaults && (rd && enyo.clone(p.defaults)) || p.defaults) || {},
 			rc = props.computed,
 			pc = (p.computed && (rc && enyo.clone(p.computed)) || p.computed) || {};
-			
+
 		// handle attributes of the kind so all subkinds will accurately
 		// have the mixture of the schema
 		if (ra) { enyo.mixin(pa, ra) && (delete props.attributes); }
