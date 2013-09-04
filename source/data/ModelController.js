@@ -20,11 +20,17 @@ enyo.kind({
 	*/
 	model: null,
 	/**
-		Retrieve an _attribute_ from the _model_ (if it exists). The only exception
-		is the _model_ property itself may be returned from this method.
+		Retrieve an _attribute_ from the _model_ (if it exists). The only exceptions
+		are the _model_ property itself may be returned from this method or _computed_
+		properties of the _controller_. This way, _bindings_ can correctly bind to
+		a _model controller's computed properties_ without modifying the _model_ definition.
+		There is a limitation here that a computed property with the same name as an _attribute_
+		or _computed property_ of the _model_ will not be accessible to _bindings_ on the
+		_model controller_.
 	*/
 	get: function (prop) {
 		if (prop == "model") { return this.getLocal(prop); }
+		if (this._isComputed(prop)) { return this._getComputed(prop); }
 		if (this.model) { return this.model.get.apply(this.model, arguments); }
 	},
 	/**
