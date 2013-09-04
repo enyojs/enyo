@@ -8,6 +8,7 @@ enyo.kind({
 			b  = new enyo.Binding({source: mc, from: ".prop1", target: c, to: ".content"}),
 			m  = new enyo.Model({prop1: "1"});
 		mc.set("model", m);
+		b.destroy();
 		this.finish(
 			(mc.get("prop1") != "1" && "could not retrieve the correct value from the model") ||
 			(c.get("content") != "1" && "control's content did not propagate from binding")
@@ -20,6 +21,7 @@ enyo.kind({
 			m  = new enyo.Model({prop1: "1"});
 		mc.set("model", m);
 		c.set("content", "2");
+		b.destroy();
 		this.finish(
 			(c.get("content") != "2" && "content value was overridden by controller's") ||
 			(mc.get("prop1") != "2" && "controller was unable to proxy correct value") ||
@@ -53,6 +55,7 @@ enyo.kind({
 		mc._computedMap = {prop1: ["prop1Computed"]};
 		mc.set("model", m);
 		mc.set("prop1", "2");
+		b.destroy();
 		this.finish(c.get("content") != "2+2" && "computed property did not update as expected, got `" + c.get("content") + "` instead of `2+2`");
 	},
 	testModelComputed: function () {
@@ -67,11 +70,13 @@ enyo.kind({
 		mc.computed["prop2"] = ["prop1"];
 		mc._computedMap = {prop1: ["prop2"]};
 		mc.set("prop3", true);
+		b1.destroy();
+		b2.destroy();
 		this.finish(
 			(m.get("prop1") != 5 && "model computed property not retrieved correctly") ||
 			(mc.get("prop1") != 5 && "controller did not retrieve prop1 correctly got `" + mc.get("prop1") + "` instead of `5`") ||
 			(mc.get("prop2") != 9 && "controller did not retrieve the correct computed property") ||
-			(mc.get("prop3") != true && "controller could not retrieve the modifed value of prop3 as expected")
+			(mc.get("prop3") !== true && "controller could not retrieve the modifed value of prop3 as expected")
 		);
 	},
 	testSyncOnModelAddition: function () {
