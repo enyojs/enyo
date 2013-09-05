@@ -47,7 +47,8 @@
 			return normalize(u);
 		},
 		/**
-			Executes the _requestKind_ with the given options.
+			Executes the _requestKind_ with the given options. A `params` hash will be used
+			to generate a query string.
 		*/
 		go: function (opts) {
 			var Kind = this.requestKind,
@@ -55,7 +56,7 @@
 				xhr  = new Kind(o);
 			xhr.response(opts.success);
 			xhr.error(opts.fail);
-			xhr.go();
+			xhr.go(opts.params);
 		},
 		/**
 			Overload this method for special implementations or needs. By default
