@@ -187,7 +187,7 @@
 		*/
 		addSources: function (props) {
 			var dd = this.sources;
-			for (var k in props) { dd[k] = props; }
+			for (var k in props) { dd[k] = props[k]; }
 			this._initSources();
 		},
 		/**
