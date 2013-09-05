@@ -365,8 +365,8 @@ enyo.kind({
 	*/
 	createRecord: function (attrs, props, i) {
 		// ensure we know whether or not to flag the data as needing to be parsed
-		var df = props.didFetch;
-		delete props.didFetch;
+		var df = attrs.didFetch;
+		delete attrs.didFetch;
 		var d = {owner: this, parse: df? true: false},
 			r = this.store.createRecord(this.model, attrs, props? enyo.mixin(d, props): d);
 		i = false === i? -1: (!isNaN(i) && i >= 0? i: this.length);
