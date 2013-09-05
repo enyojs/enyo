@@ -115,14 +115,5 @@ enyo.kind({
 			}
 			sup.apply(this, arguments);
 		};
-	}),
-	// extending enyo.Component.delegateEvent
-	delegateEvent: enyo.inherit(function (sup) {
-		return function(inDelegate, inName, inEventName, inEvent, inSender) {
-			if (inDelegate == this) {
-				inDelegate = this.owner.owner;
-			}
-			sup.apply(this, arguments);
-		};
 	})
 });
