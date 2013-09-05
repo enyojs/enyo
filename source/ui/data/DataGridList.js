@@ -144,7 +144,7 @@
 						p$.applyStyle("width", $w + "px");
 					}
 				}
-				this.columns = Math.floor(($w - $s) / ($m + $s));
+				this.columns = Math.floor(($w - $s) / ($m + $s)) || 1;
 				this.tileWidth = Math.floor(($w - (this.columns * $s) - $s) / this.columns);
 				this.tileHeight = Math.floor($h * (this.tileWidth / $m));
 				this.adjustControlsPerPage();
