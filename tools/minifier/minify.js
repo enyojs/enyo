@@ -204,10 +204,10 @@
 
 	var knownOpts = {
 		"alias": Boolean,
-		"enyo": String,	 // relative path
-		"lib": String,	 // relative path
-		"destdir": path, // absolute path (resolved by nopt)
-		"srcdir": path,	 // absolute path (resolved by nopt)
+		"enyo": String,   // relative path
+		"lib": String,    // relative path
+		"destdir": path,  // absolute path (resolved by nopt)
+		"srcdir": path,   // absolute path (resolved by nopt)
 		"output": String, // relative path
 		"help": Boolean,
 		"beautify": Boolean,
