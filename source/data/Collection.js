@@ -104,13 +104,16 @@ enyo.kind({
 	*/
 	didFetch: function (rec, opts, res) {
 		// the parsed result
-		var r = this.parse(res),
-			s = opts.strategy, fn;
-		if (r) {
+		var rr = this.parse(res),
+			s  = opts.strategy, fn;
+		if (rr) {
+			// mark the data as having been retrieved remotely so when it is instanced it
+			// will know to pass the parse flag
+			for (var i=0, r; (r=rr[i]); ++i) { r.didFetch = true; }
 			// even if replace was requested it will have already taken place so we
 			// need only evaluate the strategy for merging the new results
 			if ((fn=this[s]) && enyo.isFunction(fn)) {
-				fn.call(this, r);
+				fn.call(this, rr);
 			}
 		}
 		if (opts) {
@@ -179,7 +182,12 @@ enyo.kind({
 							else { w=true; }
 						}
 						if (w) {
-							r.setObject(r.parse(nr));
+							// check for the _didFetch_ flag that would have been added if
+							// this was called from that method so we can know whether to
+							// parse the data or not
+							var df = nr.didFetch;
+							delete nr.didFetch;
+							r.setObject(df? r.parse(nr): nr);
 							f = true;
 						}
 					}
@@ -356,7 +364,10 @@ enyo.kind({
 		of the newly created _record_.
 	*/
 	createRecord: function (attrs, props, i) {
-		var d = {parse: true, owner: this},
+		// ensure we know whether or not to flag the data as needing to be parsed
+		var df = attrs.didFetch;
+		delete attrs.didFetch;
+		var d = {owner: this, parse: df? true: false},
 			r = this.store.createRecord(this.model, attrs, props? enyo.mixin(d, props): d);
 		i = false === i? -1: (!isNaN(i) && i >= 0? i: this.length);
 		r.addListener("change", this._recordChanged);
