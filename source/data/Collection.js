@@ -158,9 +158,10 @@ enyo.kind({
 		_mergeKeys_ they will be used to compare the records otherwise it will depend
 		on the _primaryKey_ value for comparison. Any unmerged records will be added at
 		the end of the _collection_. If a _primaryKey_ value exists on the incoming _records_
-		it will take precedence over _mergeKeys_.
+		it will take precedence over _mergeKeys_. Set the optional second parameter to `true`
+		to force parsing of all records by their _kinds_ built-in `parse` method.
 	*/
-	merge: function (rec) {
+	merge: function (rec, didFetch) {
 		// TODO: with a little more time this could be optimized a bit better...
 		var p  = this.model.prototype,
 			pk = p.primaryKey,
@@ -185,7 +186,7 @@ enyo.kind({
 							// check for the _didFetch_ flag that would have been added if
 							// this was called from that method so we can know whether to
 							// parse the data or not
-							var df = nr.didFetch;
+							var df = nr.didFetch || didFetch;
 							delete nr.didFetch;
 							r.setObject(df? r.parse(nr): nr);
 							f = true;
@@ -204,9 +205,10 @@ enyo.kind({
 		you can provide the index at which to insert the _record(s)_. The default is to
 		add them at the end. If additions are made successfully this triggers a `add` event
 		to be fired with the array of the index of any _records_ successfully added. Returns
-		the array of indices as well.
+		the array of indices as well. Set the optional third parameter to `true` to force
+		all data to be parsed by the model kinds own `parse` method.
 	*/
-	add: function (rec, i) {
+	add: function (rec, i, didFetch) {
 		var rr = this.records,
 			d  = [],
 			l  = this.length,
@@ -220,7 +222,7 @@ enyo.kind({
 		// we will only provide the indices in the return and events so that we can lazily
 		// instantiate the records as they are needed
 		for (var j=0, r; (r=rec[j]); ++j) {
-			if (f) { rec[j] = this.createRecord(r, null, false); }
+			if (f) { rec[j] = this.createRecord(r, didFetch? {didFetch: true}: null, false); }
 			d.push(j+i);
 		}
 		// rather than perform a splice over and over potentially we run it once
@@ -435,10 +437,15 @@ enyo.kind({
 		applied first.
 	*/
 	constructor: function (data, opts) {
-		var d = data && enyo.isArray(data) && data,
-			o = opts || (data && !enyo.isArray(data) && data);
+		var d  = data && enyo.isArray(data) && data,
+			o  = opts || (data && !enyo.isArray(data) && data),
+			p  = o? o.parse: false,
+			df = o? o.didFetch: false;
 		if (o) { this.importProps(o); }
-		this.records = d || [];
+		this.records = (d && (p && this.parse(d)) || d) || [];
+		// if the _didFetch_ flag is present we need to mark the props as having been
+		// fetched so they will appropriately be parsed later
+		if (df) { for (var i=0, r; (r=d[i]); ++i) { r.didFetch = true; } }
 		// initialized our length property
 		this.length = this.records.length;
 		// we bind this method to our collection so it can be reused as an event listener
@@ -497,7 +504,7 @@ enyo.kind({
 				this.records = this.records? this.records.concat(p.records): p.records;
 				delete p.records;
 			}
-			for (var k in p) { this[k] = p[k]; }
+			for (var k in p) { if (k != "didFetch" && k != "parse") { this[k] = p[k]; } }
 		}
 	},
 	storeChanged: function () {
