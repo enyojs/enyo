@@ -335,6 +335,7 @@ function deployDir(subDir) {
 		if (Array.isArray(manifest.assets)) {
 			manifest.assets.forEach(function(asset) {
 				var dstAssetDir = path.dirname(path.join(opt.out, subDir, asset));
+				log("% mkdir -p " + dstAssetDir);
 				shell.mkdir('-p', dstAssetDir);
 				log("% cp -r " + path.join(subDir, asset) + "...");
 				shell.cp('-r', path.join(subDir, asset), dstAssetDir);
