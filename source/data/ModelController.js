@@ -59,13 +59,15 @@ enyo.kind({
 	},
 	/**
 		To arbitrarily update any bindings to known _attributes_ of the
-		_model_ (if it exists), call this method.
+		_model_ (if it exists), call this method. Optionally provide
+		a hash of properties and values with which to notify observers noting
+		that the values will be used as the _previous_ values if there is
+		no `model` present on the _controller_.
 	*/
-	sync: function () {
-		if (this.model) {
-			var aa = this.model.attributes;
-			for (var k in aa) { this.notifyObservers(k, this.model.previous[k], this.model.get(k)); }
-		}
+	sync: function (props) {
+		var m  = this.model,
+			aa = props || (this.model && this.model.attributes);
+		for (var k in aa) { this.notifyObservers(k, m? m.previous[k]: aa[k], m? this.model.get(k): undefined); }
 	},
 	/**
 		This method responds to the _model_ property being set on this _controller_.
@@ -78,6 +80,9 @@ enyo.kind({
 		if (p) {
 			p.removeListener("change", this._modelChanged);
 			p.removeListener("destroy", this._modelDestroyed);
+			// if we're removing the current record and there isn't a replacement
+			// we need to synchronize observers related to this record
+			if (!m) { this.sync(p.attributes); }
 		}
 		if (m) {
 			// assign listeners to respond to events from the model
