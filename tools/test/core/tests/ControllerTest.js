@@ -89,5 +89,17 @@ enyo.kind({
 			((c.prop1 != "1" || c.prop2 != "2") && "values were not initialized properly on model addition to controller") ||
 			((mc.set("model", m2)) && (c.prop1 != "2" || c.prop2 != "3") && "values did not re-initialize on second model addition")
 		);
+	},
+	testSyncOnModelRemoved: function () {
+		var mc = new enyo.ModelController(),
+			c  = new enyo.Control({controller: mc, bindings: [{from: ".controller.prop1", to: ".prop1"}]}),
+			m  = new enyo.Model({prop1: "1"}), p;
+		mc.set("model", m);
+		p = c.prop1;
+		mc.set("model", undefined);
+		this.finish(
+			(p != "1" && "the previous value was somehow incorrect meaning the binding didn't fire to begin with") ||
+			(c.prop1 !== undefined && "clearing the model on the controller did not sync the binding to undefined as expected")
+		);
 	}
 });
