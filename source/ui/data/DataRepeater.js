@@ -1,8 +1,11 @@
 //*@public
 /**
-	_enyo.DataRepeater_ is an abstract kind that will repeat a defined kind for
-	as many records as are in its _data_ array (automatically bound from a
-	controller of the kind [enyo.Collection](#enyo.Collection)).
+		The _enyo.DataRepeater_ uses _enyo.Collection_ as its _controller_ to repeatedly
+		render and synchronize _records_ (_enyo.Model_ instances) to its own children.
+		For any _record_ in the _collection_ a new child will be rendered in this _repeater_.
+		If the _record_ is destroyed the child will all be destroyed. These controls will
+		automatically update when properties on the underlying _record_ have been modified
+		if bound using `bindings` (_enyo.Binding_).
 */
 enyo.kind({
 	name: "enyo.DataRepeater",
