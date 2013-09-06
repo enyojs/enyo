@@ -58,7 +58,7 @@ enyo.kind({
 		oninput: null
 	},
 	// create RichText as a div if platform has contenteditable attribute, otherwise create it as a textarea
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			this.setTag(enyo.RichText.hasContentEditable()?"div":"textarea");
 			sup.apply(this, arguments);

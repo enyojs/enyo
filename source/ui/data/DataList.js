@@ -61,7 +61,7 @@
 		controlParentName: "page1",
 		containerName: "scroller",
 		debugPageBoundaries: false,
-		create: enyo.super(function (sup) {
+		create: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				this.orientation = this.orientation[0] == "v"? "v": "h";
@@ -159,9 +159,6 @@
 		resetPage: function (p) {
 			this.controlParentName = p.name;
 			this.discoverControlParent();
-			while (p.children.length < this.controlsPerPage) {
-				this.createComponent({});
-			}
 		},
 		generatePage: function (p, n) {
 			var $d = this.get("data"),
@@ -172,7 +169,7 @@
 			this.controlParentName = p.name;
 			this.discoverControlParent();
 			p.index = n;
-			for (var $i=0, $j=$o, c$, d$; (c$ = p.children[$i]) && (d$=$d[$j]) && $j < $e; ++$i, ++$j) {
+			for (var $i=0, $j=$o, c$, d$; ((c$=p.children[$i]) ||(p.children.length < $c && (c$=this.createComponent({})))) && (d$=$d.at($j)) && $j < $e; ++$i, ++$j) {
 				if (c$._listDisabledChild) {
 					this.enableChild(c$);
 				}
@@ -257,30 +254,24 @@
 			}
 			return $f;
 		},
-		modelsAdded: function (sender, event) {
+		modelsAdded: function (c, e, props) {
 			// FIXME: This is a temporary implementation as it will continue to
 			// throw indices for pages already generated - but it would need to inspect
 			// them to ensure they are ordered and then group them so the page is only
 			// generated once
-			if (sender == this.controller) {
-				if (!this._hasReset) {
-					return this.reset();
-				}
-				// if these conditions are true then it hasn't reset yet so it
-				// is safe to ignore the event
+			if (c == this.controller) {
+				if (!this._hasReset) { return this.reset(); }
 				if (this.generated && this.$.scroller.canGenerate) {
 					this.set("batching", true);
-					for (var $i=0, r$; (r$=event.models[$i]); ++$i) {
-						this.add(r$.index);
-					}
+					for (var i=0, r; (r=props.records[i]); ++i) { this.add(r); }
 					this.updateMetrics();
 					this.adjustLastPage();
 					this.set("batching", false);
 				}
 			}
 		},
-		modelsRemoved: function (sender, event) {
-			if (sender == this.controller) {
+		modelsRemoved: function (c, e, props) {
+			if (c == this.controller) {
 				if (this.generated && this.$.scroller.canGenerate) {
 					this.set("batching", true);
 					// FIXME: This is a temporary implementation for this event;
@@ -288,23 +279,6 @@
 					// are affected by the indices that are removed
 					this.reset();
 					this.set("batching", false);
-				}
-			}
-		},
-		modelAdded: function (sender, event) {
-			if (sender == this.controller) {
-				if (!this._hasReset && !this.batching) {
-					return this.reset();
-				}
-				if (this.generated && this.$.scroller.canGenerate) {
-					this.add(event.index);
-				}
-			}
-		},
-		modelRemoved: function (sender, event) {
-			if (sender == this.controller) {
-				if (this.generated && this.$.scroller.canGenerate) {
-					this.remove(event.index);
 				}
 			}
 		},
@@ -475,10 +449,10 @@
 			}
 		},
 		left: function () {
-			
+
 		},
 		right: function () {
-			
+
 		},
 		positionPageAfter: function (p) {
 			var $r = this.orientation,
@@ -512,7 +486,7 @@
 				this._lastPage = $b;
 			}
 		},
-		initContainer: enyo.super(function (sup) {
+		initContainer: enyo.inherit(function (sup) {
 			return function () {
 				var $o = enyo.clone(this.get("containerOptions")),
 					$s = this.get("scrollerOptions");
@@ -530,7 +504,7 @@
 				this.$.scroller.rendered();
 			}
 		},
-		resizeHandler: enyo.super(function (sup) {
+		resizeHandler: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				this.updateSizing();

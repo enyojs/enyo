@@ -5,7 +5,7 @@ enyo.kind({
 	components: [
 		{kind: "FittableColumns", classes:"onyx-toolbar-inline", components: [
 			{content: "YQL: "},
-			{kind: "onyx.Input", name:"query", fit:true, value:'select * from upcoming.events where woeid in (select woeid from geo.places where text="Sunnyvale, CA")'},
+			{kind: "onyx.Input", name:"query", fit:true, value:'select * from weather.forecast where woeid in (select woeid from geo.places where text="san francisco, ca")'},
 			{kind: "onyx.Button", content:"Fetch", ontap:"fetch"}
 		]},
 		{kind: "onyx.TextArea", fit:true, classes:"jsonp-sample-source"}

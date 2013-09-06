@@ -31,11 +31,11 @@
 		wait for change notifications; when a notification arrives, the binding will
 		synchronize the value between the two ends. Note that bindings may be
 		one-way (the default) or two-way.
-		
+
 		Usually, you will not need to create _enyo.Binding_ objects arbitrarily, but
 		will instead rely on the public [BindingSupport
 		API](#enyo/source/kernel/mixins/BindingSupport.js), which is applied to
-		[enyo.Object](#enyo.Object) and so is available on all of its subkinds. 
+		[enyo.Object](#enyo.Object) and so is available on all of its subkinds.
 	*/
 	enyo.kind({
 		name: "enyo.Binding",
@@ -93,7 +93,7 @@
 		/**
 			This value will be true if the binding needs synchronization and false if
 			it does not. While it is primarily for internal use, this property may
-			also be useful for debugging. 
+			also be useful for debugging.
 		*/
 		dirty: true,
 		/**
@@ -487,6 +487,7 @@
 				this.owner = null;
 			}
 			delete map[this.id];
+			enyo.BindingCount--;
 		},
 		/**
 			Interrupts the binding if called from within the scope of a transform. Do

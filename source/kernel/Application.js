@@ -64,7 +64,7 @@
 		var idx = 0;
 		var kind;
 		for (; idx < len; ++idx) {
-			kind = kinds[idx];
+			kind = enyo.clone(kinds[idx]);
 			// we need the name of the instance whether the controller is global
 			// or app-specific
 			var name = kind.name;
@@ -117,14 +117,19 @@
 		kind: "enyo.ViewController",
 
 		//*@public
+		//* If true, call the start() method immediately after being created.
 		autoStart: true,
 
 		//*@public
+		//* If true, render the view as part of the default start() method.
 		renderOnStart: true,
 
 		//*@public
+		//* Array of controller definitions to be created along wih the application.
 		controllers: null,
-		
+
+		//*@public
+		//* This is set to true when the associated view has been created.
 		viewReady: false,
 
 		//*@public
@@ -135,6 +140,9 @@
 
 		//*@protected
 		_isApplication: true,
+
+		// Let events bubble to enyo.master, the top of the chain
+		owner: enyo.master,
 
 		// ...........................
 		// PUBLIC METHODS
@@ -155,7 +163,7 @@
 		// PROTECTED METHODS
 
 		//*@protected
-		constructor: enyo.super(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function (props) {
 				if (props && enyo.exists(props.name)) {
 					enyo.setPath(props.name, this);
@@ -172,7 +180,7 @@
 		}),
 
 		//*@protected
-		constructed: enyo.super(function (sup) {
+		constructed: enyo.inherit(function (sup) {
 			return function () {
 				// we need to make sure that the controllers are already initialized
 				// before we create our view according to the view controller's API
@@ -184,8 +192,8 @@
 				}
 			};
 		}),
-		
-		render: enyo.super(function (sup) {
+
+		render: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				if (this.view && this.view.generated) {
@@ -214,7 +222,7 @@
 		},
 
 		//*@protected
-		destroy: enyo.super(function (sup) {
+		destroy: enyo.inherit(function (sup) {
 			return function () {
 				// release/destroy all controllers associated with
 				// this instance of the application

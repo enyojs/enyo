@@ -48,10 +48,22 @@ enyo.kind({
 
 	importProps: function (props) {
 		if (props) {
+			var k;
 			enyo.handleConcatenatedProperties(this, props);
-			for (var key in props) {
-				if (props.hasOwnProperty(key)) {
-					this[key] = props[key];
+			// if props is a default hash this is significantly faster than
+			// requiring the hasOwnProperty check every time
+			if (!props.kindName) {
+				for (k in props) {
+					this[k] = props[k];
+				}
+			}
+			// otherwise we need to do that check since we don't want to include
+			// anything in the prototype chain
+			else {
+				for (k in props) {
+					if (props.hasOwnProperty(k)) {
+						this[k] = props[k];
+					}
 				}
 			}
 		}
@@ -146,7 +158,6 @@ enyo.kind({
 	set: function (path, value, force) {
 		return enyo.setPath.apply(this, arguments);
 	},
-
 	//*@public
 	/**
 		Binds a callback to this object. If the object has been destroyed, the
@@ -157,26 +168,8 @@ enyo.kind({
 		subkinds.
 	*/
 	bindSafely: function(method/*, bound arguments*/) {
-		var scope = this;
-		if (enyo.isString(method)) {
-			if (this[method]) {
-				method = this[method];
-			} else {
-				throw(['enyo.Object.bindSafely: this["', method, '"] is null (this="', this, '")'].join(''));
-			}
-		}
-		if (enyo.isFunction(method)) {
-			var args = enyo.cloneArray(arguments, 1);
-			return function() {
-				if (scope.destroyed) {
-					return;
-				}
-				var nargs = enyo.cloneArray(arguments);
-				return method.apply(scope, args.concat(nargs));
-			};
-		} else {
-			throw(['enyo.Object.bindSafely: this["', method, '"] is not a function (this="', this, '")'].join(''));
-		}
+		var args = Array.prototype.concat.apply([this], arguments);
+		return enyo.bindSafely.apply(enyo, args);
 	},
 	//*@protected
 	destroy: function () {
@@ -192,10 +185,6 @@ enyo.kind({
 //* @protected
 enyo._objectCount = 0;
 
-enyo.Object.subclass = function(ctor, props) {
-	this.overload(ctor, props);
-};
-
 enyo.concatHandler("published", function(proto, props) {
 	var pp = props.published;
 	if (pp) {
@@ -203,37 +192,11 @@ enyo.concatHandler("published", function(proto, props) {
 		for (var n in pp) {
 			// need to make sure that even though a property is "published"
 			// it does not overwrite any computed properties
-			if (props[n] && enyo.isFunction(props[n])) {
-				continue;
-			}
+			if (props[n] && enyo.isFunction(props[n])) { continue; }
 			enyo.Object.addGetterSetter(n, pp[n], cp);
 		}
 	}
 });
-
-//*@protected
-/**
-	We need to find special cases and ensure that the overloaded
-	getter of a published property of a parent kind is flagged for
-	the global getter and setter.
-*/
-enyo.Object.overload = function (ctor, props) {
-	var proto = ctor.prototype.base? ctor.prototype.base.prototype: {};
-	var regex = /^(get|set).*/;
-	var name;
-	var prop;
-	for (name in props) {
-		if (!regex.test(name)) {
-			continue;
-		}
-		prop = props[name];
-		if ("function" === typeof prop) {
-			if (proto[name]) {
-				prop.overloaded = true;
-			}
-		}
-	}
-};
 
 //*@protected
 /**
@@ -245,29 +208,24 @@ enyo.Object.overload = function (ctor, props) {
 	instances.
 */
 enyo.Object.addGetterSetter = function (prop, value, proto) {
-	var get = "get" + enyo.cap(prop),
-		set = "set" + enyo.cap(prop),
-		fn;
-	// set the initial value for the prototype
+	var p   = enyo.cap(prop),
+		gfx = enyo.getPath.fast,
+		sfx = enyo.setPath.fast,
+		s   = "set" + p,
+		g   = "get" + p,
+		gs  = (proto._getters || (proto._getters = {})),
+		ss  = (proto._setters || (proto._setters = {})), fn;
 	proto[prop] = value;
-	fn = proto[get];
-	// if there isn't already a getter provided create one
-	if (!enyo.isFunction(fn)) {
-		fn = proto[get] = function () { return enyo.getPath.fast.call(this, prop); };
-		fn.overloaded = false;
-	} else if (false !== fn.overloaded) {
-		// otherwise we need to mark it as having been overloaded
-		// so the global getter knows not to ignore it
-		fn.overloaded = true;
-	}
-	// if there isn't already a set provided, create one
-	fn = proto[set];
-	if ("function" !== typeof fn) {
-		fn = proto[set] = function () { return enyo.setPath.fast.call(this, prop, arguments[0]); };
-		fn.overloaded = false;
-	} else if (false !== fn.overloaded) {
-		// otherwise we need to mark it as having been overloaded
-		// so the global set knows not to ignore it
-		fn.overloaded = true;
-	}
+	// if there isn't already a getter we create one using the
+	// fast track getter
+	if (!(fn = proto[g]) || !enyo.isFunction(fn)) {
+		fn = proto[g] = function () { return gfx.call(this, prop); };
+		fn.generated = true;
+	} else if (fn && "function" == typeof fn && !fn.generated) { gs[prop] = g; }
+	// if there isn't already a setter we create one using the
+	// fast track setter
+	if (!(fn = proto[s]) || !enyo.isFunction(fn)) {
+		fn = proto[s] = function (v) { return sfx.call(this, prop, v); };
+		fn.generated = true;
+	} else if (fn && "function" == typeof fn && !fn.generated) { ss[prop] = s; }
 };

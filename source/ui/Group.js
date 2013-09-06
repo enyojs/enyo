@@ -12,13 +12,22 @@ enyo.kind({
 		*/
 		highlander: true,
 		//* The control that was last selected
-		active: null
+		active: null,
+		/**
+			The `groupName` property is used to scope this group to a certain
+			set of controls.  When used, the group only controls activation of controls who
+			have the same `groupName` property set on them.
+		*/
+		groupName: null
 	},
 	//* @protected
 	handlers: {
 		onActivate: "activate"
 	},
 	activate: function(inSender, inEvent) {
+		if ((this.groupName || inEvent.originator.groupName) && (inEvent.originator.groupName != this.groupName)) {
+			return;
+		}
 		if (this.highlander) {
 			// deactivation messages are ignored unless it's an attempt
 			// to deactivate the highlander

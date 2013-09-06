@@ -11,8 +11,18 @@ enyo.kind({
 	name: "enyo.TestRunner",
 	kind: enyo.Control,
 	index: 0,
+	fails: 0,
+	handlers: {
+		onFinish: "checkResult"
+	},
+	checkResult: function(inSender, inEvent) {
+		if (!inEvent.results.passed) {
+			this.fails++;
+		}
+	},
 	rendered: function() {
 		this.inherited(arguments);
+		this.createComponent({name: "allTests", content: "TESTS RUNNING", classes: "enyo-tests-header-running"}).render();
 		this.next();
 	},
 	next: function() {
@@ -21,6 +31,13 @@ enyo.kind({
 			enyo.log("STARTING TEST SUITE ", test.prototype.kindName);
 			this.createComponent({name: test.prototype.kindName, kind: enyo.TestReporter, onFinishAll: "next"}).render().runTests();
 		} else {
+			if (this.fails === 0) {
+				this.$.allTests.setContent("ALL TESTS PASSED");
+				this.$.allTests.setClasses("enyo-tests-header-complete");
+			} else {
+				this.$.allTests.setContent(this.fails + " FAILURE(S)");
+				this.$.allTests.setClasses("enyo-tests-header-failed");
+			}
 			enyo.log("TEST RUNNER FINISHED");
 		}
 	}

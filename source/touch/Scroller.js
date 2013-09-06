@@ -144,7 +144,7 @@ enyo.kind({
 		}
 	},
 	controlParentName: "strategy",
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.horizontalChanged();
@@ -152,7 +152,7 @@ enyo.kind({
 			this.useMouseWheelChanged();
 		};
 	}),
-	importProps: enyo.super(function (sup) {
+	importProps: enyo.inherit(function (sup) {
 		return function(inProps) {
 			sup.apply(this, arguments);
 			// allow global overriding of strategy kind
@@ -161,19 +161,19 @@ enyo.kind({
 			}
 		};
 	}),
-	initComponents: enyo.super(function (sup) {
+	initComponents: enyo.inherit(function (sup) {
 		return function() {
 			this.strategyKindChanged();
 			sup.apply(this, arguments);
 		};
 	}),
-	teardownChildren: enyo.super(function (sup) {
+	teardownChildren: enyo.inherit(function (sup) {
 		return function() {
 			this.cacheScrollPosition();
 			sup.apply(this, arguments);
 		};
 	}),
-	rendered: enyo.super(function (sup) {
+	rendered: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.restoreScrollPosition();
@@ -202,7 +202,7 @@ enyo.kind({
 	maxHeightChanged: function() {
 		this.$.strategy.setMaxHeight(this.maxHeight);
 	},
-	showingChanged: enyo.super(function (sup) {
+	showingChanged: enyo.inherit(function (sup) {
 		return function() {
 			if (!this.showing) {
 				this.cacheScrollPosition();

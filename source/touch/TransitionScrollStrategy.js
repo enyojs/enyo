@@ -110,13 +110,13 @@ enyo.kind({
 	//* @protected
 
 	// apply initial transform so we're always composited
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			enyo.dom.transformValue(this.$.client, this.translation, "0,0,0");
 		};
 	}),
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function() {
 			this.clearCSSTransitionInterval();
 			sup.apply(this, arguments);

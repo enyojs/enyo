@@ -42,14 +42,14 @@ enyo.kind({
 		{kind: "Animator", onStep: "animatorStep", onEnd: "animatorEnd"},
 		{name: "client", style: "position: relative;", classes: "enyo-border-box"}
 	],
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
 			this.animatedChanged();
 			this.openChanged();
 		};
 	}),
-	initComponents: enyo.super(function (sup) {
+	initComponents: enyo.inherit(function (sup) {
 		return function() {
 			this.createChrome(this.tools);
 			sup.apply(this, arguments);

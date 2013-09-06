@@ -8,16 +8,16 @@
 		a paginated scrolling scheme to enhance performance with larger datasets.
 	*/
 	enyo.kind({
-		
+
 		//*@public
 		name: "enyo.DataGridList",
-		
+
 		//*@public
 		kind: "enyo.DataList",
-		
+
 		//*@public
 		classes: "enyo-data-grid-list",
-		
+
 		//*@public
 		/**
 			The spacing (in pixels) between elements in the grid list. It should be an
@@ -25,23 +25,23 @@
 			This is the exact spacing to be allocated on all sides of each item.
 		*/
 		spacing: 10,
-		
+
 		//*@public
 		/**
 			The minimum width (in pixels) for each grid item. Grid items will not be
 			collapsed beyond this size, but they may be proportionally expanded.
 		*/
 		minWidth: 100,
-		
+
 		//*@public
 		/**
 			The minimum height (in pixels) for each grid item. Grid items will not be
 			collapsed beyond this size, but they may be proportionally expanded.
 		*/
 		minHeight: 100,
-		
+
 		//*@protected
-		initComponents: enyo.super(function (sup) {
+		initComponents: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				var d = this.defaultProps,
@@ -49,12 +49,20 @@
 				d.classes = (d.classes || "") + c;
 			};
 		}),
-		create: enyo.super(function (sup) {
+		create: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				// currently we don't allow anything else
 				this.orientation = "v";
 				this.spacingChanged();
+			};
+		}),
+		showingChanged: enyo.inherit(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				if (this.generated && this.showing) {
+					this.resized();
+				}
 			};
 		}),
 		adjustPageSize: function (p) {
@@ -105,13 +113,13 @@
 				p.rows = r$ + 1;
 			}
 		},
-		generatePage: enyo.super(function (sup) {
+		generatePage: enyo.inherit(function (sup) {
 			return function (p, n) {
 				sup.apply(this, arguments);
 				this.adjustPageSize(p);
 			};
 		}),
-		getHeight: enyo.super(function (sup) {
+		getHeight: enyo.inherit(function (sup) {
 			return function (n) {
 				if (n && (n.name == "page1" || n.name == "page2")) {
 					/*jshint boss:true*/
@@ -132,7 +140,7 @@
 			}
 			return 0;
 		},
-		updateSizing: enyo.super(function (sup) {
+		updateSizing: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				var $w = this.width,
@@ -145,6 +153,7 @@
 					}
 				}
 				this.columns = Math.floor(($w - $s) / ($m + $s));
+				this.columns = Math.max(this.columns, 1);
 				this.tileWidth = Math.floor(($w - (this.columns * $s) - $s) / this.columns);
 				this.tileHeight = Math.floor($h * (this.tileWidth / $m));
 				this.adjustControlsPerPage();
@@ -161,7 +170,7 @@
 			if (p$ < $h) {
 				u$ = true;
 			}
-			while (!(m$ === 0 && p$ > $h)) {
+			while (!(m$ === 0 && p$ > $h) && p$ > 0 && $h > 0) {
 				// no matter what, if the total row-heights don't add up to the full
 				// size necessary to fill the page, we have to increment this number
 				if (p$ < $h) {
@@ -248,7 +257,7 @@
 				this.startJob("layoutPages", this.layoutPages, 100);
 			}
 		},
-		didScroll: enyo.super(function (sup) {
+		didScroll: enyo.inherit(function (sup) {
 			return function (sender, event) {
 				if (!this._noScroll) {
 					return sup.apply(this, arguments);

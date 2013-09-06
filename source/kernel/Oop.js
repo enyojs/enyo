@@ -25,7 +25,7 @@
 		concatenated). If the value is an array with no special needs, it will be
 		handled automatically. If it is not an array, or needs inspection, a handler
 		should be registered for the property via _enyo.concatHandler()_.
-	
+
 		This is required (as opposed to using subclassing) because of the nature of
 		extending a kind and extending an instance. These special handlers need to
 		be invoked on all occasions, not just when subclassing. This is a normalized
@@ -189,6 +189,14 @@ enyo.kind.finish = function(inProps) {
 	return ctor;
 };
 
+// if we've defined an enyo.options hash and the noDefer property is set to true,
+// revert kind behavior to old setup where all kind definitions were immediately
+// processed.
+if (enyo.options && enyo.options.noDefer) {
+	enyo.kind = enyo.kind.finish;
+	enyo.kind.finish = enyo.kind;
+}
+
 //* @public
 /**
 	Creates a singleton of a given kind with a given definition.
@@ -267,16 +275,16 @@ enyo.kind.extendMethods = function(ctor, props, add) {
 	if (!proto.inherited) {
 		proto.inherited = enyo.kind.inherited;
 	}
+	// rename constructor to _constructor to work around IE8/Prototype problems
+	if (props.hasOwnProperty("constructor")) {
+		props._constructor = props.constructor;
+		delete props.constructor;
+	}
 	// decorate function properties to support inherited (do this ex post facto so that
 	// ctor.prototype is known, relies on elements in props being copied by reference)
 	for (var n in props) {
 		var p = props[n];
-		if (enyo.isSuper(p)) {
-			// handle special case where the constructor has actually been renamed
-			// but mixins or other objects for extending will use the actual name
-			if (n == "constructor") {
-				n = "_constructor";
-			}
+		if (enyo.isInherited(p)) {
 			// ensure that if there isn't actually a super method to call, it won't
 			// fail miserably - while this shouldn't happen often, it is a sanity
 			// check for mixin-extensions for kinds
@@ -330,16 +338,31 @@ enyo.kind.inherited = function (originals, replacements) {
 // dcl inspired super-inheritance
 (function (enyo) {
 
-	var Super = function (fn) {
+	//* @protected
+	var Inherited = function (fn) {
 		this.fn = fn;
 	};
-	
-	enyo.super = function (fn) {
-		return new Super(fn);
+
+	//* @public
+	/**
+		When defining a method that overrides an existing method in a kind,
+		you can wrap the definition in this function and it will decorate it
+		appropriately for inheritance to work. The _fn_ argument must be a
+		function that takes a single argument, usually named _sup_, and that
+		returns a function where _sup.apply(this, arguments)_ is used as a
+		mechanism to make the super-call.
+
+		The older _this.inherited(arguments)_ method still works, but this
+		version results in much faster code and is the only one supported for
+		kind mixins.
+	*/
+	enyo.inherit = function (fn) {
+		return new Inherited(fn);
 	};
-	
-	enyo.isSuper = function (fn) {
-		return fn && (fn instanceof Super);
+
+	//* @protected
+	enyo.isInherited = function (fn) {
+		return fn && (fn instanceof Inherited);
 	};
 
 })(enyo);
@@ -388,7 +411,7 @@ enyo.kind.statics = {
 		hash or array of hashes to extend the current kind without creating a new
 		kind. Properties will override prototype properties. If a method that is
 		being added already exists, the new method supersedes the existing one. The
-		method may call _this.inherited()_ or be wrapped with _enyo.super_ to call
+		method may call _this.inherited()_ or be wrapped with _enyo.inherit_ to call
 		the original method (this chains multiple methods tied to a single kind). In
 		cases where an instance (not the class) is to be extended, it may be passed
 		in as the second parameter. This method does not re-run the
@@ -399,7 +422,7 @@ enyo.kind.statics = {
 		var ctor = this,
 			exts = enyo.isArray(props)? props: [props],
 			proto, fn;
-		fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isSuper(v)); };
+		fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isInherited(v)); };
 		if (!target && ctor._deferred) {
 			ctor = enyo.checkConstructor(ctor);
 		}
@@ -457,10 +480,15 @@ enyo.constructorForKind = function(inKind) {
 	//
 	// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
 	// This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
-	ctor = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath.call(enyo, inKind, true) || window[inKind] || enyo.getPath(inKind);
+	ctor = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath("enyo." + inKind) || window[inKind] || enyo.getPath(inKind);
+
 	// if this is a deferred kind, run the follow-up code then refetch the kind's constructor
 	if (ctor && ctor._finishKindCreation) {
 		ctor = ctor._finishKindCreation();
+	}
+	// If what we found at this namespace isn't a function, it's definitely not a kind constructor
+	if (!enyo.isFunction(ctor)) {
+		throw "[" + inKind + "] is not the name of a valid kind.";
 	}
 	enyo._kindCtors[inKind] = ctor;
 	return ctor;

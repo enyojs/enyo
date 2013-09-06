@@ -97,7 +97,7 @@ enyo.kind({
 	node: null,
 	generated: false,
 	kindStyle: "",
-	create: enyo.super(function (sup) {
+	create: enyo.inherit(function (sup) {
 		return function() {
 			if (this.tag == null) {
 				// initially set to true, but if this is not a renderable
@@ -123,14 +123,14 @@ enyo.kind({
 		};
 	}),
 	//*@protected
-	constructor: enyo.super(function (sup) {
+	constructor: enyo.inherit(function (sup) {
 		return function () {
 			this.attributes = enyo.clone(this.ctor.prototype.attributes);
 			sup.apply(this, arguments);
 		};
 	}),
 	//*@public
-	destroy: enyo.super(function (sup) {
+	destroy: enyo.inherit(function (sup) {
 		return function() {
 			this.removeFromRoots();
 			this.removeNodeFromDom();
@@ -151,7 +151,7 @@ enyo.kind({
 		}
 	},
 	//*@protected
-	dispatchEvent: enyo.super(function (sup) {
+	dispatchEvent: enyo.inherit(function (sup) {
 		return function (inEventName, inEvent, inSender) {
 			// prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
 			if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
@@ -173,13 +173,13 @@ enyo.kind({
 		sup.apply(this, arguments);
 	},
 	*/
-	addChild: enyo.super(function (sup) {
+	addChild: enyo.inherit(function (sup) {
 		return function(inControl) {
 			inControl.addClass(this.controlClasses);
 			sup.apply(this, arguments);
 		};
 	}),
-	removeChild: enyo.super(function (sup) {
+	removeChild: enyo.inherit(function (sup) {
 		return function(inControl) {
 			sup.apply(this, arguments);
 			inControl.removeClass(this.controlClasses);
@@ -235,7 +235,8 @@ enyo.kind({
 			var value = this.getAttribute("tabIndex");
 	*/
 	getAttribute: function(inName) {
-		return this.hasNode() ? this.node.getAttribute(inName) : this.attributes[inName];
+		var n = this.hasNode();
+		return n? n.getAttribute(inName): this.attributes[inName];
 	},
 	/**
 		Sets the value of an attribute on this object. Pass null _inValue_ to
@@ -260,8 +261,9 @@ enyo.kind({
 		node has not yet been created.
 	*/
 	getNodeProperty: function(inName, inDefault) {
-		if (this.hasNode()) {
-			return this.node[inName];
+		var n = this.hasNode();
+		if (n) {
+			return n[inName];
 		} else {
 			return inDefault;
 		}
@@ -273,8 +275,9 @@ enyo.kind({
 		_enyo.Control_ instance.
 	*/
 	setNodeProperty: function(inName, inValue) {
-		if (this.hasNode()) {
-			this.node[inName] = inValue;
+		var n = this.hasNode();
+		if (n) {
+			n[inName] = inValue;
 		}
 	},
 	/**
@@ -433,7 +436,7 @@ enyo.kind({
 		if(enyo.platform.android || enyo.platform.androidChrome || enyo.platform.blackberry) {
 			return;
 		}
-		enyo.dom.addClass(document.getElementsByTagName("body")[0], "webkitOverflowScrolling");
+		enyo.dom.addBodyClass("webkitOverflowScrolling");
 	},
 	//
 	//
@@ -489,6 +492,9 @@ enyo.kind({
 		this.addClass("enyo-no-touch-action");
 		// add css to enable hw-accelerated scrolling on non-Android platforms (ENYO-900, ENYO-901)
 		this.setupOverflowScrolling();
+		if (enyo.dom._bodyClasses) {
+			enyo.dom.flushBodyClasses();
+		}
 		// generate our HTML
 		enyo.dom.setInnerHtml(pn, this.generateHtml());
 		// post-rendering tasks
@@ -511,6 +517,9 @@ enyo.kind({
 	*/
 	write: function() {
 		/* jshint evil:true */
+		if (enyo.dom._bodyClasses) {
+			enyo.dom.flushBodyClasses();
+		}
 		if (this.fit) {
 			this.setupBodyFitting();
 		}
@@ -530,7 +539,7 @@ enyo.kind({
 	/**
 		Override this method to perform tasks that require access to the DOM node.
 
-			rendered: enyo.super(function (sup) {
+			rendered: enyo.inherit(function (sup) {
 				return function() {
 					sup.apply(this, arguments);
 					// do some task
@@ -926,8 +935,11 @@ enyo.kind({
 	},
 	//* Adds control to enyo.roots; called from write(), renderInto(), ViewController.renderInto()
 	addToRoots: function() {
-		if (!enyo.exists(enyo.roots)) { enyo.roots = []; }
-		enyo.roots.push(this);
+		if (!enyo.exists(enyo.roots)) {
+			enyo.roots = [ this ];
+		} else {
+			enyo.roots.push(this);
+		}
 		this._isRoot = true;
 	},
 	//* Removes control from enyo.roots
