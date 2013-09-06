@@ -111,5 +111,44 @@ enyo.kind({
 			this.finish("wrong handlers called");
 		}
 		k.destroy();
+	},
+	testDoubleDelegateDispatch: function() {
+		var finish = this.bindSafely("finish");
+		var K = enyo.kind({
+			kind: "enyo.Component",
+			events: {
+				onForwardedEvent: ""
+			},
+			components: [{
+				kind: "enyo.Component",
+				components: [
+					{kind: "enyo.Component", name: "innerComponent", onInnerEvent: "handleInnerEvent"}
+				]
+			}],
+			fireInnerEvent: function() {
+				this.$.innerComponent.bubble("onInnerEvent");
+			},
+			handleInnerEvent: function(inSender, inEvent) {
+				this.doForwardedEvent(inEvent);
+				return true;
+			}
+		});
+		var K2 = enyo.kind({
+			components: [{
+				kind: K,
+				name: "child",
+				onForwardedEvent: "handleForwardedEvent"
+			}],
+			handleForwardedEvent: function(inSender, inEvent) {
+				if (inSender === this.$.child) {
+					finish();
+				} else {
+					finish("bad sender");
+				}
+			}
+		});
+		var k2 = new K2();
+		k2.$.child.fireInnerEvent();
+		k2.destroy();
 	}
 });

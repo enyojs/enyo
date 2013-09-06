@@ -351,7 +351,10 @@ enyo.kind({
 		var e = inEvent || {};
 		var next = this.getBubbleTarget();
 		if (next) {
-			return next.dispatchBubble(inEventName, e, this);
+			// use delegate as sender if it exists to preserve illusion
+			// that event is dispatched directly from that, but we still
+			// have to bubble to get decorations
+			return next.dispatchBubble(inEventName, e, e.delegate || this);
 		}
 		return false;
 	},
@@ -379,12 +382,12 @@ enyo.kind({
 		var delegate = (event || (event = {})).delegate;
 		var ret;
 		// bottleneck event decoration w/ optimization to avoid call to empty function
-		if (this.decorateEvent !== enyo.Component.decorateEvent) {
+		if (this.decorateEvent !== enyo.Component.prototype.decorateEvent) {
 			this.decorateEvent(name, event, sender);
 		}
 
 		// first, handle any delegated events intended for this object
-		if (delegate && delegate === this) {
+		if (delegate && delegate.owner === this) {
 			// the most likely case is that we have a method to handle this
 			if (this[name] && "function" === typeof this[name]) {
 				return this.dispatch(name, event, sender);
@@ -401,9 +404,10 @@ enyo.kind({
 			}
 			// then check for a delegate property for this event
 			if (this[name] && enyo.isString(this[name])) {
-				// we dispatch it up as a special delegate event noted by
-				// the destination stored in "delegate" property
-				event.delegate = this.owner;
+				// we dispatch it up as a special delegate event with the
+				// component that had the delegation string property stored in
+				// the "delegate" property
+				event.delegate = this;
 				ret = this.bubbleUp(this[name], event, sender);
 				delete event.delegate;
 				return ret;
