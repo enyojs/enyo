@@ -57,6 +57,14 @@
 				this.spacingChanged();
 			};
 		}),
+		showingChanged: enyo.inherit(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				if (this.generated && this.showing) {
+					this.resized();
+				}
+			};
+		}),
 		adjustPageSize: function (p) {
 			this.layoutPage(p);
 			this.pages[p.index].height = this.getHeight(p);
@@ -144,7 +152,8 @@
 						p$.applyStyle("width", $w + "px");
 					}
 				}
-				this.columns = Math.floor(($w - $s) / ($m + $s)) || 1;
+				this.columns = Math.floor(($w - $s) / ($m + $s));
+				this.columns = Math.max(this.columns, 1);
 				this.tileWidth = Math.floor(($w - (this.columns * $s) - $s) / this.columns);
 				this.tileHeight = Math.floor($h * (this.tileWidth / $m));
 				this.adjustControlsPerPage();
@@ -161,7 +170,7 @@
 			if (p$ < $h) {
 				u$ = true;
 			}
-			while (!(m$ === 0 && p$ > $h)) {
+			while (!(m$ === 0 && p$ > $h) && p$ > 0 && $h > 0) {
 				// no matter what, if the total row-heights don't add up to the full
 				// size necessary to fill the page, we have to increment this number
 				if (p$ < $h) {
