@@ -41,13 +41,6 @@ enyo.MultipleDispatchSupport = {
 			}
 		};
 	}),
-	bubbleDelegation: enyo.inherit(function (sup) {
-		return function (delegate, prop, name, event, sender) {
-			if (this._dispatchDefaultPath) {
-				return sup.apply(this, arguments);
-			}
-		};
-	}),
 	ownerChanged: enyo.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
