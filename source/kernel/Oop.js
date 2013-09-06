@@ -480,7 +480,7 @@ enyo.constructorForKind = function(inKind) {
 	//
 	// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
 	// This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
-	ctor = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath.call(enyo, inKind, true) || window[inKind] || enyo.getPath(inKind);
+	ctor = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath("enyo." + inKind) || window[inKind] || enyo.getPath(inKind);
 
 	// if this is a deferred kind, run the follow-up code then refetch the kind's constructor
 	if (ctor && ctor._finishKindCreation) {
