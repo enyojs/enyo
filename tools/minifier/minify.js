@@ -58,13 +58,15 @@
 				if (/^http(:?s)?:/.test(urlPath)) {
 					return "url(" + urlPath + ")";
 				}
-				// get absolute path to referenced asset
-				var normalizedUrlPath = path.join(sheet, "..", urlPath);
-				// Make relative asset path to built css
-				var relPath = path.relative(path.dirname(opt.output), normalizedUrlPath);
+				// Make relative asset path from 'top-of-the-tree/build'
+				var relPath = path.join("..", opt.relsrcdir, path.dirname(sheet), urlPath);
 				if (process.platform == "win32") {
 					relPath = pathSplit(relPath).join("/");
 				}
+				console.log("opt.relsrcdir:", opt.relsrcdir);
+				console.log("sheet:", sheet);
+				console.log("urlPath:", urlPath);
+				console.log("relPath:", relPath);
 				return "url(" + relPath + ")";
 			});
 			blob += "\n/* " + path.relative(process.cwd(), sheet) + " */\n\n" + code + "\n";
@@ -202,10 +204,11 @@
 
 	var knownOpts = {
 		"alias": Boolean,
-		"enyo": String,
-		"lib": String,
-		"destdir": path, // only path that needs to be revoved by nopt as an absolute one
-		"output": String,
+		"enyo": String,   // relative path
+		"lib": String,    // relative path
+		"destdir": path,  // absolute path (resolved by nopt)
+		"srcdir": path,   // absolute path (resolved by nopt)
+		"output": String, // relative path
 		"help": Boolean,
 		"beautify": Boolean,
 		"mapfrom": [String, Array],
@@ -216,6 +219,7 @@
 		"alias": ['--alias'],
 		"enyo": ['--enyo'],
 		"lib": ['--lib'],
+		"srcdir": ['--srcdir'],
 		"destdir": ['--destdir'],
 		"output": ['--output'],
 		"h": ['--help'],
@@ -227,15 +231,17 @@
 	};
 
 	opt = nopt(knownOpts, shortHands, process.argv, 2);
-	opt.source = opt.argv.remain[0] || "package.js";
-	if (opt.source) {
-		process.chdir(path.dirname(opt.source));
+	opt.packagejs = opt.argv.remain[0] || "package.js";
+	opt.srcdir = opt.srcdir || process.cwd();
+	if (opt.packagejs) {
+		// walker only works from top-level package.js...
+		process.chdir(path.dirname(opt.packagejs));
 	}
-
-	w(opt);
-	w("");
-
-	w("");
+	// ...but we still want to (relatively) track the top of the
+	// tree, because this is the root from which the LESS sheets
+	// are resolved (unlike the JS dependencies, which are
+	// resolved from the folder of the top-level package.js).
+	opt.relsrcdir = path.relative(opt.srcdir, process.cwd());
 
 	if (opt.help) {
 		printUsage();
@@ -268,6 +274,7 @@
 		throw new Error("-output must be a relative path prefix");
 	}
 
+	w(opt);
 	walker.init(opt.enyo, opt.lib || opt.enyo + "/../lib", opt.mapfrom, opt.mapto);
 	walker.walk('package.js', walkerFinished);
 
