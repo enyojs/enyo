@@ -53,6 +53,7 @@ enyo.kind({
 	are case-insensitive.
 	*/
 	go: function(inParams) {
+		this.failed = false;
 		this.startTimer();
 		this.request(inParams);
 		return this;
