@@ -99,7 +99,6 @@ enyo.kind({
 			// initialize instance objects
 			this._componentNameMap = {};
 			this.$ = {};
-			this.__jobs = {};
 			sup.apply(this, arguments);
 		};
 	}),
@@ -447,8 +446,10 @@ enyo.kind({
 		return this.bubbleDelegation(inDelegate, inName, inEventName, inEvent, inSender);
 	},
 	stopAllJobs: function() {
-		for (var jobName in this.__jobs) {
-			this.stopJob(jobName);
+		if (this.__jobs) {
+			for (var jobName in this.__jobs) {
+				this.stopJob(jobName);
+			}
 		}
 	},
 	//* @public
@@ -544,14 +545,14 @@ enyo.kind({
 	*/
 	startJob: function(inJobName, inJob, inWait, inPriority) {
 		inPriority = inPriority || 5;
-
+		var jobs = (this.__jobs = this.__jobs || {});
 		// allow strings as job names, they map to local method names
 		if (enyo.isString(inJob)) {
 			inJob = this[inJob];
 		}
 		// stop any existing jobs with same name
 		this.stopJob(inJobName);
-		this.__jobs[inJobName] = setTimeout(this.bindSafely(function() {
+		jobs[inJobName] = setTimeout(this.bindSafely(function() {
 			enyo.jobs.add(this.bindSafely(inJob), inPriority, inJobName);
 		}), inWait);
 	},
@@ -559,9 +560,10 @@ enyo.kind({
 		Stops a component-specific job before it has been activated.
 	*/
 	stopJob: function(inJobName) {
-		if (this.__jobs[inJobName]) {
-			clearTimeout(this.__jobs[inJobName]);
-			delete this.__jobs[inJobName];
+		var jobs = (this.__jobs = this.__jobs || {});
+		if (jobs[inJobName]) {
+			clearTimeout(jobs[inJobName]);
+			delete jobs[inJobName];
 		}
 		enyo.jobs.remove(inJobName);
 	},
@@ -571,8 +573,9 @@ enyo.kind({
 		for the next _inWait_ milliseconds.
 	*/
 	throttleJob: function(inJobName, inJob, inWait) {
+		var jobs = (this.__jobs = this.__jobs || {});
 		// if we still have a job with this name pending, return immediately
-		if (this.__jobs[inJobName]) {
+		if (jobs[inJobName]) {
 			return;
 		}
 		// allow strings as job names, they map to local method names
@@ -580,7 +583,7 @@ enyo.kind({
 			inJob = this[inJob];
 		}
 		inJob.call(this);
-		this.__jobs[inJobName] = setTimeout(this.bindSafely(function() {
+		jobs[inJobName] = setTimeout(this.bindSafely(function() {
 			this.stopJob(inJobName);
 		}), inWait);
 	}
