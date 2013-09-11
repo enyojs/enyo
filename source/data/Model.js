@@ -8,44 +8,57 @@
 	var _mixinOpts = {ignore: true};
 	//*@public
 	/**
-		## Getting and Setting _enyo.Model_ values
+		_enyo.Model_ is a kind used to create data records. For the sake of
+		efficiency and simplicity, it has been designed as a special object not
+		derived from any other Enyo kind.
 
-		An _enyo.Model_ is a special object not derived from other enyo _kinds_. This is
-		for efficiency and simplicity. That being said, any `set` or `get` call on a _model_
-		will work only with the _schema_ of the _model_ and not as you would expect other
-		kinds based on _enyo.Object_. Any property set via the `set` method will be assumed
-		an `attribute` of the _model schema_. The `set` method also has the ability to accept
-		a hash of _keys_ and _values_ to apply at once. Even though the schema is tracked via
-		the `attributes` hash of the model it is __not necessary to prefix get/set paths with
-		"attributes" as this is assumed and redundant and will cause it to created a nested
-		schema object called `attributes`__.
+		__Getting and Setting enyo.Model values__
 
-		## Computed Properties and _enyo.Model_
+		Unlike kinds based on [enyo.Object](#enyo.Object), any call to	_set()_ or
+		_get()_ on a model affects only the schema of the model, which is tracked in
+		its _attributes_ hash. That is, when you set a property	on a model via
+		_set()_, you are setting the property's entry in the model's _attributes_
+		hash, not setting the property on the model itself.
 
-		Computed properties only exist for attributes of a _model_. Otherwise, they function
-		as you would expect from _ComputedSupport_ on _enyo.Object_. The only other exception
-		is that all _functions_ in the _attributes schema_ are considered to be a _computed
-		property_, they are fairly useless, however, without a declaration for any dependencies
-		they might have.
+		Note that, even though you are changing the contents of the _attributes_
+		hash, you should not specify _"attributes"_ as a parameter to _set()_ or
+		_get()_. If you do so, you will create a schema object called _"attributes"_
+		nested inside the model's _attributes_ hash.
 
-		## Bindings
+		Also note that the _set()_ method has the ability to accept a hash of keys
+		and values to be applied to the model all at once.
 
-		An _enyo.Model_ can be at the receiving end of a binding but bindings cannot be created
-		on the _model_ itself. A _bindings_ array will be ignored.
+		__Computed Properties and enyo.Model__
 
-		## Observers and Notifications
+		Computed properties only exist for attributes of a model. Otherwise, they
+		function as you would expect from
+		[ComputedSupport](#enyo/source/kernel/mixins/ComputedSupport.js) on
+		_enyo.Object_. The only exception is that all functions in the attributes
+		schema are considered to be computed properties; these are fairly useless,
+		however, if you don't declare any dependencies that they have.
 
-		There is no _observers_ block for _enyo.Model_. _Bindings_ can still be applied to _attributes_
-		of the _model_. Notifications for _observers_ works the same as with _enyo.Object_ except they
-		only apply to changes made on properties in the _attributes_.
+		__Bindings__
 
-		## Events
+		An _enyo.Model_ may be at the receiving end of a binding, but bindings
+		cannot be created on the model itself. If a model has a _bindings_ array, it
+		will be ignored.
 
-		Events are different than those in _enyo.Component_. There are no _bubbled_ or _waterfall_
-		events. Instead, you can use the registered listeners for events via the `addListener`,
-		`removeListener`, and `triggerEvent` API.
+		__Observers and Notifications__
 
-		For _enyo.Model_, generated events are "change" and "destroy".
+		While there is no _observers_ block for _enyo.Model_, bindings may still be
+		applied to attributes of the model. The notification system for observers
+		works the same as it does with _enyo.Object_, except that observers are only
+		notified of changes made to properties in the _attributes_ hash.
+
+		__Events__
+
+		The events in _enyo.Model_ differ from those in
+		[enyo.Component](#enyo.Component). Instead of _bubbled_ or _waterfall_
+		events, _enyo.Model_ has _change_ and _destroy_ events.
+		
+		To work with these events, use [addListener()](#enyo.Model::addListener),
+		[removeListener()](#enyo.Model::removeListener), and
+		[triggerEvent()](#enyo.Model::triggerEvent).
 	*/
 	enyo.kind({
 		name: "enyo.Model",
@@ -54,24 +67,24 @@
 		noDefer: true,
 		//*@public
 		/**
-			This is a hash of attributes known as the record's _schema_. This is where
-			the values of any _attributes_ are stored for an active record.
+			A hash of attributes known as the record's schema. This is where the
+			values of any attributes are stored for an active record.
 		*/
 		attributes: null,
 		/**
-			An optional hash of values and properties to be applied to the _attributes_
-			of the record at initialization. Any values in the _defaults_ that already exists
-			on the _attributes schema_ will be ignored.
+			An optional hash of values and properties to be applied to the attributes
+			of the record at initialization. Any value in _defaults_ that already
+			exists on the attributes schema will be ignored.
 		*/
 		defaults: null,
 		/**
-			Set this flag to `true` if this model is read-only and will not need to _commit_
-			or _destroy_ any changes via a _source_. This will cause a _destroy_ to safely
-			execute _destroyLocal_ by default.
+			Set this flag to true if this model is read-only and will not need to
+			commit or destroy any changes via a _source_. This will cause a _destroy_
+			to safely execute _destroyLocal()_ by default.
 		*/
 		readOnly: false,
 		/**
-			All _models_ have a _store_ reference. You can set this to a specific _store_
+			All models have a _store_ reference. You can set this to a specific _store_
 			instance in your application or use its default (the enyo.store global).
 		*/
 		store: null,
