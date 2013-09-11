@@ -1,69 +1,73 @@
 //*@public
 /**
-	The _enyo.Collection_ kind is an array-like structure that houses collections
-	of _enyo.Models_. An _enyo.Collection_ can be set as the _controller_ property
-	of an _enyo.Control_ or the _controllers_ block of an _enyo.Application_. They
-	are read-only entities in terms of retrieving and setting data via an _enyo.Source_.
-	Their implementation of _observers_ and _events_ are the same as _enyo.Model_.
+	_enyo.Collection_ is an array-like structure that houses collections of
+	[enyo.Model](#enyo.Model) instances. A collection may be set as the
+	_controller_ property of an [enyo.Control](#enyo.Control) or declared in the
+	_controllers_ block of an _enyo.Application_. Collections are read-only
+	entities in terms of retrieving and setting data via an
+	[enyo.Source](#enyo.Source). The implementation of observers and events is the
+	same as in _enyo.Model_.
 
-	A _collection_ will lazily instantiate _records_ when they are requested. This
-	is important to be aware of depending on the order of operations.
+	A collection lazily instantiates records when they are requested. This is 
+	important to keep in mind with respect to the order of operations.
 
-	An _enyo.Collection_ object can generate "add", "remove", and "destroy"
-	events that can be received using the _addListener_ method.
+	Collection objects generate _add_, _remove_, and _destroy_ events that may be
+	listened for using the _addListener()_ method.
 */
 enyo.kind({
 	name: "enyo.Collection",
 	kind: null,
 	noDefer: true,
 	/**
-		This represents the _kind_ of records the _collection_ will house. By
-		default it is simply _enyo.Model_ but can be set to any _kind_ of model.
+		The kind of records the collection will house. By default, it is simply
+		_enyo.Model_, but it may be set to any kind of model.
 	*/
 	model: enyo.Model,
 	/**
-		Set this to the correct _url_ for requesting data for this _collection_.
+		The correct URL for requesting data for this collection.
 	*/
 	url: "",
 	/**
-		By default _collections_ will instantiate records only as needed, but if
-		the desired action is to create them all instantly as they are added set
-		this flag to true.
+		By default, collections instantiate records only as needed; set this flag to
+		true if you want records to be created as soon as as they are added to the
+		collection
 	*/
 	instanceAllRecords: false,
 	/**
-		This is the default _source_ for requests made by this _collection_.
+		The default source for requests made by this collection
 	*/
 	defaultSource: "ajax",
 	/**
-		This will be the underlying array storing the _records_ for this _collection_.
-		Modifying this array may have undesirable affects.
+		The underlying array that stores the records for this collection. Modifying
+		this array may have undesirable effects.
 	*/
 	records: null,
 	/**
-		All _collections_ have a _store_ reference. You can set this to a specific _store_
-		instance in your application or use its default (the enyo.store global).
+		All collections have a store reference. You may set this to a specific
+		store instance in your application or use the default (the _enyo.store_
+		global).
 	*/
 	store: null,
 	/**
-		The number of _records_ in the _collection_.
+		The number of records in the collection
 	*/
 	length: 0,
 	/**
-		Fetch the _data_ for this _collection_. Accepts options with optional
-		callbacks, _success_ and _fail_, the _source_ (or the _defaultSource_
-		for the kind will be used), and the _replace_ flag. If _replace_ is
-		`true` all current _records_ in the _collection_ will be removed (not
-		destroyed) before adding any results. If _replace_ is set this method
-		will return an array of any _records_ that were removed. The options can
-		also specify the strategy for how to add the received data, indicating
-		_strategy_ as `add` or `merge` where `add` is the most efficient and will
-		place all incoming _records_ at the end of the _collection_ and _merge_
-		will attempt to identify existing records with the same _primaryKey_
-		and update that record with the results. When using the `add` strategy, if
-		incoming data from _fetch_ belongs to a _record_ already in the _collection_
-		this _record_ will be duplicated and have a unique _euid_. By default, `add`
-		is used unless specified otherwise.
+		Fetches the data for this collection. Accepts options with optional
+		callbacks, _success_ and _fail_, the _source_ (if not specified, the
+		_defaultSource_ for the kind will be used), and the _replace_ flag. If
+		_replace_ is true, all current records in the collection will be removed
+		(though not	destroyed) before adding any results. If this is the case, the
+		method will return an array of any records that were removed.
+		
+		The options	may include a _strategy_ for how received data is added to the
+		collection. The _"add"_ strategy (the default) is most efficient; it places
+		each incoming record at the end of the collection. The _"merge"_ strategy
+		will make the collection attempt to identify existing records with the same
+		_primaryKey_ as the incoming one, updating any matching records. When using
+		the _add_ strategy, if incoming data from _fetch()_ belongs to a record
+		already in the collection, this record will be duplicated and have a unique
+		_euid_.
 	*/
 	fetch: function (opts) {
 		var o = opts? enyo.clone(opts): {};
@@ -79,8 +83,8 @@ enyo.kind({
 		else if (o.destroy) { this.destroyAll(); }
 	},
 	/**
-		Convenience method not requiring the callee to supply the _replace_
-		parameter of the options.
+		Convenience method that does not require the callee to set the _replace_
+		parameter in the passed-in options.
 	*/
 	fetchAndReplace: function (opts) {
 		var o = opts || {};
@@ -88,8 +92,8 @@ enyo.kind({
 		return this.fetch(o);
 	},
 	/**
-		Convenience method not requiring the callee to supply the _destroy_
-		parameter of the options.
+		Convenience method that does not require the callee to set the _destroy_
+		parameter in the passed-in options.
 	*/
 	fetchAndDestroy: function (opts) {
 		var o = opts || {};
@@ -97,10 +101,10 @@ enyo.kind({
 		return this.fetch(o);
 	},
 	/**
-		This method is executed after a successful _fetch_, asynchronously. It
-		will _merge_ or _replace_ any new _data_ with its existing _data_ (see
-		_replace_ option for _fetch_). Receives the _collection_, the options and
-		the result (_res_).
+		This method is executed after a successful fetch, asynchronously. Any new
+		data either replaces or is merged with the existing data (as determined by
+		the_replace_ option for _fetch()_). Receives the collection, the options,
+		and the result (_res_).
 	*/
 	didFetch: function (rec, opts, res) {
 		// the parsed result
@@ -121,9 +125,9 @@ enyo.kind({
 		}
 	},
 	/**
-		When a _record_ fails during a request this method is executed with the name of
-		the command that failed followed by the reference to the record, the original
-		options and the result (if any).
+		When a record fails during a request, this method is executed with the name
+		of the command that failed, followed by a reference to the record, the
+		original options, and the result (if any).
 	*/
 	didFail: function (which, rec, opts, res) {
 		if (opts && opts.fail) {
@@ -131,35 +135,36 @@ enyo.kind({
 		}
 	},
 	/**
-		Overload this method to process incoming data before _didFetch_ will attempt
-		to merge it. This method should __always return an array of record hashes__.
+		Overload this method to process incoming data before _didFetch()_ attempts
+		to merge it. This method should _always_ return an array of record hashes.
 	*/
 	parse: function (data) {
 		return data;
 	},
 	/**
-		Produces an immutable hash of contents of the _collection_ as a JSON
-		parseable array.
+		Produces an immutable hash of the contents of the collection as a
+		JSON-parseable array.
 	*/
 	raw: function () {
 		// since we use our own _map_ method we are sure all records will be resolved
 		return this.map(function (rec) { return rec.raw(); });
 	},
 	/**
-		Will return the JSON stringified version of the output of _raw_ of this record.
+		Returns the output of _raw()_ for this record as a JSON string.
 	*/
 	toJSON: function () {
 		return enyo.json.stringify(this.raw());
 	},
 	/**
-		One of the strategies available after the _collection_ has retrieved data
-		from its _fetch_ method. It will attempt to find and update any record already
-		in the _collection_. If the _model kind_ associated with this _collection_ has
-		_mergeKeys_ they will be used to compare the records otherwise it will depend
-		on the _primaryKey_ value for comparison. Any unmerged records will be added at
-		the end of the _collection_. If a _primaryKey_ value exists on the incoming _records_
-		it will take precedence over _mergeKeys_. Set the optional second parameter to `true`
-		to force parsing of all records by their _kinds_ built-in `parse` method.
+		One of the strategies for adding data retrieved via _fetch()_ to the
+		collection. It attempts to find and update any matching records already in
+		the collection. If the model kind associated with this collection has
+		_mergeKeys_, they will be used to compare the records; if not, the
+		_primaryKey_ value is used for comparison. Any unmerged records will be
+		added at the end of the collection. If a _primaryKey_ value exists on the
+		incoming records, it will take precedence over _mergeKeys_. Set the optional
+		second parameter to true to force parsing of all records by the model kind's
+		built-in _parse()_ method.
 	*/
 	merge: function (rec, didFetch) {
 		// TODO: with a little more time this could be optimized a bit better...
@@ -201,12 +206,13 @@ enyo.kind({
 		if (a.length) { this.add(a); }
 	},
 	/**
-		Adds a _record_ or _records_ if an array to the _collection_. Optionally
-		you can provide the index at which to insert the _record(s)_. The default is to
-		add them at the end. If additions are made successfully this triggers a `add` event
-		to be fired with the array of the index of any _records_ successfully added. Returns
-		the array of indices as well. Set the optional third parameter to `true` to force
-		all data to be parsed by the model kinds own `parse` method.
+		Adds a passed-in record, or array of records, to the collection. Optionally,
+		you may provide the index at which to insert the record(s). Records are
+		added at the end by default. If additions are made successfully, an _add_
+		event is fired with the array of the indices of any records successfully
+		added. The method also returns this array of indices. Set the optional third
+		parameter to true to force all data to be parsed by the model kind's own
+		_parse()_ method.
 	*/
 	add: function (rec, i, didFetch) {
 		var rr = this.records,
@@ -236,11 +242,11 @@ enyo.kind({
 		if (l != this.length) { this.notifyObservers("length", l, this.length); }
 	},
 	/**
-		Accepts a _record_ or _records_ if an array to remove from the _collection_.
-		Returns a hash of any records (and the index they were at) that were successfully removed.
-		This emits the "remove" event that will have an argument with the _records_ that were
-		removed. Unlike the "add" event that only has indices, this event has references
-		to the actual _records_.
+		Accepts a record, or an array of records, to be removed from the collection.
+		Returns a hash of any records that were successfully removed (along with
+		their former indices). Emits the _remove_ event, which specifies the records
+		that were removed. Unlike the _add_ event, which contains only indices, the
+		_remove_ event has references to the actual records.
 	*/
 	remove: function (rec) {
 		// in order to do this as efficiently as possible we have to find any
@@ -290,18 +296,18 @@ enyo.kind({
 		return d;
 	},
 	/**
-		Removes all _records_ from the _collection_. This action does __not destroy
-		the records__, they will no longer belong to this _collection_. If the desired
-		action is to remove and destroy all _records_ see _destroyAll_. This method
-		returns an array with all of the removed _records_.
+		Removes all records from the collection. This action _does not_ destroy the
+		records; they will simply no longer belong to this _collection_. If the
+		desired action is to remove and destroy all records, use _destroyAll()_
+		instead. This method returns an array of all of the removed records.
 	*/
 	removeAll: function () {
 		return this.remove(this.records);
 	},
 	/**
-		Removes all _records_ from the _collection_ and _destroys_ them. This will
-		still emit the _remove_ event, and any _records_ being destroyed will also
-		emit their own _destroy_ events.
+		Removes all records from the collection and destroys them. This will still
+		emit the _remove_ event, and any records being destroyed will also emit
+		their own _destroy_ events.
 	*/
 	destroyAll: function () {
 		var rr = this.removeAll(), r;
@@ -310,18 +316,18 @@ enyo.kind({
 		this._destroyAll = false;
 	},
 	/**
-		Returns the index of the given _record_ if it exists in this _collection_.
-		Will be `-1` otherwise. Supply optional offset to begin search at an index
-		other than `0`.
+		Returns the index of the given record if it exists in this collection;
+		otherwise, returns _-1_. Supply an optional offset to begin searching at a
+		non-zero index.
 	*/
 	indexOf: function (rec, offset) {
 		return enyo.indexOf(rec, this.records, offset);
 	},
 	/**
-		Iterates over all the _records_ in this _collection_ accepting the
-		return value of _fn_ (under optional context _ctx_) and returns the
-		immutable array of that result. If no context is provided the function
-		will be executed in the context of the _collection_.
+		Iterates over all the records in this collection, accepting the
+		return value of _fn_ (under optional context _ctx_), and returning the
+		immutable array of that result. If no context is provided, the function is
+		executed in the context of the collection.
 	*/
 	map: function (fn, ctx) {
 		ctx = ctx || this;
@@ -332,10 +338,10 @@ enyo.kind({
 		}, this);
 	},
 	/**
-		Iterates over all the _records_ in this _collection_ filtering them
-		out of the result set if _fn_ returns `false`. Pass an optional context
-		_ctx_ (or the function will be executed in the context of this _collection).
-		Returns an array of all the _records_ that caused _fn_ to return `true`.
+		Iterates over all the records in this collection, filtering them out of the
+		result set if _fn_ returns false. You may pass in an optional context	_ctx_;
+		otherwise, the function will be executed in the context of this collection.
+		Returns an array of all the records that caused _fn_ to return true.
 	*/
 	filter: function (fn, ctx) {
 		ctx = ctx || this;
@@ -346,8 +352,8 @@ enyo.kind({
 		}, this);
 	},
 	/**
-		Returns the _record_ at the requested index, `undefined` if none. Since records
-		may be stored or not of the correct form, this method will resolve them as they
+		Returns the record at the requested index, or _undefined_ if there is none.
+		Since records may be stored or malformed, this method resolves them as they
 		are requested (lazily).
 	*/
 	at: function (i) {
@@ -358,12 +364,12 @@ enyo.kind({
 		return r;
 	},
 	/**
-		To create an instance of a _record_ immediately in this _collection_ use this
-		method. This method is used internally when instantiating _records_ according to
-		its _model_ property. Accepts the _attrs_ to be used, the _props_ to apply and an
-		optional index at which to insert the record into the _collection_. If the index is
-		`false` it will not add the record to the _collection_ at all. Returns the instance
-		of the newly created _record_.
+		Creates an instance of a record immediately in this collection. This method
+		is used internally when instantiating records according to the _model_
+		property. Accepts the attributes (_attrs_) to be used, the properties
+		(_props_) to apply, and an optional index at which to insert the record into
+		the _collection_. If the index is false, the record will not be added to the
+		collection at all. Returns the newly created record instance.
 	*/
 	createRecord: function (attrs, props, i) {
 		// ensure we know whether or not to flag the data as needing to be parsed
@@ -378,9 +384,9 @@ enyo.kind({
 		return r;
 	},
 	/**
-		Implement a method called _recordChanged_ that receives the _record_,
-		the _event_ and any additional properties passed along when any _record_
-		in the _collection_ emits its `change` event.
+		Implement a method called _recordChanged()_ that receives the record, the
+		event, and any additional properties passed along when any record in the
+		collection emits its _change_ event.
 	*/
 	recordChanged: null,
 	/**
@@ -396,45 +402,44 @@ enyo.kind({
 		return this.store._removeObserver(this, prop, fn);
 	},
 	/**
-		Notifies observers, but, unlike the _enyo.ObserverSupport_ API it accepts
-		only one, optional, parameter _prop_, otherwise any _changed_ properties
-		will be notified.
+		Notifies observers, but, unlike the _enyo.ObserverSupport_ API, accepts only
+		a single, optional parameter. If _prop_ is not specified, observers of any
+		changed properties will be notified.
 	*/
 	notifyObservers: function (prop) {
 		this.store._notifyObservers(this, prop);
 	},
 	/**
-		Add a listener for the given _event_. Callbacks will be executed with two
-		parameters of the form _record_, _event_ -- where _record_ is the _record_
-		that is firing the event and _event_ is the name (string) for the event
-		being fired. The _addListener_ method accepts parameters according to the
-		_enyo.ObserverSupport_ API but does not function the same way.
+		Adds a listener for the given event. Callbacks will be executed with two
+		parameters, _record_ and _event_, where _record_ is the record that is
+		firing the event and _event_ is the name (string) for the event being fired.
+		This method accepts parameters according to the _enyo.ObserverSupport_ API,
+		but does not function in the same way.
 	*/
 	addListener: function (prop, fn, ctx) {
 		return this.store.addListener(this, prop, fn, ctx);
 	},
 	/**
-		Removes a listener. Accepts the name of the _event_ that the listener is
-		registered on and the method returned from the _addListener_ call (if a
-		_ctx_ was provided otherwise just the method is fine). Returns `true` on
-		successful removal and `false` otherwise.
+		Removes a listener. Accepts the name of the event that the listener is
+		registered on and the method returned from the _addListener()_ call (if a
+		_ctx_ was provided). Returns true on successful removal; otherwise, false.
 	*/
 	removeListener: function (prop, fn) {
 		return this.store.removeListener(this, prop, fn);
 	},
 	/**
-		Triggers any _listeners_ for the _event_ of this _record_ with optional
+		Triggers any listeners for this record's specified event, with optional
 		_args_.
 	*/
 	triggerEvent: function (event, args) {
 		this.store.triggerEvent(this, event, args);
 	},
 	/**
-		When creating a new _collection_ you may pass it an array of _records_
-		(hashes to be converted or instances) and an optional hash of properties
-		to be applied to the collection. Both are optional, meaning, you can supply
-		neither, either, or both. If options and data are present, options will be
-		applied first.
+		When creating a new collection, you may pass it an array of records	(either
+		instances or hashes to be converted) and an optional hash of properties to
+		be applied to the collection. Both are optional, meaning that you can supply
+		neither, either one, or both. If both options and data are present, options
+		will be applied first.
 	*/
 	constructor: function (data, opts) {
 		var d  = data && enyo.isArray(data) && data,
@@ -465,8 +470,8 @@ enyo.kind({
 		this.storeChanged();
 	},
 	/**
-		Destroys the _collection_ and removes all _records_. This does not destroy the
-		_records_.
+		Destroys the collection and removes all records. This does not destroy the
+		records.
 	*/
 	destroy: function () {
 		var rr = this.removeAll(), r;
@@ -481,18 +486,18 @@ enyo.kind({
 		this.destroyed = true;
 	},
 	/**
-		Retrieves _path_ from the _collection_ and returns its value or undefined.
-		Note that passing _path_ as an integer is the same as calling _at_. You cannot
-		use _get_ to retrieve data from a _record_ in the _collection_ this will only
-		retrieve properties of the _collection_.
+		Retrieves the passed-in _path_ from the collection and returns its value or
+		_undefined_. Note that passing _path_ as an integer is the same as calling
+		_at()_. You cannot use _get()_ to retrieve data from a record in the
+		collection; this will only retrieve properties of the collection.
 	*/
 	get: function (path) {
 		if (!isNaN(path)) { return this.at(path); }
 		return enyo.getPath.call(this, path);
 	},
 	/**
-		Sets the value of _path_ to _val_ on the _collection_. This will not work
-		for setting values on properties of _records_ in the _collection_.
+		Sets the value of _path_ to _val_ on the collection. This will not work for
+		setting values on properties of records in the collection.
 	*/
 	set: function (path, val) {
 		return enyo.setPath.call(this, path, val);
