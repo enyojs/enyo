@@ -7,9 +7,8 @@
 	while _onchange_ fires when the text has changed and the input subsequently
 	loses focus.
 
-	For more information, see the documentation on
-	[Text Fields](https://github.com/enyojs/enyo/wiki/Text-Fields) in the Enyo
-	Developer Guide.
+	For more information, see the documentation on [Text
+	Fields](building-apps/controls/text-fields.html) in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Input",

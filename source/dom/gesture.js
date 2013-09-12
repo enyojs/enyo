@@ -7,9 +7,8 @@
 	handle basic input differently.
 
 	For more information on normalized input events and their associated
-	properties,	see	the documentation on
-	[User Input](https://github.com/enyojs/enyo/wiki/User-Input) in the Enyo
-	Developer Guide.
+	properties,	see	the documentation on [User Input](building-apps/user-input.html)
+	in the Enyo Developer Guide.
 */
 enyo.gesture = {
 	//* @protected

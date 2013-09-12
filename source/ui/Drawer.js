@@ -4,8 +4,7 @@
 	animation whose direction is determined by the _orient_ property.
 
 	For more information, see the documentation on
-	<a href="https://github.com/enyojs/enyo/wiki/Drawers">Drawers</a> in the
-	Enyo Developer Guide.
+	[Drawers](building-apps/layout/drawers.html) in the Enyo Developer Guide.
 */
 
 enyo.kind({

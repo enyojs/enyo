@@ -9,8 +9,7 @@
 	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
 
 	For more information, see the documentation on
-	<a href="https://github.com/enyojs/enyo/wiki/Creating-Controls">Controls</a>
-	in the Enyo Developer Guide.
+	[Controls](key-concepts/creating-controls.html) in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Control",

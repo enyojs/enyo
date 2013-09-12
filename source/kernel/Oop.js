@@ -63,9 +63,8 @@
 	If you make changes to _enyo.kind()_, be sure to add or update the appropriate
 	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
 
-	For more information, see the documentation on
-	[Creating Kinds](https://github.com/enyojs/enyo/wiki/Creating-Kinds)
-	in the Enyo Developer Guide.
+	For more information, see the documentation on [Creating
+	Kinds](key-concepts/creating-kinds.html) in the Enyo Developer Guide.
 */
 enyo.kind = function(inProps) {
 	var name = inProps.name || "";

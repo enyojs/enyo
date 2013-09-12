@@ -21,8 +21,7 @@
 	other event handlers further up the tree try to modify your item control.
 
 	For more information, see the documentation on
-	[Lists](https://github.com/enyojs/enyo/wiki/Lists) in the Enyo Developer
-	Guide.
+	[Lists](building-apps/layout/lists.html) in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Repeater",

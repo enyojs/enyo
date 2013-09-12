@@ -16,9 +16,8 @@
 	* "holdpulse"
 	* "flick"
 
-	For more information on these events, see the documentation on
-	[User Input](https://github.com/enyojs/enyo/wiki/User-Input) in the Enyo
-	Developer Guide.
+	For more information on these events, see the documentation on [User
+	Input](building-apps/user-input.html) in the Enyo Developer Guide.
 */
 
 //* @protected
