@@ -50,7 +50,9 @@ enyo.kind({
 		*/
 		scrim: false,
 		//*	Allow drag events sent when gesture events are happening simultaneously
-		dragDuringGesture: true
+		dragDuringGesture: true,
+		//* Facade Animation time step from ScrollMath
+		interval: 20
 	},
 	events: {
 		onShouldDrag: ""
@@ -95,6 +97,7 @@ enyo.kind({
 				containerClasses += " enyo-composite";
 			}
 			this.scrimChanged();
+			this.intervalChanged();
 			this.container.addClass(containerClasses);
 			this.translation = this.accel ? "translate3d" : "translate";
 		};
@@ -177,6 +180,9 @@ enyo.kind({
 	},
 	thumbChanged: function() {
 		this.hideThumbs();
+	},
+	intervalChanged: function() {
+		this.$.scrollMath.interval = this.interval;
 	},
 	stop: function() {
 		if (this.isScrolling()) {
