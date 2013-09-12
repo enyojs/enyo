@@ -13,6 +13,7 @@
 	var remove;
 	var add;
 	var flush;
+	var flushScheduled = false;
 
 	//*@public
 	/**
@@ -24,11 +25,11 @@
 		asynchronously at earliest opportunity.
 	*/
 	enyo.ready = function (fn, context) {
-		if (ready) {
-			enyo.asyncMethod(context || enyo.global, fn);
-		}
-		else {
-			queue.push([fn, context]);
+		queue.push([fn, context]);
+		// schedule another queue flush if needed to run new ready calls
+		if (ready && !flushScheduled) {
+			enyo.asyncMethod(window, flush);
+			flushScheduled = true;
 		}
 	};
 
@@ -71,6 +72,7 @@
 				run.apply(scope, queue.shift());
 			}
 		}
+		flushScheduled = false;
 	};
 
 	// ok, let's hook this up

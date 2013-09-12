@@ -153,6 +153,26 @@ enyo.kind({
 		}
 		this.finish(i != 3 && "did not receive all events as expected");
 	},
+	testLengthFiresFirst: function () {
+		var c  = new enyo.Collection([{},{}]),
+			w  = false,
+			fn = function () {if (c.length == 3) { w=true; }};
+		c.addListener("add", fn);
+		c.add({});
+		this.finish(!w && "did not update length prior to receiving the 'add' event");
+	},
+	testAddRemoveAdd: function () {
+		var r = [{id:1},{id:2},{id:3}],
+			c = new enyo.Collection();
+		c.add(r);
+		c.removeAll();
+		c.add(r);
+		this.finish(
+			(c.at(0).get("id") !== 1 && "first record failed") ||
+			(c.at(1).get("id") !== 2 && "second record failed") ||
+			(c.at(2).get("id") !== 3 && "third record failed")
+		);
+	},
 	testDestroy: function () {
 		var c = new enyo.Collection([{id:70},{id:71}]);
 		c.destroy();

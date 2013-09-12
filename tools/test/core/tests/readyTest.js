@@ -17,5 +17,18 @@ enyo.kind({
 		}, this);
 		good = true;
 		// we rely on test framework timeout to catch failure if code is never run
+	},
+	// we include this a second time to verify that we can keep calling enyo.ready()
+	testAsync2: function() {
+		var good = false;
+		enyo.ready(function () {
+			if (good) {
+				this.finish();
+			} else {
+				this.finish("enyo.ready() ran call immediately instead of async");
+			}
+		}, this);
+		good = true;
+		// we rely on test framework timeout to catch failure if code is never run
 	}
 });
