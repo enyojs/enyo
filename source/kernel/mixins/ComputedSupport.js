@@ -19,6 +19,17 @@
 		}
 		return c;
 	};
+	
+	// this is called when we need an instance-specific computed table so
+	// runtime modifications are unique to the instance and not the kind, also
+	// note that once the kind is instanced modifications to the _computed_
+	// block will not be registered
+	var _instanceMap = function(obj, prop) {
+		if (!obj.hasOwnProperty(prop)) {
+			obj[prop] = obj[prop]? _clone(obj[prop]): {};
+		}
+		return obj[prop];
+	};
 	//*@public
 	/**
 		Computed properties are methods of kinds that are designated as being
@@ -87,7 +98,7 @@
 		*/
 		notifyObservers: enyo.inherit(function (sup) {
 			return function (path, prev, value) {
-				var map = this._computedMap, n;
+				var map = _instanceMap(this, "_computedMap"), n;
 				if ((n = map[path])) {
 					for (var i=0, p; (p=n[i]); ++i) {
 						// this is a dependency of one of our computed properties
@@ -109,7 +120,7 @@
 			};
 		}),
 		_getComputed: function (path) {
-			var ca = this._computedCached, c;
+			var ca = _instanceMap(this, "_computedCached"), c;
 			if ((c = ca[path])) {
 				// if the cache says the computed property is dirty,
 				// we have to fetch a current value
@@ -132,8 +143,8 @@
 			be entered more than once.
 		*/
 		_markComputed: function (path) {
-			var ca = this._computedCached,
-				q = this._computedQueue,
+			var ca = _instanceMap(this, "_computedCached"),
+				q = this._computedQueue || (this._computedQueue = {}),
 				p = null, c;
 			if ((c = ca[path])) {
 				// it is cached so we mark it as dirty and use its previous
@@ -162,17 +173,6 @@
 				this.notifyObservers(k, q[k], this._getComputed(k));
 			}
 		},
-		constructor: enyo.inherit(function (sup) {
-			return function () {
-				// we do not clone this object because, once instanced, we should not need it
-				// anymore, as it has been converted to a map
-				this.computed || (this.computed = {});
-				this._computedMap = this._computedMap? _clone(this._computedMap): {};
-				this._computedCached = this._computedCached? _clone(this._computedCached): {};
-				this._computedQueue = {};
-				sup.apply(this, arguments);
-			};
-		}),
 		_computedMap: null,
 		_computedQueue: null,
 		_computedCached: null

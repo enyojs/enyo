@@ -152,15 +152,6 @@ enyo.kind({
 	name: "ComputedTest",
 	kind: enyo.TestSuite,
 	noDefer: true,
-	testComputed: function () {
-		var o = new enyo.Object();
-		this.finish(
-			(!o.computed && "computed hash was not present as expected") ||
-			(!o._computedMap && "computed map not present as expected") ||
-			(!o._computedCached && "computed cached map not present as expected") ||
-			(!o._computedQueue && "computed queue not present as expected")
-		);
-	},
 	testWithComputedProperties: function () {
 		var test = {}, o, s = this, allowed = false;
 		test.Object = enyo.kind({

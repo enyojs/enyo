@@ -24,11 +24,11 @@
 	// block will not be registered; they will have to be added via the
 	// addObserver method with an anonymous function
 	var _instanceMap = function(obj) {
-			if (!obj.hasOwnProperty("_observerMap")) {
-				obj._observerMap = _clone(obj._observerMap);
-			}
-			return obj._observerMap;
-		};
+		if (!obj.hasOwnProperty("_observerMap")) {
+			obj._observerMap = _clone(obj._observerMap);
+		}
+		return obj._observerMap;
+	};
 	//*@public
 	/**
 		Observers are methods that respond to changes in specific properties
