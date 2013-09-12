@@ -17,6 +17,18 @@
 		}
 		return c;
 	};
+
+	// this is called when we need an instance-specific observer table so
+	// runtime modifications are unique to the instance and not the kind, also
+	// note that once the kind is instanced modifications to the _observers_
+	// block will not be registered; they will have to be added via the
+	// addObserver method with an anonymous function
+	var _instanceMap = function(obj) {
+			if (!obj.hasOwnProperty("_observerMap")) {
+				obj._observerMap = _clone(obj._observerMap);
+			}
+			return obj._observerMap;
+		};
 	//*@public
 	/**
 		Observers are methods that respond to changes in specific properties
@@ -75,7 +87,8 @@
 		*/
 		addObserver: function (prop, fn, ctx) {
 			var id = enyo.uid("__observer__"),
-				map = this._observerMap;
+				map = _instanceMap(this);
+
 			if (map[prop]) {
 				map[prop].push(id);
 			} else {
@@ -93,7 +106,7 @@
 			Typically, this method will not be called directly.
 		*/
 		removeObserver: function (prop, fn) {
-			var map = this._observerMap,
+			var map = _instanceMap(this),
 				en = map[prop];
 			if (en && fn) {
 				for (var i=0, id; (id=en[i]); ++i) {
@@ -121,6 +134,8 @@
 			the _destroy()_ method.
 		*/
 		removeAllObservers: function () {
+			// we allow this even if we didn't have a local map
+			// since it won't be around for long
 			this._observerMap = {};
 			return this;
 		},
@@ -131,8 +146,9 @@
 			call that, if it exists, while also notifying other observers.
 		*/
 		notifyObservers: function (prop, prev, value) {
-			var map = this._observerMap,
-				en = map[prop],
+			var map = this._observerMap;
+			if (!map) { return; }
+			var	en = map[prop],
 				a = this._observerNotificationsEnabled, fn, n;
 			// special handler case
 			if (map["*"]) {
@@ -255,12 +271,6 @@
 		},
 		constructor: enyo.inherit(function (sup) {
 			return function () {
-				// we need an instance-specific observer table so runtime modifications
-				// are unique to the instance and not the kind, also note that once the
-				// kind is instanced modifications to the _observers_ block will not be
-				// registered; they will have to be added via the addObserver method with
-				// an anonymous function
-				this._observerMap = this._observerMap? _clone(this._observerMap): {};
 				this._observerNotificationQueue = {};
 				// we don't clone these observers as they have already been converted to the
 				// map used internally but for other reasons we ensure we have an object there

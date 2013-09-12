@@ -3,10 +3,16 @@ enyo.kind({
 	kind: enyo.TestSuite,
 	noDefer: true,
 	testObservers: function () {
-		var o = new enyo.Object();
+		var o = new enyo.Object({
+			foo: 1,
+			observers: {
+				bar: ["foo"]
+			},
+			bar: function() { }
+		});
 		this.finish(
 			(!o.observers && "observers object not created as expected") ||
-			(!o._observerMap && "observer map not created as expected") || 
+			(!o._observerMap && "observer map not created as expected") ||
 			(!o._observerNotificationQueue && "observer notification queue not created as expected")
 		);
 	},
@@ -199,7 +205,7 @@ enyo.kind({
 			},
 			fullName: function () {
 				return this.get("first") + " " + this.get("last");
-			} 
+			}
 		});
 		o = new test.Object({first: "Polly", last: "Shore"});
 		t = new enyo.Object({
