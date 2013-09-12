@@ -2,20 +2,6 @@ enyo.kind({
 	name: "ObserverTest",
 	kind: enyo.TestSuite,
 	noDefer: true,
-	testObservers: function () {
-		var o = new enyo.Object({
-			foo: 1,
-			observers: {
-				bar: ["foo"]
-			},
-			bar: function() { }
-		});
-		this.finish(
-			(!o.observers && "observers object not created as expected") ||
-			(!o._observerMap && "observer map not created as expected") ||
-			(!o._observerNotificationQueue && "observer notification queue not created as expected")
-		);
-	},
 	testPublishedPropertyAsObserver: function () {
 		var test = {}, o;
 		test.Object = enyo.kind({

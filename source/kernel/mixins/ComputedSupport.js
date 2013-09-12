@@ -158,6 +158,7 @@
 			return (this.computed? (!! this.computed[path]): false);
 		},
 		_flushComputedQueue: function () {
+			if (!this._computedQueue) { return; }
 			// forced to throw away old queue object so we don't accidentally
 			// use incorrect values later
 			// also for immutability of the queue we are forced to clone it

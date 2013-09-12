@@ -234,7 +234,7 @@
 		*/
 		_addObserverToQueue: function (prop, fn, params) {
 			if (this._observerNotificationQueueEnabled) {
-				var q = this._observerNotificationQueue,
+				var q = this._observerNotificationQueue || (this._observerNotificationQueue = {}),
 					en = q[prop];
 				params || (params = []);
 				if (!en) {
@@ -254,6 +254,7 @@
 		*/
 		_flushObserverQueue: function () {
 			if (this._observerStopCount === 0 && this._observerNotificationQueueEnabled) {
+				if (!this._observerNotificationQueue) { return; }
 				// we clone the queue for immutability since this is a synchronous
 				// and recursive method, it does not require a recursive clone however
 				var q = enyo.clone(this._observerNotificationQueue),
@@ -269,16 +270,6 @@
 				}
 			}
 		},
-		constructor: enyo.inherit(function (sup) {
-			return function () {
-				this._observerNotificationQueue = {};
-				// we don't clone these observers as they have already been converted to the
-				// map used internally but for other reasons we ensure we have an object there
-				// once instanced observer support should not use this object anymore
-				this.observers || (this.observers = {});
-				return sup.apply(this, arguments);
-			};
-		}),
 		destroy: enyo.inherit(function (sup) {
 			return function () {
 				this.removeAllObservers();
