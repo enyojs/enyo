@@ -234,6 +234,7 @@ enyo.kind({
 		// rather than perform a splice over and over potentially we run it once
 		rec.unshift.apply(rec, [i, 0]);
 		rr.splice.apply(rr, rec);
+		rec.splice(0, 2);
 		// update the new length
 		this.length = rr.length;
 		// now alert any observers of the length change
