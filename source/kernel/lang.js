@@ -774,10 +774,8 @@
 			s = source;
 			o = options;
 		}
-		var release = false;
 		if (!enyo.isObject(o)) {
-			o = enyo.pool.claimObject();
-			release = true;
+			o = {};
 		}
 		if (true === options) {
 			o.ignore = true;
@@ -798,9 +796,6 @@
 					}
 				}
 			}
-		}
-		if (release) {
-			enyo.pool.releaseObject(o);
 		}
 		return t;
 	};
