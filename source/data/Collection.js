@@ -236,10 +236,10 @@ enyo.kind({
 		rr.splice.apply(rr, rec);
 		// update the new length
 		this.length = rr.length;
-		// trigger the event with the indices
-		if (d.length) { this.triggerEvent("add", {records: d}); }
 		// now alert any observers of the length change
 		if (l != this.length) { this.notifyObservers("length", l, this.length); }
+		// trigger the event with the indices
+		if (d.length) { this.triggerEvent("add", {records: d}); }
 	},
 	/**
 		Accepts a record, or an array of records, to be removed from the collection.
