@@ -171,7 +171,7 @@ enyo.gesture.drag = {
 		this.px0 = e.clientX;
 		this.py0 = e.clientY;
 		// this.flickInfo = {startEvent: e, moves: []};
-		this.flickInfo = {}
+		this.flickInfo = {};
 		this.flickInfo.startEvent = e;
 		// FIXME: so we're trying to reuse objects where possible, should
 		// do the same in scenarios like this for arrays
@@ -248,7 +248,7 @@ enyo.gesture.drag = {
 		clearInterval(this.holdJob);
 		this.holdJob = null;
 		if (this._holdJobFunction) {
-			var $ce = this._holdJobFunction.ce;
+			this._holdJobFunction.ce = null;
 			this._holdJobFunction = null;
 		}
 		if (this.sentHold) {
