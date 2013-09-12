@@ -97,6 +97,7 @@ enyo.kind({
 				containerClasses += " enyo-composite";
 			}
 			this.scrimChanged();
+			this.intervalChanged();
 			this.container.addClass(containerClasses);
 			this.translation = this.accel ? "translate3d" : "translate";
 		};
