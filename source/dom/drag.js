@@ -85,7 +85,6 @@ enyo.gesture.drag = {
 		if (this.dragEvent) {
 			this.sendDrop(e);
 			var handled = this.sendDragFinish(e);
-			enyo.pool.releaseObject(this.dragEvent);
 			this.dragEvent = null;
 			return handled;
 		}
@@ -95,7 +94,7 @@ enyo.gesture.drag = {
 		var h = adx > ady;
 		// suggest locking if off-axis < 22.5 degrees
 		var l = (h ? ady/adx : adx/ady) < 0.414;
-		var e = enyo.pool.claimObject();
+		var e = {};
 		// var e = {
 		e.type = inType;
 		e.dx = this.dx;
@@ -142,7 +141,6 @@ enyo.gesture.drag = {
 		synth.type = "drag";
 		synth.target = this.dragEvent.target;
 		enyo.dispatch(synth);
-		enyo.pool.releaseObject(synth);
 	},
 	sendDragFinish: function(e) {
 		//enyo.log("dragfinish");
@@ -153,12 +151,10 @@ enyo.gesture.drag = {
 			}
 		};
 		enyo.dispatch(synth);
-		enyo.pool.releaseObject(synth);
 	},
 	sendDragOut: function(e) {
 		var synth = this.makeDragEvent("dragout", e.target, e, this.dragEvent.dragInfo);
 		enyo.dispatch(synth);
-		enyo.pool.releaseObject(synth);
 	},
 	sendDrop: function(e) {
 		var synth = this.makeDragEvent("drop", e.target, e, this.dragEvent.dragInfo);
@@ -168,7 +164,6 @@ enyo.gesture.drag = {
 			}
 		};
 		enyo.dispatch(synth);
-		enyo.pool.releaseObject(synth);
 	},
 	startTracking: function(e) {
 		this.tracking = true;
@@ -176,7 +171,7 @@ enyo.gesture.drag = {
 		this.px0 = e.clientX;
 		this.py0 = e.clientY;
 		// this.flickInfo = {startEvent: e, moves: []};
-		this.flickInfo = enyo.pool.claimObject();
+		this.flickInfo = {}
 		this.flickInfo.startEvent = e;
 		// FIXME: so we're trying to reuse objects where possible, should
 		// do the same in scenarios like this for arrays
@@ -235,7 +230,6 @@ enyo.gesture.drag = {
 			}
 		}
 		this.flickInfo = null;
-		enyo.pool.releaseObject(ti);
 	},
 	calcDirection: function(inNum, inDefault) {
 		return inNum > 0 ? 1 : (inNum < 0 ? -1 : inDefault);
@@ -244,10 +238,8 @@ enyo.gesture.drag = {
 		// this.holdStart = enyo.now();
 		this.holdStart = enyo.bench();
 		// clone the event to ensure it stays alive on IE upon returning to event loop
-		// var clonedEvent = enyo.clone(e);
-		var $ce = enyo.mixin(enyo.pool.claimObject(), e);
-		// $ce.srcEvent = enyo.clone(e.srcEvent);
-		$ce.srcEvent = enyo.mixin(enyo.pool.claimObject(), e.srcEvent);
+		var $ce = enyo.clone(e);
+		$ce.srcEvent = enyo.clone(e.srcEvent);
 		this._holdJobFunction = enyo.bind(this, "sendHoldPulse", $ce);
 		this._holdJobFunction.ce = $ce;
 		this.holdJob = setInterval(this._holdJobFunction, this.holdPulseDelay);
@@ -258,12 +250,9 @@ enyo.gesture.drag = {
 		if (this._holdJobFunction) {
 			var $ce = this._holdJobFunction.ce;
 			this._holdJobFunction = null;
-			enyo.pool.releaseObject($ce.srcEvent);
-			enyo.pool.releaseObject($ce);
 		}
 		if (this.sentHold) {
 			this.sentHold = false;
-			this.sendRelease(this.holdEvent);
 		}
 	},
 	sendHoldPulse: function(inEvent) {
@@ -275,18 +264,15 @@ enyo.gesture.drag = {
 		// e.holdTime = enyo.now() - this.holdStart;
 		e.holdTime = enyo.bench() - this.holdStart;
 		enyo.dispatch(e);
-		enyo.pool.releaseObject(e);
 	},
 	sendHold: function(inEvent) {
 		this.holdEvent = inEvent;
 		var e = enyo.gesture.makeEvent("hold", inEvent);
 		enyo.dispatch(e);
-		enyo.pool.releaseObject(e);
 	},
 	sendRelease: function(inEvent) {
 		var e = enyo.gesture.makeEvent("release", inEvent);
 		enyo.dispatch(e);
-		enyo.pool.releaseObject(e);
 	},
 	sendFlick: function(inEvent, inX, inY, inV) {
 		var e = enyo.gesture.makeEvent("flick", inEvent);
@@ -294,6 +280,5 @@ enyo.gesture.drag = {
 		e.yVelocity = inY;
 		e.velocity = inV;
 		enyo.dispatch(e);
-		enyo.pool.releaseObject(e);
 	}
 };

@@ -696,10 +696,9 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 	if (!inProto[fn]) {
 		inProto[fn] = function(payload) {
 			// bubble this event
-			var e = payload, c = false;
+			var e = payload;
 			if (!e) {
-				c = true;
-				e = enyo.pool.claimObject();
+				e = {};
 			}
 			var d = e.delegate;
 			// delete payload.delegate;
@@ -710,9 +709,6 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 			this.bubble(inName, e);
 			if (d) {
 				e.delegate = d;
-			}
-			if (c) {
-				enyo.pool.releaseObject(e);
 			}
 		};
 		// NOTE: Mark this function as a generated event handler to allow us to
