@@ -2,14 +2,6 @@ enyo.kind({
 	name: "ObserverTest",
 	kind: enyo.TestSuite,
 	noDefer: true,
-	testObservers: function () {
-		var o = new enyo.Object();
-		this.finish(
-			(!o.observers && "observers object not created as expected") ||
-			(!o._observerMap && "observer map not created as expected") || 
-			(!o._observerNotificationQueue && "observer notification queue not created as expected")
-		);
-	},
 	testPublishedPropertyAsObserver: function () {
 		var test = {}, o;
 		test.Object = enyo.kind({
@@ -146,15 +138,6 @@ enyo.kind({
 	name: "ComputedTest",
 	kind: enyo.TestSuite,
 	noDefer: true,
-	testComputed: function () {
-		var o = new enyo.Object();
-		this.finish(
-			(!o.computed && "computed hash was not present as expected") ||
-			(!o._computedMap && "computed map not present as expected") ||
-			(!o._computedCached && "computed cached map not present as expected") ||
-			(!o._computedQueue && "computed queue not present as expected")
-		);
-	},
 	testWithComputedProperties: function () {
 		var test = {}, o, s = this, allowed = false;
 		test.Object = enyo.kind({
@@ -199,7 +182,7 @@ enyo.kind({
 			},
 			fullName: function () {
 				return this.get("first") + " " + this.get("last");
-			} 
+			}
 		});
 		o = new test.Object({first: "Polly", last: "Shore"});
 		t = new enyo.Object({

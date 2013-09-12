@@ -1,7 +1,6 @@
 enyo.depends(
 	"log.js",
 	"lang.js",
-	"pool.js",
 	"dev.js",
 	"job.js",
 	"Oop.js",
