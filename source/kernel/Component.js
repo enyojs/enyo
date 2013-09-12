@@ -320,12 +320,8 @@ enyo.kind({
 			return;
 		}
 		var e = inEvent || {};
-		// FIXME: is this the right place?
-		// if (!("originator" in e)) {
 		if (!enyo.exists(e.originator)) {
 			e.originator = inSender || this;
-			// FIXME: use indirection here?
-			//e.delegate = e.originator.delegate || e.originator.owner;
 		}
 		return this.dispatchBubble(inEventName, e, inSender || this);
 	},
@@ -353,9 +349,11 @@ enyo.kind({
 		// Bubble to next target
 		var e = inEvent || {};
 		var next = this.getBubbleTarget();
-		var delegate = e.delegate;
 		if (next) {
-			return next.dispatchBubble(inEventName, e, delegate || this);
+			// use delegate as sender if it exists to preserve illusion
+			// that event is dispatched directly from that, but we still
+			// have to bubble to get decorations
+			return next.dispatchBubble(inEventName, e, e.delegate || this);
 		}
 		return false;
 	},
@@ -382,24 +380,33 @@ enyo.kind({
 		// we don't know where to release it
 		var delegate = (event || (event = {})).delegate;
 		var ret;
-		// bottleneck event decoration
-		this.decorateEvent(name, event, sender);
-		// dispatch via the handlers block if possible
-		if (this.handlers && this.handlers[name] &&
-			this.dispatch(this.handlers[name], event, sender)) {
-			return true;
+		// bottleneck event decoration w/ optimization to avoid call to empty function
+		if (this.decorateEvent !== enyo.Component.prototype.decorateEvent) {
+			this.decorateEvent(name, event, sender);
 		}
 
-		if (this[name]) {
-			if ("function" === typeof this[name]) {
-				if (delegate && this === delegate.owner) {
-					return this.dispatch(name, event, sender);
-				}
-			} else {
-				// otherwise we dispatch it up because it is a remap of another event
-				if (!delegate) {
-					event.delegate = this;
-				}
+		// first, handle any delegated events intended for this object
+		if (delegate && delegate.owner === this) {
+			// the most likely case is that we have a method to handle this
+			if (this[name] && "function" === typeof this[name]) {
+				return this.dispatch(name, event, sender);
+			}
+			// but if we don't, just stop the event from going further
+			return;
+		}
+
+		// for non-delgated events, try the handlers block if possible
+		if (!delegate) {
+			if (this.handlers && this.handlers[name] &&
+				this.dispatch(this.handlers[name], event, sender)) {
+				return true;
+			}
+			// then check for a delegate property for this event
+			if (this[name] && enyo.isString(this[name])) {
+				// we dispatch it up as a special delegate event with the
+				// component that had the delegation string property stored in
+				// the "delegate" property
+				event.delegate = this;
 				ret = this.bubbleUp(this[name], event, sender);
 				delete event.delegate;
 				return ret;
@@ -419,31 +426,8 @@ enyo.kind({
 		return this.bubbleUp(inEventName, inEvent, inSender);
 	},
 	decorateEvent: function(inEventName, inEvent, inSender) {
-		// an event may float by us as part of a dispatchEvent chain or delegateEvent
+		// an event may float by us as part of a dispatchEvent chain
 		// both call this method so intermediaries can decorate inEvent
-	},
-	bubbleDelegation: function(inDelegate, inName, inEventName, inEvent, inSender) {
-		if (this._silenced) {
-			return;
-		}
-		// next target in bubble sequence
-		var next = this.getBubbleTarget();
-		if (next) {
-			return next.delegateEvent(inDelegate, inName, inEventName, inEvent, inSender);
-		}
-	},
-	delegateEvent: function(inDelegate, inName, inEventName, inEvent, inSender) {
-		if (this._silenced) {
-			return;
-		}
-		// override this method to play tricks with delegation
-		// bottleneck event decoration
-		this.decorateEvent(inEventName, inEvent, inSender);
-		// by default, dispatch this event if we are in fact the delegate
-		if (inDelegate == this) {
-			return this.dispatch(inName, inEvent, inSender);
-		}
-		return this.bubbleDelegation(inDelegate, inName, inEventName, inEvent, inSender);
 	},
 	stopAllJobs: function() {
 		if (this.__jobs) {
