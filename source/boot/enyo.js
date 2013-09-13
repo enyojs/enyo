@@ -3,7 +3,7 @@
 	var thisScript = "enyo.js";
 
 	/* global enyo:true */
-	enyo = window.enyo || {};
+	enyo = window.enyo || {options: {}};
 
 	enyo.locateScript = function(inName) {
 		var scripts = document.getElementsByTagName("script");

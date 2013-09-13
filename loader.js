@@ -1,6 +1,6 @@
 /* global enyo:true */
 (function() {
-	enyo = window.enyo || {};
+	enyo = window.enyo || {options: {}};
 
 	enyo.pathResolverFactory = function() {
 		this.paths = {};
