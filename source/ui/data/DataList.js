@@ -263,7 +263,7 @@
 				if (!this._hasReset) { return this.reset(); }
 				if (this.generated && this.$.scroller.canGenerate) {
 					this.set("batching", true);
-					for (var i=0, r; (r=props.records[i]); ++i) { this.add(r); }
+					for (var i=0, r; !isNaN((r=props.records[i])); ++i) { this.add(r); }
 					this.updateMetrics();
 					this.adjustLastPage();
 					this.set("batching", false);
