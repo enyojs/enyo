@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "AnimatorTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	testDeferLowPriorityTasks: function() {
 		var finish = this.bindSafely("finish");
 		var animation = new enyo.Animator({duration: 70});
