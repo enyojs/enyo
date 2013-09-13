@@ -3,7 +3,7 @@
 	// enyo can use information from the script tag that loads this bootstrap file
 	var thisScript = "enyo.js";
 
-	enyo = window.enyo || {};
+	enyo = window.enyo || {options: {}};
 
 	enyo.locateScript = function(inName) {
 		var scripts = document.getElementsByTagName("script");
