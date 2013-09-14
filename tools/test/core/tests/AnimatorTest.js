@@ -52,3 +52,30 @@ enyo.kind({
 		}, 90);
 	}
 });
+
+//~ Test issue described in https://github.com/enyojs/enyo/commit/d76bca80195adedca4de61f197d7b452efe78b8c#commitcomment-4082791
+//~ and fixed in https://github.com/enyojs/enyo/pull/449
+enyo.kind({
+	name: "AnimatorStartupTest",
+	kind: enyo.TestSuite,
+	noDefer: true,
+	create: function(){
+		this.inherited(arguments);
+
+		var animation = new enyo.Animator({duration: 50});
+		animation.play();
+
+		this.c = new enyo.Component({
+			counter: 0,
+			executeStartUpJob: function(){
+				this.counter++;
+			}
+		});
+		this.c.startJob("startupjob", "executeStartUpJob", 1, 1);
+	},
+	testStartUpjobs: function() {
+		setTimeout(function(){
+			this.finish(this.c.counter ? "" : "Job didn't run even though the animation finished");
+		}.bind(this), 60);
+	}
+});
