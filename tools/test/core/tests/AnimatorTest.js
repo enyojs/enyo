@@ -62,9 +62,8 @@ enyo.kind({
 	create: function(){
 		this.inherited(arguments);
 
-		var animation = new enyo.Animator({duration: 50});
-		animation.play();
-
+		this.animation = new enyo.Animator({duration: 50});
+		this.animation.play();
 		this.c = new enyo.Component({
 			counter: 0,
 			executeStartUpJob: function(){
@@ -74,8 +73,9 @@ enyo.kind({
 		this.c.startJob("startupjob", "executeStartUpJob", 1, 1);
 	},
 	testStartUpjobs: function() {
-		setTimeout(function(){
-			this.finish(this.c.counter ? "" : "Job didn't run even though the animation finished");
-		}.bind(this), 60);
-	}
+		this.animation.onEnd = this.bindSafely("animationFinished");
+	},
+	animationFinished: function(){
+		this.finish(this.c.counter ? "" : "Job didn't run even though the animation finished");
+	},
 });
