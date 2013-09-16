@@ -263,7 +263,7 @@ enyo.kind.features = [];
 enyo.kind.extendMethods = function(ctor, props, add) {
 	var proto = ctor.prototype || ctor,
 		b = proto.base;
-	if (!proto.inherited) {
+	if (!proto.inherited && b) {
 		proto.inherited = enyo.kind.inherited;
 	}
 	// rename constructor to _constructor to work around IE8/Prototype problems
