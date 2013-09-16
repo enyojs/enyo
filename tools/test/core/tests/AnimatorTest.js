@@ -77,5 +77,5 @@ enyo.kind({
 	},
 	animationFinished: function(){
 		this.finish(this.c.counter ? "" : "Job didn't run even though the animation finished");
-	},
+	}
 });
