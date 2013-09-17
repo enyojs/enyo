@@ -36,11 +36,13 @@
 			claimed and may/may-not be visible.
 		*/
 		_pageHeight: function (list, page) {
-			var a  = 0,
+			var n  = page.node || page.hasNode(),
+				a  = 0,
 				cn = page.children,
 				mx = list.metrics.pages[page.index], s;
 			for (var i=0, c; (c=cn[i]); ++i) { if (c.getShowing()) { ++a; } }
 			s = (Math.floor(a/list.columns)+(a%list.columns? 1: 0))*(list.tileHeight+list.spacing);
+			n.style.height = s + "px";
 			mx.height = s;
 			return s;
 		},

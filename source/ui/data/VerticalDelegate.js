@@ -406,6 +406,11 @@ enyo.DataList.delegates.vertical = {
 	*/
 	didResize: function (list, event) {
 		list._updateBounds = true;
+		clearTimeout(list._resizeTimerId);
+		list._resizeTimerId = setTimeout(function () {
+			list.delegate.updateBounds(list);
+			list.delegate.refresh(list);
+		}, 400);
 	},
 	/**
 		Returns the height for the given list, will cache this value and reuse
