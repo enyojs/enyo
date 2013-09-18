@@ -106,13 +106,16 @@ enyo.kind({
 					// for a single level, just decorate the index property
 					inEvent.index = this.index;
 				}
-				// update delegate during bubbling to account for proxy
-				// by moving the delegate up to the repeater level
-				if (inEvent.delegate && inEvent.delegate.owner === this) {
-					inEvent.delegate = this.owner;
-				}
 			}
 			sup.apply(this, arguments);
+		};
+	}),
+	delegateEvent: enyo.inherit(function (sup) {
+		return function(inDelegate, inName, inEventName, inEvent, inSender) {
+			if (inDelegate == this) {
+				inDelegate = this.owner.owner;
+			}
+			sup.apply(this, [inDelegate, inName, inEventName, inEvent, inSender]);
 		};
 	})
 });

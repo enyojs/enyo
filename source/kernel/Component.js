@@ -308,7 +308,7 @@ enyo.kind({
 
 			function(inSender, inEvent)
 
-		where _inSender_ refers to the component that most recently
+		where _inSender_ refers to the Component that most recently
 		propagated the event and _inEvent_ is an object containing
 		event information.
 
@@ -323,19 +323,19 @@ enyo.kind({
 		if (!enyo.exists(e.originator)) {
 			e.originator = inSender || this;
 		}
-		return this.dispatchBubble(inEventName, e, inSender || this);
+		return this.dispatchBubble(inEventName, e, inSender);
 	},
 	/**
 		Bubbles an event up an object chain, starting <b>above</b> _this_.
 
-		If a handler for this event returns true (i.e., _handled_),
+		If a handler for this event returns true (aka _handled_),
 		bubbling is stopped.
 
 		Handlers always have this signature:
 
 			function(inSender, inEvent)
 
-		where _inSender_ refers to the component that most recently
+		where _inSender_ refers to the Component that most recently
 		propagated the event and _inEvent_ is an object containing
 		event information.
 
@@ -347,20 +347,17 @@ enyo.kind({
 			return;
 		}
 		// Bubble to next target
-		var e = inEvent || {};
 		var next = this.getBubbleTarget();
 		if (next) {
-			// use delegate as sender if it exists to preserve illusion
-			// that event is dispatched directly from that, but we still
-			// have to bubble to get decorations
-			return next.dispatchBubble(inEventName, e, e.delegate || this);
+			return next.dispatchBubble(inEventName, inEvent, this);
 		}
 		return false;
 	},
 	//* @protected
 	/**
-		Sends an event to a named delegate. This object may dispatch an event
-		to itself via a handler, or to its owner via an event property, e.g.:
+		Dispatching refers to sending an event to a named delegate.
+		This object may dispatch an event to itself via a handler,
+		or to its owner via an event property, e.g.:
 
 			handlers {
 				// 'tap' events dispatched to this.tapHandler
@@ -370,47 +367,27 @@ enyo.kind({
 			// 'tap' events dispatched to 'tapHandler' delegate in this.owner
 			ontap: "tapHandler"
 	*/
-	dispatchEvent: function(name, event, sender) {
+	dispatchEvent: function(inEventName, inEvent, inSender) {
 		if (this._silenced) {
 			return;
 		}
-		// if the event has a delegate associated with it we grab that
-		// for reference
-		// NOTE: This is unfortunate but we can't use a pooled object here because
-		// we don't know where to release it
-		var delegate = (event || (event = {})).delegate;
-		var ret;
-		// bottleneck event decoration w/ optimization to avoid call to empty function
-		if (this.decorateEvent !== enyo.Component.prototype.decorateEvent) {
-			this.decorateEvent(name, event, sender);
+		// bottleneck event decoration
+		this.decorateEvent(inEventName, inEvent, inSender);
+		//
+		// Note: null checks and sub-expressions are unrolled in this
+		// high frequency method to reduce call stack in the 90% case.
+		// These expressions should fail early.
+		//
+		// try to dispatch this event directly via handlers
+		//
+		if (this.handlers[inEventName] && this.dispatch(this.handlers[inEventName], inEvent, inSender)) {
+			return true;
 		}
-
-		// first, handle any delegated events intended for this object
-		if (delegate && delegate.owner === this) {
-			// the most likely case is that we have a method to handle this
-			if (this[name] && "function" === typeof this[name]) {
-				return this.dispatch(name, event, sender);
-			}
-			// but if we don't, just stop the event from going further
-			return;
-		}
-
-		// for non-delgated events, try the handlers block if possible
-		if (!delegate) {
-			if (this.handlers && this.handlers[name] &&
-				this.dispatch(this.handlers[name], event, sender)) {
-				return true;
-			}
-			// then check for a delegate property for this event
-			if (this[name] && enyo.isString(this[name])) {
-				// we dispatch it up as a special delegate event with the
-				// component that had the delegation string property stored in
-				// the "delegate" property
-				event.delegate = this;
-				ret = this.bubbleUp(this[name], event, sender);
-				delete event.delegate;
-				return ret;
-			}
+		//
+		// try to delegate this event to our owner via event properties
+		//
+		if (this[inEventName]) {
+			return this.bubbleDelegation(this.owner, this[inEventName], inEventName, inEvent, this);
 		}
 	},
 	// internal - try dispatching event to self, if that fails bubble it up the tree
@@ -426,7 +403,7 @@ enyo.kind({
 		return this.bubbleUp(inEventName, inEvent, inSender);
 	},
 	decorateEvent: function(inEventName, inEvent, inSender) {
-		// an event may float by us as part of a dispatchEvent chain
+		// an event may float by us as part of a dispatchEvent chain or delegateEvent
 		// both call this method so intermediaries can decorate inEvent
 	},
 	stopAllJobs: function() {
@@ -436,22 +413,37 @@ enyo.kind({
 			}
 		}
 	},
+	bubbleDelegation: function(inDelegate, inMethodName, inEventName, inEvent, inSender) {
+		// next target in bubble sequence
+		var next = this.getBubbleTarget();
+		if (next) {
+			return next.delegateEvent(inDelegate, inMethodName, inEventName, inEvent, inSender);
+		}
+	},
+	delegateEvent: function(inDelegate, inMethodName, inEventName, inEvent, inSender) {
+		// override this method to play tricks with delegation
+		// bottleneck event decoration
+		this.decorateEvent(inEventName, inEvent, inSender);
+		// by default, dispatch this event if we are in fact the delegate
+		if (inDelegate == this) {
+			return this.dispatch(inMethodName, inEvent, inSender);
+		}
+		return this.bubbleDelegation(inDelegate, inMethodName, inEventName, inEvent, inSender);
+	},
 	//* @public
 	/**
 		Dispatches the event to named delegate _inMethodName_, if it exists.
 		Subkinds may re-route dispatches.
 		Note that both 'handlers' events and events delegated from owned controls
-		arrive here. If you need to handle these differently, you may also need
-		to override _dispatchEvent_.
+		arrive here. If you need to handle these differently, you may
+		need to also override _dispatchEvent_.
 	*/
 	dispatch: function(inMethodName, inEvent, inSender) {
 		if (this._silenced) {
 			return;
 		}
 		var fn = inMethodName && this[inMethodName];
-		if (fn && "function" === typeof fn) {
-			// TODO: we use inSender || this but the inSender argument
-			// to keep unit tests working will be deprecated in the future
+		if (fn) {
 			return fn.call(this, inSender || this, inEvent);
 		}
 	},
