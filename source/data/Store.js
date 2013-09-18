@@ -1,34 +1,35 @@
 (function (enyo) {
 	//*@public
 	/**
-		The _enyo.Store_ object is a runtime database of _records_ as they are created.
-		While there can be multiple _stores_, there is always a top-level _store_ at
-		_enyo.store_ that is used by _enyo.Model_ and _enyo.Collection_. The _store serves
-		as a liason between _records_ and the requested _enyo.Source_ that dictates how they
-		are retrieved and/or persisted. You can register _observers_ or _event listeners_ for
-		a _record_ or _collection_ through the _store_ or a reference to the object directly.
-		Every _record_ and every _collection_ has a reference to a _store_. If none is
-		explicitly provided it will resolve to _enyo.store_.
+		_enyo.Store_ is a runtime database of data records. The store indexes
+		records internally for faster lookup. While an application may have multiple
+		stores, there is always a top-level store at _enyo.store_ that is used by
+		[enyo.Model](#enyo.Model) and [enyo.Collection](#enyo.Collection).
 
-		The _enyo.store_ indexes _records_ internally for faster lookup. Explore the API
-		to see how these methods interact.
+		The store serves as a liason between records and the
+		[enyo.Source](#enyo.Source) that dictates how they are retrieved and/or
+		persisted. You may register observers or event listeners for a record or
+		collection through the store or a reference to the object directly.
+		Every record and every collection has a reference to a store. If none is
+		explicitly provided, it will resolve to _enyo.store_.
 	*/
 	enyo.kind({
 		name: "enyo.Store",
 		kind: enyo.Object,
 		/**
-			The hash of named _sources_ that are available for use on this _store_.
-			The default _source_ is _ajax_ but other may be added by providing
-			`enyo.defaultStoreProperties` with a _sources_ hash of those to add.
+			The hash of named sources that are available for use on this store. The
+			default source is _ajax_, but others may be added by providing
+			_enyo.defaultStoreProperties_ with a _sources_ hash of sources to add.
 		*/
 		sources: {ajax: "enyo.AjaxSource", jsonp: "enyo.JsonpSource"},
 		/**
-			By default, the store indexes records in several ways one of which is by its
-			_primaryKey_ value if it exists. This is intended to be unique and it will
-			complain when it finds multiple instances of the same _record_. Set this flag to
-			`true` and it will no longer complain but __note__: having duplicate entries of the
-			same unique _primaryKey_ in a single _store_ means you cannot use _find_ or
-			_findLocal_ on that _primaryKey_, you would need to use _euid_.
+			By default, the store indexes records in several ways, one of which is by
+			the _primaryKey_ value (if it exists). This value is intended to be
+			unique; the store will complain if it finds multiple instances of the same
+			record. If you set this flag to true, the store will no longer complain;
+			however, if a store has duplicate entries with the same _primaryKey_, you
+			will not be able to search for records by _primaryKey_ in _find()_ or
+			_findLocal()_, but will need to search by _euid_ instead.
 		*/
 		ignoreDuplicates: false,
 		//*@protected
@@ -37,12 +38,12 @@
 		concat: ["sources"],
 		//*@public
 		/**
-			Will create a new record of _kind_ (string or constructor) and accepts
-			an optional _attributes_ and _options_ parameter(s) that will be passed
-			to the constructor of the _enyo.Model_ (see enyo.Model.constructor). If
-			_kind_ is not provided _enyo.Model_ will be used by default. Returns the
-			newly created instance. Will set the _records_ _store_ property to this
-			_store_.
+			Creates a new record of a given _kind_ (string or constructor) and returns
+			the newly created instance (with its _store_ property set to this   store).
+			Accepts optional attributes (_attrs_) and options (_opts_) that will be
+			passed to the constructor of the [enyo.Model](#enyo.Model) (see
+			[enyo.Model.constructor](#enyo.Model::constructor)). If no _kind_ is
+			specified, _enyo.Model_ will be used by default.
 		*/
 		createRecord: function (kind, attrs, opts) {
 			if (arguments.length < 3) {
@@ -61,23 +62,23 @@
 			return new Kind(attrs, opts);
 		},
 		/**
-			Retrieve a _record_ if it exists by its _euid_.
+			Retrieves a record (if it exists) by its _euid_.
 		*/
 		getRecord: function (euid) {
 			return this.records.euid[euid];
 		},
 		/**
-			Retrieve a _collection_ if it exists by its _euid_.
+			Retrieves a collection (if it exists) by its _euid_.
 		*/
 		getCollection: function (euid) {
 			return this.collections[euid];
 		},
 		/**
-			Creates a _collection_ of _kind_ (string or constructor) and accepts
-			an optional _records_ array and options to be passed to the constructor
-			of the _collection_ as the second parameter. Will set the _store_ property
-			to this _store_. Returns the newly created instance. If _kind_ is omitted
-			_enyo.Collection_ will be used by default.
+			Creates a collection of a given _kind_ (string or constructor) and returns
+			the newly created instance (with its _store_ property set to this store).
+			Accepts optional _records_ array and options (_opts_) to be passed to the
+			collection's constructor. If no _kind_ is specified,
+			[enyo.Collection](#enyo.Collection) will be used by default.
 		*/
 		createCollection: function (kind, records, opts) {
 			if (arguments.length < 3) {
@@ -96,11 +97,11 @@
 			return new Kind(records, opts);
 		},
 		/**
-			Add a record by its _euid_ and if it has a value for its known
-			_primaryKey_ we index it by this value as well for quicker reference
-			later. This is mostly used internally as it is called automatically by
-			_models_ as they are created. Returns `true` on successful addition,
-			`false` otherwise.
+			Adds a record by its _euid_ and, if it has a known value for its
+			_primaryKey_, indexes the record by that value as well for quicker
+			reference later. Returns true on successful addition; otherwise, false.
+			This method is mostly used internally, as it is called automatically by
+			models as they are created.
 		*/
 		addRecord: function (rec) {
 			var rr = this.records,
@@ -142,10 +143,11 @@
 			return f;
 		},
 		/**
-			Adds a collection to the _store_. This is typically done automatically
-			and does not need to be called. Accepts a reference to the _collection_.
-			Will set the _store_ to the _store_ property on the _collection_. Returns
-			`true` on successful addition, `false` otherwise.
+			Adds a collection to the store. Returns true on successful addition;
+			otherwise, false. This is typically executed automatically and does not
+			need to be called in application code. Accepts a reference to the
+			collection to be added, and sets the collection's _store_ property to this
+			store.
 		*/
 		addCollection: function (c) {
 			var cc = this.collections,
@@ -158,9 +160,9 @@
 			return f;
 		},
 		/**
-			Removes a _collection_ from the _store_. Accepts a reference to the _collection_
-			or the euid of the _collection_ to remove. Returns `true` on successful removal,
-			`false` otherwise.
+			Removes a collection from the store. Accepts the _euid_ of the collection
+			to remove, or a reference to the collection. Returns true on successful
+			removal; otherwise, false.
 		*/
 		removeCollection: function (c) {
 			var cc = this.collections;
@@ -169,8 +171,8 @@
 			c.removeListener("destroy", this._collectionDestroyed);
 		},
 		/**
-			Will remove the reference for the given _record_ if it was in
-			the _store_. This is called automatically when a _record_ is destroyed.
+			Removes the reference for the given record if it is found in the store.
+			This is called automatically when a record is destroyed.
 		*/
 		removeRecord: function (rec) {
 			var rr = this.records,
@@ -181,9 +183,9 @@
 			rec.removeListener("destroy", this._recordDestroyed);
 		},
 		/**
-			Requires a hash with _key_ _value_ pairs that are the source's name by
-			which it can be referred to by this _store_ and the constructor, instance
-			or path to either in a string.
+			Adds sources to this store.  Requires a hash with _key/value_ pairs, in
+			which a key is a source's name and a value is that source's constructor,
+			an instance, or the path to either expressed as a string.
 		*/
 		addSources: function (props) {
 			var dd = this.sources;
@@ -191,53 +193,61 @@
 			this._initSources();
 		},
 		/**
-			Accepts the name of a source of this _store_ to remove.
+			Removes the source with the passed-in name from this store.
 		*/
 		removeSource: function (name) {
 			delete this.sources[name];
 		},
 		/**
-			Accepts an array of sources names to remove from the _store_.
+			Accepts an array of source names for removal from the store.
 		*/
 		removeSources: function (sources) {
 			var dd = this.sources;
 			for (var i=0, k; (k=sources[i]); ++i) { delete dd[k]; }
 		},
 		/**
-			This method is designed to query for a _record or records_ via a _source_ and can
-			use various strategies to perform compilation of the results in the current _store_.
-			This is an asynchronous method and requires 2 parameters, the kind of record to use
-			as a constructor or string, and an options hash that includes a _success_ method,
-			optionally a _fail_ method, a _source_ designating what source to use (or will use
-			record kind's default), a _strategy_ (explained below), and a _attributes_ hash of the
-			attributes to use in the query. How these _attributes_ are used in the query depends on
-			the _source_ being used. The _success_ method expects to receive the original options
-			hash passed into find followed by the result-set (returned by the _strategy_ explained below).
+			Queries a source for a record (or records), with the ability to use
+			various strategies to compile the results in the current store. This is an
+			asynchronous method that requires two parameters--the kind of record to
+			use (in the form of a constructor or string), and an options hash that
+			includes a _success_ method, an optional _fail_ method, a _source_
+			designating the source to use (or else the record kind's default will be
+			used), a _strategy_ (explained below), and a hash of _attributes_ to use
+			in the query. How these attributes are used in the query depends on the
+			source being used. The _success_ method expects to receive the original
+			options hash passed into _find()_, followed by the result set (returned by
+			the _strategy_, as explained below).
 
-			There is a special use for this method if an _euid_ or _primaryKey_ value is provided, the
-			_euid_ directly on the options hash and the _primaryKey_ value in the _attributes_ hash of the
-			options. It will attempt to find the record locally first, and if found, call the
-			_success_ method without using the _source_. If it cannot be found, it will continue normally.
-			Whether the _source_ is used or not, in a case where the _euid_ or _primaryKey_ value are provided
-			the result will be a single _record_ or _undefined_, not an array.
+			There is a special use for this method if an _euid_ or _primaryKey_ value
+			is provided (the _euid_ directly on the options hash; the _primaryKey_ in
+			the _attributes_ hash of the options). In this case, the method will
+			attempt to find the record locally first; if it is found, the _success_
+			method will be called and the source will not be queried. If the record
+			cannot be found locally, the method will proceed normally. Regardless of
+			whether the source is used, whenever the _euid_ or _primaryKey_ value is
+			provided, the result will be either a single record or _undefined_; it
+			will not be an array.
 
-			For queries against only runtime _records_ (in the _store_) see _findLocal_.
+			For queries against runtime records only (i.e., records in the store), see
+			_findLocal()_.
 
-			When results are retrieved from the requested _source_ it will be handled according to
-			the requested _strategy_ (the default is `merge`). Strategies can easily be extended
-			or added to by creating a method on the _store_ of the form _[name]Strategy_ then setting
-			the _name_ as the _strategy_ option passed to this method. The strategy resolvers receive
-			two parameters, the current array of records for the kind in the original request and the
-			incoming results from the _source_ query. These methods are executed under the context of
-			the _store_. The available strategies with descriptions are below.
+			When results are retrieved from the requested source, they will be handled
+			according to the requested _strategy_ (the default is _merge_). Strategies
+			may easily be extended by creating a method on the store of the form
+			_&lt;name&gt;Strategy_, and then setting the _name_ as the _strategy_ option
+			passed to this method. The strategy resolvers receive two parameters--the
+			current array of records for the kind in the original request, and the
+			incoming results from the source query. These methods are executed under
+			the context of the store.
 
-			Strategies:
+			There are two available strategies: _replace_ and _merge_.
 
-			1. `replace` - all known _records_ are thrown away (not destroyed) and are replaced by the
-			new results.
-			2. `merge` (the default) - any incoming _records_ with the same _primaryKey_ as records
-			already in the _store_ will be updated with the values retrieved, and any new records
-			will simply be added to the store.
+			* When the _replace_ strategy is used, all known records are thrown away
+				(though not destroyed) and replaced by the new results.
+
+			* When using the _merge_ strategy (the default), any incoming records with
+				the same _primaryKey_ as records already in the store are updated with
+				the values retrieved, and new records are simply added to the store.
 		*/
 		find: function (kind, opts) {
 			// in cases where no kind is provided we assume enyo.Model which is consistent with
@@ -275,26 +285,31 @@
 			d.find(c, o);
 		},
 		/**
-			This method allows queries to be executed against the runtime database (in the _store_)
-			and will not query a _source_ even if it is provided. This is a synchronous method and
-			will return an array of _records_ or an empty array if none could be matched on the
-			criterion. As is explained below, if a _primaryKey_ value is provided or an _euid_ in the
-			options it will return a single _record_ or _undefined_, not an array as this is a
-			narrow search for a specific _record_.
+			Queries the runtime database (in the store); will not query a source even
+			if one is provided. This is a synchronous method and will return an array
+			of records, or an empty array if no matching records are found.
 
-			This method accepts three parameters, the kind as a constructor or string, the
-			options to match against and an optional _filter_ method. Unlike _find_, there are no
-			_success_ or _fail_ methods, note that all _keys_ of the options will be used as criteria
-			to match against. If you provide an _euid_ key, a key matching the _primaryKey_ of the
-			model kind, or a _kindName_ property it will not query for any other values or scan the entire
-			dataset. Using the _kindName_ property will return all records registered in this _store_
-			for that _kindName_.
+			As with _find()_, this method behaves somewhat differently when an _euid_
+			or _primaryKey_ value is provided (the _euid_ directly on the options
+			hash; the _primaryKey_ in the _attributes_ hash of the options).  In this
+			case,   a specific record is sought, with the return value being not an
+			array, but rather a single record or _undefined_.
 
-			The filtering process is handled by the _filter_ method of the _store_. Overload this
-			method or provide an optional third parameter that can be a function or string name of a
-			method on the _store_. This filter method will receive the _options_ to match against and
-			the _record_ as the second parameter and should return `true` or `false` as to whether or
-			not it should be included in the result-set.
+			This method accepts three parameters, the kind as a constructor or string,
+			the options to match against, and an optional _filter_ method. Unlike
+			_find()_, there are no _success_ or _fail_ methods. Also, note that all
+			keys specified in the options will be used as criteria to match against.
+			If you provide an _euid_ key, a key matching the _primaryKey_ of the
+			model kind, or a _kindName_ property, the method will not query for any
+			other values or scan the entire dataset. Using the _kindName_ property
+			will return all records registered in this store for that _kindName_.
+
+			The filtering process is handled by the store's _filter_ method. Overload
+			this method or provide an optional third parameter that may be a function
+			or string name of a method on the store. This filter method will receive
+			the options to match against and the record as the second parameter, and
+			should return either _true_ or _false_ to indicate whether it should be
+			included in the result set.
 		*/
 		findLocal: function (kind, opts, filter) {
 			if (arguments.length < 3 && enyo.isObject(kind)) {
@@ -323,29 +338,29 @@
 			return r;
 		},
 		/**
-			Overload this method to handle filtering data in special cases. The default
-			behavior simply matches a _record_ according to the options provided as attributes.
-			This method is used internally by other methods of the _store_. Overload this method
-			to handle special cases.
+			Overload this method to handle special cases. The default filtering
+			behavior simply matches a record according to the options provided as
+			attributes. This method is used internally by other methods of the store.
 		*/
 		filter: function (opts, rec) {
 			for (var k in opts) { if (rec.get(k) !== opts[k]) { return false; } }
 			return true;
 		},
 		/**
-			Responds to _find_ requests asynchronously and executes the correct _strategy_
-			for the results before responding to user callbacks.
+			Responds to _find_ requests asynchronously and executes the correct
+			strategy for the results before responding to user callbacks.
 		*/
 		didFind: function () {
 			// TODO:
 			this.log(arguments);
 		},
 		/**
-			Adds a _listener_ for a specific _event_ that any _records_ or the _store_
-			might fire. This is not the same as the _enyo.Component_ event system as this
-			does not bubble. Accepts the record _rec_, the _event_, the method _fn_ and
-			an optional context _ctx_ for the method to be bound or found on. Returns the
-			appropriate listener that needs to be supplied to _removeListener_ later.
+			Adds a listener for a specific event that any records or the store might
+			fire. This is not the same as the [enyo.Component](#enyo.Component) event
+			system, as these events do not bubble. Accepts the record (_rec_), the
+			_event_, the method (_fn_), and an optional context(_ctx_) for the method
+			to be bound or found on. Returns the appropriate listener that needs to be
+			supplied to _removeListener()_ later.
 		*/
 		addListener: function (rec, event, fn, ctx) {
 			var m  = this._recordListeners,
@@ -360,8 +375,9 @@
 			return fn;
 		},
 		/**
-			Removes a _listener_ for an event. Accepts the record _rec_, the _event_ the
-			_listener_ is registered on and the method _fn_ that was returned from _addListener_.
+			Removes a listener for an event. Accepts the record (_rec_), the _event_
+			the listener is registered on, and the method (_fn_) that was returned
+			from _addListener()_.
 		*/
 		removeListener: function (rec, event, fn) {
 			var m  = this._recordListeners,
@@ -376,7 +392,7 @@
 			}
 		},
 		/**
-			Removes all listeners from a given _record_ or _collection_.
+			Removes all listeners from a given record or collection.
 		*/
 		removeAllListeners: function (rec) {
 			var rr = this.records,
@@ -392,10 +408,10 @@
 			}
 		},
 		/**
-			Triggers the given _event_ for the requested _record_ _rec_ passing optional
-			_args_ as a single parameter. Note _args_ is expected to be a mutable object literal
-			or instance of a _kind_. Event listeners accept the _record_, the _event_ name and
-			the optional _args_ parameter.
+			Triggers the given _event_ for the requested record (_rec_), passing
+			optional _args_ as a single parameter. Note that _args_ is expected to be
+			a mutable object literal or instance of a _kind_. Event listeners accept
+			the record, the event name, and the optional _args_ parameter.
 		*/
 		triggerEvent: function (rec, event, args) {
 			var m  = this._recordListeners,
@@ -458,9 +474,9 @@
 		},
 		//*@public
 		/**
-			When the `fetch` method is executed on a _record_ and it is successful this
-			method will be called before any success method supplie as an option to the
-			_record_ itself. Overload this method to handle other scenarios.
+			When the _fetch()_ method is executed on a record and is successful, this
+			method will be called before any _success_ method supplied as an option to
+			the record itself. Overload this method to handle other scenarios.
 		*/
 		didFetch: function (rec, opts, xhr, res) {
 			if (opts) {
@@ -469,9 +485,9 @@
 			this.triggerEvent(rec, "didFetch");
 		},
 		/**
-			When the `commit` method is executed on a _record_ and it is successful this
-			method will be called before any success method supplied as an option to the
-			_record_ itself. Overload this method to handle other scenarios.
+			When the _commit()_ method is executed on a record and is successful, this
+			method will be called before any _success_ method supplied as an option to
+			the record itself. Overload this method to handle other scenarios.
 		*/
 		didCommit: function (rec, opts, xhr, res) {
 			if (opts) {
@@ -480,9 +496,10 @@
 			this.triggerEvent(rec, "didCommit");
 		},
 		/**
-			When the `destroy` method is executed on a _record_ and it is successful
-			this method will be called before any success method supplied as an option to
-			the _record_ itself. Overload this method to handle other scenarios.
+			When the _destroy()_ method is executed on a record and is successful,
+			this method will be called before any _success_ method supplied as an
+			option to the record itself. Overload this method to handle other
+			scenarios.
 		*/
 		didDestroy: function (rec, opts, xhr, res) {
 			if (opts) {
@@ -492,12 +509,12 @@
 			this._recordDestroyed(rec);
 		},
 		/**
-			This method is executed when one of the primary actions as failed. It has the
-			name of the action (one of "fetch", "commit", "destroy"), the reference to the
-			record the action failed on, and the options originally passed to the store for
-			this action. Overload this method to handle other possible fail cases gracefully.
-			By default it will look for and execute a "fail" method of the options should it
-			exist.
+			This method is executed when one of the primary actions has failed. It has
+			the name of the action (one of _"fetch"_, _"commit"_, or _"destroy"_), a
+			reference to the record the action failed on, and the options originally
+			passed to the store for the action. Overload this method to handle other
+			possible failure cases gracefully. By default, it will look for a _fail_
+			method in the options and (if one is found) execute it.
 		*/
 		didFail: function (action, rec, opts, xhr, res) {
 			if (opts) {
@@ -506,8 +523,9 @@
 		},
 		//*@protected
 		/**
-			Internal method called to find the requested source and execute the correct
-			method. It also hooks the _stores_ own response mechanisms via the options hash.
+			Internal method called to find the requested source and execute the
+			correct method. It also hooks the store's own response mechanisms via the
+			options hash.
 		*/
 		fetchRecord: function (rec, opts) {
 			var dd = this.sources,
@@ -519,8 +537,9 @@
 			d.fetch(rec, o);
 		},
 		/**
-			Internal method called to find the requested source and execute the correct
-			method. It also hooks the _stores_ own response mechanisms via the options hash.
+			Internal method called to find the requested source and execute the
+			correct method. It also hooks the store's own response mechanisms via the
+			options hash.
 		*/
 		commitRecord: function (rec, opts) {
 			var dd = this.sources,
@@ -532,8 +551,9 @@
 			d.commit(rec, o);
 		},
 		/**
-			Internal method called to find the requested source and execute the correct
-			method. It also hooks the _stores_ own response mechanisms via the options hash.
+			Internal method called to find the requested source and execute the
+			correct method. It also hooks the store's own response mechanisms via the
+			options hash.
 		*/
 		destroyRecord: function (rec, opts) {
 			var dd = this.sources,
@@ -626,9 +646,10 @@
 	});
 	//*@public
 	/**
-		There needs to always be an _enyo.store_ instance. If the default is not what you
-		need simply create a new instance and assign it to this variable or use it to create
-		your _collections_ and _models_ and they will not use this instance.
+		There must always be an _enyo.store_ instance. If the default is not what
+		you need, simply create a new instance and assign it to this variable, or
+		use it to create your collections and models and they will not use this
+		instance.
 	*/
 	enyo.store = new enyo.Store();
 })(enyo);
