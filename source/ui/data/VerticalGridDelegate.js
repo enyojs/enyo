@@ -13,6 +13,8 @@
 			and apply them to our pages individually.
 		*/
 		rendered: function (list) {
+			list.$.flyweighter.canGenerate = true;
+			this._claimChildrenPulse = 100;
 			// get our initial sizing cached now since we should actually have
 			// bounds at this point
 			this.updateMetrics(list);
@@ -22,7 +24,6 @@
 			if (list.length) { this.reset(list); }
 		},
 		pageHeight: function (list, page) {
-			if (list._didClaimChildren) { return this._pageHeight(list, page); }
 			var n  = page.node || page.hasNode(),
 				a  = n.children.length,
 				mx = list.metrics.pages[page.index], s;
@@ -32,68 +33,42 @@
 			return s;
 		},
 		/**
-			Returns the calculated height for the given page when the nodes have been
-			claimed and may/may-not be visible.
+			This method generates the markup for the page content.
 		*/
-		_pageHeight: function (list, page) {
-			var n  = page.node || page.hasNode(),
-				a  = 0,
-				cn = page.children,
-				mx = list.metrics.pages[page.index], s;
-			for (var i=0, c; (c=cn[i]); ++i) { if (c.getShowing()) { ++a; } }
-			s = (Math.floor(a/list.columns)+(a%list.columns? 1: 0))*(list.tileHeight+list.spacing);
-			n.style.height = s + "px";
-			mx.height = s;
-			return s;
-		},
-		generatePage: enyo.inherit(function (sup) {
-			return function (list, page, index) {
-				if (!list._didClaimChildren) {
-					sup.call(this, list, page, index, true);
-					this.layout(list, page);
-				} else {
-					this._generatePage(list, page, index);
-					this._layout(list, page);
-				}
-			};
-		}),
-		/**
-			Once the nodes have been claimed by this type of list it isn't efficient to
-			continually generate markup and force layouts (that are synchronous) so we
-			reuse the control already claiming the node.
-		*/
-		_generatePage: function (list, page, index) {
+		generatePage: function (list, page, index, force) {
 			var dd = list.get("data"),
 				cc = list.controlsPerPage,
 				// the initial index (in the data) to start with
 				pi = cc * index,
 				// the final index of the page
-				pf = Math.min(dd.length, pi + cc), d, dc, c;
+				pf = Math.min(dd.length, pi + cc),
+				sx = list.styleCache || (list.styleCache={}),
+				c  = list.$.flyweighter,
+				n  = page.node || page.hasNode(),
+				mk = "", d;
 			// set the pages index value
 			page.index = index;
 			page.start = pi;
 			page.end = pf;
-			list.controlParent = page;
 			// i is the iteration index of the child in the children's array of the page
 			// j is the iteration index of the dataset for each child
 			for (var i=0, j=pi; j<pf; ++i, ++j) {
 				d = dd.at(j);
-				c = page.children[i] || ((dc=true) && list.createComponent({}));
 				// we want to keep notifications from occurring until we're done
 				// setting up
-				if (!c.getShowing()) { c.setShowing(true); }
-				if (c.model !== d) {
-					c.stopNotifications();
-					c.set("model", d)
-					.set("index", j)
-					.set("selected", list.isSelected(d));
-					c.startNotifications();
-				}
+				c.stopNotifications();
+				c.set("model", d)
+				.set("id", this.idFor(list, j))
+				.set("index", j)
+				.set("selected", list.isSelected(d));
+				c.domCssText = sx[i] || c.domCssText;
+				c.tagsValid = false;
+				c.startNotifications();
+				mk += c.generateHtml();
+				c.teardownRender();
 			}
-			if (i<page.children.length) {
-				for (; i<page.children.length; ++i) { page.children[i].setShowing(false); }
-			}
-			if (dc) { page.renderReusingNode(); }
+			// take the flyweighted content and set it to the page
+			n.innerHTML = mk;
 			// now we need to update the known metrics cached for this page if we need to
 			var mx = list.metrics.pages[index] || (list.metrics.pages[index] = {});
 			// we will need to get the actual sizes for the page
@@ -102,6 +77,7 @@
 			// if we haven't already done this, update our _default_ child size for various
 			// calculations later
 			if (!list.childSize) { this.childSize(list); }
+			this.layout(list, page);
 		},
 		/**
 			Returns the calculated width for the given page.
@@ -170,6 +146,7 @@
 				h  = list.tileHeight,
 				r  = 0,
 				n  = page.node || page.hasNode(),
+				sx = list.styleCache || (list.styleCache={}),
 				cn = n.children, co;
 			if (cn.length) {
 				for (var i=0, c; (c=cn[i]); ++i) {
@@ -179,50 +156,12 @@
 					c.style.left   = (s  + (co * (w+s))) + "px";
 					c.style.width  = (w) + "px";
 					c.style.height = (h) + "px";
+					sx[i] = c.style.cssText;
 					// check if we need to increment the row
 					if ((i+1) % cc === 0) { ++r; }
 				}
 			}
 		},
-		/**
-			Takes a given page and arbitrarily positions its children according to the pre-computed
-			metrics of the list.
-	
-			TODO: This could be optimized to use requestAnimationFrame as well as render not by
-			child index but by row thus cutting down some of the over-calculation when iterating
-			over every child.
-		*/
-		_layout: function (list, page) {
-			var cc = list.columns,
-				s  = list.spacing,
-				w  = list.tileWidth,
-				h  = list.tileHeight,
-				r  = 0,
-				cn = page.children, co;
-			if (cn.length) {
-				for (var i=0, c; (c=cn[i]); ++i) {
-					c = c.node || c.hasNode();
-					// the column
-					co = i % cc;
-					c.style.top    = (s  + (r  * (h+s))) + "px";
-					c.style.left   = (s  + (co * (w+s))) + "px";
-					c.style.width  = (w) + "px";
-					c.style.height = (h) + "px";
-					// check if we need to increment the row
-					if ((i+1) % cc === 0) { ++r; }
-				}
-			}
-		},
-		/**
-			This is called at various moments to ensure that the required active controls
-			are created and available as well as bound to the correct node after scrolling has
-			stopped.
-		*/
-		_claimChildren: enyo.inherit(function (sup) {
-			return function (delegate) {
-				if (!this._didClaimChildren) { sup.apply(this, arguments); }
-			};
-		}),
 		/**
 			Delegate's resize event handler.
 		*/

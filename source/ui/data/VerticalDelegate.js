@@ -59,6 +59,7 @@ enyo.DataList.delegates.vertical = {
 		and apply them to our pages individually.
 	*/
 	rendered: function (list) {
+		list.$.flyweighter.canGenerate = true;
 		// get our initial sizing cached now since we should actually have
 		// bounds at this point
 		this.updateBounds(list);
@@ -80,7 +81,6 @@ enyo.DataList.delegates.vertical = {
 			c  = list.$.flyweighter,
 			n  = page.node || page.hasNode(),
 			mk = "", d;
-		c.canGenerate = true;
 		// set the pages index value
 		page.index = index;
 		page.start = pi;
@@ -98,8 +98,8 @@ enyo.DataList.delegates.vertical = {
 			.set("selected", list.isSelected(d));
 			c.startNotifications();
 			mk += c.generateHtml();
+			c.teardownRender();
 		}
-		c.canGenerate = false;
 		// take the flyweighted content and set it to the page
 		n.innerHTML = mk;
 		// now we need to update the known metrics cached for this page if we need to
@@ -247,9 +247,8 @@ enyo.DataList.delegates.vertical = {
 				mx = list.metrics.pages[pi] || (list.metrics.pages[pi] = {}),
 				up = list.upperProp,
 				lp = list.lowerProp,
-				sp = list.psizeProp,
-				ap = p.node.style.getPropertyValue(up);
-			if ((cp + "px") != ap) { p.node.style[up] = cp + "px"; }
+				sp = list.psizeProp;
+			p.node.style[up] = cp + "px";
 			p[up] = mx[up] = cp;
 			p[lp] = mx[lp] = (mx[sp] + cp);
 		}
