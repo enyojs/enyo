@@ -1,9 +1,25 @@
 enyo.kind({
 	name: "AnimatorTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	testDeferLowPriorityTasks: function() {
 		var finish = this.bindSafely("finish");
-		var animation = new enyo.Animator({duration: 70});
+		this.checkJobs = function(inSender, inEvent) {
+			setTimeout(function(){
+				if(!c.low){
+					finish("low priority job did not execute after animation has finished");
+				} else {
+					// check order of execution
+					if( JSON.stringify(c.executionOrder) !== '["normal","high","low"]' ){
+						finish("jobs did not execute in the correct order");
+					}
+
+					finish();
+				}
+			}, 10);
+			return true;
+		};
+		var animation = this.createComponent({kind: "enyo.Animator", duration: 70, onEnd: "checkJobs"});
 		var c = new enyo.Component({
 			executionOrder: [],
 			executeHighPriorityJob: function() {
@@ -36,18 +52,5 @@ enyo.kind({
 				finish("high priority job did not execute despite overriding priority");
 			}
 		}, 10);
-
-		setTimeout(function(){
-			if(!c.low){
-				finish("low priority job did not execute after animation has finished");
-			} else {
-				// check order of execution
-				if( JSON.stringify(c.executionOrder) !== '["normal","high","low"]' ){
-					finish("jobs did not execute in the correct order");
-				}
-
-				finish();
-			}
-		}, 90);
 	}
 });

@@ -86,8 +86,8 @@ enyo.singleton({
 		delete this._priorities[inId];
 
 		// find new highest current priority
-		for( var priority in this._priorities ){
-			highestPriority = Math.max(highestPriority, priority);
+		for( var i in this._priorities ){
+			highestPriority = Math.max(highestPriority, this._priorities[i]);
 		}
 
 		this.setPriorityLevel( highestPriority );
