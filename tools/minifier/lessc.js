@@ -31,6 +31,8 @@ function finish(loader, objs, doneCB) {
 				w("    " + e.message);
 				if (doneCB) {
 					doneCB();
+				} else {
+					process.exit(1);
 				}
 			} else {
 				try {
@@ -50,6 +52,8 @@ function finish(loader, objs, doneCB) {
 					w("    " + e.message);
 					if (doneCB) {
 						doneCB();
+					} else {
+						process.exit(1);
 					}
 				}
 			}
