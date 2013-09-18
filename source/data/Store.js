@@ -2,10 +2,10 @@
 	//*@public
 	/**
 		_enyo.Store_ is a runtime database of data records. The store indexes
-		records internally for faster lookup. While an application may have	multiple
+		records internally for faster lookup. While an application may have multiple
 		stores, there is always a top-level store at _enyo.store_ that is used by
 		[enyo.Model](#enyo.Model) and [enyo.Collection](#enyo.Collection).
-		
+
 		The store serves as a liason between records and the
 		[enyo.Source](#enyo.Source) that dictates how they are retrieved and/or
 		persisted. You may register observers or event listeners for a record or
@@ -39,7 +39,7 @@
 		//*@public
 		/**
 			Creates a new record of a given _kind_ (string or constructor) and returns
-			the newly created instance (with its _store_ property set to this	store).
+			the newly created instance (with its _store_ property set to this   store).
 			Accepts optional attributes (_attrs_) and options (_opts_) that will be
 			passed to the constructor of the [enyo.Model](#enyo.Model) (see
 			[enyo.Model.constructor](#enyo.Model::constructor)). If no _kind_ is
@@ -101,7 +101,7 @@
 			_primaryKey_, indexes the record by that value as well for quicker
 			reference later. Returns true on successful addition; otherwise, false.
 			This method is mostly used internally, as it is called automatically by
-			models as they are created. 
+			models as they are created.
 		*/
 		addRecord: function (rec) {
 			var rr = this.records,
@@ -239,15 +239,15 @@
 			current array of records for the kind in the original request, and the
 			incoming results from the source query. These methods are executed under
 			the context of the store.
-			
+
 			There are two available strategies: _replace_ and _merge_.
 
 			* When the _replace_ strategy is used, all known records are thrown away
-			    (though not destroyed) and replaced by the new results.
+				(though not destroyed) and replaced by the new results.
 
 			* When using the _merge_ strategy (the default), any incoming records with
-			    the same _primaryKey_ as records already in the store are updated with
-			    the values retrieved, and new records are simply added to the store.
+				the same _primaryKey_ as records already in the store are updated with
+				the values retrieved, and new records are simply added to the store.
 		*/
 		find: function (kind, opts) {
 			// in cases where no kind is provided we assume enyo.Model which is consistent with
@@ -292,7 +292,7 @@
 			As with _find()_, this method behaves somewhat differently when an _euid_
 			or _primaryKey_ value is provided (the _euid_ directly on the options
 			hash; the _primaryKey_ in the _attributes_ hash of the options).  In this
-			case,	a specific record is sought, with the return value being not an
+			case,   a specific record is sought, with the return value being not an
 			array, but rather a single record or _undefined_.
 
 			This method accepts three parameters, the kind as a constructor or string,

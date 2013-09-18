@@ -222,7 +222,7 @@
 	//* Returns a random integer between 0 and a specified upper boundary;
 	//* i.e., 0 <= return value < _inBound_.
 	//
-	//		var randomLetter = String.fromCharCode(enyo.irand(26) + 97);
+	//      var randomLetter = String.fromCharCode(enyo.irand(26) + 97);
 	//
 	enyo.irand = function(inBound) {
 		return Math.floor(Math.random() * inBound);
