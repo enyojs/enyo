@@ -29,7 +29,11 @@ function finish(loader, objs, doneCB) {
 			if (e) {
 				w("  Error: \x07" + e.filename + ":" + e.line + ":" + e.column);
 				w("    " + e.message);
-				doneCB();
+				if (doneCB) {
+					doneCB();
+				} else {
+					process.exit(1);
+				}
 			} else {
 				try {
 					var css =
@@ -46,7 +50,11 @@ function finish(loader, objs, doneCB) {
 				} catch(e)  {
 					w("  Error: \x07" + e.filename + ":" + e.line + ":" + e.column);
 					w("    " + e.message);
-					doneCB();
+					if (doneCB) {
+						doneCB();
+					} else {
+						process.exit(1);
+					}
 				}
 			}
 		};
