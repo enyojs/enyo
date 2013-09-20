@@ -197,7 +197,10 @@ enyo.kind({
 		}
 	},
 	stop: function(inFireEvent) {
-		this.job = enyo.cancelRequestAnimationFrame(this.job);
+		var job = this.job;
+		if (job) {
+			this.job = enyo.cancelRequestAnimationFrame(job);
+		}
 		if (inFireEvent) {
 			this.doScrollStop();
 		}
