@@ -494,7 +494,7 @@
 			not call this method otherwise.
 		*/
 		stop: function () {
-			throw "binding-top";
+			throw "binding-stop";
 		},
 		//*@protected
 		initTransform: function () {
