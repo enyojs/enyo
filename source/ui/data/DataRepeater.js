@@ -52,19 +52,6 @@ enyo.kind({
 	*/
 	childBindingDefaults: null,
 	//*@protected
-	childMixins: [enyo.RepeaterChildSupport],
-	concat: ["childMixins"],
-	controlParentName: "container",
-	containerName: "container",
-	containerOptions: {
-		name: "container",
-		classes: "enyo-fill enyo-data-repeater-container"
-	},
-	bindings: [
-		{from: ".controller.length", to: ".length"}
-	],
-	batching: false,
-	_selection: null,
 	initComponents: function () {
 		this.initContainer();
 		var c = this.kindComponents || this.components || [],
@@ -198,14 +185,6 @@ enyo.kind({
 	getChildForIndex: function (i) {
 		return this.$.container.children[i];
 	},
-	childSelected: function (sender, event) {
-		this.select(event.index);
-		return true;
-	},
-	childDeselected: function (sender, event) {
-		this.deselect(event.index);
-		return true;
-	},
 	data: function () {
 		return this.controller;
 	},
@@ -289,8 +268,14 @@ enyo.kind({
 	dataChanged: function () {
 		if (this.controller) { this.reset(); }
 	},
-	computed: {
-		selected: [],
-		data: ["controller"]
-	}
+	computed: {selected: [], data: ["controller"]},
+	noDefer: true,
+	childMixins: [enyo.RepeaterChildSupport],
+	concat: ["childMixins"],
+	controlParentName: "container",
+	containerName: "container",
+	containerOptions: {name: "container", classes: "enyo-fill enyo-data-repeater-container"},
+	bindings: [{from: ".controller.length", to: ".length"}],
+	batching: false,
+	_selection: null
 });

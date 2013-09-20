@@ -1,546 +1,191 @@
-(function (enyo) {
+//*@public
+/**
+	_enyo.DataList_ is an <a href="#enyo.DataRepeater">enyo.DataRepeater</a>
+	that employs a paginated scrolling scheme to enhance performance with larger
+	datasets. The data is provided to the _enyo.DataList_ from an _enyo.Collection_
+	set as its `controller` property.
 
-	//*@public
+	Note that, care should be taken when deciding how the children of the list
+	will be laid out. When updating the layout of child elements, when there are many,
+	can be taxing and non-performant for the browser. Do not use dynamicly updated
+	layouts that require many calculations whenever the data will be updated in a view.
+	Try using CSS whenever possible.
+
+	Note that _enyo.DataList_ currently does not support horizontal orientation.
+*/
+enyo.kind({
+	name: "enyo.DataList",
+	kind: enyo.DataRepeater,
 	/**
-		_enyo.DataList_ is an <a href="#enyo.DataRepeater">enyo.DataRepeater</a>
-		that employs a paginated scrolling scheme to enhance performance with larger
-		datasets.
-
-		Note that, when care should be taken when deciding how the children of the list
-		will be laid out. When updating the layout of child elements, when there are many,
-		can be taxing and non-performant for the browser. Do not use dynamicly updated
-		layouts that require many calculations whenever the data will be updated in a view.
-		Try using CSS whenever possible.
-
-		Note that _enyo.DataList_ currently does not support horizontal orientation.
+		The _enyo.DataList_ kind places its rows inside of a scroller. Any
+		configurable options associated with an _enyo.Scroller_ may be
+		placed in this hash and will be set accordingly on the scroller
+		for this list. If no options are specified, the default _enyo.Scroller_
+		settings are used.
 	*/
-	enyo.kind({
-		name: "enyo.DataList",
-		kind: "enyo.DataRepeater",
-		//*@public
-		/**
-			The _enyo.DataList_ kind places its rows inside of a scroller. Any
-			configurable options associated with an _enyo.Scroller_ may be
-			placed in this hash and will be set accordingly on the scroller
-			for this list. If no options are specified, the default _enyo.Scroller_
-			settings are used.
-		*/
-		scrollerOptions: null,
-		//*@public
-		/**
-			The paging orientation. Valid values are `vertical` and `horizontal`.
-		*/
-		orientation: "vertical",
-		//*@public
-		classes: "enyo-data-list",
-		//*@public
-		/**
-			The number of _controls_ to keep as _active_ per page. If the individual
-			elements are very small, this number may need to be increased; likewise,
-			if they are very large, the number may need to be decreased.
-		*/
-		controlsPerPage: 50,
-		//*@protected
-		containerOptions: {
-			name: "scroller",
-			kind: "enyo.Scroller",
-			canGenerate: false,
-			classes: "enyo-fit enyo-data-list-scroller",
-			components: [
-				{name: "active", classes: "enyo-data-list-active", components: [
-					{name: "page1", classes: "enyo-data-list-page"},
-					{name: "page2", classes: "enyo-data-list-page"}
-				]},
-				{name: "buffer", classes: "enyo-data-list-buffer"}
-			]
-		},
-		//*@protected
-		handlers: {
-			onScroll: "didScroll"
-		},
-		controlParentName: "page1",
-		containerName: "scroller",
-		debugPageBoundaries: false,
-		create: enyo.inherit(function (sup) {
-			return function () {
-				sup.apply(this, arguments);
-				this.orientation = this.orientation[0] == "v"? "v": "h";
-				if (this.debugPageBoundaries) {
-					this.$.page1.applyStyle("background-color", "#d8d8d8");
-					this.$.page2.applyStyle("background-color", "#58d3f7");
-				}
-				this.resetMetrics();
-			};
-		}),
-		rendered: function () {
-			// the initial time the list is rendered, we've only rendered the
-			// list node itself, but now we know it should be safe to calculate
-			// some boundaries so there's no ugly overlap in our absolutely
-			// positioned elements and rows and we can also render the rows and
-			// correctly map them to corresponding pages
-			this.$.scroller.canGenerate = true;
-			this.$.scroller.render();
-			// let's position and size everything initially and it will be adjusted
-			// as we go
-			this.updateSizing();
-			var $h = this.height,
-				$w = this.width,
-				$r = this.orientation,
-				$t = 0, $s;
-			for (var $i=0, c$; (c$=this.$.active.children[$i]); ++$i) {
-				$s = "";
-				if ($r == "v") {
-					$s += "width: " + $w + "px; top: " + $t + "px; " + "left: 0px;";
-				} else {
-					$s += "height: " + $h + "px; left: " + $t + "px; " + "top: 0px;";
-				}
-				c$.addStyles($s);
-				if ($t === 0) {
-					if ($r == "v") {
-						$t = $h;
-					} else {
-						$t = $w;
-					}
-				}
-				// this will initialize the cached values
-				this.getTop(c$);
-				this.getLeft(c$);
-			}
-			this._firstPage = this.$.page1;
-			this._lastPage = this.$.page2;
-			if (this.length) {
-				this.reset();
-			}
-		},
-		resetMetrics: function () {
-			this.childSize = 0;
-			this.pageCount = 0;
-			this.pages = {};
-			this.bufferSize = 0;
-		},
-		updateMetrics: function () {
-			this.defaultPageSize = this.controlsPerPage * (this.childSize || 100);
-			this.pageCount = Math.ceil(this.length / this.controlsPerPage);
-			this.bufferSize = 0;
-			for (var $i=0; $i<this.pageCount; ++$i) {
-				this.bufferSize += this.getPageSize($i);
-			}
-			this.adjustBuffer();
-		},
-		getPageSize: function (p) {
-			var $r = this.orientation,
-				$s, $n;
-			if (this.pages[p]) {
-				return $r == "v"? this.pages[p].height: this.pages[p].width;
-			}
-			$n = Math.min(this.length - (this.controlsPerPage * p), this.controlsPerPage);
-			$s = this.defaultPageSize * ($n / this.controlsPerPage);
-			return Math.max(1, $s);
-		},
-		reset: function () {
-			var $i, p$;
-			if (this.generated && this.$.scroller.generated) {
-				for ($i=1; (p$=this.$.active.children[$i]); --$i) {
-					this.resetPage(p$);
-					p$.index = $i;
-				}
-				this.resetMetrics();
-				for ($i=0; (p$=this.$.active.children[$i]); ++$i) {
-					this.generatePage(p$, $i);
-				}
-				this.updateMetrics();
-				// at this point there is most likely overlap of the pages but
-				// if so it will be out of the visible region
-				this.resetPagePositions();
-				this.$.scroller.rendered();
-				this._hasReset = true;
-			}
-		},
-		resetPage: function (p) {
-			this.controlParentName = p.name;
-			this.discoverControlParent();
-		},
-		generatePage: function (p, n) {
-			var $d = this.get("data"),
-				$c = this.controlsPerPage,
-				$o = $c * n,
-				$e = Math.min(this.length, $o + $c),
-				$r = this.orientation, $p;
-			this.controlParentName = p.name;
-			this.discoverControlParent();
-			p.index = n;
-			for (var $i=0, $j=$o, c$, d$; ((c$=p.children[$i]) ||(p.children.length < $c && (c$=this.createComponent({})))) && (d$=$d.at($j)) && $j < $e; ++$i, ++$j) {
-				if (c$._listDisabledChild) {
-					this.enableChild(c$);
-				}
-				if (c$.model !== d$) {
-					c$.stopNotifications();
-					c$.set("index", $j);
-					c$.set("model", d$);
-					c$.set("selected", this.isSelected(d$));
-					c$.startNotifications();
-				}
-			}
-			if ($i < p.children.length) {
-				this.prune(p, $i);
-			}
-			p.renderReusingNode();
-			$p = this.pages[n];
-			if (!$p) {
-				$p = this.pages[n] = {};
-			}
-			if ($r == "v") {
-				$p.height = this.getHeight(p);
-				$p.width = p.width = this.width;
-			} else {
-				$p.width = this.getWidth(p);
-				$p.height = p.height = this.height;
-			}
-			$p.start = $o;
-			$p.end = $o + ($i - 1);
-			if (!this.childSize) {
-				this.childSize = Math.floor(($r == "v"? $p.height: $p.width) / $c);
-				this.updateMetrics();
-			}
-		},
-		add: function (i) {
-			if (this.generated && this.$.scroller.canGenerate) {
-				var $n = this.pageForIndex(i),
-					$p = this.$.page1.index == $n? this.$.page1: this.$.page2.index == $n? this.$.page2: null;
-				if ($p) {
-					this.generatePage($p, $n);
-					if (!this.batching) {
-						this.updateMetrics();
-						this.adjustLastPage();
-					}
-				}
-			}
-		},
-		remove: function (i) {
-			if (this.generated && this.$.scroller.canGenerate) {
-				var $n = this.pageForIndex(i),
-					$p = this.$.page1.index == $n? this.$.page1: this.$.page2.index == $n? this.$.page2: null;
-				if ($p) {
-					this.generatePage($p, $n);
-					if (!this.batching) {
-						this.updateMetrics();
-						this.adjustLastPage();
-					}
-				}
-			}
-		},
-		refresh: function () {
-			if (this.generated && this.$.scroller.canGenerate) {
-				for (var $i=0, p$; (p$=this.$.active.children[$i]); ++$i) {
-					this.generatePage(p$, p$.index);
-				}
-				this.updateMetrics();
-				this.resetPagePositions();
-			}
-		},
-		pageForIndex: function (i) {
-			return Math.floor(i / this.controlsPerPage);
-		},
-		indexInPage: function (i, p) {
-			// FIXME: This needs to be adjusted to make better guesses
-			// but for now it's just brute force -- the issue being that
-			// the children are not always in order by index
-			var $f = false;
-			for (var $i=0, c$; (c$=p.children[$i]); ++$i) {
-				if (c$.index == i) {
-					$f = true;
-					break;
-				}
-			}
-			return $f;
-		},
-		modelsAdded: function (c, e, props) {
-			// FIXME: This is a temporary implementation as it will continue to
-			// throw indices for pages already generated - but it would need to inspect
-			// them to ensure they are ordered and then group them so the page is only
-			// generated once
-			if (c == this.controller) {
-				if (!this._hasReset) { return this.reset(); }
-				if (this.generated && this.$.scroller.canGenerate) {
-					this.set("batching", true);
-					for (var i=0, r; !isNaN((r=props.records[i])); ++i) { this.add(r); }
-					this.updateMetrics();
-					this.adjustLastPage();
-					this.set("batching", false);
-				}
-			}
-		},
-		modelsRemoved: function (c, e, props) {
-			if (c == this.controller) {
-				if (this.generated && this.$.scroller.canGenerate) {
-					this.set("batching", true);
-					// FIXME: This is a temporary implementation for this event;
-					// ultimately it needs to only do anything if the current indices
-					// are affected by the indices that are removed
-					this.reset();
-					this.set("batching", false);
-				}
-			}
-		},
-		update: function (i) {
-			// TODO: This should never get called and should possibly be removed
-			// from the API altogether
-		},
-		prune: function (p, i, e) {
-			var $t = p.children.slice(i, e);
-			for(var $i=0, c$; (c$=$t[$i]); ++$i) {
-				c$.set("model", null);
-				this.disableChild(c$);
-			}
-		},
-		disableChild: function (c$) {
-			if (!c$._listDisabledChild) {
-				c$.setShowing(false);
-				c$.canGenerate = false;
-				c$._listDisabledChild = true;
-			}
-		},
-		enableChild: function (c$) {
-			if (c$._listDisabledChild) {
-				c$.canGenerate = true;
-				c$._listDisabledChild = false;
-				c$.setShowing(true);
-			}
-		},
-		adjustBuffer: function () {
-			var $s = this.bufferSize,
-				$r = this.orientation,
-				$p = $r == "v"? "height": "width",
-				$o = $p == "height"? "width": "height";
-			if (this.$.buffer[$p] != $s) {
-				this.$.buffer[$p] = $s;
-				this.$.buffer.applyStyle($p, $s + "px");
-				this.$.buffer.applyStyle($o, this[$o] + "px");
-			}
-		},
-		adjustPageSize: function (p) {
-			var $r = this.orientation,
-				$s = this.getPageSize(p.index), $h, $w;
-			if ($r == "v") {
-				$h = this.getHeight(p);
-				$w = this.width;
-				if ($h != $s) {
-					p.height = this.pages[p.index].height = $h;
-				}
-				if (p.width != $w) {
-					p.applyStyle("width", $w + "px");
-					p.width = $w;
-				}
-			} else {
-				$w = this.getWidth(p);
-				$h = this.height;
-				if ($w != $s) {
-					p.width = this.pages[p.index].width = $w;
-				}
-				if (p.height != $h) {
-					p.applyStyle("height", $h + "px");
-					p.height = $h;
-				}
-			}
-		},
-		resetPagePositions: function () {
-			this.updateMetrics();
-			for (var $i=0, p$; (p$=this.$.active.children[$i]); ++$i) {
-				var $p = this.getPagePosition(p$.index),
-					$r = this.orientation,
-					$s = $r == "v"? "top": "left";
-				if (p$[$s] != $p) {
-					p$[$s] = $p;
-					p$.applyStyle($s, $p + "px");
-				}
-			}
-		},
-		adjustLastPage: function () {
-			var $b = this.getLastPage(),
-				$r = this.orientation,
-				$i = $b.index,
-				$p = this.getPagePosition($i),
-				$s = $r == "v"? "top": "left";
-			if ($b[$s] != $p) {
-				$b[$s] = $p;
-				$b.applyStyle($s, $p + "px");
-			}
-		},
-		getPagePosition: function (p) {
-			var $t = 0;
-			while (p > 0) {
-				--p;
-				$t += this.getPageSize(p);
-			}
-			return $t;
-		},
-		/**
-			These getter methods are implemented in this way for efficiency, as they
-			will be called often and there is a memory penalty for returning an object
-			with these properties as opposed to returning the static value directly.
-		*/
-		getHeight: function (n) {
-			var $n = n || this;
-			return $n && $n.hasNode()? ($n.height = $n.node.offsetHeight): 0;
-		},
-		getWidth: function (n) {
-			var $n = n || this;
-			return $n && $n.hasNode()? ($n.width = $n.node.offsetWidth): 0;
-		},
-		getTop: function (n) {
-			var $n = n || this;
-			return $n && $n.hasNode()? ($n.top = $n.node.offsetTop): 0;
-		},
-		getLeft: function (n) {
-			var $n = n || this;
-			return $n && $n.hasNode()? ($n.left = $n.node.offsetLeft): 0;
-		},
-		getFirstPage: function () {
-			return this._firstPage || (this._firstPage = this.$.page1);
-		},
-		getLastPage: function () {
-			return this._lastPage || (this._lastPage = this.$.page2);
-		},
-		didScroll: function (sender, event) {
-			var $d = this.getDirection(),
-				$f;
-			if ($d) {
-				$f = this[$d];
-				this.throttleJob($d, $f, 10);
-			}
-			return true;
-		},
-		getDirection: function () {
-			var $s = this.$.scroller,
-				$r = this.orientation,
-				$l = this.last,
-				$c = $r == "v"? $s.getScrollTop(): $s.getScrollLeft(),
-				$d = false;
-			if (!isNaN($l)) {
-				if ($l < $c) {
-					$d = $r == "v"? "down": "right";
-				} else if ($l > $c) {
-					$d = $r == "v"? "up": "left";
-				}
-			}
-			this.last = $c;
-			return $d;
-		},
-		up: function () {
-			if (this.orientation == "v") {
-				var $p = this.getLastPage(),
-					$t = $p.top,
-					$s = this.$.scroller.getScrollTop(),
-					$h = this.height;
-				if (($s + $h) < $t) {
-					this.positionPageBefore($p);
-				}
-			}
-		},
-		down: function () {
-			if (this.orientation == "v") {
-				var $p = this.getFirstPage(),
-					$t = $p.top,
-					$h = $p.height,
-					$s = this.$.scroller.getScrollTop();
-				if (($t + $h) < $s) {
-					this.positionPageAfter($p);
-				}
-			}
-		},
-		left: function () {
-
-		},
-		right: function () {
-
-		},
-		positionPageAfter: function (p) {
-			var $r = this.orientation,
-				$b = this.getLastPage(),
-				$i = $b.index,
-				$c = this.pageCount,
-				s$ = $r == "v"? "top": "left", p$;
-			if ($c - $i > 1) {
-				this.generatePage(p, ++$i);
-				p$ = this.getPagePosition($i);
-				p.applyStyle(s$, p$ + "px");
-				p[s$] = p$;
-				this._firstPage = $b;
-				this._lastPage = p;
-				if ($i == ($c - 1)) {
-					this.updateMetrics();
-				}
-			}
-		},
-		positionPageBefore: function (p) {
-			var $b = this.getFirstPage(),
-				$r = this.orientation,
-				$i = $b.index,
-				s$ = $r == "v"? "top": "left", p$;
-			if ($i > 0) {
-				this.generatePage(p, --$i);
-				p$ = this.getPagePosition($i);
-				p.applyStyle(s$, p$ + "px");
-				p[s$] = p$;
-				this._firstPage = p;
-				this._lastPage = $b;
-			}
-		},
-		initContainer: enyo.inherit(function (sup) {
-			return function () {
-				var $o = enyo.clone(this.get("containerOptions")),
-					$s = this.get("scrollerOptions");
-				if ($s) {
-					enyo.mixin($o, $s, {exists: true});
-				}
-				this.set("containerOptions", $o);
-				sup.apply(this, arguments);
-			};
-		}),
-		batchingChanged: function (prev, val) {
-			if (this.generated && false === val) {
-				// this is happening so various scrollers that need to know the content
-				// may have adjusted will update their flow accordingly
-				this.$.scroller.rendered();
-			}
-		},
-		resizeHandler: enyo.inherit(function (sup) {
-			return function () {
-				sup.apply(this, arguments);
-				this.updateSizing();
-				if (this.length) {
-					this.startJob("layoutPages", this.layoutPages, 100);
-				}
-			};
-		}),
-		updateSizing: function () {
-			this.width = this.getWidth();
-			this.height = this.getHeight();
-		},
-		layoutPages: function () {
-			this.adjustPageSize(this.$.page1);
-			this.adjustPageSize(this.$.page2);
-			this.adjustLastPage();
-		},
-		getChildForIndex: function (i) {
-			var p$ = this.pageForIndex(i);
-			if (this.$.page1.index == p$) {
-				p$ = this.$.page1;
-			} else if (this.$.page2.index == p$) {
-				p$ = this.$.page2;
-			} else {
-				p$ = false;
-			}
-			if (p$) {
-				for (var $i=0, c$; (c$=p$.children[$i]); ++$i) {
-					if (c$.index == i) {
-						return c$;
-					}
-				}
-			}
-			return false;
+	scrollerOptions: null,
+	/**
+		The paging orientation. Valid values are `vertical` and `horizontal`. This property
+		will be mapped to a particular strategy for how the _list_ will flow.
+	*/
+	orientation: "vertical",
+	/**
+		This is the upper bound for children to generate for each page. This can be modified as
+		needed since some platforms perform better with more (leading to larger page) or fewer
+		(leading to smaller page) active controls at a time. If fewer than this number of children
+		should be generated it will only generate as many as are needed. For collections of smaller
+		control's this number may need to be increased as each page should measure larger than the
+		container so paging can be smooth.
+	*/
+	controlsPerPage: 20,
+	/**
+		Completely reset the current list such that it will scroll to the top of the
+		scrollable region and regenerate all of its children. This is typically only necessary
+		once on initialization or if the entire dataset has been swapped out.
+	*/
+	reset: function () {
+		// we can only reset if we've already rendered
+		if (this.generated && this.$.scroller.generated) {
+			this.delegate.reset(this);
 		}
-
-	});
-
-})(enyo);
+	},
+	/**
+		Unlike `reset` that will teardown and regenerate the entire list this
+		method will attempt to refresh the pages as they are against the current dataset.
+		This is a much cheaper method than `reset` but is primarily used internally.
+	*/
+	refresh: function () {
+		this.delegate.refresh(this);
+	},
+	//*@protected
+	constructor: enyo.inherit(function (sup) {
+		return function () {
+			sup.apply(this, arguments);
+			this.metrics = {};
+			this.metrics.pages = {};
+		};
+	}),
+	create: enyo.inherit(function (sup) {
+		return function () {
+			// map the selected strategy to the correct delegate for operations
+			// on the list, default to _vertical_ if none is provided or if it
+			// could not be found
+			this.delegate = this.ctor.delegates[this.orientation] || this.base.delegates.vertical;
+			// if the delegate has an initialization routine execute it now before the
+			// container and children are rendered
+			if (this.delegate.initList) { this.delegate.initList(this); }
+			sup.apply(this, arguments);
+			// initialize the _pages_ array and add the pages to it
+			this.pages = [this.$.page1, this.$.page2];
+			this.createChrome([{name: "flyweighter", canGenerate: false, owner: this}]);
+		};
+	}),
+	/**
+		Here is where we attempt to do initialization. There are only a few root startup
+		paths but we have to be aware of them. The view is rendered, it has a controller, and
+		the controller has data, the view is rendered, it has a controller that has no data
+		and data is added later, the view is rendered, has no controller. Once the list itself
+		is rendered we check to see if we have a controller, and if so, do we have any data
+		to start rendering the rest of the list. Ultimately the implementation decisions are
+		decided by the delegate strategy.
+	*/
+	rendered: function () {
+		// now that the base list is rendered we can safely generate our scroller
+		this.$.scroller.canGenerate = true;
+		this.$.scroller.render();
+		// and now we hand over the action to our strategy to let it initialize the
+		// way it needs to
+		this.delegate.rendered(this);
+	},
+	/**
+		Overloaded to call a method of the delegate strategy.
+	*/
+	modelsAdded: function (c, e, props) {
+		if (c === this.controller && this.$.scroller.canGenerate) { this.delegate.modelsAdded(this, props); }
+	},
+	/**
+		Overloaded to call a method of the delegate strategy.
+	*/
+	modelsRemoved: function (c, e, props) {
+		if (c === this.controller && this.$.scroller.canGenerate) { this.delegate.modelsRemoved(this, props); }
+	},
+	/**
+		Overloaded from base kind to ensure that the container options correctly apply
+		the scroller options before instantiating it.
+	*/
+	initContainer: enyo.inherit(function (sup) {
+		return function () {
+			var o = enyo.clone(this.get("containerOptions")),
+				s = this.get("scrollerOptions");
+			if (s) { enyo.mixin(o, s, {exists: true}); }
+			this.set("containerOptions", o);
+			sup.apply(this, arguments);
+		};
+	}),
+	/**
+		We let the delegate strategy manage the event but we arbitrarily return true
+		because we don't want the event propagating beyond this kind.
+	*/
+	didScroll: function (sender, event) {
+		this.delegate.didScroll(this, event);
+		return true;
+	},
+	/**
+		Special override to handle resizing to try and minimize the amount of work
+		that we're doing. We don't want to waterfall the event to all children so
+		we hijack the normal handler.
+	*/
+	didResize: function (sender, event) {
+		this.startJob("resizing", function () {
+			this.delegate.didResize(this, event);
+		}, 60);
+	},
+	/**
+		Overload to adjust the root method to be able to find the nested child
+		based on the requested index.
+	*/
+	getChildForIndex: function (i) {
+		return this.delegate.childForIndex(this, i);
+	},
+	//*@protected
+	/**
+		The _enyo.DataList_ kind uses an overloaded container from its base kind. We set
+		the container to a scroller and provide a way of modifying those scroller options
+		(via the `scrollerOptions` hash). All children will reside in one of the 2 pages
+		owned by the scroller.
+	*/
+	containerOptions: {name: "scroller", kind: "enyo.Scroller", components: [
+		{name: "active", classes: "active", components: [
+			{name: "page1", classes: "page page1"},
+			{name: "page2", classes: "page page2"},
+			{name: "buffer", classes: "buffer"}
+		]}
+	], canGenerate: false, classes: "enyo-fit enyo-data-list-scroller"},
+	//* We access this kind's constructor and need it to be undeferred at that time.
+	noDefer: true,
+	//* All of the CSS is relative to this class.
+	classes: "enyo-data-list",
+	//* Our initial _controlParent_ is us for the _flyweighter_ child.
+	controlParentName: "",
+	//* Of course we set our container to _scroller_ as needed by the base kind.
+	containerName: "scroller",
+	/**
+		We have to trap the enyo-generated _onScroll_ event and let the delegate handle it. We
+		also need to catch the _onresize_ events so that we know when to update our cached sizing,
+		also we overload the default handler so we don't waterfall the resizing we arbitrarily
+		handle it to minimize the amount of work we do.
+	*/
+	handlers: {onScroll: "didScroll", onresize: "didResize"},
+	//* All delegates are named elsewhere but are stored in these statics.
+	statics: {delegates: {}},
+	//* An array of the actual _page_ references for easier access.
+	pages: null
+});
+//*@protected
+/**
+	All subclasses of _enyo.DataList_ will have the `delegates` static hash of their
+	own, this is _per kind_ not _per instance_.
+*/
+enyo.DataList.subclass = function (ctor, props) {
+	ctor.delegates = enyo.clone(ctor.prototype.base.delegates || this.delegates);
+};
