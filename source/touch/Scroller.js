@@ -222,9 +222,12 @@ enyo.kind({
 	},
 	restoreScrollPosition: function() {
 		if (this.cachedPosition) {
-			this.setScrollLeft(this.cachedPosition.left);
-			this.setScrollTop(this.cachedPosition.top);
-			this.cachedPosition = null;
+			var cp = this.cachedPosition;
+			if (cp.top || cp.left) {
+				this.setScrollLeft(cp.left);
+				this.setScrollTop(cp.top);
+				this.cachedPosition = null;
+			}
 		}
 	},
 	horizontalChanged: function() {

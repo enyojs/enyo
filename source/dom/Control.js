@@ -210,7 +210,9 @@ enyo.kind({
 	*/
 	hasNode: function() {
 		// 'generated' is used to gate access to expensive findNodeById call
-		return this.generated && (this.node || this.findNodeById());
+		// but that doesn't mean we shouldn't check if it has the node even
+		// without the _generated_ flag being set to true...
+		return this.node || (this.generated && this.findNodeById());
 	},
 	/**
 		Appends the string value of _inAddendum_ to the _content_ of this

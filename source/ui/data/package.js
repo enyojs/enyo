@@ -3,6 +3,9 @@ enyo.depends(
 	"RepeaterChildSupport.js",
 	"DataRepeater.js",
 	"DataList.js",
+	"VerticalDelegate.js",
+	"HorizontalDelegate.js",
 	"DataGridList.js",
-	"DataTable.js"
+	"DataTable.js",
+	"VerticalGridDelegate.js"
 );

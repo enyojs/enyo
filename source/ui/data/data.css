@@ -10,19 +10,47 @@
   overflow: hidden;
   position: relative;
   height: 100%;
+  width: 100%;
 }
-.enyo-data-list .enyo-data-list-active {
+.enyo-data-list .active {
   position: relative;
+  overflow: hidden;
 }
-.enyo-data-list .enyo-data-list-active .enyo-data-list-page {
+.enyo-data-list .buffer {
+  height: 100%;
+  overflow: hidden;
+}
+.enyo-data-list .page {
   position: absolute;
 }
-.enyo-data-list .enyo-data-list-buffer {
-  height: 100%;
+.enyo-data-list.debug .page1 {
+  background: #99ccff;
 }
-.enyo-data-grid-list .enyo-data-grid-list-item {
+.enyo-data-list.debug .page2 {
+  background: #cc99ff;
+}
+.enyo-data-list {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.enyo-data-list.horizontal .active {
+  white-space: nowrap;
+}
+.enyo-data-list.horizontal .page > * {
+  display: inline-block;
+}
+.enyo-data-grid-list .item {
   display: block;
   position: absolute !important;
-  -webkit-transition: top 300ms ease-in-out, left 300ms ease-in-out, width 300ms ease-in-out, height 300ms ease-in-out;
+}
+.enyo-data-grid-list .item {
+  -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+  -webkit-transition: top 300ms ease-out, left 300ms ease-out;
+  -moz-transition: top 300ms ease-out, left 300ms ease-out;
+  -ms-transition: top 300ms ease-out, left 300ms ease-out;
+  -o-transition: top 300ms ease-out, left 300ms ease-out;
+  transition: top 300ms ease-out, left 300ms ease-out;
+  box-sizing: border-box;
 }

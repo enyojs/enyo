@@ -53,6 +53,28 @@ enyo.RepeaterChildSupport = {
 		};
 	}),
 	/**
+		Override this so each time we set an _id_ on a top-level child of a _list_
+		it will properly update the _computed id_ of its own children recursively.
+		It should be noted that the more complex and deep the child's component hierarchy
+		(whose ownership is traced back to this child) the more expensive this method.
+	*/
+	idChanged: enyo.inherit(function (sup) {
+		return function () {
+			var ud = this.updateNode, c;
+			for (var k in this.$) {
+				c = this.$[k];
+				c.id = c.makeId();
+				c.idChanged();
+				// to avoid needing to loop through these later or add a whole new
+				// recursively applied mixin to all the children we simply do this
+				// now to be able to claim their nodes
+				if (ud) { c.node = document.getElementById(c.id); }
+			}
+			sup.apply(this, arguments);
+			if (ud) { this.node = document.getElementById(this.id); }
+		};
+	}),
+	/**
 		Used so that we don't stomp on any built-in handlers for the _ontap_ event.
 	*/
 	dispatchEvent: enyo.inherit(function (sup) {
