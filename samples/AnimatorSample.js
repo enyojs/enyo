@@ -26,7 +26,7 @@ enyo.kind({
 	},
 	defer: false,
 	doAnimation: function(){
-		setTimeout(enyo.bind(this, function(){
+		setTimeout(enyo.bindSafely(this, function(){
 			if(this.defer){
 				this.startJob("expensive", "expensive", 1000, 1);
 			} else {
