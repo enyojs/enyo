@@ -73,10 +73,13 @@ enyo.kind({
 	},
 	events: {
 		//* Fires when a scrolling action starts.
+		//* Includes scrollBounds field with current values of getScrollBounds
 		onScrollStart: "",
 		//* Fires while a scrolling action is in progress.
+		//* Includes scrollBounds field with current values of getScrollBounds
 		onScroll: "",
 		//* Fires when a scrolling action stops.
+		//* Includes scrollBounds field with current values of getScrollBounds
 		onScrollStop: ""
 	},
 	/**
@@ -292,12 +295,17 @@ enyo.kind({
 		this.$.strategy.scrollToNode(inNode, inAlignWithTop);
 	},
 	//* @protected
+	//* Adds current values of getScrollBounds to event
+	decorateScrollEvent: function(inEvent) {
+		inEvent.scrollBounds = this.$.strategy._getScrollBounds();
+	},
 	//* Normalizes scroll event to _onScroll_.
 	domScroll: function(inSender, e) {
 		// if a scroll event originated here, pass it to our strategy to handle
 		if (this.$.strategy.domScroll && e.originator == this) {
 			this.$.strategy.scroll(inSender, e);
 		}
+		this.decorateScrollEvent(e);
 		this.doScroll(e);
 		return true;
 	},
@@ -314,25 +322,39 @@ enyo.kind({
 		should be stopped.
 	*/
 	scrollStart: function(inSender, inEvent) {
-		return this.shouldStopScrollEvent(inEvent);
+		if (!this.shouldStopScrollEvent(inEvent)) {
+			this.decorateScrollEvent(inEvent);
+			return false;
+		}
+		return true;
 	},
 	//* Either propagates or stops the current scroll event.
 	scroll: function(inSender, inEvent) {
 		// note: scroll event can be native dom or generated.
+		var stop;
 		if (inEvent.dispatchTarget) {
 			// allow a dom event if it orignated with this scroller or its strategy
-			return this.preventScrollPropagation && !(inEvent.originator == this ||
+			stop = this.preventScrollPropagation && !(inEvent.originator == this ||
 				inEvent.originator.owner == this.$.strategy);
 		} else {
-			return this.shouldStopScrollEvent(inEvent);
+			stop = this.shouldStopScrollEvent(inEvent);
 		}
+		if (!stop) {
+			this.decorateScrollEvent(inEvent);
+			return false;
+		}
+		return true;
 	},
 	/**
 		Calls _shouldStopScrollEvent_ to determine whether current scroll event
 		should be stopped.
 	*/
 	scrollStop: function(inSender, inEvent) {
-		return this.shouldStopScrollEvent(inEvent);
+		if (!this.shouldStopScrollEvent(inEvent)) {
+			this.decorateScrollEvent(inEvent);
+			return false;
+		}
+		return true;
 	},
 	//* @public
 	//* Scroll to the top of the scrolling region.
