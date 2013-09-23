@@ -77,10 +77,18 @@ enyo.BindingSupport = {
 			}
 			bs.push((bd = new props.kind(props)));
 			if (bd._sourcePath && bd.from[0] === ".") {
-				this.addObserver(bd._sourcePath, this._rebuildSource(bd));
+				if (bd._sourcePath == "$") {
+					this.addObserver("$." + bd._sourceFrom, this._rebuildSource(bd));
+				} else {
+					this.addObserver(bd._sourcePath, this._rebuildSource(bd));
+				}
 			}
 			if (bd._targetPath && bd.to[0] === ".") {
-				this.addObserver(bd._targetPath, this._rebuildTarget(bd));
+				if (bd._targetPath == "$") {
+					this.addObserver("$." + bd._targetFrom, this._rebuildTarget(bd));
+				} else {
+					this.addObserver(bd._targetPath, this._rebuildTarget(bd));
+				}
 			}
 			if (q && auto) {
 				q.push(bd);
