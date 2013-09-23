@@ -52,6 +52,7 @@ enyo.DataList.delegates.vertical = {
 		this.adjustPagePositions(list);
 		// now update the buffer
 		this.adjustBuffer(list);
+		this.claimChildren(list);
 	},
 	/**
 		Once the list is initially rendered it will generate its scroller (so
@@ -460,7 +461,7 @@ enyo.DataList.delegates.vertical = {
 					d = dd.at(j);
 					c.stopNotifications();
 					c.set("model", d)
-					.set("id", delegate.idFor(this, j))
+					.set("id", delegate.idFor(this, j), true)
 					.set("index", j)
 					.set("selected", this.isSelected(d))
 					.startNotifications();

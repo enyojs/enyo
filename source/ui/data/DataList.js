@@ -77,7 +77,7 @@ enyo.kind({
 			sup.apply(this, arguments);
 			// initialize the _pages_ array and add the pages to it
 			this.pages = [this.$.page1, this.$.page2];
-			this.createChrome([{name: "flyweighter", canGenerate: false, owner: this}]);
+			this.createChrome([{name: "flyweighter", canGenerate: false, owner: this, spotlight: false}]);
 		};
 	}),
 	/**
