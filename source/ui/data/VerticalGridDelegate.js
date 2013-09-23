@@ -167,18 +167,21 @@
 		*/
 		didResize: function (list, event) {
 			list._updateBounds = true;
-			this.updateMetrics(list);
-			// we need to update all of our page sizes so that the buffer can resize
-			// close to properly
-			list.metrics.pages = {};
-			this.refresh(list);
-			// find the top page
-			var mx = list.metrics.pages,
-				fi = list.$.page1.index,
-				si = list.$.page2.index,
-				tp = mx[fi].top < mx[si].top? mx[fi].top: mx[si].top;
-			// ensure that the scroller is lined up with one of our pages
-			list.$.scroller.setScrollTop(tp);
+			clearTimeout(list._resizeTimerId);
+			list._resizeTimerId = setTimeout(function () {
+				list.delegate.updateMetrics(list);
+				// we need to update all of our page sizes so that the buffer can resize
+				// close to properly
+				list.metrics.pages = {};
+				list.delegate.refresh(list);
+				// find the top page
+				var mx = list.metrics.pages,
+					fi = list.$.page1.index,
+					si = list.$.page2.index,
+					tp = mx[fi].top < mx[si].top? mx[fi].top: mx[si].top;
+				// ensure that the scroller is lined up with one of our pages
+				list.$.scroller.setScrollTop(tp);
+			}, 400);
 		}
 	}, true);
 	enyo.DataGridList.delegates.verticalGrid = p;
