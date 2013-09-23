@@ -113,6 +113,13 @@ enyo.kind({
 		for (var i=0, r; (r=dd.at(i)); ++i) { this.add(r, i); }
 	},
 	//*@protected
+	rendered: enyo.inherit(function (sup) {
+		return function () {
+			sup.apply(this, arguments);
+			if (this.controller && this.length) { this.reset(); }
+			this._didRender = true;
+		};
+	}),
 	add: function (rec, i) {
 		var c = this.createComponent({model: rec, index: i});
 		if (this.generated && !this.batching) { c.render(); }
@@ -266,7 +273,9 @@ enyo.kind({
 	},
 	//*@protected
 	dataChanged: function () {
-		if (this.controller) { this.reset(); }
+		if (this.controller && this._didRender) {
+			this.reset();
+		}
 	},
 	computed: {selected: [], data: ["controller"]},
 	noDefer: true,
