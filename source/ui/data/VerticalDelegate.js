@@ -293,9 +293,9 @@ enyo.DataList.delegates.vertical = {
 		too many functions whenever this event is propagated.
 	*/
 	didScroll: function (list, event) {
-		var sc = list.$.scroller,
+		var sb = event.scrollBounds,
 			pr = list.previousScrollPos,
-			cr = (list.previousScrollPos=this.getScrollPosition(list)),
+			cr = (list.previousScrollPos = sb.top),
 			p1 = list.$.page1,
 			p2 = list.$.page2,
 			sp = list.psizeProp,
@@ -363,7 +363,7 @@ enyo.DataList.delegates.vertical = {
 			if (cr === 0) {
 				// we need to reset to origin
 				this.reset(list);
-			} else if (cr === (sc.getScrollBounds()[sp]-this[sp](list))) {
+			} else if (cr === (sb[sp]-this[sp](list))) {
 				// this is at the bottom so we need to generate bottom up from
 				// the second page
 				pc = this.pageCount(list);
