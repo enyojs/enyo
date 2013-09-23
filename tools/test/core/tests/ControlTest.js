@@ -118,10 +118,7 @@ enyo.kind({
 				throw("styles not set properly after applyStyle");
 			}
 			e.setStyle("height: 200px;");
-			if (n.style.backgroundColor !== "green" ||
-				n.style.color !== "blue" ||
-				n.style.height !== "200px" ||
-				n.style.width !== "150px") {
+			if (n.style.height !== "200px") {
 				throw("styles not set properly after setStyle");
 			}
 		} finally {
