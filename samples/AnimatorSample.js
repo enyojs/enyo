@@ -26,7 +26,7 @@ enyo.kind({
 	},
 	defer: false,
 	doAnimation: function(){
-		setTimeout(enyo.bindSafely(this, function(){
+		this.startJob("doAnimation", function(){
 			if(this.defer){
 				this.startJob("expensive", "expensive", 1000, 1);
 			} else {
@@ -36,6 +36,6 @@ enyo.kind({
 			this.$.nondeferText.setShowing(!this.defer);
 			this.$.animator.play();
 			this.defer = !this.defer;
-		}), 500);
+		}, 500);
 	}
 });
