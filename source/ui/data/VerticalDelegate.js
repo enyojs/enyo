@@ -158,7 +158,7 @@ enyo.DataList.delegates.vertical = {
 		// the current indices that are rendered
 		var fi = list.$.page1.index || (list.$.page1.index=0),
 			si = list.$.page2.index || (list.$.page2.index=1), rf, rs, pi;
-		for (var i=0, ri; (ri=props.records[i]); ++i) {
+		for (var i=0, ri; (ri=props.records[i]) >= 0; ++i) {
 			pi = this.pageForIndex(list, ri);
 			// we ensure that if the page index is either page we flag that page as
 			// needing to be updated
@@ -206,7 +206,7 @@ enyo.DataList.delegates.vertical = {
 		var keys = enyo.keys(props.records),
 			fi   = list.$.page1.index,
 			si   = list.$.page2.index, pi;
-		for (var i=keys.length-1, k; (k=keys[i]); --i) {
+		for (var i=keys.length-1, k; (k=keys[i]) >= 0; --i) {
 			pi = this.pageForIndex(list, k);
 			// if either page is included we'll break here and refresh them both
 			// to ensure accurate view
