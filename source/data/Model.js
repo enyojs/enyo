@@ -5,7 +5,12 @@
 		method so as not to create and throw away a new object every time
 		a new model is created.
 	*/
-	var _mixinOpts = {ignore: true, filter: function (k, v) { return !(v !== undefined); }};
+	var _mixinOpts = {ignore: true, filter: function (k, v) {
+		/*jshint -W018 */
+		var r = !(v !== undefined);
+		/*jshit +W018 */
+		return r;
+	}};
 	//*@public
 	/**
 		_enyo.Model_ is a kind used to create data records. For the sake of
