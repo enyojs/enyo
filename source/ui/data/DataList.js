@@ -1,15 +1,15 @@
 //*@public
 /**
-	_enyo.DataList_ is an <a href="#enyo.DataRepeater">enyo.DataRepeater</a>
-	that employs a paginated scrolling scheme to enhance performance with larger
-	datasets. The data is provided to the _enyo.DataList_ from an _enyo.Collection_
-	set as its `controller` property.
+	_enyo.DataList_ is an [enyo.DataRepeater](#enyo.DataRepeater) that employs a
+	paginated scrolling scheme to enhance performance with larger datasets. The
+	data is provided to the DataList by an [enyo.Collection](#enyo.Collection) set
+	as the value of its _controller_ property.
 
-	Note that, care should be taken when deciding how the children of the list
-	will be laid out. When updating the layout of child elements, when there are many,
-	can be taxing and non-performant for the browser. Do not use dynamicly updated
-	layouts that require many calculations whenever the data will be updated in a view.
-	Try using CSS whenever possible.
+	Note that care should be taken when deciding how to lay out the list's
+	children. When there are a large number of child elements, the layout process
+	can be taxing and non-performant for the browser. Avoid	dynamically-updated
+	layouts that require lots of calculations each time the data in a view is
+	updated. Try to use CSS whenever possible.
 
 	Note that _enyo.DataList_ currently does not support horizontal orientation.
 */
@@ -18,30 +18,32 @@ enyo.kind({
 	kind: enyo.DataRepeater,
 	/**
 		The _enyo.DataList_ kind places its rows inside of a scroller. Any
-		configurable options associated with an _enyo.Scroller_ may be
-		placed in this hash and will be set accordingly on the scroller
-		for this list. If no options are specified, the default _enyo.Scroller_
-		settings are used.
+		configurable options associated with _enyo.Scroller_ may be placed in this
+		hash and will be set accordingly on this list's scroller. If no options are
+		specified, the default _enyo.Scroller_ settings are used.
 	*/
 	scrollerOptions: null,
 	/**
-		The paging orientation. Valid values are `vertical` and `horizontal`. This property
-		will be mapped to a particular strategy for how the _list_ will flow.
+		The paging orientation. Valid values are _"vertical"_ and _"horizontal"_.
+		This property will be mapped to a particular strategy governing how the list
+		will flow.
 	*/
 	orientation: "vertical",
 	/**
-		This is the upper bound for children to generate for each page. This can be modified as
-		needed since some platforms perform better with more (leading to larger page) or fewer
-		(leading to smaller page) active controls at a time. If fewer than this number of children
-		should be generated it will only generate as many as are needed. For collections of smaller
-		control's this number may need to be increased as each page should measure larger than the
-		container so paging can be smooth.
+		The maximum number of children to generate for each page. This property may
+		be modified as needed; some platforms perform better with larger values
+		(resulting in larger pages), and others with smaller values (resulting in
+		smaller pages). If the number of children that should be generated is
+		smaller than this value, only the number needed will be generated. For
+		collections of smaller controls, this number may need to be increased, since
+		each page should be larger than the container (so that paging is smooth).
 	*/
 	controlsPerPage: 20,
 	/**
-		Completely reset the current list such that it will scroll to the top of the
-		scrollable region and regenerate all of its children. This is typically only necessary
-		once on initialization or if the entire dataset has been swapped out.
+		Completely resets the current list such that it scrolls to the top of the
+		scrollable region and regenerates all of its children. This is typically
+		necessary only on initialization, or if the entire dataset has been swapped
+		out.
 	*/
 	reset: function () {
 		// we can only reset if we've already rendered
@@ -50,9 +52,10 @@ enyo.kind({
 		}
 	},
 	/**
-		Unlike `reset` that will teardown and regenerate the entire list this
-		method will attempt to refresh the pages as they are against the current dataset.
-		This is a much cheaper method than `reset` but is primarily used internally.
+		Unlike _reset()_, which tears down and regenerates the entire list, this
+		method attempts to refresh the pages as they are against the current
+		dataset. This is much cheaper to call than _reset()_, but is primarily used
+		internally.
 	*/
 	refresh: function () {
 		this.delegate.refresh(this);
@@ -81,16 +84,21 @@ enyo.kind({
 		};
 	}),
 	/**
-		Here is where we attempt to do initialization. There are only a few root startup
-		paths but we have to be aware of them. The view is rendered, it has a controller, and
-		the controller has data, the view is rendered, it has a controller that has no data
-		and data is added later, the view is rendered, has no controller. Once the list itself
-		is rendered we check to see if we have a controller, and if so, do we have any data
-		to start rendering the rest of the list. Ultimately the implementation decisions are
-		decided by the delegate strategy.
+		Attempts to do initialization. There are only a few basic startup paths, but
+		we need to be aware of what they are:
+		
+		* The view is rendered, it has a controller, and the controller has data.
+		* The view is rendered, it has a controller with no data, and data is added
+		    later.
+		* The view is rendered, but has no controller.
+		
+		Once the list itself is rendered, we check to see if we have a controller;
+		if so, do we have any data to start rendering the rest of the list?
+		Ultimately, the implementation decisions are decided by the delegate
+		strategy.
 	*/
 	rendered: function () {
-		// now that the base list is rendered we can safely generate our scroller
+		// now that the base list is rendered, we can safely generate our scroller
 		this.$.scroller.canGenerate = true;
 		this.$.scroller.render();
 		// and now we hand over the action to our strategy to let it initialize the
@@ -123,16 +131,16 @@ enyo.kind({
 		};
 	}),
 	/**
-		We let the delegate strategy manage the event but we arbitrarily return true
-		because we don't want the event propagating beyond this kind.
+		We let the delegate strategy manage the event, but we arbitrarily return
+		true Because we don't want the event to propagate beyond this kind.
 	*/
 	didScroll: function (sender, event) {
 		this.delegate.didScroll(this, event);
 		return true;
 	},
 	/**
-		Special override to handle resizing to try and minimize the amount of work
-		that we're doing. We don't want to waterfall the event to all children so
+		Special override to handle resizing in an attempt to minimize the amount of
+		work we're doing. We don't want to waterfall the event to all children, so
 		we hijack the normal handler.
 	*/
 	didResize: function (sender, event) {
@@ -149,10 +157,10 @@ enyo.kind({
 	},
 	//*@protected
 	/**
-		The _enyo.DataList_ kind uses an overloaded container from its base kind. We set
-		the container to a scroller and provide a way of modifying those scroller options
-		(via the `scrollerOptions` hash). All children will reside in one of the 2 pages
-		owned by the scroller.
+		The _enyo.DataList_ kind uses an overloaded container from its base kind. We
+		set the container to a scroller and provide a way to modify the scroller
+		options (via the _scrollerOptions_ hash). All children will reside in one of
+		the two pages owned by the scroller.
 	*/
 	containerOptions: {name: "scroller", kind: "enyo.Scroller", components: [
 		{name: "active", classes: "active", components: [
@@ -170,10 +178,11 @@ enyo.kind({
 	//* Of course we set our container to _scroller_ as needed by the base kind.
 	containerName: "scroller",
 	/**
-		We have to trap the enyo-generated _onScroll_ event and let the delegate handle it. We
-		also need to catch the _onresize_ events so that we know when to update our cached sizing,
-		also we overload the default handler so we don't waterfall the resizing we arbitrarily
-		handle it to minimize the amount of work we do.
+		We have to trap the Enyo-generated _onScroll_ event and let the delegate
+		handle it. We also need to catch the _onresize_ events so we know when to
+		update our cached sizing. We overload the default handler so that we don't
+		waterfall the resizing; we arbitrarily handle it to minimize the amount of
+		work we do.
 	*/
 	handlers: {onScroll: "didScroll", onresize: "didResize"},
 	//* All delegates are named elsewhere but are stored in these statics.
@@ -183,8 +192,8 @@ enyo.kind({
 });
 //*@protected
 /**
-	All subclasses of _enyo.DataList_ will have the `delegates` static hash of their
-	own, this is _per kind_ not _per instance_.
+	All subclasses of _enyo.DataList_ will have their own _delegates_ static hash.
+	This is per _kind_, not per _instance_.
 */
 enyo.DataList.subclass = function (ctor, props) {
 	ctor.delegates = enyo.clone(ctor.prototype.base.delegates || this.delegates);

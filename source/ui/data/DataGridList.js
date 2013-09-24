@@ -1,12 +1,12 @@
 //*@public
 /**
-	The _enyo.DataGridList_ kind is a paginated <a href="#enyo.DataList">enyo.DataList</a>
-	designed to layout its children in a grid. Like _enyo.DataList_, it links its children
-	directly to the underlying _record_ in the _collection_ set as its `controller`. Because
-	the layout is arbitrarily handled spacing of children must be set by the available API
-	(e.g. `spacing`, `minWidth`, `minHeight`) of the _enyo.DataGridList_ kind. Note that the
-	behavior of _enyo.DataGridList_ is to attempt to expand/collapse the size of the children
-	so they may remain evenly spaced in the given area.
+	_enyo.DataGridList_ is a paginated [enyo.DataList](#enyo.DataList) designed to
+	lay out its children in a grid. Like _enyo.DataList_, it links its children
+	directly to the underlying record in the collection set as its controller.
+	Because the layout is arbitrarily handled, spacing of children must be set
+	using the kind's available API (e.g., _spacing_, _minWidth_, _minHeight_).
+	Note that _enyo.DataGridList_ will attempt to grow or shrink the size of its
+	children in order to keep them evenly spaced.
 */
 enyo.kind({
 	name: "enyo.DataGridList",
@@ -14,7 +14,7 @@ enyo.kind({
 	/**
 		The spacing (in pixels) between elements in the grid list. It should be an
 		even number, or else it will be coerced into one for consistency.
-		This is the exact spacing to be allocated on all sides of each item in total.
+		This is the exact spacing to be allocated on all sides of each item.
 	*/
 	spacing: 10,
 	/**
@@ -29,9 +29,10 @@ enyo.kind({
 	minHeight: 100,
 	//*@protected
 	/**
-		While _enyo.DataList_ provides some generic delegates for handling objects
-		we have to arbitrarily layout our children so we have our own. We add these
-		and ensure that the appropriate delegate is selected depending on the request.
+		While _enyo.DataList_ provides some generic delegates for handling objects,
+		we have to arbitrarily lay out our children, so we have our own. We add
+		these and ensure that the appropriate delegate is selected depending on the
+		request.
 	*/
 	constructor: enyo.inherit(function (sup) {
 		return function () {
@@ -46,9 +47,9 @@ enyo.kind({
 		};
 	}),
 	/**
-		We ensure that each of the items being created for the _DataGridList_ have the correct
-		CSS classes so they will display properly (and be movable, since, if they aren't absolutely
-		positioned it cannot work).
+		We ensure that each item being created for the _DataGridList_ has the
+		correct CSS classes so it will display properly (and be movable, since the
+		items must be absolutely positioned).
 	*/
 	initComponents: enyo.inherit(function (sup) {
 		return function () {
