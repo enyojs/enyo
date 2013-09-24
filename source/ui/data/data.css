@@ -22,6 +22,7 @@
 }
 .enyo-data-list .page {
   position: absolute;
+  width: 100%;
 }
 .enyo-data-list.debug .page1 {
   background: #99ccff;

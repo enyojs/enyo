@@ -6,7 +6,7 @@
 */
 enyo.DataList.delegates.vertical = {
 	//* Pulse for how long to wait before executing the _claimChildren_ method.
-	_claimChildrenPulse: 1000,
+	_scrollPulse: 0,
 	/**
 		Simply set the priority properties for this orientation that can be differentiated
 		by other delegates that wish to share some basic functionality.
@@ -29,8 +29,7 @@ enyo.DataList.delegates.vertical = {
 		this.adjustPagePositions(list);
 		// now update the buffer
 		this.adjustBuffer(list);
-		var s = this;
-		setTimeout(function () { s.claimChildren(list); }, 0);
+		this.scrollQueue("claimChildren", list, function () { list.delegate.claimChildren(list); });
 		list.hasReset = true;
 	},
 	/**
@@ -52,7 +51,7 @@ enyo.DataList.delegates.vertical = {
 		this.adjustPagePositions(list);
 		// now update the buffer
 		this.adjustBuffer(list);
-		this.claimChildren(list);
+		this.scrollQueue("claimChildren", list, function () { list.delegate.claimChildren(list); });
 	},
 	/**
 		Once the list is initially rendered it will generate its scroller (so
@@ -94,7 +93,7 @@ enyo.DataList.delegates.vertical = {
 			// setting up
 			c.stopNotifications();
 			c.set("model", d)
-			.set("id", this.idFor(list, j))
+			.set("id", this.idFor(list, j), true)
 			.set("index", j)
 			.set("selected", list.isSelected(d));
 			c.startNotifications();
@@ -304,7 +303,13 @@ enyo.DataList.delegates.vertical = {
 			tp = (p1[up] > p2[up]? p2: p1),
 			bp = p1 === tp? p2: p1,
 			pc, pi, ps;
-		if (pr === cr || (Math.abs(pr-cr) < 15)) {
+		list.scrolling = true;
+		clearTimeout(list._scrollingId);
+		list._scrollingId = setTimeout(function () {
+			list.scrolling = false;
+			list.delegate.flushScrollQueue(list);
+		}, this._scrollPulse);
+		if (pr === cr || (Math.abs((pr || 0)-cr) < 15)) {
 			// reset so the next time we check we're checking the correct value
 			list.previousScrollPos = pr;
 			return;
@@ -331,8 +336,7 @@ enyo.DataList.delegates.vertical = {
 						if (bp.index+1 == pc) { this.adjustBuffer(list); }
 						// we need to tell the pages to claim the correct nodes according to updated id's
 						// but only when scrolling has stopped so we don't do the work when we can't use it
-						clearTimeout(list._scrollingId);
-						list._scrollingId = setTimeout(list.claimChildren, this._claimChildrenPulse);
+						this.scrollQueue("claimChildren", list, function () { list.delegate.claimChildren(list); });
 					}
 				}
 			} else {
@@ -346,8 +350,7 @@ enyo.DataList.delegates.vertical = {
 						this.adjustPagePositions(list);
 						// we need to tell the pages to claim the correct nodes according to updated id's
 						// but only when scrolling has stopped so we don't do the work when we can't use it
-						clearTimeout(list._scrollingId);
-						list._scrollingId = setTimeout(list.claimChildren, this._claimChildrenPulse);
+						this.scrollQueue("claimChildren", list, function () { list.delegate.claimChildren(list); });
 					}
 				}
 			}
@@ -370,8 +373,7 @@ enyo.DataList.delegates.vertical = {
 				this.generatePage(list, p2, pc);
 				this.generatePage(list, p1, pc-1);
 				this.adjustPagePositions(list);
-				clearTimeout(list._scrollingId);
-				list._scrollingId = setTimeout(list.claimChildren, this._claimChildrenPulse);
+				this.scrollQueue("claimChildren", list, function () { list.delegate.claimChildren(list); });
 			} else {
 				// otherwise we have no idea what happened, just some arbitrary change or
 				// we were lagging, if the direction is up we take the bottom page and move
@@ -385,8 +387,7 @@ enyo.DataList.delegates.vertical = {
 					this.generatePage(list, tp, pi);
 					this.generatePage(list, bp, pi+1);
 					this.adjustPagePositions(list);
-					clearTimeout(list._scrollingId);
-					list._scrollingId = setTimeout(list.claimChildren, this._claimChildrenPulse);
+					this.scrollQueue("claimChildren", list, function () { list.delegate.claimChildren(list); });
 				} else {
 					if (pi === 0) {
 						this.reset(list);
@@ -394,8 +395,7 @@ enyo.DataList.delegates.vertical = {
 						this.generatePage(list, bp, pi);
 						this.generatePage(list, tp, pi-1);
 						this.adjustPagePositions(list);
-						clearTimeout(list._scrollingId);
-						list._scrollingId = setTimeout(list.claimChildren, this._claimChildrenPulse);
+						this.scrollQueue("claimChildren", list, function () { list.delegate.claimChildren(list); });
 					}
 				}
 			}
@@ -445,6 +445,31 @@ enyo.DataList.delegates.vertical = {
 		setTimeout(fn, 0);
 	},
 	/**
+		When actions need to be postponed until after scrolling has ended this method will
+		queue them and they will be flushed when scrolling has ceased (beyond the pulse timer).
+		The queue entry has a name so that the same entry will not enter the queue more than once.
+	*/
+	scrollQueue: function (name, list, callback) {
+		var q = list.scrollQueue || (list.scrollQueue={});
+		q[name] = callback;
+		// it will be immediately flushed if the list isn't actually scrolling
+		if (!list.scrolling) {
+			this.flushScrollQueue(list);
+		}
+	},
+	/**
+		Flushes any queued actions that were waiting until scrolling was completed.
+	*/
+	flushScrollQueue: function (list) {
+		if (!list.scrolling) {
+			var q = list.scrollQueue;
+			if (q) {
+				for (var k in q) { q[k](); }
+				list.scrollQueue = {};
+			}
+		}
+	},
+	/**
 		This method is bound to individual list instances and executed to ensure that
 		the required actions from _claimChildren_ are executed.
 	*/
@@ -457,7 +482,7 @@ enyo.DataList.delegates.vertical = {
 			this.controlParent = p;
 			if (pi >= 0 && pf >= 0) {
 				for (j=pi, k=0; j<pf; ++j, ++k) {
-					c = p.children[k] || this.createComponent({updateNode: true});
+					c = p.children[k] || this.createComponent({});
 					d = dd.at(j);
 					c.stopNotifications();
 					c.set("model", d)
@@ -468,6 +493,5 @@ enyo.DataList.delegates.vertical = {
 				}
 			}
 		}
-		this._didClaimChildren = true;
 	}
 };

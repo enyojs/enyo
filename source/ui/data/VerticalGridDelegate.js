@@ -14,7 +14,7 @@
 		*/
 		rendered: function (list) {
 			list.$.flyweighter.canGenerate = true;
-			this._claimChildrenPulse = 100;
+			this._scrollPulse = 0;
 			// get our initial sizing cached now since we should actually have
 			// bounds at this point
 			this.updateMetrics(list);
@@ -58,7 +58,7 @@
 				// setting up
 				c.stopNotifications();
 				c.set("model", d)
-				.set("id", this.idFor(list, j))
+				.set("id", this.idFor(list, j), true)
 				.set("index", j)
 				.set("selected", list.isSelected(d));
 				c.domCssText = sx[i] || c.domCssText;
