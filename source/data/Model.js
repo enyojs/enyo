@@ -249,7 +249,9 @@
 			if (d) { enyo.mixin(a, d, _mixinOpts); }
 			this.attributes = a;
 			this.changed = {};
-			this.previous = {};
+			// populate the previous property with the actual values as would be expected
+			// for further updates
+			this.previous = this.raw();
 			this.storeChanged();
 		},
 		//*@protected
