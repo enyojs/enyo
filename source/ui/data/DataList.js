@@ -89,9 +89,9 @@ enyo.kind({
 		
 		* The view is rendered, it has a controller, and the controller has data.
 		* The view is rendered, it has a controller with no data, and data is added
-		    later.
+			later.
 		* The view is rendered, but has no controller.
-		
+
 		Once the list itself is rendered, we check to see if we have a controller;
 		if so, do we have any data to start rendering the rest of the list?
 		Ultimately, the implementation decisions are decided by the delegate
