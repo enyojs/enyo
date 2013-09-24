@@ -184,6 +184,7 @@
 						var ps = this._computedMap[prop];
 						for (var i=0, p; (p=ps[i]); ++i) {
 							this.notifyObservers(p);
+							this.changed[p] = this.get(p);
 						}
 					}
 				}
@@ -220,6 +221,7 @@
 								var ps = this._computedMap[k];
 								for (var i=0, p; (p=ps[i]); ++i) {
 									this.notifyObservers(p);
+									this.changed[p] = this.get(p);
 								}
 							}
 						}
