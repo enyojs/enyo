@@ -38,3 +38,10 @@ enyo.kind({
 		};
 	})
 });
+
+/**
+	_enyo.Image.placeholder_ is globally accessible data url string that describes
+	simple placeholder image. It could be used in any samples and applicaitons without
+	considering copyright issue.
+*/
+enyo.Image.placeholder = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="100%" height="100%" style="stroke: #444; stroke-width: 1; fill: #aaa;" /><line x1="0" y1="0" x2="100%" y2="100%" style="stroke: #444; stroke-width: 1;" /><line x1="100%" y1="0" x2="0" y2="100%" style="stroke: #444; stroke-width: 1;" /></svg>';
