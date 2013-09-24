@@ -307,8 +307,8 @@ enyo.DataList.delegates.vertical = {
 		clearTimeout(list._scrollingId);
 		list._scrollingId = setTimeout(function () {
 			list.scrolling = false;
-			list.delegate.flushScrollQueue(list); },
-		this._scrollPulse);
+			list.delegate.flushScrollQueue(list);
+		}, this._scrollPulse);
 		if (pr === cr || (Math.abs((pr || 0)-cr) < 15)) {
 			// reset so the next time we check we're checking the correct value
 			list.previousScrollPos = pr;
@@ -476,7 +476,6 @@ enyo.DataList.delegates.vertical = {
 	*/
 	_claimChildren: function (delegate) {
 		var dd = this.get("data"),
-			fl = this.$.flyweighter,
 			pi, pf, i, p, j, k, c, d;
 		for (i=0; (p=this.pages[i]); ++i) {
 			pi = p.start;
