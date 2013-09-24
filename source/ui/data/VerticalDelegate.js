@@ -464,9 +464,8 @@ enyo.DataList.delegates.vertical = {
 		if (!list.scrolling) {
 			var q = list.scrollQueue;
 			if (q) {
-				for (var k in q) {
-					q[k]();
-				}
+				for (var k in q) { q[k](); }
+				list.scrollQueue = {};
 			}
 		}
 	},
