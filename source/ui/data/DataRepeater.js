@@ -1,11 +1,12 @@
 //*@public
 /**
-		The _enyo.DataRepeater_ uses _enyo.Collection_ as its _controller_ to repeatedly
-		render and synchronize _records_ (_enyo.Model_ instances) to its own children.
-		For any _record_ in the _collection_ a new child will be rendered in this _repeater_.
-		If the _record_ is destroyed the child will all be destroyed. These controls will
-		automatically update when properties on the underlying _record_ have been modified
-		if bound using `bindings` (_enyo.Binding_).
+		_enyo.DataRepeater_ uses [enyo.Collection](#enyo.Collection) as its
+		_controller_ to repeatedly render and synchronize records (instances of
+		[enyo.Model](#enyo.Model)) to its own children. For any record in the
+		collection, a new child will be rendered in this repeater. If the record is
+		destroyed, the child will be destroyed. These controls will	automatically
+		update when properties on the underlying record are modified if they have
+		been bound using bindings (see [enyo.Binding](#enyo.Binding)).
 */
 enyo.kind({
 	name: "enyo.DataRepeater",
@@ -47,8 +48,8 @@ enyo.kind({
 		Use this hash to define _defaultBindingProperties_ for _all_ children
 		(even children of children) of this repeater. This can be eliminate the
 		need to write the same paths many times. You can also use any	binding
-		macros. Any of the properties defined here will be superseded	by the
-		same property if defined for an individual binding.
+		macros. Any property defined here will be superseded by the same property if
+		defined for an individual binding.
 	*/
 	childBindingDefaults: null,
 	//*@protected
@@ -66,7 +67,7 @@ enyo.kind({
 			if (c.length > 1) {
 				d.components = c;
 			}
-			// if there is only one child the properties will be the default kind of the repeater
+			// if there is only one child, the properties will be the default kind of the repeater
 			else {
 				enyo.mixin(d, c[0]);
 			}
@@ -100,8 +101,8 @@ enyo.kind({
 	},
 	//*@public
 	/**
-		Will _destroy_ any existing children in the _repeater_ and create all new
-		children based on the current `data`.
+		Destroys any existing children in the repeater and creates all new children
+		based on the current data.
 	*/
 	reset: function () {
 		// use the facaded dataset because this could be any
