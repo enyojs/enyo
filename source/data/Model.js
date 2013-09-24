@@ -8,7 +8,7 @@
 	var _mixinOpts = {ignore: true, filter: function (k, v) {
 		/*jshint -W018 */
 		var r = !(v !== undefined);
-		/*jshit +W018 */
+		/*jshint +W018 */
 		return r;
 	}};
 	//*@public
