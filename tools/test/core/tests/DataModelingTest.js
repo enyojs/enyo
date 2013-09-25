@@ -53,10 +53,11 @@ enyo.kind({
 		this.finish(id != 71 && "event did not fire as expected");
 	},
 	testDefaultsAttributes: function () {
+		/*global test:true */
 		enyo.kind({name: "test.Model", kind: enyo.Model, defaults: {prop1: "", prop2: undefined, prop3: null, prop4: 0, prop5: "prop5", prop6: 74}});
 		var m = new test.Model({prop5: "newProp5", prop6: 0, prop7: "prop7"});
 		this.finish(
-			(m.attributes.prop1 != "" && "default empty string missing") ||
+			(m.attributes.prop1 !== "" && "default empty string missing") ||
 			(m.attributes.hasOwnProperty("prop2") && "undefined defaults aren't supposed to be used") ||
 			(m.attributes.prop3 !== null && "null was not used from defaults as expected") ||
 			(m.attributes.prop4 !== 0 && "'0' default not used from defaults as expected") ||
