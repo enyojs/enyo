@@ -448,7 +448,10 @@ enyo.kind({
 			p  = o? o.parse: false,
 			df = o? o.didFetch: false;
 		if (o) { this.importProps(o); }
-		this.records = (d && (p && this.parse(d)) || d) || [];
+		// we need to ensure that we don't keep a reference to the original array
+		// if it is passed in...with the exception that if the developer uses the parse
+		// method it is on them to ensure a local array
+		this.records = (d && (p && this.parse(d)) || d && d.slice()) || [];
 		// if the _didFetch_ flag is present we need to mark the props as having been
 		// fetched so they will appropriately be parsed later
 		if (df) { for (var i=0, r; (r=d[i]); ++i) { r.didFetch = true; } }
