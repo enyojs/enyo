@@ -184,5 +184,29 @@ enyo.kind({
 			testControl.destroy();
 			document.body.removeChild(div);
 		}
+	},
+	testAddRemoveAddDataList: function () {
+		var d = [{index: 0}, {index: 1}, {index: 2}],
+			c = new enyo.Collection(d),
+			r = new enyo.DataList({controller: c}),
+			// the reason we are looking at the node is because synchronously executing this code
+			// means we cannot be sure that the children will have been claimed by active JavaScript
+			// objects yet
+			f = function (p) { return p.hasNode().children.length; },
+			p1, p2, p3;
+		r.setParent(enyo.floatingLayer);
+		r.render();
+		p1 = f(r.$.page1);
+		c.removeAll();
+		p2 = f(r.$.page1);
+		c.add(d);
+		p3 = f(r.$.page1);
+		r.destroy();
+		enyo.floatingLayer.removeNodeFromDom();
+		this.finish(
+			(p1 !== 3 && "initial page did not have correct number of children, expected '3' got '" + p1 + "'") ||
+			(p2 !== 0 && "expected no children but got '" + p2 + "'") ||
+			(p3 !== 3 && "re-adding the records to the collection did not produce the correct number of children, got '" + p3 + "'")
+		);
 	}
 });
