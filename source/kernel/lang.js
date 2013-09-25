@@ -753,7 +753,9 @@
 		target, and if _exists_ is true, it will only use truthy values from any of
 		the sources. You may optionally add a _filter_ method-option that returns a
 		true or false value to indicate whether the value should be used. It receives
-		parameters in this order: _key_, _value_, _values_, _options_.
+		parameters in this order: _property_, _source value_, _source values_,
+		_target_, _options_. Note that modifying the target in the filter method can
+		have unexpected results.
 
 		Setting _options_ to true will set all options to true.
 	*/
@@ -791,7 +793,7 @@
 			for (n in s) {
 				s$ = s[n];
 				if (empty[n] !== s$) {
-					if ((!o.exists || s$) && (!o.ignore || !t[n]) && (o.filter && enyo.isFunction(o.filter)? o.filter(n, s$, s, o): true)) {
+					if ((!o.exists || s$) && (!o.ignore || !t[n]) && (o.filter && enyo.isFunction(o.filter)? o.filter(n, s$, s, t, o): true)) {
 						t[n] = s$;
 					}
 				}

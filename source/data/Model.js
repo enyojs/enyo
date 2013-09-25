@@ -5,11 +5,10 @@
 		method so as not to create and throw away a new object every time
 		a new model is created.
 	*/
-	var _mixinOpts = {ignore: true, filter: function (k, v) {
-		/*jshint -W018 */
-		var r = !(v !== undefined);
-		/*jshint +W018 */
-		return r;
+	var _mixinOpts = {ignore: true, filter: function (k, v, s, t) {
+		// only use the default value if the attributes value is undefined and the default
+		// entry itself is not undefined
+		return (typeof t[k] == "undefined") && (typeof v != "undefined");
 	}};
 	//*@public
 	/**
