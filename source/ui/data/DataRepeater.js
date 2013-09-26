@@ -112,6 +112,26 @@ enyo.kind({
 		this.destroyClientControls();
 		// and now we create new ones for each new record we have
 		for (var i=0, r; (r=dd.at(i)); ++i) { this.add(r, i); }
+		this.hasReset = true;
+	},
+	/**
+		Refreshes each control in the dataset.
+	*/
+	refresh: function () {
+		if (!this.hasReset) { return this.reset(); }
+		this.startJob("refreshing", function () {
+			var dd = this.get("data"),
+				cc = this.getClientControls();
+			for (var i=0, c, d; (d=dd.at(i)); ++i) {
+				c = cc[i];
+				if (c) {
+					c.set("model", d);
+				} else {
+					this.add(d, i);
+				}
+			}
+			this.prune();
+		}, 16);
 	},
 	//*@protected
 	rendered: enyo.inherit(function (sup) {
@@ -131,9 +151,11 @@ enyo.kind({
 		if (c) { c.destroy(); }
 	},
 	prune: function () {
-		var g = this.getClientControls(),
+		var g = this.getClientControls(), x;
+		if (g.length > this.length) {
 			x = g.slice(this.length);
-		for (var i=0, c; (c=x[i]); ++i) { c.destroy(); }
+			for (var i=0, c; (c=x[i]); ++i) { c.destroy(); }
+		}
 	},
 	initContainer: function () {
 		var ops = this.get("containerOptions"),
@@ -144,14 +166,8 @@ enyo.kind({
 			this.$[this.containerName] = this.$[nom];
 		}
 	},
-	handlers: {
-		onSelected: "childSelected",
-		onDeselected: "childDeselected"
-	},
-	_handlers: {
-		"add": "modelsAdded",
-		"remove": "modelsRemoved"
-	},
+	handlers: {onSelected: "childSelected", onDeselected: "childDeselected"},
+	_handlers: {add: "modelsAdded", remove: "modelsRemoved", reset: "refresh"},
 	controllerChanged: enyo.inherit(function (sup) {
 		return function (p) {
 			sup.apply(this, arguments);

@@ -179,12 +179,8 @@
 		rv = ((b && b._isObject && b._getters && (fn=b._getters[pr]) && b[fn]()) || b[pr]);
 		// now we set the new value, much simpler
 		b[pr] = value;
-		// now if the base is an enyo object then it can notify and we need to let it try
-		// if the values (previous and current) aren't equal
-		if (b._isObject) {
-			// Only notify if the value has changed or if the update should be forced
-			if (rv !== value || force) { b.notifyObservers(pr, rv, value); }
-		}
+		// only notify if the value has changed or if the update should be forced
+		if (b.notifyObservers && rv !== value || force) { b.notifyObservers(pr, rv, value); }
 		// return the original base reference we made in the first line
 		return c;
 	};
