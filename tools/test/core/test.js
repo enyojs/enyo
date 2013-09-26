@@ -1,4 +1,4 @@
-/* global enyo */
+/* global enyo, asyncTest, start, ok, module */
 
 // TestRunner.js
 
@@ -29,6 +29,9 @@ enyo.kind({
 		var test = enyo.TestSuite.tests[this.index++];
 		if (test) {
 			enyo.log("STARTING TEST SUITE ", test.prototype.kindName);
+			if (window.QUnit) {
+				module(test.prototype.kindName);
+			}
 			this.createComponent({name: test.prototype.kindName, kind: enyo.TestReporter, onFinishAll: "next"}).render().runTests();
 		} else {
 			if (this.fails === 0) {
@@ -150,8 +153,15 @@ enyo.kind({
 			if (this.$[testName]) {
 				this.$[testName].destroy();
 			}
-			this.createComponent({name: testName, kind:this.kind, onBegin: "childTestBegun", onFinish: "childTestFinished"});
-			this.$[testName].runTest(testName);
+			if (window.QUnit) {
+				asyncTest(testName, 1, this.bindSafely(function() {
+					this.createComponent({name: testName, kind:this.kind, onBegin: "childTestBegun", onFinish: "childTestFinished"});
+					this.$[testName].runTest(testName);
+				}));
+			} else {
+				this.createComponent({name: testName, kind:this.kind, onBegin: "childTestBegun", onFinish: "childTestFinished"});
+				this.$[testName].runTest(testName);
+			}
 		} else {
 			this.autoRunNextTest = false;
 			this.doFinishAll();
@@ -228,8 +238,16 @@ enyo.kind({
 		this.doFinish({results: this.results}); // bubble results
 		if (inMessage) {
 			enyo.log("FAILED TEST ", this.name, ": ", inMessage);
+			if (window.QUnit) {
+				ok(false, this.name + ": " + inMessage);
+				start();
+			}
 		} else {
 			enyo.log("PASSED TEST ", this.name);
+			if (window.QUnit) {
+				ok(true, this.name);
+				start();
+			}
 		}
 	},
 	childTestBegun: function(inSender) {
@@ -330,5 +348,5 @@ enyo.kind({
 });
 
 enyo.ready(function() {
-	new enyo.TestRunner({fit: false}).renderInto(document.body);
+	new enyo.TestRunner({fit: false}).renderInto("tests");
 });
