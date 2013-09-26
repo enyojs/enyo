@@ -38,7 +38,7 @@ enyo.DataList.delegates.vertical = {
 	*/
 	refresh: function (list) {
 		if (!list.hasReset) { return this.reset(list); }
-		var pc = this.pageCount(list)-1,
+		var pc = Math.max(this.pageCount(list)-1, 0),
 			fi = list.$.page1.index,
 			si = list.$.page2.index;
 		if (fi > pc) { fi = pc; }
@@ -260,7 +260,7 @@ enyo.DataList.delegates.vertical = {
 		var mx = list.metrics.pages,
 			ds = this.defaultPageSize(list),
 			tt = 0, sp = list.psizeProp, cp;
-		while (index) {
+		while (index > 0) {
 			cp = mx[--index];
 			tt += (cp? cp[sp]: ds);
 		}
