@@ -52,9 +52,9 @@ enyo.kind({
 		or other criteria use this object to map a _filter name_ to a _filter method_
 		on the _collection_ that will be called in the context of the _collection_ when
 		the _filter name_ is set as the `activeFilter` property. These methods should
-		return the array they wish to have the _collection_ `reset` to, `true` to emit
-		a `reset` event without resetting or any falsey value to do nothing. Note that
-		you can call `reset` within the the _filter_ but no `reset` event will be emitted.
+		return the array they wish to have the _collection_ `reset` to, `true` to force
+		a `reset` or any falsey value to do nothing. Note that you can call `reset` within
+		the the _filter_ but no `reset` event will be emitted.
 	*/
 	filters: null,
 	/**
@@ -368,7 +368,7 @@ enyo.kind({
 			this.length = this.records.length;
 			this.filtered = false;
 			ch = true;
-		} else if (records) {
+		} else if (records && enyo.isArray(records)) {
 			// if we're resetting the dataset but we're also filtering we need to
 			// ensure we preserve the original dataset
 			if (this.filtering) {
@@ -681,14 +681,10 @@ enyo.kind({
 			if (fn && this[fn]) {
 				this.filtering = true;
 				this.silenced = true;
-				var l = this.length,
-					r = this[fn]();
+				var r = this[fn]();
 				this.silenced = false;
 				if (r) {
-					if (true === r) {
-						this.notifyObservers("length", l, this.length);
-						this.triggerEvent("reset");
-					} else { this.reset(r); }
+					this.reset(true === r? undefined: r);
 				}
 				this.filtering = false;
 				if (this._uRecords && this._uRecords.length) { this.filtered = true; }
