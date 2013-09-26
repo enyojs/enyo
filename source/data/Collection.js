@@ -565,8 +565,7 @@ enyo.kind({
 		instances or hashes to be converted) and an optional hash of properties to
 		be applied to the collection. Both are optional, meaning that you can supply
 		neither, either one, or both. If both options and data are present, options
-		will be applied first. If there is a `activeFilter` set and _records_ were
-		added it will automatically _filter_ the dataset.
+		will be applied first.
 	*/
 	constructor: function (data, opts) {
 		var d  = data && enyo.isArray(data) && data,
@@ -605,7 +604,6 @@ enyo.kind({
 		}
 		this.addListener("filter", this._filterContent, this);
 		this.addObserver("activeFilter", this._activeFilterChanged, this);
-		this.triggerEvent("filter");
 	},
 	/**
 		Destroys the collection and removes all records. This does not destroy the
