@@ -297,7 +297,7 @@ enyo.kind({
 	//* @protected
 	//* Adds current values of getScrollBounds to event
 	decorateScrollEvent: function(inEvent) {
-		inEvent.scrollBounds = this.$.strategy._getScrollBounds();
+		inEvent.scrollBounds = inEvent.scrollBounds || this.$.strategy._getScrollBounds();
 	},
 	//* Normalizes scroll event to _onScroll_.
 	domScroll: function(inSender, e) {
