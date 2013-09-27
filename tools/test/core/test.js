@@ -44,8 +44,10 @@ enyo.kind({
 			} else {
 				this.$.allTests.setContent(this.fails + " FAILURE(S)");
 				this.$.allTests.setClasses("enyo-tests-header-failed");
+				if (!window.QUnit) {
 					// prepend "X"
 					document.title = "\u2716 " + document.title;
+				}
 			}
 			enyo.log("TEST RUNNER FINISHED");
 		}
