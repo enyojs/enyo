@@ -11,6 +11,9 @@
   position: relative;
   height: 100%;
   width: 100%;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .enyo-data-list .active {
   position: relative;
@@ -25,33 +28,28 @@
   width: 100%;
 }
 .enyo-data-list.debug .page1 {
-  background: #99ccff;
+  background: #99CCFF;
 }
 .enyo-data-list.debug .page2 {
-  background: #cc99ff;
-}
-.enyo-data-list {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
+  background: #CC99FF;
 }
 .enyo-data-list.horizontal .active {
   white-space: nowrap;
 }
 .enyo-data-list.horizontal .page > * {
-  display: inline-block;
+  display: inline-block !important;
 }
 .enyo-data-grid-list .item {
   display: block;
   position: absolute !important;
-}
-.enyo-data-grid-list .item {
-  -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.enyo-data-grid-list.transitions .item {
   -webkit-transition: top 300ms ease-out, left 300ms ease-out;
   -moz-transition: top 300ms ease-out, left 300ms ease-out;
   -ms-transition: top 300ms ease-out, left 300ms ease-out;
   -o-transition: top 300ms ease-out, left 300ms ease-out;
   transition: top 300ms ease-out, left 300ms ease-out;
-  box-sizing: border-box;
 }
