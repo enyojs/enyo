@@ -23,6 +23,22 @@
 			// want to do any more initialization
 			if (list.length) { this.reset(list); }
 		},
+		/**
+			Reset the page with the added check to ensure that we add the `transitions`
+			class if they are enabled on the list.
+		*/
+		reset: enyo.inherit(function (sup) {
+			return function (list) {
+				sup.apply(this, arguments);
+				if (list.allowTransitions && !list.hasClass("transitions")) {
+					list.addClass("transitions");
+				}
+			};
+		}),
+		/**
+			Unlike in DataList we can calculate the page heights since we know the structure
+			and layout of the page precisely.
+		*/
 		pageHeight: function (list, page) {
 			var n  = page.node || page.hasNode(),
 				a  = n.children.length,

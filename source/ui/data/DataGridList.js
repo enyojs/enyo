@@ -27,6 +27,11 @@ enyo.kind({
 		collapsed beyond this size, but they may be proportionally expanded.
 	*/
 	minHeight: 100,
+	/**
+		To disable the default smoothing-transitions (for supported platforms) set
+		this flag to `false`.
+	*/
+	allowTransitions: true,
 	//*@protected
 	/**
 		While _enyo.DataList_ provides some generic delegates for handling objects,
