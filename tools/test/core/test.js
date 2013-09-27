@@ -37,9 +37,15 @@ enyo.kind({
 			if (this.fails === 0) {
 				this.$.allTests.setContent("ALL TESTS PASSED");
 				this.$.allTests.setClasses("enyo-tests-header-complete");
+				if (!window.QUnit) {
+					// prepend check
+					document.title = "\u2714 " + document.title;
+				}
 			} else {
 				this.$.allTests.setContent(this.fails + " FAILURE(S)");
 				this.$.allTests.setClasses("enyo-tests-header-failed");
+					// prepend "X"
+					document.title = "\u2716 " + document.title;
 			}
 			enyo.log("TEST RUNNER FINISHED");
 		}
