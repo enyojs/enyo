@@ -1,3 +1,4 @@
 tools/node_modules
 tools/minifier/path-relative-shim.js
 tools/minifier/node_modules
+tools/test/core/qunit.js
