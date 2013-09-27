@@ -77,6 +77,7 @@ enyo.DataList.delegates.vertical = {
 			// the initial index (in the data) to start with
 			pi = cc * index,
 			// the final index of the page
+			of = page.end || 0,
 			pf = Math.min(dd.length, pi + cc),
 			c  = list.$.flyweighter,
 			n  = page.node || page.hasNode(),
@@ -105,21 +106,18 @@ enyo.DataList.delegates.vertical = {
 		// now we need to update the known metrics cached for this page if we need to
 		var mx = list.metrics.pages[index] || (list.metrics.pages[index] = {});
 		// we will need to get the actual sizes for the page
-		if (mx.height === undefined || force) { mx.height = this.pageHeight(list, page); }
-		if (mx.width === undefined || force) { mx.width = this.pageWidth(list, page); }
-		// if we haven't already done this, update our _default_ child size for various
-		// calculations later
-		if (!list.childSize) { this.childSize(list); }
+		if (!mx.height || force || pf !== of) { mx.height = this.pageHeight(list, page); }
+		if (!mx.width || force || pf !== of) { mx.width = this.pageWidth(list, page); }
 	},
 	/**
 		Generates a child size for the given list.
 	*/
 	childSize: function (list) {
 		var pi = list.$.page1.index,
-			cc = list.controlsPerPage,
+			n  = list.$.page1.node || list.$.page1.hasNode(),
 			sp = list.psizeProp;
-		if (pi >= 0) {
-			list.childSize = Math.floor(list.metrics.pages[pi][sp] / (cc || 1));
+		if (pi >= 0 && n) {
+			list.childSize = Math.floor(list.metrics.pages[pi][sp] / (n.children.length || 1));
 		}
 	},
 	/**
@@ -180,6 +178,7 @@ enyo.DataList.delegates.vertical = {
 		if (rf || rs) { this.adjustPagePositions(list); }
 		// either way we need to adjust the buffer size
 		this.adjustBuffer(list);
+		this.scrollQueue("claimChildren", list, function () { list.delegate.claimChildren(list); });
 	},
 	/**
 		Attempts to find the control for the requested index.
@@ -227,7 +226,7 @@ enyo.DataList.delegates.vertical = {
 			bs = 0, sp = list.psizeProp, ss = list.ssizeProp,
 			n = list.$.buffer.node || list.$.buffer.hasNode(), p;
 		if (n) {
-			for (var i=0; i<pc; ++i) {
+			for (var i=0; i<pc || (i===0 && pc===0); ++i) {
 				p = list.metrics.pages[i];
 				bs += (p && p[sp]) || ds;
 			}
@@ -251,6 +250,7 @@ enyo.DataList.delegates.vertical = {
 			p.node.style[up] = cp + "px";
 			p[up] = mx[up] = cp;
 			p[lp] = mx[lp] = (mx[sp] + cp);
+			if (i===0) { this.childSize(list); }
 		}
 	},
 	/**
@@ -262,7 +262,9 @@ enyo.DataList.delegates.vertical = {
 			tt = 0, sp = list.psizeProp, cp;
 		while (index > 0) {
 			cp = mx[--index];
-			tt += (cp? cp[sp]: ds);
+			// if the index is > 0 then we need to ensure we have at least
+			// the minimum height available so this is a deliberate 'fail-on-zero' case
+			tt += (cp && cp[sp]? cp[sp]: ds);
 		}
 		return tt;
 	},

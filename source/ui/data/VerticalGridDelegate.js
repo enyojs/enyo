@@ -23,6 +23,22 @@
 			// want to do any more initialization
 			if (list.length) { this.reset(list); }
 		},
+		/**
+			Reset the page with the added check to ensure that we add the `transitions`
+			class if they are enabled on the list.
+		*/
+		reset: enyo.inherit(function (sup) {
+			return function (list) {
+				sup.apply(this, arguments);
+				if (list.allowTransitions && !list.hasClass("transitions")) {
+					list.addClass("transitions");
+				}
+			};
+		}),
+		/**
+			Unlike in DataList we can calculate the page heights since we know the structure
+			and layout of the page precisely.
+		*/
 		pageHeight: function (list, page) {
 			var n  = page.node || page.hasNode(),
 				a  = n.children.length,
@@ -160,6 +176,27 @@
 					// check if we need to increment the row
 					if ((i+1) % cc === 0) { ++r; }
 				}
+			}
+		},
+		/**
+			Recalculates the buffer size based on the current metrics for the given
+			list. This may or may not be completely accurate until the final page is
+			scrolled into view.
+		*/
+		adjustBuffer: function (list) {
+			var pc = this.pageCount(list),
+				ds = this.defaultPageSize(list),
+				bs = 0, sp = list.psizeProp, ss = list.ssizeProp,
+				n = list.$.buffer.node || list.$.buffer.hasNode(), p;
+			if (n) {
+				for (var i=0; i<pc; ++i) {
+					p = list.metrics.pages[i];
+					bs += (p && p[sp]) || ds;
+				}
+				bs += list.spacing;
+				list.bufferSize = bs;
+				n.style[sp] = bs + "px";
+				n.style[ss] = this[ss](list) + "px";
 			}
 		},
 		/**

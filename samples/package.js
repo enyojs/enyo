@@ -21,5 +21,6 @@ enyo.depends(
 	"AudioSample.js",
 	"DataRepeaterSample.js",
 	"DataRepeaterSample.css",
-	"DataListSample.js"
+	"DataListSample.js",
+	"DataGridListSample.js"
 );
