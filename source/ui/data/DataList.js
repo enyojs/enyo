@@ -104,6 +104,7 @@ enyo.kind({
 		// and now we hand over the action to our strategy to let it initialize the
 		// way it needs to
 		this.delegate.rendered(this);
+		this._didRender = true;
 	},
 	/**
 		Overloaded to call a method of the delegate strategy.
