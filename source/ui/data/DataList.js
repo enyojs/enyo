@@ -58,7 +58,9 @@ enyo.kind({
 		internally.
 	*/
 	refresh: function () {
-		this.delegate.refresh(this);
+		this.startJob("refreshing", function () {
+			this.delegate.refresh(this);
+		}, 16);
 	},
 	//*@protected
 	constructor: enyo.inherit(function (sup) {

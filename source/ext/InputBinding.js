@@ -8,15 +8,17 @@
 enyo.kind({
 	name: "enyo.InputBinding",
 	kind: enyo.Binding,
+	/**
+		The direction priority for the placeholder text so it is not propagated when
+		an empty string should be.
+	*/
+	placeholderDirection: "source",
 	oneWay: false,
 	//*@protected
 	transform: function (value, direction, binding) {
 		if (value) { return value; }
-		var s = binding.source || {},
-			t = binding.target || {},
-			// we attempt to find the placeholder at either end, prioritizing
-			// to checking the source
-			ph = s.placeholder || t.placeholder || "";
+		var pd = binding.placeholderDirection,
+			ph = binding[pd].placeholder || "";
 		return ph;
 	}
 });
