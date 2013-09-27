@@ -163,6 +163,27 @@
 			}
 		},
 		/**
+			Recalculates the buffer size based on the current metrics for the given
+			list. This may or may not be completely accurate until the final page is
+			scrolled into view.
+		*/
+		adjustBuffer: function (list) {
+			var pc = this.pageCount(list),
+				ds = this.defaultPageSize(list),
+				bs = 0, sp = list.psizeProp, ss = list.ssizeProp,
+				n = list.$.buffer.node || list.$.buffer.hasNode(), p;
+			if (n) {
+				for (var i=0; i<pc; ++i) {
+					p = list.metrics.pages[i];
+					bs += (p && p[sp]) || ds;
+				}
+				bs += list.spacing;
+				list.bufferSize = bs;
+				n.style[sp] = bs + "px";
+				n.style[ss] = this[ss](list) + "px";
+			}
+		},
+		/**
 			Delegate's resize event handler.
 		*/
 		didResize: function (list, event) {
