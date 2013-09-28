@@ -52,7 +52,7 @@ enyo.BindingSupport = {
 	*/
 	binding: function () {
 		var defs = enyo.toArray(arguments),
-			bs = this.bindings,
+			bs = this.bindings || (this.bindings = []),
 			props = enyo.mixin(defs),
 			dl = this.bindingDefaults, bd;
 		props.kind = props.kind || this.defaultBindingKind || enyo.defaultBindingKind;
@@ -77,10 +77,18 @@ enyo.BindingSupport = {
 			}
 			bs.push((bd = new props.kind(props)));
 			if (bd._sourcePath && bd.from[0] === ".") {
-				this.addObserver(bd._sourcePath, this._rebuildSource(bd));
+				if (bd._sourcePath == "$") {
+					this.addObserver("$." + bd._sourceFrom, this._rebuildSource(bd));
+				} else {
+					this.addObserver(bd._sourcePath, this._rebuildSource(bd));
+				}
 			}
 			if (bd._targetPath && bd.to[0] === ".") {
-				this.addObserver(bd._targetPath, this._rebuildTarget(bd));
+				if (bd._targetPath == "$") {
+					this.addObserver("$." + bd._targetFrom, this._rebuildTarget(bd));
+				} else {
+					this.addObserver(bd._targetPath, this._rebuildTarget(bd));
+				}
 			}
 			if (q && auto) {
 				q.push(bd);
@@ -102,6 +110,7 @@ enyo.BindingSupport = {
 	*/
 	clearBindings: function (subset) {
 		var bs = subset || this.bindings;
+		if (!bs) { return; }
 		for (var i=0, b; (b=bs[i]); ++i) {
 			b.destroy();
 		}
@@ -119,6 +128,7 @@ enyo.BindingSupport = {
 	*/
 	refreshBindings: function (subset) {
 		var bs = subset || this.bindings;
+		if (!bs) { return; }
 		for (var i=0, b; (b=bs[i]); ++i) {
 			b.refresh();
 		}
@@ -136,6 +146,7 @@ enyo.BindingSupport = {
 	*/
 	rebuildBindings: function (subset) {
 		var bs = subset || this.bindings;
+		if (!bs) { return; }
 		for (var i=0, b; (b=bs[i]); ++i) {
 			b.rebuild();
 		}
@@ -150,7 +161,7 @@ enyo.BindingSupport = {
 	removeBinding: function (binding) {
 		var b = binding,
 			bs = this.bindings;
-		if (b) {
+		if (b && bs) {
 			var i = enyo.indexOf(b, bs);
 			if (!!~i) {
 				bs.splice(i, 1);
@@ -179,6 +190,7 @@ enyo.BindingSupport = {
 		if (false === this._bindingSupportInitialized) {
 			this._bindingSupportInitialized = undefined;
 			var os = this.bindings;
+			if (!os) { return; }
 			// we will now reuse the property `bindings` with the actual binding
 			// references
 			this.bindings = [];
@@ -199,21 +211,13 @@ enyo.BindingSupport = {
 			}
 		}
 	},
-	constructor: enyo.inherit(function (sup) {
-		return function () {
-			// ensure we have at least an empty array here during
-			// normal initialization
-			this.bindings = this.bindings || [];
-			// continue with the normal constructor chain
-			return sup.apply(this, arguments);
-		};
-	}),
 	constructed: enyo.inherit(function (sup) {
 		return function () {
 			// now we go ahead and create the bindings, knowing that they
 			// will register for missing targets/sources if they become
 			// available later
-			this.initBindings();
+			if (this.bindings) { this.initBindings(); }
+			else { this._bindingSupportInitialized = undefined; }
 			sup.apply(this, arguments);
 		};
 	}),
@@ -221,8 +225,10 @@ enyo.BindingSupport = {
 		return function () {
 			// destroy all bindings that belong to us
 			var bs = this.bindings;
-			for (var i=0, b; (b=bs[i]); ++i) {
-				b.destroy();
+			if (bs) {
+				for (var i=0, b; (b=bs[i]); ++i) {
+					b.destroy();
+				}
 			}
 			sup.apply(this, arguments);
 		};
@@ -296,12 +302,14 @@ enyo.ComponentBindingSupport = {
 	}),
 	constructed: enyo.inherit(function (sup) {
 		return function () {
-			this._bindingSyncAllowed = false;
-			this.initBindings();
-			// the next time this is called later during initialization the bindings will
-			// have been created but this will allow them to be synchronized at the appropriate
-			// time
-			this._bindingSyncAllowed = true;
+			if (this.bindings) {
+				this._bindingSyncAllowed = false;
+				this.initBindings();
+				// the next time this is called later during initialization the bindings will
+				// have been created but this will allow them to be synchronized at the appropriate
+				// time
+				this._bindingSyncAllowed = true;
+			}
 			return sup.apply(this, arguments);
 		};
 	})

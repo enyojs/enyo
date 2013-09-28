@@ -5,47 +5,64 @@
 		method so as not to create and throw away a new object every time
 		a new model is created.
 	*/
-	var _mixinOpts = {ignore: true};
+	var _mixinOpts = {ignore: true, filter: function (k, v, s, t) {
+		// only use the default value if the attributes value is undefined and the default
+		// entry itself is not undefined
+		return (typeof t[k] == "undefined") && (typeof v != "undefined");
+	}};
 	//*@public
 	/**
-		## Getting and Setting _enyo.Model_ values
+		_enyo.Model_ is a kind used to create data records. For the sake of
+		efficiency and simplicity, it has been designed as a special object not
+		derived from any other Enyo kind.
 
-		An _enyo.Model_ is a special object not derived from other enyo _kinds_. This is
-		for efficiency and simplicity. That being said, any `set` or `get` call on a _model_
-		will work only with the _schema_ of the _model_ and not as you would expect other
-		kinds based on _enyo.Object_. Any property set via the `set` method will be assumed
-		an `attribute` of the _model schema_. The `set` method also has the ability to accept
-		a hash of _keys_ and _values_ to apply at once. Even though the schema is tracked via
-		the `attributes` hash of the model it is __not necessary to prefix get/set paths with
-		"attributes" as this is assumed and redundant and will cause it to created a nested
-		schema object called `attributes`__.
+		__Getting and Setting enyo.Model values__
 
-		## Computed Properties and _enyo.Model_
+		Unlike kinds based on [enyo.Object](#enyo.Object), any call to	_set()_ or
+		_get()_ on a model affects only the schema of the model, which is tracked in
+		its _attributes_ hash. That is, when you set a property	on a model via
+		_set()_, you are setting the property's entry in the model's _attributes_
+		hash, not setting the property on the model itself.
 
-		Computed properties only exist for attributes of a _model_. Otherwise, they function
-		as you would expect from _ComputedSupport_ on _enyo.Object_. The only other exception
-		is that all _functions_ in the _attributes schema_ are considered to be a _computed
-		property_, they are fairly useless, however, without a declaration for any dependencies
-		they might have.
+		Note that, even though you are changing the contents of the _attributes_
+		hash, you should not specify _"attributes"_ as a parameter to _set()_ or
+		_get()_. If you do so, you will create a schema object called _"attributes"_
+		nested inside the model's _attributes_ hash.
 
-		## Bindings
+		Also note that the _set()_ method has the ability to accept a hash of keys
+		and values to be applied to the model all at once.
 
-		An _enyo.Model_ can be at the receiving end of a binding but bindings cannot be created
-		on the _model_ itself. A _bindings_ array will be ignored.
+		__Computed Properties and enyo.Model__
 
-		## Observers and Notifications
+		Computed properties only exist for attributes of a model. Otherwise, they
+		function as you would expect from
+		[ComputedSupport](#enyo/source/kernel/mixins/ComputedSupport.js) on
+		_enyo.Object_. The only exception is that all functions in the attributes
+		schema are considered to be computed properties; these are fairly useless,
+		however, if you don't declare any dependencies that they have.
 
-		There is no _observers_ block for _enyo.Model_. _Bindings_ can still be applied to _attributes_
-		of the _model_. Notifications for _observers_ works the same as with _enyo.Object_ except they
-		only apply to changes made on properties in the _attributes_.
+		__Bindings__
 
-		## Events
+		An _enyo.Model_ may be at the receiving end of a binding, but bindings
+		cannot be created on the model itself. If a model has a _bindings_ array, it
+		will be ignored.
 
-		Events are different than those in _enyo.Component_. There are no _bubbled_ or _waterfall_
-		events. Instead, you can use the registered listeners for events via the `addListener`,
-		`removeListener`, and `triggerEvent` API.
+		__Observers and Notifications__
 
-		For _enyo.Model_, generated events are "change" and "destroy".
+		While there is no _observers_ block for _enyo.Model_, bindings may still be
+		applied to attributes of the model. The notification system for observers
+		works the same as it does with _enyo.Object_, except that observers are only
+		notified of changes made to properties in the _attributes_ hash.
+
+		__Events__
+
+		The events in _enyo.Model_ differ from those in
+		[enyo.Component](#enyo.Component). Instead of _bubbled_ or _waterfall_
+		events, _enyo.Model_ has _change_ and _destroy_ events.
+		
+		To work with these events, use [addListener()](#enyo.Model::addListener),
+		[removeListener()](#enyo.Model::removeListener), and
+		[triggerEvent()](#enyo.Model::triggerEvent).
 	*/
 	enyo.kind({
 		name: "enyo.Model",
@@ -54,87 +71,91 @@
 		noDefer: true,
 		//*@public
 		/**
-			This is a hash of attributes known as the record's _schema_. This is where
-			the values of any _attributes_ are stored for an active record.
+			A hash of attributes known as the record's schema. This is where the
+			values of any attributes are stored for an active record.
 		*/
 		attributes: null,
 		/**
-			An optional hash of values and properties to be applied to the _attributes_
-			of the record at initialization. Any values in the _defaults_ that already exists
-			on the _attributes schema_ will be ignored.
+			An optional hash of values and properties to be applied to the attributes
+			of the record at initialization. Any value in _defaults_ that already
+			exists on the attributes schema will be ignored.
 		*/
 		defaults: null,
 		/**
-			Set this flag to `true` if this model is read-only and will not need to _commit_
-			or _destroy_ any changes via a _source_. This will cause a _destroy_ to safely
-			execute _destroyLocal_ by default.
+			Set this flag to true if this model is read-only and will not need to
+			commit or destroy any changes via a source. This will cause a _destroy()_
+			call to safely execute _destroyLocal()_ by default.
 		*/
 		readOnly: false,
 		/**
-			All _models_ have a _store_ reference. You can set this to a specific _store_
-			instance in your application or use its default (the enyo.store global).
+			All models have a _store_ reference. You can set this to a specific store
+			instance in your application or use the default (the _enyo.store_ global).
 		*/
 		store: null,
 		/**
-			This is the fall-back driver to use when fetching, destroying, or comitting
-			a _model_. A driver can always be specified at the time of the method execution
-			but in cases where it isn't the default will be used. This is a string that should
-			be paired with a known driver for this _records store_.
+			This is the fall-back driver to use when fetching, destroying, or
+			comitting a model. A driver may always be specified at the time of method
+			execution, but when it is not specified, the default will be used. This is
+			a string that should be paired with a known driver for this records store.
 		*/
 		defaultSource: "ajax",
 		/**
-			An optional array of strings as the only properties to include in
-			the _raw_ and _toJSON_ return values. By default it will use any properties
-			in the _attributes_ hash.
+			An optional array of strings specifying the properties that will be
+			included in the return values of _raw()_ and _toJSON()_. By default, all
+			properties in the _attributes_ hash will be included.
 		*/
 		includeKeys: null,
 		/**
-			Set this property to the correct _url_ to be used when generating the request
-			for this _record_ from any specified _source_ or the _defaultDriver_ of the _record_.
-			Note that, by default, the url for a _fetch_ will have the its _primaryKey_ appended
-			to the request. Overload the _getUrl_ method for extending this behavior. Also see _urlRoot_.
+			Set this property to the URL to be used when generating the request for
+			this record from any specified source or the _defaultDriver_ of the
+			record. Note that, by default, the _url_ for a _fetch()_ will have the its
+			_primaryKey_ appended to the request. Overload the _getUrl()_ method to
+			extend this behavior. Also see _urlRoot_.
 		*/
 		url: "",
 		/**
-			Optionally one could provide a value here for a base-kind of model (for models used
-			outside of collections) that share the same root but varying _urls_. If no _getUrl_
-			method is provided and the _url_ property does not contain a protocol identifier for
-			the _source_ it will assume this value exists and use it as the root instead.
+			For models used	outside of collections, an optional base-kind for models
+			with the same root but different _url_ values. If no _getUrl()_ method is
+			provided and the _url_ property does not contain a protocol identifier for
+			the source, it will assume that this value exists and use it as the root
+			instead.
 		*/
 		urlRoot: "",
 		/**
-			Boolean value indicating whether or not a change has occurred in the _record_
-			that needs to be committed.
+			Boolean value indicating whether a change that needs to be committed has
+			occurred in the record
 		*/
 		dirty: false,
 		/**
-			The `primaryKey` is the attribute that will be used if present in the model for
-			reference in _enyo.Collections_ and in the _models_ _store_. It will also be used,
-			by default, when generating the _url_ for the _model_. The value and property for
-			`primaryKey` is stored on the attributes hash.
+			Attribute that, if present in the model, will be used for reference in
+			_enyo.Collections_ and in the _models_ _store_. It will also be used,
+			by default, when generating the _url_ for the model. The value of
+			_primaryKey_ is stored in the _attributes_ hash.
 		*/
 		primaryKey: "id",
 		/**
-			Set this to an array of _keys_ to use for comparative purposes when using the
-			_merge_ strategy in the _store_ or any _collection_.
+			Set this to an array of keys to use for comparative purposes when using
+			the _merge_ strategy in the store or any collection.
 		*/
 		mergeKeys: null,
 		/**
-			The `euid` is an arbitrarily assigned value that every _model_ has and is unique.
-			Models can be requested via this property in _enyo.Collections_ and the _store_. This
-			property, unlike the `primaryKey`, is stored on the _model_ and not its attributes hash.
+			An arbitrary, unique value that is assigned to every model. Models may be
+			requested via this property in collections and the store. Unlike
+			_primaryKey_, this value is stored on the model and not its _attributes_
+			hash.
 		*/
 		euid: "",
 		/**
-			This is a boolean value that indicates whether the _record_ was created locally
-			or is pulled from a _source_. You should not modify this value. This will cause the
-			_source_ to change its behavior.
+			Boolean value indicating whether the record was created locally or is
+			pulled from a source. You should not modify this value, as this will cause
+			the source to change its behavior.
 		*/
 		isNew: true,
 		/**
-			Retrieve the requested _model attribute_. Will return the current value or
-			undefined. If the attribute is a function it is assumed to be a computed property
-			and will be called in the context of the model and its return value will be returned.
+			Retrieves the requested model attribute, returning the current value or
+			undefined. If the attribute is a function, it is assumed to be a computed
+			property and will be called in the context of the model, with its return
+			value being returned.
 		*/
 		get: function (prop) {
 			var fn = this.attributes[prop];
@@ -142,10 +163,10 @@
 		},
 		//*@public
 		/**
-			Will set a property or properties of the _model attribute(s)_. Accepts a property
-			name and value or a single hash of _keys_ and _values_ to be set at once. Returns
-			the _model_ for chaining. If the attribute being set is a function in the schema
-			it will be ignored.
+			Sets values on specified model attributes. Accepts a single property name
+			and value or a single hash of _keys_ and _values_ to be set all at once.
+			Returns the model for chaining. If the attribute being set is a function
+			in the schema, it will be ignored.
 		*/
 		set: function (prop, value) {
 			if (enyo.isObject(prop)) { return this.setObject(prop); }
@@ -162,6 +183,7 @@
 						var ps = this._computedMap[prop];
 						for (var i=0, p; (p=ps[i]); ++i) {
 							this.notifyObservers(p);
+							this.changed[p] = this.get(p);
 						}
 					}
 				}
@@ -172,9 +194,9 @@
 			return this;
 		},
 		/**
-			A _setter_ that accepts a hash of _key_/_value_ pairs. Returns the _model_
-			for chaining (and consistency with `set`). All _keys_ in _props_ will be added
-			to the `attributes` schema when this method is used.
+			A setter that accepts a hash of key/value pairs. Returns the model for
+			chaining (and consistency with _set()_). All keys in _props_ will be added
+			to the _attributes_ schema when this method is used.
 		*/
 		setObject: function (props) {
 			if (props) {
@@ -198,6 +220,7 @@
 								var ps = this._computedMap[k];
 								for (var i=0, p; (p=ps[i]); ++i) {
 									this.notifyObservers(p);
+									this.changed[p] = this.get(p);
 								}
 							}
 						}
@@ -210,10 +233,10 @@
 			return this;
 		},
 		/**
-			While models should normally be instanced using _enyo.store.createRecord_,
-			the same applies to the _constructor_, the first parameter will be used as
-			attributes of the model, the second, optional parameter will be used as configuration
-			for the _model_.
+			While models should normally be instanced using _enyo.store.createRecord()_,
+			the same applies to the constructor. The first parameter will be used as
+			the attributes of the model; the optional second parameter will be used as
+			configuration for the model.
 		*/
 		constructor: function (attributes, opts) {
 			// collections will supply the parse option to ensure that
@@ -232,7 +255,9 @@
 			if (d) { enyo.mixin(a, d, _mixinOpts); }
 			this.attributes = a;
 			this.changed = {};
-			this.previous = {};
+			// populate the previous property with the actual values as would be expected
+			// for further updates
+			this.previous = this.raw();
 			this.storeChanged();
 		},
 		//*@protected
@@ -244,9 +269,9 @@
 		},
 		//*@public
 		/**
-			Produces an immutable hash of the known attributes of this record. Will
-			be modified by the existence of the _includeKeys_ array otherwise it will
-			use all known properties.
+			Produces an immutable hash of the known attributes of this record. If the
+			_includeKeys_ array exists, it will	determine the keys that are included
+			in the return value; otherwise, all known properties will be included.
 		*/
 		raw: function () {
 			var i = this.includeKeys,
@@ -262,15 +287,15 @@
 			return r;
 		},
 		/**
-			Will return the JSON stringified version of the output of _raw_ of this record.
+			Returns the JSON-stringified version of the output of _raw()_ for this
+			record.
 		*/
 		toJSON: function () {
 			return enyo.json.stringify(this.raw());
 		},
 		/**
-			By default this method will use any _urlRoot_ with the _url_ property and
-			if the _record_ has a _primaryKey_ value (id by default) it will be added
-			at the end.
+			By default, uses any _urlRoot_ with the _url_ property; if the record	has
+			a _primaryKey_ value (_"id"_ by default), it will be added at the end.
 		*/
 		getUrl: function () {
 			var pk = this.primaryKey,
@@ -280,11 +305,11 @@
 			return u;
 		},
 		/**
-			Commit the current state of the _record_ to either the specified _source_
-			or the _records_ default _source_. The _source_ and any other options may be
-			specified in the _opts_ hash. You may provide a _success_ and _fail_ method that
-			will be executed on those conditions. Its _success_ method will be called with
-			the same parameters as the build-in method `didCommit`.
+			Commits the current state of the record to either the specified source or
+			the _records_ default source. The source and any other options may be
+			specified in the _opts_ hash. You may provide _success_ and _fail_ methods
+			that will be executed on those conditions. The _success_ method will be
+			called with the same parameters as the built-in _didCommit()_ method.
 		*/
 		commit: function (opts) {
 			var o = opts? enyo.clone(opts): {};
@@ -293,11 +318,11 @@
 			this.store.commitRecord(this, o);
 		},
 		/**
-			Using the state of the _record_ and any options passed in via the _opts_ hash
-			try and fetch the current model attributes from the specified (or default)
-			_source_ for this _record_. You may provide a _success_ and _fail_ method that
-			will be executed on those conditions. Its _success_ method will be called with
-			the same parameters as the build-in method `didFetch`.
+			Using the state of the record and any options passed in via the _opts_
+			hash, tries to fetch the current model attributes from the specified (or
+			default) source for this record. You may provide _success_ and _fail_
+			methods that will be executed on those conditions. The _success_ method
+			will be called with the same parameters as the built-in _didFetch()_ method.
 		*/
 		fetch: function (opts) {
 			var o = opts? enyo.clone(opts): {};
@@ -306,12 +331,13 @@
 			this.store.fetchRecord(this, o);
 		},
 		/**
-			Requests a _destroy_ action for the given _record_ and the specified (or default)
-			_source_ in the optional _opts_ hash. You may provide _success_ and _fail_ methods that
-			will be executed on those conditions. Its _success_ method will be called with
-			the same parameters as the built-in method `didDestroy`. If the _record_ is _readOnly_
-			or has its _isNew_ flag set to `true` it will call its synchronous _destroyLocal_
-			method instead and will not use any callbacks.
+			Requests a _destroy_ action for the given record and the specified (or
+			default) source in the optional _opts_ hash. You may provide _success_ and
+			_fail_ methods that will be executed on those conditions. The _success_
+			method will be called with the same parameters as the built-in
+			_didDestroy()_ method. If the record is read-only or has its _isNew_ flag
+			set to true, it will call its synchronous _destroyLocal()_ method instead
+			and will not use any callbacks.
 		*/
 		destroy: function (opts) {
 			if (this.readOnly || this.isNew) { return this.destroyLocal(); }
@@ -321,9 +347,8 @@
 			this.store.destroyRecord(this, o);
 		},
 		/**
-			To destroy the _record_ but only locally (completely remove it locally) without
-			sending a request to any _source_ to destroy it you should call this method. This
-			is the correct method to destroy local-only _records_.
+			Completely removes the record locally without sending a destroy request to
+			any source. This is the proper method for destroying local-only records.
 		*/
 		destroyLocal: function () {
 			var o = {};
@@ -331,17 +356,18 @@
 			this.store.destroyRecordLocal(this, o);
 		},
 		/**
-			Overload this method to change the structure of the data as it is returned from
-			a _fetch_ or _commit_. By default it just returns the _data_ as it was retrieved
-			from the _source_.
+			Overload this method to change the structure of the data as it is returned
+			from a _fetch_ or _commit_. By default, just returns the data as it was
+			retrieved from the source.
 		*/
 		parse: function (data) {
 			return data;
 		},
 		/**
-			When a _record_ is successfully fetched this method is called before any user
-			provided callbacks are executed. It will properly insert the incoming data
-			to the record and notify any observers of those properties that have changed.
+			When a record is successfully fetched, this method is called before any
+			user-provided callbacks are executed. It properly inserts the incoming
+			data into the record and notifies any observers of the properties that
+			have changed.
 		*/
 		didFetch: function (rec, opts, res) {
 			// the actual result has to be checked post-parse
@@ -359,8 +385,8 @@
 			}
 		},
 		/**
-			When a _record_ is successfully committed this method is called before any user
-			provided callbacks are executed.
+			When a record is successfully committed, this method is called before any
+			user-provided callbacks are executed.
 		*/
 		didCommit: function (rec, opts, res) {
 			// the actual result has to be checked post-parse
@@ -380,8 +406,8 @@
 			}
 		},
 		/**
-			When a _record_ is successfully destroyed this method is called before any user
-			provided callbacks are executed.
+			When a record is successfully destroyed, this method is called before any
+			user-provided callbacks are executed.
 		*/
 		didDestroy: function (rec, opts, res) {
 			for (var k in this.attributes) {
@@ -399,9 +425,9 @@
 			this.destroyed = true;
 		},
 		/**
-			When a _record_ fails during a request this method is executed with the name of
-			the command that failed followed by the reference to the record, the original
-			options and the result (if any).
+			When a record fails during a request, this method is executed with the
+			name of the command that failed, followed by a reference to the record,
+			the original options, and the result (if any).
 		*/
 		didFail: function (which, rec, opts, res) {
 			if (opts && opts.fail) {
@@ -421,9 +447,9 @@
 			return this.store._removeObserver(this, prop, fn);
 		},
 		/**
-			Will notify any observers for the given property, accepts the previous
-			and current values to pass to observers. If no property is provided it
-			will notify any observers for any changed properties.
+			Notifies any observers for the given property; accepts the previous and
+			current values to pass to observers. If no _prop_ is provided, notifies
+			any observers for any changed properties.
 		*/
 		notifyObservers: function (prop, prev, val) {
 			// if no prop is provided we call it once for each changed attribute
@@ -434,26 +460,25 @@
 			} else { this.store._notifyObservers(this, prop, prev, val); }
 		},
 		/**
-			Add a listener for the given _event_. Callbacks will be executed with two
-			parameters of the form (_record_, _event_) where _record_ is the _record_
+			Adds a listener for the given event. Callbacks will be executed with two
+			parameters of the form _(record, event)_, where _record_ is the record
 			that is firing the event and _event_ is the name (string) for the event
-			being fired. The _addListener_ method accepts parameters according to the
-			_enyo.ObserverSupport_ API but does not function the same way.
+			being fired. This method accepts parameters according to the
+			_enyo.ObserverSupport_ API, but does not function in the same way.
 		*/
 		addListener: function (prop, fn, ctx) {
 			return this.store.addListener(this, prop, fn, ctx);
 		},
 		/**
-			Removes a listener. Accepts the name of the _event_ that the listener is
-			registered on and the method returned from the _addListener_ call (if a
-			_ctx_ was provided otherwise just the method is fine). Returns `true` on
-			successful removal and `false` otherwise.
+			Removes a listener. Accepts the name of the event that the listener is
+			registered on and the method returned from the _addListener()_ call (if a
+			_ctx_ was provided). Returns true on successful removal; otherwise, false.
 		*/
 		removeListener: function (prop, fn) {
 			return this.store.removeListener(this, prop, fn);
 		},
 		/**
-			Triggers any _listeners_ for the _event_ of this _record_ with optional
+			Triggers any listeners for the record's specified event, with optional
 			_args_.
 		*/
 		triggerEvent: function (event, args) {

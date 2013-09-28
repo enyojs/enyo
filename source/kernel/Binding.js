@@ -168,9 +168,6 @@
 			map[this.id] = this;
 			this.initTransform();
 			this.refresh();
-			if (this.autoConnect) {
-				this.connect();
-			}
 			enyo.BindingCount++;
 		},
 		isConnected: function () {
@@ -458,7 +455,7 @@
 			for (var i=0, ops=[["source","from"],["target","to"]], p; (p=ops[i]); ++i) {
 				this._resolve.apply(this, p);
 			}
-			this.connect();
+			if (this.autoConnect) { this.connect(); }
 		},
 		/**
 			Rebuilds the entire binding. Will synchronize if it is able to connect and
@@ -494,7 +491,7 @@
 			not call this method otherwise.
 		*/
 		stop: function () {
-			throw "binding-top";
+			throw "binding-stop";
 		},
 		//*@protected
 		initTransform: function () {

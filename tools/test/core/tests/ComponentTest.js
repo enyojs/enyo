@@ -206,10 +206,6 @@ enyo.kind({
 			(baseKind.$.green.classes != "green")) {
 			throw "Overrides should not modify base kind: unexpected classes";
 		}
-		if ((baseKind.$.purple.kindStyle != "background: purple;") ||
-			(baseKind.$.green.kindStyle != "background: green;")) {
-			throw "Overrides should not modify base kind: unexpected style";
-		}
 
 		if ((subKind.$.purple.kindName != "enyo.Button") || 
 			(subKind.$.green.kindName != "enyo.Button")) {
@@ -222,10 +218,6 @@ enyo.kind({
 		if (!/^.*purple over-purple$/.test(subKind.$.purple.classes) ||
 			!/^.*green over-green$/.test(subKind.$.green.classes)) {
 			throw "Subclass overrides were not applied properly: unexpected classes";
-		}
-		if ((subKind.$.purple.kindStyle != "background: over-purple;") ||
-			(subKind.$.green.kindStyle != "background: over-green;")) {
-			throw "Subclass overrides were not applied properly: unexpected style;";
 		}
 
 		if ((subSubKind.$.purple.kindName != "enyo.Anchor") || 
@@ -240,9 +232,9 @@ enyo.kind({
 			!/^.*green over-green again-green$/.test(subSubKind.$.green.classes)) {
 			throw "Multiply-subclassed overrides were not applied properly: unexpeted classes: " + subSubKind.$.green.classes;
 		}
-		if ((subSubKind.$.purple.kindStyle != "background: again-purple;") ||
-			(subSubKind.$.green.kindStyle != "background: again-green;")) {
-			throw "Multiply-subclassed overrides were not applied properly: unexpeted style";
+		if ((subSubKind.$.purple.style.indexOf("background:again-purple;") < 0) ||
+			(subSubKind.$.green.style.indexOf("background:again-green;") < 0)) {
+			throw "Multiply-subclassed overrides were not applied properly: unexpected style";
 		}
 
 		try {

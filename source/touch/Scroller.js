@@ -4,13 +4,12 @@ applications.
 
 In some mobile environments, a default scrolling solution is not implemented for
 DOM elements.  In such cases, _enyo.Scroller_ implements a touch-based scrolling
-solution, which may be opted into either globally (by setting the flag
-_enyo.Scroller.touchScrolling = true;_) or on a per-instance basis (by
-specifying a _strategyKind_ of "TouchScrollStrategy").
+solution, which may be opted into either globally (by setting
+_enyo.Scroller.touchScrolling_ to _true_) or on a per-instance basis (by
+specifying a _strategyKind_ of _"TouchScrollStrategy"_).
 
 For more information, see the documentation on
-[Scrollers](https://github.com/enyojs/enyo/wiki/Scrollers) in the Enyo Developer
-Guide.
+[Scrollers](building-apps/layout/scrollers.html) in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Scroller",
@@ -74,10 +73,13 @@ enyo.kind({
 	},
 	events: {
 		//* Fires when a scrolling action starts.
+		//* Includes scrollBounds field with current values of getScrollBounds
 		onScrollStart: "",
 		//* Fires while a scrolling action is in progress.
+		//* Includes scrollBounds field with current values of getScrollBounds
 		onScroll: "",
 		//* Fires when a scrolling action stops.
+		//* Includes scrollBounds field with current values of getScrollBounds
 		onScrollStop: ""
 	},
 	/**
@@ -223,9 +225,12 @@ enyo.kind({
 	},
 	restoreScrollPosition: function() {
 		if (this.cachedPosition) {
-			this.setScrollLeft(this.cachedPosition.left);
-			this.setScrollTop(this.cachedPosition.top);
-			this.cachedPosition = null;
+			var cp = this.cachedPosition;
+			if (cp.top || cp.left) {
+				this.setScrollLeft(cp.left);
+				this.setScrollTop(cp.top);
+				this.cachedPosition = null;
+			}
 		}
 	},
 	horizontalChanged: function() {
@@ -290,12 +295,17 @@ enyo.kind({
 		this.$.strategy.scrollToNode(inNode, inAlignWithTop);
 	},
 	//* @protected
+	//* Adds current values of getScrollBounds to event
+	decorateScrollEvent: function(inEvent) {
+		inEvent.scrollBounds = inEvent.scrollBounds || this.$.strategy._getScrollBounds();
+	},
 	//* Normalizes scroll event to _onScroll_.
 	domScroll: function(inSender, e) {
 		// if a scroll event originated here, pass it to our strategy to handle
 		if (this.$.strategy.domScroll && e.originator == this) {
 			this.$.strategy.scroll(inSender, e);
 		}
+		this.decorateScrollEvent(e);
 		this.doScroll(e);
 		return true;
 	},
@@ -312,25 +322,39 @@ enyo.kind({
 		should be stopped.
 	*/
 	scrollStart: function(inSender, inEvent) {
-		return this.shouldStopScrollEvent(inEvent);
+		if (!this.shouldStopScrollEvent(inEvent)) {
+			this.decorateScrollEvent(inEvent);
+			return false;
+		}
+		return true;
 	},
 	//* Either propagates or stops the current scroll event.
 	scroll: function(inSender, inEvent) {
 		// note: scroll event can be native dom or generated.
+		var stop;
 		if (inEvent.dispatchTarget) {
 			// allow a dom event if it orignated with this scroller or its strategy
-			return this.preventScrollPropagation && !(inEvent.originator == this ||
+			stop = this.preventScrollPropagation && !(inEvent.originator == this ||
 				inEvent.originator.owner == this.$.strategy);
 		} else {
-			return this.shouldStopScrollEvent(inEvent);
+			stop = this.shouldStopScrollEvent(inEvent);
 		}
+		if (!stop) {
+			this.decorateScrollEvent(inEvent);
+			return false;
+		}
+		return true;
 	},
 	/**
 		Calls _shouldStopScrollEvent_ to determine whether current scroll event
 		should be stopped.
 	*/
 	scrollStop: function(inSender, inEvent) {
-		return this.shouldStopScrollEvent(inEvent);
+		if (!this.shouldStopScrollEvent(inEvent)) {
+			this.decorateScrollEvent(inEvent);
+			return false;
+		}
+		return true;
 	},
 	//* @public
 	//* Scroll to the top of the scrolling region.

@@ -7,9 +7,8 @@
 	handle basic input differently.
 
 	For more information on normalized input events and their associated
-	properties,	see	the documentation on
-	[User Input](https://github.com/enyojs/enyo/wiki/User-Input) in the Enyo
-	Developer Guide.
+	properties,	see	the documentation on [User Input](building-apps/user-input.html)
+	in the Enyo Developer Guide.
 */
 enyo.gesture = {
 	//* @protected
@@ -17,8 +16,7 @@ enyo.gesture = {
 		"screenX", "screenY", "altKey", "ctrlKey", "metaKey", "shiftKey",
 		"detail", "identifier", "dispatchTarget", "which", "srcEvent"],
 	makeEvent: function(inType, inEvent) {
-		// var e = {type: inType};
-		var e = enyo.pool.claimObject();
+		var e = {};
 		e.type = inType;
 		for (var i=0, p; (p=this.eventProps[i]); i++) {
 			e[p] = inEvent[p];
@@ -68,7 +66,6 @@ enyo.gesture = {
 			e.vertical = !e.horizontal;
 		}
 		enyo.dispatch(e);
-		enyo.pool.releaseObject(e);
 	},
 	up: function(inEvent) {
 		var e = this.makeEvent("up", inEvent);
@@ -80,19 +77,15 @@ enyo.gesture = {
 		if (!tapPrevented && this.downEvent && this.downEvent.which == 1) {
 			this.sendTap(e);
 		}
-		enyo.pool.releaseObject(this.downEvent);
 		this.downEvent = null;
-		enyo.pool.releaseObject(e);
 	},
 	over: function(inEvent) {
 		var e = this.makeEvent("enter", inEvent);
 		enyo.dispatch(e);
-		enyo.pool.releaseObject(e);
 	},
 	out: function(inEvent) {
 		var e = this.makeEvent("leave", inEvent);
 		enyo.dispatch(e);
-		enyo.pool.releaseObject(e);
 	},
 	sendTap: function(inEvent) {
 		// The common ancestor for the down/up pair is the origin for the tap event
@@ -101,7 +94,6 @@ enyo.gesture = {
 			var e = this.makeEvent("tap", inEvent);
 			e.target = t;
 			enyo.dispatch(e);
-			enyo.pool.releaseObject(e);
 		}
 	},
 	findCommonAncestor: function(inA, inB) {
@@ -171,8 +163,7 @@ enyo.gesture.events = {
 enyo.requiresWindow(function() {
 	if (document.addEventListener) {
 		document.addEventListener("DOMMouseScroll", function(inEvent) {
-			// var e = enyo.clone(inEvent);
-			var e = enyo.mixin(enyo.pool.claimObject(), inEvent);
+			var e = enyo.clone(inEvent);
 			e.preventDefault = function() {
 				inEvent.preventDefault();
 			};
@@ -180,7 +171,6 @@ enyo.requiresWindow(function() {
 			var p = e.VERTICAL_AXIS == e.axis ? "wheelDeltaY" : "wheelDeltaX";
 			e[p] =  e.detail * -40;
 			enyo.dispatch(e);
-			enyo.pool.releaseObject(e);
 		}, false);
 	}
 });

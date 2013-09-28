@@ -13,8 +13,7 @@
 	appropriate when the popup does not need to scroll along with other content.
 
 	For more information, see the documentation on
-	[Popups](https://github.com/enyojs/enyo/wiki/Popups) in the Enyo Developer
-	Guide.
+	[Popups](building-apps/controls/popups.html) in the Enyo Developer Guide.
  */
 enyo.kind({
 	name: "enyo.Popup",

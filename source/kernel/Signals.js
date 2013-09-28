@@ -8,9 +8,8 @@
 	include Window events, like _onload_ and _onbeforeunload_, and events that
 	occur directly on _document_, like _onkeypress_ if _document_ has the focus.
 
-	For more information, see the
-	<a href="https://github.com/enyojs/enyo/wiki/Signals">Signals documentation</a>
-	in the Enyo Developer Guide.
+	For more information, see the documentation on [Event
+	Handling](key-concepts/event-handling.html) in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Signals",

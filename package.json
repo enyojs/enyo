@@ -13,7 +13,6 @@
     "licenses": [{
         "type": "Apache-2.0", "url": "http://www.apache.org/licenses/LICENSE-2.0"
     }],
-    "bugs": "https://jira.enyojs.com/",
     "repository": {
         "type": "git", "url": "http://github.com/enyojs/enyo"
     },

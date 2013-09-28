@@ -63,15 +63,14 @@
 	If you make changes to _enyo.kind()_, be sure to add or update the appropriate
 	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
 
-	For more information, see the documentation on
-	[Creating Kinds](https://github.com/enyojs/enyo/wiki/Creating-Kinds)
-	in the Enyo Developer Guide.
+	For more information, see the documentation on [Creating
+	Kinds](key-concepts/creating-kinds.html) in the Enyo Developer Guide.
 */
 enyo.kind = function(inProps) {
 	var name = inProps.name || "";
 	// cannot defer unnamed kinds, kinds with static sections, or ones with
 	// noDefer flag set
-	if (name && !inProps.noDefer) {
+	if (!enyo.options.noDefer && name && !inProps.noDefer) {
 		// make a deferred constructor to avoid a lot of kind
 		// processing if we're never used
 		var DeferredCtor = function() {
@@ -189,14 +188,6 @@ enyo.kind.finish = function(inProps) {
 	return ctor;
 };
 
-// if we've defined an enyo.options hash and the noDefer property is set to true,
-// revert kind behavior to old setup where all kind definitions were immediately
-// processed.
-if (enyo.options && enyo.options.noDefer) {
-	enyo.kind = enyo.kind.finish;
-	enyo.kind.finish = enyo.kind;
-}
-
 //* @public
 /**
 	Creates a singleton of a given kind with a given definition.
@@ -272,7 +263,7 @@ enyo.kind.features = [];
 enyo.kind.extendMethods = function(ctor, props, add) {
 	var proto = ctor.prototype || ctor,
 		b = proto.base;
-	if (!proto.inherited) {
+	if (!proto.inherited && b) {
 		proto.inherited = enyo.kind.inherited;
 	}
 	// rename constructor to _constructor to work around IE8/Prototype problems

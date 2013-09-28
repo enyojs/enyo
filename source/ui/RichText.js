@@ -3,11 +3,10 @@
 	such as bold, italics, and underlining.
 
 	The content displayed in a RichText may be accessed at runtime via the
-	`getValue` and `setValue` methods.
+	_getValue()_ and _setValue()_ methods.
 
-	For more information, see the documentation on
-	[Text Fields](https://github.com/enyojs/enyo/wiki/Text-Fields) in the Enyo
-	Developer Guide.
+	For more information, see the documentation on [Text
+	Fields](building-apps/controls/text-fields.html) in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.RichText",

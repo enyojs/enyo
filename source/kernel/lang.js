@@ -179,12 +179,8 @@
 		rv = ((b && b._isObject && b._getters && (fn=b._getters[pr]) && b[fn]()) || b[pr]);
 		// now we set the new value, much simpler
 		b[pr] = value;
-		// now if the base is an enyo object then it can notify and we need to let it try
-		// if the values (previous and current) aren't equal
-		if (b._isObject) {
-			// we only want to notify if the values aren't the same
-			if (rv !== value) { b.notifyObservers(pr, rv, value); }
-		}
+		// only notify if the value has changed or if the update should be forced
+		if (b.notifyObservers && rv !== value || force) { b.notifyObservers(pr, rv, value); }
 		// return the original base reference we made in the first line
 		return c;
 	};
@@ -222,7 +218,7 @@
 	//* Returns a random integer between 0 and a specified upper boundary;
 	//* i.e., 0 <= return value < _inBound_.
 	//
-	//		var randomLetter = String.fromCharCode(enyo.irand(26) + 97);
+	//      var randomLetter = String.fromCharCode(enyo.irand(26) + 97);
 	//
 	enyo.irand = function(inBound) {
 		return Math.floor(Math.random() * inBound);
@@ -753,7 +749,9 @@
 		target, and if _exists_ is true, it will only use truthy values from any of
 		the sources. You may optionally add a _filter_ method-option that returns a
 		true or false value to indicate whether the value should be used. It receives
-		parameters in this order: _key_, _value_, _values_, _options_.
+		parameters in this order: _property_, _source value_, _source values_,
+		_target_, _options_. Note that modifying the target in the filter method can
+		have unexpected results.
 
 		Setting _options_ to true will set all options to true.
 	*/
@@ -774,10 +772,8 @@
 			s = source;
 			o = options;
 		}
-		var release = false;
 		if (!enyo.isObject(o)) {
-			o = enyo.pool.claimObject();
-			release = true;
+			o = {};
 		}
 		if (true === options) {
 			o.ignore = true;
@@ -793,14 +789,11 @@
 			for (n in s) {
 				s$ = s[n];
 				if (empty[n] !== s$) {
-					if ((!o.exists || s$) && (!o.ignore || !t[n]) && (o.filter && enyo.isFunction(o.filter)? o.filter(n, s$, s, o): true)) {
+					if ((!o.exists || s$) && (!o.ignore || !t[n]) && (o.filter && enyo.isFunction(o.filter)? o.filter(n, s$, s, t, o): true)) {
 						t[n] = s$;
 					}
 				}
 			}
-		}
-		if (release) {
-			enyo.pool.releaseObject(o);
 		}
 		return t;
 	};

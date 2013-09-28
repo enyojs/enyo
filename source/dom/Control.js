@@ -9,8 +9,7 @@
 	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
 
 	For more information, see the documentation on
-	<a href="https://github.com/enyojs/enyo/wiki/Creating-Controls">Controls</a>
-	in the Enyo Developer Guide.
+	[Controls](key-concepts/creating-controls.html) in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Control",
@@ -24,8 +23,23 @@ enyo.kind({
 		//* Hash of DOM attributes to apply to the generated HTML tag
 		attributes: null,
 		//* Space-delimited set of CSS classes to apply to the generated HTML tag
+		/**
+			A space-delimited set of CSS classes to apply to the generated DOM node. This
+			string is inheritable but calling `getClasses` will only return the classes that were
+			assigned to the given _control_. To retrieve the string of all classes applied to the
+			given _control_ see the `getCssClasses` method (for the browser set values) or the
+			`getClassAttribute` method for the combination of all classes applied via the _control_
+			inheritance chain.
+		*/
 		classes: "",
-		//* Style attribute to apply to the generated HTML tag
+		/**
+			A string of CSS to apply directly to the generated DOM node. Calling the
+			`setStyle` method will completely reset this value, calling `getStyle` will
+			retrieve the current value for this property which may not be the only _style_
+			applied to the element. To retrieve the current exact CSS string applied to an
+			element see the `getCssText` method. This string is inheritable and will be applied
+			to sub-kinds but their applied CSS will not be retrievable via this property.
+		*/
 		style: "",
 		/**
 			Content that will be generated inside the HTML tag; defaults to
@@ -118,7 +132,8 @@ enyo.kind({
 			// - use addClass instead of setClasses here, by convention 'classes' is reserved for instance objects
 			// - inheritors should 'addClass' to add classes
 			// - setClasses removes the old classes and adds the new one, setClassAttribute replaces all classes
-			this.addClass(this.classes);
+			if (this.kindClasses) { this.addClass(this.kindClasses); }
+			if (this.classes) { this.addClass(this.classes); }
 			this.initProps(["id", "content", "src"]);
 		};
 	}),
@@ -164,15 +179,6 @@ enyo.kind({
 		this.removeClass(inOld);
 		this.addClass(this.classes);
 	},
-	// modify components we create ourselves
-	/*
-	adjustComponentProps: function(inProps) {
-		if (this.controlClasses) {
-			inProps.classes = (inProps.classes ? inProps.classes + " " : "") + this.controlClasses;
-		}
-		sup.apply(this, arguments);
-	},
-	*/
 	addChild: enyo.inherit(function (sup) {
 		return function(inControl) {
 			inControl.addClass(this.controlClasses);
@@ -211,7 +217,9 @@ enyo.kind({
 	*/
 	hasNode: function() {
 		// 'generated' is used to gate access to expensive findNodeById call
-		return this.generated && (this.node || this.findNodeById());
+		// but that doesn't mean we shouldn't check if it has the node even
+		// without the _generated_ flag being set to true...
+		return this.node || (this.generated && this.findNodeById());
 	},
 	/**
 		Appends the string value of _inAddendum_ to the _content_ of this
@@ -364,6 +372,8 @@ enyo.kind({
 	//* @protected
 	initStyles: function() {
 		this.domStyles = this.domStyles? enyo.clone(this.domStyles): {};
+		enyo.Control.cssTextToDomStyles(this.kindStyle + this.style, this.domStyles);
+		this.domCssText = enyo.Control.domStylesToCssText(this.domStyles);
 	},
 	styleChanged: function() {
 		// since we want to reset the style to the default kind styles and whatever
@@ -646,6 +656,29 @@ enyo.kind({
 			height	: h,
 			width	: w
 		};
+	},
+	/**
+		Retrieve any _style_ currently applied to a given _control_ exactly as it is parsed by
+		the browser. Note this string value may differ from browser to browser.
+	*/
+	getCssText: function () {
+		var n = this.node || this.hasNode();
+		if (n) {
+			return n.style.cssText;
+		}
+	},
+	/**
+		Retrieve the string of all classes that are applied to a given _control_ exactly as the
+		browser sets them. Note this may differ from browser to browser. Also note that this is
+		only useful in scenarios where the classes have been modfied outside of the available
+		API from _enyo.Control_ for class manipulation. Otherwise it is recommended that you use
+		the `getClassAttribute` method.
+	*/
+	getCssClasses: function () {
+		var n = this.node || this.hasNode();
+		if (n) {
+			return n.className;
+		}
 	},
 	//* @protected
 	// expensive, other methods do work to avoid calling here
@@ -1028,27 +1061,24 @@ enyo.kind({
 });
 
 enyo.defaultCtor = enyo.Control;
-
-enyo.concatHandler("classes", function (proto, props) {
+enyo.concatHandler("classes", function (proto, props, noKind) {
 	if (props.classes) {
-		var c = proto.classes || "";
-		proto.classes = (c.length? (c + " "): c) + props.classes;
+		if (noKind) {
+			proto.classes = ((proto.classes? (proto.classes + " "): "") + props.classes).replace(/^\s+|\s$/, "");
+		} else {
+			proto.kindClasses = ((proto.kindClasses? proto.kindClasses: "") + (proto.classes? (" " + proto.classes): "")).replace(/^\s+|\s$/, "");
+			proto.classes = props.classes;
+		}
 		delete props.classes;
 	}
 });
 enyo.concatHandler("style", function (proto, props, noKind) {
 	if (props.style) {
-		if (!noKind) {
-			// in an attempt to avoid repeated unnecessary parsing at runtime,
-			// we do this here to remove redundant entries
-			var s = proto.domStyles? enyo.clone(proto.domStyles): {};
-			enyo.Control.cssTextToDomStyles(props.style, s);
-			proto.kindStyle = proto.domCssText = enyo.Control.domStylesToCssText(s);
-			proto.domStyles = s;
+		if (noKind) {
+			proto.style = ((proto.style? proto.style + ";": "") + (" " + props.style)).replace(/;;/g, ";").replace(/^\s+|\s$/, "");
 		} else {
-			// here we don't have a real prototype to work with, so we don't want to
-			// do the initialization parsing that will happen later
-			proto.style = ((proto.style? proto.style + ";": "") + props.style).replace(/;;/g, ";");
+			proto.kindStyle = ((proto.kindStyle? (proto.kindStyle + "; "): "") + (proto.style? (" " + proto.style): "")).replace(/;;/g, ";").replace(/^\s+|\s$/, "");
+			proto.style = props.style;
 		}
 		delete props.style;
 	}

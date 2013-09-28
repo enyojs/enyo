@@ -1,11 +1,12 @@
 //*@public
 /**
-		The _enyo.DataRepeater_ uses _enyo.Collection_ as its _controller_ to repeatedly
-		render and synchronize _records_ (_enyo.Model_ instances) to its own children.
-		For any _record_ in the _collection_ a new child will be rendered in this _repeater_.
-		If the _record_ is destroyed the child will all be destroyed. These controls will
-		automatically update when properties on the underlying _record_ have been modified
-		if bound using `bindings` (_enyo.Binding_).
+		_enyo.DataRepeater_ uses [enyo.Collection](#enyo.Collection) as its
+		_controller_ to repeatedly render and synchronize records (instances of
+		[enyo.Model](#enyo.Model)) to its own children. For any record in the
+		collection, a new child will be rendered in this repeater. If the record is
+		destroyed, the child will be destroyed. These controls will	automatically
+		update when properties on the underlying record are modified if they have
+		been bound using bindings (see [enyo.Binding](#enyo.Binding)).
 */
 enyo.kind({
 	name: "enyo.DataRepeater",
@@ -47,24 +48,11 @@ enyo.kind({
 		Use this hash to define _defaultBindingProperties_ for _all_ children
 		(even children of children) of this repeater. This can be eliminate the
 		need to write the same paths many times. You can also use any	binding
-		macros. Any of the properties defined here will be superseded	by the
-		same property if defined for an individual binding.
+		macros. Any property defined here will be superseded by the same property if
+		defined for an individual binding.
 	*/
 	childBindingDefaults: null,
 	//*@protected
-	childMixins: [enyo.RepeaterChildSupport],
-	concat: ["childMixins"],
-	controlParentName: "container",
-	containerName: "container",
-	containerOptions: {
-		name: "container",
-		classes: "enyo-fill enyo-data-repeater-container"
-	},
-	bindings: [
-		{from: ".controller.length", to: ".length"}
-	],
-	batching: false,
-	_selection: null,
 	initComponents: function () {
 		this.initContainer();
 		var c = this.kindComponents || this.components || [],
@@ -79,7 +67,7 @@ enyo.kind({
 			if (c.length > 1) {
 				d.components = c;
 			}
-			// if there is only one child the properties will be the default kind of the repeater
+			// if there is only one child, the properties will be the default kind of the repeater
 			else {
 				enyo.mixin(d, c[0]);
 			}
@@ -113,8 +101,8 @@ enyo.kind({
 	},
 	//*@public
 	/**
-		Will _destroy_ any existing children in the _repeater_ and create all new
-		children based on the current `data`.
+		Destroys any existing children in the repeater and creates all new children
+		based on the current data.
 	*/
 	reset: function () {
 		// use the facaded dataset because this could be any
@@ -124,8 +112,35 @@ enyo.kind({
 		this.destroyClientControls();
 		// and now we create new ones for each new record we have
 		for (var i=0, r; (r=dd.at(i)); ++i) { this.add(r, i); }
+		this.hasReset = true;
+	},
+	/**
+		Refreshes each control in the dataset.
+	*/
+	refresh: function () {
+		if (!this.hasReset) { return this.reset(); }
+		this.startJob("refreshing", function () {
+			var dd = this.get("data"),
+				cc = this.getClientControls();
+			for (var i=0, c, d; (d=dd.at(i)); ++i) {
+				c = cc[i];
+				if (c) {
+					c.set("model", d);
+				} else {
+					this.add(d, i);
+				}
+			}
+			this.prune();
+		}, 16);
 	},
 	//*@protected
+	rendered: enyo.inherit(function (sup) {
+		return function () {
+			sup.apply(this, arguments);
+			if (this.controller && this.length) { this.reset(); }
+			this.hasRendered = true;
+		};
+	}),
 	add: function (rec, i) {
 		var c = this.createComponent({model: rec, index: i});
 		if (this.generated && !this.batching) { c.render(); }
@@ -136,9 +151,11 @@ enyo.kind({
 		if (c) { c.destroy(); }
 	},
 	prune: function () {
-		var g = this.getClientControls(),
+		var g = this.getClientControls(), x;
+		if (g.length > this.length) {
 			x = g.slice(this.length);
-		for (var i=0, c; (c=x[i]); ++i) { c.destroy(); }
+			for (var i=0, c; (c=x[i]); ++i) { c.destroy(); }
+		}
 	},
 	initContainer: function () {
 		var ops = this.get("containerOptions"),
@@ -149,14 +166,8 @@ enyo.kind({
 			this.$[this.containerName] = this.$[nom];
 		}
 	},
-	handlers: {
-		onSelected: "childSelected",
-		onDeselected: "childDeselected"
-	},
-	_handlers: {
-		"add": "modelsAdded",
-		"remove": "modelsRemoved"
-	},
+	handlers: {onSelected: "childSelected", onDeselected: "childDeselected"},
+	_handlers: {add: "modelsAdded", remove: "modelsRemoved", reset: "refresh"},
 	controllerChanged: enyo.inherit(function (sup) {
 		return function (p) {
 			sup.apply(this, arguments);
@@ -197,14 +208,6 @@ enyo.kind({
 	},
 	getChildForIndex: function (i) {
 		return this.$.container.children[i];
-	},
-	childSelected: function (sender, event) {
-		this.select(event.index);
-		return true;
-	},
-	childDeselected: function (sender, event) {
-		this.deselect(event.index);
-		return true;
 	},
 	data: function () {
 		return this.controller;
@@ -287,10 +290,18 @@ enyo.kind({
 	},
 	//*@protected
 	dataChanged: function () {
-		if (this.controller) { this.reset(); }
+		if (this.controller && this.hasRendered) {
+			this.reset();
+		}
 	},
-	computed: {
-		selected: [],
-		data: ["controller"]
-	}
+	computed: {selected: [], data: ["controller"]},
+	noDefer: true,
+	childMixins: [enyo.RepeaterChildSupport],
+	concat: ["childMixins"],
+	controlParentName: "container",
+	containerName: "container",
+	containerOptions: {name: "container", classes: "enyo-fill enyo-data-repeater-container"},
+	bindings: [{from: ".controller.length", to: ".length"}],
+	batching: false,
+	_selection: null
 });

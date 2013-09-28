@@ -51,7 +51,7 @@ enyo.kind({
 			c  = new enyo.Control(),
 			b  = new enyo.Binding({source: mc, from: ".prop1Computed", target: c, to: ".content"});
 		mc.prop1Computed = function () { return this.get("prop1") + "+2"; };
-		mc.computed["prop1Computed"] = ["prop1"];
+		mc.computed = {prop1Computed: ["prop1"]};
 		mc._computedMap = {prop1: ["prop1Computed"]};
 		mc.set("model", m);
 		mc.set("prop1", "2");
@@ -67,7 +67,7 @@ enyo.kind({
 			b2 = new enyo.Binding({source: mc, from: ".prop2", target: c2, to: ".content"});
 		mc.set("model", m);
 		mc.prop2 = function () { return 4+5; };
-		mc.computed["prop2"] = ["prop1"];
+		mc.computed = {prop2: ["prop1"]};
 		mc._computedMap = {prop1: ["prop2"]};
 		mc.set("prop3", true);
 		b1.destroy();

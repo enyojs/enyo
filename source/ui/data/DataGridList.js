@@ -1,270 +1,89 @@
-(function (enyo) {
-
-	//*@public
+//*@public
+/**
+	_enyo.DataGridList_ is a paginated [enyo.DataList](#enyo.DataList) designed to
+	lay out its children in a grid. Like _enyo.DataList_, it links its children
+	directly to the underlying record in the collection set as its controller.
+	Because the layout is arbitrarily handled, spacing of children must be set
+	using the kind's available API (e.g., _spacing_, _minWidth_, _minHeight_).
+	Note that _enyo.DataGridList_ will attempt to grow or shrink the size of its
+	children in order to keep them evenly spaced.
+*/
+enyo.kind({
+	name: "enyo.DataGridList",
+	kind: enyo.DataList,
 	/**
-		_enyo.DataGridList_ is an <a href="#enyo.DataRepeater">enyo.DataRepeater</a>
-		designed to lay out a grid of its components according to the data supplied
-		by the associated <a href="#enyo.Collection">enyo.Collection</a>. It employs
-		a paginated scrolling scheme to enhance performance with larger datasets.
+		The spacing (in pixels) between elements in the grid list. It should be an
+		even number, or else it will be coerced into one for consistency.
+		This is the exact spacing to be allocated on all sides of each item.
 	*/
-	enyo.kind({
-
-		//*@public
-		name: "enyo.DataGridList",
-
-		//*@public
-		kind: "enyo.DataList",
-
-		//*@public
-		classes: "enyo-data-grid-list",
-
-		//*@public
-		/**
-			The spacing (in pixels) between elements in the grid list. It should be an
-			even number, or else it will be coerced into one for consistency.
-			This is the exact spacing to be allocated on all sides of each item.
-		*/
-		spacing: 10,
-
-		//*@public
-		/**
-			The minimum width (in pixels) for each grid item. Grid items will not be
-			collapsed beyond this size, but they may be proportionally expanded.
-		*/
-		minWidth: 100,
-
-		//*@public
-		/**
-			The minimum height (in pixels) for each grid item. Grid items will not be
-			collapsed beyond this size, but they may be proportionally expanded.
-		*/
-		minHeight: 100,
-
-		//*@protected
-		initComponents: enyo.inherit(function (sup) {
-			return function () {
-				sup.apply(this, arguments);
-				var d = this.defaultProps,
-					c = " enyo-data-grid-list-item";
-				d.classes = (d.classes || "") + c;
-			};
-		}),
-		create: enyo.inherit(function (sup) {
-			return function () {
-				sup.apply(this, arguments);
-				// currently we don't allow anything else
-				this.orientation = "v";
-				this.spacingChanged();
-			};
-		}),
-		showingChanged: enyo.inherit(function (sup) {
-			return function () {
-				sup.apply(this, arguments);
-				if (this.generated && this.showing) {
-					this.resized();
-				}
-			};
-		}),
-		adjustPageSize: function (p) {
-			this.layoutPage(p);
-			this.pages[p.index].height = this.getHeight(p);
-			var $s = "height: " + p.height + "px;";
-			if (p.width != this.width) {
-				p.width = this.pages[p.index].width = this.width;
-				$s += " width: " + p.width + "px;";
+	spacing: 10,
+	/**
+		The minimum width (in pixels) for each grid item. Grid items will not be
+		collapsed beyond this size, but they may be proportionally expanded.
+	*/
+	minWidth: 100,
+	/**
+		The minimum height (in pixels) for each grid item. Grid items will not be
+		collapsed beyond this size, but they may be proportionally expanded.
+	*/
+	minHeight: 100,
+	/**
+		To disable the default smoothing-transitions (for supported platforms) set
+		this flag to `false`.
+	*/
+	allowTransitions: true,
+	//*@protected
+	/**
+		While _enyo.DataList_ provides some generic delegates for handling objects,
+		we have to arbitrarily lay out our children, so we have our own. We add
+		these and ensure that the appropriate delegate is selected depending on the
+		request.
+	*/
+	constructor: enyo.inherit(function (sup) {
+		return function () {
+			var o = this.orientation;
+			// this will only remap _vertical_ and _horizontal_ meaning it is still possible to
+			// add others easily
+			this.orientation = (o == "vertical"? "verticalGrid": (o == "horizontal"? "horizontalGrid": o));
+			var s = this.spacing;
+			// ensure that spacing is set to an even number or zero
+			this.spacing = (s % 2 === 0? s: Math.max(s-1, 0));
+			return sup.apply(this, arguments);
+		};
+	}),
+	/**
+		We ensure that each item being created for the _DataGridList_ has the
+		correct CSS classes so it will display properly (and be movable, since the
+		items must be absolutely positioned).
+	*/
+	initComponents: enyo.inherit(function (sup) {
+		return function () {
+			sup.apply(this, arguments);
+			// note we wait until after the container and its children have been created
+			// so these default properties will only apply to the real children of the grid
+			var d = this.defaultProps,
+				c = " item";
+			d.classes = (d.classes || "") + c;
+		};
+	}),
+	/**
+		We don't want to worry about the normal required handling when showing changes unless
+		we're actually visible and the list has been fully rendered and we actually have
+		some data.
+	*/
+	showingChanged: enyo.inherit(function (sup) {
+		return function () {
+			sup.apply(this, arguments);
+			if (this.$.scroller.generated && this.length && this.showing) {
+				// avoid the default handler and call the event handler method
+				// designated by _enyo.DataList_
+				this.didResize();
 			}
-			p.addStyles($s);
-		},
-		layoutPage: function (p) {
-			if (p.children.length) {
-				// spacing in pixels
-				var $s = this.spacing,
-					$t = $s,
-					$l = 0,
-					$w = this.tileWidth,
-					$h = this.tileHeight,
-					$c = this.columns,
-					r$ = -1, t$, o$;
-				for (var $i=0, c$, j$=0; (c$=p.children[$i]); ++$i) {
-					if (!c$._listDisabledChild) {
-						t$ = "";
-						o$ = j$ % $c;
-						r$ = o$ === 0? r$+1: r$;
-						$t = r$ === 0? $t: $s + (r$ * ($h + $s));
-						$l = o$ === 0? $s: $l + ($w + $s);
-						if (c$.top != $t) {
-							t$ += "top: " + (c$.top = $t) + "px; ";
-						}
-						if (c$.left != $l) {
-							t$ += "left: " + (c$.left = $l) + "px; ";
-						}
-						if (c$.width != $w) {
-							t$ += "width: " + (c$.width = $w) + "px; ";
-						}
-						if (c$.height != $h) {
-							t$ += "height: " + (c$.height = $h) + "px;";
-						}
-						if (t$) {
-							c$.addStyles(t$);
-						}
-						++j$;
-					}
-				}
-				p.rows = r$ + 1;
-			}
-		},
-		generatePage: enyo.inherit(function (sup) {
-			return function (p, n) {
-				sup.apply(this, arguments);
-				this.adjustPageSize(p);
-			};
-		}),
-		getHeight: enyo.inherit(function (sup) {
-			return function (n) {
-				if (n && (n.name == "page1" || n.name == "page2")) {
-					/*jshint boss:true*/
-					return (n.height = this.getPageHeight(n));
-				}
-				return sup.apply(this, arguments);
-			};
-		}),
-		getPageHeight: function (p) {
-			if (p.children.length) {
-				var $a = 0;
-				for (var $i=0, c$; (c$=p.children[$i]); ++$i) {
-					if (!c$._listDisabledChild) {
-						++$a;
-					}
-				}
-				return (Math.floor($a / this.columns) + ($a % this.columns? 1: 0)) * (this.tileHeight + this.spacing);
-			}
-			return 0;
-		},
-		updateSizing: enyo.inherit(function (sup) {
-			return function () {
-				sup.apply(this, arguments);
-				var $w = this.width,
-					$s = this.spacing,
-					$m = this.minWidth,
-					$h = this.minHeight;
-				for (var $i=0, p$; (p$=this.$.active.children[$i]); ++$i) {
-					if (p$.width != $w) {
-						p$.applyStyle("width", $w + "px");
-					}
-				}
-				this.columns = Math.floor(($w - $s) / ($m + $s));
-				this.columns = Math.max(this.columns, 1);
-				this.tileWidth = Math.floor(($w - (this.columns * $s) - $s) / this.columns);
-				this.tileHeight = Math.floor($h * (this.tileWidth / $m));
-				this.adjustControlsPerPage();
-				this.adjustDefaultPageSize();
-			};
-		}),
-		adjustControlsPerPage: function () {
-			var $c = this.columns,
-				$p = this.controlsPerPage,
-				$h = this.height,
-				$t = (this.tileHeight + this.spacing), m$, p$, u$ = false;
-			p$ = Math.ceil($p / $c) * $t;
-			m$ = $p % $c;
-			if (p$ < $h) {
-				u$ = true;
-			}
-			while (!(m$ === 0 && p$ > $h) && p$ > 0 && $h > 0) {
-				// no matter what, if the total row-heights don't add up to the full
-				// size necessary to fill the page, we have to increment this number
-				if (p$ < $h) {
-					++$p;
-					// we set this to true so that if for some reason decrementing it
-					// causes us to be too small again, we won't get stuck in an infinite
-					// loop; it will just increase the size properly to make it work
-					u$ = true;
-				} else if (m$ !== 0 && !u$) {
-					// we can decrement in this case because we have too many and
-					// we don't want to create any more
-					--$p;
-				} else {
-					// here we may be the right number of rows but not the right number
-					// of children to fill those rows, so we need to increment to match
-					// the number of columns
-					++$p;
-				}
-				p$ = Math.ceil($p / $c) * $t;
-				m$ = $p % $c;
-			}
-			this.controlsPerPage = $p;
-			if ($p > this.$.page1.children.length) {
-				for (var $i=0; (p$=this.$.active.children[$i]); ++$i) {
-					this.resetPage(p$);
-				}
-			}
-		},
-		adjustDefaultPageSize: function () {
-			var $s = this.spacing,
-				$h = this.tileHeight,
-				$c = this.columns,
-				$p = this.controlsPerPage,
-				$t = Math.floor($p / $c) * ($h + $s);
-			this.defaultPageSize = $t;
-			// invalidate all known sizes as their cached value is
-			// useless now
-			for (var $i=0, p$; (p$=this.pages[$i]); ++$i) {
-				this.pages[$i].height = $t;
-			}
-		},
-		adjustBuffer: function () {
-			if (this.length) {
-				var $v = this.length,
-					$s = this.spacing,
-					$h = this.tileHeight,
-					$c = this.columns,
-					$t = ((Math.floor($v / $c) + ($v % $c? 1: 0)) * ($h + $s)) + $s;
-				if (this.$.buffer.height != $t) {
-					this.$.buffer.applyStyle("height", (this.$.buffer.height = $t) + "px");
-				}
-			}
-			if (this.$.buffer.width != this.width) {
-				this.$.buffer.applyStyle("width", (this.$.buffer.width = this.width) + "px");
-			}
-		},
-		layoutPages: function () {
-			var $s = this.$.scroller.getScrollTop(),
-				$i, $k;
-			this.refresh();
-			$i = this.getPagePosition(this.$.page1.index);
-			$k = this.getPagePosition(this.$.page2.index);
-			if ($s < Math.min($i, $k) || $s > Math.max($i, $k)) {
-				this._noScroll = true;
-				this.$.scroller.setScrollTop(Math.min($i, $k));
-				this._noScroll = false;
-			}
-		},
-		updateMetrics: function () {
-			this.pageCount = Math.ceil(this.length / this.controlsPerPage);
-			this.bufferSize = 0;
-			for (var $i=0; $i<this.pageCount; ++$i) {
-				this.bufferSize += this.getPageSize($i);
-			}
-			this.adjustBuffer();
-		},
-		spacingChanged: function () {
-			// tile spacing needs to be an even number
-			var $t = this.spacing;
-			if ($t % 2 !== 0) {
-				this.spacing = $t > 0? $t-1: 0;
-			}
-			if (this.generated && this.$.scroller.canGenerate) {
-				this.startJob("layoutPages", this.layoutPages, 100);
-			}
-		},
-		didScroll: enyo.inherit(function (sup) {
-			return function (sender, event) {
-				if (!this._noScroll) {
-					return sup.apply(this, arguments);
-				}
-				return true;
-			};
-		})
-	});
-
-})(enyo);
+		};
+	}),
+	//*@protected
+	//* We access this kind's constructor and need it to be undeferred at that time.
+	noDefer: true,
+	//* All of the CSS is relative to this class.
+	classes: "enyo-data-grid-list"
+});

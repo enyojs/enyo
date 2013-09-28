@@ -14,9 +14,9 @@
 	If you make changes to _enyo.Ajax_, be sure to add or update the appropriate
 	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/ajax/tests).
 
-	For more information, see the documentation on
-	[Consuming Web Services](https://github.com/enyojs/enyo/wiki/Consuming-Web-Services)
-	in the Enyo Developer Guide.
+	For more information, see the documentation on [Consuming Web
+	Services](building-apps/consuming-web-services.html) in the Enyo Developer
+	Guide.
 */
 enyo.kind({
 	name: "enyo.Ajax",
@@ -53,6 +53,7 @@ enyo.kind({
 	are case-insensitive.
 	*/
 	go: function(inParams) {
+		this.failed = false;
 		this.startTimer();
 		this.request(inParams);
 		return this;

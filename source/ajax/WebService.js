@@ -9,23 +9,23 @@ enyo.kind({
 /**
 	_enyo.WebService_ is a component that performs Web requests (_XmlHttpRequest_).
 
-	Internally, _enyo.WebService_ uses _enyo.Async_ subkinds (namely,
-	<a href="#enyo.Ajax">enyo.Ajax</a> and
-	<a href="#enyo.JsonpRequest">enyo.JsonpRequest</a>) to manage transactions.
-	The _send_ method returns the Async instance used by the request.
+	Internally, _enyo.WebService_ uses [enyo.Async](#enyo.Async) subkinds (namely,
+	[enyo.Ajax](#enyo.Ajax) and	[enyo.JsonpRequest](#enyo.JsonpRequest) to manage
+	transactions.	The _send()_ method returns the Async instance used by the
+	request.
 
 	_enyo.WebService_ uses _enyo.Ajax_ by default and, like _enyo.Ajax_, it
-	publishes all the properties of the
-	<a href="#enyo.AjaxProperties">enyo.AjaxProperties</a> object.
+	publishes all the properties of the	[enyo.AjaxProperties](#enyo.AjaxProperties)
+	object.
 
-	To use `enyo.JsonpRequest` instead of `enyo.Ajax`, set `json` to `true`.
+	To use _enyo.JsonpRequest_ instead of _enyo.Ajax_, set _jsonp_ to _true_.
 
 	If you make changes to _enyo.WebService_, be sure to add or update the
 	appropriate [unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/ajax/tests).
 
-	For more information, see the documentation on
-	[Consuming Web Services](https://github.com/enyojs/enyo/wiki/Consuming-Web-Services)
-	in the Enyo Developer Guide.
+	For more information, see the documentation on [Consuming Web
+	Services](building-apps/consuming-web-services.html) in the Enyo Developer
+	Guide.
 */
 enyo.kind({
 	name: "enyo.WebService",

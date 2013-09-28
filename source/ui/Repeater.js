@@ -21,8 +21,7 @@
 	other event handlers further up the tree try to modify your item control.
 
 	For more information, see the documentation on
-	[Lists](https://github.com/enyojs/enyo/wiki/Lists) in the Enyo Developer
-	Guide.
+	[Lists](building-apps/layout/lists.html) in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Repeater",
@@ -112,15 +111,6 @@ enyo.kind({
 				if (inEvent.delegate && inEvent.delegate.owner === this) {
 					inEvent.delegate = this.owner;
 				}
-			}
-			sup.apply(this, arguments);
-		};
-	}),
-	// extending enyo.Component.delegateEvent
-	delegateEvent: enyo.inherit(function (sup) {
-		return function(inDelegate, inName, inEventName, inEvent, inSender) {
-			if (inDelegate == this) {
-				inDelegate = this.owner.owner;
 			}
 			sup.apply(this, arguments);
 		};

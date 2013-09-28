@@ -40,8 +40,8 @@
 	appropriate [unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
 
 	For more information, see the documentation on
-	[Components](https://github.com/enyojs/enyo/wiki/Creating-Components)
-	in the Enyo Developer Guide.
+	[Components](key-concepts/creating-components.html)	in the Enyo Developer
+	Guide.
 */
 enyo.kind({
 	name: "enyo.Component",
@@ -99,7 +99,6 @@ enyo.kind({
 			// initialize instance objects
 			this._componentNameMap = {};
 			this.$ = {};
-			this.__jobs = {};
 			sup.apply(this, arguments);
 		};
 	}),
@@ -211,7 +210,7 @@ enyo.kind({
 				'but this is an error condition and should be fixed.');
 		}
 		this.$[n] = inComponent;
-		this.notifyObservers("$");
+		this.notifyObservers("$." + n);
 	},
 	//* Removes _inComponent_ from the list of components owned by the current
 	//* component (i.e., _this.$_).
@@ -321,12 +320,8 @@ enyo.kind({
 			return;
 		}
 		var e = inEvent || {};
-		// FIXME: is this the right place?
-		// if (!("originator" in e)) {
 		if (!enyo.exists(e.originator)) {
 			e.originator = inSender || this;
-			// FIXME: use indirection here?
-			//e.delegate = e.originator.delegate || e.originator.owner;
 		}
 		return this.dispatchBubble(inEventName, e, inSender || this);
 	},
@@ -354,9 +349,11 @@ enyo.kind({
 		// Bubble to next target
 		var e = inEvent || {};
 		var next = this.getBubbleTarget();
-		var delegate = e.delegate;
 		if (next) {
-			return next.dispatchBubble(inEventName, e, delegate || this);
+			// use delegate as sender if it exists to preserve illusion
+			// that event is dispatched directly from that, but we still
+			// have to bubble to get decorations
+			return next.dispatchBubble(inEventName, e, e.delegate || this);
 		}
 		return false;
 	},
@@ -383,24 +380,33 @@ enyo.kind({
 		// we don't know where to release it
 		var delegate = (event || (event = {})).delegate;
 		var ret;
-		// bottleneck event decoration
-		this.decorateEvent(name, event, sender);
-		// dispatch via the handlers block if possible
-		if (this.handlers && this.handlers[name] &&
-			this.dispatch(this.handlers[name], event, sender)) {
-			return true;
+		// bottleneck event decoration w/ optimization to avoid call to empty function
+		if (this.decorateEvent !== enyo.Component.prototype.decorateEvent) {
+			this.decorateEvent(name, event, sender);
 		}
 
-		if (this[name]) {
-			if ("function" === typeof this[name]) {
-				if (delegate && this === delegate.owner) {
-					return this.dispatch(name, event, sender);
-				}
-			} else {
-				// otherwise we dispatch it up because it is a remap of another event
-				if (!delegate) {
-					event.delegate = this;
-				}
+		// first, handle any delegated events intended for this object
+		if (delegate && delegate.owner === this) {
+			// the most likely case is that we have a method to handle this
+			if (this[name] && "function" === typeof this[name]) {
+				return this.dispatch(name, event, sender);
+			}
+			// but if we don't, just stop the event from going further
+			return;
+		}
+
+		// for non-delgated events, try the handlers block if possible
+		if (!delegate) {
+			if (this.handlers && this.handlers[name] &&
+				this.dispatch(this.handlers[name], event, sender)) {
+				return true;
+			}
+			// then check for a delegate property for this event
+			if (this[name] && enyo.isString(this[name])) {
+				// we dispatch it up as a special delegate event with the
+				// component that had the delegation string property stored in
+				// the "delegate" property
+				event.delegate = this;
 				ret = this.bubbleUp(this[name], event, sender);
 				delete event.delegate;
 				return ret;
@@ -420,35 +426,14 @@ enyo.kind({
 		return this.bubbleUp(inEventName, inEvent, inSender);
 	},
 	decorateEvent: function(inEventName, inEvent, inSender) {
-		// an event may float by us as part of a dispatchEvent chain or delegateEvent
+		// an event may float by us as part of a dispatchEvent chain
 		// both call this method so intermediaries can decorate inEvent
 	},
-	bubbleDelegation: function(inDelegate, inName, inEventName, inEvent, inSender) {
-		if (this._silenced) {
-			return;
-		}
-		// next target in bubble sequence
-		var next = this.getBubbleTarget();
-		if (next) {
-			return next.delegateEvent(inDelegate, inName, inEventName, inEvent, inSender);
-		}
-	},
-	delegateEvent: function(inDelegate, inName, inEventName, inEvent, inSender) {
-		if (this._silenced) {
-			return;
-		}
-		// override this method to play tricks with delegation
-		// bottleneck event decoration
-		this.decorateEvent(inEventName, inEvent, inSender);
-		// by default, dispatch this event if we are in fact the delegate
-		if (inDelegate == this) {
-			return this.dispatch(inName, inEvent, inSender);
-		}
-		return this.bubbleDelegation(inDelegate, inName, inEventName, inEvent, inSender);
-	},
 	stopAllJobs: function() {
-		for (var jobName in this.__jobs) {
-			this.stopJob(jobName);
+		if (this.__jobs) {
+			for (var jobName in this.__jobs) {
+				this.stopJob(jobName);
+			}
 		}
 	},
 	//* @public
@@ -544,14 +529,14 @@ enyo.kind({
 	*/
 	startJob: function(inJobName, inJob, inWait, inPriority) {
 		inPriority = inPriority || 5;
-
+		var jobs = (this.__jobs = this.__jobs || {});
 		// allow strings as job names, they map to local method names
 		if (enyo.isString(inJob)) {
 			inJob = this[inJob];
 		}
 		// stop any existing jobs with same name
 		this.stopJob(inJobName);
-		this.__jobs[inJobName] = setTimeout(this.bindSafely(function() {
+		jobs[inJobName] = setTimeout(this.bindSafely(function() {
 			enyo.jobs.add(this.bindSafely(inJob), inPriority, inJobName);
 		}), inWait);
 	},
@@ -559,9 +544,10 @@ enyo.kind({
 		Stops a component-specific job before it has been activated.
 	*/
 	stopJob: function(inJobName) {
-		if (this.__jobs[inJobName]) {
-			clearTimeout(this.__jobs[inJobName]);
-			delete this.__jobs[inJobName];
+		var jobs = (this.__jobs = this.__jobs || {});
+		if (jobs[inJobName]) {
+			clearTimeout(jobs[inJobName]);
+			delete jobs[inJobName];
 		}
 		enyo.jobs.remove(inJobName);
 	},
@@ -571,8 +557,9 @@ enyo.kind({
 		for the next _inWait_ milliseconds.
 	*/
 	throttleJob: function(inJobName, inJob, inWait) {
+		var jobs = (this.__jobs = this.__jobs || {});
 		// if we still have a job with this name pending, return immediately
-		if (this.__jobs[inJobName]) {
+		if (jobs[inJobName]) {
 			return;
 		}
 		// allow strings as job names, they map to local method names
@@ -580,7 +567,7 @@ enyo.kind({
 			inJob = this[inJob];
 		}
 		inJob.call(this);
-		this.__jobs[inJobName] = setTimeout(this.bindSafely(function() {
+		jobs[inJobName] = setTimeout(this.bindSafely(function() {
 			this.stopJob(inJobName);
 		}), inWait);
 	}
@@ -693,10 +680,9 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 	if (!inProto[fn]) {
 		inProto[fn] = function(payload) {
 			// bubble this event
-			var e = payload, c = false;
+			var e = payload;
 			if (!e) {
-				c = true;
-				e = enyo.pool.claimObject();
+				e = {};
 			}
 			var d = e.delegate;
 			// delete payload.delegate;
@@ -707,9 +693,6 @@ enyo.Component.addEvent = function(inName, inValue, inProto) {
 			this.bubble(inName, e);
 			if (d) {
 				e.delegate = d;
-			}
-			if (c) {
-				enyo.pool.releaseObject(e);
 			}
 		};
 		// NOTE: Mark this function as a generated event handler to allow us to
