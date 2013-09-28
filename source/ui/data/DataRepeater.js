@@ -138,7 +138,7 @@ enyo.kind({
 		return function () {
 			sup.apply(this, arguments);
 			if (this.controller && this.length) { this.reset(); }
-			this._didRender = true;
+			this.hasRendered = true;
 		};
 	}),
 	add: function (rec, i) {
@@ -290,7 +290,7 @@ enyo.kind({
 	},
 	//*@protected
 	dataChanged: function () {
-		if (this.controller && this._didRender) {
+		if (this.controller && this.hasRendered) {
 			this.reset();
 		}
 	},
