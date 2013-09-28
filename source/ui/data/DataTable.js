@@ -7,9 +7,5 @@ enyo.kind({
 	kind: "enyo.DataRepeater",
 	defaultKind: "enyo.TableRow",
 	style: "display: table;",
-	containerOptions: {
-		kind: "enyo.Table",
-		name: "container",
-		style: "width: 100%;"
-	}
+	containerOptions: {kind: "enyo.Table", name: "container", style: "width: 100%;"}
 });
