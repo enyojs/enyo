@@ -39,16 +39,16 @@ enyo.BindingSupport = {
 		this instance is destroyed, all the bindings that it owns will also be
 		destroyed. If this method is called too early (i.e., before bindings have
 		been fully initialized), it will add the properties to the initialization
-		queue and return _undefined_.
+		queue and return _undefined_. If no `kind` is explicitly defined in the _binding_
+		properties it will be assigned as either the _kind's_ `defaultBindingKind` or
+		the global `enyo.defaultBindingKind`.
 	*/
 	binding: function () {
 		var defs = enyo.toArray(arguments),
 			bs = this.bindings || (this.bindings = []),
-			props = enyo.mixin(defs),
-			dl = this.bindingDefaults, bd;
-		props.kind = props.kind || this.defaultBindingKind || enyo.defaultBindingKind;
+			props = enyo.mixin(defs), bd;
 		props.owner = props.owner || this;
-		if (dl) { enyo.mixin(props, dl, {ignore: true}); }
+		props.kind = props.kind || this.defaultBindingKind || enyo.defaultBindingKind;
 		if (this._bindingSupportInitialized === false) {
 			bs.push(props);
 		} else {
@@ -251,6 +251,19 @@ enyo.BindingSupport = {
 	_bindingSyncAllowed: true,
 	_bindingSyncQueue: null
 };
+//*@protected
+enyo.concatHandler("bindings", function (proto, props) {
+	if (props.bindings) {
+		var k = props.defaultBindingKind || enyo.defaultBindingKind,
+			d = props.bindingDefaults;
+		for (var i=0, b; (b=props.bindings[i]); ++i) {
+			if (d) { enyo.mixin(b, d, {ignore: true}); }
+			b.kind = b.kind || k;
+		}
+		proto.bindings = proto.bindings? proto.bindings.concat(props.bindings): props.bindings;
+		delete props.bindings;
+	}
+});
 //*@public
 /**
 	BindingSupport is available on instances of _enyo.Object_, but it is necessary
