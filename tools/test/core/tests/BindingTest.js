@@ -201,5 +201,42 @@ enyo.kind({
 			(c.$.child2.content != "ChildShared" && "defaults were not applied") ||
 			(c.$.child3.content != "Shared" && "defaults were used even with explicit property")
 		);
+	},
+	testDefaultPropertiesOnSubkind: function () {
+		enyo.kind({
+			name: "test.BDP",
+			bindingDefaults: {target: ".$"},
+			components: [
+				{name: "first"},
+				{name: "last"}
+			],
+			bindings: [
+				// should expand to .firstName -> .$.first.content
+				{from: ".firstName", to: ".first.content"},
+				// should expand to .lastName -> .$.last.content
+				{from: ".lastName",to: ".last.content"}
+			]
+		});
+		var c = enyo.singleton({
+			kind: "test.BDP",
+			bindingDefaults: {source: ".model"},
+			model: new enyo.Model({firstName: "Ben", lastName: "Combee"}),
+			bindings: [
+				// should expand to .model.firstName -> .firstName
+				{from: ".firstName", to: ".firstName"},
+				// should expand to .model.lastName -> .lastName
+				{from: ".lastName", to: ".lastName"}
+			]
+		});
+		this.finish(
+			(c.firstName !== "Ben" && "model -> property binding failed") ||
+			(c.lastName !== "Combee" && "model -> property binding failed") ||
+			(c.$.first.content !== "Ben" && "property -> content binding failed") ||
+			(c.$.last.content !== "Combee" && "property -> content binding failed") ||
+			(c.bindings[0].to !== ".$.first.content" && "inner binding 'target' defaults failed to be applied") ||
+			(c.bindings[1].to !== ".$.last.content" && "inner binding 'target' defaults failed to be applied") ||
+			(c.bindings[2].from !== ".model.firstName" && "outer binding 'source' defaults failed to be applied") ||
+			(c.bindings[3].from !== ".model.lastName" && "outer binding 'source' defaults failed to be applied")
+		);
 	}
 });

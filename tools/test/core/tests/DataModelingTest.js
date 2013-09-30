@@ -1,41 +1,43 @@
+/*global test:true */
 enyo.kind({
 	name: "ModelTests",
 	kind: enyo.TestSuite,
 	noDefer: true,
 	testCreate: function () {
-		new enyo.Model();
+		var store = enyo.singleton({name: "test.store", kind: enyo.Store});
+		new enyo.Model(null, {store: store});
 		this.finish();
 	},
 	testDestroy: function () {
-		var m    = enyo.store.findLocal({kindName: "enyo.Model"})[0],
+		var m    = test.store.findLocal({kindName: "enyo.Model"})[0],
 			euid = m.euid;
 		m.destroyLocal();
 		this.finish(
 			(!m.destroyed && "model was not marked destroyed") ||
 			(m.store && "store reference not removed") ||
-			(enyo.store.records.euid[euid] && "store did not remove the record properly") ||
-			(enyo.store.records.kn["enyo.Model"][euid] && "store did not remove the record properly")
+			(test.store.records.euid[euid] && "store did not remove the record properly") ||
+			(test.store.records.kn["enyo.Model"][euid] && "store did not remove the record properly")
 		);
 	},
 	testSetAttribute: function () {
-		var m = new enyo.Model();
+		var m = new enyo.Model(null, {store: test.store});
 		m.set("prop", true);
 		this.finish(m.attributes.prop !== true && "did not properly set the attribute value");
 	},
 	testGetAttribute: function () {
-		var m = enyo.store.findLocal({kindName: "enyo.Model"})[0],
+		var m = test.store.findLocal({kindName: "enyo.Model"})[0],
 			v = m.get("prop");
 		m.destroyLocal();
 		this.finish(v !== true && "did not properly retrieve the attribute value");
 	},
 	testGetComputedAttribute: function () {
-		var m = new enyo.Model({greet: function () {return "Hi.";}}),
+		var m = new enyo.Model({greet: function () {return "Hi.";}}, {store: test.store}),
 			v = m.get("greet");
 		m.destroyLocal();
 		this.finish(v != "Hi." && "did not retrieve the computed attribute properly");
 	},
 	testObservers: function () {
-		var m  = new enyo.Model({id: 70}),
+		var m  = new enyo.Model({id: 70}, {store: test.store}),
 			fn, id;
 		fn = function (p, v, r) {id=v;};
 		m.addObserver("id", fn);
@@ -44,7 +46,7 @@ enyo.kind({
 		this.finish(id != 71 && "observer didn't fire");
 	},
 	testEvents: function () {
-		var m  = new enyo.Model({id: 70}),
+		var m  = new enyo.Model({id: 70}, {store: test.store}),
 			fn, id;
 		fn = function (r) {id=r.get("id");};
 		m.addListener("change", fn);
@@ -54,8 +56,8 @@ enyo.kind({
 	},
 	testDefaultsAttributes: function () {
 		/*global test:true */
-		enyo.kind({name: "test.Model", kind: enyo.Model, defaults: {prop1: "", prop2: undefined, prop3: null, prop4: 0, prop5: "prop5", prop6: 74}});
-		var m = new test.Model({prop5: "newProp5", prop6: 0, prop7: "prop7"});
+		enyo.kind({name: "test.Model", kind: enyo.Model, store: test.store, defaults: {prop1: "", prop2: undefined, prop3: null, prop4: 0, prop5: "prop5", prop6: 74}});
+		var m = new test.Model({prop5: "newProp5", prop6: 0, prop7: "prop7"}, {store: test.store});
 		this.finish(
 			(m.attributes.prop1 !== "" && "default empty string missing") ||
 			(m.attributes.hasOwnProperty("prop2") && "undefined defaults aren't supposed to be used") ||

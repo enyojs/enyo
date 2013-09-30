@@ -26,15 +26,6 @@ enyo.BindingSupport = {
 	*/
 	bindings: null,
 	/**
-		If the _expandMacros_ flag is true for a binding (the default), then the
-		owner of the binding may create custom expansion rules for specific
-		properties or override defaults if necessary. Add the macro tokens you would
-		like to expand to this hash and map them to either a property path to use
-		instead of the macro, or to a method that will return the correct path for
-		macro expansion.
-	*/
-	bindingMacros: null,
-	/**
 		Set this to a hash of the available options to supply to all bindings
 		created by this object. The defaults will only be used if the specified
 		properties are not found in the binding definition.
@@ -48,16 +39,16 @@ enyo.BindingSupport = {
 		this instance is destroyed, all the bindings that it owns will also be
 		destroyed. If this method is called too early (i.e., before bindings have
 		been fully initialized), it will add the properties to the initialization
-		queue and return _undefined_.
+		queue and return _undefined_. If no `kind` is explicitly defined in the _binding_
+		properties it will be assigned as either the _kind's_ `defaultBindingKind` or
+		the global `enyo.defaultBindingKind`.
 	*/
 	binding: function () {
 		var defs = enyo.toArray(arguments),
 			bs = this.bindings || (this.bindings = []),
-			props = enyo.mixin(defs),
-			dl = this.bindingDefaults, bd;
-		props.kind = props.kind || this.defaultBindingKind || enyo.defaultBindingKind;
+			props = enyo.mixin(defs), bd;
 		props.owner = props.owner || this;
-		if (dl) { enyo.mixin(props, dl, {ignore: true}); }
+		props.kind = props.kind || this.defaultBindingKind || enyo.defaultBindingKind;
 		if (this._bindingSupportInitialized === false) {
 			bs.push(props);
 		} else {
@@ -252,25 +243,6 @@ enyo.BindingSupport = {
 		return fn;
 	},
 	/**
-		Used internally by bindings to expand macros by exposing public API features
-		to aid in dynamic macro expansion. Attempts to use special properties (if
-		they were set) to handle specific macros, overriding normal handling.
-	*/
-	_bindingExpandMacro: function (lex, token, macro, prop, binding) {
-		var ms = this.bindingMacros;
-		if (ms) {
-			var m = ms[lex];
-			if (m) {
-				var fn = this[m];
-				if (fn && enyo.isFunction(fn)) {
-					m = fn.call(this, lex, token, macro, prop, binding);
-				}
-				return m;
-			}
-		}
-		return token;
-	},
-	/**
 		Flag that indicates whether bindings have been initialized for this object.
 		It is used as an explicit _false_ test because it is removed from the object
 		instance once initialized, to reduce object clutter.
@@ -279,6 +251,19 @@ enyo.BindingSupport = {
 	_bindingSyncAllowed: true,
 	_bindingSyncQueue: null
 };
+//*@protected
+enyo.concatHandler("bindings", function (proto, props) {
+	if (props.bindings) {
+		var k = props.defaultBindingKind || enyo.defaultBindingKind,
+			d = props.bindingDefaults;
+		for (var i=0, b; (b=props.bindings[i]); ++i) {
+			if (d) { enyo.mixin(b, d, {ignore: true}); }
+			b.kind = b.kind || k;
+		}
+		proto.bindings = proto.bindings? proto.bindings.concat(props.bindings): props.bindings;
+		delete props.bindings;
+	}
+});
 //*@public
 /**
 	BindingSupport is available on instances of _enyo.Object_, but it is necessary
@@ -314,12 +299,3 @@ enyo.ComponentBindingSupport = {
 		};
 	})
 };
-//*@protected
-enyo.concatHandler("bindingMacros", function (proto, props) {
-	if (props.bindingMacros) {
-		var pm = proto.bindingMacros || (proto.bindingMacros = {}),
-			rm = props.bindingMacros;
-		enyo.mixin(enyo.clone(pm), rm);
-		delete props.bindingMacros;
-	}
-});
