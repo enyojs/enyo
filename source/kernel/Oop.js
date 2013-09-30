@@ -319,7 +319,21 @@ enyo.kind.inherited = function (originals, replacements) {
 	// warning to notify developers they are calling a
 	// super method that doesn't exist
 	if ("function" === typeof fn) {
-		return fn.apply(this, replacements? enyo.mixin(originals, replacements): originals);
+		var args = originals;
+		if (replacements) {
+			// combine the two arrays, with the replacements taking the first
+			// set of arguments, and originals filling up the rest.
+			args = [];
+			var i = 0, l = replacements.length;
+			for (; i < l; ++i) {
+				args[i] = replacements[i];
+			}
+			l = originals.length;
+			for (; i < l; ++i) {
+				args[i] = originals[i];
+			}
+		}
+		return fn.apply(this, args);
 	} else {
 		enyo.warn("enyo.kind.inherited: unable to find requested " +
 			"super-method from -> " + originals.callee.displayName + " in " + this.kindName);
