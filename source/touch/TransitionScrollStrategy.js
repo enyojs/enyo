@@ -136,6 +136,12 @@ enyo.kind({
 			this.scrollVertical = false;
 		}
 	},
+	intervalChanged: function() {
+		// TODO: Implement variable speed implementation
+		if (this.interval != enyo.TransitionScrollStrategy.prototype.interval) {
+			this.warn("'interval' not implemented in TransitionScrollStrategy");
+		}
+	},
 	calcScrollNode: function() {
 		return this.$.clientContainer.hasNode();
 	},
