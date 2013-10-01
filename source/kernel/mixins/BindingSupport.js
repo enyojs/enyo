@@ -39,9 +39,9 @@ enyo.BindingSupport = {
 		this instance is destroyed, all the bindings that it owns will also be
 		destroyed. If this method is called too early (i.e., before bindings have
 		been fully initialized), it will add the properties to the initialization
-		queue and return _undefined_. If no `kind` is explicitly defined in the _binding_
-		properties it will be assigned as either the _kind's_ `defaultBindingKind` or
-		the global `enyo.defaultBindingKind`.
+		queue and return _undefined_. If no kind is explicitly defined in the
+		binding properties, it will be assigned as either the kind's
+		_defaultBindingKind_ or the global _enyo.defaultBindingKind_.
 	*/
 	binding: function () {
 		var defs = enyo.toArray(arguments),
