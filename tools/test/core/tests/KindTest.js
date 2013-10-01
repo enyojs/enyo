@@ -93,7 +93,27 @@ enyo.kind({
 			k.destroy();
 		}
 		this.finish();
+	},
+	testInheritedCall: function() {
+		var K = enyo.kind({
+			foo: function(a, b, c) {
+				if (a + b === c) {
+					return true;
+				}
+				return false;
+			}
+		});
+		var K2 = enyo.kind({
+			kind: K,
+			foo: function() {
+				return this.inherited(arguments, [1, 4]);
+			}
+		});
+		var k2 = new K2();
+		if (k2.foo(2, 4, 5)) {
+			this.finish();
+		} else {
+			this.finish("this.inherited didn't allow argument override");
+		}
 	}
-
-
 });
