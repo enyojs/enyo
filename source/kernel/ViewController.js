@@ -1,58 +1,64 @@
 //*@public
 /**
-	The _enyo.ViewController_ is designed to manage the lifecycle of a
-	particular _view_ (enyo.Control) that it owns. It has the capability of
-	being used to control when a _view_ is inserted into the DOM, where, manage
-	events bubbled from the _view_, and isolate (or encapsulate) the entire _view_
-	hierarchy below it. In other use-cases it could be implemented as a _component_
-	in a larger hierarchy and instead of injecting its _view_ into the DOM directly
-	will insert it into its _parent_. Of course it can also be used on the _controller_
-	property of another _view_ although this would remove its own _view_ from the
-	_enyo.Component_ bubbling hierarchy (by default).
+	_enyo.ViewController_ is designed to manage the lifecycle of a particular view
+	([enyo.Control](#enyo.Control)) that it owns. It is capable of controlling
+	when a view is inserted into the DOM and where, managing events bubbled from
+	the view, and isolating (or encapsulating) the entire view hierarchy below it.
+	Alternatively, it may be implemented as a component in a larger hierarchy, in
+	which case it will inject its view into its parent rather than directly into
+	the DOM. And, of course, a ViewController may be used as the _controller_
+	property of another view, although this usage will (by default) result in the
+	removal of its own view from the [enyo.Component](#enyo.Component) bubbling
+	hierarchy.
 */
 enyo.kind({
 	name: "enyo.ViewController",
 	kind: "enyo.Controller",
 	/**
-		The `view` property can either be a constructor (or string naming a _kind_), an
-		instance of _enyo.Control_, a string representing the path to an instance of
-		_enyo.Control_, an object description of the view (object literal/hash), or null if it will
-		be set later. Setting this property to a constructor (or a string naming a _kind_) when active 
-		will automatically create an instance of that kind according to any of the settings for this 
-		_controller_. If the _view_ is set as an instance it will be rendered according to the properties
-		of the _controller_. If this property is a constructor it will be preserved in the `viewKind` property.
-		Once initialization is complete, the instance of this _controller's_ _view_ will be available
-		via this property.
+		The _view_ property may either be a constructor (or string naming a kind),
+		an instance of _enyo.Control_, a string representing the path to an instance
+		of _enyo.Control_, an object description of the view (object literal/hash),
+		or _null_ if it will be set later. Setting this property to a constructor
+		(or string naming a kind) will automatically create an instance of that kind
+		according to this controller's settings. If the view is set to an instance,
+		it will be rendered according to the properties of the controller. If this
+		property is a constructor, it will be preserved in the _viewKind_ property.
+		Once initialization is complete, the instance of this controller's view will
+		be available via this property.
 	*/
 	view: null,
 	/**
-		This is the preserved _kind_ for the `view` of this _controller_. You can set this to a constructor
-		or a string that is resolved to a constructor (or the `view` property). Either way, if a `view` is
-		set explicitly or this property was used the constructor will be available at this property.
+		The preserved kind for this controller's view. You may set this to a
+		constructor or a string that resolves to a constructor (or the _view_
+		property). In either case, if a view is set explicitly or this property is
+		used, the constructor will be available via this property.
 	*/
 	viewKind: null,
 	/**
-		This property will designate where the _controller's_ _view_ will render. This should be a string
-		of either `document.body` or the DOM `id` of a node (either inserted by an _enyo.Control_ or
-		static HTML already in the `document.body`). If the _controller_ has a `parent` (because it was
-		instantiated as a _component_ in an _enyo.Control_) this property will be ignored and the _view_
-		will instead be rendered in the `parent`. This would not happen if the _controller_ is a _component_
-		of _enyo.Component_ or is set as the `controller` property of an _enyo.Control_. The default is
-		`document.body`.
+		Designates where the controller's view will render. This should be a string
+		consisting of either _"document.body"_ (the default) or the DOM id of a node
+		(either inserted by an _enyo.Control_ or static HTML already in the
+		_document.body_). If the controller has a parent (because it was
+		instantiated as a component in an _enyo.Control_), this property will be
+		ignored and the view will instead be rendered in the parent. This will not
+		happen if the controller is a component of _enyo.Component_ or is set as the
+		_controller_ property of an _enyo.Control_.
 	*/
 	renderTarget: "document.body",
 	/**
-		When the `view` of the _controller_ has its `destroy` method called it will automatically trigger
-		its removal from the _controllers_ `view` property. By default, the _controller_ will not create
-		a new `view` (from `viewKind`) automatically unless this flag is set to `true`, the default is
-		`false`.
+		When the view of the controller has its _destroy()_ method called, it
+		automatically triggers its own removal from the controller's _view_
+		property. By default, the controller will not create a new _view_ (from
+		_viewKind_) automatically unless this flag is set to true (the default is
+		false).
 	*/
 	resetView: false,
 	/**
-		If possible, will render its `view`. If the _controller_ is a component of a UiComponent the
-		`view` will be rendered into its `container`, otherwise the `view` will be rendered into the
-		`renderTarget` of the _controller_. If the `view` is already rendered this will do nothing.
-		Optional target will be used instead of `renderTarget`.
+		Renders the controller's view, if possible. If the controller is a component
+		of a UiComponent, the view will be rendered into its container; otherwise,
+		the view will be rendered into the controller's _renderTarget_. If the view
+		is already rendered, this method will do nothing.  If specified, the
+		optional _target_ parameter will be used instead of _renderTarget_.
 	*/
 	render: function (target) {
 		var v = this.view,
@@ -68,17 +74,18 @@ enyo.kind({
 		}
 	},
 	/**
-		Will render the `view` into the requested _target_ and set the `renderTarget`
+		Renders the view into the requested _target_ and sets the _renderTarget_
 		property to _target_.
 	*/
 	renderInto: function (target) {
 		this.render((this.renderTarget=target));
 	},
 	/**
-		Responds to changes of the `view` property of the _controller_ during initialization or whenever
-		`set("view", ...)` is called. If a constructor is found it will be instanced or resolved from a string.
-		If there was a previous `view` already and the _controller_ is the `owner` it will be destroyed otherwise
-		simply removed.
+		Responds to changes in the controller's _view_ property during
+		initialization or whenever _set("view", ...)_ is called. If a constructor is
+		found, it will be instanced or resolved from a string. If a	previous view
+		exists and the controller is its owner, it will be destroyed; otherwise, it
+		will simply be removed.
 	*/
 	viewChanged: function (previous) {
 		if (previous) {
@@ -108,7 +115,7 @@ enyo.kind({
 			v = this.createComponent(d, {
 				owner: this,
 				// if this controller is a component of a UiComponent kind then it
-				// will have assigned a `container` that we can add to the child
+				// will have assigned a container that we can add to the child
 				// so it will register as a child and control to be rendered in the
 				// correct location
 				container: this.container || null,
