@@ -22,7 +22,7 @@ enyo.kind({
 		this.finish(
 			(!vc.view && "view was somehow lost") ||
 			(!(vc.view instanceof enyo.Control) && "view was not an enyo.Control") ||
-			(vc.view.owner !== vc && "view's name was lost and owner not set correctly")
+			(vc.view.owner !== vc && "owner not set correctly")
 		);
 	},
 	testCreateViewFromViewKind: function () {
@@ -34,7 +34,7 @@ enyo.kind({
 		this.finish(
 			(!vc.view && "view was somehow lost") ||
 			(!(vc.view instanceof enyo.Control) && "view was not an enyo.Control") ||
-			(vc.view.owner !== vc && "view's name was lost and owner not set correctly")
+			(vc.view.owner !== vc && "owner not set correctly")
 		);
 	},
 	testCreateViewFromViewKindStringConstructor: function () {
@@ -48,7 +48,7 @@ enyo.kind({
 		this.finish(
 			(!vc.view && "view was somehow lost") ||
 			(!(vc.view instanceof enyo.Control) && "view was not an enyo.Control") ||
-			(vc.view.owner !== vc && "view's name was lost and owner not set correctly")
+			(vc.view.owner !== vc && "owner not set correctly")
 		);
 	},
 	testCreateViewFromViewStringConstructor: function () {
@@ -62,7 +62,7 @@ enyo.kind({
 		this.finish(
 			(!vc.view && "view was somehow lost") ||
 			(!(vc.view instanceof enyo.Control) && "view was not an enyo.Control") ||
-			(vc.view.owner !== vc && "view's name was lost and owner not set correctly")
+			(vc.view.owner !== vc && "owner not set correctly")
 		);
 	},
 	testEventsFromViewToController: function () {
@@ -132,5 +132,36 @@ enyo.kind({
 			v  = vc.$.controller.$.vcv;
 		test.ViewController.CVC = undefined;
 		v.doBubbleEvent();
+	},
+	testAddLiveView: function () {
+		var v  = new enyo.Control(),
+			vc = new enyo.ViewController();
+		vc.set("view", v);
+		this.finish(
+			(!vc.view && "view was somehow lost") ||
+			(!(vc.view instanceof enyo.Control) && "view was not an enyo.Control") ||
+			(vc.view.owner === vc && "view's owner was set as the controller even though it didn't create it") ||
+			(vc.view.bubbleTarget !== vc && "view's bubbleTarget was not the controller") ||
+			(vc.view !== v && "somehow the view doesn't match the instance added")
+		);
+	},
+	testSwapLiveViews: function () {
+		var c  = 0,
+			v1 = new enyo.singleton({kind: "enyo.Control", events: {onBubbleEvent: ""}}),
+			v2 = new enyo.singleton({kind: "enyo.Control", events: {onBubbleEvent: ""}}),
+			vc = enyo.singleton({
+				kind: "enyo.ViewController",
+				handlers: {
+					onBubbleEvent: "eventCaught"
+				},
+				eventCaught: enyo.bind(this, function () { ++c; })
+			});
+		vc.set("view", v1);
+		this.finish(
+			(vc.view.doBubbleEvent() && c !== 1 && "event from first live view did not propagate") ||
+			(vc.set("view", v2) && vc.view.doBubbleEvent() && c !== 2 && "event from second live view did not propagate") ||
+			(v1.doBubbleEvent() && c === 3 && "event from removed live view still bubbled event to controller") ||
+			(vc.destroy() && v2.destroyed && "destroying the controller also destroyed the view")
+		);
 	}
 });
