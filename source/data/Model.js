@@ -80,7 +80,7 @@
 			of the record at initialization. Any value in _defaults_ that already
 			exists on the attributes schema will be ignored.
 		*/
-		defaults: null,
+		defaults: {},
 		/**
 			Set this flag to true if this model is read-only and will not need to
 			commit or destroy any changes via a source. This will cause a _destroy()_
@@ -137,7 +137,7 @@
 			Set this to an array of keys to use for comparative purposes when using
 			the _merge_ strategy in the store or any collection.
 		*/
-		mergeKeys: null,
+		mergeKeys: [],
 		/**
 			An arbitrary, unique value that is assigned to every model. Models may be
 			requested via this property in collections and the store. Unlike
@@ -178,9 +178,9 @@
 				this.notifyObservers(prop, rv, value);
 				// if this is a dependent of a computed property we mark that
 				// as changed as well
-				if (this._computedMap) {
-					if (this._computedMap[prop]) {
-						var ps = this._computedMap[prop];
+				if (this.computedMap) {
+					if (this.computedMap[prop]) {
+						var ps = this.computedMap[prop];
 						for (var i=0, p; (p=ps[i]); ++i) {
 							this.notifyObservers(p);
 							this.changed[p] = this.get(p);
@@ -212,12 +212,12 @@
 				}
 				if (ch) {
 					this.notifyObservers();
-					if (this._computedMap) {
+					if (this.computedMap) {
 						for (k in this.changed) {
 							// if this is a dependent of a computed property we mark that
 							// as changed as well
-							if (this._computedMap[k]) {
-								var ps = this._computedMap[k];
+							if (this.computedMap[k]) {
+								var ps = this.computedMap[k];
 								for (var i=0, p; (p=ps[i]); ++i) {
 									this.notifyObservers(p);
 									this.changed[p] = this.get(p);
@@ -422,6 +422,7 @@
 			this.changed = null;
 			this.defaults = null;
 			this.includeKeys = null;
+			this.mergeKeys = null;
 			this.destroyed = true;
 		},
 		/**
@@ -498,52 +499,22 @@
 			}
 			s = this.store = s || enyo.store;
 			s.addRecord(this);
-		},
-		//*@protected
-		concat: ["mergeKeys"]
+		}
 	});
 	//*@protected
-	enyo.Model.subclass = function (ctor, props) {
-		var p  = ctor.prototype || ctor,
-			ra = props.attributes,
-			// only clone when we absolutely need to
-			pa = (p.attributes && (ra && enyo.clone(p.attributes)) || p.attributes) || {},
-			rd = props.defaults,
-			// only clone when we absolutely need to
-			pd = (p.defaults && (rd && enyo.clone(p.defaults)) || p.defaults) || {},
-			rc = props.computed,
-			pc = (p.computed && (rc && enyo.clone(p.computed)) || p.computed) || {};
-
-		// handle attributes of the kind so all subkinds will accurately
-		// have the mixture of the schema
-		if (ra) { enyo.mixin(pa, ra) && (delete props.attributes); }
-		// always assign the prototype's attributes
-		p.attributes = pa;
-		// handle defaults of the kind so all subkinds will accurately
-		// have the mixture of the defaults
-		if (rd) { enyo.mixin(pd, rd) && (delete props.defaults); }
-		// always assign the prototype's defaults
-		p.defaults = pd;
-		if (rc) { enyo.mixin(pc, rc) && (delete props.computed); }
-		p.computed = pc;
-		// if there are computed properties for this model we need to remap them
-		// now for fast access later
-		if (rc) {
-			// we only want to do this for new computed properties since its
-			// already been done for the kind's own
-			var m = (p._computedMap && enyo.clone(p._computedMap)) || {};
-			for (var k in rc) {
-				// this is any of the known dependents of the computed method
-				var ds = rc[k];
-				// iterate over those and map each of those to any computed methods
-				// dependent on it
-				for (var i=0, d; (d=ds[i]); ++i) {
-					// if we don't already have this in the map we have to create it
-					if (!m[d]) { m[d] = []; }
-					m[d].push(k);
-				}
-			}
-			p._computedMap = m;
+	enyo.Model.concat = function (ctor, props) {
+		var p = ctor.prototype || ctor;
+		if (props.attributes) {
+			p.attributes = (p.attributes? enyo.mixin(enyo.clone(p.attributes), props.attributes): props.attributes);
+			delete props.attributes;
+		}
+		if (props.defaults) {
+			p.defaults = (p.defaults? enyo.mixin(enyo.clone(p.defaults), props.defaults): props.defaults);
+			delete props.defaults;
+		}
+		if (props.mergeKeys) {
+			p.mergeKeys = (p.mergeKeys? enyo.merge(p.mergeKeys, props.mergeKeys): props.mergeKeys.slice());
+			delete props.mergeKeys;
 		}
 	};
 })(enyo);

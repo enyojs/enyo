@@ -32,7 +32,7 @@
 		method on the instance and pass it the name of (or a reference to) the mixin,
 		or an array of mixins.
 	*/
-	enyo.concat.push("mixins");
+
 	//*@protected
 	/**
 		We add the feature that will execute last in the feature chain but will scan
@@ -92,9 +92,14 @@
 		}
 	};
 	enyo.kind.features.push(mixinsFeature);
-	enyo.concatHandler("mixins", function (proto, props) {
-		proto.mixins = enyo.merge(proto.mixins, props.mixins);
-	});
+	var fn = enyo.concatHandler;
+	enyo.concatHandler = function (ctor, props) {
+		if (props.mixins) {
+			var p = ctor.prototype || ctor;
+			p.mixins = (p.mixins? p.mixins.concat(props.mixins): props.mixins.slice());
+		}
+		fn.apply(this, arguments);
+	};
 	enyo.kind.extendMethods(enyo.kind.statics, {
 		extend: enyo.inherit(function (sup) {
 			return function (props, target) {

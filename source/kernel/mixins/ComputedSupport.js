@@ -1,32 +1,13 @@
 (function (enyo) {
-
+		
 	//*@protected
-	enyo.concat.push("computed");
-	/**
-		Used because, when cloning objects with arrays, we need to also
-		clone the arrays.
-	*/
-	var _clone = function (obj) {
-		var c = {};
-		for (var k in obj) {
-			if (enyo.isArray(obj[k])) {
-				c[k] = enyo.cloneArray(obj[k]);
-			} else if (enyo.isObject(obj[k])) {
-				c[k] = enyo.clone(obj[k]);
-			} else {
-				c[k] = obj[k];
-			}
-		}
-		return c;
-	};
-	
 	// this is called when we need an instance-specific computed table so
 	// runtime modifications are unique to the instance and not the kind, also
 	// note that once the kind is instanced modifications to the _computed_
 	// block will not be registered
 	var _instanceMap = function(obj, prop) {
 		if (!obj.hasOwnProperty(prop)) {
-			obj[prop] = obj[prop]? _clone(obj[prop]): {};
+			obj[prop] = obj[prop]? enyo.clone(obj[prop]): {};
 		}
 		return obj[prop];
 	};
@@ -98,8 +79,11 @@
 		*/
 		notifyObservers: enyo.inherit(function (sup) {
 			return function (path, prev, value) {
-				var map = _instanceMap(this, "_computedMap"), n;
+				var map = _instanceMap(this, "computedMap"), n;
 				if ((n = map[path])) {
+					if (typeof n == "string") {
+						n = map[path] = n.replace(/^\s+|\s+$/, "").split(" ");
+					}
 					for (var i=0, p; (p=n[i]); ++i) {
 						// this is a dependency of one of our computed properties
 						// so we will flag it as being dirty and queue the notification
@@ -120,8 +104,12 @@
 			};
 		}),
 		_getComputed: function (path) {
-			var ca = _instanceMap(this, "_computedCached"), c;
+			var ca = _instanceMap(this, "computedCached"), c;
 			if ((c = ca[path])) {
+				if (typeof c != "object") {
+					c = ca[path] = {};
+					c.dirty = true;
+				}
 				// if the cache says the computed property is dirty,
 				// we have to fetch a current value
 				if (c.dirty) {
@@ -143,10 +131,13 @@
 			be entered more than once.
 		*/
 		_markComputed: function (path) {
-			var ca = _instanceMap(this, "_computedCached"),
-				q = this._computedQueue || (this._computedQueue = {}),
+			var ca = _instanceMap(this, "computedCached"),
+				q = this.computedQueue || (this.computedQueue = {}),
 				p = null, c;
 			if ((c = ca[path])) {
+				if (typeof c != "object") {
+					c = ca[path] = {};
+				}
 				// it is cached so we mark it as dirty and use its previous
 				// known value as the value entered in the queue
 				p = c.value;
@@ -155,18 +146,17 @@
 			q[path] = p;
 		},
 		_isComputed: function (path) {
-			return (this.computed? (!! this.computed[path]): false);
+			var c = _instanceMap(this, "computed");
+			return (c && c[path] !== undefined && c[path] !== null);
 		},
 		_flushComputedQueue: function () {
-			if (!this._computedQueue) { return; }
+			if (!this.computedQueue) { return; }
 			// forced to throw away old queue object so we don't accidentally
 			// use incorrect values later
 			// also for immutability of the queue we are forced to clone it
 			// since the operation is synchronous and recursive
-			// TODO: If this causes too much overhead, we may need to find an
-			// alternative way to do this
-			var q = enyo.clone(this._computedQueue);
-			this._computedQueue = {};
+			var q = this.computedQueue;
+			this.computedQueue = {};
 			for (var k in q) {
 				// where q[k] is the previous value or null and we retrieve (once) the most
 				// recent value of the computed property if it was cached this will reset the
@@ -174,73 +164,40 @@
 				this.notifyObservers(k, q[k], this._getComputed(k));
 			}
 		},
-		_computedMap: null,
-		_computedQueue: null,
-		_computedCached: null
+		computedMap: null,
+		computedQueue: null,
+		computedCached: null
 	};
 	//*@protected
-	/**
-		Used when handling concatenated properties.
-	*/
-	enyo.concatHandler("computed", function (proto, props) {
+	var fn = enyo.concatHandler;
+	enyo.concatHandler = function (ctor, props) {
+		// call the original
+		fn.apply(this, arguments);
+		// now we have to ensure we properly maintain the computed properties
+		// for any kind but we want to do the least amount of work possible
 		if (props.computed) {
-			var po, ro, k, map, a, i, dep, ca;
-			// unfortunately there are 2 steps here but its all for the better
-			// good in terms of overall performance, we take this hit once per kind
-			// call and only if there are any computed to mess with anyways
-			// first step is to maintain the user-friendly observer declarations
-			if (!proto.computed) {
-				proto.computed = props.computed;
+			var p = ctor.prototype || ctor;
+			if (!p.computed) {
+				p.computed = {};
+				p.computedCached = {};
+				p.computedMap = {};
 			} else {
-				po = _clone(proto.computed),
-				ro = props.computed;
-				for (k in ro) {
-					if (po[k]) {
-						po[k] = enyo.merge(po[k], ro[k]);
+				p.computed = enyo.clone(p.computed);
+				p.computedCached = enyo.clone(p.computedCached);
+				p.computedMap = enyo.clone(p.computedMap);
+			}
+			for (var k in props.computed) {
+				p.computed[k] = (p.computed[k] || "") + (typeof props.computed[k] == "string"? props.computed[k]: props.computed[k].join(" "));
+				for (var i=0, d; (d=props.computed[k][i]); ++i) {
+					if (typeof d == "object" && d.cached) {
+						p.computedCached[k] = true;
 					} else {
-						po[k] = ro[k];
+						p.computedMap[d] = ((p.computedMap[d] || "") + " " + k);
 					}
 				}
-				proto.computed = po;
 			}
-			// second step is to maintain the implementation-friendly mapping
-			// of dependencies to their respective handlers so that we don't spend
-			// runtime always trying to determine who handles what and the lookup
-			// penalty is very small
-			if (proto.computed) {
-				map = proto._computedMap? _clone(proto._computedMap): {};
-				ca = proto._computedCached? _clone(proto._computedCached): {};
-				po = proto.computed;
-				for (k in po) {
-					a = po[k];
-					for (i=0; (dep=a[i]); ++i) {
-						// we need to catch any remove the configurations hash if it
-						// is present
-						if (enyo.isObject(dep)) {
-							// currently the only option we care about are the cached computed
-							// properties
-							if (dep.cached) {
-								if (!ca[k]) {
-									ca[k] = {dirty: true};
-								}
-							}
-						} else {
-							if (map[dep]) {
-								// ensure we only have unique entries so we don't accidentally
-								// notify the same handler more than once
-								map[dep].push(k);
-								map[dep] = enyo.merge(map[dep]);
-							} else {
-								map[dep] = [k];
-							}
-						}
-					}
-				}
-				proto._computedMap = map;
-				proto._computedCached = ca;
-				delete props.computed;
-			}
+			delete props.computed;
 		}
-	});
+	};
 
 })(enyo);

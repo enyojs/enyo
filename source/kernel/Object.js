@@ -1,5 +1,3 @@
-//*@protected
-enyo.concat.push("published");
 //*@public
 /**
 _enyo.Object_ lies at the heart of the Enyo framework's implementations of
@@ -26,9 +24,6 @@ enyo.kind({
 	kind: null,
 	noDefer: true,
 	//*@public
-	// concatenated properties (default)
-	concat: enyo.concat,
-	//*@public
 	/**
 		An array of strings representing mixins to be applied
 		to this kind at the end of the constructor routine.
@@ -48,7 +43,7 @@ enyo.kind({
 	importProps: function (props) {
 		if (props) {
 			var k;
-			enyo.handleConcatenatedProperties(this, props);
+			enyo.concatHandler(this, props);
 			// if props is a default hash this is significantly faster than
 			// requiring the hasOwnProperty check every time
 			if (!props.kindName) {
@@ -184,10 +179,10 @@ enyo.kind({
 //* @protected
 enyo._objectCount = 0;
 
-enyo.concatHandler("published", function(proto, props) {
+enyo.Object.concat = function (ctor, props) {
 	var pp = props.published;
 	if (pp) {
-		var cp = proto;
+		var cp = ctor.prototype || ctor;
 		for (var n in pp) {
 			// need to make sure that even though a property is "published"
 			// it does not overwrite any computed properties
@@ -195,7 +190,8 @@ enyo.concatHandler("published", function(proto, props) {
 			enyo.Object.addGetterSetter(n, pp[n], cp);
 		}
 	}
-});
+};
+
 
 //*@protected
 /**

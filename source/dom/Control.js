@@ -81,8 +81,6 @@ enyo.kind({
 		isContainer: false
 	},
 	//*@protected
-	concat: ["classes", "style", "attributes"],
-	//*@protected
 	//* Layout direction. Left-to-right (false) or right-to-left (true)
 	//* Should only be read by widget developers (sub-kinders), and normally never set by end developers
 	rtl: false,
@@ -1006,7 +1004,7 @@ enyo.kind({
 		cssTextToDomStyles: function(inText, inStyleHash, remove) {
 			if (inText) {
 				// rules are separated by any number of spaces and semicolons
-				var rules = inText.split(/\s*;[\s;]*/);
+				var rules = inText.replace(/;$/, "").split(/\s*;[\s;]*/);
 				// parse string styles into name/value pairs
 				for (var i=0, s, n, v, rule; (rule=rules[i]); i++) {
 					// "background-image: url(http://foo.com/foo.png)" => ["background-image", "url(http", "//foo.com/foo.png)"]
@@ -1056,40 +1054,40 @@ enyo.kind({
 				}
 			}
 			return h;
+		},
+		normalizeCssStyleString: function (inText) {
+			return (inText + ";").replace(/;;+/g, ";").replace(/^\s*?;/, "").replace(/;\s*(?!$)/g, "; ").replace(/:\s*/g, ": ").replace(/^\s+|\s+$/, "");
 		}
 	}
 });
 
 enyo.defaultCtor = enyo.Control;
-enyo.concatHandler("classes", function (proto, props, noKind) {
+//*@protected
+enyo.Control.concat = function (ctor, props, instance) {
+	var p = ctor.prototype || ctor;
 	if (props.classes) {
-		if (noKind) {
-			proto.classes = ((proto.classes? (proto.classes + " "): "") + props.classes).replace(/^\s+|\s$/, "");
+		if (instance) {
+			p.classes = ((p.classes? (p.classes + " "): "") + props.classes).replace(/^\s+|\s+$/, "");
 		} else {
-			proto.kindClasses = ((proto.kindClasses? proto.kindClasses: "") + (proto.classes? (" " + proto.classes): "")).replace(/^\s+|\s$/, "");
-			proto.classes = props.classes;
+			p.kindClasses = ((p.kindClasses? p.kindClasses: "") + (p.classes? (" " + p.classes): "")).replace(/^\s+|\s+$/, "");
+			p.classes = props.classes;
 		}
 		delete props.classes;
 	}
-});
-enyo.concatHandler("style", function (proto, props, noKind) {
 	if (props.style) {
-		if (noKind) {
-			proto.style = ((proto.style? proto.style + ";": "") + (" " + props.style)).replace(/;;/g, ";").replace(/^\s+|\s$/, "");
+		if (instance) {
+			p.style = enyo.Control.normalizeCssStyleString((p.style? (p.style + ";"): "") + (" " + (props.style + ";")));
 		} else {
-			proto.kindStyle = ((proto.kindStyle? (proto.kindStyle + "; "): "") + (proto.style? (" " + proto.style): "")).replace(/;;/g, ";").replace(/^\s+|\s$/, "");
-			proto.style = props.style;
+			p.kindStyle = enyo.Control.normalizeCssStyleString((p.kindStyle? (p.kindStyle + "; "): "") + (p.style? (" " + p.style): ""));
+			p.style = enyo.Control.normalizeCssStyleString(props.style);
 		}
 		delete props.style;
 	}
-});
-enyo.concatHandler("attributes", function (proto, props) {
 	if (props.attributes) {
-		var attrs = proto.attributes? enyo.clone(proto.attributes): {};
-		proto.attributes = enyo.mixin(attrs, props.attributes);
+		p.attributes = (p.attributes? enyo.mixin(enyo.clone(p.attributes), props.attributes): props.attributes);
 		delete props.attributes;
 	}
-});
+};
 
 //*@public
 /**
