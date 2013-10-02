@@ -170,21 +170,33 @@
 		*/
 		set: function (prop, value) {
 			if (enyo.isObject(prop)) { return this.setObject(prop); }
-			var rv = this.attributes[prop];
+			var rv = this.attributes[prop],
+				ch, en;
 			if (rv && "function" == typeof rv) { return this; }
 			if (rv !== value) {
 				this.previous[prop] = rv;
+				if (this.computedMap) {
+					if ((en=this.computedMap[prop])) {
+						if (typeof en == "string") {
+							en = this.computedMap[prop] = en.replace(/^\s+|\s+$/, "").split(" ");
+						}
+						ch = {};
+						for (var i=0, p; (p=en[i]); ++i) {
+							this.attributes[prop] = rv;
+							this.previous[p] = ch[p] = this.get(p);
+							this.attributes[prop] = value;
+							this.changed[p] = this.get(p);
+						}
+					}
+				}
+				
 				this.changed[prop] = this.attributes[prop] = value;
 				this.notifyObservers(prop, rv, value);
 				// if this is a dependent of a computed property we mark that
 				// as changed as well
-				if (this.computedMap) {
-					if (this.computedMap[prop]) {
-						var ps = this.computedMap[prop];
-						for (var i=0, p; (p=ps[i]); ++i) {
-							this.notifyObservers(p);
-							this.changed[p] = this.get(p);
-						}
+				if (ch) {
+					for (var k in ch) {
+						this.notifyObservers(k);
 					}
 				}
 				this.triggerEvent("change");
@@ -201,30 +213,30 @@
 		setObject: function (props) {
 			if (props) {
 				var ch = false,
-					rv, k;
+					rv, k, en;
 				for (k in props) {
 					rv = this.attributes[k];
 					if (rv && "function" == typeof rv) { continue; }
 					if (rv === props[k]) { continue; }
 					this.previous[k] = rv;
+					if (this.computedMap) {
+						if ((en=this.computedMap[k])) {
+							if (typeof en == "string") {
+								en = this.computedMap[k] = en.replace(/^\s+|\s+$/, "").split(" ");
+							}
+							for (var i=0, p; (p=en[i]); ++i) {
+								this.attributes[k] = rv;
+								this.previous[p] = this.get(p);
+								this.attributes[k] = props[k];
+								this.changed[p] = this.get(p);
+							}
+						}
+					}
 					this.changed[k] = this.attributes[k] = props[k];
 					ch = true;
 				}
 				if (ch) {
 					this.notifyObservers();
-					if (this.computedMap) {
-						for (k in this.changed) {
-							// if this is a dependent of a computed property we mark that
-							// as changed as well
-							if (this.computedMap[k]) {
-								var ps = this.computedMap[k];
-								for (var i=0, p; (p=ps[i]); ++i) {
-									this.notifyObservers(p);
-									this.changed[p] = this.get(p);
-								}
-							}
-						}
-					}
 					this.triggerEvent("change");
 					this.changed = {};
 					this.dirty = true;
@@ -263,7 +275,9 @@
 		//*@protected
 		importProps: function (p) {
 			if (p) {
-				if (p.defaults || p.attributes || p.computed) { enyo.Model.subclass(this, p); }
+				if (p.defaults || p.attributes || p.computed) { 
+					enyo.concatHandler(this, p);
+				}
 				for (var k in p) { k != "parse" && (this[k] = p[k]); }
 			}
 		},
