@@ -163,5 +163,17 @@ enyo.kind({
 			(v1.doBubbleEvent() && c === 3 && "event from removed live view still bubbled event to controller") ||
 			(vc.destroy() && v2.destroyed && "destroying the controller also destroyed the view")
 		);
+	},
+	testConditionalDestroyedViewWhenChanged: function () {
+		var vc1 = enyo.singleton({kind: "enyo.ViewController", viewKind: enyo.Control}),
+			vc2 = enyo.singleton({kind: "enyo.ViewController", viewKind: enyo.Control, resetView: true}),
+			v1  = vc1.view,
+			v2  = vc2.view;
+		v1.destroy();
+		v2.destroy();
+		this.finish(
+			((!v1.destroyed || vc1.view === v1 || v1.bubbleTarget === vc1) && "view was not properly removed when destroyed or removed") ||
+			((!v2.destroyed || vc2.view === v2 || !vc2.view || v2.bubbleTarget === vc2) && "view was not properly destroyed or recreated with resetView flag")
+		);
 	}
 });

@@ -28,10 +28,9 @@ enyo.kind({
 	/**
 		This is the preserved _kind_ for the `view` of this _controller_. You can set this to a constructor
 		or a string that is resolved to a constructor (or the `view` property). Either way, if a `view` is
-		set explicitly or this property was used the constructor will be available at this property. The default
-		is _enyo.Control_.
+		set explicitly or this property was used the constructor will be available at this property.
 	*/
-	viewKind: "enyo.Control",
+	viewKind: null,
 	/**
 		This property will designate where the _controller's_ _view_ will render. This should be a string
 		of either `document.body` or the DOM `id` of a node (either inserted by an _enyo.Control_ or
@@ -42,6 +41,13 @@ enyo.kind({
 		`document.body`.
 	*/
 	renderTarget: "document.body",
+	/**
+		When the `view` of the _controller_ has its `destroy` method called it will automatically trigger
+		its removal from the _controllers_ `view` property. By default, the _controller_ will not create
+		a new `view` (from `viewKind`) automatically unless this flag is set to `true`, the default is
+		`false`.
+	*/
+	resetView: false,
 	/**
 		If possible, will render its `view`. If the _controller_ is a component of a UiComponent the
 		`view` will be rendered into its `container`, otherwise the `view` will be rendered into the
@@ -77,7 +83,10 @@ enyo.kind({
 	viewChanged: function (previous) {
 		if (previous) {
 			previous.set("bubbleTarget", null);
-			if (previous.owner === this) { previous.destroy(); }
+			if (previous.owner === this && !previous.destroyed) {
+				previous.destroy();
+			}
+			if (previous.destroyed && !this.resetView) { return; }
 		}
 		var v = this.view;
 		// if it is a string resolve it
@@ -92,9 +101,10 @@ enyo.kind({
 			this.viewKind = enyo.getPath(this.viewKind);
 		}
 		if ((!v && this.viewKind) || (v && typeof v == "object" && !(v instanceof enyo.UiComponent))) {
-			var d = (typeof v == "object" && v) || {kind: this.viewKind};
+			var d = (typeof v == "object" && v !== null && !v.destroyed && v) || {kind: this.viewKind},
+				s = this;
 			// in case it isn't set...
-			d.kind = d.kind || this.viewKind;
+			d.kind = d.kind || this.viewKind || enyo.defaultCtor;
 			v = this.createComponent(d, {
 				owner: this,
 				// if this controller is a component of a UiComponent kind then it
@@ -104,7 +114,19 @@ enyo.kind({
 				container: this.container || null,
 				bubbleTarget: this
 			});
-		} else {
+			v.extend({
+				destroy: enyo.inherit(function (sup) {
+					return function () {
+						sup.apply(this, arguments);
+						// if the bubble target is the view contorller then we need to
+						// let it know we've been destroyed
+						if (this.bubbleTarget === s) {
+							this.bubbleTarget.set("view", null);
+						}
+					};
+				})
+			});
+		} else if (v && v instanceof enyo.UiComponent) {
 			// make sure we grab the constructor from an instance so we know what kind
 			// it was to recreate later if necessary
 			if (!this.viewKind) { this.viewKind = v.ctor; }
