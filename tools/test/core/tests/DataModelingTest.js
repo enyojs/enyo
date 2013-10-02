@@ -54,6 +54,16 @@ enyo.kind({
 		m.destroyLocal();
 		this.finish(id != 71 && "event did not fire as expected");
 	},
+	testGetRaw: function () {
+		var o = {prop1: "prop1", prop2: true, prop3: "prop3"},
+			m = new enyo.Model(o),
+			c = function (o1, o2) {
+				var r = true;
+				for (var k in o1) { if (o2[k] !== o1[k]) { r=false; } }
+				return r;
+			};
+		this.finish(!c(o, m.raw()) && "the raw output was not the same as the original input");
+	},
 	testDefaultsAttributes: function () {
 		/*global test:true */
 		enyo.kind({name: "test.Model", kind: enyo.Model, store: test.store, defaults: {prop1: "", prop2: undefined, prop3: null, prop4: 0, prop5: "prop5", prop6: 74}});
