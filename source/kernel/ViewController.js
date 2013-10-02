@@ -28,9 +28,10 @@ enyo.kind({
 	/**
 		This is the preserved _kind_ for the `view` of this _controller_. You can set this to a constructor
 		or a string that is resolved to a constructor (or the `view` property). Either way, if a `view` is
-		set explicitly or this property was used the constructor will be available at this property.
+		set explicitly or this property was used the constructor will be available at this property. The default
+		is _enyo.Control_.
 	*/
-	viewKind: null,
+	viewKind: "enyo.Control",
 	/**
 		This property will designate where the _controller's_ _view_ will render. This should be a string
 		of either `document.body` or the DOM `id` of a node (either inserted by an _enyo.Control_ or
@@ -90,7 +91,7 @@ enyo.kind({
 		if (typeof this.viewKind == "string") {
 			this.viewKind = enyo.getPath(this.viewKind);
 		}
-		if ((!v && this.viewKind) || (v && typeof v == "object")) {
+		if ((!v && this.viewKind) || (v && typeof v == "object" && !(v instanceof enyo.UiComponent))) {
 			var d = (typeof v == "object" && v) || {kind: this.viewKind};
 			// in case it isn't set...
 			d.kind = d.kind || this.viewKind;
