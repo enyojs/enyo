@@ -882,8 +882,7 @@
 		} else {
 			throw('enyo.bindSafely: scope["' + method + '"] is not a function (this="' + this + '")');
 		}
-	},
-
+	};
 
 
 	/**
@@ -952,7 +951,7 @@
 		without modification.
 	*/
 	enyo.trim = function (str) {
-		return str && str.replace? (str.replace(/^\s+|\s$/, "")): str;
+		return str && str.replace? (str.replace(/^\s+|\s+$/, "")): str;
 	};
 
 	//*@public
