@@ -15,7 +15,6 @@ enyo.applications = {};
 enyo.kind({
 	name: "enyo.Application",
 	kind: "enyo.ViewController",
-	noDefer: true,
 	/**
 		If set to `true` (defaults to `true`) will automatically call the `start`
 		method of the _application_ once its `create` method has completed executing.
@@ -131,14 +130,14 @@ enyo.kind({
 	/**
 		Ensure that events bubble from the views will reach _enyo.Master_ as expected.
 	*/
-	owner: enyo.master
-});
-
-//*@protected
-enyo.Application.concat = function (ctor, props) {
-	var p = ctor.prototype || ctor;
-	if (props.controllers) {
-		p.controllers = (p.controllers? enyo.merge(p.controllers, props.controllers): props.controllers.slice());
-		delete props.controllers;
+	owner: enyo.master,
+	statics: {
+		concat: function (ctor, props) {
+			var p = ctor.prototype || ctor;
+			if (props.controllers) {
+				p.controllers = (p.controllers? enyo.merge(p.controllers, props.controllers): props.controllers.slice());
+				delete props.controllers;
+			}
+		}
 	}
-};
+});
