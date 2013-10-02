@@ -711,23 +711,21 @@ enyo.kind({
 		// from the collection
 		if (!this._destroyAll) { this.remove(rec); }
 	},
-	concat: ["filters", "filterProps"],
 	_destroyAll: false
 });
 
-enyo.concatHandler("filters", function (proto, props) {
+enyo.Collection.concat = function (ctor, props) {
+	var p = ctor.prototype || ctor;
 	if (props.filters) {
-		if (proto.filters) {
-			proto.filters = enyo.mixin(enyo.clone(proto.filters), props.filters);
+		if (p.filters) {
+			p.filters = enyo.mixin(enyo.clone(p.filters), props.filters);
 			delete props.filters;
 		}
 	}
-});
-enyo.concatHandler("filterProps", function (proto, props) {
 	if (props.filterProps) {
-		if (proto.filterProps) {
-			proto.filterProps += (" " + props.filterProps);
+		if (p.filterProps) {
+			p.filterProps += (" " + props.filterProps);
 			delete props.filterProps;
 		}
 	}
-});
+};

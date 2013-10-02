@@ -1,7 +1,3 @@
-
-//*@protected
-// ensure that bindings are a concatenated property for all kinds
-enyo.concat.push("bindings");
 //*@public
 /**
 	These properties provide the public API for using [enyo.Binding](#enyo.Binding)
@@ -49,12 +45,12 @@ enyo.BindingSupport = {
 			props = enyo.mixin(defs), bd;
 		props.owner = props.owner || this;
 		props.kind = props.kind || this.defaultBindingKind || enyo.defaultBindingKind;
-		if (this._bindingSupportInitialized === false) {
+		if (this.bindingSupportInitialized === false) {
 			bs.push(props);
 		} else {
 			var q, auto = false;
-			if (!this._bindingSyncAllowed) {
-				q = this._bindingSyncQueue || (this._bindingSyncQueue = []);
+			if (!this.bindingSyncAllowed) {
+				q = this.bindingSyncQueue || (this.bindingSyncQueue = []);
 			}
 			// we only want to resolve the kind if it isn't already
 			// the correct constructor -- note this forces the kind
@@ -156,12 +152,16 @@ enyo.BindingSupport = {
 			var i = enyo.indexOf(b, bs);
 			if (!!~i) {
 				bs.splice(i, 1);
-				if (b._rebuildTarget) {
-					this.removeObserver(b._targetPath, b._rebuildTarget);
+				if (typeof b._rebuildTarget == "function") {
+					var tp = b._targetPath;
+					tp = (tp == "$"? (tp+"."+b._targetFrom): tp === ""? b._targetProperty: tp);
+					this.removeObserver(tp, b._rebuildTarget);
 					b._rebuildTarget = null;
 				}
-				if (b._rebuildSource) {
-					this.removeObserver(b._sourcePath, b._rebuildSource);
+				if (typeof b._rebuildSource == "function") {
+					var sp = b._sourcePath;
+					sp = (sp == "$"? (sp+"."+b._sourceFrom): sp === ""? b._sourceProperty: sp);
+					this.removeObserver(sp, b._rebuildSource);
 					b._rebuildSource = null;
 				}
 			}
@@ -178,8 +178,8 @@ enyo.BindingSupport = {
 	*/
 	initBindings: function () {
 		var i, b;
-		if (false === this._bindingSupportInitialized) {
-			this._bindingSupportInitialized = undefined;
+		if (false === this.bindingSupportInitialized) {
+			this.bindingSupportInitialized = undefined;
 			var os = this.bindings;
 			if (!os) { return; }
 			// we will now reuse the property `bindings` with the actual binding
@@ -189,8 +189,8 @@ enyo.BindingSupport = {
 				this.binding(b);
 			}
 		}
-		if (this._bindingSyncAllowed) {
-			var q = this._bindingSyncQueue;
+		if (this.bindingSyncAllowed) {
+			var q = this.bindingSyncQueue;
 			if (q && q.length) {
 				for (i=0; (b=q[i]); ++i) {
 					// we set this because that is the only option that would
@@ -208,7 +208,7 @@ enyo.BindingSupport = {
 			// will register for missing targets/sources if they become
 			// available later
 			if (this.bindings) { this.initBindings(); }
-			else { this._bindingSupportInitialized = undefined; }
+			else { this.bindingSupportInitialized = undefined; }
 			sup.apply(this, arguments);
 		};
 	}),
@@ -247,23 +247,30 @@ enyo.BindingSupport = {
 		It is used as an explicit _false_ test because it is removed from the object
 		instance once initialized, to reduce object clutter.
 	*/
-	_bindingSupportInitialized: false,
-	_bindingSyncAllowed: true,
-	_bindingSyncQueue: null
+	bindingSupportInitialized: false,
+	bindingSyncAllowed: true,
+	bindingSyncQueue: null
 };
 //*@protected
-enyo.concatHandler("bindings", function (proto, props) {
-	if (props.bindings) {
-		var k = props.defaultBindingKind || enyo.defaultBindingKind,
-			d = props.bindingDefaults;
-		for (var i=0, b; (b=props.bindings[i]); ++i) {
-			if (d) { enyo.mixin(b, d, {ignore: true}); }
-			b.kind = b.kind || k;
+(function (enyo) {
+	var fn = enyo.concatHandler;
+	enyo.concatHandler = function (ctor, props) {
+		// call the original
+		fn.apply(this, arguments);
+		// now we need to setup our bindings appropriately
+		var p = ctor.prototype || ctor;
+		if (props.bindings) {
+			var k = props.defaultBindingKind || enyo.defaultBindingKind,
+				d = props.bindingDefaults;
+			for (var i=0, b; (b=props.bindings[i]); ++i) {
+				if (d) { enyo.mixin(b, d, {ignore: true}); }
+				b.kind = b.kind || k;
+			}
+			p.bindings = p.bindings? p.bindings.concat(props.bindings): props.bindings;
+			delete props.bindings;
 		}
-		proto.bindings = proto.bindings? proto.bindings.concat(props.bindings): props.bindings;
-		delete props.bindings;
-	}
-});
+	};
+})(enyo);
 //*@public
 /**
 	BindingSupport is available on instances of _enyo.Object_, but it is necessary
@@ -274,7 +281,7 @@ enyo.ComponentBindingSupport = {
 	name: "ComponentBindingSupport",
 	//*@protected
 	/**
-		There is a special property, *_bindingTransformOwner*, that needs to be
+		There is a special property, *bindingTransformOwner*, that needs to be
 		chained down into children to shortcut bindings work to find transforms
 		for inlined bindings -- their owner is the component they are nested on
 		but the transform will most likely exist on the instance owner.
@@ -282,18 +289,18 @@ enyo.ComponentBindingSupport = {
 	adjustComponentProps: enyo.inherit(function (sup) {
 		return function (props) {
 			sup.apply(this, arguments);
-			props._bindingTransformOwner = props._bindingTransformOwner || this.getInstanceOwner();
+			props.bindingTransformOwner = props.bindingTransformOwner || this.getInstanceOwner();
 		};
 	}),
 	constructed: enyo.inherit(function (sup) {
 		return function () {
 			if (this.bindings) {
-				this._bindingSyncAllowed = false;
+				this.bindingSyncAllowed = false;
 				this.initBindings();
 				// the next time this is called later during initialization the bindings will
 				// have been created but this will allow them to be synchronized at the appropriate
 				// time
-				this._bindingSyncAllowed = true;
+				this.bindingSyncAllowed = true;
 			}
 			return sup.apply(this, arguments);
 		};

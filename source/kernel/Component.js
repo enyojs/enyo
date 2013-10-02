@@ -90,7 +90,6 @@ enyo.kind({
 		enyo.ApplicationSupport,
 		enyo.ComponentBindingSupport
 	],
-	concat: ["handlers", "events"],
 	toString: function() {
 		return this.kindName;
 	},
@@ -295,7 +294,7 @@ enyo.kind({
 	},
 	//* @protected
 	getBubbleTarget: function() {
-		return this._bubbleTarget || this.owner;
+		return this.bubbleTarget || this.owner;
 	},
 	//* @public
 	/**
@@ -616,18 +615,17 @@ enyo.Component.subclass = function(ctor, props) {
 	}
 };
 
-enyo.concatHandler("handlers", function (proto, props) {
+enyo.Component.concat = function (ctor, props) {
+	var p = ctor.prototype || ctor;
 	if (props.handlers) {
-		var h = proto.handlers? enyo.clone(proto.handlers): {};
-		proto.handlers = enyo.mixin(h, props.handlers);
+		var h = p.handlers? enyo.clone(p.handlers): {};
+		p.handlers = enyo.mixin(h, props.handlers);
 		delete props.handlers;
 	}
-});
-enyo.concatHandler("events", function (proto, props) {
 	if (props.events) {
-		enyo.Component.publishEvents(proto, props);
+		enyo.Component.publishEvents(p, props);
 	}
-});
+};
 
 enyo.Component.overrideComponents = function(components, overrides, defaultKind) {
 	var fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isInherited(v)); };
@@ -637,10 +635,14 @@ enyo.Component.overrideComponents = function(components, overrides, defaultKind)
 		var o = overrides[c.name];
 		var ctor = enyo.constructorForKind(c.kind || defaultKind);
 		if (o) {
-			// Special handling for concatenated properties
-			c.concat = ctor.prototype.concat;
-			enyo.handleConcatenatedProperties(c, o, true);
-			delete c.concat;
+			// will handle mixins, observers, computed properties and bindings because they
+			// overload the default but this will not handle the kind concatenations...
+			enyo.concatHandler(c, o);
+			var b = (c.kind && ((typeof c.kind == "string" && enyo.getPath(c.kind)) || (typeof c.kind == "function" && c.kind))) || enyo.defaultCtor;
+			while (b) {
+				if (b.concat) { b.concat(c, o, true); }
+				b = b.prototype.base;
+			}
 			// All others just mix in
 			enyo.mixin(c, o, {filter: fn});
 		}

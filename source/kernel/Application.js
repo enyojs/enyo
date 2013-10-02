@@ -1,239 +1,144 @@
-(function (enyo) {
-
-	//*@public
+//*@public
+/**
+	Any _enyo.Applications_ will be available by _name_ from this object.
+	If no _name_ is provided for an _application_ a name will be generated
+	for it.
+*/
+enyo.applications = {};
+/**
+	An _enyo.Application_ is a type of _enyo.ViewController_ that encapsulates
+	a collection of _enyo.Controllers_ and a hierarchy of _enyo.Controls_. There
+	can be multiple instances of an _application_ at a time with unique names and
+	target DOM nodes. A reference to an _application_ is available on all _enyo.Components_
+	within an _application_ via the `app` property.
+*/
+enyo.kind({
+	name: "enyo.Application",
+	kind: "enyo.ViewController",
+	noDefer: true,
 	/**
-		Tracks the applications running at any given time. For the sake of
-		convenience, and in order to provide some debugging tools, we collect
-		the running apps here for later reference. When _enyo.Application_
-		instances are destroyed, they know to remove themselves from this table.
+		If set to `true` (defaults to `true`) will automatically call the `start`
+		method of the _application_ once its `create` method has completed executing.
+		Set this to `false` if there is additional setup or an asynchronous event
+		requried before starting.
 	*/
-	var applications = enyo.applications = {};
-
-	//*@protected
+	autoStart: true,
 	/**
-		Used internally; maintains registration of applications with the
-		framework.
+		If set to `true` (defaults to `true`) will immediately render the `view`
+		when the `start` method has completed execution. Set this to `false` to delay
+		rendering if additional setup is required or an asycnhronous event required
+		before rendering.
 	*/
-	var register = function (app) {
-		applications[app.id] = app;
-	};
-
-	//*@protected
+	renderOnStart: true,
 	/**
-		Used internally; unregisters applications that have been destroyed.
+		Set this to an array of _enyo.Controller_ definitions that should be instanced
+		for this _application_. By default _controllers_ will only be available within
+		the scope of the _application_ creating them. Set the `global` flag to `true` in
+		the definition to have the `name` of the _controller_ used as its _global_ identifier.
+		Even if a _controller_ is set to _global_ it will be destroyed if the _application_ is
+		destroyed. Once the _application_ has completed its `start` method this property will be an
+		object comprised of the instances of any _controllers_ described in the original array.
+		They are referenceable by their `name`.
 	*/
-	var unregister = function (app) {
-		var kind = app.kindName;
-		var kinds = applications[kind] || [];
-		var idx = enyo.indexOf(app, kinds);
-		if (!~idx) {
-			kinds.splice(idx, 1);
-		}
-	};
-
+	controllers: null,
+	/**
+		A bindable, read-only property that indicates when the `view` has been rendered.
+	*/
+	viewReady: false,
+	/**
+		An abstraction method to allow for additional setup to take place after the _application_
+		has completed its initialization and ready to be rendered. Overload this method for
+		implementation specific requirements.
+	*/
+	start: function () {
+		if (this.renderOnStart) { this.render(); }
+	},
 	//*@protected
-	var _destroyControllers = function () {
-		var name;
-		// we iterate over the controllers that are stored in
-		// the application hash
-		for (name in this.controllers) {
-			// we can't know that all of those controllers were placed
-			// there by this application or that its owner hasn't been
-			// set to something else (owner implying this application
-			// instanced the controller and thus is responsible for its
-			// life-cycle) so we test for that and destroy it if it is
-			if (this === this.controllers[name].owner) {
-				if ("function" === typeof this.controllers[name].destroy) {
-					this.controllers[name].destroy();
+	render: enyo.inherit(function (sup) {
+		return function () {
+			sup.apply(this, arguments);
+			if (this.view && this.view.generated) {
+				this.set("viewReady", true);
+			}
+		};
+	}),
+	constructor: enyo.inherit(function (sup) {
+		return function (props) {
+			if (props && typeof props.name == "string") {
+				enyo.setPath(props.name, this);
+				// since applications are stored by their id's we set it
+				// to the name if it exists
+				this.id = (props && props.name);
+			}
+			sup.apply(this, arguments);
+			enyo.applications[this.id] = this;
+		};
+	}),
+	/**
+		Allows normal creation flow and then executes the _applications_ `start`
+		method if `autoStart` is `true`.
+	*/
+	create: enyo.inherit(function (sup) {
+		return function () {
+			sup.apply(this, arguments);
+			if (this.autoStart) { this.start(); }
+		};
+	}),
+	/**
+		Setup all controllers for the application then the rest of any components
+		defined for the kind.
+	*/
+	initComponents: enyo.inherit(function (sup) {
+		return function () {
+			// the original array of controller definitions (if any)
+			var cc = this.controllers,
+			// reassign the controllers property to the object even if we don't
+			// wind up having any
+				co = (this.controllers={});
+			if (cc) {
+				for (var i=0, c; (c=cc[i]); ++i) {
+					c.kind == c.kind || "enyo.Controller";
+					c = this.createComponent(c, {owner: this});
+					// the controller will accessible inside the '$' hash or the
+					// 'controllers' hash for binding purposes (and backwards compatibility)
+					co[c.name] = c;
+					if (c.global) { enyo.setPath(c.name, c); }
 				}
 			}
-			// regardless of ownership we release the controller reference
-			// and hope whoever was responsible for the controller will
-			// clean it up
-			delete this.controllers[name];
-		}
-		// remove the reference to the object entirely
-		delete this.controllers;
-	};
-
-	//*@protected
-	var _setupControllers = function () {
-		var kinds = this.controllers || [];
-		var controllers = this.controllers = {};
-		var len = kinds.length;
-		var idx = 0;
-		var kind;
-		for (; idx < len; ++idx) {
-			kind = enyo.clone(kinds[idx]);
-			// we need the name of the instance whether the controller is global
-			// or app-specific
-			var name = kind.name;
-			// there is the optional global flag that indicates if the controller
-			// is to be instanced outside the scope of the application
-			var global = Boolean(kind.global);
-			var Ctor;
-			var inst;
-			// cleanup
-			delete kind.global;
-			delete kind.name;
-			// if the definition does not supply a controller kind, we add one
-			if (!("kind" in kind)) {
-				kind.kind = "enyo.Controller";
-			}
-			// create a kind constructor for the controller with all of the given
-			// properties
-			Ctor = enyo.kind(kind);
-			inst = new Ctor({owner: this, app: this});
-			// if the controller is not a global controller, we create it as part
-			// of our applications controller store
-			if (false === global) {
-				controllers[name] = inst;
-			} else {
-				enyo.setPath(name, inst);
-			}
-		}
-	};
-
-	//*@public
+			// now do the rest
+			sup.apply(this, arguments);
+		};
+	}),
 	/**
-		_enyo.Application_ is a kind used to coordinate execution of a given
-		collection of _enyo_ objects. There may be one or more instances
-		running--with certain limitations, such as which one is rendered into
-		the _document.body_. (There is no limitation if each instance is
-		rendered into a separate DOM node, or if the instances are nested.)
-
-		This kind also provides the ability to namespace and automatically
-		initialize any controllers of the application.
+		Make sure that all components created by this _application_ have their
+		`app` property set correctly.
 	*/
-	enyo.kind({
+	adjustComponentProps: enyo.inherit(function (sup) {
+		return function (props) {
+			props.app = this;
+			sup.apply(this, arguments);
+		};
+	}),
+	/**
+		Make sure to cleanup the registration for the _application_.
+	*/
+	destroy: enyo.inherit(function (sup) {
+		return function () {
+			delete enyo.applications[this.id];
+			sup.apply(this, arguments);
+		};
+	}),
+	/**
+		Ensure that events bubble from the views will reach _enyo.Master_ as expected.
+	*/
+	owner: enyo.master
+});
 
-		// ...........................
-		// PUBLIC PROPERTIES
-
-		//*@public
-		name: "enyo.Application",
-
-		//*@public
-		kind: "enyo.ViewController",
-
-		//*@public
-		//* If true, call the start() method immediately after being created.
-		autoStart: true,
-
-		//*@public
-		//* If true, render the view as part of the default start() method.
-		renderOnStart: true,
-
-		//*@public
-		//* Array of controller definitions to be created along wih the application.
-		controllers: null,
-
-		//*@public
-		//* This is set to true when the associated view has been created.
-		viewReady: false,
-
-		//*@public
-		concat: ["controllers"],
-
-		// ...........................
-		// PROTECTED PROPERTIES
-
-		//*@protected
-		_isApplication: true,
-
-		// Let events bubble to enyo.master, the top of the chain
-		owner: enyo.master,
-
-		// ...........................
-		// PUBLIC METHODS
-
-		//*@public
-		/**
-			If the _autoStart_ flag is set to true, this method is
-			automatically executed when the constructor is called. Otherwise,
-			it may be executed whenever the application should begin execution.
-		*/
-		start: function () {
-			if (true === this.renderOnStart) {
-				this.render();
-			}
-		},
-
-		// ...........................
-		// PROTECTED METHODS
-
-		//*@protected
-		constructor: enyo.inherit(function (sup) {
-			return function (props) {
-				if (props && enyo.exists(props.name)) {
-					enyo.setPath(props.name, this);
-					this.id = props.name;
-					delete props.name;
-				} else {
-					this.id = enyo.uid("_application_");
-				}
-				sup.apply(this, arguments);
-				// we register kind of early in the process in case any controllers
-				// or other initialization assumes it will be there...
-				register(this);
-			};
-		}),
-
-		//*@protected
-		constructed: enyo.inherit(function (sup) {
-			return function () {
-				// we need to make sure that the controllers are already initialized
-				// before we create our view according to the view controller's API
-				_setupControllers.call(this);
-				// now we let it continue as usual
-				sup.apply(this, arguments);
-				if (this.autoStart) {
-					this.start();
-				}
-			};
-		}),
-
-		render: enyo.inherit(function (sup) {
-			return function () {
-				sup.apply(this, arguments);
-				if (this.view && this.view.generated) {
-					this.set("viewReady", true);
-				}
-			};
-		}),
-
-		//*@protected
-		/**
-			The overloaded \_createView method ensures that the appropriate
-			values are supplied to the new view instance.
-		*/
-		_createView: function () {
-			// this is the constructor for the view kind
-			var Ctor = this.get("_viewKind");
-			// the properties we want to supply to the view are the
-			// app (the reference to this application instance) and the
-			// \_bubbleTarget so events are bubbled to us
-			this.set("view", new Ctor({app: this, _bubbleTarget: this}));
-		},
-
-		//*@protected
-		_makeViewName: function () {
-			return enyo.uid("_applicationView_");
-		},
-
-		//*@protected
-		destroy: enyo.inherit(function (sup) {
-			return function () {
-				// release/destroy all controllers associated with
-				// this instance of the application
-				_destroyControllers.call(this);
-				// do the normal breakdown
-				sup.apply(this, arguments);
-				// unregister this as an active application
-				unregister(this);
-			};
-		})
-
-	});
-
-}(enyo));
+//*@protected
+enyo.Application.concat = function (ctor, props) {
+	var p = ctor.prototype || ctor;
+	if (props.controllers) {
+		p.controllers = (p.controllers? enyo.merge(p.controllers, props.controllers): props.controllers.slice());
+		delete props.controllers;
+	}
+};

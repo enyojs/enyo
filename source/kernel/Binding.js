@@ -441,7 +441,7 @@
 		initTransform: function () {
 			var tf = this.transform,
 				o  = this.owner,
-				bo = o? o._bindingTransformOwner: null;
+				bo = o? o.bindingTransformOwner: null;
 			if (tf && enyo.isString(tf)) {
 				// test first against the common case which is that it is on the
 				// transform owner or the actual owner

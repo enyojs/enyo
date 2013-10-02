@@ -15,8 +15,8 @@ enyo.kind({
 		this.finish(
 			(!o.observers.testPropChanged && "the testPropChanged method should have been an observer") ||
 			(enyo.indexOf("testProp", o.observers.testPropChanged) !== 0 && "observer dependency should have been testProp") ||
-			(!o._observerMap.testProp && "observer map did not include dependency map of testProp") ||
-			(enyo.indexOf("testPropChanged", o._observerMap.testProp) !== 0 && "observer map should map testProp to testPropChanged handler")
+			(!o.observerMap.testProp && "observer map did not include dependency map of testProp") ||
+			(enyo.trim(o.observerMap.testProp) !== "testPropChanged" && "observer map should map testProp to testPropChanged handler")
 		);
 	},
 	testFindChangedHandlers: function () {
@@ -28,8 +28,8 @@ enyo.kind({
 		});
 		o = new test.Object();
 		this.finish(
-			(!o._observerMap.testProp && "testProp was not automatically added as an observer") ||
-			(!o._observerMap.testProp1 && "testProp1 was not automatically added as an observer")
+			(!o.observerMap.testProp && "testProp was not automatically added as an observer") ||
+			(!o.observerMap.testProp1 && "testProp1 was not automatically added as an observer")
 		);
 	},
 	testAddObserverAPI: function () {
@@ -49,7 +49,7 @@ enyo.kind({
 		});
 		o = new test.Object();
 		o.addObserver("testProp", fn);
-		if (!o._observerMap.testProp) {
+		if (!o.observerMap.testProp) {
 			return this.finish("observer map not updated on addObserver as expected");
 		}
 		o.set("testProp", 1);
@@ -57,11 +57,11 @@ enyo.kind({
 	testRemoveObserverAPI: function () {
 		var o = new enyo.Object(), fn = function () {};
 		o.addObserver("noName", fn);
-		if (!o._observerMap.noName) {
+		if (!o.observerMap.noName) {
 			return this.finish("remove observer API cannot work because add observer API doesn't work");
 		}
 		o.removeObserver("noName", fn);
-		if (o._observerMap.noName) {
+		if (o.observerMap.noName) {
 			return this.finish("failed to remove the entry for the observer as expected");
 		}
 		this.finish();
@@ -86,10 +86,10 @@ enyo.kind({
 		});
 		o = new test.Object();
 		o.stopNotifications();
-		if (o._observerNotificationsEnabled) {
+		if (o.observerNotificationsEnabled) {
 			return this.finish("the notifications flag was still enabled");
 		}
-		if (o._observerStopCount !== 1) {
+		if (o.observerStopCount !== 1) {
 			return this.finish("the stop count was not updated as expected");
 		}
 		o.set("testProp", 1);

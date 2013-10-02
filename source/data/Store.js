@@ -16,6 +16,7 @@
 	enyo.kind({
 		name: "enyo.Store",
 		kind: enyo.Object,
+		noDefer: true,
 		/**
 			The hash of named sources that are available for use on this store. The
 			default source is _ajax_, but others may be added by providing
@@ -35,7 +36,6 @@
 		//*@protected
 		records: null,
 		collections: null,
-		concat: ["sources"],
 		//*@public
 		/**
 			Creates a new record of a given _kind_ (string or constructor) and returns
@@ -633,17 +633,13 @@
 		_recordListeners: null
 	});
 	//*@protected
-	enyo.concatHandler("sources", function (proto, props) {
+	enyo.Store.concat = function (ctor, props) {
 		if (props.sources) {
-			var pd = proto.sources? enyo.clone(proto.sources): {},
-				rd = props.sources;
-			// will deliberately override already defined sources so they can
-			// be remapped by subkinds
-			proto.sources = enyo.mixin(pd, rd);
-			// we don't want this to whipeout what we just did
+			var p = ctor.prototype || ctor;
+			p.sources = (p.sources? enyo.mixin(enyo.clone(p.sources), props.sources): props.sources);
 			delete props.sources;
 		}
-	});
+	};
 	//*@public
 	/**
 		There must always be an _enyo.store_ instance. If the default is not what
