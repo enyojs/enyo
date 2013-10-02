@@ -15,6 +15,9 @@ enyo.kind({
 	name: "enyo.Signals",
 	kind: "enyo.Component",
 	//* @protected
+	// needed because of early calls to bind DOM event listeners
+	// to the enyo.Signals.send call.
+	noDefer: true,
 	create: enyo.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
