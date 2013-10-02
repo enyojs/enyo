@@ -41,6 +41,9 @@ enyo.kind({
 	*/
 	addBefore: undefined,
 	//* @protected
+	controlParents: {
+		components: undefined
+	},
 	protectedStatics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
 	},
@@ -94,6 +97,10 @@ enyo.kind({
 	}),
 	discoverControlParent: function() {
 		this.controlParent = this.$[this.controlParentName] || this.controlParent;
+		this.controlParents.components = this.controlParent;
+		if (this.addControlParent) {
+			this.getInstanceOwner().controlParents[this.addControlParent] = this.controlParent;
+		}
 	},
 	adjustComponentProps: enyo.inherit(function (sup) {
 		return function(inProps) {
