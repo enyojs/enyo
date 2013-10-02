@@ -16,11 +16,11 @@ enyo.kind({
 	/**
 		The `view` property can either be a constructor (or string naming a _kind_), an
 		instance of _enyo.Control_, a string representing the path to an instance of
-		_enyo.Control_, or null if it will be set later. Setting this property to a constructor
-		(or a string naming a _kind_) when active will automatically create an instance of
-		that kind according to any of the settings for this _controller_. If the _view_ is set
-		as an instance it will be rendered according to the properties of the _controller_.
-		If this property is a constructor it will be preserved in the `viewKind` property.
+		_enyo.Control_, an object description of the view (object literal/hash), or null if it will
+		be set later. Setting this property to a constructor (or a string naming a _kind_) when active 
+		will automatically create an instance of that kind according to any of the settings for this 
+		_controller_. If the _view_ is set as an instance it will be rendered according to the properties
+		of the _controller_. If this property is a constructor it will be preserved in the `viewKind` property.
 		Once initialization is complete, the instance of this _controller's_ _view_ will be available
 		via this property.
 	*/
