@@ -14,7 +14,7 @@ enyo.ApplicationSupport = {
 	app: null,
 	adjustComponentProps: enyo.inherit(function (sup) {
 		return function (props) {
-			props.app = this.app;
+			props.app = props.app || this.app || (this instanceof enyo.Application && this);
 			sup.apply(this, arguments);
 		};
 	}),
