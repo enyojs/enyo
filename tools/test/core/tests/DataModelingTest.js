@@ -64,6 +64,38 @@ enyo.kind({
 			};
 		this.finish(!c(o, m.raw()) && "the raw output was not the same as the original input");
 	},
+	testPreviousValuesSet: function () {
+		var m  = new enyo.Model({
+			prop1: function () {
+				return this.get("prop2");
+			},
+			prop2: 0
+		}, {computed: {prop1: ["prop2"]}});
+		this.finish(
+			(m.previous.prop1 !== 0 && "computed property not initialized in previous") ||
+			(m.previous.prop2 !== 0 && "somehow initial value is all wrong") ||
+			(m.set("prop2", 1) && m.previous.prop1 !== 0 && "previous was updated after change") ||
+			(m.previous.prop2 !== 0 && "previous value was updated") ||
+			(m.set("prop2", 2) && m.previous.prop1 !== 1 && "previous was not updated correctly") ||
+			(m.previous.prop2 !== 1 && "previous value was not updated correctly")
+		);
+	},
+	testPreviousValuesSetObject: function () {
+		var m  = new enyo.Model({
+			prop1: function () {
+				return this.get("prop2");
+			},
+			prop2: 0
+		}, {computed: {prop1: ["prop2"]}});
+		this.finish(
+			(m.previous.prop1 !== 0 && "computed property not initialized in previous") ||
+			(m.previous.prop2 !== 0 && "somehow initial value is all wrong") ||
+			(m.set({"prop2": 1}) && m.previous.prop1 !== 0 && "previous was updated after change") ||
+			(m.previous.prop2 !== 0 && "previous value was updated") ||
+			(m.set({"prop2": 2}) && m.previous.prop1 !== 1 && "previous was not updated correctly") ||
+			(m.previous.prop2 !== 1 && "previous value was not updated correctly")
+		);
+	},
 	testDefaultsAttributes: function () {
 		/*global test:true */
 		enyo.kind({name: "test.Model", kind: enyo.Model, store: test.store, defaults: {prop1: "", prop2: undefined, prop3: null, prop4: 0, prop5: "prop5", prop6: 74}});
