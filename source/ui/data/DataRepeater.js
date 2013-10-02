@@ -59,7 +59,7 @@ enyo.kind({
 			o = this.getInstanceOwner(),
 			d = this.defaultProps? enyo.clone(this.defaultProps): (this.defaultProps = {});
 		// ensure that children know who their binding owner is
-		d._bindingTransformOwner = this;
+		d.bindingTransformOwner = this;
 		d.bindingDefaults = this.childBindingDefaults;
 		if (c) {
 			// if there are multiple components in the components block they will become nested
@@ -297,7 +297,6 @@ enyo.kind({
 	computed: {selected: [], data: ["controller"]},
 	noDefer: true,
 	childMixins: [enyo.RepeaterChildSupport],
-	concat: ["childMixins"],
 	controlParentName: "container",
 	containerName: "container",
 	containerOptions: {name: "container", classes: "enyo-fill enyo-data-repeater-container"},
@@ -305,3 +304,11 @@ enyo.kind({
 	batching: false,
 	_selection: null
 });
+
+enyo.DataRepeater.concat = function (ctor, props) {
+	var p = ctor.prototype || ctor;
+	if (props.childMixins) {
+		p.childMixins = (p.childMixins? enyo.merge(p.childMixins, props.childMixins): props.childMixins.slice());
+		delete props.childMixins;
+	}
+};

@@ -179,7 +179,6 @@ enyo.kind({
 				green: {kind:"enyo.Anchor", content:"Again green", classes:"again-green", style:"background:again-green;"}
 			}
 		});
-
 		var baseKind = new C1();
 		var subKind = new C2();
 		var subSubKind = new C3();
@@ -232,8 +231,8 @@ enyo.kind({
 			!/^.*green over-green again-green$/.test(subSubKind.$.green.classes)) {
 			throw "Multiply-subclassed overrides were not applied properly: unexpeted classes: " + subSubKind.$.green.classes;
 		}
-		if ((subSubKind.$.purple.style.indexOf("background:again-purple;") < 0) ||
-			(subSubKind.$.green.style.indexOf("background:again-green;") < 0)) {
+		if ((subSubKind.$.purple.style.indexOf("background: again-purple;") < 0) ||
+			(subSubKind.$.green.style.indexOf("background: again-green;") < 0)) {
 			throw "Multiply-subclassed overrides were not applied properly: unexpected style";
 		}
 
