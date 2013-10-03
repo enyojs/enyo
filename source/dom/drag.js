@@ -252,6 +252,7 @@ enyo.gesture.drag = {
 		}
 		if (this.sentHold) {
 			this.sentHold = false;
+			this.sendRelease(this.holdEvent);
 		}
 	},
 	sendHoldPulse: function(inEvent) {
