@@ -262,10 +262,10 @@
 				x = attributes;
 			// if we're created by a _collection_ the default behavior is
 			// to parse the incoming data as that data was retrieved
+			this.attributes = a;
 			if (p) { x = this.parse(x); }
 			if (x) { enyo.mixin(a, x); }
 			if (d) { enyo.mixin(a, d, _mixinOpts); }
-			this.attributes = a;
 			this.changed = {};
 			// populate the previous property with the actual values as would be expected
 			// for further updates
