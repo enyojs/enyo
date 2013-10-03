@@ -371,6 +371,10 @@ enyo.kind({
 	initStyles: function() {
 		this.domStyles = this.domStyles? enyo.clone(this.domStyles): {};
 		enyo.Control.cssTextToDomStyles(this.kindStyle + this.style, this.domStyles);
+		if (this.domStyles.display == "none") {
+			this.showing = false;
+			this.domStyles.display = "";
+		}
 		this.domCssText = enyo.Control.domStylesToCssText(this.domStyles);
 	},
 	styleChanged: function() {
