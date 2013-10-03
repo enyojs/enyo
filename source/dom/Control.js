@@ -493,10 +493,20 @@ enyo.kind({
 		this.teardownRender();
 		// inParentNode can be a string id or a node reference
 		var pn = enyo.dom.byId(inParentNode);
-		var noFit = enyo.exists(this.fit) && this.fit === false;
-		//console.log(noFit);
-		if (pn == document.body && !noFit) {
-			this.setupBodyFitting();
+		if (pn == document.body)
+		{
+			// never render directly into document.body because that can
+			// destroy floating layers & scrims
+			pn = enyo.dom.byId("enyo-body-container");
+			if (!pn) {
+				pn = document.createElement("div");
+				pn.id = "enyo-body-container";
+				document.body.insertBefore(pn, document.body.firstChild);
+			}
+			var noFit = enyo.exists(this.fit) && this.fit === false;
+			if (!noFit) {
+				this.setupBodyFitting();
+			}
 		} else if (this.fit) {
 			this.addClass("enyo-fit enyo-clip");
 		}

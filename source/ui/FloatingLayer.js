@@ -23,16 +23,6 @@ enyo.kind({
 			this.setParent(null);
 		};
 	}),
-	// detect when node is detatched due to document.body being stomped
-	hasNode: enyo.inherit(function (sup) {
-		return function() {
-			sup.apply(this, arguments);
-			if (this.node && !this.node.parentNode) {
-				this.teardownRender();
-			}
-			return this.node;
-		};
-	}),
 	render: enyo.inherit(function (sup) {
 		return function() {
 			this.parentNode = document.body;
