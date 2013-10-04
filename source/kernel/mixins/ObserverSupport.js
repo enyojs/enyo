@@ -300,11 +300,18 @@
 				p.observerMap = enyo.clone(p.observerMap);
 			}
 			for (var k in props.observers) {
-				p.observers[k] = (p.observers[k] || "") + (typeof props.observers[k] == "string"? props.observers[k]: props.observers[k].join(" "));
-				for (var i=0, d; (d=props.observers[k][i]); ++i) {
-					p.observerMap[d] = ((p.observerMap[d] || "") + " " + k);
+				p.observers[k] = (p.observers[k] || "");
+				var ss = (typeof props.observers[k] == "string"? props.observers[k].replace(/^\s+|\s+$/, "").split(" "): props.observers[k]);
+				for (var i=0, s; (s=ss[i]); ++i) {
+					// if we have not seen this entry before we will add it
+					if (!~p.observers[k].indexOf(s)) {
+						p.observers[k] += (" " + s);
+						p.observerMap[s] = ((p.observerMap[s] || "") + " " + k).replace(/^\s+|\s+$/, "").replace(/\s+/g, " ");
+					}
 				}
+				p.observers[k] = p.observers[k].replace(/^\s+|\s+$/, "").replace(/\s+/g, " ");
 			}
+			delete props.observers;
 		}
 	};
 
