@@ -187,14 +187,19 @@
 				p.computedMap = enyo.clone(p.computedMap);
 			}
 			for (var k in props.computed) {
-				p.computed[k] = (p.computed[k] || "") + (typeof props.computed[k] == "string"? props.computed[k]: props.computed[k].join(" "));
-				for (var i=0, d; (d=props.computed[k][i]); ++i) {
-					if (typeof d == "object" && d.cached) {
+				p.computed[k] = (p.computed[k] || "");
+				var ss = (typeof props.computed[k] == "string"? props.computed[k].replace(/^\s+|\s+$/, "").split(" "): props.computed[k]);
+				for (var i=0, s; (s=ss[i]); ++i) {
+					if (typeof s == "object" && s.cached) {
 						p.computedCached[k] = true;
 					} else {
-						p.computedMap[d] = ((p.computedMap[d] || "") + " " + k);
+						if (!~p.computed[k].indexOf(s)) {
+							p.computed[k] += (" " + s);
+							p.computedMap[s] = ((p.computedMap[s] || "") + " " + k).replace(/^\s+|\s+$/, "").replace(/\s+/g, " ");
+						}
 					}
 				}
+				p.computed[k] = p.computed[k].replace(/^\s+|\s+$/, "").replace(/\s+/g, " ");
 			}
 			delete props.computed;
 		}
