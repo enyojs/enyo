@@ -59,7 +59,7 @@
 		The events in _enyo.Model_ differ from those in
 		[enyo.Component](#enyo.Component). Instead of _bubbled_ or _waterfall_
 		events, _enyo.Model_ has _change_ and _destroy_ events.
-		
+
 		To work with these events, use [addListener()](#enyo.Model::addListener),
 		[removeListener()](#enyo.Model::removeListener), and
 		[triggerEvent()](#enyo.Model::triggerEvent).
@@ -178,7 +178,7 @@
 				if (this.computedMap) {
 					if ((en=this.computedMap[prop])) {
 						if (typeof en == "string") {
-							en = this.computedMap[prop] = en.replace(/^\s+|\s+$/, "").split(" ");
+							en = this.computedMap[prop] = enyo.trim(en).split(" ");
 						}
 						ch = {};
 						for (var i=0, p; (p=en[i]); ++i) {
@@ -189,7 +189,7 @@
 						}
 					}
 				}
-				
+
 				this.changed[prop] = this.attributes[prop] = value;
 				this.notifyObservers(prop, rv, value);
 				// if this is a dependent of a computed property we mark that
@@ -222,7 +222,7 @@
 					if (this.computedMap) {
 						if ((en=this.computedMap[k])) {
 							if (typeof en == "string") {
-								en = this.computedMap[k] = en.replace(/^\s+|\s+$/, "").split(" ");
+								en = this.computedMap[k] = enyo.trim(en).split(" ");
 							}
 							for (var i=0, p; (p=en[i]); ++i) {
 								this.attributes[k] = rv;
@@ -275,7 +275,7 @@
 		//*@protected
 		importProps: function (p) {
 			if (p) {
-				if (p.defaults || p.attributes || p.computed) { 
+				if (p.defaults || p.attributes || p.computed) {
 					enyo.concatHandler(this, p);
 				}
 				for (var k in p) { k != "parse" && (this[k] = p[k]); }

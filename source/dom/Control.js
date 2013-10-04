@@ -1035,7 +1035,7 @@ enyo.kind({
 					text += n + ': ' + v + '; ';
 				}
 			}
-			return text.replace(/^\s+|\s+$/g, "");
+			return enyo.trim(text);
 		},
 		stylesToHtml: function(inStyleHash) {
 			var cssText = enyo.Control.domStylesToCssText(inStyleHash);
@@ -1060,7 +1060,7 @@ enyo.kind({
 			return h;
 		},
 		normalizeCssStyleString: function (inText) {
-			return (inText + ";").replace(/;;+/g, ";").replace(/^\s*?;/, "").replace(/;\s*(?!$)/g, "; ").replace(/:\s*/g, ": ").replace(/^\s+|\s+$/, "");
+			return enyo.trim((inText + ";").replace(/;;+/g, ";").replace(/^\s*?;/, "").replace(/;\s*(?!$)/g, "; ").replace(/:\s*/g, ": "));
 		}
 	}
 });
@@ -1071,9 +1071,9 @@ enyo.Control.concat = function (ctor, props, instance) {
 	var p = ctor.prototype || ctor;
 	if (props.classes) {
 		if (instance) {
-			p.classes = ((p.classes? (p.classes + " "): "") + props.classes).replace(/^\s+|\s+$/, "");
+			p.classes = enyo.trim((p.classes? (p.classes + " "): "") + props.classes);
 		} else {
-			p.kindClasses = ((p.kindClasses? p.kindClasses: "") + (p.classes? (" " + p.classes): "")).replace(/^\s+|\s+$/, "");
+			p.kindClasses = enyo.trim((p.kindClasses? p.kindClasses: "") + (p.classes? (" " + p.classes): ""));
 			p.classes = props.classes;
 		}
 		delete props.classes;
