@@ -130,7 +130,7 @@
 			call that, if it exists, while also notifying other observers.
 		*/
 		notifyObservers: function (prop, prev, value) {
-			var ma = _instanceMap(this);
+			var ma = this.observerMap;
 			if (ma) {
 				var o = ma[prop],
 					a = this.observerNotificationsEnabled;
