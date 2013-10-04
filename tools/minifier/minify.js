@@ -50,6 +50,12 @@
 				// find the url path, ignore quotes in url string
 				var matches = /url\s*\(\s*(('([^']*)')|("([^"]*)")|([^'"]*))\s*\)/.exec(inMatch);
 				var urlPath = matches[3] || matches[5] || matches[6];
+				
+				// handle the case url('') or url("").
+				if(!urlPath){
+					return "url()";
+				}
+				
 				// skip data urls
 				if (/^data:/.test(urlPath)) {
 					return "url(" + urlPath + ")";
