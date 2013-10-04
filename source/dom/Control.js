@@ -1060,7 +1060,19 @@ enyo.kind({
 			return h;
 		},
 		normalizeCssStyleString: function (inText) {
-			return enyo.trim((inText + ";").replace(/;;+/g, ";").replace(/^\s*?;/, "").replace(/;\s*(?!$)/g, "; ").replace(/:\s*/g, ": "));
+			return (
+				(inText + ";")
+				// remove any non-alpha ascii at the front of the string
+				.replace(/^[^a-zA-Z]+/, "")
+				// remove all spaces before any semi-colons
+				.replace(/\s*?;/g, ";")
+				// remove any duplicate semi-colons
+				.replace(/;;+/g, ";")
+				// ensure we have one space after each colon or semi-colon except the last one
+				.replace(/;\s*(?!$)/g, "; ")
+				// ensure we have one space after each colon
+				.replace(/:\s*/g, ": ")
+			);
 		}
 	}
 });
