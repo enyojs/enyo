@@ -72,7 +72,7 @@
 				i  = enyo.uid("__observer__"), o;
 			if ((o = ma[prop])) {
 				if (typeof o == "string") {
-					o = ma[prop] = o.replace(/^\s+|\s+$/, "").split(" ");
+					o = ma[prop] = enyo.trim(o).split(" ");
 				}
 				o.push(i);
 			} else {
@@ -94,7 +94,7 @@
 			var ma = _instanceMap(this), o;
 			if ((o = ma[prop])) {
 				if (typeof o == "string") {
-					o = ma[prop] = o.replace(/^\s+|\s+$/, "").split(" ");
+					o = ma[prop] = enyo.trim(o).split(" ");
 				}
 				for (var i=0, i$; (i$=o[i]); ++i) {
 					if (this[i$] === fn) {
@@ -135,11 +135,11 @@
 				var o = ma[prop],
 					a = this.observerNotificationsEnabled;
 				if (typeof o == "string") {
-					o = ma[prop] = o.replace(/^\s+|\s+$/, "").split(" ");
+					o = ma[prop] = enyo.trim(o).split(" ");
 				}
 				if (ma["*"]) {
 					if (typeof ma["*"] == "string") {
-						ma["*"] = ma["*"].replace(/^\s+|\s+$/, "").split(" ");
+						ma["*"] = enyo.trim(ma["*"]).split(" ");
 					}
 					o = o? o.concat(ma["*"]): ma["*"];
 				}
@@ -301,15 +301,15 @@
 			}
 			for (var k in props.observers) {
 				p.observers[k] = (p.observers[k] || "");
-				var ss = (typeof props.observers[k] == "string"? props.observers[k].replace(/^\s+|\s+$/, "").split(" "): props.observers[k]);
+				var ss = (typeof props.observers[k] == "string"? enyo.trim(props.observers[k]).split(" "): props.observers[k]);
 				for (var i=0, s; (s=ss[i]); ++i) {
 					// if we have not seen this entry before we will add it
 					if (!~p.observers[k].indexOf(s)) {
 						p.observers[k] += (" " + s);
-						p.observerMap[s] = ((p.observerMap[s] || "") + " " + k).replace(/^\s+|\s+$/, "").replace(/\s+/g, " ");
+						p.observerMap[s] = enyo.trim((p.observerMap[s] || "") + " " + k).replace(/\s+/g, " ");
 					}
 				}
-				p.observers[k] = p.observers[k].replace(/^\s+|\s+$/, "").replace(/\s+/g, " ");
+				p.observers[k] = enyo.trim(p.observers[k]).replace(/\s+/g, " ");
 			}
 			delete props.observers;
 		}

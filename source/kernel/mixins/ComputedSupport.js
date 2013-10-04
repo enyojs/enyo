@@ -1,5 +1,5 @@
 (function (enyo) {
-		
+
 	//*@protected
 	// this is called when we need an instance-specific computed table so
 	// runtime modifications are unique to the instance and not the kind, also
@@ -82,7 +82,7 @@
 				var map = _instanceMap(this, "computedMap"), n;
 				if ((n = map[path])) {
 					if (typeof n == "string") {
-						n = map[path] = n.replace(/^\s+|\s+$/, "").split(" ");
+						n = map[path] = enyo.trim(n).split(" ");
 					}
 					for (var i=0, p; (p=n[i]); ++i) {
 						// this is a dependency of one of our computed properties
@@ -188,18 +188,18 @@
 			}
 			for (var k in props.computed) {
 				p.computed[k] = (p.computed[k] || "");
-				var ss = (typeof props.computed[k] == "string"? props.computed[k].replace(/^\s+|\s+$/, "").split(" "): props.computed[k]);
+				var ss = (typeof props.computed[k] == "string"? enyo.trim(props.computed[k]).split(" "): props.computed[k]);
 				for (var i=0, s; (s=ss[i]); ++i) {
 					if (typeof s == "object" && s.cached) {
 						p.computedCached[k] = true;
 					} else {
 						if (!~p.computed[k].indexOf(s)) {
 							p.computed[k] += (" " + s);
-							p.computedMap[s] = ((p.computedMap[s] || "") + " " + k).replace(/^\s+|\s+$/, "").replace(/\s+/g, " ");
+							p.computedMap[s] = enyo.trim((p.computedMap[s] || "") + " " + k).replace(/\s+/g, " ");
 						}
 					}
 				}
-				p.computed[k] = p.computed[k].replace(/^\s+|\s+$/, "").replace(/\s+/g, " ");
+				p.computed[k] = enyo.trim(p.computed[k]).replace(/\s+/g, " ");
 			}
 			delete props.computed;
 		}
