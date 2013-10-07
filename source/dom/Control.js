@@ -1063,11 +1063,9 @@ enyo.kind({
 			return (
 				(inText + ";")
 				// remove any non-alpha ascii at the front of the string
-				.replace(/^[^a-zA-Z]+/, "")
-				// remove all spaces before any semi-colons
-				.replace(/\s*?;/g, ";")
-				// remove any duplicate semi-colons
-				.replace(/;;+/g, ";")
+				.replace(/^[;\s]+/, "")
+				// remove all spaces before any semi-colons or any duplicates
+				.replace(/\s*;;+/g, ";")
 				// ensure we have one space after each colon or semi-colon except the last one
 				.replace(/;\s*(?!$)/g, "; ")
 				// ensure we have one space after each colon
