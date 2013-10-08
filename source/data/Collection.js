@@ -273,7 +273,17 @@ enyo.kind({
 		// we will only provide the indices in the return and events so that we can lazily
 		// instantiate the records as they are needed
 		for (var j=0, r; (r=rec[j]); ++j) {
-			if (f) { rec[j] = this.createRecord(r, didFetch? {didFetch: true}: null, false); }
+			if (!(r instanceof enyo.Model)) {
+				if (f) { rec[j] = this.createRecord(r, didFetch? {didFetch: true}: null, false); }
+			} else if (r.destroyed) {
+				throw "enyo.Collection.add: cannot add a record that has already been destroyed";
+			} else {
+				var s = r.store;
+				r.store = s || this.store;
+				if (r.store === this.store && s !== this.store) {
+					r.storeChanged();
+				}
+			}
 			d.push(j+i);
 		}
 		// rather than perform a splice over and over potentially we run it once
