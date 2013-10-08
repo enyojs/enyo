@@ -55,6 +55,28 @@ enyo.kind({
 			this.notifyObservers("model");
 		};
 	}),
+    initComponents: enyo.inherit(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			// Support for alternate control parents.  Note this code mirrors the same
+			// pattern used in Component:initComponents - create chrome then clients
+            for (var cbName in this.controlParents) {
+                var instanceControlParent = this.$[this.controlParents[cbName]];
+                if (this.multiKindComponents && this.multiKindComponents[cbName]) {
+                    this.createChrome(
+                        this.multiKindComponents[cbName], 
+                        {instanceControlParent: instanceControlParent}
+                    );
+                }
+                if (this[cbName]) {
+                    this.createClientComponents(
+                        this[cbName],
+                        {instanceControlParent: instanceControlParent}
+                    );
+                }
+            }
+		};
+	}),
 	destroy: enyo.inherit(function (sup) {
 		return function() {
 			// Destroys all non-chrome controls (regardless of owner).
@@ -197,7 +219,11 @@ enyo.kind({
 		// specified control.
 		//
 		// allow delegating the child to a different container
-		if (this.controlParent /*&& !inChild.isChrome*/) {
+        if (inChild.instanceControlParent) {
+			var instanceControlParent = inChild.instanceControlParent;
+			delete inChild.instanceControlParent;
+			instanceControlParent.addChild(inChild);
+        } else if (this.controlParent) {
 			// this.controlParent might have a controlParent, and so on; seek the ultimate parent
 			// inBefore is not passed because that control won't be in the controlParent's scope
 			this.controlParent.addChild(inChild);
@@ -314,8 +340,48 @@ enyo.kind({
 				this.model = enyo.getPath.call(m[0] == "."? this: enyo.global, m);
 			}
 		}
+	},
+	statics: {
+		subclass: function(ctor, props) {
+			var proto = ctor.prototype;
+			// Support for multiple control parents
+			if (proto.controlParents) {
+				// We'll let users put the legacy components->controlParent mapping in the new
+				// controlParents block, but we'll assign that back to the legacy controlParentName
+				// since we keep the backward-compatible logic for creating components
+				if (proto.controlParents.components) {
+					proto.controlParentName = proto.controlParents.components;
+					delete proto.controlParents.components;
+				}
+				// This hash is analogous to kindComponents used in enyo.Component, used for
+				// storing additional kindComponents associated with other controlParents
+				proto.multiKindComponents = proto.multiKindComponents && enyo.clone(proto.multiKindComponents) || {};
+				for (var cbName in proto.controlParents) {
+					if (props[cbName]) {
+						proto.multiKindComponents[cbName] = props[cbName];
+						delete proto[cbName];
+					} else {
+						if (props.componentOverrides && proto.multiKindComponents[cbName]) {
+							proto.multiKindComponents[cbName] = enyo.Component.overrideComponents(
+								proto.multiKindComponents[cbName], 
+								props.componentOverrides, 
+								proto.defaultKind
+							);
+						}
+					}
+				}
+			}
+		},
+		concat: function(ctor, props) {
+			if (props.controlParents) {
+				var p = ctor.prototype || ctor;
+				p.controlParents = (p.controlParents ? enyo.mixin(enyo.clone(p.controlParents), props.controlParents) : props.controlParents);
+				delete props.controlParents;
+			}
+		}
 	}
 });
+
 
 enyo.createFromKind = function(inKind, inParam) {
 	var Ctor = inKind && enyo.constructorForKind(inKind);

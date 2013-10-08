@@ -124,11 +124,13 @@ enyo.kind({
 		this.createChrome(this.kindComponents);
 		this.createClientComponents(this.components);
 	},
-	createChrome: function(inComponents) {
-		this.createComponents(inComponents, {isChrome: true});
+	createChrome: function(inComponents, inOpts) {
+		var opts = {isChrome: true};
+		this.createComponents(inComponents, inOpts ? enyo.mixin(opts, inOpts) : opts);
 	},
-	createClientComponents: function(inComponents) {
-		this.createComponents(inComponents, {owner: this.getInstanceOwner()});
+	createClientComponents: function(inComponents, inOpts) {
+		var opts = {owner: this.getInstanceOwner()};
+		this.createComponents(inComponents, inOpts ? enyo.mixin(opts, inOpts) : opts);
 	},
 	getInstanceOwner: function() {
 		return (!this.owner || this.owner.notInstanceOwner) ? this : this.owner;
