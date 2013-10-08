@@ -58,9 +58,9 @@ enyo.kind({
 	*/
 	filters: null,
 	/**
-		This is a space-delimited string of properties that, when updated from
+		This is an array or space-delimited string of properties that, when updated from
 		bindings or via the _set()_ method, will trigger a _filter_ event on the
-		collection automatically.
+		collection automatically if an `activeFilter` is active.
 	*/
 	filterProps: "",
 	/**
@@ -733,6 +733,12 @@ enyo.Collection.concat = function (ctor, props) {
 		}
 	}
 	if (props.filterProps) {
+		// for the incoming props to a string
+		if (enyo.isArray(props.filterProps)) {
+			props.filterProps = props.filterProps.join(" ");
+		}
+		// if there isn't already one it will be assigned from the string
+		// in the normal import props otherwise we concatenate the strings...
 		if (p.filterProps) {
 			p.filterProps += (" " + props.filterProps);
 			delete props.filterProps;
