@@ -79,10 +79,10 @@
 		*/
 		notifyObservers: enyo.inherit(function (sup) {
 			return function (path, prev, value) {
-				var map = _instanceMap(this, "computedMap"), n;
-				if ((n = map[path])) {
+				var ma = this.computedMap, n;
+				if (ma && (n = ma[path])) {
 					if (typeof n == "string") {
-						n = map[path] = enyo.trim(n).split(" ");
+						n = ma[path] = enyo.trim(n).split(" ");
 					}
 					for (var i=0, p; (p=n[i]); ++i) {
 						// this is a dependency of one of our computed properties
