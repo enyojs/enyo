@@ -137,7 +137,7 @@
 			Set this to an array of keys to use for comparative purposes when using
 			the _merge_ strategy in the store or any collection.
 		*/
-		mergeKeys: [],
+		mergeKeys: null,
 		/**
 			An arbitrary, unique value that is assigned to every model. Models may be
 			requested via this property in collections and the store. Unlike
@@ -158,8 +158,10 @@
 			value being returned.
 		*/
 		get: function (prop) {
-			var fn = this.attributes[prop];
-			return (fn && "function" == typeof fn)? fn.call(this): fn;
+			if (this.attributes) {
+				var fn = this.attributes[prop];
+				return (fn && "function" == typeof fn)? fn.call(this): fn;
+			}
 		},
 		//*@public
 		/**
@@ -169,6 +171,7 @@
 			in the schema, it will be ignored.
 		*/
 		set: function (prop, value) {
+			if (!this.attributes) { return this; }
 			if (enyo.isObject(prop)) { return this.setObject(prop); }
 			var rv = this.attributes[prop],
 				ch, en;
@@ -189,7 +192,6 @@
 						}
 					}
 				}
-
 				this.changed[prop] = this.attributes[prop] = value;
 				this.notifyObservers(prop, rv, value);
 				// if this is a dependent of a computed property we mark that
@@ -211,6 +213,7 @@
 			to the _attributes_ schema when this method is used.
 		*/
 		setObject: function (props) {
+			if (!this.attributes) { return this; }
 			if (props) {
 				var ch = false,
 					rv, k, en;
@@ -248,23 +251,19 @@
 			While models should normally be instanced using _enyo.store.createRecord()_,
 			the same applies to the constructor. The first parameter will be used as
 			the attributes of the model; the optional second parameter will be used as
-			configuration for the model.
+			configuration for the model. Note that `attributes` being passed in to this
+			method will be passed to the `parse` method. The options may include overloaded
+			methods for the _kind_ but note that since it is done at instantiation it will
+			be executed for each new _model_ created this way and it is recommended you
+			sub-kind the base _kind_ instead.
 		*/
 		constructor: function (attributes, opts) {
-			// collections will supply the parse option to ensure that
-			// data has the opportunity to be parsed as if the model had
-			// called fetch
-			var p = (opts && opts.parse) || false;
 			if (opts) { this.importProps(opts); }
 			this.euid = enyo.uuid();
-			var a = this.attributes? enyo.clone(this.attributes): {},
+			var a = this.attributes = (this.attributes? enyo.clone(this.attributes): {}),
 				d = this.defaults,
 				x = attributes;
-			// if we're created by a _collection_ the default behavior is
-			// to parse the incoming data as that data was retrieved
-			this.attributes = a;
-			if (p) { x = this.parse(x); }
-			if (x) { enyo.mixin(a, x); }
+			if (x) { enyo.mixin(a, this.parse(x)); }
 			if (d) { enyo.mixin(a, d, _mixinOpts); }
 			this.changed = {};
 			// populate the previous property with the actual values as would be expected
@@ -275,10 +274,7 @@
 		//*@protected
 		importProps: function (p) {
 			if (p) {
-				if (p.defaults || p.attributes || p.computed) {
-					enyo.concatHandler(this, p);
-				}
-				for (var k in p) { k != "parse" && (this[k] = p[k]); }
+				enyo.kind.statics.extend(p, this);
 			}
 		},
 		//*@public
@@ -432,12 +428,13 @@
 				}
 			}
 			this.triggerEvent("destroy");
-			this.previous = null;
-			this.changed = null;
-			this.defaults = null;
+			this.previous    = null;
+			this.changed     = null;
+			this.defaults    = null;
 			this.includeKeys = null;
-			this.mergeKeys = null;
-			this.destroyed = true;
+			this.mergeKeys   = null;
+			this.destroyed   = true;
+
 		},
 		/**
 			When a record fails during a request, this method is executed with the
