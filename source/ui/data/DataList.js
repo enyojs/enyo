@@ -60,7 +60,7 @@ enyo.kind({
 	refresh: function () {
 		this.startJob("refreshing", function () {
 			this.delegate.refresh(this);
-		}, 16);
+		}, 100);
 	},
 	//*@protected
 	constructor: enyo.inherit(function (sup) {
