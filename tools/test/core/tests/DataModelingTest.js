@@ -160,8 +160,15 @@ enyo.kind({
 	},
 	testDestroyAll: function () {
 		var s = new enyo.Store(),
-			c = new enyo.Collection({store: s});
-		for (var i=0; i<15; ++i) { c.add(s.createRecord({id: i}, {readOnly: true})); }
+			c = new enyo.Collection({store: s}),
+			makeRecords = function () {
+				var r = [];
+				for (var i=0; i<15; ++i) { r.push(s.createRecord({id: i}, {readOnly: true})); }
+				return r;
+			};
+		c.add(makeRecords());
+		c.destroyAll();
+		c.add(makeRecords());
 		c.destroyAll();
 		this.finish(
 			(c.length !== 0 && "length was not zero as expected after destroyAll was called") ||
