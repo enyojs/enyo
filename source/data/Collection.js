@@ -406,8 +406,7 @@ enyo.kind({
 		collection for chaining.
 	*/
 	clearFilter: function () {
-		if (this.activeFilter) { this.set("activeFilter", ""); }
-		return this;
+		return (this.activeFilter? this.set("activeFilter", ""): this);
 	},
 	/**
 		Removes all records from the collection. This action _does not_ destroy the
@@ -420,7 +419,8 @@ enyo.kind({
 		records.
 	*/
 	removeAll: function () {
-		if (this.filtered) { this.reset(); }
+		// no need to call reset prior to remove since it already checks
+		// for the filtered state and calls reset
 		return this.remove(this.records);
 	},
 	/**
@@ -433,9 +433,12 @@ enyo.kind({
 		records.
 	*/
 	destroyAll: function () {
-		var rr = this.removeAll(), r;
+		var rr = this.removeAll(),
+			r;
 		this._destroyAll = true;
-		for (var k in rr) { (r=rr[k]) && r.destroy(); }
+		for (var k in rr) {
+			(r=rr[k]) && r.destroy();
+		}
 		this._destroyAll = false;
 	},
 	/**
@@ -592,7 +595,11 @@ enyo.kind({
 		this.records = (d && (p && this.parse(d)) || d && d.slice()) || [];
 		// if the _didFetch_ flag is present we need to mark the props as having been
 		// fetched so they will appropriately be parsed later
-		if (df) { for (var i=0, r; (r=d[i]); ++i) { r.didFetch = true; } }
+		if (df) {
+			for (var i=0, r; (r=d[i]); ++i) {
+				r.didFetch = true;
+			}
+		}
 		// initialized our length property
 		this.length = this.records.length;
 		// we bind this method to our collection so it can be reused as an event listener
@@ -665,7 +672,11 @@ enyo.kind({
 				this.records = this.records? this.records.concat(p.records): p.records;
 				delete p.records;
 			}
-			for (var k in p) { if (k != "didFetch" && k != "parse") { this[k] = p[k]; } }
+			for (var k in p) {
+				if (k != "didFetch" && k != "parse") {
+					this[k] = p[k];
+				}
+			}
 		}
 	},
 	storeChanged: function () {
