@@ -229,11 +229,11 @@ enyo.kind({
 				merged = false;
 				// if there is a value for the primary key or any merge keys were
 				// provided we can continue
-				if (mk || r[pk]) {
+				var v = (r.get? r.get(pk): r[pk]);
+				if (mk || (v !== null && v !== undefined)) {
 					for (var j=0, c; (!merged && (c=local[j])); ++j) {
 						// compare the primary key value if it exists
-						var v = (r.get? r.get(pk): r[pk]);
-						if (v && v === (c.get? c.get(pk): c[pk])) {
+						if ((v !== null && v !== undefined) && v === (c.get? c.get(pk): c[pk])) {
 							// update the flag so that the inner loop won't continue
 							merged = true;
 							// remove the index from the array copy so we won't check
@@ -274,9 +274,6 @@ enyo.kind({
 						} else {
 							enyo.mixin(c, r.raw? r.raw(): r);
 						}
-						// remove the index from the array copy so we won't check
-						// this index again
-						local.splice(j, 1);
 					} else {
 						// if we checked the record data against all existing records and didn't merge it
 						// we need to add it to the array that will be added at the end

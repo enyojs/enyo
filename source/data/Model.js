@@ -263,7 +263,7 @@
 			var a = this.attributes = (this.attributes? enyo.clone(this.attributes): {}),
 				d = this.defaults,
 				x = attributes;
-			if (x) { enyo.mixin(a, enyo.parse(x)); }
+			if (x) { enyo.mixin(a, this.parse(x)); }
 			if (d) { enyo.mixin(a, d, _mixinOpts); }
 			this.changed = {};
 			// populate the previous property with the actual values as would be expected
