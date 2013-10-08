@@ -181,7 +181,9 @@ enyo.kind({
 			// if there was a different one before then we need to unregister for
 			// those events now
 			if (p && p.removeListener) {
-				for (e in h) { c.removeListener(e, h[e]); }
+				for (e in h) {
+					p.removeListener(e, h[e]);
+				}
 			}
 		};
 	}),
