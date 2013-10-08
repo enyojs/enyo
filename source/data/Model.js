@@ -453,13 +453,17 @@
 			Adds an observer according to the the _enyo.ObserverSupport_ API.
 		*/
 		addObserver: function (prop, fn, ctx) {
-			return this.store._addObserver(this, prop, fn, ctx);
+			if (this.store) {
+				return this.store._addObserver(this, prop, fn, ctx);
+			}
 		},
 		/**
 			Removes an observer according to the the _enyo.ObserverSupport_ API.
 		*/
 		removeObserver: function (prop, fn) {
-			return this.store._removeObserver(this, prop, fn);
+			if (this.store) {
+				return this.store._removeObserver(this, prop, fn);
+			}
 		},
 		/**
 			Notifies any observers for the given property; accepts the previous and
@@ -467,12 +471,14 @@
 			any observers for any changed properties.
 		*/
 		notifyObservers: function (prop, prev, val) {
-			// if no prop is provided we call it once for each changed attribute
-			if (!prop) {
-				for (var k in this.changed) {
-					this.store._notifyObservers(this, k, this.previous[k], this.attributes[k]);
-				}
-			} else { this.store._notifyObservers(this, prop, prev, val); }
+			if (this.store) {
+				// if no prop is provided we call it once for each changed attribute
+				if (!prop) {
+					for (var k in this.changed) {
+						this.store._notifyObservers(this, k, this.previous[k], this.attributes[k]);
+					}
+				} else { this.store._notifyObservers(this, prop, prev, val); }
+			}
 		},
 		/**
 			Adds a listener for the given event. Callbacks will be executed with two
@@ -482,7 +488,9 @@
 			_enyo.ObserverSupport_ API, but does not function in the same way.
 		*/
 		addListener: function (prop, fn, ctx) {
-			return this.store.addListener(this, prop, fn, ctx);
+			if (this.store) {
+				return this.store.addListener(this, prop, fn, ctx);
+			}
 		},
 		/**
 			Removes a listener. Accepts the name of the event that the listener is
@@ -490,14 +498,18 @@
 			_ctx_ was provided). Returns true on successful removal; otherwise, false.
 		*/
 		removeListener: function (prop, fn) {
-			return this.store.removeListener(this, prop, fn);
+			if (this.store) {
+				return this.store.removeListener(this, prop, fn);
+			}
 		},
 		/**
 			Triggers any listeners for the record's specified event, with optional
 			_args_.
 		*/
 		triggerEvent: function (event, args) {
-			this.store.triggerEvent(this, event, args);
+			if (this.store) {
+				this.store.triggerEvent(this, event, args);
+			}
 		},
 		//*@protected
 		storeChanged: function () {
