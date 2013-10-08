@@ -281,6 +281,9 @@
 	enyo.concatHandler = function (ctor, props) {
 		// call the original
 		fn.apply(this, arguments);
+		// now we have to ensure we properly maintain the observer properties
+		// for any kind but we want to do the least amount of work possible
+		var p = ctor.prototype || ctor;
 		// now we need to make sure we insert any observers that may not have
 		// been declared explicitly but find them by the property name convention
 		for (var r in props) {
@@ -288,9 +291,6 @@
 				addObserverForProperty(r.slice(0, -7), r, p, props);
 			}
 		}
-		// now we have to ensure we properly maintain the observer properties
-		// for any kind but we want to do the least amount of work possible
-		var p = ctor.prototype || ctor;
 		if (props.observers) {
 			if (!p.observers) {
 				p.observers = {};
