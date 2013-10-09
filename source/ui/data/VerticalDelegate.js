@@ -86,6 +86,9 @@ enyo.DataList.delegates.vertical = {
 		page.index = index;
 		page.start = pi;
 		page.end = pf;
+		if (list.length === 0) {
+			force = true;
+		}
 		// i is the iteration index of the child in the children's array of the page
 		// j is the iteration index of the dataset for each child
 		for (var i=0, j=pi; j<pf; ++i, ++j) {
@@ -106,8 +109,12 @@ enyo.DataList.delegates.vertical = {
 		// now we need to update the known metrics cached for this page if we need to
 		var mx = list.metrics.pages[index] || (list.metrics.pages[index] = {});
 		// we will need to get the actual sizes for the page
-		if (!mx.height || force || pf !== of) { mx.height = this.pageHeight(list, page); }
-		if (!mx.width || force || pf !== of) { mx.width = this.pageWidth(list, page); }
+		if (!mx.height || force || pf !== of) {
+			mx.height = this.pageHeight(list, page);
+		}
+		if (!mx.width || force || pf !== of) {
+			mx.width = this.pageWidth(list, page);
+		}
 	},
 	/**
 		Generates a child size for the given list.
@@ -226,9 +233,11 @@ enyo.DataList.delegates.vertical = {
 			bs = 0, sp = list.psizeProp, ss = list.ssizeProp,
 			n = list.$.buffer.node || list.$.buffer.hasNode(), p;
 		if (n) {
-			for (var i=0; i<pc || (i===0 && pc===0); ++i) {
-				p = list.metrics.pages[i];
-				bs += (p && p[sp]) || ds;
+			if (pc !== 0) {
+				for (var i=0; i<pc; ++i) {
+					p = list.metrics.pages[i];
+					bs += (p && p[sp]) || ds;
+				}
 			}
 			list.bufferSize = bs;
 			n.style[sp] = bs + "px";

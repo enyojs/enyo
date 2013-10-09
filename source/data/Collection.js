@@ -322,13 +322,13 @@ enyo.kind({
 				// if the instanceAllRecords flag is true we have to instance it now
 				if (this.instanceAllRecords) {
 					records[j] = this.createRecord(r, null, false);
-				} else if (r.destroyed) {
-					throw "enyo.Collection.add: cannot add a record that has already been destroyed";
 				}
-				// add the current index + the index offset determined by the index
-				// passed in to the method
-				add.push(j+i);
+			} else if (r.destroyed) {
+				throw "enyo.Collection.add: cannot add a record that has already been destroyed";
 			}
+			// add the current index + the index offset determined by the index
+			// passed in to the method
+			add.push(j+i);
 		}
 		// here we just simply use built-ins to shortcut otherwise taxing routines
 		records.unshift.apply(records, [i, 0]);
