@@ -85,6 +85,14 @@ enyo.kind({
 			this.createChrome([{name: "flyweighter", canGenerate: false, owner: this, spotlight: false, flyweighter: true}]);
 		};
 	}),
+	render: enyo.inherit(function (sup) {
+		return function () {
+			this.$.flyweighter.canGenerate = false;
+			this.$.scroller.canGenerate = false;
+			this.$.scroller.teardownRender();
+			sup.apply(this, arguments);
+		};
+	}),
 	/**
 		Attempts to do initialization. There are only a few basic startup paths, but
 		we need to be aware of what they are:
