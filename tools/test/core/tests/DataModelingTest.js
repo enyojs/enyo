@@ -54,6 +54,21 @@ enyo.kind({
 		m.destroyLocal();
 		this.finish(id != 71 && "event did not fire as expected");
 	},
+	testAddListenerContext: function () {
+		var c = new enyo.Control(),
+			m = new enyo.Model({store: test.store}),
+			r = {},
+			f = function () { r.contextReference = this.id; };
+		// test with context and string
+		c.contextString = function () { r.contextString = this.id; };
+		m.addListener("testEvent", "contextString", c);
+		m.addListener("testEvent", f, c);
+		m.triggerEvent("testEvent");
+		this.finish(
+			(r.contextString != c.id && "string was not resolved to context") ||
+			(r.contextReference != c.id && "function reference not bound to context")
+		);
+	},
 	testGetRaw: function () {
 		var o = {prop1: "prop1", prop2: true, prop3: "prop3"},
 			m = new enyo.Model(o),
