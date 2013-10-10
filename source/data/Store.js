@@ -370,8 +370,15 @@
 			// now add a new entry in the map for that record if this property hasn't
 			// been tagged before
 			m = m[event] = m[event] || [];
-			fn = enyo.isString(fn)? (ctx? ctx[fn]: enyo.getPath(fn)): (ctx? enyo.bind(ctx, fn): fn);
-			m.push(fn);
+			// string or function should be valid
+			if (ctx && (typeof fn == "function" || typeof fn == "string")) {
+				fn = enyo.bind(ctx, fn);
+			} else if (typeof fn == "string") {
+				fn = enyo.getPath(fn);
+			}
+			if (fn && typeof fn == "function") {
+				m.push(fn);
+			}
 			return fn;
 		},
 		/**
