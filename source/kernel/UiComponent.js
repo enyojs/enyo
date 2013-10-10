@@ -295,7 +295,7 @@ enyo.kind({
 		}
 	},
 	getBubbleTarget: function() {
-		return this._bubbleTarget || this.parent || this.owner;
+		return this.bubbleTarget || this.parent || this.owner;
 	},
 	controllerChanged: function (p) {
 		var c = this.controller;

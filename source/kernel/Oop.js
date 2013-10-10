@@ -1,54 +1,4 @@
-﻿(function (enyo) {
-	//*@protected
-	/**
-		Default properties of Enyo kinds to concatenate as opposed to
-		overwriting. These are automatically used unless explicitly
-		removed.
-	*/
-	enyo.concat = ["concat"];
-	/**
-		Used internally to map a concatenated property handler to the property.
-	*/
-	var map = enyo.concatMap = {};
-	var forced = {};
-	enyo.concatHandler = function (prop, handler, force) {
-		if (map[prop]) { map[prop].push(handler); }
-		else { map[prop] = [handler]; }
-		forced[prop] = force;
-	};
-	/**
-		Concatenated properties are designated properties with special handling
-		required between subclassing and extending. Any property that, when added
-		to a kind (either by subclassing or extending), needs to be manipulated
-		or merged with the base kind's value should use this mechanism. Simply add
-		the property name to the kind's _concat_ array (it, too, will be
-		concatenated). If the value is an array with no special needs, it will be
-		handled automatically. If it is not an array, or needs inspection, a handler
-		should be registered for the property via _enyo.concatHandler()_.
-
-		This is required (as opposed to using subclassing) because of the nature of
-		extending a kind and extending an instance. These special handlers need to
-		be invoked on all occasions, not just when subclassing. This is a normalized
-		and performant handler that does the least amount of work possible.
-	*/
-	enyo.handleConcatenatedProperties = function (proto, props, noKind) {
-		var c = enyo.merge(proto.concat, props.concat), fn;
-		for (var i=0, p; (p=c[i]); ++i) {
-			if (!props[p] && !proto[p] && !forced[p]) { continue; }
-			// if there is a registered handler, use it
-			if (map[p]) {
-				for (var j=0; (fn=map[p][j]); ++j) { fn(proto, props, noKind); }
-			} else if (enyo.isArray(proto[p])) {
-				// if there wasn't a special handler, but it was an array on the base,
-				// we assume it is an array coming in and we merge them
-				proto[p] = enyo.merge(proto[p], props[p]);
-				delete props[p];
-			}
-		}
-	};
-})(enyo);
-
-//* @public
+﻿//* @public
 /**
 	Creates a JavaScript constructor function with a prototype defined by
 	_inProps_. __All constructors must have a unique name__.
@@ -157,7 +107,7 @@ enyo.kind.finish = function(inProps) {
 	// there are special cases where a base class has a property
 	// that may need to be concatenated with a subclasses implementation
 	// as opposed to completely overwriting it...
-	enyo.handleConcatenatedProperties(ctor.prototype, inProps);
+	enyo.concatHandler(ctor, inProps);
 
 	// put in our props
 	enyo.mixin(ctor.prototype, inProps);
@@ -319,7 +269,21 @@ enyo.kind.inherited = function (originals, replacements) {
 	// warning to notify developers they are calling a
 	// super method that doesn't exist
 	if ("function" === typeof fn) {
-		return fn.apply(this, replacements? enyo.mixin(originals, replacements): originals);
+		var args = originals;
+		if (replacements) {
+			// combine the two arrays, with the replacements taking the first
+			// set of arguments, and originals filling up the rest.
+			args = [];
+			var i = 0, l = replacements.length;
+			for (; i < l; ++i) {
+				args[i] = replacements[i];
+			}
+			l = originals.length;
+			for (; i < l; ++i) {
+				args[i] = originals[i];
+			}
+		}
+		return fn.apply(this, args);
 	} else {
 		enyo.warn("enyo.kind.inherited: unable to find requested " +
 			"super-method from -> " + originals.callee.displayName + " in " + this.kindName);
@@ -419,11 +383,22 @@ enyo.kind.statics = {
 		}
 		proto = target || ctor.prototype;
 		for (var i=0, p; (p=exts[i]); ++i) {
-			enyo.handleConcatenatedProperties(proto, p);
+			enyo.concatHandler(proto, p);
 			enyo.kind.extendMethods(proto, p, true);
 			enyo.mixin(proto, p, {filter: fn});
 		}
 		return target || ctor;
+	}
+};
+
+//*@protected
+enyo.concatHandler = function (ctor, props) {
+	var p = ctor.prototype || ctor,
+		b = p.ctor,
+		k = (p === ctor);
+	while (b) {
+		if (b.concat) { b.concat(ctor, props, k); }
+		b = b.prototype.base;
 	}
 };
 

@@ -58,9 +58,9 @@ enyo.kind({
 	*/
 	filters: null,
 	/**
-		This is a space-delimited string of properties that, when updated from
+		This is an array or space-delimited string of properties that, when updated from
 		bindings or via the _set()_ method, will trigger a _filter_ event on the
-		collection automatically.
+		collection automatically if an `activeFilter` is active.
 	*/
 	filterProps: "",
 	/**
@@ -142,7 +142,7 @@ enyo.kind({
 	/**
 		This method is executed after a successful fetch, asynchronously. Any new
 		data either replaces or is merged with the existing data (as determined by
-		the_replace_ option for _fetch()_). Receives the collection, the options,
+		the _replace_ option for _fetch()_). Receives the collection, the options,
 		and the result (_res_).
 	*/
 	didFetch: function (rec, opts, res) {
@@ -150,9 +150,6 @@ enyo.kind({
 		var rr = this.parse(res),
 			s  = opts.strategy, fn;
 		if (rr) {
-			// mark the data as having been retrieved remotely so when it is instanced it
-			// will know to pass the parse flag
-			for (var i=0, r; (r=rr[i]); ++i) { r.didFetch = true; }
 			// even if replace was requested it will have already taken place so we
 			// need only evaluate the strategy for merging the new results
 			if ((fn=this[s]) && enyo.isFunction(fn)) {
@@ -196,96 +193,162 @@ enyo.kind({
 		return enyo.json.stringify(this.raw());
 	},
 	/**
-		One of the strategies for adding data retrieved via _fetch()_ to the
-		collection. It attempts to find and update any matching records already in
-		the collection. If the model kind associated with this collection has
-		_mergeKeys_, they will be used to compare the records; if not, the
-		_primaryKey_ value is used for comparison. Any unmerged records will be
-		added at the end of the collection. If a _primaryKey_ value exists on the
-		incoming records, it will take precedence over _mergeKeys_. Set the optional
-		second parameter to true to force parsing of all records by the model kind's
-		built-in _parse()_ method.
+		This _strategy_ accepts a single _record_ (data-hash or _enyo.Model_ instance), or
+		an array of _records_ (data-hashes or _enyo.Model_ instances) to be merged with
+		the current _collection_. This _strategy_ can be executed directly (used much like
+		the _add()_ method) or specified as the _strategy_ to employ with data retrieved via
+		the _fetch()_ method. The default behavior is to find and merge _records_ by their
+		_primaryKey_ value when present but will also rely on any _mergeKeys_ set on the
+		`model` kind for this collection. If the _record(s)_ passed into this method are
+		object-literals they will be passed through the _parse()_ method of the `model` kind
+		before being merged with existing _records_ or prior to being instanced as new _records_.
+		Any _records_ passed to this method that cannot be merged with existing _records_ will
+		be added to the collection at the end. This method will works with instanced and non-
+		instanced _records_ in the collection and merges without forcing the _record_ to be
+		instanced.
 	*/
-	merge: function (rec, didFetch) {
-		// TODO: with a little more time this could be optimized a bit better...
-		var p  = this.model.prototype,
-			pk = p.primaryKey,
-			mk = p.mergeKeys,
-			a  = [], r, f, k, m, w;
-		rec = (enyo.isArray(rec) && rec) || [rec];
-		for (var j=0, nr; (nr=rec[j]); ++j) {
-			if (enyo.exists(nr[pk]) || mk) {
-				f = false;
-				for (k=0; !f && (r=this.at(k)); ++k) {
-					if ((!isNaN(nr[pk]) || nr[pk]) && r.get(pk) == nr[pk]) {
-						// ensure that the incoming data is properly parsed
-						r.setObject(r.parse(nr));
-						f = true;
-					} else if (mk) {
-						w = false;
-						for (m=0; m<mk.length; ++m) {
-							if (nr[mk[m]] != r.get(mk[m])) { w=false; break; }
-							else { w=true; }
-						}
-						if (w) {
-							// check for the _didFetch_ flag that would have been added if
-							// this was called from that method so we can know whether to
-							// parse the data or not
-							var df = nr.didFetch || didFetch;
-							delete nr.didFetch;
-							r.setObject(df? r.parse(nr): nr);
-							f = true;
+	merge: function (records) {
+		if (records) {
+			var proto  = this.model.prototype,
+				pk     = proto.primaryKey,
+				mk     = proto.mergeKeys,
+				// the array (if any) of records to add that could not be merged
+				add    = [],
+				// the copy of our internal records so we can remove indices already
+				// merged and not need to iterate over them again
+				local  = this.records.slice(),
+				// flag used during iterations to help break the loop for an incoming
+				// record if it was successfully merged
+				merged = false,
+				// flag used when comparing merge keys
+				match  = false;
+			// ensure we're working with an array of something
+			records = (enyo.isArray(records)? records: [records]);
+			for (var i=0, r; (r=records[i]); ++i) {
+				// reset our flag
+				merged = false;
+				// if there is a value for the primary key or any merge keys were
+				// provided we can continue
+				var v = (r.get? r.get(pk): r[pk]);
+				if (mk || (v !== null && v !== undefined)) {
+					for (var j=0, c; (!merged && (c=local[j])); ++j) {
+						// compare the primary key value if it exists
+						if ((v !== null && v !== undefined) && v === (c.get? c.get(pk): c[pk])) {
+							// update the flag so that the inner loop won't continue
+							merged = true;
+							// remove the index from the array copy so we won't check
+							// this index again
+							local.splice(j, 1);
+						// otherwise we check to see if there were merge keys to check against
+						} else if (mk) {
+							// reset our test flag
+							match = false;
+							// iterate over any merge keys and compare their values if even
+							// one doesn't match then we know the whole thing won't match
+							// so we break the loop
+							for (var k=0, m; (m=mk[k]); ++k) {
+								v = (r.get? r.get(m): r[m]);
+								if (v === (c.get? c.get(m): c[m])) {
+									match = true;
+								} else {
+									match = false;
+									break;
+								}
+							}
+							// if they matched
+							if (match) {
+								// update the flag so that the inner loop won't continue
+								merged = true;
+								// remove the index from the array copy so we won't check
+								// this index again
+								local.splice(j, 1);
+							}
 						}
 					}
-				}
-				if (!f) { a.push(nr); }
-			} else { a.push(nr); }
+					if (merged) {
+						// if the current record is instanced we use the _setObject()_ method otherwise
+						// we simply mixin the properties so it will be up to date whenever it is
+						// instanced
+						if (c.setObject) {
+							c.setObject(r.raw? r.raw(): c.parse(r));
+						} else {
+							enyo.mixin(c, r.raw? r.raw(): r);
+						}
+					} else {
+						// if we checked the record data against all existing records and didn't merge it
+						// we need to add it to the array that will be added at the end
+						add.push(r);
+					}
+				} else { add.push(r); }
+			}
+			// if there were any records that needed to be added at the end of the collection
+			// we do that now
+			if (add.length) {
+				this.add(add);
+			}
 		}
-		// for any records that didn't get merged we need to add them
-		// now as a group
-		if (a.length) { this.add(a); }
 	},
 	/**
 		Adds a passed-in record, or array of records, to the collection. Optionally,
 		you may provide the index at which to insert the record(s). Records are
 		added at the end by default. If additions are made successfully, an _add_
 		event is fired with the array of the indices of any records successfully
-		added. The method also returns this array of indices. Set the optional third
-		parameter to true to force all data to be parsed by the model kind's own
-		_parse()_ method.
+		added. The method also returns this array of indices.
 	
 		Records can only be added to an unfiltered dataset. If this method is called
 		while a filter is applied, the collection will be reset prior to adding the
 		records.
 	*/
-	add: function (rec, i, didFetch) {
+	add: function (records, i) {
+		// since we can't add records to a filtered collection we will reset it to
+		// unfiltered if necessary
 		if (this.filtered) { this.reset(); }
-		var rr = this.records,
-			d  = [],
-			l  = this.length,
-			f  = this.instanceAllRecords;
-		// figure out what the index we will be inserting them at
-		i = (!isNaN(i) && (i=Math.max(0,i)) && (i=Math.min(this.length, i))) || this.length;
-		// if this is not at array already we ensure that it is
-		rec = (enyo.isArray(rec) && rec) || [rec];
-		// if there aren't actually any models we just return an empty array
-		if (!rec.length) { return d; }
-		// we will only provide the indices in the return and events so that we can lazily
-		// instantiate the records as they are needed
-		for (var j=0, r; (r=rec[j]); ++j) {
-			if (f) { rec[j] = this.createRecord(r, didFetch? {didFetch: true}: null, false); }
-			d.push(j+i);
+			// the actual records array for the collection
+		var local = this.records,
+			// the array of indices of any records added to the collection
+			add     = [],
+			// the existing length prior to adding any records
+			len     = this.length;
+		// normalize the requested index to the appropriate starting index for
+		// our operation
+		i = (i !== null && !isNaN(i) && (i=Math.max(0,i)) && (i=Math.min(len,i))) || len;
+		// ensure we're working with an array of incoming records/data hashes
+		records = (enyo.isArray(records)? records: [records]);
+		// if there aren't really any records to add we just return an empty array
+		if (!records.length) { return add; }
+		// we want to lazily instantiate records (unless the instanceAllRecords flag is true)
+		for (var j=0, r; (r=records[j]); ++j) {
+			if (!(r instanceof enyo.Model)) {
+				// if the instanceAllRecords flag is true we have to instance it now
+				if (this.instanceAllRecords) {
+					records[j] = this.createRecord(r, null, false);
+				}
+			} else if (r.destroyed) {
+				throw "enyo.Collection.add: cannot add a record that has already been destroyed";
+			}
+			// add the current index + the index offset determined by the index
+			// passed in to the method
+			add.push(j+i);
 		}
-		// rather than perform a splice over and over potentially we run it once
-		rec.unshift.apply(rec, [i, 0]);
-		rr.splice.apply(rr, rec);
-		rec.splice(0, 2);
-		// update the new length
-		this.length = rr.length;
-		// now alert any observers of the length change
-		if (l != this.length) { this.notifyObservers("length", l, this.length); }
-		// trigger the event with the indices
-		if (d.length) { this.triggerEvent("add", {records: d}); }
+		// here we just simply use built-ins to shortcut otherwise taxing routines
+		records.unshift.apply(records, [i, 0]);
+		// we add these records to our own records array at the correct index
+		local.splice.apply(local, records);
+		// we have to return the passed-in array to its original state
+		records.splice(0, 2);
+		// update our new length property
+		this.length = local.length;
+		// if the current length is different than the original length we need to
+		// notify any observers of this change
+		if (len !== this.length) {
+			this.notifyObservers("length", len, this.length);
+		}
+		// if necessary, trigger the `add` event for listeners
+		if (add.length) {
+			this.triggerEvent("add", {records: add});
+		}
+		// return the array of added indices
+		return add;
 	},
 	/**
 		Accepts a record, or an array of records, to be removed from the collection.
@@ -396,8 +459,7 @@ enyo.kind({
 		collection for chaining.
 	*/
 	clearFilter: function () {
-		if (this.activeFilter) { this.set("activeFilter", ""); }
-		return this;
+		return (this.activeFilter? this.set("activeFilter", ""): this);
 	},
 	/**
 		Removes all records from the collection. This action _does not_ destroy the
@@ -410,7 +472,8 @@ enyo.kind({
 		records.
 	*/
 	removeAll: function () {
-		if (this.filtered) { this.reset(); }
+		// no need to call reset prior to remove since it already checks
+		// for the filtered state and calls reset
 		return this.remove(this.records);
 	},
 	/**
@@ -423,9 +486,12 @@ enyo.kind({
 		records.
 	*/
 	destroyAll: function () {
-		var rr = this.removeAll(), r;
+		var rr = this.removeAll(),
+			r;
 		this._destroyAll = true;
-		for (var k in rr) { (r=rr[k]) && r.destroy(); }
+		for (var k in rr) {
+			(r=rr[k]) && r.destroy();
+		}
 		this._destroyAll = false;
 	},
 	/**
@@ -494,13 +560,14 @@ enyo.kind({
 		property. Accepts the attributes (_attrs_) to be used, the properties
 		(_props_) to apply, and an optional index at which to insert the record into
 		the _collection_. If the index is false, the record will not be added to the
-		collection at all. Returns the newly created record instance.
+		collection at all. Returns the newly created record instance. Note that records
+		created by a collection have their `owner` property set to the collection and
+		will be added to the `store` set on the collection. If a collection is _destroyed_
+		any _records_ it owns will also be _destroyed_ unless the `preserveRecords` flag
+		is `true`.
 	*/
 	createRecord: function (attrs, props, i) {
-		// ensure we know whether or not to flag the data as needing to be parsed
-		var df = attrs.didFetch;
-		delete attrs.didFetch;
-		var d = {owner: this, parse: df? true: false},
+		var d = {owner: this},
 			r = this.store.createRecord(this.model, attrs, props? enyo.mixin(d, props): d);
 		i = false === i? -1: (!isNaN(i) && i >= 0? i: this.length);
 		r.addListener("change", this._recordChanged);
@@ -568,21 +635,14 @@ enyo.kind({
 		instances or hashes to be converted) and an optional hash of properties to
 		be applied to the collection. Both are optional, meaning that you can supply
 		neither, either one, or both. If both options and data are present, options
-		will be applied first.
+		will be applied first. If the _data_ array is present it will be passed through
+		the `parse` method of the collection.
 	*/
 	constructor: function (data, opts) {
-		var d  = data && enyo.isArray(data) && data,
-			o  = opts || (data && !enyo.isArray(data) && data),
-			p  = o? o.parse: false,
-			df = o? o.didFetch: false;
+		var d  = enyo.isArray(data)? data.slice(): null,
+			o  = opts || (data && !d? data: null);
 		if (o) { this.importProps(o); }
-		// we need to ensure that we don't keep a reference to the original array
-		// if it is passed in...with the exception that if the developer uses the parse
-		// method it is on them to ensure a local array
-		this.records = (d && (p && this.parse(d)) || d && d.slice()) || [];
-		// if the _didFetch_ flag is present we need to mark the props as having been
-		// fetched so they will appropriately be parsed later
-		if (df) { for (var i=0, r; (r=d[i]); ++i) { r.didFetch = true; } }
+		this.records = (this.records || []).concat(d? this.parse(d): []);
 		// initialized our length property
 		this.length = this.records.length;
 		// we bind this method to our collection so it can be reused as an event listener
@@ -655,7 +715,7 @@ enyo.kind({
 				this.records = this.records? this.records.concat(p.records): p.records;
 				delete p.records;
 			}
-			for (var k in p) { if (k != "didFetch" && k != "parse") { this[k] = p[k]; } }
+			enyo.kind.statics.extend(p, this);
 		}
 	},
 	storeChanged: function () {
@@ -711,23 +771,27 @@ enyo.kind({
 		// from the collection
 		if (!this._destroyAll) { this.remove(rec); }
 	},
-	concat: ["filters", "filterProps"],
 	_destroyAll: false
 });
 
-enyo.concatHandler("filters", function (proto, props) {
+enyo.Collection.concat = function (ctor, props) {
+	var p = ctor.prototype || ctor;
 	if (props.filters) {
-		if (proto.filters) {
-			proto.filters = enyo.mixin(enyo.clone(proto.filters), props.filters);
+		if (p.filters) {
+			p.filters = enyo.mixin(enyo.clone(p.filters), props.filters);
 			delete props.filters;
 		}
 	}
-});
-enyo.concatHandler("filterProps", function (proto, props) {
 	if (props.filterProps) {
-		if (proto.filterProps) {
-			proto.filterProps += (" " + props.filterProps);
+		// for the incoming props to a string
+		if (enyo.isArray(props.filterProps)) {
+			props.filterProps = props.filterProps.join(" ");
+		}
+		// if there isn't already one it will be assigned from the string
+		// in the normal import props otherwise we concatenate the strings...
+		if (p.filterProps) {
+			p.filterProps += (" " + props.filterProps);
 			delete props.filterProps;
 		}
 	}
-});
+};

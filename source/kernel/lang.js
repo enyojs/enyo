@@ -882,8 +882,7 @@
 		} else {
 			throw('enyo.bindSafely: scope["' + method + '"] is not a function (this="' + this + '")');
 		}
-	},
-
+	};
 
 
 	/**
@@ -952,8 +951,15 @@
 		without modification.
 	*/
 	enyo.trim = function (str) {
-		return str && str.replace? (str.replace(/^\s+|\s$/, "")): str;
+		return str && str.replace? (str.replace(/^\s+|\s+$/g, "")): str;
 	};
+
+	// use built-in .trim when available in JS runtime
+	if (String.prototype.trim) {
+		enyo.trim = function(str) {
+			return str && str.trim? str.trim() : str;
+		};
+	}
 
 	//*@public
 	/**

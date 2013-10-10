@@ -1,33 +1,15 @@
 (function (enyo) {
 	//*@protected
-	// ensure observers will be handled by the concatenation handler
-	enyo.concat.push("changedObservers", "observers");
-	/**
-		Used because, when cloning objects with arrays, we need to also
-		clone the arrays.
-	*/
-	var _clone = function (obj) {
-		var c = {};
-		for (var k in obj) {
-			if (enyo.isArray(obj[k])) {
-				c[k] = enyo.cloneArray(obj[k]);
-			} else {
-				c[k] = obj[k];
-			}
-		}
-		return c;
-	};
-
 	// this is called when we need an instance-specific observer table so
 	// runtime modifications are unique to the instance and not the kind, also
 	// note that once the kind is instanced modifications to the _observers_
 	// block will not be registered; they will have to be added via the
 	// addObserver method with an anonymous function
 	var _instanceMap = function(obj) {
-		if (!obj.hasOwnProperty("_observerMap")) {
-			obj._observerMap = _clone(obj._observerMap);
+		if (!obj.hasOwnProperty("observerMap")) {
+			obj.observerMap = enyo.clone(obj.observerMap);
 		}
-		return obj._observerMap;
+		return obj.observerMap;
 	};
 	//*@public
 	/**
@@ -86,17 +68,20 @@
 			observer may not be added for the same event more than once.
 		*/
 		addObserver: function (prop, fn, ctx) {
-			var id = enyo.uid("__observer__"),
-				map = _instanceMap(this);
-
-			if (map[prop]) {
-				map[prop].push(id);
+			var ma = _instanceMap(this),
+				i  = enyo.uid("__observer__"), o;
+			if ((o = ma[prop])) {
+				if (typeof o == "string") {
+					o = ma[prop] = enyo.trim(o).split(" ");
+				}
+				o.push(i);
 			} else {
-				map[prop] = [id];
+				ma[prop] = [i];
 			}
-			this[id] = ctx? enyo.bind(ctx, fn): fn;
-			this[id].observer = true;
-			return this[id];
+			this[i] = ctx? enyo.bindSafely(ctx, fn): fn;
+			this[i].observer = true;
+			this[i].observerId = i;
+			return this[i];
 		},
 		/**
 			Attempts to remove the given listener/observer for the given property,
@@ -106,22 +91,21 @@
 			Typically, this method will not be called directly.
 		*/
 		removeObserver: function (prop, fn) {
-			var map = _instanceMap(this),
-				en = map[prop];
-			if (en && fn) {
-				for (var i=0, id; (id=en[i]); ++i) {
-					if (this[id] === fn) {
-						en.splice(i, 1);
-						// for methods that are anonymously added as an
-						// observer we need to remove them from the object completely
+			var ma = _instanceMap(this), o;
+			if ((o = ma[prop])) {
+				if (typeof o == "string") {
+					o = ma[prop] = enyo.trim(o).split(" ");
+				}
+				for (var i=0, i$; (i$=o[i]); ++i) {
+					if (this[i$] === fn) {
+						o.splice(i, 1);
 						if (fn.observer) {
-							delete this[id];
+							delete this[i$];
 						}
-						if (en.length === 0) {
-							// we completely remove the entry for the property in the map
-							// so we don't do extra work on updates and it isn't enumerable
-							delete map[prop];
+						if (o.length === 0) {
+							delete ma[prop];
 						}
+						return;
 					}
 				}
 			}
@@ -136,7 +120,7 @@
 		removeAllObservers: function () {
 			// we allow this even if we didn't have a local map
 			// since it won't be around for long
-			this._observerMap = {};
+			this.observerMap = {};
 			return this;
 		},
 		/**
@@ -146,21 +130,27 @@
 			call that, if it exists, while also notifying other observers.
 		*/
 		notifyObservers: function (prop, prev, value) {
-			var map = this._observerMap;
-			if (!map) { return; }
-			var	en = map[prop],
-				a = this._observerNotificationsEnabled, fn, n;
-			// special handler case
-			if (map["*"]) {
-				en = en? en.concat(map["*"]): map["*"];
-			}
-			if (en) {
-				for (var i=0; (n=en[i]); ++i) {
-					if ((fn = this[n])) {
-						if (!a) {
-							this._addObserverToQueue(prop, fn, [prev, value, prop]);
-						} else {
-							fn.call(this, prev, value, prop);
+			var ma = this.observerMap;
+			if (ma) {
+				var o = ma[prop],
+					a = this.observerNotificationsEnabled;
+				if (typeof o == "string") {
+					o = ma[prop] = enyo.trim(o).split(" ");
+				}
+				if (ma["*"]) {
+					if (typeof ma["*"] == "string") {
+						ma["*"] = enyo.trim(ma["*"]).split(" ");
+					}
+					o = o? o.concat(ma["*"]): ma["*"];
+				}
+				if (o) {
+					for (var i=0, n, fn; (n=o[i]); ++i) {
+						if ((fn = this[n])) {
+							if (!a) {
+								this._addObserverToQueue(prop, fn, [prev, value, prop]);
+							} else {
+								fn.call(this, prev, value, prop);
+							}
 						}
 					}
 				}
@@ -181,8 +171,8 @@
 			flushed until the counter reaches 0.
 		*/
 		stopNotifications: function (disableQueue) {
-			this._observerNotificationsEnabled = false;
-			this._observerStopCount += 1;
+			this.observerNotificationsEnabled = false;
+			this.observerStopCount += 1;
 			if (disableQueue) {
 				this.disableNotificationQueue();
 			}
@@ -199,11 +189,11 @@
 			re-enable the notification queue if it was disabled.
 		*/
 		startNotifications: function (enableQueue) {
-			if (this._observerStopCount !== 0) {
-				this._observerStopCount -= 1;
+			if (this.observerStopCount !== 0) {
+				this.observerStopCount -= 1;
 			}
-			if (this._observerStopCount === 0) {
-				this._observerNotificationsEnabled = true;
+			if (this.observerStopCount === 0) {
+				this.observerNotificationsEnabled = true;
 				this._flushObserverQueue();
 			}
 			if (enableQueue) {
@@ -216,7 +206,7 @@
 			no effect until they are disabled.
 		*/
 		enableNotificationQueue: function () {
-			this._observerNotificationQueueEnabled = true;
+			this.observerNotificationQueueEnabled = true;
 		},
 		/**
 			Disables the notification queue. Has no effect if the queue is
@@ -225,16 +215,16 @@
 			and any items in the queue will be cleared (not flushed).
 		*/
 		disableNotificationQueue: function () {
-			this._observerNotificationQueueEnabled = false;
-			this._observerNotificationQueue = {};
+			this.observerNotificationQueueEnabled = false;
+			this.observerNotificationQueue = {};
 		},
 		//*@protected
 		/**
 			Used internally when a notification is queued.
 		*/
 		_addObserverToQueue: function (prop, fn, params) {
-			if (this._observerNotificationQueueEnabled) {
-				var q = this._observerNotificationQueue || (this._observerNotificationQueue = {}),
+			if (this.observerNotificationQueueEnabled) {
+				var q = this.observerNotificationQueue || (this.observerNotificationQueue = {}),
 					en = q[prop];
 				params || (params = []);
 				if (!en) {
@@ -253,14 +243,14 @@
 			the action is complete.
 		*/
 		_flushObserverQueue: function () {
-			if (this._observerStopCount === 0 && this._observerNotificationQueueEnabled) {
-				if (!this._observerNotificationQueue) { return; }
+			if (this.observerStopCount === 0 && this.observerNotificationQueueEnabled) {
+				if (!this.observerNotificationQueue) { return; }
 				// we clone the queue for immutability since this is a synchronous
 				// and recursive method, it does not require a recursive clone however
-				var q = enyo.clone(this._observerNotificationQueue),
+				var q = enyo.clone(this.observerNotificationQueue),
 					fn, p, en, ps, tmp = [];
 				// now we reset before we begin
-				this._observerNotificationQueue = {};
+				this.observerNotificationQueue = {};
 				for (p in q) {
 					en = q[p];
 					ps = enyo.isFunction(en[0])? tmp: en.shift();
@@ -276,79 +266,53 @@
 				sup.apply(this, arguments);
 			};
 		}),
-		_observerStopCount: 0,
-		_observerNotificationQueue: null,
-		_observerNotificationsEnabled: true,
-		_observerNotificationQueueEnabled: true,
-		_observerMap: null
+		observerStopCount: 0,
+		observerNotificationQueue: null,
+		observerNotificationsEnabled: true,
+		observerNotificationQueueEnabled: true,
+		observerMap: null
 	};
-	/**
-		Used when handling concatenated properties.
-	*/
-	enyo.concatHandler("observers", function (proto, props) {
-		if (props.observers) {
-			var po, ro, k, map, a, i, dep;
-			// unfortunately there are 2 steps here but it's all for the better
-			// good in terms of overall performance, we take this hit once per kind
-			// call and only if there are any observers to mess with anyways
-			// first step is to maintain the user-friendly observer declarations
-			if (!proto.observers) {
-				proto.observers = props.observers;
-			} else {
-				po = _clone(proto.observers),
-				ro = props.observers;
-				for (k in ro) {
-					if (po[k]) {
-						po[k] = enyo.merge(po[k], ro[k]);
-					} else {
-						po[k] = ro[k];
-					}
-				}
-				proto.observers = po;
+	//*@protected
+	var addObserverForProperty = function (n, fn, proto, props) {
+		var po = props.observers || (props.observers = {});
+		(po[fn]=(po[fn] || [])).push(n);
+	};
+	var fn = enyo.concatHandler;
+	enyo.concatHandler = function (ctor, props) {
+		// call the original
+		fn.apply(this, arguments);
+		// now we have to ensure we properly maintain the observer properties
+		// for any kind but we want to do the least amount of work possible
+		var p = ctor.prototype || ctor;
+		// now we need to make sure we insert any observers that may not have
+		// been declared explicitly but find them by the property name convention
+		for (var r in props) {
+			if (r.slice(-7) == "Changed") {
+				addObserverForProperty(r.slice(0, -7), r, p, props);
 			}
-			// second step is to maintain the implementation-friendly mapping
-			// of dependencies to their respective handlers so that we don't spend
-			// runtime always trying to determine who handles what and the lookup
-			// penalty is very small
-			if (proto.observers) {
-				map = proto._observerMap? _clone(proto._observerMap): {};
-				po = proto.observers;
-				for (k in po) {
-					a = po[k];
-					for (i=0; (dep=a[i]); ++i) {
-						if (map[dep]) {
-							// ensure we only have unique entries so we don't accidently
-							// notify the same handler more than once
-							map[dep].push(k);
-							map[dep] = enyo.merge(map[dep]);
-						} else {
-							map[dep] = [k];
-						}
+		}
+		if (props.observers) {
+			if (!p.observers) {
+				p.observers = {};
+				p.observerMap = {};
+			} else {
+				p.observers = enyo.clone(p.observers);
+				p.observerMap = enyo.clone(p.observerMap);
+			}
+			for (var k in props.observers) {
+				p.observers[k] = (p.observers[k] || "");
+				var ss = (typeof props.observers[k] == "string"? enyo.trim(props.observers[k]).split(" "): props.observers[k]);
+				for (var i=0, s; (s=ss[i]); ++i) {
+					// if we have not seen this entry before we will add it
+					if (!~p.observers[k].indexOf(s)) {
+						p.observers[k] += (" " + s);
+						p.observerMap[s] = enyo.trim((p.observerMap[s] || "") + " " + k).replace(/\s+/g, " ");
 					}
 				}
-				proto._observerMap = map;
+				p.observers[k] = enyo.trim(p.observers[k]).replace(/\s+/g, " ");
 			}
 			delete props.observers;
 		}
-	});
-	var addObserverForProperty = function (n, fn, proto, props) {
-		var po = props.observers || {};
-		if (!po[fn]) {
-			po[fn] = [n];
-		} else {
-			po[fn].push(n);
-			po[fn] = enyo.merge(po[fn]);
-		}
-		props.observers = po;
-
 	};
-	enyo.concatHandler("changedObservers", function (proto, props) {
-		var k, pr;
-		for (k in props) {
-			pr = k.split("Changed");
-			if (pr.length > 1) {
-				addObserverForProperty(pr[0], k, proto, props);
-			}
-		}
-	}, true);
+
 })(enyo);

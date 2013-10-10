@@ -59,7 +59,7 @@
 		The events in _enyo.Model_ differ from those in
 		[enyo.Component](#enyo.Component). Instead of _bubbled_ or _waterfall_
 		events, _enyo.Model_ has _change_ and _destroy_ events.
-		
+
 		To work with these events, use [addListener()](#enyo.Model::addListener),
 		[removeListener()](#enyo.Model::removeListener), and
 		[triggerEvent()](#enyo.Model::triggerEvent).
@@ -80,7 +80,7 @@
 			of the record at initialization. Any value in _defaults_ that already
 			exists on the attributes schema will be ignored.
 		*/
-		defaults: null,
+		defaults: {},
 		/**
 			Set this flag to true if this model is read-only and will not need to
 			commit or destroy any changes via a source. This will cause a _destroy()_
@@ -158,8 +158,10 @@
 			value being returned.
 		*/
 		get: function (prop) {
-			var fn = this.attributes[prop];
-			return (fn && "function" == typeof fn)? fn.call(this): fn;
+			if (this.attributes) {
+				var fn = this.attributes[prop];
+				return (fn && "function" == typeof fn)? fn.call(this): fn;
+			}
 		},
 		//*@public
 		/**
@@ -169,22 +171,34 @@
 			in the schema, it will be ignored.
 		*/
 		set: function (prop, value) {
+			if (!this.attributes) { return this; }
 			if (enyo.isObject(prop)) { return this.setObject(prop); }
-			var rv = this.attributes[prop];
+			var rv = this.attributes[prop],
+				ch, en;
 			if (rv && "function" == typeof rv) { return this; }
 			if (rv !== value) {
 				this.previous[prop] = rv;
+				if (this.computedMap) {
+					if ((en=this.computedMap[prop])) {
+						if (typeof en == "string") {
+							en = this.computedMap[prop] = enyo.trim(en).split(" ");
+						}
+						ch = {};
+						for (var i=0, p; (p=en[i]); ++i) {
+							this.attributes[prop] = rv;
+							this.previous[p] = ch[p] = this.get(p);
+							this.attributes[prop] = value;
+							this.changed[p] = this.get(p);
+						}
+					}
+				}
 				this.changed[prop] = this.attributes[prop] = value;
 				this.notifyObservers(prop, rv, value);
 				// if this is a dependent of a computed property we mark that
 				// as changed as well
-				if (this._computedMap) {
-					if (this._computedMap[prop]) {
-						var ps = this._computedMap[prop];
-						for (var i=0, p; (p=ps[i]); ++i) {
-							this.notifyObservers(p);
-							this.changed[p] = this.get(p);
-						}
+				if (ch) {
+					for (var k in ch) {
+						this.notifyObservers(k);
 					}
 				}
 				this.triggerEvent("change");
@@ -199,32 +213,33 @@
 			to the _attributes_ schema when this method is used.
 		*/
 		setObject: function (props) {
+			if (!this.attributes) { return this; }
 			if (props) {
 				var ch = false,
-					rv, k;
+					rv, k, en;
 				for (k in props) {
 					rv = this.attributes[k];
 					if (rv && "function" == typeof rv) { continue; }
 					if (rv === props[k]) { continue; }
 					this.previous[k] = rv;
+					if (this.computedMap) {
+						if ((en=this.computedMap[k])) {
+							if (typeof en == "string") {
+								en = this.computedMap[k] = enyo.trim(en).split(" ");
+							}
+							for (var i=0, p; (p=en[i]); ++i) {
+								this.attributes[k] = rv;
+								this.previous[p] = this.get(p);
+								this.attributes[k] = props[k];
+								this.changed[p] = this.get(p);
+							}
+						}
+					}
 					this.changed[k] = this.attributes[k] = props[k];
 					ch = true;
 				}
 				if (ch) {
 					this.notifyObservers();
-					if (this._computedMap) {
-						for (k in this.changed) {
-							// if this is a dependent of a computed property we mark that
-							// as changed as well
-							if (this._computedMap[k]) {
-								var ps = this._computedMap[k];
-								for (var i=0, p; (p=ps[i]); ++i) {
-									this.notifyObservers(p);
-									this.changed[p] = this.get(p);
-								}
-							}
-						}
-					}
 					this.triggerEvent("change");
 					this.changed = {};
 					this.dirty = true;
@@ -236,24 +251,20 @@
 			While models should normally be instanced using _enyo.store.createRecord()_,
 			the same applies to the constructor. The first parameter will be used as
 			the attributes of the model; the optional second parameter will be used as
-			configuration for the model.
+			configuration for the model. Note that `attributes` being passed in to this
+			method will be passed to the `parse` method. The options may include overloaded
+			methods for the _kind_ but note that since it is done at instantiation it will
+			be executed for each new _model_ created this way and it is recommended you
+			sub-kind the base _kind_ instead.
 		*/
 		constructor: function (attributes, opts) {
-			// collections will supply the parse option to ensure that
-			// data has the opportunity to be parsed as if the model had
-			// called fetch
-			var p = (opts && opts.parse) || false;
 			if (opts) { this.importProps(opts); }
 			this.euid = enyo.uuid();
-			var a = this.attributes? enyo.clone(this.attributes): {},
+			var a = this.attributes = (this.attributes? enyo.clone(this.attributes): {}),
 				d = this.defaults,
 				x = attributes;
-			// if we're created by a _collection_ the default behavior is
-			// to parse the incoming data as that data was retrieved
-			if (p) { x = this.parse(x); }
-			if (x) { enyo.mixin(a, x); }
+			if (x) { enyo.mixin(a, this.parse(x)); }
 			if (d) { enyo.mixin(a, d, _mixinOpts); }
-			this.attributes = a;
 			this.changed = {};
 			// populate the previous property with the actual values as would be expected
 			// for further updates
@@ -263,8 +274,7 @@
 		//*@protected
 		importProps: function (p) {
 			if (p) {
-				if (p.defaults || p.attributes || p.computed) { enyo.Model.subclass(this, p); }
-				for (var k in p) { k != "parse" && (this[k] = p[k]); }
+				enyo.kind.statics.extend(p, this);
 			}
 		},
 		//*@public
@@ -418,11 +428,13 @@
 				}
 			}
 			this.triggerEvent("destroy");
-			this.previous = null;
-			this.changed = null;
-			this.defaults = null;
+			this.previous    = null;
+			this.changed     = null;
+			this.defaults    = null;
 			this.includeKeys = null;
-			this.destroyed = true;
+			this.mergeKeys   = null;
+			this.destroyed   = true;
+
 		},
 		/**
 			When a record fails during a request, this method is executed with the
@@ -438,13 +450,17 @@
 			Adds an observer according to the the _enyo.ObserverSupport_ API.
 		*/
 		addObserver: function (prop, fn, ctx) {
-			return this.store._addObserver(this, prop, fn, ctx);
+			if (this.store) {
+				return this.store._addObserver(this, prop, fn, ctx);
+			}
 		},
 		/**
 			Removes an observer according to the the _enyo.ObserverSupport_ API.
 		*/
 		removeObserver: function (prop, fn) {
-			return this.store._removeObserver(this, prop, fn);
+			if (this.store) {
+				return this.store._removeObserver(this, prop, fn);
+			}
 		},
 		/**
 			Notifies any observers for the given property; accepts the previous and
@@ -452,12 +468,14 @@
 			any observers for any changed properties.
 		*/
 		notifyObservers: function (prop, prev, val) {
-			// if no prop is provided we call it once for each changed attribute
-			if (!prop) {
-				for (var k in this.changed) {
-					this.store._notifyObservers(this, k, this.previous[k], this.attributes[k]);
-				}
-			} else { this.store._notifyObservers(this, prop, prev, val); }
+			if (this.store) {
+				// if no prop is provided we call it once for each changed attribute
+				if (!prop) {
+					for (var k in this.changed) {
+						this.store._notifyObservers(this, k, this.previous[k], this.attributes[k]);
+					}
+				} else { this.store._notifyObservers(this, prop, prev, val); }
+			}
 		},
 		/**
 			Adds a listener for the given event. Callbacks will be executed with two
@@ -467,7 +485,9 @@
 			_enyo.ObserverSupport_ API, but does not function in the same way.
 		*/
 		addListener: function (prop, fn, ctx) {
-			return this.store.addListener(this, prop, fn, ctx);
+			if (this.store) {
+				return this.store.addListener(this, prop, fn, ctx);
+			}
 		},
 		/**
 			Removes a listener. Accepts the name of the event that the listener is
@@ -475,14 +495,18 @@
 			_ctx_ was provided). Returns true on successful removal; otherwise, false.
 		*/
 		removeListener: function (prop, fn) {
-			return this.store.removeListener(this, prop, fn);
+			if (this.store) {
+				return this.store.removeListener(this, prop, fn);
+			}
 		},
 		/**
 			Triggers any listeners for the record's specified event, with optional
 			_args_.
 		*/
 		triggerEvent: function (event, args) {
-			this.store.triggerEvent(this, event, args);
+			if (this.store) {
+				this.store.triggerEvent(this, event, args);
+			}
 		},
 		//*@protected
 		storeChanged: function () {
@@ -498,52 +522,22 @@
 			}
 			s = this.store = s || enyo.store;
 			s.addRecord(this);
-		},
-		//*@protected
-		concat: ["mergeKeys"]
+		}
 	});
 	//*@protected
-	enyo.Model.subclass = function (ctor, props) {
-		var p  = ctor.prototype || ctor,
-			ra = props.attributes,
-			// only clone when we absolutely need to
-			pa = (p.attributes && (ra && enyo.clone(p.attributes)) || p.attributes) || {},
-			rd = props.defaults,
-			// only clone when we absolutely need to
-			pd = (p.defaults && (rd && enyo.clone(p.defaults)) || p.defaults) || {},
-			rc = props.computed,
-			pc = (p.computed && (rc && enyo.clone(p.computed)) || p.computed) || {};
-
-		// handle attributes of the kind so all subkinds will accurately
-		// have the mixture of the schema
-		if (ra) { enyo.mixin(pa, ra) && (delete props.attributes); }
-		// always assign the prototype's attributes
-		p.attributes = pa;
-		// handle defaults of the kind so all subkinds will accurately
-		// have the mixture of the defaults
-		if (rd) { enyo.mixin(pd, rd) && (delete props.defaults); }
-		// always assign the prototype's defaults
-		p.defaults = pd;
-		if (rc) { enyo.mixin(pc, rc) && (delete props.computed); }
-		p.computed = pc;
-		// if there are computed properties for this model we need to remap them
-		// now for fast access later
-		if (rc) {
-			// we only want to do this for new computed properties since its
-			// already been done for the kind's own
-			var m = (p._computedMap && enyo.clone(p._computedMap)) || {};
-			for (var k in rc) {
-				// this is any of the known dependents of the computed method
-				var ds = rc[k];
-				// iterate over those and map each of those to any computed methods
-				// dependent on it
-				for (var i=0, d; (d=ds[i]); ++i) {
-					// if we don't already have this in the map we have to create it
-					if (!m[d]) { m[d] = []; }
-					m[d].push(k);
-				}
-			}
-			p._computedMap = m;
+	enyo.Model.concat = function (ctor, props) {
+		var p = ctor.prototype || ctor;
+		if (props.attributes) {
+			p.attributes = (p.attributes? enyo.mixin(enyo.clone(p.attributes), props.attributes): props.attributes);
+			delete props.attributes;
+		}
+		if (props.defaults) {
+			p.defaults = (p.defaults? enyo.mixin(enyo.clone(p.defaults), props.defaults): props.defaults);
+			delete props.defaults;
+		}
+		if (props.mergeKeys) {
+			p.mergeKeys = (p.mergeKeys? enyo.merge(p.mergeKeys, props.mergeKeys): props.mergeKeys.slice());
+			delete props.mergeKeys;
 		}
 	};
 })(enyo);

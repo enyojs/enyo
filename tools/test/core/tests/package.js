@@ -24,5 +24,6 @@ enyo.depends(
 	"JsonTest.js",
 	"AsyncTest.js",
 	"AjaxTest.js",
-	"ControllerTest.js"
+	"ControllerTest.js",
+	"ViewController.js"
 );

@@ -28,5 +28,29 @@ enyo.kind({
 		app.destroy();
 
 		this.finish();
+	},
+	testComponentsAppProperty: function () {
+		var a = enyo.singleton({
+			name: "test.Application.App",
+			kind: "enyo.Application",
+			renderOnStart: false,
+			view: {
+				name: "1",
+				components: [
+					{name: "2", components: [
+						{name: "3", components: [							
+							{name: "4"}
+						]}
+					]}
+				]
+			}
+		});
+		for (var k in a.$) {
+			if (!a.$[k].app) {
+				this.finish("app was not propagated to children as expected");
+			}
+		}
+		this.finish();
 	}
+	
 });

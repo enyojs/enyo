@@ -59,7 +59,7 @@ enyo.kind({
 			o = this.getInstanceOwner(),
 			d = this.defaultProps? enyo.clone(this.defaultProps): (this.defaultProps = {});
 		// ensure that children know who their binding owner is
-		d._bindingTransformOwner = this;
+		d.bindingTransformOwner = this;
 		d.bindingDefaults = this.childBindingDefaults;
 		if (c) {
 			// if there are multiple components in the components block they will become nested
@@ -82,7 +82,9 @@ enyo.kind({
 			// we need to pre-bind these methods so they can easily be added
 			// and removed as listeners later
 			var h = this._handlers = enyo.clone(this._handlers);
-			for (var e in h) { h[e] = this.bindSafely(h[e]); }
+			for (var e in h) {
+				h[e] = this.bindSafely(h[e]);
+			}
 			sup.apply(this, arguments);
 		};
 	}),
@@ -111,7 +113,9 @@ enyo.kind({
 		// destroy the client controls we might already have
 		this.destroyClientControls();
 		// and now we create new ones for each new record we have
-		for (var i=0, r; (r=dd.at(i)); ++i) { this.add(r, i); }
+		for (var i=0, r; (r=dd.at(i)); ++i) {
+			this.add(r, i);
+		}
 		this.hasReset = true;
 	},
 	/**
@@ -137,24 +141,32 @@ enyo.kind({
 	rendered: enyo.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
-			if (this.controller && this.length) { this.reset(); }
+			if (this.controller && this.length) {
+				this.reset();
+			}
 			this.hasRendered = true;
 		};
 	}),
 	add: function (rec, i) {
 		var c = this.createComponent({model: rec, index: i});
-		if (this.generated && !this.batching) { c.render(); }
+		if (this.generated && !this.batching) {
+			c.render();
+		}
 	},
 	remove: function (i) {
 		var g = this.getClientControls(),
 			c = g[i || (Math.abs(g.length-1))];
-		if (c) { c.destroy(); }
+		if (c) {
+			c.destroy();
+		}
 	},
 	prune: function () {
 		var g = this.getClientControls(), x;
 		if (g.length > this.length) {
 			x = g.slice(this.length);
-			for (var i=0, c; (c=x[i]); ++i) { c.destroy(); }
+			for (var i=0, c; (c=x[i]); ++i) {
+				c.destroy();
+			}
 		}
 	},
 	initContainer: function () {
@@ -181,7 +193,9 @@ enyo.kind({
 			// if there was a different one before then we need to unregister for
 			// those events now
 			if (p && p.removeListener) {
-				for (e in h) { c.removeListener(e, h[e]); }
+				for (e in h) {
+					p.removeListener(e, h[e]);
+				}
 			}
 		};
 	}),
@@ -190,7 +204,9 @@ enyo.kind({
 			this.set("batching", true);
 			// note that these are indices when being added so they can be lazily
 			// instantiated
-			for (var i=0, r; (!isNaN(r=props.records[i])); ++i) { this.add(c.at(r), r); }
+			for (var i=0, r; (!isNaN(r=props.records[i])); ++i) {
+				this.add(c.at(r), r);
+			}
 			this.set("batching", false);
 		}
 	},
@@ -198,12 +214,14 @@ enyo.kind({
 		if (c == this.controller) {
 			// unfortunately we need to remove these in reverse order
 			var idxs = enyo.keys(props.records);
-			for (var i=idxs.length-1, idx; (idx=idxs[i]); --i) { this.remove(idx); }
+			for (var i=idxs.length-1, idx; (idx=idxs[i]); --i) {
+				this.remove(idx);
+			}
 		}
 	},
 	batchingChanged: function (prev, val) {
 		if (this.generated && false === val) {
-			this.$[this.containerName].renderReusingNode();
+			this.$[this.containerName].render();
 		}
 	},
 	getChildForIndex: function (i) {
@@ -229,8 +247,12 @@ enyo.kind({
 				}
 				s.push(r);
 			}
-			if (c) { c.set("selected", true); }
-			if (this.selectionProperty) { (s=this.selectionProperty) && r.set(s, true); }
+			if (c) {
+				c.set("selected", true);
+			}
+			if (this.selectionProperty) {
+				(s=this.selectionProperty) && r.set(s, true);
+			}
 			this.notifyObservers("selected");
 		}
 	},
@@ -242,9 +264,15 @@ enyo.kind({
 			r = this.controller.at(index),
 			s = this._selection, i;
 		i = enyo.indexOf(r, s);
-		if (!!~i) { s.splice(i, 1); }
-		if (c) { c.set("selected", false); }
-		if (this.selectionProperty) { (s=this.selectionProperty) && r.set(s, false); }
+		if (!!~i) {
+			s.splice(i, 1);
+		}
+		if (c) {
+			c.set("selected", false);
+		}
+		if (this.selectionProperty) {
+			(s=this.selectionProperty) && r.set(s, false);
+		}
 		this.notifyObservers("selected");
 	},
 	/**
@@ -261,7 +289,9 @@ enyo.kind({
 			this.stopNotifications();
 			var s = this._selection;
 			s.length = 0;
-			for (var i=0; i<this.length; ++i) { this.select(i); }
+			for (var i=0; i<this.length; ++i) {
+				this.select(i);
+			}
 			this.startNotifications();
 		}
 	},
@@ -297,7 +327,6 @@ enyo.kind({
 	computed: {selected: [], data: ["controller"]},
 	noDefer: true,
 	childMixins: [enyo.RepeaterChildSupport],
-	concat: ["childMixins"],
 	controlParentName: "container",
 	containerName: "container",
 	containerOptions: {name: "container", classes: "enyo-fill enyo-data-repeater-container"},
@@ -305,3 +334,11 @@ enyo.kind({
 	batching: false,
 	_selection: null
 });
+
+enyo.DataRepeater.concat = function (ctor, props) {
+	var p = ctor.prototype || ctor;
+	if (props.childMixins) {
+		p.childMixins = (p.childMixins? enyo.merge(p.childMixins, props.childMixins): props.childMixins.slice());
+		delete props.childMixins;
+	}
+};

@@ -10,14 +10,7 @@
 		by reference (e.g., arrays and native JavaScript objects). But
 		for these types it is much clearer in nearly all cases.
 	*/
-	_force = /(string|number|boolean)/,
-	/**
-		Used in macro expansion to determine the macro token unwrapped;
-		works in tandem with _enyo.macroize.pattern_ and always assumes
-		this is the pattern being used in binding macro support--we
-		do not want to have to reset the sticky flag on every execution.
-	*/
-	_token = /\{\$([^{}]*)\}/;
+	_force = /(string|number|boolean)/;
 	/**
 		For tracking purposes we count bindings.
 	*/
@@ -96,14 +89,6 @@
 			also be useful for debugging.
 		*/
 		dirty: true,
-		/**
-			By default, bindings will attempt to expand macroized properties. If you
-			do not use macros, it may be more efficient to set this flag to false (the
-			default is true). To turn off macro expansion for an entire kind, set its
-			_defaultBindingKind_ to _enyo.NoMacroBinding_; to turn it off throughout
-			the framework, set _enyo.defaultBindingKind = enyo.NoMacroBinding_.
-		*/
-		expandMacros: true,
 		/**
 			Each binding has a unique id that can be used with the global static
 			method _enyo.Binding.find()_ to retrieve a reference to that binding. It
@@ -222,7 +207,6 @@
 			// a string, or no base and we have to determine it from the path
 			var b  = this[base],
 				p  = this[path],
-				e  = this.expandMacros,
 				o  = this.owner,
 				bp = "_" + base + "Path",
 				b$ = this[bp],
@@ -240,9 +224,6 @@
 			// we attempt to shortcut this method here so we don't do unnecessary work
 			// multiple times over the life of the binding
 			if (!(enyo.isString(b$) && p$)) {
-				// we need to verify that the path is of the correct form and expand any
-				// macros that might have been used
-				if (e) { p = this[path] = this._expandMacro(path, p); }
 				var parts = p.slice(1).split(".");
 				// verify we know if this is relative or not and decide what we can do with
 				// the information we have
@@ -282,43 +263,6 @@
 			this[bp]   = b$;
 			this[bf]   = f$;
 			this[pp]   = p$;
-		},
-		_expandMacro: function (prop, macro) {
-			if (!macro) { return; }
-			var o = this.owner,
-				ms, m, ex, r;
-			// we hate to run this test unnecessarily, but the overhead we'll
-			// save by this test outweighs the cons
-			ms = macro.match(enyo.macroize.pattern);
-			if (ms) {
-				m = {};
-				for (var i=0, e; (e=ms[i]); ++i) {
-					// retrieve the original macro and its extracted token for
-					// custom mapping
-					e = _token.exec(e);
-					r = e[0];
-					ex = e[1];
-					if (o) {
-						// this will either be expanded or the same thing; it's a
-						// safe execution
-						m[r] = o._bindingExpandMacro(ex, r, macro, prop, this);
-					}
-					if (!m[r] || m[r] == r) {
-						// this is most likely a local property someone is short-cutting by
-						// the convention of their naming scheme, so we test for the existence
-						// and validity of the property
-						if (this[ex] && enyo.isString(this[ex])) {
-							m[r] = this[ex];
-						}
-						// otherwise we ignore it because its invalid
-					}
-				}
-				// now we should have been able to expand any custom-added macros
-				// (usually meta properties to shortcut a different dynamic path)
-				// so we need to try and macroize the entire path now
-				return enyo.quickReplace(macro, m);
-			}
-			return macro;
 		},
 		connectSource: function () {
 			var src  = this.source,
@@ -497,7 +441,7 @@
 		initTransform: function () {
 			var tf = this.transform,
 				o  = this.owner,
-				bo = o? o._bindingTransformOwner: null;
+				bo = o? o.bindingTransformOwner: null;
 			if (tf && enyo.isString(tf)) {
 				// test first against the common case which is that it is on the
 				// transform owner or the actual owner

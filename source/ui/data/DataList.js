@@ -60,7 +60,7 @@ enyo.kind({
 	refresh: function () {
 		this.startJob("refreshing", function () {
 			this.delegate.refresh(this);
-		}, 16);
+		}, 100);
 	},
 	//*@protected
 	constructor: enyo.inherit(function (sup) {
@@ -83,6 +83,14 @@ enyo.kind({
 			// initialize the _pages_ array and add the pages to it
 			this.pages = [this.$.page1, this.$.page2];
 			this.createChrome([{name: "flyweighter", canGenerate: false, owner: this, spotlight: false, flyweighter: true}]);
+		};
+	}),
+	render: enyo.inherit(function (sup) {
+		return function () {
+			this.$.flyweighter.canGenerate = false;
+			this.$.scroller.canGenerate = false;
+			this.$.scroller.teardownRender();
+			sup.apply(this, arguments);
 		};
 	}),
 	/**
