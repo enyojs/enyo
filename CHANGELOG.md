@@ -1,4 +1,8 @@
-## 2.3.0-pre.10-dev
+## 2.3.0-pre.11
+
+enyo.Model.set() now supports the force parameter.
+
+## 2.3.0-pre.10 (9 October 2013)
 
 Removed macro support from bindings
 
