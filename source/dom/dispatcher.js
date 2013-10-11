@@ -239,8 +239,9 @@
 		var p = enyo.clone(_xy);
 		// if we are in ie8 we facade the _pageX, pageY_ properties
 		if (enyo.platform.ie < 9) {
-			p.pageX = (p.clientX - window.pageXOffset);
-			p.pageY = (p.clientY - window.pageYOffset);
+			var d = (document.documentElement || document.body.parentNode || document.body);
+			p.pageX = (p.clientX + d.scrollLeft);
+			p.pageY = (p.clientY + d.scrollTop);
 		}
 		return p;
 	};
