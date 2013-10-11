@@ -10,6 +10,9 @@
 	property of another view, although this usage will (by default) result in the
 	removal of its own view from the [enyo.Component](#enyo.Component) bubbling
 	hierarchy.
+
+	Note, _enyo.ViewController_ may have _components_ defined in its `components`
+	array but these _components_ should not be _enyo.Controls_.
 */
 enyo.kind({
 	name: "enyo.ViewController",
@@ -93,11 +96,15 @@ enyo.kind({
 			if (previous.owner === this && !previous.destroyed) {
 				previous.destroy();
 			}
-			if (previous.destroyed && !this.resetView) { return; }
+			if (previous.destroyed && !this.resetView) {
+				return;
+			}
 		}
 		var v = this.view;
 		// if it is a string resolve it
-		if (typeof v == "string") { v = enyo.getPath(v); }
+		if (typeof v == "string") {
+			v = enyo.getPath(v);
+		}
 		// if it is a function we need to instance it
 		if (typeof v == "function") {
 			// save the constructor for later
@@ -136,7 +143,9 @@ enyo.kind({
 		} else if (v && v instanceof enyo.UiComponent) {
 			// make sure we grab the constructor from an instance so we know what kind
 			// it was to recreate later if necessary
-			if (!this.viewKind) { this.viewKind = v.ctor; }
+			if (!this.viewKind) {
+				this.viewKind = v.ctor;
+			}
 			v.set("bubbleTarget", this);
 		}
 		this.view = v;
@@ -154,5 +163,11 @@ enyo.kind({
 			this.view = null;
 			this.viewKind = null;
 		};
-	})
+	}),
+	/**
+		The _controller_ can't be the instance owner of its child view for event propagation
+		reasons. This flag being true ensures that events will not be handled multiple times
+		by the _controller_ and its _view_ separately.
+	*/
+	notInstanceOwner: true
 });

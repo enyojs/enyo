@@ -35,11 +35,10 @@ enyo.kind({
 			kind: "enyo.Application",
 			renderOnStart: false,
 			view: {
-				name: "1",
 				components: [
-					{name: "2", components: [
-						{name: "3", components: [							
-							{name: "4"}
+					{components: [
+						{components: [							
+							{}
 						]}
 					]}
 				]
@@ -51,6 +50,75 @@ enyo.kind({
 			}
 		}
 		this.finish();
+	},
+	testViewTreeEventsUpAndBack: function () {
+		var a = enyo.singleton({
+			kind: "enyo.Application",
+			renderOnStart: false,
+			handlers: {
+				onBottomUp: "bottomUp"
+			},
+			view: {components: [
+				{components: [
+					{components: [
+						{components: [
+							{components: [
+								{components: [
+									{handlers: {onTopDown: "doBottomUp"}, events: {onBottomUp:""}}
+								]}
+							]}
+						]}
+					]}
+				]}
+			]},
+			bottomUp: enyo.bind(this, function () {
+				// has the context of the test method, not the
+				// application
+				this.finish();
+			})
+		})
+		a.waterfall("onTopDown");
+	},
+	testApplicationBindings: function () {
+		var a = enyo.singleton({
+			kind: "enyo.Application",
+			renderOnStart: false,
+			view: {
+				name: "view",
+				components: [
+					{name: "child"}
+				],
+				bindings: [
+					{from: ".app.$.controller.data", to: ".$.child.content"}
+				]
+			},
+			components: [
+				{name: "controller", data: "some value"} // should be a controller because of defaultKind!
+			]
+		});
+		this.finish(
+			(a.view.$.child.content != a.$.controller.data && "the binding did not propagate as expected")
+		);
+	},
+	testCompatibilityOfApplicationBindings: function () {
+				var a = enyo.singleton({
+			kind: "enyo.Application",
+			renderOnStart: false,
+			view: {
+				name: "view",
+				components: [
+					{name: "child"}
+				],
+				bindings: [
+					{from: ".app.controllers.controller.data", to: ".$.child.content"}
+				]
+			},
+			controllers: [
+				{name: "controller", data: "some value"} // should be a controller because of defaultKind!
+			]
+		});
+		this.finish(
+			(a.view.$.child.content != a.$.controller.data && "the binding did not propagate as expected")
+		);
 	}
-	
 });
