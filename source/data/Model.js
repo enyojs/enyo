@@ -170,13 +170,13 @@
 			Returns the model for chaining. If the attribute being set is a function
 			in the schema, it will be ignored.
 		*/
-		set: function (prop, value) {
+		set: function (prop, value, force) {
 			if (!this.attributes) { return this; }
 			if (enyo.isObject(prop)) { return this.setObject(prop); }
 			var rv = this.attributes[prop],
 				ch, en;
 			if (rv && "function" == typeof rv) { return this; }
-			if (rv !== value) {
+			if (force || rv !== value) {
 				this.previous[prop] = rv;
 				if (this.computedMap) {
 					if ((en=this.computedMap[prop])) {
