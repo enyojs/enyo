@@ -157,7 +157,7 @@ enyo.kind({
 			// we owned when the loop started could have been destroyed
 			// by containers. Avoid redestroying components by testing
 			// destroyed flag.
-			if (!c.destroyed) {
+			if (!c.destroyed && !(c instanceof enyo.Controller && c.global)) {
 				c.destroy();
 			}
 		});
