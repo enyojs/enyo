@@ -47,3 +47,9 @@ accepts the optional second parameter.
 Change to enyo.Model `add` method that no longer accepts optional third
 parameter and will automatically call the model's `parse` method if it is a
 data-hash (not an instanced record).
+
+Added framework method `enyo.getPosition` that returns an immutable object with
+the most recent _clientX, clientY_, _pageX, pageY_ and _screenX, screenY_ values.
+As noted in the documentation, IE8 and Opera both report inconsistent values for
+_screenX, screenY_ and we facade the _pageX, pageY_ values for IE8 since they are
+unsupported.
