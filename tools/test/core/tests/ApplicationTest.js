@@ -76,7 +76,7 @@ enyo.kind({
 				// application
 				this.finish();
 			})
-		})
+		});
 		a.waterfall("onTopDown");
 	},
 	testApplicationBindings: function () {
@@ -101,7 +101,7 @@ enyo.kind({
 		);
 	},
 	testCompatibilityOfApplicationBindings: function () {
-				var a = enyo.singleton({
+		var a = enyo.singleton({
 			kind: "enyo.Application",
 			renderOnStart: false,
 			view: {
