@@ -6,7 +6,7 @@
 enyo.applications = {};
 /**
 	_enyo.Application_ is a type of [enyo.ViewController](#enyo.ViewController)
-	that encapsulates	a collection of [enyo.Controller](#enyo.Controller)s and a
+	that encapsulates a collection of [enyo.Controller](#enyo.Controller)s and a
 	hierarchy of [enyo.Control](#enyo.Control)s. There may be multiple instances
 	of an application at a given time, with unique names and target DOM nodes.
 	Within a given application, a reference to the application is available on all
@@ -30,15 +30,20 @@ enyo.kind({
 	*/
 	renderOnStart: true,
 	/**
+		The _defaultKind_ for _enyo.Application_ is _enyo.Controller_.
+	*/
+	defaultKind: "enyo.Controller",
+	/**
+		## DEPRECATED -- SEE CHANGELOG -- USE `components` INSTEAD
+
 		Set this to an array of _enyo.Controller_ definitions that should be
 		instanced for this application. By default, controllers will only be
-		available within the scope of the application creating them. Set the
-		_global_ flag to true in the definition to use the name of the controller as
-		its global identifier. Note that, even if _global: true_ is set on a
-		controller, it will be destroyed if the application is destroyed. Once the
-		application has completed its _start()_ method, this property will be an
-		object comprised of the instances of any controllers described in the
-		original array.  These controllers may then be referenced by name.
+		available within the scope of the application creating them. As the property
+		exists on _enyo.Controller_, setting the _global_ flag to true in the definition
+		will use the name of the controller as its global identifier. Note that if a controller
+		is set as _global_ it will not be destroyed if the application is destroyed.
+		Once the application has completed its _start()_ method, this property will be a
+		reference to the application's `$` property. These controllers may then be referenced by name.
 	*/
 	controllers: null,
 	/**
@@ -52,7 +57,9 @@ enyo.kind({
 		Overload this method to suit your app's specific requirements.
 	*/
 	start: function () {
-		if (this.renderOnStart) { this.render(); }
+		if (this.renderOnStart) {
+			this.render();
+		}
 	},
 	//*@protected
 	render: enyo.inherit(function (sup) {
@@ -72,7 +79,10 @@ enyo.kind({
 				this.id = (props && props.name);
 			}
 			sup.apply(this, arguments);
-			enyo.applications[this.id] = this;
+			// we alias the `controllers` property to the `$` property to preserve
+			// backwards compatibility for the deprecated API for now
+			this.controllers = this.$;
+			enyo.applications[this.id || this.makeId()] = this;
 		};
 	}),
 	/**
@@ -82,32 +92,9 @@ enyo.kind({
 	create: enyo.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
-			if (this.autoStart) { this.start(); }
-		};
-	}),
-	/**
-		Sets up all controllers for the application, then any other components
-		defined for the kind.
-	*/
-	initComponents: enyo.inherit(function (sup) {
-		return function () {
-			// the original array of controller definitions (if any)
-			var cc = this.controllers,
-			// reassign the controllers property to the object even if we don't
-			// wind up having any
-				co = (this.controllers={});
-			if (cc) {
-				for (var i=0, c; (c=cc[i]); ++i) {
-					c.kind == c.kind || "enyo.Controller";
-					c = this.createComponent(c, {owner: this});
-					// the controller will accessible inside the '$' hash or the
-					// 'controllers' hash for binding purposes (and backwards compatibility)
-					co[c.name] = c;
-					if (c.global) { enyo.setPath(c.name, c); }
-				}
+			if (this.autoStart) {
+				this.start();
 			}
-			// now do the rest
-			sup.apply(this, arguments);
 		};
 	}),
 	/**
@@ -136,9 +123,11 @@ enyo.kind({
 	owner: enyo.master,
 	statics: {
 		concat: function (ctor, props) {
-			var p = ctor.prototype || ctor;
 			if (props.controllers) {
-				p.controllers = (p.controllers? enyo.merge(p.controllers, props.controllers): props.controllers.slice());
+				var p = ctor.prototype || ctor;
+				// we merge the controllers with components here to reduce initialization necessary
+				// at runtime -- the _controllers_ property should be fully removed in a future release
+				p.components = (p.components? p.components.concat(props.controllers): props.controllers.slice());
 				delete props.controllers;
 			}
 		}

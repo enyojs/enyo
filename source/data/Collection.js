@@ -3,20 +3,19 @@
 	_enyo.Collection_ is an array-like structure that houses collections of
 	[enyo.Model](#enyo.Model) instances. A collection may be set as the
 	_controller_ property of an [enyo.Control](#enyo.Control) or declared in the
-	_controllers_ block of an _enyo.Application_. Collections are read-only
+	_components_ block of an _enyo.Application_. Collections are read-only
 	entities in terms of retrieving and setting data via an
-	[enyo.Source](#enyo.Source). The implementation of observers and events is the
-	same as in _enyo.Model_.
+	[enyo.Source](#enyo.Source). Like _enyo.Model_, _enyo.Collection_ has a
+	separate and distinct non-bubbling API.  Collection objects generate _add_,
+	_remove_, _reset_ and _destroy_ events that may be listened for using the
+	_addListener()_ method.
 
 	A collection lazily instantiates records when they are requested. This is 
 	important to keep in mind with respect to the order of operations.
-
-	Collection objects generate _add_, _remove_, _reset_ and _destroy_ events that may be
-	listened for using the _addListener()_ method.
 */
 enyo.kind({
 	name: "enyo.Collection",
-	kind: null,
+	kind: enyo.Component,
 	noDefer: true,
 	/**
 		The kind of records the collection will house. By default, it is simply
@@ -582,28 +581,6 @@ enyo.kind({
 	*/
 	recordChanged: null,
 	/**
-		Adds an observer according to the the _enyo.ObserverSupport_ API.
-	*/
-	addObserver: function (prop, fn, ctx) {
-		return this.store._addObserver(this, prop, fn, ctx);
-	},
-	/**
-		Removes an observer according to the the _enyo.ObserverSupport_ API.
-	*/
-	removeObserver: function (prop, fn) {
-		return this.store._removeObserver(this, prop, fn);
-	},
-	/**
-		Notifies observers, but, unlike the _enyo.ObserverSupport_ API, accepts only
-		a single, optional parameter. If _prop_ is not specified, observers of any
-		changed properties will be notified.
-	*/
-	notifyObservers: function (prop) {
-		if (!this.silenced) {
-			this.store._notifyObservers(this, prop);
-		}
-	},
-	/**
 		Adds a listener for the given event. Callbacks will be executed with two
 		parameters, _record_ and _event_, where _record_ is the record that is
 		firing the event and _event_ is the name (string) for the event being fired.
@@ -626,7 +603,7 @@ enyo.kind({
 		_args_.
 	*/
 	triggerEvent: function (event, args) {
-		if (!this.silenced) {
+		if (!this._silenced) {
 			this.store.triggerEvent(this, event, args);
 		}
 	},
@@ -690,24 +667,6 @@ enyo.kind({
 		this.store = null;
 		this.destroyed = true;
 	},
-	/**
-		Retrieves the passed-in _path_ from the collection and returns its value or
-		_undefined_. Note that passing _path_ as an integer is the same as calling
-		_at()_. You cannot use _get()_ to retrieve data from a record in the
-		collection; this will only retrieve properties of the collection.
-	*/
-	get: function (path) {
-		if (path !== null && !isNaN(path)) { return this.at(path); }
-		return enyo.getPath.call(this, path);
-	},
-	/**
-		Sets the value of _path_ to _val_ on the collection. This will not work for
-		setting values on properties of records in the collection. Optional force
-		parameter to notify any observers.
-	*/
-	set: function (path, val, force) {
-		return enyo.setPath.call(this, path, val, force);
-	},
 	//*@protected
 	importProps: function (p) {
 		if (p) {
@@ -746,9 +705,9 @@ enyo.kind({
 			var fn = this.filters[this.activeFilter];
 			if (fn && this[fn]) {
 				this.filtering = true;
-				this.silenced = true;
+				this.silence();
 				var r = this[fn]();
-				this.silenced = false;
+				this.unsilence();
 				if (r) {
 					this.reset(true === r? undefined: r);
 				}
