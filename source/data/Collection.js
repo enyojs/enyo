@@ -310,7 +310,7 @@ enyo.kind({
 			len     = this.length;
 		// normalize the requested index to the appropriate starting index for
 		// our operation
-		i = (i !== null && !isNaN(i) && (i=Math.max(0,i)) && (i=Math.min(len,i))) || len;
+		i = i !== null && !isNaN(i) ? Math.max(0, Math.min(len, i)) : len;
 		// ensure we're working with an array of incoming records/data hashes
 		records = (enyo.isArray(records)? records: [records]);
 		// if there aren't really any records to add we just return an empty array
