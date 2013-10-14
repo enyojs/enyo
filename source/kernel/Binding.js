@@ -84,12 +84,6 @@
 		*/
 		connected: false,
 		/**
-			This value will be true if the binding needs synchronization and false if
-			it does not. While it is primarily for internal use, this property may
-			also be useful for debugging.
-		*/
-		dirty: true,
-		/**
 			Each binding has a unique id that can be used with the global static
 			method _enyo.Binding.find()_ to retrieve a reference to that binding. It
 			can also be used to track registered listeners on objects back to their
