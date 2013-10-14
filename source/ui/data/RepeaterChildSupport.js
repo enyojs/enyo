@@ -11,9 +11,12 @@
 	function updateIds (p) {
 		for (var i=0, t=p.tree, pr, c; (c=t[i]); ++i) {
 			pr = c.id;
+			if (!p.flyweighter) { 
+				c.node = null;
+				c.generated = true; 
+			}
 			c.id = c.makeId();
 			c.idChanged(pr);
-			if (!p.flyweighter) { c.node = document.getElementById(c.id); }
 		}
 	}
 	//*@public
@@ -83,7 +86,10 @@
 				if (this.tree) { updateIds(this); }
 				sup.apply(this, arguments);
 				// if we're not the flyweighter we need to grab our node now
-				if (!this.flyweighter) { this.node = document.getElementById(this.id); }
+				if (!this.flyweighter) { 
+					this.node = null; 
+					this.generated = true;
+				}
 			};
 		}),
 		/**
