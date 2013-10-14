@@ -12,8 +12,8 @@
 		for (var i=0, t=p.tree, pr, c; (c=t[i]); ++i) {
 			pr = c.id;
 			if (!p.flyweighter) { 
-				c.generated = true; 
 				c.node = null;
+				c.generated = true; 
 			}
 			c.id = c.makeId();
 			c.idChanged(pr);
@@ -87,7 +87,7 @@
 				sup.apply(this, arguments);
 				// if we're not the flyweighter we need to grab our node now
 				if (!this.flyweighter) { 
-					this.node = document.getElementById(this.id); 
+					this.node = null; 
 					this.generated = true;
 				}
 			};
