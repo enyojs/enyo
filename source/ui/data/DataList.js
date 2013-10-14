@@ -10,8 +10,6 @@
 	can be taxing and non-performant for the browser. Avoid	dynamically-updated
 	layouts that require lots of calculations each time the data in a view is
 	updated. Try to use CSS whenever possible.
-
-	Note that _enyo.DataList_ currently does not support horizontal orientation.
 */
 enyo.kind({
 	name: "enyo.DataList",
