@@ -34,7 +34,7 @@ enyo.kind({
 	*/
 	defaultKind: "enyo.Controller",
 	/**
-		## DEPRECATED -- SEE CHANGELOG -- USE `components` INSTEAD
+		## DEPRECATED -- SEE CHANGELOG -- USE _components_ INSTEAD
 
 		Set this to an array of _enyo.Controller_ definitions that should be
 		instanced for this application. By default, controllers will only be
@@ -43,7 +43,7 @@ enyo.kind({
 		will use the name of the controller as its global identifier. Note that if a controller
 		is set as _global_ it will not be destroyed if the application is destroyed.
 		Once the application has completed its _start()_ method, this property will be a
-		reference to the application's `$` property. These controllers may then be referenced by name.
+		reference to the application's _$_ property. These controllers may then be referenced by name.
 	*/
 	controllers: null,
 	/**

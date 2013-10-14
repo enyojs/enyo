@@ -51,15 +51,15 @@ enyo.kind({
 		other criteria may use this object to map a filter name to a filter method
 		on the collection that will be called in the context of the collection when
 		the filter name is set as the _activeFilter_ property. These methods should
-		return the array they wish to have the collection reset to, _true_ to force
-		a _reset_, or any falsey value to do nothing. Note that you can call
-		_reset()_ within the filter, but no _reset_ event will be emitted.
+		return the array they wish to have the collection reset to, true to force
+		a reset, or any falsey value to do nothing. Note that you can call _reset()_
+		within the filter, but no _reset_ event will be emitted.
 	*/
 	filters: null,
 	/**
 		This is an array or space-delimited string of properties that, when updated from
 		bindings or via the _set()_ method, will trigger a _filter_ event on the
-		collection automatically if an `activeFilter` is active.
+		collection automatically if an _activeFilter_ is active.
 	*/
 	filterProps: "",
 	/**
@@ -192,19 +192,20 @@ enyo.kind({
 		return enyo.json.stringify(this.raw());
 	},
 	/**
-		This _strategy_ accepts a single _record_ (data-hash or _enyo.Model_ instance), or
-		an array of _records_ (data-hashes or _enyo.Model_ instances) to be merged with
-		the current _collection_. This _strategy_ can be executed directly (used much like
-		the _add()_ method) or specified as the _strategy_ to employ with data retrieved via
-		the _fetch()_ method. The default behavior is to find and merge _records_ by their
-		_primaryKey_ value when present but will also rely on any _mergeKeys_ set on the
-		`model` kind for this collection. If the _record(s)_ passed into this method are
-		object-literals they will be passed through the _parse()_ method of the `model` kind
-		before being merged with existing _records_ or prior to being instanced as new _records_.
-		Any _records_ passed to this method that cannot be merged with existing _records_ will
-		be added to the collection at the end. This method will works with instanced and non-
-		instanced _records_ in the collection and merges without forcing the _record_ to be
-		instanced.
+		This strategy accepts a single record (data-hash or _enyo.Model_ instance),
+		or an array of records (data-hashes or _enyo.Model_ instances) to be merged
+		with the current collection. This strategy may be executed directly (much
+		like the _add()_ method) or specified as the strategy to employ with data
+		retrieved via	the _fetch()_ method. The default behavior is to find and
+		merge records by their _primaryKey_ value when present, but _merge_ will
+		also rely on any _mergeKeys_ set on the model kind for this collection. If
+		the record(s) passed into this method are object-literals, they will be
+		passed through the _parse()_ method of the model kind before being merged
+		with existing records or being instanced as new records. Any records passed
+		to this method that cannot be merged with existing records will be added to
+		the collection at the end. This method will work with instanced and
+		non-instanced records in the collection and merges without forcing records
+		to be instanced.
 	*/
 	merge: function (records) {
 		if (records) {
@@ -559,11 +560,11 @@ enyo.kind({
 		property. Accepts the attributes (_attrs_) to be used, the properties
 		(_props_) to apply, and an optional index at which to insert the record into
 		the _collection_. If the index is false, the record will not be added to the
-		collection at all. Returns the newly created record instance. Note that records
-		created by a collection have their `owner` property set to the collection and
-		will be added to the `store` set on the collection. If a collection is _destroyed_
-		any _records_ it owns will also be _destroyed_ unless the `preserveRecords` flag
-		is `true`.
+		collection at all. Returns the newly created record instance. Note that
+		records created by a collection have their _owner_ property set to the
+		collection and will be added to the _store_ set on the collection. If a
+		collection is destroyed, any records it owns will also be destroyed unless
+		the _preserveRecords_ flag is true.
 	*/
 	createRecord: function (attrs, props, i) {
 		var d = {owner: this},
@@ -612,8 +613,8 @@ enyo.kind({
 		instances or hashes to be converted) and an optional hash of properties to
 		be applied to the collection. Both are optional, meaning that you can supply
 		neither, either one, or both. If both options and data are present, options
-		will be applied first. If the _data_ array is present it will be passed through
-		the `parse` method of the collection.
+		will be applied first. If the _data_ array is present, it will be passed
+		through the _parse_ method of the collection.
 	*/
 	constructor: function (data, opts) {
 		var d  = enyo.isArray(data)? data.slice(): null,

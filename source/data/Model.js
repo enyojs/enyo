@@ -251,11 +251,11 @@
 			While models should normally be instanced using _enyo.store.createRecord()_,
 			the same applies to the constructor. The first parameter will be used as
 			the attributes of the model; the optional second parameter will be used as
-			configuration for the model. Note that `attributes` being passed in to this
-			method will be passed to the `parse` method. The options may include overloaded
-			methods for the _kind_ but note that since it is done at instantiation it will
-			be executed for each new _model_ created this way and it is recommended you
-			sub-kind the base _kind_ instead.
+			configuration for the model. Note that _attributes_ being passed into this
+			method will be passed to the _parse_ method. The options may include overloaded
+			methods for the kind, but note that since it is done at instantiation, it will
+			be executed for each new model created this way; it is recommended that you
+			subkind the base kind instead.
 		*/
 		constructor: function (attributes, opts) {
 			if (opts) { this.importProps(opts); }
