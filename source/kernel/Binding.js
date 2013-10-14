@@ -157,17 +157,11 @@
 			var val = this.getSourceValue(),
 				fn  = this.transform,
 				o   = this.owner;
+			if (undefined === val) { return; }
 			if (fn && enyo.isFunction(fn)) {
-				try {
-					val = fn.call(o || this, val, "source", this);
-				} catch (e) {
-					// catch the known error and return having been interrupted
-					if (e === "binding-stop") {
-						return;
-					}
-					// otherwise we release the error so as not to silence
-					// something else
-					throw e;
+				val = fn.call(o || this, val, "source", this);
+				if (undefined === val) {
+					return;
 				}
 			}
 			if (!this.oneWay) {
@@ -182,14 +176,11 @@
 			var val = this.getTargetValue(),
 				fn  = this.transform,
 				o   = this.owner;
+			if (undefined === val) { return; }
 			if (fn && enyo.isFunction(fn)) {
-				try {
-					val = fn.call(o || this, val, "target", this);
-				} catch (e) {
-					if (e === "binding-stop") {
-						return;
-					}
-					throw e;
+				val = fn.call(o || this, val, "target", this);
+				if (undefined === val) {
+					return;
 				}
 			}
 			this.disconnectSource();
@@ -423,13 +414,6 @@
 			}
 			delete map[this.id];
 			enyo.BindingCount--;
-		},
-		/**
-			Interrupts the binding if called from within the scope of a transform. Do
-			not call this method otherwise.
-		*/
-		stop: function () {
-			throw "binding-stop";
 		},
 		//*@protected
 		initTransform: function () {
