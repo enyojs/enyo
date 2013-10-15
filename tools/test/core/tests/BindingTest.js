@@ -24,6 +24,36 @@ enyo.kind({
 			(enyo.Binding.find(b.id) && "id was not removed from the store")
 		);
 	},
+	testComponentBindingsDestroy: function () {
+		var co = new enyo.Component({
+		  name: "MyComponent",
+
+		  prop1: "value of prop1",
+		  prop2: "value of prop2",
+		  prop3: "value of prop3",
+		  prop4: "value of prop4",
+
+		  components: [
+		    {tag: "div", name: "prop1"},
+		    {tag: "div", name: "prop2"},
+		    {tag: "div", name: "prop3"},
+		    {tag: "div", name: "prop4"}
+		  ],
+
+		  bindings: [
+		    {from: ".prop1", to: ".$.prop1.content"},
+		    {from: ".prop2", to: ".$.prop2.content"},
+		    {from: ".prop3", to: ".$.prop3.content"},
+		    {from: ".prop4", to: ".$.prop4.content"}
+		  ]
+		});
+
+		co.destroy();
+
+		this.finish(
+			(co.bindings.length !== 0) && "did not remove all bindings"
+		);
+	},
 	testOneWaySynchronization: function () {
 		var c = enyo.singleton({
 			prop: "Shared",
