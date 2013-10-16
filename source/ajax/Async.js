@@ -11,8 +11,8 @@
 	encounters an error.
 
 	More information on _Async_ and its usage is available in the documentation	on
-	[Consuming Web Services](building-apps/consuming-web-services.html) in the
-	Enyo Developer Guide.
+	[Consuming Web Services](building-apps/managing-data/consuming-web-services.html)
+	in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Async",

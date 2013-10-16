@@ -24,8 +24,8 @@ enyo.kind({
 	appropriate [unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/ajax/tests).
 
 	For more information, see the documentation on [Consuming Web
-	Services](building-apps/consuming-web-services.html) in the Enyo Developer
-	Guide.
+	Services](building-apps/managing-data/consuming-web-services.html) in the Enyo
+	Developer Guide.
 */
 enyo.kind({
 	name: "enyo.WebService",
