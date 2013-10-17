@@ -68,6 +68,7 @@
 		name: "enyo.Model",
 		//*@protected
 		kind: null,
+		mixins: [enyo.ObserverSupport, enyo.BindingSupport],
 		noDefer: true,
 		//*@public
 		/**
@@ -198,11 +199,12 @@
 				// as changed as well
 				if (ch) {
 					for (var k in ch) {
-						this.notifyObservers(k);
+						this.notifyObservers(k, this.previous[k], ch[k]);
 					}
 				}
-				this.triggerEvent("change");
-				this.changed = {};
+				if (this.triggerEvent("change")) {
+					this.changed = {};
+				}
 				this.dirty = true;
 			}
 			return this;
@@ -215,35 +217,15 @@
 		setObject: function (props) {
 			if (!this.attributes) { return this; }
 			if (props) {
-				var ch = false,
-					rv, k, en;
-				for (k in props) {
-					rv = this.attributes[k];
-					if (rv && "function" == typeof rv) { continue; }
-					if (rv === props[k]) { continue; }
-					this.previous[k] = rv;
-					if (this.computedMap) {
-						if ((en=this.computedMap[k])) {
-							if (typeof en == "string") {
-								en = this.computedMap[k] = enyo.trim(en).split(" ");
-							}
-							for (var i=0, p; (p=en[i]); ++i) {
-								this.attributes[k] = rv;
-								this.previous[p] = this.get(p);
-								this.attributes[k] = props[k];
-								this.changed[p] = this.get(p);
-							}
-						}
-					}
-					this.changed[k] = this.attributes[k] = props[k];
-					ch = true;
+				this.stopNotifications();
+				this.silence();
+				for (var k in props) {
+					this.set(k, props[k]);
 				}
-				if (ch) {
-					this.notifyObservers();
-					this.triggerEvent("change");
-					this.changed = {};
-					this.dirty = true;
-				}
+				this.startNotifications();
+				this.unsilence();
+				this.triggerEvent("change");
+				this.changed = {};
 			}
 			return this;
 		},
@@ -416,6 +398,18 @@
 			}
 		},
 		/**
+			Temporarily suspend any events from being fired.
+		*/
+		silence: function () {
+			this.silenced = true;
+		},
+		/**
+			Unsuspend silenced events.
+		*/
+		unsilence: function () {
+			this.silenced = false;
+		},
+		/**
 			When a record is successfully destroyed, this method is called before any
 			user-provided callbacks are executed.
 		*/
@@ -449,34 +443,34 @@
 		/**
 			Adds an observer according to the the _enyo.ObserverSupport_ API.
 		*/
-		addObserver: function (prop, fn, ctx) {
-			if (this.store) {
-				return this.store._addObserver(this, prop, fn, ctx);
-			}
-		},
+		// addObserver: function (prop, fn, ctx) {
+		// 	if (this.store) {
+		// 		return this.store._addObserver(this, prop, fn, ctx);
+		// 	}
+		// },
 		/**
 			Removes an observer according to the the _enyo.ObserverSupport_ API.
 		*/
-		removeObserver: function (prop, fn) {
-			if (this.store) {
-				return this.store._removeObserver(this, prop, fn);
-			}
-		},
+		// removeObserver: function (prop, fn) {
+		// 	if (this.store) {
+		// 		return this.store._removeObserver(this, prop, fn);
+		// 	}
+		// },
 		/**
 			Notifies any observers for the given property; accepts the previous and
 			current values to pass to observers. If no _prop_ is provided, notifies
 			any observers for any changed properties.
 		*/
-		notifyObservers: function (prop, prev, val) {
-			if (this.store) {
-				// if no prop is provided we call it once for each changed attribute
-				if (!prop) {
-					for (var k in this.changed) {
-						this.store._notifyObservers(this, k, this.previous[k], this.attributes[k]);
-					}
-				} else { this.store._notifyObservers(this, prop, prev, val); }
-			}
-		},
+		// notifyObservers: function (prop, prev, val) {
+		// 	if (this.store) {
+		// 		// if no prop is provided we call it once for each changed attribute
+		// 		if (!prop) {
+		// 			for (var k in this.changed) {
+		// 				this.store._notifyObservers(this, k, this.previous[k], this.attributes[k]);
+		// 			}
+		// 		} else { this.store._notifyObservers(this, prop, prev, val); }
+		// 	}
+		// },
 		/**
 			Adds a listener for the given event. Callbacks will be executed with two
 			parameters of the form _(record, event)_, where _record_ is the record
@@ -501,12 +495,14 @@
 		},
 		/**
 			Triggers any listeners for the record's specified event, with optional
-			_args_.
+			_args_. Returns true on successful send, otherwise false.
 		*/
 		triggerEvent: function (event, args) {
-			if (this.store) {
+			if (this.store && !this.silenced) {
 				this.store.triggerEvent(this, event, args);
+				return true;
 			}
+			return false;
 		},
 		//*@protected
 		storeChanged: function () {

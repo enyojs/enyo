@@ -79,7 +79,7 @@
 		*/
 		notifyObservers: enyo.inherit(function (sup) {
 			return function (path, prev, value) {
-				var ma = this.computedMap, n;
+				var ma = _instanceMap(this, "computedMap"), n;
 				if (ma && (n = ma[path])) {
 					if (typeof n == "string") {
 						n = ma[path] = enyo.trim(n).split(" ");

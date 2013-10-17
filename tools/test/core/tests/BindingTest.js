@@ -17,8 +17,8 @@ enyo.kind({
 			(!b.destroyed && "did not set the destroy flag") ||
 			(b.source && "source wasn't removed") ||
 			(b.target && "target wasn't removed") ||
-			(b._sourceObserver && "source observer wasn't removed") ||
-			(b._targetObserver && "target observer wasn't removed") ||
+			(b.sourceObserver && "source observer wasn't removed") ||
+			(b.targetObserver && "target observer wasn't removed") ||
 			(b.transform && "transform still existed") ||
 			(b.owner && "owner still existed") ||
 			(enyo.Binding.find(b.id) && "id was not removed from the store")
@@ -232,11 +232,7 @@ enyo.kind({
 			(c.firstName !== "Ben" && "model -> property binding failed") ||
 			(c.lastName !== "Combee" && "model -> property binding failed") ||
 			(c.$.first.content !== "Ben" && "property -> content binding failed") ||
-			(c.$.last.content !== "Combee" && "property -> content binding failed") ||
-			(c.bindings[0].to !== ".$.first.content" && "inner binding 'target' defaults failed to be applied") ||
-			(c.bindings[1].to !== ".$.last.content" && "inner binding 'target' defaults failed to be applied") ||
-			(c.bindings[2].from !== ".model.firstName" && "outer binding 'source' defaults failed to be applied") ||
-			(c.bindings[3].from !== ".model.lastName" && "outer binding 'source' defaults failed to be applied")
+			(c.$.last.content !== "Combee" && "property -> content binding failed")
 		);
 	}
 });

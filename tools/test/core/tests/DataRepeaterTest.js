@@ -171,11 +171,11 @@ enyo.kind({
 
 			// isSelected
 			repeater.deselectAll();
-			if (repeater.isSelected(repeater.controller.at(102))) {
+			if (repeater.isSelected(repeater.collection.at(102))) {
 				throw "isSelected for non-selected item returned true";
 			}
 			repeater.select(102);
-			if (!repeater.isSelected(repeater.controller.at(102))) {
+			if (!repeater.isSelected(repeater.collection.at(102))) {
 				throw "isSelected for selected item returned false";
 			}
 

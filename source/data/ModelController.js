@@ -29,9 +29,16 @@ enyo.kind({
 		_model controller_.
 	*/
 	get: function (prop) {
-		if (prop == "model") { return this.getLocal(prop); }
-		if (this._isComputed(prop)) { return this._getComputed(prop); }
-		if (this.model) { return this.model.get.apply(this.model, arguments); }
+		if (prop == "model") {
+			return this.getLocal(prop);
+		} else if (this._isComputed(prop)) {
+			return this._getComputed(prop);
+		} else if (this.model) {
+			return this.model.get.apply(this.model, arguments);
+		} else {
+			// to ensure that bindings will clear according to their api
+			return null;
+		}
 	},
 	/**
 		Will allow the retrieval of local properties and computed properties
@@ -67,7 +74,7 @@ enyo.kind({
 	sync: function (props) {
 		var m  = this.model,
 			aa = props || (this.model && this.model.attributes);
-		for (var k in aa) { this.notifyObservers(k, m? m.previous[k]: aa[k], m? this.model.get(k): undefined); }
+		for (var k in aa) { this.notifyObservers(k, m? m.previous[k]: aa[k], m? this.model.get(k): null); }
 	},
 	/**
 		This method responds to the _model_ property being set on this _controller_.

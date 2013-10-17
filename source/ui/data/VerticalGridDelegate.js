@@ -72,16 +72,19 @@
 				d = dd.at(j);
 				// we want to keep notifications from occurring until we're done
 				// setting up
+				var b = enyo.dev.bench({name: "rebuildBindings", logging: false, average: true});
 				c.stopNotifications();
 				c.set("model", d)
 				.set("id", this.idFor(list, j), true)
 				.set("index", j)
 				.set("selected", list.isSelected(d));
+				// c.rebuildBindings();
 				c.domCssText = sx[i] || c.domCssText;
 				c.tagsValid = false;
 				c.startNotifications();
 				mk += c.generateHtml();
 				c.teardownRender();
+				b.stop();
 			}
 			// take the flyweighted content and set it to the page
 			n.innerHTML = mk;

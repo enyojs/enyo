@@ -134,7 +134,9 @@
 			// regardless of whether or not the record has a primary key now, that could be because
 			// it is delayed in retrieving one, doesn't have one and won't, or either way we want to
 			// know if it changes so mappings are accurate internally
-			rec.addObserver(pk, this._recordKeyChanged);
+			if (!f) {
+				rec.addObserver(pk, this.bindSafely("_recordKeyChanged", rec));
+			}
 			// for kind name registration we have to make sure that there are any entries
 			// for that kind already
 			if (!rr.kn[rec.kindName]) { rr.kn[rec.kindName] = {}; }
@@ -415,6 +417,16 @@
 			}
 		},
 		/**
+			Primarily for development, returns a hash of all events and any listeners
+			associated with the event for the requested _model_ or _collection_.
+		*/
+		listeners: function (rec) {
+			var m  = this._recordListeners,
+				ed = enyo.isString(rec)? rec: rec.euid;
+			m = m[ed] = m[ed] || {};
+			return enyo.clone(m);
+		},
+		/**
 			Triggers the given _event_ for the requested record (_rec_), passing
 			optional _args_ as a single parameter. Note that _args_ is expected to be
 			a mutable object literal or instance of a _kind_. Event listeners accept
@@ -609,7 +621,7 @@
 			this.removeAllListeners(col);
 			this._removeAllObservers(col);
 		},
-		_recordKeyChanged: function (prev, val, prop, rec) {
+		_recordKeyChanged: function (rec, prev, val, prop) {
 			// we use the same test for normalized addition via the _addRecord_ method
 			// that will warn if some other record already has this id or if the id somehow
 			// is now different for that particular record

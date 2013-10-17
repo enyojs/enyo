@@ -6,7 +6,7 @@ enyo.kind({
 		var TestApp = enyo.kind({
 			kind: 'Application',
 			renderOnStart: false,
-			controllers: [{
+			components: [{
 				name: 'routes',
 				kind: 'enyo.Router'
 			}],
@@ -17,12 +17,12 @@ enyo.kind({
 		});
 
 		var app = new TestApp();
-		if (!(app.controllers.routes instanceof enyo.Router)) {
+		if (!(app.$.routes instanceof enyo.Router)) {
 			this.finish("application controller not created");
 		}
 		app.destroy();
 		app = new TestApp();
-		if (!(app.controllers.routes instanceof enyo.Router)) {
+		if (!(app.$.routes instanceof enyo.Router)) {
 			this.finish("application controller not re-created");
 		}
 		app.destroy();
@@ -110,7 +110,7 @@ enyo.kind({
 					{name: "child"}
 				],
 				bindings: [
-					{from: ".app.controllers.controller.data", to: ".$.child.content"}
+					{from: ".app.$.controller.data", to: ".$.child.content"}
 				]
 			},
 			controllers: [

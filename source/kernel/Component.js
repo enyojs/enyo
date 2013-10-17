@@ -101,16 +101,27 @@ enyo.kind({
 			sup.apply(this, arguments);
 		};
 	}),
+	//*@protected
+	/**
+		This deliberately avoids calling the super method of its base kind
+		because it is a waste of time (currently). This can easily be modified
+		if necessary to call it if additional features are added requiring it.
+	*/
 	constructed: enyo.inherit(function (sup) {
-		return function(inProps) {
+		return function(props) {
 			// perform initialization
-			this.create(inProps);
+			this.create(props);
 			sup.apply(this, arguments);
 		};
 	}),
 	create: function() {
+		// stop and queue all of the notifications happening synchronously to allow
+		// responders to only do single passes on work traversing the tree
+		this.stopNotifications();
 		this.ownerChanged();
 		this.initComponents();
+		// release the kraken!
+		this.startNotifications();
 	},
 	initComponents: function() {
 		// The _components_ property in kind declarations is renamed to
@@ -209,7 +220,7 @@ enyo.kind({
 				'but this is an error condition and should be fixed.');
 		}
 		this.$[n] = inComponent;
-		this.notifyObservers("$." + n);
+		this.notifyObservers("$." + n, null, inComponent);
 	},
 	//* Removes _inComponent_ from the list of components owned by the current
 	//* component (i.e., _this.$_).

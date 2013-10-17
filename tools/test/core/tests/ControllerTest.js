@@ -126,10 +126,10 @@ enyo.kind({
 			m  = new enyo.Model({prop1: "1"}), p;
 		mc.set("model", m);
 		p = c.prop1;
-		mc.set("model", undefined);
+		mc.set("model", null);
 		this.finish(
 			(p != "1" && "the previous value was somehow incorrect meaning the binding didn't fire to begin with") ||
-			(c.prop1 !== undefined && "clearing the model on the controller did not sync the binding to undefined as expected")
+			(c.prop1 !== null && "clearing the model on the controller did not sync the binding to null as expected")
 		);
 	}
 });

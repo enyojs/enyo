@@ -2,7 +2,7 @@
 /**
 	_enyo.DataGridList_ is a paginated [enyo.DataList](#enyo.DataList) designed to
 	lay out its children in a grid. Like _enyo.DataList_, it links its children
-	directly to the underlying record in the collection set as its controller.
+	directly to the underlying record in the collection set as its collection.
 	Because the layout is arbitrarily handled, spacing of children must be set
 	using the kind's available API (e.g., _spacing_, _minWidth_, _minHeight_).
 	Note that _enyo.DataGridList_ will attempt to grow or shrink the size of its
