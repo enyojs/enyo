@@ -24,6 +24,12 @@ enyo.kind({
 	*/
 	multipleSelection: false,
 	/**
+		Set this to false to to handle selection support manually.
+		If this is false, selection of children will need to be handled programatically
+		and the repeater will not trigger automatically the select/deselect methods on tap.
+	*/
+	autoSelect: true,
+	/**
 		This class will be applied to the repeater when _selection_ is enabled.
 		The default is _selection-enabled_. If _multipleSelection_ is true, this
 		class will also be applied.

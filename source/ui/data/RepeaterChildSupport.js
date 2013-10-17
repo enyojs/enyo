@@ -59,7 +59,7 @@
 			};
 		}),
 		_selectionHandler: function (sender, event) {
-			if (this.repeater.selection && !this.get("disabled")) {
+			if (this.repeater.selection &&  this.repeater.autoSelect && !this.get("disabled")) {
 				this.set("selected", !this.selected);
 			}
 		},
