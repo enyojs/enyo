@@ -1,5 +1,10 @@
 ## 2.3.0-pre.11
 
+Enyo now supports the W3C pointer events recommendation and will use those in
+preference to mouse events when available.  The earlier MSPointer event
+support is now only enabled when W3C pointer events aren't detected, fixing a
+touch-recognition problem in Internet Explorer 11.
+
 enyo.Model.set() now supports the force parameter.
 
 ## 2.3.0-pre.10 (9 October 2013)
