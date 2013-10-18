@@ -446,51 +446,6 @@
 				}
 			}
 		},
-		//*@protected
-		_addObserver: function (rec, prop, fn, ctx) {
-			var m  = this._recordObservers,
-				ed = enyo.isString(rec)? rec: rec.euid;
-			// add a new entry in map for this record if there isn't one already
-			m = m[ed] = m[ed] || {};
-			// now add a new entry in the map for that record if this property hasn't
-			// been tagged before
-			m = m[prop] = m[prop] || [];
-			fn = enyo.isString(fn)? (ctx? ctx[fn]: enyo.getPath(fn)): (ctx? enyo.bind(ctx, fn): fn);
-			!~enyo.indexOf(fn, m) && m.push(fn);
-			return fn;
-		},
-		_removeObserver: function (rec, prop, fn) {
-			var m  = this._recordObservers,
-				ed = enyo.isString(rec)? rec: rec.euid, i;
-			m = m[ed];
-			if (m) {
-				m = m[prop];
-				if (m) {
-					i = enyo.indexOf(fn, m);
-					if (i > -1) { m.splice(i, 1); }
-				}
-			}
-		},
-		_removeAllObservers: function (rec) {
-			var m  = this._recordObservers,
-				ed = enyo.isString(rec)? rec: rec.euid, hh;
-			m = m[ed];
-			if (m) {
-				for (var p in m) {
-					hh = m[p];
-					if (hh) {
-						for (var i=0, h; (h=hh[i]); ++i) { this._removeObserver(rec, p, h); }
-					}
-				}
-			}
-		},
-		_notifyObservers: function (rec, prop, prev, val) {
-			var ro = this._recordObservers[rec.euid],
-				rh = ro && ro[prop];
-			if (rh) {
-				for (var i=0, h; (h=rh[i]); ++i) { h(prev, val, prop, rec); }
-			}
-		},
 		//*@public
 		/**
 			When the _fetch()_ method is executed on a record and is successful, this
@@ -613,13 +568,11 @@
 		_recordDestroyed: function (rec) {
 			this.removeRecord(rec);
 			this.removeAllListeners(rec);
-			this._removeAllObservers(rec);
 			rec.store = null;
 		},
 		_collectionDestroyed: function (col) {
 			this.removeCollection(col);
 			this.removeAllListeners(col);
-			this._removeAllObservers(col);
 		},
 		_recordKeyChanged: function (rec, prev, val, prop) {
 			// we use the same test for normalized addition via the _addRecord_ method
@@ -640,16 +593,12 @@
 				this.collections = this.collections || {};
 				this._initRecords();
 				this._initSources();
-				this._recordObservers = {};
 				this._recordListeners = {};
 				this._recordKeyChanged = this.bindSafely(this._recordKeyChanged);
 				this._collectionDestroyed = this.bindSafely(this._collectionDestroyed);
 				return r;
 			};
-		}),
-		//*@protected
-		_recordObservers: null,
-		_recordListeners: null
+		})
 	});
 	//*@protected
 	enyo.Store.concat = function (ctor, props) {
