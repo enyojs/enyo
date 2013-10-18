@@ -441,37 +441,6 @@
 			}
 		},
 		/**
-			Adds an observer according to the the _enyo.ObserverSupport_ API.
-		*/
-		// addObserver: function (prop, fn, ctx) {
-		// 	if (this.store) {
-		// 		return this.store._addObserver(this, prop, fn, ctx);
-		// 	}
-		// },
-		/**
-			Removes an observer according to the the _enyo.ObserverSupport_ API.
-		*/
-		// removeObserver: function (prop, fn) {
-		// 	if (this.store) {
-		// 		return this.store._removeObserver(this, prop, fn);
-		// 	}
-		// },
-		/**
-			Notifies any observers for the given property; accepts the previous and
-			current values to pass to observers. If no _prop_ is provided, notifies
-			any observers for any changed properties.
-		*/
-		// notifyObservers: function (prop, prev, val) {
-		// 	if (this.store) {
-		// 		// if no prop is provided we call it once for each changed attribute
-		// 		if (!prop) {
-		// 			for (var k in this.changed) {
-		// 				this.store._notifyObservers(this, k, this.previous[k], this.attributes[k]);
-		// 			}
-		// 		} else { this.store._notifyObservers(this, prop, prev, val); }
-		// 	}
-		// },
-		/**
 			Adds a listener for the given event. Callbacks will be executed with two
 			parameters of the form _(record, event)_, where _record_ is the record
 			that is firing the event and _event_ is the name (string) for the event
