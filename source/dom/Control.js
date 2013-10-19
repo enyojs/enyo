@@ -510,7 +510,7 @@ enyo.kind({
 		// generate our HTML
 		enyo.dom.setInnerHtml(pn, this.generateHtml());
 		// post-rendering tasks
-		this.addToRoots();
+		enyo.addToRoots(this);
 		if (this.generated) {
 			this.rendered();
 		}
@@ -541,7 +541,7 @@ enyo.kind({
 		this.setupOverflowScrolling();
 		document.write(this.generateHtml());
 		// post-rendering tasks
-		this.addToRoots();
+		enyo.addToRoots(this);
 		if (this.generated) {
 			this.rendered();
 		}
@@ -968,15 +968,7 @@ enyo.kind({
 
 		return false;
 	},
-	//* Adds control to enyo.roots; called from write(), renderInto(), ViewController.renderInto()
-	addToRoots: function() {
-		if (!enyo.exists(enyo.roots)) {
-			enyo.roots = [ this ];
-		} else {
-			enyo.roots.push(this);
-		}
-		this._isRoot = true;
-	},
+	
 	//* Removes control from enyo.roots
 	removeFromRoots: function() {
 		if (this._isRoot) {
