@@ -35,7 +35,7 @@
 		oRoot.rendered = function() {
 			fRendered.apply(oRoot, []);
 			fFlush();
-		}
+		};
 		oRoot._isRoot = true;
 	};
 	
