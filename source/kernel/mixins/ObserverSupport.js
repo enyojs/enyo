@@ -285,7 +285,8 @@
 					}
 					o = o? o.concat(ma["*"]): ma["*"];
 				}
-				if (o) {
+				if (o && o.length) {
+					o = o.slice();
 					for (var i=0, n, fn; (n=o[i]); ++i) {
 						if ((fn = this[n])) {
 							if (!a) {
@@ -406,12 +407,6 @@
 				}
 			}
 		},
-		destroy: enyo.inherit(function (sup) {
-			return function () {
-				this.removeAllObservers();
-				sup.apply(this, arguments);
-			};
-		}),
 		observerStopCount: 0,
 		observerNotificationQueue: null,
 		observerNotificationsEnabled: true,

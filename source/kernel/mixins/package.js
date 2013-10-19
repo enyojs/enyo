@@ -4,5 +4,6 @@ enyo.depends(
 	"ComputedSupport.js",
 	"BindingSupport.js",
 	"ApplicationSupport.js",
-	"MultipleDispatchSupport.js"
+	"MultipleDispatchSupport.js",
+	"RegisteredEventSupport.js"
 );

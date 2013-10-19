@@ -510,8 +510,13 @@ enyo.kind({
 		this._silenced = true;
 		this._silenceCount += 1;
 	},
-
-	//*@public
+	/**
+		Returns `true` if the object is currently _silenced_ and will not propagate
+		events (of any kind) otherwise `false`.
+	*/
+	isSilenced: function () {
+		return this._silenced;
+	},
 	/**
 		Allows event propagation for this component if the internal silence counter
 		is 0; otherwise, decrements the counter by one.  For event propagation to

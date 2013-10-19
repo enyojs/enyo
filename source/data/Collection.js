@@ -15,8 +15,11 @@
 */
 enyo.kind({
 	name: "enyo.Collection",
+	//*@protected
 	kind: enyo.Component,
 	noDefer: true,
+	mixins: [enyo.RegisteredEventSupport],
+	//*@public
 	/**
 		The kind of records the collection will house. By default, it is simply
 		_enyo.Model_, but it may be set to any kind of model.
@@ -486,11 +489,11 @@ enyo.kind({
 		records.
 	*/
 	destroyAll: function () {
-		var rr = this.removeAll(),
-			r;
-		this._destroyAll = true;
-		for (var k in rr) {
-			(r=rr[k]) && r.destroy();
+		// all of the removed records that we know need to be destroyed
+		var records = this.removeAll();
+		this._destroyAll;
+		for (var k in records) {
+			records[k].destroy();
 		}
 		this._destroyAll = false;
 	},
@@ -582,33 +585,6 @@ enyo.kind({
 	*/
 	recordChanged: null,
 	/**
-		Adds a listener for the given event. Callbacks will be executed with two
-		parameters, _record_ and _event_, where _record_ is the record that is
-		firing the event and _event_ is the name (string) for the event being fired.
-		This method accepts parameters according to the _enyo.ObserverSupport_ API,
-		but does not function in the same way.
-	*/
-	addListener: function (prop, fn, ctx) {
-		return this.store.addListener(this, prop, fn, ctx);
-	},
-	/**
-		Removes a listener. Accepts the name of the event that the listener is
-		registered on and the method returned from the _addListener()_ call (if a
-		_ctx_ was provided). Returns true on successful removal; otherwise, false.
-	*/
-	removeListener: function (prop, fn) {
-		return this.store.removeListener(this, prop, fn);
-	},
-	/**
-		Triggers any listeners for this record's specified event, with optional
-		_args_.
-	*/
-	triggerEvent: function (event, args) {
-		if (!this._silenced) {
-			this.store.triggerEvent(this, event, args);
-		}
-	},
-	/**
 		When creating a new collection, you may pass it an array of records	(either
 		instances or hashes to be converted) and an optional hash of properties to
 		be applied to the collection. Both are optional, meaning that you can supply
@@ -626,7 +602,7 @@ enyo.kind({
 			this.length = this.records.length;
 			// we bind this method to our collection so it can be reused as an event listener
 			// for many records
-			this._recordChanged = enyo.bindSafely(this, this._recordChanged);
+			this._recordChanged   = enyo.bindSafely(this, this._recordChanged);
 			this._recordDestroyed = enyo.bindSafely(this, this._recordDestroyed);
 			this.euid = enyo.uuid();
 			// attempt to resolve the kind of model if it is a string and not a constructor
@@ -659,19 +635,22 @@ enyo.kind({
 		method.	To avoid destroying records that are owned by this collection, set
 		the _preserveRecords_ flag to true.
 	*/
-	destroy: function () {
-		var rr = this.removeAll(), r;
-		for (var k in rr) {
-			r = rr[k];
-			if (r.owner === this) {
-				if (this.preserveRecords) { r.owner = null; }
-				else { r.destroy(); }
+	destroy: enyo.inherit(function (sup) {
+		return function () {
+			var rr = this.removeAll(), r;
+			for (var k in rr) {
+				r = rr[k];
+				if (r.owner === this) {
+					if (this.preserveRecords) { r.owner = null; }
+					else { r.destroy(); }
+				}
 			}
-		}
-		this.triggerEvent("destroy");
-		this.store = null;
-		this.destroyed = true;
-	},
+			this.triggerEvent("destroy");
+			this.store = null;
+			this.removeAllListeners();
+			sup.apply(this, arguments);
+		};
+	}),
 	//*@protected
 	importProps: function (p) {
 		if (p) {
@@ -734,8 +713,7 @@ enyo.kind({
 		// will have already been removed, otherwise we remove the record
 		// from the collection
 		if (!this._destroyAll) { this.remove(rec); }
-	},
-	_destroyAll: false
+	}
 });
 
 enyo.Collection.concat = function (ctor, props) {
