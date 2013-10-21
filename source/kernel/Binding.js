@@ -265,10 +265,25 @@
 				// update our properties that will be used later for actually connecting the pieces
 				var sp                    = from.slice(1).split(".");
 				var tp                    = to  .slice(1).split(".");
+				// unfortunately special handling is required for cases where the object requested is
+				// actually a reference to a component in the `$` hash
+				var is                    = enyo.lastIndexOf(".", from);
+				var it                    = enyo.lastIndexOf(".", to);
 				this.sourcePath           = (from[0] == "^"? sp.slice(0, -1): sp).join(".");
-				this.sourceProp           = sp  .pop();
 				this.targetPath           = (this.oneWay || to[0] == "^"? tp.slice(0,-1): tp).join(".");
-				this.targetProp           = tp  .pop();
+				if (is > -1 && from[is-1] == "$") {
+					// this means that the final property we need to request is something on the
+					// hash directly and not a property of that object
+					this.sourceProp       = sp.slice(-2).join(".");
+				} else {
+					this.sourceProp       = sp  .pop();
+				}
+				if (it > -1 && from[it-1] == "$") {
+					// same situation as for the source above
+					this.targetProp       = tp.slice(-2).join(".");
+				} else {
+					this.targetProp       = tp  .pop();
+				}
 				this.building             = false;
 			}
 			if (source === enyo.global) {

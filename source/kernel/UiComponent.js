@@ -44,6 +44,21 @@ enyo.kind({
 	protectedStatics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
 	},
+	// TODO-POST-2.3
+	// we will go ahead and do all of this but warn that it is deprecated
+	controllerChanged: function (p) {
+		var c = this.controller;
+		if (c) {
+			if (enyo.isString(c)) {
+				this.warn(
+					"the `controller` properties special handling has been deprecated, please use " +
+					"bindings to help resolve paths as this feature will be removed"
+				);
+				c = this.controller = enyo.getPath.call(c[0] == "."? this: enyo.global, c);
+			}
+		}
+	},
+	// END-TODO-POST-2.3
 	create: enyo.inherit(function (sup) {
 		return function() {
 			this.controls = [];
@@ -51,6 +66,9 @@ enyo.kind({
 			this.containerChanged();
 			sup.apply(this, arguments);
 			this.layoutKindChanged();
+			// TODO-POST-2.3
+			this.notifyObservers("controller");
+			// END-TODO-POST-2.3
 		};
 	}),
 	destroy: enyo.inherit(function (sup) {

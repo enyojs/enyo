@@ -195,7 +195,11 @@ enyo.BindingSupport = {
 			if (fn.binding) {
 				// expect no periods or one if the initial character is '$' because
 				// of its special nature (it will be forced to register this way)
-				if (((c=enyo.lastIndexOf(".", path)) === -1) || (c === 1 && path[0] == "$" && (t=this.get(path)))) {
+				// it is important to note the difference in the final test here that if the
+				// current path being executed is from the source and the condition is the '$'
+				// we do not retrieve the final object - regardless as we already have the correct
+				// root but for target we need to attempt to retrieve that root
+				if (((c=enyo.lastIndexOf(".", path)) === -1) || (c === 1 && path[0] == "$" && (fn.bindingProp == "source" || (t=this.get(path))))) {
 					// we tell the binding which of the methods it was registering as
 					// an observer have successfully completed and it will automatically
 					// synchronize if it is supposed to and only when both ends are complete

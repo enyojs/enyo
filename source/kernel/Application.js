@@ -145,6 +145,11 @@ enyo.kind({
 	statics: {
 		concat: function (ctor, props) {
 			if (props.controllers) {
+				enyo.warn(
+					"enyo.Application: the `controllers` property has been deprecated, please " +
+					"use the `components` property and update any bindings referencing `controllers` to " +
+					"use `$` instead"
+				);
 				var p = ctor.prototype || ctor;
 				// we merge the controllers with components here to reduce initialization necessary
 				// at runtime -- the _controllers_ property should be fully removed in a future release
