@@ -1,3 +1,10 @@
+/*
+ * Enables registering callbacks, to be called when
+ * renderInto is done rendering root component tree
+ *
+ * @author: Lex Podgorny
+ */
+
 (function (enyo) {
 
 	var aCallbacks = [];
