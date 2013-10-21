@@ -73,7 +73,7 @@
 			An observer may be added for any property of the object, but an
 			observer may not be added for the same event more than once.
 		*/
-		addObserver: function (path, fn, ctx, _id, _ch) {
+		addObserver: function (path, fn, ctx) {
 				// we want to fast-path single item paths when possible but we can't
 				// avoid needing to determine if that is possible so we do it first
 			var parts    = (path[0] == "."? path.slice(1): path).split("."),
@@ -81,6 +81,10 @@
 				prop     = parts.shift(),
 				// local reference to original method passed in
 				observer = fn,
+				// these are internally used variables we check for but don't expose in
+				// the method definition
+				_id      = arguments[3],
+				_ch      = arguments[4],
 				// the id for the observer that will be registered is either uniquely
 				// generated or inherited for chains or in cases of reuse of the same
 				// observer method on multiple instances we _must_ reuse the same id
