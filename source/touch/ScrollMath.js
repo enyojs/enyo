@@ -53,7 +53,7 @@ enyo.kind({
 	//* Animation time step
 	interval: 20,
 	//* Flag to enable frame-based animation; if false, time-based animation is used
-	fixedTime: true,
+	fixedTime: false,
 	//* @protected
 	// simulation state
 	x0: 0,
@@ -132,7 +132,7 @@ enyo.kind({
 		this[inEx] = this[inEx0] + c * dp;
 	},
 	// one unit of time for simulation
-	frame: 10,
+	frame: 3,
 	// piece-wise constraint simulation
 	simulate: function(t) {
 		while (t >= this.frame) {
