@@ -43,6 +43,9 @@ the same limitation of only working with `attributes` of the record.
 As required by ENYO-3339, _enyo.Binding_ now registers for an entire path and will update
 based on changes anywhere in the path.
 
+_enyo.Store_ now throws an _error_ instead of a _warning_ when a duplicate `primaryKey` is
+found for unique records in the same _enyo.Store_.
+
 ## 2.3.0-pre.10 (9 October 2013)
 
 Removed macro support from bindings
