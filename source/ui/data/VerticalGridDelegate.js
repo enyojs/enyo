@@ -51,7 +51,7 @@
 		/**
 			This method generates the markup for the page content.
 		*/
-		generatePage: function (list, page, index, force) {
+		generatePage: function (list, page, index) {
 			var dd = list.get("data"),
 				cc = list.controlsPerPage,
 				// the initial index (in the data) to start with
@@ -205,7 +205,7 @@
 		/**
 			Delegate's resize event handler.
 		*/
-		didResize: function (list, event) {
+		didResize: function (list) {
 			list._updateBounds = true;
 			clearTimeout(list._resizeTimerId);
 			list._resizeTimerId = setTimeout(function () {

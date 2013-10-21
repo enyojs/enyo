@@ -314,7 +314,7 @@ enyo.master = new enyo.Component({
 		return '';
 	},
 	isDescendantOf: enyo.nop,
-	bubble: function(inEventName, inEvent, inSender) {
+	bubble: function(inEventName, inEvent) {
 		//enyo.log("master event: " + inEventName);
 		if (inEventName == "onresize") {
 			// Resize is special; waterfall this message.

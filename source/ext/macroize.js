@@ -55,7 +55,7 @@ enyo.macroize = function(inText, inMap, inPattern) {
 */
 enyo.quickReplace = function (text, map, pattern) {
 	pattern = pattern || enyo.macroize.pattern;
-	var fn = function (token, lex) {
+	var fn = function (token) {
 		var r = map[token];
 		return r || token;
 	};

@@ -111,11 +111,11 @@ enyo.kind({
 			this._modelChanged = this.bindSafely("_modelChanged");
 		};
 	}),
-	_modelChanged: function (r, e, a) {
+	_modelChanged: function (r) {
 		var ch = r.changed;
 		for (var k in ch) { this.notifyObservers(k, r.previous[k], ch[k]); }
 	},
-	_modelDestroyed: function (r, e, a) {
+	_modelDestroyed: function (r) {
 		if (r === this.model) {
 			this.setLocal("model", null);
 		}

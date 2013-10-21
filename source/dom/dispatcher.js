@@ -101,7 +101,7 @@
 			return t;
 		},
 		//* Returns the default Enyo control for events.
-		findDefaultTarget: function(e) {
+		findDefaultTarget: function() {
 			return enyo.master;
 		},
 		dispatchBubble: function(e, c) {
