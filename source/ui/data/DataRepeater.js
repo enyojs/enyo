@@ -181,6 +181,7 @@ enyo.kind({
 	},
 	handlers: {onSelected: "childSelected", onDeselected: "childDeselected"},
 	_handlers: {add: "modelsAdded", remove: "modelsRemoved", reset: "refresh"},
+	// TODO-POST-2.3
 	/**
 		For backwards compatibility with 2.3.0-pre, we have a responder for the
 		controller property. This is deprecated and should be using 'collection'
@@ -198,18 +199,23 @@ enyo.kind({
 		}
 		this.set("collection", c);
 	},
+	// END-TODO-POST-2.3
 	collectionChanged: function (p) {
+		// TODO-POST-2.3
 		// backwards compatibility check
 		if (this.controller && this.controller !== p) {
 			return this.controllerChanged();
 		}
+		// END-TODO-POST-2.3
 		var c = this.collection;
 		if (typeof c == "string") {
 			c = this.collection = enyo.getPath(c);
 		}
 		if (c) {
 			this.initCollection(c, p);
+			// TODO-POST-2.3
 			this.controller = c;
+			// END-TODO-POST-2.3
 		}
 	},
 	initCollection: function (c, p) {
@@ -368,6 +374,8 @@ enyo.DataRepeater.concat = function (ctor, props) {
 		p.childMixins = (p.childMixins? enyo.merge(p.childMixins, props.childMixins): props.childMixins.slice());
 		delete props.childMixins;
 	}
+	// TODO-POST-2.3
+	// this will not longer be required
 	if (props.bindings) {
 		var _test = /controller/g;
 		for (var i=0, b; (b=props.bindings[i]); ++i) {
@@ -391,4 +399,5 @@ enyo.DataRepeater.concat = function (ctor, props) {
 			}
 		}
 	}
+	// END-TODO-POST-2.3
 };
