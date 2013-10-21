@@ -15,11 +15,12 @@
 	
 	/*********** ENYO PUBLIC **********/
 
+	//* Registers callback to be called every time a root is rendered after calling Control.renderInto()
 	enyo.rendered = function (f, oContext) {
 		aCallbacks.push([f, oContext]);
 	};
 	
-	//* Adds control to enyo.roots; renderInto()
+	//* Adds control to enyo.roots; Called from Control.renderInto()
 	enyo.addToRoots = function(oRoot) {
 		if (!enyo.exists(enyo.roots)) {
 			enyo.roots = [ oRoot ];
