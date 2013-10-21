@@ -117,6 +117,27 @@ enyo.kind({
 		};
 	}),
 	/**
+		THIS NEEDS TO BE REMOVED POST 2.3 AND IS ONLY HERE FOR BACKWARDS COMPATIBILITY
+		OF THE DEPRECATED `controllers` PROPERTY.
+	*/
+	addObserver: enyo.inherit(function (sup) {
+		return function (path) {
+			if (/^controllers/.test(path)) {
+				// throw a warning so developers will know to update their code for future
+				// proofing
+				this.warn(
+					"the `controllers` property is deprecated, please update bindings to instead " +
+					"use `$` instead (for path `" + path + "`)"
+				);
+				// we need to map this property path to '$' instead so it will actually
+				// work with observers
+				path = path.replace(/^controllers/, "$");
+				arguments[0] = path;
+			}
+			return sup.apply(this, arguments);
+		};
+	}),
+	/**
 		Ensures that events bubbling from the views will reach _enyo.master_ as
 		expected.
 	*/

@@ -107,10 +107,12 @@ enyo.kind({
 			view: {
 				name: "view",
 				components: [
-					{name: "child"}
+					{name: "child1"},
+					{name: "child2"}
 				],
 				bindings: [
-					{from: ".app.$.controller.data", to: ".$.child.content"}
+					{from: ".app.$.controller.data", to: ".$.child1.content"},
+					{from: ".app.controllers.controller.data", to: ".$.child2.content"}
 				]
 			},
 			controllers: [
@@ -118,7 +120,8 @@ enyo.kind({
 			]
 		});
 		this.finish(
-			(a.view.$.child.content != a.$.controller.data && "the binding did not propagate as expected")
+			(a.view.$.child1.content != a.$.controller.data && "the correct binding did not work") ||
+			(a.view.$.child2.content != a.$.controller.data && "the deprecated binding did not work")
 		);
 	}
 });
