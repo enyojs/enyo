@@ -336,7 +336,7 @@ enyo.kind({
 			}
 		}
 	},
-	scrollMathStart: function(inSender) {
+	scrollMathStart: function() {
 		if (this.scrollNode) {
 			this.calcBoundaries();
 			if (this.thumb) {
@@ -356,7 +356,7 @@ enyo.kind({
 			this.updateThumbs();
 		}
 	},
-	scrollMathStop: function(inSender) {
+	scrollMathStop: function() {
 		this.effectScrollStop();
 		if (this.thumb) {
 			this.delayHideThumbs(100);

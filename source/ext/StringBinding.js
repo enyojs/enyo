@@ -1,7 +1,7 @@
 enyo.kind({
 	name: "enyo.StringBinding",
 	kind: enyo.Binding,
-	transform: function (val, dir, bind) {
+	transform: function (val) {
 		if (!enyo.isString(val)) {
 			return "";
 		}

@@ -415,7 +415,7 @@ enyo.DataList.delegates.vertical = {
 	/**
 		Delegate's resize event handler.
 	*/
-	didResize: function (list, event) {
+	didResize: function (list) {
 		list._updateBounds = true;
 		clearTimeout(list._resizeTimerId);
 		list._resizeTimerId = setTimeout(function () {

@@ -204,6 +204,6 @@ enyo.kind({
 	All subclasses of _enyo.DataList_ will have their own _delegates_ static hash.
 	This is per _kind_, not per _instance_.
 */
-enyo.DataList.subclass = function (ctor, props) {
+enyo.DataList.subclass = function (ctor) {
 	ctor.delegates = enyo.clone(ctor.prototype.base.delegates || this.delegates);
 };
