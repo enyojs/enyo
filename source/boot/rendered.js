@@ -1,29 +1,25 @@
-(function (oScope, enyo) {
+(function (enyo) {
 
-	var aQueue          = [],
-		bFlushScheduled = false;
+	var aCallbacks = [];
 	
-	var fFlush = function () {
-			while (aQueue.length) {
-				fRun.apply(oScope, aQueue.shift());
+	var fInvoke = function (oRoot) {
+			var nLength = aCallbacks.length,
+				a,
+				n;
+				
+			for (n=0; n<nLength; n++) {
+				a = aCallbacks[n];
+				a[0].apply(a[1] || enyo.global, [oRoot]);
 			}
-			bFlushScheduled = false;
-		},
-		fRun = function (f, oContext) {
-			f.call(oContext || enyo.global);
 		};
 	
 	/*********** ENYO PUBLIC **********/
 
 	enyo.rendered = function (f, oContext) {
-		aQueue.push([f, oContext]);
-		if (!bFlushScheduled) {
-			enyo.asyncMethod(oScope, fFlush);
-			bFlushScheduled = true;
-		}
+		aCallbacks.push([f, oContext]);
 	};
 	
-	//* Adds control to enyo.roots; called from write(), renderInto(), ViewController.renderInto()
+	//* Adds control to enyo.roots; renderInto()
 	enyo.addToRoots = function(oRoot) {
 		if (!enyo.exists(enyo.roots)) {
 			enyo.roots = [ oRoot ];
@@ -34,9 +30,9 @@
 		var fRendered = oRoot.rendered;
 		oRoot.rendered = function() {
 			fRendered.apply(oRoot, []);
-			fFlush();
+			fInvoke(oRoot);
 		};
 		oRoot._isRoot = true;
 	};
 	
-})(window, enyo);
+})(enyo);
