@@ -58,7 +58,7 @@
 				sup.apply(this, arguments);
 			};
 		}),
-		_selectionHandler: function (sender, event) {
+		_selectionHandler: function () {
 			if (this.repeater.selection && !this.get("disabled")) {
 				this.set("selected", !this.selected);
 			}

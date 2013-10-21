@@ -212,7 +212,7 @@ enyo.kind({
 		}
 	},
 	// Update thumbs, recalculate boundaries, and bubble scroll event
-	scroll: function(inSender, inEvent) {
+	scroll: function() {
 		if(this.thumb) {
 			this.updateThumbs();
 		}
@@ -262,7 +262,7 @@ enyo.kind({
 	},
 	// On touch, stop transition by setting transform values to current computed style, and
 	// changing transition time to 0s. TODO
-	down: function(inSender, inEvent) {
+	down: function() {
 		var _this = this;
 		if (this.isScrolling() && !this.isOverscrolling()) {
 			this.stopTimeout = setTimeout(function() {

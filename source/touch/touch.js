@@ -65,7 +65,7 @@ enyo.requiresWindow(function() {
 		},
 		// use mouseup after touches are done to reset event handling back to default
 		// --this works as long as no one did a preventDefault on the touch events
-		mouseup: function(e) {
+		mouseup: function() {
 			if (this._touchCount === 0) {
 				this.sawMousedown = false;
 				gesture.events = oldevents;

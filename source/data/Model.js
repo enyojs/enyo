@@ -419,7 +419,7 @@
 			When a record is successfully destroyed, this method is called before any
 			user-provided callbacks are executed.
 		*/
-		didDestroy: function (rec, opts, res) {
+		didDestroy: function () {
 			for (var k in this.attributes) {
 				if (this.attributes[k] instanceof enyo.Model || this.attributes[k] instanceof enyo.Collection) {
 					if (this.attributes[k].owner === this) {

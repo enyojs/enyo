@@ -341,7 +341,7 @@ enyo.kind({
 		_inEvent_ will have at least one property, _originator_, which
 		references the component that triggered the event in the first place.
 	*/
-	bubbleUp: function(inEventName, inEvent, inSender) {
+	bubbleUp: function(inEventName, inEvent) {
 		if (this._silenced) {
 			return;
 		}

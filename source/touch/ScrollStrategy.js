@@ -182,7 +182,7 @@ enyo.kind({
 		}
 	},
 	// avoid allowing scroll when starting at a vertical boundary to prevent ios from window scrolling.
-	down: function(inSender, inEvent) {
+	down: function() {
 		this.calcStartInfo();
 	},
 	// NOTE: mobile native scrollers need touchmove. Indicate this by

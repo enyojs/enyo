@@ -260,11 +260,11 @@ enyo.kind({
 			}
 		}
 	},
-	requestShow: function(inSender, inEvent) {
+	requestShow: function() {
 		this.show();
 		return true;
 	},
-	requestHide: function(inSender, inEvent) {
+	requestHide: function() {
 		this.hide();
 		return true;
 	},
