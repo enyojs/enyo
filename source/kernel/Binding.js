@@ -221,13 +221,14 @@
 			this.synchronizing = false;
 		},
 		syncTargetObserver: function () {
-			debugger
+			this.sync();
 		},
 		resolve: function () {
 			var source = this.source,
 				target = this.target,
 				from   = this.from,
-				to     = this.to;
+				to     = this.to,
+				tp, sp;
 			// this allows empty bindings to be created
 			if (!from || !to) { return; }
 			// this is the first track and should only be reachable if the binding has not yet been
@@ -263,8 +264,8 @@
 					this.target = target = (to[0]   == "."? this.owner: enyo.global);
 				}
 				// update our properties that will be used later for actually connecting the pieces
-				var sp                    = from.slice(1).split(".");
-				var tp                    = to  .slice(1).split(".");
+				sp                        = from.slice(1).split(".");
+				tp                        = to  .slice(1).split(".");
 				// unfortunately special handling is required for cases where the object requested is
 				// actually a reference to a component in the `$` hash
 				var is                    = enyo.lastIndexOf(".", from);
