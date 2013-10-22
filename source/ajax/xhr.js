@@ -94,19 +94,20 @@ enyo.xhr = {
 				inCallback.apply(null, [data, inXhr]);
 				inXhr = null;
 			};
-		}
-		inXhr.onreadystatechange = function() {
-			if (inXhr.readyState == 4) {
-				var data;
-				if (inXhr.responseType === "arraybuffer") {
-					data = inXhr.response;
-				} else if (typeof inXhr.responseText === "string") {
-					data = inXhr.responseText;
+		} else {
+			inXhr.onreadystatechange = function() {
+				if (inXhr && inXhr.readyState == 4) {
+					var data;
+					if (inXhr.responseType === "arraybuffer") {
+						data = inXhr.response;
+					} else if (typeof inXhr.responseText === "string") {
+						data = inXhr.responseText;
+					}
+					inCallback.apply(null, [data, inXhr]);
+					inXhr = null;
 				}
-				inCallback.apply(null, [data, inXhr]);
-				inXhr = null;
-			}
-		};
+			};
+		}
 	},
 	inOrigin: function(inUrl) {
 		var a = document.createElement("a"), result = false;
