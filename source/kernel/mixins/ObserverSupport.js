@@ -120,7 +120,7 @@
 			if (parts.length) {
 				// for a path we need to engage observers anywhere in the chain possible
 				// so that changes below that point can correctly rebuild
-				var chain = _e.chain || (_e.chain = []);
+				_e.chain  = _e.chain || [];
 				path      = parts.join(".");
 				// bind the correct references to the callback so it is reusable in this context
 				fn        = enyo.bindSafely(this, "updateObserver", path, observer, ctx, id, _e);
@@ -176,7 +176,7 @@
 			as the same property on the various objects, _prop_ is the local property that caused
 			this update to fire.
 		*/
- 		updateObserver: function (path, fn, ctx, id, _e, previous, current) {
+		updateObserver: function (path, fn, ctx, id, _e, previous, current) {
 			// we need to remove all observers below this point in the chain
 			// then reapply to new bases
 			this.removeChainedObservers(id);

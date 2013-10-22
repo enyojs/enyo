@@ -5,7 +5,7 @@ enyo.kind({
 	noDefer: true,
 	testCreate: function () {
 		var store = enyo.singleton({name: "test.store", kind: enyo.Store});
-		var m = new enyo.Model(null, {store: store});
+		new enyo.Model(null, {store: store});
 		this.finish();
 	},
 	testDestroy: function () {

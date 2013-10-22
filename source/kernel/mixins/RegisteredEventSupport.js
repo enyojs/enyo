@@ -80,7 +80,7 @@
 		removeListener: function (prop, fn) {
 			var ls = this.listeners(prop);
 			if (ls.length) {
-				idx = enyo.indexOf(fn, ls);
+				var idx = enyo.indexOf(fn, ls);
 				if (!!~idx) {
 					ls.splice(idx, 1);
 				}
