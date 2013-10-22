@@ -164,11 +164,13 @@
 			this method will remove it from any existing store prior to adding it.
 		*/
 		addCollection: function (c) {
-			var collections = this.collections;
+			var collections = this.collections,
+				euid        = c.euid;
 			if (c.store && c.store !== this) {
 				c.store.removeCollection(c);
 			}
 			c.addListener("destroy", this._collectionDestroyed);
+			collections[euid] = c;
 			if (!c.store) {
 				c.store = this;
 			}
