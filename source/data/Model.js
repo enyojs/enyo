@@ -43,31 +43,31 @@
 
 		__Bindings__
 
-		An _enyo.Model_ may be at the receiving end of a binding, but bindings
-		cannot be created on the model itself. If a model has a _bindings_ array, it
-		will be ignored.
+		Bindings may be applied to _enyo.Models_ with the understanding that they will
+		only be activated via changes to `attributes`.
 
 		__Observers and Notifications__
 
-		While there is no _observers_ block for _enyo.Model_, bindings may still be
-		applied to attributes of the model. The notification system for observers
-		works the same as it does with _enyo.Object_, except that observers are only
-		notified of changes made to properties in the _attributes_ hash.
+		The notification system for observers works the same as it does with _enyo.Object_,
+		except that observers are only notified of changes made to properties in the _attributes_
+		hash.
 
 		__Events__
 
 		The events in _enyo.Model_ differ from those in
 		[enyo.Component](#enyo.Component). Instead of _bubbled_ or _waterfall_
-		events, _enyo.Model_ has _change_ and _destroy_ events.
+		events, _enyo.Model_ has _change_ and _destroy_ events
+		(enyo.RegisteredEventSupport](#enyo.RegisteredEventSupport));
 
-		To work with these events, use [addListener()](#enyo.Model::addListener),
-		[removeListener()](#enyo.Model::removeListener), and
-		[triggerEvent()](#enyo.Model::triggerEvent).
+		To work with these events, use [addListener()](#enyo.RegisteredEventSupport::addListener),
+		[removeListener()](#enyo.RegisteredEventSupport::removeListener), and
+		[triggerEvent()](#enyo.RegisteredEventSupport::triggerEvent).
 	*/
 	enyo.kind({
 		name: "enyo.Model",
 		//*@protected
 		kind: null,
+		mixins: [enyo.ObserverSupport, enyo.BindingSupport, enyo.RegisteredEventSupport],
 		noDefer: true,
 		//*@public
 		/**
@@ -198,11 +198,13 @@
 				// as changed as well
 				if (ch) {
 					for (var k in ch) {
-						this.notifyObservers(k);
+						this.notifyObservers(k, this.previous[k], ch[k]);
 					}
 				}
-				this.triggerEvent("change");
-				this.changed = {};
+				if (!this.isSilenced()) {
+					this.triggerEvent("change");
+					this.changed = {};
+				}
 				this.dirty = true;
 			}
 			return this;
@@ -215,35 +217,15 @@
 		setObject: function (props) {
 			if (!this.attributes) { return this; }
 			if (props) {
-				var ch = false,
-					rv, k, en;
-				for (k in props) {
-					rv = this.attributes[k];
-					if (rv && "function" == typeof rv) { continue; }
-					if (rv === props[k]) { continue; }
-					this.previous[k] = rv;
-					if (this.computedMap) {
-						if ((en=this.computedMap[k])) {
-							if (typeof en == "string") {
-								en = this.computedMap[k] = enyo.trim(en).split(" ");
-							}
-							for (var i=0, p; (p=en[i]); ++i) {
-								this.attributes[k] = rv;
-								this.previous[p] = this.get(p);
-								this.attributes[k] = props[k];
-								this.changed[p] = this.get(p);
-							}
-						}
-					}
-					this.changed[k] = this.attributes[k] = props[k];
-					ch = true;
+				this.stopNotifications();
+				this.silence();
+				for (var k in props) {
+					this.set(k, props[k]);
 				}
-				if (ch) {
-					this.notifyObservers();
-					this.triggerEvent("change");
-					this.changed = {};
-					this.dirty = true;
-				}
+				this.startNotifications();
+				this.unsilence();
+				this.triggerEvent("change");
+				this.changed = {};
 			}
 			return this;
 		},
@@ -265,7 +247,7 @@
 				x = attributes;
 			if (x) { enyo.mixin(a, this.parse(x)); }
 			if (d) { enyo.mixin(a, d, _mixinOpts); }
-			this.changed = {};
+			this.changed  = {};
 			// populate the previous property with the actual values as would be expected
 			// for further updates
 			this.previous = this.raw();
@@ -311,7 +293,9 @@
 			var pk = this.primaryKey,
 				id = this.get(pk),
 				u  = this.urlRoot + "/" + this.url;
-			if (id) { u += ("/" + id); }
+			if (id) {
+				u += ("/" + id);
+			}
 			return u;
 		},
 		/**
@@ -419,7 +403,7 @@
 			When a record is successfully destroyed, this method is called before any
 			user-provided callbacks are executed.
 		*/
-		didDestroy: function (rec, opts, res) {
+		didDestroy: function () {
 			for (var k in this.attributes) {
 				if (this.attributes[k] instanceof enyo.Model || this.attributes[k] instanceof enyo.Collection) {
 					if (this.attributes[k].owner === this) {
@@ -428,13 +412,18 @@
 				}
 			}
 			this.triggerEvent("destroy");
+			this.store._recordDestroyed(this);
 			this.previous    = null;
 			this.changed     = null;
 			this.defaults    = null;
 			this.includeKeys = null;
 			this.mergeKeys   = null;
+			this.store       = null;
 			this.destroyed   = true;
-
+			// we don't call the inherited destroy chain so we do our own cleanup
+			// to avoid lingering entries
+			this.removeAllObservers();
+			this.removeAllListeners();
 		},
 		/**
 			When a record fails during a request, this method is executed with the
@@ -444,68 +433,6 @@
 		didFail: function (which, rec, opts, res) {
 			if (opts && opts.fail) {
 				opts.fail(rec, opts, res);
-			}
-		},
-		/**
-			Adds an observer according to the the _enyo.ObserverSupport_ API.
-		*/
-		addObserver: function (prop, fn, ctx) {
-			if (this.store) {
-				return this.store._addObserver(this, prop, fn, ctx);
-			}
-		},
-		/**
-			Removes an observer according to the the _enyo.ObserverSupport_ API.
-		*/
-		removeObserver: function (prop, fn) {
-			if (this.store) {
-				return this.store._removeObserver(this, prop, fn);
-			}
-		},
-		/**
-			Notifies any observers for the given property; accepts the previous and
-			current values to pass to observers. If no _prop_ is provided, notifies
-			any observers for any changed properties.
-		*/
-		notifyObservers: function (prop, prev, val) {
-			if (this.store) {
-				// if no prop is provided we call it once for each changed attribute
-				if (!prop) {
-					for (var k in this.changed) {
-						this.store._notifyObservers(this, k, this.previous[k], this.attributes[k]);
-					}
-				} else { this.store._notifyObservers(this, prop, prev, val); }
-			}
-		},
-		/**
-			Adds a listener for the given event. Callbacks will be executed with two
-			parameters of the form _(record, event)_, where _record_ is the record
-			that is firing the event and _event_ is the name (string) for the event
-			being fired. This method accepts parameters according to the
-			_enyo.ObserverSupport_ API, but does not function in the same way.
-		*/
-		addListener: function (prop, fn, ctx) {
-			if (this.store) {
-				return this.store.addListener(this, prop, fn, ctx);
-			}
-		},
-		/**
-			Removes a listener. Accepts the name of the event that the listener is
-			registered on and the method returned from the _addListener()_ call (if a
-			_ctx_ was provided). Returns true on successful removal; otherwise, false.
-		*/
-		removeListener: function (prop, fn) {
-			if (this.store) {
-				return this.store.removeListener(this, prop, fn);
-			}
-		},
-		/**
-			Triggers any listeners for the record's specified event, with optional
-			_args_.
-		*/
-		triggerEvent: function (event, args) {
-			if (this.store) {
-				this.store.triggerEvent(this, event, args);
 			}
 		},
 		//*@protected
@@ -522,6 +449,19 @@
 			}
 			s = this.store = s || enyo.store;
 			s.addRecord(this);
+		},
+		_attributeSpy: function () {
+			var pkey = this.primaryKey,
+				prop = arguments[2];
+			if (pkey == prop) {
+				// we need to let the store know that our id (unique primaryKey value)
+				// changed - we do this here so it doesn't need to register a new observer
+				// for every record created
+				this.store._recordKeyChanged(this, this.previous[this.primaryKey]);
+			}
+		},
+		observers: {
+			_attributeSpy: "*"
 		}
 	});
 	//*@protected

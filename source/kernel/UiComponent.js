@@ -44,6 +44,21 @@ enyo.kind({
 	protectedStatics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
 	},
+	// TODO-POST-2.3
+	// we will go ahead and do all of this but warn that it is deprecated
+	controllerChanged: function (p) {
+		var c = this.controller;
+		if (c) {
+			if (enyo.isString(c)) {
+				this.warn(
+					"the `controller` properties special handling has been deprecated, please use " +
+					"bindings to help resolve paths as this feature will be removed"
+				);
+				c = this.controller = enyo.getPath.call(c[0] == "."? this: enyo.global, c);
+			}
+		}
+	},
+	// END-TODO-POST-2.3
 	create: enyo.inherit(function (sup) {
 		return function() {
 			this.controls = [];
@@ -51,8 +66,11 @@ enyo.kind({
 			this.containerChanged();
 			sup.apply(this, arguments);
 			this.layoutKindChanged();
-			this.notifyObservers("controller");
-			this.notifyObservers("model");
+			// TODO-POST-2.3
+			if (this.controller) {
+				this.notifyObservers("controller");
+			}
+			// END-TODO-POST-2.3
 		};
 	}),
 	destroy: enyo.inherit(function (sup) {
@@ -63,11 +81,6 @@ enyo.kind({
 			this.setContainer(null);
 			// Destroys chrome controls owned by this.
 			sup.apply(this, arguments);
-			this.model = null;
-			if (this.controller && this.controller.removeDispatchTarget) {
-				this.controller.removeDispatchTarget(this);
-			}
-			this.controller = null;
 		};
 	}),
 	importProps: enyo.inherit(function (sup) {
@@ -296,24 +309,6 @@ enyo.kind({
 	},
 	getBubbleTarget: function() {
 		return this.bubbleTarget || this.parent || this.owner;
-	},
-	controllerChanged: function (p) {
-		var c = this.controller;
-		if (c) {
-			if (enyo.isString(c)) {
-				c = this.controller = enyo.getPath.call(c[0] == "."? this: enyo.global, c);
-			}
-			if (c && c.addDispatchTarget) { c.addDispatchTarget(this); }
-		}
-		if (p && p.removeDispatchTarget) { p.removeDispatchTarget(this); }
-	},
-	modelChanged: function (p) {
-		var m = this.model;
-		if (m) {
-			if (enyo.isString(m)) {
-				this.model = enyo.getPath.call(m[0] == "."? this: enyo.global, m);
-			}
-		}
 	}
 });
 
@@ -339,7 +334,7 @@ enyo.master = new enyo.Component({
 		return '';
 	},
 	isDescendantOf: enyo.nop,
-	bubble: function(inEventName, inEvent, inSender) {
+	bubble: function(inEventName, inEvent) {
 		//enyo.log("master event: " + inEventName);
 		if (inEventName == "onresize") {
 			// Resize is special; waterfall this message.

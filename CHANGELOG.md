@@ -7,6 +7,45 @@ touch-recognition problem in Internet Explorer 11.
 
 enyo.Model.set() now supports the force parameter.
 
+Removed unusable feature `dirty` from _enyo.Binding_ as implementing it would
+cause unnecessary overhead and it ultimately a useless feature since they are
+synchronously executed.
+
+Removed the _modelChanged()_ and deprecated _controllerChanged()_ base methods from _enyo.UiComponent_
+thus any developer code currently calling `this.inherited(arguments)` from within an overloaded
+_modelChanged()_ method will fail and needs to be removed. This is a feature change required by ENYO-3339.
+
+Removed the _stop()_ method from _enyo.Binding_ as required by ENYO-3338. Instead of
+calling that method via the binding reference in a transform return `undefined`
+(or nothing since `undefined` is the default) to achieve the same behavior.
+
+Instances of _enyo.Binding_ will no longer propagate `undefined`; instead use `null`.
+
+Deprecated the `controllers` array for _enyo.Application_; instead use `components`
+with the same features. This should modify bindings from `.app.controllers.{name}` to 
+`.app.$.{name}` for controllers/components created for an _enyo.Application_ instance.
+
+Deprecated the `controller` property for _enyo.DataRepeater_ and all sub-kinds; instead use
+`collection`. This also means you should update any overloaded `controllerChanged` methods
+to instead be `collectionChanged` and bindings referencing `controller` to `collection`.
+
+The registered event system previously employed by _enyo.Model_ and _enyo.Collection_ has
+been reworked and is no longer dependent on _enyo.Store_. See _enyo.RegisteredEventSupport_
+for more information. This change means the API methods previously available via _enyo.Store_
+(including the observer support implementation) no longer exist.
+
+_enyo.Collection_ is now a sub-kind of _enyo.Component_ and thus employs the default
+_enyo.ObserverSupport_ mechanims (as well as _enyo.ComputedSupport_).
+
+_enyo.Model_ now employs the default _enyo.ObserverSupport_ and _enyo.BindingSupport_ with
+the same limitation of only working with `attributes` of the record.
+
+As required by ENYO-3339, _enyo.Binding_ now registers for an entire path and will update
+based on changes anywhere in the path.
+
+_enyo.Store_ now throws an _error_ instead of a _warning_ when a duplicate `primaryKey` is
+found for unique records in the same _enyo.Store_.
+
 ## 2.3.0-pre.10 (9 October 2013)
 
 Removed macro support from bindings

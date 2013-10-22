@@ -78,7 +78,7 @@ enyo.kind({
 		}
 		this.doChange();
 	},
-	highlander: function(inKey) {
+	highlander: function() {
 		if (!this.multi) {
 			this.deselect(this.lastSelected);
 		}

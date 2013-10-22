@@ -101,16 +101,22 @@ enyo.kind({
 			sup.apply(this, arguments);
 		};
 	}),
+	//*@protected
 	constructed: enyo.inherit(function (sup) {
-		return function(inProps) {
+		return function(props) {
 			// perform initialization
-			this.create(inProps);
+			this.create(props);
 			sup.apply(this, arguments);
 		};
 	}),
 	create: function() {
+		// stop and queue all of the notifications happening synchronously to allow
+		// responders to only do single passes on work traversing the tree
+		this.stopNotifications();
 		this.ownerChanged();
 		this.initComponents();
+		// release the kraken!
+		this.startNotifications();
 	},
 	initComponents: function() {
 		// The _components_ property in kind declarations is renamed to
@@ -209,7 +215,7 @@ enyo.kind({
 				'but this is an error condition and should be fixed.');
 		}
 		this.$[n] = inComponent;
-		this.notifyObservers("$." + n);
+		this.notifyObservers("$." + n, null, inComponent);
 	},
 	//* Removes _inComponent_ from the list of components owned by the current
 	//* component (i.e., _this.$_).
@@ -341,7 +347,7 @@ enyo.kind({
 		_inEvent_ will have at least one property, _originator_, which
 		references the component that triggered the event in the first place.
 	*/
-	bubbleUp: function(inEventName, inEvent, inSender) {
+	bubbleUp: function(inEventName, inEvent) {
 		if (this._silenced) {
 			return;
 		}
@@ -499,8 +505,13 @@ enyo.kind({
 		this._silenced = true;
 		this._silenceCount += 1;
 	},
-
-	//*@public
+	/**
+		Returns `true` if the object is currently _silenced_ and will not propagate
+		events (of any kind) otherwise `false`.
+	*/
+	isSilenced: function () {
+		return this._silenced;
+	},
 	/**
 		Allows event propagation for this component if the internal silence counter
 		is 0; otherwise, decrements the counter by one.  For event propagation to

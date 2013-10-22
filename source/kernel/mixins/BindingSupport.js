@@ -40,46 +40,22 @@ enyo.BindingSupport = {
 		_defaultBindingKind_ or the global _enyo.defaultBindingKind_.
 	*/
 	binding: function () {
-		var defs = enyo.toArray(arguments),
-			bs = this.bindings || (this.bindings = []),
-			props = enyo.mixin(defs), bd;
+		var defs  = enyo.toArray(arguments),
+			props = enyo.mixin(defs),
+			bs    = this.bindings || (this.bindings = []),
+			bd;
 		props.owner = props.owner || this;
-		props.kind = props.kind || this.defaultBindingKind || enyo.defaultBindingKind;
+		props.kind  = props.kind  || this.defaultBindingKind || enyo.defaultBindingKind;
 		if (this.bindingSupportInitialized === false) {
 			bs.push(props);
 		} else {
-			var q, auto = false;
-			if (!this.bindingSyncAllowed) {
-				q = this.bindingSyncQueue || (this.bindingSyncQueue = []);
-			}
 			// we only want to resolve the kind if it isn't already
 			// the correct constructor -- note this forces the kind
 			// to be resolved at that time
 			if (!enyo.isFunction(props.kind)) {
 				props.kind = enyo.getPath(props.kind);
 			}
-			if (q && false !== props.autoSync) {
-				auto = true;
-				props.autoSync = false;
-			}
-			bs.push((bd = new props.kind(props)));
-			if (bd._sourcePath && bd.from[0] === ".") {
-				if (bd._sourcePath == "$") {
-					this.addObserver("$." + bd._sourceFrom, this._rebuildSource(bd));
-				} else {
-					this.addObserver(bd._sourcePath, this._rebuildSource(bd));
-				}
-			}
-			if (bd._targetPath && bd.to[0] === ".") {
-				if (bd._targetPath == "$") {
-					this.addObserver("$." + bd._targetFrom, this._rebuildTarget(bd));
-				} else {
-					this.addObserver(bd._targetPath, this._rebuildTarget(bd));
-				}
-			}
-			if (q && auto) {
-				q.push(bd);
-			}
+			bs.push((bd=new props.kind(props)));
 		}
 		return bd;
 	},
@@ -146,24 +122,11 @@ enyo.BindingSupport = {
 		its _owner_ property.
 	*/
 	removeBinding: function (binding) {
-		var b = binding,
-			bs = this.bindings;
-		if (b && bs) {
-			var i = enyo.indexOf(b, bs);
-			if (!!~i) {
+		var bs = this.bindings;
+		if (binding && bs && bs.length) {
+			var i = enyo.indexOf(binding, bs);
+			if (i > -1) {
 				bs.splice(i, 1);
-				if (typeof b._rebuildTarget == "function") {
-					var tp = b._targetPath;
-					tp = (tp == "$"? (tp+"."+b._targetFrom): tp === ""? b._targetProperty: tp);
-					this.removeObserver(tp, b._rebuildTarget);
-					b._rebuildTarget = null;
-				}
-				if (typeof b._rebuildSource == "function") {
-					var sp = b._sourcePath;
-					sp = (sp == "$"? (sp+"."+b._sourceFrom): sp === ""? b._sourceProperty: sp);
-					this.removeObserver(sp, b._rebuildSource);
-					b._rebuildSource = null;
-				}
 			}
 		}
 	},
@@ -180,35 +143,29 @@ enyo.BindingSupport = {
 		var i, b;
 		if (false === this.bindingSupportInitialized) {
 			this.bindingSupportInitialized = undefined;
-			var os = this.bindings;
-			if (!os) { return; }
+			var bs = this.bindings;
+			if (!bs) { return; }
 			// we will now reuse the property `bindings` with the actual binding
 			// references
 			this.bindings = [];
-			for (i=0; (b=os[i]); ++i) {
+			for (i=0; (b=bs[i]); ++i) {
 				this.binding(b);
 			}
 		}
-		if (this.bindingSyncAllowed) {
-			var q = this.bindingSyncQueue;
-			if (q && q.length) {
-				for (i=0; (b=q[i]); ++i) {
-					// we set this because that is the only option that would
-					// have allowed it to be in this queue
-					b.autoSync = true;
-					b.sync();
-				}
-				q = null;
-			}
-		}
 	},
+	//*@protected
 	constructed: enyo.inherit(function (sup) {
 		return function () {
 			// now we go ahead and create the bindings, knowing that they
 			// will register for missing targets/sources if they become
 			// available later
-			if (this.bindings) { this.initBindings(); }
-			else { this.bindingSupportInitialized = undefined; }
+			if (this.bindings) {
+				this.initBindings();
+			} else {
+				// to ensure that bindings will be properly registered later
+				// we set this flag here
+				this.bindingSupportInitialized = undefined;
+			}
 			sup.apply(this, arguments);
 		};
 	}),
@@ -217,31 +174,44 @@ enyo.BindingSupport = {
 			// destroy all bindings that belong to us
 			var bs = this.bindings;
 			if (bs) {
-				for (var i=0, b; (b=bs[i]); ++i) {
+				for (var i=bs.length-1, b; (b=bs[i]); --i) {
 					b.destroy();
 				}
 			}
 			sup.apply(this, arguments);
 		};
 	}),
-	_rebuildSource: function (binding) {
-		var fn = function () {
-			binding.disconnectSource();
-			binding.source = null;
-			binding.refresh();
+	/**
+		Attempt to identify when we have successfully been able to register the end of
+		the chain for a binding and synchronize only then.
+	*/
+	addObserver: enyo.inherit(function (sup) {
+		return function (path, fn, ctx) {
+			// the actual returned registered observer from the binding
+			var ret = sup.apply(this, arguments),
+				t = this,
+				c;
+			// all bindings add a reference of themselves to their observer methods
+			if (fn.binding) {
+				// expect no periods or one if the initial character is '$' because
+				// of its special nature (it will be forced to register this way)
+				// it is important to note the difference in the final test here that if the
+				// current path being executed is from the source and the condition is the '$'
+				// we do not retrieve the final object - regardless as we already have the correct
+				// root but for target we need to attempt to retrieve that root
+				if (((c=enyo.lastIndexOf(".", path)) === -1) || (c === 1 && path[0] == "$" && (fn.bindingProp == "source" || (t=this.get(path))))) {
+					// we tell the binding which of the methods it was registering as
+					// an observer have successfully completed and it will automatically
+					// synchronize if it is supposed to and only when both ends are complete
+					fn.binding.registered(fn.bindingProp, t);
+				}
+				// either way we want to ensure that the reference to the binding
+				// remains on the returned method even if it isn't the original
+				ret.binding = fn.binding;
+			}
+			return ret;
 		};
-		binding._rebuildSource = fn;
-		return fn;
-	},
-	_rebuildTarget: function (binding) {
-		var fn = function () {
-			binding.disconnectTarget();
-			binding.target = null;
-			binding.refresh();
-		};
-		binding._rebuildTarget = fn;
-		return fn;
-	},
+	}),
 	/**
 		Flag that indicates whether bindings have been initialized for this object.
 		It is used as an explicit _false_ test because it is removed from the object
@@ -257,10 +227,10 @@ enyo.BindingSupport = {
 	enyo.concatHandler = function (ctor, props) {
 		// call the original
 		fn.apply(this, arguments);
-		// now we need to setup our bindings appropriately
-		var p = ctor.prototype || ctor;
 		if (props.bindings) {
-			var k = props.defaultBindingKind || enyo.defaultBindingKind,
+			// now we need to setup our bindings appropriately
+			var p = ctor.prototype || ctor,
+				k = props.defaultBindingKind || enyo.defaultBindingKind,
 				d = props.bindingDefaults;
 			for (var i=0, b; (b=props.bindings[i]); ++i) {
 				if (d) { enyo.mixin(b, d, {ignore: true}); }
@@ -290,19 +260,6 @@ enyo.ComponentBindingSupport = {
 		return function (props) {
 			sup.apply(this, arguments);
 			props.bindingTransformOwner = props.bindingTransformOwner || this.getInstanceOwner();
-		};
-	}),
-	constructed: enyo.inherit(function (sup) {
-		return function () {
-			if (this.bindings) {
-				this.bindingSyncAllowed = false;
-				this.initBindings();
-				// the next time this is called later during initialization the bindings will
-				// have been created but this will allow them to be synchronized at the appropriate
-				// time
-				this.bindingSyncAllowed = true;
-			}
-			return sup.apply(this, arguments);
 		};
 	})
 };

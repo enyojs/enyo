@@ -17,11 +17,41 @@ enyo.kind({
 			(!b.destroyed && "did not set the destroy flag") ||
 			(b.source && "source wasn't removed") ||
 			(b.target && "target wasn't removed") ||
-			(b._sourceObserver && "source observer wasn't removed") ||
-			(b._targetObserver && "target observer wasn't removed") ||
+			(b.sourceObserver && "source observer wasn't removed") ||
+			(b.targetObserver && "target observer wasn't removed") ||
 			(b.transform && "transform still existed") ||
 			(b.owner && "owner still existed") ||
 			(enyo.Binding.find(b.id) && "id was not removed from the store")
+		);
+	},
+	testComponentBindingsDestroy: function () {
+		var co = new enyo.Component({
+			name: "MyComponent",
+
+			prop1: "value of prop1",
+			prop2: "value of prop2",
+			prop3: "value of prop3",
+			prop4: "value of prop4",
+
+			components: [
+				{tag: "div", name: "prop1"},
+				{tag: "div", name: "prop2"},
+				{tag: "div", name: "prop3"},
+				{tag: "div", name: "prop4"}
+			],
+
+			bindings: [
+				{from: ".prop1", to: ".$.prop1.content"},
+				{from: ".prop2", to: ".$.prop2.content"},
+				{from: ".prop3", to: ".$.prop3.content"},
+				{from: ".prop4", to: ".$.prop4.content"}
+			]
+		});
+
+		co.destroy();
+
+		this.finish(
+			(co.bindings.length !== 0) && "did not remove all bindings"
 		);
 	},
 	testOneWaySynchronization: function () {
@@ -232,11 +262,7 @@ enyo.kind({
 			(c.firstName !== "Ben" && "model -> property binding failed") ||
 			(c.lastName !== "Combee" && "model -> property binding failed") ||
 			(c.$.first.content !== "Ben" && "property -> content binding failed") ||
-			(c.$.last.content !== "Combee" && "property -> content binding failed") ||
-			(c.bindings[0].to !== ".$.first.content" && "inner binding 'target' defaults failed to be applied") ||
-			(c.bindings[1].to !== ".$.last.content" && "inner binding 'target' defaults failed to be applied") ||
-			(c.bindings[2].from !== ".model.firstName" && "outer binding 'source' defaults failed to be applied") ||
-			(c.bindings[3].from !== ".model.lastName" && "outer binding 'source' defaults failed to be applied")
+			(c.$.last.content !== "Combee" && "property -> content binding failed")
 		);
 	}
 });

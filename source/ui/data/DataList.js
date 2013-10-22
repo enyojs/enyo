@@ -3,7 +3,7 @@
 	_enyo.DataList_ is an [enyo.DataRepeater](#enyo.DataRepeater) that employs a
 	paginated scrolling scheme to enhance performance with larger datasets. The
 	data is provided to the DataList by an [enyo.Collection](#enyo.Collection) set
-	as the value of its _controller_ property.
+	as the value of its _collection_ property.
 
 	Note that care should be taken when deciding how to lay out the list's
 	children. When there are a large number of child elements, the layout process
@@ -95,12 +95,12 @@ enyo.kind({
 		Attempts to do initialization. There are only a few basic startup paths, but
 		we need to be aware of what they are:
 		
-		* The view is rendered, it has a controller, and the controller has data.
-		* The view is rendered, it has a controller with no data, and data is added
+		* The view is rendered, it has a collection, and the collection has data.
+		* The view is rendered, it has a collection with no data, and data is added
 			later.
-		* The view is rendered, but has no controller.
+		* The view is rendered, but has no collection.
 
-		Once the list itself is rendered, we check to see if we have a controller;
+		Once the list itself is rendered, we check to see if we have a collection;
 		if so, do we have any data to start rendering the rest of the list?
 		Ultimately, the implementation decisions are decided by the delegate
 		strategy.
@@ -118,13 +118,13 @@ enyo.kind({
 		Overloaded to call a method of the delegate strategy.
 	*/
 	modelsAdded: function (c, e, props) {
-		if (c === this.controller && this.$.scroller.canGenerate) { this.delegate.modelsAdded(this, props); }
+		if (c === this.collection && this.$.scroller.canGenerate) { this.delegate.modelsAdded(this, props); }
 	},
 	/**
 		Overloaded to call a method of the delegate strategy.
 	*/
 	modelsRemoved: function (c, e, props) {
-		if (c === this.controller && this.$.scroller.canGenerate) { this.delegate.modelsRemoved(this, props); }
+		if (c === this.collection && this.$.scroller.canGenerate) { this.delegate.modelsRemoved(this, props); }
 	},
 	/**
 		Overloaded from base kind to ensure that the container options correctly apply
@@ -204,6 +204,6 @@ enyo.kind({
 	All subclasses of _enyo.DataList_ will have their own _delegates_ static hash.
 	This is per _kind_, not per _instance_.
 */
-enyo.DataList.subclass = function (ctor, props) {
+enyo.DataList.subclass = function (ctor) {
 	ctor.delegates = enyo.clone(ctor.prototype.base.delegates || this.delegates);
 };

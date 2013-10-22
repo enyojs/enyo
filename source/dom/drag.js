@@ -197,7 +197,7 @@ enyo.gesture.drag = {
 			ti.moves.shift();
 		}
 	},
-	endTracking: function(e) {
+	endTracking: function() {
 		this.tracking = false;
 		var ti = this.flickInfo;
 		var moves = ti && ti.moves;

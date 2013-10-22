@@ -940,7 +940,7 @@ enyo.kind({
 	},
 	//
 	//
-	fitChanged: function(inOld) {
+	fitChanged: function() {
 		this.parent.reflow();
 	},
 	//* Returns true if this control is the current fullscreen control.
