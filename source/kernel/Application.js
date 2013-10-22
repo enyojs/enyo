@@ -120,6 +120,7 @@ enyo.kind({
 	// this will no longer be required
 	addObserver: enyo.inherit(function (sup) {
 		return function (path) {
+			var args = arguments;
 			if (/^controllers/.test(path)) {
 				// throw a warning so developers will know to update their code for future
 				// proofing
@@ -130,9 +131,10 @@ enyo.kind({
 				// we need to map this property path to '$' instead so it will actually
 				// work with observers
 				path = path.replace(/^controllers/, "$");
-				arguments[0] = path;
+				args = enyo.cloneArray(arguments);
+				args[0] = path;
 			}
-			return sup.apply(this, arguments);
+			return sup.apply(this, args);
 		};
 	}),
 	// END-TODO-POST-2.3
