@@ -91,7 +91,7 @@ enyo.kind({
 		enyo.ComponentBindingSupport
 	],
 	toString: function() {
-		return this.kindName;
+		return this.name + " [" + this.kindName + "]";
 	},
 	constructor: enyo.inherit(function (sup) {
 		return function(props) {
