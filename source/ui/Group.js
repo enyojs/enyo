@@ -31,6 +31,11 @@ enyo.kind({
 			return;
 		}
 		if (this.highlander) {
+			// we can optionally accept an `allowHighlanderDeactivate` property in inEvent without directly 
+			// specifying it when instatiating the group - used mainly for custom kinds requiring deactivation  
+			if (inEvent.allowHighlanderDeactivate !== undefined && inEvent.allowHighlanderDeactivate !== this.allowHighlanderDeactivate) {
+				this.setAllowHighlanderDeactivate(inEvent.allowHighlanderDeactivate);
+			}
 			// deactivation messages are ignored unless it's an attempt
 			// to deactivate the highlander
 			if (!inEvent.originator.active) {
