@@ -11,9 +11,9 @@ Removed unusable feature `dirty` from _enyo.Binding_ as implementing it would
 cause unnecessary overhead and it ultimately a useless feature since they are
 synchronously executed.
 
-Removed the _modelChanged()_ and _controllerChanged()_ base methods from _enyo.UiComponent_
-thus any developer code currently calling `this.inherited(arguments)` will fail
-and needs to be removed. This is a feature change required by ENYO-3339.
+Removed the _modelChanged()_ and deprecated _controllerChanged()_ base methods from _enyo.UiComponent_
+thus any developer code currently calling `this.inherited(arguments)` from within an overloaded
+_modelChanged()_ method will fail and needs to be removed. This is a feature change required by ENYO-3339.
 
 Removed the _stop()_ method from _enyo.Binding_ as required by ENYO-3338. Instead of
 calling that method via the binding reference in a transform return `undefined`
