@@ -102,11 +102,6 @@ enyo.kind({
 		};
 	}),
 	//*@protected
-	/**
-		This deliberately avoids calling the super method of its base kind
-		because it is a waste of time (currently). This can easily be modified
-		if necessary to call it if additional features are added requiring it.
-	*/
 	constructed: enyo.inherit(function (sup) {
 		return function(props) {
 			// perform initialization
