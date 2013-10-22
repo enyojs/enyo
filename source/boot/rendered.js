@@ -1,46 +1,41 @@
 /*
  * Enables registering callbacks, to be called when
  * renderInto is done rendering root component tree
- *
- * @author: Lex Podgorny
  */
 
+//*@protected
 (function (enyo) {
 
-	var aCallbacks = [];
-	
-	var fInvoke = function (oRoot) {
-			var nLength = aCallbacks.length,
-				a,
-				n;
-				
-			for (n=0; n<nLength; n++) {
-				a = aCallbacks[n];
-				a[0].apply(a[1] || enyo.global, [oRoot]);
-			}
-		};
-	
-	/*********** ENYO PUBLIC **********/
+	var callbacks = [];
 
-	//* Registers callback to be called every time a root is rendered after calling Control.renderInto()
-	enyo.rendered = function (f, oContext) {
-		aCallbacks.push([f, oContext]);
-	};
-	
-	//* Adds control to enyo.roots; Called from Control.renderInto()
-	enyo.addToRoots = function(oRoot) {
-		if (!enyo.exists(enyo.roots)) {
-			enyo.roots = [ oRoot ];
-		} else {
-			enyo.roots.push(oRoot);
+	var invoke = function (root) {
+		for (var n=0, a; (a = callbacks[n]); n++) {
+			a[0].apply(a[1] || enyo.global, [root]);
 		}
-		
-		var fRendered = oRoot.rendered;
-		oRoot.rendered = function() {
-			fRendered.apply(oRoot, []);
-			fInvoke(oRoot);
-		};
-		oRoot._isRoot = true;
 	};
-	
+
+	//*@public
+	//* Registers callback to be called every time a root is rendered by calling
+	//* enyo.Control.renderInto() or
+	enyo.rendered = function (f, context) {
+		callbacks.push([f, context]);
+	};
+
+	//*@protected
+	//* Adds control to enyo.roots; Called from enyo.Control.renderInto()
+	enyo.addToRoots = function(root) {
+		if (!enyo.exists(enyo.roots)) {
+			enyo.roots = [ root ];
+		} else {
+			enyo.roots.push(root);
+		}
+
+		var rendered = root.rendered;
+		root.rendered = function() {
+			rendered.apply(root, []);
+			invoke(root);
+		};
+		root._isRoot = true;
+	};
+
 })(enyo);
