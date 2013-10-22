@@ -138,7 +138,7 @@
 				map[prop] = [id];
 			}
 			// add the entry for the callback
-			fn                  = this[id] = ctx? enyo.bindSafely(ctx, fn): fn;
+			fn                  = this[id] = (ctx? enyo.bindSafely(ctx, fn): fn);
 			fn.observer         = true;
 			_e.observerId       = id;
 			// now the information that may not be unique to the observer if it is registered on

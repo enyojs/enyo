@@ -147,11 +147,6 @@
 			// now to index the record by its kind name
 			records.kn[rec.kindName] = records.kn[rec.kindName] || (records.kn[rec.kindName] = {});
 			records.kn[rec.kindName][euid] = rec;
-			// we need to ensure changes to the primaryKey property are updated accordingly
-			// as that is a perfectly valid operation (client-side anyways) but we store the
-			// bound method reference so we can remove it later if necessary
-			rec._storePKObserver = rec.addObserver(pkey, this.bindSafely("_recordKeyChanged", rec));
-			rec.addListener("destroy", this._recordDestroyed);
 			if (!rec.store) {
 				rec.store = this;
 			}
@@ -197,8 +192,6 @@
 			delete records.euid[euid];
 			delete records.kn[rec.kindName][euid];
 			delete records.pk[rec.kindName][id];
-			rec.removeListener("destroy", this._recordDestroyed);
-			rec.removeObserver(pkey, rec._storePKObserver);
 		},
 		/**
 			Adds sources to this store.  Requires a hash with _key/value_ pairs, in
@@ -500,15 +493,12 @@
 		_collectionDestroyed: function (col) {
 			this.removeCollection(col);
 		},
-		_recordKeyChanged: function (rec, prev, val, prop) {
-			// we use the same test for normalized addition via the _addRecord_ method
-			// that will warn if some other record already has this id or if the id somehow
-			// is now different for that particular record
-			this.removeRecord(rec);
-			// the primaryKey value will have already been updated by this point so remove
-			// record didn't remove it with the previous value so we need to make sure
-			// it is cleanly removed
-			delete this.records.pk[rec.kindName][prev];
+		_recordKeyChanged: function (rec, prev) {
+			// ultimately we need to remove only the entry for the record by its kindName's
+			// unique primaryKey value
+			if (prev) {
+				delete this.records.pk[rec.kindName][prev];
+			}
 			this.addRecord(rec);
 		},
 		constructor: enyo.inherit(function (sup) {

@@ -412,6 +412,7 @@
 				}
 			}
 			this.triggerEvent("destroy");
+			this.store._recordDestroyed(this);
 			this.previous    = null;
 			this.changed     = null;
 			this.defaults    = null;
@@ -448,6 +449,19 @@
 			}
 			s = this.store = s || enyo.store;
 			s.addRecord(this);
+		},
+		_attributeSpy: function () {
+			var pkey = this.primaryKey,
+				prop = arguments[2];
+			if (pkey == prop) {
+				// we need to let the store know that our id (unique primaryKey value)
+				// changed - we do this here so it doesn't need to register a new observer
+				// for every record created
+				this.store._recordKeyChanged(this, this.previous[this.primaryKey]);
+			}
+		},
+		observers: {
+			_attributeSpy: "*"
 		}
 	});
 	//*@protected
