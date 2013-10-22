@@ -174,7 +174,7 @@ enyo.BindingSupport = {
 			// destroy all bindings that belong to us
 			var bs = this.bindings;
 			if (bs) {
-				for (var i=0, b; (b=bs[0]); ++i) {
+				for (var i=bs.length-1, b; (b=bs[i]); --i) {
 					b.destroy();
 				}
 			}
