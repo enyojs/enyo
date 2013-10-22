@@ -67,7 +67,9 @@ enyo.kind({
 			sup.apply(this, arguments);
 			this.layoutKindChanged();
 			// TODO-POST-2.3
-			this.notifyObservers("controller");
+			if (this.controller) {
+				this.notifyObservers("controller");
+			}
 			// END-TODO-POST-2.3
 		};
 	}),
