@@ -31,6 +31,13 @@ enyo.kind({
 			sup.apply(this, arguments);
 		};
 	}),
+	destroy: enyo.inherit(function (sup) {
+		return function() {
+			// explicilty release any XHR refs
+			this.xhr = null;
+			sup.apply(this, arguments);
+		};
+	}),
 	//* @public
 	/**
 	Sends the Ajax request with parameters _inParams_. _inParams_ values may be

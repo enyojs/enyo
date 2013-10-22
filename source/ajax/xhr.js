@@ -92,6 +92,7 @@ enyo.xhr = {
 					data = inXhr.responseText;
 				}
 				inCallback.apply(null, [data, inXhr]);
+				inXhr = null;
 			};
 		}
 		inXhr.onreadystatechange = function() {
@@ -103,6 +104,7 @@ enyo.xhr = {
 					data = inXhr.responseText;
 				}
 				inCallback.apply(null, [data, inXhr]);
+				inXhr = null;
 			}
 		};
 	},

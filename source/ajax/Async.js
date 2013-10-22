@@ -35,6 +35,15 @@ enyo.kind({
 			this.progressHandlers = [];
 		};
 	}),
+	destroy: enyo.inherit(function (sup) {
+		return function() {
+			if (this.timeoutJob) {
+				this.clearTimeout();
+			}
+			sup.apply(this, arguments);
+		};
+	}),
+
 	accumulate: function(inArray, inMethodArgs) {
 		var fn = (inMethodArgs.length < 2) ? inMethodArgs[0] : enyo.bind(inMethodArgs[0], inMethodArgs[1]);
 		inArray.push(fn);
