@@ -410,8 +410,6 @@
 			if (opts) {
 				if (opts.success) { opts.success(res); }
 			}
-			// // once that is done we can execute the remaining things to be done
-			// this._recordDestroyed(rec);
 		},
 		/**
 			This method is executed when one of the primary actions has failed. It has
