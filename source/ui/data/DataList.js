@@ -60,6 +60,15 @@ enyo.kind({
 			this.delegate.refresh(this);
 		}, 100);
 	},
+	/**
+		Pass in an integer within the bounds of the lists's collection to have it
+		scroll to the position of that index in the list.
+	*/
+	scrollToIndex: function (idx) {
+		if (idx >= 0 && idx < this.length) {
+			this.delegate.scrollToIndex(this, idx);
+		}
+	},
 	//*@protected
 	constructor: enyo.inherit(function (sup) {
 		return function () {
@@ -118,13 +127,17 @@ enyo.kind({
 		Overloaded to call a method of the delegate strategy.
 	*/
 	modelsAdded: function (c, e, props) {
-		if (c === this.collection && this.$.scroller.canGenerate) { this.delegate.modelsAdded(this, props); }
+		if (c === this.collection && this.$.scroller.canGenerate) {
+			this.delegate.modelsAdded(this, props);
+		}
 	},
 	/**
 		Overloaded to call a method of the delegate strategy.
 	*/
 	modelsRemoved: function (c, e, props) {
-		if (c === this.collection && this.$.scroller.canGenerate) { this.delegate.modelsRemoved(this, props); }
+		if (c === this.collection && this.$.scroller.canGenerate) {
+			this.delegate.modelsRemoved(this, props);
+		}
 	},
 	/**
 		Overloaded from base kind to ensure that the container options correctly apply
