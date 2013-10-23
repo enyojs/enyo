@@ -39,6 +39,9 @@
 .enyo-data-list.horizontal .page > * {
   display: inline-block !important;
 }
+.enyo-data-list.horizontal .page {
+  width: auto;
+}
 .enyo-data-grid-list .item {
   display: block;
   position: absolute !important;

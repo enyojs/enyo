@@ -330,12 +330,12 @@ enyo.DataList.delegates.vertical = {
 	didScroll: function (list, event) {
 		var sb = event.scrollBounds,
 			pr = list.previousScrollPos,
-			cr = (list.previousScrollPos = sb.top),
 			p1 = list.$.page1,
 			p2 = list.$.page2,
 			sp = list.psizeProp,
 			up = list.upperProp,
 			lp = list.lowerProp,
+			cr = (list.previousScrollPos = sb[up]),
 			tp = (p1[up] > p2[up]? p2: p1),
 			bp = p1 === tp? p2: p1,
 			pc, pi, ps;
