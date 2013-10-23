@@ -97,6 +97,8 @@ enyo.kind({
 	*/
 	preventScrollPropagation: true,
 	//* @protected
+	// needed to allow global mods to enyo.Scroller.touchScrolling
+	noDefer: true,
 	handlers: {
 		onscroll: "domScroll",
 		onScrollStart: "scrollStart",
