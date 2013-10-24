@@ -255,11 +255,15 @@ enyo.kind({
 	},
 	//* Gets scroll position along horizontal axis.
 	getScrollLeft: function() {
-		return this.$.strategy.getScrollLeft();
+		// sync our internal property
+		this.scrollLeft = this.$.strategy.getScrollLeft();
+		return this.scrollLeft;
 	},
 	//* Gets scroll position along vertical axis.
 	getScrollTop: function() {
-		return this.$.strategy.getScrollTop();
+		// sync our internal property
+		this.scrollTop = this.$.strategy.getScrollTop();
+		return this.scrollTop;
 	},
 	//* @public
 	/**
@@ -271,7 +275,17 @@ enyo.kind({
 		* _width_, _height_: size of the full area of the scrolled region
 	*/
 	getScrollBounds: function() {
-		return this.$.strategy.getScrollBounds();
+		var bounds  = this.$.strategy.getScrollBounds();
+		if (
+			(bounds.xDir !== -1 && bounds.xDir !== 0 && bounds.xDir !== 1) ||
+			(bounds.yDir !== -1 && bounds.yDir !== 0 && bounds.yDir !== 1)
+		) {
+			this.decorateBounds(bounds);
+		}
+		// keep our properties synchronized always and without extra calls
+		this.scrollTop  = bounds.top;
+		this.scrollLeft = bounds.left;
+		return bounds;
 	},
 	/**
 		Scrolls the given control (_inControl_) into view. If _inAlignWithTop_
@@ -299,13 +313,34 @@ enyo.kind({
 	//* @protected
 	//* Adds current values of getScrollBounds to event
 	decorateScrollEvent: function(inEvent) {
-		inEvent.scrollBounds = inEvent.scrollBounds || this.$.strategy._getScrollBounds();
+		var bounds = inEvent.scrollBounds = inEvent.scrollBounds || this.getScrollBounds();
+		// in the off chance that the event already had scrollBounds then we need
+		// to make sure they are decorated
+		if (
+			(bounds.xDir !== -1 && bounds.xDir !== 0 && bounds.xDir !== 1) ||
+			(bounds.yDir !== -1 && bounds.yDir !== 0 && bounds.yDir !== 1)
+		) {
+			this.decorateBounds(bounds);
+		}
+		// keep our properties synchronized always and without extra calls
+		this.scrollTop  = bounds.top;
+		this.scrollLeft = bounds.left;
+	},
+	decorateBounds: function (bounds) {
+		var x       = this.scrollLeft - bounds.left,
+			y       = this.scrollTop  - bounds.top;
+		bounds.xDir = (x < 0? 1: x > 0? -1: 0);
+		bounds.yDir = (y < 0? 1: y > 0? -1: 0);
+		// we update our current bounds properties so we don't have to unnecessarily
+		// call getScrollTop/getScrollLeft because we already have the current data
+		this.scrollLeft = bounds.left;
+		this.scrollTop  = bounds.top;
 	},
 	//* Normalizes scroll event to _onScroll_.
 	domScroll: function(inSender, e) {
 		// if a scroll event originated here, pass it to our strategy to handle
 		if (this.$.strategy.domScroll && e.originator == this) {
-			this.$.strategy.scroll(inSender, e);
+			this.$.strategy.domScroll(inSender, e);
 		}
 		this.decorateScrollEvent(e);
 		this.doScroll(e);

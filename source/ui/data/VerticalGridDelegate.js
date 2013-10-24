@@ -13,8 +13,6 @@
 			and apply them to our pages individually.
 		*/
 		rendered: function (list) {
-			list.$.flyweighter.canGenerate = true;
-			this._scrollPulse = 0;
 			// get our initial sizing cached now since we should actually have
 			// bounds at this point
 			this.updateMetrics(list);
@@ -51,53 +49,12 @@
 		/**
 			This method generates the markup for the page content.
 		*/
-		generatePage: function (list, page, index) {
-			var dd = list.get("data"),
-				cc = list.controlsPerPage,
-				// the initial index (in the data) to start with
-				pi = cc * index,
-				// the final index of the page
-				pf = Math.min(dd.length, pi + cc),
-				sx = list.styleCache || (list.styleCache={}),
-				c  = list.$.flyweighter,
-				n  = page.node || page.hasNode(),
-				mk = "", d;
-			// set the pages index value
-			page.index = index;
-			page.start = pi;
-			page.end = pf;
-			// i is the iteration index of the child in the children's array of the page
-			// j is the iteration index of the dataset for each child
-			for (var i=0, j=pi; j<pf; ++i, ++j) {
-				d = dd.at(j);
-				// we want to keep notifications from occurring until we're done
-				// setting up
-				var b = enyo.dev.bench({name: "rebuildBindings", logging: false, average: true});
-				c.stopNotifications();
-				c.set("model", d)
-				.set("id", this.idFor(list, j), true)
-				.set("index", j)
-				.set("selected", list.isSelected(d));
-				// c.rebuildBindings();
-				c.domCssText = sx[i] || c.domCssText;
-				c.tagsValid = false;
-				c.startNotifications();
-				mk += c.generateHtml();
-				c.teardownRender();
-				b.stop();
-			}
-			// take the flyweighted content and set it to the page
-			n.innerHTML = mk;
-			// now we need to update the known metrics cached for this page if we need to
-			var mx = list.metrics.pages[index] || (list.metrics.pages[index] = {});
-			// we will need to get the actual sizes for the page
-			mx.height = this.pageHeight(list, page);
-			mx.width = this.pageWidth(list, page);
-			// if we haven't already done this, update our _default_ child size for various
-			// calculations later
-			if (!list.childSize) { this.childSize(list); }
-			this.layout(list, page);
-		},
+		generatePage: enyo.inherit(function (sup) {
+			return function (list, page) {
+				sup.apply(this, arguments);
+				this.layout(list, page);
+			};
+		}),
 		/**
 			Returns the calculated width for the given page.
 		*/
@@ -164,18 +121,18 @@
 				w  = list.tileWidth,
 				h  = list.tileHeight,
 				r  = 0,
-				n  = page.node || page.hasNode(),
-				sx = list.styleCache || (list.styleCache={}),
+				n  = page,
 				cn = n.children, co;
 			if (cn.length) {
 				for (var i=0, c; (c=cn[i]); ++i) {
 					// the column
 					co = i % cc;
-					c.style.top    = (s  + (r  * (h+s))) + "px";
-					c.style.left   = (s  + (co * (w+s))) + "px";
-					c.style.width  = (w) + "px";
-					c.style.height = (h) + "px";
-					sx[i] = c.style.cssText;
+					c.setStyle(
+						"top: "    + (s  + (r  * (h+s))) + "px; " +
+						"left: "   + (s  + (co * (w+s))) + "px; " +
+						"width: "  + (w) +                 "px; " +
+						"height: " + (h) +                 "px"
+					);
 					// check if we need to increment the row
 					if ((i+1) % cc === 0) { ++r; }
 				}
@@ -196,7 +153,6 @@
 					p = list.metrics.pages[i];
 					bs += (p && p[sp]) || ds;
 				}
-				bs += list.spacing;
 				list.bufferSize = bs;
 				n.style[sp] = bs + "px";
 				n.style[ss] = this[ss](list) + "px";

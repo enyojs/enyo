@@ -183,6 +183,7 @@
 			return !! (this.sourceRegistered && this.targetRegistered);
 		},
 		syncFromSource: function () {
+			if (this.debug) debugger
 			this.synchronizing = true;
 			if (this.isConnected() && this.isRegistered()) {
 				var value = this.getSourceValue(),
@@ -190,9 +191,9 @@
 				if (fn && typeof fn == "function") {
 					value = fn.call(this.owner || this, value, "source", this);
 				}
-				if (value === undefined) {
-					return;
-				}
+				// if (value === undefined) {
+				// 	return;
+				// }
 				if (!this.oneWay) {
 					this.disconnectTarget();
 				}

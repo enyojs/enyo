@@ -14,19 +14,22 @@
 			Initialize the list by adding a class to modify the CSS properly and settings its
 			priority properties.
 		*/
-		initList: function (list) {
-			// add the class
-			list.addClass("horizontal");
-			// set the priority properties
-			list.upperProp = "left";
-			list.lowerProp = "right";
-			list.psizeProp = "width";
-			list.ssizeProp = "height";
-			// set the scroller options
-			var so = list.scrollerOptions || (list.scrollerOptions = {});
-			so.vertical = "hidden";
-			so.horizontal = "auto";
-		},
+		initList: enyo.inherit(function (sup) {
+			return function (list) {
+				sup.apply(this, arguments);
+				// add the class
+				list.addClass("horizontal");
+				// set the priority properties
+				list.upperProp = "left";
+				list.lowerProp = "right";
+				list.psizeProp = "width";
+				list.ssizeProp = "height";
+				// set the scroller options
+				var so         = list.scrollerOptions || (list.scrollerOptions = {});
+				so.vertical    = "hidden";
+				so.horizontal  = "auto";
+			};
+		}),
 		//* Overload to retrieve the correct scroll position
 		getScrollPosition: function (list) {
 			return list.$.scroller.getScrollLeft();

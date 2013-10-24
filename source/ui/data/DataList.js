@@ -36,7 +36,7 @@ enyo.kind({
 		collections of smaller controls, this number may need to be increased, since
 		each page should be larger than the container (so that paging is smooth).
 	*/
-	controlsPerPage: 20,
+	controlsPerPage: 25,
 	/**
 		Completely resets the current list such that it scrolls to the top of the
 		scrollable region and regenerates all of its children. This is typically
@@ -83,18 +83,18 @@ enyo.kind({
 			// on the list, default to _vertical_ if none is provided or if it
 			// could not be found
 			this.delegate = this.ctor.delegates[this.orientation] || this.base.delegates.vertical;
+			sup.apply(this, arguments);
 			// if the delegate has an initialization routine execute it now before the
 			// container and children are rendered
-			if (this.delegate.initList) { this.delegate.initList(this); }
-			sup.apply(this, arguments);
+			if (this.delegate.initList) {
+				this.delegate.initList(this);
+			}
 			// initialize the _pages_ array and add the pages to it
 			this.pages = [this.$.page1, this.$.page2];
-			this.createChrome([{name: "flyweighter", canGenerate: false, owner: this, spotlight: false, flyweighter: true}]);
 		};
 	}),
 	render: enyo.inherit(function (sup) {
 		return function () {
-			this.$.flyweighter.canGenerate = false;
 			this.$.scroller.canGenerate = false;
 			this.$.scroller.teardownRender();
 			sup.apply(this, arguments);
