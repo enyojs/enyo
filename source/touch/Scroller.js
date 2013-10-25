@@ -313,7 +313,7 @@ enyo.kind({
 	//* @protected
 	//* Adds current values of getScrollBounds to event
 	decorateScrollEvent: function(inEvent) {
-		var bounds = inEvent.scrollBounds = inEvent.scrollBounds || this.getScrollBounds();
+		var bounds = inEvent.scrollBounds = inEvent.scrollBounds || this.$.strategy._getScrollBounds();
 		// in the off chance that the event already had scrollBounds then we need
 		// to make sure they are decorated
 		if (
