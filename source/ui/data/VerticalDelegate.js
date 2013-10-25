@@ -333,11 +333,14 @@ enyo.DataList.delegates.vertical = {
 		return list.$.scroller.getScrollTop();
 	},
 	scrollHandler: function (list, bounds) {
-		var pos = this.pagesByPosition(list);
-		if ((bounds.xDir === 1 || bounds.yDir === 1) && pos.lastPage.index !== (this.pageCount(list)-1)) {
+		var last = this.pageCount(list)-1,
+			pos  = this.pagesByPosition(list);
+		if ((bounds.xDir === 1 || bounds.yDir === 1) && pos.lastPage.index !== (last)) {
 			this.generatePage(list, pos.firstPage, pos.lastPage.index + 1);
 			this.adjustPagePositions(list);
-			this.adjustBuffer(list);
+			if (pos.firstPage.index === last || pos.lastPage.index === last) {
+				this.adjustBuffer(list);
+			}
 		} else if ((bounds.xDir === -1 || bounds.yDir === -1) && pos.firstPage.index !== 0) {
 			this.generatePage(list, pos.lastPage, pos.firstPage.index - 1);
 			this.adjustPagePositions(list);
@@ -359,11 +362,13 @@ enyo.DataList.delegates.vertical = {
 		}
 	},
 	resetToPosition: function (list, px) {
-		var index = Math.ceil(px / this.defaultPageSize(list)),
-			last  = this.pageCount(list)-1;
-		list.$.page1.index = (index = Math.min(index, last));
-		list.$.page2.index = (index === last? (index-1): (index+1));
-		this.refresh(list);
+		if (px >= 0 && px <= list.bufferSize) {
+			var index = Math.ceil(px / this.defaultPageSize(list)),
+				last  = this.pageCount(list)-1;
+			list.$.page1.index = (index = Math.min(index, last));
+			list.$.page2.index = (index === last? (index-1): (index+1));
+			this.refresh(list);
+		}
 	},
 	/**
 		Handles scroll events for the given list. The events themselves aren't
@@ -372,8 +377,6 @@ enyo.DataList.delegates.vertical = {
 		too many functions whenever this event is propagated.
 	*/
 	didScroll: function (list, event) {
-		console.log("didScroll: ", event.scrollBounds.xDir, event.scrollBounds.yDir);
-
 		var threshold = list.scrollThreshold,
 			bounds    = event.scrollBounds,
 			metrics   = list.metrics.pages,
