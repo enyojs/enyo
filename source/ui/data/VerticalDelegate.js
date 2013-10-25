@@ -338,9 +338,7 @@ enyo.DataList.delegates.vertical = {
 		if ((bounds.xDir === 1 || bounds.yDir === 1) && pos.lastPage.index !== (last)) {
 			this.generatePage(list, pos.firstPage, pos.lastPage.index + 1);
 			this.adjustPagePositions(list);
-			if (pos.firstPage.index === last || pos.lastPage.index === last) {
-				this.adjustBuffer(list);
-			}
+			this.adjustBuffer(list);
 		} else if ((bounds.xDir === -1 || bounds.yDir === -1) && pos.firstPage.index !== 0) {
 			this.generatePage(list, pos.lastPage, pos.firstPage.index - 1);
 			this.adjustPagePositions(list);
