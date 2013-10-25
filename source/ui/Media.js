@@ -661,5 +661,5 @@ enyo.kind({
 		node.pause();
 		node.currentTime = this.node.duration;
 		this._prevCommand = "jumpToEnd";
-	},
+	}
 });
