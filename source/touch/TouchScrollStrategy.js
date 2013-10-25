@@ -52,7 +52,11 @@ enyo.kind({
 		//*	Allow drag events sent when gesture events are happening simultaneously
 		dragDuringGesture: true,
 		//* Facade Animation time step from ScrollMath
-		interval: 20
+		interval: 20,
+		//* Adjust animation interval type from ScrollMath
+		fixedTime: true,
+		//* Modify one unit of time for simulation from ScrollMath
+		frame: 10
 	},
 	events: {
 		onShouldDrag: ""
@@ -98,6 +102,8 @@ enyo.kind({
 			}
 			this.scrimChanged();
 			this.intervalChanged();
+			this.fixedTimeChanged();
+			this.frameChanged();
 			this.container.addClass(containerClasses);
 			this.translation = this.accel ? "translate3d" : "translate";
 		};
@@ -183,6 +189,12 @@ enyo.kind({
 	},
 	intervalChanged: function() {
 		this.$.scrollMath.interval = this.interval;
+	},
+	fixedTimeChanged: function() {
+		this.$.scrollMath.fixedTime = this.fixedTime;
+	},
+	frameChanged: function() {
+		this.$.scrollMath.frame = this.frame;
 	},
 	stop: function() {
 		if (this.isScrolling()) {
