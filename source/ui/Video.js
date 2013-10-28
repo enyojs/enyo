@@ -43,12 +43,6 @@ enyo.kind({
 		//* set video playbackRate
 		playbackRate: 1,
 		//* Hash of playbackRate you can set this hash by
-		//* playbackRateHash: {
-		//*		fastForward: ["2", "4", "8", "16"],
-		//*		rewind: ["-2", "-4", "-8", "-16"],
-		//*		slowForward: ["1/4", "1/2"],
-		//*		slowRewind: ["-1/2", "-1"]
-		//*	}
 		playbackRateHash: {
 			fastForward: ["2", "4", "8", "16"],
 			rewind: ["-2", "-4", "-8", "-16"],
@@ -76,7 +70,7 @@ enyo.kind({
 	},
 	tag: "video",
 	//* @protected
-	
+
 	_playbackRateArray: null,
 	_speedIndex: 0,
 
@@ -202,7 +196,7 @@ enyo.kind({
 		}
 
 		this.setPlaybackRate(this.selectPlaybackRate(this._speedIndex));
-		
+
 	},
 	rewind: function() {
 		var node = this.hasNode();
@@ -241,7 +235,7 @@ enyo.kind({
 			break;
 		}
 
-		
+
 		this.setPlaybackRate(this.selectPlaybackRate(this._speedIndex));
 	},
 	jumpBackward: function() {
@@ -363,7 +357,7 @@ enyo.kind({
 	getSeeking: function() {
 		return this.hasNode() ? this.hasNode().seeking : -1;
 	},
-	
+
 	//* @protected
 
 	//* Custom rewind functionality until browsers support negative playback rate
@@ -379,7 +373,7 @@ enyo.kind({
 			adjustedDistance = Math.abs(distance * pbRate) / 1000,
 			newTime = this.getCurrentTime() - adjustedDistance
 		;
-		
+
 		this.setCurrentTime(newTime);
 		this.startRewindJob();
 	},
@@ -404,7 +398,6 @@ enyo.kind({
 		if (!node || !node.videoWidth || !node.videoHeight) {
 			return;
 		}
-		// Fixme: Do not reach to this code on TV
 		this.setAspectRatio(node.videoWidth/node.videoHeight+":1");
 		inEvent = enyo.mixin(inEvent, this.createEventData());
 	},
@@ -460,7 +453,7 @@ enyo.kind({
 	//* Emit _onPlay_ event (to normalize enyo-generated _onPlay_ events)
 	_play: function(inSender, inEvent) {
 		var node = this.hasNode();
-		
+
 		if (!node) {
 			return;
 		}

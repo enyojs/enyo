@@ -473,10 +473,9 @@ enyo.kind({
 			distance = now - this.rewindBeginTime,
 			pbRate = this.calcNumberValueOfPlaybackRate(this.playbackRate),
 			adjustedDistance = Math.abs(distance * pbRate) / 1000,
-			newTime = this.getCurrentTime() - adjustedDistance
-			;
-			this.setCurrentTime(newTime);
-			this.startRewindJob();
+			newTime = this.getCurrentTime() - adjustedDistance;
+		this.setCurrentTime(newTime);
+		this.startRewindJob();
 	},
 	//* Start rewind job
 	startRewindJob: function() {
@@ -549,7 +548,7 @@ enyo.kind({
 		}
 
 		this.setPlaybackRate(this.selectPlaybackRate(this._speedIndex));
-			
+
 	},
 	rewind: function() {
 		var node = this.hasNode();
@@ -573,7 +572,7 @@ enyo.kind({
 			this.selectPlaybackRateArray("slowRewind");
 			this._speedIndex = 0;
 			if (this.isPaused() && this.node.duration > this.node.currentTime) {
-					node.play();
+				node.play();
 			}
 			this._prevCommand = "slowRewind";
 			break;
@@ -588,7 +587,7 @@ enyo.kind({
 			break;
 		}
 
-			
+
 		this.setPlaybackRate(this.selectPlaybackRate(this._speedIndex));
 	},
 	setPlaybackRate: function(inPlaybackRate) {
@@ -613,7 +612,7 @@ enyo.kind({
 		if (!(enyo.platform.webos || window.PalmSystem)) {
 			// For supporting cross browser behavior
 			if (pbNumber < 0) {
-					this.beginRewind();
+				this.beginRewind();
 			}
 		}
 	},
