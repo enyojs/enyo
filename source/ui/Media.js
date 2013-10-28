@@ -1,7 +1,7 @@
 /**
-	_enyo.Media_ implements an HTML 5 Media element. It is not intended to
-	be used directly, but serves as the base kind for [enyo.Audio](#enyo.Audio)
-	and [enyo.Video](#enyo.Video).
+		_enyo.Media_ implements an HTML 5 Media element. It is not intended to
+		be used directly, but serves as the base kind for [enyo.Audio](#enyo.Audio)
+		and [enyo.Video](#enyo.Video).
 */
 enyo.kind({
 	name: "enyo.Media",
@@ -19,16 +19,16 @@ enyo.kind({
 		playbackRate: 1.0,
 		//* Hash of playbackRate you can set this hash by
 		//* playbackRateHash: {
-		//*		fastForward: ["2", "4", "8", "16"],
-		//*		rewind: ["-2", "-4", "-8", "-16"],
-		//*		slowForward: ["1/4", "1/2"],
-		//*		slowRewind: ["-1/2", "-1"]
-		//*	}
+		//*                fastForward: ["2", "4", "8", "16"],
+		//*                rewind: ["-2", "-4", "-8", "-16"],
+		//*                slowForward: ["1/4", "1/2"],
+		//*                slowRewind: ["-1/2", "-1"]
+		//*        }
 		playbackRateHash: {
-			fastForward: ["2", "4", "8", "16"],
-			rewind: ["-2", "-4", "-8", "-16"],
-			slowForward: ["1/4", "1/2", "1"],
-			slowRewind: ["-1/2", "-1"]
+				fastForward: ["2", "4", "8", "16"],
+				rewind: ["-2", "-4", "-8", "-16"],
+				slowForward: ["1/4", "1/2", "1"],
+				slowRewind: ["-1/2", "-1"]
 		},
 		//* Indicates how data should be preloaded, reflecting the preload HTML attribute (none, metadata, auto)
 		preload: "none",
@@ -43,18 +43,18 @@ enyo.kind({
 	},
 	events: {
 		/**
-			Fires when element stops fetching media data before it is completely
-			downloaded, but not due to an error.
+				Fires when element stops fetching media data before it is completely
+				downloaded, but not due to an error.
 		*/
 		onAbort: "",
 		/**
-			Fires when element can resume playback of the media data, but may need to
-			stop for further buffering of content.
+				Fires when element can resume playback of the media data, but may need to
+				stop for further buffering of content.
 		*/
 		onCanPlay: "",
 		/**
-			Fires when element can resume playback of the media data without needing
-			to stop for further buffering of content.
+				Fires when element can resume playback of the media data without needing
+				to stop for further buffering of content.
 		*/
 		onCanPlayThrough: "",
 		//* Fires when the duration attribute has been changed.
@@ -68,8 +68,8 @@ enyo.kind({
 		//* Fires when the media data is rendered.
 		onLoadedData: "",
 		/**
-			Fires when the media duration and dimensions of the media resource/text
-			tracks are ready.
+				Fires when the media duration and dimensions of the media resource/text
+				tracks are ready.
 		*/
 		onLoadedMetaData: "",
 		//* Fires when the media element begins looking for media data.
@@ -79,15 +79,15 @@ enyo.kind({
 		//* Fires when playback is no longer paused.
 		onPlay: "",
 		/**
-			Fires when playback is ready to start after having been paused or delayed
-			due to lack of media data.
+				Fires when playback is ready to start after having been paused or delayed
+				due to lack of media data.
 		*/
 		onPlaying: "",
 		//* Fires when fetching media data.
 		onProgress: "",
 		/**
-			Fires when either _this.defaultPlaybackRate_ or _this.playbackRate_ is
-			updated.
+				Fires when either _this.defaultPlaybackRate_ or _this.playbackRate_ is
+				updated.
 		*/
 		onRateChange: "",
 		//* Fires when the seeking IDL attribute changes to false.
@@ -101,8 +101,8 @@ enyo.kind({
 		/** Fires when either _this.volume_ or _this.muted_ is updated.
 		onVolumeChange: "",
 		/**
-			Fires when playback has stopped because the next frame is not available,
-			but is expected to be.
+				Fires when playback has stopped because the next frame is not available,
+				but is expected to be.
 		*/
 		onWaiting: "",
 		onFastforward: "",
@@ -230,22 +230,22 @@ enyo.kind({
 		}
 	},
 	/**
-		Called when element stops fetching media data before it has been completely
-		downloaded, but not due to an error.
+			Called when element stops fetching media data before it has been completely
+			downloaded, but not due to an error.
 	*/
 	_abort: function() {
 		this.doEnded();
 	},
 	/**
-		Called when element can resume playback of media data, but may need to stop
-		for further buffering of content.
+			Called when element can resume playback of media data, but may need to stop
+			for further buffering of content.
 	*/
 	_canPlay: function() {
 		this.doCanPlay();
 	},
 	/**
-		Called when element can resume playback of the media data without needing to
-		stop for further buffering of content.
+			Called when element can resume playback of the media data without needing to
+			stop for further buffering of content.
 	*/
 	_canPlayThrough: function() {
 		this.doCanPlayThrough();
@@ -267,15 +267,15 @@ enyo.kind({
 		this.doError();
 	},
 	/**
-		Called when we can render the media data at the current playback position
-		for the first time.
+			Called when we can render the media data at the current playback position
+			for the first time.
 	*/
 	_loadedData: function() {
 		this.doLoadedData();
 	},
 	/**
-		Called when the media duration and dimensions of the media resource/text
-		tracks are ready.
+			Called when the media duration and dimensions of the media resource/text
+			tracks are ready.
 	*/
 	_loadedMetaData: function() {
 		this.doLoadedMetaData();
@@ -293,8 +293,8 @@ enyo.kind({
 		this.doPlay();
 	},
 	/**
-		Called when playback is ready to start after having been paused or delayed
-		due to lack of media data.
+			Called when playback is ready to start after having been paused or delayed
+			due to lack of media data.
 	*/
 	_playing: function() {
 		this.doPlaying();
@@ -366,8 +366,13 @@ enyo.kind({
 		this.doSeeking();
 	},
 	//* Called when the media controller position has changed.
-	_timeUpdate: function() {
-		this.doTimeUpdate();
+	_timeUpdate: function(inSender, inEvent) {
+		var node = this.hasNode();
+
+		if (!node) {
+			return;
+		}
+		inEvent = enyo.mixin(inEvent, this.createEventData());
 	},
 	//* Called when either _this.volume_ or _this.muted_ is updated.
 	_volumeChange: function() {
@@ -469,9 +474,9 @@ enyo.kind({
 			pbRate = this.calcNumberValueOfPlaybackRate(this.playbackRate),
 			adjustedDistance = Math.abs(distance * pbRate) / 1000,
 			newTime = this.getCurrentTime() - adjustedDistance
-		;
-		this.setCurrentTime(newTime);
-		this.startRewindJob();
+			;
+			this.setCurrentTime(newTime);
+			this.startRewindJob();
 	},
 	//* Start rewind job
 	startRewindJob: function() {
@@ -544,7 +549,7 @@ enyo.kind({
 		}
 
 		this.setPlaybackRate(this.selectPlaybackRate(this._speedIndex));
-		
+			
 	},
 	rewind: function() {
 		var node = this.hasNode();
@@ -568,7 +573,7 @@ enyo.kind({
 			this.selectPlaybackRateArray("slowRewind");
 			this._speedIndex = 0;
 			if (this.isPaused() && this.node.duration > this.node.currentTime) {
-				node.play();
+					node.play();
 			}
 			this._prevCommand = "slowRewind";
 			break;
@@ -583,7 +588,7 @@ enyo.kind({
 			break;
 		}
 
-		
+			
 		this.setPlaybackRate(this.selectPlaybackRate(this._speedIndex));
 	},
 	setPlaybackRate: function(inPlaybackRate) {
@@ -608,7 +613,7 @@ enyo.kind({
 		if (!(enyo.platform.webos || window.PalmSystem)) {
 			// For supporting cross browser behavior
 			if (pbNumber < 0) {
-				this.beginRewind();
+					this.beginRewind();
 			}
 		}
 	},
