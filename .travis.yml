@@ -1,6 +1,10 @@
 language: php
 php:
-  - 5.4
+  - 5.5
+cache:
+  apt: true
+  directories:
+  - $HOME/.npm
 install: "npm -g install jshint"
 before_script:
   - php -S localhost:8000 &
@@ -11,3 +15,4 @@ script:
   phantomjs tools/test/core/phantomjs-test.js &&
   echo -e "\x1b\x5b35;1m*** Running ajax tests with phantomjs\x1b\x5b0m" &&
   (phantomjs tools/test/ajax/phantomjs-test.js || true)
+
