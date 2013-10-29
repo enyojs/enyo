@@ -35,33 +35,31 @@
 		__Computed Properties and enyo.Model__
 
 		Computed properties only exist for attributes of a model. Otherwise, they
-		function as you would expect from
-		[ComputedSupport](#enyo/source/kernel/mixins/ComputedSupport.js) on
-		_enyo.Object_. The only exception is that all functions in the attributes
-		schema are considered to be computed properties; these are fairly useless,
-		however, if you don't declare any dependencies that they have.
+		function just as you would expect from the [ComputedSupport
+		mixin](#enyo.ComputedSupport) on _enyo.Object_. The only exception is that
+		all functions in the attributes schema are considered to be computed
+		properties; these are fairly useless, though, unless you declare their
+		dependencies.
 
 		__Bindings__
 
-		Bindings may be applied to _enyo.Models_ with the understanding that they will
-		only be activated via changes to `attributes`.
+		Bindings may be applied to _enyo.Model_ instances with the understanding
+		that they will only be activated via changes to _attributes_.
 
 		__Observers and Notifications__
 
-		The notification system for observers works the same as it does with _enyo.Object_,
-		except that observers are only notified of changes made to properties in the _attributes_
-		hash.
+		The notification system for observers works the same as it does with
+		_enyo.Object_, except that observers are only notified of changes made to
+		properties in the _attributes_ hash.
 
 		__Events__
 
 		The events in _enyo.Model_ differ from those in
 		[enyo.Component](#enyo.Component). Instead of _bubbled_ or _waterfall_
-		events, _enyo.Model_ has _change_ and _destroy_ events
-		(enyo.RegisteredEventSupport](#enyo.RegisteredEventSupport));
-
-		To work with these events, use [addListener()](#enyo.RegisteredEventSupport::addListener),
+		events, _enyo.Model_ has _change_ and _destroy_ events.	To work with these
+		events, use the [addListener()](#enyo.RegisteredEventSupport::addListener),
 		[removeListener()](#enyo.RegisteredEventSupport::removeListener), and
-		[triggerEvent()](#enyo.RegisteredEventSupport::triggerEvent).
+		[triggerEvent()](#enyo.RegisteredEventSupport::triggerEvent) methods.
 	*/
 	enyo.kind({
 		name: "enyo.Model",
@@ -403,7 +401,7 @@
 			When a record is successfully destroyed, this method is called before any
 			user-provided callbacks are executed.
 		*/
-		didDestroy: function () {
+		didDestroy: function (rec, opts, res) {
 			for (var k in this.attributes) {
 				if (this.attributes[k] instanceof enyo.Model || this.attributes[k] instanceof enyo.Collection) {
 					if (this.attributes[k].owner === this) {
@@ -424,6 +422,10 @@
 			// to avoid lingering entries
 			this.removeAllObservers();
 			this.removeAllListeners();
+			
+			if (opts && opts.success) {
+				opts.success(rec, opts, res);
+			}
 		},
 		/**
 			When a record fails during a request, this method is executed with the
