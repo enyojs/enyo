@@ -48,6 +48,12 @@ enyo.kind({
 	*/
 	controlsPerPage: 25,
 	/**
+		Because some systems perform poorly on initialization there is a delay when
+		attempting to actually draw the contents of a _enyo.DataList_. Usually you
+		will not need to adjust this value (ms).
+	*/
+	renderDelay: 250,
+	/**
 		Completely resets the current list such that it scrolls to the top of the
 		scrollable region and regenerates all of its children. This is typically
 		necessary only on initialization, or if the entire dataset has been swapped
@@ -125,13 +131,21 @@ enyo.kind({
 		strategy.
 	*/
 	rendered: function () {
-		// now that the base list is rendered, we can safely generate our scroller
-		this.$.scroller.canGenerate = true;
-		this.$.scroller.render();
-		// and now we hand over the action to our strategy to let it initialize the
-		// way it needs to
-		this.delegate.rendered(this);
-		this.hasRendered = true;
+		// actually rendering a datalist can be taxing for some systems so
+		// we arbitrarily delay showing for a fixed amount of time
+		this.startJob("rendering", function () {
+			// now that the base list is rendered, we can safely generate our scroller
+			this.$.scroller.canGenerate = true;
+			this.$.scroller.render();
+			// and now we hand over the action to our strategy to let it initialize the
+			// way it needs to
+			this.delegate.rendered(this);
+			this.hasRendered = true;
+			// now add our class to adjust visibility (if no overridden)
+			this.addClass("rendered");
+		}, this.renderDelay);
+		// this delay will allow slower systems to keep going and get everything else
+		// on screen before worrying about setting up the list
 	},
 	/**
 		Overloaded to call a method of the delegate strategy.

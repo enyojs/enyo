@@ -17,7 +17,22 @@
 	}
 	.page {
 		position: absolute;
+		visibility: hidden;
+		opacity: 0;
+		filter: alpha(opacity=0);
 		width: 100%;
+		-webkit-transition: opacity 300ms ease-out;
+		-moz-transition: opacity 300ms ease-out;
+		-ms-transition: opacity 300ms ease-out;
+		-o-transition: opacity 300ms ease-out;
+		transition: opacity 300ms ease-out;
+	}
+	&.rendered {
+		.page {
+			visibility: visible;
+			opacity: 1;
+			filter: alpha(opacity=100);
+		}
 	}
 	&.debug {
 		.page1 {
