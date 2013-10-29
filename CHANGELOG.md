@@ -46,6 +46,11 @@ based on changes anywhere in the path.
 _enyo.Store_ now throws an _error_ instead of a _warning_ when a duplicate `primaryKey` is
 found for unique records in the same _enyo.Store_.
 
+_enyo.Scroller_ and _enyo.ScrollStrategy_ have been updated to normalize new properties available
+on the returned hash of _getScrollBounds()_. It now will indicate via the xDir and yDir properties
+a 1 (positive movement along the axis), -1 (negative movement along the axis) or 0 (no movement on
+the axis).
+
 ## 2.3.0-pre.10 (9 October 2013)
 
 Removed macro support from bindings

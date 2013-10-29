@@ -273,6 +273,8 @@ enyo.kind({
 		* _maxLeft_, _maxTop_: maximum value for left/top (minimum is always 0)
 		* _clientHeight_, _clientWidth_: size of the scroller on screen
 		* _width_, _height_: size of the full area of the scrolled region
+		* _xDir, yDir_: either 1, -1, or 0 indicated positive/negative movement along
+		along the axis or none at all, respectively
 	*/
 	getScrollBounds: function() {
 		var bounds  = this.$.strategy.getScrollBounds();
