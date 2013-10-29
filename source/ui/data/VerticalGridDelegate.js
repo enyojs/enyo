@@ -23,14 +23,13 @@
 			if (list.length) { this.reset(list); }
 		},
 		/**
-			Reset the page with the added check to ensure that we add the `transitions`
-			class if they are enabled on the list.
+			Reset the page with the added class update to the list.
 		*/
 		reset: enyo.inherit(function (sup) {
 			return function (list) {
 				sup.apply(this, arguments);
-				if (list.allowTransitions && !list.hasClass("transitions")) {
-					list.addClass("transitions");
+				if (list.hasReset && !list.hasClass("reset")) {
+					list.canAddResetClass = true;
 				}
 			};
 		}),
@@ -117,6 +116,10 @@
 			over every child.
 		*/
 		layout: function (list, page) {
+			if (list.canAddResetClass) {
+				list.addClass("reset");
+				delete list.canAddResetClass;
+			}
 			var cc = list.columns,
 				s  = list.spacing,
 				w  = list.tileWidth,

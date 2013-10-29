@@ -48,6 +48,11 @@ enyo.kind({
 	*/
 	controlsPerPage: 25,
 	/**
+		To disable the default smoothing-transitions (for supported platforms) set
+		this flag to `false`.
+	*/
+	allowTransitions: true,
+	/**
 		Because some systems perform poorly on initialization there is a delay when
 		attempting to actually draw the contents of a _enyo.DataList_. Usually you
 		will not need to adjust this value (ms). If _renderDelay_ is null there will
@@ -101,6 +106,8 @@ enyo.kind({
 			// on the list, default to _vertical_ if none is provided or if it
 			// could not be found
 			this.delegate = this.ctor.delegates[this.orientation] || this.base.delegates.vertical;
+			// if we can, we use transitions
+			this.allowTransitionsChanged();
 			sup.apply(this, arguments);
 			// if the delegate has an initialization routine execute it now before the
 			// container and children are rendered
@@ -210,6 +217,9 @@ enyo.kind({
 		return this.delegate.childForIndex(this, i);
 	},
 	//*@protected
+	allowTransitionsChanged: function () {
+		this.addRemoveClass("transitions", this.allowTransitions);
+	},
 	/**
 		The _enyo.DataList_ kind uses an overloaded container from its base kind. We
 		set the container to a scroller and provide a way to modify the scroller
