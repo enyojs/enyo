@@ -50,7 +50,9 @@ enyo.kind({
 	/**
 		Because some systems perform poorly on initialization there is a delay when
 		attempting to actually draw the contents of a _enyo.DataList_. Usually you
-		will not need to adjust this value (ms).
+		will not need to adjust this value (ms). If _renderDelay_ is null there will
+		be no delay and it will be executed synchronously. Note that if set to 0 it
+		will be executed asynchronously.
 	*/
 	renderDelay: 250,
 	/**
@@ -132,8 +134,9 @@ enyo.kind({
 	*/
 	rendered: function () {
 		// actually rendering a datalist can be taxing for some systems so
-		// we arbitrarily delay showing for a fixed amount of time
-		this.startJob("rendering", function () {
+		// we arbitrarily delay showing for a fixed amount of time unless delay is
+		// null in which case it will be executed immediately
+		var startup = function () {
 			// now that the base list is rendered, we can safely generate our scroller
 			this.$.scroller.canGenerate = true;
 			this.$.scroller.render();
@@ -143,9 +146,14 @@ enyo.kind({
 			this.hasRendered = true;
 			// now add our class to adjust visibility (if no overridden)
 			this.addClass("rendered");
-		}, this.renderDelay);
-		// this delay will allow slower systems to keep going and get everything else
-		// on screen before worrying about setting up the list
+		};
+		if (this.renderDelay === null) {
+			startup.call(this);
+		} else {
+			this.startJob("rendering", startup, this.renderDelay);
+			// this delay will allow slower systems to keep going and get everything else
+			// on screen before worrying about setting up the list
+		}
 	},
 	/**
 		Overloaded to call a method of the delegate strategy.
