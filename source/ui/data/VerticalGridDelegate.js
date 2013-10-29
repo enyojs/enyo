@@ -6,6 +6,7 @@
 		called directly from the list. It is only available to _enyo.DataGridLists_.
 	*/
 	var p = enyo.clone(enyo.DataGridList.delegates.vertical);
+	p.pageSizeMultiplier = 3;
 	enyo.kind.extendMethods(p, {
 		/**
 			Once the list is initially rendered it will generate its scroller (so
@@ -85,12 +86,12 @@
 				h  = list.minHeight;
 			// the number of columns is the ratio of the available width minus the spacing
 			// by the minimum tile width plus the spacing
-			list.columns = Math.max(Math.floor((w-s) / (m+s)), 1);
+			list.columns    = Math.max(Math.floor((w-s) / (m+s)), 1);
 			// the actual tile width is a ratio of the remaining width after all columns
 			// and spacing are accounted for and the number of columns that we know we should have
-			list.tileWidth = /*Math.floor*/((w-(s*(list.columns+1)))/list.columns);
+			list.tileWidth  = ((w-(s*(list.columns+1)))/list.columns);
 			// the actual tile height is related to the tile width
-			list.tileHeight = /*Math.floor*/(h*(list.tileWidth/m));
+			list.tileHeight = (h*(list.tileWidth/m));
 			// unfortunately this forces us to recalculate the number of controls that can
 			// be used for each page
 			this.controlsPerPage(list);
@@ -103,7 +104,7 @@
 		*/
 		controlsPerPage: function (list) {
 			var ts  = list.tileHeight+list.spacing,
-				hs  = list.boundsCache.height*1.5,
+				hs  = list.boundsCache.height*this.pageSizeMultiplier,
 				cp  = Math.floor(hs/ts)*list.columns;
 			list.controlsPerPage = cp;
 		},
@@ -127,7 +128,7 @@
 				for (var i=0, c; (c=cn[i]); ++i) {
 					// the column
 					co = i % cc;
-					c.setStyle(
+					c.addStyles(
 						"top: "    + (s  + (r  * (h+s))) + "px; " +
 						"left: "   + (s  + (co * (w+s))) + "px; " +
 						"width: "  + (w) +                 "px; " +
@@ -153,6 +154,7 @@
 					p = list.metrics.pages[i];
 					bs += (p && p[sp]) || ds;
 				}
+				bs += list.spacing;
 				list.bufferSize = bs;
 				n.style[sp] = bs + "px";
 				n.style[ss] = this[ss](list) + "px";
@@ -163,21 +165,18 @@
 		*/
 		didResize: function (list) {
 			list._updateBounds = true;
-			clearTimeout(list._resizeTimerId);
-			list._resizeTimerId = setTimeout(function () {
-				list.delegate.updateMetrics(list);
-				// we need to update all of our page sizes so that the buffer can resize
-				// close to properly
-				list.metrics.pages = {};
-				list.delegate.refresh(list);
-				// find the top page
-				var mx = list.metrics.pages,
-					fi = list.$.page1.index,
-					si = list.$.page2.index,
-					tp = mx[fi].top < mx[si].top? mx[fi].top: mx[si].top;
-				// ensure that the scroller is lined up with one of our pages
-				list.$.scroller.setScrollTop(tp);
-			}, 400);
+			this.updateMetrics(list);
+			// we need to update all of our page sizes so that the buffer can resize
+			// close to properly
+			list.metrics.pages = {};
+			this.refresh(list);
+			// find the top page
+			var mx = list.metrics.pages,
+				fi = list.$.page1.index,
+				si = list.$.page2.index,
+				tp = mx[fi].top < mx[si].top? mx[fi].top: mx[si].top;
+			// ensure that the scroller is lined up with one of our pages
+			list.$.scroller.setScrollTop(tp);
 		}
 	}, true);
 	enyo.DataGridList.delegates.verticalGrid = p;

@@ -375,24 +375,26 @@ enyo.DataList.delegates.vertical = {
 		too many functions whenever this event is propagated.
 	*/
 	didScroll: function (list, event) {
-		var threshold = list.scrollThreshold,
-			bounds    = event.scrollBounds,
-			metrics   = list.metrics.pages,
-			pos       = this.pagesByPosition(list);
-		if (bounds.xDir === 1 || bounds.yDir === 1) {
-			if (bounds[list.upperProp] > threshold[list.lowerProp]) {
-				if (bounds[list.upperProp] < metrics[pos.lastPage.index][list.lowerProp]) {
-					this.scrollHandler(list, bounds);
-				} else {
-					this.resetToPosition(list, bounds[list.upperProp]);
+		if (!list.usingScrollListener) {
+			var threshold = list.scrollThreshold,
+				bounds    = event.scrollBounds,
+				metrics   = list.metrics.pages,
+				pos       = this.pagesByPosition(list);
+			if (bounds.xDir === 1 || bounds.yDir === 1) {
+				if (bounds[list.upperProp] > threshold[list.lowerProp]) {
+					if (bounds[list.upperProp] < metrics[pos.lastPage.index][list.lowerProp]) {
+						this.scrollHandler(list, bounds);
+					} else {
+						this.resetToPosition(list, bounds[list.upperProp]);
+					}
 				}
-			}
-		} else if (bounds.yDir === -1 || bounds.xDir === -1) {
-			if (bounds[list.upperProp] < threshold[list.upperProp]) {
-				if (bounds[list.upperProp] > metrics[pos.firstPage.index][list.upperProp]) {
-					this.scrollHandler(list, bounds);
-				} else {
-					this.resetToPosition(list, bounds[list.upperProp]);
+			} else if (bounds.yDir === -1 || bounds.xDir === -1) {
+				if (bounds[list.upperProp] < threshold[list.upperProp]) {
+					if (bounds[list.upperProp] > metrics[pos.firstPage.index][list.upperProp]) {
+						this.scrollHandler(list, bounds);
+					} else {
+						this.resetToPosition(list, bounds[list.upperProp]);
+					}
 				}
 			}
 		}
