@@ -361,7 +361,6 @@ enyo.DataList.delegates.vertical = {
 		var threshold = list.scrollThreshold || (list.scrollThreshold={}),
 			metrics   = list.metrics.pages,
 			pos       = this.pagesByPosition(list),
-			last      = this.pageCount(list)-1,
 			firstIdx  = pos.firstPage.index,
 			lastIdx   = pos.lastPage.index;
 		// now to update the properties the scroller will use to determine
@@ -378,7 +377,7 @@ enyo.DataList.delegates.vertical = {
 				last  = this.pageCount(list) - 1,
 				pos   = this.pagesByPosition(list);
 			if (
-				(px <= pos.firstPage[list.upperProp] && px > 0) ||
+				(px <= pos.firstPage[list.upperProp]) ||
 				(px >= pos.lastPage[list.lowerProp])
 			) {
 				list.$.page1.index = (index = Math.min(index, last));
