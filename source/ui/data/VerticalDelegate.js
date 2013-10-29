@@ -164,9 +164,8 @@ enyo.DataList.delegates.vertical = {
 		if (c) {
 			list.$.scroller.scrollIntoView(c, this.pagePosition(list, p));
 		} else {
-			list.$.page1.index = p;
-			list.$.page2.index = (p+1);
-			this.refresh(list);
+			// we do this to ensure we trigger the paging event when necessary
+			this.resetToPosition(list, this.pagePosition(list, p));
 			// now retry the original logic until we have this right
 			enyo.asyncMethod(function () {
 				list.scrollToIndex(i);
@@ -376,15 +375,21 @@ enyo.DataList.delegates.vertical = {
 	resetToPosition: function (list, px) {
 		if (px >= 0 && px <= list.bufferSize) {
 			var index = Math.ceil(px / this.defaultPageSize(list)),
-				last  = this.pageCount(list)-1;
-			list.$.page1.index = (index = Math.min(index, last));
-			list.$.page2.index = (index === last? (index-1): (index+1));
-			this.refresh(list);
-			list.triggerEvent("paging", {
-				start: list.$.page1.start,
-				end: list.$.page2.end,
-				action: "reset"
-			});
+				last  = this.pageCount(list) - 1,
+				pos   = this.pagesByPosition(list);
+			if (
+				(px <= pos.firstPage[list.upperProp] && px > 0) ||
+				(px >= pos.lastPage[list.lowerProp])
+			) {
+				list.$.page1.index = (index = Math.min(index, last));
+				list.$.page2.index = (index === last? (index-1): (index+1));
+				this.refresh(list);
+				list.triggerEvent("paging", {
+					start: list.$.page1.start,
+					end: list.$.page2.end,
+					action: "reset"
+				});
+			}
 		}
 	},
 	/**
