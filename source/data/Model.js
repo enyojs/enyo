@@ -172,6 +172,7 @@
 			if (!this.attributes) { return this; }
 			if (enyo.isObject(prop)) { return this.setObject(prop); }
 			var rv = this.attributes[prop],
+				updated = false,
 				ch, en;
 			if (rv && "function" == typeof rv) { return this; }
 			if (force || rv !== value) {
@@ -187,6 +188,7 @@
 							this.previous[p] = ch[p] = this.get(p);
 							this.attributes[prop] = value;
 							this.changed[p] = this.get(p);
+							updated = true;
 						}
 					}
 				}
@@ -199,7 +201,7 @@
 						this.notifyObservers(k, this.previous[k], ch[k]);
 					}
 				}
-				if (!this.isSilenced()) {
+				if (!this.isSilenced() && updated) {
 					this.triggerEvent("change");
 					this.changed = {};
 				}
@@ -213,17 +215,20 @@
 			to the _attributes_ schema when this method is used.
 		*/
 		setObject: function (props) {
-			if (!this.attributes) { return this; }
-			if (props) {
-				this.stopNotifications();
-				this.silence();
-				for (var k in props) {
-					this.set(k, props[k]);
+			if (this.attributes) {
+				if (props) {
+					this.stopNotifications();
+					this.silence();
+					for (var k in props) {
+						this.set(k, props[k]);
+					}
+					this.startNotifications();
+					this.unsilence();
+					if (enyo.keys(this.changed).length) {
+						this.triggerEvent("change");
+					}
+					this.changed = {};
 				}
-				this.startNotifications();
-				this.unsilence();
-				this.triggerEvent("change");
-				this.changed = {};
 			}
 			return this;
 		},
@@ -366,13 +371,13 @@
 			var r = this.parse(res);
 			if (r) {
 				this.setObject(r);
-				// once notifications have taken place we clear the dirty status so the
-				// state of the model is now clean
-				this.dirty = false;
-				if (opts) {
-					if (opts.success) {
-						opts.success(rec, opts, res);
-					}
+			}
+			// once notifications have taken place we clear the dirty status so the
+			// state of the model is now clean
+			this.dirty = false;
+			if (opts) {
+				if (opts.success) {
+					opts.success(rec, opts, res);
 				}
 			}
 		},
@@ -385,15 +390,15 @@
 			var r = this.parse(res);
 			if (r) {
 				this.setObject(r);
-				// once notifications have taken place we clear the dirty status so the
-				// state of the model is now clean
-				this.dirty = false;
-				// since this was successful this can no longer be considered a new record
-				this.isNew = false;
-				if (opts) {
-					if (opts.success) {
-						opts.success(rec, opts, res);
-					}
+			}
+			// once notifications have taken place we clear the dirty status so the
+			// state of the model is now clean
+			this.dirty = false;
+			// since this was successful this can no longer be considered a new record
+			this.isNew = false;
+			if (opts) {
+				if (opts.success) {
+					opts.success(rec, opts, res);
 				}
 			}
 		},
