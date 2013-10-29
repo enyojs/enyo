@@ -188,13 +188,19 @@ enyo.kind({
 		this.hideThumbs();
 	},
 	intervalChanged: function() {
-		this.$.scrollMath.interval = this.interval;
+		if (this.$.scrollMath) {
+			this.$.scrollMath.interval = this.interval;
+		}
 	},
 	fixedTimeChanged: function() {
-		this.$.scrollMath.fixedTime = this.fixedTime;
+		if (this.$.scrollMath) {
+			this.$.scrollMath.fixedTime = this.fixedTime;
+		}
 	},
 	frameChanged: function() {
-		this.$.scrollMath.frame = this.frame;
+		if (this.$.scrollMath) {
+			this.$.scrollMath.frame = this.frame;
+		}
 	},
 	stop: function() {
 		if (this.isScrolling()) {
