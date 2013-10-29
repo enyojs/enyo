@@ -172,8 +172,8 @@
 			if (!this.attributes) { return this; }
 			if (enyo.isObject(prop)) { return this.setObject(prop); }
 			var rv = this.attributes[prop],
-				updated = false,
 				ch, en;
+			this._updated = false;
 			if (rv && "function" == typeof rv) { return this; }
 			if (force || rv !== value) {
 				this.previous[prop] = rv;
@@ -188,7 +188,7 @@
 							this.previous[p] = ch[p] = this.get(p);
 							this.attributes[prop] = value;
 							this.changed[p] = this.get(p);
-							updated = true;
+							this._updated = true;
 						}
 					}
 				}
@@ -201,7 +201,10 @@
 						this.notifyObservers(k, this.previous[k], ch[k]);
 					}
 				}
-				if (!this.isSilenced() && updated) {
+				if (!this.isSilenced() && this._updated) {
+					// note we only clear this here if we are the ones to fire the
+					// changed event
+					this._updated = false;
 					this.triggerEvent("change");
 					this.changed = {};
 				}
@@ -224,7 +227,8 @@
 					}
 					this.startNotifications();
 					this.unsilence();
-					if (enyo.keys(this.changed).length) {
+					if (this._updated) {
+						this._updated = false;
 						this.triggerEvent("change");
 					}
 					this.changed = {};
