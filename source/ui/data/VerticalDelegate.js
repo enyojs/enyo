@@ -102,10 +102,10 @@ enyo.DataList.delegates.vertical = {
 		// the first index for this generated page
 		page.start  = list.controlsPerPage * index;
 		// the last index for this generated page
-		page.end    = Math.min(data.length, page.start + list.controlsPerPage);
+		page.end    = Math.min((data.length - 1), (page.start + list.controlsPerPage) - 1);
 		// if generating a control we need to use the correct page as the control parent
 		list.controlParent = page;
-		for (var i=page.start; i < page.end && i < data.length; ++i) {
+		for (var i=page.start; i <= page.end && i < data.length; ++i) {
 			view = (page.children[i - page.start] || list.createComponent({}));
 			// disable notifications until all properties to be updated
 			// have been
@@ -339,9 +339,23 @@ enyo.DataList.delegates.vertical = {
 			this.generatePage(list, pos.firstPage, pos.lastPage.index + 1);
 			this.adjustPagePositions(list);
 			this.adjustBuffer(list);
+			// note that the reference to the page positions has been udpated by
+			// another method so we trust the actual pages
+			list.triggerEvent("paging", {
+				start: pos.firstPage.start,
+				end: pos.lastPage.end,
+				action: "scroll"
+			});
 		} else if ((bounds.xDir === -1 || bounds.yDir === -1) && pos.firstPage.index !== 0) {
 			this.generatePage(list, pos.lastPage, pos.firstPage.index - 1);
 			this.adjustPagePositions(list);
+			// note that the reference to the page positions has been udpated by
+			// another method so we trust the actual pages
+			list.triggerEvent("paging", {
+				start: pos.firstPage.start,
+				end: pos.lastPage.end,
+				action: "scroll"
+			});
 		}
 	},
 	setScrollThreshold: function (list) {
@@ -366,6 +380,11 @@ enyo.DataList.delegates.vertical = {
 			list.$.page1.index = (index = Math.min(index, last));
 			list.$.page2.index = (index === last? (index-1): (index+1));
 			this.refresh(list);
+			list.triggerEvent("paging", {
+				start: list.$.page1.start,
+				end: list.$.page2.end,
+				action: "reset"
+			});
 		}
 	},
 	/**
@@ -404,11 +423,8 @@ enyo.DataList.delegates.vertical = {
 	*/
 	didResize: function (list) {
 		list._updateBounds = true;
-		clearTimeout(list._resizeTimerId);
-		list._resizeTimerId = setTimeout(function () {
-			list.delegate.updateBounds(list);
-			list.delegate.refresh(list);
-		}, 400);
+		this.updateBounds(list);
+		this.refresh(list);
 	},
 	/**
 		Returns the height for the given list, will cache this value and reuse

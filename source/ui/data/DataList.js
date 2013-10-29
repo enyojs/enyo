@@ -15,6 +15,16 @@ enyo.kind({
 	name: "enyo.DataList",
 	kind: enyo.DataRepeater,
 	/**
+		The _enyo.DataList_ kind will emit a registered event when paging, `paging`,
+		so that for per-page updates can be made when necessary. You can register for
+		this event by calling _addListener()_ for the `paging` event with a callback.
+		The callback method will be passed a reference to the _enyo.DataList_ that is
+		paging, the name of the event (`paging`), and hash with the properties `start`,
+		`end` and `action` that refer to the lowest active index in the dataset through
+		the highest active index and the action that triggered the paging respectively.
+		The `action` value can be either 'scroll' or 'reset'.
+	*/
+	/**
 		The _enyo.DataList_ kind places its rows inside of a scroller. Any
 		configurable options associated with _enyo.Scroller_ may be placed in this
 		hash and will be set accordingly on this list's scroller. If no options are
@@ -207,6 +217,8 @@ enyo.kind({
 		work we do.
 	*/
 	handlers: {onScroll: "didScroll", onresize: "didResize"},
+	//* Add the RegisteredEventSupport mixin for the paging event
+	mixins: [enyo.RegisteredEventSupport],
 	//* All delegates are named elsewhere but are stored in these statics.
 	statics: {delegates: {}},
 	//* An array of the actual _page_ references for easier access.
