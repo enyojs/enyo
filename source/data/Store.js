@@ -359,7 +359,11 @@
 			attributes. This method is used internally by other methods of the store.
 		*/
 		filter: function (opts, rec) {
-			for (var k in opts) { if (rec.get(k) !== opts[k]) { return false; } }
+			for (var k in opts) {
+				if (rec.get(k) !== opts[k]) {
+					return false;
+				}
+			}
 			return true;
 		},
 		/**
@@ -378,9 +382,8 @@
 		*/
 		didFetch: function (rec, opts, xhr, res) {
 			if (opts) {
-				if (opts.success) { return opts.success(res); }
+				if (opts.success) { opts.success(res); }
 			}
-			this.triggerEvent(rec, "didFetch");
 		},
 		/**
 			When the _commit()_ method is executed on a record and is successful, this
@@ -389,9 +392,8 @@
 		*/
 		didCommit: function (rec, opts, xhr, res) {
 			if (opts) {
-				if (opts.success) { return opts.success(res); }
+				if (opts.success) { opts.success(res); }
 			}
-			this.triggerEvent(rec, "didCommit");
 		},
 		/**
 			When the _destroy()_ method is executed on a record and is successful,
@@ -424,13 +426,15 @@
 			options hash.
 		*/
 		fetchRecord: function (rec, opts) {
-			var dd = this.sources,
+			var ss = this.sources,
 				o  = opts? enyo.clone(opts): {},
-				d  = dd[o.source || rec.defaultSource];
-			if (!d) { return this.warn("could not find source `" + (o.source || rec.defaultSource) + "`"); }
+				s  = ss[o.source || rec.defaultSource];
+			if (!s) {
+				throw "enyo.Store: Could not find source '" + (o.source || rec.defaultSource) + "'";
+			}
 			o.success = this.bindSafely("didFetch", rec, opts);
-			o.fail = this.bindSafely("didFail", "fetch", rec, opts);
-			d.fetch(rec, o);
+			o.fail    = this.bindSafely("didFail", "fetch", rec, opts);
+			s.fetch(rec, o);
 		},
 		/**
 			Internal method called to find the requested source and execute the
@@ -438,13 +442,15 @@
 			options hash.
 		*/
 		commitRecord: function (rec, opts) {
-			var dd = this.sources,
+			var ss = this.sources,
 				o  = opts? enyo.clone(opts): {},
-				d  = dd[o.source || rec.defaultSource];
-			if (!d) { return this.warn("could not find source `" + (o.source || rec.defaultSource) + "`"); }
+				s  = ss[o.source || rec.defaultSource];
+			if (!s) {
+				throw "enyo.Store: Could not find source '" + (o.source || rec.defaultSource) + "'";
+			}
 			o.success = this.bindSafely("didCommit", rec, opts);
-			o.fail = this.bindSafely("didFail", "commit", rec, opts);
-			d.commit(rec, o);
+			o.fail    = this.bindSafely("didFail", "commit", rec, opts);
+			s.commit(rec, o);
 		},
 		/**
 			Internal method called to find the requested source and execute the
@@ -452,13 +458,15 @@
 			options hash.
 		*/
 		destroyRecord: function (rec, opts) {
-			var dd = this.sources,
+			var ss = this.sources,
 				o  = opts? enyo.clone(opts): {},
-				d  = dd[o.source || rec.defaultSource];
-			if (!d) { return this.warn("could not find source `" + (o.source || rec.defaultSource) + "`"); }
+				s  = ss[o.source || rec.defaultSource];
+			if (!s) {
+				throw "enyo.Store: Could not find source '" + (o.source || rec.defaultSource) + "'";
+			}
 			o.success = this.bindSafely("didDestroy", rec, opts);
-			o.fail = this.bindSafely("didFail", "destroy", rec, opts);
-			d.destroy(rec, o);
+			o.fail    = this.bindSafely("didFail", "destroy", rec, opts);
+			s.destroy(rec, o);
 		},
 		destroyRecordLocal: function (rec, opts) {
 			this.didDestroy(rec, opts);

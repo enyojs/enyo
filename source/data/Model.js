@@ -169,41 +169,48 @@
 			in the schema, it will be ignored.
 		*/
 		set: function (prop, value, force) {
-			if (!this.attributes) { return this; }
-			if (enyo.isObject(prop)) { return this.setObject(prop); }
-			var rv = this.attributes[prop],
-				ch, en;
-			if (rv && "function" == typeof rv) { return this; }
-			if (force || rv !== value) {
-				this.previous[prop] = rv;
-				if (this.computedMap) {
-					if ((en=this.computedMap[prop])) {
-						if (typeof en == "string") {
-							en = this.computedMap[prop] = enyo.trim(en).split(" ");
-						}
-						ch = {};
-						for (var i=0, p; (p=en[i]); ++i) {
-							this.attributes[prop] = rv;
-							this.previous[p] = ch[p] = this.get(p);
-							this.attributes[prop] = value;
-							this.changed[p] = this.get(p);
+			if (this.attributes) {
+				if (enyo.isObject(prop)) { return this.setObject(prop); }
+				var rv = this.attributes[prop],
+					ch, en;
+				this._updated = false;
+				if (rv && "function" == typeof rv) { return this; }
+				if (force || rv !== value) {
+					this.previous[prop] = rv;
+					if (this.computedMap) {
+						if ((en=this.computedMap[prop])) {
+							if (typeof en == "string") {
+								en = this.computedMap[prop] = enyo.trim(en).split(" ");
+							}
+							ch = {};
+							for (var i=0, p; (p=en[i]); ++i) {
+								this.attributes[prop] = rv;
+								this.previous[p] = ch[p] = this.get(p);
+								this.attributes[prop] = value;
+								this.changed[p] = this.get(p);
+								this._updated = true;
+							}
 						}
 					}
-				}
-				this.changed[prop] = this.attributes[prop] = value;
-				this.notifyObservers(prop, rv, value);
-				// if this is a dependent of a computed property we mark that
-				// as changed as well
-				if (ch) {
-					for (var k in ch) {
-						this.notifyObservers(k, this.previous[k], ch[k]);
+					this.changed[prop] = this.attributes[prop] = value;
+					this.notifyObservers(prop, rv, value);
+					this._updated = true;
+					// if this is a dependent of a computed property we mark that
+					// as changed as well
+					if (ch) {
+						for (var k in ch) {
+							this.notifyObservers(k, this.previous[k], ch[k]);
+						}
 					}
+					if (!this.isSilenced() && this._updated) {
+						// note we only clear this here if we are the ones to fire the
+						// changed event
+						this._updated = false;
+						this.triggerEvent("change");
+						this.changed = {};
+					}
+					this.dirty = true;
 				}
-				if (!this.isSilenced()) {
-					this.triggerEvent("change");
-					this.changed = {};
-				}
-				this.dirty = true;
 			}
 			return this;
 		},
@@ -213,17 +220,21 @@
 			to the _attributes_ schema when this method is used.
 		*/
 		setObject: function (props) {
-			if (!this.attributes) { return this; }
-			if (props) {
-				this.stopNotifications();
-				this.silence();
-				for (var k in props) {
-					this.set(k, props[k]);
+			if (this.attributes) {
+				if (props) {
+					this.stopNotifications();
+					this.silence();
+					for (var k in props) {
+						this.set(k, props[k]);
+					}
+					this.startNotifications();
+					this.unsilence();
+					if (this._updated) {
+						this._updated = false;
+						this.triggerEvent("change");
+					}
+					this.changed = {};
 				}
-				this.startNotifications();
-				this.unsilence();
-				this.triggerEvent("change");
-				this.changed = {};
 			}
 			return this;
 		},
@@ -366,13 +377,13 @@
 			var r = this.parse(res);
 			if (r) {
 				this.setObject(r);
-				// once notifications have taken place we clear the dirty status so the
-				// state of the model is now clean
-				this.dirty = false;
-				if (opts) {
-					if (opts.success) {
-						opts.success(rec, opts, res);
-					}
+			}
+			// once notifications have taken place we clear the dirty status so the
+			// state of the model is now clean
+			this.dirty = false;
+			if (opts) {
+				if (opts.success) {
+					opts.success(rec, opts, res);
 				}
 			}
 		},
@@ -385,15 +396,15 @@
 			var r = this.parse(res);
 			if (r) {
 				this.setObject(r);
-				// once notifications have taken place we clear the dirty status so the
-				// state of the model is now clean
-				this.dirty = false;
-				// since this was successful this can no longer be considered a new record
-				this.isNew = false;
-				if (opts) {
-					if (opts.success) {
-						opts.success(rec, opts, res);
-					}
+			}
+			// once notifications have taken place we clear the dirty status so the
+			// state of the model is now clean
+			this.dirty = false;
+			// since this was successful this can no longer be considered a new record
+			this.isNew = false;
+			if (opts) {
+				if (opts.success) {
+					opts.success(rec, opts, res);
 				}
 			}
 		},
