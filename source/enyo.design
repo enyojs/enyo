@@ -359,6 +359,14 @@
                     }
                 },
                 {
+                    "name": "enyo.ScrollStrategy",
+                    "kind": "enyo.ScrollStrategy",
+                    "description": "Enyo component to hide",
+                    "config": {
+                        "kind": "enyo.ScrollStrategy"
+                    }
+                },
+                {
                     "name": "enyo.Selection",
                     "kind": "enyo.Selection",
                     "description": "Enyo component to hide",
@@ -372,14 +380,6 @@
                     "description": "Enyo component to hide",
                     "config": {
                         "kind": "enyo.Signals"
-                    }
-                },
-                {
-                    "name": "enyo.ScrollStrategy",
-                    "kind": "enyo.ScrollStrategy",
-                    "description": "Enyo component to hide",
-                    "config": {
-                        "kind": "enyo.ScrollStrategy"
                     }
                 },
                 {
