@@ -406,7 +406,7 @@
 			When a record is successfully destroyed, this method is called before any
 			user-provided callbacks are executed.
 		*/
-		didDestroy: function () {
+		didDestroy: function (rec, opts, res) {
 			for (var k in this.attributes) {
 				if (this.attributes[k] instanceof enyo.Model || this.attributes[k] instanceof enyo.Collection) {
 					if (this.attributes[k].owner === this) {
@@ -427,6 +427,10 @@
 			// to avoid lingering entries
 			this.removeAllObservers();
 			this.removeAllListeners();
+			
+			if (opts && opts.success) {
+				opts.success(rec, opts, res);
+			}
 		},
 		/**
 			When a record fails during a request, this method is executed with the
