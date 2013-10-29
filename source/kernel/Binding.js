@@ -204,24 +204,23 @@
 			this.synchronizing = false;
 		},
 		syncFromTarget: function () {
-			this.synchronizing = true;
-			if (this.isConnected() && this.isRegistered()) {
-				var value = this.getTargetValue(),
-					fn    = this.transform;
-				if (fn && typeof fn == "function") {
-					value = fn.call(this.owner || this, value, "target", this);
+			if (!this.oneWay) {
+				this.synchronizing = true;
+				if (this.isConnected() && this.isRegistered()) {
+					var value = this.getTargetValue(),
+						fn    = this.transform;
+					if (fn && typeof fn == "function") {
+						value = fn.call(this.owner || this, value, "target", this);
+					}
+					if (value === undefined) {
+						return;
+					}
+					this.disconnectSource();
+					this.setSourceValue(value);
+					this.connectSource();
 				}
-				if (value === undefined) {
-					return;
-				}
-				this.disconnectSource();
-				this.setSourceValue(value);
-				this.connectSource();
+				this.synchronizing = false;
 			}
-			this.synchronizing = false;
-		},
-		syncTargetObserver: function () {
-			this.sync();
 		},
 		resolve: function () {
 			var source = this.source,
@@ -271,7 +270,7 @@
 				var is                    = enyo.lastIndexOf(".", from);
 				var it                    = enyo.lastIndexOf(".", to);
 				this.sourcePath           = (from[0] == "^"? sp.slice(0, -1): sp).join(".");
-				this.targetPath           = (this.oneWay || to[0] == "^"? tp.slice(0,-1): tp).join(".");
+				this.targetPath           = (to[0] == "^"? tp.slice(0,-1): tp).join(".");
 				if (is > -1 && from[is-1] == "$") {
 					// this means that the final property we need to request is something on the
 					// hash directly and not a property of that object
@@ -346,11 +345,7 @@
 			}
 			if (target && target.addObserver && !this.targetConnected) {
 				if (!fn && path) {
-					if (this.oneWay) {
-						fn = this.targetObserver = enyo.bindSafely(this, this.syncTargetObserver);
-					} else {
-						fn = this.targetObserver = enyo.bindSafely(this, this.syncFromTarget);
-					}
+					fn = this.targetObserver = enyo.bindSafely(this, this.syncFromTarget);
 					fn.binding     = this;
 					fn.bindingProp = "target";
 				}
