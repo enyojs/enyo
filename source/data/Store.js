@@ -380,7 +380,7 @@
 			method will be called before any _success_ method supplied as an option to
 			the record itself. Overload this method to handle other scenarios.
 		*/
-		didFetch: function (rec, opts, xhr, res) {
+		didFetch: function (rec, opts, res) {
 			if (opts) {
 				if (opts.success) { opts.success(res); }
 			}
@@ -390,7 +390,7 @@
 			method will be called before any _success_ method supplied as an option to
 			the record itself. Overload this method to handle other scenarios.
 		*/
-		didCommit: function (rec, opts, xhr, res) {
+		didCommit: function (rec, opts, res) {
 			if (opts) {
 				if (opts.success) { opts.success(res); }
 			}
@@ -401,7 +401,7 @@
 			option to the record itself. Overload this method to handle other
 			scenarios.
 		*/
-		didDestroy: function (rec, opts, xhr, res) {
+		didDestroy: function (rec, opts, res) {
 			if (opts) {
 				if (opts.success) { opts.success(res); }
 			}
@@ -414,7 +414,7 @@
 			possible failure cases gracefully. By default, it will look for a _fail_
 			method in the options and (if one is found) execute it.
 		*/
-		didFail: function (action, rec, opts, xhr, res) {
+		didFail: function (action, rec, opts, res) {
 			if (opts) {
 				if (opts.fail) { return opts.fail(res); }
 			}
