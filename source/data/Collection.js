@@ -331,7 +331,7 @@ enyo.kind({
 			} else {
 				// adding an instantiated model so start listening for events
 				r.addListener("change", this._recordChanged);
-		        	r.addListener("destroy", this._recordDestroyed);
+				r.addListener("destroy", this._recordDestroyed);
 			}
 			// add the current index + the index offset determined by the index
 			// passed in to the method
