@@ -45,7 +45,7 @@ enyo.kind({
 	*/
 	selectionProperty: "",
 	/**
-		Set this to a space-delimited string of events, or an array, that can trigger
+		Set this to a space-delimited string of events or an array that can trigger
 		the selection of a particular child. By default it is simply the _ontap_
 		event. To prevent selection entirely see _selection_ and set it to `false`.
 	*/

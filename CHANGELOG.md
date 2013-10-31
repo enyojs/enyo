@@ -55,6 +55,9 @@ _enyo.Store_ built-in methods: _didFetch()_, _didCommit()_, _didFail()_ have new
 in the form _rec, opts, res_ from an _enyo.Source_. An _enyo.XHRSource_ adds a fourth parameter that
 is the XHR object reference.
 
+_enyo.DataRepeater_ has a new property _selectionEvents_ to allow for mapping other events to the
+selection process previously tied only to _ontap_.
+
 ## 2.3.0-pre.10 (9 October 2013)
 
 Removed macro support from bindings
