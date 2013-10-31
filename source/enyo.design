@@ -4,6 +4,9 @@
             "name": "enyo",
             "items": [
                 {
+                    "name": "Empty kind",
+                    "description": "An empty control",
+                    "config": {}
                 },
                 {
                     "name": "enyo.Anchor",
