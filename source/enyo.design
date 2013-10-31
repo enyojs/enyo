@@ -179,6 +179,15 @@
                     "config": {
                         "kind": "enyo.ToolDecorator"
                     }
+                },
+                {
+                    "name": "enyo.Video",
+                    "description": "A video stream",
+                    "config": {
+                        "kind": "enyo.Video",
+                        "src": "http://www.w3schools.com/html/movie.mp4",
+                        "showControls": true
+                    }
                 }
             ]
         },
