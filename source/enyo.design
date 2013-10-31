@@ -395,6 +395,24 @@
                     "filterLevel": "useful"
                 }
             }
+        },
+        {
+            "type": "kind",
+            "name": "enyo.Scroller",
+            "properties": {
+                "strategyKind": {
+                    "filterLevel": "useful",
+                    "inputKind": {
+                        "kind": "Inspector.Config.Select",
+                        "values": [
+                            "ScrollStrategy",
+                            "TouchScrollStrategy",
+                            "TranslateScrollStrategy",
+                            "TransitionScrollStrategy"
+                        ]
+                    }
+                }
+            }
         }
     ]
 }
