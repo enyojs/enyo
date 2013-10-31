@@ -13,7 +13,6 @@
                 },
                 {
                     "name": "enyo.Anchor",
-                    "kind": "enyo.Anchor",
                     "description": "A HTML anchor",
                     "config": {
                         "kind": "enyo.Anchor",
@@ -22,16 +21,15 @@
                 },
                 {
                     "name": "enyo.Audio",
-                    "kind": "enyo.Audio",
                     "description": "An audio stream",
                     "config": {
                         "kind": "enyo.Audio",
-                        "src": "http://www.w3schools.com/tags/horse.mp3"
+                        "src": "http://www.w3schools.com/tags/horse.mp3",
+                        "showControls": true
                     }
                 },
                 {
                     "name": "enyo.Button",
-                    "kind": "enyo.Button",
                     "description": "An button",
                     "config": {
                         "kind": "enyo.Button",
@@ -40,7 +38,6 @@
                 },
                 {
                     "name": "enyo.Checkbox",
-                    "kind": "enyo.Checkbox",
                     "description": "A checkbox",
                     "config": {
                         "kind": "enyo.Checkbox"
@@ -48,7 +45,6 @@
                 },
                 {
                     "name": "enyo.Control",
-                    "kind": "enyo.Control",
                     "description": "A simple control",
                     "config": {
                         "kind": "enyo.Control"
@@ -56,7 +52,6 @@
                 },
                 {
                     "name": "enyo.Drawer",
-                    "kind": "enyo.Drawer",
                     "description": "A drawer",
                     "config": {
                         "kind": "enyo.Drawer"
@@ -64,7 +59,6 @@
                 },
                 {
                     "name": "enyo.FlyweightRepeater",
-                    "kind": "enyo.FlyweightRepeater",
                     "description": "A flyweight repeater",
                     "config": {
                         "kind": "enyo.FlyweightRepeater"
@@ -72,7 +66,6 @@
                 },
                 {
                     "name": "enyo.Group",
-                    "kind": "enyo.Group",
                     "description": "A group",
                     "config": {
                         "kind": "enyo.Group"
@@ -80,7 +73,6 @@
                 },
                 {
                     "name": "enyo.GroupItem",
-                    "kind": "enyo.GroupItem",
                     "description": "A group item",
                     "config": {
                         "kind": "enyo.GroupItem"
@@ -88,7 +80,6 @@
                 },
                 {
                     "name": "enyo.Image",
-                    "kind": "enyo.Image",
                     "description": "An image",
                     "config": {
                         "kind": "enyo.Image"
@@ -96,7 +87,6 @@
                 },
                 {
                     "name": "enyo.Input",
-                    "kind": "enyo.Input",
                     "description": "An text input",
                     "config": {
                         "kind": "enyo.Input"
@@ -104,7 +94,6 @@
                 },
                 {
                     "name": "enyo.Media",
-                    "kind": "enyo.Media",
                     "description": "A HTML5 media element",
                     "config": {
                         "kind": "enyo.Media"
@@ -112,7 +101,6 @@
                 },
                 {
                     "name": "enyo.Option",
-                    "kind": "enyo.Option",
                     "description": "An option",
                     "config": {
                         "kind": "enyo.Option"
@@ -120,7 +108,6 @@
                 },
                 {
                     "name": "enyo.PanZoomView",
-                    "kind": "enyo.PanZoomView",
                     "description": "A panzoom view",
                     "config": {
                         "kind": "enyo.PanZoomView"
@@ -131,7 +118,6 @@
                 },
                 {
                     "name": "enyo.Popup",
-                    "kind": "enyo.Popup",
                     "description": "A popup",
                     "config": {
                         "kind": "enyo.Popup"
@@ -139,7 +125,6 @@
                 },
                 {
                     "name": "enyo.RichText",
-                    "kind": "enyo.RichText",
                     "description": "A rich text input",
                     "config": {
                         "kind": "enyo.RichText"
@@ -147,7 +132,6 @@
                 },
                 {
                     "name": "enyo.Repeater",
-                    "kind": "enyo.Repeater",
                     "description": "A repeater",
                     "config": {
                         "kind": "enyo.Repeater"
@@ -158,7 +142,6 @@
                 },
                 {
                     "name": "enyo.Select",
-                    "kind": "enyo.Select",
                     "description": "A select",
                     "config": {
                         "kind": "enyo.Select"
@@ -170,7 +153,6 @@
                 },
                 {
                     "name": "enyo.Scroller",
-                    "kind": "enyo.Scroller",
                     "description": "A scroller",
                     "config": {
                         "kind": "enyo.Scroller",
@@ -179,7 +161,6 @@
                 },
                 {
                     "name": "enyo.ScrollThumb",
-                    "kind": "enyo.ScrollThumb",
                     "description": "A scroll thumb",
                     "config": {
                         "kind": "enyo.ScrollThumb"
@@ -187,7 +168,6 @@
                 },
                 {
                     "name": "enyo.TextArea",
-                    "kind": "enyo.TextArea",
                     "description": "A multi-line text input",
                     "config": {
                         "kind": "enyo.TextArea"
@@ -195,7 +175,6 @@
                 },
                 {
                     "name": "enyo.ToolDecorator",
-                    "kind": "enyo.ToolDecorator",
                     "description": "A tool decorator",
                     "config": {
                         "kind": "enyo.ToolDecorator"
@@ -208,7 +187,6 @@
             "items": [
                 {
                     "name": "enyo.DataGridList",
-                    "kind": "enyo.DataGridList",
                     "description": "A pagined data grid list",
                     "config": {
                         "kind": "enyo.DataGridList"
@@ -216,7 +194,6 @@
                 },
                 {
                     "name": "enyo.DataList",
-                    "kind": "enyo.DataList",
                     "description": "A grid list",
                     "config": {
                         "kind": "enyo.DataList"
@@ -224,7 +201,6 @@
                 },
                 {
                     "name": "enyo.DataRepeater",
-                    "kind": "enyo.DataRepeater",
                     "description": "A data repeater",
                     "config": {
                         "kind": "enyo.DataRepeater"
@@ -232,7 +208,6 @@
                 },
                 {
                     "name": "enyo.DataTable",
-                    "kind": "enyo.DataTable",
                     "description": "A data table",
                     "config": {
                         "kind": "enyo.DataTable"
@@ -240,7 +215,6 @@
                 },
                 {
                     "name": "enyo.GridFlyWeightRepeater",
-                    "kind": "enyo.GridFlyWeightRepeater",
                     "description": "A grid flyweight repeater",
                     "config": {
                         "kind": "enyo.GridFlyWeightRepeater"
@@ -248,7 +222,6 @@
                 },
                 {
                     "name": "enyo.GridList",
-                    "kind": "enyo.GridList",
                     "description": "A grid list",
                     "config": {
                         "kind": "enyo.Drawer"
@@ -259,7 +232,6 @@
                 },
                 {
                     "name": "enyo.GridListImageItem",
-                    "kind": "enyo.GridListImageItem",
                     "description": "A grid list image item",
                     "config": {
                         "kind": "enyo.GridListImageItem"
@@ -272,7 +244,6 @@
             "items": [
                 {
                     "name": "enyo.Table",
-                    "kind": "enyo.Table",
                     "description": "A table",
                     "config": {
                         "kind": "enyo.Table"
@@ -280,7 +251,6 @@
                 },
                 {
                     "name": "enyo.TableRow",
-                    "kind": "enyo.TableRow",
                     "description": "A table row",
                     "config": {
                         "kind": "enyo.TableRow"
@@ -288,7 +258,6 @@
                 },
                 {
                     "name": "enyo.TableCell",
-                    "kind": "enyo.TableCell",
                     "description": "A table cell",
                     "config": {
                         "kind": "enyo.TableCell"
@@ -301,7 +270,6 @@
             "items": [
                 {
                     "name": "enyo.Animator",
-                    "kind": "enyo.Animator",
                     "description": "A animator",
                     "config": {
                         "kind": "enyo.Animator"
@@ -309,7 +277,6 @@
                 },
                 {
                     "name": "enyo.Controller",
-                    "kind": "enyo.Controller",
                     "description": "A controller",
                     "config": {
                         "kind": "enyo.Controller"
@@ -317,7 +284,6 @@
                 },
                 {
                     "name": "enyo.DragAvatar",
-                    "kind": "enyo.DragAvatar",
                     "description": "A drag and drop avatar",
                     "config": {
                         "kind": "enyo.DragAvatar"
@@ -328,7 +294,6 @@
                 },
                 {
                     "name": "enyo.ModelController",
-                    "kind": "enyo.ModelController",
                     "description": "A model controller",
                     "config": {
                         "kind": "enyo.ModelController"
@@ -336,7 +301,6 @@
                 },
                 {
                     "name": "enyo.MultipleDispatchComponent",
-                    "kind": "enyo.MultipleDispatchComponent",
                     "description": "A multiple dispatch component",
                     "config": {
                         "kind": "enyo.MultipleDispatchComponent"
@@ -344,7 +308,6 @@
                 },
                 {
                     "name": "enyo.OwnerProxy",
-                    "kind": "enyo.OwnerProxy",
                     "description": "Enyo component to hide",
                     "config": {
                         "kind": "enyo.OwnerProxy"
@@ -352,7 +315,6 @@
                 },
                 {
                     "name": "enyo.ScrollMath",
-                    "kind": "enyo.ScrollMath",
                     "description": "A scroll math",
                     "config": {
                         "kind": "enyo.ScrollMath"
@@ -360,7 +322,6 @@
                 },
                 {
                     "name": "enyo.ScrollStrategy",
-                    "kind": "enyo.ScrollStrategy",
                     "description": "Enyo component to hide",
                     "config": {
                         "kind": "enyo.ScrollStrategy"
@@ -368,7 +329,6 @@
                 },
                 {
                     "name": "enyo.Selection",
-                    "kind": "enyo.Selection",
                     "description": "Enyo component to hide",
                     "config": {
                         "kind": "enyo.Selection"
@@ -376,7 +336,6 @@
                 },
                 {
                     "name": "enyo.Signals",
-                    "kind": "enyo.Signals",
                     "description": "Enyo component to hide",
                     "config": {
                         "kind": "enyo.Signals"
@@ -384,7 +343,6 @@
                 },
                 {
                     "name": "enyo.TouchScrollStrategy",
-                    "kind": "enyo.TouchScrollStrategy",
                     "description": "Enyo component to hide",
                     "config": {
                         "kind": "enyo.TouchScrollStrategy"
@@ -392,7 +350,6 @@
                 },
                 {
                     "name": "enyo.TransitionScrollStrategy",
-                    "kind": "enyo.TransitionScrollStrategy",
                     "description": "Enyo component to hide",
                     "config": {
                         "kind": "enyo.TransitionScrollStrategy"
@@ -400,7 +357,6 @@
                 },
                 {
                     "name": "enyo.TranslateScrollStrategy",
-                    "kind": "enyo.TranslateScrollStrategy",
                     "description": "Enyo component to hide",
                     "config": {
                         "kind": "enyo.TranslateScrollStrategy"
@@ -408,7 +364,6 @@
                 },
                 {
                     "name": "enyo.UiComponent",
-                    "kind": "enyo.UiComponent",
                     "description": "Enyo component to hide",
                     "config": {
                         "kind": "enyo.UiComponent"
@@ -416,7 +371,6 @@
                 },
                 {
                     "name": "enyo.ViewController",
-                    "kind": "enyo.ViewController",
                     "description": "Enyo component to hide",
                     "config": {
                         "kind": "enyo.ViewController"
