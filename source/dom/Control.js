@@ -215,7 +215,9 @@ enyo.kind({
 	*/
 	hasNode: function() {
 		// 'generated' is used to gate access to expensive findNodeById call
-		return this.generated && (this.node || this.findNodeById());
+		// but that doesn't mean we shouldn't check if it has the node even
+		// without the _generated_ flag being set to true...
+		return this.node || (this.generated && this.findNodeById());
 	},
 	/**
 		Appends the string value of _inAddendum_ to the _content_ of this
@@ -706,11 +708,9 @@ enyo.kind({
 	},
 	srcChanged: function() {
 		if (!this.src) {
-			// allow us to clear the src property
-			this.setAttribute("src", "");
-		} else {
-			this.setAttribute("src", enyo.path.rewrite(this.src));
+			return;
 		}
+		this.setAttribute("src", enyo.path.rewrite(this.src));
 	},
 	attributesChanged: function() {
 		this.invalidateTags();
@@ -915,7 +915,6 @@ enyo.kind({
 		}
 	},
 	showingChanged: function() {
-		console.log(this.toString());
 		this.syncDisplayToShowing();
 	},
 	getShowing: function() {
