@@ -4,12 +4,6 @@
             "name": "enyo",
             "items": [
                 {
-                    "name": "enyo.Application",
-                    "kind": "enyo.Application",
-                    "description": "An application",
-                    "config": {
-                        "kind": "enyo.Application"
-                    }
                 },
                 {
                     "name": "enyo.Anchor",
