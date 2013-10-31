@@ -915,6 +915,7 @@ enyo.kind({
 		}
 	},
 	showingChanged: function() {
+		console.log(this.toString());
 		this.syncDisplayToShowing();
 	},
 	getShowing: function() {

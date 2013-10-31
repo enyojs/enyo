@@ -1010,7 +1010,7 @@
 		
 		oContext[sMethodName] = function () {
 			var a = Array.prototype.slice.call(arguments);
-			a.unshift(fOriginal);
+			a.unshift(fOriginal.bind(oContext));
 			return fWrapper.apply(oWrapperContext || oContext, a);
 		};
 		oContext[sMethodName].unwrapped = fOriginal;
