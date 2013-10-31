@@ -272,6 +272,13 @@
             "name": "ignore",
             "items": [
                 {
+                    "name": "enyo.Application",
+                    "description": "An application",
+                    "config": {
+                        "kind": "enyo.Application"
+                    }
+                },
+                {
                     "name": "enyo.Animator",
                     "description": "A animator",
                     "config": {
