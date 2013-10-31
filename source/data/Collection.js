@@ -328,6 +328,10 @@ enyo.kind({
 				}
 			} else if (r.destroyed) {
 				throw "enyo.Collection.add: cannot add a record that has already been destroyed";
+			} else {
+				// adding an instantiated model so start listening for events
+				r.addListener("change", this._recordChanged);
+				r.addListener("destroy", this._recordDestroyed);
 			}
 			// add the current index + the index offset determined by the index
 			// passed in to the method
