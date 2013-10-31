@@ -17,7 +17,7 @@
 		//*@protected
 		selectedChanged: enyo.inherit(function (sup) {
 			return function () {
-				if (this.repeater.selection && !this.get("disabled")) {
+				if (this.repeater.selection) {
 					this.addRemoveClass(this.selectedClass || "selected", this.selected);
 					// for efficiency purposes, we now directly call this method as opposed to
 					// forcing a synchronous event dispatch
@@ -39,7 +39,7 @@
 			};
 		}),
 		_selectionHandler: function () {
-			if (this.repeater.selection) {
+			if (this.repeater.selection && !this.get("disabled")) {
 				this.set("selected", !this.selected);
 			}
 		},
