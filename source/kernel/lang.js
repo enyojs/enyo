@@ -977,5 +977,54 @@
 		);
 		return p;
 	};
+	
+	//*@public
+	/**
+		Replaces _sMethodName_ method of _oContext_ with a function which calls the wrapper 
+		with it's list of parameters prepended by a reference to wrapped (original) function.
+		
+		This provides convenience of allowing conditional calls of the original function within the wrapper,
+		unlike a common implentation that supplies "before" and "after" cross cutting concerns.
+		
+		_enyo.wrap_ stores a reference to original (unwrapped) function for subsequent _enyo.unwrap_ calls.
+		
+		Example: 
+		=========================================
+		
+		var o = {
+			test: function(sText) { return sText; }
+		}
+		
+		enyo.wrap('test', o, function(fOriginal, sText) {
+			return 'before ' + fOriginal(sText) + ' after';
+		});
+		o.test('mytext')  // returns: "before mytext after"
+		
+		enyo.unwrap('test', o);
+		o.test('mytext')  // returns: "mytext"
+		
+		=========================================
+	*/
+	enyo.wrap = function(sMethodName, oContext, fWrapper, oWrapperContext) {
+		var fOriginal = oContext[sMethodName];
+		
+		oContext[sMethodName] = function () {
+			var a = Array.prototype.slice.call(arguments);
+			a.unshift(fOriginal.bind(oContext));
+			return fWrapper.apply(oWrapperContext || oContext, a);
+		};
+		oContext[sMethodName].unwrapped = fOriginal;
+	};
+	
+	//*@public
+	/**
+		Reverts method _sMethodName_ of _oContext_ to reference original function, 
+		the way it was before _enyo.wrap()_ call
+	*/
+	enyo.unwrap = function(sMethodName, oContext) {
+		if (typeof oContext[sMethodName] == 'function') {
+			oContext[sMethodName] = oContext[sMethodName].unwrapped;
+		}
+	};
 
 })();
