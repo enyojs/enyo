@@ -1012,9 +1012,9 @@
 			var a = Array.prototype.slice.call(arguments);
 			a.unshift(fOriginal);
 			return fWrapper.apply(oWrapperContext || oContext, a);
-		}
+		};
 		oContext[sMethodName].unwrapped = fOriginal;
-	}
+	};
 	
 	//*@public
 	/**
@@ -1025,6 +1025,6 @@
 		if (typeof oContext[sMethodName] == 'function') {
 			oContext[sMethodName] = oContext[sMethodName].unwrapped;
 		}
-	}
+	};
 
 })();
