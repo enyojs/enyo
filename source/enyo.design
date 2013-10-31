@@ -82,7 +82,8 @@
                     "name": "enyo.Image",
                     "description": "An image",
                     "config": {
-                        "kind": "enyo.Image"
+                        "kind": "enyo.Image",
+                        "src": "http://enyojs.com/gallery/images/enyo-logo.png"
                     }
                 },
                 {
@@ -96,7 +97,9 @@
                     "name": "enyo.Media",
                     "description": "A HTML5 media element",
                     "config": {
-                        "kind": "enyo.Media"
+                        "kind": "enyo.Media",
+                        "src": "http://www.w3schools.com/tags/horse.mp3",
+                        "showControls": true
                     }
                 },
                 {
@@ -110,11 +113,11 @@
                     "name": "enyo.PanZoomView",
                     "description": "A panzoom view",
                     "config": {
-                        "kind": "enyo.PanZoomView"
-                    },
-                    "components": [
-                        {"content": "Hello World"}
-                    ]
+                        "kind": "enyo.PanZoomView",
+                        "components": [
+                            {"content": "Hello World"}
+                        ]
+                    }                    
                 },
                 {
                     "name": "enyo.Popup",
@@ -144,12 +147,12 @@
                     "name": "enyo.Select",
                     "description": "A select",
                     "config": {
-                        "kind": "enyo.Select"
-                    },
-                    "components": [
-                        {"content": "Descending", "value": "d"},
-                        {"content": "Ascending", "value": "a"}
-                    ]
+                        "kind": "enyo.Select",
+                        "components": [
+                            {"content": "Descending", "value": "d"},
+                            {"content": "Ascending", "value": "a"}
+                        ]
+                    }
                 },
                 {
                     "name": "enyo.Scroller",
@@ -224,11 +227,11 @@
                     "name": "enyo.GridList",
                     "description": "A grid list",
                     "config": {
-                        "kind": "enyo.Drawer"
-                    },
-                    "components": [
-                        {"kind": "enyo.Image", "name": "img"}
-                    ]
+                        "kind": "enyo.GridList",
+                        "components": [
+                            {"kind": "enyo.Image", "name": "img"}
+                        ]
+                    }
                 },
                 {
                     "name": "enyo.GridListImageItem",
@@ -286,11 +289,11 @@
                     "name": "enyo.DragAvatar",
                     "description": "A drag and drop avatar",
                     "config": {
-                        "kind": "enyo.DragAvatar"
-                    },
-                    "components": [
-                        {"tag": "img", "src": "http://enyojs.com/gallery/images/enyo-logo.png"}
-                    ]
+                        "kind": "enyo.DragAvatar",
+                        "components": [
+                            {"tag": "img", "src": "http://enyojs.com/gallery/images/enyo-logo.png"}
+                        ]
+                    }
                 },
                 {
                     "name": "enyo.ModelController",
