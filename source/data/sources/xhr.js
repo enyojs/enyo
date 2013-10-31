@@ -54,7 +54,13 @@
 			var Kind = this.requestKind,
 				o    = enyo.only(this._ajaxOptions, opts),
 				xhr  = new Kind(o);
-			xhr.response(opts.success);
+			xhr.response(function (xhr, res) {
+				// we swap the ordering to preserve the signature of the
+				// store while passing the xhr object if needed
+				if (opts && opts.success) {
+					opts.success(res, xhr);
+				}
+			});
 			xhr.error(opts.fail);
 			xhr.go(opts.params);
 		},
