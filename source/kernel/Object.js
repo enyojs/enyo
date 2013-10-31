@@ -14,8 +14,9 @@ respectively.
 By convention, the setter for a published property will trigger an optional
 _&lt;propertyName&gt;Changed_ method when called.
 
-For more information, see the documentation on [Published
-Properties](key-concepts/published-properties.html) in the Enyo Developer Guide.
+For more information, see the documentation on [Objects and Published
+Properties](key-concepts/objects-and-published-properties.html) in the Enyo
+Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Object",

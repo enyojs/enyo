@@ -69,7 +69,7 @@ enyo.kind({
 	/**
 		Simple Verlet integrator for simulating Newtonian motion.
 	*/
-	verlet: function(p) {
+	verlet: function() {
 		var x = this.x;
 		this.x += x - this.x0;
 		this.x0 = x;
@@ -239,7 +239,7 @@ enyo.kind({
 			return true;
 		}
 	},
-	dragDrop: function(e) {
+	dragDrop: function() {
 		if (this.dragging && !window.PalmSystem) {
 			var kSimulatedFlickScalar = 0.5;
 			this.y = this.uy;

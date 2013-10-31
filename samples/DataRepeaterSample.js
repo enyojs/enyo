@@ -18,11 +18,11 @@ enyo.kind({
 		]}
 	],
 	bindings: [
-		{from: ".controller", to: ".$.repeater.controller"}
+		{from: ".collection", to: ".$.repeater.collection"}
 	],
 	create: enyo.inherit(function (sup) {
 		return function () {
-			this.controller = new enyo.Collection(this.data);
+			this.collection = new enyo.Collection(this.data);
 			sup.apply(this, arguments);
 		};
 	}),

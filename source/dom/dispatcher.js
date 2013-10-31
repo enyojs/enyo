@@ -101,7 +101,7 @@
 			return t;
 		},
 		//* Returns the default Enyo control for events.
-		findDefaultTarget: function(e) {
+		findDefaultTarget: function() {
 			return enyo.master;
 		},
 		dispatchBubble: function(e, c) {
@@ -200,5 +200,50 @@
 			}
 		}
 	);
+
+	/**
+		Instead of having multiple _features_ pushed and handled in separate methods
+		for these events we will handle them uniformly here to expose as accurate as
+		possible the last known interaction coordinates.
+	*/
+	var _xy = {};
+	enyo.dispatcher.features.push(
+		function (e) {
+			if (
+				(e.type == "mousemove")  ||
+				(e.type == "tap")        ||
+				(e.type == "click")      ||
+				(e.type == "touchmove")
+			) {
+				_xy.clientX = e.clientX;
+				_xy.clientY = e.clientY;
+				// note only ie8 does not support pageX/pageY
+				_xy.pageX   = e.pageX;
+				_xy.pageY   = e.pageY;
+				// note ie8 and opera report these values incorrectly
+				_xy.screenX = e.screenX;
+				_xy.screenY = e.screenY;
+			}
+		}
+	);
+	//*@public
+	/**
+		Retrieve the last known coordinates of the cursor or user-interaction point
+		in _touch_ environments. Returns an immutable object with the _clientX, clientY_,
+		_pageX, pageY_ and _screenX, screenY_ properties. It is important to note that
+		IE 8 and Opera have improper reporting for the _screenX, screenY_
+		properties (they both use CSS pixels as opposed to device pixels) and IE8 has no
+		support for the _pageX, pageY_ properties so they are facaded.
+	*/
+	enyo.getPosition = function () {
+		var p = enyo.clone(_xy);
+		// if we are in ie8 we facade the _pageX, pageY_ properties
+		if (enyo.platform.ie < 9) {
+			var d = (document.documentElement || document.body.parentNode || document.body);
+			p.pageX = (p.clientX + d.scrollLeft);
+			p.pageY = (p.clientY + d.scrollTop);
+		}
+		return p;
+	};
 	
 })(enyo);

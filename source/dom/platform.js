@@ -93,6 +93,7 @@ enyo.platform = {
 			if (p.extra) {
 				enyo.mixin(ep, p.extra);
 			}
+			ep.platformName = p.platform;
 			break;
 		}
 	}

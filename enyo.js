@@ -37,9 +37,9 @@
 		document.write('<scri' + 'pt src="' + root + "/source/boot/" + inSrc + '"></scri' + 'pt>');
 		/* jshint evil: false */
 	};
-
 	script("version.js");
 	script("ready.js");
+	script("rendered.js");
 	script("../../loader.js");
 	script("boot.js");
 	script("../package.js");

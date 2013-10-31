@@ -1,81 +1,85 @@
 //* @protected
 (function() {
-	// add touch-specific gesture feature
-	var gesture = enyo.gesture;
-	if (window.navigator.msPointerEnabled) {
-		var msEvents = [
+	var pointerEvents;
+	if (window.navigator.pointerEnabled) {
+		pointerEvents = [
+			"pointerdown",
+			"pointerup",
+			"pointermove",
+			"pointerover",
+			"pointerout",
+			"pointercancel"
+		];
+	} else if (window.navigator.msPointerEnabled) {
+		pointerEvents = [
 			"MSPointerDown",
 			"MSPointerUp",
 			"MSPointerMove",
 			"MSPointerOver",
 			"MSPointerOut",
-			"MSPointerCancel",
-			"MSGestureTap",
-			"MSGestureDoubleTap",
-			"MSGestureHold",
-			"MSGestureStart",
-			"MSGestureChange",
-			"MSGestureEnd"
+			"MSPointerCancel"
 		];
-		enyo.forEach(msEvents, function(e) {
+	}
+	if (pointerEvents) {
+		var makeEvent = function(inEvent) {
+			var e = enyo.clone(inEvent);
+			e.srcEvent = inEvent;
+			// normalize "mouse button" info
+			// 1: left, 2: right, 3: both left & right, 4: center
+			e.which = inEvent.buttons;
+			return e;
+		};
+
+		var gesture = enyo.gesture;
+		enyo.gesture.events = {};
+		var handlers = {
+			pointerdown: function(inEvent) {
+				var e = makeEvent(inEvent);
+				gesture.down(e);
+			},
+			pointerup: function(inEvent) {
+				var e = makeEvent(inEvent);
+				gesture.up(e);
+			},
+			pointermove: function(inEvent) {
+				var e = makeEvent(inEvent);
+				gesture.move(e);
+			},
+			pointercancel: function(inEvent) {
+				// FIXME: not really the same as touchend, as touch action
+				// was cancelled, but Enyo doesn't have that concept
+				var e = makeEvent(inEvent);
+				gesture.up(e);
+			},
+			pointerover: function(inEvent) {
+				var e = makeEvent(inEvent);
+				gesture.over(e);
+			},
+			pointerout: function(inEvent) {
+				var e = makeEvent(inEvent);
+				gesture.out(e);
+			}
+		};
+
+		// alias in the older MS versions
+		if (!window.navigator.pointerEnabled && window.navigator.msPointerEnabled) {
+			handlers.MSPointerDown = handlers.pointerdown;
+			handlers.MSPointerUp = handlers.pointerup;
+			handlers.MSPointerMove = handlers.pointermove;
+			handlers.MSPointerCancel = handlers.pointercancel;
+			handlers.MSPointerOver = handlers.pointerover;
+			handlers.MSPointerOut = handlers.pointerout;
+		}
+
+		enyo.forEach(pointerEvents, function(e) {
 			enyo.dispatcher.listen(document, e);
 		});
-		// add our own MSPointer event handler
+
+		// add our own pointerEvents event handler
 		enyo.dispatcher.features.push(function(e) {
 			if (handlers[e.type] && e.isPrimary) {
 				handlers[e.type](e);
 			}
 		});
-		// remove the default mouse event handlers
-		enyo.gesture.events = {};
 	}
-
-	var makeEvent = function(inEvent) {
-		var e = enyo.clone(inEvent);
-		e.srcEvent = inEvent;
-		// normalize "mouse button" info
-		// 1: left, 2: right, 3: both left & right, 4: center
-		e.which = inEvent.buttons;
-		return e;
-	};
-
-	var handlers = {
-		// FIXME: need to register for gestures in MSPointerDown
-		// according to Microsoft docs
-		/*MSGestureStart: function(inEvent) {
-			enyo.dispatch(gestureNormalize("gesturestart", inEvent));
-		},
-		MSGestureChange: function(inEvent) {
-			enyo.dispatch(gestureNormalize("gesturechange", inEvent));
-		},
-		MSGestureEnd: function(inEvent) {
-			enyo.dispatch(gestureNormalize("gestureend", inEvent));
-		},*/
-		MSPointerDown: function(inEvent) {
-			var e = makeEvent(inEvent);
-			gesture.down(e);
-		},
-		MSPointerUp: function(inEvent) {
-			var e = makeEvent(inEvent);
-			gesture.up(e);
-		},
-		MSPointerMove: function(inEvent) {
-			var e = makeEvent(inEvent);
-			gesture.move(e);
-		},
-		MSPointerCancel: function(inEvent) {
-			// FIXME: not really the same as touchend, as touch action
-			// was cancelled, but Enyo doesn't have that concept
-			var e = makeEvent(inEvent);
-			gesture.up(e);
-		},
-		MSPointerOver: function(inEvent) {
-			var e = makeEvent(inEvent);
-			gesture.over(e);
-		},
-		MSPointerOut: function(inEvent) {
-			var e = makeEvent(inEvent);
-			gesture.out(e);
-		}
-	};
 })();

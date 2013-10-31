@@ -1,4 +1,57 @@
-## 2.3.0-pre.10-dev
+## 2.3.0-pre.11
+
+Enyo now supports the W3C pointer events recommendation and will use those in
+preference to mouse events when available.  The earlier MSPointer event
+support is now only enabled when W3C pointer events aren't detected, fixing a
+touch-recognition problem in Internet Explorer 11.
+
+enyo.Model.set() now supports the force parameter.
+
+Removed unusable feature `dirty` from _enyo.Binding_ as implementing it would
+cause unnecessary overhead and it ultimately a useless feature since they are
+synchronously executed.
+
+Removed the _modelChanged()_ and deprecated _controllerChanged()_ base methods from _enyo.UiComponent_
+thus any developer code currently calling `this.inherited(arguments)` from within an overloaded
+_modelChanged()_ method will fail and needs to be removed. This is a feature change required by ENYO-3339.
+
+Removed the _stop()_ method from _enyo.Binding_ as required by ENYO-3338. Instead of
+calling that method via the binding reference in a transform return `undefined`
+(or nothing since `undefined` is the default) to achieve the same behavior.
+
+Instances of _enyo.Binding_ will no longer propagate `undefined`; instead use `null`.
+
+Deprecated the `controllers` array for _enyo.Application_; instead use `components`
+with the same features. This should modify bindings from `.app.controllers.{name}` to 
+`.app.$.{name}` for controllers/components created for an _enyo.Application_ instance.
+
+Deprecated the `controller` property for _enyo.DataRepeater_ and all sub-kinds; instead use
+`collection`. This also means you should update any overloaded `controllerChanged` methods
+to instead be `collectionChanged` and bindings referencing `controller` to `collection`.
+
+The registered event system previously employed by _enyo.Model_ and _enyo.Collection_ has
+been reworked and is no longer dependent on _enyo.Store_. See _enyo.RegisteredEventSupport_
+for more information. This change means the API methods previously available via _enyo.Store_
+(including the observer support implementation) no longer exist.
+
+_enyo.Collection_ is now a sub-kind of _enyo.Component_ and thus employs the default
+_enyo.ObserverSupport_ mechanims (as well as _enyo.ComputedSupport_).
+
+_enyo.Model_ now employs the default _enyo.ObserverSupport_ and _enyo.BindingSupport_ with
+the same limitation of only working with `attributes` of the record.
+
+As required by ENYO-3339, _enyo.Binding_ now registers for an entire path and will update
+based on changes anywhere in the path.
+
+_enyo.Store_ now throws an _error_ instead of a _warning_ when a duplicate `primaryKey` is
+found for unique records in the same _enyo.Store_.
+
+_enyo.Scroller_ and _enyo.ScrollStrategy_ have been updated to normalize new properties available
+on the returned hash of _getScrollBounds()_. It now will indicate via the xDir and yDir properties
+a 1 (positive movement along the axis), -1 (negative movement along the axis) or 0 (no movement on
+the axis).
+
+## 2.3.0-pre.10 (9 October 2013)
 
 Removed macro support from bindings
 
@@ -43,3 +96,28 @@ accepts the optional second parameter.
 Change to enyo.Model `add` method that no longer accepts optional third
 parameter and will automatically call the model's `parse` method if it is a
 data-hash (not an instanced record).
+
+Added framework method `enyo.getPosition` that returns an immutable object with
+the most recent _clientX, clientY_, _pageX, pageY_ and _screenX, screenY_ values.
+As noted in the documentation, IE8 and Opera both report inconsistent values for
+_screenX, screenY_ and we facade the _pageX, pageY_ values for IE8 since they are
+unsupported.
+
+The _enyo.Application_ `controllers` property has been deprecated. While current
+code using it should continue to execute properly it is recommended you update your
+applications to use the `components` array instead and bindings from `.app.controller.name`
+should instead be `.app.$.name`. References of the `controllers` property on instances
+of _enyo.Application_ are actually using the `$` property by alias. *THIS FUNCTIONALITY
+WILL BE REMOVED IN THE NEXT MAJOR RELEASE AFTER 2.3.0*.
+
+The `defaultKind` of _enyo.Application_ has been set to _enyo.Controller_.
+
+The _enyo.Collection_ kind is now a subkind of _enyo.Component_ which means it now inherits
+from the _enyo.ObserverSupport_ mixin as opposed to the special observer support in
+_enyo.Model_.
+
+The `global` property has now been moved to a property of the _enyo.Controller_ kind
+and _controllers_ whose `global` flag is set to `true` will *not be destroyed even if
+their `owner` is an _enyo.Application_ that is being destroyed*.
+
+You can no longer retrieve an index from _enyo.Collection_ use the `get` method.

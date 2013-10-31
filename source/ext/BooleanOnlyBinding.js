@@ -9,7 +9,7 @@ enyo.kind({
 	//*@protected
 	transform: function (value, direction, binding) {
 		if (value !== true && value !== false) {
-			binding.stop();
+			return undefined;
 		}
 		return value;
 	}

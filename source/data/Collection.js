@@ -3,21 +3,23 @@
 	_enyo.Collection_ is an array-like structure that houses collections of
 	[enyo.Model](#enyo.Model) instances. A collection may be set as the
 	_controller_ property of an [enyo.Control](#enyo.Control) or declared in the
-	_controllers_ block of an _enyo.Application_. Collections are read-only
+	_components_ block of an _enyo.Application_. Collections are read-only
 	entities in terms of retrieving and setting data via an
-	[enyo.Source](#enyo.Source). The implementation of observers and events is the
-	same as in _enyo.Model_.
+	[enyo.Source](#enyo.Source). Like _enyo.Model_, _enyo.Collection_ has a
+	separate and distinct non-bubbling API.  Collection objects generate _add_,
+	_remove_, _reset_ and _destroy_ events that may be listened for using the
+	_addListener()_ method.
 
 	A collection lazily instantiates records when they are requested. This is 
 	important to keep in mind with respect to the order of operations.
-
-	Collection objects generate _add_, _remove_, _reset_ and _destroy_ events that may be
-	listened for using the _addListener()_ method.
 */
 enyo.kind({
 	name: "enyo.Collection",
-	kind: null,
+	//*@protected
+	kind: enyo.Component,
 	noDefer: true,
+	mixins: [enyo.RegisteredEventSupport],
+	//*@public
 	/**
 		The kind of records the collection will house. By default, it is simply
 		_enyo.Model_, but it may be set to any kind of model.
@@ -52,15 +54,15 @@ enyo.kind({
 		other criteria may use this object to map a filter name to a filter method
 		on the collection that will be called in the context of the collection when
 		the filter name is set as the _activeFilter_ property. These methods should
-		return the array they wish to have the collection reset to, _true_ to force
-		a _reset_, or any falsey value to do nothing. Note that you can call
-		_reset()_ within the filter, but no _reset_ event will be emitted.
+		return the array they wish to have the collection reset to, true to force
+		a reset, or any falsey value to do nothing. Note that you can call _reset()_
+		within the filter, but no _reset_ event will be emitted.
 	*/
 	filters: null,
 	/**
 		This is an array or space-delimited string of properties that, when updated from
 		bindings or via the _set()_ method, will trigger a _filter_ event on the
-		collection automatically if an `activeFilter` is active.
+		collection automatically if an _activeFilter_ is active.
 	*/
 	filterProps: "",
 	/**
@@ -193,19 +195,20 @@ enyo.kind({
 		return enyo.json.stringify(this.raw());
 	},
 	/**
-		This _strategy_ accepts a single _record_ (data-hash or _enyo.Model_ instance), or
-		an array of _records_ (data-hashes or _enyo.Model_ instances) to be merged with
-		the current _collection_. This _strategy_ can be executed directly (used much like
-		the _add()_ method) or specified as the _strategy_ to employ with data retrieved via
-		the _fetch()_ method. The default behavior is to find and merge _records_ by their
-		_primaryKey_ value when present but will also rely on any _mergeKeys_ set on the
-		`model` kind for this collection. If the _record(s)_ passed into this method are
-		object-literals they will be passed through the _parse()_ method of the `model` kind
-		before being merged with existing _records_ or prior to being instanced as new _records_.
-		Any _records_ passed to this method that cannot be merged with existing _records_ will
-		be added to the collection at the end. This method will works with instanced and non-
-		instanced _records_ in the collection and merges without forcing the _record_ to be
-		instanced.
+		This strategy accepts a single record (data-hash or _enyo.Model_ instance),
+		or an array of records (data-hashes or _enyo.Model_ instances) to be merged
+		with the current collection. This strategy may be executed directly (much
+		like the _add()_ method) or specified as the strategy to employ with data
+		retrieved via	the _fetch()_ method. The default behavior is to find and
+		merge records by their _primaryKey_ value when present, but _merge_ will
+		also rely on any _mergeKeys_ set on the model kind for this collection. If
+		the record(s) passed into this method are object-literals, they will be
+		passed through the _parse()_ method of the model kind before being merged
+		with existing records or being instanced as new records. Any records passed
+		to this method that cannot be merged with existing records will be added to
+		the collection at the end. This method will work with instanced and
+		non-instanced records in the collection and merges without forcing records
+		to be instanced.
 	*/
 	merge: function (records) {
 		if (records) {
@@ -306,12 +309,12 @@ enyo.kind({
 			// the actual records array for the collection
 		var local = this.records,
 			// the array of indices of any records added to the collection
-			add     = [],
+			add   = [],
 			// the existing length prior to adding any records
-			len     = this.length;
+			len   = this.length;
 		// normalize the requested index to the appropriate starting index for
 		// our operation
-		i = (i !== null && !isNaN(i) && (i=Math.max(0,i)) && (i=Math.min(len,i))) || len;
+		i = (i !== null && !isNaN(i))? Math.max(0, Math.min(len, i)) : len;
 		// ensure we're working with an array of incoming records/data hashes
 		records = (enyo.isArray(records)? records: [records]);
 		// if there aren't really any records to add we just return an empty array
@@ -486,11 +489,11 @@ enyo.kind({
 		records.
 	*/
 	destroyAll: function () {
-		var rr = this.removeAll(),
-			r;
-		this._destroyAll = true;
-		for (var k in rr) {
-			(r=rr[k]) && r.destroy();
+		// all of the removed records that we know need to be destroyed
+		var records = this.removeAll();
+		this._destroyAll;
+		for (var k in records) {
+			records[k].destroy();
 		}
 		this._destroyAll = false;
 	},
@@ -560,11 +563,11 @@ enyo.kind({
 		property. Accepts the attributes (_attrs_) to be used, the properties
 		(_props_) to apply, and an optional index at which to insert the record into
 		the _collection_. If the index is false, the record will not be added to the
-		collection at all. Returns the newly created record instance. Note that records
-		created by a collection have their `owner` property set to the collection and
-		will be added to the `store` set on the collection. If a collection is _destroyed_
-		any _records_ it owns will also be _destroyed_ unless the `preserveRecords` flag
-		is `true`.
+		collection at all. Returns the newly created record instance. Note that
+		records created by a collection have their _owner_ property set to the
+		collection and will be added to the _store_ set on the collection. If a
+		collection is destroyed, any records it owns will also be destroyed unless
+		the _preserveRecords_ flag is true.
 	*/
 	createRecord: function (attrs, props, i) {
 		var d = {owner: this},
@@ -582,132 +585,72 @@ enyo.kind({
 	*/
 	recordChanged: null,
 	/**
-		Adds an observer according to the the _enyo.ObserverSupport_ API.
-	*/
-	addObserver: function (prop, fn, ctx) {
-		return this.store._addObserver(this, prop, fn, ctx);
-	},
-	/**
-		Removes an observer according to the the _enyo.ObserverSupport_ API.
-	*/
-	removeObserver: function (prop, fn) {
-		return this.store._removeObserver(this, prop, fn);
-	},
-	/**
-		Notifies observers, but, unlike the _enyo.ObserverSupport_ API, accepts only
-		a single, optional parameter. If _prop_ is not specified, observers of any
-		changed properties will be notified.
-	*/
-	notifyObservers: function (prop) {
-		if (!this.silenced) {
-			this.store._notifyObservers(this, prop);
-		}
-	},
-	/**
-		Adds a listener for the given event. Callbacks will be executed with two
-		parameters, _record_ and _event_, where _record_ is the record that is
-		firing the event and _event_ is the name (string) for the event being fired.
-		This method accepts parameters according to the _enyo.ObserverSupport_ API,
-		but does not function in the same way.
-	*/
-	addListener: function (prop, fn, ctx) {
-		return this.store.addListener(this, prop, fn, ctx);
-	},
-	/**
-		Removes a listener. Accepts the name of the event that the listener is
-		registered on and the method returned from the _addListener()_ call (if a
-		_ctx_ was provided). Returns true on successful removal; otherwise, false.
-	*/
-	removeListener: function (prop, fn) {
-		return this.store.removeListener(this, prop, fn);
-	},
-	/**
-		Triggers any listeners for this record's specified event, with optional
-		_args_.
-	*/
-	triggerEvent: function (event, args) {
-		if (!this.silenced) {
-			this.store.triggerEvent(this, event, args);
-		}
-	},
-	/**
 		When creating a new collection, you may pass it an array of records	(either
 		instances or hashes to be converted) and an optional hash of properties to
 		be applied to the collection. Both are optional, meaning that you can supply
 		neither, either one, or both. If both options and data are present, options
-		will be applied first. If the _data_ array is present it will be passed through
-		the `parse` method of the collection.
+		will be applied first. If the _data_ array is present, it will be passed
+		through the _parse_ method of the collection.
 	*/
-	constructor: function (data, opts) {
-		var d  = enyo.isArray(data)? data.slice(): null,
-			o  = opts || (data && !d? data: null);
-		if (o) { this.importProps(o); }
-		this.records = (this.records || []).concat(d? this.parse(d): []);
-		// initialized our length property
-		this.length = this.records.length;
-		// we bind this method to our collection so it can be reused as an event listener
-		// for many records
-		this._recordChanged = enyo.bindSafely(this, this._recordChanged);
-		this._recordDestroyed = enyo.bindSafely(this, this._recordDestroyed);
-		this.euid = enyo.uuid();
-		// attempt to resolve the kind of model if it is a string and not a constructor
-		// for the kind
-		var m = this.model;
-		if (m && enyo.isString(m)) {
-			this.model = enyo.getPath(m);
-		} else {
-			this.model = enyo.checkConstructor(m);
-		}
-		// initialize the store
-		this.storeChanged();
-		this.filters = this.filters || {};
-		// if there are any properties designated for filtering we set those observers
-		if (this.filterProps.length) {
-			var fn = enyo.bindSafely(this, function () { this.triggerEvent("filter"); });
-			for (var j=0, ps=this.filterProps.split(" "), fp; (fp=ps[j]); ++j) {
-				this.addObserver(fp, fn);
+	constructor: enyo.inherit(function (sup) {
+		return function (data, opts) {
+			var d  = enyo.isArray(data)? data.slice(): null,
+				o  = opts || (data && !d? data: null);
+			if (o) { this.importProps(o); }
+			this.records = (this.records || []).concat(d? this.parse(d): []);
+			// initialized our length property
+			this.length = this.records.length;
+			// we bind this method to our collection so it can be reused as an event listener
+			// for many records
+			this._recordChanged   = enyo.bindSafely(this, this._recordChanged);
+			this._recordDestroyed = enyo.bindSafely(this, this._recordDestroyed);
+			this.euid = enyo.uuid();
+			// attempt to resolve the kind of model if it is a string and not a constructor
+			// for the kind
+			var m = this.model;
+			if (m && enyo.isString(m)) {
+				this.model = enyo.getPath(m);
+			} else {
+				this.model = enyo.checkConstructor(m);
 			}
-		}
-		this.addListener("filter", this._filterContent, this);
-		this.addObserver("activeFilter", this._activeFilterChanged, this);
-	},
+			// initialize the store
+			this.storeChanged();
+			this.filters = this.filters || {};
+			// if there are any properties designated for filtering we set those observers
+			if (this.filterProps.length) {
+				var fn = enyo.bindSafely(this, function () { this.triggerEvent("filter"); });
+				for (var j=0, ps=this.filterProps.split(" "), fp; (fp=ps[j]); ++j) {
+					this.addObserver(fp, fn);
+				}
+			}
+			this.addListener("filter", this._filterContent, this);
+			this.addObserver("activeFilter", this._activeFilterChanged, this);
+			data = opts = undefined;
+			sup.apply(this, arguments);
+		};
+	}),
 	/**
 		Destroys the collection and removes all records. This does not destroy the
 		records unless they were created by this collection's _createRecord()_
 		method.	To avoid destroying records that are owned by this collection, set
 		the _preserveRecords_ flag to true.
 	*/
-	destroy: function () {
-		var rr = this.removeAll(), r;
-		for (var k in rr) {
-			r = rr[k];
-			if (r.owner === this) {
-				if (this.preserveRecords) { r.owner = null; }
-				else { r.destroy(); }
+	destroy: enyo.inherit(function (sup) {
+		return function () {
+			var rr = this.removeAll(), r;
+			for (var k in rr) {
+				r = rr[k];
+				if (r.owner === this) {
+					if (this.preserveRecords) { r.owner = null; }
+					else { r.destroy(); }
+				}
 			}
-		}
-		this.triggerEvent("destroy");
-		this.store = null;
-		this.destroyed = true;
-	},
-	/**
-		Retrieves the passed-in _path_ from the collection and returns its value or
-		_undefined_. Note that passing _path_ as an integer is the same as calling
-		_at()_. You cannot use _get()_ to retrieve data from a record in the
-		collection; this will only retrieve properties of the collection.
-	*/
-	get: function (path) {
-		if (path !== null && !isNaN(path)) { return this.at(path); }
-		return enyo.getPath.call(this, path);
-	},
-	/**
-		Sets the value of _path_ to _val_ on the collection. This will not work for
-		setting values on properties of records in the collection. Optional force
-		parameter to notify any observers.
-	*/
-	set: function (path, val, force) {
-		return enyo.setPath.call(this, path, val, force);
-	},
+			this.triggerEvent("destroy");
+			this.store = null;
+			this.removeAllListeners();
+			sup.apply(this, arguments);
+		};
+	}),
 	//*@protected
 	importProps: function (p) {
 		if (p) {
@@ -746,9 +689,9 @@ enyo.kind({
 			var fn = this.filters[this.activeFilter];
 			if (fn && this[fn]) {
 				this.filtering = true;
-				this.silenced = true;
+				this.silence();
 				var r = this[fn]();
-				this.silenced = false;
+				this.unsilence();
 				if (r) {
 					this.reset(true === r? undefined: r);
 				}
@@ -770,8 +713,7 @@ enyo.kind({
 		// will have already been removed, otherwise we remove the record
 		// from the collection
 		if (!this._destroyAll) { this.remove(rec); }
-	},
-	_destroyAll: false
+	}
 });
 
 enyo.Collection.concat = function (ctor, props) {

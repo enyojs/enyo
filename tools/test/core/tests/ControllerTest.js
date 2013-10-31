@@ -1,4 +1,34 @@
 enyo.kind({
+	name: "ControllerTest",
+	kind: enyo.TestSuite,
+	noDefer: true,
+	testGlobalProperty: function () {
+		/*global test:true */
+		var c = enyo.singleton({
+			name: "test.global.controller",
+			kind: "enyo.Controller",
+			global: true
+		});
+		this.finish(
+			(c !== test.global.controller && "controller was not set globally as expected")
+		);
+	},
+	testGlobalInComponent: function () {
+		var a = enyo.singleton({
+			kind: "enyo.Application",
+			components: [
+				{name: "controller", global: true}
+			]
+		});
+		this.finish(
+			(!window.controller && "controller was not set globally ever") ||
+			((a.destroy() || true) && !window.controller && "controller removed from global scope when owner destroyed") ||
+			(window.controller.destroyed && "controller was destroyed when owner was destroyed")
+		);
+	}
+});
+
+enyo.kind({
 	name: "ModelControllerTest",
 	kind: enyo.TestSuite,
 	noDefer: true,
@@ -96,10 +126,10 @@ enyo.kind({
 			m  = new enyo.Model({prop1: "1"}), p;
 		mc.set("model", m);
 		p = c.prop1;
-		mc.set("model", undefined);
+		mc.set("model", null);
 		this.finish(
 			(p != "1" && "the previous value was somehow incorrect meaning the binding didn't fire to begin with") ||
-			(c.prop1 !== undefined && "clearing the model on the controller did not sync the binding to undefined as expected")
+			(c.prop1 !== null && "clearing the model on the controller did not sync the binding to null as expected")
 		);
 	}
 });

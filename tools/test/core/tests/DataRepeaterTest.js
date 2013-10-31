@@ -37,7 +37,7 @@ enyo.kind({
 			}
 			c.add(r$);
 			testControl.renderInto(div);
-			repeater.set("controller", c);
+			repeater.set("collection", c);
 
 			// Test selection disabled
 			repeater.set("selection", false);
@@ -171,11 +171,11 @@ enyo.kind({
 
 			// isSelected
 			repeater.deselectAll();
-			if (repeater.isSelected(repeater.controller.at(102))) {
+			if (repeater.isSelected(repeater.collection.at(102))) {
 				throw "isSelected for non-selected item returned true";
 			}
 			repeater.select(102);
-			if (!repeater.isSelected(repeater.controller.at(102))) {
+			if (!repeater.isSelected(repeater.collection.at(102))) {
 				throw "isSelected for selected item returned false";
 			}
 
@@ -188,7 +188,7 @@ enyo.kind({
 	testAddRemoveAddDataList: function () {
 		var d = [{index: 0}, {index: 1}, {index: 2}],
 			c = new enyo.Collection(d),
-			r = new enyo.DataList({controller: c}),
+			r = new enyo.DataList({collection: c, renderDelay: null}),
 			// the reason we are looking at the node is because synchronously executing this code
 			// means we cannot be sure that the children will have been claimed by active JavaScript
 			// objects yet

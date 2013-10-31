@@ -20,12 +20,12 @@ enyo.kind({
 		);
 	},
 	testSetAttribute: function () {
-		var m = new enyo.Model(null, {store: test.store});
+		var m = new enyo.Model({id: 1000}, {store: test.store});
 		m.set("prop", true);
 		this.finish(m.attributes.prop !== true && "did not properly set the attribute value");
 	},
 	testGetAttribute: function () {
-		var m = test.store.findLocal({kindName: "enyo.Model"})[0],
+		var m = test.store.findLocal({kindName: "enyo.Model", id: 1000}),
 			v = m.get("prop");
 		m.destroyLocal();
 		this.finish(v !== true && "did not properly retrieve the attribute value");
@@ -53,6 +53,21 @@ enyo.kind({
 		m.set("id", 71);
 		m.destroyLocal();
 		this.finish(id != 71 && "event did not fire as expected");
+	},
+	testAddListenerContext: function () {
+		var c = new enyo.Control(),
+			m = new enyo.Model({store: test.store}),
+			r = {},
+			f = function () { r.contextReference = this.id; };
+		// test with context and string
+		c.contextString = function () { r.contextString = this.id; };
+		m.addListener("testEvent", "contextString", c);
+		m.addListener("testEvent", f, c);
+		m.triggerEvent("testEvent");
+		this.finish(
+			(r.contextString != c.id && "string was not resolved to context") ||
+			(r.contextReference != c.id && "function reference not bound to context")
+		);
 	},
 	testGetRaw: function () {
 		var o = {prop1: "prop1", prop2: true, prop3: "prop3"},
@@ -128,31 +143,31 @@ enyo.kind({
 		);
 	},
 	testAddRecords: function () {
-		var c = new enyo.Collection();
+		var c = new enyo.Collection({store: new enyo.Store()});
 		c.add([{id:70},{id:71}]);
 		this.finish(c.length != 2 && "did not add the records properly");
 	},
 	testRemoveRecord: function () {
-		var c = new enyo.Collection();
+		var c = new enyo.Collection({store: new enyo.Store()});
 		for (var i=0; i<30; ++i) { c.add({id: i}); }
 		c.remove(c.at(1));
 		this.finish(c.length != 29 && "did not remove single record from the collection");
 	},
 	testRemoveRecords: function () {
-		var c = new enyo.Collection(), r;
+		var c = new enyo.Collection({store: new enyo.Store()}), r;
 		for (var i=0; i<30; ++i) { c.add({id: i}); }
 		for (i=0, r=[]; i<15; ++i) { r.push(c.at(i)); }
 		c.remove(r);
 		this.finish(c.length != 15 && "did not correctly remove 15 records from the collection");
 	},
 	testRemoveAll: function () {
-		var c = new enyo.Collection();
+		var c = new enyo.Collection({store: new enyo.Store()});
 		for (var i=0; i<30; ++i) { c.add({id: i}); }
 		c.removeAll();
 		this.finish(c.length !== 0 && "did not remove all records from the collection as expected");
 	},
 	testThatDestroyedRecordIsRemovedFromCollection: function () {
-		var c = new enyo.Collection();
+		var c = new enyo.Collection({store: new enyo.Store()});
 		c.add({id: 1});
 		var r = c.at(0);
 		r.destroyLocal();
@@ -228,7 +243,7 @@ enyo.kind({
 	},
 	testAddRemoveAdd: function () {
 		var r = [{id:1},{id:2},{id:3}],
-			c = new enyo.Collection();
+			c = new enyo.Collection({store: new enyo.Store()});
 		c.add(r);
 		c.removeAll();
 		c.add(r);

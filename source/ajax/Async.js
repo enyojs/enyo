@@ -11,8 +11,8 @@
 	encounters an error.
 
 	More information on _Async_ and its usage is available in the documentation	on
-	[Consuming Web Services](building-apps/consuming-web-services.html) in the
-	Enyo Developer Guide.
+	[Consuming Web Services](building-apps/managing-data/consuming-web-services.html)
+	in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Async",
@@ -35,6 +35,15 @@ enyo.kind({
 			this.progressHandlers = [];
 		};
 	}),
+	destroy: enyo.inherit(function (sup) {
+		return function() {
+			if (this.timeoutJob) {
+				this.clearTimeout();
+			}
+			sup.apply(this, arguments);
+		};
+	}),
+
 	accumulate: function(inArray, inMethodArgs) {
 		var fn = (inMethodArgs.length < 2) ? inMethodArgs[0] : enyo.bind(inMethodArgs[0], inMethodArgs[1]);
 		inArray.push(fn);

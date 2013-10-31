@@ -1,21 +1,4 @@
 (function (enyo) {
-	//*@protected
-	function flattenTree (p, tree) {
-		var t  = tree || p.tree || (p.tree=[]),
-			ch = p.children;
-		for (var i=0, c; (c=ch[i]); ++i) {
-			t.push(c);
-			flattenTree(c, t);
-		}
-	}
-	function updateIds (p) {
-		for (var i=0, t=p.tree, pr, c; (c=t[i]); ++i) {
-			pr = c.id;
-			c.id = c.makeId();
-			c.idChanged(pr);
-			if (!p.flyweighter) { c.node = document.getElementById(c.id); }
-		}
-	}
 	//*@public
 	/**
 		_enyo.RepeaterChildSupport_ contains methods and properties that are
@@ -55,7 +38,7 @@
 				sup.apply(this, arguments);
 			};
 		}),
-		_selectionHandler: function (sender, event) {
+		_selectionHandler: function () {
 			if (this.repeater.selection && !this.get("disabled")) {
 				this.set("selected", !this.selected);
 			}
@@ -68,22 +51,6 @@
 		createClientComponents: enyo.inherit(function () {
 			return function (components) {
 				this.createComponents(components, {owner: this});
-			};
-		}),
-		/**
-			Override this so each time we set an _id_ on a top-level child of a _list_
-			it will properly update the _computed id_ of its own children recursively.
-			It should be noted that the more complex and deep the child's component hierarchy
-			(whose ownership is traced back to this child) the more expensive this method.
-		*/
-		idChanged: enyo.inherit(function (sup) {
-			return function () {
-				// now we update all of the id's so they are unique as far as the controls
-				// we're aware of go
-				if (this.tree) { updateIds(this); }
-				sup.apply(this, arguments);
-				// if we're not the flyweighter we need to grab our node now
-				if (!this.flyweighter) { this.node = document.getElementById(this.id); }
 			};
 		}),
 		/**
@@ -101,15 +68,17 @@
 		create: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
-				// now that we will have (should have) initialized our component tree proper
-				// we can cache a flattened version of this tree
-				flattenTree(this);
 				var r = this.repeater,
 					s = r.selectionProperty;
 				// this property will only be set if the instance of the repeater needs
 				// to track the selected state from the view and model and keep them in sync
 				if (s) {
-					var bnd = this.binding({from: ".model." + s, to: ".selected", oneWay: false, kind: enyo.BooleanBinding});
+					var bnd = this.binding({
+						from: ".model." + s,
+						to: ".selected",
+						oneWay: false,
+						kind: enyo.BooleanBinding
+					});
 					this._selectionBindingId = bnd.id;
 				}
 			};

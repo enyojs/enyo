@@ -7,7 +7,7 @@ enyo.kind({
 	name: "enyo.BooleanBinding",
 	kind: enyo.Binding,
 	//*@protected
-	transform: function (value, direction, binding) {
+	transform: function (value) {
 		return !! value;
 	}
 });
@@ -21,7 +21,7 @@ enyo.kind({
 	name: "enyo.EmptyBinding",
 	kind: enyo.Binding,
 	//*@protected
-	transform: function (value, direction, binding) {
+	transform: function (value) {
 		return (value !== "" && value != null);
 	}
 });
