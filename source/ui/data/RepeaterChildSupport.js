@@ -58,9 +58,11 @@
 		*/
 		dispatchEvent: enyo.inherit(function (sup) {
 			return function (name, event, sender) {
-				if (name == "ontap" && !event._fromRepeaterChild) {
-					this._selectionHandler(sender, event);
-					event._fromRepeaterChild = true;
+				if (!event._fromRepeaterChild) {
+					if (!!~enyo.indexOf(name, this.repeater.selectionEvents)) {
+						this._selectionHandler();
+						event._fromRepeaterChild = true;
+					}
 				}
 				return sup.apply(this, arguments);
 			};
