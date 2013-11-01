@@ -1,11 +1,158 @@
 {
     "palette": [
        {
-            "name": "Enyo",
+            "name": "enyo",
             "items": [
                 {
+                    "name": "Empty kind",
+                    "description": "An empty control",
+                    "config": {}
+                },
+                {
+                    "name": "enyo.Anchor",
+                    "description": "A HTML anchor",
+                    "config": {
+                        "kind": "enyo.Anchor",
+                        "content": "Anchor"
+                    }
+                },
+                {
+                    "name": "enyo.Audio",
+                    "description": "An audio stream",
+                    "config": {
+                        "kind": "enyo.Audio",
+                        "src": "http://www.w3schools.com/tags/horse.mp3",
+                        "showControls": true
+                    }
+                },
+                {
+                    "name": "enyo.Button",
+                    "description": "An button",
+                    "config": {
+                        "kind": "enyo.Button",
+                        "content": "Button"
+                    }
+                },
+                {
+                    "name": "enyo.Checkbox",
+                    "description": "A checkbox",
+                    "config": {
+                        "kind": "enyo.Checkbox"
+                    }
+                },
+                {
+                    "name": "enyo.Control",
+                    "description": "A simple control",
+                    "config": {
+                        "kind": "enyo.Control"
+                    }
+                },
+                {
+                    "name": "enyo.Drawer",
+                    "description": "A drawer",
+                    "config": {
+                        "kind": "enyo.Drawer"
+                    }
+                },
+                {
+                    "name": "enyo.FlyweightRepeater",
+                    "description": "A flyweight repeater",
+                    "config": {
+                        "kind": "enyo.FlyweightRepeater"
+                    }
+                },
+                {
+                    "name": "enyo.Group",
+                    "description": "A group",
+                    "config": {
+                        "kind": "enyo.Group"
+                    }
+                },
+                {
+                    "name": "enyo.GroupItem",
+                    "description": "A group item",
+                    "config": {
+                        "kind": "enyo.GroupItem"
+                    }
+                },
+                {
+                    "name": "enyo.Image",
+                    "description": "An image",
+                    "config": {
+                        "kind": "enyo.Image",
+                        "src": "http://enyojs.com/gallery/images/enyo-logo.png"
+                    }
+                },
+                {
+                    "name": "enyo.Input",
+                    "description": "An text input",
+                    "config": {
+                        "kind": "enyo.Input"
+                    }
+                },
+                {
+                    "name": "enyo.Media",
+                    "description": "A HTML5 media element",
+                    "config": {
+                        "kind": "enyo.Media",
+                        "src": "http://www.w3schools.com/tags/horse.mp3",
+                        "showControls": true
+                    }
+                },
+                {
+                    "name": "enyo.Option",
+                    "description": "An option",
+                    "config": {
+                        "kind": "enyo.Option"
+                    }
+                },
+                {
+                    "name": "enyo.PanZoomView",
+                    "description": "A panzoom view",
+                    "config": {
+                        "kind": "enyo.PanZoomView",
+                        "components": [
+                            {"content": "Hello World"}
+                        ]
+                    }                    
+                },
+                {
+                    "name": "enyo.Popup",
+                    "description": "A popup",
+                    "config": {
+                        "kind": "enyo.Popup"
+                    }
+                },
+                {
+                    "name": "enyo.RichText",
+                    "description": "A rich text input",
+                    "config": {
+                        "kind": "enyo.RichText"
+                    }
+                },
+                {
+                    "name": "enyo.Repeater",
+                    "description": "A repeater",
+                    "config": {
+                        "kind": "enyo.Repeater"
+                    },
+                    "options": {
+                        "isRepeater": true
+                    }
+                },
+                {
+                    "name": "enyo.Select",
+                    "description": "A select",
+                    "config": {
+                        "kind": "enyo.Select",
+                        "components": [
+                            {"content": "Descending", "value": "d"},
+                            {"content": "Ascending", "value": "a"}
+                        ]
+                    }
+                },
+                {
                     "name": "enyo.Scroller",
-                    "kind": "enyo.Scroller",
                     "description": "A scroller",
                     "config": {
                         "kind": "enyo.Scroller",
@@ -13,14 +160,236 @@
                     }
                 },
                 {
-                    "name": "enyo.Repeater",
-                    "kind": "enyo.Repeater",
-                    "description": "A repeater",
+                    "name": "enyo.ScrollThumb",
+                    "description": "A scroll thumb",
                     "config": {
-                        "kind": "enyo.Repeater"
-                    },
-                    "options": {
-                        "isRepeater": true
+                        "kind": "enyo.ScrollThumb"
+                    }
+                },
+                {
+                    "name": "enyo.TextArea",
+                    "description": "A multi-line text input",
+                    "config": {
+                        "kind": "enyo.TextArea"
+                    }
+                },
+                {
+                    "name": "enyo.ToolDecorator",
+                    "description": "A tool decorator",
+                    "config": {
+                        "kind": "enyo.ToolDecorator"
+                    }
+                },
+                {
+                    "name": "enyo.Video",
+                    "description": "A video stream",
+                    "config": {
+                        "kind": "enyo.Video",
+                        "src": "http://www.w3schools.com/html/movie.mp4",
+                        "showControls": true
+                    }
+                }
+            ]
+        },
+        {
+            "name": "enyo-data",
+            "items": [
+                {
+                    "name": "enyo.DataGridList",
+                    "description": "A pagined data grid list",
+                    "config": {
+                        "kind": "enyo.DataGridList"
+                    }
+                },
+                {
+                    "name": "enyo.DataList",
+                    "description": "A grid list",
+                    "config": {
+                        "kind": "enyo.DataList"
+                    }
+                },
+                {
+                    "name": "enyo.DataRepeater",
+                    "description": "A data repeater",
+                    "config": {
+                        "kind": "enyo.DataRepeater"
+                    }
+                },
+                {
+                    "name": "enyo.DataTable",
+                    "description": "A data table",
+                    "config": {
+                        "kind": "enyo.DataTable"
+                    }
+                },
+                {
+                    "name": "enyo.GridFlyWeightRepeater",
+                    "description": "A grid flyweight repeater",
+                    "config": {
+                        "kind": "enyo.GridFlyWeightRepeater"
+                    }
+                },
+                {
+                    "name": "enyo.GridList",
+                    "description": "A grid list",
+                    "config": {
+                        "kind": "enyo.GridList",
+                        "components": [
+                            {"kind": "enyo.Image", "name": "img"}
+                        ]
+                    }
+                },
+                {
+                    "name": "enyo.GridListImageItem",
+                    "description": "A grid list image item",
+                    "config": {
+                        "kind": "enyo.GridListImageItem"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "enyo-table",
+            "items": [
+                {
+                    "name": "enyo.Table",
+                    "description": "A table",
+                    "config": {
+                        "kind": "enyo.Table"
+                    }
+                },
+                {
+                    "name": "enyo.TableRow",
+                    "description": "A table row",
+                    "config": {
+                        "kind": "enyo.TableRow"
+                    }
+                },
+                {
+                    "name": "enyo.TableCell",
+                    "description": "A table cell",
+                    "config": {
+                        "kind": "enyo.TableCell"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "ignore",
+            "items": [
+                {
+                    "name": "enyo.Application",
+                    "description": "An application",
+                    "config": {
+                        "kind": "enyo.Application"
+                    }
+                },
+                {
+                    "name": "enyo.Animator",
+                    "description": "A animator",
+                    "config": {
+                        "kind": "enyo.Animator"
+                    }
+                },
+                {
+                    "name": "enyo.Controller",
+                    "description": "A controller",
+                    "config": {
+                        "kind": "enyo.Controller"
+                    }
+                },
+                {
+                    "name": "enyo.DragAvatar",
+                    "description": "A drag and drop avatar",
+                    "config": {
+                        "kind": "enyo.DragAvatar",
+                        "components": [
+                            {"tag": "img", "src": "http://enyojs.com/gallery/images/enyo-logo.png"}
+                        ]
+                    }
+                },
+                {
+                    "name": "enyo.ModelController",
+                    "description": "A model controller",
+                    "config": {
+                        "kind": "enyo.ModelController"
+                    }
+                },
+                {
+                    "name": "enyo.MultipleDispatchComponent",
+                    "description": "A multiple dispatch component",
+                    "config": {
+                        "kind": "enyo.MultipleDispatchComponent"
+                    }
+                },
+                {
+                    "name": "enyo.OwnerProxy",
+                    "description": "Enyo component to hide",
+                    "config": {
+                        "kind": "enyo.OwnerProxy"
+                    }
+                },
+                {
+                    "name": "enyo.ScrollMath",
+                    "description": "A scroll math",
+                    "config": {
+                        "kind": "enyo.ScrollMath"
+                    }
+                },
+                {
+                    "name": "enyo.ScrollStrategy",
+                    "description": "Enyo component to hide",
+                    "config": {
+                        "kind": "enyo.ScrollStrategy"
+                    }
+                },
+                {
+                    "name": "enyo.Selection",
+                    "description": "Enyo component to hide",
+                    "config": {
+                        "kind": "enyo.Selection"
+                    }
+                },
+                {
+                    "name": "enyo.Signals",
+                    "description": "Enyo component to hide",
+                    "config": {
+                        "kind": "enyo.Signals"
+                    }
+                },
+                {
+                    "name": "enyo.TouchScrollStrategy",
+                    "description": "Enyo component to hide",
+                    "config": {
+                        "kind": "enyo.TouchScrollStrategy"
+                    }
+                },
+                {
+                    "name": "enyo.TransitionScrollStrategy",
+                    "description": "Enyo component to hide",
+                    "config": {
+                        "kind": "enyo.TransitionScrollStrategy"
+                    }
+                },
+                {
+                    "name": "enyo.TranslateScrollStrategy",
+                    "description": "Enyo component to hide",
+                    "config": {
+                        "kind": "enyo.TranslateScrollStrategy"
+                    }
+                },
+                {
+                    "name": "enyo.UiComponent",
+                    "description": "Enyo component to hide",
+                    "config": {
+                        "kind": "enyo.UiComponent"
+                    }
+                },
+                {
+                    "name": "enyo.ViewController",
+                    "description": "Enyo component to hide",
+                    "config": {
+                        "kind": "enyo.ViewController"
                     }
                 }
             ]
@@ -33,6 +402,24 @@
             "events": {
                 "onSetupItem": {
                     "filterLevel": "useful"
+                }
+            }
+        },
+        {
+            "type": "kind",
+            "name": "enyo.Scroller",
+            "properties": {
+                "strategyKind": {
+                    "filterLevel": "useful",
+                    "inputKind": {
+                        "kind": "Inspector.Config.Select",
+                        "values": [
+                            "ScrollStrategy",
+                            "TouchScrollStrategy",
+                            "TranslateScrollStrategy",
+                            "TransitionScrollStrategy"
+                        ]
+                    }
                 }
             }
         }
