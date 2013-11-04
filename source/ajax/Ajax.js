@@ -44,20 +44,20 @@ enyo.kind({
 	either Strings or Objects.
 
 	_inParams_ as an Object is converted into the url query string. For
-	instance, passing <code>{q: "searchTerm"}</code> will result in the addition
-	of the string `q="searchTerm"` to the current url query string.
+	instance, passing _{q: "searchTerm"}_ will result in the addition
+	of the string _q="searchTerm"_ to the current url query string.
 
 	_inParams_ as a String is used as the query part of the URL directly.
 
 	_inParams_ will not be converted into a POST body, it will always be used as
-	part of the URL query string if provided.  Use the `postBody` property for
+	part of the URL query string if provided.  Use the _postBody_ property for
 	specifying a body.
 
-	When the request is completed, the code will set a `xhrResponse` property
-	in the `enyo.Ajax` object with the subproperties `status`, `headers`, and
-	`body`.  These cache the results from the XHR for later use.  The keys for
-	the `headers` object have been converted to all lower case as HTTP headers
-	are case-insensitive.
+	When the request is completed, the code will set an _xhrResponse_ property
+	on the _enyo.Ajax_ object with the subproperties _status_, _headers_, and
+	_body_.  These cache the results from the XHR for later use.  The keys for
+	the _headers_ object are converted to all lowercase, as HTTP headers are
+	case-insensitive.
 	*/
 	go: function(inParams) {
 		this.failed = false;
