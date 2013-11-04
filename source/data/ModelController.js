@@ -102,7 +102,9 @@ enyo.kind({
 	create: enyo.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
-			this.notifyObservers("model");
+			if (this.model) {
+				this.notifyObservers("model", null, this.model);
+			}
 		};
 	}),
 	constructor: enyo.inherit(function (sup) {
