@@ -44,6 +44,18 @@ enyo.kind({
 			(c.get("content") != "1" && "control's content did not propagate from binding")
 		);
 	},
+	testModelSetAtCreation: function() {
+		var	c  = new enyo.Control();
+		var m  = new enyo.Model({prop1: "0"});
+		var mc = new enyo.ModelController({model: m});
+		var b  = new enyo.Binding({source: mc, from: ".prop1", target: c, to: ".content"});
+		mc.set("prop1", "1");
+		b.destroy();
+		this.finish(
+			(mc.get("prop1") != "1" && "could not retrieve the correct value from the model") ||
+			(c.get("content") != "1" && "control's content did not propagate from binding")
+		);
+	},
 	testTwoWayBinding: function () {
 		var mc = new enyo.ModelController(),
 			c  = new enyo.Control(),
