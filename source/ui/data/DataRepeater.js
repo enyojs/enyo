@@ -1,12 +1,13 @@
 //*@public
 /**
-		_enyo.DataRepeater_ uses [enyo.Collection](#enyo.Collection) as its
-		_controller_ to repeatedly render and synchronize records (instances of
-		[enyo.Model](#enyo.Model)) to its own children. For any record in the
-		collection, a new child will be rendered in this repeater. If the record is
-		destroyed, the child will be destroyed. These controls will	automatically
-		update when properties on the underlying record are modified if they have
-		been bound using bindings (see [enyo.Binding](#enyo.Binding)).
+		_enyo.DataRepeater_ iterates over the items in an
+		[enyo.Collection](#enyo.Collection) to repeatedly render and
+		synchronize  records (instances of [enyo.Model](#enyo.Model)) to its
+		own children. For any record in the collection, a new child will be
+		rendered in this repeater. If  the record is destroyed, the child will
+		be destroyed. These controls will automatically update when the
+		properties on the underlying record are modified if they have been
+		bound using bindings (see [enyo.Binding](#enyo.Binding)).
 */
 enyo.kind({
 	name: "enyo.DataRepeater",
