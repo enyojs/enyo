@@ -114,6 +114,7 @@
 		}),
 		childSize: function (list) {
 			// currently DataGridList is only vertical
+			/*jshint -W093 */
 			return (list.childSize = (list.tileHeight + list.spacing));
 		},
 		/**

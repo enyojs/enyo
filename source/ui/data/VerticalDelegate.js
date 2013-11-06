@@ -187,6 +187,7 @@ enyo.DataList.delegates.vertical = {
 			// update our time for future comparison
 			list._updatedControlsPerPage = enyo.bench();
 		}
+		/*jshint -W093 */
 		return (list.controlsPerPage = perPage);
 	},
 	/**
