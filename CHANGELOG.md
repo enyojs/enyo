@@ -1,3 +1,8 @@
+## 2.3.0-pre.12
+
+_enyo.DataList_ no longer has the _controlsPerPage_ property but instead has a _pageSizeMultiplier_ value
+as it now dynamically determines the number of controls for a given page.
+
 ## 2.3.0-pre.11
 
 Enyo now supports the W3C pointer events recommendation and will use those in
@@ -50,6 +55,13 @@ _enyo.Scroller_ and _enyo.ScrollStrategy_ have been updated to normalize new pro
 on the returned hash of _getScrollBounds()_. It now will indicate via the xDir and yDir properties
 a 1 (positive movement along the axis), -1 (negative movement along the axis) or 0 (no movement on
 the axis).
+
+_enyo.Store_ built-in methods: _didFetch()_, _didCommit()_, _didFail()_ have new method signatures
+in the form _rec, opts, res_ from an _enyo.Source_. An _enyo.XHRSource_ adds a fourth parameter that
+is the XHR object reference.
+
+_enyo.DataRepeater_ has a new property _selectionEvents_ to allow for mapping other events to the
+selection process previously tied only to _ontap_.
 
 ## 2.3.0-pre.10 (9 October 2013)
 

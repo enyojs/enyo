@@ -153,10 +153,9 @@ enyo.kind({
 					"use the `components` property and update any bindings referencing `controllers` to " +
 					"use `$` instead"
 				);
-				var p = ctor.prototype || ctor;
 				// we merge the controllers with components here to reduce initialization necessary
 				// at runtime -- the _controllers_ property should be fully removed in a future release
-				p.components = (p.components? p.components.concat(props.controllers): props.controllers.slice());
+				props.components = (props.components? props.components.concat(props.controllers): props.controllers.slice());
 				delete props.controllers;
 			}
 		}

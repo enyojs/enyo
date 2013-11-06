@@ -23,10 +23,11 @@ enyo.kind({
 			components: [
 				{name:"repeater", kind: kind, components: [
 					{bindings: [{from: ".model.text", to: ".content"}]}
-				]},
+				], renderDelay: null},
 				{name: "selected"}
 			]
 		});
+		testControl.renderInto(div);
 		try {
 			// Setup test environment
 			var repeater = testControl.$.repeater;
@@ -188,7 +189,7 @@ enyo.kind({
 	testAddRemoveAddDataList: function () {
 		var d = [{index: 0}, {index: 1}, {index: 2}],
 			c = new enyo.Collection(d),
-			r = new enyo.DataList({collection: c, renderDelay: null}),
+			r = new enyo.DataList({collection: c, renderDelay: null, style: "height: 300px !important;"}),
 			// the reason we are looking at the node is because synchronously executing this code
 			// means we cannot be sure that the children will have been claimed by active JavaScript
 			// objects yet

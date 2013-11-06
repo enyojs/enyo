@@ -45,6 +45,12 @@ enyo.kind({
 	*/
 	selectionProperty: "",
 	/**
+		Set this to a space-delimited string of events or an array that can trigger
+		the selection of a particular child. By default it is simply the _ontap_
+		event. To prevent selection entirely see _selection_ and set it to `false`.
+	*/
+	selectionEvents: "ontap",
+	/**
 		Use this hash to define _defaultBindingProperties_ for _all_ children
 		(even children of children) of this repeater. This can be eliminate the
 		need to write the same paths many times. You can also use any	binding
@@ -79,6 +85,9 @@ enyo.kind({
 	constructor: enyo.inherit(function (sup) {
 		return function () {
 			this._selection = [];
+			// we need to initialize our selectionEvents array
+			var se = this.selectionEvents;
+			this.selectionEvents = (typeof se == "string"? se.split(" "): se);
 			// we need to pre-bind these methods so they can easily be added
 			// and removed as listeners later
 			var h = this._handlers = enyo.clone(this._handlers);
@@ -271,8 +280,9 @@ enyo.kind({
 			r = this.collection.at(index),
 			s = this._selection, i;
 		if (this.selection) {
-			if (this.multipleSelection && (!~enyo.indexOf(r, s))) { s.push(r); }
-			else if (!~enyo.indexOf(r, s)) {
+			if (this.multipleSelection && (!~enyo.indexOf(r, s))) {
+				s.push(r);
+			} else if (!~enyo.indexOf(r, s)) {
 				while (s.length) {
 					i = this.collection.indexOf(s.pop());
 					this.deselect(i);
@@ -357,7 +367,7 @@ enyo.kind({
 			this.reset();
 		}
 	},
-	computed: {selected: [], data: ["controller"]},
+	computed: {selected: [], data: ["controller", "collection"]},
 	noDefer: true,
 	childMixins: [enyo.RepeaterChildSupport],
 	controlParentName: "container",

@@ -15,34 +15,38 @@ enyo.kind({
 	name: "enyo.Video",
 	kind: enyo.Control,
 	published: {
-		//* source URL of the video file, can be relative to the application's HTML file
+		//* Source URL of the video file; may be relative to the application's HTML file
 		src: "",
-		//* Specify multiple sources for the same video file
+		//* Lets you specify multiple sources for the same video file
 		sourceComponents: null,
-		//* source of image file to show when video isn't available
+		//* Source of image file to show when video isn't available
 		poster: "",
-		//* if true, show controls for starting and stopping video player
+		//* If true, controls for starting and stopping the video player are shown
 		showControls: false,
 		/**
-			This value determines if/how the video object should preload. Possible values:
-				auto: preload the video data as soon as possible.
-				metadata: preload only the video metadata.
-				none: do not preload any video data.
+			Determines how (or if) the video object is preloaded. Possible values:
+
+			* "auto": Preload the video data as soon as possible.
+			* "metadata": Preload only the video metadata.
+			* "none": Do not preload any video data.
 		*/
 		preload: "metadata",
-		//* if true, video will automatically start
+		//* If true, video will automatically start playing
 		autoplay: false,
-		//* if true, restart video player from beginning when finished
+		/**
+			If true, when playback is finished, video player will restart from the
+			beginning
+		*/
 		loop: false,
-		//* (webOS only) if true, stretch the video to fill the entire window
+		//* If true, video is stretched to fill the entire window (webOS only).
 		fitToWindow: false,
-		//* Video aspect ratio in the format _width:height_
+		//* Video aspect ratio expressed as _width: height_
 		aspectRatio: null,
-		//* jump forward or backward time in seconds
+		//* Number of seconds to jump forward or backward
 		jumpSec: 30,
-		//* set video playbackRate
+		//* Video playback rate
 		playbackRate: 1,
-		//* Hash of playbackRate you can set this hash by
+		//* Mapping of playback rate names to playback rate values
 		playbackRateHash: {
 			fastForward: ["2", "4", "8", "16"],
 			rewind: ["-2", "-4", "-8", "-16"],
@@ -51,14 +55,26 @@ enyo.kind({
 		}
 	},
 	events: {
+		//* Fires when _playbackRate_ is changed to an integer greater than 1.
 		onFastforward: "",
+		//* Fires when _playbackRate_ is changed to a value between 0 and 1.
 		onSlowforward: "",
+		//* Fires when _playbackRate_ is changed to an integer less than -1.
 		onRewind: "",
+		/**
+			Fires when _playbackRate_ is changed to a value less than 0 but greater
+			than or equal to -1.
+		*/		
 		onSlowrewind: "",
+		//* Fires when _jumpForward()_ is called.
 		onJumpForward: "",
+		//* Fires when _jumpBackward()_ is called.
 		onJumpBackward: "",
+		//* Fires when _playbackRate_ is set to 1.
 		onPlay: "",
+		//* Fires when EventData is changed.
 		onStart: "",
+		//* Fires when elements are rendered.
 		onDisableTranslation: ""
 	},
 	handlers: {
@@ -126,11 +142,12 @@ enyo.kind({
 	load: function() {
 		if(this.hasNode()) { this.hasNode().load(); }
 	},
-	//* Unload the current video source, stopping all playback and buffering.
+	//* Unloads the current video source, stopping all playback and buffering.
 	unload: function() {
 		this.set("src", "");
 		this.load();
 	},
+	//* Initiates playback of the media data.
 	play: function() {
 		if (!this.hasNode()) {
 			return;
@@ -139,6 +156,7 @@ enyo.kind({
 		this.node.play();
 		this._prevCommand = "play";
 	},
+	//* Pauses media playback.
 	pause: function() {
 		if (!this.hasNode()) {
 			return;
@@ -147,6 +165,7 @@ enyo.kind({
 		this.node.pause();
 		this._prevCommand = "pause";
 	},
+	//* Changes the playback speed via _this.selectPlaybackRate()_.
 	fastForward: function() {
 		var node = this.hasNode();
 
@@ -198,6 +217,7 @@ enyo.kind({
 		this.setPlaybackRate(this.selectPlaybackRate(this._speedIndex));
 
 	},
+	//* Changes the playback speed via _this.selectPlaybackRate()_.
 	rewind: function() {
 		var node = this.hasNode();
 
@@ -238,6 +258,7 @@ enyo.kind({
 
 		this.setPlaybackRate(this.selectPlaybackRate(this._speedIndex));
 	},
+	//* Jumps backward _jumpSec_ seconds from the current time.
 	jumpBackward: function() {
 		var node = this.hasNode();
 
@@ -251,6 +272,7 @@ enyo.kind({
 
 		this.doJumpBackward(enyo.mixin(this.createEventData(), {jumpSize: this.jumpSec}));
 	},
+	//* Jumps forward _jumpSec_ seconds from the current time.
 	jumpForward: function() {
 		var node = this.hasNode();
 
@@ -264,6 +286,7 @@ enyo.kind({
 
 		this.doJumpForward(enyo.mixin(this.createEventData(), {jumpSize: this.jumpSec}));
 	},
+	//* Jumps to beginning of media source and sets _playbackRate_ to 1.
 	jumpToStart: function() {
 		var node = this.hasNode();
 
@@ -276,6 +299,7 @@ enyo.kind({
 		node.currentTime = 0;
 		this._prevCommand = "jumpToStart";
 	},
+	//* Jumps to end of media source and sets _playbackRate_ to 1.
 	jumpToEnd: function() {
 		var node = this.hasNode();
 
@@ -288,9 +312,11 @@ enyo.kind({
 		node.currentTime = this.node.duration;
 		this._prevCommand = "jumpToEnd";
 	},
+	//* Sets the playback rate type (from the keys of _playBackRateHash_).
 	selectPlaybackRateArray: function(cmd) {
 		this._playbackRateArray = this.playbackRateHash[cmd];
 	},
+	//* Changes _playbackRate_ when initiating fast forward or rewind.
 	clampPlaybackRate: function(index) {
 		if (!this._playbackRateArray) {
 			return;
@@ -298,9 +324,11 @@ enyo.kind({
 
 		return index % this._playbackRateArray.length;
 	},
+	//* Returns the playback rate name for the passed-in index.
 	selectPlaybackRate: function(index) {
 		return this._playbackRateArray[index];
 	},
+	//* Sets _playbackRate_ according to passed-in string.
 	setPlaybackRate: function(inPlaybackRate) {
 		var node = this.hasNode(),
 			pbNumber
@@ -327,33 +355,33 @@ enyo.kind({
 			}
 		}
 	},
-	//* Return true if currently in paused state
+	//* Returns true if currently in paused state.
 	isPaused: function() {
 		return this.hasNode() ? this.hasNode().paused : true;
 	},
-	//* Return current player position in the video (in seconds)
+	//* Returns current player position in the video (in seconds).
 	getCurrentTime: function() {
 		return this.hasNode() ? this.hasNode().currentTime : 0;
 	},
-	//* Return buffered time ranges
+	//* Returns buffered time range.
 	getBufferedTimeRange: function() {
 		return this.hasNode() ? this.hasNode().buffered : 0;
 	},
-	//* Set current player position in the video (in seconds)
+	//* Sets current player position in the video (in seconds).
 	setCurrentTime: function(inTime) {
 		if ((typeof inTime === 'number') && this.hasNode()) {
 			this.node.currentTime = inTime;
 		}
 	},
-	//* Get play duration in the video (in seconds)
+	//* Gets play duration in the video (in seconds).
 	getDuration: function() {
 		return this.hasNode() ? this.hasNode().duration : 0;
 	},
-	//* Get readyState (0~4)
+	//* Gets readyState (0-4).
 	getReadyState: function() {
 		return this.hasNode() ? this.hasNode().readyState : -1;
 	},
-	//* Get seeking status
+	//* Gets seeking status.
 	getSeeking: function() {
 		return this.hasNode() ? this.hasNode().seeking : -1;
 	},
