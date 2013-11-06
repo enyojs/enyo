@@ -67,7 +67,7 @@
 				return sup.apply(this, arguments);
 			};
 		}),
-		create: enyo.inherit(function (sup) {
+		constructed: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				var r = this.repeater,

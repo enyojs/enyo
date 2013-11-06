@@ -196,7 +196,9 @@ enyo.kind({
 		true Because we don't want the event to propagate beyond this kind.
 	*/
 	didScroll: function (sender, event) {
-		this.delegate.didScroll(this, event);
+		if (this.hasRendered) {
+			this.delegate.didScroll(this, event);
+		}
 		return true;
 	},
 	/**
@@ -205,9 +207,11 @@ enyo.kind({
 		we hijack the normal handler.
 	*/
 	didResize: function (sender, event) {
-		this.startJob("resizing", function () {
-			this.delegate.didResize(this, event);
-		}, 60);
+		if (this.hasRendered) {
+			this.startJob("resizing", function () {
+				this.delegate.didResize(this, event);
+			}, 60);
+		}
 	},
 	/**
 		Overload to adjust the root method to be able to find the nested child
