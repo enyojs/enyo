@@ -366,7 +366,7 @@ enyo.kind({
 			this.reset();
 		}
 	},
-	computed: {selected: [], data: ["collection"]},
+	computed: {selected: [], data: ["controller", "collection"]},
 	noDefer: true,
 	childMixins: [enyo.RepeaterChildSupport],
 	controlParentName: "container",
