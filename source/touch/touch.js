@@ -120,6 +120,9 @@ enyo.requiresWindow(function() {
 			enyo.forEach(['ontouchstart', 'ontouchmove', 'ontouchend', 'ongesturestart', 'ongesturechange', 'ongestureend'], function(e) {
 				document[e] = enyo.dispatch;
 			});
+			// on iOS7 document.ongesturechange is never called
+			document.addEventListener("gesturechange", enyo.dispatch, false);
+
 			if (enyo.platform.androidChrome <= 18 || enyo.platform.silk === 2) {
 				// HACK: on Chrome for Android v18 on devices with higher density displays,
 				// document.elementFromPoint expects screen coordinates, not document ones
