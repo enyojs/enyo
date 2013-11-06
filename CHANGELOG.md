@@ -1,3 +1,8 @@
+## 2.3.0-pre.12
+
+_enyo.DataList_ no longer has the _controlsPerPage_ property but instead has a _pageSizeMultiplier_ value
+as it now dynamically determines the number of controls for a given page.
+
 ## 2.3.0-pre.11
 
 Enyo now supports the W3C pointer events recommendation and will use those in

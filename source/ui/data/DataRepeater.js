@@ -280,8 +280,9 @@ enyo.kind({
 			r = this.collection.at(index),
 			s = this._selection, i;
 		if (this.selection) {
-			if (this.multipleSelection && (!~enyo.indexOf(r, s))) { s.push(r); }
-			else if (!~enyo.indexOf(r, s)) {
+			if (this.multipleSelection && (!~enyo.indexOf(r, s))) {
+				s.push(r);
+			} else if (!~enyo.indexOf(r, s)) {
 				while (s.length) {
 					i = this.collection.indexOf(s.pop());
 					this.deselect(i);
@@ -366,7 +367,7 @@ enyo.kind({
 			this.reset();
 		}
 	},
-	computed: {selected: [], data: ["collection"]},
+	computed: {selected: [], data: ["controller", "collection"]},
 	noDefer: true,
 	childMixins: [enyo.RepeaterChildSupport],
 	controlParentName: "container",
