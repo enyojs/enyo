@@ -6,7 +6,6 @@
 		called directly from the list. It is only available to _enyo.DataGridLists_.
 	*/
 	var p = enyo.clone(enyo.DataGridList.delegates.vertical);
-	p.pageSizeMultiplier = 3;
 	enyo.kind.extendMethods(p, {
 		/**
 			Once the list is initially rendered it will generate its scroller (so
@@ -70,7 +69,7 @@
 			Retrieves the default page size.
 		*/
 		defaultPageSize: function (list) {
-			return (Math.ceil(list.controlsPerPage/list.columns) * (list.tileHeight+list.spacing));
+			return (Math.ceil(this.controlsPerPage(list)/list.columns) * (list.tileHeight+list.spacing));
 		},
 		/**
 			Calculates metric values required for the absolute positioning and scaling of
@@ -98,14 +97,24 @@
 		/**
 			The number of controls necessary to fill a page will change depending on some
 			factors such as scaling and list-size adjustments. It is a function of the calculated
-			size required (1.2 * the current boundary height) and the adjusted tile height and
+			size required (pageSizeMultiplier * the current boundary height) and the adjusted tile height and
 			spacing.
 		*/
-		controlsPerPage: function (list) {
-			var ts  = list.tileHeight+list.spacing,
-				hs  = list.boundsCache.height*this.pageSizeMultiplier,
-				cp  = Math.floor(hs/ts)*list.columns;
-			list.controlsPerPage = cp;
+		controlsPerPage: enyo.inherit(function (sup) {
+			return function (list) {
+				var orig    = list._updatedControlsPerPage,
+					perPage = sup.apply(this, arguments);
+				if (orig != list._updatedControlsPerPage) {
+					// we need to adjust this value as it did not take into account
+					// the spacing or the columns
+					perPage = list.controlsPerPage = (perPage * list.columns);
+				}
+				return perPage;
+			};
+		}),
+		childSize: function (list) {
+			// currently DataGridList is only vertical
+			return (list.childSize = (list.tileHeight + list.spacing));
 		},
 		/**
 			Takes a given page and arbitrarily positions its children according to the pre-computed

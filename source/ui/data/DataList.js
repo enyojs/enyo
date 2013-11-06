@@ -38,15 +38,14 @@ enyo.kind({
 	*/
 	orientation: "vertical",
 	/**
-		The maximum number of children to generate for each page. This property may
-		be modified as needed; some platforms perform better with larger values
-		(resulting in larger pages), and others with smaller values (resulting in
-		smaller pages). If the number of children that should be generated is
-		smaller than this value, only the number needed will be generated. For
-		collections of smaller controls, this number may need to be increased, since
-		each page should be larger than the container (so that paging is smooth).
+		This is typically handled automatically but some platforms may benefit from
+		having a larger or smaller value here. If there is a number here it will be
+		multiplied by the available viewport size (depending on orientation) to determine
+		the minimum page size. The page size is directly related to the number of controls
+		that will be generated at any given time (and subsequently needing update)
+		whenever paging occurs. This number can be any rational number greater than _1.2_.
 	*/
-	controlsPerPage: 25,
+	pageSizeMultiplier: null,
 	/**
 		To disable the default smoothing-transitions (for supported platforms) set
 		this flag to `false`.
@@ -96,8 +95,11 @@ enyo.kind({
 	constructor: enyo.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
-			this.metrics = {};
+			this.metrics       = {};
 			this.metrics.pages = {};
+			if (this.pageSizeMultiplier !== null && !isNaN(this.pageSizeMultiplier)) {
+				this.pageSizeMultiplier = Math.max(1.2, this.pageSizeMultiplier);
+			}
 		};
 	}),
 	create: enyo.inherit(function (sup) {
