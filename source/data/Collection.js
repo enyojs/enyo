@@ -379,21 +379,23 @@ enyo.kind({
 		// TODO: there may be even faster ways...
 		var rr = [],
 			d  = {},
-			l  = this.length, x=0, m=0;
+			l  = this.length, x, m;
 		// if not an array, make it one
 		rec = (enyo.isArray(rec) && rec) || [rec];
 		for (var j=0, r, i, k; (r=rec[j]); ++j) {
 			if ((i=this.indexOf(r)) > -1) {
-				if (i <= m) {
+				if (m === undefined || i <= m) {
 					m=i;
 					rr.unshift(i);
-				} else if (i >= x) {
+				}
+				else if (x === undefined || i >= x) {
 					x=i;
 					rr.push(i);
-				} else {
+				}
+				else if (x !== i && m !== i) {
 					k=0;
 					while (rr[k] < i) { ++k; }
-					rr.splice(k-1, 0, i);
+					rr.splice(k, 0, i);
 				}
 				d[i] = r;
 			}
