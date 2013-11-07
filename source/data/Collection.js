@@ -1,16 +1,14 @@
 //*@public
 /**
 	_enyo.Collection_ is an array-like structure that houses collections of
-	[enyo.Model](#enyo.Model) instances. A collection may be set as the
-	_controller_ property of an [enyo.Control](#enyo.Control) or declared in the
-	_components_ block of an _enyo.Application_. Collections are read-only
-	entities in terms of retrieving and setting data via an
-	[enyo.Source](#enyo.Source). Like _enyo.Model_, _enyo.Collection_ has a
-	separate and distinct non-bubbling API.  Collection objects generate _add_,
-	_remove_, _reset_ and _destroy_ events that may be listened for using the
+	[enyo.Model](#enyo.Model) instances. Collections are read-only entities in
+	terms of retrieving and setting data via an [enyo.Source](#enyo.Source).
+	Like _enyo.Model_, _enyo.Collection_ has a separate and distinct non-
+	bubbling notification API.  Collection objects generate _add_, _remove_,
+	_reset_ and _destroy_ events that may be listened for using the
 	_addListener()_ method.
 
-	A collection lazily instantiates records when they are requested. This is 
+	A collection lazily instantiates records when they are requested. This is
 	important to keep in mind with respect to the order of operations.
 */
 enyo.kind({
@@ -96,7 +94,7 @@ enyo.kind({
 		_replace_ is true, all current records in the collection will be removed
 		(though not	destroyed) before adding any results. If this is the case, the
 		method will return an array of any records that were removed.
-		
+
 		The options	may include a _strategy_ for how received data is added to the
 		collection. The _"add"_ strategy (the default) is most efficient; it places
 		each incoming record at the end of the collection. The _"merge"_ strategy
@@ -105,7 +103,7 @@ enyo.kind({
 		the _add_ strategy, if incoming data from _fetch()_ belongs to a record
 		already in the collection, this record will be duplicated and have a unique
 		_euid_.
-	
+
 		This method will call _reset()_ if any filters have been applied to the
 		collection.
 	*/
@@ -297,7 +295,7 @@ enyo.kind({
 		added at the end by default. If additions are made successfully, an _add_
 		event is fired with the array of the indices of any records successfully
 		added. The method also returns this array of indices.
-	
+
 		Records can only be added to an unfiltered dataset. If this method is called
 		while a filter is applied, the collection will be reset prior to adding the
 		records.
@@ -363,7 +361,7 @@ enyo.kind({
 		their former indices). Emits the _remove_ event, which specifies the records
 		that were removed. Unlike the _add_ event, which contains only indices, the
 		_remove_ event has references to the actual records.
-	
+
 		Records can only be removed from the unfiltered dataset. If this method is
 		called while a filter is applied, the collection will be reset prior to
 		removing the records.
@@ -475,7 +473,7 @@ enyo.kind({
 		records; they will simply no longer belong to this collection. If the
 		desired action is to remove and destroy all records, use _destroyAll()_
 		instead. This method returns an array of all of the removed records.
-	
+
 		If _removeAll()_ is called while the collection is in a filtered state, it
 		will reset the collection, clearing any filters, before removing all
 		records.
@@ -489,7 +487,7 @@ enyo.kind({
 		Removes all records from the collection and destroys them. This will still
 		emit the _remove_ event, and any records being destroyed will also emit
 		their own _destroy_ events.
-	
+
 		If _destroyAll()_ is called while the collection is in a filtered state, it
 		will reset the collection, clearing any filters, before destroying all
 		records.
@@ -507,7 +505,7 @@ enyo.kind({
 		Returns the index of the given record if it exists in this collection;
 		otherwise, returns _-1_. Supply an optional offset to begin searching at a
 		non-zero index.
-	
+
 		Note that when _indexOf()_ is used within an active filter,	each subsequent
 		call to _indexOf()_ will only iterate over the current filtered data unless
 		a _reset()_ call is made to restore the entire dataset.
@@ -520,7 +518,7 @@ enyo.kind({
 		return value of _fn_ (under optional context _ctx_), and returning the
 		immutable array of that result. If no context is provided, the function is
 		executed in the context of the collection.
-	
+
 		Note that when _map()_ is used within an active filter, each subsequent call
 		to _map()_ will only iterate over the current filtered data unless a
 		_reset()_ call is made to restore the entire dataset.
@@ -538,7 +536,7 @@ enyo.kind({
 		result set if _fn_ returns false. You may pass in an optional context	_ctx_;
 		otherwise, the function will be executed in the context of this collection.
 		Returns an array of all the records that caused _fn_ to return true.
-	
+
 		Note that when _filter()_ is used within an active filter, each subsequent
 		call to _filter()_ will only iterate over the current filtered data unless a
 		_reset()_ call is made to restore the entire dataset.
