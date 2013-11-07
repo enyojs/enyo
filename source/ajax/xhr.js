@@ -129,7 +129,10 @@ enyo.xhr = {
 		if (a.protocol === "file:" ||
 			a.protocol === ":" && window.location.protocol === "file:") {
 			// leave off search and hash parts of the URL
-			return a.protocol + '//' + a.pathname;
+			// and work around a bug in webOS 3 where the app's host has a domain string
+			// in it that isn't resolved as a path
+			var host = (enyo.platform.webos < 4) ? "" : a.host;
+			return a.protocol + '//' + host + a.pathname;
 		} else if (a.protocol === ":" && window.location.protocol === "x-wmapp0:") {
 			// explicitly return absolute URL for Windows Phone 8, as an absolute path is required for local files
 			return window.location.protocol + "//" + window.location.pathname.split('/')[0] + "/" + a.host + a.pathname;
