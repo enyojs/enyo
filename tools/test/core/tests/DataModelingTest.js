@@ -124,6 +124,20 @@ enyo.kind({
 			(m.attributes.prop6 !== 0 && "'0' attribute ignored unexectedly") ||
 			(m.attributes.prop7 != "prop7" && "new attribute missing")
 		);
+	},
+	testSetObject: function() {
+		// test for ENYO-3538
+		var m = new enyo.Model({ value1: 0, value2: 0});
+		var gotChange = false;
+		m.addListener("change", function() {
+			gotChange = true;
+		});
+		m.setObject({ value1: 1, value2: 0});
+		if (gotChange) {
+			this.finish();
+		} else {
+			this.finish("didn't fire change event for setObject");
+		}
 	}
 });
 
