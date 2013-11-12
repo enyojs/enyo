@@ -110,12 +110,12 @@ enyo.kind({
 			this.delegate = this.ctor.delegates[this.orientation] || this.base.delegates.vertical;
 			// if we can, we use transitions
 			this.allowTransitionsChanged();
-			sup.apply(this, arguments);
 			// if the delegate has an initialization routine execute it now before the
 			// container and children are rendered
 			if (this.delegate.initList) {
 				this.delegate.initList(this);
 			}
+			sup.apply(this, arguments);
 			// initialize the _pages_ array and add the pages to it
 			this.pages = [this.$.page1, this.$.page2];
 		};

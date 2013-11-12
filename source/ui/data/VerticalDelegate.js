@@ -15,12 +15,6 @@ enyo.DataList.delegates.vertical = {
 		by other delegates that wish to share some basic functionality.
 	*/
 	initList: function (list) {
-		if (list.$.scroller.addScrollListener) {
-			list.usingScrollListener = true;
-			list.$.scroller.addScrollListener(
-				enyo.bindSafely(this, "scrollHandler", list)
-			);
-		}
 		list.upperProp = "top";
 		list.lowerProp = "bottom";
 		list.psizeProp = "height";
@@ -95,6 +89,12 @@ enyo.DataList.delegates.vertical = {
 		and apply them to our pages individually.
 	*/
 	rendered: function (list) {
+		if (list.$.scroller.addScrollListener) {
+			list.usingScrollListener = true;
+			list.$.scroller.addScrollListener(
+				enyo.bindSafely(this, "scrollHandler", list)
+			);
+		}
 		// get our initial sizing cached now since we should actually have
 		// bounds at this point
 		this.updateBounds(list);
@@ -412,13 +412,14 @@ enyo.DataList.delegates.vertical = {
 			lastIdx   = pos.lastPage.index,
 			count     = this.pageCount(list)-1,
 			lowerProp = list.lowerProp,
-			upperProp = list.upperProp;
+			upperProp = list.upperProp,
+			fn        = upperProp == "top"? this.height: this.width;
 		// now to update the properties the scroller will use to determine
 		// when we need to be notified of position changes requiring paging
 		if (firstIdx === 0) {
 			threshold[upperProp] = undefined;
 		} else {
-			threshold[upperProp] = metrics[lastIdx][upperProp] - this.height(list);
+			threshold[upperProp] = metrics[lastIdx][upperProp] - fn(list);
 		}
 		if (lastIdx === count) {
 			threshold[lowerProp] = undefined;
