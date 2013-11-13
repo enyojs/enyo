@@ -152,6 +152,7 @@ enyo.kind({
 		if (!this.hasNode()) {
 			return;
 		}
+		this._speedIndex = 0;
 		this.setPlaybackRate(1);
 		this.node.play();
 		this._prevCommand = "play";
@@ -161,6 +162,7 @@ enyo.kind({
 		if (!this.hasNode()) {
 			return;
 		}
+		this._speedIndex = 0;
 		this.setPlaybackRate(1);
 		this.node.pause();
 		this._prevCommand = "pause";
