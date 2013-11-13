@@ -27,7 +27,7 @@ enyo.dispatcher.features.push(function(e) {
 //	be called on _enyo.dispatcher_, and not on the plug-in itself.
 //
 enyo.mixin(enyo.dispatcher, {
-	noCaptureEvents: {load: 1, unload:1, error: 1},
+	noCaptureEvents: {load: 1, unload:1, error: 1, transitionend: 1, animationend: 1},
 	autoForwardEvents: {leave: 1, resize: 1},
 	captures: [],
 	//* Capture events for `inTarget` and optionally forward them
