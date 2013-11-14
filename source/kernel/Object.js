@@ -171,7 +171,8 @@ enyo.kind({
 		// Since JS objects are never truly destroyed (GC'd) until all references are
 		// gone, we might have some delayed action on this object that needs access
 		// to this flag.
-		this.destroyed = true;
+		// Using this.set to make the property observable
+		this.set("destroyed", true);
 	},
 
 	_isObject: true
