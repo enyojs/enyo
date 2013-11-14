@@ -61,8 +61,8 @@ enyo.kind({
 	// END-TODO-POST-2.3
 	create: enyo.inherit(function (sup) {
 		return function() {
-			this.controls = [];
-			this.children = [];
+			this.controls = this.controls || [];
+			this.children = this.children || [];
 			this.containerChanged();
 			sup.apply(this, arguments);
 			this.layoutKindChanged();

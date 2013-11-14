@@ -19,6 +19,10 @@ enyo.DataList.delegates.vertical = {
 		list.lowerProp = "bottom";
 		list.psizeProp = "height";
 		list.ssizeProp = "width";
+		// set the scroller options
+		var so         = list.scrollerOptions || (list.scrollerOptions = {});
+		so.vertical    = "auto";
+		so.horizontal  = "hidden";
 	},
 	/**
 		A hard reset of the list pages and children. Will scroll to the top, reset children
@@ -460,25 +464,15 @@ enyo.DataList.delegates.vertical = {
 		if (!list.usingScrollListener) {
 			var threshold = list.scrollThreshold,
 				bounds    = event.scrollBounds,
-				metrics   = list.metrics.pages,
-				pos       = this.pagesByPosition(list),
 				lowerProp = list.lowerProp,
 				upperProp = list.upperProp;
 			if (bounds.xDir === 1 || bounds.yDir === 1) {
 				if (bounds[upperProp] > threshold[lowerProp]) {
-					if (bounds[upperProp] < metrics[pos.lastPage.index][lowerProp]) {
-						this.scrollHandler(list, bounds);
-					} else {
-						this.resetToPosition(list, bounds[upperProp]);
-					}
+					this.scrollHandler(list, bounds);
 				}
 			} else if (bounds.yDir === -1 || bounds.xDir === -1) {
 				if (bounds[upperProp] < threshold[upperProp]) {
-					if (bounds[upperProp] > metrics[pos.firstPage.index][upperProp]) {
-						this.scrollHandler(list, bounds);
-					} else {
-						this.resetToPosition(list, bounds[upperProp]);
-					}
+					this.scrollHandler(list, bounds);
 				}
 			}
 		}

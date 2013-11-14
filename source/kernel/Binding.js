@@ -193,13 +193,7 @@
 				if (value === undefined) {
 					return;
 				}
-				if (!this.oneWay) {
-					this.disconnectTarget();
-				}
-				this.setTargetValue(value);
-				if (!this.oneWay) {
-					this.connectTarget();
-				}				
+				this.setTargetValue(value);		
 			}
 			this.synchronizing = false;
 		},
@@ -215,9 +209,7 @@
 					if (value === undefined) {
 						return;
 					}
-					this.disconnectSource();
 					this.setSourceValue(value);
-					this.connectSource();
 				}
 				this.synchronizing = false;
 			}
