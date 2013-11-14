@@ -464,8 +464,6 @@ enyo.DataList.delegates.vertical = {
 		if (!list.usingScrollListener) {
 			var threshold = list.scrollThreshold,
 				bounds    = event.scrollBounds,
-				metrics   = list.metrics.pages,
-				pos       = this.pagesByPosition(list),
 				lowerProp = list.lowerProp,
 				upperProp = list.upperProp;
 			if (bounds.xDir === 1 || bounds.yDir === 1) {

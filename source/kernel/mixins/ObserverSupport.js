@@ -375,8 +375,7 @@
 		*/
 		_addObserverToQueue: function (prop, params) {
 			if (this.observerNotificationQueueEnabled) {
-				var q = this.observerNotificationQueue || (this.observerNotificationQueue = {}),
-					en = q[prop];
+				var q = this.observerNotificationQueue || (this.observerNotificationQueue = {});
 				params || (params = []);
 				q[prop] = params;
 			}
@@ -392,7 +391,7 @@
 				// we clone the queue for immutability since this is a synchronous
 				// and recursive method, it does not require a recursive clone however
 				var q = enyo.clone(this.observerNotificationQueue),
-					props;
+					p, props;
 				// now we reset before we begin
 				this.observerNotificationQueue = {};
 				for (p in q) {
