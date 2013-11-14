@@ -280,6 +280,10 @@
 			if (ma) {
 				var o = ma[prop],
 					a = this.observerNotificationsEnabled;
+				if (!a) {
+					this._addObserverToQueue(prop, [prev, value, prop]);
+					return this;
+				}
 				if (typeof o == "string") {
 					o = ma[prop] = enyo.trim(o).split(" ");
 				}
@@ -293,11 +297,7 @@
 					o = o.slice();
 					for (var i=0, n, fn; (n=o[i]); ++i) {
 						if ((fn = this[n])) {
-							if (!a) {
-								this._addObserverToQueue(prop, fn, [prev, value, prop]);
-							} else {
-								fn.call(this, prev, value, prop);
-							}
+							fn.call(this, prev, this.get(prop), prop);
 						}
 					}
 				}
@@ -373,19 +373,12 @@
 		/**
 			Used internally when a notification is queued.
 		*/
-		_addObserverToQueue: function (prop, fn, params) {
+		_addObserverToQueue: function (prop, params) {
 			if (this.observerNotificationQueueEnabled) {
 				var q = this.observerNotificationQueue || (this.observerNotificationQueue = {}),
 					en = q[prop];
 				params || (params = []);
-				if (!en) {
-					q[prop] = [params, fn];
-				} else {
-					en.splice(0, 1, params);
-					if (enyo.indexOf(fn, en) < 0) {
-						en.push(fn);
-					}
-				}
+				q[prop] = params;
 			}
 		},
 		/**
@@ -399,15 +392,13 @@
 				// we clone the queue for immutability since this is a synchronous
 				// and recursive method, it does not require a recursive clone however
 				var q = enyo.clone(this.observerNotificationQueue),
-					fn, p, en, ps, tmp = [];
+					props;
 				// now we reset before we begin
 				this.observerNotificationQueue = {};
 				for (p in q) {
-					en = q[p];
-					ps = enyo.isFunction(en[0])? tmp: en.shift();
-					for (var i=0; (fn=en[i]); ++i) {
-						fn.apply(this, ps);
-					}
+					props = q[p];
+					props.unshift(p);
+					this.notifyObservers.apply(this, props);
 				}
 			}
 		},
