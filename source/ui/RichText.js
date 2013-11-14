@@ -88,6 +88,7 @@ enyo.kind({
 		} else {
 			this.setAttribute("disabled", this.disabled);
 		}
+		this.bubble("onDisabledChange");
 	},
 	updateValue: function() {
 		var val = this.node.innerHTML;
