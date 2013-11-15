@@ -433,12 +433,6 @@ enyo.kind({
 			return r;
 		};
 	}),
-	getScrollBounds: enyo.inherit(function (sup) {
-		return function() {
-			this.stop();
-			return sup.apply(this, arguments);
-		};
-	}),
 	// Thumb processing
 	alertThumbs: function() {
 		this.showThumbs();
