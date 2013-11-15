@@ -1,10 +1,11 @@
 //* @protected
 
 /**
-	Key mapping feature: Adds a _keySymbol_ property to key events, based on a global
-	key mapping.  Use enyo.dispatcher.registerKeyMap to add keyCode-to-keySymbol mappings,
-	via a simple hash.  May be called multiple time from e.g. different libraries (map is
-	mixed into global mapping table), but last-in wins.
+	Key mapping feature: Adds a _keySymbol_ property to key events, based on a
+	global key mapping.  Use _enyo.dispatcher.registerKeyMap()_ to add
+	keyCode-to-keySymbol mappings via a simple hash.  This method may be called
+	multiple times from different libraries to mix different maps into the
+	global mapping table; if conflicts arise, the last-in wins.
 
 		enyo.dispatcher.registerKeyMap({
 			415 : "play",
