@@ -106,9 +106,18 @@ enyo.kind({
 		return function () {
 			// if we can, we use transitions
 			this.allowTransitionsChanged();
-			this.orientationChanged();
+			// map the selected strategy to the correct delegate for operations
+			// on the list, default to _vertical_ if none is provided or if it
+			// could not be found
+			this.delegate = this.ctor.delegates[this.orientation] || this.base.delegates.vertical;
+			// if the delegate has an initialization routine execute it now before the
+			// container and children are rendered
+			if (this.delegate.initList) {
+				this.delegate.initList(this);
+			}
 			sup.apply(this, arguments);
-			this.didCreate = true;
+			// initialize the _pages_ array and add the pages to it
+			this.pages = [this.$.page1, this.$.page2];
 		};
 	}),
 	render: enyo.inherit(function (sup) {
@@ -118,38 +127,6 @@ enyo.kind({
 			sup.apply(this, arguments);
 		};
 	}),
-	orientationChanged: function () {
-		this.controls = this.controls || [];
-		this.children = this.children || [];
-		this.stopAllJobs();
-		this.destroyClientControls();
-		this.destroyComponents();
-		this.controlParent     = null;
-		this.controlParentName = this.ctor.prototype.controlParentName;
-		this.defaultProps      = this.ctor.prototype.defaultProps;
-		if (this.delegate && this.delegate.destroyList) {
-			this.delegate.destroyList(this);
-		}
-		// map the selected strategy to the correct delegate for operations
-		// on the list, default to _vertical_ if none is provided or if it
-		// could not be found
-		this.delegate = this.ctor.delegates[this.orientation] || this.base.delegates.vertical;
-		// if the delegate has an initialization routine execute it now before the
-		// container and children are rendered
-		if (this.delegate.initList) {
-			this.delegate.initList(this);
-		}
-		// we will need to hide this method (the real method) so that the one-time execution
-		// from the create method won't double up what we're doing
-		this._initComponents = this._initComponents || this.initComponents;
-		this.initComponents  = enyo.nop;
-		this._initComponents();
-		// initialize the _pages_ array and add the pages to it
-		this.pages = [this.$.page1, this.$.page2];
-		if (this.didCreate) {
-			this.render();
-		}
-	},
 	/**
 		Attempts to do initialization. There are only a few basic startup paths, but
 		we need to be aware of what they are:
@@ -203,6 +180,14 @@ enyo.kind({
 			this.delegate.modelsRemoved(this, props);
 		}
 	},
+	destroy: enyo.inherit(function (sup) {
+		return function () {
+			if (this.delegate && this.delegate.destroyList) {
+				this.delegate.destroyList(this);
+			}
+			sup.apply(this, arguments);
+		};
+	}),
 	/**
 		Overloaded from base kind to ensure that the container options correctly apply
 		the scroller options before instantiating it.
