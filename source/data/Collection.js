@@ -152,9 +152,9 @@ enyo.kind({
 		if (rr) {
 			// unfortunately we have to mark this all as having been fetched so when they
 			// are instantiated they won't have their _isNew_ flag set to true
-			for (var i=0, rec; (rec=rr[i]); ++i) {
-				if (rec) {
-					rec.isNew = false;
+			for (var i=0, data; (data=rr[i]); ++i) {
+				if (data) {
+					data.isNew = false;
 				}
 			}
 			// even if replace was requested it will have already taken place so we
