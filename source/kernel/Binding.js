@@ -183,22 +183,23 @@
 			return !! (this.sourceRegistered && this.targetRegistered);
 		},
 		syncFromSource: function () {
-			this.synchronizing = true;
-			if (this.isConnected() && this.isRegistered()) {
-				var value = this.getSourceValue(),
-					fn    = this.transform;
-				if (fn && typeof fn == "function") {
-					value = fn.call(this.owner || this, value, "source", this);
+			if (!this.synchronizing) {
+				this.synchronizing = true;
+				if (this.isConnected() && this.isRegistered()) {
+					var value = this.getSourceValue(),
+						fn    = this.transform;
+					if (fn && typeof fn == "function") {
+						value = fn.call(this.owner || this, value, "source", this);
+					}
+					if (value !== undefined) {
+						this.setTargetValue(value);		
+					}
 				}
-				if (value === undefined) {
-					return;
-				}
-				this.setTargetValue(value);		
+				this.synchronizing = false;
 			}
-			this.synchronizing = false;
 		},
 		syncFromTarget: function () {
-			if (!this.oneWay) {
+			if (!this.oneWay && !this.synchronizing) {
 				this.synchronizing = true;
 				if (this.isConnected() && this.isRegistered()) {
 					var value = this.getTargetValue(),
@@ -206,10 +207,9 @@
 					if (fn && typeof fn == "function") {
 						value = fn.call(this.owner || this, value, "target", this);
 					}
-					if (value === undefined) {
-						return;
+					if (value !== undefined) {
+						this.setSourceValue(value);
 					}
-					this.setSourceValue(value);
 				}
 				this.synchronizing = false;
 			}
