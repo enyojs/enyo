@@ -26,8 +26,8 @@
 				list.ssizeProp = "height";
 				// set the scroller options
 				var so         = list.scrollerOptions || (list.scrollerOptions = {});
-				so.vertical    = "hidden";
-				so.horizontal  = "auto";
+				so.vertical    = so.vertical || "hidden";
+				so.horizontal  = so.horizontal || "auto";
 			};
 		}),
 		destroyList: function (list) {

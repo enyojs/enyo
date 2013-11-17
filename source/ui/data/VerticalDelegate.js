@@ -21,8 +21,8 @@ enyo.DataList.delegates.vertical = {
 		list.ssizeProp = "width";
 		// set the scroller options
 		var so         = list.scrollerOptions || (list.scrollerOptions = {});
-		so.vertical    = "auto";
-		so.horizontal  = "hidden";
+		so.vertical    = so.vertical || "auto";
+		so.horizontal  = so.horizontal || "hidden";
 	},
 	/**
 		A hard reset of the list pages and children. Will scroll to the top, reset children
