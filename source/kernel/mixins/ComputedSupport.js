@@ -47,9 +47,9 @@
 	enyo.ComputedSupport = {
 		name: "ComputedSupport",
 		/**
-			Used to identify computed methods and their dependencies (if any).
+			Used to identify computed methods and their dependencies (if any):
+			`computed`
 		*/
-		computed: null,
 		//*@protected
 		get: enyo.inherit(function (sup) {
 			return function (path) {
@@ -150,7 +150,7 @@
 			return (c && c[path] !== undefined && c[path] !== null);
 		},
 		_flushComputedQueue: function () {
-			if (!this.computedQueue) { return; }
+			if (!this.computedQueue || !this.observerNotificationsEnabled) { return; }
 			// forced to throw away old queue object so we don't accidentally
 			// use incorrect values later
 			// also for immutability of the queue we are forced to clone it
@@ -163,10 +163,13 @@
 				// dirty flag to false
 				this.notifyObservers(k, q[k], this._getComputed(k));
 			}
-		},
-		computedMap: null,
-		computedQueue: null,
-		computedCached: null
+		}
+		/**
+			Meta-properties used:
+			`computedMap`
+			`computedQueue`
+			`computedCached`
+		*/
 	};
 	//*@protected
 	var fn = enyo.concatHandler;
