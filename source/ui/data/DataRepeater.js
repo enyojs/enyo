@@ -203,7 +203,7 @@ enyo.kind({
 		// unregister previous collections
 		var c = this.controller;
 		this.controller = undefined;
-		if (c) {
+		if (c && (!this.collection || this.collection !== c)) {
 			this.warn("the `controller` property has been deprecated, please update and use `collection` " +
 				"instead - including any bindings currently mapped directly to `controller`");
 		}
