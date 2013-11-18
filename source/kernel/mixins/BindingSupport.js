@@ -12,21 +12,21 @@ enyo.BindingSupport = {
 	/**
 		While the binding kind may be overloaded on a per-binding basis
 		for objects that intend to use a custom kind for all of their
-		bindings, it may also be set here.
+		bindings, it may also be set here:
+		`defaultBindingKind`
 	*/
-	defaultBindingKind: null,
 	/**
 		Set this to an array of binding declarations that will be created
 		when the object is instantiated. Post-construction, this array will
-		contain a reference to all available bindings on the instance of the kind.
+		contain a reference to all available bindings on the instance of the kind:
+		`bindings`
 	*/
-	bindings: null,
 	/**
 		Set this to a hash of the available options to supply to all bindings
 		created by this object. The defaults will only be used if the specified
-		properties are not found in the binding definition.
+		properties are not found in the binding definition:
+		`bindingDefaults`
 	*/
-	bindingDefaults: null,
 	/**
 		To create a binding on its own (not with the _bindings_ array for the kind),
 		pass the properties to this method. It accepts multiple hashes of properties
@@ -218,8 +218,11 @@ enyo.BindingSupport = {
 		instance once initialized, to reduce object clutter.
 	*/
 	bindingSupportInitialized: false,
-	bindingSyncAllowed: true,
-	bindingSyncQueue: null
+	bindingSyncAllowed: true
+	/**
+		Meta-properties used:
+		`bindingSyncQueue`
+	*/
 };
 //*@protected
 (function (enyo) {

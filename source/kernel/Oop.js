@@ -385,7 +385,7 @@ enyo.kind.statics = {
 		for (var i=0, p; (p=exts[i]); ++i) {
 			enyo.concatHandler(proto, p);
 			enyo.kind.extendMethods(proto, p, true);
-			enyo.mixin(proto, p, {ignore: true, filter: fn});
+			enyo.mixin(proto, p, {/*ignore: true, */filter: fn});
 		}
 		return target || ctor;
 	}

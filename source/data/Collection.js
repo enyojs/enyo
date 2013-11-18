@@ -150,6 +150,13 @@ enyo.kind({
 		var rr = this.parse(res),
 			s  = opts.strategy, fn;
 		if (rr) {
+			// unfortunately we have to mark this all as having been fetched so when they
+			// are instantiated they won't have their _isNew_ flag set to true
+			for (var i=0, data; (data=rr[i]); ++i) {
+				if (data) {
+					data.isNew = false;
+				}
+			}
 			// even if replace was requested it will have already taken place so we
 			// need only evaluate the strategy for merging the new results
 			if ((fn=this[s]) && enyo.isFunction(fn)) {
@@ -574,13 +581,26 @@ enyo.kind({
 		the _preserveRecords_ flag is true.
 	*/
 	createRecord: function (attrs, props, i) {
-		var d = {owner: this},
-			r = this.store.createRecord(this.model, attrs, props? enyo.mixin(d, props): d);
-		i = false === i? -1: (!isNaN(i) && i >= 0? i: this.length);
-		r.addListener("change", this._recordChanged);
-		r.addListener("destroy", this._recordDestroyed);
-		if (i >= 0) { this.add(r, i); }
-		return r;
+		var defaults = {owner: this},
+			rec;
+		// we have to check to see if we marked these attributes as being fetched
+		// by their isNew flag and propagate that properly if so
+		if (attrs && attrs.isNew === false) {
+			(props || defaults).isNew = false;
+			// remove the flag so that it doesn't show up as an attribute of the
+			// the record
+			delete attrs.isNew;
+		}
+		rec = this.store.createRecord(this.model, attrs, (props? enyo.mixin(defaults, props): defaults));
+		// normalize the index we're adding this record at knowing that a false
+		// indicates we don't insert the record (because it probably already is) and
+		// we don't update the entry here because it will be handled in the caller
+		// if that is the case
+		i = (false === i? -1: (i !== null && i >= 0? i: this.length));
+		rec.addListener("change",  this._recordChanged);
+		rec.addListener("destroy", this._recordDestroyed);
+		if (i >= 0) { this.add(rec, i); }
+		return rec;
 	},
 	/**
 		Implement a method called _recordChanged()_ that receives the record, the

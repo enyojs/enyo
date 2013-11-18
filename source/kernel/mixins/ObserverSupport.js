@@ -59,9 +59,9 @@
 	enyo.ObserverSupport = {
 		name: "ObserverSupport",
 		/**
-			Used to identify observers and map them to dependencies.
+			Used to identify observers and map them to dependencies:
+			`observers`
 		*/
-		observers: null,
 		/**
 			Registers an observer for the passed-in property, returning a
 			reference to the handler function being registered, so that it
@@ -388,9 +388,10 @@
 		_flushObserverQueue: function () {
 			if (this.observerStopCount === 0 && this.observerNotificationQueueEnabled) {
 				if (!this.observerNotificationQueue) { return; }
-				// we clone the queue for immutability since this is a synchronous
-				// and recursive method, it does not require a recursive clone however
-				var q = enyo.clone(this.observerNotificationQueue),
+				// because we reassign the queue before iterating over it and because
+				// we aren't storing the actual function references, only properties
+				// to notify for changes, we do not need to clone this queue
+				var q = this.observerNotificationQueue,
 					p, props;
 				// now we reset before we begin
 				this.observerNotificationQueue = {};
@@ -402,10 +403,13 @@
 			}
 		},
 		observerStopCount: 0,
-		observerNotificationQueue: null,
+		/**
+			Meta-properties used:
+			`observerNotificationQueue`
+			`observerMap`
+		*/
 		observerNotificationsEnabled: true,
-		observerNotificationQueueEnabled: true,
-		observerMap: null
+		observerNotificationQueueEnabled: true
 	};
 	//*@protected
 	var addObserverForProperty = function (n, fn, proto, props) {

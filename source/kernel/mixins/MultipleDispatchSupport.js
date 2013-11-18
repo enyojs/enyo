@@ -60,6 +60,9 @@ enyo.MultipleDispatchSupport = {
 			sup.apply(this, arguments);
 		};
 	}),
-	_dispatchTargets: null,
+	/**
+		Meta-properties used:
+		`_dispatchTargets`
+	*/
 	_dispatchDefaultPath: false
 };

@@ -383,6 +383,8 @@
 			// once notifications have taken place we clear the dirty status so the
 			// state of the model is now clean
 			this.dirty = false;
+			// the record can no longer be considered new
+			this.isNew = false;
 			if (opts) {
 				if (opts.success) {
 					opts.success(rec, opts, res);
