@@ -50,12 +50,12 @@
 				// find the url path, ignore quotes in url string
 				var matches = /url\s*\(\s*(('([^']*)')|("([^"]*)")|([^'"]*))\s*\)/.exec(inMatch);
 				var urlPath = matches[3] || matches[5] || matches[6];
-				
+
 				// handle the case url('') or url("").
 				if(!urlPath){
 					return "url()";
 				}
-				
+
 				// skip data urls
 				if (/^data:/.test(urlPath)) {
 					return "url(" + urlPath + ")";
@@ -136,7 +136,7 @@
 	};
 
 	var walkerFinished = function(loader, chunks) {
-		var outfolder = path.dirname(path.join(opt.destdir, opt.output));
+		var outfolder = path.dirname(path.resolve(opt.destdir, opt.output));
 		var exists = fs.existsSync || path.existsSync;
 		var currChunk = 1;
 		var topDepends;
@@ -160,7 +160,7 @@
 						if (css.length) {
 							w("");
 							var cssFile = opt.output + currChunk + ".css";
-							fs.writeFileSync(path.join(opt.destdir, cssFile), css, "utf8");
+							fs.writeFileSync(path.resolve(opt.destdir, cssFile), css, "utf8");
 							if (topDepends) {
 								topDepends.push(cssFile);
 							}
@@ -169,7 +169,7 @@
 						if (js.length) {
 							w("");
 							var jsFile = opt.output + currChunk + ".js";
-							fs.writeFileSync(path.join(opt.destdir, jsFile), js, "utf8");
+							fs.writeFileSync(path.resolve(opt.destdir, jsFile), js, "utf8");
 							if (topDepends) {
 								topDepends.push(jsFile);
 							}
@@ -193,8 +193,8 @@
 				js = js + "enyo.path.addPath(\"lib\", \"lib\");\n";
 				// Add depends for all of the top-level files
 				js = js + "enyo.depends(\n\t\"" + topDepends.join("\",\n\t\"") + "\"\n);";
-				fs.writeFileSync(path.join(opt.destdir, opt.output + ".js"), js, "utf8");
-				fs.writeFileSync(path.join(opt.destdir, opt.output + ".css"), "/* CSS loaded via enyo.depends() call in " + opt.output + ".js */", "utf8");
+				fs.writeFileSync(path.resolve(opt.destdir, opt.output + ".js"), js, "utf8");
+				fs.writeFileSync(path.resolve(opt.destdir, opt.output + ".css"), "/* CSS loaded via enyo.depends() call in " + opt.output + ".js */", "utf8");
 			}
 
 			w("");
@@ -276,12 +276,9 @@
 
 	opt.destdir = opt.destdir || process.cwd();
 	opt.output = opt.output || "build/out";
-	if (path.resolve(opt.output) === opt.output) {
-		throw new Error("-output must be a relative path prefix");
-	}
 
 	w(opt);
 	walker.init(opt.enyo, opt.lib || opt.enyo + "/../lib", opt.mapfrom, opt.mapto);
-	walker.walk('package.js', walkerFinished);
+	walker.walk(path.basename(opt.packagejs), walkerFinished);
 
 })();
