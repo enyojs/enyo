@@ -3,6 +3,12 @@
 _enyo.DataList_ no longer has the _controlsPerPage_ property but instead has a _pageSizeMultiplier_ value
 as it now dynamically determines the number of controls for a given page.
 
+_enyo.Collection's_ _filter()_ method may be called without any parameters to easily apply whatever the
+_activeFilter_ may be set to, if anything. It will return an immutable array of either the filtered content
+or if no _activeFilter_ was present the entire dataset. This is a convenience extension of the original
+behavior and does not modify the existing behavior as it could not be called without parameters previously
+and would throw an error.
+
 ## 2.3.0-pre.11
 
 Enyo now supports the W3C pointer events recommendation and will use those in
