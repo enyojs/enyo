@@ -9,16 +9,20 @@ Needed to revert the change to _enyo.Binding_ from 2.3.0-pre.11. Re-implemented 
 for interrupting transform propagation (as was still indicated by the API docs) and note that bindings
 will again propagate `undefined` values to ensure bindings clear when expected.
 
-## 2.3.0-pre.12
-
-_enyo.DataList_ no longer has the _controlsPerPage_ property but instead has a _pageSizeMultiplier_ value
-as it now dynamically determines the number of controls for a given page.
-
 _enyo.Collection's_ _filter()_ method may be called without any parameters to easily apply whatever the
 _activeFilter_ may be set to, if anything. It will return an immutable array of either the filtered content
 or if no _activeFilter_ was present the entire dataset. This is a convenience extension of the original
 behavior and does not modify the existing behavior as it could not be called without parameters previously
 and would throw an error.
+
+_enyo.DataList's_ _getChildForIndex()_ and now _childForIndex()_ (same method, different name) now correctly
+return `undefined` consistently rather than `false`. This correction is consistent with previous documentation
+and base kind method (inheriting API from _enyo.DataRepeater_).
+
+## 2.3.0-pre.12
+
+_enyo.DataList_ no longer has the _controlsPerPage_ property but instead has a _pageSizeMultiplier_ value
+as it now dynamically determines the number of controls for a given page.
 
 ## 2.3.0-pre.11
 
