@@ -177,19 +177,27 @@
 			Delegate's resize event handler.
 		*/
 		didResize: function (list) {
+			// store the previous stats for comparative purposes
+			var prev = list.boundsCache;
+			
+			// flag the list to have its bounds updated
 			list._updateBounds = true;
 			this.updateMetrics(list);
-			// we need to update all of our page sizes so that the buffer can resize
-			// close to properly
-			list.metrics.pages = {};
+			
+			// if no change it the viewport then we didn't update anything size-wise
+			// and do not need to refresh at all
+			if (
+				prev.left   === list.boundsCache.left  &&
+				prev.top    === list.boundsCache.top   &&
+				prev.width  === list.boundsCache.width &&
+				prev.height === list.boundsCache.height
+			) {
+				return;
+			}
+			
+			// it is necessary to update the content of the list according to our
+			// new sizing
 			this.refresh(list);
-			// find the top page
-			var mx = list.metrics.pages,
-				fi = list.$.page1.index,
-				si = list.$.page2.index,
-				tp = mx[fi].top < mx[si].top? mx[fi].top: mx[si].top;
-			// ensure that the scroller is lined up with one of our pages
-			list.$.scroller.setScrollTop(tp);
 		}
 	}, true);
 	enyo.DataGridList.delegates.verticalGrid = p;
