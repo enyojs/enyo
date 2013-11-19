@@ -55,6 +55,7 @@ enyo.mixin(enyo.dispatcher, {
 			// the way the event propagates. Therefore decide if the event should forward
 			// before the capture target receives the event (since it may release capture).
 			var shouldForward = (this.autoForwardEvents[e.type] || this.forwardEvents);
+			e.captured = true;
 			if (inFromDOM) {
 				// Bubble as DOM event (type has no "on" prefix)
 				this.dispatchBubble(e, c1);
@@ -62,6 +63,7 @@ enyo.mixin(enyo.dispatcher, {
 				// Bubble as custom event (type already "on"-prefixed)
 				c1.dispatchBubble(e.type, e, c1);
 			}
+			delete e.captured;
 			if (!shouldForward) {
 				e.preventDispatch = true;
 			}
