@@ -130,7 +130,7 @@
                 }
 
                 sup.apply(this, arguments);
-            }
+            };
         }),
 
         // enyo.Source interface implementation
@@ -252,7 +252,7 @@
                         if(schema.attributes.indexOf(attr) < 0) {
                             schema.attributes.push(attr);
                         }
-                    })
+                    });
                 }
 
                 schema.primaryKey = rec.primaryKey || opts.primaryKey;
@@ -277,7 +277,7 @@
                 }
 
                 if(opts.where) {
-                    sql[5] = opts.where
+                    sql[5] = opts.where;
                 }
 
                 if(schema.primaryKey) {
@@ -326,7 +326,7 @@
                     }).join();
                 }
 
-                sql[5] = schema.attributes.map(function() {return '?'}).join();
+                sql[5] = schema.attributes.map(function() {return '?';}).join();
 
                 return sql.join(' ');
             },
@@ -400,7 +400,7 @@
                     (function executeStatement(statement) {
                         t.executeSql(statement, null, function(t, r) {
                             if(typeof cb === 'function'
-                                && statemens.length == 0) {
+                                && statemens.length === 0) {
                                 cb();
                                 return;
                             }
