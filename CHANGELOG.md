@@ -1,3 +1,9 @@
+## 2.3.0-pre.13
+
+Needed to revert the change to _enyo.Binding_ from 2.3.0-pre.11. Re-implemented the _stop()_ method
+for interrupting transform propagation (as was still indicated by the API docs) and note that bindings
+will again propagate `undefined` values to ensure bindings clear when expected.
+
 ## 2.3.0-pre.12
 
 _enyo.DataList_ no longer has the _controlsPerPage_ property but instead has a _pageSizeMultiplier_ value
@@ -20,9 +26,9 @@ Removed the _modelChanged()_ and deprecated _controllerChanged()_ base methods f
 thus any developer code currently calling `this.inherited(arguments)` from within an overloaded
 _modelChanged()_ method will fail and needs to be removed. This is a feature change required by ENYO-3339.
 
-Removed the _stop()_ method from _enyo.Binding_ as required by ENYO-3338. Instead of
+~~Removed the _stop()_ method from _enyo.Binding_ as required by ENYO-3338. Instead of
 calling that method via the binding reference in a transform return `undefined`
-(or nothing since `undefined` is the default) to achieve the same behavior.
+(or nothing since `undefined` is the default) to achieve the same behavior.~~
 
 Instances of _enyo.Binding_ will no longer propagate `undefined`; instead use `null`.
 
