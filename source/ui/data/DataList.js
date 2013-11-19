@@ -78,9 +78,9 @@ enyo.kind({
 		internally.
 	*/
 	refresh: function () {
-		this.startJob("refreshing", function () {
+		if (this.hasRendered) {
 			this.delegate.refresh(this);
-		}, 100);
+		}
 	},
 	/**
 		Pass in an integer within the bounds of the lists's collection to have it
@@ -218,16 +218,18 @@ enyo.kind({
 	*/
 	didResize: function (sender, event) {
 		if (this.hasRendered) {
-			this.startJob("resizing", function () {
-				this.delegate.didResize(this, event);
-			}, 60);
+			this.delegate.didResize(this, event);
 		}
 	},
 	/**
 		Overload to adjust the root method to be able to find the nested child
-		based on the requested index.
+		based on the requested index if its page is currently active. Will return
+		undefined if the index is out of bounds or if the control is not currently
+		available.
+	
+		Also see [getChildForIndex](#getChildForIndex) which calls this method.
 	*/
-	getChildForIndex: function (i) {
+	childForIndex: function (i) {
 		return this.delegate.childForIndex(this, i);
 	},
 	//*@protected

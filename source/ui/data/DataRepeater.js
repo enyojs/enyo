@@ -266,8 +266,19 @@ enyo.kind({
 			this.$[this.containerName].render();
 		}
 	},
+	/**
+		Calls _childForIndex()_, leaving for posterity.
+	*/
 	getChildForIndex: function (i) {
-		return this.$.container.children[i];
+		return this.childForIndex(i);
+	},
+	/**
+		Attempts to return the control representation of the data index.
+		Returns the control or undefined if it could not be found or the
+		index of out of bounds.
+	*/
+	childForIndex: function (i) {
+		return this.$.container.children[i];		
 	},
 	data: function () {
 		return this.collection;

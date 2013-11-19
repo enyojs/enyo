@@ -82,7 +82,7 @@ enyo.DataList.delegates.vertical = {
 		for (var i=0, p; (p=list.pages[i]); ++i) {
 			this.generatePage(list, p, p.index);
 		}
-		// adjust their posecondIndextions in case they've changed at all
+		// adjust their positions in case they've changed at all
 		this.adjustPagePositions(list);
 		// now update the buffer
 		this.adjustBuffer(list);
@@ -284,7 +284,6 @@ enyo.DataList.delegates.vertical = {
 				}
 			}
 		}
-		return false;
 	},
 	/**
 		Attempts to inelligently decide when to force updates for models being removed

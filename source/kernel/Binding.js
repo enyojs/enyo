@@ -191,9 +191,7 @@
 					if (fn && typeof fn == "function") {
 						value = fn.call(this.owner || this, value, "source", this);
 					}
-					if (value !== undefined) {
-						this.setTargetValue(value);		
-					}
+					this.setTargetValue(value);		
 				}
 				this.synchronizing = false;
 			}
@@ -207,9 +205,7 @@
 					if (fn && typeof fn == "function") {
 						value = fn.call(this.owner || this, value, "target", this);
 					}
-					if (value !== undefined) {
-						this.setSourceValue(value);
-					}
+					this.setSourceValue(value);
 				}
 				this.synchronizing = false;
 			}
@@ -417,7 +413,11 @@
 					this.destroy();
 					return;
 				}
-				source.set(this.sourceProp, value, !_force.test(typeof value));
+				if (!this.stop) {
+					source.set(this.sourceProp, value, !_force.test(typeof value));
+				} else {
+					this.stop = false;
+				}
 			}
 		},
 		setTargetValue: function (value) {
@@ -427,7 +427,11 @@
 					this.destroy();
 					return;
 				}
-				target.set(this.targetProp, value, !_force.test(typeof value));
+				if (!this.stop) {
+					target.set(this.targetProp, value, !_force.test(typeof value));
+				} else {
+					this.stop = false;
+				}
 			}
 		},
 		//*@public
@@ -485,6 +489,7 @@
 			a reference to the binding.
 		*/
 		refresh: function () {
+			this.stop = false;
 			this.resolve();
 			if (this.autoConnect) {
 				this.connect();
@@ -499,11 +504,19 @@
 			this.disconnect();
 			enyo.mixin(this, this.originals);
 			this.building         = true;
+			this.stop             = false;
 			this.sourceRegistered = false;
 			this.targetRegistered = false;
 			this.registeredSource = null;
 			this.registeredTarget = null;
 			return this;
+		},
+		/**
+			Will cause a single propagation attempt to fail. Typically not called
+			outside the scope of a transform.
+		*/
+		stop: function () {
+			this.stop = true;
 		},
 		/**
 			Rebuilds the entire binding. Will synchronize if it is able to connect and
