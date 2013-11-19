@@ -488,7 +488,7 @@ enyo.kind({
 	removeAll: function () {
 		// no need to call reset prior to remove since it already checks
 		// for the filtered state and calls reset
-		return this.remove(this.records);
+		return this.reset().remove(this.records);
 	},
 	/**
 		Removes all records from the collection and destroys them. This will still
@@ -547,12 +547,22 @@ enyo.kind({
 		Note that when _filter()_ is used within an active filter, each subsequent
 		call to _filter()_ will only iterate over the current filtered data unless a
 		_reset()_ call is made to restore the entire dataset.
+	
+		If _filter()_ is called without any parameters it will apply the _activeFilter_
+		to the dataset if it exists and is not already applied. It will return an immutable
+		array of the filtered records if there was an _activeFilter_ or a copy of the
+		entire unfiltered dataset.
 	*/
 	filter: function (fn, ctx) {
-		ctx = ctx || this;
 		var fs = [];
-		for (var i=0, l=this.length, r; i<l && (r=this.at(i)); ++i) {
-			if (fn.call(ctx, r, i)) { fs.push(r); }
+		if (fn) {
+			ctx = ctx || this;
+			for (var i=0, l=this.length, r; i<l && (r=this.at(i)); ++i) {
+				if (fn.call(ctx, r, i)) { fs.push(r); }
+			}
+		} else {
+			this._activeFilterChanged();
+			fs = this.records.slice();
 		}
 		return fs;
 	},
