@@ -47,6 +47,7 @@ enyo.kind({
 		onRequestHide: "requestHide"
 	},
 	captureEvents: true,
+	eventsToCapture: { down:1, tap:1 },
 	//* @public
 	events: {
 		//* Fires after the popup is shown.
@@ -205,7 +206,7 @@ enyo.kind({
 		};
 	}),
 	capture: function() {
-		enyo.dispatcher.capture(this, !this.modal);
+		enyo.dispatcher.capture(this, !this.modal, this.eventsToCapture);
 	},
 	release: function() {
 		enyo.dispatcher.release(this);
