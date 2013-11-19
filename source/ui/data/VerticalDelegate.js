@@ -39,6 +39,9 @@ enyo.DataList.delegates.vertical = {
 		// now update the buffer
 		this.adjustBuffer(list);
 		list.hasReset = true;
+		// reset the scroller so it will also start from the 'top' whatever that may
+		// be (left/top)
+		list.$.scroller.scrollTo(0, 0);
 	},
 	/**
 		Returns a hash of the pages marked by there position as either 'firstPage' or 'lastPage'.
