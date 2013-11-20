@@ -38,7 +38,6 @@ enyo.kind({
 	//* @protected
 	showing: false,
 	handlers: {
-		ondown: "down",
 		onkeydown: "keydown",
 		ondragstart: "dragstart",
 		onfocus: "focus",
@@ -47,6 +46,7 @@ enyo.kind({
 		onRequestHide: "requestHide"
 	},
 	captureEvents: true,
+	eventsToCapture: { down:1, tap:1 },
 	//* @public
 	events: {
 		//* Fires after the popup is shown.
@@ -77,9 +77,7 @@ enyo.kind({
 	}),
 	destroy: enyo.inherit(function (sup) {
 		return function() {
-			if (this.showing) {
-				this.release();
-			}
+			this.release();
 			sup.apply(this, arguments);
 		};
 	}),
@@ -205,27 +203,36 @@ enyo.kind({
 		};
 	}),
 	capture: function() {
-		enyo.dispatcher.capture(this, !this.modal);
+		enyo.dispatcher.capture(this, this.eventsToCapture, enyo.bind(this, "capturedEvent"), !this.modal);
 	},
 	release: function() {
 		enyo.dispatcher.release(this);
 	},
-	down: function(inSender, inEvent) {
+	capturedEvent: function(inEventName, inEvent, inSender) {
+		switch (inEventName) {
+			case "down":
+				this.capturedDown(inSender, inEvent);
+				break;
+			case "tap":
+				this.capturedTap(inSender, inEvent);
+				break;
+		}
+	},
+	capturedDown: function(inSender, inEvent) {
 		//record the down event to verify in tap
 		this.downEvent = inEvent;
 
 		// prevent focus from shifting outside the popup when modal.
-		if (this.modal && !inEvent.dispatchTarget.isDescendantOf(this)) {
+		if (this.modal) {
 			inEvent.preventDefault();
 		}
 	},
-	tap: function(inSender, inEvent) {
+	capturedTap: function(inSender, inEvent) {
 		// dismiss on tap if property is set and click started & ended outside the popup
 		if (this.autoDismiss && (!inEvent.dispatchTarget.isDescendantOf(this)) && this.downEvent &&
 			(!this.downEvent.dispatchTarget.isDescendantOf(this))) {
 			this.downEvent = null;
 			this.hide();
-			return true;
 		}
 	},
 	// if a drag event occurs outside a popup, hide
