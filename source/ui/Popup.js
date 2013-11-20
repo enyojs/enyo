@@ -77,9 +77,7 @@ enyo.kind({
 	}),
 	destroy: enyo.inherit(function (sup) {
 		return function() {
-			if (this.showing) {
-				this.release();
-			}
+			this.release();
 			sup.apply(this, arguments);
 		};
 	}),
@@ -225,7 +223,7 @@ enyo.kind({
 		this.downEvent = inEvent;
 
 		// prevent focus from shifting outside the popup when modal.
-		if (this.modal && !inEvent.dispatchTarget.isDescendantOf(this)) {
+		if (this.modal) {
 			inEvent.preventDefault();
 		}
 	},
