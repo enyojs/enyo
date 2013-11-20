@@ -20,14 +20,15 @@
 				// add the class
 				list.addClass("horizontal");
 				// set the priority properties
+				list.posProp   = list.rtl ? "right" : "left";
 				list.upperProp = "left";
 				list.lowerProp = "right";
 				list.psizeProp = "width";
 				list.ssizeProp = "height";
 				// set the scroller options
 				var so         = list.scrollerOptions || (list.scrollerOptions = {});
-				so.vertical    = so.vertical || "hidden";
-				so.horizontal  = so.horizontal || "auto";
+				so.vertical    = "hidden";
+				so.horizontal  = "auto";
 			};
 		}),
 		destroyList: function (list) {

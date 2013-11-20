@@ -15,6 +15,7 @@ enyo.DataList.delegates.vertical = {
 		by other delegates that wish to share some basic functionality.
 	*/
 	initList: function (list) {
+		list.posProp   = "top";
 		list.upperProp = "top";
 		list.lowerProp = "bottom";
 		list.psizeProp = "height";
@@ -339,10 +340,11 @@ enyo.DataList.delegates.vertical = {
 			var pi = p.index,
 				cp = this.pagePosition(list, p.index),
 				mx = list.metrics.pages[pi] || (list.metrics.pages[pi] = {}),
+				pp = list.posProp,
 				up = list.upperProp,
 				lp = list.lowerProp,
 				sp = list.psizeProp;
-			p.node.style[up] = cp + "px";
+			p.node.style[pp] = cp + "px";
 			p[up] = mx[up] = cp;
 			p[lp] = mx[lp] = (mx[sp] + cp);
 		}
