@@ -12,6 +12,18 @@ enyo.kind({
 			]
 		});
 
+		var K2 = enyo.kind({
+			kind: enyo.Control,
+			components: [
+				{ name: "client", components: [
+					{ name: "a" },
+					{ name: "b" },
+					{ name: "c" }
+				]}
+			]
+		});
+		var k2 = new K2();
+
 		// create new div, attach to start of body, delete at end
 		// needed because we need live DOM with getElementById working
 		var div = document.createElement("div");
@@ -55,11 +67,22 @@ enyo.kind({
 			if (kn.firstChild !== aaa.hasNode()) {
 				throw("added a child not first node");
 			}
+
+			var a0 = k2.createComponent({}, {addBefore: null});
+			if(k2.$.client.children[0] !== a0) {
+				throw("added a child not first node of controlParent");
+			}
+			var c0 = k2.createComponent({}, {addBefore: k2.$.c});
+			if(k2.$.client.children.slice(-2, -1)[0] !== c0) {
+				throw("added a child is not inserted before last child");
+			}
 		} finally {
 			// clean up after our test
 			k.destroy();
+			k2.destroy();
 			document.body.removeChild(div);
 		}
+		
 		this.finish();
 	},
 	testGetBounds: function() {
