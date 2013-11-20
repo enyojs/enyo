@@ -9,6 +9,10 @@ Needed to revert the change to _enyo.Binding_ from 2.3.0-pre.11. Re-implemented 
 for interrupting transform propagation (as was still indicated by the API docs) and note that bindings
 will again propagate `undefined` values to ensure bindings clear when expected.
 
+_enyo.Binding_ has a new property `allowUndefined` that defaults to `true` allowing the `undefined` object
+to be propagated. Setting this to `false` will keep it from propagating `undefined` without the use of
+a _transform_ or an overloaded binding _kind_.
+
 _enyo.Collection's_ _filter()_ method may be called without any parameters to easily apply whatever the
 _activeFilter_ may be set to, if anything. It will return an immutable array of either the filtered content
 or if no _activeFilter_ was present the entire dataset. This is a convenience extension of the original

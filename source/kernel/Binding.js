@@ -61,6 +61,12 @@
 		*/
 		source: null,
 		/**
+			Set this to false to keep the binding from propagating `undefined` in
+			either direction. For more control over the values that get propagated
+			see [transform](#transform). Defaults to `true`.
+		*/
+		allowUndefined: true,
+		/**
 			Set this only to a reference for an object to use as the target for the
 			binding. If this is not a bindable object, the target will be derived from
 			the _to_ property during initialization.
@@ -191,7 +197,9 @@
 					if (fn && typeof fn == "function") {
 						value = fn.call(this.owner || this, value, "source", this);
 					}
-					this.setTargetValue(value);		
+					if (this.allowUndefined || value !== undefined) {
+						this.setTargetValue(value);
+					}
 				}
 				this.synchronizing = false;
 			}
@@ -205,7 +213,9 @@
 					if (fn && typeof fn == "function") {
 						value = fn.call(this.owner || this, value, "target", this);
 					}
-					this.setSourceValue(value);
+					if (this.allowUndefined || value !== undefined) {
+						this.setSourceValue(value);
+					}
 				}
 				this.synchronizing = false;
 			}
