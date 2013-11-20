@@ -5,6 +5,20 @@ rather notifies the captureTarget through a callback passed as a parameter to th
 The `capture` API also now requires a whitelist of events to capture, rather than the previous
 behavior of capturing (nearly) all events.
 
+Needed to revert the change to _enyo.Binding_ from 2.3.0-pre.11. Re-implemented the _stop()_ method
+for interrupting transform propagation (as was still indicated by the API docs) and note that bindings
+will again propagate `undefined` values to ensure bindings clear when expected.
+
+_enyo.Collection's_ _filter()_ method may be called without any parameters to easily apply whatever the
+_activeFilter_ may be set to, if anything. It will return an immutable array of either the filtered content
+or if no _activeFilter_ was present the entire dataset. This is a convenience extension of the original
+behavior and does not modify the existing behavior as it could not be called without parameters previously
+and would throw an error.
+
+_enyo.DataList's_ _getChildForIndex()_ and now _childForIndex()_ (same method, different name) now correctly
+return `undefined` consistently rather than `false`. This correction is consistent with previous documentation
+and base kind method (inheriting API from _enyo.DataRepeater_).
+
 ## 2.3.0-pre.12
 
 _enyo.DataList_ no longer has the _controlsPerPage_ property but instead has a _pageSizeMultiplier_ value
@@ -27,9 +41,9 @@ Removed the _modelChanged()_ and deprecated _controllerChanged()_ base methods f
 thus any developer code currently calling `this.inherited(arguments)` from within an overloaded
 _modelChanged()_ method will fail and needs to be removed. This is a feature change required by ENYO-3339.
 
-Removed the _stop()_ method from _enyo.Binding_ as required by ENYO-3338. Instead of
+~~Removed the _stop()_ method from _enyo.Binding_ as required by ENYO-3338. Instead of
 calling that method via the binding reference in a transform return `undefined`
-(or nothing since `undefined` is the default) to achieve the same behavior.
+(or nothing since `undefined` is the default) to achieve the same behavior.~~
 
 Instances of _enyo.Binding_ will no longer propagate `undefined`; instead use `null`.
 
