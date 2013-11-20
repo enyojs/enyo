@@ -1,3 +1,10 @@
+## 2.3.0-rc1
+
+_enyo.dispatcher.capture_ API no longer bubbles captured events through the normal event chain, but
+rather notifies the captureTarget through a callback passed as a parameter to the `capture` API.
+The `capture` API also now takes an optional whitelist of events to capture, rather than the default
+behavior of capturing (nearly) all events.
+
 ## 2.3.0-pre.12
 
 _enyo.DataList_ no longer has the _controlsPerPage_ property but instead has a _pageSizeMultiplier_ value
