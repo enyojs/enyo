@@ -203,7 +203,7 @@ enyo.kind({
 		};
 	}),
 	capture: function() {
-		enyo.dispatcher.capture(this, !this.modal, this.eventsToCapture, enyo.bind(this, "capturedEvent"));
+		enyo.dispatcher.capture(this, this.eventsToCapture, enyo.bind(this, "capturedEvent"), !this.modal);
 	},
 	release: function() {
 		enyo.dispatcher.release(this);

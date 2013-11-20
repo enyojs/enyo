@@ -7,7 +7,7 @@
 */
 enyo.dispatcher.features.push(function(e) {
     var c = e.dispatchTarget;
-	var wants = this.captureTarget && ((this.captureEvents && this.captureEvents[e.type]) || (!this.captureEvents && !this.noCaptureEvents[e.type]));
+	var wants = this.captureTarget && this.captureEvents[e.type];
 	var needs = wants && !(c && c.isDescendantOf && c.isDescendantOf(this.captureTarget));
 	if (needs) {
 		var c1 = e.captureTarget = this.captureTarget;
@@ -27,11 +27,10 @@ enyo.dispatcher.features.push(function(e) {
 //        be called on _enyo.dispatcher_, and not on the plug-in itself.
 //
 enyo.mixin(enyo.dispatcher, {
-	noCaptureEvents: {load: 1, unload:1, error: 1, transitionend: 1, animationend: 1},
 	autoForwardEvents: {leave: 1, resize: 1},
 	captures: [],
 	//* Capture events for `inTarget` and optionally forward them
-	capture: function(inTarget, inShouldForward, inEvents, inCallback) {
+	capture: function(inTarget, inEvents, inCallback, inShouldForward) {
 		var info = {target: inTarget, forward: inShouldForward, events: inEvents, callback: inCallback};
 		this.captures.push(info);
 		this.setCaptureInfo(info);
