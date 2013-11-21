@@ -1,9 +1,10 @@
 ## 2.3.0-rc1
 
-_enyo.dispatcher.capture_ API no longer bubbles captured events through the normal event chain, but
-rather notifies the captureTarget through a callback passed as a parameter to the `capture` API.
-The `capture` API also now requires a whitelist of events to capture, rather than the previous
-behavior of capturing (nearly) all events.
+_enyo.dispatcher.capture_ API no longer bubbles all captured events through the normal event chain, but
+rather notifies the captureTarget when specific events occur through a map of callbacks passed as a parameter 
+to the `capture` API.  This is a breaking change to the enyo.dispatcher.capture API, however it is a very
+unpublicized (and fairly difficult-to-use) feature that was only used in enyo.Popup among Enyo-team developed 
+controls, so we assume it will have low impact on the general public.
 
 ## 2.3.0-pre.12
 

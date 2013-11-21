@@ -46,7 +46,10 @@ enyo.kind({
 		onRequestHide: "requestHide"
 	},
 	captureEvents: true,
-	eventsToCapture: { down:1, tap:1 },
+	eventsToCapture: { 
+		ondown: "capturedDown", 
+		ontap: "capturedTap" 
+	},
 	//* @public
 	events: {
 		//* Fires after the popup is shown.
@@ -203,21 +206,10 @@ enyo.kind({
 		};
 	}),
 	capture: function() {
-		enyo.dispatcher.capture(this, this.eventsToCapture, enyo.bind(this, "capturedEvent"));
+		enyo.dispatcher.capture(this, this.eventsToCapture);
 	},
 	release: function() {
 		enyo.dispatcher.release(this);
-	},
-	capturedEvent: function(inEventName, inSender, inEvent) {
-		switch (inEventName) {
-			case "down":
-				this.capturedDown(inSender, inEvent);
-				break;
-			case "tap":
-				this.capturedTap(inSender, inEvent);
-				break;
-		}
-		return this.modal;
 	},
 	capturedDown: function(inSender, inEvent) {
 		//record the down event to verify in tap
@@ -227,6 +219,7 @@ enyo.kind({
 		if (this.modal) {
 			inEvent.preventDefault();
 		}
+		return this.modal;
 	},
 	capturedTap: function(inSender, inEvent) {
 		// dismiss on tap if property is set and click started & ended outside the popup
@@ -235,6 +228,7 @@ enyo.kind({
 			this.downEvent = null;
 			this.hide();
 		}
+		return this.modal;
 	},
 	// if a drag event occurs outside a popup, hide
 	dragstart: function(inSender, inEvent) {
