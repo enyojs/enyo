@@ -10,14 +10,15 @@ enyo.dispatcher.features.push(function(e) {
 		var c = e.dispatchTarget;
 		var eventName = (e.customEvent ? "" : "on") + e.type;
 		var handlerName = this.captureEvents[eventName];
-		var handler = handlerName && this.captureTarget[handlerName];
+		var handlerScope = this.captureHandlerScope || this.captureTarget;
+		var handler = handlerName && handlerScope[handlerName];
 		var shouldCapture = handler && !(c && c.isDescendantOf && c.isDescendantOf(this.captureTarget));
 		if (shouldCapture) {
 			var c1 = e.captureTarget = this.captureTarget;
 			// NOTE: We do not want releasing capture while an event is being processed to alter
 			// the way the event propagates. Therefore decide if the event should forward
 			// before the capture target receives the event (since it may release capture).
-			e.preventDispatch = handler && handler.apply(this.captureTarget, [c1, e]) && !this.autoForwardEvents[e.type];
+			e.preventDispatch = handler && handler.apply(handlerScope, [c1, e]) && !this.autoForwardEvents[e.type];
 		}
 	}
 });
@@ -30,13 +31,13 @@ enyo.mixin(enyo.dispatcher, {
 	autoForwardEvents: {leave: 1, resize: 1},
 	captures: [],
 	/** 
-		Capture events for `inTarget`, where inEvents is specified as a hash of event names mapped
-		to callback handler names to be called on the inTarget.  The callback is called when any of 
-		the captured events are dispatched outside of the capturing control.  Returning true from 
-		the callback stops dispatch of the event to the original dispatchTarget.
+		Capture events for `inTarget`, where `inEvents` is specified as a hash of event names mapped
+		to callback handler names to be called on the inTarget (or optionally, `inScope).  The callback 
+		is called when any of the captured events are dispatched outside of the capturing control.
+		Returning true from the callback stops dispatch of the event to the original dispatchTarget.
 	*/
-	capture: function(inTarget, inEvents) {
-		var info = {target: inTarget, events: inEvents};
+	capture: function(inTarget, inEvents, inScope) {
+		var info = {target: inTarget, events: inEvents, scope: inScope};
 		this.captures.push(info);
 		this.setCaptureInfo(info);
 	},
@@ -54,5 +55,6 @@ enyo.mixin(enyo.dispatcher, {
 	setCaptureInfo: function(inInfo) {
 		this.captureTarget = inInfo && inInfo.target;
 		this.captureEvents = inInfo && inInfo.events;
+		this.captureHandlerScope = inInfo && inInfo.scope;
 	}
 });
