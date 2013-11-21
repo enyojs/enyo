@@ -14,11 +14,7 @@ enyo.dispatcher.features.push(function(e) {
 		// NOTE: We do not want releasing capture while an event is being processed to alter
 		// the way the event propagates. Therefore decide if the event should forward
 		// before the capture target receives the event (since it may release capture).
-		var shouldForward = (this.autoForwardEvents[e.type] || this.forwardEvents);
-		this.captureCallback(e.type, e, c1);
-		if (!shouldForward) {
-			e.preventDispatch = true;
-		}
+		e.preventDispatch = this.captureCallback(e.type, c1, e) && !this.autoForwardEvents[e.type];
 	}
 });
 
@@ -29,9 +25,14 @@ enyo.dispatcher.features.push(function(e) {
 enyo.mixin(enyo.dispatcher, {
 	autoForwardEvents: {leave: 1, resize: 1},
 	captures: [],
-	//* Capture events for `inTarget` and optionally forward them
-	capture: function(inTarget, inEvents, inCallback, inShouldForward) {
-		var info = {target: inTarget, forward: inShouldForward, events: inEvents, callback: inCallback};
+	/** 
+		Capture events for `inTarget`, where inEvents is specified as a hash of event names mapped
+		to truthy values.  The callback is called when any of the captured events are dispatched outside
+		of the capturing control.  Returning true from the callback stops dispatch of the event to the 
+		original dispatchTarget.
+	*/
+	capture: function(inTarget, inEvents, inCallback) {
+		var info = {target: inTarget, events: inEvents, callback: inCallback};
 		this.captures.push(info);
 		this.setCaptureInfo(info);
 	},
@@ -48,7 +49,6 @@ enyo.mixin(enyo.dispatcher, {
 	//* Set the information for a captured event
 	setCaptureInfo: function(inInfo) {
 		this.captureTarget = inInfo && inInfo.target;
-		this.forwardEvents = inInfo && inInfo.forward;
 		this.captureEvents = inInfo && inInfo.events;
 		this.captureCallback = inInfo && inInfo.callback;
 	}

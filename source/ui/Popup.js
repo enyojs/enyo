@@ -203,12 +203,12 @@ enyo.kind({
 		};
 	}),
 	capture: function() {
-		enyo.dispatcher.capture(this, this.eventsToCapture, enyo.bind(this, "capturedEvent"), !this.modal);
+		enyo.dispatcher.capture(this, this.eventsToCapture, enyo.bind(this, "capturedEvent"));
 	},
 	release: function() {
 		enyo.dispatcher.release(this);
 	},
-	capturedEvent: function(inEventName, inEvent, inSender) {
+	capturedEvent: function(inEventName, inSender, inEvent) {
 		switch (inEventName) {
 			case "down":
 				this.capturedDown(inSender, inEvent);
@@ -217,6 +217,7 @@ enyo.kind({
 				this.capturedTap(inSender, inEvent);
 				break;
 		}
+		return this.modal;
 	},
 	capturedDown: function(inSender, inEvent) {
 		//record the down event to verify in tap

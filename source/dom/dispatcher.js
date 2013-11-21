@@ -197,6 +197,7 @@
 					// but note the tap event will fire first
 					var cp = enyo.clone(e);
 					cp.type = "tap";
+					cp.preventDefault = enyo.nop;
 					enyo.dispatch(cp);
 				}
 			}
