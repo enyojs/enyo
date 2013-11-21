@@ -58,11 +58,11 @@
 
 				// skip data urls
 				if (/^data:/.test(urlPath)) {
-					return "url(" + urlPath + ")";
+					return "url('" + urlPath + "')";
 				}
 				// skip an external link
 				if (/^http(:?s)?:/.test(urlPath)) {
-					return "url(" + urlPath + ")";
+					return "url('" + urlPath + "'')";
 				}
 				// Make relative asset path from 'top-of-the-tree/build'
 				var relPath = path.join("..", opt.relsrcdir, path.dirname(sheet), urlPath);
@@ -73,7 +73,7 @@
 				console.log("sheet:", sheet);
 				console.log("urlPath:", urlPath);
 				console.log("relPath:", relPath);
-				return "url(" + relPath + ")";
+				return "url('" + relPath + "')";
 			});
 			blob += "\n/* " + path.relative(process.cwd(), sheet) + " */\n\n" + code + "\n";
 		};
