@@ -15,6 +15,7 @@ enyo.DataList.delegates.vertical = {
 		by other delegates that wish to share some basic functionality.
 	*/
 	initList: function (list) {
+		list.posProp   = "top";
 		list.upperProp = "top";
 		list.lowerProp = "bottom";
 		list.psizeProp = "height";
@@ -39,6 +40,9 @@ enyo.DataList.delegates.vertical = {
 		// now update the buffer
 		this.adjustBuffer(list);
 		list.hasReset = true;
+		// reset the scroller so it will also start from the 'top' whatever that may
+		// be (left/top)
+		list.$.scroller.scrollTo(0, 0);
 	},
 	/**
 		Returns a hash of the pages marked by there position as either 'firstPage' or 'lastPage'.
@@ -82,7 +86,7 @@ enyo.DataList.delegates.vertical = {
 		for (var i=0, p; (p=list.pages[i]); ++i) {
 			this.generatePage(list, p, p.index);
 		}
-		// adjust their posecondIndextions in case they've changed at all
+		// adjust their positions in case they've changed at all
 		this.adjustPagePositions(list);
 		// now update the buffer
 		this.adjustBuffer(list);
@@ -284,7 +288,6 @@ enyo.DataList.delegates.vertical = {
 				}
 			}
 		}
-		return false;
 	},
 	/**
 		Attempts to inelligently decide when to force updates for models being removed
@@ -339,10 +342,11 @@ enyo.DataList.delegates.vertical = {
 			var pi = p.index,
 				cp = this.pagePosition(list, p.index),
 				mx = list.metrics.pages[pi] || (list.metrics.pages[pi] = {}),
+				pp = list.posProp,
 				up = list.upperProp,
 				lp = list.lowerProp,
 				sp = list.psizeProp;
-			p.node.style[up] = cp + "px";
+			p.node.style[pp] = cp + "px";
 			p[up] = mx[up] = cp;
 			p[lp] = mx[lp] = (mx[sp] + cp);
 		}
