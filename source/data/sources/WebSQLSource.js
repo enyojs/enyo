@@ -30,8 +30,10 @@
                 create index iA on A(a);
 
             + _props.dbSchemaDidUpdate_ a callback to be invoked once schema has
-              been created/updated. Will be called with an error object argument
-              if schema update failed.
+              been created/updated. It will be called with an error object argument
+              if schema update failed. If schema update succeeded, then the
+              callback is invoked with first argument of null and SQL database
+              object as a second argument.
 
 
         Example:
@@ -396,12 +398,14 @@
 
             updateSchema: function(db, schema, cb) {
                 db.transaction(function(t) {
-                    var statemens = schema.split(';');
+                    var statemens = schema.split(';').filter(function(s) {
+                            return s.trim() !== '';
+                        });
                     (function executeStatement(statement) {
                         t.executeSql(statement, null, function(t, r) {
                             if(typeof cb === 'function'
                                 && statemens.length === 0) {
-                                cb();
+                                cb(null, db);
                                 return;
                             }
                             executeStatement(statemens.shift());
