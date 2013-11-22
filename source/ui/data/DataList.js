@@ -155,6 +155,9 @@ enyo.kind({
 			this.hasRendered = true;
 			// now add our class to adjust visibility (if no overridden)
 			this.addClass("rendered");
+			if (this.didRender) {
+				this.didRender();
+			}
 		};
 		if (this.renderDelay === null) {
 			startup.call(this);
