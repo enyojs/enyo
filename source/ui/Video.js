@@ -73,9 +73,7 @@ enyo.kind({
 		//* Fires when _playbackRate_ is set to 1.
 		onPlay: "",
 		//* Fires when EventData is changed.
-		onStart: "",
-		//* Fires when elements are rendered.
-		onDisableTranslation: ""
+		onStart: ""
 	},
 	handlers: {
 		//* Catch video _loadedmetadata_ event
@@ -101,10 +99,6 @@ enyo.kind({
 	rendered: function() {
 		this.inherited(arguments);
 		this.hookupVideoEvents();
-		// FIXME: transforms and HW acceleration (applied by panels) currently kills video on webOS
-		if (true || enyo.platform.webos === 4) {
-			this.doDisableTranslation();
-		}
 	},
 	posterChanged: function() {
 		if (this.poster) {
@@ -152,6 +146,7 @@ enyo.kind({
 		if (!this.hasNode()) {
 			return;
 		}
+		this._speedIndex = 0;
 		this.setPlaybackRate(1);
 		this.node.play();
 		this._prevCommand = "play";
@@ -161,6 +156,7 @@ enyo.kind({
 		if (!this.hasNode()) {
 			return;
 		}
+		this._speedIndex = 0;
 		this.setPlaybackRate(1);
 		this.node.pause();
 		this._prevCommand = "pause";

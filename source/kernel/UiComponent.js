@@ -61,8 +61,8 @@ enyo.kind({
 	// END-TODO-POST-2.3
 	create: enyo.inherit(function (sup) {
 		return function() {
-			this.controls = [];
-			this.children = [];
+			this.controls = this.controls || [];
+			this.children = this.children || [];
 			this.containerChanged();
 			sup.apply(this, arguments);
 			this.layoutKindChanged();
@@ -173,7 +173,7 @@ enyo.kind({
 		// not used to create controls and should likely not be called directly.
 		// It can be overridden to detect when controls are added.
 		if (inBefore !== undefined) {
-			var idx = (inBefore === null) ? 0 : this.indexOfChild(inBefore);
+			var idx = (inBefore === null) ? 0 : this.indexOfControl(inBefore);
 			this.controls.splice(idx, 0, inControl);
 		} else {
 			this.controls.push(inControl);
@@ -212,8 +212,7 @@ enyo.kind({
 		// allow delegating the child to a different container
 		if (this.controlParent /*&& !inChild.isChrome*/) {
 			// this.controlParent might have a controlParent, and so on; seek the ultimate parent
-			// inBefore is not passed because that control won't be in the controlParent's scope
-			this.controlParent.addChild(inChild);
+			this.controlParent.addChild(inChild, inBefore);
 		} else {
 			// NOTE: addChild drives setParent.
 			// It's the opposite for setContainer, where containerChanged (in Containable)

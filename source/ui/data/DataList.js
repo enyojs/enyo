@@ -78,9 +78,9 @@ enyo.kind({
 		internally.
 	*/
 	refresh: function () {
-		this.startJob("refreshing", function () {
+		if (this.hasRendered) {
 			this.delegate.refresh(this);
-		}, 100);
+		}
 	},
 	/**
 		Pass in an integer within the bounds of the lists's collection to have it
@@ -104,18 +104,18 @@ enyo.kind({
 	}),
 	create: enyo.inherit(function (sup) {
 		return function () {
+			// if we can, we use transitions
+			this.allowTransitionsChanged();
 			// map the selected strategy to the correct delegate for operations
 			// on the list, default to _vertical_ if none is provided or if it
 			// could not be found
 			this.delegate = this.ctor.delegates[this.orientation] || this.base.delegates.vertical;
-			// if we can, we use transitions
-			this.allowTransitionsChanged();
-			sup.apply(this, arguments);
 			// if the delegate has an initialization routine execute it now before the
 			// container and children are rendered
 			if (this.delegate.initList) {
 				this.delegate.initList(this);
 			}
+			sup.apply(this, arguments);
 			// initialize the _pages_ array and add the pages to it
 			this.pages = [this.$.page1, this.$.page2];
 		};
@@ -155,6 +155,9 @@ enyo.kind({
 			this.hasRendered = true;
 			// now add our class to adjust visibility (if no overridden)
 			this.addClass("rendered");
+			if (this.didRender) {
+				this.didRender();
+			}
 		};
 		if (this.renderDelay === null) {
 			startup.call(this);
@@ -180,6 +183,14 @@ enyo.kind({
 			this.delegate.modelsRemoved(this, props);
 		}
 	},
+	destroy: enyo.inherit(function (sup) {
+		return function () {
+			if (this.delegate && this.delegate.destroyList) {
+				this.delegate.destroyList(this);
+			}
+			sup.apply(this, arguments);
+		};
+	}),
 	/**
 		Overloaded from base kind to ensure that the container options correctly apply
 		the scroller options before instantiating it.
@@ -210,16 +221,18 @@ enyo.kind({
 	*/
 	didResize: function (sender, event) {
 		if (this.hasRendered) {
-			this.startJob("resizing", function () {
-				this.delegate.didResize(this, event);
-			}, 60);
+			this.delegate.didResize(this, event);
 		}
 	},
 	/**
 		Overload to adjust the root method to be able to find the nested child
-		based on the requested index.
+		based on the requested index if its page is currently active. Will return
+		undefined if the index is out of bounds or if the control is not currently
+		available.
+	
+		Also see [getChildForIndex](#getChildForIndex) which calls this method.
 	*/
-	getChildForIndex: function (i) {
+	childForIndex: function (i) {
 		return this.delegate.childForIndex(this, i);
 	},
 	//*@protected

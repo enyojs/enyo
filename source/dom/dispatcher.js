@@ -75,7 +75,7 @@
 				}
 			}
 			if (c && !e.preventDispatch) {
-				this.dispatchBubble(e, c);
+				return this.dispatchBubble(e, c);
 			}
 		},
 		//* Takes an event target and finds the corresponding Enyo control.
@@ -105,7 +105,9 @@
 			return enyo.master;
 		},
 		dispatchBubble: function(e, c) {
-			return c.bubble("on" + e.type, e, c);
+			var type = e.type;
+			type = e.customEvent ? type : "on" + type;
+			return c.bubble(type, e, c);
 		}
 	};
 
@@ -195,6 +197,7 @@
 					// but note the tap event will fire first
 					var cp = enyo.clone(e);
 					cp.type = "tap";
+					cp.preventDefault = enyo.nop;
 					enyo.dispatch(cp);
 				}
 			}

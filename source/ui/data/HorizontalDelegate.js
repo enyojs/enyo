@@ -20,6 +20,7 @@
 				// add the class
 				list.addClass("horizontal");
 				// set the priority properties
+				list.posProp   = list.rtl ? "right" : "left";
 				list.upperProp = "left";
 				list.lowerProp = "right";
 				list.psizeProp = "width";
@@ -30,6 +31,11 @@
 				so.horizontal  = "auto";
 			};
 		}),
+		destroyList: function (list) {
+			if (list) {
+				list.removeClass("horizontal");
+			}
+		},
 		//* Overload to retrieve the correct scroll position
 		getScrollPosition: function (list) {
 			return list.$.scroller.getScrollLeft();

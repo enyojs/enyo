@@ -124,6 +124,38 @@ enyo.kind({
 			(m.attributes.prop6 !== 0 && "'0' attribute ignored unexectedly") ||
 			(m.attributes.prop7 != "prop7" && "new attribute missing")
 		);
+	},
+	testSetObject: function() {
+		// test for ENYO-3538
+		var m = new enyo.Model({ value1: 0, value2: 0});
+		var gotChange = false;
+		m.addListener("change", function() {
+			gotChange = true;
+		});
+		m.setObject({ value1: 1, value2: 0});
+		if (gotChange) {
+			this.finish();
+		} else {
+			this.finish("didn't fire change event for setObject");
+		}
+	},
+	testFetchedRecordSendsRemoteDestroy: function () {
+		var store = enyo.singleton({
+				kind: "enyo.Store",
+				destroyRecord: enyo.bind(this, function () {
+					this.finish();
+				}),
+				destroyRecordLocal: enyo.bind(this, function () {
+					this.finish("destroyed the record as a local record");
+				})
+			}),
+			rec  = new enyo.Model(null, {store: store});
+		// simulate a fetch with no data returned which is fine,
+		// should flag it as not being new causing a destroy
+		// call to use the correct remote-call method in the
+		// store
+		rec.didFetch();
+		rec.destroy();
 	}
 });
 
@@ -330,6 +362,25 @@ enyo.kind({
 			(c.set("prop1", "") && c.set("prop2", "frank") && c.length !== 1 && "resetting prop1 and explicitly matching prop2 did not filter correctly") ||
 			(c.reset() && c.length !== 5 && "resetting did not unfilter even with props set")
 		);
+	},
+	testFetchedRecordSendsRemoteDestroy: function () {
+		var store = enyo.singleton({
+				kind: "enyo.Store",
+				destroyRecord: enyo.bind(this, function () {
+					this.finish();
+				}),
+				destroyRecordLocal: enyo.bind(this, function () {
+					this.finish("destroyed the record as a local record");
+				})
+			}),
+			col  = new enyo.Collection({store: store});
+		for (var i=0, recs = []; i<10; ++i) {
+			recs.push({index: i});
+		}
+		col.didFetch(null, {success: function () {
+			var rec = col.at(0);
+			rec.destroy();	
+		}, strategy: "add"}, recs);
 	}
 });
 

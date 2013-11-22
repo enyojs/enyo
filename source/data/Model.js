@@ -224,12 +224,14 @@
 				if (props) {
 					this.stopNotifications();
 					this.silence();
+					var updated = false;
 					for (var k in props) {
 						this.set(k, props[k]);
+						updated = updated || this._updated;
 					}
 					this.startNotifications();
 					this.unsilence();
-					if (this._updated) {
+					if (updated) {
 						this._updated = false;
 						this.triggerEvent("change");
 					}
@@ -381,6 +383,8 @@
 			// once notifications have taken place we clear the dirty status so the
 			// state of the model is now clean
 			this.dirty = false;
+			// the record can no longer be considered new
+			this.isNew = false;
 			if (opts) {
 				if (opts.success) {
 					opts.success(rec, opts, res);
@@ -433,7 +437,7 @@
 			// to avoid lingering entries
 			this.removeAllObservers();
 			this.removeAllListeners();
-			
+
 			if (opts && opts.success) {
 				opts.success(rec, opts, res);
 			}

@@ -15,16 +15,15 @@ enyo.DataList.delegates.vertical = {
 		by other delegates that wish to share some basic functionality.
 	*/
 	initList: function (list) {
-		if (list.$.scroller.addScrollListener) {
-			list.usingScrollListener = true;
-			list.$.scroller.addScrollListener(
-				enyo.bindSafely(this, "scrollHandler", list)
-			);
-		}
+		list.posProp   = "top";
 		list.upperProp = "top";
 		list.lowerProp = "bottom";
 		list.psizeProp = "height";
 		list.ssizeProp = "width";
+		// set the scroller options
+		var so         = list.scrollerOptions || (list.scrollerOptions = {});
+		so.vertical    = so.vertical || "auto";
+		so.horizontal  = so.horizontal || "hidden";
 	},
 	/**
 		A hard reset of the list pages and children. Will scroll to the top, reset children
@@ -41,6 +40,9 @@ enyo.DataList.delegates.vertical = {
 		// now update the buffer
 		this.adjustBuffer(list);
 		list.hasReset = true;
+		// reset the scroller so it will also start from the 'top' whatever that may
+		// be (left/top)
+		list.$.scroller.scrollTo(0, 0);
 	},
 	/**
 		Returns a hash of the pages marked by there position as either 'firstPage' or 'lastPage'.
@@ -84,7 +86,7 @@ enyo.DataList.delegates.vertical = {
 		for (var i=0, p; (p=list.pages[i]); ++i) {
 			this.generatePage(list, p, p.index);
 		}
-		// adjust their posecondIndextions in case they've changed at all
+		// adjust their positions in case they've changed at all
 		this.adjustPagePositions(list);
 		// now update the buffer
 		this.adjustBuffer(list);
@@ -95,6 +97,12 @@ enyo.DataList.delegates.vertical = {
 		and apply them to our pages individually.
 	*/
 	rendered: function (list) {
+		if (list.$.scroller.addScrollListener) {
+			list.usingScrollListener = true;
+			list.$.scroller.addScrollListener(
+				enyo.bindSafely(this, "scrollHandler", list)
+			);
+		}
 		// get our initial sizing cached now since we should actually have
 		// bounds at this point
 		this.updateBounds(list);
@@ -280,7 +288,6 @@ enyo.DataList.delegates.vertical = {
 				}
 			}
 		}
-		return false;
 	},
 	/**
 		Attempts to inelligently decide when to force updates for models being removed
@@ -335,10 +342,11 @@ enyo.DataList.delegates.vertical = {
 			var pi = p.index,
 				cp = this.pagePosition(list, p.index),
 				mx = list.metrics.pages[pi] || (list.metrics.pages[pi] = {}),
+				pp = list.posProp,
 				up = list.upperProp,
 				lp = list.lowerProp,
 				sp = list.psizeProp;
-			p.node.style[up] = cp + "px";
+			p.node.style[pp] = cp + "px";
 			p[up] = mx[up] = cp;
 			p[lp] = mx[lp] = (mx[sp] + cp);
 		}
@@ -412,13 +420,14 @@ enyo.DataList.delegates.vertical = {
 			lastIdx   = pos.lastPage.index,
 			count     = this.pageCount(list)-1,
 			lowerProp = list.lowerProp,
-			upperProp = list.upperProp;
+			upperProp = list.upperProp,
+			fn        = upperProp == "top"? this.height: this.width;
 		// now to update the properties the scroller will use to determine
 		// when we need to be notified of position changes requiring paging
 		if (firstIdx === 0) {
 			threshold[upperProp] = undefined;
 		} else {
-			threshold[upperProp] = metrics[lastIdx][upperProp] - this.height(list);
+			threshold[upperProp] = metrics[lastIdx][upperProp] - fn(list);
 		}
 		if (lastIdx === count) {
 			threshold[lowerProp] = undefined;
@@ -459,25 +468,15 @@ enyo.DataList.delegates.vertical = {
 		if (!list.usingScrollListener) {
 			var threshold = list.scrollThreshold,
 				bounds    = event.scrollBounds,
-				metrics   = list.metrics.pages,
-				pos       = this.pagesByPosition(list),
 				lowerProp = list.lowerProp,
 				upperProp = list.upperProp;
 			if (bounds.xDir === 1 || bounds.yDir === 1) {
 				if (bounds[upperProp] > threshold[lowerProp]) {
-					if (bounds[upperProp] < metrics[pos.lastPage.index][lowerProp]) {
-						this.scrollHandler(list, bounds);
-					} else {
-						this.resetToPosition(list, bounds[upperProp]);
-					}
+					this.scrollHandler(list, bounds);
 				}
 			} else if (bounds.yDir === -1 || bounds.xDir === -1) {
 				if (bounds[upperProp] < threshold[upperProp]) {
-					if (bounds[upperProp] > metrics[pos.firstPage.index][upperProp]) {
-						this.scrollHandler(list, bounds);
-					} else {
-						this.resetToPosition(list, bounds[upperProp]);
-					}
+					this.scrollHandler(list, bounds);
 				}
 			}
 		}

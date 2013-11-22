@@ -38,7 +38,7 @@ function finish(loader, objs, doneCB) {
 				try {
 					var css =
 						"/* WARNING: This is a generated file for backward-compatibility.  Most      */\n" +
-						"/* usrs should instead modify LESS files.  If you choose to edit this CSS   */\n" +
+						"/* users should instead modify LESS files.  If you choose to edit this CSS  */\n" +
 						"/* directly rather than LESS files, you should make sure less.xx.yy.min.js  */\n" +
 						"/* is commented out in your debug.html, and run deploy.sh/bat using the     */\n" +
 						"/* '-c' flag to disable LESS compilation.  This will force the loader and   */\n" +

@@ -9,9 +9,9 @@ enyo.ApplicationSupport = {
 	name: "ApplicationSupport",
 	/**
 		This will be the reference to the _owner-application_ if the
-		_enyo.Component_ was created in the scope of an _enyo.Application_.
+		_enyo.Component_ was created in the scope of an _enyo.Application_:
+		`app`
 	*/
-	app: null,
 	adjustComponentProps: enyo.inherit(function (sup) {
 		return function (props) {
 			props.app = props.app || this.app || (this instanceof enyo.Application && this);
