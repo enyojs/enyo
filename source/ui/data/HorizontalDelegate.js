@@ -26,9 +26,11 @@
 				list.psizeProp = "width";
 				list.ssizeProp = "height";
 				// set the scroller options
-				var so         = list.scrollerOptions || (list.scrollerOptions = {});
+				var so         = list.scrollerOptions? (list.scrollerOptions = enyo.clone(list.scrollerOptions)): (list.scrollerOptions = {});
+				// this is a horizontal list it cannot scroll vertically
 				so.vertical    = "hidden";
-				so.horizontal  = "auto";
+				// it has to scroll vertically one way or another
+				so.horizontal  = so.horizontal == "scroll"? "scroll": "auto";
 			};
 		}),
 		destroyList: function (list) {

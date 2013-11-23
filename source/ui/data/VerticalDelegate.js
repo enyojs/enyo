@@ -21,8 +21,9 @@ enyo.DataList.delegates.vertical = {
 		list.psizeProp = "height";
 		list.ssizeProp = "width";
 		// set the scroller options
-		var so         = list.scrollerOptions || (list.scrollerOptions = {});
-		so.vertical    = so.vertical || "auto";
+		var so         = list.scrollerOptions? (list.scrollerOptions = enyo.clone(list.scrollerOptions)): (list.scrollerOptions = {});
+		// this is a datalist...it has to be scroll or auto for vertical
+		so.vertical    = so.vertical == "scroll"? "scroll": "auto";
 		so.horizontal  = so.horizontal || "hidden";
 	},
 	/**
