@@ -373,7 +373,6 @@ enyo.kind({
 			this.showing = false;
 			this.domStyles.display = "";
 		}
-		this.domCssText = enyo.Control.domStylesToCssText(this.domStyles);
 	},
 	styleChanged: function() {
 		// since we want to reset the style to the default kind styles and whatever
@@ -771,7 +770,7 @@ enyo.kind({
 		this.tagsValid = false;
 	},
 	prepareTags: function() {
-		var htmlStyle = this.domCssText;
+		var htmlStyle = this.domCssText = enyo.Control.domStylesToCssText(this.domStyles);
 		this._openTag = '<' +
 			this.tag +
 			(htmlStyle ? ' style="' + htmlStyle + '"' : "") +
