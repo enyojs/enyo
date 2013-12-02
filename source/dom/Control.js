@@ -422,12 +422,12 @@ enyo.kind({
 	},
 	//* @protected
 	domStylesChanged: function() {
-		this.domCssText = enyo.Control.domStylesToCssText(this.domStyles);
+		this.invalidateStyles();
 		this.invalidateTags();
 		this.renderStyles();
 	},
 	stylesToNode: function() {
-		this.node.style.cssText = this.domCssText;
+		this.node.style.cssText = this.getDomCssText();
 	},
 	setupBodyFitting: function() {
 		enyo.dom.applyBodyFit();
@@ -769,8 +769,18 @@ enyo.kind({
 	invalidateTags: function() {
 		this.tagsValid = false;
 	},
+	invalidateStyles: function() {
+		this.stylesValid = false;
+	},
+	getDomCssText: function() {
+		if (!this.stylesValid) {
+			this.domCssText = enyo.Control.domStylesToCssText(this.domStyles);
+			this.stylesValid = true;
+		}
+		return this.domCssText;
+	},
 	prepareTags: function() {
-		var htmlStyle = this.domCssText = enyo.Control.domStylesToCssText(this.domStyles);
+		var htmlStyle = this.getDomCssText();
 		this._openTag = '<' +
 			this.tag +
 			(htmlStyle ? ' style="' + htmlStyle + '"' : "") +
