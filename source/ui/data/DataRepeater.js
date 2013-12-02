@@ -288,7 +288,7 @@ enyo.kind({
 		Selects the item at the given index.
 	*/
 	select: function (index) {
-		var c = this.getChildForIndex(index),
+		var c = this.childForIndex(index),
 			r = this.collection.at(index),
 			s = this._selection, i;
 		if (this.selection) {
