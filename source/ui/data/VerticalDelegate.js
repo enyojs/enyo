@@ -116,6 +116,8 @@ enyo.DataList.delegates.vertical = {
 		This method generates the markup for the page content.
 	*/
 	generatePage: function (list, page, index) {
+		// in case it hasn't been set we ensure it is marked correctly
+		page.index  = index;
 			// the collection of data with records to use
 		var data    = list.collection,
 			// the metrics for the entire list
@@ -124,8 +126,6 @@ enyo.DataList.delegates.vertical = {
 			perPage = this.controlsPerPage(list),
 			// placeholder for the control we're going to update
 			view;
-		// in case it hasn't been set we ensure it is marked correctly
-		page.index  = index;
 		// the first index for this generated page
 		page.start  = perPage * index;
 		// the last index for this generated page
@@ -164,9 +164,12 @@ enyo.DataList.delegates.vertical = {
 	childSize: function (list) {
 		var pageIndex = list.$.page1.index,
 			sizeProp  = list.psizeProp,
-			n         = list.$.page1.node || list.$.page1.hasNode();
+			n         = list.$.page1.node || list.$.page1.hasNode(),
+			size, props;
 		if (pageIndex >= 0 && n) {
-			list.childSize = Math.floor(list.metrics.pages[pageIndex][sizeProp] / (n.children.length || 1));
+			props = list.metrics.pages[pageIndex];
+			size  = props? props[sizeProp]: 0;
+			list.childSize = Math.floor(size / (n.children.length || 1));
 		}
 		return list.childSize || (list.childSize = 100); // we have to start somewhere
 	},
@@ -203,7 +206,8 @@ enyo.DataList.delegates.vertical = {
 		Retrieves the page index for the given record index.
 	*/
 	pageForIndex: function (list, i) {
-		return Math.floor(i / (this.controlsPerPage(list) || 1));
+		var perPage = list.controlsPerPage || this.controlsPerPage(list);
+		return Math.floor(i / (perPage || 1));
 	},
 	/**
 		Attempts to scroll to the given index.
@@ -376,13 +380,15 @@ enyo.DataList.delegates.vertical = {
 		Retrieves the default page size.
 	*/
 	defaultPageSize: function (list) {
-		return (this.controlsPerPage(list) * (list.childSize || 100));
+		var perPage = list.controlsPerPage || this.controlsPerPage(list);
+		return (perPage * (list.childSize || 100));
 	},
 	/**
 		Retrieves the number of pages for for given list.
 	*/
 	pageCount: function (list) {
-		return (Math.ceil(list.length / (this.controlsPerPage(list) || 1)));
+		var perPage = list.controlsPerPage || this.controlsPerPage(list);
+		return (Math.ceil(list.length / (perPage || 1)));
 	},
 	/**
 		Retrieves the current (and desired) scroll position from the scroller
