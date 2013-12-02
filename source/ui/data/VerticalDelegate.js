@@ -308,6 +308,10 @@ enyo.DataList.delegates.vertical = {
 			// to ensure accurate view
 			if (pi == fi || pi == si) {
 				this.refresh(list);
+				// for sanity we check to ensure that the current scroll position is
+				// showing our available content fully since elements were removed
+				var pos = this.pagesByPosition(list);
+				this.scrollToIndex(list, pos.firstPage.start);
 				break;
 			}
 		}
