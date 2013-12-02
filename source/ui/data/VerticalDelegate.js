@@ -206,7 +206,8 @@ enyo.DataList.delegates.vertical = {
 		Retrieves the page index for the given record index.
 	*/
 	pageForIndex: function (list, i) {
-		return Math.floor(i / (this.controlsPerPage(list) || 1));
+		var perPage = list.controlsPerPage || this.controlsPerPage(list);
+		return Math.floor(i / (perPage || 1));
 	},
 	/**
 		Attempts to scroll to the given index.
@@ -379,13 +380,15 @@ enyo.DataList.delegates.vertical = {
 		Retrieves the default page size.
 	*/
 	defaultPageSize: function (list) {
-		return (this.controlsPerPage(list) * (list.childSize || 100));
+		var perPage = list.controlsPerPage || this.controlsPerPage(list);
+		return (perPage * (list.childSize || 100));
 	},
 	/**
 		Retrieves the number of pages for for given list.
 	*/
 	pageCount: function (list) {
-		return (Math.ceil(list.length / (this.controlsPerPage(list) || 1)));
+		var perPage = list.controlsPerPage || this.controlsPerPage(list);
+		return (Math.ceil(list.length / (perPage || 1)));
 	},
 	/**
 		Retrieves the current (and desired) scroll position from the scroller
