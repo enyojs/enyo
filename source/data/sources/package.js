@@ -1,4 +1,5 @@
 enyo.depends(
 	"localStorage.js",
-	"xhr.js"
+	"xhr.js",
+    "WebSQLSource.js"
 );
