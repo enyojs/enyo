@@ -53,7 +53,9 @@
 		if (sp && cp) {
 			ds[cp] = t;
 			if (st) {
+				// Optimization: set transform directly to node when available
 				st[sp] = t;
+				inControl.invalidateStyles();
 			} else {
 				inControl.domStylesChanged();
 			}
