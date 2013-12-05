@@ -523,8 +523,9 @@
                 rec;
             for(i = 0; i < keys.length; ++i) {
                 rec = records[keys[i]];
-                if(rec instanceof enyo.Model)
+                if(rec instanceof enyo.Model) {
                     this.removeRecord(rec);
+                }
             }
         },
 		constructor: enyo.inherit(function (sup) {
