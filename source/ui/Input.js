@@ -94,9 +94,13 @@ enyo.kind({
 		this.bubble("onDisabledChange");
 	},
 	valueChanged: function() {
-		this.setAttribute("value", this.value);
-		if (this.getNodeProperty("value", this.value) !== this.value) {
-			this.setNodeProperty("value", this.value);
+		var node = this.hasNode();
+		if (node) {
+			if (node.value !== this.value) {
+				node.value = this.value;
+			}
+		} else {
+			this.setAttribute("value", this.value);
 		}
 	},
 	iekeyup: function(inSender, inEvent) {
