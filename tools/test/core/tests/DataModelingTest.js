@@ -410,6 +410,23 @@ enyo.kind({
 			(!m3 && "could not find the record by euid")
 		);
 	},
+	testFindLocalFailCase: function () {
+		// we need to make sure it will gracefully fail when trying to retrieve a record
+		// that doesn't exist or no entries have actually been made
+		var store = new enyo.Store(),
+			mk    = enyo.kind({kind: "enyo.Model"}),
+			r1, r2;
+		try {
+			r1 = store.findLocal(mk, {id: 87});
+			r2 = store.findLocal(mk, {euid: enyo.uuid()});
+		} catch (e) {
+			return this.finish("did not gracefully fail to find record");
+		}
+		this.finish(
+			(r1 !== undefined && "result from findLocal for primaryKey should be undefined") ||
+			(r2 !== undefined && "resutl from findLocal for euid should be undefined")
+		);
+	},
 	testFindByEuid: function () {
 		var m    = enyo.store.findLocal({id: 70}),
 			euid = m.euid,
