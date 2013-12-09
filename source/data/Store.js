@@ -165,6 +165,7 @@
 				c.store.removeCollection(c);
 			}
 			c.addListener("destroy", this._collectionDestroyed);
+            c.addListener("remove", this._recordRemoved, this);
 			collections[euid] = c;
 			if (!c.store) {
 				c.store = this;
@@ -179,6 +180,7 @@
 				euid        = c.euid;
 			delete collections[euid];
 			c.removeListener("destroy", this._collectionDestroyed);
+            c.removeListener("remove", this._recordRemoved);
 		},
 		/**
 			Removes the reference for the given record if it is found in the store.
@@ -514,6 +516,18 @@
 			}
 			this.addRecord(rec);
 		},
+        _recordRemoved: function(sender, event, args) {
+            var records = (args && args.records) || {},
+                keys = Object.keys(records),
+                i,
+                rec;
+            for(i = 0; i < keys.length; ++i) {
+                rec = records[keys[i]];
+                if(rec instanceof enyo.Model) {
+                    this.removeRecord(rec);
+                }
+            }
+        },
 		constructor: enyo.inherit(function (sup) {
 			return function (props) {
 				var r            = sup.apply(this, arguments);
