@@ -504,6 +504,7 @@ enyo.kind({
 		var records = this.removeAll();
 		this._destroyAll;
 		for (var k in records) {
+			if(records[k] instanceof enyo.Model)
 			records[k].destroy();
 		}
 		this._destroyAll = false;
