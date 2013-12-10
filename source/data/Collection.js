@@ -522,7 +522,9 @@ enyo.kind({
 		this._destroyAll = true;
 		for (var k in records) {
 			rec = records[k];
-			rec[fn]();
+			if (rec && rec instanceof enyo.Model) {
+				rec[fn]();
+			}
 		}
 		this._destroyAll = false;
 	},
