@@ -1,4 +1,4 @@
-## 2.3.0-rc3
+## 2.3.1-pre.1
 
 _enyo.Collection.destroyAll()_ now accepts a boolean parameter to signify it will call the record's _destroyLocal()_ method as opposed to the default of _destroy()_.
 
