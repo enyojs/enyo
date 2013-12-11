@@ -1,3 +1,11 @@
+## 2.3.0-rc3
+
+_enyo.Collection.destroyAll()_ now accepts a boolean parameter to signify it will call the record's _destroyLocal()_ method as opposed to the default of _destroy()_.
+
+Added _enyo.Collection.destroyAllLocal()_ as a convenience method.
+
+Added _enyo.Collection.fetchAndDestroyLocal()_ method to do the same as _fetchAndDestroy()_ except it will call _destroyLocal()_ on the records instead of _destroy()_. This also means you could call _fetch()_ with the options property _destroyLocal_ set to _true_ to have the same effect.
+
 ## 2.3.0-rc1
 
 _enyo.dispatcher.capture_ API no longer bubbles all captured events through the normal event chain, but
