@@ -21,10 +21,11 @@
 					this.addRemoveClass(this.selectedClass || "selected", this.selected);
 					// for efficiency purposes, we now directly call this method as opposed to
 					// forcing a synchronous event dispatch
+					var idx = this.repeater.collection.indexOf(this.model);
 					if (this.selected && !this.repeater.isSelected(this.model)) {
-						this.repeater.select(this.index);
+						this.repeater.select(idx);
 					} else if (!this.selected && this.repeater.isSelected(this.model)) {
-						this.repeater.deselect(this.index);
+						this.repeater.deselect(idx);
 					}
 				}
 				sup.apply(this, arguments);
@@ -34,7 +35,7 @@
 			return function (sender, event) {
 				event.model = this.model;
 				event.child = this;
-				event.index = this.index;
+				event.index = this.repeater.collection.indexOf(this.model);
 				sup.apply(this, arguments);
 			};
 		}),
