@@ -10,25 +10,26 @@
 	can be taxing and non-performant for the browser. Avoid	dynamically-updated
 	layouts that require lots of calculations each time the data in a view is
 	updated. Try to use CSS whenever possible.
+
+	While paging through data, _enyo.DataList_ emits the _paging_ event, which
+	allows you to make updates on a per-page basis, as necessary. You may register
+	for this event by calling _addListener()_ and specifying the event, along with
+	a callback method.
+
+	The callback method is passed a reference to the _enyo.DataList_, the name of
+	the event (_"paging"_), and a hash with the properties _start_, _end_, and
+	_action_, referring to the lowest active index in the dataset, the highest
+	active index, and the action that triggered the paging, respectively. The
+	value of _action_ value may be either _"scroll"_ or _"reset"_.
 */
 enyo.kind({
 	name: "enyo.DataList",
 	kind: enyo.DataRepeater,
 	/**
-		The _enyo.DataList_ kind will emit a registered event when paging, `paging`,
-		so that for per-page updates can be made when necessary. You can register for
-		this event by calling _addListener()_ for the `paging` event with a callback.
-		The callback method will be passed a reference to the _enyo.DataList_ that is
-		paging, the name of the event (`paging`), and hash with the properties `start`,
-		`end` and `action` that refer to the lowest active index in the dataset through
-		the highest active index and the action that triggered the paging respectively.
-		The `action` value can be either 'scroll' or 'reset'.
-	*/
-	/**
-		The _enyo.DataList_ kind places its rows inside of a scroller. Any
-		configurable options associated with _enyo.Scroller_ may be placed in this
-		hash and will be set accordingly on this list's scroller. If no options are
-		specified, the default _enyo.Scroller_ settings are used.
+		_enyo.DataList_ places its rows inside of a scroller. Any configurable
+		options of _enyo.Scroller_ may be placed in this hash; their values will be
+		set accordingly on this list's scroller. If no options are specified, the
+		default _enyo.Scroller_ settings are used.
 	*/
 	scrollerOptions: null,
 	/**
@@ -38,31 +39,32 @@ enyo.kind({
 	*/
 	orientation: "vertical",
 	/**
-		This is typically handled automatically but some platforms may benefit from
-		having a larger or smaller value here. If there is a number here it will be
-		multiplied by the available viewport size (depending on orientation) to determine
-		the minimum page size. The page size is directly related to the number of controls
-		that will be generated at any given time (and subsequently needing update)
-		whenever paging occurs. This number can be any rational number greater than _1.2_.
+		This is typically handled automatically, but some platforms may benefit from
+		having a larger or smaller value here. If there is a number here, it will be
+		multiplied by the available viewport size (depending on orientation) to
+		determine the minimum page size. The page size is directly related to the
+		number of controls that are generated at any given time (and that
+		subsequently need updating) whenever paging occurs. This number may be any
+		rational number greater than _1.2_.
 	*/
 	pageSizeMultiplier: null,
 	/**
-		To disable the default smoothing-transitions (for supported platforms) set
-		this flag to `false`.
+		To disable the default smoothing-transitions (for supported platforms), set
+		this flag to false.
 	*/
 	allowTransitions: true,
 	/**
-		Because some systems perform poorly on initialization there is a delay when
-		attempting to actually draw the contents of a _enyo.DataList_. Usually you
-		will not need to adjust this value (ms). If _renderDelay_ is null there will
-		be no delay and it will be executed synchronously. Note that if set to 0 it
-		will be executed asynchronously.
+		Because some systems perform poorly on initialization, there is a delay when
+		we attempt to actually draw the contents of a DataList. Usually, you will
+		not need to adjust this value (expressed in milliseconds). If _renderDelay_
+		is null, there will be no delay and rendering will take place synchronously.
+		If _renderDelay_ is set to 0, rendering will be done asynchronously.
 	*/
 	renderDelay: 250,
 	/**
 		Completely resets the current list such that it scrolls to the top of the
 		scrollable region and regenerates all of its children. This is typically
-		necessary only on initialization, or if the entire dataset has been swapped
+		necessary only on initialization or if the entire dataset has been swapped
 		out.
 	*/
 	reset: function () {
@@ -83,8 +85,8 @@ enyo.kind({
 		}
 	},
 	/**
-		Pass in an integer within the bounds of the lists's collection to have it
-		scroll to the position of that index in the list.
+		Pass in an integer within the bounds of the lists's collection to scroll to
+		the position of that index in the list.
 	*/
 	scrollToIndex: function (idx) {
 		if (idx >= 0 && idx < this.length) {
@@ -128,9 +130,9 @@ enyo.kind({
 		};
 	}),
 	/**
-		Attempts to do initialization. There are only a few basic startup paths, but
-		we need to be aware of what they are:
-		
+		Attempts to perform initialization. There are only a few basic startup
+		paths, but we need to be aware of what they are:
+
 		* The view is rendered, it has a collection, and the collection has data.
 		* The view is rendered, it has a collection with no data, and data is added
 			later.
@@ -206,7 +208,7 @@ enyo.kind({
 	}),
 	/**
 		We let the delegate strategy manage the event, but we arbitrarily return
-		true Because we don't want the event to propagate beyond this kind.
+		true because we don't want the event to propagate beyond this kind.
 	*/
 	didScroll: function (sender, event) {
 		if (this.hasRendered) {
@@ -226,11 +228,11 @@ enyo.kind({
 	},
 	/**
 		Overload to adjust the root method to be able to find the nested child
-		based on the requested index if its page is currently active. Will return
+		based on the requested index if its page is currently active. Returns
 		undefined if the index is out of bounds or if the control is not currently
 		available.
 	
-		Also see [getChildForIndex](#getChildForIndex) which calls this method.
+		Also see _getChildForIndex()_, which calls this method.
 	*/
 	childForIndex: function (i) {
 		return this.delegate.childForIndex(this, i);
@@ -240,10 +242,10 @@ enyo.kind({
 		this.addRemoveClass("transitions", this.allowTransitions);
 	},
 	/**
-		The _enyo.DataList_ kind uses an overloaded container from its base kind. We
-		set the container to a scroller and provide a way to modify the scroller
-		options (via the _scrollerOptions_ hash). All children will reside in one of
-		the two pages owned by the scroller.
+		_enyo.DataList_ uses an overloaded container from its base kind. We set the
+		container to a scroller and provide a way to modify the scroller options
+		(via the _scrollerOptions_ hash). All children will reside in one of the two
+		pages owned by the scroller.
 	*/
 	containerOptions: {name: "scroller", kind: "enyo.Scroller", components: [
 		{name: "active", classes: "active", components: [
