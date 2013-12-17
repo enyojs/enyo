@@ -157,6 +157,8 @@ enyo.DataList.delegates.vertical = {
 		metrics        = metrics.pages[index] || (metrics.pages[index] = {});
 		metrics.height = this.pageHeight(list, page);
 		metrics.width  = this.pageWidth(list, page);
+		// update the childSize value now that we have measurements
+		this.childSize(list);
 	},
 	/**
 		Generates a child size for the given list.
@@ -195,7 +197,7 @@ enyo.DataList.delegates.vertical = {
 			// we always update the default child size value first, here
 			childSize = this.childSize(list);
 			// using height/width of the available viewport times our multiplier value
-			perPage   = list.controlsPerPage = Math.ceil((fn(list) * multi) / childSize);
+			perPage   = list.controlsPerPage = Math.ceil(((fn(list) * multi) / childSize) + 1);
 			// update our time for future comparison
 			list._updatedControlsPerPage = enyo.bench();
 		}
@@ -238,8 +240,11 @@ enyo.DataList.delegates.vertical = {
 	*/
 	pageHeight: function (list, page) {
 		var h = page.node.offsetHeight;
+		var m = list.metrics.pages[page.index];
 		if (h === 0 && list.length) {
 			list.heightNeedsUpdate = true;
+			// attempt to reuse the last known height for this page
+			h = m? m.height: 0;
 		}
 		return h;
 	},
@@ -248,8 +253,11 @@ enyo.DataList.delegates.vertical = {
 	*/
 	pageWidth: function (list, page) {
 		var w = page.node.offsetWidth;
+		var m = list.metrics.pages[page.index];
 		if (w === 0 && list.length) {
 			list.widthNeedsUpdate = true;
+			// attempt to reuse the last known width for this page
+			w = m? m.width: 0;
 		}
 		return w;
 	},
