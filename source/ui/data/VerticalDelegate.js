@@ -237,13 +237,21 @@ enyo.DataList.delegates.vertical = {
 		Returns the calculated height for the given page.
 	*/
 	pageHeight: function (list, page) {
-		return page.node.offsetHeight;
+		var h = page.node.offsetHeight;
+		if (h === 0 && list.length) {
+			list.heightNeedsUpdate = true;
+		}
+		return h;
 	},
 	/**
 		Returns the calculated width for the given page.
 	*/
 	pageWidth: function (list, page) {
-		return page.node.offsetWidth;
+		var w = page.node.offsetWidth;
+		if (w === 0 && list.length) {
+			list.widthNeedsUpdate = true;
+		}
+		return w;
 	},
 	/**
 		Attempts to intelligently decide when to force updates for models being added

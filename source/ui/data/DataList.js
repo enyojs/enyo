@@ -210,6 +210,12 @@ enyo.kind({
 	*/
 	didScroll: function (sender, event) {
 		if (this.hasRendered) {
+			if (this.heightNeedsUpdate || this.widthNeedsUpdate) {
+				// assign this here so that if for any reason it needs to
+				// it can reset it
+				this.heightNeedsUpdate = this.widthNeedsUpdate = false;
+				this.refresh();
+			}
 			this.delegate.didScroll(this, event);
 		}
 		return true;
@@ -221,6 +227,12 @@ enyo.kind({
 	*/
 	didResize: function (sender, event) {
 		if (this.hasRendered) {
+			if (this.heightNeedsUpdate || this.widthNeedsUpdate) {
+				// assign this here so that if for any reason it needs to
+				// it can reset it
+				this.heightNeedsUpdate = this.widthNeedsUpdate = false;
+				this.refresh();
+			}
 			this.delegate.didResize(this, event);
 		}
 	},
