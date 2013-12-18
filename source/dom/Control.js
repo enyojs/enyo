@@ -934,26 +934,22 @@ enyo.kind({
 		return this.showing;
 	},
 	//* Returns true if this and all parents are showing.
-	getAbsoluteShowing: function() {
-		var b = this.getBounds();
+	getAbsoluteShowing: function(ignoreBounds) {
+		var b;
+		if (!ignoreBounds) {
+			b = this.getBounds();
+		}
 
-		if(this.getShowing() === false || (b.height === 0 && b.width === 0)) {
+		if(this.getShowing() === false || (b && b.height === 0 && b.width === 0)) {
 			return false;
 		}
 
 		if(this.parent && this.parent.getAbsoluteShowing) {
-			return this.parent.getAbsoluteShowing();
+			return this.parent.getAbsoluteShowing(ignoreBounds);
 		} else {
 			return true;
 		}
 	},
-	resized: enyo.inherit(function (sup) {
-		return function () {
-			if (this.getAbsoluteShowing()) {
-				sup.apply(this, arguments);
-			}
-		};
-	}),
 	//
 	//
 	fitChanged: function() {
