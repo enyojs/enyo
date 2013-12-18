@@ -4,7 +4,7 @@ _enyo.Control.getAbsoluteBounds()_ now accepts an optional boolean parameter tha
 skip the _getBounds()_ call internally and rely solely on the return value of the _getShowing()_
 public API.
 
-_enyo.Scroller_ has been updated such that it will only propagate _resize_ events to children if it's
+_enyo.Scroller_ has been updated such that it will only propagate _resize_ events to children unless it's
 _showing_ property is `true`.
 
 ## 2.3.0-rc1
