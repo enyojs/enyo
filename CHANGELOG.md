@@ -6,6 +6,15 @@ Added _enyo.Collection.destroyAllLocal()_ as a convenience method.
 
 Added _enyo.Collection.fetchAndDestroyLocal()_ method to do the same as _fetchAndDestroy()_ except it will call _destroyLocal()_ on the records instead of _destroy()_. This also means you could call _fetch()_ with the options property _destroyLocal_ set to _true_ to have the same effect.
 
+## 2.3.0-rc4
+
+_enyo.Control.getAbsoluteBounds()_ now accepts an optional boolean parameter that, if `true`, will
+skip the _getBounds()_ call internally and rely solely on the return value of the _getShowing()_
+public API.
+
+_enyo.Scroller_ has been updated such that it will only propagate _resize_ events to children if it's
+_showing_ property is `true`.
+
 ## 2.3.0-rc1
 
 _enyo.dispatcher.capture_ API no longer bubbles all captured events through the normal event chain, but
