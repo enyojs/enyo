@@ -933,7 +933,12 @@ enyo.kind({
 		this.showing = (this.domStyles.display != "none");
 		return this.showing;
 	},
-	//* Returns true if this and all parents are showing.
+	/**
+		Returns true if this and all parents are showing. If the optional
+		_ignoreBounds_ boolean parameter is `true` it will not force a layout
+		by retrieving computed bounds and rely on the return from _getShowing()_
+		exclusively.
+	*/
 	getAbsoluteShowing: function(ignoreBounds) {
 		var b;
 		if (!ignoreBounds) {
