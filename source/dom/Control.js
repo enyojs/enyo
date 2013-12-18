@@ -947,6 +947,13 @@ enyo.kind({
 			return true;
 		}
 	},
+	resized: enyo.inherit(function (sup) {
+		return function () {
+			if (this.getAbsoluteShowing()) {
+				sup.apply(this, arguments);
+			}
+		};
+	}),
 	//
 	//
 	fitChanged: function() {
