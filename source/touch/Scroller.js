@@ -428,7 +428,14 @@ enyo.kind({
 	//* Send the useMouseWheel propert to the scroll strategy
 	useMouseWheelChanged: function() {
 		this.$.strategy.setUseMouseWheel(this.useMouseWheel);
-	}
+	},
+	resized: enyo.inherit(function (sup) {
+		return function () {
+			if (this.getAbsoluteShowing(true)) {
+				sup.apply(this, arguments);
+			}
+		};
+	})
 });
 
 // provide a touch scrolling solution by default when the environment is mobile
