@@ -143,7 +143,7 @@
 					co = i % cc;
 					c.addStyles(
 						"top: "    + (s  + (r  * (h+s))) + "px; " +
-						"left: "   + (s  + (co * (w+s))) + "px; " +
+						(list.rtl ? "right: " : "left: ") + (s  + (co * (w+s))) + "px; " +
 						"width: "  + (w) +                 "px; " +
 						"height: " + (h) +                 "px"
 					);
