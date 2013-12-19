@@ -921,6 +921,25 @@
 		return new Date().getTime();
 	};
 
+	/**
+		When window.performance is available, supply a high-precision, high performance
+		monotonic timestamp, which is independent of changes to the system clock and safer
+		for use in animation, etc.  Falls back to enyo.now (based on the JS _Date_ object),
+		which is subject to system time changes.
+	*/
+	enyo.perfNow = (function () {
+		// we have to check whether or not the browser has supplied a valid
+		// method to use
+		var perf = window.performance || {};
+		// test against all known vendor-specific implementations, but use
+		// a fallback just in case
+		perf.now = perf.now || perf.mozNow || perf.msNow || perf.oNow || perf.webkitNow || enyo.now;
+		return function () {
+			return perf.now();
+		};
+	}());
+
+
 	//* @protected
 
 	enyo.nop = function(){};

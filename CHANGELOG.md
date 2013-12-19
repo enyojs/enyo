@@ -8,6 +8,10 @@ Added _enyo.Collection.fetchAndDestroyLocal()_ method to do the same as _fetchAn
 
 ## 2.3.0-rc4
 
+Added _enyo.perfNow()_, a high-precision, high performance monotonic timestamp, which is independent of changes
+to the system clock and safer for use in animation, etc.  Falls back to _enyo.now()_ (based on the JS _Date_
+object) on platforms where `window.performance.now()` is not available.
+
 _enyo.Control.getAbsoluteBounds()_ now accepts an optional boolean parameter that, if `true`, will
 skip the _getBounds()_ call internally and rely solely on the return value of the _getShowing()_
 public API.
