@@ -96,7 +96,7 @@
 				if (b._isObject) {
 					if (b._getters && (fn = b._getters[r$])) {
 						b = b[fn]();
-					} else if (b.computed && b.get && b.computed[r$]) {
+					} else if (b.computed && b.get && b.computed[r$] != null) {
 						b = b[r$]();
 					} else {
 						b = b[r$];
@@ -129,7 +129,7 @@
 		var b = this, fn, v;
 		if (b._getters && (fn = b._getters[path])) {
 			v = b[fn]();
-		} else if (b.get && b.computed && b.computed[path]) {
+		} else if (b.get && b.computed && b.computed[path] != null) {
 			v = b[path]();
 		} else {
 			v = b[path];
@@ -182,7 +182,7 @@
 					// in the rare case that our path includes a computed property (as part of
 					// chain -- this really is rare but not impossible) we use the getter to retrieve
 					// it correctly
-					if (b._isObject && b.computed && b.computed[r$]) {
+					if (b._isObject && b.computed && b.computed[r$] != null) {
 						b = b.get(r$);
 					} else if (isDeferredConstructor(tp)) {
 						// ensure this isn't a constructor that needs to be undeferred
@@ -217,7 +217,7 @@
 			rv, fn;
 		// we have to check and ensure that we're not setting a computed property
 		// and if we are, do nothing
-		if (b.computed && b.computed[path]) {
+		if (b.computed && b.computed[path] != null) {
 			return b;
 		}
 		if (b._getters && (fn=b._getters[path])) {
