@@ -127,7 +127,6 @@ enyo.kind({
 		if (args === 1) {
 			// time independent
 			f = this.fraction = enyo.easedLerp(this.t0, this.duration, this.easingFunction, this.reversed);
-			this.log(this.t0, this.t1, this.dt, f);
 			this.value = this.startValue + f * (this.endValue - this.startValue);
 		} else {
 			this.value = enyo.easedComplexLerp(this.t0, this.duration, this.easingFunction, this.reversed,
