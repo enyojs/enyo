@@ -6,17 +6,7 @@
 		When available, supply a high-precision, high performance
 		monotonic benchmark for some internal usage and benchmark testing.
 	*/
-	enyo.bench = (function () {
-		// we have to check whether or not the browser has supplied a valid
-		// method to use
-		var perf = window.performance || {};
-		// test against all known vendor-specific implementations, but use
-		// a fallback just in case
-		perf.now = perf.now || perf.mozNow || perf.msNow || perf.oNow || perf.webkitNow || enyo.now;
-		return function () {
-			return perf.now();
-		};
-	}());
+	enyo.bench = enyo.perfNow;
 
 	//*@protected
 	/**
