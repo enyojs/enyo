@@ -138,6 +138,23 @@ enyo.kind({
 	name: "ComputedTest",
 	kind: enyo.TestSuite,
 	noDefer: true,
+	testFalsyComputed: function() {
+		var K = enyo.kind({
+			kind: enyo.Object,
+			computed: {
+				zeroProp: []
+			},
+			zeroProp: function () {
+				return 0;
+			}
+		});
+		var o = new K();
+		if (o.get("zeroProp") !== 0) {
+			this.finish("get zeroProp returned non-zero");
+		} else {
+			this.finish();
+		}
+	},
 	testWithComputedProperties: function () {
 		var test = {}, o, s = this, allowed = false;
 		test.Object = enyo.kind({
@@ -168,6 +185,7 @@ enyo.kind({
 		o.set("testProp", 3);
 		allowed = true;
 		o.startNotifications();
+		o.destroy();
 	},
 	testComputedWithBindings: function () {
 		var test = {}, o, t, s = this;
