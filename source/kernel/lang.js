@@ -89,15 +89,26 @@
 			v, fn;
 		for (var i=0, r$; (r$=ps[i]); ++i) {
 			// this will retrieve the requested element if it has a getter we call this
-			// to account for computed properties, default getters are used when present
-			b = (
-					// these are carefully ordered in terms of likeliness to encounter thus
-					// reducing the number of checks that need to be executed
-					(b && b._isObject && (
-						(b._getters && (fn = b._getters[r$]) && b[fn]()) ||
-						(b.get && b.computed && b.computed[r$] && b[r$]()) || b[r$]
-					)) || (("function" == typeof b && (b = enyo.checkConstructor(b)) && b[r$]) || b[r$])
-				);
+			// to account for computed properties, default getters are used when present.
+			// these are carefully ordered in terms of likeliness to encounter thus
+			// reducing the number of checks that need to be executed
+			if (b) {
+				if (b._isObject) {
+					if (b._getters && (fn = b._getters[r$])) {
+						b = b[fn]();
+					} else if (b.computed && b.get && b.computed[r$]) {
+						b = b[r$]();
+					} else {
+						b = b[r$];
+					}
+				} else {
+					// check for undeferral of kind constructors before use
+					if ("function" == typeof b) {
+						b = enyo.checkConstructor(b);
+					}
+					b = b[r$];
+				}
+			}
 			if (!b) { break; }
 		}
 		// if the index isn't the same as the length of parts (including the 0 case)
@@ -111,13 +122,18 @@
 	};
 
 	//*@protected
-	//* Simplified version of enyo.getPath used internally for get<Name> calls
+	//* Simplified version of enyo.getPath used internally for get<Name> calls.
+	//* This is able to handle basic and computed properties
 	enyo.getPath.fast = function (path) {
 		// the current context
-		var b = this,
-			// the final value to return
-			fn, v;
-		v = ((b._getters && (fn=b._getters[path]) && b[fn]()) || b[path]);
+		var b = this, fn, v;
+		if (b._getters && (fn = b._getters[path])) {
+			v = b[fn]();
+		} else if (b.get && b.computed && b.computed[path]) {
+			v = b[path]();
+		} else {
+			v = b[path];
+		}
 		return (("function" == typeof v && enyo.checkConstructor(v)) || v);
 	};
 
@@ -158,25 +174,32 @@
 			if (r$ == "enyo" && enyo === b) { continue; }
 			// its actually pretty simple, check to see if the next requested context exists and is an object
 			// or a function, if so, we use that and continue, otherwise we have to create it
-			b = (
-					((tp=b[r$]) && (
-						// if its just an object, use it straight up
-						(typeof tp == "object" && tp) ||
-						(typeof tp == "function" && (
-							// in the rare case that our path includes a computed property (as part of
-							// chain -- this really is rare but not impossible) we use the getter to retrieve
-							// it correctly
-							(b._isObject && b.computed && b.computed[r$] && b.get(r$)) ||
-							// ensure this isn't a constructor that needs to be undeferred
-							(isDeferredConstructor(tp) && enyo.checkConstructor(tp)) || tp
-						))
-						// if it wasn't present we instantiate the path and use that object
-					)) || (b[r$]={})
-				);
+			if ((tp = b[r$])) {
+				if (typeof tp === "object") {
+					b = tp;
+				}
+				else if (typeof tp == "function") {
+					// in the rare case that our path includes a computed property (as part of
+					// chain -- this really is rare but not impossible) we use the getter to retrieve
+					// it correctly
+					if (b._isObject && b.computed && b.computed[r$]) {
+						b = b.get(r$);
+					} else if (isDeferredConstructor(tp)) {
+						// ensure this isn't a constructor that needs to be undeferred
+						b = enyo.checkConstructor(tp);
+					} else {
+						b = tp;
+					}
+				}
+			}
+			else {
+				// if it wasn't present we instantiate the path and use that object
+				b = b[r$] = {};
+			}
 		}
 		// now we can attempt to retrieve a previous value if it can be done in as
 		// efficient a manner as possible -- we will call an overloaded getter if necessary
-		rv = ((b && b._isObject && b._getters && (fn=b._getters[pr]) && b[fn]()) || b[pr]);
+		rv = (b && b._isObject && b._getters && (fn=b._getters[pr])) ? b[fn]() : b[pr];
 		// now we set the new value, much simpler
 		b[pr] = value;
 		// only notify if the value has changed or if the update should be forced
@@ -194,8 +217,14 @@
 			rv, fn;
 		// we have to check and ensure that we're not setting a computed property
 		// and if we are, do nothing
-		if (b.computed && b.computed[path]) { return b; }
-		rv = ((b._getters && (fn=b._getters[path]) && b[fn]()) || b[path]);
+		if (b.computed && b.computed[path]) {
+			return b;
+		}
+		if (b._getters && (fn=b._getters[path])) {
+			rv = b[fn]();
+		} else {
+			rv = b[path];
+		}
 		// set the new value now that we can
 		b[path] = value;
 		// this method is only ever called from the context of enyo objects
