@@ -199,7 +199,7 @@ enyo.kind({
 	//* @public
 	/**
 		Returns the DOM node representing the control.
-		If the control is not currently rendered, returns null.
+		If the control is not currently rendered, returns a falsy value (null or false).
 
 		If _hasNode()_ returns a value, the _node_ property will be valid and
 		can be checked directly.
@@ -985,7 +985,7 @@ enyo.kind({
 
 		return false;
 	},
-	
+
 	//* Removes control from enyo.roots
 	removeFromRoots: function() {
 		if (this._isRoot) {
