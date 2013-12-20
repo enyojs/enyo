@@ -469,7 +469,7 @@ enyo.kind({
 	},
 	//* Calculate the time that has elapsed since
 	_rewind: function() {
-		var now = enyo.now(),
+		var now = enyo.perfNow(),
 			distance = now - this.rewindBeginTime,
 			pbRate = this.calcNumberValueOfPlaybackRate(this.playbackRate),
 			adjustedDistance = Math.abs(distance * pbRate) / 1000,
@@ -479,7 +479,7 @@ enyo.kind({
 	},
 	//* Start rewind job
 	startRewindJob: function() {
-		this.rewindBeginTime = enyo.now();
+		this.rewindBeginTime = enyo.perfNow();
 		enyo.job(this.id + "rewind", this.bindSafely("_rewind"), 100);
 	},
 	//* Stop rewind job

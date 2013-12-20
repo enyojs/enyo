@@ -142,10 +142,10 @@
 					// the column
 					co = i % cc;
 					c.addStyles(
-						"top: "    + (s  + (r  * (h+s))) + "px; " +
-						"left: "   + (s  + (co * (w+s))) + "px; " +
-						"width: "  + (w) +                 "px; " +
-						"height: " + (h) +                 "px"
+						"top: "    + Math.round(s  + (r  * (h+s))) + "px; " +
+						(list.rtl ? "right: " : "left: ") + Math.round(s  + (co * (w+s))) + "px; " +
+						"width: "  + Math.round(w) +                 "px; " +
+						"height: " + Math.round(h) +                 "px"
 					);
 					// check if we need to increment the row
 					if ((i+1) % cc === 0) { ++r; }

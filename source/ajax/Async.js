@@ -95,14 +95,14 @@ enyo.kind({
 		}
 	},
 	startTimer: function() {
-		this.startTime = enyo.now();
+		this.startTime = enyo.perfNow();
 		if (this.timeout) {
 			this.timeoutJob = setTimeout(this.bindSafely("timeoutComplete"), this.timeout);
 		}
 	},
 	endTimer: function() {
 		if (this.timeoutJob) {
-			this.endTime = enyo.now();
+			this.endTime = enyo.perfNow();
 			clearTimeout(this.timeoutJob);
 			this.timeoutJob = null;
 			this.latency = this.endTime - this.startTime;
