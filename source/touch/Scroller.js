@@ -210,8 +210,6 @@ enyo.kind({
 		return function() {
 			if (!this.showing) {
 				this.cacheScrollPosition();
-				this.setScrollLeft(0);
-				this.setScrollTop(0);
 			}
 			sup.apply(this, arguments);
 			if (this.showing) {
