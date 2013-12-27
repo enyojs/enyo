@@ -158,7 +158,11 @@ enyo.DataList.delegates.vertical = {
 		metrics.height = this.pageHeight(list, page);
 		metrics.width  = this.pageWidth(list, page);
 		// update the childSize value now that we have measurements
-		this.childSize(list);
+		var childSize = list.childSize;
+		if (childSize != this.childSize(list)) {
+			list._updatedControlsPerPage = undefined;
+			this.generatePage(list, page, index);
+		}
 	},
 	/**
 		Generates a child size for the given list.
