@@ -62,7 +62,7 @@ enyo.kind({
 			{content: "The \"transition-timing-function\" property has value \"" + this.$.selectTransitionTiming.getValue() + "\" applied."},
 			{content: "The \"transition-duration\" property has value \"" + this.$.selectTransitionDuration.getValue() + "\" applied."},
 			{content: "The \"background-color\" property has value \"" + this.$.selectColor.getValue() + "\" applied."}
-		])
+		]);
 		this.$.results.render();
 	},
 	selectChanged: function(inSender, inEvent) {

@@ -1,8 +1,8 @@
 /*
 	Implementation notes:
-	- We are utilizing inSender (as opposed to inEvent.originator) in our button tap handler
-	  as we need to normalize for the case of the image button that has a child component, and
-	  we are concerned with the top-level button itself.
+	-	We are utilizing inSender (as opposed to inEvent.originator) in our button tap handler
+		as we need to normalize for the case of the image button that has a child component, and
+		we are concerned with the top-level button itself.
 */
 enyo.kind({
 	name: "enyo.sample.ButtonSample",

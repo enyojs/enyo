@@ -9,7 +9,7 @@ enyo.kind({
 	],
 	handlers: {
         ondrag: "drag",
-        ondragfinish: "dragFinish",
+        ondragfinish: "dragFinish"
     },
     drag: function(inSender, inEvent) {
         this.$.dragAvatar.drag(inEvent);

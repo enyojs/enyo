@@ -1,7 +1,7 @@
 /*
 	Implementation notes:
-	- The RichText methods involving selection (HTML5 selection object) require 
-	  that the RichText object have focus first.
+	-	The RichText methods involving selection (HTML5 selection object) require 
+		that the RichText object have focus first.
 */
 enyo.kind({
 	name: "enyo.sample.RichTextSample",

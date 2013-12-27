@@ -2,9 +2,9 @@ enyo.kind({
 	name: "enyo.sample.TextAreaSample",
 	classes: "text-area-sample",
 	components: [
-		{tag: "label", content: "Text Area", classes: "section", attributes: [{for: "inputTextArea"}]},
+		{tag: "label", content: "Text Area", classes: "section", attributes: [{"for": "inputTextArea"}]},
 		{kind: "enyo.TextArea", name: "inputTextArea", type: "text", placeholder: "TextArea", value: "Initial TextArea Value", onchange: "inputChanged", oninput: "inputOccurred"},
-		{tag: "label", content: "Disabled Text Area", classes: "section", attributes: [{for: "textAreaDisabled"}]},
+		{tag: "label", content: "Disabled Text Area", classes: "section", attributes: [{"for": "textAreaDisabled"}]},
 		{kind: "enyo.TextArea", name: "textAreaDisabled", disabled: true, value: "Disabled", onchange: "inputChanged", oninput: "inputOccurred"},
 		{kind: "enyo.Button", name: "buttonTextAreaToggle", ontap: "buttonTextAreaToggleTapped", content: "Toggle Text Area State"},
 		{name: "results", classes: "results"}

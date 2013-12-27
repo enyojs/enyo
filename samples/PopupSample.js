@@ -1,8 +1,8 @@
 /*
 	Implementation notes:
-	- The Popup At Event Position popup has property floating:true to mitigate the sampler's 
-	  horizontal scroll offset (the control that allows the side navigation to be dragged 
-	  closed and open).
+	-	The Popup At Event Position popup has property floating:true to mitigate the sampler's 
+		horizontal scroll offset (the control that allows the side navigation to be dragged 
+		closed and open).
 */
 enyo.kind({
 	name: "enyo.sample.PopupSample",

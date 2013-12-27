@@ -18,9 +18,11 @@ enyo.kind({
 	monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
 	create: function() {
 		this.inherited(arguments);
+		
+		var currentRow;
+		var dateObj = new Date();
 
 		// calculate current date
-		var dateObj = new Date();
 		var currentDate = dateObj.getDate();
 
 		// calculate date of first day of the month
@@ -30,9 +32,11 @@ enyo.kind({
 		// calculate date of last day of the month
 		var lastDate = this.getDaysInMonth(dateObj.getMonth(), dateObj.getYear());
 
+		// this calculation can probably be simplified, but allows for padding blank spaces in
+		// the calendar to display a "full" table
 		for (var i=0; i<lastDate+offset+(((lastDate+offset)%7)?7-((lastDate+offset)%7):0); i++) {
 			if (i%7 === 0) {
-				var currentRow = this.$.table.createComponent({});
+				currentRow = this.$.table.createComponent({});
 			}
 			if (i<offset || i>=lastDate+offset) {
 				currentRow.createComponent({});
@@ -50,6 +54,6 @@ enyo.kind({
 	},
 	// adapted from http://stackoverflow.com/questions/1810984/number-of-days-in-any-month
 	getDaysInMonth: function(m, y) {
-	   return /8|3|5|10/.test(m)?30:m==1?(!(y%4)&&y%100)||!(y%400)?29:28:31;
+		return (/8|3|5|10/).test(m)?30:m==1?(!(y%4)&&y%100)||!(y%400)?29:28:31;
 	}
 });

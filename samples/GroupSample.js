@@ -1,12 +1,12 @@
 /*
 	Implementation notes:
-	- For button groups, using tap handler (instead of activate handler) because the 
-	  activate handler needs to run first to handle highlander. The reverse sequence
-	  occurs for checkbox groups (tap handler is run first).
-	- In the handlers, inEvent.originator is used (as opposed to inSender) because we
-	  are concerned with the individual group items when displaying the result; the 
-	  handlers are defined on the group in this sample, so inSender would refer to the
-	  group.
+	-	For button groups, using tap handler (instead of activate handler) because the 
+		activate handler needs to run first to handle highlander. The reverse sequence
+		occurs for checkbox groups (tap handler is run first).
+	-	In the handlers, inEvent.originator is used (as opposed to inSender) because we
+		are concerned with the individual group items when displaying the result; the 
+		handlers are defined on the group in this sample, so inSender would refer to the
+		group.
 */
 enyo.kind({
 	name: "enyo.sample.GroupSample",
