@@ -19,8 +19,8 @@ enyo.kind({
 	create: function() {
 		this.inherited(arguments);
 		
-		var currentRow;
-		var dateObj = new Date();
+		var currentRow,
+			dateObj = new Date();
 
 		// calculate current date
 		var currentDate = dateObj.getDate();
@@ -54,6 +54,6 @@ enyo.kind({
 	},
 	// adapted from http://stackoverflow.com/questions/1810984/number-of-days-in-any-month
 	getDaysInMonth: function(m, y) {
-		return (/8|3|5|10/).test(m)?30:m==1?(!(y%4)&&y%100)||!(y%400)?29:28:31;
+		return (/8|3|5|10/).test(m)?30:m==1?((y%4==0)&&y%100)||(y%400==0)?29:28:31;
 	}
 });
