@@ -2,47 +2,68 @@ enyo.kind({
 	name: "enyo.sample.AudioSample",
 	classes: "audio-sample",
 	components: [
-		{kind: "enyo.Audio", onEnded: "ended"},
-		{content: "Sounds", classes:"audio-sample-divider"},
-		{classes: "onyx-toolbar-inline", components: [
-			{kind: "onyx.PickerDecorator", components: [
-				{},
-				{kind: "onyx.Picker", onSelect: "itemSelected", components: [
-					{content: "Birds", active: true},
-					{content: "Cat"},
-					{content: "Cow"},
-					{content: "Guitar"}
-				]}
-			]},
-			{kind: "onyx.Button", content: "Play", ontap: "togglePlay"}
+		{
+			kind: "enyo.Audio",
+			onratechange: "rateChanged",
+			ontimeupdate: "timeChanged",
+			onFastforward: "playbackChanged",
+			onRewind: "playbackChanged",
+			onPlay: "playbackChanged",
+			onPause: "playbackChanged",
+			onLoadedMetaData: "metaDataLoaded"
+		},
+		{content: "Audio", classes: "section"},
+		{kind: "enyo.Select", name: "selectAudio", onchange: "selectChanged", components: [
+			{content: "Andre Agassi - Farewell To Tennis", active: true},
+			{content: "Fight Club Rules"},
+			{content: "Hail to the Chief"},
+			{content: "Winston Churchill: Blood, Toil, Tears, and Sweat"}
 		]},
-		{tag: "br"},
-		{name: "console"}
+		{content: "Playback", classes: "section"},
+		{kind: "enyo.Button", content: "Play", ontap: "togglePlay"},
+		{kind: "enyo.Button", content: "<< Rewind", ontap: "buttonRewindTapped"},
+		{kind: "enyo.Button", content: "Fast Forward >>", ontap: "buttonFastForwardTapped"},
+		{kind: "enyo.Button", content: "< Jump Backward", ontap: "buttonJumpBackwardTapped"},
+		{kind: "enyo.Button", content: "Jump Forward >", ontap: "buttonJumpForwardTapped"},
+		{kind: "enyo.Button", content: "Loop", ontap: "buttonLoopTapped"},
+		{name: "results", classes: "results"},
+		{kind: "enyo.Popup", name: "popupStatus", floating: true, centered: true, classes: "popup"}
 	],
 	sounds: [
-		{label: "Birds", src: "http://www.universal-soundbank.com/mp3/sounds/12591.mp3"},
-		{label: "Cat", src: "http://www.universal-soundbank.com/mp3/sounds/986.mp3"},
-		{label: "Cow", src: "http://www.universal-soundbank.com/mp3/sounds/101.mp3"},
-		{label: "Guitar", src: "http://www.universal-soundbank.com/mp3/sounds/18265.mp3"}
+		"http://www.noiseaddicts.com/samples/3828.mp3",
+		"http://www.noiseaddicts.com/samples/2514.mp3",
+		"http://www.noiseaddicts.com/samples/4353.mp3",
+		"http://www.noiseaddicts.com/samples/134.mp3"
 	],
 	rendered: function() {
 		this.inherited(arguments);
-		this.loadAudio(0);
+		this.loadAudio(this.$.selectAudio.getSelected());
+	},
+	metaDataLoaded: function(inSender, inEvent) {
+		this.timeChanged(inSender, enyo.mixin(inEvent, {duration: this.$.audio.getDuration(), currentTime: this.$.audio.getCurrentTime()}));
+	},
+	playbackChanged: function(inSender, inEvent) {
+		if (inEvent.type === "onPause") {
+			this.displayPopup("Pause");
+		} else if (inEvent.originator.playbackRate > 1) {
+			this.displayPopup("Fast-Forward");			
+		} else if (inEvent.originator.playbackRate < -1) {
+			this.displayPopup("Rewind");
+		} else if (inEvent.originator.playbackRate == 1) {
+			this.displayPopup("Play");
+		}
 	},
 	loadAudio: function(inIndex) {
-		this.$.audio.setSrc(this.sounds[inIndex].src);
-		this.$.console.setContent("");
+		this.$.audio.setSrc(this.sounds[inIndex]);
 		this.$.button.setContent("Play");
 	},
 	playAudio: function() {
 		this.$.audio.play();
 		this.$.button.setContent("Pause");
-		this.$.console.setContent("Audio playing");
 	},
 	pauseAudio: function() {
 		this.$.audio.pause();
 		this.$.button.setContent("Play");
-		this.$.console.setContent("Audio paused");
 	},
 	togglePlay: function(inSender, inResponse) {
 		if (this.$.audio.getPaused()) {
@@ -51,18 +72,39 @@ enyo.kind({
 			this.pauseAudio();
 		}
 	},
-	ended: function(inSender, inResponse) {
-		this.$.console.setContent("Audio ended");
-		this.$.button.setContent("Play");
+	buttonRewindTapped: function(inSender, inEvent) {
+		this.$.audio.rewind();
 	},
-	itemSelected: function(inItem) {
-		var content = inItem.selected.getContent();
-		var soundCount = this.sounds.length;
-		for (var i=0; i<soundCount; i++) {
-			if (content === this.sounds[i].label) {
-				this.loadAudio(i);
-				break;
-			}
-		}
+	buttonFastForwardTapped: function(inSender, inEvent) {
+		this.$.audio.fastForward();
+	},
+	buttonJumpBackwardTapped: function(inSender, inEvent) {
+		this.$.audio.jumpBackward();
+		this.displayPopup("Jump Backward " + this.$.audio.getJumpSec() + "s");
+	},
+	buttonJumpForwardTapped: function(inSender, inEvent) {
+		this.$.audio.jumpForward();
+		this.displayPopup("Jump Forward " + this.$.audio.getJumpSec() + "s");
+	},
+	buttonLoopTapped: function(inSender, inEvent) {
+		this.$.audio.setLoop(!this.$.audio.getLoop());
+		this.displayPopup("Looping " + (this.$.audio.getLoop() ? "Enabled" : "Disabled"));
+	},
+	rateChanged: function(inSender, inEvent) {
+		this.displayPopup("Playback " + inEvent.playbackRate + "x");
+	},
+	timeChanged: function(inSender, inEvent) {
+		this.$.results.setContent("Duration: " + Math.floor(inEvent.duration) + "s, Current Position: " + Math.floor(inEvent.currentTime) + "s");
+	},
+	selectChanged: function(inSender, inEvent) {
+		this.loadAudio(inSender.selected);
+	},
+	displayPopup: function(inContent) {
+		var popup = this.$.popupStatus;
+		popup.setContent(inContent);
+		popup.setShowing(true);
+		enyo.job("autoHidePopup", function() { 
+			popup.hide(); 
+		}, 1000);
 	}
 });

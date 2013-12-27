@@ -1,17 +1,9 @@
-.audio-sample {
+.input-sample {
 	padding: 0 20px;
 	font-family: Segoe UI, Prelude Medium, Helvetica, Verdana, sans-serif;
 	font-size: 16px;
 }
-.popup {
-	padding: 10px;
-	border-radius: 5px;
-	background-color: #226B9A;
-	color: #FFF;
-	font-size: 24px;
-	font-weight: bold;
-}
-.audio-sample .section {
+.input-sample .section {
 	padding-top: 20px;
 	display: block;
 	color: #F49200;
@@ -19,7 +11,18 @@
 	font-weight: bold;
 	margin-bottom: 8px;
 }
-.audio-sample .results {
+.input-sample .enyo-input {
+	width: 400px;
+	display: block;
+	background: none;
+	border: 1px solid #CCC;
+	color: #555;
+	font-size: 16px;
+}
+.input-sample .enyo-input[type=email]:invalid {
+	background-color: red;
+}
+.input-sample .results {
 	margin: 20px 0;
 	padding: 20px;
 	min-height: 24px;
