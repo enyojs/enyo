@@ -639,19 +639,21 @@ enyo.kind({
 			t = 0,
 			n = this.hasNode(),
 			w = n ? n.offsetWidth : 0,
-			h = n ? n.offsetHeight : 0;
+			h = n ? n.offsetHeight : 0,
+			p = null;
 
 		while(n) {
-			l += n.offsetLeft - (n.offsetParent ? n.offsetParent.scrollLeft : 0);
-			t += n.offsetTop  - (n.offsetParent ? n.offsetParent.scrollTop	: 0);
-			n = n.offsetParent;
+			p = (n.offsetParent === document.body) ? document.documentElement : n.offsetParent;
+			l += n.offsetLeft - (p ? p.scrollLeft : 0);
+			t += n.offsetTop  - (p ? p.scrollTop	: 0);
+			n = p;
 		}
 
 		return {
 			top		: t,
 			left	: l,
-			bottom	: document.body.offsetHeight - t - h,
-			right   : document.body.offsetWidth  - l - w,
+			bottom	: document.documentElement.offsetHeight - t - h,
+			right   : document.documentElement.offsetWidth  - l - w,
 			height	: h,
 			width	: w
 		};
