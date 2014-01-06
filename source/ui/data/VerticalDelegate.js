@@ -241,7 +241,7 @@ enyo.DataList.delegates.vertical = {
 	pageHeight: function (list, page) {
 		var h = page.node.offsetHeight;
 		var m = list.metrics.pages[page.index];
-		if (h === 0 && list.length) {
+		if (!page.getAbsoluteShowing(true) && list.length) {
 			list.heightNeedsUpdate = true;
 			// attempt to reuse the last known height for this page
 			h = m? m.height: 0;
@@ -254,7 +254,7 @@ enyo.DataList.delegates.vertical = {
 	pageWidth: function (list, page) {
 		var w = page.node.offsetWidth;
 		var m = list.metrics.pages[page.index];
-		if (w === 0 && list.length) {
+		if (!page.getAbsoluteShowing(true) && list.length) {
 			list.widthNeedsUpdate = true;
 			// attempt to reuse the last known width for this page
 			w = m? m.width: 0;
