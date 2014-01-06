@@ -47,8 +47,18 @@ enyo.kind({
 	*/
 	pageSizeMultiplier: null,
 	/**
-		To disable the default smoothing-transitions (for supported platforms) set
-		this flag to `false`.
+		It is helpful for performance if the list doesn't need to guess at the size of
+		the children. In cases where all children are a fixed height/width (depending on
+		the orientation of the list) you may explicitly define that value for the list
+		to use and bypass much of its guesswork. This value is a number that will be interpreted
+		in pixels and applied to the primary size depending on orientation: _height_ when
+		_vertical_ and _width_ when _horizontal_. Note this value is not applied to the
+		children via CSS by the list.
+	*/
+	fixedChildSize: null,
+	/**
+		To disable the default smoothing-transitions (for supported platforms), set
+		this flag to false.
 	*/
 	allowTransitions: true,
 	/**

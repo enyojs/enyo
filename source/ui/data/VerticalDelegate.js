@@ -126,6 +126,7 @@ enyo.DataList.delegates.vertical = {
 			perPage = this.controlsPerPage(list),
 			// placeholder for the control we're going to update
 			view;
+		
 		// the first index for this generated page
 		page.start  = perPage * index;
 		// the last index for this generated page
@@ -164,16 +165,18 @@ enyo.DataList.delegates.vertical = {
 		Generates a child size for the given list.
 	*/
 	childSize: function (list) {
-		var pageIndex = list.$.page1.index,
-			sizeProp  = list.psizeProp,
-			n         = list.$.page1.node || list.$.page1.hasNode(),
-			size, props;
-		if (pageIndex >= 0 && n) {
-			props = list.metrics.pages[pageIndex];
-			size  = props? props[sizeProp]: 0;
-			list.childSize = Math.floor(size / (n.children.length || 1));
+		if (!list.fixedChildSize) {
+			var pageIndex = list.$.page1.index,
+				sizeProp  = list.psizeProp,
+				n         = list.$.page1.node || list.$.page1.hasNode(),
+				size, props;
+			if (pageIndex >= 0 && n) {
+				props = list.metrics.pages[pageIndex];
+				size  = props? props[sizeProp]: 0;
+				list.childSize = Math.floor(size / (n.children.length || 1));
+			}
 		}
-		return list.childSize || (list.childSize = 100); // we have to start somewhere
+		return list.fixedChildSize || list.childSize || (list.childSize = 100); // we have to start somewhere
 	},
 	/**
 		When necessary will update the the value of controlsPerPage dynamically
@@ -199,7 +202,7 @@ enyo.DataList.delegates.vertical = {
 			// using height/width of the available viewport times our multiplier value
 			perPage   = list.controlsPerPage = Math.ceil(((fn(list) * multi) / childSize) + 1);
 			// update our time for future comparison
-			list._updatedControlsPerPage = enyo.bench();
+			list._updatedControlsPerPage = enyo.perfNow();
 		}
 		/*jshint -W093 */
 		return (list.controlsPerPage = perPage);
@@ -397,7 +400,7 @@ enyo.DataList.delegates.vertical = {
 	*/
 	defaultPageSize: function (list) {
 		var perPage = list.controlsPerPage || this.controlsPerPage(list);
-		return (perPage * (list.childSize || 100));
+		return (perPage * (list.fixedChildSize || list.childSize || 100));
 	},
 	/**
 		Retrieves the number of pages for for given list.
@@ -537,7 +540,7 @@ enyo.DataList.delegates.vertical = {
 	*/
 	updateBounds: function (list) {
 		list.boundsCache    = list.getBounds();
-		list._updatedBounds = enyo.bench();
+		list._updatedBounds = enyo.perfNow();
 		list._updateBounds  = false;
 	}
 };
