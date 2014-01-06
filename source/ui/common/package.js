@@ -1,0 +1,9 @@
+enyo.depends(
+	"Icon.js",
+	"Button.js",
+	"IconButton.js",
+	"Checkbox.js",
+	"InputDecorator.js",
+	"ProgressBar.js",
+	"Slider.js"
+);
