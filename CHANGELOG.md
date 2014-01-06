@@ -1,3 +1,9 @@
+## 2.3.0-rc5
+
+Added _fixedChildSize_ public property to _enyo.DataList_ to allow the list to optimize performance when
+list items will have fixed dimensions. Whenever items in the list will be uniform this option should be
+utilized.
+
 ## 2.3.0-rc4
 
 Added _enyo.perfNow()_, a high-precision, high performance monotonic timestamp, which is independent of changes
