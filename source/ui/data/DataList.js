@@ -197,7 +197,6 @@ enyo.kind({
 	},
 	//*@protected
 	_absoluteShowingChanged: function () {
-		this.log(this.get("absoluteShowing"));
 		if (this.get("absoluteShowing")) {
 			if (this._showingQueue && this._showingQueue.length) {
 				var queue = this._showingQueue;
@@ -223,7 +222,6 @@ enyo.kind({
 		}
 		queue.push(name);
 		methods[name] = fn;
-		this.log(queue);
 	},
 	//*@public
 	/**
