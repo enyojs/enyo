@@ -149,5 +149,62 @@ enyo.kind({
 			document.body.removeChild(div);
 		}
 		this.finish();
+	},
+	testAbsoluteShowing: function () {
+		var root = enyo.singleton({
+			kind: "enyo.Control",
+			components: [
+				{name: "control1", components: [
+					{name: "control2"},
+					{name: "control3"}
+				]}
+			]
+		});
+		
+		if (
+			!root.get("absoluteShowing") ||
+			!root.$.control1.get("absoluteShowing") ||
+			!root.$.control2.get("absoluteShowing") ||
+			!root.$.control3.get("absoluteShowing")
+		) {
+			this.finish("initial value not correct, supposed to be true with defaults");
+		}
+		
+		root.setShowing(false);
+		
+		if (
+			root.$.control1.get("absoluteShowing") ||
+			root.$.control2.get("absoluteShowing") ||
+			root.$.control3.get("absoluteShowing")
+		) {
+			this.finish("children should have had their state updated because parent setShowing is false");
+		}
+		
+		root.setShowing(true);
+		
+		if (
+			!root.get("absoluteShowing") ||
+			!root.$.control1.get("absoluteShowing") ||
+			!root.$.control2.get("absoluteShowing") ||
+			!root.$.control3.get("absoluteShowing")
+		) {
+			this.finish("showing state should all be showing again");
+		}
+		
+		root.$.control1.setShowing(false);
+		
+		if (!root.get("absoluteShowing")) {
+			this.finish("the parent should not be affected by the child");
+		}
+		
+		if (
+			root.$.control1.get("absoluteShowing") ||
+			root.$.control2.get("absoluteShowing") ||
+			root.$.control3.get("absoluteShowing")
+		) {
+			this.finish("children of modified child should match the showing state of the parent");
+		}
+		
+		this.finish();
 	}
 });

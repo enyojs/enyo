@@ -90,6 +90,26 @@ enyo.kind({
 		ontap: "tap"
 	},
 	//*@protected
+	computed: {
+		absoluteShowing: ["showing", "parentShowing", {cached: true, default: true}]
+	},
+	bindings: [
+		{from: ".parent.absoluteShowing", to: ".parentShowing"}
+	],
+	//*@public
+	//* A read-only boolean value indicating the _showing_ state of the _parent_.
+	parentShowing: true,
+	/**
+		A read-only _computed property_ that can be observed to determine if/when
+		the view is actually visible. It uses its own `showing` property along with
+		the current `absoluteShowing` value of its parent. This way, if any _control_
+		sets its `showing` state to `false` all of its children will know they aren't
+		visible.
+	*/
+	absoluteShowing: function () {
+		return !! (this.showing && (this.parent? this.parentShowing: true));
+	},
+	//*@protected
 	_isView: true,
 	/**
 		When using the _renderReusingNode()_ path for updating a tree of views,

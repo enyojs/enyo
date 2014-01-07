@@ -4,6 +4,14 @@ Added _fixedChildSize_ public property to _enyo.DataList_ to allow the list to o
 list items will have fixed dimensions. Whenever items in the list will be uniform this option should be
 utilized.
 
+Added _default_ value support for _computed properties_. Simply provide a configuration object with a key
+_default_ and any value, even `undefined`.
+
+Added _enyo.Control.absoluteShowing_ read-only boolean property that may be observed to indicate whether
+the control is actually visible. Setting the _showing_ property to `false` for any control will flip this
+properties value to `false` for all children. This property can then be reliably used to separate logic that
+should only occur when a control is visible.
+
 ## 2.3.0-rc4
 
 Added _enyo.perfNow()_, a high-precision, high performance monotonic timestamp, which is independent of changes
