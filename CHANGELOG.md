@@ -6,6 +6,12 @@ Added _enyo.Collection.destroyAllLocal()_ as a convenience method.
 
 Added _enyo.Collection.fetchAndDestroyLocal()_ method to do the same as _fetchAndDestroy()_ except it will call _destroyLocal()_ on the records instead of _destroy()_. This also means you could call _fetch()_ with the options property _destroyLocal_ set to _true_ to have the same effect.
 
+## 2.3.0-rc5
+
+Added _fixedChildSize_ public property to _enyo.DataList_ to allow the list to optimize performance when
+list items will have fixed dimensions. Whenever items in the list will be uniform this option should be
+utilized.
+
 ## 2.3.0-rc4
 
 Added _enyo.perfNow()_, a high-precision, high performance monotonic timestamp, which is independent of changes
