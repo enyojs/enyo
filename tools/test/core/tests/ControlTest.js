@@ -167,7 +167,7 @@ enyo.kind({
 			!root.$.control2.get("absoluteShowing") ||
 			!root.$.control3.get("absoluteShowing")
 		) {
-			this.finish("initial value not correct, supposed to be true with defaults");
+			return this.finish("initial value not correct, supposed to be true with defaults");
 		}
 		
 		root.setShowing(false);
@@ -177,7 +177,7 @@ enyo.kind({
 			root.$.control2.get("absoluteShowing") ||
 			root.$.control3.get("absoluteShowing")
 		) {
-			this.finish("children should have had their state updated because parent setShowing is false");
+			return this.finish("children should have had their state updated because parent setShowing is false");
 		}
 		
 		root.setShowing(true);
@@ -188,13 +188,13 @@ enyo.kind({
 			!root.$.control2.get("absoluteShowing") ||
 			!root.$.control3.get("absoluteShowing")
 		) {
-			this.finish("showing state should all be showing again");
+			return this.finish("showing state should all be showing again");
 		}
 		
 		root.$.control1.setShowing(false);
 		
 		if (!root.get("absoluteShowing")) {
-			this.finish("the parent should not be affected by the child");
+			return this.finish("the parent should not be affected by the child");
 		}
 		
 		if (
@@ -202,7 +202,7 @@ enyo.kind({
 			root.$.control2.get("absoluteShowing") ||
 			root.$.control3.get("absoluteShowing")
 		) {
-			this.finish("children of modified child should match the showing state of the parent");
+			return this.finish("children of modified child should match the showing state of the parent");
 		}
 		
 		this.finish();

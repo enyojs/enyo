@@ -199,7 +199,7 @@ enyo.kind({
 		var test = {};
 		test.object = enyo.singleton({
 			kind: "enyo.Object",
-			computed: {myComputedProp: ["myprop1", "myprop2", {cached: true, default: false}]},
+			computed: {myComputedProp: ["myprop1", "myprop2", {cached: true, defaultValue: false}]},
 			myprop1: true,
 			myComputedProp: function () {
 				return !! (this.myprop1 && this.myprop2);
@@ -210,7 +210,11 @@ enyo.kind({
 		});
 		
 		if (changed) {
-			this.finish("default value was not used");
+			return this.finish("default value was not used");
+		}
+		
+		if (test.object.get("myComputedProp")) {
+			return this.finish("default value was not used");
 		}
 		
 		test.object.set("myprop2", true);
@@ -223,14 +227,14 @@ enyo.kind({
 		var test = {};
 		test.obj1 = enyo.singleton({
 			kind: "enyo.Object",
-			computed: {myComputedProp: [{default: false}]},
+			computed: {myComputedProp: [{defaultValue: false}]},
 			myComputedProp: function () {
 				return true;
 			}
 		});
 		test.obj2 = enyo.singleton({
 			kind: "enyo.Object",
-			computed: {myComputedProp: ["myprop1", {default: false}]},
+			computed: {myComputedProp: ["myprop1", {defaultValue: false}]},
 			myprop1: true,
 			myComputedProp: function () {
 				return this.get("myprop1");
@@ -238,7 +242,7 @@ enyo.kind({
 		});
 		test.obj3 = enyo.singleton({
 			kind: "enyo.Object",
-			computed: {myComputedProp: ["myprop1", {default: false}]},
+			computed: {myComputedProp: ["myprop1", {defaultValue: false}]},
 			bindings: [
 				{source: test.obj2, from: ".myprop1", to: ".myprop1"}
 			],

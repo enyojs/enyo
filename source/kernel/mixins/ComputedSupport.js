@@ -114,9 +114,9 @@
 					// this can only happen once it will attempt to supply a default
 					// value for the computed (cached) property instead of forcing it
 					// to be evaluated the first time it is requested
-					if (config && config.hasOwnProperty("default")) {
+					if (config && config.hasOwnProperty("defaultValue")) {
 						c.dirty = false;
-						c.value = config.default;
+						c.value = config.defaultValue;
 					} else {
 						c.dirty = true;
 					}
@@ -131,10 +131,10 @@
 				// the most recent
 				return c.value;
 			} else if (config) {
-				if (config.hasOwnProperty("default")) {
-					var def = config.default;
+				if (config.hasOwnProperty("defaultValue")) {
+					var def = config.defaultValue;
 					// remove it so we won't use it again for this instnace
-					delete config.default;
+					delete config.defaultValue;
 					return def;
 				}
 			}

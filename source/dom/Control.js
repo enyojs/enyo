@@ -91,7 +91,7 @@ enyo.kind({
 	},
 	//*@protected
 	computed: {
-		absoluteShowing: ["showing", "parentShowing", {cached: true, default: true}]
+		absoluteShowing: ["showing", "parentShowing", {cached: true, defaultValue: true}]
 	},
 	bindings: [
 		{from: ".parent.absoluteShowing", to: ".parentShowing"}
