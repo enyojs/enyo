@@ -1,0 +1,12 @@
+.drag-avatar-sample {
+	padding: 20px;
+}
+.drag-avatar-sample .enyo-input[type=text] {
+	margin: 10px 0;
+	width: 400px;
+	display: block;
+	background: none;
+	border: 1px solid #CCC;
+	color: #555;
+	font-size: 20px;
+}
