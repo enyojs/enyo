@@ -27,7 +27,6 @@ enyo.kind({
 	},
 	tap: function() {
 		if (this.disabled) {
-			this.log();
 			return true;
 		}
 		this.setActive(true);
