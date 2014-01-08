@@ -24,7 +24,7 @@ enyo.xhr = {
 	*/
 	request: function(inParams) {
 		var xhr = this.getXMLHttpRequest(inParams);
-		var url = enyo.path.rewrite(this.simplifyFileURL(inParams.url));
+		var url = this.simplifyFileURL(enyo.path.rewrite(inParams.url));
 		//
 		var method = inParams.method || "GET";
 		var async = !inParams.sync;
