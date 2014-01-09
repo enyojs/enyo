@@ -280,7 +280,7 @@ enyo.kind({
 		true Because we don't want the event to propagate beyond this kind.
 	*/
 	didScroll: function (sender, event) {
-		if (this.hasRendered) {
+		if (this.hasRendered && this.collection) {
 			if (this.heightNeedsUpdate || this.widthNeedsUpdate) {
 				// assign this here so that if for any reason it needs to
 				// it can reset it
@@ -298,7 +298,7 @@ enyo.kind({
 	*/
 	didResize: function (sender, event) {
 		if (this.get("absoluteShowing")) {
-			if (this.hasRendered) {
+			if (this.hasRendered && this.collection) {
 				if (this.heightNeedsUpdate || this.widthNeedsUpdate) {
 					// assign this here so that if for any reason it needs to
 					// it can reset it
