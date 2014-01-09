@@ -457,12 +457,12 @@ enyo.DataList.delegates.vertical = {
 		if (firstIdx === 0) {
 			threshold[upperProp] = undefined;
 		} else {
-			threshold[upperProp] = metrics[lastIdx][upperProp] - fn(list);
+			threshold[upperProp] = (metrics[firstIdx][upperProp] + this.childSize(list));
 		}
 		if (lastIdx === count) {
 			threshold[lowerProp] = undefined;
 		} else {
-			threshold[lowerProp] = metrics[firstIdx][lowerProp];
+			threshold[lowerProp] = (metrics[lastIdx][lowerProp] - fn(list) - this.childSize(list));
 		}
 		if (list.usingScrollListener) {
 			list.$.scroller.setScrollThreshold(threshold);
@@ -501,11 +501,11 @@ enyo.DataList.delegates.vertical = {
 				lowerProp = list.lowerProp,
 				upperProp = list.upperProp;
 			if (bounds.xDir === 1 || bounds.yDir === 1) {
-				if (bounds[upperProp] > threshold[lowerProp]) {
+				if (bounds[upperProp] >= threshold[lowerProp]) {
 					this.scrollHandler(list, bounds);
 				}
 			} else if (bounds.yDir === -1 || bounds.xDir === -1) {
-				if (bounds[upperProp] < threshold[upperProp]) {
+				if (bounds[upperProp] <= threshold[upperProp]) {
 					this.scrollHandler(list, bounds);
 				}
 			}
