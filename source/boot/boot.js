@@ -81,18 +81,40 @@ enyo.depends = function() {
 };
 
 // Runtime loader
-// Usage: enyo.load(depends, [onLoadCallback])
-//  where - depends is string or array of string paths to package.js, script, or css to load
-//        - doneCallback is fired after file or package loading has completed
-// Only one file/package is loaded at a time; additional calls are queued and loading deferred
 (function() {
 	var enyo = window.enyo;
 	var runtimeLoadQueue = [];
+
+	var domLoaded = false;
+	enyo.ready(function() {
+		domLoaded = true;
+	});
+
+	/**
+		Used to load one or more script, stylesheet, or package.js files at runtime.
+
+		* depends is string or array of string paths to package.js, script, or css to load
+		* doneCallback is fired after file or package loading has completed
+
+		If called during load time (before the DOMContentLoaded event), this can only be used
+		to load a single script and stylesheet file.  Using it to load a package.js file or
+		providing an array of files can disrupt normal package.js handling.
+	*/
 	enyo.load = function(depends, onLoadCallback) {
-		runtimeLoadQueue.push(arguments);
-		if (!enyo.runtimeLoading) {
-			enyo.runtimeLoading = true;
-			runtimeLoad();
+		if (domLoaded) {
+			runtimeLoadQueue.push(arguments);
+			if (!enyo.runtimeLoading) {
+				enyo.runtimeLoading = true;
+				runtimeLoad();
+			}
+		} else {
+			if (enyo.isArray(depends)) {
+				for (var i = 0; i < depends.length; ++i) {
+					enyo.loader.require(depends[i]);
+				}
+			} else {
+				enyo.loader.require(depends);
+			}
 		}
 	};
 	function runtimeLoad(onLoad) {
