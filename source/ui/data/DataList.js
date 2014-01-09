@@ -78,9 +78,13 @@ enyo.kind({
 		out.
 	*/
 	reset: function () {
-		// we can only reset if we've already rendered
-		if (this.generated && this.$.scroller.generated) {
-			this.delegate.reset(this);
+		if (this.get("absoluteShowing")) {
+			// we can only reset if we've already rendered
+			if (this.generated && this.$.scroller.generated) {
+				this.delegate.reset(this);
+			}
+		} else {
+			this._addToShowingQueue("reset", this.reset);
 		}
 	},
 	/**
@@ -90,8 +94,12 @@ enyo.kind({
 		internally.
 	*/
 	refresh: function () {
-		if (this.hasRendered) {
-			this.delegate.refresh(this);
+		if (this.get("absoluteShowing")) {
+			if (this.hasRendered) {
+				this.delegate.refresh(this);
+			}
+		} else {
+			this._addToShowingQueue("refresh", this.refresh);
 		}
 	},
 	/**
@@ -100,7 +108,13 @@ enyo.kind({
 	*/
 	scrollToIndex: function (idx) {
 		if (idx >= 0 && idx < this.length) {
-			this.delegate.scrollToIndex(this, idx);
+			if (this.get("absoluteShowing")) {
+				this.delegate.scrollToIndex(this, idx);
+			} else {
+				this._addToShowingQueue("scrollToIndex", function () {
+					this.delegate.scrollToIndex(this, idx);
+				});
+			}
 		}
 	},
 	//*@protected
@@ -154,37 +168,78 @@ enyo.kind({
 		strategy.
 	*/
 	rendered: function () {
-		// actually rendering a datalist can be taxing for some systems so
-		// we arbitrarily delay showing for a fixed amount of time unless delay is
-		// null in which case it will be executed immediately
-		var startup = function () {
-			// now that the base list is rendered, we can safely generate our scroller
-			this.$.scroller.canGenerate = true;
-			this.$.scroller.render();
-			// and now we hand over the action to our strategy to let it initialize the
-			// way it needs to
-			this.delegate.rendered(this);
-			this.hasRendered = true;
-			// now add our class to adjust visibility (if no overridden)
-			this.addClass("rendered");
-			if (this.didRender) {
-				this.didRender();
+		if (this.get("absoluteShowing")) {
+			// actually rendering a datalist can be taxing for some systems so
+			// we arbitrarily delay showing for a fixed amount of time unless delay is
+			// null in which case it will be executed immediately
+			var startup = function () {
+				// now that the base list is rendered, we can safely generate our scroller
+				this.$.scroller.canGenerate = true;
+				this.$.scroller.render();
+				// and now we hand over the action to our strategy to let it initialize the
+				// way it needs to
+				this.delegate.rendered(this);
+				this.hasRendered = true;
+				// now add our class to adjust visibility (if no overridden)
+				this.addClass("rendered");
+				if (this.didRender) {
+					this.didRender();
+				}
+			};
+			if (this.renderDelay === null) {
+				startup.call(this);
+			} else {
+				this.startJob("rendering", startup, this.renderDelay);
+				// this delay will allow slower systems to keep going and get everything else
+				// on screen before worrying about setting up the list
 			}
-		};
-		if (this.renderDelay === null) {
-			startup.call(this);
 		} else {
-			this.startJob("rendering", startup, this.renderDelay);
-			// this delay will allow slower systems to keep going and get everything else
-			// on screen before worrying about setting up the list
+			this._addToShowingQueue("rendered", this.rendered);
 		}
 	},
+	//*@protected
+	_absoluteShowingChanged: function () {
+		this.log(this.get("absoluteShowing"));
+		if (this.get("absoluteShowing")) {
+			if (this._showingQueue && this._showingQueue.length) {
+				var queue = this._showingQueue;
+				var methods = this._showingQueueMethods;
+				var fn;
+				var name;
+				this._showingQueue = null;
+				this._showingQueueMethods = null;
+				do {
+					name = queue.shift();
+					fn = methods[name];
+					fn.call(this);
+				} while (queue.length);
+			}
+		}
+	},
+	_addToShowingQueue: function (name, fn) {
+		var queue = this._showingQueue || (this._showingQueue = []);
+		var methods = this._showingQueueMethods || (this._showingQueueMethods = {});
+		var idx = enyo.indexOf(name, queue);
+		if (idx >= 0) {
+			queue.splice(idx, 1);
+		}
+		queue.push(name);
+		methods[name] = fn;
+		this.log(queue);
+	},
+	//*@public
 	/**
 		Overloaded to call a method of the delegate strategy.
 	*/
 	modelsAdded: function (c, e, props) {
 		if (c === this.collection && this.$.scroller.canGenerate) {
-			this.delegate.modelsAdded(this, props);
+			if (this.get("absoluteShowing")) {
+				this.delegate.modelsAdded(this, props);
+			} else {
+				this._addToShowingQueue("modelsAdded", function () {
+					this.delegate.modelsAdded(this, props);
+				});
+			}
 		}
 	},
 	/**
@@ -192,7 +247,13 @@ enyo.kind({
 	*/
 	modelsRemoved: function (c, e, props) {
 		if (c === this.collection && this.$.scroller.canGenerate) {
-			this.delegate.modelsRemoved(this, props);
+			if (this.get("absoluteShowing")) {
+				this.delegate.modelsRemoved(this, props);
+			} else {
+				this._addToShowingQueue("modelsRemoved", function () {
+					this.delegate.modelsRemoved(this, props);
+				});
+			}
 		}
 	},
 	destroy: enyo.inherit(function (sup) {
@@ -200,6 +261,8 @@ enyo.kind({
 			if (this.delegate && this.delegate.destroyList) {
 				this.delegate.destroyList(this);
 			}
+			this._showingQueue = null;
+			this._showingQueueMethods = null;
 			sup.apply(this, arguments);
 		};
 	}),
@@ -238,14 +301,18 @@ enyo.kind({
 		we hijack the normal handler.
 	*/
 	didResize: function (sender, event) {
-		if (this.hasRendered) {
-			if (this.heightNeedsUpdate || this.widthNeedsUpdate) {
-				// assign this here so that if for any reason it needs to
-				// it can reset it
-				this.heightNeedsUpdate = this.widthNeedsUpdate = false;
-				this.refresh();
+		if (this.get("absoluteShowing")) {
+			if (this.hasRendered) {
+				if (this.heightNeedsUpdate || this.widthNeedsUpdate) {
+					// assign this here so that if for any reason it needs to
+					// it can reset it
+					this.heightNeedsUpdate = this.widthNeedsUpdate = false;
+					this.refresh();
+				}
+				this.delegate.didResize(this, event);
 			}
-			this.delegate.didResize(this, event);
+		} else {
+			this._addToShowingQueue("didResize", this.didResize);
 		}
 	},
 	/**
@@ -292,6 +359,7 @@ enyo.kind({
 		work we do.
 	*/
 	handlers: {onScroll: "didScroll", onresize: "didResize"},
+	observers: {_absoluteShowingChanged: ["absoluteShowing"]},
 	//* Add the RegisteredEventSupport mixin for the paging event
 	mixins: [enyo.RegisteredEventSupport],
 	//* All delegates are named elsewhere but are stored in these statics.
