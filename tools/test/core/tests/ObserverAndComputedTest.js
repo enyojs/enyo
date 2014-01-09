@@ -212,6 +212,71 @@ enyo.kind({
 		});
 		o.binding({from: ".fullName", to: ".fullName", target: t});
 	},
+	testDefaultValueForCachedComputedProperty: function () {
+		var changed = false;
+		var test = {};
+		test.object = enyo.singleton({
+			kind: "enyo.Object",
+			computed: {myComputedProp: ["myprop1", "myprop2", {cached: true, defaultValue: false}]},
+			myprop1: true,
+			myComputedProp: function () {
+				return !! (this.myprop1 && this.myprop2);
+			},
+			myComputedPropChanged: function () {
+				changed = true;
+			}
+		});
+		
+		if (changed) {
+			return this.finish("default value was not used");
+		}
+		
+		if (test.object.get("myComputedProp")) {
+			return this.finish("default value was not used");
+		}
+		
+		test.object.set("myprop2", true);
+		
+		this.finish(
+			!changed && "default value overrode the actual value on change"
+		);
+	},
+	testDefaultValueForComputedProperty: function () {
+		var test = {};
+		test.obj1 = enyo.singleton({
+			kind: "enyo.Object",
+			computed: {myComputedProp: [{defaultValue: false}]},
+			myComputedProp: function () {
+				return true;
+			}
+		});
+		test.obj2 = enyo.singleton({
+			kind: "enyo.Object",
+			computed: {myComputedProp: ["myprop1", {defaultValue: false}]},
+			myprop1: true,
+			myComputedProp: function () {
+				return this.get("myprop1");
+			}
+		});
+		test.obj3 = enyo.singleton({
+			kind: "enyo.Object",
+			computed: {myComputedProp: ["myprop1", {defaultValue: false}]},
+			bindings: [
+				{source: test.obj2, from: ".myprop1", to: ".myprop1"}
+			],
+			myComputedProp: function () {
+				return this.get("myprop1");
+			}
+		});
+
+		this.finish(
+			(test.obj1.get("myComputedProp") && "default value was not used") ||
+			(!test.obj1.get("myComputedProp") && "default value was used after initial request") ||
+			(test.obj2.get("myComputedProp") && "default value was not used with dependencies") ||
+			(!test.obj2.get("myComputedProp") && "default value was used after initial request") ||
+			(!test.obj3.get("myComputedProp") && "default value was used even after updated binding value")
+		);
+	},
 	testInheritedKindComputed: function () {
 		var test = {},
 			rs = "",
