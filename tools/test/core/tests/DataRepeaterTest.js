@@ -100,7 +100,7 @@ enyo.kind({
 			// Multi-select single
 			repeater.set("multipleSelection", true);
 			// destroy a binding that will not propagate the array
-			testControl.bindings[1].destroy();
+			testControl.bindings[2].destroy();
 			repeater.select(25);
 			s = repeater.get("selected");
 			if (s.length != 1) {
