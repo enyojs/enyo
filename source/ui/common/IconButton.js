@@ -32,20 +32,35 @@ enyo.kind({
 		this.setActive(true);
 	},
 	down: function(inSender, inEvent) {
+		if (this.disabled) {
+			return true;
+		}
 		this.addClass("pressed");
 		this._isInControl = true;
 	},
 	enter: function(inSender, inEvent) {
+		if (this.disabled) {
+			return true;
+		}
 		this._isInControl = true;
 	},
 	drag: function(inSender, inEvent) {
+		if (this.disabled) {
+			return true;
+		}
 		this.addRemoveClass("pressed", this._isInControl);
 	},
 	leave: function(inSender, inEvent) {
+		if (this.disabled) {
+			return true;
+		}
 		this.removeClass("pressed");
 		this._isInControl = false;
 	},
 	up: function(inSender, inEvent) {
+		if (this.disabled) {
+			return true;
+		}
 		this.removeClass("pressed");
 		this._isInControl = false;
 	},
