@@ -15,7 +15,7 @@
 		from a developer-provided resource file corresponding to the current user
 		locale.
 	*/
-	window.$L = function(string) {
+	window.$L = window.$L || function(string) {
 		return string;
 	};
 
@@ -37,7 +37,7 @@
 
 		This feature is not supported on IE8 which doesn't support addEventListener.
 	*/
-	enyo.updateLocale = function() {
+	enyo.updateLocale = enyo.updateLocale || function() {
 		// This is a stub, to be implemented by a g11n library as needed
 	};
 	enyo.broadcastLocaleChange = function() {
