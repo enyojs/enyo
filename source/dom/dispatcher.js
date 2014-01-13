@@ -65,7 +65,7 @@
 		//* Fires an event for Enyo to listen for.
 		dispatch: function(e) {
 			// Find the control who maps to e.target, or the first control that maps to an ancestor of e.target.
-			var c = this.findDispatchTarget(e.target) || this.findDefaultTarget(e);
+			var c = this.findDispatchTarget(e.target) || this.findDefaultTarget();
 			// Cache the original target
 			e.dispatchTarget = c;
 			// support pluggable features return true to abort immediately or set e.preventDispatch to avoid processing.
