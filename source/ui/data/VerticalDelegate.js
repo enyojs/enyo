@@ -459,7 +459,7 @@ enyo.DataList.delegates.vertical = {
 		} else {
 			threshold[upperProp] = (metrics[firstIdx][upperProp] + this.childSize(list));
 		}
-		if (lastIdx === count) {
+		if (lastIdx >= count) {
 			threshold[lowerProp] = undefined;
 		} else {
 			threshold[lowerProp] = (metrics[lastIdx][lowerProp] - fn(list) - this.childSize(list));
