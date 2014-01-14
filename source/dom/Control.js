@@ -401,12 +401,22 @@ enyo.kind({
 	/**
 		Adds CSS styles to the set of styles assigned to this object.
 
-		_inCssText_ is a string containing CSS styles in text format.
+		_inCss_ is either a string containing CSS styles in text format,
+		or an object containing style names as keys and style values as property values
 
-			this.$.box.addStyles("background-color: red; padding: 4px;");
+		A. this.$.box.addStyles("background-color: red; padding: 4px;"); 
+		is same as
+		B. this.$.box.addStyles({"background-color": "red", "padding": "4px"});
 	*/
-	addStyles: function(inCssText) {
-		enyo.Control.cssTextToDomStyles(inCssText, this.domStyles);
+	addStyles: function(inCss) {
+		if (enyo.isObject(inCss)) {
+			var css = '';
+			for (var key in inCss) {
+				css += key + ':' + inCss[key] + ';';
+			}
+			inCss = css;
+		}
+		enyo.Control.cssTextToDomStyles(inCss, this.domStyles);
 		this.domStylesChanged();
 	},
 	/**
