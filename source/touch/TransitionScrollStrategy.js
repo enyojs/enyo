@@ -400,7 +400,6 @@ enyo.kind({
 	// When user releases the drag, set this.dragging to false, bounce overflow back, and hide scrim.
 	dragfinish: function(inSender, inEvent) {
 		if (this.dragging) {
-			inEvent.preventTap();
 			this.dragging = false;
 			if(!this.isScrolling()) {
 				this.correctOverflow();
