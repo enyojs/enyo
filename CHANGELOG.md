@@ -6,6 +6,8 @@ Added _enyo.Collection.destroyAllLocal()_ as a convenience method.
 
 Added _enyo.Collection.fetchAndDestroyLocal()_ method to do the same as _fetchAndDestroy()_ except it will call _destroyLocal()_ on the records instead of _destroy()_. This also means you could call _fetch()_ with the options property _destroyLocal_ set to _true_ to have the same effect.
 
+Added support for the Page Visibility API by normalizing  visibilitychange events, the document.hidden and the document.visibilityState properties. Uses fallbacks to support older browsers.
+
 ## 2.3.0-rc5
 
 Added _fixedChildSize_ public property to _enyo.DataList_ to allow the list to optimize performance when
