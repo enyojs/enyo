@@ -178,7 +178,6 @@ enyo.kind({
 	dragfinish: function(inSender, inEvent) {
 		if (this.dragging) {
 			this.dragging = false;
-			inEvent.preventTap();
 		}
 	},
 	// avoid allowing scroll when starting at a vertical boundary to prevent ios from window scrolling.

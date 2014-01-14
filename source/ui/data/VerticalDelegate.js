@@ -126,6 +126,7 @@ enyo.DataList.delegates.vertical = {
 			perPage = this.controlsPerPage(list),
 			// placeholder for the control we're going to update
 			view;
+		
 		// the first index for this generated page
 		page.start  = perPage * index;
 		// the last index for this generated page
@@ -164,16 +165,18 @@ enyo.DataList.delegates.vertical = {
 		Generates a child size for the given list.
 	*/
 	childSize: function (list) {
-		var pageIndex = list.$.page1.index,
-			sizeProp  = list.psizeProp,
-			n         = list.$.page1.node || list.$.page1.hasNode(),
-			size, props;
-		if (pageIndex >= 0 && n) {
-			props = list.metrics.pages[pageIndex];
-			size  = props? props[sizeProp]: 0;
-			list.childSize = Math.floor(size / (n.children.length || 1));
+		if (!list.fixedChildSize) {
+			var pageIndex = list.$.page1.index,
+				sizeProp  = list.psizeProp,
+				n         = list.$.page1.node || list.$.page1.hasNode(),
+				size, props;
+			if (pageIndex >= 0 && n) {
+				props = list.metrics.pages[pageIndex];
+				size  = props? props[sizeProp]: 0;
+				list.childSize = Math.floor(size / (n.children.length || 1));
+			}
 		}
-		return list.childSize || (list.childSize = 100); // we have to start somewhere
+		return list.fixedChildSize || list.childSize || (list.childSize = 100); // we have to start somewhere
 	},
 	/**
 		When necessary will update the the value of controlsPerPage dynamically
@@ -199,7 +202,7 @@ enyo.DataList.delegates.vertical = {
 			// using height/width of the available viewport times our multiplier value
 			perPage   = list.controlsPerPage = Math.ceil(((fn(list) * multi) / childSize) + 1);
 			// update our time for future comparison
-			list._updatedControlsPerPage = enyo.bench();
+			list._updatedControlsPerPage = enyo.perfNow();
 		}
 		/*jshint -W093 */
 		return (list.controlsPerPage = perPage);
@@ -241,7 +244,7 @@ enyo.DataList.delegates.vertical = {
 	pageHeight: function (list, page) {
 		var h = page.node.offsetHeight;
 		var m = list.metrics.pages[page.index];
-		if (h === 0 && list.length) {
+		if (h === 0 && list.length && page.node.children.length) {
 			list.heightNeedsUpdate = true;
 			// attempt to reuse the last known height for this page
 			h = m? m.height: 0;
@@ -254,7 +257,7 @@ enyo.DataList.delegates.vertical = {
 	pageWidth: function (list, page) {
 		var w = page.node.offsetWidth;
 		var m = list.metrics.pages[page.index];
-		if (w === 0 && list.length) {
+		if (w === 0 && list.length && page.node.children.length) {
 			list.widthNeedsUpdate = true;
 			// attempt to reuse the last known width for this page
 			w = m? m.width: 0;
@@ -397,7 +400,7 @@ enyo.DataList.delegates.vertical = {
 	*/
 	defaultPageSize: function (list) {
 		var perPage = list.controlsPerPage || this.controlsPerPage(list);
-		return (perPage * (list.childSize || 100));
+		return (perPage * (list.fixedChildSize || list.childSize || 100));
 	},
 	/**
 		Retrieves the number of pages for for given list.
@@ -454,12 +457,12 @@ enyo.DataList.delegates.vertical = {
 		if (firstIdx === 0) {
 			threshold[upperProp] = undefined;
 		} else {
-			threshold[upperProp] = metrics[lastIdx][upperProp] - fn(list);
+			threshold[upperProp] = (metrics[firstIdx][upperProp] + this.childSize(list));
 		}
-		if (lastIdx === count) {
+		if (lastIdx >= count) {
 			threshold[lowerProp] = undefined;
 		} else {
-			threshold[lowerProp] = metrics[firstIdx][lowerProp];
+			threshold[lowerProp] = (metrics[lastIdx][lowerProp] - fn(list) - this.childSize(list));
 		}
 		if (list.usingScrollListener) {
 			list.$.scroller.setScrollThreshold(threshold);
@@ -498,11 +501,11 @@ enyo.DataList.delegates.vertical = {
 				lowerProp = list.lowerProp,
 				upperProp = list.upperProp;
 			if (bounds.xDir === 1 || bounds.yDir === 1) {
-				if (bounds[upperProp] > threshold[lowerProp]) {
+				if (bounds[upperProp] >= threshold[lowerProp]) {
 					this.scrollHandler(list, bounds);
 				}
 			} else if (bounds.yDir === -1 || bounds.xDir === -1) {
-				if (bounds[upperProp] < threshold[upperProp]) {
+				if (bounds[upperProp] <= threshold[upperProp]) {
 					this.scrollHandler(list, bounds);
 				}
 			}
@@ -537,7 +540,7 @@ enyo.DataList.delegates.vertical = {
 	*/
 	updateBounds: function (list) {
 		list.boundsCache    = list.getBounds();
-		list._updatedBounds = enyo.bench();
+		list._updatedBounds = enyo.perfNow();
 		list._updateBounds  = false;
 	}
 };

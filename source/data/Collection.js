@@ -122,9 +122,6 @@ enyo.kind({
 		// while any possible asynchronous remote (not always remote...) calls
 		// are made for efficiency
 		enyo.asyncMethod(this, function () { this.store.fetchRecord(this, o); });
-		if (o.replace && !o.destroy) { this.removeAll(); }
-		else if (o.destroy && !o.destroyLocal) { this.destroyAll(); }
-		else if (o.destroyLocal) { this.destroyAllLocal(); }
 	},
 	/**
 		Convenience method that does not require the callee to set the _replace_
@@ -160,6 +157,14 @@ enyo.kind({
 		and the result (_res_).
 	*/
 	didFetch: function (rec, opts, res) {
+		// empty the collection accordingly, if needed
+		if (opts.replace && !opts.destroy) {
+			this.removeAll();
+		} else if (opts.destroy && !opts.destroyLocal) {
+			this.destroyAll();
+		} else if (opts.destroyLocal) {
+			this.destroyAllLocal();
+		}
 		// the parsed result
 		var rr = this.parse(res),
 			s  = opts.strategy, fn;

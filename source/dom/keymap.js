@@ -18,6 +18,11 @@
 enyo.dispatcher.features.push(function(e) {
 	if ((e.type === "keydown") || (e.type === "keyup") || (e.type === "keypress")) {
 		e.keySymbol = this.keyMap[e.keyCode];
+		// Dispatch key events to be sent via Signals
+		var c = this.findDefaultTarget();
+		if (e.dispatchTarget !== c) {
+			this.dispatchBubble(e, c);
+		}
 	}
 });
 

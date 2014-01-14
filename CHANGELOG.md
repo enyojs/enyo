@@ -6,6 +6,22 @@ Added _enyo.Collection.destroyAllLocal()_ as a convenience method.
 
 Added _enyo.Collection.fetchAndDestroyLocal()_ method to do the same as _fetchAndDestroy()_ except it will call _destroyLocal()_ on the records instead of _destroy()_. This also means you could call _fetch()_ with the options property _destroyLocal_ set to _true_ to have the same effect.
 
+Added support for the Page Visibility API by normalizing  visibilitychange events, the document.hidden and the document.visibilityState properties. Uses fallbacks to support older browsers.
+
+## 2.3.0-rc5
+
+Added _fixedChildSize_ public property to _enyo.DataList_ to allow the list to optimize performance when
+list items will have fixed dimensions. Whenever items in the list will be uniform this option should be
+utilized.
+
+Added _defaultValue_ value support for _computed properties_. Simply provide a configuration object with a key
+_defaultValue_ and any value, even `undefined`.
+
+Added _enyo.Control.absoluteShowing_ read-only boolean property that may be observed to indicate whether
+the control is actually visible. Setting the _showing_ property to `false` for any control will flip this
+properties value to `false` for all children. This property can then be reliably used to separate logic that
+should only occur when a control is visible.
+
 ## 2.3.0-rc4
 
 Added _enyo.perfNow()_, a high-precision, high performance monotonic timestamp, which is independent of changes
@@ -16,15 +32,15 @@ _enyo.Control.getAbsoluteShowing()_ now accepts an optional boolean parameter th
 skip the _getBounds()_ call internally and rely solely on the return value of the _getShowing()_
 public API.
 
-_enyo.Scroller_ has been updated such that it will only propagate _resize_ events to children if it's
+_enyo.Scroller_ has been updated such that it will only propagate _resize_ events to children when its'
 _showing_ property is `true`.
 
 ## 2.3.0-rc1
 
 _enyo.dispatcher.capture_ API no longer bubbles all captured events through the normal event chain, but
-rather notifies the captureTarget when specific events occur through a map of callbacks passed as a parameter 
+rather notifies the captureTarget when specific events occur through a map of callbacks passed as a parameter
 to the `capture` API.  This is a breaking change to the enyo.dispatcher.capture API, however it is a very
-unpublicized (and fairly difficult-to-use) feature that was only used in enyo.Popup among Enyo-team developed 
+unpublicized (and fairly difficult-to-use) feature that was only used in enyo.Popup among Enyo-team developed
 controls, so we assume it will have low impact on the general public.
 
 Needed to revert the change to _enyo.Binding_ from 2.3.0-pre.11. Re-implemented the _stop()_ method
@@ -74,7 +90,7 @@ calling that method via the binding reference in a transform return `undefined`
 Instances of _enyo.Binding_ will no longer propagate `undefined`; instead use `null`.
 
 Deprecated the `controllers` array for _enyo.Application_; instead use `components`
-with the same features. This should modify bindings from `.app.controllers.{name}` to 
+with the same features. This should modify bindings from `.app.controllers.{name}` to
 `.app.$.{name}` for controllers/components created for an _enyo.Application_ instance.
 
 Deprecated the `controller` property for _enyo.DataRepeater_ and all sub-kinds; instead use

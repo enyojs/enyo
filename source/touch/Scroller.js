@@ -209,9 +209,7 @@ enyo.kind({
 	showingChanged: enyo.inherit(function (sup) {
 		return function() {
 			if (!this.showing) {
-				this.cacheScrollPosition();
-				this.setScrollLeft(0);
-				this.setScrollTop(0);
+				this.cacheScrollPosition(true);
 			}
 			sup.apply(this, arguments);
 			if (this.showing) {
@@ -222,8 +220,20 @@ enyo.kind({
 	thumbChanged: function() {
 		this.$.strategy.setThumb(this.thumb);
 	},
-	cacheScrollPosition: function() {
-		this.cachedPosition = {left: this.getScrollLeft(), top: this.getScrollTop()};
+	/*
+		cache mechanism is necessary because scrollTop/scrollLeft aren't available
+		when a DOM node is hidden via display:none. They always return 0 and don't
+		accept changes.
+
+		FIXME: need to know when parent is hidden, not just self
+	*/
+	cacheScrollPosition: function(reset) {
+		var cachedPosition = {left: this.getScrollLeft(), top: this.getScrollTop()};
+		if (reset) {
+			this.setScrollLeft(0);
+			this.setScrollTop(0);
+		}
+		this.cachedPosition = cachedPosition;
 	},
 	restoreScrollPosition: function() {
 		if (this.cachedPosition) {

@@ -335,7 +335,6 @@ enyo.kind({
 	},
 	dragfinish: function(inSender, inEvent) {
 		if (this.dragging) {
-			inEvent.preventTap();
 			this.$.scrollMath.dragFinish();
 			this.dragging = false;
 			if (this.scrim) {

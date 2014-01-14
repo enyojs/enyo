@@ -277,7 +277,7 @@ enyo.kind({
 		}
 
 		this.setPlaybackRate(1);
-		node.currentTime += this.jumpSec;
+		node.currentTime += parseInt(this.jumpSec, 10);
 		this._prevCommand = "jumpForward";
 
 		this.doJumpForward(enyo.mixin(this.createEventData(), {jumpSize: this.jumpSec}));
