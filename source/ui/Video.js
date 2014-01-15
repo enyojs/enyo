@@ -64,7 +64,7 @@ enyo.kind({
 		/**
 			Fires when _playbackRate_ is changed to a value less than 0 but greater
 			than or equal to -1.
-		*/		
+		*/
 		onSlowrewind: "",
 		//* Fires when _jumpForward()_ is called.
 		onJumpForward: "",
@@ -88,18 +88,22 @@ enyo.kind({
 	_playbackRateArray: null,
 	_speedIndex: 0,
 
-	create: function() {
-		this.inherited(arguments);
-		this.posterChanged();
-		this.showControlsChanged();
-		this.preloadChanged();
-		this.autoplayChanged();
-		this.loopChanged();
-	},
-	rendered: function() {
-		this.inherited(arguments);
-		this.hookupVideoEvents();
-	},
+	create: enyo.inherit(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.posterChanged();
+			this.showControlsChanged();
+			this.preloadChanged();
+			this.autoplayChanged();
+			this.loopChanged();
+		};
+	}),
+	rendered: enyo.inherit(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.hookupVideoEvents();
+		};
+	}),
 	posterChanged: function() {
 		if (this.poster) {
 			var path = enyo.path.rewrite(this.poster);
