@@ -39,7 +39,10 @@ enyo.kind({
 		//* If true, default media controls are shown
 		showControls: false,
 		//* Current playback volume, as a number in the range from 0.0 to 1.0
-		volume: 1.0
+		volume: 1.0,
+
+		duration: 0,
+		currentTime: 0
 	},
 	events: {
 		/**
@@ -279,6 +282,7 @@ enyo.kind({
 	*/
 	_loadedMetaData: function() {
 		this.doLoadedMetaData();
+		this.set("duration", this.hasNode().duration);
 	},
 	//* Called when the media element begins looking for media data.
 	_loadStart: function() {
@@ -373,6 +377,9 @@ enyo.kind({
 			return;
 		}
 		inEvent = enyo.mixin(inEvent, this.createEventData());
+
+		this.set("duration", node.duration);
+		this.set("currentTime", node.currentTime);
 	},
 	//* Called when either _this.volume_ or _this.muted_ is updated.
 	_volumeChange: function() {
@@ -457,11 +464,16 @@ enyo.kind({
 		}
 	},
 	//* Set current player position in the video (in seconds)
-	setCurrentTime: function(inTime) {
-		if ((typeof inTime === 'number') && this.hasNode()) {
-			this.node.currentTime = inTime;
+	currentTimeChanged: function() {
+		if (this.hasNode() && this.hasNode.currentTime != this.currentTime) {
+			this.node.currentTime = this.currentTime;
 		}
 	},
+	// setCurrentTime: function(inTime) {
+	// 	if ((typeof inTime === 'number') && this.hasNode()) {
+	// 		this.node.currentTime = inTime;
+	// 	}
+	// },
 	//* Custom rewind functionality until browsers support negative playback rate
 	beginRewind: function() {
 		this.node.pause();
