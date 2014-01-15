@@ -31,7 +31,9 @@ enyo.kind({
 		};
 	}),
 	notify: function(inMsg, inPayload) {
-		this.dispatchEvent(inMsg, inPayload);
+		if(!inPayload._targetApp || this.app.id === inPayload._targetApp.id){
+			this.dispatchEvent(inMsg, inPayload);
+		}
 	},
 	protectedStatics: {
 		listeners: [],
