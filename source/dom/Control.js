@@ -87,27 +87,9 @@ enyo.kind({
 	//*@public
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
-		ontap: "tap"
-	},
-	//*@protected
-	computed: {
-		absoluteShowing: ["showing", "parentShowing", {cached: true, defaultValue: true}]
-	},
-	bindings: [
-		{from: ".parent.absoluteShowing", to: ".parentShowing"}
-	],
-	//*@public
-	//* A read-only boolean value indicating the _showing_ state of the _parent_.
-	parentShowing: true,
-	/**
-		A read-only _computed property_ that can be observed to determine if/when
-		the view is actually visible. It uses its own `showing` property along with
-		the current `absoluteShowing` value of its parent. This way, if any _control_
-		sets its `showing` state to `false` all of its children will know they aren't
-		visible.
-	*/
-	absoluteShowing: function () {
-		return !! (this.showing && (this.parent? this.parentShowing: true));
+		ontap: "tap",
+		//* The waterfall event when the showing property is modified
+		onShowingChanged: "showingChangedHandler"
 	},
 	//*@protected
 	_isView: true,
@@ -943,8 +925,17 @@ enyo.kind({
 			this.applyStyle("display", "none");
 		}
 	},
-	showingChanged: function() {
+	showingChanged: function(was) {
 		this.syncDisplayToShowing();
+		
+		var waterfall = (was === true || was === false)
+			, parent = this.parent;
+		// make sure that we don't trigger the waterfall when this method
+		// is arbitrarily called during _create_ and it should only matter
+		// that it changed if our parent's are all showing as well
+		if (waterfall && (parent? parent.getAbsoluteShowing(true): true)) {
+			this.waterfall("onShowingChanged", {originator: this, showing: this.getShowing()});
+		}
 	},
 	getShowing: function() {
 		// 'showing' specifically means domStyles.display !== 'none'.
@@ -974,6 +965,15 @@ enyo.kind({
 		} else {
 			return true;
 		}
+	},
+	/**
+		Handles the _onshowingchanged_ event that is waterfalled by controls
+		when their _showing_ value is modified. If the control is not showing
+		itself already it will not continue the waterfall. Overload this method
+		for additional handling of this event.
+	*/
+	showingChangedHandler: function (inSender, inEvent) {		
+		return inSender === this? false: !this.getShowing();
 	},
 	//
 	//
