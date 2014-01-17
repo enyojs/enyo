@@ -315,7 +315,7 @@ enyo.kind({
 	},
 	showingChangedHandler: enyo.inherit(function (sup) {
 		return function (inSender, inEvent) {
-			this.set("absoluteShowing", this.getShowing() && this.getAbsoluteShowing(true));
+			this.set("absoluteShowing", this.getAbsoluteShowing(true));
 			
 			return sup.apply(this, arguments);
 		};
