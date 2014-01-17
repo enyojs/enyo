@@ -313,6 +313,13 @@ enyo.kind({
 			this._addToShowingQueue("didResize", this.didResize);
 		}
 	},
+	showingChangedHandler: enyo.inherit(function (sup) {
+		return function (inSender, inEvent) {
+			this.set("absoluteShowing", this.getShowing() && this.getAbsoluteShowing(true));
+			
+			return sup.apply(this, arguments);
+		};
+	}),
 	/**
 		Overload to adjust the root method to be able to find the nested child
 		based on the requested index if its page is currently active. Returns
@@ -343,6 +350,7 @@ enyo.kind({
 	], canGenerate: false, classes: "enyo-fit enyo-data-list-scroller"},
 	//* We access this kind's constructor and need it to be undeferred at that time.
 	noDefer: true,
+	absoluteShowing: true,
 	//* All of the CSS is relative to this class.
 	classes: "enyo-data-list",
 	//* Our initial _controlParent_ is us for the _flyweighter_ child.
