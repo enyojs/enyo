@@ -324,7 +324,7 @@ enyo.kind({
 		if (c) {
 			c.set("selected", false);
 		}
-		if (this.selectionProperty) {
+		if (this.selectionProperty && r) {
 			(s=this.selectionProperty) && r.set(s, false);
 		}
 		this.notifyObservers("selected");
