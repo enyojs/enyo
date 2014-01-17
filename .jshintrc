@@ -12,6 +12,7 @@
     "sub": true,
     "eqnull": true,
     "laxbreak": true,
+	"laxcomma": true,
     "curly": true,
     "indent": 4,
     "newcap": true,

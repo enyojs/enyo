@@ -116,7 +116,7 @@ enyo.kind({
 				{from: ".prop", to: ".$.child.content"}
 			]
 		}), b;
-		b = c.bindings[1];
+		b = c.bindings[0];
 		c.$.child.destroy();
 		b.sync();
 		this.finish(!b.destroyed && "binding was not destroyed when it discovered its target was destroyed");
