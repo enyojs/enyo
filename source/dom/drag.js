@@ -242,10 +242,10 @@ enyo.gesture.drag = {
 		$ce.srcEvent = enyo.clone(e.srcEvent);
 		this._holdJobFunction = enyo.bind(this, "sendHoldPulse", $ce);
 		this._holdJobFunction.ce = $ce;
-		this.holdJob = setInterval(this._holdJobFunction, this.holdPulseConfig.delay);
+		this.holdJob = setTimeout(this._holdJobFunction, this.holdPulseConfig.delay);
 	},
 	cancelHold: function() {
-		clearInterval(this.holdJob);
+		clearTimeout(this.holdJob);
 		this.holdJob = null;
 		if (this._holdJobFunction) {
 			this._holdJobFunction.ce = null;
@@ -267,6 +267,7 @@ enyo.gesture.drag = {
 		}
 		var e = enyo.gesture.makeEvent("holdpulse", inEvent);
 		e.holdTime = enyo.perfNow() - this.holdStart;
+		setTimeout(this._holdJobFunction, this.holdPulseConfig.delay);
 		enyo.dispatch(e);
 	},
 	sendHold: function(inEvent) {
