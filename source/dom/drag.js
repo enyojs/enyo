@@ -34,10 +34,13 @@ enyo.dispatcher.features.push(
 enyo.gesture.drag = {
 	//* @protected
 	hysteresisSquared: 16,
-	holdPulseDelay: 200,
 	trackCount: 5,
 	minFlick: 0.1,
 	minTrack: 8,
+	holdPulseConfig: {
+		delay: 200,
+		stopStrategy: "hysteresis" // other values include "element" (stop when mouse leaves original element)
+	},
 	down: function(e) {
 		// tracking if the mouse is down
 		//enyo.log("tracking ON");
@@ -64,7 +67,7 @@ enyo.gesture.drag = {
 			}
 			if (this.dragEvent) {
 				this.sendDrag(e);
-			} else if (this.dy*this.dy + this.dx*this.dx >= this.hysteresisSquared) {
+			} else if (this.holdPulseConfig.stopStrategy === "hysteresis" && this.dy*this.dy + this.dx*this.dx >= this.hysteresisSquared) {
 				this.sendDragStart(e);
 				this.cancelHold();
 			}
@@ -78,6 +81,8 @@ enyo.gesture.drag = {
 	leave: function(e) {
 		if (this.dragEvent) {
 			this.sendDragOut(e);
+		} else if (this.holdPulseConfig.stopStrategy === "element") {
+			this.cancelHold();
 		}
 	},
 	stopDragging: function(e) {
@@ -237,7 +242,7 @@ enyo.gesture.drag = {
 		$ce.srcEvent = enyo.clone(e.srcEvent);
 		this._holdJobFunction = enyo.bind(this, "sendHoldPulse", $ce);
 		this._holdJobFunction.ce = $ce;
-		this.holdJob = setInterval(this._holdJobFunction, this.holdPulseDelay);
+		this.holdJob = setInterval(this._holdJobFunction, this.holdPulseConfig.delay);
 	},
 	cancelHold: function() {
 		clearInterval(this.holdJob);
@@ -253,6 +258,10 @@ enyo.gesture.drag = {
 	},
 	sendHoldPulse: function(inEvent) {
 		if (!this.sentHold) {
+			var me = this; // create reference to "this" for closure
+			inEvent.configureHoldPulse = function(opts) {
+				enyo.mixin(me.holdPulseConfig, opts);
+			};
 			this.sentHold = true;
 			this.sendHold(inEvent);
 		}
