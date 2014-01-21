@@ -983,7 +983,6 @@ enyo.kind({
 	// it to the `absoluteShowing` property, making it observable/bindable
 	absoluteShowingInvalidated: function (inSender, inEvent) {
 		this.set("absoluteShowing", this.getAbsoluteShowing(true));
-		this.log(this.id, this.absoluteShowing);
 	},
 	removeAbsoluteShowingListeners: function() {
 		var c = this;

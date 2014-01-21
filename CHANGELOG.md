@@ -12,7 +12,7 @@ the control is actually visible. Setting the _showing_ property to `false` for a
 properties value to `false` for all children. This property can then be reliably used to separate logic that
 should only occur when a control is visible.  NOTE:  Use of this property is on an opt-in basis: _absoluteShowing_
 is only changed when the _observeAbsoluteShowing_ property is set to `true` on the control of interest for 
-performance reasons, as propagating the `absoluteShowing` status to children is costly.
+performance reasons, as propagating the _absoluteShowing_ status to children is costly.
 
 ## 2.3.0-rc4
 
