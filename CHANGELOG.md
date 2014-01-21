@@ -10,7 +10,9 @@ _defaultValue_ and any value, even `undefined`.
 Added _enyo.Control.absoluteShowing_ read-only boolean property that may be observed to indicate whether
 the control is actually visible. Setting the _showing_ property to `false` for any control will flip this
 properties value to `false` for all children. This property can then be reliably used to separate logic that
-should only occur when a control is visible.
+should only occur when a control is visible.  NOTE:  Use of this property is on an opt-in basis: _absoluteShowing_
+is only changed when the _observeAbsoluteShowing_ property is set to `true` on the control of interest for 
+performance reasons, as propagating the `absoluteShowing` status to children is costly.
 
 ## 2.3.0-rc4
 
