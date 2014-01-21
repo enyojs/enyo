@@ -144,10 +144,11 @@ enyo.gesture.drag = {
 	sendDragFinish: function(e) {
 		//enyo.log("dragfinish");
 		var synth = this.makeDragEvent("dragfinish", this.dragEvent.target, e, this.dragEvent.dragInfo);
-		// always prevent tap event when dragfinish event occurs in the dragging context
-		if (e.preventTap) {
-			e.preventTap();
-		}
+		synth.preventTap = function() {
+			if (e.preventTap) {
+				e.preventTap();
+			}
+		};
 		enyo.dispatch(synth);
 	},
 	sendDragOut: function(e) {
