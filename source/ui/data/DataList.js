@@ -234,8 +234,8 @@ enyo.kind({
 			if (this.get("absoluteShowing")) {
 				this.delegate.modelsAdded(this, props);
 			} else {
-				this._addToShowingQueue("modelsAdded", function () {
-					this.delegate.modelsAdded(this, props);
+				this._addToShowingQueue("refresh", function () {
+					this.refresh();
 				});
 			}
 		}
@@ -248,8 +248,8 @@ enyo.kind({
 			if (this.get("absoluteShowing")) {
 				this.delegate.modelsRemoved(this, props);
 			} else {
-				this._addToShowingQueue("modelsRemoved", function () {
-					this.delegate.modelsRemoved(this, props);
+				this._addToShowingQueue("refresh", function () {
+					this.refresh();
 				});
 			}
 		}
