@@ -500,6 +500,7 @@ enyo.DataList.delegates.vertical = {
 				bounds    = event.scrollBounds,
 				lowerProp = list.lowerProp,
 				upperProp = list.upperProp;
+			bounds[upperProp] = this.getScrollPosition(list);
 			if (bounds.xDir === 1 || bounds.yDir === 1) {
 				if (bounds[upperProp] >= threshold[lowerProp]) {
 					this.scrollHandler(list, bounds);
