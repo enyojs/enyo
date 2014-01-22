@@ -88,6 +88,10 @@ enyo.kind({
 	*/
 	length: 0,
 	/**
+		When true, the collection is currently fetching data
+	*/
+	isFetching: false,
+	/**
 		Fetches the data for this collection. Accepts options with optional
 		callbacks, _success_ and _fail_, the _source_ (if not specified, the
 		_defaultSource_ for the kind will be used), and the _replace_ flag. If
@@ -121,6 +125,7 @@ enyo.kind({
 		// now if we need to lets remove the records and attempt to do this
 		// while any possible asynchronous remote (not always remote...) calls
 		// are made for efficiency
+		this.set("isFetching", true);
 		enyo.asyncMethod(this, function () { this.store.fetchRecord(this, o); });
 	},
 	/**
@@ -185,6 +190,7 @@ enyo.kind({
 		if (opts) {
 			if (opts.success) { opts.success(rec, opts, res); }
 		}
+		this.set("isFetching", false);
 	},
 	/**
 		When a record fails during a request, this method is executed with the name
