@@ -51,7 +51,7 @@
 		*/
 		go: function (opts) {
 			var Kind = this.requestKind,
-				o    = enyo.only(this._ajaxOptions, opts),
+				o    = enyo.only(this._requestOptions, opts),
 				xhr  = new Kind(o);
 			xhr.response(function (xhr, res) {
 				// we swap the ordering to preserve the signature of the
@@ -78,9 +78,7 @@
 			opts.method = "POST";
 			opts.postBody = pb;
 			this.go(opts);
-		},
-		//*@protected
-		_ajaxOptions: enyo.keys(enyo.AjaxProperties)
+		}
 	});
 	//*@public
 	/**
@@ -111,7 +109,9 @@
 			opts.method = "DELETE";
 			opts.url = this.buildUrl(rec, opts);
 			this.go(opts);
-		}
+		},
+		//*@protected
+		_requestOptions: enyo.keys(enyo.AjaxProperties)
 	});
 	/**
 		A generic source for use with a JSONP-ready backend. It uses the "GET"
@@ -144,6 +144,9 @@
 			opts.method = "DELETE";
 			opts.url = this.buildUrl(rec, opts);
 			this.go(opts);
-		}
+		},
+		//*@protected
+		_requestOptions: enyo.keys(enyo.getPath("enyo.JsonpRequest").prototype.published)
+
 	});
 })(enyo);
