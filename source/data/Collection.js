@@ -201,6 +201,7 @@ enyo.kind({
 		if (opts && opts.fail) {
 			opts.fail(rec, opts, res);
 		}
+		this.set("isFetching", false);
 	},
 	/**
 		Overload this method to process incoming data before _didFetch()_ attempts
