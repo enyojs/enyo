@@ -97,7 +97,11 @@ enyo.kind({
 		_defaultSource_ for the kind will be used), and the _replace_ flag. If
 		_replace_ is true, all current records in the collection will be removed
 		(though not	destroyed) before adding any results. If this is the case, the
-		method will return an array of any records that were removed.
+		method will return an array of any records that were removed. If the _destroy_
+		or _destroyLocal_ flags are set to `true` they will trigger the correct
+		method to remove the records and also destroy them locally or remotely
+		depending on which feature is set. Note that if a model's _readOnly_ flag
+		is set to `true` calling _destroy()_ will have the same effect as _destroyLocal()_.
 
 		The options	may include a _strategy_ for how received data is added to the
 		collection. The _"add"_ strategy (the default) is most efficient; it places
@@ -123,8 +127,6 @@ enyo.kind({
 		// are made for efficiency
 		this.set("isFetching", true);
 		enyo.asyncMethod(this, function () { this.store.fetchRecord(this, o); });
-		if (o.replace && !o.destroy) { this.removeAll(); }
-		else if (o.destroy) { this.destroyAll(); }
 	},
 	/**
 		Convenience method that does not require the callee to set the _replace_
@@ -145,12 +147,29 @@ enyo.kind({
 		return this.fetch(o);
 	},
 	/**
+		Convenience method that does not require the callee to set the _destroyLocal_
+		parameter in the passed-in options.
+	*/
+	fetchAndDestroyLocal: function (opts) {
+		var o = opts || {};
+		o.destroyLocal = true;
+		return this.fetch(o);
+	},
+	/**
 		This method is executed after a successful fetch, asynchronously. Any new
 		data either replaces or is merged with the existing data (as determined by
 		the _replace_ option for _fetch()_). Receives the collection, the options,
 		and the result (_res_).
 	*/
 	didFetch: function (rec, opts, res) {
+		// empty the collection accordingly, if needed
+		if (opts.replace && !opts.destroy) {
+			this.removeAll();
+		} else if (opts.destroy && !opts.destroyLocal) {
+			this.destroyAll();
+		} else if (opts.destroyLocal) {
+			this.destroyAllLocal();
+		}
 		// the parsed result
 		var rr = this.parse(res),
 			s  = opts.strategy, fn;
@@ -182,6 +201,7 @@ enyo.kind({
 		if (opts && opts.fail) {
 			opts.fail(rec, opts, res);
 		}
+		this.set("isFetching", false);
 	},
 	/**
 		Overload this method to process incoming data before _didFetch()_ attempts
@@ -499,20 +519,33 @@ enyo.kind({
 	/**
 		Removes all records from the collection and destroys them. This will still
 		emit the _remove_ event, and any records being destroyed will also emit
-		their own _destroy_ events.
+		their own _destroy_ events. If the _local_ parameter is `true` it will call
+		the record's _destroyLocal()_ method instead of _destroy()_.
 
 		If _destroyAll()_ is called while the collection is in a filtered state, it
 		will reset the collection, clearing any filters, before destroying all
 		records.
 	*/
-	destroyAll: function () {
+	destroyAll: function (local) {
 		// all of the removed records that we know need to be destroyed
-		var records = this.removeAll();
-		this._destroyAll;
+		var records = this.removeAll(),
+			fn = local === true? "destroyLocal": "destroy",
+			rec;
+		this._destroyAll = true;
 		for (var k in records) {
-			records[k].destroy();
+			rec = records[k];
+			if (rec && rec instanceof enyo.Model) {
+				rec[fn]();
+			}
 		}
 		this._destroyAll = false;
+	},
+	/**
+		Same as _destroyAll()_ except that it will call the model's _destroyLocal()_
+		method.
+	*/
+	destroyAllLocal: function () {
+		this.destroyAll(true);
 	},
 	/**
 		Returns the index of the given record if it exists in this collection;
