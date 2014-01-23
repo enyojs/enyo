@@ -198,7 +198,8 @@ enyo.kind({
 		}
 	},
 	//*@protected
-	_absoluteShowingChanged: function () {
+	observeAbsoluteShowing: true,
+	absoluteShowingChanged: function () {
 		if (this.get("absoluteShowing")) {
 			if (this._showingQueue && this._showingQueue.length) {
 				var queue = this._showingQueue;
@@ -313,13 +314,6 @@ enyo.kind({
 			this._addToShowingQueue("didResize", this.didResize);
 		}
 	},
-	showingChangedHandler: enyo.inherit(function (sup) {
-		return function (inSender, inEvent) {
-			this.set("absoluteShowing", this.getAbsoluteShowing(true));
-			
-			return sup.apply(this, arguments);
-		};
-	}),
 	/**
 		Overload to adjust the root method to be able to find the nested child
 		based on the requested index if its page is currently active. Returns
@@ -365,7 +359,6 @@ enyo.kind({
 		work we do.
 	*/
 	handlers: {onScroll: "didScroll", onresize: "didResize"},
-	observers: {_absoluteShowingChanged: ["absoluteShowing"]},
 	//* Add the RegisteredEventSupport mixin for the paging event
 	mixins: [enyo.RegisteredEventSupport],
 	//* All delegates are named elsewhere but are stored in these statics.

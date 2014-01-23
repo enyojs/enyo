@@ -78,7 +78,25 @@ enyo.kind({
 		*/
 		fit: null,
 		//* Used by Ares design editor for design objects
-		isContainer: false
+		isContainer: false,
+		/**
+			When true, the absoluteShowing property will reflect whether the control 
+			is actually displayed, based on the `showing` state of this control and 
+			all of its parents.
+
+			IMPORTANT: For performance reasons, this property is only valid if the
+			`observeAbsoluteShowing` property is set to true (defaults to false).
+			This property should be relied on sparingly, as it requires overhead at
+			create-tiem and during parent showing changes to propagate the value 
+			from parents to children.
+		*/
+		absoluteShowing: true,
+		/**
+			When true, the `absoluteShowing` property will be observable/bindable, 
+			and the `absoluteShowingChanged` change handler will be called when the
+			absolute showing state of this control changes.
+		*/
+		observeAbsoluteShowing: false
 	},
 	//*@protected
 	//* Layout direction. Left-to-right (false) or right-to-left (true)
@@ -87,9 +105,7 @@ enyo.kind({
 	//*@public
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
-		ontap: "tap",
-		//* The waterfall event when the showing property is modified
-		onShowingChanged: "showingChangedHandler"
+		ontap: "tap"
 	},
 	//*@protected
 	_isView: true,
@@ -126,6 +142,12 @@ enyo.kind({
 			// setting 'display: none;' style at initialization time will
 			// not work if 'showing' is true.
 			this.showingChanged();
+			
+			// Only call the change handler at startup if there is actually work to do
+			if (this.observeAbsoluteShowing) {
+				this.observeAbsoluteShowingChanged();
+			}
+
 			// Notes:
 			// - 'classes' does not reflect the complete set of classes on an object; the complete set is in
 			//   this.attributes.class. The '*Class' apis affect this.attributes.class.
@@ -147,6 +169,10 @@ enyo.kind({
 	//*@public
 	destroy: enyo.inherit(function (sup) {
 		return function() {
+			// De-register this control from all of its parents' showingListeners
+			if (this.observeAbsoluteShowing) {
+				this.removeAbsoluteShowingListeners();
+			}
 			this.removeFromRoots();
 			this.removeNodeFromDom();
 			enyo.Control.unregisterDomEvents(this.id);
@@ -927,16 +953,46 @@ enyo.kind({
 			this.applyStyle("display", "none");
 		}
 	},
-	showingChanged: function(was) {
+	showingChanged: function(inOld) {
 		this.syncDisplayToShowing();
 		
-		var waterfall = (was === true || was === false)
-			, parent = this.parent;
-		// make sure that we don't trigger the waterfall when this method
-		// is arbitrarily called during _create_ and it should only matter
-		// that it changed if our parent's are all showing as well
-		if (waterfall && (parent? parent.getAbsoluteShowing(true): true)) {
-			this.waterfall("onShowingChanged", {originator: this, showing: this.getShowing()});
+		// Only call the absoluteShowingInvalidated on listeners at startup if the showing is false
+		// since it defaults to true; otherwise call it any time the showing value changes
+		if (this.absoluteShowingListeners && ((inOld !== undefined) || !this.showing)) {
+			for (var i=0; i<this.absoluteShowingListeners.length; i++) {
+				this.absoluteShowingListeners[i].absoluteShowingInvalidated(this, this.showing);
+			}
+		}
+	},
+	// We use a very light-weight observer-like system for propogating showing changes
+	// of parents down to children, and only when they opt-in to needing absoluteShowing
+	// to be observable.  This avoids the overhead of observers and event bubble/waterfall,
+	// doing the bare minimum required to propagate the state to interested controls.
+	observeAbsoluteShowingChanged: function() {
+		if (this.observeAbsoluteShowing) {
+			var c = this;
+			while (c) {
+				c.absoluteShowingListeners = parent.absoluteShowingListeners || [];
+				c.absoluteShowingListeners.push(this);
+				c = c.parent;
+			}
+		} else {
+			this.removeAbsoluteShowingListeners();
+		}
+	},
+	// This fucntion is called from any of its parents when the parent's `showing` changes.  We then call
+	// `getAbsoluteShowing` to determine the actual absoluteShowing state of this control, and set
+	// it to the `absoluteShowing` property, making it observable/bindable
+	absoluteShowingInvalidated: function (inSender, inEvent) {
+		this.set("absoluteShowing", this.getAbsoluteShowing(true));
+	},
+	removeAbsoluteShowingListeners: function() {
+		var c = this;
+		while (c) {
+			if (c.absoluteShowingListeners) {
+				enyo.remove(this, c.absoluteShowingListeners);
+			}
+			c = c.parent;
 		}
 	},
 	getShowing: function() {
@@ -974,9 +1030,6 @@ enyo.kind({
 		itself already it will not continue the waterfall. Overload this method
 		for additional handling of this event.
 	*/
-	showingChangedHandler: function (inSender, inEvent) {		
-		return inSender === this? false: !this.getShowing();
-	},
 	//
 	//
 	fitChanged: function() {
