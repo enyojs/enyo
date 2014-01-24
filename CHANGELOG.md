@@ -1,5 +1,7 @@
 ## 2.3.1-pre.1
 
+_enyo.asyncMethod()_ now accepts an anonymous function as a single parameter. Previous asnyncMethod signature remains supported as well.
+
 _enyo.Collection.destroyAll()_ now accepts a boolean parameter to signify it will call the record's _destroyLocal()_ method as opposed to the default of _destroy()_.
 
 Added _enyo.Collection.destroyAllLocal()_ as a convenience method.
