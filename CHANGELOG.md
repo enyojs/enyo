@@ -10,6 +10,12 @@ Added support for the Page Visibility API by normalizing  visibilitychange event
 
 ## 2.3.0-rc5
 
+From this release forward, the `display` style attribute will no longer be synced back to the
+`showing` property after Control creation to avoid inconsistent state situations when `getShowing`
+is called in a `showingChanged` handler before the `showing` and `display` values are synced.
+Changing `showing` will update the `display` style, but changes to the style will not be reflected
+in the showing property.
+
 Added _fixedChildSize_ public property to _enyo.DataList_ to allow the list to optimize performance when
 list items will have fixed dimensions. Whenever items in the list will be uniform this option should be
 utilized.
