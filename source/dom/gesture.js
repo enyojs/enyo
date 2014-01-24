@@ -14,7 +14,8 @@ enyo.gesture = {
 	//* @protected
 	eventProps: ["target", "relatedTarget", "clientX", "clientY", "pageX", "pageY",
 		"screenX", "screenY", "altKey", "ctrlKey", "metaKey", "shiftKey",
-		"detail", "identifier", "dispatchTarget", "which", "srcEvent"],
+		"detail", "identifier", "dispatchTarget", "which", "srcEvent",
+		"configureHoldPulse"],
 	makeEvent: function(inType, inEvent) {
 		var e = {};
 		e.type = inType;
