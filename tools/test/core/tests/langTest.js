@@ -54,6 +54,19 @@ enyo.kind({
 		var index = enyo.indexOf("foo", [null, null, null, null,"foo"], 10);
 		this.finish(index !== -1 ? "if fromIndex is greater then array length, should return -1" : false);
 	},
+	testAsyncMethod: function() {
+		var timesCalled = 0;
+		var self = this;
+		enyo.asyncMethod(function() { timesCalled++; });
+		enyo.asyncMethod(this, function(i) { timesCalled += 1; }, 1);
+		setTimeout(function() {
+			if (timesCalled != 2) {
+				self.finish("one or more asyncMethods not called");
+			} else {
+				self.finish();
+			}
+		}, 25);
+	},
 	testIsObject: function() {
 		if (!enyo.isObject({})) {
 			this.finish("enyo.isObject failed on object");
