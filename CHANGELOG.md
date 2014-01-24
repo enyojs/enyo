@@ -1,14 +1,26 @@
 ## 2.3.1-pre.1
 
-_enyo.asyncMethod()_ now accepts an anonymous function as a single parameter. Previous asnyncMethod signature remains supported as well.
+Add _enyo.toUpperCase()_ and _enyo.toLowerCase()_ methods. Use these to
+replace calls to _String.toUpperCase()_ and _String.toLowerCase()_ in code
+that needs to be locale-aware.
 
-_enyo.Collection.destroyAll()_ now accepts a boolean parameter to signify it will call the record's _destroyLocal()_ method as opposed to the default of _destroy()_.
+_enyo.asyncMethod()_ now accepts an anonymous function as a single parameter.
+Previous asnyncMethod signature remains supported as well.
+
+_enyo.Collection.destroyAll()_ now accepts a boolean parameter to signify it
+will call the record's _destroyLocal()_ method as opposed to the default of
+_destroy()_.
 
 Added _enyo.Collection.destroyAllLocal()_ as a convenience method.
 
-Added _enyo.Collection.fetchAndDestroyLocal()_ method to do the same as _fetchAndDestroy()_ except it will call _destroyLocal()_ on the records instead of _destroy()_. This also means you could call _fetch()_ with the options property _destroyLocal_ set to _true_ to have the same effect.
+Added _enyo.Collection.fetchAndDestroyLocal()_ method to do the same as
+_fetchAndDestroy()_ except it will call _destroyLocal()_ on the records
+instead of _destroy()_. This also means you could call _fetch()_ with the
+options property _destroyLocal_ set to _true_ to have the same effect.
 
-Added support for the Page Visibility API by normalizing  visibilitychange events, the document.hidden and the document.visibilityState properties. Uses fallbacks to support older browsers.
+Added support for the Page Visibility API by normalizing  visibilitychange
+events, the document.hidden and the document.visibilityState properties. Uses
+fallbacks to support older browsers.
 
 ## 2.3.0-rc5
 
