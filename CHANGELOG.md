@@ -1,4 +1,4 @@
-## 2.3.1-pre.1
+## 2.4.0-pre.1
 
 Add _enyo.toUpperCase()_ and _enyo.toLowerCase()_ methods. Use these to
 replace calls to _String.toUpperCase()_ and _String.toLowerCase()_ in code
