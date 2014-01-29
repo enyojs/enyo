@@ -1,4 +1,45 @@
-## 2.3.0-rc4
+## 2.3.0-rc.6
+
+A new method, `enyo.dom.getAbsoluteBounds`, has been added. This method is more sophisticated than
+previous methods for getting a node's absolute bounds, taking into account translateX, translateY
+and matrix3d transforms. The existing `enyo.Control.getAbsoluteBounds` API remains unchanged, but its
+implementation has been changed to utilize the new `enyo.dom.getAbsoluteBounds` method.
+
+Added _configureHoldPulse_ method to "down" event for configuring subsequent "holdpulse" events. Pass in a 
+hash of options that can include "delay" (ms delay between "holdpulse" events), "moveTolerance" (threshold
+for determining cursor has left original location), "endHold" (values include "onMove" and "onLeave",
+determines whether "holdpulse" should be cancelled when cursor leaves tolerant target area or the control
+itself, respectively), and "resume" (whether or not "holdpulse" should resume when re-entering either the 
+control ["onLeave" endHold value] or the thresholded original coordinates ["onMove" endHold value]).
+
+Add _enyo.toUpperCase()_ and _enyo.toLowerCase()_ methods. Use these to replace calls to
+_String.toUpperCase()_ and _String.toLowerCase()_ in code that needs to be locale-aware.
+
+## 2.3.0-rc.5
+
+From this release forward, the `display` style attribute will no longer be synced back to the
+`showing` property after Control creation to avoid inconsistent state situations when `getShowing`
+is called in a `showingChanged` handler before the `showing` and `display` values are synced.
+Changing `showing` will update the `display` style, but changes to the style will not be reflected
+in the showing property.
+
+Added _fixedChildSize_ public property to _enyo.DataList_ to allow the list to optimize performance when
+list items will have fixed dimensions. Whenever items in the list will be uniform this option should be
+utilized.
+
+Added _defaultValue_ value support for _computed properties_. Simply provide a configuration object with a key
+_defaultValue_ and any value, even `undefined`.
+
+Added _enyo.Control.absoluteShowing_ read-only boolean property that may be observed to indicate whether
+the control is actually visible. Setting the _showing_ property to `false` for any control will flip this
+properties value to `false` for all children. This property can then be reliably used to separate logic that
+should only occur when a control is visible.
+
+## 2.3.0-rc.4
+
+Added _enyo.perfNow()_, a high-precision, high performance monotonic timestamp, which is independent of changes
+to the system clock and safer for use in animation, etc.  Falls back to _enyo.now()_ (based on the JS _Date_
+object) on platforms where `window.performance.now()` is not available.
 
 _enyo.Control.getAbsoluteShowing()_ now accepts an optional boolean parameter that, if `true`, will
 skip the _getBounds()_ call internally and rely solely on the return value of the _getShowing()_
@@ -7,12 +48,12 @@ public API.
 _enyo.Scroller_ has been updated such that it will only propagate _resize_ events to children when its'
 _showing_ property is `true`.
 
-## 2.3.0-rc1
+## 2.3.0-rc.1
 
 _enyo.dispatcher.capture_ API no longer bubbles all captured events through the normal event chain, but
-rather notifies the captureTarget when specific events occur through a map of callbacks passed as a parameter 
+rather notifies the captureTarget when specific events occur through a map of callbacks passed as a parameter
 to the `capture` API.  This is a breaking change to the enyo.dispatcher.capture API, however it is a very
-unpublicized (and fairly difficult-to-use) feature that was only used in enyo.Popup among Enyo-team developed 
+unpublicized (and fairly difficult-to-use) feature that was only used in enyo.Popup among Enyo-team developed
 controls, so we assume it will have low impact on the general public.
 
 Needed to revert the change to _enyo.Binding_ from 2.3.0-pre.11. Re-implemented the _stop()_ method
@@ -62,7 +103,7 @@ calling that method via the binding reference in a transform return `undefined`
 Instances of _enyo.Binding_ will no longer propagate `undefined`; instead use `null`.
 
 Deprecated the `controllers` array for _enyo.Application_; instead use `components`
-with the same features. This should modify bindings from `.app.controllers.{name}` to 
+with the same features. This should modify bindings from `.app.controllers.{name}` to
 `.app.$.{name}` for controllers/components created for an _enyo.Application_ instance.
 
 Deprecated the `controller` property for _enyo.DataRepeater_ and all sub-kinds; instead use
