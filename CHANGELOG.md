@@ -1,4 +1,10 @@
-## 2.3.0-rc5
+## 2.3.0-rc.6
+
+enyo.Control's `getAbsoluteBounds` method has been replaced with a call to a new
+`enyo.dom.getAbsoluteBounds` method, derived from a more sophisticated version that
+takes into account translateX, translateY, and matrix3d transforms.
+
+## 2.3.0-rc.5
 
 From this release forward, the `display` style attribute will no longer be synced back to the
 `showing` property after Control creation to avoid inconsistent state situations when `getShowing`
@@ -18,7 +24,7 @@ the control is actually visible. Setting the _showing_ property to `false` for a
 properties value to `false` for all children. This property can then be reliably used to separate logic that
 should only occur when a control is visible.
 
-## 2.3.0-rc4
+## 2.3.0-rc.4
 
 Added _enyo.perfNow()_, a high-precision, high performance monotonic timestamp, which is independent of changes
 to the system clock and safer for use in animation, etc.  Falls back to _enyo.now()_ (based on the JS _Date_
@@ -31,7 +37,7 @@ public API.
 _enyo.Scroller_ has been updated such that it will only propagate _resize_ events to children when its'
 _showing_ property is `true`.
 
-## 2.3.0-rc1
+## 2.3.0-rc.1
 
 _enyo.dispatcher.capture_ API no longer bubbles all captured events through the normal event chain, but
 rather notifies the captureTarget when specific events occur through a map of callbacks passed as a parameter 
