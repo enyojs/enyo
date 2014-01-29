@@ -11,11 +11,11 @@ Added support for the Page Visibility API by normalizing  visibilitychange event
 ## 2.3.0-rc6
 
 Added _configureHoldPulse_ method to "down" event for configuring subsequent "holdpulse" events. Pass in a 
-hash of options that can include "delay" (ms delay between "holdpulse" events), "hysteresisSquared" (threshold
-for determining cursor has left original location), "stopStrategy" (values include "hysteresis" and "control",
-determines whether "holdpulse" should be cancelled when cursor leaves thresholded target area or the control
-itself), and "resume" (whether or not "holdpulse" should resume when re-entering either the control ["control"
-stopStrategy] or the thresholded original coordinates ["hysteresis" stopStrategy"]).
+hash of options that can include "delay" (ms delay between "holdpulse" events), "moveTolerance" (threshold
+for determining cursor has left original location), "endHold" (values include "onMove" and "onLeave",
+determines whether "holdpulse" should be cancelled when cursor leaves tolerant target area or the control
+itself, respectively), and "resume" (whether or not "holdpulse" should resume when re-entering either the 
+control ["onLeave" endHold value] or the thresholded original coordinates ["onMove" endHold value]).
 
 ## 2.3.0-rc5
 
