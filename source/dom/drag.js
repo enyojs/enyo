@@ -35,11 +35,11 @@ enyo.gesture.drag = {
 	//* @protected
 	holdPulseDefaultConfig: {
 		delay: 200,
-		// if "true", holdPulse will resume when pointer re-enters original control (control stopStrategy)
-		// or coordinates (hysteresis stopStrategy), otherwise will utilize drag behavior
+		// if "true", holdPulse will resume when pointer re-enters original control ("onLeave" endHold value)
+		// or coordinates with tolerance ("onMove" endHold value), otherwise will utilize drag behavior
 		resume: false,
-		hysteresisSquared: 16,
-		stopStrategy: "hysteresis" // other values include "control" (stop when pointer leaves original control)
+		moveTolerance: 16,
+		endHold: "onMove" // other values include "onLeave" (stop hold when pointer leaves original control)
 	},
 	holdPulseConfig: {},
 	trackCount: 5,
@@ -69,8 +69,8 @@ enyo.gesture.drag = {
 			}
 			if (this.dragEvent) {
 				this.sendDrag(e);
-			} else if (this.holdPulseConfig.stopStrategy === "hysteresis") {
-				if (this.dy*this.dy + this.dx*this.dx >= this.holdPulseConfig.hysteresisSquared) { // outside of target
+			} else if (this.holdPulseConfig.endHold === "onMove") {
+				if (this.dy*this.dy + this.dx*this.dx >= this.holdPulseConfig.moveTolerance) { // outside of target
 					if (this.holdJob) { // only stop/cancel hold job if it currently exists
 						if (this.holdPulseConfig.resume) { // pause hold to potentially resume later
 							this.stopHold();
@@ -92,15 +92,15 @@ enyo.gesture.drag = {
 		this.target = null;
 	},
 	enter: function(e) {
-		// resume hold when re-entering original target when using a "control" stopStrategy 
-		if (this.holdPulseConfig.resume && this.holdPulseConfig.stopStrategy === "control" && this.target && e.target === this.target) {
+		// resume hold when re-entering original target when using "onLeave" endHold value 
+		if (this.holdPulseConfig.resume && this.holdPulseConfig.endHold === "onLeave" && this.target && e.target === this.target) {
 			this.beginHold(e);
 		}
 	},
 	leave: function(e) {
 		if (this.dragEvent) {
 			this.sendDragOut(e);
-		} else if (this.holdPulseConfig.stopStrategy === "control") {
+		} else if (this.holdPulseConfig.endHold === "onLeave") {
 			if (this.holdPulseConfig.resume) { // pause hold to potentially resume later
 				this.stopHold();
 			} else { // completely cancel hold
