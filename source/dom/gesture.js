@@ -59,7 +59,7 @@ enyo.gesture = {
 
 		// expose method for configuring holdpulse options
 		e.configureHoldPulse = function(inOpts) {
-			drag.holdPulseConfig = enyo.mixin(drag.holdPulseConfig, inOpts);
+			enyo.mixin(drag.holdPulseConfig, inOpts);
 		};
 
 		enyo.dispatch(e);
