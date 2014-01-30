@@ -83,7 +83,7 @@ enyo.kind({
 	//*@protected
 	//* Layout direction. Left-to-right (false) or right-to-left (true)
 	//* Should only be read by widget developers (sub-kinders), and normally never set by end developers
-	rtl: false,
+	rtl: false,s
 	//*@public
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
@@ -637,8 +637,8 @@ enyo.kind({
 		this.domStylesChanged();
 	},
 	/**
-		Returns an object describing the absolute position on the screen, relative to the top
-		left point on the screen.  This function takes into account account absolute/relative 
+		Returns an object describing the control's absolute position within the viewport,
+		relative to the top left corner. This function takes into account account absolute/relative 
 		offsetParent positioning, scroll position, and CSS transforms (currently translateX, 
 		translateY, and matrix3d). 
 
