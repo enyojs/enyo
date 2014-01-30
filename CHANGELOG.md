@@ -25,6 +25,13 @@ previous methods for getting a node's absolute bounds, taking into account trans
 and matrix3d transforms. The existing `enyo.Control.getAbsoluteBounds` API remains unchanged, but its
 implementation has been changed to utilize the new `enyo.dom.getAbsoluteBounds` method.
 
+Added _configureHoldPulse_ method to "down" event for configuring subsequent "holdpulse" events. Pass in a 
+hash of options that can include "delay" (ms delay between "holdpulse" events), "moveTolerance" (threshold
+for determining cursor has left original location), "endHold" (values include "onMove" and "onLeave",
+determines whether "holdpulse" should be cancelled when cursor leaves tolerant target area or the control
+itself, respectively), and "resume" (whether or not "holdpulse" should resume when re-entering either the 
+control ["onLeave" endHold value] or the thresholded original coordinates ["onMove" endHold value]).
+
 Add _enyo.toUpperCase()_ and _enyo.toLowerCase()_ methods. Use these to replace calls to
 _String.toUpperCase()_ and _String.toLowerCase()_ in code that needs to be locale-aware.
 
