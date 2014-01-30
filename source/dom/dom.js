@@ -335,8 +335,8 @@ enyo.dom = {
 		}
 	},
 	/**
-		Returns an object describing the absolute position on the screen, relative to the top
-		left point on the screen.  This function takes into account account absolute/relative 
+		Returns an object describing the node's absolute position within the viewport,
+		relative to the top left corner. This function takes into account account absolute/relative 
 		offsetParent positioning, scroll position, and CSS transforms (currently translateX, 
 		translateY, and matrix3d). 
 
