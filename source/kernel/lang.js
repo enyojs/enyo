@@ -224,6 +224,18 @@
 		return Math.floor(Math.random() * inBound);
 	};
 
+	//* Returns _inString_ converted to upper case.
+	//* This is overridden and elaborated upon when enyo-ilib loads.
+	enyo.toUpperCase = function(inString) {
+		return inString.toUpperCase();
+	};
+
+	//* Returns _inString_ converted to lower case.
+	//* This is overridden and elaborated upon when enyo-ilib loads.
+	enyo.toLowerCase = function(inString) {
+		return inString.toLowerCase();
+	};
+
 	//* Returns _inString_ with the first letter capitalized.
 	enyo.cap = function(inString) {
 		return inString.slice(0, 1).toUpperCase() + inString.slice(1);

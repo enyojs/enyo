@@ -5,6 +5,9 @@ previous methods for getting a node's absolute bounds, taking into account trans
 and matrix3d transforms. The existing `enyo.Control.getAbsoluteBounds` API remains unchanged, but its
 implementation has been changed to utilize the new `enyo.dom.getAbsoluteBounds` method.
 
+Add _enyo.toUpperCase()_ and _enyo.toLowerCase()_ methods. Use these to replace calls to
+_String.toUpperCase()_ and _String.toLowerCase()_ in code that needs to be locale-aware.
+
 ## 2.3.0-rc.5
 
 From this release forward, the `display` style attribute will no longer be synced back to the
