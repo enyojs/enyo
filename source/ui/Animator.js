@@ -66,7 +66,7 @@ enyo.kind({
 		if (inProps) {
 			enyo.mixin(this, inProps);
 		}
-		this.t0 = this.t1 = enyo.now();
+		this.t0 = this.t1 = enyo.perfNow();
 		this.value = this.startValue;
 
 		// register this jobPriority to block less urgent tasks from executing
@@ -88,7 +88,7 @@ enyo.kind({
 	reverse: function() {
 		if (this.isAnimating()) {
 			this.reversed = !this.reversed;
-			var now = this.t1 = enyo.now();
+			var now = this.t1 = enyo.perfNow();
 			// adjust start time (t0) to allow for animation done so far to replay
 			var elapsed = now - this.t0;
 			this.t0 = now + elapsed - this.duration;
@@ -119,7 +119,7 @@ enyo.kind({
 		return (this.dt >= this.duration);
 	},
 	next: function() {
-		this.t1 = enyo.now();
+		this.t1 = enyo.perfNow();
 		this.dt = this.t1 - this.t0;
 		var args = this.easingFunction.length;
 		var f;

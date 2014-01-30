@@ -218,8 +218,7 @@ enyo.gesture.drag = {
 		ti.moves.push({
 			x: e.clientX,
 			y: e.clientY,
-			// t: enyo.now()
-			t: enyo.bench()
+			t: enyo.perfNow()
 		});
 		// track specified # of points
 		if (ti.moves.length > this.trackCount) {
@@ -234,8 +233,7 @@ enyo.gesture.drag = {
 			// note: important to use up time to reduce flick
 			// velocity based on time between move and up.
 			var l = moves[moves.length-1];
-			// var n = enyo.now();
-			var n = enyo.bench();
+			var n = enyo.perfNow();
 			// take the greatest of flick between each tracked move and last move
 			for (var i=moves.length-2, dt=0, x1=0, y1=0, x=0, y=0, sx=0, sy=0, m; (m=moves[i]); i--) {
 				// this flick (this move - last move) / (this time - last time)
@@ -263,8 +261,7 @@ enyo.gesture.drag = {
 		return inNum > 0 ? 1 : (inNum < 0 ? -1 : inDefault);
 	},
 	beginHold: function(e) {
-		// this.holdStart = enyo.now();
-		this.holdStart = enyo.bench();
+		this.holdStart = enyo.perfNow();
 		// clone the event to ensure it stays alive on IE upon returning to event loop
 		var $ce = enyo.clone(e);
 		$ce.srcEvent = enyo.clone(e.srcEvent);
@@ -293,8 +290,7 @@ enyo.gesture.drag = {
 			this.sendHold(inEvent);
 		}
 		var e = enyo.gesture.makeEvent("holdpulse", inEvent);
-		// e.holdTime = enyo.now() - this.holdStart;
-		e.holdTime = enyo.bench() - this.holdStart;
+		e.holdTime = enyo.perfNow() - this.holdStart;
 		enyo.dispatch(e);
 	},
 	sendHold: function(inEvent) {
