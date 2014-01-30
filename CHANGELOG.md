@@ -5,6 +5,13 @@ previous methods for getting a node's absolute bounds, taking into account trans
 and matrix3d transforms. The existing `enyo.Control.getAbsoluteBounds` API remains unchanged, but its
 implementation has been changed to utilize the new `enyo.dom.getAbsoluteBounds` method.
 
+Added _configureHoldPulse_ method to "down" event for configuring subsequent "holdpulse" events. Pass in a 
+hash of options that can include "delay" (ms delay between "holdpulse" events), "moveTolerance" (threshold
+for determining cursor has left original location), "endHold" (values include "onMove" and "onLeave",
+determines whether "holdpulse" should be cancelled when cursor leaves tolerant target area or the control
+itself, respectively), and "resume" (whether or not "holdpulse" should resume when re-entering either the 
+control ["onLeave" endHold value] or the thresholded original coordinates ["onMove" endHold value]).
+
 Add _enyo.toUpperCase()_ and _enyo.toLowerCase()_ methods. Use these to replace calls to
 _String.toUpperCase()_ and _String.toLowerCase()_ in code that needs to be locale-aware.
 
@@ -44,9 +51,9 @@ _showing_ property is `true`.
 ## 2.3.0-rc.1
 
 _enyo.dispatcher.capture_ API no longer bubbles all captured events through the normal event chain, but
-rather notifies the captureTarget when specific events occur through a map of callbacks passed as a parameter 
+rather notifies the captureTarget when specific events occur through a map of callbacks passed as a parameter
 to the `capture` API.  This is a breaking change to the enyo.dispatcher.capture API, however it is a very
-unpublicized (and fairly difficult-to-use) feature that was only used in enyo.Popup among Enyo-team developed 
+unpublicized (and fairly difficult-to-use) feature that was only used in enyo.Popup among Enyo-team developed
 controls, so we assume it will have low impact on the general public.
 
 Needed to revert the change to _enyo.Binding_ from 2.3.0-pre.11. Re-implemented the _stop()_ method
@@ -96,7 +103,7 @@ calling that method via the binding reference in a transform return `undefined`
 Instances of _enyo.Binding_ will no longer propagate `undefined`; instead use `null`.
 
 Deprecated the `controllers` array for _enyo.Application_; instead use `components`
-with the same features. This should modify bindings from `.app.controllers.{name}` to 
+with the same features. This should modify bindings from `.app.controllers.{name}` to
 `.app.$.{name}` for controllers/components created for an _enyo.Application_ instance.
 
 Deprecated the `controller` property for _enyo.DataRepeater_ and all sub-kinds; instead use
