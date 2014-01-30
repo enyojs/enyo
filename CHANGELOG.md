@@ -1,9 +1,5 @@
 ## 2.4.0-pre.1
 
-Add _enyo.toUpperCase()_ and _enyo.toLowerCase()_ methods. Use these to
-replace calls to _String.toUpperCase()_ and _String.toLowerCase()_ in code
-that needs to be locale-aware.
-
 _enyo.asyncMethod()_ now accepts an anonymous function as a single parameter.
 Previous asnyncMethod signature remains supported as well.
 
@@ -22,7 +18,17 @@ Added support for the Page Visibility API by normalizing  visibilitychange
 events, the document.hidden and the document.visibilityState properties. Uses
 fallbacks to support older browsers.
 
-## 2.3.0-rc5
+## 2.3.0-rc.6
+
+A new method, `enyo.dom.getAbsoluteBounds`, has been added. This method is more sophisticated than
+previous methods for getting a node's absolute bounds, taking into account translateX, translateY
+and matrix3d transforms. The existing `enyo.Control.getAbsoluteBounds` API remains unchanged, but its
+implementation has been changed to utilize the new `enyo.dom.getAbsoluteBounds` method.
+
+Add _enyo.toUpperCase()_ and _enyo.toLowerCase()_ methods. Use these to replace calls to
+_String.toUpperCase()_ and _String.toLowerCase()_ in code that needs to be locale-aware.
+
+## 2.3.0-rc.5
 
 From this release forward, the `display` style attribute will no longer be synced back to the
 `showing` property after Control creation to avoid inconsistent state situations when `getShowing`
@@ -42,7 +48,7 @@ the control is actually visible. Setting the _showing_ property to `false` for a
 properties value to `false` for all children. This property can then be reliably used to separate logic that
 should only occur when a control is visible.
 
-## 2.3.0-rc4
+## 2.3.0-rc.4
 
 Added _enyo.perfNow()_, a high-precision, high performance monotonic timestamp, which is independent of changes
 to the system clock and safer for use in animation, etc.  Falls back to _enyo.now()_ (based on the JS _Date_
@@ -55,7 +61,7 @@ public API.
 _enyo.Scroller_ has been updated such that it will only propagate _resize_ events to children when its'
 _showing_ property is `true`.
 
-## 2.3.0-rc1
+## 2.3.0-rc.1
 
 _enyo.dispatcher.capture_ API no longer bubbles all captured events through the normal event chain, but
 rather notifies the captureTarget when specific events occur through a map of callbacks passed as a parameter
