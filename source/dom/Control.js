@@ -87,7 +87,9 @@ enyo.kind({
 	//*@public
 	handlers: {
 		//* Controls will call a user-provided _tap_ method when tapped upon.
-		ontap: "tap"
+		ontap: "tap",
+		//* The waterfall event when the showing property is modified
+		onShowingChanged: "showingChangedHandler"
 	},
 	//*@protected
 	_isView: true,
@@ -199,7 +201,7 @@ enyo.kind({
 	//* @public
 	/**
 		Returns the DOM node representing the control.
-		If the control is not currently rendered, returns null.
+		If the control is not currently rendered, returns a falsy value (null or false).
 
 		If _hasNode()_ returns a value, the _node_ property will be valid and
 		can be checked directly.
@@ -399,12 +401,21 @@ enyo.kind({
 	/**
 		Adds CSS styles to the set of styles assigned to this object.
 
-		_inCssText_ is a string containing CSS styles in text format.
+		_inCss_ is either a string containing CSS styles in text format,
+		or an object containing style names as keys and style values as property values
 
-			this.$.box.addStyles("background-color: red; padding: 4px;");
+		A. this.$.box.addStyles("background-color: red; padding: 4px;");
+		is same as
+		B. this.$.box.addStyles({"background-color": "red", "padding": "4px"});
 	*/
-	addStyles: function(inCssText) {
-		enyo.Control.cssTextToDomStyles(inCssText, this.domStyles);
+	addStyles: function(inCss) {
+		if (enyo.isObject(inCss)) {
+			for (var key in inCss) {
+				this.domStyles[key] = inCss[key];
+			}
+		} else {
+			enyo.Control.cssTextToDomStyles(inCss, this.domStyles);
+		}
 		this.domStylesChanged();
 	},
 	/**
@@ -918,14 +929,19 @@ enyo.kind({
 			this.applyStyle("display", "none");
 		}
 	},
-	showingChanged: function() {
+	showingChanged: function(was) {
 		this.syncDisplayToShowing();
+		
+		var waterfall = (was === true || was === false)
+			, parent = this.parent;
+		// make sure that we don't trigger the waterfall when this method
+		// is arbitrarily called during _create_ and it should only matter
+		// that it changed if our parent's are all showing as well
+		if (waterfall && (parent? parent.getAbsoluteShowing(true): true)) {
+			this.waterfall("onShowingChanged", {originator: this, showing: this.getShowing()});
+		}
 	},
 	getShowing: function() {
-		// 'showing' specifically means domStyles.display !== 'none'.
-		// 'showing' does not imply the node is actually visible or even rendered in DOM,
-		// it simply reflects this state of this specific property as a convenience.
-		this.showing = (this.domStyles.display != "none");
 		return this.showing;
 	},
 	/**
@@ -949,6 +965,15 @@ enyo.kind({
 		} else {
 			return true;
 		}
+	},
+	/**
+		Handles the _onshowingchanged_ event that is waterfalled by controls
+		when their _showing_ value is modified. If the control is not showing
+		itself already it will not continue the waterfall. Overload this method
+		for additional handling of this event.
+	*/
+	showingChangedHandler: function (inSender, inEvent) {		
+		return inSender === this? false: !this.getShowing();
 	},
 	//
 	//
@@ -980,7 +1005,7 @@ enyo.kind({
 
 		return false;
 	},
-	
+
 	//* Removes control from enyo.roots
 	removeFromRoots: function() {
 		if (this._isRoot) {

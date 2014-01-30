@@ -149,13 +149,13 @@ enyo.kind({
 	animate: function() {
 		this.stop();
 		// time tracking
-		var t0 = enyo.now(), t = 0;
+		var t0 = enyo.perfNow(), t = 0;
 		// delta tracking
 		var x0, y0;
 		// animation handler
 		var fn = this.bindSafely(function() {
 			// wall-clock time
-			var t1 = enyo.now();
+			var t1 = enyo.perfNow();
 			// schedule next frame
 			this.job = enyo.requestAnimationFrame(fn);
 			// delta from last wall clock time
@@ -212,7 +212,7 @@ enyo.kind({
 		this.y = this.y0 = y;
 		this.x = this.x0 = x;
 		this.scroll();
-		this.stop(true);
+		this.stop();
 	},
 	startDrag: function(e) {
 		this.dragging = true;
@@ -267,7 +267,7 @@ enyo.kind({
 	mousewheel: function(e) {
 		var dy = this.vertical ? e.wheelDeltaY || e.wheelDelta: 0;
 		if ((dy > 0 && this.y < this.topBoundary) || (dy < 0 && this.y > this.bottomBoundary)) {
-			this.stop(true);
+			this.stop();
 			this.y = this.y0 = this.y0 + dy;
 			this.start();
 			return true;

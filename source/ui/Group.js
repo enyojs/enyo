@@ -42,8 +42,12 @@ enyo.kind({
 				// this clause prevents deactivating a grouped item once it's been active,
 				// as long as `allowHighlanderDeactivate` is false. Otherwise, the only
 				// proper way to deactivate a grouped item is to choose a new highlander.
-				if (inEvent.originator == this.active && !this.allowHighlanderDeactivate) {
-					this.active.setActive(true);
+				if (inEvent.originator == this.active) {
+					if (!this.allowHighlanderDeactivate) {
+						this.active.setActive(true);
+					} else {
+						this.setActive(null);
+					}
 				}
 			} else {
 				this.setActive(inEvent.originator);

@@ -258,6 +258,7 @@ enyo.kind({
 			var idxs = enyo.keys(props.records);
 			for (var i=idxs.length-1, idx; (idx=idxs[i]); --i) {
 				this.remove(idx);
+				this.deselect(idx);
 			}
 		}
 	},
@@ -324,7 +325,7 @@ enyo.kind({
 		if (c) {
 			c.set("selected", false);
 		}
-		if (this.selectionProperty) {
+		if (this.selectionProperty && r) {
 			(s=this.selectionProperty) && r.set(s, false);
 		}
 		this.notifyObservers("selected");

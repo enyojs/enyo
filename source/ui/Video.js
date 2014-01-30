@@ -64,7 +64,7 @@ enyo.kind({
 		/**
 			Fires when _playbackRate_ is changed to a value less than 0 but greater
 			than or equal to -1.
-		*/		
+		*/
 		onSlowrewind: "",
 		//* Fires when _jumpForward()_ is called.
 		onJumpForward: "",
@@ -88,18 +88,22 @@ enyo.kind({
 	_playbackRateArray: null,
 	_speedIndex: 0,
 
-	create: function() {
-		this.inherited(arguments);
-		this.posterChanged();
-		this.showControlsChanged();
-		this.preloadChanged();
-		this.autoplayChanged();
-		this.loopChanged();
-	},
-	rendered: function() {
-		this.inherited(arguments);
-		this.hookupVideoEvents();
-	},
+	create: enyo.inherit(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.posterChanged();
+			this.showControlsChanged();
+			this.preloadChanged();
+			this.autoplayChanged();
+			this.loopChanged();
+		};
+	}),
+	rendered: enyo.inherit(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.hookupVideoEvents();
+		};
+	}),
 	posterChanged: function() {
 		if (this.poster) {
 			var path = enyo.path.rewrite(this.poster);
@@ -277,7 +281,7 @@ enyo.kind({
 		}
 
 		this.setPlaybackRate(1);
-		node.currentTime += this.jumpSec;
+		node.currentTime += parseInt(this.jumpSec, 10);
 		this._prevCommand = "jumpForward";
 
 		this.doJumpForward(enyo.mixin(this.createEventData(), {jumpSize: this.jumpSec}));
@@ -391,7 +395,7 @@ enyo.kind({
 	},
 	//* Calculate the time that has elapsed since
 	_rewind: function() {
-		var now = enyo.now(),
+		var now = enyo.perfNow(),
 			distance = now - this.rewindBeginTime,
 			pbRate = this.calcNumberValueOfPlaybackRate(this.playbackRate),
 			adjustedDistance = Math.abs(distance * pbRate) / 1000,
@@ -403,7 +407,7 @@ enyo.kind({
 	},
 	//* Start rewind job
 	startRewindJob: function() {
-		this.rewindBeginTime = enyo.now();
+		this.rewindBeginTime = enyo.perfNow();
 		enyo.job(this.id + "rewind", this.bindSafely("_rewind"), 100);
 	},
 	//* Stop rewind job

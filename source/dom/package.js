@@ -6,6 +6,7 @@ enyo.depends(
 	"platform.js",
 	"animation.js",
 	"cordova.js",
+	"page_visibility.js",
 	"dispatcher.js",
 	"preview.js",
 	"modal.js",

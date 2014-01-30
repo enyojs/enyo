@@ -64,9 +64,9 @@ _showing_ property is `true`.
 ## 2.3.0-rc.1
 
 _enyo.dispatcher.capture_ API no longer bubbles all captured events through the normal event chain, but
-rather notifies the captureTarget when specific events occur through a map of callbacks passed as a parameter 
+rather notifies the captureTarget when specific events occur through a map of callbacks passed as a parameter
 to the `capture` API.  This is a breaking change to the enyo.dispatcher.capture API, however it is a very
-unpublicized (and fairly difficult-to-use) feature that was only used in enyo.Popup among Enyo-team developed 
+unpublicized (and fairly difficult-to-use) feature that was only used in enyo.Popup among Enyo-team developed
 controls, so we assume it will have low impact on the general public.
 
 Needed to revert the change to _enyo.Binding_ from 2.3.0-pre.11. Re-implemented the _stop()_ method
@@ -116,7 +116,7 @@ calling that method via the binding reference in a transform return `undefined`
 Instances of _enyo.Binding_ will no longer propagate `undefined`; instead use `null`.
 
 Deprecated the `controllers` array for _enyo.Application_; instead use `components`
-with the same features. This should modify bindings from `.app.controllers.{name}` to 
+with the same features. This should modify bindings from `.app.controllers.{name}` to
 `.app.$.{name}` for controllers/components created for an _enyo.Application_ instance.
 
 Deprecated the `controller` property for _enyo.DataRepeater_ and all sub-kinds; instead use
