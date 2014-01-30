@@ -204,7 +204,7 @@ enyo.kind({
 	},
 	stop: function() {
 		if (this.isScrolling()) {
-			this.$.scrollMath.stop(true);
+			this.$.scrollMath.stop();
 		}
 	},
 	stabilize: function() {
@@ -335,6 +335,7 @@ enyo.kind({
 	},
 	dragfinish: function(inSender, inEvent) {
 		if (this.dragging) {
+			inEvent.preventTap();
 			this.$.scrollMath.dragFinish();
 			this.dragging = false;
 			if (this.scrim) {
