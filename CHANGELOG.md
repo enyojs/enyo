@@ -1,8 +1,9 @@
 ## 2.3.0-rc.6
 
-enyo.Control's `getAbsoluteBounds` method has been replaced with a call to a new
-`enyo.dom.getAbsoluteBounds` method, derived from a more sophisticated version that
-takes into account translateX, translateY, and matrix3d transforms.
+A new method, `enyo.dom.getAbsoluteBounds`, has been added. This method is more sophisticated than
+previous methods for getting a node's absolute bounds, taking into account translateX, translateY
+and matrix3d transforms. The existing `enyo.Control.getAbsoluteBounds` API remains unchanged, but its
+implementation has been changed to utilize the new `enyo.dom.getAbsoluteBounds` method.
 
 ## 2.3.0-rc.5
 
