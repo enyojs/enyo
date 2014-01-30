@@ -636,27 +636,22 @@ enyo.kind({
 		}
 		this.domStylesChanged();
 	},
+	/**
+		Returns an object describing the control's absolute position within the viewport,
+		relative to the top left corner. This function takes into account account absolute/relative 
+		offsetParent positioning, scroll position, and CSS transforms (currently translateX, 
+		translateY, and matrix3d). 
+
+			{left: ..., top: ..., bottom: ..., right: ..., width: ..., height: ...}
+
+		Values returned are only valid if _hasNode()_ is truthy.
+		If there's no DOM node for the object, this returns a bounds structure with
+		_undefined_ as the value of all fields.
+	*/
 	getAbsoluteBounds: function() {
-		var l = 0,
-			t = 0,
-			n = this.hasNode(),
-			w = n ? n.offsetWidth : 0,
-			h = n ? n.offsetHeight : 0;
-
-		while(n) {
-			l += n.offsetLeft - (n.offsetParent ? n.offsetParent.scrollLeft : 0);
-			t += n.offsetTop  - (n.offsetParent ? n.offsetParent.scrollTop	: 0);
-			n = n.offsetParent;
-		}
-
-		return {
-			top		: t,
-			left	: l,
-			bottom	: document.body.offsetHeight - t - h,
-			right   : document.body.offsetWidth  - l - w,
-			height	: h,
-			width	: w
-		};
+		var n = this.node || this.hasNode();
+		var b = enyo.dom.getAbsoluteBounds(n);
+		return b || {left: undefined, top: undefined, width: undefined, height: undefined, bottom: undefined, right: undefined};
 	},
 	/**
 		Retrieve any _style_ currently applied to a given _control_ exactly as it is parsed by
