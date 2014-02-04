@@ -33,7 +33,9 @@ enyo.kind({
 		centered: false,
 		//* Set to true to be able to show transition on the style modifications otherwise
 		//* the transition is invisible (visibility: hidden)
-		showTransitions: false
+		showTransitions: false,
+		//* Set to true to stop preventDefault from being called on captured events
+		allowDefault: false
 	},
 	//* @protected
 	showing: false,
@@ -216,7 +218,7 @@ enyo.kind({
 		this.downEvent = inEvent;
 
 		// prevent focus from shifting outside the popup when modal.
-		if (this.modal) {
+		if (this.modal && !this.allowDefault) {
 			inEvent.preventDefault();
 		}
 		return this.modal;
