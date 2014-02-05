@@ -1,5 +1,14 @@
 ## 2.4.0-pre.1
 
+Added isFetching property to enyo.Collection, for common use case of showing loader spnner via binding.
+
+Add sizing property to enyo.Image, which renders image as <div> with background-image, and allows use 
+of contain or cover background-size properties.  Also added `position` property for use with sizing property, 
+for setting background-position
+
+Updated lessc.js and minify.js to use relative URL's when compiling less files, to be compatible with the
+bootplate `Theme.less` scheme for importing and then overriding library variables in application less file.S
+
 _enyo.asyncMethod()_ now accepts an anonymous function as a single parameter.
 Previous asnyncMethod signature remains supported as well.
 
