@@ -731,7 +731,7 @@ enyo.kind({
 		// control tree a second time (to set it later).
 		// The contract is that insertion in DOM will happen synchronously
 		// to generateHtml() and before anybody should be calling hasNode().
-		this.generated = true;
+		this.set("generated", true);
 		// because we just generated our html we can set this flag to false
 		this._needsRender = false;
 		return h;
@@ -835,7 +835,7 @@ enyo.kind({
 			this.teardownChildren();
 		}
 		this.node = null;
-		this.generated = false;
+		this.set("generated", false);
 	},
 	teardownChildren: function() {
 		for (var i=0, c; (c=this.children[i]); i++) {
@@ -846,7 +846,7 @@ enyo.kind({
 		this.teardownRender();
 		this.node = document.createElement(this.tag);
 		this.addNodeToParent();
-		this.generated = true;
+		this.set("generated", true);
 	},
 	renderDom: function() {
 		this.renderAttributes();
@@ -947,11 +947,11 @@ enyo.kind({
 			b = this.getBounds();
 		}
 
-		if(this.getShowing() === false || (b && b.height === 0 && b.width === 0)) {
+		if (!this.generated || this.destroyed || !this.getShowing() || (b && b.height === 0 && b.width === 0)) {
 			return false;
 		}
 
-		if(this.parent && this.parent.getAbsoluteShowing) {
+		if (this.parent && this.parent.getAbsoluteShowing) {
 			return this.parent.getAbsoluteShowing(ignoreBounds);
 		} else {
 			return true;
