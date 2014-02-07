@@ -104,11 +104,22 @@
 			};
 		}),
 		_getComputed: function (path) {
-			var ca = _instanceMap(this, "computedCached"), c;
+			var ca = _instanceMap(this, "computedCached");
+			var cc = _instanceMap(this, "computedConfig");
+			var config = cc? _instanceMap(cc, path): null;
+			var c;
 			if ((c = ca[path])) {
 				if (typeof c != "object") {
 					c = ca[path] = {};
-					c.dirty = true;
+					// this can only happen once it will attempt to supply a default
+					// value for the computed (cached) property instead of forcing it
+					// to be evaluated the first time it is requested
+					if (config && config.hasOwnProperty("defaultValue")) {
+						c.dirty = false;
+						c.value = config.defaultValue;
+					} else {
+						c.dirty = true;
+					}
 				}
 				// if the cache says the computed property is dirty,
 				// we have to fetch a current value
@@ -119,6 +130,13 @@
 				// return the value whether it was cached or
 				// the most recent
 				return c.value;
+			} else if (config) {
+				if (config.hasOwnProperty("defaultValue")) {
+					var def = config.defaultValue;
+					// remove it so we won't use it again for this instnace
+					delete config.defaultValue;
+					return def;
+				}
 			}
 			// if it is not a cacheable computed property, we
 			// have to execute it to get the current value
@@ -184,17 +202,22 @@
 				p.computed = {};
 				p.computedCached = {};
 				p.computedMap = {};
+				p.computedConfig = {};
 			} else {
 				p.computed = enyo.clone(p.computed);
 				p.computedCached = enyo.clone(p.computedCached);
 				p.computedMap = enyo.clone(p.computedMap);
+				p.computedConfig = enyo.clone(p.computedConfig);
 			}
 			for (var k in props.computed) {
 				p.computed[k] = (p.computed[k] || "");
 				var ss = (typeof props.computed[k] == "string"? enyo.trim(props.computed[k]).split(" "): props.computed[k]);
 				for (var i=0, s; (s=ss[i]); ++i) {
-					if (typeof s == "object" && s.cached) {
-						p.computedCached[k] = true;
+					if (typeof s == "object") {
+						if (s.cached === true) {
+							p.computedCached[k] = true;
+						}
+						p.computedConfig[k] = (p.computedConfig[k]? enyo.mixin(enyo.clone(p.computedConfig[k]), s): s);
 					} else {
 						if (!~p.computed[k].indexOf(s)) {
 							p.computed[k] += (" " + s);
