@@ -956,11 +956,11 @@ enyo.kind({
 			b = this.getBounds();
 		}
 
-		if(this.generated === false || (this.destroyed && this.destroyed === true) || this.getShowing() === false || (b && b.height === 0 && b.width === 0)) {
+		if (!this.generated || this.destroyed || !this.getShowing() || (b && b.height === 0 && b.width === 0)) {
 			return false;
 		}
 
-		if(this.parent && this.parent.getAbsoluteShowing) {
+		if (this.parent && this.parent.getAbsoluteShowing) {
 			return this.parent.getAbsoluteShowing(ignoreBounds);
 		} else {
 			return true;
