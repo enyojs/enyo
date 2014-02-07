@@ -355,7 +355,7 @@ enyo.dom = {
 			transformProp  = enyo.dom.getStyleTransformProp(),
 			xRegEx         = /translateX\((-?\d+|-?\d*\.\d+)px\)/i,
 			yRegEx         = /translateY\((-?\d+|-?\d*\.\d+)px\)/i,
-			m3RegEx        = /(?!matrix3d\()(-?\d+|-?\d+\.\d+)(?=[,\)])/g,
+			m3RegEx        = /(?!matrix3d\()(-?\d+|-?\d*\.\d+)(?=[,\)])/g,
 			match          = null,
 			style          = null,
 			offsetParent   = null;
