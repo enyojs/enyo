@@ -5,5 +5,6 @@ enyo.depends(
 	"Checkbox.js",
 	"InputDecorator.js",
 	"ProgressBar.js",
-	"Slider.js"
+	"Slider.js",
+	"ContextualPopup.js"
 );
