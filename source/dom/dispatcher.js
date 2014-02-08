@@ -9,7 +9,7 @@
 			"click", "dblclick", "change", "keydown", "keyup", "keypress", "input",
 			"paste", "copy", "cut", "webkitTransitionEnd", "transitionend", "webkitAnimationEnd", "animationEnd"],
 		// these events come from window
-		windowEvents: ["resize", "load", "unload", "message", "hashchange"],
+		windowEvents: ["resize", "load", "unload", "message", "hashchange", "popstate"],
 		// feature plugins (aka filters)
 		features: [],
 		connect: function() {

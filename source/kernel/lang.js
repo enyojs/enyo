@@ -253,6 +253,18 @@
 		return Math.floor(Math.random() * inBound);
 	};
 
+	//* Returns _inString_ converted to upper case.
+	//* This is overridden and elaborated upon when enyo-ilib loads.
+	enyo.toUpperCase = function(inString) {
+		return inString.toUpperCase();
+	};
+
+	//* Returns _inString_ converted to lower case.
+	//* This is overridden and elaborated upon when enyo-ilib loads.
+	enyo.toLowerCase = function(inString) {
+		return inString.toLowerCase();
+	};
+
 	//* Returns _inString_ with the first letter capitalized.
 	enyo.cap = function(inString) {
 		return inString.slice(0, 1).toUpperCase() + inString.slice(1);
@@ -916,13 +928,21 @@
 
 	/**
 		Calls method _inMethod_ on _inScope_ asynchronously.
-
+	
 		Uses _window.setTimeout_ with minimum delay, usually around 10ms.
-
+	
 		Additional arguments are passed to _inMethod_ when it is invoked.
+	
+		If only a single argument is supplied, will just call that
+		function asyncronously without doing any additional binding.
 	*/
 	enyo.asyncMethod = function(inScope, inMethod/*, inArgs*/) {
-		return setTimeout(enyo.bind.apply(enyo, arguments), 1);
+		if (!inMethod) {
+			// passed just a single argument
+			return setTimeout(inScope, 1);
+		} else {
+			return setTimeout(enyo.bind.apply(enyo, arguments), 1);
+		}
 	};
 
 	/**

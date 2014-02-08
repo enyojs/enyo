@@ -62,8 +62,10 @@ enyo.kind({
 	//* @public
 	/** Renders the collection of items. This will delete any existing items and
 		recreate the repeater if called after the repeater has been rendered.
-		This is called automatically if _setCount_ is called, even if the count
-		remains the same.
+		This is called automatically when the count property changes. To set the 
+		count and force a re-render, such as when a data model changes, use 
+		set("count", newCount, true) where the last parameter forces the change 
+		handler to be called, even if the count remains the same.
 	*/
 	build: function() {
 		this.destroyClientControls();

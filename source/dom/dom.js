@@ -334,6 +334,81 @@ enyo.dom = {
 			enyo.dom.addClass(document.body, s);
 		}
 	},
+	/**
+		Returns an object describing the absolute position on the screen, relative to the top
+		left point on the screen.  This function takes into account account absolute/relative 
+		offsetParent positioning, scroll position, and CSS transforms (currently translateX, 
+		translateY, and matrix3d). 
+
+			{left: ..., top: ..., bottom: ..., right: ..., width: ..., height: ...}
+
+		Values returned are only valid if _hasNode()_ is truthy.
+		If there's no DOM node for the object, this returns a bounds structure with
+		_undefined_ as the value of all fields.
+	*/
+	getAbsoluteBounds: function(inNode) {
+		var node           = inNode,
+			left           = 0,
+			top            = 0,
+			width          = node.offsetWidth,
+			height         = node.offsetHeight,
+			transformProp  = enyo.dom.getStyleTransformProp(),
+			xRegEx         = /translateX\((-?\d+|-?\d*\.\d+)px\)/i,
+			yRegEx         = /translateY\((-?\d+|-?\d*\.\d+)px\)/i,
+			m3RegEx        = /(?!matrix3d\()(-?\d+|-?\d*\.\d+)(?=[,\)])/g,
+			match          = null,
+			style          = null,
+			offsetParent   = null;
+
+		while (node) {
+			// Add offset from any new offset parent encountered
+			if (node.offsetParent != offsetParent) {
+				// Fix for FF (GF-2036), offsetParent is working differently between FF and chrome
+				if (enyo.platform.firefox) {
+					left += node.offsetLeft;
+					top  += node.offsetTop;
+				} else {
+					left += node.offsetLeft - (node.offsetParent ? node.offsetParent.scrollLeft : 0);
+					top  += node.offsetTop  - (node.offsetParent ? node.offsetParent.scrollTop  : 0);
+				}
+				offsetParent = node.offsetParent;
+			}
+			// Add offset from transforms
+			if (transformProp && node.style) {
+				style = node.style[transformProp];
+				// translateX
+				match = style.match(xRegEx);
+				if (match && typeof match[1] != 'undefined' && match[1]) {
+					left += parseInt(match[1], 10);
+				}
+				// translateY
+				match = style.match(yRegEx);
+				if (match && typeof match[1] != 'undefined' && match[1]) {
+					top += parseInt(match[1], 10);
+				}
+				// matrix3D 
+				// ex) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -5122.682003906055, 1, 1)
+				match = style.match(m3RegEx);
+				if (match && match.length === 16) {
+					if (typeof match[12] != 'undefined' && match[12] !== "0") {
+						left += parseFloat(match[12]);
+					}
+					if (typeof match[13] != 'undefined' && match[13] !== "0") {
+						top += parseFloat(match[13]);
+					}
+				}
+			}
+			node = node.parentNode;
+		}
+		return {
+			top     : inNode ? top : undefined,
+			left    : inNode ? left : undefined,
+			bottom  : inNode ? document.body.offsetHeight - top  - height : undefined,
+			right   : inNode ? document.body.offsetWidth  - left - width : undefined,
+			height  : height,
+			width   : width
+		};
+	},
 	//*@protected
 	flushBodyClasses: function() {
 		if (enyo.dom._bodyClasses) {
