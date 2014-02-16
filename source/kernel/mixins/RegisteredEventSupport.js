@@ -1,3 +1,18 @@
+/*
+	Copyright 2014 LG Electronics, Inc.
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+*/
 (function (enyo) {
 	//*@protected
 	var _eventMap = {};
@@ -8,7 +23,7 @@
 		or need to emit events in this fashion. For those objects they employ a listener
 		event scheme where only objects registered for a specific event on an instance
 		of an object will receive notifications.
-	
+
 		Objects employing this event scheme may also use the bubble/waterfall event
 		system as they do not interfere. An object instance does not need to have this
 		mixin applied in order to be able to register a listener for an event on an object
@@ -20,7 +35,7 @@
 			Sets a flag that disables event propagation for this component. Also
 			increments an internal counter that tracks the number of times the
 			_unsilence_ method must be called before event propagation will continue.
-		
+
 			Note this method will also silence bubble/waterfall events if applied to
 			an _enyo.Component_.
 		*/
@@ -142,5 +157,5 @@
 		_silenced: false,
 		_silenceCount: 0
 	};
-	
+
 })(enyo);

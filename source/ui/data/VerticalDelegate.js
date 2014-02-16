@@ -1,3 +1,18 @@
+/*
+	Copyright 2014 LG Electronics, Inc.
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+*/
 //*@protected
 /**
 	This is a delegate (strategy) used by _enyo.DataList_ for vertically oriented
@@ -57,7 +72,7 @@ enyo.DataList.delegates.vertical = {
 		pos.firstPage   = (
 			metrics[firstIndex][upperProp] < metrics[secondIndex][upperProp]
 			? list.$.page1
-			: list.$.page2			
+			: list.$.page2
 		);
 		pos.lastPage = (pos.firstPage === list.$.page1? list.$.page2: list.$.page1);
 		return pos;
@@ -126,7 +141,7 @@ enyo.DataList.delegates.vertical = {
 			perPage = this.controlsPerPage(list),
 			// placeholder for the control we're going to update
 			view;
-		
+
 		// the first index for this generated page
 		page.start  = perPage * index;
 		// the last index for this generated page

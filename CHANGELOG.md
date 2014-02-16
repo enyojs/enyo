@@ -1,9 +1,14 @@
+## 2.4.0-pre.2
+
+Updated source files with copyright notices and Apache 2.0 license pointers
+per updated legal advice.
+
 ## 2.4.0-pre.1
 
 Added isFetching property to enyo.Collection, for common use case of showing loader spnner via binding.
 
-Add sizing property to enyo.Image, which renders image as <div> with background-image, and allows use 
-of contain or cover background-size properties.  Also added `position` property for use with sizing property, 
+Add sizing property to enyo.Image, which renders image as <div> with background-image, and allows use
+of contain or cover background-size properties.  Also added `position` property for use with sizing property,
 for setting background-position
 
 Updated lessc.js and minify.js to use relative URL's when compiling less files, to be compatible with the
@@ -34,11 +39,11 @@ previous methods for getting a node's absolute bounds, taking into account trans
 and matrix3d transforms. The existing `enyo.Control.getAbsoluteBounds` API remains unchanged, but its
 implementation has been changed to utilize the new `enyo.dom.getAbsoluteBounds` method.
 
-Added _configureHoldPulse_ method to "down" event for configuring subsequent "holdpulse" events. Pass in a 
+Added _configureHoldPulse_ method to "down" event for configuring subsequent "holdpulse" events. Pass in a
 hash of options that can include "delay" (ms delay between "holdpulse" events), "moveTolerance" (threshold
 for determining cursor has left original location), "endHold" (values include "onMove" and "onLeave",
 determines whether "holdpulse" should be cancelled when cursor leaves tolerant target area or the control
-itself, respectively), and "resume" (whether or not "holdpulse" should resume when re-entering either the 
+itself, respectively), and "resume" (whether or not "holdpulse" should resume when re-entering either the
 control ["onLeave" endHold value] or the thresholded original coordinates ["onMove" endHold value]).
 
 Add _enyo.toUpperCase()_ and _enyo.toLowerCase()_ methods. Use these to replace calls to

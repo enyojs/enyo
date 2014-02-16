@@ -1,3 +1,18 @@
+/*
+	Copyright 2014 LG Electronics, Inc.
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+*/
 (function (enyo) {
 	//*@protected
 	/**
@@ -120,7 +135,7 @@
 		/**
 			Takes a given page and arbitrarily positions its children according to the pre-computed
 			metrics of the list.
-	
+
 			TODO: This could be optimized to use requestAnimationFrame as well as render not by
 			child index but by row thus cutting down some of the over-calculation when iterating
 			over every child.
@@ -179,11 +194,11 @@
 		didResize: function (list) {
 			// store the previous stats for comparative purposes
 			var prev = list.boundsCache;
-			
+
 			// flag the list to have its bounds updated
 			list._updateBounds = true;
 			this.updateMetrics(list);
-			
+
 			// if no change it the viewport then we didn't update anything size-wise
 			// and do not need to refresh at all
 			if (
@@ -194,7 +209,7 @@
 			) {
 				return;
 			}
-			
+
 			// it is necessary to update the content of the list according to our
 			// new sizing
 			this.refresh(list);

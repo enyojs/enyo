@@ -1,3 +1,18 @@
+/*
+	Copyright 2014 LG Electronics, Inc.
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+*/
 /**
 	_enyo.Control_ is a component that controls a DOM node (i.e., an element in
 	the user interface). Controls are generally visible and the user often
@@ -647,9 +662,9 @@ enyo.kind({
 	},
 	/**
 		Returns an object describing the absolute position on the screen, relative to the top
-		left point on the screen.  This function takes into account account absolute/relative 
-		offsetParent positioning, scroll position, and CSS transforms (currently translateX, 
-		translateY, and matrix3d). 
+		left point on the screen.  This function takes into account account absolute/relative
+		offsetParent positioning, scroll position, and CSS transforms (currently translateX,
+		translateY, and matrix3d).
 
 			{left: ..., top: ..., bottom: ..., right: ..., width: ..., height: ...}
 
@@ -931,7 +946,7 @@ enyo.kind({
 	},
 	showingChanged: function(was) {
 		this.syncDisplayToShowing();
-		
+
 		var waterfall = (was === true || was === false)
 			, parent = this.parent;
 		// make sure that we don't trigger the waterfall when this method
@@ -972,7 +987,7 @@ enyo.kind({
 		itself already it will not continue the waterfall. Overload this method
 		for additional handling of this event.
 	*/
-	showingChangedHandler: function (inSender, inEvent) {		
+	showingChangedHandler: function (inSender, inEvent) {
 		return inSender === this? false: !this.getShowing();
 	},
 	//

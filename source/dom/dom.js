@@ -1,3 +1,18 @@
+/*
+	Copyright 2014 LG Electronics, Inc.
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+*/
 //* @public
 
 /**
@@ -336,9 +351,9 @@ enyo.dom = {
 	},
 	/**
 		Returns an object describing the absolute position on the screen, relative to the top
-		left point on the screen.  This function takes into account account absolute/relative 
-		offsetParent positioning, scroll position, and CSS transforms (currently translateX, 
-		translateY, and matrix3d). 
+		left point on the screen.  This function takes into account account absolute/relative
+		offsetParent positioning, scroll position, and CSS transforms (currently translateX,
+		translateY, and matrix3d).
 
 			{left: ..., top: ..., bottom: ..., right: ..., width: ..., height: ...}
 
@@ -386,7 +401,7 @@ enyo.dom = {
 				if (match && typeof match[1] != 'undefined' && match[1]) {
 					top += parseInt(match[1], 10);
 				}
-				// matrix3D 
+				// matrix3D
 				// ex) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -5122.682003906055, 1, 1)
 				match = style.match(m3RegEx);
 				if (match && match.length === 16) {

@@ -1,3 +1,18 @@
+/*
+	Copyright 2014 LG Electronics, Inc.
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+*/
 /**
 	Enyo supports a cross-platform set of drag events.  These events allow users
 	to write a single set of event handlers for applications that run on both
@@ -92,7 +107,7 @@ enyo.gesture.drag = {
 		this.target = null;
 	},
 	enter: function(e) {
-		// resume hold when re-entering original target when using "onLeave" endHold value 
+		// resume hold when re-entering original target when using "onLeave" endHold value
 		if (this.holdPulseConfig.resume && this.holdPulseConfig.endHold === "onLeave" && this.target && e.target === this.target) {
 			this.beginHold(e);
 		}

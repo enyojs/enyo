@@ -1,3 +1,18 @@
+/*
+	Copyright 2014 LG Electronics, Inc.
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+*/
 //* @protected
 
 /**
@@ -30,9 +45,9 @@ enyo.dispatcher.features.push(function(e) {
 enyo.mixin(enyo.dispatcher, {
 	autoForwardEvents: {leave: 1, resize: 1},
 	captures: [],
-	/** 
+	/**
 		Capture events for `inTarget`, where `inEvents` is specified as a hash of event names mapped
-		to callback handler names to be called on the inTarget (or optionally, `inScope).  The callback 
+		to callback handler names to be called on the inTarget (or optionally, `inScope).  The callback
 		is called when any of the captured events are dispatched outside of the capturing control.
 		Returning true from the callback stops dispatch of the event to the original dispatchTarget.
 	*/

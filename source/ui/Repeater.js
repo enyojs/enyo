@@ -1,4 +1,19 @@
-﻿/**
+/*
+	Copyright 2014 LG Electronics, Inc.
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+*/
+/**
 	_enyo.Repeater_ is a simple control for making lists of items.
 
 	The components of a repeater are copied for each item created, and are
@@ -62,9 +77,9 @@ enyo.kind({
 	//* @public
 	/** Renders the collection of items. This will delete any existing items and
 		recreate the repeater if called after the repeater has been rendered.
-		This is called automatically when the count property changes. To set the 
-		count and force a re-render, such as when a data model changes, use 
-		set("count", newCount, true) where the last parameter forces the change 
+		This is called automatically when the count property changes. To set the
+		count and force a re-render, such as when a data model changes, use
+		set("count", newCount, true) where the last parameter forces the change
 		handler to be called, even if the count remains the same.
 	*/
 	build: function() {
