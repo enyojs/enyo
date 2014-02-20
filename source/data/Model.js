@@ -176,7 +176,7 @@
 				this._updated = false;
 				if (rv && "function" == typeof rv) { return this; }
 				if (force || rv !== value) {
-					this.previous[prop] = rv;
+					this.previous = enyo.clone(this.attributes);
 					if (this.computedMap) {
 						if ((en=this.computedMap[prop])) {
 							if (typeof en == "string") {
@@ -220,8 +220,10 @@
 			to the _attributes_ schema when this method is used.
 		*/
 		setObject: function (props) {
+			var prev;
 			if (this.attributes) {
 				if (props) {
+					prev = enyo.clone(this.attributes);
 					this.stopNotifications();
 					this.silence();
 					var updated = false;
@@ -229,6 +231,7 @@
 						this.set(k, props[k]);
 						updated = updated || this._updated;
 					}
+					this.previous = prev;
 					this.startNotifications();
 					this.unsilence();
 					if (updated) {
