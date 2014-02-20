@@ -770,6 +770,7 @@ enyo.kind({
 		// TODO: this will be used internally for relational data structures
 		// if the developer provided a _recordChanged_ method we need to call
 		// it now
+		this.triggerEvent("change", {record: rec});
 		if (this.recordChanged) {
 			this.recordChanged(rec, e, p);
 		}
