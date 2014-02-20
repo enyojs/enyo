@@ -50,10 +50,21 @@ enyo.gesture = {
 		return e;
 	},
 	down: function(inEvent) {
+		// set holdpulse defaults
+		this.drag.holdPulseConfig = enyo.clone(this.drag.holdPulseDefaultConfig);
+
 		// cancel any hold since it's possible in corner cases to get a down without an up
 		var e = this.makeEvent("down", inEvent);
+
+		// expose method for configuring holdpulse options
+		e.configureHoldPulse = this.configureHoldPulse;
+
 		enyo.dispatch(e);
 		this.downEvent = e;
+
+		// workaround to allow event to propagate to control before hold job begins
+		this.drag.cancelHold();
+		this.drag.beginHold(e);
 	},
 	move: function(inEvent) {
 		var e = this.makeEvent("move", inEvent);
@@ -113,6 +124,9 @@ enyo.gesture = {
 			}
 			c = c.parentNode;
 		}
+	},
+	configureHoldPulse: function(inOpts) {
+		enyo.mixin(enyo.gesture.drag.holdPulseConfig, inOpts);
 	}
 };
 
