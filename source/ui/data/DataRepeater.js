@@ -159,7 +159,12 @@ enyo.kind({
 		};
 	}),
 	add: function (rec, i) {
-		var c = this.createComponent({model: rec, index: i});
+		var g = this.getClientControls(),
+			props = {model: rec, index: i};
+		if (i < g.length) {
+			props.addBefore = g[i];
+		}
+		var c = this.createComponent(props);
 		if (this.generated && !this.batching) {
 			c.render();
 		}
