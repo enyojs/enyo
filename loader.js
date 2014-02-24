@@ -240,6 +240,10 @@
 			// Note: manifest file name must end in "package.js"
 			//
 			var folder = '', manifest = 'package.js';
+			// handle urls that start with '//' that use current document's protocol
+			if (/^\/\//.test(inPath)) {
+				inPath = document.location.protocol + inPath;
+			}
 			// convert back slashes to forward slashes, remove double slashes, split on slash
 			var parts = inPath.replace(/\\/g, "/").replace(/\/\//g, "/").replace(/:\//, "://").split("/");
 			if (parts.length) {
