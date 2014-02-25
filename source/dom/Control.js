@@ -951,7 +951,7 @@ enyo.kind({
 			return false;
 		}
 
-		if (this.parent && this.parent.getAbsoluteShowing) {
+		if (this.parent && this.parent.getAbsoluteShowing && (this.parentNode !== enyo.floatingLayer.hasNode())) {
 			return this.parent.getAbsoluteShowing(ignoreBounds);
 		} else {
 			return true;
