@@ -122,6 +122,7 @@ enyo.kind({
 			this.initStyles();
 			// superkind initialization
 			sup.apply(this, arguments);
+			
 			// 'showing' is tertiary method for modifying display style
 			// setting 'display: none;' style at initialization time will
 			// not work if 'showing' is true.
@@ -135,6 +136,9 @@ enyo.kind({
 			if (this.kindClasses) { this.addClass(this.kindClasses); }
 			if (this.classes) { this.addClass(this.classes); }
 			this.initProps(["id", "content", "src"]);
+			if (enyo.prerendered) {
+				this.generated = true;
+			}
 		};
 	}),
 	//*@protected
@@ -465,6 +469,20 @@ enyo.kind({
 		Renders this object into DOM, generating a DOM node if needed.
 	*/
 	render: function() {
+		if (enyo.prerendered) {
+			this.generated = false;
+			var oNode = this.findNodeById();
+			if (oNode) {
+				this.node = oNode;
+				this.generated = true;
+				if (this.parent) {
+					this.parent.beforeChildRender(this);
+				}
+				this.rendered();
+				return this;
+			}
+		}
+		
 		if (this.parent) {
 			// allow the parent to perform setup tasks
 			// note: ('parent.generated' may change here)
@@ -497,34 +515,41 @@ enyo.kind({
 		be used to have it expand to fill the whole window.
 	*/
 	renderInto: function(inParentNode) {
-		// clean up render flags and memoizations
-		this.teardownRender();
-		// inParentNode can be a string id or a node reference
-		var pn = enyo.dom.byId(inParentNode);
-		var noFit = enyo.exists(this.fit) && this.fit === false;
-		//console.log(noFit);
-		if (pn == document.body && !noFit) {
-			this.setupBodyFitting();
-		} else if (this.fit) {
-			this.addClass("enyo-fit enyo-clip");
-		}
-		// for IE10 support, we want full support over touch actions in Enyo-rendered areas
-		this.addClass("enyo-no-touch-action");
-		// add css to enable hw-accelerated scrolling on non-Android platforms (ENYO-900, ENYO-901)
-		this.setupOverflowScrolling();
-		if (enyo.dom._bodyClasses) {
-			enyo.dom.flushBodyClasses();
-		}
-		// generate our HTML
-		enyo.dom.setInnerHtml(pn, this.generateHtml());
-		// post-rendering tasks
-		enyo.addToRoots(this);
-		if (this.generated) {
+		if (enyo.prerendered) {
+			enyo.addToRoots(this);
+			this.node = this.findNodeById();
 			this.rendered();
+		} else {
+			// clean up render flags and memoizations
+			this.teardownRender();
+			// inParentNode can be a string id or a node reference
+			var pn = enyo.dom.byId(inParentNode);
+			var noFit = enyo.exists(this.fit) && this.fit === false;
+			//console.log(noFit);
+			if (pn == document.body && !noFit) {
+				this.setupBodyFitting();
+			} else if (this.fit) {
+				this.addClass("enyo-fit enyo-clip");
+			}
+			// for IE10 support, we want full support over touch actions in Enyo-rendered areas
+			this.addClass("enyo-no-touch-action");
+			// add css to enable hw-accelerated scrolling on non-Android platforms (ENYO-900, ENYO-901)
+			this.setupOverflowScrolling();
+			if (enyo.dom._bodyClasses) {
+				enyo.dom.flushBodyClasses();
+			}
+			// generate our HTML
+			enyo.dom.setInnerHtml(pn, this.generateHtml());
+			// post-rendering tasks
+			enyo.addToRoots(this);
+			if (this.generated) {
+				this.rendered();
+			}
 		}
 		// support method chaining
 		return this;
 	},
+	
 	/**
 		Uses _document.write_ to output the control into the document.
 		If the control has _fit: true_ defined, appropriate styles will be set
@@ -740,7 +765,7 @@ enyo.kind({
 		// control tree a second time (to set it later).
 		// The contract is that insertion in DOM will happen synchronously
 		// to generateHtml() and before anybody should be calling hasNode().
-		this.set("generated", true);
+		this.generated = true;
 		// because we just generated our html we can set this flag to false
 		this._needsRender = false;
 		return h;
@@ -844,7 +869,7 @@ enyo.kind({
 			this.teardownChildren();
 		}
 		this.node = null;
-		this.set("generated", false);
+		this.generated = false;
 	},
 	teardownChildren: function() {
 		for (var i=0, c; (c=this.children[i]); i++) {
@@ -855,7 +880,7 @@ enyo.kind({
 		this.teardownRender();
 		this.node = document.createElement(this.tag);
 		this.addNodeToParent();
-		this.set("generated", true);
+		this.generated = true;
 	},
 	renderDom: function() {
 		this.renderAttributes();
@@ -956,11 +981,11 @@ enyo.kind({
 			b = this.getBounds();
 		}
 
-		if (!this.generated || this.destroyed || !this.getShowing() || (b && b.height === 0 && b.width === 0)) {
+		if(this.getShowing() === false || (b && b.height === 0 && b.width === 0)) {
 			return false;
 		}
 
-		if (this.parent && this.parent.getAbsoluteShowing && (this.parentNode !== enyo.floatingLayer.hasNode())) {
+		if(this.parent && this.parent.getAbsoluteShowing) {
 			return this.parent.getAbsoluteShowing(ignoreBounds);
 		} else {
 			return true;

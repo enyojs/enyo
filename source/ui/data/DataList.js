@@ -175,6 +175,7 @@ enyo.kind({
 			var startup = function () {
 				// now that the base list is rendered, we can safely generate our scroller
 				this.$.scroller.canGenerate = true;
+				console.log('hhhhhhh');
 				this.$.scroller.render();
 				// and now we hand over the action to our strategy to let it initialize the
 				// way it needs to
