@@ -301,6 +301,8 @@ enyo.dom = {
 		//For IE 8 compatibility, need to ensure html is not an empty value.  Empty stings will cause it to explode.
 		if (html.length > 0) {
 			node.innerHTML = html;
+		} else {
+			node.nodeValue = '';
 		}
 	},
 	//* check a DOM node for a specific CSS class
