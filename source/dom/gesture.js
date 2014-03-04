@@ -32,7 +32,6 @@ enyo.gesture = {
 				e.clientX*= enyo.dom._bodyScaleFactorX;
 				e.clientY*= enyo.dom._bodyScaleFactorY;
 			}
-			console.log("makeEvent.clientX: %s %d", e.type, e.clientX);
 		}
 		//
 		// normalize event.which and event.pageX/event.pageY

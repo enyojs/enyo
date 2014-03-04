@@ -154,7 +154,6 @@ enyo.dom = {
 		var bodyBounds = this.getBounds(document.body);
 		this._bodyScaleFactorY = bodyBounds.height / this.getWindowHeight();
 		this._bodyScaleFactorX = bodyBounds.width / this.getWindowWidth();
-		// enyo.log("Body Scale Factor: %s X, %s Y;", this._bodyScaleFactorX, this._bodyScaleFactorY);
 	},
 	// Workaround for lack of compareDocumentPosition support in IE8
 	// Code MIT Licensed, John Resig; source: http://ejohn.org/blog/comparing-document-position/
