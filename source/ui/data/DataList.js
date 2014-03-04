@@ -227,7 +227,7 @@ enyo.kind({
 	},
 	/**
 		This function intentionally left blank. In DataRepeater, it removes the
-		a control at the specified index but that is handled by the delegate here.
+		control at the specified index but that is handled by the delegate here.
 	*/
 	remove: function(index) {},
 	//*@public
