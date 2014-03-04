@@ -1,4 +1,4 @@
-## 2.4.0-pre.1
+## 2.4.0-pre.2
 
 _controller_ is no longer a special property. This affects _DataRepeater_, _DataList_ and _DataGridList_, _UiComponent_ (and child-kinds) and _Application_.
 For _DataRepeater_, _DataList_ and _DataGridList_ use _collection_ instead. For all other kinds there is no direct replacement for the previous functionality.
@@ -8,6 +8,8 @@ _Application.controllers_ has been removed. Declare controllers as normal _compo
 
 _DataRepeater.length_ is no longer a bound property. Check for the existence of _collection_ then the length. This value was not very useful
 as it was and became a performance hog. This change affects _DataRepeater_, _DataList_ and _DataGridList_.
+
+## 2.4.0-pre.1
 
 Added isFetching property to enyo.Collection, for common use case of showing loader spnner via binding.
 
