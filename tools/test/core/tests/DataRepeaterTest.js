@@ -180,6 +180,17 @@ enyo.kind({
 				throw "isSelected for selected item returned false";
 			}
 
+			// reset
+			repeater.set("multipleSelection", false);
+			repeater.deselectAll();
+
+			// Test selecting a newly adding a record at the top of the collection
+			repeater.collection.createRecord({text:"Added at Top"}, null, 0);
+			repeater.select(0);
+			if(repeater.get("selected").get("text") !== "Added at Top") {
+				throw "Added item isn't selected";
+			}
+
 			this.finish();
 		} finally {
 			testControl.destroy();
