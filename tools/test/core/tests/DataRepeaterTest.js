@@ -180,6 +180,18 @@ enyo.kind({
 				throw "isSelected for selected item returned false";
 			}
 
+			// reset
+			repeater.set("multipleSelection", false);
+			repeater.deselectAll();
+
+			// Test deselction on destroy
+			repeater.select(102);
+			var toDestroy = repeater.collection.at(102);
+			toDestroy.destroy();
+			if(repeater.get("selected") !== null) {
+				throw "Destroyed control was not deselected.";
+			}
+
 			this.finish();
 		} finally {
 			testControl.destroy();

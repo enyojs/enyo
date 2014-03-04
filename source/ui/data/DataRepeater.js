@@ -258,7 +258,7 @@ enyo.kind({
 			var idxs = enyo.keys(props.records);
 			for (var i=idxs.length-1, idx; (idx=idxs[i]); --i) {
 				this.remove(idx);
-				this.deselect(idx);
+				this._select(idx, props.records[idx], false);
 			}
 		}
 	},
@@ -284,51 +284,54 @@ enyo.kind({
 	data: function () {
 		return this.collection;
 	},
+	/**
+		Consolidates selection logic and allows for deselection of a model
+		that has already been removed from the collection
+	*/
+	_select: function (index, model, select) {
+		if (!this.selection) return;
+
+		var c = this.getChildForIndex(index),
+			s = this._selection,
+			i = enyo.indexOf(model, s);
+
+		if (select) {
+			if(i == -1) {
+				if(!this.multipleSelection) {
+					while (s.length) {
+						i = this.collection.indexOf(s.pop());
+						this.deselect(i);
+					}
+				}
+
+				s.push(model);
+			}
+		} else {
+			if(i >= 0) {
+				s.splice(i, 1);
+			}
+		}
+
+		if (c) {
+			c.set("selected", select);
+		}
+		if (this.selectionProperty && model) {
+			(s=this.selectionProperty) && model.set(s, select);
+		}
+		this.notifyObservers("selected");
+	},
 	//*@public
 	/**
 		Selects the item at the given index.
 	*/
 	select: function (index) {
-		var c = this.childForIndex(index),
-			r = this.collection.at(index),
-			s = this._selection, i;
-		if (this.selection) {
-			if (this.multipleSelection && (!~enyo.indexOf(r, s))) {
-				s.push(r);
-			} else if (!~enyo.indexOf(r, s)) {
-				while (s.length) {
-					i = this.collection.indexOf(s.pop());
-					this.deselect(i);
-				}
-				s.push(r);
-			}
-			if (c) {
-				c.set("selected", true);
-			}
-			if (this.selectionProperty) {
-				(s=this.selectionProperty) && r.set(s, true);
-			}
-			this.notifyObservers("selected");
-		}
+		this._select(index, this.collection.at(index), true);
 	},
 	/**
 		De-selects the item at the given index.
 	*/
 	deselect: function (index) {
-		var c = this.getChildForIndex(index),
-			r = this.collection.at(index),
-			s = this._selection, i;
-		i = enyo.indexOf(r, s);
-		if (!!~i) {
-			s.splice(i, 1);
-		}
-		if (c) {
-			c.set("selected", false);
-		}
-		if (this.selectionProperty && r) {
-			(s=this.selectionProperty) && r.set(s, false);
-		}
-		this.notifyObservers("selected");
+		this._select(index, this.collection.at(index), false);
 	},
 	/**
 		Returns a Boolean indicating whether the given model is selected.
