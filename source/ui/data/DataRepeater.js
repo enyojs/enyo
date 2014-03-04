@@ -289,7 +289,9 @@ enyo.kind({
 		that has already been removed from the collection
 	*/
 	_select: function (index, model, select) {
-		if (!this.selection) return;
+		if (!this.selection) {
+			return;
+		}
 
 		var c = this.getChildForIndex(index),
 			s = this._selection,
