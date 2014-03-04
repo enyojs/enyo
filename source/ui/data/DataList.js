@@ -107,7 +107,8 @@ enyo.kind({
 		the position of that index in the list.
 	*/
 	scrollToIndex: function (idx) {
-		if (idx >= 0 && idx < this.length) {
+		var len = this.collection? this.collection.length: 0;
+		if (idx >= 0 && idx < len) {
 			if (this.get("absoluteShowing")) {
 				this.delegate.scrollToIndex(this, idx);
 			} else {
