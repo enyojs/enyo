@@ -521,6 +521,7 @@ enyo.kind({
 		enyo.addToRoots(this);
 		if (this.generated) {
 			this.rendered();
+			enyo.dom.updateScaleFactor();
 		}
 		// support method chaining
 		return this;
@@ -552,6 +553,7 @@ enyo.kind({
 		enyo.addToRoots(this);
 		if (this.generated) {
 			this.rendered();
+			enyo.dom.updateScaleFactor();
 		}
 		// support method chaining
 		return this;
