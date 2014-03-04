@@ -69,7 +69,8 @@ enyo.kind({
 	showingChanged: enyo.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
-			if (this.$.scroller.generated && this.length && this.showing) {
+			var len = this.collection? this.collection.length: 0;
+			if (this.$.scroller.generated && len && this.showing) {
 				// avoid the default handler and call the event handler method
 				// designated by _enyo.DataList_
 				this.didResize();

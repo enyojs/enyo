@@ -116,49 +116,9 @@ enyo.kind({
 			sup.apply(this, arguments);
 		};
 	}),
-	// TODO-POST-2.3
-	// this will no longer be required
-	addObserver: enyo.inherit(function (sup) {
-		return function (path) {
-			var args = arguments;
-			if (/^controllers/.test(path)) {
-				// throw a warning so developers will know to update their code for future
-				// proofing
-				this.warn(
-					"the `controllers` property is deprecated, please update bindings to instead " +
-					"use `$` instead (for path `" + path + "`)"
-				);
-				// we need to map this property path to '$' instead so it will actually
-				// work with observers
-				path = path.replace(/^controllers/, "$");
-				args = enyo.cloneArray(arguments);
-				args[0] = path;
-			}
-			return sup.apply(this, args);
-		};
-	}),
-	// END-TODO-POST-2.3
 	/**
 		Ensures that events bubbling from the views will reach _enyo.master_ as
 		expected.
 	*/
-	owner: enyo.master,
-	// TODO-POST-2.3
-	// there will no longer be a need for this concatenation at all
-	statics: {
-		concat: function (ctor, props) {
-			if (props.controllers) {
-				enyo.warn(
-					"enyo.Application: the `controllers` property has been deprecated, please " +
-					"use the `components` property and update any bindings referencing `controllers` to " +
-					"use `$` instead"
-				);
-				// we merge the controllers with components here to reduce initialization necessary
-				// at runtime -- the _controllers_ property should be fully removed in a future release
-				props.components = (props.components? props.components.concat(props.controllers): props.controllers.slice());
-				delete props.controllers;
-			}
-		}
-	}
-	// END-TODO-POST-2.3
+	owner: enyo.master
 });
