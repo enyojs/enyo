@@ -15,5 +15,5 @@
 */
 
 enyo.version = {
-	enyo: "2.3.0-rc.9"
+	enyo: "2.3.0-rc.11"
 };
