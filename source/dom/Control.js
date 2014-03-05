@@ -931,7 +931,9 @@ enyo.kind({
 	},
 	showingChanged: function(was) {
 		this.syncDisplayToShowing();
-		
+		this.waterfallShowingChanged(was);
+	},
+	waterfallShowingChanged: function(was) {
 		var waterfall = (was === true || was === false)
 			, parent = this.parent;
 		// make sure that we don't trigger the waterfall when this method
@@ -940,6 +942,7 @@ enyo.kind({
 		if (waterfall && (parent? parent.getAbsoluteShowing(true): true)) {
 			this.waterfall("onShowingChanged", {originator: this, showing: this.getShowing()});
 		}
+
 	},
 	getShowing: function() {
 		return this.showing;
