@@ -931,9 +931,12 @@ enyo.kind({
 	},
 	showingChanged: function(was) {
 		this.syncDisplayToShowing();
-		this.waterfallShowingChanged(was);
+		this.sendShowingChangedEvent(was);
 	},
-	waterfallShowingChanged: function(was) {
+	/**
+		Waterfalls the "onShowingChanged" event of the current control
+	*/
+	sendShowingChangedEvent: function(was) {
 		var waterfall = (was === true || was === false)
 			, parent = this.parent;
 		// make sure that we don't trigger the waterfall when this method
