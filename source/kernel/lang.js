@@ -928,11 +928,11 @@
 
 	/**
 		Calls method _inMethod_ on _inScope_ asynchronously.
-	
+
 		Uses _window.setTimeout_ with minimum delay, usually around 10ms.
-	
+
 		Additional arguments are passed to _inMethod_ when it is invoked.
-	
+
 		If only a single argument is supplied, will just call that
 		function asyncronously without doing any additional binding.
 	*/
