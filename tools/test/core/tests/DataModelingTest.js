@@ -290,79 +290,6 @@ enyo.kind({
 		c.destroy();
 		this.finish(c.length !== 0 && "destroying a collection should remove all of its records");
 	},
-	testFilterInheritanceProperties: function () {
-		/*global test:true */
-		enyo.kind({name: "test.CF1", kind: enyo.Collection, filterProps: "prop1 prop2", filters: {filter1: "filter1"}});
-		enyo.kind({name: "test.CF2", kind: test.CF1, filterProps: "prop3", filters: {filter2: "filter2"}});
-		var c1 = new test.CF1(),
-			c2 = new test.CF2();
-		test.CF1 = null;
-		test.CF2 = null;
-		this.finish(
-			(c1.filters.filter1 !== "filter1" && "original filter did not exist") ||
-			(c1.filters.filter2 && "somehow base kind got subkinds filter") ||
-			(c1.filterProps != "prop1 prop2" && "the filterProps property got munged in the base kind") ||
-			(c2.filters.filter1 !== "filter1" && "original filter missing on subkind") ||
-			(c2.filters.filter2 !== "filter2" && "new filter did not exist on subkind") ||
-			(c2.filterProps != "prop1 prop2 prop3" && "subkinds filterProps did not get concatenated as expected") ||
-			(c1.filters === c2.filters && "they share the same object")
-		);
-	},
-	testFilters: function () {
-		/*global test:true */
-		enyo.kind({
-			name: "test.CF1",
-			kind: enyo.Collection,
-			filters: {index: "indexFilter"},
-			indexFilter: function () {
-				return this.filter(function (r) {
-					return 0 === r.get("index") % 2;
-				});
-			}
-		});
-		var c, r = [];
-		for (var i=0; i<5; ++i) { r.push({index: i}); }
-		c = new test.CF1(r);
-		test.CF1 = null;
-		c.set("activeFilter", "index");
-		this.finish(
-			(c.length !== 3 && "filter was not applied to content as expected") ||
-			(c.filtered !== true && "filtered flag was not set") ||
-			(!c._uRecords && "collection did not cache original dataset") ||
-			(c.reset() && c.length !== 5 && "calling reset did not restore the collection") ||
-			(c.triggerEvent("filter") && c.length !== 3 && "repeating the filter had different result") ||
-			(c.clearFilter() && c.length !== 5 && "calling clearFilter did not restore the collection") ||
-			(c.filtered !== false && "calling clearFilter did not clear the filtered flag")
-		);
-	},
-	testFilterProps: function () {
-		/*global test:true */
-		enyo.kind({
-			name: "test.CF1",
-			kind: enyo.Collection,
-			filters: {name: "nameFilter"},
-			filterProps: "prop1 prop2",
-			activeFilter: "name",
-			prop1: "",
-			prop2: "",
-			nameFilter: function () {
-				var p = this.prop1 + this.prop2;
-				this.reset();
-				return this.filter(function (r) {
-					return (p && r.get("name").substring(0, p.length) === p) || (!p && true);
-				});
-			}
-		});
-		var c = new test.CF1([{name: "jim"}, {name: "jeff"}, {name: "bob"}, {name: "bill"}, {name: "frank"}]);
-		this.finish(
-			(c.length !== 5 && "initial length was somehow wrong") ||
-			(c.set("prop1", "j") && c.length !== 2 && "single prop change did not filter correctly") ||
-			(c.set("prop2", "e") && c.length !== 1 && "setting second prop did not filter correctly") ||
-			(c.set("prop1", "b") && c.set("prop2", "") && c.length !== 2 && "resetting properties did not filter correctly") ||
-			(c.set("prop1", "") && c.set("prop2", "frank") && c.length !== 1 && "resetting prop1 and explicitly matching prop2 did not filter correctly") ||
-			(c.reset() && c.length !== 5 && "resetting did not unfilter even with props set")
-		);
-	},
 	testFetchedRecordSendsRemoteDestroy: function () {
 		var store = enyo.singleton({
 				kind: "enyo.Store",
@@ -379,7 +306,7 @@ enyo.kind({
 		}
 		col.didFetch(null, {success: function () {
 			var rec = col.at(0);
-			rec.destroy();	
+			rec.destroy();
 		}, strategy: "add"}, recs);
 	}
 });
