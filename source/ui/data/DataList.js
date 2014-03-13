@@ -226,6 +226,11 @@ enyo.kind({
 		queue.push(name);
 		methods[name] = fn;
 	},
+	/**
+		This function intentionally left blank. In DataRepeater, it removes the
+		control at the specified index but that is handled by the delegate here.
+	*/
+	remove: function(index) {},
 	//*@public
 	/**
 		Overloaded to call a method of the delegate strategy.
@@ -244,17 +249,21 @@ enyo.kind({
 	/**
 		Overloaded to call a method of the delegate strategy.
 	*/
-	modelsRemoved: function (c, e, props) {
-		if (c === this.collection && this.$.scroller.canGenerate) {
-			if (this.get("absoluteShowing")) {
-				this.delegate.modelsRemoved(this, props);
-			} else {
-				this._addToShowingQueue("refresh", function () {
-					this.refresh();
-				});
+	modelsRemoved: enyo.inherit(function(sup) {
+		return function modelsRemoved(c, e, props) {
+			if (c === this.collection && this.$.scroller.canGenerate) {
+				if (this.get("absoluteShowing")) {
+					this.delegate.modelsRemoved(this, props);
+				} else {
+					this._addToShowingQueue("refresh", function () {
+						this.refresh();
+					});
+				}
 			}
-		}
-	},
+
+			sup.apply(this, arguments);
+		};
+	}),
 	destroy: enyo.inherit(function (sup) {
 		return function () {
 			if (this.delegate && this.delegate.destroyList) {
