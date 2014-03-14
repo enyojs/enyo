@@ -150,6 +150,32 @@ enyo.xhr = {
 			}
 		} catch(e) {}
 		try {
+
+			if (enyo.platform.firefoxOS) {
+				var shouldCreateNonStandardXHR = false; // flag to decide if we're creating the xhr or not
+				var xhrOptions = {};
+
+				// mozSystem allows you to do cross-origin requests on Firefox OS
+				// As seen in:
+				//   https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest#Non-standard_properties
+				if (inParams.mozSystem) {
+					xhrOptions.mozSystem = true;
+					shouldCreateNonStandardXHR = true;
+				}
+
+				// mozAnon allows you to send a request without cookies or authentication headers
+				// As seen in:
+				//   https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest#Non-standard_properties
+				if (inParams.mozAnon) {
+					xhrOptions.mozAnon = true;
+					shouldCreateNonStandardXHR = true;
+				}
+
+				if (shouldCreateNonStandardXHR) {
+					return new XMLHttpRequest(xhrOptions);
+				}
+			}
+
 			return new XMLHttpRequest();
 		} catch(e) {}
 		return null;
