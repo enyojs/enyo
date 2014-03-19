@@ -48,7 +48,7 @@ enyo.kind({
 	}),
 	srcChanged: enyo.inherit(function (sup) {
 		return function () {
-			if (this.sizing) {
+			if (this.sizing && this.src) {
 				this.applyStyle("background-image", "url(" + enyo.path.rewrite(this.src) + ")");
 			} else {
 				sup.apply(this, arguments);
