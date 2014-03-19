@@ -267,7 +267,7 @@ enyo.kind({
 		}
 
 		this.setPlaybackRate(1);
-		node.currentTime -= this.jumpSec;
+		this.setCurrentTime(this.currentTime - this.jumpSec);
 		this._prevCommand = "jumpBackward";
 
 		this.doJumpBackward(enyo.mixin(this.createEventData(), {jumpSize: this.jumpSec}));
@@ -281,7 +281,7 @@ enyo.kind({
 		}
 
 		this.setPlaybackRate(1);
-		node.currentTime += parseInt(this.jumpSec, 10);
+		this.setCurrentTime(this.currentTime + parseInt(this.jumpSec, 10));
 		this._prevCommand = "jumpForward";
 
 		this.doJumpForward(enyo.mixin(this.createEventData(), {jumpSize: this.jumpSec}));
@@ -296,7 +296,7 @@ enyo.kind({
 
 		this.setPlaybackRate(1);
 		node.pause();
-		node.currentTime = 0;
+		this.setCurrentTime(0);
 		this._prevCommand = "jumpToStart";
 	},
 	//* Jumps to end of media source and sets _playbackRate_ to 1.
@@ -309,7 +309,7 @@ enyo.kind({
 
 		this.setPlaybackRate(1);
 		node.pause();
-		node.currentTime = this.node.duration;
+		this.setCurrentTime(this.node.duration);
 		this._prevCommand = "jumpToEnd";
 	},
 	//* Sets the playback rate type (from the keys of _playBackRateHash_).
@@ -346,7 +346,7 @@ enyo.kind({
 		pbNumber = this.calcNumberValueOfPlaybackRate(inPlaybackRate);
 
 		// Set native playback rate
-		node.playbackRate = pbNumber;
+		this.setNodePlaybackRate(pbNumber);
 
 		if (!(enyo.platform.webos || window.PalmSystem)) {
 			// For supporting cross browser behavior
@@ -354,6 +354,9 @@ enyo.kind({
 				this.beginRewind();
 			}
 		}
+	},
+	setNodePlaybackRate: function(val) {
+		this.hasNode().playbackRate = val; 
 	},
 	//* Returns true if currently in paused state.
 	isPaused: function() {
@@ -370,7 +373,7 @@ enyo.kind({
 	//* Sets current player position in the video (in seconds).
 	setCurrentTime: function(inTime) {
 		if ((typeof inTime === 'number') && this.hasNode()) {
-			this.node.currentTime = inTime;
+			this.hasNode().currentTime = inTime;
 		}
 	},
 	//* Gets play duration in the video (in seconds).
