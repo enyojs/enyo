@@ -16,8 +16,8 @@ enyo.xhr = {
 		- _password_: The optional password to use for authentication purposes.
 		- _xhrFields_: Optional object containing name/value pairs to mix directly into the generated xhr object.
 		- _mimeType_: Optional string to override the MIME-Type.
-        - _mozSystem_: Optional boolean to create cross-domain XHR (Firefox OS only)
-        - _mozAnon_: Optional boolean to create anonymous XHR that doesn't not send cookies or authentication headers (Firefox OS only)
+		- _mozSystem_: Optional boolean to create cross-domain XHR (Firefox OS only)
+		- _mozAnon_: Optional boolean to create anonymous XHR that does not send cookies or authentication headers (Firefox OS only)
 
 		Note: on iOS 6, we will explicity add a "cache-control: no-cache"
 		header for any non-GET requests to workaround a system bug that caused
