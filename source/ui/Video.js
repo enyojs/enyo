@@ -134,7 +134,8 @@ enyo.kind({
 	srcChanged: function() {
 		// We override the inherited method from enyo.Control because
 		// it prevents us from setting src to a falsy value.
-		this.setAttribute("src", enyo.path.rewrite(this.src));
+		var src = this.src ? enyo.path.rewrite(this.src) : this.src;
+		this.setAttribute("src", src);
 	},
 	//* @public
 	load: function() {
