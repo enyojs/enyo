@@ -1,3 +1,9 @@
+## 2.4.0-pre.3
+
+Added support for `mozAnon` and `mozSystem` properties to enyo.xhr. The mozSystem boolean enables cross-origin requests
+ and the mozAnon boolean enables anonymous xhr by not sending cookies or authentication headers. Both these
+settings are currently only working on Firefox OS.
+
 ## 2.4.0-pre.2
 
 _controller_ is no longer a special property. This affects _DataRepeater_,
