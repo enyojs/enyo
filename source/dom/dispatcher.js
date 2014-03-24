@@ -110,7 +110,7 @@
 			return c.bubble(type, e, c);
 		},
 		triggerHandler: function() {
-			var args = Array.prototype.slice.call(arguments, 0),
+			var args = enyo.cloneArray(arguments),
 				control = args.shift();
 			return control.dispatchEvent(args);
 		}
