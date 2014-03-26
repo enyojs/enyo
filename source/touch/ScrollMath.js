@@ -265,10 +265,19 @@ enyo.kind({
 		this.start();
 	},
 	mousewheel: function(e) {
-		var dy = this.vertical ? e.wheelDeltaY || e.wheelDelta: 0;
+		var dy = this.vertical ? e.wheelDeltaY || (!e.wheelDeltaX ? e.wheelDelta : 0) : 0,
+			dx = this.horizontal ? e.wheelDeltaX : 0,
+			shouldScroll = false;
 		if ((dy > 0 && this.y < this.topBoundary) || (dy < 0 && this.y > this.bottomBoundary)) {
-			this.stop(true);
 			this.y = this.y0 = this.y0 + dy;
+			shouldScroll = true;
+		}
+		if ((dx > 0 && this.x < this.leftBoundary) || (dx < 0 && this.x > this.rightBoundary)) {
+			this.x = this.x0 = this.x0 + dx;
+			shouldScroll = true;
+		}
+		if (shouldScroll) {
+			this.stop(true);
 			this.start();
 			return true;
 		}
