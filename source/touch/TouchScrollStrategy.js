@@ -357,7 +357,9 @@ enyo.kind({
 	scrollMathStart: function() {
 		if (this.scrollNode && !this.isScrolling()) {
 			this.scrolling = true;
-			if (!this.isOverscrolling()) this.calcBoundaries();
+			if (!this.isOverscrolling()) {
+				this.calcBoundaries();
+			}
 			if (this.thumb) {
 				this.showThumbs();
 			}
