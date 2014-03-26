@@ -505,11 +505,11 @@ enyo.DataList.delegates.vertical = {
 				upperProp = list.upperProp;
 			bounds[upperProp] = this.getScrollPosition(list);
 			if (bounds.xDir === 1 || bounds.yDir === 1) {
-				if (bounds[upperProp] >= threshold[lowerProp]) {
+				if (!isNaN(threshold[lowerProp]) && (bounds[upperProp] >= threshold[lowerProp])) {
 					this.scrollHandler(list, bounds);
 				}
 			} else if (bounds.yDir === -1 || bounds.xDir === -1) {
-				if (bounds[upperProp] <= threshold[upperProp]) {
+				if (!isNaN(threshold[upperProp]) && (bounds[upperProp] <= threshold[upperProp])) {
 					this.scrollHandler(list, bounds);
 				}
 			}

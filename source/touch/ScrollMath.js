@@ -181,8 +181,15 @@ enyo.kind({
 				//this.log(this.y, y0);
 				this.scroll();
 			} else if (!this.dragging) {
-				this.stop(true);
+				
+				// @WHYTHEFUCK:
+				// WHY DO WE EMIT STOP EVENT THEN EMIT ANOTHER SCROLL?!??
+				// this.stop(true);
+				// this.scroll();
+				
+				this.stop();
 				this.scroll();
+				this.doScrollStop();
 			}
 			y0 = this.y;
 			x0 = this.x;
@@ -192,8 +199,8 @@ enyo.kind({
 	//* @protected
 	start: function() {
 		if (!this.job) {
-			this.animate();
 			this.doScrollStart();
+			this.animate();
 		}
 	},
 	stop: function(inFireEvent) {
