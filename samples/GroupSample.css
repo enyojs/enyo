@@ -10,6 +10,9 @@
 	font-weight: bold;
 	margin-bottom: 8px;
 }
+.group-sample .grouping > * {
+	display: block;
+}
 .group-sample .results {
 	margin: 20px 0;
 	padding: 20px;
@@ -17,4 +20,7 @@
 	border-radius: 10px;
 	color: #FFF;
 	background-color: #555;
+}
+.group-sample .results > *:not(:last-child) {
+	margin-bottom: 10px;
 }
