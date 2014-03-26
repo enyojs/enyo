@@ -227,7 +227,7 @@
 	//* Returns _inString_ converted to upper case.
 	//* This is overridden and elaborated upon when enyo-ilib loads.
 	enyo.toUpperCase = function(inString) {
-		if (typeof(inString) === "undefined" || typeof(inString) === "null") {
+		if (typeof(inString) === "undefined" || inString === "null") {
 			return inString;
 		}
 		return inString.toString().toUpperCase();
@@ -236,7 +236,7 @@
 	//* Returns _inString_ converted to lower case.
 	//* This is overridden and elaborated upon when enyo-ilib loads.
 	enyo.toLowerCase = function(inString) {
-		if (typeof(inString) === "undefined" || typeof(inString) === "null") {
+		if (typeof(inString) === "undefined" || inString === "null") {
 			return inString;
 		}
 		return inString.toString().toLowerCase();
