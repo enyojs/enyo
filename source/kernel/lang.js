@@ -256,13 +256,19 @@
 	//* Returns _inString_ converted to upper case.
 	//* This is overridden and elaborated upon when enyo-ilib loads.
 	enyo.toUpperCase = function(inString) {
-		return inString.toUpperCase();
+		if (typeof(inString) === "undefined" || typeof(inString) === "null") {
+			return inString;
+		}
+		return inString.toString().toUpperCase();
 	};
 
 	//* Returns _inString_ converted to lower case.
 	//* This is overridden and elaborated upon when enyo-ilib loads.
 	enyo.toLowerCase = function(inString) {
-		return inString.toLowerCase();
+		if (typeof(inString) === "undefined" || typeof(inString) === "null") {
+			return inString;
+		}
+		return inString.toString().toLowerCase();
 	};
 
 	//* Returns _inString_ with the first letter capitalized.
