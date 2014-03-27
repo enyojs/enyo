@@ -181,12 +181,6 @@ enyo.kind({
 				//this.log(this.y, y0);
 				this.scroll();
 			} else if (!this.dragging) {
-				
-				// @WHYTHEFUCK:
-				// WHY DO WE EMIT STOP EVENT THEN EMIT ANOTHER SCROLL?!??
-				// this.stop(true);
-				// this.scroll();
-				
 				this.stop();
 				this.scroll();
 				this.doScrollStop();
