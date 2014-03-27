@@ -160,7 +160,7 @@ enyo.kind({
 	//* Whether or not the scroller is in overscrolling
 	isOverscrolling: function() {
 		var m = this.$.scrollMath || this;
-		return (this.overscroll) ? m.isInOverScroll() : false;
+		return (this.overscroll) ? Boolean(m.isInOverScroll()) : false;
 	},
 	domScroll: function() {
 		if (!this.isScrolling()) {
@@ -355,8 +355,11 @@ enyo.kind({
 		}
 	},
 	scrollMathStart: function() {
-		if (this.scrollNode) {
-			this.calcBoundaries();
+		if (this.scrollNode && !this.isScrolling()) {
+			this.scrolling = true;
+			if (!this.isOverscrolling()) {
+				this.calcBoundaries();
+			}
 			if (this.thumb) {
 				this.showThumbs();
 			}
@@ -375,6 +378,7 @@ enyo.kind({
 		}
 	},
 	scrollMathStop: function() {
+		this.scrolling = false;
 		this.effectScrollStop();
 		if (this.thumb) {
 			this.delayHideThumbs(100);
@@ -396,7 +400,7 @@ enyo.kind({
 		if (this.scrollNode) {
 			this.scrollLeft = this.scrollNode.scrollLeft = inX;
 			this.scrollTop = this.scrollNode.scrollTop = inY;
-			this.effectOverscroll(Math.round(inX), Math.round(inY));
+			this.effectOverscroll(inX !== null? Math.round(inX): inX, inY !== null? Math.round(inY): inY);
 		}
 	},
 	effectScrollStop: function() {
