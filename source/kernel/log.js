@@ -37,10 +37,12 @@ enyo.logging = {
 			a$ = [a$.join(" ")];
 		}
 		var fn = console[inMethod];
-		if (fn && fn.apply) {
+		// We prevent calling fn.apply or console.log.apply in Firefox for Android due to a browser bug.
+		// FIXME: Remove Firefox for Android exclusion when issue is fixed in browser.
+		if (fn && fn.apply && !enyo.platform.androidFirefox) {
 			// some consoles support 'warn', 'info', and so on
 			fn.apply(console, a$);
-		} else if (console.log.apply) {
+		} else if (console.log.apply && !enyo.platform.androidFirefox) {
 			// some consoles support console.log.apply
 			console.log.apply(console, a$);
 		} else {
