@@ -125,7 +125,7 @@ enyo.kind({
 			return;
 		}
 		this._testAjax({url: "php/test4.php", method: "POST", postBody: "data"}, null, function(inValue) {
-			if (enyo.platform.ios && enyo.platform.ios >= 6) {
+			if (enyo.platform.ios && enyo.platform.ios == 6) {
 				var status = inValue.cacheCtrl && (inValue.cacheCtrl.indexOf('no-cache') === 0);
 				if (!status) {
 					enyo.log("Bad Cache-Control: " + inValue.cacheCtrl + " expected: " + "no-cache");
