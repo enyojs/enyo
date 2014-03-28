@@ -44,7 +44,10 @@ enyo.logging = {
         }
 		//var a$ = enyo.logging.formatArgs(inMethod, inArgs);
 		var a$ = enyo.isArray(inArgs) ? inArgs : enyo.cloneArray(inArgs);
-		enyo.logging.validateArgs(a$);
+		if (enyo.platform.androidFirefox) {
+			// Firefox for Android's console does not handle objects with circular references
+			enyo.logging.validateArgs(a$);
+		}
 		if (enyo.dumbConsole) {
 			// at least in early versions of webos, console.* only accept a single argument
 			a$ = [a$.join(" ")];
