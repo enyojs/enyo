@@ -108,11 +108,6 @@
 			var type = e.type;
 			type = e.customEvent ? type : "on" + type;
 			return c.bubble(type, e, c);
-		},
-		triggerHandler: function() {
-			var args = enyo.cloneArray(arguments),
-				control = args.shift();
-			return control.dispatchEvent(args);
 		}
 	};
 
@@ -128,18 +123,6 @@
 
 	enyo.dispatch = function(inEvent) {
 		return enyo.dispatcher.dispatch(inEvent);
-	};
-
-	/**
-		Triggers the handler for a given event type on the specified control.
-		The _inControl_ parameter is the control object, and the _inEventType_ parameter is the event type string.
-		The _inEvent_ and _inSender_ parameters are optional and represent event and sender objects, respectively,
-		to pass to the handler. For example:
-
-		enyo.triggerHandler(myControl, "ontap");
-	*/
-	enyo.triggerHandler = function(/* inControl, inEventType, [inEvent], [inSender] */) {
-		return enyo.dispatcher.triggerHandler.apply(this, arguments);
 	};
 
 	enyo.bubble = function(inEvent) {

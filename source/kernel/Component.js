@@ -461,6 +461,17 @@ enyo.kind({
 		}
 	},
 	/**
+		Triggers the handler for a given event type.
+		The _inEventType_ parameter is the event type string.
+		The _inEvent_ and _inSender_ parameters are optional and represent event and sender objects, respectively,
+		to pass to the handler. 
+
+		Example usage: myControl.triggerHandler("ontap");
+	*/
+	triggerHandler: function(/* inEventType, [inEvent], [inSender] */) {
+		return this.dispatchEvent.apply(this, arguments);
+	},
+	/**
 		Sends a message to myself and all of my components.
 		You can stop a waterfall into components owned by a
 		receiving object by returning a truthy value from
