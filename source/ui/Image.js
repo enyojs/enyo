@@ -10,7 +10,7 @@ enyo.kind({
 	published: {
 		//* maps to the "alt" attribute of an img tag
 		alt: "",
-		/** 
+		/**
 			By default, the image is rendered using an `<img>` tag.  When this property
 			is set to `"cover"` or `"constrain"`, the image is rendered using a `<div>`,
 			utilizing `background-image` and `background-size`.
@@ -21,7 +21,7 @@ enyo.kind({
 			sized.
 		*/
 		sizing: "",
-		/** 
+		/**
 			When `sizing` is used, this property sets the positioning of the image within the
 			bounds, corresponding to the `background-position` CSS property.
 		*/
@@ -90,10 +90,12 @@ enyo.kind({
 			until final graphics are provided. As a SVG image, it will
 			expand to fill the desired width and height set in the style.
 		*/
-		placeholder: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" ' +
-			'xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="100%" height="100%" ' +
-			'style="stroke: #444; stroke-width: 1; fill: #aaa;" /><line x1="0" y1="0" ' +
-			'x2="100%" y2="100%" style="stroke: #444; stroke-width: 1;" /><line x1="100%" ' +
-			'y1="0" x2="0" y2="100%" style="stroke: #444; stroke-width: 1;" /></svg>'
+		placeholder:
+			"data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC" +
+			"9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48cmVjdCB3aWR0aD0iMTAw" +
+			"JSIgaGVpZ2h0PSIxMDAlIiBzdHlsZT0ic3Ryb2tlOiAjNDQ0OyBzdHJva2Utd2lkdGg6IDE7IGZpbGw6ICNhYW" +
+			"E7IiAvPjxsaW5lIHgxPSIwIiB5MT0iMCIgeDI9IjEwMCUiIHkyPSIxMDAlIiBzdHlsZT0ic3Ryb2tlOiAjNDQ0" +
+			"OyBzdHJva2Utd2lkdGg6IDE7IiAvPjxsaW5lIHgxPSIxMDAlIiB5MT0iMCIgeDI9IjAiIHkyPSIxMDAlIiBzdH" +
+			"lsZT0ic3Ryb2tlOiAjNDQ0OyBzdHJva2Utd2lkdGg6IDE7IiAvPjwvc3ZnPg=="
 	}
 });
