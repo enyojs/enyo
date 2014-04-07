@@ -1019,34 +1019,15 @@ enyo.kind({
 		}
 	},
 	/**
-		Inspects the stringified version of this control's content to determine whether or not the content is RTL, 
-		setting the control's rtl property and applying the "direction" style attribute as necessary.
+		Sets the control's directionality based on its string content.
 	*/
-	checkContentRtl: function() {
+	detectTextDirectionality: function() {
 		var content = this.content;
 		if (content && typeof content === "object") {
 			content = content.toString();
 		}
-		// Set RTL mode based on first character of content
-		if (content && content.length) {
-			var firstCharCode = content.charCodeAt(0);
-			// Ignore RTL check if first character is puncutation or LTR number
-			// Puncutation + Numbers (33-64): !, ", #, $, %, &, ', (, ), *, +, ,, -, ., /, :, ;, <, =, >, ?, @, [0-9]
-			// Punctuation (91-96): [, \, ], ^, _, `
-			// Punctuation (123-126): {, |, }, ~
-			if (!(firstCharCode >= 33 && firstCharCode <= 64) && 
-				!(firstCharCode >= 91 && firstCharCode <= 96) && 
-				!(firstCharCode >= 123 && firstCharCode <= 126)) {
-				// Check if within Hebrew or Arabic ranges (in addition to Syriac to reduce number of comparisons)
-				// Hebrew: 1424-1535
-				// Arabic: 1536-1791, 1872-1919, 64336-65023, 65136-65279
-				// Syriac: 1792-1871
-				this.rtl = ((firstCharCode >= 1424 && firstCharCode <= 1919) ||
-					(firstCharCode >= 64336 && firstCharCode <= 65023) ||
-					(firstCharCode >= 65136 && firstCharCode <= 65279));
-				this.applyStyle("direction", this.rtl ? "rtl" : "ltr");
-			}
-		}
+		this.rtl = enyo.isRtl(content);
+		this.applyStyle("direction", this.rtl ? "rtl" : "ltr");
 	},
 
 	//
