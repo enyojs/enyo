@@ -1063,7 +1063,7 @@
 
 	//*@public
 	/**
-		Takes a string and determines whether or not it is RTL
+		Takes content and determines whether or not it is RTL
 	*/
 	enyo.isRtl = function (str) {
 		return rtlPattern.test(str);
