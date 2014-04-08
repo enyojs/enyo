@@ -1003,6 +1003,13 @@ enyo.kind({
 			enyo.remove(this, enyo.roots);
 		}
 	},
+	/**
+		Sets the control's directionality based on its content.
+	*/
+	detectTextDirectionality: function() {
+		this.rtl = enyo.isRtl(this.content);
+		this.applyStyle("direction", this.rtl ? "rtl" : "ltr");
+	},
 
 	//
 	//

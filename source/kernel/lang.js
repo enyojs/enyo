@@ -1015,4 +1015,20 @@
 		return p;
 	};
 
+	//* @protected
+	/**
+		This regex pattern is used by the _enyo.isRtl_ function.
+
+		Arabic: \u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFE
+		Hebrew: \u0590-\u05FF\uFB1D-\uFB4F
+	*/
+	var rtlPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFE\u0590-\u05FF\uFB1D-\uFB4F]/;
+
+	//*@public
+	/**
+		Takes content and determines whether or not it is RTL
+	*/
+	enyo.isRtl = function (str) {
+		return rtlPattern.test(str);
+	};
 })();
