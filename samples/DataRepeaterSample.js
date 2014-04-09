@@ -1,6 +1,6 @@
 enyo.kind({
 	name: "enyo.sample.DataRepeaterSample",
-	classes: "data-repeater-sample enyo-fit enyo-border-box",
+	classes: "data-repeater-sample enyo-border-box",
 	components: [
 		{name: "repeater", kind: "enyo.DataRepeater", components: [
 			{components: [
