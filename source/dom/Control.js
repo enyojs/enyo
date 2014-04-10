@@ -1007,7 +1007,7 @@ enyo.kind({
 		Sets the control's directionality based on its content.
 	*/
 	detectTextDirectionality: function() {
-		if (this.content && this.content.lengh) {
+		if (this.content && this.content.length) {
 			this.rtl = enyo.isRtl(this.content);
 			this.applyStyle("direction", this.rtl ? "rtl" : "ltr");
 		}
