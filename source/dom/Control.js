@@ -638,9 +638,9 @@ enyo.kind({
 	},
 	/**
 		Returns an object describing the control's absolute position within the viewport,
-		relative to the top left corner. This function takes into account account absolute/relative 
-		offsetParent positioning, scroll position, and CSS transforms (currently translateX, 
-		translateY, and matrix3d). 
+		relative to the top left corner. This function takes into account account absolute/relative
+		offsetParent positioning, scroll position, and CSS transforms (currently translateX,
+		translateY, and matrix3d).
 
 			{left: ..., top: ..., bottom: ..., right: ..., width: ..., height: ...}
 
@@ -922,7 +922,7 @@ enyo.kind({
 	},
 	showingChanged: function(was) {
 		this.syncDisplayToShowing();
-		
+
 		var waterfall = (was === true || was === false)
 			, parent = this.parent;
 		// make sure that we don't trigger the waterfall when this method
@@ -963,7 +963,7 @@ enyo.kind({
 		itself already it will not continue the waterfall. Overload this method
 		for additional handling of this event.
 	*/
-	showingChangedHandler: function (inSender, inEvent) {		
+	showingChangedHandler: function (inSender, inEvent) {
 		return inSender === this? false: !this.getShowing();
 	},
 	//
@@ -996,7 +996,7 @@ enyo.kind({
 
 		return false;
 	},
-	
+
 	//* Removes control from enyo.roots
 	removeFromRoots: function() {
 		if (this._isRoot) {
@@ -1007,8 +1007,10 @@ enyo.kind({
 		Sets the control's directionality based on its content.
 	*/
 	detectTextDirectionality: function() {
-		this.rtl = enyo.isRtl(this.content);
-		this.applyStyle("direction", this.rtl ? "rtl" : "ltr");
+		if (this.content && this.content.lengh) {
+			this.rtl = enyo.isRtl(this.content);
+			this.applyStyle("direction", this.rtl ? "rtl" : "ltr");
+		}
 	},
 
 	//
