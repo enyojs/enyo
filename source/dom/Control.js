@@ -978,7 +978,7 @@ enyo.kind({
 		itself already it will not continue the waterfall. Overload this method
 		for additional handling of this event.
 	*/
-	showingChangedHandler: function (inSender, inEvent) {		
+	showingChangedHandler: function (inSender, inEvent) {
 		return inSender === this? false: !this.getShowing();
 	},
 	//
@@ -1016,6 +1016,15 @@ enyo.kind({
 	removeFromRoots: function() {
 		if (this._isRoot) {
 			enyo.remove(this, enyo.roots);
+		}
+	},
+	/**
+		Sets the control's directionality based on its content.
+	*/
+	detectTextDirectionality: function() {
+		if (this.content && this.content.length) {
+			this.rtl = enyo.isRtl(this.content);
+			this.applyStyle("direction", this.rtl ? "rtl" : "ltr");
 		}
 	},
 
