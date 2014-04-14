@@ -15,5 +15,5 @@
 */
 
 enyo.version = {
-	enyo: "2.4.0-pre.2"
+	enyo: "2.4.0"
 };
