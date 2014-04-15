@@ -32,7 +32,7 @@ enyo.kind({
 	mixins: [
 		enyo.MixinSupport,
 		enyo.ObserverSupport,
-		enyo.ComputedSupport,
+		// enyo.ComputedSupport,
 		enyo.BindingSupport
 	],
 
@@ -43,24 +43,12 @@ enyo.kind({
 
 	importProps: function (props) {
 		if (props) {
-			var k;
+			var key;
 			enyo.concatHandler(this, props);
 			// if props is a default hash this is significantly faster than
 			// requiring the hasOwnProperty check every time
-			if (!props.kindName) {
-				for (k in props) {
-					this[k] = props[k];
-				}
-			}
-			// otherwise we need to do that check since we don't want to include
-			// anything in the prototype chain
-			else {
-				for (k in props) {
-					if (props.hasOwnProperty(k)) {
-						this[k] = props[k];
-					}
-				}
-			}
+			if (!props.kindName) for (key in props) enyo.concatenated.indexOf(key) === -1 && (this[key] = props[key]);
+			else for (key in props) enyo.concatenated.indexOf(key) === -1 && props.hasOwnProperty(key) && (this[key] = props[key]);
 		}
 	},
 
@@ -124,9 +112,7 @@ enyo.kind({
 		(Moving forward, however, Enyo code should use computed properties
 		instead of relying on the getter naming convention.)
 	*/
-	get: function (path) {
-		return enyo.getPath.apply(this, arguments);
-	},
+	get: enyo.getPath,
 	//*@public
 	/**
 		Sets the value of a property (or path). Pass in the property (or path)
@@ -146,9 +132,8 @@ enyo.kind({
 		should use computed properties or observers instead of relying on the
 		setter naming convention.)
 	*/
-	set: function (path, value, force) {
-		return enyo.setPath.apply(this, arguments);
-	},
+	set: enyo.setPath,
+	
 	//*@public
 	/**
 		Binds a callback to this object. If the object has been destroyed, the
@@ -170,7 +155,7 @@ enyo.kind({
 		// Using this.set to make the property observable
 		this.set("destroyed", true);
 	},
-
+	
 	_isObject: true
 });
 

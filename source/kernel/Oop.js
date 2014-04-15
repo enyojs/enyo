@@ -1,4 +1,6 @@
-﻿//* @public
+﻿enyo.concatenated = [];
+
+//* @public
 /**
 	Creates a JavaScript constructor function with a prototype defined by
 	_inProps_. __All constructors must have a unique name__.
@@ -374,31 +376,51 @@ enyo.kind.statics = {
 		constructor or the instance.
 	*/
 	extend: function(props, target) {
-		var ctor = this,
-			exts = enyo.isArray(props)? props: [props],
-			proto, fn;
-		fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isInherited(v)); };
-		if (!target && ctor._deferred) {
-			ctor = enyo.checkConstructor(ctor);
-		}
+		var ctor = this
+			, exts = enyo.isArray(props)? props: [props]
+			, proto, fn;
+			
+		fn = function (key, value) {
+			return !(typeof value == "function" || enyo.isInherited(value)) && enyo.concatenated.indexOf(key) === -1;
+		};
+		
+		if (!target && ctor._deferred) ctor = enyo.checkConstructor(ctor);
+		
 		proto = target || ctor.prototype;
-		for (var i=0, p; (p=exts[i]); ++i) {
-			enyo.concatHandler(proto, p);
-			enyo.kind.extendMethods(proto, p, true);
-			enyo.mixin(proto, p, {/*ignore: true, */filter: fn});
+		for (var i=0, ext; (ext=exts[i]); ++i) {
+			enyo.concatHandler(proto, ext, true);
+			enyo.kind.extendMethods(proto, ext, true);
+			enyo.mixin(proto, ext, {filter: fn});
 		}
+		
 		return target || ctor;
+		// 
+		// 
+		// var ctor = this,
+		// 	exts = enyo.isArray(props)? props: [props],
+		// 	proto, fn;
+		// fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isInherited(v)); };
+		// if (!target && ctor._deferred) {
+		// 	ctor = enyo.checkConstructor(ctor);
+		// }
+		// proto = target || ctor.prototype;
+		// for (var i=0, p; (p=exts[i]); ++i) {
+		// 	enyo.concatHandler(proto, p, true);
+		// 	enyo.kind.extendMethods(proto, p, true);
+		// 	enyo.mixin(proto, p, {/*ignore: true, */filter: fn});
+		// }
+		// return target || ctor;
 	}
 };
 
 //*@protected
-enyo.concatHandler = function (ctor, props) {
-	var p = ctor.prototype || ctor,
-		b = p.ctor,
-		k = (p === ctor);
-	while (b) {
-		if (b.concat) { b.concat(ctor, props, k); }
-		b = b.prototype.base;
+enyo.concatHandler = function (ctor, props, extending) {
+	var proto = ctor.prototype || ctor
+		, base = proto.ctor;
+		
+	while (base) {
+		if (base.concat) base.concat(ctor, props, extending);
+		base = base.prototype.base;
 	}
 };
 

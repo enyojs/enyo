@@ -173,11 +173,11 @@
 
 		// ...........................
 		// COMPUTED PROPERTIES
-
-		computed: {
-			location: ["_current", {cached: true}],
-			defaultPath: []
-		},
+		
+		computed: [
+			{method: "location", path: "_current", config: {cached: true}},
+			{method: "defaultPath"}
+		],
 
 		//*@public
 		/**

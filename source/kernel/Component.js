@@ -215,12 +215,21 @@ enyo.kind({
 				'but this is an error condition and should be fixed.');
 		}
 		this.$[n] = inComponent;
-		this.notifyObservers("$." + n, null, inComponent);
+		this.notify("$." + n, null, inComponent);
+		
+		// if the publish property is true then we expose it outside of the $ hash as well
+		if (inComponent.publish) {
+			this[n] = inComponent;
+			this.notify(n, null, inComponent);
+		}
 	},
 	//* Removes _inComponent_ from the list of components owned by the current
 	//* component (i.e., _this.$_).
 	removeComponent: function(inComponent) {
-		delete this.$[inComponent.getName()];
+		var name = inComponent.getName();
+		
+		delete this.$[name];
+		if (inComponent.publish) delete this[name];
 	},
 	//* @public
 	/**
@@ -228,11 +237,9 @@ enyo.kind({
 		hash into an array and returns the array.
 	*/
 	getComponents: function() {
-		var results = [];
-		for (var n in this.$) {
-			results.push(this.$[n]);
-		}
-		return results;
+		var res = [];
+		for (var name in this.$) res.push(this.$[name]);
+		return res;
 	},
 	//* @protected
 	adjustComponentProps: function(inProps) {

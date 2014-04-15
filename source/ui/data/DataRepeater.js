@@ -105,9 +105,9 @@ enyo.kind({
 			this.selectionChanged();
 		};
 	}),
-	observers: {
-		selectionChanged: ["multipleSelection"]
-	},
+	observers: [
+		{method: "selectionChanged", path: "multipleSelection"}
+	],
 	selectionChanged: function () {
 		this.addRemoveClass(this.selectionClass, this.selection);
 		this.addRemoveClass(this.multipleSelectionClass, this.multipleSelection && this.selection);
@@ -134,7 +134,6 @@ enyo.kind({
 	*/
 	refresh: function () {
 		if (!this.hasReset) { return this.reset(); }
-		this.startJob("refreshing", function () {
 			var dd = this.get("data"),
 				cc = this.getClientControls();
 			for (var i=0, c, d; (d=dd.at(i)); ++i) {
@@ -146,7 +145,6 @@ enyo.kind({
 				}
 			}
 			this.prune();
-		}, 16);
 	},
 	//*@protected
 	rendered: enyo.inherit(function (sup) {
@@ -165,11 +163,12 @@ enyo.kind({
 		}
 	},
 	remove: function (i) {
-		var g = this.getClientControls(),
-			c = g[i || (Math.abs(g.length-1))];
-		if (c) {
-			c.destroy();
-		}
+		var controls = this.getClientControls()
+			, control;
+		
+		control = controls[i];
+		
+		if (control) control.destroy();
 	},
 	prune: function () {
 		var g = this.getClientControls()
@@ -192,7 +191,7 @@ enyo.kind({
 		}
 	},
 	handlers: {onSelected: "childSelected", onDeselected: "childDeselected"},
-	_handlers: {add: "modelsAdded", remove: "modelsRemoved", reset: "refresh"},
+	_handlers: {add: "modelsAdded", remove: "modelsRemoved", reset: "refresh", sort: "refresh", filter: "refresh"},
 	collectionChanged: function (p) {
 		var c = this.collection;
 		if (typeof c == "string") {
@@ -215,27 +214,36 @@ enyo.kind({
 			}
 		}
 	},
-	modelsAdded: function (c, e, props) {
-		if (c == this.collection) {
-			this.set("batching", true);
-			// note that these are indices when being added so they can be lazily
-			// instantiated
-			for (var i=0, r; (!isNaN(r=props.records[i])); ++i) {
-				this.add(c.at(r), r);
-			}
-			this.set("batching", false);
-		}
+	modelsAdded: function (sender, e, props) {
+		if (sender === this.collection) this.refresh();
+		
+		
+	// modelsAdded: function (c, e, props) {
+		// if (c == this.collection) {
+		// 	this.set("batching", true);
+		// 	// note that these are indices when being added so they can be lazily
+		// 	// instantiated
+		// 	// for (var i=0, r; (!isNaN(r=props.records[i])); ++i) {
+		// 	// 	this.add(c.at(r), r);
+		// 	// }
+		// 	this.set("batching", false);
+		// }
 	},
-	modelsRemoved: function (c, e, props) {
-		if (c == this.collection) {
-			// unfortunately we need to remove these in reverse order
-			var idxs = enyo.keys(props.records);
-			for (var i=idxs.length-1, idx; (idx=idxs[i]); --i) {
-				this.remove(idx);
-				this._select(idx, props.records[idx], false);
-			}
-		}
+	modelsRemoved: function (sender) {
+		if (sender === this.collection) this.refresh();
 	},
+	
+	
+	// modelsRemoved: function (c, e, props) {
+	// 	if (c == this.collection) {
+	// 		// unfortunately we need to remove these in reverse order
+	// 		var idxs = enyo.keys(props.records);
+	// 		for (var i=idxs.length-1, idx; (idx=idxs[i]); --i) {
+	// 			this.remove(idx);
+	// 			this.deselect(idx);
+	// 		}
+	// 	}
+	// },
 	batchingChanged: function (prev, val) {
 		if (this.generated && false === val) {
 			this.$[this.containerName].render();
@@ -360,7 +368,10 @@ enyo.kind({
 			this.reset();
 		}
 	},
-	computed: {selected: [], data: ["controller", "collection"]},
+	computed: [
+		{method: "selected"},
+		{method: "data", path: ["controller", "collection"]}
+	],
 	noDefer: true,
 	childMixins: [enyo.RepeaterChildSupport],
 	controlParentName: "container",

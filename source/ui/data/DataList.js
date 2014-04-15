@@ -93,7 +93,7 @@ enyo.kind({
 		dataset. This is much cheaper to call than _reset()_, but is primarily used
 		internally.
 	*/
-	refresh: function () {
+	refresh: function (c, e) {
 		if (this.get("absoluteShowing")) {
 			if (this.hasRendered) {
 				this.delegate.refresh(this);
@@ -375,7 +375,9 @@ enyo.kind({
 		work we do.
 	*/
 	handlers: {onScroll: "didScroll", onresize: "didResize"},
-	observers: {_absoluteShowingChanged: ["absoluteShowing"]},
+	observers: [
+		{method: "_absoluteShowingChanged", path: "absoluteShowing"}
+	],
 	//* Add the RegisteredEventSupport mixin for the paging event
 	mixins: [enyo.RegisteredEventSupport],
 	//* All delegates are named elsewhere but are stored in these statics.
