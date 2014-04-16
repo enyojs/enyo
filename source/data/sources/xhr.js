@@ -60,7 +60,11 @@
 					opts.success(res, xhr);
 				}
 			});
-			xhr.error(opts.fail);
+			xhr.error(function (xhr, res) {
+				if (opts && opts.fail) {
+					opts.fail(res, xhr);
+				}
+			});
 			xhr.go(opts.params);
 		},
 		/**
