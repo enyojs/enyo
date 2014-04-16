@@ -1,3 +1,6 @@
+/**
+	@namespace enyo
+*/
 (function (enyo, scope) {
 	
 	/**
@@ -30,6 +33,10 @@
 	
 	// some platforms need alternative syntax (e.g., when compiled as a v8 builtin)
 	if (!enyo.setPrototype) {
+		
+		/**
+			@private
+		*/
 		enyo.setPrototype = function(ctor, proto) {
 			ctor.prototype = proto;
 		};
@@ -50,8 +57,13 @@
 	// ----------------------------------
 	
 	/**
+		Determine if a variable is defined.
+		
 		@public
-		@method enyo.exists
+		@function exists
+		@memberof enyo
+		@param {*} target Anything that can be compared to `undefined`.
+		@returns {Boolean} `true` if defined, `false` otherwise.
 	*/
 	enyo.exists = function (target) {
 		return (target !== undefined);
@@ -64,7 +76,10 @@
 		the identifier as a string.
 	
 		@public
-		@method enyo.uid
+		@function uid
+		@memberof enyo
+		@param {String} [prefix] The prefix to prepend to the generated unique id.
+		@returns {String} An optionally prefixed identifier.
 	*/
 	enyo.uid = function (prefix) {
 		return String((prefix? prefix: "") + uidCounter++);
@@ -74,7 +89,9 @@
 		RFC4122 uuid generator for the browser.
 	
 		@public
-		@method enyo.uuid
+		@function uuid
+		@memberof enyo
+		@returns {String} A RFC4122 compliant universally unique identifier.
 	*/
 	enyo.uuid = function () {
 		// @TODO: Could possibly be faster
@@ -90,42 +107,67 @@
 	};
 	
 	/**
+		Generates a random number using `Math.random`.
+	
 		@public
-		@method enyo.irand
+		@function irand
+		@memberof enyo
+		@param {Number} bound The multiplier by which to generate the product.
+		@returns {Number} A random number.
 	*/
-	enyo.irand = function(inBound) {
-		return Math.floor(Math.random() * inBound);
+	enyo.irand = function(bound) {
+		return Math.floor(Math.random() * bound);
 	};
 	
 	var toString = Object.prototype.toString;
 
 	/**
+		Determine if a given variable is a `String`.
+	
 		@public
-		@method enyo.isString
+		@function isString
+		@memberof enyo
+		@param {*} The variable to determine is a `String`.
+		@returns {Boolean} `true` if a `String`, `false` otherwise.
 	*/
 	enyo.isString = function(it) {
 		return toString.call(it) === "[object String]";
 	};
 
 	/**
+		Determine if a given variable is a `Function`.
+		
 		@public
-		@method enyo.isFunction
+		@function isFunction
+		@memberof enyo
+		@param {*} it The variable to determine is a `Function`.
+		@returns {Boolean} `true` if a `Function`, `false` otherwise.
 	*/
 	enyo.isFunction = function(it) {
 		return toString.call(it) === "[object Function]";
 	};
 
 	/**
+		Determine if a given variable is an `Array`.
+	
 		@public
-		@method enyo.isArray
+		@function isArray
+		@memberof enyo
+		@param {*} it The variable to determine is an `Array`.
+		@returns {Boolean} `true` if an `Array`, `false` otherwise.
 	*/
 	enyo.isArray = Array.isArray || function(it) {
 		return toString.call(it) === "[object Array]";
 	};
 
 	/**
+		Determine if a given variable is an `Object`.
+	
 		@public
-		@method enyo.isObject
+		@function isObject
+		@memberof enyo
+		@param {*} it The variable to determine is an `Object`.
+		@returns {Boolean} `true` if an `Object`, `false` otherwise.
 	*/
 	enyo.isObject = Object.isObject || function (it) {
 		// explicit null/undefined check for IE8 compatibility
@@ -133,45 +175,31 @@
 	};
 
 	/**
+		Determine if a given variable is an explicit boolean `true`.
+	
 		@public
-		@method enyo.isTrue
+		@function isTrue
+		@memberof enyo
+		@param {*} it The variable to determine is an explicit `true`.
+		@returns {Boolean} `true` if an explicit `true`, `false` otherwise.
 	*/
 	enyo.isTrue = function(it) {
 		return !(it === "false" || it === false || it === 0 || it === null || it === undefined);
 	};
 	
 	/**
-		Returns a function closure that will call (and return the value of)
-		function _method_, with _scope_ as _this_.
-
-		_method_ may be a function or the string name of a function-valued
-		property on _scope_.
-
-		Arguments to the closure are passed into the bound function.
-
-			// a function that binds this to this.foo
-			var fn = enyo.bind(this, "foo");
-			// the value of this.foo(3)
-			var value = fn(3);
-
-		Optionally, any number of arguments may be prefixed to the bound function.
-
-			// a function that binds this to this.bar, with arguments ("hello", 42)
-			var fn = enyo.bind(this, "bar", "hello", 42);
-			// the value of this.bar("hello", 42, "goodbye");
-			var value = fn("goodbye");
-
-		Functions may be bound to any scope.
-
-			// binds function 'bar' to scope 'foo'
-			var fn = enyo.bind(foo, bar);
-			// the value of bar.call(foo);
-			var value = fn();
+		Bind the `this` context of any method to a scope and a variable number of
+		provided initial parameters.
 	
 		@public
-		@method enyo.bind
+		@function bind
+		@memberof enyo
+		@param {Object} scope The `this` context for the method.
+		@param {(Function|String)} method A Function or the name of a method to bind.
+		@param {...*} [args] Any arguments that will be provided as the initial arguments to the enclosed method.
+		@returns {Function} The bound method/closure.
 	*/
-	enyo.bind = function(scope, method/*, bound arguments*/){
+	enyo.bind = function(scope, method){
 		if (!method) {
 			method = scope;
 			scope = null;
@@ -206,9 +234,14 @@
 		enyo.Object.bindSafely and for enyo.Object-like objects like enyo.Model and enyo.Collection.
 	
 		@public
-		@method enyo.bindSafely
+		@function bindSafely
+		@memberof enyo
+		@param {Object} scope The `this` context for the method.
+		@param {(Function|String)} method A Function or the name of a method to bind.
+		@param {...*} [args] Any arguments that will be provided as the initial arguments to the enclosed method.
+		@returns {Function} The bound method/closure.
 	*/
-	enyo.bindSafely = function(scope, method/*, bound arguments*/) {
+	enyo.bindSafely = function(scope, method) {
 		if (enyo.isString(method)) {
 			if (scope[method]) {
 				method = scope[method];
@@ -241,9 +274,14 @@
 		function asyncronously without doing any additional binding.
 	
 		@public
-		@method enyo.asyncMethod
+		@function asyncMethod
+		@memberof enyo
+		@param {Object} scope The `this` context for the method.
+		@param {(Function|String)} method A Function or the name of a method to bind.
+		@param {...*} [args] Any arguments that will be provided as the initial arguments to the enclosed method.
+		@returns {Number} The `setTimeout` id.
 	*/
-	enyo.asyncMethod = function(inScope, inMethod/*, inArgs*/) {
+	enyo.asyncMethod = function(scope, method) {
 		if (!inMethod) {
 			// passed just a single argument
 			return setTimeout(inScope, 1);
@@ -256,28 +294,35 @@
 		Calls named method _inMethod_ (String) on _inObject_ with optional
 		arguments _inArguments_ (Array), if the object and method exist.
 
+		@example
 			enyo.call(myWorkObject, "doWork", [3, "foo"]);
 	
 		@public
-		@method enyo.call
+		@function call
+		@memberof enyo
+		@param {Object} scope The `this` context for the method.
+		@param {(Function|String)} method A Function or the name of a method to bind.
+		@param {Array} [args] An array of arguments to pass to the method.
+		@returns {*} The return value of the method.
 	*/
-	enyo.call = function(inObject, inMethod, inArguments) {
-		var context = inObject || this;
-		if (inMethod) {
-			var fn = context[inMethod] || inMethod;
+	enyo.call = function(scope, method, args) {
+		var context = scope || this;
+		if (method) {
+			var fn = context[method] || method;
 			if (fn && fn.apply) {
-				return fn.apply(context, inArguments || []);
+				return fn.apply(context, args || []);
 			}
 		}
 	};
 
 	/**
-		Returns the current time.
-
-		The returned value is equivalent to _new Date().getTime()_.
+		Returns the current time in milliseconds. On platforms that support it will use
+		`Date.now` otherwise it will be equivalent to `new Date().getTime()`.
 		
 		@public
-		@method enyo.now
+		@function now
+		@memberof enyo
+		@returns {Number} The milliseconds representing the current time.
 	*/
 	enyo.now = Date.now || function() {
 		return new Date().getTime();
@@ -290,7 +335,10 @@
 		which is subject to system time changes.
 	
 		@public
-		@method enyo.perfNow
+		@function perfNow
+		@memberof enyo
+		@returns {Number} The milliseconds representing the current time or time since beginning
+			execution of the application as reported by the platform.
 	*/
 	enyo.perfNow = (function () {
 		// we have to check whether or not the browser has supplied a valid
@@ -313,7 +361,11 @@
 		found. May safely be called on non-existent paths.
 	
 		@public
-		@method enyo.getPath
+		@function getPath
+		@memberof enyo
+		@param {String} path The path from which to retrieve a value.
+		@returns {*} The value for the given path or `undefined` if the path could not be
+			completely resolved.
 	*/
 	var getPath = enyo.getPath = function (path) {
 		// we're trying to catch only null/undefined not empty string or 0 cases
@@ -353,7 +405,7 @@
 	
 	/**
 		@private
-		@method enyo.getPath.fast
+		@function enyo.getPath.fast
 	*/
 	enyo.getPath.fast = function (path) {
 		// the current context
@@ -381,7 +433,12 @@
 		will be triggered regardless. Returns the context from which the method was executed.
 	
 		@public
-		@method enyo.setPath
+		@function setPath
+		@memberof enyo
+		@param {String} path The path for which to set the given value.
+		@param {*} is The value to set.
+		@param {Object} [opts] An options hash.
+		@returns {this} Whatever the given context was when executed.
 	*/
 	var setPath = enyo.setPath = function (path, is, opts) {
 		// we're trying to catch only null/undefined not empty string or 0 cases
@@ -451,7 +508,7 @@
 	
 	/**
 		@private
-		@method enyo.setPath.fast
+		@function enyo.setPath.fast
 	*/
 	enyo.setPath.fast = function (path, value) {
 		// the current context
@@ -483,50 +540,77 @@
 	// ----------------------------------
 	
 	/**
+		Uppercase a given string. Will coerce to a `String` if possible/necessary.
+	
 		@public
-		@method enyo.toUpperCase
+		@function toUpperCase
+		@memberof enyo
+		@param {String} str The string to uppercase.
+		@returns {String} The uppercased string.
 	*/
-	enyo.toUpperCase = function(inString) {
-		if (inString != null) {
-			return inString.toString().toUpperCase();
+	enyo.toUpperCase = function(str) {
+		if (str != null) {
+			return str.toString().toUpperCase();
 		}
-		return inString;
+		return str;
 	};
 	
 	/**
+		Lowercase a given string. Will coerce to a `String` if possible/necessary.
+	
 		@public
-		@method enyo.toLowerCase
+		@function toLowerCase
+		@memberof enyo
+		@param {String} str The string to lowercase.
+		@returns {String} The lowercased string.
 	*/
-	enyo.toLowerCase = function(inString) {
-		if (inString != null) {
-			return inString.toString().toLowerCase();
+	enyo.toLowerCase = function(str) {
+		if (str != null) {
+			return str.toString().toLowerCase();
 		}
-		return inString;
+		return str;
 	};
 	
 	/**
+		Capitalize a given string.
+	
 		@public
-		@method enyo.cap
+		@function cap
+		@memberof enyo
+		@param {String} str The string to capitalize.
+		@returns {String} The capitalized string.
 	*/
-	enyo.cap = function(inString) {
-		return inString.slice(0, 1).toUpperCase() + inString.slice(1);
+	enyo.cap = function(str) {
+		return str.slice(0, 1).toUpperCase() + str.slice(1);
 	};
 
 	/**
+		Un-capitalize a given string.
+		
 		@public
-		@method enyo.uncap
+		@function uncap
+		@memberof enyo
+		@param {String} str The string to un-capitalize.
+		@returns {String} The un-capitalized string.
 	*/
-	enyo.uncap = function(inString) {
-		return inString.slice(0, 1).toLowerCase() + inString.slice(1);
+	enyo.uncap = function(str) {
+		return str.slice(0, 1).toLowerCase() + str.slice(1);
 	};
 	
 	/**
+		Will inject a variable number of values, in order, into a template string
+		at positions held by `%.`.
+	
 		@public
-		@method enyo.format
+		@function format
+		@memberof enyo
+		@param {String} template The string template to inject with values.
+		@param {...String} val The values to inject into the template.
+		@returns {String} A copy of the template populated with values.
 	*/
-	enyo.format = function(inVarArgs) {
+	enyo.format = function(template) {
 		var pattern = /\%./g;
-		var arg = 0, template = inVarArgs, args = arguments;
+		var arg = 0, template = template, args = arguments;
 		var replacer = function(inCode) {
 			return args[++arg];
 		};
@@ -546,7 +630,10 @@
 		without modification.
 	
 		@public
-		@method enyo.trim
+		@function trim
+		@memberof enyo
+		@param {String} str The string from which to remove whitespace.
+		@returns {String} The trimmed string.
 	*/
 	enyo.trim = function (str) {
 		return (typeof str == "string" && str.trim()) || str;
@@ -596,10 +683,12 @@
 	};
 	
 	/**
-		Returns an array of all own enumerable properties found on _inObject_.
+		Returns an array of all own enumerable properties found on a given object.
 	
 		@public
-		@method enyo.keys
+		@function keys
+		@memberof enyo
+		@alias Object.keys.
 	*/
 	enyo.keys = Object.keys;
 	
@@ -610,7 +699,13 @@
 		parameter is true, falsy values will be ignored.
 	
 		@public
-		@method enyo.only
+		@function only
+		@memberof enyo
+		@param {String[]} properties The properties to include on the returned object.
+		@param {Object} object The object from which to retrieve values for the requested properties.
+		@param {Boolean} [ignore=false] Whether or not to ignore copying falsy values.
+		@returns {Object} A new object populated with the requested properties and values from
+			the given object.
 	*/
 	enyo.only = function (properties, object, ignore) {
 		var ret = {}
@@ -638,7 +733,13 @@
 		returned object.
 	
 		@public
-		@method enyo.remap
+		@function remap
+		@memberof enyo
+		@param {Object} map The object with key/value pairs.
+		@param {Object} obj The object whose values will be used.
+		@param {Boolean} [pass=false] Whether or not to pass the unnamed properties through
+			from the given object.
+		@returns {Object} A new object whose properties have been mapped.
 	*/
 	enyo.remap = function (map, obj, pass) {
 		var ret = pass? enyo.clone(obj): {};
@@ -656,7 +757,8 @@
 		are shallow copies.
 	
 		@public
-		@method enyo.except
+		@function except
+		@memberof enyo
 	*/
 	enyo.except = function (properties, object) {
 		// the new object to return with just the requested keys
@@ -699,7 +801,8 @@
 		copy of the original array of objects for comparison.
 	
 		@public
-		@method enyo.indexBy
+		@function indexBy
+		@memberof enyo
 	*/
 	enyo.indexBy = function (property, array, filter) {
 		// the return value - indexed map from the given array
@@ -743,7 +846,8 @@
 		Shallow-clones an object or an array.
 		
 		@public
-		@method enyo.clone
+		@function clone
+		@memberof enyo
 	*/
 	enyo.clone = function(obj) {
 		return enyo.isArray(obj) ? enyo.cloneArray(obj) : enyo.mixin({}, obj);
@@ -783,7 +887,8 @@
 		Setting _options_ to true will set all options to true.
 	
 		@public
-		@method enyo.mixin
+		@function mixin
+		@memberof enyo
 	*/
 	var mixin = enyo.mixin = function () {
 		var ret = arguments[0]
@@ -825,7 +930,8 @@
 		Returns an array of the values of all properties in an object.
 	
 		@public
-		@method enyo.values
+		@function values
+		@memberof enyo
 	*/
 	enyo.values = function (obj) {
 		var ret = [];
@@ -946,7 +1052,8 @@
 		browser supplied method when available.
 		
 		@public
-		@method enyo.indexOf
+		@function indexOf
+		@memberof enyo
 	*/
 	enyo.indexOf = function(array, el, offset) {
 		if (!(array instanceof Array)) return el.indexOf(array, offset);
@@ -955,6 +1062,10 @@
 	
 	/**
 		ECMA 5.1 (ECMA-262) draft implementation of Array.prototype.lastIndexOf.
+	
+		@public
+		@function lastIndexOf
+		@memberof enyo
 	*/
 	enyo.lastIndexOf = function (array, el, offset) {
 		if (!(array instanceof Array)) return el.lastIndexOf(array, offset);
@@ -965,7 +1076,8 @@
 		ECMA6 (ECMA-262) draft implementation of Array.prototype.findIndex.
 	
 		@public
-		@method enyo.findIndex
+		@function findIndex
+		@memberof enyo
 	*/
 	enyo.findIndex = function (array, fn, ctx) {
 		return array.findIndex(fn, ctx);
@@ -975,7 +1087,8 @@
 		ECMA 6 (ECMA-262) draft implementation of Array.prototype.find.
 	
 		@public
-		@method enyo.find
+		@function find
+		@memberof enyo
 	*/
 	enyo.find = function (array, fn, ctx) {
 		return array.find(fn, ctx);
@@ -983,7 +1096,8 @@
 	
 	/**
 		@public
-		@method enyo.where
+		@function where
+		@memberof enyo
 		@alias enyo.find
 	*/
 	enyo.where = enyo.find;
@@ -992,7 +1106,8 @@
 		ECMA 5.1 (ECMA-262) draft implementation of Array.prototype.forEach.
 	
 		@public
-		@method enyo.forEach
+		@function forEach
+		@memberof enyo
 	*/
 	enyo.forEach = function (array, fn, ctx) {
 		return array.forEach(fn, ctx);
@@ -1000,7 +1115,8 @@
 	
 	/**
 		@public
-		@method enyo.map
+		@function map
+		@memberof enyo
 	*/
 	enyo.map = function (array, fn, ctx) {
 		return array.map(fn, ctx);
@@ -1008,7 +1124,8 @@
 	
 	/**
 		@public
-		@method enyo.filter
+		@function filter
+		@memberof enyo
 	*/
 	enyo.filter = function (array, fn, ctx) {
 		return array.filter(fn, ctx);
@@ -1016,7 +1133,8 @@
 	
 	/**
 		@public
-		@method enyo.pluck
+		@function pluck
+		@memberof enyo
 	*/
 	enyo.pluck = function (array, prop) {
 		if (!(array instanceof Array)) {
@@ -1034,7 +1152,8 @@
 	
 	/**
 		@public
-		@method enyo.merge
+		@function merge
+		@memberof enyo
 	*/
 	enyo.merge = function () {
 		var ret = []
@@ -1047,7 +1166,8 @@
 	
 	/**
 		@public
-		@method enyo.union
+		@function union
+		@memberof enyo
 	*/
 	enyo.union = function () {
 		var ret = []
@@ -1066,7 +1186,8 @@
 	
 	/**
 		@public
-		@method enyo.unique
+		@function unique
+		@memberof enyo
 		@alias enyo.union
 	*/
 	enyo.unique = enyo.union;
@@ -1084,7 +1205,8 @@
 		The special _arguments_ variable is an example of an array-like object.
 	
 		@public
-		@method enyo.cloneArray
+		@function cloneArray
+		@memberof enyo
 	*/
 	enyo.cloneArray = function(inArrayLike, inOffset, inStartWith) {
 		var arr = inStartWith || [];
@@ -1096,14 +1218,16 @@
 	
 	/**
 		@public
-		@method enyo.toArray
+		@function toArray
+		@memberof enyo
 		@alias enyo.cloneArray
 	*/
 	enyo.toArray = enyo.cloneArray;
 	
 	/**
 		@public
-		@method enyo.remove
+		@function remove
+		@memberof enyo
 	*/
 	enyo.remove = function(array, el) {
 		if (!(array instanceof Array)) {
@@ -1117,18 +1241,22 @@
 		return array;
 	};
 
-	//* @protected
 	/**
 		This regex pattern is used by the _enyo.isRtl_ function.
 
 		Arabic: \u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFE
 		Hebrew: \u0590-\u05FF\uFB1D-\uFB4F
+	
+		@private
 	*/
 	var rtlPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFE\u0590-\u05FF\uFB1D-\uFB4F]/;
 
-	//*@public
 	/**
-		Takes content and determines whether or not it is RTL
+		Takes content and determines whether or not it is RTL.
+	
+		@public
+		@function isRtl
+		@memberof enyo
 	*/
 	enyo.isRtl = function (str) {
 		return rtlPattern.test(str);

@@ -1,32 +1,58 @@
-(function (enyo) {
+/**
+	@namespace enyo
+*/
+(function (enyo, scope) {
 	
-	var kind = enyo.kind
-		, inherit = enyo.inherit
-		, mixin = enyo.mixin;
+	var kind = enyo.kind;
 		
-	var ModelList = enyo.ModelList;
+	var ModelList = enyo.ModelList,
 	
-	var Store = kind({
-		kind: enyo.Object,
+		// because Object is already taken by something...blarg
+		eObject = enyo.Object;
+	
+	/**
+		@private
+		@class Store
+		@extends enyo.Object
+	*/
+	var Store = kind(
+		/** @lends Store.prototype */ {
 		
+		/**
+			@private
+		*/
+		kind: eObject,
+		
+		/**
+			@public
+			@method
+		*/
 		find: function () {
 			
 			return this;
 		},
 		
+		/**
+			@public
+			@method
+		*/
 		findLocal: function (ctor, fn, opts) {
 			var kindName = ctor.prototype.kindName
 				, list = this.models[kindName]
 				, options = {all: true, context: this}
 				, ctx, all;
 				
-			opts = opts? mixin({}, [options, opts]): options;
+			opts = opts? enyo.mixin({}, [options, opts]): options;
 			ctx = opts.context;
 			all = opts.all;
 				
 			if (list) return all? list.find(fn, ctx): list.where(fn, ctx);
 		},
 		
+		/**
+			@public
+			@method
+		*/
 		add: function (models) {
 			var kindName = models && models instanceof Array? models[0].kindName: models.kindName
 				, list = this.models[kindName];
@@ -36,6 +62,10 @@
 			return this;
 		},
 		
+		/**
+			@public
+			@method
+		*/
 		remove: function (models) {
 			var kindName = models && models instanceof Array? models[0].kindName: models.kindName
 				, list = this.models[kindName];
@@ -45,15 +75,19 @@
 			return this;
 		},
 		
+		/**
+			@public
+			@method
+		*/
 		has: function (ctor, model) {
 			var list = this.models[ctor.prototype.kindName];
 			return list? list.has(model): false;
 		},
 		
-		
-		
-		
-		constructor: inherit(function (sup) {
+		/**
+			@private
+		*/
+		constructor: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				
@@ -66,9 +100,10 @@
 		})
 	});
 	
-	
-	
-	
+	/**
+		@public
+		@this enyo.store
+	*/
 	enyo.store = new Store();
 	
 	// 
@@ -340,4 +375,4 @@
 	// 
 	// enyo.store = new Store();
 
-})(enyo);
+})(enyo, this);
