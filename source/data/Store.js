@@ -11,7 +11,9 @@
 		eObject = enyo.Object;
 	
 	/**
-		@private
+		An anonymous kind used internally for the singleton {@link enyo.store}.
+
+		@protected
 		@class Store
 		@extends enyo.Object
 	*/
@@ -91,7 +93,7 @@
 			return function () {
 				sup.apply(this, arguments);
 				
-				// @NOTE: All future sub-kinds of enyo.Model that are processed will automatically
+				// all future sub-kinds of enyo.Model that are processed will automatically
 				// create/add their entries to this object in their concat method
 				this.models = {
 					'enyo.Model': new ModelList()
@@ -101,8 +103,11 @@
 	});
 	
 	/**
+		A runtime database for working with {@link enyo.Model} instances.
+	
 		@public
-		@this enyo.store
+		@type Store
+		@memberof enyo
 	*/
 	enyo.store = new Store();
 	
