@@ -90,34 +90,26 @@
 			@returns {this} The callee for chaining.
 		*/
 		start: function () {
-			
 			if (this.renderOnStart) this.render();
 			return this;
-			
 		},
 		
 		/**
 			@private
 		*/
 		render: enyo.inherit(function (sup) {
-			
 			return function () {
-				
 				// call the super method render() from ViewController
 				sup.apply(this, arguments);
 				if (this.view && this.view.generated) this.set('viewReady', true);
-				
 			};
-			
 		}),
 		
 		/**
 			@private
 		*/
 		constructor: enyo.inherit(function (sup) {
-			
 			return function (props) {
-				
 				if (props && typeof props.name == 'string') {
 					enyo.setPath(props.name, this);
 					// since applications are stored by their id's we set it
@@ -129,9 +121,7 @@
 				// backwards compatibility for the deprecated API for now
 				this.controllers = this.$;
 				enyo.applications[this.id || this.makeId()] = this;
-				
 			};
-			
 		}),
 		
 		/**
@@ -141,15 +131,12 @@
 			@private
 		*/
 		create: enyo.inherit(function (sup) {
-			
 			return function () {
-				
 				// ensure that we create() all of the components before continuing
 				sup.apply(this, arguments);
 				if (this.autoStart) this.start();
 				
 			};
-			
 		}),
 		
 		/**
@@ -159,14 +146,10 @@
 			@private
 		*/
 		adjustComponentProps: enyo.inherit(function (sup) {
-			
 			return function (props) {
-				
 				props.app = this;
 				sup.apply(this, arguments);
-				
 			};
-			
 		}),
 		
 		/**
@@ -175,14 +158,10 @@
 			@private
 		*/
 		destroy: enyo.inherit(function (sup) {
-			
 			return function () {
-				
 				delete enyo.applications[this.id];
 				sup.apply(this, arguments);
-				
 			};
-			
 		}),
 		
 		/**
