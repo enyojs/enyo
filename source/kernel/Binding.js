@@ -1,46 +1,51 @@
-(function (enyo) {
+/**
+	@namespace enyo
+*/
+(function (enyo, scope) {
 	
-	var kind = enyo.kind
-		, mixin = enyo.mixin
-		, uid = enyo.uid
-		// , where = enyo.where
-		// , isString = enyo.isString
-		// , isObject = enyo.isObject
-		, isFunction = enyo.isFunction
-		, getPath = enyo.getPath
-		, remove = enyo.remove
-		, bindings = enyo.bindings = [];
-	
-	var DIRTY_FROM = 0x01
-		, DIRTY_TO = 0x02;
+	var kind = enyo.kind;
 	
 	/**
+		All {@link enyo.Binding} instances are stored in this list and can be retrieved via the
+		{@link enyo.Binding~find} method using a {@link enyo.Binding#id} to identify it.
+	
+		@public
+		@name enyo.bindings
+		@memberof enyo
+	*/
+	var bindings = enyo.bindings = [];
+	
+	var DIRTY_FROM = 0x01,
+		DIRTY_TO = 0x02;
+	
+	/**
+		Used to determine if a {@link enyo.Binding} is actually ready.
+	
 		@private
-		@method
 	*/
 	function ready (binding) {
 		var rdy = binding.ready;
 		
 		if (!rdy) {
 			
-			var from = binding.from || ""
-				, to = binding.to || ""
-				, source = binding.source
-				, target = binding.target
-				, owner = binding.owner;
+			var from = binding.from || '',
+				to = binding.to || '',
+				source = binding.source,
+				target = binding.target,
+				owner = binding.owner;
 			
-			/*isString(from)*/ (typeof from == "string") || (from = "");
-			/*isString(to)*/ (typeof to == "string") || (to = "");
+			if (typeof from != 'string') from = '';
+			if (typeof to != 'string') to = '';
 			
 			if (!source) {
 				
 				// the worst case scenario here is for backward compatability purposes
 				// we have to at least be able to derive the source via the from string
-				if (from[0] == "^") {
+				if (from[0] == '^') {
 					
 					// this means we're reaching for a global
 					from = from.slice(1);
-					source = getPath.call(enyo.global, from);
+					source = enyo.getPath.call(enyo.global, from);
 					
 				} else {
 					source = owner;
@@ -52,11 +57,11 @@
 				
 				// same worst case as above, for backwards compatability purposes
 				// we have to at least be able to derive the target via the to string
-				if (to[0] == "^") {
+				if (to[0] == '^') {
 					
 					// this means we're reaching for a global
 					to = to.slice(1);
-					target = getPath.call(enyo.global, to);
+					target = enyo.getPath.call(enyo.global, to);
 				} else {
 					target = owner;
 				}
@@ -64,13 +69,13 @@
 			
 			binding.target = target;
 			binding.source = source;
-			binding.from = from[0] == "."? from.slice(1): from;
-			binding.to = to[0] == "."? to.slice(1): to;
+			binding.from = from[0] == '.'? from.slice(1): from;
+			binding.to = to[0] == '.'? to.slice(1): to;
 			
 			// now our sanitation
 			rdy = !! (
-				(source && /*isObject(source)*/ (typeof source == "object")) &&
-				(target && /*isObject(target)*/ (typeof source == "object")) &&
+				(source && (typeof source == 'object')) &&
+				(target && (typeof source == 'object')) &&
 				(from) &&
 				(to)
 			);
@@ -85,8 +90,20 @@
 	*/
 	kind(
 		/** @lends enyo.Binding.prototype */ {
-		name: "enyo.Binding",
+		
+		/**
+			@private
+		*/
+		name: 'enyo.Binding',
+		
+		/**
+			@private
+		*/
 		kind: null,
+		
+		/**
+			@private
+		*/
 		noDefer: true,
 		
 		/**
@@ -199,7 +216,7 @@
 				
 				// for two-way bindings we unregister the observer from
 				// the target as well
-				!this.oneWay && this.target.unobserve(this.to, this.onTarget, this);
+				if (!this.oneWay) this.target.unobserve(this.to, this.onTarget, this);
 				
 				this.connected = false;
 			}
@@ -212,13 +229,14 @@
 			@method
 		*/
 		sync: function () {
+			var source = this.source,
+				target = this.target,
+				from = this.from,
+				to = this.to,
+				xform = this.getTransform(),
+				val;
+			
 			if (this.isConnected()) {
-				var source = this.source
-					, target = this.target
-					, from = this.from
-					, to = this.to
-					, xform = this.getTransform()
-					, val;
 					
 				switch (this.dirty) {
 				case DIRTY_TO:
@@ -239,12 +257,12 @@
 				this.dirty = null;
 				this._stop = null;
 			}
+			
 			return this;
 		},
 		
 		/**
 			@private
-			@method
 		*/
 		getTransform: function () {
 			return this._didInitTransform? this.transform: (function (bnd) {
@@ -255,13 +273,13 @@
 					, xformOwner = owner && owner.bindingTransformOwner;
 				
 				if (xform) {
-					if (typeof xform == "string") {
+					if (typeof xform == 'string') {
 						if (xformOwner && xformOwner[xform]) {
 							xform = xformOwner[xform];
 						} else if (owner && owner[xform]) {
 							xform = owner[xform];
 						} else {
-							xform = getPath(xform);
+							xform = enyo.getPath(xform);
 						}
 					}
 					
@@ -272,14 +290,13 @@
 		
 		/**
 			@private
-			@method
 		*/
 		constructor: function (props) {
 			bindings.push(this);
 			
-			props && mixin(this, props);
+			props && enyo.mixin(this, props);
 			
-			this.euid || (this.euid = uid("b"));
+			this.euid || (this.euid = uid('b'));
 			
 			this.autoConnect && this.connect();
 			this.autoSync && this.sync();
@@ -288,6 +305,7 @@
 		/**
 			@public
 			@method
+			@returns {this} Callee for chaining.
 		*/
 		destroy: function () {
 			var owner = this.owner;
@@ -302,11 +320,12 @@
 			if (owner && !owner.destroyed) {
 				owner.removeBinding(this);
 			}
+			
+			return this;
 		},
 		
 		/**
 			@private
-			@method
 		*/
 		onSource: function (was, is, path) {
 			// @TODO: Should it...would it benefit from using these passed in values?
@@ -316,7 +335,6 @@
 		
 		/**
 			@private
-			@method
 		*/
 		onTarget: function (was, is, path) {
 			// @TODO: Same question as above, it seems useful but would it affect computed
@@ -324,7 +342,6 @@
 			this.dirty = this.dirty == DIRTY_FROM? null: DIRTY_TO;
 			return this.dirty == DIRTY_TO && this.sync();
 		}
-		
 	});
 	
 	/**
@@ -356,4 +373,4 @@
 	*/
 	enyo.defaultBindingKind = enyo.Binding;
 	
-})(enyo);
+})(enyo, this);
