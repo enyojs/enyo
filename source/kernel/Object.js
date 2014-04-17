@@ -3,11 +3,30 @@
 */
 (function (enyo, scope) {
 
-	var kind = enyo.kind;
+	var kind = enyo.kind,
+		logging = enyo.logging;
 
 	var MixinSupport = enyo.MixinSupport
 		, ObserverSupport = enyo.ObserverSupport
 		, BindingSupport = enyo.BindingSupport;
+		
+	/**
+		Used by all {@link enyo.Object objects} and subkinds when using the
+		{@link enyo.Object#log}, {@link enyo.Object#warn} and {@link enyo.Object#error} methods.
+	
+		@private
+	*/
+	function log (method, args) {
+		if (logging.shouldLog(method)) {
+			try {
+				throw new Error();
+			} catch(err) {
+				logging._log(method, [args.callee.caller.displayName + ': ']
+					.concat(enyo.cloneArray(args)));
+				enyo.log(err.stack);
+			}
+		}
+	}
 
 	/**
 		{@link enyo.Object} lies at the heart of the Enyo framework's implementations of property
@@ -50,20 +69,14 @@
 		/**
 			@private
 		*/
-		mixins: [
-			MixinSupport,
-			ObserverSupport,
-			BindingSupport
-		],
+		mixins: [MixinSupport, ObserverSupport, BindingSupport],
 
 		/**
 			@private
 		*/
 		constructor: function(props) {
-			
 			enyo._objectCount++;
 			this.importProps(props);
-			
 		},
 
 		/**
@@ -77,7 +90,6 @@
 			@returns {this} The callee for chaining.
 		*/
 		importProps: function (props) {
-			
 			var key;
 
 			if (props) {
@@ -98,7 +110,6 @@
 			}
 			
 			return this;
-			
 		},
 		
 		/**
@@ -111,14 +122,12 @@
 			@returns {this} The callee for chaining.
 		*/
 		destroyObject: function(name) {
-			
 			if (this[name] && this[name].destroy) {
 				this[name].destroy();
 			}
 			this[name] = null;
 			
 			return this;
-			
 		},
 		
 		/**
@@ -139,11 +148,9 @@
 			});
 		*/
 		log: function() {
-			
-			var acc = arguments.callee.caller;
-			var nom = ((acc ? acc.displayName : '') || '(instance method)') + ':';
-			enyo.logging.log('log', [nom].concat(enyo.cloneArray(arguments)));
-			
+			var acc = arguments.callee.caller,
+				nom = ((acc ? acc.displayName : '') || '(instance method)') + ':';
+			logging.log('log', [nom].concat(enyo.cloneArray(arguments)));
 		},
 		
 		/**
@@ -154,9 +161,7 @@
 			@method
 		*/
 		warn: function() {
-			
-			this._log('warn', arguments);
-			
+			log('warn', arguments);
 		},
 		
 		/**
@@ -167,26 +172,7 @@
 			@method
 		*/
 		error: function() {
-			
-			this._log('error', arguments);
-			
-		},
-		
-		/**
-			@private
-		*/
-		_log: function(method, args) {
-			
-			if (enyo.logging.shouldLog(method)) {
-				try {
-					throw new Error();
-				} catch(x) {
-					enyo.logging._log(method, [args.callee.caller.displayName + ': ']
-						.concat(enyo.cloneArray(args)));
-					enyo.log(x.stack);
-				}
-			}
-			
+			log('error', arguments);
 		},
 
 		/**
@@ -232,10 +218,8 @@
 			@alias enyo.bindSafely
 		*/
 		bindSafely: function(method) {
-			
 			var args = Array.prototype.concat.apply([this], arguments);
 			return enyo.bindSafely.apply(enyo, args);
-			
 		},
 		
 		/**
@@ -253,7 +237,6 @@
 			// to this flag.
 			// Using this.set to make the property observable
 			return this.set('destroyed', true);
-			
 		}
 	});
 
@@ -266,7 +249,6 @@
 		@private
 	*/
 	enyo.Object.concat = function (ctor, props) {
-		
 		var pubs = props.published,
 			cpy,
 			prop;
@@ -280,7 +262,6 @@
 				addGetterSetter(prop, pubs[prop], cpy);
 			}
 		}
-		
 	};
 
 	/**
@@ -326,7 +307,6 @@
 			// and we mark it as generated
 			fn.generated = true;
 		} else if (fn && typeof fn == 'function' && !fn.generated) setters[prop] = setName;
-		
 	}
 
 })(enyo, this);
