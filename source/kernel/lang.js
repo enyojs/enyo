@@ -82,7 +82,7 @@
 		@returns {String} An optionally prefixed identifier.
 	*/
 	enyo.uid = function (prefix) {
-		return String((prefix? prefix: "") + uidCounter++);
+		return String((prefix? prefix: '') + uidCounter++);
 	};
 	
 	/**
@@ -96,10 +96,10 @@
 	enyo.uuid = function () {
 		// @TODO: Could possibly be faster
 		var t, p = (
-			(Math.random().toString(16).substr(2,8)) + "-" +
-			((t=Math.random().toString(16).substr(2,8)).substr(0,4)) + "-" +
+			(Math.random().toString(16).substr(2,8)) + '-' +
+			((t=Math.random().toString(16).substr(2,8)).substr(0,4)) + '-' +
 			(t.substr(4,4)) +
-			((t=Math.random().toString(16).substr(2,8)).substr(0,4)) + "-" +
+			((t=Math.random().toString(16).substr(2,8)).substr(0,4)) + '-' +
 			(t.substr(4,4)) +
 			(Math.random().toString(16).substr(2,8))
 		);
@@ -131,7 +131,7 @@
 		@returns {Boolean} `true` if a `String`, `false` otherwise.
 	*/
 	enyo.isString = function(it) {
-		return toString.call(it) === "[object String]";
+		return toString.call(it) === '[object String]';
 	};
 
 	/**
@@ -144,7 +144,7 @@
 		@returns {Boolean} `true` if a `Function`, `false` otherwise.
 	*/
 	enyo.isFunction = function(it) {
-		return toString.call(it) === "[object Function]";
+		return toString.call(it) === '[object Function]';
 	};
 
 	/**
@@ -157,7 +157,7 @@
 		@returns {Boolean} `true` if an `Array`, `false` otherwise.
 	*/
 	enyo.isArray = Array.isArray || function(it) {
-		return toString.call(it) === "[object Array]";
+		return toString.call(it) === '[object Array]';
 	};
 
 	/**
@@ -171,7 +171,7 @@
 	*/
 	enyo.isObject = Object.isObject || function (it) {
 		// explicit null/undefined check for IE8 compatibility
-		return (it != null) && (toString.call(it) === "[object Object]");
+		return (it != null) && (toString.call(it) === '[object Object]');
 	};
 
 	/**
@@ -184,7 +184,7 @@
 		@returns {Boolean} `true` if an explicit `true`, `false` otherwise.
 	*/
 	enyo.isTrue = function(it) {
-		return !(it === "false" || it === false || it === 0 || it === null || it === undefined);
+		return !(it === 'false' || it === false || it === 0 || it === null || it === undefined);
 	};
 	
 	/**
@@ -205,14 +205,14 @@
 			scope = null;
 		}
 		scope = scope || enyo.global;
-		if (enyo.isString(method)) {
+		if (typeof method == 'string') {
 			if (scope[method]) {
 				method = scope[method];
 			} else {
 				throw('enyo.bind: scope["' + method + '"] is null (scope="' + scope + '")');
 			}
 		}
-		if (enyo.isFunction(method)) {
+		if (typeof method == 'function') {
 			var args = enyo.cloneArray(arguments, 2);
 			if (method.bind) {
 				return method.bind.apply(method, [scope].concat(args));
@@ -229,7 +229,7 @@
 	};
 	
 	/**
-		Binds a callback to a scope.  If the object has a "destroyed" property that's truthy,
+		Binds a callback to a scope.  If the object has a 'destroyed' property that's truthy,
 		then the callback will not be run if called.  This can be used to implement both
 		enyo.Object.bindSafely and for enyo.Object-like objects like enyo.Model and enyo.Collection.
 	
@@ -242,14 +242,14 @@
 		@returns {Function} The bound method/closure.
 	*/
 	enyo.bindSafely = function(scope, method) {
-		if (enyo.isString(method)) {
+		if (typeof method == 'string') {
 			if (scope[method]) {
 				method = scope[method];
 			} else {
 				throw('enyo.bindSafely: scope["' + method + '"] is null (this="' + this + '")');
 			}
 		}
-		if (enyo.isFunction(method)) {
+		if (typeof method == 'function') {
 			var args = enyo.cloneArray(arguments, 2);
 			return function() {
 				if (scope.destroyed) {
@@ -282,9 +282,9 @@
 		@returns {Number} The `setTimeout` id.
 	*/
 	enyo.asyncMethod = function(scope, method) {
-		if (!inMethod) {
+		if (!method) {
 			// passed just a single argument
-			return setTimeout(inScope, 1);
+			return setTimeout(scope, 1);
 		} else {
 			return setTimeout(enyo.bind.apply(enyo, arguments), 1);
 		}
@@ -295,7 +295,7 @@
 		arguments _inArguments_ (Array), if the object and method exist.
 
 		@example
-			enyo.call(myWorkObject, "doWork", [3, "foo"]);
+			enyo.call(myWorkObject, 'doWork', [3, 'foo']);
 	
 		@public
 		@function call
@@ -369,26 +369,29 @@
 	*/
 	var getPath = enyo.getPath = function (path) {
 		// we're trying to catch only null/undefined not empty string or 0 cases
-		if (!path && /*!enyo.exists(path)*/ path !== null && path !== undefined) return path;
+		if (!path && path !== null && path !== undefined) return path;
 		
-		var next = (this === enyo? enyo.global: this)
-			, parts, part, getter, prev;
+		var next = (this === enyo? enyo.global: this),
+			parts,
+			part,
+			getter,
+			prev;
 		
 		// obviously there is a severe penalty for requesting get with a path lead
 		// by unnecessary relative notation...
-		if (path[0] == ".") path = path.replace(/^\.+/, "");
+		if (path[0] == '.') path = path.replace(/^\.+/, '');
 		
 		// here's where we check to make sure we have a truthy string-ish
 		if (!path) return;
 		
-		parts = path.split(".");
+		parts = path.split('.');
 		part = parts.shift();
 		
 		do {
 			prev = next;
 			// for constructors we must check to make sure they are undeferred before
 			// looking for static properties
-			if (next.prototype) next = enyo.checkConstructor(next);
+			// if (next.prototype) next = enyo.checkConstructor(next);
 			// for the auto generated or provided published property support we have separate
 			// routines that must be called to preserve compatibility
 			if (next._getters && ((getter = next._getters[part])) && !getter.generated) next = next[getter]();
@@ -400,7 +403,7 @@
 				
 		// if necessary we ensure we've undeferred any constructor that we're
 		// retrieving here as a final property as well
-		return next && next.prototype? enyo.checkConstructor(next): next;
+		return next/* && next.prototype? enyo.checkConstructor(next): next*/;
 	};
 	
 	/**
@@ -416,7 +419,7 @@
 			v = b[path];
 		}
 		
-		return (("function" == typeof v && enyo.checkConstructor(v)) || v);
+		return (('function' == typeof v && enyo.checkConstructor(v)) || v);
 	};
 
 	/**
@@ -442,14 +445,20 @@
 	*/
 	var setPath = enyo.setPath = function (path, is, opts) {
 		// we're trying to catch only null/undefined not empty string or 0 cases
-		if (!path || (!path && /*!enyo.exists(path)*/ path !== null && path !== undefined)) return this;
+		if (!path || (!path && path !== null && path !== undefined)) return this;
 		
-		var next = (this === enyo? enyo.global: this)
-			, options = {create: true, silent: false, force: false}
-			, base = next
-			, parts, part, was, force, create, silent, comparator;
+		var next = (this === enyo? enyo.global: this),
+			options = {create: true, silent: false, force: false},
+			base = next,
+			parts,
+			part,
+			was,
+			force,
+			create,
+			silent,
+			comparator;
 		
-		if (typeof opts == "object") opts = enyo.mixin({}, [options, opts]);
+		if (typeof opts == 'object') opts = enyo.mixin({}, [options, opts]);
 		else {
 			force = opts;
 			opts = options;
@@ -463,12 +472,12 @@
 		
 		// obviously there is a severe penalty for requesting get with a path lead
 		// by unnecessary relative notation...
-		if (path[0] == ".") path = path.replace(/^\.+/, "");
+		if (path[0] == '.') path = path.replace(/^\.+/, '');
 		
 		// here's where we check to make sure we have a truthy string-ish
 		if (!path) return next;
 		
-		parts = path.split(".");
+		parts = path.split('.');
 		part = parts.shift();
 		
 		do {
@@ -479,10 +488,10 @@
 				// correct constructor
 				// @TODO: It seems ludicrous to have to check this on every single part of a chain; if we didn't have
 				// deferred constructors this wouldn't be necessary and is expensive - unnecessarily so when speed is so important
-				if (next.prototype) next = enyo.checkConstructor(next);
+				// if (next.prototype) next = enyo.checkConstructor(next);
 				if (next !== base && next.set && next.set !== setPath) {
 					parts.unshift(part);
-					next.set(parts.join("."), is, opts);
+					next.set(parts.join('.'), is, opts);
 					return base;
 				}
 				if (next !== base && next.get) next = (next.get !== getPath? next.get(part): next[part]) || (create && (next[part] = {}));
@@ -609,11 +618,16 @@
 		@returns {String} A copy of the template populated with values.
 	*/
 	enyo.format = function(template) {
-		var pattern = /\%./g;
-		var arg = 0, template = template, args = arguments;
-		var replacer = function(inCode) {
+		var pattern = /\%./g,
+			arg = 0,
+			template = template,
+			args = arguments,
+			replacer;
+		
+		replacer = function() {
 			return args[++arg];
 		};
+		
 		return template.replace(pattern, replacer);
 	};
 	
@@ -621,7 +635,7 @@
 		@private
 	*/
 	String.prototype.trim = String.prototype.trim || function () {
-		return this.replace(/^\s+|\s+$/g, "");
+		return this.replace(/^\s+|\s+$/g, '');
 	};
 	
 	/**
@@ -636,7 +650,7 @@
 		@returns {String} The trimmed string.
 	*/
 	enyo.trim = function (str) {
-		return (typeof str == "string" && str.trim()) || str;
+		return (typeof str == 'string' && str.trim()) || str;
 	};
 	
 	// ----------------------------------
@@ -648,7 +662,7 @@
 		return function (obj) {
 			// in the polyfill we can't support the additional features so we are ignoring
 			// the extra parameters
-			if (!obj || obj === null || typeof obj != "object") throw "Object.create: Invalid parameter";
+			if (!obj || obj === null || typeof obj != 'object') throw 'Object.create: Invalid parameter';
 			anon.prototype = obj;
 			return new anon();
 		};
@@ -663,7 +677,7 @@
 			}
 		}
 		// *sigh* IE 8
-		if (!({toString: null}).propertyIsEnumerable("toString")) {
+		if (!({toString: null}).propertyIsEnumerable('toString')) {
 			var dontEnums = [
 				'toString',
 				'toLocaleString',
@@ -708,10 +722,11 @@
 			the given object.
 	*/
 	enyo.only = function (properties, object, ignore) {
-		var ret = {}
-			, prop;
+		var ret = {},
+			prop,
+			i;
 		
-		for (var i=0, len=properties.length >>> 0; i<len; ++i) {
+		for (i = 0, len = properties.length >>> 0; i < len; ++i) {
 			prop = properties[i];
 			
 			if (ignore && (object[prop] === undefined || object[prop] === null)) continue;
@@ -742,10 +757,11 @@
 		@returns {Object} A new object whose properties have been mapped.
 	*/
 	enyo.remap = function (map, obj, pass) {
-		var ret = pass? enyo.clone(obj): {};
+		var ret = pass ? enyo.clone(obj) : {},
+			key;
 		
-		for (var key in map) {
-			if (key in obj) ret[map[key]] = obj.get? obj.get(key): obj[key];
+		for (key in map) {
+			if (key in obj) ret[map[key]] = obj.get ? obj.get(key) : obj[key];
 		}
 		return ret;
 	};
@@ -762,17 +778,17 @@
 	*/
 	enyo.except = function (properties, object) {
 		// the new object to return with just the requested keys
-		var ret = {};
-		var keep;
-		var idx = 0;
-		var len;
-		var key;
+		var ret = {},
+			keep,
+			idx = 0,
+			len,
+			key;
 		// sanity check the properties array
 		if (!exists(properties) || !(properties instanceof Array)) {
 			return ret;
 		}
 		// sanity check the object
-		if (!exists(object) || "object" !== typeof object) {
+		if (!exists(object) || 'object' !== typeof object) {
 			return ret;
 		}
 		// we want to only use the union of the properties and the
@@ -806,22 +822,22 @@
 	*/
 	enyo.indexBy = function (property, array, filter) {
 		// the return value - indexed map from the given array
-		var map = {};
-		var value;
-		var len;
-		var idx = 0;
+		var map = {},
+			value,
+			len,
+			idx = 0;
 		// sanity check for the array with an efficient native array check
 		if (!exists(array) || !(array instanceof Array)) {
 			return map;
 		}
 		// sanity check the property as a string
-		if (!exists(property) || "string" !== typeof property) {
+		if (!exists(property) || 'string' !== typeof property) {
 			return map;
 		}
 		// the immutable copy of the array
 		var copy = enyo.clone(array);
 		// test to see if filter actually exsits
-		filter = exists(filter) && "function" === typeof filter? filter: undefined;
+		filter = exists(filter) && 'function' === typeof filter ? filter : undefined;
 		for (len = array.length; idx < len; ++idx) {
 			// grab the value from the array
 			value = array[idx];
@@ -891,10 +907,10 @@
 		@memberof enyo
 	*/
 	var mixin = enyo.mixin = function () {
-		var ret = arguments[0]
-			, src = arguments[1]
-			, opts = arguments[2]
-			, val;
+		var ret = arguments[0],
+			src = arguments[1],
+			opts = arguments[2],
+			val;
 		
 		if (!ret) ret = {};
 		else if (ret instanceof Array) {
