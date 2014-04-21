@@ -241,8 +241,8 @@
 				switch (this.dirty) {
 				case DIRTY_TO:
 					val = target.get(to);
-					xform && (val = xform(val, DIRTY_TO, this));
-					!this._stop && source.set(from, val, {create: false});
+					if (xform) val = xform(val, DIRTY_TO, this);
+					if (!this._stop) source.set(from, val, {create: false});
 					break;
 				case DIRTY_FROM:
 					
@@ -250,8 +250,8 @@
 				// it is ever arbitrarily called not having been dirty?
 				// default:
 					val = source.get(from);
-					xform && (val = xform(val, DIRTY_FROM, this));
-					!this._stop && target.set(to, val, {create: false});
+					if (xform) val = xform(val, DIRTY_FROM, this);
+					if (!this._stop) target.set(to, val, {create: false});
 					break;
 				}
 				this.dirty = null;
@@ -268,9 +268,9 @@
 			return this._didInitTransform? this.transform: (function (bnd) {
 				bnd._didInitTransform = true;
 				
-				var xform = bnd.transform
-					, owner = bnd.owner
-					, xformOwner = owner && owner.bindingTransformOwner;
+				var xform = bnd.transform,
+					owner = bnd.owner,
+					xformOwner = owner && owner.bindingTransformOwner;
 				
 				if (xform) {
 					if (typeof xform == 'string') {
@@ -283,7 +283,7 @@
 						}
 					}
 					
-					return (bnd.transform = isFunction(xform)? xform: null);
+					return (bnd.transform = (typeof xform == 'function' ? xform : null));
 				}
 			})(this);
 		},
@@ -294,12 +294,10 @@
 		constructor: function (props) {
 			bindings.push(this);
 			
-			props && enyo.mixin(this, props);
-			
-			this.euid || (this.euid = uid('b'));
-			
-			this.autoConnect && this.connect();
-			this.autoSync && this.sync();
+			if (props) enyo.mixin(this, props);
+			if (!this.euid) this.euid = enyo.uid('b');
+			if (this.autoConnect) this.connect();
+			if (this.autoSync) this.sync();
 		},
 		
 		/**
@@ -315,11 +313,11 @@
 			this.source = null;
 			this.target = null;
 			this.destroyed = true;
-			remove(this, bindings);
 			
-			if (owner && !owner.destroyed) {
-				owner.removeBinding(this);
-			}
+			// @todo: remove me or postpone operation?
+			enyo.remove(this, bindings);
+			
+			if (owner && !owner.destroyed) owner.removeBinding(this);
 			
 			return this;
 		},
@@ -329,7 +327,7 @@
 		*/
 		onSource: function (was, is, path) {
 			// @TODO: Should it...would it benefit from using these passed in values?
-			this.dirty = this.dirty == DIRTY_TO? null: DIRTY_FROM;
+			this.dirty = this.dirty == DIRTY_TO ? null : DIRTY_FROM;
 			return this.dirty == DIRTY_FROM && this.sync();
 		},
 		
@@ -339,7 +337,7 @@
 		onTarget: function (was, is, path) {
 			// @TODO: Same question as above, it seems useful but would it affect computed
 			// properties or stale values?
-			this.dirty = this.dirty == DIRTY_FROM? null: DIRTY_TO;
+			this.dirty = this.dirty == DIRTY_FROM ? null : DIRTY_TO;
 			return this.dirty == DIRTY_TO && this.sync();
 		}
 	});

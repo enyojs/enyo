@@ -992,8 +992,8 @@
 			fn = inValue.caller;
 		} else {
 			if (inName.slice(0, 2) != 'on') {
-				enyo.warn('enyo.Component.addEvent: event names must start with 'on'. ' + inProto.kindName +
-					' event '' + inName + '' was auto-corrected to 'on' + inName + ''.');
+				enyo.warn('enyo.Component.addEvent: event names must start with "on". ' + inProto.kindName + ' ' +
+					'event "' + inName + '" was auto-corrected to "on' + inName + '".');
 				inName = 'on' + inName;
 			}
 			v = inValue;

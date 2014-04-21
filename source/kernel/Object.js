@@ -190,7 +190,7 @@
 			@returns {*} The value for the given path or `undefined` if the path could not be
 				completely resolved.
 		*/
-		get: getPath,
+		get: enyo.getPath,
 		
 		/**
 			Updates the value for the given path. The value can be set as long as the
@@ -204,7 +204,7 @@
 			@param {Object} [opts] An options hash.
 			@returns {this} The callee for chaining.
 		*/
-		set: setPath,
+		set: enyo.setPath,
 	
 		/**
 			Binds a callback to this object. If the object has been destroyed, the bound method will
