@@ -390,7 +390,7 @@
 			@private
 		*/
 		_createComponent: function (props, ext) {
-			var def = enyo.mixin({}, [ext, props]);
+			var def = ext ? enyo.mixin({}, [ext, props]) : enyo.clone(props);
 			
 			// always adjust the properties according to the needs of the kind and parent kinds
 			this.adjustComponentProps(def);
