@@ -207,15 +207,15 @@
 		/**
 			@private
 		*/
-		createChrome: function (inComponents) {
-			this.createComponents(inComponents, {isChrome: true});
+		createChrome: function (comps) {
+			this.createComponents(comps, {isChrome: true});
 		},
 		
 		/**
 			@private
 		*/
-		createClientComponents: function (inComponents) {
-			this.createComponents(inComponents, {owner: this.getInstanceOwner()});
+		createClientComponents: function (comps) {
+			this.createComponents(comps, {owner: this.getInstanceOwner()});
 		},
 		
 		/**
@@ -393,10 +393,10 @@
 			var def = enyo.mixin({}, [ext, props]);
 			
 			// always adjust the properties according to the needs of the kind and parent kinds
-			this.adjustComponentProps(props);
+			this.adjustComponentProps(def);
 			
 			// pass along for the final stage
-			return Component.create(props);
+			return Component.create(def);
 		},
 		
 		/**
