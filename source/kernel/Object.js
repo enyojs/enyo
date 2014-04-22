@@ -296,7 +296,7 @@
 			
 			// and we mark it as generated
 			fn.generated = true;
-		} else if (fn && typeof fn == 'function' && !fn.genereated) getters[prop] = getName;
+		} else if (fn && typeof fn == 'function' && !fn.generated) getters[prop] = getName;
 		
 		// we need to do the same thing for the setters
 		if (!(fn = proto[setName]) || typeof fn != 'function') {
