@@ -299,8 +299,8 @@ enyo.kind({
 		}
 	},
 	//* @protected
-	getBubbleTarget: function() {
-		return this.bubbleTarget || this.owner;
+	getBubbleTarget: function(inEventName, inEvent) {
+		return (inEvent.delegate) ? this.owner : this.bubbleTarget || this.cachedBubbleTarget && this.cachedBubbleTarget[inEventName] || this.owner;
 	},
 	//* @public
 	/**
@@ -353,7 +353,7 @@ enyo.kind({
 		}
 		// Bubble to next target
 		var e = inEvent || {};
-		var next = this.getBubbleTarget();
+		var next = this.getBubbleTarget(inEventName, inEvent);
 		if (next) {
 			// use delegate as sender if it exists to preserve illusion
 			// that event is dispatched directly from that, but we still
@@ -402,12 +402,18 @@ enyo.kind({
 
 		// for non-delgated events, try the handlers block if possible
 		if (!delegate) {
-			if (this.handlers && this.handlers[name] &&
-				this.dispatch(this.handlers[name], event, sender)) {
+			var bHandlers = this.handlers && this.handlers[name];
+			var bDelegate = this[name] && enyo.isString(this[name]);
+
+			if (bHandlers || bDelegate || this.id === "master") {
+				this.setCachedBubbleTarget(name, event);
+			}
+			if (this.id !== "master") this.setCurrentInfo(event);
+			if (bHandlers && this.dispatch(this.handlers[name], event, sender)) {
 				return true;
 			}
 			// then check for a delegate property for this event
-			if (this[name] && enyo.isString(this[name])) {
+			if (bDelegate) {
 				// we dispatch it up as a special delegate event with the
 				// component that had the delegation string property stored in
 				// the "delegate" property
@@ -416,7 +422,19 @@ enyo.kind({
 				delete event.delegate;
 				return ret;
 			}
+			//this.setCurrentInfo(event);
 		}
+	},
+	setCachedBubbleTarget: function(name, event) {
+		for (n in event.cache) {
+			if(!event.cache[n].cachedBubbleTarget) event.cache[n].cachedBubbleTarget = {};
+			event.cache[n].cachedBubbleTarget[name] = this;
+		}
+		event.cache = {};
+	},
+	setCurrentInfo: function(event) {
+		if(!event.cache) event.cache = {};
+		event.cache[this.id] = this;
 	},
 	// internal - try dispatching event to self, if that fails bubble it up the tree
 	dispatchBubble: function(inEventName, inEvent, inSender) {
