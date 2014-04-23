@@ -6,9 +6,15 @@
 	var kind = enyo.kind;
 		
 	var ModelList = enyo.ModelList,
+		EventEmitter = enyo.EventEmitter,
 	
 		// because Object is already taken by something...blarg
-		eObject = enyo.Object;
+		_Object = enyo.Object;
+		
+	var BaseStore = enyo.kind({
+		kind: _Object,
+		mixins: [EventEmitter]
+	});
 	
 	/**
 		An anonymous kind used internally for the singleton {@link enyo.store}.
@@ -23,7 +29,7 @@
 		/**
 			@private
 		*/
-		kind: eObject,
+		kind: BaseStore,
 		
 		/**
 			@public
@@ -39,16 +45,21 @@
 			@method
 		*/
 		findLocal: function (ctor, fn, opts) {
-			var kindName = ctor.prototype.kindName
-				, list = this.models[kindName]
-				, options = {all: true, context: this}
-				, ctx, all;
+			var kindName = ctor.prototype.kindName,
+				list = this.models[kindName],
+				options = {all: true, context: this};
+			
+			// allows the method to be called with a constructor only and will return an
+			// immutable copy of the array of all models of that type or an empty array
+			if (arguments.length == 1 || typeof fn != 'function') {
+				return list ? list.slice() : [];
+			}
+			
+			// ensure we use defaults with any provided options
+			opts = opts ? enyo.mixin({}, [options, opts]) : options;
 				
-			opts = opts? enyo.mixin({}, [options, opts]): options;
-			ctx = opts.context;
-			all = opts.all;
-				
-			if (list) return all? list.find(fn, ctx): list.where(fn, ctx);
+			if (list) return opts.all ? list.filter(fn, opts.context) : list.where(fn, opts.context);
+			else return [];
 		},
 		
 		/**
@@ -87,17 +98,80 @@
 		},
 		
 		/**
+			@public
+			@method
+		*/
+		resolve: function (ctor, model) {
+			var list = this.models[ctor.prototype.kindName];
+			return list? list.resolve(model): undefined;
+		},
+		
+		/**
 			@private
 		*/
 		constructor: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				
+				this._scopeListeners = [];
+				
 				// all future sub-kinds of enyo.Model that are processed will automatically
 				// create/add their entries to this object in their concat method
 				this.models = {
 					'enyo.Model': new ModelList()
 				};
+			};
+		}),
+		
+		/**
+			@private
+		*/
+		scopeListeners: function (scope, e) {
+			return !scope ? this._scopeListeners : this._scopeListeners.filter(function (ln) {
+				return ln.scope === scope ? !e ? true : ln.event == e : false;
+			});
+		},
+		
+		/**
+			@private
+		*/
+		on: enyo.inherit(function (sup) {
+			return function (ctor, e, fn, ctx) {
+				if (typeof ctor == 'function') {
+					this.scopeListeners().push({
+						scope: ctor,
+						event: e,
+						method: fn,
+						ctx: ctx || this
+					});
+					
+					return this;
+				}
+				
+				return sup.apply(this, arguments);
+			};
+		}),
+		
+		/**
+			@private
+		*/
+		off: enyo.inherit(function (sup) {
+			return function (ctor, e, fn) {
+				var listeners,
+					idx;
+				
+				if (typeof ctor == 'function') {
+					listeners = this.scopeListeners(ctor);
+					if (listeners.length) {
+						idx = listeners.findIndex(function (ln) {
+							return ln.event == e && ln.method === fn;
+						});
+						
+						// if it found the entry we remove it
+						if (idx >= 0) listeners.splice(idx, 1);
+					}
+					return this;
+				}
 			};
 		})
 	});

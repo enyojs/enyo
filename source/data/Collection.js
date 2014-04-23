@@ -160,7 +160,7 @@
 					
 				
 				// see if we have an existing entry for this model/hash
-				found = loc.has(id);
+				found = loc.resolve(id);
 				
 				// if it already existed...
 				if (found) {
@@ -177,7 +177,7 @@
 						keep[found.euid] = model;
 						keep.length++;
 					}
-				} else if (attrs && find && (found = this.store.has(ctor, id))) {
+				} else if (attrs && find && (found = this.store.resolve(ctor, id))) {
 					// in this case we were asked to search our store for an existing record
 					// and we found one but we didn't previously have it so we are technically
 					// adding it

@@ -83,6 +83,12 @@
 			return !! this.table[model];
 		} else return this.indexOf(model) > -1;
 	};
+	
+	enyo.ModelList.prototype.resolve = function (model) {
+		if (typeof model == 'string' || typeof model == 'number') {
+			return this.table[model];
+		} else return model;
+	};
 		
 	// var kind = enyo.kind
 	// 	, clone = enyo.clone
