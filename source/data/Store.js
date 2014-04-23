@@ -173,6 +173,32 @@
 					return this;
 				}
 			};
+		}),
+		
+		/**
+			@private
+		*/
+		emit: enyo.inherit(function (sup) {
+			return function (ctor, e) {
+				var listeners,
+					args;
+				
+				if (typeof ctor == 'function') {
+					listeners = this.scopeListeners(ctor, e);
+					
+					if (listeners.length) {
+						args = enyo.toArray(arguments).slice(1);
+						args.unshift(this);
+						listeners.forEach(function (ln) {
+							ln.method.apply(ln.ctx, args);
+						});
+						return true;
+					}
+					return false;
+				}
+				
+				return sup.apply(this, arguments);
+			};
 		})
 	});
 	
