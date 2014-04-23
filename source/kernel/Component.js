@@ -325,6 +325,10 @@ enyo.kind({
 			return;
 		}
 		var e = inEvent || {};
+		e.cache = {};
+		if (!e.cacheEnable) {
+			e.cacheEnable = true;
+		}
 		if (!enyo.exists(e.originator)) {
 			e.originator = inSender || this;
 		}
@@ -353,6 +357,9 @@ enyo.kind({
 		}
 		// Bubble to next target
 		var e = inEvent || {};
+		if (!e.cacheEnable) {
+			e.cacheEnable = true;
+		}
 		var next = this.getBubbleTarget(inEventName, inEvent);
 		if (next) {
 			// use delegate as sender if it exists to preserve illusion
@@ -405,10 +412,14 @@ enyo.kind({
 			var bHandlers = this.handlers && this.handlers[name];
 			var bDelegate = this[name] && enyo.isString(this[name]);
 
-			if (bHandlers || bDelegate || this.id === "master") {
-				this.setCachedBubbleTarget(name, event);
+			if (event.cacheEnable) {
+				if (bHandlers || bDelegate || this.id === "master") {
+					this.setCachedBubbleTarget(name, event);
+				}
+				if (this.id !== "master") {
+					this.setCurrentInfo(event);
+				}
 			}
-			if (this.id !== "master") this.setCurrentInfo(event);
 			if (bHandlers && this.dispatch(this.handlers[name], event, sender)) {
 				return true;
 			}
@@ -500,6 +511,9 @@ enyo.kind({
 			return;
 		}
 		event = event || {};
+		if (event.cacheEnable) {
+			event.cacheEnable = false;
+		}
 		//this.log(name, (sender || this).name, "=>", this.name);
 		if (this.dispatchEvent(name, event, sender)) {
 			return true;
@@ -515,6 +529,10 @@ enyo.kind({
 	waterfallDown: function(name, event, sender) {
 		if (this._silenced) {
 			return;
+		}
+		event = event || {};
+		if (event.cacheEnable) {
+			event.cacheEnable = false;
 		}
 		for (var n in this.$) {
 			this.$[n].waterfall(name, event, sender);
