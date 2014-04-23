@@ -58,7 +58,7 @@
 			// ensure we use defaults with any provided options
 			opts = opts ? enyo.mixin({}, [options, opts]) : options;
 				
-			if (list) return opts.all ? list.filter(fn, opts.context) : list.where(fn, opts.context);
+			if (list) return opts.all ? list.filter(fn, opts.context) : list.find(fn, opts.context);
 			else return [];
 		},
 		
