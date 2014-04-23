@@ -325,8 +325,8 @@ enyo.kind({
 			return;
 		}
 		var e = inEvent || {};
-		e.cache = {};
 		if (!e.cacheEnable) {
+			e.cache = {};
 			e.cacheEnable = true;
 		}
 		if (!enyo.exists(e.originator)) {
@@ -358,6 +358,7 @@ enyo.kind({
 		// Bubble to next target
 		var e = inEvent || {};
 		if (!e.cacheEnable) {
+			e.cache = {};
 			e.cacheEnable = true;
 		}
 		var next = this.getBubbleTarget(inEventName, inEvent);
@@ -438,13 +439,14 @@ enyo.kind({
 	},
 	setCachedBubbleTarget: function(name, event) {
 		for (n in event.cache) {
-			if(!event.cache[n].cachedBubbleTarget) event.cache[n].cachedBubbleTarget = {};
+			if (!event.cache[n].cachedBubbleTarget) {
+				event.cache[n].cachedBubbleTarget = {};
+			}
 			event.cache[n].cachedBubbleTarget[name] = this;
 		}
 		event.cache = {};
 	},
 	setCurrentInfo: function(event) {
-		if(!event.cache) event.cache = {};
 		event.cache[this.id] = this;
 	},
 	// internal - try dispatching event to self, if that fails bubble it up the tree
