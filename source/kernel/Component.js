@@ -326,7 +326,6 @@ enyo.kind({
 		}
 		var e = inEvent || {};
 		if (!e.cacheEnable) {
-			e.cache = {};
 			e.cacheEnable = true;
 		}
 		if (!enyo.exists(e.originator)) {
@@ -358,7 +357,6 @@ enyo.kind({
 		// Bubble to next target
 		var e = inEvent || {};
 		if (!e.cacheEnable) {
-			e.cache = {};
 			e.cacheEnable = true;
 		}
 		var next = this.getBubbleTarget(inEventName, inEvent);
@@ -410,22 +408,26 @@ enyo.kind({
 
 		// for non-delgated events, try the handlers block if possible
 		if (!delegate) {
-			var bHandlers = this.handlers && this.handlers[name];
-			var bDelegate = this[name] && enyo.isString(this[name]);
+			var bHandler = this.handlers && this.handlers[name];
+			var bDelegatedFunction = this[name] && enyo.isString(this[name]);
 
 			if (event.cacheEnable) {
-				if (bHandlers || bDelegate || this.id === "master") {
-					this.setCachedBubbleTarget(name, event);
+				if (event.lastHandledComponent && (bHandler || bDelegatedFunction || this.id === "master")) {
+					if (!event.lastHandledComponent.cachedBubbleTarget) {
+					 	event.lastHandledComponent.cachedBubbleTarget = {};
+					}
+					event.lastHandledComponent.cachedBubbleTarget[name] = this;
+					event.lastHandledComponent = undefined;
 				}
-				if (this.id !== "master") {
-					this.setCurrentInfo(event);
+				if (!event.lastHandledComponent && this.id !== "master") {
+					event.lastHandledComponent = this;
 				}
 			}
-			if (bHandlers && this.dispatch(this.handlers[name], event, sender)) {
+			if (bHandler && this.dispatch(this.handlers[name], event, sender)) {
 				return true;
 			}
 			// then check for a delegate property for this event
-			if (bDelegate) {
+			if (bDelegatedFunction) {
 				// we dispatch it up as a special delegate event with the
 				// component that had the delegation string property stored in
 				// the "delegate" property
@@ -434,20 +436,7 @@ enyo.kind({
 				delete event.delegate;
 				return ret;
 			}
-			//this.setCurrentInfo(event);
 		}
-	},
-	setCachedBubbleTarget: function(name, event) {
-		for (n in event.cache) {
-			if (!event.cache[n].cachedBubbleTarget) {
-				event.cache[n].cachedBubbleTarget = {};
-			}
-			event.cache[n].cachedBubbleTarget[name] = this;
-		}
-		event.cache = {};
-	},
-	setCurrentInfo: function(event) {
-		event.cache[this.id] = this;
 	},
 	// internal - try dispatching event to self, if that fails bubble it up the tree
 	dispatchBubble: function(inEventName, inEvent, inSender) {
