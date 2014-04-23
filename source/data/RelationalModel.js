@@ -373,7 +373,7 @@
 				, related = this.related
 				, changed;
 			
-			if (sender === store) {
+			if (sender === enyo.store) {
 				if (e == 'add') {
 					if (this.checkRelation(props.model)) this.related.add(props.model, {merge: false});
 				}
