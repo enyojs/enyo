@@ -325,9 +325,8 @@ enyo.kind({
 			return;
 		}
 		var e = inEvent || {};
-		if (!e.cacheEnable) {
-			e.cacheEnable = true;
-		}
+		e.lastHandledComponent = undefined;
+		e.cacheEnable = true;
 		if (!enyo.exists(e.originator)) {
 			e.originator = inSender || this;
 		}
@@ -356,9 +355,7 @@ enyo.kind({
 		}
 		// Bubble to next target
 		var e = inEvent || {};
-		if (!e.cacheEnable) {
-			e.cacheEnable = true;
-		}
+		e.cacheEnable = true;
 		var next = this.getBubbleTarget(inEventName, inEvent);
 		if (next) {
 			// use delegate as sender if it exists to preserve illusion
@@ -502,9 +499,7 @@ enyo.kind({
 			return;
 		}
 		event = event || {};
-		if (event.cacheEnable) {
-			event.cacheEnable = false;
-		}
+		event.cacheEnable = false;
 		//this.log(name, (sender || this).name, "=>", this.name);
 		if (this.dispatchEvent(name, event, sender)) {
 			return true;
@@ -522,9 +517,7 @@ enyo.kind({
 			return;
 		}
 		event = event || {};
-		if (event.cacheEnable) {
-			event.cacheEnable = false;
-		}
+		event.cacheEnable = false;
 		for (var n in this.$) {
 			this.$[n].waterfall(name, event, sender);
 		}
