@@ -98,6 +98,7 @@ enyo.kind({
 			// initialize instance objects
 			this._componentNameMap = {};
 			this.$ = {};
+			this.cachedBubbleTarget = {};
 			sup.apply(this, arguments);
 		};
 	}),
@@ -300,7 +301,7 @@ enyo.kind({
 	},
 	//* @protected
 	getBubbleTarget: function(inEventName, inEvent) {
-		return (inEvent.delegate) ? this.owner : this.bubbleTarget || this.cachedBubbleTarget && this.cachedBubbleTarget[inEventName] || this.owner;
+		return (inEvent.delegate) ? this.owner : this.bubbleTarget || this.cachedBubbleTarget[inEventName] || this.owner;
 	},
 	//* @public
 	/**
@@ -410,11 +411,8 @@ enyo.kind({
 
 			if (event.cacheEnable) {
 				if (event.lastHandledComponent && (bHandler || bDelegatedFunction || this.id === "master")) {
-					if (!event.lastHandledComponent.cachedBubbleTarget) {
-					 	event.lastHandledComponent.cachedBubbleTarget = {};
-					}
 					event.lastHandledComponent.cachedBubbleTarget[name] = this;
-					event.lastHandledComponent = undefined;
+					delete event.lastHandledComponent;
 				}
 				if (!event.lastHandledComponent && this.id !== "master") {
 					event.lastHandledComponent = this;
