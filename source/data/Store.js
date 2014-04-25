@@ -102,7 +102,7 @@
 			@method
 		*/
 		resolve: function (ctor, model) {
-			var list = this.models[ctor.prototype.kindName];
+			var list = this.models[ctor && ctor.prototype.kindName];
 			return list? list.resolve(model): undefined;
 		},
 		
