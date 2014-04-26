@@ -189,12 +189,17 @@ process.chdir(opt.source);
 
 // application default values may come from the manifest file: deploy.json
 var manifest;
-try {
-	manifest = JSON.parse(fs.readFileSync("deploy.json"));
-} catch(e) {
+if (fs.existsSync("deploy.json")) {
+	try {
+		manifest = JSON.parse(fs.readFileSync("deploy.json"));
+	} catch(e) {
+		console.error("Error parsing deploy.json: " + e);
+		process.exit(1);
+	}
+} else {
 	manifest = {
 		_default: true
-	};
+	};	
 }
 
 opt.packagejs = opt.packagejs || manifest.packagejs || "package.js";
@@ -330,23 +335,29 @@ if (opt.test) {
 
 function deployDir(subDir) {
 	log("Deploying '" + subDir + "'...");
-	try {
-		var manifest = JSON.parse(fs.readFileSync(path.join(subDir, "deploy.json")));
-		if (Array.isArray(manifest.assets)) {
-			manifest.assets.forEach(function(asset) {
-				var dstAssetDir = path.dirname(path.join(opt.out, subDir, asset));
-				log("% mkdir -p " + dstAssetDir);
-				shell.mkdir('-p', dstAssetDir);
-				log("% cp -r " + path.join(subDir, asset) + "...");
-				shell.cp('-r', path.join(subDir, asset), dstAssetDir);
-			});
+	var dj = path.join(subDir, "deploy.json");
+	if (fs.existsSync(dj)) {
+		try {
+			var manifest = JSON.parse(fs.readFileSync(dj));
+			if (Array.isArray(manifest.assets)) {
+				manifest.assets.forEach(function(asset) {
+					var dstAssetDir = path.dirname(path.join(opt.out, subDir, asset));
+					log("% mkdir -p " + dstAssetDir);
+					shell.mkdir('-p', dstAssetDir);
+					log("% cp -r " + path.join(subDir, asset) + "...");
+					shell.cp('-r', path.join(subDir, asset), dstAssetDir);
+				});
+			}
+			if (Array.isArray(manifest.libs)) {
+				manifest.libs.forEach(function(libDir) {
+					deployDir(path.join(subDir, libDir));
+				});
+			}
+		} catch(e) {
+			console.error("Error parsing " + dj + ": " + e);
+			process.exit(1);
 		}
-		if (Array.isArray(manifest.libs)) {
-			manifest.libs.forEach(function(libDir) {
-				deployDir(path.join(subDir, libDir));
-			});
-		}
-	} catch(e) {
+	} else {
 		// backward compatibility: run deploy.sh or deploy.bat
 		try {
 			if (noexec) {
