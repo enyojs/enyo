@@ -5,6 +5,7 @@ enyo.depends(
 	"Animator.js",
 	"BaseLayout.js",
 	"Image.js",
+	"StylesheetSupport.js",
 	"Input.js",
 	"RichText.js",
 	"TextArea.js",
