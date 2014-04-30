@@ -70,7 +70,7 @@ enyo.kind({
 				sup.apply(this, arguments);
 			}
 		};
-	}),
+	})
 });
 
 /**
