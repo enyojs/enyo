@@ -62,7 +62,7 @@ enyo.kind({
 		setSize: ["width", "height", "totalWidth", "totalHeight"],
 		setOffset: ["offsetTop", "offsetLeft"],
 		_applyAnimation: ["iterationCount", "cellOrientation", "columns", "rows", "id"],
-		updateKeyframes: ["cellOrientation", "width", "height", "totalWidth", "totalHeight", "columns", "rows", "offsetTop", "offsetLeft"],
+		updateKeyframes: ["cellOrientation", "width", "height", "totalWidth", "totalHeight", "columns", "rows", "offsetTop", "offsetLeft"]
 	},
 	//* @protected
 
@@ -78,8 +78,9 @@ enyo.kind({
 		this.set(inProp, parseInt(this.get(inProp), 10));
 	},
 	durationChanged: function() {
-		console.log("Duration Changed:", this);
 		this._setInt("duration");
+		this.$.spriteImage.applyStyle("-webkit-animation-duration", (this.get("duration") / 1000) + "s");
+		this._forceAnimationReset();
 	},
 	widthChanged: function() {
 		this._setInt("width");
@@ -114,10 +115,6 @@ enyo.kind({
 		this.$.spriteImage.set("stylesheetContent", this._generateKeyframes());
 		this._forceAnimationReset();
 	},
-	durationChanged: function() {
-		this.$.spriteImage.applyStyle("-webkit-animation-duration", (this.get("duration") / 1000) + "s");
-		this._forceAnimationReset();
-	},
 	_forceAnimationReset: function() {
 		this.$.spriteImage.applyStyle("-webkit-animation-name", null);
 		this.startJob("forceAnimationReset", function() {
@@ -130,19 +127,14 @@ enyo.kind({
 		this.durationChanged();
 	},
 	_generateKeyframes: function() {
-		var o, i, x, y,
+		var o,
 			width = this.get("width"),
 			height = this.get("height"),
-			totalwidth = this.get("totalWidth"),
-			totalheight = this.get("totalHeight"),
 			rows = this.get("rows"),
 			cols = this.get("columns"),
 			horiz = this.get("cellOrientation") == "horizontal" ? true : false,
-			offsetTop = this.get("offsetTop"),
-			offsetLeft = this.get("offsetLeft"),
 			kfStr = "",
-			outer = (horiz ? rows : cols),
-			inner = (horiz ? cols : rows);
+			outer = (horiz ? rows : cols);
 
 		kfStr += "@-webkit-keyframes "+ this.get("animationName") +" {\n";
 		for (o = 0; o < outer; o++) {
@@ -162,7 +154,7 @@ enyo.kind({
 				// endY
 				horiz ? (-height * o) : ((-height * rows) + height)
 			);
-		};
+		}
 		kfStr += "}\n";
 		return kfStr;
 	},

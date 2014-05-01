@@ -33,7 +33,7 @@ enyo.kind({
 			{content: "8s", value: "8000"},
 			{content: "9s", value: "9000"},
 			{content: "10s", value: "10000"}
-		]},
+		]}
 	],
 	bindings: [
 		{from: ".$.sprite1Picker.value", to: ".$.sprite1.duration"},
