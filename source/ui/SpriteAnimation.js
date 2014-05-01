@@ -74,31 +74,9 @@ enyo.kind({
 		this.updateKeyframes();
 		this._applyAnimation();
 	},
-	_setInt: function(inProp) {
-		this.set(inProp, parseInt(this.get(inProp), 10));
-	},
 	durationChanged: function() {
-		this._setInt("duration");
 		this.$.spriteImage.applyStyle("-webkit-animation-duration", (this.get("duration") / 1000) + "s");
 		this._forceAnimationReset();
-	},
-	widthChanged: function() {
-		this._setInt("width");
-	},
-	heightChanged: function() {
-		this._setInt("height");
-	},
-	rowsChanged: function() {
-		this._setInt("rows");
-	},
-	columnsChanged: function() {
-		this._setInt("columns");
-	},
-	offsetTopChanged: function() {
-		this._setInt("offsetTop");
-	},
-	offsetLeftChanged: function() {
-		this._setInt("offsetLeft");
 	},
 	setSize: function() {
 		this.applyStyle("width", this.get("width") + "px");
