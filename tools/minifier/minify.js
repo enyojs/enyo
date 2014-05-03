@@ -26,7 +26,7 @@
 		w("-no-alias:", "Don't use path macros");
 		w("-alias:", "Give paths a macroized alias");
 		w("-enyo ENYOPATH:", "Relative path to enyo folder (enyo)");
-		w("-lib LIBPATH:", "Relative path to lib folder ($enyo/../lib)");
+		w("-lib LIBPATH:", "Relative path to lib folder ($enyo/..)");
 		w("-destdir DESTDIR:", "Target directory, prepended to any output file but skipped within generated files (current dir)");
 		w("-output RELPATH/PREFIX:", "Folder + output file prefix, relative to DESTDIR (build/out)");
 		w("-beautify:", "Output pretty version that's less compressed but has code on separate lines");
@@ -277,7 +277,8 @@
 	}
 
 	w(opt);
-	walker.init(opt.enyo, opt.lib || opt.enyo + "/../lib", opt.mapfrom, opt.mapto);
+	var libPath = (opt.enyo.indexOf("lib"+path.sep+"enyo")>=0 ? opt.enyo+"/.." : opt.enyo+"/../lib");
+	walker.init(opt.enyo, opt.lib || "lib", opt.mapfrom, opt.mapto);
 	walker.walk(path.basename(opt.packagejs), walkerFinished);
 
 })();

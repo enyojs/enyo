@@ -1,0 +1,12 @@
+{
+	"name": "enyo",
+	"version": "2.4.0",
+	"main":"enyo.js",
+	"dependencies": {},
+	"ignore": [
+		".jshintrc",
+		".travis.yml",
+		".gitignore",
+		".jshintignore"
+	]
+}
