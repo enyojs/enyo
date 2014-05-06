@@ -137,7 +137,9 @@ enyo.kind({
 			this.fraction = 1;
 			this.fire("onStep");
 			this.cancel();
-			this.fire("onEnd");
+			enyo.asyncMethod(this.bindSafely(function() {
+				this.fire("onEnd");
+			}));
 		} else {
 			this.fire("onStep");
 			this.requestNext();
