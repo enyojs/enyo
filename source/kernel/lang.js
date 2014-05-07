@@ -256,13 +256,19 @@
 	//* Returns _inString_ converted to upper case.
 	//* This is overridden and elaborated upon when enyo-ilib loads.
 	enyo.toUpperCase = function(inString) {
-		return inString.toUpperCase();
+		if (inString != null) {
+			return inString.toString().toUpperCase();
+		}
+		return inString;
 	};
 
 	//* Returns _inString_ converted to lower case.
 	//* This is overridden and elaborated upon when enyo-ilib loads.
 	enyo.toLowerCase = function(inString) {
-		return inString.toLowerCase();
+		if (inString != null) {
+			return inString.toString().toLowerCase();
+		}
+		return inString;
 	};
 
 	//* Returns _inString_ with the first letter capitalized.
@@ -928,11 +934,11 @@
 
 	/**
 		Calls method _inMethod_ on _inScope_ asynchronously.
-	
+
 		Uses _window.setTimeout_ with minimum delay, usually around 10ms.
-	
+
 		Additional arguments are passed to _inMethod_ when it is invoked.
-	
+
 		If only a single argument is supplied, will just call that
 		function asyncronously without doing any additional binding.
 	*/
@@ -1046,4 +1052,20 @@
 		return p;
 	};
 
+	//* @protected
+	/**
+		This regex pattern is used by the _enyo.isRtl_ function.
+
+		Arabic: \u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFE
+		Hebrew: \u0590-\u05FF\uFB1D-\uFB4F
+	*/
+	var rtlPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFE\u0590-\u05FF\uFB1D-\uFB4F]/;
+
+	//*@public
+	/**
+		Takes content and determines whether or not it is RTL
+	*/
+	enyo.isRtl = function (str) {
+		return rtlPattern.test(str);
+	};
 })();

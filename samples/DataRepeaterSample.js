@@ -1,15 +1,17 @@
 enyo.kind({
 	name: "enyo.sample.DataRepeaterSample",
-	classes: "data-repeater-sample enyo-fit",
+	classes: "data-repeater-sample enyo-border-box",
 	components: [
 		{name: "repeater", kind: "enyo.DataRepeater", components: [
 			{components: [
 				{classes: "name-wrapper", components: [
+					{name: "index", classes: "index", tag: "span"},
 					{name: "firstName", classes: "name", tag: "span"},
 					{name: "lastName", classes: "name last", tag: "span"},
 					{name: "lastNameLetter", classes: "name last-letter", tag: "span"}
 				]}
 			], bindings: [
+				{from: ".index", to: ".$.index.content"},
 				{from: ".model.firstName", to: ".$.firstName.content"},
 				{from: ".model.lastName", to: ".$.lastName.content"},
 				{from: ".model.lastName", to: ".$.lastNameLetter.content", transform: function (v) { return v.charAt(0); }},

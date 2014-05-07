@@ -162,7 +162,7 @@ enyo.kind({
 	rendered: enyo.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
-			if (this.collection && this.length) {
+			if (this.collection && this.collection.length) {
 				this.reset();
 			}
 			this.hasRendered = true;
@@ -182,9 +182,11 @@ enyo.kind({
 		}
 	},
 	prune: function () {
-		var g = this.getClientControls(), x;
-		if (g.length > this.length) {
-			x = g.slice(this.length);
+		var g = this.getClientControls()
+			, len = (this.collection? this.collection.length: 0)
+			, x;
+		if (g.length > len) {
+			x = g.slice(len);
 			for (var i=0, c; (c=x[i]); ++i) {
 				c.destroy();
 			}
@@ -201,41 +203,13 @@ enyo.kind({
 	},
 	handlers: {onSelected: "childSelected", onDeselected: "childDeselected"},
 	_handlers: {add: "modelsAdded", remove: "modelsRemoved", reset: "refresh"},
-	// TODO-POST-2.3
-	/**
-		For backwards compatibility with 2.3.0-pre, we have a responder for the
-		controller property. This is deprecated and should be using 'collection'
-		instead.
-	*/
-	controllerChanged: function () {
-		// it simply forwards the property to the correct one and since this
-		// will have been done since initialization it will also work to
-		// unregister previous collections
-		var c = this.controller;
-		this.controller = undefined;
-		if (c && (!this.collection || this.collection !== c)) {
-			this.warn("the `controller` property has been deprecated, please update and use `collection` " +
-				"instead - including any bindings currently mapped directly to `controller`");
-		}
-		this.set("collection", c);
-	},
-	// END-TODO-POST-2.3
 	collectionChanged: function (p) {
-		// TODO-POST-2.3
-		// backwards compatibility check
-		if (this.controller && this.controller !== p) {
-			return this.controllerChanged();
-		}
-		// END-TODO-POST-2.3
 		var c = this.collection;
 		if (typeof c == "string") {
 			c = this.collection = enyo.getPath(c);
 		}
 		if (c) {
 			this.initCollection(c, p);
-			// TODO-POST-2.3
-			this.controller = c;
-			// END-TODO-POST-2.3
 		}
 	},
 	initCollection: function (c, p) {
@@ -268,7 +242,7 @@ enyo.kind({
 			var idxs = enyo.keys(props.records);
 			for (var i=idxs.length-1, idx; (idx=idxs[i]); --i) {
 				this.remove(idx);
-				this.deselect(idx);
+				this._select(idx, props.records[idx], false);
 			}
 		}
 	},
@@ -295,51 +269,56 @@ enyo.kind({
 	data: function () {
 		return this.collection;
 	},
+	/**
+		Consolidates selection logic and allows for deselection of a model
+		that has already been removed from the collection
+	*/
+	_select: function (index, model, select) {
+		if (!this.selection) {
+			return;
+		}
+
+		var c = this.getChildForIndex(index),
+			s = this._selection,
+			i = enyo.indexOf(model, s);
+
+		if (select) {
+			if(i == -1) {
+				if(!this.multipleSelection) {
+					while (s.length) {
+						i = this.collection.indexOf(s.pop());
+						this.deselect(i);
+					}
+				}
+
+				s.push(model);
+			}
+		} else {
+			if(i >= 0) {
+				s.splice(i, 1);
+			}
+		}
+
+		if (c) {
+			c.set("selected", select);
+		}
+		if (this.selectionProperty && model) {
+			(s=this.selectionProperty) && model.set(s, select);
+		}
+		this.notifyObservers("selected");
+	},
 	//*@public
 	/**
 		Selects the item at the given index.
 	*/
 	select: function (index) {
-		var c = this.childForIndex(index),
-			r = this.collection.at(index),
-			s = this._selection, i;
-		if (this.selection) {
-			if (this.multipleSelection && (!~enyo.indexOf(r, s))) {
-				s.push(r);
-			} else if (!~enyo.indexOf(r, s)) {
-				while (s.length) {
-					i = this.collection.indexOf(s.pop());
-					this.deselect(i);
-				}
-				s.push(r);
-			}
-			if (c) {
-				c.set("selected", true);
-			}
-			if (this.selectionProperty) {
-				(s=this.selectionProperty) && r.set(s, true);
-			}
-			this.notifyObservers("selected");
-		}
+		this._select(index, this.collection.at(index), true);
 	},
 	/**
 		De-selects the item at the given index.
 	*/
 	deselect: function (index) {
-		var c = this.getChildForIndex(index),
-			r = this.collection.at(index),
-			s = this._selection, i;
-		i = enyo.indexOf(r, s);
-		if (!!~i) {
-			s.splice(i, 1);
-		}
-		if (c) {
-			c.set("selected", false);
-		}
-		if (this.selectionProperty && r) {
-			(s=this.selectionProperty) && r.set(s, false);
-		}
-		this.notifyObservers("selected");
+		this._select(index, this.collection.at(index), false);
 	},
 	/**
 		Returns a Boolean indicating whether the given model is selected.
@@ -353,9 +332,10 @@ enyo.kind({
 	selectAll: function () {
 		if (this.multipleSelection) {
 			this.stopNotifications();
-			var s = this._selection;
+			var s = this._selection
+				, len = this.collection? this.collection.length: 0;
 			s.length = 0;
-			for (var i=0; i<this.length; ++i) {
+			for (var i=0; i<len; ++i) {
 				this.select(i);
 			}
 			this.startNotifications();
@@ -397,7 +377,6 @@ enyo.kind({
 	controlParentName: "container",
 	containerName: "container",
 	containerOptions: {name: "container", classes: "enyo-fill enyo-data-repeater-container"},
-	bindings: [{from: ".collection.length", to: ".length"}],
 	batching: false,
 	_selection: null
 });
@@ -408,30 +387,4 @@ enyo.DataRepeater.concat = function (ctor, props) {
 		p.childMixins = (p.childMixins? enyo.merge(p.childMixins, props.childMixins): props.childMixins.slice());
 		delete props.childMixins;
 	}
-	// TODO-POST-2.3
-	// this will not longer be required
-	if (props.bindings) {
-		var _test = /controller/g;
-		for (var i=0, b; (b=props.bindings[i]); ++i) {
-			if (
-				(typeof b.source == "string" && _test.test(b.source)) ||
-				(_test.test(b.from))                                  ||
-				(typeof b.target == "string" && _test.test(b.target)) ||
-				(_test.test(b.to))
-			) {
-				enyo.warn(p.kindName + ".concat: the `controller` property has been deprecated, please use `collection` " +
-					"including any bindings that use `controller`, this is automatically updated for you but will be removed " +
-					"in a future release");
-				if (typeof b.source == "string") {
-					b.source = b.source.replace(_test, "collection");
-				}
-				b.from = b.from.replace(_test, "collection");
-				if (typeof b.target == "string") {
-					b.target = b.target.replace(_test, "collection");
-				}
-				b.to = b.to.replace(_test, "collection");
-			}
-		}
-	}
-	// END-TODO-POST-2.3
 };

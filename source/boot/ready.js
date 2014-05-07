@@ -28,7 +28,7 @@
 		queue.push([fn, context]);
 		// schedule another queue flush if needed to run new ready calls
 		if (ready && !flushScheduled) {
-			enyo.asyncMethod(window, flush);
+			setTimeout(flush, 0);
 			flushScheduled = true;
 		}
 	};
@@ -42,7 +42,7 @@
 		// if we're interactive, it should be safe to move
 		// forward because the content has been parsed
 		if ((ready = ("interactive" === doc.readyState))) {
-			if (!~enyo.indexOf(event.type, ["DOMContentLoaded", "readystatechange"])) {
+			if ("DOMContentLoaded" !== event.type && "readystatechange" !== event.type) {
 				remove(event.type, init);
 				flush();
 			}

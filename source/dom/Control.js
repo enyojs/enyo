@@ -931,7 +931,12 @@ enyo.kind({
 	},
 	showingChanged: function(was) {
 		this.syncDisplayToShowing();
-		
+		this.sendShowingChangedEvent(was);
+	},
+	/**
+		Waterfalls the "onShowingChanged" event of the current control
+	*/
+	sendShowingChangedEvent: function(was) {
 		var waterfall = (was === true || was === false)
 			, parent = this.parent;
 		// make sure that we don't trigger the waterfall when this method
@@ -940,6 +945,7 @@ enyo.kind({
 		if (waterfall && (parent? parent.getAbsoluteShowing(true): true)) {
 			this.waterfall("onShowingChanged", {originator: this, showing: this.getShowing()});
 		}
+
 	},
 	getShowing: function() {
 		return this.showing;
@@ -972,7 +978,7 @@ enyo.kind({
 		itself already it will not continue the waterfall. Overload this method
 		for additional handling of this event.
 	*/
-	showingChangedHandler: function (inSender, inEvent) {		
+	showingChangedHandler: function (inSender, inEvent) {
 		return inSender === this? false: !this.getShowing();
 	},
 	//
@@ -1010,6 +1016,15 @@ enyo.kind({
 	removeFromRoots: function() {
 		if (this._isRoot) {
 			enyo.remove(this, enyo.roots);
+		}
+	},
+	/**
+		Sets the control's directionality based on its content.
+	*/
+	detectTextDirectionality: function() {
+		if (this.content && this.content.length) {
+			this.rtl = enyo.isRtl(this.content);
+			this.applyStyle("direction", this.rtl ? "rtl" : "ltr");
 		}
 	},
 

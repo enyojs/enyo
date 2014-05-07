@@ -39,12 +39,11 @@
 	*/
 	enyo.updateLocale = function() {
 		// This is a stub, to be implemented by a g11n library as needed
-	};
-	enyo.broadcastLocaleChange = function() {
-		enyo.updateLocale();
 		enyo.Signals.send("onlocalechange");
 	};
 	if (document.addEventListener) {
-		document.addEventListener("localechange", enyo.broadcastLocaleChange, false);
+		document.addEventListener("localechange", function(e) {
+			enyo.updateLocale();
+		}, false);
 	}
 })();

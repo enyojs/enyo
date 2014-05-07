@@ -23,6 +23,18 @@ enyo.logging = {
 		return a$;
 	},
 	*/
+	validateArgs: function(inArr) {
+		// gracefully handle and prevent circular reference errors in objects
+		for (var i=0, l=inArr.length, item; (item=inArr[i]) || i<l; i++) {
+			try {
+				if (typeof item === "object") {
+					inArr[i] = enyo.json.stringify(item);
+				}
+			} catch (e) {
+				inArr[i] = "Error: " + e.message;
+			}
+		}
+	},
 	_log: function(inMethod, inArgs) {
 		// avoid trying to use console on IE instances where the object hasn't been
 		// created due to the developer tools being unopened
@@ -32,6 +44,10 @@ enyo.logging = {
         }
 		//var a$ = enyo.logging.formatArgs(inMethod, inArgs);
 		var a$ = enyo.isArray(inArgs) ? inArgs : enyo.cloneArray(inArgs);
+		if (enyo.platform.androidFirefox) {
+			// Firefox for Android's console does not handle objects with circular references
+			enyo.logging.validateArgs(a$);
+		}
 		if (enyo.dumbConsole) {
 			// at least in early versions of webos, console.* only accept a single argument
 			a$ = [a$.join(" ")];

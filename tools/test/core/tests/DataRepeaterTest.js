@@ -191,6 +191,14 @@ enyo.kind({
 				throw "Added item isn't selected";
 			}
 
+			// Test deselction on destroy
+			repeater.select(102);
+			var toDestroy = repeater.collection.at(102);
+			toDestroy.destroy();
+			if(repeater.get("selected") !== null) {
+				throw "Destroyed control was not deselected.";
+			}
+
 			this.finish();
 		} finally {
 			testControl.destroy();

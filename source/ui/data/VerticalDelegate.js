@@ -110,7 +110,7 @@ enyo.DataList.delegates.vertical = {
 		// now if we already have a length then that implies we have a controller
 		// and that we have data to render at this point, otherwise we don't
 		// want to do any more initialization
-		if (list.length) { this.reset(list); }
+		if (list.collection && list.collection.length) { this.reset(list); }
 	},
 	/**
 		This method generates the markup for the page content.
@@ -244,7 +244,8 @@ enyo.DataList.delegates.vertical = {
 	pageHeight: function (list, page) {
 		var h = page.node.offsetHeight;
 		var m = list.metrics.pages[page.index];
-		if (h === 0 && list.length && page.node.children.length) {
+		var len = list.collection? list.collection.length: 0;
+		if (h === 0 && len && page.node.children.length) {
 			list.heightNeedsUpdate = true;
 			// attempt to reuse the last known height for this page
 			h = m? m.height: 0;
@@ -257,7 +258,8 @@ enyo.DataList.delegates.vertical = {
 	pageWidth: function (list, page) {
 		var w = page.node.offsetWidth;
 		var m = list.metrics.pages[page.index];
-		if (w === 0 && list.length && page.node.children.length) {
+		var len = list.collection? list.collection.length: 0;
+		if (w === 0 && len && page.node.children.length) {
 			list.widthNeedsUpdate = true;
 			// attempt to reuse the last known width for this page
 			w = m? m.width: 0;
@@ -407,7 +409,8 @@ enyo.DataList.delegates.vertical = {
 	*/
 	pageCount: function (list) {
 		var perPage = list.controlsPerPage || this.controlsPerPage(list);
-		return (Math.ceil(list.length / (perPage || 1)));
+		var len = list.collection? list.collection.length: 0;
+		return (Math.ceil(len / (perPage || 1)));
 	},
 	/**
 		Retrieves the current (and desired) scroll position from the scroller
@@ -502,11 +505,11 @@ enyo.DataList.delegates.vertical = {
 				upperProp = list.upperProp;
 			bounds[upperProp] = this.getScrollPosition(list);
 			if (bounds.xDir === 1 || bounds.yDir === 1) {
-				if (bounds[upperProp] >= threshold[lowerProp]) {
+				if (!isNaN(threshold[lowerProp]) && (bounds[upperProp] >= threshold[lowerProp])) {
 					this.scrollHandler(list, bounds);
 				}
 			} else if (bounds.yDir === -1 || bounds.xDir === -1) {
-				if (bounds[upperProp] <= threshold[upperProp]) {
+				if (!isNaN(threshold[upperProp]) && (bounds[upperProp] <= threshold[upperProp])) {
 					this.scrollHandler(list, bounds);
 				}
 			}
