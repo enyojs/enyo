@@ -56,7 +56,9 @@ enyo.kind({
 		//* Adjust animation interval type from ScrollMath
 		fixedTime: true,
 		//* Modify one unit of time for simulation from ScrollMath
-		frame: 10
+		frame: 10,
+		//* Allow default events to occur (e.g., native scrolling)
+		preventDefault: true
 	},
 	events: {
 		onShouldDrag: ""
@@ -309,7 +311,9 @@ enyo.kind({
 		this.doShouldDrag(inEvent);
 		this.dragging = (inEvent.dragger == this || (!inEvent.dragger && inEvent.boundaryDragger == this));
 		if (this.dragging) {
-			inEvent.preventDefault();
+			if(this.preventDefault){
+				inEvent.preventDefault();
+			}
 			// note: needed because show/hide changes
 			// the position so sync'ing is required when
 			// dragging begins (needed because show/hide does not trigger onscroll)
@@ -326,7 +330,9 @@ enyo.kind({
 			return false;
 		}
 		if (this.dragging) {
-			inEvent.preventDefault();
+			if(this.preventDefault){
+				inEvent.preventDefault();
+			}
 			this.$.scrollMath.drag(inEvent);
 			if (this.scrim) {
 				this.$.scrim.show();

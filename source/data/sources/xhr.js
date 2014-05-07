@@ -102,6 +102,7 @@
 			opts.method = rec.isNew? "POST": "PUT";
 			opts.url = this.buildUrl(rec, opts);
 			opts.postBody = rec.toJSON();
+			opts.contentType = "application/json";
 			this.go(opts);
 		},
 		//* Uses "DELETE" method.
