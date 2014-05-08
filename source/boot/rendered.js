@@ -1,41 +1,80 @@
-/*
- * Enables registering callbacks, to be called when
- * renderInto is done rendering root component tree
- */
-
-//*@protected
-(function (enyo) {
-
-	var callbacks = [];
-
-	var invoke = function (root) {
-		for (var n=0, a; (a = callbacks[n]); n++) {
-			a[0].apply(a[1] || enyo.global, [root]);
+(function (enyo, scope) {
+	/** @namespace enyo */
+	
+	/**
+		@private
+	*/
+	var callbacks = [],
+		roots = [];
+		
+	/**
+		@private
+	*/
+	enyo.roots = roots;
+	
+	/**
+		Invokes all known callbacks (if any) against the root view once it has been rendered. This
+		method won't likely be executed very often.
+	
+		@private
+	*/
+	function invoke (root) {
+		callbacks.forEach(function (ln) {
+			ln.method.call(ln.context, root);
+		});
+	}
+	
+	/**
+		Register a single callback to be executed whenever a _root_ view is rendered.
+	
+		@public
+		@method enyo.rendered
+		@param {Function} method The callback to execute.
+		@param {Object} [context=enyo.global] The context under which to execute the callback.
+	*/
+	enyo.rendered = function (method, context) {
+		callbacks.push({method: method, context: context || enyo.global});
+	};
+	
+	/**
+		@private
+	*/
+	enyo.addToRoots = function (view) {
+		var rendered,
+			destroy;
+		
+		// since it is possible to call renderInto more than once on a given view we ensure we
+		// don't register it twice unnecessarily
+		if (roots.indexOf(view) === -1) {
+			
+			roots.push(view);
+			
+			// hijack the rendered method
+			rendered = view.rendered;
+			
+			// hijack the destroy method
+			destroy = view.destroy;
+			
+			// supply our rendered hook
+			view.rendered = function () {
+				// we call the original first
+				rendered.apply(this, arguments);
+				
+				// and now we invoke the known callbacks against this root
+				invoke(this);
+			};
+			
+			// supply our destroy hook
+			view.destroy = function () {
+				var idx = roots.indexOf(this);
+				
+				// remove it from the roots array
+				if (idx > -1) roots.splice(idx, 1);
+				
+				// now we can call the original
+				destroy.apply(this, arguments);
+			};
 		}
 	};
-
-	//*@public
-	//* Registers callback to be called every time a root is rendered by calling
-	//* enyo.Control.renderInto() or
-	enyo.rendered = function (f, context) {
-		callbacks.push([f, context]);
-	};
-
-	//*@protected
-	//* Adds control to enyo.roots; Called from enyo.Control.renderInto()
-	enyo.addToRoots = function(root) {
-		if (!enyo.exists(enyo.roots)) {
-			enyo.roots = [ root ];
-		} else {
-			enyo.roots.push(root);
-		}
-
-		var rendered = root.rendered;
-		root.rendered = function() {
-			rendered.apply(root, []);
-			invoke(root);
-		};
-		root._isRoot = true;
-	};
-
-})(enyo);
+	
+})(enyo, this);
