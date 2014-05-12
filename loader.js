@@ -73,8 +73,8 @@
 		loadSheet: function(inSheet) {
 			this.machine.sheet(inSheet);
 		},
-		loadPackage: function(inPackage) {
-			this.machine.script(inPackage);
+		loadPackage: function(inPackage, inOnSucess, inOnError) {
+			this.machine.script(inPackage, inOnSucess, inOnError);
 		},
 		report: function() {
 		},
@@ -102,7 +102,7 @@
 			var block = this.stack.pop();
 			if (block) {
 				// propagate failed scripts to queued block
-				if(enyo.runtimeLoading && inBlock.failed) {
+				if(enyo.runtimeLoading && inBlock.failed && block != inBlock) {
 					block.failed = block.failed || [];
 					block.failed.push.apply(block.failed, inBlock.failed);
 				}
@@ -290,7 +290,16 @@
 			}
 			// load the actual package. the package MUST call a continuation function
 			// or the process will halt.
-			this.loadPackage(this.manifest);
+			var failure;
+			if(enyo.runtimeLoading) {
+				var self = this;
+				var failure = function() {
+					inBlock.failed = inBlock.failed || [];
+					inBlock.failed.push(inPath);
+					self.more(inBlock);
+				};
+			}
+			this.loadPackage(this.manifest, null, failure);
 		}
 	};
 })();
