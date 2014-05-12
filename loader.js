@@ -293,7 +293,7 @@
 			var failure;
 			if(enyo.runtimeLoading) {
 				var self = this;
-				var failure = function() {
+				failure = function() {
 					inBlock.failed = inBlock.failed || [];
 					inBlock.failed.push(inPath);
 					self.more(inBlock);
