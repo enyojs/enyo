@@ -48,4 +48,23 @@ Added _isComputed()_ method, primarily for internal use.
 
 Removed the previously public _initBindings()_ method (was used only during initialization of object and nowhere else in framework).
 
-Revmoed the previous public _refreshBindings()_ and _rebuildBindings()_ methods as they are no longer relevant.
+Removed the previous public _refreshBindings()_ and _rebuildBindings()_ methods as they are no longer relevant.
+
+### Collection
+
+Added configuration options that allow more succinct control over various actions; this is in-line with a move to accept an options parameter in many methods across the framework.
+
+### Model
+
+Added configuration options that allow more succinct control over various actions; this is in-line with a move to accept an options parameter in many methods across the framework.
+
+### Store
+
+Removed _addCollection()_/_removeCollection()_ methods as they are no longer used or referenced by the store.
+
+Removed _addRecord()_/_createRecord()_/_getRecord()_ methods as the store does not create instances of records. These have been removed in favor of a new paradigm using _add()_/_remove()_ methods.
+
+### Source
+
+### Control
+

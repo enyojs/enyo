@@ -18,11 +18,29 @@
 		Reduced initialization callstack by not unnecessarily calling some changed handlers and
 		class string initialization methods
 	
+		Removed setClasses overloaded method in preference for set('classes' ...) because this
+		allowed a normalized and more efficient way of managing them via the addClass API
+	
+		Possible modification to previous (INCONSISTENT) behavior of addClass that added to the
+		node but did not update the instance 'classes' property so they did not have the same
+		entry point to updating the DOM and hasClass would fail because they were synchronized -
+		now they are and they both use the same entry point to update the DOM which normalizes how
+		Bindings can interact with them and the possibility of improved perforance in a runloop
+	
+		getAttribute no longer attempts to retrieve the value from the node if we have a fixed
+		value for it already because it means we set it and there is no need to query the DOM
+	
+		remove getCssText method as it is unnecessary just call get('cssText') or access the property
+		directly knowing that style is synchronized to this value as long as the control has been
+		rendered
+	
+		remove getCssClasses method for the same reasons as getCssText method
 	*/
 	
 	var kind = enyo.kind;
 	
-	var UiComponent = enyo.UiComponent;
+	var UiComponent = enyo.UiComponent,
+		HTMLStringDelegate = enyo.HTMLStringDelegate;
 	
 	/**
 		@public
@@ -110,8 +128,121 @@
 			onShowingChanged: 'showingChangedHandler'
 		},
 		
+		/**
+			Overloaded to hook a few properties to preprocess values before observers
+			are notified.
+		*/
+		set: enyo.inherit(function (sup) {
+			return function (path, is, opts) {
+				switch (path) {
+					
+				// whenever set('classes', ...) is called we need to preprocess the value before
+				// any observers fire to ensure that if there is actually a change it will have
+				// access to the correct value
+				case 'classes':
+					return sup.call(this, path, this.preprocessClasses(is), opts);
+					break;
+					
+				// whenever set('style', ...) is called we need to preprocess the value before any
+				// observers fire to ensure that if there is actually a change it will have access
+				// to the correct value
+				case 'style':
+					return sup.call(this, path, this.preprocessStyle(is), opts);
+					break;
+				default:
+					return sup.apply(this, arguments);
+					break;
+				}
+			};
+		}),
+		
 		// .................................
 		// DOM NODE MANIPULATION API
+		
+		/**
+			@public
+		*/
+		getBounds: function () {
+			var node = this.hasNode(),
+				bounds = node && enyo.dom.getBounds(node);
+			
+			return bounds || {left: undefined, top: undefined, width: undefined, height: undefined};
+		},
+		
+		/**
+			@public
+		*/
+		setBounds: function (bounds, unit) {
+			var newStyle = '',
+				extents = ['width', 'height', 'left', 'top', 'right', 'bottom'],
+				i = 0,
+				val,
+				ext;
+			
+			// if no unit is supplied we default to pixels
+			unit = unit || 'px';
+			
+			for (; (ext = extents[i]); ++i) {
+				val = bounds[ext];
+				if (val || val === 0) {
+					newStyle += (ext + ':' + val + (typeof val == 'string' ? '' : unit) + ';')
+				}
+			}
+			
+			this.set('style', this.style + newStyle);
+		},
+		
+		/**
+			@public
+		*/
+		getAbsoluteBounds: function () {
+			var node = this.hasNode(),
+				bounds = node && enyo.dom.getAbsoluteBounds(node);
+				
+			return bounds || {
+				left: undefined,
+				top: undefined,
+				width: undefined,
+				height: undefined,
+				bottom: undefined,
+				right: undefined
+			};
+		},
+		
+		/**
+			@public
+		*/
+		show: function () {
+			this.set('showing', true);
+		},
+		
+		/**
+			@public
+		*/
+		hide: function () {
+			this.set('showing', false);
+		},
+		
+		/**
+			@public
+		*/
+		focus: function () {
+			if (this.hasNode()) this.node.focus();
+		},
+		
+		/**
+			@public
+		*/
+		blur: function () {
+			if (this.hasNode()) this.node.blur();
+		},
+		
+		/**
+			@public
+		*/
+		hasFocus: function () {
+			if (this.hasNode()) return document.activeElement === this.node;
+		},
 		
 		/**
 			@public
@@ -124,34 +255,44 @@
 			@public
 		*/
 		getAttribute: function (name) {
+			var node;
+			
 			// TODO: This is a fixed API assuming that no changes will happen to the DOM that
 			// do not use it...original implementation of this method used the node's own
-			// getAttribute method if it existed but it doesn't seem possible for them to get
-			// out of sync...
-			return this.attributes[name];
+			// getAttribute method every time it could but we really only need to do that if we
+			// weren't the ones that set the value to begin with -- in slow DOM situations this
+			// could still be faster but it needs to be verified
+			if (this.attributes.hasOwnProperty(name)) return this.attributes[name];
+			else {
+				node = this.hasNode();
+				
+				// we store the value so that next time we'll know what it is
+				return (this.attributes[name] = (node ? node.getAttribute(name) : null));
+			}
 		},
 		
 		/**
 			@public
 		*/
 		setAttribute: function (name, value) {
-			return this.set('attributes.' + name, value);
+			
+			// this effectively does the exact same thing as calling set('attributes.x' ...) so they
+			// are the same as the way bindings must handle them
+			return name ? this.set('attributes.' + name, value) : this;
 		},
 		
 		/**
 			@public
 		*/
 		getNodeProperty: function (name, def) {
-			var node = this.hasNode();
-			return node ? node[name] : def;
+			return this.hasNode() ? this.node[name] : def;
 		},
 		
 		/**
 			@public
 		*/
 		setNodeProperty: function (name, value) {
-			var node = this.hasNode();
-			if (node) node[name] = value;
+			if (this.hasNode()) this.node[name] = value;
 			return this;
 		},
 		
@@ -164,19 +305,22 @@
 			@public
 		*/
 		hasClass: function (name) {
-			return name && ((this.attributes['class'] || '').indexOf(name) > -1);
+			return name && this.classes.indexOf(name) > -1;
 		},
 		
 		/**
 			@public
 		*/
 		addClass: function (name) {
-			var classes;
+			var classes = this.classes;
 			
-			if (!this.hasClass(name)) {
-				classes = this.classes;
-				this.classes += ((this.classes ? ' ' : '') + name);
-				this.classesChanged(classes, this.classes);
+			// NOTE: Because this method accepts a string and for efficiency does not wish to
+			// parse it to determine if it is actually multiple classes we later pull a trick
+			// to keep it normalized and synchronized with our attributes hash and the node's
+			if (name) {
+				
+				// this is hooked
+				this.set('classes', classes + (classes ? (' ' + name) : name));
 			}
 			
 			return this;
@@ -186,29 +330,311 @@
 			@public
 		*/
 		removeClass: function (name) {
+			var classes = this.classes;
 			
+			if (name) this.set('classes', classes.replace(name, ''));
+			
+			return this;
 		},
 		
 		/**
 			@public
 		*/
 		addRemoveClass: function (name, add) {
+			return name ? this[add ? 'addClass' : 'removeClass'](name) : this;
+		},
+		
+		/**
+			Hook from {@link enyo.Control#set} to ensure that values are synchronized before
+			observers have access to them. We let the browser handle figuring out what the outcome
+			is and we synchronize to it later.
+		
+			@private
+		*/
+		preprocessClasses: function (classes) {
+			var node = this.hasNode();
 			
+			if (node) {
+				if (classes) node.setAttribute('class', classes);
+				else node.removeAttribute('class');
+				
+				classes = node.getAttribute('class');
+			}
+			
+			return classes;
+		},
+		
+		/**
+			Hook from {@link enyo.Control#set} to ensure that values are synchronized before
+			observers have access to them. We let the browser handle figuring out what the outcome
+			is and we synchronize to it later.
+		
+			@private
+		*/
+		preprocessStyle: function (style) {
+			var node = this.hasNode();
+			
+			if (node && style != this.cssText) {
+				node.style.cssText = this.kindStyle + (style || '');
+				// now we store the parsed version
+				this.cssText = style = node.style.cssText;
+			}
+			
+			return style;
 		},
 		
 		/**
 			@private
 		*/
-		classesChanged: function (was) {
-			if (was) this.removeClass(was);
-			if (this.classes) this.addClass(this.classes);
+		classesChanged: function () {
+			var classes = this.classes,
+				node = this.hasNode(),
+				attrs = this.attributes,
+				delegate = this.renderDelegate || Control.renderDelegate;
+				
+			// we need to update our attributes.class value and flag ourselves to be
+			// updated
+			attrs['class'] = classes;
+			
+			// if we don't have a node then it means the changes weren't flushed so we need to be
+			// flagged for update
+			if (!node) delegate.invalidate(this, 'attributes');
+		},
+		
+		/**
+			@public
+		*/
+		applyStyle: function (prop, value) {
+			
+			// NOTE: This method deliberately avoids calling set('style', ...) for performance
+			// as it will have already been parsed by the browser so we pass it on via the
+			// notification system which is the same
+			
+			// TODO: Wish we could delay this potentially...
+			// if we have a node we render the value immediately and update our style string
+			// in the process to keep them synchronized
+			var node = this.hasNode(),
+				style = this.style,
+				delegate = this.renderDelegate || Control.renderDelegate;
+			// update our current cached value
+			// this.domStyles[prop] = value;
+			if (node) {
+				node.style[prop] = value;
+				
+				// cssText is an internal property used to help know when to sync and not
+				// sync with the node in styleChanged
+				this.style = this.cssText = node.style.cssText;
+				
+				// otherwise we have to try and prepare it for the next time it is rendered we will
+				// need to update it because it will not be synchronized
+			} else this.style += (prop + ':' + value + ';');
+			
+			// we don't want to cause the notification update unless we have the node and know we
+			// have the actual correct value - later after render if they are changed it will
+			// cause a notification to take place with the correct value
+			if (this.style != style) {
+				// allow bindings or other observers the opportunity to respond
+				if (node) this.notify('style', style, this.style);
+				else delegate.invalidate(this, 'style');
+			}
+			
+			return this;
+		},
+		
+		/**
+			@public
+		*/
+		addStyles: function (css) {
+			var key,
+				newStyle = '';
+			
+			if (typeof css == 'object') {
+				for (key in css) newStyle += (key + ':' + css[key] + ';');
+			} else newStyle = css;
+			
+			this.set('style', this.style + newStyle);
 		},
 		
 		/**
 			@private
 		*/
 		styleChanged: function () {
+			var delegate;
 			
+			// if the cssText internal string doesn't match then we know style was set directly
+			if (this.cssText != this.style) {
+				
+				// we need to render the changes and synchronize - this means that the style
+				// property was set directly so we will reset it prepending it with the original
+				// style (if any) for the kind and keeping whatever the browser is keeping
+				if (this.hasNode()) {
+					this.node.style.cssText = this.kindStyle + (this.style || '');
+					// now we store the parsed version
+					this.cssText = this.style = this.node.style.cssText;
+				} else {
+					delegate = this.renderDelegate || Control.renderDelegate;
+					delegate.invalidate(this, 'style');
+				}
+			}
+		},
+		
+		/**
+			@public
+		*/
+		getComputedStyleValue: function (prop, def) {
+			return this.hasNode() ? enyo.dom.getComputedStyleValue(this.node, prop) : def;
+		},
+		
+		/**
+			@private
+		*/
+		findNodeById: function () {
+			return this.id && (this.node = enyo.dom.byId(this.id));
+		},
+		
+		/**
+			@private
+		*/
+		idChanged: function (was) {
+			if (was) Control.unregisterDomEvents(was);
+			if (this.id) Control.registerDomEvents(this.id, this);
+			this.set('attributes.id', this.id);
+		},
+		
+		/**
+			@private
+		*/
+		contentChanged: function () {
+			var delegate = this.renderDelegate || Control.renderDelegate;
+			delegate.invalidate(this, 'content');
+		},
+		
+		/**
+			@private
+		*/
+		attributesChanged: function () {
+			this.log(arguments);
+			
+			// TODO:
+		},
+		
+		/**
+			@public
+		*/
+		beforeChildRender: function () {
+			// if we are generated, we should flow before rendering a child;
+			// if not, the render context isn't ready anyway
+			if (this.generated) this.flow();
+		},
+		
+		/**
+			@private
+		*/
+		showingChanged: function (was) {
+			
+			// if we are changing from not showing to showing we attempt to find whatever
+			// our last known value for display was or use the default
+			if (!was) this.applyStyle('display', this._display || '');
+			
+			// if we are supposed to be hiding the control then we need to cache our current
+			// display state
+			else if (!this.showing) {
+				// we can't truly cache this because it _could_ potentially be set to multiple
+				// values throughout its lifecycle although that seems highly unlikely...
+				this._display = this.hasNode() ? this.node.style.display : '';
+				this.applyStyle('display', 'none');
+			}
+
+			this.sendShowingChangedEvent(was);
+		},
+		
+		/**
+			@private
+		*/
+		sendShowingChangedEvent: function (was) {
+			var waterfall = (was === true || was === false),
+				parent = this.parent;
+				
+			// make sure that we don't trigger the waterfall when this method
+			// is arbitrarily called during _create_ and it should only matter
+			// that it changed if our parent's are all showing as well
+			if (waterfall && (parent ? parent.getAbsoluteShowing(true) : true)) {
+				this.waterfall('onShowingChanged', {originator: this, showing: this.showing});
+			}
+		},
+		
+		/**
+			Returns true if this and all parents are showing. If the optional _ignoreBounds_ boolean
+			parameter is `true` it will not force a layout by retrieving computed bounds and rely on
+			the return from _this.showing_ exclusively.
+		
+			@public
+		*/
+		getAbsoluteShowing: function (ignoreBounds) {
+			var bounds = !ignoreBounds ? this.getBounds() : null,
+				parent = this.parent;
+			
+			if (!this.generated || this.destroyed || !this.showing || (bounds &&
+				bounds.height === 0 && bounds.width === 0)) {
+				return false;
+			}
+			
+			if (parent && parent.getAbsoluteShowing && (
+				this.parentNode !== enyo.floatingLayer.hasNode())) {
+				return parent.getAbsoluteShowing(ignoreBounds);
+			}
+			
+			return true;
+		},
+		
+		/**
+			Handles the _onshowingchanged_ event that is waterfalled by controls when their
+			_showing_ value is modified. If the control is not showing itself already it will not
+			continue the waterfall. Overload this method for additional handling of this event.
+		
+			@private
+		*/
+		showingChangedHandler: function (sender, event) {
+			return sender === this ? false : !this.showing;
+		},
+		
+		/**
+			@private
+		*/
+		fitChanged: function () {
+			this.parent.reflow();
+		},
+		
+		/**
+			@public
+		*/
+		isFullscreen: function () {
+			return (this.hasNode() && this.node === enyo.fullscreen.getFullscreenElement());
+		},
+		
+		/**
+			@public
+		*/
+		requestFullscreen: function () {
+			if (!this.hasNode()) return false;
+
+			if (enyo.fullscreen.requestFullscreen(this)) {
+				return true;
+			}
+
+			return false;
+		},
+		
+		/**
+			@public
+		*/
+		cancelFullscreen: function() {
+			if (this.isFullscreen()) {
+				enyo.fullscreen.cancelFullscreen();
+				return true;
+			}
+
+			return false;
 		},
 		
 		// .................................
@@ -247,6 +673,8 @@
 			
 			// the render delegate acts on the control
 			delegate.render(this);
+			
+			return this;
 		},
 		
 		/**
@@ -254,7 +682,36 @@
 			@method
 		*/
 		renderInto: function (parentNode) {
+			var delegate = this.renderDelegate || Control.renderDelegate,
+				noFit = this.fit === false;
+				
+			// attempt to retrieve the parentNode
+			parentNode = enyo.dom.byId(parentNode);
 			
+			// teardown in case of previous render
+			delegate.teardownRender(this);
+			
+			if (parentNode == document.body && !noFit) this.setupBodyFitting();
+			else if (this.fit) this.addClass('enyo-fit enyo-clip');
+			
+			// for IE10 support, we want full support over touch actions in enyo-rendered areas
+			this.addClass('enyo-no-touch-action');
+			
+			// add css to enable hw-accelerated scrolling on non-android platforms
+			// ENYO-900, ENYO-901
+			this.setupOverflowScrolling();
+			
+			// if there are unflushed body classes we flush them now...
+			enyo.dom.flushBodyClasses();
+			
+			// now let the delegate render it the way it needs to
+			delegate.renderInto(this, parentNode);
+			
+			// we inject this as a root view because, well, apparently that is just an assumption
+			// we've been making...
+			enyo.addToRoots(this);
+			
+			return this;
 		},
 		
 		/**
@@ -262,7 +719,71 @@
 			@method
 		*/
 		rendered: function () {
+			var child,
+				i = 0;
 			
+			// CAVEAT: Currently we use one entry point ('reflow') for
+			// post-render layout work *and* post-resize layout work.
+			this.reflow();
+			
+			for (; (child = this.children[i]); ++i) {
+				if (child.generated) child.rendered();
+			}
+		},
+		
+		/**
+			@private
+		*/
+		teardownRender: function () {
+			var delegate = this.renderDelegate || Control.renderDelegate;
+			
+			delegate.teardownRender(this);
+		},
+		
+		/**
+			@private
+		*/
+		addNodeToParent: function () {
+			var pn;
+			
+			if (this.node) {
+				pn = this.getParentNode();
+				if (pn) {
+					if (this.addBefore !== undefined) {
+						this.insertNodeInParent(pn, this.addBefore && this.addBefore.hasNode());
+					} else this.appendNodeToParent(pn);
+				}
+			}
+		},
+		
+		/**
+			@private
+		*/
+		appendNodeToParent: function(parentNode) {
+			parentNode.appendChild(this.node);
+		},
+		
+		/**
+			@private
+		*/
+		insertNodeInParent: function(parentNode, beforeNode) {
+			parentNode.insertBefore(this.node, beforeNode || parentNode.firstChild);
+		},
+		
+		/**
+			@private
+		*/
+		removeNodeFromDom: function() {
+			if (this.hasNode() && this.node.parentNode) {
+				this.node.parentNode.removeChild(this.node);
+			}
+		},
+		
+		/**
+			@private
+		*/
+		getParentNode: function () {
+			return this.parentNode || (this.parent && (this.parent.hasNode() || this.parent.getParentNode()));
 		},
 		
 		// .................................
@@ -273,7 +794,6 @@
 		create: enyo.inherit(function (sup) {
 			return function (props) {
 				var attrs = props && props.attributes,
-					style,
 					classes;
 				
 				// ensure that we both keep an instance copy of defined attributes but also
@@ -285,22 +805,10 @@
 				}
 				
 				// initialize the styles for this instance
-				this.domStyles = this.domStyles ? enyo.clone(this.domStyles) : {};
-				style = this.kindStyle + this.style;
-				if (style) Control.cssTextToDomStyles(style, this.domStyles);
-				
-				// check to ensure that the showing property is flagged (implicitly) from the
-				// display value of a style entry if necessary
-				if (this.domStyles.display == 'none') {
-					this.showing = false;
-					this.domStyles.display = '';
-				}
+				this.style = this.kindStyle + this.style;
 				
 				// super initialization
 				sup.apply(this, arguments);
-				
-				// initialize/synchronize the showing property
-				this.showingChanged();
 				
 				// try and make it so we only need to call the method once during
 				// initialization and only then when we have something to add
@@ -310,7 +818,7 @@
 				
 				// if there are known classes needed to be applied from the kind
 				// definition and the instance definition (such as a component block)
-				if (classes) this.addClass(classes);
+				this.classes = this.attributes['class'] = classes;
 				
 				// setup the id for this control if we have one
 				this.idChanged();
@@ -347,9 +855,125 @@
 		/**
 			@private
 		*/
-		rtl: false
+		rtl: false,
+		
+		/**
+			@private
+		*/
+		setupBodyFitting: function () {
+			enyo.dom.applyBodyFit();
+			this.addClass('enyo-fit enyo-clip');
+		},
+		
+		/*
+			If the platform is Android or Android-Chrome, don't include the css rule
+			_-webkit-overflow-scrolling: touch_, as it is not supported in Android and leads to
+			overflow issues (ENYO-900 and ENYO-901). Similarly, BB10 has issues repainting
+			out-of-viewport content when _-webkit-overflow-scrolling_ is used (ENYO-1396).
+		
+			@private
+		*/
+		setupOverflowScrolling: function () {
+			if(enyo.platform.android || enyo.platform.androidChrome || enyo.platform.blackberry) {
+				return;
+			}
+			enyo.dom.addBodyClass('webkitOverflowScrolling');
+		},
+		
+		/**
+			Sets the control's directionality based on its content.
+			
+			@private
+		*/
+		detectTextDirectionality: function () {
+			if (this.content && this.content.length) {
+				this.rtl = enyo.isRtl(this.content);
+				this.applyStyle('direction', this.rtl ? 'rtl' : 'ltr');
+			}
+		}
 		
 		// .................................
 	});
+	
+	/**
+		@public
+		@static
+	*/
+	enyo.defaultCtor = Control;
+	
+	/**
+		@public
+		@static
+	*/
+	Control.renderDelegate = HTMLStringDelegate;
+	
+	/**
+		@private
+	*/
+	Control.registerDomEvents = function (id, control) {
+		enyo.$[id] = control;
+	};
+	
+	/**
+		@private
+	*/
+	Control.unregisterDomEvents = function (id) {
+		enyo.$[id] = null;
+	};
+	
+	/**
+		@private
+	*/
+	Control.normalizeCssStyleString = function (style) {
+		return (
+			(style + ';')
+			// remove any non-alpha ascii at the front of the string
+			.replace(/^[;\s]+/, '')
+			// remove all spaces before any semi-colons or any duplicates
+			.replace(/\s*(;|:)\1+/g, '$1')
+			// ensure we have one space after each colon or semi-colon except the last one
+			.replace(/(:|;)\s*(?!$)/g, '$1 ')
+		);
+	};
+	
+	/**
+		@private
+	*/
+	Control.concat = function (ctor, props, instance) {
+		var proto = ctor.prototype || ctor,
+			attrs,
+			str;
+		
+		if (props.classes) {
+			if (instance) {
+				str = (proto.classes ? (proto.classes + ' ') : '') + props.classes;
+				proto.classes = str;
+			} else {
+				str = (proto.kindClasses || '') + (proto.classes ? (' ' + proto.classes) : '');
+				proto.kindClasses = str;
+				proto.classes = props.classes;
+			}
+			delete props.classes;
+		}
+		
+		if (props.style) {
+			if (instance) {
+				str = (proto.style ? (proto.style + ';') : '') + (props.style + ';');
+				proto.style = Control.normalizeCssStyleString(str);
+			} else {
+				str = proto.kindStyle ? proto.kindStyle : '';
+				str += proto.style ? (';' + proto.style) : '';
+				proto.kindStyle = Control.normalizeCssStyleString(str);
+				proto.style = Control.normalizeCssStyleString(props.style);
+			}
+			delete props.style;
+		}
+		
+		if (props.attributes) {
+			attrs = proto.attributes;
+			attrs = attrs ? enyo.mixin({}, [attrs, props.attributes]) : props.attributes;
+			delete props.attributes;
+		}
+	};
 	
 })(enyo, this);
