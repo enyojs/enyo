@@ -142,13 +142,6 @@
 				case 'classes':
 					return sup.call(this, path, this.preprocessClasses(is), opts);
 					break;
-					
-				// whenever set('style', ...) is called we need to preprocess the value before any
-				// observers fire to ensure that if there is actually a change it will have access
-				// to the correct value
-				// case 'style':
-				// 	return sup.call(this, path, this.preprocessStyle(is), opts);
-				// 	break;
 				default:
 					return sup.apply(this, arguments);
 					break;
@@ -469,8 +462,10 @@
 		*/
 		idChanged: function (was) {
 			if (was) Control.unregisterDomEvents(was);
-			if (this.id) Control.registerDomEvents(this.id, this);
-			this.set('attributes.id', this.id);
+			if (this.id) {
+				Control.registerDomEvents(this.id, this);
+				this.set('attributes.id', this.id);
+			}
 		},
 		
 		/**
