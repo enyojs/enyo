@@ -414,12 +414,12 @@ enyo.kind.statics = {
 };
 
 //*@protected
-enyo.concatHandler = function (ctor, props, extending) {
+enyo.concatHandler = function (ctor, props, instance) {
 	var proto = ctor.prototype || ctor
 		, base = proto.ctor;
 		
 	while (base) {
-		if (base.concat) base.concat(ctor, props, extending);
+		if (base.concat) base.concat(ctor, props, instance);
 		base = base.prototype.base;
 	}
 };

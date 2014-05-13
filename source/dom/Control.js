@@ -146,9 +146,9 @@
 				// whenever set('style', ...) is called we need to preprocess the value before any
 				// observers fire to ensure that if there is actually a change it will have access
 				// to the correct value
-				case 'style':
-					return sup.call(this, path, this.preprocessStyle(is), opts);
-					break;
+				// case 'style':
+				// 	return sup.call(this, path, this.preprocessStyle(is), opts);
+				// 	break;
 				default:
 					return sup.apply(this, arguments);
 					break;
@@ -365,25 +365,6 @@
 		},
 		
 		/**
-			Hook from {@link enyo.Control#set} to ensure that values are synchronized before
-			observers have access to them. We let the browser handle figuring out what the outcome
-			is and we synchronize to it later.
-		
-			@private
-		*/
-		preprocessStyle: function (style) {
-			var node = this.hasNode();
-			
-			if (node && style != this.cssText) {
-				node.style.cssText = this.kindStyle + (style || '');
-				// now we store the parsed version
-				this.cssText = style = node.style.cssText;
-			}
-			
-			return style;
-		},
-		
-		/**
 			@private
 		*/
 		classesChanged: function () {
@@ -414,8 +395,8 @@
 			// if we have a node we render the value immediately and update our style string
 			// in the process to keep them synchronized
 			var node = this.hasNode(),
-				style = this.style,
-				delegate = this.renderDelegate || Control.renderDelegate;
+				style = this.style;
+				
 			// update our current cached value
 			// this.domStyles[prop] = value;
 			if (node) {
@@ -427,16 +408,7 @@
 				
 				// otherwise we have to try and prepare it for the next time it is rendered we will
 				// need to update it because it will not be synchronized
-			} else this.style += (prop + ':' + value + ';');
-			
-			// we don't want to cause the notification update unless we have the node and know we
-			// have the actual correct value - later after render if they are changed it will
-			// cause a notification to take place with the correct value
-			if (this.style != style) {
-				// allow bindings or other observers the opportunity to respond
-				if (node) this.notify('style', style, this.style);
-				else delegate.invalidate(this, 'style');
-			}
+			} else this.set('style', style + (prop + ':' + value + ';'));
 			
 			return this;
 		},
@@ -450,7 +422,7 @@
 			
 			if (typeof css == 'object') {
 				for (key in css) newStyle += (key + ':' + css[key] + ';');
-			} else newStyle = css;
+			} else newStyle = css || '';
 			
 			this.set('style', this.style + newStyle);
 		},
@@ -462,7 +434,7 @@
 			var delegate;
 			
 			// if the cssText internal string doesn't match then we know style was set directly
-			if (this.cssText != this.style) {
+			if (this.cssText !== this.style) {
 				
 				// we need to render the changes and synchronize - this means that the style
 				// property was set directly so we will reset it prepending it with the original
@@ -783,7 +755,9 @@
 			@private
 		*/
 		getParentNode: function () {
-			return this.parentNode || (this.parent && (this.parent.hasNode() || this.parent.getParentNode()));
+			return this.parentNode || (this.parent && (
+				this.parent.hasNode() || this.parent.getParentNode())
+			);
 		},
 		
 		// .................................
@@ -963,8 +937,10 @@
 			} else {
 				str = proto.kindStyle ? proto.kindStyle : '';
 				str += proto.style ? (';' + proto.style) : '';
+				str += props.style;
+				
+				// moved it all to kindStyle so that it will be available whenever instanced
 				proto.kindStyle = Control.normalizeCssStyleString(str);
-				proto.style = Control.normalizeCssStyleString(props.style);
 			}
 			delete props.style;
 		}

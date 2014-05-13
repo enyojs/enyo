@@ -93,7 +93,7 @@
 			var key;
 
 			if (props) {
-				enyo.concatHandler(this, props);
+				enyo.concatHandler(this, props, true);
 				// if props is a default hash this is significantly faster than
 				// requiring the hasOwnProperty check every time
 				if (!props.kindName) {

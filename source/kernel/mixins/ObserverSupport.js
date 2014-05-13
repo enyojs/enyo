@@ -349,9 +349,9 @@
 	
 	// @NOTE: It seems like a lot of work but it really won't happen that much and the more
 	// we push to kind-time the better for initialization time
-	enyo.concatHandler = function (ctor, props) {
+	enyo.concatHandler = function (ctor, props, instance) {
 		
-		sup.call(this, ctor, props);
+		sup.call(this, ctor, props, instance);
 		
 		if (props === ObserverSupport) return;
 

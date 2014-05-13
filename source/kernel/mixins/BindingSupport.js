@@ -116,12 +116,12 @@
 	var sup = enyo.concatHandler
 		, flags = {ignore: true};
 	
-	enyo.concatHandler = function (ctor, props) {
+	enyo.concatHandler = function (ctor, props, instance) {
 		var proto = ctor.prototype || ctor
 			, kind = props && (props.defaultBindingKind || defaultBindingKind)
 			, defaults = props && props.bindingDefaults;
 		
-		sup.call(this, ctor, props);
+		sup.call(this, ctor, props, instance);
 		if (props.bindings) {
 			props.bindings.forEach(function (bnd) {
 				defaults && mixin(bnd, defaults, flags);
