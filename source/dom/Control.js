@@ -128,6 +128,19 @@
 			onShowingChanged: 'showingChangedHandler'
 		},
 		
+		/**
+			@private
+		*/
+		strictlyInternalEvents: {onenter: 1, onleave: 1},
+		
+		/**
+			@private
+		*/
+		isInternalEvent: function (event) {
+			var rdt = enyo.dispatcher.findDispatchTarget(event.relatedTarget);
+			return rdt && rdt.isDescendantOf(this);
+		},
+		
 		// .................................
 		// DOM NODE MANIPULATION API
 		
@@ -279,6 +292,13 @@
 			return this;
 		},
 		
+		/**
+			@public
+		*/
+		addContent: function (content) {
+			return this.set('content', this.get('content') + content);
+		},
+		
 		// .................................
 		
 		// .................................
@@ -341,7 +361,7 @@
 					node.setAttribute('class', classes || this.kindClasses);
 				} else node.removeAttribute('class');
 				
-				classes = node.getAttribute('class');
+				this.classes = classes = node.getAttribute('class');
 			}
 			
 			// we need to update our attributes.class value and flag ourselves to be
@@ -831,6 +851,227 @@
 		}
 		
 		// .................................
+		
+		// .................................
+		// DEPRECATED
+		
+		/**
+			@public
+			@deprecated
+		*/
+		getTag: function () {
+			return this.tag;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		setTag: function (tag) {
+			var was = this.tag;
+			
+			if (tag && typeof tag == 'string') {
+				this.tag = tag;
+				if (was !== tag) this.notify('tag', was, tag);
+			}
+			return this;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		getAttributes: function () {
+			return this.attributes;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		setAttributes: function (attrs) {
+			var was = this.attributes;
+			
+			if (typeof attrs == 'object') {
+				this.attributes = attrs;
+				if (attrs !== was) this.notify('attributes', was, attrs);
+			}
+			
+			return this;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		getClasses: function () {
+			return this.classes;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		setClasses: function (classes) {
+			var was = this.classes;
+			
+			this.classes = classes;
+			if (was != classes) this.notify('classes', was, classes);
+			
+			return this;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		getStyle: function () {
+			return this.style;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		setStyle: function (style) {
+			var was = this.style;
+			
+			this.style = style;
+			if (was != style) this.notify('style', was, style);
+			
+			return this;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		getContent: function () {
+			return this.content;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		setContent: function (content) {
+			var was = this.content;
+			this.content = content;
+			
+			if (was != content) this.notify('content', was, content);
+			
+			return this;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		getShowing: function () {
+			return this.showing;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		setShowing: function (showing) {
+			var was = this.showing;
+			this.showing = showing;
+			
+			if (was != showing) this.notify('showing', was, showing);
+			
+			return this;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		getAllowHtml: function () {
+			return this.allowHtml;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		setAllowHtml: function (allow) {
+			var was = this.allowHtml;
+			this.allowHtml = !! allow;
+			
+			if (was !== allow) this.notify('allowHtml', was, allow);
+			
+			return this;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		getCanGenerate: function () {
+			return this.canGenerate;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		setCanGenerate: function (can) {
+			var was = this.canGenerate;
+			this.canGenerate = !! can;
+			
+			if (was !== can) this.notify('canGenerate', was, can);
+			
+			return this;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		getFit: function () {
+			return this.fit;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		setFit: function (fit) {
+			var was = this.fit;
+			this.fit = !! fit;
+			
+			if (was !== fit) this.notify('fit', was, fit);
+			
+			return this;
+		},
+		
+		/**
+			@public
+			@deprecated
+			@ares
+		*/
+		getIsContainer: function () {
+			return this.isContainer;
+		},
+		
+		/**
+			@public
+			@deprecated
+			@ares
+		*/
+		setIsContainer: function (isContainer) {
+			var was = this.isContainer;
+			this.isContainer = !! isContainer;
+			
+			if (was !== isContainer) this.notify('isContainer', was, isContainer);
+			
+			return this;
+		}
+		
+		// .................................
+		
 	});
 	
 	/**
