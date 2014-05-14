@@ -296,6 +296,9 @@ enyo.DataList.delegates.vertical = {
 		if (rf || rs) { this.adjustPagePositions(list); }
 		// either way we need to adjust the buffer size
 		this.adjustBuffer(list);
+		// regardless of the status of updating the pages we need to ensure that we update
+		// the scroll thresholds as space for new pages may now exist that didn't before
+		this.setScrollThreshold(list);
 	},
 	/**
 		Attempts to find the control for the requested index.
