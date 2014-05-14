@@ -98,6 +98,7 @@ enyo.kind({
 			// initialize instance objects
 			this._componentNameMap = {};
 			this.$ = {};
+			this.cachedBubbleTarget = {};
 			sup.apply(this, arguments);
 		};
 	}),
@@ -299,8 +300,8 @@ enyo.kind({
 		}
 	},
 	//* @protected
-	getBubbleTarget: function() {
-		return this.bubbleTarget || this.owner;
+	getBubbleTarget: function(inEventName, inEvent) {
+		return (inEvent.delegate) ? this.owner : this.bubbleTarget || this.cachedBubbleTarget[inEventName] || this.owner;
 	},
 	//* @public
 	/**
@@ -325,6 +326,8 @@ enyo.kind({
 			return;
 		}
 		var e = inEvent || {};
+		e.lastHandledComponent = undefined;
+		e.cacheEnable = true;
 		if (!enyo.exists(e.originator)) {
 			e.originator = inSender || this;
 		}
@@ -353,7 +356,8 @@ enyo.kind({
 		}
 		// Bubble to next target
 		var e = inEvent || {};
-		var next = this.getBubbleTarget();
+		e.cacheEnable = true;
+		var next = this.getBubbleTarget(inEventName, inEvent);
 		if (next) {
 			// use delegate as sender if it exists to preserve illusion
 			// that event is dispatched directly from that, but we still
@@ -402,12 +406,23 @@ enyo.kind({
 
 		// for non-delgated events, try the handlers block if possible
 		if (!delegate) {
-			if (this.handlers && this.handlers[name] &&
-				this.dispatch(this.handlers[name], event, sender)) {
+			var bHandler = this.handlers && this.handlers[name];
+			var bDelegatedFunction = this[name] && enyo.isString(this[name]);
+
+			if (event.cacheEnable) {
+				if (event.lastHandledComponent && (bHandler || bDelegatedFunction || this.id === "master")) {
+					event.lastHandledComponent.cachedBubbleTarget[name] = this;
+					delete event.lastHandledComponent;
+				}
+				if (!event.lastHandledComponent && this.id !== "master") {
+					event.lastHandledComponent = this;
+				}
+			}
+			if (bHandler && this.dispatch(this.handlers[name], event, sender)) {
 				return true;
 			}
 			// then check for a delegate property for this event
-			if (this[name] && enyo.isString(this[name])) {
+			if (bDelegatedFunction) {
 				// we dispatch it up as a special delegate event with the
 				// component that had the delegation string property stored in
 				// the "delegate" property
@@ -482,6 +497,7 @@ enyo.kind({
 			return;
 		}
 		event = event || {};
+		event.cacheEnable = false;
 		//this.log(name, (sender || this).name, "=>", this.name);
 		if (this.dispatchEvent(name, event, sender)) {
 			return true;
@@ -498,6 +514,8 @@ enyo.kind({
 		if (this._silenced) {
 			return;
 		}
+		event = event || {};
+		event.cacheEnable = false;
 		for (var n in this.$) {
 			this.$[n].waterfall(name, event, sender);
 		}
