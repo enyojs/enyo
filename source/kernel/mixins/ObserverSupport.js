@@ -165,22 +165,21 @@
 			@method
 		*/
 		getObservers: function (path) {
-			var euid = this.euid || (this.euid = uid("o"))
-				, loc;
+			var euid = this.euid || (this.euid = uid('o')),
+				ret,
+				loc;
 				
-			// loc = observerTable[euid] || (observerTable[euid] = (
-			// 	this._observers? (function (obs) {
-			// 		var cpy = {};
-			// 		for (var key in obs) cpy[key] = obs[key].slice();
-			// 		return cpy;
-			// 	}(this._observers)): {}
-			// ));
-			
 			loc = observerTable[euid] || (observerTable[euid] = (
 				this._observers? Object.create(this._observers): {}
 			));
 			
-			return path? loc[path]: loc;
+			if (!path) return loc;
+			
+			ret = loc[path];
+			
+			// if the special property exists...
+			if (loc['*']) ret = ret ? ret.concat(loc['*']) : loc['*'].slice();
+			return ret;
 		},
 		
 		/**
