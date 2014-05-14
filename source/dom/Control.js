@@ -247,10 +247,21 @@
 			@public
 		*/
 		setAttribute: function (name, value) {
+			var attrs = this.attributes,
+				node = this.hasNode(),
+				delegate = this.renderDelegate || Control.renderDelegate;
+				
+			if (name) {
+				attrs[name] = value;
+				
+				if (node) {
+					if (value == null || value === false || value === '') {
+						node.removeAttribute(name);
+					} else node.setAttribute(name, value);
+				} else delegate.invalidate(this, 'attributes');
+			}
 			
-			// this effectively does the exact same thing as calling set('attributes.x' ...) so they
-			// are the same as the way bindings must handle them
-			return name ? this.set('attributes.' + name, value) : this;
+			return this;
 		},
 		
 		/**
@@ -431,7 +442,7 @@
 			if (was) Control.unregisterDomEvents(was);
 			if (this.id) {
 				Control.registerDomEvents(this.id, this);
-				this.set('attributes.id', this.id);
+				this.setAttribute('id', this.id);
 			}
 		},
 		
@@ -441,15 +452,6 @@
 		contentChanged: function () {
 			var delegate = this.renderDelegate || Control.renderDelegate;
 			delegate.invalidate(this, 'content');
-		},
-		
-		/**
-			@private
-		*/
-		attributesChanged: function () {
-			this.log(arguments);
-			
-			// TODO:
 		},
 		
 		/**
@@ -909,7 +911,7 @@
 		
 		if (props.attributes) {
 			attrs = proto.attributes;
-			attrs = attrs ? enyo.mixin({}, [attrs, props.attributes]) : props.attributes;
+			proto.attributes = attrs ? enyo.mixin({}, [attrs, props.attributes]) : props.attributes;
 			delete props.attributes;
 		}
 	};
