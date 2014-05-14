@@ -848,7 +848,7 @@
 				this.rtl = enyo.isRtl(this.content);
 				this.applyStyle('direction', this.rtl ? 'rtl' : 'ltr');
 			}
-		}
+		},
 		
 		// .................................
 		
