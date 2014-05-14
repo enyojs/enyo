@@ -128,27 +128,6 @@
 			onShowingChanged: 'showingChangedHandler'
 		},
 		
-		/**
-			Overloaded to hook a few properties to preprocess values before observers
-			are notified.
-		*/
-		set: enyo.inherit(function (sup) {
-			return function (path, is, opts) {
-				switch (path) {
-					
-				// whenever set('classes', ...) is called we need to preprocess the value before
-				// any observers fire to ensure that if there is actually a change it will have
-				// access to the correct value
-				case 'classes':
-					return sup.call(this, path, this.preprocessClasses(is), opts);
-					break;
-				default:
-					return sup.apply(this, arguments);
-					break;
-				}
-			};
-		}),
-		
 		// .................................
 		// DOM NODE MANIPULATION API
 		
@@ -305,7 +284,7 @@
 			@public
 		*/
 		addClass: function (name) {
-			var classes = this.classes;
+			var classes = this.classes || '';
 			
 			// NOTE: Because this method accepts a string and for efficiency does not wish to
 			// parse it to determine if it is actually multiple classes we later pull a trick
@@ -338,26 +317,6 @@
 		},
 		
 		/**
-			Hook from {@link enyo.Control#set} to ensure that values are synchronized before
-			observers have access to them. We let the browser handle figuring out what the outcome
-			is and we synchronize to it later.
-		
-			@private
-		*/
-		preprocessClasses: function (classes) {
-			var node = this.hasNode();
-			
-			if (node) {
-				if (classes) node.setAttribute('class', classes);
-				else node.removeAttribute('class');
-				
-				classes = node.getAttribute('class');
-			}
-			
-			return classes;
-		},
-		
-		/**
 			@private
 		*/
 		classesChanged: function () {
@@ -365,7 +324,15 @@
 				node = this.hasNode(),
 				attrs = this.attributes,
 				delegate = this.renderDelegate || Control.renderDelegate;
+			
+			if (node) {
+				if (classes || this.kindClasses) {
+					node.setAttribute('class', classes || this.kindClasses);
+				} else node.removeAttribute('class');
 				
+				classes = node.getAttribute('class');
+			}
+			
 			// we need to update our attributes.class value and flag ourselves to be
 			// updated
 			attrs['class'] = classes;
