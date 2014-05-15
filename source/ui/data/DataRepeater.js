@@ -103,6 +103,9 @@ enyo.kind({
 			sup.apply(this, arguments);
 			this.collectionChanged();
 			this.selectionChanged();
+			if (this.collection && this.length) {
+				this.reset();
+			}
 		};
 	}),
 	observers: {
@@ -152,9 +155,6 @@ enyo.kind({
 	rendered: enyo.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
-			if (this.collection && this.length) {
-				this.reset();
-			}
 			this.hasRendered = true;
 		};
 	}),
@@ -226,6 +226,7 @@ enyo.kind({
 			// TODO-POST-2.3
 			this.controller = c;
 			// END-TODO-POST-2.3
+			this.reset();
 		}
 	},
 	initCollection: function (c, p) {
@@ -372,6 +373,12 @@ enyo.kind({
 	selected: function() {
 		// to ensure that bindings will clear properly according to their api
 		return (this.multipleSelection ? this._selection : this._selection[0]) || null;
+	},
+	/*
+		Returns the container control for the repeater
+	*/
+	getContainer: function() {
+		return this.$[this.containerName];
 	},
 	//*@protected
 	dataChanged: function () {
