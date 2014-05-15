@@ -389,7 +389,6 @@
 				style = this.style;
 				
 			// update our current cached value
-			// this.domStyles[prop] = value;
 			if (node) {
 				node.style[prop] = value;
 				

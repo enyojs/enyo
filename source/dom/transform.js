@@ -45,21 +45,10 @@
 		return text;
 	};
 	enyo.dom.transformsToDom = function(inControl) {
-		var t = this.domTransformsToCss(inControl.domTransforms);
-		var st = inControl.hasNode() ? inControl.node.style : null;
-		var ds = inControl.domStyles;
-		var sp = this.getStyleTransformProp();
-		var cp = this.getCssTransformProp();
-		if (sp && cp) {
-			ds[cp] = t;
-			if (st) {
-				// Optimization: set transform directly to node when available
-				st[sp] = t;
-				inControl.invalidateStyles();
-			} else {
-				inControl.domStylesChanged();
-			}
-		}
+		var css = this.domTransformsToCss(inControl.domTransforms),
+			styleProp = this.getStyleTransformProp();
+		
+		if (styleProp) inControl.applyStyle(styleProp, css);
 	};
 	//* @public
 	/**

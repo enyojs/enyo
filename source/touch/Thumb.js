@@ -78,7 +78,7 @@ enyo.kind({
 				}
 				if (this._size !== s) {
 					this._size = s;
-					this.node.style[d] = this.domStyles[d] = s + "px";
+					this.applyStyle(d, s + 'px');
 				}
 			} else {
 				this.hide();
