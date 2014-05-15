@@ -16,7 +16,6 @@
 			@private
 		*/
 		render: function (control) {
-			var el;
 			
 			if (control.parent) {
 				control.parent.beforeChildRender(control);
@@ -27,10 +26,11 @@
 			
 			if (control.hasNode()) {
 				control.removeNodeFromDom();
-				this.teardownRender(control);
-			}
+				this.update(control);
+			} else {
 
-			control.node = this.generate(control);
+				control.node = this.generate(control);
+			}
 			control.addNodeToParent();
 			
 			// because technically it was a fragment and we need it to use the actual
@@ -129,6 +129,44 @@
 			
 			control.generated = true;
 			return frag;
+		},
+		
+		/**
+			@private
+		*/
+		update: function (control, node) {
+			
+			var root = node || control.node,
+				allowHtml = control.allowHtml,
+				content,
+				child,
+				el,
+				i = 0;
+			
+			root.style.cssText = control.cssText || control.style;
+			
+			this.renderAttributes(control, root);
+			
+			if (control.children.length) {
+				// we don't know for sure if these controls were separated from their nodes
+				// so we check that first and if not then we undo the teardown that took place
+				// and find them in the still-connected tree
+				for (; (child = control.children[i]); ++i) {
+					el = child.node || root.querySelector('#' + child.id);
+					// TODO: This is incomplete as implemented this is for analysis only
+					if (el) this.update(child, el);
+					else {
+						el = this.generate(child);
+						root.appendChild(el);
+					}
+				}
+			} else {
+				content = control.get('content');
+				root.innerHTML = allowHtml ? content : enyo.dom.escape(content);
+			}
+			
+			control.generated = true;
+			control.node = root;
 		},
 		
 		/**

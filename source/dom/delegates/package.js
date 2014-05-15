@@ -1,4 +1,3 @@
 enyo.depends(
-	'HTMLStringDelegate.js',
-	'DocumentFragmentDelegate.js'
+	'HTMLStringDelegate.js'
 );
