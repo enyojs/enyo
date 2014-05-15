@@ -15,8 +15,28 @@
 		/**
 			@private
 		*/
-		render: function () {
+		render: function (control) {
+			var el;
 			
+			if (control.parent) {
+				control.parent.beforeChildRender(control);
+				
+				if (!control.parent.generated) return;
+				if (control.tag === null) return control.parent.render();
+			}
+			
+			if (control.hasNode()) {
+				control.removeNodeFromDom();
+				this.teardownRender(control);
+			}
+
+			control.node = this.generate(control);
+			control.addNodeToParent();
+			
+			// because technically it was a fragment and we need it to use the actual
+			// node next time it's needed
+			control.node = null;
+			if (control.generated) control.rendered();
 		},
 		
 		/**
@@ -37,7 +57,7 @@
 		teardownRender: function (control) {
 			if (control.generated) this.teardownChildren(control);
 			control.node = null;
-			control.set('generated', false);
+			control.generated = false;
 		},
 		
 		/**
@@ -59,6 +79,7 @@
 			var child,
 				content,
 				allowHtml = control.allowHtml,
+				frag,
 				el,
 				i = 0;
 			
@@ -71,8 +92,14 @@
 			
 			// now if we have a tag we create the correct element for this control
 			// and append it to the fragment/parent
-			if (control.tag) {
+			if (control.tag && !control.hasNode()) {
 				el = document.createElement(control.tag);
+				
+				// insert it into the tree
+				frag.appendChild(el);
+			} else el = control.node;
+			
+			if (el) {
 				
 				// control.cssText is a shortcut for pre-parsed browser-ready css string
 				// should the view have somehow already been rendered
@@ -80,9 +107,6 @@
 				
 				// go ahead and render any attributes to the node
 				this.renderAttributes(control, el);
-				
-				// insert it into the tree
-				frag.appendChild(el);
 			}
 			
 			// supposed to give it the opportunity to flow
@@ -103,7 +127,7 @@
 				el.innerHTML = allowHtml ? content : enyo.dom.escape(content);
 			}
 			
-			control.set('generated', true);
+			control.generated = true;
 			return frag;
 		},
 		
@@ -119,7 +143,7 @@
 			if (node) {
 				for (key in attrs) {
 					val = attrs[key];
-					if (val === null || val === false || val === "") {
+					if (val === null || val === false || val === '') {
 						node.removeAttribute(key);
 					} else {
 						node.setAttribute(key, val);
