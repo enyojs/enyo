@@ -320,7 +320,7 @@
 			// NOTE: Because this method accepts a string and for efficiency does not wish to
 			// parse it to determine if it is actually multiple classes we later pull a trick
 			// to keep it normalized and synchronized with our attributes hash and the node's
-			if (name) {
+			if (name && classes.indexOf(name) === -1) {
 				
 				// this is hooked
 				this.set('classes', classes + (classes ? (' ' + name) : name));
