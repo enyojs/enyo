@@ -659,12 +659,12 @@
 			// if there are unflushed body classes we flush them now...
 			enyo.dom.flushBodyClasses();
 			
-			// now let the delegate render it the way it needs to
-			delegate.renderInto(this, parentNode);
-			
 			// we inject this as a root view because, well, apparently that is just an assumption
 			// we've been making...
 			enyo.addToRoots(this);
+			
+			// now let the delegate render it the way it needs to
+			delegate.renderInto(this, parentNode);
 			
 			return this;
 		},
@@ -794,6 +794,40 @@
 				// ensure no other bubbled events can be dispatched to this control
 				enyo.$[this.id] = null;
 				sup.apply(this, arguments);
+			};
+		}),
+		
+		/**
+			@private
+		*/
+		dispatchEvent: enyo.inherit(function (sup) {
+			return function (name, event, sender) {
+				// prevent dispatch and bubble of events that are strictly internal (e.g.
+				// enter/leave)
+				if (this.strictlyInternalEvents[name] && this.isInternalEvent(event)) {
+					return true;
+				}
+				return sup.apply(this, arguments);
+			};
+		}),
+		
+		/**
+			@private
+		*/
+		addChild: enyo.inherit(function (sup) {
+			return function (control) {
+				control.addClass(this.controlClasses);
+				sup.apply(this, arguments);
+			};
+		}),
+		
+		/**
+			@private
+		*/
+		removeChild: enyo.inherit(function (sup) {
+			return function (control) {
+				sup.apply(this, arguments);
+				control.removeClass(this.controlClasses);
 			};
 		}),
 		
