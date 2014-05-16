@@ -35,7 +35,7 @@ enyo.kind({
 	create: function() {
 		this.inherited(arguments);
 		var scrollers = this.$.panels.getPanels();
-		for (var i in scrollers) {
+		for (var i = 0; i < scrollers.length; ++i) {
 			scrollers[i].createComponent({
 				allowHtml:true,
 				content:this.text,

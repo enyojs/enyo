@@ -698,6 +698,15 @@
 		/**
 			@private
 		*/
+		teardownChildren: function () {
+			var delegate = this.renderDelegate || Control.renderDelegate;
+			
+			delegate.teardownChildren(this);
+		},
+		
+		/**
+			@private
+		*/
 		addNodeToParent: function () {
 			var pn;
 			
@@ -748,10 +757,9 @@
 		/**
 			@private
 		*/
-		create: enyo.inherit(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function (props) {
-				var attrs = props && props.attributes,
-					classes;
+				var attrs = props && props.attributes;
 				
 				// ensure that we both keep an instance copy of defined attributes but also
 				// update the hash with any additional instance definitions at runtime
@@ -760,6 +768,17 @@
 					enyo.mixin(this.attributes, attrs);
 					delete  props.attributes;
 				}
+				
+				return sup.apply(this, arguments);
+			};
+		}),
+		
+		/**
+			@private
+		*/
+		create: enyo.inherit(function (sup) {
+			return function (props) {
+				var classes;
 				
 				// initialize the styles for this instance
 				this.style = this.kindStyle + this.style;
