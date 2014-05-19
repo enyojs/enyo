@@ -49,6 +49,12 @@ enyo.kind({
 	getSrc: function () {
 		return this.getAttribute('src');
 	},
+	setSrc: function (src) {
+		var was = this.src;
+		this.src = src;
+		
+		if (was !== src) this.notify('src', was, src);
+	},
 	srcChanged: function () {
 		if (this.sizing && this.src) {
 			this.applyStyle("background-image", "url(" + enyo.path.rewrite(this.src) + ")");
