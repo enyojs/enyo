@@ -60,7 +60,11 @@
 					opts.success(res, xhr);
 				}
 			});
-			xhr.error(opts.fail);
+			xhr.error(function (xhr, res) {
+				if (opts && opts.fail) {
+					opts.fail(res, xhr);
+				}
+			});
 			xhr.go(opts.params);
 		},
 		/**
@@ -102,6 +106,7 @@
 			opts.method = rec.isNew? "POST": "PUT";
 			opts.url = this.buildUrl(rec, opts);
 			opts.postBody = rec.toJSON();
+			opts.contentType = "application/json";
 			this.go(opts);
 		},
 		//* Uses "DELETE" method.
