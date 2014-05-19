@@ -106,6 +106,7 @@ enyo.kind({
 			// in some cases does not receive an appropriate response from the
 			// browser
 			attrs.value = this.value;
+			this.attributeToNode("value",this.value);
 		} else {
 			this.setAttribute("value", this.value);
 		}
