@@ -786,6 +786,12 @@
 				// super initialization
 				sup.apply(this, arguments);
 				
+				// ensure that if we aren't showing -> true then the correct style
+				// is applied - note that there might be issues with this because we are
+				// trying not to have to parse out any other explicit display value during
+				// initialization and we can't check because we haven't rendered yet
+				if (!this.showing) this.style += ' display: none;';
+				
 				// try and make it so we only need to call the method once during
 				// initialization and only then when we have something to add
 				classes = this.kindClasses;
