@@ -131,6 +131,9 @@ enyo.kind({
 	}),
 	create: enyo.inherit(function (sup) {
 		return function () {
+			// synchronize the showing and absoluteShowing properties as absoluteShowing is
+			// an internal property that should not be true if showing is false
+			this.absoluteShowing = this.showing;
 			// if we can, we use transitions
 			this.allowTransitionsChanged();
 			// map the selected strategy to the correct delegate for operations
