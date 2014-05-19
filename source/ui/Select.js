@@ -27,7 +27,9 @@ enyo.kind({
 	name: "enyo.Select",
 	published: {
 		//* Index of the selected option in the list
-		selected: 0
+		selected: 0,
+		//* The value of the selected option
+		value: null
 	},
 	//* @protected
 	handlers: {
@@ -42,6 +44,7 @@ enyo.kind({
 			if(enyo.platform.ie == 8){
 				this.setAttribute("onchange", enyo.bubbler);
 			}
+			this.change();
 			this.selectedChanged();
 		};
 	}),
@@ -53,6 +56,9 @@ enyo.kind({
 	},
 	change: function() {
 		this.selected = this.getSelected();
+		if (this.hasNode()) {
+			this.set("value", this.node.value);
+		}
 	},
 	render: enyo.inherit(function (sup) {
 		return function() {
@@ -64,14 +70,7 @@ enyo.kind({
 				sup.apply(this, arguments);
 			}
 		};
-	}),
-	//* @public
-	//* Returns the value of the selected option.
-	getValue: function() {
-		if (this.hasNode()) {
-			return this.node.value;
-		}
-	}
+	})
 });
 
 /**
@@ -81,7 +80,9 @@ enyo.kind({
 	name: "enyo.Option",
 	published: {
 		//* Value of the option
-		value: ""
+		value: "",
+		//* Is this option selected or not (not by default)
+		selected: false
 	},
 	//* @protected
 	tag: "option",
@@ -89,10 +90,14 @@ enyo.kind({
 		return function() {
 			sup.apply(this, arguments);
 			this.valueChanged();
+			this.selectedChanged();
 		};
 	}),
 	valueChanged: function() {
 		this.setAttribute("value", this.value);
+	},
+	selectedChanged: function() {
+		this.setAttribute("selected", this.selected);
 	}
 });
 
