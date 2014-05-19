@@ -108,13 +108,9 @@ enyo.depends = function() {
 				runtimeLoad();
 			}
 		} else {
-			if (enyo.isArray(depends)) {
-				for (var i = 0; i < depends.length; ++i) {
-					enyo.loader.require(depends[i]);
-				}
-			} else {
-				enyo.loader.require(depends);
-			}
+			var dependsArg = enyo.isArray(depends) ? depends : [depends];
+			var ldr = enyo.loader;
+			ldr.load.apply(ldr, dependsArg);
 		}
 	};
 	function runtimeLoad(onLoad) {
