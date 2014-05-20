@@ -152,7 +152,7 @@ enyo.kind({
 	receive: function(inText, inXhr) {
 		if (!this.failed && !this.destroyed) {
 			var body;
-			if (this.sync && inXhr.responseType === "arraybuffer") {
+			if (inXhr.responseType === "arraybuffer") {
 				body = inXhr.response;
 			} else if (typeof inXhr.responseText === "string") {
 				body = inXhr.responseText;
@@ -193,7 +193,7 @@ enyo.kind({
 		// if any exceptions are thrown while checking fields in the xhr,
 		// assume a failure.
 		try {
-			if (this.sync && inXhr.responseType === "arraybuffer") {
+			if (inXhr.responseType === "arraybuffer") {
 				// if we are loading binary data, don't try to access inXhr.responseText
 				// because that throws an exception on webkit. Instead, just look for
 				// the response.
