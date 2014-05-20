@@ -326,7 +326,7 @@ enyo.kind({
 			return;
 		}
 		var e = inEvent || {};
-		e.lastHandledComponent = undefined;
+		e.lastHandledComponent = null;
 		e.cacheEnable = true;
 		if (!enyo.exists(e.originator)) {
 			e.originator = inSender || this;
@@ -407,12 +407,12 @@ enyo.kind({
 		// for non-delgated events, try the handlers block if possible
 		if (!delegate) {
 			var bHandler = this.handlers && this.handlers[name];
-			var bDelegatedFunction = this[name] && enyo.isString(this[name]);
+			var bDelegatedFunction = typeof this[name] == 'string';
 
 			if (event.cacheEnable) {
 				if (event.lastHandledComponent && (bHandler || bDelegatedFunction || this.id === "master")) {
 					event.lastHandledComponent.cachedBubbleTarget[name] = this;
-					delete event.lastHandledComponent;
+					event.lastHandledComponent = null;
 				}
 				if (!event.lastHandledComponent && this.id !== "master") {
 					event.lastHandledComponent = this;
