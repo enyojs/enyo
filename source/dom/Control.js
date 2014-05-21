@@ -804,6 +804,7 @@
 				
 				// setup the id for this control if we have one
 				this.idChanged();
+				this.contentChanged();
 			};
 		}),
 		
