@@ -388,17 +388,19 @@
 			var node = this.hasNode(),
 				style = this.style;
 				
-			// update our current cached value
-			if (node) {
-				node.style[prop] = value;
+			if (value !== null && value !== '' && value !== undefined) {
+				// update our current cached value
+				if (node) {
+					node.style[prop] = value;
 				
-				// cssText is an internal property used to help know when to sync and not
-				// sync with the node in styleChanged
-				this.style = this.cssText = node.style.cssText;
+					// cssText is an internal property used to help know when to sync and not
+					// sync with the node in styleChanged
+					this.style = this.cssText = node.style.cssText;
 				
-				// otherwise we have to try and prepare it for the next time it is rendered we will
-				// need to update it because it will not be synchronized
-			} else this.set('style', style + (prop + ':' + value + ';'));
+					// otherwise we have to try and prepare it for the next time it is rendered we will
+					// need to update it because it will not be synchronized
+				} else this.set('style', style + (prop + ':' + value + ';'));
+			}
 			
 			return this;
 		},
@@ -804,6 +806,7 @@
 				
 				// setup the id for this control if we have one
 				this.idChanged();
+				this.contentChanged();
 			};
 		}),
 		

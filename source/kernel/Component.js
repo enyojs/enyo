@@ -953,8 +953,9 @@
 			var o = overrides[c.name];
 			var ctor = enyo.constructorForKind(c.kind || defaultKind);
 			if (o) {
-				// will handle mixins, observers, computed properties and bindings because they
-				// overload the default but this will not handle the kind concatenations...
+
+				// NOTE: You cannot overload mixins, observers or computed properties from
+				// component overrides
 				enyo.concatHandler(c, o);
 				var b = (c.kind && ((typeof c.kind == 'string' && enyo.getPath(c.kind)) || (typeof c.kind == 'function' && c.kind))) || enyo.defaultCtor;
 				while (b) {
