@@ -85,6 +85,8 @@ enyo.kind({
 	},
 	defaultKind: "Component",
 	noDefer: true,
+	cachedBubble: true,
+	cachePoint: false,
 	handlers: {},
 	mixins: [
 		enyo.ApplicationSupport,
@@ -301,7 +303,7 @@ enyo.kind({
 	},
 	//* @protected
 	getBubbleTarget: function(inEventName, inEvent) {
-		return (inEvent.delegate) ? this.owner : this.bubbleTarget || this.cachedBubbleTarget[inEventName] || this.owner;
+		return (inEvent.delegate) ? this.owner : this.bubbleTarget || this.cachedBubble && this.cachedBubbleTarget[inEventName] || this.owner;
 	},
 	//* @public
 	/**
@@ -327,7 +329,7 @@ enyo.kind({
 		}
 		var e = inEvent || {};
 		e.lastHandledComponent = null;
-		e.cacheEnable = true;
+		e.bubbling = true;
 		if (!enyo.exists(e.originator)) {
 			e.originator = inSender || this;
 		}
@@ -356,7 +358,7 @@ enyo.kind({
 		}
 		// Bubble to next target
 		var e = inEvent || {};
-		e.cacheEnable = true;
+		e.bubbling = true;
 		var next = this.getBubbleTarget(inEventName, inEvent);
 		if (next) {
 			// use delegate as sender if it exists to preserve illusion
@@ -408,9 +410,10 @@ enyo.kind({
 		if (!delegate) {
 			var bHandler = this.handlers && this.handlers[name];
 			var bDelegatedFunction = typeof this[name] == 'string';
+			this.cachePoint = this.cachePoint || bHandler || bDelegatedFunction || this.id === "master" ;
 
-			if (event.cacheEnable) {
-				if (event.lastHandledComponent && (bHandler || bDelegatedFunction || this.id === "master")) {
+			if (event.bubbling) {
+				if (event.lastHandledComponent && this.cachePoint) {
 					event.lastHandledComponent.cachedBubbleTarget[name] = this;
 					event.lastHandledComponent = null;
 				}
@@ -497,7 +500,7 @@ enyo.kind({
 			return;
 		}
 		event = event || {};
-		event.cacheEnable = false;
+		event.bubbling = false;
 		//this.log(name, (sender || this).name, "=>", this.name);
 		if (this.dispatchEvent(name, event, sender)) {
 			return true;
@@ -515,7 +518,7 @@ enyo.kind({
 			return;
 		}
 		event = event || {};
-		event.cacheEnable = false;
+		event.bubbling = false;
 		for (var n in this.$) {
 			this.$[n].waterfall(name, event, sender);
 		}
