@@ -415,7 +415,12 @@
 					
 					// this is a rare case to nullify the style of a control that is not
 					// rendered or does not have a node
-					style = style.replace(new RegExp('\\b' + prop + '\\s*:\\s*[a-zA-Z0-9\\ ]*;'), '');
+					style = style.replace(new RegExp(
+						// this looks a lot worse than it is the complexity stems from needing to
+						// match a url container that can have other characters including semi-
+						// colon and also that the last property may/may-not end with one
+						'\\s*' + prop + '\\s*:\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*(?:url\\(.*\\)\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*)?\\s*(?:;|;?$)'
+					),'');
 					this.set('style', style);
 				}
 			}
