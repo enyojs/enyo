@@ -415,7 +415,7 @@
 					
 					// this is a rare case to nullify the style of a control that is not
 					// rendered or does not have a node
-					style = style.replace(new RegExp('\b' + prop + ':\s+(?:[a-zA-Z0-9\ ]*);'), '');
+					style = style.replace(new RegExp('\\b' + prop + '\\s*:\\s*[a-zA-Z0-9\\ ]*;'), '');
 					this.set('style', style);
 				}
 			}
