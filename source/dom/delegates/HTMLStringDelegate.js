@@ -155,13 +155,19 @@
 		*/
 		generateInnerHtml: function (control) {
 			var allowHtml = control.allowHtml,
+				fnName = 'generateChildHtml',
 				content;
 			
 			// flow can alter the way that html content is rendered inside
 			// the container regardless of whether there are children.
 			control.flow();
-			if (control.children.length) return this.generateChildHtml(control);
-			else {
+			if (control.children.length) {
+				if (control[fnName] && 'function' === typeof control[fnName]) {
+					return control[fnName]();
+				} else {
+					return this[fnName](control);
+				}
+			} else {
 				content = control.get('content');
 				return allowHtml ? content : enyo.dom.escape(content);
 			}
