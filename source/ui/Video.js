@@ -96,6 +96,7 @@ enyo.kind({
 			this.preloadChanged();
 			this.autoplayChanged();
 			this.loopChanged();
+			this.srcChanged();
 		};
 	}),
 	rendered: enyo.inherit(function (sup) {

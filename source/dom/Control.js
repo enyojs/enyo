@@ -400,6 +400,22 @@
 					// otherwise we have to try and prepare it for the next time it is rendered we will
 					// need to update it because it will not be synchronized
 				} else this.set('style', style + (prop + ':' + value + ';'));
+			} else {
+				
+				// in this case we are trying to clear the style property so if we have the node
+				// we let the browser handle whatever the value should be now and otherwise
+				// we have to parse it out of the style string and wait to be rendered
+				
+				if (node) {
+					node.style[prop] = '';
+					this.style = this.cssText = node.style.cssText;
+				} else {
+					
+					// this is a rare case to nullify the style of a control that is not
+					// rendered or does not have a node
+					style = style.replace(new RegExp('\b' + prop + ':\s+(?:[a-zA-Z0-9\ ]*);'), '');
+					this.set('style', style);
+				}
 			}
 			
 			return this;
