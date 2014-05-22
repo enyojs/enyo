@@ -179,10 +179,12 @@
 		generateChildHtml: function (control) {
 			var child,
 				html = '',
-				i = 0;
+				i = 0,
+				delegate;
 			
 			for (; (child = control.children[i]); ++i) {
-				html += this.generateHtml(child);
+				delegate = child.renderDelegate || this;
+				html += delegate.generateHtml(child);
 			}
 			
 			return html;
