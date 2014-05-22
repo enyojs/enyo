@@ -241,7 +241,7 @@
 				switch (this.dirty) {
 				case DIRTY_TO:
 					val = target.get(to);
-					if (xform) val = xform(val, DIRTY_TO, this);
+					if (xform) val = xform.call(this.owner || this, val, DIRTY_TO, this);
 					if (!this._stop) source.set(from, val, {create: false});
 					break;
 				case DIRTY_FROM:
@@ -250,7 +250,7 @@
 				// it is ever arbitrarily called not having been dirty?
 				// default:
 					val = source.get(from);
-					if (xform) val = xform(val, DIRTY_FROM, this);
+					if (xform) val = xform.call(this.owner || this, val, DIRTY_FROM, this);
 					if (!this._stop) target.set(to, val, {create: false});
 					break;
 				}
