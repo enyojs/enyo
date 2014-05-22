@@ -308,7 +308,7 @@
 			@public
 		*/
 		hasClass: function (name) {
-			return name && this.classes.indexOf(name) > -1;
+			return name && (' ' + this.classes + ' ').indexOf(' ' + name + ' ') > -1;
 		},
 		
 		/**
@@ -320,7 +320,7 @@
 			// NOTE: Because this method accepts a string and for efficiency does not wish to
 			// parse it to determine if it is actually multiple classes we later pull a trick
 			// to keep it normalized and synchronized with our attributes hash and the node's
-			if (name && classes.indexOf(name) === -1) {
+			if (!this.hasClass(name)) {
 				
 				// this is hooked
 				this.set('classes', classes + (classes ? (' ' + name) : name));
@@ -335,7 +335,9 @@
 		removeClass: function (name) {
 			var classes = this.classes;
 			
-			if (name) this.set('classes', classes.replace(name, ''));
+			if (name) {
+				this.set('classes', (' ' + classes + ' ').replace(' ' + name + ' ', ' ').trim());
+			}
 			
 			return this;
 		},
@@ -818,7 +820,7 @@
 				
 				// if there are known classes needed to be applied from the kind
 				// definition and the instance definition (such as a component block)
-				this.classes = this.attributes['class'] = classes;
+				this.classes = this.attributes['class'] = classes ? classes.trim() : classes;
 				
 				// setup the id for this control if we have one
 				this.idChanged();
