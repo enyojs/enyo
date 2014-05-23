@@ -691,6 +691,8 @@
 			// now let the delegate render it the way it needs to
 			delegate.renderInto(this, parentNode);
 			
+			enyo.dom.updateScaleFactor();
+			
 			return this;
 		},
 		
