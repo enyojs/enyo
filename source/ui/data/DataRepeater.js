@@ -132,8 +132,9 @@ enyo.kind({
 	/**
 		Refreshes each control in the dataset.
 	*/
-	refresh: function () {
+	refresh: function (immediate) {
 		if (!this.hasReset) { return this.reset(); }
+		var refresh = this.bindSafely(function () {
 			var dd = this.get("data"),
 				cc = this.getClientControls();
 			for (var i=0, c, d; (d=dd.at(i)); ++i) {
@@ -145,6 +146,16 @@ enyo.kind({
 				}
 			}
 			this.prune();
+		});
+
+        // refresh is used as the event handler for
+        // collection resets so checking for truthy isn't
+        // enough. it must be true.
+		if(immediate === true) {
+			refresh();
+		} else {
+			this.startJob("refreshing", refresh, 16);
+		}
 	},
 	//*@protected
 	rendered: enyo.inherit(function (sup) {
@@ -247,6 +258,7 @@ enyo.kind({
 	batchingChanged: function (prev, val) {
 		if (this.generated && false === val) {
 			this.$[this.containerName].render();
+			this.refresh(true);
 		}
 	},
 	/**
