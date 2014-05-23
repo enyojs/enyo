@@ -31,7 +31,8 @@
 			@public
 		*/
 		defaultOptions: {
-			cacheBust: false
+			cacheBust: false,
+			contentType: "application/json"
 		},
 		
 		/**
