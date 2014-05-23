@@ -44,6 +44,7 @@ enyo.kind({
 			sup.apply(this, arguments);
 			this.altChanged();
 			this.sizingChanged();
+			this.srcChanged();
 		};
 	}),
 	getSrc: function () {

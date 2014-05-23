@@ -355,9 +355,14 @@
 		if (props === ObserverSupport) return;
 
 		var proto = ctor.prototype || ctor
-			, observers = proto._observers? Object.create(proto._observers): {}
+			, observers = proto._observers? Object.create(proto._observers): null
 			, incoming = props.observers
 			, chains = proto._observerChains && proto._observerChains.slice();
+			
+		if (!observers) {
+			if (proto.kindName) observers = {};
+			else return;
+		}
 			
 		if (incoming && !isArray(incoming)) {
 			(function () {
