@@ -44,6 +44,8 @@ enyo.depends(
 	"RichTextSample.css",
 	"SelectSample.js",
 	"SelectSample.css",
+	"StylesheetSupportSample.js",
+	"StylesheetSupportSample.css",
 	"TableSample.js",
 	"TableSample.css",
 	"TextAreaSample.js",
