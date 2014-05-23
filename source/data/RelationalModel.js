@@ -545,6 +545,7 @@
 			
 			// the instance attribute for the designated key will actually point to this relation
 			inst.attributes[key] = this;
+			this.inverseType = inverseType;
 			
 			// if we have a related value now check to see if it is something we should attempt
 			// to resolve
