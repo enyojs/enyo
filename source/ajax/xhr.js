@@ -65,7 +65,7 @@ enyo.xhr = {
 		}
 		//
 		xhr.send(inParams.body || null);
-		if (!async && inParams.callback) {
+		if (async && inParams.callback) {
 			xhr.onreadystatechange(xhr);
 		}
 		return xhr;

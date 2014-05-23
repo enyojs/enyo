@@ -152,7 +152,9 @@ enyo.kind({
 	receive: function(inText, inXhr) {
 		if (!this.failed && !this.destroyed) {
 			var body;
-			if (typeof inXhr.responseText === "string") {
+			if (this.sync && inXhr.responseType === "arraybuffer") {
+				body = inXhr.response;
+			} else if (typeof inXhr.responseText === "string") {
 				body = inXhr.responseText;
 			} else {
 				// IE carrying a binary
@@ -191,17 +193,26 @@ enyo.kind({
 		// if any exceptions are thrown while checking fields in the xhr,
 		// assume a failure.
 		try {
-			var text = "";
-			// work around IE8-9 bug where accessing responseText will thrown error
-			// for binary requests.
-			if (typeof inXhr.responseText === "string") {
-				text = inXhr.responseText;
-			}
-			// Follow same failure policy as jQuery's Ajax code
-			// CORS failures on FireFox will have status 0 and no responseText,
-			// so treat that as failure.
-			if (inXhr.status === 0 && text === "") {
-				return true;
+			if (this.sync && inXhr.responseType === "arraybuffer") {
+				// if we are loading binary data, don't try to access inXhr.responseText
+				// because that throws an exception on webkit. Instead, just look for
+				// the response.
+				if (inXhr.status === 0 && !inXhr.response) {
+					return true;
+				}
+			} else {
+				var text = "";
+				// work around IE8-9 bug where accessing responseText will thrown error
+				// for binary requests.
+				if (typeof inXhr.responseText === "string") {
+					text = inXhr.responseText;
+				}
+				// Follow same failure policy as jQuery's Ajax code
+				// CORS failures on FireFox will have status 0 and no responseText,
+				// so treat that as failure.
+				if (inXhr.status === 0 && text === "") {
+					return true;
+				}
 			}
 			// Otherwise, status 0 may be good for local file access.  We treat the range
 			// 1-199 and 300+ as failure (only 200-series code are OK).
@@ -226,6 +237,9 @@ enyo.kind({
 			return r;
 		}
 	},
+	binaryHandler: function(inXhr) {
+		return inXhr.response;
+	}, 
 	//* @protected
 	//* Handler for ajax progress events.
 	updateProgress: function(event) {
