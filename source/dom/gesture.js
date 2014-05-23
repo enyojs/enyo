@@ -29,8 +29,8 @@ enyo.gesture = {
 			// Intercept only these events, not all events, like hold, 
 			// release, tap, etc, to avoid doing the operation again.
 			if (e.type == "move" || e.type == "up" || e.type == "down" || e.type == "enter" || e.type == "leave") {
-				e.clientX*= enyo.dom._bodyScaleFactorX;
-				e.clientY*= enyo.dom._bodyScaleFactorY;
+				e.clientX *= enyo.dom._bodyScaleFactorX;
+				e.clientY *= enyo.dom._bodyScaleFactorY;
 			}
 		}
 		//
