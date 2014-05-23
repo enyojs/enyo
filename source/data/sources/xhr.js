@@ -78,9 +78,13 @@
 			options = only(this.allowed, mixin({}, [defaults, opts]), true);
 			xhr = new ctor(options);
 			xhr.response(function (xhr, res) {
+				// ensure that the ordering of the parameters is as expected
 				if (opts.success) opts.success(res, xhr);
 			});
-			xhr.error(opts.error);
+			xhr.error(function (xhr, res) {
+				// ensure that the ordering of the parameters is as expected
+				if (opts && opts.error) opts.error(res, xhr);
+			});
 			xhr.go(params);
 		},
 		
