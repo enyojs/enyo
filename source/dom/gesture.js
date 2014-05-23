@@ -25,7 +25,7 @@ enyo.gesture = {
 		e.preventDefault = this.preventDefault;
 		e.disablePrevention = this.disablePrevention;
 
-		if (enyo.dom._bodyScaleFactorX !== 1) {
+		if (enyo.dom._bodyScaleFactorX !== 1 || enyo.dom._bodyScaleFactorY !== 1) {
 			// Intercept only these events, not all events, like hold, 
 			// release, tap, etc, to avoid doing the operation again.
 			if (e.type == "move" || e.type == "up" || e.type == "down" || e.type == "enter" || e.type == "leave") {

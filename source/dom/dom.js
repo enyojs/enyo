@@ -147,6 +147,7 @@ enyo.dom = {
 	},
 	/**
 		The proportion by which the body tag differs from the window size, in both X and Y dimensions.
+		This happens when we need to scale the whole interface down from 1920x1080 (1080p) to 1280x720 (720p)
 	*/
 	_bodyScaleFactorY: 1,
 	_bodyScaleFactorX: 1,
