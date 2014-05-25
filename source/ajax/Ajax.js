@@ -251,7 +251,7 @@ enyo.kind({
 				ev[k] = event[k];
 			}
 		}
-		this.sendProgress(event.loaded, 0, event.total, ev);
+		this.sendProgress(ev.loaded, 0, ev.total, ev);
 	},
 	statics: {
 		objectToQuery: function(/*Object*/ map) {
