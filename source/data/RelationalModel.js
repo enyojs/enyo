@@ -103,7 +103,9 @@
 			// ensure we have a constructor for our related model kind
 			this.model = enyo.constructorForKind(this.model);
 			
-            this.includeInJSON = !props.includeInJSON && !this.isOwner? (this.model.prototype.primaryKey || 'id'): this.includeInJSON;
+            this.includeInJSON = !props.includeInJSON && !this.isOwner
+				? (this.model.prototype.primaryKey || 'id')
+				: this.includeInJSON;
 			
 			// let the subkinds do their thing
 			this.init();
@@ -422,13 +424,13 @@
 		*/
 		checkRelation: function (model) {
 			var ctor = this.model
-				, inst = this.instance
-				, key = this.key
-				, inverseKey = this.inverseKey
-				, related = inverseKey && model.get(inverseKey)
-				, rel = model.getRelation(inverseKey)
-				, id = inst.get(inst.primaryKey)
-				, isOwner = this.isOwner;
+				inst = this.instance,
+				key = this.key,
+				inverseKey = this.inverseKey,
+				related = inverseKey && model.get(inverseKey),
+				rel = model.getRelation(inverseKey),
+				id = inst.get(inst.primaryKey),
+				isOwner = this.isOwner;
 			
 			if (related && (related.has(inst) || related.find(function (model) { return model.attributes[model.primaryKey] == id; }))) {
 				
@@ -541,7 +543,7 @@
 			if (typeof inverseType == 'string') inverseType = enyo.constructorForKind(inverseType);
 			
 			// ensure we've got the correct related if any
-			if (related) this.related = related;
+			if (related || related === 0) this.related = related;
 			
 			// the instance attribute for the designated key will actually point to this relation
 			inst.attributes[key] = this;
@@ -558,7 +560,7 @@
 					if (typeof related == 'object') id = related[model.prototype.primaryKey];
 					else if (typeof related == 'string' || typeof related == 'number') id = related;
 					
-					found = enyo.store.resolve(id);
+					found = enyo.store.resolve(model, id);
 					if (found) related = this.related = found;
 				}
 			}
@@ -567,21 +569,22 @@
 				
 				// if this is the owner side of the relation we may need to create the instance
 				// for our relation if it wasn't found already
-				if (!related || !(related instanceof Model)) {
+				if (related == null || !(related instanceof Model)) {
 					if (this.create) {
 						// we create the empty instance so we can separately deal with the
 						// various ways the related data could be handed to us (could be id or data)
 						model = new model(null, null, this.modelOptions);
 						// might need to parse the related data
-						if (this.parse && related != null) related = model.parse(related);
+						if ((this.parse || model.options.parse) && related != null) {
+							related = model.parse(related);
+						}
 						// related should be a value now if we're going to set anything
-						if (related) {
+						if (related != null) {
 							if (typeof related == 'object') model.set(related);
 							else model.set(model.primaryKey, related);
 						}
 					
 						this.related = model;
-						model = this.model;
 					} else enyo.store.on(model, 'add', this.onChange, this);
 				}
 			}
@@ -674,6 +677,7 @@
 						rev = new this.inverseType(found, {
 							isOwner: !isOwner,
 							key: this.inverseKey,
+							inverseKey: this.key,
 							parse: false,
 							create: false,
 							model: this.instance.ctor,
@@ -766,7 +770,7 @@
 		@public
 		@class enyo.RelationalModel
 	*/
-	kind({
+	var RelationalModel = kind({
 		name: 'enyo.RelationalModel',
 		kind: Model,
 		noDefer: true,
@@ -803,10 +807,9 @@
 		*/
 		get: enyo.inherit(function (sup) {
 			return function (path) {
-				path || (path = '');
-				
-				var prop = path
-					, rel, parts;
+				var prop = path || (path = ''),
+					rel,
+					parts;
 				
 				if (path.indexOf('.') >= 0) {
 					parts = path.split('.');
@@ -815,9 +818,9 @@
 				
 				rel = this.isRelation(prop);
 				
-				return !rel? sup.apply(this, arguments):
-					parts? rel.getRelated().get(parts.join('.')):
-					rel.getRelated();
+				if (!rel) return sup.apply(this, arguments);
+				else if (parts) return rel.getRelated().get(parts.join('.'));
+				else return rel.getRelated();
 			};
 		}),
 		
@@ -957,12 +960,26 @@
 			@method
 		*/
 		initRelations: function () {
-			var rels = this.relations || (this.relations = []);
+			// if there aren't any relations we initialize the value to an empty array
+			var rels = this.relations ? this.relations.slice() : [],
+				rel,
+				i = 0;
+			
+			this.relations = rels;
+			
+			// if there are relations then we need to ensure that we instance each one and then
+			// we attempt to find their existing relations if possible
 			if (rels.length) {
-				this.relations = rels.map(function (ln) {
-					return new ln.type(this, ln);
-				}, this);
-				this.relations.forEach(function (ln) { ln.findRelated(); });
+				
+				for (; (rel = rels[i]); ++i) {
+					rels[i] = new rel.type(this, rel);
+				}
+				
+				// unfortunately we had to do this in two passes to ensure that all of the relations
+				// were instanced before attempting to find the other relations
+				for (i = 0; (rel = rels[i]); ++i) {
+					rel.findRelated();
+				}
 			}
 		}
 
@@ -973,7 +990,7 @@
 	
 		@private
 	*/
-	enyo.RelationalModel.concat = function (ctor, props) {
+	RelationalModel.concat = function (ctor, props) {
 		var proto = ctor.prototype || ctor
 			, rels = proto.relations && proto.relations.slice()
 			, type;
