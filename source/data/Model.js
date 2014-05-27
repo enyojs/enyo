@@ -179,16 +179,31 @@
 			@method
 		*/
 		destroy: function (opts) {
-			if ((this.options.commit && (!opts || opts.commit !== false)) || (opts && (opts.source || opts.commit))) {
-				var dit = this
-					, options = opts? clone(opts): {};
+			
+			// this becomes an (potentially) async operation if we are committing this destroy
+			// to a source and its kind of tricky to figure out because there are several ways
+			// it could be flagged to do this
+			
+			if (
+				// if our default option says to commit operations and the given opts don't tell us
+				// explicitly to ignore that we must do it
+				(this.options.commit && (!opts || opts.commit !== false)) ||
+				// or if there are supplied options and it has a source declared or the commit flag
+				// as true
+				(opts && (opts.source || opts.commit))
+			) {
+				var scop = this,
+					options = opts ? enyo.clone(opts) : {};
+					
 				options.success = function () {
-					dit.destroy({commit: false});
-					opts && opts.success && opts.success(opts);
-				};
+					// continue the operation this time with commit false explicitly
+					scop.destroy({commit: false});
+					if (opts && opts.success) opts.success(opts);
+				}
 				Source.execute('destroy', this, options);
 				return this;
 			}
+			
 			
 			// we flag this early so objects that receive an event and process it
 			// can optionally check this to support faster cleanup in some cases
@@ -198,10 +213,10 @@
 			this.unsilence(true).emit('destroy');
 			this.removeAllListeners();
 			this.removeAllObservers();
-			// this.attributes = null;
-			// this.previous = null;
-			// this.changed = null;
-			// this.store = null;
+			
+			// if this does not have the the batching flag (that would be set by a collection)
+			// then we need to do the default of removing it from the store
+			if (!opts || !opts.batching) this.store.remove(this);
 			return this;
 		},
 		
