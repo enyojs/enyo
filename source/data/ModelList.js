@@ -57,21 +57,25 @@
 	};
 		
 	enyo.ModelList.prototype.remove = function (models) {
+		var table = this.table,
+			removed = [],
+			model,
+			idx,
+			id,
+			i = 0;
+		
 		if (models && !(models instanceof Array)) models = [models];
 		
-		var table = this.table
-			, model, i, id, idx, removed;
-		
-		for (i=0; (model = models[i]); ++i) {
+		for (; (model = models[i]); ++i) {
 			table[model.euid] = null;
 			id = model.get(model.primaryKey);
 			
-			if (id !== null && id !== undefined) table[id] = null;
+			if (id != null) table[id] = null;
 			
 			idx = this.indexOf(model);
 			if (idx > -1) {
 				this.splice(idx, 1);
-				(removed || (removed = [])).push(model);
+				removed.push(model);
 			}
 		}
 		
