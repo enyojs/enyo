@@ -160,10 +160,14 @@
 					
 				
 				// see if we have an existing entry for this model/hash
-				found = loc.resolve(id);
+				found = loc.has(id);
 				
 				// if it already existed...
 				if (found) {
+					
+					// we need to ensure we've resolved the model (if necessary)
+					found = loc.resolve(id);
+					
 					if (merge) {
 						attrs || (attrs = model.attributes);
 						parse && (attrs = found.parse(attrs));
