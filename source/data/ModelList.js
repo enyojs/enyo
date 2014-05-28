@@ -62,17 +62,19 @@
 			model,
 			idx,
 			id,
-			i = 0;
+			i;
 		
 		if (models && !(models instanceof Array)) models = [models];
 		
-		for (; (model = models[i]); ++i) {
+		// we start at the end to ensure that you could even pass the list itself
+		// and it will work
+		for (i = models.length - 1; (model = models[i]); --i) {
 			table[model.euid] = null;
 			id = model.get(model.primaryKey);
 			
 			if (id != null) table[id] = null;
 			
-			idx = this.indexOf(model);
+			idx = models === this ? i : this.indexOf(model);
 			if (idx > -1) {
 				this.splice(idx, 1);
 				removed.push(model);
