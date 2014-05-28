@@ -1,3 +1,4 @@
+
 (function (enyo, scope) {
 	
 	var kind = enyo.kind;
@@ -41,7 +42,7 @@
 		
 		/**
 		*/
-		create: true,
+		create: false,
 		
 		/**
 		*/
@@ -65,7 +66,7 @@
 		
 		/**
 		*/
-		isOwner: true,
+		isOwner: false,
 		
 		/**
 		*/
@@ -125,16 +126,24 @@
 		*/
 		setRelated: function (related) {
 			var inst = this.instance,
-				key = this.key,
+				model = this.model,
 				was = this.related,
+				changed,
+				prev;
+			
+			
+			if (related) enyo.store.off(model, 'add', this.onChange, this);
+			
+			this.related = related;
+			
+			if (!inst._changing) {
+			
 				changed = inst.changed || (inst.changed = {}),
 				prev = inst.previous || (inst.previous = {});
 			
-			changed[key] = this.related = related;
-			prev[key] = was;
-			if (was !== related) {
-				inst.notify(key, was, related);
-				inst.emit('change', changed);
+				changed[key] = related;
+				prev[key] = was;
+				if (was !== related) inst.emit('change', changed);
 			}
 			return this;
 		},
@@ -144,6 +153,13 @@
 			@method
 		*/
 		destroy: function () {
+			var isOwner = this.isOwner,
+				related = this.related;
+				
+			if (isOwner && related && related.destroy) {
+				related.destroy();
+			}
+			
 			this.destroyed = true;
 			this.instance = null;
 		}
@@ -382,6 +398,20 @@
 				if (e == 'add') {
 					if (this.checkRelation(props.model)) this.related.add(props.model, {merge: false});
 				}
+			} else if (sender === related) {
+				if (isOwner) {
+					
+					// if the instance is already changing then we do not need to do anything
+					// because it probably stemmed from there anyway
+					if (inst._changing) return;
+					
+					// @todo This must be updated to be more thorough...
+					inst.isDirty = true;
+					changed = inst.changed || (inst.changed = {});
+					inst.previous || (inst.previous = {});
+					changed[key] = related;
+					inst.emit('change', changed, inst);
+				}
 			}
 		},
 		
@@ -561,7 +591,11 @@
 			@public
 		*/
 		options: {
-			inverseType: 'enyo.toOne'
+			inverseType: 'enyo.toOne',
+			
+			/**
+			*/
+			modelOptions: null
 		},
 		
 		/**
@@ -575,6 +609,7 @@
 				key = this.key,
 				isOwner = this.isOwner,
 				related = this.related == null ? inst.attributes[key] : this.related,
+				modelOptions = this.modelOptions,
 				id,
 				found;
 			
@@ -602,34 +637,47 @@
 					if (typeof related == 'object') id = related[model.prototype.primaryKey];
 					else if (typeof related == 'string' || typeof related == 'number') id = related;
 					
-					found = enyo.store.resolve(model, id);
+					if (id != null) found = enyo.store.resolve(model, id);
+					
+					// if we found an instance we store it and make sure to update the local
+					// reference here
 					if (found) related = this.related = found;
 				}
 			}
 			
-			if (isOwner) {
+			// if (isOwner) {
 				
 				// if this is the owner side of the relation we may need to create the instance
 				// for our relation if it wasn't found already
 				if (related == null || !(related instanceof Model)) {
 					if (this.create) {
+						
+						// if the only information we have about the thing is a string or number
+						// then we facade a data hash so the model has the opportunity to work
+						// as expected
+						if (related != null && typeof related != 'object') {
+							id = related;
+							related = {};
+							related[model.prototype.primaryKey] = id;
+						}
+						
+						// if the parse flag is true then we force a parse operation on model
+						// creation regardless of its own flags
+						if (this.parse) {
+							if (!modelOptions) modelOptions = {};
+							modelOptions.parse = true;
+						}
+						
 						// we create the empty instance so we can separately deal with the
 						// various ways the related data could be handed to us (could be id or data)
-						model = new model(null, null, this.modelOptions);
-						// might need to parse the related data
-						if ((this.parse || model.options.parse) && related != null) {
-							related = model.parse(related);
-						}
-						// related should be a value now if we're going to set anything
-						if (related != null) {
-							if (typeof related == 'object') model.set(related);
-							else model.set(model.primaryKey, related);
-						}
+						found = model = new model(related, null, modelOptions);
 					
 						this.related = model;
-					} else enyo.store.on(model, 'add', this.onChange, this);
+					}
 				}
-			}
+			// }
+			
+			if (!found) enyo.store.on(model, 'add', this.onChange, this);
 			
 			// last but not least we begin to listen for changes on our model instance
 			inst.on('change', this.onChange, this);
@@ -705,7 +753,7 @@
 				
 				// if we are the owner end we may have a listener on the store and can
 				// safely remove it
-				if (isOwner) enyo.store.off(this.model, 'add', this.onChange, this);
+				enyo.store.off(this.model, 'add', this.onChange, this);
 				
 				// update our related value
 				this.related = found;
@@ -717,7 +765,6 @@
 					// if there isn't one then we go ahead and create it implicitly
 					if (!rev) {
 						rev = new this.inverseType(found, {
-							isOwner: !isOwner,
 							key: this.inverseKey,
 							inverseKey: this.key,
 							parse: false,
@@ -761,7 +808,7 @@
 					model.euid == related ||
 					pkey == related ||
 					pkey == related[inst.primaryKey]
-				) || (id !== null && model.get(inverseKey) == id)
+				) || (id != null && model.get(inverseKey) == id)
 			);
 		},
 		
@@ -797,17 +844,22 @@
 				}
 			} else if (sender === this.related) {
 				if (e == 'change' && isOwner) {
+					
+					// if the instance is already changing then we do not need to do anything
+					// because it probably stemmed from there anyway
+					if (inst._changing) return;
+					
 					// @todo This must be updated to be more thorough...
 					inst.isDirty = true;
 					changed = inst.changed || (inst.changed = {});
 					inst.previous || (inst.previous = {});
-					changed[key] = props;
+					changed[key] = this.related;
 					inst.emit('change', changed, inst);
 				}
 			}
 		}
 	});
-
+	
 	/**
 		@public
 		@class enyo.RelationalModel
@@ -899,7 +951,11 @@
 				opts || (opts = {});
 				silent = opts.silent;
 				force = force || opts.force;
-			
+				
+				// ensure that recursive sub routines know we are already being updated and do not
+				// need to emit an event because we will
+				this._changing = true;
+				
 				for (key in incoming) {
 					value = incoming[key];
 					
@@ -928,13 +984,16 @@
 					}
 				}
 			
-				if (changed) {
+				if (changed || force) {
 					// must flag this model as having been updated
 					this.isDirty = true;
 				
-					if (!silent && !this.isSilenced()) this.emit('change', changed, this);
+					if (!silent) this.emit('change', changed, this);
 				}
 			}
+			
+			// make sure we clear the flag
+			this._changing = null;
 		},
 		
 		/**

@@ -6,340 +6,497 @@ describe('enyo.RelationalModel', function () {
 	describe('methods', function () {
 		
 		// convenience mechanism for quicker reference of the prototype
-		var proto = Relational.prototype;
+		var proto = Relational.prototype,
+		
+		// the primary model instance to reuse between tests
+			model;
+		
+		// a generic nested relational kind for a specific test case
+		enyo.kind({
+			name: 'GenericModel',
+			kind: Relational,
+			relations: [
+				{
+					type: 'toOne',
+					key: 'nestedToOne',
+					isOwner: true,
+					create: true
+				}
+			]
+		});
+		
+		// a generic kind with a bunch of various relations to use for the following api tests
+		var Model = enyo.kind({
+			kind: Relational,
+			relations: [
+				{
+					type: 'toOne',
+					key: 'toOne',
+					model: 'GenericModel',
+					isOwner: true,
+					create: true,
+					includeInJSON: false
+				},
+				{
+					type: 'toMany',
+					key: 'toMany',
+					isOwner: true,
+					includeInJSON: false
+				},
+				{
+					type: 'manyToMany',
+					key: 'manyToMany',
+					isOwner: true,
+					includeInJSON: false
+				},
+				{
+					type: 'toOne',
+					key: 'toOneNotOwned',
+					isOwner: false,
+					includeInJSON: false
+				}
+			]
+		});
+		
+		before(function () {
+			model = new Model({
+				id: 0,
+				toOne: {
+					nestedToOne: {
+						nestedToOneProp: true
+					}
+				}
+			});
+		});
+		
+		after(function () {
+			// dereference the constructor
+			Model = null;
+			GenericModel = null;
+			
+			// breakdown the model instance
+			model.destroy();
+		});
 	
 		describe('#getRelation', function () {
 			
-			it('should respond to the method getRelation', function () {
+			it ('should respond to the method getRelation', function () {
 				expect(proto).to.itself.respondTo('getRelation');
 			});
 			
-			it('should return a Relation instance if it exists for the requested key or falsy',
+			it ('should return a Relation instance if it exists for the requested key or falsy',
 				function () {
-					var model;
-				
-					model = enyo.singleton({
-						kind: Relational,
-						relations: [{
-							key: 'testprop'
-						}]
-					});
-				
-					expect(model.getRelation('testprop')).to.exist.and.to.be.an.instanceof(enyo.toOne);
-					expect(model.getRelation('someotherprop')).to.not.be.ok;
-					model.destroy();
+					expect(model.getRelation('toOne')).to.be.an.instanceof(enyo.toOne);
+					expect(model.getRelation('INVALID')).to.not.be.ok;
 			});
 			
 		});
 		
-		describe ('#isRelation', function () {
+		describe('#isRelation', function () {
 			
 			it ('should respond to the method isRelation', function () {
 				expect(proto).to.itself.respondTo('isRelation');
 			});
 			
-			it ('should should return a relation instance if a relation exists for the requested key or falsy', function () {
-				var model;
-				
-				model = enyo.singleton({
-					kind: Relational,
-					relations: [{
-						key: 'testprop'
-					}]
-				});
-				
-				expect(model.isRelation('testprop')).to.exist.and.to.be.an.instanceof(enyo.toOne);
-				expect(model.isRelation('someotherprop')).to.not.be.ok;
-				model.destroy();
-			})
+			it ('should should return a relation instance if a relation exists for the ' +
+				'requested key or falsy', function () {
+				expect(model.isRelation('toOne')).to.be.an.instanceof(enyo.toOne);
+				expect(model.isRelation('INVALID')).to.not.be.ok;
+			});
 			
 		});
 		
-		describe ('#get', function () {
+		describe('#get', function () {
 			
-			it ('should return an attribute value as expected', function () {
-				var model = new Relational({testprop: true});
+			it ('should respond to the method get', function () {
+				expect(proto).to.itself.respondTo('get');
+			});
+			
+			it ('should return a value from the attributes hash when a non-recursive string path ' +
+				'is provided', function () {
+				expect(model.get('id')).to.equal(0);
+			});
+			
+			it ('should return an instance of a model when requesting a toOne relation key',
+				function () {
+				
+				expect(model.get('toOne')).to.be.an.instanceof(Relational);
+			});
+			
+			it ('should return an instance of a collection when requesting a toMany or a ' +
+				'manyToMany relation key', function () {
+				
+				expect(model.get('toMany')).to.be.an.instanceof(enyo.Collection);
+				expect(model.get('manyToMany')).to.be.an.instanceof(enyo.Collection);
+			});
+			
+			it ('should return an attribute from a nested relational model when a recursive ' +
+				'string path is provided', function () {
+				
+				expect(model.get('toOne.nestedToOne.nestedToOneProp')).to.be.true;
+			});
+			
+		});
+		
+		describe('#set', function () {
+			
+			it ('should respond to the method set', function () {
+				expect(proto).to.itself.respondTo('set');
+			});
+			
+			it ('should set a property of the attributes hash to the value when a ' +
+				'non-recursive string path is provided', function () {
+				
+				// so we set a value of the parent model
+				model.set('testprop', true);
+				
+				// and we expect it to have been set
 				expect(model.get('testprop')).to.be.true;
-				model.destroy();
+				expect(model.attributes.testprop).to.be.true;
 			});
 			
-			it ('should return an instance of a model or collection when requesting a relation', function () {
-				var ctor, model;
+			it ('should set a property of the attributes hash of a related toOne model ' +
+				'when a recursive string path is provided', function () {
 				
-				ctor = enyo.kind({
-					kind: Relational,
-					relations: [{
-						key: 'testprop'
-					}]
-				});
+				// set a recursive value of the toOne related model
+				model.set('toOne.testprop', true);
+				// set an even more recursive value of the toOne's nested related model
+				model.set('toOne.nestedToOne.testprop', true);
 				
-				model = new ctor({testprop: {id: 0}});
-				expect(model.get('testprop')).to.exist.and.to.be.an.instanceof(Relational);
-				model.destroy();
+				// ensure they were both updated as expected
+				expect(model.get('toOne').attributes.testprop).to.be.true;
+				expect(model.get('toOne.nestedToOne').attributes.testprop).to.be.true;
 			});
 			
-		});
-		
-		describe ('#set', function () {
-			
-			it ('should set a property of the attributes object to the value', function () {
-				var model = new Relational();
-				model.set('testprop1', true);
-				expect(model.get('testprop1')).to.be.true;
-				expect(model.attributes.testprop1).to.be.true;
-				model.destroy();
-			});
-			
-			it ('should set the property on a relation\'s model/collection', function () {
-				var model;
+			it ('should set a property of a related toMany collection when a recursive ' +
+				'string path is provided', function () {
 				
-				model = enyo.singleton({
-					kind: Relational,
-					relations: [{
-						key: 'tooneprop'
-					}, {
-						key: 'tomanyprop',
-						type: 'toMany'
-					}]
-				});
+				// set the recursive path of the toMany relation to some value
+				model.set('toMany.testprop', true);
 				
-				model.set('tooneprop.testprop', true);
-				model.set('tomanyprop.testprop', true);
-				
-				expect(model.get('tooneprop').attributes.testprop).to.be.true;
-				expect(model.get('tomanyprop').testprop).to.be.true;
-				
-				model.destroy();
+				// make sure it was set
+				expect(model.get('toMany.testprop')).to.be.true;
+				expect(model.get('toMany').testprop).to.be.true;
 			});
 			
 		});
 		
-		describe ('#setLocal', function () {
+		describe('#setLocal', function () {
+			
+			it ('should respond to the method setLocal', function () {
+				expect(proto).to.itself.respondTo('setLocal');
+			});
+			
 			it ('should set a local property not of the attributes object', function () {
-				var model = new Relational();
-				model.setLocal('localprop', true);
-				expect(model.localprop).to.be.true;
-				expect(model.attributes.localprop).to.not.exist;
-				model.destroy();
+				// set the value to explicit false just to further distinguish it from the
+				// same testprop set on the attributes hash
+				model.setLocal('testprop', false);
+				// now make sure things were set as expected
+				expect(model.getLocal('testprop')).to.be.false;
+				expect(model.testprop).to.be.false;
+				expect(model.attributes.testprop).to.be.true;
 			});
 		});
 		
-		describe ('#raw', function () {
+		describe('#raw', function () {
 			
-			it ('should return an object literal with the attributes of the model', function () {
-				var model = new Relational({prop1: true, prop2: false});
-				expect(model.raw()).to.eql({prop1: true, prop2: false});
-				model.destroy();
+			it ('should respond to the method raw', function () {
+				expect(proto).to.itself.respondTo('raw');
+			});
+			
+			it ('should return a hash with the attributes of the model', function () {
+				// as we designated in the model definition nothing else was to be included
+				// but we will test that next
+				expect(model.raw()).to.eql({
+					id: 0,
+					testprop: true
+				});
 			});
 			
 			it ('should return only the keys requested in the includeKeys array', function () {
-				var model;
-				
-				model = enyo.singleton({
-					kind: Relational,
-					includeKeys: ['id', 'testprop'],
-					relations: [{
-						key: 'testprop',
-						includeInJSON: 'id'
-					}, {
-						key: 'otherprop'
-					}]
+				// first we modify the array to just get the id
+				model.includeKeys = ['id'];
+				expect(model.raw()).to.eql({
+					id: 0
 				});
-				model.set({id: 345, testprop: 10, otherprop: {id: 456}});
-				expect(model.raw()).to.eql({id: 345, testprop: 10});
-				model.destroy();
 			});
 			
 		});
 		
-		describe ('#fetchRelated', function () {
+		describe('#fetchRelated', function () {
 			it ('should be able to fetch data for all relations');
 			it ('should be able to fetch data for the specified relation');
 		});
 		
-		describe ('#destroy', function () {
+		describe('#destroy', function () {
 			
-			it ('should destroy all relations');
-			it ('should cause all relations with isOwner true to destroy their models as well');
+			// for this we create a separate instance of the model we've been looking at
+			var model;
+			
+			beforeEach(function () {
+				if (!model || model.destroyed) model = new Model();
+			});
+			
+			afterEach(function () {
+				if (!model.destroyed) model.destroy();
+			});
+			
+			it ('should respond to the method destroy', function () {
+				expect(proto).to.itself.respondTo('destroy');
+			});
+			
+			it ('should destroy all relations', function () {
+				var stubs = [];
+				// we want to stub these destroys to ensure that they are called as expected
+				model.relations.forEach(function (rel) {
+					stubs.push(sinon.stub(rel, 'destroy'));
+				});
+				
+				// now we destroy the model and look at all the stubs to ensure they were
+				// all called
+				model.destroy();
+				
+				stubs.forEach(function (stub) {
+					expect(stub.called).to.be.true;
+				});
+			});
+			
+			it ('should cause all relations with isOwner true to destroy their models as well',
+				function () {
+				var extra;
+				
+				// we need to make sure we add an instance of the unowned relation
+				model.set('toOneNotOwned', (extra = new Relational()));
+				
+				// we need to stub the destroy methods of all of the related models to ensure
+				// that they are destroyed as well
+				var spy1 = sinon.spy(model.get('toOne'), 'destroy'),
+					spy2 = sinon.spy(model.get('toOne.nestedToOne'), 'destroy'),
+					spy3 = sinon.spy(model.get('toMany'), 'destroy'),
+					spy4 = sinon.spy(model.get('manyToMany'), 'destroy'),
+					// the only one we expect NOT to be called
+					spy5 = sinon.spy(model.get('toOneNotOwned'), 'destroy');
+				
+				// now destroy the model
+				model.destroy();
+				
+				// now check for the expected call status of all of the destroy methods
+				// except the one
+				expect(spy1.called).to.be.true;
+				expect(spy2.called).to.be.true;
+				expect(spy3.called).to.be.true;
+				expect(spy4.called).to.be.true;
+				// the one case that should not be true
+				expect(spy5.called).to.be.false;
+				
+				// make sure to clean up the additional model
+				extra.destroy();
+			});
+			
 			it ('should cause a remote destroy attempt when option complete is true');
 			
 		});
 	
 	});
 		
-	describe ('Relation properties', function () {
+	describe('relation options', function () {
 	
-		describe ('#type', function () {
+		describe('~type', function () {
 			
-			it ('should accept the strings \'toOne\', \'toMany\', \'enyo.toOne\', \'enyo.toMany\'', function () {
-				var model = enyo.singleton({
-					kind: Relational,
-					relations: [{
-						type: 'toOne'
-					}, {
-						type: 'enyo.toOne'
-					}, {
-						type: 'toMany'
-					}, {
-						type: 'enyo.toMany'
-					}]
-				});
-				
-				expect(model.relations[0]).to.be.an.instanceof(enyo.toOne);
-				expect(model.relations[1]).to.be.an.instanceof(enyo.toOne);
-				expect(model.relations[2]).to.be.an.instanceof(enyo.toMany);
-				expect(model.relations[3]).to.be.an.instanceof(enyo.toMany);
-				
+			var model;
+			
+			var Model = enyo.kind({
+				kind: Relational,
+				relations: [
+					{
+						key: 'defaultedToOne'
+					},
+					{
+						type: 'toOne',
+						key: 'toOneString'
+					},
+					{
+						type: 'enyo.toOne',
+						key: 'enyo.toOneString'
+					},
+					{
+						type: enyo.toOne,
+						key: 'enyo.toOneConstructor'
+					},
+					{
+						type: 'toMany',
+						key: 'toManyString'
+					},
+					{
+						type: 'enyo.toMany',
+						key: 'enyo.toManyString'
+					},
+					{
+						type: enyo.toMany,
+						key: 'enyo.toManyConstructor'
+					},
+					{
+						type: 'manyToMany',
+						key: 'manyToManyString'
+					},
+					{
+						type: 'enyo.manyToMany',
+						key: 'enyo.manyToManyString'
+					},
+					{
+						type: enyo.manyToMany,
+						key: 'enyo.manyToManyConstructor'
+					}
+				]
+			});
+			
+			before(function () {
+				model = new Model();
+			});
+			
+			after(function () {
+				Model = null;
 				model.destroy();
 			});
 			
-			it ('should accept the constructor for enyo.toOne and enyo.toMany', function () {
-				var model = enyo.singleton({
-					kind: Relational,
-					relations: [{
-						type: enyo.toOne
-					}, {
-						type: enyo.toMany
-					}]
-				});
-				
-				expect(model.relations[0]).to.be.an.instanceof(enyo.toOne);
-				expect(model.relations[1]).to.be.an.instanceof(enyo.toMany);
-				model.destroy();
+			it ('should accept all variations of type declarations for relations', function () {
+				expect(model.getRelation('toOneString'))
+					.to.be.an.instanceof(enyo.toOne);
+				expect(model.getRelation('enyo.toOneString'))
+					.to.be.an.instanceof(enyo.toOne);
+				expect(model.getRelation('enyo.toOneConstructor'))
+					.to.be.an.instanceof(enyo.toOne);
+				expect(model.getRelation('toManyString'))
+					.to.be.an.instanceof(enyo.toMany);
+				expect(model.getRelation('enyo.toManyString'))
+					.to.be.an.instanceof(enyo.toMany);
+				expect(model.getRelation('enyo.toManyConstructor'))
+					.to.be.an.instanceof(enyo.toMany);
+				expect(model.getRelation('manyToManyString'))
+					.to.be.an.instanceof(enyo.manyToMany);
+				expect(model.getRelation('enyo.manyToManyString'))
+					.to.be.an.instanceof(enyo.manyToMany);
+				expect(model.getRelation('enyo.manyToManyConstructor'))
+					.to.be.an.instanceof(enyo.manyToMany);
 			});
 			
 			it ('should default to enyo.toOne', function () {
-				var model = enyo.singleton({
-					kind: Relational,
-					relations: [{}]
-				});
-				
-				expect(model.relations[0]).to.be.an.instanceof(enyo.toOne);
-				model.destroy();
+				expect(model.getRelation('defaultedToOne')).to.be.an.instanceof(enyo.toOne);
 			});
 			
 		});
 		
-		describe ('#key', function () {
+		describe('~key', function () {
 			
-			it ('should add the key to the attributes of the model pointing to the relation instance', function () {
-				var model = enyo.singleton({
-					kind: Relational,
-					relations: [{
-						key: 'someKey'
-					}]
-				});
-				expect(model.attributes.someKey).to.eql(model.relations[0]);
-				model.destroy();
-			});
+			var model;
 			
-			it ('should be used as the implicit inverseKey in automatic reverse relations', function () {
-				var model = enyo.singleton({
-					kind: Relational,
-					relations: [{
-						key: 'someKey',
-						inverseKey: 'knownInverse'
-					}]
-				});
-				expect(model.get('someKey').relations[0].inverseKey).to.equal('someKey');
-				model.destroy();
-			});
-			
-		});
-		
-		describe ('#inverseKey', function () {
-			
-			it ('should use the inverseKey, when available, to find existing models', function () {
-				var ctor, mod1, mod2;
-				
-				ctor = enyo.kind({
-					kind: Relational,
-					relations: [{
-						key: 'childModel',
-						inverseKey: 'parentModel',
-						create: false
-					}]
-				});
-				mod2 = new Relational({parentModel: 'someid'});
-				mod1 = new ctor({id: 'someid'});
-				expect(mod1.get('childModel')).to.eql(mod2);
-				mod1.destroy();
-				mod2.destroy();
-			});
-			
-			it ('should use the inverseKey as the implicit key in automatic reverse relations', function () {
-				var model = enyo.singleton({
-					kind: Relational,
-					relations: [{
-						key: 'someKey',
-						inverseKey: 'knownInverse'
-					}]
-				});
-				expect(model.get('someKey').relations[0].key).to.equal('knownInverse');
-				model.destroy();
-			});
-			
-		});
-	
-		describe ('#isOwner', function () {
-			
-			it ('should only allow one end of a relationship to have isOwner true');
-			
-			it ('should respond to changes in child-relations as if it also changed', function () {
-				var ctor, model, spy = sinon.spy();
-				
-				ctor = enyo.kind({
-					kind: Relational,
-					relations: [{
-						key: 'childModel'
-					}]
-				});
-				
-				model = new ctor();
-				model.on('change', spy);
-				expect(model.isDirty).to.be.false;
-				model.set('childModel.name', 'someNewValue');
-				expect(model.get('childModel.name')).to.equal('someNewValue');
-				expect(model.isDirty).to.be.true;
-				expect(spy).to.have.been.called;
-				model.destroy();
-			});
-			
-			it ('should ignore events and notifications when neither relation has isOwner true', function () {
-				var ctor1, ctor2, mod1, mod2, spy = sinon.spy();
-				ctor1 = enyo.kind({
-					kind: Relational,
-					relations: [{
-						key: 'ctor2',
-						inverseKey: 'ctor1',
-						model: ctor2,
-						isOwner: false,
+			var Model = enyo.kind({
+				kind: Relational,
+				relations: [
+					{
+						type: 'toOne',
+						key: 'toOne',
+						inverseKey: 'toOneInverse',
+						isOwner: true,
 						create: true
-					}]
-				});
-				ctor2 = enyo.kind({
-					kind: Relational,
-					relations: [{
-						key: 'ctor1',
-						inverseKey: 'ctor2',
-						model: ctor1,
-						isOwner: false
-					}]
-				});
-				mod1 = new ctor1({id: 'id01', ctor2: {id: 'id00', name: 'someName'}});
-				mod2 = new ctor2({id: 'id00', ctor1: {id: 'id01'}})
-				mod1.on('change', spy);
-				mod1.set('ctor2.name', 'someOtherName');
-				expect(spy).to.not.have.been.called;
-				expect(mod1.isDirty).to.be.false;
+					}
+				]
+			});
+			
+			before(function () {
+				model = new Model();
+			});
+			
+			after(function () {
+				Model = null;
+				model.destroy();
+			});
+			
+			it ('should be used as the local key in the attributes hash of the model the ' +
+				'relation belongs to and point to the instance of the relation', function () {
 				
-				mod1.destroy();
-				mod2.destroy();
+				expect(model.attributes.toOne).to.be.an.instanceof(enyo.toOne);
+			});
+			
+			it ('should be used as the implicit inverseKey in automatic reverse relations',
+				function () {
+				
+				expect(model.get('toOne').getRelation('toOneInverse').inverseKey).to.equal('toOne');
+			});
+			
+		});
+		
+		describe('~inverseKey', function () {
+			
+			var model1,
+				model2;
+			
+			var Model = enyo.kind({
+				kind: Relational,
+				relations: [
+					{
+						type: 'toOne',
+						key: 'toOne',
+						inverseKey: 'toOneInverse'
+					}
+				]
+			});
+			
+			before(function () {
+				model1 = new Relational({toOneInverse: 0});
+				model2 = new Model({id: 0});
+			});
+			
+			after(function () {
+				Model = null;
+				model1.destroy();
+				model2.destroy();
+			});
+			
+			it ('should use the inverseKey to find existing models', function () {
+				expect(model2.get('toOne')).to.eql(model1);
+			});
+			
+			it ('should be used as the implicit inverseKey in automatic reverse relations',
+				function () {
+				
+				expect(model2.get('toOne.toOneInverse')).to.eql(model2);
 			});
 			
 		});
 	
-		describe ('#includeInJSON', function () {
+		describe ('~isOwner', function () {
+			
+			var model;
+			
+			var Model = enyo.kind({
+				kind: Relational,
+				relations: [
+					{
+						type: 'toOne',
+						key: 'toOneOwned',
+						isOwner: true
+					},
+					{
+						type: 'toOne',
+						key: 'toOneNotOwned',
+						create: true
+					}
+				]
+			});
+			
+			before(function () {
+				model = new Model();
+			});
+			
+			after(function () {
+				Model = null;
+				model.destroy();
+			});
+			
+		});
+	
+		describe ('~includeInJSON', function () {
 			
 			it ('should not include a relation in raw output when includeInJSON is false', function () {
 				var ctor, model;
@@ -500,37 +657,8 @@ describe('enyo.RelationalModel', function () {
 	});
 	
 	describe ('usage', function () {
-	
-		describe ('using toOne', function () {
 		
-			it ('should be able to declare an explicit toOne relation');
-			it ('should be able to declare an implicit toOne relation');
-			it ('should find the related model when it is created later');
-			it ('should find the related model when it is created before');
-			it ('should create the related model when it is passed in as data');
-			it ('should fetch the related model when autoFetch is true');
-			it ('should be able to fetch the related model later when autoFetch is false');
-			it ('should should not respond to events/notifications for related model(s) if isOwner is false');
-			it ('should destroy all relations where isOwner is true and destroyed by default');
-			it ('should not destroy a relation where isOwner is true and the destroy flag is false');
-		
-		});
-	
-		describe ('using toMany', function () {
-		
-			it ('should be able to declare an explicit toMany relation');
-			it ('should be able to declare an implicit toMany relation');
-			it ('should find related models when they are created later');
-			it ('should find related models when they are created before');
-			it ('should create the related models when they are passed in as data');
-			it ('should fetch the related models when autoFetch is true');
-			it ('should be able to fetch the related models later when autoFetch is false');
-			it ('should force the reverse relation (if any) to be toOne even when set as toMany');
-			it ('should force all toMany relations to isOwner false');
-		
-		});
-		
-		describe ('using manyToMany', function () {
+		describe ('manyToMany', function () {
 			
 			// the collection of teachers we create for the tests
 			var teachers,
@@ -730,80 +858,219 @@ describe('enyo.RelationalModel', function () {
 			
 		});
 	
-		describe ('Events', function () {
+		describe('Events', function () {
+			
+			// the model instance we'll be using
+			var model;
+			
+			// we create a temporary kind that houses the types of relations we want to test
+			var Model = enyo.kind({
+				kind: Relational,
+				relations: [
+					{
+						// changes to this relation should indicate a change on our parent
+						type: 'toOne',
+						key: 'toOneOwned',
+						isOwner: true
+					},
+					{
+						// changes to this relation should not indicate a change on our parent
+						type: 'toOne',
+						key: 'toOneNotOwned',
+						isOwner: false
+					},
+					{
+						// changes to this collection should indicate a change on our parent
+						type: 'toMany',
+						key: 'toMany',
+						isOwner: true
+					}
+				]
+			});
+			
+			before(function () {
+				model = new Model({
+					// we hand it an instance because it wouldn't have created it anyway because
+					// it isn't the owner
+					toOneNotOwned: new Relational()
+				});
+			});
+			
+			after(function () {
+				// dereference the constructor
+				Model = null;
+				// breakdown our instance
+				model.get('toOneNotOwned').destroy();
+				model.destroy();
+			});
 		
-			it ('should propagate change events when isOwner is true and a child-relation changes');
+			it ('should propagate change events when isOwner is true and a child-relation ' +
+				'changes', function () {
+				
+				// we create a spy to simply detect if the event fired when expected
+				var spy = sinon.spy();
+				model.on('change', spy);
+				
+				// now we touch the relation we own to try and trigger the resulting change on
+				// the parent
+				model.set('toOneOwned.id', 0);
+				
+				// we remove the spy now
+				model.off('change', spy);
+				
+				// this test is important because it ensures it was called and only once which
+				// is very, very important!
+				expect(spy.callCount).to.equal(1);
+			});
+			
+			it ('should not propagate change events when isOwner is false and a child-relation ' +
+				'changes', function () {
+				
+				// if the spy is called then it was notified needlessly
+				var spy = sinon.spy();
+				model.on('change', spy);
+				
+				// touch the non-owned relation
+				model.set('toOneNotOwned.id', 0);
+				
+				// we remove the spy now
+				model.off('change', spy);
+				
+				// ensure that the spy was never called
+				expect(spy.called).to.be.false;
+			});
+			
+			it ('should propagate a change event when isOwner is true and a toMany relation ' +
+				'is updated', function () {
+				
+				var spy = sinon.spy();
+				model.on('change', spy);
+				
+				// add a model to the collection
+				model.get('toMany').add({});
+				
+				// remove the spy
+				model.off('change', spy);
+				
+				// ensure that the spy was called and only called once
+				expect(spy.callCount).to.equal(1);
+			});
 		
 		});
-	
-		describe ('Bindings', function () {
 		
-			it ('should be able to bind to attributes', function () {
-				var model, obj;
+		// we need to ensure that bindings function as expected in normal scenarios so we break
+		// them down by type to see what we can get
+		describe('Bindings', function () {
 			
-				model = enyo.singleton({
-					kind: Relational,
-					relations: [{
-						key: 'tooneprop'
-					}]
-				});
+			// the model instance to be used throughout these sub-tests
+			var model,
 			
-				obj = new enyo.Object();
-				obj.model = model;
-			
-				model.set('tooneprop.someattr', 'some value');
-				obj.binding({from: 'model.tooneprop.someattr', to: 'localattr'});
-			
-				expect(model.get('tooneprop.someattr')).to.equal('some value');
-				expect(obj.localattr).to.exist.and.to.equal('some value');
+			// the shared object instance to use as a binding target
+				obj;
+				
+			// the temporary kind to use
+			var Model = enyo.kind({
+				kind: Relational,
+				relations: [
+					// we create a toOne relation
+					{
+						type: 'toOne',
+						key: 'toOne',
+						create: true,
+						isOwner: true
+					},
+					// a toMany relation
+					{
+						type: 'toMany',
+						key: 'toMany',
+						isOwner: true
+					},
+					// and a manyToMany relation
+					{
+						type: 'manyToMany',
+						key: 'manyToMany',
+						isOwner: true
+					}
+				]
 			});
-		
-			it ('should be able to bind through a toOne relation chain', function () {
 			
-				var ctor, obj, model;
+			// the temporary object kind to use so we can test implicit bindings not just
+			// imperative ones
+			var ObjectCtor = enyo.kind({
+				kind: enyo.Object,
+				bindings: [
+					{from: 'model.toOne.toOneProp', to: 'toOneProp', oneWay: false},
+					{from: 'model.toMany.length', to: 'toManyProp'},
+					{from: 'model.manyToMany.length', to: 'manyToManyProp'}
+				]
+			});
 			
-				ctor = enyo.kind({
-					kind: Relational,
-					relations: [{
-						key: 'tooneprop'
-					}]
+			before(function () {
+				model = new Model({
+					toOne: {
+						toOneProp: 'expected value'
+					},
+					toMany: [
+						{id: 0},
+						{id: 1},
+						{id: 2}
+					],
+					manyToMany: [
+						{id: 3},
+						{id: 4},
+						{id: 5}
+					]
 				});
+				obj = new ObjectCtor({model: model});
+			});
 			
-				model = new ctor({tooneprop: 30});
-				obj = new enyo.Object({model: model});
-			
-				obj.binding({from: 'model.tooneprop.id', to: 'toonepropid'});
-			
-				expect(obj.toonepropid).to.exist.and.to.equal(30);
-			
+			after(function () {
+				// dereference constructors
+				Model = null;
+				ObjectCtor = null;
+				// cleanup model and object
 				model.destroy();
 				obj.destroy();
 			});
-		
-			it ('should be able to bind to a local property of the collection of a toMany relation', function () {
 			
-				var ctor, obj, model;
-			
-				ctor = enyo.kind({
-					kind: Relational,
-					relations: [{
-						key: 'tomanyprop',
-						type: 'toMany'
-					}]
+			describe('toOne', function () {
+				
+				it ('should be able to bind to an attribute of the relational model', function () {
+					expect(obj.toOneProp).to.equal('expected value');
 				});
-			
-				model = new ctor({tomanyprop: [{id: 0}, {id: 1}, {id: 2}]});
-				obj = new enyo.Object({model: model});
-			
-				obj.binding({from: 'model.tomanyprop.length', to: 'length'});
-			
-				expect(obj).to.have.length(3);
-			
-				obj.destroy();
-				model.destroy();
+				
+				it ('should be able to set a two-way value', function () {
+					// set the target-side of the two-way binding
+					obj.set('toOneProp', 'next value');
+					// ensure that it is being retrieved as expected via the getter
+					expect(model.get('toOne.toOneProp')).to.equal('next value');
+					// ensure that it was properly set on the attributes hash
+					expect(model.get('toOne').attributes.toOneProp).to.equal('next value');
+				});
+				
 			});
-		
-		});	
+			
+			describe('toMany', function () {
+				
+				it ('should be able to bind to a local property of the toMany relation',
+					function () {
+					
+					expect(obj.get('toManyProp')).to.equal(3);
+				});
+				
+			});
+			
+			describe('manyToMany', function () {
+				
+				it ('should be able to bind to a local property of the manyToMany relation',
+					function () {
+					
+					expect(obj.get('manyToManyProp')).to.equal(3);
+				});
+				
+			});
+			
+		});
 		
 	});
 		
