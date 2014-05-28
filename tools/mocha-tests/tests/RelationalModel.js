@@ -501,7 +501,7 @@ describe('enyo.RelationalModel', function () {
 	
 	describe ('usage', function () {
 	
-		describe ('toOne Relations', function () {
+		describe ('using toOne', function () {
 		
 			it ('should be able to declare an explicit toOne relation');
 			it ('should be able to declare an implicit toOne relation');
@@ -516,7 +516,7 @@ describe('enyo.RelationalModel', function () {
 		
 		});
 	
-		describe ('toMany Relations', function () {
+		describe ('using toMany', function () {
 		
 			it ('should be able to declare an explicit toMany relation');
 			it ('should be able to declare an implicit toMany relation');
@@ -561,7 +561,8 @@ describe('enyo.RelationalModel', function () {
 						type: 'manyToMany',
 						model: 'Teacher',
 						key: 'teachers',
-						inverseKey: 'students'
+						inverseKey: 'students',
+						includeInJSON: false
 					}
 				]
 			});
