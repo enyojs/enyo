@@ -142,9 +142,9 @@ enyo.kind({
 			return true;
 		},
 		getTouchStrategy: function() {
-			return (enyo.platform.android >= 3) || (enyo.platform.windowsPhone === 8) || (enyo.platform.webos >= 4)
+			return (enyo.platform.android >= 3) (enyo.platform.androidChrome >= 18) || (enyo.platform.windowsPhone === 8) || (enyo.platform.webos >= 4)
 				? "TranslateScrollStrategy"
-				: "TouchScrollStrategy";
+				: (enyo.platform.ios >= 5) ? "TransitionScrollStrategy" : "TouchScrollStrategy";
 		}
 	},
 	controlParentName: "strategy",
