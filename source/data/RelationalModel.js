@@ -286,7 +286,8 @@
 		setRelated: function (data) {
 			var related = this.related;
 			
-			related.add(data, {purge: true, parse: true});
+			// related.add(data, {purge: true, parse: true});
+			related.add(data, {purge: true});
 		},
 		
 		/**
@@ -302,7 +303,9 @@
 				found = enyo.store.findLocal(ctor, this.checkRelation, {context: this});
 				// we shouldn't need to update any records already present so we'll ignore
 				// duplicates for efficiency
-				if (found.length) related.add(found, {merge: false});
+				if (found.length) {
+					related.add(found, {merge: false});
+				}
 			}
 		},
 		
@@ -432,7 +435,8 @@
 				id = inst.get(inst.primaryKey),
 				isOwner = this.isOwner;
 			
-			if (related && (related.has(inst) || related.find(function (model) { return model.attributes[model.primaryKey] == id; }))) {
+			if (related && related.has(inst)) {
+			// if (related && (related.has(inst) || related.find(function (model) { return model.attributes[model.primaryKey] == id; }))) {
 				
 				// if the relation isn't found it probably wasn't defined and we need
 				// to automatically generate it based on what we know
@@ -456,40 +460,78 @@
 		
 		onChange: enyo.inherit(function (sup) {
 			return function (sender, e, props) {
-				var related = this.related
-					, inst = this.instance
-					, inverseKey = this.inverseKey
-					, key = this.key
-					, changed, previous;
+				var related = this.related,
+					inst = this.instance,
+					inverseKey = this.inverseKey,
+					model,
+					i;
 				
-				if (sender === related && !this.isChanging) {
-				
-					this.isChanging = true;
-				
+				// this is a very tricky scenario that we need to be very careful about to try
+				// and avoid unnecessary work (when possible) and to keep out of an infinite
+				// loop of notifications
+				if (sender === related) {
+					
+					// we are attempting to distinguish between the occassions we can encounter
+					// this method here if our related collection emits an add, remove or change
+					// event -- if it is change we know it stemmed from a model already
+					// contained by it
 					if (e == 'change') {
-						if (this.checkRelation(props.model)) related.add(props.model);
-						else related.remove(props.model);
-					} else if (inverseKey && (e == 'add' || e == 'remove')) {
-						
-						props.models.forEach(function (model) {
-							model.get(inverseKey)[e](inst);
-						});
+						// we need to figure out if the thing that changed makes us no longer
+						// related to them
+						console.log('onChange');
+					} else if (e == 'add') {
+						// in this case we added a/some model/models that should probably be
+						// updated to know about our instance as well
+						for (i = 0; (model = props.models[i]); ++i) {
+							model.get(inverseKey).add(inst, {merge: false});
+						}
+					} else if (e == 'remove') {
+						// in this case we removed a/some model/models that should probably be
+						// updated to know about the removal as well
+						for (i = 0; (model = props.models[i]); ++i) {
+							model.get(inverseKey).remove(inst);
+						}
 					}
 					
-					changed = inst.changed || (inst.changed = {});
-					previous = inst.previuos || (inst.previous = {});
-					changed[key] = previous[key] = related;
-					inst.emit('change', changed);
-				
-					this.isChanging = false;
-				}
-				
-				// console.log(inst.euid, key, 'onChange', sender === related? 'related': 'store', e, props);
-				// console.log(related.euid, key, e, props.model.changed);
-
-				else sup.apply(this, arguments);
+				} else sup.apply(this, arguments);
 			};
 		})
+		// onChange: enyo.inherit(function (sup) {
+		// 	return function (sender, e, props) {
+		// 		var related = this.related
+		// 			, inst = this.instance
+		// 			, inverseKey = this.inverseKey
+		// 			, key = this.key
+		// 			, changed, previous;
+		// 		
+		// 		if (sender === related && !this.isChanging) {
+		// 		
+		// 			this.isChanging = true;
+		// 		
+		// 			if (e == 'change') {
+		// 				if (this.checkRelation(props.model)) related.add(props.model);
+		// 				else related.remove(props.model);
+		// 			} else if (inverseKey && (e == 'add' || e == 'remove')) {
+		// 				
+		// 				props.models.forEach(function (model) {
+		// 					model.get(inverseKey)[e](inst);
+		// 				});
+		// 			}
+		// 			
+		// 			changed = inst.changed || (inst.changed = {});
+		// 			previous = inst.previuos || (inst.previous = {});
+		// 			changed[key] = previous[key] = related;
+		// 			inst.emit('change', changed);
+		// 		
+		// 			this.isChanging = false;
+		// 		}
+		// 		
+		// 		// console.log(inst.euid, key, 'onChange', sender === related? 'related': 'store', e, props);
+		// 		// console.log(related.euid, key, e, props.model.changed);
+		// 
+		// 		else sup.apply(this, arguments);
+		// 	};
+		// })
 	});
 	
 	/**
@@ -949,7 +991,16 @@
 		*/
 		destroy: enyo.inherit(function (sup) {
 			return function () {
-				this.relations.forEach(function (rel) { rel.destroy(); });
+				var relations = this.relations,
+					rel,
+					i = 0;
+				
+				// give the relations the ability to teardown during destruction
+				for (; (rel = relations[i]); ++i) {
+					rel.destroy();
+				}
+				
+				// carry on before finally removing our relations reference
 				sup.apply(this, arguments);
 				this.relations = null;
 			};
