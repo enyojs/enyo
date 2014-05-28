@@ -103,7 +103,7 @@
 			// ensure we have a constructor for our related model kind
 			this.model = enyo.constructorForKind(this.model);
 			
-            this.includeInJSON = !props.includeInJSON && !this.isOwner
+            this.includeInJSON = props.includeInJSON == null && !this.isOwner
 				? (this.model.prototype.primaryKey || 'id')
 				: this.includeInJSON;
 			
