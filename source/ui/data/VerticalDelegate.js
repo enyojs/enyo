@@ -131,6 +131,10 @@ enyo.DataList.delegates.vertical = {
 		page.start  = perPage * index;
 		// the last index for this generated page
 		page.end    = Math.min((data.length - 1), (page.start + perPage) - 1);
+		
+		if (page.start < 0) page.start = null;
+		if (page.end < 0) page.end = null;
+		
 		// if generating a control we need to use the correct page as the control parent
 		list.controlParent = page;
 		for (var i=page.start; i <= page.end && i < data.length; ++i) {
@@ -272,35 +276,42 @@ enyo.DataList.delegates.vertical = {
 		records being added are ordered and sequential.
 	*/
 	modelsAdded: function (list, props) {
-		if (!list.hasReset) { return this.reset(list); }
-		// the current indices that are rendered
-		var fi = list.$.page1.index || (list.$.page1.index=0),
-			si = list.$.page2.index || (list.$.page2.index=1), rf, rs, pi;
-		for (var i=0, ri; (ri=props.records[i]) >= 0; ++i) {
-			pi = this.pageForIndex(list, ri);
-			// we ensure that if the page index is either page we flag that page as
-			// needing to be updated
-			if (pi == fi) {
-				rf = true;
-			} else if (pi == si) {
-				rs = true;
-			} else if (pi > si) {
-				// no need to continue looking if the page index is greater
-				// than the known second page index
-				break;
-			}
+		
+		// if the list has not already reset, reset
+		if (!list.hasReset) return this.reset(list);
+		
+		var collection = list.collection,
+			
+			// we need the controls per page for simple arithmetic
+			cpp = this.controlsPerPage(list),
+			first = list.$.page1.start != null ? list.$.page1.start : 0,
+			last = list.$.page2.end != null ? list.$.page2.end : ((cpp * 2) - 1),
+			len = props.models.length,
+			gen,
+			check,
+			idx;
+			
+		check = function (i) {
+			return (i >= first && i <= last);
+		};
+		
+		// retrieve the first index for the first added model in the collection
+		idx = collection.indexOf(props.models[0]);
+		
+		gen = check(idx);
+		
+		if (!gen) {
+			
+			// we can use the fact that we know that all indices of the models that were added are
+			// sequential and contiguous to know where the last index is
+			idx = idx + len - 1;
+			
+			gen = check(idx);
 		}
-		// if either page was flagged go ahead and update it
-		if (rf) { this.generatePage(list, list.$.page1, fi); }
-		if (rs) { this.generatePage(list, list.$.page2, si); }
-		// if either was updated we want to go ahead and ensure that our page positions
-		// are still appropriate
-		if (rf || rs) { this.adjustPagePositions(list); }
-		// either way we need to adjust the buffer size
-		this.adjustBuffer(list);
-		// regardless of the status of updating the pages we need to ensure that we update
-		// the scroll thresholds as space for new pages may now exist that didn't before
-		this.setScrollThreshold(list);
+		
+		// if we need to refresh, do it now and ensure that we're properly setup to scroll
+		// if we were adding to a partially filled page
+		if (gen) this.refresh(list);
 	},
 	/**
 		Attempts to find the control for the requested index.
