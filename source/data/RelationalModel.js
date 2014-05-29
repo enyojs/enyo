@@ -154,14 +154,16 @@
 		*/
 		destroy: function () {
 			var isOwner = this.isOwner,
+				create = this.create,
 				related = this.related;
 				
-			if (isOwner && related && related.destroy) {
+			if ((isOwner || create) && related && related.destroy && !related.destroyed) {
 				related.destroy();
 			}
 			
 			this.destroyed = true;
 			this.instance = null;
+			this.related = null;
 		}
 	});
 	

@@ -73,7 +73,6 @@ describe('enyo.RelationalModel', function () {
 			// dereference the constructor
 			Model = null;
 			GenericModel = null;
-			
 			// breakdown the model instance
 			model.destroy();
 		});
@@ -249,7 +248,7 @@ describe('enyo.RelationalModel', function () {
 				var stubs = [];
 				// we want to stub these destroys to ensure that they are called as expected
 				model.relations.forEach(function (rel) {
-					stubs.push(sinon.stub(rel, 'destroy'));
+					stubs.push(sinon.spy(rel, 'destroy'));
 				});
 				
 				// now we destroy the model and look at all the stubs to ensure they were
@@ -465,7 +464,7 @@ describe('enyo.RelationalModel', function () {
 			
 		});
 	
-		describe ('~isOwner', function () {
+		describe('~isOwner', function () {
 			
 			var model;
 			
@@ -491,151 +490,187 @@ describe('enyo.RelationalModel', function () {
 			
 			after(function () {
 				Model = null;
+				model.get('toOneNotOwned').destroy();
 				model.destroy();
 			});
 			
 		});
 	
-		describe ('~includeInJSON', function () {
+		describe('~includeInJSON', function () {
 			
-			it ('should not include a relation in raw output when includeInJSON is false', function () {
-				var ctor, model;
-				
-				ctor = enyo.kind({
-					kind: Relational,
-					relations: [{
-						key: 'childModel',
+			var model;
+			
+			var Model = enyo.kind({
+				kind: Relational,
+				relations: [
+					{
+						type: 'toOne',
+						key: 'toOne',
+						isOwner: true,
+						create: true,
 						includeInJSON: false
-					}]
+					},
+					{
+						type: 'toOne',
+						key: 'toOneNotOwned',
+						isOwner: false,
+						create: true
+					}
+				]
+			});
+			
+			before(function () {
+				model = new Model({
+					toOne: 10,
+					toOneNotOwned: 11
 				});
-				
-				model = new ctor();
-				expect(model.raw()).to.be.empty;
+			});
+			
+			after(function () {
+				Model = null;
+				model.get('toOneNotOwned').destroy();
 				model.destroy();
 			});
 			
-			it ('should include the entire relation raw output when includeInJSON is true and isOwner is true', function () {
-				var ctor, model;
+			it ('should not include a relation in raw output when includeInJSON is false',
+				function () {
 				
-				ctor = enyo.kind({
-					kind: Relational,
-					relations: [{
-						key: 'childModel',
-						includeInJSON: true
-					}]
+				expect(model.raw()).to.eql({
+					toOneNotOwned: 11
 				});
-				
-				model = new ctor({childModel: {id: 'id0101', name: 'someName'}});
-				expect(model.raw()).to.eql({childModel: {id: 'id0101', name: 'someName'}});
-				model.destroy();
 			});
 			
-			it ('should include the id of the relation by default when isOwner is false', function () {
-				var ctor, model;
+			it ('should include the entire relation raw output when includeInJSON is true and ' +
+				'isOwner is true', function () {
 				
-				ctor = enyo.kind({
-					kind: Relational,
-					relations: [{
-						key: 'childModel',
-						isOwner: false
-					}]
+				// update the flag so the test can do what it needs
+				model.getRelation('toOne').includeInJSON = true;
+				expect(model.raw()).to.eql({
+					toOne: {
+						id: 10
+					},
+					toOneNotOwned: 11
 				});
+			});
+			
+			it ('should include the id of the relation by default when isOwner is false and no ' +
+				'other property/properties is/are specified', function () {
 				
-				model = new ctor();
-				model.set('childModel', new Relational({id: 'id0101'}));
-				expect(model.raw()).to.eql({childModel: 'id0101'});
-				model.get('childModel').destroy();
-				model.destroy();
+				expect(model.raw().toOneNotOwned).to.equal(11);
 			});
 			
 			it ('should include a single key when includeInJSON is a string', function () {
-				var ctor, model;
+				// update the relational flag
+				model.getRelation('toOne').includeInJSON = 'name';
+				// add a value for it to attempt to retrieve
+				model.set('toOne.name', 'expected value');
 				
-				ctor = enyo.kind({
-					kind: Relational,
-					relations: [{
-						key: 'childModel',
-						includeInJSON: 'name'
-					}]
-				});
-				
-				model = new ctor({childModel: {id: 'id0101', name: 'someName'}});
-				expect(model.raw()).to.eql({childModel: 'someName'});
-				model.destroy();
+				expect(model.raw().toOne).to.equal('expected value');
 			});
 			
 			it ('should include all keys requested when includeInJSON is an array', function () {
-				var ctor, model;
+				// udpate the relational flag
+				model.getRelation('toOne').includeInJSON = ['name', 'age'];
+				// add a value
+				model.set('toOne.age', 12);
 				
-				ctor = enyo.kind({
-					kind: Relational,
-					relations: [{
-						key: 'childModel',
-						includeInJSON: ['name', 'age']
-					}]
+				expect(model.raw().toOne).to.eql({
+					name: 'expected value',
+					age: 12
 				});
-				
-				model = new ctor({childModel: {id: 'id0101', name: 'someName', age: 35}});
-				expect(model.raw()).to.eql({childModel: {name: 'someName', age: 35}});
-				model.destroy();
 			});
 			
 			it ('should include any return value when includeInJSON is a function', function () {
-				var ctor, model;
+				// update relational flag
+				model.getRelation('toOne').includeInJSON = function () { return 'new value'; };
 				
-				ctor = enyo.kind({
+				expect(model.raw().toOne).to.equal('new value');
+			});
+			
+		});
+		
+		describe('~create', function () {
+			
+			var model;
+			
+			var Model = enyo.kind({
+				kind: Relational,
+				relations: [
+					{
+						type: 'toOne',
+						key: 'toOne',
+						create: true
+					}
+				]
+			});
+			
+			before(function () {
+				model = new Model({
+					toOne: {
+						id: 10
+					}
+				});
+			});
+			
+			after(function () {
+				Model = null;
+				model.destroy();
+			});
+			
+			it ('should create an instance when create is true', function () {
+				expect(model.get('toOne')).to.be.an.instanceof(Relational);
+			});
+			
+			it ('should use existing data when creating an instance when create is true',
+				function () {
+				
+				expect(model.get('toOne.id')).to.equal(10);
+			});
+			
+		});
+		
+		describe('~parse', function () {
+			
+			var model;
+			
+			before(function () {
+				
+				enyo.kind({
+					name: 'GenericModel1',
 					kind: Relational,
-					relations: [{
-						key: 'childModel',
-						includeInJSON: function (key) {
-							return 'cool';
+					noDefer: true,
+					relations: [
+						{
+							type: 'toOne',
+							key: 'toOne',
+							model: 'GenericModel2',
+							create: true,
+							parse: true
 						}
-					}]
+					]
 				});
 				
-				model = new ctor({childModel: {id: 'id0101', name: 'someName', age: 35}});
-				expect(model.raw()).to.eql({childModel: 'cool'});
-				model.destroy();
+				
+				enyo.kind({
+					name: 'GenericModel2',
+					kind: Relational,
+					noDefer: true
+				});
+				
 			});
 			
-		});
-		
-		describe ('#create', function () {
-			
-			it ('should create an instance from existing data when isOwner is true', function () {
-				var ctor, model;
-				
-				ctor = enyo.kind({
-					kind: Relational,
-					relations: [{
-						key: 'testprop'
-					}]
-				});
-				model = new ctor({testprop: {id: 0}});
-				expect(model.attributes.testprop).to.exist.and.to.be.an.instanceof(enyo.toOne);
-				expect(model.getRelation('testprop').related).to.exist.and.to.be.an.instanceof(enyo.RelationalModel);
-				model.destroy();
+			after(function () {
+				GenericModel1 = null;
+				GenericModel2 = null;
+				if (model && !model.destroyed) model.destroy();
 			});
 			
-		});
-		
-		describe ('#parse', function () {
-			
-			it ('should parse incoming data for a relation when it exists and create is true', function () {
-				var ctor, model, spy = sinon.spy(), base;
-				base = enyo.kind({kind: Relational, parse: spy});
-				ctor = enyo.kind({
-					kind: Relational,
-					relations: [{
-						key: 'somekey',
-						model: base,
-						parse: true
-					}]
-				});
-				
-				model = new ctor({somekey: {id: '02318214893423423'}});
-				expect(spy).to.have.been.calledOnce;
-				model.destroy();
+			it ('should force a model to execute its parse method when creating an instance and ' +
+				'parse is true', function () {
+
+				var spy = sinon.spy(GenericModel2.prototype, 'parse');
+				model = new GenericModel1({toOne: 10});
+				expect(spy.called).to.be.true;
 			});
 			
 		});
