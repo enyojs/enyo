@@ -334,25 +334,49 @@ enyo.DataList.delegates.vertical = {
 		if the models are part of any visible pages.
 	*/
 	modelsRemoved: function (list, props) {
-		// we know that the removed records have been ordered so we can
-		// work from the bottom to the top, a major difference between adding
-		// and removing, however, is the fact that added records are grouped
-		// and removed models could be random so we may have to check them all
-		var keys = enyo.keys(props.records),
-			fi   = list.$.page1.index,
-			si   = list.$.page2.index, pi;
-		for (var i=keys.length-1, k; (k=keys[i]) >= 0; --i) {
-			pi = this.pageForIndex(list, k);
-			// if either page is included we'll break here and refresh them both
-			// to ensure accurate view
-			if (pi == fi || pi == si) {
-				this.refresh(list);
-				// for sanity we check to ensure that the current scroll position is
-				// showing our available content fully since elements were removed
-				var pos = this.pagesByPosition(list);
-				this.scrollToIndex(list, pos.firstPage.start);
-				break;
-			}
+		
+		// if the list has not already reset, reset
+		if (!list.hasReset) return this.reset(list);
+		
+		var collection = list.collection,
+			
+			// we need the controls per page for simple arithmetic
+			cpp = this.controlsPerPage(list),
+			first = list.$.page1.start != null ? list.$.page1.start : 0,
+			last = list.$.page2.end != null ? list.$.page2.end : ((cpp * 2) - 1),
+			len = props.models.length,
+			gen,
+			check,
+			idx,
+			pos;
+			
+		check = function (i) {
+			return (i >= first && i <= last);
+		};
+		
+		// retrieve the first index for the first added model in the collection
+		idx = collection.indexOf(props.models[0]);
+		
+		gen = check(idx);
+		
+		if (!gen) {
+			
+			// we can use the fact that we know that all indices of the models that were added are
+			// sequential and contiguous to know where the last index is
+			idx = idx + len - 1;
+			
+			gen = check(idx);
+		}
+		
+		// if we need to refresh, do it now and ensure that we're properly setup to scroll
+		// if we were adding to a partially filled page
+		if (gen) {
+			this.refresh(list);
+			
+			// for sanity ensure that the current scroll position is showing our available content
+			// fully since elements were removed
+			pos = this.pagesByPosition(list);
+			this.scrollToIndex(list, pos.firstPage.start);
 		}
 	},
 	/**
