@@ -10,55 +10,58 @@ describe('enyo.RelationalModel', function () {
 		
 		// the primary model instance to reuse between tests
 			model;
-		
-		// a generic nested relational kind for a specific test case
-		enyo.kind({
-			name: 'GenericModel',
-			kind: Relational,
-			relations: [
-				{
-					type: 'toOne',
-					key: 'nestedToOne',
-					isOwner: true,
-					create: true
-				}
-			]
-		});
-		
-		// a generic kind with a bunch of various relations to use for the following api tests
-		var Model = enyo.kind({
-			kind: Relational,
-			relations: [
-				{
-					type: 'toOne',
-					key: 'toOne',
-					model: 'GenericModel',
-					isOwner: true,
-					create: true,
-					includeInJSON: false
-				},
-				{
-					type: 'toMany',
-					key: 'toMany',
-					isOwner: true,
-					includeInJSON: false
-				},
-				{
-					type: 'manyToMany',
-					key: 'manyToMany',
-					isOwner: true,
-					includeInJSON: false
-				},
-				{
-					type: 'toOne',
-					key: 'toOneNotOwned',
-					isOwner: false,
-					includeInJSON: false
-				}
-			]
-		});
+			
+		var Model;
 		
 		before(function () {
+			
+			// a generic nested relational kind for a specific test case
+			enyo.kind({
+				name: 'GenericModel',
+				kind: Relational,
+				relations: [
+					{
+						type: 'toOne',
+						key: 'nestedToOne',
+						isOwner: true,
+						create: true
+					}
+				]
+			});
+		
+			// a generic kind with a bunch of various relations to use for the following api tests
+			Model = enyo.kind({
+				kind: Relational,
+				relations: [
+					{
+						type: 'toOne',
+						key: 'toOne',
+						model: 'GenericModel',
+						isOwner: true,
+						create: true,
+						includeInJSON: false
+					},
+					{
+						type: 'toMany',
+						key: 'toMany',
+						isOwner: true,
+						includeInJSON: false
+					},
+					{
+						type: 'manyToMany',
+						key: 'manyToMany',
+						isOwner: true,
+						includeInJSON: false
+					},
+					{
+						type: 'toOne',
+						key: 'toOneNotOwned',
+						isOwner: false,
+						includeInJSON: false
+					}
+				]
+			});
+			
 			model = new Model({
 				id: 0,
 				toOne: {
@@ -304,52 +307,53 @@ describe('enyo.RelationalModel', function () {
 			
 			var model;
 			
-			var Model = enyo.kind({
-				kind: Relational,
-				relations: [
-					{
-						key: 'defaultedToOne'
-					},
-					{
-						type: 'toOne',
-						key: 'toOneString'
-					},
-					{
-						type: 'enyo.toOne',
-						key: 'enyo.toOneString'
-					},
-					{
-						type: enyo.toOne,
-						key: 'enyo.toOneConstructor'
-					},
-					{
-						type: 'toMany',
-						key: 'toManyString'
-					},
-					{
-						type: 'enyo.toMany',
-						key: 'enyo.toManyString'
-					},
-					{
-						type: enyo.toMany,
-						key: 'enyo.toManyConstructor'
-					},
-					{
-						type: 'manyToMany',
-						key: 'manyToManyString'
-					},
-					{
-						type: 'enyo.manyToMany',
-						key: 'enyo.manyToManyString'
-					},
-					{
-						type: enyo.manyToMany,
-						key: 'enyo.manyToManyConstructor'
-					}
-				]
-			});
+			var Model;
 			
 			before(function () {
+				Model = enyo.kind({
+					kind: Relational,
+					relations: [
+						{
+							key: 'defaultedToOne'
+						},
+						{
+							type: 'toOne',
+							key: 'toOneString'
+						},
+						{
+							type: 'enyo.toOne',
+							key: 'enyo.toOneString'
+						},
+						{
+							type: enyo.toOne,
+							key: 'enyo.toOneConstructor'
+						},
+						{
+							type: 'toMany',
+							key: 'toManyString'
+						},
+						{
+							type: 'enyo.toMany',
+							key: 'enyo.toManyString'
+						},
+						{
+							type: enyo.toMany,
+							key: 'enyo.toManyConstructor'
+						},
+						{
+							type: 'manyToMany',
+							key: 'manyToManyString'
+						},
+						{
+							type: 'enyo.manyToMany',
+							key: 'enyo.manyToManyString'
+						},
+						{
+							type: enyo.manyToMany,
+							key: 'enyo.manyToManyConstructor'
+						}
+					]
+				});
 				model = new Model();
 			});
 			
@@ -389,20 +393,21 @@ describe('enyo.RelationalModel', function () {
 			
 			var model;
 			
-			var Model = enyo.kind({
-				kind: Relational,
-				relations: [
-					{
-						type: 'toOne',
-						key: 'toOne',
-						inverseKey: 'toOneInverse',
-						isOwner: true,
-						create: true
-					}
-				]
-			});
+			var Model;
 			
 			before(function () {
+				Model = enyo.kind({
+					kind: Relational,
+					relations: [
+						{
+							type: 'toOne',
+							key: 'toOne',
+							inverseKey: 'toOneInverse',
+							isOwner: true,
+							create: true
+						}
+					]
+				});
 				model = new Model();
 			});
 			
@@ -430,18 +435,19 @@ describe('enyo.RelationalModel', function () {
 			var model1,
 				model2;
 			
-			var Model = enyo.kind({
-				kind: Relational,
-				relations: [
-					{
-						type: 'toOne',
-						key: 'toOne',
-						inverseKey: 'toOneInverse'
-					}
-				]
-			});
+			var Model;
 			
 			before(function () {
+				Model = enyo.kind({
+					kind: Relational,
+					relations: [
+						{
+							type: 'toOne',
+							key: 'toOne',
+							inverseKey: 'toOneInverse'
+						}
+					]
+				});
 				model1 = new Relational({toOneInverse: 0});
 				model2 = new Model({id: 0});
 			});
@@ -468,23 +474,24 @@ describe('enyo.RelationalModel', function () {
 			
 			var model;
 			
-			var Model = enyo.kind({
-				kind: Relational,
-				relations: [
-					{
-						type: 'toOne',
-						key: 'toOneOwned',
-						isOwner: true
-					},
-					{
-						type: 'toOne',
-						key: 'toOneNotOwned',
-						create: true
-					}
-				]
-			});
+			var Model;
 			
 			before(function () {
+				Model = enyo.kind({
+					kind: Relational,
+					relations: [
+						{
+							type: 'toOne',
+							key: 'toOneOwned',
+							isOwner: true
+						},
+						{
+							type: 'toOne',
+							key: 'toOneNotOwned',
+							create: true
+						}
+					]
+				});
 				model = new Model();
 			});
 			
@@ -500,26 +507,27 @@ describe('enyo.RelationalModel', function () {
 			
 			var model;
 			
-			var Model = enyo.kind({
-				kind: Relational,
-				relations: [
-					{
-						type: 'toOne',
-						key: 'toOne',
-						isOwner: true,
-						create: true,
-						includeInJSON: false
-					},
-					{
-						type: 'toOne',
-						key: 'toOneNotOwned',
-						isOwner: false,
-						create: true
-					}
-				]
-			});
+			var Model;
 			
 			before(function () {
+				Model = enyo.kind({
+					kind: Relational,
+					relations: [
+						{
+							type: 'toOne',
+							key: 'toOne',
+							isOwner: true,
+							create: true,
+							includeInJSON: false
+						},
+						{
+							type: 'toOne',
+							key: 'toOneNotOwned',
+							isOwner: false,
+							create: true
+						}
+					]
+				});
 				model = new Model({
 					toOne: 10,
 					toOneNotOwned: 11
@@ -593,18 +601,19 @@ describe('enyo.RelationalModel', function () {
 			
 			var model;
 			
-			var Model = enyo.kind({
-				kind: Relational,
-				relations: [
-					{
-						type: 'toOne',
-						key: 'toOne',
-						create: true
-					}
-				]
-			});
+			var Model;
 			
 			before(function () {
+				Model = enyo.kind({
+					kind: Relational,
+					relations: [
+						{
+							type: 'toOne',
+							key: 'toOne',
+							create: true
+						}
+					]
+				});
 				model = new Model({
 					toOne: {
 						id: 10
@@ -701,36 +710,36 @@ describe('enyo.RelationalModel', function () {
 			// the collection of students we create for the tests
 				students;
 			
-			// for this series of tests we will use the Teacher/Student paradigm for human
-			// readability and understanding and dereference the constructors when we're done
-			enyo.kind({
-				name: 'Teacher',
-				kind: Relational,
-				relations: [
-					{
-						type: 'manyToMany',
-						model: 'Student',
-						key: 'students',
-						inverseKey: 'teachers'
-					}
-				]
-			});
-			
-			enyo.kind({
-				name: 'Student',
-				kind: Relational,
-				relations: [
-					{
-						type: 'manyToMany',
-						model: 'Teacher',
-						key: 'teachers',
-						inverseKey: 'students',
-						includeInJSON: false
-					}
-				]
-			});
-			
 			before(function () {
+			
+				// for this series of tests we will use the Teacher/Student paradigm for human
+				// readability and understanding and dereference the constructors when we're done
+				enyo.kind({
+					name: 'Teacher',
+					kind: Relational,
+					relations: [
+						{
+							type: 'manyToMany',
+							model: 'Student',
+							key: 'students',
+							inverseKey: 'teachers'
+						}
+					]
+				});
+			
+				enyo.kind({
+					name: 'Student',
+					kind: Relational,
+					relations: [
+						{
+							type: 'manyToMany',
+							model: 'Teacher',
+							key: 'teachers',
+							inverseKey: 'students',
+							includeInJSON: false
+						}
+					]
+				});
 				
 				// we will instantiate 3 teachers and then multiple students assigned
 				// to the various teachers
@@ -893,7 +902,7 @@ describe('enyo.RelationalModel', function () {
 			
 		});
 	
-		describe('Events', function () {
+		describe('events', function () {
 			
 			// the model instance we'll be using
 			var model;
@@ -906,18 +915,21 @@ describe('enyo.RelationalModel', function () {
 						// changes to this relation should indicate a change on our parent
 						type: 'toOne',
 						key: 'toOneOwned',
+						create: true,
 						isOwner: true
 					},
 					{
 						// changes to this relation should not indicate a change on our parent
 						type: 'toOne',
 						key: 'toOneNotOwned',
+						create: true,
 						isOwner: false
 					},
 					{
 						// changes to this collection should indicate a change on our parent
 						type: 'toMany',
 						key: 'toMany',
+						create: true,
 						isOwner: true
 					}
 				]
@@ -995,7 +1007,7 @@ describe('enyo.RelationalModel', function () {
 		
 		// we need to ensure that bindings function as expected in normal scenarios so we break
 		// them down by type to see what we can get
-		describe('Bindings', function () {
+		describe('bindings', function () {
 			
 			// the model instance to be used throughout these sub-tests
 			var model,
@@ -1003,44 +1015,47 @@ describe('enyo.RelationalModel', function () {
 			// the shared object instance to use as a binding target
 				obj;
 				
-			// the temporary kind to use
-			var Model = enyo.kind({
-				kind: Relational,
-				relations: [
-					// we create a toOne relation
-					{
-						type: 'toOne',
-						key: 'toOne',
-						create: true,
-						isOwner: true
-					},
-					// a toMany relation
-					{
-						type: 'toMany',
-						key: 'toMany',
-						isOwner: true
-					},
-					// and a manyToMany relation
-					{
-						type: 'manyToMany',
-						key: 'manyToMany',
-						isOwner: true
-					}
-				]
-			});
-			
-			// the temporary object kind to use so we can test implicit bindings not just
-			// imperative ones
-			var ObjectCtor = enyo.kind({
-				kind: enyo.Object,
-				bindings: [
-					{from: 'model.toOne.toOneProp', to: 'toOneProp', oneWay: false},
-					{from: 'model.toMany.length', to: 'toManyProp'},
-					{from: 'model.manyToMany.length', to: 'manyToManyProp'}
-				]
-			});
+			var Model,
+				ObjectCtor;
 			
 			before(function () {
+				// the temporary kind to use
+				Model = enyo.kind({
+					kind: Relational,
+					relations: [
+						// we create a toOne relation
+						{
+							type: 'toOne',
+							key: 'toOne',
+							create: true,
+							isOwner: true
+						},
+						// a toMany relation
+						{
+							type: 'toMany',
+							key: 'toMany',
+							isOwner: true
+						},
+						// and a manyToMany relation
+						{
+							type: 'manyToMany',
+							key: 'manyToMany',
+							isOwner: true
+						}
+					]
+				});
+			
+				// the temporary object kind to use so we can test implicit bindings not just
+				// imperative ones
+				ObjectCtor = enyo.kind({
+					kind: enyo.Object,
+					bindings: [
+						{from: 'model.toOne.toOneProp', to: 'toOneProp', oneWay: false},
+						{from: 'model.toMany.length', to: 'toManyProp'},
+						{from: 'model.manyToMany.length', to: 'manyToManyProp'}
+					]
+				});
+				
 				model = new Model({
 					toOne: {
 						toOneProp: 'expected value'

@@ -212,6 +212,11 @@
 			isOwner: false,
 			
 			/**
+			
+			*/
+			create: true,
+			
+			/**
 			*/
 			collection: RelationalCollection,
 			
@@ -394,6 +399,7 @@
 			var inst = this.instance
 				, key = this.key
 				, related = this.related
+				, isOwner = this.isOwner
 				, changed;
 			
 			if (sender === enyo.store) {
@@ -521,7 +527,13 @@
 						// in this case we removed a/some model/models that should probably be
 						// updated to know about the removal as well
 						for (i = 0; (model = props.models[i]); ++i) {
-							model.get(inverseKey).remove(inst);
+							
+							// this event will be caught in the event that the model was destroyed
+							// but should that happen the other collections will also have done
+							// this already (or will do it) but if the model is already destroyed
+							// it won't be able to retrieve its relations anymore so we can
+							// safely skip it
+							if (!model.destroyed) model.get(inverseKey).remove(inst);
 						}
 					}
 					
