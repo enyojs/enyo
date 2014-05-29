@@ -52,8 +52,8 @@ describe ("Collection", function () {
 				fn = function () {
 					col.add(shared);
 				};
-				expect(fn).to.not.throw("add");
-				expect(col).to.have.length(len);
+				expect(fn).to.throw("add");
+				expect(col).to.have.length((len * 2) - 1);
 				destroy = true;
 			});
 		});

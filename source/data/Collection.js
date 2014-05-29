@@ -160,10 +160,14 @@
 					
 				
 				// see if we have an existing entry for this model/hash
-				found = loc.resolve(id);
+				found = loc.has(id);
 				
 				// if it already existed...
 				if (found) {
+					
+					// we need to ensure we've resolved the model (if necessary)
+					found = loc.resolve(id);
+					
 					if (merge) {
 						attrs || (attrs = model.attributes);
 						parse && (attrs = found.parse(attrs));
@@ -258,7 +262,7 @@
 			
 			removed = loc.remove(models);
 			
-			if (removed) {
+			if (removed.length) {
 				for (var i=0, end=removed.length; i<end; ++i) {
 					model = removed[i];
 					model.off('*', this.onModelEvent, this);
@@ -294,7 +298,7 @@
 			
 			if (!silent) {
 				len != this.length && this.notify('length', len, this.length);
-				removed && this.emit('remove', {/* for partial backward compatibility */records: removed, /* prefered */models: removed});
+				removed.length && this.emit('remove', {/* for partial backward compatibility */records: removed, /* prefered */models: removed});
 			}
 			
 			commit && removed && this.commit();

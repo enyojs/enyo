@@ -66,11 +66,23 @@
 			@public
 			@method
 		*/
-		add: function (models) {
-			var kindName = models && models instanceof Array? models[0].kindName: models.kindName
-				, list = this.models[kindName];
-			
-			if (list) list.add(models);
+		add: function (models, opts) {
+			var ctor = models && models instanceof Array ? models[0].ctor : models.ctor,
+				kindName = ctor && ctor.prototype.kindName,
+				list = this.models[kindName],
+				added,
+				i;
+				
+			// if we were able to find the list then we go ahead and attempt to add the models
+			if (list) added = list.add(models);
+			// if we successfully added models and this was a default operation (not being
+			// batched by a collection or other feature) we emit the event needed primarily
+			// by relational models but could be useful other places
+			if (added.length && (!opts || !opts.silent)) {
+				for (i = 0; i < added.length; ++i) {
+					this.emit(ctor, 'add', {model: added[i]});
+				}
+			}
 			
 			return this;
 		},
@@ -79,11 +91,23 @@
 			@public
 			@method
 		*/
-		remove: function (models) {
-			var kindName = models && models instanceof Array? models[0].kindName: models.kindName
-				, list = this.models[kindName];
+		remove: function (models, opts) {
+			var ctor = models && models instanceof Array ? models[0].ctor : models.ctor,
+				kindName = ctor && ctor.prototype.kindName,
+				list = this.models[kindName],
+				removed,
+				i;
 			
-			if (list) list.remove(models);
+			// if we were able to find the list then we go ahead and attempt to remove the models
+			if (list) removed = list.remove(models);
+			// if we successfully removed models and this was a default opreation (not being
+			// batched by a collection or other feature) we emit the event needed primarily
+			// by relational models but could be useful other places
+			if (removed.length && (!opts || !opts.silent)) {
+				for (i = 0; i < removed.length; ++i) {
+					this.emit(ctor, 'remove', {model: removed[i]});
+				}
+			}
 			
 			return this;
 		},
