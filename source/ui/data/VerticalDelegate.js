@@ -52,8 +52,8 @@ enyo.DataList.delegates.vertical = {
 		var metrics     = list.metrics.pages,
 			pos         = list.pagePositions || (list.pagePositions={}),
 			upperProp   = list.upperProp,
-			firstIndex  = list.$.page1.index,
-			secondIndex = list.$.page2.index;
+			firstIndex  = list.$.page1.index || 0,
+			secondIndex = list.$.page2.index || 1;
 		pos.firstPage   = (
 			metrics[firstIndex][upperProp] < metrics[secondIndex][upperProp]
 			? list.$.page1
@@ -284,15 +284,16 @@ enyo.DataList.delegates.vertical = {
 			
 			// we need the controls per page for simple arithmetic
 			cpp = this.controlsPerPage(list),
-			first = list.$.page1.start != null ? list.$.page1.start : 0,
-			last = list.$.page2.end != null ? list.$.page2.end : ((cpp * 2) - 1),
+			pos = this.pagesByPosition(list),
+			first = pos.firstPage.start != null ? pos.firstPage.start : 0,
+			final = (cpp * 2) + (first - 1),
 			len = props.models.length,
 			gen,
 			check,
 			idx;
 			
 		check = function (i) {
-			return (i >= first && i <= last);
+			return (i >= first && i <= final);
 		};
 		
 		// retrieve the first index for the first added model in the collection
@@ -312,6 +313,13 @@ enyo.DataList.delegates.vertical = {
 		// if we need to refresh, do it now and ensure that we're properly setup to scroll
 		// if we were adding to a partially filled page
 		if (gen) this.refresh(list);
+		else {
+			
+			// we still need to ensure that the metrics are updated so it knows it can scroll
+			// past the boundaries of the current pages (potentially)
+			this.adjustBuffer(list);
+			this.adjustPagePositions(list);
+		}
 	},
 	/**
 		Attempts to find the control for the requested index.
@@ -342,31 +350,22 @@ enyo.DataList.delegates.vertical = {
 			
 			// we need the controls per page for simple arithmetic
 			cpp = this.controlsPerPage(list),
-			first = list.$.page1.start != null ? list.$.page1.start : 0,
-			last = list.$.page2.end != null ? list.$.page2.end : ((cpp * 2) - 1),
+			pos = this.pagesByPosition(list),
+			first = pos.firstPage.start != null ? pos.firstPage.start : 0,
+			final = (cpp * 2) + (first - 1),
 			len = props.models.length,
 			gen,
 			check,
-			idx,
-			pos;
+			idx;
 			
 		check = function (i) {
-			return (i >= first && i <= last);
+			return (i <= final);
 		};
 		
 		// retrieve the first index for the first added model in the collection
-		idx = collection.indexOf(props.models[0]);
+		idx = collection.indexOf(props.models[0]) + len - 1;
 		
 		gen = check(idx);
-		
-		if (!gen) {
-			
-			// we can use the fact that we know that all indices of the models that were added are
-			// sequential and contiguous to know where the last index is
-			idx = idx + len - 1;
-			
-			gen = check(idx);
-		}
 		
 		// if we need to refresh, do it now and ensure that we're properly setup to scroll
 		// if we were adding to a partially filled page
@@ -375,7 +374,6 @@ enyo.DataList.delegates.vertical = {
 			
 			// for sanity ensure that the current scroll position is showing our available content
 			// fully since elements were removed
-			pos = this.pagesByPosition(list);
 			this.scrollToIndex(list, pos.firstPage.start);
 		}
 	},
