@@ -24,6 +24,9 @@
       "url": "http://www.apache.org/licenses/LICENSE-2.0"
     }
   ],
+  "scripts": {
+    "test": "mocha-phantomjs tools/mocha-tests/index.html"
+  },
   "repository": {
     "type": "git",
     "url": "http://github.com/enyojs/enyo"
@@ -36,6 +39,9 @@
   },
   "devDependencies": {
     "sinon": "~1.8.1",
-    "sinon-chai": "~2.5.0"
+    "sinon-chai": "~2.5.0",
+    "mocha": "~1.20.0",
+    "mocha-phantomjs": "~3.4.1",
+    "jshint": "~2.5.1"
   }
 }
