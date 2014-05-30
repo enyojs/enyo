@@ -93,6 +93,11 @@
 			// unfortunately this forces us to recalculate the number of controls that can
 			// be used for each page
 			this.controlsPerPage(list);
+			// Compute first and last row index bounds
+			if (list.collection) {
+				list.indexBoundFirstRow = list.columns;
+				list.indexBoundLastRow = (Math.ceil(list.collection.length / list.columns) - 1) * list.columns - 1;
+			}
 		},
 		/**
 			The number of controls necessary to fill a page will change depending on some
