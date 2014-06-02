@@ -1,18 +1,6 @@
-language: php
-php:
-  - 5.5
+language: node_js
+node_js:
+  - "0.10"
 cache:
-  apt: true
   directories:
   - $HOME/.npm
-install: "npm -g install jshint"
-before_script:
-  - php -S localhost:8000 &
-script:
-  echo -e "\x1b\x5b35;1m*** Running JSHint\x1b\x5b0m" &&
-  jshint . &&
-  echo -e "\x1b\x5b35;1m*** Running core tests with phantomjs\x1b\x5b0m" &&
-  phantomjs tools/test/core/phantomjs-test.js &&
-  echo -e "\x1b\x5b35;1m*** Running ajax tests with phantomjs\x1b\x5b0m" &&
-  (phantomjs tools/test/ajax/phantomjs-test.js || true)
-
