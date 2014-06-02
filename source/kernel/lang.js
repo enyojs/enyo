@@ -353,6 +353,28 @@
 	}());
 
 	/**
+		A simple reusable method to indicate that some method should no longer be used.
+		@example
+			...
+			enyo.store.addSources: enyo.deprecated("enyo.store.addSources"),
+			...
+			// Output: "method call to <deprecatedMethod> is deprecated. <customMessage>"
+	
+		@public
+		@function deprecated
+		@memberof enyo
+		@param {String} [deprecatedMethod] Full method name which is now deprecated.
+			ex: "enyo.store.addSources"
+		@param {String} [customMessage] Additional helper-text to be appended to the default message.
+		@returns {Function} A function that throws an exception with pre-written deprecation text.
+	*/
+	enyo.deprecated = (function(deprecatedMethod, customMessage) {
+		return function() {
+			throw('method call to "' + deprecatedMethod + '()" is deprecated. ' + (customMessage || ''));
+		};
+	});
+
+	/**
 		A fast-path enabled global getter that takes a string path, which may be a
 		full path (from context window/Enyo) or a relative path (to the execution
 		context of the method). It knows how to check for and call the
