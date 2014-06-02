@@ -234,6 +234,8 @@
 		@memberof enyo
 	*/
 	enyo.store = new Store();
+
+	enyo.store.addSources = enyo.deprecated('enyo.store.addSources', 'Dropped in version 2.5');
 	
 	// 
 	// var kind = enyo.kind
