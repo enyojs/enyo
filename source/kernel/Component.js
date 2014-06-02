@@ -299,6 +299,7 @@
 			} while (this.$[nom]);
 			
 			this._componentNameMap[pre] = Number(last);
+			/*jshint -W093 */
 			return (comp.name = nom);
 		},
 		
@@ -883,21 +884,21 @@
 	*/
 	enyo.create = Component.create = function(props) {
 		var kind,
-			ctor;
+			Ctor;
 		
 		if (!props.kind && props.hasOwnProperty('kind')) throw new Error(
-			'enyo.create: Attempt to create a null kind. Check dependencies for [' + def.name + ']'
+			'enyo.create: Attempt to create a null kind. Check dependencies for [' + props.name + ']'
 		);
 		
 		kind = props.kind || props.isa || enyo.defaultCtor;
-		ctor = enyo.constructorForKind(kind);
+		Ctor = enyo.constructorForKind(kind);
 		
-		if (!ctor) {
+		if (!Ctor) {
 			enyo.error('No constructor found for kind ' + kind);
-			ctor = Component;
+			Ctor = Component;
 		}
 		
-		return new ctor(props);
+		return new Ctor(props);
 	};
 
 	/**
@@ -1040,6 +1041,6 @@
 		}
 		
 		return pre;
-	};
+	}
 	
 })(enyo, this);

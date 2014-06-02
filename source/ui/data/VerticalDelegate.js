@@ -286,14 +286,14 @@ enyo.DataList.delegates.vertical = {
 			cpp = this.controlsPerPage(list),
 			pos = this.pagesByPosition(list),
 			first = pos.firstPage.start != null ? pos.firstPage.start : 0,
-			final = (cpp * 2) + (first - 1),
+			end = (cpp * 2) + (first - 1),
 			len = props.models.length,
 			gen,
 			check,
 			idx;
 			
 		check = function (i) {
-			return (i >= first && i <= final);
+			return (i >= first && i <= end);
 		};
 		
 		// retrieve the first index for the first added model in the collection
@@ -352,14 +352,14 @@ enyo.DataList.delegates.vertical = {
 			cpp = this.controlsPerPage(list),
 			pos = this.pagesByPosition(list),
 			first = pos.firstPage.start != null ? pos.firstPage.start : 0,
-			final = (cpp * 2) + (first - 1),
+			end = (cpp * 2) + (first - 1),
 			len = props.models.length,
 			gen,
 			check,
 			idx;
 			
 		check = function (i) {
-			return (i <= final);
+			return (i <= end);
 		};
 		
 		// retrieve the first index for the first added model in the collection

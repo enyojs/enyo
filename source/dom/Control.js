@@ -170,7 +170,7 @@
 			for (; (ext = extents[i]); ++i) {
 				val = bounds[ext];
 				if (val || val === 0) {
-					newStyle += (ext + ':' + val + (typeof val == 'string' ? '' : unit) + ';')
+					newStyle += (ext + ':' + val + (typeof val == 'string' ? '' : unit) + ';');
 				}
 			}
 			
@@ -252,7 +252,9 @@
 				node = this.hasNode();
 				
 				// we store the value so that next time we'll know what it is
+				/*jshint -W093 */
 				return (this.attributes[name] = (node ? node.getAttribute(name) : null));
+				/*jshint +W093 */
 			}
 		},
 		

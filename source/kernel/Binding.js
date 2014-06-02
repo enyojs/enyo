@@ -81,7 +81,9 @@
 			);
 		}
 		
+		/*jshint -W093 */
 		return (binding.ready = rdy);
+		/*jshint +W093 */
 	}
 	
 	/**
@@ -283,7 +285,9 @@
 						}
 					}
 					
+					/*jshint -W093 */
 					return (bnd.transform = (typeof xform == 'function' ? xform : null));
+					/*jshint +W093 */
 				}
 			})(this);
 		},

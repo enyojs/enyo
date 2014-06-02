@@ -13,7 +13,7 @@
     "eqnull": true,
     "laxbreak": true,
 	"laxcomma": true,
-    "curly": true,
+    "curly": false,
     "indent": 4,
     "newcap": true,
     "undef": true,

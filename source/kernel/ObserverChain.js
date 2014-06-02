@@ -1,10 +1,6 @@
 (function (enyo) {
 	
-	var kind = enyo.kind
-		, inherit = enyo.inherit
-		, bind = enyo.bindSafely
-		// , isObject = enyo.isObject
-		// , forEach = enyo.forEach;
+	var kind = enyo.kind;
 		
 	var LinkedList = enyo.LinkedList
 		, LinkedListNode = enyo.LinkedListNode;
@@ -29,7 +25,7 @@
 			@private
 			@method
 		*/
-		constructor: inherit(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				this.connect();
@@ -40,7 +36,7 @@
 			@private
 			@method
 		*/
-		destroy: inherit(function (sup) {
+		destroy: enyo.inherit(function (sup) {
 			return function () {
 				this.disconnect();
 				sup.apply(this, arguments);
@@ -131,7 +127,7 @@
 			@private
 			@method
 		*/
-		destroy: inherit(function (sup) {
+		destroy: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				this.object = null;
@@ -179,7 +175,6 @@
 		createChain: function () {
 			var parts = this.parts
 				, next = this.object
-				, last = parts.length - 1
 				, $ = false
 				, node, prop;
 				

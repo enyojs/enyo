@@ -87,11 +87,11 @@
 		@static
 	*/
 	Source.create = function (props) {
-		var ctor = (props && props.kind) || this;
+		var Ctor = (props && props.kind) || this;
 		
-		if (typeof ctor == 'string') ctor = constructorForKind(ctor);
+		if (typeof Ctor == 'string') Ctor = constructorForKind(Ctor);
 		
-		return new ctor(props);
+		return new Ctor(props);
 	};
 	
 	/**
@@ -108,9 +108,11 @@
 		
 		if (source) {
 			// if it is a boolean true then it means use all available sources
-			if (source === true) for (name in enyo.sources) {
-				source = enyo.sources[name];
-				source[action] && source[action](model, opts);
+			if (source === true) {
+				for (name in enyo.sources) {
+					source = enyo.sources[name];
+					source[action] && source[action](model, opts);
+				}
 			}
 			
 			// if it is an array of specific sources to use
