@@ -1193,7 +1193,7 @@
 			, value;
 		for (var i=0, len=values.length >>> 0; i<len; ++i) {
 			value = values[i];
-			if (!seen.length || -1 < seen.indexOf(value)) {
+			if (!seen.length || -1 === seen.indexOf(value)) {
 				seen.push(value);
 				if (i == values.lastIndexOf(value)) ret.push(value);
 			}

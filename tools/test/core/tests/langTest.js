@@ -161,7 +161,7 @@ enyo.kind({
 		// test for the ignore feature (if this works it should work for simply scenarios)
 		$t = {one: "ONE"};
 		$s = [{one: "one"}, {two:"two"}, {one:"three"},{three:"three"}];
-		enyo.mixin($t, $s, true);
+		enyo.mixin($t, $s, {ignore: true});
 		if ($t.one != "ONE") {
 			return this.finish("The ignore flag was not used properly");
 		}

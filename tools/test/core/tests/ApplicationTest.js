@@ -12,7 +12,7 @@ enyo.kind({
 			}],
 			view: {
 				name: 'TestView',
-				kind: 'View'
+				kind: 'enyo.Control'
 			}
 		});
 
