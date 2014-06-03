@@ -16,7 +16,6 @@ enyo.depends(
 	"InheritanceSanityTest.js",
 	"AnimatorTest.js",
 	"MultipleDispatchTest.js",
-	"ObserverAndComputedTest.js",
 	"JsonTest.js",
 	"AsyncTest.js",
 	"AjaxTest.js",
