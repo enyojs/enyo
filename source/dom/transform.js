@@ -46,7 +46,13 @@
 	};
 	enyo.dom.transformsToDom = function(inControl) {
 		var css = this.domTransformsToCss(inControl.domTransforms),
+			styleProp;
+		
+		if (inControl.hasNode()) {
 			styleProp = this.getStyleTransformProp();
+		} else {
+			styleProp = this.getCssTransformProp();
+		}
 		
 		if (styleProp) inControl.applyStyle(styleProp, css);
 	};
