@@ -4,13 +4,8 @@
 		, mixin = enyo.mixin
 		, clone = enyo.clone
 		, only = enyo.only
-		, getPath = enyo.getPath
-		, isString = enyo.isString
-		, isObject = enyo.isObject
 		, isFunction = enyo.isFunction
 		, uid = enyo.uid
-		, uuid = enyo.uuid
-		, json = enyo.json
 		, inherit = enyo.inherit;
 		
 	var ObserverSupport = enyo.ObserverSupport
@@ -199,7 +194,7 @@
 					// continue the operation this time with commit false explicitly
 					scop.destroy({commit: false});
 					if (opts && opts.success) opts.success(opts);
-				}
+				};
 				Source.execute('destroy', this, options);
 				return this;
 			}
@@ -367,7 +362,7 @@
 			@method
 		*/
 		onFetch: function (res, opts) {
-			console.log('enyo.Model.onFetch', arguments);
+			// console.log('enyo.Model.onFetch', arguments);
 			
 			this.isNew = false;
 			
@@ -380,7 +375,7 @@
 			@method
 		*/
 		onCommit: function () {
-			console.log('enyo.Model.onCommit', arguments);
+			// console.log('enyo.Model.onCommit', arguments);
 			
 			this.isDirty = false;
 		},
@@ -389,7 +384,7 @@
 			@private
 		*/
 		onError: function () {
-			console.log('enyo.Model.onError', arguments);
+			// console.log('enyo.Model.onError', arguments);
 		}
 	});
 	

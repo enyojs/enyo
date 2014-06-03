@@ -11,7 +11,7 @@
 		@public
 		@class enyo.AjaxSource
 	*/
-	var AjaxSource = kind(
+	kind(
 		/** @lends enyo.AjaxSource.prototype */ {
 		name: "enyo.AjaxSource",
 		kind: XHRSource,
