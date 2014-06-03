@@ -10,7 +10,6 @@ enyo.depends(
 	"ComponentDispatchTest.js",
 	"ComponentHandlersTest.js",
 	"ControlTest.js",
-	"ControlPropsTest.js",
 	"DecodePackagePathTest.js",
 	"PathResolverTest.js",
 	"ViewportPositioningTest.js",
