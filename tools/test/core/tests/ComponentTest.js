@@ -2,30 +2,6 @@ enyo.kind({
 	name: "ComponentTest",
 	kind: enyo.TestSuite,
 	noDefer: true,
-	testNestedComponentUndefinedKind: function() {
-		var pass = false;
-		// should throw exception as this is an error
-		try {
-			var A = enyo.kind(
-				{
-					name: "parentComponent",
-					components: [
-						{
-							name: "nestedComponent",
-							kind: undefined
-						}
-					]
-				}
-			);
-			new A({});
-		} catch(e) {
-			pass = true;
-		}
-		if (!pass) {
-			throw("no exception for explicitly undefined kind in a nested component");
-		}
-		this.finish();
-	},
 	testStartJob: function() {
 		var finish = this.bindSafely("finish");
 		var c = new enyo.Component();
