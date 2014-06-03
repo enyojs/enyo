@@ -12,19 +12,6 @@ enyo.kind({
 		this.finish(
 			(c !== test.global.controller && "controller was not set globally as expected")
 		);
-	},
-	testGlobalInComponent: function () {
-		var a = enyo.singleton({
-			kind: "enyo.Application",
-			components: [
-				{name: "controller", global: true}
-			]
-		});
-		this.finish(
-			(!window.controller && "controller was not set globally ever") ||
-			((a.destroy() || true) && !window.controller && "controller removed from global scope when owner destroyed") ||
-			(window.controller.destroyed && "controller was destroyed when owner was destroyed")
-		);
 	}
 });
 
