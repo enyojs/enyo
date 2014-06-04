@@ -285,7 +285,7 @@ enyo.kind({
 		return function () {
 			var o = enyo.clone(this.get("containerOptions")),
 				s = this.get("scrollerOptions");
-			if (s) { enyo.mixin(o, s, {exists: true}); }
+			if (s) { enyo.mixin(o, s); }
 			this.set("containerOptions", o);
 			sup.apply(this, arguments);
 		};
