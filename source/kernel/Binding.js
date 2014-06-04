@@ -202,6 +202,7 @@
 					
 					// we flag it as having been connected
 					this.connected = true;
+					if (this.autoSync) this.sync(true);
 				}
 			}
 			
@@ -230,7 +231,7 @@
 			@public
 			@method
 		*/
-		sync: function () {
+		sync: function (force) {
 			var source = this.source,
 				target = this.target,
 				from = this.from,
@@ -238,9 +239,9 @@
 				xform = this.getTransform(),
 				val;
 			
-			if (this.isConnected()) {
+			if (this.isReady() && this.isConnected()) {
 					
-				switch (this.dirty) {
+				switch (this.dirty || (force && DIRTY_FROM)) {
 				case DIRTY_TO:
 					val = target.get(to);
 					if (xform) val = xform.call(this.owner || this, val, DIRTY_TO, this);
@@ -301,7 +302,6 @@
 			if (props) enyo.mixin(this, props);
 			if (!this.euid) this.euid = enyo.uid('b');
 			if (this.autoConnect) this.connect();
-			if (this.autoSync) this.sync();
 		},
 		
 		/**
@@ -316,6 +316,7 @@
 			this.owner = null;
 			this.source = null;
 			this.target = null;
+			this.ready = null;
 			this.destroyed = true;
 			
 			// @todo: remove me or postpone operation?
