@@ -508,9 +508,10 @@
 			@method
 		*/
 		onModelsChange: function (was, is, prop, opts) {
-			var models = this.models.slice();
+			var models = this.models.slice(),
+				len = models.length;
 			
-			// if (was) was.destroy();
+			if (len != this.length) this.set('length', len);
 			
 			this.emit('reset', {/* for partial backward compatibility */records: models, /* prefered */models: models});
 		},
