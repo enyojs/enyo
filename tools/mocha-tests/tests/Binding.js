@@ -306,7 +306,7 @@ describe('enyo.Binding', function () {
 			ownerless.destroy();
 			
 			// and the function
-			window.xform = null;
+			window.globalXform = null;
 		});
 		
 		describe('#oneWay', function () {
