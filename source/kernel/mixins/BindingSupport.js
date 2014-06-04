@@ -31,14 +31,14 @@
 			var args = toArray(arguments)
 				, props = mixin(args)
 				, bindings = this.bindings || (this.bindings = [])
-				, ctor, bnd;
+				, Ctor, bnd;
 				
 			props.owner = props.owner || this;
-			ctor = props.kind = props.kind || this.defaultBindingKind || defaultBindingKind;
+			Ctor = props.kind = props.kind || this.defaultBindingKind || defaultBindingKind;
 			
 			if (this._bindingSupportInitialized) {
-				isString(ctor) && (ctor = props.kind = constructorForKind(ctor));
-				bnd = new ctor(props);
+				isString(Ctor) && (Ctor = props.kind = constructorForKind(Ctor));
+				bnd = new Ctor(props);
 				bindings.push(bnd);
 				return bnd;
 			} else bindings.push(props);

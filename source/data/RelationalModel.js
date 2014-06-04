@@ -1,3 +1,4 @@
+
 (function (enyo, scope) {
 	
 	var kind = enyo.kind;
@@ -41,7 +42,7 @@
 		
 		/**
 		*/
-		create: true,
+		create: false,
 		
 		/**
 		*/
@@ -65,7 +66,7 @@
 		
 		/**
 		*/
-		isOwner: true,
+		isOwner: false,
 		
 		/**
 		*/
@@ -103,7 +104,9 @@
 			// ensure we have a constructor for our related model kind
 			this.model = enyo.constructorForKind(this.model);
 			
-            this.includeInJSON = !props.includeInJSON && !this.isOwner? (this.model.prototype.primaryKey || 'id'): this.includeInJSON;
+            this.includeInJSON = props.includeInJSON == null && !this.isOwner
+				? (this.model.prototype.primaryKey || 'id')
+				: this.includeInJSON;
 			
 			// let the subkinds do their thing
 			this.init();
@@ -123,16 +126,25 @@
 		*/
 		setRelated: function (related) {
 			var inst = this.instance,
-				key = this.key,
+				model = this.model,
 				was = this.related,
+				key = this.key,
+				changed,
+				prev;
+			
+			
+			if (related) enyo.store.off(model, 'add', this.onChange, this);
+			
+			this.related = related;
+			
+			if (!inst._changing) {
+			
 				changed = inst.changed || (inst.changed = {}),
 				prev = inst.previous || (inst.previous = {});
 			
-			changed[key] = this.related = related;
-			prev[key] = was;
-			if (was !== related) {
-				inst.notify(key, was, related);
-				inst.emit('change', changed);
+				changed[key] = related;
+				prev[key] = was;
+				if (was !== related) inst.emit('change', changed);
 			}
 			return this;
 		},
@@ -142,8 +154,17 @@
 			@method
 		*/
 		destroy: function () {
+			var isOwner = this.isOwner,
+				create = this.create,
+				related = this.related;
+				
+			if ((isOwner || create) && related && related.destroy && !related.destroyed) {
+				related.destroy();
+			}
+			
 			this.destroyed = true;
 			this.instance = null;
+			this.related = null;
 		}
 	});
 	
@@ -192,6 +213,11 @@
 			isOwner: false,
 			
 			/**
+			
+			*/
+			create: true,
+			
+			/**
 			*/
 			collection: RelationalCollection,
 			
@@ -205,7 +231,7 @@
 			@method
 		*/
 		init: function () {
-			
+			/*jshint -W055 */
 			var collection = this.collection,
 				model = this.model,
 				collectionOpts = this.collectionOptions ? enyo.clone(this.collectionOptions) : {},
@@ -267,6 +293,7 @@
 			// @note We only register for this if we have an inverseKey otherwise we have no
 			// way of knowing the reverse relationship
 			if (this.inverseKey) enyo.store.on(model, 'add', this.onChange, this);
+			/*jshint +W055 */
 		},
 		
 		/**
@@ -284,7 +311,8 @@
 		setRelated: function (data) {
 			var related = this.related;
 			
-			related.add(data, {purge: true, parse: true});
+			// related.add(data, {purge: true, parse: true});
+			related.add(data, {purge: true});
 		},
 		
 		/**
@@ -294,13 +322,16 @@
 		findRelated: function () {
 			var ctor = this.model,
 				related = this.related,
-				inverseKey = this.inverseKey;
+				inverseKey = this.inverseKey,
+				found;
 			
 			if (inverseKey) {
 				found = enyo.store.findLocal(ctor, this.checkRelation, {context: this});
 				// we shouldn't need to update any records already present so we'll ignore
 				// duplicates for efficiency
-				if (found.length) related.add(found, {merge: false});
+				if (found.length) {
+					related.add(found, {merge: false});
+				}
 			}
 		},
 		
@@ -351,13 +382,15 @@
 			var iJson = this.includeInJSON
 				, raw;
 			if (iJson === true) raw = this.related.raw();
-			else if (typeof iJson == 'string') raw = this.related.map(function (model) {
-				return model.get(iJson);
-			});
-			else if (iJson instanceof Array) raw = this.related.map(function (model) {
-				return enyo.only(iJson, model.raw());
-			});
-			else if (typeof iJson == 'function') raw = iJson.call(this.instance, this.key, this);
+			else if (typeof iJson == 'string') {
+				raw = this.related.map(function (model) {
+					return model.get(iJson);
+				});
+			} else if (iJson instanceof Array) {
+				raw = this.related.map(function (model) {
+					return enyo.only(iJson, model.raw());
+				});
+			} else if (typeof iJson == 'function') raw = iJson.call(this.instance, this.key, this);
 			return raw;
 		},
 		
@@ -371,11 +404,26 @@
 			var inst = this.instance
 				, key = this.key
 				, related = this.related
+				, isOwner = this.isOwner
 				, changed;
 			
 			if (sender === enyo.store) {
 				if (e == 'add') {
 					if (this.checkRelation(props.model)) this.related.add(props.model, {merge: false});
+				}
+			} else if (sender === related) {
+				if (isOwner) {
+					
+					// if the instance is already changing then we do not need to do anything
+					// because it probably stemmed from there anyway
+					if (inst._changing) return;
+					
+					// @todo This must be updated to be more thorough...
+					inst.isDirty = true;
+					changed = inst.changed || (inst.changed = {});
+					inst.previous || (inst.previous = {});
+					changed[key] = related;
+					inst.emit('change', changed, inst);
 				}
 			}
 		},
@@ -399,7 +447,7 @@
 			proto.collectionOptions = enyo.mixin({}, [proto.collectionOptions, props.collectionOptions]);
 			delete props.collectionOptions;
 		}
-	}
+	};
 	
 	/**
 		@public
@@ -421,28 +469,31 @@
 			@method
 		*/
 		checkRelation: function (model) {
-			var ctor = this.model
-				, inst = this.instance
-				, key = this.key
-				, inverseKey = this.inverseKey
-				, related = inverseKey && model.get(inverseKey)
-				, rel = model.getRelation(inverseKey)
-				, id = inst.get(inst.primaryKey)
-				, isOwner = this.isOwner;
+			var Ctor = this.model,
+				inst = this.instance,
+				key = this.key,
+				inverseKey = this.inverseKey,
+				related = inverseKey && model.get(inverseKey),
+				rel = model.getRelation(inverseKey),
+				// id = inst.get(inst.primaryKey),
+				isOwner = this.isOwner;
 			
-			if (related && (related.has(inst) || related.find(function (model) { return model.attributes[model.primaryKey] == id; }))) {
+			if (related && related.has(inst)) {
+			// if (related && (related.has(inst) || related.find(function (model) { return model.attributes[model.primaryKey] == id; }))) {
 				
 				// if the relation isn't found it probably wasn't defined and we need
 				// to automatically generate it based on what we know
-				if (!rel) model.relations.push((rel = new enyo.manyToMany(model, {
-					key: inverseKey,
-					inverseKey: key,
-					parse: false,
-					create: false,
-					isOwner: !isOwner,
-					model: ctor,
-					related: inst
-				})));
+				if (!rel) {
+					model.relations.push((rel = new enyo.manyToMany(model, {
+						key: inverseKey,
+						inverseKey: key,
+						parse: false,
+						create: false,
+						isOwner: !isOwner,
+						model: Ctor,
+						related: inst
+					})));
+				}
 				
 				// if (rel.related !== inst) rel.setRelated(inst);
 				// if (!rel.related.has(inst)) rel.related.add(inst);
@@ -454,38 +505,46 @@
 		
 		onChange: enyo.inherit(function (sup) {
 			return function (sender, e, props) {
-				var related = this.related
-					, inst = this.instance
-					, inverseKey = this.inverseKey
-					, key = this.key
-					, changed, previous;
+				var related = this.related,
+					inst = this.instance,
+					inverseKey = this.inverseKey,
+					model,
+					i;
 				
-				if (sender === related && !this.isChanging) {
-				
-					this.isChanging = true;
-				
+				// this is a very tricky scenario that we need to be very careful about to try
+				// and avoid unnecessary work (when possible) and to keep out of an infinite
+				// loop of notifications
+				if (sender === related) {
+					
+					// we are attempting to distinguish between the occassions we can encounter
+					// this method here if our related collection emits an add, remove or change
+					// event -- if it is change we know it stemmed from a model already
+					// contained by it
 					if (e == 'change') {
-						if (this.checkRelation(props.model)) related.add(props.model);
-						else related.remove(props.model);
-					} else if (inverseKey && (e == 'add' || e == 'remove')) {
-						
-						props.models.forEach(function (model) {
-							model.get(inverseKey)[e](inst);
-						});
+						// we need to figure out if the thing that changed makes us no longer
+						// related to them
+						// console.log('onChange');
+					} else if (e == 'add') {
+						// in this case we added a/some model/models that should probably be
+						// updated to know about our instance as well
+						for (i = 0; (model = props.models[i]); ++i) {
+							model.get(inverseKey).add(inst, {merge: false});
+						}
+					} else if (e == 'remove') {
+						// in this case we removed a/some model/models that should probably be
+						// updated to know about the removal as well
+						for (i = 0; (model = props.models[i]); ++i) {
+							
+							// this event will be caught in the event that the model was destroyed
+							// but should that happen the other collections will also have done
+							// this already (or will do it) but if the model is already destroyed
+							// it won't be able to retrieve its relations anymore so we can
+							// safely skip it
+							if (!model.destroyed) model.get(inverseKey).remove(inst);
+						}
 					}
 					
-					changed = inst.changed || (inst.changed = {});
-					previous = inst.previuos || (inst.previous = {});
-					changed[key] = previous[key] = related;
-					inst.emit('change', changed);
-				
-					this.isChanging = false;
-				}
-				
-				// console.log(inst.euid, key, 'onChange', sender === related? 'related': 'store', e, props);
-				// console.log(related.euid, key, e, props.model.changed);
-
-				else sup.apply(this, arguments);
+				} else sup.apply(this, arguments);
 			};
 		})
 	});
@@ -517,7 +576,11 @@
 			@public
 		*/
 		options: {
-			inverseType: 'enyo.toOne'
+			inverseType: 'enyo.toOne',
+			
+			/**
+			*/
+			modelOptions: null
 		},
 		
 		/**
@@ -529,8 +592,9 @@
 				inverseType = this.inverseType,
 				inst = this.instance,
 				key = this.key,
-				isOwner = this.isOwner,
+				// isOwner = this.isOwner,
 				related = this.related == null ? inst.attributes[key] : this.related,
+				modelOptions = this.modelOptions,
 				id,
 				found;
 			
@@ -541,10 +605,11 @@
 			if (typeof inverseType == 'string') inverseType = enyo.constructorForKind(inverseType);
 			
 			// ensure we've got the correct related if any
-			if (related) this.related = related;
+			if (related || related === 0) this.related = related;
 			
 			// the instance attribute for the designated key will actually point to this relation
 			inst.attributes[key] = this;
+			this.inverseType = inverseType;
 			
 			// if we have a related value now check to see if it is something we should attempt
 			// to resolve
@@ -557,33 +622,44 @@
 					if (typeof related == 'object') id = related[model.prototype.primaryKey];
 					else if (typeof related == 'string' || typeof related == 'number') id = related;
 					
-					found = enyo.store.resolve(id);
+					if (id != null) found = enyo.store.resolve(model, id);
+					
+					// if we found an instance we store it and make sure to update the local
+					// reference here
 					if (found) related = this.related = found;
 				}
 			}
 			
-			if (isOwner) {
-				
-				// if this is the owner side of the relation we may need to create the instance
-				// for our relation if it wasn't found already
-				if (!related || !(related instanceof Model)) {
-					if (this.create) {
-						// we create the empty instance so we can separately deal with the
-						// various ways the related data could be handed to us (could be id or data)
-						model = new model(null, null, this.modelOptions);
-						// might need to parse the related data
-						if (this.parse && related != null) related = model.parse(related);
-						// related should be a value now if we're going to set anything
-						if (related) {
-							if (typeof related == 'object') model.set(related);
-							else model.set(model.primaryKey, related);
-						}
+			// if this is the owner side of the relation we may need to create the instance
+			// for our relation if it wasn't found already
+			if (related == null || !(related instanceof Model)) {
+				if (this.create) {
 					
-						this.related = model;
-						model = this.model;
-					} else enyo.store.on(model, 'add', this.onChange, this);
+					// if the only information we have about the thing is a string or number
+					// then we facade a data hash so the model has the opportunity to work
+					// as expected
+					if (related != null && typeof related != 'object') {
+						id = related;
+						related = {};
+						related[model.prototype.primaryKey] = id;
+					}
+					
+					// if the parse flag is true then we force a parse operation on model
+					// creation regardless of its own flags
+					if (this.parse) {
+						if (!modelOptions) modelOptions = {};
+						modelOptions.parse = true;
+					}
+					/*jshint -W055 */
+					// we create the empty instance so we can separately deal with the
+					// various ways the related data could be handed to us (could be id or data)
+					found = model = new model(related, null, modelOptions);
+					/*jshint +W055 */
+					this.related = model;
 				}
 			}
+			
+			if (!found) enyo.store.on(model, 'add', this.onChange, this);
 			
 			// last but not least we begin to listen for changes on our model instance
 			inst.on('change', this.onChange, this);
@@ -639,7 +715,7 @@
 		findRelated: function () {
 			
 			var related = this.related,
-				inst = this.instance,
+				// inst = this.instance,
 				isOwner = this.isOwner,
 				found,
 				rev;
@@ -659,7 +735,7 @@
 				
 				// if we are the owner end we may have a listener on the store and can
 				// safely remove it
-				if (isOwner) enyo.store.off(this.model, 'add', this.onChange, this);
+				enyo.store.off(this.model, 'add', this.onChange, this);
 				
 				// update our related value
 				this.related = found;
@@ -671,8 +747,8 @@
 					// if there isn't one then we go ahead and create it implicitly
 					if (!rev) {
 						rev = new this.inverseType(found, {
-							isOwner: !isOwner,
 							key: this.inverseKey,
+							inverseKey: this.key,
 							parse: false,
 							create: false,
 							model: this.instance.ctor,
@@ -714,7 +790,7 @@
 					model.euid == related ||
 					pkey == related ||
 					pkey == related[inst.primaryKey]
-				) || (id !== null && model.get(inverseKey) == id)
+				) || (id != null && model.get(inverseKey) == id)
 			);
 		},
 		
@@ -750,22 +826,27 @@
 				}
 			} else if (sender === this.related) {
 				if (e == 'change' && isOwner) {
+					
+					// if the instance is already changing then we do not need to do anything
+					// because it probably stemmed from there anyway
+					if (inst._changing) return;
+					
 					// @todo This must be updated to be more thorough...
 					inst.isDirty = true;
 					changed = inst.changed || (inst.changed = {});
 					inst.previous || (inst.previous = {});
-					changed[key] = props;
+					changed[key] = this.related;
 					inst.emit('change', changed, inst);
 				}
 			}
 		}
 	});
-
+	
 	/**
 		@public
 		@class enyo.RelationalModel
 	*/
-	kind({
+	var RelationalModel = kind({
 		name: 'enyo.RelationalModel',
 		kind: Model,
 		noDefer: true,
@@ -802,10 +883,9 @@
 		*/
 		get: enyo.inherit(function (sup) {
 			return function (path) {
-				path || (path = '');
-				
-				var prop = path
-					, rel, parts;
+				var prop = path || (path = ''),
+					rel,
+					parts;
 				
 				if (path.indexOf('.') >= 0) {
 					parts = path.split('.');
@@ -814,9 +894,9 @@
 				
 				rel = this.isRelation(prop);
 				
-				return !rel? sup.apply(this, arguments):
-					parts? rel.getRelated().get(parts.join('.')):
-					rel.getRelated();
+				if (!rel) return sup.apply(this, arguments);
+				else if (parts) return rel.getRelated().get(parts.join('.'));
+				else return rel.getRelated();
 			};
 		}),
 		
@@ -853,7 +933,11 @@
 				opts || (opts = {});
 				silent = opts.silent;
 				force = force || opts.force;
-			
+				
+				// ensure that recursive sub routines know we are already being updated and do not
+				// need to emit an event because we will
+				this._changing = true;
+				
 				for (key in incoming) {
 					value = incoming[key];
 					
@@ -882,13 +966,16 @@
 					}
 				}
 			
-				if (changed) {
+				if (changed || force) {
 					// must flag this model as having been updated
 					this.isDirty = true;
 				
-					if (!silent && !this.isSilenced()) this.emit('change', changed, this);
+					if (!silent) this.emit('change', changed, this);
 				}
 			}
+			
+			// make sure we clear the flag
+			this._changing = null;
 		},
 		
 		/**
@@ -945,7 +1032,16 @@
 		*/
 		destroy: enyo.inherit(function (sup) {
 			return function () {
-				this.relations.forEach(function (rel) { rel.destroy(); });
+				var relations = this.relations,
+					rel,
+					i = 0;
+				
+				// give the relations the ability to teardown during destruction
+				for (; (rel = relations[i]); ++i) {
+					rel.destroy();
+				}
+				
+				// carry on before finally removing our relations reference
 				sup.apply(this, arguments);
 				this.relations = null;
 			};
@@ -956,12 +1052,26 @@
 			@method
 		*/
 		initRelations: function () {
-			var rels = this.relations || (this.relations = []);
+			// if there aren't any relations we initialize the value to an empty array
+			var rels = this.relations ? this.relations.slice() : [],
+				rel,
+				i = 0;
+			
+			this.relations = rels;
+			
+			// if there are relations then we need to ensure that we instance each one and then
+			// we attempt to find their existing relations if possible
 			if (rels.length) {
-				this.relations = rels.map(function (ln) {
-					return new ln.type(this, ln);
-				}, this);
-				this.relations.forEach(function (ln) { ln.findRelated(); });
+				
+				for (; (rel = rels[i]); ++i) {
+					rels[i] = new rel.type(this, rel);
+				}
+				
+				// unfortunately we had to do this in two passes to ensure that all of the relations
+				// were instanced before attempting to find the other relations
+				for (i = 0; (rel = rels[i]); ++i) {
+					rel.findRelated();
+				}
 			}
 		}
 
@@ -972,10 +1082,9 @@
 	
 		@private
 	*/
-	enyo.RelationalModel.concat = function (ctor, props) {
+	RelationalModel.concat = function (ctor, props) {
 		var proto = ctor.prototype || ctor
-			, rels = proto.relations && proto.relations.slice()
-			, type;
+			, rels = proto.relations && proto.relations.slice();
 
 		if (props.relations) {
 			rels = (rels && rels.concat(props.relations)) || props.relations;
@@ -986,14 +1095,15 @@
 		// it will have already been done for any existing relations from a base kind
 		props.relations && props.relations.forEach(function (relation) {
 			var type = relation.type;
-			
+			/*jshint -W018 */
 			if (!(type === enyo.toMany) && !(type === enyo.toOne) && !(type === enyo.manyToMany)) {
 				relation.type = typeof type == 'string'? enyo.constructorForKind(enyo[type] || type): enyo.toOne;
 			}
+			/*jshint +W018 */
 		});
 		
 		// remove this property so it will not be slammed on top of the root property
-		delete props.relations
+		delete props.relations;
 		// apply our modified relations array to the prototype
 		proto.relations = rels;
 	};

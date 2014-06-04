@@ -24,6 +24,15 @@ enyo.gesture = {
 		e.srcEvent = e.srcEvent || inEvent;
 		e.preventDefault = this.preventDefault;
 		e.disablePrevention = this.disablePrevention;
+
+		if (enyo.dom._bodyScaleFactorX !== 1 || enyo.dom._bodyScaleFactorY !== 1) {
+			// Intercept only these events, not all events, like hold, 
+			// release, tap, etc, to avoid doing the operation again.
+			if (e.type == "move" || e.type == "up" || e.type == "down" || e.type == "enter" || e.type == "leave") {
+				e.clientX *= enyo.dom._bodyScaleFactorX;
+				e.clientY *= enyo.dom._bodyScaleFactorY;
+			}
+		}
 		//
 		// normalize event.which and event.pageX/event.pageY
 		// Note that while "which" works in IE9, it is broken for mousemove. Therefore,

@@ -1,20 +1,6 @@
 (function (enyo) {
 	
-	var isString = enyo.isString
-		, isObject = enyo.isObject
-		, isArray = enyo.isArray
-		, isFunction = enyo.isFunction
-		// , forEach = enyo.forEach
-		// , map = enyo.map
-		, clone = enyo.clone
-		// , keys = enyo.keys
-		// , findIndex = enyo.findIndex
-		// , filter = enyo.filter
-		, uid = enyo.uid
-		, inherit = enyo.inherit
-		// , isInherited = enyo.isInherited
-		, nop = enyo.nop
-		, observerTable = {};
+	var observerTable = {};
 		
 	var ObserverChain = enyo.ObserverChain
 		, ObserverSupport;
@@ -38,11 +24,6 @@
 			method: fn,
 			ctx: ctx || this
 		});
-		
-		// (observers[path] || (observers[path] = []))[priority? "unshift": "push"]({
-		// 	method: fn,
-		// 	ctx: ctx || this
-		// });
 		
 		if (!noChain && path.indexOf(".") > 0) {
 			this.chains()[priority? "unshift": "push"](new ObserverChain(path, this));
@@ -85,9 +66,11 @@
 		if (obj.isObserving()) {
 			var observers = obj.getObservers(path);
 			
-			if (observers && observers.length) for (var i=0, ln; (ln=observers[i]); ++i) {
-				if (typeof ln.method == "string") obj[ln.method](was, is, path, opts);
-				else ln.method.call(ln.ctx || obj, was, is, path, opts);
+			if (observers && observers.length) {
+				for (var i=0, ln; (ln=observers[i]); ++i) {
+					if (typeof ln.method == "string") obj[ln.method](was, is, path, opts);
+					else ln.method.call(ln.ctx || obj, was, is, path, opts);
+				}
 			}
 		} else enqueue(obj, path, was, is, opts);
 		
@@ -104,7 +87,7 @@
 		
 			ln.was = was;
 			ln.is = is;
-			ln.opts
+			ln.opts = opts;
 		}
 	}
 	
@@ -165,7 +148,7 @@
 			@method
 		*/
 		getObservers: function (path) {
-			var euid = this.euid || (this.euid = uid('o')),
+			var euid = this.euid || (this.euid = enyo.uid('o')),
 				ret,
 				loc;
 				
@@ -308,7 +291,7 @@
 			@private
 			@method
 		*/
-		constructor: inherit(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function () {
 				var chains, chain;
 				
@@ -328,7 +311,7 @@
 			@private
 			@method
 		*/
-		destroy: inherit(function (sup) {
+		destroy: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				
@@ -364,7 +347,7 @@
 			else return;
 		}
 			
-		if (incoming && !isArray(incoming)) {
+		if (incoming && !(incoming instanceof Array)) {
 			(function () {
 				var tmp = [], deps, name;
 				// here is the slow iteration over the properties...
@@ -400,11 +383,13 @@
 			}
 		};
 		
-		if (incoming) incoming.forEach(function (ln) {
-			// first we determine if the path itself is an array of paths to observe
-			if (isArray(ln.path)) ln.path.forEach(function (en) { addObserverEntry(en, ln.method); });
-			else addObserverEntry(ln.path, ln.method);
-		});
+		if (incoming) {
+			incoming.forEach(function (ln) {
+				// first we determine if the path itself is an array of paths to observe
+				if (ln.path && ln.path instanceof Array) ln.path.forEach(function (en) { addObserverEntry(en, ln.method); });
+				else addObserverEntry(ln.path, ln.method);
+			});
+		}
 		
 		// we clear the key so it will not be added to the prototype
 		// delete props.observers;

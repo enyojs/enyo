@@ -11,8 +11,7 @@ enyo.kind({
 				kind: 'enyo.Router'
 			}],
 			view: {
-				name: 'TestView',
-				kind: 'View'
+				name: 'TestView'
 			}
 		});
 

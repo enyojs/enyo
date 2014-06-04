@@ -10,7 +10,7 @@
 		@public
 		@class enyo.JsonpSource
 	*/
-	var JsonpSource = kind(
+	kind(
 		/** @lends enyo.JsonpSource.prototype */ {
 		name: "enyo.JsonpSource",
 		kind: XHRSource,

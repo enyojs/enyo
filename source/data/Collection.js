@@ -2,14 +2,10 @@
 	
 	var kind = enyo.kind
 		, inherit = enyo.inherit
-		, isArray = enyo.isArray
-		, isObject = enyo.isObject
-		, isString = enyo.isString
 		, constructorForKind = enyo.constructorForKind
 		, store = enyo.store
 		, uid = enyo.uid
 		, mixin = enyo.mixin
-		, json = enyo.json
 		, clone = enyo.clone;
 	
 	var Component = enyo.Component
@@ -131,8 +127,10 @@
 				, sort = opts.sort
 				, commit = opts.commit
 				, create = opts.create !== false;
-			
+
+			/*jshint -W018 */
 			sort && !(typeof sort == 'function') && (sort = this.comparator);
+			/*jshint +W018 */
 			
 			// for a special case purge to remove records that aren't in the current
 			// set being added
@@ -160,10 +158,14 @@
 					
 				
 				// see if we have an existing entry for this model/hash
-				found = loc.resolve(id);
+				found = loc.has(id);
 				
 				// if it already existed...
 				if (found) {
+					
+					// we need to ensure we've resolved the model (if necessary)
+					found = loc.resolve(id);
+					
 					if (merge) {
 						attrs || (attrs = model.attributes);
 						parse && (attrs = found.parse(attrs));
@@ -242,7 +244,7 @@
 				, len = loc.length
 				, ctor = this.model
 				, options = this.options
-				, removed, model, idx;
+				, removed, model;
 			
 			// normalize options so we have values
 			opts = opts? mixin({}, [options, opts]): options;
@@ -258,7 +260,7 @@
 			
 			removed = loc.remove(models);
 			
-			if (removed) {
+			if (removed.length) {
 				for (var i=0, end=removed.length; i<end; ++i) {
 					model = removed[i];
 					model.off('*', this.onModelEvent, this);
@@ -269,32 +271,9 @@
 			
 			this.length = loc.length;
 			
-			// most features dependent on notification of this action can and should
-			// avoid needing the original indices of the models being removed
-			// for (var i=0, end=models.length; i<end; ++i) {
-			// 	model = models[i];
-			// 	loc.remove(model/*, {silent: true}*/);
-			// 	// we know if it successfully removed the model because the length was
-			// 	// updated accordingly
-			// 	if (loc.length != len) {
-			// 		removed || (removed = []);
-			// 		removed.push(model);
-			// 		model.off('*', this.onModelEvent, this);
-			// 		// if destroy is true then we call that now and it won't have duplicate remove
-			// 		// requests because the event responder only calls remove if the model isn't
-			// 		// destroyed and we can ignore the complete flag because it will automatically
-			// 		// be removed from the store when it is destroyed
-			// 		if (destroy) model.destroy(opts);
-			// 		// we need to also remove it from the store if we can
-			// 		else if (complete) this.store.remove(ctor, model);
-			// 		// update our internal length because it was decremented
-			// 		len = loc.length;
-			// 	}
-			// }
-			
 			if (!silent) {
 				len != this.length && this.notify('length', len, this.length);
-				removed && this.emit('remove', {/* for partial backward compatibility */records: removed, /* prefered */models: removed});
+				removed.length && this.emit('remove', {/* for partial backward compatibility */records: removed, /* prefered */models: removed});
 			}
 			
 			commit && removed && this.commit();
@@ -454,7 +433,7 @@
 			@method
 		*/
 		prepareModel: function (attrs, opts) {
-			var ctor = this.model
+			var Ctor = this.model
 				// , options = {silent: true, noAdd: true}
 				, model;
 			
@@ -462,11 +441,11 @@
 			// opts = opts || {};
 			// opts.noAdd = true;
 			
-			attrs instanceof ctor && (model = attrs);
+			attrs instanceof Ctor && (model = attrs);
 			if (!model) {
 				opts = opts || {};
 				opts.noAdd = true;
-				model = new ctor(attrs, null, opts);
+				model = new Ctor(attrs, null, opts);
 			}
 			
 			model.on('*', this.onModelEvent, this);

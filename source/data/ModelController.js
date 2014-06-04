@@ -168,14 +168,6 @@
 			@private
 			@method
 		*/
-		// removeObserver: function () {
-		// 	return this.unobserve.apply(this, arguments);
-		// },
-		
-		/**
-			@private
-			@method
-		*/
 		constructor: function (props) {
 			// ensure we have our own model property
 			this.model = null;

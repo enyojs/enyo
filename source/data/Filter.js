@@ -3,10 +3,7 @@
 	var kind = enyo.kind
 		, inherit = enyo.inherit
 		, nop = enyo.nop
-		, remove = enyo.remove
-		, only = enyo.only
 		, clone = enyo.clone
-		, mixin = enyo.mixin
 		, constructorForKind = enyo.constructorForKind;
 	
 	var Collection = enyo.Collection;
@@ -172,7 +169,8 @@
 				// this is tricky at first - if as a filter we have no child filters then
 				// we want to share state with our subfilter, otherwise, we don't and will
 				// let the subkind manage the state of our models separately
-				/*if (!this.listeners("sync").length) */this.set("models", is.models);
+				/*if (!this.listeners("sync").length) */
+				this.set("models", is.models);
 				
 				// children filters can't listen for the reset event because their content would
 				// incorrectly update according to filter-changes but here we need them to sync
