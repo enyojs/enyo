@@ -321,6 +321,9 @@ enyo.master = new enyo.Component({
 			// to its owned Components (i.e., master has no children).
 			enyo.master.waterfallDown("onresize", this.eventFlags);
 			enyo.master.waterfallDown("onpostresize", this.eventFlags);
+
+			// If the window is resized, we'll want to update the scale factor.
+			enyo.dom.updateScaleFactor();
 		} else {
 			// All other top-level events are sent only to interested Signal
 			// receivers.

@@ -64,7 +64,7 @@ describe ("Model", function () {
 			
 			it ("should remove the model from the store", function () {
 				var len = enyo.store.models["enyo.Model"].length;
-				model = new enyo.Model(null, {options: {syncStore: true}});
+				model = new enyo.Model();
 				expect(enyo.store.models["enyo.Model"].length).to.be.above(len);
 				model.destroy();
 				expect(enyo.store.models["enyo.Model"].has(model)).to.not.be.ok;
@@ -157,7 +157,6 @@ describe ("Model", function () {
 			var len = enyo.store.models["enyo.Model"].length;
 			ctor = enyo.kind({kind: "enyo.Model"});
 			model = new ctor();
-			enyo.store._flushQueue();
 			expect(enyo.store.models["enyo.Model"].length).to.at.least(len+1);
 			enyo.store.models["enyo.Model"].remove(model);
 		});

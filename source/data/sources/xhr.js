@@ -31,7 +31,8 @@
 			@public
 		*/
 		defaultOptions: {
-			cacheBust: false
+			cacheBust: false,
+			contentType: "application/json"
 		},
 		
 		/**
@@ -66,7 +67,7 @@
 			@method
 		*/
 		go: function (opts) {
-			var ctor = this.requestKind
+			var Ctor = this.requestKind
 				, defaults = this.defaultOptions
 				, xhr, params, options;
 				
@@ -75,11 +76,15 @@
 			} else if (defaults.params) params = defaults.params;
 			
 			options = only(this.allowed, mixin({}, [defaults, opts]), true);
-			xhr = new ctor(options);
+			xhr = new Ctor(options);
 			xhr.response(function (xhr, res) {
+				// ensure that the ordering of the parameters is as expected
 				if (opts.success) opts.success(res, xhr);
 			});
-			xhr.error(opts.error);
+			xhr.error(function (xhr, res) {
+				// ensure that the ordering of the parameters is as expected
+				if (opts && opts.error) opts.error(res, xhr);
+			});
 			xhr.go(params);
 		},
 		
@@ -88,8 +93,9 @@
 			@method
 		*/
 		find: function (ctor, opts) {
-			var proto = ctor.prototype
-				, url = "/find/" + proto.kindName;
+			
+			// @TODO: This whole function is suspect...
+			var proto = ctor.prototype;
 			
 			opts.url = this.buildUrl(proto, opts);
 			opts.method = opts.method || "POST";

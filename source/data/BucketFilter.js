@@ -9,7 +9,7 @@
 		@public
 		@class enyo.BucketFilter
 	*/
-	var BucketFilter = kind(
+	kind(
 		/** @lends enyo.BucketFilter.prototype */ {
 		name: "enyo.BucketFilter",
 		kind: Filter,
@@ -55,7 +55,7 @@
 			return function (props) {
 				sup.apply(this, arguments);
 				
-				if (props.default) this.defaultFilterName = props.name;
+				if (props.isDefault) this.defaultFilterName = props.name;
 			};
 		}),
 		

@@ -1,22 +1,7 @@
 (function (enyo) {
 	
-	var isString = enyo.isString
-		// , isObject = enyo.isObject
-		, isArray = enyo.isArray
-		// , isFunction = enyo.isFunction
-		// , where = enyo.where
-		, remove = enyo.remove
-		// , forEach = enyo.forEach
-		// , indexOf = enyo.indexOf
-		, clone = enyo.clone
-		// , keys = enyo.keys
-		// , map = enyo.map
-		, nar = enyo.nar
-		// , filter = enyo.filter
-		, inherit = enyo.inherit
-		, extend = enyo.kind.statics.extend;
+	var extend = enyo.kind.statics.extend;
 		
-	// var defaultConfig = {};
 	var ComputedSupport;
 	
 	enyo.concatenated.push("computed");
@@ -48,8 +33,10 @@
 		var queue = obj._computedQueue || (obj._computedQueue = [])
 			, deps = obj._computedDependencies[path];
 			
-		if (deps) for (var i=0, dep; (dep=deps[i]); ++i) {
-			if (!queue.length || -1 == queue.indexOf(dep)) queue.push(dep);
+		if (deps) {
+			for (var i=0, dep; (dep=deps[i]); ++i) {
+				if (!queue.length || -1 == queue.indexOf(dep)) queue.push(dep);
+			}
 		}
 	}
 	
@@ -59,8 +46,10 @@
 	function flushComputed (obj) {
 		var queue = obj._computedQueue;
 		obj._computedQueue = null;
-		if (queue && obj.isObserving()) for (var i=0, ln; (ln=queue[i]); ++i) {
-			obj.notify(ln, obj._getComputedCache(ln).value, getComputedValue(obj, ln));
+		if (queue && obj.isObserving()) {
+			for (var i=0, ln; (ln=queue[i]); ++i) {
+				obj.notify(ln, obj._getComputedCache(ln).value, getComputedValue(obj, ln));
+			}
 		}
 	}
 	
@@ -97,7 +86,7 @@
 			@private
 			@method
 		*/
-		get: inherit(function (sup) {
+		get: enyo.inherit(function (sup) {
 			return function (path) {
 				return this.isComputed(path)? getComputedValue(this, path): sup.apply(this, arguments);
 			};
@@ -107,7 +96,7 @@
 			@private
 			@method
 		*/
-		set: inherit(function (sup) {
+		set: enyo.inherit(function (sup) {
 			return function (path) {
 				// we do not accept parameters for computed properties
 				return this.isComputed(path)? this: sup.apply(this, arguments);
@@ -126,7 +115,7 @@
 			@private
 			@method
 		*/
-		notify: inherit(function (sup) {
+		notify: enyo.inherit(function (sup) {
 			return function (path, was, is) {
 				this.isComputedDependency(path) && queueComputed(this, path);
 				this._computedRecursion++;
@@ -182,17 +171,19 @@
 			// @NOTE: This is the handling of the original syntax provided for computed properties in 2.3.ish...
 			// All we do here is convert it to a structure that can be used for the other scenario and preferred
 			// computed declarations format
-			if (!isArray(props.computed)) {
+			if (!props.computed || !(props.computed instanceof Array)) {
 				(function () {
 					var tmp = [], deps, name, conf;
 					// here is the slow iteration over the properties...
 					for (name in props.computed) {
 						// points to the dependencies of the computed method
 						deps = props.computed[name];
+						/*jshint -W083 */
 						conf = deps && deps.find(function (ln) {
 							// we deliberately remove the entry here and forcibly return true to break
-							return typeof ln == "object"? (remove(deps, ln) || true): false;
+							return typeof ln == "object"? (enyo.remove(deps, ln) || true): false;
 						});
+						/*jshint +W083 */
 						// create a single entry now for the method/computed with all dependencies
 						tmp.push({method: name, path: deps, cached: conf? conf.cached: null});
 					}
@@ -219,7 +210,9 @@
 				computed[ln.method] = !! ln.cached;
 				// we must now look to add an entry for any given dependencies and map them
 				// back to the computed property they will trigger
-				if (isArray(ln.path)) ln.path.forEach(function (dep) { addDependency(dep, ln.method); });
+				/*jshint -W083 */
+				if (ln.path && ln.path instanceof Array) ln.path.forEach(function (dep) { addDependency(dep, ln.method); });
+				/*jshint +W083 */
 				else if (ln.path) addDependency(ln.path, ln.method);
 			}
 			

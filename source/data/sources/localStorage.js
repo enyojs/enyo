@@ -3,8 +3,6 @@
 	if (localStorage) {
 		var kind = enyo.kind
 			, json = enyo.json
-			, inherit = enyo.inherit
-			, constructorForKind = enyo.constructorForKind
 			, uuid = enyo.uuid;
 	
 		var Source = enyo.Source
@@ -20,7 +18,7 @@
 			@public
 			@class enyo.LocalStorageSource
 		*/
-		var LocalStorageSource = kind(
+		kind(
 			/** @lends enyo.LocalStorageSource.prototype */ {
 			name: "enyo.LocalStorageSource",
 			kind: Source,
@@ -61,13 +59,15 @@
 					// now we need to dereference these id's but note that even if these belonged to multiple
 					// collections or have already been loaded into the store they should be found and merged
 					// unless otherwise directed so this is safe
-					if (res) res = res.map(function (id) {
-						return storage.models[id];
-					});
+					if (res) {
+						res = res.map(function (id) {
+							return storage.models[id];
+						});
+					}
 				}
 				
 				else if (model instanceof Model) {
-					if (!(id = model.attributes[models.primaryKey])) throw new Error(CODES.UNIQUE_PRIMARY_KEY);
+					if (!(id = model.attributes[model.primaryKey])) throw new Error(CODES.UNIQUE_PRIMARY_KEY);
 						
 					res = storage.models[id];
 				}
@@ -88,11 +88,6 @@
 					if (!(id = model.url)) throw new Error(CODES.UNIQUE_URL);
 					storage.collections[id] = model.map(function (model) {
 						// @TODO: Currently it seems that in this arbitrary assignment case there is no need
-						// to require a change notification from the model...that may not be true however...
-						// var pkey = model.primaryKey
-						// 	, ln = {};
-						// ln[pkey] = model.attributes[pkey] || (model.attributes[pkey] = uuid());
-						// return ln;
 						return model.attributes[model.primaryKey] || (model.attributes[model.primaryKey] = uuid());
 					});
 				}

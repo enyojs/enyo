@@ -170,7 +170,7 @@
 			for (; (ext = extents[i]); ++i) {
 				val = bounds[ext];
 				if (val || val === 0) {
-					newStyle += (ext + ':' + val + (typeof val == 'string' ? '' : unit) + ';')
+					newStyle += (ext + ':' + val + (typeof val == 'string' ? '' : unit) + ';');
 				}
 			}
 			
@@ -252,7 +252,9 @@
 				node = this.hasNode();
 				
 				// we store the value so that next time we'll know what it is
+				/*jshint -W093 */
 				return (this.attributes[name] = (node ? node.getAttribute(name) : null));
+				/*jshint +W093 */
 			}
 		},
 		
@@ -308,7 +310,7 @@
 			@public
 		*/
 		hasClass: function (name) {
-			return name && this.classes.indexOf(name) > -1;
+			return name && (' ' + this.classes + ' ').indexOf(' ' + name + ' ') > -1;
 		},
 		
 		/**
@@ -320,7 +322,7 @@
 			// NOTE: Because this method accepts a string and for efficiency does not wish to
 			// parse it to determine if it is actually multiple classes we later pull a trick
 			// to keep it normalized and synchronized with our attributes hash and the node's
-			if (name && classes.indexOf(name) === -1) {
+			if (!this.hasClass(name)) {
 				
 				// this is hooked
 				this.set('classes', classes + (classes ? (' ' + name) : name));
@@ -335,7 +337,9 @@
 		removeClass: function (name) {
 			var classes = this.classes;
 			
-			if (name) this.set('classes', classes.replace(name, ''));
+			if (name) {
+				this.set('classes', (' ' + classes + ' ').replace(' ' + name + ' ', ' ').trim());
+			}
 			
 			return this;
 		},
@@ -388,17 +392,40 @@
 			var node = this.hasNode(),
 				style = this.style;
 				
-			// update our current cached value
-			if (node) {
-				node.style[prop] = value;
+			if (value !== null && value !== '' && value !== undefined) {
+				// update our current cached value
+				if (node) {
+					node.style[prop] = value;
 				
-				// cssText is an internal property used to help know when to sync and not
-				// sync with the node in styleChanged
-				this.style = this.cssText = node.style.cssText;
+					// cssText is an internal property used to help know when to sync and not
+					// sync with the node in styleChanged
+					this.style = this.cssText = node.style.cssText;
 				
-				// otherwise we have to try and prepare it for the next time it is rendered we will
-				// need to update it because it will not be synchronized
-			} else this.set('style', style + (prop + ':' + value + ';'));
+					// otherwise we have to try and prepare it for the next time it is rendered we will
+					// need to update it because it will not be synchronized
+				} else this.set('style', style + (prop + ':' + value + ';'));
+			} else {
+				
+				// in this case we are trying to clear the style property so if we have the node
+				// we let the browser handle whatever the value should be now and otherwise
+				// we have to parse it out of the style string and wait to be rendered
+				
+				if (node) {
+					node.style[prop] = '';
+					this.style = this.cssText = node.style.cssText;
+				} else {
+					
+					// this is a rare case to nullify the style of a control that is not
+					// rendered or does not have a node
+					style = style.replace(new RegExp(
+						// this looks a lot worse than it is the complexity stems from needing to
+						// match a url container that can have other characters including semi-
+						// colon and also that the last property may/may-not end with one
+						'\\s*' + prop + '\\s*:\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*(?:url\\(.*\\)\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*)?\\s*(?:;|;?$)'
+					),'');
+					this.set('style', style);
+				}
+			}
 			
 			return this;
 		},
@@ -666,6 +693,8 @@
 			// now let the delegate render it the way it needs to
 			delegate.renderInto(this, parentNode);
 			
+			enyo.dom.updateScaleFactor();
+			
 			return this;
 		},
 		
@@ -800,10 +829,11 @@
 				
 				// if there are known classes needed to be applied from the kind
 				// definition and the instance definition (such as a component block)
-				this.classes = this.attributes['class'] = classes;
+				this.classes = this.attributes['class'] = classes ? classes.trim() : classes;
 				
 				// setup the id for this control if we have one
 				this.idChanged();
+				this.contentChanged();
 			};
 		}),
 		

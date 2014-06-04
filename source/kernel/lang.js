@@ -620,7 +620,7 @@
 	enyo.format = function(template) {
 		var pattern = /\%./g,
 			arg = 0,
-			template = template,
+			tmp = template,
 			args = arguments,
 			replacer;
 		
@@ -628,7 +628,7 @@
 			return args[++arg];
 		};
 		
-		return template.replace(pattern, replacer);
+		return tmp.replace(pattern, replacer);
 	};
 	
 	/**
@@ -658,21 +658,21 @@
 	// ----------------------------------
 	
 	Object.create = Object.create || (function () {
-		var anon = function () {};
+		var Anon = function () {};
 		return function (obj) {
 			// in the polyfill we can't support the additional features so we are ignoring
 			// the extra parameters
 			if (!obj || obj === null || typeof obj != 'object') throw 'Object.create: Invalid parameter';
-			anon.prototype = obj;
-			return new anon();
+			Anon.prototype = obj;
+			return new Anon();
 		};
 	})();
 	
 	Object.keys = Object.keys || function (obj) {
 		var results = [];
 		var hop = Object.prototype.hasOwnProperty;
-		for (var prop in inObject) {
-			if (hop.call(inObject, prop)) {
+		for (var prop in obj) {
+			if (hop.call(obj, prop)) {
 				results.push(prop);
 			}
 		}
@@ -688,7 +688,7 @@
 				'constructor'
 			];
 			for (var i = 0, p; (p = dontEnums[i]); i++) {
-				if (hop.call(inObject, p)) {
+				if (hop.call(obj, p)) {
 					results.push(p);
 				}
 			}
@@ -724,6 +724,7 @@
 	enyo.only = function (properties, object, ignore) {
 		var ret = {},
 			prop,
+			len,
 			i;
 		
 		for (i = 0, len = properties.length >>> 0; i < len; ++i) {
@@ -784,16 +785,16 @@
 			len,
 			key;
 		// sanity check the properties array
-		if (!exists(properties) || !(properties instanceof Array)) {
+		if (!enyo.exists(properties) || !(properties instanceof Array)) {
 			return ret;
 		}
 		// sanity check the object
-		if (!exists(object) || 'object' !== typeof object) {
+		if (!enyo.exists(object) || 'object' !== typeof object) {
 			return ret;
 		}
 		// we want to only use the union of the properties and the
 		// available keys on the object
-		keep = union(properties, keys(object));
+		keep = enyo.union(properties, Object.keys(object));
 		// for every property in the keep array now copy that to the new
 		// hash
 		for (len = keep.length; idx < len; ++idx) {
@@ -827,22 +828,22 @@
 			len,
 			idx = 0;
 		// sanity check for the array with an efficient native array check
-		if (!exists(array) || !(array instanceof Array)) {
+		if (!enyo.exists(array) || !(array instanceof Array)) {
 			return map;
 		}
 		// sanity check the property as a string
-		if (!exists(property) || 'string' !== typeof property) {
+		if (!enyo.exists(property) || 'string' !== typeof property) {
 			return map;
 		}
 		// the immutable copy of the array
 		var copy = enyo.clone(array);
 		// test to see if filter actually exsits
-		filter = exists(filter) && 'function' === typeof filter ? filter : undefined;
+		filter = enyo.exists(filter) && 'function' === typeof filter ? filter : undefined;
 		for (len = array.length; idx < len; ++idx) {
 			// grab the value from the array
 			value = array[idx];
 			// make sure that it exists and has the requested property at all
-			if (exists(value) && exists(value[property])) {
+			if (enyo.exists(value) && enyo.exists(value[property])) {
 				if (filter) {
 					// if there was a filter use it - it is responsible for
 					// updating the map accordingly

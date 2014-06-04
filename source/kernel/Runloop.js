@@ -39,16 +39,18 @@
 		flush: nop,
 		
 		trigger: function () {
-			var dit = this;
+			var it = this;
 			
 			if (!this.queued) {
 				this.queued = true;
 				
-				if (!this.flushing) this.queueId = setTimeout(function () {
-					dit.flushing = true;
-					dit.queued = false;
-					dit.flush();
-				}, this.interval);
+				if (!this.flushing) {
+					this.queueId = setTimeout(function () {
+						it.flushing = true;
+						it.queued = false;
+						it.flush();
+					}, this.interval);
+				}
 			}
 		},
 		

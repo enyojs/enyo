@@ -66,11 +66,23 @@
 			@public
 			@method
 		*/
-		add: function (models) {
-			var kindName = models && models instanceof Array? models[0].kindName: models.kindName
-				, list = this.models[kindName];
-			
-			if (list) list.add(models);
+		add: function (models, opts) {
+			var ctor = models && models instanceof Array ? models[0].ctor : models.ctor,
+				kindName = ctor && ctor.prototype.kindName,
+				list = this.models[kindName],
+				added,
+				i;
+				
+			// if we were able to find the list then we go ahead and attempt to add the models
+			if (list) added = list.add(models);
+			// if we successfully added models and this was a default operation (not being
+			// batched by a collection or other feature) we emit the event needed primarily
+			// by relational models but could be useful other places
+			if (added.length && (!opts || !opts.silent)) {
+				for (i = 0; i < added.length; ++i) {
+					this.emit(ctor, 'add', {model: added[i]});
+				}
+			}
 			
 			return this;
 		},
@@ -79,11 +91,23 @@
 			@public
 			@method
 		*/
-		remove: function (models) {
-			var kindName = models && models instanceof Array? models[0].kindName: models.kindName
-				, list = this.models[kindName];
+		remove: function (models, opts) {
+			var ctor = models && models instanceof Array ? models[0].ctor : models.ctor,
+				kindName = ctor && ctor.prototype.kindName,
+				list = this.models[kindName],
+				removed,
+				i;
 			
-			if (list) list.remove(models);
+			// if we were able to find the list then we go ahead and attempt to remove the models
+			if (list) removed = list.remove(models);
+			// if we successfully removed models and this was a default opreation (not being
+			// batched by a collection or other feature) we emit the event needed primarily
+			// by relational models but could be useful other places
+			if (removed.length && (!opts || !opts.silent)) {
+				for (i = 0; i < removed.length; ++i) {
+					this.emit(ctor, 'remove', {model: removed[i]});
+				}
+			}
 			
 			return this;
 		},
@@ -210,274 +234,5 @@
 		@memberof enyo
 	*/
 	enyo.store = new Store();
-	
-	// 
-	// var kind = enyo.kind
-	// 	, inherit = enyo.inherit
-	// 	, toArray = enyo.toArray
-	// 	, mixin = enyo.mixin
-	// 	
-	// var EventEmitter = enyo.EventEmitter
-	// 	, ModelList = enyo.ModelList;
-	// 	
-	// /**
-	// 	@private
-	// */
-	// var BaseStore = kind({
-	// 	kind: enyo.Object,
-	// 	mixins: [EventEmitter]
-	// });
-	// 
-	// /**
-	// 	@private
-	// 	@class Store
-	// */
-	// var Store = kind(
-	// 	/** @lends Store.prototype */ {
-	// 	name: "enyo.Store",
-	// 	kind: BaseStore,
-	// 	
-	// 	/**
-	// 		@private
-	// 		@method
-	// 	*/
-	// 	on: inherit(function (sup) {
-	// 		return function (ctor, e, fn, ctx) {
-	// 			if (typeof ctor == "function") {
-	// 				this.scopeListeners().push({
-	// 					scope: ctor,
-	// 					event: e,
-	// 					method: fn,
-	// 					ctx: ctx || this
-	// 				});
-	// 				
-	// 				return this;
-	// 			}
-	// 			
-	// 			return sup.apply(this, arguments);
-	// 		};
-	// 	}),
-	// 	
-	// 	/**
-	// 		@private
-	// 		@method
-	// 	*/
-	// 	addListener: function () {
-	// 		return this.on.apply(this, arguments);
-	// 	},
-	// 	
-	// 	/**
-	// 		@private
-	// 		@method
-	// 	*/
-	// 	emit: inherit(function (sup) {
-	// 		return function (ctor, e) {
-	// 			var dit = this;
-	// 			
-	// 			runloop.add("event", function () {
-	// 				if (typeof ctor == "function") {
-	// 					var listeners = dit.scopeListeners(ctor, e);
-	// 				
-	// 					if (listeners.length) {
-	// 						var args = toArray(arguments).slice(1);
-	// 						args.unshift(dit);
-	// 						listeners.forEach(function (ln) {
-	// 							ln.method.apply(ln.ctx, args);
-	// 						});
-	// 						// return true;
-	// 					}
-	// 					// return false;
-	// 				}
-	// 			
-	// 				return sup.apply(dit, arguments);
-	// 			});
-	// 			
-	// 			// @TODO: This will incorrectly indicate that we had listeners for an event
-	// 			// even if we didn't need to fix
-	// 			return true;
-	// 		};
-	// 	}),
-	// 	
-	// 	/**
-	// 		@private
-	// 		@method
-	// 	*/
-	// 	triggerEvent: function () {
-	// 		return this.emit.apply(this, arguments);
-	// 	},
-	// 	
-	// 	/**
-	// 		@private
-	// 		@method
-	// 	*/
-	// 	off: inherit(function (sup) {
-	// 		return function (ctor, e, fn) {
-	// 			if (typeof ctor == "function") {
-	// 				var listeners = this.scopeListeners()
-	// 					, idx;
-	// 					
-	// 				if (listeners.length) {
-	// 					idx = listeners.findIndex(function (ln) {
-	// 						return ln.scope === ctor && ln.event == e && ln.method === fn;
-	// 					});
-	// 					idx >= 0 && listeners.splice(idx, 1);
-	// 				}
-	// 				
-	// 				return this;
-	// 			}
-	// 			
-	// 			return sup.apply(this, arguments);
-	// 		};
-	// 	}),
-	// 	
-	// 	/**
-	// 		@private
-	// 		@method
-	// 	*/
-	// 	removeListener: function () {
-	// 		return this.off.apply(this, arguments);
-	// 	},
-	// 	
-	// 	/**
-	// 		@private
-	// 		@method
-	// 	*/
-	// 	scopeListeners: function (scope, e) {
-	// 		return !scope? this._scopeListeners: this._scopeListeners.filter(function (ln) {
-	// 			return ln.scope === scope? !e? true: ln.event === e: false; 
-	// 		});
-	// 	},
-	// 	
-	// 	/**
-	// 		@public
-	// 		@method
-	// 	*/
-	// 	has: function (ctor, model) {
-	// 		var models = this.models[ctor.prototype.kindName];
-	// 		return models && models.has(model);
-	// 	},
-	// 	
-	// 	/**
-	// 		@public
-	// 		@method
-	// 	*/
-	// 	contains: function (ctor, model) {
-	// 		return this.has(ctor, model);
-	// 	},
-	// 		
-	// 	/**
-	// 		@private
-	// 		@method
-	// 	*/
-	// 	add: function (model, opts) {			
-	// 		var models = this.models[model.kindName];
-	// 		models.add(model);
-	// 		runloop.add("add", {model: model, options: opts});
-	// 		return this;
-	// 	},
-	// 	
-	// 	/**
-	// 		@private
-	// 		@method
-	// 	*/
-	// 	remove: function (model, opts) {
-	// 		var models = this.models[model.kindName];
-	// 		models.remove(model);
-	// 		
-	// 		runloop.add("remove", {model: model, options: opts});
-	// 		return this;
-	// 	},
-	// 	
-	// 	/**
-	// 		@private
-	// 		@method
-	// 	*/
-	// 	onModelEvent: function (model, e) {
-	// 		// this.log(arguments);
-	// 		
-	// 		switch (e) {
-	// 		case "destroy":
-	// 			this.remove(model, model.options.syncStore);
-	// 			break;
-	// 		case "change":
-	// 			// @TODO: PrimaryKey/id change..
-	// 			break;
-	// 		}
-	// 	},
-	// 	
-	// 	/**
-	// 		@public
-	// 		@method
-	// 	*/
-	// 	remote: function (action, model, opts) {
-	// 		runloop.add("remote", function () {
-	// 			var source = opts.source || model.source
-	// 				, name;
-	// 		
-	// 			if (source) {
-	// 				if (source === true) for (name in enyo.sources) {
-	// 					source = enyo.sources[name];
-	// 					if (source[action]) source[action](model, opts);
-	// 				} else if (source instanceof Array) {
-	// 					source.forEach(function (name) {
-	// 						var src = enyo.sources[name];
-	// 						if (src && src[action]) src[action](models, opts);
-	// 					});
-	// 				} else if ((source = enyo.sources[source]) && source[action]) source[action](model, opts);
-	// 			}
-	// 		
-	// 			// @TODO: Should this throw an error??
-	// 		});
-	// 	},
-	// 	
-	// 	/**
-	// 		@public
-	// 		@method
-	// 	*/
-	// 	find: function () {
-	// 	},
-	// 	
-	// 	/**
-	// 		@public
-	// 		@method
-	// 	*/
-	// 	findLocal: function (ctor, fn, opts) {
-	// 		var models = this.models[ctor.prototype.kindName]
-	// 			, options = {all: true}
-	// 			, found, method, ctx;
-	// 			
-	// 		if (arguments.length == 1) return models.slice();
-	// 		
-	// 		opts = opts? mixin({}, [options, opts]): options;
-	// 		
-	// 		ctx = opts.context || this;
-	// 		
-	// 		method = models && (opts.all? models.filter: models.where);
-	// 		found = method && method.call(models, function (ln) {
-	// 			return fn.call(ctx, ln, opts);
-	// 		});
-	// 		
-	// 		return found;
-	// 	},
-	// 		
-	// 	/**
-	// 		@private
-	// 		@method
-	// 	*/
-	// 	constructor: inherit(function (sup) {
-	// 		return function () {
-	// 			this.euid = "store";
-	// 			
-	// 			sup.apply(this, arguments);
-	// 			this.models = {"enyo.Model": new ModelList()};
-	// 			
-	// 			// our overloaded event emitter methods need storage for
-	// 			// the listeners
-	// 			this._scopeListeners = [];
-	// 		};
-	// 	})
-	// });
-	// 
-	// enyo.store = new Store();
 
 })(enyo, this);
