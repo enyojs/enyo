@@ -299,6 +299,7 @@
 			} while (this.$[nom]);
 			
 			this._componentNameMap[pre] = Number(last);
+			/*jshint -W093 */
 			return (comp.name = nom);
 		},
 		
@@ -883,21 +884,21 @@
 	*/
 	enyo.create = Component.create = function(props) {
 		var kind,
-			ctor;
+			Ctor;
 		
 		if (!props.kind && props.hasOwnProperty('kind')) throw new Error(
-			'enyo.create: Attempt to create a null kind. Check dependencies for [' + def.name + ']'
+			'enyo.create: Attempt to create a null kind. Check dependencies for [' + props.name + ']'
 		);
 		
 		kind = props.kind || props.isa || enyo.defaultCtor;
-		ctor = enyo.constructorForKind(kind);
+		Ctor = enyo.constructorForKind(kind);
 		
-		if (!ctor) {
+		if (!Ctor) {
 			enyo.error('No constructor found for kind ' + kind);
-			ctor = Component;
+			Ctor = Component;
 		}
 		
-		return new ctor(props);
+		return new Ctor(props);
 	};
 
 	/**
@@ -953,8 +954,9 @@
 			var o = overrides[c.name];
 			var ctor = enyo.constructorForKind(c.kind || defaultKind);
 			if (o) {
-				// will handle mixins, observers, computed properties and bindings because they
-				// overload the default but this will not handle the kind concatenations...
+
+				// NOTE: You cannot overload mixins, observers or computed properties from
+				// component overrides
 				enyo.concatHandler(c, o);
 				var b = (c.kind && ((typeof c.kind == 'string' && enyo.getPath(c.kind)) || (typeof c.kind == 'function' && c.kind))) || enyo.defaultCtor;
 				while (b) {
@@ -1039,6 +1041,6 @@
 		}
 		
 		return pre;
-	};
+	}
 	
 })(enyo, this);

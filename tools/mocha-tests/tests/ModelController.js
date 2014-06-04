@@ -204,7 +204,8 @@ describe ("ModelController", function () {
 			ctor = enyo.kind({
 				kind: enyo.RelationalModel,
 				relations: [{
-					key: "tooneprop"
+					key: "tooneprop",
+					create: true
 				}]
 			});
 			

@@ -1,13 +1,5 @@
 (function (enyo) {
 	
-	var getPath = enyo.getPath
-		, checkConstructor = enyo.checkConstructor
-		, inherit = enyo.inherit
-		, getLocal = enyo.getLocal
-		, setLocal = enyo.setLocal
-		, setPath = enyo.setPath
-		, isObject = enyo.isObject;
-	
 	/**
 		This mixin is designed to abstract interaction of the _get()_/_set()_ methods. It allows
 		a specific property to be named as the _proxy object_ {@link #proxyObjectKey}. The _proxy object_
@@ -35,7 +27,7 @@
 			var key = this.proxyObjectKey
 				, proxy = this[key];
 			
-			return proxy? proxy.get? proxy.get.apply(proxy, arguments): getPath.call(proxy, path): undefined;
+			return proxy? proxy.get? proxy.get.apply(proxy, arguments): enyo.getPath.call(proxy, path): undefined;
 		},
 		
 		/**
@@ -47,11 +39,11 @@
 				, proxy = this[key]
 				, was, force;
 			// for backwards compatibility
-			force = isObject(opts)? opts.force: opts;
+			force = enyo.isObject(opts)? opts.force: opts;
 			
 			if (proxy) {
 				was = this.get(path);
-				proxy.set? proxy.set.apply(proxy, arguments): setPath.apply(proxy, arguments);
+				proxy.set? proxy.set.apply(proxy, arguments): enyo.setPath.apply(proxy, arguments);
 				
 				if (this.notify && (force || was !== is || (opts && opts.compare && opts.compare(was, is)))) this.notify(path, was, is);
 			}
@@ -64,7 +56,7 @@
 			@method
 		*/
 		getLocal: function (path) {
-			return getPath.call(this, path);
+			return enyo.getPath.call(this, path);
 		},
 		
 		/**
@@ -72,7 +64,7 @@
 			@method
 		*/
 		setLocal: function (path, is, opts) {
-			return setPath.call(this, path, is, opts);
+			return enyo.setPath.call(this, path, is, opts);
 		}
 	};
 	

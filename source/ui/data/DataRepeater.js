@@ -132,8 +132,9 @@ enyo.kind({
 	/**
 		Refreshes each control in the dataset.
 	*/
-	refresh: function () {
+	refresh: function (immediate) {
 		if (!this.hasReset) { return this.reset(); }
+		var refresh = this.bindSafely(function () {
 			var dd = this.get("data"),
 				cc = this.getClientControls();
 			for (var i=0, c, d; (d=dd.at(i)); ++i) {
@@ -145,6 +146,16 @@ enyo.kind({
 				}
 			}
 			this.prune();
+		});
+
+		// refresh is used as the event handler for
+		// collection resets so checking for truthy isn't
+		// enough. it must be true.
+		if(immediate === true) {
+			refresh();
+		} else {
+			this.startJob("refreshing", refresh, 16);
+		}
 	},
 	//*@protected
 	rendered: enyo.inherit(function (sup) {
@@ -216,37 +227,46 @@ enyo.kind({
 	},
 	modelsAdded: function (sender, e, props) {
 		if (sender === this.collection) this.refresh();
-		
-		
-	// modelsAdded: function (c, e, props) {
-		// if (c == this.collection) {
-		// 	this.set("batching", true);
-		// 	// note that these are indices when being added so they can be lazily
-		// 	// instantiated
-		// 	// for (var i=0, r; (!isNaN(r=props.records[i])); ++i) {
-		// 	// 	this.add(c.at(r), r);
-		// 	// }
-		// 	this.set("batching", false);
-		// }
 	},
-	modelsRemoved: function (sender) {
-		if (sender === this.collection) this.refresh();
+	modelsRemoved: function (sender, e, props) {
+		var selected = this._selection,
+			orig,
+			model,
+			idx,
+			len = selected && selected.length,
+			i = props.models.length - 1;
+		
+		if (sender === this.collection) {
+			
+			// ensure that the models aren't currently selected
+			if (len) {
+				
+				// unfortunately we need to make a copy to preserve what the original was
+				// so we can pass it with the notification if any of these are deselected
+				orig = selected.slice();
+				
+				// clearly we won't need to continue checking if we need to remove the model from
+				// the selection if there aren't any more in there
+				for (; (model = props.models[i]) && selected.length; --i) {
+					idx = selected.indexOf(model);
+					if (idx > -1) selected.splice(idx, 1);
+				}
+				
+				if (len != selected.length) {
+					if (this.selection) {
+						if (this.multipleSelection) this.notify('selected', orig, selected);
+						else this.notify('selected', orig[0], selected[0] || null);
+					}
+				}
+			}
+			
+			this.refresh();
+		}
 	},
-	
-	
-	// modelsRemoved: function (c, e, props) {
-	// 	if (c == this.collection) {
-	// 		// unfortunately we need to remove these in reverse order
-	// 		var idxs = enyo.keys(props.records);
-	// 		for (var i=idxs.length-1, idx; (idx=idxs[i]); --i) {
-	// 			this.remove(idx);
-	// 			this.deselect(idx);
-	// 		}
-	// 	}
-	// },
 	batchingChanged: function (prev, val) {
 		if (this.generated && false === val) {
 			this.$[this.containerName].render();
+			this.refresh(true);
 		}
 	},
 	/**

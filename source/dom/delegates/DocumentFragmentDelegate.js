@@ -174,9 +174,10 @@
 		*/
 		renderAttributes: function (control, node) {
 			var attrs = control.attributes,
-				node = node || control.hasNode(),
 				key,
 				val;
+			
+			node = node || control.hasNode();
 			
 			if (node) {
 				for (key in attrs) {

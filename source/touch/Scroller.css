@@ -17,3 +17,11 @@
 .enyo-scrollee-fit {
 	height: 100%;
 }
+
+.enyo-flex-item.flex .enyo-scrollee-fit {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
