@@ -67,10 +67,11 @@
 				}
 			}
 			
-			binding.target = target;
-			binding.source = source;
-			binding.from = from[0] == '.'? from.slice(1): from;
-			binding.to = to[0] == '.'? to.slice(1): to;
+			// we do this so we don't overwrite the originals in case we need to reset later
+			binding._target = target;
+			binding._source = source;
+			binding._from = from[0] == '.'? from.slice(1): from;
+			binding._to = to[0] == '.'? to.slice(1): to;
 			
 			// now our sanitation
 			rdy = !! (
@@ -191,14 +192,33 @@
 			@public
 			@method
 		*/
+		reset: function () {
+			this.disconnect();
+			this.ready = null;
+			this._source = this._target = this._to = this._from = null;
+			return this;
+		},
+		
+		/**
+			@public
+			@method
+		*/
+		rebuild: function () {
+			return this.reset().connect();
+		},
+		
+		/**
+			@public
+			@method
+		*/
 		connect: function () {
 			if (!this.isConnected()) {
 				if (this.isReady()) {
-					this.source.observe(this.from, this.onSource, this, {priority: true});
+					this._source.observe(this._from, this.onSource, this, {priority: true});
 					
 					// for two-way bindings we register to observe changes
 					// from the target
-					if (!this.oneWay) this.target.observe(this.to, this.onTarget, this);
+					if (!this.oneWay) this._target.observe(this._to, this.onTarget, this);
 					
 					// we flag it as having been connected
 					this.connected = true;
@@ -215,11 +235,11 @@
 		*/
 		disconnect: function () {
 			if (this.isConnected()) {
-				this.source.unobserve(this.from, this.onSource);
+				this._source.unobserve(this._from, this.onSource, this);
 				
 				// for two-way bindings we unregister the observer from
 				// the target as well
-				if (!this.oneWay) this.target.unobserve(this.to, this.onTarget, this);
+				if (!this.oneWay) this._target.unobserve(this._to, this.onTarget, this);
 				
 				this.connected = false;
 			}
@@ -232,10 +252,10 @@
 			@method
 		*/
 		sync: function (force) {
-			var source = this.source,
-				target = this.target,
-				from = this.from,
-				to = this.to,
+			var source = this._source,
+				target = this._target,
+				from = this._from,
+				to = this._to,
 				xform = this.getTransform(),
 				val;
 			
@@ -268,7 +288,7 @@
 			@private
 		*/
 		getTransform: function () {
-			return this._didInitTransform? this.transform: (function (bnd) {
+			return this._didInitTransform ? this.transform : (function (bnd) {
 				bnd._didInitTransform = true;
 				
 				var xform = bnd.transform,
@@ -310,17 +330,19 @@
 			@returns {this} Callee for chaining.
 		*/
 		destroy: function () {
-			var owner = this.owner;
+			var owner = this.owner,
+				idx;
 			
 			this.disconnect();
 			this.owner = null;
-			this.source = null;
-			this.target = null;
+			this.source = this._source = null;
+			this.target = this._target = null;
 			this.ready = null;
 			this.destroyed = true;
 			
 			// @todo: remove me or postpone operation?
-			enyo.remove(this, bindings);
+			idx = bindings.indexOf(this);
+			if (idx > -1) bindings.splice(idx, 1);
 			
 			if (owner && !owner.destroyed) owner.removeBinding(this);
 			
