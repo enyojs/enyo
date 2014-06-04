@@ -351,6 +351,14 @@
 			@public
 			@method
 		*/
+		empty: function (opts) {
+			return this.remove(this.models, opts);
+		},
+		
+		/**
+			@public
+			@method
+		*/
 		toJSON: function () {
 			// @NOTE: Needs to be the JSON parse-able object...
 			// return json.stringify(this.raw());
