@@ -227,7 +227,10 @@
 				// notify observers of the length change
 				len != this.length && this.notify('length', len, this.length);
 				// notify listeners of the addition of records
-				added && this.emit('add', {/* for backward compatibility */ records: added, /* prefered */ models: added});
+				if (added) {
+					added = new ModelList(added);
+					this.emit('add', {/* for backward compatibility */ records: added, /* prefered */ models: added});
+				}
 			}
 			
 			commit && added && this.commit(opts);
@@ -265,15 +268,18 @@
 					model = removed[i];
 					model.off('*', this.onModelEvent, this);
 					if (destroy) model.destroy(opts);
-					else if (complete) model.store.remove(ctor, model);
 				}
+				if (complete) this.store.remove(ctor, removed);
 			}
 			
 			this.length = loc.length;
 			
 			if (!silent) {
 				len != this.length && this.notify('length', len, this.length);
-				removed.length && this.emit('remove', {/* for partial backward compatibility */records: removed, /* prefered */models: removed});
+				if (removed.length) {
+					removed = new ModelList(removed);
+					this.emit('remove', {/* for partial backward compatibility */records: removed, /* prefered */models: removed});
+				}
 			}
 			
 			commit && removed && this.commit();
@@ -376,7 +382,7 @@
 				opts = opts? mixin({}, [options, opts]): options;
 				silent = opts.silent;
 				this.models.sort(fn || this.comparator);
-				!silent && this.emit('sort', {comparator: fn || this.comparator, models: this.models.slice()});
+				!silent && this.emit('sort', {comparator: fn || this.comparator, models: this.models.copy()});
 			}
 			return this;
 		},
@@ -516,7 +522,7 @@
 			@method
 		*/
 		onModelsChange: function (was, is, prop, opts) {
-			var models = this.models.slice(),
+			var models = this.models.copy(),
 				len = models.length;
 			
 			if (len != this.length) this.set('length', len);

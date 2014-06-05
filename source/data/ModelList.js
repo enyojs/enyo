@@ -3,16 +3,15 @@
 	/**
 		
 	*/
-	function ModelList () {
+	function ModelList (args) {
 		Array.call(this);
-		
 		this.table = {};
+		if (args) this.add(args, 0);
 	}
 	
-	ModelList.prototype = [];
+	ModelList.prototype = Object.create(Array.prototype);
 	
 	enyo.ModelList = ModelList;
-		
 	enyo.ModelList.prototype.add = function (models, idx) {
 		var table = this.table,
 			added = [],
@@ -96,6 +95,41 @@
 		if (typeof model == 'string' || typeof model == 'number') {
 			return this.table[model];
 		} else return model;
+	};
+	
+	/**
+		This negates a step in the process where normally one would call `slice`.
+	
+		@private
+	*/
+	enyo.ModelList.prototype.copy = function () {
+		return new ModelList(this);
+	};
+	
+	/**
+		Let it be known that this is a disgusting thing to have to do but otherwise it will not
+		return an instance of ModelList and many (possible) alternatives require newer platform
+		support.
+	
+		@private
+	*/
+	enyo.ModelList.prototype.slice = function () {
+		var ret = Array.prototype.slice.apply(this, arguments);
+		
+		return new ModelList(ret);
+	};
+	
+	/**
+		Let it be known that this is a disgusting thing to have to do but otherwise it will not
+		return an instance of ModelList and many (possible) alternatives require newer platform
+		support.
+	
+		@private
+	*/
+	enyo.ModelList.prototype.filter = function () {
+		var ret = Array.prototype.filter.apply(this, arguments);
+		
+		return new ModelList(ret);
 	};
 	
 })(enyo);
