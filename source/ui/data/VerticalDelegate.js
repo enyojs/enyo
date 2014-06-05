@@ -285,15 +285,15 @@ enyo.DataList.delegates.vertical = {
 			// we need the controls per page for simple arithmetic
 			cpp = this.controlsPerPage(list),
 			pos = this.pagesByPosition(list),
-			first = pos.firstPage.start != null ? pos.firstPage.start : 0,
-			end = (cpp * 2) + (first - 1),
+			firstPageStart = pos.firstPage.start != null ? pos.firstPage.start : 0,
+			lastPageEnd = (cpp * 2) + (firstPageStart - 1),
 			len = props.models.length,
 			gen,
 			check,
 			idx;
 			
 		check = function (i) {
-			return (i >= first && i <= end);
+			return (i >= firstPageStart && i <= lastPageEnd);
 		};
 		
 		// retrieve the first index for the first added model in the collection
@@ -351,15 +351,15 @@ enyo.DataList.delegates.vertical = {
 			// we need the controls per page for simple arithmetic
 			cpp = this.controlsPerPage(list),
 			pos = this.pagesByPosition(list),
-			first = pos.firstPage.start != null ? pos.firstPage.start : 0,
-			end = (cpp * 2) + (first - 1),
+			firstPageStart = pos.firstPage.start != null ? pos.firstPage.start : 0,
+			lastPageEnd = (cpp * 2) + (firstPageStart - 1),
 			len = props.models.length,
 			gen,
 			check,
 			idx;
 			
 		check = function (i) {
-			return (i <= end);
+			return (i <= lastPageEnd);
 		};
 		
 		// retrieve the first index for the first added model in the collection
