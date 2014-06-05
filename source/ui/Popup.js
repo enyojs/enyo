@@ -17,6 +17,7 @@
  */
 enyo.kind({
 	name: "enyo.Popup",
+	noDefer: true,
 	classes: "enyo-popup enyo-no-touch-action",
 	published: {
 		//* Set to true to prevent controls outside the popup from receiving
@@ -50,7 +51,7 @@ enyo.kind({
 	captureEvents: true,
 	eventsToCapture: { 
 		ondown: "capturedDown", 
-		ontap: "capturedTap" 
+		ontap: "capturedTap"
 	},
 	//* @public
 	events: {
@@ -339,3 +340,15 @@ enyo.kind({
 		this.show();
 	}
 });
+
+// By default, we capture ondown and ontap to implement the popup's modal behavior,
+// but in certain circumstances it may be necessary to capture other events as
+// well, so we provide this hook to extend. (Currently using this in Moonstone to
+// capture onSpotlightFocus events).
+enyo.Popup.concat = function (ctor, props, instance) {
+	var proto = ctor.prototype || ctor,
+		evts = proto.eventsToCapture;
+	proto.eventsToCapture = evts ? enyo.mixin({}, [evts, props.eventsToCapture]) : props.eventsToCapture;
+	delete props.eventsToCapture;
+};
+
