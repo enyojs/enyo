@@ -1,9 +1,10 @@
 (function (enyo, scope) {
 	
+	/* @namespace enyo */
+	
 	var kind = enyo.kind;
 	
-	var Collection = enyo.Collection,
-		ModelList = enyo.ModelList;
+	var Collection = enyo.Collection;
 	
 	/**
 		Used internally (re-use) for filters that do not have a valid filter. This means they will
@@ -16,19 +17,21 @@
 	}
 	
 	/**
-		This is an abstract class. In principle it can be used as a {@link enyo.Collection} or act
-		on a {@link enyo.Collection} as itself ({@see enyo.Filter#collection} property). Since this
-		is an abstract class, it is not intended to be used on its own.
-	
-		All {@link enyo.Component#components} of a {@link enyo.Filter} have their `publish` property
-		set to `true` (unless explicitly `false`). They should always have a `name` and additional
-		(optional) property `method`. If `method` is not declared explicitly a function by that
-		name will be used from the parent {@link enyo.Filter}. If one cannot be found it will use
-		a function that will always return `true`. Also note that the `method` can be a `function`.
+		This is an abstract class used by subclasses to implement features relevant to filtered
+		[collections]{@link enyo.Collection}. It does extend {@link enyo.Collection} but only
+		implements a subset of its methods. Unlike a normal {@link enyo.Collection} that keeps its
+		own set of [models]{@link enyo.Model} instances (and can create, remove or destroy them), a
+		{@link enyo.Filter} uses another instance of {@link enyo.Collection} as its dataset and
+		safely proxies its [models]{@link enyo.Model} as a complete set or according to the needs
+		of its subclass. {@link enyo.Filter} is not intended to communicate with
+		[sources]{@link enyo.Source} (e.g. via {@link enyo.Collection#fetch}). It maintains an
+		implementation specific API (from its subclass) and propagates the events and API's
+		inherited from {@link enyo.Collection} required to interact with
+		[controls]{@link enyo.Control}.
 		
-		
-		@public
+		@protected
 		@class enyo.Filter
+		@extends enyo.Collection
 	*/
 	var Filter = kind(
 		/** @lends enyo.Filter.prototype */ {
@@ -49,15 +52,8 @@
 		noDefer: true,
 		
 		/**
-			If the {@link enyo.Filter} is being used as a proxy for swappable
-			{@link enyo.Collection} instances then this property should be used noting that all
-			related filters will only have access to models in the current collection set here. If
-			this property is being used, all {@link enyo.Collection} accessor methods are proxied
-			to the underlying collection. If it is not being used, then the {@link enyo.Filter} will
-			act on itself according to how it has been configured. This is important since, for
-			example, calling {@link enyo.Collection#fetch} on the {@link enyo.Filter} will
-			potentially work very differently if it has an underlying collection instance or is
-			acting on itself.
+			The actual {@link enyo.Collection} content to proxy. How the {@link enyo.Collection} is
+			used varies by the subclass implementing the feature.
 			
 			@type enyo.Collection
 			@default null
@@ -66,8 +62,8 @@
 		collection: null,
 		
 		/**
-			Once all components have been created, those that are {@link enyo.Filter}'s (or sub-
-			classes) will be added to this array. This array should not be modified directly and
+			Once all components have been created, those that are [filters]{@link enyo.Filter} (or
+			subclasses) will be added to this array. This array should not be modified directly and
 			is primarily for internal use.
 			
 			@type Array
@@ -82,15 +78,6 @@
 		defaultProps: {
 			kind: 'enyo.Filter'
 		},
-		
-		/**
-			@private
-		*/
-		bindings: [
-			{from: 'collection.length', to: 'length', transform: function (value, dir, binding) {
-				return !isNaN(value) ? value : binding.stop();
-			}}
-		],
 		
 		/**
 			@private
@@ -143,12 +130,12 @@
 			{path: 'collection', method: 'onCollectionChange'}
 		],
 		
-		
 		/**
-			Should be implemented by subclasses.
+			Reset the filter to its initial state. Will vary by subclass implementation.
 		
-			@public
+			@abstract
 			@method
+			@public
 		*/
 		reset: enyo.nop,
 		
@@ -160,6 +147,11 @@
 				// ensure we have an array to work with
 				this.filters = [];
 				
+				// unfortunately we must maintain data structures that need remain out of our
+				// proxy path so we each must create a collection instance for internal use
+				this._internal = new Collection();
+				this._internal.on('*', this.onInternalEvent, this);
+				
 				sup.apply(this, arguments);
 			};
 		}),
@@ -169,45 +161,28 @@
 		*/
 		constructed: enyo.inherit(function (sup) {
 			return function () {
-				var fetch = this.options.fetch,
-					filters = this.filters,
-					collection = this.collection,
+				var collection,
 					owner;
-					
-				// we need to ensure that the collection doesn't try to fetch before we create our
-				// default collection and finish initializing
-				this.options.fetch = false;
 				
 				sup.apply(this, arguments);
 				
-				// we allow filters to be nested...so it gets confusing
+				// we allow filters to be nested so they need to receive events from the
+				// parent-filter and do with them as they need
 				if ((owner = this.owner) && owner instanceof Filter) {
-					owner.on('sync', this.onOwnerEvent, this);
+					
+					// if we're a child collection we don't want to monitor our parent's own state
+					// we want to monitor their entire dataset
+					this.collection = owner._internal;
+					
+					// register especially for owner events as we will differentiate them from
+					// normal collection events
+					this.collection.on('*', this.onOwnerEvent, this);
 				}
 				
-				// figure out if we need to create a collection from what we've been given since it
-				// can be a string, constructor, instance or nothing
-				if (collection) {
-					if (typeof collection == 'string') {
-						collection = enyo.constructorForKind(collection);
-					}
-					if (typeof collection == 'function') {
-						collection = this.createComponent({kind: collection});
-						
-						// in the off-chance that we were handed data initially we should ensure
-						// the sub-collection has it
-						if (this.models.length) collection.set('models', this.models);
-					}
+				collection = this.collection;
 				
-					this.set('collection', collection);
-				} else this.onCollectionChange();
-				
-				// if we were supposed to automatically fetch we reassign the correct value and
-				// do as we're told
-				if (fetch) {
-					this.options.fetch = fetch;
-					this.fetch();
-				}
+				// if there is a collection instance already we need to initialize it
+				if (collection) this.onCollectionChange(null, collection);
 			};
 		}),
 		
@@ -216,8 +191,23 @@
 		*/
 		destroy: enyo.inherit(function (sup) {
 			return function () {
+				var collection = this.collection;
+				
+				// make sure that we remove our listener if we're being destroyed for some
+				// reason (this would seem to be an irregular practice)
+				if (collection) {
+					if (collection === this.owner._internal) {
+						collection.off('*', this.onOwnerEvent, this);
+					} else {
+						collection.off('*', this.onCollectionEvent, this);
+					}
+				}
 				
 				sup.apply(this, arguments);
+				
+				// free our internal collection
+				this._internal.destroy();
+				this._internal = null;
 			};
 		}),
 		
@@ -225,54 +215,73 @@
 			@private
 		*/
 		onCollectionChange: function (was, is) {
-			var models;
+			var internal = this._internal;
 			
-			if (was) {
-				was.off('*', this.onCollectionEvent, this);
-			}
-			if (is) {
-				is.on('*', this.onCollectionEvent, this);
+			if (was) was.off('*', this.onCollectionEvent, this);
+			
+			// ensure that child-filters cannot have their internal/external collection's reset
+			if (is && !(was && was === this.owner._internal)) {
 				
-				// children filters can't listen for the reset event because their content would
-				// incorrectly update according to filter-changes but here we need them to sync
-				// to new data so we emit a special event call sync
-				this.emit('sync:reset', {models: is.models});
+				// case of child-filter who's collection is its owner does not need to receive
+				// these events since it will receive them in a special handler to differentiate
+				// these cases
+				if (is !== this.owner._internal) is.on('*', this.onCollectionEvent, this);
+				
+				// reset the models (causing reset to propagate to children or bound parties)
+				internal.set('models', is.models.copy());
 			} else {
-				
-				models = this.models;
-				
-				// noting the absolute importance of the force flag here as it will ensure that our
-				// length property is set correctly and it will ultimately propagate the sync event
-				// that we want to be sent to our child filters (if any)
-				this.set('models', models || new ModelList(), {force: true});
+				// it was set to nothing so we should be nothing
+				if (internal.length) internal.empty();
 			}
 		},
 		
 		/**
-			@private
-		*/
-		_collectionProp: 'collection',
-		
-		/**
+			This method is invoked when events are received from a `collection` that is not the
+			owner of this filter (meaning it is not a child since all child-filters owners are
+			also filters and their event handling happens in another method). As long as we are
+			consistent about applying the same action against ourselves we should remain in-sync as
+			well as propagate the same event again with the exception of `sort` that will wind up
+			being a `reset`.
+			
 			@private
 		*/
 		onCollectionEvent: function (sender, e, props) {
-			if (this.filters.length) {
-				// the child filters need to sync but to maintain ordered sets they
-				// must re-scan the entirety of the base
-				if (e == 'reset') this.emit('sync:reset', {models: sender.models});
-				else if (e == 'add') this.emit('sync:add', {models: props.models});
-				else if (e == 'remove') this.emit('sync:remove', {models: props.models});
+			// we are listening for particular events to signal that we should update according
+			// to its changes if we are a nested filter
+			
+			var models = props.models,
+				internal = this._internal;
+			
+			switch (e) {
+			case 'add':
+				
+				// will ensure an add gets propagated if the models are new
+				internal.add(models, {merge: false});
+				break;
+			case 'reset':
+			case 'sort':
+				
+				// will ensure a reset gets propagated
+				internal.empty(models);
+				break;
+			case 'remove':
+				
+				// will ensure a remove gets propagated (assuming something is removed)
+				internal.remove(models);
+				break;
 			}
-		
-			// we always re-emit the event as our own to ensure that anyone interested
-			// is updated accordingly
-			this.emit(e, props);
 		},
 		
 		/**
-			Should be implemented by subclasses.
+			@abstract
+			@private
+		*/
+		onInternalEvent: enyo.nop,
 		
+		/**
+			Subclasses are responsible for handling all owner related events.
+		
+			@abstract
 			@private
 		*/
 		onOwnerEvent: enyo.nop,
@@ -280,121 +289,53 @@
 		/**
 			@private
 		*/
-		add: enyo.inherit(function (sup) {
-			return function (models, opts) {
-				var collection = this[this._collectionProp],
-					ret;
-				
-				opts = opts ? enyo.mixin({}, [this.options, opts]) : enyo.clone(this.options);
-				opts.source = opts.source || this.source;
-				
-				if (collection) {
-					ret = collection.add.apply(collection, arguments);
-					if (opts.commit) this.commit(opts);
-				} else {
-					ret = sup.apply(this, arguments);
-					if (ret.length) this.emit('sync:add', {models: ret});
-				}
-				return ret;
-			};
-		}),
+		add: enyo.nop,
 		
 		/**
 			@private
 		*/
-		remove: enyo.inherit(function (sup) {
-			return function () {
-				var collection = this[this._collectionProp],
-					ret;
-					
-				opts = opts ? enyo.mixin({}, [this.options, opts]) : enyo.clone(this.options);
-				opts.source = opts.source || this.source;
-				
-				if (collection) {
-					ret = collection.remove.apply(collection, arguments);
-					if (opts.commit) this.commit(opts);
-				} else {
-					ret = sup.apply(this, arguments);
-					if (ret.length) this.emit('sync:remove', {models: ret});
-				}
-				return ret;
-			};
-		}),
+		remove: enyo.nop,
 		
 		/**
 			@private
 		*/
-		fetch: enyo.inherit(function (sup) {
-			return function () {
-				var collection = this[this._collectionProp];
-				
-				if (collection) return collection.fetch.apply(collection, arguments);
-				else return sup.apply(this, arguments);
-			};
-		}),
+		fetch: enyo.nop,
 		
 		/**
 			@private
 		*/
-		sort: enyo.inherit (function (sup) {
-			return function () {
-				var collection = this[this._collectionProp];
-				
-				if (collection) return collection.sort.apply(collection, arguments);
-				else return sup.apply(this, arguments);
-			};
-		}),
+		sort: enyo.nop,
 		
 		/**
 			@private
 		*/
-		commit: enyo.inherit(function (sup) {
-			return function () {
-				var collection = this[this._collectionProp];
-				
-				if (collection) {
-					// it is possible that the target collection does not have an appropriate
-					// url or it was set on the parent bucket alone so we check that here
-					if (!collection.url) collection.url = this.url;
-					return collection.commit.apply(collection, arguments);
-				} else return sup.apply(this, arguments);
-			};
-		}),
-		
+		commit: enyo.nop,
 		
 		/**
 			@private
 		*/
 		at: enyo.inherit(function (sup) {
 			return function () {
-				var collection = this[this._collectionProp];
-				
-				if (collection) return collection.at.apply(collection, arguments);
-				else return sup.apply(this, arguments);
+				return this.models ? sup.apply(this, arguments) : undefined;
 			};
 		}),
 		
 		/**
 			@private
 		*/
-		raw: enyo.inherit(function (sup) {
-			return function () {
-				var collection = this[this._collectionProp];
-				
-				if (collection) return collection.raw.apply(collection, arguments);
-				else return sup.apply(this, arguments);
-			};
-		}),
+		raw: enyo.nop,
+		
+		/**
+			@private
+		*/
+		toJSON: enyo.nop,
 		
 		/**
 			@private
 		*/
 		has: enyo.inherit(function (sup) {
 			return function () {
-				var collection = this[this._collectionProp];
-				
-				if (collection) return collection.has.apply(collection, arguments);
-				else return sup.apply(this, arguments);
+				return this.models ? sup.apply(this, arguments) : false;
 			};
 		}),
 		
@@ -403,10 +344,7 @@
 		*/
 		forEach: enyo.inherit(function (sup) {
 			return function () {
-				var collection = this[this._collectionProp];
-				
-				if (collection) return collection.forEach.apply(collection, arguments);
-				else return sup.apply(this, arguments);
+				return this.models ? sup.apply(this, arguments) : undefined;
 			};
 		}),
 		
@@ -415,10 +353,7 @@
 		*/
 		filter: enyo.inherit(function (sup) {
 			return function () {
-				var collection = this[this._collectionProp];
-				
-				if (collection) return collection.filter.apply(collection, arguments);
-				else return sup.apply(this, arguments);
+				return this.models ? sup.apply(this, arguments) : [];
 			};
 		}),
 		
@@ -427,10 +362,7 @@
 		*/
 		find: enyo.inherit(function (sup) {
 			return function () {
-				var collection = this[this._collectionProp];
-				
-				if (collection) return collection.find.apply(collection, arguments);
-				else return sup.apply(this, arguments);
+				return this.models ? sup.apply(this, arguments) : undefined;
 			};
 		}),
 		
@@ -439,10 +371,7 @@
 		*/
 		map: enyo.inherit(function (sup) {
 			return function () {
-				var collection = this[this._collectionProp];
-				
-				if (collection) return collection.map.apply(collection, arguments);
-				else return sup.apply(this, arguments);
+				return this.models ? sup.apply(this, arguments) : [];
 			};
 		}),
 		
@@ -451,33 +380,14 @@
 		*/
 		indexOf: enyo.inherit(function (sup) {
 			return function () {
-				var collection = this[this._collectionProp];
-				
-				if (collection) return collection.indexOf.apply(collection, arguments);
-				else return sup.apply(this, arguments);
+				return this.models ? sup.apply(this, arguments) : -1;
 			};
 		}),
 		
 		/**
 			@private
 		*/
-		empty: enyo.inherit(function (sup) {
-			return function (opts) {
-				var collection = this[this._collectionProp],
-					ret;
-				
-				if (collection) {
-					ret = collection.empty.apply(collection, arguments);
-					if ((opts && opts.commit) || this.options.commit) {
-						this.commit(opts);
-					}
-				} else {
-					ret = sup.apply(this, arguments);
-					if (ret.length) this.emit('sync:remove', {models: ret});
-				}
-				return ret;
-			};
-		})
+		empty: enyo.nop
 	});
 	
 })(enyo, this);
