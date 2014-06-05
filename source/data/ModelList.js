@@ -98,38 +98,16 @@
 	};
 	
 	/**
-		This negates a step in the process where normally one would call `slice`.
-	
-		@private
+		Copies the current {@link enyo.ModelList} and returns an shallow copy. This method differs
+		from {@link enyo.ModelList#slice} that it inherits from native Array because _slice_ returns
+		an Array.
+		
+		@returns {enyo.ModelList} A shallow copy of the callee.
+		@method
+		@public
 	*/
 	enyo.ModelList.prototype.copy = function () {
 		return new ModelList(this);
-	};
-	
-	/**
-		Let it be known that this is a disgusting thing to have to do but otherwise it will not
-		return an instance of ModelList and many (possible) alternatives require newer platform
-		support.
-	
-		@private
-	*/
-	enyo.ModelList.prototype.slice = function () {
-		var ret = Array.prototype.slice.apply(this, arguments);
-		
-		return new ModelList(ret);
-	};
-	
-	/**
-		Let it be known that this is a disgusting thing to have to do but otherwise it will not
-		return an instance of ModelList and many (possible) alternatives require newer platform
-		support.
-	
-		@private
-	*/
-	enyo.ModelList.prototype.filter = function () {
-		var ret = Array.prototype.filter.apply(this, arguments);
-		
-		return new ModelList(ret);
 	};
 	
 })(enyo);
