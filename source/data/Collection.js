@@ -235,7 +235,6 @@
 				len != this.length && this.notify('length', len, this.length);
 				// notify listeners of the addition of records
 				if (added) {
-					added = new ModelList(added);
 					this.emit('add', {/* for backward compatibility */ records: added, /* prefered */ models: added});
 				}
 			}
@@ -284,7 +283,6 @@
 			if (!silent) {
 				len != this.length && this.notify('length', len, this.length);
 				if (removed.length) {
-					removed = new ModelList(removed);
 					this.emit('remove', {/* for partial backward compatibility */records: removed, /* prefered */models: removed});
 				}
 			}
@@ -540,7 +538,6 @@
 		onModelEvent: function (model, e) {
 			switch (e) {
 			case 'change':
-				// this.emit('change', {models: [model]});
 				this.emit('change', {model: model});
 				break;
 			case 'destroy':
