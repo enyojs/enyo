@@ -289,17 +289,12 @@ enyo.DataList.delegates.vertical = {
 			end = (cpp * 2) + (first - 1),
 			len = props.models.length,
 			gen,
-			check,
 			idx;
-			
-		check = function (i) {
-			return (i >= first && i <= end);
-		};
 		
 		// retrieve the first index for the first added model in the collection
 		idx = collection.indexOf(props.models[0]);
 		
-		gen = check(idx);
+		gen = (idx >= first && idx <= end);
 		
 		if (!gen) {
 			
@@ -307,7 +302,7 @@ enyo.DataList.delegates.vertical = {
 			// sequential and contiguous to know where the last index is
 			idx = idx + len - 1;
 			
-			gen = check(idx);
+			gen = (idx <= end);
 		}
 		
 		// if we need to refresh, do it now and ensure that we're properly setup to scroll
@@ -355,17 +350,12 @@ enyo.DataList.delegates.vertical = {
 			end = (cpp * 2) + (first - 1),
 			len = props.models.length,
 			gen,
-			check,
 			idx;
-			
-		check = function (i) {
-			return (i <= end);
-		};
 		
 		// retrieve the first index for the first added model in the collection
 		idx = collection.indexOf(props.models[0]) + len - 1;
 		
-		gen = check(idx);
+		gen = idx <= end;
 		
 		// if we need to refresh, do it now and ensure that we're properly setup to scroll
 		// if we were adding to a partially filled page
