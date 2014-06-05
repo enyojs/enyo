@@ -46,11 +46,11 @@
 			@default '*'
 			@public
 		*/
-		active: '*',
+		activeFilter: '*',
 		
 		/**
-			This will be the {@link enyo.BucketFilter#active} filter on initialization and anytime
-			the {@link enyo.BucketFilter#reset} method is called. It can be set directly or
+			This will be the {@link enyo.BucketFilter#activeFilter} filter on initialization and
+			anytime the {@link enyo.BucketFilter#reset} method is called. It can be set directly or
 			implicitly by setting a child-filter's `isDefault` flag to `true`.
 		
 			@type String
@@ -62,8 +62,8 @@
 		/**
 			Removes any active filter. If there is a {@link enyo.BucketFilter#defaultFilter} it will
 			automatically set it as the active filter (if it wasn't active already). Otherwise it
-			will set the {@link enyo.BucketFilter#active} property to the special `*` character and
-			proxy its complete dataset.
+			will set the {@link enyo.BucketFilter#activeFilter} property to the special `*`
+			character and proxy its complete dataset.
 		
 			@method
 			@param {Object} [opts] The options to be passed to the internal
@@ -72,7 +72,7 @@
 			@public
 		*/
 		reset: function (opts) {
-			return this.set('active', this.defaultFilter || '*', opts);
+			return this.set('activeFilter', this.defaultFilter || '*', opts);
 		},
 		
 		/**
@@ -86,8 +86,8 @@
 			@private
 		*/
 		observers: [
-			{path: 'active', method: 'onActiveChange'},
-			{path: 'activeCollection', method: 'onActiveCollectionChange'}
+			{path: 'activeFilter', method: 'onActiveFilterChange'},
+			{path: 'activeFilterCollection', method: 'onActiveFilterCollectionChange'}
 		],
 		
 		/**
@@ -110,7 +110,7 @@
 				sup.apply(this, arguments);
 				
 				// we go ahead and let it initialize the current filter however it can
-				this.onActiveChange();
+				this.onActiveFilterChange();
 			};
 		}),
 		
@@ -122,22 +122,22 @@
 		onOwnerEvent: function (sender, e, props) {
 			// we are listening for particular events to signal that we should update according
 			// to its changes if we are a nested filter
-			
 			var models = props.models,
+				owner = this.owner,
 				internal = this._internal,
 				filtered;
 			
 			switch (e) {
 			case 'add':
 				
-				filtered = this.method(models, sender);
+				filtered = models.filter(this.method, owner);
 				
 				// will ensure an add gets propagated if the models are new
 				internal.add(filtered, {merge: false});
 				break;
 			case 'reset':
 				
-				filtered = this.method(models, sender);
+				filtered = models.filter(this.method, owner);
 				
 				// will ensure a reset gets propagated
 				internal.empty(filtered);
@@ -145,7 +145,16 @@
 			case 'remove':
 				
 				// will ensure a remove gets propagated (assuming something is removed)
-				internal.remove(this, models);
+				internal.remove(models);
+				break;
+			case 'change':
+				// the change event being emitted from a collection only stems from internal
+				// model changes so the property is model not models
+				filtered = this.method.call(owner, props.model);
+				
+				// if it should be included we add it otherwise we attempt to remove it
+				if (filtered) internal.add(props.model, {merge: false});
+				else if (internal.has(props.model)) internal.remove(props.model);
 				break;
 			}
 		},
@@ -157,33 +166,38 @@
 			
 			// if our internal collection is what we are currently proxying then we need to
 			// propagate the event, otherwise not
-			if (this.models === sender.models) this.emit(e, props);
+			if (this.models === sender.models) {
+				
+				if (sender.models.length != this.length) this.set('length', sender.models.length);
+				
+				this.emit(e, props);
+			}
 		},
 		
 		/**
 			@private
 		*/
-		onActiveChange: function () {
-			var nom = this.active || '*',
+		onActiveFilterChange: function () {
+			var nom = this.activeFilter || '*',
 				filter;
 			
 			filter = this[nom] || null;
 			
 			// if the filter isn't found then it will automatically reset to the complete dataset
-			this.set('activeCollection', filter);
+			this.set('activeFilterCollection', filter);
 		},
 		
 		/**
 			@private
 		*/
-		onActiveCollectionChange: function (was, is) {
+		onActiveFilterCollectionChange: function (was, is) {
 			var internal = this._internal;
 			
-			if (was) was.off('*', this.onActiveCollectionEvent, this);
+			if (was) was.off('*', this.onActiveFilterCollectionEvent, this);
 			// if the current filter has been updated it will have caused a set on this property
 			// with the correct filtered collection
 			if (is) {
-				is.on('*', this.onActiveCollectionEvent, this);
+				is.on('*', this.onActiveFilterCollectionEvent, this);
 				
 				// we set our models to be shared with this new active collection so we can
 				// proxy its dataset and then we just proxy its events as our own
@@ -205,7 +219,9 @@
 		/**
 			@private
 		*/
-		onActiveCollectionEvent: function (sender, e, props) {
+		onActiveFilterCollectionEvent: function (sender, e, props) {
+			
+			if (sender.models.length != this.length) this.set('length', sender.models.length);
 			
 			// we share the same reference to our models (ModelList) array so we don't need to
 			// try and keep them synchronized as a separate effort we simply emit the event

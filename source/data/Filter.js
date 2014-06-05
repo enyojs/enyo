@@ -269,6 +269,12 @@
 				// will ensure a remove gets propagated (assuming something is removed)
 				internal.remove(models);
 				break;
+			case 'change':
+				
+				// we need to propagate the change event as our internal collection's own so that
+				// child filters and/or subclasses will be able to handle this as they need to
+				internal.emit(e, props);
+				break;
 			}
 		},
 		
