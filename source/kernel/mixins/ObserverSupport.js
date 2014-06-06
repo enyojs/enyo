@@ -16,7 +16,7 @@
 			, priority, noChain, entries;
 			
 		priority = opts && opts.priority;
-		noChain = opts && opts.noChain;
+		noChain = (opts && opts.noChain) || path[0] == '$' && path.split('.').length === 2;
 
 		if (observers[path] && !observers.hasOwnProperty(path)) observers[path] = observers[path].slice();
 		entries = observers[path] || (observers[path] = []);

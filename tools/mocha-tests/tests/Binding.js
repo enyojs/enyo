@@ -398,11 +398,11 @@ describe('enyo.Binding', function () {
 			it ('should be derrived out of the from property if not explicitly provided and ' +
 				'relative to the binding\'s owner if it has one', function () {
 				
-				expect(oneWay.source).to.equal(source);
+				expect(oneWay._source).to.equal(source);
 			});
 			
 			it ('should use the object passed in when explicitly set', function () {
-				expect(ownerless.source).to.equal(source);
+				expect(ownerless._source).to.equal(source);
 			});
 			
 		});
@@ -418,12 +418,12 @@ describe('enyo.Binding', function () {
 				var path = oneWay.to.split('.').shift();
 				
 				// the source and target will be the same object actually
-				expect(oneWay.source).to.equal(oneWay.target);
-				expect(oneWay.source.get(path)).to.equal(target);
+				expect(oneWay._source).to.equal(oneWay._target);
+				expect(oneWay._source.get(path)).to.equal(target);
 			});
 			
 			it ('should use the object passed in when explicitly set', function () {
-				expect(ownerless.target).to.equal(target);
+				expect(ownerless._target).to.equal(target);
 			});
 			
 		});
