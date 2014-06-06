@@ -3,16 +3,15 @@
 	/**
 		
 	*/
-	function ModelList () {
+	function ModelList (args) {
 		Array.call(this);
-		
 		this.table = {};
+		if (args) this.add(args, 0);
 	}
 	
-	ModelList.prototype = [];
+	ModelList.prototype = Object.create(Array.prototype);
 	
 	enyo.ModelList = ModelList;
-		
 	enyo.ModelList.prototype.add = function (models, idx) {
 		var table = this.table,
 			added = [],
@@ -96,6 +95,19 @@
 		if (typeof model == 'string' || typeof model == 'number') {
 			return this.table[model];
 		} else return model;
+	};
+	
+	/**
+		Copies the current {@link enyo.ModelList} and returns an shallow copy. This method differs
+		from {@link enyo.ModelList#slice} that it inherits from native Array because _slice_ returns
+		an Array.
+		
+		@returns {enyo.ModelList} A shallow copy of the callee.
+		@method
+		@public
+	*/
+	enyo.ModelList.prototype.copy = function () {
+		return new ModelList(this);
 	};
 	
 })(enyo);

@@ -508,6 +508,7 @@
 				var related = this.related,
 					inst = this.instance,
 					inverseKey = this.inverseKey,
+					isOwner = this.isOwner,
 					model,
 					i;
 				
@@ -542,6 +543,23 @@
 							// safely skip it
 							if (!model.destroyed) model.get(inverseKey).remove(inst);
 						}
+					}
+					
+					// manyToMany is a special case that requires us to propagate the changes from
+					// either end as changes to the parent model unlike toMany and toOne that
+					// exclusively rely on the isOwner field and safely assuming uni-directional
+					// ownership - but blindly setting isOwner to true on all manyToMany relations
+					// won't work either because of the repercussions on other aspects of the
+					// relationship so we should propagate changes but only on add/remove events
+					// so we don't cause an infinite loop of change events and we fake the ownership
+					// flag when necessary to get it to emit the change as it is encountered in this
+					// scope only
+					if (e == 'add' || e == 'remove') {
+						// force it to be true for this call
+						this.isOwner = true;
+						sup.apply(this, arguments);
+						// return it to whatever it was originally
+						this.isOwner = isOwner;
 					}
 					
 				} else sup.apply(this, arguments);

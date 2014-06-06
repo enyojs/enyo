@@ -1,27 +1,34 @@
-(function (enyo) {
+(function (enyo, scope) {
 	
-	var kind = enyo.kind
-		, inherit = enyo.inherit
-		, constructorForKind = enyo.constructorForKind
-		, store = enyo.store
-		, uid = enyo.uid
-		, mixin = enyo.mixin
-		, clone = enyo.clone;
+	var kind = enyo.kind;
 	
-	var Component = enyo.Component
-		, EventEmitter = enyo.EventEmitter
-		, Model = enyo.Model
-		, ModelList = enyo.ModelList
-		, Source = enyo.Source;
+	var Component = enyo.Component,
+		EventEmitter = enyo.EventEmitter,
+		Model = enyo.Model,
+		ModelList = enyo.ModelList,
+		Source = enyo.Source;
 	
 	/**
 		@public
 		@class enyo.Collection
+		@extends enyo.Component
 	*/
 	var Collection = kind(
 		/** @lends enyo.Collection.prototype */ {
+		
+		/**
+			@private
+		*/
 		name: 'enyo.Collection',
+		
+		/**
+			@private
+		*/
 		kind: Component,
+		
+		/**
+			@private
+		*/
 		noDefer: true,
 		
 		/**
@@ -116,7 +123,7 @@
 			arguments.length > 2 && (opts = arguments[2]);
 			
 			// normalize options so we have values
-			opts = opts? mixin({}, [options, opts]): options;
+			opts = opts? enyo.mixin({}, [options, opts]): options;
 			
 			// our flags
 			var merge = opts.merge
@@ -227,7 +234,9 @@
 				// notify observers of the length change
 				len != this.length && this.notify('length', len, this.length);
 				// notify listeners of the addition of records
-				added && this.emit('add', {/* for backward compatibility */ records: added, /* prefered */ models: added});
+				if (added) {
+					this.emit('add', {/* for backward compatibility */ records: added, /* prefered */ models: added});
+				}
 			}
 			
 			commit && added && this.commit(opts);
@@ -247,7 +256,7 @@
 				, removed, model;
 			
 			// normalize options so we have values
-			opts = opts? mixin({}, [options, opts]): options;
+			opts = opts? enyo.mixin({}, [options, opts]): options;
 			
 			// our flags
 			var silent = opts.silent
@@ -265,15 +274,17 @@
 					model = removed[i];
 					model.off('*', this.onModelEvent, this);
 					if (destroy) model.destroy(opts);
-					else if (complete) model.store.remove(ctor, model);
 				}
+				if (complete) this.store.remove(ctor, removed);
 			}
 			
 			this.length = loc.length;
 			
 			if (!silent) {
 				len != this.length && this.notify('length', len, this.length);
-				removed.length && this.emit('remove', {/* for partial backward compatibility */records: removed, /* prefered */models: removed});
+				if (removed.length) {
+					this.emit('remove', {/* for partial backward compatibility */records: removed, /* prefered */models: removed});
+				}
 			}
 			
 			commit && removed && this.commit();
@@ -312,7 +323,11 @@
 			@method
 		*/
 		forEach: function (fn, ctx) {
-			return this.models.forEach(fn, ctx || this);
+			
+			// ensure that this is an immutable reference to the models such that changes will
+			// not affect the entire loop - e.g. calling destroy on models won't keep this from
+			// completing
+			return this.models.slice().forEach(fn, ctx || this);
 		},
 		
 		/**
@@ -320,7 +335,11 @@
 			@method
 		*/
 		filter: function (fn, ctx) {
-			return this.models.filter(fn, ctx || this);
+			
+			// ensure that this is an immutable reference to the models such that changes will
+			// not affect the entire loop - e.g. calling destroy on models won't keep this from
+			// completing
+			return this.models.slice().filter(fn, ctx || this);
 		},
 		
 		/**
@@ -328,7 +347,11 @@
 			@method
 		*/
 		find: function (fn, ctx) {
-			return this.models.find(fn, ctx || this);
+			
+			// ensure that this is an immutable reference to the models such that changes will
+			// not affect the entire loop - e.g. calling destroy on models won't keep this from
+			// completing
+			return this.models.slice().find(fn, ctx || this);
 		},
 		
 		/**
@@ -336,7 +359,11 @@
 			@method
 		*/
 		map: function (fn, ctx) {
-			return this.models.map(fn, ctx || this);
+			
+			// ensure that this is an immutable reference to the models such that changes will
+			// not affect the entire loop - e.g. calling destroy on models won't keep this from
+			// completing
+			return this.models.slice().map(fn, ctx || this);
 		},
 		
 		/**
@@ -344,7 +371,44 @@
 			@method
 		*/
 		indexOf: function (model, offset) {
-			return this.models.indexOf(model, offset);
+			
+			// ensure that this is an immutable reference to the models such that changes will
+			// not affect the entire loop - e.g. calling destroy on models won't keep this from
+			// completing
+			return this.models.slice().indexOf(model, offset);
+		},
+		
+		/**
+			@public
+			@method
+		*/
+		empty: function (models, opts) {
+			var silent,
+				removed;
+			
+			if (models && !(models instanceof Array || models instanceof Model)) {
+				// there were no models but instead some options only
+				opts = models;
+				models = null;
+			}
+			
+			opts = opts || {};
+			
+			// just in case the entire thing was supposed to be silent
+			silent = opts.silent;
+			opts.silent = true;
+			
+			removed = this.remove(this.models, opts);
+			
+			// if there are models we are going to propagate the remove quietly and instead issue
+			// a single reset with the new content
+			if (models) this.add(models, opts);
+			
+			// now if the entire thing wasn't supposed to have been done silently we issue
+			// a reset
+			if (!silent) this.emit('reset', {models: this.models.copy()});
+			
+			return removed;
 		},
 		
 		/**
@@ -365,10 +429,10 @@
 			if (fn || this.comparator) {
 				var options = {silent: false}, silent;
 			
-				opts = opts? mixin({}, [options, opts]): options;
+				opts = opts? enyo.mixin({}, [options, opts]): options;
 				silent = opts.silent;
 				this.models.sort(fn || this.comparator);
-				!silent && this.emit('sort', {comparator: fn || this.comparator, models: this.models.slice()});
+				!silent && this.emit('sort', {comparator: fn || this.comparator, models: this.models.copy()});
 			}
 			return this;
 		},
@@ -377,7 +441,7 @@
 			@public
 		*/
 		commit: function (opts) {
-			var options = opts? clone(opts): {}
+			var options = opts? enyo.clone(opts): {}
 				, dit = this;
 			
 			options.success = function (res) {
@@ -396,7 +460,7 @@
 			@public
 		*/
 		fetch: function (opts) {
-			var options = opts? clone(opts): {}
+			var options = opts? enyo.clone(opts): {}
 				, dit = this;
 			
 			options.success = function (res) {
@@ -414,7 +478,7 @@
 		/**
 			@public
 		*/
-		destroy: inherit(function (sup) {
+		destroy: enyo.inherit(function (sup) {
 			return function (opts) {
 				// @TODO: ...
 				
@@ -437,7 +501,7 @@
 				// , options = {silent: true, noAdd: true}
 				, model;
 			
-			// opts = opts? mixin({}, [options, opts]): options;
+			// opts = opts? enyo.mixin({}, [options, opts]): options;
 			// opts = opts || {};
 			// opts.noAdd = true;
 			
@@ -468,7 +532,7 @@
 		onFetch: function (opts, res) {
 			var options = this.options;
 			
-			opts = opts? mixin({}, [options, opts]): options;
+			opts = opts? enyo.mixin({}, [options, opts]): options;
 			
 			var parse = opts.parse;
 			
@@ -494,7 +558,6 @@
 		onModelEvent: function (model, e) {
 			switch (e) {
 			case 'change':
-				// this.emit('change', {models: [model]});
 				this.emit('change', {model: model});
 				break;
 			case 'destroy':
@@ -508,9 +571,10 @@
 			@method
 		*/
 		onModelsChange: function (was, is, prop, opts) {
-			var models = this.models.slice();
+			var models = this.models.copy(),
+				len = models.length;
 			
-			// if (was) was.destroy();
+			if (len != this.length) this.set('length', len);
 			
 			this.emit('reset', {/* for partial backward compatibility */records: models, /* prefered */models: models});
 		},
@@ -519,9 +583,9 @@
 			@private
 			@method
 		*/
-		constructor: inherit(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function (recs, props, opts) {
-				// opts = opts? (this.options = mixin({}, [this.options, opts])): this.options;
+				// opts = opts? (this.options = enyo.mixin({}, [this.options, opts])): this.options;
 				
 				// if properties were passed in but not a records array
 				props = recs && !(recs instanceof Array)? recs: props;
@@ -536,11 +600,11 @@
 				}
 								
 				if (props && props.options) {
-					this.options = mixin({}, [this.options, props.options]);
+					this.options = enyo.mixin({}, [this.options, props.options]);
 					delete props.options;
 				}
 				
-				opts = opts? mixin({}, [this.options, opts]): this.options;
+				opts = opts? enyo.mixin({}, [this.options, opts]): this.options;
 				
 				// @TODO: For now, while there is only one property we manually check for it
 				// if more options arrise that should be configurable this way it may need to
@@ -548,12 +612,12 @@
 				opts.fetch && (this.options.fetch = opts.fetch);
 				
 				this.length = this.models.length;
-				this.euid = uid('c');
+				this.euid = enyo.uid('c');
 				
 				sup.call(this, props);
 				
-				typeof this.model == 'string' && (this.model = constructorForKind(this.model));
-				this.store = this.store || store;
+				typeof this.model == 'string' && (this.model = enyo.constructorForKind(this.model));
+				this.store = this.store || enyo.store;
 				recs && recs.length && this.add(recs, opts);
 			};
 		}),
@@ -561,7 +625,7 @@
 		/**
 			@private
 		*/
-		constructed: inherit(function (sup) {
+		constructed: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				
@@ -579,9 +643,9 @@
 		var proto = ctor.prototype || ctor;
 		
 		if (props.options) {
-			proto.options = mixin({}, [proto.options, props.options]);
+			proto.options = enyo.mixin({}, [proto.options, props.options]);
 			delete props.options;
 		}
 	};
 	
-})(enyo);
+})(enyo, this);
