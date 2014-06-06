@@ -32,7 +32,9 @@
 				to = binding.to || '',
 				source = binding.source,
 				target = binding.target,
-				owner = binding.owner;
+				owner = binding.owner,
+				twoWay = !binding.oneWay,
+				toTarget;
 			
 			if (typeof from != 'string') from = '';
 			if (typeof to != 'string') to = '';
@@ -72,6 +74,14 @@
 			binding._source = source;
 			binding._from = from[0] == '.'? from.slice(1): from;
 			binding._to = to[0] == '.'? to.slice(1): to;
+			
+			if (!twoWay) {
+				toTarget = binding._to.split('.');
+				if (toTarget.length > 2) {
+					toTarget.pop();
+					binding._toTarget = toTarget.join('.');
+				}
+			}
 			
 			// now our sanitation
 			rdy = !! (
@@ -195,7 +205,7 @@
 		reset: function () {
 			this.disconnect();
 			this.ready = null;
-			this._source = this._target = this._to = this._from = null;
+			this._source = this._target = this._to = this._from = this._toTarget = null;
 			return this;
 		},
 		
@@ -219,6 +229,9 @@
 					// for two-way bindings we register to observe changes
 					// from the target
 					if (!this.oneWay) this._target.observe(this._to, this.onTarget, this);
+					else if (this._toTarget) {
+						this._target.observe(this._toTarget, this.onToTarget, this, {priority: true});
+					}
 					
 					// we flag it as having been connected
 					this.connected = true;
@@ -240,6 +253,9 @@
 				// for two-way bindings we unregister the observer from
 				// the target as well
 				if (!this.oneWay) this._target.unobserve(this._to, this.onTarget, this);
+				else if (this._toTarget) {
+					this._target.unobserve(this._toTarget, this.onToTarget, this);
+				}
 				
 				this.connected = false;
 			}
@@ -320,6 +336,7 @@
 			bindings.push(this);
 			
 			if (props) enyo.mixin(this, props);
+			
 			if (!this.euid) this.euid = enyo.uid('b');
 			if (this.autoConnect) this.connect();
 		},
@@ -366,6 +383,14 @@
 			// properties or stale values?
 			this.dirty = this.dirty == DIRTY_FROM ? null : DIRTY_TO;
 			return this.dirty == DIRTY_TO && this.sync();
+		},
+		
+		/**
+			@private
+		*/
+		onToTarget: function (was, is, path) {
+			this.dirty = DIRTY_FROM;
+			this.reset().connect();
 		}
 	});
 	
