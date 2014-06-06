@@ -323,7 +323,11 @@
 			@method
 		*/
 		forEach: function (fn, ctx) {
-			return this.models.forEach(fn, ctx || this);
+			
+			// ensure that this is an immutable reference to the models such that changes will
+			// not affect the entire loop - e.g. calling destroy on models won't keep this from
+			// completing
+			return this.models.slice().forEach(fn, ctx || this);
 		},
 		
 		/**
@@ -331,7 +335,11 @@
 			@method
 		*/
 		filter: function (fn, ctx) {
-			return this.models.filter(fn, ctx || this);
+			
+			// ensure that this is an immutable reference to the models such that changes will
+			// not affect the entire loop - e.g. calling destroy on models won't keep this from
+			// completing
+			return this.models.slice().filter(fn, ctx || this);
 		},
 		
 		/**
@@ -339,7 +347,11 @@
 			@method
 		*/
 		find: function (fn, ctx) {
-			return this.models.find(fn, ctx || this);
+			
+			// ensure that this is an immutable reference to the models such that changes will
+			// not affect the entire loop - e.g. calling destroy on models won't keep this from
+			// completing
+			return this.models.slice().find(fn, ctx || this);
 		},
 		
 		/**
@@ -347,7 +359,11 @@
 			@method
 		*/
 		map: function (fn, ctx) {
-			return this.models.map(fn, ctx || this);
+			
+			// ensure that this is an immutable reference to the models such that changes will
+			// not affect the entire loop - e.g. calling destroy on models won't keep this from
+			// completing
+			return this.models.slice().map(fn, ctx || this);
 		},
 		
 		/**
@@ -355,7 +371,11 @@
 			@method
 		*/
 		indexOf: function (model, offset) {
-			return this.models.indexOf(model, offset);
+			
+			// ensure that this is an immutable reference to the models such that changes will
+			// not affect the entire loop - e.g. calling destroy on models won't keep this from
+			// completing
+			return this.models.slice().indexOf(model, offset);
 		},
 		
 		/**
