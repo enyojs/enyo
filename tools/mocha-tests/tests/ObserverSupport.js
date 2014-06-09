@@ -94,10 +94,10 @@ describe ("ObserverSupport Mixin", function () {
 				
 				fn = function () {};
 				obj.addObserver("some.nested.property", fn);
-				chain = obj.chains()[0];
+				chain = obj.getChains()[0];
 				obj.removeObserver("some.nested.property", obj.chainObserver);
 				expect(chain.destroyed).to.be.true;
-				expect(obj.chains()).to.be.empty;
+				expect(obj.getChains()).to.be.empty;
 			});
 		});
 		
@@ -125,10 +125,10 @@ describe ("ObserverSupport Mixin", function () {
 				
 				fn = function () {};
 				obj.observe("some.nested.property", fn);
-				chain = obj.chains()[0];
+				chain = obj.getChains()[0];
 				obj.unobserve("some.nested.property", obj.chainObserver);
 				expect(chain.destroyed).to.be.true;
-				expect(obj.chains()).to.be.empty;
+				expect(obj.getChains()).to.be.empty;
 			});
 		});
 		
@@ -560,7 +560,7 @@ describe ("ObserverSupport Mixin", function () {
 			});
 		
 			it ("should destroy all chains when an object is destroyed", function () {
-				var chains = obj.chains();
+				var chains = obj.getChains();
 				expect(chains).to.be.an("array").and.have.length(2);
 				obj.destroy();
 				enyo.forEach(chains, function (chain) {
