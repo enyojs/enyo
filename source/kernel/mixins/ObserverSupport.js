@@ -294,14 +294,17 @@
 		*/
 		constructor: enyo.inherit(function (sup) {
 			return function () {
-				var chains, chain;
+				var chains, chain, path, entries, i;
 				
 				// if there are any observers that need to create dynamic chains
 				// we look for and instance those now
 				if (this._observerChains) {
 					chains = this._observerChains;
 					this._observerChains = {};
-					for (var i=0; (chain=chains[i]); ++i) this.observe(chain.path, chain.method);
+					for (path in chains) {
+						entries = chains[path];
+						for (i = 0; (chain = entries[i]); ++i) this.observe(path, chain.method);
+					}
 				}
 				
 				sup.apply(this, arguments);
@@ -349,7 +352,7 @@
 		var proto = ctor.prototype || ctor
 			, observers = proto._observers? Object.create(proto._observers): null
 			, incoming = props.observers
-			, chains = proto._observerChains && proto._observerChains.slice();
+			, chains = proto._observerChains && Object.create(proto._observerChains);
 			
 		if (!observers) {
 			if (proto.kindName) observers = {};
@@ -384,8 +387,11 @@
 			var obs;
 			// we have to make sure that the path isn't a chain because if it is we add it
 			// to the chains instead
-			if (path.indexOf(".") > -1) (chains || (chains = [])).push({path: path, method: method});
-			else {
+			if (path.indexOf(".") > -1) {
+				if (!chains) chains = {};
+				obs = chains[path] || (chains[path] = []);
+				obs.push({method: method});
+			} else {
 				if (observers[path] && !observers.hasOwnProperty(path)) observers[path] = observers[path].slice();
 				obs = observers[path] || (observers[path] = []);
 				if (!obs.find(function (ln) { return ln.method == method; })) obs.push({method: method});
