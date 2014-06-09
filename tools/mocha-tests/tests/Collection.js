@@ -1,92 +1,94 @@
-describe ("Collection", function () {
-	describe ("Methods", function () {
-		var ctor = enyo.Collection;
+describe('enyo.Collection', function () {
+	
+	var Collection = enyo.Collection,
+		proto = Collection.prototype;
+	
+	describe('methods', function () {
 		
-		describe ("#add", function () {
-			var col, shared, destroy;
+		describe('#add', function () {
 			
-			shared = [
-				{id: 1, name: "Kevin"},
-				{id: 2, name: "Cole"},
-				{id: 3, name: "Gray"},
-				{id: 4, name: "Jim"},
-				{id: 5, name: "Aaron"},
-				{id: 6, name: "Blake"}
-			];
-			
-			afterEach (function () {
-				col && destroy && col.destroy();
-			});
-			
-			it ("should respond to the method add", function () {
-				expect(ctor.prototype).to.respondTo("add");
-			});
-			it ("should accept an array of object literals", function () {
-				var fn;
-				col = new ctor();
-				col.on("add", function () { throw new Error("add"); });
-				fn = function () {
-					col.add(shared);
-				};
-				expect(fn).to.throw("add");
-				expect(col).to.have.length(6);
-			});
-			it ("should default to using existing models when possible", function () {
-				var fn;
-				expect(col).to.have.length(6);
-				
-				fn = function () {
-					col.add([{id: 6, name: "Blake Stephens"}, {id: 7, name: "Jeff"}]);
-				};
-				
-				expect(fn).to.throw("add");
-				expect(col).to.have.length(7);
-				expect(col.at(5).get("name")).to.equal("Blake Stephens");
-			});
-			it ("should accept an array of model instances", function () {
-				var len = col.length, fn;
-				enyo.forEach(shared, function (ln, idx) {
-					shared[idx] = new enyo.Model(ln);
-				});
-				
-				fn = function () {
-					col.add(shared);
-				};
-				expect(fn).to.throw("add");
-				expect(col).to.have.length((len * 2) - 1);
-				destroy = true;
-			});
 		});
-		describe ("#remove", function () {
-			var col, shared, destroy;
+		
+		describe('#remove', function () {
 			
-			afterEach (function () {
-				col && destroy && col.destroy();
-			});
-			
-			it ("should respond to the method remove", function () {
-				expect(ctor.prototype).to.respondTo("remove");
-			});
-			
-			it ("should accept an array of model instances to be removed, if found", function () {
-				var model, fn;
-				col = new ctor();
-				col.on("remove", function () { throw new Error("remove"); });
-				col.add({id: 0, name: "Cole"});
-				expect(col).to.have.length(1);
-				model = col.at(0);
-				expect(model).to.exist.and.to.be.instanceof(enyo.Model);
-				fn = function () {
-					col.remove(model);
-				};
-				expect(fn).to.throw("remove");
-				expect(col).to.have.length(0);
-				model.destroy();
-				model = new enyo.Model();
-				expect(fn).to.not.throw("remove");
-				model.destroy();
-				destroy = true;
-			});
 		});
+		
+		describe('#sort', function () {
+			
+		});
+		
+		describe('#forEach', function () {
+			
+		});
+		
+		describe('#filter', function () {
+			
+		});
+		
+		describe('#parse', function () {
+			
+		});
+		
+		describe('#at', function () {
+			
+		});
+		
+		describe('#raw', function () {
+			
+		});
+		
+		describe('#has', function () {
+			
+		});
+		
+		describe('#find', function () {
+			
+		});
+		
+		describe('#map', function () {
+			
+		});
+		
+		describe('#indexOf', function () {
+			
+		});
+		
+		describe('#empty', function () {
+			
+		});
+		
+		describe('#toJSON', function () {
+			
+		});
+		
+		describe('#commit', function () {
+			
+		});
+		
+		describe('#fetch', function () {
+			
+		});
+		
+		describe('#destroy', function () {
+			
+		});
+
 	});
+	
+	describe('statics', function () {
+		
+		describe('~constructor', function () {
+			
+		});
+		
+		describe('~concat', function () {
+			
+		});
+		
+	});
+	
+	describe('usage', function () {
+		
+	});
+	
 });
