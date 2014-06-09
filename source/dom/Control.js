@@ -372,9 +372,9 @@
 			// updated
 			attrs['class'] = classes;
 			
-			// if we don't have a node then it means the changes weren't flushed so we need to be
-			// flagged for update
-			if (!node) delegate.invalidate(this, 'attributes');
+			// we want to notify the delegate that the attributes have changed in case it wants
+			// to handle this is some special way
+			delegate.invalidate(this, 'attributes');
 		},
 		
 		/**
@@ -448,7 +448,7 @@
 			@private
 		*/
 		styleChanged: function () {
-			var delegate;
+			var delegate = this.renderDelegate || Control.renderDelegate;
 			
 			// if the cssText internal string doesn't match then we know style was set directly
 			if (this.cssText !== this.style) {
@@ -460,10 +460,11 @@
 					this.node.style.cssText = this.kindStyle + (this.style || '');
 					// now we store the parsed version
 					this.cssText = this.style = this.node.style.cssText;
-				} else {
-					delegate = this.renderDelegate || Control.renderDelegate;
-					delegate.invalidate(this, 'style');
 				}
+				
+				// we need to ensure that the delegate has an opportunity to handle this change
+				// separately if it needs to
+				delegate.invalidate('style', this);
 			}
 		},
 		
