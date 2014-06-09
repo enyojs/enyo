@@ -294,22 +294,19 @@ enyo.DataList.delegates.vertical = {
 		// retrieve the first index for the first added model in the collection
 		idx = collection.indexOf(props.models[0]);
 		
-		gen = (idx >= first && idx <= end);
-		
-		if (!gen) {
-			
-			// we can use the fact that we know that all indices of the models that were added are
-			// sequential and contiguous to know where the last index is
-			idx = idx + len - 1;
-			
-			gen = (idx <= end);
+		// we can use the fact that we know that all indices of the models that were added are
+		// sequential and contiguous to know where the last index is
+		if (idx < first) {
+			gen = (idx + len - 1 < first) ? false : true;
+		} else {
+			gen = (idx > end) ? false : true;
 		}
-		
+
 		// if we need to refresh, do it now and ensure that we're properly setup to scroll
 		// if we were adding to a partially filled page
-		if (gen) this.refresh(list);
-		else {
-			
+		if (gen) {
+			this.refresh(list);
+		} else {
 			// we still need to ensure that the metrics are updated so it knows it can scroll
 			// past the boundaries of the current pages (potentially)
 			this.adjustBuffer(list);
