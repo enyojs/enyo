@@ -569,9 +569,12 @@
 				return false;
 			}
 			
-			if (parent && parent.getAbsoluteShowing && (
-				this.parentNode !== enyo.floatingLayer.hasNode())) {
-				return parent.getAbsoluteShowing(ignoreBounds);
+			if (parent && parent.getAbsoluteShowing) {
+				
+				// we actually don't care what the parent says if it is the floating layer
+				if (!this.parentNode || (this.parentNode !== enyo.floatingLayer.hasNode())) {
+					return parent.getAbsoluteShowing(ignoreBounds);
+				}
 			}
 			
 			return true;
