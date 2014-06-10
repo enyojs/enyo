@@ -95,9 +95,24 @@
 			this.controlsPerPage(list);
 			// Compute first and last row index bounds
 			if (list.collection) {
-				list.indexBoundFirstRow = list.columns;
-				list.indexBoundLastRow = (Math.ceil(list.collection.length / list.columns) - 1) * list.columns - 1;
+				this.updateIndexBound(list);
 			}
+		},
+		/**
+			Calculates index bound that is required for adjusting page position
+		*/
+		updateIndexBound: function(list) {
+			// If updateMetrics is not called before
+			if (list.columns === undefined) {
+				var bs = list.boundsCache,
+					w  = bs.width,
+					s  = list.spacing,
+					m  = list.minWidth;
+				list.columns = Math.max(Math.floor((w-s) / (m+s)), 1);	
+			}
+
+			list.indexBoundFirstRow = list.columns;
+			list.indexBoundLastRow = (Math.ceil(list.collection.length / list.columns) - 1) * list.columns - 1;
 		},
 		/**
 			The number of controls necessary to fill a page will change depending on some
