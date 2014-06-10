@@ -464,7 +464,7 @@
 				
 				// we need to ensure that the delegate has an opportunity to handle this change
 				// separately if it needs to
-				delegate.invalidate('style', this);
+				delegate.invalidate(this, 'style');
 			}
 		},
 		
