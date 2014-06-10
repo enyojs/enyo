@@ -41,7 +41,7 @@ enyo.kind({
 	kMaxFlick: enyo.platform.android > 2 ? 2 : 1e9,
 	//* The value used in friction() to determine if the delta (e.g., y - y0) is
 	//* close enough to zero to consider as zero
-	kFrictionEpsilon: 1e-2,
+	kFrictionEpsilon: enyo.platform.webos > 3 ? 1e-1 : 1e-2,
 	//* Top snap boundary, generally 0
 	topBoundary: 0,
 	//* Right snap boundary, generally (viewport width - content width)
