@@ -353,12 +353,11 @@ enyo.DataList.delegates.vertical = {
 			pos = this.pagesByPosition(list),
 			first = pos.firstPage.start != null ? pos.firstPage.start : 0,
 			end = (cpp * 2) + (first - 1),
-			len = props.models.length,
 			gen,
 			idx;
 		
-		// retrieve the index for the last added model in the collection
-		idx = collection.indexOf(props.models[0]) + len - 1;
+		// retrieve the index for the first added model in the collection
+		idx = collection.indexOf(props.models[0]);
 		
 		// if the index is above the end of our currently rendered indices we need to refresh
 		gen = idx <= end;
