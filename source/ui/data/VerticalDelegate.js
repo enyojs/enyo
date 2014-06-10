@@ -287,34 +287,34 @@ enyo.DataList.delegates.vertical = {
 			pos = this.pagesByPosition(list),
 			first = pos.firstPage.start != null ? pos.firstPage.start : 0,
 			end = (cpp * 2) + (first - 1),
-			len = props.models.length,
-			gen,
-			check,
+			gen = true,
 			idx;
-			
-		check = function (i) {
-			return (i >= first && i <= end);
-		};
 		
 		// retrieve the first index for the first added model in the collection
 		idx = collection.indexOf(props.models[0]);
 		
-		gen = check(idx);
+		// the only time we don't refresh is if the first index of the contiguous set of added
+		// models is beyond our final rendered page (possible) indices
 		
-		if (!gen) {
-			
-			// we can use the fact that we know that all indices of the models that were added are
-			// sequential and contiguous to know where the last index is
-			idx = idx + len - 1;
-			
-			gen = check(idx);
-		}
+		// note that this will refresh the following scenarios
+		// 1. if the dataset was spliced in above the current indices and the last index added was
+		//    less than the first index rendered
+		// 2. if the dataset was spliced in above the current indices and overlapped some of the
+		//    current indices
+		// 3. if the dataset was spliced in above the current indices and completely overlapped
+		//    the current indices (pushing them all down)
+		// 4. if the dataset was spliced inside the current indices (pushing some down)
+		// 5. if the dataset was appended to the current dataset and was inside the indices that
+		//    should be currently rendered (there was a partially filled page)
+		
+		// in the case where it does not need to refresh the existing controls it will update its
+		// measurements and page positions within the buffer so scrolling can continue properly
+		if (idx > end) gen = false;
 		
 		// if we need to refresh, do it now and ensure that we're properly setup to scroll
 		// if we were adding to a partially filled page
 		if (gen) this.refresh(list);
 		else {
-			
 			// we still need to ensure that the metrics are updated so it knows it can scroll
 			// past the boundaries of the current pages (potentially)
 			this.adjustBuffer(list);
@@ -353,19 +353,14 @@ enyo.DataList.delegates.vertical = {
 			pos = this.pagesByPosition(list),
 			first = pos.firstPage.start != null ? pos.firstPage.start : 0,
 			end = (cpp * 2) + (first - 1),
-			len = props.models.length,
 			gen,
-			check,
 			idx;
-			
-		check = function (i) {
-			return (i <= end);
-		};
 		
-		// retrieve the first index for the first added model in the collection
-		idx = collection.indexOf(props.models[0]) + len - 1;
+		// retrieve the index for the first added model in the collection
+		idx = collection.indexOf(props.models[0]);
 		
-		gen = check(idx);
+		// if the index is above the end of our currently rendered indices we need to refresh
+		gen = idx <= end;
 		
 		// if we need to refresh, do it now and ensure that we're properly setup to scroll
 		// if we were adding to a partially filled page
