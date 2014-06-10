@@ -100,15 +100,12 @@
 		},
 		/**
 			Calculates index bound that is required for adjusting page position
+			You can call this method after DataGridList is rendered.
 		*/
 		updateIndexBound: function(list) {
-			// If updateMetrics is not called before
-			if (list.columns === undefined) {
-				var bs = list.boundsCache,
-					w  = bs.width,
-					s  = list.spacing,
-					m  = list.minWidth;
-				list.columns = Math.max(Math.floor((w-s) / (m+s)), 1);	
+			// If user calls this method before DataGridList is rendered
+			if (list.boundsCache === undefined) {
+				this.updateMetrics(list);
 			}
 
 			list.indexBoundFirstRow = list.columns;
