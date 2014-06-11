@@ -94,15 +94,16 @@
 			// be used for each page
 			this.controlsPerPage(list);
 			// Compute first and last row index bounds
-			if (list.collection) {
-				this.updateIndexBound(list);
-			}
+			this.updateIndexBound(list);
 		},
 		/**
 			Calculates index bound that is required for adjusting page position
 			You can call this method after DataGridList is rendered.
 		*/
 		updateIndexBound: function(list) {
+			if (list.collection) {
+				return;
+			}
 			// If user calls this method before DataGridList is rendered
 			if (list.boundsCache === undefined) {
 				this.updateMetrics(list);
