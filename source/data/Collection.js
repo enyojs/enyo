@@ -430,6 +430,22 @@
 		},
 		
 		/**
+			The configuration options for {@link enyo.Collection#remove}. For complete descriptions
+			of the options and their defaults {@see enyo.Collection#options}. Some properties have a
+			different meaning in a specific context. Please review their descriptions below to see
+			how they are used in this context.
+		
+			@typedef {object} enyo.Collection#remove~options
+			@property {boolean} silent - Emit events and notifications.
+			@property {boolean} commit - {@link enyo.Collection#commit} changes to the
+				{@link enyo.Collection} after completing the {@link enyo.Collection#add}.
+			@property {boolean} complete - Remove the {@link enyo.Model} from the
+				{@link enyo.Collection#store} as well as the {@link enyo.Collection}.
+			@property {boolean} destroy - {@link enyo.Model#destroy} the {@link enyo.Model} as well
+				as remove it from the {@link enyo.Collection}.
+		*/
+		
+		/**
 			Remove data from the dataset. It can take a [model]{@link enyo.Model} or an array of
 			[models]{@link enyo.Model}. If any of the instances are present in the
 			{@link enyo.Collection} they will be removed, in the order in which they are
@@ -437,6 +453,10 @@
 			removed from the dataset (and the `silent` option is not `true`).
 		
 			@fires enyo.Collection#remove
+			@param {(enyo.Model|enyo.Model[])} models The [models]{@link enyo.Model} to remove
+				if they exist in the {@link enyo.Collection}.
+			@param {enyo.Collection#remove~options} [opts] The configuration options that modify
+				the behavior of this method.
 			@method
 			@public
 		*/
@@ -467,7 +487,10 @@
 					model.off('*', this.onModelEvent, this);
 					if (destroy) model.destroy(opts);
 				}
-				if (complete) this.store.remove(ctor, removed);
+				
+				// no need to remove them from the store if they were destroyed as they have already
+				// been removed
+				if (complete && !destroy) this.store.remove(ctor, removed);
 			}
 			
 			this.length = loc.length;
