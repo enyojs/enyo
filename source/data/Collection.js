@@ -595,11 +595,7 @@
 			@method
 		*/
 		indexOf: function (model, offset) {
-			
-			// ensure that this is an immutable reference to the models such that changes will
-			// not affect the entire loop - e.g. calling destroy on models won't keep this from
-			// completing
-			return this.models.slice().indexOf(model, offset);
+			return this.models.indexOf(model, offset);
 		},
 		
 		/**
