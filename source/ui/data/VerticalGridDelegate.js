@@ -101,7 +101,7 @@
 			You can call this method after DataGridList is rendered.
 		*/
 		updateIndexBound: function(list) {
-			if (list.collection) {
+			if (!list.collection) {
 				return;
 			}
 			// If user calls this method before DataGridList is rendered
