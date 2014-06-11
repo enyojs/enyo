@@ -9,21 +9,54 @@ describe('enyo.Collection', function () {
 		
 		describe('#add', function () {
 			
+			var collection;
+			
+			before(function () {
+				collection = new Collection();
+			});
+			
+			after(function () {
+				collection.destroy({destroy: true});
+			});
+			
+			beforeEach(function () {
+				collection.empty({destroy: true});
+			});
+			
 			it ('should respond to the method add', function () {
 				expect(proto).to.itself.respondTo('add');
 			});
 			
+			it ('should notify observers of the length property when it is updated', function () {
+				
+				var spy = sinon.spy();
+				
+				// register the spy to listen for changes to length
+				collection.observe('length', spy);
+				collection.add({});
+				
+				expect(collection.length).to.equal(1);
+				expect(spy.callCount).to.equal(1);
+				
+				collection.unobserve('length', spy);
+			});
+			
+			it ('should listen to events from models that are added', function () {
+				
+				var spy = sinon.spy(),
+					model;
+				
+				collection.add({});
+				model = collection.at(0);
+				
+				collection.on('change', spy);
+				model.set('prop', 'value');
+				
+				expect(spy.callCount).to.equal(1);
+				
+			});
+			
 			describe('params', function () {
-				
-				var collection;
-				
-				before(function () {
-					collection = new Collection();
-				});
-				
-				after(function () {
-					collection.destroy({destroy: true});
-				});
 				
 				describe('@models', function () {
 					
@@ -134,6 +167,34 @@ describe('enyo.Collection', function () {
 							expect(collection.length).to.equal(2);
 							expect(collection.at(0).get('id')).to.equal(1);
 							expect(collection.at(1).get('id')).to.equal(2);
+						});
+						
+					});
+					
+					describe('~destroy', function () {
+						
+						afterEach(function () {
+							collection.empty({destroy: true});
+						});
+						
+						it ('should destroy models removed if the purge and destroy flags are true',
+							function () {
+							
+							var models;
+							
+							collection.add([
+								{id: 0},
+								{id: 1},
+								{id: 2}
+							]);
+							
+							// keep a copy of the models that were just instanced to check after
+							models = collection.models.slice();
+							collection.add({id: 3}, {purge: true, destroy: true});
+							
+							models.forEach(function (ln) {
+								expect(ln.destroyed).to.be.true;
+							});
 						});
 						
 					});
@@ -450,21 +511,58 @@ describe('enyo.Collection', function () {
 		
 		describe('#remove', function () {
 			
+			var collection;
+			
+			before(function () {
+				collection = new Collection();
+			});
+			
+			after(function () {
+				collection.destroy({destroy: true});
+			});
+			
 			it ('should respond to the method remove', function () {
 				expect(proto).to.itself.respondTo('remove');
 			});
 			
+			it ('should notify observers of the length property when it is updated', function () {
+				
+				var spy = sinon.spy();
+				
+				collection.add({});
+				
+				// add the spy as an observer for length changes
+				collection.observe('length', spy);
+				collection.remove(collection.at(0), {destroy: true});
+				
+				expect(collection.length).to.equal(0);
+				expect(spy.callCount).to.equal(1);
+				
+				collection.unobserve(spy);
+			});
+			
+			it ('should stop listening to events from models that are removed', function () {
+				
+				// note that collections emit a change event when any model emits a change event
+				var spy = sinon.spy(),
+					model;
+				
+				collection.add({});
+				model = collection.at(0);
+				
+				collection.on('change', spy);
+				
+				model.set('prop', 'value');
+				expect(spy.callCount).to.equal(1);
+				spy.reset();
+				collection.remove(model);
+				model.set('prop', null);
+				
+				expect(spy.callCount).to.equal(0);
+				collection.off('change', spy);
+			});
+			
 			describe('params', function () {
-				
-				var collection;
-				
-				before(function () {
-					collection = new Collection();
-				});
-				
-				after(function () {
-					collection.destroy({destroy: true});
-				});
 				
 				describe('@models', function () {
 					
@@ -474,6 +572,10 @@ describe('enyo.Collection', function () {
 							{},
 							{}
 						]);
+					});
+					
+					after(function () {
+						collection.empty({destroy: true});
 					});
 					
 					it ('should accept a model instance', function () {
@@ -490,7 +592,106 @@ describe('enyo.Collection', function () {
 				
 				describe('@opts', function () {
 					
+					describe('~silent', function () {
+						
+						it ('should not emit events or notifications if the silent flag is true',
+							function () {
+							
+							var spy = sinon.spy();
+							
+							collection.add({});
+							
+							// add the spy as a listener for events and for notifications
+							collection.on('*', spy);
+							collection.observe('*', spy);
+							
+							collection.remove(collection.models, {silent: true, destroy: true});
+							
+							expect(collection.length).to.equal(0);
+							expect(spy.called).to.be.false;
+						});
+						
+					});
 					
+					describe('~commit', function () {
+						
+						it ('should call commit when commit is true and changes are made',
+							function () {
+							
+							var stub;
+							
+							collection.add({});
+							
+							stub = sinon.stub(collection, 'commit');
+							
+							collection.remove(collection.models, {commit: true});
+							
+							expect(stub.callCount).to.equal(1);
+							stub.restore();
+						});
+						
+						it ('should not call commit when commit is true but changes are not made',
+							function () {
+							
+							var model = new Model(),
+								stub = sinon.stub(collection, 'commit');
+							
+							// attempt to remove a model that is not in the collection
+							collection.remove(model, {commit: true});
+							
+							expect(stub.callCount).to.equal(0);
+							stub.restore();
+							model.destroy();
+						});
+						
+					});
+					
+					describe('~complete', function () {
+						
+						it ('should remove a model from the collection\'s store reference if it ' +
+							'is true and the model was also removed from the collection',
+							function () {
+							
+							var model;
+							
+							collection.add({});
+							model = collection.at(0);
+							
+							expect(collection.store.has(model)).to.be.true;
+							
+							collection.remove(model, {complete: true});
+							
+							expect(collection.length).to.equal(0);
+							expect(collection.store.has(model)).to.be.false;
+							
+							model.destroy();
+						});
+						
+					});
+					
+					describe('~destroy', function () {
+						
+						it ('should destroy the models removed from the collection', function () {
+							
+							var models;
+							
+							collection.add([
+								{},
+								{},
+								{}
+							]);
+							
+							models = collection.models.slice();
+							collection.remove(collection.models, {destroy: true});
+							
+							expect(collection.length).to.equal(0);
+							
+							models.forEach(function (ln) {
+								expect(ln.destroyed).to.be.true;
+							});
+						});
+						
+					});
 					
 				});
 				
@@ -573,6 +774,13 @@ describe('enyo.Collection', function () {
 	});
 	
 	describe('usage', function () {
+		
+		describe('events', function () {
+			
+			
+			
+		});
+		
 		
 	});
 	

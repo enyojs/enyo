@@ -251,6 +251,8 @@
 				resolved it should _create_ a new instance.
 			@property {number} index - The index at which to add the new dataset. Defaults to the
 				end of the current dataset if not explicitly set or valid.
+			@property {boolean} destroy - If `purge` is `true`, this will {@link enyo.Model#destroy}
+				any [models]{@link enyo.Model} that were [removed]{@link enyo.Collection#remove}.
 			@property {object} modelOptions - When instancing a model this object will be passed
 				to the constructor as its {@link enyo.Model#constructor} options parameter.
 		*/
@@ -274,6 +276,7 @@
 			@param {enyo.Collection#add~options} [opts] The configuration options that modify the
 				behavior of this method. The [defaults]{@link enyo.Collection#options} will be
 				merged with these options before evaluating.
+			@returns {enyo.Model[]} The [models]{@link enyo.Model} that were added, if any.
 			@method
 			@public
 		*/
@@ -409,7 +412,7 @@
 				loc.add(added, idx);
 				sort && this.sort(sort, {silent: true});
 				
-				// we batch this operation to make use of its ~efficient array opereations
+				// we batch this operation to make use of its ~efficient array operations
 				this.store.add(added); 
 			}
 			this.length = loc.length;
@@ -426,7 +429,7 @@
 			
 			commit && added && this.commit(opts);
 			
-			return added;
+			return added || [];
 		},
 		
 		/**
@@ -457,6 +460,7 @@
 				if they exist in the {@link enyo.Collection}.
 			@param {enyo.Collection#remove~options} [opts] The configuration options that modify
 				the behavior of this method.
+			@returns {enyo.Model[]} The [models]{@link enyo.Model} that were removed, if any.
 			@method
 			@public
 		*/
@@ -490,7 +494,7 @@
 				
 				// no need to remove them from the store if they were destroyed as they have already
 				// been removed
-				if (complete && !destroy) this.store.remove(ctor, removed);
+				if (complete && !destroy) this.store.remove(removed);
 			}
 			
 			this.length = loc.length;
@@ -502,12 +506,17 @@
 				}
 			}
 			
-			commit && removed && this.commit();
+			commit && removed.length && this.commit();
 			
 			return removed;
 		},
 		
 		/**
+			Retrieve a {@link enyo.Model} for the provided index.
+		
+			@param {number} idx The index to return from the {@link enyo.Collection}.
+			@returns {(enyo.Model|undefined)} The {@link enyo.Model} at the given index or
+				`undefined`.
 			@public
 			@method
 		*/
