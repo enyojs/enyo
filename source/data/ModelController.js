@@ -160,13 +160,17 @@
 			@private
 			@method
 		*/
-		constructor: function (props) {
-			// ensure we have our own model property
-			this.model = null;
-			
-			// adhere to normal approach to constructor properties hash
-			props && mixin(this, props);
-		},
+		constructor: inherit(function (sup) {
+			return function (props) {
+				sup.apply(this, arguments);
+
+				// ensure we have our own model property
+				this.model = null;
+				
+				// adhere to normal approach to constructor properties hash
+				props && mixin(this, props);
+			};
+		}),
 		
 		/**
 			@public
