@@ -62,21 +62,6 @@ enyo.kind({
 		};
 	}),
 	/**
-		We guarantee that index bound is maintained and up to date.
-	*/
-	modelsAdded: enyo.inherit(function (sup) {
-		return function (list, props) {
-			this.updateIndexBound(list);
-			sup.apply(this, arguments);
-		};
-	}),
-	modelsRemoved: enyo.inherit(function (sup) {
-		return function (list, props) {
-			this.updateIndexBound(list);
-			sup.apply(this, arguments);
-		};
-	}),
-	/**
 		We don't want to worry about the normal required handling when showing changes unless
 		we're actually visible and the list has been fully rendered and we actually have
 		some data.
