@@ -1,9 +1,32 @@
 describe('enyo.Collection', function () {
 	
 	var Collection = enyo.Collection,
-		Model = enyo.Model;
+		Model = enyo.Model,
+		STATES = Collection.STATES;
 	
 	var proto = Collection.prototype;
+	
+	describe('properties', function () {
+		
+		var collection;
+		
+		before(function () {
+			collection = new Collection();
+		});
+		
+		after(function () {
+			collection.destroy({destroy: true});
+		});
+		
+		describe('#status', function () {
+			
+			it ('should have the default READY status', function () {
+				expect(collection.status).to.equal(STATES.READY);
+			});
+			
+		});
+		
+	});
 	
 	describe('methods', function () {
 		

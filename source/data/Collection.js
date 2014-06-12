@@ -9,6 +9,68 @@
 		Source = enyo.Source;
 	
 	/**
+		The possible values assigned to {@link enyo.Collection#status}. These codes can be extended
+		when necessary to provide more detailed state control.
+	
+		@todo Need example of what extending looks like and how to keep functionality working in
+			error state handling, etc.
+	
+		@name enyo.Collection~STATES
+		@enum {number}
+		@readonly
+	*/
+	var STATES = {
+		
+		/**
+			The default {@link enyo.Collection#status}. No actions are currently taking place and
+			no errors have been encountered.
+		*/
+		READY: 0x01,
+		
+		/**
+			The {@link enyo.Collection} is currently attempting to {@link enyo.Collection#fetch}.
+		*/
+		FETCHING: 0x02,
+		
+		/**
+			The {@link enyo.Collection} is currently attempting to {@link enyo.Collection#commit}.
+		*/
+		COMMITTING: 0x04,
+		
+		/**
+			The {@link enyo.Collection} has encountered an error during a
+			{@link enyo.Collection#fetch} attempt.
+		*/
+		ERROR_FETCHING: 0x08,
+		
+		/**
+			The {@link enyo.Collection} has encountered an error during a
+			{@link enyo.Collection#commit} attempt.
+		*/
+		ERROR_COMMITTING: 0x10,
+		
+		/**
+			NOT AN ACTUAL STATE. This is (with default values) when the {@link enyo.Collection} is
+			[fetching]{@link enyo.Collection#fetch} or [committing]{@link enyo.Collection#commit}.
+			This is a convenience mask to test if it is doing some asynchronous task and waiting
+			for a result. If additional states are added that would need to be testable as a busy
+			state, those values would need to be OR'd with this.
+		
+			@todo Example of how to use this mask.
+		*/
+		BUSY: 0x02 | 0x04,
+		
+		/**
+			NOT AN ACTUAL STATE. This is exposed for extensibility purposes and is used for error
+			state checking against a mask of possible error codes. If additional error codes are
+			added they will need to be OR'd with this mask.
+		
+			@todo Example of how to do this.
+		*/
+		ERROR: 0x08 | 0x10
+	};
+	
+	/**
 		An array-like structure designed to house a _collection_ of {@link enyo.Model} instances.
 	
 		@public
@@ -44,6 +106,19 @@
 			@public
 		*/
 		model: Model,
+		
+		/**
+			The current {@link enyo.Collection#STATES} of the {@link enyo.Collection}. This value
+			changes automatically and can be observed for more complex state monitoring. If an
+			error is encountered it must be cleared before additional state-altering actions can
+			be taken; {@see enyo.Collection#clearError} for more information.
+			
+			@type enyo.Collection~STATES
+			@default enyo.Collection~STATES.READY
+			@readonly
+			@public
+		*/
+		status: STATES.READY,
 		
 		/**
 			The configurable default {@link enyo.Collection#options}. These values will be used to
@@ -658,40 +733,96 @@
 		},
 		
 		/**
+			Attempt to persist the state of this {@link enyo.Collection}. The actual method by which
+			this is accomplished varies on the associated [source]{@link enyo.Collection#source} (or
+			[overloaded source]{@link enyo.Collection#commit~options.source}). This method will
+			immediately call {@link enyo.Collection#onError} with the `action` set to the current
+			{@link enyo.Collection#status} if it is one of the error states
+			({@link enyo.Collection~STATES.ERROR_FETCHING} or
+			{@link enyo.Collection~STATES.ERROR_COMMITTING}; more if extended). Also note you cannot
+			call this method if it is already in a [busy state]{@link enyo.Collection~STATES.BUSY}.
+			
+			@param {external:Object} [opts] The configuration
+				[options]{@link enyo.Collection#commit~options}.
+			@returns {enyo.Collection} The callee for chaining.
+			@method
 			@public
 		*/
 		commit: function (opts) {
-			var options = opts? enyo.clone(opts): {}
-				, dit = this;
+			var options,
+				source,
+				it = this;
 			
-			options.success = function (res) {
-				dit.onCommit(opts, res);
-			};
+			// if the current status is not one of the error states we can continue
+			if (this.status & ~(STATES.ERROR | STATES.BUSY)) {
+				
+				// if there were options passed in we copy them quickly so that we can hijack
+				// the success and error methods while preserving the originals to use later
+				options = opts ? enyo.clone(opts, true) : {};
+				
+				// make sure we keep track of how many sources we're requesting
+				source = opts.source || this.source;
+				if (source && ((source instanceof Array) || source === true)) {
+					this._waiting = source.length ? source.slice() : Object.keys(enyo.sources);
+				}
+					
+				options.success = function (source, res) {
+					it.onCommit(opts, res, source);
+				};
+				
+				options.error = function (source, res) {
+					it.onError('COMMITTING', opts, res, source);
+				};
+				
+				// set the state
+				this.set('status', STATES.COMMITTING);
+				
+				// now pass this on to the source to execute as it sees fit
+				Source.execute('commit', this, options);
+			} else this.onError(this.status, opts);
 			
-			options.error = function (res) {
-				dit.onError('commit', opts, res);
-			};
-			
-			Source.execute('commit', this, options);
 			return this;
 		},
 		
 		/**
+			@todo
+			
+			@method
 			@public
 		*/
 		fetch: function (opts) {
-			var options = opts? enyo.clone(opts): {}
-				, dit = this;
+			var options,
+				source,
+				it = this;
+				
+			// if the current status is not one of the error states we can continue
+			if (this.status & ~(STATES.ERROR | STATES.BUSY)) {
+				
+				// if there were options passed in we copy them quickly so that we can hijack
+				// the success and error methods while preserving the originals to use later
+				options = opts ? enyo.clone(opts, true) : {};
+				
+				// make sure we keep track of how many sources we're requesting
+				source = opts.source || this.source;
+				if (source && ((source instanceof Array) || source === true)) {
+					this._waiting = source.length ? source.slice() : Object.keys(enyo.sources);
+				}
+				
+				options.success = function (source, res) {
+					it.onFetch(opts, res, source);
+				};
+				
+				options.error = function (source, res) {
+					it.onError('FETCHING', opts, res, source);
+				};
+				
+				// set the state
+				this.set('status', STATES.FETCHING);
+				
+				// now pass this on to the source to execute as it sees fit
+				Source.execute('fetch', opts, res);
+			} else this.onError(this.status, opts);
 			
-			options.success = function (res) {
-				dit.onFetch(opts, res);
-			};
-			
-			options.error = function (res) {
-				dit.onError('fetch', opts, res);
-			};
-			
-			Source.execute('fetch', this, options);
 			return this;
 		},
 		
@@ -740,40 +871,75 @@
 		/**
 			@private
 		*/
-		onCommit: function (opts, res) {
-			this.log(opts, res);
+		onCommit: function (opts, res, source) {
+			var idx;
 			
-			if (opts && opts.success) opts.success(opts, res);
-		},
-		
-		/**
-			@private
-		*/
-		onFetch: function (opts, res) {
-			var options = this.options;
-			
-			opts = opts? enyo.mixin({}, [options, opts]): options;
-			
-			var parse = opts.parse;
-			
-			if (res) {
-				parse && (res = this.parse(res));
-				this.add(res, opts);
+			if (this._waiting) {
+				idx = this._waiting.indexOf(source);
+				if (idx > -1) this._waiting.splice(idx, 1);
+				if (!this._waiting.length) this._waiting = null;
 			}
 			
-			if (opts.success) opts.success(this, opts, res);
+			// clear the state
+			if (!this._waiting) this.set('status', STATES.READY);
+			
+			if (opts && opts.success) opts.success(this, opts, res, source);
 		},
 		
 		/**
 			@private
 		*/
+		onFetch: function (opts, res, source) {
+			var idx;
+			
+			if (this._waiting) {
+				idx = this._waiting.indexOf(source);
+				if (idx > -1) this._waiting.splice(idx, 1);
+				if (!this._waiting.length) this._waiting = null;
+			}
+			
+			// clear the state
+			if (!this._waiting) this.set('status', STATES.READY);
+			
+			// if there is a result we add it to the collection passing it any per-fetch options
+			// that will override the defaults (e.g. parse) we don't do that here as it will
+			// be done in the add method -- also note we reassign the result to whatever was
+			// actually added and pass that to any other success callback if there is one
+			if (res) res = this.add(res, opts);
+			
+			// now look for an additional success callback
+			if (opts && opts.success) opts.success(this, opts, res, source);
+		},
+		
+		/**
+			If an {@link enyo.Collection#error} is encountered during {@link enyo.Collection#fetch}
+			or {@link enyo.Collection#commit} this method will be called. By default it updates the
+			[collection's]{@link enyo.Collection} {@link enyo.Collection#status} property and then
+			checks to see if there is a provided
+			[error handler]{@link enyo.Collection#source~options} and, if so, will call that method
+			with the appropriate parameters {@see enyo.Collection#source~error}. This method can be
+			overloaded to provide additional behavior.
+		
+			@param {string} action The name of the action that failed, one of `FETCHING` or
+				`COMMITTING`.
+			@param {enyo.Collection#source~options} The options hash originally passed along with
+				the original action.
+			@param {*} [res] The result of the requested `action` - varies depending on the
+				requested {@link enyo.Collection#source}.
+			@public
+		*/
 		onError: function (action, opts, res) {
-			this.log(action, opts, res);
+			
+			// if the error action is a status number then we don't need to update it otherwise
+			// we set it to the known state value
+			if (typeof action == 'string') this.set('status', STATES[action]);
+			
+			// we need to check to see if there is an options handler for this error
+			if (opts && opts.error) opts.error(this, action, opts, res);
 		},
 		
 		/**
 			@private
-			@method
 		*/
 		onModelEvent: function (model, e) {
 			switch (e) {
@@ -788,7 +954,6 @@
 		
 		/**
 			@private
-			@method
 		*/
 		onModelsChange: function (was, is, prop, opts) {
 			var models = this.models.copy(),
@@ -801,7 +966,6 @@
 		
 		/**
 			@private
-			@method
 		*/
 		constructor: enyo.inherit(function (sup) {
 			return function (recs, props, opts) {
@@ -854,6 +1018,13 @@
 			};
 		})
 	});
+	
+	/**
+		@alias enyo.Collection~STATES
+		@static
+		@public
+	*/
+	Collection.STATES = STATES;
 	
 	/**
 		@private

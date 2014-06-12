@@ -103,30 +103,77 @@
 	};
 	
 	Source.execute = function (action, model, opts) {
-		var source = opts.source || model.source
-			, name;
+		var source = opts.source || model.source,
+		
+			// we need to be able to bind the success and error callbacks for each of the
+			// sources we'll be using
+			options = enyo.clone(opts, true),
+			nom = source,
+			msg;
 		
 		if (source) {
-			// if it is a boolean true then it means use all available sources
+			
+			// if explicitly set to true then we need to use all available sources in the
+			// application
 			if (source === true) {
-				for (name in enyo.sources) {
-					source = enyo.sources[name];
-					source[action] && source[action](model, opts);
+				
+				for (nom in enyo.sources) {
+					source = enyo.sources[nom];
+					if (source[action]) {
+						
+						// bind the source name to the success and error callbacks
+						options.success = opts.success.bind(null, nom);
+						options.error = opts.error.bind(null, nom);
+						
+						source[action](model, options);
+					}
 				}
 			}
 			
-			// if it is an array of specific sources to use
+			// if it is an array of specific sources to use we, well, will only use those!
 			else if (source instanceof Array) {
-				source.forEach(function (name) {
-					if (enyo.sources[name] && enyo.sources[name][action]) enyo.sources[name][action](model, opts);
+				source.forEach(function (nom) {
+					var src = enyo.sources[nom];
+					
+					if (src && src[action]) {
+						// bind the source name to the success and error callbacks
+						options.success = opts.success.bind(null, nom);
+						options.error = opts.error.bind(null, nom);
+						
+						src[action](model, options);
+					}
 				});
 			}
 			
-			// else the singular case
-			else if ((source = enyo.sources[source]) && source[action]) source[action](model, opts);
+			// otherwise only one was specified and we attempt to use that
+			else if ((source = enyo.sources[nom]) && source[action]) {
+				
+				// bind the source name to the success and error callbacks
+				options.success = opts.success.bind(null, nom);
+				options.error = opts.error.bind(null, nom);
+				
+				source[action](model, options);
+			}
+			
+			// we could not resolve the requested source
+			else {
+				msg = 'enyo.Source.execute(): requested source(s) could not be found for ' +
+					model.kindName + '.' + action + '()';
+				
+				enyo.warn(msg);
+				
+				// we need to fail the attempt and let it be handled
+				opts.error(nom, msg);
+			}
+		} else {
+			msg = 'enyo.Source.execute(): no source(s) provided for ' + model.kindName + '.' +
+				action + '()';
+				
+			enyo.warn(msg);
+			
+			// we need to fail the attempt and let it be handled
+			opts.error(nom, msg);
 		}
-		
-		else enyo.warn('enyo.Source.execute(): invalid source(s) requested by ' + model.kindName + '.' + action + '()');
 	};
 	
 })(enyo);
