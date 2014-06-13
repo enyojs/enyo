@@ -93,7 +93,41 @@
 			// unfortunately this forces us to recalculate the number of controls that can
 			// be used for each page
 			this.controlsPerPage(list);
+
+			// Compute first and last row index bounds
+			this.updateIndexBound(list);
 		},
+		/**
+			Calculates index bound that is required for adjusting page position
+			You can call this method after DataGridList is rendered.
+		*/
+		updateIndexBound: function(list) {
+			if (!list.collection) {
+				return;
+			}
+			// If user calls this method before DataGridList is rendered
+			if (list.boundsCache === undefined) {
+				this.updateMetrics(list);
+			}
+
+			list.indexBoundFirstRow = list.columns;
+			list.indexBoundLastRow = (Math.ceil(list.collection.length / list.columns) - 1) * list.columns - 1;
+		},
+		/**
+			We guarantee that index bound is maintained and up to date.
+		*/
+		modelsAdded: enyo.inherit(function (sup) {
+			return function (list, props) {
+				this.updateIndexBound(list);
+				sup.apply(this, arguments);
+			};
+		}),
+		modelsRemoved: enyo.inherit(function (sup) {
+			return function (list, props) {
+				this.updateIndexBound(list);
+				sup.apply(this, arguments);
+			};
+		}),
 		/**
 			The number of controls necessary to fill a page will change depending on some
 			factors such as scaling and list-size adjustments. It is a function of the calculated
@@ -120,7 +154,7 @@
 		/**
 			Takes a given page and arbitrarily positions its children according to the pre-computed
 			metrics of the list.
-	
+
 			TODO: This could be optimized to use requestAnimationFrame as well as render not by
 			child index but by row thus cutting down some of the over-calculation when iterating
 			over every child.
@@ -179,11 +213,11 @@
 		didResize: function (list) {
 			// store the previous stats for comparative purposes
 			var prev = list.boundsCache;
-			
+
 			// flag the list to have its bounds updated
 			list._updateBounds = true;
 			this.updateMetrics(list);
-			
+
 			// if no change it the viewport then we didn't update anything size-wise
 			// and do not need to refresh at all
 			if (
@@ -194,7 +228,7 @@
 			) {
 				return;
 			}
-			
+
 			// it is necessary to update the content of the list according to our
 			// new sizing
 			this.refresh(list);
