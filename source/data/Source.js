@@ -51,7 +51,13 @@
 			@method
 		*/
 		destroy: function (model, opts) {
-			//
+			
+			// if called with no parameters we actually just breakdown the source and remove
+			// it as being available
+			if (!arguments.length) {
+				enyo.sources[this.name] = null;
+				this.name = null;
+			}
 		},
 		
 		/**
@@ -133,16 +139,26 @@
 			// if it is an array of specific sources to use we, well, will only use those!
 			else if (source instanceof Array) {
 				source.forEach(function (nom) {
-					var src = enyo.sources[nom];
+					var src = typeof nom == 'string' ? enyo.sources[nom] : nom;
 					
 					if (src && src[action]) {
 						// bind the source name to the success and error callbacks
-						options.success = opts.success.bind(null, nom);
-						options.error = opts.error.bind(null, nom);
+						options.success = opts.success.bind(null, src.name);
+						options.error = opts.error.bind(null, src.name);
 						
 						src[action](model, options);
 					}
 				});
+			}
+			
+			// if it is an instance of a source
+			else if (source instanceof Source && source[action]) {
+				
+				// bind the source name to the success and error callbacks
+				options.success = opts.success.bind(null, source.name);
+				options.error = opts.error.bind(null, source.name);
+				
+				source[action](model, options);
 			}
 			
 			// otherwise only one was specified and we attempt to use that

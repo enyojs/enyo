@@ -901,6 +901,9 @@
 	};
 
 	/**
+		@todo Rewrite with appropriate documentation for options parameter (typedef)
+		@todo document 'quick' option
+	
 		Will take a variety of options to ultimately mix a set of properties
 		from objects into single object. All configurations accept a boolean as
 		the final parameter to indicate whether or not to ignore _truthy_/_existing_

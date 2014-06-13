@@ -174,6 +174,8 @@
 			@method
 		*/
 		destroy: function (opts) {
+			var options,
+				it = this;
 			
 			// this becomes an (potentially) async operation if we are committing this destroy
 			// to a source and its kind of tricky to figure out because there are several ways
@@ -187,14 +189,18 @@
 				// as true
 				(opts && (opts.source || opts.commit))
 			) {
-				var scop = this,
-					options = opts ? enyo.clone(opts) : {};
+				options = opts ? enyo.clone(opts, true) : {};
 					
 				options.success = function () {
 					// continue the operation this time with commit false explicitly
-					scop.destroy({commit: false});
+					it.destroy({commit: false});
 					if (opts && opts.success) opts.success(opts);
 				};
+				
+				options.error = function (source, res) {
+					// @todo
+				};
+				
 				Source.execute('destroy', this, options);
 				return this;
 			}
@@ -361,7 +367,7 @@
 			@private
 			@method
 		*/
-		onFetch: function (res, opts) {
+		onFetch: function (opts, res, source) {
 			// console.log('enyo.Model.onFetch', arguments);
 			
 			this.isNew = false;
@@ -374,7 +380,7 @@
 			@private
 			@method
 		*/
-		onCommit: function () {
+		onCommit: function (opts, res, source) {
 			// console.log('enyo.Model.onCommit', arguments);
 			
 			this.isDirty = false;
@@ -383,7 +389,7 @@
 		/**
 			@private
 		*/
-		onError: function () {
+		onError: function (action, opts, res, source) {
 			// console.log('enyo.Model.onError', arguments);
 		}
 	});

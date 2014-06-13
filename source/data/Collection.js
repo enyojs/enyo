@@ -50,6 +50,12 @@
 		ERROR_COMMITTING: 0x10,
 		
 		/**
+			The {@link enyo.Collection} has somehow encountered an error that it does not understand
+			so it uses this state.
+		*/
+		ERROR_UNKNOWN: 0x20,
+		
+		/**
 			NOT AN ACTUAL STATE. This is (with default values) when the {@link enyo.Collection} is
 			[fetching]{@link enyo.Collection#fetch} or [committing]{@link enyo.Collection#commit}.
 			This is a convenience mask to test if it is doing some asynchronous task and waiting
@@ -67,7 +73,7 @@
 		
 			@todo Example of how to do this.
 		*/
-		ERROR: 0x08 | 0x10
+		ERROR: 0x08 | 0x10 | 0x20
 	};
 	
 	/**
@@ -761,7 +767,7 @@
 				options = opts ? enyo.clone(opts, true) : {};
 				
 				// make sure we keep track of how many sources we're requesting
-				source = opts.source || this.source;
+				source = options.source || this.source;
 				if (source && ((source instanceof Array) || source === true)) {
 					this._waiting = source.length ? source.slice() : Object.keys(enyo.sources);
 				}
@@ -803,7 +809,7 @@
 				options = opts ? enyo.clone(opts, true) : {};
 				
 				// make sure we keep track of how many sources we're requesting
-				source = opts.source || this.source;
+				source = options.source || this.source;
 				if (source && ((source instanceof Array) || source === true)) {
 					this._waiting = source.length ? source.slice() : Object.keys(enyo.sources);
 				}
@@ -820,7 +826,7 @@
 				this.set('status', STATES.FETCHING);
 				
 				// now pass this on to the source to execute as it sees fit
-				Source.execute('fetch', opts, res);
+				Source.execute('fetch', this, options);
 			} else this.onError(this.status, opts);
 			
 			return this;
@@ -875,7 +881,9 @@
 			var idx;
 			
 			if (this._waiting) {
-				idx = this._waiting.indexOf(source);
+				idx = this._waiting.findIndex(function (ln) {
+					return (ln instanceof Source ? ln.name : ln) == source;
+				});
 				if (idx > -1) this._waiting.splice(idx, 1);
 				if (!this._waiting.length) this._waiting = null;
 			}
@@ -893,7 +901,9 @@
 			var idx;
 			
 			if (this._waiting) {
-				idx = this._waiting.indexOf(source);
+				idx = this._waiting.findIndex(function (ln) {
+					return (ln instanceof Source ? ln.name : ln) == source;
+				});
 				if (idx > -1) this._waiting.splice(idx, 1);
 				if (!this._waiting.length) this._waiting = null;
 			}
@@ -928,14 +938,37 @@
 				requested {@link enyo.Collection#source}.
 			@public
 		*/
-		onError: function (action, opts, res) {
+		onError: function (action, opts, res, source) {
+			var stat;
 			
 			// if the error action is a status number then we don't need to update it otherwise
 			// we set it to the known state value
-			if (typeof action == 'string') this.set('status', STATES[action]);
+			if (typeof action == 'string') {
+				
+				// all built-in errors will pass this as their values are > 0 but we go ahead and
+				// ensure that no developer used the 0x00 for an error code
+				stat = STATES['ERROR_' + action];
+			} else stat = action;
+			
+			if (isNaN(stat) || (stat & ~STATES.ERROR)) stat = STATES.ERROR_UNKNOWN;
+			
+			// if it has changed give observers the opportunity to respond
+			this.set('status', stat);
 			
 			// we need to check to see if there is an options handler for this error
 			if (opts && opts.error) opts.error(this, action, opts, res);
+		},
+		
+		/**
+			Clear the error state explicitly. This allows for overloaded behavior as may be
+			necessary in some application scenarios.
+			
+			@returns {enyo.Collection} The callee for chaining.
+			@method
+			@public
+		*/
+		clearError: function () {
+			return this.set('status', STATES.READY);
 		},
 		
 		/**
