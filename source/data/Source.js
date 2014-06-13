@@ -179,7 +179,7 @@
 				enyo.warn(msg);
 				
 				// we need to fail the attempt and let it be handled
-				opts.error(nom, msg);
+				opts.error(nom ? typeof nom == 'string' ? nom : nom.name : 'UNKNOWN', msg);
 			}
 		} else {
 			msg = 'enyo.Source.execute(): no source(s) provided for ' + model.kindName + '.' +
@@ -188,7 +188,7 @@
 			enyo.warn(msg);
 			
 			// we need to fail the attempt and let it be handled
-			opts.error(nom, msg);
+			opts.error(nom ? typeof nom == 'string' ? nom : nom.name : 'UNKNOWN', msg);
 		}
 	};
 	
