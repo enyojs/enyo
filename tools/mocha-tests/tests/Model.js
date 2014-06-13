@@ -79,6 +79,7 @@ describe('enyo.Model', function () {
 			});
 			
 		});
+		
 		describe('#destroy', function () {
 			
 			var model;
