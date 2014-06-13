@@ -1,7 +1,7 @@
 {
   "name": "enyojs",
   "filename": "enyo.js",
-  "version": "2.3.0",
+  "version": "2.5.0-pre.1",
   "description": "Enyo is an open source object-oriented JavaScript framework emphasizing encapsulation and modularity. Enyo contains everything you need to create a fast, scalable mobile or web application.",
   "homepage": "http://enyojs.com/",
   "bugs": "http://jira.enyojs.com/",
