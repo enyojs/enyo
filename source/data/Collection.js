@@ -548,7 +548,6 @@
 		remove: function (models, opts) {
 			var loc = this.models
 				, len = loc.length
-				, ctor = this.model
 				, options = this.options
 				, removed, model;
 			
