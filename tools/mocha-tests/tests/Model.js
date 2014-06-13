@@ -1,164 +1,241 @@
-describe ("Model", function () {
-	describe ("Methods", function () {
-		describe ("#constructor", function () {
-			describe ("@opts", function () {
-				it ("noAdd:true should not add a model instance to any store", function () {
-					var len = enyo.store.models["enyo.Model"].length;
-					new enyo.Model({}, {}, {noAdd: true});
-					expect(enyo.store.models["enyo.Model"].length).to.equal(len);
+describe('enyo.Model', function () {
+	
+	var Model = enyo.Model,
+		proto = Model.prototype;
+	
+	describe('methods', function () {
+		
+		describe('#constructor', function () {
+			
+			describe('params', function () {
+			
+				describe('@attrs', function () {
+					
+					before(function () {
+						enyo.kind({
+							name: 'TestModel',
+							kind: Model,
+							attributes: {
+								default1: 'value1'
+							}
+						});
+					});
+					
+					after(function () {
+						TestModel = null;
+					});
+					
+					it ('should always have a unique attributes hash', function () {
+						
+						var model = new Model();
+						
+						expect(model.attributes).to.not.eql(proto.attributes);
+						model.destroy();
+					});
+				
+					it ('should merge provided attributes with existing attributes', function () {
+						
+						var model = new TestModel({key1: 'value1', key2: 'value2'});
+						
+						expect(model.attributes).to.deep.equal({
+							default1: 'value1',
+							key1: 'value1',
+							key2: 'value2'
+						});
+						
+						model.destroy();
+					});
+					
 				});
+				
+				describe('@props', function () {
+					
+					it ('should apply properties via the importProps method if they exist',
+						function () {
+						
+						var model = new Model(null, {euid: '@m1'});
+						
+						expect(model.euid).to.equal('@m1');
+						model.destroy();
+					});
+					
+				});
+				
+				describe('@opts', function () {
+					
+					it ('should honor the constructor configuration option noAdd if it is true',
+						function () {
+						
+						// this option is really only used by collection in order to create a model
+						// without adding it to the store so that it can batch the operation
+						var model = new Model(null, null, {noAdd: true});
+						
+						expect(enyo.store.has(model)).to.be.false;
+						model.destroy();
+					});
+					
+				});
+				
 			});
-			describe ("@attrs", function () {
-				var model, ctor;
-				
-				afterEach (function () {
-					model && model.destroy();
-				});
-				
-				it ("should have a unique attributes property if no attributes are provided", function () {
-					model = new enyo.Model();
-					expect(model.attributes).to.not.equal(model.ctor.prototype.attributes);
-				});
-				it ("should apply the attributes if they do exist", function () {
-					model = new enyo.Model({testprop: true});
-					expect(model.attributes.testprop).to.be.true;
-					expect(model.attributes).to.not.equal(model.ctor.prototype.attributes);
-				});
-				it ("should safely merge the subkinds default attributes with those supplied", function () {
-					ctor = enyo.kind({kind: "enyo.Model", attributes: {prop1: true, prop2: false}});
-					model = new ctor({prop2: true, prop3: false});
-					expect(model.attributes).to.deep.equal({prop1: true, prop2: true, prop3: false});
-					model.destroy();
-					model = new ctor();
-					expect(model.attributes).to.deep.equal({prop1: true, prop2: false});
-				});
-				it ("should use the parse method on attrs if the option is set as a default option or in the opts parameter", function () {
-					ctor = enyo.kind({kind: "enyo.Model", options: {parse: true}, parse: function (data) {return data.subdata;}});
-					model = new ctor({subdata: {prop1: true, prop2: false}});
-					expect(model.attributes).to.deep.equal({prop1: true, prop2: false});
-					model.destroy();
-					ctor.prototype.options.parse = false;
-					model = new ctor({subdata: {prop1: true, prop2: false}}, null, {parse: true});
-					expect(model.attributes).to.deep.equal({prop1: true, prop2: false});
-				});
-			});
-			describe ("@props", function () {
-				var model;
-				
-				afterEach (function () {
-					model && model.destroy();
-				});
-				
-				it ("should detect and apply props if they exist", function () {
-					model = new enyo.Model(null, {euid: "@m1"});
-					expect(model.euid).to.equal("@m1");
-				});
-			});
+			
 		});
-		describe ("#destroy", function () {
+		describe('#destroy', function () {
+			
 			var model;
 			
-			afterEach (function () {
-				model && model.destroy();
+			beforeEach(function () {
+				model = new Model();
 			});
 			
-			it ("should remove the model from the store", function () {
-				var len = enyo.store.models["enyo.Model"].length;
-				model = new enyo.Model();
-				expect(enyo.store.models["enyo.Model"].length).to.be.above(len);
+			it ('should remove the model from the store', function () {
+				
 				model.destroy();
-				expect(enyo.store.models["enyo.Model"].has(model)).to.not.be.ok;
+				
+				expect(enyo.store.has(model)).to.be.false;
 			});
-			it ("should remove all listeners", function () {
-				model = new enyo.Model();
-				model.on("test", function () {throw new Error("test");});
-				var fn = function () {model.emit("test");};
-				expect(fn).to.throw("test");
+			
+			it ('should remove all listeners from the model', function () {
+				
+				// we add a listener for an event then destroy the model and attempt to emit
+				// and event again to see if it was still listening
+				var spy = sinon.spy();
+				model.on('*', spy);
+				
 				model.destroy();
-				expect(fn).to.not.throw("test");
+				// it should have received an event so we clear it to be sure
+				expect(spy.called).to.be.true;
+				spy.reset();
+				
+				model.emit('EVENT');
+				expect(spy.called).to.be.false;
 			});
-			it ("should remove all observers", function () {
-				model = new enyo.Model();
-				model.observe("prop1", function () {throw new Error("prop1");});
-				var fn = function () {model.set("prop1", Math.random());};
-				expect(fn).to.throw("prop1");
+			
+			it ('should remove all observers', function () {
+				
+				// we add an observer for any notification and then destroy the model and attempt
+				// to notify again to see if it was still observing
+				var spy = sinon.spy();
+				model.observe('*', spy);
+				
+				model.notify('NOTIFICATION');
+				expect(spy.called).to.be.true;
+				spy.reset();
+				
 				model.destroy();
-				expect(fn).to.not.throw("prop1");
+				
+				model.notify('NOTIFICATION');
+				expect(spy.called).to.be.false;
 			});
+			
 		});
-		describe ("#set", function () {
+		
+		describe('#set', function () {
+			
 			var model;
 			
-			afterEach (function () {
-				model && model.destroy();
+			before(function () {
+				model = new Model();
 			});
 			
-			it ("should update an attribute value", function () {
-				model = new enyo.Model();
-				expect(model.get("prop1")).to.be.undefined;
-				expect(model.attributes.prop1).to.be.undefined;
-				model.set("prop1", true);
-				expect(model.get("prop1")).to.be.true;
-				expect(model.attributes.prop1).to.be.true;
+			after(function () {
+				model.destroy();
 			});
-			it ("should update attributes with an object", function () {
-				model = new enyo.Model();
-				expect(model.get("prop1")).to.be.undefined;
-				expect(model.attributes.prop1).to.be.undefined;
-				expect(model.get("prop2")).to.be.undefined;
-				expect(model.attributes.prop2).to.be.undefined;
-				model.set({prop1: true, prop2: false});
-				expect(model.get("prop1")).to.be.true;
-				expect(model.attributes.prop1).to.be.true;
-				expect(model.get("prop2")).to.be.false;
-				expect(model.attributes.prop2).to.be.false;
+			
+			it ('should accept a path and a value', function () {
+				model.set('path', 'value');
+				expect(model.get('path')).to.equal('value');
+				expect(model.attributes.path).to.equal('value');
 			});
-			it ("should emit a changed event when changes occur and not when they don't", function () {
-				var fn;
-				model = new enyo.Model({prop1: true, prop2: false, prop3: 1});
-				model.on("change", function () { throw new Error("change"); });
-				fn = function () {
-					model.set("prop1", true);
-				};
-				expect(fn).to.not.throw("change");
-				fn = function () {
-					model.set({prop2: true, prop3: 2});
-				};
-				expect(fn).to.throw("change");
-				expect(model.changed).to.exist.and.to.have.keys(["prop2", "prop3"]);
-				expect(model.previous).to.exist.and.to.have.keys(["prop1", "prop2", "prop3"]);
+			
+			it ('should accept an object of key/values', function () {
+				model.set({key1: 'value1', key2: 'value2'});
+				expect(model.get('key1')).to.equal('value1');
+				expect(model.get('key2')).to.equal('value2');
+				expect(model.attributes.key1).to.equal('value1');
+				expect(model.attributes.key2).to.equal('value2');
 			});
-		});
-	});
-	describe ("Static Methods", function () {
-		describe ("~concat", function () {
-			it ("all subkinds should properly inherit and merge options", function () {
-				var ctor1 = enyo.kind({kind: "enyo.Model", options: {prop1: true, prop2: false}})
-					, ctor2 = enyo.kind({kind: ctor1, options: {prop2: true, prop3: false}});
-				expect(ctor1.prototype.options).to.include.keys("prop1", "prop2");
-				expect(ctor2.prototype.options).to.include.keys("prop1", "prop2", "prop3");
+			
+			it ('should emit a change event when an attribute is actually changed', function () {
+				
+				var spy = sinon.spy();
+				
+				model.on('change', spy);
+				model.set('key1', 'value2');
+				expect(spy.callCount).to.equal(1);
+				spy.reset();
+				
+				// now test that it does get fired when no actual change takes place
+				model.set('key1', 'value2');
+				expect(spy.called).to.be.false;
+				
+				model.off('change', spy);
 			});
-		});
-	});
-	describe ("Other", function () {
-		var model, ctor;
-		
-		afterEach (function () {
-			model && model.destroy();
+			
 		});
 		
-		it ("should have a new entry in the default store whenever a subkind is named and undeferred", function () {
-			enyo.kind({name: "NewKind1", kind: "enyo.Model", noDefer: true});
-			expect(enyo.store.models.NewKind1).to.exist.and.to.be.an.instanceof(enyo.ModelList);
-			enyo.kind({name: "NewKind2", kind: "NewKind1", noDefer: true});
-			expect(enyo.store.models.NewKind2).to.exist.and.to.be.an.instanceof(enyo.ModelList);
-		});
-		it ("should properly be added to the store's enyo.Model category for an unnamed kind of model", function () {
-			var len = enyo.store.models["enyo.Model"].length;
-			ctor = enyo.kind({kind: "enyo.Model"});
-			model = new ctor();
-			expect(enyo.store.models["enyo.Model"].length).to.at.least(len+1);
-			enyo.store.models["enyo.Model"].remove(model);
-		});
 	});
+	
+	describe('statics', function () {
+		
+		describe('~concat', function () {
+			
+			before(function () {
+				enyo.kind({
+					name: 'TestModel',
+					noDefer: true,
+					kind: Model,
+					options: {
+						key1: 'value1',
+						key3: 'value3'
+					}
+				});
+			});
+			
+			after(function () {
+				TestModel = null;
+			});
+			
+			it ('should merge the options hash for all subkinds', function () {
+				
+				// create an anonymous subkind to see if the options are being merged
+				var Ctor = enyo.kind({
+					kind: TestModel,
+					noDefer: true,
+					options: {
+						key2: 'value2'
+					}
+				});
+				
+				expect(Ctor.prototype.options).to.include({
+					key1: 'value1',
+					key2: 'value2',
+					key3: 'value3'
+				});
+				
+			});
+			
+			it ('should add an entry to enyo.store.models for each new subclass of enyo.Model',
+				function () {
+				
+				expect(enyo.store.models.TestModel).to.exist;
+			});
+			
+		});
+		
+	});
+	
+	describe('usage', function () {
+		
+		it ('should property add an instance of enyo.Model to enyo.store\'s internal models',
+			function () {
+			
+			var len = enyo.store.models['enyo.Model'].length,
+				model = new Model();
+			
+			expect(enyo.store.has(model)).to.be.true;
+			expect(enyo.store.models['enyo.Model']).to.have.length.above(len);
+		});
+		
+	});
+	
 });

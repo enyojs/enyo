@@ -15,6 +15,59 @@
 		, ModelList = enyo.ModelList
 		, Source = enyo.Source
 		, oObject = enyo.Object;
+		
+	/**
+	*/
+	var STATES = {
+		
+		/**
+		*/
+		NEW: 0x01,
+		
+		/**
+		*/
+		DIRTY: 0x02,
+		
+		/**
+		*/
+		CLEAN: 0x04,
+		
+		/**
+		*/
+		READY: 0x01 | 0x02 | 0x04,
+		
+		/**
+		*/
+		FETCHING: 0x08,
+		
+		/**
+		*/
+		COMMITTING: 0x10,
+		
+		/**
+		*/
+		BUSY: 0x08 | 0x10,
+		
+		/**
+		*/
+		ERROR_COMMITTING: 0x20,
+		
+		/**
+		*/
+		ERROR_FETCHING: 0x40,
+		
+		/**
+		*/
+		ERROR_UNKNOWN: 0x80,
+		
+		/**
+		*/
+		DESTROYED: 0x100,
+		
+		/**
+		*/
+		ERROR: 0x20 | 0x40 | 0x80
+	};
 	
 	/**
 		@private
@@ -63,12 +116,7 @@
 		/**
 			@public
 		*/
-		isNew: true,
-		
-		/**
-			@public
-		*/
-		isDirty: false,
+		status: STATES.NEW | STATES.CLEAN,
 		
 		/**
 			@public
@@ -125,23 +173,38 @@
 			@method
 		*/
 		commit: function (opts) {
-			var options = opts? clone(opts): {}
-				, dit = this;
+			var options,
+				source,
+				it = this;
+			
+			// if the current status is not one of the error states we can continue
+			if (this.status & ~(STATES.ERROR | STATES.BUSY)) {
 				
-			options.success = function (res) {
-				dit.previous = clone(dit.attributes);
-				dit.onCommit(opts, res);
+				// if there were options passed in we copy them quickly so that we can hijack
+				// the success and error methods while preserving the originals to use later
+				options = opts ? enyo.clone(opts, true) : {};
 				
-				if (opts && opts.success) {
-					opts.success(dit, res, opts);
+				// make sure we keep track of how many sources we're requesting
+				source = options.source || this.source;
+				if (source && ((source instanceof Array) || source === true)) {
+					this._waiting = source.length ? source.slice() : Object.keys(enyo.sources);
 				}
-			};
-		
-			options.error = function (res) {
-				dit.onError('commit', opts, res);
-			};
-		
-			Source.execute('commit', this, options);
+					
+				options.success = function (source, res) {
+					it.onCommit(opts, res, source);
+				};
+				
+				options.error = function (source, res) {
+					it.onError('COMMITTING', opts, res, source);
+				};
+				
+				// set the state
+				this.status = this.status | STATES.COMMITTING;
+				
+				// now pass this on to the source to execute as it sees fit
+				Source.execute('commit', this, options);
+			} else this.onError(this.status, opts);
+			
 			return this;
 		},
 		
@@ -150,22 +213,38 @@
 			@method
 		*/
 		fetch: function (opts) {
-			var options = opts? clone(opts): {}
-				, dit = this;
+			var options,
+				source,
+				it = this;
 				
-			options.success = function (res) {
-				dit.onFetch(res, opts);
+			// if the current status is not one of the error states we can continue
+			if (this.status & ~(STATES.ERROR | STATES.BUSY)) {
 				
-				if (opts && opts.success) {
-					opts.success(dit, res, opts);
+				// if there were options passed in we copy them quickly so that we can hijack
+				// the success and error methods while preserving the originals to use later
+				options = opts ? enyo.clone(opts, true) : {};
+				
+				// make sure we keep track of how many sources we're requesting
+				source = options.source || this.source;
+				if (source && ((source instanceof Array) || source === true)) {
+					this._waiting = source.length ? source.slice() : Object.keys(enyo.sources);
 				}
-			};
+				
+				options.success = function (source, res) {
+					it.onFetch(opts, res, source);
+				};
+				
+				options.error = function (source, res) {
+					it.onError('FETCHING', opts, res, source);
+				};
+				
+				// set the state
+				this.status = this.status | STATES.FETCHING;
+				
+				// now pass this on to the source to execute as it sees fit
+				Source.execute('fetch', this, options);
+			} else this.onError(this.status, opts);
 			
-			options.error = function (res) {
-				dit.onError('fetch', opts, res);
-			};
-			
-			Source.execute('fetch', this, options);
 			return this;
 		},
 		
@@ -191,10 +270,10 @@
 			) {
 				options = opts ? enyo.clone(opts, true) : {};
 					
-				options.success = function () {
+				options.success = function (source, res) {
 					// continue the operation this time with commit false explicitly
 					it.destroy({commit: false});
-					if (opts && opts.success) opts.success(opts);
+					if (opts && opts.success) opts.success(this, opts, res, source);
 				};
 				
 				options.error = function (source, res) {
@@ -211,6 +290,7 @@
 			// e.g. Collection/Store don't need to remove listeners because it will
 			// be done in a much quicker way already
 			this.destroyed = true;
+			this.status = STATES.DESTROYED;
 			this.unsilence(true).emit('destroy');
 			this.removeAllListeners();
 			this.removeAllObservers();
@@ -236,46 +316,67 @@
 		set: function (path, is, opts) {
 			if (!this.destroyed) {
 				
-				var attrs = this.attributes
-					, options = this.options
-					, changed, incoming, force, silent, key, value, commit;
-					
+				var attrs = this.attributes,
+					options = this.options,
+					changed,
+					incoming,
+					force,
+					silent,
+					key,
+					value,
+					commit,
+					fetched;
+				
+				// the default case for this setter is accepting an object of key->value pairs
+				// to apply to the model in which case the second parameter is the optional
+				// configuration hash
 				if (typeof path == 'object') {
 					incoming = path;
-					opts || (opts = is);
-				} else {
+					opts = opts || is;
+				}
+				
+				// otherwise in order to have a single path here we flub it so it will keep on
+				// going as expected
+				else {
 					incoming = {};
 					incoming[path] = is;
 				}
-		
+				
+				// to maintain backward compatibility with the old setters that allowed the third
+				// parameter to be a boolean to indicate whether or not to force notification of
+				// change even if there was any
 				if (opts === true) {
 					force = true;
 					opts = {};
 				}
 		
-				// opts || (opts = this.options);
-				opts = opts? mixin({}, [options, opts]): options;
+				opts = opts ? enyo.mixin({}, [options, opts]) : options;
 				silent = opts.silent;
 				force = force || opts.force;
 				commit = opts.commit;
+				fetched = opts.fetched;
 		
 				for (key in incoming) {
 					value = incoming[key];
 			
 					if (value !== attrs[key] || force) {
-						// merely in case it was reassigned or cleared unknowingly
-						changed || (changed = this.changed = {});
+						// to ensure we have an object to work with
+						// note that we check inside this loop so we don't have to examine keys
+						// later only the local variable changed
+						changed = this.changed || (this.changed = {});
 						changed[key] = attrs[key] = value;
 					}
 				}
 		
 				if (changed) {
-					// must flag this model as having been updated
-					this.isDirty = true;
-			
+					
+					// we add dirty as a value of the status but clear the CLEAN bit if it
+					// was set - this would allow it to be in the ERROR state and NEW and DIRTY
+					if (!fetched) this.status = (this.status | STATES.DIRTY) ^ STATES.CLEAN;
+					
 					if (!silent) this.emit('change', changed, this);
 				
-					commit && this.commit();
+					if (commit && !fetched) this.commit(opts);
 				}
 			}
 		},
@@ -363,36 +464,92 @@
 		triggerEvent: function () {
 			return this.emit.apply(this, arguments);
 		},
+		
 		/**
-			@private
-			@method
+			@public
 		*/
 		onFetch: function (opts, res, source) {
-			// console.log('enyo.Model.onFetch', arguments);
+			var idx;
 			
-			this.isNew = false;
+			if (this._waiting) {
+				idx = this._waiting.findIndex(function (ln) {
+					return (ln instanceof Source ? ln.name : ln) == source;
+				});
+				if (idx > -1) this._waiting.splice(idx, 1);
+				if (!this._waiting.length) this._waiting = null;
+			}
 			
-			if (this.options.parse) res = this.parse(res);
-			this.set(res);
+			// ensure we have an options hash and it knows it was just fetched
+			opts = opts ? opts : {};
+			opts.fetched = true;
+			
+			// note this will not add the DIRTY state because it was fetched but also note that it
+			// will not clear the DIRTY flag if it was already DIRTY
+			if (res) this.set(res, opts);
+			
+			// clear the FETCHING and NEW state (if it was NEW) we do not set it as dirty as this
+			// action alone doesn't warrant a dirty flag that would need to be set in the set method
+			if (!this._waiting) this.status = this.status ^ (STATES.FETCHING | STATES.NEW);
+			
+			// now look for an additional success callback
+			if (opts && opts.success) opts.success(this, opts, res, source);
 		},
 		
 		/**
-			@private
-			@method
+			@public
 		*/
 		onCommit: function (opts, res, source) {
-			// console.log('enyo.Model.onCommit', arguments);
+			var idx;
 			
-			this.isDirty = false;
+			if (this._waiting) {
+				idx = this._waiting.findIndex(function (ln) {
+					return (ln instanceof Source ? ln.name : ln) == source;
+				});
+				if (idx > -1) this._waiting.splice(idx, 1);
+				if (!this._waiting.length) this._waiting = null;
+			}
+			
+			if (!this._waiting) {
+				// we need to clear the COMMITTING bit and DIRTY bit as well as ensure that the
+				// 'previous' hash is whatever the current attributes are
+				this.previous = enyo.clone(this.attributes, true);
+				this.status = (this.status | STATES.CLEAN) ^ (STATES.COMMITTING | STATES.DIRTY);
+			}
+			
+			if (opts && opts.success) opts.success(this, opts, res, source);			
 		},
 		
 		/**
-			@private
+			@public
 		*/
 		onError: function (action, opts, res, source) {
-			// console.log('enyo.Model.onError', arguments);
+			var stat;
+			
+			// if the error action is a status number then we don't need to update it otherwise
+			// we set it to the known state value
+			if (typeof action == 'string') {
+				
+				// all built-in errors will pass this as their values are > 0 but we go ahead and
+				// ensure that no developer used the 0x00 for an error code
+				stat = STATES['ERROR_' + action];
+			} else stat = action;
+			
+			if (isNaN(stat) || (stat & ~STATES.ERROR)) stat = STATES.ERROR_UNKNOWN;
+			
+			// if it has changed give observers the opportunity to respond
+			this.status = stat;
+			
+			// we need to check to see if there is an options handler for this error
+			if (opts && opts.error) opts.error(this, action, opts, res);
 		}
 	});
+	
+	/**
+		@alias enyo.Model~STATES
+		@static
+		@public
+	*/
+	Model.STATES = STATES;
 	
 	/**
 		@private
