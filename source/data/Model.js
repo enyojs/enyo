@@ -164,7 +164,10 @@
 			@method
 		*/
 		restore: function (prop) {
-			if (prop) this.set(prop, this.previous[prop]);
+			
+			// we ensure that the property is forcibly notified (when possible) to ensure that
+			// bindings or other observers will know it returned to that value
+			if (prop) this.set(prop, this.previous[prop], {force: true});
 			else this.set(this.previous);
 		},
 		
