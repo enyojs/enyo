@@ -1210,9 +1210,8 @@
 			// remove all spaces before any semi-colons or any duplicates
 			.replace(/\s*(;|:)\1+/g, '$1')
 			// ensure we have one space after each colon or semi-colon except the last one
-			.replace(/(:|;)\s*(?!$)/g, '$1 ')
-			//ensure urls of form http:// or https:// do not have space after colon
-			.replace(/(http|https):\s+/g, '$1:')
+			// also ensure space after colon not added to urls of form http:// or https://
+			.replace(/([^http|^https]:|;)\s*(?!$)/g, '$1 ')
 		);
 	};
 	
