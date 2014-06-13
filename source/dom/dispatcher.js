@@ -7,7 +7,7 @@
 		// these events come from document
 		events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel",
 			"click", "dblclick", "change", "keydown", "keyup", "keypress", "input",
-			"paste", "copy", "cut", "webkitTransitionEnd", "transitionend", "webkitAnimationEnd", "animationEnd"],
+			"paste", "copy", "cut", "webkitTransitionEnd", "transitionend", "webkitAnimationEnd", "animationend"],
 		// these events come from window
 		windowEvents: ["resize", "load", "unload", "message", "hashchange", "popstate"],
 		// feature plugins (aka filters)
