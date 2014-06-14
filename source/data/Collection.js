@@ -898,6 +898,9 @@
 				
 				if (this.length && options.destroy) this.empty(options);
 				
+				// set the final resting state of this collection
+				this.set('status', STATES.DESTROYED);
+				
 				sup.apply(this, arguments);
 			};
 		}),
