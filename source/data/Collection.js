@@ -77,7 +77,11 @@
 		
 			@todo Example of how to do this.
 		*/
-		ERROR: 0x08 | 0x10 | 0x20 | 0x40
+		ERROR: 0x08 | 0x10 | 0x20 | 0x40,
+		
+		/**
+		*/
+		DESTROYED: 0x80
 	};
 	
 	/**
