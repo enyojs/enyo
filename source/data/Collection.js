@@ -50,6 +50,10 @@
 		ERROR_COMMITTING: 0x10,
 		
 		/**
+		*/
+		ERROR_DESTROYING: 0x40,
+		
+		/**
 			The {@link enyo.Collection} has somehow encountered an error that it does not understand
 			so it uses this state.
 		*/
@@ -73,7 +77,7 @@
 		
 			@todo Example of how to do this.
 		*/
-		ERROR: 0x08 | 0x10 | 0x20
+		ERROR: 0x08 | 0x10 | 0x20 | 0x40
 	};
 	
 	/**
@@ -836,7 +840,63 @@
 		*/
 		destroy: enyo.inherit(function (sup) {
 			return function (opts) {
-				// @TODO: ...
+				var options = opts ? enyo.mixin({}, [this.options, opts]) : this.options,
+					it = this,
+					idx;
+							
+				// this becomes an (potentially) async operation if we are committing this destroy
+				// to a source and its kind of tricky to figure out because there are several ways
+				// it could be flagged to do this
+							
+				if (options.commit || options.source) {
+					
+					// remap to the originals
+					options = opts ? enyo.clone(opts, true) : {};
+					
+					options.success = function (source, res) {
+					
+						if (it._waiting) {
+							idx = it._waiting.findIndex(function (ln) {
+								return (ln instanceof Source ? ln.name : ln) == source;
+							});
+							if (idx > -1) it._waiting.splice(idx, 1);
+							if (!it._waiting.length) it._waiting = null;
+						}
+					
+						// continue the operation this time with commit false explicitly
+						if (!it._waiting) {
+							options.commit = options.source = null;
+							it.destroy(options);
+						}
+						if (opts && opts.success) opts.success(this, opts, res, source);
+					};
+				
+					options.error = function (source, res) {
+					
+						if (it._waiting) {
+							idx = it._waiting.findIndex(function (ln) {
+								return (ln instanceof Source ? ln.name : ln) == source;
+							});
+							if (idx > -1) it._waiting.splice(idx, 1);
+							if (!it._waiting.length) it._waiting = null;
+						}
+					
+						// continue the operation this time with commit false explicitly
+						if (!it._waiting) {
+							options.commit = options.source = null;
+							it.destroy(options);
+						}
+					
+						// we don't bother setting the error state if we aren't waiting because it
+						// will be cleared to DESTROYED and it would be pointless
+						else this.onError('DESTROYING', opts, res, source);
+					};
+				
+					Source.execute('destroy', this, options);
+					return this;
+				}
+				
+				if (this.length && options.destroy) this.empty(options);
 				
 				sup.apply(this, arguments);
 			};
@@ -955,7 +1015,7 @@
 			this.set('status', stat);
 			
 			// we need to check to see if there is an options handler for this error
-			if (opts && opts.error) opts.error(this, action, opts, res);
+			if (opts && opts.error) opts.error(this, action, opts, res, source);
 		},
 		
 		/**

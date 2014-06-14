@@ -58,6 +58,10 @@
 		
 		/**
 		*/
+		ERROR_DESTROYING: 0x200,
+		
+		/**
+		*/
 		ERROR_UNKNOWN: 0x80,
 		
 		/**
@@ -66,7 +70,7 @@
 		
 		/**
 		*/
-		ERROR: 0x20 | 0x40 | 0x80
+		ERROR: 0x20 | 0x40 | 0x80 | 0x200
 	};
 	
 	/**
@@ -256,33 +260,58 @@
 			@method
 		*/
 		destroy: function (opts) {
-			var options,
-				it = this;
-			
+			var options = opts ? enyo.mixin({}, [this.options, opts]) : this.options,
+				it = this,
+				idx;
+		
 			// this becomes an (potentially) async operation if we are committing this destroy
 			// to a source and its kind of tricky to figure out because there are several ways
 			// it could be flagged to do this
-			
-			if (
-				// if our default option says to commit operations and the given opts don't tell us
-				// explicitly to ignore that we must do it
-				(this.options.commit && (!opts || opts.commit !== false)) ||
-				// or if there are supplied options and it has a source declared or the commit flag
-				// as true
-				(opts && (opts.source || opts.commit))
-			) {
+		
+			if (options.commit || options.source) {
+				
+				// remap to the originals
 				options = opts ? enyo.clone(opts, true) : {};
-					
+				
 				options.success = function (source, res) {
+				
+					if (it._waiting) {
+						idx = it._waiting.findIndex(function (ln) {
+							return (ln instanceof Source ? ln.name : ln) == source;
+						});
+						if (idx > -1) it._waiting.splice(idx, 1);
+						if (!it._waiting.length) it._waiting = null;
+					}
+				
 					// continue the operation this time with commit false explicitly
-					it.destroy({commit: false});
+					if (!it._waiting) {
+						options.commit = options.source = null;
+						it.destroy(options);
+					}
 					if (opts && opts.success) opts.success(this, opts, res, source);
 				};
-				
+			
 				options.error = function (source, res) {
-					// @todo
-				};
 				
+					if (it._waiting) {
+						idx = it._waiting.findIndex(function (ln) {
+							return (ln instanceof Source ? ln.name : ln) == source;
+						});
+						if (idx > -1) it._waiting.splice(idx, 1);
+						if (!it._waiting.length) it._waiting = null;
+					}
+				
+					// continue the operation this time with commit false explicitly
+					if (!it._waiting) {
+						options.commit = options.source = null;
+						it.destroy(options);
+					}
+				
+					// we don't bother setting the error state if we aren't waiting because it
+					// will be cleared to DESTROYED and it would be pointless
+					else this.onError('DESTROYING', opts, res, source);
+				};
+			
 				Source.execute('destroy', this, options);
 				return this;
 			}
@@ -301,7 +330,6 @@
 			// if this does not have the the batching flag (that would be set by a collection)
 			// then we need to do the default of removing it from the store
 			if (!opts || !opts.batching) this.store.remove(this);
-			return this;
 		},
 		
 		/**
@@ -540,10 +568,18 @@
 			if (isNaN(stat) || (stat & ~STATES.ERROR)) stat = STATES.ERROR_UNKNOWN;
 			
 			// if it has changed give observers the opportunity to respond
-			this.status = stat;
+			this.status = this.status | stat;
 			
 			// we need to check to see if there is an options handler for this error
-			if (opts && opts.error) opts.error(this, action, opts, res);
+			if (opts && opts.error) opts.error(this, action, opts, res, source);
+		},
+		
+		/**
+			@method
+			@public
+		*/
+		clearError: function () {
+			this.status = this.status ^ STATES.ERROR;
 		}
 	});
 	
