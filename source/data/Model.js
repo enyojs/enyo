@@ -184,8 +184,8 @@
 				source,
 				it = this;
 			
-			// if the current status is not one of the error states we can continue
-			if (this.status & ~(STATES.ERROR | STATES.BUSY)) {
+			// if the current status is not one of the error or busy states we can continue
+			if (!(this.status & (STATES.ERROR | STATES.BUSY))) {
 				
 				// if there were options passed in we copy them quickly so that we can hijack
 				// the success and error methods while preserving the originals to use later
@@ -224,8 +224,8 @@
 				source,
 				it = this;
 				
-			// if the current status is not one of the error states we can continue
-			if (this.status & ~(STATES.ERROR | STATES.BUSY)) {
+			// if the current status is not one of the error or busy states we can continue
+			if (!(this.status & (STATES.ERROR | STATES.BUSY))) {
 				
 				// if there were options passed in we copy them quickly so that we can hijack
 				// the success and error methods while preserving the originals to use later

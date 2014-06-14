@@ -1,7 +1,185 @@
 describe('enyo.Model', function () {
 	
 	var Model = enyo.Model,
-		proto = Model.prototype;
+		proto = Model.prototype,
+		STATES = Model.STATES;
+	
+	
+	describe('properties', function () {
+		
+		var model;
+		
+		before(function () {
+			model = new Model();
+		});
+		
+		after(function () {
+			model.destroy();
+		});
+		
+		describe('#status', function () {
+			
+			// we need to create a fake source to be able to fudge requests to test status
+			var src1,
+				src2,
+				src3;
+			
+			before(function () {
+				src1 = enyo.Source.create({name: 'src1'});
+				src2 = enyo.Source.create({name: 'src2'});
+				src3 = enyo.Source.create({name: 'src3'});
+			
+				// assign it directly
+				model.source = src1;
+			});
+			
+			after(function () {
+				src1.destroy();
+				src2.destroy();
+				src3.destroy();
+				
+				model.source = null;
+			});
+			
+			it ('should have the default CLEAN and NEW status and be READY', function () {
+				expect(model.status & STATES.READY).to.be.ok;
+			});
+			
+			it ('should be FETCHING and BUSY after fetch is called', function () {
+				
+				// because we're using the default nop implementation of enyo.Source it will not
+				// actually do anything
+				model.fetch();
+				expect(model.status & (STATES.FETCHING | STATES.BUSY)).to.be.ok;
+				
+				// call onFetch to clear its state
+				model.onFetch();
+				expect(model.status & STATES.READY).to.be.ok;
+			});
+			
+			it ('should be COMMITTING and BUSY after commit is called', function () {
+				
+				// because we're using the default nop implementation of enyo.Source it will not
+				// actually do anything
+				model.commit();
+				expect(model.status & (STATES.COMMITTING | STATES.BUSY)).to.be.ok;
+				
+				// call onCommit to clear its state
+				model.onCommit();
+				expect(model.status & STATES.READY).to.be.ok;
+			});
+			
+			it ('should be ERROR_FETCHING and ERROR if error encountered during either a commit ' +
+				'or fetch call', function () {
+				
+				// we will stub the methods on the source to call the error handler
+				var fn = function (model, opts) {
+					opts.error();
+				};
+				
+				sinon.stub(src1, 'commit', fn);
+				sinon.stub(src1, 'fetch', fn);
+				
+				// first we check the fetch
+				model.fetch();
+				expect(model.status & (STATES.ERROR_FETCHING | STATES.ERROR)).to.be.ok;
+				
+				// clear the state
+				model.clearError();
+				
+				// now we check the commit
+				model.commit();
+				expect(model.status & (STATES.ERROR_COMMITTING | STATES.ERROR)).to.be.ok;
+				
+				model.clearError();
+				src1.commit.restore();
+				src1.fetch.restore();
+			});
+			
+			it ('should not allow a commit or fetch to be called when in an error state',
+				function () {
+				
+				var spy = sinon.spy(),
+					opts = {},
+					fn;
+				
+				fn = function () {
+					opts.success();
+				};
+				
+				// spy will be the success callback we expect never to be fired
+				opts.success = spy;
+				
+				// ensure that calls will be successful if it reaches them
+				sinon.stub(src1, 'commit', fn);
+				sinon.stub(src1, 'fetch', fn);
+				
+				// should not do this unless testing!
+				model.status = STATES.CLEAN | STATES.ERROR;
+				
+				// successive calls to commit or fetch should never be successful
+				model.commit(opts);
+				model.fetch(opts);
+				expect(spy.called).to.be.false;
+				expect(model.status & STATES.ERROR).to.be.ok;
+				
+				model.clearError();
+				src1.commit.restore();
+				src1.fetch.restore();
+			});
+			
+			it ('should not return to READY state until all sources return successfully for ' +
+				'fetch and commit calls', function () {
+				
+				// we need to force success for both commit and fetch for all sources except one
+				// so we can make sure that its state wasn't reset until the end
+				var fn = function (model, opts) {
+					opts.success();
+				};
+				
+				sinon.stub(src1, 'fetch', fn);
+				sinon.stub(src2, 'fetch', fn);
+				sinon.stub(src1, 'commit', fn);
+				sinon.stub(src2, 'commit', fn);
+				
+				// now we assign all of the sources to the model
+				model.source = [src1, src2, src3];
+				
+				// first we will check the state control of fetch
+				model.fetch();
+				
+				// we expect 2 of the 3 to have responded successfully that will leave the state
+				// in BUSY
+				expect(model.status & (STATES.FETCHING | STATES.BUSY)).to.be.ok;
+				expect(model._waiting).to.have.length(1);
+				
+				// now try and complete the queue by fudging the callback
+				model.onFetch(null, null, src3.name);
+				expect(model.status & STATES.READY).to.be.ok;
+				expect(model._waiting).to.be.null;
+				
+				// first we will check the state control of committing
+				model.commit();
+				
+				// we expect 2 of the 3 to have responded successfully that will leave the state
+				// in BUSY
+				expect(model.status & (STATES.COMMITTING | STATES.BUSY)).to.be.ok;
+				expect(model._waiting).to.have.length(1);
+				
+				// now try and complete the queue by fudging the callback
+				model.onCommit(null, null, src3.name);
+				expect(model.status & STATES.READY).to.be.ok;
+				expect(model._waiting).to.be.null;
+				
+				src1.fetch.restore();
+				src2.fetch.restore();
+				src1.commit.restore();
+				src2.commit.restore();
+			});
+			
+		});
+	
+	});
 	
 	describe('methods', function () {
 		

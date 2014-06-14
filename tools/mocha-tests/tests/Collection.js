@@ -51,7 +51,7 @@ describe('enyo.Collection', function () {
 				// because we're using the default nop implementation of enyo.Source it will not
 				// actually do anything
 				collection.fetch();
-				expect(collection.status).to.equal(STATES.FETCHING);
+				expect(collection.status & STATES.FETCHING).to.equal(STATES.FETCHING);
 				expect(collection.status & STATES.BUSY).to.be.ok;
 				
 				// call onFetch to clear its state
@@ -64,7 +64,7 @@ describe('enyo.Collection', function () {
 				// because we're using the default nop implementation of enyo.Source it will not
 				// actually do anything
 				collection.commit();
-				expect(collection.status).to.equal(STATES.COMMITTING);
+				expect(collection.status & STATES.COMMITTING).to.equal(STATES.COMMITTING);
 				expect(collection.status & STATES.BUSY).to.be.ok;
 				
 				// call onCommit to clear its state
@@ -85,7 +85,7 @@ describe('enyo.Collection', function () {
 				
 				// first we check the fetch
 				collection.fetch();
-				expect(collection.status).to.equal(STATES.ERROR_FETCHING);
+				expect(collection.status & STATES.ERROR_FETCHING).to.equal(STATES.ERROR_FETCHING);
 				expect(collection.status & STATES.ERROR).to.be.ok;
 				
 				// clear the state
@@ -93,7 +93,7 @@ describe('enyo.Collection', function () {
 				
 				// now we check the commit
 				collection.commit();
-				expect(collection.status).to.equal(STATES.ERROR_COMMITTING);
+				expect(collection.status & STATES.ERROR_COMMITTING).to.be.ok
 				expect(collection.status & STATES.ERROR).to.be.ok;
 				
 				collection.clearError();
@@ -120,7 +120,7 @@ describe('enyo.Collection', function () {
 				sinon.stub(src1, 'fetch', fn);
 				
 				// should not do this unless testing!
-				collection.set('status', STATES.ERROR);
+				collection.set('status', collection.status | STATES.ERROR);
 				
 				// successive calls to commit or fetch should never be successful
 				collection.commit(opts);
@@ -156,13 +156,13 @@ describe('enyo.Collection', function () {
 				
 				// we expect 2 of the 3 to have responded successfully that will leave the state
 				// in BUSY
-				expect(collection.status).to.equal(STATES.FETCHING);
+				expect(collection.status & STATES.FETCHING).to.equal(STATES.FETCHING);
 				expect(collection.status & STATES.BUSY).to.be.ok;
 				expect(collection._waiting).to.have.length(1);
 				
 				// now try and complete the queue by fudging the callback
 				collection.onFetch(null, null, src3.name);
-				expect(collection.status).to.equal(STATES.READY);
+				expect(collection.status & STATES.READY).to.equal(STATES.READY);
 				expect(collection._waiting).to.be.null;
 				
 				// first we will check the state control of committing
@@ -170,13 +170,13 @@ describe('enyo.Collection', function () {
 				
 				// we expect 2 of the 3 to have responded successfully that will leave the state
 				// in BUSY
-				expect(collection.status).to.equal(STATES.COMMITTING);
+				expect(collection.status & STATES.COMMITTING).to.equal(STATES.COMMITTING);
 				expect(collection.status & STATES.BUSY).to.be.ok;
 				expect(collection._waiting).to.have.length(1);
 				
 				// now try and complete the queue by fudging the callback
 				collection.onCommit(null, null, src3.name);
-				expect(collection.status).to.equal(STATES.READY);
+				expect(collection.status & STATES.READY).to.equal(STATES.READY);
 				expect(collection._waiting).to.be.null;
 				
 				src1.fetch.restore();

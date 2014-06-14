@@ -516,6 +516,8 @@
 				}
 			}
 			
+			// note that if commit is set but this was called from a successful fetch this will be
+			// a nop (as intended)
 			commit && added && this.commit(opts);
 			
 			return added || [];
@@ -574,15 +576,18 @@
 			removed = loc.remove(models);
 			
 			if (removed.length) {
+				
+				// ensure that we can batch remove from the store
+				opts.batching = true;
+				
 				for (var i=0, end=removed.length; i<end; ++i) {
 					model = removed[i];
 					model.off('*', this.onModelEvent, this);
 					if (destroy) model.destroy(opts);
 				}
 				
-				// no need to remove them from the store if they were destroyed as they have already
-				// been removed
-				if (complete && !destroy) this.store.remove(removed);
+				// if complete or destroy was set we remove them from the store (batched op)
+				if (complete || destroy) this.store.remove(removed);
 			}
 			
 			this.length = loc.length;
@@ -594,6 +599,8 @@
 				}
 			}
 			
+			// if this is called from an overloaded method (such as fetch or commit) or some 
+			// success callback this will be a nop (as intended)
 			commit && removed.length && this.commit();
 			
 			return removed;
@@ -687,8 +694,23 @@
 		},
 		
 		/**
-			@public
+			Remove all [models]{@link enyo.Model} from the [collection]{@link enyo.Collection}.
+			Optionally a [model or models]{@link enyo.Model} can be provided that will replace the
+			removed [models]{@link enyo.Model}. If this operation is not `silent` it will emit a
+			`reset` event. Returns the removed [models]{@link enyo.Model} but be aware that if the
+			`destroy` configuration option is set then the returned models will have limited
+			usefulness.
+		
+			@fires enyo.Collection~events.reset
+			@param {(enyo.Model|enyo.Model[])} [models] The [model or models]{@link enyo.Model} to
+				use as a replacement for the current set of [models]{@link enyo.Model} in the
+				{@link enyo.Collection}.
+			@param {enyo.Collection#empty~options} [opts] The options that will modify the behavior
+				of this method.
+			@returns {enyo.Model[]} The [models]{@link enyo.Model} that were removed from the
+				{@link enyo.Collection}.
 			@method
+			@public
 		*/
 		empty: function (models, opts) {
 			var silent,
@@ -767,7 +789,7 @@
 				it = this;
 			
 			// if the current status is not one of the error states we can continue
-			if (this.status & ~(STATES.ERROR | STATES.BUSY)) {
+			if (!(this.status & (STATES.ERROR | STATES.BUSY))) {
 				
 				// if there were options passed in we copy them quickly so that we can hijack
 				// the success and error methods while preserving the originals to use later
@@ -788,11 +810,11 @@
 				};
 				
 				// set the state
-				this.set('status', STATES.COMMITTING);
+				this.set('status', this.status | STATES.COMMITTING);
 				
 				// now pass this on to the source to execute as it sees fit
 				Source.execute('commit', this, options);
-			} else this.onError(this.status, opts);
+			} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
 			
 			return this;
 		},
@@ -809,7 +831,7 @@
 				it = this;
 				
 			// if the current status is not one of the error states we can continue
-			if (this.status & ~(STATES.ERROR | STATES.BUSY)) {
+			if (!(this.status & (STATES.ERROR | STATES.BUSY))) {
 				
 				// if there were options passed in we copy them quickly so that we can hijack
 				// the success and error methods while preserving the originals to use later
@@ -830,11 +852,11 @@
 				};
 				
 				// set the state
-				this.set('status', STATES.FETCHING);
+				this.set('status', this.status | STATES.FETCHING);
 				
 				// now pass this on to the source to execute as it sees fit
 				Source.execute('fetch', this, options);
-			} else this.onError(this.status, opts);
+			} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
 			
 			return this;
 		},
@@ -954,10 +976,12 @@
 				if (!this._waiting.length) this._waiting = null;
 			}
 			
-			// clear the state
-			if (!this._waiting) this.set('status', STATES.READY);
-			
 			if (opts && opts.success) opts.success(this, opts, res, source);
+			
+			// clear the state
+			if (!this._waiting) {
+				this.set('status', (this.status | STATES.READY) ^ STATES.COMMITTING);
+			}
 		},
 		
 		/**
@@ -974,9 +998,6 @@
 				if (!this._waiting.length) this._waiting = null;
 			}
 			
-			// clear the state
-			if (!this._waiting) this.set('status', STATES.READY);
-			
 			// if there is a result we add it to the collection passing it any per-fetch options
 			// that will override the defaults (e.g. parse) we don't do that here as it will
 			// be done in the add method -- also note we reassign the result to whatever was
@@ -985,6 +1006,11 @@
 			
 			// now look for an additional success callback
 			if (opts && opts.success) opts.success(this, opts, res, source);
+			
+			// clear the state
+			if (!this._waiting) {
+				this.set('status', (this.status | STATES.READY) ^ STATES.FETCHING);
+			}
 		},
 		
 		/**
@@ -1016,10 +1042,10 @@
 				stat = STATES['ERROR_' + action];
 			} else stat = action;
 			
-			if (isNaN(stat) || (stat & ~STATES.ERROR)) stat = STATES.ERROR_UNKNOWN;
+			if (isNaN(stat) || !(stat & STATES.ERROR)) stat = STATES.ERROR_UNKNOWN;
 			
 			// if it has changed give observers the opportunity to respond
-			this.set('status', stat);
+			this.set('status', this.status | stat);
 			
 			// we need to check to see if there is an options handler for this error
 			if (opts && opts.error) opts.error(this, action, opts, res, source);
