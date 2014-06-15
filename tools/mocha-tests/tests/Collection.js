@@ -108,12 +108,12 @@ describe('enyo.Collection', function () {
 					opts = {},
 					fn;
 				
+				// spy will be the success callback we expect never to be fired
+				opts.success = spy;
+				
 				fn = function () {
 					opts.success();
 				};
-				
-				// spy will be the success callback we expect never to be fired
-				opts.success = spy;
 				
 				// ensure that calls will be successful if it reaches them
 				sinon.stub(src1, 'commit', fn);
@@ -132,6 +132,38 @@ describe('enyo.Collection', function () {
 				collection.clearError();
 				src1.commit.restore();
 				src1.fetch.restore();
+			});
+			
+			it ('should not allow a destroy with commit to be called when in an error state',
+				function () {
+				
+				// we needed to keep this separate so it wouldn't actually destroy the re-used
+				// collection
+				var collection = new Collection(),
+					spy = sinon.spy(),
+					opts = {},
+					fn;
+				
+				collection.source = src1;
+				collection.status = collection.status | STATES.ERROR_COMMITTING;
+				
+				opts.success = spy;
+				opts.commit = true;
+				
+				fn = function () {
+					opts.success();
+				};
+				
+				sinon.stub(src1, 'destroy', fn);
+				
+				collection.destroy(opts);
+				
+				expect(spy.called).to.be.false;
+				expect(collection.status & STATES.ERROR).to.be.ok;
+				
+				collection.clearError();
+				collection.destroy();
+				src1.destroy.restore();
 			});
 			
 			it ('should not return to READY state until all sources return successfully for ' +
@@ -190,6 +222,159 @@ describe('enyo.Collection', function () {
 	});
 	
 	describe('methods', function () {
+		
+		describe('#isError', function () {
+			
+			var collection;
+			
+			before(function () {
+				collection = new Collection();
+			});
+			
+			after(function () {
+				collection.destroy({destroy: true});
+			});
+			
+			it ('should correctly return true if the status is an ERROR state value', function () {
+				
+				collection.status = STATES.ERROR_COMMITTING;
+				expect(collection.isError()).to.be.true;
+				
+				collection.status = STATES.ERROR_FETCHING;
+				expect(collection.isError()).to.be.true;
+				
+				collection.status = STATES.ERROR_DESTROYING;
+				expect(collection.isError()).to.be.true;
+				
+				collection.status = STATES.ERROR_UNKNOWN;
+				expect(collection.isError()).to.be.true;
+				
+			});
+			
+			it ('should correctly return false if the status is not an ERROR state value',
+				function () {
+				
+				collection.status = STATES.READY;
+				expect(collection.isError()).to.be.false;
+				
+			});
+			
+			it ('should correctly use the parameter if provided', function () {
+				
+				collection.status = STATES.READY;
+				expect(collection.isError(STATES.ERROR_COMMITTING)).to.be.true;
+				
+				collection.status = STATES.ERROR_FETCHING;
+				expect(collection.isError(STATES.READY)).to.be.false;
+				
+			});
+			
+			it ('should correctly ignore the parameter if it is not numeric', function () {
+				
+				collection.status = STATES.ERROR_FETCHING;
+				expect(collection.isError({})).to.be.true;
+				
+			});
+			
+		});
+		
+		describe('#isBusy', function () {
+			
+			var collection;
+			
+			before(function () {
+				collection = new Collection();
+			});
+			
+			after(function () {
+				collection.destroy({destroy: true});
+			});
+			
+			it ('should correctly return true if the status is a BUSY state value', function () {
+				
+				collection.status = STATES.FETCHING;
+				expect(collection.isBusy()).to.be.true;
+				
+				collection.status = STATES.COMMITTING;
+				expect(collection.isBusy()).to.be.true;
+				
+				collection.status = STATES.DESTROYING;
+				expect(collection.isBusy()).to.be.true;
+				
+			});
+			
+			it ('should correctly return false if the status is not a BUSY state value',
+				function () {
+				
+				collection.status = STATES.READY;
+				expect(collection.isBusy()).to.be.false;
+				
+			});
+			
+			it ('should correctly use the parameter if provided', function () {
+				
+				collection.status = STATES.READY;
+				expect(collection.isBusy(STATES.COMMITTING)).to.be.true;
+				
+				collection.status = STATES.BUSY;
+				expect(collection.isBusy(STATES.READY)).to.be.false;
+				
+			});
+			
+			it ('should correctly ignore the parameter if it is not numeric', function () {
+				
+				collection.status = STATES.COMMITTING;
+				expect(collection.isBusy({})).to.be.true;
+				
+			});
+			
+		});
+		
+		describe('#isReady', function () {
+			
+			var collection;
+			
+			before(function () {
+				collection = new Collection();
+			});
+			
+			after(function () {
+				collection.destroy({destroy: true});
+			});
+			
+			it ('should correctly return true if the status is a READY state value', function () {
+				
+				collection.status = STATES.READY;
+				expect(collection.isReady()).to.be.true;
+				
+			});
+			
+			it ('should correctly return false if the status is not a READY state value',
+				function () {
+				
+				collection.status = STATES.BUSY;
+				expect(collection.isReady()).to.be.false;
+				
+			});
+			
+			it ('should correctly use the parameter if provided', function () {
+				
+				collection.status = STATES.READY;
+				expect(collection.isReady(STATES.COMMITTING)).to.be.false;
+				
+				collection.status = STATES.BUSY;
+				expect(collection.isReady(STATES.READY)).to.be.true;
+				
+			});
+			
+			it ('should correctly ignore the parameter if it is not numeric', function () {
+				
+				collection.status = STATES.READY;
+				expect(collection.isReady({})).to.be.true;
+				
+			});
+			
+		});
 		
 		describe('#add', function () {
 			

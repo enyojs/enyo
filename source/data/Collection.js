@@ -38,6 +38,10 @@
 		COMMITTING: 0x04,
 		
 		/**
+		*/
+		DESTROYING: 0x100,
+		
+		/**
 			The {@link enyo.Collection} has encountered an error during a
 			{@link enyo.Collection#fetch} attempt.
 		*/
@@ -68,7 +72,7 @@
 		
 			@todo Example of how to use this mask.
 		*/
-		BUSY: 0x02 | 0x04,
+		BUSY: 0x02 | 0x04 | 0x100,
 		
 		/**
 			NOT AN ACTUAL STATE. This is exposed for extensibility purposes and is used for error
@@ -876,49 +880,59 @@
 							
 				if (options.commit || options.source) {
 					
-					// remap to the originals
-					options = opts ? enyo.clone(opts, true) : {};
+					// if the current status is not one of the error states we can continue
+					if (!(this.status & (STATES.ERROR | STATES.BUSY))) {
 					
-					options.success = function (source, res) {
+						// remap to the originals
+						options = opts ? enyo.clone(opts, true) : {};
 					
-						if (it._waiting) {
-							idx = it._waiting.findIndex(function (ln) {
-								return (ln instanceof Source ? ln.name : ln) == source;
-							});
-							if (idx > -1) it._waiting.splice(idx, 1);
-							if (!it._waiting.length) it._waiting = null;
-						}
+						options.success = function (source, res) {
 					
-						// continue the operation this time with commit false explicitly
-						if (!it._waiting) {
-							options.commit = options.source = null;
-							it.destroy(options);
-						}
-						if (opts && opts.success) opts.success(this, opts, res, source);
-					};
+							if (it._waiting) {
+								idx = it._waiting.findIndex(function (ln) {
+									return (ln instanceof Source ? ln.name : ln) == source;
+								});
+								if (idx > -1) it._waiting.splice(idx, 1);
+								if (!it._waiting.length) it._waiting = null;
+							}
+					
+							// continue the operation this time with commit false explicitly
+							if (!it._waiting) {
+								options.commit = options.source = null;
+								it.destroy(options);
+							}
+							if (opts && opts.success) opts.success(this, opts, res, source);
+						};
 				
-					options.error = function (source, res) {
+						options.error = function (source, res) {
 					
-						if (it._waiting) {
-							idx = it._waiting.findIndex(function (ln) {
-								return (ln instanceof Source ? ln.name : ln) == source;
-							});
-							if (idx > -1) it._waiting.splice(idx, 1);
-							if (!it._waiting.length) it._waiting = null;
-						}
+							if (it._waiting) {
+								idx = it._waiting.findIndex(function (ln) {
+									return (ln instanceof Source ? ln.name : ln) == source;
+								});
+								if (idx > -1) it._waiting.splice(idx, 1);
+								if (!it._waiting.length) it._waiting = null;
+							}
 					
-						// continue the operation this time with commit false explicitly
-						if (!it._waiting) {
-							options.commit = options.source = null;
-							it.destroy(options);
-						}
+							// continue the operation this time with commit false explicitly
+							if (!it._waiting) {
+								options.commit = options.source = null;
+								it.destroy(options);
+							}
 					
-						// we don't bother setting the error state if we aren't waiting because it
-						// will be cleared to DESTROYED and it would be pointless
-						else this.onError('DESTROYING', opts, res, source);
-					};
+							// we don't bother setting the error state if we aren't waiting because 
+							// it will be cleared to DESTROYED and it would be pointless
+							else this.onError('DESTROYING', opts, res, source);
+						};
+					
+						this.set('status', this.status | STATES.DESTROYING);
 				
-					Source.execute('destroy', this, options);
+						Source.execute('destroy', this, options);
+					} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
+					
+					// we don't allow the destroy to take place and we don't forcibly break-down
+					// the collection errantly so there is an opportuniy to resolve the issue
+					// before we lose access to the collection's content!
 					return this;
 				}
 				
@@ -1061,6 +1075,44 @@
 		*/
 		clearError: function () {
 			return this.set('status', STATES.READY);
+		},
+		
+		/**
+			Convenience method to avoid using bitwise comparison directly for the
+			{@link enyo.Collection#status}. Automatically checks the current
+			{@link enyo.Collection#status} or the passed-in value to determine if it is an
+			[error state]{@link enyo.Collection~STATES.ERROR}. The passed-in value will only be
+			used if it is a numeric value.
+		
+			@param {enyo.Collection~STATES} [status] Provide a specific value to test.
+			@returns {boolean} Whether or not the given status is an error.
+			@method
+			@public
+		*/
+		isError: function (status) {
+			return !! ((isNaN(status) ? this.status : status) & STATES.ERROR);
+		},
+		
+		/**
+			Convenience method to avoid using bitwise comparison directly for the
+			{@link enyo.Collection#status}. Automatically check the current
+			{@link enyo.Collection#status} or the passed-in value to determine if it is a
+			[busy state]{@link enyo.Collection~STATES.BUSY}. The passed-in value will only be
+			used if it is a numeric value.
+		*/
+		isBusy: function (status) {
+			return !! ((isNaN(status) ? this.status : status) & STATES.BUSY);
+		},
+		
+		/**
+			Convenience method to avoid using bitwise comparison directly for the
+			{@link enyo.Collection#status}. Automatically check the current
+			{@link enyo.Collection#status} or the passed-in value to determine if it is a
+			[ready state]{@link enyo.Collection~STATES.READY}. The passed-in value will only be
+			used if it is a numeric value.
+		*/
+		isReady: function (status) {
+			return !! ((isNaN(status) ? this.status : status) & STATES.READY);
 		},
 		
 		/**
