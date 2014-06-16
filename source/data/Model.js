@@ -170,21 +170,6 @@
 	*/
 	STATES.ERROR_UNKNOWN = 0x0800;
 	
-		
-	/**
-		This is a multi-state mask and will never be set explicitly. By default, it can be used to
-		determine if the {@link enyo.Model} is currently [new]{@link enyo.Model~STATES.NEW},
-		[dirty]{@link enyo.Model~STATES.DIRTY} or [clean]{@link enyo.Model~STATES.CLEAN}. It does
-		not imply the {@link enyo.Model} is not also in an
-		[error state]{@link enyo.Model~STATES.ERROR}. {@see enyo.Collection#isReady} for an easy way
-		to determine if the {@link enyo.Collection} is actually ready wthout having to use bitwise
-		operations.
-	
-		@name enyo.Model~STATES.READY
-		@type {enyo.Model~STATES}
-	*/
-	STATES.READY = STATES.NEW | STATES.DIRTY | STATES.CLEAN;
-	
 	/**
 		This is a multi-state mask and will never be set explicitly. By default it can be used to
 		determine if the {@link enyo.Model} is [fetching]{@link enyo.Model#fetch},
@@ -211,6 +196,18 @@
 		@type {enyo.Model~STATES}
 	*/
 	STATES.ERROR = STATES.ERROR_FETCHING | STATES.ERROR_COMMITTING | STATES.ERROR_DESTROYING | STATES.ERROR_UNKNOWN;
+	
+	/**
+		This is a multi-state mask and will never be set explicitly. By default, it can be used to
+		verify that an {@link enyo.Model} is not in an [error state]{@link enyo.Model~STATES.ERROR}
+		or a [busy state]{@link enyo.Model~STATES.BUSY}. {@see enyo.Model#isReady} for an easy way
+		to determine if the {@link enyo.Model} is actually _ready_ without having to use bitwise
+		operations.
+	
+		@name enyo.Model~STATES.READY
+		@type {enyo.Model~STATES}
+	*/
+	STATES.READY = ~(STATES.BUSY | STATES.ERROR);
 	
 	/**
 		@private
@@ -409,49 +406,59 @@
 		
 			if (options.commit || options.source) {
 				
-				// remap to the originals
-				options = opts ? enyo.clone(opts, true) : {};
+				// if the current status is not one of the error states we can continue
+				if (!(this.status & (STATES.ERROR | STATES.BUSY))) {
 				
-				options.success = function (source, res) {
+					// remap to the originals
+					options = opts ? enyo.clone(opts, true) : {};
 				
-					if (it._waiting) {
-						idx = it._waiting.findIndex(function (ln) {
-							return (ln instanceof Source ? ln.name : ln) == source;
-						});
-						if (idx > -1) it._waiting.splice(idx, 1);
-						if (!it._waiting.length) it._waiting = null;
-					}
+					options.success = function (source, res) {
 				
-					// continue the operation this time with commit false explicitly
-					if (!it._waiting) {
-						options.commit = options.source = null;
-						it.destroy(options);
-					}
-					if (opts && opts.success) opts.success(this, opts, res, source);
-				};
+						if (it._waiting) {
+							idx = it._waiting.findIndex(function (ln) {
+								return (ln instanceof Source ? ln.name : ln) == source;
+							});
+							if (idx > -1) it._waiting.splice(idx, 1);
+							if (!it._waiting.length) it._waiting = null;
+						}
+				
+						// continue the operation this time with commit false explicitly
+						if (!it._waiting) {
+							options.commit = options.source = null;
+							it.destroy(options);
+						}
+						if (opts && opts.success) opts.success(this, opts, res, source);
+					};
 			
-				options.error = function (source, res) {
+					options.error = function (source, res) {
 				
-					if (it._waiting) {
-						idx = it._waiting.findIndex(function (ln) {
-							return (ln instanceof Source ? ln.name : ln) == source;
-						});
-						if (idx > -1) it._waiting.splice(idx, 1);
-						if (!it._waiting.length) it._waiting = null;
-					}
+						if (it._waiting) {
+							idx = it._waiting.findIndex(function (ln) {
+								return (ln instanceof Source ? ln.name : ln) == source;
+							});
+							if (idx > -1) it._waiting.splice(idx, 1);
+							if (!it._waiting.length) it._waiting = null;
+						}
 				
-					// continue the operation this time with commit false explicitly
-					if (!it._waiting) {
-						options.commit = options.source = null;
-						it.destroy(options);
-					}
+						// continue the operation this time with commit false explicitly
+						if (!it._waiting) {
+							options.commit = options.source = null;
+							it.destroy(options);
+						}
 				
-					// we don't bother setting the error state if we aren't waiting because it
-					// will be cleared to DESTROYED and it would be pointless
-					else this.onError('DESTROYING', opts, res, source);
-				};
+						// we don't bother setting the error state if we aren't waiting because it
+						// will be cleared to DESTROYED and it would be pointless
+						else this.onError('DESTROYING', opts, res, source);
+					};
+				
+					this.status = this.status | STATES.DESTROYING;
 			
-				Source.execute('destroy', this, options);
+					Source.execute('destroy', this, options);
+				} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
+				
+				// we don't allow the destroy to take place and we don't forcibly break-down
+				// the collection errantly so there is an opportuniy to resolve the issue
+				// before we lose access to the collection's content!
 				return this;
 			}
 			
@@ -542,7 +549,7 @@
 					
 					// we add dirty as a value of the status but clear the CLEAN bit if it
 					// was set - this would allow it to be in the ERROR state and NEW and DIRTY
-					if (!fetched) this.status = (this.status | STATES.DIRTY) ^ STATES.CLEAN;
+					if (!fetched) this.status = (this.status | STATES.DIRTY) & ~STATES.CLEAN;
 					
 					if (!silent) this.emit('change', changed, this);
 				
@@ -659,7 +666,7 @@
 			
 			// clear the FETCHING and NEW state (if it was NEW) we do not set it as dirty as this
 			// action alone doesn't warrant a dirty flag that would need to be set in the set method
-			if (!this._waiting) this.status = this.status ^ (STATES.FETCHING | STATES.NEW);
+			if (!this._waiting) this.status = this.status & ~(STATES.FETCHING | STATES.NEW);
 			
 			// now look for an additional success callback
 			if (opts && opts.success) opts.success(this, opts, res, source);
@@ -683,7 +690,7 @@
 				// we need to clear the COMMITTING bit and DIRTY bit as well as ensure that the
 				// 'previous' hash is whatever the current attributes are
 				this.previous = enyo.clone(this.attributes, true);
-				this.status = (this.status | STATES.CLEAN) ^ (STATES.COMMITTING | STATES.DIRTY);
+				this.status = (this.status | STATES.CLEAN) & ~(STATES.COMMITTING | STATES.DIRTY);
 			}
 			
 			if (opts && opts.success) opts.success(this, opts, res, source);			
@@ -706,8 +713,8 @@
 			
 			if (isNaN(stat) || (stat & ~STATES.ERROR)) stat = STATES.ERROR_UNKNOWN;
 			
-			// if it has changed give observers the opportunity to respond
-			this.status = this.status | stat;
+			// correctly set the current status and ensure we clear any busy flags
+			this.status = (this.status | stat) & ~STATES.BUSY;
 			
 			// we need to check to see if there is an options handler for this error
 			if (opts && opts.error) opts.error(this, action, opts, res, source);
@@ -718,7 +725,7 @@
 			@public
 		*/
 		clearError: function () {
-			this.status = this.status ^ STATES.ERROR;
+			this.status = this.status & ~STATES.ERROR;
 		},
 		
 		/**
