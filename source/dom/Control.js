@@ -1212,9 +1212,9 @@
 		// ensure we have one space after each colon or semi-colon except the last one
 		.replace(/(:|;)\s*(?!$)/g, '$1 ');
 		//ensure urls do not have space after colon
-		var urlregex = /url\s*\(([^\)]*):\s+([^\)]*)\)/g;
-		while (style.search(urlregex) != -1) {
-			style = style.replace(urlregex, 'url\($1:$2\)');
+		var urlRegex = /url\s*\(([^\)]*):\s+([^\)]*)\)/g;
+		while (style.search(urlRegex) != -1) {
+			style = style.replace(urlRegex, 'url($1:$2)');
 		}
 		return style;
 	};
