@@ -10,7 +10,8 @@
 	
 	/**
 		The possible values assigned to {@link enyo.Collection#status}. These codes can be extended
-		when necessary to provide more detailed state control.
+		when necessary to provide more detailed state control. See the inline documentation
+		information and explanation associated with the {@link enyo.Model~STATES}.
 	
 		@todo Need example of what extending looks like and how to keep functionality working in
 			error state handling, etc.
@@ -19,74 +20,115 @@
 		@enum {number}
 		@readonly
 	*/
-	var STATES = {
+	var STATES = {};
 		
-		/**
-			The default {@link enyo.Collection#status}. No actions are currently taking place and
-			no errors have been encountered.
-		*/
-		READY: 0x01,
+	/**
+		The default {@link enyo.Collection#status}. No actions are currently taking place and
+		no errors have been encountered. {@see enyo.Collection#isReady} for an easy way to
+		determine if the {@link enyo.Collection} is actually ready wthout having to use bitwise
+		operations.
 		
-		/**
-			The {@link enyo.Collection} is currently attempting to {@link enyo.Collection#fetch}.
-		*/
-		FETCHING: 0x02,
+		@name enyo.Collection~STATES.READY
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.READY = 0x0001;
+	
+	/**
+		The final state of an {@link enyo.Collection} once its {@link enyo.Collection#destroy}
+		method has successfully completed. This is an exclusive state.
+	
+		@name enyo.Collection~STATES.DESTROYED
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.DESTROYED = 0x0002;
 		
-		/**
-			The {@link enyo.Collection} is currently attempting to {@link enyo.Collection#commit}.
-		*/
-		COMMITTING: 0x04,
+	/**
+		The {@link enyo.Collection} is currently attempting to {@link enyo.Collection#fetch}.
+	
+		@name enyo.Collection~STATES.FETCHING
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.FETCHING = 0x0004;
 		
-		/**
-		*/
-		DESTROYING: 0x100,
+	/**
+		The {@link enyo.Collection} is currently attempting to {@link enyo.Collection#commit}.
+	
+		@name enyo.Collection~STATES.COMMITTING
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.COMMITTING = 0x0008;
 		
-		/**
-			The {@link enyo.Collection} has encountered an error during a
-			{@link enyo.Collection#fetch} attempt.
-		*/
-		ERROR_FETCHING: 0x08,
+	/**
+		The {@link enyo.Collection} is currently attempting to _commit_ a
+		{@link enyo.Collection#destroy}.
+	
+		@name enyo.Collection~STATES.DESTROYING
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.DESTROYING = 0x0010;
 		
-		/**
-			The {@link enyo.Collection} has encountered an error during a
-			{@link enyo.Collection#commit} attempt.
-		*/
-		ERROR_COMMITTING: 0x10,
+	/**
+		The {@link enyo.Collection} has encountered an error during a {@link enyo.Collection#fetch}
+		attempt.
 		
-		/**
-		*/
-		ERROR_DESTROYING: 0x40,
+		@name enyo.Collection~STATES.ERROR_FETCHING
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.ERROR_FETCHING = 0x0020;
 		
-		/**
-			The {@link enyo.Collection} has somehow encountered an error that it does not understand
-			so it uses this state.
-		*/
-		ERROR_UNKNOWN: 0x20,
+	/**
+		The {@link enyo.Collection} has encountered an error during a {@link enyo.Collection#commit}
+		attempt.
+	
+		@name enyo.Collection~STATES.ERROR_COMMITTING
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.ERROR_COMMITTING = 0x0040;
 		
-		/**
-			NOT AN ACTUAL STATE. This is (with default values) when the {@link enyo.Collection} is
-			[fetching]{@link enyo.Collection#fetch} or [committing]{@link enyo.Collection#commit}.
-			This is a convenience mask to test if it is doing some asynchronous task and waiting
-			for a result. If additional states are added that would need to be testable as a busy
-			state, those values would need to be OR'd with this.
+	/**
+		The {@link enyo.Collection} has encountered an error during a
+		{@link enyo.Collection#destroy} attempt.
+	
+		@name enyo.Collection~STATES.ERROR_DESTROYING
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.ERROR_DESTROYING = 0x0080;
 		
-			@todo Example of how to use this mask.
-		*/
-		BUSY: 0x02 | 0x04 | 0x100,
+	/**
+		The {@link enyo.Collection} has somehow encountered an error that it does not understand
+		so it uses this state.
+	
+		@name enyo.Collection~STATES.ERROR_UNKNOWN
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.ERROR_UNKNOWN = 0x0100;
 		
-		/**
-			NOT AN ACTUAL STATE. This is exposed for extensibility purposes and is used for error
-			state checking against a mask of possible error codes. If additional error codes are
-			added they will need to be OR'd with this mask.
+	/**
+		This is a multi-state mask and will never be set explicitly. By default it can be used to
+		determine if the {@link enyo.Collection} is [fetching]{@link enyo.Collection#fetch},
+		[committing]{@link enyo.Collection#commit} or [destroying]{@link enyo.Collection#destroy}.
+		You can add states to this mask by OR'ing them. {@see enyo.Collection#isBusy} for an easy
+		way to determine if the {@link enyo.Collection} is actually busy without having to use
+		bitwise operations.
 		
-			@todo Example of how to do this.
-		*/
-		ERROR: 0x08 | 0x10 | 0x20 | 0x40,
+		@name enyo.Collection~STATES.BUSY
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.BUSY = STATES.FETCHING | STATES.COMMITTING | STATES.DESTROYING;
 		
-		/**
-		*/
-		DESTROYED: 0x80
-	};
+	/**
+		This is a multi-state mask and will never be set explicitly. By default it can be used to
+		determine if the {@link enyo.Collection} has encountered an error while
+		[fetching]{@link enyo.Collection#fetch}, [committing]{@link enyo.Collection#commit} or
+		[destroying]{@link enyo.Collection#destroy}. There is also the
+		[unknown error]{@link enyo.Collection~STATES.ERROR_UNKNOWN} state that is included in this
+		mask. Additional error states can be added by OR'ing them. {@see enyo.Collection#isError}
+		for an easy way to determine if the {@link enyo.Collection} is actually in an error state.
+		
+		@name enyo.Collection~STATES.ERROR
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.ERROR = STATES.ERROR_COMMITTING | STATES.ERROR_FETCHING | STATES.ERROR_DESTROYING | STATES.ERROR_UNKNOWN;
 	
 	/**
 		An array-like structure designed to house a _collection_ of {@link enyo.Model} instances.

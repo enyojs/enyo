@@ -15,63 +15,202 @@
 		, ModelList = enyo.ModelList
 		, Source = enyo.Source
 		, oObject = enyo.Object;
+	
+	/**
+		The possible values assigned to {@link enyo.Model#status}. These codes can be extended
+		when necessary to provide more detailed state control. See the inline documentation
+		information and explanation associated with each individual state.
+	
+		Just a general note to developers exploring this implementation: these flags are HEX values
+		representing the BINARY flag position (a 1 in a binary number that is unique). For
+		additional information on using binary-flags and binary-operations see
+		{@link http://www.experts-exchange.com/Programming/Misc/A_1842-Binary-Bit-Flags-Tutorial-and-Usage-Tips.html}
+		or {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators}.
+		
+		Why is this information included here? Mostly for general reference in cases where there is
+		a desire to extend the built-in flags to include additional flag. Understanding what they
+		represent is the key to not having to do much more work to add another ERROR or BUSY state
+		(for example). Additional flags need to start with the next unique power of 2 position
+		(the value directly below the ellipses in the table below). Controlling state this way
+		allows it to be in multiple states simulatenously (sometimes) and be updated without needing
+		to modify existing code.
+	
+		Here is a table of the values, note that each flag position (in binary) represents a power
+		of 2 so each flag has only 1 '1':
+		
+		HEX             DEC             BIN
+		0x0001             1            0000 0000 0000 0001
+		0x0002             2            0000 0000 0000 0010
+		0x0004             4            0000 0000 0000 0100
+		0x0008             8            0000 0000 0000 1000
+		0x0010            16            0000 0000 0001 0000
+		0x0020            32            0000 0000 0010 0000
+		0x0040            64            0000 0000 0100 0000
+		0x0080           128            0000 0000 1000 0000
+		0x0100           256            0000 0001 0000 0000
+		0x0200           512            0000 0010 0000 0000
+		0x0400          1024            0000 0100 0000 0000
+		0x0800          2048            0000 1000 0000 0000
+	
+		...
+	
+		0x1000          4096            0001 0000 0000 0000
+		
+		As a hint, converting (HEX) 0x0800 to DEC do:
+			(0*16^3) + (8*16^2) + (0*16^1) + (0*16^0) = 2048
+		
+		As a hint, converting (HEX) 0x0800 to BIN do:
+			0    8    0    0    (HEX)
+			---- ---- ---- ----
+			0000 1000 0000 0000 (BIN)
+	
+	
+		@name enyo.Model~STATES
+		@enum {number}
+		@readonly
+	*/
+	var STATES = {};
 		
 	/**
+		The {@link enyo.Model} was created by the application and exists only in the client.
+		Successfully [fetching]{@link enyo.Model#fetch} (or [fetching]{@link enyo.Collection#fetch}
+		from a {@link enyo.Collection}) will remove this flag. Also, successfully
+		[committing]{@link enyo.Model#commit} (or [committing]{@link enyo.Collection#commit}
+		from a {@link enyo.Collection}) will remove this flag.
+	
+		@name enyo.Model~STATES.NEW
+		@type {enyo.Model~STATES}
 	*/
-	var STATES = {
+	STATES.NEW = 0x0001;
 		
-		/**
-		*/
-		NEW: 0x01,
+	/**
+		The {@link enyo.Model} has been modified locally and has not been (successfully)
+		[committed]{@link enyo.Model#commit} (or {@link enyo.Collection#commit}). Once completed,
+		this flag will be removed.
+	
+		@name enyo.Model~STATES.DIRTY
+		@type {enyo.Model~STATES}
+	*/
+	STATES.DIRTY = 0x0002;
 		
-		/**
-		*/
-		DIRTY: 0x02,
+	/**
+		The {@link enyo.Model} is either {@link enyo.Model~STATES.NEW} or it was
+		{@link enyo.Model~STATES.DIRTY} after a local modification and then successfully
+		[committed]{@link enyo.Model#commit} (or {@link enyo.Collection#commit}). This flag is set
+		by default on new [models]{@link enyo.Model}.
+	
+		@name enyo.Model~STATES.CLEAN
+		@type {enyo.Model~STATES}
+	*/
+	STATES.CLEAN = 0x0004;
+	
+	/**
+		The final state of an {@link enyo.Model} once its {@link enyo.Model#destroy}
+		method has successfully completed. This is an exclusive state.
+	
+		@name enyo.Model~STATES.DESTROYED
+		@type {enyo.Model~STATES.DESTROYED}
+	*/
+	STATES.DESTROYED = 0x0008;
 		
-		/**
-		*/
-		CLEAN: 0x04,
+	/**
+		The {@link enyo.Model} is currently attempting to {@link enyo.Model#fetch}.
 		
-		/**
-		*/
-		READY: 0x01 | 0x02 | 0x04,
+		@name enyo.Model~STATES.FETCHING
+		@type {enyo.Model~STATES}
+	*/
+	STATES.FETCHING = 0x0010;
 		
-		/**
-		*/
-		FETCHING: 0x08,
+	/**
+		The {@link enyo.Model} is currently attempting to {@link enyo.Model#commit}.
 		
-		/**
-		*/
-		COMMITTING: 0x10,
+		@name enyo.Model~STATES.COMMITTING
+		@type {enyo.Model~STATES}
+	*/
+	STATES.COMMITTING = 0x0020;
 		
-		/**
-		*/
-		BUSY: 0x08 | 0x10,
+	/**
+		The {@link enyo.Model} is currently attempting to {@link enyo.Model#destroy}.
+	
+		@name enyo.Model~STATES.DESTROYING
+		@type {enyo.Model~STATES}
+	*/
+	STATES.DESTROYING = 0x0080;
 		
-		/**
-		*/
-		ERROR_COMMITTING: 0x20,
+	/**
+		The {@link enyo.Model} has encountered an error during a {@link enyo.Model#commit} attempt.
+	
+		@name enyo.Model~STATES.ERROR_COMMITTING
+		@type {enyo.Model~STATES}
+	*/
+	STATES.ERROR_COMMITTING = 0x0100;
 		
-		/**
-		*/
-		ERROR_FETCHING: 0x40,
+	/**
+		The {@link enyo.Model} has encountered an error during a {@link enyo.Model#fetch} attempt.
 		
-		/**
-		*/
-		ERROR_DESTROYING: 0x200,
+		@name enyo.Model~STATES.ERROR_FETCHING
+		@type {enyo.Model~STATES}
+	*/
+	STATES.ERROR_FETCHING = 0x0200;
 		
-		/**
-		*/
-		ERROR_UNKNOWN: 0x80,
+	/**
+		The {@link enyo.Model} has encountered an error during a {@link enyo.Model#destroy} attempt.
 		
-		/**
-		*/
-		DESTROYED: 0x100,
+		@name enyo.Model~STATES.ERROR_DESTROYING
+		@type {enyo.Model~STATES}
+	*/
+	STATES.ERROR_DESTROYING = 0x0400;
 		
-		/**
-		*/
-		ERROR: 0x20 | 0x40 | 0x80 | 0x200
-	};
+	/**
+		The {@link enyo.Model} has somehow encountered an error that it does not understand
+		so it uses this state.
+	
+		@name enyo.Model~STATES.ERROR_UNKNOWN
+		@type {enyo.Model~STATES}
+	*/
+	STATES.ERROR_UNKNOWN = 0x0800;
+	
+		
+	/**
+		This is a multi-state mask and will never be set explicitly. By default, it can be used to
+		determine if the {@link enyo.Model} is currently [new]{@link enyo.Model~STATES.NEW},
+		[dirty]{@link enyo.Model~STATES.DIRTY} or [clean]{@link enyo.Model~STATES.CLEAN}. It does
+		not imply the {@link enyo.Model} is not also in an
+		[error state]{@link enyo.Model~STATES.ERROR}. {@see enyo.Collection#isReady} for an easy way
+		to determine if the {@link enyo.Collection} is actually ready wthout having to use bitwise
+		operations.
+	
+		@name enyo.Model~STATES.READY
+		@type {enyo.Model~STATES}
+	*/
+	STATES.READY = STATES.NEW | STATES.DIRTY | STATES.CLEAN;
+	
+	/**
+		This is a multi-state mask and will never be set explicitly. By default it can be used to
+		determine if the {@link enyo.Model} is [fetching]{@link enyo.Model#fetch},
+		[committing]{@link enyo.Model#commit} or [destroying]{@link enyo.Model#destroy}.
+		You can add states to this mask by OR'ing them. {@see enyo.Model#isBusy} for an easy
+		way to determine if the {@link enyo.Model} is actually busy without having to use
+		bitwise operations.
+	
+		@name enyo.Model~STATES.BUSY
+		@type {enyo.Model~STATES}
+	*/
+	STATES.BUSY = STATES.FETCHING | STATES.COMMITTING | STATES.DESTROYING;
+	
+	/**
+		This is a multi-state mask and will never be set explicitly. By default it can be used to
+		determine if the {@link enyo.Model} has encountered an error while
+		[fetching]{@link enyo.Model#fetch}, [committing]{@link enyo.Model#commit} or
+		[destroying]{@link enyo.Model#destroy}. There is also the
+		[unknown error]{@link enyo.Model~STATES.ERROR_UNKNOWN} state that is included in this
+		mask. Additional error states can be added by OR'ing them. {@see enyo.Model#isError}
+		for an easy way to determine if the {@link enyo.Model} is actually in an error state.
+		
+		@name enyo.Model~STATES.ERROR
+		@type {enyo.Model~STATES}
+	*/
+	STATES.ERROR = STATES.ERROR_FETCHING | STATES.ERROR_COMMITTING | STATES.ERROR_DESTROYING | STATES.ERROR_UNKNOWN;
 	
 	/**
 		@private
@@ -580,6 +719,44 @@
 		*/
 		clearError: function () {
 			this.status = this.status ^ STATES.ERROR;
+		},
+		
+		/**
+			Convenience method to avoid using bitwise comparison directly for the
+			{@link enyo.Collection#status}. Automatically checks the current
+			{@link enyo.Collection#status} or the passed-in value to determine if it is an
+			[error state]{@link enyo.Collection~STATES.ERROR}. The passed-in value will only be
+			used if it is a numeric value.
+		
+			@param {enyo.Collection~STATES} [status] Provide a specific value to test.
+			@returns {boolean} Whether or not the given status is an error.
+			@method
+			@public
+		*/
+		isError: function (status) {
+			return !! ((isNaN(status) ? this.status : status) & STATES.ERROR);
+		},
+		
+		/**
+			Convenience method to avoid using bitwise comparison directly for the
+			{@link enyo.Collection#status}. Automatically check the current
+			{@link enyo.Collection#status} or the passed-in value to determine if it is a
+			[busy state]{@link enyo.Collection~STATES.BUSY}. The passed-in value will only be
+			used if it is a numeric value.
+		*/
+		isBusy: function (status) {
+			return !! ((isNaN(status) ? this.status : status) & STATES.BUSY);
+		},
+		
+		/**
+			Convenience method to avoid using bitwise comparison directly for the
+			{@link enyo.Collection#status}. Automatically check the current
+			{@link enyo.Collection#status} or the passed-in value to determine if it is a
+			[ready state]{@link enyo.Collection~STATES.READY}. The passed-in value will only be
+			used if it is a numeric value.
+		*/
+		isReady: function (status) {
+			return !! ((isNaN(status) ? this.status : status) & STATES.READY);
 		}
 	});
 	
