@@ -856,7 +856,7 @@
 				};
 				
 				// set the state
-				this.set('status', this.status | STATES.COMMITTING);
+				this.set('status', (this.status | STATES.COMMITTING) & ~STATES.READY);
 				
 				// now pass this on to the source to execute as it sees fit
 				Source.execute('commit', this, options);
@@ -898,7 +898,7 @@
 				};
 				
 				// set the state
-				this.set('status', this.status | STATES.FETCHING);
+				this.set('status', (this.status | STATES.FETCHING) & ~STATES.READY);
 				
 				// now pass this on to the source to execute as it sees fit
 				Source.execute('fetch', this, options);
@@ -967,7 +967,7 @@
 							else this.onError('DESTROYING', opts, res, source);
 						};
 					
-						this.set('status', this.status | STATES.DESTROYING);
+						this.set('status', (this.status | STATES.DESTROYING) & ~STATES.READY);
 				
 						Source.execute('destroy', this, options);
 					} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
@@ -1036,7 +1036,7 @@
 			
 			// clear the state
 			if (!this._waiting) {
-				this.set('status', (this.status | STATES.READY) ^ STATES.COMMITTING);
+				this.set('status', (this.status | STATES.READY) & ~STATES.COMMITTING);
 			}
 		},
 		
@@ -1065,7 +1065,7 @@
 			
 			// clear the state
 			if (!this._waiting) {
-				this.set('status', (this.status | STATES.READY) ^ STATES.FETCHING);
+				this.set('status', (this.status | STATES.READY) & ~STATES.FETCHING);
 			}
 		},
 		
@@ -1101,7 +1101,7 @@
 			if (isNaN(stat) || !(stat & STATES.ERROR)) stat = STATES.ERROR_UNKNOWN;
 			
 			// if it has changed give observers the opportunity to respond
-			this.set('status', this.status | stat);
+			this.set('status', (this.status | stat) & ~STATES.READY);
 			
 			// we need to check to see if there is an options handler for this error
 			if (opts && opts.error) opts.error(this, action, opts, res, source);
