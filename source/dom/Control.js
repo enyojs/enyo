@@ -1203,20 +1203,15 @@
 		@private
 	*/
 	Control.normalizeCssStyleString = function (style) {
-		style =
-		(style + ';')
-		// remove any non-alpha ascii at the front of the string
-		.replace(/^[;\s]+/, '')
-		// remove all spaces before any semi-colons or any duplicates
-		.replace(/\s*(;|:)\1+/g, '$1')
-		// ensure we have one space after each colon or semi-colon except the last one
-		.replace(/(:|;)\s*(?!$)/g, '$1 ');
-		//ensure urls do not have space after colon
-		var urlRegex = /url\s*\(([^\)]*):\s+([^\)]*)\)/g;
-		while (style.search(urlRegex) != -1) {
-			style = style.replace(urlRegex, 'url($1:$2)');
-		}
-		return style;
+		return (
+			(';' + style + ';')
+			// remove duplicate ending semi-colons
+			.replace(/(;)\1+\s*$/, ';')
+			// ensure we have one space after each colon or semi-colon except the last one
+			.replace(/;\s*([\w-]+)\s*:\s*/g, '; $1: ')
+			//remove first semi-colon and space
+			.substr(1).trim()
+		);
 	};
 	
 	/**
