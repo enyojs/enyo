@@ -117,8 +117,15 @@
 			@method
 		*/
 		has: function (ctor, model) {
-			var list = this.models[ctor.prototype.kindName];
-			return list? list.has(model): false;
+			var list;
+			
+			if (!model) {
+				model = ctor;
+				ctor = model.ctor;
+			}
+			
+			list = this.models[ctor.prototype.kindName];
+			return list ? list.has(model) : false;
 		},
 		
 		/**

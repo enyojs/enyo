@@ -860,14 +860,37 @@
 	};
 	
 	/**
-		Shallow-clones an object or an array.
+		Will create and return a shallow copy of an [Object]{@link external:Object} or an
+		[Array]{@link external:Array}. For _objects_, by default, properties will be scanned and
+		copied directly to the _clone_ such that they would pass the
+		[hasOwnProperty]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty}
+		test. This is expensive and often not required. In this case use the optional second
+		parameter to allow a more efficient [copy]{@link Object~create} to be made.
 		
-		@public
+		@param {(object|array)} base The [Object]{@link external:Object} or
+			[Array]{@link external:Array} to be cloned.
+		@param {boolean} [quick] When cloning [objects]{@link external:Object} will use a faster
+			[copy]{@link Object~create} method; has no meaning when cloaning
+			[arrays]{@link external:Array}.
+		@returns {*} A clone of the provided _base_ if _base_ is of the correct type otherwise it
+			will return _base_ as it was passed in.
 		@function clone
 		@memberof enyo
+		@public
 	*/
-	enyo.clone = function(obj) {
-		return enyo.isArray(obj) ? enyo.cloneArray(obj) : enyo.mixin({}, obj);
+	enyo.clone = function(base, quick) {
+		if (base) {
+			
+			// avoid the overhead of calling yet another internal function to do type-checking
+			// just copy the array and be done with it
+			if (base instanceof Array) return base.slice();
+			else if (base instanceof Object) {
+				return quick ? Object.create(base) : enyo.mixin({}, base);
+			}
+		}
+		
+		// we will only do this if it is not an array or native object
+		return base;
 	};
 	
 	var empty = {};
@@ -878,6 +901,9 @@
 	};
 
 	/**
+		@todo Rewrite with appropriate documentation for options parameter (typedef)
+		@todo document 'quick' option
+	
 		Will take a variety of options to ultimately mix a set of properties
 		from objects into single object. All configurations accept a boolean as
 		the final parameter to indicate whether or not to ignore _truthy_/_existing_
