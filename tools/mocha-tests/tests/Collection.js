@@ -53,6 +53,7 @@ describe('enyo.Collection', function () {
 				collection.fetch();
 				expect(collection.status & STATES.FETCHING).to.equal(STATES.FETCHING);
 				expect(collection.status & STATES.BUSY).to.be.ok;
+				expect(collection.status & STATES.READY).to.not.be.ok;
 				
 				// call onFetch to clear its state
 				collection.onFetch();
@@ -66,6 +67,7 @@ describe('enyo.Collection', function () {
 				collection.commit();
 				expect(collection.status & STATES.COMMITTING).to.equal(STATES.COMMITTING);
 				expect(collection.status & STATES.BUSY).to.be.ok;
+				expect(collection.statys & STATES.READY).to.not.be.ok;
 				
 				// call onCommit to clear its state
 				collection.onCommit();
@@ -87,6 +89,7 @@ describe('enyo.Collection', function () {
 				collection.fetch();
 				expect(collection.status & STATES.ERROR_FETCHING).to.equal(STATES.ERROR_FETCHING);
 				expect(collection.status & STATES.ERROR).to.be.ok;
+				expect(collection.status & STATES.READY).to.not.be.ok;
 				
 				// clear the state
 				collection.clearError();
@@ -95,6 +98,7 @@ describe('enyo.Collection', function () {
 				collection.commit();
 				expect(collection.status & STATES.ERROR_COMMITTING).to.be.ok
 				expect(collection.status & STATES.ERROR).to.be.ok;
+				expect(collection.status & STATES.READY).to.not.be.ok;
 				
 				collection.clearError();
 				src1.commit.restore();
@@ -128,6 +132,7 @@ describe('enyo.Collection', function () {
 				
 				expect(spy.called).to.be.false;
 				expect(collection.status & STATES.ERROR).to.be.ok;
+				expect(collection.statys & STATES.READY).to.not.be.ok;
 				
 				collection.clearError();
 				src1.commit.restore();
@@ -160,6 +165,7 @@ describe('enyo.Collection', function () {
 				
 				expect(spy.called).to.be.false;
 				expect(collection.status & STATES.ERROR).to.be.ok;
+				expect(collection.status & STATES.READY).to.not.be.ok;
 				
 				collection.clearError();
 				collection.destroy();
