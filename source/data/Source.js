@@ -105,6 +105,10 @@
 		@static
 	*/
 	Source.concat = function (ctor, props) {
+		
+		// force noDefer so that we can actually set this method on the constructor
+		if (props) props.noDefer = true;
+		
 		ctor.create = Source.create;
 	};
 	
