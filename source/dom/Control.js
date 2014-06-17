@@ -1203,15 +1203,15 @@
 		@private
 	*/
 	Control.normalizeCssStyleString = function (style) {
-		return (
-			(style + ';')
-			// remove any non-alpha ascii at the front of the string
-			.replace(/^[;\s]+/, '')
-			// remove all spaces before any semi-colons or any duplicates
-			.replace(/\s*(;|:)\1+/g, '$1')
-			// ensure we have one space after each colon or semi-colon except the last one
-			.replace(/(:|;)\s*(?!$)/g, '$1 ')
-		);
+		return style ? (
+			(";" + style)
+			// add a semi-colon if it's not the last character (also trim possible unnecessary whitespace)
+			.replace(/([^;])\s*$/, "$1;")
+			// ensure we have one space after each colon or semi-colon
+			.replace(/\s*;\s*([\w-]+)\s*:\s*/g, "; $1: ")
+			// remove first semi-colon and space
+			.substr(2).trim()
+		) : "";
 	};
 	
 	/**
