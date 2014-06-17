@@ -13,7 +13,7 @@
 	for(var i=0; i<scripts.length; i++) {
 		if(scripts[i].src.indexOf("enyo/tools/less.js")>-1) {
 			// update path relative to this script for extra precision
-			path = self.src.replace("enyo/tools/less.js", path);
+			path = scripts[i].src.replace("enyo/tools/less.js", path);
 			break;
 		}
 	}
