@@ -145,6 +145,17 @@ enyo.dom = {
 		}
 		return 480;
 	},
+	/**
+		The proportion by which the body tag differs from the window size, in both X and Y dimensions.
+		This happens when we need to scale the whole interface down from 1920x1080 (1080p) to 1280x720 (720p)
+	*/
+	_bodyScaleFactorY: 1,
+	_bodyScaleFactorX: 1,
+	updateScaleFactor: function() {
+		var bodyBounds = this.getBounds(document.body);
+		this._bodyScaleFactorY = bodyBounds.height / this.getWindowHeight();
+		this._bodyScaleFactorX = bodyBounds.width / this.getWindowWidth();
+	},
 	// Workaround for lack of compareDocumentPosition support in IE8
 	// Code MIT Licensed, John Resig; source: http://ejohn.org/blog/comparing-document-position/
 	compareDocumentPosition: function(a, b) {

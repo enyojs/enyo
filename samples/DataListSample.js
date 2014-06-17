@@ -12,7 +12,7 @@ enyo.kind({
 			], bindings: [
 				{from: ".model.firstName", to: ".$.firstName.content"},
 				{from: ".model.lastName", to: ".$.lastName.content"},
-				{from: ".model.lastName", to: ".$.lastNameLetter.content", transform: function (v) { return v.charAt(0); }},
+				{from: ".model.lastName", to: ".$.lastNameLetter.content", transform: function (v) { return v && v.charAt(0); }},
 				{from: ".model.classes", to: ".classes"}
 			]}
 		]}

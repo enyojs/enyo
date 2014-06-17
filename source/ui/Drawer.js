@@ -94,14 +94,14 @@ enyo.kind({
 		// the actual drawer DOM node adjusts its height
 		if (this.hasNode()) {
 			var d = inSender.dimension;
-			this.node.style[d] = this.domStyles[d] = inSender.value + "px";
+			this.applyStyle(d, inSender.value + 'px');
 		}
 		// while the client inside the drawer adjusts its position to move out of the visible area
 		var cn = this.$.client.hasNode();
 		if (cn) {
 			var p = inSender.position;
 			var o = (this.open ? inSender.endValue : inSender.startValue);
-			cn.style[p] = this.$.client.domStyles[p] = (inSender.value - o) + "px";
+			this.$.client.applyStyle(p, (inSender.value - o) + 'px');
 		}
 		if (this.container && this.resizeContainer) {
 			this.container.resized();
@@ -114,19 +114,16 @@ enyo.kind({
 			this.$.client.hide();
 		}
 		else {
-			// save changes to this.domCssText --> see ENYO-1561
-			this.$.client.domCssText = enyo.Control.domStylesToCssText(this.$.client.domStyles);
-			// at end of open animation, clean limit on height/width
 			var v = (this.orient == "v");
 			var d = v ? "height" : "width";
 			var p = v ? "top" : "left";
 			var cn = this.$.client.hasNode();
 			// clear out changes to container position & node dimension
 			if (cn) {
-				cn.style[p] = this.$.client.domStyles[p] = null;
+				this.$.client.applyStyle(p, null);
 			}
 			if (this.node) {
-				this.node.style[d] = this.domStyles[d] = null;
+				this.applyStyle(d, null);
 			}
 		}
 		if (this.container && this.resizeContainer) {

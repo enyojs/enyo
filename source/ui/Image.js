@@ -44,17 +44,30 @@ enyo.kind({
 			sup.apply(this, arguments);
 			this.altChanged();
 			this.sizingChanged();
+			this.srcChanged();
 		};
 	}),
-	srcChanged: enyo.inherit(function (sup) {
-		return function () {
-			if (this.sizing && this.src) {
-				this.applyStyle("background-image", "url(" + enyo.path.rewrite(this.src) + ")");
+	getSrc: function () {
+		return this.getAttribute('src');
+	},
+	setSrc: function (src) {
+		var was = this.src;
+		this.src = src;
+		
+		if (was !== src) this.notify('src', was, src);
+	},
+	srcChanged: function () {
+		if (this.sizing && this.src) {
+			this.applyStyle("background-image", "url(" + enyo.path.rewrite(this.src) + ")");
+		} else {
+			if (!this.src) {
+				// allow us to clear the src property
+				this.setAttribute("src", "");
 			} else {
-				sup.apply(this, arguments);
+				this.setAttribute("src", enyo.path.rewrite(this.src));
 			}
-		};
-	}),
+		}
+	},
 	altChanged: function() {
 		this.setAttribute("alt", this.alt);
 	},

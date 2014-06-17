@@ -1,500 +1,799 @@
 (function (enyo) {
-	//*@protected
+	
+	var kind = enyo.kind
+		, mixin = enyo.mixin
+		, clone = enyo.clone
+		, only = enyo.only
+		, isFunction = enyo.isFunction
+		, uid = enyo.uid
+		, inherit = enyo.inherit;
+		
+	var ObserverSupport = enyo.ObserverSupport
+		, ComputedSupport = enyo.ComputedSupport
+		, BindingSupport = enyo.BindingSupport
+		, EventEmitter = enyo.EventEmitter
+		, ModelList = enyo.ModelList
+		, Source = enyo.Source
+		, oObject = enyo.Object;
+	
 	/**
-		We create this reusable object for properties passed to the mixin
-		method so as not to create and throw away a new object every time
-		a new model is created.
+		The possible values assigned to {@link enyo.Model#status}. These codes can be extended
+		when necessary to provide more detailed state control. See the inline documentation
+		information and explanation associated with each individual state.
+	
+		Just a general note to developers exploring this implementation: these flags are HEX values
+		representing the BINARY flag position (a 1 in a binary number that is unique). For
+		additional information on using binary-flags and binary-operations see
+		{@link http://www.experts-exchange.com/Programming/Misc/A_1842-Binary-Bit-Flags-Tutorial-and-Usage-Tips.html}
+		or {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators}.
+		
+		Why is this information included here? Mostly for general reference in cases where there is
+		a desire to extend the built-in flags to include additional flag. Understanding what they
+		represent is the key to not having to do much more work to add another ERROR or BUSY state
+		(for example). Additional flags need to start with the next unique power of 2 position
+		(the value directly below the ellipses in the table below). Controlling state this way
+		allows it to be in multiple states simulatenously (sometimes) and be updated without needing
+		to modify existing code.
+	
+		Here is a table of the values, note that each flag position (in binary) represents a power
+		of 2 so each flag has only 1 '1':
+		
+		HEX             DEC             BIN
+		0x0001             1            0000 0000 0000 0001
+		0x0002             2            0000 0000 0000 0010
+		0x0004             4            0000 0000 0000 0100
+		0x0008             8            0000 0000 0000 1000
+		0x0010            16            0000 0000 0001 0000
+		0x0020            32            0000 0000 0010 0000
+		0x0040            64            0000 0000 0100 0000
+		0x0080           128            0000 0000 1000 0000
+		0x0100           256            0000 0001 0000 0000
+		0x0200           512            0000 0010 0000 0000
+		0x0400          1024            0000 0100 0000 0000
+		0x0800          2048            0000 1000 0000 0000
+	
+		...
+	
+		0x1000          4096            0001 0000 0000 0000
+		
+		As a hint, converting (HEX) 0x0800 to DEC do:
+			(0*16^3) + (8*16^2) + (0*16^1) + (0*16^0) = 2048
+		
+		As a hint, converting (HEX) 0x0800 to BIN do:
+			0    8    0    0    (HEX)
+			---- ---- ---- ----
+			0000 1000 0000 0000 (BIN)
+	
+	
+		@name enyo.Model~STATES
+		@enum {number}
+		@readonly
 	*/
-	var _mixinOpts = {ignore: true, filter: function (k, v, s, t) {
-		// only use the default value if the attributes value is undefined and the default
-		// entry itself is not undefined
-		return (typeof t[k] == "undefined") && (typeof v != "undefined");
-	}};
-	//*@public
+	var STATES = {};
+		
 	/**
-		_enyo.Model_ is a kind used to create data records. For the sake of
-		efficiency and simplicity, it has been designed as a special object not
-		derived from any other Enyo kind.
-
-		__Getting and Setting enyo.Model values__
-
-		Unlike kinds based on [enyo.Object](#enyo.Object), any call to	_set()_ or
-		_get()_ on a model affects only the schema of the model, which is tracked in
-		its _attributes_ hash. That is, when you set a property	on a model via
-		_set()_, you are setting the property's entry in the model's _attributes_
-		hash, not setting the property on the model itself.
-
-		Note that, even though you are changing the contents of the _attributes_
-		hash, you should not specify _"attributes"_ as a parameter to _set()_ or
-		_get()_. If you do so, you will create a schema object called _"attributes"_
-		nested inside the model's _attributes_ hash.
-
-		Also note that the _set()_ method has the ability to accept a hash of keys
-		and values to be applied to the model all at once.
-
-		__Computed Properties and enyo.Model__
-
-		Computed properties only exist for attributes of a model. Otherwise, they
-		function just as you would expect from the [ComputedSupport
-		mixin](#enyo.ComputedSupport) on _enyo.Object_. The only exception is that
-		all functions in the attributes schema are considered to be computed
-		properties; these are fairly useless, though, unless you declare their
-		dependencies.
-
-		__Bindings__
-
-		Bindings may be applied to _enyo.Model_ instances with the understanding
-		that they will only be activated via changes to _attributes_.
-
-		__Observers and Notifications__
-
-		The notification system for observers works the same as it does with
-		_enyo.Object_, except that observers are only notified of changes made to
-		properties in the _attributes_ hash.
-
-		__Events__
-
-		The events in _enyo.Model_ differ from those in
-		[enyo.Component](#enyo.Component). Instead of _bubbled_ or _waterfall_
-		events, _enyo.Model_ has _change_ and _destroy_ events.	To work with these
-		events, use the [addListener()](#enyo.RegisteredEventSupport::addListener),
-		[removeListener()](#enyo.RegisteredEventSupport::removeListener), and
-		[triggerEvent()](#enyo.RegisteredEventSupport::triggerEvent) methods.
+		The {@link enyo.Model} was created by the application and exists only in the client.
+		Successfully [fetching]{@link enyo.Model#fetch} (or [fetching]{@link enyo.Collection#fetch}
+		from a {@link enyo.Collection}) will remove this flag. Also, successfully
+		[committing]{@link enyo.Model#commit} (or [committing]{@link enyo.Collection#commit}
+		from a {@link enyo.Collection}) will remove this flag.
+	
+		@name enyo.Model~STATES.NEW
+		@type {enyo.Model~STATES}
 	*/
-	enyo.kind({
-		name: "enyo.Model",
-		//*@protected
+	STATES.NEW = 0x0001;
+		
+	/**
+		The {@link enyo.Model} has been modified locally and has not been (successfully)
+		[committed]{@link enyo.Model#commit} (or {@link enyo.Collection#commit}). Once completed,
+		this flag will be removed.
+	
+		@name enyo.Model~STATES.DIRTY
+		@type {enyo.Model~STATES}
+	*/
+	STATES.DIRTY = 0x0002;
+		
+	/**
+		The {@link enyo.Model} is either {@link enyo.Model~STATES.NEW} or it was
+		{@link enyo.Model~STATES.DIRTY} after a local modification and then successfully
+		[committed]{@link enyo.Model#commit} (or {@link enyo.Collection#commit}). This flag is set
+		by default on new [models]{@link enyo.Model}.
+	
+		@name enyo.Model~STATES.CLEAN
+		@type {enyo.Model~STATES}
+	*/
+	STATES.CLEAN = 0x0004;
+	
+	/**
+		The final state of an {@link enyo.Model} once its {@link enyo.Model#destroy}
+		method has successfully completed. This is an exclusive state.
+	
+		@name enyo.Model~STATES.DESTROYED
+		@type {enyo.Model~STATES.DESTROYED}
+	*/
+	STATES.DESTROYED = 0x0008;
+		
+	/**
+		The {@link enyo.Model} is currently attempting to {@link enyo.Model#fetch}.
+		
+		@name enyo.Model~STATES.FETCHING
+		@type {enyo.Model~STATES}
+	*/
+	STATES.FETCHING = 0x0010;
+		
+	/**
+		The {@link enyo.Model} is currently attempting to {@link enyo.Model#commit}.
+		
+		@name enyo.Model~STATES.COMMITTING
+		@type {enyo.Model~STATES}
+	*/
+	STATES.COMMITTING = 0x0020;
+		
+	/**
+		The {@link enyo.Model} is currently attempting to {@link enyo.Model#destroy}.
+	
+		@name enyo.Model~STATES.DESTROYING
+		@type {enyo.Model~STATES}
+	*/
+	STATES.DESTROYING = 0x0080;
+		
+	/**
+		The {@link enyo.Model} has encountered an error during a {@link enyo.Model#commit} attempt.
+	
+		@name enyo.Model~STATES.ERROR_COMMITTING
+		@type {enyo.Model~STATES}
+	*/
+	STATES.ERROR_COMMITTING = 0x0100;
+		
+	/**
+		The {@link enyo.Model} has encountered an error during a {@link enyo.Model#fetch} attempt.
+		
+		@name enyo.Model~STATES.ERROR_FETCHING
+		@type {enyo.Model~STATES}
+	*/
+	STATES.ERROR_FETCHING = 0x0200;
+		
+	/**
+		The {@link enyo.Model} has encountered an error during a {@link enyo.Model#destroy} attempt.
+		
+		@name enyo.Model~STATES.ERROR_DESTROYING
+		@type {enyo.Model~STATES}
+	*/
+	STATES.ERROR_DESTROYING = 0x0400;
+		
+	/**
+		The {@link enyo.Model} has somehow encountered an error that it does not understand
+		so it uses this state.
+	
+		@name enyo.Model~STATES.ERROR_UNKNOWN
+		@type {enyo.Model~STATES}
+	*/
+	STATES.ERROR_UNKNOWN = 0x0800;
+	
+	/**
+		This is a multi-state mask and will never be set explicitly. By default it can be used to
+		determine if the {@link enyo.Model} is [fetching]{@link enyo.Model#fetch},
+		[committing]{@link enyo.Model#commit} or [destroying]{@link enyo.Model#destroy}.
+		You can add states to this mask by OR'ing them. {@see enyo.Model#isBusy} for an easy
+		way to determine if the {@link enyo.Model} is actually busy without having to use
+		bitwise operations.
+	
+		@name enyo.Model~STATES.BUSY
+		@type {enyo.Model~STATES}
+	*/
+	STATES.BUSY = STATES.FETCHING | STATES.COMMITTING | STATES.DESTROYING;
+	
+	/**
+		This is a multi-state mask and will never be set explicitly. By default it can be used to
+		determine if the {@link enyo.Model} has encountered an error while
+		[fetching]{@link enyo.Model#fetch}, [committing]{@link enyo.Model#commit} or
+		[destroying]{@link enyo.Model#destroy}. There is also the
+		[unknown error]{@link enyo.Model~STATES.ERROR_UNKNOWN} state that is included in this
+		mask. Additional error states can be added by OR'ing them. {@see enyo.Model#isError}
+		for an easy way to determine if the {@link enyo.Model} is actually in an error state.
+		
+		@name enyo.Model~STATES.ERROR
+		@type {enyo.Model~STATES}
+	*/
+	STATES.ERROR = STATES.ERROR_FETCHING | STATES.ERROR_COMMITTING | STATES.ERROR_DESTROYING | STATES.ERROR_UNKNOWN;
+	
+	/**
+		This is a multi-state mask and will never be set explicitly. By default, it can be used to
+		verify that an {@link enyo.Model} is not in an [error state]{@link enyo.Model~STATES.ERROR}
+		or a [busy state]{@link enyo.Model~STATES.BUSY}. {@see enyo.Model#isReady} for an easy way
+		to determine if the {@link enyo.Model} is actually _ready_ without having to use bitwise
+		operations.
+	
+		@name enyo.Model~STATES.READY
+		@type {enyo.Model~STATES}
+	*/
+	STATES.READY = ~(STATES.BUSY | STATES.ERROR);
+	
+	/**
+		@private
+	*/
+	var BaseModel = kind({
 		kind: null,
-		mixins: [enyo.ObserverSupport, enyo.BindingSupport, enyo.RegisteredEventSupport],
+		mixins: [ObserverSupport, ComputedSupport, BindingSupport, EventEmitter]
+	});
+	
+	/**
+		@public
+		@class enyo.Model
+	*/
+	var Model = kind(
+		/** @lends enyo.Model.prototype */ {
+		name: 'enyo.Model',
+		kind: BaseModel,
 		noDefer: true,
-		//*@public
+				
 		/**
-			A hash of attributes known as the record's schema. This is where the
-			values of any attributes are stored for an active record.
+			@public
 		*/
 		attributes: null,
+		
 		/**
-			An optional hash of values and properties to be applied to the attributes
-			of the record at initialization. Any value in _defaults_ that already
-			exists on the attributes schema will be ignored.
+			@public
 		*/
-		defaults: {},
+		source: null,
+		
 		/**
-			Set this flag to true if this model is read-only and will not need to
-			commit or destroy any changes via a source. This will cause a _destroy()_
-			call to safely execute _destroyLocal()_ by default.
-		*/
-		readOnly: false,
-		/**
-			All models have a _store_ reference. You can set this to a specific store
-			instance in your application or use the default (the _enyo.store_ global).
-		*/
-		store: null,
-		/**
-			This is the fall-back driver to use when fetching, destroying, or
-			comitting a model. A driver may always be specified at the time of method
-			execution, but when it is not specified, the default will be used. This is
-			a string that should be paired with a known driver for this records store.
-		*/
-		defaultSource: "ajax",
-		/**
-			An optional array of strings specifying the properties that will be
-			included in the return values of _raw()_ and _toJSON()_. By default, all
-			properties in the _attributes_ hash will be included.
+			@public
 		*/
 		includeKeys: null,
+		
 		/**
-			Set this property to the URL to be used when generating the request for
-			this record from any specified source or the _defaultDriver_ of the
-			record. Note that, by default, the _url_ for a _fetch()_ will have the its
-			_primaryKey_ appended to the request. Overload the _getUrl()_ method to
-			extend this behavior. Also see _urlRoot_.
+			@public
 		*/
-		url: "",
-		/**
-			For models used	outside of collections, an optional base-kind for models
-			with the same root but different _url_ values. If no _getUrl()_ method is
-			provided and the _url_ property does not contain a protocol identifier for
-			the source, it will assume that this value exists and use it as the root
-			instead.
-		*/
-		urlRoot: "",
-		/**
-			Boolean value indicating whether a change that needs to be committed has
-			occurred in the record
-		*/
-		dirty: false,
-		/**
-			Attribute that, if present in the model, will be used for reference in
-			_enyo.Collections_ and in the _models_ _store_. It will also be used,
-			by default, when generating the _url_ for the model. The value of
-			_primaryKey_ is stored in the _attributes_ hash.
-		*/
-		primaryKey: "id",
-		/**
-			Set this to an array of keys to use for comparative purposes when using
-			the _merge_ strategy in the store or any collection.
-		*/
-		mergeKeys: null,
-		/**
-			An arbitrary, unique value that is assigned to every model. Models may be
-			requested via this property in collections and the store. Unlike
-			_primaryKey_, this value is stored on the model and not its _attributes_
-			hash.
-		*/
-		euid: "",
-		/**
-			Boolean value indicating whether the record was created locally or is
-			pulled from a source. You should not modify this value, as this will cause
-			the source to change its behavior.
-		*/
-		isNew: true,
-		/**
-			Retrieves the requested model attribute, returning the current value or
-			undefined. If the attribute is a function, it is assumed to be a computed
-			property and will be called in the context of the model, with its return
-			value being returned.
-		*/
-		get: function (prop) {
-			if (this.attributes) {
-				var fn = this.attributes[prop];
-				return (fn && "function" == typeof fn)? fn.call(this): fn;
-			}
+		options: {
+			silent: false,
+			remote: false,
+			commit: false,
+			parse: false,
+			fetch: false
 		},
-		//*@public
+		
 		/**
-			Sets values on specified model attributes. Accepts a single property name
-			and value or a single hash of _keys_ and _values_ to be set all at once.
-			Returns the model for chaining. If the attribute being set is a function
-			in the schema, it will be ignored.
+			@public
 		*/
-		set: function (prop, value, force) {
-			if (this.attributes) {
-				if (enyo.isObject(prop)) { return this.setObject(prop); }
-				var rv = this.attributes[prop],
-					ch, en;
-				this._updated = false;
-				if (rv && "function" == typeof rv) { return this; }
-				if (force || rv !== value) {
-					this.previous[prop] = rv;
-					if (this.computedMap) {
-						if ((en=this.computedMap[prop])) {
-							if (typeof en == "string") {
-								en = this.computedMap[prop] = enyo.trim(en).split(" ");
-							}
-							ch = {};
-							for (var i=0, p; (p=en[i]); ++i) {
-								this.attributes[prop] = rv;
-								this.previous[p] = ch[p] = this.get(p);
-								this.attributes[prop] = value;
-								this.changed[p] = this.get(p);
-								this._updated = true;
-							}
-						}
-					}
-					this.changed[prop] = this.attributes[prop] = value;
-					this.notifyObservers(prop, rv, value);
-					this._updated = true;
-					// if this is a dependent of a computed property we mark that
-					// as changed as well
-					if (ch) {
-						for (var k in ch) {
-							this.notifyObservers(k, this.previous[k], ch[k]);
-						}
-					}
-					if (!this.isSilenced() && this._updated) {
-						// note we only clear this here if we are the ones to fire the
-						// changed event
-						this._updated = false;
-						this.triggerEvent("change");
-						this.changed = {};
-					}
-					this.dirty = true;
-				}
-			}
-			return this;
-		},
+		status: STATES.NEW | STATES.CLEAN,
+		
 		/**
-			A setter that accepts a hash of key/value pairs. Returns the model for
-			chaining (and consistency with _set()_). All keys in _props_ will be added
-			to the _attributes_ schema when this method is used.
+			@public
 		*/
-		setObject: function (props) {
-			if (this.attributes) {
-				if (props) {
-					this.stopNotifications();
-					this.silence();
-					var updated = false;
-					for (var k in props) {
-						this.set(k, props[k]);
-						updated = updated || this._updated;
-					}
-					this.startNotifications();
-					this.unsilence();
-					if (updated) {
-						this._updated = false;
-						this.triggerEvent("change");
-					}
-					this.changed = {};
-				}
-			}
-			return this;
-		},
+		primaryKey: 'id',
+		
 		/**
-			While models should normally be instanced using _enyo.store.createRecord()_,
-			the same applies to the constructor. The first parameter will be used as
-			the attributes of the model; the optional second parameter will be used as
-			configuration for the model. Note that _attributes_ being passed into this
-			method will be passed to the _parse_ method. The options may include overloaded
-			methods for the kind, but note that since it is done at instantiation, it will
-			be executed for each new model created this way; it is recommended that you
-			subkind the base kind instead.
-		*/
-		constructor: function (attributes, opts) {
-			if (opts) { this.importProps(opts); }
-			this.euid = enyo.uuid();
-			var a = this.attributes = (this.attributes? enyo.clone(this.attributes): {}),
-				d = this.defaults,
-				x = attributes;
-			if (x) { enyo.mixin(a, this.parse(x)); }
-			if (d) { enyo.mixin(a, d, _mixinOpts); }
-			this.changed  = {};
-			// populate the previous property with the actual values as would be expected
-			// for further updates
-			this.previous = this.raw();
-			this.storeChanged();
-		},
-		//*@protected
-		importProps: function (p) {
-			if (p) {
-				enyo.kind.statics.extend(p, this);
-			}
-		},
-		//*@public
-		/**
-			Produces an immutable hash of the known attributes of this record. If the
-			_includeKeys_ array exists, it will	determine the keys that are included
-			in the return value; otherwise, all known properties will be included.
-		*/
-		raw: function () {
-			var i = this.includeKeys,
-				a = this.attributes,
-				r = i? enyo.only(i, a): enyo.clone(a);
-			for (var k in r) {
-				if ("function" == typeof r[k]) {
-					r[k] = r[k].call(this);
-				} else if (r[k] instanceof enyo.Collection) {
-					r[k] = r[k].raw();
-				}
-			}
-			return r;
-		},
-		/**
-			Returns the JSON-stringified version of the output of _raw()_ for this
-			record.
-		*/
-		toJSON: function () {
-			return enyo.json.stringify(this.raw());
-		},
-		/**
-			By default, uses any _urlRoot_ with the _url_ property; if the record	has
-			a _primaryKey_ value (_"id"_ by default), it will be added at the end.
-		*/
-		getUrl: function () {
-			var pk = this.primaryKey,
-				id = this.get(pk),
-				u  = this.urlRoot + "/" + this.url;
-			if (id) {
-				u += ("/" + id);
-			}
-			return u;
-		},
-		/**
-			Commits the current state of the record to either the specified source or
-			the _records_ default source. The source and any other options may be
-			specified in the _opts_ hash. You may provide _success_ and _fail_ methods
-			that will be executed on those conditions. The _success_ method will be
-			called with the same parameters as the built-in _didCommit()_ method.
-		*/
-		commit: function (opts) {
-			var o = opts? enyo.clone(opts): {};
-			o.success = enyo.bindSafely(this, "didCommit", this, opts);
-			o.fail = enyo.bindSafely(this, "didFail", "commit", this, opts);
-			this.store.commitRecord(this, o);
-		},
-		/**
-			Using the state of the record and any options passed in via the _opts_
-			hash, tries to fetch the current model attributes from the specified (or
-			default) source for this record. You may provide _success_ and _fail_
-			methods that will be executed on those conditions. The _success_ method
-			will be called with the same parameters as the built-in _didFetch()_ method.
-		*/
-		fetch: function (opts) {
-			var o = opts? enyo.clone(opts): {};
-			o.success = enyo.bindSafely(this, "didFetch", this, opts);
-			o.fail = enyo.bindSafely(this, "didFail", "fetch", this, opts);
-			this.store.fetchRecord(this, o);
-		},
-		/**
-			Requests a _destroy_ action for the given record and the specified (or
-			default) source in the optional _opts_ hash. You may provide _success_ and
-			_fail_ methods that will be executed on those conditions. The _success_
-			method will be called with the same parameters as the built-in
-			_didDestroy()_ method. If the record is read-only or has its _isNew_ flag
-			set to true, it will call its synchronous _destroyLocal()_ method instead
-			and will not use any callbacks.
-		*/
-		destroy: function (opts) {
-			if (this.readOnly || this.isNew) { return this.destroyLocal(); }
-			var o = opts? enyo.clone(opts): {};
-			o.success = enyo.bindSafely(this, "didDestroy", this, opts);
-			o.fail = enyo.bindSafely(this, "didFail", "destroy", this, opts);
-			this.store.destroyRecord(this, o);
-		},
-		/**
-			Completely removes the record locally without sending a destroy request to
-			any source. This is the proper method for destroying local-only records.
-		*/
-		destroyLocal: function () {
-			var o = {};
-			o.success = enyo.bindSafely(this, "didDestroy", this);
-			this.store.destroyRecordLocal(this, o);
-		},
-		/**
-			Overload this method to change the structure of the data as it is returned
-			from a _fetch_ or _commit_. By default, just returns the data as it was
-			retrieved from the source.
+			@public
+			@method
 		*/
 		parse: function (data) {
 			return data;
 		},
+		
 		/**
-			When a record is successfully fetched, this method is called before any
-			user-provided callbacks are executed. It properly inserts the incoming
-			data into the record and notifies any observers of the properties that
-			have changed.
+			@public
+			@method
 		*/
-		didFetch: function (rec, opts, res) {
-			// the actual result has to be checked post-parse
-			var r = this.parse(res);
-			if (r) {
-				this.setObject(r);
-			}
-			// once notifications have taken place we clear the dirty status so the
-			// state of the model is now clean
-			this.dirty = false;
-			// the record can no longer be considered new
-			this.isNew = false;
-			if (opts) {
-				if (opts.success) {
-					opts.success(rec, opts, res);
-				}
-			}
+		raw: function () {
+			var inc = this.includeKeys
+				, attrs = this.attributes
+				, keys = inc || Object.keys(attrs)
+				, cpy = inc? only(inc, attrs): clone(attrs);
+			keys.forEach(function (key) {
+				var ent = this.get(key);
+				if (isFunction(ent)) cpy[key] = ent.call(this);
+				else if (ent && ent.raw) cpy[key] = ent.raw();
+				else cpy[key] = ent;
+			}, this);
+			return cpy;
 		},
+		
 		/**
-			When a record is successfully committed, this method is called before any
-			user-provided callbacks are executed.
+			@public
+			@method
 		*/
-		didCommit: function (rec, opts, res) {
-			// the actual result has to be checked post-parse
-			var r = this.parse(res);
-			if (r) {
-				this.setObject(r);
-			}
-			// once notifications have taken place we clear the dirty status so the
-			// state of the model is now clean
-			this.dirty = false;
-			// since this was successful this can no longer be considered a new record
-			this.isNew = false;
-			if (opts) {
-				if (opts.success) {
-					opts.success(rec, opts, res);
-				}
-			}
+		toJSON: function () {
+			
+			// @NOTE: Because this is supposed to return a JSON parse-able object
+			return this.raw();
 		},
+		
 		/**
-			When a record is successfully destroyed, this method is called before any
-			user-provided callbacks are executed.
+			@public
+			@method
 		*/
-		didDestroy: function (rec, opts, res) {
-			for (var k in this.attributes) {
-				if (this.attributes[k] instanceof enyo.Model || this.attributes[k] instanceof enyo.Collection) {
-					if (this.attributes[k].owner === this) {
-						this.attributes[k].destroy();
-					}
+		restore: function (prop) {
+			
+			// we ensure that the property is forcibly notified (when possible) to ensure that
+			// bindings or other observers will know it returned to that value
+			if (prop) this.set(prop, this.previous[prop], {force: true});
+			else this.set(this.previous);
+		},
+		
+		/**
+			@public
+			@method
+		*/
+		commit: function (opts) {
+			var options,
+				source,
+				it = this;
+			
+			// if the current status is not one of the error or busy states we can continue
+			if (!(this.status & (STATES.ERROR | STATES.BUSY))) {
+				
+				// if there were options passed in we copy them quickly so that we can hijack
+				// the success and error methods while preserving the originals to use later
+				options = opts ? enyo.clone(opts, true) : {};
+				
+				// make sure we keep track of how many sources we're requesting
+				source = options.source || this.source;
+				if (source && ((source instanceof Array) || source === true)) {
+					this._waiting = source.length ? source.slice() : Object.keys(enyo.sources);
 				}
+					
+				options.success = function (source, res) {
+					it.onCommit(opts, res, source);
+				};
+				
+				options.error = function (source, res) {
+					it.onError('COMMITTING', opts, res, source);
+				};
+				
+				// set the state
+				this.status = this.status | STATES.COMMITTING;
+				
+				// now pass this on to the source to execute as it sees fit
+				Source.execute('commit', this, options);
+			} else this.onError(this.status, opts);
+			
+			return this;
+		},
+		
+		/**
+			@public
+			@method
+		*/
+		fetch: function (opts) {
+			var options,
+				source,
+				it = this;
+				
+			// if the current status is not one of the error or busy states we can continue
+			if (!(this.status & (STATES.ERROR | STATES.BUSY))) {
+				
+				// if there were options passed in we copy them quickly so that we can hijack
+				// the success and error methods while preserving the originals to use later
+				options = opts ? enyo.clone(opts, true) : {};
+				
+				// make sure we keep track of how many sources we're requesting
+				source = options.source || this.source;
+				if (source && ((source instanceof Array) || source === true)) {
+					this._waiting = source.length ? source.slice() : Object.keys(enyo.sources);
+				}
+				
+				options.success = function (source, res) {
+					it.onFetch(opts, res, source);
+				};
+				
+				options.error = function (source, res) {
+					it.onError('FETCHING', opts, res, source);
+				};
+				
+				// set the state
+				this.status = this.status | STATES.FETCHING;
+				
+				// now pass this on to the source to execute as it sees fit
+				Source.execute('fetch', this, options);
+			} else this.onError(this.status, opts);
+			
+			return this;
+		},
+		
+		/**
+			@public
+			@method
+		*/
+		destroy: function (opts) {
+			var options = opts ? enyo.mixin({}, [this.options, opts]) : this.options,
+				it = this,
+				idx;
+		
+			// this becomes an (potentially) async operation if we are committing this destroy
+			// to a source and its kind of tricky to figure out because there are several ways
+			// it could be flagged to do this
+		
+			if (options.commit || options.source) {
+				
+				// if the current status is not one of the error states we can continue
+				if (!(this.status & (STATES.ERROR | STATES.BUSY))) {
+				
+					// remap to the originals
+					options = opts ? enyo.clone(opts, true) : {};
+				
+					options.success = function (source, res) {
+				
+						if (it._waiting) {
+							idx = it._waiting.findIndex(function (ln) {
+								return (ln instanceof Source ? ln.name : ln) == source;
+							});
+							if (idx > -1) it._waiting.splice(idx, 1);
+							if (!it._waiting.length) it._waiting = null;
+						}
+				
+						// continue the operation this time with commit false explicitly
+						if (!it._waiting) {
+							options.commit = options.source = null;
+							it.destroy(options);
+						}
+						if (opts && opts.success) opts.success(this, opts, res, source);
+					};
+			
+					options.error = function (source, res) {
+				
+						if (it._waiting) {
+							idx = it._waiting.findIndex(function (ln) {
+								return (ln instanceof Source ? ln.name : ln) == source;
+							});
+							if (idx > -1) it._waiting.splice(idx, 1);
+							if (!it._waiting.length) it._waiting = null;
+						}
+				
+						// continue the operation this time with commit false explicitly
+						if (!it._waiting) {
+							options.commit = options.source = null;
+							it.destroy(options);
+						}
+				
+						// we don't bother setting the error state if we aren't waiting because it
+						// will be cleared to DESTROYED and it would be pointless
+						else this.onError('DESTROYING', opts, res, source);
+					};
+				
+					this.status = this.status | STATES.DESTROYING;
+			
+					Source.execute('destroy', this, options);
+				} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
+				
+				// we don't allow the destroy to take place and we don't forcibly break-down
+				// the collection errantly so there is an opportuniy to resolve the issue
+				// before we lose access to the collection's content!
+				return this;
 			}
-			this.triggerEvent("destroy");
-			this.store._recordDestroyed(this);
-			this.previous    = null;
-			this.changed     = null;
-			this.defaults    = null;
-			this.includeKeys = null;
-			this.mergeKeys   = null;
-			this.store       = null;
-			this.destroyed   = true;
-			// we don't call the inherited destroy chain so we do our own cleanup
-			// to avoid lingering entries
-			this.removeAllObservers();
+			
+			
+			// we flag this early so objects that receive an event and process it
+			// can optionally check this to support faster cleanup in some cases
+			// e.g. Collection/Store don't need to remove listeners because it will
+			// be done in a much quicker way already
+			this.destroyed = true;
+			this.status = STATES.DESTROYED;
+			this.unsilence(true).emit('destroy');
 			this.removeAllListeners();
-
-			if (opts && opts.success) {
-				opts.success(rec, opts, res);
-			}
+			this.removeAllObservers();
+			
+			// if this does not have the the batching flag (that would be set by a collection)
+			// then we need to do the default of removing it from the store
+			if (!opts || !opts.batching) this.store.remove(this);
 		},
+		
 		/**
-			When a record fails during a request, this method is executed with the
-			name of the command that failed, followed by a reference to the record,
-			the original options, and the result (if any).
+			@public
+			@method
 		*/
-		didFail: function (which, rec, opts, res) {
-			if (opts && opts.fail) {
-				opts.fail(rec, opts, res);
-			}
+		get: function (path) {
+			return this.isComputed(path)? this.getLocal(path): this.attributes[path];
 		},
-		//*@protected
-		storeChanged: function () {
-			var s = this.store || enyo.store;
-			if (s) {
-				if (enyo.isString(s)) {
-					s = enyo.getPath(s);
-					if (!s) {
-						enyo.warn("enyo.Model: could not find the requested store -> ", this.store, ", using" +
-							"the default store");
+		
+		/**
+			@public
+			@method
+		*/
+		set: function (path, is, opts) {
+			if (!this.destroyed) {
+				
+				var attrs = this.attributes,
+					options = this.options,
+					changed,
+					incoming,
+					force,
+					silent,
+					key,
+					value,
+					commit,
+					fetched;
+				
+				// the default case for this setter is accepting an object of key->value pairs
+				// to apply to the model in which case the second parameter is the optional
+				// configuration hash
+				if (typeof path == 'object') {
+					incoming = path;
+					opts = opts || is;
+				}
+				
+				// otherwise in order to have a single path here we flub it so it will keep on
+				// going as expected
+				else {
+					incoming = {};
+					incoming[path] = is;
+				}
+				
+				// to maintain backward compatibility with the old setters that allowed the third
+				// parameter to be a boolean to indicate whether or not to force notification of
+				// change even if there was any
+				if (opts === true) {
+					force = true;
+					opts = {};
+				}
+		
+				opts = opts ? enyo.mixin({}, [options, opts]) : options;
+				silent = opts.silent;
+				force = force || opts.force;
+				commit = opts.commit;
+				fetched = opts.fetched;
+		
+				for (key in incoming) {
+					value = incoming[key];
+			
+					if (value !== attrs[key] || force) {
+						// to ensure we have an object to work with
+						// note that we check inside this loop so we don't have to examine keys
+						// later only the local variable changed
+						changed = this.changed || (this.changed = {});
+						changed[key] = attrs[key] = value;
 					}
 				}
+		
+				if (changed) {
+					
+					// we add dirty as a value of the status but clear the CLEAN bit if it
+					// was set - this would allow it to be in the ERROR state and NEW and DIRTY
+					if (!fetched) this.status = (this.status | STATES.DIRTY) & ~STATES.CLEAN;
+					
+					if (!silent) this.emit('change', changed, this);
+				
+					if (commit && !fetched) this.commit(opts);
+				}
 			}
-			s = this.store = s || enyo.store;
-			s.addRecord(this);
 		},
-		_attributeSpy: function () {
-			var pkey = this.primaryKey,
-				prop = arguments[2];
-			if (pkey == prop) {
-				// we need to let the store know that our id (unique primaryKey value)
-				// changed - we do this here so it doesn't need to register a new observer
-				// for every record created
-				this.store._recordKeyChanged(this, this.previous[this.primaryKey]);
+		
+		/**
+			@private
+			@method
+		*/
+		getLocal: ComputedSupport.get.fn(oObject.prototype.get),
+		
+		/**
+			@private
+			@method
+		*/
+		setLocal: ComputedSupport.set.fn(oObject.prototype.set),
+		
+		/**
+			@private
+			@method
+		*/
+		constructor: function (attrs, props, opts) {
+			
+			// in cases where there is an options hash provided in the _props_ param
+			// we need to integrate it manually...
+			if (props && props.options) {
+				this.options = mixin({}, [this.options, props.options]);
+				delete props.options;
 			}
+			
+			// the _opts_ parameter is a one-hit options hash it does not leave
+			// behind its values as default options...
+			opts = opts? mixin({}, [this.options, opts]): this.options;
+			
+			// go ahead and mix all of the properties in
+			props && mixin(this, props);
+			
+			var noAdd = opts.noAdd
+				, commit = opts.commit
+				, parse = opts.parse
+				, fetch = this.options.fetch
+				, defaults;
+			
+			// defaults = this.defaults && (typeof this.defaults == 'function'? this.defaults(attrs, opts): this.defaults);
+			defaults = this.defaults && typeof this.defaults == 'function'? this.defaults(attrs, opts): null;
+			
+			// ensure we have a unique identifier that could potentially
+			// be used in remote systems
+			this.euid = this.euid || uid('m');
+			
+			// if necessary we need to parse the incoming attributes
+			attrs = attrs? parse? this.parse(attrs): attrs: null;
+			
+			// ensure we have the updated attributes
+			this.attributes = this.attributes? defaults? mixin({}, [defaults, this.attributes]): clone(this.attributes): defaults? clone(defaults): {};
+			attrs && mixin(this.attributes, attrs);
+			this.previous = clone(this.attributes);
+			
+			// now we need to ensure we have a store and register with it
+			this.store = this.store || enyo.store;
+			
+			// @TODO: The idea here is that when batch instancing records a collection
+			// should be intelligent enough to avoid doing each individually or in some
+			// cases it may be useful to have a record that is never added to a store?
+			if (!noAdd) this.store.add(this, opts);
+			
+			commit && this.commit();
+			fetch && this.fetch();
 		},
-		observers: {
-			_attributeSpy: "*"
+		
+		/**
+			@private
+		*/
+		emit: inherit(function (sup) {
+			return function (e, props) {
+				if (e == 'change' && props && this.isObserving()) {
+					for (var key in props) this.notify(key, this.previous[key], props[key]);
+				}
+				return sup.apply(this, arguments);
+			};
+		}),
+		
+		/**
+			@private
+		*/
+		triggerEvent: function () {
+			return this.emit.apply(this, arguments);
+		},
+		
+		/**
+			@public
+		*/
+		onFetch: function (opts, res, source) {
+			var idx;
+			
+			if (this._waiting) {
+				idx = this._waiting.findIndex(function (ln) {
+					return (ln instanceof Source ? ln.name : ln) == source;
+				});
+				if (idx > -1) this._waiting.splice(idx, 1);
+				if (!this._waiting.length) this._waiting = null;
+			}
+			
+			// ensure we have an options hash and it knows it was just fetched
+			opts = opts ? opts : {};
+			opts.fetched = true;
+			
+			// note this will not add the DIRTY state because it was fetched but also note that it
+			// will not clear the DIRTY flag if it was already DIRTY
+			if (res) this.set(res, opts);
+			
+			// clear the FETCHING and NEW state (if it was NEW) we do not set it as dirty as this
+			// action alone doesn't warrant a dirty flag that would need to be set in the set method
+			if (!this._waiting) this.status = this.status & ~(STATES.FETCHING | STATES.NEW);
+			
+			// now look for an additional success callback
+			if (opts && opts.success) opts.success(this, opts, res, source);
+		},
+		
+		/**
+			@public
+		*/
+		onCommit: function (opts, res, source) {
+			var idx;
+			
+			if (this._waiting) {
+				idx = this._waiting.findIndex(function (ln) {
+					return (ln instanceof Source ? ln.name : ln) == source;
+				});
+				if (idx > -1) this._waiting.splice(idx, 1);
+				if (!this._waiting.length) this._waiting = null;
+			}
+			
+			if (!this._waiting) {
+				// we need to clear the COMMITTING bit and DIRTY bit as well as ensure that the
+				// 'previous' hash is whatever the current attributes are
+				this.previous = enyo.clone(this.attributes, true);
+				this.status = (this.status | STATES.CLEAN) & ~(STATES.COMMITTING | STATES.DIRTY);
+			}
+			
+			if (opts && opts.success) opts.success(this, opts, res, source);			
+		},
+		
+		/**
+			@public
+		*/
+		onError: function (action, opts, res, source) {
+			var stat;
+			
+			// if the error action is a status number then we don't need to update it otherwise
+			// we set it to the known state value
+			if (typeof action == 'string') {
+				
+				// all built-in errors will pass this as their values are > 0 but we go ahead and
+				// ensure that no developer used the 0x00 for an error code
+				stat = STATES['ERROR_' + action];
+			} else stat = action;
+			
+			if (isNaN(stat) || (stat & ~STATES.ERROR)) stat = STATES.ERROR_UNKNOWN;
+			
+			// correctly set the current status and ensure we clear any busy flags
+			this.status = (this.status | stat) & ~STATES.BUSY;
+			
+			// we need to check to see if there is an options handler for this error
+			if (opts && opts.error) opts.error(this, action, opts, res, source);
+		},
+		
+		/**
+			@method
+			@public
+		*/
+		clearError: function () {
+			this.status = this.status & ~STATES.ERROR;
+		},
+		
+		/**
+			Convenience method to avoid using bitwise comparison directly for the
+			{@link enyo.Collection#status}. Automatically checks the current
+			{@link enyo.Collection#status} or the passed-in value to determine if it is an
+			[error state]{@link enyo.Collection~STATES.ERROR}. The passed-in value will only be
+			used if it is a numeric value.
+		
+			@param {enyo.Collection~STATES} [status] Provide a specific value to test.
+			@returns {boolean} Whether or not the given status is an error.
+			@method
+			@public
+		*/
+		isError: function (status) {
+			return !! ((isNaN(status) ? this.status : status) & STATES.ERROR);
+		},
+		
+		/**
+			Convenience method to avoid using bitwise comparison directly for the
+			{@link enyo.Collection#status}. Automatically check the current
+			{@link enyo.Collection#status} or the passed-in value to determine if it is a
+			[busy state]{@link enyo.Collection~STATES.BUSY}. The passed-in value will only be
+			used if it is a numeric value.
+		*/
+		isBusy: function (status) {
+			return !! ((isNaN(status) ? this.status : status) & STATES.BUSY);
+		},
+		
+		/**
+			Convenience method to avoid using bitwise comparison directly for the
+			{@link enyo.Collection#status}. Automatically check the current
+			{@link enyo.Collection#status} or the passed-in value to determine if it is a
+			[ready state]{@link enyo.Collection~STATES.READY}. The passed-in value will only be
+			used if it is a numeric value.
+		*/
+		isReady: function (status) {
+			return !! ((isNaN(status) ? this.status : status) & STATES.READY);
 		}
 	});
-	//*@protected
-	enyo.Model.concat = function (ctor, props) {
-		var p = ctor.prototype || ctor;
-		if (props.attributes) {
-			p.attributes = (p.attributes? enyo.mixin(enyo.clone(p.attributes), props.attributes): props.attributes);
-			delete props.attributes;
-		}
-		if (props.defaults) {
-			p.defaults = (p.defaults? enyo.mixin(enyo.clone(p.defaults), props.defaults): props.defaults);
-			delete props.defaults;
-		}
-		if (props.mergeKeys) {
-			p.mergeKeys = (p.mergeKeys? enyo.merge(p.mergeKeys, props.mergeKeys): props.mergeKeys.slice());
-			delete props.mergeKeys;
+	
+	/**
+		@alias enyo.Model~STATES
+		@static
+		@public
+	*/
+	Model.STATES = STATES;
+	
+	/**
+		@private
+		@static
+	*/
+	Model.concat = function (ctor, props) {
+		var proto = ctor.prototype || ctor;
+		
+		if (props.options) {
+			proto.options = mixin({}, [proto.options, props.options]);
+			delete props.options;
 		}
 	};
+	
+	/**
+		@private
+	*/
+	enyo.kind.features.push(function (ctor) {
+		if (ctor.prototype instanceof Model) {
+			!enyo.store.models[ctor.prototype.kindName] && (enyo.store.models[ctor.prototype.kindName] = new ModelList());
+		}
+	});
+
 })(enyo);

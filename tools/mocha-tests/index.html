@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>Enyo Tests</title>
+		<!-- -->
+		<meta http-equiv="Content-Type" content="text/html; charset=utf8"/>
+		<meta name="apple-mobile-web-app-capable" content="yes"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	    <link rel="stylesheet" href="../../node_modules/mocha/mocha.css" />
+
+		<script src="../../enyo.js" charset="utf-8"></script>
+	</head>
+	<body>
+		<div id="mocha"></div>
+		<script src="../../node_modules/mocha/mocha.js"></script>
+		<script src="../../node_modules/chai/chai.js"></script>
+		<script src="../../node_modules/sinon-chai/lib/sinon-chai.js"></script>
+		<script src="../../node_modules/sinon/pkg/sinon.js"></script>
+		<script>
+			mocha.ui('bdd');
+			mocha.reporter('html');
+			expect = chai.expect;
+		</script>
+		<script src="tests/Util.js"></script>
+		<script src="tests/Control.js"></script>
+		<!-- if these are ever moved out of core then these tests will also need to be moved -->
+		<script src="tests/DataRepeater.js"></script>
+		<script src="tests/DataList.js"></script>
+		<script src="tests/DataGridList.js"></script>
+		<!-- -->
+		<script src="tests/ObserverSupport.js"></script>
+		<script src="tests/Binding.js"></script>
+		<script src="tests/BindingSupport.js"></script>
+		<script src="tests/Model.js"></script>
+		<script src="tests/Collection.js"></script>
+		<script src="tests/Store.js"></script>
+		<script src="tests/RelationalModel.js"></script>
+		<script src="tests/ModelController.js"></script>
+		<script src="tests/BucketFilter.js"></script>
+		<script>
+			if (window.mochaPhantomJS) {
+				mochaPhantomJS.run();
+			} else {
+				mocha.run();
+			}
+		</script>
+	</body>
+</html>

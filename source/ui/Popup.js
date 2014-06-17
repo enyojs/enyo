@@ -17,6 +17,7 @@
  */
 enyo.kind({
 	name: "enyo.Popup",
+	noDefer: true,
 	classes: "enyo-popup enyo-no-touch-action",
 	published: {
 		//* Set to true to prevent controls outside the popup from receiving
@@ -50,7 +51,7 @@ enyo.kind({
 	captureEvents: true,
 	eventsToCapture: { 
 		ondown: "capturedDown", 
-		ontap: "capturedTap" 
+		ontap: "capturedTap"
 	},
 	//* @public
 	events: {
@@ -65,8 +66,18 @@ enyo.kind({
 	],
 	create: enyo.inherit(function (sup) {
 		return function() {
+			var showing = this.showing;
+			this.showing = false;
+			
 			sup.apply(this, arguments);
 			this.canGenerate = !this.floating;
+			
+			// if the showing flag was true we know the intent was to automatically show the
+			// popup on render...but it can't be rendered in the normal flow...but the rendered
+			// method won't be called because it wasn't generated...SO...we arbitrarily flag
+			// it as generated even though it wasn't to ensure that its rendered method will
+			// be called and we then check for this scenario in rendered
+			this.generated = showing;
 		};
 	}),
 	render: enyo.inherit(function (sup) {
@@ -174,6 +185,18 @@ enyo.kind({
 			this.addStyles( "top: " + Math.max( ( ( o.height - b.height ) / 2 ), 0 ) + "px; left: " + Math.max( ( ( o.width - b.width ) / 2 ), 0 ) + "px;" );
 		}
 	},
+	rendered: enyo.inherit(function (sup) {
+		return function () {
+			// generated won't be true when this method is called with showing false unless
+			// we set it that way so we need to go ahead and do our actual render now that the container (parent)
+			// has been rendered and the floating layer can be rendered and we should be able to carry on normally
+			if (this.generated && !this.showing && !this.hasNode()) {
+				this.generated = false;
+				this.showing = true;
+				this.showingChanged();
+			} else sup.apply(this, arguments);
+		};
+	}),
 	showingChanged: enyo.inherit(function (sup) {
 		return function() {
 			// auto render when shown.
@@ -317,3 +340,15 @@ enyo.kind({
 		this.show();
 	}
 });
+
+// By default, we capture ondown and ontap to implement the popup's modal behavior,
+// but in certain circumstances it may be necessary to capture other events as
+// well, so we provide this hook to extend. (Currently using this in Moonstone to
+// capture onSpotlightFocus events).
+enyo.Popup.concat = function (ctor, props, instance) {
+	var proto = ctor.prototype || ctor,
+		evts = proto.eventsToCapture;
+	proto.eventsToCapture = evts ? enyo.mixin({}, [evts, props.eventsToCapture]) : props.eventsToCapture;
+	delete props.eventsToCapture;
+};
+

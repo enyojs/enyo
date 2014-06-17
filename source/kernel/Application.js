@@ -1,124 +1,175 @@
-//*@public
 /**
-	Any _enyo.Application_ instances will be available by name from this object.
-	If no name is provided for an application, a name will be generated for it.
+	@namespace enyo
 */
-enyo.applications = {};
-/**
-	_enyo.Application_ is a type of [enyo.ViewController](#enyo.ViewController)
-	that encapsulates a collection of [enyo.Controller](#enyo.Controller)s and a
-	hierarchy of [enyo.Control](#enyo.Control)s. There may be multiple instances
-	of an application at a given time, with unique names and target DOM nodes.
-	Within a given application, a reference to the application is available on all
-	[enyo.Component](#enyo.Component) objects via the _app_ property.
-*/
-enyo.kind({
-	name: "enyo.Application",
-	kind: "enyo.ViewController",
+(function (enyo, scope) {
+	
+	var kind = enyo.kind;
+	
+	var ViewController = enyo.ViewController;
+	
 	/**
-		If set to true (the default), the application's _start()_ method will
-		automatically be called once its _create()_ method has completed execution.
-		Set this to false if additional setup (or an asynchronous event) is required
-		before starting.
+		Any _enyo.Application_ instances will be available by name from this object. If no name is
+		provided for an application, a name will be generated for it.
+	
+		@public
+		@memberof enyo
 	*/
-	autoStart: true,
+	enyo.applications = {};
+	
 	/**
-		If set to true (the default), the application will immediately render its
-		_view_ when the _start()_ method has completed execution. Set this to false
-		to delay rendering if additional setup (or an asynchronous event) is
-		required before rendering.
+		_enyo.Application_ is a type of {@link enyo.ViewController} that encapsulates a collection
+		of {@link enyo.Controller controllers} and a hierarchy of {@link enyo.Control controls}.
+		There may be multiple instances of an application at a given time, with unique names and
+		target DOM nodes. Within a given application, a reference to the application is available
+		on all {@link enyo.Component components} objects via the _app_ property.
+	
+		@public
+		@class enyo.Application
+		@extends enyo.ViewController
 	*/
-	renderOnStart: true,
-	/**
-		The _defaultKind_ for _enyo.Application_ is _enyo.Controller_.
-	*/
-	defaultKind: "enyo.Controller",
-	/**
-		## DEPRECATED -- SEE CHANGELOG -- USE _components_ INSTEAD
+	kind(
+		/** @lends enyo.Application.prototype */ {
+		
+		/**
+			@private
+		*/
+		name: 'enyo.Application',
+		
+		/**
+			@private
+		*/
+		kind: ViewController,
+		
+		/**
+			If set to true (the default), the application's _start()_ method will automatically be
+			called once its _create()_ method has completed execution. Set this to false if
+			additional setup (or an asynchronous event) is required before starting.
+		
+			@public
+			@default true
+			@type {Boolean}
+		*/
+		autoStart: true,
+		
+		/**
+			If set to true (the default), the application will immediately render its _view_ when
+			the _start()_ method has completed execution. Set this to false to delay rendering if
+			additional setup (or an asynchronous event) is required before rendering.
+		
+			@public
+			@default true
+			@type {Boolean}
+		*/
+		renderOnStart: true,
+		
+		/**
+			The _defaultKind_ for _enyo.Application_ is _enyo.Controller_.
+		
+			@public
+			@default 'enyo.Controller'
+			@type {String}
+		*/
+		defaultKind: 'enyo.Controller',
 
-		Set this to an array of _enyo.Controller_ definitions that should be
-		instanced for this application. By default, controllers will only be
-		available within the scope of the application creating them. As the property
-		exists on _enyo.Controller_, setting the _global_ flag to true in the definition
-		will use the name of the controller as its global identifier. Note that if a controller
-		is set as _global_ it will not be destroyed if the application is destroyed.
-		Once the application has completed its _start()_ method, this property will be a
-		reference to the application's _$_ property. These controllers may then be referenced by name.
-	*/
-	controllers: null,
-	/**
-		A bindable, read-only property that indicates whether the view has been
-		rendered
-	*/
-	viewReady: false,
-	/**
-		An abstract method to allow for additional setup to take place after the
-		application has completed its initialization and is ready to be rendered.
-		Overload this method to suit your app's specific requirements.
-	*/
-	start: function () {
-		if (this.renderOnStart) {
-			this.render();
-		}
-	},
-	//*@protected
-	render: enyo.inherit(function (sup) {
-		return function () {
-			sup.apply(this, arguments);
-			if (this.view && this.view.generated) {
-				this.set("viewReady", true);
-			}
-		};
-	}),
-	constructor: enyo.inherit(function (sup) {
-		return function (props) {
-			if (props && typeof props.name == "string") {
-				enyo.setPath(props.name, this);
-				// since applications are stored by their id's we set it
-				// to the name if it exists
-				this.id = (props && props.name);
-			}
-			sup.apply(this, arguments);
-			// we alias the `controllers` property to the `$` property to preserve
-			// backwards compatibility for the deprecated API for now
-			this.controllers = this.$;
-			enyo.applications[this.id || this.makeId()] = this;
-		};
-	}),
-	/**
-		Allows normal creation flow and then executes the application's _start()_
-		method if _autoStart_ is true.
-	*/
-	create: enyo.inherit(function (sup) {
-		return function () {
-			sup.apply(this, arguments);
-			if (this.autoStart) {
-				this.start();
-			}
-		};
-	}),
-	/**
-		Makes sure that all components created by this application have their _app_
-		property set correctly.
-	*/
-	adjustComponentProps: enyo.inherit(function (sup) {
-		return function (props) {
-			props.app = this;
-			sup.apply(this, arguments);
-		};
-	}),
-	/**
-		Cleans up the registration for the application.
-	*/
-	destroy: enyo.inherit(function (sup) {
-		return function () {
-			delete enyo.applications[this.id];
-			sup.apply(this, arguments);
-		};
-	}),
-	/**
-		Ensures that events bubbling from the views will reach _enyo.master_ as
-		expected.
-	*/
-	owner: enyo.master
-});
+		/**
+			A bindable, read-only property that indicates whether the view has been rendered.
+		
+			@public
+			@readonly
+			@type {Boolean}
+		*/
+		viewReady: false,
+		
+		/**
+			An abstract method to allow for additional setup to take place after the application has
+			completed its initialization and is ready to be rendered. Overload this method to suit
+			your app's specific requirements.
+		
+			@public
+			@method
+			@returns {this} The callee for chaining.
+		*/
+		start: function () {
+			if (this.renderOnStart) this.render();
+			return this;
+		},
+		
+		/**
+			@private
+		*/
+		render: enyo.inherit(function (sup) {
+			return function () {
+				// call the super method render() from ViewController
+				sup.apply(this, arguments);
+				if (this.view && this.view.generated) this.set('viewReady', true);
+			};
+		}),
+		
+		/**
+			@private
+		*/
+		constructor: enyo.inherit(function (sup) {
+			return function (props) {
+				if (props && typeof props.name == 'string') {
+					enyo.setPath(props.name, this);
+					// since applications are stored by their id's we set it
+					// to the name if it exists
+					this.id = (props && props.name);
+				}
+				sup.apply(this, arguments);
+				// we alias the `controllers` property to the `$` property to preserve
+				// backwards compatibility for the deprecated API for now
+				this.controllers = this.$;
+				enyo.applications[this.id || this.makeId()] = this;
+			};
+		}),
+		
+		/**
+			Allows normal creation flow and then executes the application's _start()_ method if
+			_autoStart_ is true.
+		
+			@private
+		*/
+		create: enyo.inherit(function (sup) {
+			return function () {
+				// ensure that we create() all of the components before continuing
+				sup.apply(this, arguments);
+				if (this.autoStart) this.start();
+				
+			};
+		}),
+		
+		/**
+			Makes sure that all components created by this application have their _app_ property
+			set correctly.
+		
+			@private
+		*/
+		adjustComponentProps: enyo.inherit(function (sup) {
+			return function (props) {
+				props.app = this;
+				sup.apply(this, arguments);
+			};
+		}),
+		
+		/**
+			Cleans up the registration for the application.
+		
+			@private
+		*/
+		destroy: enyo.inherit(function (sup) {
+			return function () {
+				delete enyo.applications[this.id];
+				sup.apply(this, arguments);
+			};
+		}),
+		
+		/**
+			Ensures that events bubbling from the views will reach _enyo.master_ as expected.
+		
+			@private
+		*/
+		owner: enyo.master
+	});
+	
+})(enyo, this);

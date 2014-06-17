@@ -5,3 +5,6 @@ Thumbs.db
 /source/minify/build
 /examples/3 - Making Builds/source/minify/build
 /examples/3 - Making Builds/source/minify-include-enyo/build
+
+node_modules/*
+out

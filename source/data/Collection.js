@@ -1,646 +1,1261 @@
-//*@public
-/**
-	_enyo.Collection_ is an array-like structure that houses collections of
-	[enyo.Model](#enyo.Model) instances. Collections are read-only entities in
-	terms of retrieving and setting data via an [enyo.Source](#enyo.Source).
-	Like _enyo.Model_, _enyo.Collection_ has a separate and distinct non-
-	bubbling notification API.  Collection objects generate _add_, _remove_,
-	_reset_ and _destroy_ events that may be listened for using the
-	_addListener()_ method.
+(function (enyo, scope) {
+	
+	var kind = enyo.kind;
+	
+	var Component = enyo.Component,
+		EventEmitter = enyo.EventEmitter,
+		Model = enyo.Model,
+		ModelList = enyo.ModelList,
+		Source = enyo.Source;
+	
+	/**
+		The possible values assigned to {@link enyo.Collection#status}. These codes can be extended
+		when necessary to provide more detailed state control. See the inline documentation
+		information and explanation associated with the {@link enyo.Model~STATES}.
+	
+		@todo Need example of what extending looks like and how to keep functionality working in
+			error state handling, etc.
+	
+		@name enyo.Collection~STATES
+		@enum {number}
+		@readonly
+	*/
+	var STATES = {};
+		
+	/**
+		The default {@link enyo.Collection#status}. No actions are currently taking place and
+		no errors have been encountered. {@see enyo.Collection#isReady} for an easy way to
+		determine if the {@link enyo.Collection} is actually ready wthout having to use bitwise
+		operations.
+		
+		@name enyo.Collection~STATES.READY
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.READY = 0x0001;
+	
+	/**
+		The final state of an {@link enyo.Collection} once its {@link enyo.Collection#destroy}
+		method has successfully completed. This is an exclusive state.
+	
+		@name enyo.Collection~STATES.DESTROYED
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.DESTROYED = 0x0002;
+		
+	/**
+		The {@link enyo.Collection} is currently attempting to {@link enyo.Collection#fetch}.
+	
+		@name enyo.Collection~STATES.FETCHING
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.FETCHING = 0x0004;
+		
+	/**
+		The {@link enyo.Collection} is currently attempting to {@link enyo.Collection#commit}.
+	
+		@name enyo.Collection~STATES.COMMITTING
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.COMMITTING = 0x0008;
+		
+	/**
+		The {@link enyo.Collection} is currently attempting to _commit_ a
+		{@link enyo.Collection#destroy}.
+	
+		@name enyo.Collection~STATES.DESTROYING
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.DESTROYING = 0x0010;
+		
+	/**
+		The {@link enyo.Collection} has encountered an error during a {@link enyo.Collection#fetch}
+		attempt.
+		
+		@name enyo.Collection~STATES.ERROR_FETCHING
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.ERROR_FETCHING = 0x0020;
+		
+	/**
+		The {@link enyo.Collection} has encountered an error during a {@link enyo.Collection#commit}
+		attempt.
+	
+		@name enyo.Collection~STATES.ERROR_COMMITTING
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.ERROR_COMMITTING = 0x0040;
+		
+	/**
+		The {@link enyo.Collection} has encountered an error during a
+		{@link enyo.Collection#destroy} attempt.
+	
+		@name enyo.Collection~STATES.ERROR_DESTROYING
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.ERROR_DESTROYING = 0x0080;
+		
+	/**
+		The {@link enyo.Collection} has somehow encountered an error that it does not understand
+		so it uses this state.
+	
+		@name enyo.Collection~STATES.ERROR_UNKNOWN
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.ERROR_UNKNOWN = 0x0100;
+		
+	/**
+		This is a multi-state mask and will never be set explicitly. By default it can be used to
+		determine if the {@link enyo.Collection} is [fetching]{@link enyo.Collection#fetch},
+		[committing]{@link enyo.Collection#commit} or [destroying]{@link enyo.Collection#destroy}.
+		You can add states to this mask by OR'ing them. {@see enyo.Collection#isBusy} for an easy
+		way to determine if the {@link enyo.Collection} is actually busy without having to use
+		bitwise operations.
+		
+		@name enyo.Collection~STATES.BUSY
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.BUSY = STATES.FETCHING | STATES.COMMITTING | STATES.DESTROYING;
+		
+	/**
+		This is a multi-state mask and will never be set explicitly. By default it can be used to
+		determine if the {@link enyo.Collection} has encountered an error while
+		[fetching]{@link enyo.Collection#fetch}, [committing]{@link enyo.Collection#commit} or
+		[destroying]{@link enyo.Collection#destroy}. There is also the
+		[unknown error]{@link enyo.Collection~STATES.ERROR_UNKNOWN} state that is included in this
+		mask. Additional error states can be added by OR'ing them. {@see enyo.Collection#isError}
+		for an easy way to determine if the {@link enyo.Collection} is actually in an error state.
+		
+		@name enyo.Collection~STATES.ERROR
+		@type {enyo.Collection~STATES}
+	*/
+	STATES.ERROR = STATES.ERROR_COMMITTING | STATES.ERROR_FETCHING | STATES.ERROR_DESTROYING | STATES.ERROR_UNKNOWN;
+	
+	/**
+		An array-like structure designed to house a _collection_ of {@link enyo.Model} instances.
+	
+		@public
+		@class enyo.Collection
+		@extends enyo.Component
+	*/
+	var Collection = kind(
+		/** @lends enyo.Collection.prototype */ {
+		
+		/**
+			@private
+		*/
+		name: 'enyo.Collection',
+		
+		/**
+			@private
+		*/
+		kind: Component,
+		
+		/**
+			@private
+		*/
+		noDefer: true,
+		
+		/**
+			The {@link enyo~kind) of {@link enyo.Model} that this {@link enyo.Collection} will be
+			implementing or housing. This is important to set properly so that when
+			[fetching]{@link enyo.Collection#fetch} the returned data will correctly be instanced
+			as the correct {@link enyo.Model} subclass.
+			
+			@type {(enyo.Model|string)}
+			@default enyo.Model
+			@public
+		*/
+		model: Model,
+		
+		/**
+			The current {@link enyo.Collection#STATES} of the {@link enyo.Collection}. This value
+			changes automatically and can be observed for more complex state monitoring. If an
+			error is encountered it must be cleared before additional state-altering actions can
+			be taken; {@see enyo.Collection#clearError} for more information.
+			
+			@type enyo.Collection~STATES
+			@default enyo.Collection~STATES.READY
+			@readonly
+			@public
+		*/
+		status: STATES.READY,
+		
+		/**
+			The configurable default {@link enyo.Collection#options}. These values will be used to
+			modify the behavior of the {@link enyo.Collection} unless additional _options_ are
+			passed into the methods that use them. When modifying these values in a
+			[subclass]{@link enyo~kind} of {@link enyo.Collection} they will be merged with existing
+			values.
+			
+			@type {object}
+			@public
+		*/
+		options: /** @lends enyo.Collection#options */ {
+			
+			/**
+				When data is being added to the {@link enyo.Collection} that already exist
+				(matched by {@link enyo.Model#primaryKey}) set the new data values with the current
+				{@link enyo.Model} instance. This indicates that it will update the existing values
+				with the new ones by calling {@link enyo.Model#set} on the
+				[model instance]{@link enyo.Model}.
+				
+				@type {boolean}
+				@default true
+				@public
+			*/
+			merge: true,
+			
+			/**
+				Many accessor methods of the {@link enyo.Collection} will emit events and/or
+				notifications. This indicates whether or not to supress those events or
+				notifications in times when that behavior is necessary. Most often you will not
+				want to modify this value.
+			
+				@type {boolean}
+				@default false
+				@public
+			*/
+			silent: false,
+			
+			/**
+				When [adding]{@link enyo.Collection#add} [models]{@link enyo.Model} this flag
+				indicates whether or not to remove (_purge_) the existing [models]{@link enyo.Model}
+				that are not included in the new dataset.
+			
+				@type {boolean}
+				@default false
+				@public
+			*/
+			purge: false,
+			
+			/**
+				The collection's [parse]{@link enyo.Collection#parse} method can automatically be
+				executed for incoming data added via the {@link enyo.Collection#constructor} method
+				or later after having [fetched]{@link enyo.Collection#fetch} data. It may be
+				necessary to distinguish these two occassions (one needing to parse and one not) by
+				using the runtime configuration options of the methods. In cases where it will
+				always be necessary this can be set to `true`.
+			
+				@type {boolean}
+				@default false
+				@public
+			*/
+			parse: false,
+			
+			/**
+				When data being added to the {@link enyo.Collection} cannot be found (or 
+				{@link enyo.Collection#options#find} is `false`) this descides if a new
+				{@link enyo.Model} should be created. [Models]{@link enyo.Model} that are created
+				by an {@link enyo.Collection} have their {@link enyo.Model#owner} property set to
+				the {@link enyo.Collection} that instanced them. This is important because if the
+				{@link enyo.Collection} is [destroyed]{@link enyo.Collection#destroy} it will also
+				[destroy]{@link enyo.Model#destroy} [models]{@link enyo.Model} that it owns.
+			
+				@type {boolean}
+				@default true
+				@public
+			*/
+			create: true,
+			
+			/**
+				When data being added to the {@link enyo.Collection} is not already an
+				{@link enyo.Model} instance it will attempt to find an existing model by its
+				{@link enyo.Model#primaryKey} if it exists. In most cases this is the prefered
+				behavior but if the {@link enyo.Model} class being instanced does not have a
+				{@link enyo.Model#primaryKey} it is unnecessary and this value can be set to
+				`false`.
+				
+				@type {boolean}
+				@default true
+				@public
+			*/
+			find: true,
+			
+			/**
+				When [adding]{@link enyo.Collection#add} [models]{@link enyo.Model} to the
+				{@link enyo.Collection} it can also be sorted. If the
+				{@link enyo.Collection#comparator} is a _function_ and this value is `true` it will
+				use the _comparator_ to sort the entire {@link enyo.Collection}. It can also be
+				a _function_ that will be used to sort the {@link enyo.Collection} instead of or in-
+				place of a {@link enyo.Collection#comparator}.
+			
+				@type {(boolean|function)}
+				@default false
+				@public
+			*/
+			sort: false,
+			
+			/**
+				When modifications are made to the {@link enyo.Collection} this flag will ensure
+				that those changes are [committed]{@link enyo.Collection#commit} according to the
+				configuration and {@link enyo.Collection#source}. This can also be configured per-
+				call to methods that use it.
+			
+				@type {boolean}
+				@default false
+				@public
+			*/
+			commit: false,
+			
+			/**
+				When [models]{@link enyo.Model} are [removed]{@link enyo.Collection#remove} from the
+				dataset this flag indicates whether or not to {@link enyo.Model#destroy} them as
+				well. Note that this could have a significant impact if the same
+				[models]{@link enyo.Model} are used in other [collections]{@link enyo.Collection}.
+			
+				@type {boolean}
+				@default false
+				@public
+			*/
+			destroy: false,
+			
+			/**
+				When [models]{@link enyo.Model} are [removed]{@link enyo.Collection#remove} from the
+				dataset this flag indicates whether or not to also _remove_ them from the
+				{@link enyo.Collection#store}. This is rarely necessary and can cause problems if
+				the [models]{@link enyo.Model} are used in other
+				[collections]{@link enyo.Collection}. It is also ignored if the
+				{@link enyo.Collection#options#destroy} flag is `true`.
+			
+				@type {boolean}
+				@default false
+				@public
+			*/
+			complete: false,
+			
+			/**
+				When the {@link enyo.Collection} is initialized it can automatically attempt to
+				{@link enyo.Collection#fetch} data when the {@link enyo.Collection#source} and
+				{@link enyo.Collection#url} or {@link enyo.Collection#buildUrl} properties are
+				configured properly.
+				
+				@type {boolean}
+				@default false
+				@public
+			*/
+			fetch: false
+		},
+		
+		/**
+			@private
+		*/
+		mixins: [EventEmitter],
+		
+		/**
+			@private
+		*/
+		observers: [
+			{path: 'models', method: 'onModelsChange'}
+		],
+		
+		/**
+			Modify the structure of data such that it can be used by the {@link enyo.Collection#add}
+			method. This method will only be used during initialization or after a successful
+			{@link enyo.Collection#fetch} if the {@link enyo.Collection#options#parse} flag is set
+			to `true`. This can be used for simple remapping, renaming or complex restructuring of
+			data coming from a {@link enyo.Collection#source} that needs to be modified prior to
+			being [added]{@link enyo.Collection#add} to the dataset.
+		
+			@param {*} data The incoming data passed to the {@link enyo.Collection#constructor} or
+				returned by a successful {@link enyo.Collection#fetch}.
+			@returns {array} The properly formatted data to be accepted by
+				{@link enyo.Collection#add} method.
+			@method
+			@public
+		*/
+		parse: function (data) {
+			return data;
+		},
+		
+		/**
+			The configuration options for {@link enyo.Collection#add}. For complete descriptions of
+			the options and their defaults {@see enyo.Collection#options}. Some properties have a
+			different meaning in a specific context. Please review their descriptions below to see
+			how they are used in this context.
+		
+			@typedef {object} enyo.Collection#add~options
+			@property {boolean} merge - Update existing models when found.
+			@property {boolean} purge - Remove existing models not in new dataset.
+			@property {boolean} silent - Emit events and notifications.
+			@property {boolean} parse - Parse the incoming dataset before evaluating.
+			@property {boolean} find - Look for an existing model.
+			@property {(boolean|function)} sort - Sort the finalized dataset.
+			@property {boolean} commit - {@link enyo.Collection#commit} changes to the
+				{@link enyo.Collection} after completing the {@link enyo.Collection#add}.
+			@property {boolean} create - When an existing {@link enyo.Model} instance cannot be
+				resolved it should _create_ a new instance.
+			@property {number} index - The index at which to add the new dataset. Defaults to the
+				end of the current dataset if not explicitly set or valid.
+			@property {boolean} destroy - If `purge` is `true`, this will {@link enyo.Model#destroy}
+				any [models]{@link enyo.Model} that were [removed]{@link enyo.Collection#remove}.
+			@property {object} modelOptions - When instancing a model this object will be passed
+				to the constructor as its {@link enyo.Model#constructor} options parameter.
+		*/
+		
+		/**
+			Add data to the dataset. This method can add an individual [model]{@link enyo.Model} or
+			an array of [models]{@link enyo.Model}. It can splice them into the dataset at a
+			designated index or remove models from the existing dataset that are not included in the
+			new one. {@see enyo.Collection#add~options} for detailed information on the
+			configuration options available for this method. This method is heavily optimized for
+			batch operations on _arrays_ of data. For better performance ensure that loops do not
+			consecutively call this method but instead build an array to pass to it as its first
+			parameter.
+			
+			@fires enyo.Collection#add
+			@param {(object|object[]|enyo.Model|enyo.Model[])} models The data to add to the
+			 	{@link enyo.Collection} that can be an object-literal, an array of object-literals,
+				an {@link enyo.Model} instance or array of {@link enyo.Model} instances. Note if the
+				{@link enyo.Collection#options#parse} configuration option is `true` it will use the
+				returned value as this parameter.
+			@param {enyo.Collection#add~options} [opts] The configuration options that modify the
+				behavior of this method. The [defaults]{@link enyo.Collection#options} will be
+				merged with these options before evaluating.
+			@returns {enyo.Model[]} The [models]{@link enyo.Model} that were added, if any.
+			@method
+			@public
+		*/
+		add: function (models, opts) {
+			var loc = this.models
+				, len = this.length
+				, ctor = this.model
+				, options = this.options
+				, pkey = ctor.prototype.primaryKey
+				, idx = len
+				, added, keep, removed, model, attrs, found, id;
+				
+			// for backwards compatibility with earlier api standards we allow the
+			// second paramter to be the index and third param options when
+			// necessary
+			!isNaN(opts) && (idx = opts);
+			arguments.length > 2 && (opts = arguments[2]);
+			
+			// normalize options so we have values
+			opts = opts? enyo.mixin({}, [options, opts]): options;
+			
+			// our flags
+			var merge = opts.merge
+				, purge = opts.purge
+				, silent = opts.silent
+				, parse = opts.parse
+				, find = opts.find
+				, sort = opts.sort
+				, commit = opts.commit
+				, create = opts.create !== false
+				, modelOpts = opts.modelOptions
+				, index = opts.index;
+				
+			idx = !isNaN(index) ? Math.max(0, Math.min(len, index)) : idx;
 
-	A collection lazily instantiates records when they are requested. This is
-	important to keep in mind with respect to the order of operations.
-*/
-enyo.kind({
-	name: "enyo.Collection",
-	//*@protected
-	kind: enyo.Component,
-	noDefer: true,
-	mixins: [enyo.RegisteredEventSupport],
-	//*@public
-	/**
-		The kind of records the collection will house. By default, it is simply
-		_enyo.Model_, but it may be set to any kind of model.
-	*/
-	model: enyo.Model,
-	/**
-		The correct URL for requesting data for this collection.
-	*/
-	url: "",
-	/**
-		By default, collections instantiate records only as needed; set this flag to
-		true if you want records to be created as soon as as they are added to the
-		collection
-	*/
-	instanceAllRecords: false,
-	/**
-		The default source for requests made by this collection
-	*/
-	defaultSource: "ajax",
-	/**
-		The underlying array that stores the records for this collection. Modifying
-		this array may have undesirable effects.
-	*/
-	records: null,
-	/**
-		Preserve records generated by this collection, even if the collection is
-		destroyed. By default, they will also be destroyed.
-	*/
-	preserveRecords: false,
-	/**
-		All collections have a store reference. You may set this to a specific
-		store instance in your application or use the default (the _enyo.store_
-		global).
-	*/
-	store: null,
-	/**
-		The number of records in the collection
-	*/
-	length: 0,
-	/**
-		When true, the collection is currently fetching data
-	*/
-	isFetching: false,
-	/**
-		Fetches the data for this collection. Accepts options with optional
-		callbacks, _success_ and _fail_, the _source_ (if not specified, the
-		_defaultSource_ for the kind will be used), and the _replace_ flag. If
-		_replace_ is true, all current records in the collection will be removed
-		(though not	destroyed) before adding any results. If this is the case, the
-		method will return an array of any records that were removed. If the _destroy_
-		or _destroyLocal_ flags are set to `true` they will trigger the correct
-		method to remove the records and also destroy them locally or remotely
-		depending on which feature is set. Note that if a model's _readOnly_ flag
-		is set to `true` calling _destroy()_ will have the same effect as _destroyLocal()_.
-
-		The options	may include a _strategy_ for how received data is added to the
-		collection. The _"add"_ strategy (the default) is most efficient; it places
-		each incoming record at the end of the collection. The _"merge"_ strategy
-		will make the collection attempt to identify existing records with the same
-		_primaryKey_ as the incoming one, updating any matching records. When using
-		the _add_ strategy, if incoming data from _fetch()_ belongs to a record
-		already in the collection, this record will be duplicated and have a unique
-		_euid_.
-	*/
-	fetch: function (opts) {
-		var o = opts? enyo.clone(opts): {};
-		// ensure there is a strategy for the _didFetch_ method
-		(opts = opts || {}) && (opts.strategy = opts.strategy || "add");
-		o.success = enyo.bindSafely(this, "didFetch", this, opts);
-		o.fail = enyo.bindSafely(this, "didFail", "fetch", this, opts);
-		// now if we need to lets remove the records and attempt to do this
-		// while any possible asynchronous remote (not always remote...) calls
-		// are made for efficiency
-		this.set("isFetching", true);
-		enyo.asyncMethod(this, function () { this.store.fetchRecord(this, o); });
-	},
-	/**
-		Convenience method that does not require the callee to set the _replace_
-		parameter in the passed-in options.
-	*/
-	fetchAndReplace: function (opts) {
-		var o = opts || {};
-		o.replace = true;
-		return this.fetch(o);
-	},
-	/**
-		Convenience method that does not require the callee to set the _destroy_
-		parameter in the passed-in options.
-	*/
-	fetchAndDestroy: function (opts) {
-		var o = opts || {};
-		o.destroy = true;
-		return this.fetch(o);
-	},
-	/**
-		Convenience method that does not require the callee to set the _destroyLocal_
-		parameter in the passed-in options.
-	*/
-	fetchAndDestroyLocal: function (opts) {
-		var o = opts || {};
-		o.destroyLocal = true;
-		return this.fetch(o);
-	},
-	/**
-		This method is executed after a successful fetch, asynchronously. Any new
-		data either replaces or is merged with the existing data (as determined by
-		the _replace_ option for _fetch()_). Receives the collection, the options,
-		and the result (_res_).
-	*/
-	didFetch: function (rec, opts, res) {
-		// empty the collection accordingly, if needed
-		if (opts.replace && !opts.destroy) {
-			this.removeAll();
-		} else if (opts.destroy && !opts.destroyLocal) {
-			this.destroyAll();
-		} else if (opts.destroyLocal) {
-			this.destroyAllLocal();
-		}
-		// the parsed result
-		var rr = this.parse(res),
-			s  = opts.strategy, fn;
-		if (rr) {
-			// unfortunately we have to mark this all as having been fetched so when they
-			// are instantiated they won't have their _isNew_ flag set to true
-			for (var i=0, data; (data=rr[i]); ++i) {
-				if (data) {
-					data.isNew = false;
+			/*jshint -W018 */
+			sort && !(typeof sort == 'function') && (sort = this.comparator);
+			/*jshint +W018 */
+			
+			// for a special case purge to remove records that aren't in the current
+			// set being added
+			
+			if (parse) models = this.parse(models);
+				
+			// we treat all additions as an array of additions
+			!(models instanceof Array) && (models = [models]);
+			
+			for (var i=0, end=models.length; i<end; ++i) {
+				model = models[i];
+				attrs = null;
+				
+				if (!model && isNaN(model)) continue;
+				
+				// first determine if the model is an instance of model since
+				// everything else hinges on this
+				if (!(model instanceof Model)) {
+					// we need to determine how to handle this
+					attrs = model;
 				}
-			}
-			// even if replace was requested it will have already taken place so we
-			// need only evaluate the strategy for merging the new results
-			if ((fn=this[s]) && enyo.isFunction(fn)) {
-				fn.call(this, rr);
-			}
-		}
-		if (opts) {
-			if (opts.success) { opts.success(rec, opts, res); }
-		}
-		this.set("isFetching", false);
-	},
-	/**
-		When a record fails during a request, this method is executed with the name
-		of the command that failed, followed by a reference to the record, the
-		original options, and the result (if any).
-	*/
-	didFail: function (which, rec, opts, res) {
-		if (opts && opts.fail) {
-			opts.fail(rec, opts, res);
-		}
-		this.set("isFetching", false);
-	},
-	/**
-		Overload this method to process incoming data before _didFetch()_ attempts
-		to merge it. This method should _always_ return an array of record hashes.
-	*/
-	parse: function (data) {
-		return data;
-	},
-	/**
-		Produces an immutable hash of the contents of the collection as a
-		JSON-parseable array.
-	*/
-	raw: function () {
-		// since we use our own _map_ method we are sure all records will be resolved
-		return this.map(function (rec) { return rec.raw(); });
-	},
-	/**
-		Returns the output of _raw()_ for this record as a JSON string.
-	*/
-	toJSON: function () {
-		return enyo.json.stringify(this.raw());
-	},
-	/**
-		This strategy accepts a single record (data-hash or _enyo.Model_ instance),
-		or an array of records (data-hashes or _enyo.Model_ instances) to be merged
-		with the current collection. This strategy may be executed directly (much
-		like the _add()_ method) or specified as the strategy to employ with data
-		retrieved via	the _fetch()_ method. The default behavior is to find and
-		merge records by their _primaryKey_ value when present, but _merge_ will
-		also rely on any _mergeKeys_ set on the model kind for this collection. If
-		the record(s) passed into this method are object-literals, they will be
-		passed through the _parse()_ method of the model kind before being merged
-		with existing records or being instanced as new records. Any records passed
-		to this method that cannot be merged with existing records will be added to
-		the collection at the end. This method will work with instanced and
-		non-instanced records in the collection and merges without forcing records
-		to be instanced.
-	*/
-	merge: function (records) {
-		if (records) {
-			var proto  = this.model.prototype,
-				pk     = proto.primaryKey,
-				mk     = proto.mergeKeys,
-				// the array (if any) of records to add that could not be merged
-				add    = [],
-				// the copy of our internal records so we can remove indices already
-				// merged and not need to iterate over them again
-				local  = this.records.slice(),
-				// flag used during iterations to help break the loop for an incoming
-				// record if it was successfully merged
-				merged = false,
-				// flag used when comparing merge keys
-				match  = false;
-			// ensure we're working with an array of something
-			records = (enyo.isArray(records)? records: [records]);
-			for (var i=0, r; (r=records[i]); ++i) {
-				// reset our flag
-				merged = false;
-				// if there is a value for the primary key or any merge keys were
-				// provided we can continue
-				var v = (r.get? r.get(pk): r[pk]);
-				if (mk || (v !== null && v !== undefined)) {
-					for (var j=0, c; (!merged && (c=local[j])); ++j) {
-						// compare the primary key value if it exists
-						if ((v !== null && v !== undefined) && v === (c.get? c.get(pk): c[pk])) {
-							// update the flag so that the inner loop won't continue
-							merged = true;
-							// remove the index from the array copy so we won't check
-							// this index again
-							local.splice(j, 1);
-						// otherwise we check to see if there were merge keys to check against
-						} else if (mk) {
-							// reset our test flag
-							match = false;
-							// iterate over any merge keys and compare their values if even
-							// one doesn't match then we know the whole thing won't match
-							// so we break the loop
-							for (var k=0, m; (m=mk[k]); ++k) {
-								v = (r.get? r.get(m): r[m]);
-								if (v === (c.get? c.get(m): c[m])) {
-									match = true;
-								} else {
-									match = false;
-									break;
-								}
-							}
-							// if they matched
-							if (match) {
-								// update the flag so that the inner loop won't continue
-								merged = true;
-								// remove the index from the array copy so we won't check
-								// this index again
-								local.splice(j, 1);
-							}
-						}
+				
+				if (typeof attrs == 'string' || typeof attrs == 'number') {
+					id = attrs;
+					attrs = {};
+					attrs[pkey] = id;
+				} else id = attrs? attrs[pkey]: model;
+					
+				
+				// see if we have an existing entry for this model/hash
+				if (find) found = loc.has(id);
+				
+				// if it already existed...
+				if (found) {
+					
+					// we need to ensure we've resolved the model (if necessary)
+					found = loc.resolve(id);
+					
+					if (merge) {
+						attrs || (attrs = model.attributes);
+						found.set(attrs, opts);
 					}
-					if (merged) {
-						// if the current record is instanced we use the _setObject()_ method otherwise
-						// we simply mixin the properties so it will be up to date whenever it is
-						// instanced
-						if (c.setObject) {
-							c.setObject(r.raw? r.raw(): c.parse(r));
-						} else {
-							enyo.mixin(c, r.raw? r.raw(): r);
-						}
-					} else {
-						// if we checked the record data against all existing records and didn't merge it
-						// we need to add it to the array that will be added at the end
-						add.push(r);
+					// with the purge flag we endeavor on the expensive track of removing
+					// those models currently in the collection that aren't in the incoming
+					// dataset and aren't being created
+					if (purge) {
+						keep || (keep = {length: 0});
+						keep[found.euid] = model;
+						keep.length++;
 					}
-				} else { add.push(r); }
-			}
-			// if there were any records that needed to be added at the end of the collection
-			// we do that now
-			if (add.length) {
-				this.add(add);
-			}
-		}
-	},
-	/**
-		Adds a passed-in record, or array of records, to the collection. Optionally,
-		you may provide the index at which to insert the record(s). Records are
-		added at the end by default. If additions are made successfully, an _add_
-		event is fired with the array of the indices of any records successfully
-		added. The method also returns this array of indices.
-	*/
-	add: function (records, i) {
-		// the actual records array for the collection
-		var local = this.records,
-			// the array of indices of any records added to the collection
-			add   = [],
-			// the existing length prior to adding any records
-			len   = this.length;
-		// normalize the requested index to the appropriate starting index for
-		// our operation
-		i = (i !== null && !isNaN(i))? Math.max(0, Math.min(len, i)) : len;
-		// ensure we're working with an array of incoming records/data hashes
-		records = (enyo.isArray(records)? records: [records]);
-		// if there aren't really any records to add we just return an empty array
-		if (!records.length) { return add; }
-		// we want to lazily instantiate records (unless the instanceAllRecords flag is true)
-		for (var j=0, r; (r=records[j]); ++j) {
-			if (!(r instanceof enyo.Model)) {
-				// if the instanceAllRecords flag is true we have to instance it now
-				if (this.instanceAllRecords) {
-					records[j] = this.createRecord(r, null, false);
-				}
-			} else if (r.destroyed) {
-				throw "enyo.Collection.add: cannot add a record that has already been destroyed";
-			} else {
-				// adding an instantiated model so start listening for events
-				r.addListener("change", this._recordChanged);
-				r.addListener("destroy", this._recordDestroyed);
-			}
-			// add the current index + the index offset determined by the index
-			// passed in to the method
-			add.push(j+i);
-		}
-		// here we just simply use built-ins to shortcut otherwise taxing routines
-		records.unshift.apply(records, [i, 0]);
-		// we add these records to our own records array at the correct index
-		local.splice.apply(local, records);
-		// we have to return the passed-in array to its original state
-		records.splice(0, 2);
-		// update our new length property
-		this.length = local.length;
-		// if the current length is different than the original length we need to
-		// notify any observers of this change
-		if (len !== this.length) {
-			this.notifyObservers("length", len, this.length);
-		}
-		// if necessary, trigger the `add` event for listeners
-		if (add.length) {
-			this.triggerEvent("add", {records: add});
-		}
-		// return the array of added indices
-		return add;
-	},
-	/**
-		Accepts a record, or an array of records, to be removed from the collection.
-		Returns a hash of any records that were successfully removed (along with
-		their former indices). Emits the _remove_ event, which specifies the records
-		that were removed. Unlike the _add_ event, which contains only indices, the
-		_remove_ event has references to the actual records.
-	*/
-	remove: function (rec) {
-		// in order to do this as efficiently as possible we have to find any
-		// record(s) that exist that we actually can remove and ensure that they
-		// are ordered so, in reverse order, we can remove them without the need
-		// to lookup their indices more than once or make copies of any arrays beyond
-		// the ordering array, unfortunately we have to make two passes against the
-		// records being removed
-		// TODO: there may be even faster ways...
-		var rr = [],
-			d  = {},
-			l  = this.length, x, m;
-		// if not an array, make it one
-		rec = (enyo.isArray(rec) && rec) || [rec];
-		for (var j=0, r, i, k; (r=rec[j]); ++j) {
-			if ((i=this.indexOf(r)) > -1) {
-				if (m === undefined || i <= m) {
-					m=i;
-					rr.unshift(i);
-				}
-				else if (x === undefined || i >= x) {
-					x=i;
-					rr.push(i);
-				}
-				else if (x !== i && m !== i) {
-					k=0;
-					while (rr[k] < i) { ++k; }
-					rr.splice(k, 0, i);
-				}
-				d[i] = r;
-			}
-		}
-		// now we iterate over any indices we know we'll remove in reverse
-		// order safely being able to use the index we just found for both the
-		// splice and the return index
-		for (j=rr.length-1; !isNaN((i=rr[j])); --j) {
-			this.records.splice(i, 1);
-			if (d[i] instanceof this.model) {
-				d[i].removeListener("change", this._recordChanged);
-				d[i].removeListener("destroy", this._recordDestroyed);
-			}
-		}
-		// fix up our new length
-		this.length = this.records.length;
-		// now alert any observers of the length change
-		if (l != this.length) { this.notifyObservers("length", l, this.length); }
-		// trigger the event with the instances
-		if (rr.length) { this.triggerEvent("remove", {records: d}); }
-		return d;
-	},
-	/**
-		This method takes an array of records to replace its current records.
-		Unlike the _add()_ method, this method emits a _reset_ event and does not
-		emit _add_ or _remove_, even for new records.
-	*/
-	reset: function (records) {
-		var ch = false,
-			l;
-		if (records && enyo.isArray(records)) {
-			l = this.records.length;
-			this.records = records.slice();
-			this.length = this.records.length;
-			ch = true;
-		}
-		if (ch) {
-			if (l !== this.length) { this.notifyObservers("length", l, this.length); }
-			this.triggerEvent("reset", {records: this.records});
-		}
-		return this;
-	},
-	/**
-		Removes all records from the collection. This action _does not_ destroy the
-		records; they will simply no longer belong to this collection. If the
-		desired action is to remove and destroy all records, use _destroyAll()_
-		instead. This method returns an array of all of the removed records.
-	*/
-	removeAll: function () {
-		return this.reset().remove(this.records);
-	},
-	/**
-		Removes all records from the collection and destroys them. This will still
-		emit the _remove_ event, and any records being destroyed will also emit
-		their own _destroy_ events. If the _local_ parameter is `true` it will call
-		the record's _destroyLocal()_ method instead of _destroy()_.
-	*/
-	destroyAll: function (local) {
-		// all of the removed records that we know need to be destroyed
-		var records = this.removeAll(),
-			fn = local === true? "destroyLocal": "destroy",
-			rec;
-		this._destroyAll = true;
-		for (var k in records) {
-			rec = records[k];
-			if (rec && rec instanceof enyo.Model) {
-				rec[fn]();
-			}
-		}
-		this._destroyAll = false;
-	},
-	/**
-		Same as _destroyAll()_ except that it will call the model's _destroyLocal()_
-		method.
-	*/
-	destroyAllLocal: function () {
-		this.destroyAll(true);
-	},
-	/**
-		Returns the index of the given record if it exists in this collection;
-		otherwise, returns _-1_. Supply an optional offset to begin searching at a
-		non-zero index.
-	*/
-	indexOf: function (rec, offset) {
-		return enyo.indexOf(rec, this.records, offset);
-	},
-	/**
-		Iterates over all the records in this collection, accepting the
-		return value of _fn_ (under optional context _ctx_), and returning the
-		immutable array of that result. If no context is provided, the function is
-		executed in the context of the collection.
-	*/
-	map: function (fn, ctx) {
-		ctx = ctx || this;
-		var fs = [];
-		for (var i=0, l=this.length, r; i<l && (r=this.at(i)); ++i) {
-			fs.push(fn.call(ctx, r, i));
-		}
-		return fs;
-	},
-	/**
-		Iterates over all the records in this collection, filtering them out of the
-		result set if _fn_ returns false. You may pass in an optional context _ctx_;
-		otherwise, the function will be executed in the context of this collection.
-		Returns an array of all the records that caused _fn_ to return true.
-	*/
-	filter: function (fn, ctx) {
-		var fs = [];
-		if (fn) {
-			ctx = ctx || this;
-			for (var i=0, l=this.length, r; i<l && (r=this.at(i)); ++i) {
-				if (fn.call(ctx, r, i)) { fs.push(r); }
-			}
-		}
-		return fs;
-	},
-	/**
-		Returns the record at the requested index, or _undefined_ if there is none.
-		Since records may be stored or malformed, this method resolves them as they
-		are requested (lazily).
-	*/
-	at: function (i) {
-		var r = this.records[i];
-		if (r && !(r instanceof this.model)) {
-			r = this.records[i] = this.createRecord(r, null, false);
-		}
-		return r;
-	},
-	/**
-		Creates an instance of a record immediately in this collection. This method
-		is used internally when instantiating records according to the _model_
-		property. Accepts the attributes (_attrs_) to be used, the properties
-		(_props_) to apply, and an optional index at which to insert the record into
-		the _collection_. If the index is false, the record will not be added to the
-		collection at all. Returns the newly created record instance. Note that
-		records created by a collection have their _owner_ property set to the
-		collection and will be added to the _store_ set on the collection. If a
-		collection is destroyed, any records it owns will also be destroyed unless
-		the _preserveRecords_ flag is true.
-	*/
-	createRecord: function (attrs, props, i) {
-		var defaults = {owner: this},
-			rec;
-		// we have to check to see if we marked these attributes as being fetched
-		// by their isNew flag and propagate that properly if so
-		if (attrs && attrs.isNew === false) {
-			(props || defaults).isNew = false;
-			// remove the flag so that it doesn't show up as an attribute of the
-			// the record
-			delete attrs.isNew;
-		}
-		rec = this.store.createRecord(this.model, attrs, (props? enyo.mixin(defaults, props): defaults));
-		// normalize the index we're adding this record at knowing that a false
-		// indicates we don't insert the record (because it probably already is) and
-		// we don't update the entry here because it will be handled in the caller
-		// if that is the case
-		i = (false === i? -1: (i !== null && i >= 0? i: this.length));
-		rec.addListener("change",  this._recordChanged);
-		rec.addListener("destroy", this._recordDestroyed);
-		if (i >= 0) { this.add(rec, i); }
-		return rec;
-	},
-	/**
-		Implement a method called _recordChanged()_ that receives the record, the
-		event, and any additional properties passed along when any record in the
-		collection emits its _change_ event.
-	*/
-	recordChanged: null,
-	/**
-		When creating a new collection, you may pass it an array of records	(either
-		instances or hashes to be converted) and an optional hash of properties to
-		be applied to the collection. Both are optional, meaning that you can supply
-		neither, either one, or both. If both options and data are present, options
-		will be applied first. If the _data_ array is present, it will be passed
-		through the _parse_ method of the collection.
-	*/
-	constructor: enyo.inherit(function (sup) {
-		return function (data, opts) {
-			var d  = enyo.isArray(data)? data.slice(): null,
-				o  = opts || (data && !d? data: null);
-			if (o) { this.importProps(o); }
-			this.records = (this.records || []).concat(d? this.parse(d): []);
-			// initialized our length property
-			this.length = this.records.length;
-			// we bind this method to our collection so it can be reused as an event listener
-			// for many records
-			this._recordChanged   = enyo.bindSafely(this, this._recordChanged);
-			this._recordDestroyed = enyo.bindSafely(this, this._recordDestroyed);
-			this.euid = enyo.uuid();
-			// attempt to resolve the kind of model if it is a string and not a constructor
-			// for the kind
-			var m = this.model;
-			if (m && enyo.isString(m)) {
-				this.model = enyo.getPath(m);
-			} else {
-				this.model = enyo.checkConstructor(m);
-			}
-			// initialize the store
-			this.storeChanged();
-			data = opts = undefined;
-			sup.apply(this, arguments);
-		};
-	}),
-	/**
-		Destroys the collection and removes all records. This does not destroy the
-		records unless they were created by this collection's _createRecord()_
-		method.	To avoid destroying records that are owned by this collection, set
-		the _preserveRecords_ flag to true.
-	*/
-	destroy: enyo.inherit(function (sup) {
-		return function () {
-			var rr = this.removeAll(), r;
-			for (var k in rr) {
-				r = rr[k];
-				if (r.owner === this) {
-					if (this.preserveRecords) { r.owner = null; }
-					else { r.destroy(); }
+				} else if (attrs && find && (found = this.store.resolve(ctor, id))) {
+					// in this case we were asked to search our store for an existing record
+					// and we found one but we didn't previously have it so we are technically
+					// adding it
+					// @NOTE: Setting the _find_ option always assumes _merge_
+					attrs || (attrs = model.attributes);
+					parse && (attrs = found.parse(attrs));
+					added || (added = []);
+					added.push(found);
+					this.prepareModel(found, opts);
+					merge && found.set(attrs, opts);
+				} else if (!attrs) {
+					added || (added = []);
+					added.push(model);
+					this.prepareModel(model);
+				} else if (create) {
+					model = this.prepareModel(attrs || model, modelOpts);
+					added || (added = []);
+					added.push(model);
+					
+					// with the purge flag we endeavor on the expensive track of removing
+					// those models currently in the collection that aren't in the incoming
+					// dataset and aren't being created
+					if (purge) {
+						keep || (keep = {length: 0});
+						keep[model.euid] = model;
+						keep.length++;
+					}
 				}
 			}
-			this.triggerEvent("destroy");
-			this.store = null;
-			this.removeAllListeners();
-			sup.apply(this, arguments);
-		};
-	}),
-	//*@protected
-	importProps: function (p) {
-		if (p) {
-			if (p.records) {
-				this.records = this.records? this.records.concat(p.records): p.records;
-				delete p.records;
+			
+			// here we process those models to be removed if purge was true
+			// the other guard is just in case we actually get to keep everything
+			// so we don't do this unnecessary pass
+			if (purge && (keep && keep.length)) {
+				removed || (removed = []);
+				keep || (keep = {});
+				for (i=0; i<len; ++i) !keep[(model = loc[i]).euid] && removed.push(model);
+				// if we removed any we process that now
+				removed.length && this.remove(removed, opts);
 			}
-			enyo.kind.statics.extend(p, this);
-		}
-	},
-	storeChanged: function () {
-		var s = this.store || enyo.store;
-		if (s) {
-			if (enyo.isString(s)) {
-				s = enyo.getPath(s);
-				if (!s) {
-					enyo.warn("enyo.Collection: could not find the requested store -> ", this.store, ", using" +
-						"the default store");
+			
+			// added && loc.stopNotifications().add(added, idx).startNotifications();
+			if (added) {
+				loc.add(added, idx);
+				sort && this.sort(sort, {silent: true});
+				
+				// we batch this operation to make use of its ~efficient array operations
+				this.store.add(added); 
+			}
+			this.length = loc.length;
+			
+			
+			if (!silent) {
+				// notify observers of the length change
+				len != this.length && this.notify('length', len, this.length);
+				// notify listeners of the addition of records
+				if (added) {
+					this.emit('add', {/* for backward compatibility */ records: added, /* prefered */ models: added});
 				}
 			}
+			
+			// note that if commit is set but this was called from a successful fetch this will be
+			// a nop (as intended)
+			commit && added && this.commit(opts);
+			
+			return added || [];
+		},
+		
+		/**
+			The configuration options for {@link enyo.Collection#remove}. For complete descriptions
+			of the options and their defaults {@see enyo.Collection#options}. Some properties have a
+			different meaning in a specific context. Please review their descriptions below to see
+			how they are used in this context.
+		
+			@typedef {object} enyo.Collection#remove~options
+			@property {boolean} silent - Emit events and notifications.
+			@property {boolean} commit - {@link enyo.Collection#commit} changes to the
+				{@link enyo.Collection} after completing the {@link enyo.Collection#add}.
+			@property {boolean} complete - Remove the {@link enyo.Model} from the
+				{@link enyo.Collection#store} as well as the {@link enyo.Collection}.
+			@property {boolean} destroy - {@link enyo.Model#destroy} the {@link enyo.Model} as well
+				as remove it from the {@link enyo.Collection}.
+		*/
+		
+		/**
+			Remove data from the dataset. It can take a [model]{@link enyo.Model} or an array of
+			[models]{@link enyo.Model}. If any of the instances are present in the
+			{@link enyo.Collection} they will be removed, in the order in which they are
+			encountered. Emits the {@link enyo.Collection#remove} event if any models were found and
+			removed from the dataset (and the `silent` option is not `true`).
+		
+			@fires enyo.Collection#remove
+			@param {(enyo.Model|enyo.Model[])} models The [models]{@link enyo.Model} to remove
+				if they exist in the {@link enyo.Collection}.
+			@param {enyo.Collection#remove~options} [opts] The configuration options that modify
+				the behavior of this method.
+			@returns {enyo.Model[]} The [models]{@link enyo.Model} that were removed, if any.
+			@method
+			@public
+		*/
+		remove: function (models, opts) {
+			var loc = this.models
+				, len = loc.length
+				, options = this.options
+				, removed, model;
+			
+			// normalize options so we have values
+			opts = opts? enyo.mixin({}, [options, opts]): options;
+			
+			// our flags
+			var silent = opts.silent
+				, destroy = opts.destroy
+				, complete = opts.complete
+				, commit = opts.commit;
+			
+			// we treat all additions as an array of additions
+			!(models instanceof Array) && (models = [models]);
+			
+			removed = loc.remove(models);
+			
+			if (removed.length) {
+				
+				// ensure that we can batch remove from the store
+				opts.batching = true;
+				
+				for (var i=0, end=removed.length; i<end; ++i) {
+					model = removed[i];
+					model.off('*', this.onModelEvent, this);
+					if (destroy) model.destroy(opts);
+				}
+				
+				// if complete or destroy was set we remove them from the store (batched op)
+				if (complete || destroy) this.store.remove(removed);
+			}
+			
+			this.length = loc.length;
+			
+			if (!silent) {
+				len != this.length && this.notify('length', len, this.length);
+				if (removed.length) {
+					this.emit('remove', {/* for partial backward compatibility */records: removed, /* prefered */models: removed});
+				}
+			}
+			
+			// if this is called from an overloaded method (such as fetch or commit) or some 
+			// success callback this will be a nop (as intended)
+			commit && removed.length && this.commit();
+			
+			return removed;
+		},
+		
+		/**
+			Retrieve a {@link enyo.Model} for the provided index.
+		
+			@param {number} idx The index to return from the {@link enyo.Collection}.
+			@returns {(enyo.Model|undefined)} The {@link enyo.Model} at the given index or
+				`undefined`.
+			@public
+			@method
+		*/
+		at: function (idx) {
+			return this.models[idx];
+		},
+		
+		/**
+			@public
+			@method
+		*/
+		raw: function () {
+			return this.models.map(function (model) {
+				return model.raw();
+			});
+		},
+		
+		/**
+			@public
+			@method
+		*/
+		has: function (model) {
+			return this.models.has(model);
+		},
+		
+		/**
+			@public
+			@method
+		*/
+		forEach: function (fn, ctx) {
+			
+			// ensure that this is an immutable reference to the models such that changes will
+			// not affect the entire loop - e.g. calling destroy on models won't keep this from
+			// completing
+			return this.models.slice().forEach(fn, ctx || this);
+		},
+		
+		/**
+			@public
+			@method
+		*/
+		filter: function (fn, ctx) {
+			
+			// ensure that this is an immutable reference to the models such that changes will
+			// not affect the entire loop - e.g. calling destroy on models won't keep this from
+			// completing
+			return this.models.slice().filter(fn, ctx || this);
+		},
+		
+		/**
+			@public
+			@method
+		*/
+		find: function (fn, ctx) {
+			
+			// ensure that this is an immutable reference to the models such that changes will
+			// not affect the entire loop - e.g. calling destroy on models won't keep this from
+			// completing
+			return this.models.slice().find(fn, ctx || this);
+		},
+		
+		/**
+			@public
+			@method
+		*/
+		map: function (fn, ctx) {
+			
+			// ensure that this is an immutable reference to the models such that changes will
+			// not affect the entire loop - e.g. calling destroy on models won't keep this from
+			// completing
+			return this.models.slice().map(fn, ctx || this);
+		},
+		
+		/**
+			@public
+			@method
+		*/
+		indexOf: function (model, offset) {
+			return this.models.indexOf(model, offset);
+		},
+		
+		/**
+			Remove all [models]{@link enyo.Model} from the [collection]{@link enyo.Collection}.
+			Optionally a [model or models]{@link enyo.Model} can be provided that will replace the
+			removed [models]{@link enyo.Model}. If this operation is not `silent` it will emit a
+			`reset` event. Returns the removed [models]{@link enyo.Model} but be aware that if the
+			`destroy` configuration option is set then the returned models will have limited
+			usefulness.
+		
+			@fires enyo.Collection~events.reset
+			@param {(enyo.Model|enyo.Model[])} [models] The [model or models]{@link enyo.Model} to
+				use as a replacement for the current set of [models]{@link enyo.Model} in the
+				{@link enyo.Collection}.
+			@param {enyo.Collection#empty~options} [opts] The options that will modify the behavior
+				of this method.
+			@returns {enyo.Model[]} The [models]{@link enyo.Model} that were removed from the
+				{@link enyo.Collection}.
+			@method
+			@public
+		*/
+		empty: function (models, opts) {
+			var silent,
+				removed;
+			
+			if (models && !(models instanceof Array || models instanceof Model)) {
+				// there were no models but instead some options only
+				opts = models;
+				models = null;
+			}
+			
+			opts = opts || {};
+			
+			// just in case the entire thing was supposed to be silent
+			silent = opts.silent;
+			opts.silent = true;
+			
+			removed = this.remove(this.models, opts);
+			
+			// if there are models we are going to propagate the remove quietly and instead issue
+			// a single reset with the new content
+			if (models) this.add(models, opts);
+			
+			// now if the entire thing wasn't supposed to have been done silently we issue
+			// a reset
+			if (!silent) this.emit('reset', {models: this.models.copy()});
+			
+			return removed;
+		},
+		
+		/**
+			@public
+			@method
+		*/
+		toJSON: function () {
+			// @NOTE: Needs to be the JSON parse-able object...
+			// return json.stringify(this.raw());
+			return this.raw();
+		},
+		
+		/**
+			@public
+			@method
+		*/
+		sort: function (fn, opts) {
+			if (fn || this.comparator) {
+				var options = {silent: false}, silent;
+			
+				opts = opts? enyo.mixin({}, [options, opts]): options;
+				silent = opts.silent;
+				this.models.sort(fn || this.comparator);
+				!silent && this.emit('sort', {comparator: fn || this.comparator, models: this.models.copy()});
+			}
+			return this;
+		},
+		
+		/**
+			Attempt to persist the state of this {@link enyo.Collection}. The actual method by which
+			this is accomplished varies on the associated [source]{@link enyo.Collection#source} (or
+			[overloaded source]{@link enyo.Collection#commit~options.source}). This method will
+			immediately call {@link enyo.Collection#onError} with the `action` set to the current
+			{@link enyo.Collection#status} if it is one of the error states
+			({@link enyo.Collection~STATES.ERROR_FETCHING} or
+			{@link enyo.Collection~STATES.ERROR_COMMITTING}; more if extended). Also note you cannot
+			call this method if it is already in a [busy state]{@link enyo.Collection~STATES.BUSY}.
+			
+			@param {external:Object} [opts] The configuration
+				[options]{@link enyo.Collection#commit~options}.
+			@returns {enyo.Collection} The callee for chaining.
+			@method
+			@public
+		*/
+		commit: function (opts) {
+			var options,
+				source,
+				it = this;
+			
+			// if the current status is not one of the error states we can continue
+			if (!(this.status & (STATES.ERROR | STATES.BUSY))) {
+				
+				// if there were options passed in we copy them quickly so that we can hijack
+				// the success and error methods while preserving the originals to use later
+				options = opts ? enyo.clone(opts, true) : {};
+				
+				// make sure we keep track of how many sources we're requesting
+				source = options.source || this.source;
+				if (source && ((source instanceof Array) || source === true)) {
+					this._waiting = source.length ? source.slice() : Object.keys(enyo.sources);
+				}
+					
+				options.success = function (source, res) {
+					it.onCommit(opts, res, source);
+				};
+				
+				options.error = function (source, res) {
+					it.onError('COMMITTING', opts, res, source);
+				};
+				
+				// set the state
+				this.set('status', (this.status | STATES.COMMITTING) & ~STATES.READY);
+				
+				// now pass this on to the source to execute as it sees fit
+				Source.execute('commit', this, options);
+			} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
+			
+			return this;
+		},
+		
+		/**
+			@todo
+			
+			@method
+			@public
+		*/
+		fetch: function (opts) {
+			var options,
+				source,
+				it = this;
+				
+			// if the current status is not one of the error states we can continue
+			if (!(this.status & (STATES.ERROR | STATES.BUSY))) {
+				
+				// if there were options passed in we copy them quickly so that we can hijack
+				// the success and error methods while preserving the originals to use later
+				options = opts ? enyo.clone(opts, true) : {};
+				
+				// make sure we keep track of how many sources we're requesting
+				source = options.source || this.source;
+				if (source && ((source instanceof Array) || source === true)) {
+					this._waiting = source.length ? source.slice() : Object.keys(enyo.sources);
+				}
+				
+				options.success = function (source, res) {
+					it.onFetch(opts, res, source);
+				};
+				
+				options.error = function (source, res) {
+					it.onError('FETCHING', opts, res, source);
+				};
+				
+				// set the state
+				this.set('status', (this.status | STATES.FETCHING) & ~STATES.READY);
+				
+				// now pass this on to the source to execute as it sees fit
+				Source.execute('fetch', this, options);
+			} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
+			
+			return this;
+		},
+		
+		/**
+			@public
+		*/
+		destroy: enyo.inherit(function (sup) {
+			return function (opts) {
+				var options = opts ? enyo.mixin({}, [this.options, opts]) : this.options,
+					it = this,
+					idx;
+							
+				// this becomes an (potentially) async operation if we are committing this destroy
+				// to a source and its kind of tricky to figure out because there are several ways
+				// it could be flagged to do this
+							
+				if (options.commit || options.source) {
+					
+					// if the current status is not one of the error states we can continue
+					if (!(this.status & (STATES.ERROR | STATES.BUSY))) {
+					
+						// remap to the originals
+						options = opts ? enyo.clone(opts, true) : {};
+					
+						options.success = function (source, res) {
+					
+							if (it._waiting) {
+								idx = it._waiting.findIndex(function (ln) {
+									return (ln instanceof Source ? ln.name : ln) == source;
+								});
+								if (idx > -1) it._waiting.splice(idx, 1);
+								if (!it._waiting.length) it._waiting = null;
+							}
+					
+							// continue the operation this time with commit false explicitly
+							if (!it._waiting) {
+								options.commit = options.source = null;
+								it.destroy(options);
+							}
+							if (opts && opts.success) opts.success(this, opts, res, source);
+						};
+				
+						options.error = function (source, res) {
+					
+							if (it._waiting) {
+								idx = it._waiting.findIndex(function (ln) {
+									return (ln instanceof Source ? ln.name : ln) == source;
+								});
+								if (idx > -1) it._waiting.splice(idx, 1);
+								if (!it._waiting.length) it._waiting = null;
+							}
+					
+							// continue the operation this time with commit false explicitly
+							if (!it._waiting) {
+								options.commit = options.source = null;
+								it.destroy(options);
+							}
+					
+							// we don't bother setting the error state if we aren't waiting because 
+							// it will be cleared to DESTROYED and it would be pointless
+							else this.onError('DESTROYING', opts, res, source);
+						};
+					
+						this.set('status', (this.status | STATES.DESTROYING) & ~STATES.READY);
+				
+						Source.execute('destroy', this, options);
+					} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
+					
+					// we don't allow the destroy to take place and we don't forcibly break-down
+					// the collection errantly so there is an opportuniy to resolve the issue
+					// before we lose access to the collection's content!
+					return this;
+				}
+				
+				if (this.length && options.destroy) this.empty(options);
+				
+				// set the final resting state of this collection
+				this.set('status', STATES.DESTROYED);
+				
+				sup.apply(this, arguments);
+			};
+		}),
+		
+		/**
+			@public
+			@method
+		*/
+		comparator: null,
+		
+		/**
+			@private
+			@method
+		*/
+		prepareModel: function (attrs, opts) {
+			var Ctor = this.model
+				// , options = {silent: true, noAdd: true}
+				, model;
+			
+			// opts = opts? enyo.mixin({}, [options, opts]): options;
+			// opts = opts || {};
+			// opts.noAdd = true;
+			
+			attrs instanceof Ctor && (model = attrs);
+			if (!model) {
+				opts = opts || {};
+				opts.noAdd = true;
+				model = new Ctor(attrs, null, opts);
+			}
+			
+			model.on('*', this.onModelEvent, this);
+			
+			return model;
+		},
+		
+		/**
+			@private
+		*/
+		onCommit: function (opts, res, source) {
+			var idx;
+			
+			if (this._waiting) {
+				idx = this._waiting.findIndex(function (ln) {
+					return (ln instanceof Source ? ln.name : ln) == source;
+				});
+				if (idx > -1) this._waiting.splice(idx, 1);
+				if (!this._waiting.length) this._waiting = null;
+			}
+			
+			if (opts && opts.success) opts.success(this, opts, res, source);
+			
+			// clear the state
+			if (!this._waiting) {
+				this.set('status', (this.status | STATES.READY) & ~STATES.COMMITTING);
+			}
+		},
+		
+		/**
+			@private
+		*/
+		onFetch: function (opts, res, source) {
+			var idx;
+			
+			if (this._waiting) {
+				idx = this._waiting.findIndex(function (ln) {
+					return (ln instanceof Source ? ln.name : ln) == source;
+				});
+				if (idx > -1) this._waiting.splice(idx, 1);
+				if (!this._waiting.length) this._waiting = null;
+			}
+			
+			// if there is a result we add it to the collection passing it any per-fetch options
+			// that will override the defaults (e.g. parse) we don't do that here as it will
+			// be done in the add method -- also note we reassign the result to whatever was
+			// actually added and pass that to any other success callback if there is one
+			if (res) res = this.add(res, opts);
+			
+			// now look for an additional success callback
+			if (opts && opts.success) opts.success(this, opts, res, source);
+			
+			// clear the state
+			if (!this._waiting) {
+				this.set('status', (this.status | STATES.READY) & ~STATES.FETCHING);
+			}
+		},
+		
+		/**
+			If an {@link enyo.Collection#error} is encountered during {@link enyo.Collection#fetch}
+			or {@link enyo.Collection#commit} this method will be called. By default it updates the
+			[collection's]{@link enyo.Collection} {@link enyo.Collection#status} property and then
+			checks to see if there is a provided
+			[error handler]{@link enyo.Collection#source~options} and, if so, will call that method
+			with the appropriate parameters {@see enyo.Collection#source~error}. This method can be
+			overloaded to provide additional behavior.
+		
+			@param {string} action The name of the action that failed, one of `FETCHING` or
+				`COMMITTING`.
+			@param {enyo.Collection#source~options} The options hash originally passed along with
+				the original action.
+			@param {*} [res] The result of the requested `action` - varies depending on the
+				requested {@link enyo.Collection#source}.
+			@public
+		*/
+		onError: function (action, opts, res, source) {
+			var stat;
+			
+			// if the error action is a status number then we don't need to update it otherwise
+			// we set it to the known state value
+			if (typeof action == 'string') {
+				
+				// all built-in errors will pass this as their values are > 0 but we go ahead and
+				// ensure that no developer used the 0x00 for an error code
+				stat = STATES['ERROR_' + action];
+			} else stat = action;
+			
+			if (isNaN(stat) || !(stat & STATES.ERROR)) stat = STATES.ERROR_UNKNOWN;
+			
+			// if it has changed give observers the opportunity to respond
+			this.set('status', (this.status | stat) & ~STATES.READY);
+			
+			// we need to check to see if there is an options handler for this error
+			if (opts && opts.error) opts.error(this, action, opts, res, source);
+		},
+		
+		/**
+			Clear the error state explicitly. This allows for overloaded behavior as may be
+			necessary in some application scenarios.
+			
+			@returns {enyo.Collection} The callee for chaining.
+			@method
+			@public
+		*/
+		clearError: function () {
+			return this.set('status', STATES.READY);
+		},
+		
+		/**
+			Convenience method to avoid using bitwise comparison directly for the
+			{@link enyo.Collection#status}. Automatically checks the current
+			{@link enyo.Collection#status} or the passed-in value to determine if it is an
+			[error state]{@link enyo.Collection~STATES.ERROR}. The passed-in value will only be
+			used if it is a numeric value.
+		
+			@param {enyo.Collection~STATES} [status] Provide a specific value to test.
+			@returns {boolean} Whether or not the given status is an error.
+			@method
+			@public
+		*/
+		isError: function (status) {
+			return !! ((isNaN(status) ? this.status : status) & STATES.ERROR);
+		},
+		
+		/**
+			Convenience method to avoid using bitwise comparison directly for the
+			{@link enyo.Collection#status}. Automatically check the current
+			{@link enyo.Collection#status} or the passed-in value to determine if it is a
+			[busy state]{@link enyo.Collection~STATES.BUSY}. The passed-in value will only be
+			used if it is a numeric value.
+		*/
+		isBusy: function (status) {
+			return !! ((isNaN(status) ? this.status : status) & STATES.BUSY);
+		},
+		
+		/**
+			Convenience method to avoid using bitwise comparison directly for the
+			{@link enyo.Collection#status}. Automatically check the current
+			{@link enyo.Collection#status} or the passed-in value to determine if it is a
+			[ready state]{@link enyo.Collection~STATES.READY}. The passed-in value will only be
+			used if it is a numeric value.
+		*/
+		isReady: function (status) {
+			return !! ((isNaN(status) ? this.status : status) & STATES.READY);
+		},
+		
+		/**
+			@private
+		*/
+		onModelEvent: function (model, e) {
+			switch (e) {
+			case 'change':
+				this.emit('change', {model: model});
+				break;
+			case 'destroy':
+				this.remove(model);
+				break;
+			}
+		},
+		
+		/**
+			@private
+		*/
+		onModelsChange: function (was, is, prop, opts) {
+			var models = this.models.copy(),
+				len = models.length;
+			
+			if (len != this.length) this.set('length', len);
+			
+			this.emit('reset', {/* for partial backward compatibility */records: models, /* prefered */models: models});
+		},
+		
+		/**
+			@private
+		*/
+		constructor: enyo.inherit(function (sup) {
+			return function (recs, props, opts) {
+				// opts = opts? (this.options = enyo.mixin({}, [this.options, opts])): this.options;
+				
+				// if properties were passed in but not a records array
+				props = recs && !(recs instanceof Array)? recs: props;
+				if (props === recs) recs = null;
+				// initialize our core records
+				// this.models = this.models || new ModelList();
+				!this.models && (this.set('models', new ModelList()));
+				
+				if (props && props.records) {
+					recs = recs? recs.concat(props.records): props.records.slice();
+					delete props.records;
+				}
+								
+				if (props && props.options) {
+					this.options = enyo.mixin({}, [this.options, props.options]);
+					delete props.options;
+				}
+				
+				opts = opts? enyo.mixin({}, [this.options, opts]): this.options;
+				
+				// @TODO: For now, while there is only one property we manually check for it
+				// if more options arrise that should be configurable this way it may need to
+				// be modified
+				opts.fetch && (this.options.fetch = opts.fetch);
+				
+				this.length = this.models.length;
+				this.euid = enyo.uid('c');
+				
+				sup.call(this, props);
+				
+				typeof this.model == 'string' && (this.model = enyo.constructorForKind(this.model));
+				this.store = this.store || enyo.store;
+				recs && recs.length && this.add(recs, opts);
+			};
+		}),
+		
+		/**
+			@private
+		*/
+		constructed: enyo.inherit(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				
+				// automatically attempt a fetch after initialization is complete
+				if (this.options.fetch) this.fetch();
+			};
+		})
+	});
+	
+	/**
+		@alias enyo.Collection~STATES
+		@static
+		@public
+	*/
+	Collection.STATES = STATES;
+	
+	/**
+		@private
+		@static
+	*/
+	Collection.concat = function (ctor, props) {
+		var proto = ctor.prototype || ctor;
+		
+		if (props.options) {
+			proto.options = enyo.mixin({}, [proto.options, props.options]);
+			delete props.options;
 		}
-		s = this.store = s || enyo.store;
-		s.addCollection(this);
-	},
-	_recordChanged: function (rec, e, p) {
-		// TODO: this will be used internally for relational data structures
-		// if the developer provided a _recordChanged_ method we need to call
-		// it now
-		if (this.recordChanged) {
-			this.recordChanged(rec, e, p);
-		}
-	},
-	_recordDestroyed: function (rec) {
-		// if we're destroying all records we ignore this as the record
-		// will have already been removed, otherwise we remove the record
-		// from the collection
-		if (!this._destroyAll) { this.remove(rec); }
-	}
-});
+	};
+	
+})(enyo, this);

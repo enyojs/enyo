@@ -93,7 +93,7 @@ enyo.kind({
 		dataset. This is much cheaper to call than _reset()_, but is primarily used
 		internally.
 	*/
-	refresh: function () {
+	refresh: function (c, e) {
 		if (this.get("absoluteShowing")) {
 			if (this.hasRendered) {
 				this.delegate.refresh(this);
@@ -131,6 +131,9 @@ enyo.kind({
 	}),
 	create: enyo.inherit(function (sup) {
 		return function () {
+			// synchronize the showing and absoluteShowing properties as absoluteShowing is
+			// an internal property that should not be true if showing is false
+			this.absoluteShowing = this.showing;
 			// if we can, we use transitions
 			this.allowTransitionsChanged();
 			// map the selected strategy to the correct delegate for operations
@@ -254,14 +257,14 @@ enyo.kind({
 			if (c === this.collection && this.$.scroller.canGenerate) {
 				if (this.get("absoluteShowing")) {
 					this.delegate.modelsRemoved(this, props);
+					sup.apply(this, arguments);
 				} else {
 					this._addToShowingQueue("refresh", function () {
+						sup.apply(this, arguments);
 						this.refresh();
 					});
 				}
 			}
-
-			sup.apply(this, arguments);
 		};
 	}),
 	destroy: enyo.inherit(function (sup) {
@@ -375,7 +378,9 @@ enyo.kind({
 		work we do.
 	*/
 	handlers: {onScroll: "didScroll", onresize: "didResize"},
-	observers: {_absoluteShowingChanged: ["absoluteShowing"]},
+	observers: [
+		{method: "_absoluteShowingChanged", path: "absoluteShowing"}
+	],
 	//* Add the RegisteredEventSupport mixin for the paging event
 	mixins: [enyo.RegisteredEventSupport],
 	//* All delegates are named elsewhere but are stored in these statics.

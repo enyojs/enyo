@@ -1,234 +1,227 @@
 (function (enyo) {
-
-	//*@protected
-	// this is called when we need an instance-specific computed table so
-	// runtime modifications are unique to the instance and not the kind, also
-	// note that once the kind is instanced modifications to the _computed_
-	// block will not be registered
-	var _instanceMap = function(obj, prop) {
-		if (!obj.hasOwnProperty(prop)) {
-			obj[prop] = obj[prop]? enyo.clone(obj[prop]): {};
-		}
-		return obj[prop];
-	};
-	//*@public
+	
+	var extend = enyo.kind.statics.extend;
+		
+	var ComputedSupport;
+	
+	enyo.concatenated.push("computed");
+	
 	/**
-		Computed properties are methods of kinds that are designated as being
-		dependent upon multiple properties--much like observers, except that
-		they themselves are treated as properties (not functions). An
-		_enyo.Binding_ cannot be bound to a function directly, but it can be
-		bound to a computed property.
-
-		Computed properties have the advantage of being cacheable (meaning that many
-		requests for the property won't require pointless recalculations) and will
-		notify observers when any of their own dependencies change. Computed
-		properties may be called directly, and will accept parameters just like other
-		functions, but be aware	that you cannot call any setter method for a
-		computed property. Also note that for any observers of a computed property,
-		there will never be a _previous_ value unless it is cached.
-
-		Just as with [ObserverSupport](#enyo/source/kernel/mixins/ObserverSupport.js),
-		you can specify that a method is a computed property by including it within a
-		_computed_ block.
-
-			enyo.kind({
-				name: "Sample",
-				computed: {
-					mood: ["expression", "posture", "volume", {cached: true}],
-					maxHours: []
-				}
-			})
-
-		Another feature of computed properties is the ability to add configurable
-		options. Options are found in the computed property's array of dependencies.
-		Look at the defaults for options of computed properties to see what options
-		are available.
+		@private
 	*/
-	enyo.ComputedSupport = {
+	function getComputedValue (obj, path) {
+		var cache = obj._getComputedCache(path)
+			, isCached = obj._isComputedCached(path);
+		
+		// in the end, for efficiency and completeness in other situations
+		// it is better to know the returned value of all computed properties
+		// but in cases where they are set as cached we will sometimes use
+		// that value
+		if (cache.dirty || cache.dirty === undefined) {
+			isCached && (cache.dirty = false);
+			cache.previous = cache.value;
+			cache.value = obj[path]();
+		}
+		
+		return cache.value;
+	}
+	
+	/**
+		@private
+	*/
+	function queueComputed (obj, path) {
+		var queue = obj._computedQueue || (obj._computedQueue = [])
+			, deps = obj._computedDependencies[path];
+			
+		if (deps) {
+			for (var i=0, dep; (dep=deps[i]); ++i) {
+				if (!queue.length || -1 == queue.indexOf(dep)) queue.push(dep);
+			}
+		}
+	}
+	
+	/**
+		@private
+	*/
+	function flushComputed (obj) {
+		var queue = obj._computedQueue;
+		obj._computedQueue = null;
+		if (queue && obj.isObserving()) {
+			for (var i=0, ln; (ln=queue[i]); ++i) {
+				obj.notify(ln, obj._getComputedCache(ln).value, getComputedValue(obj, ln));
+			}
+		}
+	}
+	
+	/**
+		@public
+		@mixin
+	*/
+	ComputedSupport = enyo.ComputedSupport = {
 		name: "ComputedSupport",
+		
 		/**
-			Used to identify computed methods and their dependencies (if any):
-			`computed`
+			@private
 		*/
-		//*@protected
+		_computedRecursion: 0,
+		
+		/**
+			@public
+			@method
+		*/
+		isComputed: function (path) {
+			// if it exists it will be explicitly one of these cases and it is cheaper than hasOwnProperty
+			return this._computed && (this._computed[path] === true || this._computed[path] === false);
+		},
+		
+		/**
+			@public
+			@method
+		*/
+		isComputedDependency: function (path) {
+			return !! (this._computedDependencies? this._computedDependencies[path]: false);
+		},
+		
+		/**
+			@private
+			@method
+		*/
 		get: enyo.inherit(function (sup) {
 			return function (path) {
-				if (this._isComputed(path)) {
-					return this._getComputed(path);
-				}
-				return sup.apply(this, arguments);
+				return this.isComputed(path)? getComputedValue(this, path): sup.apply(this, arguments);
 			};
 		}),
+		
+		/**
+			@private
+			@method
+		*/
 		set: enyo.inherit(function (sup) {
-			return function (path, value) {
-				if (this._isComputed(path)) {
-					// there is no support for setting a value for a computed
-					// property but this will protected it from getting "obliterated"
-					return this;
-				}
-				return sup.apply(this, arguments);
+			return function (path) {
+				// we do not accept parameters for computed properties
+				return this.isComputed(path)? this: sup.apply(this, arguments);
 			};
 		}),
+		
 		/**
-			We hook notifyObservers to determine if the current property is
-			a dependency that would trigger an update to a computed property.
-			Keep in mind that we do so knowing that multiple properties could
-			trigger an update to the same computed property synchronously before
-			it has the opportunity to flush the queue, so we will be mindful to
-			never allow the same computed property into the queue more than once.
+			@private
+			@method
 		*/
-		notifyObservers: enyo.inherit(function (sup) {
-			return function (path, prev, value) {
-				var ma = _instanceMap(this, "computedMap"), n;
-				if (ma && (n = ma[path])) {
-					if (typeof n == "string") {
-						n = ma[path] = enyo.trim(n).split(" ");
-					}
-					for (var i=0, p; (p=n[i]); ++i) {
-						// this is a dependency of one of our computed properties
-						// so we will flag it as being dirty and queue the notification
-						// for any of its dependents, we blow away any other entry for
-						// this property already in the queue always setting the _value_
-						// in the queue to the known previous value if it was cached or null
-						this._markComputed(p);
-					}
-					// continue with normal notification handling
-					sup.apply(this, arguments);
-					// now we flush the queue, knowing this could have been recursively
-					// executed
-					this._flushComputedQueue();
-				} else {
-					// carry on
-					sup.apply(this, arguments);
-				}
+		notifyObservers: function () {
+			return this.notify.apply(this, arguments);
+		},
+		
+		/**
+			@private
+			@method
+		*/
+		notify: enyo.inherit(function (sup) {
+			return function (path, was, is) {
+				this.isComputedDependency(path) && queueComputed(this, path);
+				this._computedRecursion++;
+				sup.apply(this, arguments);
+				this._computedRecursion--;
+				this._computedQueue && this._computedRecursion === 0 && flushComputed(this);
+				return this;
 			};
 		}),
-		_getComputed: function (path) {
-			var ca = _instanceMap(this, "computedCached");
-			var cc = _instanceMap(this, "computedConfig");
-			var config = cc? _instanceMap(cc, path): null;
-			var c;
-			if ((c = ca[path])) {
-				if (typeof c != "object") {
-					c = ca[path] = {};
-					// this can only happen once it will attempt to supply a default
-					// value for the computed (cached) property instead of forcing it
-					// to be evaluated the first time it is requested
-					if (config && config.hasOwnProperty("defaultValue")) {
-						c.dirty = false;
-						c.value = config.defaultValue;
-					} else {
-						c.dirty = true;
-					}
-				}
-				// if the cache says the computed property is dirty,
-				// we have to fetch a current value
-				if (c.dirty) {
-					c.value = this[path]();
-					c.dirty = false;
-				}
-				// return the value whether it was cached or
-				// the most recent
-				return c.value;
-			} else if (config) {
-				if (config.hasOwnProperty("defaultValue")) {
-					var def = config.defaultValue;
-					// remove it so we won't use it again for this instnace
-					delete config.defaultValue;
-					return def;
-				}
-			}
-			// if it is not a cacheable computed property, we
-			// have to execute it to get the current value
-			return this[path]();
-		},
+		
 		/**
-			If the property is a cached computed property, we update it
-			as dirty, and then place it in the queue. The same method, if
-			it is already in the queue, will be blown away so that it will never
-			be entered more than once.
+			@private
+			@method
 		*/
-		_markComputed: function (path) {
-			var ca = _instanceMap(this, "computedCached"),
-				q = this.computedQueue || (this.computedQueue = {}),
-				p = null, c;
-			if ((c = ca[path])) {
-				if (typeof c != "object") {
-					c = ca[path] = {};
-				}
-				// it is cached so we mark it as dirty and use its previous
-				// known value as the value entered in the queue
-				p = c.value;
-				c.dirty = true;
-			}
-			q[path] = p;
+		_isComputedCached: function (path) {
+			return this._computed[path];
 		},
-		_isComputed: function (path) {
-			var c = _instanceMap(this, "computed");
-			return (c && c[path] !== undefined && c[path] !== null);
-		},
-		_flushComputedQueue: function () {
-			if (!this.computedQueue || !this.observerNotificationsEnabled) { return; }
-			// forced to throw away old queue object so we don't accidentally
-			// use incorrect values later
-			// also for immutability of the queue we are forced to clone it
-			// since the operation is synchronous and recursive
-			var q = this.computedQueue;
-			this.computedQueue = {};
-			for (var k in q) {
-				// where q[k] is the previous value or null and we retrieve (once) the most
-				// recent value of the computed property if it was cached this will reset the
-				// dirty flag to false
-				this.notifyObservers(k, q[k], this._getComputed(k));
-			}
-		}
+		
 		/**
-			Meta-properties used:
-			`computedMap`
-			`computedQueue`
-			`computedCached`
+			@private
+			@method
 		*/
-	};
-	//*@protected
-	var fn = enyo.concatHandler;
-	enyo.concatHandler = function (ctor, props) {
-		// call the original
-		fn.apply(this, arguments);
-		// now we have to ensure we properly maintain the computed properties
-		// for any kind but we want to do the least amount of work possible
-		if (props.computed) {
-			var p = ctor.prototype || ctor;
-			if (!p.computed) {
-				p.computed = {};
-				p.computedCached = {};
-				p.computedMap = {};
-				p.computedConfig = {};
-			} else {
-				p.computed = enyo.clone(p.computed);
-				p.computedCached = enyo.clone(p.computedCached);
-				p.computedMap = enyo.clone(p.computedMap);
-				p.computedConfig = enyo.clone(p.computedConfig);
-			}
-			for (var k in props.computed) {
-				p.computed[k] = (p.computed[k] || "");
-				var ss = (typeof props.computed[k] == "string"? enyo.trim(props.computed[k]).split(" "): props.computed[k]);
-				for (var i=0, s; (s=ss[i]); ++i) {
-					if (typeof s == "object") {
-						if (s.cached === true) {
-							p.computedCached[k] = true;
-						}
-						p.computedConfig[k] = (p.computedConfig[k]? enyo.mixin(enyo.clone(p.computedConfig[k]), s): s);
-					} else {
-						if (!~p.computed[k].indexOf(s)) {
-							p.computed[k] += (" " + s);
-							p.computedMap[s] = enyo.trim((p.computedMap[s] || "") + " " + k).replace(/\s+/g, " ");
-						}
-					}
-				}
-				p.computed[k] = enyo.trim(p.computed[k]).replace(/\s+/g, " ");
-			}
-			delete props.computed;
+		_getComputedCache: function (path) {
+			var cache = this._computedCache || (this._computedCache = {});
+			return cache[path] || (cache[path] = {});
 		}
 	};
+	
 
+	/**
+		Hijack the original so we can add additional default behavior.
+	*/
+	var sup = enyo.concatHandler;
+
+	// @NOTE: It seems like a lot of work but it really won't happen that much and the more
+	// we push to kind-time the better for initialization time
+	enyo.concatHandler = function (ctor, props, instance) {
+	
+		sup.call(this, ctor, props, instance);
+	
+		// only matters if there are computed properties to manage
+		if (props.computed) {
+			
+			var proto = ctor.prototype || ctor
+				, computed = proto._computed? Object.create(proto._computed): {}
+				, dependencies = proto._computedDependencies? Object.create(proto._computedDependencies): {};
+			
+			// if it hasn't already been applied we need to ensure that the prototype will
+			// actually have the computed support mixin present, it will not apply it more
+			// than once to the prototype
+			extend(ComputedSupport, proto);
+		
+			// @NOTE: This is the handling of the original syntax provided for computed properties in 2.3.ish...
+			// All we do here is convert it to a structure that can be used for the other scenario and preferred
+			// computed declarations format
+			if (!props.computed || !(props.computed instanceof Array)) {
+				(function () {
+					var tmp = [], deps, name, conf;
+					// here is the slow iteration over the properties...
+					for (name in props.computed) {
+						// points to the dependencies of the computed method
+						deps = props.computed[name];
+						/*jshint -W083 */
+						conf = deps && deps.find(function (ln) {
+							// we deliberately remove the entry here and forcibly return true to break
+							return typeof ln == "object"? (enyo.remove(deps, ln) || true): false;
+						});
+						/*jshint +W083 */
+						// create a single entry now for the method/computed with all dependencies
+						tmp.push({method: name, path: deps, cached: conf? conf.cached: null});
+					}
+					
+					// note that we only do this one so even for a mixin that is evaluated several
+					// times this would only happen once
+					props.computed = tmp;
+				}());
+			}
+			
+			var addDependency = function (path, dep) {
+				// its really an inverse look at the original
+				var deps;
+				
+				if (dependencies[path] && !dependencies.hasOwnProperty(path)) dependencies[path] = dependencies.path.slice();
+				deps = dependencies[path] || (dependencies[path] = []);
+				deps.push(dep);
+			};
+			
+			// now we handle the new computed properties the way we intended to
+			for (var i=0, ln; (ln=props.computed[i]); ++i) {
+				// if the entry already exists we are merely updating whether or not it is
+				// now cached
+				computed[ln.method] = !! ln.cached;
+				// we must now look to add an entry for any given dependencies and map them
+				// back to the computed property they will trigger
+				/*jshint -W083 */
+				if (ln.path && ln.path instanceof Array) ln.path.forEach(function (dep) { addDependency(dep, ln.method); });
+				/*jshint +W083 */
+				else if (ln.path) addDependency(ln.path, ln.method);
+			}
+			
+			// arg, free the key from the properties so it won't be applied later...
+			// delete props.computed;
+			// make sure to reassign the correct items to the prototype
+			proto._computed = computed;
+			proto._computedDependencies = dependencies;
+		}
+	};
+	
 })(enyo);

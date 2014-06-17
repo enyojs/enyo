@@ -93,7 +93,40 @@
 			// unfortunately this forces us to recalculate the number of controls that can
 			// be used for each page
 			this.controlsPerPage(list);
+			// Compute first and last row index bounds
+			this.updateIndexBound(list);
 		},
+		/**
+			Calculates index bound that is required for adjusting page position
+			You can call this method after DataGridList is rendered.
+		*/
+		updateIndexBound: function(list) {
+			if (!list.collection) {
+				return;
+			}
+			// If user calls this method before DataGridList is rendered
+			if (list.boundsCache === undefined) {
+				this.updateMetrics(list);
+			}
+
+			list.indexBoundFirstRow = list.columns;
+			list.indexBoundLastRow = (Math.ceil(list.collection.length / list.columns) - 1) * list.columns - 1;
+		},
+		/**
+			We guarantee that index bound is maintained and up to date.
+		*/
+		modelsAdded: enyo.inherit(function (sup) {
+			return function (list, props) {
+				this.updateIndexBound(list);
+				sup.apply(this, arguments);
+			};
+		}),
+		modelsRemoved: enyo.inherit(function (sup) {
+			return function (list, props) {
+				this.updateIndexBound(list);
+				sup.apply(this, arguments);
+			};
+		}),
 		/**
 			The number of controls necessary to fill a page will change depending on some
 			factors such as scaling and list-size adjustments. It is a function of the calculated

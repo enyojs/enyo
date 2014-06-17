@@ -52,8 +52,8 @@ enyo.DataList.delegates.vertical = {
 		var metrics     = list.metrics.pages,
 			pos         = list.pagePositions || (list.pagePositions={}),
 			upperProp   = list.upperProp,
-			firstIndex  = list.$.page1.index,
-			secondIndex = list.$.page2.index;
+			firstIndex  = list.$.page1.index || 0,
+			secondIndex = list.$.page2.index || 1;
 		pos.firstPage   = (
 			metrics[firstIndex][upperProp] < metrics[secondIndex][upperProp]
 			? list.$.page1
@@ -131,6 +131,10 @@ enyo.DataList.delegates.vertical = {
 		page.start  = perPage * index;
 		// the last index for this generated page
 		page.end    = Math.min((data.length - 1), (page.start + perPage) - 1);
+		
+		if (page.start < 0) page.start = null;
+		if (page.end < 0) page.end = null;
+		
 		// if generating a control we need to use the correct page as the control parent
 		list.controlParent = page;
 		for (var i=page.start; i <= page.end && i < data.length; ++i) {
@@ -272,32 +276,50 @@ enyo.DataList.delegates.vertical = {
 		records being added are ordered and sequential.
 	*/
 	modelsAdded: function (list, props) {
-		if (!list.hasReset) { return this.reset(list); }
-		// the current indices that are rendered
-		var fi = list.$.page1.index || (list.$.page1.index=0),
-			si = list.$.page2.index || (list.$.page2.index=1), rf, rs, pi;
-		for (var i=0, ri; (ri=props.records[i]) >= 0; ++i) {
-			pi = this.pageForIndex(list, ri);
-			// we ensure that if the page index is either page we flag that page as
-			// needing to be updated
-			if (pi == fi) {
-				rf = true;
-			} else if (pi == si) {
-				rs = true;
-			} else if (pi > si) {
-				// no need to continue looking if the page index is greater
-				// than the known second page index
-				break;
-			}
+		
+		// if the list has not already reset, reset
+		if (!list.hasReset) return this.reset(list);
+		
+		var collection = list.collection,
+			
+			// we need the controls per page for simple arithmetic
+			cpp = this.controlsPerPage(list),
+			pos = this.pagesByPosition(list),
+			first = pos.firstPage.start != null ? pos.firstPage.start : 0,
+			end = (cpp * 2) + (first - 1),
+			gen = true,
+			idx;
+		
+		// retrieve the first index for the first added model in the collection
+		idx = collection.indexOf(props.models[0]);
+		
+		// the only time we don't refresh is if the first index of the contiguous set of added
+		// models is beyond our final rendered page (possible) indices
+		
+		// note that this will refresh the following scenarios
+		// 1. if the dataset was spliced in above the current indices and the last index added was
+		//    less than the first index rendered
+		// 2. if the dataset was spliced in above the current indices and overlapped some of the
+		//    current indices
+		// 3. if the dataset was spliced in above the current indices and completely overlapped
+		//    the current indices (pushing them all down)
+		// 4. if the dataset was spliced inside the current indices (pushing some down)
+		// 5. if the dataset was appended to the current dataset and was inside the indices that
+		//    should be currently rendered (there was a partially filled page)
+		
+		// in the case where it does not need to refresh the existing controls it will update its
+		// measurements and page positions within the buffer so scrolling can continue properly
+		if (idx > end) gen = false;
+		
+		// if we need to refresh, do it now and ensure that we're properly setup to scroll
+		// if we were adding to a partially filled page
+		if (gen) this.refresh(list);
+		else {
+			// we still need to ensure that the metrics are updated so it knows it can scroll
+			// past the boundaries of the current pages (potentially)
+			this.adjustBuffer(list);
+			this.adjustPagePositions(list);
 		}
-		// if either page was flagged go ahead and update it
-		if (rf) { this.generatePage(list, list.$.page1, fi); }
-		if (rs) { this.generatePage(list, list.$.page2, si); }
-		// if either was updated we want to go ahead and ensure that our page positions
-		// are still appropriate
-		if (rf || rs) { this.adjustPagePositions(list); }
-		// either way we need to adjust the buffer size
-		this.adjustBuffer(list);
 	},
 	/**
 		Attempts to find the control for the requested index.
@@ -320,25 +342,34 @@ enyo.DataList.delegates.vertical = {
 		if the models are part of any visible pages.
 	*/
 	modelsRemoved: function (list, props) {
-		// we know that the removed records have been ordered so we can
-		// work from the bottom to the top, a major difference between adding
-		// and removing, however, is the fact that added records are grouped
-		// and removed models could be random so we may have to check them all
-		var keys = enyo.keys(props.records),
-			fi   = list.$.page1.index,
-			si   = list.$.page2.index, pi;
-		for (var i=keys.length-1, k; (k=keys[i]) >= 0; --i) {
-			pi = this.pageForIndex(list, k);
-			// if either page is included we'll break here and refresh them both
-			// to ensure accurate view
-			if (pi == fi || pi == si) {
-				this.refresh(list);
-				// for sanity we check to ensure that the current scroll position is
-				// showing our available content fully since elements were removed
-				var pos = this.pagesByPosition(list);
-				this.scrollToIndex(list, pos.firstPage.start);
-				break;
-			}
+		
+		// if the list has not already reset, reset
+		if (!list.hasReset) return this.reset(list);
+		
+		var collection = list.collection,
+			
+			// we need the controls per page for simple arithmetic
+			cpp = this.controlsPerPage(list),
+			pos = this.pagesByPosition(list),
+			first = pos.firstPage.start != null ? pos.firstPage.start : 0,
+			end = (cpp * 2) + (first - 1),
+			gen,
+			idx;
+		
+		// retrieve the index for the first added model in the collection
+		idx = collection.indexOf(props.models[0]);
+		
+		// if the index is above the end of our currently rendered indices we need to refresh
+		gen = idx <= end;
+		
+		// if we need to refresh, do it now and ensure that we're properly setup to scroll
+		// if we were adding to a partially filled page
+		if (gen) {
+			this.refresh(list);
+			
+			// for sanity ensure that the current scroll position is showing our available content
+			// fully since elements were removed
+			this.scrollToIndex(list, pos.firstPage.start);
 		}
 	},
 	/**
