@@ -1204,7 +1204,7 @@
 	*/
 	Control.normalizeCssStyleString = function (style) {
 		return style ? (
-			(";" + style)
+			(";" + style + ";")
 			// ensure we have one space after each colon or semi-colon
 			.replace(/\s*;\s*([\w-]+)\s*:\s*/g, "; $1: ")
 			// remove first semi-colon and space
