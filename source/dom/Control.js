@@ -1203,15 +1203,13 @@
 		@private
 	*/
 	Control.normalizeCssStyleString = function (style) {
-		return (
-			(';' + style + ';')
-			// remove duplicate ending semi-colons
-			.replace(/(;)\1+\s*$/, ';')
-			// ensure we have one space after each colon or semi-colon except the last one
-			.replace(/;\s*([\w-]+)\s*:\s*/g, '; $1: ')
-			//remove first semi-colon and space
-			.substr(1).trim()
-		);
+		return style ? (
+			(";" + style)
+			// ensure we have one space after each colon or semi-colon
+			.replace(/\s*;\s*([\w-]+)\s*:\s*/g, "; $1: ")
+			// remove first semi-colon and space
+			.substr(2).trim()
+		) : "";
 	};
 	
 	/**
