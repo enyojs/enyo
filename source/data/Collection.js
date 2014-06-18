@@ -810,7 +810,7 @@
 			Attempt to persist the state of this {@link enyo.Collection}. The actual method by which
 			this is accomplished varies on the associated [source]{@link enyo.Collection#source} (or
 			[overloaded source]{@link enyo.Collection#commit~options.source}). This method will
-			immediately call {@link enyo.Collection#onError} with the `action` set to the current
+			immediately call {@link enyo.Collection#errored} with the `action` set to the current
 			{@link enyo.Collection#status} if it is one of the error states
 			({@link enyo.Collection~STATES.ERROR_FETCHING} or
 			{@link enyo.Collection~STATES.ERROR_COMMITTING}; more if extended). Also note you cannot
@@ -845,7 +845,7 @@
 				};
 				
 				options.error = function (source, res) {
-					it.onError('COMMITTING', opts, res, source);
+					it.errored('COMMITTING', opts, res, source);
 				};
 				
 				// set the state
@@ -853,7 +853,7 @@
 				
 				// now pass this on to the source to execute as it sees fit
 				Source.execute('commit', this, options);
-			} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
+			} else if (this.status & STATES.ERROR) this.errored(this.status, opts);
 			
 			return this;
 		},
@@ -887,7 +887,7 @@
 				};
 				
 				options.error = function (source, res) {
-					it.onError('FETCHING', opts, res, source);
+					it.errored('FETCHING', opts, res, source);
 				};
 				
 				// set the state
@@ -895,7 +895,7 @@
 				
 				// now pass this on to the source to execute as it sees fit
 				Source.execute('fetch', this, options);
-			} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
+			} else if (this.status & STATES.ERROR) this.errored(this.status, opts);
 			
 			return this;
 		},
@@ -957,13 +957,13 @@
 					
 							// we don't bother setting the error state if we aren't waiting because 
 							// it will be cleared to DESTROYED and it would be pointless
-							else this.onError('DESTROYING', opts, res, source);
+							else this.errored('DESTROYING', opts, res, source);
 						};
 					
 						this.set('status', (this.status | STATES.DESTROYING) & ~STATES.READY);
 				
 						Source.execute('destroy', this, options);
-					} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
+					} else if (this.status & STATES.ERROR) this.errored(this.status, opts);
 					
 					// we don't allow the destroy to take place and we don't forcibly break-down
 					// the collection errantly so there is an opportuniy to resolve the issue
@@ -1012,7 +1012,7 @@
 		},
 		
 		/**
-			@private
+			@public
 		*/
 		committed: function (opts, res, source) {
 			var idx;
@@ -1034,7 +1034,7 @@
 		},
 		
 		/**
-			@private
+			@public
 		*/
 		fetched: function (opts, res, source) {
 			var idx;
@@ -1079,7 +1079,7 @@
 				requested {@link enyo.Collection#source}.
 			@public
 		*/
-		onError: function (action, opts, res, source) {
+		errored: function (action, opts, res, source) {
 			var stat;
 			
 			// if the error action is a status number then we don't need to update it otherwise
