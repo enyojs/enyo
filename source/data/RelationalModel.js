@@ -133,7 +133,7 @@
 				prev;
 			
 			
-			if (related) enyo.store.off(model, 'add', this.onChange, this);
+			if (related) enyo.store.off(model, 'add', this._changed, this);
 			
 			this.related = related;
 			
@@ -285,14 +285,14 @@
 			this.related = collection;
 			
 			// we need to detect these changes to propagate them onward
-			collection.on('*', this.onChange, this);
+			collection.on('*', this._changed, this);
 		
 			// special overload of store allows us to more narrowly listen to particular events
 			// for associated kinds
 			
 			// @note We only register for this if we have an inverseKey otherwise we have no
 			// way of knowing the reverse relationship
-			if (this.inverseKey) enyo.store.on(model, 'add', this.onChange, this);
+			if (this.inverseKey) enyo.store.on(model, 'add', this._changed, this);
 			/*jshint +W055 */
 		},
 		
@@ -398,8 +398,8 @@
 			@private
 			@method
 		*/
-		onChange: function (sender, e, props) {
-			// console.log('enyo.toMany.onChange: ', arguments);
+		_changed: function (sender, e, props) {
+			// console.log('enyo.toMany._changed: ', arguments);
 			
 			var inst = this.instance
 				, key = this.key
@@ -503,7 +503,7 @@
 			return false;
 		},
 		
-		onChange: enyo.inherit(function (sup) {
+		_changed: enyo.inherit(function (sup) {
 			return function (sender, e, props) {
 				var related = this.related,
 					inst = this.instance,
@@ -524,7 +524,7 @@
 					if (e == 'change') {
 						// we need to figure out if the thing that changed makes us no longer
 						// related to them
-						// console.log('onChange');
+						// console.log('_changed');
 					} else if (e == 'add') {
 						// in this case we added a/some model/models that should probably be
 						// updated to know about our instance as well
@@ -677,10 +677,10 @@
 				}
 			}
 			
-			if (!found) enyo.store.on(model, 'add', this.onChange, this);
+			if (!found) enyo.store.on(model, 'add', this._changed, this);
 			
 			// last but not least we begin to listen for changes on our model instance
-			inst.on('change', this.onChange, this);
+			inst.on('change', this._changed, this);
 		},
 		
 		/**
@@ -753,7 +753,7 @@
 				
 				// if we are the owner end we may have a listener on the store and can
 				// safely remove it
-				enyo.store.off(this.model, 'add', this.onChange, this);
+				enyo.store.off(this.model, 'add', this._changed, this);
 				
 				// update our related value
 				this.related = found;
@@ -787,7 +787,7 @@
 					}
 				}
 				
-				if (isOwner) found.on('change', this.onChange, this);
+				if (isOwner) found.on('change', this._changed, this);
 			}
 			
 			return found;
@@ -832,7 +832,7 @@
 			@private
 			@method
 		*/
-		onChange: function (sender, e, props) {
+		_changed: function (sender, e, props) {
 			var key = this.key,
 				inst = this.instance,
 				isOwner = this.isOwner,
