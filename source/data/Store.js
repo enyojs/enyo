@@ -61,8 +61,8 @@
 				be filtering.
 			@param {enyo.Store#find~filter} fn The filter method.
 			@param {enyo.Store#find~options} [opts] The options parameter.
-			@returns {(enyo.Model|enyo.Model[])} If the _all_ flag is `true` it will return an array
-				of [models]{@link enyo.Model} otherwise it will return the first
+			@returns {(enyo.Model|enyo.Model[]|undefined)} If the _all_ flag is `true` it will
+				return an array of [models]{@link enyo.Model} otherwise it will return the first
 				[model]{@link enyo.Model} that returned `true` from the filter method. It will
 				return `undefined` if _all_ is `false` and no match could be found
 				{@see external:Array.prototype.find}.
@@ -84,7 +84,10 @@
 			opts = opts ? enyo.mixin({}, [options, opts]) : options;
 				
 			if (list) return opts.all ? list.filter(fn, opts.context) : list.find(fn, opts.context);
-			else return [];
+			
+			// if it happens it could not find a list for the requested kind we fudge the return
+			// so it can keep on executing
+			else return opts.all ? [] : undefined;
 		},
 		
 		/**
