@@ -32,19 +32,44 @@
 		kind: BaseStore,
 		
 		/**
-			@public
-			@method
+			This method should determine if the given {@link enyo.Model} should be included in the
+			filtered set for {@link enyo.Store#find} method.
+		
+			@callback enyo.Store#find~filter
+			@param {enyo.Model} model The {@link enyo.Model} to filter.
+			@returns {boolean} Return `true` if the model meets the filter requirements, `false`
+				otherwise.
 		*/
-		find: function () {
-			
-			return this;
-		},
 		
 		/**
-			@public
-			@method
+			The configuration options for the {@link enyo.Store#find} method.
+		
+			@typedef {object} enyo.Store#find~options
+			@property {boolean} all=true - Whether or not to include more than one match for the
+				filter method. If `true` will return an array of matches, otherwise a single match.
+			@property {object} context - If provided it will be used as the `this` (_context_) of
+				the filter method.
 		*/
-		findLocal: function (ctor, fn, opts) {
+		
+		/**
+			Find a [model (or models)]{@link enyo.Model} of a certain [kind]{@link enyo.kind}. Will
+			use the return value from a filter method to determine whether or not to include a
+			particular [model]{@link enyo.Model}. Using the _all_ optional flag will ensure it
+			looks for all matches otherwise it will stop and return the first positive match.
+		
+			@param {enyo.Model} ctor The constructor for the _kind_ of {@link enyo.Model} it will
+				be filtering.
+			@param {enyo.Store#find~filter} fn The filter method.
+			@param {enyo.Store#find~options} [opts] The options parameter.
+			@returns {(enyo.Model|enyo.Model[]|undefined)} If the _all_ flag is `true` it will
+				return an array of [models]{@link enyo.Model} otherwise it will return the first
+				[model]{@link enyo.Model} that returned `true` from the filter method. It will
+				return `undefined` if _all_ is `false` and no match could be found
+				{@see external:Array.prototype.find}.
+			@method
+			@public
+		*/
+		find: function (ctor, fn, opts) {
 			var kindName = ctor.prototype.kindName,
 				list = this.models[kindName],
 				options = {all: true, context: this};
@@ -59,7 +84,19 @@
 			opts = opts ? enyo.mixin({}, [options, opts]) : options;
 				
 			if (list) return opts.all ? list.filter(fn, opts.context) : list.find(fn, opts.context);
-			else return [];
+			
+			// if it happens it could not find a list for the requested kind we fudge the return
+			// so it can keep on executing
+			else return opts.all ? [] : undefined;
+		},
+		
+		/**
+			@alias enyo.Store#find
+			@method
+			@public
+		*/
+		findLocal: function () {
+			return this.find.apply(this, arguments);
 		},
 		
 		/**
