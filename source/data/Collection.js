@@ -342,13 +342,6 @@
 		mixins: [EventEmitter],
 		
 		/**
-			@private
-		*/
-		observers: [
-			{path: 'models', method: 'onModelsChange'}
-		],
-		
-		/**
 			Modify the structure of data such that it can be used by the {@link enyo.Collection#add}
 			method. This method will only be used during initialization or after a successful
 			{@link enyo.Collection#fetch} if the {@link enyo.Collection#options#parse} flag is set
@@ -1174,7 +1167,7 @@
 		/**
 			@private
 		*/
-		onModelsChange: function (was, is, prop, opts) {
+		modelsChanged: function (was, is, prop) {
 			var models = this.models.copy(),
 				len = models.length;
 			
