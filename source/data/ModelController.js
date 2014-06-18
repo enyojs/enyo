@@ -50,13 +50,6 @@
 		
 		/**
 			@private
-		*/
-		observers: [
-			{method: "onChange", path: "model"}
-		],
-		
-		/**
-			@private
 			@method
 		*/
 		get: inherit(function (sup) {
@@ -89,9 +82,8 @@
 		
 		/**
 			@private
-			@method
 		*/
-		onChange: function (was, is, path) {
+		modelChanged: function (was, is, path) {
 			// unregister previous model if any
 			if (was) was.off("*", this._modelEvent, this);
 			// register for events on new model if any
