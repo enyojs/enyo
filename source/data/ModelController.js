@@ -93,9 +93,9 @@
 		*/
 		onChange: function (was, is, path) {
 			// unregister previous model if any
-			if (was) was.off("*", this.onModelEvent, this);
+			if (was) was.off("*", this._modelEvent, this);
 			// register for events on new model if any
-			if (is) is.on("*", this.onModelEvent, this);
+			if (is) is.on("*", this._modelEvent, this);
 			
 			// either way we need to update any observers that might be related
 			// to the model
@@ -113,7 +113,7 @@
 			@private
 			@method
 		*/
-		onModelEvent: function (model, e, props) {
+		_modelEvent: function (model, e, props) {
 			// re-emit the event as expected with the only change being the originator (first param)
 			// will be this controller but all listeners should expect to use the third parameter as
 			// is the convention for model listeners
@@ -183,7 +183,7 @@
 		destroy: inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
-				this.model && this.model.off("*", this.onModelEvent, this);
+				this.model && this.model.off("*", this._modelEvent, this);
 			};
 		})
 		

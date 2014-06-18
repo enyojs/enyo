@@ -621,7 +621,7 @@
 				
 				for (var i=0, end=removed.length; i<end; ++i) {
 					model = removed[i];
-					model.off('*', this.onModelEvent, this);
+					model.off('*', this._modelEvent, this);
 					if (destroy) model.destroy(opts);
 				}
 				
@@ -1006,7 +1006,7 @@
 				model = new Ctor(attrs, null, opts);
 			}
 			
-			model.on('*', this.onModelEvent, this);
+			model.on('*', this._modelEvent, this);
 			
 			return model;
 		},
@@ -1153,7 +1153,7 @@
 		/**
 			@private
 		*/
-		onModelEvent: function (model, e) {
+		_modelEvent: function (model, e) {
 			switch (e) {
 			case 'change':
 				this.emit('change', {model: model});
