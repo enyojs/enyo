@@ -95,7 +95,7 @@ enyo.fullscreen = {
 
 		control.addClass("enyo-fullscreen");
 		control.appendNodeToParent(enyo.floatingLayer.hasNode());
-		control.resized();
+		control.resize();
 
 		this.setFullscreenControl(control);
 		this.setFullscreenElement(control.hasNode());
@@ -124,7 +124,7 @@ enyo.fullscreen = {
 			control.insertNodeInParent(parentNode, beforeNode);
 		}
 
-		control.resized();
+		control.resize();
 
 		this.setFullscreenControl(null);
 		this.setFullscreenElement(null);

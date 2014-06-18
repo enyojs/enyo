@@ -212,7 +212,7 @@ enyo.kind({
 			}
 			sup.apply(this, arguments);
 			if (this.showing) {
-				this.resized();
+				this.resize();
 				if (this.captureEvents) {
 					this.capture();
 				}

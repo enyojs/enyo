@@ -27,7 +27,7 @@ enyo.kind({
 		layoutKind: ""
 	},
 	handlers: {
-		onresize: "resizeHandler"
+		onresize: "handleResize"
 	},
 	/**
 		When set, provides a control reference used to indicate where a
@@ -242,15 +242,15 @@ enyo.kind({
 	},
 	/**
 		Call after this control has been resized to allow it to process the size change.
-		To respond to a resize, override _resizeHandler_ instead.
+		To respond to a resize, override _handleResize_ instead.
 	*/
 	// syntactic sugar for 'waterfall("onresize")'
-	resized: function() {
+	resize: function() {
 		this.waterfall("onresize", enyo.UiComponent._resizeFlags);
 		this.waterfall("onpostresize", enyo.UiComponent._resizeFlags);
 	},
 	//* @protected
-	resizeHandler: function() {
+	handleResize: function() {
 		// FIXME: once we are in the business of reflowing layouts on resize, then we have an
 		// inside/outside problem: some scenarios will need to reflow before child
 		// controls reflow, and some will need to reflow after. Even more complex scenarios
