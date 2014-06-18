@@ -52,8 +52,8 @@ describe('enyo.Model', function () {
 				model.fetch();
 				expect(model.status & (STATES.FETCHING | STATES.BUSY)).to.be.ok;
 				
-				// call onFetch to clear its state
-				model.onFetch();
+				// call fetched to clear its state
+				model.fetched();
 				expect(model.status & STATES.READY).to.be.ok;
 			});
 			
@@ -64,8 +64,8 @@ describe('enyo.Model', function () {
 				model.commit();
 				expect(model.status & (STATES.COMMITTING | STATES.BUSY)).to.be.ok;
 				
-				// call onCommit to clear its state
-				model.onCommit();
+				// call committed to clear its state
+				model.committed();
 				expect(model.status & STATES.READY).to.be.ok;
 			});
 			
@@ -154,7 +154,7 @@ describe('enyo.Model', function () {
 				expect(model._waiting).to.have.length(1);
 				
 				// now try and complete the queue by fudging the callback
-				model.onFetch(null, null, src3.name);
+				model.fetched(null, null, src3.name);
 				expect(model.status & STATES.READY).to.be.ok;
 				expect(model._waiting).to.be.null;
 				
@@ -167,7 +167,7 @@ describe('enyo.Model', function () {
 				expect(model._waiting).to.have.length(1);
 				
 				// now try and complete the queue by fudging the callback
-				model.onCommit(null, null, src3.name);
+				model.committed(null, null, src3.name);
 				expect(model.status & STATES.READY).to.be.ok;
 				expect(model._waiting).to.be.null;
 				

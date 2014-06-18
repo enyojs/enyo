@@ -334,7 +334,7 @@
 				}
 					
 				options.success = function (source, res) {
-					it.onCommit(opts, res, source);
+					it.committed(opts, res, source);
 				};
 				
 				options.error = function (source, res) {
@@ -374,7 +374,7 @@
 				}
 				
 				options.success = function (source, res) {
-					it.onFetch(opts, res, source);
+					it.fetched(opts, res, source);
 				};
 				
 				options.error = function (source, res) {
@@ -645,7 +645,7 @@
 		/**
 			@public
 		*/
-		onFetch: function (opts, res, source) {
+		fetched: function (opts, res, source) {
 			var idx;
 			
 			if (this._waiting) {
@@ -675,7 +675,7 @@
 		/**
 			@public
 		*/
-		onCommit: function (opts, res, source) {
+		committed: function (opts, res, source) {
 			var idx;
 			
 			if (this._waiting) {
