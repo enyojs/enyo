@@ -124,13 +124,6 @@
 		}),
 		
 		/**
-			@private
-		*/
-		observers: [
-			{path: 'collection', method: 'onCollectionChange'}
-		],
-		
-		/**
 			Reset the filter to its initial state. Will vary by subclass implementation.
 		
 			@abstract
@@ -150,7 +143,7 @@
 				// unfortunately we must maintain data structures that need remain out of our
 				// proxy path so we each must create a collection instance for internal use
 				this._internal = new Collection();
-				this._internal.on('*', this.onInternalEvent, this);
+				this._internal.on('*', this._internalEvent, this);
 				
 				sup.apply(this, arguments);
 			};
@@ -176,13 +169,13 @@
 					
 					// register especially for owner events as we will differentiate them from
 					// normal collection events
-					this.collection.on('*', this.onOwnerEvent, this);
+					this.collection.on('*', this._ownerEvent, this);
 				}
 				
 				collection = this.collection;
 				
 				// if there is a collection instance already we need to initialize it
-				if (collection) this.onCollectionChange(null, collection);
+				if (collection) this.collectionChanged(null, collection);
 			};
 		}),
 		
@@ -197,9 +190,9 @@
 				// reason (this would seem to be an irregular practice)
 				if (collection) {
 					if (collection === this.owner._internal) {
-						collection.off('*', this.onOwnerEvent, this);
+						collection.off('*', this._ownerEvent, this);
 					} else {
-						collection.off('*', this.onCollectionEvent, this);
+						collection.off('*', this._collectionEvent, this);
 					}
 				}
 				
@@ -214,10 +207,10 @@
 		/**
 			@private
 		*/
-		onCollectionChange: function (was, is) {
+		collectionChanged: function (was, is) {
 			var internal = this._internal;
 			
-			if (was) was.off('*', this.onCollectionEvent, this);
+			if (was) was.off('*', this._collectionEvent, this);
 			
 			// ensure that child-filters cannot have their internal/external collection's reset
 			if (is && !(was && was === this.owner._internal)) {
@@ -225,7 +218,7 @@
 				// case of child-filter who's collection is its owner does not need to receive
 				// these events since it will receive them in a special handler to differentiate
 				// these cases
-				if (is !== this.owner._internal) is.on('*', this.onCollectionEvent, this);
+				if (is !== this.owner._internal) is.on('*', this._collectionEvent, this);
 				
 				// reset the models (causing reset to propagate to children or bound parties)
 				internal.set('models', is.models.copy());
@@ -245,7 +238,7 @@
 			
 			@private
 		*/
-		onCollectionEvent: function (sender, e, props) {
+		_collectionEvent: function (sender, e, props) {
 			// we are listening for particular events to signal that we should update according
 			// to its changes if we are a nested filter
 			
@@ -282,7 +275,7 @@
 			@abstract
 			@private
 		*/
-		onInternalEvent: enyo.nop,
+		_internalEvent: enyo.nop,
 		
 		/**
 			Subclasses are responsible for handling all owner related events.
@@ -290,7 +283,7 @@
 			@abstract
 			@private
 		*/
-		onOwnerEvent: enyo.nop,
+		_ownerEvent: enyo.nop,
 		
 		/**
 			@private
