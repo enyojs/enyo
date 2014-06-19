@@ -161,13 +161,17 @@
 			@private
 			@method
 		*/
-		constructor: function (props) {
-			// ensure we have our own model property
-			this.model = null;
-			
-			// adhere to normal approach to constructor properties hash
-			props && enyo.mixin(this, props);
-		},
+		constructor: enyo.inherit(function (sup) {
+			return function (props) {
+				sup.apply(this, arguments);
+
+				// ensure we have our own model property
+				this.model = null;
+				
+				// adhere to normal approach to constructor properties hash
+				props && enyo.mixin(this, props);
+			};
+		}),
 		
 		/**
 			@public
