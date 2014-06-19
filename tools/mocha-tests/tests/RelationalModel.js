@@ -183,23 +183,6 @@ describe('enyo.RelationalModel', function () {
 			
 		});
 		
-		describe('#setLocal', function () {
-			
-			it ('should respond to the method setLocal', function () {
-				expect(proto).to.itself.respondTo('setLocal');
-			});
-			
-			it ('should set a local property not of the attributes object', function () {
-				// set the value to explicit false just to further distinguish it from the
-				// same testprop set on the attributes hash
-				model.setLocal('testprop', false);
-				// now make sure things were set as expected
-				expect(model.getLocal('testprop')).to.be.false;
-				expect(model.testprop).to.be.false;
-				expect(model.attributes.testprop).to.be.true;
-			});
-		});
-		
 		describe('#raw', function () {
 			
 			it ('should respond to the method raw', function () {
