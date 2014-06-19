@@ -183,7 +183,7 @@ enyo.kind({
 			} else if (!this.dragging) {
 				this.stop();
 				this.scroll();
-				this.doScrollStop();
+				this.doScrollStop({animating:false});
 			}
 			y0 = this.y;
 			x0 = this.x;
