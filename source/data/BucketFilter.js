@@ -85,14 +85,6 @@
 		/**
 			@private
 		*/
-		observers: [
-			{path: 'activeFilter', method: 'onActiveFilterChange'},
-			{path: 'activeFilterCollection', method: 'onActiveFilterCollectionChange'}
-		],
-		
-		/**
-			@private
-		*/
 		adjustComponentProps: enyo.inherit(function (sup) {
 			return function (props) {
 				sup.apply(this, arguments);
@@ -109,17 +101,20 @@
 			return function () {
 				sup.apply(this, arguments);
 				
+				// TODO: Invoking changed handlers during initialization seems wrong
+				// but its used everywhere...
+				
 				// we go ahead and let it initialize the current filter however it can
-				this.onActiveFilterChange();
+				this.activeFilterChanged();
 			};
 		}),
 		
 		/**
-			See the comments on {@link enyo.Filter#onCollectionEvent}.
+			See the comments on {@link enyo.Filter#_collectionEvent}.
 			
 			@private
 		*/
-		onOwnerEvent: function (sender, e, props) {
+		_ownerEvent: function (sender, e, props) {
 			// we are listening for particular events to signal that we should update according
 			// to its changes if we are a nested filter
 			var models = props.models,
@@ -162,7 +157,7 @@
 		/**
 			@private
 		*/
-		onInternalEvent: function (sender, e, props) {
+		_internalEvent: function (sender, e, props) {
 			
 			// if our internal collection is what we are currently proxying then we need to
 			// propagate the event, otherwise not
@@ -177,7 +172,7 @@
 		/**
 			@private
 		*/
-		onActiveFilterChange: function () {
+		activeFilterChanged: function () {
 			var nom = this.activeFilter || '*',
 				filter;
 			
@@ -190,14 +185,14 @@
 		/**
 			@private
 		*/
-		onActiveFilterCollectionChange: function (was, is) {
+		activeFilterCollectionChanged: function (was, is) {
 			var internal = this._internal;
 			
-			if (was) was.off('*', this.onActiveFilterCollectionEvent, this);
+			if (was) was.off('*', this._activeFilterCollectionEvent, this);
 			// if the current filter has been updated it will have caused a set on this property
 			// with the correct filtered collection
 			if (is) {
-				is.on('*', this.onActiveFilterCollectionEvent, this);
+				is.on('*', this._activeFilterCollectionEvent, this);
 				
 				// we set our models to be shared with this new active collection so we can
 				// proxy its dataset and then we just proxy its events as our own
@@ -210,7 +205,7 @@
 			// that may be
 			else {
 				
-				// also note the shared reference such that the onInternalEvent will actually
+				// also note the shared reference such that the _internalEvent will actually
 				// propagate its internal events as our own now
 				this.set('models', internal.models);
 			}
@@ -219,7 +214,7 @@
 		/**
 			@private
 		*/
-		onActiveFilterCollectionEvent: function (sender, e, props) {
+		_activeFilterCollectionEvent: function (sender, e, props) {
 			
 			if (sender.models.length != this.length) this.set('length', sender.models.length);
 			

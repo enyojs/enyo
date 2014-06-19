@@ -439,7 +439,7 @@ enyo.kind({
 	useMouseWheelChanged: function() {
 		this.$.strategy.setUseMouseWheel(this.useMouseWheel);
 	},
-	resized: enyo.inherit(function (sup) {
+	resize: enyo.inherit(function (sup) {
 		return function () {
 			if (this.getAbsoluteShowing(true)) {
 				sup.apply(this, arguments);

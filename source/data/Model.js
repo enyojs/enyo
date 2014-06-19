@@ -334,11 +334,11 @@
 				}
 					
 				options.success = function (source, res) {
-					it.onCommit(opts, res, source);
+					it.committed(opts, res, source);
 				};
 				
 				options.error = function (source, res) {
-					it.onError('COMMITTING', opts, res, source);
+					it.errored('COMMITTING', opts, res, source);
 				};
 				
 				// set the state
@@ -346,7 +346,7 @@
 				
 				// now pass this on to the source to execute as it sees fit
 				Source.execute('commit', this, options);
-			} else this.onError(this.status, opts);
+			} else this.errored(this.status, opts);
 			
 			return this;
 		},
@@ -374,11 +374,11 @@
 				}
 				
 				options.success = function (source, res) {
-					it.onFetch(opts, res, source);
+					it.fetched(opts, res, source);
 				};
 				
 				options.error = function (source, res) {
-					it.onError('FETCHING', opts, res, source);
+					it.errored('FETCHING', opts, res, source);
 				};
 				
 				// set the state
@@ -386,7 +386,7 @@
 				
 				// now pass this on to the source to execute as it sees fit
 				Source.execute('fetch', this, options);
-			} else this.onError(this.status, opts);
+			} else this.errored(this.status, opts);
 			
 			return this;
 		},
@@ -448,13 +448,13 @@
 				
 						// we don't bother setting the error state if we aren't waiting because it
 						// will be cleared to DESTROYED and it would be pointless
-						else this.onError('DESTROYING', opts, res, source);
+						else this.errored('DESTROYING', opts, res, source);
 					};
 				
 					this.status = this.status | STATES.DESTROYING;
 			
 					Source.execute('destroy', this, options);
-				} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
+				} else if (this.status & STATES.ERROR) this.errored(this.status, opts);
 				
 				// we don't allow the destroy to take place and we don't forcibly break-down
 				// the collection errantly so there is an opportuniy to resolve the issue
@@ -645,7 +645,7 @@
 		/**
 			@public
 		*/
-		onFetch: function (opts, res, source) {
+		fetched: function (opts, res, source) {
 			var idx;
 			
 			if (this._waiting) {
@@ -675,7 +675,7 @@
 		/**
 			@public
 		*/
-		onCommit: function (opts, res, source) {
+		committed: function (opts, res, source) {
 			var idx;
 			
 			if (this._waiting) {
@@ -699,7 +699,7 @@
 		/**
 			@public
 		*/
-		onError: function (action, opts, res, source) {
+		errored: function (action, opts, res, source) {
 			var stat;
 			
 			// if the error action is a status number then we don't need to update it otherwise

@@ -342,13 +342,6 @@
 		mixins: [EventEmitter],
 		
 		/**
-			@private
-		*/
-		observers: [
-			{path: 'models', method: 'onModelsChange'}
-		],
-		
-		/**
 			Modify the structure of data such that it can be used by the {@link enyo.Collection#add}
 			method. This method will only be used during initialization or after a successful
 			{@link enyo.Collection#fetch} if the {@link enyo.Collection#options#parse} flag is set
@@ -628,7 +621,7 @@
 				
 				for (var i=0, end=removed.length; i<end; ++i) {
 					model = removed[i];
-					model.off('*', this.onModelEvent, this);
+					model.off('*', this._modelEvent, this);
 					if (destroy) model.destroy(opts);
 				}
 				
@@ -817,7 +810,7 @@
 			Attempt to persist the state of this {@link enyo.Collection}. The actual method by which
 			this is accomplished varies on the associated [source]{@link enyo.Collection#source} (or
 			[overloaded source]{@link enyo.Collection#commit~options.source}). This method will
-			immediately call {@link enyo.Collection#onError} with the `action` set to the current
+			immediately call {@link enyo.Collection#errored} with the `action` set to the current
 			{@link enyo.Collection#status} if it is one of the error states
 			({@link enyo.Collection~STATES.ERROR_FETCHING} or
 			{@link enyo.Collection~STATES.ERROR_COMMITTING}; more if extended). Also note you cannot
@@ -848,11 +841,11 @@
 				}
 					
 				options.success = function (source, res) {
-					it.onCommit(opts, res, source);
+					it.committed(opts, res, source);
 				};
 				
 				options.error = function (source, res) {
-					it.onError('COMMITTING', opts, res, source);
+					it.errored('COMMITTING', opts, res, source);
 				};
 				
 				// set the state
@@ -860,7 +853,7 @@
 				
 				// now pass this on to the source to execute as it sees fit
 				Source.execute('commit', this, options);
-			} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
+			} else if (this.status & STATES.ERROR) this.errored(this.status, opts);
 			
 			return this;
 		},
@@ -890,11 +883,11 @@
 				}
 				
 				options.success = function (source, res) {
-					it.onFetch(opts, res, source);
+					it.fetched(opts, res, source);
 				};
 				
 				options.error = function (source, res) {
-					it.onError('FETCHING', opts, res, source);
+					it.errored('FETCHING', opts, res, source);
 				};
 				
 				// set the state
@@ -902,7 +895,7 @@
 				
 				// now pass this on to the source to execute as it sees fit
 				Source.execute('fetch', this, options);
-			} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
+			} else if (this.status & STATES.ERROR) this.errored(this.status, opts);
 			
 			return this;
 		},
@@ -964,13 +957,13 @@
 					
 							// we don't bother setting the error state if we aren't waiting because 
 							// it will be cleared to DESTROYED and it would be pointless
-							else this.onError('DESTROYING', opts, res, source);
+							else this.errored('DESTROYING', opts, res, source);
 						};
 					
 						this.set('status', (this.status | STATES.DESTROYING) & ~STATES.READY);
 				
 						Source.execute('destroy', this, options);
-					} else if (this.status & STATES.ERROR) this.onError(this.status, opts);
+					} else if (this.status & STATES.ERROR) this.errored(this.status, opts);
 					
 					// we don't allow the destroy to take place and we don't forcibly break-down
 					// the collection errantly so there is an opportuniy to resolve the issue
@@ -1013,15 +1006,15 @@
 				model = new Ctor(attrs, null, opts);
 			}
 			
-			model.on('*', this.onModelEvent, this);
+			model.on('*', this._modelEvent, this);
 			
 			return model;
 		},
 		
 		/**
-			@private
+			@public
 		*/
-		onCommit: function (opts, res, source) {
+		committed: function (opts, res, source) {
 			var idx;
 			
 			if (this._waiting) {
@@ -1041,9 +1034,9 @@
 		},
 		
 		/**
-			@private
+			@public
 		*/
-		onFetch: function (opts, res, source) {
+		fetched: function (opts, res, source) {
 			var idx;
 			
 			if (this._waiting) {
@@ -1086,7 +1079,7 @@
 				requested {@link enyo.Collection#source}.
 			@public
 		*/
-		onError: function (action, opts, res, source) {
+		errored: function (action, opts, res, source) {
 			var stat;
 			
 			// if the error action is a status number then we don't need to update it otherwise
@@ -1160,7 +1153,7 @@
 		/**
 			@private
 		*/
-		onModelEvent: function (model, e) {
+		_modelEvent: function (model, e) {
 			switch (e) {
 			case 'change':
 				this.emit('change', {model: model});
@@ -1174,7 +1167,7 @@
 		/**
 			@private
 		*/
-		onModelsChange: function (was, is, prop, opts) {
+		modelsChanged: function (was, is, prop) {
 			var models = this.models.copy(),
 				len = models.length;
 			

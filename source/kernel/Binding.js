@@ -224,13 +224,13 @@
 		connect: function () {
 			if (!this.isConnected()) {
 				if (this.isReady()) {
-					this._source.observe(this._from, this.onSource, this, {priority: true});
+					this._source.observe(this._from, this._sourceChanged, this, {priority: true});
 					
 					// for two-way bindings we register to observe changes
 					// from the target
-					if (!this.oneWay) this._target.observe(this._to, this.onTarget, this);
+					if (!this.oneWay) this._target.observe(this._to, this._targetChanged, this);
 					else if (this._toTarget) {
-						this._target.observe(this._toTarget, this.onToTarget, this, {priority: true});
+						this._target.observe(this._toTarget, this._toTargetChanged, this, {priority: true});
 					}
 					
 					// we flag it as having been connected
@@ -248,13 +248,13 @@
 		*/
 		disconnect: function () {
 			if (this.isConnected()) {
-				this._source.unobserve(this._from, this.onSource, this);
+				this._source.unobserve(this._from, this._sourceChanged, this);
 				
 				// for two-way bindings we unregister the observer from
 				// the target as well
-				if (!this.oneWay) this._target.unobserve(this._to, this.onTarget, this);
+				if (!this.oneWay) this._target.unobserve(this._to, this._targetChanged, this);
 				else if (this._toTarget) {
-					this._target.unobserve(this._toTarget, this.onToTarget, this);
+					this._target.unobserve(this._toTarget, this._toTargetChanged, this);
 				}
 				
 				this.connected = false;
@@ -369,7 +369,7 @@
 		/**
 			@private
 		*/
-		onSource: function (was, is, path) {
+		_sourceChanged: function (was, is, path) {
 			// @TODO: Should it...would it benefit from using these passed in values?
 			this.dirty = this.dirty == DIRTY_TO ? null : DIRTY_FROM;
 			return this.dirty == DIRTY_FROM && this.sync();
@@ -378,7 +378,7 @@
 		/**
 			@private
 		*/
-		onTarget: function (was, is, path) {
+		_targetChanged: function (was, is, path) {
 			// @TODO: Same question as above, it seems useful but would it affect computed
 			// properties or stale values?
 			this.dirty = this.dirty == DIRTY_FROM ? null : DIRTY_TO;
@@ -388,7 +388,7 @@
 		/**
 			@private
 		*/
-		onToTarget: function (was, is, path) {
+		_toTargetChanged: function (was, is, path) {
 			this.dirty = DIRTY_FROM;
 			this.reset().connect();
 		}

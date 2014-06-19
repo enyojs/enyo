@@ -52,7 +52,7 @@
 		*/
 		connect: function () {
 			var obj = this.object
-				, obs = this.onChange
+				, obs = this._changed
 				, prop = this.property;
 			obj && obj.observe && obj.observe(prop, obs, this, {noChain: true, priority: true});
 		},
@@ -63,7 +63,7 @@
 		*/
 		disconnect: function () {
 			var obj = this.object
-				, obs = this.onChange
+				, obs = this._changed
 				, prop = this.property;
 			obj && obj.unobserve && obj.unobserve(prop, obs, this);
 		},
@@ -96,7 +96,7 @@
 		/**
 			@public
 		*/
-		onChange: function (was, is) {
+		_changed: function (was, is) {
 			this.list.observed(this, was, is);
 		}
 	});

@@ -104,7 +104,7 @@ enyo.kind({
 			this.$.client.applyStyle(p, (inSender.value - o) + 'px');
 		}
 		if (this.container && this.resizeContainer) {
-			this.container.resized();
+			this.container.resize();
 		}
 		this.doDrawerAnimationStep();
 		return true;
@@ -127,7 +127,7 @@ enyo.kind({
 			}
 		}
 		if (this.container && this.resizeContainer) {
-			this.container.resized();
+			this.container.resize();
 		}
 		this.doDrawerAnimationEnd();
 		return true;
