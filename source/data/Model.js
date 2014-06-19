@@ -13,8 +13,7 @@
 		, BindingSupport = enyo.BindingSupport
 		, EventEmitter = enyo.EventEmitter
 		, ModelList = enyo.ModelList
-		, Source = enyo.Source
-		, oObject = enyo.Object;
+		, Source = enyo.Source;
 	
 	/**
 		The possible values assigned to {@link enyo.Model#status}. These codes can be extended
@@ -483,7 +482,7 @@
 			@method
 		*/
 		get: function (path) {
-			return this.isComputed(path)? this.getLocal(path): this.attributes[path];
+			return this.isComputed(path) ? this._getComputed(path) : this.attributes[path];
 		},
 		
 		/**
@@ -562,13 +561,7 @@
 			@private
 			@method
 		*/
-		getLocal: ComputedSupport.get.fn(oObject.prototype.get),
-		
-		/**
-			@private
-			@method
-		*/
-		setLocal: ComputedSupport.set.fn(oObject.prototype.set),
+		_getComputed: ComputedSupport.get.fn(function () { return undefined; }),
 		
 		/**
 			@private

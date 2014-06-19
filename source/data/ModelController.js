@@ -1,24 +1,19 @@
 (function (enyo) {
 	
-	var kind = enyo.kind
-		, inherit = enyo.inherit
-		, isObject = enyo.isObject
-		, mixin = enyo.mixin;
+	var kind = enyo.kind;
 	
-	var ProxyObject = enyo.ProxyObject
-		, Component = enyo.Component
-		// , ObserverSupport = enyo.ObserverSupport
-		, ComputedSupport = enyo.ComputedSupport
-		// , BindingSupport = enyo.BindingSupport
-		, EventEmitter = enyo.EventEmitter
-		, oObject = enyo.Object;
+	var ProxyObject = enyo.ProxyObject,
+		Component = enyo.Component,
+		ComputedSupport = enyo.ComputedSupport,
+		EventEmitter = enyo.EventEmitter,
+		oObject = enyo.Object;
 	
 	/**
 		@private
 	*/
 	var BaseModelController = kind({
 		kind: Component,
-		mixins: [/*ObserverSupport, */ComputedSupport, /*BindingSupport, */EventEmitter, ProxyObject]
+		mixins: [ComputedSupport, EventEmitter, ProxyObject]
 	});
 	
 	/**
@@ -35,7 +30,7 @@
 	*/
 	kind(
 		/** @lends enyo.ModelController.prototype */ {
-		name: "enyo.ModelController",
+		name: 'enyo.ModelController',
 		kind: BaseModelController,
 		
 		/**
@@ -46,15 +41,20 @@
 		/**
 			@private
 		*/
-		proxyObjectKey: "model",
+		proxyObjectKey: 'model',
 		
 		/**
 			@private
 			@method
 		*/
-		get: inherit(function (sup) {
+		get: enyo.inherit(function (sup) {
 			return function (path) {
-				return this.hasOwnProperty(path) || this.isComputed(path)? this.getLocal(path): sup.apply(this, arguments);
+				
+				if (this.hasOwnProperty(path) || this.isComputed(path)) {
+					return this._getComputed(path);
+				}
+				
+				return sup.apply(this, arguments);
 			};
 		}),
 		
@@ -62,9 +62,16 @@
 			@private
 			@method
 		*/
-		set: inherit(function (sup) {
+		set: enyo.inherit(function (sup) {
 			return function (path) {
-				return isObject(path) || (!this.hasOwnProperty(path) && !this.isComputed(path))? sup.apply(this, arguments): this.setLocal.apply(this, arguments);
+				
+				if (typeof path == 'string') {
+					if (this.hasOwnProperty(path)) {
+						return this.isComputed(path) ? this : enyo.setPath.apply(this, arguments);
+					}
+				}
+				
+				return sup.apply(this, arguments);
 			};
 		}),
 		
@@ -72,22 +79,16 @@
 			@private
 			@method
 		*/
-		getLocal: ComputedSupport.get.fn(oObject.prototype.get),
-		
-		/**
-			@private
-			@method
-		*/
-		setLocal: ComputedSupport.set.fn(oObject.prototype.set),
+		_getComputed: ComputedSupport.get.fn(oObject.prototype.get),
 		
 		/**
 			@private
 		*/
 		modelChanged: function (was, is, path) {
 			// unregister previous model if any
-			if (was) was.off("*", this._modelEvent, this);
+			if (was) was.off('*', this._modelEvent, this);
 			// register for events on new model if any
-			if (is) is.on("*", this._modelEvent, this);
+			if (is) is.on('*', this._modelEvent, this);
 			
 			// either way we need to update any observers that might be related
 			// to the model
@@ -98,7 +99,7 @@
 				}
 			}
 			
-			this.emit("model", {was: was, is: is});
+			this.emit('model', {was: was, is: is});
 		},
 		
 		/**
@@ -112,11 +113,11 @@
 			this.emit(e, props, model);
 			
 			switch (e) {
-			case "change":
+			case 'change':
 				if (props) for (var key in props) this.notify(key, model.previous[key], props[key]);
 				break;
-			case "destroy":
-				this.setLocal("model", null);
+			case 'destroy':
+				this.set('model', null);
 				break;
 			}
 		},
@@ -133,13 +134,13 @@
 			@private
 			@method
 		*/
-		observe: inherit(function (sup) {
+		observe: enyo.inherit(function (sup) {
 			return function (path) {
 				var part = path
 					, parts;
 				
-				if (path.indexOf(".") > -1) {
-					parts = path.split(".");
+				if (path.indexOf('.') > -1) {
+					parts = path.split('.');
 					part = parts.shift();
 				}
 				
@@ -160,7 +161,7 @@
 			@private
 			@method
 		*/
-		constructor: inherit(function (sup) {
+		constructor: enyo.inherit(function (sup) {
 			return function (props) {
 				sup.apply(this, arguments);
 
@@ -168,7 +169,7 @@
 				this.model = null;
 				
 				// adhere to normal approach to constructor properties hash
-				props && mixin(this, props);
+				props && enyo.mixin(this, props);
 			};
 		}),
 		
@@ -176,10 +177,10 @@
 			@public
 			@method
 		*/
-		destroy: inherit(function (sup) {
+		destroy: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
-				this.model && this.model.off("*", this._modelEvent, this);
+				this.model && this.model.off('*', this._modelEvent, this);
 			};
 		})
 		
