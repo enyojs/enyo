@@ -181,9 +181,20 @@ enyo.kind({
 				//this.log(this.y, y0);
 				this.scroll();
 			} else if (!this.dragging) {
+				// set final values
+				if (this.endX !== undefined) {
+					this.x = this.x0 = this.endX;
+				}
+				if (this.endY !== undefined) {
+					this.y = this.y0 = this.endY;
+				}
+
 				this.stop();
 				this.scroll();
 				this.doScrollStop();
+
+				this.endX = undefined;
+				this.endY = undefined;
 			}
 			y0 = this.y;
 			x0 = this.x;
@@ -294,9 +305,11 @@ enyo.kind({
 	*/
 	scrollTo: function(inX, inY) {
 		if (inY !== null) {
+			this.endY = -inY;
 			this.y = this.y0 - (inY + this.y0) * (1 - this.kFrictionDamping);
 		}
 		if (inX !== null) {
+			this.endX = -inX;
 			this.x = this.x0 - (inX + this.x0) * (1 - this.kFrictionDamping);
 		}
 		this.start();
