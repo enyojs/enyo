@@ -305,11 +305,11 @@ enyo.kind({
 	*/
 	scrollTo: function(inX, inY) {
 		if (inY !== null) {
-			this.endY = -inY;
+			this.endY = this.clampY(-inY);
 			this.y = this.y0 - (inY + this.y0) * (1 - this.kFrictionDamping);
 		}
 		if (inX !== null) {
-			this.endX = -inX;
+			this.endX = this.clampX(-inX);
 			this.x = this.x0 - (inX + this.x0) * (1 - this.kFrictionDamping);
 		}
 		this.start();
@@ -329,5 +329,11 @@ enyo.kind({
 	isInOverScroll: function() {
 		return this.job && (this.x > this.leftBoundary || this.x < this.rightBoundary ||
 			this.y > this.topBoundary || this.y < this.bottomBoundary);
+	},
+	clampX: function(inX) {
+		return Math.min(this.leftBoundary, Math.max(inX, this.rightBoundary));
+	},
+	clampY: function(inY) {
+		return Math.min(this.topBoundary, Math.max(inY, this.bottomBoundary));
 	}
 });
