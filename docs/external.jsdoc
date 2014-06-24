@@ -10,3 +10,51 @@
 	@see http://www.experts-exchange.com/Programming/Misc/A_1842-Binary-Bit-Flags-Tutorial-and-Usage-Tips.html
 	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators
 */
+
+/**
+	Universally Unique Identifier
+	@external UUID
+	@see http://en.wikipedia.org/wiki/Universally_unique_identifier
+*/
+
+/**
+	String Object
+	@external String
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
+*/
+
+/**
+	Function Object
+	@external Function
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
+*/
+
+/**
+	Array Object
+	@external Array
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+*/
+
+/**
+	`Object` Object
+	@external Object
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
+*/
+
+/**
+	window.setTimeout
+	@external window.setTimeout
+	@see https://developer.mozilla.org/en-US/docs/Web/API/Window.setTimeout
+*/
+
+/**
+	Date.now
+	@external Object
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now
+*/
+
+/**
+	Date.getTime
+	@external Date.getTime
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime
+*/
