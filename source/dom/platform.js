@@ -69,7 +69,7 @@
 		// webOS 1 - 3
 		{platform: 'webos', regex: /(?:web|hpw)OS\/(\d+)/},
 		// webOS 4 / OpenWebOS
-		{platform: 'webos', regex: /WebAppManager|Isis/, forceVersion: 4},
+		{platform: "webos", regex: /WebAppManager|Isis|webOS\./, forceVersion: 4},
 		// desktop Safari
 		{platform: 'safari', regex: /Version\/(\d+)[.\d]+\s+Safari/},
 		// desktop Chrome
