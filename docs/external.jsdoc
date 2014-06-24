@@ -48,6 +48,18 @@
 */
 
 /**
+	window.performance
+	@external window.performance
+	@see https://developer.mozilla.org/en-US/docs/Web/API/window.performance
+*/
+
+/**
+	Date
+	@external Date
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+*/
+
+/**
 	Date.now
 	@external Object
 	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now
