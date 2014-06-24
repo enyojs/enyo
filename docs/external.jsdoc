@@ -1,0 +1,12 @@
+/**
+	@todo Need to define this.
+	@external kind
+	@see enyo.kind
+*/
+
+/**
+	Binary (bitwise) operations.
+	@external bitwise
+	@see http://www.experts-exchange.com/Programming/Misc/A_1842-Binary-Bit-Flags-Tutorial-and-Usage-Tips.html
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators
+*/

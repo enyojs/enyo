@@ -3,9 +3,9 @@
 		"allowUnknownTags": false
 	},
 	"source": {
-		"include": ["source"],
+		"include": ["source", "docs/external.jsdoc"],
 		"exclude": ["tools", "samples", "minify", "docs", "node_modules"],
-		"includePattern": ".+\\.js$"
+		"includePattern": ".+\\.js(doc)?$"
 	},
 	"opts": {
 		"encoding": "utf8",
