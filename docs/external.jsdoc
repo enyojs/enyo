@@ -1,120 +1,173 @@
 /**
-	@todo Need to define this.
-	@external kind
-	@see enyo.kind
+* @todo Need to define this.
+* @external kind
+* @see enyo.kind
 */
 
 /**
-	@todo Need to define this.
-	@external mixin
-	@see enyo.mixin
+* @todo Need to define this.
+* @external mixin
+* @see enyo.mixin
 */
 
 /**
-	Binary (bitwise) operations.
-	@external bitwise
-	@see http://www.experts-exchange.com/Programming/Misc/A_1842-Binary-Bit-Flags-Tutorial-and-Usage-Tips.html
-	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators
+* Binary (bitwise) operations.
+* @external bitwise
+* @see http://www.experts-exchange.com/Programming/Misc/A_1842-Binary-Bit-Flags-Tutorial-and-Usage-Tips.html
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators
 */
 
 /**
-	Polyfill
-	@external polyfill
-	@see http://en.wikipedia.org/wiki/Polyfill
+* Polyfill
+* @external polyfill
+* @see http://en.wikipedia.org/wiki/Polyfill
 */
 
 /**
-	Universally Unique Identifier
-	@external UUID
-	@see http://en.wikipedia.org/wiki/Universally_unique_identifier
+* Universally Unique Identifier
+* @external UUID
+* @see http://en.wikipedia.org/wiki/Universally_unique_identifier
 */
 
 /**
-	undefined property
-	@external undefined
-	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined
+* undefined property
+* @external undefined
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined
 */
 
 /**
-	String Object
-	@external String
-	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
+* String Object
+* @external String
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
 */
 
 /**
-	Function Object
-	@external Function
-	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
+* Function Object
+* @external Function
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
 */
 
 /**
-	Array Object
-	@external Array
-	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+* Array Object
+* @external Array
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
 */
 
 /**
-	`Object` Object
-	@external Object
-	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
+* Array.indexOf
+* @external Array.indexOf
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
+* @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.14
 */
 
 /**
-	Object.create
-	@external Object.create
-	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
+* Array.lastIndexOf
+* @external Array.lastIndexOf
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf
+* http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.15
 */
 
 /**
-	Object.keys
-	@external Object.keys
-	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
+* Array.findIndex
+* @external Array.findIndex
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
 */
 
 /**
-	window.setTimeout
-	@external window.setTimeout
-	@see https://developer.mozilla.org/en-US/docs/Web/API/Window.setTimeout
+* Array.find
+* @external Array.find
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
 */
 
 /**
-	window.performance
-	@external window.performance
-	@see https://developer.mozilla.org/en-US/docs/Web/API/window.performance
+* Array.forEach
+* @external Array.forEach
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
+* @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.18
 */
 
 /**
-	Date
-	@external Date
-	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+* Array.map
+* @external Array.map
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+* @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.19
 */
 
 /**
-	Date.now
-	@external Date.now
-	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now
+* Array.filter
+* @external Array.filter
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+* @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.20
 */
 
 /**
-	Date.getTime
-	@external Date.getTime
-	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime
+* `Object` Object
+* @external Object
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
 */
 
 /**
-	console
-	@external console
-	@see https://developer.mozilla.org/en-US/docs/Web/API/console
+* Object.create
+* @external Object.create
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
 */
 
 /**
-	console.warn
-	@external console.warn
-	@see https://developer.mozilla.org/en-US/docs/Web/API/console.warn
+* Object.hasOwnProperty
+* @external Object.hasOwnProperty
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
 */
 
 /**
-	console.error
-	@external console.error
-	@see https://developer.mozilla.org/en-US/docs/Web/API/console.error
+* Object.keys
+* @external Object.keys
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
+*/
+
+/**
+* window.setTimeout
+* @external window.setTimeout
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window.setTimeout
+*/
+
+/**
+* window.performance
+* @external window.performance
+* @see https://developer.mozilla.org/en-US/docs/Web/API/window.performance
+*/
+
+/**
+* Date
+* @external Date
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+*/
+
+/**
+* Date.now
+* @external Date.now
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now
+*/
+
+/**
+* Date.getTime
+* @external Date.getTime
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime
+*/
+
+/**
+* console
+* @external console
+* @see https://developer.mozilla.org/en-US/docs/Web/API/console
+*/
+
+/**
+* console.warn
+* @external console.warn
+* @see https://developer.mozilla.org/en-US/docs/Web/API/console.warn
+*/
+
+/**
+* console.error
+* @external console.error
+* @see https://developer.mozilla.org/en-US/docs/Web/API/console.error
 */
