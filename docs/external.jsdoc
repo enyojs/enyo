@@ -5,6 +5,12 @@
 */
 
 /**
+	@todo Need to define this.
+	@external mixin
+	@see enyo.mixin
+*/
+
+/**
 	Binary (bitwise) operations.
 	@external bitwise
 	@see http://www.experts-exchange.com/Programming/Misc/A_1842-Binary-Bit-Flags-Tutorial-and-Usage-Tips.html
@@ -21,6 +27,12 @@
 	Universally Unique Identifier
 	@external UUID
 	@see http://en.wikipedia.org/wiki/Universally_unique_identifier
+*/
+
+/**
+	undefined property
+	@external undefined
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined
 */
 
 /**
@@ -79,7 +91,7 @@
 
 /**
 	Date.now
-	@external Object
+	@external Date.now
 	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now
 */
 
@@ -87,4 +99,22 @@
 	Date.getTime
 	@external Date.getTime
 	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime
+*/
+
+/**
+	console
+	@external console
+	@see https://developer.mozilla.org/en-US/docs/Web/API/console
+*/
+
+/**
+	console.warn
+	@external console.warn
+	@see https://developer.mozilla.org/en-US/docs/Web/API/console.warn
+*/
+
+/**
+	console.error
+	@external console.error
+	@see https://developer.mozilla.org/en-US/docs/Web/API/console.error
 */
