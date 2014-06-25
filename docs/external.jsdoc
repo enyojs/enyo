@@ -5,8 +5,116 @@
 */
 
 /**
+	@todo Need to define this.
+	@external mixin
+	@see enyo.mixin
+*/
+
+/**
 	Binary (bitwise) operations.
 	@external bitwise
 	@see http://www.experts-exchange.com/Programming/Misc/A_1842-Binary-Bit-Flags-Tutorial-and-Usage-Tips.html
 	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators
+*/
+
+/**
+	Polyfill
+	@external polyfill
+	@see http://en.wikipedia.org/wiki/Polyfill
+*/
+
+/**
+	Universally Unique Identifier
+	@external UUID
+	@see http://en.wikipedia.org/wiki/Universally_unique_identifier
+*/
+
+/**
+	undefined property
+	@external undefined
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined
+*/
+
+/**
+	String Object
+	@external String
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
+*/
+
+/**
+	Function Object
+	@external Function
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
+*/
+
+/**
+	Array Object
+	@external Array
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+*/
+
+/**
+	`Object` Object
+	@external Object
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
+*/
+
+/**
+	Object.create
+	@external Object.create
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
+*/
+
+/**
+	Object.keys
+	@external Object.keys
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
+*/
+
+/**
+	window.setTimeout
+	@external window.setTimeout
+	@see https://developer.mozilla.org/en-US/docs/Web/API/Window.setTimeout
+*/
+
+/**
+	window.performance
+	@external window.performance
+	@see https://developer.mozilla.org/en-US/docs/Web/API/window.performance
+*/
+
+/**
+	Date
+	@external Date
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+*/
+
+/**
+	Date.now
+	@external Date.now
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now
+*/
+
+/**
+	Date.getTime
+	@external Date.getTime
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime
+*/
+
+/**
+	console
+	@external console
+	@see https://developer.mozilla.org/en-US/docs/Web/API/console
+*/
+
+/**
+	console.warn
+	@external console.warn
+	@see https://developer.mozilla.org/en-US/docs/Web/API/console.warn
+*/
+
+/**
+	console.error
+	@external console.error
+	@see https://developer.mozilla.org/en-US/docs/Web/API/console.error
 */
