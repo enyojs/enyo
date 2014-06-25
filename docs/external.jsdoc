@@ -12,6 +12,12 @@
 */
 
 /**
+	Polyfill
+	@external polyfill
+	@see http://en.wikipedia.org/wiki/Polyfill
+*/
+
+/**
 	Universally Unique Identifier
 	@external UUID
 	@see http://en.wikipedia.org/wiki/Universally_unique_identifier
@@ -39,6 +45,18 @@
 	`Object` Object
 	@external Object
 	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
+*/
+
+/**
+	Object.create
+	@external Object.create
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
+*/
+
+/**
+	Object.keys
+	@external Object.keys
+	@see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
 */
 
 /**
