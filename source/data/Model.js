@@ -296,7 +296,7 @@
 			var inc = this.includeKeys
 				, attrs = this.attributes
 				, keys = inc || Object.keys(attrs)
-				, cpy = inc? only(inc, attrs): enyo.clone(attrs);
+				, cpy = inc? enyo.only(inc, attrs): enyo.clone(attrs);
 			keys.forEach(function (key) {
 				var ent = this.get(key);
 				if (typeof ent == 'function') cpy[key] = ent.call(this);
@@ -692,7 +692,7 @@
 			opts = opts? enyo.mixin({}, [this.options, opts]): this.options;
 			
 			// go ahead and mix all of the properties in
-			props && mixin(this, props);
+			props && enyo.mixin(this, props);
 			
 			var noAdd = opts.noAdd
 				, commit = opts.commit
@@ -705,14 +705,14 @@
 			
 			// ensure we have a unique identifier that could potentially
 			// be used in remote systems
-			this.euid = this.euid || uid('m');
+			this.euid = this.euid || enyo.uid('m');
 			
 			// if necessary we need to parse the incoming attributes
 			attrs = attrs? parse? this.parse(attrs): attrs: null;
 			
 			// ensure we have the updated attributes
 			this.attributes = this.attributes? defaults? enyo.mixin({}, [defaults, this.attributes]): enyo.clone(this.attributes, true): defaults? enyo.clone(defaults, true): {};
-			attrs && mixin(this.attributes, attrs);
+			attrs && enyo.mixin(this.attributes, attrs);
 			this.previous = enyo.clone(this.attributes, true);
 			
 			// now we need to ensure we have a store and register with it
