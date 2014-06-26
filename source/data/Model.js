@@ -1,287 +1,305 @@
 (function (enyo) {
 	
-	var kind = enyo.kind
-		, mixin = enyo.mixin
-		, clone = enyo.clone
-		, only = enyo.only
-		, isFunction = enyo.isFunction
-		, uid = enyo.uid
-		, inherit = enyo.inherit;
+	var kind = enyo.kind;
 		
-	var ObserverSupport = enyo.ObserverSupport
-		, ComputedSupport = enyo.ComputedSupport
-		, BindingSupport = enyo.BindingSupport
-		, EventEmitter = enyo.EventEmitter
-		, ModelList = enyo.ModelList
-		, Source = enyo.Source;
+	var ObserverSupport = enyo.ObserverSupport,
+		ComputedSupport = enyo.ComputedSupport,
+		BindingSupport = enyo.BindingSupport,
+		EventEmitter = enyo.EventEmitter,
+		StateSupport = enyo.StateSupport,
+		ModelList = enyo.ModelList,
+		Source = enyo.Source;
+	
+	var STATES = enyo.States;
 	
 	/**
-		The possible values assigned to {@link enyo.Model#status}. These codes can be extended
-		when necessary to provide more detailed state control. See the inline documentation
-		information and explanation associated with each individual state.
-	
-		Just a general note to developers exploring this implementation: these flags are HEX values
-		representing the BINARY flag position (a 1 in a binary number that is unique). For
-		additional information on using binary-flags and binary-operations see
-		{@link http://www.experts-exchange.com/Programming/Misc/A_1842-Binary-Bit-Flags-Tutorial-and-Usage-Tips.html}
-		or {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators}.
-		
-		Why is this information included here? Mostly for general reference in cases where there is
-		a desire to extend the built-in flags to include additional flag. Understanding what they
-		represent is the key to not having to do much more work to add another ERROR or BUSY state
-		(for example). Additional flags need to start with the next unique power of 2 position
-		(the value directly below the ellipses in the table below). Controlling state this way
-		allows it to be in multiple states simulatenously (sometimes) and be updated without needing
-		to modify existing code.
-	
-		Here is a table of the values, note that each flag position (in binary) represents a power
-		of 2 so each flag has only 1 '1':
-		
-		HEX             DEC             BIN
-		0x0001             1            0000 0000 0000 0001
-		0x0002             2            0000 0000 0000 0010
-		0x0004             4            0000 0000 0000 0100
-		0x0008             8            0000 0000 0000 1000
-		0x0010            16            0000 0000 0001 0000
-		0x0020            32            0000 0000 0010 0000
-		0x0040            64            0000 0000 0100 0000
-		0x0080           128            0000 0000 1000 0000
-		0x0100           256            0000 0001 0000 0000
-		0x0200           512            0000 0010 0000 0000
-		0x0400          1024            0000 0100 0000 0000
-		0x0800          2048            0000 1000 0000 0000
-	
-		...
-	
-		0x1000          4096            0001 0000 0000 0000
-		
-		As a hint, converting (HEX) 0x0800 to DEC do:
-			(0*16^3) + (8*16^2) + (0*16^1) + (0*16^0) = 2048
-		
-		As a hint, converting (HEX) 0x0800 to BIN do:
-			0    8    0    0    (HEX)
-			---- ---- ---- ----
-			0000 1000 0000 0000 (BIN)
-	
-	
-		@name enyo.Model~STATES
-		@enum {number}
-		@readonly
-	*/
-	var STATES = {};
-		
-	/**
-		The {@link enyo.Model} was created by the application and exists only in the client.
-		Successfully [fetching]{@link enyo.Model#fetch} (or [fetching]{@link enyo.Collection#fetch}
-		from a {@link enyo.Collection}) will remove this flag. Also, successfully
-		[committing]{@link enyo.Model#commit} (or [committing]{@link enyo.Collection#commit}
-		from a {@link enyo.Collection}) will remove this flag.
-	
-		@name enyo.Model~STATES.NEW
-		@type {enyo.Model~STATES}
-	*/
-	STATES.NEW = 0x0001;
-		
-	/**
-		The {@link enyo.Model} has been modified locally and has not been (successfully)
-		[committed]{@link enyo.Model#commit} (or {@link enyo.Collection#commit}). Once completed,
-		this flag will be removed.
-	
-		@name enyo.Model~STATES.DIRTY
-		@type {enyo.Model~STATES}
-	*/
-	STATES.DIRTY = 0x0002;
-		
-	/**
-		The {@link enyo.Model} is either {@link enyo.Model~STATES.NEW} or it was
-		{@link enyo.Model~STATES.DIRTY} after a local modification and then successfully
-		[committed]{@link enyo.Model#commit} (or {@link enyo.Collection#commit}). This flag is set
-		by default on new [models]{@link enyo.Model}.
-	
-		@name enyo.Model~STATES.CLEAN
-		@type {enyo.Model~STATES}
-	*/
-	STATES.CLEAN = 0x0004;
-	
-	/**
-		The final state of an {@link enyo.Model} once its {@link enyo.Model#destroy}
-		method has successfully completed. This is an exclusive state.
-	
-		@name enyo.Model~STATES.DESTROYED
-		@type {enyo.Model~STATES.DESTROYED}
-	*/
-	STATES.DESTROYED = 0x0008;
-		
-	/**
-		The {@link enyo.Model} is currently attempting to {@link enyo.Model#fetch}.
-		
-		@name enyo.Model~STATES.FETCHING
-		@type {enyo.Model~STATES}
-	*/
-	STATES.FETCHING = 0x0010;
-		
-	/**
-		The {@link enyo.Model} is currently attempting to {@link enyo.Model#commit}.
-		
-		@name enyo.Model~STATES.COMMITTING
-		@type {enyo.Model~STATES}
-	*/
-	STATES.COMMITTING = 0x0020;
-		
-	/**
-		The {@link enyo.Model} is currently attempting to {@link enyo.Model#destroy}.
-	
-		@name enyo.Model~STATES.DESTROYING
-		@type {enyo.Model~STATES}
-	*/
-	STATES.DESTROYING = 0x0080;
-		
-	/**
-		The {@link enyo.Model} has encountered an error during a {@link enyo.Model#commit} attempt.
-	
-		@name enyo.Model~STATES.ERROR_COMMITTING
-		@type {enyo.Model~STATES}
-	*/
-	STATES.ERROR_COMMITTING = 0x0100;
-		
-	/**
-		The {@link enyo.Model} has encountered an error during a {@link enyo.Model#fetch} attempt.
-		
-		@name enyo.Model~STATES.ERROR_FETCHING
-		@type {enyo.Model~STATES}
-	*/
-	STATES.ERROR_FETCHING = 0x0200;
-		
-	/**
-		The {@link enyo.Model} has encountered an error during a {@link enyo.Model#destroy} attempt.
-		
-		@name enyo.Model~STATES.ERROR_DESTROYING
-		@type {enyo.Model~STATES}
-	*/
-	STATES.ERROR_DESTROYING = 0x0400;
-		
-	/**
-		The {@link enyo.Model} has somehow encountered an error that it does not understand
-		so it uses this state.
-	
-		@name enyo.Model~STATES.ERROR_UNKNOWN
-		@type {enyo.Model~STATES}
-	*/
-	STATES.ERROR_UNKNOWN = 0x0800;
-	
-	/**
-		This is a multi-state mask and will never be set explicitly. By default it can be used to
-		determine if the {@link enyo.Model} is [fetching]{@link enyo.Model#fetch},
-		[committing]{@link enyo.Model#commit} or [destroying]{@link enyo.Model#destroy}.
-		You can add states to this mask by OR'ing them. {@see enyo.Model#isBusy} for an easy
-		way to determine if the {@link enyo.Model} is actually busy without having to use
-		bitwise operations.
-	
-		@name enyo.Model~STATES.BUSY
-		@type {enyo.Model~STATES}
-	*/
-	STATES.BUSY = STATES.FETCHING | STATES.COMMITTING | STATES.DESTROYING;
-	
-	/**
-		This is a multi-state mask and will never be set explicitly. By default it can be used to
-		determine if the {@link enyo.Model} has encountered an error while
-		[fetching]{@link enyo.Model#fetch}, [committing]{@link enyo.Model#commit} or
-		[destroying]{@link enyo.Model#destroy}. There is also the
-		[unknown error]{@link enyo.Model~STATES.ERROR_UNKNOWN} state that is included in this
-		mask. Additional error states can be added by OR'ing them. {@see enyo.Model#isError}
-		for an easy way to determine if the {@link enyo.Model} is actually in an error state.
-		
-		@name enyo.Model~STATES.ERROR
-		@type {enyo.Model~STATES}
-	*/
-	STATES.ERROR = STATES.ERROR_FETCHING | STATES.ERROR_COMMITTING | STATES.ERROR_DESTROYING | STATES.ERROR_UNKNOWN;
-	
-	/**
-		This is a multi-state mask and will never be set explicitly. By default, it can be used to
-		verify that an {@link enyo.Model} is not in an [error state]{@link enyo.Model~STATES.ERROR}
-		or a [busy state]{@link enyo.Model~STATES.BUSY}. {@see enyo.Model#isReady} for an easy way
-		to determine if the {@link enyo.Model} is actually _ready_ without having to use bitwise
-		operations.
-	
-		@name enyo.Model~STATES.READY
-		@type {enyo.Model~STATES}
-	*/
-	STATES.READY = ~(STATES.BUSY | STATES.ERROR);
-	
-	/**
-		@private
+	* This is only necessary because of the order in which mixins are applied.
+	*
+	* @class
+	* @private
 	*/
 	var BaseModel = kind({
 		kind: null,
-		mixins: [ObserverSupport, ComputedSupport, BindingSupport, EventEmitter]
+		mixins: [ObserverSupport, ComputedSupport, BindingSupport, EventEmitter, StateSupport]
 	});
 	
 	/**
-		@public
-		@class enyo.Model
+	* The event emitted when [attributes]{@link enyo.Model#attributes} have been modified. The event
+	* [object]{@link external:Object} will be the key/value pairs of
+	* [attributes]{@link enyo.Model#attributes} that changed and their new values.
+	*
+	* @event enyo.Model#change
+	* @type {Object}
+	* @public
+	*/
+	
+	/**
+	* The default configurable [options]{@link enyo.Model#options} used in certain API methods
+	* of {@link enyo.Model}.
+	*
+	* @typedef {Object} enyo.Model~Options
+	* @property {Boolean} silent=false - Keep events and notifications from being emitted.
+	* @property {Boolean} commit=false - Immediately [commit]{@link enyo.Model#commit} changes
+	*	after they have occurred. Also note that if `true` when
+	*	[destroyed]{@link enyo.Model#destroy} the [model]{@link enyo.Model} will also be
+	*	[destroyed]{@link enyo.Model#destroy} via any [sources]{@link enyo.Model#source} it has.
+	* @property {Boolean} parse=false - During initialization, [parse]{@link enyo.Model#parse}
+	*	any given [attributes]{@link enyo.Model#attributes}; after
+	*	[fetching]{@link enyo.Model#fetch} [parse]{@link enyo.Model#parse} the _data_ before
+	*	calling [set]{@link enyo.Model#set}.
+	* @property {Boolean} fetch=false - Automatically call [fetch]{@link enyo.Model#fetch}
+	*	during initialization.
+	*/
+	
+	/**
+	* The configurable options for [fetch]{@link enyo.Model#fetch},
+	* [commit]{@link enyo.Model#commit} and [destroy]{@link enyo.Model#destroy}.
+	*
+	* @typedef {enyo.Model~Options} enyo.Model~ActionOptions
+	* @property {enyo.Model~Success} success - The callback executed upon successful
+	*	completion.
+	* @property {enyo.Model~Error} error - The callback executed upon a failed attempt.
+	*/
+	
+	/**
+	* @callback enyo.Model~Success
+	* @param {enyo.Model} model The model that is returning successfully.
+	* @param {enyo.Model~ActionOptions} opts The original options passed to the action method that
+	*	is returning successfully.
+	* @param {*} res The result, if any, returned by the [source]{@link enyo.Source} that
+	*	executed it.
+	* @param {String} source The name of the [source]{@link enyo.Model#source} that has returned
+	*	successfully.
+	*/
+	
+	/**
+	* @callback enyo.Model~Error
+	* @param {enyo.Model} model The model that is returning successfully.
+	* @param {String} action The name of the action that failed, one of `FETCHING`,
+	*	`COMMITTING` or `DESTROYING`.
+	* @param {enyo.Model~Options} opts The original options passed to the action method that is
+	*	returning successfully.
+	* @param {*} res The result, if any, returned by the [source]{@link enyo.Source} that
+	*	executed it.
+	* @param {String} source The name of the [source]{@link enyo.Model#source} that has returned
+	*	successfully.
+	*/
+	
+	/**
+	* An [object]{@link external:Object} that is used to represent and maintain _state_. Usually,
+	* a [model]{@link enyo.Model} is used to expose _data_ to the _view layer_. It keeps logic
+	* related to the _data_ (retrieving it, updating it, storing it, etc.) out of the _view_ and
+	* the _view_ can automatically update based on changes in the [model]{@link enyo.Model}.
+	* [Models]{@link enyo.Model} have the ability to work with other _data layer_
+	* [kinds]{@link external:kind} for more sophisticated implementations.
+	*
+	* [Models]{@link enyo.Model} have [bindable]{@link enyo.BindingSupport}
+	* [attributes]{@link enyo.Model#attributes}. This differs from other
+	* [bindable]{@link enyo.BindingSupport} [kinds]{@link external:kind} in that it proxies values
+	* from an internal [hash]{@link external:Object} as opposed to the target property directly.
+	* 
+	* @see enyo.Store
+	* @see enyo.Collection
+	* @see enyo.RelationalModel
+	* @see enyo.ModelController
+	* @class enyo.Model
+	* @mixes enyo.ObserverSupport
+	* @mixes enyo.ComputedSupport
+	* @mixes enyo.BindingSupport
+	* @mixes enyo.EventEmitter
+	* @mixes enyo.StateSupport
+	* @public
 	*/
 	var Model = kind(
 		/** @lends enyo.Model.prototype */ {
+		
+		/**
+		* @private
+		*/
 		name: 'enyo.Model',
+		
+		/**
+		* @private
+		*/
 		kind: BaseModel,
+		
+		/**
+		* @private
+		*/
 		noDefer: true,
+		
+		/**
+		* Used by various [sources]{@link enyo.Model#source} as part of the
+		* [URI]{@link external:URI} from which it can be [fetched]{@link enyo.Model#fetch},
+		* [committed]{@link enyo.Model#commit} or [destroyed]{@link enyo.Model#destroy}. Some
+		* [sources]{@link enyo.Model#source} may use this property in other ways.
+		*
+		* @see enyo.Model#getUrl
+		* @see enyo.Source
+		* @see enyo.AjaxSource
+		* @see enyo.JsonpSource
+		* @type {String}
+		* @default ''
+		* @public
+		*/
+		url: '',
+		
+		/**
+		* Implement this method to be used by [sources]{@link enyo.Model#source} to dynamically
+		* derrive the [URI]{@link external:URI} from which it can be
+		* [fetched]{@link enyo.Model#fetch}, [committed]{@link enyo.Model#commit} or
+		* [destroyed]{@link enyo.Model#destroy}. Some [sources]{@link enyo.Model#source} may use
+		* this property in other ways. Note that implementing this method means the
+		* [url]{@link enyo.Model#url} will not be used.
+		*
+		* @see enyo.Model#url
+		* @see enyo.Source
+		* @see enyo.AjaxSource
+		* @see enyo.JsonpSource
+		* @type {Function}
+		* @default null
+		* @virtual
+		* @public
+		*/
+		getUrl: null,
 				
 		/**
-			@public
+		* The [hash]{@link external:Object} of properties proxied by this [model]{@link enyo.Model}.
+		* If defined on a [subkind]{@link external:subkind} it can be assigned default values and
+		* all [instances]{@link external:instance} will share its default structure. If no
+		* _attributes_ are defined an empty [hash]{@link external:Object} will be assigned during
+		* initialization. It is not necessary to pre-define the structure of a
+		* [model]{@link enyo.Model} and depending on its complexity can even hinder performance when
+		* not necessary.
+		*
+		* It should also be noted that using [get]{@link enyo.Model#get} or
+		* [set]{@link enyo.Model#set} will be accessing and modifying this property. This includes
+		* the values that [bindings]{@link enyo.BindingSupport} are bound to/from.
+		*
+		* @type {Object}
+		* @default null
+		* @public
 		*/
 		attributes: null,
 		
 		/**
-			@public
+		* The [source(s)]{@link enyo.Source} to use when [fetching]{@link enyo.Model#fetch},
+		* [committing]{@link enyo.Model#commit} or [destroying]{@link enyo.Model#destroy}. All
+		* methods that use a _source_ (or _sources_) can override this default value in their
+		* respective configurations parameter. This can be a [String]{@link external:String},
+		* an [Array]{@link external:Array} of [strings]{@link external:String}, an
+		* {@link enyo.Source} instance or an [Array]{@link external:Array} of
+		* [sources]{@link enyo.Source}.
+		*
+		* @see enyo.Source
+		* @see enyo.Model#fetch
+		* @see enyo.Model#commit
+		* @see enyo.Model#destroy
+		* @type {(String|String[]|enyo.Source|enyo.Source[])}
+		* @default null
+		* @public
 		*/
 		source: null,
 		
 		/**
-			@public
+		* These [keys]{@link external:Object.keys} will be the only
+		* [attributes]{@link enyo.Model#attributes} included if the [model]{@link enyo.Model} is
+		* [committed]{@link enyo.Model#commit}. It directly modifies the result of calling
+		* [raw]{@link enyo.Model#raw}. If not defined all [keys]{@link external:Object.keys} from
+		* the [attributes]{@link enyo.Model#attributes} [hash]{@link external:Object} will be used.
+		*
+		* @see enyo.Model#raw
+		* @see enyo.Model#toJSON
+		* @type {String[]}
+		* @default null
+		* @public
 		*/
 		includeKeys: null,
 		
 		/**
-			@public
+		* The inheritable default configuration _options_. These specify the behavior of particular
+		* API features of {@link enyo.Model}. For the methods that use them, they can be overloaded
+		* using their respective configurations parameter. Note that setting an
+		* [options hash]{@link external:Object} on a [subkind]{@link external:subkind} will be
+		* merged with - not replace - the [superkind's]{@link external:superkind} own _options_.
+		*
+		* @type {enyo.Model~Options}
+		* @public
 		*/
 		options: {
 			silent: false,
-			remote: false,
 			commit: false,
 			parse: false,
 			fetch: false
 		},
 		
 		/**
-			@public
+		* The current [state(s)]{@link enyo.States} that the [model]{@link enyo.Model} may possess.
+		* There are limitations to which [state(s)]{@link enyo.States} the [model]{@link enyo.Model}
+		* may possess at any given time. By default a [model]{@link enyo.Model} is
+		* [NEW]{@link enyo.States.NEW} and [CLEAN]{@link enyo.States.CLEAN}. This is __not__ a
+		* [bindable]{@link enyo.BindingSupport} property.
+		*
+		* @see enyo.States
+		* @see enyo.StateSupport
+		* @type {enyo.States}
+		* @readonly
+		* @public
 		*/
 		status: STATES.NEW | STATES.CLEAN,
 		
 		/**
-			@public
+		* The _unique_ attribute from which the [model]{@link enyo.Model} can be indexed. This
+		* _uniqueness_ must only exist for the specific [kind]{@link external:kind} of
+		* [model]{@link enyo.Model}.
+		*
+		* @type {String}
+		* @default 'id'
+		* @public
 		*/
 		primaryKey: 'id',
 		
 		/**
-			@public
-			@method
+		* Inspect and restructure incoming _data_ prior to having it [set]{@link enyo.Model#set} on
+		* the [model]{@link enyo.Model}. While this method _can_ be called directly it is most
+		* often used via the [parse]{@link enyo.Model~Options.parse} option and executed automatically
+		* either during initialization or when [fetched]{@link enyo.Model#fetch} (or both in some
+		* cases). This is an virtual method and needs to be provided for a given implementation's
+		* needs.
+		*
+		* @see enyo.Model~Options.parse
+		* @param {*} data The incoming _data_ that may need to be restructured or reduced prior to
+		*	being [set]{@link enyo.Model#set} on the [model]{@link enyo.Model}.
+		* @returns {Object} The [hash]{@link external:Object} to apply to the
+		*	[model]{@link enyo.Model} via [set]{@link enyo.Model#set}.
+		* @virtual
+		* @public
 		*/
 		parse: function (data) {
 			return data;
 		},
 		
 		/**
-			@public
-			@method
+		* Returns an [Object]{@link external:Object} that represents the underlying data structure
+		* of the [model]{@link enyo.Model}. This is dependent on the current
+		* [attributes]{@link enyo.Model#attributes} as well as the
+		* [includeKeys]{@link enyo.Model#includeKeys}.
+		* [Computed properties]{@link enyo.ComputedSupport} are _never included_.
+		*
+		* @see enyo.Model#includeKeys
+		* @see enyo.Model#attributes
+		* @returns {Object} The formatted [hash]{@link external:Object} representing the underlying
+		*	data structure of the [model]{@link enyo.Model}.
+		* @public
 		*/
 		raw: function () {
 			var inc = this.includeKeys
 				, attrs = this.attributes
 				, keys = inc || Object.keys(attrs)
-				, cpy = inc? only(inc, attrs): clone(attrs);
+				, cpy = inc? enyo.only(inc, attrs): enyo.clone(attrs);
 			keys.forEach(function (key) {
 				var ent = this.get(key);
-				if (isFunction(ent)) cpy[key] = ent.call(this);
+				if (typeof ent == 'function') cpy[key] = ent.call(this);
 				else if (ent && ent.raw) cpy[key] = ent.raw();
 				else cpy[key] = ent;
 			}, this);
@@ -289,8 +307,13 @@
 		},
 		
 		/**
-			@public
-			@method
+		* Returns the [JSON]{@link external:JSON} serializable [raw]{@link enyo.Model#raw} output
+		* of the [model]{@link enyo.Model}. Will automatically be executed by
+		* [JSON.parse]{@link external:JSON.parse}.
+		*
+		* @see enyo.Model#raw
+		* @returns {Object} The return value of [raw]{@link enyo.Model#raw}
+		* @public
 		*/
 		toJSON: function () {
 			
@@ -299,8 +322,16 @@
 		},
 		
 		/**
-			@public
-			@method
+		* Restore an [attribute]{@link enyo.Model#attributes} to its previous value. If no
+		* [attribute]{@link enyo.Model#attributes} is provided it will restore all previous values.
+		*
+		* @see enyo.Model#set
+		* @see enyo.Model#previous
+		* @param {String} [prop] The [attribute]{@link enyo.Model#attributes} to
+		*	[restore]{@link enyo.Model#restore}. If not provided all
+		*	[attributes]{@link enyo.Model#attributes} will be [restored]{@link enyo.Model#restore}.
+		* @returns {this} The callee for chaining.
+		* @public
 		*/
 		restore: function (prop) {
 			
@@ -308,11 +339,25 @@
 			// bindings or other observers will know it returned to that value
 			if (prop) this.set(prop, this.previous[prop], {force: true});
 			else this.set(this.previous);
+			
+			return this;
 		},
 		
 		/**
-			@public
-			@method
+		* Commit the [model]{@link enyo.Model} to a [source]{@link enyo.Model#source} or
+		* [sources]{@link enyo.Model#source}. A {@link enyo.Model} cannot be
+		* [committed]{@link enyo.Model#commit} if it is in an
+		* [error]{@link enyo.States.ERROR} ({@link enyo.StateSupport.isError}) or
+		* [busy]{@link enyo.States.BUSY} ({@link enyo.StateSupport.isBusy})
+		* [state]{@link enyo.Model#status}. While executing it will add the
+		* [COMMITTING]{@link enyo.States.COMMITTING} flag to [status]{@link enyo.Model#status}. Once
+		* it has completed execution it will remove this flag (even if it fails).
+		*
+		* @see enyo.Model#committed
+		* @see enyo.Model#status
+		* @param {enyo.Model~ActionOptions} [opts] Optional configuration options.
+		* @returns {this} The callee for chaining.
+		* @public
 		*/
 		commit: function (opts) {
 			var options,
@@ -351,8 +396,20 @@
 		},
 		
 		/**
-			@public
-			@method
+		* Fetch the [model]{@link enyo.Model} from a [source]{@link enyo.Model#source} or
+		* [sources]{@link enyo.Model#source}. A {@link enyo.Model} cannot be
+		* [fetcheded]{@link enyo.Model#fetch} if it is in an
+		* [error]{@link enyo.States.ERROR} ({@link enyo.StateSupport.isError}) or
+		* [busy]{@link enyo.States.BUSY} ({@link enyo.StateSupport.isBusy})
+		* [state]{@link enyo.Model#status}. While executing it will add the
+		* [FETCHING]{@link enyo.States.FETCHING} flag to [status]{@link enyo.Model#status}. Once
+		* it has completed execution it will remove this flag (even if it fails).
+		*
+		* @see enyo.Model#fetched
+		* @see enyo.Model#status
+		* @param {enyo.Model~ActionOptions} [opts] Optional configuration options.
+		* @returns {this} The callee for chaining.
+		* @public
 		*/
 		fetch: function (opts) {
 			var options,
@@ -391,8 +448,22 @@
 		},
 		
 		/**
-			@public
-			@method
+		* Destroy the [model]{@link enyo.Model}. By default, the [model]{@link enyo.Model} will only
+		* be [destroyed]{@link external:destroy} in the client. To execute with a
+		* [source]{@link enyo.Model#source} or [sources]{@link enyo.Model#source} the
+		* [commit default option]{@link enyo.Model#options} must be `true` or a `source` property
+		* must be provided in the _opts_ parameter explicitly. A {@link enyo.Model} cannot be
+		* [destroyed]{@link enyo.Model#destroy} (using a [source]{@link enyo.Model#source}) if it is
+		* in an [error]{@link enyo.States.ERROR} ({@link enyo.StateSupport.isError}) or
+		* [busy]{@link enyo.States.BUSY} ({@link enyo.StateSupport.isBusy})
+		* [state]{@link enyo.Model#status}. While executing it will add the
+		* [DESTROYING]{@link enyo.States.DESTROYING} flag to [status]{@link enyo.Model#status}. Once
+		* it has completed execution it will remove this flag (even if it fails).
+		*
+		* @see enyo.Model#status
+		* @param {enyo.Model~ActionOptions} [opts] Optional configuration options.
+		* @returns {this} The callee for chaining.
+		* @public
 		*/
 		destroy: function (opts) {
 			var options = opts ? enyo.mixin({}, [this.options, opts]) : this.options,
@@ -478,16 +549,41 @@
 		},
 		
 		/**
-			@public
-			@method
+		* Retrieve the value for the given property or path. If the property is a
+		* [computed property]{@link enyo.ComputedSupport.computed} then it will return that value
+		* otherwise it will attempt to retrieve the value from the
+		* [attributes hash]{@link enyo.Model#attributes}.
+		*
+		* @param {String} path The property to retrieve.
+		* @returns {*} The value for the requested property or path, `undefined` if it cannot be
+		*	found or does not exist.
+		* @public
 		*/
 		get: function (path) {
 			return this.isComputed(path) ? this._getComputed(path) : this.attributes[path];
 		},
 		
 		/**
-			@public
-			@method
+		* Set the requested _path_ or [hash]{@link external:Object} of properties on the
+		* [model]{@link enyo.Model}. Properties are applied to the
+		* [attributes hash]{@link enyo.Model#attributes} and are retrievable via
+		* [get]{@link enyo.Model#get}. If properties were updated and the `silent` option is not
+		* `true` it will emit a `change` event as well as individual
+		* [notifications]{@link enyo.ObserverSupport.notify} for the properties that were modified.
+		*
+		* @fires enyo.Model#event:change
+		* @see enyo.ObserverSupport
+		* @see enyo.BindingSupport
+		* @param {(String|Object)} path Either the property name or a [hash]{@link external:Object}
+		*	of properties and values to set.
+		* @param {(*|enyo.Model~Options)} is If _path_ is a [string]{@link external:String} this should be
+		*	the value to set for the given property; otherwise it should be an optional
+		*	[hash]{@link enyo.Model~Options} of available configuration options.
+		* @param {enyo.Model~Options} [opts] If _path_ is a [string]{@link external:String} this should be
+		*	the the optional [hash]{@link enyo.Model~Options} of available configuration options;
+		*	otherwise it will not be used.
+		* @returns {this} The callee for chaining.
+		* @public
 		*/
 		set: function (path, is, opts) {
 			if (!this.destroyed) {
@@ -555,33 +651,48 @@
 					if (commit && !fetched) this.commit(opts);
 				}
 			}
+			
+			return this;
 		},
 		
 		/**
-			@private
-			@method
+		* A bit of hackery to facade the normal [getter]{@link enyo.ComputedSupport.get}. Note that
+		* we pass an arbitrary super-method that automatically returns `undefined` which is
+		* consistent with this use-case and it's intended purpose.
+		*
+		* @private
 		*/
 		_getComputed: ComputedSupport.get.fn(function () { return undefined; }),
 		
 		/**
-			@private
-			@method
+		* Initializes the [model]{@link enyo.Model}. Unlike some methods, the parameters are not
+		* interchangeable. If not using a particular (optional) parameter use `null`.
+		*
+		* @param {Object} [attrs] Optionally initialize the [model]{@link enyo.Model} with some
+		*	[attributes]{@link enyo.Model#attributes}.
+		* @param {Object} [props] Properties to apply directly to the [model]{@link enyo.Model} and
+		*	not the [attributes hash]{@link enyo.Model#attributes}. If these properties contain an
+		*	`options` property (a [hash]{@link external:Object}) it will be merged with existing
+		*	[options]{@link enyo.Model#options}.
+		* @param {enyo.Model~Options} [opts] This is a one-time [options hash]{@link enyo.Model~Options} that
+		*	is only used during initialization and not applied as defaults.
+		* @public
 		*/
 		constructor: function (attrs, props, opts) {
 			
 			// in cases where there is an options hash provided in the _props_ param
 			// we need to integrate it manually...
 			if (props && props.options) {
-				this.options = mixin({}, [this.options, props.options]);
+				this.options = enyo.mixin({}, [this.options, props.options]);
 				delete props.options;
 			}
 			
 			// the _opts_ parameter is a one-hit options hash it does not leave
 			// behind its values as default options...
-			opts = opts? mixin({}, [this.options, opts]): this.options;
+			opts = opts? enyo.mixin({}, [this.options, opts]): this.options;
 			
 			// go ahead and mix all of the properties in
-			props && mixin(this, props);
+			props && enyo.mixin(this, props);
 			
 			var noAdd = opts.noAdd
 				, commit = opts.commit
@@ -594,15 +705,15 @@
 			
 			// ensure we have a unique identifier that could potentially
 			// be used in remote systems
-			this.euid = this.euid || uid('m');
+			this.euid = this.euid || enyo.uid('m');
 			
 			// if necessary we need to parse the incoming attributes
 			attrs = attrs? parse? this.parse(attrs): attrs: null;
 			
 			// ensure we have the updated attributes
-			this.attributes = this.attributes? defaults? mixin({}, [defaults, this.attributes]): clone(this.attributes): defaults? clone(defaults): {};
-			attrs && mixin(this.attributes, attrs);
-			this.previous = clone(this.attributes);
+			this.attributes = this.attributes? defaults? enyo.mixin({}, [defaults, this.attributes]): enyo.clone(this.attributes, true): defaults? enyo.clone(defaults, true): {};
+			attrs && enyo.mixin(this.attributes, attrs);
+			this.previous = enyo.clone(this.attributes, true);
 			
 			// now we need to ensure we have a store and register with it
 			this.store = this.store || enyo.store;
@@ -617,9 +728,12 @@
 		},
 		
 		/**
-			@private
+		* Overloaded. We funnel arbitrary notification updates through here as it is faster than
+		* using the built-in notification updates for batch operations.
+		*
+		* @private
 		*/
-		emit: inherit(function (sup) {
+		emit: enyo.inherit(function (sup) {
 			return function (e, props) {
 				if (e == 'change' && props && this.isObserving()) {
 					for (var key in props) this.notify(key, this.previous[key], props[key]);
@@ -629,14 +743,31 @@
 		}),
 		
 		/**
-			@private
+		* Overloaded to alias the - also overloaded - [emit]{@link enyo.Model#emit} method.
+		*
+		* @private
 		*/
 		triggerEvent: function () {
 			return this.emit.apply(this, arguments);
 		},
 		
 		/**
-			@public
+		* When a [fetch]{@link enyo.Model#fetch} has completed successfully it is returned
+		* to this method. This method handles special and important behavior - it should not be
+		* called directly and take care when overloading to ensure you call the super-method. This
+		* correctly sets the [status]{@link enyo.Model#status} and in cases where multiple
+		* [sources]{@link enyo.Model#source} were used it waits until all have responded before
+		* clearing the [FETCHING]{@link enyo.States.FETCHING} flag. If a
+		* [success]{@link enyo.Model~Success} callback was was provided it will be called once for
+		* each [source]{@link enyo.Model#source}.
+		*
+		* @param {enyo.Model~ActionOptions} opts The original options passed to
+		*	[fetch]{@link enyo.Model#fetch} merged with the defaults.
+		* @param {*} [res] The result provided from the given _source_ if any. This will vary
+		*	depending on the [source]{@link enyo.Model#source}.
+		* @param {String} source The name of the [source]{@link enyo.Model#source} that has
+		*	completed successfully.
+		* @public
 		*/
 		fetched: function (opts, res, source) {
 			var idx;
@@ -666,7 +797,22 @@
 		},
 		
 		/**
-			@public
+		* When a [commit]{@link enyo.Model#commit} has completed successfully it is returned
+		* to this method. This method handles special and important behavior - it should not be
+		* called directly and take care when overloading to ensure you call the super-method. This
+		* correctly sets the [status]{@link enyo.Model#status} and in cases where multiple
+		* [sources]{@link enyo.Model#source} were used it waits until all have responded before
+		* clearing the [COMMITTING]{@link enyo.States.COMMITTING} flag. If a
+		* [success]{@link enyo.Model~Success} callback was was provided it will be called once for
+		* each [source]{@link enyo.Model#source}.
+		*
+		* @param {enyo.Model~ActionOptions} opts The original options passed to
+		*	[commit]{@link enyo.Model#commit} merged with the defaults.
+		* @param {*} [res] The result provided from the given _source_ if any. This will vary
+		*	depending on the [source]{@link enyo.Model#source}.
+		* @param {String} source The name of the [source]{@link enyo.Model#source} that has
+		*	completed successfully.
+		* @public
 		*/
 		committed: function (opts, res, source) {
 			var idx;
@@ -690,10 +836,28 @@
 		},
 		
 		/**
-			@public
+		* When an _action_ ([fetch]{@link enyo.Model#fetch}, [commit]{@link enyo.Model#commit} or
+		* [destroy]{@link enyo.Model#destroy}) has failed it will be passed to this method. This
+		* method handles special and important behavior - it should not be called directly and take
+		* care when overloading to ensure you call the super-method. This correctly sets the
+		* [status]{@link enyo.Model#status} to the known [error state]{@link enyo.States.ERROR} or
+		* the [unknown error state]{@link enyo.States.ERROR_UNKNOWN} if it could not be determined.
+		* If an [error callback]{@link enyo.Model~Error} was provided this method will execute it.
+		*
+		* @see enyo.StateSupport.clearError
+		* @param {String} action The _action_ (one of `FETCHING`, `COMMITTING` or `DESTROYING`) that
+		*	failed and is now in an [error state]{@link enyo.States.ERROR}.
+		* @param {enyo.Model~ActionOptions} opts The original options passed to the _action_ method
+		*	merged with the defaults.
+		* @param {*} [res] The result provided from the given _source_ if any. This will vary
+		*	depending on the [source]{@link enyo.Model#source}.
+		* @param {String} source The name of the [source]{@link enyo.Model#source} that has
+		*	errored.
+		* @public
 		*/
 		errored: function (action, opts, res, source) {
-			var stat;
+			var stat,
+				idx;
 			
 			// if the error action is a status number then we don't need to update it otherwise
 			// we set it to the known state value
@@ -709,79 +873,36 @@
 			// correctly set the current status and ensure we clear any busy flags
 			this.status = (this.status | stat) & ~STATES.BUSY;
 			
+			if (this._waiting) {
+				idx = this._waiting.findIndex(function (ln) {
+					return (ln instanceof Source ? ln.name : ln) == source;
+				});
+				if (idx > -1) this._waiting.splice(idx, 1);
+				if (!this._waiting.length) this._waiting = null;
+			}
+			
 			// we need to check to see if there is an options handler for this error
 			if (opts && opts.error) opts.error(this, action, opts, res, source);
-		},
-		
-		/**
-			@method
-			@public
-		*/
-		clearError: function () {
-			this.status = this.status & ~STATES.ERROR;
-		},
-		
-		/**
-			Convenience method to avoid using bitwise comparison directly for the
-			{@link enyo.Collection#status}. Automatically checks the current
-			{@link enyo.Collection#status} or the passed-in value to determine if it is an
-			[error state]{@link enyo.Collection~STATES.ERROR}. The passed-in value will only be
-			used if it is a numeric value.
-		
-			@param {enyo.Collection~STATES} [status] Provide a specific value to test.
-			@returns {boolean} Whether or not the given status is an error.
-			@method
-			@public
-		*/
-		isError: function (status) {
-			return !! ((isNaN(status) ? this.status : status) & STATES.ERROR);
-		},
-		
-		/**
-			Convenience method to avoid using bitwise comparison directly for the
-			{@link enyo.Collection#status}. Automatically check the current
-			{@link enyo.Collection#status} or the passed-in value to determine if it is a
-			[busy state]{@link enyo.Collection~STATES.BUSY}. The passed-in value will only be
-			used if it is a numeric value.
-		*/
-		isBusy: function (status) {
-			return !! ((isNaN(status) ? this.status : status) & STATES.BUSY);
-		},
-		
-		/**
-			Convenience method to avoid using bitwise comparison directly for the
-			{@link enyo.Collection#status}. Automatically check the current
-			{@link enyo.Collection#status} or the passed-in value to determine if it is a
-			[ready state]{@link enyo.Collection~STATES.READY}. The passed-in value will only be
-			used if it is a numeric value.
-		*/
-		isReady: function (status) {
-			return !! ((isNaN(status) ? this.status : status) & STATES.READY);
 		}
+		
 	});
 	
 	/**
-		@alias enyo.Model~STATES
-		@static
-		@public
-	*/
-	Model.STATES = STATES;
-	
-	/**
-		@private
-		@static
+	* @name enyo.Model.concat
+	* @static
+	* @private
 	*/
 	Model.concat = function (ctor, props) {
 		var proto = ctor.prototype || ctor;
 		
 		if (props.options) {
-			proto.options = mixin({}, [proto.options, props.options]);
+			proto.options = enyo.mixin({}, [proto.options, props.options]);
 			delete props.options;
 		}
 	};
 	
 	/**
-		@private
+	* @private
 	*/
 	enyo.kind.features.push(function (ctor) {
 		if (ctor.prototype instanceof Model) {

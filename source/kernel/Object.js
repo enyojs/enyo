@@ -26,7 +26,7 @@
 	}
 
 	/**
-	* {@link enyo.Object} lies at the heart of the enyo framework's implementations of property
+	* {@link enyo.Object} lies at the heart of the Enyo framework's implementations of property
 	* publishing, computed properties (via the {@link enyo.ComputedSupport} 
 	* [mixin]{@link external:mixin}, and data binding via the {@link enyo.BindingSupport} 
 	* [mixin]{@link external:mixin} and {@link enyo.Binding} object. It also provides several 
@@ -36,6 +36,7 @@
 	* @mixes enyo.MixinSupport
 	* @mixes enyo.ObseverSupport
 	* @mixes enyo.BindingSupport
+	* @public
 	*/
 	kind(
 		/** @lends enyo.Object.prototype */ {
@@ -205,7 +206,7 @@
 		* [object]{@link enyo.Object} has been destroyed, the bound method will be aborted cleanly 
 		* with no value returned.
 		*
-		* This method should generally be used instead of `enyo.bind` for running code in the 
+		* This method should generally be used instead of {@link enyo.bind} for running code in the 
 		* context of an instance of {@link enyo.Object} or one of its 
 		* [subkinds]{@link external:subkind}.
 		*

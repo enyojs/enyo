@@ -12,13 +12,33 @@
 
 /**
 * @todo Need to define this.
-* @external Event
+* @external event
 * @see https://github.com/enyojs/enyo/wiki/Event-Handling
 */
 
 /**
 * @todo Need to define this.
 * @external EUID
+*/
+
+/**
+* @todo Need to define this.
+* @external delegate
+*/
+
+/**
+* @todo Need to define this.
+* @external constructor
+*/
+
+/**
+* @todo Need to define this.
+* @external configurationBlock
+*/
+
+/**
+* @todo Need to define this.
+* @external chrome
 */
 
 ///// Internally Documented Links (Glossary) /////

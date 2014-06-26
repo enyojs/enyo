@@ -1,25 +1,52 @@
-//*@public
 /**
-	_enyo.Controller_ is the base kind for all controllers in Enyo. An
-	abstract kind, it is a delegate/component that is designed to be a
-	proxy for information.
+* {@link enyo.Controller} is the base kind for all controllers in Enyo. An abstract 
+* [kind]{@link external:kind}, it is a 
+* [delegate]{@link external:delegate}/[component]{@link enyo.Component} that is designed to be a 
+* proxy for information.
+*
+* @class enyo.Controller
+* @public
 */
-enyo.kind({
-	//*@public
-	name: "enyo.Controller",
-	kind: "enyo.MultipleDispatchComponent",
+enyo.kind(
+	/** @lends enyo.Controller.prototype */ {
+
 	/**
-		Set this flag to `true` such that when instanced this _controller_ will be available
-		globally. If this flag is `true` even the `owner` (if any) cannot _destroy_ it.
+	* @private
+	*/
+	name: "enyo.Controller",
+
+	/**
+	* @private
+	*/
+	kind: "enyo.MultipleDispatchComponent",
+
+	/**
+	* Set this flag to `true` such that when instanced this [controller]{@link enyo.Controller} will
+	* be available globally. If this flag is `true` even the [owner]{@link enyo.Component#owner} 
+	* (if any) cannot [destroy]{@link enyo.Component#destroy} it.
+	*
+	* @default false
+	* @type {Boolean}
+	* @public
 	*/
 	global: false,
+
 	/**
-		The default source of information for all instances of _enyo.Controller_
-		and its subkinds. In some cases, this will be a computed property to
-		facilitate overloading. It may contain any type of data.
+	* The default source of information for all instances of {@link enyo.Controller} and its 
+	* [subkinds]{@link external:subkind}. In some cases, this will be a 
+	* [computed property]{@link enyo.ComputedSupport} to facilitate overloading. It may contain any
+	* type of data.
+	*
+	* @default null
+	* @type {*}
+	* @public
 	*/
 	data: null,
-	//*@protected
+
+	/**
+	* @method
+	* @private
+	*/
 	constructor: enyo.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);

@@ -6,7 +6,24 @@
 		, ObserverSupport;
 		
 	enyo.concatenated.push("observers");
-		
+	
+	/**
+	* A method that responds to changes to one or more properties.
+	* [Observers]{@link enyo.ObserverSupport~observer} can be registered several different ways.
+	* See the {@link enyo.ObserverSupport} documentation for more details. Also note that
+	* [observers]{@link enyo.ObserverSupport~observer} should not be called directly but, if
+	* defined on a [kind]{@link external:kind}, they can be overloaded for special behavior.
+	*
+	* @see enyo.ObserverSupport
+	* @see enyo.ObserverSupport.observe
+	* @callback enyo.ObserverSupport~Observer
+	* @param {*} was The previous value of the property that has changed.
+	* @param {*} is The current value of the property that has changed.
+	* @param {String} prop The name of the property that has changed.
+	* @public
+	*/
+	
+	
 	/**
 		@private
 	*/
