@@ -179,7 +179,7 @@
 	* properties have a different meaning in a specific context. Please review their
 	* descriptions below to see how they are used in this context.
 	* 
-	* @typedef {Object} enyo.Collection~RemoveOptions
+	* @typedef {enyo.Collection~Options} enyo.Collection~RemoveOptions
 	* @property {Boolean} silent - Emit events and notifications.
 	* @property {Boolean} commit - [Commit]{@link enyo.Collection#commit} changes to the
 	*	[collection]{@link enyo.Collection} after completing the
@@ -189,6 +189,40 @@
 	* @property {Boolean} destroy - [Destroy]{@link enyo.Model#destroy} the
 	*	[model]{@link enyo.Model} as well as remove it from the
 	*	[collection]{@link enyo.Collection}.
+	*/
+	
+	/**
+	* The configurable options for [fetch]{@link enyo.Collection#fetch},
+	* [commit]{@link enyo.Collection#commit} and [destroy]{@link enyo.Collection#destroy}.
+	*
+	* @typedef {enyo.Collection~Options} enyo.Collection~ActionOptions
+	* @property {enyo.Collection~Success} success - The callback executed upon successful
+	*	completion.
+	* @property {enyo.Collection~Error} error - The callback executed upon a failed attempt.
+	*/
+	
+	/**
+	* @callback enyo.Collection~Success
+	* @param {enyo.Collection} collection The collection that is returning successfully.
+	* @param {enyo.Collection~ActionOptions} opts The original options passed to the action method
+	*	that is returning successfully.
+	* @param {*} res The result, if any, returned by the [source]{@link enyo.Source} that
+	*	executed it.
+	* @param {String} source The name of the [source]{@link enyo.Collection#source} that has
+	*	returned successfully.
+	*/
+	
+	/**
+	* @callback enyo.Collection~Error
+	* @param {enyo.Collection} collection The collection that is returning successfully.
+	* @param {String} action The name of the action that failed, one of `FETCHING`,
+	*	`COMMITTING` or `DESTROYING`.
+	* @param {enyo.Collection~ActionOptions} opts The original options passed to the
+	*	action method that is returning successfully.
+	* @param {*} res The result, if any, returned by the [source]{@link enyo.Source} that
+	*	executed it.
+	* @param {String} source The name of the [source]{@link enyo.Collection#source} that has
+	*	returned successfully.
 	*/
 	
 	/**
@@ -786,19 +820,18 @@
 		},
 		
 		/**
-		* Commit the [model]{@link enyo.Model} to a [source]{@link enyo.Model#source} or
-		* [sources]{@link enyo.Model#source}. A {@link enyo.Model} cannot be
-		* [committed]{@link enyo.Model#commit} if it is in an
+		* Commit the [collection]{@link enyo.Collection} to a [source]{@link enyo.Collection#source}
+		* or [sources]{@link enyo.Collection#source}. A {@link enyo.Collection} cannot be
+		* [committed]{@link enyo.Collection#commit} if it is in an
 		* [error]{@link enyo.States.ERROR} ({@link enyo.StateSupport.isError}) or
 		* [busy]{@link enyo.States.BUSY} ({@link enyo.StateSupport.isBusy})
 		* [state]{@link enyo.Model#status}. While executing it will add the
-		* [COMMITTING]{@link enyo.States.COMMITTING} flag to [status]{@link enyo.Model#status}. Once
-		* it has completed execution it will remove this flag (even if it fails).
+		* [COMMITTING]{@link enyo.States.COMMITTING} flag to [status]{@link enyo.Collection#status}.
+		* Once it has completed execution it will remove this flag (even if it fails).
 		*
-		* @see enyo.Model#committed
-		* @see enyo.Model#status
-		* @param {enyo.Model~ActionOptions} [opts] The overloaded [options]{@link enyo.Model~Options} and/or the
-		*	_success_ and _error_ callbacks.
+		* @see enyo.Collection#committed
+		* @see enyo.Collection#status
+		* @param {enyo.Collection~ActionOptions} [opts] Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -839,6 +872,19 @@
 		},
 		
 		/**
+		* Fetch the [collection]{@link enyo.Collection} from a
+		* [source]{@link enyo.Collection#source} or [sources]{@link enyo.Collection#source}. A
+		* {@link enyo.Collection} cannot be [fetcheded]{@link enyo.Collection#fetch} if it is in an
+		* [error]{@link enyo.States.ERROR} ({@link enyo.StateSupport.isError}) or
+		* [busy]{@link enyo.States.BUSY} ({@link enyo.StateSupport.isBusy})
+		* [state]{@link enyo.Model#status}. While executing it will add the
+		* [FETCHING]{@link enyo.States.FETCHING} flag to [status]{@link enyo.Collection#status}.
+		* Once it has completed execution it will remove this flag (even if it fails).
+		*
+		* @see enyo.Collection#fetched
+		* @see enyo.Collection#status
+		* @param {enyo.Collection~ActionOptions} [opts] Optional configuration options.
+		* @returns {this} The callee for chaining.
 		* @public
 		*/
 		fetch: function (opts) {
@@ -878,6 +924,24 @@
 		},
 		
 		/**
+		* Destroy the [collection]{@link enyo.Collection}. By default, the
+		* [collection]{@link enyo.Collection} will only be [destroyed]{@link external:destroy} in
+		* the client. To execute with a [source]{@link enyo.Collection#source} or
+		* [sources]{@link enyo.Collection#source} the
+		* [commit default option]{@link enyo.Collection#options} must be `true` or a `source`
+		* property must be provided in the _opts_ parameter explicitly. A {@link enyo.Collection}
+		* cannot be [destroyed]{@link enyo.Collection#destroy} (using a
+		* [source]{@link enyo.Collection#source}) if it is in an [error]{@link enyo.States.ERROR}
+		* ({@link enyo.StateSupport.isError}) or [busy]{@link enyo.States.BUSY}
+		* ({@link enyo.StateSupport.isBusy}) [state]{@link enyo.Collection#status}. While executing
+		* it will add the [DESTROYING]{@link enyo.States.DESTROYING} flag to
+		* [status]{@link enyo.Collection#status}. Once it has completed execution it will remove
+		* this flag (even if it fails).
+		*
+		* @see enyo.Collection#status
+		* @param {enyo.Collection~ActionOptions} [opts] Optional configuration options.
+		* @returns {this} The callee for chaining.
+		* @method
 		* @public
 		*/
 		destroy: enyo.inherit(function (sup) {
@@ -1000,6 +1064,21 @@
 		},
 		
 		/**
+		* When a [commit]{@link enyo.Collection#commit} has completed successfully it is returned
+		* to this method. This method handles special and important behavior - it should not be
+		* called directly and take care when overloading to ensure you call the super-method. This
+		* correctly sets the [status]{@link enyo.Collection#status} and in cases where multiple
+		* [sources]{@link enyo.Collection#source} were used it waits until all have responded before
+		* clearing the [COMMITTING]{@link enyo.States.COMMITTING} flag. If a
+		* [success]{@link enyo.Collection~Success} callback was was provided it will be called once
+		* for each [source]{@link enyo.Collection#source}.
+		*
+		* @param {enyo.Collection~ActionOptions} opts The original options passed to
+		*	[commit]{@link enyo.Collection#commit} merged with the defaults.
+		* @param {*} [res] The result provided from the given _source_ if any. This will vary
+		*	depending on the [source]{@link enyo.Collection#source}.
+		* @param {String} source The name of the [source]{@link enyo.Collection#source} that has
+		*	completed successfully.
 		* @public
 		*/
 		committed: function (opts, res, source) {
@@ -1022,6 +1101,21 @@
 		},
 		
 		/**
+		* When a [fetch]{@link enyo.Collection#fetch} has completed successfully it is returned
+		* to this method. This method handles special and important behavior - it should not be
+		* called directly and take care when overloading to ensure you call the super-method. This
+		* correctly sets the [status]{@link enyo.Collection#status} and in cases where multiple
+		* [sources]{@link enyo.Collection#source} were used it waits until all have responded before
+		* clearing the [FETCHING]{@link enyo.States.FETCHING} flag. If a
+		* [success]{@link enyo.Collection~Success} callback was was provided it will be called once
+		* for each [source]{@link enyo.Collection#source}.
+		*
+		* @param {enyo.Collection~ActionOptions} opts The original options passed to
+		*	[fetch]{@link enyo.Collection#fetch} merged with the defaults.
+		* @param {*} [res] The result provided from the given _source_ if any. This will vary
+		*	depending on the [source]{@link enyo.Collection#source}.
+		* @param {String} source The name of the [source]{@link enyo.Collection#source} that has
+		*	completed successfully.
 		* @public
 		*/
 		fetched: function (opts, res, source) {
@@ -1060,7 +1154,7 @@
 		* 
 		* @param {String} action The name of the action that failed, one of `FETCHING` or
 		*	`COMMITTING`.
-		* @param {enyo.Collection~Options} opts The options hash originally passed along with
+		* @param {enyo.Collection~ActionOptions} opts The options hash originally passed along with
 		*	the original action.
 		* @param {*} [res] The result of the requested _action_; varies depending on the
 		*	requested [source]{@link enyo.Collection#source}.
@@ -1143,6 +1237,7 @@
 		* @param {Object} [props] A [hash]{@link external:Object} of properties to apply directly
 		*	to the [collection]{@link enyo.Collection}.
 		* @param {Object} [opts] A [hash]{@link external:Object}
+		* @method
 		* @public
 		*/
 		constructor: enyo.inherit(function (sup) {
@@ -1185,6 +1280,7 @@
 		}),
 		
 		/**
+		* @method
 		* @private
 		*/
 		constructed: enyo.inherit(function (sup) {

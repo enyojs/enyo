@@ -24,6 +24,16 @@
 	});
 	
 	/**
+	* The event emitted when [attributes]{@link enyo.Model#attributes} have been modified. The event
+	* [object]{@link external:Object} will be the key/value pairs of
+	* [attributes]{@link enyo.Model#attributes} that changed and their new values.
+	*
+	* @event enyo.Model#change
+	* @type {Object}
+	* @public
+	*/
+	
+	/**
 	* The default configurable [options]{@link enyo.Model#options} used in certain API methods
 	* of {@link enyo.Model}.
 	*
@@ -54,8 +64,8 @@
 	/**
 	* @callback enyo.Model~Success
 	* @param {enyo.Model} model The model that is returning successfully.
-	* @param {enyo.Model~Options} opts The original [options]{@link enyo.Model~Options} passed to the
-	*	action method that is returning successfully.
+	* @param {enyo.Model~ActionOptions} opts The original options passed to the action method that
+	*	is returning successfully.
 	* @param {*} res The result, if any, returned by the [source]{@link enyo.Source} that
 	*	executed it.
 	* @param {String} source The name of the [source]{@link enyo.Model#source} that has returned
@@ -67,8 +77,8 @@
 	* @param {enyo.Model} model The model that is returning successfully.
 	* @param {String} action The name of the action that failed, one of `FETCHING`,
 	*	`COMMITTING` or `DESTROYING`.
-	* @param {enyo.Model~Options} opts The original [options]{@link enyo.Model~Options} passed to the
-	*	action method that is returning successfully.
+	* @param {enyo.Model~Options} opts The original options passed to the action method that is
+	*	returning successfully.
 	* @param {*} res The result, if any, returned by the [source]{@link enyo.Source} that
 	*	executed it.
 	* @param {String} source The name of the [source]{@link enyo.Model#source} that has returned
@@ -345,8 +355,7 @@
 		*
 		* @see enyo.Model#committed
 		* @see enyo.Model#status
-		* @param {enyo.Model~ActionOptions} [opts] The overloaded [options]{@link enyo.Model~Options} and/or the
-		*	_success_ and _error_ callbacks.
+		* @param {enyo.Model~ActionOptions} [opts] Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -398,8 +407,7 @@
 		*
 		* @see enyo.Model#fetched
 		* @see enyo.Model#status
-		* @param {enyo.Model~ActionOptions} [opts] The overloaded [options]{@link enyo.Model~Options} and/or the
-		*	_success_ and _error_ callbacks.
+		* @param {enyo.Model~ActionOptions} [opts] Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -453,8 +461,7 @@
 		* it has completed execution it will remove this flag (even if it fails).
 		*
 		* @see enyo.Model#status
-		* @param {enyo.Model~ActionOptions} [opts] The overloaded [options]{@link enyo.Model~Options} and/or the
-		*	_success_ and _error_ callbacks.
+		* @param {enyo.Model~ActionOptions} [opts] Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -564,6 +571,7 @@
 		* `true` it will emit a `change` event as well as individual
 		* [notifications]{@link enyo.ObserverSupport.notify} for the properties that were modified.
 		*
+		* @fires enyo.Model#event:change
 		* @see enyo.ObserverSupport
 		* @see enyo.BindingSupport
 		* @param {(String|Object)} path Either the property name or a [hash]{@link external:Object}
@@ -753,8 +761,8 @@
 		* [success]{@link enyo.Model~Success} callback was was provided it will be called once for
 		* each [source]{@link enyo.Model#source}.
 		*
-		* @param {enyo.Model~Options} opts The original options passed to
-		*	[fetch]{@link enyo.Model#fetch} merged with the [defaults]{@link enyo.Model~Options}.
+		* @param {enyo.Model~ActionOptions} opts The original options passed to
+		*	[fetch]{@link enyo.Model#fetch} merged with the defaults.
 		* @param {*} [res] The result provided from the given _source_ if any. This will vary
 		*	depending on the [source]{@link enyo.Model#source}.
 		* @param {String} source The name of the [source]{@link enyo.Model#source} that has
@@ -798,8 +806,8 @@
 		* [success]{@link enyo.Model~Success} callback was was provided it will be called once for
 		* each [source]{@link enyo.Model#source}.
 		*
-		* @param {enyo.Model~Options} opts The original options passed to
-		*	[commit]{@link enyo.Model#commit} merged with the [defaults]{@link enyo.Model~Options}.
+		* @param {enyo.Model~ActionOptions} opts The original options passed to
+		*	[commit]{@link enyo.Model#commit} merged with the defaults.
 		* @param {*} [res] The result provided from the given _source_ if any. This will vary
 		*	depending on the [source]{@link enyo.Model#source}.
 		* @param {String} source The name of the [source]{@link enyo.Model#source} that has
@@ -839,8 +847,8 @@
 		* @see enyo.StateSupport.clearError
 		* @param {String} action The _action_ (one of `FETCHING`, `COMMITTING` or `DESTROYING`) that
 		*	failed and is now in an [error state]{@link enyo.States.ERROR}.
-		* @param {enyo.Model~Options} opts The original options passed to the _action_ method -merged with
-		*	the [defaults]{@link enyo.Model~Options}.
+		* @param {enyo.Model~ActionOptions} opts The original options passed to the _action_ method
+		*	merged with the defaults.
 		* @param {*} [res] The result provided from the given _source_ if any. This will vary
 		*	depending on the [source]{@link enyo.Model#source}.
 		* @param {String} source The name of the [source]{@link enyo.Model#source} that has
