@@ -10,6 +10,17 @@
 * @see enyo.mixin
 */
 
+/**
+* @todo Need to define this.
+* @external Event
+* @see https://github.com/enyojs/enyo/wiki/Event-Handling
+*/
+
+/**
+* @todo Need to define this.
+* @external EUID
+*/
+
 ///// Internally Documented Links (Glossary) /////
 
 /**
@@ -47,144 +58,141 @@
 */
 
 /**
-* undefined property
+* @external callback
+* @see https://developer.mozilla.org/en-US/docs/Mozilla/js-ctypes/js-ctypes_reference/Callbacks
+*/
+
+/**
 * @external undefined
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined
 */
 
 /**
-* String Object
+* @external arguments
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions_and_function_scope/arguments
+*/
+
+/**
 * @external String
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
 */
 
 /**
-* Function Object
 * @external Function
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
 */
 
 /**
-* Array Object
 * @external Array
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
 */
 
 /**
-* Array.indexOf
 * @external Array.indexOf
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
 * @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.14
 */
 
 /**
-* Array.lastIndexOf
 * @external Array.lastIndexOf
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf
 * http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.15
 */
 
 /**
-* Array.findIndex
 * @external Array.findIndex
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
 */
 
 /**
-* Array.find
 * @external Array.find
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
 */
 
 /**
-* Array.forEach
 * @external Array.forEach
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
 * @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.18
 */
 
 /**
-* Array.map
 * @external Array.map
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
 * @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.19
 */
 
 /**
-* Array.filter
 * @external Array.filter
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
 * @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.20
 */
 
 /**
-* `Object` Object
+* @external Array.join
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+*/
+
+/**
 * @external Object
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
 */
 
 /**
-* Object.create
 * @external Object.create
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
 */
 
 /**
-* Object.hasOwnProperty
 * @external Object.hasOwnProperty
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
 */
 
 /**
-* Object.keys
 * @external Object.keys
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
 */
 
 /**
-* window.setTimeout
 * @external window.setTimeout
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Window.setTimeout
 */
 
 /**
-* window.performance
 * @external window.performance
 * @see https://developer.mozilla.org/en-US/docs/Web/API/window.performance
 */
 
 /**
-* Date
 * @external Date
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
 */
 
 /**
-* Date.now
 * @external Date.now
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now
 */
 
 /**
-* Date.getTime
 * @external Date.getTime
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime
 */
 
 /**
-* console
 * @external console
 * @see https://developer.mozilla.org/en-US/docs/Web/API/console
 */
 
 /**
-* console.warn
 * @external console.warn
 * @see https://developer.mozilla.org/en-US/docs/Web/API/console.warn
 */
 
 /**
-* console.error
 * @external console.error
 * @see https://developer.mozilla.org/en-US/docs/Web/API/console.error
+*/
+
+/**
+* @external Node
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Node
 */

@@ -1,6 +1,3 @@
-/**
-	@namespace enyo
-*/
 (function (enyo, scope) {
 	
 	var kind = enyo.kind;
@@ -8,30 +5,31 @@
 	var ViewController = enyo.ViewController;
 	
 	/**
-		Any _enyo.Application_ instances will be available by name from this object. If no name is
-		provided for an application, a name will be generated for it.
-	
-		@public
-		@memberof enyo
+	* Any _enyo.Application_ instances will be available by name from this 
+	* [object]{@link external:Object}. If no name is provided for an application, a name will be 
+	* generated for it.
+	*
+	* @public
 	*/
 	enyo.applications = {};
 	
 	/**
-		_enyo.Application_ is a type of {@link enyo.ViewController} that encapsulates a collection
-		of {@link enyo.Controller controllers} and a hierarchy of {@link enyo.Control controls}.
-		There may be multiple instances of an application at a given time, with unique names and
-		target DOM nodes. Within a given application, a reference to the application is available
-		on all {@link enyo.Component components} objects via the _app_ property.
-	
-		@public
-		@class enyo.Application
-		@extends enyo.ViewController
+	* _enyo.Application_ is a type of {@link enyo.ViewController} that encapsulates a collection
+	* of {@link enyo.Controller controllers} and a hierarchy of [controls]{@link enyo.Control}.
+	* There may be multiple instances of an application at a given time, with unique names and
+	* target [DOM nodes]{@link external:Node}. Within a given application, a reference to the 
+	* application is available on all [components]{@link enyo.Component} via the 
+	* [app]{@link enyo.ApplicationSupport#app} property.
+	*
+	* @class enyo.Application
+	* @extends enyo.ViewController
+	* @public
 	*/
 	kind(
 		/** @lends enyo.Application.prototype */ {
 		
 		/**
-			@private
+		* @private
 		*/
 		name: 'enyo.Application',
 		
@@ -41,53 +39,56 @@
 		kind: ViewController,
 		
 		/**
-			If set to true (the default), the application's _start()_ method will automatically be
-			called once its _create()_ method has completed execution. Set this to false if
-			additional setup (or an asynchronous event) is required before starting.
-		
-			@public
-			@default true
-			@type {Boolean}
+		* If set to `true` (the default), the application's [start]{@link enyo.Application#start} 
+		* method will automatically be called once its [create]{@link enyo.Application#create} 
+		* method has completed execution. Set this to `false` if additional setup (or an 
+		* asynchronous [event]{@link external:Event}) is required before starting.
+		*
+		* @default true
+		* @type {Boolean}
+		* @public
 		*/
 		autoStart: true,
 		
 		/**
-			If set to true (the default), the application will immediately render its _view_ when
-			the _start()_ method has completed execution. Set this to false to delay rendering if
-			additional setup (or an asynchronous event) is required before rendering.
-		
-			@public
-			@default true
-			@type {Boolean}
+		* If set to `true` (the default), the application will immediately 
+		* [render]{@link enyo.Application#render} its [view]{@link enyo.ViewController#view} when 
+		* the [start]{@link enyo.Application#start} method has completed execution. Set this to 
+		* `false` to delay rendering if additional setup (or an asynchronous 
+		* [event]{@link external:Event}) is required before rendering.
+		*
+		* @default true
+		* @type {Boolean}
+		* @public
 		*/
 		renderOnStart: true,
 		
 		/**
-			The _defaultKind_ for _enyo.Application_ is _enyo.Controller_.
-		
-			@public
-			@default 'enyo.Controller'
-			@type {String}
+		* The _defaultKind_ for {@link enyo.Application} is {@link enyo.Controller}.
+		*
+		* @default 'enyo.Controller'
+		* @type {String}
+		* @public
 		*/
 		defaultKind: 'enyo.Controller',
 
 		/**
-			A bindable, read-only property that indicates whether the view has been rendered.
-		
-			@public
-			@readonly
-			@type {Boolean}
+		* A [bindable]{@link enyo.BindingSupport}, read-only property that indicates whether the 
+		* [view]{@link enyo.ViewController#view} has been rendered.
+		*
+		* @readonly
+		* @type {Boolean}
+		* @public
 		*/
 		viewReady: false,
 		
 		/**
-			An abstract method to allow for additional setup to take place after the application has
-			completed its initialization and is ready to be rendered. Overload this method to suit
-			your app's specific requirements.
-		
-			@public
-			@method
-			@returns {this} The callee for chaining.
+		* An abstract method to allow for additional setup to take place after the application has
+		* completed its initialization and is ready to be rendered. Overload this method to suit
+		* your app's specific requirements.
+		*
+		* @returns {this} The callee for chaining.
+		* @public
 		*/
 		start: function () {
 			if (this.renderOnStart) this.render();
@@ -95,7 +96,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		render: enyo.inherit(function (sup) {
 			return function () {
@@ -106,7 +107,7 @@
 		}),
 		
 		/**
-			@private
+		* @private
 		*/
 		constructor: enyo.inherit(function (sup) {
 			return function (props) {
@@ -125,10 +126,11 @@
 		}),
 		
 		/**
-			Allows normal creation flow and then executes the application's _start()_ method if
-			_autoStart_ is true.
-		
-			@private
+		* Allows normal creation flow and then executes the application's 
+		* [start]{@link enyo.Application#start} method if 
+		* [autoStart]{@link enyo.Application#autoStart} is `true`.
+		*
+		* @private
 		*/
 		create: enyo.inherit(function (sup) {
 			return function () {
@@ -140,10 +142,10 @@
 		}),
 		
 		/**
-			Makes sure that all components created by this application have their _app_ property
-			set correctly.
-		
-			@private
+		* Makes sure that all {@link enyo.Component components} created by this application have 
+		* their [app]{@link enyo.ApplicationSupport#app} property set correctly.
+		*
+		* @private
 		*/
 		adjustComponentProps: enyo.inherit(function (sup) {
 			return function (props) {
@@ -153,9 +155,9 @@
 		}),
 		
 		/**
-			Cleans up the registration for the application.
-		
-			@private
+		* Cleans up the registration for the application.
+		*
+		* @private
 		*/
 		destroy: enyo.inherit(function (sup) {
 			return function () {
@@ -165,9 +167,10 @@
 		}),
 		
 		/**
-			Ensures that events bubbling from the views will reach _enyo.master_ as expected.
-		
-			@private
+		* Ensures that [events]{@link external:Event} bubbling from the views will reach 
+		* {@link enyo.master} as expected.
+		*
+		* @private
 		*/
 		owner: enyo.master
 	});

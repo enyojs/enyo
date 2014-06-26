@@ -1,20 +1,17 @@
-/**
-	@namespace enyo
-*/
 (function (enyo, scope) {
 
-	var kind = enyo.kind,
-		logging = enyo.logging;
+	var kind = enyo.kind
+		, logging = enyo.logging;
 
 	var MixinSupport = enyo.MixinSupport
 		, ObserverSupport = enyo.ObserverSupport
 		, BindingSupport = enyo.BindingSupport;
 		
 	/**
-		Used by all {@link enyo.Object objects} and subkinds when using the
-		{@link enyo.Object#log}, {@link enyo.Object#warn} and {@link enyo.Object#error} methods.
-	
-		@private
+	* Used by all [objects]{@link enyo.Object} and [subkinds]{@link external:subkind} when using the
+	* {@link enyo.Object#log}, {@link enyo.Object#warn} and {@link enyo.Object#error} methods.
+	*
+	* @private
 	*/
 	function log (method, args) {
 		if (logging.shouldLog(method)) {
@@ -29,65 +26,66 @@
 	}
 
 	/**
-		{@link enyo.Object} lies at the heart of the Enyo framework's implementations of property
-		publishing, computed properties (via the {@link enyo.ComputedSupport} mixin, and data
-		binding via the {@link enyo.BindingSupport} mixin and {@link enyo.Binding} object. It also
-		provides several utility functions for its subkinds.
-	
-		@class enyo.Object
-		@mixes enyo.MixinSupport
-		@mixes enyo.ObseverSupport
-		@mixes enyo.BindingSupport
+	* {@link enyo.Object} lies at the heart of the enyo framework's implementations of property
+	* publishing, computed properties (via the {@link enyo.ComputedSupport} 
+	* [mixin]{@link external:mixin}, and data binding via the {@link enyo.BindingSupport} 
+	* [mixin]{@link external:mixin} and {@link enyo.Binding} object. It also provides several 
+	* utility [functions]{@link external:Function} for its [subkinds]{@link external:subkind}.
+	*
+	* @class enyo.Object
+	* @mixes enyo.MixinSupport
+	* @mixes enyo.ObseverSupport
+	* @mixes enyo.BindingSupport
 	*/
 	kind(
 		/** @lends enyo.Object.prototype */ {
 
 		/**
-			@private
+		* @private
 		*/
 		name: 'enyo.Object',
 
 		/**
-			@private
+		* @private
 		*/
 		kind: null,
 
 		/**
-			@private
+		* @private
 		*/
 		noDefer: true,
 
 		/**
-			If the {@link enyo.Object#destroy destroy} method has been called this property will be
-			`true`, otherwise `false`.
-
-			@public
-			@type {Boolean}
+		* If the [destroy]{@link enyo.Object#destroy} method has been called this property will be
+		* `true`, otherwise `false`.
+		*
+		* @default false
+		* @type {Boolean}
+		* @public
 		*/
 		destroyed: false,
 
 		/**
-			@private
+		* @private
 		*/
 		mixins: [MixinSupport, ObserverSupport, BindingSupport],
 
 		/**
-			@private
+		* @private
 		*/
-		constructor: function(props) {
+		constructor: function (props) {
 			enyo._objectCount++;
 			this.importProps(props);
 		},
 
 		/**
-			Import the values from the given object. Automatically called from the
-			{@link enyo.Object#constructor constructor}.
-		
-			@public
-			@method
-			@param {Object} [props] If provided, the object from which to retrieve keys/values to
-				mix-in.
-			@returns {this} The callee for chaining.
+		* Import the values from the given [object]{@link external:Object}. Automatically called
+		* from the [constructor]{@link enyo.Object#constructor}.
+		*
+		* @param {Object} [props] If provided, the [object]{@link external:Object} from which to 
+		*                         retrieve [keys/values]{@link external:Object.keys} to mix-in.
+		* @returns {this} The callee for chaining.
+		* @public
 		*/
 		importProps: function (props) {
 			var key;
@@ -113,15 +111,14 @@
 		},
 		
 		/**
-			Call the {@link enyo.Object#destroy destroy} method for the named {@link enyo.Object}
-			property.
-		
-			@public
-			@method
-			@param {String} name The name of the property to destroy if possible.
-			@returns {this} The callee for chaining.
+		* Call the [destroy]{@link enyo.Object#destroy} method for the named {@link enyo.Object} 
+		* property.
+		*
+		* @param {String} name The name of the property to destroy if possible.
+		* @returns {this} The callee for chaining.
+		* @public
 		*/
-		destroyObject: function(name) {
+		destroyObject: function (name) {
 			if (this[name] && this[name].destroy) {
 				this[name].destroy();
 			}
@@ -131,104 +128,101 @@
 		},
 		
 		/**
-			Sends a log message to the console, prepended with the name of the kind and method from
-			which _log_ was invoked. Multiple arguments are coerced to String and joined with
-			spaces.
-		
-			@public
-			@method
-			@example
-			enyo.kind({
-				name: 'MyObject',
-				kind: 'enyo.Object',
-				hello: function() {
-					this.log('says', 'hi');
-					// shows in the console: MyObject.hello: says hi
-				}
-			});
+		* Sends a log message to the [console]{@link external:console}, prepended with the name of 
+		* the [kind]{@link external:kind} and method from which _log_ was invoked. Multiple 
+		* [arguments]{@link external:arguments} are coerced to [String]{@link external:String} and 
+		* [joined with spaces]{@link external:Array.join}.
+		*
+		* @example
+		* enyo.kind({
+		*	name: 'MyObject',
+		*	kind: 'enyo.Object',
+		*	hello: function() {
+		*		this.log('says', 'hi');
+		*		// shows in the console: MyObject.hello: says hi
+		*	}
+		* });
+		* @public
 		*/
-		log: function() {
+		log: function () {
 			var acc = arguments.callee.caller,
 				nom = ((acc ? acc.displayName : '') || '(instance method)') + ':';
 			logging.log('log', [nom].concat(enyo.cloneArray(arguments)));
 		},
 		
 		/**
-			Same as {@link enyo.Object#log log} except that it uses the console's warn method (if
-			it exists).
-		
-			@public
-			@method
+		* Same as [log]{@link enyo.Object#log} except that it uses the 
+		* [console's warn]{@warn external:console.warn} method (if it exists).
+		*
+		* @public
 		*/
-		warn: function() {
+		warn: function () {
 			log('warn', arguments);
 		},
 		
 		/**
-			Same as {@link enyo.Object#log log} except that it uses the console's error method (if
-			it exists).
-			
-			@public
-			@method
+		* Same as [log]{@link enyo.Object#log} except that it uses the 
+		* [console's error]{@link external:console.error} method (if it exists).
+		*
+		* @public
 		*/
-		error: function() {
+		error: function () {
 			log('error', arguments);
 		},
 
 		/**
-			Retrieves the value for the given path. The value can be retrieved as long as the
-			given path is resolvable relative to the given {@link enyo.Object}. See
-			{@link enyo.getPath} for complete details.
-
-			This method is backwards-compatible and will automatically call any existing _getter_
-			method that uses the getProperty naming convention. (Moving forward, however, Enyo code
-			should use computed properties instead of relying on the getter naming convention.)
-		
-			@public
-			@method
-			@param {String} path The path from which to retrieve a value.
-			@returns {*} The value for the given path or `undefined` if the path could not be
-				completely resolved.
+		* Retrieves the value for the given path. The value can be retrieved as long as the given 
+		* path is resolvable relative to the given {@link enyo.Object}. See {@link enyo.getPath} for
+		* complete details.
+		*
+		* This method is backwards-compatible and will automatically call any existing _getter_
+		* method that uses the getProperty naming convention. (Moving forward, however, Enyo code
+		* should use computed properties {@link enyo.ComputedSupport} instead of relying on the 
+		* getter naming convention.)
+		*
+		* @param {String} path The path from which to retrieve a value.
+		* @returns {*} The value for the given path or [undefined]{@link external:undefined} if 
+		*                  the path could not be completely resolved.
+		* @public
 		*/
 		get: enyo.getPath,
 		
 		/**
-			Updates the value for the given path. The value can be set as long as the
-			given path is resolvable relative to the given {@link enyo.Object}. See
-			{@link enyo.setPath} for complete details.
-		
-			@public
-			@method
-			@param {String} path The path for which to set the given value.
-			@param {*} is The value to set.
-			@param {Object} [opts] An options hash.
-			@returns {this} The callee for chaining.
+		* Updates the value for the given path. The value can be set as long as the given path is 
+		* resolvable relative to the given {@link enyo.Object}. See {@link enyo.setPath} for 
+		* complete details.
+		*
+		* @param {String} path The path for which to set the given value.
+		* @param {*} value The value to set.
+		* @param {Object} [opts] An options hash.
+		* @returns {this} The callee for chaining.
+		* @public
 		*/
 		set: enyo.setPath,
 	
 		/**
-			Binds a callback to this object. If the object has been destroyed, the bound method will
-			be aborted cleanly with no value returned.
-
-			This method should generally be used instead of `enyo.bind` for running code in the
-			context of an instance of _enyo.Object_ or one of its subkinds.
-		
-			@public
-			@method
-			@alias enyo.bindSafely
+		* Binds a [callback]{@link external:callback} to this [object]{@link enyo.Object}. If the 
+		* [object]{@link enyo.Object} has been destroyed, the bound method will be aborted cleanly 
+		* with no value returned.
+		*
+		* This method should generally be used instead of `enyo.bind` for running code in the 
+		* context of an instance of {@link enyo.Object} or one of its 
+		* [subkinds]{@link external:subkind}.
+		*
+		* @alias enyo.bindSafely
+		* @public
 		*/
-		bindSafely: function(method) {
+		bindSafely: function (method) {
 			var args = Array.prototype.concat.apply([this], arguments);
 			return enyo.bindSafely.apply(enyo, args);
 		},
 		
 		/**
-			An abstract method (primarily) that sets the {@link enyo.Object#destroyed destroyed}
-			property  to `true`.
-		
-			@public
-			@method
-			@returns {this} The callee for chaining.
+		* An abstract method (primarily) that sets the [destroyed]{@link enyo.Object#destroyed} 
+		* property to `true`.
+		*
+		* @returns {this} The callee for chaining.
+		* @public
 		*/
 		destroy: function () {
 			
@@ -241,12 +235,12 @@
 	});
 
 	/**
-		@private
+	* @private
 	*/
 	enyo._objectCount = 0;
 
 	/**
-		@private
+	* @private
 	*/
 	enyo.Object.concat = function (ctor, props) {
 		var pubs = props.published,
@@ -265,12 +259,13 @@
 	};
 
 	/**
-		This method creates a getter/setter for a published property of an _enyo.Object_, but is
-		deprecated. It is maintained for purposes of backwards compatability. The preferred method
-		is to mark public and protected (private) methods and properties using documentation or
-		other means and rely on the _get_ and _set_ methods of _enyo.Object_ instances.
-	
-		@private
+	* This method creates a getter/setter for a published property of an {@link enyo.Object}, but is
+	* deprecated. It is maintained for purposes of backwards compatability. The preferred method is 
+	* to mark public and protected (private) methods and properties using documentation or other 
+	* means and rely on the [get]{@link enyo.Object#get} and [set]{@link enyo.Object#set} methods of
+	* {@link enyo.Object} instances.
+	*
+	* @private
 	*/
 	function addGetterSetter (prop, value, proto) {
 		
