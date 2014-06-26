@@ -94,10 +94,10 @@
 	}
 	
 	/**
-	* _enyo.Binding_ is a mechanism used to keep properties synchronized. A binding may be used to 
-	* link two properties on different [objects]{@link enyo.Object}, or even two properties on the 
-	* same [object]{@link enyo.Object}. Once a [binding]{@link enyo.Binding} has been established, 
-	* it will wait for change notifications; when a notification arrives, the 
+	* {@link enyo.Binding} is a mechanism used to keep properties synchronized. A binding may be 
+	* used to link two properties on different [objects]{@link enyo.Object}, or even two properties 
+	* on the same [object]{@link enyo.Object}. Once a [binding]{@link enyo.Binding} has been 
+	* established, it will wait for change notifications; when a notification arrives, the 
 	* [binding]{@link enyo.Binding} will synchronize the value between the two ends. Note that 
 	* [bindings]{@link enyo.Binding} may be 
 	* [one-way (the default) or two-way]{@link enyo.Binding#oneWay}.

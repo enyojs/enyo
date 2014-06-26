@@ -21,6 +21,11 @@
 * @external EUID
 */
 
+/**
+* @todo Need to define this.
+* @external delegate
+*/
+
 ///// Internally Documented Links (Glossary) /////
 
 /**

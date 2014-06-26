@@ -36,6 +36,7 @@
 	* @mixes enyo.MixinSupport
 	* @mixes enyo.ObseverSupport
 	* @mixes enyo.BindingSupport
+	* @public
 	*/
 	kind(
 		/** @lends enyo.Object.prototype */ {
