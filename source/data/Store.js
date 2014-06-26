@@ -1,6 +1,3 @@
-/**
-	@namespace enyo
-*/
 (function (enyo, scope) {
 	
 	var kind = enyo.kind;
@@ -10,64 +7,71 @@
 	
 		// because Object is already taken by something...blarg
 		_Object = enyo.Object;
-		
+	
+	/**
+	* Only necessary because of the order in which mixins are applied.
+	*
+	* @class
+	* @private
+	*/
 	var BaseStore = enyo.kind({
 		kind: _Object,
 		mixins: [EventEmitter]
 	});
 	
 	/**
-		An anonymous kind used internally for the singleton {@link enyo.store}.
-
-		@protected
-		@class Store
-		@extends enyo.Object
+	* This method should determine if the given [model]{@link enyo.Model} should be included in the
+	* filtered set for the [find]{@link enyo.Store#find} method.
+	* 
+	* @callback enyo.Store~Filter
+	* @param {enyo.Model} model The [model]{@link enyo.Model} to filter.
+	* @returns {Boolean} Return `true` if the model meets the filter requirements, `false`
+	*	otherwise.
+	*/
+	
+	/**
+	* The configuration options for the [find]{@link enyo.Store#find} method.
+	* 
+	* @typedef {Object} enyo.Store~FindOptions
+	* @property {Boolean} all=true - Whether or not to include more than one match for the
+	*	filter method. If `true` will return an array of matches, otherwise a single match.
+	* @property {Object} context - If provided it will be used as the `this` (_context_) of
+	*	the filter method.
+	*/
+	
+	/**
+	* An anonymous kind used internally for the singleton {@link enyo.store}.
+    * 
+	* @see enyo.store
+	* @class enyo.Store
+	* @mixes enyo.EventEmitter
+	* @extends enyo.Object
+	* @protected
 	*/
 	var Store = kind(
 		/** @lends Store.prototype */ {
 		
 		/**
-			@private
+		* @private
 		*/
 		kind: BaseStore,
 		
 		/**
-			This method should determine if the given {@link enyo.Model} should be included in the
-			filtered set for {@link enyo.Store#find} method.
-		
-			@callback enyo.Store#find~filter
-			@param {enyo.Model} model The {@link enyo.Model} to filter.
-			@returns {boolean} Return `true` if the model meets the filter requirements, `false`
-				otherwise.
-		*/
-		
-		/**
-			The configuration options for the {@link enyo.Store#find} method.
-		
-			@typedef {object} enyo.Store#find~options
-			@property {boolean} all=true - Whether or not to include more than one match for the
-				filter method. If `true` will return an array of matches, otherwise a single match.
-			@property {object} context - If provided it will be used as the `this` (_context_) of
-				the filter method.
-		*/
-		
-		/**
-			Find a [model (or models)]{@link enyo.Model} of a certain [kind]{@link enyo.kind}. Will
-			use the return value from a filter method to determine whether or not to include a
-			particular [model]{@link enyo.Model}. Using the _all_ optional flag will ensure it
-			looks for all matches otherwise it will stop and return the first positive match.
-		
-			@param {enyo.Model} ctor The constructor for the _kind_ of {@link enyo.Model} it will
-				be filtering.
-			@param {enyo.Store#find~filter} fn The filter method.
-			@param {enyo.Store#find~options} [opts] The options parameter.
-			@returns {(enyo.Model|enyo.Model[]|undefined)} If the _all_ flag is `true` it will
-				return an array of [models]{@link enyo.Model} otherwise it will return the first
-				[model]{@link enyo.Model} that returned `true` from the filter method. It will
-				return `undefined` if _all_ is `false` and no match could be found
-				{@see external:Array.prototype.find}.
-			@method
-			@public
+		* Find a [model (or models)]{@link enyo.Model} of a certain [kind]{@link external:kind}.
+		* It uses the return value from a filter method to determine whether or not to include a
+		* particular [model]{@link enyo.Model}. Using the _all_ optional flag will ensure it
+		* looks for all matches otherwise it will stop and return the first positive match.
+		* 
+		* @see {@link external:Array.find}
+		* @param {enyo.Model} ctor The constructor for the [kind]{@link external:kind} of
+		*	[model]{@link enyo.Model} it will be filtering.
+		* @param {enyo.Store~Filter} fn The filter method.
+		* @param {enyo.Store~FindOptions} [opts] The options parameter.
+		* @returns {(enyo.Model|enyo.Model[]|undefined)} If the _all_ flag is `true` it will
+		*	return an array of [models]{@link enyo.Model} otherwise it will return the first
+		*	[model]{@link enyo.Model} that returned `true` from the filter method. It will
+		*	return `undefined` if _all_ is `false` and no match could be found.
+		* @public
 		*/
 		find: function (ctor, fn, opts) {
 			var kindName = ctor.prototype.kindName,
@@ -91,17 +95,15 @@
 		},
 		
 		/**
-			@alias enyo.Store#find
-			@method
-			@public
+		* @alias enyo.Store#find
+		* @public
 		*/
 		findLocal: function () {
 			return this.find.apply(this, arguments);
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		add: function (models, opts) {
 			var ctor = models && models instanceof Array ? models[0].ctor : models.ctor,
@@ -125,8 +127,7 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		remove: function (models, opts) {
 			var ctor = models && models instanceof Array ? models[0].ctor : models.ctor,
@@ -150,8 +151,20 @@
 		},
 		
 		/**
-			@public
-			@method
+		* Determine, from the given parameters, if the [store]{@link enyo.store} has a specific
+		* [model]{@link enyo.Model}.
+		*
+		* @param {(Function|enyo.Model)} ctor Can be the constructor for an {@link enyo.Model} or
+		*	a [model]{@link enyo.Model} instance. If not providing a [model]{@link enyo.Model}
+		*	instance as the next (_model_) parameter, this must be a constructor.
+		* @param {(String|Number|enyo.Model)} [model] If the _ctor_ parameter is a
+		*	constructor this can be a [Number]{@link external:Number} or a
+		*	[String]{@link external:String} representing a
+		*	[primaryKey]{@link enyo.Model#primaryKey} for the given {@link enyo.Model} or an
+		*	instance of a [model]{@link enyo.Model}.
+		* @returns {Boolean} Whether or not the [store]{@link enyo.store} has the given
+		*	[model]{@link enyo.Model}.
+		* @public
 		*/
 		has: function (ctor, model) {
 			var list;
@@ -166,8 +179,7 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		resolve: function (ctor, model) {
 			var list = this.models[ctor && ctor.prototype.kindName];
@@ -175,7 +187,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		constructor: enyo.inherit(function (sup) {
 			return function () {
@@ -192,7 +204,7 @@
 		}),
 		
 		/**
-			@private
+		* @private
 		*/
 		scopeListeners: function (scope, e) {
 			return !scope ? this._scopeListeners : this._scopeListeners.filter(function (ln) {
@@ -201,7 +213,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		on: enyo.inherit(function (sup) {
 			return function (ctor, e, fn, ctx) {
@@ -221,7 +233,7 @@
 		}),
 		
 		/**
-			@private
+		* @private
 		*/
 		off: enyo.inherit(function (sup) {
 			return function (ctor, e, fn) {
@@ -244,7 +256,7 @@
 		}),
 		
 		/**
-			@private
+		* @private
 		*/
 		emit: enyo.inherit(function (sup) {
 			return function (ctor, e) {
@@ -271,11 +283,16 @@
 	});
 	
 	/**
-		A runtime database for working with {@link enyo.Model} instances.
-	
-		@public
-		@type Store
-		@memberof enyo
+	* A runtime database for working with [models]{@link enyo.Model}. It is primarily used
+	* internally by _data layer_ [kinds]{@link external:kind} ({@link enyo.Model},
+	* {@link enyo.Collection}, {@link enyo.RelationalModel}).
+	* 
+	* @see enyo.Model
+	* @see enyo.Collection
+	* @see enyo.RelationalModel
+	* @type enyo.Store
+	* @memberof enyo
+	* @public
 	*/
 	enyo.store = new Store();
 
