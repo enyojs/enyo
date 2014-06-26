@@ -136,6 +136,7 @@
 	*
 	* @param {*} it The variable to determine is an [Array]{@link external:Array}.
 	* @returns {Boolean} `true` if an [Array]{@link external:Array}, `false` otherwise.
+	* @method
 	* @public
 	*/
 	enyo.isArray = Array.isArray || function (it) {
@@ -147,6 +148,7 @@
 	*
 	* @param {*} it The variable to determine is an [Object]{@link external:Object}.
 	* @returns {Boolean} `true` if an [Object]{@link external:Object}, `false` otherwise.
+	* @method
 	* @public
 	*/
 	enyo.isObject = Object.isObject || function (it) {
@@ -296,6 +298,7 @@
 	* [new Date().getTime()]{@link external:Date.getTime}.
 	* 
 	* @returns {Number} The milliseconds representing the current time.
+	* @method
 	* @public
 	*/
 
@@ -311,6 +314,7 @@
 	* 
 	* @returns {Number} The milliseconds representing the current time or time since beginning
 	*                       execution of the application as reported by the platform.
+	* @method
 	* @public
 	*/
 	enyo.perfNow = (function () {
@@ -335,6 +339,7 @@
 	* @param {String} path The path from which to retrieve a value.
 	* @returns {*} The value for the given path or `undefined` if the path could not be
 	*                  completely resolved.
+	* @method enyo.getPath
 	* @public
 	*/
 	var getPath = enyo.getPath = function (path) {
@@ -396,7 +401,7 @@
 	* A global setter that takes a string path (relative to the method's execution context) or a
 	* full path (relative to window). Attempts to automatically retrieve any previously existing
 	* value to supply to any observers. If the context is an {@link enyo.Object} or subkind, the
-	* @{link enyo.ObserverSupport.notify} method is used to notify listeners for the path's being
+	* {@link enyo.ObserverSupport.notify} method is used to notify listeners for the path's being
 	* set. If the previous value is equivalent to the newly set value, observers will not be
 	* triggered by default. If the third parameter is present and is an explicit boolean true, the
 	* observers will be triggered regardless. Returns the context from which the method was executed.
@@ -405,6 +410,7 @@
 	* @param {*} is The value to set.
 	* @param {Object} [opts] An options hash.
 	* @returns {this} Whatever the given context was when executed.
+	* @method enyo.setPath
 	* @public
 	*/
 	var setPath = enyo.setPath = function (path, is, opts) {
@@ -660,6 +666,7 @@
 	* Returns an array of all own enumerable properties found on a given object.
 	*
 	* @alias Object.keys.
+	* @method enyo.keys
 	* @public
 	*/
 	enyo.keys = Object.keys;
@@ -836,7 +843,8 @@
 
 		Setting _options_ to true will set all options to true.
 	
-		@public
+	* @method enyo.mixin
+	* @public
 	*/
 	var mixin = enyo.mixin = function () {
 		var ret = arguments[0],
@@ -897,7 +905,7 @@
 	/**
 	* Because our older API parameters are not consistent with other array API methods and also
 	* because only [IE8 doesn't have integrated support]{@link external:polyfill} for
-	* [`indexOf`]{@link external:Array.indexOf}, we ensure it is defined (only IE8) and advise,
+	* [indexOf]{@linkcode external:Array.indexOf}, we ensure it is defined (only IE8) and advise,
 	* moving forward, that the built-in method be used. But to preserve our original API it will
 	* simply call this method knowing it exists.
 	*
@@ -922,7 +930,7 @@
 	/**
 	* Because our older API parameters are not consistent with other array API methods and also
 	* because only [IE8 doesn't have integrated support]{@link external:polyfill} for
-	* [`lastIndexOf`]{@link external:Array.lastIndexOf} we ensure it is defined (only IE8) and
+	* [lastIndexOf]{@linkcode external:Array.lastIndexOf} we ensure it is defined (only IE8) and
 	* advise, moving forward, that the built-in method be used. But to preserve our original API it
 	* will simply call this method knowing it exists.
 	*
@@ -1059,6 +1067,7 @@
 	* This method supports the same arguments as the native version, plus an extra argument at the
 	* beginning referring to the _array_ to run this method on.
 	*
+	* @method enyo.find
 	* @public
 	*/
 	enyo.find = function (array, fn, ctx) {
@@ -1067,6 +1076,7 @@
 	
 	/**
 	* @alias enyo.find
+	* @method enyo.where
 	* @public
 	*/
 	enyo.where = enyo.find;
@@ -1187,6 +1197,7 @@
 	
 	/**
 	* @alias enyo.cloneArray
+	* @method enyo.toArray
 	* @public
 	*/
 	enyo.toArray = enyo.cloneArray;
