@@ -183,11 +183,6 @@
 */
 
 /**
-* @external console.log
-* @see https://developer.mozilla.org/en-US/docs/Web/API/console.log
-*/
-
-/**
 * @external console.warn
 * @see https://developer.mozilla.org/en-US/docs/Web/API/console.warn
 */
