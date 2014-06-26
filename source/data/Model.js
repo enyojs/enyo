@@ -24,6 +24,58 @@
 	});
 	
 	/**
+	* The default configurable [options]{@link enyo.Model#options} used in certain API methods
+	* of {@link enyo.Model}.
+	*
+	* @typedef {Object} enyo.Model~Options
+	* @property {Boolean} silent=false - Keep events and notifications from being emitted.
+	* @property {Boolean} commit=false - Immediately [commit]{@link enyo.Model#commit} changes
+	*	after they have occurred. Also note that if `true` when
+	*	[destroyed]{@link enyo.Model#destroy} the [model]{@link enyo.Model} will also be
+	*	[destroyed]{@link enyo.Model#destroy} via any [sources]{@link enyo.Model#source} it has.
+	* @property {Boolean} parse=false - During initialization, [parse]{@link enyo.Model#parse}
+	*	any given [attributes]{@link enyo.Model#attributes}; after
+	*	[fetching]{@link enyo.Model#fetch} [parse]{@link enyo.Model#parse} the _data_ before
+	*	calling [set]{@link enyo.Model#set}.
+	* @property {Boolean} fetch=false - Automatically call [fetch]{@link enyo.Model#fetch}
+	*	during initialization.
+	*/
+	
+	/**
+	* The configurable options for [fetch]{@link enyo.Model#fetch},
+	* [commit]{@link enyo.Model#commit} and [destroy]{@link enyo.Model#destroy}.
+	*
+	* @typedef {enyo.Model~Options} enyo.Model~ActionOptions
+	* @property {enyo.Model~Success} success - The callback executed upon successful
+	*	completion.
+	* @property {enyo.Model~Error} error - The callback executed upon a failed attempt.
+	*/
+	
+	/**
+	* @callback enyo.Model~Success
+	* @param {enyo.Model} model The model that is returning successfully.
+	* @param {enyo.Model~Options} opts The original [options]{@link enyo.Model~Options} passed to the
+	*	action method that is returning successfully.
+	* @param {*} res The result, if any, returned by the [source]{@link enyo.Source} that
+	*	executed it.
+	* @param {String} source The name of the [source]{@link enyo.Model#source} that has returned
+	*	successfully.
+	*/
+	
+	/**
+	* @callback enyo.Model~Error
+	* @param {enyo.Model} model The model that is returning successfully.
+	* @param {String} action The name of the action that failed, one of `FETCHING`,
+	*	`COMMITTING` or `DESTROYING`.
+	* @param {enyo.Model~Options} opts The original [options]{@link enyo.Model~Options} passed to the
+	*	action method that is returning successfully.
+	* @param {*} res The result, if any, returned by the [source]{@link enyo.Source} that
+	*	executed it.
+	* @param {String} source The name of the [source]{@link enyo.Model#source} that has returned
+	*	successfully.
+	*/
+	
+	/**
 	* An [object]{@link external:Object} that is used to represent and maintain _state_. Usually,
 	* a [model]{@link enyo.Model} is used to expose _data_ to the _view layer_. It keeps logic
 	* related to the _data_ (retrieving it, updating it, storing it, etc.) out of the _view_ and
@@ -65,6 +117,41 @@
 		* @private
 		*/
 		noDefer: true,
+		
+		/**
+		* Used by various [sources]{@link enyo.Model#source} as part of the
+		* [URI]{@link external:URI} from which it can be [fetched]{@link enyo.Model#fetch},
+		* [committed]{@link enyo.Model#commit} or [destroyed]{@link enyo.Model#destroy}. Some
+		* [sources]{@link enyo.Model#source} may use this property in other ways.
+		*
+		* @see enyo.Model#getUrl
+		* @see enyo.Source
+		* @see enyo.AjaxSource
+		* @see enyo.JsonpSource
+		* @type {String}
+		* @default ''
+		* @public
+		*/
+		url: '',
+		
+		/**
+		* Implement this method to be used by [sources]{@link enyo.Model#source} to dynamically
+		* derrive the [URI]{@link external:URI} from which it can be
+		* [fetched]{@link enyo.Model#fetch}, [committed]{@link enyo.Model#commit} or
+		* [destroyed]{@link enyo.Model#destroy}. Some [sources]{@link enyo.Model#source} may use
+		* this property in other ways. Note that implementing this method means the
+		* [url]{@link enyo.Model#url} will not be used.
+		*
+		* @see enyo.Model#url
+		* @see enyo.Source
+		* @see enyo.AjaxSource
+		* @see enyo.JsonpSource
+		* @type {Function}
+		* @default null
+		* @virtual
+		* @public
+		*/
+		getUrl: null,
 				
 		/**
 		* The [hash]{@link external:Object} of properties proxied by this [model]{@link enyo.Model}.
@@ -120,31 +207,13 @@
 		includeKeys: null,
 		
 		/**
-		* The default [options]{@link enyo.Model#options} and configurable
-		* [options]{@link enyo.Model#options} used in certain API methods of {@link enyo.Model}.
-		*
-		* @typedef {Object} ModelOptions
-		* @property {Boolean} silent=false - Keep events and notifications from being emitted.
-		* @property {Boolean} commit=false - Immediately [commit]{@link enyo.Model#commit} changes
-		*	after they have occurred. Also note that if `true` when
-		*	[destroyed]{@link enyo.Model#destroy} the [model]{@link enyo.Model} will also be
-		*	[destroyed]{@link enyo.Model#destroy} via any [sources]{@link enyo.Model#source} it has.
-		* @property {Boolean} parse=false - During initialization, [parse]{@link enyo.Model#parse}
-		*	any given [attributes]{@link enyo.Model#attributes}; after
-		*	[fetching]{@link enyo.Model#fetch} [parse]{@link enyo.Model#parse} the _data_ before
-		*	calling [set]{@link enyo.Model#set}.
-		* @property {Boolean} fetch=false - Automatically call [fetch]{@link enyo.Model#fetch}
-		*	during initialization.
-		*/
-		
-		/**
 		* The inheritable default configuration _options_. These specify the behavior of particular
 		* API features of {@link enyo.Model}. For the methods that use them, they can be overloaded
 		* using their respective configurations parameter. Note that setting an
 		* [options hash]{@link external:Object} on a [subkind]{@link external:subkind} will be
 		* merged with - not replace - the [superkind's]{@link external:superkind} own _options_.
 		*
-		* @type {ModelOptions}
+		* @type {enyo.Model~Options}
 		* @public
 		*/
 		options: {
@@ -183,17 +252,17 @@
 		/**
 		* Inspect and restructure incoming _data_ prior to having it [set]{@link enyo.Model#set} on
 		* the [model]{@link enyo.Model}. While this method _can_ be called directly it is most
-		* often used via the [parse]{@link ModelOptions.parse} option and executed automatically
+		* often used via the [parse]{@link enyo.Model~Options.parse} option and executed automatically
 		* either during initialization or when [fetched]{@link enyo.Model#fetch} (or both in some
-		* cases). This is an abstract method and needs to be overloaded for a given implementations
+		* cases). This is an virtual method and needs to be provided for a given implementation's
 		* needs.
 		*
-		* @see ModelOptions.parse
+		* @see enyo.Model~Options.parse
 		* @param {*} data The incoming _data_ that may need to be restructured or reduced prior to
 		*	being [set]{@link enyo.Model#set} on the [model]{@link enyo.Model}.
 		* @returns {Object} The [hash]{@link external:Object} to apply to the
 		*	[model]{@link enyo.Model} via [set]{@link enyo.Model#set}.
-		* @abstract
+		* @virtual
 		* @public
 		*/
 		parse: function (data) {
@@ -265,40 +334,6 @@
 		},
 		
 		/**
-		* The configurable options for [fetch]{@link enyo.Model#fetch},
-		* [commit]{@link enyo.Model#commit} and [destroy]{@link enyo.Model#destroy}.
-		*
-		* @typedef {ModelOptions} ModelActionOptions
-		* @property {ModelSuccessCallback} success - The callback executed upon successful
-		*	completion.
-		* @property {ModelErrorCallback} error - The callback executed upon a failed attempt.
-		*/
-		
-		/**
-		* @callback ModelSuccessCallback
-		* @param {enyo.Model} model The model that is returning successfully.
-		* @param {ModelOptions} opts The original [options]{@link ModelOptions} passed to the
-		*	action method that is returning successfully.
-		* @param {*} res The result, if any, returned by the [source]{@link enyo.Source} that
-		*	executed it.
-		* @param {String} source The name of the [source]{@link enyo.Model#source} that has returned
-		*	successfully.
-		*/
-		
-		/**
-		* @callback ModelErrorCallback
-		* @param {enyo.Model} model The model that is returning successfully.
-		* @param {String} action The name of the action that failed, one of `FETCHING`,
-		*	`COMMITTING` or `DESTROYING`.
-		* @param {ModelOptions} opts The original [options]{@link ModelOptions} passed to the
-		*	action method that is returning successfully.
-		* @param {*} res The result, if any, returned by the [source]{@link enyo.Source} that
-		*	executed it.
-		* @param {String} source The name of the [source]{@link enyo.Model#source} that has returned
-		*	successfully.
-		*/
-		
-		/**
 		* Commit the [model]{@link enyo.Model} to a [source]{@link enyo.Model#source} or
 		* [sources]{@link enyo.Model#source}. A {@link enyo.Model} cannot be
 		* [committed]{@link enyo.Model#commit} if it is in an
@@ -310,7 +345,7 @@
 		*
 		* @see enyo.Model#committed
 		* @see enyo.Model#status
-		* @param {ModelActionOptions} [opts] The overloaded [options]{@link ModelOptions} and/or the
+		* @param {enyo.Model~ActionOptions} [opts] The overloaded [options]{@link enyo.Model~Options} and/or the
 		*	_success_ and _error_ callbacks.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -363,7 +398,7 @@
 		*
 		* @see enyo.Model#fetched
 		* @see enyo.Model#status
-		* @param {ModelActionOptions} [opts] The overloaded [options]{@link ModelOptions} and/or the
+		* @param {enyo.Model~ActionOptions} [opts] The overloaded [options]{@link enyo.Model~Options} and/or the
 		*	_success_ and _error_ callbacks.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -418,7 +453,7 @@
 		* it has completed execution it will remove this flag (even if it fails).
 		*
 		* @see enyo.Model#status
-		* @param {ModelActionOptions} [opts] The overloaded [options]{@link ModelOptions} and/or the
+		* @param {enyo.Model~ActionOptions} [opts] The overloaded [options]{@link enyo.Model~Options} and/or the
 		*	_success_ and _error_ callbacks.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -533,11 +568,11 @@
 		* @see enyo.BindingSupport
 		* @param {(String|Object)} path Either the property name or a [hash]{@link external:Object}
 		*	of properties and values to set.
-		* @param {(*|ModelOptions)} is If _path_ is a [string]{@link external:String} this should be
+		* @param {(*|enyo.Model~Options)} is If _path_ is a [string]{@link external:String} this should be
 		*	the value to set for the given property; otherwise it should be an optional
-		*	[hash]{@link ModelOptions} of available configuration options.
-		* @param {ModelOptions} [opts] If _path_ is a [string]{@link external:String} this should be
-		*	the the optional [hash]{@link ModelOptions} of available configuration options;
+		*	[hash]{@link enyo.Model~Options} of available configuration options.
+		* @param {enyo.Model~Options} [opts] If _path_ is a [string]{@link external:String} this should be
+		*	the the optional [hash]{@link enyo.Model~Options} of available configuration options;
 		*	otherwise it will not be used.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -631,7 +666,7 @@
 		*	not the [attributes hash]{@link enyo.Model#attributes}. If these properties contain an
 		*	`options` property (a [hash]{@link external:Object}) it will be merged with existing
 		*	[options]{@link enyo.Model#options}.
-		* @param {ModelOptions} [opts] This is a one-time [options hash]{@link ModelOptions} that
+		* @param {enyo.Model~Options} [opts] This is a one-time [options hash]{@link enyo.Model~Options} that
 		*	is only used during initialization and not applied as defaults.
 		* @public
 		*/
@@ -715,11 +750,11 @@
 		* correctly sets the [status]{@link enyo.Model#status} and in cases where multiple
 		* [sources]{@link enyo.Model#source} were used it waits until all have responded before
 		* clearing the [FETCHING]{@link enyo.States.FETCHING} flag. If a
-		* [success]{@link ModelSuccessCallback} callback was was provided it will be called once for each
-		* [source]{@link enyo.Model#source}.
+		* [success]{@link enyo.Model~Success} callback was was provided it will be called once for
+		* each [source]{@link enyo.Model#source}.
 		*
-		* @param {ModelOptions} opts The original options passed to
-		*	[fetch]{@link enyo.Model#fetch} merged with the [defaults]{@link ModelOptions}.
+		* @param {enyo.Model~Options} opts The original options passed to
+		*	[fetch]{@link enyo.Model#fetch} merged with the [defaults]{@link enyo.Model~Options}.
 		* @param {*} [res] The result provided from the given _source_ if any. This will vary
 		*	depending on the [source]{@link enyo.Model#source}.
 		* @param {String} source The name of the [source]{@link enyo.Model#source} that has
@@ -760,11 +795,11 @@
 		* correctly sets the [status]{@link enyo.Model#status} and in cases where multiple
 		* [sources]{@link enyo.Model#source} were used it waits until all have responded before
 		* clearing the [COMMITTING]{@link enyo.States.COMMITTING} flag. If a
-		* [success]{@link ModelSuccessCallback} callback was was provided it will be called once for
+		* [success]{@link enyo.Model~Success} callback was was provided it will be called once for
 		* each [source]{@link enyo.Model#source}.
 		*
-		* @param {ModelOptions} opts The original options passed to
-		*	[commit]{@link enyo.Model#commit} merged with the [defaults]{@link ModelOptions}.
+		* @param {enyo.Model~Options} opts The original options passed to
+		*	[commit]{@link enyo.Model#commit} merged with the [defaults]{@link enyo.Model~Options}.
 		* @param {*} [res] The result provided from the given _source_ if any. This will vary
 		*	depending on the [source]{@link enyo.Model#source}.
 		* @param {String} source The name of the [source]{@link enyo.Model#source} that has
@@ -799,13 +834,13 @@
 		* care when overloading to ensure you call the super-method. This correctly sets the
 		* [status]{@link enyo.Model#status} to the known [error state]{@link enyo.States.ERROR} or
 		* the [unknown error state]{@link enyo.States.ERROR_UNKNOWN} if it could not be determined.
-		* If an [error callback]{@link ModelErrorCallback} was provided this method will execute it.
+		* If an [error callback]{@link enyo.Model~Error} was provided this method will execute it.
 		*
 		* @see enyo.StateSupport.clearError
 		* @param {String} action The _action_ (one of `FETCHING`, `COMMITTING` or `DESTROYING`) that
 		*	failed and is now in an [error state]{@link enyo.States.ERROR}.
-		* @param {ModelOptions} opts The original options passed to the _action_ method -merged with
-		*	the [defaults]{@link ModelOptions}.
+		* @param {enyo.Model~Options} opts The original options passed to the _action_ method -merged with
+		*	the [defaults]{@link enyo.Model~Options}.
 		* @param {*} [res] The result provided from the given _source_ if any. This will vary
 		*	depending on the [source]{@link enyo.Model#source}.
 		* @param {String} source The name of the [source]{@link enyo.Model#source} that has

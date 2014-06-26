@@ -6,407 +6,377 @@
 		EventEmitter = enyo.EventEmitter,
 		Model = enyo.Model,
 		ModelList = enyo.ModelList,
+		StateSupport = enyo.StateSupport,
 		Source = enyo.Source;
 	
-	/**
-		The possible values assigned to {@link enyo.Collection#status}. These codes can be extended
-		when necessary to provide more detailed state control. See the inline documentation
-		information and explanation associated with the {@link enyo.Model~STATES}.
-	
-		@todo Need example of what extending looks like and how to keep functionality working in
-			error state handling, etc.
-	
-		@name enyo.Collection~STATES
-		@enum {number}
-		@readonly
-	*/
-	var STATES = {};
-		
-	/**
-		The default {@link enyo.Collection#status}. No actions are currently taking place and
-		no errors have been encountered. {@see enyo.Collection#isReady} for an easy way to
-		determine if the {@link enyo.Collection} is actually ready wthout having to use bitwise
-		operations.
-		
-		@name enyo.Collection~STATES.READY
-		@type {enyo.Collection~STATES}
-	*/
-	STATES.READY = 0x0001;
+	var STATES = enyo.States;
 	
 	/**
-		The final state of an {@link enyo.Collection} once its {@link enyo.Collection#destroy}
-		method has successfully completed. This is an exclusive state.
-	
-		@name enyo.Collection~STATES.DESTROYED
-		@type {enyo.Collection~STATES}
+	* This is only necessary because of the order in which mixins are applied.
+	*
+	* @class
+	* @private
 	*/
-	STATES.DESTROYED = 0x0002;
-		
-	/**
-		The {@link enyo.Collection} is currently attempting to {@link enyo.Collection#fetch}.
-	
-		@name enyo.Collection~STATES.FETCHING
-		@type {enyo.Collection~STATES}
-	*/
-	STATES.FETCHING = 0x0004;
-		
-	/**
-		The {@link enyo.Collection} is currently attempting to {@link enyo.Collection#commit}.
-	
-		@name enyo.Collection~STATES.COMMITTING
-		@type {enyo.Collection~STATES}
-	*/
-	STATES.COMMITTING = 0x0008;
-		
-	/**
-		The {@link enyo.Collection} is currently attempting to _commit_ a
-		{@link enyo.Collection#destroy}.
-	
-		@name enyo.Collection~STATES.DESTROYING
-		@type {enyo.Collection~STATES}
-	*/
-	STATES.DESTROYING = 0x0010;
-		
-	/**
-		The {@link enyo.Collection} has encountered an error during a {@link enyo.Collection#fetch}
-		attempt.
-		
-		@name enyo.Collection~STATES.ERROR_FETCHING
-		@type {enyo.Collection~STATES}
-	*/
-	STATES.ERROR_FETCHING = 0x0020;
-		
-	/**
-		The {@link enyo.Collection} has encountered an error during a {@link enyo.Collection#commit}
-		attempt.
-	
-		@name enyo.Collection~STATES.ERROR_COMMITTING
-		@type {enyo.Collection~STATES}
-	*/
-	STATES.ERROR_COMMITTING = 0x0040;
-		
-	/**
-		The {@link enyo.Collection} has encountered an error during a
-		{@link enyo.Collection#destroy} attempt.
-	
-		@name enyo.Collection~STATES.ERROR_DESTROYING
-		@type {enyo.Collection~STATES}
-	*/
-	STATES.ERROR_DESTROYING = 0x0080;
-		
-	/**
-		The {@link enyo.Collection} has somehow encountered an error that it does not understand
-		so it uses this state.
-	
-		@name enyo.Collection~STATES.ERROR_UNKNOWN
-		@type {enyo.Collection~STATES}
-	*/
-	STATES.ERROR_UNKNOWN = 0x0100;
-		
-	/**
-		This is a multi-state mask and will never be set explicitly. By default it can be used to
-		determine if the {@link enyo.Collection} is [fetching]{@link enyo.Collection#fetch},
-		[committing]{@link enyo.Collection#commit} or [destroying]{@link enyo.Collection#destroy}.
-		You can add states to this mask by OR'ing them. {@see enyo.Collection#isBusy} for an easy
-		way to determine if the {@link enyo.Collection} is actually busy without having to use
-		bitwise operations.
-		
-		@name enyo.Collection~STATES.BUSY
-		@type {enyo.Collection~STATES}
-	*/
-	STATES.BUSY = STATES.FETCHING | STATES.COMMITTING | STATES.DESTROYING;
-		
-	/**
-		This is a multi-state mask and will never be set explicitly. By default it can be used to
-		determine if the {@link enyo.Collection} has encountered an error while
-		[fetching]{@link enyo.Collection#fetch}, [committing]{@link enyo.Collection#commit} or
-		[destroying]{@link enyo.Collection#destroy}. There is also the
-		[unknown error]{@link enyo.Collection~STATES.ERROR_UNKNOWN} state that is included in this
-		mask. Additional error states can be added by OR'ing them. {@see enyo.Collection#isError}
-		for an easy way to determine if the {@link enyo.Collection} is actually in an error state.
-		
-		@name enyo.Collection~STATES.ERROR
-		@type {enyo.Collection~STATES}
-	*/
-	STATES.ERROR = STATES.ERROR_COMMITTING | STATES.ERROR_FETCHING | STATES.ERROR_DESTROYING | STATES.ERROR_UNKNOWN;
+	var BaseCollection = enyo.kind({
+		kind: Component,
+		mixins: [EventEmitter, StateSupport]
+	});
 	
 	/**
-		An array-like structure designed to house a _collection_ of {@link enyo.Model} instances.
+	* [Models]{@link enyo.Model} were added to the [collection]{@link enyo.Collection}.
+	*
+	* @event enyo.Collection#add
+	* @type {Object}
+	* @property {enyo.Model[]} models - An [array]{@link external:Array} of
+	*	[models]{@link enyo.Model} that were [added]{@link enyo.Collection#add} to the
+	*	[collection]{@link enyo.Collection}.
+	* @property {enyo.Collection} collection - A reference to the
+	*	[collection]{@link enyo.Collection} that [emitted]{@link enyo.EventEmitter.emit} the event.
+	* @public
+	*/
 	
-		@public
-		@class enyo.Collection
-		@extends enyo.Component
+	/**
+	* [Models]{@link enyo.Model} were [removed]{@link enyo.Collection#remove} from the
+	* [collection]{@link enyo.Collection}.
+	*
+	* @event enyo.Collection#remove
+	* @type {Object}
+	* @property {enyo.Model[]} models - An [array]{@link external:Array} of
+	*	[models]{@link enyo.Model} that were [removed]{@link enyo.Collection#remove} from the
+	*	[collection]{@link enyo.Collection}.
+	* @property {enyo.Collection} collection - A reference to the
+	*	[collection]{@link enyo.Collection} that [emitted]{@link enyo.EventEmitter.emit} the event.
+	* @public
+	*/
+	
+	/**
+	* The [collection]{@link enyo.Collection} was [sorted]{@link enyo.Collection#sort}.
+	*
+	* @event enyo.Collection#sort
+	* @type {Object}
+	* @property {enyo.Model[]} models - An [array]{@link external:Array} of all
+	*	[models]{@link enyo.Model} in the correct, [sorted]{@link enyo.Collection#sort} order.
+	* @property {enyo.Collection} collection - A reference to the
+	*	[collection]{@link enyo.Collection} that [emitted]{@link enyo.EventEmitter.emit} the event.
+	* @property {Function} comparator - A reference to the
+	*	[comparator]{@link enyo.Collection#comparator} that was used when
+	*	[sorting]{@link enyo.Collection#sort} the [collection]{@link enyo.Collection}.
+	* @public
+	*/
+	
+	/**
+	* The [collection]{@link enyo.Collection} was reset and its contents have been updated
+	* arbitrarily.
+	*
+	* @event enyo.Collection#reset
+	* @type {Object}
+	* @property {enyo.Model[]} models - An [array]{@link external:Array} of all
+	*	[models]{@link enyo.Model} as they are currently.
+	* @property {enyo.Collection} collection - A reference to the
+	*	[collection]{@link enyo.Collection} that [emitted]{@link enyo.EventEmitter.emit} the event.
+	* @public
+	*/
+	
+	/**
+	* The default configurable [options]{@link enyo.Collection#options} used in certain API
+	* methods of {@link enyo.Collection}.
+	*
+	* @typedef {Object} enyo.Collection~Options
+	* @property {Boolean} merge=true - When data is being added to the
+	*	[collection]{@link enyo.Collection} that already exist (matched by
+	*	[primaryKey]{@link enyo.Model#primaryKey}) set the new data values with the current
+	*	[model]{@link enyo.Model} instance. This indicates that it will update the existing
+	*	values with the new ones by calling [set]{@link enyo.Model#set} on the
+	*	[model]{@link enyo.Model}.
+	* @property {Boolean} silent=false - Many accessor methods of the
+	*	[collection]{@link enyo.Collection} will emit events and/or notifications. This
+	*	indicates whether or not to supress those events or notifications at times when that
+	*	behavior is necessary. Most often you will not want to modify this value.
+	* @property {Boolean} purge=false - When [adding]{@link enyo.Collection#add}
+	*	[models]{@link enyo.Model} this flag indicates whether or not to remove (_purge_) the
+	*	existing [models]{@link enyo.Model} that are not included in the new dataset.
+	* @property {Boolean} parse=false - The collection's [parse]{@link enyo.Collection#parse}
+	*	method can automatically be executed for incoming data added via the
+	*	[constructor]{@link enyo.Collection#constructor} method or later after having
+	*	[fetched]{@link enyo.Collection#fetch} data. It may be necessary to distinguish these
+	*	two occassions (one needing to parse and one not) by using the runtime configuration
+	*	options of the method(s). In cases where it will always be necessary this can be set to
+	*	`true`.
+	* @property {Boolean} create=true - When data being added to the
+	*	[collection]{@link enyo.Collection} cannot be found (or
+	*	[find]{@link enyo.Collection#options#find} is `false`) this determines if a new
+	*	[model]{@link enyo.Model} should be created. [Models]{@link enyo.Model} that are created
+	*	by a [collection]{@link enyo.Collection} have their [owner]{@link enyo.Model#owner}
+	*	property set to the [collection]{@link enyo.Collection} that instanced them.
+	* @property {Boolean} find=true - When data being added to the
+	*	[collection]{@link enyo.Collection} is not already a [model]{@link enyo.Model} instance
+	*	it will attempt to find an existing [model]{@link enyo.Model} by its
+	*	[primaryKey]{@link enyo.Model#primaryKey} if it exists. In most cases this is the
+	*	prefered behavior but if the {@link enyo.Model} [kind]{@link external:kind} being
+	*	instanced does not have a [primaryKey]{@link enyo.Model#primaryKey} it is unnecessary
+	*	and this value can be set to `false`.
+	* @property {Boolean} sort=false - When [adding]{@link enyo.Collection#add}
+	*	[models]{@link enyo.Model} to the [colleciton]{@link enyo.Collection} it can also be
+	*	sorted. If the [comparator]{@link enyo.Collection#comparator} is a
+	*	[function]{@link external:Function} and this value is `true` it will use the
+	*	[comparator]{@link enyo.Collection#comparator} to sort the entire
+	*	[collection]{@link enyo.Collection}. It can also be a
+	*	[function]{@link external:Function} that will be used to _sort_ the
+	*	[collection]{@link enyo.Collection} instead of or in-place of a defined
+	*	[comparator]{@link enyo.Collection#comparator}.
+	* @property {Boolean} commit=false - When modifications are made to the
+	*	[collection]{@link enyo.Collection} this flag will ensure that those changes are
+	*	[committed]{@link enyo.Collection#commit} according to the configuration and
+	*	availability of a [source]{@link enyo.Collection#source}. This can also be configured
+	*	per-call to methods that use it.
+	* @property {Boolean} destroy=false - When [models]{@link enyo.Model} are
+	*	[removed]{@link enyo.Collection#remove} from the [collection]{@link enyo.Collection}
+	*	this flag indicates whether or not to [destroy]{@link enyo.Model#destroy} them as well.
+	*	Note that this could have a significant impact if the same [models]{@link enyo.Model}
+	*	are used in other [collections]{@link enyo.Collection}.
+	* @property {Boolean} complete=false - When [models]{@link enyo.Model} are
+	*	[removed]{@link enyo.Collection#remove} from the [collection]{@link enyo.Collection}
+	*	this flag indicates whether or not to also _remove_ them from the
+	*	[store]{@link enyo.Collection#store}. This is rarely necessary and can cause problems if
+	*	the [models]{@link enyo.Model} are used in other [collections]{@link enyo.Collection}.
+	*	It is also ignored if the [destroy]{@link enyo.Collection#options#destroy} flag is
+	*	`true`.
+	* @property {Boolean} fetch=false - When the [collection]{@link enyo.Collection} is
+	*	initialized it can automatically attempt to [fetch]{@link enyo.Collection#fetch} data
+	*	when the [source]{@link enyo.Collection#source} and [url]{@link enyo.Collection#url}
+	*	or {@link enyo.Collection#getUrl} properties are configured properly.
+	*/
+	
+	/**
+	* The configuration options for [add]{@link enyo.Collection#add}. For complete descriptions
+	* of the options and their defaults see {@link enyo.Collection#options}. Some properties
+	* have a different meaning in a specific context. Please review their descriptions below to
+	* see how they are used in this context.
+	* 
+	* @typedef {enyo.Collection~Options} enyo.Collection~AddOptions
+	* @property {Boolean} merge - Update existing models when found.
+	* @property {Boolean} purge - Remove existing models not in new dataset.
+	* @property {Boolean} silent - Emit events and notifications.
+	* @property {Boolean} parse - Parse the incoming dataset before evaluating.
+	* @property {Boolean} find - Look for an existing model.
+	* @property {(Boolean|Function)} sort - Sort the finalized dataset.
+	* @property {Boolean} commit - {@link enyo.Collection#commit} changes to the
+	*	{@link enyo.Collection} after completing the {@link enyo.Collection#add}.
+	* @property {Boolean} create - When an existing {@link enyo.Model} instance cannot be
+	*	resolved it should _create_ a new instance.
+	* @property {number} index - The index at which to add the new dataset. Defaults to the
+	*	end of the current dataset if not explicitly set or valid.
+	* @property {Boolean} destroy - If `purge` is `true`, this will {@link enyo.Model#destroy}
+	*	any [models]{@link enyo.Model} that were [removed]{@link enyo.Collection#remove}.
+	* @property {Object} modelOptions - When instancing a [model]{@link enyo.Model} this
+	*	[object]{@link external:Object} will be passed to the constructor as its _options_
+	*	parameter.
+	*/
+	
+	/**
+	* The configuration options for [remove]{@link enyo.Collection#remove}. For complete
+	* descriptions of the options and their defaults see {@link enyo.Collection~Options}. Some
+	* properties have a different meaning in a specific context. Please review their
+	* descriptions below to see how they are used in this context.
+	* 
+	* @typedef {Object} enyo.Collection~RemoveOptions
+	* @property {Boolean} silent - Emit events and notifications.
+	* @property {Boolean} commit - [Commit]{@link enyo.Collection#commit} changes to the
+	*	[collection]{@link enyo.Collection} after completing the
+	*	[remove]{@link enyo.Collection#remove}.
+	* @property {Boolean} complete - Remove the [model]{@link enyo.Model} from the
+	*	[store]{@link enyo.Collection#store} as well as the [collection]{@link enyo.Collection}.
+	* @property {Boolean} destroy - [Destroy]{@link enyo.Model#destroy} the
+	*	[model]{@link enyo.Model} as well as remove it from the
+	*	[collection]{@link enyo.Collection}.
+	*/
+	
+	/**
+	* A method used to compare two elements in a {@link enyo.Collection}. Should be implemented like
+	* callbacks used with [Array.sort]{@link external:Array.sort}.
+	*
+	* @see {@link external:Array.sort}
+	* @see enyo.Collection#sort
+	* @see enyo.Collection#comparator
+	* @callback enyo.Collection~Comparator
+	* @param {enyo.Model} a The first [model]{@link enyo.Model} to compare.
+	* @param {enyo.Model} b The second [model]{@link enyo.Model} to compare.
+	* @returns {Number} `-1` if _a_ should have a lower index, `0` if they are the same and `1`
+	*	if _b_ should have the lower index.
+	*/
+	
+	/**
+	* An array-like structure designed to store instances of {@link enyo.Model}.
+	* 
+	* @class enyo.Collection
+	* @extends enyo.Component
+	* @mixes enyo.StateSupport
+	* @mixes enyo.EventEmitter
+	* @public
 	*/
 	var Collection = kind(
 		/** @lends enyo.Collection.prototype */ {
 		
 		/**
-			@private
+		* @private
 		*/
 		name: 'enyo.Collection',
 		
 		/**
-			@private
+		* @private
 		*/
-		kind: Component,
+		kind: BaseCollection,
 		
 		/**
-			@private
+		* @private
 		*/
 		noDefer: true,
 		
 		/**
-			The {@link enyo~kind) of {@link enyo.Model} that this {@link enyo.Collection} will be
-			implementing or housing. This is important to set properly so that when
-			[fetching]{@link enyo.Collection#fetch} the returned data will correctly be instanced
-			as the correct {@link enyo.Model} subclass.
-			
-			@type {(enyo.Model|string)}
-			@default enyo.Model
-			@public
+		* Used by various [sources]{@link enyo.Collection#source} as part of the
+		* [URI]{@link external:URI} from which it can be [fetched]{@link enyo.Collection#fetch},
+		* [committed]{@link enyo.Collection#commit} or [destroyed]{@link enyo.Collection#destroy}.
+		* Some [sources]{@link enyo.Collection#source} may use this property in other ways.
+		*
+		* @see enyo.Collection#getUrl
+		* @see enyo.Source
+		* @see enyo.AjaxSource
+		* @see enyo.JsonpSource
+		* @type {String}
+		* @default ''
+		* @public
+		*/
+		url: '',
+		
+		/**
+		* Implement this method to be used by [sources]{@link enyo.Model#source} to dynamically
+		* derrive the [URI]{@link external:URI} from which it can be
+		* [fetched]{@link enyo.Collection#fetch}, [committed]{@link enyo.Collection#commit} or
+		* [destroyed]{@link enyo.Collection#destroy}. Some
+		* [sources]{@link enyo.Collection#source} may use this property in other ways. Note that
+		* implementing this method means the [url]{@link enyo.Collection#url} will not be used.
+		*
+		* @see enyo.Collection#url
+		* @see enyo.Source
+		* @see enyo.AjaxSource
+		* @see enyo.JsonpSource
+		* @type {Function}
+		* @default null
+		* @virtual
+		* @public
+		*/
+		getUrl: null,
+		
+		/**
+		* The [kind]{@link external:kind) of {@link enyo.Model} that this
+		* [collection]{@link enyo.Collection} will contain. This is important to set properly so
+		* that when [fetching]{@link enyo.Collection#fetch} the returned data will be instanced
+		* as the correct [model]{@link enyo.Model} [subkind]{@link external:subkind}.
+		* 
+		* @type {(enyo.Model|String)}
+		* @default enyo.Model
+		* @public
 		*/
 		model: Model,
 		
 		/**
-			The current {@link enyo.Collection#STATES} of the {@link enyo.Collection}. This value
-			changes automatically and can be observed for more complex state monitoring. If an
-			error is encountered it must be cleared before additional state-altering actions can
-			be taken; {@see enyo.Collection#clearError} for more information.
-			
-			@type enyo.Collection~STATES
-			@default enyo.Collection~STATES.READY
-			@readonly
-			@public
+		* A special type of [array]{@link external:Array} used internally by
+		* {@link enyo.Collection}. It should not be modified directly nor should the property be
+		* set directly. It is used as a container by the [collection]{@link enyo.Collection}. If
+		* it is [set]{@link enyo.Collection#set} directly it will
+		* [emit]{@link enyo.EventEmitter.emit} a [reset]{@link enyo.Collection#event:reset} event.
+		*
+		* @see enyo.Collection#modelsChanged
+		* @type enyo.ModelList
+		* @default null
+		* @readonly
+		* @protected
+		*/
+		models: null,
+		
+		/**
+		* The current [state]{@link enyo.States} of the [collection]{@link enyo.Collection}. This
+		* value changes automatically and can be observed for more complex state monitoring. The
+		* default is [READY]{@link enyo.States.READY}.
+		* 
+		* @see enyo.States
+		* @see enyo.StateSupport
+		* @type enyo.States
+		* @default enyo.States.READY
+		* @readonly
+		* @public
 		*/
 		status: STATES.READY,
 		
 		/**
-			The configurable default {@link enyo.Collection#options}. These values will be used to
-			modify the behavior of the {@link enyo.Collection} unless additional _options_ are
-			passed into the methods that use them. When modifying these values in a
-			[subclass]{@link enyo~kind} of {@link enyo.Collection} they will be merged with existing
-			values.
-			
-			@type {object}
-			@public
+		* The configurable default [options]{@link enyo.Collection~Options}. These values will be
+		* used to modify the behavior of the [collection]{@link enyo.Collection} unless additional
+		* _options_ are passed into the methods that use them. When modifying these values in a
+		* [subkind]{@link external:subkind} of {@link enyo.Collection} they will be merged with
+		* existing values.
+		* 
+		* @type {enyo.Collection~Options}
+		* @public
 		*/
-		options: /** @lends enyo.Collection#options */ {
-			
-			/**
-				When data is being added to the {@link enyo.Collection} that already exist
-				(matched by {@link enyo.Model#primaryKey}) set the new data values with the current
-				{@link enyo.Model} instance. This indicates that it will update the existing values
-				with the new ones by calling {@link enyo.Model#set} on the
-				[model instance]{@link enyo.Model}.
-				
-				@type {boolean}
-				@default true
-				@public
-			*/
+		options: {
 			merge: true,
-			
-			/**
-				Many accessor methods of the {@link enyo.Collection} will emit events and/or
-				notifications. This indicates whether or not to supress those events or
-				notifications in times when that behavior is necessary. Most often you will not
-				want to modify this value.
-			
-				@type {boolean}
-				@default false
-				@public
-			*/
 			silent: false,
-			
-			/**
-				When [adding]{@link enyo.Collection#add} [models]{@link enyo.Model} this flag
-				indicates whether or not to remove (_purge_) the existing [models]{@link enyo.Model}
-				that are not included in the new dataset.
-			
-				@type {boolean}
-				@default false
-				@public
-			*/
 			purge: false,
-			
-			/**
-				The collection's [parse]{@link enyo.Collection#parse} method can automatically be
-				executed for incoming data added via the {@link enyo.Collection#constructor} method
-				or later after having [fetched]{@link enyo.Collection#fetch} data. It may be
-				necessary to distinguish these two occassions (one needing to parse and one not) by
-				using the runtime configuration options of the methods. In cases where it will
-				always be necessary this can be set to `true`.
-			
-				@type {boolean}
-				@default false
-				@public
-			*/
 			parse: false,
-			
-			/**
-				When data being added to the {@link enyo.Collection} cannot be found (or 
-				{@link enyo.Collection#options#find} is `false`) this descides if a new
-				{@link enyo.Model} should be created. [Models]{@link enyo.Model} that are created
-				by an {@link enyo.Collection} have their {@link enyo.Model#owner} property set to
-				the {@link enyo.Collection} that instanced them. This is important because if the
-				{@link enyo.Collection} is [destroyed]{@link enyo.Collection#destroy} it will also
-				[destroy]{@link enyo.Model#destroy} [models]{@link enyo.Model} that it owns.
-			
-				@type {boolean}
-				@default true
-				@public
-			*/
 			create: true,
-			
-			/**
-				When data being added to the {@link enyo.Collection} is not already an
-				{@link enyo.Model} instance it will attempt to find an existing model by its
-				{@link enyo.Model#primaryKey} if it exists. In most cases this is the prefered
-				behavior but if the {@link enyo.Model} class being instanced does not have a
-				{@link enyo.Model#primaryKey} it is unnecessary and this value can be set to
-				`false`.
-				
-				@type {boolean}
-				@default true
-				@public
-			*/
 			find: true,
-			
-			/**
-				When [adding]{@link enyo.Collection#add} [models]{@link enyo.Model} to the
-				{@link enyo.Collection} it can also be sorted. If the
-				{@link enyo.Collection#comparator} is a _function_ and this value is `true` it will
-				use the _comparator_ to sort the entire {@link enyo.Collection}. It can also be
-				a _function_ that will be used to sort the {@link enyo.Collection} instead of or in-
-				place of a {@link enyo.Collection#comparator}.
-			
-				@type {(boolean|function)}
-				@default false
-				@public
-			*/
 			sort: false,
-			
-			/**
-				When modifications are made to the {@link enyo.Collection} this flag will ensure
-				that those changes are [committed]{@link enyo.Collection#commit} according to the
-				configuration and {@link enyo.Collection#source}. This can also be configured per-
-				call to methods that use it.
-			
-				@type {boolean}
-				@default false
-				@public
-			*/
 			commit: false,
-			
-			/**
-				When [models]{@link enyo.Model} are [removed]{@link enyo.Collection#remove} from the
-				dataset this flag indicates whether or not to {@link enyo.Model#destroy} them as
-				well. Note that this could have a significant impact if the same
-				[models]{@link enyo.Model} are used in other [collections]{@link enyo.Collection}.
-			
-				@type {boolean}
-				@default false
-				@public
-			*/
 			destroy: false,
-			
-			/**
-				When [models]{@link enyo.Model} are [removed]{@link enyo.Collection#remove} from the
-				dataset this flag indicates whether or not to also _remove_ them from the
-				{@link enyo.Collection#store}. This is rarely necessary and can cause problems if
-				the [models]{@link enyo.Model} are used in other
-				[collections]{@link enyo.Collection}. It is also ignored if the
-				{@link enyo.Collection#options#destroy} flag is `true`.
-			
-				@type {boolean}
-				@default false
-				@public
-			*/
 			complete: false,
-			
-			/**
-				When the {@link enyo.Collection} is initialized it can automatically attempt to
-				{@link enyo.Collection#fetch} data when the {@link enyo.Collection#source} and
-				{@link enyo.Collection#url} or {@link enyo.Collection#buildUrl} properties are
-				configured properly.
-				
-				@type {boolean}
-				@default false
-				@public
-			*/
 			fetch: false
 		},
 		
 		/**
-			@private
-		*/
-		mixins: [EventEmitter],
-		
-		/**
-			Modify the structure of data such that it can be used by the {@link enyo.Collection#add}
-			method. This method will only be used during initialization or after a successful
-			{@link enyo.Collection#fetch} if the {@link enyo.Collection#options#parse} flag is set
-			to `true`. This can be used for simple remapping, renaming or complex restructuring of
-			data coming from a {@link enyo.Collection#source} that needs to be modified prior to
-			being [added]{@link enyo.Collection#add} to the dataset.
-		
-			@param {*} data The incoming data passed to the {@link enyo.Collection#constructor} or
-				returned by a successful {@link enyo.Collection#fetch}.
-			@returns {array} The properly formatted data to be accepted by
-				{@link enyo.Collection#add} method.
-			@method
-			@public
+		* Modify the structure of data such that it can be used by the
+		* [add]{@link enyo.Collection#add} method. This method will only be used during
+		* initialization or after a successful [fetch]{@link enyo.Collection#fetch} if the
+		* [parse]{@link enyo.Collection~Options.parse} flag is set to `true`. This can be used for simple
+		* remapping, renaming or complex restructuring of data coming from a
+		* [source]{@link enyo.Collection#source} that needs to be modified prior to being
+		* [added]{@link enyo.Collection#add} to the [collection]{@link enyo.Collection}. This is a
+		* virtual method and must be implemented.
+		* 
+		* @param {*} data The incoming data passed to the
+		*	[constructor]{@link enyo.Collection#constructor} or returned by a successful
+		*	[fetch]{@link enyo.Collection#fetch}.
+		* @returns {Array} The properly formatted data to be accepted by the
+		*	[add]{@link enyo.Collection#add} method.
+		* @virtual
+		* @public
 		*/
 		parse: function (data) {
 			return data;
 		},
 		
 		/**
-			The configuration options for {@link enyo.Collection#add}. For complete descriptions of
-			the options and their defaults {@see enyo.Collection#options}. Some properties have a
-			different meaning in a specific context. Please review their descriptions below to see
-			how they are used in this context.
-		
-			@typedef {object} enyo.Collection#add~options
-			@property {boolean} merge - Update existing models when found.
-			@property {boolean} purge - Remove existing models not in new dataset.
-			@property {boolean} silent - Emit events and notifications.
-			@property {boolean} parse - Parse the incoming dataset before evaluating.
-			@property {boolean} find - Look for an existing model.
-			@property {(boolean|function)} sort - Sort the finalized dataset.
-			@property {boolean} commit - {@link enyo.Collection#commit} changes to the
-				{@link enyo.Collection} after completing the {@link enyo.Collection#add}.
-			@property {boolean} create - When an existing {@link enyo.Model} instance cannot be
-				resolved it should _create_ a new instance.
-			@property {number} index - The index at which to add the new dataset. Defaults to the
-				end of the current dataset if not explicitly set or valid.
-			@property {boolean} destroy - If `purge` is `true`, this will {@link enyo.Model#destroy}
-				any [models]{@link enyo.Model} that were [removed]{@link enyo.Collection#remove}.
-			@property {object} modelOptions - When instancing a model this object will be passed
-				to the constructor as its {@link enyo.Model#constructor} options parameter.
-		*/
-		
-		/**
-			Add data to the dataset. This method can add an individual [model]{@link enyo.Model} or
-			an array of [models]{@link enyo.Model}. It can splice them into the dataset at a
-			designated index or remove models from the existing dataset that are not included in the
-			new one. {@see enyo.Collection#add~options} for detailed information on the
-			configuration options available for this method. This method is heavily optimized for
-			batch operations on _arrays_ of data. For better performance ensure that loops do not
-			consecutively call this method but instead build an array to pass to it as its first
-			parameter.
-			
-			@fires enyo.Collection#add
-			@param {(object|object[]|enyo.Model|enyo.Model[])} models The data to add to the
-			 	{@link enyo.Collection} that can be an object-literal, an array of object-literals,
-				an {@link enyo.Model} instance or array of {@link enyo.Model} instances. Note if the
-				{@link enyo.Collection#options#parse} configuration option is `true` it will use the
-				returned value as this parameter.
-			@param {enyo.Collection#add~options} [opts] The configuration options that modify the
-				behavior of this method. The [defaults]{@link enyo.Collection#options} will be
-				merged with these options before evaluating.
-			@returns {enyo.Model[]} The [models]{@link enyo.Model} that were added, if any.
-			@method
-			@public
+		* Add data to the [collection]{@link enyo.Collection}. This method can add an individual
+		* [model]{@link enyo.Model} or an [array]{@link external:Array} of
+		* [models]{@link enyo.Model}. It can splice them into the dataset at a designated index or
+		* remove models from the existing dataset that are not included in the new one.
+		* See {@link enyo.Collection~AddOptions} for detailed information on the
+		* configuration options available for this method. This method is heavily optimized for
+		* batch operations on [arrays]{@link external:Array} of [models]{@link enyo.Model}. For
+		* better performance ensure that loops do not consecutively call this method but instead
+		* build an [array]{@link external:Array} to pass as its first parameter.
+		* 
+		* @fires enyo.Collection#event:add
+		* @param {(Object|Object[]|enyo.Model|enyo.Model[])} models The data to add to the
+		*	{@link enyo.Collection} that can be a [hash]{@link external:Object}, an array of
+		*	[hashes]{@link external:Object},
+		*	an {@link enyo.Model} instance or array of {@link enyo.Model} instances. Note if the
+		*	{@link enyo.Collection#options#parse} configuration option is `true` it will use the
+		*	returned value as this parameter.
+		* @param {enyo.Collection~AddOptions} [opts] The configuration options that modify the
+		*	behavior of this method. The [defaults]{@link enyo.Collection~Options} will be
+		*	merged with these options before evaluating.
+		* @returns {enyo.Model[]} The [models]{@link enyo.Model} that were added, if any.
+		* @public
 		*/
 		add: function (models, opts) {
 			var loc = this.models
@@ -551,7 +521,7 @@
 				len != this.length && this.notify('length', len, this.length);
 				// notify listeners of the addition of records
 				if (added) {
-					this.emit('add', {/* for backward compatibility */ records: added, /* prefered */ models: added});
+					this.emit('add', {models: added, collection: this});
 				}
 			}
 			
@@ -563,36 +533,21 @@
 		},
 		
 		/**
-			The configuration options for {@link enyo.Collection#remove}. For complete descriptions
-			of the options and their defaults {@see enyo.Collection#options}. Some properties have a
-			different meaning in a specific context. Please review their descriptions below to see
-			how they are used in this context.
-		
-			@typedef {object} enyo.Collection#remove~options
-			@property {boolean} silent - Emit events and notifications.
-			@property {boolean} commit - {@link enyo.Collection#commit} changes to the
-				{@link enyo.Collection} after completing the {@link enyo.Collection#add}.
-			@property {boolean} complete - Remove the {@link enyo.Model} from the
-				{@link enyo.Collection#store} as well as the {@link enyo.Collection}.
-			@property {boolean} destroy - {@link enyo.Model#destroy} the {@link enyo.Model} as well
-				as remove it from the {@link enyo.Collection}.
-		*/
-		
-		/**
-			Remove data from the dataset. It can take a [model]{@link enyo.Model} or an array of
-			[models]{@link enyo.Model}. If any of the instances are present in the
-			{@link enyo.Collection} they will be removed, in the order in which they are
-			encountered. Emits the {@link enyo.Collection#remove} event if any models were found and
-			removed from the dataset (and the `silent` option is not `true`).
-		
-			@fires enyo.Collection#remove
-			@param {(enyo.Model|enyo.Model[])} models The [models]{@link enyo.Model} to remove
-				if they exist in the {@link enyo.Collection}.
-			@param {enyo.Collection#remove~options} [opts] The configuration options that modify
-				the behavior of this method.
-			@returns {enyo.Model[]} The [models]{@link enyo.Model} that were removed, if any.
-			@method
-			@public
+		* Remove data from the [collection]{@link enyo.Collection}. It can take a
+		* [model]{@link enyo.Model} or an [array]{@link external:Array} of
+		* [models]{@link enyo.Model}. If any of the instances are present in the
+		* [collection]{@link enyo.Collection} they will be removed, in the order in which they are
+		* encountered. Emits the {@link enyo.Collection#remove} event if any models were found and
+		* removed from the [collection]{@link enyo.Collection} (and the `silent` option is not
+		* `true`).
+		* 
+		* @fires enyo.Collection#remove
+		* @param {(enyo.Model|enyo.Model[])} models The [models]{@link enyo.Model} to remove
+		* 	if they exist in the [collection]{@link enyo.Collection}.
+		* @param {enyo.Collection~RemoveOptions} [opts] The configuration options that modify
+		* 	the behavior of this method.
+		* @returns {enyo.Model[]} The [models]{@link enyo.Model} that were removed, if any.
+		* @public
 		*/
 		remove: function (models, opts) {
 			var loc = this.models
@@ -634,7 +589,7 @@
 			if (!silent) {
 				len != this.length && this.notify('length', len, this.length);
 				if (removed.length) {
-					this.emit('remove', {/* for partial backward compatibility */records: removed, /* prefered */models: removed});
+					this.emit('remove', {models: removed, collection: this});
 				}
 			}
 			
@@ -646,21 +601,24 @@
 		},
 		
 		/**
-			Retrieve a {@link enyo.Model} for the provided index.
-		
-			@param {number} idx The index to return from the {@link enyo.Collection}.
-			@returns {(enyo.Model|undefined)} The {@link enyo.Model} at the given index or
-				`undefined`.
-			@public
-			@method
+		* Retrieve a [model]{@link enyo.Model} for the provided index.
+		* 
+		* @param {Number} idx The index to return from the [collection]{@link enyo.Collection}.
+		* @returns {(enyo.Model|undefined)} The [model]{@link enyo.Model} at the given index or
+		* 	`undefined` if it cannot be found.
+		* @public
 		*/
 		at: function (idx) {
 			return this.models[idx];
 		},
 		
 		/**
-			@public
-			@method
+		* Returns the JSON serializable [array]{@link external:Array} of [models]{@link enyo.Model}
+		* according to their own [raw]{@link enyo.Model#raw} output.
+		*
+		* @returns {enyo.Model[]} The [models]{@link enyo.Model} according to their
+		*	[raw]{@link enyo.Model#raw} output.
+		* @public
 		*/
 		raw: function () {
 			return this.models.map(function (model) {
@@ -669,16 +627,21 @@
 		},
 		
 		/**
-			@public
-			@method
+		* Determine if the [model]{@link enyo.Model} is contained by this
+		* [collection]{@link enyo.Collection}.
+		*
+		* @param {enyo.Model} model The [model]{@link enyo.Model} to check.
+		* @returns {Boolean} Whether or not the [model]{@link enyo.Model} belongs to the
+		*	[collection]{@link enyo.Collection}.
+		* @public
 		*/
 		has: function (model) {
 			return this.models.has(model);
 		},
 		
 		/**
-			@public
-			@method
+		* @see {@link external:Array.forEach}
+		* @public
 		*/
 		forEach: function (fn, ctx) {
 			
@@ -689,8 +652,8 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @see {@link external:Array.filter}
+		* @public
 		*/
 		filter: function (fn, ctx) {
 			
@@ -701,8 +664,8 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @see {@link external:Array.find}
+		* @public
 		*/
 		find: function (fn, ctx) {
 			
@@ -713,8 +676,8 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @see {@link external:Array.map}
+		* @public
 		*/
 		map: function (fn, ctx) {
 			
@@ -725,31 +688,29 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @see {@link external:Array.indexOf}
+		* @public
 		*/
 		indexOf: function (model, offset) {
 			return this.models.indexOf(model, offset);
 		},
 		
 		/**
-			Remove all [models]{@link enyo.Model} from the [collection]{@link enyo.Collection}.
-			Optionally a [model or models]{@link enyo.Model} can be provided that will replace the
-			removed [models]{@link enyo.Model}. If this operation is not `silent` it will emit a
-			`reset` event. Returns the removed [models]{@link enyo.Model} but be aware that if the
-			`destroy` configuration option is set then the returned models will have limited
-			usefulness.
-		
-			@fires enyo.Collection~events.reset
-			@param {(enyo.Model|enyo.Model[])} [models] The [model or models]{@link enyo.Model} to
-				use as a replacement for the current set of [models]{@link enyo.Model} in the
-				{@link enyo.Collection}.
-			@param {enyo.Collection#empty~options} [opts] The options that will modify the behavior
-				of this method.
-			@returns {enyo.Model[]} The [models]{@link enyo.Model} that were removed from the
-				{@link enyo.Collection}.
-			@method
-			@public
+		* Remove all [models]{@link enyo.Model} from the [collection]{@link enyo.Collection}.
+		* Optionally a [model or models]{@link enyo.Model} can be provided that will replace the
+		* removed [models]{@link enyo.Model}. If this operation is not `silent` it will emit a
+		* `reset` event. Returns the removed [models]{@link enyo.Model} but be aware that if the
+		* `destroy` configuration option is set then the returned models will have limited
+		* usefulness.
+	    * 
+		* @param {(enyo.Model|enyo.Model[])} [models] The [model or models]{@link enyo.Model} to
+		*	use as a replacement for the current set of [models]{@link enyo.Model} in the
+		*	{@link enyo.Collection}.
+		* @param {enyo.Collection~Options} [opts] The options that will modify the behavior
+		*	of this method.
+		* @returns {enyo.Model[]} The [models]{@link enyo.Model} that were removed from the
+		*	[collection]{@link enyo.Collection}.
+		* @public
 		*/
 		empty: function (models, opts) {
 			var silent,
@@ -775,24 +736,38 @@
 			
 			// now if the entire thing wasn't supposed to have been done silently we issue
 			// a reset
-			if (!silent) this.emit('reset', {models: this.models.copy()});
+			if (!silent) this.emit('reset', {models: this.models.copy(), collection: this});
 			
 			return removed;
 		},
 		
 		/**
-			@public
-			@method
+		* Returns the [JSON]{@link external:JSON} serializable [raw]{@link enyo.Collection#raw}
+		* output of the [collection]{@link enyo.Collection}. Will automatically be executed by
+		* [JSON.parse]{@link external:JSON.parse}.
+		*
+		* @see enyo.Collection#raw
+		* @returns {Object} The return value of [raw]{@link enyo.Collection#raw}
+		* @public
 		*/
 		toJSON: function () {
-			// @NOTE: Needs to be the JSON parse-able object...
-			// return json.stringify(this.raw());
 			return this.raw();
 		},
 		
 		/**
-			@public
-			@method
+		* The default behavior of this method is the same as {@link external:Array.sort}. If the
+		* [function]{@link external:Function} parameter is ommitted it will attempt to use the
+		* [comparator]{@link enyo.Collection} (if any) from the [collection]{@link enyo.Collection}.
+		* Note that the [collection]{@link enyo.Collection} is _sorted_ in-place and returns a
+		* reference to itself. The [collection]{@link enyo.Collection}
+		* [emits]{@link enyo.EventEmitter.emit} the [sort]{@link enyo.Collection#event:sort} event.
+		*
+		* @fires enyo.Collection#event:sort
+		* @see {@link external:Array.sort}
+		* @param {enyo.Collection~Comparator} [fn] The _comparator_ method.
+		* @param {enyo.Collection~Options} [opts] The configuration options.
+		* @returns {this} The callee for chaining.
+		* @public
 		*/
 		sort: function (fn, opts) {
 			if (fn || this.comparator) {
@@ -801,26 +776,31 @@
 				opts = opts? enyo.mixin({}, [options, opts]): options;
 				silent = opts.silent;
 				this.models.sort(fn || this.comparator);
-				!silent && this.emit('sort', {comparator: fn || this.comparator, models: this.models.copy()});
+				!silent && this.emit('sort', {
+					comparator: fn || this.comparator,
+					models: this.models.copy(),
+					collection: this
+				});
 			}
 			return this;
 		},
 		
 		/**
-			Attempt to persist the state of this {@link enyo.Collection}. The actual method by which
-			this is accomplished varies on the associated [source]{@link enyo.Collection#source} (or
-			[overloaded source]{@link enyo.Collection#commit~options.source}). This method will
-			immediately call {@link enyo.Collection#errored} with the `action` set to the current
-			{@link enyo.Collection#status} if it is one of the error states
-			({@link enyo.Collection~STATES.ERROR_FETCHING} or
-			{@link enyo.Collection~STATES.ERROR_COMMITTING}; more if extended). Also note you cannot
-			call this method if it is already in a [busy state]{@link enyo.Collection~STATES.BUSY}.
-			
-			@param {external:Object} [opts] The configuration
-				[options]{@link enyo.Collection#commit~options}.
-			@returns {enyo.Collection} The callee for chaining.
-			@method
-			@public
+		* Commit the [model]{@link enyo.Model} to a [source]{@link enyo.Model#source} or
+		* [sources]{@link enyo.Model#source}. A {@link enyo.Model} cannot be
+		* [committed]{@link enyo.Model#commit} if it is in an
+		* [error]{@link enyo.States.ERROR} ({@link enyo.StateSupport.isError}) or
+		* [busy]{@link enyo.States.BUSY} ({@link enyo.StateSupport.isBusy})
+		* [state]{@link enyo.Model#status}. While executing it will add the
+		* [COMMITTING]{@link enyo.States.COMMITTING} flag to [status]{@link enyo.Model#status}. Once
+		* it has completed execution it will remove this flag (even if it fails).
+		*
+		* @see enyo.Model#committed
+		* @see enyo.Model#status
+		* @param {enyo.Model~ActionOptions} [opts] The overloaded [options]{@link enyo.Model~Options} and/or the
+		*	_success_ and _error_ callbacks.
+		* @returns {this} The callee for chaining.
+		* @public
 		*/
 		commit: function (opts) {
 			var options,
@@ -859,10 +839,7 @@
 		},
 		
 		/**
-			@todo
-			
-			@method
-			@public
+		* @public
 		*/
 		fetch: function (opts) {
 			var options,
@@ -901,7 +878,7 @@
 		},
 		
 		/**
-			@public
+		* @public
 		*/
 		destroy: enyo.inherit(function (sup) {
 			return function (opts) {
@@ -981,14 +958,25 @@
 		}),
 		
 		/**
-			@public
-			@method
+		* This method is a virtual method that, when provided, will be used for sorting during
+		* [add]{@link enyo.Collection#add} when the `sort` flag is `true` or when the
+		* [sort]{@link enyo.Collection#sort} method is called without a
+		* [function]{@link external:Function} parameter being passed to it.
+		*
+		* @see enyo.Collection~Comparator
+		* @type {enyo.Collection~Comparator}
+		* @default null
+		* @virtual
+		* @method
+		* @public
 		*/
 		comparator: null,
 		
 		/**
-			@private
-			@method
+		* Used during [add]{@link enyo.Collection#add} when `create` is `true` and the data is a
+		* [hash]{@link external:Object}.
+		*
+		* @private
 		*/
 		prepareModel: function (attrs, opts) {
 			var Ctor = this.model
@@ -1012,7 +1000,7 @@
 		},
 		
 		/**
-			@public
+		* @public
 		*/
 		committed: function (opts, res, source) {
 			var idx;
@@ -1034,7 +1022,7 @@
 		},
 		
 		/**
-			@public
+		* @public
 		*/
 		fetched: function (opts, res, source) {
 			var idx;
@@ -1063,21 +1051,22 @@
 		},
 		
 		/**
-			If an {@link enyo.Collection#error} is encountered during {@link enyo.Collection#fetch}
-			or {@link enyo.Collection#commit} this method will be called. By default it updates the
-			[collection's]{@link enyo.Collection} {@link enyo.Collection#status} property and then
-			checks to see if there is a provided
-			[error handler]{@link enyo.Collection#source~options} and, if so, will call that method
-			with the appropriate parameters {@see enyo.Collection#source~error}. This method can be
-			overloaded to provide additional behavior.
-		
-			@param {string} action The name of the action that failed, one of `FETCHING` or
-				`COMMITTING`.
-			@param {enyo.Collection#source~options} The options hash originally passed along with
-				the original action.
-			@param {*} [res] The result of the requested `action` - varies depending on the
-				requested {@link enyo.Collection#source}.
-			@public
+		* If an error is encountered when [fetching]{@link enyo.Collection#fetch},
+		* [committing]{@link enyo.Collection#commit} or [destroying]{@link enyo.Collection#destroy}
+		* the [collection]{@link enyo.Collection} this method will be called. By default it updates
+		* the [collection's]{@link enyo.Collection} [status]{@link enyo.Collection#status} property
+		* and then checks to see if there is a provided
+		* [error handler]{@link enyo.Collection~ErrorCallback} and, if so, will call that method.
+		* 
+		* @param {String} action The name of the action that failed, one of `FETCHING` or
+		*	`COMMITTING`.
+		* @param {enyo.Collection~Options} opts The options hash originally passed along with
+		*	the original action.
+		* @param {*} [res] The result of the requested _action_; varies depending on the
+		*	requested [source]{@link enyo.Collection#source}.
+		* @param {String} source The name of the [source]{@link enyo.Collection#source} that has
+		*	returned an error.
+		* @public
 		*/
 		errored: function (action, opts, res, source) {
 			var stat;
@@ -1101,57 +1090,20 @@
 		},
 		
 		/**
-			Clear the error state explicitly. This allows for overloaded behavior as may be
-			necessary in some application scenarios.
-			
-			@returns {enyo.Collection} The callee for chaining.
-			@method
-			@public
+		* Overloaded version of the method to call [set]{@link enyo.Collection#set} instead of
+		* simply assigning the value. This allows it to
+		* [notify observers]{@link enyo.ObserverSupport.notify} and thus update
+		* [bindings]{@link enyo.BindingSupport.bindings} as well.
+		*
+		* @see enyo.StateSupport.clearError
+		* @public
 		*/
 		clearError: function () {
 			return this.set('status', STATES.READY);
 		},
 		
 		/**
-			Convenience method to avoid using bitwise comparison directly for the
-			{@link enyo.Collection#status}. Automatically checks the current
-			{@link enyo.Collection#status} or the passed-in value to determine if it is an
-			[error state]{@link enyo.Collection~STATES.ERROR}. The passed-in value will only be
-			used if it is a numeric value.
-		
-			@param {enyo.Collection~STATES} [status] Provide a specific value to test.
-			@returns {boolean} Whether or not the given status is an error.
-			@method
-			@public
-		*/
-		isError: function (status) {
-			return !! ((isNaN(status) ? this.status : status) & STATES.ERROR);
-		},
-		
-		/**
-			Convenience method to avoid using bitwise comparison directly for the
-			{@link enyo.Collection#status}. Automatically check the current
-			{@link enyo.Collection#status} or the passed-in value to determine if it is a
-			[busy state]{@link enyo.Collection~STATES.BUSY}. The passed-in value will only be
-			used if it is a numeric value.
-		*/
-		isBusy: function (status) {
-			return !! ((isNaN(status) ? this.status : status) & STATES.BUSY);
-		},
-		
-		/**
-			Convenience method to avoid using bitwise comparison directly for the
-			{@link enyo.Collection#status}. Automatically check the current
-			{@link enyo.Collection#status} or the passed-in value to determine if it is a
-			[ready state]{@link enyo.Collection~STATES.READY}. The passed-in value will only be
-			used if it is a numeric value.
-		*/
-		isReady: function (status) {
-			return !! ((isNaN(status) ? this.status : status) & STATES.READY);
-		},
-		
-		/**
-			@private
+		* @private
 		*/
 		_modelEvent: function (model, e) {
 			switch (e) {
@@ -1165,7 +1117,12 @@
 		},
 		
 		/**
-			@private
+		* Responds to changes of the [models]{@link enyo.Collection#models} property.
+		*
+		* @see enyo.Collection#models
+		* @fires enyo.Collection#event:reset
+		* @type {enyo.ObserverSupport~Observer}
+		* @public
 		*/
 		modelsChanged: function (was, is, prop) {
 			var models = this.models.copy(),
@@ -1173,11 +1130,20 @@
 			
 			if (len != this.length) this.set('length', len);
 			
-			this.emit('reset', {/* for partial backward compatibility */records: models, /* prefered */models: models});
+			this.emit('reset', {models: models, collection: this});
 		},
 		
 		/**
-			@private
+		* Initializes the [collection]{@link enyo.Collection}.
+		*
+		* @param {(Object|Object[]|enyo.Model[])} [recs] An [array]{@link external:Array} of either
+		*	[models]{@link enyo.Model} or [hashes]{@link external:Object} to initialize the
+		*	[collection]{@link enyo.Collection} with or can be an [object]{@link external:Object}
+		*	equivalent to the _props_ parameter.
+		* @param {Object} [props] A [hash]{@link external:Object} of properties to apply directly
+		*	to the [collection]{@link enyo.Collection}.
+		* @param {Object} [opts] A [hash]{@link external:Object}
+		* @public
 		*/
 		constructor: enyo.inherit(function (sup) {
 			return function (recs, props, opts) {
@@ -1219,7 +1185,7 @@
 		}),
 		
 		/**
-			@private
+		* @private
 		*/
 		constructed: enyo.inherit(function (sup) {
 			return function () {
@@ -1229,18 +1195,13 @@
 				if (this.options.fetch) this.fetch();
 			};
 		})
+		
 	});
 	
 	/**
-		@alias enyo.Collection~STATES
-		@static
-		@public
-	*/
-	Collection.STATES = STATES;
-	
-	/**
-		@private
-		@static
+	* @name enyo.Collection.concat
+	* @static
+	* @private
 	*/
 	Collection.concat = function (ctor, props) {
 		var proto = ctor.prototype || ctor;
