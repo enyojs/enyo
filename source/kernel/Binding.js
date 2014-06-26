@@ -1,3 +1,17 @@
+/**
+* The details for an {@link enyo.Binding#transform} [function]{@link external:Function}, including 
+* the available parameters and how they can be used.
+* 
+* @callback BindingTransformCallback
+* @param {*} value The _value_ being synchronized.
+* @param {String} direction the _direction_ (a string matching either "source" or "target", 
+*                           as in "going to the source").
+* @param {Object} binding A reference to the associated [binding]{@link enyo.Binding}. In cases 
+*                         where the [binding]{@link enyo.Binding} should be interrupted and not 
+*                         propagate the synchronization at all, call the _stop()_ method of 
+*                         the passed-in [binding]{@link enyo.Binding} reference.
+*/
+
 (function (enyo, scope) {
 	
 	var kind = enyo.kind;
@@ -249,31 +263,16 @@
 		* @public
 		*/
 		to: null,
-		
-		/**
-		* The details for an {@link enyo.Binding#transform} 
-		* [function]{@link external:Function}, including the available parameters and how they can
-		* be used.
-		*
-		* @typedef {Function} enyo.Binding#transform~function
-		* @param {*} value The _value_ being synchronized.
-		* @param {String} direction the _direction_ (a string matching either "source" or "target", 
-		*                           as in "going to the source").
-		* @param {Object} binding A reference to this [binding]{@link enyo.Binding}. In cases where 
-		*                         the [binding]{@link enyo.Binding} should be interrupted and not 
-		*                         propagate the synchronization at all, call the _stop()_ method of 
-		*                         the passed-in [binding]{@link enyo.Binding} reference.
-		*/
 
 		/**
 		* Set this to a [function]{@link external:Function} or the name of a method on the 
 		* [owner]{@link enyo.Binding#owner} of this [binding]{@link enyo.Binding}. The _transform_ 
 		* is used to programmatically modify the value being synchronized. 
-		* {@see enyo.Binding#transform~function} for detailed information on the parameters that are
-		* made available to _transform_.
+		* {@see BindingTransformCallback} for detailed information on the parameters that are made 
+		* available to _transform_.
 		* 
 		* @default null
-		* @type {Function}
+		* @type {BindingTransformCallback}
 		* @public
 		*/
 		transform: null,
