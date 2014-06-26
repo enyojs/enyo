@@ -2,7 +2,7 @@ describe('enyo.Model', function () {
 	
 	var Model = enyo.Model,
 		proto = Model.prototype,
-		STATES = Model.STATES;
+		STATES = enyo.States;
 	
 	
 	describe('properties', function () {

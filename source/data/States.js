@@ -151,14 +151,14 @@
 		* [ERROR_UNKNOWN]{@link enyo.States.ERROR_UNKNOWN}. It can be extended to include
 		* additional values using the [bitwise]{@link external:bitwise} _OR_ operator (`|`).
 		*/
-		ERROR: 0x0100 | 0x0200 | 0x0400,
+		ERROR: 0x0100 | 0x0200 | 0x0400 | 0x0800,
 		
 		/**
 		* A multi-state [bitmask]{@link external:bitwise}. Compares if a given flag is one of any
 		* state included in the definition of _READY_. By default, this is the inverse of any
 		* values included in [BUSY]{@link enyo.States.BUSY} or [ERROR]{@link enyo.States.ERROR}.
 		*/
-		READY: ~(0x0010 | 0x0020 | 0x0080 | 0x0100 | 0x0200 | 0x0400)
+		READY: ~(0x0010 | 0x0020 | 0x0080 | 0x0100 | 0x0200 | 0x0400 | 0x0800)
 	};
 	
 	/**
