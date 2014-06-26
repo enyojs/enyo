@@ -1,5 +1,5 @@
 (function (enyo, scope) {
-	/** @namespace enyo */
+
 	/**
 	* Shared values for various [kinds]{@link external:kind} used to indicate a _state_ or
 	* _states_ (multiple states simultaneously). These flags are binary values represented by
