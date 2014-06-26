@@ -10,18 +10,35 @@
 * @see enyo.mixin
 */
 
+///// Internally Documented Links (Glossary) /////
+
 /**
 * Binary (bitwise) operations.
+* 
 * @external bitwise
 * @see http://www.experts-exchange.com/Programming/Misc/A_1842-Binary-Bit-Flags-Tutorial-and-Usage-Tips.html
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators
 */
 
 /**
-* Polyfill
+* Strict Equality. This comparison logic ensures not only that the value of the things being
+* compared is the same, but also their types.
+* 
+* @external ===
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Using_the_Equality_Operators
+*/
+
+/**
+* A "polyfill" describes a method or function that is added to older browsers which don't support a
+* the native version of said method, in an effort to bring the browser up to the current standards
+* of modern browsers. This allows code, which is expecting a modern browser, to work interchangably
+* on an older one.
+* 
 * @external polyfill
 * @see http://en.wikipedia.org/wiki/Polyfill
 */
+
+///// Externally Documented Links /////
 
 /**
 * Universally Unique Identifier
