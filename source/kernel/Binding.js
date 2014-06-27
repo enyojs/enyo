@@ -146,8 +146,8 @@
 		* If a [binding]{@link enyo.Binding} is one-way, this flag should be `true` (the default). 
 		* If this flag is set to `false`, the [binding]{@link enyo.Binding} will be two-way.
 		*
-		* @default true
 		* @type {Boolean}
+		* @default true
 		* @public
 		*/
 		oneWay: true,
@@ -158,8 +158,8 @@
 		* [objects]{@link external:Object}), this value will be `true`. Setting this manually will
 		* have undesirable effects.
 		*
-		* @default false
 		* @type {Boolean}
+		* @default false
 		* @public
 		*/
 		connected: false,
@@ -172,8 +172,8 @@
 		* owner created the [binding]{@link enyo.Binding}, it will also be responsible for 
 		* destroying it (automatically).
 		*
-		* @default null
 		* @type {enyo.Object}
+		* @default null
 		* @public
 		*/
 		owner: null,
@@ -183,8 +183,8 @@
 		* ([source]{@link enyo.Binding#source} and [target]{@link enyo.Binding#target}). If this 
 		* process should be deferred, set this flag to `false`.
 		*
-		* @default true
 		* @type {Boolean}
+		* @default true
 		* @public
 		*/
 		autoConnect: true,
@@ -194,8 +194,8 @@
 		* its [source]{@link enyo.Binding#source} to its [target]{@link enyo.Binding#target}. If 
 		* this process should be deferred, set this flag to `false`.
 		* 
-		* @default true
 		* @type {Boolean}
+		* @default true
 		* @public
 		*/
 		autoSync: true,
@@ -206,8 +206,8 @@
 		* [bindable]{@link enyo.BindingSupport} [object]{@link external:Object}, the _source_ will 
 		* be derived from the [from]{@link enyo.Binding#from} property during initialization.
 		* 
-		* @default null
 		* @type {Object}
+		* @default null
 		* @public
 		*/
 		source: null,
@@ -218,8 +218,8 @@
 		* [bindable]{@link enyo.BindingSupport} [object]{@link external:Object}, the _target_ will 
 		* be derived from the [to]{@link enyo.Binding#to} property during initialization.
 		* 
-		* @default null
 		* @type {Object}
+		* @default null
 		* @public
 		*/
 		target: null,
@@ -235,14 +235,19 @@
 		* and the "^" are used in tandem, the "^" will be ignored and the path will be assumed to be
 		* relative to the provided [source]{@link enyo.Binding#source}.
 		* 
-		* @default null
 		* @type {String}
+		* @default null
 		* @public
 		*/
 		from: null,
 		
 		/**
-		* 
+		* The _dirty_ property represents the changed value state of both the property designated by
+		* the [from]{@link enyo.Binding#from} path and the property designated by the 
+		* [to][@link enyo.Binding#to] path.
+		*
+		* @type {Number}
+		* @default {@link enyo.Binding.DIRTY_FROM}
 		* @public
 		*/
 		dirty: DIRTY_FROM,
@@ -258,8 +263,8 @@
 		* will be ignored and the path will be assumed to be relative to the provided 
 		* [target]{@link enyo.Binding#target}.
 		* 
-		* @default null
 		* @type {String}
+		* @default null
 		* @public
 		*/
 		to: null,
@@ -271,8 +276,8 @@
 		* See {@link enyo.Binding~Transform} for detailed information on the parameters that are 
 		* made available to _transform_.
 		* 
-		* @default null
 		* @type {enyo.Binding~Transform}
+		* @default null
 		* @public
 		*/
 		transform: null,
@@ -532,8 +537,9 @@
 	*
 	* @param {String} euid The [Enyo global id]{@link external:EUID} by which to retrieve a 
 	*                      [binding]{@link enyo.Binding}.
-	* @returns {enyo.Binding|undefined} A reference to the binding if the id is found; otherwise, it
-	*                                     will return [undefined]{@link external:undefined}.
+	* @returns {enyo.Binding|undefined} A reference to the [binding]{@link enyo.Binding} if the id 
+	*                                     is found; otherwise, it will return 
+	*                                     [undefined]{@link external:undefined}.
 	* 
 	* @static
 	* @public
@@ -563,7 +569,8 @@
 	enyo.Binding.DIRTY_TO = DIRTY_TO;
 	
 	/**
-	* The default [kind]{@link external:kind} that provides binding functionality.
+	* The default [kind]{@link external:kind} that provides [binding]{@link enyo.Binding} 
+	* functionality.
 	* 
 	* static
 	* public
