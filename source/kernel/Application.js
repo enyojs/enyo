@@ -44,8 +44,8 @@
 		* method has completed execution. Set this to `false` if additional setup (or an 
 		* asynchronous [event]{@link external:event}) is required before starting.
 		*
-		* @default true
 		* @type {Boolean}
+		* @default true
 		* @public
 		*/
 		autoStart: true,
@@ -57,8 +57,8 @@
 		* `false` to delay rendering if additional setup (or an asynchronous 
 		* [event]{@link external:event}) is required before rendering.
 		*
-		* @default true
 		* @type {Boolean}
+		* @default true
 		* @public
 		*/
 		renderOnStart: true,
@@ -66,8 +66,8 @@
 		/**
 		* The _defaultKind_ for {@link enyo.Application} is {@link enyo.Controller}.
 		*
-		* @default 'enyo.Controller'
 		* @type {String}
+		* @default 'enyo.Controller'
 		* @public
 		*/
 		defaultKind: 'enyo.Controller',
@@ -78,6 +78,7 @@
 		*
 		* @readonly
 		* @type {Boolean}
+		* @default false
 		* @public
 		*/
 		viewReady: false,
