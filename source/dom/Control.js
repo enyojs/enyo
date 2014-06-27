@@ -123,6 +123,11 @@
 		/**
 			@public
 		*/
+		renderOnShow: '',
+
+		/**
+			@public
+		*/
 		handlers: {
 			ontap: 'tap',
 			onShowingChanged: 'showingChangedHandler'
@@ -507,6 +512,13 @@
 			var delegate = this.renderDelegate || Control.renderDelegate;
 			delegate.invalidate(this, 'content');
 		},
+
+		/**
+			@private
+		*/
+		renderOnShowChanged: function () {
+			this.setCanGenerate(!this.renderOnShow);			
+		},
 		
 		/**
 			@public
@@ -845,6 +857,7 @@
 				// setup the id for this control if we have one
 				this.idChanged();
 				this.contentChanged();
+				this.renderOnShowChanged();
 			};
 		}),
 		
