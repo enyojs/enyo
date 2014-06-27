@@ -514,6 +514,11 @@
 		},
 
 		/**
+			If developer would like to delay rendering of control until it called to show,
+			set renderOnShow to true.
+			It means that _canGenerate_ becomes false and will be true 
+			when you set showing to true
+
 			@private
 		*/
 		renderOnShowChanged: function () {
