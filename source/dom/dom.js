@@ -115,6 +115,9 @@ enyo.dom = {
 			this.addClass(h, "enyo-document-fit");
 		}
 		enyo.dom.addBodyClass("enyo-body-fit");
+		if (!enyo.platform.ios) {
+			enyo.dom.addBodyClass("enyo-clip");
+		}
 		enyo.bodyIsFitting = true;
 	},
 	getWindowWidth: function() {
