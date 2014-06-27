@@ -2,7 +2,9 @@
 	"name": "enyo",
 	"version": "2.5.0",
 	"main":"enyo.js",
-	"dependencies": {},
+	"dependencies": {
+
+	},
 	"ignore": [
 		".jshintrc",
 		".travis.yml",
