@@ -178,13 +178,18 @@
 */
 
 /**
-* @external window.setTimeout
-* @see https://developer.mozilla.org/en-US/docs/Web/API/Window.setTimeout
+* @external window.location
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window.location
 */
 
 /**
 * @external window.performance
-* @see https://developer.mozilla.org/en-US/docs/Web/API/window.performance
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window.performance
+*/
+
+/**
+* @external window.setTimeout
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window.setTimeout
 */
 
 /**
