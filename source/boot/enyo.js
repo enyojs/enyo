@@ -3,6 +3,7 @@
 	var thisScript = "enyo.js";
 
 	/* global enyo:true */
+	/** @namespace enyo */
 	enyo = window.enyo || {options: {}};
 
 	enyo.locateScript = function(inName) {

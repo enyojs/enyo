@@ -42,14 +42,13 @@
 	/**
 	* An anonymous kind used internally for the singleton {@link enyo.store}.
     * 
-	* @see enyo.store
 	* @class enyo.Store
 	* @mixes enyo.EventEmitter
 	* @extends enyo.Object
 	* @protected
 	*/
 	var Store = kind(
-		/** @lends Store.prototype */ {
+		/** @lends enyo.Store.prototype */ {
 		
 		/**
 		* @private
@@ -95,7 +94,9 @@
 		},
 		
 		/**
-		* @alias enyo.Store#find
+		* This method is an alias for [find]{@link enyo.Store#find}.
+		*
+		* @deprecated
 		* @public
 		*/
 		findLocal: function () {
