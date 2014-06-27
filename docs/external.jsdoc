@@ -41,6 +41,11 @@
 * @external chrome
 */
 
+/**
+* @todo Need to define this.
+* @external subkind
+*/
+
 ///// Internally Documented Links (Glossary) /////
 
 /**

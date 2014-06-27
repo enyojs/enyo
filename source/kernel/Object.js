@@ -153,7 +153,7 @@
 		
 		/**
 		* Same as [log]{@link enyo.Object#log} except that it uses the 
-		* [console's warn]{@warn external:console.warn} method (if it exists).
+		* [console's warn]{@link external:console.warn} method (if it exists).
 		*
 		* @public
 		*/
@@ -178,7 +178,7 @@
 		*
 		* This method is backwards-compatible and will automatically call any existing _getter_
 		* method that uses the getProperty naming convention. (Moving forward, however, Enyo code
-		* should use computed properties {@link enyo.ComputedSupport} instead of relying on the 
+		* should use [computed properties]{@link enyo.ComputedSupport} instead of relying on the 
 		* getter naming convention.)
 		*
 		* @param {String} path The path from which to retrieve a value.

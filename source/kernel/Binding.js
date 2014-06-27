@@ -110,15 +110,17 @@
 	/**
 	* {@link enyo.Binding} is a mechanism used to keep properties synchronized. A 
 	* [binding]{@link enyo.Binding} may be used to link two properties on different 
-	* [objects]{@link enyo.Object}, or even two properties on the same [object]{@link enyo.Object}. 
-	* Once a [binding]{@link enyo.Binding} has been established, it will wait for change 
-	* notifications; when a notification arrives, the [binding]{@link enyo.Binding} will synchronize
-	* the value between the two ends. Note that [bindings]{@link enyo.Binding} may be 
+	* [objects]{@link external:Object}, or even two properties on the same 
+	* [object]{@link external:Object}. Once a [binding]{@link enyo.Binding} has been established, it
+	* will wait for change notifications; when a notification arrives, the 
+	* [binding]{@link enyo.Binding} will synchronize the value between the two ends. Note that 
+	* [bindings]{@link enyo.Binding} may be 
 	* [one-way (the default) or two-way]{@link enyo.Binding#oneWay}.
 	* 
-	* Usually, you will not need to create {@link enyo.Binding} objects arbitrarily, but will 
-	* instead rely on the public [BindingSupport API](@link enyo.BindingSupport), which is applied 
-	* to [enyo.Object](@link enyo.Object) and so is available on all of its 
+	* Usually, you will not need to create {@link enyo.Binding} [objects]{@link external:Object} 
+	* arbitrarily, but will instead rely on the public 
+	* [BindingSupport API]{@link enyo.BindingSupport}, which is applied to 
+	* [enyo.Object]{@link enyo.Object} and so is available on all of its 
 	* [subkinds]{@link external:subkind}.
 	* 
 	* @class enyo.Binding
@@ -201,7 +203,7 @@
 		autoSync: true,
 		
 		/**
-		* Set this only to a reference for an [object]{@link external:Object} to use as the source 
+		* Set this only to a reference for an [object]{@link external:Object} to use as the _source_ 
 		* for the [binding]{@link enyo.Binding}. If this is not a 
 		* [bindable]{@link enyo.BindingSupport} [object]{@link external:Object}, the _source_ will 
 		* be derived from the [from]{@link enyo.Binding#from} property during initialization.
@@ -244,7 +246,7 @@
 		/**
 		* The _dirty_ property represents the changed value state of both the property designated by
 		* the [from]{@link enyo.Binding#from} path and the property designated by the 
-		* [to][@link enyo.Binding#to] path.
+		* [to]{@link enyo.Binding#to} path.
 		*
 		* @type {Number}
 		* @default {@link enyo.Binding.DIRTY_FROM}
@@ -436,9 +438,10 @@
 		},
 		
 		/**
-		* Releases all of the [binding's]{@link enyo.Binding} parts and unregisters its observers. 
-		* Typically, this method will not need to be called directly unless the 
-		* [binding]{@link enyo.Binding} was created without an [owner]{@link enyo.Binding#owner}.
+		* Releases all of the [binding's]{@link enyo.Binding} parts and unregisters its 
+		* [observers]{@link enyo.ObserverSupport}. Typically, this method will not need to be called 
+		* directly unless the [binding]{@link enyo.Binding} was created without an 
+		* [owner]{@link enyo.Binding#owner}.
 		* 
 		* @returns {this} The callee for chaining.
 		* @public
@@ -551,8 +554,8 @@
 	};
 	
 	/**
-	* Possible value of {@link enyo.Binding#dirty} representing that the value of
-	* [binding source]{@link enyo.Binding#source} has changed.
+	* Possible value of the [dirty]{@link enyo.Binding#dirty} property representing that the value 
+	* of [binding source]{@link enyo.Binding#source} has changed.
 	* 
 	* @static
 	* @public
@@ -560,8 +563,8 @@
 	enyo.Binding.DIRTY_FROM = DIRTY_FROM;
 	
 	/**
-	* Possible value of {@link enyo.Binding#dirty} representing that the value of
-	* [binding target]{@link enyo.Binding#target} has changed.
+	* Possible value of the [dirty]{@link enyo.Binding#dirty} property representing that the value 
+	* of [binding target]{@link enyo.Binding#target} has changed.
 	* 
 	* @static
 	* @public
