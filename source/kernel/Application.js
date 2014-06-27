@@ -34,7 +34,7 @@
 		name: 'enyo.Application',
 		
 		/**
-			@private
+		* @private
 		*/
 		kind: ViewController,
 		
