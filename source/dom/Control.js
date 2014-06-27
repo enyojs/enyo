@@ -522,7 +522,7 @@
 			@private
 		*/
 		renderOnShowChanged: function () {
-			this.setCanGenerate(!this.renderOnShow);			
+			this.setCanGenerate(!this.renderOnShow);		
 		},
 		
 		/**
@@ -1080,6 +1080,26 @@
 			this.content = content;
 			
 			if (was != content) this.notify('content', was, content);
+			
+			return this;
+		},
+		/**
+			@public
+			@deprecated
+		*/
+		getRenderOnShow: function () {
+			return this.renderOnShow;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		setRenderOnSHow: function (can) {
+			var was = this.renderOnShow;
+			this.canGenerate = !! can;
+			
+			if (was !== can) this.notify('canRenderOnShow', was, can);
 			
 			return this;
 		},
