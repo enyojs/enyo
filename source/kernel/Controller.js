@@ -25,8 +25,8 @@ enyo.kind(
 	* be available globally. If this flag is `true` even the [owner]{@link enyo.Component#owner} 
 	* (if any) cannot [destroy]{@link enyo.Component#destroy} it.
 	*
-	* @default false
 	* @type {Boolean}
+	* @default false
 	* @public
 	*/
 	global: false,
@@ -37,8 +37,8 @@ enyo.kind(
 	* [computed property]{@link enyo.ComputedSupport} to facilitate overloading. It may contain any
 	* type of data.
 	*
-	* @default null
 	* @type {*}
+	* @default null
 	* @public
 	*/
 	data: null,

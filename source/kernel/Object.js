@@ -60,8 +60,8 @@
 		* If the [destroy]{@link enyo.Object#destroy} method has been called this property will be
 		* `true`, otherwise `false`.
 		*
-		* @default false
 		* @type {Boolean}
+		* @default false
 		* @public
 		*/
 		destroyed: false,
