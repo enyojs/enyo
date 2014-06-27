@@ -42,7 +42,7 @@
 		* If set to `true` (the default), the application's [start]{@link enyo.Application#start} 
 		* method will automatically be called once its [create]{@link enyo.Application#create} 
 		* method has completed execution. Set this to `false` if additional setup (or an 
-		* asynchronous [event]{@link external:Event}) is required before starting.
+		* asynchronous [event]{@link external:event}) is required before starting.
 		*
 		* @default true
 		* @type {Boolean}
@@ -55,7 +55,7 @@
 		* [render]{@link enyo.Application#render} its [view]{@link enyo.ViewController#view} when 
 		* the [start]{@link enyo.Application#start} method has completed execution. Set this to 
 		* `false` to delay rendering if additional setup (or an asynchronous 
-		* [event]{@link external:Event}) is required before rendering.
+		* [event]{@link external:event}) is required before rendering.
 		*
 		* @default true
 		* @type {Boolean}
@@ -96,6 +96,7 @@
 		},
 		
 		/**
+		* @method
 		* @private
 		*/
 		render: enyo.inherit(function (sup) {
@@ -107,6 +108,7 @@
 		}),
 		
 		/**
+		* @method
 		* @private
 		*/
 		constructor: enyo.inherit(function (sup) {
@@ -130,6 +132,7 @@
 		* [start]{@link enyo.Application#start} method if 
 		* [autoStart]{@link enyo.Application#autoStart} is `true`.
 		*
+		* @method
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {
@@ -145,6 +148,7 @@
 		* Makes sure that all {@link enyo.Component components} created by this application have 
 		* their [app]{@link enyo.ApplicationSupport#app} property set correctly.
 		*
+		* @method
 		* @private
 		*/
 		adjustComponentProps: enyo.inherit(function (sup) {
@@ -157,6 +161,7 @@
 		/**
 		* Cleans up the registration for the application.
 		*
+		* @method
 		* @private
 		*/
 		destroy: enyo.inherit(function (sup) {
@@ -167,7 +172,7 @@
 		}),
 		
 		/**
-		* Ensures that [events]{@link external:Event} bubbling from the views will reach 
+		* Ensures that [events]{@link external:event} bubbling from the views will reach 
 		* {@link enyo.master} as expected.
 		*
 		* @private

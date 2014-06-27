@@ -1,17 +1,3 @@
-/**
-* The details for an {@link enyo.Binding#transform} [function]{@link external:Function}, including 
-* the available parameters and how they can be used.
-* 
-* @callback BindingTransformCallback
-* @param {*} value The _value_ being synchronized.
-* @param {String} direction the _direction_ (a string matching either "source" or "target", 
-*                           as in "going to the source").
-* @param {Object} binding A reference to the associated [binding]{@link enyo.Binding}. In cases 
-*                         where the [binding]{@link enyo.Binding} should be interrupted and not 
-*                         propagate the synchronization at all, call the _stop()_ method of 
-*                         the passed-in [binding]{@link enyo.Binding} reference.
-*/
-
 (function (enyo, scope) {
 	
 	var kind = enyo.kind;
@@ -106,19 +92,33 @@
 		return (binding.ready = rdy);
 		/*jshint +W093 */
 	}
+
+	/**
+	* The details for an {@link enyo.Binding#transform} [function]{@link external:Function}, 
+	* including the available parameters and how they can be used.
+	* 
+	* @callback enyo.Binding~Transform
+	* @param {*} value The _value_ being synchronized.
+	* @param {String} direction the _direction_ (a string matching either "source" or "target", 
+	*                           as in "going to the source").
+	* @param {Object} binding A reference to the associated [binding]{@link enyo.Binding}. In cases 
+	*                         where the [binding]{@link enyo.Binding} should be interrupted and not 
+	*                         propagate the synchronization at all, call the _stop()_ method of 
+	*                         the passed-in [binding]{@link enyo.Binding} reference.
+	*/
 	
 	/**
-	* {@link enyo.Binding} is a mechanism used to keep properties synchronized. A binding may be 
-	* used to link two properties on different [objects]{@link enyo.Object}, or even two properties 
-	* on the same [object]{@link enyo.Object}. Once a [binding]{@link enyo.Binding} has been 
-	* established, it will wait for change notifications; when a notification arrives, the 
-	* [binding]{@link enyo.Binding} will synchronize the value between the two ends. Note that 
-	* [bindings]{@link enyo.Binding} may be 
+	* {@link enyo.Binding} is a mechanism used to keep properties synchronized. A 
+	* [binding]{@link enyo.Binding} may be used to link two properties on different 
+	* [objects]{@link enyo.Object}, or even two properties on the same [object]{@link enyo.Object}. 
+	* Once a [binding]{@link enyo.Binding} has been established, it will wait for change 
+	* notifications; when a notification arrives, the [binding]{@link enyo.Binding} will synchronize
+	* the value between the two ends. Note that [bindings]{@link enyo.Binding} may be 
 	* [one-way (the default) or two-way]{@link enyo.Binding#oneWay}.
 	* 
-	* Usually, you will not need to create _enyo.Binding_ objects arbitrarily, but will instead rely
-	* on the public [BindingSupport API](@link enyo.BindingSupport), which is applied to
-	* [enyo.Object](@link enyo.Object) and so is available on all of its 
+	* Usually, you will not need to create {@link enyo.Binding} objects arbitrarily, but will 
+	* instead rely on the public [BindingSupport API](@link enyo.BindingSupport), which is applied 
+	* to [enyo.Object](@link enyo.Object) and so is available on all of its 
 	* [subkinds]{@link external:subkind}.
 	* 
 	* @class enyo.Binding
@@ -268,11 +268,11 @@
 		* Set this to a [function]{@link external:Function} or the name of a method on the 
 		* [owner]{@link enyo.Binding#owner} of this [binding]{@link enyo.Binding}. The _transform_ 
 		* is used to programmatically modify the value being synchronized. 
-		* {@see BindingTransformCallback} for detailed information on the parameters that are made 
-		* available to _transform_.
+		* See {@link enyo.Binding~Transform} for detailed information on the parameters that are 
+		* made available to _transform_.
 		* 
 		* @default null
-		* @type {BindingTransformCallback}
+		* @type {enyo.Binding~Transform}
 		* @public
 		*/
 		transform: null,
@@ -532,7 +532,7 @@
 	*
 	* @param {String} euid The [Enyo global id]{@link external:EUID} by which to retrieve a 
 	*                      [binding]{@link enyo.Binding}.
-	* @returns {enyo.Binding|undefined} a reference to the binding if the id is found; otherwise, it
+	* @returns {enyo.Binding|undefined} A reference to the binding if the id is found; otherwise, it
 	*                                     will return [undefined]{@link external:undefined}.
 	* 
 	* @static

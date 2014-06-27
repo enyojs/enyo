@@ -1,5 +1,5 @@
 /**
-* {@link enyo.Controller} is the base kind for all controllers in enyo. An abstract 
+* {@link enyo.Controller} is the base kind for all controllers in Enyo. An abstract 
 * [kind]{@link external:kind}, it is a 
 * [delegate]{@link external:delegate}/[component]{@link enyo.Component} that is designed to be a 
 * proxy for information.
@@ -9,12 +9,12 @@
 */
 enyo.kind(
 	/** @lends enyo.Controller.prototype */ {
-	
+
 	/**
 	* @private
 	*/
 	name: "enyo.Controller",
-	
+
 	/**
 	* @private
 	*/
@@ -30,7 +30,7 @@ enyo.kind(
 	* @public
 	*/
 	global: false,
-	
+
 	/**
 	* The default source of information for all instances of {@link enyo.Controller} and its 
 	* [subkinds]{@link external:subkind}. In some cases, this will be a 
@@ -42,8 +42,9 @@ enyo.kind(
 	* @public
 	*/
 	data: null,
-	
+
 	/**
+	* @method
 	* @private
 	*/
 	constructor: enyo.inherit(function (sup) {
