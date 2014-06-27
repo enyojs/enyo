@@ -55,21 +55,29 @@
 		/**
 		* Only exists in the client and was created during the runtime of the
 		* [application]{@link external:application}.
+		*
+		* @default 1
 		*/
 		NEW: 0x0001,
 		
 		/**
 		* Has been modified locally only.
+		*
+		* @default 2
 		*/
 		DIRTY: 0x0002,
 		
 		/**
 		* Has not been modified locally.
+		*
+		* @default 4
 		*/
 		CLEAN: 0x0004,
 		
 		/**
 		* Can no longer be modified.
+		*
+		* @default 8
 		*/
 		DESTROYED: 0x0008,
 		
@@ -79,6 +87,8 @@
 		* @see enyo.Model#fetch
 		* @see enyo.RelationalModel#fetch
 		* @see enyo.Collection#fetch
+		*
+		* @default 16
 		*/
 		FETCHING: 0x0010,
 		
@@ -88,6 +98,8 @@
 		* @see enyo.Model#commit
 		* @see enyo.RelationalModel#commit
 		* @see enyo.Collection#commit
+		*
+		* @default 32
 		*/
 		COMMITTING: 0x0020,
 		
@@ -97,8 +109,10 @@
 		* @see enyo.Model#destroy
 		* @see enyo.RelationalModel#destroy
 		* @see enyo.Collection#destroy
+		*
+		* @default 64
 		*/
-		DESTROYING: 0x0080,
+		DESTROYING: 0x0040,
 		
 		/**
 		* There was an error during _commit_.
@@ -106,8 +120,10 @@
 		* @see enyo.Model#commit
 		* @see enyo.RelationalModel#commit
 		* @see enyo.Collection#commit
+		*
+		* @default 128
 		*/
-		ERROR_COMMITTING: 0x0100,
+		ERROR_COMMITTING: 0x0080,
 		
 		/**
 		* There was an error during _fetch_.
@@ -115,8 +131,10 @@
 		* @see enyo.Model#fetch
 		* @see enyo.RelationalModel#fetch
 		* @see enyo.Collection#fetch
+		*
+		* @default 256
 		*/
-		ERROR_FETCHING: 0x0200,
+		ERROR_FETCHING: 0x0100,
 		
 		/**
 		* There was an error during _destroy_.
@@ -124,14 +142,18 @@
 		* @see enyo.Model#destroy
 		* @see enyo.RelationalModel#destroy
 		* @see enyo.Collection#destroy
+		*
+		* @default 512
 		*/
-		ERROR_DESTROYING: 0x0400,
+		ERROR_DESTROYING: 0x0200,
 		
 		/**
 		* An error was encountered for which there was no exact flag or an invalid error was
 		* specified.
+		*
+		* @default 1024
 		*/
-		ERROR_UNKNOWN: 0x0800,
+		ERROR_UNKNOWN: 0x0400,
 		
 		/**
 		* A multi-state [bitmask]{@link external:bitwise}. Compares if a given flag is one of
@@ -139,8 +161,10 @@
 		* [FETCHING]{@link enyo.States.FETCHING}, [COMMITTING]{@link enyo.States.COMMITTING} or
 		* [DESTROYING]{@link enyo.States.DESTROYING}. It can be extended to include additional
 		* values using the [bitwise]{@link external:bitwise} _OR_ operator (`|`).
+		*
+		* @default 112
 		*/
-		BUSY: 0x0010 | 0x0020 | 0x0080,
+		BUSY: 0x0010 | 0x0020 | 0x0040,
 		
 		/**
 		* A multi-state [bitmask]{@link external:bitwise}. Compares if a given flag is one of any
@@ -150,15 +174,19 @@
 		* [ERROR_DESTROYING]{@link enyo.States.ERROR_DESTROYING} or
 		* [ERROR_UNKNOWN]{@link enyo.States.ERROR_UNKNOWN}. It can be extended to include
 		* additional values using the [bitwise]{@link external:bitwise} _OR_ operator (`|`).
+		*
+		* @default 1920
 		*/
-		ERROR: 0x0100 | 0x0200 | 0x0400 | 0x0800,
+		ERROR: 0x0080 | 0x0100 | 0x0200 | 0x0400,
 		
 		/**
 		* A multi-state [bitmask]{@link external:bitwise}. Compares if a given flag is one of any
 		* state included in the definition of _READY_. By default, this is the inverse of any
 		* values included in [BUSY]{@link enyo.States.BUSY} or [ERROR]{@link enyo.States.ERROR}.
+		*
+		* @default -2041
 		*/
-		READY: ~(0x0010 | 0x0020 | 0x0080 | 0x0100 | 0x0200 | 0x0400 | 0x0800)
+		READY: ~(0x0008 | 0x0010 | 0x0020 | 0x0040 | 0x0080 | 0x0100 | 0x0200 | 0x0400)
 	};
 	
 	/**
