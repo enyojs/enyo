@@ -133,7 +133,7 @@ enyo.kind({
 	dragstart: function() {
 		return this.hasFocus();
 	},
-	focused: function() {
+	focused: function(inSender, inEvent) {
 		this.preventDefaultOnOffscreen(inSender, inEvent);
 		if (this.selectOnFocus) {
 			enyo.asyncMethod(this, "selectContents");
