@@ -1,4 +1,4 @@
-(function (enyo) {
+(function (enyo, scope) {
 	
 	var kind = enyo.kind;
 	
@@ -9,7 +9,10 @@
 		oObject = enyo.Object;
 	
 	/**
-		@private
+	* Only necessary because of the order in which mixins are applied.
+	*
+	* @class
+	* @private
 	*/
 	var BaseModelController = kind({
 		kind: Component,
@@ -17,35 +20,67 @@
 	});
 	
 	/**
-		Model instance proxy.
-	
-		The _model_ property is a reserved word and will conflict with the controller if it is an attribute
-		of the model instance being proxied.
-	
-		@NOTE: Rules of property resolution - if the controller can call hasOwnProperty -> true it will look
-		locally or if the property is resolved to be a computed property otherwise assume the proxy.
-	
-		@public
-		@class enyo.ModelController
+	* A controller designed to proxy an underlying [model]{@link enyo.Model}. Other
+	* [kinds]{@link external:kind} can [bind]{@link enyo.BindingSupport.bindings} to this
+	* controller as if it was a {@link enyo.Model}. Using the
+	* [model]{@link enyo.ModelController#model} reserved property, the actual {@link enyo.Model}
+	* can be changed without the [bindings]{@link enyo.BindingSupport.bindings} needing to know. It
+	* will also propagate events [emitted]{@link enyo.EventEmitter.emit} by the underlying
+	* [model]{@link enyo.ModelController#model}.
+	* 
+	* It is important to note that the [model]{@link enyo.ModelController#model} property is a
+	* reserved property name. Also note that [bindings]{@link enyo.BindingSupport.bindings} should
+	* __never bind through the controller to the model directly__. Ever.
+	* 
+	* ##Rules of property resolution
+	* If the controller can call [hasOwnProperty]{@link external:Object.hasOwnProperty} and it
+	* returns `true` it will look locally or if the property is resolved to be a computed property
+	* otherwise assume to proxy the requested property from the given
+	* [model]{@link enyo.ModelController#model} when available.
+	* 
+	* @class enyo.ModelController
+	* @extends enyo.Component
+	* @mixes enyo.ComputedSupport
+	* @mixes enyo.EventEmitter
+	* @mixes enyo.ProxyObject
+	* @public
 	*/
 	kind(
 		/** @lends enyo.ModelController.prototype */ {
+		
+		/**
+		* @private
+		*/
 		name: 'enyo.ModelController',
+		
+		/**
+		* @private
+		*/
 		kind: BaseModelController,
 		
 		/**
-			@public
+		* The {@link enyo.Model} to proxy. If this is set to an instance of {@link enyo.Model} the
+		* [controller]{@link enyo.ModelController} will propagate {@link enyo.Model} events and
+		* [notifications]{@link enyo.ObserverSupport.notify}. __No bindings should ever bind
+		* directly to attributes of this property__.
+		*
+		* Also note that this is a _reserved_ property name and will collide with any
+		* [attribute]{@link enyo.Model#attributes} named _model_. This scenario should be avoided.
+		*
+		* @type enyo.Model
+		* @default null
+		* @public
 		*/
 		model: null,
 		
 		/**
-			@private
+		* @private
 		*/
 		proxyObjectKey: 'model',
 		
 		/**
-			@private
-			@method
+		* @method
+		* @private
 		*/
 		get: enyo.inherit(function (sup) {
 			return function (path) {
@@ -59,8 +94,8 @@
 		}),
 		
 		/**
-			@private
-			@method
+		* @method
+		* @private
 		*/
 		set: enyo.inherit(function (sup) {
 			return function (path) {
@@ -76,13 +111,14 @@
 		}),
 		
 		/**
-			@private
-			@method
+		* @method
+		* @private
 		*/
 		_getComputed: ComputedSupport.get.fn(oObject.prototype.get),
 		
 		/**
-			@private
+		* @type enyo.ObserverSupport~Observer
+		* @private
 		*/
 		modelChanged: function (was, is, path) {
 			// unregister previous model if any
@@ -103,8 +139,8 @@
 		},
 		
 		/**
-			@private
-			@method
+		* @method
+		* @private
 		*/
 		_modelEvent: function (model, e, props) {
 			// re-emit the event as expected with the only change being the originator (first param)
@@ -123,16 +159,16 @@
 		},
 		
 		/**
-			@private
-			@method
+		* @method
+		* @private
 		*/
 		modelObservedProperties: function () {
 			return this._observedProps || (this._observedProps = {});
 		},
 		
 		/**
-			@private
-			@method
+		* @method
+		* @private
 		*/
 		observe: enyo.inherit(function (sup) {
 			return function (path) {
@@ -150,28 +186,29 @@
 		}),
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		addObserver: function () {
 			return this.observe.apply(this, arguments);
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
-		constructor: function (props) {
-			// ensure we have our own model property
-			this.model = null;
+		constructor: enyo.inherit(function (sup) {
+			return function (props) {
+				// ensure we have our own model property
+				this.model = null;
 			
-			// adhere to normal approach to constructor properties hash
-			props && enyo.mixin(this, props);
-		},
+				// adhere to normal approach to constructor properties hash
+				props && enyo.mixin(this, props);
+				sup.apply(this, arguments);
+			};
+		}),
 		
 		/**
-			@public
-			@method
+		* @method
+		* @private
 		*/
 		destroy: enyo.inherit(function (sup) {
 			return function () {
@@ -182,4 +219,4 @@
 		
 	});
 	
-})(enyo);
+})(enyo, this);
