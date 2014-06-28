@@ -105,7 +105,7 @@
 	* {@linkplain key-concepts/creating-components.html Components} in the Enyo Developer Guide.
 	* 
 	* @class enyo.Component
-	* @extend enyo.Object  
+	* @extends enyo.Object  
 	* @public
 	*/
 	var Component = kind(
