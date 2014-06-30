@@ -1,86 +1,86 @@
 (function (enyo, scope) {
 	
-	/* @namespace enyo */
-	
 	var kind = enyo.kind;
 	
 	var Collection = enyo.Collection;
 	
 	/**
-		Used internally (re-use) for filters that do not have a valid filter. This means they will
-		always keep a mirrored copy of the entire current dataset of the parent filter.
-		
-		@private
+	* Used internally (re-use) for filters that do not have a valid filter. This means they will
+	* always keep a mirrored copy of the entire current dataset of the parent filter.
+	* 
+	* @private
 	*/
 	function alwaysTrue () {
 		return true;
 	}
 	
 	/**
-		This is an abstract class used by subclasses to implement features relevant to filtered
-		[collections]{@link enyo.Collection}. It does extend {@link enyo.Collection} but only
-		implements a subset of its methods. Unlike a normal {@link enyo.Collection} that keeps its
-		own set of [models]{@link enyo.Model} instances (and can create, remove or destroy them), a
-		{@link enyo.Filter} uses another instance of {@link enyo.Collection} as its dataset and
-		safely proxies its [models]{@link enyo.Model} as a complete set or according to the needs
-		of its subclass. {@link enyo.Filter} is not intended to communicate with
-		[sources]{@link enyo.Source} (e.g. via {@link enyo.Collection#fetch}). It maintains an
-		implementation specific API (from its subclass) and propagates the events and API's
-		inherited from {@link enyo.Collection} required to interact with
-		[controls]{@link enyo.Control}.
-		
-		@protected
-		@class enyo.Filter
-		@extends enyo.Collection
+	* This is an abstract [kind]{@link external:kind} used by [subkinds]{@link external:subkind} to
+	* implement features relevant to filtered [collections]{@link enyo.Collection}. It does extend
+	* {@link enyo.Collection} but only implements a subset of its methods. Unlike a normal
+	* {@link enyo.Collection} that keeps its own set of [model]{@link enyo.Model} instances (and can
+	* create, remove or destroy them), a {@link enyo.Filter} uses another instance of
+	* {@link enyo.Collection} as its dataset and safely proxies its [models]{@link enyo.Model} as a
+	* complete set or according to the needs of its [subkind]{@link external:subkind}.
+	* {@link enyo.Filter} is not intended to communicate with [sources]{@link enyo.Source} (e.g. via
+	* {@link enyo.Collection#fetch}). It maintains an implementation specific API (from its
+	* [subkinds]{@link external:subkind}) and propagates the events and API's inherited from
+	* {@link enyo.Collection} required to interact with [controls]{@link enyo.Control}.
+	* 
+	* @class enyo.Filter
+	* @extends enyo.Collection
+	* @protected
 	*/
 	var Filter = kind(
 		/** @lends enyo.Filter.prototype */ {
 		
 		/**
-			@private
+		* @private
 		*/
 		name: 'enyo.Filter',
 		
 		/**
-			@private
+		* @private
 		*/
 		kind: Collection,
 		
 		/**
-			@private
+		* @private
 		*/
 		noDefer: true,
 		
 		/**
-			The actual {@link enyo.Collection} content to proxy. How the {@link enyo.Collection} is
-			used varies by the subclass implementing the feature.
-			
-			@type enyo.Collection
-			@default null
-			@public
+		* The actual {@link enyo.Collection} content to proxy. How the {@link enyo.Collection} is
+		* used varies by the [subkind]{@link external:subkind} implementing the feature.
+		* 
+		* @type enyo.Collection
+		* @default null
+		* @public
 		*/
 		collection: null,
 		
 		/**
-			Once all components have been created, those that are [filters]{@link enyo.Filter} (or
-			subclasses) will be added to this array. This array should not be modified directly and
-			is primarily for internal use.
-			
-			@type Array
-			@readonly
-			@public
+		* Once all components have been created, those that are [filters]{@link enyo.Filter} (or
+		* [subkinds]{@link external:subkind}) will be added to this [array]{@link external:Array}.
+		* This [array]{@link external:Array} should not be modified directly and is primarily for
+		* internal use.
+		* 
+		* @type Array
+		* @default null
+		* @readonly
+		* @public
 		*/
 		filters: null,
 		
 		/**
-			@private
+		* @private
 		*/
 		defaultProps: {
 			kind: 'enyo.Filter'
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		adjustComponentProps: enyo.inherit(function (sup) {
 			return function (props) {
@@ -111,7 +111,7 @@
 		}),
 		
 		/**
-			@private
+		* @private
 		*/
 		addComponent: enyo.inherit(function (sup) {
 			return function (comp) {
@@ -124,16 +124,17 @@
 		}),
 		
 		/**
-			Reset the filter to its initial state. Will vary by subclass implementation.
-		
-			@abstract
-			@method
-			@public
+		* Reset the [filter]{@link enyo.Filter} to its initial state. Will vary by
+		* [subkind]{@link external:subkind} implementation.
+		* 
+		* @virtual
+		* @method
+		* @public
 		*/
 		reset: enyo.nop,
 		
 		/**
-			@private
+		* @private
 		*/
 		constructor: enyo.inherit(function (sup) {
 			return function () {
@@ -150,7 +151,7 @@
 		}),
 		
 		/**
-			@private
+		* @private
 		*/
 		constructed: enyo.inherit(function (sup) {
 			return function () {
@@ -180,7 +181,7 @@
 		}),
 		
 		/**
-			@private
+		* @private
 		*/
 		destroy: enyo.inherit(function (sup) {
 			return function () {
@@ -205,7 +206,7 @@
 		}),
 		
 		/**
-			@private
+		* @private
 		*/
 		collectionChanged: function (was, is) {
 			var internal = this._internal;
@@ -229,14 +230,14 @@
 		},
 		
 		/**
-			This method is invoked when events are received from a `collection` that is not the
-			owner of this filter (meaning it is not a child since all child-filters owners are
-			also filters and their event handling happens in another method). As long as we are
-			consistent about applying the same action against ourselves we should remain in-sync as
-			well as propagate the same event again with the exception of `sort` that will wind up
-			being a `reset`.
-			
-			@private
+		* This method is invoked when events are received from a `collection` that is not the
+		* owner of this filter (meaning it is not a child since all child-filters owners are
+		* also filters and their event handling happens in another method). As long as we are
+		* consistent about applying the same action against ourselves we should remain in-sync as
+		* well as propagate the same event again with the exception of `sort` that will wind up
+		* being a `reset`.
+		* 
+		* @private
 		*/
 		_collectionEvent: function (sender, e, props) {
 			// we are listening for particular events to signal that we should update according
@@ -272,46 +273,67 @@
 		},
 		
 		/**
-			@abstract
-			@private
+		* To be implemented by [subkind]{@link external:subkind} for internal use only.
+		*
+		* @virtual
+		* @private
 		*/
 		_internalEvent: enyo.nop,
 		
 		/**
-			Subclasses are responsible for handling all owner related events.
-		
-			@abstract
-			@private
+		* To be implemented by [subkind]{@link external:subkind} for internal use only.
+		*
+		* @virtual
+		* @private
 		*/
 		_ownerEvent: enyo.nop,
 		
 		/**
-			@private
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		*
+		* @method
+		* @public
 		*/
 		add: enyo.nop,
 		
 		/**
-			@private
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		*
+		* @method
+		* @public
 		*/
 		remove: enyo.nop,
 		
 		/**
-			@private
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		*
+		* @method
+		* @public
 		*/
 		fetch: enyo.nop,
 		
 		/**
-			@private
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		*
+		* @method
+		* @public
 		*/
 		sort: enyo.nop,
 		
 		/**
-			@private
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		*
+		* @method
+		* @public
 		*/
 		commit: enyo.nop,
 		
 		/**
-			@private
+		* Overloaded implementation.
+		*
+		* @see enyo.Collection#at
+		* @method
+		* @public
 		*/
 		at: enyo.inherit(function (sup) {
 			return function () {
@@ -320,17 +342,27 @@
 		}),
 		
 		/**
-			@private
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		*
+		* @method
+		* @public
 		*/
 		raw: enyo.nop,
 		
 		/**
-			@private
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		*
+		* @method
+		* @public
 		*/
 		toJSON: enyo.nop,
 		
 		/**
-			@private
+		* Overloaded implementation.
+		*
+		* @see enyo.Collection#has
+		* @method
+		* @public
 		*/
 		has: enyo.inherit(function (sup) {
 			return function () {
@@ -339,7 +371,11 @@
 		}),
 		
 		/**
-			@private
+		* Overloaded implementation.
+		*
+		* @see enyo.Collection#forEach
+		* @method
+		* @public
 		*/
 		forEach: enyo.inherit(function (sup) {
 			return function () {
@@ -348,7 +384,11 @@
 		}),
 		
 		/**
-			@private
+		* Overloaded implementation.
+		*
+		* @see enyo.Collection#filter
+		* @method
+		* @public
 		*/
 		filter: enyo.inherit(function (sup) {
 			return function () {
@@ -357,7 +397,11 @@
 		}),
 		
 		/**
-			@private
+		* Overloaded implementation.
+		*
+		* @see enyo.Collection#find
+		* @method
+		* @public
 		*/
 		find: enyo.inherit(function (sup) {
 			return function () {
@@ -366,7 +410,11 @@
 		}),
 		
 		/**
-			@private
+		* Overloaded implementation.
+		*
+		* @see enyo.Collection#map
+		* @method
+		* @public
 		*/
 		map: enyo.inherit(function (sup) {
 			return function () {
@@ -375,7 +423,11 @@
 		}),
 		
 		/**
-			@private
+		* Overloaded implementation.
+		*
+		* @see enyo.Collection#indexOf
+		* @method
+		* @public
 		*/
 		indexOf: enyo.inherit(function (sup) {
 			return function () {
@@ -384,7 +436,10 @@
 		}),
 		
 		/**
-			@private
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		*
+		* @method
+		* @public
 		*/
 		empty: enyo.nop
 	});
