@@ -31,7 +31,7 @@ enyo.kind(
 	*/
 	published: {
 		/** 
-		* Maps to the _href_ [attribute]{@link external:Attribute} of the &lt;a&gt; tag
+		* Maps to the _href_ [attribute]{@link external:Attribute} of the &lt;a&gt; tag.
 		* 
 		* @type {String}
 		* @default ''
@@ -41,7 +41,7 @@ enyo.kind(
 		href: '',
 
 		/**
-		* Maps to the _title_ [attribute]{@link external:Attribute} of the &lt;a&gt; tag
+		* Maps to the _title_ [attribute]{@link external:Attribute} of the &lt;a&gt; tag.
 		* 
 		* @type {String}
 		* @default  ''

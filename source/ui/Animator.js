@@ -62,7 +62,7 @@ enyo.kind(
 		duration: 350,
 
 		/** 
-		* Value of [value]{@link enyo.Animator#value} property at the beginning of an animation
+		* Value of [value]{@link enyo.Animator#value} property at the beginning of an animation.
 		*
 		* @type {Number}
 		* @default 0
@@ -72,7 +72,7 @@ enyo.kind(
 		startValue: 0,
 
 		/** 
-		* Value of [value]{@link enyo.Animator#value} property at the end of an animation
+		* Value of [value]{@link enyo.Animator#value} property at the end of an animation.
 		*
 		* @type {Number}
 		* @default 1
@@ -94,7 +94,7 @@ enyo.kind(
 
 		/** 
 		* [Function]{@link external:Function} that determines how the animation progresses from 
-		* [startValue]{@link enyo.Animator#startValue} to [endValue]{@link enyo.Animator#endValue}
+		* [startValue]{@link enyo.Animator#startValue} to [endValue]{@link enyo.Animator#endValue}.
 		* 
 		* @type {Function}
 		* @default enyo.easing.cubicOut
