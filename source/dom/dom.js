@@ -115,6 +115,11 @@ enyo.dom = {
 			this.addClass(h, "enyo-document-fit");
 		}
 		enyo.dom.addBodyClass("enyo-body-fit");
+		if (!enyo.platform.ios) {
+			// Defeat native scroller by clip on body.
+			// In ios, leave overflow as auto beacuse it helps defeat ios page scrolling.
+			enyo.dom.addBodyClass("enyo-clip");
+		}
 		enyo.bodyIsFitting = true;
 	},
 	getWindowWidth: function() {
