@@ -53,7 +53,7 @@
 	* @name $
 	* @type {Object}
 	* @default null
-	* @memberOf enyo.Component.prototype
+	* @memberof enyo.Component.prototype
 	* @readonly
 	* @public
 	*/

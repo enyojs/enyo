@@ -8,25 +8,30 @@
 * @class enyo.Anchor
 * @public
 */
-enyo.kind({
+enyo.kind(
+	/** @lends enyo.Anchor.prototype */ {
+
 	/**
 	* @private
 	*/
 	name: 'enyo.Anchor',
+
 	/**
 	* @private
 	*/
 	kind: 'enyo.Control',
+
 	/**
 	* @private
 	*/
 	tag: 'a',
+
 	/** 
 	* @private
 	*/
 	published: {
 		/** 
-		* Maps to the _href_ [attribute]{@link external:Attribute} of the &lt;a&gt; tag.
+		* Maps to the _href_ [attribute]{@link external:Attribute} of the &lt;a&gt; tag
 		* 
 		* @type {String}
 		* @default ''
@@ -34,8 +39,9 @@ enyo.kind({
 		* @public
 		*/
 		href: '',
+
 		/**
-		* Maps to the _title_ [attribute]{@link external:Attribute} of the &lt;a&gt; tag.
+		* Maps to the _title_ [attribute]{@link external:Attribute} of the &lt;a&gt; tag
 		* 
 		* @type {String}
 		* @default  ''
@@ -44,6 +50,7 @@ enyo.kind({
 		*/
 		title: ''
 	},
+
 	/**
 	* @private
 	*/
@@ -54,12 +61,14 @@ enyo.kind({
 			this.titleChanged();
 		};
 	}),
+
 	/**
 	* @private
 	*/
 	hrefChanged: function() {
 		this.setAttribute("href", this.href);
 	},
+
 	/**
 	* @private
 	*/

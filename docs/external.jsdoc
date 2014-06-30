@@ -256,3 +256,8 @@
 * @external Attribute
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
 */
+
+/**
+* @external window
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window
+*/
