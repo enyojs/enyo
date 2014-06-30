@@ -212,6 +212,7 @@
 		},
 		
 		/**
+		* @method
 		* @private
 		*/
 		constructor: enyo.inherit(function (sup) {
@@ -224,6 +225,7 @@
 		}),
 		
 		/**
+		* @method
 		* @private
 		*/
 		constructed: enyo.inherit(function (sup) {
