@@ -1,7 +1,8 @@
 /**
 * _enyo.Anchor_ implements an [HTML anchor]{@link external:Anchor} (&lt;a&gt;) tag. Published 
-* properties allow you to bind the anchor's [href]{@link enyo.Anchor#href} and 
-* [title]{@link enyo.Anchor#title} attributes to appropriate fields on data 
+* properties allow you to [bind]{@link enyo.BindingSupport} the [anchor's]{@link external:Anchor} 
+* [href]{@link enyo.Anchor#href} and [title]{@link enyo.Anchor#title} 
+* [attributes]{@link external:Attribute} to appropriate fields on data 
 * [objects]{@link external:Object}.
 *
 * @class enyo.Anchor
@@ -25,7 +26,7 @@ enyo.kind({
 	*/
 	published: {
 		/** 
-		* Maps to the _href_ attribute of the &lt;a&gt; tag.
+		* Maps to the _href_ [attribute]{@link external:Attribute} of the &lt;a&gt; tag.
 		* 
 		* @type {String}
 		* @default ''
@@ -34,7 +35,7 @@ enyo.kind({
 		*/
 		href: '',
 		/**
-		* Maps to the _title_ attribute of the &lt;a&gt; tag.
+		* Maps to the _title_ [attribute]{@link external:Attribute} of the &lt;a&gt; tag.
 		* 
 		* @type {String}
 		* @default  ''
