@@ -20,7 +20,35 @@
 
 	/**
 	* A [hash]{@link external:Object} of references to all the [components]{@link enyo.Component} 
-	* owned by this [component]{@link enyo.Component}.
+	* owned by this [component]{@link enyo.Component}. This property is updated whenever a new
+	* [component]{@link enyo.Component} is added; the new component can be accessed via its 
+	* [name]{@link enyo.Component#name} property. Additionally, we can also observe changes on
+	* properties of [components]{@link enyo.Component} referenced by the _$_ property.
+	*
+	* @example <caption>Component access via the $ hash</caption>
+	* var c = new enyo.Component({
+	*	name: 'me',
+	*	components: [
+	*		{kind: 'Component', name: 'other'}
+	*	]
+	* });
+	*
+	* // We can now access 'other' on the $ hash of 'c', via c.$.other
+	*
+	* @example <caption>Observing changes on a component referenced by the $ property</caption>
+	* var c = new enyo.Component({
+	*	name: 'me',
+	*	components: [
+	*		{kind: 'Component', name: 'other'}
+	*	]
+	* });
+	*
+	* c.addObserver('$.other.active', function() {
+	*	// do something to respond to the "active" property of "other" changing
+	* })
+	*
+	* c.$.other.set('active', true); // this will trigger the observer to run its callback
+	* 
 	* 
 	* @name $
 	* @type {Object}

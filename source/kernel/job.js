@@ -19,7 +19,6 @@
 * @param {Number} wait The number of milliseconds to wait before executing the [job]{@link enyo.job}
 *                      again.
 * @static
-* @memberof enyo
 * @public
 */
 enyo.job = function(nom, job, wait) {
@@ -35,7 +34,6 @@ enyo.job = function(nom, job, wait) {
 *
 * @param {String} nom The name of the [job]{@link enyo.job} to throttle.
 * @static
-* @memberof enyo
 * @public
 */
 enyo.job.stop = function(nom) {
@@ -58,7 +56,6 @@ enyo.job.stop = function(nom) {
 * @param {Number} wait The number of milliseconds to wait before executing the [job]{@link enyo.job}
 *                      again.
 * @static
-* @memberof enyo
 * @public
 */
 enyo.job.throttle = function(nom, job, wait) {

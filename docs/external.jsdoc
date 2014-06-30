@@ -46,6 +46,11 @@
 * @external subkind
 */
 
+/**
+* @todo Need to define this.
+* @external deferred
+*/
+
 ///// Internally Documented Links (Glossary) /////
 
 /**
@@ -72,6 +77,12 @@
 * 
 * @external polyfill
 * @see http://en.wikipedia.org/wiki/Polyfill
+*/
+
+/**
+* Inheritance
+* @external inheritance
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain
 */
 
 ///// Externally Documented Links /////
@@ -160,6 +171,10 @@
 /**
 * @external Object
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
+*/
+/**
+* @external Object.prototype
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype
 */
 
 /**
