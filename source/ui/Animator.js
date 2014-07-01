@@ -104,6 +104,9 @@
 			*/
 			easingFunction: enyo.easing.cubicOut
 		},
+		/*
+		* @private
+		*/
 		events: {
 			/**
 			* Fires when an animation step occurs.

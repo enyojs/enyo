@@ -28,7 +28,17 @@
 		* @private
 		*/
 		events: {
-			//* Fires when checkbox is tapped.
+			/**
+			* Fires when checkbox is tapped.
+			*
+			* @event enyo.Checkbox#onActivate
+			* @type {Object}
+			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+			*                           propagated the [event]{@link external:event}.
+			* @property {Object} event - An [object]{@link external:Object} containing 
+			*                          [event]{@link external:event} information.
+			* @public
+			*/
 			onActivate: ""
 		},
 

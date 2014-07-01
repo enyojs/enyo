@@ -4,8 +4,10 @@
 	* [HTML 5 Media element]{@link external:HTML5MediaElement} that allows you to play audio data.
 	* 
 	* Initialize an audio component as follows:
-	* 
-	*	{kind: 'enyo.Audio', src: 'http://www.w3schools.com/tags/horse.mp3'}
+	*
+	* ```
+	* {kind: 'enyo.Audio', src: 'http://www.w3schools.com/tags/horse.mp3'}
+	* ```
 	* 
 	* To play the audio, call `this.$.audio.play()`.
 	* 
