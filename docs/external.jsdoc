@@ -51,6 +51,11 @@
 * @external deferred
 */
 
+/**
+* @todo need to define this.
+* @external layout
+*/
+
 ///// Internally Documented Links (Glossary) /////
 
 /**
@@ -260,4 +265,14 @@
 /**
 * @external window
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Window
+*/
+
+/**
+* @external audio
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
+*/
+
+/**
+* @external HTML5MediaElement
+* @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
 */

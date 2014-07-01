@@ -78,6 +78,17 @@
 	* @memberOf enyo.Component.prototype
 	* @public
 	*/
+
+	/**
+	* If `true`, the [layout]{@link external:layout} strategy will adjust the size of this 
+	* [component]{@link enyo.Component} to occupy the remaining available space.
+	* 
+	* @name fit
+	* @type {Boolean}
+	* @default undefined
+	* @memberOf enyo.Component.prototype
+	* @public
+	*/
 	
 	/**
 	* {@link enyo.Component} is the fundamental building block for Enyo applications. 
