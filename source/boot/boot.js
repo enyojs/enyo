@@ -50,6 +50,7 @@ enyo.machine = {
 			/* jshint evil: true */
 			document.write(
 				'<scri' + 'pt src="' + inSrc + '"' +
+				' charset="utf-8" ' +
 				(onLoad ? ' onload="' + onLoad + '"' : '') +
 				(onError ? ' onerror="' + onError + '"' : '') +
 				'></scri' + 'pt>');
