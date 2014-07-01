@@ -1,41 +1,43 @@
-(function () {
-	"use strict";
+(function (enyo, scope) {
+	'use strict';
 
 	/**
 	* When available, supply a high-precision, high performance monotonic benchmark for some
 	* internal usage and benchmark testing.
 	* 
-	* @private
+	* @alias enyo.perfNow
+	* @method
+	* @public
 	*/
 	enyo.bench = enyo.perfNow;
 
 	/*
-	* Track the active tests
+	* Track the active tests.
 	*
 	* @private
 	*/
 	var tests = {};
 
 	/*
-	* Track averages
+	* Track averages.
 	*
 	* @private
 	*/
 	var averages = {};
 
 	/*
-	* Default report template string
+	* Default report template string.
 	*
 	* @private
 	*/
-	var report_template = "- - - - - - - - - - - - - - - - -\n" +
-					"BENCHMARK REPORT (%.): %.\n" +
-					"TOTAL TIME (ms): %.\n" +
-					"AVERAGE TIME (ms): %.\n" +
-					"MINIMUM TIME (ms): %.\n" +
-					"MAXIMUM TIME (ms): %.\n" +
-					"NUMBER OF ENTRIES: %.\n" +
-					"- - - - - - - - - - - - - - - - -\n";
+	var report_template = '- - - - - - - - - - - - - - - - -\n' +
+					'BENCHMARK REPORT (%.): %.\n' +
+					'TOTAL TIME (ms): %.\n' +
+					'AVERAGE TIME (ms): %.\n' +
+					'MINIMUM TIME (ms): %.\n' +
+					'MAXIMUM TIME (ms): %.\n' +
+					'NUMBER OF ENTRIES: %.\n' +
+					'- - - - - - - - - - - - - - - - -\n';
 
 	/*
 	* Calculates average and basic statistics.
@@ -59,6 +61,20 @@
 		stats.average = Math.abs(total/(number || 1));
 		return stats;
 	};
+	
+	/**
+	* Configurable benchmark options [hash]{@link external:Object}. For more details see the
+	* same properties defined on {@link enyo.dev.Benchmark}.
+	* 
+	* @typedef  {Object} enyo.dev.Benchmark~Options
+	* @property {String} name - The referenceable name of the benchmark (used for reporting).
+	* @property {Boolean} average - Defaults to `true`; if `true`, calculate an average of repeated
+	*	start/stops for the bench.
+	* @property {Boolean} logging - Defaults to `true`; if `true`, write start and stop messages to
+	*	the console.
+	* @property {Boolean} autoStart - Defaults to `true`; if `true`, automatically start the
+	*	[benchmark]{@link enyo.dev.Benchmark}.
+	*/
 
 	/**
 	* This is a collection of methods to assist in simple benchmarking. The goal was to supply
@@ -70,50 +86,38 @@
 	* @namespace enyo.dev
 	* @public
 	*/
-	enyo.dev = {
+	enyo.dev = /** @lends enyo.dev */ {
 
 		/**
-		* Can be set to false to disable all benchmarking code
+		* Can be set to false to disable all benchmarking code.
 		*
 		* @type {Boolean}
 		* @default true
 		* @public
 		*/
 		enabled: true,
-
-		/**
-		* Confuigurable benchmark options [object/hash]{@link external:Object}.
-		* 
-		* @typedef  {Object} enyo.dev~Options
-		* 
-		* @property {String} [name] - optional name for test
-		* @property {Boolean} average=false - if true, calculate an average of repeated start/stops
-		*                                   for the test
-		* @property {Boolean} logging=true -  if true, write start and stop messages to the console
-		* @property {Boolean} autoStart=true - if true, automatically start the benchmark
-		*/
 	
 		/**
-		* Create a new benchmark test. The [_opts_ object]{@link enyo.dev~Options} passed in has the
-		* properties.
+		* Create a new benchmark test with the given configuration options.
 		*
-		* @param {enyo.dev~Options} opts [Options]{@link enyo.dev~Options} for the benchmark instance.
-		* @returns {Benchmark} A Benchmark instance that has start and stop methods used to track a
-		*                        test.
+		* @param {enyo.dev.Benchmark~Options} opts The configuration options to apply to the
+		*	[benchmark]{@link enyo.dev.Benchmark~Options}.
+		* @returns {enyo.dev.Benchmark} A Benchmark instance that has start and stop methods used to
+		*	track a test.
 		* @public
 		*/
 		bench: function (opts) {
 			if (true !== this.enabled) {
 				return false;
 			}
-			var options = opts || {name: enyo.uid("bench")};
-			return new Benchmark(options);
+			var options = opts || {name: enyo.uid('bench')};
+			return new enyo.dev.Benchmark(options);
 		},
 
 		/**
-		* Print output to the console information about a benchmark named _name_.
+		* Show a report for a given [benchmark]{@link enyo.dev.Benchmark} by name.
 		*
-		* @param {String} name The name of the benchmark to report.
+		* @param {String} name The name of the [benchmark]{@link enyo.dev.Benchmark} to report.
 		* @public
 		*/
 		report: function (name) {
@@ -121,14 +125,14 @@
 			if (!bench) {
 				return false;
 			}
-			if (bench.report && "function" === typeof bench.report) {
+			if (bench.report && 'function' === typeof bench.report) {
 				return bench.report();
 			} else {
 				var stats = calc(bench);
 				enyo.log(
 					enyo.format(
 						report_template,
-						"averages",
+						'averages',
 						name,
 						stats.total,
 						stats.average,
@@ -141,9 +145,10 @@
 		},
 
 		/**
-		* Remove stored data for a benchmark named _name_.
+		* Remove all stored data related to the named [benchmark]{@link enyo.dev.Benchmark}.
 		*
-		* @param {String} name The name of the benchmark to report.
+		* @param {String} name The name of the [benchmark]{@link enyo.dev.Benchmark} from which to
+		*	remove stored data.
 		* @public
 		*/
 		clear: function (name) {
@@ -166,29 +171,30 @@
 	};
 
 	/**
-	* @private
+	* An internally used [kind]{@link external:kind} for development benchmarking.
+	*
+	* @class enyo.dev.Benchmark
+	* @protected
 	*/
-	function Benchmark (options) {
-		enyo.mixin(this, options);
-		tests[this.name] = this;
-		if (true === this.average && !averages[this.name]) {
-			averages[this.name] = [];
-		}
-		if (averages[this.name] && false !== this.average) {
-			this._averaging = true;
-		}
-		if (true === this.autoStart) {
-			this.start();
-		}
-	}
-
-	Benchmark.prototype = {
-
-		// ...........................
-		// PUBLIC PROPERTIES
-
+	enyo.kind(/** @lends enyo.dev.Benchmark.prototype */ {
+		
 		/**
-		* To log or not to log...
+		* @private
+		*/
+		name: 'enyo.dev.Benchmark',
+		
+		/**
+		* @private
+		*/
+		kind: null,
+		
+		/**
+		* @private
+		*/
+		noDefer: true,
+		
+		/**
+		* Determines whether or not output will be logged to the console.
 		* 
 		* @type {Boolean}
 		* @default true
@@ -204,10 +210,17 @@
 		* @public
 		*/
 		autoStart: true,
-
-		// ...........................
-		// PROTECTED PROPERTIES
-
+		
+		/**
+		* Determines whether or not this will collect and maintain an averages report for
+		* benches intended to be executed multiple times.
+		*
+		* @type {Boolean}
+		* @default true
+		* @public
+		*/
+		average: true,
+		
 		/**
 		* @private
 		*/
@@ -232,30 +245,29 @@
 		* @private
 		*/
 		_time: null,
-
-		// ...........................
-		// PUBLIC METHODS
-
+		
 		/**
-		* Begin the benchmark!
+		* Begin benching.
 		*
-		* @returns {Boolean} True if we successfully started, false otherwise.
+		* @returns {Boolean} Whether or not it successfully began benching. Will be `false` if it
+		*	was already benching.
 		* @public
 		*/
 		start: function () {
 			if (true === this._started) {
 				return false;
 			}
-			this._log("starting benchmark");
+			this._log('starting benchmark');
 			this._begin = enyo.bench();
 			this._started = true;
 			return true;
 		},
 
 		/**
-		* All done benchmarking. Finish the benchmark instance with this.
+		* Stop benching.
 		*
-		* @returns {Boolean} True if we successfully stopped, false if we hadn't started yet.
+		* @returns {Boolean} Whether or not it successfully stopped benching. Will be `false` if it
+		*	was not benching.
 		* @public
 		*/
 		stop: function () {
@@ -264,17 +276,31 @@
 			}
 			this._end = enyo.bench();
 			this._time = this._end - this._begin;
-			this._log("benchmark complete: " + this._time);
+			this._log('benchmark complete: ' + this._time);
 			if (true === this._averaging) {
 				averages[this.name].push(this._time);
 			}
 			this._started = false;
 			return true;
 		},
-
-		// ...........................
-		// PROTECTED METHODS
-
+		
+		/**
+		* @private
+		*/
+		constructor: function (options) {
+			enyo.mixin(this, options);
+			tests[this.name] = this;
+			if (true === this.average && !averages[this.name]) {
+				averages[this.name] = [];
+			}
+			if (averages[this.name] && false !== this.average) {
+				this._averaging = true;
+			}
+			if (true === this.autoStart) {
+				this.start();
+			}
+		},
+		
 		/**
 		* @private
 		*/
@@ -282,8 +308,9 @@
 			if (!this.logging) {
 				return false;
 			}
-			enyo.log("bench (" + this.name + "): " + message);
+			enyo.log('bench (' + this.name + '): ' + message);
 		}
-
-	};
-}());
+		
+	});
+	
+})(enyo, this);
