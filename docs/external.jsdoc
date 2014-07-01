@@ -313,6 +313,11 @@
 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/background-position
 */
 
+/**
+* @external DOMEvent
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Event
+*/
+
 ///// Common Type Definitions /////
 
 /**
