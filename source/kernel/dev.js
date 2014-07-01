@@ -1,29 +1,33 @@
 (function () {
 	"use strict";
 
-	//*@protected
 	/**
-		When available, supply a high-precision, high performance
-		monotonic benchmark for some internal usage and benchmark testing.
+	* When available, supply a high-precision, high performance monotonic benchmark for some
+	* internal usage and benchmark testing.
+	* 
+	* @private
 	*/
 	enyo.bench = enyo.perfNow;
 
-	//*@protected
-	/**
-		This is a collection of methods to assist in simple benchmarking.
-		The goal was to supply useful functionality while impacting the results
-		as little as possible (the more calculations we do during benchmarking,
-		the greater the opportunity to skew results). This is particularly important
-		when using potentially-nested benchmark series (i.e., benchmarking a method
-		that executes other benchmarked methods).
+	/*
+	* Track the active tests
+	*
+	* @private
 	*/
-
-	// Track the active tests
 	var tests = {};
-	// Track averages
+
+	/*
+	* Track averages
+	*
+	* @private
+	*/
 	var averages = {};
 
-	// Default report template string
+	/*
+	* Default report template string
+	*
+	* @private
+	*/
 	var report_template = "- - - - - - - - - - - - - - - - -\n" +
 					"BENCHMARK REPORT (%.): %.\n" +
 					"TOTAL TIME (ms): %.\n" +
@@ -33,7 +37,11 @@
 					"NUMBER OF ENTRIES: %.\n" +
 					"- - - - - - - - - - - - - - - - -\n";
 
-	// Calculates average and basic statistics.
+	/*
+	* Calculates average and basic statistics.
+	*
+	* @private
+	*/
 	var calc = function (numbers) {
 		var total = 0;
 		var min = Infinity;
@@ -52,25 +60,47 @@
 		return stats;
 	};
 
-	//*@public
+	/**
+	* This is a collection of methods to assist in simple benchmarking. The goal was to supply
+	* useful functionality while impacting the results as little as possible (the more calculations
+	* we do during benchmarking, the greater the opportunity to skew results). This is particularly
+	* important when using potentially-nested benchmark series (i.e., benchmarking a method that
+	* executes other benchmarked methods).
+	*
+	* @namespace enyo.dev
+	* @public
+	*/
 	enyo.dev = {
 
-		//*@public
-		//* can be set to false to disable all benchmarking code
+		/**
+		* Can be set to false to disable all benchmarking code
+		*
+		* @type {Boolean}
+		* @default true
+		* @public
+		*/
 		enabled: true,
 
-		//*@public
 		/**
-			Create a new benchmark test.
-			The opts object passed in has the properties
-
-			* name: optional name for test
-			* average: if true, calculate an average of repeated start/stops for the test
-			* logging: if true, write start and stop messages to the console (defaults to true)
-			* autoStart: if true, automatically start the benchmark (defaults to true)
-
-			This returns an object that has start and stop methods used
-			to track a test.
+		* Confuigurable benchmark options [object/hash]{@link external:Object}.
+		* 
+		* @typedef  {Object} enyo.dev~Options
+		* 
+		* @property {String} [name] - optional name for test
+		* @property {Boolean} average=false - if true, calculate an average of repeated start/stops
+		*                                   for the test
+		* @property {Boolean} logging=true -  if true, write start and stop messages to the console
+		* @property {Boolean} autoStart=true - if true, automatically start the benchmark
+		*/
+	
+		/**
+		* Create a new benchmark test. The [_opts_ object]{@link enyo.dev~Options} passed in has the
+		* properties.
+		*
+		* @param {enyo.dev~Options} opts [Options]{@link enyo.dev~Options} for the benchmark instance.
+		* @returns {Benchmark} A Benchmark instance that has start and stop methods used to track a
+		*                        test.
+		* @public
 		*/
 		bench: function (opts) {
 			if (true !== this.enabled) {
@@ -80,8 +110,12 @@
 			return new Benchmark(options);
 		},
 
-		//*@public
-		//* Output to the console information about a benchmark named _name_.
+		/**
+		* Print output to the console information about a benchmark named _name_.
+		*
+		* @param {String} name The name of the benchmark to report.
+		* @public
+		*/
 		report: function (name) {
 			var bench = averages[name] || tests[name];
 			if (!bench) {
@@ -106,8 +140,12 @@
 			}
 		},
 
-		//*@public
-		//* Remove stored data for a benchmark named _name_.
+		/**
+		* Remove stored data for a benchmark named _name_.
+		*
+		* @param {String} name The name of the benchmark to report.
+		* @public
+		*/
 		clear: function (name) {
 			var source = tests[name]? tests: averages[name]? averages: null;
 			if (!source) {
@@ -127,7 +165,9 @@
 
 	};
 
-	//*@protected
+	/**
+	* @private
+	*/
 	function Benchmark (options) {
 		enyo.mixin(this, options);
 		tests[this.name] = this;
@@ -142,27 +182,66 @@
 		}
 	}
 
-	//*@protected
 	Benchmark.prototype = {
 
 		// ...........................
 		// PUBLIC PROPERTIES
 
+		/**
+		* To log or not to log...
+		* 
+		* @type {Boolean}
+		* @default true
+		* @public
+		*/
 		logging: true,
+
+		/**
+		* Start benchmarking immediately when this instance is created. 
+		* 
+		* @type {Boolean}
+		* @default true
+		* @public
+		*/
 		autoStart: true,
 
 		// ...........................
 		// PROTECTED PROPERTIES
 
+		/**
+		* @private
+		*/
 		_started: false,
+
+		/**
+		* @private
+		*/
 		_averaging: false,
+
+		/**
+		* @private
+		*/
 		_begin: null,
+
+		/**
+		* @private
+		*/
 		_end: null,
+
+		/**
+		* @private
+		*/
 		_time: null,
 
 		// ...........................
 		// PUBLIC METHODS
 
+		/**
+		* Begin the benchmark!
+		*
+		* @returns {Boolean} True if we successfully started, false otherwise.
+		* @public
+		*/
 		start: function () {
 			if (true === this._started) {
 				return false;
@@ -173,6 +252,12 @@
 			return true;
 		},
 
+		/**
+		* All done benchmarking. Finish the benchmark instance with this.
+		*
+		* @returns {Boolean} True if we successfully stopped, false if we hadn't started yet.
+		* @public
+		*/
 		stop: function () {
 			if (!this._started) {
 				return false;
@@ -190,6 +275,9 @@
 		// ...........................
 		// PROTECTED METHODS
 
+		/**
+		* @private
+		*/
 		_log: function (message) {
 			if (!this.logging) {
 				return false;
