@@ -22,6 +22,7 @@
 	* During animation, an {@link enyo.jobs} priority of 5 is registered to defer low priority tasks.
 	*
 	* @class enyo.Animator
+	* @extends enyo.Component
 	* @public
 	*/
 	enyo.kind(

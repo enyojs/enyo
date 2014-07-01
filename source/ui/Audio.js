@@ -14,6 +14,7 @@
 	* To get a reference to the actual HTML 5 Media element, call `this.$.audio.hasNode()`.
 	*
 	* @class enyo.Audio
+	* @extends enyo.Media
 	* @public
 	*/
 	enyo.kind(

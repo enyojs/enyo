@@ -7,6 +7,7 @@
 	* [Buttons](building-apps/controls/buttons.html) in the Enyo Developer Guide.
 	*
 	* @class enyo.Button
+	* @extends enyo.ToolDecorator
 	* @public
 	*/
 	enyo.kind(
@@ -28,9 +29,7 @@
 		tag: 'button',
 
 		/**
-		*
-		* @memberof enyo.Button
-		* @public
+		* @private
 		*/
 		attributes: {
 			/**

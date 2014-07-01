@@ -7,6 +7,7 @@
 	* [objects]{@link external:Object}.
 	*
 	* @class enyo.Anchor
+	* @extends enyo.Control
 	* @public
 	*/
 	enyo.kind(

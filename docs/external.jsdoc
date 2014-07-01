@@ -299,8 +299,18 @@
 */
 
 /**
+* @external img
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Img
+*/
+
+/**
 * @external HTML5MediaElement
 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
+*/
+
+/**
+* @external backgroundPosition
+* @see https://developer.mozilla.org/en-US/docs/Web/CSS/background-position
 */
 
 ///// Common Type Definitions /////

@@ -8,6 +8,7 @@
 	* the [fit]{@link enyo.Component#fit} property.
 	*
 	* @class enyo.BaseLayout
+	* @extends enyo.Layout
 	* @public
 	*/
 	enyo.kind(

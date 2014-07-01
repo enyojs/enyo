@@ -4,6 +4,7 @@
 	* grouping using {@link enyo.Group}.
 	*
 	* @class enyo.Checkbox
+	* @extends enyo.Input
 	* @public
 	*/
 	enyo.kind(
