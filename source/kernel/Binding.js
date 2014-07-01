@@ -249,7 +249,7 @@
 		* [to]{@link enyo.Binding#to} path.
 		*
 		* @type {Number}
-		* @default {@link enyo.Binding.DIRTY_FROM}
+		* @default enyo.Binding.DIRTY_FROM
 		* @public
 		*/
 		dirty: DIRTY_FROM,

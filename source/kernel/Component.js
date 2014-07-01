@@ -53,7 +53,7 @@
 	* @name $
 	* @type {Object}
 	* @default null
-	* @memberOf enyo.Component.prototype
+	* @memberof enyo.Component.prototype
 	* @readonly
 	* @public
 	*/
@@ -73,6 +73,17 @@
 	* // We can now access 'other' directly, via c.other
 	* 
 	* @name publish
+	* @type {Boolean}
+	* @default undefined
+	* @memberOf enyo.Component.prototype
+	* @public
+	*/
+
+	/**
+	* If `true`, the [layout]{@link external:layout} strategy will adjust the size of this 
+	* [component]{@link enyo.Component} to occupy the remaining available space.
+	* 
+	* @name fit
 	* @type {Boolean}
 	* @default undefined
 	* @memberOf enyo.Component.prototype
