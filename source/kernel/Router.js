@@ -1,4 +1,4 @@
-(function (enyo) {
+(function(enyo, scope) {
 
 	/**
 	* Any instance of a router will be referenced here for the global hash change handler.
@@ -592,4 +592,4 @@
 
 	});
 
-})(enyo);
+})(enyo, this);
