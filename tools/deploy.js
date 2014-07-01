@@ -23,7 +23,7 @@ is the content of a typical application manifest:
 
 ```json
 {
-	"enyo": "./enyo",
+	"enyo": "./lib/enyo",
 	"packagejs": "./package.js",
 	"assets": ["./icon.png", "./index.html", "./assets"],
 	"libs": ["./lib/onyx", "./lib/layout"]
@@ -208,7 +208,7 @@ opt.packagejs = path.relative(process.cwd(), opt.packagejs);
 var rootFolder = path.relative(path.dirname(opt.packagejs), ".");
 
 opt.build = opt.build || manifest.build || "build";
-opt.enyo = opt.enyo || manifest.enyo || "enyo"; // from top-level folder
+opt.enyo = opt.enyo || manifest.enyo || "lib/enyo"; // from top-level folder
 
 log("opt:", opt);
 
