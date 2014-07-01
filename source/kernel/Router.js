@@ -31,7 +31,7 @@
 	* @private
 	*/
 	var prepare = function (str) {
-		return str[0] === "#"? str.slice(1): str;
+		return str[0] === '#'? str.slice(1): str;
 	};
 
 	/**
@@ -41,7 +41,7 @@
 	* @private
 	*/
 	enyo.ready(function () {
-		enyo.dispatcher.listen(window, "hashchange", hashDidChange);
+		enyo.dispatcher.listen(window, 'hashchange', hashDidChange);
 	});
 
 	/**
@@ -58,14 +58,14 @@
 	* A route is a declarative hash with the following structure:
 	*
 	* ```
-	* {path: "some/path", handler: "function", context: "context"}
+	* {path: 'some/path', handler: 'function', context: 'context'}
 	* ```
 	*
 	* The path is a string that may be static (explicitly matched) or dynamic (matched based on
 	* dynamic placeholders). Dynamic paths may name elements to be matched, e.g.:
 	*
 	* ```
-	* {path: ":user/:id"}
+	* {path: ':user/:id'}
 	* ```
 	*
 	* In this case, the handler would be called with two parameters filled with the values matched
@@ -96,7 +96,7 @@
 		/*
 		* @public
 		*/
-		name: "enyo.Router",
+		name: 'enyo.Router',
 
 		/**
 		* If `true`, the router will respond to hash changes or internal events. If this flag is set
@@ -154,7 +154,7 @@
 
 		/**
 		* The router will attempt to track history based on the events that have been generated
-		* through it. This allows the usage of the browser's "Back" and "Forward" buttons.
+		* through it. This allows the usage of the browser's 'Back' and 'Forward' buttons.
 		* 
 		* @type {Boolean}
 		* @default false
@@ -172,12 +172,12 @@
 		* 
 		* @example
 		* routes: [
-		*     {path: "users/:userName", handler: "loadUser"},
-		*     {path: "users", handler: "usersIndex"},
-		*     {path: "about/moreDetail", handler: "detailedAboutScreen"},
-		*     {path: "about", handler: "aboutScreen"},
-		*     {path: "home", handler: "homeScreen", default: true},
-		*     {path: "", handler: "handleBlankRoute"}
+		*     {path: 'users/:userName', handler: 'loadUser'},
+		*     {path: 'users', handler: 'usersIndex'},
+		*     {path: 'about/moreDetail', handler: 'detailedAboutScreen'},
+		*     {path: 'about', handler: 'aboutScreen'},
+		*     {path: 'home', handler: 'homeScreen', default: true},
+		*     {path: '', handler: 'handleBlankRoute'}
 		* ]
 		* 
 		* @type {Array}
@@ -191,7 +191,7 @@
 		/*
 		* @private
 		*/
-		kind: "enyo.Controller",
+		kind: 'enyo.Controller',
 
 		/*
 		* @private
@@ -206,7 +206,7 @@
 		/*
 		* @private
 		*/
-		_current: "",
+		_current: '',
 
 		/*
 		* @private
@@ -217,15 +217,15 @@
 		// COMPUTED PROPERTIES
 		
 		computed: [
-			{method: "location", path: "_current", config: {cached: true}},
-			{method: "defaultPath"}
+			{method: 'location', path: '_current', config: {cached: true}},
+			{method: 'defaultPath'}
 		],
 
 		/**
 		* A computed property that will return the location as known by this router. This property
 		* will be synchronized with [window.location.hash]{@link external:window.location} unless
 		* its [internalOnly]{@linkcode enyo.Router#internalOnly} flag is set to `true`. Passing a
-		* string to this property via `_set("location", "mylocation")` will update the inner
+		* string to this property via `_set('location', 'mylocation')` will update the inner
 		* location known by this router.
 		*
 		* @public
@@ -234,12 +234,12 @@
 			if (loc) {
 				loc = prepare(loc);
 				if (!this.internalOnly) {
-					enyo.asyncMethod(this, "trigger", {location: loc, change: true});
+					enyo.asyncMethod(this, 'trigger', {location: loc, change: true});
 				} else {
-					this.set("_current", loc);
+					this.set('_current', loc);
 				}
 			} else {
-				return prepare(this.get("_current"));
+				return prepare(this.get('_current'));
 			}
 		},
 
@@ -249,7 +249,7 @@
 		* @public
 		*/
 		defaultPath: function () {
-			return this.defaultRoute ? this.defaultRoute.path: "";
+			return this.defaultRoute ? this.defaultRoute.path: '';
 		},
 
 		// ...........................
@@ -272,14 +272,14 @@
 		*/
 		trigger: function (params) {
 			if (!params) {
-				params = {location: this.get("_current")};
-			} else if ("string" === typeof params) {
+				params = {location: this.get('_current')};
+			} else if ('string' === typeof params) {
 				params = {location: params};
 			}
 			var loc = params.location;
 			var global = params.global;
 			var change = params.change;
-			var current = this.get("location");
+			var current = this.get('location');
 			if (change) {
 				if (current !== loc) {
 					window.location.hash = loc;
@@ -303,7 +303,7 @@
 		* this router.
 		*
 		* @param {String} path A _path_ to test against this router's
-		*                      [routes]{@linkcode enyo.Router#routes}.
+		*	[routes]{@linkcode enyo.Router#routes}.
 		* @public
 		*/
 		handle: function (path) {
@@ -333,7 +333,7 @@
 					this._history.shift();
 					// we shift the requested location off the stack
 					// but reapply it
-					this.set("location", this._history.shift());
+					this.set('location', this._history.shift());
 				}
 			}
 		},
@@ -346,26 +346,24 @@
 		*
 		* @param {String} location The location string to add to the history.
 		* @param {(Number|Boolean)} [idx] Where the where in the history stack the new _location_
-		*                                 should be added. `true` for the first/oldest position,
-		*                                 or a number indicating the index to add the location to.
-		*                                 Not including this value or setting to `undefined` will
-		*                                 add the _location_ to the last/most-recent position in the
-		*                                 history stack.
+		*	should be added. `true` for the first/oldest position, or a number indicating the index
+		*	to add the location to. Not including this value or setting to `undefined` will add the
+		*	_location_ to the last/most-recent position in the history stack.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
 		addHistory: function (location, idx) {
 			if (this.useHistory) {
 				switch (typeof idx) {
-				case "undefined":
+				case 'undefined':
 					this._history.unshift(location);
 					break;
-				case "number":
+				case 'number':
 					if (idx >= 0 && idx < this._history.length) {
 						this._history.splice(idx, 0, location);
 					}
 					break;
-				case "boolean":
+				case 'boolean':
 					this._history.push(location);
 					break;
 				}
@@ -402,7 +400,7 @@
 			}
 			else if (token.test(route.path)) {
 				token.lastIndex = 0;
-				regex = new RegExp(route.path.replace(token, "([a-zA-Z0-9-]*)"));
+				regex = new RegExp(route.path.replace(token, '([a-zA-Z0-9-]*)'));
 				route.regex = regex;
 				dynamic.push(route);
 			} else {
@@ -437,14 +435,14 @@
 				// to registering for events
 				this._setupRoutes();
 				// make sure we're up to date
-				this.set("_current", prepare(window.location.hash));
+				this.set('_current', prepare(window.location.hash));
 				// ok, register for events
 				listeners.push(this);
 				// ok, if we need to go ahead and route our current
 				// location, lets do it
 				if (this.triggerOnStart) {
 					if (this.defaultPathOnStart) {
-						this.trigger({change: true, location: this.get("defaultPath")});
+						this.trigger({change: true, location: this.get('defaultPath')});
 					} else {
 						this.trigger();
 					}
@@ -478,7 +476,7 @@
 				return prepare(prop);
 			})(hash);
 			if (this.listening) {
-				this.set("_current", $hash);
+				this.set('_current', $hash);
 				this.handle($hash);
 			}
 		},
@@ -488,15 +486,15 @@
 		*/
 		_execHandler: function (context, handler, args, route) {
 			var $fn = handler;
-			var $ctx = "string" === typeof context? enyo.getPath.call(this, context): context || this;
+			var $ctx = 'string' === typeof context? enyo.getPath.call(this, context): context || this;
 			// if the handler is defined as a string, we need to determine if
 			// it is relative to the router, relative to the context, or a named
 			// function in the global scope
-			if ("string" === typeof handler) {
+			if ('string' === typeof handler) {
 				// first check to see if the handler is a named property
 				// on the router; otherwise, try the context itself
 				$fn = this[handler] || $ctx[handler];
-				if ("function" === typeof $fn) {
+				if ('function' === typeof $fn) {
 					// in case we actually found it, let's not go hunting
 					// next time
 					route.handler = $fn;
@@ -504,7 +502,7 @@
 				}
 			}
 			// if we have an actual handler, let's execute it now
-			if ($fn && "function" === typeof $fn) {
+			if ($fn && 'function' === typeof $fn) {
 				$fn.apply($ctx, args);
 				return true;
 			}
@@ -588,10 +586,10 @@
 		*/
 		_currentChanged: function () {
 			if (this.useHistory) {
-				this._history.unshift(this.get("location"));
+				this._history.unshift(this.get('location'));
 			}
 		}
 
 	});
 
-}(enyo));
+})(enyo);

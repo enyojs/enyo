@@ -85,6 +85,12 @@
 */
 
 /**
+* The Document Object Model (DOM) is a programming interface for HTML and XML documents.
+* @external DOM
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model
+*/
+
+/**
 * Inheritance
 * @external inheritance
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain
@@ -248,6 +254,11 @@
 */
 
 /**
+* @external DOM
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Node
+*/
+
+/**
 * @external Node
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Node
 */
@@ -290,4 +301,12 @@
 /**
 * @external HTML5MediaElement
 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
+*/
+
+///// Common Type Definitions /////
+
+/**
+* A {@link external:DOM} node element @{link external:Object}.
+*
+* @typedef {Node}
 */
