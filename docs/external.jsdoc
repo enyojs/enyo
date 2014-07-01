@@ -273,6 +273,16 @@
 */
 
 /**
+* @external button
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button
+*/
+
+/**
+* @external form
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+*/
+
+/**
 * @external HTML5MediaElement
 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
 */

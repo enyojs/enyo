@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.Audio_ extends [enyo.Media]{@link enyo.Media} to implement an 
+	* _enyo.Audio_ extends {@link enyo.Media} to implement an 
 	* [HTML 5 Media element]{@link external:HTML5MediaElement} that allows you to play audio data.
 	* 
 	* Initialize an audio component as follows:
@@ -20,17 +20,17 @@
 		/**
 		* @private
 		*/
-		name: "enyo.Audio",
+		name: 'enyo.Audio',
 
 		/**
 		* @private
 		*/
-		kind: "enyo.Media",
+		kind: 'enyo.Media',
 
 		/**
 		* @private
 		*/
-		tag: "audio",
+		tag: 'audio',
 
 		/**
 		* @private

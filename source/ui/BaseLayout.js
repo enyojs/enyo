@@ -16,12 +16,12 @@
 		/**
 		* @private
 		*/
-		name: "enyo.BaseLayout",
+		name: 'enyo.BaseLayout',
 
 		/**
 		* @private
 		*/
-		kind: "enyo.Layout",
+		kind: 'enyo.Layout',
 
 		/**
 		* The name of the class to apply to components that are being positioned by a 
@@ -31,7 +31,7 @@
 		* @default 'enyo-positioned'
 		* @public
 		*/
-		layoutClass: "enyo-positioned",
+		layoutClass: 'enyo-positioned',
 
 		/**
 		* Adds or removes the `enyo-fit` class for [components]{@link enyo.Component} whose 
@@ -42,7 +42,7 @@
 		reflow: function() {
 			enyo.forEach(this.container.children, function(c) {
 				if (c.fit !== null) {
-					c.addRemoveClass("enyo-fit", c.fit);
+					c.addRemoveClass('enyo-fit', c.fit);
 				}
 			}, this);
 		}

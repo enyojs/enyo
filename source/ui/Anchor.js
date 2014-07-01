@@ -67,14 +67,14 @@
 		* @private
 		*/
 		hrefChanged: function() {
-			this.setAttribute("href", this.href);
+			this.setAttribute('href', this.href);
 		},
 
 		/**
 		* @private
 		*/
 		titleChanged: function() {
-			this.setAttribute("title", this.title);
+			this.setAttribute('title', this.title);
 		}
 	});
 })(enyo, this);

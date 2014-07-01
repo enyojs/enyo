@@ -41,12 +41,12 @@
 		/**
 		* @private
 		*/
-		name: "enyo.Animator",
+		name: 'enyo.Animator',
 
 		/**
 		* @private
 		*/
-		kind: "Component",
+		kind: 'Component',
 
 		/**
 		* @private
@@ -116,7 +116,7 @@
 			*                          [event]{@link external:event} information.
 			* @public
 			*/
-			onStep: "",
+			onStep: '',
 
 			/**
 			* Fires when the animation finishes normally.
@@ -129,7 +129,7 @@
 			*                          [event]{@link external:event} information.
 			* @public
 			*/
-			onEnd: "",
+			onEnd: '',
 
 			/**
 			* Fires when the animation is prematurely stopped.
@@ -142,7 +142,7 @@
 			*                          [event]{@link external:event} information.
 			* @public
 			*/
-			onStop: ""
+			onStop: ''
 		},
 
 		/**
@@ -151,7 +151,7 @@
 		constructed: enyo.inherit(function (sup) {
 			return function() {
 				sup.apply(this, arguments);
-				this._next = this.bindSafely("next");
+				this._next = this.bindSafely('next');
 			};
 		}),
 
@@ -199,7 +199,7 @@
 		stop: function() {
 			if (this.isAnimating()) {
 				this.cancel();
-				this.fire("onStop");
+				this.fire('onStop');
 				return this;
 			}
 		},
@@ -285,13 +285,13 @@
 			if (((f >= 1) && (args === 1)) || this.shouldEnd()) {
 				this.value = this.endValue;
 				this.fraction = 1;
-				this.fire("onStep");
+				this.fire('onStep');
 				this.cancel();
 				enyo.asyncMethod(this.bindSafely(function() {
-					this.fire("onEnd");
+					this.fire('onEnd');
 				}));
 			} else {
-				this.fire("onStep");
+				this.fire('onStep');
 				this.requestNext();
 			}
 		},
