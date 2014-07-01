@@ -49,12 +49,12 @@
 		/**
 		* @private
 		*/
-		name: "enyo.DragAvatar",
+		name: 'enyo.DragAvatar',
 
 		/**
 		* @private
 		*/
-		kind: "enyo.Component",
+		kind: 'enyo.Component',
 
 		/**
 		* @private
@@ -121,7 +121,7 @@
 		*/
 		showingChanged: function() {
 			this.avatar.setShowing(this.showing);
-			document.body.style.cursor = this.showing ? "move" : null;
+			document.body.style.cursor = this.showing ? 'move' : null;
 		},
 
 		/**

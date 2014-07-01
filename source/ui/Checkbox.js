@@ -12,17 +12,17 @@
 		/**
 		* @private
 		*/
-		name: "enyo.Checkbox",
+		name: 'enyo.Checkbox',
 
 		/**
 		* @private
 		*/
-		kind: "enyo.Input",
+		kind: 'enyo.Input',
 
 		/**
 		* @private
 		*/
-		classes: "enyo-checkbox",
+		classes: 'enyo-checkbox',
 
 		/**
 		* @private
@@ -39,7 +39,7 @@
 			*                          [event]{@link external:event} information.
 			* @public
 			*/
-			onActivate: ""
+			onActivate: ''
 		},
 
 		/**
@@ -69,7 +69,7 @@
 			/**
 			* @private
 			*/
-			type: "checkbox"
+			type: 'checkbox'
 		},
 		
 		/**
@@ -83,8 +83,8 @@
 		* @private
 		*/
 		handlers: {
-			onchange: "change",
-			onclick: "click"
+			onchange: 'change',
+			onclick: 'click'
 		},
 
 		/**
@@ -104,8 +104,8 @@
 		* @private
 		*/
 		checkedChanged: function() {
-			this.setNodeProperty("checked", this.checked);
-			this.setAttribute("checked", this.checked ? "checked" : "");
+			this.setNodeProperty('checked', this.checked);
+			this.setAttribute('checked', this.checked ? 'checked' : '');
 			this.setActive(this.checked);
 		},
 
@@ -119,7 +119,7 @@
 		activeChanged: function() {
 			this.active = enyo.isTrue(this.active);
 			this.setChecked(this.active);
-			this.bubble("onActivate");
+			this.bubble('onActivate');
 		},
 
 		/**
@@ -159,7 +159,7 @@
 		// we squelch the inherited method
 		},
 		change: function() {
-			var nodeChecked = enyo.isTrue(this.getNodeProperty("checked"));
+			var nodeChecked = enyo.isTrue(this.getNodeProperty('checked'));
 			this.setActive(nodeChecked);
 		},
 
@@ -172,7 +172,7 @@
 			// Note: keyboard interaction (e.g. pressing space when focused) fires
 			// a click event.
 			if (enyo.platform.ie <= 8) {
-				this.bubble("onchange", inEvent);
+				this.bubble('onchange', inEvent);
 			}
 		}
 	});
