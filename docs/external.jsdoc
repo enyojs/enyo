@@ -110,6 +110,11 @@
 */
 
 /**
+* @external entity
+* @see http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
+*/
+
+/**
 * @external undefined
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined
 */
@@ -204,6 +209,21 @@
 */
 
 /**
+* @external window
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window
+*/
+
+/**
+* @external window.getComputedStyle
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window.getComputedStyle
+*/
+
+/**
+* @external window.getComputedStyleValue
+* @see https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/NsIAccessNode#getComputedStyleValue()
+*/
+
+/**
 * @external window.location
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Window.location
 */
@@ -255,7 +275,7 @@
 
 /**
 * @external DOM
-* @see https://developer.mozilla.org/en-US/docs/Web/API/Node
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model
 */
 
 /**
@@ -271,11 +291,6 @@
 /**
 * @external Attribute
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
-*/
-
-/**
-* @external window
-* @see https://developer.mozilla.org/en-US/docs/Web/API/Window
 */
 
 /**
@@ -301,6 +316,16 @@
 /**
 * @external img
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Img
+*/
+
+/**
+* @external focus
+* @see https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XUL/Method/focus
+*/
+
+/**
+* @external blur
+* @see https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XUL/Method/blur
 */
 
 /**
