@@ -1,5 +1,43 @@
 (function (enyo, scope) {
 	/**
+	* Fires immediately when the text changes.
+	*
+	* @event enyo.Input#oninput
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the text has changed and the [input]{@link enyo.Image} subsequently loses 
+	* focus.
+	*
+	* @event enyo.Input#onchange
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	//* 
+	/**
+	* Fires when the [input]{@link enyo.Input} is disabled or enabled.
+	*
+	* @event enyo.Input#onDisabledChange
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+	
+	/**
 	* _enyo.Input_ implements an [HTML &lt;input&gt; element]{@link external:input} with 
 	* cross-platform support for change [events]{@link external:event}.
 	* 
@@ -85,43 +123,6 @@
 		* @private
 		*/
 		events: {
-			/**
-			* Fires immediately when the text changes.
-			*
-			* @event enyo.Input#oninput
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
-
-			/**
-			* Fires when the text has changed and the [input]{@link enyo.Image} subsequently loses 
-			* focus.
-			*
-			* @event enyo.Input#onchange
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
-		
-			//* 
-			/**
-			* Fires when the [input]{@link enyo.Input} is disabled or enabled.
-			*
-			* @event enyo.Input#onDisabledChange
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onDisabledChange: ""
 		},
 

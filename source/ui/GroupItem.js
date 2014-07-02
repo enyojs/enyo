@@ -16,7 +16,7 @@
 	* API. It manages the [active state]{@link enyo.GroupItem#active} of the 
 	* [component]{@link enyo.Component} (or the [inheriting]{@link external:subkind} 
 	* [component]{@link enyo.Component}). A [subkind]{@link external:subkind} may call `setActive` 
-	* to set the [active property]{@link enyo.GroupItem#active} to the desired state; this will 
+	* to set the [active]{@link enyo.GroupItem#active} property to the desired state; this will 
 	* additionally [bubble]{@link enyo.Component#bubble} an 
 	* [onActivate]{@link enyo.Groupitem#event:onActivate} [event]{@link external:event}, which can 
 	* be handled as needed by the containing [components]{@link enyo.Component}. This is useful for 

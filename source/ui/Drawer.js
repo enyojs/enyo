@@ -1,9 +1,39 @@
 (function (enyo, scope) {
 	/**
+	* Fires when the [drawer]{@link enyo.Drawer} has been opened or closed. The handler can 
+	* determine whether the [drawer]{@link enyo.Drawer} was just opened or just closed based
+	* on the [open]{@link enyo.Drawer#open} property. If `this.getOpen()` returns `true`, 
+	* the [drawer]{@link enyo.Drawer} was opened; if not, it was closed.
+	*
+	* @event enyo.Drawer#onDrawerAnimationStep
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*                           propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*                          [event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the [drawer]{@link enyo.Drawer} has been opened or closed. The handler can 
+	* determine whether the [drawer]{@link enyo.Drawer} was just opened or just closed based
+	* on the [open]{@link enyo.Drawer#open} property. If `this.getOpen()` returns `true`, 
+	* the [drawer]{@link enyo.Drawer} was opened; if not, it was closed.
+	*
+	* @event enyo.Drawer#onDrawerAnimationEnd
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*                           propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*                          [event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
 	* _enyo.Drawer_ is a control that appears or disappears based on its 
 	* [open]{@link enyo.Drawer#open} property. By default, the [drawer]{@link enyo.Drawer} appears 
 	* or disappears with a sliding animation whose direction is determined by the 
-	* [orient property]{@link enyo.Drawer#orient}.
+	* [orient]{@link enyo.Drawer#orient} property.
 	*
 	* For more information, see the documentation on
 	* [Drawers](building-apps/layout/drawers.html) in the Enyo Developer Guide.
@@ -70,36 +100,7 @@
 		* @private
 		*/
 		events: {
-			/**
-			* Fires when the [drawer]{@link enyo.Drawer} has been opened or closed. The handler can 
-			* determine whether the [drawer]{@link enyo.Drawer} was just opened or just closed based
-			* on the [open]{@link enyo.Drawer#open} property. If `this.getOpen()` returns `true`, 
-			* the [drawer]{@link enyo.Drawer} was opened; if not, it was closed.
-			*
-			* @event enyo.Drawer#onDrawerAnimationStep
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*                           propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*                          [event]{@link external:event} information.
-			* @public
-			*/
 			onDrawerAnimationStep: '',
-
-			/**
-			* Fires when the [drawer]{@link enyo.Drawer} has been opened or closed. The handler can 
-			* determine whether the [drawer]{@link enyo.Drawer} was just opened or just closed based
-			* on the [open]{@link enyo.Drawer#open} property. If `this.getOpen()` returns `true`, 
-			* the [drawer]{@link enyo.Drawer} was opened; if not, it was closed.
-			*
-			* @event enyo.Drawer#onDrawerAnimationEnd
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*                           propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*                          [event]{@link external:event} information.
-			* @public
-			*/
 			onDrawerAnimationEnd: ''
 		},
 		

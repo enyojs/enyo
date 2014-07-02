@@ -85,7 +85,7 @@
 			/**
 			* When [sizing]{@link enyo.Image#sizing} is used, this property sets the positioning of 
 			* the [image]{@link enyo.Image} within the bounds, corresponding to the 
-			* [`background-position` CSS property]{@link external:backgroundPosition}.
+			* [`background-position`]{@link external:backgroundPosition} CSS property.
 			* 
 			* @type {String}
 			* @default ''

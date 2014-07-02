@@ -1,5 +1,41 @@
 (function (enyo, scope) {
 	/**
+	* Fires when an animation step occurs.
+	*
+	* @event enyo.Animator#onStep
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*                           propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*                          [event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the animation finishes normally.
+	*
+	* @event enyo.Animator#onEnd
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*                           propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*                          [event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the animation is prematurely stopped.
+	*
+	* @event enyo.Animator#onStop
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*                           propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*                          [event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
 	* _enyo.Animator_ is a basic animation [component]{@link enyo.Component}.  Call 
 	* [play]{@link enyo.Animator#play} to start the animation. The animation will run for the period 
 	* (in milliseconds) specified by its [duration]{@link enyo.Animator#duration} property. The 
@@ -109,43 +145,8 @@
 		* @private
 		*/
 		events: {
-			/**
-			* Fires when an animation step occurs.
-			*
-			* @event enyo.Animator#onStep
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*                           propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*                          [event]{@link external:event} information.
-			* @public
-			*/
 			onStep: '',
-
-			/**
-			* Fires when the animation finishes normally.
-			*
-			* @event enyo.Animator#onEnd
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*                           propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*                          [event]{@link external:event} information.
-			* @public
-			*/
 			onEnd: '',
-
-			/**
-			* Fires when the animation is prematurely stopped.
-			*
-			* @event enyo.Animator#onStop
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*                           propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*                          [event]{@link external:event} information.
-			* @public
-			*/
 			onStop: ''
 		},
 

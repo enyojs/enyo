@@ -1,5 +1,350 @@
 (function (enyo, scope) {
 	/**
+	* Fires when element stops fetching [media]{@link enyo.Media} data before it is 
+	* completely downloaded, but not due to an error.
+	*
+	* @event enyo.Media#onAbort
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when element can resume playback of the [media]{@link enyo.Media} data, but may 
+	* need to stop for further buffering of content.
+	*
+	* @event enyo.Media#onCanPlay
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when element can resume playback of the [media]{@link enyo.Media} data without 
+	* needing to stop for further buffering of content.
+	*
+	* @event enyo.Media#onCanPlayThrough
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the [duration]{@link enyo.Media#duration} attribute has been changed.
+	*
+	* @event enyo.Media#onDurationChange
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when [networkState]{@link external:networkState} switches to `NETWORK_EMPTY` 
+	* from another state.
+	*
+	* @event enyo.Media#onEmptied
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when [media]{@link enyo.Media} playback finishes normally.
+	*
+	* @event enyo.Media#onEnded
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when an error occurs while fetching [media]{@link enyo.Media} data.
+	*
+	* @event enyo.Media#onError
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the [media]{@link enyo.Media} data is rendered.
+	*
+	* @event enyo.Media#onLoadedData
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the [media]{@link enyo.Media} data is rendered.
+	*
+	* @event enyo.Media#onLoadedMetaData
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the [media]{@link enyo.Media} data is rendered.
+	*
+	* @event enyo.Media#onLoadStart
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when playback is paused.
+	*
+	* @event enyo.Media#onPause
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when playback is no longer paused.
+	*
+	* @event enyo.Media#onPlay
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when playback is ready to start after having been paused or delayed due to lack 
+	* of [media]{@link enyo.Media} data.
+	*
+	* @event enyo.Media#onPlaying
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when fetching [media]{@link enyo.Media} data.
+	*
+	* @event enyo.Media#onProgress
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when either [defaultPlaybackRate]{@link enyo.Media#defaultPlaybackRate} or 
+	* [playbackRate]{@link enyo.Media#playbackRate} is updated.
+	*
+	* @event enyo.Media#onRateChange
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the seeking IDL attribute changes to false.
+	*
+	* @event enyo.Media#onSeeked
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the seeking IDL attribute changes to false.
+	*
+	* @event enyo.Media#onSeeking
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when [media]{@link enyo.Media} fetching is interrupted.
+	*
+	* @event enyo.Media#onStalled
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the [media]{@link enyo.Media} controller position changes.
+	*
+	* @event enyo.Media#onTimeUpdate
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when either [volume]{@link enyo.Media#volume} or [muted]{@link enyo.Media#muted}
+	* is updated.
+	*
+	* @event enyo.Media#onVolumeChange
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when playback has stopped because the next frame is not available, but is 
+	* expected to be.
+	*
+	* @event enyo.Media#onWaiting
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the playback rate has changed to a value > 1.
+	*
+	* @event enyo.Media#onFastforward
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the playback rate has changed to a positive value < 1.
+	*
+	* @event enyo.Media#onSlowforward
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the playback rate has changed to a value < -1.
+	*
+	* @event enyo.Media#onRewind
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the playback rate has changed to a negative value > -1.
+	*
+	* @event enyo.Media#onSlowrewind
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the playback has jumped forward by the number of seconds specified by the
+	* [jumpSec property]{@link enyo.Media#jumpSec}.
+	*
+	* @event enyo.Media#onJumpForward
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when the playback has jumped backward by the number of seconds specified by the
+	* [jumpSec property]{@link enyo.Media#jumpSec}.
+	*
+	* @event enyo.Media#onJumpBackward
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires when playback has started.
+	*
+	* @event enyo.Media#onStart
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+	/**
 	* _enyo.Media_ implements an [HTML 5 Media element]{@link external:HTML5MediaElement}. It is not
 	* intended to be used directly, but serves as the base [kind]{@link external:kind} for 
 	* {@link enyo.Audio} and {@link enyo.Video}.
@@ -151,378 +496,33 @@
 		* @private
 		*/
 		events: {
-			/**
-			* Fires when element stops fetching [media]{@link enyo.Media} data before it is 
-			* completely downloaded, but not due to an error.
-			*
-			* @event enyo.Media#onAbort
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onAbort: "",
-
-			/**
-			* Fires when element can resume playback of the [media]{@link enyo.Media} data, but may 
-			* need to stop for further buffering of content.
-			*
-			* @event enyo.Media#onCanPlay
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onCanPlay: '',
-
-			/**
-			* Fires when element can resume playback of the [media]{@link enyo.Media} data without 
-			* needing to stop for further buffering of content.
-			*
-			* @event enyo.Media#onCanPlayThrough
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onCanPlayThrough: '',
-
-			/**
-			* Fires when the [duration]{@link enyo.Media#duration} attribute has been changed.
-			*
-			* @event enyo.Media#onDurationChange
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onDurationChange: '',
-
-			/**
-			* Fires when [networkState]{@link external:networkState} switches to `NETWORK_EMPTY` 
-			* from another state.
-			*
-			* @event enyo.Media#onEmptied
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onEmptied: '',
-
-			/**
-			* Fires when [media]{@link enyo.Media} playback finishes normally.
-			*
-			* @event enyo.Media#onEnded
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onEnded: '',
-
-			/**
-			* Fires when an error occurs while fetching [media]{@link enyo.Media} data.
-			*
-			* @event enyo.Media#onError
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onError: '',
-
-			/**
-			* Fires when the [media]{@link enyo.Media} data is rendered.
-			*
-			* @event enyo.Media#onLoadedData
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onLoadedData: '',
-
-			/**
-			* Fires when the [media]{@link enyo.Media} data is rendered.
-			*
-			* @event enyo.Media#onLoadedMetaData
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onLoadedMetaData: '',
-
-			/**
-			* Fires when the [media]{@link enyo.Media} data is rendered.
-			*
-			* @event enyo.Media#onLoadStart
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onLoadStart: '',
-
-			/**
-			* Fires when playback is paused.
-			*
-			* @event enyo.Media#onPause
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onPause: '',
-
-			/**
-			* Fires when playback is no longer paused.
-			*
-			* @event enyo.Media#onPlay
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onPlay: '',
-
-			/**
-			* Fires when playback is ready to start after having been paused or delayed due to lack 
-			* of [media]{@link enyo.Media} data.
-			*
-			* @event enyo.Media#onPlaying
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onPlaying: '',
-
-			/**
-			* Fires when fetching [media]{@link enyo.Media} data.
-			*
-			* @event enyo.Media#onProgress
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onProgress: '',
-
-			/**
-			* Fires when either [defaultPlaybackRate]{@link enyo.Media#defaultPlaybackRate} or 
-			* [playbackRate]{@link enyo.Media#playbackRate} is updated.
-			*
-			* @event enyo.Media#onRateChange
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onRateChange: '',
-
-			/**
-			* Fires when the seeking IDL attribute changes to false.
-			*
-			* @event enyo.Media#onSeeked
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onSeeked: '',
-
-			/**
-			* Fires when the seeking IDL attribute changes to false.
-			*
-			* @event enyo.Media#onSeeking
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onSeeking: '',
-
-			/**
-			* Fires when [media]{@link enyo.Media} fetching is interrupted.
-			*
-			* @event enyo.Media#onStalled
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onStalled: '',
-
-			/**
-			* Fires when the [media]{@link enyo.Media} controller position changes.
-			*
-			* @event enyo.Media#onTimeUpdate
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onTimeUpdate: '',
-
-			/**
-			* Fires when either [volume]{@link enyo.Media#volume} or [muted]{@link enyo.Media#muted}
-			* is updated.
-			*
-			* @event enyo.Media#onVolumeChange
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onVolumeChange: '',
-
-			/**
-			* Fires when playback has stopped because the next frame is not available, but is 
-			* expected to be.
-			*
-			* @event enyo.Media#onWaiting
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onWaiting: '',
-
-			/**
-			* Fires when the playback rate has changed to a value > 1.
-			*
-			* @event enyo.Media#onFastforward
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onFastforward: '',
-
-			/**
-			* Fires when the playback rate has changed to a positive value < 1.
-			*
-			* @event enyo.Media#onSlowforward
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onSlowforward: '',
-
-			/**
-			* Fires when the playback rate has changed to a value < -1.
-			*
-			* @event enyo.Media#onRewind
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onRewind: '',
-
-			/**
-			* Fires when the playback rate has changed to a negative value > -1.
-			*
-			* @event enyo.Media#onSlowrewind
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onSlowrewind: '',
-
-			/**
-			* Fires when the playback has jumped forward by the number of seconds specified by the
-			* [jumpSec property]{@link enyo.Media#jumpSec}.
-			*
-			* @event enyo.Media#onJumpForward
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onJumpForward: '',
-
-			/**
-			* Fires when the playback has jumped backward by the number of seconds specified by the
-			* [jumpSec property]{@link enyo.Media#jumpSec}.
-			*
-			* @event enyo.Media#onJumpBackward
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onJumpBackward: '',
-
-			/**
-			* Fires when playback has started.
-			*
-			* @event enyo.Media#onStart
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onStart: ''
 		},
 		

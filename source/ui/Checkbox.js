@@ -1,5 +1,17 @@
 (function (enyo, scope) {
 	/**
+	* Fires when checkbox is tapped.
+	*
+	* @event enyo.Checkbox#onActivate
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*                           propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*                          [event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
 	* _enyo.Checkbox_ implements an HTML checkbox [input]{@link external:input}, with support for 
 	* grouping using {@link enyo.Group}.
 	*
@@ -29,17 +41,6 @@
 		* @private
 		*/
 		events: {
-			/**
-			* Fires when checkbox is tapped.
-			*
-			* @event enyo.Checkbox#onActivate
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*                           propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*                          [event]{@link external:event} information.
-			* @public
-			*/
 			onActivate: ''
 		},
 
@@ -111,7 +112,7 @@
 		},
 
 		/**
-		* The [active property]{@link enyo.Checkbox#active}, and onActivate 
+		* The [active]{@link enyo.Checkbox#active} property, and onActivate 
 		* [event]{@link external:event}, are part of the [GroupItem]{@link enyo.Groupitem} interface
 		* that we support in this [object]{@link external:Object}.
 		* 
@@ -125,7 +126,7 @@
 
 		/**
 		* All [input]{@link enyo.Input} type [controls]{@link enyo.Control} support the 
-		* [value property]{@link enyo.Input#value}.
+		* [value]{@link enyo.Input#value} property.
 		*
 		* @param {Boolean} val Whether the [checkbox]{@link enyo.Checkbox} should be checked or not.
 		*                      The value will be treated as `true` if it is truthy, otherwise it 

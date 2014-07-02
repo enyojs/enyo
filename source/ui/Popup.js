@@ -1,17 +1,41 @@
 (function (enyo, scope) {
 	/**
+	* Fires after the [popup]{@link enyo.Popup} is shown.
+	*
+	* @event enyo.Popup#onShow
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
+	* Fires after the [popup]{@link enyo.Popup} is hidden.
+	*
+	* @event enyo.Popup#onHide
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {Object} event - An [object]{@link external:Object} containing 
+	*	[event]{@link external:event} information.
+	* @public
+	*/
+
+	/**
 	* _enyo.Popup_ is a [control]{@link enyo.Control} used to display certain content on top of 
 	* other content.
 	* 
 	* [Popups]{@link enyo.Popup} are initially hidden on creation; they can be shown by calling the 
 	* [show]{@link enyo.Popup#show} method and re-hidden by calling [hide]{@link enyo.Popup#hide}.  
 	* [Popups]{@link enyo.Popup} may be centered using the 
-	* [centered property]{@link enyo.Popup#centered}; if not centered, they should be given a 
+	* [centered]{@link enyo.Popup#centered} property; if not centered, they should be given a 
 	* specific position.
 	* 
 	* A [popup]{@link enyo.Popup} may be optionally floated above all 
 	* [application]{@link enyo.Application} content by setting its 
-	* [floating property]{@link enyo.Popup#floating} to `true`. This has the advantage of 
+	* [floating]{@link enyo.Popup#floating} property to `true`. This has the advantage of 
 	* guaranteeing that the [popup]{@link enyo.Popup} will be displayed on top of other content. 
 	* This usage is appropriate when the [popup]{@link enyo.Popup} does not need to scroll along 
 	* with other content.
@@ -148,31 +172,7 @@
 		* @private
 		*/
 		events: {
-
-			/**
-			* Fires after the [popup]{@link enyo.Popup} is shown.
-			*
-			* @event enyo.Popup#onShow
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onShow: '',
-
-			/**
-			* Fires after the [popup]{@link enyo.Popup} is hidden.
-			*
-			* @event enyo.Popup#onHide
-			* @type {Object}
-			* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-			*	propagated the [event]{@link external:event}.
-			* @property {Object} event - An [object]{@link external:Object} containing 
-			*	[event]{@link external:event} information.
-			* @public
-			*/
 			onHide: ''
 		},
 
