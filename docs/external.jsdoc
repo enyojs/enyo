@@ -318,10 +318,39 @@
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Event
 */
 
+/**
+* @external TimeRange
+* @see https://developer.mozilla.org/en-US/docs/Web/API/TimeRanges
+*/
+
+/**
+* @todo Find a better external source
+* @external networkState
+* @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement#Properties
+*/
+
+/**
+* @todo Find a better external source
+* @external readyState
+* @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement#Properties
+*/
+
 ///// Common Type Definitions /////
 
 /**
-* A {@link external:DOM} node element @{link external:Object}.
+* A {@link external:DOM} node element {@link external:Object}.
 *
 * @typedef {Node}
+*/
+
+/**
+* A {@link external:TimeRanges} element {@link external:Object}.
+*
+* @typedef {TimeRanges}
+*/
+
+/**
+* A {@link external:readyState} value.
+*
+* @typedef {ReadyState}
 */

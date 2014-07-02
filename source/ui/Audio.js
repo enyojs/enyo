@@ -11,7 +11,8 @@
 	* 
 	* To play the audio, call `this.$.audio.play()`.
 	* 
-	* To get a reference to the actual HTML 5 Media element, call `this.$.audio.hasNode()`.
+	* To get a reference to the actual [HTML 5 Media element]{@link external:HTML5MediaElement}, 
+	* call `this.$.audio.hasNode()`.
 	*
 	* @class enyo.Audio
 	* @extends enyo.Media

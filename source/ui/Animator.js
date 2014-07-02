@@ -176,11 +176,11 @@
 		*                         directly into this [object]{@link external:Object}.
 		* @public
 		*/
-		play: function(inProps) {
+		play: function(props) {
 			this.stop();
 			this.reversed = false;
-			if (inProps) {
-				enyo.mixin(this, inProps);
+			if (props) {
+				enyo.mixin(this, props);
 			}
 			this.t0 = this.t1 = enyo.perfNow();
 			this.value = this.startValue;
@@ -303,10 +303,10 @@
 		/**
 		* @private
 		*/
-		fire: function(inEventName) {
-			var fn = this[inEventName];
+		fire: function(nom) {
+			var fn = this[nom];
 			if (enyo.isString(fn)) {
-				this.bubble(inEventName);
+				this.bubble(nom);
 			} else if (fn) {
 				fn.call(this.context || window, this);
 			}
