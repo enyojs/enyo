@@ -320,12 +320,21 @@
 
 /**
 * @external focus
-* @see https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XUL/Method/focus
+* @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement.focus
 */
 
 /**
 * @external blur
-* @see https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XUL/Method/blur
+* @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement.blur
+*/
+
+* @external iframe
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
+*/
+
+/**
+* @external script
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script
 */
 
 /**
@@ -346,6 +355,31 @@
 /**
 * @external TimeRange
 * @see https://developer.mozilla.org/en-US/docs/Web/API/TimeRanges
+*/
+
+/**
+* @external Selection
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Selection
+*/
+
+/**
+* @external Selection.collapseToStart
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Selection.collapseToStart
+*/
+
+/**
+* @external Selection.collapseToEnd
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Selection.collapseToEnd
+*/
+
+/**
+* @external Selection.modify
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Selection.modify
+*/
+
+/**
+* @external Range
+* @see https://developer.mozilla.org/en-US/docs/Web/API/range
 */
 
 /**
@@ -378,4 +412,10 @@
 * A {@link external:readyState} value.
 *
 * @typedef {ReadyState}
+*/
+
+/**
+* A {@link external:Selection} [object]{@link external:Object}.
+*
+* @typedef {Selection}
 */
