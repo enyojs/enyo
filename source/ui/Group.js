@@ -5,6 +5,14 @@
 */
 enyo.kind({
 	name: "enyo.Group",
+	events: {
+		/**
+			Fires when the active control is changed
+
+			_inEvent.active_ contains a reference to the active control
+		*/
+		onActiveChanged: ""
+	},
 	published: {
 		/**
 			If true, only one GroupItem in the component list may be active at
@@ -62,5 +70,6 @@ enyo.kind({
 		if (this.active) {
 			this.active.addClass("active");
 		}
+		this.doActiveChanged({active: this.active});
 	}
 });
