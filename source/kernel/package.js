@@ -4,7 +4,6 @@ enyo.depends(
 	'job.js',
 	'Oop.js',
 	'dev.js',
-	'Runloop.js',
 	'LinkedList.js',
 	'ObserverChain.js',
 	'Binding.js',
