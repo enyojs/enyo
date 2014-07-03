@@ -379,6 +379,11 @@
 */
 
 /**
+* @external video
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video
+*/
+
+/**
 * @external HTML5MediaElement
 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
 */
@@ -394,7 +399,7 @@
 */
 
 /**
-* @external TimeRange
+* @external TimeRanges
 * @see https://developer.mozilla.org/en-US/docs/Web/API/TimeRanges
 */
 
