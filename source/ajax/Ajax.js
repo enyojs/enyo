@@ -67,6 +67,16 @@
 		}),
 		
 		/**
+		* This will be set once a request has completed (successfully or failed). It is a cache of
+		* the response values.
+		*
+		* @type enyo.Ajax~xhrResponse
+		* @default null
+		* @public
+		*/
+		xhrResponse: null,
+		
+		/**
 		* Execute the request with the given options. The parameter can be a
 		* [hash]{@link external:Object} of properties or a [string]{@link external:String}. Both
 		* represent the query string, with the [hash]{@link external:Object} being serialized and
