@@ -338,6 +338,21 @@
 */
 
 /**
+* @external select
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select
+*/
+
+/**
+* @external option
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option
+*/
+
+/**
+* @external optgroup
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/optgroup
+*/
+
+/**
 * @external HTML5MediaElement
 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
 */

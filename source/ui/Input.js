@@ -38,7 +38,7 @@
 	*/
 	
 	/**
-	* _enyo.Input_ implements an [HTML &lt;input&gt; element]{@link external:input} with 
+	* _enyo.Input_ implements an HTML [&lt;input&gt;]{@link external:input} element with 
 	* cross-platform support for change [events]{@link external:event}.
 	* 
 	* You can listen for [oninput]{@link enyo.Input#event:oninput} and 

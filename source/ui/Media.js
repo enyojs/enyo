@@ -345,7 +345,7 @@
 	* @public
 	*/
 	/**
-	* _enyo.Media_ implements an [HTML 5 Media element]{@link external:HTML5MediaElement}. It is not
+	* _enyo.Media_ implements an HTML5 [Media]{@link external:HTML5MediaElement} element. It is not
 	* intended to be used directly, but serves as the base [kind]{@link external:kind} for 
 	* {@link enyo.Audio} and {@link enyo.Video}.
 	*
