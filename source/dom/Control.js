@@ -1,127 +1,125 @@
 (function (enyo, scope) {
 	
-	/**
-	
-		NOTES:
-	
-		Removed 'src' support as shortcut to access/set attributes.src nodeAttribute in favor of
-		a change in enyo.Binding that will allow the same behavior for all attributes...(TODO)
-	
-		Removed 'write' method.
-	
-		Removed all support for renderReusingNode.
-	
-		Reduced initialization callstack by removing overloaded constructor method.
-	
-		Removed need for 'initStyles' method or calling it from 'create' method
-	
-		Reduced initialization callstack by not unnecessarily calling some changed handlers and
-		class string initialization methods
-	
-		Removed setClasses overloaded method in preference for set('classes' ...) because this
-		allowed a normalized and more efficient way of managing them via the addClass API
-	
-		Possible modification to previous (INCONSISTENT) behavior of addClass that added to the
-		node but did not update the instance 'classes' property so they did not have the same
-		entry point to updating the DOM and hasClass would fail because they were synchronized -
-		now they are and they both use the same entry point to update the DOM which normalizes how
-		Bindings can interact with them and the possibility of improved perforance in a runloop
-	
-		getAttribute no longer attempts to retrieve the value from the node if we have a fixed
-		value for it already because it means we set it and there is no need to query the DOM
-	
-		remove getCssText method as it is unnecessary just call get('cssText') or access the property
-		directly knowing that style is synchronized to this value as long as the control has been
-		rendered
-	
-		remove getCssClasses method for the same reasons as getCssText method
-	*/
-	
 	var kind = enyo.kind;
 	
 	var UiComponent = enyo.UiComponent,
 		HTMLStringDelegate = enyo.HTMLStringDelegate;
 	
 	/**
-		@public
-		@class enyo.Control
-		@extends enyo.UiComponent
+	* @class enyo.Control
+	* @extends enyo.UiComponent
+	* @public
 	*/
 	var Control = kind(
 		/** @lends enyo.Control.prototype */ {
 	
 		/**
-			@private
+		* @private
 		*/
 		name: 'enyo.Control',
 		
 		/**
-			@private
+		* @private
 		*/
 		kind: UiComponent,
 		
 		/**
-			@private
+		* @private
 		*/
 		noDefer: true,
 		
 		/**
-			@public
+		* @public
 		*/
 		defaultKind: 'enyo.Control',
 		
 		/**
-			@public
+		* The [DOM node]{@link external:DOM} tag name that should be created.
+		*
+		* @type {String}
+		* @default 'div'
+		* @public
 		*/
 		tag: 'div',
 		
 		/**
-			@public
+		* An attributes [hash]{@link external:Object} to be applied to the created
+		* [DOM node]{@link external:DOM}.
+		*
+		* @type {Object}
+		* @default null
+		* @public
 		*/
 		attributes: null,
 		
 		/**
-			@public
+		* [Boolean]{@link external:Boolean} flag for whether this element should "fit" or fill its
+		* container's size.
+		*
+		* @type {Boolean}
+		* @default null
+		* @public
 		*/
 		fit: null,
 		
 		/**
-			@public
+		* Should this control allow HTML in its [content]{@linkcode enyo.Control.content} property. If set to
+		* `false`, HTML will be encoded into [HTML entities]{@link external:entity} (like `&lt;` and
+		* `&gt;`) for literal visual representation.
+		*
+		* @type {Boolean}
+		* @default null
+		* @public
 		*/
 		allowHtml: false,
 		
 		/**
-			@public
+		* Mymics the HTML `style` attribute
+		*
+		* @type {String}
+		* @default ''
+		* @public
 		*/
 		style: '',
 		
 		/**
-			@private
+		* @private
 		*/
 		kindStyle: '',
 		
 		/**
-			@public
+		* Mymics the HTML `class` attribute
+		*
+		* @type {String}
+		* @default ''
+		* @public
 		*/
 		classes: '',
 		
 		/**
-			@private
+		* @private
 		*/
 		kindClasses: '',
 		
 		/**
-			@public
+		* [Classes]{@link enyo.Control.classes} that are applied to all controls.
+		*
+		* @type {String}
+		* @default ''
+		* @public
 		*/
 		controlClasses: '',
 		
 		/**
-			@public
+		* The text-based content of the Control. With the {@link enyo.Control.allowHtml} flag set to
+		* `true`, you may set this property to a string of HTML.
+		* @public
 		*/
 		content: '',
 		
 		/**
-			@public
+		* @todo Find out how to document "handlers".
+		* @publiC
 		*/
 		handlers: {
 			ontap: 'tap',
@@ -129,12 +127,12 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		strictlyInternalEvents: {onenter: 1, onleave: 1},
 		
 		/**
-			@private
+		* @private
 		*/
 		isInternalEvent: function (event) {
 			var rdt = enyo.dispatcher.findDispatchTarget(event.relatedTarget);
@@ -145,7 +143,15 @@
 		// DOM NODE MANIPULATION API
 		
 		/**
-			@public
+		* Get the bounds for this control. The `top` and `left` properties returned by this method
+		* represent the control's positional distance in pixels from either A) the first parent of
+		* this control which is `absolute`ly or `relative`ly positioned, or B) the `document.body`.
+		*
+		* This is a shortcut convenience method for {@link enyo.dom.getBounds}.
+		*
+		* @returns {Object} An [object]{@link external:Object} containing `top`, `left`, `width`,
+		*	and `height` properties.
+		* @public
 		*/
 		getBounds: function () {
 			var node = this.hasNode(),
@@ -155,7 +161,14 @@
 		},
 		
 		/**
-			@public
+		* Set the absolute/relative position and/or size for this control. `Null` or `undefined`
+		* property values are ignored. Optionally specify a _unit_ (valid CSS measurement unit) as a
+		* [string]{@link exteral:String} to apply to each of the position/size assignments.
+		*
+		* @param {Object} bounds An [object]{@link external:Object} optionally containing one or more of
+		*	the following properties: `width`, `height`, `top`, `right`, `bottom`, and/or `left`.
+		* @param {String} [unit='px']
+		* @public
 		*/
 		setBounds: function (bounds, unit) {
 			var newStyle = '',
@@ -178,7 +191,15 @@
 		},
 		
 		/**
-			@public
+		* Get the bounds for this control. The `top` and `left` properties returned by this method
+		* represent the control's positional distance in pixels from `document.body`. To get the
+		* bounds relative to this control's parent(s), use {@link enyo.Control.getBounds}.
+		*
+		* This is a shortcut convenience method for {@link enyo.dom.getAbsoluteBounds}.
+		* 
+		* @returns {Object} An [object]{@link external:Object} containing `top`, `left`, `width`,
+		*	and `height` properties.
+		* @public
 		*/
 		getAbsoluteBounds: function () {
 			var node = this.hasNode(),
@@ -195,49 +216,72 @@
 		},
 		
 		/**
-			@public
+		* Shortcut method to set @{link enyo.Control.showing} to `true`.
+		*
+		* @public
 		*/
 		show: function () {
 			this.set('showing', true);
 		},
 		
 		/**
-			@public
+		* Shortcut method to set @{link enyo.Control.showing} to `false`.
+		*
+		* @public
 		*/
 		hide: function () {
 			this.set('showing', false);
 		},
 		
 		/**
-			@public
+		* Set this control to be [focused]{@link external:focus}.
+		*
+		* @public
 		*/
 		focus: function () {
 			if (this.hasNode()) this.node.focus();
 		},
 		
 		/**
-			@public
+		* [Blur]{@link external:blur} this control. (The opposite of {@link enyo.Control.focus}.)
+		*
+		* @public
 		*/
 		blur: function () {
 			if (this.hasNode()) this.node.blur();
 		},
 		
 		/**
-			@public
+		* Test whether this control currently has the [focus]{@link external:focus}.
+		*
+		* @returns {Boolean} Does this control have focus? 
+		*	True if yes, no if false.
+		* @public
 		*/
 		hasFocus: function () {
 			if (this.hasNode()) return document.activeElement === this.node;
 		},
 		
 		/**
-			@public
+		* Test whether this control's [DOM node]{@link external:Node} has been created.
+		*
+		* @returns {Boolean} Has this [DOM node]{@link external:Node} been created?
+		*	True if yes, no if false.
+		* @public
 		*/
 		hasNode: function () {
 			return this.generated && (this.node || this.findNodeById());
 		},
 		
 		/**
-			@public
+		* Gets the requested property _name_ from the control's attributes
+		* [hash]{@link external:Object}, from its cache of node attributes or if it has yet to be
+		* cached, from the [node]{@link external:Node} itself.
+		*
+		* @param {String} name The attribute name to get.
+		* @returns {(String|Null)} The value of the requested attribute, `null` if there isn't a
+		*	[DOM node]{@link external:Node} yet.
+		* @public
 		*/
 		getAttribute: function (name) {
 			var node;
@@ -259,7 +303,14 @@
 		},
 		
 		/**
-			@public
+		* Assign an attribute to a control's [node]{@link external:Node}. Assigning a `null`,
+		* `false`, or empty string ("") _value_ to _name_ will remove the attribute from the
+		* [node]{@link external:Node} altogether.
+		*
+		* @param {String} name Attribute name to assign/remove.
+		* @param {(String|Number|null)} value The value to assign to _name_
+		* @returns {this} Callee for chaining.
+		* @public
 		*/
 		setAttribute: function (name, value) {
 			var attrs = this.attributes,
@@ -280,14 +331,26 @@
 		},
 		
 		/**
-			@public
+		* Reads the _name_ property directly off of the [node]{@link external:Node}. Provide a
+		* default _def_ to use if there is no [node]{@link external:Node} yet.
+		* 
+		* @param {String} name [Node]{@link external:Node} property name to get.
+		* @param {*} def Default value to apply if there is no [node]{@link external:Node}.
+		* @returns {String} Value of the _name_ property or _def_ if the [node]{@link external:Node}
+		*	was not available.
+		* @public
 		*/
 		getNodeProperty: function (name, def) {
 			return this.hasNode() ? this.node[name] : def;
 		},
 		
 		/**
-			@public
+		* Sets the _name_ property _value_ directly on the [node]{@link external:Node}.
+		* 
+		* @param {String} name [Node]{@link external:Node} property name to set.
+		* @param {*} value Value to assign to the property.
+		* @returns {this} Callee for chaining.
+		* @public
 		*/
 		setNodeProperty: function (name, value) {
 			if (this.hasNode()) this.node[name] = value;
@@ -295,7 +358,11 @@
 		},
 		
 		/**
-			@public
+		* Append additional content to this control.
+		* 
+		* @param {String} content The new string to add to the end of the content property.
+		* @returns {this} Callee for chaining.
+		* @public
 		*/
 		addContent: function (content) {
 			return this.set('content', this.get('content') + content);
@@ -307,14 +374,22 @@
 		// STYLE/CLASS API
 		
 		/**
-			@public
+		* Check whether this control has the `class` _name_ or not. 
+		*
+		* @param {String} name The class or classes name to check for.
+		* @returns {Boolean} Does it have the _name_ class or not?
+		* @public
 		*/
 		hasClass: function (name) {
 			return name && (' ' + this.classes + ' ').indexOf(' ' + name + ' ') > -1;
 		},
 		
 		/**
-			@public
+		* Adds the provided class _name_ to this control's classes list.
+		*
+		* @param {String} name The name of the class to add.
+		* @returns {this} Callee for chaining.
+		* @public
 		*/
 		addClass: function (name) {
 			var classes = this.classes || '';
@@ -332,7 +407,14 @@
 		},
 		
 		/**
-			@public
+		* Removes the provided class _name_ from this control's classes list.
+		*
+		* _Note: It is not advisable to remove multiple space-separated class names using this
+		* method. Call this for each class name you'd like to remove._
+		*
+		* @param {String} name The name of the class to remove.
+		* @returns {this} Callee for chaining.
+		* @public
 		*/
 		removeClass: function (name) {
 			var classes = this.classes;
@@ -345,14 +427,21 @@
 		},
 		
 		/**
-			@public
+		* Add or Remove the provided class _name_ to this control conditionally based on the state
+		* of the _add_ argument.
+		*
+		* @param {String} name The name of the class to remove.
+		* @param {Boolean} add If this is `true`, the _name_ will be added as a class, `false` and
+		*	it will be removed.
+		* @returns {this} Callee for chaining.
+		* @public
 		*/
 		addRemoveClass: function (name, add) {
 			return name ? this[add ? 'addClass' : 'removeClass'](name) : this;
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		classesChanged: function () {
 			var classes = this.classes,
@@ -378,7 +467,15 @@
 		},
 		
 		/**
-			@public
+		* Apply some CSS styling directly with this. Use the _prop_ argument to specify the CSS
+		* property name you'd like to set, and the _value_ for the value you'd like for the _prop_.
+		* Setting _value_ to null will remove the CSS property _name_ altegether.
+		*
+		* @param {String} prop The CSS property to assign.
+		* @param {(String|Number|null|undefined)} value The value to assign to _prop_. Setting this
+		*	to `null`, `undefined` or empty string ("") will remove the property _prop_.
+		* @returns {this} Callee for chaining.
+		* @public
 		*/
 		applyStyle: function (prop, value) {
 			
@@ -425,7 +522,7 @@
 					// this is a rare case to nullify the style of a control that is not
 					// rendered or does not have a node
 					style = style.replace(new RegExp(
-						// this looks a lot worse than it is the complexity stems from needing to
+						// This looks a lot worse than it is. The complexity stems from needing to
 						// match a url container that can have other characters including semi-
 						// colon and also that the last property may/may-not end with one
 						'\\s*' + prop + '\\s*:\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*(?:url\\(.*\\)\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*)?\\s*(?:;|;?$)'
@@ -438,7 +535,11 @@
 		},
 		
 		/**
-			@public
+		* A way to add several CSS properties and values all at once, using a single string. Similar
+		* to the way the HTML `style` attribute works.
+		*
+		* @param {String} css A string containing one or more valid CSS styles.
+		* @returns {this} Callee for chaining.
 		*/
 		addStyles: function (css) {
 			var key,
@@ -452,7 +553,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		styleChanged: function () {
 			var delegate = this.renderDelegate || Control.renderDelegate;
@@ -476,21 +577,29 @@
 		},
 		
 		/**
-			@public
+		* Retrieve a control's CSS property value. This isn't just pulling the assigned value of
+		* _prop_, it's returning the browser's understanding of _prop_, the "computed" value. If
+		* this control hasn't renederd yet, and you need a default value, like `0`, include it in
+		* the arguments as _def_.
+		*
+		* @param {String} prop The property name to get.
+		* @param {*} [def] An optional default value, in case the control isn't renederd yet.
+		* @returns {(String|Number)} The computed value of _prop_, as the browser sees it.
+		* @public
 		*/
 		getComputedStyleValue: function (prop, def) {
 			return this.hasNode() ? enyo.dom.getComputedStyleValue(this.node, prop) : def;
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		findNodeById: function () {
 			return this.id && (this.node = enyo.dom.byId(this.id));
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		idChanged: function (was) {
 			if (was) Control.unregisterDomEvents(was);
@@ -501,7 +610,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		contentChanged: function () {
 			var delegate = this.renderDelegate || Control.renderDelegate;
@@ -509,7 +618,9 @@
 		},
 		
 		/**
-			@public
+		* If the control has been generated, re-flow this control.
+		*
+		* @public
 		*/
 		beforeChildRender: function () {
 			// if we are generated, we should flow before rendering a child;
@@ -518,7 +629,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		showingChanged: function (was) {
 			
@@ -539,7 +650,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		sendShowingChangedEvent: function (was) {
 			var waterfall = (was === true || was === false),
@@ -554,11 +665,12 @@
 		},
 		
 		/**
-			Returns true if this and all parents are showing. If the optional _ignoreBounds_ boolean
-			parameter is `true` it will not force a layout by retrieving computed bounds and rely on
-			the return from _this.showing_ exclusively.
-		
-			@public
+		* Returns true if this and all parents are showing. 
+		*
+		* @param {Boolean} ignoreBounds If this is `true` it will not force a layout by retrieving
+		*	computed bounds and rely on the return from {@link enyo.Control.showing} exclusively.
+		* @returns {Boolean} Represents whether the control is showing (visible) or not.
+		* @public
 		*/
 		getAbsoluteShowing: function (ignoreBounds) {
 			var bounds = !ignoreBounds ? this.getBounds() : null,
@@ -581,32 +693,40 @@
 		},
 		
 		/**
-			Handles the _onshowingchanged_ event that is waterfalled by controls when their
-			_showing_ value is modified. If the control is not showing itself already it will not
-			continue the waterfall. Overload this method for additional handling of this event.
-		
-			@private
+		* Handles the _onshowingchanged_ event that is waterfalled by controls when their _showing_
+		* value is modified. If the control is not showing itself already it will not continue the
+		* waterfall. Overload this method for additional handling of this event.
+		*
+		* @private
 		*/
 		showingChangedHandler: function (sender, event) {
 			return sender === this ? false : !this.showing;
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		fitChanged: function () {
 			this.parent.reflow();
 		},
 		
 		/**
-			@public
+		* Test whether we are in fullscreen mode or not.
+		*
+		* @returns {Boolean} Are we in fullscreen mode?
+		* @public
 		*/
 		isFullscreen: function () {
 			return (this.hasNode() && this.node === enyo.fullscreen.getFullscreenElement());
 		},
-		
+
 		/**
-			@public
+		* Ask for this control become fullscreen (like a video container). If the request is
+		* granted, it will fill the screen, and return `true`. `False` if it does not succeed, and
+		* won't become fullscreen.
+		*
+		* @returns {Boolean} `True` on success, `false` if fullscreen was not possible.
+		* @public
 		*/
 		requestFullscreen: function () {
 			if (!this.hasNode()) return false;
@@ -617,9 +737,13 @@
 
 			return false;
 		},
-		
+
 		/**
-			@public
+		* End fullscreen mode for this control.
+		*
+		* @returns {Boolean} If this control was in fullscreen mode before this was called, return
+		*	`true` and take it out of fullscreen mode, `false` otherwise and does nothing.
+		* @public
 		*/
 		cancelFullscreen: function() {
 			if (this.isFullscreen()) {
@@ -629,35 +753,55 @@
 
 			return false;
 		},
-		
+
 		// .................................
 		
 		// .................................
 		// RENDER-SCHEME API
 		
 		/**
-			@public
+		* Determines whether the control is allowed to be generated, i.e. rendered into the
+		* [DOM]{@link external:DOM} tree.
+		* 
+		* @type {Boolean}
+		* @default true
+		* @public
 		*/
 		canGenerate: true,
 		
 		/**
-			@public
+		* Determines whether the control is visible or hidden.
+		* 
+		* @type {Boolean}
+		* @default true
+		* @public
 		*/
 		showing: true,
 		
 		/**
-			@public
+		* The [node]{@link external:Node} that this control will be rendered into.
+		* 
+		* @type {enyo.Control}
+		* @default null
+		* @public
 		*/
 		renderDelegate: null,
 		
 		/**
-			@private
+		* State flag for whether the control has been generated yet or not.
+		*
+		* @type {Boolean}
+		* @default false
+		* @private
 		*/
 		generated: false,
 		
 		/**
-			@public
-			@method
+		* Force the control to be rendered. You should use this sparingly as it can be costly, but
+		* may be necessary in cases where a control or its contents were updated surreptitiously.
+		*
+		* @returns {this} Callee for chaining.
+		* @public
 		*/
 		render: function () {
 			
@@ -671,8 +815,12 @@
 		},
 		
 		/**
-			@public
-			@method
+		* Take this control and drop it into a (new/different) [DOM node]{@link external:Node}. This
+		* replaces any existing [nodes]{@link external:Node} in the target _parentNode_.
+		*
+		* @param {Node} parentNode The new parent of this control.
+		* @returns {this} Callee for chaining. 
+		* @public
 		*/
 		renderInto: function (parentNode) {
 			var delegate = this.renderDelegate || Control.renderDelegate,
@@ -710,8 +858,10 @@
 		},
 		
 		/**
-			@public
-			@method
+		* A function that fires after the control has rendered. This preforms a
+		* [reflow]{@link enyo.Control.reflow}.
+		*
+		* @public
 		*/
 		rendered: function () {
 			var child,
@@ -727,7 +877,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		teardownRender: function () {
 			var delegate = this.renderDelegate || Control.renderDelegate;
@@ -736,7 +886,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		teardownChildren: function () {
 			var delegate = this.renderDelegate || Control.renderDelegate;
@@ -745,7 +895,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		addNodeToParent: function () {
 			var pn;
@@ -761,21 +911,21 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		appendNodeToParent: function(parentNode) {
 			parentNode.appendChild(this.node);
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		insertNodeInParent: function(parentNode, beforeNode) {
 			parentNode.insertBefore(this.node, beforeNode || parentNode.firstChild);
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		removeNodeFromDom: function() {
 			if (this.hasNode() && this.node.parentNode) {
@@ -784,7 +934,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		getParentNode: function () {
 			return this.parentNode || (this.parent && (
@@ -795,7 +945,7 @@
 		// .................................
 		
 		/**
-			@private
+		* @private
 		*/
 		constructor: enyo.inherit(function (sup) {
 			return function (props) {
@@ -814,7 +964,7 @@
 		}),
 		
 		/**
-			@private
+		* @private
 		*/
 		create: enyo.inherit(function (sup) {
 			return function (props) {
@@ -849,8 +999,10 @@
 		}),
 		
 		/**
-			@public
-			@method
+		* Destroys the control and removes it from the [DOM]{@link external:DOM}. Also removes the
+		* ability for this control to receive bubbled events.
+		*
+		* @public
 		*/
 		destroy: enyo.inherit(function (sup) {
 			return function() {
@@ -864,7 +1016,7 @@
 		}),
 		
 		/**
-			@private
+		* @private
 		*/
 		dispatchEvent: enyo.inherit(function (sup) {
 			return function (name, event, sender) {
@@ -878,7 +1030,7 @@
 		}),
 		
 		/**
-			@private
+		* @private
 		*/
 		addChild: enyo.inherit(function (sup) {
 			return function (control) {
@@ -888,7 +1040,7 @@
 		}),
 		
 		/**
-			@private
+		* @private
 		*/
 		removeChild: enyo.inherit(function (sup) {
 			return function (control) {
@@ -902,20 +1054,20 @@
 		// METHODS OR PROPERTIES THAT PROBABLY SHOULD NOT BE HERE BUT ARE ANYWAY
 		
 		/**
-			Apparently used by Ares 2 still but we have the property embedded in the kind...
-		
-			@private
-			@deprecated
+		* Apparently used by Ares 2 still but we have the property embedded in the kind...
+		*
+		* @deprecated
+		* @private
 		*/
 		isContainer: false,
 		
 		/**
-			@private
+		* @private
 		*/
 		rtl: false,
 		
 		/**
-			@private
+		* @private
 		*/
 		setupBodyFitting: function () {
 			enyo.dom.applyBodyFit();
@@ -923,12 +1075,12 @@
 		},
 		
 		/*
-			If the platform is Android or Android-Chrome, don't include the css rule
-			_-webkit-overflow-scrolling: touch_, as it is not supported in Android and leads to
-			overflow issues (ENYO-900 and ENYO-901). Similarly, BB10 has issues repainting
-			out-of-viewport content when _-webkit-overflow-scrolling_ is used (ENYO-1396).
-		
-			@private
+		* If the platform is Android or Android-Chrome, don't include the css rule
+		* _-webkit-overflow-scrolling: touch_, as it is not supported in Android and leads to
+		* overflow issues (ENYO-900 and ENYO-901). Similarly, BB10 has issues repainting
+		* out-of-viewport content when _-webkit-overflow-scrolling_ is used (ENYO-1396).
+		*
+		* @private
 		*/
 		setupOverflowScrolling: function () {
 			if(enyo.platform.android || enyo.platform.androidChrome || enyo.platform.blackberry) {
@@ -938,9 +1090,9 @@
 		},
 		
 		/**
-			Sets the control's directionality based on its content.
-			
-			@private
+		* Sets the control's directionality based on its content.
+		*
+		* @private
 		*/
 		detectTextDirectionality: function () {
 			if (this.content && this.content.length) {
@@ -955,16 +1107,16 @@
 		// DEPRECATED
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		getTag: function () {
 			return this.tag;
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		setTag: function (tag) {
 			var was = this.tag;
@@ -977,16 +1129,16 @@
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		getAttributes: function () {
 			return this.attributes;
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		setAttributes: function (attrs) {
 			var was = this.attributes;
@@ -1000,16 +1152,16 @@
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		getClasses: function () {
 			return this.classes;
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		setClasses: function (classes) {
 			var was = this.classes;
@@ -1021,16 +1173,16 @@
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		getStyle: function () {
 			return this.style;
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		setStyle: function (style) {
 			var was = this.style;
@@ -1042,16 +1194,16 @@
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		getContent: function () {
 			return this.content;
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		setContent: function (content) {
 			var was = this.content;
@@ -1063,16 +1215,16 @@
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		getShowing: function () {
 			return this.showing;
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		setShowing: function (showing) {
 			var was = this.showing;
@@ -1084,16 +1236,16 @@
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		getAllowHtml: function () {
 			return this.allowHtml;
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		setAllowHtml: function (allow) {
 			var was = this.allowHtml;
@@ -1105,16 +1257,16 @@
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		getCanGenerate: function () {
 			return this.canGenerate;
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		setCanGenerate: function (can) {
 			var was = this.canGenerate;
@@ -1126,16 +1278,16 @@
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		getFit: function () {
 			return this.fit;
 		},
 		
 		/**
-			@public
-			@deprecated
+		* @deprecated
+		* @public
 		*/
 		setFit: function (fit) {
 			var was = this.fit;
@@ -1147,18 +1299,18 @@
 		},
 		
 		/**
-			@public
-			@deprecated
-			@ares
+		* @ares
+		* @deprecated
+		* @public
 		*/
 		getIsContainer: function () {
 			return this.isContainer;
 		},
 		
 		/**
-			@public
-			@deprecated
-			@ares
+		* @ares
+		* @deprecated
+		* @public
 		*/
 		setIsContainer: function (isContainer) {
 			var was = this.isContainer;
@@ -1174,33 +1326,33 @@
 	});
 	
 	/**
-		@public
-		@static
+	* @static
+	* @public
 	*/
 	enyo.defaultCtor = Control;
 	
 	/**
-		@public
-		@static
+	* @static
+	* @public
 	*/
 	Control.renderDelegate = HTMLStringDelegate;
 	
 	/**
-		@private
+	* @private
 	*/
 	Control.registerDomEvents = function (id, control) {
 		enyo.$[id] = control;
 	};
 	
 	/**
-		@private
+	* @private
 	*/
 	Control.unregisterDomEvents = function (id) {
 		enyo.$[id] = null;
 	};
 	
 	/**
-		@private
+	* @private
 	*/
 	Control.normalizeCssStyleString = function (style) {
 		return style ? (
@@ -1215,7 +1367,7 @@
 	};
 	
 	/**
-		@private
+	* @private
 	*/
 	Control.concat = function (ctor, props, instance) {
 		var proto = ctor.prototype || ctor,
