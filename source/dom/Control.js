@@ -524,7 +524,7 @@
 			
 			// if we are changing from not showing to showing we attempt to find whatever
 			// our last known value for display was or use the default
-			if (!was) this.applyStyle('display', this._display || '');
+			if (!was && this.showing) this.applyStyle('display', this._display || '');
 			
 			// if we are supposed to be hiding the control then we need to cache our current
 			// display state
