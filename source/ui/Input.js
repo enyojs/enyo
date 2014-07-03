@@ -63,6 +63,7 @@
 		* @private
 		*/
 		published: {
+			
 			/**
 			* Value of the [input]{@link enyo.Input}. Use this property only to initialize the 
 			* _value_. Call `getValue` and `setValue` to manipulate the _value_ at runtime.
@@ -156,6 +157,7 @@
 		},
 
 		/**
+		* @method
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {
@@ -177,6 +179,7 @@
 		}),
 
 		/**
+		* @method
 		* @private
 		*/
 		rendered: enyo.inherit(function (sup) {

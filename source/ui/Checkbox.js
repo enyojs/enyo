@@ -48,6 +48,7 @@
 		* @private
 		*/
 		published: {
+			
 			/**
 			* Value of [checkbox]{@link enyo.Checkbox}; `true` if checked.
 			* 
@@ -90,6 +91,7 @@
 		},
 
 		/**
+		* @method
 		* @private
 		*/
 		rendered: enyo.inherit(function (sup) {

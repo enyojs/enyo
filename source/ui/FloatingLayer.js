@@ -29,6 +29,7 @@
 		name: 'enyo.FloatingLayer',
 		
 		/**
+		* @method
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {
@@ -40,7 +41,8 @@
 
 		/**
 		* Detect when [node]{@link external:Node} is detatched due to document.body being stomped.
-		* 
+		*
+		* @method
 		* @private
 		*/
 		hasNode: enyo.inherit(function (sup) {
@@ -54,6 +56,7 @@
 		}),
 
 		/**
+		* @method
 		* @private
 		*/
 		render: enyo.inherit(function (sup) {

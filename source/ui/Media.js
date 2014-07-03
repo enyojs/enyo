@@ -364,6 +364,7 @@
 		* @private
 		*/
 		published: {
+			
 			/**
 			* URL of the sound file to play; may be relative to the application HTML file.
 			* 
@@ -564,6 +565,7 @@
 		_speedIndex: 0,
 
 		/**
+		* @method
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {
@@ -578,6 +580,7 @@
 		}),
 
 		/**
+		* @method
 		* @private
 		*/
 		rendered: enyo.inherit(function (sup) {

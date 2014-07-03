@@ -63,6 +63,7 @@
 		* @private
 		*/
 		published: {
+			
 			/**
 			* The number of items to be repeated.
 			* 
@@ -82,6 +83,7 @@
 		},
 
 		/**
+		* @method
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {
@@ -92,6 +94,7 @@
 		}),
 		
 		/**
+		* @method
 		* @private
 		*/
 		initComponents: enyo.inherit(function (sup) {
@@ -162,9 +165,23 @@
 	* 
 	* @private
 	*/
-	enyo.kind({
+	enyo.kind(
+		/** @lends enyo.OwnerProxy.prototype */ {
+			
+		/**
+		* @private
+		*/
 		name: 'enyo.OwnerProxy',
+
+		/**
+		* @private
+		*/
 		tag: null,
+
+		/**
+		* @method
+		* @private
+		*/
 		decorateEvent: enyo.inherit(function (sup) {
 			return function(inEventName, inEvent, inSender) {
 				if (inEvent) {

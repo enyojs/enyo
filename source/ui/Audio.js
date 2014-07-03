@@ -40,6 +40,7 @@
 		* @private
 		*/
 		published: {
+			
 			/** 
 			* Indicates how data should be preloaded, reflecting the 
 			* [preload HTML attribute]{@link external:audio} ('none', 'metadata', 'auto').

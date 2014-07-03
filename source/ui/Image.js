@@ -55,6 +55,7 @@
 		* @private
 		*/
 		published: {
+			
 			/**
 			* Maps to the _alt_ attribute of an [img tag]{@link external:img}.
 			* 
@@ -124,6 +125,7 @@
 		},
 
 		/**
+		* @method
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {

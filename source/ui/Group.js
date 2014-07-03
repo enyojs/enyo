@@ -19,6 +19,7 @@
 		* @private
 		*/
 		published: {
+			
 			/**
 			* If `true`, only one [GroupItem]{@link enyo.GroupItem} in the 
 			* [component]{@link enyo.Component} list may be active at a given time.

@@ -56,6 +56,7 @@
 		* @private
 		*/
 		published: {
+			
 			/**
 			* _allowHtml_ is enabled by default in [RichText]{@link enyo.RichText} to take advantage
 			* of all the rich editing properties. However, this allows for **ANY** HTML to be 
@@ -143,7 +144,8 @@
 		/**
 		* Create [RichText]{@link enyo.RichText} as a div if platform has `contenteditable` 
 		* attribute, otherwise create it as a `textarea`.
-		* 
+		*
+		* @method
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {

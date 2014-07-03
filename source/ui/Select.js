@@ -38,7 +38,7 @@
 		* @private
 		*/
 		published: {
-
+			
 			/**
 			* Index of the selected [option]{@link enyo.Option} in the list.
 			* 
@@ -78,6 +78,7 @@
 		defaultKind: 'enyo.Option',
 
 		/**
+		* @method
 		* @private
 		*/
 		rendered: enyo.inherit(function (sup) {

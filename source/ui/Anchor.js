@@ -32,6 +32,7 @@
 		* @private
 		*/
 		published: {
+			
 			/** 
 			* Maps to the _href_ [attribute]{@link external:Attribute} of the &lt;a&gt; tag.
 			* 
@@ -54,6 +55,7 @@
 		},
 
 		/**
+		* @method
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {

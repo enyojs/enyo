@@ -53,6 +53,7 @@
 		* @private
 		*/
 		published: {
+			
 			/**
 			* The visibility state of the [drawer's]{@link enyo.Drawer} associated control.
 			* 
@@ -118,6 +119,7 @@
 		],
 
 		/**
+		* @method
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {
@@ -129,6 +131,7 @@
 		}),
 
 		/**
+		* @method
 		* @private
 		*/
 		initComponents: enyo.inherit(function (sup) {

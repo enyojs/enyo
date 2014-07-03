@@ -353,6 +353,11 @@
 */
 
 /**
+* @external style
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/style
+*/
+
+/**
 * @external HTML5MediaElement
 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
 */

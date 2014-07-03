@@ -46,6 +46,7 @@
 		* @private
 		*/
 		published: {
+			
 			/**
 			 * When `true`, the [button]{@link external:button} is shown as disabled and does not 
 			 * generate tap [events]{@link external:event}.
@@ -59,6 +60,7 @@
 		},
 		
 		/**
+		* @method
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {

@@ -55,6 +55,7 @@
 		},
 		
 		/**
+		* @method
 		* @private
 		*/
 		rendered: enyo.inherit(function (sup) {
