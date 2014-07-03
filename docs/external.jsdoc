@@ -358,6 +358,21 @@
 */
 
 /**
+* @external table
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table
+*/
+
+/**
+* @external tr
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/tr
+*/
+
+/**
+* @external td
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/td
+*/
+
+/**
 * @external HTML5MediaElement
 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
 */
