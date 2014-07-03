@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.Button_ implements an [HTML button]{@link external:button}, with support for grouping 
+	* _enyo.Button_ implements an HTML [button]{@link external:button}, with support for grouping 
 	* using {@link enyo.Group}.
 	*
 	* For more information, see the documentation on
@@ -46,6 +46,7 @@
 		* @private
 		*/
 		published: {
+			
 			/**
 			 * When `true`, the [button]{@link external:button} is shown as disabled and does not 
 			 * generate tap [events]{@link external:event}.
@@ -59,6 +60,7 @@
 		},
 		
 		/**
+		* @method
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {

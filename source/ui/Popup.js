@@ -68,6 +68,7 @@
 		* @private
 		*/
 		published: {
+			
 			/**
 			* Set to `true` to prevent [controls]{@link enyo.Control} outside the 
 			* [popup]{@link enyo.Popup} from receiving [events]{@link external:event} while the 
@@ -184,6 +185,7 @@
 		],
 
 		/**
+		* @method
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {
@@ -204,6 +206,7 @@
 		}),
 
 		/**
+		* @method
 		* @private
 		*/
 		render: enyo.inherit(function (sup) {
@@ -219,6 +222,7 @@
 		}),
 
 		/**
+		* @method
 		* @private
 		*/
 		destroy: enyo.inherit(function (sup) {
@@ -229,6 +233,7 @@
 		}),
 
 		/**
+		* @method
 		* @private
 		*/
 		reflow: enyo.inherit(function (sup) {
@@ -328,6 +333,7 @@
 		},
 
 		/**
+		* @method
 		* @private
 		*/
 		rendered: enyo.inherit(function (sup) {
@@ -344,6 +350,7 @@
 		}),
 
 		/**
+		* @method
 		* @private
 		*/
 		showingChanged: enyo.inherit(function (sup) {

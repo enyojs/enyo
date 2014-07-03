@@ -89,6 +89,7 @@
 		* @private
 		*/
 		published: {
+			
 			/** 
 			* Animation duration in milliseconds
 			*
@@ -151,6 +152,7 @@
 		},
 
 		/**
+		* @method
 		* @private
 		*/
 		constructed: enyo.inherit(function (sup) {
@@ -161,6 +163,7 @@
 		}),
 
 		/**
+		* @method
 		* @private
 		*/
 		destroy: enyo.inherit(function (sup) {

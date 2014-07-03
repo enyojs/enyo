@@ -61,6 +61,7 @@
 		* @private
 		*/
 		published: {
+			
 			/**
 			* Current visibility state of the [DragAvatar]{@link enyo.DragAvatar}.
 			* 
@@ -95,6 +96,7 @@
 		},
 		
 		/**
+		* @method
 		* @private
 		*/
 		initComponents: enyo.inherit(function (sup) {
