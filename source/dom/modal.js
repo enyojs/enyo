@@ -10,7 +10,7 @@
 	enyo.dispatcher.features.push(function(e) {
 		if (this.captureTarget) {
 			var c = e.dispatchTarget;
-			var eventName = (e.customEvent ? "" : "on") + e.type;
+			var eventName = (e.customEvent ? '' : 'on') + e.type;
 			var handlerName = this.captureEvents[eventName];
 			var handlerScope = this.captureHandlerScope || this.captureTarget;
 			var handler = handlerName && handlerScope[handlerName];
