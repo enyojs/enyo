@@ -1,6 +1,44 @@
 (function (enyo, scope) {
 	
 	/**
+	* A polyfill for platforms that don't yet support
+	* [bind]{@link external:Function.prototype.bind}. As is explained in the linked article, this
+	* polyfill handles the general use-case but cannot exactly mirror ECMA-262 version 5
+	* implementation specification. This is an adaptation of the example promoted
+	* [here]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind}.
+	*/
+	if (!Function.prototype.bind) {
+		Function.prototype.bind = function (ctx) {
+			// deliberately used here...
+			var args = Array.prototype.slice.call(arguments, 1),
+				scop = this,
+				nop = function () {},
+				ret;
+			
+			// as-per MDN's explanation of this polyfill we're filling in for the IsCallable
+			// internal (we can't access it)
+			if (typeof this != 'function') {
+				throw new TypeError('Function.prototype.bind called on non-callable object.');
+			}
+			
+			ret = function () {
+				var largs = args.concat(Array.prototype.slice.call(arguments)),
+					lctx = this instanceof nop && ctx ? this : ctx;
+				
+				return scop.apply(lctx, largs);
+			};
+			
+			nop.prototype = this.prototype;
+			
+			/*jshint -W055 */
+			ret.prototype = new nop();
+			/*jshint +W055 */
+			
+			return ret;
+		};
+	}
+	
+	/**
 	* @private
 	*/
 	enyo.global = scope;
