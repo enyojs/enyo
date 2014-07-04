@@ -86,7 +86,7 @@
 			// now our sanitation
 			rdy = !! (
 				(source && (typeof source == 'object')) &&
-				(target && (typeof source == 'object')) &&
+				(target && (typeof target == 'object')) &&
 				(from) &&
 				(to)
 			);
