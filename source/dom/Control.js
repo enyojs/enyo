@@ -123,6 +123,11 @@
 		/**
 			@public
 		*/
+		renderOnShow: '',
+
+		/**
+			@public
+		*/
 		handlers: {
 			ontap: 'tap',
 			onShowingChanged: 'showingChangedHandler'
@@ -507,6 +512,19 @@
 			var delegate = this.renderDelegate || Control.renderDelegate;
 			delegate.invalidate(this, 'content');
 		},
+
+		/**
+			If developer would like to delay rendering of control until it called to show,
+			set renderOnShow to true.
+			It means that _canGenerate_ becomes false and will be true 
+			when you set showing to true
+
+			@private
+		*/
+		renderOnShowChanged: function () {
+			if (!this.hasNode()) this.showing = false;
+			this.setCanGenerate(!this.renderOnShow);		
+		},
 		
 		/**
 			@public
@@ -524,8 +542,12 @@
 			
 			// if we are changing from not showing to showing we attempt to find whatever
 			// our last known value for display was or use the default
-			if (!was) this.applyStyle('display', this._display || '');
-			
+			if (!was) {
+				this.applyStyle('display', this._display || '');
+				// If renderOnShow is true and canGenerate is false then
+				// develper intended to make this control un-rendered until got request to show
+				if (this.renderOnShow && !this.canGenerate) this.render();
+			}			
 			// if we are supposed to be hiding the control then we need to cache our current
 			// display state
 			else if (!this.showing) {
@@ -845,6 +867,7 @@
 				// setup the id for this control if we have one
 				this.idChanged();
 				this.contentChanged();
+				this.renderOnShowChanged();
 			};
 		}),
 		
@@ -1058,6 +1081,26 @@
 			this.content = content;
 			
 			if (was != content) this.notify('content', was, content);
+			
+			return this;
+		},
+		/**
+			@public
+			@deprecated
+		*/
+		getRenderOnShow: function () {
+			return this.renderOnShow;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		setRenderOnSHow: function (can) {
+			var was = this.renderOnShow;
+			this.canGenerate = !! can;
+			
+			if (was !== can) this.notify('canRenderOnShow', was, can);
 			
 			return this;
 		},
