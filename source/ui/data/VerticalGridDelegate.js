@@ -37,7 +37,7 @@
 		reset: enyo.inherit(function (sup) {
 			return function (list) {
 				sup.apply(this, arguments);
-				if (list.hasReset && !list.hasClass("reset")) {
+				if (list.hasReset && !list.hasClass('reset')) {
 					list.canAddResetClass = true;
 				}
 			};
@@ -54,7 +54,7 @@
 				a  = n.children.length,
 				mx = list.metrics.pages[page.index], s;
 			s = (Math.floor(a/list.columns)+(a%list.columns? 1: 0))*(list.tileHeight+list.spacing);
-			n.style.height = s + "px";
+			n.style.height = s + 'px';
 			mx.height = s;
 			return s;
 		},
@@ -80,7 +80,7 @@
 			var s  = list.boundsCache.width,
 				n  = page.node || page.hasNode(),
 				mx = list.metrics.pages[page.index];
-			n.style.width = s + "px";
+			n.style.width = s + 'px';
 			mx.width = s;
 			return s;
 		},
@@ -202,7 +202,7 @@
 		*/
 		layout: function (list, page) {
 			if (list.canAddResetClass) {
-				list.addClass("reset");
+				list.addClass('reset');
 				delete list.canAddResetClass;
 			}
 			var cc = list.columns,
@@ -217,10 +217,10 @@
 					// the column
 					co = i % cc;
 					c.addStyles(
-						"top: "    + Math.round(s  + (r  * (h+s))) + "px; " +
-						(list.rtl ? "right: " : "left: ") + Math.round(s  + (co * (w+s))) + "px; " +
-						"width: "  + Math.round(w) +                 "px; " +
-						"height: " + Math.round(h) +                 "px"
+						'top: '    + Math.round(s  + (r  * (h+s))) + 'px; ' +
+						(list.rtl ? 'right: ' : 'left: ') + Math.round(s  + (co * (w+s))) + 'px; ' +
+						'width: '  + Math.round(w) +                 'px; ' +
+						'height: ' + Math.round(h) +                 'px'
 					);
 					// check if we need to increment the row
 					if ((i+1) % cc === 0) { ++r; }
@@ -246,8 +246,8 @@
 				}
 				bs += list.spacing;
 				list.bufferSize = bs;
-				n.style[sp] = bs + "px";
-				n.style[ss] = this[ss](list) + "px";
+				n.style[sp] = bs + 'px';
+				n.style[ss] = this[ss](list) + 'px';
 			}
 		},
 		

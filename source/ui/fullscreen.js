@@ -36,9 +36,9 @@
 		* @private
 		*/
 		elementAccessor:
-			("fullscreenElement" in document) ? "fullscreenElement" :
-			("mozFullScreenElement" in document) ? "mozFullScreenElement" :
-			("webkitFullscreenElement" in document) ? "webkitFullscreenElement" :
+			('fullscreenElement' in document) ? 'fullscreenElement' :
+			('mozFullScreenElement' in document) ? 'mozFullScreenElement' :
+			('webkitFullscreenElement' in document) ? 'webkitFullscreenElement' :
 			null,
 
 		/** 
@@ -47,9 +47,9 @@
 		* @private
 		*/
 		requestAccessor:
-			("requestFullscreen" in document.documentElement) ? "requestFullscreen" :
-			("mozRequestFullScreen" in document.documentElement) ? "mozRequestFullScreen" :
-			("webkitRequestFullscreen" in document.documentElement) ? "webkitRequestFullscreen" :
+			('requestFullscreen' in document.documentElement) ? 'requestFullscreen' :
+			('mozRequestFullScreen' in document.documentElement) ? 'mozRequestFullScreen' :
+			('webkitRequestFullscreen' in document.documentElement) ? 'webkitRequestFullscreen' :
 			null,
 
 		/** 
@@ -58,9 +58,9 @@
 		* @private
 		*/
 		cancelAccessor:
-			("cancelFullScreen" in document) ? "cancelFullScreen" :
-			("mozCancelFullScreen" in document) ? "mozCancelFullScreen" :
-			("webkitCancelFullScreen" in document) ? "webkitCancelFullScreen" :
+			('cancelFullScreen' in document) ? 'cancelFullScreen' :
+			('mozCancelFullScreen' in document) ? 'mozCancelFullScreen' :
+			('webkitCancelFullScreen' in document) ? 'webkitCancelFullScreen' :
 			null,
 
 		/**
@@ -166,7 +166,7 @@
 				enyo.floatingLayer.render();
 			}
 
-			control.addClass("enyo-fullscreen");
+			control.addClass('enyo-fullscreen');
 			control.appendNodeToParent(enyo.floatingLayer.hasNode());
 			control.resize();
 
@@ -194,7 +194,7 @@
 			parentNode = control.parent.hasNode();
 			control.prevAddBefore = null;
 
-			control.removeClass("enyo-fullscreen");
+			control.removeClass('enyo-fullscreen');
 
 			if (!beforeNode) {
 				control.appendNodeToParent(parentNode);
@@ -219,7 +219,7 @@
 			this.requestor = null;
 
 			// Broadcast change
-			enyo.Signals.send("onFullscreenChange");
+			enyo.Signals.send('onFullscreenChange');
 		}
 	};
 
@@ -231,9 +231,9 @@
 	enyo.ready(function() {
 		// no need for IE8 fallback, since it won't ever send this event
 		if (document.addEventListener) {
-			document.addEventListener("webkitfullscreenchange", enyo.bind(enyo.fullscreen, "detectFullscreenChangeEvent"), false);
-			document.addEventListener("mozfullscreenchange",    enyo.bind(enyo.fullscreen, "detectFullscreenChangeEvent"), false);
-			document.addEventListener("fullscreenchange",       enyo.bind(enyo.fullscreen, "detectFullscreenChangeEvent"), false);
+			document.addEventListener('webkitfullscreenchange', enyo.bind(enyo.fullscreen, 'detectFullscreenChangeEvent'), false);
+			document.addEventListener('mozfullscreenchange',    enyo.bind(enyo.fullscreen, 'detectFullscreenChangeEvent'), false);
+			document.addEventListener('fullscreenchange',       enyo.bind(enyo.fullscreen, 'detectFullscreenChangeEvent'), false);
 		}
 	});
 
@@ -244,7 +244,7 @@
 	if(!enyo.fullscreen.nativeSupport()) {
 		enyo.dispatcher.features.push(
 			function(e) {
-				if (e.type === "keydown" && e.keyCode === 27) {
+				if (e.type === 'keydown' && e.keyCode === 27) {
 					enyo.fullscreen.cancelFullscreen();
 				}
 			}
