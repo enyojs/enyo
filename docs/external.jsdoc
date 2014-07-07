@@ -429,6 +429,11 @@
 */
 
 /**
+* @external fullscreen
+* @see https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Using_full_screen_mode
+*/
+
+/**
 * @todo Find a better external source
 * @external networkState
 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement#Properties

@@ -19,7 +19,7 @@
 		name: 'RepeaterChildSupport',
 
 		/**
-		* Indicates whether the current child is selected in the repeater.
+		* Indicates whether the current child is selected in the [repeater]{@link enyo.DataRepeater}.
 		*
 		* @type {Boolean}
 		* @default false
