@@ -5,9 +5,9 @@
 	* @event enyo.Animator#onStep
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*                           propagated the [event]{@link external:event}.
+	*	propagated the [event]{@link external:event}.
 	* @property {Object} event - An [object]{@link external:Object} containing 
-	*                          [event]{@link external:event} information.
+	*	[event]{@link external:event} information.
 	* @public
 	*/
 
@@ -17,9 +17,9 @@
 	* @event enyo.Animator#onEnd
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*                           propagated the [event]{@link external:event}.
+	*	propagated the [event]{@link external:event}.
 	* @property {Object} event - An [object]{@link external:Object} containing 
-	*                          [event]{@link external:event} information.
+	*	[event]{@link external:event} information.
 	* @public
 	*/
 
@@ -29,9 +29,9 @@
 	* @event enyo.Animator#onStop
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*                           propagated the [event]{@link external:event}.
+	*	propagated the [event]{@link external:event}.
 	* @property {Object} event - An [object]{@link external:Object} containing 
-	*                          [event]{@link external:event} information.
+	*	[event]{@link external:event} information.
 	* @public
 	*/
 
@@ -177,7 +177,7 @@
 		* Plays the animation.
 		*
 		* @param {Object} [props] As a convenience, this [hash]{@link external:Object} will be mixed
-		*                         directly into this [object]{@link external:Object}.
+		*	directly into this [object]{@link external:Object}.
 		* @public
 		*/
 		play: function(props) {

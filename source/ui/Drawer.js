@@ -8,9 +8,9 @@
 	* @event enyo.Drawer#onDrawerAnimationStep
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*                           propagated the [event]{@link external:event}.
+	*	propagated the [event]{@link external:event}.
 	* @property {Object} event - An [object]{@link external:Object} containing 
-	*                          [event]{@link external:event} information.
+	*	[event]{@link external:event} information.
 	* @public
 	*/
 
@@ -23,9 +23,9 @@
 	* @event enyo.Drawer#onDrawerAnimationEnd
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*                           propagated the [event]{@link external:event}.
+	*	propagated the [event]{@link external:event}.
 	* @property {Object} event - An [object]{@link external:Object} containing 
-	*                          [event]{@link external:event} information.
+	*	[event]{@link external:event} information.
 	* @public
 	*/
 

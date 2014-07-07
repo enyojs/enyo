@@ -5,9 +5,9 @@
 	* @event enyo.Checkbox#onActivate
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*                           propagated the [event]{@link external:event}.
+	*	propagated the [event]{@link external:event}.
 	* @property {Object} event - An [object]{@link external:Object} containing 
-	*                          [event]{@link external:event} information.
+	*	[event]{@link external:event} information.
 	* @public
 	*/
 
@@ -131,8 +131,8 @@
 		* [value]{@link enyo.Input#value} property.
 		*
 		* @param {Boolean} val Whether the [checkbox]{@link enyo.Checkbox} should be checked or not.
-		*                      The value will be treated as `true` if it is truthy, otherwise it 
-		*                      will be considered `false`.
+		*	The value will be treated as `true` if it is truthy, otherwise it 
+		*	will be considered `false`.
 		* @public
 		*/
 		setValue: function(val) {
@@ -143,7 +143,7 @@
 		* Retrieve the current [value]{@link enyo.Input#value} of the [checkbox]{@link enyo.Checkbox}
 		*
 		* @returns {Boolean} `true` if the [checkbox]{@link enyo.Checkbox} is checked; `false`
-		*                           otherwise.
+		*	otherwise.
 		* @public
 		*/
 		getValue: function() {
