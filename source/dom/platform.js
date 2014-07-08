@@ -1,43 +1,48 @@
-/**
-	Determines OS versions of platforms that need special treatment.
-	Can have one of the following properties:
+(function(enyo, scope) {
+	/**
+	* Determines OS versions of platforms that need special treatment. Can have one of the following
+	* properties:
+	*
+	* * android
+	* * androidChrome _(Chrome on Android, standard starting in 4.1)_
+	* * androidFirefox
+	* * ie
+	* * ios
+	* * webos
+	* * windowsPhone
+	* * blackberry
+	* * tizen
+	* * safari _(desktop version)_
+	* * chrome _(desktop version)_
+	* * firefox _(desktop version)_
+	* * firefoxOS
+	*
+	* If the property is defined, its value will be the major version number of the platform.
+	*
+	* Example:
+	* ```javascript
+	* // android 2 does not have 3d css
+	* if (enyo.platform.android < 3) {
+	* 	t = "translate(30px, 50px)";
+	* } else {
+	* 	t = "translate3d(30px, 50px, 0)";
+	* }
+	* this.applyStyle("-webkit-transform", t);
+	* ```
+	*
+	* @name enyo.platform
+	*/
+	enyo.platform = 
+		/** @lends enyo.platform */ {
+		//* True if the platform has native single-finger events
+		touch: Boolean(("ontouchstart" in window) || window.navigator.msMaxTouchPoints),
+		//* True if the platform has native double-finger events
+		gesture: Boolean(("ongesturestart" in window) || window.navigator.msMaxTouchPoints)
+	};
 
-	* android
-	* androidChrome (Chrome on Android, standard starting in 4.1)
-	* androidFirefox
-	* ie
-	* ios
-	* webos
-	* windowsPhone
-	* blackberry
-	* tizen
-	* safari (desktop version)
-	* chrome (desktop version)
-	* firefox (desktop version)
-	* firefoxOS
-
-	If the property is defined, its value will be the major version	number
-	of the platform.
-
-	Example:
-
-		// android 2 does not have 3d css
-		if (enyo.platform.android < 3) {
-			t = "translate(30px, 50px)";
-		} else {
-			t = "translate3d(30px, 50px, 0)";
-		}
-		this.applyStyle("-webkit-transform", t);
-*/
-enyo.platform = {
-	//* True if the platform has native single-finger events
-	touch: Boolean(("ontouchstart" in window) || window.navigator.msMaxTouchPoints),
-	//* True if the platform has native double-finger events
-	gesture: Boolean(("ongesturestart" in window) || window.navigator.msMaxTouchPoints)
-};
-
-//* @protected
-(function() {
+	/**
+	* @private
+	*/
 	var ua = navigator.userAgent;
 	var ep = enyo.platform;
 	var platforms = [
@@ -98,6 +103,16 @@ enyo.platform = {
 			break;
 		}
 	}
-	// these platforms only allow one argument for console.log
+	
+	/**
+	* These platforms only allow one argument for `console.log`:
+	*
+	* * android
+	* * ios
+	* * webos
+	*
+	* @private
+	*/
 	enyo.dumbConsole = Boolean(ep.android || ep.ios || ep.webos);
-})();
+
+})(enyo, this);
