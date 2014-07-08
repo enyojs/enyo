@@ -453,7 +453,7 @@
 ///// Common Type Definitions /////
 
 /**
-* A {@link external:DOM} node element {@link external:Object}.
+* A [DOM]{@link external:DOM} [node]{@link external:Node} element [object]{@link external:Object}.
 *
 * @typedef {Node}
 */
