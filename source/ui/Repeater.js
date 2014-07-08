@@ -12,7 +12,7 @@
 	/**
 	* Fires when each item is created.
 	*
-	* @event enyo.Repeater#onSetupItem
+	* @event enyo.Repeater#event:onSetupItem
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -28,7 +28,7 @@
 	* each item created, and are wrapped in a [control]{@link enyo.Control} that keeps the state of 
 	* the item index.
 	* 
-	* ```
+	* ```javascript
 	* {kind: 'Repeater', count: 2, onSetupItem: 'setImageSource', components: [
 	*	{kind: 'Image'}
 	* ]}
@@ -149,6 +149,7 @@
 		* it, so any state stored in the item is preserved.
 		*
 		* @param {Number} idx The index of the item to render.
+		* @fires enyo.Repeater#event:onSetupItem
 		* @public
 		*/
 		renderRow: function(idx) {
@@ -205,4 +206,5 @@
 			};
 		})
 	});
+
 })(enyo, this);

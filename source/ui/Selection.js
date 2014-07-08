@@ -13,14 +13,15 @@
 
 	/**
 	* Fires when an item is selected.
-	* ```
+	* 
+	* ```javascript
 	* {kind: "Selection", onSelect: "selectRow"...
 	* ...
 	* selectRow: function(inSender, inEvent) {
 	* ...
 	* ```
 	*
-	* @event enyo.Selection#onSelect
+	* @event enyo.Selection#event:onSelect
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -31,14 +32,15 @@
 
 	/**
 	* Fires when an item is deselected.
-	* ```
+	* 
+	* ```javascript
 	* {kind: "Selection", onSelect: "deselectRow"...
 	* ...
 	* deselectRow: function(inSender, inEvent)
 	* ...
 	* ```
 	*
-	* @event enyo.Selection#onDeselect
+	* @event enyo.Selection#event:onDeselect
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -50,7 +52,7 @@
 	/**
 	* Fires when selection changes (but not when selection is cleared).
 	*
-	* @event enyo.Selection#onChange
+	* @event enyo.Selection#event:onChange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -63,7 +65,7 @@
 	* _enyo.Selection_ is used to manage row selection state for lists. It provides selection state 
 	* management for both single-select and multi-select lists.
 	*
-	* ```
+	* ```javascript
 	* // The following is an excerpt from enyo.FlyweightRepeater.
 	* enyo.kind({
 	*	name: "enyo.FlyweightRepeater",
@@ -292,4 +294,5 @@
 			this.selected = newSelected;
 		}
 	});
+
 })(enyo, this);

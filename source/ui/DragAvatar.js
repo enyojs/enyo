@@ -19,7 +19,7 @@
 	* displays the avatar control when the user drags, and updates its position relative to the 
 	* current pointer location.
 	*
-	* ```
+	* ```javascript
 	* enyo.kind({
 	*	name: 'App',
 	*	handlers: {
@@ -159,4 +159,5 @@
 			this.setShowing(false);
 		}
 	});
+
 })(enyo, this);

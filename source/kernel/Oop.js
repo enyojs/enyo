@@ -154,7 +154,7 @@
 	* Creates a singleton of a given [kind]{@link external:kind} with a given definition. __The name 
 	* property will be the instance name of the singleton and must be unique__.
 	*
-	* ```
+	* ```javascript
 	*	enyo.singleton({
 	*		kind: 'enyo.Control',
 	*		name: 'app.MySingleton',
@@ -540,4 +540,5 @@
 	enyo.registerTheme = function(inNamespace) {
 		enyo.mixin(enyo.Theme, inNamespace);
 	};
+
 })(enyo, this);

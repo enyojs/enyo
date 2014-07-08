@@ -2,7 +2,7 @@
 	/**
 	* Fires immediately when the text changes.
 	*
-	* @event enyo.Input#oninput
+	* @event enyo.Input#event:oninput
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -15,7 +15,7 @@
 	* Fires when the text has changed and the [input]{@link enyo.Image} subsequently loses 
 	* focus.
 	*
-	* @event enyo.Input#onchange
+	* @event enyo.Input#event:onchange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -24,11 +24,10 @@
 	* @public
 	*/
 
-	//* 
 	/**
 	* Fires when the [input]{@link enyo.Input} is disabled or enabled.
 	*
-	* @event enyo.Input#onDisabledChange
+	* @event enyo.Input#event:onDisabledChange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -124,7 +123,7 @@
 		* @private
 		*/
 		events: {
-			onDisabledChange: ""
+			onDisabledChange: ''
 		},
 
 		/**
@@ -139,21 +138,21 @@
 		/**
 		* @private
 		*/
-		tag: "input",
+		tag: 'input',
 
 		/**
 		* @private
 		*/
-		classes: "enyo-input",
+		classes: 'enyo-input',
 
 		/**
 		* @private
 		*/
 		handlers: {
-			onfocus: "focused",
-			oninput: "input",
-			onclear: "clear",
-			ondragstart: "dragstart"
+			onfocus: 'focused',
+			oninput: 'input',
+			onclear: 'clear',
+			ondragstart: 'dragstart'
 		},
 
 		/**
@@ -163,10 +162,10 @@
 		create: enyo.inherit(function (sup) {
 			return function() {
 				if (enyo.platform.ie) {
-					this.handlers.onkeyup = "iekeyup";
+					this.handlers.onkeyup = 'iekeyup';
 				}
 				if (enyo.platform.windowsPhone) {
-					this.handlers.onkeydown = "iekeydown";
+					this.handlers.onkeydown = 'iekeydown';
 				}
 				sup.apply(this, arguments);
 				this.placeholderChanged();
@@ -186,11 +185,11 @@
 			return function() {
 				sup.apply(this, arguments);
 
-				enyo.makeBubble(this, "focus", "blur");
+				enyo.makeBubble(this, 'focus', 'blur');
 
 				//Force onchange event to be bubbled inside Enyo for IE8
 				if(enyo.platform.ie == 8){
-					this.setAttribute("onchange", enyo.bubbler);
+					this.setAttribute('onchange', enyo.bubbler);
 				}
 
 				this.disabledChanged();
@@ -204,14 +203,14 @@
 		* @private
 		*/
 		typeChanged: function() {
-			this.setAttribute("type", this.type);
+			this.setAttribute('type', this.type);
 		},
 
 		/**
 		* @private
 		*/
 		placeholderChanged: function() {
-			this.setAttribute("placeholder", this.placeholder);
+			this.setAttribute('placeholder', this.placeholder);
 		},
 
 		/**
@@ -219,8 +218,8 @@
 		* @private
 		*/
 		disabledChanged: function() {
-			this.setAttribute("disabled", this.disabled);
-			this.bubble("onDisabledChange");
+			this.setAttribute('disabled', this.disabled);
+			this.bubble('onDisabledChange');
 		},
 
 		/**
@@ -240,7 +239,7 @@
 				// browser
 				attrs.value = this.value;
 			} else {
-				this.setAttribute("value", this.value);
+				this.setAttribute('value', this.value);
 			}
 		},
 
@@ -251,7 +250,7 @@
 			var ie = enyo.platform.ie, kc = inEvent.keyCode;
 			// input event missing on ie 8, fails to fire on backspace and delete keys in ie 9
 			if (ie <= 8 || (ie == 9 && (kc == 8 || kc == 46))) {
-				this.bubble("oninput", inEvent);
+				this.bubble('oninput', inEvent);
 			}
 		},
 
@@ -261,7 +260,7 @@
 		iekeydown: function(inSender, inEvent) {
 			var wp = enyo.platform.windowsPhone, kc = inEvent.keyCode, dt = inEvent.dispatchTarget;
 			// onchange event fails to fire on enter key for Windows Phone 8, so we force blur
-			if (wp <= 8 && kc == 13 && this.tag == "input" && dt.hasNode()) {
+			if (wp <= 8 && kc == 13 && this.tag == 'input' && dt.hasNode()) {
 				dt.node.blur();
 			}
 		},
@@ -270,7 +269,7 @@
 		* @private
 		*/
 		clear: function() {
-			this.setValue("");
+			this.setValue('');
 		},
 
 		// note: we disallow dragging of an input to allow text selection on all platforms
@@ -286,7 +285,7 @@
 		*/
 		focused: function() {
 			if (this.selectOnFocus) {
-				enyo.asyncMethod(this, "selectContents");
+				enyo.asyncMethod(this, 'selectContents');
 			}
 		},
 
@@ -300,7 +299,7 @@
 				n.setSelectionRange(0, n.value.length);
 			} else if (n && n.createTextRange) {
 				var r = n.createTextRange();
-				r.expand("textedit");
+				r.expand('textedit');
 				r.select();
 			}
 		},
@@ -309,8 +308,9 @@
 		* @private
 		*/
 		input: function() {
-			var val = this.getNodeProperty("value");
+			var val = this.getNodeProperty('value');
 			this.setValue(val);
 		}
 	});
+
 })(enyo, this);

@@ -2,7 +2,7 @@
 	/**
 	* Fires when the [image]{@link enyo.Image} has loaded.
 	*
-	* @event enyo.Image#onload
+	* @event enyo.Image#event:onload
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -14,7 +14,7 @@
 	/**
 	* Fires when there has been an error when loading the [image]{@link enyo.Image}.
 	*
-	* @event enyo.Image#onerror
+	* @event enyo.Image#event:onerror
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -239,4 +239,5 @@
 				'lsZT0ic3Ryb2tlOiAjNDQ0OyBzdHJva2Utd2lkdGg6IDE7IiAvPjwvc3ZnPg=='
 		}
 	});
+
 })(enyo, this);

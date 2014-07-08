@@ -2,7 +2,7 @@
 	/**
 	* Fires when the [active state]{@link enyo.GroupItem#active} has changed.
 	*
-	* @event enyo.GroupItem#onActivate
+	* @event enyo.GroupItem#event:onActivate
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -31,7 +31,7 @@
 	* @public
 	*/
 	enyo.kind(
-		/** @lends enyo.FloatingLayer.prototype */ {
+		/** @lends enyo.Groupitem.prototype */ {
 
 		/**
 		* @private
@@ -73,4 +73,5 @@
 			this.bubble('onActivate');
 		}
 	});
+	
 })(enyo, this);

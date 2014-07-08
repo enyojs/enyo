@@ -25,7 +25,8 @@
 	* [name]{@link enyo.Component#name} property. Additionally, we can also observe changes on
 	* properties of [components]{@link enyo.Component} referenced by the _$_ property.
 	*
-	* @example <caption>Component access via the $ hash</caption>
+	* Component access via the $ hash:
+	* ```javascript
 	* var c = new enyo.Component({
 	*	name: 'me',
 	*	components: [
@@ -34,8 +35,10 @@
 	* });
 	*
 	* // We can now access 'other' on the $ hash of 'c', via c.$.other
+	* ```
 	*
-	* @example <caption>Observing changes on a component referenced by the $ property</caption>
+	* Observing changes on a component referenced by the $ property:
+	* ```javascript
 	* var c = new enyo.Component({
 	*	name: 'me',
 	*	components: [
@@ -48,7 +51,7 @@
 	* })
 	*
 	* c.$.other.set('active', true); // this will trigger the observer to run its callback
-	* 
+	* ```
 	* 
 	* @name $
 	* @type {Object}
@@ -101,7 +104,7 @@
 	* [object]{@link external:Object} that defines various properties to be initialized on the 
 	* {@link enyo.Component}. For example:
 	* 
-	* ```
+	* ```javascript
 	* // create a new component, initialize its name property to 'me'
 	* var c = new enyo.Component({
 	*	name: 'me'
@@ -111,7 +114,7 @@
 	* When a [Component]{@link enyo.Component} is instantiated, items configured in its 
 	* [components]{@link enyo.Component#components} property are instantiated, too:
 	* 
-	* ```
+	* ```javascript
 	* // create a new component, which itself has a component
 	* var c = new enyo.Component({
 	*	name: 'me',
@@ -144,7 +147,9 @@
 	* {@linkplain key-concepts/creating-components.html Components} in the Enyo Developer Guide.
 	* 
 	* @class enyo.Component
-	* @extends enyo.Object  
+	* @extends enyo.Object
+	* @mixes enyo.ApplicationSupport
+	* @mixes enyo.ComponentBindingSupport
 	* @public
 	*/
 	var Component = kind(
@@ -1153,5 +1158,5 @@
 		
 		return pre;
 	}
-	
+
 })(enyo, this);

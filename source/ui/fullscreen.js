@@ -5,10 +5,10 @@
 	*
 	* @name enyo.fullscreen
 	* @type Object
-	* @public
+	* @protected
 	*/
 	enyo.fullscreen = {
-
+		
 		/**
 		* Reference to the current fs [control]{@link enyo.Control}.
 		*
@@ -250,4 +250,5 @@
 			}
 		);
 	}
+
 })(enyo, this);

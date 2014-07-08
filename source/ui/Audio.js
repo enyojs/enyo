@@ -53,4 +53,5 @@
 			preload: 'auto'
 		}
 	});
+	
 })(enyo, this);

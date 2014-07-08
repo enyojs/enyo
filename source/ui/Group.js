@@ -8,7 +8,7 @@
 	* @public
 	*/
 	enyo.kind(
-		/** @lends enyo.FloatingLayer.prototype */ {
+		/** @lends enyo.Group.prototype */ {
 
 		/**
 		* @private
@@ -117,4 +117,5 @@
 			}
 		}
 	});
+
 })(enyo, this);

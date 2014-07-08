@@ -5,7 +5,7 @@
 	* on the [open]{@link enyo.Drawer#open} property. If `this.getOpen()` returns `true`, 
 	* the [drawer]{@link enyo.Drawer} was opened; if not, it was closed.
 	*
-	* @event enyo.Drawer#onDrawerAnimationStep
+	* @event enyo.Drawer#event:onDrawerAnimationStep
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -20,7 +20,7 @@
 	* on the [open]{@link enyo.Drawer#open} property. If `this.getOpen()` returns `true`, 
 	* the [drawer]{@link enyo.Drawer} was opened; if not, it was closed.
 	*
-	* @event enyo.Drawer#onDrawerAnimationEnd
+	* @event enyo.Drawer#event:onDrawerAnimationEnd
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -235,4 +235,5 @@
 			return true;
 		}
 	});
+
 })(enyo, this);

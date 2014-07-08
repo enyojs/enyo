@@ -18,7 +18,7 @@
 	* Note: It's not intended that users create instances of _enyo.FloatingLayer_.
 	*
 	* @class enyo.FloatingLayer
-	* @public
+	* @protected
 	*/
 	enyo.kind(
 		/** @lends enyo.FloatingLayer.prototype */ {
@@ -90,4 +90,5 @@
 	});
 
 	enyo.floatingLayer = new enyo.FloatingLayer();
+	
 })(enyo, this);

@@ -2,7 +2,7 @@
 	/**
 	* Fires when checkbox is tapped.
 	*
-	* @event enyo.Checkbox#onActivate
+	* @event enyo.Checkbox#event:onActivate
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -180,4 +180,5 @@
 			}
 		}
 	});
+
 })(enyo, this);

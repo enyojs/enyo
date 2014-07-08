@@ -2,7 +2,7 @@
 	/**
 	* Fires after the [popup]{@link enyo.Popup} is shown.
 	*
-	* @event enyo.Popup#onShow
+	* @event enyo.Popup#event:onShow
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -14,7 +14,7 @@
 	/**
 	* Fires after the [popup]{@link enyo.Popup} is hidden.
 	*
-	* @event enyo.Popup#onHide
+	* @event enyo.Popup#event:onHide
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -351,6 +351,8 @@
 
 		/**
 		* @method
+		* @fires enyo.Popup#event:onShow
+		* @fires enyo.Popup#event:onHide
 		* @private
 		*/
 		showingChanged: enyo.inherit(function (sup) {
@@ -558,5 +560,6 @@
 		proto.eventsToCapture = evts ? enyo.mixin({}, [evts, props.eventsToCapture]) : props.eventsToCapture;
 		delete props.eventsToCapture;
 	};
+
 })(enyo, this);
 

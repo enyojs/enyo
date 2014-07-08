@@ -14,12 +14,12 @@
 		/**
 		* @private
 		*/
-		name: "enyo.Controller",
+		name: 'enyo.Controller',
 
 		/**
 		* @private
 		*/
-		kind: "enyo.MultipleDispatchComponent",
+		kind: 'enyo.MultipleDispatchComponent',
 
 		/**
 		* Set this flag to `true` such that when instanced this [controller]{@link enyo.Controller} will
@@ -58,4 +58,5 @@
 		}),
 		_isController: true
 	});
+
 })(enyo, this);

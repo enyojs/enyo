@@ -71,4 +71,5 @@
 	};
 
 	enyo.job._jobs = {};
+	
 })(enyo, this);

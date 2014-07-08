@@ -89,4 +89,5 @@
 			return this.getId() + this._stylesheet_id_suffix;
 		}
 	};
+
 })(enyo, this);

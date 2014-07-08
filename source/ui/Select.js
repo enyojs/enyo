@@ -25,7 +25,6 @@
 	* @class enyo.Select
 	* @public
 	*/
-
 	enyo.kind(
 		/** @lends enyo.Select.prototype */ {
 
@@ -262,4 +261,5 @@
 			this.setAttribute('label', this.label);
 		}
 	});
+
 })(enyo, this);

@@ -3,7 +3,7 @@
 	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer greater than 
 	* `1`.
 	*
-	* @event enyo.Video#onFastforward
+	* @event enyo.Video#event:onFastforward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -16,7 +16,7 @@
 	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to a value between `0` and
 	* `1`.
 	*
-	* @event enyo.Video#onSlowforward
+	* @event enyo.Video#event:onSlowforward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -29,7 +29,7 @@
 	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer less than 
 	* `-1`.
 	*
-	* @event enyo.Video#onRewind
+	* @event enyo.Video#event:onRewind
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -42,7 +42,7 @@
 	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to a value less than `0` 
 	* but greater than or equal to `-1`.
 	*
-	* @event enyo.Video#onSlowrewind
+	* @event enyo.Video#event:onSlowrewind
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -54,7 +54,7 @@
 	/**
 	* Fires when [_jumpForward()_]{@link enyo.Video#jumpForward} is called.
 	*
-	* @event enyo.Video#onJumpForward
+	* @event enyo.Video#event:onJumpForward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -66,7 +66,7 @@
 	/**
 	* Fires when [_jumpBackward()_]{@link enyo.Video#jumpBackward} is called.
 	*
-	* @event enyo.Video#onJumpBackward
+	* @event enyo.Video#event:onJumpBackward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -78,7 +78,7 @@
 	/**
 	* Fires when EventData is changed.
 	*
-	* @event enyo.Video#onPlay
+	* @event enyo.Video#event:onPlay
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -90,7 +90,7 @@
 	/**
 	* Fires when the [image]{@link enyo.Image} has loaded.
 	*
-	* @event enyo.Video#onStart
+	* @event enyo.Video#event:onStart
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -98,6 +98,7 @@
 	*	[event]{@link external:event} information.
 	* @public
 	*/
+
 	/**
 	* _enyo.Video_ is a [control]{@link enyo.Control} that allows you to play video. It is an
 	* abstraction of HTML 5 [Video]{@link external:video}.
@@ -972,4 +973,5 @@
 			);
 		}
 	});
+
 })(enyo, this);

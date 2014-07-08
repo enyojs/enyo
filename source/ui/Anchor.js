@@ -80,4 +80,5 @@
 			this.setAttribute('title', this.title);
 		}
 	});
+
 })(enyo, this);

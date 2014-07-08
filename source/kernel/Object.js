@@ -83,7 +83,7 @@
 		* Import the values from the given [object]{@link external:Object}. Automatically called
 		* from the [constructor]{@link enyo.Object#constructor}.
 		*
-		* @param {Object} [props] If provided, the [object]{@link external:Object} from which to 
+		* @param {Object} props If provided, the [object]{@link external:Object} from which to 
 		*                         retrieve [keys/values]{@link external:Object.keys} to mix-in.
 		* @returns {this} The callee for chaining.
 		* @public

@@ -2,7 +2,7 @@
 	/**
 	* Fires when an animation step occurs.
 	*
-	* @event enyo.Animator#onStep
+	* @event enyo.Animator#event:onStep
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -14,7 +14,7 @@
 	/**
 	* Fires when the animation finishes normally.
 	*
-	* @event enyo.Animator#onEnd
+	* @event enyo.Animator#event:onEnd
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -26,7 +26,7 @@
 	/**
 	* Fires when the animation is prematurely stopped.
 	*
-	* @event enyo.Animator#onStop
+	* @event enyo.Animator#event:onStop
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -83,7 +83,7 @@
 		/**
 		* @private
 		*/
-		kind: 'Component',
+		kind: 'enyo.Component',
 
 		/**
 		* @private
@@ -142,6 +142,7 @@
 			*/
 			easingFunction: enyo.easing.cubicOut
 		},
+		
 		/*
 		* @private
 		*/
@@ -176,7 +177,7 @@
 		/** 
 		* Plays the animation.
 		*
-		* @param {Object} [props] As a convenience, this [hash]{@link external:Object} will be mixed
+		* @param {Object} props As a convenience, this [hash]{@link external:Object} will be mixed
 		*	directly into this [object]{@link external:Object}.
 		* @public
 		*/
@@ -316,4 +317,5 @@
 			}
 		}
 	});
+
 })(enyo, this);

@@ -306,4 +306,5 @@
 			return (inPercent * 100) +'%	{ -webkit-transform: translateZ(0) translateX('+ inX +'px)   translateY('+ inY +'px); }\n';
 		}
 	});
+
 })(enyo, this);

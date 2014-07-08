@@ -50,4 +50,5 @@
 	});
 
 	//enyo.Control.prototype.layoutKind = "enyo.BaseLayout";
+
 })(enyo, this);

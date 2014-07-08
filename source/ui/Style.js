@@ -44,4 +44,5 @@
 			this.inherited(arguments);
 		}
 	});
+
 })(enyo, this);

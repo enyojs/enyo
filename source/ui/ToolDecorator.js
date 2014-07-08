@@ -24,4 +24,5 @@
 		*/
 		classes: 'enyo-tool-decorator'
 	});
+
 })(enyo, this);
