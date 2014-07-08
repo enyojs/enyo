@@ -28,6 +28,7 @@
 		selected: false,
 		
 		/*
+		* @method
 		* @private
 		*/
 		selectedChanged: enyo.inherit(function (sup) {
@@ -48,6 +49,7 @@
 		}),
 
 		/*
+		* @method
 		* @private
 		*/
 		decorateEvent: enyo.inherit(function (sup) {
@@ -73,6 +75,7 @@
 		* are no name collisions in the instance [owner]{@link enyo.Component#owner}, and also so 
 		* that [bindings]{@link enyo.Binding} will correctly map to names.
 		*
+		* @method
 		* @private
 		*/
 		createClientComponents: enyo.inherit(function () {
@@ -84,6 +87,7 @@
 		* Used so that we don't stomp on any built-in handlers for the _ontap_ 
 		* [event]{@link external:event}.
 		*
+		* @method
 		* @private
 		*/
 		dispatchEvent: enyo.inherit(function (sup) {
@@ -99,6 +103,7 @@
 		}),
 
 		/*
+		* @method
 		* @private
 		*/
 		constructed: enyo.inherit(function (sup) {
@@ -121,6 +126,7 @@
 		}),
 
 		/*
+		* @method
 		* @private
 		*/
 		destroy: enyo.inherit(function (sup) {

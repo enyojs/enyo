@@ -32,6 +32,7 @@
 		/**
 		* Reset the page with the added class update to the list.
 		*
+		* @method
 		* @private
 		*/
 		reset: enyo.inherit(function (sup) {
@@ -62,6 +63,7 @@
 		/**
 		* This method generates the markup for the page content.
 		*
+		* @method
 		* @private
 		*/
 		generatePage: enyo.inherit(function (sup) {
@@ -144,6 +146,7 @@
 		/**
 		* We guarantee that index bound is maintained and up to date.
 		*
+		* @method
 		* @private
 		*/
 		modelsAdded: enyo.inherit(function (sup) {
@@ -152,6 +155,13 @@
 				sup.apply(this, arguments);
 			};
 		}),
+
+		/**
+		* We guarantee that index bound is maintained and up to date.
+		*
+		* @method
+		* @private
+		*/
 		modelsRemoved: enyo.inherit(function (sup) {
 			return function (list, props) {
 				this.updateIndexBound(list);
@@ -166,6 +176,7 @@
 		* ([pageSizeMultiplier]{@link enyo.DataList#pageSizeMultiplier} * the current boundary 
 		* height) and the adjusted tile height and spacing.
 		*
+		* @method
 		* @private
 		*/
 		controlsPerPage: enyo.inherit(function (sup) {

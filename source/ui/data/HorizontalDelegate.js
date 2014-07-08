@@ -17,6 +17,7 @@
 		* Initialize the list by adding a class to modify the CSS properly and settings its priority
 		* properties.
 		*
+		* @method
 		* @private
 		*/
 		initList: enyo.inherit(function (sup) {
@@ -58,6 +59,7 @@
 		/**
 		* Overload to ensure we arbitrarily resize the _active_ container to the width of the buffer.
 		*
+		* @method
 		* @private
 		*/
 		adjustBuffer: enyo.inherit(function (sup) {

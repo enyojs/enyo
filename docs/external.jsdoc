@@ -384,6 +384,11 @@
 */
 
 /**
+* @external scrollIntoView
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Element.scrollIntoView
+*/
+
+/**
 * @external HTML5MediaElement
 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
 */
