@@ -181,7 +181,7 @@
 		*	directly into this [object]{@link external:Object}.
 		* @public
 		*/
-		play: function(props) {
+		play: function (props) {
 			this.stop();
 			this.reversed = false;
 			if (props) {

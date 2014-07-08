@@ -60,6 +60,7 @@
 		* If the [destroy]{@link enyo.Object#destroy} method has been called this property will be
 		* `true`, otherwise `false`.
 		*
+		* @readonly
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -134,7 +135,7 @@
 		* [arguments]{@link external:arguments} are coerced to [String]{@link external:String} and 
 		* [joined with spaces]{@link external:Array.join}.
 		*
-		* @example
+		* ```javascript
 		* enyo.kind({
 		*	name: 'MyObject',
 		*	kind: 'enyo.Object',
@@ -143,6 +144,7 @@
 		*		// shows in the console: MyObject.hello: says hi
 		*	}
 		* });
+		* ```
 		* @public
 		*/
 		log: function () {

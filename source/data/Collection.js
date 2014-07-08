@@ -68,7 +68,7 @@
 	* The [collection]{@link enyo.Collection} was reset and its contents have been updated
 	* arbitrarily.
 	*
-	* @event enyo.Collection#reset
+	* @event enyo.Collection#event:reset
 	* @type {Object}
 	* @property {enyo.Model[]} models - An [array]{@link external:Array} of all
 	*	[models]{@link enyo.Model} as they are currently.
