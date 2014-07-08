@@ -1,6 +1,3 @@
-/**
-* @namespace enyo
-*/
 (function (enyo, scope) {
 
 	/**
