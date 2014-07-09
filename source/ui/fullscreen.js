@@ -5,7 +5,7 @@
 	*
 	* @name enyo.fullscreen
 	* @type Object
-	* @protected
+	* @public
 	*/
 	enyo.fullscreen = {
 		

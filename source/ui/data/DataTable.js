@@ -38,4 +38,5 @@
 			style: 'width: 100%;'
 		}
 	});
+
 })(enyo, this);

@@ -73,5 +73,7 @@
 			};
 		})
 	}, true);
+
 	enyo.DataList.delegates.horizontal = p;
+
 })(enyo, this);

@@ -19,6 +19,15 @@
 	*	y-axis or none at all, respectively.
 	*/
 
+
+	/**
+	* An [object]{@link enyo.Object} representing the overscroll boundaries.
+	*
+	* @typedef {Object} enyo.Scroller~OverscrollBoundaryObject
+	* @property {Number} overleft The left overscroll position.
+	* @property {Number} overtop The top overscroll position.
+	*/
+
 	/**
 	* The extended [event]{@link external:event} [object]{@link external:Object} that is provided 
 	* when a scroll [event]{@link external:event} is fired.
@@ -90,7 +99,8 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+		/** @lends enyo.Scroller.prototype */ {
 
 			/**
 			* Specifies how to horizontally scroll.  Acceptable values are 'scroll', 'auto', 
@@ -99,7 +109,6 @@
 			* 
 			* @type {String}
 			* @default 'default'
-			* @memberof enyo.Scroller.prototype
 			* @public
 			*/
 			horizontal: 'default',
@@ -110,7 +119,6 @@
 			* 
 			* @type {String}
 			* @default 'default'
-			* @memberof enyo.Scroller.prototype
 			* @public
 			*/
 			vertical: 'default',
@@ -120,7 +128,6 @@
 			* 
 			* @type {Number}
 			* @default 0
-			* @memberof enyo.Scroller.prototype
 			* @public
 			*/
 			scrollTop: 0,
@@ -130,7 +137,6 @@
 			* 
 			* @type {Number}
 			* @default 0
-			* @memberof enyo.Scroller.prototype
 			* @public
 			*/
 			scrollLeft: 0,
@@ -153,7 +159,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Scroller.prototype
 			* @public
 			*/
 			touch: false,
@@ -175,7 +180,6 @@
 			*
 			* @type {String}
 			* @default 'ScrollStrategy'
-			* @memberOf enyo.Scroller.prototype
 			* @public
 			*/
 			strategyKind: 'ScrollStrategy',
@@ -185,7 +189,6 @@
 			* 
 			* @type {Boolean}
 			* @default true
-			* @memberof enyo.Scroller.prototype
 			* @public
 			*/
 			thumb: true,
@@ -195,7 +198,6 @@
 			* 
 			* @type {Boolean}
 			* @default true
-			* @memberof enyo.Scroller.prototype
 			* @public
 			*/
 			useMouseWheel: true
@@ -385,7 +387,7 @@
 		/**
 		* @private
 		*/
-		strategyKindChanged: function() {
+		strategyKindChanged: function () {
 			if (this.$.strategy) {
 				this.$.strategy.destroy();
 				this.controlParent = null;
@@ -400,7 +402,7 @@
 		/**
 		* @private
 		*/
-		createStrategy: function() {
+		createStrategy: function () {
 			this.createComponents([{name: 'strategy', maxHeight: this.maxHeight,
 				kind: this.strategyKind, thumb: this.thumb,
 				preventDragPropagation: this.preventDragPropagation,
@@ -410,14 +412,14 @@
 		/**
 		* @private
 		*/
-		getStrategy: function() {
+		getStrategy: function () {
 			return this.$.strategy;
 		},
 
 		/**
 		* @private
 		*/
-		maxHeightChanged: function() {
+		maxHeightChanged: function () {
 			this.$.strategy.setMaxHeight(this.maxHeight);
 		},
 
@@ -440,19 +442,19 @@
 		/**
 		* @private
 		*/
-		thumbChanged: function() {
+		thumbChanged: function () {
 			this.$.strategy.setThumb(this.thumb);
 		},
 
 		/**
 		* Cache mechanism is necessary because scrollTop/scrollLeft aren't available when a DOM node
-		* is hidden via display:none. They always return 0 and don't accept changes.
+		* is hidden via `display:none`. They always return `0` and don't accept changes.
 		* 
 		* FIXME: need to know when parent is hidden, not just self
 		* 
 		* @private
 		*/
-		cacheScrollPosition: function(reset) {
+		cacheScrollPosition: function (reset) {
 			var cachedPosition = {left: this.getScrollLeft(), top: this.getScrollTop()};
 			if (reset) {
 				this.setScrollLeft(0);
@@ -464,7 +466,7 @@
 		/**
 		* @private
 		*/
-		restoreScrollPosition: function() {
+		restoreScrollPosition: function () {
 			if (this.cachedPosition) {
 				var cp = this.cachedPosition;
 				if (cp.top || cp.left) {
@@ -478,14 +480,14 @@
 		/**
 		* @private
 		*/
-		horizontalChanged: function() {
+		horizontalChanged: function () {
 			this.$.strategy.setHorizontal(this.horizontal);
 		},
 
 		/**
 		* @private
 		*/
-		verticalChanged: function() {
+		verticalChanged: function () {
 			this.$.strategy.setVertical(this.vertical);
 		},
 
@@ -493,48 +495,52 @@
 		// property value changes, not if getter changes.
 		
 		/**
-		* Sets scroll position along horizontal axis.
-		* 
-		* @private
+		* Set the horizontal scroll position.
+		*
+		* @param {Number} left The horizontal scroll position in pixels.
+		* @public
 		*/
-		setScrollLeft: function(inLeft) {
-			this.scrollLeft = inLeft;
+		setScrollLeft: function (left) {
+			this.scrollLeft = left;
 			if (this.cachedPosition) {
-				this.cachedPosition.left = inLeft;
+				this.cachedPosition.left = left;
 			}
 			this.$.strategy.setScrollLeft(this.scrollLeft);
 		},
 
 		/**
-		* Sets scroll position along vertical axis.
-		* 
-		* @private
+		* Set the vertical scroll position.
+		*
+		* @param {Number} top The vertical scroll position in pixels.
+		* @public
 		*/
-		setScrollTop: function(inTop) {
-			this.scrollTop = inTop;
+		setScrollTop: function (top) {
+			this.scrollTop = top;
 			if (this.cachedPosition) {
-				this.cachedPosition.top = inTop;
+				this.cachedPosition.top = top;
 			}
-			this.$.strategy.setScrollTop(inTop);
+			this.$.strategy.setScrollTop(top);
 		},
 
 		/**
-		* Gets scroll position along horizontal axis.
-		* 
-		* @private
+		* Retrieve the horizontal scroll position.
+		*
+		* @returns {Number} The horizontal scroll position in pixels.
+		* @public
 		*/
-		getScrollLeft: function() {
+		getScrollLeft: function () {
 			// sync our internal property
 			this.scrollLeft = this.$.strategy.getScrollLeft();
 			return this.scrollLeft;
 		},
 
 		/**
-		* Gets scroll position along vertical axis.
-		* 
+		* Retrieve the vertical scroll position.
+		*
+		* @returns {Number} The vertical scroll position in pixels.
 		* @private
 		*/
-		getScrollTop: function() {
+		getScrollTop: function () {
 			// sync our internal property
 			this.scrollTop = this.$.strategy.getScrollTop();
 			return this.scrollTop;
@@ -543,11 +549,11 @@
 		/**
 		* Retrieve the scroll boundaries of the [scroller]{@link enyo.Scroller}.
 		* 
-		* @returns {enyo.Scroller~BoundaryObject} An [object]{@link external:Object} describing the scroll 
-		*	boundaries.
+		* @returns {enyo.Scroller~BoundaryObject} An [object]{@link external:Object} describing the 
+		*	scroll boundaries.
 		* @public
 		*/
-		getScrollBounds: function() {
+		getScrollBounds: function () {
 			var bounds  = this.$.strategy.getScrollBounds();
 			if (
 				(bounds.xDir !== -1 && bounds.xDir !== 0 && bounds.xDir !== 1) ||
@@ -570,7 +576,7 @@
 		*	[scroller]{@link enyo.Scroller}.
 		* @public
 		*/
-		scrollIntoView: function(ctl, alignWithTop) {
+		scrollIntoView: function (ctl, alignWithTop) {
 			this.$.strategy.scrollIntoView(ctl, alignWithTop);
 		},
 
@@ -581,7 +587,7 @@
 		* @param {Number} y The _y_ position in pixels.
 		* @public
 		*/
-		scrollTo: function(x, y) {
+		scrollTo: function (x, y) {
 			this.$.strategy.scrollTo(x, y);
 		},
 
@@ -598,7 +604,7 @@
 		*	[scroller]{@link enyo.Scroller}.
 		* @public
 		*/
-		scrollToControl: function(ctl, alignWithTop) {
+		scrollToControl: function (ctl, alignWithTop) {
 			this.scrollToNode(ctl.hasNode(), alignWithTop);
 		},
 
@@ -611,7 +617,7 @@
 		*	[scroller]{@link enyo.Scroller}.
 		* @public
 		*/
-		scrollToNode: function(node, alignWithTop) {
+		scrollToNode: function (node, alignWithTop) {
 			this.$.strategy.scrollToNode(node, alignWithTop);
 		},
 
@@ -620,8 +626,8 @@
 		* 
 		* @private
 		*/
-		decorateScrollEvent: function(inEvent) {
-			var bounds = inEvent.scrollBounds = inEvent.scrollBounds || this.$.strategy._getScrollBounds();
+		decorateScrollEvent: function (event) {
+			var bounds = event.scrollBounds = event.scrollBounds || this.$.strategy._getScrollBounds();
 			// in the off chance that the event already had scrollBounds then we need
 			// to make sure they are decorated
 			if (
@@ -652,12 +658,13 @@
 		/** 
 		* Normalizes scroll [event]{@link external:event} to _onScroll_.
 		*
+		* @fires enyo.Scroller#event:onScroll
 		* @private
 		*/
-		domScroll: function(inSender, e) {
+		domScroll: function (sender, e) {
 			// if a scroll event originated here, pass it to our strategy to handle
 			if (this.$.strategy.domScroll && e.originator == this) {
-				this.$.strategy.domScroll(inSender, e);
+				this.$.strategy.domScroll(sender, e);
 			}
 			this.decorateScrollEvent(e);
 			this.doScroll(e);
@@ -666,12 +673,12 @@
 
 		/**
 		* @returns {Boolean} Returns `true` if the current scroll [event]{@link external:event} 
-		* should be stopped; `false` if it should be allowed to propagate.
+		*	should be stopped; `false` if it should be allowed to propagate.
 		* @private
 		*/
-		shouldStopScrollEvent: function(inEvent) {
+		shouldStopScrollEvent: function (event) {
 			return (this.preventScrollPropagation &&
-				inEvent.originator.owner != this.$.strategy);
+				event.originator.owner != this.$.strategy);
 		},
 
 		/**
@@ -680,9 +687,9 @@
 		*
 		* @private
 		*/
-		scrollStart: function(inSender, inEvent) {
-			if (!this.shouldStopScrollEvent(inEvent)) {
-				this.decorateScrollEvent(inEvent);
+		scrollStart: function (sender, event) {
+			if (!this.shouldStopScrollEvent(event)) {
+				this.decorateScrollEvent(event);
 				return false;
 			}
 			return true;
@@ -693,18 +700,18 @@
 		*
 		* @private
 		*/
-		scroll: function(inSender, inEvent) {
+		scroll: function (sender, event) {
 			// note: scroll event can be native dom or generated.
 			var stop;
-			if (inEvent.dispatchTarget) {
+			if (event.dispatchTarget) {
 				// allow a dom event if it orignated with this scroller or its strategy
-				stop = this.preventScrollPropagation && !(inEvent.originator == this ||
-					inEvent.originator.owner == this.$.strategy);
+				stop = this.preventScrollPropagation && !(event.originator == this ||
+					event.originator.owner == this.$.strategy);
 			} else {
-				stop = this.shouldStopScrollEvent(inEvent);
+				stop = this.shouldStopScrollEvent(event);
 			}
 			if (!stop) {
-				this.decorateScrollEvent(inEvent);
+				this.decorateScrollEvent(event);
 				return false;
 			}
 			return true;
@@ -716,9 +723,9 @@
 		*
 		* @private
 		*/
-		scrollStop: function(inSender, inEvent) {
-			if (!this.shouldStopScrollEvent(inEvent)) {
-				this.decorateScrollEvent(inEvent);
+		scrollStop: function (sender, event) {
+			if (!this.shouldStopScrollEvent(event)) {
+				this.decorateScrollEvent(event);
 				return false;
 			}
 			return true;
@@ -729,7 +736,7 @@
 		*
 		* @public
 		*/
-		scrollToTop: function() {
+		scrollToTop: function () {
 			this.setScrollTop(0);
 		},
 
@@ -738,7 +745,7 @@
 		*
 		* @public
 		*/
-		scrollToBottom: function() {
+		scrollToBottom: function () {
 			this.setScrollTop(this.getScrollBounds().maxTop);
 		},
 
@@ -747,7 +754,7 @@
 		*
 		* @public
 		*/
-		scrollToRight: function() {
+		scrollToRight: function () {
 			this.setScrollLeft(this.getScrollBounds().maxLeft);
 		},
 
@@ -756,7 +763,7 @@
 		*
 		* @public
 		*/
-		scrollToLeft: function() {
+		scrollToLeft: function () {
 			this.setScrollLeft(0);
 		},
 
@@ -765,7 +772,7 @@
 		*
 		* @public
 		*/
-		stabilize: function() {
+		stabilize: function () {
 			var s = this.getStrategy();
 			if (s.stabilize) {
 				s.stabilize();
@@ -778,7 +785,7 @@
 		*
 		* @private
 		*/
-		useMouseWheelChanged: function() {
+		useMouseWheelChanged: function () {
 			this.$.strategy.setUseMouseWheel(this.useMouseWheel);
 		},
 
@@ -798,4 +805,5 @@
 	if (enyo.Scroller.hasTouchScrolling()) {
 		enyo.Scroller.prototype.strategyKind = enyo.Scroller.getTouchStrategy();
 	}
+
 })(enyo, this);

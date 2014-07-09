@@ -107,20 +107,13 @@
 		classes: 'enyo-image',
 
 		/**
-		* @namespace enyo.Image.attributes
+		* @type {Object}
+		* @property {Boolean} draggable Note: The _draggable_ attribute takes one of these 
+		*	[String]{@link external:String} values: 'true', 'false', 'auto' (Boolean `false` would 
+		*	remove the attribute). The default is 'false'.
 		* @public
 		*/
-		attributes: 
-		/** @lends enyo.Image.attributes */ {
-
-			/**
-			* Note: The _draggable_ attribute takes one of these [String]{@link external:String} 
-			* values: 'true', 'false', 'auto' (Boolean `false` would remove the attribute).
-			* 
-			* @type {String}
-			* @default 'false'
-			* @public
-			*/
+		attributes: {
 			draggable: 'false'
 		},
 

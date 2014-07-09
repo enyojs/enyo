@@ -629,4 +629,5 @@
 			delete props.childMixins;
 		}
 	};
+
 })(enyo, this);

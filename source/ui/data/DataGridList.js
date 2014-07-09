@@ -131,4 +131,5 @@
 		*/
 		classes: 'enyo-data-grid-list'
 	});
+
 })(enyo, this);

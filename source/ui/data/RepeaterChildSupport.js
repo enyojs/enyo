@@ -146,4 +146,5 @@
 		*/
 		_selectionBindingId: null
 	};
+
 })(enyo, this);

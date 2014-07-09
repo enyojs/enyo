@@ -291,5 +291,7 @@
 			this.refresh(list);
 		}
 	}, true);
+
 	enyo.DataGridList.delegates.verticalGrid = p;
+
 })(enyo, this);

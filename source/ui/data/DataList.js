@@ -12,7 +12,7 @@
 	/**
 	* Fires each time data has been paged, on a per-page basis.
 	*
-	* @event enyo.DataList#paging
+	* @event enyo.DataList#event:paging
 	* @type {Object}
 	* @property {Object} sender - A reference to the {@link enyo.DataList}.
 	* @property {String} nom The name of the [event]{@link external:event}.
@@ -576,4 +576,5 @@
 	enyo.DataList.subclass = function (ctor) {
 		ctor.delegates = enyo.clone(ctor.prototype.base.delegates || this.delegates);
 	};
+
 })(enyo, this);
