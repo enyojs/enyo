@@ -62,14 +62,14 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Repeater.prototype */ {
 			
 			/**
 			* The number of items to be repeated.
 			* 
 			* @type {Number}
 			* @default 0
-			* @memberof enyo.Repeater.prototype
 			* @public
 			*/
 			count: 0

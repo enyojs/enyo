@@ -364,14 +364,14 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Media.prototype */ {
 			
 			/**
 			* URL of the sound file to play; may be relative to the application HTML file.
 			* 
 			* @type {String}
 			* @default ''
-			* @memberof enyo.Media.prototype
 			* @public
 			*/
 			src: '',
@@ -381,7 +381,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Media.prototype
 			* @public
 			*/
 			autoplay: false,
@@ -391,7 +390,6 @@
 			* 
 			* @type {Number}
 			* @default 1.0
-			* @memberof enyo.Media.prototype
 			* @public
 			*/
 			defaultPlaybackRate: 1.0,
@@ -401,7 +399,6 @@
 			* 
 			* @type {Number}
 			* @default 30
-			* @memberof enyo.Media.prototype
 			* @public
 			*/
 			jumpSec: 30,
@@ -411,7 +408,6 @@
 			* 
 			* @type {Number}
 			* @default 1.0
-			* @memberof enyo.Media.prototype
 			* @public
 			*/
 			playbackRate: 1.0,
@@ -432,7 +428,6 @@
 			*	slowForward: ['1/4', '1/2', '1'],
 			*	slowRewind: ['-1/2', '-1']
 			* }
-			* @memberof enyo.Media.prototype
 			* @public
 			*/
 			playbackRateHash: {
@@ -448,7 +443,6 @@
 			* 
 			* @type {String}
 			* @default 'none'
-			* @memberof enyo.Media.prototype
 			* @public
 			*/
 			preload: 'none',
@@ -458,7 +452,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Media.prototype
 			* @public
 			*/
 			loop: false,
@@ -468,7 +461,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Media.prototype
 			* @public
 			*/
 			muted: false,
@@ -478,7 +470,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Media.prototype
 			* @public
 			*/
 			showControls: false,
@@ -488,7 +479,6 @@
 			* 
 			* @type {Number}
 			* @default 1.0
-			* @memberof enyo.Media.prototype
 			* @public
 			*/
 			volume: 1.0

@@ -61,7 +61,8 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Input.prototype */ {
 			
 			/**
 			* Value of the [input]{@link enyo.Input}. Use this property only to initialize the 
@@ -69,7 +70,6 @@
 			* 
 			* @type {String}
 			* @default ''
-			* @memberof enyo.Input.prototype
 			* @public
 			*/
 			value: '',
@@ -79,7 +79,6 @@
 			* 
 			* @type {String}
 			* @default ''
-			* @memberof enyo.Input.prototype
 			* @public
 			*/
 			placeholder: '',
@@ -92,7 +91,6 @@
 			* 
 			* @type {String}
 			* @default ''
-			* @memberof enyo.Input.prototype
 			* @public
 			*/
 			type: '',
@@ -103,7 +101,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Input.prototype
 			* @public
 			*/
 			disabled: false,
@@ -113,7 +110,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Input.prototype
 			* @public
 			*/
 			selectOnFocus: false

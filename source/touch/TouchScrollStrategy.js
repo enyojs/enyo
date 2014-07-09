@@ -54,7 +54,7 @@
 		* @private
 		*/
 		published: 
-		/** @lends enyo.TouchScrollStrategy.prototype */ {
+			/** @lends enyo.TouchScrollStrategy.prototype */ {
 			
 			/**
 			* Specifies how to vertically scroll.  Acceptable values are 'scroll', 'auto', 'hidden',

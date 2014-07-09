@@ -45,7 +45,7 @@
 	* @public
 	*/
 	enyo.kind(
-		/** @lends enyo.Checkbox.prototype */ {
+		/** @lends enyo.DragAvatar.prototype */ {
 
 		/**
 		* @private
@@ -60,14 +60,14 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.DragAvatar.prototype */ {
 			
 			/**
 			* Current visibility state of the [DragAvatar]{@link enyo.DragAvatar}.
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.DragAvatar.prototype
 			* @public
 			*/
 			showing: false,
@@ -78,7 +78,6 @@
 			*
 			* @type {Number}
 			* @default 20
-			* @memberof enyo.DragAvatar.prototype
 			* @public
 			*/
 			offsetX: 20,
@@ -89,7 +88,6 @@
 			*
 			* @type {Number}
 			* @default 20
-			* @memberof enyo.DragAvatar.prototype
 			* @public
 			*/
 			offsetY: 30

@@ -134,7 +134,8 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Video.prototype */ {
 
 			/**
 			* Source URL of the [video]{@link enyo.Video} file; may be relative to the application's
@@ -142,7 +143,6 @@
 			* 
 			* @type {String}
 			* @default ''
-			* @memberof enyo.Video.prototype
 			* @public
 			*/
 			src: '',
@@ -152,7 +152,6 @@
 			* 
 			* @type {Object}
 			* @default null
-			* @memberof enyo.Video.prototype
 			* @public
 			*/
 			sourceComponents: null,
@@ -162,7 +161,6 @@
 			* 
 			* @type {String}
 			* @default ''
-			* @memberof enyo.Video.prototype
 			* @public
 			*/
 			poster: '',
@@ -173,7 +171,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Video.prototype
 			* @public
 			*/
 			showControls: false,
@@ -187,7 +184,6 @@
 			* 
 			* @type {String}
 			* @default 'metadata'
-			* @memberof enyo.Video.prototype
 			* @public
 			*/
 			preload: 'metadata',
@@ -197,7 +193,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Video.prototype
 			* @public
 			*/
 			autoplay: false,
@@ -208,7 +203,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Video.prototype
 			* @public
 			*/
 			loop: false,
@@ -219,7 +213,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Video.prototype
 			* @public
 			*/
 			fitToWindow: false,
@@ -229,7 +222,6 @@
 			* 
 			* @type {Number}
 			* @default 0
-			* @memberof enyo.Video.prototype
 			* @public
 			*/
 			aspectRatio: null,
@@ -239,7 +231,6 @@
 			* 
 			* @type {Number}
 			* @default 30
-			* @memberof enyo.Video.prototype
 			* @public
 			*/
 			jumpSec: 30,
@@ -249,7 +240,6 @@
 			* 
 			* @type {Number}
 			* @default 1
-			* @memberof enyo.Video.prototype
 			* @public
 			*/
 			playbackRate: 1,
@@ -272,7 +262,6 @@
 			*	slowForward: ['1/4', '1/2', '1'],
 			*	slowRewind: ['-1/2', '-1']
 			* }
-			* @memberof enyo.Video.prototype
 			* @public
 			*/
 			playbackRateHash: {

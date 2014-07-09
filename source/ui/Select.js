@@ -36,14 +36,14 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Select.prototype */ {
 			
 			/**
 			* Index of the selected [option]{@link enyo.Option} in the list.
 			* 
 			* @type {Number}
 			* @default 0
-			* @memberof enyo.Select.prototype
 			* @public
 			*/
 			selected: 0,
@@ -53,7 +53,6 @@
 			* 
 			* @type {Object}
 			* @default null
-			* @memberof enyo.Select.prototype
 			* @public
 			*/
 			value: null

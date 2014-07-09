@@ -18,7 +18,8 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.SpriteAnimation.prototype */ {
 
 			/**
 			* Default value used if the animation has no 
@@ -26,7 +27,6 @@
 			* 
 			* @type {String}
 			* @default ''false''
-			* @memberof enyo.SpriteAnimation.prototype
 			* @public
 			*/
 			src: '',
@@ -36,7 +36,6 @@
 			* 
 			* @type {Number}
 			* @default 5000
-			* @memberof enyo.SpriteAnimation.prototype
 			* @public
 			*/
 			duration: 5000,
@@ -46,7 +45,6 @@
 			* 
 			* @type {Number}
 			* @default 100
-			* @memberof enyo.SpriteAnimation.prototype
 			* @public
 			*/
 			width: 100,
@@ -56,7 +54,6 @@
 			* 
 			* @type {Number}
 			* @default 100
-			* @memberof enyo.SpriteAnimation.prototype
 			* @public
 			*/
 			height: 100,
@@ -66,7 +63,6 @@
 			* 
 			* @type {Number}
 			* @default 1
-			* @memberof enyo.SpriteAnimation.prototype
 			* @public
 			*/
 			rows: 1,
@@ -76,7 +72,6 @@
 			* 
 			* @type {Number}
 			* @default 2
-			* @memberof enyo.SpriteAnimation.prototype
 			* @public
 			*/
 			columns: 2,
@@ -86,7 +81,6 @@
 			* 
 			* @type {String}
 			* @default 'infinite'
-			* @memberof enyo.SpriteAnimation.prototype
 			* @public
 			*/
 			iterationCount: 'infinite',
@@ -104,7 +98,6 @@
 			* 
 			* @type {String}
 			* @default 'horizontal'
-			* @memberof enyo.SpriteAnimation.prototype
 			* @public
 			*/
 			cellOrientation: 'horizontal',
@@ -116,7 +109,6 @@
 			* 
 			* @type {Number}
 			* @default 0
-			* @memberof enyo.SpriteAnimation.prototype
 			* @public
 			*/
 			offsetTop: 0,
@@ -127,7 +119,6 @@
 			* 
 			* @type {Number}
 			* @default 0
-			* @memberof enyo.SpriteAnimation.prototype
 			* @public
 			*/
 			offsetLeft: 0

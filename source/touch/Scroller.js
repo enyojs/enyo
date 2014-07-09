@@ -100,7 +100,7 @@
 		* @private
 		*/
 		published: 
-		/** @lends enyo.Scroller.prototype */ {
+			/** @lends enyo.Scroller.prototype */ {
 
 			/**
 			* Specifies how to horizontally scroll.  Acceptable values are 'scroll', 'auto', 

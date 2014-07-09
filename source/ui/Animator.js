@@ -88,14 +88,14 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Animator.prototype */ {
 			
 			/** 
 			* Animation duration in milliseconds
 			*
 			* @type {Number}
 			* @default 350
-			* @memberof enyo.Animator.prototype
 			* @public
 			*/
 			duration: 350,
@@ -105,7 +105,6 @@
 			*
 			* @type {Number}
 			* @default 0
-			* @memberof enyo.Animator.prototype
 			* @public
 			*/
 			startValue: 0,
@@ -115,7 +114,6 @@
 			*
 			* @type {Number}
 			* @default 1
-			* @memberof enyo.Animator.prototype
 			* @public
 			*/
 			endValue: 1,
@@ -126,7 +124,6 @@
 			*
 			* @type {Object}
 			* @default null
-			* @memberof enyo.Animator.prototype
 			* @public
 			*/
 			node: null,
@@ -137,7 +134,6 @@
 			* 
 			* @type {Function}
 			* @default enyo.easing.cubicOut
-			* @memberof enyo.Animator.prototype
 			* @public
 			*/
 			easingFunction: enyo.easing.cubicOut

@@ -18,7 +18,8 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Group.prototype */ {
 			
 			/**
 			* If `true`, only one [GroupItem]{@link enyo.GroupItem} in the 
@@ -26,7 +27,6 @@
 			* 
 			* @type {Boolean}
 			* @default true
-			* @memberof enyo.Group.prototype
 			* @public
 			*/
 			highlander: true,
@@ -36,7 +36,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Group.prototype
 			* @public
 			*/
 			allowHighlanderDeactivate: false,
@@ -46,7 +45,6 @@
 			* 
 			* @type {Object}
 			* @default null
-			* @memberof enyo.Group.prototype
 			* @public
 			*/
 			active: null,
@@ -59,7 +57,6 @@
 			* 
 			* @type {String}
 			* @default null
-			* @memberof enyo.Group.prototype
 			* @public
 			*/
 			groupName: ''

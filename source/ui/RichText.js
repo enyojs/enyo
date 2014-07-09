@@ -55,7 +55,8 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.RichText.prototype */ {
 			
 			/**
 			* _allowHtml_ is enabled by default in [RichText]{@link enyo.RichText} to take advantage
@@ -66,7 +67,6 @@
 			* 
 			* @type {Boolean}
 			* @default true
-			* @memberof enyo.RichText.prototype
 			* @public
 			*/
 			allowHtml: true,
@@ -77,7 +77,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.RichText.prototype
 			* @public
 			*/
 			disabled: false,
@@ -87,7 +86,6 @@
 			* 
 			* @type {String}
 			* @default ''
-			* @memberof enyo.RichText.prototype
 			* @public
 			*/
 			value: ''

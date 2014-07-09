@@ -11,7 +11,7 @@
 	* @public
 	*/
 	enyo.kind(
-		/** @lends enyo.BaseLayout.prototype */ {
+		/** @lends enyo.Button.prototype */ {
 
 		/**
 		* @private
@@ -45,7 +45,8 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Button.prototype */ {
 			
 			/**
 			 * When `true`, the [button]{@link external:button} is shown as disabled and does not 
@@ -53,7 +54,6 @@
 			 * 
 			 * @type {Boolean}
 			 * @default false
-			 * @memberof enyo.Button.prototype
 			 * @public
 			 */
 			disabled: false

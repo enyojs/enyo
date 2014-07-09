@@ -47,14 +47,14 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Checkbox.prototype */ {
 			
 			/**
 			* Value of [checkbox]{@link enyo.Checkbox}; `true` if checked.
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Checkbox.prototype
 			* @public
 			*/
 			checked: false,
@@ -64,7 +64,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Checkbox.prototype
 			* @public
 			*/
 			active: false,

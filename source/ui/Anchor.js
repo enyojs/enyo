@@ -31,14 +31,14 @@
 		/** 
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Anchor.prototype */ {
 			
 			/** 
 			* Maps to the _href_ [attribute]{@link external:Attribute} of the &lt;a&gt; tag.
 			* 
 			* @type {String}
 			* @default ''
-			* @memberof enyo.Anchor.prototype
 			* @public
 			*/
 			href: '',
@@ -48,7 +48,6 @@
 			* 
 			* @type {String}
 			* @default  ''
-			* @memberof enyo.Anchor.prototype
 			* @public
 			*/
 			title: ''

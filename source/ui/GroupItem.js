@@ -41,14 +41,14 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Groupitem.prototype */ {
 
 			/**
 			* This is `true` if the item is currently selected
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.GroupItem.prototype
 			* @public
 			*/
 			active: false

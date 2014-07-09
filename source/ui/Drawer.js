@@ -52,14 +52,14 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Drawer.prototype */ {
 			
 			/**
 			* The visibility state of the [drawer's]{@link enyo.Drawer} associated control.
 			* 
 			* @type {Boolean}
 			* @default true
-			* @memberof enyo.Drawer.prototype
 			* @public
 			*/
 			open : true,
@@ -70,7 +70,6 @@
 			* 
 			* @type {String}
 			* @default 'v'
-			* @memberof enyo.Drawer.prototype
 			* @public
 			*/
 			orient : 'v',
@@ -80,7 +79,6 @@
 			* 
 			* @type {Boolean}
 			* @default true
-			* @memberof enyo.Drawer.prototype
 			* @public
 			*/
 			animated : true,
@@ -91,7 +89,6 @@
 			* 
 			* @type {Boolean}
 			* @default true
-			* @memberof enyo.Drawer.prototype
 			* @public
 			*/
 			resizeContainer: true

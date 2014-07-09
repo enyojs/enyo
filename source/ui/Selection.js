@@ -108,14 +108,14 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Selection.prototype */ {
 
 			/**
 			* If `true`, multiple selections are allowed.
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Selection.prototype
 			* @public
 			*/
 			multi: false

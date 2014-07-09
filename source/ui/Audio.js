@@ -39,7 +39,8 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Audio.prototype */ {
 			
 			/** 
 			* Indicates how data should be preloaded, reflecting the 
@@ -47,7 +48,6 @@
 			*
 			* @type {String}
 			* @default 'auto'
-			* @memberof enyo.Audio.prototype
 			* @public
 			*/
 			preload: 'auto'

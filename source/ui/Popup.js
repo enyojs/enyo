@@ -67,7 +67,8 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Popup.prototype */ {
 			
 			/**
 			* Set to `true` to prevent [controls]{@link enyo.Control} outside the 
@@ -76,7 +77,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Popup.prototype
 			* @public
 			*/
 			modal: false,
@@ -87,7 +87,6 @@
 			* 
 			* @type {Boolean}
 			* @default true
-			* @memberof enyo.Popup.prototype
 			* @public
 			*/
 			autoDismiss: true,
@@ -100,7 +99,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Popup.prototype
 			* @public
 			*/
 			floating: false,
@@ -111,7 +109,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Popup.prototype
 			* @public
 			*/
 			centered: false,
@@ -122,7 +119,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Popup.prototype
 			* @public
 			*/
 			showTransitions: false,
@@ -133,7 +129,6 @@
 			* 
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.Popup.prototype
 			* @public
 			*/
 			allowDefault: false

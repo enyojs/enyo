@@ -54,14 +54,14 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Image.prototype */ {
 			
 			/**
 			* Maps to the _alt_ attribute of an [img tag]{@link external:img}.
 			* 
 			* @type {String}
 			* @default ''
-			* @memberof enyo.Image.prototype
 			* @public
 			*/
 			alt: '',
@@ -78,7 +78,6 @@
 			* 
 			* @type {String}
 			* @default ''
-			* @memberof enyo.Image.prototype
 			* @public
 			*/
 			sizing: '',
@@ -90,7 +89,6 @@
 			* 
 			* @type {String}
 			* @default ''
-			* @memberof enyo.Image.prototype
 			* @public
 			*/
 			position: 'center'
