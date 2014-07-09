@@ -5,15 +5,15 @@
 	enyo.concatenated = [];
 
 	/**
-	* Creates a JavaScript [constructor]{@link external:constructor} function with a prototype defined 
-	* by _props_. __All [constructors]{@link external:constructor} must have a unique name__.
+	* Creates a JavaScript [constructor]{@link external:constructor} function with a prototype 
+	* defined by _props_. __All [constructors]{@link external:constructor} must have a unique name__.
 	* 
-	* _enyo.kind()_ makes it easy to build a constructor-with-prototype (like a class) that has advanced 
-	* features like prototype-chaining ([inheritance]{@link external:inheritance}).
+	* _enyo.kind()_ makes it easy to build a constructor-with-prototype (like a class) that has 
+	* advanced features like prototype-chaining ([inheritance]{@link external:inheritance}).
 	* 
 	* A plug-in system is included for extending the abilities of the [kind]{@link external:kind} 
-	* generator, and [constructors]{@link external:constructor} are allowed to perform custom operations
-	* when subclassed.
+	* generator, and [constructors]{@link external:constructor} are allowed to perform custom 
+	* operations when subclassed.
 	* 
 	* If you make changes to _enyo.kind()_, be sure to add or update the appropriate
 	* [unit tests](@link https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
@@ -21,11 +21,12 @@
 	* For more information, see the documentation on [Creating
 	* Kinds](key-concepts/creating-kinds.html) in the Enyo Developer Guide.
 	*
-	* @param {Object} props A [hash]{@link external:Object} of properties used to define and create the
-	*                       [kind]{@link external:kind}
+	* @namespace enyo.kind
+	* @param {Object} props A [hash]{@link external:Object} of properties used to define and create 
+	*	the [kind]{@link external:kind}
 	* @public
 	*/
-	enyo.kind = function(props) {
+	enyo.kind = function (props) {
 		var name = props.name || '';
 		// cannot defer unnamed kinds, kinds with static sections, or ones with
 		// noDefer flag set
@@ -87,16 +88,16 @@
 	/**
 	* @private
 	*/
-	enyo.kind.finish = function(inProps) {
+	enyo.kind.finish = function (props) {
 		// kind-name to constructor map could be faulty now that a new kind exists, so we simply destroy the memoizations
 		enyo._kindCtors = {};
 		// extract 'name' property
-		var name = inProps.name || '';
-		delete inProps.name;
+		var name = props.name || '';
+		delete props.name;
 		// extract 'kind' property
-		var hasKind = ('kind' in inProps);
-		var kind = inProps.kind;
-		delete inProps.kind;
+		var hasKind = ('kind' in props);
+		var kind = props.kind;
+		delete props.kind;
 		// establish base class reference
 		var base = enyo.constructorForKind(kind);
 		var isa = base && base.prototype || null;
@@ -109,9 +110,9 @@
 		// make a boilerplate constructor
 		var ctor = enyo.kind.makeCtor();
 		// semi-reserved word 'constructor' causes problems with Prototype and IE, so we rename it here
-		if (inProps.hasOwnProperty('constructor')) {
-			inProps._constructor = inProps.constructor;
-			delete inProps.constructor;
+		if (props.hasOwnProperty('constructor')) {
+			props._constructor = props.constructor;
+			delete props.constructor;
 		}
 		// create our prototype
 		//ctor.prototype = isa ? enyo.delegate(isa) : {};
@@ -119,10 +120,10 @@
 		// there are special cases where a base class has a property
 		// that may need to be concatenated with a subclasses implementation
 		// as opposed to completely overwriting it...
-		enyo.concatHandler(ctor, inProps);
+		enyo.concatHandler(ctor, props);
 
 		// put in our props
-		enyo.mixin(ctor.prototype, inProps);
+		enyo.mixin(ctor.prototype, props);
 		// alias class name as 'kind' in the prototype
 		// but we actually only need to set this if a new name was used,
 		// not if it is inheriting from a kind anonymously
@@ -138,7 +139,7 @@
 		// reference our real constructor
 		ctor.prototype.ctor = ctor;
 		// support pluggable 'features'
-		enyo.forEach(enyo.kind.features, function(fn){ fn(ctor, inProps); });
+		enyo.forEach(enyo.kind.features, function(fn){ fn(ctor, props); });
 		// put reference into namespace
 		if ((name && !enyo.getPath(name)) || enyo.kind.allowOverride) {
 			enyo.setPath(name, ctor);
@@ -172,7 +173,7 @@
 	*
 	* @public
 	*/
-	enyo.singleton = function(conf, context) {
+	enyo.singleton = function (conf, context) {
 		// extract 'name' property (the name of our singleton)
 		var name = conf.name;
 		delete(conf.name);
@@ -187,8 +188,8 @@
 	/**
 	* @private
 	*/
-	enyo.kind.makeCtor = function() {
-		var enyoConstructor = function() {
+	enyo.kind.makeCtor = function () {
+		var enyoConstructor = function () {
 			if (!(this instanceof enyoConstructor)) {
 				throw 'enyo.kind: constructor called directly, not using "new"';
 			}
@@ -234,7 +235,7 @@
 	*
 	* @private
 	*/
-	enyo.kind.extendMethods = function(ctor, props, add) {
+	enyo.kind.extendMethods = function (ctor, props, add) {
 		var proto = ctor.prototype || ctor,
 			b = proto.base;
 		if (!proto.inherited && b) {
@@ -382,9 +383,10 @@
 	});
 
 	/**
-	* @public
+	* @private
 	*/
-	enyo.kind.statics = {
+	enyo.kind.statics = 
+		/** @lends enyo.kind */ {
 
 		/**
 		* A [kind]{@link external:kind} may set its own _subclass()_ method as a _static.method_ for its
@@ -393,9 +395,9 @@
 		* for special handling of important features.
 		*
 		* @param {Function} ctor The [constructor]{@link external:constructor} of the 
-		*                        [kind]{@external:kind} being subclassed.
+		*	[kind]{@external:kind} being subclassed.
 		* @param {Object} props The properties of the [kind]{@external:kind} being subclassed.
-		* @memberof enyo.kind.statics
+		* @memberof enyo.kind
 		* @public
 		*/
 		subclass: function(ctor, props) {},
@@ -409,23 +411,23 @@
 		* the [constructor]{@link external:constructor} or instance.
 		*
 		* @param {Object|Object[]} props A [hash]{@link external:Object} or [array]{@link external:Array} 
-		*                                of [hashes]{@link external:Object}. Properties will override 
-		*                                [prototype]{@link external:Object.prototype} properties. If a 
-		*                                method that is being added already exists, the new method 
-		*                                supersedes the existing one. The method may call 
-		*                                `this.inherited()` or be wrapped with `enyo.inherit` to call 
-		*                                the original method (this chains multiple methods tied to a 
-		*                                single [kind]{@link external:kind}).
+		*	of [hashes]{@link external:Object}. Properties will override 
+		*	[prototype]{@link external:Object.prototype} properties. If a 
+		*	method that is being added already exists, the new method 
+		*	supersedes the existing one. The method may call 
+		*	`this.inherited()` or be wrapped with `enyo.inherit` to call 
+		*	the original method (this chains multiple methods tied to a 
+		*	single [kind]{@link external:kind}).
 		* @param {Object} [target] The instance to be extended. If this is not specified, then the
-		*                          [constructor]{@link external:constructor} of the 
-		*                          [object]{@link external:Object} this method is being called on will 
-		*                          be extended.
+		*	[constructor]{@link external:constructor} of the 
+		*	[object]{@link external:Object} this method is being called on will 
+		*	be extended.
 		* @returns {Object} The [constructor]{@link external:constructor} of the class, or specific 
-		*                       instance, that has been extended.
-		* @memberof enyo.kind.statics
+		*	instance, that has been extended.
+		* @memberof enyo.kind
 		* @public
 		*/
-		extend: function(props, target) {
+		extend: function (props, target) {
 			var ctor = this
 				, exts = enyo.isArray(props)? props: [props]
 				, proto, fn;
@@ -466,17 +468,17 @@
 	*
 	* @private
 	*/
-	enyo.checkConstructor = function(inKind) {
-		if (enyo.isFunction(inKind)) {
+	enyo.checkConstructor = function (kind) {
+		if (enyo.isFunction(kind)) {
 			// if a deferred enyo kind, finish that work first
-			if (inKind._FinalCtor) {
-				return inKind._FinalCtor;
+			if (kind._FinalCtor) {
+				return kind._FinalCtor;
 			}
-			if (inKind._finishKindCreation) {
-				return inKind._finishKindCreation();
+			if (kind._finishKindCreation) {
+				return kind._finishKindCreation();
 			}
 		}
-		return inKind;
+		return kind;
 	};
 
 	/**
@@ -489,30 +491,30 @@
 	/**
 	* @private
 	*/
-	enyo.constructorForKind = function(inKind) {
-		if (inKind === null) {
-			return inKind;
-		} else if (inKind === undefined) {
+	enyo.constructorForKind = function(kind) {
+		if (kind === null) {
+			return kind;
+		} else if (kind === undefined) {
 			return enyo.defaultCtor;
 		}
-		else if (enyo.isFunction(inKind)) {
-			return enyo.checkConstructor(inKind);
+		else if (enyo.isFunction(kind)) {
+			return enyo.checkConstructor(kind);
 		}
 
 		// use memoized constructor if available...
-		var ctor = enyo._kindCtors[inKind];
+		var ctor = enyo._kindCtors[kind];
 		if (ctor) {
 			return ctor;
 		}
 		// otherwise look it up and memoize what we find
 		//
-		// if inKind is an object in enyo, say "Control", then ctor = enyo["Control"]
-		// if inKind is a path under enyo, say "Heritage.Button", then ctor = enyo["Heritage.Button"] || enyo.Heritage.Button
-		// if inKind is a fully qualified path, say "enyo.Heritage.Button", then ctor = enyo["enyo.Heritage.Button"] || enyo.enyo.Heritage.Button || enyo.Heritage.Button
+		// if kind is an object in enyo, say "Control", then ctor = enyo["Control"]
+		// if kind is a path under enyo, say "Heritage.Button", then ctor = enyo["Heritage.Button"] || enyo.Heritage.Button
+		// if kind is a fully qualified path, say "enyo.Heritage.Button", then ctor = enyo["enyo.Heritage.Button"] || enyo.enyo.Heritage.Button || enyo.Heritage.Button
 		//
 		// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
 		// This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
-		ctor = enyo.Theme[inKind] || enyo[inKind] || enyo.getPath('enyo.' + inKind) || window[inKind] || enyo.getPath(inKind);
+		ctor = enyo.Theme[kind] || enyo[kind] || enyo.getPath('enyo.' + kind) || window[kind] || enyo.getPath(kind);
 
 		// if this is a deferred kind, run the follow-up code then refetch the kind's constructor
 		if (ctor && ctor._finishKindCreation) {
@@ -520,9 +522,9 @@
 		}
 		// If what we found at this namespace isn't a function, it's definitely not a kind constructor
 		if (!enyo.isFunction(ctor)) {
-			throw '[' + inKind + '] is not the name of a valid kind.';
+			throw '[' + kind + '] is not the name of a valid kind.';
 		}
-		enyo._kindCtors[inKind] = ctor;
+		enyo._kindCtors[kind] = ctor;
 		return ctor;
 	};
 
@@ -537,8 +539,8 @@
 	/**
 	* @private
 	*/
-	enyo.registerTheme = function(inNamespace) {
-		enyo.mixin(enyo.Theme, inNamespace);
+	enyo.registerTheme = function (ns) {
+		enyo.mixin(enyo.Theme, ns);
 	};
 
 })(enyo, this);

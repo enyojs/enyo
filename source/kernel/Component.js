@@ -11,11 +11,11 @@
 	/**
 	* @callback enyo.Component~EventHandler
 	* @param {enyo.Component} sender The [component]{@link enyo.Component} that most recently
-	*                                propagated the [event]{@link external:event}.
+	*	propagated the [event]{@link external:event}.
 	* @param {Object} event An [object]{@link external:Object} containing 
-	*                       [event]{@link external:event} information.
+	*	[event]{@link external:event} information.
 	* @returns {Boolean} A value indicating whether the [event]{@link external:event} has been
-	*                      handled or not. If `true`, then bubbling is stopped.
+	*	handled or not. If `true`, then bubbling is stopped.
 	*/
 
 	/**
@@ -173,7 +173,8 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+			/** @lends enyo.Component.prototype */ {
 			
 			/**
 			* A unique name for the [component]{@link enyo.Component} within its 
@@ -185,7 +186,6 @@
 			* 
 			* @type {String}
 			* @default ''
-			* @memberof enyo.Component.prototype
 			* @public
 			*/
 			name: '',
@@ -198,7 +198,6 @@
 			* 
 			* @type {String}
 			* @default ''
-			* @memberof enyo.Component.prototype
 			* @public
 			*/
 			id: '',
@@ -211,7 +210,6 @@
 			*
 			* @type {enyo.Component}
 			* @default null
-			* @memberof enyo.Component.prototype
 			* @public
 			*/
 			owner: null,
@@ -227,7 +225,6 @@
 			* 
 			* @type {Object}
 			* @default null
-			* @memberof enyo.Component.prototype
 			* @public
 			*/
 			componentOverrides: null
@@ -476,7 +473,7 @@
 		* [array]{@link external:Array} and returns the [array]{@link external:Array}.
 		* 
 		* @returns {enyo.Component[]} The [components]{@link enyo.Component} found in the
-		*                                 [$ hash]{@link enyo.Component#$}.
+		*	[$ hash]{@link enyo.Component#$}.
 		* @public
 		*/
 		getComponents: function () {
@@ -556,7 +553,7 @@
 		* @param {Object[]} props The array of {@link enyo.Component} definitions to be created.
 		* @param {Object} ext Additional properties to be supplied as defaults for each.
 		* @returns {enyo.Component[]} The array of [components]{@link enyo.Component} that were
-		*                                 created.
+		*	created.
 		* @public
 		*/
 		createComponents: function (props, ext) {
@@ -590,9 +587,9 @@
 		* 
 		* @param {String} nom The name of the [event]{@link external:event} to bubble.
 		* @param {Object} [event] The [event]{@link external:event} [object]{@link external:Object} 
-		*                         to be passed along while bubbling.
+		*	to be passed along while bubbling.
 		* @param {enyo.Component} [sender=this] The {@link enyo.Component} responsible for
-		*                                       bubbling the [event]{@link external:event}.
+		*	bubbling the [event]{@link external:event}.
 		* @returns {Boolean} `false` if unhandled or uninterrupted, `true` otherwise.
 		* @public
 		*/
@@ -615,7 +612,7 @@
 		* 
 		* @param {String} nom The name of the [event]{@link external:event}.
 		* @param {Object} [event] The [event]{@link external:event} properties to pass along while 
-		*                         bubbling.
+		*	bubbling.
 		* @returns {Boolean} `false` if unhandled or uninterrupted, `true` otherwise.
 		* @public
 		*/
@@ -742,7 +739,7 @@
 		* 
 		* @param {String} nom The method name to dispatch the [event]{@link external:event}.
 		* @param {Object} [event] The [event]{@link external:event} [object]{@link external:Object} 
-		*                         to pass along.
+		*	to pass along.
 		* @param {enyo.Component} [sender=this] The originator of the [event]{@link external:event}.
 		* @public
 		*/
@@ -784,7 +781,7 @@
 		* 
 		* @param {String} nom The name of the [event]{@link external:event} to _waterfall_.
 		* @param {Object} [event] The [event]{@link external:event} [object]{@link external:Object} 
-		*                         to pass along.
+		*	to pass along.
 		* @param {enyo.Component} [sender=this] The originator of the [event]{@link external:event}.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -811,7 +808,7 @@
 		* 
 		* @param {String} nom The name of the [event]{@link external:event}.
 		* @param {Object} [event] The [event]{@link external:event} [object]{@link external:Object} 
-		*                         to pass along.
+		*	to pass along.
 		* @param {enyo.Component} [sender=this] The [event]{@link external:event} originator.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -871,7 +868,7 @@
 		* for each call to [silence]{@link enyo.Component#silence}.
 		* 
 		* @returns {Boolean} `true` if the {@link enyo.Component} is now unsilenced completely,
-		*                           `false` if it remains silenced.
+		*	`false` if it remains silenced.
 		* @public
 		*/
 		unsilence: function () {
@@ -897,12 +894,12 @@
 		* 
 		* @param {String} nom The name of the [job]{@link enyo.job} to start.
 		* @param {(Function|String)} job Either the name of a method or a 
-		*                                [function]{@link external:Function} to execute as the 
-		*                                requested [job]{@link enyo.job}.
+		*	[function]{@link external:Function} to execute as the 
+		*	requested [job]{@link enyo.job}.
 		* @param {Number} wait The number of milliseconds to wait before starting the 
-		*                      [job]{@link enyo.job}.
+		*	[job]{@link enyo.job}.
 		* @param {Number} [priority=5] The priority value to be associated with this 
-		*                              [job]{@link enyo.job}.
+		*	[job]{@link enyo.job}.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -944,10 +941,10 @@
 		* 
 		* @param {String} nom The name of the [job]{@link enyo.job} to throttle.
 		* @param {(Function|String)} job Either the name of a method or a 
-		*                                [function]{@link external:Function} to execute as the 
-		*                                requested [job]{@link enyo.job}.
+		*	[function]{@link external:Function} to execute as the 
+		*	requested [job]{@link enyo.job}.
 		* @param {Number} wait The number of milliseconds to wait before executing the 
-		*                      [job]{@link enyo.job} again.
+		*	[job]{@link enyo.job} again.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/

@@ -85,7 +85,7 @@
 		* from the [constructor]{@link enyo.Object#constructor}.
 		*
 		* @param {Object} props If provided, the [object]{@link external:Object} from which to 
-		*                         retrieve [keys/values]{@link external:Object.keys} to mix-in.
+		*	retrieve [keys/values]{@link external:Object.keys} to mix-in.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -185,7 +185,7 @@
 		*
 		* @param {String} path The path from which to retrieve a value.
 		* @returns {*} The value for the given path or [undefined]{@link external:undefined} if 
-		*                  the path could not be completely resolved.
+		*	the path could not be completely resolved.
 		* @public
 		*/
 		get: enyo.getPath,

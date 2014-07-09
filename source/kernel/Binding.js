@@ -100,11 +100,11 @@
 	* @callback enyo.Binding~Transform
 	* @param {*} value The _value_ being synchronized.
 	* @param {String} direction the _direction_ (a string matching either "source" or "target", 
-	*                           as in "going to the source").
+	*	as in "going to the source").
 	* @param {Object} binding A reference to the associated [binding]{@link enyo.Binding}. In cases 
-	*                         where the [binding]{@link enyo.Binding} should be interrupted and not 
-	*                         propagate the synchronization at all, call the _stop()_ method of 
-	*                         the passed-in [binding]{@link enyo.Binding} reference.
+	*	where the [binding]{@link enyo.Binding} should be interrupted and not 
+	*	propagate the synchronization at all, call the _stop()_ method of 
+	*	the passed-in [binding]{@link enyo.Binding} reference.
 	*/
 	
 	/**
@@ -539,10 +539,10 @@
 	* Retrieve a [binding]{@link enyo.Binding} by its global id.
 	*
 	* @param {String} euid The [Enyo global id]{@link external:EUID} by which to retrieve a 
-	*                      [binding]{@link enyo.Binding}.
+	*	[binding]{@link enyo.Binding}.
 	* @returns {enyo.Binding|undefined} A reference to the [binding]{@link enyo.Binding} if the id 
-	*                                     is found; otherwise, it will return 
-	*                                     [undefined]{@link external:undefined}.
+	*	is found; otherwise, it will return 
+	*	[undefined]{@link external:undefined}.
 	* 
 	* @static
 	* @public
