@@ -53,7 +53,8 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+		/** @lends enyo.TouchScrollStrategy.prototype */ {
 			
 			/**
 			* Specifies how to vertically scroll.  Acceptable values are 'scroll', 'auto', 'hidden',
@@ -61,7 +62,6 @@
 			* 
 			* @type {String}
 			* @default 'default'
-			* @memberof enyo.TouchScrollStrategy.prototype
 			* @public
 			*/
 			vertical: 'default',
@@ -73,7 +73,6 @@
 			* 
 			* @type {String}
 			* @default 'default'
-			* @memberof enyo.TouchScrollStrategy.prototype
 			* @public
 			*/
 			horizontal: 'default',
@@ -83,7 +82,6 @@
 			* 
 			* @type {Boolean}
 			* @default true
-			* @memberof enyo.TouchScrollStrategy.prototype
 			* @public
 			*/
 			thumb: true,
@@ -94,7 +92,6 @@
 			*
 			* @type {Boolean}
 			* @default false
-			* @memberof enyo.TouchScrollStrategy.prototype
 			* @public
 			*/
 			scrim: false,
@@ -105,7 +102,6 @@
 			* 
 			* @type {Boolean}
 			* @default true
-			* @memberof enyo.TouchScrollStrategy.prototype
 			* @public
 			*/
 			dragDuringGesture: true,
@@ -115,7 +111,6 @@
 			* 
 			* @type {Number}
 			* @default 20
-			* @memberof enyo.TouchScrollStrategy.prototype
 			* @public
 			*/
 			interval: 20,
@@ -125,7 +120,6 @@
 			* 
 			* @type {Boolean}
 			* @default true
-			* @memberof enyo.TouchScrollStrategy.prototype
 			* @public
 			*/
 			fixedTime: true,
@@ -135,7 +129,6 @@
 			* 
 			* @type {Number}
 			* @default 10
-			* @memberof enyo.TouchScrollStrategy.prototype
 			* @public
 			*/
 			frame: 10,
@@ -145,7 +138,6 @@
 			* 
 			* @type {Boolean}
 			* @default true
-			* @memberof enyo.TouchScrollStrategy.prototype
 			* @public
 			*/
 			preventDefault: true

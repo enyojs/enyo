@@ -27,7 +27,8 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+		/** @lends enyo.ScrollStrategy.prototype */ {
 			
 			/**
 			* Specifies how to vertically scroll.  Acceptable values are 'scroll', 'auto', 'hidden',
@@ -35,7 +36,6 @@
 			* 
 			* @type {String}
 			* @default 'default'
-			* @memberof enyo.ScrollStrategy.prototype
 			* @public
 			*/
 			vertical: 'default',
@@ -47,7 +47,6 @@
 			* 
 			* @type {String}
 			* @default 'default'
-			* @memberof enyo.ScrollStrategy.prototype
 			* @public
 			*/
 			horizontal: 'default',
@@ -57,7 +56,6 @@
 			* 
 			* @type {Number}
 			* @default 0
-			* @memberof enyo.ScrollStrategy.prototype
 			* @public
 			*/
 			scrollLeft: 0,
@@ -67,7 +65,6 @@
 			* 
 			* @type {Number}
 			* @default 0
-			* @memberof enyo.ScrollStrategy.prototype
 			* @public
 			*/
 			scrollTop: 0,
@@ -77,7 +74,6 @@
 			* 
 			* @type {Number}
 			* @default null
-			* @memberof enyo.ScrollStrategy.prototype
 			* @public
 			*/
 			maxHeight: null,
@@ -87,7 +83,6 @@
 			* 
 			* @type {Boolean}
 			* @default true
-			* @memberof enyo.ScrollStrategy.prototype
 			* @public
 			*/
 			useMouseWheel: true

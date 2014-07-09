@@ -61,7 +61,8 @@
 		/**
 		* @private
 		*/
-		published: {
+		published: 
+		/** @lends enyo.ScrollMath.prototype */ {
 
 			/** 
 			* Set to `true` to enable vertical scrolling.
