@@ -40,17 +40,17 @@
 		/**
 		* @private
 		*/
-		constructor: function(inContainer) {
-			this.container = inContainer;
-			if (inContainer) {
-				inContainer.addClass(this.layoutClass);
+		constructor: function (container) {
+			this.container = container;
+			if (container) {
+				container.addClass(this.layoutClass);
 			}
 		},
 
 		/**
 		* @private
 		*/
-		destroy: function() {
+		destroy: function () {
 			if (this.container) {
 				this.container.removeClass(this.layoutClass);
 			}
@@ -61,7 +61,7 @@
 		*
 		* @public
 		*/
-		flow: function() {
+		flow: function () {
 		},
 
 		/** 
@@ -69,7 +69,7 @@
 		*
 		* @public
 		*/
-		reflow: function() {
+		reflow: function () {
 		}
 	});
 

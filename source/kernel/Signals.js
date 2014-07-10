@@ -63,7 +63,7 @@
 		/**
 		* @private
 		*/
-		notify: function(msg, load) {
+		notify: function (msg, load) {
 			this.dispatchEvent(msg, load);
 		},
 
@@ -95,7 +95,7 @@
 			*	[event]{@glossary event} properties to be accessed by subscribers.
 			* @public
 			*/
-			send: function(msg, load) {
+			send: function (msg, load) {
 				enyo.forEach(this.listeners, function(l) {
 					l.notify(msg, load);
 				});

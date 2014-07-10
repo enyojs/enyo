@@ -190,7 +190,7 @@
 		*
 		* @protected
 		*/
-		discoverControlParent: function() {
+		discoverControlParent: function () {
 			this.controlParent = this.$[this.controlParentName] || this.controlParent;
 		},
 
@@ -212,7 +212,7 @@
 		* @method
 		* @private
 		*/
-		containerChanged: function(container) {
+		containerChanged: function (container) {
 			if (container) {
 				container.removeControl(this);
 			}
@@ -227,7 +227,7 @@
 		* @method
 		* @private
 		*/
-		parentChanged: function(oldParent) {
+		parentChanged: function (oldParent) {
 			if (oldParent && oldParent != this.parent) {
 				oldParent.removeChild(this);
 			}
@@ -244,7 +244,7 @@
 		*	descendant.
 		* @public
 		*/
-		isDescendantOf: function(ancestor) {
+		isDescendantOf: function (ancestor) {
 			var p = this;
 			while (p && p!=ancestor) {
 				p = p.parent;
@@ -258,7 +258,7 @@
 		* @returns {enyo.Control[]} An [array]{@glossary Array} of [controls]{@link enyo.Control}.
 		* @public
 		*/
-		getControls: function() {
+		getControls: function () {
 			return this.controls;
 		},
 
@@ -268,7 +268,7 @@
 		* @returns {enyo.Control[]} An [array]{@glossary Array} of [controls]{@link enyo.Control}.
 		* @public
 		*/
-		getClientControls: function() {
+		getClientControls: function () {
 			var results = [];
 			for (var i=0, cs=this.controls, c; (c=cs[i]); i++) {
 				if (!c.isChrome) {
@@ -284,7 +284,7 @@
 		*
 		* @public
 		*/
-		destroyClientControls: function() {
+		destroyClientControls: function () {
 			var c$ = this.getClientControls();
 			for (var i=0, c; (c=c$[i]); i++) {
 				c.destroy();
@@ -294,64 +294,64 @@
 		/**
 		* @private
 		*/
-		addControl: function(inControl, inBefore) {
+		addControl: function (ctl, before) {
 			// Called to add an already created control to the object's control list. It is
 			// not used to create controls and should likely not be called directly.
 			// It can be overridden to detect when controls are added.
-			if (inBefore !== undefined) {
-				var idx = (inBefore === null) ? 0 : this.indexOfControl(inBefore);
-				this.controls.splice(idx, 0, inControl);
+			if (before !== undefined) {
+				var idx = (before === null) ? 0 : this.indexOfControl(before);
+				this.controls.splice(idx, 0, ctl);
 			} else {
-				this.controls.push(inControl);
+				this.controls.push(before);
 			}
 			// When we add a Control, we also establish a parent.
-			this.addChild(inControl, inBefore);
+			this.addChild(ctl, before);
 		},
 
 		/**
 		* @private
 		*/
-		removeControl: function(inControl) {
+		removeControl: function (ctl) {
 			// Called to remove a control from the object's control list. As with addControl it
 			// can be overridden to detect when controls are removed.
 			// When we remove a Control, we also remove it from its parent.
-			inControl.setParent(null);
-			return enyo.remove(inControl, this.controls);
+			ctl.setParent(null);
+			return enyo.remove(ctl, this.controls);
 		},
 
 		/**
 		* @private
 		*/
-		indexOfControl: function(inControl) {
-			return enyo.indexOf(inControl, this.controls);
+		indexOfControl: function (ctl) {
+			return enyo.indexOf(ctl, this.controls);
 		},
 
 		/**
 		* @private
 		*/
-		indexOfClientControl: function(inControl) {
-			return enyo.indexOf(inControl, this.getClientControls());
+		indexOfClientControl: function (ctl) {
+			return enyo.indexOf(ctl, this.getClientControls());
 		},
 
 		/**
 		* @private
 		*/
-		indexInContainer: function() {
+		indexInContainer: function () {
 			return this.container.indexOfControl(this);
 		},
 
 		/**
 		* @private
 		*/
-		clientIndexInContainer: function() {
+		clientIndexInContainer: function () {
 			return this.container.indexOfClientControl(this);
 		},
 
 		/**
 		* @private
 		*/
-		controlAtIndex: function(inIndex) {
-			return this.controls[inIndex];
+		controlAtIndex: function (idx) {
+			return this.controls[idx];
 		},
 		
 		/**
@@ -359,15 +359,15 @@
 		* 
 		* @private
 		*/
-		addChild: function(inChild, inBefore) {
+		addChild: function (child, before) {
 			// if inBefore is undefined, add to the end of the child list.
 			// If it's null, add to front of list, otherwise add before the
 			// specified control.
 			//
 			// allow delegating the child to a different container
-			if (this.controlParent /*&& !inChild.isChrome*/) {
+			if (this.controlParent /*&& !child.isChrome*/) {
 				// this.controlParent might have a controlParent, and so on; seek the ultimate parent
-				this.controlParent.addChild(inChild, inBefore);
+				this.controlParent.addChild(child, before);
 			} else {
 				// NOTE: addChild drives setParent.
 				// It's the opposite for setContainer, where containerChanged (in Containable)
@@ -378,13 +378,13 @@
 				// not intended to be called by client code. Therefore, the lack of parallelism
 				// should be private to this implementation.
 				// Set the child's parent property to this
-				inChild.setParent(this);
+				child.setParent(this);
 				// track in children array
 				if (inBefore !== undefined) {
-					var idx = (inBefore === null) ? 0 : this.indexOfChild(inBefore);
-					this.children.splice(idx, 0, inChild);
+					var idx = (inBefore === null) ? 0 : this.indexOfChild(before);
+					this.children.splice(idx, 0, child);
 				} else {
-					this.children.push(inChild);
+					this.children.push(child);
 				}
 			}
 		},
@@ -392,21 +392,21 @@
 		/**
 		* @private
 		*/
-		removeChild: function(inChild) {
-			return enyo.remove(inChild, this.children);
+		removeChild: function (child) {
+			return enyo.remove(child, this.children);
 		},
 
 		/**
 		* @private
 		*/
-		indexOfChild: function(inChild) {
-			return enyo.indexOf(inChild, this.children);
+		indexOfChild: function (child) {
+			return enyo.indexOf(child, this.children);
 		},
 
 		/**
 		* @private
 		*/
-		layoutKindChanged: function() {
+		layoutKindChanged: function () {
 			if (this.layout) {
 				this.layout.destroy();
 			}
@@ -419,7 +419,7 @@
 		/**
 		* @private
 		*/
-		flow: function() {
+		flow: function () {
 			if (this.layout) {
 				this.layout.flow();
 			}
@@ -430,7 +430,7 @@
 		* post-resize layout work.
 		* @private
 		*/
-		reflow: function() {
+		reflow: function () {
 			if (this.layout) {
 				this.layout.reflow();
 			}
@@ -443,7 +443,7 @@
 		* 
 		* @public
 		*/
-		resize: function() {
+		resize: function () {
 			this.waterfall('onresize', enyo.UiComponent._resizeFlags);
 			this.waterfall('onpostresize', enyo.UiComponent._resizeFlags);
 		},
@@ -451,7 +451,7 @@
 		/**
 		* @private
 		*/
-		handleResize: function() {
+		handleResize: function () {
 			// FIXME: once we are in the business of reflowing layouts on resize, then we have an
 			// inside/outside problem: some scenarios will need to reflow before child
 			// controls reflow, and some will need to reflow after. Even more complex scenarios
@@ -473,7 +473,7 @@
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
-		waterfallDown: function(nom, event, sender) {
+		waterfallDown: function (nom, event, sender) {
 			event = event || {};
 			// Note: Controls will generally be both in a $ hash and a child list somewhere.
 			// Attempt to avoid duplicated messages by sending only to components that are not
@@ -502,7 +502,7 @@
 		/**
 		* @private
 		*/
-		getBubbleTarget: function() {
+		getBubbleTarget: function () {
 			return this.bubbleTarget || this.parent || this.owner;
 		}
 	});
@@ -510,7 +510,7 @@
 	/**
 	* @private
 	*/
-	enyo.createFromKind = function(kind, param) {
+	enyo.createFromKind = function (kind, param) {
 		var Ctor = kind && enyo.constructorForKind(kind);
 		if (Ctor) {
 			return new Ctor(param);
@@ -530,13 +530,13 @@
 		name: 'master',
 		notInstanceOwner: true,
 		eventFlags: {showingOnly: true}, // don't waterfall these events into hidden controls
-		getId: function() {
+		getId: function () {
 			return '';
 		},
 		isDescendantOf: enyo.nop,
-		bubble: function(inEventName, inEvent) {
-			//enyo.log('master event: ' + inEventName);
-			if (inEventName == 'onresize') {
+		bubble: function (nom, event) {
+			//enyo.log('master event: ' + nom);
+			if (nom == 'onresize') {
 				// Resize is special; waterfall this message.
 				// This works because master is a Component, so it waterfalls
 				// to its owned Components (i.e., master has no children).
@@ -548,7 +548,7 @@
 			} else {
 				// All other top-level events are sent only to interested Signal
 				// receivers.
-				enyo.Signals.send(inEventName, inEvent);
+				enyo.Signals.send(nom, event);
 			}
 		}
 	});
