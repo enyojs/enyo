@@ -47,7 +47,8 @@ enyo.kind({
 		onfocus: "focused",
 		oninput: "input",
 		onclear: "clear",
-		ondragstart: "dragstart"
+		ondragstart: "dragstart",
+		onkeydown: "preventDefaultOnOffscreen"
 	},
 	create: enyo.inherit(function (sup) {
 		return function() {
@@ -118,6 +119,7 @@ enyo.kind({
 		}
 	},
 	iekeydown: function(inSender, inEvent) {
+		this.preventDefaultOnOffscreen(inSender, inEvent);
 		var wp = enyo.platform.windowsPhone, kc = inEvent.keyCode, dt = inEvent.dispatchTarget;
 		// onchange event fails to fire on enter key for Windows Phone 8, so we force blur
 		if (wp <= 8 && kc == 13 && this.tag == "input" && dt.hasNode()) {
@@ -131,7 +133,8 @@ enyo.kind({
 	dragstart: function() {
 		return this.hasFocus();
 	},
-	focused: function() {
+	focused: function(inSender, inEvent) {
+		this.preventDefaultOnOffscreen(inSender, inEvent);
 		if (this.selectOnFocus) {
 			enyo.asyncMethod(this, "selectContents");
 		}
@@ -150,5 +153,11 @@ enyo.kind({
 	input: function() {
 		var val = this.getNodeProperty("value");
 		this.setValue(val);
+	},
+	preventDefaultOnOffscreen: function(inSender, inEvent) {
+		var b = this.getAbsoluteBounds();
+		if (b.left > window.screen.availWidth || b.top > window.screen.availHeight || b.right < 0 || b.bottom < 0) {
+			inEvent.preventDefault();
+		}
 	}
 });
