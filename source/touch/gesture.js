@@ -1,4 +1,15 @@
 (function (enyo, scope) {
+
+	/**
+	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided when we
+	* emulate iOS gesture [events]{@glossary event} on non-iOS devices.
+	*
+	* @typedef {Object} enyo.gesture~EmulatedGestureEvent
+	* @property {Number} pageX The x-coordinate of the center point between fingers.
+	* @property {Number} pageY The y-coordinate of the center point between fingers.
+	* @property {Number} rotation The degrees of rotation from the beginning of the gesture.
+	* @property {Number} scale The percent change of distance between fingers.
+	*/
 	
 	/**
 	* @private
@@ -21,12 +32,6 @@
 	};
 
 	/**
-	* Gesture events: emulates iOS gesture events on non iOS devices.
-	* Event Contents:
-	* - pageX / pageY: center point between fingers
-	* - rotation: degrees of rotation from beginning of gesture
-	* - scale: % change of distance between fingers
-	*
 	* @private
 	*/
 	var touchGestures = {
@@ -44,22 +49,22 @@
 		/**
 		* @private
 		*/
-		touchstart: function(inEvent) {
+		touchstart: function(e) {
 			// some devices can send multiple changed touches on start and end
-			enyo.forEach(inEvent.changedTouches, function(t) {
+			enyo.forEach(e.changedTouches, function(t) {
 				var id = t.identifier;
 				// some devices can send multiple touchstarts
 				if (enyo.indexOf(id, this.orderedTouches) < 0) {
 					this.orderedTouches.push(id);
 				}
 			}, this);
-			if (inEvent.touches.length >= 2 && !this.gesture) {
-				var p = this.gesturePositions(inEvent);
+			if (e.touches.length >= 2 && !this.gesture) {
+				var p = this.gesturePositions(e);
 				this.gesture = this.gestureVector(p);
 				this.gesture.angle = this.gestureAngle(p);
 				this.gesture.scale = 1;
 				this.gesture.rotation = 0;
-				var g = this.makeGesture('gesturestart', inEvent, {vector: this.gesture, scale: 1, rotation: 0});
+				var g = this.makeGesture('gesturestart', e, {vector: this.gesture, scale: 1, rotation: 0});
 				enyo.dispatch(g);
 			}
 		},
@@ -67,15 +72,15 @@
 		/**
 		* @private
 		*/
-		touchend: function(inEvent) {
+		touchend: function(e) {
 			// some devices can send multiple changed touches on start and end
-			enyo.forEach(inEvent.changedTouches, function(t) {
+			enyo.forEach(e.changedTouches, function(t) {
 				enyo.remove(t.identifier, this.orderedTouches);
 			}, this);
-			if (inEvent.touches.length <= 1 && this.gesture) {
-				var t = inEvent.touches[0] || inEvent.changedTouches[inEvent.changedTouches.length - 1];
+			if (e.touches.length <= 1 && this.gesture) {
+				var t = e.touches[0] || e.changedTouches[e.changedTouches.length - 1];
 				// gesture end sends last rotation and scale, with the x/y of the last finger
-				enyo.dispatch(this.makeGesture('gestureend', inEvent, {vector: {xcenter: t.pageX, ycenter: t.pageY}, scale: this.gesture.scale, rotation: this.gesture.rotation}));
+				enyo.dispatch(this.makeGesture('gestureend', e, {vector: {xcenter: t.pageX, ycenter: t.pageY}, scale: this.gesture.scale, rotation: this.gesture.rotation}));
 				this.gesture = null;
 			}
 		},
@@ -83,9 +88,9 @@
 		/**
 		* @private
 		*/
-		touchmove: function(inEvent) {
+		touchmove: function(e) {
 			if (this.gesture) {
-				var g = this.makeGesture('gesturechange', inEvent);
+				var g = this.makeGesture('gesturechange', e);
 				this.gesture.scale = g.scale;
 				this.gesture.rotation = g.rotation;
 				enyo.dispatch(g);
@@ -95,9 +100,9 @@
 		/**
 		* @private
 		*/
-		findIdentifiedTouch: function(inTouches, inId) {
-			for (var i = 0, t; (t = inTouches[i]); i++) {
-				if (t.identifier === inId) {
+		findIdentifiedTouch: function(touches, id) {
+			for (var i = 0, t; (t = touches[i]); i++) {
+				if (t.identifier === id) {
 					return t;
 				}
 			}
@@ -106,9 +111,9 @@
 		/**
 		* @private
 		*/
-		gesturePositions: function(inEvent) {
-			var first = this.findIdentifiedTouch(inEvent.touches, this.orderedTouches[0]);
-			var last = this.findIdentifiedTouch(inEvent.touches, this.orderedTouches[this.orderedTouches.length - 1]);
+		gesturePositions: function(e) {
+			var first = this.findIdentifiedTouch(e.touches, this.orderedTouches[0]);
+			var last = this.findIdentifiedTouch(e.touches, this.orderedTouches[this.orderedTouches.length - 1]);
 			var fx = first.pageX, lx = last.pageX, fy = first.pageY, ly = last.pageY;
 			// center the first touch as 0,0
 			var x = lx - fx, y = ly - fy;
@@ -121,8 +126,8 @@
 		* 
 		* @private
 		*/
-		gestureAngle: function(inPositions) {
-			var p = inPositions;
+		gestureAngle: function(positions) {
+			var p = positions;
 			// yay math!, rad -> deg
 			var a = Math.asin(p.y / p.h) * (180 / Math.PI);
 			// fix for range limits of asin (-90 to 90)
@@ -142,9 +147,9 @@
 		* 
 		* @private
 		*/
-		gestureVector: function(inPositions) {
+		gestureVector: function(positions) {
 			// the least recent touch and the most recent touch determine the bounding box of the gesture event
-			var p = inPositions;
+			var p = positions;
 			// center the first touch as 0,0
 			return {
 				magnitude: p.h,
@@ -156,22 +161,22 @@
 		/**
 		* @private
 		*/
-		makeGesture: function(inType, inEvent, inCache) {
+		makeGesture: function(type, e, cache) {
 			var vector, scale, rotation;
-			if (inCache) {
-				vector = inCache.vector;
-				scale = inCache.scale;
-				rotation = inCache.rotation;
+			if (cache) {
+				vector = cache.vector;
+				scale = cache.scale;
+				rotation = cache.rotation;
 			} else {
-				var p = this.gesturePositions(inEvent);
+				var p = this.gesturePositions(e);
 				vector = this.gestureVector(p);
 				scale = vector.magnitude / this.gesture.magnitude;
 				// gestureEvent.rotation is difference from the starting angle, clockwise
 				rotation = (360 + this.gestureAngle(p) - this.gesture.angle) % 360;
 			}
-			var e = enyo.clone(inEvent);
-			return enyo.mixin(e, {
-				type: inType,
+			var event = enyo.clone(e);
+			return enyo.mixin(event, {
+				type: type,
 				scale: scale,
 				pageX: vector.xcenter,
 				pageY: vector.ycenter,
