@@ -1,5 +1,7 @@
 (function (enyo, scope) {
 	
+	var Binding = enyo.Binding;
+	
 	/**
 	* A {@link enyo.Binding} that coerces any value passing through it to be a {@glossary Boolean}
 	* value. Use this by setting the `kind` property of your [binding]{@link enyo.Binding}
@@ -9,10 +11,22 @@
 	* @extends enyo.Binding
 	* @public
 	*/
-	enyo.kind({
+	enyo.kind(
+		/** @lends enyo.BooleanBinding.prototype */ {
+		
+		/**
+		* @private
+		*/
 		name: 'enyo.BooleanBinding',
-		kind: enyo.Binding,
-		//*@protected
+		
+		/**
+		* @private
+		*/
+		kind: Binding,
+		
+		/**
+		* @private
+		*/
 		transform: function (value) {
 			return !! value;
 		}
@@ -26,10 +40,22 @@
 	* @extends enyo.Binding
 	* @public
 	*/
-	enyo.kind({
+	enyo.kind(
+		/** @lends enyo.EmptyBinding.prototype */ {
+		
+		/**
+		* @private
+		*/
 		name: 'enyo.EmptyBinding',
-		kind: enyo.Binding,
-		//*@protected
+		
+		/**
+		* @private
+		*/
+		kind: Binding,
+		
+		/**
+		* @private
+		*/
 		transform: function (value) {
 			return (value !== '' && value != null);
 		}
