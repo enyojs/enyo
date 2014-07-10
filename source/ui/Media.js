@@ -350,6 +350,7 @@
 	* intended to be used directly, but serves as the base [kind]{@link external:kind} for 
 	* {@link enyo.Audio} and {@link enyo.Video}.
 	*
+	* @ui
 	* @class enyo.Media
 	* @protected
 	*/
