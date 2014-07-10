@@ -312,6 +312,7 @@ enyo.kind({
 			this.endX = this.clampX(-inX);
 			this.x = this.x0 - (inX + this.x0) * (1 - this.kFrictionDamping);
 		}
+		if (inX == this.x && inY == this.y) return;
 		this.start();
 	},
 	setScrollX: function(inX) {
