@@ -41,11 +41,11 @@
 			// gracefully handle and prevent circular reference errors in objects
 			for (var i=0, l=args.length, item; (item=args[i]) || i<l; i++) {
 				try {
-					if (typeof item === "object") {
+					if (typeof item === 'object') {
 						args[i] = enyo.json.stringify(item);
 					}
 				} catch (e) {
-					args[i] = "Error: " + e.message;
+					args[i] = 'Error: ' + e.message;
 				}
 			}
 		},
@@ -57,7 +57,7 @@
 			// avoid trying to use console on IE instances where the object hasn't been
 			// created due to the developer tools being unopened
 			var console = window.console;
-			if (typeof console === "undefined") {
+			if (typeof console === 'undefined') {
 	            return;
 	        }
 			//var a$ = enyo.logging.formatArgs(fn, args);
@@ -68,7 +68,7 @@
 			}
 			if (enyo.dumbConsole) {
 				// at least in early versions of webos, console.* only accept a single argument
-				a$ = [a$.join(" ")];
+				a$ = [a$.join(' ')];
 			}
 			var fn$ = console[fn];
 			if (fn$ && fn$.apply) {
@@ -79,7 +79,7 @@
 				console.log.apply(console, a$);
 			} else {
 				// otherwise, do our own formatting
-				console.log(a$.join(" "));
+				console.log(a$.join(' '));
 			}
 		},
 		
@@ -90,7 +90,7 @@
 		*/
 		log: function (fn, args) {
 			var console = window.console;
-			if (typeof console !== "undefined") {
+			if (typeof console !== 'undefined') {
 				if (this.shouldLog(fn)) {
 					this._log(fn, args);
 				}
@@ -127,7 +127,7 @@
 	* @public
 	*/
 	enyo.log = function () {
-		enyo.logging.log("log", arguments);
+		enyo.logging.log('log', arguments);
 	};
 
 	/**
@@ -141,7 +141,7 @@
 	* @public
 	*/
 	enyo.warn = function () {
-		enyo.logging.log("warn", arguments);
+		enyo.logging.log('warn', arguments);
 	};
 
 	/**
@@ -155,7 +155,7 @@
 	* @public
 	*/
 	enyo.error = function () {
-		enyo.logging.log("error", arguments);
+		enyo.logging.log('error', arguments);
 	};
 
 })(enyo, this);
