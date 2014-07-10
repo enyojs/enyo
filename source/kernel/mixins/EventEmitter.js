@@ -30,7 +30,7 @@
 			
 		if (listeners.length) {
 			idx = listeners.findIndex(function (ln) {
-				return ln.event == e && ln.method === fn && ctx? ln.ctx === ctx: true;
+				return ln.event == e && ln.method === fn && (ctx? ln.ctx === ctx: true);
 			});
 			idx >= 0 && listeners.splice(idx, 1);
 		}
