@@ -360,7 +360,7 @@
 		* @private
 		*/
 		addChild: function (child, before) {
-			// if inBefore is undefined, add to the end of the child list.
+			// if before is undefined, add to the end of the child list.
 			// If it's null, add to front of list, otherwise add before the
 			// specified control.
 			//
@@ -380,8 +380,8 @@
 				// Set the child's parent property to this
 				child.setParent(this);
 				// track in children array
-				if (inBefore !== undefined) {
-					var idx = (inBefore === null) ? 0 : this.indexOfChild(before);
+				if (before !== undefined) {
+					var idx = (before === null) ? 0 : this.indexOfChild(before);
 					this.children.splice(idx, 0, child);
 				} else {
 					this.children.push(child);
