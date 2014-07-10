@@ -24,7 +24,7 @@
 	*
 	* @class enyo.TouchScrollStrategy
 	* @extends enyo.ScrollStrategy
-	* @public
+	* @protected
 	*/
 	enyo.kind(
 		/** @lends enyo.TouchScrollStrategy.prototype */ {

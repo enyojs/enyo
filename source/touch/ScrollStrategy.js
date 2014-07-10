@@ -9,7 +9,7 @@
 	* implicitly.
 	*
 	* @class enyo.ScrollStrategy
-	* @public
+	* @protected
 	*/
 	enyo.kind(
 		/** @lends enyo.ScrollStrategy.prototype */ {

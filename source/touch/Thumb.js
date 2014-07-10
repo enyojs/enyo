@@ -7,7 +7,7 @@
 	* _enyo.ScrollThumb_ is not typically created in application code.
 	*
 	* @class enyo.ScrollThumb
-	* @public
+	* @protected
 	*/
 	enyo.kind(
 		/** @lends enyo.ScrollThumb.prototype */ {

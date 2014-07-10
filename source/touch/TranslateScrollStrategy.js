@@ -10,7 +10,7 @@
 	*
 	* @class enyo.TranslateScrollStrategy
 	* @extends enyo.TouchScrollStrategy
-	* @public
+	* @protected
 	*/
 	enyo.kind(
 		/** @lends enyo.TranslateScrollStrategy.prototype */ {

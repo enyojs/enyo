@@ -43,7 +43,7 @@
 	* _enyo.ScrollMath_ is not typically created in application code.
 	*
 	* @class enyo.ScrollMath
-	* @public
+	* @protected
 	*/
 	enyo.kind(
 		/** @lends enyo.ScrollMath.prototype */ {
