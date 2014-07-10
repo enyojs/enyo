@@ -12,9 +12,11 @@
 	}
 	
 	/**
+	* An internally used {@glossary kind}.
+	*
 	* @class enyo.ObserverChainNode
 	* @extends enyo.LinkedListNode
-	* @public
+	* @private
 	*/
 	var ObserverChainNode = kind(
 		/** @lends enyo.ObserverChainNode.prototype */ {
@@ -60,7 +62,7 @@
 		}),
 		
 		/**
-		* @public
+		* @private
 		*/
 		connect: function () {
 			var obj = this.object
@@ -70,7 +72,7 @@
 		},
 		
 		/**
-		* @public
+		* @private
 		*/
 		disconnect: function () {
 			var obj = this.object
@@ -80,7 +82,7 @@
 		},
 		
 		/**
-		* @public
+		* @private
 		*/
 		setObject: function (object) {
 			var cur = this.object
@@ -112,9 +114,11 @@
 	});
 	
 	/**
+	* An internally used {@glossary kind}.
+	*
 	* @class enyo.ObserverChain
 	* @extends enyo.LinkedList
-	* @public
+	* @private
 	*/
 	kind(
 		/** @lends enyo.ObserverChain.prototype */ {
@@ -164,7 +168,6 @@
 		}),
 		
 		/**
-		* @method
 		* @private
 		*/
 		rebuild: function (target) {
@@ -182,7 +185,6 @@
 		},
 		
 		/**
-		* @method
 		* @private
 		*/
 		buildPath: function (target) {
@@ -196,7 +198,6 @@
 		},
 		
 		/**
-		* @method
 		* @private
 		*/
 		createChain: function () {
@@ -226,7 +227,6 @@
 		},
 		
 		/**
-		* @method
 		* @private
 		*/
 		observed: function (node, was, is) {
