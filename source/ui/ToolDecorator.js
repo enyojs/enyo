@@ -2,6 +2,7 @@
 	/**
 	* _enyo.ToolDecorator_ lines up [components]{@link enyo.Component} in a row, centered vertically.
 	*
+	* @ui
 	* @class enyo.ToolDecorator
 	* @extends enyo.GroupItem
 	* @public

@@ -15,6 +15,7 @@
 	* _enyo.Checkbox_ implements an HTML checkbox [input]{@link external:input}, with support for 
 	* grouping using {@link enyo.Group}.
 	*
+	* @ui
 	* @class enyo.Checkbox
 	* @extends enyo.Input
 	* @public

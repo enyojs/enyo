@@ -6,6 +6,8 @@
 	* [attributes]{@link external:Attribute} to appropriate fields on data 
 	* [objects]{@link external:Object}.
 	*
+	* 
+	* @ui
 	* @class enyo.Anchor
 	* @extends enyo.Control
 	* @public

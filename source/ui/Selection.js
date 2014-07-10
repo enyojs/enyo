@@ -88,6 +88,7 @@
 	* });
 	* ```
 	*
+	* @ui
 	* @class enyo.Selection
 	* @extends enyo.Component
 	* @public

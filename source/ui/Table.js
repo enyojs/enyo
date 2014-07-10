@@ -10,6 +10,7 @@
 	* _enyo.Table_ implements an HTML [&lt;table&gt;]{@link external:table} element. This is a work 
 	* in progress.
 	*
+	* @ui
 	* @class enyo.Table
 	* @public
 	*/

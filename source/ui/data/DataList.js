@@ -39,6 +39,7 @@
 	* [event]{@link external:event} by calling [_addListener()_]{@link enyo.EventEmitter#addListener}
 	* and specifying the [event]{@link external:event}, along with a callback method.
 	*
+	* @ui
 	* @class enyo.DataList
 	* @extends enyo.DataRepeater
 	* @public

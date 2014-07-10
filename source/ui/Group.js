@@ -4,6 +4,7 @@
 	* [radio groups]{@link external:input} from arbitrary [components]{@link enyo.Component} 
 	* supporting the {@link enyo.GroupItem} API.
 	*
+	* @ui
 	* @class enyo.Group
 	* @public
 	*/

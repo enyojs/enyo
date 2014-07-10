@@ -40,6 +40,7 @@
 	* });
 	* ```
 	*
+	* @ui
 	* @class enyo.DragAvatar
 	* @extends enyo.Component
 	* @public

@@ -12,6 +12,7 @@
 	* Note that _enyo.DataGridList_ will attempt to grow or shrink the size of its children in order
 	* to keep them evenly spaced.
 	*
+	* @ui
 	* @class enyo.DataGridList
 	* @extends enyo.DataList
 	* @public

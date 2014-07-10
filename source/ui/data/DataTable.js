@@ -3,6 +3,7 @@
 	* _enyo.DataTable_ enables the creation of data-driven tables. 
 	* Along with [_enyo.Table_]{@link enyo.Table}, this is a work in progress.
 	*
+	* @ui
 	* @class enyo.DataTable
 	* @public
 	*/

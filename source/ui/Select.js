@@ -22,6 +22,7 @@
 	* Note: This uses the [`&lt;select&gt;`]{@link external:select} tag, which isn't implemented for
 	* native webOS applications, although it does work in the webOS Web browser.
 	*
+	* @ui
 	* @class enyo.Select
 	* @public
 	*/

@@ -6,6 +6,7 @@
 	* For more information, see the documentation on
 	* [Buttons](building-apps/controls/buttons.html) in the Enyo Developer Guide.
 	*
+	* @ui
 	* @class enyo.Button
 	* @extends enyo.ToolDecorator
 	* @public

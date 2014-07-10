@@ -351,7 +351,7 @@
 	* {@link enyo.Audio} and {@link enyo.Video}.
 	*
 	* @class enyo.Media
-	* @public
+	* @protected
 	*/
 	enyo.kind(
 		/** @lends enyo.Media.prototype */ {

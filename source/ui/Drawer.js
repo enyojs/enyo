@@ -38,6 +38,7 @@
 	* For more information, see the documentation on
 	* [Drawers](building-apps/layout/drawers.html) in the Enyo Developer Guide.
 	*
+	* @ui
 	* @class enyo.Drawer
 	* @public
 	*/

@@ -114,6 +114,7 @@
 	* To get a reference to the actual HTML 5 [Video]{@link external:video} element, call
 	* `this.$.video.hasNode()`.
 	*
+	* @ui
 	* @class enyo.Video
 	* @extends enyo.Control
 	* @public

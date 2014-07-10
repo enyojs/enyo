@@ -7,6 +7,7 @@
 	* will automatically update when the properties on the underlying record are modified if they 
 	* have been bound using bindings (see {@link enyo.Binding}).
 	*
+	* @ui
 	* @class enyo.DataRepeater
 	* @public
 	*/

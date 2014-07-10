@@ -27,6 +27,7 @@
 	* <a href="#enyo.Group">enyo.Group</a> kind, which enables the creation of
 	* radio groups from arbitrary components that	support the Grouping API.
 	*
+	* @ui
 	* @class enyo.GroupItem
 	* @public
 	*/

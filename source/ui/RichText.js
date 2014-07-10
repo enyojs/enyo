@@ -30,6 +30,7 @@
 	* For more information, see the documentation on [Text
 	* Fields](building-apps/controls/text-fields.html) in the Enyo Developer Guide.
 	*
+	* @ui
 	* @class enyo.RichText
 	* @extends enyo.Input
 	* @public

@@ -43,6 +43,7 @@
 	* For more information, see the documentation on
 	* [Popups](building-apps/controls/popups.html) in the Enyo Developer Guide.
 	*
+	* @ui
 	* @class enyo.Popup
 	* @public
 	*/

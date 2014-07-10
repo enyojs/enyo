@@ -29,6 +29,7 @@
 	* [onerror]{@link enyo.Image#event:onerror} [events]{@link external:event}. Image dragging is 
 	* suppressed by default, so as not to interfere with touch interfaces.
 	*
+	* @ui
 	* @class enyo.Image
 	* @public
 	*/
