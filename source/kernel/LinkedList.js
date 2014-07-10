@@ -1,32 +1,45 @@
-(function (enyo) {
+(function (enyo, scope) {
 	
 	var kind = enyo.kind
 		, mixin = enyo.mixin
 		, constructorForKind = enyo.constructorForKind;
 	
 	/**
-		@public
-		@class
+	* An abstract _linked-list_ node.
+	*
+	* @class enyo.LinkedListNode
+	* @private
 	*/
-	kind({
+	kind(
+		/** @lends enyo.LinkedListNode.prototype */ {
 		
-		name: "enyo.LinkedListNode",
+		/**
+		* @private
+		*/
+		name: 'enyo.LinkedListNode',
+		
+		/**
+		* @private
+		*/
 		kind: null,
+		
+		/**
+		* @private
+		*/
 		noDefer: true,
 		
 		/**
-			@private
+		* @private
 		*/
 		prev: null,
 		
 		/**
-			@private
+		* @private
 		*/
 		next: null,
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		copy: function () {
 			var cpy = new this.ctor();
@@ -36,16 +49,14 @@
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		constructor: function (props) {
 			props && mixin(this, props);
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		destroy: function () {
 			// clear reference to previous node
@@ -61,38 +72,51 @@
 	});
 
 	/**
-		@public
-		@class
+	* An abstract _linked-list_.
+	*
+	* @class enyo.LinkedList
+	* @private
 	*/
-	kind({
+	kind(
+		/** @lends enyo.LinkedList.prototype */ {
 		
-		name: "enyo.LinkedList",
+		/**
+		* @private
+		*/
+		name: 'enyo.LinkedList',
+		
+		/**
+		* @private
+		*/
 		kind: null,
+		
+		/**
+		* @private
+		*/
 		noDefer: true,
 		
 		/**
-			@public
+		* @private
 		*/
 		nodeKind: enyo.LinkedListNode,
 		
 		/**
-			@private
+		* @private
 		*/
 		head: null,
 		
 		/**
-			@private
+		* @private
 		*/
 		tail: null,
 		
 		/**
-			@public
+		* @private
 		*/
 		length: 0,
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		clear: function () {
 			if (this.head) {
@@ -105,8 +129,7 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		slice: function (fromNode, toNode) {
 			var node = fromNode || this.head
@@ -127,8 +150,7 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		destroy: function () {
 			this.clear();
@@ -136,16 +158,14 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		createNode: function (props) {
 			return new this.nodeKind(props);
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		deleteNode: function (node) {
 			this.removeNode(node);
@@ -156,8 +176,7 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		removeNode: function (node) {
 			var prev = node.prev
@@ -171,8 +190,7 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		appendNode: function (node, targetNode) {
 			targetNode = targetNode || this.tail;
@@ -200,8 +218,7 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		find: function (fn, ctx, targetNode) {
 			var node = targetNode || this.head;
@@ -217,8 +234,7 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		forward: function (fn, ctx, targetNode) {
 			var node = targetNode || this.head;
@@ -234,8 +250,7 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		backward: function (fn, ctx, targetNode) {
 			var node = targetNode || this.tail;
@@ -251,12 +266,11 @@
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		constructor: function () {
 			this.nodeType = constructorForKind(this.nodeType);
 		}
 	});
 
-})(enyo);
+})(enyo, this);
