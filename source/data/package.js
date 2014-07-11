@@ -1,13 +1,14 @@
 enyo.depends(
-	"Source.js",
-	"ModelList.js",
-	"Store.js",
-	"Model.js",
-	"Collection.js",
-	"RelationalModel.js",
-	"ModelController.js",
-	"Filter.js",
-	"BucketFilter.js",
-	"ProgressiveFilter.js",
-	"sources"
+	'States.js',
+	'Source.js',
+	'ModelList.js',
+	'Store.js',
+	'Model.js',
+	'Collection.js',
+	'RelationalModel.js',
+	'ModelController.js',
+	'Filter.js',
+	'BucketFilter.js',
+	'ProgressiveFilter.js',
+	'sources'
 );

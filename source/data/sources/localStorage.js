@@ -1,4 +1,6 @@
-(function (enyo, localStorage) {
+(function (enyo, scope) {
+	
+	var localStorage = scope.localStorage;
 	
 	if (localStorage) {
 		var kind = enyo.kind
@@ -10,27 +12,56 @@
 			, Model = enyo.Model;
 			
 		var CODES = {
-			UNIQUE_URL: "A Collection must have a unique url property when using localStorage",
-			UNIQUE_PRIMARY_KEY: "A Model must have a unqiue primaryKey to be able to fetch it from localStorage"
+			UNIQUE_URL: 'A Collection must have a unique url property when using localStorage',
+			UNIQUE_PRIMARY_KEY: 'A Model must have a unqiue primaryKey to be able to fetch it from localStorage'
 		};
 	
 		/**
-			@public
-			@class enyo.LocalStorageSource
+		* A [localStorage]{@link external:localStorage} [source]{@link enyo.Source}. Is only even
+		* an available [kind]{@link external:kind} on platforms that support the
+		* [localStorage]{@link external:localStorage} web-standard.
+		*
+		* It is important to note that usage of this {@link enyo.Source} requires that
+		* [models]{@link enyo.Model} and [collections]{@link enyo.Collection} must use their
+		* respective _url_ properties ({@link enyo.Model#url} and {@link enyo.Collection#url}). The
+		* {@link enyo.Collection#url} must be unique for any [collection]{@link enyo.Collection}
+		* that needs to be [committed]{@link enyo.Collection#commit}. Any {@link enyo.Model} that
+		* will be [committed]{@link enyo.Model#commit} directly or within a {@link enyo.Collection}
+		* _must have a unique [primaryKey]{@link enyo.Model#primaryKey}_.
+		*
+		* @class enyo.LocalStorageSource
+		* @extends enyo.Source
+		* @public
 		*/
 		kind(
 			/** @lends enyo.LocalStorageSource.prototype */ {
-			name: "enyo.LocalStorageSource",
+			
+			/**
+			* @private
+			*/
+			name: 'enyo.LocalStorageSource',
+			
+			/**
+			* @private
+			*/
 			kind: Source,
+			
+			/**
+			* @private
+			*/
 			noDefer: true,
 			
 			/**
-				@public
+			* The namespace of all [models]{@link enyo.Model} and
+			* [collections]{@link enyo.Collection} that will be stored by this
+			* {@link enyo.LocalStorageSource}.
+			*
+			* @public
 			*/
-			prefix: "enyo-app",
+			prefix: 'enyo-app',
 			
 			/**
-				@private
+			* @private
 			*/
 			storage: function () {
 				return this._storage || (this._storage = (function (source) {
@@ -38,16 +69,18 @@
 					var storage = localStorage.getItem(source.prefix);
 					
 					// if there was anything in the store we turn it into an array temporarily
-					if (typeof storage == "string") storage = storage.split(",");
+					if (typeof storage == 'string') storage = storage.split(',');
 					if (storage) storage = source.unpack(storage);
 				
 					return storage || {uuids: [], collections: {}, models: {}};
 				})(this));
 			},
-		
+			
 			/**
-				@public
-				@method
+			* Implementation of {@link enyo.Source#fetch}.
+			*
+			* @see enyo.Source#fetch
+			* @public
 			*/
 			fetch: function (model, opts) {
 				var storage = this.storage(), id, res;
@@ -73,13 +106,15 @@
 				}
 				
 				// @TODO: For now it is assumed that there will never be a valid
-				// "error" to call when using local storage?
+				// 'error' to call when using local storage?
 				opts.success(res);
 			},
 		
 			/**
-				@public
-				@method
+			* Implementation of {@link enyo.Source#commit}.
+			*
+			* @see enyo.Source#commit
+			* @public
 			*/
 			commit: function (model, opts) {
 				var storage = this.storage(), id;
@@ -104,10 +139,12 @@
 				this.save(id);
 				opts.success();
 			},
-		
+			
 			/**
-				@public
-				@method
+			* Implementation of {@link enyo.Source#destroy}.
+			*
+			* @see enyo.Source#destroy
+			* @public
 			*/
 			destroy: function (model, opts) {
 				var storage = this.storage(), id, idx;
@@ -130,22 +167,23 @@
 			},
 		
 			/**
-				@public
-				@method
+			* Not implemented.
+			*
+			* @public
 			*/
 			find: function (ctor, opts) {
-			
+				// needs to be implemented
 			},
 			
 			/**
-				@public
+			* @private
 			*/
 			save: function (uuid) {
 				var storage = this.storage()
 					, prefix = this.prefix;
 					
 				var fn = function (uuid) {
-					var key = (prefix + "-" + uuid)
+					var key = (prefix + '-' + uuid)
 						, model = storage.models[uuid]
 						, collection = storage.collections[uuid];
 					if (model || collection) localStorage.setItem(key, json.stringify({model: !! model, collection: !! collection, data: model || collection}));
@@ -157,17 +195,17 @@
 				
 				
 				else {
-					["collections", "models"].forEach(function (key) {
+					['collections', 'models'].forEach(function (key) {
 						Object.keys(storage[key]).forEach(fn);
 					});
 				}
 				
 				// we always update the overall array to ensure it is up-to-date
-				localStorage.setItem(prefix, storage.uuids.join(","));
+				localStorage.setItem(prefix, storage.uuids.join(','));
 			},
 			
 			/**
-				@public
+			* @private
 			*/
 			unpack: function (uuids) {
 				var prefix = this.prefix
@@ -176,10 +214,10 @@
 					, storage = {uuids: uuids, models: models, collections: collections};
 					
 				uuids.forEach(function (uuid) {
-					var key = (prefix + "-" + uuid)
+					var key = (prefix + '-' + uuid)
 						, ln = localStorage.getItem(key);
 					
-					if (ln && typeof ln == "string") {
+					if (ln && typeof ln == 'string') {
 						ln = json.parse(ln);
 						
 						if (ln.collection) collections[uuid] = ln.data;
@@ -191,7 +229,6 @@
 			}
 		});
 	
-		// new LocalStorageSource();
 	}
 	
-})(enyo, localStorage);
+})(enyo, this);
