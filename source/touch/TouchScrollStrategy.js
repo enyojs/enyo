@@ -561,7 +561,7 @@
 		/**
 		* @private
 		*/
-		move: function (sender, event) {
+		move: function (sender, e) {
 		},
 
 		// Special synthetic DOM events served up by the Gesture system
@@ -570,23 +570,23 @@
 		* @fires enyo.TouchScrollStrategy#onShouldDrag
 		* @private
 		*/
-		dragstart: function (sender, event) {
+		dragstart: function (sender, e) {
 			// Ignore drags sent from multi-touch events
-			if(!this.dragDuringGesture && event.srcEvent.touches && event.srcEvent.touches.length > 1) {
+			if(!this.dragDuringGesture && e.srcEvent.touches && e.srcEvent.touches.length > 1) {
 				return true;
 			}
 			// note: allow drags to propagate to parent scrollers via data returned in the shouldDrag event.
-			this.doShouldDrag(event);
-			this.dragging = (event.dragger == this || (!event.dragger && event.boundaryDragger == this));
+			this.doShouldDrag(e);
+			this.dragging = (e.dragger == this || (!e.dragger && e.boundaryDragger == this));
 			if (this.dragging) {
 				if(this.preventDefault){
-					event.preventDefault();
+					e.preventDefault();
 				}
 				// note: needed because show/hide changes
 				// the position so sync'ing is required when
 				// dragging begins (needed because show/hide does not trigger onscroll)
 				this.syncScrollMath();
-				this.$.scrollMath.startDrag(event);
+				this.$.scrollMath.startDrag(e);
 				if (this.preventDragPropagation) {
 					return true;
 				}
@@ -596,24 +596,24 @@
 		/**
 		* @private
 		*/
-		drag: function (sender, event) {
+		drag: function (sender, e) {
 			// if the list is doing a reorder, don't scroll
 			if(this.listReordering) {
 				return false;
 			}
 			if (this.dragging) {
 				if(this.preventDefault){
-					event.preventDefault();
+					e.preventDefault();
 				}
-				this.$.scrollMath.drag(event);
+				this.$.scrollMath.drag(e);
 				if (this.scrim) {
 					this.$.scrim.show();
 				}
 			}
 		},
-		dragfinish: function (sender, event) {
+		dragfinish: function (sender, e) {
 			if (this.dragging) {
-				event.preventTap();
+				e.preventTap();
 				this.$.scrollMath.dragFinish();
 				this.dragging = false;
 				if (this.scrim) {
@@ -720,14 +720,14 @@
 		/**
 		* @private
 		*/
-		effectOverscroll: function(inX, inY) {
+		effectOverscroll: function(x, y) {
 			var n = this.scrollNode;
 			var x = "0", y = "0", z = this.accel ? ",0" : "";
-			if (inY !== null && Math.abs(inY - n.scrollTop) > 1) {
-				y = (n.scrollTop - inY);
+			if (y !== null && Math.abs(y - n.scrollTop) > 1) {
+				y = (n.scrollTop - y);
 			}
-			if (inX !== null && Math.abs(inX - n.scrollLeft) > 1) {
-				x = (n.scrollLeft - inX);
+			if (x !== null && Math.abs(x - n.scrollLeft) > 1) {
+				x = (n.scrollLeft - x);
 			}
 			if(!this.transform) {
 				//adjust top/left if browser can't handle translations

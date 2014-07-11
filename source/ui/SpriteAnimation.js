@@ -293,8 +293,8 @@
 		/**
 		* @private
 		*/
-		_generateKeyframe: function(inPercent, inX, inY) {
-			return (inPercent * 100) +'%	{ -webkit-transform: translateZ(0) translateX('+ inX +'px)   translateY('+ inY +'px); }\n';
+		_generateKeyframe: function(percent, x, y) {
+			return (percent * 100) +'%	{ -webkit-transform: translateZ(0) translateX('+ x +'px)   translateY('+ y +'px); }\n';
 		}
 	});
 

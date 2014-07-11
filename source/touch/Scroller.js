@@ -626,8 +626,8 @@
 		* 
 		* @private
 		*/
-		decorateScrollEvent: function (event) {
-			var bounds = event.scrollBounds = event.scrollBounds || this.$.strategy._getScrollBounds();
+		decorateScrollEvent: function (e) {
+			var bounds = e.scrollBounds = e.scrollBounds || this.$.strategy._getScrollBounds();
 			// in the off chance that the event already had scrollBounds then we need
 			// to make sure they are decorated
 			if (
@@ -676,9 +676,9 @@
 		*	should be stopped; `false` if it should be allowed to propagate.
 		* @private
 		*/
-		shouldStopScrollEvent: function (event) {
+		shouldStopScrollEvent: function (e) {
 			return (this.preventScrollPropagation &&
-				event.originator.owner != this.$.strategy);
+				e.originator.owner != this.$.strategy);
 		},
 
 		/**
@@ -687,9 +687,9 @@
 		*
 		* @private
 		*/
-		scrollStart: function (sender, event) {
-			if (!this.shouldStopScrollEvent(event)) {
-				this.decorateScrollEvent(event);
+		scrollStart: function (sender, e) {
+			if (!this.shouldStopScrollEvent(e)) {
+				this.decorateScrollEvent(e);
 				return false;
 			}
 			return true;
@@ -700,18 +700,18 @@
 		*
 		* @private
 		*/
-		scroll: function (sender, event) {
+		scroll: function (sender, e) {
 			// note: scroll event can be native dom or generated.
 			var stop;
-			if (event.dispatchTarget) {
+			if (e.dispatchTarget) {
 				// allow a dom event if it orignated with this scroller or its strategy
-				stop = this.preventScrollPropagation && !(event.originator == this ||
-					event.originator.owner == this.$.strategy);
+				stop = this.preventScrollPropagation && !(e.originator == this ||
+					e.originator.owner == this.$.strategy);
 			} else {
-				stop = this.shouldStopScrollEvent(event);
+				stop = this.shouldStopScrollEvent(e);
 			}
 			if (!stop) {
-				this.decorateScrollEvent(event);
+				this.decorateScrollEvent(e);
 				return false;
 			}
 			return true;
@@ -723,9 +723,9 @@
 		*
 		* @private
 		*/
-		scrollStop: function (sender, event) {
-			if (!this.shouldStopScrollEvent(event)) {
-				this.decorateScrollEvent(event);
+		scrollStop: function (sender, e) {
+			if (!this.shouldStopScrollEvent(e)) {
+				this.decorateScrollEvent(e);
 				return false;
 			}
 			return true;

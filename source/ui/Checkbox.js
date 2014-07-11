@@ -170,13 +170,13 @@
 		/**
 		* @private
 		*/
-		click: function(inSender, inEvent) {
+		click: function(sender, e) {
 			// Various versions of IE (notably IE8) do not fire 'onchange' for
 			// checkboxes, so we discern change via 'click'.
 			// Note: keyboard interaction (e.g. pressing space when focused) fires
 			// a click event.
 			if (enyo.platform.ie <= 8) {
-				this.bubble('onchange', inEvent);
+				this.bubble('onchange', e);
 			}
 		}
 	});

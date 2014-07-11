@@ -243,19 +243,19 @@
 		/**
 		* @private
 		*/
-		iekeyup: function(inSender, inEvent) {
-			var ie = enyo.platform.ie, kc = inEvent.keyCode;
+		iekeyup: function(sender, e) {
+			var ie = enyo.platform.ie, kc = e.keyCode;
 			// input event missing on ie 8, fails to fire on backspace and delete keys in ie 9
 			if (ie <= 8 || (ie == 9 && (kc == 8 || kc == 46))) {
-				this.bubble('oninput', inEvent);
+				this.bubble('oninput', e);
 			}
 		},
 
 		/**
 		* @private
 		*/
-		iekeydown: function(inSender, inEvent) {
-			var wp = enyo.platform.windowsPhone, kc = inEvent.keyCode, dt = inEvent.dispatchTarget;
+		iekeydown: function(sender, e) {
+			var wp = enyo.platform.windowsPhone, kc = e.keyCode, dt = e.dispatchTarget;
 			// onchange event fails to fire on enter key for Windows Phone 8, so we force blur
 			if (wp <= 8 && kc == 13 && this.tag == 'input' && dt.hasNode()) {
 				dt.node.blur();

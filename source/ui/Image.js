@@ -176,11 +176,11 @@
 		/**
 		* @private
 		*/
-		sizingChanged: function(inOld) {
+		sizingChanged: function(was) {
 			this.tag = this.sizing ? 'div' : 'img';
 			this.addRemoveClass('sized', !!this.sizing);
-			if (this.inOld) {
-				this.removeClass(inOld);
+			if (was) {
+				this.removeClass(was);
 			}
 			if (this.sizing) {
 				this.addClass(this.sizing);

@@ -403,13 +403,13 @@
 		/**
 		* @private
 		*/
-		capturedDown: function(inSender, inEvent) {
+		capturedDown: function(sender, e) {
 			//record the down event to verify in tap
-			this.downEvent = inEvent;
+			this.downEvent = e;
 
 			// prevent focus from shifting outside the popup when modal.
 			if (this.modal && !this.allowDefault) {
-				inEvent.preventDefault();
+				e.preventDefault();
 			}
 			return this.modal;
 		},
@@ -417,9 +417,9 @@
 		/**
 		* @private
 		*/
-		capturedTap: function(inSender, inEvent) {
+		capturedTap: function(sender, e) {
 			// dismiss on tap if property is set and click started & ended outside the popup
-			if (this.autoDismiss && (!inEvent.dispatchTarget.isDescendantOf(this)) && this.downEvent &&
+			if (this.autoDismiss && (!e.dispatchTarget.isDescendantOf(this)) && this.downEvent &&
 				(!this.downEvent.dispatchTarget.isDescendantOf(this))) {
 				this.downEvent = null;
 				this.hide();
@@ -432,10 +432,10 @@
 		* 
 		* @private
 		*/
-		dragstart: function(inSender, inEvent) {
-			var inScope = (inEvent.dispatchTarget === this || inEvent.dispatchTarget.isDescendantOf(this));
-			if (inSender.autoDismiss && !inScope) {
-				inSender.setShowing(false);
+		dragstart: function(sender, e) {
+			var inScope = (e.dispatchTarget === this || e.dispatchTarget.isDescendantOf(this));
+			if (sender.autoDismiss && !inScope) {
+				sender.setShowing(false);
 			}
 			return true;
 		},
@@ -443,8 +443,8 @@
 		/**
 		* @private
 		*/
-		keydown: function(inSender, inEvent) {
-			if (this.showing && this.autoDismiss && inEvent.keyCode == 27 /* escape */) {
+		keydown: function(sender, e) {
+			if (this.showing && this.autoDismiss && e.keyCode == 27 /* escape */) {
 				this.hide();
 			}
 		},
@@ -454,9 +454,9 @@
 		* 
 		* @private
 		*/
-		blur: function(inSender, inEvent) {
-			if (inEvent.dispatchTarget.isDescendantOf(this)) {
-				this.lastFocus = inEvent.originator;
+		blur: function(sender, e) {
+			if (e.dispatchTarget.isDescendantOf(this)) {
+				this.lastFocus = e.originator;
 			}
 		},
 
@@ -466,8 +466,8 @@
 		* 
 		* @private
 		*/
-		focus: function(inSender, inEvent) {
-			var dt = inEvent.dispatchTarget;
+		focus: function(sender, e) {
+			var dt = e.dispatchTarget;
 			if (this.modal && !dt.isDescendantOf(this)) {
 				if (dt.hasNode()) {
 					dt.node.blur();
@@ -501,17 +501,17 @@
 		* display outside the viewport, and defaults to anchoring the top left corner of the 
 		* [popup]{@link enyo.Popup} to the mouse [event]{@link external:event}.
 		* 
-		* @param {Object} event The mouse [event]{@link external:event} that initiated this call.
+		* @param {Object} e The mouse [event]{@link external:event} that initiated this call.
 		* @param {Object} [offset] An optional [object]{@link external:Object} which may contain 
 		*	`left` and `top` properties to specify an _offset_ relative to the location the
 		*	[popup]{@link enyo.Popup} would otherwise be positioned.
 		* @public
 		*/
-		showAtEvent: function(event, offset) {
+		showAtEvent: function(e, offset) {
 			// Calculate our ideal target based on the event position and offset
 			var p = {
-				left: event.centerX || event.clientX || event.pageX,
-				top: event.centerY || event.clientY || event.pageY
+				left: e.centerX || e.clientX || e.pageX,
+				top: e.centerY || e.clientY || e.pageY
 			};
 			if (offset) {
 				p.left += offset.left || 0;
@@ -533,9 +533,9 @@
 		*	bottom are specified).
 		* @public
 		*/
-		showAtPosition: function(inPosition) {
+		showAtPosition: function(pos) {
 			// Save our target position for later processing
-			this.targetPosition = inPosition;
+			this.targetPosition = pos;
 
 			// Show the dialog
 			this.show();

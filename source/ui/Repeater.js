@@ -116,8 +116,8 @@
 		/**
 		* @private
 		*/
-		itemAtIndex: function(inIndex) {
-			return this.controlAtIndex(inIndex);
+		itemAtIndex: function(idx) {
+			return this.controlAtIndex(idx);
 		},
 
 		/** 

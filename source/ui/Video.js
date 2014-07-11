@@ -821,13 +821,13 @@
 		},
 
 		/**
-		* Calc number value of inPlaybackRate (support for fractions)
+		* Calc number value of rate (support for fractions)
 		* 
 		* @private
 		*/
-		calcNumberValueOfPlaybackRate: function(inPlaybackRate) {
-			var pbArray = String(inPlaybackRate).split('/');
-			return (pbArray.length > 1) ? parseInt(pbArray[0], 10) / parseInt(pbArray[1], 10) : parseInt(inPlaybackRate, 10);
+		calcNumberValueOfPlaybackRate: function(rate) {
+			var pbArray = String(rate).split('/');
+			return (pbArray.length > 1) ? parseInt(pbArray[0], 10) / parseInt(pbArray[1], 10) : parseInt(rate, 10);
 		},
 
 		/**
@@ -836,26 +836,26 @@
 		* 
 		* @private
 		*/
-		metadataLoaded: function(inSender, inEvent) {
+		metadataLoaded: function(sender, e) {
 			var node = this.hasNode();
 			this.setAspectRatio('none');
 			if (!node || !node.videoWidth || !node.videoHeight) {
 				return;
 			}
 			this.setAspectRatio(node.videoWidth/node.videoHeight+':1');
-			inEvent = enyo.mixin(inEvent, this.createEventData());
+			e = enyo.mixin(e, this.createEventData());
 		},
 
 		/**
 		* @private
 		*/
-		timeupdate: function(inSender, inEvent) {
+		timeupdate: function(sender, e) {
 			var node = this.hasNode();
 
 			if (!node) {
 				return;
 			}
-			inEvent = enyo.mixin(inEvent, this.createEventData());
+			e = enyo.mixin(e, this.createEventData());
 		},
 
 		/**
@@ -866,7 +866,7 @@
 		* @fires enyo.Video#event:doPlay
 		* @private
 		*/
-		ratechange: function(inSender, inEvent) {
+		ratechange: function(sender, e) {
 			var node = this.hasNode(),
 				pbNumber
 			;
@@ -875,20 +875,20 @@
 				return;
 			}
 
-			inEvent = enyo.mixin(inEvent, this.createEventData());
+			e = enyo.mixin(e, this.createEventData());
 
-			pbNumber = this.calcNumberValueOfPlaybackRate(inEvent.playbackRate);
+			pbNumber = this.calcNumberValueOfPlaybackRate(e.playbackRate);
 
 			if (pbNumber > 0 && pbNumber < 1) {
-				this.doSlowforward(inEvent);
+				this.doSlowforward(e);
 			} else if (pbNumber > 1) {
-				this.doFastforward(inEvent);
+				this.doFastforward(e);
 			} else if (pbNumber < 0 && pbNumber >= -1) {
-				this.doSlowrewind(inEvent);
+				this.doSlowrewind(e);
 			} else if (pbNumber < -1) {
-				this.doRewind(inEvent);
+				this.doRewind(e);
 			} else if (pbNumber == 1) {
-				this.doPlay(inEvent);
+				this.doPlay(e);
 			}
 		},
 
@@ -919,16 +919,16 @@
 		* @fires enyo.Video#event:doPlay
 		* @private
 		*/
-		_play: function(inSender, inEvent) {
+		_play: function(sender, e) {
 			var node = this.hasNode();
 
 			if (!node) {
 				return;
 			}
 
-			inEvent = enyo.mixin(inEvent, this.createEventData());
+			e = enyo.mixin(e, this.createEventData());
 
-			this.doPlay(inEvent);
+			this.doPlay(e);
 		},
 
 		/**

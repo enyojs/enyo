@@ -332,7 +332,7 @@
 		* 
 		* @private
 		*/
-		remove: function(index) {},
+		remove: function(idx) {},
 
 		/**
 		* Overloaded to call a method of the [delegate]{@link external:delegate} strategy.

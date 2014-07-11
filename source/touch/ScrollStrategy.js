@@ -329,16 +329,16 @@
 		/**
 		* @private
 		*/
-		shouldDrag: function (event) {
-			var requestV = event.vertical;
+		shouldDrag: function (e) {
+			var requestV = e.vertical;
 			return (requestV && this.canVertical  || !requestV && this.canHorizontal) /*&& !this.isOobVerticalScroll(event)*/;
 		},
 
 		/**
 		* @private
 		*/
-		dragstart: function (sender, event) {
-			this.dragging = this.shouldDrag(event);
+		dragstart: function (sender, e) {
+			this.dragging = this.shouldDrag(e);
 			if (this.dragging) {
 				return this.preventDragPropagation;
 			}
@@ -347,10 +347,10 @@
 		/**
 		* @private
 		*/
-		dragfinish: function (sender, event) {
+		dragfinish: function (sender, e) {
 			if (this.dragging) {
 				this.dragging = false;
-				event.preventTap();
+				e.preventTap();
 			}
 		},
 
@@ -370,19 +370,19 @@
 		* 
 		* @private
 		*/
-		move: function (sender, event) {
-			if (event.which && (this.canVertical && event.vertical || this.canHorizontal && event.horizontal)) {
-				event.disablePrevention();
+		move: function (sender, e) {
+			if (e.which && (this.canVertical && e.vertical || this.canHorizontal && e.horizontal)) {
+				e.disablePrevention();
 			}
 		},
 
 		/**
 		* @private
 		*/
-		mousewheel: function (sender, event) {
+		mousewheel: function (sender, e) {
 			//* We disable mouse wheel scrolling by preventing the default
 			if (!this.useMouseWheel) {
-				event.preventDefault();
+				e.preventDefault();
 			}
 		}
 	});

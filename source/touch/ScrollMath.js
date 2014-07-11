@@ -248,7 +248,7 @@
 		*
 		* @private
 		*/
-		damping: function (value, origin, coeff, sign) {
+		damping: function (val, origin, coeff, sign) {
 			var kEpsilon = 0.5;
 			//
 			// this is basically just value *= coeff (generally, coeff < 1)
@@ -256,12 +256,12 @@
 			// 'sign' and the conditional is to force the damping to only occur
 			// on one side of the origin.
 			//
-			var dv = value - origin;
+			var dv = val - origin;
 			// Force close-to-zero to zero
 			if (Math.abs(dv) < kEpsilon) {
 				return origin;
 			}
-			return value*sign > origin*sign ? coeff * dv + origin : value;
+			return val*sign > origin*sign ? coeff * dv + origin : val;
 		},
 
 		/**
@@ -270,8 +270,8 @@
 		*
 		* @private
 		*/
-		boundaryDamping: function (value, aBoundary, bBoundary, coeff) {
-			return this.damping(this.damping(value, aBoundary, coeff, 1), bBoundary, coeff, -1);
+		boundaryDamping: function (val, aBoundary, bBoundary, coeff) {
+			return this.damping(this.damping(val, aBoundary, coeff, 1), bBoundary, coeff, -1);
 		},
 
 		/**
@@ -298,13 +298,13 @@
 		*
 		* @private
 		*/
-		friction: function (inEx, inEx0, inCoeff) {
+		friction: function (ex, ex0, coeff) {
 			// implicit velocity
-			var dp = this[inEx] - this[inEx0];
+			var dp = this[ex] - this[ex0];
 			// let close-to-zero collapse to zero (i.e. smaller than epsilon is considered zero)
-			var c = Math.abs(dp) > this.kFrictionEpsilon ? inCoeff : 0;
+			var c = Math.abs(dp) > this.kFrictionEpsilon ? coeff : 0;
 			// reposition using damped velocity
-			this[inEx] = this[inEx0] + c * dp;
+			this[ex] = this[ex0] + c * dp;
 		},
 
 		/** 
@@ -389,12 +389,12 @@
 		/**
 		* @private
 		*/
-		stop: function (shouldFireEvent) {
+		stop: function (fire) {
 			var job = this.job;
 			if (job) {
 				this.job = enyo.cancelRequestAnimationFrame(job);
 			}
-			if (shouldFireEvent) {
+			if (fire) {
 				this.doScrollStop();
 			}
 		},

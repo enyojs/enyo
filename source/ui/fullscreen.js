@@ -97,16 +97,16 @@
 		*
 		* @public
 		*/
-		requestFullscreen: function(inControl) {
-			if (this.getFullscreenControl() || !(inControl.hasNode())) {
+		requestFullscreen: function(ctl) {
+			if (this.getFullscreenControl() || !(ctl.hasNode())) {
 				return false;
 			}
 
-			this.requestor = inControl;
+			this.requestor = ctl;
 
 			// Only use native request if platform supports all of the API
 			if (this.nativeSupport()) {
-				inControl.hasNode()[this.requestAccessor]();
+				ctl.hasNode()[this.requestAccessor]();
 			} else {
 				this.fallbackRequestFullscreen();
 			}
@@ -133,8 +133,8 @@
 		*
 		* @private
 		*/
-		setFullscreenElement: function(inNode) {
-			this.fullscreenElement = inNode;
+		setFullscreenElement: function(node) {
+			this.fullscreenElement = node;
 		},
 
 		/** 
@@ -142,8 +142,8 @@
 		*
 		* @private
 		*/
-		setFullscreenControl: function(inControl) {
-			this.fullscreenControl = inControl;
+		setFullscreenControl: function(ctl) {
+			this.fullscreenControl = ctl;
 		},
 
 		/** 

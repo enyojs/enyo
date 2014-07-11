@@ -889,7 +889,7 @@
 		* @fires enyo.Media#event:onPlay
 		* @private
 		*/
-		_rateChange: function(inSender, inEvent) {
+		_rateChange: function(sender, e) {
 			var node = this.hasNode(),
 				pbNumber
 			;
@@ -898,20 +898,20 @@
 				return;
 			}
 
-			inEvent = enyo.mixin(inEvent, this.createEventData());
+			e = enyo.mixin(e, this.createEventData());
 
-			pbNumber = this.calcNumberValueOfPlaybackRate(inEvent.playbackRate);
+			pbNumber = this.calcNumberValueOfPlaybackRate(e.playbackRate);
 
 			if (pbNumber > 0 && pbNumber < 1) {
-				this.doSlowforward(inEvent);
+				this.doSlowforward(e);
 			} else if (pbNumber > 1) {
-				this.doFastforward(inEvent);
+				this.doFastforward(e);
 			} else if (pbNumber < 0 && pbNumber >= -1) {
-				this.doSlowrewind(inEvent);
+				this.doSlowrewind(e);
 			} else if (pbNumber < -1) {
-				this.doRewind(inEvent);
+				this.doRewind(e);
 			} else if (pbNumber == 1) {
-				this.doPlay(inEvent);
+				this.doPlay(e);
 			}
 		},
 
@@ -949,13 +949,13 @@
 		* 
 		* @private
 		*/
-		_timeUpdate: function(inSender, inEvent) {
+		_timeUpdate: function(sender, e) {
 			var node = this.hasNode();
 
 			if (!node) {
 				return;
 			}
-			inEvent = enyo.mixin(inEvent, this.createEventData());
+			e = enyo.mixin(e, this.createEventData());
 		},
 
 		/**
@@ -1292,7 +1292,7 @@
 		},
 
 
-		setPlaybackRate: function(inPlaybackRate) {
+		setPlaybackRate: function(rate) {
 			var node = this.hasNode(),
 				pbNumber
 			;
@@ -1304,9 +1304,9 @@
 			// Stop rewind (if happenning)
 			this.stopRewindJob();
 
-			// Make sure inPlaybackRate is a string
-			this.playbackRate = inPlaybackRate = String(inPlaybackRate);
-			pbNumber = this.calcNumberValueOfPlaybackRate(inPlaybackRate);
+			// Make sure rate is a string
+			this.playbackRate = rate = String(rate);
+			pbNumber = this.calcNumberValueOfPlaybackRate(rate);
 
 			// Set native playback rate
 			node.playbackRate = pbNumber;

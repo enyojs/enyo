@@ -73,23 +73,23 @@
 		/**
 		* @private
 		*/
-		activate: function(inSender, inEvent) {
-			if ((this.groupName || inEvent.originator.groupName) && (inEvent.originator.groupName != this.groupName)) {
+		activate: function(sender, e) {
+			if ((this.groupName || e.originator.groupName) && (e.originator.groupName != this.groupName)) {
 				return;
 			}
 			if (this.highlander) {
-				// we can optionally accept an `allowHighlanderDeactivate` property in inEvent without directly 
+				// we can optionally accept an `allowHighlanderDeactivate` property in e without directly 
 				// specifying it when instatiating the group - used mainly for custom kinds requiring deactivation  
-				if (inEvent.allowHighlanderDeactivate !== undefined && inEvent.allowHighlanderDeactivate !== this.allowHighlanderDeactivate) {
-					this.setAllowHighlanderDeactivate(inEvent.allowHighlanderDeactivate);
+				if (e.allowHighlanderDeactivate !== undefined && e.allowHighlanderDeactivate !== this.allowHighlanderDeactivate) {
+					this.setAllowHighlanderDeactivate(e.allowHighlanderDeactivate);
 				}
 				// deactivation messages are ignored unless it's an attempt
 				// to deactivate the highlander
-				if (!inEvent.originator.active) {
+				if (!e.originator.active) {
 					// this clause prevents deactivating a grouped item once it's been active,
 					// as long as `allowHighlanderDeactivate` is false. Otherwise, the only
 					// proper way to deactivate a grouped item is to choose a new highlander.
-					if (inEvent.originator == this.active) {
+					if (e.originator == this.active) {
 						if (!this.allowHighlanderDeactivate) {
 							this.active.setActive(true);
 						} else {
@@ -97,7 +97,7 @@
 						}
 					}
 				} else {
-					this.setActive(inEvent.originator);
+					this.setActive(e.originator);
 				}
 			}
 		},

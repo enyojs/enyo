@@ -130,13 +130,13 @@
 		* Instantiates the avatar control (if necessary), determines correct position, and calls 
 		* [show]{@enyo.DragAvatar#show} to make it visible.
 		*
-		* @param {Object} event An [object]{@link external:Object} containing 
-		*                       [event]{@link external:event} information.
+		* @param {Object} e An [object]{@link external:Object} containing 
+		*	[event]{@link external:event} information.
 		* @public
 		*/
-		drag: function(event) {
+		drag: function(e) {
 			this.requireAvatar();
-			this.avatar.setBounds({top: event.pageY - this.offsetY, left: event.pageX + this.offsetX});
+			this.avatar.setBounds({top: e.pageY - this.offsetY, left: e.pageX + this.offsetX});
 			this.show();
 		},
 
