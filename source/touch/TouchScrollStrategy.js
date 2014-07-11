@@ -722,7 +722,7 @@
 		*/
 		effectOverscroll: function(x, y) {
 			var n = this.scrollNode;
-			var xt = "0", yt = "0", zt = this.accel ? ",0" : "";
+			var xt = '0', yt = '0', zt = this.accel ? ',0' : '';
 			if (y !== null && Math.abs(y - n.scrollTop) > 1) {
 				yt = (n.scrollTop - y);
 			}
@@ -731,9 +731,9 @@
 			}
 			if(!this.transform) {
 				//adjust top/left if browser can't handle translations
-				this.$.client.setBounds({left:xt + "px", top:yt + "px"});
+				this.$.client.setBounds({left:xt + 'px', top:yt + 'px'});
 			} else {
-				enyo.dom.transformValue(this.$.client, this.translation, xt + "px, " + yt + "px" + zt);
+				enyo.dom.transformValue(this.$.client, this.translation, xt + 'px, ' + yt + 'px' + zt);
 			}
 		},
 
