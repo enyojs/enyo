@@ -135,7 +135,7 @@ enyo.kind({
 			i
 		;
 		
-		if (!sources || sources.length == 0) {
+		if (!sources || sources.length === 0) {
 			return;
 		}
 		
