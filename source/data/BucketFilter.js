@@ -88,7 +88,7 @@
 			return function (props) {
 				sup.apply(this, arguments);
 				
-				// the last component who's property is found will win...
+				// the last component whose property is found will win...
 				if (props.isDefault) this.defaultFilter = props.name;
 			};
 		}),
@@ -101,10 +101,10 @@
 				sup.apply(this, arguments);
 				
 				// TODO: Invoking changed handlers during initialization seems wrong
-				// but its used everywhere...
+				// but it's used everywhere...
 				
 				// we go ahead and let it initialize the current filter however it can
-				this.activeFilterChanged();
+				this.reset({force: true});
 			};
 		}),
 		
@@ -165,6 +165,8 @@
 				if (sender.models.length != this.length) this.set('length', sender.models.length);
 				
 				this.emit(e, props);
+			} else if ((!this.isChildFilter) && (e === 'reset')) {
+				this.set('models', this._internal.models);
 			}
 		},
 		
