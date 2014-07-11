@@ -6,6 +6,19 @@
 		HTMLStringDelegate = enyo.HTMLStringDelegate;
 
 	/**
+	* _enyo.Control_ is a [component]{@link enyo.UiComponent} that controls a
+	* [DOM]{@link external:DOM} [node]{@link external:Node} (i.e., an element in the user
+	* interface). _Controls_ are generally visible and the user often interacts with them directly.
+	* While things like buttons and input boxes are obviously controls, in Enyo, a control may be as
+	* simple as a text item or as complex as an entire application. They both inherit the same basic
+	* core capabilities from here.
+	*
+	* For more information, see the documentation on
+	* [Controls]{@link http://enyojs.com/docs/2.4.0/key-concepts/controls.html} in the
+	* [Enyo Developer Guide]{@link http://enyojs.com/docs/}.
+	*
+	* _If you make changes to enyo.Control, be sure to add or update the appropriate unit tests._
+	*
 	* @class enyo.Control
 	* @extends enyo.UiComponent
 	* @public
@@ -29,6 +42,8 @@
 		noDefer: true,
 
 		/**
+		* @type {String}
+		* @default 'enyo.Control'
 		* @public
 		*/
 		defaultKind: 'enyo.Control',
