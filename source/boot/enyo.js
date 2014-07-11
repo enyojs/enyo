@@ -3,8 +3,12 @@
 	var thisScript = "enyo.js";
 
 	/* global enyo:true */
+	/** @namespace enyo */
 	enyo = window.enyo || {options: {}};
 
+	/**
+	* @private
+	*/
 	enyo.locateScript = function(inName) {
 		var scripts = document.getElementsByTagName("script");
 		for (var i=scripts.length-1, s, src, l=inName.length; (i>=0) && (s=scripts[i]); i--) {
@@ -17,7 +21,14 @@
 			}
 		}
 	};
-
+	
+	/**
+	* Optional options to pass to the framework.
+	*
+	* @name enyo.args
+	* @type {Object}
+	* @public
+	*/
 	enyo.args = enyo.args || {};
 
 	var tag = enyo.locateScript(thisScript);

@@ -1,4 +1,4 @@
-(function (enyo) {
+(function (enyo, scope) {
 	
 	var kind = enyo.kind;
 		
@@ -6,24 +6,39 @@
 		, LinkedListNode = enyo.LinkedListNode;
 	
 	function get (base, prop) {
-		return base && /*isObject(base)*/ (typeof base == "object")? (
+		return base && /*isObject(base)*/ (typeof base == 'object')? (
 			base.get? base.get(prop): base[prop]
 		): undefined;
 	}
 	
 	/**
-		@public
-		@class enyo.ObserverChainNode
+	* An internally used {@glossary kind}.
+	*
+	* @class enyo.ObserverChainNode
+	* @extends enyo.LinkedListNode
+	* @private
 	*/
 	var ObserverChainNode = kind(
 		/** @lends enyo.ObserverChainNode.prototype */ {
-		name: "enyo.ObserverChainNode",
+
+		/**
+		* @private
+		*/
+		name: 'enyo.ObserverChainNode',
+
+		/**
+		* @private
+		*/
 		kind: LinkedListNode,
+
+		/**
+		* @private
+		*/
 		noDefer: true,
 		
 		/**
-			@private
-			@method
+		* @method
+		* @private
 		*/
 		constructor: enyo.inherit(function (sup) {
 			return function () {
@@ -33,8 +48,8 @@
 		}),
 		
 		/**
-			@private
-			@method
+		* @method
+		* @private
 		*/
 		destroy: enyo.inherit(function (sup) {
 			return function () {
@@ -47,8 +62,7 @@
 		}),
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		connect: function () {
 			var obj = this.object
@@ -58,8 +72,7 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		disconnect: function () {
 			var obj = this.object
@@ -69,8 +82,7 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		setObject: function (object) {
 			var cur = this.object
@@ -94,7 +106,7 @@
 		},
 		
 		/**
-			@public
+		* @private
 		*/
 		_changed: function (was, is) {
 			this.list.observed(this, was, is);
@@ -102,30 +114,49 @@
 	});
 	
 	/**
-		@public
-		@class enyo.ObserverChain
+	* An internally used {@glossary kind}.
+	*
+	* @class enyo.ObserverChain
+	* @extends enyo.LinkedList
+	* @private
 	*/
 	kind(
 		/** @lends enyo.ObserverChain.prototype */ {
-		name: "enyo.ObserverChain",
+
+		/**
+		* @private
+		*/
+		name: 'enyo.ObserverChain',
+
+		/**
+		* @private
+		*/
 		kind: LinkedList,
+
+		/**
+		* @private
+		*/
 		nodeKind: ObserverChainNode,
+
+		/**
+		* @private
+		*/
 		noDefer: true,
 		
 		/**
-			@private
-			@method
+		* @method
+		* @private
 		*/
 		constructor: function (path, object) {
 			this.object = object;
 			this.path = path;
-			this.parts = path.split(".");
+			this.parts = path.split('.');
 			this.createChain();
 		},
 		
 		/**
-			@private
-			@method
+		* @method
+		* @private
 		*/
 		destroy: enyo.inherit(function (sup) {
 			return function () {
@@ -137,8 +168,7 @@
 		}),
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		rebuild: function (target) {
 			if (!this.rebuilding) {
@@ -155,22 +185,20 @@
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		buildPath: function (target) {
-			var str = "";
+			var str = '';
 			
 			this.backward(function (node) {
-				str = node.property + (str? ("." + str): str);
+				str = node.property + (str? ('.' + str): str);
 			}, this, target);
 			
 			return str;
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		createChain: function () {
 			var parts = this.parts
@@ -182,13 +210,13 @@
 				
 			// forEach(parts, function (prop, idx) {
 				// we create a special case for the $ hash property
-				if (prop == "$") {
+				if (prop == '$') {
 					$ = true;
 				} else {
 					// in cases where the chain has the $ property we arbitrarily
 					// force it onto our current nodes property and let the special handling
 					// in ObserverChainNode and ObserverSupport handle the rest
-					$ && (prop = "$." + prop);
+					$ && (prop = '$.' + prop);
 					node = this.createNode({property: prop, object: next, list: this});
 					this.appendNode(node);
 					next = get(next, prop);
@@ -199,8 +227,7 @@
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		observed: function (node, was, is) {
 			this.object.stopNotifications();
@@ -215,5 +242,5 @@
 			this.object.startNotifications();
 		}
 	});
-	
-})(enyo);
+
+})(enyo, this);

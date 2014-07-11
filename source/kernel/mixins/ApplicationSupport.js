@@ -1,28 +1,42 @@
-//*@public
-/**
-	These properties are applied to all _enyo.Components_ and
-	ensures that, when created in the scope of an _enyo.Application_,
-	they will have a reference to their _owner-application_ via the
-	`app` property.
-*/
-enyo.ApplicationSupport = {
-	name: "ApplicationSupport",
+(function (enyo, scope) {
+	
 	/**
-		This will be the reference to the _owner-application_ if the
-		_enyo.Component_ was created in the scope of an _enyo.Application_:
-		`app`
+	* This is an internally used support mixin. It is applied to all
+	* [components]{@link enyo.Component} of an {@link enyo.Application} instance and their
+	* [components]{@link enyo.Component} recursively. It adds an `app` property to each instance
+	* that is a local reference to the {@link enyo.Application} instance that they belong to.
+	* 
+	* @mixin enyo.ApplicationSupport
+	* @protected
 	*/
-	adjustComponentProps: enyo.inherit(function (sup) {
-		return function (props) {
-			props.app = props.app || this.app || (this instanceof enyo.Application && this);
-			sup.apply(this, arguments);
-		};
-	}),
-	destroy: enyo.inherit(function (sup) {
-		return function () {
-			// release the reference to the application
-			this.app = null;
-			sup.apply(this, arguments);
-		};
-	})
-};
+	enyo.ApplicationSupport = {
+	
+		/**
+		* @private
+		*/
+		name: 'ApplicationSupport',
+	
+		/**
+		* @private
+		*/
+		adjustComponentProps: enyo.inherit(function (sup) {
+			return function (props) {
+				props.app = props.app || this.app || (this instanceof enyo.Application && this);
+				sup.apply(this, arguments);
+			};
+		}),
+	
+		/**
+		* @private
+		*/
+		destroy: enyo.inherit(function (sup) {
+			return function () {
+				// release the reference to the application
+				this.app = null;
+				sup.apply(this, arguments);
+			};
+		})
+	
+	};
+
+})(enyo, this);

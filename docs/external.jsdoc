@@ -1,0 +1,477 @@
+/**
+* @todo Need to define this.
+* @external kind
+* @see enyo.kind
+*/
+
+/**
+* @todo Need to define this.
+* @external mixin
+* @see enyo.mixin
+*/
+
+/**
+* @todo Need to define this.
+* @external event
+* @see https://github.com/enyojs/enyo/wiki/Event-Handling
+*/
+
+/**
+* @todo Need to define this.
+* @external EUID
+*/
+
+/**
+* @todo Need to define this.
+* @external delegate
+*/
+
+/**
+* @todo Need to define this.
+* @external constructor
+*/
+
+/**
+* @todo Need to define this.
+* @external configurationBlock
+*/
+
+/**
+* @todo Need to define this.
+* @external chrome
+*/
+
+/**
+* @todo Need to define this.
+* @external subkind
+*/
+
+/**
+* @todo Need to define this.
+* @external deferred
+*/
+
+/**
+* @todo need to define this.
+* @external layout
+*/
+
+///// Internally Documented Links (Glossary) /////
+
+/**
+* Binary (bitwise) operations.
+* 
+* @external bitwise
+* @see http://www.experts-exchange.com/Programming/Misc/A_1842-Binary-Bit-Flags-Tutorial-and-Usage-Tips.html
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators
+*/
+
+/**
+* Strict Equality. This comparison logic ensures not only that the value of the things being
+* compared is the same, but also their types.
+* 
+* @external ===
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Using_the_Equality_Operators
+*/
+
+/**
+* A "polyfill" describes a method or function that is added to older browsers which don't support a
+* the native version of said method, in an effort to bring the browser up to the current standards
+* of modern browsers. This allows code, which is expecting a modern browser, to work interchangably
+* on an older one.
+* 
+* @external polyfill
+* @see http://en.wikipedia.org/wiki/Polyfill
+*/
+
+/**
+* The Document Object Model (DOM) is a programming interface for HTML and XML documents.
+* @external DOM
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model
+*/
+
+/**
+* Inheritance
+* @external inheritance
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain
+*/
+
+///// Externally Documented Links /////
+
+/**
+* Universally Unique Identifier
+* @external UUID
+* @see http://en.wikipedia.org/wiki/Universally_unique_identifier
+*/
+
+/**
+* @external callback
+* @see https://developer.mozilla.org/en-US/docs/Mozilla/js-ctypes/js-ctypes_reference/Callbacks
+*/
+
+/**
+* @external entity
+* @see http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
+*/
+
+/**
+* @external undefined
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined
+*/
+
+/**
+* @external arguments
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions_and_function_scope/arguments
+*/
+
+/**
+* @external String
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
+*/
+
+/**
+* @external Function
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
+*/
+
+/**
+* @external Array
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+*/
+
+/**
+* @external Array.indexOf
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
+* @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.14
+*/
+
+/**
+* @external Array.lastIndexOf
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf
+* http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.15
+*/
+
+/**
+* @external Array.findIndex
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
+*/
+
+/**
+* @external Array.find
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+*/
+
+/**
+* @external Array.forEach
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
+* @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.18
+*/
+
+/**
+* @external Array.map
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+* @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.19
+*/
+
+/**
+* @external Array.filter
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+* @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.20
+*/
+
+/**
+* @external Array.join
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+*/
+
+/**
+* @external Object
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
+*/
+/**
+* @external Object.prototype
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype
+*/
+
+/**
+* @external Object.create
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
+*/
+
+/**
+* @external Object.hasOwnProperty
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
+*/
+
+/**
+* @external Object.keys
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
+*/
+
+/**
+* @external window
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window
+*/
+
+/**
+* @external window.getComputedStyle
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window.getComputedStyle
+*/
+
+/**
+* @external window.getComputedStyleValue
+* @see https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/NsIAccessNode#getComputedStyleValue()
+*/
+
+/**
+* @external window.location
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window.location
+*/
+
+/**
+* @external window.performance
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window.performance
+*/
+
+/**
+* @external window.setTimeout
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window.setTimeout
+*/
+
+/**
+* @external Date
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+*/
+
+/**
+* @external Date.now
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now
+*/
+
+/**
+* @external Date.getTime
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime
+*/
+
+/**
+* @external console
+* @see https://developer.mozilla.org/en-US/docs/Web/API/console
+*/
+
+/**
+* @external console.log
+* @see https://developer.mozilla.org/en-US/docs/Web/API/console.log
+*/
+
+/**
+* @external console.warn
+* @see https://developer.mozilla.org/en-US/docs/Web/API/console.warn
+*/
+
+/**
+* @external console.error
+* @see https://developer.mozilla.org/en-US/docs/Web/API/console.error
+*/
+
+/**
+* @external DOM
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model
+*/
+
+/**
+* @external Node
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Node
+*/
+
+/**
+* @external Anchor
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
+*/
+
+/**
+* @external Attribute
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
+*/
+
+/**
+* @external audio
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
+*/
+
+/**
+* @external button
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button
+*/
+
+/**
+* @external form
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+*/
+
+/**
+* @external input
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input
+*/
+
+/**
+* @external img
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Img
+*/
+
+/**
+* @external focus
+* @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement.focus
+*/
+
+/**
+* @external blur
+* @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement.blur
+*/
+
+/**
+* @external iframe
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
+*/
+
+/**
+* @external script
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script
+*/
+
+/**
+* @external select
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select
+*/
+
+/**
+* @external option
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option
+*/
+
+/**
+* @external optgroup
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/optgroup
+*/
+
+/**
+* @external style
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/style
+*/
+
+/**
+* @external table
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table
+*/
+
+/**
+* @external tr
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/tr
+*/
+
+/**
+* @external td
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/td
+*/
+
+/**
+* @external textarea
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea
+*/
+
+/**
+* @external video
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video
+*/
+
+/**
+* @external scrollIntoView
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Element.scrollIntoView
+*/
+
+/**
+* @external HTML5MediaElement
+* @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
+*/
+
+/**
+* @external backgroundPosition
+* @see https://developer.mozilla.org/en-US/docs/Web/CSS/background-position
+*/
+
+/**
+* @external DOMEvent
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Event
+*/
+
+/**
+* @external TimeRanges
+* @see https://developer.mozilla.org/en-US/docs/Web/API/TimeRanges
+*/
+
+/**
+* @external Selection
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Selection
+*/
+
+/**
+* @external Selection.collapseToStart
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Selection.collapseToStart
+*/
+
+/**
+* @external Selection.collapseToEnd
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Selection.collapseToEnd
+*/
+
+/**
+* @external Selection.modify
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Selection.modify
+*/
+
+/**
+* @external Range
+* @see https://developer.mozilla.org/en-US/docs/Web/API/range
+*/
+
+/**
+* @external fullscreen
+* @see https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Using_full_screen_mode
+*/
+
+/**
+* @todo Find a better external source
+* @external networkState
+* @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement#Properties
+*/
+
+/**
+* @todo Find a better external source
+* @external readyState
+* @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement#Properties
+*/
+
+///// Common Type Definitions /////
+
+/**
+* A [DOM]{@link external:DOM} [node]{@link external:Node} element [object]{@link external:Object}.
+*
+* @typedef {Node}
+*/
+
+/**
+* A {@link external:TimeRanges} element {@link external:Object}.
+*
+* @typedef {TimeRanges}
+*/
+
+/**
+* A {@link external:readyState} value.
+*
+* @typedef {ReadyState}
+*/
+
+/**
+* A {@link external:Selection} [object]{@link external:Object}.
+*
+* @typedef {Selection}
+*/

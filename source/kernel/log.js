@@ -1,116 +1,161 @@
-//* @protected
+(function (enyo, scope) {
 
-enyo.logging = {
-	// log levels are integers from 0-99
-	// 99 is maximum logging
-	level: 99,
-	// set level to -1 to disable all logging
-	levels: {log: 20, warn: 10, error: 0},
-	// return true if logging level is lower than the current log level
-	shouldLog: function(inMethod) {
-		var ll = parseInt(this.levels[inMethod], 0);
-		return (ll <= this.level);
-	},
-	/*
-	formatArgs: function(inMethod, inArgs) {
-		var a$ = [];
-		for (var i=0, l=inArgs.length, a; (a=inArgs[i]) || i<l; i++) {
-			if (String(a) == "[object Object]") {
-				a = enyo.json.stringify(a);
-			}
-			a$.push(a);
-		}
-		return a$;
-	},
+	/**
+	* Internally used methods and properties associated with _logging_.
+	*
+	* @namespace enyo.logging
+	* @public
 	*/
-	validateArgs: function(inArr) {
-		// gracefully handle and prevent circular reference errors in objects
-		for (var i=0, l=inArr.length, item; (item=inArr[i]) || i<l; i++) {
-			try {
-				if (typeof item === "object") {
-					inArr[i] = enyo.json.stringify(item);
+	enyo.logging = /** @lends enyo.logging */ {
+		
+		/**
+		* The log level to use. Can be from -1-99 where -1 disables all logging, 0 is 'error',
+		* 10 is 'warn' and 20 is 'log'. It is preferred that this value be set using the
+		* {@link enyo.setLogLevel} method.
+		*
+		* @type {Number}
+		* @default 99
+		* @public
+		*/
+		level: 99,
+		
+		/**
+		* The known levels.
+		*
+		* @private
+		*/
+		levels: {log: 20, warn: 10, error: 0},
+		
+		/**
+		* @private
+		*/
+		shouldLog: function (fn) {
+			var ll = parseInt(this.levels[fn], 0);
+			return (ll <= this.level);
+		},
+		
+		/**
+		* @private
+		*/
+		validateArgs: function (args) {
+			// gracefully handle and prevent circular reference errors in objects
+			for (var i=0, l=args.length, item; (item=args[i]) || i<l; i++) {
+				try {
+					if (typeof item === 'object') {
+						args[i] = enyo.json.stringify(item);
+					}
+				} catch (e) {
+					args[i] = 'Error: ' + e.message;
 				}
-			} catch (e) {
-				inArr[i] = "Error: " + e.message;
+			}
+		},
+		
+		/**
+		* @private
+		*/
+		_log: function (fn, args) {
+			// avoid trying to use console on IE instances where the object hasn't been
+			// created due to the developer tools being unopened
+			var console = window.console;
+			if (typeof console === 'undefined') {
+	            return;
+	        }
+			//var a$ = enyo.logging.formatArgs(fn, args);
+			var a$ = enyo.isArray(args) ? args : enyo.cloneArray(args);
+			if (enyo.platform.androidFirefox) {
+				// Firefox for Android's console does not handle objects with circular references
+				enyo.logging.validateArgs(a$);
+			}
+			if (enyo.dumbConsole) {
+				// at least in early versions of webos, console.* only accept a single argument
+				a$ = [a$.join(' ')];
+			}
+			var fn$ = console[fn];
+			if (fn$ && fn$.apply) {
+				// some consoles support 'warn', 'info', and so on
+				fn$.apply(console, a$);
+			} else if (console.log.apply) {
+				// some consoles support console.log.apply
+				console.log.apply(console, a$);
+			} else {
+				// otherwise, do our own formatting
+				console.log(a$.join(' '));
+			}
+		},
+		
+		/**
+		* This is exposed elsewhere.
+		*
+		* @private
+		*/
+		log: function (fn, args) {
+			var console = window.console;
+			if (typeof console !== 'undefined') {
+				if (this.shouldLog(fn)) {
+					this._log(fn, args);
+				}
 			}
 		}
-	},
-	_log: function(inMethod, inArgs) {
-		// avoid trying to use console on IE instances where the object hasn't been
-		// created due to the developer tools being unopened
-		var console = window.console;
-		if (typeof console === "undefined") {
-            return;
-        }
-		//var a$ = enyo.logging.formatArgs(inMethod, inArgs);
-		var a$ = enyo.isArray(inArgs) ? inArgs : enyo.cloneArray(inArgs);
-		if (enyo.platform.androidFirefox) {
-			// Firefox for Android's console does not handle objects with circular references
-			enyo.logging.validateArgs(a$);
+	};
+
+	/**
+	* Set the log level to the given value. This will restrict the amount of output depending on
+	* the settings. The higher the value, the more output that will be allowed. The default is
+	* 99. The value, -1, would silence all logging, even 'error' (0).
+	*
+	* @see enyo.logging.level
+	* @see enyo.log
+	* @see enyo.warn
+	* @see enyo.error
+	* @param {Number} level The level to set logging to.
+	*/
+	enyo.setLogLevel = function (level) {
+		var ll = parseInt(level, 0);
+		if (isFinite(ll)) {
+			enyo.logging.level = ll;
 		}
-		if (enyo.dumbConsole) {
-			// at least in early versions of webos, console.* only accept a single argument
-			a$ = [a$.join(" ")];
-		}
-		var fn = console[inMethod];
-		if (fn && fn.apply) {
-			// some consoles support 'warn', 'info', and so on
-			fn.apply(console, a$);
-		} else if (console.log.apply) {
-			// some consoles support console.log.apply
-			console.log.apply(console, a$);
-		} else {
-			// otherwise, do our own formatting
-			console.log(a$.join(" "));
-		}
-	},
-	log: function(inMethod, inArgs) {
-		var console = window.console;
-		if (typeof console !== "undefined") {
-			if (this.shouldLog(inMethod)) {
-				this._log(inMethod, inArgs);
-			}
-		}
-	}
-};
+	};
 
-//* @public
+	/**
+	* A wrapper for {@glossary console.log} compatible across supported platforms. Will output only
+	* if the current [log level]{@link enyo.logging.level} allows it. {@glossary Object} parameters
+	* will be serialized via {@glossary JSON.stringify} autmoatically.
+	*
+	* @utility
+	* @see {@glossary console.log}
+	* @param {...*} - The arguments to be logged.
+	* @public
+	*/
+	enyo.log = function () {
+		enyo.logging.log('log', arguments);
+	};
 
-/**
-	Sets the log level for this window if the input is a real number.
+	/**
+	* A wrapper for {@glossary console.warn} compatible across supported platforms. Will output only
+	* if the current [log level]{@link enyo.logging.level} allows it. {@glossary Object} parameters
+	* will be serialized via {@glossary JSON.stringify} autmoatically.
+	*
+	* @utillity
+	* @see {@glossary console.warn}
+	* @param {...*} - The arguments to be logged.
+	* @public
+	*/
+	enyo.warn = function () {
+		enyo.logging.log('warn', arguments);
+	};
 
-	The log level is used as a watermark to control the amount of logging.
-	Setting the log level lower will prevent logging functions with a higher
-	level from being executed.
+	/**
+	* A wrapper for {@glossary console.error} compatible across supported platforms. Will output
+	* only if the current [log level]{@link enyo.logging.level} allows it. {@glossary Object}
+	* parameters will be serialized via {@glossary JSON.stringify} autmoatically.
+	*
+	* @utility
+	* @see {@glossary console.warn}
+	* @param {...*} - The arguments to be logged.
+	* @public
+	*/
+	enyo.error = function () {
+		enyo.logging.log('error', arguments);
+	};
 
-	The default log level is 99.  <a href="#enyo.log">enyo.log</a> will output
-	if the level is 20 or above, <a href="#enyo.warn">enyo.warn</a> at 10, and
-	<a href="#enyo.error">enyo.error</a> at 0.
-*/
-enyo.setLogLevel = function(inLevel) {
-	var ll = parseInt(inLevel, 0);
-	if (isFinite(ll)) {
-		enyo.logging.level = ll;
-	}
-};
-
-/**
-	Sends a log message to the console, if the current log level allows for it.
-
-	Objects are converted to JSON automatically.
-
-	Multiple arguments are coerced to String and joined with spaces.
-*/
-enyo.log = function() {
-	enyo.logging.log("log", arguments);
-};
-
-//* Same as _log_, except uses the console's warn method (if it exists).
-enyo.warn = function() {
-	enyo.logging.log("warn", arguments);
-};
-
-//* Same as _log_, except uses the console's error method (if it exists).
-enyo.error = function() {
-	enyo.logging.log("error", arguments);
-};
+})(enyo, this);
