@@ -301,6 +301,13 @@
 		/**
 		* @private
 		*/
+		observers: {
+			updateSource: ["src", "sourceComponents"]
+		},
+
+		/**
+		* @private
+		*/
 		tag: 'video',
 
 		/**
@@ -325,7 +332,6 @@
 				this.preloadChanged();
 				this.autoplayChanged();
 				this.loopChanged();
-				this.srcChanged();
 			};
 		}),
 
@@ -339,6 +345,56 @@
 				this.hookupVideoEvents();
 			};
 		}),
+
+		/**
+		* @method
+		* @private
+		*/
+		updateSource: function(inOld, inNew, inSource) {
+			var src = this.src;
+			
+			// Allways wipe out any previous sources before setting src or new sources
+			this.destroyClientControls();
+
+			if (inSource === "src") {
+				this.sourceComponents = null;
+				src = src ? enyo.path.rewrite(src) : "";
+				this.setAttribute("src", enyo.path.rewrite(src));
+			} else {
+				this.src = "";
+				if (!!this.getAttribute("src")) { this.setAttribute("src", ""); }
+				this.addSources();
+			}
+			
+			// HTML5 spec says that if you change src after page is loaded, you
+			// need to call load() to load the new data
+			if (this.hasNode()) {
+				this.node.load();	// not called
+			}
+		},
+		/**
+		* Add _<source>_ tags for each sources specified in _this.sources_
+		* 
+		* @private
+		*/
+		addSources: function() {
+			var sources = this.getSourceComponents(),
+				i
+			;
+			
+			if (!sources || sources.length === 0) {
+				return;
+			}
+			
+			// Add a source tag for each source
+			for (i = 0; i < sources.length; i++) {
+				sources[i].src = sources[i].src ? enyo.path.rewrite(sources[i].src) : "";
+				this.createComponent(enyo.mixin({attributes: sources[i]}, {tag: "source"}));
+			}
+			
+			// Rerender
+			this.render();
+		},
 
 		/**
 		* @private
@@ -389,15 +445,6 @@
 			if (!this.hasNode()) {
 				return;
 			}
-		},
-
-		/**
-		* @private
-		*/
-		srcChanged: function() {
-			// We override the inherited method from enyo.Control because
-			// it prevents us from setting src to a falsy value.
-			this.setAttribute('src', enyo.path.rewrite(this.src));
 		},
 		
 		/**
