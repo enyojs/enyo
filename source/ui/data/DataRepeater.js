@@ -259,8 +259,11 @@ enyo.kind({
 					}
 				}
 			}
-			
-			this.refresh();
+			// if list is refreshed once due to models remove
+			// we do not need to refresh it again
+			if (!this.hasRefreshed) {
+				this.refresh();	
+			}
 		}
 	},
 	batchingChanged: function (prev, val) {
