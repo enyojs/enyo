@@ -162,7 +162,8 @@
 				
 				// we allow filters to be nested so they need to receive events from the
 				// parent-filter and do with them as they need
-				if ((owner = this.owner) && owner instanceof Filter) {
+				this.isChildFilter = ((owner = this.owner) && owner instanceof Filter);
+				if(this.isChildFilter) {
 					
 					// if we're a child collection we don't want to monitor our parent's own state
 					// we want to monitor their entire dataset
@@ -190,7 +191,7 @@
 				// make sure that we remove our listener if we're being destroyed for some
 				// reason (this would seem to be an irregular practice)
 				if (collection) {
-					if (collection === this.owner._internal) {
+					if (this.isChildFilter && collection === this.owner._internal) {
 						collection.off('*', this._ownerEvent, this);
 					} else {
 						collection.off('*', this._collectionEvent, this);
@@ -213,13 +214,15 @@
 			
 			if (was) was.off('*', this._collectionEvent, this);
 			
-			// ensure that child-filters cannot have their internal/external collection's reset
-			if (is && !(was && was === this.owner._internal)) {
+			// ensure that child-filters cannot have their internal/external collections reset
+			if (is && !(was && this.isChildFilter && was === this.owner._internal)) {
 				
-				// case of child-filter who's collection is its owner does not need to receive
+				// case of child-filter whose collection is its owner does not need to receive
 				// these events since it will receive them in a special handler to differentiate
 				// these cases
-				if (is !== this.owner._internal) is.on('*', this._collectionEvent, this);
+				if (!this.isChildFilter || (is !== this.owner._internal)) {
+					is.on('*', this._collectionEvent, this);
+				}
 				
 				// reset the models (causing reset to propagate to children or bound parties)
 				internal.set('models', is.models.copy());
