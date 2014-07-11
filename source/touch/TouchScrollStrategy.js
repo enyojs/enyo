@@ -731,7 +731,7 @@
 			}
 			if(!this.transform) {
 				//adjust top/left if browser can't handle translations
-				this.$.client.setBounds({left:x + "px", top:y + "px"});
+				this.$.client.setBounds({left:xt + "px", top:yt + "px"});
 			} else {
 				enyo.dom.transformValue(this.$.client, this.translation, xt + "px, " + yt + "px" + zt);
 			}
