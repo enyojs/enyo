@@ -13,19 +13,19 @@
 	* @param {enyo.Component} sender The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@link external:event}.
 	* @param {Object} event An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
-	* @returns {Boolean} A value indicating whether the [event]{@link external:event} has been
+	*	event information.
+	* @returns {Boolean} A value indicating whether the event has been
 	*	handled or not. If `true`, then bubbling is stopped.
 	*/
 
 	/**
 	* A [hash]{@link external:Object} of references to all the [components]{@link enyo.Component} 
-	* owned by this [component]{@link enyo.Component}. This property is updated whenever a new
-	* [component]{@link enyo.Component} is added; the new component can be accessed via its 
-	* [name]{@link enyo.Component#name} property. Additionally, we can also observe changes on
-	* properties of [components]{@link enyo.Component} referenced by the _$_ property.
+	* owned by this component. This property is updated whenever a new
+	* component is added; the new component may be accessed via its
+	* [`name`]{@link enyo.Component#name} property. We may also observe changes on
+	* properties of components referenced by the `$` property.
 	*
-	* Component access via the $ hash:
+	* Component access via the `$` hash:
 	* ```javascript
 	* var c = new enyo.Component({
 	*	name: 'me',
@@ -37,7 +37,7 @@
 	* // We can now access 'other' on the $ hash of 'c', via c.$.other
 	* ```
 	*
-	* Observing changes on a component referenced by the $ property:
+	* Observing changes on a component referenced by the `$` property:
 	* ```javascript
 	* var c = new enyo.Component({
 	*	name: 'me',
@@ -63,7 +63,7 @@
 
 	/**
 	* If `true`, this [component's]{@link enyo.Component} [owner]{@link enyo.Component#owner} will
-	* have a direct name reference to the owned [component]{@link enyo.Component}.
+	* have a direct name reference to the owned component.
 	*
 	* @example
 	* var c = new enyo.Component({
@@ -95,14 +95,13 @@
 	
 	/**
 	* {@link enyo.Component} is the fundamental building block for Enyo applications. 
-	* [Components]{@link enyo.Component} are designed to fit together, allowing complex behaviors to
+	* Components are designed to fit together, allowing complex behaviors to
 	* be fashioned from smaller bits of functionality.
 	* 
-	* [Component]{@link enyo.Component} [constructors]{@link external:constructor} take a single 
-	* argument (sometimes called an {@link enyo.Component} 
-	* [configuration]{@link external:configurationBlock}), a JavaScript 
-	* [object]{@link external:Object} that defines various properties to be initialized on the 
-	* {@link enyo.Component}. For example:
+	* Component [constructors]{@link external:constructor} take a single 
+	* argument (sometimes called a [component configuration]{@link external:configurationBlock}), 
+	* a JavaScript [object]{@link external:Object} that defines various properties to be initialized on the 
+	* component.  For example:
 	* 
 	* ```javascript
 	* // create a new component, initialize its name property to 'me'
@@ -111,8 +110,8 @@
 	* });
 	* ```
 	* 
-	* When a [Component]{@link enyo.Component} is instantiated, items configured in its 
-	* [components]{@link enyo.Component#components} property are instantiated, too:
+	* When a component is instantiated, items configured in its 
+	* [`components`]{@link enyo.Component#components} property are instantiated, too:
 	* 
 	* ```javascript
 	* // create a new component, which itself has a component
@@ -124,27 +123,24 @@
 	* });
 	* ```
 	* 
-	* In this case, when _me_ is created, _other_ is also created, and we say that _me owns other_. 
-	* In other words, the [owner]{@link enyo.Component#owner} property of _other_ equals _me_. 
-	* Notice that you can specify the [kind]{@link external:kind} of _other_ explicitly in its
-	* [configuration block]{@link external:configurationBlock}, to tell _me_ what 
-	* [constructor]{@link external:constructor} to use to create _other_.
+	* In this case, when `me` is created, `other` is also created, and we say that `me` owns `other`. 
+	* In other words, the [`owner`]{@link enyo.Component#owner} property of `other` equals `me`. 
+	* Notice that you can specify the [kind]{@link external:kind} of `other` explicitly in its
+	* configuration block, to tell `me` what constructor to use to create `other`.
 	* 
-	* Note that [kind]{@link external:kind} values may be references to actual 
-	* [kinds]{@link external:kind} or string-names of [kinds]{@link external:kind}. 
-	* [Kind]{@link external:kind} names that do not resolve directly to [kinds]{@link external:kind}
+	* Note that [`kind`]{@link external:kind} values may be references to actual 
+	* kinds or string-names of kinds. Kind names that do not resolve directly to kinds
 	* are looked up in default namespaces. In this case, `kind: 'Component'` resolves to 
 	* `enyo.Component`.
 	* 
-	* To move a [component]{@link enyo.Component}, use the `setOwner` method to change the 
-	* [component's]{@link enyo.Component} [owner]{@link enyo.Component#owner}. If you want to make a
-	* [component]{@link enyo.Component} unowned, use `setOwner(null)`.
+	* To move a component, use the `setOwner()` method to change the
+	* component's owner. If you want a component to be unowned, use `setOwner(null)`.
 	* 
-	* If you make changes to {@link enyo.Component}, be sure to add or update the appropriate
+	* If you make changes to `enyo.Component`, be sure to add or update the appropriate
 	* {@linkplain https://github.com/enyojs/enyo/tree/master/tools/test/core/tests unit tests}.
 	* 
 	* For more information, see the documentation on
-	* {@linkplain key-concepts/creating-components.html Components} in the Enyo Developer Guide.
+	* {@linkplain key-concepts/components.html Components} in the Enyo Developer Guide.
 	* 
 	* @class enyo.Component
 	* @extends enyo.Object
@@ -179,10 +175,10 @@
 			/**
 			* A unique name for the [component]{@link enyo.Component} within its 
 			* [owner]{@link enyo.Component#owner}. This is used to set the access name in the 
-			* [owner's]{@link enyo.Component#owner} [$ hash]{@link enyo.Component#$}. If not 
+			* owner's [$ hash]{@link enyo.Component#$}. If not 
 			* specified, a default name will be provided based on the name of the 
-			* [object's]{@link enyo.Object} [kind]{@link external:kind}, optionally with a number 
-			* suffix if more than one instance exists in the [owner]{@link enyo.Component#owner}.
+			* [object's]{@link enyo.Object} [kind]{@link external:kind}, with a numeric
+			* suffix appended if more than one instance exists in the owner.
 			* 
 			* @type {String}
 			* @default ''
@@ -192,9 +188,9 @@
 			
 			/**
 			* A unique id for the [component]{@link enyo.Component}, usually automatically generated
-			* based on its position within the [component]{@link enyo.Component} hierarchy, although
-			* it may also be directly specified. {@link enyo.Control} uses this _id_ value for the 
-			* DOM [id]@link enyo.Control#id} attribute.
+			* based on its position within the component hierarchy, although
+			* it may also be directly specified. {@link enyo.Control} uses this `id` value for the 
+			* DOM [`id`]@link enyo.Control#id} attribute.
 			* 
 			* @type {String}
 			* @default ''
