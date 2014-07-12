@@ -286,8 +286,8 @@ enyo.kind({
 			}
 		}
 	},
-	getBubbleTarget: function() {
-		return this.bubbleTarget || this.parent || this.owner;
+	getBubbleTarget: function(inEventName, inEvent) {
+		return (inEvent.delegate) ? this.owner : this.bubbleTarget ||  this.cachedBubble && this.cachedBubbleTarget[inEventName] || this.parent || this.owner;
 	}
 });
 

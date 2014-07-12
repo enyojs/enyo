@@ -74,6 +74,10 @@
 			@private
 		*/
 		noDefer: true,
+
+
+		cachedBubble: true,
+		cachePoint: false,
 		
 		/**
 			@private
@@ -160,6 +164,7 @@
 				// initialize instance objects
 				this._componentNameMap = {};
 				this.$ = {};
+				this.cachedBubbleTarget = {};
 				sup.apply(this, arguments);
 			};
 		}),
@@ -471,8 +476,8 @@
 		/**
 			@private
 		*/
-		getBubbleTarget: function () {
-			return this.bubbleTarget || this.owner;
+		getBubbleTarget: function(inEventName, inEvent) {
+			return (inEvent.delegate) ? this.owner : this.bubbleTarget || this.cachedBubble && this.cachedBubbleTarget[inEventName] || this.owner;
 		},
 		
 		/**
@@ -503,6 +508,8 @@
 		bubble: function (nom, event, sender) {
 			if (!this._silenced) {
 				event = event || {};
+				event.lastHandledComponent = null;
+				event.bubbling = true;
 				// deliberately done this way
 				if (event.originator == null) event.originator = sender || this;
 				return this.dispatchBubble(nom, event, sender || this);
@@ -538,7 +545,8 @@
 			
 			if (!this._silenced) {
 				event = event || {};
-				next = this.getBubbleTarget();
+				event.bubbling = true;
+				var next = this.getBubbleTarget(nom, event);
 				if (next) {
 					// use delegate as sender if it exists to preserve illusion
 					// that event is dispatched directly from that, but we still
@@ -591,12 +599,23 @@
 
 				// for non-delgated events, try the handlers block if possible
 				if (!delegate) {
-					if (this.handlers && this.handlers[nom] &&
-						this.dispatch(this.handlers[nom], event, sender)) {
+					var bHandler = this.handlers && this.handlers[nom];
+					var bDelegatedFunction = enyo.isString(this[nom]);
+					var cachePoint = this.cachePoint || bHandler || bDelegatedFunction || this.id === "master" ;
+
+					if (event.bubbling) {
+						if (event.lastHandledComponent && cachePoint) {
+							event.lastHandledComponent.cachedBubbleTarget[nom] = this;
+							event.lastHandledComponent = null;
+						}
+						if (!event.lastHandledComponent && this.id !== "master") {
+							event.lastHandledComponent = this;
+						}
+					}
+					if (bHandler && this.dispatch(this.handlers[nom], event, sender)) {
 						return true;
 					}
-					// then check for a delegate property for this event
-					if (this[nom] && enyo.isString(this[nom])) {
+					if (bDelegatedFunction) {
 						// we dispatch it up as a special delegate event with the
 						// component that had the delegation string property stored in
 						// the 'delegate' property
@@ -605,6 +624,21 @@
 						delete event.delegate;
 						return ret;
 					}
+
+					// if (this.handlers && this.handlers[nom] &&
+					// 	this.dispatch(this.handlers[nom], event, sender)) {
+					// 	return true;
+					// }
+					// // then check for a delegate property for this event
+					// if (this[nom] && enyo.isString(this[nom])) {
+					// 	// we dispatch it up as a special delegate event with the
+					// 	// component that had the delegation string property stored in
+					// 	// the 'delegate' property
+					// 	event.delegate = this;
+					// 	ret = this.bubbleUp(this[nom], event, sender);
+					// 	delete event.delegate;
+					// 	return ret;
+					// }
 				}
 			}
 			return false;
@@ -701,6 +735,7 @@
 		waterfall: function(nom, event, sender) {
 			if (!this._silenced) {
 				event = event || {};
+				event.bubbling = false;
 				
 				// give the locals an opportunity to interrupt the event
 				if (this.dispatchEvent(nom, event, sender)) return true;
@@ -726,7 +761,9 @@
 		*/
 		waterfallDown: function(nom, event, sender) {
 			var comp;
-			
+			event = event || {};
+			event.bubbling = false;
+
 			if (!this._silenced) {
 				for (comp in this.$) this.$[comp].waterfall(nom, event, sender || this);
 			}
