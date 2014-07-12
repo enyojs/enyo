@@ -1100,7 +1100,7 @@
 			@public
 			@deprecated
 		*/
-		setRenderOnSHow: function (can) {
+		setRenderOnShow: function (can) {
 			var was = this.renderOnShow;
 			this.canGenerate = !! can;
 			
