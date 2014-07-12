@@ -75,8 +75,14 @@
 		*/
 		noDefer: true,
 
-
+		/**
+			@private
+		*/
 		cachedBubble: true,
+
+		/**
+			@private
+		*/
 		cachePoint: false,
 		
 		/**
