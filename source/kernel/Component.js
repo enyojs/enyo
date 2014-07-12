@@ -552,7 +552,7 @@
 			if (!this._silenced) {
 				event = event || {};
 				event.bubbling = true;
-				var next = this.getBubbleTarget(nom, event);
+				next = this.getBubbleTarget(nom, event);
 				if (next) {
 					// use delegate as sender if it exists to preserve illusion
 					// that event is dispatched directly from that, but we still
