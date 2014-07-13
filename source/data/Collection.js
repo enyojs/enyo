@@ -587,7 +587,7 @@
 			var loc = this.models
 				, len = loc.length
 				, options = this.options
-				, removed, model;
+				, removed, model, idx;
 			
 			// normalize options so we have values
 			opts = opts? enyo.mixin({}, [options, opts]): options;
@@ -601,6 +601,10 @@
 			// we treat all additions as an array of additions
 			!(models instanceof Array) && (models = [models]);
 			
+			// save index of the first removed model before removing
+			idx = this.indexOf(models[0]);
+
+			// remove models from modelList
 			removed = loc.remove(models);
 			
 			if (removed.length) {
@@ -623,7 +627,7 @@
 			if (!silent) {
 				len != this.length && this.notify('length', len, this.length);
 				if (removed.length) {
-					this.emit('remove', {models: removed, collection: this});
+					this.emit('remove', {models: removed, collection: this, index: idx});
 				}
 			}
 			
