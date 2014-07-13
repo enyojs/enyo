@@ -259,11 +259,9 @@ enyo.kind({
 					}
 				}
 			}
-			// if list is refreshed once due to models remove
-			// we do not need to refresh it again
-			if (!this.hasRefreshed) {
-				this.refresh();	
-			}
+			// if list is already refreshed in delegate,
+			// then we do not need to refresh it again
+			this.hasRefreshed ? this.hasRefreshed = false : this.refresh();
 		}
 	},
 	batchingChanged: function (prev, val) {

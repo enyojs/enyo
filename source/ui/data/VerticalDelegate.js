@@ -67,7 +67,6 @@ enyo.DataList.delegates.vertical = {
 		the buffer accordingly.
 	*/
 	refresh: function (list) {
-		list.hasRefreshed = false;
 		if (!list.hasReset) { return this.reset(list); }
 		var pageCount   = Math.max(this.pageCount(list) - 1, 0),
 			firstIndex  = list.$.page1.index,
