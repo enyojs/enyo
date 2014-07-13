@@ -123,7 +123,7 @@
 		/**
 			@public
 		*/
-		renderOnShow: '',
+		renderOnShow: false,
 
 		/**
 			@public
