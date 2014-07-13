@@ -522,7 +522,7 @@
 			@private
 		*/
 		renderOnShowChanged: function () {
-			if (!this.hasNode()) this.showing = false;
+			if (!this.hasNode() && this.renderOnShow) this.showing = false;
 			this.setCanGenerate(!this.renderOnShow);
 		},
 		
