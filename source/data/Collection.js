@@ -576,10 +576,10 @@
 		* `true`).
 		* 
 		* @fires enyo.Collection#remove
-		* @param {(enyo.Model|enyo.Model[])} models The [models]{@link enyo.Model} to remove
-		* 	if they exist in the [collection]{@link enyo.Collection}.
-		* @param {enyo.Collection~RemoveOptions} [opts] The configuration options that modify
-		* 	the behavior of this method.
+		* @param {(enyo.Model|enyo.Model[])} models The [models]{@link enyo.Model} to remove		
+		*	if they exist in the [collection]{@link enyo.Collection}.
+		* @param {enyo.Collection~RemoveOptions} [opts] The configuration options that modify		
+		*	the behavior of this method.
 		* @returns {enyo.Model[]} The [models]{@link enyo.Model} that were removed, if any.
 		* @public
 		*/
@@ -638,8 +638,8 @@
 		* Retrieve a [model]{@link enyo.Model} for the provided index.
 		* 
 		* @param {Number} idx The index to return from the [collection]{@link enyo.Collection}.
-		* @returns {(enyo.Model|undefined)} The [model]{@link enyo.Model} at the given index or
-		* 	`undefined` if it cannot be found.
+		* @returns {(enyo.Model|undefined)} The [model]{@link enyo.Model} at the given index or		
+		*	`undefined` if it cannot be found.
 		* @public
 		*/
 		at: function (idx) {
@@ -736,7 +736,7 @@
 		* `reset` event. Returns the removed [models]{@link enyo.Model} but be aware that if the
 		* `destroy` configuration option is set then the returned models will have limited
 		* usefulness.
-	    * 
+		* 
 		* @param {(enyo.Model|enyo.Model[])} [models] The [model or models]{@link enyo.Model} to
 		*	use as a replacement for the current set of [models]{@link enyo.Model} in the
 		*	{@link enyo.Collection}.
