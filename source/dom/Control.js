@@ -1102,7 +1102,7 @@
 		*/
 		setRenderOnShow: function (can) {
 			var was = this.renderOnShow;
-			this.canGenerate = !! can;
+			this.renderOnShow = can;
 			
 			if (was !== can) this.notify('canRenderOnShow', was, can);
 			
