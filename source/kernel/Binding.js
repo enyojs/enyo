@@ -3,8 +3,8 @@
 	var kind = enyo.kind;
 	
 	/**
-	* All {@link enyo.Binding} instances are stored in this list and can be retrieved via the
-	* {@link enyo.Binding.find} method using an {@link enyo.Binding#id} to identify it.
+	* All {@link enyo.Binding} instances are stored in this list and may be retrieved via the
+	* {@link enyo.Binding.find} method using an {@link enyo.Binding#id} identifier.
 	*
 	* @name enyo.bindings
 	* @public
@@ -98,30 +98,27 @@
 	* including the available parameters and how they can be used.
 	* 
 	* @callback enyo.Binding~Transform
-	* @param {*} value The _value_ being synchronized.
-	* @param {String} direction the _direction_ (a string matching either "source" or "target", 
+	* @param {*} value The value being synchronized.
+	* @param {String} direction The direction (a string matching either "source" or "target", 
 	*	as in "going to the source").
 	* @param {Object} binding A reference to the associated [binding]{@link enyo.Binding}. In cases 
-	*	where the [binding]{@link enyo.Binding} should be interrupted and not 
-	*	propagate the synchronization at all, call the _stop()_ method of 
-	*	the passed-in [binding]{@link enyo.Binding} reference.
+	*	where the binding should be interrupted and not propagate the synchronization at all, call
+	* the `stop()` method on the passed-in binding reference.
 	*/
 	
 	/**
 	* {@link enyo.Binding} is a mechanism used to keep properties synchronized. A 
-	* [binding]{@link enyo.Binding} may be used to link two properties on different 
-	* [objects]{@link external:Object}, or even two properties on the same 
-	* [object]{@link external:Object}. Once a [binding]{@link enyo.Binding} has been established, it
-	* will wait for change notifications; when a notification arrives, the 
-	* [binding]{@link enyo.Binding} will synchronize the value between the two ends. Note that 
-	* [bindings]{@link enyo.Binding} may be 
+	* binding may be used to link two properties on different
+	* [objects]{@link external:Object}, or even two properties on the same object.
+	* Once a binding has been established, it will wait for change notifications;
+	* when a notification arrives, the binding will synchronize the value between
+	* the two ends. Note that bindings may be either
 	* [one-way (the default) or two-way]{@link enyo.Binding#oneWay}.
 	* 
-	* Usually, you will not need to create {@link enyo.Binding} [objects]{@link external:Object} 
-	* arbitrarily, but will instead rely on the public 
-	* [BindingSupport API]{@link enyo.BindingSupport}, which is applied to 
-	* [enyo.Object]{@link enyo.Object} and so is available on all of its 
-	* [subkinds]{@link external:subkind}.
+	* Usually, you will not need to create Binding objects arbitrarily, but will
+	* instead rely on the public [BindingSupport API]{@link enyo.BindingSupport},
+	* which is applied to [enyo.Object]{@link enyo.Object} and so is available on
+	* all of its [subkinds]{@link external:subkind}.
 	* 
 	* @class enyo.Binding
 	* @public
@@ -146,7 +143,7 @@
 		
 		/**
 		* If a [binding]{@link enyo.Binding} is one-way, this flag should be `true` (the default). 
-		* If this flag is set to `false`, the [binding]{@link enyo.Binding} will be two-way.
+		* If this flag is set to `false`, the binding will be two-way.
 		*
 		* @type {Boolean}
 		* @default true
@@ -167,12 +164,12 @@
 		connected: false,
 		
 		/**
-		* The _owner_ property is used extensively for various purposes within a 
-		* [binding]{@link enyo.Binding}. One primary purpose is to serve as a root 
-		* [object]{@link external:Object} from which to	search for its ends (the 
-		* [source]{@link enyo.Binding#source} and/or [target]{@link enyo.Binding#target}). If the 
-		* owner created the [binding]{@link enyo.Binding}, it will also be responsible for 
-		* destroying it (automatically).
+		* This property is used extensively for various purposes within a
+		* [binding]{@link enyo.Binding}. One primary purpose is to serve as a root
+		* [object]{@link external:Object} from which to	search for the binding's ends (the
+		* [source]{@link enyo.Binding#source} and/or [target]{@link enyo.Binding#target}).
+		* If the owner created the binding, it will also be responsible for destroying 
+		* it (automatically).
 		*
 		* @type {enyo.Object}
 		* @default null
@@ -203,10 +200,10 @@
 		autoSync: true,
 		
 		/**
-		* Set this only to a reference for an [object]{@link external:Object} to use as the _source_ 
-		* for the [binding]{@link enyo.Binding}. If this is not a 
-		* [bindable]{@link enyo.BindingSupport} [object]{@link external:Object}, the _source_ will 
-		* be derived from the [from]{@link enyo.Binding#from} property during initialization.
+		* Set this only to a reference for an [object]{@link external:Object} to use
+		* as the source for the [binding]{@link enyo.Binding}. If this is not a
+		* [bindable]{@link enyo.BindingSupport} object, the source will be derived
+		* from the [from]{@link enyo.Binding#from} property during initialization.
 		* 
 		* @type {Object}
 		* @default null
@@ -215,10 +212,10 @@
 		source: null,
 		
 		/**
-		* Set this only to a reference for an [object]{@link external:Object} to use as the _target_
-		* for the [binding]{@link enyo.Binding}. If this is not a 
-		* [bindable]{@link enyo.BindingSupport} [object]{@link external:Object}, the _target_ will 
-		* be derived from the [to]{@link enyo.Binding#to} property during initialization.
+		* Set this only to a reference for an [object]{@link external:Object} to use
+		* as the target for the [binding]{@link enyo.Binding}. If this is not a
+		* [bindable]{@link enyo.BindingSupport} object, the target will will be
+		* derived from the [to]{@link enyo.Binding#to} property during initialization.
 		* 
 		* @type {Object}
 		* @default null
@@ -227,15 +224,14 @@
 		target: null,
 		
 		/**
-		* The _from_ property designates a path in which the property of the 
-		* [source]{@link enyo.Binding#source} to bind from may be found. If the 
-		* [source]{@link enyo.Binding#source} is explicitly provided and the path is relative (i.e.,
-		* it begins with a "."), it is relative to the [source]{@link enyo.Binding#source}; 
-		* otherwise, it is relative to the [owner]{@link enyo.Binding#owner} of the 
-		* [binding]{@link enyo.Binding}. To have a [binding]{@link enyo.Binding} be evaluated from 
-		* the global scope, prefix the path with a "^". If the [source]{@link enyo.Binding#source} 
-		* and the "^" are used in tandem, the "^" will be ignored and the path will be assumed to be
-		* relative to the provided [source]{@link enyo.Binding#source}.
+		* A path in which the property of the [source]{@link enyo.Binding#source} to
+		* bind from may be found. If the source is explicitly provided and the path
+		* is relative (i.e., it begins with a `"."`), it is relative to the source;
+		* otherwise, it is relative to the [owner]{@link enyo.Binding#owner} of the
+		* [binding]{@link enyo.Binding}. To have a binding be evaluated from the
+		* global scope, prefix the path with a `"^"`. If the source and the `"^"`
+		* are used in tandem, the `"^"` will be ignored and the path will be assumed
+		* to be relative to the provided source.
 		* 
 		* @type {String}
 		* @default null
@@ -244,7 +240,7 @@
 		from: null,
 		
 		/**
-		* The _dirty_ property represents the changed value state of both the property designated by
+		* The `dirty` property represents the changed value state of both the property designated by
 		* the [from]{@link enyo.Binding#from} path and the property designated by the 
 		* [to]{@link enyo.Binding#to} path.
 		*
@@ -255,15 +251,13 @@
 		dirty: DIRTY_FROM,
 		
 		/**
-		* The _to_ property designates a path in which the property of the 
-		* [target]{@link enyo.Binding#target} to bind from may be found. If the 
-		* [target]{@link enyo.Binding#target} is explicitly provided and the path is relative (i.e.,
-		* it begins with a "."), it is relative to the [target]{@link enyo.Binding#target}; 
-		* otherwise, it is relative to the owner of the [binding]{@link enyo.Binding}. To have a 
-		* [binding]{@link enyo.Binding} be evaluated from the global scope, prefix the path with a 
-		* "^". If the [target]{@link enyo.Binding#target} and the "^" are used in tandem, the "^" 
-		* will be ignored and the path will be assumed to be relative to the provided 
-		* [target]{@link enyo.Binding#target}.
+		* A path in which the property of the [target]{@link enyo.Binding#target} to
+		* bind from may be found. If the target is explicitly provided and the path
+		* is relative (i.e., it begins with a `"."`), it is relative to the target;
+		* otherwise, it is relative to the owner of the [binding]{@link enyo.Binding}.
+		* To have a binding be evaluated from the global scope, prefix the path with
+		* a `"^"`. If the target and the `"^"` are used in tandem, the `"^"` will be
+		* ignored and the path will be assumed to be relative to the provided target.
 		* 
 		* @type {String}
 		* @default null
@@ -272,11 +266,11 @@
 		to: null,
 
 		/**
-		* Set this to a [function]{@link external:Function} or the name of a method on the 
-		* [owner]{@link enyo.Binding#owner} of this [binding]{@link enyo.Binding}. The _transform_ 
-		* is used to programmatically modify the value being synchronized. 
-		* See {@link enyo.Binding~Transform} for detailed information on the parameters that are 
-		* made available to _transform_.
+		* Set this to a [function]{@link external:Function} or the name of a method on
+		* the [owner]{@link enyo.Binding#owner} of this [binding]{@link enyo.Binding}.
+		* The transform is used to programmatically modify the value being synchronized.
+		* See {@link enyo.Binding~Transform} for detailed information on the parameters
+		* that are available to `transform`.
 		* 
 		* @type {enyo.Binding~Transform}
 		* @default null
@@ -285,9 +279,9 @@
 		transform: null,
 		
 		/**
-		* Determine if the [binding]{@link enyo.Binding} is currently connected.
+		* Indicates whether the [binding]{@link enyo.Binding} is currently connected.
 		*
-		* @returns {Boolean} `true` if connected, `false` otherwise.
+		* @returns {Boolean} `true` if connected; otherwise, `false`.
 		* @public
 		*/
 		isConnected: function () {
@@ -295,8 +289,8 @@
 		},
 		
 		/**
-		* Will cause a single propagation attempt to fail. Typically not called outside the scope of
-		* a [transform]{@link enyo.Binding#transform}.
+		* Causes a single propagation attempt to fail. Typically not called outside
+		* the scope of a [transform]{@link enyo.Binding#transform}.
 		* 
 		* @public
 		*/
@@ -305,9 +299,9 @@
 		},
 		
 		/**
-		* Determines whether the [binding]{@link enyo.Binding} is actually ready.
+		* Indicates whether the [binding]{@link enyo.Binding} is actually ready.
 		* 
-		* @returns {Boolean} `true if ready, `false otherwise.
+		* @returns {Boolean} `true` if ready; otherwise, `false`.
 		* @public
 		*/
 		isReady: function () {
@@ -339,11 +333,11 @@
 		},
 		
 		/**
-		* Connects the ends (i.e., the [source]{@link enyo.Binding#source} and 
-		* [target]{@link enyo.Binding#target}) of the [binding]{@link enyo.Binding}. While you 
-		* typically won't need to call this method, it is safe to call even when the ends are 
-		* already established. Note that if one or both of the ends does become connected and the 
-		* [autoSync]{@link enyo.Binding#autoSync} flag is `true`, the ends will automatically be 
+		* Connects the ends (i.e., the [source]{@link enyo.Binding#source} and
+		* [target]{@link enyo.Binding#target}) of the [binding]{@link enyo.Binding}. While you
+		* typically won't need to call this method, it is safe to call even when the ends are
+		* already established. Note that if one or both of the ends does become connected and the
+		* [autoSync]{@link enyo.Binding#autoSync} flag is `true`, the ends will automatically be
 		* synchronized.
 		* 
 		* @returns {this} The callee for chaining.
@@ -396,10 +390,10 @@
 		},
 		
 		/**
-		* Synchronizes values from the [source]{@link enyo.Binding#source} to the 
-		* [target]{@link enyo.Binding#target}. This usually will not need to be called manually. 
-		* [Two-way bindings]{@link enyo.Binding#oneWay} will automatically synchronize from the 
-		* [target]{@link enyo.Binding#target} end once they are connected.
+		* Synchronizes values from the [source]{@link enyo.Binding#source} to the
+		* [target]{@link enyo.Binding#target}. This usually will not need to be called manually.
+		* [Two-way bindings]{@link enyo.Binding#oneWay} will automatically synchronize from the
+		* target end once they are connected.
 		* 
 		* @returns {this} The callee for chaining.
 		* @public
@@ -440,8 +434,7 @@
 		/**
 		* Releases all of the [binding's]{@link enyo.Binding} parts and unregisters its 
 		* [observers]{@link enyo.ObserverSupport}. Typically, this method will not need to be called 
-		* directly unless the [binding]{@link enyo.Binding} was created without an 
-		* [owner]{@link enyo.Binding#owner}.
+		* directly unless the binding was created without an [owner]{@link enyo.Binding#owner}.
 		* 
 		* @returns {this} The callee for chaining.
 		* @public
@@ -536,13 +529,12 @@
 	});
 	
 	/**
-	* Retrieve a [binding]{@link enyo.Binding} by its global id.
+	* Retrieves a [binding]{@link enyo.Binding} by its global id.
 	*
 	* @param {String} euid The [Enyo global id]{@link external:EUID} by which to retrieve a 
 	*	[binding]{@link enyo.Binding}.
-	* @returns {enyo.Binding|undefined} A reference to the [binding]{@link enyo.Binding} if the id 
-	*	is found; otherwise, it will return 
-	*	[undefined]{@link external:undefined}.
+	* @returns {enyo.Binding|undefined} A reference to the binding if the id 
+	*	is found; otherwise, it will return [undefined]{@link external:undefined}.
 	* 
 	* @static
 	* @public
@@ -554,8 +546,8 @@
 	};
 	
 	/**
-	* Possible value of the [dirty]{@link enyo.Binding#dirty} property representing that the value 
-	* of [binding source]{@link enyo.Binding#source} has changed.
+	* Possible value of the [dirty]{@link enyo.Binding#dirty} property, indicating that the value 
+	* of the [binding source]{@link enyo.Binding#source} has changed.
 	* 
 	* @static
 	* @public
@@ -563,8 +555,8 @@
 	enyo.Binding.DIRTY_FROM = DIRTY_FROM;
 	
 	/**
-	* Possible value of the [dirty]{@link enyo.Binding#dirty} property representing that the value 
-	* of [binding target]{@link enyo.Binding#target} has changed.
+	* Possible value of the [dirty]{@link enyo.Binding#dirty} property, indicating that the value
+	* of the [binding target]{@link enyo.Binding#target} has changed.
 	* 
 	* @static
 	* @public
