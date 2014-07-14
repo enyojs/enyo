@@ -91,6 +91,8 @@ enyo.DataList.delegates.vertical = {
 		this.adjustPagePositions(list);
 		// now update the buffer
 		this.adjustBuffer(list);
+		// inform that list is already refreshed to superior kind 
+		// especially enyo.DataRepeater
 		list.hasRefreshed = true;
 	},
 	/**
