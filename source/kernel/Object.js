@@ -28,13 +28,13 @@
 	/**
 	* {@link enyo.Object} lies at the heart of the Enyo framework's implementations of property
 	* publishing, computed properties (via the {@link enyo.ComputedSupport} 
-	* [mixin]{@link external:mixin}, and data binding via the {@link enyo.BindingSupport} 
-	* [mixin]{@link external:mixin} and {@link enyo.Binding} object. It also provides several 
+	* [mixin]{@link external:mixin}), and data binding (via the {@link enyo.BindingSupport} 
+	* [mixin]{@link external:mixin} and {@link enyo.Binding} object). It also provides several 
 	* utility [functions]{@link external:Function} for its [subkinds]{@link external:subkind}.
 	*
 	* @class enyo.Object
 	* @mixes enyo.MixinSupport
-	* @mixes enyo.ObseverSupport
+	* @mixes enyo.ObserverSupport
 	* @mixes enyo.BindingSupport
 	* @public
 	*/
@@ -57,8 +57,8 @@
 		noDefer: true,
 
 		/**
-		* If the [destroy]{@link enyo.Object#destroy} method has been called this property will be
-		* `true`, otherwise `false`.
+		* If the [`destroy()`]{@link enyo.Object#destroy} method has been called, this property will be
+		* `true`; otherwise, `false`.
 		*
 		* @readonly
 		* @type {Boolean}
@@ -81,11 +81,11 @@
 		},
 
 		/**
-		* Import the values from the given [object]{@link external:Object}. Automatically called
+		* Imports the values from the given [object]{@link external:Object}. Automatically called
 		* from the [constructor]{@link enyo.Object#constructor}.
 		*
 		* @param {Object} props If provided, the [object]{@link external:Object} from which to 
-		*	retrieve [keys/values]{@link external:Object.keys} to mix-in.
+		*	retrieve [keys/values]{@link external:Object.keys} to mix in.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -113,10 +113,10 @@
 		},
 		
 		/**
-		* Call the [destroy]{@link enyo.Object#destroy} method for the named {@link enyo.Object} 
+		* Calls the [`destroy()`]{@link enyo.Object#destroy} method for the named {@link enyo.Object} 
 		* property.
 		*
-		* @param {String} name The name of the property to destroy if possible.
+		* @param {String} name The name of the property to destroy, if possible.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -131,7 +131,7 @@
 		
 		/**
 		* Sends a log message to the [console]{@link external:console}, prepended with the name of 
-		* the [kind]{@link external:kind} and method from which _log_ was invoked. Multiple 
+		* the [kind]{@link external:kind} and method from which `log()` was invoked. Multiple 
 		* [arguments]{@link external:arguments} are coerced to [String]{@link external:String} and 
 		* [joined with spaces]{@link external:Array.join}.
 		*
@@ -154,8 +154,8 @@
 		},
 		
 		/**
-		* Same as [log]{@link enyo.Object#log} except that it uses the 
-		* [console's warn]{@link external:console.warn} method (if it exists).
+		* Same as [`log()`]{@link enyo.Object#log}, except that it uses the 
+		* [console's `warn()`]{@link external:console.warn} method (if it exists).
 		*
 		* @public
 		*/
@@ -164,8 +164,8 @@
 		},
 		
 		/**
-		* Same as [log]{@link enyo.Object#log} except that it uses the 
-		* [console's error]{@link external:console.error} method (if it exists).
+		* Same as [`log()`]{@link enyo.Object#log} except that it uses the 
+		* [console's `error()`]{@link external:console.error} method (if it exists).
 		*
 		* @public
 		*/
@@ -174,12 +174,12 @@
 		},
 
 		/**
-		* Retrieves the value for the given path. The value can be retrieved as long as the given 
+		* Retrieves the value for the given path. The value may be retrieved as long as the given 
 		* path is resolvable relative to the given {@link enyo.Object}. See {@link enyo.getPath} for
 		* complete details.
 		*
-		* This method is backwards-compatible and will automatically call any existing _getter_
-		* method that uses the getProperty naming convention. (Moving forward, however, Enyo code
+		* This method is backwards-compatible and will automatically call any existing getter
+		* method that uses the "getProperty" naming convention. (Moving forward, however, Enyo code
 		* should use [computed properties]{@link enyo.ComputedSupport} instead of relying on the 
 		* getter naming convention.)
 		*
@@ -191,7 +191,7 @@
 		get: enyo.getPath,
 		
 		/**
-		* Updates the value for the given path. The value can be set as long as the given path is 
+		* Updates the value for the given path. The value may be set as long as the given path is 
 		* resolvable relative to the given {@link enyo.Object}. See {@link enyo.setPath} for 
 		* complete details.
 		*
@@ -204,12 +204,12 @@
 		set: enyo.setPath,
 	
 		/**
-		* Binds a [callback]{@link external:callback} to this [object]{@link enyo.Object}. If the 
-		* [object]{@link enyo.Object} has been destroyed, the bound method will be aborted cleanly 
+		* Binds a [callback]{@link external:callback} to this [object]{@link enyo.Object}.
+		* If the object has been destroyed, the bound method will be aborted cleanly,
 		* with no value returned.
 		*
-		* This method should generally be used instead of {@link enyo.bind} for running code in the 
-		* context of an instance of {@link enyo.Object} or one of its 
+		* This method should generally be used instead of {@link enyo.bind} for running
+		* code in the context of an instance of {@link enyo.Object} or one of its
 		* [subkinds]{@link external:subkind}.
 		*
 		* @alias enyo.bindSafely
@@ -221,7 +221,7 @@
 		},
 		
 		/**
-		* An abstract method (primarily) that sets the [destroyed]{@link enyo.Object#destroyed} 
+		* An abstract method (primarily) that sets the [`destroyed`]{@link enyo.Object#destroyed} 
 		* property to `true`.
 		*
 		* @returns {this} The callee for chaining.
@@ -263,7 +263,7 @@
 
 	/**
 	* This method creates a getter/setter for a published property of an {@link enyo.Object}, but is
-	* deprecated. It is maintained for purposes of backwards compatability. The preferred method is 
+	* deprecated. It is maintained for purposes of backwards compatibility. The preferred method is 
 	* to mark public and protected (private) methods and properties using documentation or other 
 	* means and rely on the [get]{@link enyo.Object#get} and [set]{@link enyo.Object#set} methods of
 	* {@link enyo.Object} instances.
