@@ -190,7 +190,7 @@
 			* A unique id for the [component]{@link enyo.Component}, usually automatically generated
 			* based on its position within the component hierarchy, although
 			* it may also be directly specified. {@link enyo.Control} uses this `id` value for the 
-			* DOM [`id`]@link enyo.Control#id} attribute.
+			* DOM [`id`]{@link enyo.Control#id} attribute.
 			* 
 			* @type {String}
 			* @default ''
@@ -199,10 +199,10 @@
 			id: '',
 			
 			/**
-			* The [component]{@link enyo.Component} that owns this [component]{@link enyo.Component}.
-			* It is usually implicitly defined during creation based on the 
-			* [createComponent]{@link enyo.Component#createComponent} call or 
-			* [components]{@link enyo.Component#components} hash.
+			* The [component]{@link enyo.Component} that owns this component.
+			* It is usually defined implicitly at creation time based on the 
+			* [`createComponent()`]{@link enyo.Component#createComponent} call or 
+			* the [`components`]{@link enyo.Component#components} hash.
 			*
 			* @type {enyo.Component}
 			* @default null
@@ -214,10 +214,9 @@
 			* This can be a [hash]{@link external:Object} of features to apply to 
 			* [chrome]{@link external:chrome} [components]{@link enyo.Component} of the base 
 			* [kind]{@link external:kind}. They are matched by [name]{@link enyo.Component#name} 
-			* (if the [component]{@link enyo.Component} you wish to modify does not have a 
-			* [name]{@link enyo.Component#name} this will not work). You can modify any properties 
-			* of the [component]{@link enyo.Component} except for _methods_. Setting this at runtime
-			* will have no effect.
+			* (if the component you wish to modify does not have a name, this will not work).
+			* You can modify any properties of the component except for methods. Setting a
+			* value for `componentOverrides` at runtime will have no effect.
 			* 
 			* @type {Object}
 			* @default null
@@ -324,13 +323,13 @@
 		},
 		
 		/**
-		* Removes this [component]{@link enyo.Component} from its 
-		* [owner]{@link enyo.Component#owner} (sets [owner]{@link enyo.Component#owner} to `null`) 
-		* and does any necessary cleanup. The [component]{@link enyo.Component} is flagged with a 
-		* _destroyed: true_ property. Usually, the [component]{@link enyo.Component} will be 
-		* suitable for garbage collection after being destroyed, unless user code keeps a reference 
+		* Removes this [component]{@link enyo.Component} from its
+		* [owner]{@link enyo.Component#owner} (setting `owner` to `null`)
+		* and does any necessary cleanup. The component is flagged with
+		* `destroyed: true`. Usually, the component will be suitable for garbage
+		* collection after being destroyed, unless user code keeps a reference
 		* to it.
-		* 
+		*
 		* @returns {this} The callee for chaining.
 		* @method
 		* @public
@@ -403,11 +402,10 @@
 		},
 		
 		/**
-		* Adds a [component]{@link enyo.Component} to the list of [components]{@link enyo.Component}
-		* owned by the current [component]{@link enyo.Component} 
-		* (i.e., [this.$]{@link enyo.Component#$}).
+		* Adds a [component]{@link enyo.Component} to the list of components
+		* owned by the current component (i.e., [this.$]{@link enyo.Component#$}).
 		* 
-		* @param {enyo.Component} comp The {@link enyo.Component} to add.
+		* @param {enyo.Component} comp The [component]{@link enyo.Component} to add.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -442,13 +440,13 @@
 		},
 		
 		/**
-		* Removes the {@link enyo.Component} from those known to be owned by this
-		* {@link enyo.Component}. This includes removing it from the [$ hash]{@link enyo.Component#$} 
-		* and from the [owner]{@link enyo.Component#owner} directly if {@link enyo.Component#publish} 
-		* is set to `true`.
+		* Removes the passed-in [component]{@link enyo.Component} from those known
+		* to be owned by this component. The component will be removed from the
+		* [$ hash]{@link enyo.Component#$}, and from the [owner]{@link enyo.Component#owner}
+		* directly if [`publish`]{@link enyo.Component#publish} is set to `true`.
 		* 
 		* @param {enyo.Component} comp The component to remove.
-		* @returns {this} Callee for chaining.
+		* @returns {this} The callee for chaining.
 		* @public
 		*/
 		removeComponent: function (comp) {
@@ -465,8 +463,8 @@
 		
 		/**
 		* Returns an [array]{@link external:Array} of owned [components]{@link enyo.Component}; in 
-		* other words, converts the [$ hash]{@link enyo.Component#$} into an 
-		* [array]{@link external:Array} and returns the [array]{@link external:Array}.
+		* other words, converts the [$ hash]{@link enyo.Component#$} into an array
+		* and returns the array.
 		* 
 		* @returns {enyo.Component[]} The [components]{@link enyo.Component} found in the
 		*	[$ hash]{@link enyo.Component#$}.
@@ -501,26 +499,25 @@
 		/**
 		* Creates and returns a [component]{@link enyo.Component} as defined by the combination of 
 		* a base and an additional property [hash]{@link external:Object}. The properties provided 
-		* in the standard property [hash]{@link external:Object} override those provided in the 
-		* additional property [hash]{@link external:Object}.
+		* in the standard property hash override those provided in the 
+		* additional property hash.
 		* 
-		* The created [component]{@link enyo.Component} passes through initialization machinery 
-		* provided by the creating [component]{@link enyo.Component}, which may supply special 
+		* The created component passes through initialization machinery 
+		* provided by the creating component, which may supply special 
 		* handling. Unless the [owner]{@link enyo.Component#owner} is explicitly specified, the new 
-		* [component]{@link enyo.Component} will be owned by the instance on which 
-		* [createComponent]{@link enyo.Component#createComponent} is called.
+		* component will be owned by the instance on which this method is called.
 		* 
 		* @example
-		* // Create a new component named _dynamic_ owned by _this_
+		* // Create a new component named 'dynamic', owned by 'this'
 		* // (will be available as this.$.dynamic).
 		* this.createComponent({name: 'dynamic'});
 		* 
 		* @example
-		* // Create a new component named _another_ owned by _other_
+		* // Create a new component named 'another' owned by 'other'
 		* // (will be available as other.$.another).
 		* this.createComponent({name: 'another'}, {owner: other});
 		* 
-		* @param {Object} props The declarative {@link external:kind} definition.
+		* @param {Object} props The declarative [kind]{@link external:kind} definition.
 		* @param {Object} ext Additional properties to be applied (defaults).
 		* @returns {enyo.Component} The instance created with the given parameters.
 		* @public
@@ -535,8 +532,8 @@
 		/**
 		* Creates [components]{@link enyo.Component} as defined by the [arrays]{@link external:Array}
 		* of base and additional property [hashes]{@link external:Object}. The standard and 
-		* additional property [hashes]{@link external:Object} are combined as described in 
-		* {@link enyo.Component#createComponent}.
+		* additional property hashes are combined as described in 
+		* [`createComponent()`]{@link enyo.Component#createComponent}.
 		* 
 		* @example
 		* // ask foo to create components _bar_ and _zot_, but set the owner of
@@ -575,18 +572,18 @@
 		},
 		
 		/**
-		* Bubbles an [event]{@link external:event} up an [object]{@link external:Object} chain, 
-		* starting with _this_.
+		* Bubbles an [event]{@link external:event} up an [object]{@link external:Object} chain,
+		* starting with `this`.
 		*
-		* A [handler]{@link enyo.Component~EventHandler} for an [event]{@link external:event} can be
-		* specified. See {@link enyo.Component~EventHandler} for complete details.
+		* A handler for an event may be specified. See {@link enyo.Component~EventHandler}
+		* for complete details.
 		* 
 		* @param {String} nom The name of the [event]{@link external:event} to bubble.
-		* @param {Object} [event] The [event]{@link external:event} [object]{@link external:Object} 
+		* @param {Object} [event] The [event]{@link external:event} [object]{@link external:Object}
 		*	to be passed along while bubbling.
 		* @param {enyo.Component} [sender=this] The {@link enyo.Component} responsible for
 		*	bubbling the [event]{@link external:event}.
-		* @returns {Boolean} `false` if unhandled or uninterrupted, `true` otherwise.
+		* @returns {Boolean} `false` if unhandled or uninterrupted; otherwise, `true`.
 		* @public
 		*/
 		bubble: function (nom, event, sender) {
@@ -600,16 +597,16 @@
 		},
 		
 		/**
-		* Bubbles an [event]{@link external:event} up an [object]{@link external:Object} chain, 
-		* starting __above__ _this_.
+		* Bubbles an [event]{@link external:event} up an [object]{@link external:Object} chain,
+		* starting _above_ `this`.
 		* 
-		* A [handler]{@link enyo.Component~EventHandler} for an [event]{@link external:event} can be
-		* specified. See {@link enyo.Component~EventHandler} for complete details.
+		* A handler for an event may be specified. See {@link enyo.Component~EventHandler}
+		* for complete details.
 		* 
 		* @param {String} nom The name of the [event]{@link external:event}.
-		* @param {Object} [event] The [event]{@link external:event} properties to pass along while 
+		* @param {Object} [event] The [event]{@link external:event} properties to pass along while
 		*	bubbling.
-		* @returns {Boolean} `false` if unhandled or uninterrupted, `true` otherwise.
+		* @returns {Boolean} `false` if unhandled or uninterrupted; otherwise, `true`.
 		* @public
 		*/
 		bubbleUp: function (nom, event) {
@@ -630,9 +627,9 @@
 		
 		/**
 		* Sends an [event]{@link external:event} to a named [delegate]{@link external:delegate}. 
-		* This [object]{@link external:Object} may dispatch an [event]{@link external:event{}} to 
+		* This [object]{@link external:Object} may dispatch an event to 
 		* itself via a [handler]{@link enyo.Component~EventHandler}, or to its 
-		* [owner]{@link enyo.Component#owner} via an [event]{@link external:event} property, e.g.:
+		* [owner]{@link enyo.Component#owner} via an event property, e.g.:
 		* 
 		*	handlers {
 		*		// 'tap' events dispatched to this.tapHandler
@@ -727,11 +724,11 @@
 		},
 		
 		/**
-		* Dispatches the [event]{@link external:event} to named [delegate]{@link external:delegate} 
-		* _nom_, if it exists. [Subkinds]{@link external:subkind} may re-route dispatches. Note that 
-		* both 'handlers' [events]{@link external:event} and [events]{@link external:event} 
-		* delegated from owned controls arrive here. If you need to handle these differently, you 
-		* may also need to override [dispatchEvent]{@link enyo.Component#dispatchEvent}.
+		* Dispatches the [event]{@link external:event} to named [delegate]{@link external:delegate}
+		* `nom`, if it exists. [Subkinds]{@link external:subkind} may re-route dispatches. Note that
+		* both 'handlers' events and events delegated from owned controls arrive here.
+		* If you need to handle these types of events differently, you may also need to
+		* override [`dispatchEvent()`]{@link enyo.Component#dispatchEvent}.
 		* 
 		* @param {String} nom The method name to dispatch the [event]{@link external:event}.
 		* @param {Object} [event] The [event]{@link external:event} [object]{@link external:Object} 
@@ -770,12 +767,12 @@
 		},
 		
 		/**
-		* Sends a message to myself and all of my [components]{@link enyo.Component}. You can stop a
-		* _waterfall_ into [components]{@link enyo.Component} owned by a receiving 
-		* [object]{@link external:Object} by returning a truthy value from the 
-		* [event]{@link external:event} [handler]{@link enyo.Component~EventHandler}.
+		* Sends a message to myself and all of my [components]{@link enyo.Component}.
+		* You can stop a waterfall into components owned by a receiving object
+		* by returning a truthy value from the [event]{@link external:event}
+		* [handler]{@link enyo.Component~EventHandler}.
 		* 
-		* @param {String} nom The name of the [event]{@link external:event} to _waterfall_.
+		* @param {String} nom The name of the [event]{@link external:event} to waterfall.
 		* @param {Object} [event] The [event]{@link external:event} [object]{@link external:Object} 
 		*	to pass along.
 		* @param {enyo.Component} [sender=this] The originator of the [event]{@link external:event}.
@@ -832,8 +829,8 @@
 		/**
 		* Sets a flag that disables [event]{@link external:event} propagation for this 
 		* [component]{@link enyo.Component}. Also increments an internal counter that tracks the 
-		* number of times the [unsilence]{@link enyo.Component#unsilence} method must be called
-		* before [event]{@link external:event} propagation will continue.
+		* number of times the [`unsilence()`]{@link enyo.Component#unsilence} method must be called
+		* before event propagation will continue.
 		* 
 		* @returns {this} The callee for chaining.
 		* @public
@@ -847,10 +844,10 @@
 		
 		/**
 		* Determines if the [object]{@link external:Object} is currently 
-		* [silenced]{@link enyo.Component#_silenced}, which will prevent propagatation of
+		* [silenced]{@link enyo.Component#_silenced}, which will prevent propagation of
 		* [events]{@link external:event} (of any kind).
 		* 
-		* @returns {Boolean} `true` if silenced, `false` otherwise.
+		* @returns {Boolean} `true` if silenced; otherwise, `false`.
 		* @public
 		*/
 		isSilenced: function () {
@@ -860,10 +857,10 @@
 		/**
 		* Allows [event]{@link external:event} propagation for this [component]{@link enyo.Component} 
 		* if the internal silence counter is `0`; otherwise, decrements the counter by one. For 
-		* [event]{@link external:event} propagation to resume, this method must be called one time 
-		* for each call to [silence]{@link enyo.Component#silence}.
+		* event propagation to resume, this method must be called one time 
+		* for each call to [`silence()`]{@link enyo.Component#silence}.
 		* 
-		* @returns {Boolean} `true` if the {@link enyo.Component} is now unsilenced completely,
+		* @returns {Boolean} `true` if the {@link enyo.Component} is now unsilenced completely;
 		*	`false` if it remains silenced.
 		* @public
 		*/
@@ -874,28 +871,27 @@
 		},
 		
 		/**
-		* Creates a new [job]{@link enyo.job} tied to this instance of the 
-		* [component]{@link enyo.Component}. If the [component]{@link enyo.Component} is 
-		* [destroyed]{@link enyo.Component#destroy}, any [jobs]{@link enyo.job} associated with it 
+		* Creates a new [job]{@link enyo.job} tied to this instance of the
+		* [component]{@link enyo.Component}. If the component is
+		* [destroyed]{@link enyo.Component#destroy}, any jobs associated with it
 		* will be stopped.
 		* 
-		* If you start a [job]{@link enyo.job} with the same name as a pending [job]{@link enyo.job},
-		* the original [job]{@link enyo.job} will be stopped; this can be useful for resetting 
+		* If you start a job with the same name as a pending job,
+		* the original job will be stopped; this can be useful for resetting
 		* timeouts.
 		* 
-		* You may supply a priority level (1-10) at which the [job]{@link enyo.job} should be 
+		* You may supply a priority level (1-10) at which the job should be
 		* executed. The default level is `5`. Setting the priority lower than `5` (or setting it to
-		* the string `low`) will defer the [job]{@link enyo.job} if an animation is in progress, 
+		* the string `"low"`) will defer the job if an animation is in progress,
 		* which can help to avoid stuttering.
 		* 
 		* @param {String} nom The name of the [job]{@link enyo.job} to start.
-		* @param {(Function|String)} job Either the name of a method or a 
-		*	[function]{@link external:Function} to execute as the 
-		*	requested [job]{@link enyo.job}.
-		* @param {Number} wait The number of milliseconds to wait before starting the 
-		*	[job]{@link enyo.job}.
-		* @param {Number} [priority=5] The priority value to be associated with this 
-		*	[job]{@link enyo.job}.
+		* @param {(Function|String)} job Either the name of a method or a
+		*	[function]{@link external:Function} to execute as the requested job.
+		* @param {Number} wait The number of milliseconds to wait before starting
+		*	the job.
+		* @param {Number} [priority=5] The priority value to be associated with this
+		*	job.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -931,16 +927,15 @@
 		},
 		
 		/**
-		* Execute the [job]{@link enyo.job} immediately, then prevent any other calls to 
-		* _throttleJob_ with the same [job]{@link enyo.job} name from running for the specified
-		* amount of time.
+		* Executes the specified [job]{@link enyo.job} immediately, then prevents
+		* any other calls to `throttleJob()` with the same job name from running for
+		* the specified amount of time.
 		* 
 		* @param {String} nom The name of the [job]{@link enyo.job} to throttle.
-		* @param {(Function|String)} job Either the name of a method or a 
-		*	[function]{@link external:Function} to execute as the 
-		*	requested [job]{@link enyo.job}.
-		* @param {Number} wait The number of milliseconds to wait before executing the 
-		*	[job]{@link enyo.job} again.
+		* @param {(Function|String)} job Either the name of a method or a
+		*	[function]{@link external:Function} to execute as the requested job.
+		* @param {Number} wait The number of milliseconds to wait before executing the
+		*	job again.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
