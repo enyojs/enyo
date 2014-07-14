@@ -1,11 +1,10 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.UiComponent_ implements a container strategy suitable for presentation layers.
+	* {@link enyo.UiComponent} implements a container strategy suitable for presentation layers.
 	* 
-	* _UiComponent_ itself is abstract. Concrete [subkinds]{@glossary subkind} include
-	* <a href="#enyo.Control">enyo.Control</a> (for HTML/DOM) and
-	* <a href="#enyo.canvas.Control">enyo.canvas.Control</a>
-	* (for Canvas contexts).
+	* `UiComponent` itself is abstract. Concrete [subkinds]{@link external:subkind} include
+	* {@link enyo.Control} (for HTML/DOM) and
+	* {@link enyo.canvas.Control} (for Canvas contexts).
 	*
 	* @class enyo.UiComponent
 	* @extends enyo.Component
@@ -32,7 +31,7 @@
 
 			/** 
 			* The [UiComponent]{@link enyo.UiComponent} that physically contains this 
-			* [component]{@link enyo.Component} in * the DOM.
+			* [component]{@link enyo.Component} in the DOM.
 			*
 			* @type {enyo.UiComponent}
 			* @default null
@@ -41,8 +40,8 @@
 			container: null,
 
 			/**
-			* The [UiComponent]{@link enyo.UiComponent} that owns this 
-			* [component]{@link enyo.Component} for purposes of [event]{@glossary event} 
+			* The [UiComponent]{@link enyo.UiComponent} that owns this
+			* [component]{@link enyo.Component} for purposes of [event]{@link external:event}
 			* propagation.
 			*
 			* @type {enyo.UiComponent}
@@ -53,7 +52,7 @@
 
 			/**
 			* The [UiComponent]{@link enyo.UiComponent} that will physically contain new items added
-			* by calls to [_createComponent_]{@link enyo.UiComponent#createComponent}.
+			* by calls to [`createComponent()`]{@link enyo.UiComponent#createComponent}.
 			*
 			* @type {String}
 			* @default 'client'
@@ -62,7 +61,7 @@
 			controlParentName: 'client',
 			
 			/** 
-			* A [kind]{@glossary kind} used to manage the size and placement of child 
+			* A [kind]{@link external:kind} used to manage the size and placement of child 
 			* [components]{@link enyo.Component}.
 			*
 			* @type {String}
@@ -80,15 +79,14 @@
 		},
 
 		/**
-		* When set, provides a [control]{@link enyo.Control} reference used to indicate where a 
-		* newly-created [component]{@link enyo.Component} should be added in the 
-		* [UiComponent's]{@link enyo.UiComponent} [array]{@glossary Array} of children. This is 
-		* typically used when dynamically creating children (rather than at design time). If set to 
-		* `null`, the new [control]{@link enyo.Control} will be added at the beginning of the 
-		* [array]{@glossary Array}; if set to a specific existing [control]{@link enyo.Control}, the
-		* new [control]{@link enyo.Control} will be added before the specified 
-		* [control]{@link enyo.Control}. If left as `undefined`, the default behavior is to add the 
-		* new [control]{@link enyo.Control} at the end of the [array]{@glossary Array}.
+		* When set, provides a [control]{@link enyo.Control} reference used to indicate where a
+		* newly-created [component]{@link enyo.Component} should be added in the
+		* [UiComponent's]{@link enyo.UiComponent} [array]{@link external:Array} of children. This is
+		* typically used when creating children dynamically (rather than at design time). If set
+		* to `null`, the new control will be added at the beginning of the array; if set to a
+		* specific existing control, the new control will be added before the specified
+		* control. If left as `undefined`, the default behavior is to add the new control
+		* at the end of the array.
 		*
 		* @type {enyo.Control}
 		* @default undefined
@@ -148,31 +146,30 @@
 		/**
 		* Creates [components]{@link enyo.Component} as defined by the [arrays]{@link external:Array}
 		* of base and additional property [hashes]{@link external:Object}. The standard and 
-		* additional property [hashes]{@link external:Object} are combined as described in 
+		* additional property hashes are combined as described in
 		* {@link enyo.Component#createComponent}.
 		* 
 		* @example
-		* // ask foo to create components _bar_ and _zot_, but set the owner of
-		* // both components to _this_.
+		* // ask foo to create components 'bar' and 'zot', but set the owner of
+		* // both components to 'this'.
 		* this.$.foo.createComponents([
 		*	{name: 'bar'},
 		*	{name: 'zot'}
 		* ], {owner: this});
 		*
-		* As implemented, [_controlParentName_]{@link enyo.UiComponent#controlParentName} only works
-		* to identify an owned [control]{@link enyo.Control} created via _createComponents_ 
-		* (i.e., usually in our _components_ block). To attach a _controlParent_ via other means, 
-		* one must call [_discoverControlParent_]{@link enyo.UiComponent#discoverControlParent} or 
-		* set _controlParent_ directly.
+		* As implemented, [`_controlParentName_`]{@link enyo.UiComponent#controlParentName} only works
+		* to identify an owned control created via `createComponents()`
+		* (i.e., usually in our `components` block). To attach a `controlParent` via other means, 
+		* one must call [`discoverControlParent()`]{@link enyo.UiComponent#discoverControlParent} or 
+		* set `controlParent` directly.
 		* 
-		* We could call [_discoverControlParent_]{@link enyo.UiComponent#discoverControlParent} in 
-		* [_addComponent_]{@link enyo.Component#addComponent}, but it would cause a lot of useless 
-		* checking.
+		* We could call `discoverControlParent()` in
+		* [`addComponent()`]{@link enyo.Component#addComponent}, but that would
+		* cause a lot of useless checking.
 		* 
 		* @param {Object[]} props The array of {@link enyo.Component} definitions to be created.
 		* @param {Object} ext Additional properties to be supplied as defaults for each.
-		* @returns {enyo.Component[]} The array of [components]{@link enyo.Component} that were
-		*	created.
+		* @returns {enyo.Component[]} The array of components that were created.
 		* @method
 		* @public
 		*/
@@ -234,14 +231,13 @@
 		},
 
 		/**
-		* Determines if the [control]{@link enyo.Control} is a descendant of another 
-		* [control]{@Link enyo.Control}.
+		* Determines whether the [control]{@link enyo.Control} is a descendant of
+		* another control.
 		* 
-		* Note: Oddly, a [control]{@link enyo.Control} is considered a descendant of itself.
+		* Note: Oddly, a control is considered to be a descendant of itself.
 		*
-		* @param {enyo.Control} ancestor The control [control]{@link enyo.Control} whose lineage 
-		*	will be checked to determine if the current [control]{@link enyo.Control} is a 
-		*	descendant.
+		* @param {enyo.Control} ancestor The [control]{@link enyo.Control} whose lineage 
+		*	will be checked to determine whether the current control is a descendant.
 		* @public
 		*/
 		isDescendantOf: function (ancestor) {
@@ -255,7 +251,7 @@
 		/**
 		* Returns all controls.
 		*
-		* @returns {enyo.Control[]} An [array]{@glossary Array} of [controls]{@link enyo.Control}.
+		* @returns {enyo.Control[]} An [array]{@link external:Array} of [controls]{@link enyo.Control}.
 		* @public
 		*/
 		getControls: function () {
@@ -265,7 +261,7 @@
 		/**
 		* Returns all non-chrome controls.
 		*
-		* @returns {enyo.Control[]} An [array]{@glossary Array} of [controls]{@link enyo.Control}.
+		* @returns {enyo.Control[]} An [array]{@link external:Array} of [controls]{@link enyo.Control}.
 		* @public
 		*/
 		getClientControls: function () {
@@ -280,7 +276,7 @@
 
 		/**
 		* Destroys "client controls", the same set of [controls]{@link enyo.Control} returned by 
-		* [_getClientControls_]{@link enyo.UiComponent#getClientControls}.
+		* [`getClientControls()`]{@link enyo.UiComponent#getClientControls}.
 		*
 		* @public
 		*/
@@ -438,7 +434,7 @@
 
 		/**
 		* Call after this [control]{@link enyo.Control} has been resized to allow it to process the 
-		* size change. To respond to a resize, override _handleResize_ instead. Acts as syntactic 
+		* size change. To respond to a resize, override `handleResize()` instead. Acts as syntactic 
 		* sugar for `waterfall('onresize')`.
 		* 
 		* @public
@@ -467,9 +463,8 @@
 		* [event]{@link external:event} [handler]{@link enyo.Component~EventHandler}.
 		* 
 		* @param {String} nom The name of the [event]{@link external:event}.
-		* @param {Object} [event] The [event]{@link external:event} [object]{@link external:Object} 
-		*	to pass along.
-		* @param {enyo.Component} [sender=this] The [event]{@link external:event} originator.
+		* @param {Object} [event] The event object to pass along.
+		* @param {enyo.Component} [sender=this] The event's originator.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -518,11 +513,11 @@
 	};
 
 	/**
-	* Default owner for ownerless [UiComponents]{@link enyo.UiComponent} to allow notifying such 
-	* [UiComponents]{@link enyo.UiComponent} of important system events like window resize.
+	* Default owner assigned to ownerless [UiComponents]{@link enyo.UiComponent},
+	* to allow such UiComponents to be notified of important system events like window resize.
 	*
-	* NOTE: Ownerless [UiComponents]{@link enyo.UiComponent will not be garbage collected unless 
-	* explicitly destroyed, as they will be referenced by _enyo.master_.
+	* NOTE: Ownerless [UiComponents]{@link enyo.UiComponent} will not be garbage collected unless 
+	* explicitly destroyed, as they will be referenced by `enyo.master`.
 	*
 	* @private
 	*/
