@@ -548,7 +548,7 @@
 				// develper intended to make this control un-rendered 
 				// until there is a request to show
 				if (this.renderOnShow && !this.generated) {
-					this.setCanGenerate = true;
+					this.setCanGenerate(true);
 					this.render();
 				}
 			}			
