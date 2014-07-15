@@ -117,14 +117,14 @@
 	};
 
 	/**
-	* A wrapper for [`console.log()`]{@link external:console.log}, compatible
+	* A wrapper for [`console.log()`]{@glossary console.log}, compatible
 	* across supported platforms. Will output only if the current
-	* [log level]{@link enyo.logging.level} allows it. [Object]{@link external:Object}
-	* parameters will be serialized via [`JSON.stringify()`]{@link external:JSON.stringify}
+	* [log level]{@link enyo.logging.level} allows it. [Object]{@glossary Object}
+	* parameters will be serialized via [`JSON.stringify()`]{@glossary JSON.stringify}
 	* automatically.
 	*
 	* @utility
-	* @see [console.log]{@link external:console.log}
+	* @see {@glossary console.log}
 	* @param {...*} - The arguments to be logged.
 	* @public
 	*/
@@ -133,14 +133,14 @@
 	};
 
 	/**
-	* A wrapper for [`console.warn()`]{@link external:console.warn}, compatible
+	* A wrapper for [`console.warn()`]{@glossary console.warn}, compatible
 	* across supported platforms. Will output only if the current
-	* [log level]{@link enyo.logging.level} allows it. [Object]{@link external:Object}
-	* parameters will be serialized via [`JSON.stringify()`]{@link external:JSON.stringify}
+	* [log level]{@link enyo.logging.level} allows it. [Object]{@glossary Object}
+	* parameters will be serialized via [`JSON.stringify()`]{@glossary JSON.stringify}
 	* automatically.
 	*
 	* @utillity
-	* @see [console.warn]{@link external:console.warn}
+	* @see {@glossary console.warn}
 	* @param {...*} - The arguments to be logged.
 	* @public
 	*/
@@ -149,10 +149,10 @@
 	};
 
 	/**
-	* A wrapper for [`console.error()`]{@link external:console.error} compatible
+	* A wrapper for [`console.error()`]{@glossary console.error}, compatible
 	* across supported platforms. Will output only if the current
-	* [log level]{@link enyo.logging.level} allows it. [Object]{@link external:Object}
-	* parameters will be serialized via [`JSON.stringify()`]{@link external:JSON.stringify}
+	* [log level]{@link enyo.logging.level} allows it. [Object]{@glossary Object}
+	* parameters will be serialized via [`JSON.stringify()`]{@glossary JSON.stringify}
 	* automatically.
 	*
 	* @utility

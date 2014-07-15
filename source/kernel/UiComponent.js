@@ -2,7 +2,7 @@
 	/**
 	* {@link enyo.UiComponent} implements a container strategy suitable for presentation layers.
 	* 
-	* `UiComponent` itself is abstract. Concrete [subkinds]{@link external:subkind} include
+	* `UiComponent` itself is abstract. Concrete [subkinds]{@glossary subkind} include
 	* {@link enyo.Control} (for HTML/DOM) and
 	* {@link enyo.canvas.Control} (for Canvas contexts).
 	*
@@ -41,7 +41,7 @@
 
 			/**
 			* The [UiComponent]{@link enyo.UiComponent} that owns this
-			* [component]{@link enyo.Component} for purposes of [event]{@link external:event}
+			* [component]{@link enyo.Component} for purposes of [event]{@glossary event}
 			* propagation.
 			*
 			* @type {enyo.UiComponent}
@@ -61,7 +61,7 @@
 			controlParentName: 'client',
 			
 			/** 
-			* A [kind]{@link external:kind} used to manage the size and placement of child 
+			* A [kind]{@glossary kind} used to manage the size and placement of child 
 			* [components]{@link enyo.Component}.
 			*
 			* @type {String}
@@ -81,7 +81,7 @@
 		/**
 		* When set, provides a [control]{@link enyo.Control} reference used to indicate where a
 		* newly-created [component]{@link enyo.Component} should be added in the
-		* [UiComponent's]{@link enyo.UiComponent} [array]{@link external:Array} of children. This is
+		* [UiComponent's]{@link enyo.UiComponent} [array]{@glossary Array} of children. This is
 		* typically used when creating children dynamically (rather than at design time). If set
 		* to `null`, the new control will be added at the beginning of the array; if set to a
 		* specific existing control, the new control will be added before the specified
@@ -144,7 +144,7 @@
 		}),
 
 		/**
-		* Creates [components]{@link enyo.Component} as defined by the [arrays]{@link external:Array}
+		* Creates [components]{@link enyo.Component} as defined by the [arrays]{@glossary Array}
 		* of base and additional property [hashes]{@link external:Object}. The standard and 
 		* additional property hashes are combined as described in
 		* {@link enyo.Component#createComponent}.
@@ -251,7 +251,7 @@
 		/**
 		* Returns all controls.
 		*
-		* @returns {enyo.Control[]} An [array]{@link external:Array} of [controls]{@link enyo.Control}.
+		* @returns {enyo.Control[]} An [array]{@glossary Array} of [controls]{@link enyo.Control}.
 		* @public
 		*/
 		getControls: function () {
@@ -261,7 +261,7 @@
 		/**
 		* Returns all non-chrome controls.
 		*
-		* @returns {enyo.Control[]} An [array]{@link external:Array} of [controls]{@link enyo.Control}.
+		* @returns {enyo.Control[]} An [array]{@glossary Array} of [controls]{@link enyo.Control}.
 		* @public
 		*/
 		getClientControls: function () {

@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* {@link enyo.Layout} is the base [kind]{@link external:kind} for layout
+	* {@link enyo.Layout} is the base [kind]{@glossary kind} for layout
 	* kinds. Layout kinds are used by {@link enyo.UiComponent}-based
 	* [controls]{@link enyo.Control} to allow for arranging of child controls by
 	* setting the [`layoutKind`]{@link enyo.UiComponent#layoutKind} property.
@@ -30,7 +30,7 @@
 
 		/** 
 		* CSS class that's added to the [control]{@link enyo.Control} using this 
-		* [layout]{@link enyo.Layout} [kind]{@link external:kind}.
+		* [layout]{@link enyo.Layout} [kind]{@glossary kind}.
 		*
 		* @type {String}
 		* @default ''
