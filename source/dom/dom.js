@@ -468,7 +468,7 @@
 		* @public
 		*/
 		addBodyClass: function(s) {
-			if (!enyo.exists(enyo.roots)) {
+			if (!enyo.exists(enyo.roots) || enyo.roots.length === 0) {
 				if (enyo.dom._bodyClasses) {
 					enyo.dom._bodyClasses.push(s);
 				} else {
