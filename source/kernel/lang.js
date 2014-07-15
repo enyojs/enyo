@@ -2,8 +2,8 @@
 	
 	/**
 	* A polyfill for platforms that don't yet support
-	* [bind]{@link external:Function.prototype.bind}. As is explained in the linked article, this
-	* polyfill handles the general use-case but cannot exactly mirror ECMA-262 version 5
+	* [`bind()`]{@link external:Function.prototype.bind}. As explained in the linked article, this
+	* polyfill handles the general use case but cannot exactly mirror the ECMA-262 version 5
 	* implementation specification. This is an adaptation of the example promoted
 	* [here]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind}.
 	*/
@@ -59,8 +59,8 @@
 	enyo.nar = [];
 	
 	/**
-	* This name is reported in inspectors as the type of objects created via delegate, otherwise we
-	* would just use {@link enyo.nop}
+	* This name is reported in inspectors as the type of objects created via delegate;
+	* otherwise, we would just use {@link enyo.nop}.
 	*
 	* @private
 	*/
@@ -92,7 +92,7 @@
 	// ----------------------------------
 	
 	/**
-	* Determine if a variable is defined.
+	* Determines whether a variable is defined.
 	* 
 	* @param {*} target Anything that can be compared to `undefined`.
 	* @returns {Boolean} `true` if defined, `false` otherwise.
@@ -108,7 +108,7 @@
 	* Creates a unique identifier (with an optional prefix) and returns the identifier as a string.
 	*
 	* @param {String} [prefix] The prefix to prepend to the generated unique id.
-	* @returns {String} An optionally prefixed identifier.
+	* @returns {String} An optionally-prefixed identifier.
 	* @public
 	*/
 	enyo.uid = function (prefix) {
@@ -118,7 +118,7 @@
 	/**
 	* RFC4122 uuid generator for the browser.
 	*
-	* @returns {String} A [RFC4122]{@link external:UUID} compliant universally unique identifier.
+	* @returns {String} An [RFC4122]{@link external:UUID}-compliant, universally unique identifier.
 	* @public
 	*/
 	enyo.uuid = function () {
@@ -137,7 +137,7 @@
 	/**
 	* Generates a random number using [Math.random]{@link external:Math.random}.
 	*
-	* @param {Number} bound The multiplier by which to generate the product.
+	* @param {Number} bound The multiplier used to generate the product.
 	* @returns {Number} A random number.
 	* @public
 	*/
@@ -148,10 +148,11 @@
 	var toString = Object.prototype.toString;
 
 	/**
-	* Determine if a given variable is a [String]{@link external:String}.
+	* Determines whether a given variable is a [String]{@link external:String}.
 	*
-	* @param {*} The variable to determine is a [String]{@link external:String}.
-	* @returns {Boolean} `true` if a [String]{@link external:String}, `false` otherwise.
+	* @param {*} it The variable to be tested.
+	* @returns {Boolean} `true` if variable is a [String]{@link external:String};
+	* otherwise, `false`.
 	* @public
 	*/
 	enyo.isString = function (it) {
@@ -159,10 +160,11 @@
 	};
 
 	/**
-	* Determine if a given variable is a [Function]{@link external:Function}.
+	* Determines whether a given variable is a [Function]{@link external:Function}.
 	* 
-	* @param {*} it The variable to determine is a [Function]{@link external:Function}.
-	* @returns {Boolean} `true` if a [Function]{@link external:Function}, `false` otherwise.
+	* @param {*} it The variable to be tested.
+	* @returns {Boolean} `true` if variable is a [Function]{@link external:Function};
+	* otherwise, `false`.
 	* @public
 	*/
 	enyo.isFunction = function (it) {
@@ -170,10 +172,11 @@
 	};
 
 	/**
-	* Determine if a given variable is an [Array]{@link external:Array}.
+	* Determines whether a given variable is an [Array]{@link external:Array}.
 	*
-	* @param {*} it The variable to determine is an [Array]{@link external:Array}.
-	* @returns {Boolean} `true` if an [Array]{@link external:Array}, `false` otherwise.
+	* @param {*} it The variable to be tested.
+	* @returns {Boolean} `true` if variable is an [Array]{@link external:Array};
+	* otherwise, `false`.
 	* @method
 	* @public
 	*/
@@ -182,10 +185,11 @@
 	};
 
 	/**
-	* Determine if a given variable is an [Object]{@link external:Object}.
+	* Determines whether a given variable is an [Object]{@link external:Object}.
 	*
-	* @param {*} it The variable to determine is an [Object]{@link external:Object}.
-	* @returns {Boolean} `true` if an [Object]{@link external:Object}, `false` otherwise.
+	* @param {*} it The variable to be tested.
+	* @returns {Boolean} `true` if variable is an [Object]{@link external:Object};
+	* otherwise, `false`.
 	* @method
 	* @public
 	*/
@@ -195,10 +199,11 @@
 	};
 
 	/**
-	* Determine if a given variable is an explicit boolean `true`.
+	* Determines whether a given variable is an explicit boolean `true`.
 	*
-	* @param {*} it The variable to determine is an explicit `true`.
-	* @returns {Boolean} `true` if an explicit `true`, `false` otherwise.
+	* @param {*} it The variable to be tested.
+	* @returns {Boolean} `true` if variable is an explicit `true`; otherwise,
+	* `false`.
 	* @public
 	*/
 	enyo.isTrue = function (it) {
@@ -206,7 +211,7 @@
 	};
 	
 	/**
-	* Bind the `this` context of any method to a scope and a variable number of provided initial
+	* Binds the `this` context of any method to a scope and a variable number of provided initial
 	* parameters.
 	*
 	* @param {Object} scope The `this` context for the method.
@@ -246,9 +251,9 @@
 	};
 	
 	/**
-	* Binds a callback to a scope. If the object has a 'destroyed' property that's truthy, then the
+	* Binds a callback to a scope. If the object has a `destroyed` property that's truthy, then the
 	* callback will not be run if called. This can be used to implement both
-	* {@link enyo.Object.bindSafely} and for {@link enyo.Object}-like objects like
+	* {@link enyo.Object.bindSafely} and {@link enyo.Object}-like objects like
 	* {@link enyo.Model} and {@link enyo.Collection}.
 	*
 	* @param {Object} scope The `this` context for the method.
@@ -281,14 +286,14 @@
 	};
 	
 	/**
-	* Calls the provided _method_ on _scope_, asynchronously.
+	* Calls the provided `method` on `scope`, asynchronously.
 	*
-	* Uses [window.setTimeout]{@link external:window.setTimeout} with minimum delay, usually around
-	* 10ms.
+	* Uses [`window.setTimeout()`]{@link external:window.setTimeout} with minimum delay,
+	* usually around 10ms.
 	*
-	* Additional arguments are passed to _method_ when it is invoked.
+	* Additional arguments are passed to `method` when it is invoked.
 	*
-	* If only a single argument is supplied, will just call that function asyncronously without
+	* If only a single argument is supplied, will just call that function asynchronously without
 	* doing any additional binding.
 	*
 	* @param {Object} scope The `this` context for the method.
@@ -308,8 +313,8 @@
 	};
 
 	/**
-	* Calls the provided _method_ ([String]{@link external:String}) on _scope_ with optional
-	* arguments _args_ ([Array]{@link external:Array}), if the object and method exist.
+	* Calls the provided `method` ([String]{@link external:String}) on `scope` with optional
+	* arguments `args` ([Array]{@link external:Array}), if the object and method exist.
 	*
 	* @example
 	* 	enyo.call(myWorkObject, 'doWork', [3, 'foo']);
@@ -331,11 +336,11 @@
 	};
 
 	/**
-	* Returns the current time in milliseconds. On platforms that support it will use
-	* [Date.now]{@link external:Date.now} otherwise it will be equivalent to
-	* [new Date().getTime()]{@link external:Date.getTime}.
+	* Returns the current time in milliseconds. On platforms that support it,
+	* [`Date.now()`]{@link external:Date.now} will be used; otherwise this will
+	* be equivalent to [`new Date().getTime()`]{@link external:Date.getTime}.
 	* 
-	* @returns {Number} The milliseconds representing the current time.
+	* @returns {Number} Number of milliseconds representing the current time.
 	* @method
 	* @public
 	*/
@@ -345,13 +350,14 @@
 	};
 
 	/**
-	* When [window.performance]{@link external:window.performance} is available, supply a
-	* high-precision, high performance monotonic timestamp, which is independent of changes to the
-	* system clock and safer for use in animation, etc. Falls back to {@link enyo.now} (based on the
-	* JS [Date]{@link external:Date} object), which is subject to system time changes.
+	* When [`window.performance`]{@link external:window.performance} is available, supplies
+	* a high-precision, high-performance monotonic timestamp, which is independent of
+	* changes to the system clock and thus safer for use in animation, etc. Falls back to
+	* [`enyo.now()`]{@link enyo.now} (based on the JavaScript [Date]{@link external:Date}
+	* object), which is subject to system time changes.
 	* 
-	* @returns {Number} The milliseconds representing the current time or time since beginning
-	*                       execution of the application as reported by the platform.
+	* @returns {Number} Number of milliseconds representing the current time or time since
+	*                   start of application execution as reported by the platform.
 	* @method
 	* @public
 	*/
@@ -371,11 +377,11 @@
 	* A fast-path enabled global getter that takes a string path, which may be a full path (from
 	* context window/Enyo) or a relative path (to the execution context of the method). It knows how
 	* to check for and call the backwards-compatible generated getters, as well as how to handle
-	* computed properties. Returns _undefined_ if the object at the given path cannot be found. May
+	* computed properties. Returns `undefined` if the object at the given path cannot be found. May
 	* safely be called on non-existent paths.
 	*	
 	* @param {String} path The path from which to retrieve a value.
-	* @returns {*} The value for the given path or `undefined` if the path could not be
+	* @returns {*} The value for the given path, or `undefined` if the path could not be
 	*                  completely resolved.
 	* @method enyo.getPath
 	* @public
@@ -556,8 +562,8 @@
 	// ----------------------------------
 	
 	/**
-	* Uppercase a given string. Will coerce to a [String]{@link external:String} if
-	* possible/necessary.
+	* Uppercases a given string. Will coerce to a [String]{@link external:String}
+	* if possible/necessary.
 	*
 	* @param {String} str The string to uppercase.
 	* @returns {String} The uppercased string.
@@ -571,8 +577,8 @@
 	};
 	
 	/**
-	* Lowercase a given string. Will coerce to a [String]{@link external:String} if
-	* possible/necessary.
+	* Lowercases a given string. Will coerce to a [String]{@link external:String}
+	* if possible/necessary.
 	*
 	* @param {String} str The string to lowercase.
 	* @returns {String} The lowercased string.
@@ -586,7 +592,7 @@
 	};
 	
 	/**
-	* Capitalize a given string.
+	* Capitalizes a given string.
 	*
 	* @param {String} str The string to capitalize.
 	* @returns {String} The capitalized string.
@@ -597,7 +603,7 @@
 	};
 
 	/**
-	* Un-capitalize a given string.
+	* Un-capitalizes a given string.
 	* 
 	* @param {String} str The string to un-capitalize.
 	* @returns {String} The un-capitalized string.
@@ -608,8 +614,8 @@
 	};
 	
 	/**
-	* Will inject an arbitrary number of values, in order, into a template string at positions held
-	* by `%.`.
+	* Injects an arbitrary number of values, in order, into a template string at
+	* positions marked by `"%."`.
 	*
 	* @param {String} template The string template to inject with values.
 	* @param {...String} val The values to inject into the template.
@@ -638,8 +644,8 @@
 	};
 	
 	/**
-	* Takes a string and trims leading and trailing spaces. If the string has no length, is not a
-	* string, or is a falsy value, it will be returned without modification.
+	* Takes a string and trims leading and trailing spaces. Strings with no length,
+	* non-strings, and falsy values will be returned without modification.
 	*
 	* @param {String} str The string from which to remove whitespace.
 	* @returns {String} The trimmed string.
@@ -655,7 +661,7 @@
 	
 	/**
 	* A [polyfill]{@link external:polyfill} for platforms that don't support
-	* [Object.create]{@link external:Object.create}
+	* [`Object.create()`]{@link external:Object.create}.
 	*/
 	Object.create = Object.create || (function () {
 		var Anon = function () {};
@@ -670,7 +676,7 @@
 	
 	/**
 	* A [polyfill]{@link external:polyfill} for platforms that don't support
-	* [Object.keys]{@link external:Object.keys}
+	* [`Object.keys()`]{@link external:Object.keys}.
 	*/
 	Object.keys = Object.keys || function (obj) {
 		var results = [];
@@ -701,7 +707,7 @@
 	};
 	
 	/**
-	* Returns an array of all own enumerable properties found on a given object.
+	* Returns an array of all known enumerable properties found on a given object.
 	*
 	* @alias Object.keys.
 	* @method enyo.keys
@@ -710,9 +716,10 @@
 	enyo.keys = Object.keys;
 	
 	/**
-	* Convenience method that takes an array of properties and an object as parameters. Returns a
-	* new object with just those properties named in the array that are found to exist on the base
-	* object. If the third parameter is true, falsy values will be ignored.
+	* Convenience method that takes an [array]{@link external:Array} of properties
+	* and an [object]{@link external:Object} as parameters. Returns a new object
+	* with only those properties named in the array that are found to exist on the
+	* base object. If the third parameter is `true`, falsy values will be ignored.
 	*
 	* @param {String[]} properties The properties to include on the returned object.
 	* @param {Object} object The object from which to retrieve values for the requested properties.
@@ -738,17 +745,18 @@
 	};
 
 	/**
-	* Convenience method that takes two objects as parameters. For each key from the first object,
-	* if the key also exists in the second object, a mapping of the key from the first object to the
-	* key from the second object is added to a result object, which is eventually returned. In other
-	* words, the returned object maps the named properties of the first object to the named
-	* properties of the second object. The optional third parameter is a boolean designating whether
-	* to pass unknown key/value pairs through to the new object. If true, those keys will exist on
-	* the returned object.
+	* Convenience method that takes two [objects]{@link external:Object} as parameters.
+	* For each key from the first object, if the key also exists in the second object,
+	* a mapping of the key from the first object to the key from the second object is
+	* added to a result object, which is eventually returned. In other words, the
+	* returned object maps the named properties of the first object to the named
+	* properties of the second object. The optional third parameter is a boolean
+	* designating whether to pass unknown key/value pairs through to the new object.
+	* If `true`, those keys will exist on the returned object.
 	*
 	* @param {Object} map The object with key/value pairs.
 	* @param {Object} obj The object whose values will be used.
-	* @param {Boolean} [pass=false] Whether or not to pass the unnamed properties through
+	* @param {Boolean} [pass=false] Whether or not to pass unnamed properties through
 	*                               from the given object.
 	* @returns {Object} A new object whose properties have been mapped.
 	* @public
@@ -764,15 +772,17 @@
 	};
 
 	/**
-	* Helper method that accepts an _array_ of objects and returns a hash of those objects indexed
-	* by the specified _property_. If a _filter_ is provided, the _filter_ should accept four
-	* parameters: the key, the value (object), the current mutable map reference, and an immutable
-	* copy of the original array of objects for comparison.
+	* Helper method that accepts an [array]{@link external:Array} of
+	* [objects]{@link external:Object} and returns a hash of those objects indexed
+	* by the specified `property`. If a `filter` is provided, the filter should
+	* accept four parameters: the key, the value (object), the current mutable map
+	* reference, and an immutable copy of the original array of objects for
+	* comparison.
 	*
 	* @param {String} property The property to index the array by.
 	* @param {Array} array An array of property objects.
-	* @param {Function} [filter] The filter function to use, accepts 4 arguments.
-	* @returns {Object} A hash (object) indexed by the _property_ argument
+	* @param {Function} [filter] The filter function to use; accepts four arguments.
+	* @returns {Object} A hash (object) indexed by the `property` argument
 	* @public
 	*/
 	enyo.indexBy = function (property, array, filter) {
@@ -814,20 +824,19 @@
 	};
 	
 	/**
-	* Will create and return a shallow copy of an [Object]{@link external:Object} or an
-	* [Array]{@link external:Array}. For _objects_, by default, properties will be scanned and
-	* copied directly to the _clone_ such that they would pass the
-	* [hasOwnProperty]{@link external:Object.hasOwnProperty} test. This is expensive and often not
-	* required. In this case use the optional second parameter to allow a more efficient
+	* Creates and returns a shallow copy of an [Object]{@link external:Object} or an
+	* [Array]{@link external:Array}. For objects, by default, properties will be scanned and
+	* copied directly to the clone such that they would pass the
+	* [`hasOwnProperty()`]{@link external:Object.hasOwnProperty} test. This is expensive and often not
+	* required. In this case, the optional second parameter may be used to allow a more efficient
 	* [copy]{@link Object.create} to be made.
 	* 
 	* @param {(Object|Array)} base The [Object]{@link external:Object} or
 	*                              [Array]{@link external:Array} to be cloned.
-	* @param {Boolean} [quick] When cloning [objects]{@link external:Object} will use a faster
-	*                          [copy]{@link Object.create} method; has no meaning when cloaning
-	*                          [arrays]{@link external:Array}.
-	* @returns {*} A clone of the provided _base_ if _base_ is of the correct type otherwise it
-	*                will return _base_ as it was passed in.
+	* @param {Boolean} [quick] If `true`, when cloning objects, a faster [copy]{@link Object.create}
+	*                          method will be used. This parameter has no meaning when cloning arrays.
+	* @returns {*} A clone of the provided `base` if `base` is of the correct type; otherwise,
+	*              returns `base` as it was passed in.
 	* @public
 	*/
 	enyo.clone = function (base, quick) {
@@ -925,7 +934,7 @@
 	* [object]{@link external:Object}.
 	*
 	* @param {Object} obj The [Object]{@link external:Object} to read the values from.
-	* @returns {Array} An [array]{@link external:Array} with the values from the _obj_.
+	* @returns {Array} An [array]{@link external:Array} with the values from the `obj`.
 	* @public
 	*/
 	enyo.values = function (obj) {
@@ -941,11 +950,11 @@
 	// ----------------------------------
 	
 	/**
-	* Because our older API parameters are not consistent with other array API methods and also
-	* because only [IE8 doesn't have integrated support]{@link external:polyfill} for
-	* [indexOf]{@linkcode external:Array.indexOf}, we ensure it is defined (only IE8) and advise,
-	* moving forward, that the built-in method be used. But to preserve our original API it will
-	* simply call this method knowing it exists.
+	* Because our older API parameters are not consistent with other array API methods, and also
+	* because only [IE8 lacks integrated support]{@link external:polyfill} for
+	* [`indexOf()`]{@linkcode external:Array.indexOf}, we ensure it is defined (only IE8) and advise,
+	* moving forward, that the built-in method be used. But to preserve our original API, it will
+	* simply call this method, knowing it exists.
 	*
 	* @private
 	*/
@@ -966,11 +975,11 @@
 	};
 	
 	/**
-	* Because our older API parameters are not consistent with other array API methods and also
-	* because only [IE8 doesn't have integrated support]{@link external:polyfill} for
-	* [lastIndexOf]{@linkcode external:Array.lastIndexOf} we ensure it is defined (only IE8) and
-	* advise, moving forward, that the built-in method be used. But to preserve our original API it
-	* will simply call this method knowing it exists.
+	* Because our older API parameters are not consistent with other array API methods, and also
+	* because only [IE8 lacks integrated support]{@link external:polyfill} for
+	* [`lastIndexOf()`]{@linkcode external:Array.lastIndexOf} we ensure it is defined (only IE8) and
+	* advise, moving forward, that the built-in method be used. But to preserve our original API, it
+	* will simply call this method, knowing it exists.
 	*
 	* @private
 	*/
@@ -996,7 +1005,7 @@
 	
 	/**
 	* A [polyfill]{@link external:polyfill} for platforms that don't support
-	* [Array.findIndex]{@link external:Array.findIndex}
+	* [`Array.findIndex()`]{@link external:Array.findIndex}.
 	*/
 	Array.prototype.findIndex = Array.prototype.findIndex || function (fn, ctx) {
 		for (var i=0, len=this.length >>> 0; i<len; ++i) {
@@ -1007,7 +1016,7 @@
 	
 	/**
 	* A [polyfill]{@link external:polyfill} for platforms that don't support
-	* [Array.find]{@link external:Array.find}
+	* [`Array.find()`]{@link external:Array.find}.
 	*/
 	Array.prototype.find = Array.prototype.find || function (fn, ctx) {
 		for (var i=0, len=this.length >>> 0; i<len; ++i) {
@@ -1017,7 +1026,7 @@
 	
 	/**
 	* A [polyfill]{@link external:polyfill} for platforms that don't support
-	* [Array.forEach]{@link external:Array.forEach}
+	* [`Array.forEach()`]{@link external:Array.forEach}.
 	*/
 	Array.prototype.forEach = Array.prototype.forEach || function (fn, ctx) {
 		for (var i=0, len=this.length >>> 0; i<len; ++i) fn.call(ctx, this[i], this);
@@ -1025,7 +1034,7 @@
 	
 	/**
 	* A [polyfill]{@link external:polyfill} for platforms that don't support
-	* [Array.map]{@link external:Array.map}
+	* [`Array.map()`]{@link external:Array.map}.
 	*/
 	Array.prototype.map = Array.prototype.map || function (fn, ctx) {
 		var ret = [];
@@ -1037,7 +1046,7 @@
 	
 	/**
 	* A [polyfill]{@link external:polyfill} for platforms that don't support
-	* [Array.filter]{@link external:Array.filter}
+	* [`Array.filter()`]{@link external:Array.filter}.
 	*/
 	Array.prototype.filter = Array.prototype.filter || function (fn, ctx) {
 		var ret = [];
@@ -1048,15 +1057,15 @@
 	};
 	
 	/**
-	* An eyno convenience method reference to [Array.indexOf]{@link external:Array.indexOf}.
+	* An Enyo convenience method reference to [`Array.indexOf()`]{@link external:Array.indexOf}.
 	* 
-	* This also supports the legacy enyo argument order `el.indexOf(array, offset)` and can
+	* This also supports the legacy Enyo argument order `el.indexOf(array, offset)` and can
 	* differentiate between this and the standard `array.indexOf(el, offset)`.
 	*
-	* _When possible, you should use the native equivelant._
+	* **When possible, you should use the native equivalent.**
 	* 
 	* This method supports the same arguments as the native version, plus an extra argument at the
-	* beginning referring to the _array_ to run this method on.
+	* beginning referring to the [array]{@link external:Array} to run this method on.
 	*
 	* @public
 	*/
@@ -1066,15 +1075,15 @@
 	};
 	
 	/**
-	* An eyno convenience method reference to [Array.lastIndexOf]{@link external:Array.lastIndexOf}.
+	* An Enyo convenience method reference to [`Array.lastIndexOf()`]{@link external:Array.lastIndexOf}.
 	* 
-	* This also supports the legacy enyo argument order `el.lastIndexOf(array, offset)` and can
+	* This also supports the legacy Enyo argument order `el.lastIndexOf(array, offset)` and can
 	* differentiate between this and the standard `array.lastIndexOf(el, offset)`.
 	*
-	* _When possible, you should use the native equivelant._
+	* **When possible, you should use the native equivalent.**
 	* 
 	* This method supports the same arguments as the native version, plus an extra argument at the
-	* beginning referring to the _array_ to run this method on.
+	* beginning referring to the [array]{@link external:Array} to run this method on.
 	*
 	* @public
 	*/
@@ -1084,13 +1093,13 @@
 	};
 	
 	/**
-	* An eyno convenience method reference to [Array.findIndex]{@link external:Array.findIndex}.
-	*
-	* _When possible, you should use the native equivelant._
+	* An Enyo convenience method reference to [`Array.findIndex()`]{@link external:Array.findIndex}.
+	* 
+	* **When possible, you should use the native equivalent.**
 	* 
 	* This method supports the same arguments as the native version, plus an extra argument at the
-	* beginning referring to the _array_ to run this method on.
-	*
+	* beginning referring to the [array]{@link external:Array} to run this method on.
+	* 
 	* @public
 	*/
 	enyo.findIndex = function (array, fn, ctx) {
@@ -1098,13 +1107,13 @@
 	};
 	
 	/**
-	* An eyno convenience method reference to [Array.find]{@link external:Array.find}.
-	*
-	* _When possible, you should use the native equivelant._
+	* An Enyo convenience method reference to [`Array.find()`]{@link external:Array.find}.
+	* 
+	* **When possible, you should use the native equivalent.**
 	* 
 	* This method supports the same arguments as the native version, plus an extra argument at the
-	* beginning referring to the _array_ to run this method on.
-	*
+	* beginning referring to the [array]{@link external:Array} to run this method on.
+	* 
 	* @method enyo.find
 	* @public
 	*/
@@ -1120,13 +1129,13 @@
 	enyo.where = enyo.find;
 	
 	/**
-	* An eyno convenience method reference to [Array.forEach]{@link external:Array.forEach}.
-	*
-	* _When possible, you should use the native equivelant._
+	* An Enyo convenience method reference to [`Array.forEach()`]{@link external:Array.forEach}.
+	* 
+	* **When possible, you should use the native equivalent.**
 	* 
 	* This method supports the same arguments as the native version, plus an extra argument at the
-	* beginning referring to the _array_ to run this method on.
-	*
+	* beginning referring to the [array]{@link external:Array} to run this method on.
+	* 
 	* @public
 	*/
 	enyo.forEach = function (array, fn, ctx) {
@@ -1134,12 +1143,12 @@
 	};
 	
 	/**
-	* An eyno convenience method reference to [Array.map]{@link external:Array.map}.
+	* An Enyo convenience method reference to [`Array.map()`]{@link external:Array.map}.
 	*
-	* _When possible, you should use the native equivelant._
+	* **When possible, you should use the native equivalent.**
 	* 
 	* This method supports the same arguments as the native version, plus an extra argument at the
-	* beginning referring to the _array_ to run this method on.
+	* beginning referring to the [array]{@link external:Array} to run this method on.
 	*
 	* @public
 	*/
@@ -1148,33 +1157,32 @@
 	};
 	
 	/**
-	* An eyno convenience method reference to [Array.filter]{@link external:Array.filter}.
+	* An Enyo convenience method reference to [`Array.filter()`]{@link external:Array.filter}.
 	*
-	* _When possible, you should use the native equivelant._
+	* **When possible, you should use the native equivalent.**
 	* 
 	* This method supports the same arguments as the native version, plus an extra argument at the
-	* beginning referring to the _array_ to run this method on.
+	* beginning referring to the [array]{@link external:Array} to run this method on.
 	*
 	* @public
 	*/
 	enyo.filter = function (array, fn, ctx) {
 		return array.filter(fn, ctx);
 	};
-	
+
 	/**
-	* When given an [array]{@link external:Array} of [objects]{@link external:Object}, `pluck` will
-	* search through the _array_'s [objects]{@link external:Object}, and any
-	* [object]{@link external:Object} with the a property name matching _prop_ will be compiled into
-	* a new returned [array]{@link external:Array}. Each [object]{@link external:Object} in the
-	* [array]{@link external:Array} which doesn't have the property will add an `undefined`
-	* placeholder element to the final [array]{@link external:Array}. It will have the same length
-	* as the supplied _array_.
+	* When given an [array]{@link external:Array} of [objects]{@link external:Object},
+	* searches through the array's objects; each object with a property name matching
+	* `prop` has its value for that property compiled into a result array, which is
+	* eventually returned. For each array object that doesn't have a matching property,
+	* an `undefined` placeholder element is added to the result array, such that the
+	* returned result array has the same length as the passed-in `array` parameter.
 	* 
 	* @param {Array} array The [array]{@link external:Array} of [objects]{@link external:Object}
-	*                      where the _prop_ will be checked for.
-	* @param {String} prop A string containing the name of the property to check for.
-	* @returns {Array} An [Array]{@link external:Array} of all the values of the named _property_ from
-	*                     the objects in the _array_.
+	*                      in which the `prop` will be searched for.
+	* @param {String} prop A string containing the name of the property to search for.
+	* @returns {Array} An array of all the values of the named property from
+	*                     objects contained in the `array`.
 	* @public
 	*/
 	enyo.pluck = function (array, prop) {
@@ -1208,16 +1216,19 @@
 	};
 	
 	/**
-	* Clones an existing Array, or converts an array-like object into an Array.
+	* Clones an existing [Array]{@link external:Array}, or converts an array-like
+	* object into an Array.
 	* 
-	* If _offset_ is non-zero, the cloning starts from that index in the source Array.
-	* The clone may be appended to an existing Array by passing the existing Array as _inStartWith_.
+	* If `offset` is non-zero, the cloning starts from that index in the source
+	* Array. The clone may be appended to an existing Array by passing in the
+	* existing Array as `initialArray`.
 	* 
-	* Array-like objects have _length_ properties, and support square-bracket notation ([]).
-	* Often, array-like objects do not support Array methods, such as _push_ or _concat_, and
-	* so must be converted to Arrays before use.
+	* Array-like objects have `length` properties, and support square-bracket
+	* notation `([])`. Array-like objects often do not support Array methods
+	* such as `push()` or `concat()`, and so must be converted to Arrays before
+	* use.
 	* 
-	* The special _arguments_ variable is an example of an array-like object.
+	* The special `arguments` variable is an example of an array-like object.
 	*
 	* @public
 	*/
@@ -1241,8 +1252,9 @@
 	enyo.toArray = enyo.cloneArray;
 	
 	/**
-	* With a given _array_, the first [strictly equal]{@link external:===} to occurance of _el_ is
-	* removed. _array_ is modified directly.
+	* Within a given [array]{@link external:Array}, removes the first
+	* [strictly equal to]{@link external:===} occurrence of `el`.
+	* Note that `array` is modified directly.
 	*
 	* @param {Array} array The [Array]{@link external:Array} to look through.
 	* @param {*} el The element to search for and remove.
@@ -1261,7 +1273,7 @@
 	};
 
 	/**
-	* This regex pattern is used by the _enyo.isRtl_ function.
+	* This regex pattern is used by the [`enyo.isRtl()`]{@link enyo.isRtl} function.
 	* 
 	* Arabic: \u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFE
 	* Hebrew: \u0590-\u05FF\uFB1D-\uFB4F
@@ -1271,10 +1283,10 @@
 	var rtlPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFE\u0590-\u05FF\uFB1D-\uFB4F]/;
 
 	/**
-	* Takes content _str_ and determines whether or not it is [RTL]{@link external:RTL}.
+	* Takes content `str` and determines whether or not it is [RTL]{@link external:RTL}.
 	*
 	* @param {String} str A [String]{@link external:String} to check the [RTL]{@link external:RTL}-ness of.
-	* @return {Boolean} True if the _str_ should be RTL, false if not.
+	* @return {Boolean} `true` if `str` should be RTL; `false` if not.
 	* @public
 	*/
 	enyo.isRtl = function (str) {
