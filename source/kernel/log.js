@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 
 	/**
-	* Internally used methods and properties associated with _logging_.
+	* Internally used methods and properties associated with logging.
 	*
 	* @namespace enyo.logging
 	* @public
@@ -11,7 +11,7 @@
 		/**
 		* The log level to use. Can be from -1-99 where -1 disables all logging, 0 is 'error',
 		* 10 is 'warn' and 20 is 'log'. It is preferred that this value be set using the
-		* {@link enyo.setLogLevel} method.
+		* [`enyo.setLogLevel()`]{@link enyo.setLogLevel} method.
 		*
 		* @type {Number}
 		* @default 99
@@ -99,7 +99,7 @@
 	};
 
 	/**
-	* Set the log level to the given value. This will restrict the amount of output depending on
+	* Sets the log level to the given value. This will restrict the amount of output depending on
 	* the settings. The higher the value, the more output that will be allowed. The default is
 	* 99. The value, -1, would silence all logging, even 'error' (0).
 	*
@@ -117,12 +117,14 @@
 	};
 
 	/**
-	* A wrapper for {@glossary console.log} compatible across supported platforms. Will output only
-	* if the current [log level]{@link enyo.logging.level} allows it. {@glossary Object} parameters
-	* will be serialized via {@glossary JSON.stringify} autmoatically.
+	* A wrapper for [`console.log()`]{@link external:console.log}, compatible
+	* across supported platforms. Will output only if the current
+	* [log level]{@link enyo.logging.level} allows it. [Object]{@link external:Object}
+	* parameters will be serialized via [`JSON.stringify()`]{@link external:JSON.stringify}
+	* automatically.
 	*
 	* @utility
-	* @see {@glossary console.log}
+	* @see [console.log]{@link external:console.log}
 	* @param {...*} - The arguments to be logged.
 	* @public
 	*/
@@ -131,12 +133,14 @@
 	};
 
 	/**
-	* A wrapper for {@glossary console.warn} compatible across supported platforms. Will output only
-	* if the current [log level]{@link enyo.logging.level} allows it. {@glossary Object} parameters
-	* will be serialized via {@glossary JSON.stringify} autmoatically.
+	* A wrapper for [`console.warn()`]{@link external:console.warn}, compatible
+	* across supported platforms. Will output only if the current
+	* [log level]{@link enyo.logging.level} allows it. [Object]{@link external:Object}
+	* parameters will be serialized via [`JSON.stringify()`]{@link external:JSON.stringify}
+	* automatically.
 	*
 	* @utillity
-	* @see {@glossary console.warn}
+	* @see [console.warn]{@link external:console.warn}
 	* @param {...*} - The arguments to be logged.
 	* @public
 	*/
@@ -145,12 +149,14 @@
 	};
 
 	/**
-	* A wrapper for {@glossary console.error} compatible across supported platforms. Will output
-	* only if the current [log level]{@link enyo.logging.level} allows it. {@glossary Object}
-	* parameters will be serialized via {@glossary JSON.stringify} autmoatically.
+	* A wrapper for [`console.error()`]{@link external:console.error} compatible
+	* across supported platforms. Will output only if the current
+	* [log level]{@link enyo.logging.level} allows it. [Object]{@link external:Object}
+	* parameters will be serialized via [`JSON.stringify()`]{@link external:JSON.stringify}
+	* automatically.
 	*
 	* @utility
-	* @see {@glossary console.warn}
+	* @see [console.error]{@link external:console.error}
 	* @param {...*} - The arguments to be logged.
 	* @public
 	*/

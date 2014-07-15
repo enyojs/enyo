@@ -1,15 +1,16 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.Layout_ is the base [kind]{@glossary kind} for layout [kinds]{@glossary kind}. These are
-	* used by {@link enyo.UiComponent}-based [controls]{@link enyo.Control} to allow for arranging 
-	* of the children by setting the [_layoutKind_]{@link enyo.UiComponent#layoutKind} property.
+	* {@link enyo.Layout} is the base [kind]{@link external:kind} for layout
+	* kinds. Layout kinds are used by {@link enyo.UiComponent}-based
+	* [controls]{@link enyo.Control} to allow for arranging of child controls by
+	* setting the [`layoutKind`]{@link enyo.UiComponent#layoutKind} property.
 	* 
-	* Derived [kinds]{@glossary kind} will usually provide their own 
-	* [_layoutClass_]{@link enyo.Layout#layoutClass} property to affect the CSS rules used, and may 
-	* also implement the [_flow_]{@link enyo.Layout#flow} and [_reflow_]{@link enyo.Layout#reflow} 
-	* methods. [_flow_]{@link enyo.Layout#flow} is called during [control]{@link enyo.Control} 
-	* rendering, while [_reflow_]{@link enyo.Layout#reflow} is called when the associated 
-	* [control]{@link enyo.Control} is resized.
+	* Derived kinds will usually provide their own
+	* [`layoutClass`]{@link enyo.Layout#layoutClass} property to affect the CSS
+	* rules used, and may also implement the [`flow()`]{@link enyo.Layout#flow}
+	* and [`reflow()`]{@link enyo.Layout#reflow} methods. `flow()` is called
+	* during control rendering, while `reflow()` is called when the associated
+	* control is resized.
 	*
 	* @class enyo.Layout
 	* @public
@@ -29,7 +30,7 @@
 
 		/** 
 		* CSS class that's added to the [control]{@link enyo.Control} using this 
-		* [layout]{@link enyo.Layout} [kind]{@glossary kind}.
+		* [layout]{@link enyo.Layout} [kind]{@link external:kind}.
 		*
 		* @type {String}
 		* @default ''
@@ -57,7 +58,7 @@
 		},
 		
 		/**
-		* Called during static property layout (i.e. during rendering).
+		* Called during static property layout (i.e., during rendering).
 		*
 		* @public
 		*/
@@ -65,7 +66,7 @@
 		},
 
 		/** 
-		* Called during dynamic measuring layout (i.e. during a resize).
+		* Called during dynamic measuring layout (i.e., during a resize).
 		*
 		* @public
 		*/
