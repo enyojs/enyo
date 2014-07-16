@@ -649,6 +649,9 @@
 					if (!silent) this.emit('change', changed, this);
 				
 					if (commit && !fetched) this.commit(opts);
+					
+					// reset value so subsequent changes won't be added to this change-set
+					this.changed = null;
 				}
 			}
 			
