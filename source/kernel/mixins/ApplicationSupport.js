@@ -1,10 +1,11 @@
 (function (enyo, scope) {
 	
 	/**
-	* This is an internally used support mixin. It is applied to all
-	* [components]{@link enyo.Component} of an {@link enyo.Application} instance and their
-	* [components]{@link enyo.Component} recursively. It adds an `app` property to each instance
-	* that is a local reference to the {@link enyo.Application} instance that they belong to.
+	* An internally-used support mixin that is applied to all
+	* [components]{@link enyo.Component} of an {@link enyo.Application} instance
+	* (and to their components, recursively). This mixin adds an `app` property to
+	* each component--a local reference to the `enyo.Application` instance that
+	* the component belongs to.
 	* 
 	* @mixin enyo.ApplicationSupport
 	* @protected

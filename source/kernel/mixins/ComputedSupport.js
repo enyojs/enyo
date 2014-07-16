@@ -54,11 +54,11 @@
 	}
 	
 	/**
-	* This mixin adds API methods to support
-	* [computed properties]{@link external:"computed property"}. Unlike with other support mixins,
+	* A mixin that adds API methods to support
+	* [computed properties]{@link external:"computed property"}. Unlike other support mixins,
 	* this mixin does not need to be explicitly included by a [kind]{@link external:kind}. If the
-	* [computed]{@link enyo.ComputedSupport.computed} [array]{@link external:Array} is found in
-	* a [kind]{@link external:kind} definition it will automatically be included.
+	* [`computed`]{@link enyo.ComputedSupport.computed} [array]{@link external:Array} is found in
+	* a kind definition, this mixin will automatically be included.
 	*
 	* @mixin enyo.ComputedSupport
 	* @public
@@ -76,11 +76,11 @@
 		_computedRecursion: 0,
 		
 		/**
-		* Primarily for internal use, this method determines if the given path is a known
-		* [computed property]{@link external:"computed property"}.
+		* Primarily intended for internal use, this method determines whether the
+		* given path is a known [computed property]{@link external:"computed property"}.
 		*
 		* @param {String} path The property or path to test.
-		* @returns {Boolean} Whether or not the _path_ is a
+		* @returns {Boolean} Whether or not the `path` is a
 		*	[computed property]{@link external:"computed property"}.
 		* @public
 		*/
@@ -90,11 +90,12 @@
 		},
 		
 		/**
-		* Primarily for internal use, this method determines if the given path is a known dependency
-		* of a [computed property]{@link external:"computed property"}.
+		* Primarily intended for internal use, this method determines whether the
+		* given path is a known dependency of a
+		* [computed property]{@link external:"computed property"}.
 		*
 		* @param {String} path The property or path to test.
-		* @returns {Boolean} Whether or not the _path_ is a dependency of a
+		* @returns {Boolean} Whether or not the `path` is a dependency of a
 		*	[computed property]{@link external:"computed property"}.
 		* @public
 		*/

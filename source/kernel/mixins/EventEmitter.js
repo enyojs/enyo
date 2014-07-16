@@ -63,10 +63,11 @@
 	}
 	
 	/**
-	* This mixin adds support for registered event listeners. These events are different from
-	* the bubbled events (e.g. DOM events and [handlers]{@link enyo.Component#handlers}). When
-	* [emitted]{@link enyo.EventEmitter.emit} they _do not bubble_ and will only be handled by
-	* [registered listeners]{@link enyo.EventEmitter.on}.
+	* A mixin that adds support for registered event listeners. These events are
+	* different from bubbled events (e.g., DOM events and
+	* [handlers]{@link enyo.Component#handlers}). When
+	* [emitted]{@link enyo.EventEmitter.emit}, these events **do not bubble** and
+	* will only be handled by [registered listeners]{@link enyo.EventEmitter.on}.
 	*
 	* @mixin enyo.EventEmitter
 	* @public
@@ -89,9 +90,9 @@
 		_silenceCount: 0,
 		
 		/**
-		* Disallow propagation of events. This is a counting semaphor and
-		* [unsilence]{@link enyo.EventEmitter.unsilence} will need to be called the same number of
-		* times that this method is called.
+		* Disables propagation of events. This is a counting semaphor and
+		* [`unsilence()`]{@link enyo.EventEmitter.unsilence} will need to be called
+		* the same number of times that this method is called.
 		*
 		* @see enyo.EventEmitter.unsilence
 		* @returns {this} The callee for chaining.
@@ -104,9 +105,9 @@
 		},
 		
 		/**
-		* Enable propagation of events. This is a counting semaphor and this method will need to be
-		* called the same number of times that [silence]{@link enyo.EventEmitter.silence} was
-		* called.
+		* Enables propagation of events. This is a counting semaphor and this method
+		* will need to be called the same number of times that
+		* [`silence()`]{@link enyo.EventEmitter.silence} was called.
 		*
 		* @see enyo.EventEmitter.silence
 		* @returns {this} The callee for chaining.
@@ -124,7 +125,7 @@
 		},
 		
 		/**
-		* Determine if the callee is currently [silenced]{@link enyo.EventEmitter.silence}.
+		* Determines whether the callee is currently [silenced]{@link enyo.EventEmitter.silence}.
 		*
 		* @returns {Boolean} Whether or not the callee is
 		*	[silenced]{@link enyo.EventEmitter.silence}.
@@ -144,8 +145,8 @@
 		},
 		
 		/**
-		* Add an event listener. Until [removed]{@link enyo.EventEmitter.off} this listener will
-		* fire every time the event is [emitted]{@link enyo.EventEmitter.emit}.
+		* Adds an event listener. Until [removed]{@link enyo.EventEmitter.off}, this
+		* listener will fire every time the event is [emitted]{@link enyo.EventEmitter.emit}.
 		*
 		* @param {String} e The event name to register for.
 		* @param {Function} fn The listener.
@@ -167,12 +168,12 @@
 		},
 		
 		/**
-		* Remove an event listener.
+		* Removes an event listener.
 		*
 		* @param {String} e The event name.
 		* @param {Function} fn The listener to unregister.
-		* @param {Object} [ctx] If the listener was registered with a context it should be provided
-		*	when unregistered as well.
+		* @param {Object} [ctx] If the listener was registered with a context, it
+		* should be provided when unregistering as well.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -181,7 +182,7 @@
 		},
 		
 		/**
-		* Remove all listeners or all listeners for a given event.
+		* Removes all listeners, or all listeners for a given event.
 		*
 		* @param {String} [e] The optional target event.
 		* @returns {this} The callee for chaining.
@@ -204,13 +205,13 @@
 		},
 		
 		/**
-		* Primarily for internal use, returns an immutable copy of all listeners or all listeners
-		* for a particular event (if any).
+		* Primarily intended for internal use, this method returns an immutable copy
+		* of all listeners, or all listeners for a particular event (if any).
 		*
 		* @param {String} [e] The targeted event.
-		* @returns {Object[]} Event listeners are stored in [hashes]{@link external:Object}. The
-		*	returns value will be an [array]{@link external:Array} of these
-		*	[hashes]{@link external:Object} if any listeners exist.
+		* @returns {Object[]} Event listeners are stored in [hashes]{@link external:Object}.
+		*	The return value will be an [array]{@link external:Array} of these hashes
+		* if any listeners exist.
 		* @public
 		*/
 		listeners: function (e) {
@@ -232,7 +233,7 @@
 		},
 		
 		/**
-		* Emit the named event. All subsequent arguments will be passed to the event listeners.
+		* Emits the named event. All subsequent arguments will be passed to the event listeners.
 		*
 		* @param {String} e The event to emit.
 		* @param {...*} args All subsequent arguments will be passed to the event listeners.

@@ -12,8 +12,8 @@
 	
 	/**
 	* An internally used mixin that is added to {@link enyo.Object} and its
-	* [subkinds]{@link external:subkind}. It includes protected and public API methods for using
-	* [bindings]{@link enyo.Binding}.
+	* [subkinds]{@link external:subkind}. It includes public and protected API
+	* methods for working with [bindings]{@link enyo.Binding}.
 	*
 	* @mixin enyo.BindingSupport
 	* @protected
@@ -31,11 +31,11 @@
 		_bindingSupportInitialized: false,
 		
 		/**
-		* Imperatively create a binding. Merges the variable number of
-		* [hashes]{@link external:Object} and instances a [binding]{@link enyo.Binding} that will
-		* have its [owner]{@link enyo.Binding#owner} property set to the callee (the current
-		* {@link enyo.Object}). [Bindings]{@link enyo.Binding} created this way will be
-		* [destroyed]{@link enyo.Binding#destroy} when the _owner_ is
+		* Imperatively creates a [binding]{@link enyo.Binding}. Merges a variable
+		* number of [hashes]{@link external:Object} and instantiates a binding that
+		* will have its [owner]{@link enyo.Binding#owner} property set to the callee
+		* (the current {@link enyo.Object}). Bindings created in this way will be
+		* [destroyed]{@link enyo.Binding#destroy} when their `owner` is
 		* [destroyed]{@link enyo.Object#destroy}.
 		*
 		* @param {...Object} props A variable number of [hashes]{@link external:Object} that will
@@ -63,8 +63,8 @@
 		},
 		
 		/**
-		* Removes and [destroys]{@link enyo.Binding#destroy} all or a subset of
-		* [bindings]{@link enyo.Binding} belonging to the callee.
+		* Removes and [destroys]{@link enyo.Binding#destroy} all of, or a subset of,
+		* the [bindings]{@link enyo.Binding} belonging to the callee.
 		*
 		* @param {enyo.Binding[]} [subset] The optional [array]{@link external:Array} of
 		*	[bindings]{@link enyo.Binding} to remove.
@@ -81,13 +81,12 @@
 		},
 		
 		/**
-		* Remove a single {@link enyo.Binding} from the callee. This does not
-		* [destroy]{@link enyo.Binding#destroy} the {@link enyo.Binding}. It will also remove the
+		* Removes a single {@link enyo.Binding} from the callee. (This does not
+		* [destroy]{@link enyo.Binding#destroy} the binding.) Also removes the
 		* [owner]{@link enyo.Binding#owner} reference if it is the callee.
 		*
-		* It should be noted that when a [binding]{@link enyo.Binding} is
-		* [destroyed]{@link enyo.Binding#destroy} it is automatically removed from its
-		* [owner]{@link enyo.Binding#owner}.
+		* It should be noted that when a binding is destroyed, it is automatically
+		* removed from its owner.
 		*
 		* @param {enyo.Binding} binding The {@link enyo.Binding} instance to remove.
 		* @returns {this} The callee for chaining.
@@ -128,8 +127,8 @@
 	};
 	
 	/**
-	* An internally used mixin applied to {@link enyo.Component} instances to better support
-	* [bindings]{@link enyo.Binding}.
+	* An internally used mixin applied to {@link enyo.Component} instances to
+	* better support [bindings]{@link enyo.Binding}.
 	
 	* @mixin enyo.ComponentBindingSupport
 	* @protected
