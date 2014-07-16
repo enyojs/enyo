@@ -285,7 +285,23 @@
 		* @public
 		*/
 		isConnected: function () {
-			return this.connected;
+			var from = this._from,
+				to = this.oneWay ? (this._toTarget || this._to) : this._to,
+				source = this._source,
+				target = this._target,
+				toChain,
+				fromChain;
+				
+			if (from && to && source && target) {
+				if (!this.oneWay || this._toTarget) toChain = target.getChains()[to];
+				fromChain = source.getChains()[from];
+				
+				return this.connected
+					&& (fromChain ? fromChain.isConnected() : true)
+					&& (toChain ? toChain.isConnected() : true);
+			}
+			
+			return false;
 		},
 		
 		/**
@@ -357,7 +373,7 @@
 					
 					// we flag it as having been connected
 					this.connected = true;
-					if (this.autoSync) this.sync(true);
+					if (this.isConnected() && this.autoSync) this.sync(true);
 				}
 			}
 			

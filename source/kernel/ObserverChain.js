@@ -68,7 +68,10 @@
 			var obj = this.object
 				, obs = this._changed
 				, prop = this.property;
-			obj && obj.observe && obj.observe(prop, obs, this, {noChain: true, priority: true});
+			if (obj && obj.observe && obj.observe(prop, obs, this, {noChain: true, priority: true})) {
+				this.connected = true;
+				this.list.connected++;
+			}
 		},
 		
 		/**
@@ -77,8 +80,11 @@
 		disconnect: function () {
 			var obj = this.object
 				, obs = this._changed
-				, prop = this.property;
+				, prop = this.property
+				, was = this.connected;
 			obj && obj.unobserve && obj.unobserve(prop, obs, this);
+			this.connected = null;
+			if (was) this.list.connected--;
 		},
 		
 		/**
@@ -144,6 +150,11 @@
 		noDefer: true,
 		
 		/**
+		* @private
+		*/
+		connected: 0,
+		
+		/**
 		* @method
 		* @private
 		*/
@@ -182,6 +193,13 @@
 				}, this, target);
 				this.rebuilding = false;
 			}
+		},
+		
+		/**
+		* @private
+		*/
+		isConnected: function () {
+			return !! (this.connected === this.length && this.length);
 		},
 		
 		/**
