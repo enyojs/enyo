@@ -39,6 +39,18 @@
 		* @public
 		*/
 		multipleSelection: false,
+		
+		/**
+		* Set this to `true` to allow group-selection behavior such that only one child can be
+		* selected at a time and once one is selected, it cannot be deselected (via user input).
+		* The child can still be deselected via the _selection api methods_. Note that this will set
+		* {@link enyo.DataRepeater#multipleSelection} to `false`.
+		*
+		* @type {Boolean}
+		* @default false
+		* @public
+		*/
+		groupSelection: false,
 
 		/**
 		* This class will be applied to the [repeater]{@link enyo.DataRepeater} when 
@@ -147,6 +159,7 @@
 				for (var e in h) {
 					h[e] = this.bindSafely(h[e]);
 				}
+				if (this.groupSelection === true) this.multipleSelection = false;
 				sup.apply(this, arguments);
 			};
 		}),
@@ -169,6 +182,26 @@
 		observers: [
 			{method: 'selectionChanged', path: 'multipleSelection'}
 		],
+		
+		/**
+		* @private
+		*/
+		groupSelectionChanged: function () {
+			if (this.groupSelection) this.set('multipleSelection', false); 
+		},
+		
+		/**
+		* @private
+		*/
+		multipleSelectionChanged: function (was) {
+			if (was && !this.multipleSelection) {
+				if (this._selection.length > 1) {
+					this.deselectAll();
+				}
+			} else if (this.multipleSelection) {
+				this.set('groupSelection', false);
+			}
+		},
 
 		/**
 		* @private
