@@ -5,21 +5,22 @@
 	enyo.concatenated = [];
 
 	/**
-	* Creates a JavaScript [constructor]{@link external:constructor} function with a prototype
-	* defined by _props_. __All [constructors]{@link external:constructor} must have a unique name__.
+	* Creates a JavaScript [constructor]{@link external:constructor} function with
+	* a prototype defined by `props`. **All constructors must have a unique name.**
 	*
-	* _enyo.kind()_ makes it easy to build a constructor-with-prototype (like a class) that has
-	* advanced features like prototype-chaining ([inheritance]{@link external:inheritance}).
+	* `enyo.kind()` makes it easy to build a constructor-with-prototype (like a
+	* class) that has advanced features like prototype-chaining
+	* ([inheritance]{@link external:inheritance}).
 	*
-	* A plug-in system is included for extending the abilities of the [kind]{@link external:kind}
-	* generator, and [constructors]{@link external:constructor} are allowed to perform custom
-	* operations when subclassed.
+	* A plug-in system is included for extending the abilities of the
+	* [kind]{@link external:kind} generator, and constructors are allowed to
+	* perform custom operations when subclassed.
 	*
-	* If you make changes to _enyo.kind()_, be sure to add or update the appropriate
+	* If you make changes to `enyo.kind()`, be sure to add or update the appropriate
 	* [unit tests](@link https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
 	*
-	* For more information, see the documentation on [Creating
-	* Kinds](key-concepts/creating-kinds.html) in the Enyo Developer Guide.
+	* For more information, see the documentation on [Kinds](key-concepts/kinds.html)
+	* in the Enyo Developer Guide.
 	*
 	* @namespace enyo.kind
 	* @param {Object} props A [hash]{@link external:Object} of properties used to define and create
@@ -152,8 +153,9 @@
 	};
 
 	/**
-	* Creates a singleton of a given [kind]{@link external:kind} with a given definition. __The name
-	* property will be the instance name of the singleton and must be unique__.
+	* Creates a singleton of a given [kind]{@link external:kind} with a given
+	* definition. **The `name` property will be the instance name of the singleton
+	* and must be unique.**
 	*
 	* ```javascript
 	*	enyo.singleton({
@@ -277,10 +279,10 @@
 	enyo.kind.features.push(enyo.kind.extendMethods);
 
 	/**
-	* Called by {@link enyo.Object} instances attempting to access super-methods of a parent class
-	* ([kind]{@link external:kind}) by calling `this.inherited(arguments)` from within a
-	* [kind]{@link external:kind} method. This can only be done safely when there is known to be a super
-	* class with the same method.
+	* Called by {@link enyo.Object} instances attempting to access super-methods
+	* of a parent class ([kind]{@link external:kind}) by calling
+	* `this.inherited(arguments)` from within a kind method. This can only be done
+	* safely when there is known to be a super class with the same method.
 	*
 	* @private
 	*/
@@ -331,13 +333,12 @@
 		* to work.
 		*
 		* The older `this.inherited(arguments)` method still works, but this version results in much
-		* faster code and is the only one supported for [kind]{@link external:kind}
-		* [mixins]{@link external:mixin}.
+		* faster code and is the only one supported for kind [mixins]{@link external:mixin}.
 		*
-		* @param {Function} fn A [function]{@link external:Function} that takes a single argument,
-		*                      usually named _sup_, and that returns a function where
+		* @param {Function} fn A [function]{@link external:Function} that takes a single
+		*                      argument (usually named `sup`) and returns a function where
 		*                      `sup.apply(this, arguments)` is used as a mechanism to make the
-		*                      super-call
+		*                      super-call.
 		* @public
 		*/
 		enyo.inherit = function (fn) {
@@ -388,40 +389,40 @@
 	enyo.kind.statics = {
 
 		/**
-		* A [kind]{@link external:kind} may set its own _subclass()_ method as a _static.method_ for its
-		* [constructor]{@link external:constructor}. Whenever it is subclassed, the
-		* [constructor]{@link external:constructor} and properties will be passed through this method
-		* for special handling of important features.
+		* A [kind]{@link external:kind} may set its own `subclass()` method as a
+		* static method for its [constructor]{@link external:constructor}. Whenever
+		* it is subclassed, the constructor and properties will be passed through
+		* this method for special handling of important features.
 		*
 		* @param {Function} ctor The [constructor]{@link external:constructor} of the
-		*	[kind]{@external:kind} being subclassed.
-		* @param {Object} props The properties of the [kind]{@external:kind} being subclassed.
+		*	[kind]{@link external:kind} being subclassed.
+		* @param {Object} props The properties of the kind being subclassed.
 		* @memberof enyo.kind
 		* @public
 		*/
 		subclass: function(ctor, props) {},
 
 		/**
-		* Allows for extending of the current [kind]{@link external:kind} without creating a new
-		* [kind]{@link external:kind}. This method is available on all
+		* Allows for extension of the current [kind]{@link external:kind} without
+		* creating a new kind. This method is available on all
 		* [constructors]{@link external:constructor}, although calling it on a
-		* [deferred]{@link external:deferred} [constructor]{@link external:constructor} will force it to
-		* be resolved at that time. This method does not re-run the {@link enyo.kind.features} against
-		* the [constructor]{@link external:constructor} or instance.
+		* [deferred]{@link external:deferred} constructor will force it to be
+		* resolved at that time. This method does not re-run the
+		* {@link enyo.kind.features} against the constructor or instance.
 		*
 		* @param {Object|Object[]} props A [hash]{@link external:Object} or [array]{@link external:Array}
 		*	of [hashes]{@link external:Object}. Properties will override
 		*	[prototype]{@link external:Object.prototype} properties. If a
-		*	method that is being added already exists, the new method
-		*	supersedes the existing one. The method may call
-		*	`this.inherited()` or be wrapped with `enyo.inherit` to call
+		*	method that is being added already exists, the new method will
+		*	supersede the existing one. The method may call
+		*	`this.inherited()` or be wrapped with `enyo.inherit()` to call
 		*	the original method (this chains multiple methods tied to a
 		*	single [kind]{@link external:kind}).
 		* @param {Object} [target] The instance to be extended. If this is not specified, then the
 		*	[constructor]{@link external:constructor} of the
 		*	[object]{@link external:Object} this method is being called on will
 		*	be extended.
-		* @returns {Object} The [constructor]{@link external:constructor} of the class, or specific
+		* @returns {Object} The constructor of the class, or specific
 		*	instance, that has been extended.
 		* @memberof enyo.kind
 		* @public
@@ -481,7 +482,7 @@
 	};
 
 	/**
-	* Factory for [kinds]{@link external:kind} identified by [strings]{@link external:String}
+	* Factory for [kinds]{@link external:kind} identified by [strings]{@link external:String}.
 	*
 	* @private
 	*/
@@ -529,7 +530,7 @@
 
 	/**
 	* Namespace for current theme (`enyo.Theme.Button` references the Button specialization for the
-	* current theme)
+	* current theme).
 	*
 	* @private
 	*/

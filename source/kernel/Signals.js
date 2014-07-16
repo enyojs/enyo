@@ -1,14 +1,15 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.Signals_ [components]{@link enyo.Component} are used to listen to global messages.
+	* {@link enyo.Signals} is a [component]{@link enyo.Component} used to listen
+	* to global messages.
 	* 
-	* An object with a _Signals_ [component]{@link enyo.Component} can listen to messages sent from 
-	* anywhere by declaring handlers for them.
+	* An object with a Signals component can listen to messages sent from anywhere
+	* by declaring handlers for them.
 	* 
-	* DOM [events]{@glossary event} that have no node targets are broadcast as signals. These 
-	* [events]{@glossary event} include Window events, like _onload_ and _onbeforeunload_, and 
-	* [events]{@glossary event} that occur directly on _document_, like _onkeypress_ if _document_ 
-	* has the focus.
+	* DOM [events]{@glossary event} that have no node targets are broadcast as
+	* signals. These events include Window events, such as `onload` and
+	* `onbeforeunload`, as well as events that occur directly on `document`, such
+	* as `onkeypress` if `document` has the focus.
 	* 
 	* For more information, see the documentation on [Event
 	* Handling](key-concepts/event-handling.html) in the Enyo Developer Guide.
@@ -31,8 +32,8 @@
 		kind: 'enyo.Component',
 
 		/**
-		* Needed because of early calls to bind DOM [event]{@glossary event} listeners to the 
-		* [enyo.Signals.send]{@link enyo.Signals#send} call.
+		* Needed because of early calls to bind DOM [event]{@glossary event} listeners
+		* to the [`enyo.Signals.send()`]{@link enyo.Signals#send} call.
 		* 
 		* @private
 		*/
@@ -87,12 +88,12 @@
 			/** @lends enyo.Signals.prototype */ {
 
 			/**
-			* Broadcast a global message that will be consumed by subscribers.
+			* Broadcasts a global message to be consumed by subscribers.
 			* 
-			* @param {String} msg The message to send, usually the name of the 
+			* @param {String} msg The message to send; usually the name of the 
 			*	[event]{@glossary event}.
-			* @param {Object} load An [object]{@glossary Object} containing any associated
-			*	[event]{@glossary event} properties to be accessed by subscribers.
+			* @param {Object} load An [object]{@glossary Object} containing any
+			*	associated event properties to be accessed by subscribers.
 			* @public
 			*/
 			send: function (msg, load) {

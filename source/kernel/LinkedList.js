@@ -5,7 +5,7 @@
 		, constructorForKind = enyo.constructorForKind;
 	
 	/**
-	* An abstract _linked-list_ node.
+	* An abstract linked-list node.
 	*
 	* @class enyo.LinkedListNode
 	* @private
@@ -72,7 +72,7 @@
 	});
 
 	/**
-	* An abstract _linked-list_.
+	* An abstract linked-list.
 	*
 	* @class enyo.LinkedList
 	* @private

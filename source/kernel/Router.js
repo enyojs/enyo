@@ -8,7 +8,7 @@
 	var listeners = [];
 
 	/**
-	* This is the intended global _window.hashchange_ event handler. If another handler is
+	* This is the intended global `window.hashchange` event handler. If another handler is
 	* arbitrarily registered for this event, then it will not fire.
 	* 
 	* @private
@@ -35,8 +35,8 @@
 	};
 
 	/**
-	* All of our actively-supported browsers support this method of registering for _hashchange_
-	* events.
+	* All of our actively-supported browsers support this method of registering
+	* for `hashchange` events.
 	* 
 	* @private
 	*/
@@ -45,15 +45,17 @@
 	});
 
 	/**
-	* _enyo.Router_ is a controller with the ability to interpret changes in the url as well as set
-	* changes to the url in a manner that is compatible across browsers. With defined route
-	* handling, the application state can be managed more closely with respect to the location state
-	* of the browser. There may be multiple router instances active at any one time. Routers only
-	* interact with the hash portion of the browser location and will not force a reload of the
+	* {@link enyo.Router} is a controller with the ability to interpret changes in
+	* the URL and make changes to the URL in a manner that is compatible across
+	* browsers. With defined route handling, the application state can be managed
+	* more closely with respect to the location state of the browser. There may be
+	* multiple router instances active at any one time. Routers only interact with
+	* the hash portion of the browser location and will not force a reload of the
 	* current page.
 	*
-	* [Routes]{@linkcode enyo.Router#routes} may be defined in several ways and may be added at
-	* startup or [added programmatically]{@linkcode enyo.Router#addRoute} at a later time.
+	* [Routes]{@linkcode enyo.Router#routes} may be defined in several ways and
+	* may be added at startup or [added programmatically]{@linkcode enyo.Router#addRoute}
+	* at a later time.
 	*
 	* A route is a declarative hash with the following structure:
 	*
@@ -61,25 +63,28 @@
 	* {path: 'some/path', handler: 'function', context: 'context'}
 	* ```
 	*
-	* The path is a string that may be static (explicitly matched) or dynamic (matched based on
-	* dynamic placeholders). Dynamic paths may name elements to be matched, e.g.:
+	* The `path` is a string that may be static (explicitly matched) or dynamic
+	* (matched based on dynamic placeholders). Dynamic paths may name elements to
+	* be matched, e.g.:
 	*
 	* ```
 	* {path: ':user/:id'}
 	* ```
 	*
-	* In this case, the handler would be called with two parameters filled with the values matched
-	* by that structure. It is important to note that a dynamic route will apply the first match it
-	* finds, so care must be used to ensure that the correct route is matched
-	* (e.g., `/users/:user/:id` is more exact because of the static _users_ portion of the path).
+	* In this case, `handler` would be called with two parameters filled with
+	* the values matched by that structure. It is important to note that a dynamic
+	* route will apply the first match it finds, so care must be taken to ensure
+	* that the correct route is matched (e.g., `/users/:user/:id` is more exact
+	* because it includes the static `users` portion of the path).
 	*
-	* The handler may be a function reference or a string that will be mapped to a function. A check
-	* for the function's existence is conducted first on the router, then on any provided context,
-	* and finally in the global scope. If a context is provided, the function will be executed under
-	* that context regardless of where the function was found.
+	* `handler` may be a function reference or a string that will be mapped to a
+	* function. A check for the function's existence is conducted first on the
+	* router, then on any provided context, and finally in the global scope. If a
+	* context is provided, the function will be executed under that context
+	* regardless of where the function was found.
 	*
-	* The context property may be an object, an instance or a string that will be mapped to an
-	* object if possible.
+	* The `context` property may be an object, an instance, or a string that will
+	* be mapped to an object, if possible.
 	*
 	* Note that, currently, only letters and numbers are supported in dynamic routes.
 	* 
@@ -109,9 +114,10 @@
 		listening: true,
 
 		/**
-		* If true, the router will neither respond to hash changes in the browser nor be able to
-		* trigger them. Instead, it may be used internally to maintain or trigger state changes in
-		* an application without changing location.
+		* If `true`, the router will neither respond to hash changes in the browser
+		* nor be able to trigger them. Instead, the router may be used internally to
+		* maintain or trigger state changes in an application without changing
+		* location.
 		* 
 		* @type {Boolean}
 		* @default false
@@ -120,8 +126,8 @@
 		internalOnly: false,
 
 		/**
-		* If the desire is to force the current browser location to a particular path on startup set
-		* this value to `true`. Will be ignored if
+		* Set this to `true` to force the current browser location to a particular
+		* path on startup. This flag will be ignored if
 		* [triggerOnStart]{@linkcode enyo.Router#triggerOnStart} is `false`.
 		* 
 		* @type {Boolean}
@@ -131,7 +137,7 @@
 		defaultPathOnStart: false,
 
 		/**
-		* The _defaultRoute_ should have the same structure as a normal route (hash). It may be
+		* The `defaultRoute` should have the same structure as a normal route (hash). It may be
 		* arbitrarily assigned to this property or mixed into the
 		* [routes]{@linkcode enyo.Router#routes} array with a special `default: true` flag set. For
 		* any unmatched hash changes, this route will be executed and passed the path that was not
@@ -144,7 +150,7 @@
 
 		/**
 		* By default, when a router is created, it will attempt to trigger the correct route for the
-		* current browser location. Set this to false to prevent this from happening.
+		* current browser location. Set this flag to `false` to prevent this behavior.
 		* 
 		* @type {Boolean}
 		* @default true
@@ -163,12 +169,13 @@
 		useHistory: false,
 
 		/**
-		* The _routes_ array constitutes the handlers for this router. Routes are string paths,
-		* static or dynamic, that route particular _hashchange_ events. They are defined in an
-		* [array]{@link external:Array} of [hashes]{@link external:Object} with a _handler_
-		* (function name), _path_ (for static and dynamic paths), an optional _context_
-		* (for the _handler_), or a _default_ Boolean `true`|`false` where that handler will be used
-		* when no other route can handle the _hashchange_ event.
+		* The `routes` [array]{@link external:Array} specifies the handlers for
+		* the current Router instance. Routes are string paths, static or dynamic,
+		* that route particular `hashchange` events. They are defined in an array of
+		* [hashes]{@link external:Object} with a `handler` (function name), `path`
+		* (for static and dynamic paths), an optional `context` (for the `handler`),
+		* or a `default` Boolean `true`|`false` value indicating whether the handler
+		* should be used when no other route can handle the `hashchange` event.
 		* 
 		* @example
 		* routes: [
@@ -222,11 +229,11 @@
 		],
 
 		/**
-		* A computed property that will return the location as known by this router. This property
-		* will be synchronized with [window.location.hash]{@link external:window.location} unless
-		* its [internalOnly]{@linkcode enyo.Router#internalOnly} flag is set to `true`. Passing a
-		* string to this property via `_set('location', 'mylocation')` will update the inner
-		* location known by this router.
+		* A computed property that returns the location as known by this router. This property
+		* will be synchronized with [`window.location.hash`]{@link external:window.location}
+		* unless the [`internalOnly`]{@linkcode enyo.Router#internalOnly} flag is set to `true`.
+		* Passing a string to this property via `_set('location', 'mylocation')` will update the
+		* inner location known by this router.
 		*
 		* @public
 		*/
@@ -244,7 +251,8 @@
 		},
 
 		/**
-		* Returns the string for the default path (if any; otherwise, an empty string).
+		* Returns the string for the default path, or an empty string if no default
+		* path exists.
 		*
 		* @public
 		*/
@@ -256,17 +264,19 @@
 		// PUBLIC METHODS
 
 		/**
-		* Triggers a change without necessarily requiring a change to occur. If called without a
-		* parameter, it will force the route that matches the current browser location to fire. If a
-		* string is passed in, this method will trigger an internal-only event (i.e., the browser
-		* location will not be changed). If it is passed a hash, the method will try to use a
-		* _location_ property while looking for optional _change_ and _global_ properties.
+		* Triggers a change without necessarily requiring a change to occur. If
+		* called without a parameter, it will force the route that matches the
+		* current browser location to fire. If a string is passed in, this method
+		* will trigger an internal-only event (i.e., the browser location will not
+		* be changed). If it is passed a hash, the method will try to use a
+		* `location` property while looking for optional `change` and `global`
+		* properties.
 		*
-		* If the _change_ property is present and `true`, it will force a
-		* [location.hash]{@linkcode external:window.location} change in the browser (this is always
-		* global). If the _global_ property is present and `true` and _change_ is not present or
-		* false, it will trigger an internal event that all routers will respond to (not just this
-		* instance).
+		* If the `change` property is present and `true`, it will force a
+		* [`location.hash`]{@linkcode external:window.location} change in the
+		* browser (this is always global). If the `global` property is present and
+		* `true` and `change` is not present or `false`, it will trigger an internal
+		* event that all routers will respond to (not just this instance).
 		*
 		* @public
 		*/
@@ -298,11 +308,11 @@
 		/**
 		* In very rare circumstances, it may be useful to pass a path to the
 		* [routes]{@linkcode enyo.Router#routes} without using
-		* [trigger()]{@linkcode enyo.Router#trigger} or global hash changes with _path_ being a
-		* string that will be evaluated against the [routes]{@linkcode enyo.Router#routes} owned by
+		* [trigger()]{@linkcode enyo.Router#trigger} or global hash changes with
+		* `path` being a string that will be evaluated against the routes owned by
 		* this router.
 		*
-		* @param {String} path A _path_ to test against this router's
+		* @param {String} path A path to test against this router's
 		*	[routes]{@linkcode enyo.Router#routes}.
 		* @public
 		*/
@@ -321,8 +331,8 @@
 		},
 
 		/**
-		* If history is enabled and some history exists, attempts to revert the current known
-		* location to the previous one in the stack.
+		* If history is enabled and some history exists, attempts to revert the
+		* current known location to the previous one in the stack.
 		*
 		* @public
 		*/
@@ -339,16 +349,19 @@
 		},
 
 		/**
-		* Arbitrarily adds history. Optional second parameter can be a boolean true to place the
-		* location at the lowest (first) position of the stack, or an integer indicating its exact
-		* location in the stack. If the index is out of bounds, it will be added at the lowest
-		* position (same as boolean true for second parameter). Returns callee for chaining.
+		* Arbitrarily adds history. The optional second parameter may be set to a
+		* boolean `true` to add the location at the lowest (first) position in the
+		* stack, or to an integer indicating the exact position for the location in
+		* the stack. If the index is out of bounds, the location will be added at
+		* the lowest position (the same as if boolean `true` is passed as the second
+		* parameter). Returns callee for chaining.
 		*
 		* @param {String} location The location string to add to the history.
-		* @param {(Number|Boolean)} [idx] Where the where in the history stack the new _location_
-		*	should be added. `true` for the first/oldest position, or a number indicating the index
-		*	to add the location to. Not including this value or setting to `undefined` will add the
-		*	_location_ to the last/most-recent position in the history stack.
+		* @param {(Number|Boolean)} [idx] Position in the history stack where the
+		* new location should be added. Pass `true` for the first/oldest position,
+		* or a number indicating the index where the location should be added. If no
+		* value (or `undefined`) is specified, the location will be added at the
+		*	last/most-recent position in the history stack.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -372,7 +385,7 @@
 		},
 
 		/**
-		* Clears any history the router has currently stored. Returns callee for chaining.
+		* Clears any history the router has stored. Returns callee for chaining.
 		*
 		* @returns {this} The callee for chaining.
 		* @public
@@ -383,11 +396,11 @@
 		},
 
 		/**
-		* Can be used to programmatically add [routes]{@linkcode enyo.Router#routes} to the router
-		* where _route_ is a hash as described by the [routes]{@linkcode enyo.Router#routes} array.
-		* Returns callee for chaining.
+		* May be used to programmatically add [routes]{@linkcode enyo.Router#routes}
+		* to the router. `route` is a hash as described by the
+		* [`routes`]{@linkcode enyo.Router#routes} array. Returns callee for chaining.
 		*
-		* @param {Object} route The route to add
+		* @param {Object} route The route to add.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
