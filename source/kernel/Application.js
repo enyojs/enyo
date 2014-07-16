@@ -5,7 +5,7 @@
 	var ViewController = enyo.ViewController;
 	
 	/**
-	* Any _enyo.Application_ instances will be available by name from this 
+	* Any {@link enyo.Application} instances will be available by name from this 
 	* [object]{@link external:Object}. If no name is provided for an 
 	* [application]{@link enyo.Application}, a name will be generated for it.
 	*
@@ -18,9 +18,9 @@
 	* collection of {@link enyo.Controller controllers} and a hierarchy of 
 	* [controls]{@link enyo.Control}. There may be multiple instances of an 
 	* [application]{@link enyo.Application} at a given time, with unique names and target 
-	* [DOM nodes]{@link external:Node}. Within a given [application]{@link enyo.Application}, a 
-	* reference to the [application]{@link enyo.Application} is available on all 
-	* [components]{@link enyo.Component} via the [app]{@link enyo.ApplicationSupport#app} property.
+	* [DOM nodes]{@link external:Node}. Within a given application, a reference to the
+	* application is available on all [components]{@link enyo.Component} via the
+	* [`app`]{@link enyo.ApplicationSupport#app} property.
 	*
 	* @class enyo.Application
 	* @extends enyo.ViewController
@@ -41,8 +41,8 @@
 		
 		/**
 		* If set to `true` (the default), the [application's]{@link enyo.Application} 
-		* [start]{@link enyo.Application#start} method will automatically be called once its 
-		* [create]{@link enyo.Application#create} method has completed execution. Set this to 
+		* [`start()`]{@link enyo.Application#start} method will automatically be called once its 
+		* [`create()`]{@link enyo.Application#create} method has completed execution. Set this to 
 		* `false` if additional setup (or an asynchronous [event]{@link external:event}) is required
 		* before starting.
 		*
@@ -55,7 +55,7 @@
 		/**
 		* If set to `true` (the default), the [application]{@link enyo.Application} will immediately 
 		* [render]{@link enyo.Application#render} its [view]{@link enyo.ViewController#view} when 
-		* the [start]{@link enyo.Application#start} method has completed execution. Set this to 
+		* the [`start()`]{@link enyo.Application#start} method has completed execution. Set this to 
 		* `false` to delay rendering if additional setup (or an asynchronous 
 		* [event]{@link external:event}) is required before rendering.
 		*
@@ -66,7 +66,7 @@
 		renderOnStart: true,
 		
 		/**
-		* The _defaultKind_ for {@link enyo.Application} is {@link enyo.Controller}.
+		* The `defaultKind` for {@link enyo.Application} is {@link enyo.Controller}.
 		*
 		* @type {String}
 		* @default 'enyo.Controller'
@@ -132,8 +132,8 @@
 		
 		/**
 		* Allows normal creation flow and then executes the application's 
-		* [start]{@link enyo.Application#start} method if 
-		* [autoStart]{@link enyo.Application#autoStart} is `true`.
+		* [`start()`]{@link enyo.Application#start} method if 
+		* [`autoStart`]{@link enyo.Application#autoStart} is `true`.
 		*
 		* @method
 		* @private
@@ -148,8 +148,8 @@
 		}),
 		
 		/**
-		* Makes sure that all {@link enyo.Component components} created by this application have 
-		* their [app]{@link enyo.ApplicationSupport#app} property set correctly.
+		* Ensures that all [components]{@link enyo.Component} created by this application have 
+		* their [`app`]{@link enyo.ApplicationSupport#app} property set correctly.
 		*
 		* @method
 		* @private

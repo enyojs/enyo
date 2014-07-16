@@ -1,17 +1,17 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.ViewController_ is designed to manage the lifecycle of a particular view
+	* {@link enyo.ViewController} is designed to manage the lifecycle of a particular view
 	* ({@link enyo.Control}) that it owns. It is capable of controlling when a view is inserted into
 	* the DOM and where, managing [events]{@glossary event} bubbled from the view, and isolating (or
 	* encapsulating) the entire view hierarchy below it. Alternatively, it may be implemented as a 
 	* [component]{@link enyo.Component} in a larger hierarchy, in which case it will inject its view
-	* into its parent rather than directly into the DOM. And, of course, a _ViewController_ may be 
-	* used as the _controller_ property of another view, although this usage will (by default) 
+	* into its parent rather than directly into the DOM. And, of course, a ViewController may be 
+	* used as the `controller` property of another view, although this usage will (by default) 
 	* result in the removal of its own view from the {@link enyo.Component} bubbling hierarchy.
 	* 
-	* Note, _enyo.ViewController_ may have [_components_]{@link enyo.Component} defined in its 
-	* `components` [array]{@glossary Array}, but these [_components_]{@link enyo.Component} should 
-	* not be [_enyo.Controls_]{@link enyo.Control}.
+	* Note that `enyo.ViewController` may have components defined in its
+	* `components` [array]{@glossary Array}, but these components should
+	* not be `enyo.Controls`.
 	*
 	* @class enyo.ViewController
 	* @extends enyo.Controller
@@ -31,19 +31,19 @@
 		kind: 'enyo.Controller',
 
 		/**
-		* The _view_ property may either be a [constructor]{@glossary constructor} (or 
-		* [string]{@glossary String} naming a [kind]{@glossary kind}), an instance of 
-		* [_enyo.Control_]{@link enyo.Control}, a [string]{@glossary String} representing the path 
-		* to an instance of [_enyo.Control_]{@link enyo.Control}, an [object]{@glossary Object} 
-		* description of the view ([object literal/hash]{@glossary Object}), or `null` if it will be
-		* set later. Setting this property to a [constructor]{@glossary constructor} (or 
-		* [string]{@glossary String} naming a [kind]{@glossary kind}) will automatically create an 
-		* instance of that [kind]{@glossary kind} according to this controller's settings. If the 
-		* _view_ is set to an instance, it will be rendered according to the properties of the 
-		* controller. If this property is a [constructor]{@glossary constructor}, it will be 
-		* preserved in the [_viewKind_]{@link enyo.ViewController#viewKind} property. Once 
-		* initialization is complete, the instance of this controller's view will be available via 
-		* this property.
+		* The `view` property may either be a [constructor]{@glossary constructor}
+		* (or [string]{@glossary String} naming a [kind]{@glossary kind}), an
+		* instance of {@link enyo.Control}, a [string]{@glossary String} representing
+		* the path to an instance of `enyo.Control`, an [object]{@glossary Object}
+		* description of the view ([object literal/hash]), or `null` if it will be
+		* set later. Setting this property to a constructor or string naming a kind
+		* will automatically create an instance of that kind according to this
+		* controller's settings. If the `view` is set to an instance, it will be
+		* rendered according to the properties of the controller. If this property
+		* is a constructor, it will be preserved in the
+		* [`viewKind`]{@link enyo.ViewController#viewKind} property. Once
+		* initialization is complete, the instance of this controller's view will be
+		* available via this property.
 		*
 		* @type {enyo.Control|String|Object}
 		* @default null
@@ -52,11 +52,12 @@
 		view: null,
 
 		/**
-		* The preserved [kind]{@glossary kind} for this controller's view. You may set this to a
-		* [constructor]{@glossary constructor} or a [string]{@glossary String} that resolves to a 
-		* [constructor]{@glossary constructor} (or the [_view_]{@link enyo.ViewController#view}
-		* property). In either case, if a view is set explicitly or this property is used, the 
-		* constructor will be available via this property.
+		* The preserved [kind]{@glossary kind} for this controller's view. You may
+		* set this to a [constructor]{@glossary constructor} or a
+		* [string]{@glossary String} that resolves to a constructor (or the
+		* [`view`]{@link enyo.ViewController#view} property). In either case, if a
+		* view is set explicitly or this property is used, the constructor will be
+		* available via this property.
 		*
 		* @type {String}
 		* @default null
@@ -65,14 +66,14 @@
 		viewKind: null,
 
 		/**
-		* Designates where the controller's view will render. This should be a string consisting of 
-		* either _'document.body'_ (the default) or the DOM id of a node (either inserted by an 
-		* [_enyo.Control_]{@link enyo.Control} or static HTML already in the _document.body_). If 
-		* the controller has a parent (because it was instantiated as a component in an 
-		* [_enyo.Control_]{@link enyo.Control}), this property will be ignored and the view will 
-		* instead be rendered in the parent. This will not happen if the controller is a component 
-		* of [_enyo.Component_]{@link enyo.Component} or is set as the _controller_ property of an 
-		* [_enyo.Control_]{@link enyo.Control}.
+		* Designates where the controller's view will render. This should be a
+		* string consisting of either `'document.body'` (the default) or the DOM id
+		* of a node (either inserted by an {@link enyo.Control} or static HTML
+		* already in the `document.body`). If the controller has a parent (because
+		* it was instantiated as a component in an `enyo.Control`, this property
+		* will be ignored and the view will instead be rendered in the parent. This
+		* will not happen if the controller is a component of {@link enyo.Component}
+		* or is set as the `controller` property of an `enyo.Control`.
 		*
 		* @type {String}
 		* @default 'document.body'
@@ -81,12 +82,11 @@
 		renderTarget: 'document.body',
 
 		/**
-		* When the view of the controller has its [_destroy()_]{@link enyo.Control#destroy} method 
-		* called, it automatically triggers its own removal from the controller's 
-		* [_view_]{@link enyo.ViewController#view} property. By default, the controller will not 
-		* create a new [_view_]{@link enyo.ViewController#view} (from 
-		* [_viewKind_]{@link enyo.ViewController#viewKind}) automatically unless this flag is set to
-		* `true`.
+		* When the view of the controller has its [`destroy()`]{@link enyo.Control#destroy}
+		* method called, it automatically triggers its own removal from the controller's
+		* [`view`]{@link enyo.ViewController#view} property. By default, the controller
+		* will not create a new view (from [`viewKind`]{@link enyo.ViewController#viewKind})
+		* automatically unless this flag is set to `true`.
 		*
 		* @type {Boolean}
 		* @default false
@@ -95,14 +95,14 @@
 		resetView: false,
 
 		/**
-		* Renders the controller's view, if possible. If the controller is a component of a 
-		* [UiComponent]{@link enyo.UiComponent}, the view will be rendered into its container; 
-		* otherwise, the view will be rendered into the controller's 
-		* [_renderTarget_]{@link enyo.ViewController#renderTarget}. If the view is already rendered,
-		* this method will do nothing.
+		* Renders the controller's view, if possible. If the controller is a
+		* component of a [UiComponent]{@link enyo.UiComponent}, the view will be
+		* rendered into its container; otherwise, the view will be rendered into the
+		* controller's [`renderTarget`]{@link enyo.ViewController#renderTarget}. If
+		* the view is already rendered, this method will do nothing.
 		*
 		* @param {String} [target] When specified, this value will be used instead of
-		*	[_renderTarget_]{@link enyo.ViewController#renderTarget}.
+		*	[`renderTarget`]{@link enyo.ViewController#renderTarget}.
 		* @public
 		*/
 		render: function (target) {
@@ -120,8 +120,9 @@
 		},
 
 		/**
-		* Renders the view into the specified _target_ and sets the 
-		* [_renderTarget_]{@link enyo.ViewController#renderTarget} property to _target_.
+		* Renders the view into the specified `target` and sets the 
+		* [`renderTarget`]{@link enyo.ViewController#renderTarget} property to
+		* `target`.
 		*
 		* @param {String} target Where the view will be rendered into.
 		* @public
@@ -131,12 +132,12 @@
 		},
 
 		/**
-		* Responds to changes in the controller's [_view_]{@link enyo.ViewController#view} property 
-		* during initialization or whenever `set('view', ...)` is called. If a 
-		* [constructor]{@glossary constructor} is found, it will be instanced or resolved from a 
-		* [string]{@glossary String}. If a previous view exists and the controller is its 
-		* [owner]{@link enyo.Component#owner}, it will be destroyed; otherwise, it will simply be 
-		* removed.
+		* Responds to changes in the controller's [`view`]{@link enyo.ViewController#view}
+		* property during initialization or whenever `set('view', ...)` is called.
+		* If a [constructor]{@glossary constructor} is found, it will be instanced
+		* or resolved from a [string]{@glossary String}. If a previous view exists
+		* and the controller is its [owner]{@link enyo.Component#owner}, it will be
+		* destroyed; otherwise, it will simply be removed.
 		*
 		* @private
 		*/
@@ -224,9 +225,10 @@
 			};
 		}),
 		/**
-			The _controller_ can't be the instance owner of its child view for event propagation
-			reasons. This flag being true ensures that events will not be handled multiple times
-			by the _controller_ and its _view_ separately.
+			The `controller` can't be the instance owner of its child view for event
+			propagation reasons. When this flag is `true`, it ensures that events will
+			not be handled multiple times (by the `controller` and its `view`
+			separately).
 		*/
 		notInstanceOwner: true
 	});
