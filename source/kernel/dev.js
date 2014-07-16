@@ -2,8 +2,8 @@
 	'use strict';
 
 	/**
-	* When available, supply a high-precision, high performance monotonic benchmark for some
-	* internal usage and benchmark testing.
+	* When available, supplies a high-precision, high performance monotonic
+	* benchmark for some internal usage and benchmark testing.
 	* 
 	* @alias enyo.perfNow
 	* @method
@@ -12,14 +12,14 @@
 	enyo.bench = enyo.perfNow;
 
 	/*
-	* Track the active tests.
+	* Tracks the active tests.
 	*
 	* @private
 	*/
 	var tests = {};
 
 	/*
-	* Track averages.
+	* Tracks averages.
 	*
 	* @private
 	*/
@@ -63,25 +63,27 @@
 	};
 	
 	/**
-	* Configurable benchmark options [hash]{@link external:Object}. For more details see the
-	* same properties defined on {@link enyo.dev.Benchmark}.
+	* Configurable benchmark options [hash]{@link external:Object}. For more
+	* details, see the same properties defined on {@link enyo.dev.Benchmark}.
 	* 
 	* @typedef  {Object} enyo.dev.Benchmark~Options
-	* @property {String} name - The referenceable name of the benchmark (used for reporting).
-	* @property {Boolean} average - Defaults to `true`; if `true`, calculate an average of repeated
-	*	start/stops for the bench.
-	* @property {Boolean} logging - Defaults to `true`; if `true`, write start and stop messages to
-	*	the console.
-	* @property {Boolean} autoStart - Defaults to `true`; if `true`, automatically start the
-	*	[benchmark]{@link enyo.dev.Benchmark}.
+	* @property {String} name - The referenceable name of the
+	* [benchmark]{@link enyo.dev.Benchmark} (used for reporting).
+	* @property {Boolean} average - If `true` (the default), an average of
+	* repeated start/stops for the bench will be calculated.
+	* @property {Boolean} logging - If `true` (the default), start and stop
+	* messages will be written to the console.
+	* @property {Boolean} autoStart - If `true` (the default), the benchmark will
+	* automatically start on instantiation.
 	*/
 
 	/**
-	* This is a collection of methods to assist in simple benchmarking. The goal was to supply
-	* useful functionality while impacting the results as little as possible (the more calculations
-	* we do during benchmarking, the greater the opportunity to skew results). This is particularly
-	* important when using potentially-nested benchmark series (i.e., benchmarking a method that
-	* executes other benchmarked methods).
+	* A collection of methods to assist in simple benchmarking. In creating these
+	* methods, the goal was to supply useful functionality while impacting the
+	* results as little as possible (the more calculations we do during
+	* benchmarking, the greater the opportunity to skew results). This is
+	* particularly important when dealing with potentially-nested benchmark series
+	* (i.e., benchmarking a method that executes other benchmarked methods).
 	*
 	* @namespace enyo.dev
 	* @public
@@ -89,7 +91,7 @@
 	enyo.dev = /** @lends enyo.dev */ {
 
 		/**
-		* Can be set to false to disable all benchmarking code.
+		* Can be set to `false` to disable all benchmarking code.
 		*
 		* @type {Boolean}
 		* @default true
@@ -98,12 +100,14 @@
 		enabled: true,
 	
 		/**
-		* Create a new benchmark test with the given configuration options.
+		* Creates a new [benchmark]{@link enyo.dev.Benchmark} test with the given
+		* configuration options.
 		*
-		* @param {enyo.dev.Benchmark~Options} opts The configuration options to apply to the
-		*	[benchmark]{@link enyo.dev.Benchmark~Options}.
-		* @returns {enyo.dev.Benchmark} A Benchmark instance that has start and stop methods used to
-		*	track a test.
+		* @param {enyo.dev.Benchmark~Options} opts The configuration
+		* [options]{@link enyo.dev.Benchmark~Options} to apply to the
+		* [benchmark]{@link enyo.dev.Benchmark}.
+		* @returns {enyo.dev.Benchmark} A Benchmark instance with `start()` and
+		* `stop()` methods used to track a test.
 		* @public
 		*/
 		bench: function (opts) {
@@ -115,7 +119,7 @@
 		},
 
 		/**
-		* Show a report for a given [benchmark]{@link enyo.dev.Benchmark} by name.
+		* Shows a report for a given [benchmark]{@link enyo.dev.Benchmark} by name.
 		*
 		* @param {String} name The name of the [benchmark]{@link enyo.dev.Benchmark} to report.
 		* @public
@@ -145,7 +149,7 @@
 		},
 
 		/**
-		* Remove all stored data related to the named [benchmark]{@link enyo.dev.Benchmark}.
+		* Removes all stored data related to the named [benchmark]{@link enyo.dev.Benchmark}.
 		*
 		* @param {String} name The name of the [benchmark]{@link enyo.dev.Benchmark} from which to
 		*	remove stored data.
@@ -171,7 +175,7 @@
 	};
 
 	/**
-	* An internally used [kind]{@link external:kind} for development benchmarking.
+	* A [kind]{@link external:kind} used internally for development benchmarking.
 	*
 	* @class enyo.dev.Benchmark
 	* @protected
@@ -194,7 +198,7 @@
 		noDefer: true,
 		
 		/**
-		* Determines whether or not output will be logged to the console.
+		* Determines whether output will be logged to the console.
 		* 
 		* @type {Boolean}
 		* @default true
@@ -203,7 +207,7 @@
 		logging: true,
 
 		/**
-		* Start benchmarking immediately when this instance is created. 
+		* Determines whether benchmarking will start immediately when this instance is created. 
 		* 
 		* @type {Boolean}
 		* @default true
@@ -212,7 +216,7 @@
 		autoStart: true,
 		
 		/**
-		* Determines whether or not this will collect and maintain an averages report for
+		* Determines whether this instance will collect and maintain a report of averages for
 		* benches intended to be executed multiple times.
 		*
 		* @type {Boolean}
@@ -247,10 +251,10 @@
 		_time: null,
 		
 		/**
-		* Begin benching.
+		* Begins benching.
 		*
-		* @returns {Boolean} Whether or not it successfully began benching. Will be `false` if it
-		*	was already benching.
+		* @returns {Boolean} Whether or not benching began successfully. Returns `false` if
+		*	benching was already in progress.
 		* @public
 		*/
 		start: function () {
@@ -264,10 +268,10 @@
 		},
 
 		/**
-		* Stop benching.
+		* Stops benching.
 		*
-		* @returns {Boolean} Whether or not it successfully stopped benching. Will be `false` if it
-		*	was not benching.
+		* @returns {Boolean} Whether or not benching was stopped successfully. Returns `false`
+		*	if benching was not in progress.
 		* @public
 		*/
 		stop: function () {

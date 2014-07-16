@@ -1,18 +1,19 @@
 (function (enyo, scope) {
 
 	/**
-	* The {@link enyo.jobs} singleton provides a mechanism for queueing tasks (i.e., functions) for
-	* execution in order of priority. The execution of the current job stack may be blocked
-	* programmatically by setting a prioerity level (_run level_) under which no jobs are
-	* executed.
+	* The {@link enyo.jobs} singleton provides a mechanism for queueing tasks
+	* (i.e., functions) for execution in order of priority. The execution of the
+	* current job stack may be blocked programmatically by setting a priority
+	* level (run level) below which no jobs are executed.
 	*
-	* At the moment, only {@link enyo.Animator} uses this interface, setting a priority of 4, which
-	* blocks all low priority tasks from executing during animations. To maintain backward
-	* compatibility, jobs are assigned a priority of 5 by default; thus they are not blocked by
-	* animations.
+	* At the moment, only {@link enyo.Animator} uses this interface, setting a
+	* priority of 4, which blocks all low priority tasks from executing during
+	* animations. To maintain backward compatibility, jobs are assigned a priority
+	* of 5 by default; thus they are not blocked by animations.
 	*
-	* Normally, application code will not use {@link enyo.jobs} directly, but will instead use the
-	* [job]{@link enyo.Component#job} method of {@link enyo.Component}.
+	* Normally, application code will not use `enyo.jobs` directly, but will
+	* instead use the [`job()`]{@link enyo.Component#job} method of
+	* {@link enyo.Component}.
 	*
 	* @name enyo.jobs
 	* @public
@@ -67,13 +68,14 @@
 		},
 		
 		/**
-		* Adds a job to the job queue. If the current priority level is higher than this job's
-		* priority, the job gets deferred until the job level drops; if it is lower, the job is
-		* run immediately.
+		* Adds a [job]{@link enyo.job} to the job queue. If the current priority
+		* level is higher than this job's priority, this job gets deferred until the
+		* job level drops; if it is lower, this job is run immediately.
 		*
-		* @param {Function} job The actual {@glossary Function} to execute as the _job_.
-		* @param {Number} priority The priority of the _job_.
-		* @param {String} nom The name of the _job_ for reference later.
+		* @param {Function} job The actual {@glossary Function} to execute as the
+		* [job]{@link enyo.job}.
+		* @param {Number} priority The priority of the job.
+		* @param {String} nom The name of the job for later reference.
 		* @public
 		*/
 		add: function (job, priority, nom) {
@@ -98,11 +100,11 @@
 		},
 		
 		/**
-		* Will remove the named _job_ from the queue.
+		* Will remove the named [job]{@link enyo.job} from the queue.
 		*
-		* @param {String} nom The name of the _job_ to remove.
-		* @returns {Array} An {@glossary Array} that will contain the removed _job_ if it was found
-		*	or empty if it was not found.
+		* @param {String} nom The name of the [job]{@link enyo.job} to remove.
+		* @returns {Array} An {@glossary Array} that will contain the removed job if
+		* it was found, or empty if it was not found.
 		* @public
 		*/
 		remove: function (nom) {
@@ -131,11 +133,11 @@
 		},
 		
 		/**
-		* Removes a priority. If the removed priority had been the highest priority, the priority
-		* level drops to the next highest priority and queued jobs with a higher priority are
-		* executed.
+		* Removes a priority level. If the removed priority was previously the
+		* highest priority, the priority level drops to the next highest priority
+		* and queued jobs with a higher priority are executed.
 		*
-		* @param {String} id The name of the priority to remove.
+		* @param {String} id The name of the priority level to remove.
 		* @public
 		*/
 		unregisterPriority: function (id) {
