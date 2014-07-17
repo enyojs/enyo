@@ -136,6 +136,9 @@
 		content: '',
 
 		/**
+		* Due to performace matter, developer could delay rendering of Control
+		* until when it becomes visible.
+		* You may set this property to true to postpone rendering.
 		* @public
 		*/
 		renderOnShow: false,
@@ -652,6 +655,11 @@
 			delegate.invalidate(this, 'content');
 		},
 		/**
+		* If developer would like to delay rendering of control
+		* until it is required to be shown actually,
+		* set renderOnShow to true.
+		* It means that _canGenerate_ becomes false and will be true 
+		* when you set showing to true
 		* @private
 		*/
 		renderOnShowChanged: function () {
