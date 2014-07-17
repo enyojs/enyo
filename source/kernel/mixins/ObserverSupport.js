@@ -8,11 +8,12 @@
 	enyo.concatenated.push("observers");
 	
 	/**
-	* A method that responds to changes to one or more properties.
-	* [Observers]{@link enyo.ObserverSupport~observer} can be registered several different ways.
-	* See the {@link enyo.ObserverSupport} documentation for more details. Also note that
-	* [observers]{@link enyo.ObserverSupport~observer} should not be called directly but, if
-	* defined on a [kind]{@link external:kind}, they can be overloaded for special behavior.
+	* Responds to changes in one or more properties.
+	* [Observers]{@link enyo.ObserverSupport~observer} may be registered in
+	* several different ways. See the {@link enyo.ObserverSupport} documentation
+	* for more details. Also note that, while observers should not be called
+	* directly, if defined on a [kind]{@link external:kind}, they may be
+	* overloaded for special behavior.
 	*
 	* @see enyo.ObserverSupport
 	* @see enyo.ObserverSupport.observe
@@ -126,15 +127,15 @@
 	}
 		
 	/**
-	* Adds support for notifications on property changes. Most [kinds]{@link external:kind} already
-	* have this [mixin]{@link external:mixin} applied (any [kind]{@link external:kind} that
-	* inherits from {@link enyo.Object}). This allows for
+	* Adds support for notifications on property changes. Most
+	* [kinds]{@link external:kind} (including all kinds that inherit from
+	* {@link enyo.Object}) already have this [mixin]{@link external:mixin} applied.
+	* This allows for
 	* [observers]{@link enyo.ObserverSupport~Observer} to be
-	* [declared]{@link enyo.ObserverSupport.observers} or _implied_ (see below).
+	* [declared]{@link enyo.ObserverSupport.observers} or "implied" (see below).
 	*
-	* _Implied_ [observers]{@link enyo.ObserverSupport~Observer} are not
-	* [declared]{@link enyo.ObserverSupport.observers} but derived from their _name_. They take the
-	* form _[property]Changed_ where _property_ is the property to
+	* Implied observers are not declared, but derived from their `name`. They take
+	* the form `<property>Changed`, where `<property>` is the property to
 	* [observe]{@link enyo.ObserverSupport.observe}. For example:
 	*
 	* ```javascript
@@ -146,7 +147,7 @@
 	*
 	* 	// and the implied observer of that property
 	* 	valueChanged: function (was, is) {
-	* 		// do something now that it changed
+	* 		// do something now that it has changed
 	* 		enyo.log('value was "' + was + '" but now it is "' + is + '"');
 	* 	}
 	* });
@@ -155,10 +156,9 @@
 	* mine.set('value', false); // -> value was "true" but now it is "false"
 	* ```
 	*
-	* Using the [observers property]{@link enyo.ObserverSupport.observers} for its declarative
-	* syntax, [observers]{@link enyo.ObserverSupport~Observer} can
-	* [observe]{@link enyo.ObserverSupport.observe} any property (or properties) regardless of
-	* their _name_. For example:
+	* Using the [`observers`]{@link enyo.ObserverSupport.observers} property for
+	* its declarative syntax, an observer may observe any property (or
+	* properties), regardless of its `name`. For example:
 	*
 	* ```javascript
 	* enyo.kind({
@@ -176,7 +176,7 @@
 	* 		{method: 'myObserver', path: ['value', 'count']}
 	* 	],
 	*
-	* 	// now this observer will be notified to changes on both properties
+	* 	// now this observer will be notified of changes to both properties
 	* 	myObserver: function (was, is, prop) {
 	* 		// do something now that it changed
 	* 		enyo.log(prop + ' was "' + was + '" but now it is "' + is + '"');
@@ -188,15 +188,15 @@
 	* mine.set('count', 2); // -> count was "1" but now it is "2"
 	* ```
 	*
-	* While [observers]{@link enyo.ObserverSupport~Observer} can be
-	* [notified]{@link enyo.ObserverSupport.notify} for more than one property, this is not a
-	* typical usecase for _implied_ [observers]{@link enyo.ObserverSupport~Observer} as
-	* the convention only registers them for the named property.
+	* While observers may be [notified]{@link enyo.ObserverSupport.notify} of
+	* changes to multiple properties, this is not a typical use case for implied
+	* observers, since, by convention, they are only registered for the named
+	* property.
 	*
-	* There is yet another way to use [observers]{@link enyo.ObserverSupport~Observer} if necessary.
-	* Using the API methods [observe]{@link enyo.ObserverSupport.observe} and
-	* [unobserve]{@link enyo.ObserverSupport.unobserve} you can dynamically register and unregister
-	* [observers]{@link enyo.ObserverSupport~Observer} as needed. For example:
+	* There is one additional way to use observers, if necessary. You may use the
+	* API methods [`observe()`]{@link enyo.ObserverSupport.observe} and
+	* [`unobserve()`]{@link enyo.ObserverSupport.unobserve} to dynamically
+	* register and unregister observers as needed. For example:
 	*
 	* ```javascript
 	* var object = new enyo.Object({value: true});
@@ -210,8 +210,8 @@
 	* object.set('value', true); // no output because there is no observer
 	* ```
 	*
-	* Make sure to read the documentation regarding the use of the API methods as it is important
-	* to use it correctly to avoid common pitfalls and memory leaks.
+	* Be sure to read the documentation for these API methods; proper usage of
+	* these methods is important for avoiding common pitfalls and memory leaks.
 	*
 	* @mixin enyo.ObserverSupport
 	* @public
@@ -244,27 +244,28 @@
 		_notificationQueueEnabled: true,
 		
 		/**
-		* Determine if _observing_ is enabled. If
-		* [stopNotifications]{@link enyo.ObserverSupport.stopNotifications} has been called then
-		* this will return `false`.
+		* Determines whether `_observing` is enabled. If
+		* [`stopNotifications()`]{@link enyo.ObserverSupport.stopNotifications} has
+		* been called, then this will return `false`.
 		*
 		* @see enyo.ObserverSupport.stopNotifications
 		* @see enyo.ObserverSupport.startNotifications
-		* @returns {Boolean} Whether or not the _callee_ is _observing_.
+		* @returns {Boolean} Whether or not the callee is observing.
 		*/
 		isObserving: function () {
 			return this._observing;
 		},
 		
 		/**
-		* Return an immutable list of [observers]{@link enyo.ObserverSupport~Observer} for the
-		* given _path_ or all [observers]{@link enyo.ObserverSupport~Observer} for the _callee_.
+		* Returns an immutable list of [observers]{@link enyo.ObserverSupport~Observer}
+		* for the given `path`, or all observers for the callee.
 		*
-		* @param {String} [path] Find [observers]{@link enyo.ObserverSupport~Observer} for this
-		*	_property_ or _property path_. If not provided all
-		*	[observers]{@link enyo.ObserverSupport~Observer} for the _callee_ will be returned.
-		* @returns {enyo.ObserverSupport~Observer[]} The immutable [array]{@link external:Array} of
-		*	[observers]{@link enyo.ObserverSupport~Observer}.
+		* @param {String} [path] Path or property path for which
+		* [observers]{@link enyo.ObserverSupport~Observer} will be returned. If not
+		* specified, all observers for the callee will be returned.
+		*
+		* @returns {enyo.ObserverSupport~Observer[]} The immutable
+		* [array]{@link external:Array} of observers.
 		* @public
 		*/
 		getObservers: function (path) {
@@ -303,22 +304,22 @@
 		},
 		
 		/**
-		* Register an [observer]{@link enyo.ObserverSupport~Observer} to be
-		* [notified]{@link enyo.ObserverSupport.notify} when the given property has been changed. It
-		* is important to note that it is possible to register the same
-		* [observer]{@link enyo.ObserverSupport~Observer} multiple times (this is entirely never the
-		* intention) so care should be taken to avoid that scenario. It is also important to
-		* understand how they are stored and unregistered
-		* ([unobserved]{@link enyo.ObserverSupport.unobserve}). The _ctx_ (context) parameter is
-		* stored with the [observer]{@link enyo.ObserverSupport~Observer} reference. If used, it
-		* _should always be used_ when [unobserving]{@link enyo.ObserverSupport.unobserve} as well.
+		* Registers an [observer]{@link enyo.ObserverSupport~Observer} to be
+		* [notified]{@link enyo.ObserverSupport.notify} when the given property has
+		* been changed. It is important to note that it is possible to register the
+		* same observer multiple times (although this is never the intention), so
+		* care should be taken to avoid that scenario. It is also important to
+		* understand how observers are stored and unregistered
+		* ([unobserved]{@link enyo.ObserverSupport.unobserve}). The `ctx` (context)
+		* parameter is stored with the observer reference. **If used when
+		* registering, it should also be used when unregistering.**
 		*
 		* @see enyo.ObserverSupport.unobserve
-		* @param {String} path The _property_ or _property path_ to observe.
+		* @param {String} path The property or property path to observe.
 		* @param {enyo.ObserverSupport~Observer} fn The
 		*	[observer]{@link enyo.ObserverSupport~Observer} method that responds to changes.
-		* @param {*} [ctx] The _this_ (context) under which to execute the
-		*	[observer]{@link enyo.ObserverSupport~Observer}.
+		* @param {*} [ctx] The `this` (context) under which to execute the observer.
+		*
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -337,16 +338,16 @@
 		},
 		
 		/**
-		* Unregister an [observer]{@link enyo.ObserverSupport~Observer}. If a _ctx_ (context) was
-		* supplied to [observe]{@link enyo.ObserverSupport.observe} it should also be supplied to
-		* [unobserve]{@link enyo.ObserverSupport.unobserve}.
+		* Unregisters an [observer]{@link enyo.ObserverSupport~Observer}. If a `ctx`
+		* (context) was supplied to [`observe()`]{@link enyo.ObserverSupport.observe},
+		* then it should also be supplied to this method.
 		*
 		* @see enyo.ObserverSupport.observe
-		* @param {String} path The _property_ or _property path_ to unobserve.
+		* @param {String} path The property or property path to unobserve.
 		* @param {enyo.ObserverSupport~Observer} fn The
 		*	[observer]{@link enyo.ObserverSupport~Observer} method that responds to changes.
-		* @param {*} [ctx] The _this_ (context) under which to execute the
-		*	[observer]{@link enyo.ObserverSupport~Observer}.
+		* @param {*} [ctx] The `this` (context) under which to execute the observer.
+		*
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -355,11 +356,11 @@
 		},
 		
 		/**
-		* Remove all [observers]{@link enyo.ObserverSupport~Observer} from the _callee_. If a
-		* _path_ parameter is provided it will only remove
-		* [observers]{@link enyo.ObserverSupport~Observer} for that _path_ (or property).
+		* Removes all [observers]{@link enyo.ObserverSupport~Observer} from the
+		* callee. If a `path` parameter is provided, observers will only be removed
+		* from that path (or property).
 		*
-		* @param {String} [path] A _property_ or _property path_ from which to remove all
+		* @param {String} [path] A property or property path from which to remove all
 		*	[observers]{@link enyo.ObserverSupport~Observer}.
 		* @returns {this} The callee for chaining.
 		*/
@@ -388,12 +389,13 @@
 		},
 		
 		/**
-		* Trigger any [observers]{@link enyo.ObserverSupport~Observer} for the given _path_. Must
-		* supply the previous and current values. Typically this method is called automatically or
-		* can forcibly be called when [setting]{@link enyo.Object#set} a value with the _force_
-		* option.
+		* Triggers any [observers]{@link enyo.ObserverSupport~Observer} for the
+		* given `path`. The previous and current values must be supplied. This
+		* method is typically called automatically, but it may also be called
+		* forcibly by [setting]{@link enyo.Object#set} a value with the
+		* `force` option.
 		*
-		* @param {String} path The _property_ or _property path_ to notify.
+		* @param {String} path The property or property path to notify.
 		* @param {*} was The previous value.
 		* @param {*} is The current value.
 		* @returns {this} The callee for chaining.
@@ -403,14 +405,15 @@
 		},
 		
 		/**
-		* Stop all [notifications]{@link enyo.ObserverSupport.notify} from propagating. By default,
-		* all [notifications]{@link enyo.ObserverSupport.notify} will be queued and flushed once
-		* [startNotifications]{@link enyo.ObserverSupport.startNotifications} has been called. There
-		* is an optional flag here to also disable the queue or you can use the
-		* [disableNotificationQueue]{@link enyo.ObserverSupport.disableNotificationQueue} and
-		* [enableNotificationQueue]{@link enyo.ObserverSupport.enableNotificationQueue} API methods.
-		* The [startNotifications]{@link enyo.ObserverSupport.startNotifications} method will need
-		* to be called the same number of times this method has been called.
+		* Stops all [notifications]{@link enyo.ObserverSupport.notify} from
+		* propagating. By default, all notifications will be queued and flushed once
+		* [`startNotifications()`]{@link enyo.ObserverSupport.startNotifications}
+		* has been called. Setting the optional `noQueue` flag will also disable the
+		* queue, or you can use the
+		* [`disableNotificationQueue()`]{@link enyo.ObserverSupport.disableNotificationQueue} and
+		* [`enableNotificationQueue()`]{@link enyo.ObserverSupport.enableNotificationQueue}
+		* API methods. `startNotifications()` will need to be called the same number
+		* of times that this method has been called.
 		*
 		* @see enyo.ObserverSupport.startNotifications
 		* @see enyo.ObserverSupport.disableNotificationQueue
@@ -426,17 +429,19 @@
 		},
 		
 		/**
-		* Start [notifications]{@link enyo.ObserverSupport.notify} if they have been
-		* [disabled]{@link enyo.ObserverSupport.stopNotifications}. If the notification queue was
-		* not disabled, this will automatically flush the queue of all notifications that were
-		* encountered while stopped. This method needs to be called the same number of times that
-		* [stopNotifications]{@link enyo.ObserverSupport.stopNotifications} was called.
+		* Starts [notifications]{@link enyo.ObserverSupport.notify} if they have
+		* been [disabled]{@link enyo.ObserverSupport.stopNotifications}. If the
+		* notification queue was not disabled, this will automatically flush the
+		* queue of all notifications that were encountered while stopped. This
+		* method must be called the same number of times that
+		* [`stopNotifications()`]{@link enyo.ObserverSupport.stopNotifications} was
+		* called.
 		*
 		* @see enyo.ObserverSupport.stopNotifications
 		* @see enyo.ObserverSupport.disableNotificationQueue
 		* @see enyo.ObserverSupport.enableNotificationQueue
-		* @param {Boolean} [queue] If `true` and the notification queue is disabled, it will be
-		*	re-enabled.
+		* @param {Boolean} [queue] If `true` and the notification queue is disabled,
+		* the queue will be re-enabled.
 		* @returns {this} The callee for chaining.
 		*/
 		startNotifications: function (queue) {
@@ -448,7 +453,7 @@
 		},
 		
 		/**
-		* If the notification queue was disabled, this will re-enable it.
+		* Re-enables the notification queue, if it was disabled.
 		*
 		* @see enyo.ObserverSupport.disableNotificationQueue
 		* @returns {this} The callee for chaining.
@@ -459,8 +464,8 @@
 		},
 		
 		/**
-		* If the notification queue is enabled (default), it will be disabled. If there were
-		* notifications currently in the queue, they will be removed.
+		* If the notification queue is enabled (the default), it will be disabled
+		* and any notifications in the queue will be removed.
 		*
 		* @see enyo.ObserverSupport.enableNotificationQueue
 		* @returns {this} The callee for chaining.

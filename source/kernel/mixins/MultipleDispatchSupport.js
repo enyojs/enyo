@@ -1,11 +1,11 @@
 (function (enyo, scope) {
 
 	/**
-	* Collection of methods to allow a single {@link enyo.Component} to
-	* [dispatch]{@link enyo.Component#dispatchEvent} a single event to multiple targets. The events
-	* are synchronously propagated in the order in which the targets are encountered. Note that
-	* this mixin is already applied to a base [kind]{@link external:kind}:
-	* {@link enyo.MultipleDispatchComponent}.
+	* A collection of methods to allow a single {@link enyo.Component} to
+	* [dispatch]{@link enyo.Component#dispatchEvent} a single event to multiple
+	* targets. The events are synchronously propagated in the order in which the
+	* targets are encountered. Note that this mixin is already applied to a base
+	* [kind]{@link external:kind}, {@link enyo.MultipleDispatchComponent}.
 	*
 	* @mixin enyo.MultipleDispatchSupport
 	* @public
@@ -18,7 +18,7 @@
 		name: 'MultipleDispatchSupport',
 		
 		/**
-		* Add a target for dispatchment.
+		* Adds a target for dispatching.
 		*
 		* @param {enyo.Component} component The {@link enyo.Component} to add as a dispatch target.
 		* @public
@@ -30,7 +30,7 @@
 			}
 		},
 		/**
-		* Remove a target from dispatchment.
+		* Removes a target from dispatching.
 		*
 		* @param {enyo.Component} component The {@link enyo.Component} to remove as a dispatch
 		*	target.

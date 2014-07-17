@@ -12,7 +12,7 @@
 	enyo.concatenated.push('mixins');
 	
 	/**
-	* Apply, with safeguards, a given mixin to an object.
+	* Applies, with safeguards, a given mixin to an object.
 	*
 	* @private
 	*/
@@ -80,8 +80,8 @@
 	};
 	
 	/**
-	* Internally used support mixin. Adds API methods to aid in using and applying mixins to
-	* [kinds]{@link external:kind}.
+	* An internally-used support mixin that adds API methods to aid in using and
+	* applying mixins to [kinds]{@link external:kind}.
 	*
 	* @mixin enyo.MixinSupport
 	* @protected
@@ -94,7 +94,7 @@
 		name: 'MixinSupport',
 		
 		/**
-		* Extend the instance with the given properties.
+		* Extends the instance with the given properties.
 		*
 		* @param {Object} props The property [hash]{@link external:Object} from which to extend
 		*	the callee.
