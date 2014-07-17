@@ -6,18 +6,20 @@
 		HTMLStringDelegate = enyo.HTMLStringDelegate;
 
 	/**
-	* _enyo.Control_ is a [component]{@link enyo.UiComponent} that controls a
-	* [DOM]{@glossary DOM} [node]{@glossary Node} (i.e., an element in the user
-	* interface). _Controls_ are generally visible and the user often interacts with them directly.
-	* While things like buttons and input boxes are obviously controls, in Enyo, a control may be as
-	* simple as a text item or as complex as an entire application. They both inherit the same basic
-	* core capabilities from here.
+	* {@link enyo.Control} is a [component]{@link enyo.UiComponent} that controls
+	* a [DOM]{@glossary DOM} [node]{@glossary Node} (i.e., an element in the user
+	* interface). Controls are generally visible and the user often interacts with
+	* them directly. While things like buttons and input boxes are obviously
+	* controls, in Enyo, a control may be as simple as a text item or as complex
+	* as an entire application. Both inherit the same basic core capabilities from
+	* this kind.
 	*
 	* For more information, see the documentation on
-	* [Controls]{@link http://enyojs.com/docs/2.4.0/key-concepts/controls.html} in the
-	* [Enyo Developer Guide]{@link http://enyojs.com/docs/}.
+	* [Controls]{@link key-concepts/controls.html} in the
+	* [Enyo Developer Guide]{@link index.html}.
 	*
-	* _If you make changes to enyo.Control, be sure to add or update the appropriate unit tests._
+	* **If you make changes to `enyo.Control`, be sure to add or update the
+	* appropriate unit tests.**
 	*
 	* @class enyo.Control
 	* @extends enyo.UiComponent
@@ -58,8 +60,8 @@
 		tag: 'div',
 
 		/**
-		* An attributes [hash]{@glossary Object} to be applied to the created
-		* [DOM node]{@glossary DOM}.
+		* A [hash]{@glossary Object} of attributes to be applied to the created
+		* [DOM]{@glossary DOM} node.
 		*
 		* @type {Object}
 		* @default null
@@ -68,8 +70,8 @@
 		attributes: null,
 
 		/**
-		* [Boolean]{@glossary Boolean} flag for whether this element should "fit" or fill its
-		* container's size.
+		* [Boolean]{@glossary Boolean} flag indicating whether this element should
+		* "fit", or fill its container's size.
 		*
 		* @type {Boolean}
 		* @default null
@@ -78,9 +80,10 @@
 		fit: null,
 
 		/**
-		* Should this control allow HTML in its [content]{@linkcode enyo.Control.content} property.
-		* If set to `false`, HTML will be encoded into [HTML entities]{@glossary entity} (like
-		* `&lt;` and `&gt;`) for literal visual representation.
+		* [Boolean]{@glossary Boolean} flag indicating whether HTML is allowed in
+		* this control's [`content`]{@link enyo.Control.content} property. If `false`
+		* (the default), HTML will be encoded into [HTML entities]{@glossary entity}
+		* (e.g., `&lt;` and `&gt;`) for literal visual representation.
 		*
 		* @type {Boolean}
 		* @default null
@@ -89,7 +92,7 @@
 		allowHtml: false,
 
 		/**
-		* Mymics the HTML `style` attribute
+		* Mimics the HTML `style` attribute.
 		*
 		* @type {String}
 		* @default ''
@@ -103,7 +106,7 @@
 		kindStyle: '',
 
 		/**
-		* Mymics the HTML `class` attribute
+		* Mimics the HTML `class` attribute.
 		*
 		* @type {String}
 		* @default ''
@@ -126,15 +129,15 @@
 		controlClasses: '',
 
 		/**
-		* The text-based content of the Control. With the {@link enyo.Control.allowHtml} flag set to
-		* `true`, you may set this property to a string of HTML.
+		* The text-based content of the Control. If the [`allowHtml`]{@link enyo.Control.allowHtml}
+		* flag is set to `true`, you may set this property to an HTML string.
 		* @public
 		*/
 		content: '',
 
 		/**
 		* @todo Find out how to document "handlers".
-		* @publiC
+		* @public
 		*/
 		handlers: {
 			ontap: 'tap',
@@ -158,14 +161,15 @@
 		// DOM NODE MANIPULATION API
 
 		/**
-		* Get the bounds for this control. The `top` and `left` properties returned by this method
-		* represent the control's positional distance in pixels from either A) the first parent of
-		* this control which is `absolute`ly or `relative`ly positioned, or B) the `document.body`.
+		* Gets the bounds for this control. The `top` and `left` properties returned
+		* by this method represent the control's positional distance in pixels from
+		* either A) the first parent of this control that is absolutely or relatively
+		* positioned, or B) the `document.body`.
 		*
 		* This is a shortcut convenience method for {@link enyo.dom.getBounds}.
 		*
-		* @returns {Object} An [object]{@glossary Object} containing `top`, `left`, `width`,
-		*	and `height` properties.
+		* @returns {Object} An [object]{@glossary Object} containing `top`, `left`,
+		* `width`, and `height` properties.
 		* @public
 		*/
 		getBounds: function () {
@@ -176,13 +180,15 @@
 		},
 
 		/**
-		* Set the absolute/relative position and/or size for this control. `Null` or `undefined`
-		* property values are ignored. Optionally specify a _unit_ (valid CSS measurement unit) as a
-		* [string]{@link exteral:String} to apply to each of the position/size assignments.
+		* Sets the absolute/relative position and/or size for this control. Values
+		* of `null` or `undefined` for the `bounds` properties will be ignored. You
+		* may optionally specify a `unit` (i.e., a valid CSS measurement unit) as a
+		* [string]{@link exteral:String} to be applied to each of the position/size
+		* assignments.
 		*
-		* @param {Object} bounds An [object]{@glossary Object} optionally containing one or
-		*	more of the following properties: `width`, `height`, `top`, `right`, `bottom`, and/or
-		*	`left`.
+		* @param {Object} bounds An [object]{@glossary Object}, optionally
+		* containing one or more of the following properties: `width`, `height`,
+		* `top`, `right`, `bottom`, and `left`.
 		* @param {String} [unit='px']
 		* @public
 		*/
@@ -193,7 +199,7 @@
 				val,
 				ext;
 
-			// if no unit is supplied we default to pixels
+			// if no unit is supplied, we default to pixels
 			unit = unit || 'px';
 
 			for (; (ext = extents[i]); ++i) {
@@ -207,14 +213,15 @@
 		},
 
 		/**
-		* Get the bounds for this control. The `top` and `left` properties returned by this method
-		* represent the control's positional distance in pixels from `document.body`. To get the
-		* bounds relative to this control's parent(s), use {@link enyo.Control.getBounds}.
+		* Gets the bounds for this control. The `top` and `left` properties returned
+		* by this method represent the control's positional distance in pixels from
+		* `document.body`. To get the bounds relative to this control's parent(s),
+		* use {@link enyo.Control.getBounds}.
 		*
 		* This is a shortcut convenience method for {@link enyo.dom.getAbsoluteBounds}.
 		*
-		* @returns {Object} An [object]{@glossary Object} containing `top`, `left`, `width`,
-		*	and `height` properties.
+		* @returns {Object} An [object]{@glossary Object} containing `top`, `left`,
+		* `width`, and `height` properties.
 		* @public
 		*/
 		getAbsoluteBounds: function () {
@@ -250,7 +257,7 @@
 		},
 
 		/**
-		* Set this control to be [focused]{@glossary focus}.
+		* Sets this control to be [focused]{@glossary focus}.
 		*
 		* @public
 		*/
@@ -259,7 +266,8 @@
 		},
 
 		/**
-		* [Blur]{@glossary blur} this control. (The opposite of {@link enyo.Control.focus}.)
+		* [Blurs]{@glossary blur} this control. (The opposite of
+		* {@link enyo.Control.focus}.)
 		*
 		* @public
 		*/
@@ -268,10 +276,10 @@
 		},
 
 		/**
-		* Test whether this control currently has the [focus]{@glossary focus}.
+		* Determines whether this control currently has the [focus]{@glossary focus}.
 		*
-		* @returns {Boolean} Does this control have focus?
-		*	True if yes, no if false.
+		* @returns {Boolean} Whether this control has focus. `true` if the control
+		* has focus; otherwise, false.
 		* @public
 		*/
 		hasFocus: function () {
@@ -279,10 +287,10 @@
 		},
 
 		/**
-		* Test whether this control's [DOM node]{@glossary Node} has been created.
+		* Determines whether this control's [DOM node]{@glossary Node} has been created.
 		*
-		* @returns {Boolean} Has this [DOM node]{@glossary Node} been created?
-		*	True if yes, no if false.
+		* @returns {Boolean} Whether this control's [DOM node]{@glossary Node} has
+		* been created. `true` if it has been created; otherwise, false.
 		* @public
 		*/
 		hasNode: function () {
@@ -290,13 +298,13 @@
 		},
 
 		/**
-		* Gets the requested property _name_ from the control's attributes
-		* [hash]{@glossary Object}, from its cache of node attributes or if it has yet to be
-		* cached, from the [node]{@glossary Node} itself.
+		* Gets the requested property (`name`) from the control's attributes
+		* [hash]{@glossary Object}, from its cache of node attributes, or, if it has
+		* yet to be cached, from the [node]{@glossary Node} itself.
 		*
 		* @param {String} name The attribute name to get.
-		* @returns {(String|Null)} The value of the requested attribute, `null` if there isn't a
-		*	[DOM node]{@glossary Node} yet.
+		* @returns {(String|Null)} The value of the requested attribute, or `null`
+		* if there isn't a [DOM node]{@glossary Node} yet.
 		* @public
 		*/
 		getAttribute: function (name) {
@@ -319,12 +327,12 @@
 		},
 
 		/**
-		* Assign an attribute to a control's [node]{@glossary Node}. Assigning a `null`,
-		* `false`, or empty string ("") _value_ to _name_ will remove the attribute from the
-		* [node]{@glossary Node} altogether.
+		* Assigns an attribute to a control's [node]{@glossary Node}. Assigning
+		* `name` a value of `null`, `false`, or the empty string `("")` will remove
+		* the attribute from the node altogether.
 		*
 		* @param {String} name Attribute name to assign/remove.
-		* @param {(String|Number|null)} value The value to assign to _name_
+		* @param {(String|Number|null)} value The value to assign to `name`
 		* @returns {this} Callee for chaining.
 		* @public
 		*/
@@ -347,13 +355,13 @@
 		},
 
 		/**
-		* Reads the _name_ property directly off of the [node]{@glossary Node}. Provide a
-		* default _def_ to use if there is no [node]{@glossary Node} yet.
+		* Reads the `name` property directly from the [node]{@glossary Node}. You
+		* may provide a default (`def`) to use if there is no node yet.
 		*
-		* @param {String} name [Node]{@glossary Node} property name to get.
-		* @param {*} def Default value to apply if there is no [node]{@glossary Node}.
-		* @returns {String} Value of the _name_ property or _def_ if the [node]{@glossary Node}
-		*	was not available.
+		* @param {String} name The [node]{@glossary Node} property name to get.
+		* @param {*} def The default value to apply if there is no node.
+		* @returns {String} The value of the `name` property, or `def` if the node
+		* was not available.
 		* @public
 		*/
 		getNodeProperty: function (name, def) {
@@ -361,11 +369,11 @@
 		},
 
 		/**
-		* Sets the _name_ property _value_ directly on the [node]{@glossary Node}.
+		* Sets the value of a property (`name`) directly on the [node]{@glossary Node}.
 		*
-		* @param {String} name [Node]{@glossary Node} property name to set.
-		* @param {*} value Value to assign to the property.
-		* @returns {this} Callee for chaining.
+		* @param {String} name The [node]{@glossary Node} property name to set.
+		* @param {*} value The value to assign to the property.
+		* @returns {this} The callee for chaining.
 		* @public
 		*/
 		setNodeProperty: function (name, value) {
@@ -374,10 +382,11 @@
 		},
 
 		/**
-		* Append additional content to this control.
+		* Appends additional content to this control.
 		*
-		* @param {String} content The new string to add to the end of the content property.
-		* @returns {this} Callee for chaining.
+		* @param {String} content The new string to add to the end of the `content`
+		* property.
+		* @returns {this} The callee for chaining.
 		* @public
 		*/
 		addContent: function (content) {
@@ -390,10 +399,10 @@
 		// STYLE/CLASS API
 
 		/**
-		* Check whether this control has the `class` _name_ or not.
+		* Determines whether this control has the class `name`.
 		*
-		* @param {String} name The class or classes name to check for.
-		* @returns {Boolean} Does it have the _name_ class or not?
+		* @param {String} name The name of the class (or classes) to check for.
+		* @returns {Boolean} Whether the control has the class `name`.
 		* @public
 		*/
 		hasClass: function (name) {
@@ -401,10 +410,10 @@
 		},
 
 		/**
-		* Adds the provided class _name_ to this control's classes list.
+		* Adds the specified class to this control's list of classes.
 		*
 		* @param {String} name The name of the class to add.
-		* @returns {this} Callee for chaining.
+		* @returns {this} The callee for chaining.
 		* @public
 		*/
 		addClass: function (name) {
@@ -423,13 +432,14 @@
 		},
 
 		/**
-		* Removes the provided class _name_ from this control's classes list.
+		* Removes the specified class from this control's list of classes.
 		*
-		* _Note: It is not advisable to remove multiple space-separated class names using this
-		* method. Call this for each class name you'd like to remove._
+		* **Note: It is not advisable to pass a string of multiple, space-delimited
+		* class names into this method. Instead, call the method once for each class
+		* name that you want to remove.**
 		*
 		* @param {String} name The name of the class to remove.
-		* @returns {this} Callee for chaining.
+		* @returns {this} The callee for chaining.
 		* @public
 		*/
 		removeClass: function (name) {
@@ -443,13 +453,13 @@
 		},
 
 		/**
-		* Add or Remove the provided class _name_ to this control conditionally based on the state
-		* of the _add_ argument.
+		* Adds or removes the specified class conditionally, based on the state
+		* of the `add` argument.
 		*
-		* @param {String} name The name of the class to remove.
-		* @param {Boolean} add If this is `true`, the _name_ will be added as a class, `false` and
-		*	it will be removed.
-		* @returns {this} Callee for chaining.
+		* @param {String} name The name of the class to add or remove.
+		* @param {Boolean} add If `true`, `name` will be added as a class; if
+		* `false`, it will be removed.
+		* @returns {this} The callee for chaining.
 		* @public
 		*/
 		addRemoveClass: function (name, add) {
@@ -483,13 +493,15 @@
 		},
 
 		/**
-		* Apply some CSS styling directly with this. Use the _prop_ argument to specify the CSS
-		* property name you'd like to set, and the _value_ for the value you'd like for the _prop_.
-		* Setting _value_ to null will remove the CSS property _name_ altegether.
+		* Applies a CSS style directly to the control. Use the `prop` argument to
+		* specify the CSS property name you'd like to set, and `value` to specify
+		* the desired value. Setting `value` to `null` will remove the CSS property
+		* `prop` altogether.
 		*
 		* @param {String} prop The CSS property to assign.
-		* @param {(String|Number|null|undefined)} value The value to assign to _prop_. Setting this
-		*	to `null`, `undefined` or empty string ("") will remove the property _prop_.
+		* @param {(String|Number|null|undefined)} value The value to assign to
+		* `prop`. Setting a value of `null`, `undefined`, or the empty string `("")`
+		* will remove the property `prop` from the control.
 		* @returns {this} Callee for chaining.
 		* @public
 		*/
@@ -551,11 +563,11 @@
 		},
 
 		/**
-		* A way to add several CSS properties and values all at once, using a single string. Similar
-		* to the way the HTML `style` attribute works.
+		* Allows the addition of several CSS properties and values at once, via a
+		* single string, similar to how the HTML `style` attribute works.
 		*
 		* @param {String} css A string containing one or more valid CSS styles.
-		* @returns {this} Callee for chaining.
+		* @returns {this} The callee for chaining.
 		*/
 		addStyles: function (css) {
 			var key,
@@ -593,14 +605,16 @@
 		},
 
 		/**
-		* Retrieve a control's CSS property value. This isn't just pulling the assigned value of
-		* _prop_, it's returning the browser's understanding of _prop_, the "computed" value. If
-		* this control hasn't renederd yet, and you need a default value, like `0`, include it in
-		* the arguments as _def_.
+		* Retrieves a control's CSS property value. This doesn't just pull the
+		* assigned value of `prop`; it returns the browser's understanding of `prop`,
+		* the "computed" value. If the control isn't been rendered yet, and you need
+		* a default value (such as `0`), include it in the arguments as `def`.
 		*
 		* @param {String} prop The property name to get.
-		* @param {*} [def] An optional default value, in case the control isn't renederd yet.
-		* @returns {(String|Number)} The computed value of _prop_, as the browser sees it.
+		* @param {*} [def] An optional default value, in case the control isn't
+		* rendered yet.
+		* @returns {(String|Number)} The computed value of `prop`, as the browser
+		* sees it.
 		* @public
 		*/
 		getComputedStyleValue: function (prop, def) {
@@ -634,7 +648,7 @@
 		},
 
 		/**
-		* If the control has been generated, re-flow this control.
+		* If the control has been generated, re-flows the control.
 		*
 		* @public
 		*/
@@ -681,11 +695,11 @@
 		},
 
 		/**
-		* Returns true if this and all parents are showing.
+		* Returns true if this control and all parents are showing.
 		*
-		* @param {Boolean} ignoreBounds If this is `true` it will not force a layout by retrieving
+		* @param {Boolean} ignoreBounds If `true`, it will not force a layout by retrieving
 		*	computed bounds and rely on the return from {@link enyo.Control.showing} exclusively.
-		* @returns {Boolean} Represents whether the control is showing (visible) or not.
+		* @returns {Boolean} Indicates whether the control is showing (visible).
 		* @public
 		*/
 		getAbsoluteShowing: function (ignoreBounds) {
@@ -709,9 +723,10 @@
 		},
 
 		/**
-		* Handles the _onshowingchanged_ event that is waterfalled by controls when their _showing_
-		* value is modified. If the control is not showing itself already it will not continue the
-		* waterfall. Overload this method for additional handling of this event.
+		* Handles the `onshowingchanged` event that is waterfalled by controls when
+		* their `showing` value is modified. If the control is not showing itself
+		* already, it will not continue the waterfall. Overload this method to
+		* provide additional handling for this event.
 		*
 		* @private
 		*/
@@ -727,9 +742,9 @@
 		},
 
 		/**
-		* Test whether we are in fullscreen mode or not.
+		* Determines whether we are in fullscreen mode or not.
 		*
-		* @returns {Boolean} Are we in fullscreen mode?
+		* @returns {Boolean} Whether we are currently in fullscreen mode.
 		* @public
 		*/
 		isFullscreen: function () {
@@ -737,11 +752,12 @@
 		},
 
 		/**
-		* Ask for this control become fullscreen (like a video container). If the request is
-		* granted, it will fill the screen, and return `true`. `False` if it does not succeed, and
-		* won't become fullscreen.
+		* Requests that this control be displayed fullscreen (like a video
+		* container). If the request is granted, the control fills the screen and
+		* `true` is returned; if the request is denied, the control is not resized
+		* and `false` is returned.
 		*
-		* @returns {Boolean} `True` on success, `false` if fullscreen was not possible.
+		* @returns {Boolean} `true` on success; otherwise, `false`.
 		* @public
 		*/
 		requestFullscreen: function () {
@@ -755,10 +771,11 @@
 		},
 
 		/**
-		* End fullscreen mode for this control.
+		* Ends fullscreen mode for this control.
 		*
-		* @returns {Boolean} If this control was in fullscreen mode before this was called, return
-		*	`true` and take it out of fullscreen mode, `false` otherwise and does nothing.
+		* @returns {Boolean} If the control was in fullscreen mode before this
+		* method was called, it is taken out of that mode and `true` is returned;
+		* otherwise, `false` is returned.
 		* @public
 		*/
 		cancelFullscreen: function() {
@@ -776,8 +793,8 @@
 		// RENDER-SCHEME API
 
 		/**
-		* Determines whether the control is allowed to be generated, i.e. rendered into the
-		* [DOM]{@glossary DOM} tree.
+		* Indicates whether the control is allowed to be generated, i.e., rendered
+		* into the [DOM]{@glossary DOM} tree.
 		*
 		* @type {Boolean}
 		* @default true
@@ -786,7 +803,7 @@
 		canGenerate: true,
 
 		/**
-		* Determines whether the control is visible or hidden.
+		* Indicates whether the control is visible.
 		*
 		* @type {Boolean}
 		* @default true
@@ -804,7 +821,7 @@
 		renderDelegate: null,
 
 		/**
-		* State flag for whether the control has been generated yet or not.
+		* Indicates whether the control has been generated yet.
 		*
 		* @type {Boolean}
 		* @default false
@@ -813,10 +830,11 @@
 		generated: false,
 
 		/**
-		* Force the control to be rendered. You should use this sparingly as it can be costly, but
-		* may be necessary in cases where a control or its contents were updated surreptitiously.
+		* Forces the control to be rendered. You should use this sparingly, as it
+		* can be costly, but it may be necessary in cases where a control or its
+		* contents have been updated surreptitiously.
 		*
-		* @returns {this} Callee for chaining.
+		* @returns {this} The callee for chaining.
 		* @public
 		*/
 		render: function () {
@@ -831,11 +849,12 @@
 		},
 
 		/**
-		* Take this control and drop it into a (new/different) [DOM node]{@glossary Node}. This
-		* replaces any existing [nodes]{@glossary Node} in the target _parentNode_.
+		* Takes this control and drops it into a (new/different)
+		* [DOM node]{@glossary Node}. This will replace any existing nodes in the
+		* target `parentNode`.
 		*
 		* @param {Node} parentNode The new parent of this control.
-		* @returns {this} Callee for chaining.
+		* @returns {this} The callee for chaining.
 		* @public
 		*/
 		renderInto: function (parentNode) {
@@ -874,7 +893,7 @@
 		},
 
 		/**
-		* A function that fires after the control has rendered. This preforms a
+		* A function that fires after the control has rendered. This performs a
 		* [reflow]{@link enyo.Control.reflow}.
 		*
 		* @public
@@ -1015,8 +1034,8 @@
 		}),
 
 		/**
-		* Destroys the control and removes it from the [DOM]{@glossary DOM}. Also removes the
-		* ability for this control to receive bubbled events.
+		* Destroys the control and removes it from the [DOM]{@glossary DOM}. Also
+		* removes the control's ability to receive bubbled events.
 		*
 		* @public
 		*/
@@ -1092,9 +1111,9 @@
 
 		/*
 		* If the platform is Android or Android-Chrome, don't include the css rule
-		* _-webkit-overflow-scrolling: touch_, as it is not supported in Android and leads to
+		* `-webkit-overflow-scrolling: touch`, as it is not supported in Android and leads to
 		* overflow issues (ENYO-900 and ENYO-901). Similarly, BB10 has issues repainting
-		* out-of-viewport content when _-webkit-overflow-scrolling_ is used (ENYO-1396).
+		* out-of-viewport content when `-webkit-overflow-scrolling` is used (ENYO-1396).
 		*
 		* @private
 		*/

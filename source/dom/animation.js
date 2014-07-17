@@ -50,14 +50,14 @@
 	/**
 	* Requests an animation callback.
 	*
-	* On compatible browsers, if _node_ is defined, the [callback]{@glossary callback} will
-	* fire only if _node_ is visible.
+	* On compatible browsers, if `node` is defined, the [callback]{@glossary callback} will
+	* fire only if `node` is visible.
 	*
 	* @param {Function} callback A [callback]{@glossary callback} to be executed on the
 	*                            animation frame.
 	* @param {Node} node The DOM node to request the animation frame for.
 	* @returns {Object} A request id to be used with
-	*                     [enyo.cancelRequestAnimationFrame]{@link enyo.cancelRequestAnimationFrame}.
+	*                     [`enyo.cancelRequestAnimationFrame()`]{@link enyo.cancelRequestAnimationFrame}.
 	* @public
 	*/
 	enyo.requestAnimationFrame = function(callback, node) {
@@ -73,10 +73,12 @@
 	};
 
 	/**
-	* An assortment of interpolation functions for animations. Similar in function to CSS3 transitions.
+	* A set of interpolation functions for animations, similar in function to CSS3
+	* transitions.
 	*
-	* Intended for use with [enyo.easedLerp]{@link enyo.easedLerp}. Easing functions accept one (1)
-	* [Number]{@glossary Number} parameter and return one (1) [Number]{@glossary Number}
+	* These are intended for use with {@link enyo.easedLerp}. Each easing function
+	* accepts one (1) [Number]{@glossary Number} parameter and returns one (1)
+	* [Number]{@glossary Number} value.
 	*
 	* @namespace enyo.easing
 	* @public
@@ -131,14 +133,15 @@
 	/**
 	* Gives an interpolation of an animated transition's distance from 0 to 1.
 	*
-	* Given a start time (_t0_) and an animation duration (_duration_), applies the _easing_ function to
-	* the percentage of time elapsed / duration, capped at 100%.
+	* Given a start time (`t0`) and an animation duration (`duration`), this
+	* method applies the `easing` function to the percentage of time elapsed
+	* divided by duration, capped at 100%.
 	*
 	* @param {Number} t0 Start time.
-	* @param {Number} duration Duration in miliseconds.
+	* @param {Number} duration Duration in milliseconds.
 	* @param {Function} easing An easing [function]{@glossary Function} reference from
 	*	{@link enyo.easing}.
-	* @param {Boolean} reverse Shall this run in reverse?
+	* @param {Boolean} reverse Whether the animation will run in reverse.
 	* @returns {Number} The resulting position, capped at a maximum of 100%.
 	* @public
 	*/
@@ -152,16 +155,17 @@
 	};
 
 	/**
-	* Gives an interpolation of an animated transition's distance from _startValue_ to _valueChange_.
+	* Gives an interpolation of an animated transition's distance from
+	* `startValue` to `valueChange`.
 	*
-	* Applies the _easing_ function with a wider range of variables to allow for more complex
-	* animations.
+	* Applies the `easing` function with a wider range of variables to allow for
+	* more complex animations.
 	*
 	* @param {Number} t0 Start time.
-	* @param {Number} duration Duration in miliseconds.
+	* @param {Number} duration Duration in milliseconds.
 	* @param {Function} easing An easing [function]{@glossary Function} reference from
 	*	{@link enyo.easing}.
-	* @param {Boolean} reverse Shall this run in reverse?
+	* @param {Boolean} reverse Whether the animation will run in reverse.
 	* @param {Number} time
 	* @param {Number} startValue Starting value.
 	* @param {Number} valueChange
