@@ -413,7 +413,8 @@
 			}
 			else if (token.test(route.path)) {
 				token.lastIndex = 0;
-				regex = new RegExp(route.path.replace(token, '([a-zA-Z0-9-]*)'));
+				// regex = new RegExp(route.path.replace(token, '([a-zA-Z0-9-]*)'));
+				regex = new RegExp(route.path.replace(token, '([a-zA-Z0-9-\.]*)'));
 				route.regex = regex;
 				dynamic.push(route);
 			} else {
