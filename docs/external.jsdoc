@@ -1,59 +1,59 @@
 /**
 * @todo Need to define this.
-* @external kind
+* @glossary kind
 * @see enyo.kind
 */
 
 /**
 * @todo Need to define this.
-* @external mixin
+* @glossary mixin
 * @see enyo.mixin
 */
 
 /**
 * @todo Need to define this.
-* @external event
+* @glossary event
 * @see https://github.com/enyojs/enyo/wiki/Event-Handling
 */
 
 /**
 * @todo Need to define this.
-* @external EUID
+* @glossary EUID
 */
 
 /**
 * @todo Need to define this.
-* @external delegate
+* @glossary delegate
 */
 
 /**
 * @todo Need to define this.
-* @external constructor
+* @glossary constructor
 */
 
 /**
 * @todo Need to define this.
-* @external configurationBlock
+* @glossary configurationBlock
 */
 
 /**
 * @todo Need to define this.
-* @external chrome
+* @glossary chrome
 */
 
 /**
 * @todo Need to define this.
-* @external subkind
+* @glossary subkind
 */
 
 /**
 * @todo Need to define this.
-* @external deferred
+* @glossary deferred
 */
 
 /**
 * @todo need to define this.
-* @external layout
+* @glossary layout
 */
 
 ///// Internally Documented Links (Glossary) /////
@@ -61,7 +61,7 @@
 /**
 * Binary (bitwise) operations.
 * 
-* @external bitwise
+* @glossary bitwise
 * @see http://www.experts-exchange.com/Programming/Misc/A_1842-Binary-Bit-Flags-Tutorial-and-Usage-Tips.html
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators
 */
@@ -70,7 +70,7 @@
 * Strict Equality. This comparison logic ensures not only that the value of the things being
 * compared is the same, but also their types.
 * 
-* @external ===
+* @glossary ===
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Using_the_Equality_Operators
 */
 
@@ -80,19 +80,19 @@
 * browser up to the standards of modern browsers. This allows code that expects
 * a modern browser to work properly in an older one.
 * 
-* @external polyfill
+* @glossary polyfill
 * @see http://en.wikipedia.org/wiki/Polyfill
 */
 
 /**
 * The Document Object Model (DOM) is a programming interface for HTML and XML documents.
-* @external DOM
+* @glossary DOM
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model
 */
 
 /**
 * Inheritance
-* @external inheritance
+* @glossary inheritance
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain
 */
 
@@ -100,379 +100,379 @@
 
 /**
 * Universally Unique Identifier
-* @external UUID
+* @glossary UUID
 * @see http://en.wikipedia.org/wiki/Universally_unique_identifier
 */
 
 /**
-* @external callback
+* @glossary callback
 * @see https://developer.mozilla.org/en-US/docs/Mozilla/js-ctypes/js-ctypes_reference/Callbacks
 */
 
 /**
-* @external entity
+* @glossary entity
 * @see http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
 */
 
 /**
-* @external undefined
+* @glossary undefined
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined
 */
 
 /**
-* @external arguments
+* @glossary arguments
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions_and_function_scope/arguments
 */
 
 /**
-* @external String
+* @glossary String
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
 */
 
 /**
-* @external Function
+* @glossary Function
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
 */
 
 /**
-* @external Array
+* @glossary Array
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
 */
 
 /**
-* @external Array.indexOf
+* @glossary Array.indexOf
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
 * @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.14
 */
 
 /**
-* @external Array.lastIndexOf
+* @glossary Array.lastIndexOf
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf
 * http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.15
 */
 
 /**
-* @external Array.findIndex
+* @glossary Array.findIndex
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
 */
 
 /**
-* @external Array.find
+* @glossary Array.find
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
 */
 
 /**
-* @external Array.forEach
+* @glossary Array.forEach
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
 * @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.18
 */
 
 /**
-* @external Array.map
+* @glossary Array.map
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
 * @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.19
 */
 
 /**
-* @external Array.filter
+* @glossary Array.filter
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
 * @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.20
 */
 
 /**
-* @external Array.join
+* @glossary Array.join
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
 */
 
 /**
-* @external Object
+* @glossary Object
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
 */
 
 /**
-* @external Object.prototype
+* @glossary Object.prototype
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype
 */
 
 /**
-* @external Object.create
+* @glossary Object.create
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
 */
 
 /**
-* @external Object.hasOwnProperty
+* @glossary Object.hasOwnProperty
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
 */
 
 /**
-* @external Object.keys
+* @glossary Object.keys
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
 */
 
 /**
-* @external window
+* @glossary window
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Window
 */
 
 /**
-* @external window.getComputedStyle
+* @glossary window.getComputedStyle
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Window.getComputedStyle
 */
 
 /**
-* @external window.getComputedStyleValue
+* @glossary window.getComputedStyleValue
 * @see https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/NsIAccessNode#getComputedStyleValue()
 */
 
 /**
-* @external window.location
+* @glossary window.location
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Window.location
 */
 
 /**
-* @external window.performance
+* @glossary window.performance
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Window.performance
 */
 
 /**
-* @external window.setTimeout
+* @glossary window.setTimeout
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Window.setTimeout
 */
 
 /**
-* @external Date
+* @glossary Date
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
 */
 
 /**
-* @external Date.now
+* @glossary Date.now
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now
 */
 
 /**
-* @external Date.getTime
+* @glossary Date.getTime
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime
 */
 
 /**
-* @external console
+* @glossary console
 * @see https://developer.mozilla.org/en-US/docs/Web/API/console
 */
 
 /**
-* @external console.log
+* @glossary console.log
 * @see https://developer.mozilla.org/en-US/docs/Web/API/console.log
 */
 
 /**
-* @external console.warn
+* @glossary console.warn
 * @see https://developer.mozilla.org/en-US/docs/Web/API/console.warn
 */
 
 /**
-* @external console.error
+* @glossary console.error
 * @see https://developer.mozilla.org/en-US/docs/Web/API/console.error
 */
 
 /**
-* @external DOM
+* @glossary DOM
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model
 */
 
 /**
-* @external Node
+* @glossary Node
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Node
 */
 
 /**
-* @external Anchor
+* @glossary Anchor
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
 */
 
 /**
-* @external Attribute
+* @glossary Attribute
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
 */
 
 /**
-* @external audio
+* @glossary audio
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
 */
 
 /**
-* @external button
+* @glossary button
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button
 */
 
 /**
-* @external form
+* @glossary form
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
 */
 
 /**
-* @external input
+* @glossary input
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input
 */
 
 /**
-* @external img
+* @glossary img
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Img
 */
 
 /**
-* @external focus
+* @glossary focus
 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement.focus
 */
 
 /**
-* @external blur
+* @glossary blur
 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement.blur
 */
 
 /**
-* @external iframe
+* @glossary iframe
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
 */
 
 /**
-* @external script
+* @glossary script
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script
 */
 
 /**
-* @external select
+* @glossary select
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select
 */
 
 /**
-* @external option
+* @glossary option
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option
 */
 
 /**
-* @external optgroup
+* @glossary optgroup
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/optgroup
 */
 
 /**
-* @external style
+* @glossary style
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/style
 */
 
 /**
-* @external table
+* @glossary table
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table
 */
 
 /**
-* @external tr
+* @glossary tr
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/tr
 */
 
 /**
-* @external td
+* @glossary td
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/td
 */
 
 /**
-* @external textarea
+* @glossary textarea
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea
 */
 
 /**
-* @external video
+* @glossary video
 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video
 */
 
 /**
-* @external scrollIntoView
+* @glossary scrollIntoView
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Element.scrollIntoView
 */
 
 /**
-* @external HTML5MediaElement
+* @glossary HTML5MediaElement
 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
 */
 
 /**
-* @external backgroundPosition
+* @glossary backgroundPosition
 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/background-position
 */
 
 /**
-* @external DOMEvent
+* @glossary DOMEvent
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Event
 */
 
 /**
-* @external TimeRanges
+* @glossary TimeRanges
 * @see https://developer.mozilla.org/en-US/docs/Web/API/TimeRanges
 */
 
 /**
-* @external Selection
+* @glossary Selection
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Selection
 */
 
 /**
-* @external Selection.collapseToStart
+* @glossary Selection.collapseToStart
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Selection.collapseToStart
 */
 
 /**
-* @external Selection.collapseToEnd
+* @glossary Selection.collapseToEnd
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Selection.collapseToEnd
 */
 
 /**
-* @external Selection.modify
+* @glossary Selection.modify
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Selection.modify
 */
 
 /**
-* @external Range
+* @glossary Range
 * @see https://developer.mozilla.org/en-US/docs/Web/API/range
 */
 
 /**
-* @external fullscreen
+* @glossary fullscreen
 * @see https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Using_full_screen_mode
 */
 
 /**
 * @todo Find a better external source
-* @external networkState
+* @glossary networkState
 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement#Properties
 */
 
 /**
 * @todo Find a better external source
-* @external readyState
+* @glossary readyState
 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement#Properties
 */
 
 ///// Common Type Definitions /////
 
 /**
-* A [DOM]{@link external:DOM} [node]{@link external:Node} element [object]{@link external:Object}.
+* A [DOM]{@glossary DOM} [node]{@glossary Node} element [object]{@glossary Object}.
 *
 * @typedef {Node}
 */
 
 /**
-* A {@link external:TimeRanges} element {@link external:Object}.
+* A {@glossary TimeRanges} element {@glossary Object}.
 *
 * @typedef {TimeRanges}
 */
 
 /**
-* A {@link external:readyState} value.
+* A {@glossary readyState} value.
 *
 * @typedef {ReadyState}
 */
 
 /**
-* A {@link external:Selection} [object]{@link external:Object}.
+* A {@glossary Selection} [object]{@glossary Object}.
 *
 * @typedef {Selection}
 */
