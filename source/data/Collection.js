@@ -555,7 +555,7 @@
 				len != this.length && this.notify('length', len, this.length);
 				// notify listeners of the addition of records
 				if (added) {
-					this.emit('add', {models: added, collection: this});
+					this.emit('add', {models: added, collection: this, index: idx});
 				}
 			}
 			
@@ -576,10 +576,10 @@
 		* `true`).
 		* 
 		* @fires enyo.Collection#remove
-		* @param {(enyo.Model|enyo.Model[])} models The [models]{@link enyo.Model} to remove
-		* 	if they exist in the [collection]{@link enyo.Collection}.
-		* @param {enyo.Collection~RemoveOptions} [opts] The configuration options that modify
-		* 	the behavior of this method.
+		* @param {(enyo.Model|enyo.Model[])} models The [models]{@link enyo.Model} to remove		
+		*	if they exist in the [collection]{@link enyo.Collection}.
+		* @param {enyo.Collection~RemoveOptions} [opts] The configuration options that modify		
+		*	the behavior of this method.
 		* @returns {enyo.Model[]} The [models]{@link enyo.Model} that were removed, if any.
 		* @public
 		*/
@@ -587,7 +587,7 @@
 			var loc = this.models
 				, len = loc.length
 				, options = this.options
-				, removed, model;
+				, removed, model, idx;
 			
 			// normalize options so we have values
 			opts = opts? enyo.mixin({}, [options, opts]): options;
@@ -601,6 +601,10 @@
 			// we treat all additions as an array of additions
 			!(models instanceof Array) && (models = [models]);
 			
+			// save index of the first removed model before removing
+			idx = this.indexOf(models[0]);
+
+			// remove models from modelList
 			removed = loc.remove(models);
 			
 			if (removed.length) {
@@ -623,7 +627,7 @@
 			if (!silent) {
 				len != this.length && this.notify('length', len, this.length);
 				if (removed.length) {
-					this.emit('remove', {models: removed, collection: this});
+					this.emit('remove', {models: removed, collection: this, index: idx});
 				}
 			}
 			
@@ -638,8 +642,8 @@
 		* Retrieve a [model]{@link enyo.Model} for the provided index.
 		* 
 		* @param {Number} idx The index to return from the [collection]{@link enyo.Collection}.
-		* @returns {(enyo.Model|undefined)} The [model]{@link enyo.Model} at the given index or
-		* 	`undefined` if it cannot be found.
+		* @returns {(enyo.Model|undefined)} The [model]{@link enyo.Model} at the given index or		
+		*	`undefined` if it cannot be found.
 		* @public
 		*/
 		at: function (idx) {
@@ -736,7 +740,7 @@
 		* `reset` event. Returns the removed [models]{@link enyo.Model} but be aware that if the
 		* `destroy` configuration option is set then the returned models will have limited
 		* usefulness.
-	    * 
+		* 
 		* @param {(enyo.Model|enyo.Model[])} [models] The [model or models]{@link enyo.Model} to
 		*	use as a replacement for the current set of [models]{@link enyo.Model} in the
 		*	{@link enyo.Collection}.
