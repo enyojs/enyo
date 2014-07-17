@@ -136,6 +136,11 @@
 		content: '',
 
 		/**
+		* @public
+		*/
+		renderOnShow: false,
+
+		/**
 		* @todo Find out how to document "handlers".
 		* @public
 		*/
@@ -646,6 +651,13 @@
 			var delegate = this.renderDelegate || Control.renderDelegate;
 			delegate.invalidate(this, 'content');
 		},
+		/**
+		* @private
+		*/
+		renderOnShowChanged: function () {
+			if (!this.hasNode() && this.renderOnShow) this.showing = false;
+			this.setCanGenerate(!this.renderOnShow);
+		},
 
 		/**
 		* If the control has been generated, re-flows the control.
@@ -1030,6 +1042,7 @@
 				// setup the id for this control if we have one
 				this.idChanged();
 				this.contentChanged();
+				this.renderOnShowChanged();
 			};
 		}),
 
