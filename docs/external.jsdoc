@@ -75,10 +75,10 @@
 */
 
 /**
-* A "polyfill" describes a method or function that is added to older browsers which don't support a
-* the native version of said method, in an effort to bring the browser up to the current standards
-* of modern browsers. This allows code, which is expecting a modern browser, to work interchangably
-* on an older one.
+* A "polyfill" describes a method or function that is added to older browsers
+* that don't support a native version of said method, in an effort to bring the
+* browser up to the standards of modern browsers. This allows code that expects
+* a modern browser to work properly in an older one.
 * 
 * @external polyfill
 * @see http://en.wikipedia.org/wiki/Polyfill
@@ -188,6 +188,7 @@
 * @external Object
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
 */
+
 /**
 * @external Object.prototype
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype

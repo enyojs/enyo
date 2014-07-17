@@ -139,7 +139,7 @@
 	* parameters will be serialized via [`JSON.stringify()`]{@glossary JSON.stringify}
 	* automatically.
 	*
-	* @utillity
+	* @utility
 	* @see {@glossary console.warn}
 	* @param {...*} - The arguments to be logged.
 	* @public
