@@ -94,7 +94,7 @@
 	}
 
 	/**
-	* The details for an {@link enyo.Binding#transform} [function]{@link external:Function}, 
+	* The details for an {@link enyo.Binding#transform} [function]{@glossary Function}, 
 	* including the available parameters and how they can be used.
 	* 
 	* @callback enyo.Binding~Transform
@@ -109,7 +109,7 @@
 	/**
 	* {@link enyo.Binding} is a mechanism used to keep properties synchronized. A 
 	* binding may be used to link two properties on different
-	* [objects]{@link external:Object}, or even two properties on the same object.
+	* [objects]{@glossary Object}, or even two properties on the same object.
 	* Once a binding has been established, it will wait for change notifications;
 	* when a notification arrives, the binding will synchronize the value between
 	* the two ends. Note that bindings may be either
@@ -118,7 +118,7 @@
 	* Usually, you will not need to create Binding objects arbitrarily, but will
 	* instead rely on the public [BindingSupport API]{@link enyo.BindingSupport},
 	* which is applied to [enyo.Object]{@link enyo.Object} and so is available on
-	* all of its [subkinds]{@link external:subkind}.
+	* all of its [subkinds]{@glossary subkind}.
 	* 
 	* @class enyo.Binding
 	* @public
@@ -154,7 +154,7 @@
 		/**
 		* If the [binding]{@link enyo.Binding} was able to resolve both ends (i.e., its 
 		* [source]{@link enyo.Binding#source} and [target]{@link enyo.Binding#target} 
-		* [objects]{@link external:Object}), this value will be `true`. Setting this manually will
+		* [objects]{@glossary Object}), this value will be `true`. Setting this manually will
 		* have undesirable effects.
 		*
 		* @type {Boolean}
@@ -166,7 +166,7 @@
 		/**
 		* This property is used extensively for various purposes within a
 		* [binding]{@link enyo.Binding}. One primary purpose is to serve as a root
-		* [object]{@link external:Object} from which to	search for the binding's ends (the
+		* [object]{@glossary Object} from which to	search for the binding's ends (the
 		* [source]{@link enyo.Binding#source} and/or [target]{@link enyo.Binding#target}).
 		* If the owner created the binding, it will also be responsible for destroying 
 		* it (automatically).
@@ -200,7 +200,7 @@
 		autoSync: true,
 		
 		/**
-		* Set this only to a reference for an [object]{@link external:Object} to use
+		* Set this only to a reference for an [object]{@glossary Object} to use
 		* as the source for the [binding]{@link enyo.Binding}. If this is not a
 		* [bindable]{@link enyo.BindingSupport} object, the source will be derived
 		* from the [from]{@link enyo.Binding#from} property during initialization.
@@ -212,7 +212,7 @@
 		source: null,
 		
 		/**
-		* Set this only to a reference for an [object]{@link external:Object} to use
+		* Set this only to a reference for an [object]{@glossary Object} to use
 		* as the target for the [binding]{@link enyo.Binding}. If this is not a
 		* [bindable]{@link enyo.BindingSupport} object, the target will will be
 		* derived from the [to]{@link enyo.Binding#to} property during initialization.
@@ -266,7 +266,7 @@
 		to: null,
 
 		/**
-		* Set this to a [function]{@link external:Function} or the name of a method on
+		* Set this to a [function]{@glossary Function} or the name of a method on
 		* the [owner]{@link enyo.Binding#owner} of this [binding]{@link enyo.Binding}.
 		* The transform is used to programmatically modify the value being synchronized.
 		* See {@link enyo.Binding~Transform} for detailed information on the parameters
@@ -531,10 +531,10 @@
 	/**
 	* Retrieves a [binding]{@link enyo.Binding} by its global id.
 	*
-	* @param {String} euid The [Enyo global id]{@link external:EUID} by which to retrieve a 
+	* @param {String} euid The [Enyo global id]{@glossary EUID} by which to retrieve a 
 	*	[binding]{@link enyo.Binding}.
 	* @returns {enyo.Binding|undefined} A reference to the binding if the id 
-	*	is found; otherwise, it will return [undefined]{@link external:undefined}.
+	*	is found; otherwise, it will return [undefined]{@glossary undefined}.
 	* 
 	* @static
 	* @public
@@ -564,7 +564,7 @@
 	enyo.Binding.DIRTY_TO = DIRTY_TO;
 	
 	/**
-	* The default [kind]{@link external:kind} that provides [binding]{@link enyo.Binding} 
+	* The default [kind]{@glossary kind} that provides [binding]{@link enyo.Binding} 
 	* functionality.
 	* 
 	* static

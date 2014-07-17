@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
 	* Normalizes and provides fullscreen support for [controls]{@link enyo.Control}, based upon the
-	* [fullscreen]{@link external:fullscreen} API.
+	* [fullscreen]{@glossary fullscreen} API.
 	*
 	* @name enyo.fullscreen
 	* @type Object
@@ -64,10 +64,10 @@
 			null,
 
 		/**
-		* Determines whether the platform supports the [fullscreen]{@link external:fullscreen} API.
+		* Determines whether the platform supports the [fullscreen]{@glossary fullscreen} API.
 		* 
 		* @returns {Boolean} Returns `true` if platform supports all of the 
-		*	[fullscreen]{@link external:fullscreen} API, `false` otherwise.
+		*	[fullscreen]{@glossary fullscreen} API, `false` otherwise.
 		* @public
 		*/
 		nativeSupport: function() {
@@ -209,8 +209,8 @@
 		},
 
 		/** 
-		* Listen for fs change [event]{@link external:event} and broadcast as normalized 
-		* [event]{@link external:event}.
+		* Listen for fs change [event]{@glossary event} and broadcast as normalized 
+		* [event]{@glossary event}.
 		*
 		* @private
 		*/
@@ -224,7 +224,7 @@
 	};
 
 	/**
-	* Normalize platform-specific fs change [events]{@link external:event}.
+	* Normalize platform-specific fs change [events]{@glossary event}.
 	*
 	* @private
 	*/

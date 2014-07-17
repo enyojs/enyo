@@ -1,19 +1,19 @@
-﻿(function (enyo, scope) {
+(function (enyo, scope) {
 	/**
 	* @private
 	*/
 	enyo.concatenated = [];
 
 	/**
-	* Creates a JavaScript [constructor]{@link external:constructor} function with
+	* Creates a JavaScript [constructor]{@glossary constructor} function with
 	* a prototype defined by `props`. **All constructors must have a unique name.**
 	*
 	* `enyo.kind()` makes it easy to build a constructor-with-prototype (like a
 	* class) that has advanced features like prototype-chaining
-	* ([inheritance]{@link external:inheritance}).
+	* ([inheritance]{@glossary inheritance}).
 	*
 	* A plug-in system is included for extending the abilities of the
-	* [kind]{@link external:kind} generator, and constructors are allowed to
+	* [kind]{@glossary kind} generator, and constructors are allowed to
 	* perform custom operations when subclassed.
 	*
 	* If you make changes to `enyo.kind()`, be sure to add or update the appropriate
@@ -23,8 +23,8 @@
 	* in the Enyo Developer Guide.
 	*
 	* @namespace enyo.kind
-	* @param {Object} props A [hash]{@link external:Object} of properties used to define and create
-	*	the [kind]{@link external:kind}
+	* @param {Object} props A [hash]{@glossary Object} of properties used to define and create
+	*	the [kind]{@glossary kind}
 	* @public
 	*/
 	enyo.kind = function (props) {
@@ -153,7 +153,7 @@
 	};
 
 	/**
-	* Creates a singleton of a given [kind]{@link external:kind} with a given
+	* Creates a singleton of a given [kind]{@glossary kind} with a given
 	* definition. **The `name` property will be the instance name of the singleton
 	* and must be unique.**
 	*
@@ -231,8 +231,8 @@
 
 	/**
 	* Used internally by several mechanisms to allow safe and normalized handling for extending a
-	* [kind's]{@link external:kind} super-methods. It can take a
-	* [constructor]{@link external:constructor}, a [prototype]{@link external:Object.prototype}, or an
+	* [kind's]{@glossary kind} super-methods. It can take a
+	* [constructor]{@glossary constructor}, a [prototype]{@glossary Object.prototype}, or an
 	* instance.
 	*
 	* @private
@@ -280,7 +280,7 @@
 
 	/**
 	* Called by {@link enyo.Object} instances attempting to access super-methods
-	* of a parent class ([kind]{@link external:kind}) by calling
+	* of a parent class ([kind]{@glossary kind}) by calling
 	* `this.inherited(arguments)` from within a kind method. This can only be done
 	* safely when there is known to be a super class with the same method.
 	*
@@ -328,14 +328,14 @@
 		};
 
 		/**
-		* When defining a method that overrides an existing method in a [kind]{@link external:kind}, you
+		* When defining a method that overrides an existing method in a [kind]{@glossary kind}, you
 		* can wrap the definition in this function and it will decorate it appropriately for inheritance
 		* to work.
 		*
 		* The older `this.inherited(arguments)` method still works, but this version results in much
-		* faster code and is the only one supported for kind [mixins]{@link external:mixin}.
+		* faster code and is the only one supported for kind [mixins]{@glossary mixin}.
 		*
-		* @param {Function} fn A [function]{@link external:Function} that takes a single
+		* @param {Function} fn A [function]{@glossary Function} that takes a single
 		*                      argument (usually named `sup`) and returns a function where
 		*                      `sup.apply(this, arguments)` is used as a mechanism to make the
 		*                      super-call.
@@ -389,13 +389,13 @@
 	enyo.kind.statics = {
 
 		/**
-		* A [kind]{@link external:kind} may set its own `subclass()` method as a
-		* static method for its [constructor]{@link external:constructor}. Whenever
+		* A [kind]{@glossary kind} may set its own `subclass()` method as a
+		* static method for its [constructor]{@glossary constructor}. Whenever
 		* it is subclassed, the constructor and properties will be passed through
 		* this method for special handling of important features.
 		*
-		* @param {Function} ctor The [constructor]{@link external:constructor} of the
-		*	[kind]{@link external:kind} being subclassed.
+		* @param {Function} ctor The [constructor]{@glossary constructor} of the
+		*	[kind]{@glossary kind} being subclassed.
 		* @param {Object} props The properties of the kind being subclassed.
 		* @memberof enyo.kind
 		* @public
@@ -403,24 +403,24 @@
 		subclass: function(ctor, props) {},
 
 		/**
-		* Allows for extension of the current [kind]{@link external:kind} without
+		* Allows for extension of the current [kind]{@glossary kind} without
 		* creating a new kind. This method is available on all
-		* [constructors]{@link external:constructor}, although calling it on a
-		* [deferred]{@link external:deferred} constructor will force it to be
+		* [constructors]{@glossary constructor}, although calling it on a
+		* [deferred]{@glossary deferred} constructor will force it to be
 		* resolved at that time. This method does not re-run the
 		* {@link enyo.kind.features} against the constructor or instance.
 		*
-		* @param {Object|Object[]} props A [hash]{@link external:Object} or [array]{@link external:Array}
-		*	of [hashes]{@link external:Object}. Properties will override
-		*	[prototype]{@link external:Object.prototype} properties. If a
+		* @param {Object|Object[]} props A [hash]{@glossary Object} or [array]{@glossary Array}
+		*	of [hashes]{@glossary Object}. Properties will override
+		*	[prototype]{@glossary Object.prototype} properties. If a
 		*	method that is being added already exists, the new method will
 		*	supersede the existing one. The method may call
 		*	`this.inherited()` or be wrapped with `enyo.inherit()` to call
 		*	the original method (this chains multiple methods tied to a
-		*	single [kind]{@link external:kind}).
+		*	single [kind]{@glossary kind}).
 		* @param {Object} [target] The instance to be extended. If this is not specified, then the
-		*	[constructor]{@link external:constructor} of the
-		*	[object]{@link external:Object} this method is being called on will
+		*	[constructor]{@glossary constructor} of the
+		*	[object]{@glossary Object} this method is being called on will
 		*	be extended.
 		* @returns {Object} The constructor of the class, or specific
 		*	instance, that has been extended.
@@ -463,8 +463,8 @@
 	};
 
 	/**
-	* Call this with an [enyo.kind()]{@link enyo.kind{}} [constructor]{@link external:constructor} to
-	* make sure it's been [undeferred]{@link external:deferred}.
+	* Call this with an [enyo.kind()]{@link enyo.kind{}} [constructor]{@glossary constructor} to
+	* make sure it's been [undeferred]{@glossary deferred}.
 	*
 	* @private
 	*/
@@ -482,7 +482,7 @@
 	};
 
 	/**
-	* Factory for [kinds]{@link external:kind} identified by [strings]{@link external:String}.
+	* Factory for [kinds]{@glossary kind} identified by [strings]{@glossary String}.
 	*
 	* @private
 	*/

@@ -4,7 +4,7 @@
 	* all children of [_enyo.DataRepeater_]{@link enyo.DataRepeater} to assist in selection support. 
 	* (See {@link enyo.DataRepeater} for details on how to use selection support.) 
 	* _enyo.RepeaterChildSupport_ also adds the _model_, _child_ ([control]{@link enyo.Control} 
-	* instance), and _index_ properties to all [events]{@link external:event} emitted from the 
+	* instance), and _index_ properties to all [events]{@glossary event} emitted from the 
 	* repeater's children.
 	*
 	* @name enyo.RepeaterChildSupport
@@ -85,7 +85,7 @@
 		}),
 		/**
 		* Used so that we don't stomp on any built-in handlers for the _ontap_ 
-		* [event]{@link external:event}.
+		* [event]{@glossary event}.
 		*
 		* @method
 		* @private

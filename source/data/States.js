@@ -1,17 +1,17 @@
 (function (enyo, scope) {
 
 	/**
-	* Shared values for various [kinds]{@link external:kind} used to indicate a _state_ or
+	* Shared values for various [kinds]{@glossary kind} used to indicate a _state_ or
 	* _states_ (multiple states simultaneously). These flags are binary values represented by
 	* hexadecimal numerals. They can be modified and compared (or even extended) using
-	* [bitwise operations]{@link external:bitwise} or various
-	* [API methods]{@link enyo.StateSupport} available to the [kinds]{@link external:kind} that
-	* support them. Make sure to explore the documentation for a given [kind]{@link external:kind}
+	* [bitwise operations]{@glossary bitwise} or various
+	* [API methods]{@link enyo.StateSupport} available to the [kinds]{@glossary kind} that
+	* support them. Make sure to explore the documentation for a given [kind]{@glossary kind}
 	* as they may have a specific use for a given flag.
 	* 
 	* As a cursory overview, here is a table of the values already declared by built-in flags.
 	* Each hexadecimal numeral represents a unique power of 2 in binary from which we can use
-	* [bitwise masks]{@link external:bitwise} to determine if a particular value is present.
+	* [bitwise masks]{@glossary bitwise} to determine if a particular value is present.
 	* 
 	* ```javascript
 	* HEX             DEC             BIN
@@ -54,7 +54,7 @@
 		
 		/**
 		* Only exists in the client and was created during the runtime of the
-		* [application]{@link external:application}.
+		* [application]{@glossary application}.
 		*
 		* @default 1
 		*/
@@ -156,31 +156,31 @@
 		ERROR_UNKNOWN: 0x0400,
 		
 		/**
-		* A multi-state [bitmask]{@link external:bitwise}. Compares if a given flag is one of
+		* A multi-state [bitmask]{@glossary bitwise}. Compares if a given flag is one of
 		* any state included in the definition of _BUSY_. By default, this is one of
 		* [FETCHING]{@link enyo.States.FETCHING}, [COMMITTING]{@link enyo.States.COMMITTING} or
 		* [DESTROYING]{@link enyo.States.DESTROYING}. It can be extended to include additional
-		* values using the [bitwise]{@link external:bitwise} _OR_ operator (`|`).
+		* values using the [bitwise]{@glossary bitwise} _OR_ operator (`|`).
 		*
 		* @default 112
 		*/
 		BUSY: 0x0010 | 0x0020 | 0x0040,
 		
 		/**
-		* A multi-state [bitmask]{@link external:bitwise}. Compares if a given flag is one of any
+		* A multi-state [bitmask]{@glossary bitwise}. Compares if a given flag is one of any
 		* state included in the definition of _ERROR_. By default, this is one of
 		* [ERROR_FETCHING]{@link enyo.States.ERROR_FETCHING},
 		* [ERROR_COMMITTING]{@link enyo.States.ERROR_COMMITTING},
 		* [ERROR_DESTROYING]{@link enyo.States.ERROR_DESTROYING} or
 		* [ERROR_UNKNOWN]{@link enyo.States.ERROR_UNKNOWN}. It can be extended to include
-		* additional values using the [bitwise]{@link external:bitwise} _OR_ operator (`|`).
+		* additional values using the [bitwise]{@glossary bitwise} _OR_ operator (`|`).
 		*
 		* @default 1920
 		*/
 		ERROR: 0x0080 | 0x0100 | 0x0200 | 0x0400,
 		
 		/**
-		* A multi-state [bitmask]{@link external:bitwise}. Compares if a given flag is one of any
+		* A multi-state [bitmask]{@glossary bitwise}. Compares if a given flag is one of any
 		* state included in the definition of _READY_. By default, this is the inverse of any
 		* values included in [BUSY]{@link enyo.States.BUSY} or [ERROR]{@link enyo.States.ERROR}.
 		*
@@ -222,11 +222,11 @@
 		},
 		
 		/**
-		* Convenience method to avoid using [bitwise]{@link external:bitwise} comparison for the
+		* Convenience method to avoid using [bitwise]{@glossary bitwise} comparison for the
 		* [status]{@link enyo.StateSupport.status}. Uses the current
 		* [status]{@link enyo.StateSupport.status} or the provided value and determines if it is
 		* an [error state]{@link enyo.States.ERROR}. The provided value will only be used if it is
-		* a [Number]{@link external:Number}.
+		* a [Number]{@glossary Number}.
 		*
 		* @param {enyo.States} [status] The specific value to compare as an
 		*	[error state]{@link enyo.States.ERROR}.
@@ -238,11 +238,11 @@
 		},
 		
 		/**
-		* Convenience method to avoid using [bitwise]{@link external:bitwise} comparison for the
+		* Convenience method to avoid using [bitwise]{@glossary bitwise} comparison for the
 		* [status]{@link enyo.StateSupport.status}. Uses the current
 		* [status]{@link enyo.StateSupport.status} or the provided value and determines if it is
 		* a [busy state]{@link enyo.States.BUSY}. The provided value will only be used if it is
-		* a [Number]{@link external:Number}.
+		* a [Number]{@glossary Number}.
 		*
 		* @param {enyo.States} [status] The specific value to compare as a
 		*	[busy state]{@link enyo.States.BUSY}.
@@ -254,11 +254,11 @@
 		},
 		
 		/**
-		* Convenience method to avoid using [bitwise]{@link external:bitwise} comparison for the
+		* Convenience method to avoid using [bitwise]{@glossary bitwise} comparison for the
 		* [status]{@link enyo.StateSupport.status}. Uses the current
 		* [status]{@link enyo.StateSupport.status} or the provided value and determines if it is
 		* a [ready state]{@link enyo.States.READY}. The provided value will only be used if it is
-		* a [Number]{@link external:Number}.
+		* a [Number]{@glossary Number}.
 		*
 		* @param {enyo.States} [status] The specific value to compare as a
 		*	[ready state]{@link enyo.States.READY}.

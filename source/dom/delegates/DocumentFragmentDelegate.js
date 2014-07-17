@@ -3,7 +3,7 @@
 	/**
 	* An incomplete (but mostly working) render delegate designed to use DocumentFragment for
 	* generating new content and updating the DOM by reusing existing
-	* [nodes]{@link external:Node} when possible.
+	* [nodes]{@glossary Node} when possible.
 	*
 	* This delegate is retained for future work and is not ready for production use.
 	*

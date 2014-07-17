@@ -63,7 +63,7 @@
 	};
 	
 	/**
-	* Configurable benchmark options [hash]{@link external:Object}. For more
+	* Configurable benchmark options [hash]{@glossary Object}. For more
 	* details, see the same properties defined on {@link enyo.dev.Benchmark}.
 	* 
 	* @typedef  {Object} enyo.dev.Benchmark~Options
@@ -175,7 +175,7 @@
 	};
 
 	/**
-	* A [kind]{@link external:kind} used internally for development benchmarking.
+	* A [kind]{@glossary kind} used internally for development benchmarking.
 	*
 	* @class enyo.dev.Benchmark
 	* @protected

@@ -209,8 +209,8 @@
 		* of all listeners, or all listeners for a particular event (if any).
 		*
 		* @param {String} [e] The targeted event.
-		* @returns {Object[]} Event listeners are stored in [hashes]{@link external:Object}.
-		*	The return value will be an [array]{@link external:Array} of these hashes
+		* @returns {Object[]} Event listeners are stored in [hashes]{@glossary Object}.
+		*	The return value will be an [array]{@glossary Array} of these hashes
 		* if any listeners exist.
 		* @public
 		*/

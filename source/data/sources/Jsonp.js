@@ -7,7 +7,7 @@
 		, JsonpRequest = checkConstructor(enyo.JsonpRequest);
 	
 	/**
-	* An all-purpose [ajax]{@link external:ajax} [source]{@link enyo.Source} designed to communicate
+	* An all-purpose [ajax]{@glossary ajax} [source]{@link enyo.Source} designed to communicate
 	* with REST-ful API backends that support JSON-P style callbacks.
 	*
 	* @class enyo.JsonpSource
@@ -40,7 +40,7 @@
 		noDefer: true,
 		
 		/**
-		* An [array]{@link external:Array} of the keys that will be used for the options passed to
+		* An [array]{@glossary Array} of the keys that will be used for the options passed to
 		* the [requestKind]{@link enyo.XHRSource#requestKind}.
 		*
 		* @see enyo.AjaxProperties

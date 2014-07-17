@@ -11,15 +11,15 @@
 	/**
 	* @callback enyo.Component~EventHandler
 	* @param {enyo.Component} sender The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@link external:event}.
-	* @param {Object} event An [object]{@link external:Object} containing 
+	*	propagated the [event]{@glossary event}.
+	* @param {Object} event An [object]{@glossary Object} containing 
 	*	event information.
 	* @returns {Boolean} A value indicating whether the event has been
 	*	handled or not. If `true`, then bubbling is stopped.
 	*/
 
 	/**
-	* A [hash]{@link external:Object} of references to all the [components]{@link enyo.Component} 
+	* A [hash]{@glossary Object} of references to all the [components]{@link enyo.Component} 
 	* owned by this component. This property is updated whenever a new
 	* component is added; the new component may be accessed via its
 	* [`name`]{@link enyo.Component#name} property. We may also observe changes on
@@ -83,7 +83,7 @@
 	*/
 
 	/**
-	* If `true`, the [layout]{@link external:layout} strategy will adjust the size of this 
+	* If `true`, the [layout]{@glossary layout} strategy will adjust the size of this 
 	* [component]{@link enyo.Component} to occupy the remaining available space.
 	* 
 	* @name fit
@@ -98,9 +98,9 @@
 	* Components are designed to fit together, allowing complex behaviors to
 	* be fashioned from smaller bits of functionality.
 	* 
-	* Component [constructors]{@link external:constructor} take a single 
-	* argument (sometimes called a [component configuration]{@link external:configurationBlock}), 
-	* a JavaScript [object]{@link external:Object} that defines various properties to be initialized on the 
+	* Component [constructors]{@glossary constructor} take a single 
+	* argument (sometimes called a [component configuration]{@glossary configurationBlock}), 
+	* a JavaScript [object]{@glossary Object} that defines various properties to be initialized on the 
 	* component.  For example:
 	* 
 	* ```javascript
@@ -125,10 +125,10 @@
 	* 
 	* In this case, when `me` is created, `other` is also created, and we say that `me` owns `other`. 
 	* In other words, the [`owner`]{@link enyo.Component#owner} property of `other` equals `me`. 
-	* Notice that you can specify the [kind]{@link external:kind} of `other` explicitly in its
+	* Notice that you can specify the [kind]{@glossary kind} of `other` explicitly in its
 	* configuration block, to tell `me` what constructor to use to create `other`.
 	* 
-	* Note that [`kind`]{@link external:kind} values may be references to actual 
+	* Note that [`kind`]{@glossary kind} values may be references to actual 
 	* kinds or string-names of kinds. Kind names that do not resolve directly to kinds
 	* are looked up in default namespaces. In this case, `kind: 'Component'` resolves to 
 	* `enyo.Component`.
@@ -177,7 +177,7 @@
 			* [owner]{@link enyo.Component#owner}. This is used to set the access name in the 
 			* owner's [$ hash]{@link enyo.Component#$}. If not 
 			* specified, a default name will be provided based on the name of the 
-			* [object's]{@link enyo.Object} [kind]{@link external:kind}, with a numeric
+			* [object's]{@link enyo.Object} [kind]{@glossary kind}, with a numeric
 			* suffix appended if more than one instance exists in the owner.
 			* 
 			* @type {String}
@@ -211,9 +211,9 @@
 			owner: null,
 			
 			/**
-			* This can be a [hash]{@link external:Object} of features to apply to 
-			* [chrome]{@link external:chrome} [components]{@link enyo.Component} of the base 
-			* [kind]{@link external:kind}. They are matched by [name]{@link enyo.Component#name} 
+			* This can be a [hash]{@glossary Object} of features to apply to 
+			* [chrome]{@glossary chrome} [components]{@link enyo.Component} of the base 
+			* [kind]{@glossary kind}. They are matched by [name]{@link enyo.Component#name} 
 			* (if the component you wish to modify does not have a name, this will not work).
 			* You can modify any properties of the component except for methods. Setting a
 			* value for `componentOverrides` at runtime will have no effect.
@@ -462,7 +462,7 @@
 		},
 		
 		/**
-		* Returns an [array]{@link external:Array} of owned [components]{@link enyo.Component}; in 
+		* Returns an [array]{@glossary Array} of owned [components]{@link enyo.Component}; in 
 		* other words, converts the [$ hash]{@link enyo.Component#$} into an array
 		* and returns the array.
 		* 
@@ -498,7 +498,7 @@
 		
 		/**
 		* Creates and returns a [component]{@link enyo.Component} as defined by the combination of 
-		* a base and an additional property [hash]{@link external:Object}. The properties provided 
+		* a base and an additional property [hash]{@glossary Object}. The properties provided 
 		* in the standard property hash override those provided in the 
 		* additional property hash.
 		* 
@@ -517,7 +517,7 @@
 		* // (will be available as other.$.another).
 		* this.createComponent({name: 'another'}, {owner: other});
 		* 
-		* @param {Object} props The declarative [kind]{@link external:kind} definition.
+		* @param {Object} props The declarative [kind]{@glossary kind} definition.
 		* @param {Object} ext Additional properties to be applied (defaults).
 		* @returns {enyo.Component} The instance created with the given parameters.
 		* @public
@@ -530,8 +530,8 @@
 		},
 		
 		/**
-		* Creates [components]{@link enyo.Component} as defined by the [arrays]{@link external:Array}
-		* of base and additional property [hashes]{@link external:Object}. The standard and 
+		* Creates [components]{@link enyo.Component} as defined by the [arrays]{@glossary Array}
+		* of base and additional property [hashes]{@glossary Object}. The standard and 
 		* additional property hashes are combined as described in 
 		* [`createComponent()`]{@link enyo.Component#createComponent}.
 		* 
@@ -572,17 +572,17 @@
 		},
 		
 		/**
-		* Bubbles an [event]{@link external:event} up an [object]{@link external:Object} chain,
+		* Bubbles an [event]{@glossary event} up an [object]{@glossary Object} chain,
 		* starting with `this`.
 		*
 		* A handler for an event may be specified. See {@link enyo.Component~EventHandler}
 		* for complete details.
 		* 
-		* @param {String} nom The name of the [event]{@link external:event} to bubble.
-		* @param {Object} [event] The [event]{@link external:event} [object]{@link external:Object}
+		* @param {String} nom The name of the [event]{@glossary event} to bubble.
+		* @param {Object} [event] The [event]{@glossary event} [object]{@glossary Object}
 		*	to be passed along while bubbling.
 		* @param {enyo.Component} [sender=this] The {@link enyo.Component} responsible for
-		*	bubbling the [event]{@link external:event}.
+		*	bubbling the [event]{@glossary event}.
 		* @returns {Boolean} `false` if unhandled or uninterrupted; otherwise, `true`.
 		* @public
 		*/
@@ -597,14 +597,14 @@
 		},
 		
 		/**
-		* Bubbles an [event]{@link external:event} up an [object]{@link external:Object} chain,
+		* Bubbles an [event]{@glossary event} up an [object]{@glossary Object} chain,
 		* starting _above_ `this`.
 		* 
 		* A handler for an event may be specified. See {@link enyo.Component~EventHandler}
 		* for complete details.
 		* 
-		* @param {String} nom The name of the [event]{@link external:event}.
-		* @param {Object} [event] The [event]{@link external:event} properties to pass along while
+		* @param {String} nom The name of the [event]{@glossary event}.
+		* @param {Object} [event] The [event]{@glossary event} properties to pass along while
 		*	bubbling.
 		* @returns {Boolean} `false` if unhandled or uninterrupted; otherwise, `true`.
 		* @public
@@ -626,8 +626,8 @@
 		},
 		
 		/**
-		* Sends an [event]{@link external:event} to a named [delegate]{@link external:delegate}. 
-		* This [object]{@link external:Object} may dispatch an event to 
+		* Sends an [event]{@glossary event} to a named [delegate]{@glossary delegate}. 
+		* This [object]{@glossary Object} may dispatch an event to 
 		* itself via a [handler]{@link enyo.Component~EventHandler}, or to its 
 		* [owner]{@link enyo.Component#owner} via an event property, e.g.:
 		* 
@@ -689,7 +689,7 @@
 		},
 		
 		/**
-		* Internal - try dispatching [event]{@link external:event} to self; if that fails, 
+		* Internal - try dispatching [event]{@glossary event} to self; if that fails, 
 		* [bubble it up]{@link enyo.Component#bubbleUp} the tree.
 		* 
 		* @private
@@ -724,16 +724,16 @@
 		},
 		
 		/**
-		* Dispatches the [event]{@link external:event} to named [delegate]{@link external:delegate}
-		* `nom`, if it exists. [Subkinds]{@link external:subkind} may re-route dispatches. Note that
+		* Dispatches the [event]{@glossary event} to named [delegate]{@glossary delegate}
+		* `nom`, if it exists. [Subkinds]{@glossary subkind} may re-route dispatches. Note that
 		* both 'handlers' events and events delegated from owned controls arrive here.
 		* If you need to handle these types of events differently, you may also need to
 		* override [`dispatchEvent()`]{@link enyo.Component#dispatchEvent}.
 		* 
-		* @param {String} nom The method name to dispatch the [event]{@link external:event}.
-		* @param {Object} [event] The [event]{@link external:event} [object]{@link external:Object} 
+		* @param {String} nom The method name to dispatch the [event]{@glossary event}.
+		* @param {Object} [event] The [event]{@glossary event} [object]{@glossary Object} 
 		*	to pass along.
-		* @param {enyo.Component} [sender=this] The originator of the [event]{@link external:event}.
+		* @param {enyo.Component} [sender=this] The originator of the [event]{@glossary event}.
 		* @public
 		*/
 		dispatch: function (nom, event, sender) {
@@ -751,14 +751,14 @@
 		
 		/**
 		* Triggers the [handler]{@link enyo.Component~EventHandler} for a given 
-		* [event]{@link external:event} type.
+		* [event]{@glossary event} type.
 		* 
 		* @example
 		* myControl.triggerHandler('ontap');
 		* 
-		* @param {String} nom The name of the [event]{@link external:event} to trigger.
-		* @param {Object} [event] The [event]{@link external:event} object to pass along.
-		* @param {enyo.Component} [sender=this] The originator of the [event]{@link external:event}.
+		* @param {String} nom The name of the [event]{@glossary event} to trigger.
+		* @param {Object} [event] The [event]{@glossary event} object to pass along.
+		* @param {enyo.Component} [sender=this] The originator of the [event]{@glossary event}.
 		* @returns {Boolean} `false` if unhandled or uninterrupted, `true` otherwise.
 		* @public
 		*/
@@ -769,13 +769,13 @@
 		/**
 		* Sends a message to myself and all of my [components]{@link enyo.Component}.
 		* You can stop a waterfall into components owned by a receiving object
-		* by returning a truthy value from the [event]{@link external:event}
+		* by returning a truthy value from the [event]{@glossary event}
 		* [handler]{@link enyo.Component~EventHandler}.
 		* 
-		* @param {String} nom The name of the [event]{@link external:event} to waterfall.
-		* @param {Object} [event] The [event]{@link external:event} [object]{@link external:Object} 
+		* @param {String} nom The name of the [event]{@glossary event} to waterfall.
+		* @param {Object} [event] The [event]{@glossary event} [object]{@glossary Object} 
 		*	to pass along.
-		* @param {enyo.Component} [sender=this] The originator of the [event]{@link external:event}.
+		* @param {enyo.Component} [sender=this] The originator of the [event]{@glossary event}.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -796,13 +796,13 @@
 		/**
 		* Sends a message to all of my [components]{@link enyo.Component}, but not myself. You can 
 		* stop a [waterfall]{@link enyo.Component#waterfall} into [components]{@link enyo.Component}
-		* owned by a receiving [object]{@link external:Object} by returning a truthy value from the 
-		* [event]{@link external:event} [handler]{@link enyo.Component~EventHandler}.
+		* owned by a receiving [object]{@glossary Object} by returning a truthy value from the 
+		* [event]{@glossary event} [handler]{@link enyo.Component~EventHandler}.
 		* 
-		* @param {String} nom The name of the [event]{@link external:event}.
-		* @param {Object} [event] The [event]{@link external:event} [object]{@link external:Object} 
+		* @param {String} nom The name of the [event]{@glossary event}.
+		* @param {Object} [event] The [event]{@glossary event} [object]{@glossary Object} 
 		*	to pass along.
-		* @param {enyo.Component} [sender=this] The [event]{@link external:event} originator.
+		* @param {enyo.Component} [sender=this] The [event]{@glossary event} originator.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -827,7 +827,7 @@
 		_silenceCount: 0,
 		
 		/**
-		* Sets a flag that disables [event]{@link external:event} propagation for this 
+		* Sets a flag that disables [event]{@glossary event} propagation for this 
 		* [component]{@link enyo.Component}. Also increments an internal counter that tracks the 
 		* number of times the [`unsilence()`]{@link enyo.Component#unsilence} method must be called
 		* before event propagation will continue.
@@ -843,9 +843,9 @@
 		},
 		
 		/**
-		* Determines if the [object]{@link external:Object} is currently 
+		* Determines if the [object]{@glossary Object} is currently 
 		* [silenced]{@link enyo.Component#_silenced}, which will prevent propagation of
-		* [events]{@link external:event} (of any kind).
+		* [events]{@glossary event} (of any kind).
 		* 
 		* @returns {Boolean} `true` if silenced; otherwise, `false`.
 		* @public
@@ -855,7 +855,7 @@
 		},
 		
 		/**
-		* Allows [event]{@link external:event} propagation for this [component]{@link enyo.Component} 
+		* Allows [event]{@glossary event} propagation for this [component]{@link enyo.Component} 
 		* if the internal silence counter is `0`; otherwise, decrements the counter by one. For 
 		* event propagation to resume, this method must be called one time 
 		* for each call to [`silence()`]{@link enyo.Component#silence}.
@@ -887,7 +887,7 @@
 		* 
 		* @param {String} nom The name of the [job]{@link enyo.job} to start.
 		* @param {(Function|String)} job Either the name of a method or a
-		*	[function]{@link external:Function} to execute as the requested job.
+		*	[function]{@glossary Function} to execute as the requested job.
 		* @param {Number} wait The number of milliseconds to wait before starting
 		*	the job.
 		* @param {Number} [priority=5] The priority value to be associated with this
@@ -933,7 +933,7 @@
 		* 
 		* @param {String} nom The name of the [job]{@link enyo.job} to throttle.
 		* @param {(Function|String)} job Either the name of a method or a
-		*	[function]{@link external:Function} to execute as the requested job.
+		*	[function]{@glossary Function} to execute as the requested job.
 		* @param {Number} wait The number of milliseconds to wait before executing the
 		*	job again.
 		* @returns {this} The callee for chaining.
@@ -960,14 +960,14 @@
 	enyo.defaultCtor = Component;
 
 	/**
-	* Creates new instances from [config]{@link external:configurationBlock} 
-	* [objects]{@link external:Object}. This method looks up the proper 
-	* [constructor]{@link external:constructor} based on the provided [kind]{@link external:kind} 
+	* Creates new instances from [config]{@glossary configurationBlock} 
+	* [objects]{@glossary Object}. This method looks up the proper 
+	* [constructor]{@glossary constructor} based on the provided [kind]{@glossary kind} 
 	* attribute.
 	* 
 	* @name enyo.create
-	* @param {Object} props The properties that define the [kind]{@link external:kind}.
-	* @returns {*} An instance of the requested [kind]{@link external:kind}.
+	* @param {Object} props The properties that define the [kind]{@glossary kind}.
+	* @returns {*} An instance of the requested [kind]{@glossary kind}.
 	* @public
 	*/
 	enyo.create = Component.create = function(props) {

@@ -29,19 +29,19 @@
 
 	/**
 	* The default options for [relations]{@link enyo.RelationalModel#relations}. These may vary
-	* for the individual [kind]{@link external:kind} of relation.
+	* for the individual [kind]{@glossary kind} of relation.
 	*
 	* @typedef {Object} enyo.RelationalModel~RelationOptions
-	* @property {String} type=toOne - The [kind]{@link external:kind} of relation being declared.
+	* @property {String} type=toOne - The [kind]{@glossary kind} of relation being declared.
 	*	Can be the name of the relation type or a reference to the constructor.
 	* @property {String} key=null - The [attribute]{@link enyo.Model#attributes} name for the
 	*	relation being declared.
 	* @property {Boolean} create=false - Whether or not the relation should automatically create
-	*	the instance of the related [kind]{@link external:kind}.
+	*	the instance of the related [kind]{@glossary kind}.
 	* @property {Boolean} parse=false - Whether or not the relation should call the
 	*	[parse]{@link enyo.Model#parse} method with incoming data before
 	*	[setting]{@link enyo.Model#set} it on the [model]{@link enyo.RelationalModel}.
-	* @property {String} model=enyo.RelationalModel - The [kind]{@link external:kind} of the
+	* @property {String} model=enyo.RelationalModel - The [kind]{@glossary kind} of the
 	*	reverse of the relation. This will vary depending on the _type_ or relation being declared.
 	* @property {Boolean} fetch=false - Whether or not to automatically call
 	*	[fetch]{@link enyo.Model#fetch} (or {@link enyo.Collection#fetch}) after initialization.
@@ -51,8 +51,8 @@
 	*	reverse. If it does, it will update according to changes and will include the reverse end
 	*	in its [raw]{@link enyo.Model#raw} output.
 	* @property {(Boolean|String|String[])} includeInJSON=true - Whether or not to include the
-	*	relation in its [raw]{@link enyo.Model#raw} output. If a [string]{@link external:String},
-	*	only that _key_ will be included, if an [array]{@link external:Array} only those _keys_ will
+	*	relation in its [raw]{@link enyo.Model#raw} output. If a [string]{@glossary String},
+	*	only that _key_ will be included, if an [array]{@glossary Array} only those _keys_ will
 	*	be included.
 	*/
 	var relationDefaults = {
@@ -200,13 +200,13 @@
 		
 		/**
 		* The default [options]{@link enyo.RelationalModel~RelationOptions} overloaded for this
-		* [kind]{@link external:kind}.
+		* [kind]{@glossary kind}.
 		*
 		* @type enyo.RelationalModel~RelationOptions
 		* @property {Boolean} create=true - By default the relation should create the
 		*	[collection]{@link enyo.Collection} automatically.
 		* @property {enyo.Collection} collection=RelationalCollection - The
-		*	[kind]{@link external:kind} of {@link enyo.Collection} to use, can be a the name or a
+		*	[kind]{@glossary kind} of {@link enyo.Collection} to use, can be a the name or a
 		*	reference to the constructor.
 		* @property {Object} collectionOptions - An options hash to pass to the
 		*	[collection]{@link enyo.Collection} when it is being instanced.
@@ -464,7 +464,7 @@
 		
 		/**
 		* The default [options]{@link enyo.RelationalModel~RelationOptions} overloaded for this
-		* [kind]{@link external:kind}.
+		* [kind]{@glossary kind}.
 		*
 		* @see enyo.toMany#options
 		* @type enyo.RelationalModel~RelationOptions
@@ -608,7 +608,7 @@
 		
 		/**
 		* The default [options]{@link enyo.RelationalModel~RelationOptions} overloaded for this
-		* [kind]{@link external:kind}.
+		* [kind]{@glossary kind}.
 		*
 		* @type enyo.RelationalModel~RelationOptions
 		* @property {String} inverseType=enyo.toOne - This is can be `enyo.toOne` or `enyo.toMany`.
@@ -904,9 +904,9 @@
 		noDefer: true,
 		
 		/**
-		* An [array]{@link external:Array} declaring relationships of this
+		* An [array]{@glossary Array} declaring relationships of this
 		* [model]{@link enyo.RelationalModel} to other [models]{@link enyo.RelationalModel}. These
-		* are [hashes]{@link external:Object} of corresponding
+		* are [hashes]{@glossary Object} of corresponding
 		* [properties]{@link enyo.RelationalModel~RelationOptions} defining and configuring
 		* individual relations. They can be of the _type_ {@link enyo.toOne}, {@link enyo.toMany}
 		* or {@link enyo.manyToMany}. They must include a _key_ property that is the name of the

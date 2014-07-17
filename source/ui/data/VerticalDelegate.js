@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* This is a [delegate]{@link external:delegate} (strategy) used by 
+	* This is a [delegate]{@glossary delegate} (strategy) used by 
 	* [_enyo.DataList_]{@link enyo.DataList} for vertically oriented lists. This is used by all 
 	* lists for this strategy and does not get copied but called directly from the list.
 	*
@@ -22,7 +22,7 @@
 
 		/**
 		* Simply set the priority properties for this orientation that can be differentiated by 
-		* other [delegates]{@link external:delegate} that wish to share some basic functionality.
+		* other [delegates]{@glossary delegate} that wish to share some basic functionality.
 		*
 		* @param {enyo.DataList} list The list to perform this action on.
 		* @private
@@ -67,7 +67,7 @@
 		* Retrieve list pages, indexed by their position.
 		*
 		* @param {enyo.DataList} list The list to perform this action on.
-		* @returns {Object} Returns a [hash]{@link external:Object} of the pages marked by their 
+		* @returns {Object} Returns a [hash]{@glossary Object} of the pages marked by their 
 		*	position as either 'firstPage' or 'lastPage'.
 		* @private
 		*/
@@ -614,11 +614,11 @@
 			}
 		},
 		/**
-		* Handles scroll [events]{@link external:event} for the given list. The 
-		* [events]{@link external:event} themselves aren't helpful as depending on the underlying 
+		* Handles scroll [events]{@glossary event} for the given list. The 
+		* [events]{@glossary event} themselves aren't helpful as depending on the underlying 
 		* _scrollStrategy_ they have varied information. This is a hefty method but contained to 
-		* keep from calling too many [functions]{@link external:Function} whenever this 
-		* [event]{@link external:event} is propagated.
+		* keep from calling too many [functions]{@glossary Function} whenever this 
+		* [event]{@glossary event} is propagated.
 		*
 		* @private
 		*/

@@ -2,12 +2,12 @@
 
 	/**
 	* An [XHR2]{@link http://www.w3.org/TR/XMLHttpRequest/} _FormData_ implementation. It is used to
-	* send `multipart/form-data` [ajax]{@link external:ajax} requests. The {@link enyo.Blob}
-	* [kind]{@link external:kind} is the content provider for file-parts.
+	* send `multipart/form-data` [ajax]{@glossary ajax} requests. The {@link enyo.Blob}
+	* [kind]{@glossary kind} is the content provider for file-parts.
 	*
 	* Note that in Internet Explorer < 10, both {@link enyo.FormData} and {@link enyo.Blob} are
-	* limited to [string]{@link external:String} content and {@link enyo.Blob} may only be
-	* instantiated using an [array]{@link external:Array} or [string]{@link external:String}.
+	* limited to [string]{@glossary String} content and {@link enyo.Blob} may only be
+	* instantiated using an [array]{@glossary Array} or [string]{@glossary String}.
 	*
 	* This implementation is inspired by
 	* [html5-formdata]{@link https://github.com/francois2metz/html5-formdata/blob/master/formdata.js}.

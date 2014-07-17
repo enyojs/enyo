@@ -1,13 +1,13 @@
-﻿(function (enyo, scope) {
+(function (enyo, scope) {
 	/**
 	* Fires when a scrolling action starts.
 	*
 	* @event enyo.ScrollMath#onScrollStart
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @private
 	*/
 
@@ -17,9 +17,9 @@
 	* @event enyo.ScrollMath#onScroll
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @private
 	*/
 
@@ -29,16 +29,16 @@
 	* @event enyo.ScrollMath#onScrollStop
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @private
 	*/
 
 	/**
 	* _enyo.ScrollMath_ implements a scrolling dynamics simulation. It is a helper 
-	* [kind]{@link external:kind} used by other [scroller]{@link enyo.Scroller} 
-	* [kinds]{@link external:kind}, such as {@link enyo.TouchScrollStrategy}.
+	* [kind]{@glossary kind} used by other [scroller]{@link enyo.Scroller} 
+	* [kinds]{@glossary kind}, such as {@link enyo.TouchScrollStrategy}.
 	* 
 	* _enyo.ScrollMath_ is not typically created in application code.
 	*

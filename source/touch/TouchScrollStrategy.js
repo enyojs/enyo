@@ -6,9 +6,9 @@
 	* @event enyo.TouchScrollStrategy#onShouldDrag
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @private
 	*/
 
@@ -97,7 +97,7 @@
 			scrim: false,
 
 			/**	
-			* Allow drag [events]{@link external:event} sent when gesture 
+			* Allow drag [events]{@glossary event} sent when gesture 
 			* [events]{@Link external:event} are happening simultaneously.
 			* 
 			* @type {Boolean}
@@ -134,7 +134,7 @@
 			frame: 10,
 
 			/** 
-			* Allow default [events]{@link external:event} to occur (e.g., native scrolling).
+			* Allow default [events]{@glossary event} to occur (e.g., native scrolling).
 			* 
 			* @type {Boolean}
 			* @default true
@@ -743,7 +743,7 @@
 		/**
 		* Retrieve the overscroll boundaries of the [scroller]{@link enyo.Scroller}.
 		*
-		* @returns {enyo.Scroller~OverscrollBoundaryObject} An [object]{@link external:Object}
+		* @returns {enyo.Scroller~OverscrollBoundaryObject} An [object]{@glossary Object}
 		*	describing the overscroll boundaries.
 		* @public
 		*/
@@ -770,7 +770,7 @@
 		/**
 		* Retrieve the scroll boundaries of the [scroller]{@link enyo.Scroller}.
 		* 
-		* @returns {enyo.Scroller~BoundaryObject} An [object]{@link external:Object} describing the 
+		* @returns {enyo.Scroller~BoundaryObject} An [object]{@glossary Object} describing the 
 		*	scroll boundaries.
 		* @method
 		* @public

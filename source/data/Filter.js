@@ -15,16 +15,16 @@
 	}
 	
 	/**
-	* This is an abstract [kind]{@link external:kind} used by [subkinds]{@link external:subkind} to
+	* This is an abstract [kind]{@glossary kind} used by [subkinds]{@glossary subkind} to
 	* implement features relevant to filtered [collections]{@link enyo.Collection}. It does extend
 	* {@link enyo.Collection} but only implements a subset of its methods. Unlike a normal
 	* {@link enyo.Collection} that keeps its own set of [model]{@link enyo.Model} instances (and can
 	* create, remove or destroy them), a {@link enyo.Filter} uses another instance of
 	* {@link enyo.Collection} as its dataset and safely proxies its [models]{@link enyo.Model} as a
-	* complete set or according to the needs of its [subkind]{@link external:subkind}.
+	* complete set or according to the needs of its [subkind]{@glossary subkind}.
 	* {@link enyo.Filter} is not intended to communicate with [sources]{@link enyo.Source} (e.g. via
 	* {@link enyo.Collection#fetch}). It maintains an implementation specific API (from its
-	* [subkinds]{@link external:subkind}) and propagates the events and API's inherited from
+	* [subkinds]{@glossary subkind}) and propagates the events and API's inherited from
 	* {@link enyo.Collection} required to interact with [controls]{@link enyo.Control}.
 	* 
 	* @class enyo.Filter
@@ -51,7 +51,7 @@
 		
 		/**
 		* The actual {@link enyo.Collection} content to proxy. How the {@link enyo.Collection} is
-		* used varies by the [subkind]{@link external:subkind} implementing the feature.
+		* used varies by the [subkind]{@glossary subkind} implementing the feature.
 		* 
 		* @type enyo.Collection
 		* @default null
@@ -61,8 +61,8 @@
 		
 		/**
 		* Once all components have been created, those that are [filters]{@link enyo.Filter} (or
-		* [subkinds]{@link external:subkind}) will be added to this [array]{@link external:Array}.
-		* This [array]{@link external:Array} should not be modified directly and is primarily for
+		* [subkinds]{@glossary subkind}) will be added to this [array]{@glossary Array}.
+		* This [array]{@glossary Array} should not be modified directly and is primarily for
 		* internal use.
 		* 
 		* @type Array
@@ -125,7 +125,7 @@
 		
 		/**
 		* Reset the [filter]{@link enyo.Filter} to its initial state. Will vary by
-		* [subkind]{@link external:subkind} implementation.
+		* [subkind]{@glossary subkind} implementation.
 		* 
 		* @virtual
 		* @method
@@ -276,7 +276,7 @@
 		},
 		
 		/**
-		* To be implemented by [subkind]{@link external:subkind} for internal use only.
+		* To be implemented by [subkind]{@glossary subkind} for internal use only.
 		*
 		* @virtual
 		* @private
@@ -284,7 +284,7 @@
 		_internalEvent: enyo.nop,
 		
 		/**
-		* To be implemented by [subkind]{@link external:subkind} for internal use only.
+		* To be implemented by [subkind]{@glossary subkind} for internal use only.
 		*
 		* @virtual
 		* @private
@@ -292,7 +292,7 @@
 		_ownerEvent: enyo.nop,
 		
 		/**
-		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@glossary subkind}.
 		*
 		* @method
 		* @public
@@ -300,7 +300,7 @@
 		add: enyo.nop,
 		
 		/**
-		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@glossary subkind}.
 		*
 		* @method
 		* @public
@@ -308,7 +308,7 @@
 		remove: enyo.nop,
 		
 		/**
-		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@glossary subkind}.
 		*
 		* @method
 		* @public
@@ -316,7 +316,7 @@
 		fetch: enyo.nop,
 		
 		/**
-		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@glossary subkind}.
 		*
 		* @method
 		* @public
@@ -324,7 +324,7 @@
 		sort: enyo.nop,
 		
 		/**
-		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@glossary subkind}.
 		*
 		* @method
 		* @public
@@ -345,7 +345,7 @@
 		}),
 		
 		/**
-		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@glossary subkind}.
 		*
 		* @method
 		* @public
@@ -353,7 +353,7 @@
 		raw: enyo.nop,
 		
 		/**
-		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@glossary subkind}.
 		*
 		* @method
 		* @public
@@ -439,7 +439,7 @@
 		}),
 		
 		/**
-		* Unavailable on {@link enyo.Filter} and [subkinds]{@link external:subkind}.
+		* Unavailable on {@link enyo.Filter} and [subkinds]{@glossary subkind}.
 		*
 		* @method
 		* @public

@@ -56,13 +56,13 @@
 		kind: BaseStore,
 		
 		/**
-		* Find a [model (or models)]{@link enyo.Model} of a certain [kind]{@link external:kind}.
+		* Find a [model (or models)]{@link enyo.Model} of a certain [kind]{@glossary kind}.
 		* It uses the return value from a filter method to determine whether or not to include a
 		* particular [model]{@link enyo.Model}. Using the _all_ optional flag will ensure it
 		* looks for all matches otherwise it will stop and return the first positive match.
 		* 
-		* @see {@link external:Array.find}
-		* @param {enyo.Model} ctor The constructor for the [kind]{@link external:kind} of
+		* @see {@glossary Array.find}
+		* @param {enyo.Model} ctor The constructor for the [kind]{@glossary kind} of
 		*	[model]{@link enyo.Model} it will be filtering.
 		* @param {enyo.Store~Filter} fn The filter method.
 		* @param {enyo.Store~FindOptions} [opts] The options parameter.
@@ -163,8 +163,8 @@
 		*	a [model]{@link enyo.Model} instance. If not providing a [model]{@link enyo.Model}
 		*	instance as the next (_model_) parameter, this must be a constructor.
 		* @param {(String|Number|enyo.Model)} [model] If the _ctor_ parameter is a
-		*	constructor this can be a [Number]{@link external:Number} or a
-		*	[String]{@link external:String} representing a
+		*	constructor this can be a [Number]{@glossary Number} or a
+		*	[String]{@glossary String} representing a
 		*	[primaryKey]{@link enyo.Model#primaryKey} for the given {@link enyo.Model} or an
 		*	instance of a [model]{@link enyo.Model}.
 		* @returns {Boolean} Whether or not the [store]{@link enyo.store} has the given
@@ -289,7 +289,7 @@
 	
 	/**
 	* A runtime database for working with [models]{@link enyo.Model}. It is primarily used
-	* internally by _data layer_ [kinds]{@link external:kind} ({@link enyo.Model},
+	* internally by _data layer_ [kinds]{@glossary kind} ({@link enyo.Model},
 	* {@link enyo.Collection}, {@link enyo.RelationalModel}).
 	* 
 	* @see enyo.Model

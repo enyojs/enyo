@@ -5,9 +5,9 @@
 	* @event enyo.TransitionScrollStrategy#onScrollStart
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @private
 	*/
 
@@ -17,9 +17,9 @@
 	* @event enyo.TransitionScrollStrategy#onScroll
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @private
 	*/
 
@@ -29,14 +29,14 @@
 	* @event enyo.TransitionScrollStrategy#onScrollStop
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @private
 	*/
 
 	/**
-	* _enyo.TransitionScrollStrategy_ is a helper [kind]{@link external:kind} that extends
+	* _enyo.TransitionScrollStrategy_ is a helper [kind]{@glossary kind} that extends
 	* {@link enyo.TouchScrollStrategy}, optimizing it for scrolling environments in which effecting 
 	* scroll changes with transforms using CSS transitions is fastest.
 	* 
@@ -457,7 +457,7 @@
 		},
 		
 		/**
-		* Update thumbs, recalculate boundaries, and bubble scroll [event]{@link external:event}.
+		* Update thumbs, recalculate boundaries, and bubble scroll [event]{@glossary event}.
 		*
 		* @fires enyo.TransitionScrollStrategy#event:onScroll
 		* @private
@@ -471,7 +471,7 @@
 		},
 		
 		/**
-		* Scroll to current x,y coordinates and bubble scrollstart [event]{@link external:event}.
+		* Scroll to current x,y coordinates and bubble scrollstart [event]{@glossary event}.
 		*
 		* @fires enyo.TransitionScrollStrategy#event:onScrollStart
 		* @private
@@ -482,7 +482,7 @@
 		},
 		
 		/**
-		* If scrolling, stop. Hide thumbs and bubble scrollstop [event]{@link external:event}.
+		* If scrolling, stop. Hide thumbs and bubble scrollstop [event]{@glossary event}.
 		*
 		* @fires enyo.TransitionScrollStrategy#event:onScrollStop
 		* @private
@@ -552,7 +552,7 @@
 		},
 
 		/**
-		* Special synthetic [DOM events]{@link external:DOMEvent} served up by the 
+		* Special synthetic [DOM events]{@glossary DOMEvent} served up by the 
 		* [Gesture]{@link enyo.gesture} system.
 		* 
 		* @private
@@ -928,7 +928,7 @@
 		
 		/**
 		* Create an interval to: update the x/y values while scrolling is happening, check for
-		* crossing into the overflow region, and bubble a scroll [event]{@link external:event}.
+		* crossing into the overflow region, and bubble a scroll [event]{@glossary event}.
 		*
 		* @private
 		*/
@@ -954,7 +954,7 @@
 		},
 		
 		/**
-		* Save current x/y position and bubble scroll [event]{@link external:event}.
+		* Save current x/y position and bubble scroll [event]{@glossary event}.
 		*
 		* @private
 		*/
@@ -1059,7 +1059,7 @@
 		/**
 		* Retrieve the overscroll boundaries of the [scroller]{@link enyo.Scroller}.
 		*
-		* @returns {enyo.Scroller~OverscrollBoundaryObject} An [object]{@link external:Object}
+		* @returns {enyo.Scroller~OverscrollBoundaryObject} An [object]{@glossary Object}
 		*	describing the overscroll boundaries.
 		* @public
 		*/

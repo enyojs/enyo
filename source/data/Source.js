@@ -13,7 +13,7 @@
 	
 	/**
 	* This is an abstract base class. A [source]{@link enyo.Source} is a communication layer used
-	* by _data layer_ [kinds]{@link external:kind} to retrieve and persist data and application
+	* by _data layer_ [kinds]{@glossary kind} to retrieve and persist data and application
 	* state via its abstract API methods.
 	*
 	* @class enyo.Source
@@ -60,7 +60,7 @@
 		* @virtual
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
 		*	[collection]{@link enyo.Collection} that need to be retrieved.
-		* @param {Object} opts The configuration options [hash]{@link external:Object} including
+		* @param {Object} opts The configuration options [hash]{@glossary Object} including
 		*	a _success_ and _error_ callback.
 		*/
 		fetch: function (model, opts) {
@@ -75,7 +75,7 @@
 		* @virtual
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
 		*	[collection]{@link enyo.Collection} that need to be persisted.
-		* @param {Object} opts The configuration options [hash]{@link external:Object} including
+		* @param {Object} opts The configuration options [hash]{@glossary Object} including
 		*	a _success_ and _error_ callback.
 		*/
 		commit: function (model, opts) {
@@ -91,7 +91,7 @@
 		*
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
 		*	[collection]{@link enyo.Collection} that need to be deleted.
-		* @param {Object} opts The configuration options [hash]{@link external:Object} including
+		* @param {Object} opts The configuration options [hash]{@glossary Object} including
 		*	a _success_ and _error_ callback.
 		*/
 		destroy: function (model, opts) {
@@ -110,9 +110,9 @@
 		* a _success_ and _error_ callback to handle the result.
 		*
 		* @virtual
-		* @param {Function} ctor The constructor for the [kind]{@link external:kind} of
+		* @param {Function} ctor The constructor for the [kind]{@glossary kind} of
 		*	{@link enyo.Model} or {@link enyo.Collection} to be queried.
-		* @param {Object} opts The configuration options [hash]{@link external:Object} including a
+		* @param {Object} opts The configuration options [hash]{@glossary Object} including a
 		*	_success_ and _error_ callback.
 		*/
 		find: function (ctor, opts) {
@@ -144,18 +144,18 @@
 	/**
 	* Create an instance of a [source]{@link enyo.Source} with the given properties. These
 	* properties should include a _kind_ properties with the name of the
-	* [kind]{@link external:kind} of [source]{@link enyo.Source} and a _name_ for that instance.
-	* This static method is also available on all [subkinds]{@link external:subkind} of
+	* [kind]{@glossary kind} of [source]{@link enyo.Source} and a _name_ for that instance.
+	* This static method is also available on all [subkinds]{@glossary subkind} of
 	* {@link enyo.Source}. The instance will automatically be added to the
-	* [enyo.sources]{@link enyo.sources} [object]{@link external:Object} and will be referencable
+	* [enyo.sources]{@link enyo.sources} [object]{@glossary Object} and will be referencable
 	* by its _name_.
 	*
 	* @name enyo.Source.create
 	* @static
 	* @method
 	* @param {Object} props The properties to pass to the constructor for the requested
-	*	[kind]{@link external:kind} of [source]{@link enyo.Source}.
-	* @returns {enyo.Source} An instance of the requested [kind]{@link external:kind} of
+	*	[kind]{@glossary kind} of [source]{@link enyo.Source}.
+	* @returns {enyo.Source} An instance of the requested [kind]{@glossary kind} of
 	*	{@link enyo.Source}.
 	* @public
 	*/

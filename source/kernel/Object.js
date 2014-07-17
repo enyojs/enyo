@@ -8,7 +8,7 @@
 		, BindingSupport = enyo.BindingSupport;
 		
 	/**
-	* Used by all [objects]{@link enyo.Object} and [subkinds]{@link external:subkind} when using the
+	* Used by all [objects]{@link enyo.Object} and [subkinds]{@glossary subkind} when using the
 	* {@link enyo.Object#log}, {@link enyo.Object#warn} and {@link enyo.Object#error} methods.
 	*
 	* @private
@@ -28,9 +28,9 @@
 	/**
 	* {@link enyo.Object} lies at the heart of the Enyo framework's implementations of property
 	* publishing, computed properties (via the {@link enyo.ComputedSupport} 
-	* [mixin]{@link external:mixin}), and data binding (via the {@link enyo.BindingSupport} 
-	* [mixin]{@link external:mixin} and {@link enyo.Binding} object). It also provides several 
-	* utility [functions]{@link external:Function} for its [subkinds]{@link external:subkind}.
+	* [mixin]{@glossary mixin}), and data binding (via the {@link enyo.BindingSupport} 
+	* [mixin]{@glossary mixin} and {@link enyo.Binding} object). It also provides several 
+	* utility [functions]{@glossary Function} for its [subkinds]{@glossary subkind}.
 	*
 	* @class enyo.Object
 	* @mixes enyo.MixinSupport
@@ -81,11 +81,11 @@
 		},
 
 		/**
-		* Imports the values from the given [object]{@link external:Object}. Automatically called
+		* Imports the values from the given [object]{@glossary Object}. Automatically called
 		* from the [constructor]{@link enyo.Object#constructor}.
 		*
-		* @param {Object} props If provided, the [object]{@link external:Object} from which to 
-		*	retrieve [keys/values]{@link external:Object.keys} to mix in.
+		* @param {Object} props If provided, the [object]{@glossary Object} from which to 
+		*	retrieve [keys/values]{@glossary Object.keys} to mix in.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -130,10 +130,10 @@
 		},
 		
 		/**
-		* Sends a log message to the [console]{@link external:console}, prepended with the name of 
-		* the [kind]{@link external:kind} and method from which `log()` was invoked. Multiple 
-		* [arguments]{@link external:arguments} are coerced to [String]{@link external:String} and 
-		* [joined with spaces]{@link external:Array.join}.
+		* Sends a log message to the [console]{@glossary console}, prepended with the name of 
+		* the [kind]{@glossary kind} and method from which `log()` was invoked. Multiple 
+		* [arguments]{@glossary arguments} are coerced to [String]{@glossary String} and 
+		* [joined with spaces]{@glossary Array.join}.
 		*
 		* ```javascript
 		* enyo.kind({
@@ -155,7 +155,7 @@
 		
 		/**
 		* Same as [`log()`]{@link enyo.Object#log}, except that it uses the 
-		* [console's `warn()`]{@link external:console.warn} method (if it exists).
+		* [console's `warn()`]{@glossary console.warn} method (if it exists).
 		*
 		* @public
 		*/
@@ -165,7 +165,7 @@
 		
 		/**
 		* Same as [`log()`]{@link enyo.Object#log} except that it uses the 
-		* [console's `error()`]{@link external:console.error} method (if it exists).
+		* [console's `error()`]{@glossary console.error} method (if it exists).
 		*
 		* @public
 		*/
@@ -184,7 +184,7 @@
 		* getter naming convention.)
 		*
 		* @param {String} path The path from which to retrieve a value.
-		* @returns {*} The value for the given path or [undefined]{@link external:undefined} if 
+		* @returns {*} The value for the given path or [undefined]{@glossary undefined} if 
 		*	the path could not be completely resolved.
 		* @public
 		*/
@@ -204,13 +204,13 @@
 		set: enyo.setPath,
 	
 		/**
-		* Binds a [callback]{@link external:callback} to this [object]{@link enyo.Object}.
+		* Binds a [callback]{@glossary callback} to this [object]{@link enyo.Object}.
 		* If the object has been destroyed, the bound method will be aborted cleanly,
 		* with no value returned.
 		*
 		* This method should generally be used instead of {@link enyo.bind} for running
 		* code in the context of an instance of {@link enyo.Object} or one of its
-		* [subkinds]{@link external:subkind}.
+		* [subkinds]{@glossary subkind}.
 		*
 		* @alias enyo.bindSafely
 		* @public

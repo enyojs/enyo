@@ -5,7 +5,7 @@
 	* [dispatch]{@link enyo.Component#dispatchEvent} a single event to multiple
 	* targets. The events are synchronously propagated in the order in which the
 	* targets are encountered. Note that this mixin is already applied to a base
-	* [kind]{@link external:kind}, {@link enyo.MultipleDispatchComponent}.
+	* [kind]{@glossary kind}, {@link enyo.MultipleDispatchComponent}.
 	*
 	* @mixin enyo.MultipleDispatchSupport
 	* @public

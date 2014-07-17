@@ -1,11 +1,11 @@
 (function (enyo, scope) {
 	
 	/**
-	* Available additional attributes that can be set with a [cookie]{@link external:cookie}.
+	* Available additional attributes that can be set with a [cookie]{@glossary cookie}.
 	*
 	* @typedef {Object} enyo~CookieOptions
 	* @property {String} path - The path that the cookie is relevant to, defaults to current
-	*	[document.location]{@link external:document.location}.
+	*	[document.location]{@glossary document.location}.
 	* @property {String} domain - The _host_ portion of the domain URI.
 	* @property {String} max-age - The length of time the cookie is valid __in seconds__.
 	* @property {String} expires - The date at which to expire the cookie, in GMTString format. If
@@ -16,11 +16,11 @@
 	*/
 
 	/**
-	* Retrieves the given [cookie]{@link external:cookie} from
-	* [document.cookie]{@link external:document.cookie}.
+	* Retrieves the given [cookie]{@glossary cookie} from
+	* [document.cookie]{@glossary document.cookie}.
 	*
 	* @param {String} nom The name of the cookie to retrieve.
-	* @returns {(String|undefined)} The [decoded]{@link external:decoreURIComponent} cookie or
+	* @returns {(String|undefined)} The [decoded]{@glossary decoreURIComponent} cookie or
 	*	`undefined` if it could not be retrieved.
 	* @public
 	*/
@@ -30,18 +30,18 @@
 	};
 
 	/**
-	* Set a [cookie]{@link external:cookie} for the given name and value to
-	* [document.cookie]{@link external:document.cookie}. Use the optional configuration
-	* [hash]{@link external:Object} to specify the
+	* Set a [cookie]{@glossary cookie} for the given name and value to
+	* [document.cookie]{@glossary document.cookie}. Use the optional configuration
+	* [hash]{@glossary Object} to specify the
 	* [cookie properties]{@link enyo~CookieProperties}. You can remove a
-	* [cookie]{@link external:cookie} using this method by setting its `Max-Age` value to `0`.
+	* [cookie]{@glossary cookie} using this method by setting its `Max-Age` value to `0`.
 	*
 	* Also note that if you are developing in Google Chrome with a local file as your application
 	* it must be started with `--enable-file-cookies` (from the command line) to allow
-	* [cookies]{@link external:cookie} to be set.
+	* [cookies]{@glossary cookie} to be set.
 	*
 	* @param {String} nom The name of the cookie.
-	* @param {*} value The value to be [encoded]{@link external:encodeURIComponent} for storage.
+	* @param {*} value The value to be [encoded]{@glossary encodeURIComponent} for storage.
 	* @param {enyo~CookieProperties} [props] The optional configuration properties to apply to
 	*	the cookie.
 	* @public

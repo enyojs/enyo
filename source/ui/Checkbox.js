@@ -5,14 +5,14 @@
 	* @event enyo.Checkbox#event:onActivate
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
 	/**
-	* _enyo.Checkbox_ implements an HTML checkbox [input]{@link external:input}, with support for 
+	* _enyo.Checkbox_ implements an HTML checkbox [input]{@glossary input}, with support for 
 	* grouping using {@link enyo.Group}.
 	*
 	* @ui
@@ -115,8 +115,8 @@
 
 		/**
 		* The [active]{@link enyo.Checkbox#active} property, and onActivate 
-		* [event]{@link external:event}, are part of the [GroupItem]{@link enyo.Groupitem} interface
-		* that we support in this [object]{@link external:Object}.
+		* [event]{@glossary event}, are part of the [GroupItem]{@link enyo.Groupitem} interface
+		* that we support in this [object]{@glossary Object}.
 		* 
 		* @private
 		*/

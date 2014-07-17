@@ -80,8 +80,8 @@
 		selectionProperty: '',
 
 		/**
-		* Set this to a space-delimited string of [events]{@link external:event} or an 
-		* [array]{@link external:Array} that can trigger the selection of a particular child. To 
+		* Set this to a space-delimited string of [events]{@glossary event} or an 
+		* [array]{@glossary Array} that can trigger the selection of a particular child. To 
 		* prevent selection entirely see [_selection_]{@link enyo.DataRepeater#selection} and set it
 		* to `false`.
 		*
@@ -92,7 +92,7 @@
 		selectionEvents: 'ontap',
 
 		/**
-		* Use this [hash]{@link external:Object} to define _defaultBindingProperties_ for _all_ 
+		* Use this [hash]{@glossary Object} to define _defaultBindingProperties_ for _all_ 
 		* children (even children of children) of this [repeater]{@link enyo.DataRepeater}. This can
 		* eliminate the need to write the same paths many times. You can also use any 
 		* [binding]{@link enyo.Binding} macros. Any property defined here will be superseded by the 
@@ -556,7 +556,7 @@
 		/**
 		* A computed property that returns the currently selected [model]{@link enyo.Model} (if 
 		* [_multipleSelection_]{@link enyo.DataRepeater#multipleSelection} is `false`), or an 
-		* immutable [array]{@link external:Array} of all currently selected 
+		* immutable [array]{@glossary Array} of all currently selected 
 		* [models]{@link enyo.Model} (if it is `true`).
 		*
 		* @public

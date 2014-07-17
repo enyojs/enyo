@@ -60,10 +60,10 @@
 		minHeight: 100,
 
 		/**
-		* While {@link enyo.DataList} provides some generic [delegates]{@link external:delegate} for 
-		* handling [objects]{@link external:Object}, we have to arbitrarily lay out our children, so
+		* While {@link enyo.DataList} provides some generic [delegates]{@glossary delegate} for 
+		* handling [objects]{@glossary Object}, we have to arbitrarily lay out our children, so
 		* we have our own. We add these and ensure that the appropriate 
-		* [delegate]{@link external:delegate} is selected depending on the request.
+		* [delegate]{@glossary delegate} is selected depending on the request.
 		*
 		* @method
 		* @private
@@ -118,7 +118,7 @@
 		}),
 
 		/** 
-		* We access this [kind's]{@link external:kind} [constructor]{@link external:constructor} 
+		* We access this [kind's]{@glossary kind} [constructor]{@glossary constructor} 
 		* and need it to be undeferred at that time.
 		*
 		* @private

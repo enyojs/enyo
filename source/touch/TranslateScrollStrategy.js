@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.TranslateScrollStrategy_ is a helper [kind]{@link external:kind} that extends
+	* _enyo.TranslateScrollStrategy_ is a helper [kind]{@glossary kind} that extends
 	* {@link enyo.TouchScrollStrategy}, optimizing it for scrolling environments in which effecting 
 	* scroll changes with transforms is fastest.
 	* 

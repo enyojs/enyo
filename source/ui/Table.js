@@ -7,7 +7,7 @@
 	*/
 
 	/**
-	* _enyo.Table_ implements an HTML [&lt;table&gt;]{@link external:table} element. This is a work 
+	* _enyo.Table_ implements an HTML [&lt;table&gt;]{@glossary table} element. This is a work 
 	* in progress.
 	*
 	* @ui
@@ -42,7 +42,7 @@
 	});
 
 	/**
-	* _enyo.TableRow_ implements an HTML [&lt;tr&gt;]{@link external:tr} element.
+	* _enyo.TableRow_ implements an HTML [&lt;tr&gt;]{@glossary tr} element.
 	*
 	* @class enyo.TableRow
 	* @public
@@ -67,7 +67,7 @@
 	});
 
 	/**
-	* _enyo.TableCell_ implements an HTML [&lt;td&gt;]{@link external:td} element.
+	* _enyo.TableCell_ implements an HTML [&lt;td&gt;]{@glossary td} element.
 	*
 	* @class enyo.TableCell
 	* @public

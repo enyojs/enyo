@@ -12,7 +12,7 @@
 	* [Observers]{@link enyo.ObserverSupport~observer} may be registered in
 	* several different ways. See the {@link enyo.ObserverSupport} documentation
 	* for more details. Also note that, while observers should not be called
-	* directly, if defined on a [kind]{@link external:kind}, they may be
+	* directly, if defined on a [kind]{@glossary kind}, they may be
 	* overloaded for special behavior.
 	*
 	* @see enyo.ObserverSupport
@@ -128,8 +128,8 @@
 		
 	/**
 	* Adds support for notifications on property changes. Most
-	* [kinds]{@link external:kind} (including all kinds that inherit from
-	* {@link enyo.Object}) already have this [mixin]{@link external:mixin} applied.
+	* [kinds]{@glossary kind} (including all kinds that inherit from
+	* {@link enyo.Object}) already have this [mixin]{@glossary mixin} applied.
 	* This allows for
 	* [observers]{@link enyo.ObserverSupport~Observer} to be
 	* [declared]{@link enyo.ObserverSupport.observers} or "implied" (see below).
@@ -265,7 +265,7 @@
 		* specified, all observers for the callee will be returned.
 		*
 		* @returns {enyo.ObserverSupport~Observer[]} The immutable
-		* [array]{@link external:Array} of observers.
+		* [array]{@glossary Array} of observers.
 		* @public
 		*/
 		getObservers: function (path) {

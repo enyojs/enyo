@@ -5,7 +5,7 @@
 	
 	/**
 	* This is the default render delegate used by {@link enyo.Control}. It generates the HTML
-	* [string]{@link external:String} content and correctly inserts it into the DOM. This employs
+	* [string]{@glossary String} content and correctly inserts it into the DOM. This employs
 	* a string-concatenation technique to accomplish DOM insertion in batches.
 	*
 	* @name enyo.HTMLStringDelegate

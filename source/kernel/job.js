@@ -15,7 +15,7 @@
 	* }
 	*
 	* @param {String} nom The name of the [job]{@link enyo.job} to throttle.
-	* @param {(Function|String)} job Either the name of a method or a [function]{@link external:Function} 
+	* @param {(Function|String)} job Either the name of a method or a [function]{@glossary Function} 
 	*                                to execute as the requested job.
 	* @param {Number} wait The number of milliseconds to wait before executing the job again.
 	* @static
@@ -53,7 +53,7 @@
 	* too often.
 	* 
 	* @param {String} nom The name of the [job]{@link enyo.job} to throttle.
-	* @param {(Function|String)} job Either the name of a method or a [function]{@link external:Function} 
+	* @param {(Function|String)} job Either the name of a method or a [function]{@glossary Function} 
 	*                                to execute as the requested job.
 	* @param {Number} wait The number of milliseconds to wait before executing the
 	*                      job again.

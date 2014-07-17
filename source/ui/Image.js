@@ -5,9 +5,9 @@
 	* @event enyo.Image#event:onload
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -17,16 +17,16 @@
 	* @event enyo.Image#event:onerror
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
 	/**
-	* _enyo.Image_ implements an HTML [&lt;img&gt;]{@link external:img} element and, optionally, 
+	* _enyo.Image_ implements an HTML [&lt;img&gt;]{@glossary img} element and, optionally, 
 	* [bubbles]{@link enyo.Component#bubble} the [onload]{@link enyo.Image#event:onload} and 
-	* [onerror]{@link enyo.Image#event:onerror} [events]{@link external:event}. Image dragging is 
+	* [onerror]{@link enyo.Image#event:onerror} [events]{@glossary event}. Image dragging is 
 	* suppressed by default, so as not to interfere with touch interfaces.
 	*
 	* @ui
@@ -43,7 +43,7 @@
 		
 		/**
 		* When `true`, no [onload]{@link enyo.Image#event:onload} or 
-		* [onerror]{@link enyo.Image#event:onerror} [event]{@link external:event} handlers will be 
+		* [onerror]{@link enyo.Image#event:onerror} [event]{@glossary event} handlers will be 
 		* created.
 		* 
 		* @type {Boolean}
@@ -59,7 +59,7 @@
 			/** @lends enyo.Image.prototype */ {
 			
 			/**
-			* Maps to the _alt_ attribute of an [img tag]{@link external:img}.
+			* Maps to the _alt_ attribute of an [img tag]{@glossary img}.
 			* 
 			* @type {String}
 			* @default ''
@@ -86,7 +86,7 @@
 			/**
 			* When [sizing]{@link enyo.Image#sizing} is used, this property sets the positioning of 
 			* the [image]{@link enyo.Image} within the bounds, corresponding to the 
-			* [`background-position`]{@link external:backgroundPosition} CSS property.
+			* [`background-position`]{@glossary backgroundPosition} CSS property.
 			* 
 			* @type {String}
 			* @default ''
@@ -108,7 +108,7 @@
 		/**
 		* @type {Object}
 		* @property {Boolean} draggable Note: The _draggable_ attribute takes one of these 
-		*	[String]{@link external:String} values: 'true', 'false', 'auto' (Boolean `false` would 
+		*	[String]{@glossary String} values: 'true', 'false', 'auto' (Boolean `false` would 
 		*	remove the attribute). The default is 'false'.
 		* @public
 		*/

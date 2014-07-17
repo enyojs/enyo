@@ -1,7 +1,7 @@
-﻿(function (enyo, scope) {
+(function (enyo, scope) {
 
 	/**
-	* An abstract [kind]{@link external:kind} designed to aid in handling asynchronous operations.
+	* An abstract [kind]{@glossary kind} designed to aid in handling asynchronous operations.
 	* It represents a task that has not yet completed. Callback functions may be registered to be
 	* notified when the task is complete.
 	*
@@ -109,7 +109,7 @@
 		},
 		
 		/**
-		* Register a [function]{@link external:Function} to be fired when
+		* Register a [function]{@glossary Function} to be fired when
 		* [execution]{@link enyo.Async#go} is completed successfully. Parameters can be in any order
 		* to preserve backward compatibility.
 		*
@@ -124,7 +124,7 @@
 		},
 		
 		/**
-		* Register a [function]{@link external:Function} to be fired when
+		* Register a [function]{@glossary Function} to be fired when
 		* [execution]{@link enyo.Async#go} is completed errantly. Parameters can be in any order to
 		* preserve backward compatibility.
 		*
@@ -139,7 +139,7 @@
 		},
 		
 		/**
-		* Register a [function]{@link external:Function} to be fired on progress events. Parameters
+		* Register a [function]{@glossary Function} to be fired on progress events. Parameters
 		* can be in any order to preserve backward compatibility.
 		*
 		* @param {Function} fn The callback to register.
@@ -271,7 +271,7 @@
 		
 		/**
 		* Initiates the asynchronous routine and will supply the given value if it completes
-		* successfully. This method is usually overloaded in [subkinds]{@link external:subkind}.
+		* successfully. This method is usually overloaded in [subkinds]{@glossary subkind}.
 		*
 		* @virtual
 		* @param {*} value The value to pass to responders.

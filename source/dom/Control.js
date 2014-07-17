@@ -7,7 +7,7 @@
 
 	/**
 	* _enyo.Control_ is a [component]{@link enyo.UiComponent} that controls a
-	* [DOM]{@link external:DOM} [node]{@link external:Node} (i.e., an element in the user
+	* [DOM]{@glossary DOM} [node]{@glossary Node} (i.e., an element in the user
 	* interface). _Controls_ are generally visible and the user often interacts with them directly.
 	* While things like buttons and input boxes are obviously controls, in Enyo, a control may be as
 	* simple as a text item or as complex as an entire application. They both inherit the same basic
@@ -49,7 +49,7 @@
 		defaultKind: 'enyo.Control',
 
 		/**
-		* The [DOM node]{@link external:DOM} tag name that should be created.
+		* The [DOM node]{@glossary DOM} tag name that should be created.
 		*
 		* @type {String}
 		* @default 'div'
@@ -58,8 +58,8 @@
 		tag: 'div',
 
 		/**
-		* An attributes [hash]{@link external:Object} to be applied to the created
-		* [DOM node]{@link external:DOM}.
+		* An attributes [hash]{@glossary Object} to be applied to the created
+		* [DOM node]{@glossary DOM}.
 		*
 		* @type {Object}
 		* @default null
@@ -68,7 +68,7 @@
 		attributes: null,
 
 		/**
-		* [Boolean]{@link external:Boolean} flag for whether this element should "fit" or fill its
+		* [Boolean]{@glossary Boolean} flag for whether this element should "fit" or fill its
 		* container's size.
 		*
 		* @type {Boolean}
@@ -79,7 +79,7 @@
 
 		/**
 		* Should this control allow HTML in its [content]{@linkcode enyo.Control.content} property.
-		* If set to `false`, HTML will be encoded into [HTML entities]{@link external:entity} (like
+		* If set to `false`, HTML will be encoded into [HTML entities]{@glossary entity} (like
 		* `&lt;` and `&gt;`) for literal visual representation.
 		*
 		* @type {Boolean}
@@ -164,7 +164,7 @@
 		*
 		* This is a shortcut convenience method for {@link enyo.dom.getBounds}.
 		*
-		* @returns {Object} An [object]{@link external:Object} containing `top`, `left`, `width`,
+		* @returns {Object} An [object]{@glossary Object} containing `top`, `left`, `width`,
 		*	and `height` properties.
 		* @public
 		*/
@@ -180,7 +180,7 @@
 		* property values are ignored. Optionally specify a _unit_ (valid CSS measurement unit) as a
 		* [string]{@link exteral:String} to apply to each of the position/size assignments.
 		*
-		* @param {Object} bounds An [object]{@link external:Object} optionally containing one or
+		* @param {Object} bounds An [object]{@glossary Object} optionally containing one or
 		*	more of the following properties: `width`, `height`, `top`, `right`, `bottom`, and/or
 		*	`left`.
 		* @param {String} [unit='px']
@@ -213,7 +213,7 @@
 		*
 		* This is a shortcut convenience method for {@link enyo.dom.getAbsoluteBounds}.
 		*
-		* @returns {Object} An [object]{@link external:Object} containing `top`, `left`, `width`,
+		* @returns {Object} An [object]{@glossary Object} containing `top`, `left`, `width`,
 		*	and `height` properties.
 		* @public
 		*/
@@ -250,7 +250,7 @@
 		},
 
 		/**
-		* Set this control to be [focused]{@link external:focus}.
+		* Set this control to be [focused]{@glossary focus}.
 		*
 		* @public
 		*/
@@ -259,7 +259,7 @@
 		},
 
 		/**
-		* [Blur]{@link external:blur} this control. (The opposite of {@link enyo.Control.focus}.)
+		* [Blur]{@glossary blur} this control. (The opposite of {@link enyo.Control.focus}.)
 		*
 		* @public
 		*/
@@ -268,7 +268,7 @@
 		},
 
 		/**
-		* Test whether this control currently has the [focus]{@link external:focus}.
+		* Test whether this control currently has the [focus]{@glossary focus}.
 		*
 		* @returns {Boolean} Does this control have focus?
 		*	True if yes, no if false.
@@ -279,9 +279,9 @@
 		},
 
 		/**
-		* Test whether this control's [DOM node]{@link external:Node} has been created.
+		* Test whether this control's [DOM node]{@glossary Node} has been created.
 		*
-		* @returns {Boolean} Has this [DOM node]{@link external:Node} been created?
+		* @returns {Boolean} Has this [DOM node]{@glossary Node} been created?
 		*	True if yes, no if false.
 		* @public
 		*/
@@ -291,12 +291,12 @@
 
 		/**
 		* Gets the requested property _name_ from the control's attributes
-		* [hash]{@link external:Object}, from its cache of node attributes or if it has yet to be
-		* cached, from the [node]{@link external:Node} itself.
+		* [hash]{@glossary Object}, from its cache of node attributes or if it has yet to be
+		* cached, from the [node]{@glossary Node} itself.
 		*
 		* @param {String} name The attribute name to get.
 		* @returns {(String|Null)} The value of the requested attribute, `null` if there isn't a
-		*	[DOM node]{@link external:Node} yet.
+		*	[DOM node]{@glossary Node} yet.
 		* @public
 		*/
 		getAttribute: function (name) {
@@ -319,9 +319,9 @@
 		},
 
 		/**
-		* Assign an attribute to a control's [node]{@link external:Node}. Assigning a `null`,
+		* Assign an attribute to a control's [node]{@glossary Node}. Assigning a `null`,
 		* `false`, or empty string ("") _value_ to _name_ will remove the attribute from the
-		* [node]{@link external:Node} altogether.
+		* [node]{@glossary Node} altogether.
 		*
 		* @param {String} name Attribute name to assign/remove.
 		* @param {(String|Number|null)} value The value to assign to _name_
@@ -347,12 +347,12 @@
 		},
 
 		/**
-		* Reads the _name_ property directly off of the [node]{@link external:Node}. Provide a
-		* default _def_ to use if there is no [node]{@link external:Node} yet.
+		* Reads the _name_ property directly off of the [node]{@glossary Node}. Provide a
+		* default _def_ to use if there is no [node]{@glossary Node} yet.
 		*
-		* @param {String} name [Node]{@link external:Node} property name to get.
-		* @param {*} def Default value to apply if there is no [node]{@link external:Node}.
-		* @returns {String} Value of the _name_ property or _def_ if the [node]{@link external:Node}
+		* @param {String} name [Node]{@glossary Node} property name to get.
+		* @param {*} def Default value to apply if there is no [node]{@glossary Node}.
+		* @returns {String} Value of the _name_ property or _def_ if the [node]{@glossary Node}
 		*	was not available.
 		* @public
 		*/
@@ -361,9 +361,9 @@
 		},
 
 		/**
-		* Sets the _name_ property _value_ directly on the [node]{@link external:Node}.
+		* Sets the _name_ property _value_ directly on the [node]{@glossary Node}.
 		*
-		* @param {String} name [Node]{@link external:Node} property name to set.
+		* @param {String} name [Node]{@glossary Node} property name to set.
 		* @param {*} value Value to assign to the property.
 		* @returns {this} Callee for chaining.
 		* @public
@@ -777,7 +777,7 @@
 
 		/**
 		* Determines whether the control is allowed to be generated, i.e. rendered into the
-		* [DOM]{@link external:DOM} tree.
+		* [DOM]{@glossary DOM} tree.
 		*
 		* @type {Boolean}
 		* @default true
@@ -795,7 +795,7 @@
 		showing: true,
 
 		/**
-		* The [node]{@link external:Node} that this control will be rendered into.
+		* The [node]{@glossary Node} that this control will be rendered into.
 		*
 		* @type {enyo.Control}
 		* @default null
@@ -831,8 +831,8 @@
 		},
 
 		/**
-		* Take this control and drop it into a (new/different) [DOM node]{@link external:Node}. This
-		* replaces any existing [nodes]{@link external:Node} in the target _parentNode_.
+		* Take this control and drop it into a (new/different) [DOM node]{@glossary Node}. This
+		* replaces any existing [nodes]{@glossary Node} in the target _parentNode_.
 		*
 		* @param {Node} parentNode The new parent of this control.
 		* @returns {this} Callee for chaining.
@@ -1015,7 +1015,7 @@
 		}),
 
 		/**
-		* Destroys the control and removes it from the [DOM]{@link external:DOM}. Also removes the
+		* Destroys the control and removes it from the [DOM]{@glossary DOM}. Also removes the
 		* ability for this control to receive bubbled events.
 		*
 		* @public

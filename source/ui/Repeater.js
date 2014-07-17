@@ -1,7 +1,7 @@
-﻿(function (enyo, scope) {
+(function (enyo, scope) {
 	/**
-	* The extended [event]{@link external:event} [object]{@link external:Object} that is provided 
-	* when the [onSetupItem]{@link enyo.Repeater#event:onSetupItem} [event]{@link external:event} is
+	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided 
+	* when the [onSetupItem]{@link enyo.Repeater#event:onSetupItem} [event]{@glossary event} is
 	* fired.
 	*
 	* @typedef {Object} enyo.Repeater~SetupItemEvent
@@ -15,9 +15,9 @@
 	* @event enyo.Repeater#event:onSetupItem
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {enyo.Repeater~SetupItemEvent} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information. 
+	*	propagated the [event]{@glossary event}.
+	* @property {enyo.Repeater~SetupItemEvent} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information. 
 	* @public
 	*/
 
@@ -42,7 +42,7 @@
 	* ```
 	* 
 	* Be sure to return `true` from your `onSetupItem` handler to avoid having other 
-	* [event]{@link external:event} handlers further up the tree try to modify your item 
+	* [event]{@glossary event} handlers further up the tree try to modify your item 
 	* [control]{@link enyo.Control}.
 	* 
 	* For more information, see the documentation on
@@ -146,7 +146,7 @@
 		},
 		/**
 		* Renders a specific item in the [collection]{@link enyo.Collection}. This does not destroy
-		* the item, but just calls the `onSetupItem` [event]{@link external:event} handler again for
+		* the item, but just calls the `onSetupItem` [event]{@glossary event} handler again for
 		* it, so any state stored in the item is preserved.
 		*
 		* @param {Number} idx The index of the item to render.
@@ -161,8 +161,8 @@
 
 	/**
 	* Sometimes client [controls]{@link enyo.Control} are intermediated with null-controls. These 
-	* overrides reroute [events]{@link external:event} from such [controls]{@link enyo.Control} to 
-	* the nominal [delegate]{@link external:delegate}, as would happen in the absence of 
+	* overrides reroute [events]{@glossary event} from such [controls]{@link enyo.Control} to 
+	* the nominal [delegate]{@glossary delegate}, as would happen in the absence of 
 	* intermediation.
 	* 
 	* @private

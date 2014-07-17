@@ -95,7 +95,7 @@
 		}
 
 		/**
-		* Tell Enyo to listen for these [events]{@link external:event}.
+		* Tell Enyo to listen for these [events]{@glossary event}.
 		* 
 		* @private
 		*/

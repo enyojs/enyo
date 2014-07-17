@@ -6,7 +6,7 @@
 	
 	/**
 	* Any {@link enyo.Application} instances will be available by name from this 
-	* [object]{@link external:Object}. If no name is provided for an 
+	* [object]{@glossary Object}. If no name is provided for an 
 	* [application]{@link enyo.Application}, a name will be generated for it.
 	*
 	* @public
@@ -18,7 +18,7 @@
 	* collection of {@link enyo.Controller controllers} and a hierarchy of 
 	* [controls]{@link enyo.Control}. There may be multiple instances of an 
 	* [application]{@link enyo.Application} at a given time, with unique names and target 
-	* [DOM nodes]{@link external:Node}. Within a given application, a reference to the
+	* [DOM nodes]{@glossary Node}. Within a given application, a reference to the
 	* application is available on all [components]{@link enyo.Component} via the
 	* [`app`]{@link enyo.ApplicationSupport#app} property.
 	*
@@ -43,7 +43,7 @@
 		* If set to `true` (the default), the [application's]{@link enyo.Application} 
 		* [`start()`]{@link enyo.Application#start} method will automatically be called once its 
 		* [`create()`]{@link enyo.Application#create} method has completed execution. Set this to 
-		* `false` if additional setup (or an asynchronous [event]{@link external:event}) is required
+		* `false` if additional setup (or an asynchronous [event]{@glossary event}) is required
 		* before starting.
 		*
 		* @type {Boolean}
@@ -57,7 +57,7 @@
 		* [render]{@link enyo.Application#render} its [view]{@link enyo.ViewController#view} when 
 		* the [`start()`]{@link enyo.Application#start} method has completed execution. Set this to 
 		* `false` to delay rendering if additional setup (or an asynchronous 
-		* [event]{@link external:event}) is required before rendering.
+		* [event]{@glossary event}) is required before rendering.
 		*
 		* @type {Boolean}
 		* @default true
@@ -175,7 +175,7 @@
 		}),
 		
 		/**
-		* Ensures that [events]{@link external:event} bubbling from the views will reach 
+		* Ensures that [events]{@glossary event} bubbling from the views will reach 
 		* {@link enyo.master} as expected.
 		*
 		* @private

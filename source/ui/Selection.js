@@ -1,8 +1,8 @@
 (function (enyo, scope) {
 	/**
-	* The extended [event]{@link external:event} [object]{@link external:Object} that is provided 
+	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided 
 	* when the [onSelect]{@link enyo.Selection#event:onSelect} and 
-	* [onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@link external:event} are fired.
+	* [onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@glossary event} are fired.
 	*
 	* @typedef {Object} enyo.Selection~SelectionEvent
 	* @property {Number|String} key Whatever _key_ was used to register the 
@@ -24,9 +24,9 @@
 	* @event enyo.Selection#event:onSelect
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {enyo.Selection~SelectionEvent} event - An [object]{@link external:Object} 
-	*	containing [event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {enyo.Selection~SelectionEvent} event - An [object]{@glossary Object} 
+	*	containing [event]{@glossary event} information.
 	* @public
 	*/
 
@@ -43,9 +43,9 @@
 	* @event enyo.Selection#event:onDeselect
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {enyo.Selection~SelectionEvent} event - An [object]{@link external:Object} 
-	*	containing [event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {enyo.Selection~SelectionEvent} event - An [object]{@glossary Object} 
+	*	containing [event]{@glossary event} information.
 	* @public
 	*/
 
@@ -55,9 +55,9 @@
 	* @event enyo.Selection#event:onChange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -187,10 +187,10 @@
 		* @param {Number|String} key The unique identifier of the row.
 		* @param {Boolean} sel Is `true` if the row should be selected, `false` if the row should be
 		*	unselected.
-		* @param {Object} [data] An optional data [object]{@link external:Object} to store in the 
+		* @param {Object} [data] An optional data [object]{@glossary Object} to store in the 
 		*	selection for the key that will be sent with the 
 		*	[onSelect]{@link enyo.Selection#event:onSelect} or 
-		*	[onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@link external:event}. If
+		*	[onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@glossary event}. If
 		*	not used, the _data_ will be set to `true`.
 		* @fires enyo.Selection#event:onChange
 		* @public
@@ -225,10 +225,10 @@
 		* _select_ will also deselect the previous [selection]{@link enyo.Selection}.
 		*
 		* @param {Number|String} key The unique identifier of the row.
-		* @param {Object} [data] An optional data [object]{@link external:Object} to store in the 
+		* @param {Object} [data] An optional data [object]{@glossary Object} to store in the 
 		*	selection for the key that will be sent with the 
 		*	[onSelect]{@link enyo.Selection#event:onSelect} or 
-		*	[onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@link external:event}. If
+		*	[onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@glossary event}. If
 		*	not used, the _data_ will be set to `true`.
 		* @public
 		*/
@@ -248,10 +248,10 @@
 		* [selection]{@link enyo.Selection}.
 		*
 		* @param {Number|String} key The unique identifier of the row.
-		* @param {Object} [data] An optional data [object]{@link external:Object} to store in the 
+		* @param {Object} [data] An optional data [object]{@glossary Object} to store in the 
 		*	selection for the key that will be sent with the 
 		*	[onSelect]{@link enyo.Selection#event:onSelect} or 
-		*	[onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@link external:event}. If
+		*	[onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@glossary event}. If
 		*	not used, the _data_ will be set to `true`.
 		* @public
 		*/
@@ -265,8 +265,8 @@
 		/**
 		* Retrieve the current [selection]{@link enyo.Selection}.
 		*
-		* @returns {Object} the selection as a [hash]{@link external:Object} in which each selected 
-		*	item has a value; unselected items are [undefined]{@link external:undefined}.
+		* @returns {Object} the selection as a [hash]{@glossary Object} in which each selected 
+		*	item has a value; unselected items are [undefined]{@glossary undefined}.
 		* @public
 		*/
 		getSelected: function() {

@@ -2,7 +2,7 @@
 	
 	/**
 	* A polyfill for platforms that don't yet support
-	* [`bind()`]{@link external:Function.prototype.bind}. As explained in the linked article, this
+	* [`bind()`]{@glossary Function.prototype.bind}. As explained in the linked article, this
 	* polyfill handles the general use case but cannot exactly mirror the ECMA-262 version 5
 	* implementation specification. This is an adaptation of the example promoted
 	* [here]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind}.
@@ -118,7 +118,7 @@
 	/**
 	* RFC4122 uuid generator for the browser.
 	*
-	* @returns {String} An [RFC4122]{@link external:UUID}-compliant, universally unique identifier.
+	* @returns {String} An [RFC4122]{@glossary UUID}-compliant, universally unique identifier.
 	* @public
 	*/
 	enyo.uuid = function () {
@@ -135,7 +135,7 @@
 	};
 	
 	/**
-	* Generates a random number using [Math.random]{@link external:Math.random}.
+	* Generates a random number using [Math.random]{@glossary Math.random}.
 	*
 	* @param {Number} bound The multiplier used to generate the product.
 	* @returns {Number} A random number.
@@ -148,10 +148,10 @@
 	var toString = Object.prototype.toString;
 
 	/**
-	* Determines whether a given variable is a [String]{@link external:String}.
+	* Determines whether a given variable is a [String]{@glossary String}.
 	*
 	* @param {*} it The variable to be tested.
-	* @returns {Boolean} `true` if variable is a [String]{@link external:String};
+	* @returns {Boolean} `true` if variable is a [String]{@glossary String};
 	* otherwise, `false`.
 	* @public
 	*/
@@ -160,10 +160,10 @@
 	};
 
 	/**
-	* Determines whether a given variable is a [Function]{@link external:Function}.
+	* Determines whether a given variable is a [Function]{@glossary Function}.
 	* 
 	* @param {*} it The variable to be tested.
-	* @returns {Boolean} `true` if variable is a [Function]{@link external:Function};
+	* @returns {Boolean} `true` if variable is a [Function]{@glossary Function};
 	* otherwise, `false`.
 	* @public
 	*/
@@ -172,10 +172,10 @@
 	};
 
 	/**
-	* Determines whether a given variable is an [Array]{@link external:Array}.
+	* Determines whether a given variable is an [Array]{@glossary Array}.
 	*
 	* @param {*} it The variable to be tested.
-	* @returns {Boolean} `true` if variable is an [Array]{@link external:Array};
+	* @returns {Boolean} `true` if variable is an [Array]{@glossary Array};
 	* otherwise, `false`.
 	* @method
 	* @public
@@ -185,10 +185,10 @@
 	};
 
 	/**
-	* Determines whether a given variable is an [Object]{@link external:Object}.
+	* Determines whether a given variable is an [Object]{@glossary Object}.
 	*
 	* @param {*} it The variable to be tested.
-	* @returns {Boolean} `true` if variable is an [Object]{@link external:Object};
+	* @returns {Boolean} `true` if variable is an [Object]{@glossary Object};
 	* otherwise, `false`.
 	* @method
 	* @public
@@ -288,7 +288,7 @@
 	/**
 	* Calls the provided `method` on `scope`, asynchronously.
 	*
-	* Uses [`window.setTimeout()`]{@link external:window.setTimeout} with minimum delay,
+	* Uses [`window.setTimeout()`]{@glossary window.setTimeout} with minimum delay,
 	* usually around 10ms.
 	*
 	* Additional arguments are passed to `method` when it is invoked.
@@ -313,8 +313,8 @@
 	};
 
 	/**
-	* Calls the provided `method` ([String]{@link external:String}) on `scope` with optional
-	* arguments `args` ([Array]{@link external:Array}), if the object and method exist.
+	* Calls the provided `method` ([String]{@glossary String}) on `scope` with optional
+	* arguments `args` ([Array]{@glossary Array}), if the object and method exist.
 	*
 	* @example
 	* 	enyo.call(myWorkObject, 'doWork', [3, 'foo']);
@@ -337,8 +337,8 @@
 
 	/**
 	* Returns the current time in milliseconds. On platforms that support it,
-	* [`Date.now()`]{@link external:Date.now} will be used; otherwise this will
-	* be equivalent to [`new Date().getTime()`]{@link external:Date.getTime}.
+	* [`Date.now()`]{@glossary Date.now} will be used; otherwise this will
+	* be equivalent to [`new Date().getTime()`]{@glossary Date.getTime}.
 	* 
 	* @returns {Number} Number of milliseconds representing the current time.
 	* @method
@@ -350,10 +350,10 @@
 	};
 
 	/**
-	* When [`window.performance`]{@link external:window.performance} is available, supplies
+	* When [`window.performance`]{@glossary window.performance} is available, supplies
 	* a high-precision, high-performance monotonic timestamp, which is independent of
 	* changes to the system clock and thus safer for use in animation, etc. Falls back to
-	* [`enyo.now()`]{@link enyo.now} (based on the JavaScript [Date]{@link external:Date}
+	* [`enyo.now()`]{@link enyo.now} (based on the JavaScript [Date]{@glossary Date}
 	* object), which is subject to system time changes.
 	* 
 	* @returns {Number} Number of milliseconds representing the current time or time since
@@ -562,7 +562,7 @@
 	// ----------------------------------
 	
 	/**
-	* Uppercases a given string. Will coerce to a [String]{@link external:String}
+	* Uppercases a given string. Will coerce to a [String]{@glossary String}
 	* if possible/necessary.
 	*
 	* @param {String} str The string to uppercase.
@@ -577,7 +577,7 @@
 	};
 	
 	/**
-	* Lowercases a given string. Will coerce to a [String]{@link external:String}
+	* Lowercases a given string. Will coerce to a [String]{@glossary String}
 	* if possible/necessary.
 	*
 	* @param {String} str The string to lowercase.
@@ -660,8 +660,8 @@
 	// ----------------------------------
 	
 	/**
-	* A [polyfill]{@link external:polyfill} for platforms that don't support
-	* [`Object.create()`]{@link external:Object.create}.
+	* A [polyfill]{@glossary polyfill} for platforms that don't support
+	* [`Object.create()`]{@glossary Object.create}.
 	*/
 	Object.create = Object.create || (function () {
 		var Anon = function () {};
@@ -675,8 +675,8 @@
 	})();
 	
 	/**
-	* A [polyfill]{@link external:polyfill} for platforms that don't support
-	* [`Object.keys()`]{@link external:Object.keys}.
+	* A [polyfill]{@glossary polyfill} for platforms that don't support
+	* [`Object.keys()`]{@glossary Object.keys}.
 	*/
 	Object.keys = Object.keys || function (obj) {
 		var results = [];
@@ -716,8 +716,8 @@
 	enyo.keys = Object.keys;
 	
 	/**
-	* Convenience method that takes an [array]{@link external:Array} of properties
-	* and an [object]{@link external:Object} as parameters. Returns a new object
+	* Convenience method that takes an [array]{@glossary Array} of properties
+	* and an [object]{@glossary Object} as parameters. Returns a new object
 	* with only those properties named in the array that are found to exist on the
 	* base object. If the third parameter is `true`, falsy values will be ignored.
 	*
@@ -745,7 +745,7 @@
 	};
 
 	/**
-	* Convenience method that takes two [objects]{@link external:Object} as parameters.
+	* Convenience method that takes two [objects]{@glossary Object} as parameters.
 	* For each key from the first object, if the key also exists in the second object,
 	* a mapping of the key from the first object to the key from the second object is
 	* added to a result object, which is eventually returned. In other words, the
@@ -772,8 +772,8 @@
 	};
 
 	/**
-	* Helper method that accepts an [array]{@link external:Array} of
-	* [objects]{@link external:Object} and returns a hash of those objects indexed
+	* Helper method that accepts an [array]{@glossary Array} of
+	* [objects]{@glossary Object} and returns a hash of those objects indexed
 	* by the specified `property`. If a `filter` is provided, the filter should
 	* accept four parameters: the key, the value (object), the current mutable map
 	* reference, and an immutable copy of the original array of objects for
@@ -824,15 +824,15 @@
 	};
 	
 	/**
-	* Creates and returns a shallow copy of an [Object]{@link external:Object} or an
-	* [Array]{@link external:Array}. For objects, by default, properties will be scanned and
+	* Creates and returns a shallow copy of an [Object]{@glossary Object} or an
+	* [Array]{@glossary Array}. For objects, by default, properties will be scanned and
 	* copied directly to the clone such that they would pass the
-	* [`hasOwnProperty()`]{@link external:Object.hasOwnProperty} test. This is expensive and often not
+	* [`hasOwnProperty()`]{@glossary Object.hasOwnProperty} test. This is expensive and often not
 	* required. In this case, the optional second parameter may be used to allow a more efficient
 	* [copy]{@link Object.create} to be made.
 	* 
-	* @param {(Object|Array)} base The [Object]{@link external:Object} or
-	*                              [Array]{@link external:Array} to be cloned.
+	* @param {(Object|Array)} base The [Object]{@glossary Object} or
+	*                              [Array]{@glossary Array} to be cloned.
 	* @param {Boolean} [quick] If `true`, when cloning objects, a faster [copy]{@link Object.create}
 	*                          method will be used. This parameter has no meaning when cloning arrays.
 	* @returns {*} A clone of the provided `base` if `base` is of the correct type; otherwise,
@@ -930,11 +930,11 @@
 	};
 	
 	/**
-	* Returns an [array]{@link external:Array} of the values of all properties in an
-	* [object]{@link external:Object}.
+	* Returns an [array]{@glossary Array} of the values of all properties in an
+	* [object]{@glossary Object}.
 	*
-	* @param {Object} obj The [Object]{@link external:Object} to read the values from.
-	* @returns {Array} An [array]{@link external:Array} with the values from the `obj`.
+	* @param {Object} obj The [Object]{@glossary Object} to read the values from.
+	* @returns {Array} An [array]{@glossary Array} with the values from the `obj`.
 	* @public
 	*/
 	enyo.values = function (obj) {
@@ -951,7 +951,7 @@
 	
 	/**
 	* Because our older API parameters are not consistent with other array API methods, and also
-	* because only [IE8 lacks integrated support]{@link external:polyfill} for
+	* because only [IE8 lacks integrated support]{@glossary polyfill} for
 	* [`indexOf()`]{@linkcode external:Array.indexOf}, we ensure it is defined (only IE8) and advise,
 	* moving forward, that the built-in method be used. But to preserve our original API, it will
 	* simply call this method, knowing it exists.
@@ -976,7 +976,7 @@
 	
 	/**
 	* Because our older API parameters are not consistent with other array API methods, and also
-	* because only [IE8 lacks integrated support]{@link external:polyfill} for
+	* because only [IE8 lacks integrated support]{@glossary polyfill} for
 	* [`lastIndexOf()`]{@linkcode external:Array.lastIndexOf} we ensure it is defined (only IE8) and
 	* advise, moving forward, that the built-in method be used. But to preserve our original API, it
 	* will simply call this method, knowing it exists.
@@ -1004,8 +1004,8 @@
 	};
 	
 	/**
-	* A [polyfill]{@link external:polyfill} for platforms that don't support
-	* [`Array.findIndex()`]{@link external:Array.findIndex}.
+	* A [polyfill]{@glossary polyfill} for platforms that don't support
+	* [`Array.findIndex()`]{@glossary Array.findIndex}.
 	*/
 	Array.prototype.findIndex = Array.prototype.findIndex || function (fn, ctx) {
 		for (var i=0, len=this.length >>> 0; i<len; ++i) {
@@ -1015,8 +1015,8 @@
 	};
 	
 	/**
-	* A [polyfill]{@link external:polyfill} for platforms that don't support
-	* [`Array.find()`]{@link external:Array.find}.
+	* A [polyfill]{@glossary polyfill} for platforms that don't support
+	* [`Array.find()`]{@glossary Array.find}.
 	*/
 	Array.prototype.find = Array.prototype.find || function (fn, ctx) {
 		for (var i=0, len=this.length >>> 0; i<len; ++i) {
@@ -1025,16 +1025,16 @@
 	};
 	
 	/**
-	* A [polyfill]{@link external:polyfill} for platforms that don't support
-	* [`Array.forEach()`]{@link external:Array.forEach}.
+	* A [polyfill]{@glossary polyfill} for platforms that don't support
+	* [`Array.forEach()`]{@glossary Array.forEach}.
 	*/
 	Array.prototype.forEach = Array.prototype.forEach || function (fn, ctx) {
 		for (var i=0, len=this.length >>> 0; i<len; ++i) fn.call(ctx, this[i], this);
 	};
 	
 	/**
-	* A [polyfill]{@link external:polyfill} for platforms that don't support
-	* [`Array.map()`]{@link external:Array.map}.
+	* A [polyfill]{@glossary polyfill} for platforms that don't support
+	* [`Array.map()`]{@glossary Array.map}.
 	*/
 	Array.prototype.map = Array.prototype.map || function (fn, ctx) {
 		var ret = [];
@@ -1045,8 +1045,8 @@
 	};
 	
 	/**
-	* A [polyfill]{@link external:polyfill} for platforms that don't support
-	* [`Array.filter()`]{@link external:Array.filter}.
+	* A [polyfill]{@glossary polyfill} for platforms that don't support
+	* [`Array.filter()`]{@glossary Array.filter}.
 	*/
 	Array.prototype.filter = Array.prototype.filter || function (fn, ctx) {
 		var ret = [];
@@ -1057,7 +1057,7 @@
 	};
 	
 	/**
-	* An Enyo convenience method reference to [`Array.indexOf()`]{@link external:Array.indexOf}.
+	* An Enyo convenience method reference to [`Array.indexOf()`]{@glossary Array.indexOf}.
 	* 
 	* This also supports the legacy Enyo argument order `el.indexOf(array, offset)` and can
 	* differentiate between this and the standard `array.indexOf(el, offset)`.
@@ -1065,7 +1065,7 @@
 	* **When possible, you should use the native equivalent.**
 	* 
 	* This method supports the same arguments as the native version, plus an extra argument at the
-	* beginning referring to the [array]{@link external:Array} to run this method on.
+	* beginning referring to the [array]{@glossary Array} to run this method on.
 	*
 	* @public
 	*/
@@ -1075,7 +1075,7 @@
 	};
 	
 	/**
-	* An Enyo convenience method reference to [`Array.lastIndexOf()`]{@link external:Array.lastIndexOf}.
+	* An Enyo convenience method reference to [`Array.lastIndexOf()`]{@glossary Array.lastIndexOf}.
 	* 
 	* This also supports the legacy Enyo argument order `el.lastIndexOf(array, offset)` and can
 	* differentiate between this and the standard `array.lastIndexOf(el, offset)`.
@@ -1083,7 +1083,7 @@
 	* **When possible, you should use the native equivalent.**
 	* 
 	* This method supports the same arguments as the native version, plus an extra argument at the
-	* beginning referring to the [array]{@link external:Array} to run this method on.
+	* beginning referring to the [array]{@glossary Array} to run this method on.
 	*
 	* @public
 	*/
@@ -1093,12 +1093,12 @@
 	};
 	
 	/**
-	* An Enyo convenience method reference to [`Array.findIndex()`]{@link external:Array.findIndex}.
+	* An Enyo convenience method reference to [`Array.findIndex()`]{@glossary Array.findIndex}.
 	* 
 	* **When possible, you should use the native equivalent.**
 	* 
 	* This method supports the same arguments as the native version, plus an extra argument at the
-	* beginning referring to the [array]{@link external:Array} to run this method on.
+	* beginning referring to the [array]{@glossary Array} to run this method on.
 	* 
 	* @public
 	*/
@@ -1107,12 +1107,12 @@
 	};
 	
 	/**
-	* An Enyo convenience method reference to [`Array.find()`]{@link external:Array.find}.
+	* An Enyo convenience method reference to [`Array.find()`]{@glossary Array.find}.
 	* 
 	* **When possible, you should use the native equivalent.**
 	* 
 	* This method supports the same arguments as the native version, plus an extra argument at the
-	* beginning referring to the [array]{@link external:Array} to run this method on.
+	* beginning referring to the [array]{@glossary Array} to run this method on.
 	* 
 	* @method enyo.find
 	* @public
@@ -1129,12 +1129,12 @@
 	enyo.where = enyo.find;
 	
 	/**
-	* An Enyo convenience method reference to [`Array.forEach()`]{@link external:Array.forEach}.
+	* An Enyo convenience method reference to [`Array.forEach()`]{@glossary Array.forEach}.
 	* 
 	* **When possible, you should use the native equivalent.**
 	* 
 	* This method supports the same arguments as the native version, plus an extra argument at the
-	* beginning referring to the [array]{@link external:Array} to run this method on.
+	* beginning referring to the [array]{@glossary Array} to run this method on.
 	* 
 	* @public
 	*/
@@ -1143,12 +1143,12 @@
 	};
 	
 	/**
-	* An Enyo convenience method reference to [`Array.map()`]{@link external:Array.map}.
+	* An Enyo convenience method reference to [`Array.map()`]{@glossary Array.map}.
 	*
 	* **When possible, you should use the native equivalent.**
 	* 
 	* This method supports the same arguments as the native version, plus an extra argument at the
-	* beginning referring to the [array]{@link external:Array} to run this method on.
+	* beginning referring to the [array]{@glossary Array} to run this method on.
 	*
 	* @public
 	*/
@@ -1157,12 +1157,12 @@
 	};
 	
 	/**
-	* An Enyo convenience method reference to [`Array.filter()`]{@link external:Array.filter}.
+	* An Enyo convenience method reference to [`Array.filter()`]{@glossary Array.filter}.
 	*
 	* **When possible, you should use the native equivalent.**
 	* 
 	* This method supports the same arguments as the native version, plus an extra argument at the
-	* beginning referring to the [array]{@link external:Array} to run this method on.
+	* beginning referring to the [array]{@glossary Array} to run this method on.
 	*
 	* @public
 	*/
@@ -1171,14 +1171,14 @@
 	};
 
 	/**
-	* When given an [array]{@link external:Array} of [objects]{@link external:Object},
+	* When given an [array]{@glossary Array} of [objects]{@glossary Object},
 	* searches through the array's objects; each object with a property name matching
 	* `prop` has its value for that property compiled into a result array, which is
 	* eventually returned. For each array object that doesn't have a matching property,
 	* an `undefined` placeholder element is added to the result array, such that the
 	* returned result array has the same length as the passed-in `array` parameter.
 	* 
-	* @param {Array} array The [array]{@link external:Array} of [objects]{@link external:Object}
+	* @param {Array} array The [array]{@glossary Array} of [objects]{@glossary Object}
 	*                      in which the `prop` will be searched for.
 	* @param {String} prop A string containing the name of the property to search for.
 	* @returns {Array} An array of all the values of the named property from
@@ -1200,10 +1200,10 @@
 	};
 	
 	/**
-	* Concatenates a variable number of [arrays]{@link external:Array}, removing any duplicate
+	* Concatenates a variable number of [arrays]{@glossary Array}, removing any duplicate
 	* entries.
 	* 
-	* @returns {Array} The unique values from all [arrays]{@link external:Array}.
+	* @returns {Array} The unique values from all [arrays]{@glossary Array}.
 	* @public
 	*/
 	enyo.merge = function (/* _arrays_ */) {
@@ -1216,7 +1216,7 @@
 	};
 	
 	/**
-	* Clones an existing [Array]{@link external:Array}, or converts an array-like
+	* Clones an existing [Array]{@glossary Array}, or converts an array-like
 	* object into an Array.
 	* 
 	* If `offset` is non-zero, the cloning starts from that index in the source
@@ -1252,11 +1252,11 @@
 	enyo.toArray = enyo.cloneArray;
 	
 	/**
-	* Within a given [array]{@link external:Array}, removes the first
-	* [strictly equal to]{@link external:===} occurrence of `el`.
+	* Within a given [array]{@glossary Array}, removes the first
+	* [strictly equal to]{@glossary ===} occurrence of `el`.
 	* Note that `array` is modified directly.
 	*
-	* @param {Array} array The [Array]{@link external:Array} to look through.
+	* @param {Array} array The [Array]{@glossary Array} to look through.
 	* @param {*} el The element to search for and remove.
 	* @public
 	*/
@@ -1283,9 +1283,9 @@
 	var rtlPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFE\u0590-\u05FF\uFB1D-\uFB4F]/;
 
 	/**
-	* Takes content `str` and determines whether or not it is [RTL]{@link external:RTL}.
+	* Takes content `str` and determines whether or not it is [RTL]{@glossary RTL}.
 	*
-	* @param {String} str A [String]{@link external:String} to check the [RTL]{@link external:RTL}-ness of.
+	* @param {String} str A [String]{@glossary String} to check the [RTL]{@glossary RTL}-ness of.
 	* @return {Boolean} `true` if `str` should be RTL; `false` if not.
 	* @public
 	*/

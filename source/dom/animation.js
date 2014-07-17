@@ -50,10 +50,10 @@
 	/**
 	* Requests an animation callback.
 	*
-	* On compatible browsers, if _node_ is defined, the [callback]{@link external:callback} will
+	* On compatible browsers, if _node_ is defined, the [callback]{@glossary callback} will
 	* fire only if _node_ is visible.
 	*
-	* @param {Function} callback A [callback]{@link external:callback} to be executed on the
+	* @param {Function} callback A [callback]{@glossary callback} to be executed on the
 	*                            animation frame.
 	* @param {Node} node The DOM node to request the animation frame for.
 	* @returns {Object} A request id to be used with
@@ -76,7 +76,7 @@
 	* An assortment of interpolation functions for animations. Similar in function to CSS3 transitions.
 	*
 	* Intended for use with [enyo.easedLerp]{@link enyo.easedLerp}. Easing functions accept one (1)
-	* [Number]{@link external:Number} parameter and return one (1) [Number]{@link external:Number}
+	* [Number]{@glossary Number} parameter and return one (1) [Number]{@glossary Number}
 	*
 	* @namespace enyo.easing
 	* @public
@@ -136,7 +136,7 @@
 	*
 	* @param {Number} t0 Start time.
 	* @param {Number} duration Duration in miliseconds.
-	* @param {Function} easing An easing [function]{@link external:Function} reference from
+	* @param {Function} easing An easing [function]{@glossary Function} reference from
 	*	{@link enyo.easing}.
 	* @param {Boolean} reverse Shall this run in reverse?
 	* @returns {Number} The resulting position, capped at a maximum of 100%.
@@ -159,7 +159,7 @@
 	*
 	* @param {Number} t0 Start time.
 	* @param {Number} duration Duration in miliseconds.
-	* @param {Function} easing An easing [function]{@link external:Function} reference from
+	* @param {Function} easing An easing [function]{@glossary Function} reference from
 	*	{@link enyo.easing}.
 	* @param {Boolean} reverse Shall this run in reverse?
 	* @param {Number} time

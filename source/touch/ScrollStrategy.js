@@ -1,6 +1,6 @@
-﻿(function (enyo, scope) {
+(function (enyo, scope) {
 	/**
-	* _enyo.ScrollStrategy_ is a helper [kind]{@link external:kind} that implements a default 
+	* _enyo.ScrollStrategy_ is a helper [kind]{@glossary kind} that implements a default 
 	* scrolling strategy for an {@link enyo.Scroller}.
 	* 
 	* _enyo.ScrollStrategy_ is not typically created in application code. Instead, it is specified 
@@ -300,7 +300,7 @@
 		/**
 		* Retrieve the scroll boundaries of the [scroller]{@link enyo.Scroller}.
 		* 
-		* @returns {enyo.Scroller~BoundaryObject} An [object]{@link external:Object} describing the 
+		* @returns {enyo.Scroller~BoundaryObject} An [object]{@glossary Object} describing the 
 		*	scroll boundaries.
 		* @public
 		*/

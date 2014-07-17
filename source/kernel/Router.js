@@ -169,10 +169,10 @@
 		useHistory: false,
 
 		/**
-		* The `routes` [array]{@link external:Array} specifies the handlers for
+		* The `routes` [array]{@glossary Array} specifies the handlers for
 		* the current Router instance. Routes are string paths, static or dynamic,
 		* that route particular `hashchange` events. They are defined in an array of
-		* [hashes]{@link external:Object} with a `handler` (function name), `path`
+		* [hashes]{@glossary Object} with a `handler` (function name), `path`
 		* (for static and dynamic paths), an optional `context` (for the `handler`),
 		* or a `default` Boolean `true`|`false` value indicating whether the handler
 		* should be used when no other route can handle the `hashchange` event.
@@ -230,7 +230,7 @@
 
 		/**
 		* A computed property that returns the location as known by this router. This property
-		* will be synchronized with [`window.location.hash`]{@link external:window.location}
+		* will be synchronized with [`window.location.hash`]{@glossary window.location}
 		* unless the [`internalOnly`]{@linkcode enyo.Router#internalOnly} flag is set to `true`.
 		* Passing a string to this property via `_set('location', 'mylocation')` will update the
 		* inner location known by this router.

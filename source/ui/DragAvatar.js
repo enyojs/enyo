@@ -130,8 +130,8 @@
 		* Instantiates the avatar control (if necessary), determines correct position, and calls 
 		* [show]{@enyo.DragAvatar#show} to make it visible.
 		*
-		* @param {Object} e An [object]{@link external:Object} containing 
-		*	[event]{@link external:event} information.
+		* @param {Object} e An [object]{@glossary Object} containing 
+		*	[event]{@glossary event} information.
 		* @public
 		*/
 		drag: function(e) {

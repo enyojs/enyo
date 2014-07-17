@@ -1,9 +1,9 @@
 (function (enyo, scope) {
 
 	/**
-	* A [async]{@link enyo.Async} task specifically designed to wrap [JSONP]{@link external:JSONP}
+	* A [async]{@link enyo.Async} task specifically designed to wrap [JSONP]{@glossary JSONP}
 	* requests to a remote server. Make sure to read about the use-case for
-	* [JSONP]{@link external:JSONP} requests and the
+	* [JSONP]{@glossary JSONP} requests and the
 	* [Consuming Web Services](building-apps/managing-data/consuming-web-services.html) in the Enyo
 	* Developer Guide.
 	*
@@ -50,7 +50,7 @@
 			charset: null,
 			
 			/**
-			* This is the name of the [function]{@link external:Function} that is included in the
+			* This is the name of the [function]{@glossary Function} that is included in the
 			* encoded arguments and used to wrap the return value from the server. This can also
 			* be set to `null` in some cases.
 			*
@@ -76,8 +76,8 @@
 			/**
 			* In cases where a backend is inflexible with
 			* [callback]{@link enyo.JsonRequest#callback} names this property can be used to
-			* specify a global [function]{@link external:Function} instead. Note that when using
-			* this, it will replace any existing [function]{@link external:Function} of the given
+			* specify a global [function]{@glossary Function} instead. Note that when using
+			* this, it will replace any existing [function]{@glossary Function} of the given
 			* name and only _one_ [JsonRequest]{@link enyo.JsonRequest} using this property can be
 			* active at a time.
 			*

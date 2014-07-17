@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.Select_ implements an HTML [selection]{@link external:select} widget, using 
-	* {@link enyo.Option} [kinds]{@link external:kind} by default.
+	* _enyo.Select_ implements an HTML [selection]{@glossary select} widget, using 
+	* {@link enyo.Option} [kinds]{@glossary kind} by default.
 	*
 	* ```
 	* {kind: 'Select', onchange: 'selectChanged', components: [
@@ -19,7 +19,7 @@
 	* }
 	* ```
 	* 
-	* Note: This uses the [`&lt;select&gt;`]{@link external:select} tag, which isn't implemented for
+	* Note: This uses the [`&lt;select&gt;`]{@glossary select} tag, which isn't implemented for
 	* native webOS applications, although it does work in the webOS Web browser.
 	*
 	* @ui
@@ -133,8 +133,8 @@
 	});
 
 	/**
-	* _enyo.Option_ implements the [options]{@link external:option} in a 
-	* [select]{@link external:select} [control]{@link enyo.Control}.
+	* _enyo.Option_ implements the [options]{@glossary option} in a 
+	* [select]{@glossary select} [control]{@link enyo.Control}.
 	*
 	* @class enyo.Option
 	* @public
@@ -204,7 +204,7 @@
 	});
 
 	/**
-	* _enyo.OptionGroup_ allows for the [grouping]{@link external:optgroup} of 
+	* _enyo.OptionGroup_ allows for the [grouping]{@glossary optgroup} of 
 	* [options]{@link enyo.Option} in a [select]{@link enyo.Select} [control]{@link enyo.Control}, 
 	* and for the disabling of blocks of [options]{@link enyo.Option}.
 	*

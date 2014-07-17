@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* The _moon.StylesheetSupport_ [mixin]{@link external:mixin} is used to add a "side-car" 
+	* The _moon.StylesheetSupport_ [mixin]{@glossary mixin} is used to add a "side-car" 
 	* inline-stylesheet to a [control]{@link enyo.Control}, specifically for procedurally generated 
 	* CSS that can't live in the more appropriate location: a CSS/LESS file.
 	*

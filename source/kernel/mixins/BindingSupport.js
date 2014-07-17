@@ -12,7 +12,7 @@
 	
 	/**
 	* An internally used mixin that is added to {@link enyo.Object} and its
-	* [subkinds]{@link external:subkind}. It includes public and protected API
+	* [subkinds]{@glossary subkind}. It includes public and protected API
 	* methods for working with [bindings]{@link enyo.Binding}.
 	*
 	* @mixin enyo.BindingSupport
@@ -32,13 +32,13 @@
 		
 		/**
 		* Imperatively creates a [binding]{@link enyo.Binding}. Merges a variable
-		* number of [hashes]{@link external:Object} and instantiates a binding that
+		* number of [hashes]{@glossary Object} and instantiates a binding that
 		* will have its [owner]{@link enyo.Binding#owner} property set to the callee
 		* (the current {@link enyo.Object}). Bindings created in this way will be
 		* [destroyed]{@link enyo.Binding#destroy} when their `owner` is
 		* [destroyed]{@link enyo.Object#destroy}.
 		*
-		* @param {...Object} props A variable number of [hashes]{@link external:Object} that will
+		* @param {...Object} props A variable number of [hashes]{@glossary Object} that will
 		*	be merged into the properties applied to the {@link enyo.Binding} instance.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -66,7 +66,7 @@
 		* Removes and [destroys]{@link enyo.Binding#destroy} all of, or a subset of,
 		* the [bindings]{@link enyo.Binding} belonging to the callee.
 		*
-		* @param {enyo.Binding[]} [subset] The optional [array]{@link external:Array} of
+		* @param {enyo.Binding[]} [subset] The optional [array]{@glossary Array} of
 		*	[bindings]{@link enyo.Binding} to remove.
 		* @returns {this} The callee for chaining.
 		* @public

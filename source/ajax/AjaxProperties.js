@@ -66,7 +66,7 @@
 		sync: false,
 		
 		/**
-		* Optional additional request headers as a [hash]{@link external:Object} or `null`.
+		* Optional additional request headers as a [hash]{@glossary Object} or `null`.
 		
 		* ```javascript
 		* { 'X-My-Header': 'My Value', 'Mood': 'Happy' }
@@ -80,8 +80,8 @@
 		
 		/**
 		* The content for the request body for POST/PUT methods. When postBody is a
-		* [buffer]{@link external:Buffer} or a [string]{@link external:String}, it is passed
-		* verbatim in the request body. When it is a [hash]{@link external:Object}, the way it is
+		* [buffer]{@glossary Buffer} or a [string]{@glossary String}, it is passed
+		* verbatim in the request body. When it is a [hash]{@glossary Object}, the way it is
 		* encoded depends on the contentType:
 		*
 		* - application/json => JSON.stringify
@@ -113,7 +113,7 @@
 		password: '',
 		
 		/**
-		* Optional [hash]{@link external:Object} with fields to pass directly to the underlying XHR
+		* Optional [hash]{@glossary Object} with fields to pass directly to the underlying XHR
 		* object. One example is the _withCredentials_ flag used for cross-origin requests.
 		*
 		* @type {Object}
@@ -123,7 +123,7 @@
 		xhrFields: null,
 		
 		/**
-		* Optional [string]{@link external:String} to override the MIME-Type header.
+		* Optional [string]{@glossary String} to override the MIME-Type header.
 		*
 		* @type {String}
 		* @default null

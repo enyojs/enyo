@@ -21,7 +21,7 @@
 	
 	/**
 	* A controller designed to proxy an underlying [model]{@link enyo.Model}. Other
-	* [kinds]{@link external:kind} can [bind]{@link enyo.BindingSupport.bindings} to this
+	* [kinds]{@glossary kind} can [bind]{@link enyo.BindingSupport.bindings} to this
 	* controller as if it was a {@link enyo.Model}. Using the
 	* [model]{@link enyo.ModelController#model} reserved property, the actual {@link enyo.Model}
 	* can be changed without the [bindings]{@link enyo.BindingSupport.bindings} needing to know. It
@@ -33,7 +33,7 @@
 	* __never bind through the controller to the model directly__. Ever.
 	* 
 	* ##Rules of property resolution
-	* If the controller can call [hasOwnProperty]{@link external:Object.hasOwnProperty} and it
+	* If the controller can call [hasOwnProperty]{@glossary Object.hasOwnProperty} and it
 	* returns `true` it will look locally or if the property is resolved to be a computed property
 	* otherwise assume to proxy the requested property from the given
 	* [model]{@link enyo.ModelController#model} when available.

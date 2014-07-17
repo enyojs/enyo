@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* This is a [delegate]{@link external:delegate} (strategy) used by 
+	* This is a [delegate]{@glossary delegate} (strategy) used by 
 	* [_enyo.DataList_]{@link enyo.DataList} for horizontally orientedlists. This is used by all 
 	* lists for this strategy and does not get copied but called directly from the list.
 	*

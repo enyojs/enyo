@@ -156,7 +156,7 @@
 	* automatically.
 	*
 	* @utility
-	* @see [console.error]{@link external:console.error}
+	* @see [console.error]{@glossary console.error}
 	* @param {...*} - The arguments to be logged.
 	* @public
 	*/

@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* This is a [delegate]{@link external:delegate} (strategy) used by 
+	* This is a [delegate]{@glossary delegate} (strategy) used by 
 	* [_enyo.DataGridList_]{@link enyo.DataGridList} for vertically oriented lists. This is used by 
 	* all lists for this strategy and does not get copied but called directly from the list. It is 
 	* only available to [_enyo.DataGridList_]{@link enyo.DataGridList}.
@@ -172,7 +172,7 @@
 		/**
 		* The number of [controls]{@link enyo.Control} necessary to fill a page will change 
 		* depending on some factors such as scaling and list-size adjustments. It is a 
-		* [function]{@link external:Function} of the calculated size required 
+		* [function]{@glossary Function} of the calculated size required 
 		* ([pageSizeMultiplier]{@link enyo.DataList#pageSizeMultiplier} * the current boundary 
 		* height) and the adjusted tile height and spacing.
 		*
@@ -263,7 +263,7 @@
 		},
 		
 		/**
-		* Delegate's resize [event]{@link external:event} handler.
+		* Delegate's resize [event]{@glossary event} handler.
 		*
 		* @private
 		*/

@@ -29,8 +29,8 @@
 	*/
 
 	/**
-	* The extended [event]{@link external:event} [object]{@link external:Object} that is provided 
-	* when a scroll [event]{@link external:event} is fired.
+	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided 
+	* when a scroll [event]{@glossary event} is fired.
 	*
 	* @typedef {Object} enyo.Scroller~ScrollEvent
 	* @property {enyo.Scroller~BoundaryObject} bounds Current values of scroller bounds.
@@ -42,9 +42,9 @@
 	* @event enyo.Scroller#onScrollStart
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -54,9 +54,9 @@
 	* @event enyo.Scroller#onScroll
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -66,9 +66,9 @@
 	* @event enyo.Scroller#onScrollStop
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -234,7 +234,7 @@
 
 		/**
 		* If `true`, the [scroller]{@link enyo.Scroller} will not propagate _dragstart_ 
-		* [events]{@link external:event} that cause it to start scrolling.
+		* [events]{@glossary event} that cause it to start scrolling.
 		*
 		* @type {Boolean}
 		* @default true
@@ -244,7 +244,7 @@
 
 		/**
 		* If `true`, the [scroller]{@link enyo.Scroller} will not propagate scroll 
-		* [events]{@link external:event}.
+		* [events]{@glossary event}.
 		*
 		* @type {Boolean}
 		* @default true
@@ -549,7 +549,7 @@
 		/**
 		* Retrieve the scroll boundaries of the [scroller]{@link enyo.Scroller}.
 		* 
-		* @returns {enyo.Scroller~BoundaryObject} An [object]{@link external:Object} describing the 
+		* @returns {enyo.Scroller~BoundaryObject} An [object]{@glossary Object} describing the 
 		*	scroll boundaries.
 		* @public
 		*/
@@ -595,7 +595,7 @@
 		* Ensures that the given [control]{@link enyo.Control} is visible in the 
 		* [scroller's]{@link enyo.Scroller} viewport. Unlike 
 		* [_scrollIntoView_]{@link enyo.Scroller#scrollIntoView}, which uses DOM's 
-		* [_scrollIntoView_]{@link external:scrollIntoView}, this only affects the current 
+		* [_scrollIntoView_]{@glossary scrollIntoView}, this only affects the current 
 		* [scroller]{@link enyo.Scroller}.
 		*
 		* @param {enyo.Control} ctl The [control]{@link enyo.Control} to make visible in the 
@@ -622,7 +622,7 @@
 		},
 
 		/** 
-		* Adds current values of getScrollBounds to [event]{@link external:event}.
+		* Adds current values of getScrollBounds to [event]{@glossary event}.
 		* 
 		* @private
 		*/
@@ -656,7 +656,7 @@
 		},
 
 		/** 
-		* Normalizes scroll [event]{@link external:event} to _onScroll_.
+		* Normalizes scroll [event]{@glossary event} to _onScroll_.
 		*
 		* @fires enyo.Scroller#event:onScroll
 		* @private
@@ -672,7 +672,7 @@
 		},
 
 		/**
-		* @returns {Boolean} Returns `true` if the current scroll [event]{@link external:event} 
+		* @returns {Boolean} Returns `true` if the current scroll [event]{@glossary event} 
 		*	should be stopped; `false` if it should be allowed to propagate.
 		* @private
 		*/
@@ -683,7 +683,7 @@
 
 		/**
 		* Calls [_shouldStopScrollEvent_]{@link enyo.Scroller#shouldStopScrollEvent} to determine 
-		* whether current scroll [event]{@link external:event} should be stopped.
+		* whether current scroll [event]{@glossary event} should be stopped.
 		*
 		* @private
 		*/
@@ -696,7 +696,7 @@
 		},
 
 		/** 
-		* Either propagates or stops the current scroll [event]{@link external:event}.
+		* Either propagates or stops the current scroll [event]{@glossary event}.
 		*
 		* @private
 		*/
@@ -719,7 +719,7 @@
 
 		/**
 		* Calls [_shouldStopScrollEvent_]{@link enyo.Scroller#shouldStopScrollEvent} to determine 
-		* whether current scroll [event]{@link external:event} should be stopped.
+		* whether current scroll [event]{@glossary event} should be stopped.
 		*
 		* @private
 		*/

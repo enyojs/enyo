@@ -27,7 +27,7 @@
 	*
 	* @event enyo.Collection#add
 	* @type {Object}
-	* @property {enyo.Model[]} models - An [array]{@link external:Array} of
+	* @property {enyo.Model[]} models - An [array]{@glossary Array} of
 	*	[models]{@link enyo.Model} that were [added]{@link enyo.Collection#add} to the
 	*	[collection]{@link enyo.Collection}.
 	* @property {enyo.Collection} collection - A reference to the
@@ -41,7 +41,7 @@
 	*
 	* @event enyo.Collection#remove
 	* @type {Object}
-	* @property {enyo.Model[]} models - An [array]{@link external:Array} of
+	* @property {enyo.Model[]} models - An [array]{@glossary Array} of
 	*	[models]{@link enyo.Model} that were [removed]{@link enyo.Collection#remove} from the
 	*	[collection]{@link enyo.Collection}.
 	* @property {enyo.Collection} collection - A reference to the
@@ -54,7 +54,7 @@
 	*
 	* @event enyo.Collection#sort
 	* @type {Object}
-	* @property {enyo.Model[]} models - An [array]{@link external:Array} of all
+	* @property {enyo.Model[]} models - An [array]{@glossary Array} of all
 	*	[models]{@link enyo.Model} in the correct, [sorted]{@link enyo.Collection#sort} order.
 	* @property {enyo.Collection} collection - A reference to the
 	*	[collection]{@link enyo.Collection} that [emitted]{@link enyo.EventEmitter.emit} the event.
@@ -70,7 +70,7 @@
 	*
 	* @event enyo.Collection#event:reset
 	* @type {Object}
-	* @property {enyo.Model[]} models - An [array]{@link external:Array} of all
+	* @property {enyo.Model[]} models - An [array]{@glossary Array} of all
 	*	[models]{@link enyo.Model} as they are currently.
 	* @property {enyo.Collection} collection - A reference to the
 	*	[collection]{@link enyo.Collection} that [emitted]{@link enyo.EventEmitter.emit} the event.
@@ -112,16 +112,16 @@
 	*	[collection]{@link enyo.Collection} is not already a [model]{@link enyo.Model} instance
 	*	it will attempt to find an existing [model]{@link enyo.Model} by its
 	*	[primaryKey]{@link enyo.Model#primaryKey} if it exists. In most cases this is the
-	*	prefered behavior but if the {@link enyo.Model} [kind]{@link external:kind} being
+	*	prefered behavior but if the {@link enyo.Model} [kind]{@glossary kind} being
 	*	instanced does not have a [primaryKey]{@link enyo.Model#primaryKey} it is unnecessary
 	*	and this value can be set to `false`.
 	* @property {Boolean} sort=false - When [adding]{@link enyo.Collection#add}
 	*	[models]{@link enyo.Model} to the [colleciton]{@link enyo.Collection} it can also be
 	*	sorted. If the [comparator]{@link enyo.Collection#comparator} is a
-	*	[function]{@link external:Function} and this value is `true` it will use the
+	*	[function]{@glossary Function} and this value is `true` it will use the
 	*	[comparator]{@link enyo.Collection#comparator} to sort the entire
 	*	[collection]{@link enyo.Collection}. It can also be a
-	*	[function]{@link external:Function} that will be used to _sort_ the
+	*	[function]{@glossary Function} that will be used to _sort_ the
 	*	[collection]{@link enyo.Collection} instead of or in-place of a defined
 	*	[comparator]{@link enyo.Collection#comparator}.
 	* @property {Boolean} commit=false - When modifications are made to the
@@ -169,7 +169,7 @@
 	* @property {Boolean} destroy - If `purge` is `true`, this will {@link enyo.Model#destroy}
 	*	any [models]{@link enyo.Model} that were [removed]{@link enyo.Collection#remove}.
 	* @property {Object} modelOptions - When instancing a [model]{@link enyo.Model} this
-	*	[object]{@link external:Object} will be passed to the constructor as its _options_
+	*	[object]{@glossary Object} will be passed to the constructor as its _options_
 	*	parameter.
 	*/
 	
@@ -227,9 +227,9 @@
 	
 	/**
 	* A method used to compare two elements in a {@link enyo.Collection}. Should be implemented like
-	* callbacks used with [Array.sort]{@link external:Array.sort}.
+	* callbacks used with [Array.sort]{@glossary Array.sort}.
 	*
-	* @see {@link external:Array.sort}
+	* @see {@glossary Array.sort}
 	* @see enyo.Collection#sort
 	* @see enyo.Collection#comparator
 	* @callback enyo.Collection~Comparator
@@ -268,7 +268,7 @@
 		
 		/**
 		* Used by various [sources]{@link enyo.Collection#source} as part of the
-		* [URI]{@link external:URI} from which it can be [fetched]{@link enyo.Collection#fetch},
+		* [URI]{@glossary URI} from which it can be [fetched]{@link enyo.Collection#fetch},
 		* [committed]{@link enyo.Collection#commit} or [destroyed]{@link enyo.Collection#destroy}.
 		* Some [sources]{@link enyo.Collection#source} may use this property in other ways.
 		*
@@ -284,7 +284,7 @@
 		
 		/**
 		* Implement this method to be used by [sources]{@link enyo.Model#source} to dynamically
-		* derrive the [URI]{@link external:URI} from which it can be
+		* derrive the [URI]{@glossary URI} from which it can be
 		* [fetched]{@link enyo.Collection#fetch}, [committed]{@link enyo.Collection#commit} or
 		* [destroyed]{@link enyo.Collection#destroy}. Some
 		* [sources]{@link enyo.Collection#source} may use this property in other ways. Note that
@@ -302,10 +302,10 @@
 		getUrl: null,
 		
 		/**
-		* The [kind]{@link external:kind) of {@link enyo.Model} that this
+		* The [kind]{@glossary kind) of {@link enyo.Model} that this
 		* [collection]{@link enyo.Collection} will contain. This is important to set properly so
 		* that when [fetching]{@link enyo.Collection#fetch} the returned data will be instanced
-		* as the correct [model]{@link enyo.Model} [subkind]{@link external:subkind}.
+		* as the correct [model]{@link enyo.Model} [subkind]{@glossary subkind}.
 		* 
 		* @type {(enyo.Model|String)}
 		* @default enyo.Model
@@ -314,7 +314,7 @@
 		model: Model,
 		
 		/**
-		* A special type of [array]{@link external:Array} used internally by
+		* A special type of [array]{@glossary Array} used internally by
 		* {@link enyo.Collection}. It should not be modified directly nor should the property be
 		* set directly. It is used as a container by the [collection]{@link enyo.Collection}. If
 		* it is [set]{@link enyo.Collection#set} directly it will
@@ -346,7 +346,7 @@
 		* The configurable default [options]{@link enyo.Collection~Options}. These values will be
 		* used to modify the behavior of the [collection]{@link enyo.Collection} unless additional
 		* _options_ are passed into the methods that use them. When modifying these values in a
-		* [subkind]{@link external:subkind} of {@link enyo.Collection} they will be merged with
+		* [subkind]{@glossary subkind} of {@link enyo.Collection} they will be merged with
 		* existing values.
 		* 
 		* @type {enyo.Collection~Options}
@@ -390,19 +390,19 @@
 		
 		/**
 		* Add data to the [collection]{@link enyo.Collection}. This method can add an individual
-		* [model]{@link enyo.Model} or an [array]{@link external:Array} of
+		* [model]{@link enyo.Model} or an [array]{@glossary Array} of
 		* [models]{@link enyo.Model}. It can splice them into the dataset at a designated index or
 		* remove models from the existing dataset that are not included in the new one.
 		* See {@link enyo.Collection~AddOptions} for detailed information on the
 		* configuration options available for this method. This method is heavily optimized for
-		* batch operations on [arrays]{@link external:Array} of [models]{@link enyo.Model}. For
+		* batch operations on [arrays]{@glossary Array} of [models]{@link enyo.Model}. For
 		* better performance ensure that loops do not consecutively call this method but instead
-		* build an [array]{@link external:Array} to pass as its first parameter.
+		* build an [array]{@glossary Array} to pass as its first parameter.
 		* 
 		* @fires enyo.Collection#event:add
 		* @param {(Object|Object[]|enyo.Model|enyo.Model[])} models The data to add to the
-		*	{@link enyo.Collection} that can be a [hash]{@link external:Object}, an array of
-		*	[hashes]{@link external:Object},
+		*	{@link enyo.Collection} that can be a [hash]{@glossary Object}, an array of
+		*	[hashes]{@glossary Object},
 		*	an {@link enyo.Model} instance or array of {@link enyo.Model} instances. Note if the
 		*	{@link enyo.Collection#options#parse} configuration option is `true` it will use the
 		*	returned value as this parameter.
@@ -568,7 +568,7 @@
 		
 		/**
 		* Remove data from the [collection]{@link enyo.Collection}. It can take a
-		* [model]{@link enyo.Model} or an [array]{@link external:Array} of
+		* [model]{@link enyo.Model} or an [array]{@glossary Array} of
 		* [models]{@link enyo.Model}. If any of the instances are present in the
 		* [collection]{@link enyo.Collection} they will be removed, in the order in which they are
 		* encountered. Emits the {@link enyo.Collection#remove} event if any models were found and
@@ -647,7 +647,7 @@
 		},
 		
 		/**
-		* Returns the JSON serializable [array]{@link external:Array} of [models]{@link enyo.Model}
+		* Returns the JSON serializable [array]{@glossary Array} of [models]{@link enyo.Model}
 		* according to their own [raw]{@link enyo.Model#raw} output.
 		*
 		* @returns {enyo.Model[]} The [models]{@link enyo.Model} according to their
@@ -674,7 +674,7 @@
 		},
 		
 		/**
-		* @see {@link external:Array.forEach}
+		* @see {@glossary Array.forEach}
 		* @public
 		*/
 		forEach: function (fn, ctx) {
@@ -686,7 +686,7 @@
 		},
 		
 		/**
-		* @see {@link external:Array.filter}
+		* @see {@glossary Array.filter}
 		* @public
 		*/
 		filter: function (fn, ctx) {
@@ -698,7 +698,7 @@
 		},
 		
 		/**
-		* @see {@link external:Array.find}
+		* @see {@glossary Array.find}
 		* @public
 		*/
 		find: function (fn, ctx) {
@@ -710,7 +710,7 @@
 		},
 		
 		/**
-		* @see {@link external:Array.map}
+		* @see {@glossary Array.map}
 		* @public
 		*/
 		map: function (fn, ctx) {
@@ -722,7 +722,7 @@
 		},
 		
 		/**
-		* @see {@link external:Array.indexOf}
+		* @see {@glossary Array.indexOf}
 		* @public
 		*/
 		indexOf: function (model, offset) {
@@ -776,9 +776,9 @@
 		},
 		
 		/**
-		* Returns the [JSON]{@link external:JSON} serializable [raw]{@link enyo.Collection#raw}
+		* Returns the [JSON]{@glossary JSON} serializable [raw]{@link enyo.Collection#raw}
 		* output of the [collection]{@link enyo.Collection}. Will automatically be executed by
-		* [JSON.parse]{@link external:JSON.parse}.
+		* [JSON.parse]{@glossary JSON.parse}.
 		*
 		* @see enyo.Collection#raw
 		* @returns {Object} The return value of [raw]{@link enyo.Collection#raw}
@@ -789,15 +789,15 @@
 		},
 		
 		/**
-		* The default behavior of this method is the same as {@link external:Array.sort}. If the
-		* [function]{@link external:Function} parameter is ommitted it will attempt to use the
+		* The default behavior of this method is the same as {@glossary Array.sort}. If the
+		* [function]{@glossary Function} parameter is ommitted it will attempt to use the
 		* [comparator]{@link enyo.Collection} (if any) from the [collection]{@link enyo.Collection}.
 		* Note that the [collection]{@link enyo.Collection} is _sorted_ in-place and returns a
 		* reference to itself. The [collection]{@link enyo.Collection}
 		* [emits]{@link enyo.EventEmitter.emit} the [sort]{@link enyo.Collection#event:sort} event.
 		*
 		* @fires enyo.Collection#event:sort
-		* @see {@link external:Array.sort}
+		* @see {@glossary Array.sort}
 		* @param {enyo.Collection~Comparator} [fn] The _comparator_ method.
 		* @param {enyo.Collection~Options} [opts] The configuration options.
 		* @returns {this} The callee for chaining.
@@ -925,7 +925,7 @@
 		
 		/**
 		* Destroy the [collection]{@link enyo.Collection}. By default, the
-		* [collection]{@link enyo.Collection} will only be [destroyed]{@link external:destroy} in
+		* [collection]{@link enyo.Collection} will only be [destroyed]{@glossary destroy} in
 		* the client. To execute with a [source]{@link enyo.Collection#source} or
 		* [sources]{@link enyo.Collection#source} the
 		* [commit default option]{@link enyo.Collection#options} must be `true` or a `source`
@@ -1025,7 +1025,7 @@
 		* This method is a virtual method that, when provided, will be used for sorting during
 		* [add]{@link enyo.Collection#add} when the `sort` flag is `true` or when the
 		* [sort]{@link enyo.Collection#sort} method is called without a
-		* [function]{@link external:Function} parameter being passed to it.
+		* [function]{@glossary Function} parameter being passed to it.
 		*
 		* @see enyo.Collection~Comparator
 		* @type {enyo.Collection~Comparator}
@@ -1038,7 +1038,7 @@
 		
 		/**
 		* Used during [add]{@link enyo.Collection#add} when `create` is `true` and the data is a
-		* [hash]{@link external:Object}.
+		* [hash]{@glossary Object}.
 		*
 		* @private
 		*/
@@ -1230,13 +1230,13 @@
 		/**
 		* Initializes the [collection]{@link enyo.Collection}.
 		*
-		* @param {(Object|Object[]|enyo.Model[])} [recs] An [array]{@link external:Array} of either
-		*	[models]{@link enyo.Model} or [hashes]{@link external:Object} to initialize the
-		*	[collection]{@link enyo.Collection} with or can be an [object]{@link external:Object}
+		* @param {(Object|Object[]|enyo.Model[])} [recs] An [array]{@glossary Array} of either
+		*	[models]{@link enyo.Model} or [hashes]{@glossary Object} to initialize the
+		*	[collection]{@link enyo.Collection} with or can be an [object]{@glossary Object}
 		*	equivalent to the _props_ parameter.
-		* @param {Object} [props] A [hash]{@link external:Object} of properties to apply directly
+		* @param {Object} [props] A [hash]{@glossary Object} of properties to apply directly
 		*	to the [collection]{@link enyo.Collection}.
-		* @param {Object} [opts] A [hash]{@link external:Object}
+		* @param {Object} [opts] A [hash]{@glossary Object}
 		* @method
 		* @public
 		*/

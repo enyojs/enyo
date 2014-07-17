@@ -25,7 +25,7 @@
 		* ```
 		*
 		* @param {String} id The document element ID to get.
-		* @param {Node} [doc] A [node]{@link external:Node} to search in. Default is the whole
+		* @param {Node} [doc] A [node]{@glossary Node} to search in. Default is the whole
 		*	document.
 		* @public
 		*/
@@ -55,7 +55,7 @@
 		/**
 		* Returns an object describing the geometry of this node, like so:
 		*
-		* @param {Node} n The [node]{@link external:Node} to measure.
+		* @param {Node} n The [node]{@glossary Node} to measure.
 		* @returns {Object} An object containing the properties `top`, `left`, `height`, and
 		*	`width`.
 		* @public
@@ -278,9 +278,9 @@
 		},
 
 		/**
-		* Gets the boundaries of a [node's]{@link external:Node} `margin` or `padding` box.
+		* Gets the boundaries of a [node's]{@glossary Node} `margin` or `padding` box.
 		*
-		* @param {Node} node The [node]{@link external:Node} to measure.
+		* @param {Node} node The [node]{@glossary Node} to measure.
 		* @param {Node} box The boundary to measure from ('padding' or 'margin').
 		* @returns {Object} An object containing the properties `top`, `right`, `bottom`, and
 		*	`left`.
@@ -299,7 +299,7 @@
 		/**
 		* Gets the calculated padding of a node. Shortcut for {@link enyo.dom.calcBoxExtents}.
 		*
-		* @param {Node} node The [node]{@link external:Node} to measure.
+		* @param {Node} node The [node]{@glossary Node} to measure.
 		* @returns {Object} An object containing the properties `top`, `right`, `bottom`, and
 		*	`left`.
 		* @public
@@ -311,7 +311,7 @@
 		/**
 		* Gets the calculated margin of a node. Shortcut for {@link enyo.dom.calcBoxExtents}.
 		*
-		* @param {Node} node The [node]{@link external:Node} to measure.
+		* @param {Node} node The [node]{@glossary Node} to measure.
 		* @returns {Object} An object containing the properties `top`, `right`, `bottom`, and
 		*	`left`.
 		* @public
@@ -327,8 +327,8 @@
 		* the position will be relative to the viewport and suitable for absolute positioning in a
 		* floating layer.
 		*
-		* @param {Node} node The [node]{@link external:Node} to measure.
-		* @param {Node} relativeToNode The [node]{@link external:Node} to measure the distance from.
+		* @param {Node} node The [node]{@glossary Node} to measure.
+		* @param {Node} relativeToNode The [node]{@glossary Node} to measure the distance from.
 		* @returns {Object} An object containing the properties `top`, `right`, `bottom`, `left`,
 		*	`height`, and `width`.
 		* @public
@@ -410,7 +410,7 @@
 		/**
 		* Set the `innerHTML` property of a _node_ to _html_.
 		*
-		* @param {Node} node The [node]{@link external:Node} to set.
+		* @param {Node} node The [node]{@glossary Node} to set.
 		* @param {String} html An HTML string.
 		* @public
 		*/
@@ -419,9 +419,9 @@
 		},
 
 		/**
-		* Check a [DOM]{@link external:Node} [node]{@link external:Node} for a specific CSS class.
+		* Check a [DOM]{@glossary Node} [node]{@glossary Node} for a specific CSS class.
 		*
-		* @param {Node} node The [node]{@link external:Node} to set.
+		* @param {Node} node The [node]{@glossary Node} to set.
 		* @param {String} s The class name to check for.
 		* @returns {(Boolean|undefined)} True if the _node_ has the _s_ class. Undefined if there is
 		*	no _node_ or it has no className property.
@@ -435,7 +435,7 @@
 		/**
 		* Uniquely add a CSS class to a DOM node.
 		*
-		* @param {Node} node The [node]{@link external:Node} to set.
+		* @param {Node} node The [node]{@glossary Node} to set.
 		* @param {String} s The class name to add.
 		* @public
 		*/
@@ -449,7 +449,7 @@
 		/**
 		* Remove a CSS class from a DOM node if it exists.
 		*
-		* @param {Node} node The [node]{@link external:Node} to set.
+		* @param {Node} node The [node]{@glossary Node} to set.
 		* @param {String} s The class name to remove from _node_.
 		* @public
 		*/
@@ -493,7 +493,7 @@
 		* Values returned are only valid if _hasNode()_ is truthy. If there's no DOM node for the
 		* object, this returns a bounds structure with _undefined_ as the value of all fields.
 		*
-		* @param {Node} n The [node]{@link external:Node} to measure.
+		* @param {Node} n The [node]{@glossary Node} to measure.
 		* @returns {Object} An object containing the properties `top`, `right`, `bottom`, `left`,
 		*	`height`, and `width`.
 		* @public

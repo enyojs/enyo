@@ -5,9 +5,9 @@
 	* @event enyo.Popup#event:onShow
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -17,9 +17,9 @@
 	* @event enyo.Popup#event:onHide
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -73,7 +73,7 @@
 			
 			/**
 			* Set to `true` to prevent [controls]{@link enyo.Control} outside the 
-			* [popup]{@link enyo.Popup} from receiving [events]{@link external:event} while the 
+			* [popup]{@link enyo.Popup} from receiving [events]{@glossary event} while the 
 			* [popup]{@link enyo.Popup} is showing.
 			* 
 			* @type {Boolean}
@@ -126,7 +126,7 @@
 
 			/**
 			* Set to `true` to stop `preventDefault` from being called on captured 
-			* [events]{@link external:event}.
+			* [events]{@glossary event}.
 			* 
 			* @type {Boolean}
 			* @default false
@@ -499,10 +499,10 @@
 		* Open at the location of a mouse [event]{link external:event}. The 
 		* [popup's]{@link enyo.Popup} position is automatically constrained so that it does not
 		* display outside the viewport, and defaults to anchoring the top left corner of the 
-		* [popup]{@link enyo.Popup} to the mouse [event]{@link external:event}.
+		* [popup]{@link enyo.Popup} to the mouse [event]{@glossary event}.
 		* 
-		* @param {Object} e The mouse [event]{@link external:event} that initiated this call.
-		* @param {Object} [offset] An optional [object]{@link external:Object} which may contain 
+		* @param {Object} e The mouse [event]{@glossary event} that initiated this call.
+		* @param {Object} [offset] An optional [object]{@glossary Object} which may contain 
 		*	`left` and `top` properties to specify an _offset_ relative to the location the
 		*	[popup]{@link enyo.Popup} would otherwise be positioned.
 		* @public
@@ -526,7 +526,7 @@
 		* [popup]{@link enyo.Popup} will be automatically constrained so that it does not display 
 		* outside the viewport.
 		* 
-		* @param {Object} pos An [object]{@link external:Object} which may contain left, top, bottom,
+		* @param {Object} pos An [object]{@glossary Object} which may contain left, top, bottom,
 		*	and right properties to specify where the [popup]{@link enyo.Popup} will be anchored. If 
 		*	both left and right are included, the [popup]{@link enyo.Popup} will have a preference 
 		*	of anchoring to the left (likewise, the preference will be for the top if both top and
@@ -545,8 +545,8 @@
 	/**
 	* By default, we capture ondown and ontap to implement the [popup's]{@link enyo.Popup} modal 
 	* behavior, but in certain circumstances it may be necessary to capture other 
-	* [events]{@link external:event} as well, so we provide this hook to extend. (Currently using 
-	* this in Moonstone to capture onSpotlightFocus [events]{@link external:event}).
+	* [events]{@glossary event} as well, so we provide this hook to extend. (Currently using 
+	* this in Moonstone to capture onSpotlightFocus [events]{@glossary event}).
 	* 
 	* @private
 	*/

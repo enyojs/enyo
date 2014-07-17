@@ -5,7 +5,7 @@
 	var Source = enyo.Source;
 	
 	/**
-	* An abstract [kind]{@link external:kind} of [source]{@link enyo.Source} to be used for general
+	* An abstract [kind]{@glossary kind} of [source]{@link enyo.Source} to be used for general
 	* XHR-type functionality.
 	*
 	* @class enyo.XHRSource
@@ -31,7 +31,7 @@
 		noDefer: true,
 		
 		/**
-		* The [kind]{@link external:kind} to use for requests. Should have the same API as
+		* The [kind]{@glossary kind} to use for requests. Should have the same API as
 		* {@link enyo.Ajax} to use the built-in functionality.
 		*
 		* @type {Function}
@@ -41,7 +41,7 @@
 		requestKind: null,
 		
 		/**
-		* If provided, will be pre-fixed into the URI [string]{@link external:String}. Works in
+		* If provided, will be pre-fixed into the URI [string]{@glossary String}. Works in
 		* tandem with {@link enyo.Model#url} and {@link enyo.Collection#url} to build a complete
 		* path.
 		*
@@ -52,7 +52,7 @@
 		urlRoot: '',
 		
 		/**
-		* These options will be merged (first with [subkinds]{@link external:subkind}) and then
+		* These options will be merged (first with [subkinds]{@glossary subkind}) and then
 		* with any options passed to the various API methods of {@link enyo.XHRSource}. While the
 		* options passed to the methods may include any properties, only properties found in
 		* {@link enyo.AjaxProperties} will be merged and passed to the
@@ -70,7 +70,7 @@
 		},
 		
 		/**
-		* Used internally to resolve and build the URI [string]{@link external:String} for requests.
+		* Used internally to resolve and build the URI [string]{@glossary String} for requests.
 		* The derived url is a combination of the _opts_ param (optional) `url` property or the
 		* [model's]{@link enyo.Model} (or [collection's]{@link enyo.Collection})
 		* [getUrl]{@link enyo.Model#getUrl} ({@link enyo.Collection#getUrl}) and
@@ -79,7 +79,7 @@
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
 		*	[collection]{@link enyo.Collection} to use to derive the _url_.
 		* @param {Object} [opts] The options hash with possible `url` property.
-		* @returns {String} The normalized _url_ [string]{@link external:String}.
+		* @returns {String} The normalized _url_ [string]{@glossary String}.
 		* @method
 		* @public
 		*/
@@ -139,7 +139,7 @@
 		*
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
 		*	[collection]{@link enyo.Collection} from which to build the _url_.
-		* @param {Object} opts The options [hash]{@link external:Object} passed to
+		* @param {Object} opts The options [hash]{@glossary Object} passed to
 		*	[buildUrl]{@link enyo.XHRSource#buildUrl} and possessing the _method_ and _attributes_
 		*	properties.
 		* @public

@@ -145,7 +145,7 @@
 
 		/**
 		* Creates [components]{@link enyo.Component} as defined by the [arrays]{@glossary Array}
-		* of base and additional property [hashes]{@link external:Object}. The standard and 
+		* of base and additional property [hashes]{@glossary Object}. The standard and 
 		* additional property hashes are combined as described in
 		* {@link enyo.Component#createComponent}.
 		* 
@@ -459,10 +459,10 @@
 		/**
 		* Sends a message to all of my descendants, but not myself. You can stop a 
 		* [waterfall]{@link enyo.Component#waterfall} into [components]{@link enyo.Component}owned 
-		* by a receiving [object]{@link external:Object} by returning a truthy value from the 
-		* [event]{@link external:event} [handler]{@link enyo.Component~EventHandler}.
+		* by a receiving [object]{@glossary Object} by returning a truthy value from the 
+		* [event]{@glossary event} [handler]{@link enyo.Component~EventHandler}.
 		* 
-		* @param {String} nom The name of the [event]{@link external:event}.
+		* @param {String} nom The name of the [event]{@glossary event}.
 		* @param {Object} [event] The event object to pass along.
 		* @param {enyo.Component} [sender=this] The event's originator.
 		* @returns {this} The callee for chaining.

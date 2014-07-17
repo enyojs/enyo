@@ -40,7 +40,7 @@
 		}),
 
 		/**
-		* Detect when [node]{@link external:Node} is detatched due to document.body being stomped.
+		* Detect when [node]{@glossary Node} is detatched due to document.body being stomped.
 		*
 		* @method
 		* @private

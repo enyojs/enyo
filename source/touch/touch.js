@@ -100,9 +100,9 @@
 			},
 
 			/**
-			* Use _mouseup_ after touches are done to reset [event]{@link external:event} handling 
+			* Use _mouseup_ after touches are done to reset [event]{@glossary event} handling 
 			* back to default; this works as long as no one did a _preventDefault_ on the touch 
-			* [events]{@link external:event}.
+			* [events]{@glossary event}.
 			* 
 			* @private
 			*/

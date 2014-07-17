@@ -63,7 +63,7 @@
 			* _allowHtml_ is enabled by default in [RichText]{@link enyo.RichText} to take advantage
 			* of all the rich editing properties. However, this allows for **ANY** HTML to be 
 			* inserted into the [RichText]{@link enyo.RichText}, including 
-			* [iframe]{@link external:iframe} and [script]{@link external:script} tags, which can be
+			* [iframe]{@glossary iframe} and [script]{@glossary script} tags, which can be
 			* a secuity concern in some situations. If set to `false`, inserted HTML will be escaped.
 			* 
 			* @type {Boolean}
@@ -74,7 +74,7 @@
 
 			/**
 			* If `true`, the [RichText]{@link enyo.RichText} will not accept input or generate 
-			* [events]{@link external:event}.
+			* [events]{@glossary event}.
 			* 
 			* @type {Boolean}
 			* @default false
@@ -162,7 +162,7 @@
 			this._value = this.get('value');
 		},
 		/**
-		* Simulate [onchange]{@link enyo.Input#event:onchange} [event]{@link external:event} that 
+		* Simulate [onchange]{@link enyo.Input#event:onchange} [event]{@glossary event} that 
 		* [inputs]{@link enyo.Input} expose.
 		*
 		* @fires enyo.Input#event:onchange
@@ -234,13 +234,13 @@
 		},
 
 		/**
-		* Removes the [selection]{@link external:Selection} [object]{@link external:Object}.
+		* Removes the [selection]{@glossary Selection} [object]{@glossary Object}.
 		* 
-		* @param {Boolean} start If `true`, the [selection]{@link external:Selection} is 
-		*	[collapsed to the start]{@link external:Selection.collapseToStart} of the 
-		*	[range]{@link external:Range}, otherwise it is 
-		*	[collapsed to the end]{@link external:Selection.collapseToEnd} of the 
-		*	[range]{@link external:Range}.
+		* @param {Boolean} start If `true`, the [selection]{@glossary Selection} is 
+		*	[collapsed to the start]{@glossary Selection.collapseToStart} of the 
+		*	[range]{@glossary Range}, otherwise it is 
+		*	[collapsed to the end]{@glossary Selection.collapseToEnd} of the 
+		*	[range]{@glossary Range}.
 		* @public
 		*/
 		removeSelection: function(start) {
@@ -251,8 +251,8 @@
 		},
 
 		/**
-		* Modifies the [selection]{@link external:Selection} [object]{@link external:Object}. Please
-		* see the [Selection.modify]{@link external:Selection.modify} API for more information.
+		* Modifies the [selection]{@glossary Selection} [object]{@glossary Object}. Please
+		* see the [Selection.modify]{@glossary Selection.modify} API for more information.
 		* 
 		* @param {enyo.RichText~ModifyType} type The type of change to apply.
 		* @param {enyo.RichText~ModifyDirection} dir The direction in which to apply the change.
@@ -267,7 +267,7 @@
 		},
 
 		/**
-		* Moves the cursor according to the [Editing API]{@link external:Selection.modify}.
+		* Moves the cursor according to the [Editing API]{@glossary Selection.modify}.
 		* 
 		* @param {enyo.RichText~ModifyDirection} dir The direction in which to apply the change.
 		* @param {enyo.RichText~ModifyAmount} amount This is the granularity for the change.

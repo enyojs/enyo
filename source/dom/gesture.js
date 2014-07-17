@@ -176,9 +176,9 @@
 		},
 
 		/**
-		* Given two [DOM nodes]{@link external:Node}, this searches for a shared ancestor (looks up
-		* the heirarchic [DOM]{@link external:DOM} tree of [nodes]{@link external:Node}). The shared
-		* ancestor [node]{@link external:Node} is returned.
+		* Given two [DOM nodes]{@glossary Node}, this searches for a shared ancestor (looks up
+		* the heirarchic [DOM]{@glossary DOM} tree of [nodes]{@glossary Node}). The shared
+		* ancestor [node]{@glossary Node} is returned.
 		*
 		* @param {Node} controlA Control one.
 		* @param {Node} controlB Control two.

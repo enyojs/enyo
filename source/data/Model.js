@@ -25,7 +25,7 @@
 	
 	/**
 	* The event emitted when [attributes]{@link enyo.Model#attributes} have been modified. The event
-	* [object]{@link external:Object} will be the key/value pairs of
+	* [object]{@glossary Object} will be the key/value pairs of
 	* [attributes]{@link enyo.Model#attributes} that changed and their new values.
 	*
 	* @event enyo.Model#change
@@ -86,17 +86,17 @@
 	*/
 	
 	/**
-	* An [object]{@link external:Object} that is used to represent and maintain _state_. Usually,
+	* An [object]{@glossary Object} that is used to represent and maintain _state_. Usually,
 	* a [model]{@link enyo.Model} is used to expose _data_ to the _view layer_. It keeps logic
 	* related to the _data_ (retrieving it, updating it, storing it, etc.) out of the _view_ and
 	* the _view_ can automatically update based on changes in the [model]{@link enyo.Model}.
 	* [Models]{@link enyo.Model} have the ability to work with other _data layer_
-	* [kinds]{@link external:kind} for more sophisticated implementations.
+	* [kinds]{@glossary kind} for more sophisticated implementations.
 	*
 	* [Models]{@link enyo.Model} have [bindable]{@link enyo.BindingSupport}
 	* [attributes]{@link enyo.Model#attributes}. This differs from other
-	* [bindable]{@link enyo.BindingSupport} [kinds]{@link external:kind} in that it proxies values
-	* from an internal [hash]{@link external:Object} as opposed to the target property directly.
+	* [bindable]{@link enyo.BindingSupport} [kinds]{@glossary kind} in that it proxies values
+	* from an internal [hash]{@glossary Object} as opposed to the target property directly.
 	* 
 	* @see enyo.Store
 	* @see enyo.Collection
@@ -130,7 +130,7 @@
 		
 		/**
 		* Used by various [sources]{@link enyo.Model#source} as part of the
-		* [URI]{@link external:URI} from which it can be [fetched]{@link enyo.Model#fetch},
+		* [URI]{@glossary URI} from which it can be [fetched]{@link enyo.Model#fetch},
 		* [committed]{@link enyo.Model#commit} or [destroyed]{@link enyo.Model#destroy}. Some
 		* [sources]{@link enyo.Model#source} may use this property in other ways.
 		*
@@ -146,7 +146,7 @@
 		
 		/**
 		* Implement this method to be used by [sources]{@link enyo.Model#source} to dynamically
-		* derrive the [URI]{@link external:URI} from which it can be
+		* derrive the [URI]{@glossary URI} from which it can be
 		* [fetched]{@link enyo.Model#fetch}, [committed]{@link enyo.Model#commit} or
 		* [destroyed]{@link enyo.Model#destroy}. Some [sources]{@link enyo.Model#source} may use
 		* this property in other ways. Note that implementing this method means the
@@ -164,10 +164,10 @@
 		getUrl: null,
 				
 		/**
-		* The [hash]{@link external:Object} of properties proxied by this [model]{@link enyo.Model}.
-		* If defined on a [subkind]{@link external:subkind} it can be assigned default values and
-		* all [instances]{@link external:instance} will share its default structure. If no
-		* _attributes_ are defined an empty [hash]{@link external:Object} will be assigned during
+		* The [hash]{@glossary Object} of properties proxied by this [model]{@link enyo.Model}.
+		* If defined on a [subkind]{@glossary subkind} it can be assigned default values and
+		* all [instances]{@glossary instance} will share its default structure. If no
+		* _attributes_ are defined an empty [hash]{@glossary Object} will be assigned during
 		* initialization. It is not necessary to pre-define the structure of a
 		* [model]{@link enyo.Model} and depending on its complexity can even hinder performance when
 		* not necessary.
@@ -186,9 +186,9 @@
 		* The [source(s)]{@link enyo.Source} to use when [fetching]{@link enyo.Model#fetch},
 		* [committing]{@link enyo.Model#commit} or [destroying]{@link enyo.Model#destroy}. All
 		* methods that use a _source_ (or _sources_) can override this default value in their
-		* respective configurations parameter. This can be a [String]{@link external:String},
-		* an [Array]{@link external:Array} of [strings]{@link external:String}, an
-		* {@link enyo.Source} instance or an [Array]{@link external:Array} of
+		* respective configurations parameter. This can be a [String]{@glossary String},
+		* an [Array]{@glossary Array} of [strings]{@glossary String}, an
+		* {@link enyo.Source} instance or an [Array]{@glossary Array} of
 		* [sources]{@link enyo.Source}.
 		*
 		* @see enyo.Source
@@ -202,11 +202,11 @@
 		source: null,
 		
 		/**
-		* These [keys]{@link external:Object.keys} will be the only
+		* These [keys]{@glossary Object.keys} will be the only
 		* [attributes]{@link enyo.Model#attributes} included if the [model]{@link enyo.Model} is
 		* [committed]{@link enyo.Model#commit}. It directly modifies the result of calling
-		* [raw]{@link enyo.Model#raw}. If not defined all [keys]{@link external:Object.keys} from
-		* the [attributes]{@link enyo.Model#attributes} [hash]{@link external:Object} will be used.
+		* [raw]{@link enyo.Model#raw}. If not defined all [keys]{@glossary Object.keys} from
+		* the [attributes]{@link enyo.Model#attributes} [hash]{@glossary Object} will be used.
 		*
 		* @see enyo.Model#raw
 		* @see enyo.Model#toJSON
@@ -220,8 +220,8 @@
 		* The inheritable default configuration _options_. These specify the behavior of particular
 		* API features of {@link enyo.Model}. For the methods that use them, they can be overloaded
 		* using their respective configurations parameter. Note that setting an
-		* [options hash]{@link external:Object} on a [subkind]{@link external:subkind} will be
-		* merged with - not replace - the [superkind's]{@link external:superkind} own _options_.
+		* [options hash]{@glossary Object} on a [subkind]{@glossary subkind} will be
+		* merged with - not replace - the [superkind's]{@glossary superkind} own _options_.
 		*
 		* @type {enyo.Model~Options}
 		* @public
@@ -250,7 +250,7 @@
 		
 		/**
 		* The _unique_ attribute from which the [model]{@link enyo.Model} can be indexed. This
-		* _uniqueness_ must only exist for the specific [kind]{@link external:kind} of
+		* _uniqueness_ must only exist for the specific [kind]{@glossary kind} of
 		* [model]{@link enyo.Model}.
 		*
 		* @type {String}
@@ -270,7 +270,7 @@
 		* @see enyo.Model~Options.parse
 		* @param {*} data The incoming _data_ that may need to be restructured or reduced prior to
 		*	being [set]{@link enyo.Model#set} on the [model]{@link enyo.Model}.
-		* @returns {Object} The [hash]{@link external:Object} to apply to the
+		* @returns {Object} The [hash]{@glossary Object} to apply to the
 		*	[model]{@link enyo.Model} via [set]{@link enyo.Model#set}.
 		* @virtual
 		* @public
@@ -280,7 +280,7 @@
 		},
 		
 		/**
-		* Returns an [Object]{@link external:Object} that represents the underlying data structure
+		* Returns an [Object]{@glossary Object} that represents the underlying data structure
 		* of the [model]{@link enyo.Model}. This is dependent on the current
 		* [attributes]{@link enyo.Model#attributes} as well as the
 		* [includeKeys]{@link enyo.Model#includeKeys}.
@@ -288,7 +288,7 @@
 		*
 		* @see enyo.Model#includeKeys
 		* @see enyo.Model#attributes
-		* @returns {Object} The formatted [hash]{@link external:Object} representing the underlying
+		* @returns {Object} The formatted [hash]{@glossary Object} representing the underlying
 		*	data structure of the [model]{@link enyo.Model}.
 		* @public
 		*/
@@ -307,9 +307,9 @@
 		},
 		
 		/**
-		* Returns the [JSON]{@link external:JSON} serializable [raw]{@link enyo.Model#raw} output
+		* Returns the [JSON]{@glossary JSON} serializable [raw]{@link enyo.Model#raw} output
 		* of the [model]{@link enyo.Model}. Will automatically be executed by
-		* [JSON.parse]{@link external:JSON.parse}.
+		* [JSON.parse]{@glossary JSON.parse}.
 		*
 		* @see enyo.Model#raw
 		* @returns {Object} The return value of [raw]{@link enyo.Model#raw}
@@ -449,7 +449,7 @@
 		
 		/**
 		* Destroy the [model]{@link enyo.Model}. By default, the [model]{@link enyo.Model} will only
-		* be [destroyed]{@link external:destroy} in the client. To execute with a
+		* be [destroyed]{@glossary destroy} in the client. To execute with a
 		* [source]{@link enyo.Model#source} or [sources]{@link enyo.Model#source} the
 		* [commit default option]{@link enyo.Model#options} must be `true` or a `source` property
 		* must be provided in the _opts_ parameter explicitly. A {@link enyo.Model} cannot be
@@ -564,7 +564,7 @@
 		},
 		
 		/**
-		* Set the requested _path_ or [hash]{@link external:Object} of properties on the
+		* Set the requested _path_ or [hash]{@glossary Object} of properties on the
 		* [model]{@link enyo.Model}. Properties are applied to the
 		* [attributes hash]{@link enyo.Model#attributes} and are retrievable via
 		* [get]{@link enyo.Model#get}. If properties were updated and the `silent` option is not
@@ -574,12 +574,12 @@
 		* @fires enyo.Model#event:change
 		* @see enyo.ObserverSupport
 		* @see enyo.BindingSupport
-		* @param {(String|Object)} path Either the property name or a [hash]{@link external:Object}
+		* @param {(String|Object)} path Either the property name or a [hash]{@glossary Object}
 		*	of properties and values to set.
-		* @param {(*|enyo.Model~Options)} is If _path_ is a [string]{@link external:String} this should be
+		* @param {(*|enyo.Model~Options)} is If _path_ is a [string]{@glossary String} this should be
 		*	the value to set for the given property; otherwise it should be an optional
 		*	[hash]{@link enyo.Model~Options} of available configuration options.
-		* @param {enyo.Model~Options} [opts] If _path_ is a [string]{@link external:String} this should be
+		* @param {enyo.Model~Options} [opts] If _path_ is a [string]{@glossary String} this should be
 		*	the the optional [hash]{@link enyo.Model~Options} of available configuration options;
 		*	otherwise it will not be used.
 		* @returns {this} The callee for chaining.
@@ -672,7 +672,7 @@
 		*	[attributes]{@link enyo.Model#attributes}.
 		* @param {Object} [props] Properties to apply directly to the [model]{@link enyo.Model} and
 		*	not the [attributes hash]{@link enyo.Model#attributes}. If these properties contain an
-		*	`options` property (a [hash]{@link external:Object}) it will be merged with existing
+		*	`options` property (a [hash]{@glossary Object}) it will be merged with existing
 		*	[options]{@link enyo.Model#options}.
 		* @param {enyo.Model~Options} [opts] This is a one-time [options hash]{@link enyo.Model~Options} that
 		*	is only used during initialization and not applied as defaults.

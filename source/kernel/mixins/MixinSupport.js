@@ -81,7 +81,7 @@
 	
 	/**
 	* An internally-used support mixin that adds API methods to aid in using and
-	* applying mixins to [kinds]{@link external:kind}.
+	* applying mixins to [kinds]{@glossary kind}.
 	*
 	* @mixin enyo.MixinSupport
 	* @protected
@@ -96,7 +96,7 @@
 		/**
 		* Extends the instance with the given properties.
 		*
-		* @param {Object} props The property [hash]{@link external:Object} from which to extend
+		* @param {Object} props The property [hash]{@glossary Object} from which to extend
 		*	the callee.
 		*/
 		extend: function (props) {

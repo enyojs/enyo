@@ -6,9 +6,9 @@
 	* @event enyo.Video#event:onFastforward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -19,9 +19,9 @@
 	* @event enyo.Video#event:onSlowforward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -32,9 +32,9 @@
 	* @event enyo.Video#event:onRewind
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -45,9 +45,9 @@
 	* @event enyo.Video#event:onSlowrewind
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -57,9 +57,9 @@
 	* @event enyo.Video#event:onJumpForward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -69,9 +69,9 @@
 	* @event enyo.Video#event:onJumpBackward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -81,9 +81,9 @@
 	* @event enyo.Video#event:onPlay
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -93,15 +93,15 @@
 	* @event enyo.Video#event:onStart
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
 	/**
 	* _enyo.Video_ is a [control]{@link enyo.Control} that allows you to play video. It is an
-	* abstraction of HTML 5 [Video]{@link external:video}.
+	* abstraction of HTML 5 [Video]{@glossary video}.
 	* 
 	* Initialize a [video]{@link enyo.Video} [component]{@link enyo.Component} as follows:
 	*
@@ -111,7 +111,7 @@
 	* 
 	* To play a [video]{@link enyo.Video}, call `this.$.video.play()`.
 	* 
-	* To get a reference to the actual HTML 5 [Video]{@link external:video} element, call
+	* To get a reference to the actual HTML 5 [Video]{@glossary video} element, call
 	* `this.$.video.hasNode()`.
 	*
 	* @ui
@@ -632,7 +632,7 @@
 		},
 
 		/**
-		* Sets the playback rate type (from the [keys]{@link external:Object.keys} of 
+		* Sets the playback rate type (from the [keys]{@glossary Object.keys} of 
 		* [playbackRateHash]{@link enyo.Video#playbackRateHash}).
 		*
 		* @param {String} cmd Key of the playback rate type.
@@ -722,9 +722,9 @@
 		},
 
 		/**
-		* Determine the buffered [time range]{@link external:TimeRanges}.
+		* Determine the buffered [time range]{@glossary TimeRanges}.
 		*
-		* @returns {TimeRanges} The buffered [time range]{@link external:TimeRanges}.
+		* @returns {TimeRanges} The buffered [time range]{@glossary TimeRanges}.
 		* @public
 		*/
 		getBufferedTimeRange: function() {
@@ -754,9 +754,9 @@
 		},
 
 		/**
-		* Determines the [readyState]{@link external:readyState} of the [video]{@link enyo.Video}.
+		* Determines the [readyState]{@glossary readyState} of the [video]{@link enyo.Video}.
 		*
-		* @returns {ReadyState} The [readyState]{@link external:readyState} of the 
+		* @returns {ReadyState} The [readyState]{@glossary readyState} of the 
 		*	[video]{@link enyo.Video}.
 		* @public
 		*/
@@ -914,7 +914,7 @@
 		},
 
 		/**
-		* Normalizes enyo-generated _onPlay_ [events]{@link external:event}.
+		* Normalizes enyo-generated _onPlay_ [events]{@glossary event}.
 		* 
 		* @fires enyo.Video#event:doPlay
 		* @private
@@ -932,7 +932,7 @@
 		},
 
 		/**
-		* Add all HTML5 [video]{@link external:video} [events]{@link external:event}.
+		* Add all HTML5 [video]{@glossary video} [events]{@glossary event}.
 		* 
 		* @private
 		*/

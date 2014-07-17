@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.TextArea_ implements an HTML [&lt;textarea&gt;]{@link external:textarea} element with
-	* cross-platform support for change [events]{@link external:event}.
+	* _enyo.TextArea_ implements an HTML [&lt;textarea&gt;]{@glossary textarea} element with
+	* cross-platform support for change [events]{@glossary event}.
 	* 
 	* For more information, see the documentation on [Text
 	* Fields](building-apps/controls/text-fields.html) in the Enyo Developer Guide.

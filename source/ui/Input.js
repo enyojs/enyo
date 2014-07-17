@@ -5,9 +5,9 @@
 	* @event enyo.Input#event:oninput
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -18,9 +18,9 @@
 	* @event enyo.Input#event:onchange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 
@@ -30,18 +30,18 @@
 	* @event enyo.Input#event:onDisabledChange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {Object} event - An [object]{@link external:Object} containing 
-	*	[event]{@link external:event} information.
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
 	* @public
 	*/
 	
 	/**
-	* _enyo.Input_ implements an HTML [&lt;input&gt;]{@link external:input} element with 
-	* cross-platform support for change [events]{@link external:event}.
+	* _enyo.Input_ implements an HTML [&lt;input&gt;]{@glossary input} element with 
+	* cross-platform support for change [events]{@glossary event}.
 	* 
 	* You can listen for [oninput]{@link enyo.Input#event:oninput} and 
-	* [onchange]{@link enyo.Input#event:onchange} [DOM events]{@link external:DOMEvent} from this 
+	* [onchange]{@link enyo.Input#event:onchange} [DOM events]{@glossary DOMEvent} from this 
 	* [control]{@link enyo.Control} to know when the text inside has been modified.
 	* 
 	* For more information, see the documentation on [Text
@@ -87,7 +87,7 @@
 			/**
 			* Type of [input]{@link enyo.Input}; if not specified, it's treated as "text". It can
 			* be anything specified for the _type_ attribute in the 
-			* [HTML specification]{@link external:input}, including "url", "email", "search", or 
+			* [HTML specification]{@glossary input}, including "url", "email", "search", or 
 			* "number".
 			* 
 			* @type {String}

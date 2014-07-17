@@ -3,7 +3,7 @@
 	/**
 	* A mixin designed to abstract interaction of the {@link enyo.Object#get} and
 	* {@link enyo.Object#set} methods. It does not need to be applied to
-	* [subkinds]{@link external:subkind} of {@link enyo.Object}.
+	* [subkinds]{@glossary subkind} of {@link enyo.Object}.
 	* 
 	* @mixin enyo.ProxyObject
 	* @public

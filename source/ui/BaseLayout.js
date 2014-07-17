@@ -1,9 +1,9 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.BaseLayout_ provides a basic [layout]{@link external:layout} strategy, positioning 
+	* _enyo.BaseLayout_ provides a basic [layout]{@glossary layout} strategy, positioning 
 	* contained [components]{@link enyo.Component} with the `enyo-positioned` 
 	* [layoutClass]{@link enyo.BaseLayout#layoutClass}. In addition, it adjusts the 
-	* [layout]{@link external:layout} when [reflow]{@link enyo.BaseLayout#reflow} is called, 
+	* [layout]{@glossary layout} when [reflow]{@link enyo.BaseLayout#reflow} is called, 
 	* removing or adding the `enyo-fit` class for [components]{@link enyo.Component} that have set 
 	* the [fit]{@link enyo.Component#fit} property.
 	*
@@ -26,7 +26,7 @@
 
 		/**
 		* The name of the class to apply to components that are being positioned by a 
-		* [layout]{@link external:layout} strategy.
+		* [layout]{@glossary layout} strategy.
 		* 
 		* @type {String}
 		* @default 'enyo-positioned'

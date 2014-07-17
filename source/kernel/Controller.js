@@ -1,8 +1,8 @@
 (function (enyo, scope) {
 	/**
-	* {@link enyo.Controller} is the base [kind]{@link external:kind} for all
+	* {@link enyo.Controller} is the base [kind]{@glossary kind} for all
 	* controllers in Enyo. An abstract kind, `enyo.Controller` is a
-	* [delegate]{@link external:delegate}/[component]{@link enyo.Component} that
+	* [delegate]{@glossary delegate}/[component]{@link enyo.Component} that
 	* is designed to be a proxy for information.
 	*
 	* @class enyo.Controller
@@ -36,7 +36,7 @@
 
 		/**
 		* The default source of information for all instances of {@link enyo.Controller}
-		* and its [subkinds]{@link external:subkind}. In some cases, this will be a
+		* and its [subkinds]{@glossary subkind}. In some cases, this will be a
 		* [computed property]{@link enyo.ComputedSupport} to facilitate overloading.
 		* It may contain any type of data.
 		*

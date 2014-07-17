@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
-	* The [event]{@link external:event} [object]{@link external:Object} that is provided when the 
-	* [paging]{@link enyo.DataList#event:paging} [event]{@link external:event} is fired.
+	* The [event]{@glossary event} [object]{@glossary Object} that is provided when the 
+	* [paging]{@link enyo.DataList#event:paging} [event]{@glossary event} is fired.
 	*
 	* @typedef {Object} enyo.DataList~PagingEvent
 	* @property {Number} start The lowest active index in the dataset.
@@ -15,9 +15,9 @@
 	* @event enyo.DataList#event:paging
 	* @type {Object}
 	* @property {Object} sender - A reference to the {@link enyo.DataList}.
-	* @property {String} nom The name of the [event]{@link external:event}.
-	* @property {enyo.DataList~PagingEvent} event - A [hash]{@link external:Object} with properties
-	*	specific to the [paging]{@link enyo.DataList#event:paging} [event]{@link external:event}.
+	* @property {String} nom The name of the [event]{@glossary event}.
+	* @property {enyo.DataList~PagingEvent} event - A [hash]{@glossary Object} with properties
+	*	specific to the [paging]{@link enyo.DataList#event:paging} [event]{@glossary event}.
 	* @public
 	*/
 
@@ -29,15 +29,15 @@
 	* 
 	* Note that care should be taken when deciding how to lay out the list's children. When there 
 	* are a large number of child [elements]{@link enyo.Control}, the layout process can be taxing 
-	* and non-performant for the browser. Avoid	dynamically-updated [layouts]{@link external:layout}
+	* and non-performant for the browser. Avoid	dynamically-updated [layouts]{@glossary layout}
 	* that require lots of calculations each time the data in a view is updated. Try to use CSS 
 	* whenever possible.
 	* 
 	* While paging through data, _enyo.DataList_ emits the 
-	* [_paging_]{@link enyo.DataList#event:paging} [event]{@link external:event}, which allows you 
+	* [_paging_]{@link enyo.DataList#event:paging} [event]{@glossary event}, which allows you 
 	* to make updates on a per-page basis, as necessary. You may register for this 
-	* [event]{@link external:event} by calling [_addListener()_]{@link enyo.EventEmitter#addListener}
-	* and specifying the [event]{@link external:event}, along with a callback method.
+	* [event]{@glossary event} by calling [_addListener()_]{@link enyo.EventEmitter#addListener}
+	* and specifying the [event]{@glossary event}, along with a callback method.
 	*
 	* @ui
 	* @class enyo.DataList
@@ -60,7 +60,7 @@
 		/**
 		* _enyo.DataList_ places its rows inside of a [scroller]{@link enyo.Scroller}. Any 
 		* configurable options of [_enyo.Scroller_]{@link enyo.Scroller} may be placed in this 
-		* [hash]{@link external:Object}; their values will be set accordingly on this 
+		* [hash]{@glossary Object}; their values will be set accordingly on this 
 		* [list's]{@link enyo.DataList} [scroller]{@link enyo.Scroller}. If no options are specified,
 		* the default [_enyo.Scroller_]{@link enyo.Scroller} settings are used.
 		*
@@ -256,7 +256,7 @@
 		* Once the [list]{@link enyo.DataList} itself is rendered, we check to see if we have a 
 		* [collection]{@link enyo.Collection}; if so, do we have any data to start rendering the 
 		* rest of the [list]{@link enyo.DataList}? Ultimately, the implementation decisions are 
-		* decided by the [delegate]{@link external:delegate} strategy.
+		* decided by the [delegate]{@glossary delegate} strategy.
 		* 
 		* @private
 		*/
@@ -326,16 +326,16 @@
 			methods[name] = fn;
 		},
 		/**
-		* This [function]{@link external:Function} intentionally left blank. In 
+		* This [function]{@glossary Function} intentionally left blank. In 
 		* [DataRepeater]{@link enyo.DataRepeater}, it removes the [control]{@link enyo.Control} at 
-		* the specified index but that is handled by the [delegate]{@link external:delegate} here.
+		* the specified index but that is handled by the [delegate]{@glossary delegate} here.
 		* 
 		* @private
 		*/
 		remove: function(idx) {},
 
 		/**
-		* Overloaded to call a method of the [delegate]{@link external:delegate} strategy.
+		* Overloaded to call a method of the [delegate]{@glossary delegate} strategy.
 		*
 		* @private
 		*/
@@ -351,7 +351,7 @@
 			}
 		},
 		/**
-		* Overloaded to call a method of the [delegate]{@link external:delegate} strategy.
+		* Overloaded to call a method of the [delegate]{@glossary delegate} strategy.
 		*
 		* @private
 		*/
@@ -386,7 +386,7 @@
 			};
 		}),
 		/**
-		* Overloaded from base [kind]{@link external:kind} to ensure that the container options 
+		* Overloaded from base [kind]{@glossary kind} to ensure that the container options 
 		* correctly apply the [scroller]{@link enyo.Scroller} options before instantiating it.
 		*
 		* @private
@@ -401,9 +401,9 @@
 			};
 		}),
 		/**
-		* We let the [delegate]{@link external:delegate} strategy manage the 
-		* [event]{@link external:event}, but we arbitrarily return `true` because we don't want the 
-		* [event]{@link external:event} to propagate beyond this [kind]{@link external:kind}.
+		* We let the [delegate]{@glossary delegate} strategy manage the 
+		* [event]{@glossary event}, but we arbitrarily return `true` because we don't want the 
+		* [event]{@glossary event} to propagate beyond this [kind]{@glossary kind}.
 		*
 		* @private
 		*/
@@ -422,7 +422,7 @@
 		/**
 		* Special override to handle resizing in an attempt to minimize the amount of work we're 
 		* doing. We don't want to [waterfall]{@link enyo.Component#waterfall} the 
-		* [event]{@link external:event} to all children, so we hijack the normal handler.
+		* [event]{@glossary event} to all children, so we hijack the normal handler.
 		*
 		* @private
 		*/
@@ -474,7 +474,7 @@
 		},
 		/**
 		* [_enyo.DataList_]{@link enyo.DataList} uses an overloaded container from its base 
-		* [kind]{@link external:kind}. We set the container to a [scroller]{@link enyo.Scroller} and
+		* [kind]{@glossary kind}. We set the container to a [scroller]{@link enyo.Scroller} and
 		* provide a way to modify the [scroller]{@link enyo.Scroller} options (via the 
 		* [_scrollerOptions_]{@link enyo.DataList#scrollerOptions} [hash]{@link enyo.Object}). All 
 		* children will reside in one of the two pages owned by the [scroller]{@link enyo.Scroller}.
@@ -490,7 +490,7 @@
 		], canGenerate: false, classes: 'enyo-fit enyo-data-list-scroller'},
 
 		/**
-		* We access this [kind's]{@link external:kind} [constructor]{@link external:constructor} and
+		* We access this [kind's]{@glossary kind} [constructor]{@glossary constructor} and
 		* need it to be undeferred at that time.
 		* 
 		* @private
@@ -518,15 +518,15 @@
 
 		/**
 		* Of course we set our container to `'scroller'` as needed by the base 
-		* [kind]{@link external:kind}.
+		* [kind]{@glossary kind}.
 		* 
 		* @private
 		*/
 		containerName: 'scroller',
 		/**
 		* We have to trap the Enyo-generated [_onScroll_]{@link enyo.Scroller#event:onScroll} 
-		* [event]{@link external:event} and let the [delegate]{@link external:delegate} handle it. 
-		* We also need to catch the _onresize_ [events]{@link external:event} so we know when to
+		* [event]{@glossary event} and let the [delegate]{@glossary delegate} handle it. 
+		* We also need to catch the _onresize_ [events]{@glossary event} so we know when to
 		* update our cached sizing. We overload the default handler so that we don't 
 		* [waterfall]{@link enyo.Component#waterfall} the resizing; we arbitrarily handle it to 
 		* minimize the amount of work we do.
@@ -544,15 +544,15 @@
 
 		/**
 		* Add the [RegisteredEventSupport]{@link enyo.RegisteredEventSupport} 
-		* [mixin]{@link external:mixin} for the [paging]{@link enyo.DataList#event:paging} 
-		* [event]{@link external:event}.
+		* [mixin]{@glossary mixin} for the [paging]{@link enyo.DataList#event:paging} 
+		* [event]{@glossary event}.
 		* 
 		* @private
 		*/
 		mixins: [enyo.RegisteredEventSupport],
 
 		/**
-		* All [delegates]{@link external:delegate} are named elsewhere but are stored in these 
+		* All [delegates]{@glossary delegate} are named elsewhere but are stored in these 
 		* statics.
 		* 
 		* @private
@@ -560,7 +560,7 @@
 		statics: {delegates: {}},
 
 		/**
-		* An [array]{@link external:Array} of the actual _page_ references for easier access.
+		* An [array]{@glossary Array} of the actual _page_ references for easier access.
 		* 
 		* @private
 		*/
@@ -569,8 +569,8 @@
 
 	/**
 	* All subclasses of [_enyo.DataList_]{@link enyo.DataList} will have their own 
-	* [_delegates_]{@link external:delegate} static [hash]{@link external:Object}. This is per 
-	* [_kind_]{@link external:kind}, not per _instance_.
+	* [_delegates_]{@glossary delegate} static [hash]{@glossary Object}. This is per 
+	* [_kind_]{@glossary kind}, not per _instance_.
 	*
 	* @private
 	*/

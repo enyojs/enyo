@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.ScrollThumb_ is a helper [kind]{@link external:kind} used by 
+	* _enyo.ScrollThumb_ is a helper [kind]{@glossary kind} used by 
 	* {@link enyo.TouchScrollStrategy} and {@link enyo.TranslateScrollStrategy} to display a small 
 	* visual scroll indicator.
 	* 

@@ -1,4 +1,4 @@
-﻿(function (enyo, scope) {
+(function (enyo, scope) {
 	
 	/**
 	* Fires when a response is received.
@@ -22,9 +22,9 @@
 	
 	/**
 	* Fires when the request progresses. This event is the raw
-	* [ProgressEvent]{@link external:ProgressEvent}.
+	* [ProgressEvent]{@glossary ProgressEvent}.
 	*
-	* @see {@link external:ProgressEvent}
+	* @see {@glossary ProgressEvent}
 	* @event enyo.WebService#event:onProgress
 	* @type {Object}
 	* @property {Boolean} lengthComputable - The read-only flag indicating if the progress is
@@ -49,7 +49,7 @@
 	});
 
 	/**
-	* A [component]{@link enyo.Component} that performs [XHR]{@link external:XMLHttpRequest}
+	* A [component]{@link enyo.Component} that performs [XHR]{@glossary XMLHttpRequest}
 	* requests. Internally it relies on the [async]{@link enyo.Async} subkinds
 	* ({@link enyo.Ajax} and {@link enyo.JsonpRequest}) to manage transactions.
 	*
@@ -86,7 +86,7 @@
 		published: {
 			
 			/**
-			* Whether or not to use the [JSONP]{@link external:JSONP} protocol (and
+			* Whether or not to use the [JSONP]{@glossary JSONP} protocol (and
 			* {@link enyo.JsonpRequest} instead of {@link enyo.Ajax}).
 			*
 			* @memberof enyo.WebService.prototype
@@ -97,7 +97,7 @@
 			jsonp: false,
 			
 			/**
-			* When using [JSONP]{@link external:JSONP} this is the name of the callback parameter.
+			* When using [JSONP]{@glossary JSONP} this is the name of the callback parameter.
 			* Note that this not the name of a callback function, but only the name of the callback
 			* parameter. Enyo will create an internal callback function as necessary.
 			*
@@ -110,7 +110,7 @@
 			callbackName: 'callback',
 			
 			/**
-			* When using [JSONP]{@link external:JSONP}, the optional character set to use to
+			* When using [JSONP]{@glossary JSONP}, the optional character set to use to
 			* interpret the return data.
 			*
 			* @see enyo.WebService#jsonp

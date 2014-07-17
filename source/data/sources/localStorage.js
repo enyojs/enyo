@@ -17,9 +17,9 @@
 		};
 	
 		/**
-		* A [localStorage]{@link external:localStorage} [source]{@link enyo.Source}. Is only even
-		* an available [kind]{@link external:kind} on platforms that support the
-		* [localStorage]{@link external:localStorage} web-standard.
+		* A [localStorage]{@glossary localStorage} [source]{@link enyo.Source}. Is only even
+		* an available [kind]{@glossary kind} on platforms that support the
+		* [localStorage]{@glossary localStorage} web-standard.
 		*
 		* It is important to note that usage of this {@link enyo.Source} requires that
 		* [models]{@link enyo.Model} and [collections]{@link enyo.Collection} must use their

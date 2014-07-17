@@ -8,7 +8,7 @@
 		, AjaxProperties = enyo.AjaxProperties;
 	
 	/**
-	* An all-purpose [ajax]{@link external:ajax} [source]{@link enyo.Source} designed to communicate
+	* An all-purpose [ajax]{@glossary ajax} [source]{@link enyo.Source} designed to communicate
 	* with REST-ful API backends.
 	*
 	* @class enyo.AjaxSource
@@ -41,7 +41,7 @@
 		noDefer: true,
 		
 		/**
-		* An [array]{@link external:Array} of the keys that will be used for the options passed to
+		* An [array]{@glossary Array} of the keys that will be used for the options passed to
 		* the [requestKind]{@link enyo.XHRSource#requestKind}.
 		*
 		* @see enyo.AjaxProperties

@@ -1,4 +1,4 @@
-﻿(function (enyo, scope) {
+(function (enyo, scope) {
 	
 	/**
 	* A cache of response properties set on the {@link enyo.Ajax} instance once it has completed
@@ -12,11 +12,11 @@
 	*/
 	
 	/**
-	* A [kind]{@link external:kind} designed to expose the native
-	* [XMLHttpRequest]{@link external:XMLHttpRequest} API. Available configuration options are
+	* A [kind]{@glossary kind} designed to expose the native
+	* [XMLHttpRequest]{@glossary XMLHttpRequest} API. Available configuration options are
 	* exposed by {@link enyo.AjaxProperties}.
 	*
-	* This [kind]{@link external:kind} does not extend {@link enyo.Component} and cannot be used
+	* This [kind]{@glossary kind} does not extend {@link enyo.Component} and cannot be used
 	* in the [components block]{@link enyo.Component#components}.
 	*
 	* For more information, see the documentation on
@@ -78,9 +78,9 @@
 		
 		/**
 		* Execute the request with the given options. The parameter can be a
-		* [hash]{@link external:Object} of properties or a [string]{@link external:String}. Both
-		* represent the query string, with the [hash]{@link external:Object} being serialized and
-		* the [string]{@link external:String} being used directly.
+		* [hash]{@glossary Object} of properties or a [string]{@glossary String}. Both
+		* represent the query string, with the [hash]{@glossary Object} being serialized and
+		* the [string]{@glossary String} being used directly.
 		*
 		* ```javascript
 		* var query = {q: 'searchTerm'}; // -> "?q=searchTerm"
@@ -94,8 +94,8 @@
 		* @see enyo.AjaxProperties
 		* @see enyo.Ajax#xhrResponse
 		* @see enyo.Ajax~xhrResponse
-		* @param {(Object|String)} [params] A [string]{@link external:String} or
-		*	[hash]{@link external:Object} to be used as the query string.
+		* @param {(Object|String)} [params] A [string]{@glossary String} or
+		*	[hash]{@glossary Object} to be used as the query string.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
