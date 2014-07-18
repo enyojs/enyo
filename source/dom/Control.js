@@ -685,8 +685,16 @@
 
 			// if we are changing from not showing to showing we attempt to find whatever
 			// our last known value for display was or use the default
-			if (!was) this.applyStyle('display', this._display || '');
-
+			if (!was) {
+				this.applyStyle('display', this._display || '');
+				// If renderOnShow is true and generated is false then
+				// develper intended to make this control un-rendered 
+				// until there is a request to show
+				if (this.renderOnShow && !this.generated) {
+					this.setCanGenerate(true);
+					this.render();
+				}
+			}
 			// if we are supposed to be hiding the control then we need to cache our current
 			// display state
 			else if (!this.showing) {
