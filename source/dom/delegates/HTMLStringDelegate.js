@@ -126,9 +126,20 @@
 		*/
 		generateHtml: function (control) {
 			var content,
-				html;
-			
-			if (control.canGenerate === false) {
+				html,
+				prevControl;
+
+			if (control.renderOnShowQueue.length) {
+				prevControl = control.renderOnShowQueue.pop();
+				if (prevControl.parent === control.parent) {
+					prevControl.addBefore = control;	
+				}				
+			}
+
+			if (control.canGenerate === false) {				
+				if (control.renderOnShow === true) {
+					control.renderOnShowQueue.push(control);
+				}
 				return '';
 			}
 			// do this first in case content generation affects outer html (styles or attributes)

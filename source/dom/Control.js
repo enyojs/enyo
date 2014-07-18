@@ -142,7 +142,10 @@
 		* @public
 		*/
 		renderOnShow: false,
-
+		/**
+		* private
+		*/
+		renderOnShowQueue: [],
 		/**
 		* @todo Find out how to document "handlers".
 		* @public
