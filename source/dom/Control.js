@@ -1277,7 +1277,26 @@
 
 			return this;
 		},
-
+		/**
+			@public
+			@deprecated
+		*/
+		getRenderOnShow: function () {
+			return this.renderOnShow;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		setRenderOnShow: function (can) {
+			var was = this.renderOnShow;
+			this.renderOnShow = can;
+			
+			if (was !== can) this.notify('renderOnShow', was, can);
+			
+			return this;
+		},
 		/**
 		* @deprecated
 		* @public
