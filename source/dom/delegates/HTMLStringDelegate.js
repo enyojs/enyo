@@ -128,9 +128,14 @@
 			var content,
 				html,
 				prevControl;
-
+				
+			// If previous control has enabled renderOnShow
+			// then renderOnShowQueue has an entity.
 			if (control.renderOnShowQueue.length) {
 				prevControl = control.renderOnShowQueue.pop();
+				// If prevControl and control are sibling
+				// then place prevControl before control
+				// If they are not sibling, just append prevControl to parent
 				if (prevControl.parent === control.parent) {
 					prevControl.addBefore = control;	
 				}				

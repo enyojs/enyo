@@ -143,7 +143,11 @@
 		*/
 		renderOnShow: false,
 		/**
-		* private
+		* When you make a control which renderOnShow is true visible,
+		* you should know where it placed.
+		* To resolve this matter, we remember the position
+		* when we traverse component hierachy to generate HTML
+		* @private
 		*/
 		renderOnShowQueue: [],
 		/**
