@@ -4,7 +4,7 @@
 	*/
 
 	/**
-	 * The CSS `transition` property name, decided by which browser is identified. Ex:
+	 * The CSS `transition` property name for the current browser/platform, e.g.:
 	 *
 	 * * `-webkit-transition`
 	 * * `-moz-transition`

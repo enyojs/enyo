@@ -1,9 +1,9 @@
 (function (enyo, scope) {
 
 	/**
-	* Event modal capture feature: capture events to a specific control via
-	* [enyo.dispatcher.capture(inControl, inShouldForward)]{@linkcode enyo.dispatcher.capture}
-	* release events via {@link enyo.dispatcher.release}.
+	* Event modal capture feature. Capture events to a specific control via
+	* [enyo.dispatcher.capture(inControl, inShouldForward)]{@linkcode enyo.dispatcher.capture};
+	* release events via [enyo.dispatcher.release()]{@link enyo.dispatcher.release}.
 	*
 	* @private
 	*/
@@ -42,11 +42,11 @@
 		captures: [],
 
 		/** 
-		* Capture events for `inTarget`, where `inEvents` is specified as a hash of event names
-		* mapped to callback handler names to be called on the inTarget (or optionally, `inScope).
-		* The callback  is called when any of the captured events are dispatched outside of the
-		* capturing control. Returning true from the callback stops dispatch of the event to the
-		* original dispatchTarget.
+		* Captures [events]{@glossary event} for `inTarget`, where `inEvents` is specified as a
+		* hash of event names mapped to callback handler names to be called on `inTarget` (or,
+		* optionally, `inScope`). The callback is called when any of the captured events are
+		* dispatched outside of the capturing control. Returning `true` from the callback stops
+		* dispatch of the event to the original `dispatchTarget`.
 		*
 		* @private
 		*/
@@ -57,7 +57,7 @@
 		},
 
 		/**
-		* Remove the specified target from the capture list.
+		* Removes the specified target from the capture list.
 		* 
 		* @private
 		*/
@@ -72,7 +72,7 @@
 		},
 
 		/**
-		* Set the information for a captured event.
+		* Sets the information for a captured [event]{@glossary event}.
 		* 
 		* @private
 		*/

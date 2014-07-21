@@ -2,7 +2,7 @@
 	/**
 	* Support for the W3C Page Visibility API - http://www.w3.org/TR/page-visibility
 	*
-	* {@linkcode enyo.hidden} and {@linkcode enyo.visibilityState} contain the same information as
+	* {@link enyo.hidden} and {@link enyo.visibilityState} contain the same information as
 	* `document.hidden` and `document.visibilityState` in supported browsers. The `visibilitychange`
 	* event is channelled through the [Signals]{@link enyo.Signals} mechanism.
 	*
@@ -63,7 +63,7 @@
 		// set inital values for enyo.hidden and enyo.visibilityState it's probably save to assume
 		// that the current document is visible when loading the page
 		/**
-		* True if the document is hidden.
+		* `true` if the document is hidden; otherwise, `false`.
 		*
 		* @name enyo#hidden
 		* @readonly
@@ -74,7 +74,7 @@
 		enyo.hidden = typeof document[hidden] !== 'undefined' ? document[hidden] : false;
 
 		/**
-		* True if the document is visible.
+		* String indicating the document's visibility state.
 		*
 		* @name enyo#visibilityState
 		* @readonly

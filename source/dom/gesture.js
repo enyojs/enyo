@@ -2,12 +2,12 @@
 
 	/**
 	* Enyo supports a set of normalized events that work similarly across all supported platforms.
-	* These events are provided so that users can write a single set of event handlers for applications
-	* that run on both mobile and desktop platforms. They are needed because desktop and mobile
-	* platforms handle basic input differently.
+	* These events are provided so that users can write a single set of event handlers for
+	* applications that run on both mobile and desktop platforms. They are needed because desktop
+	* and mobile platforms handle basic input differently.
 	*
 	* For more information on normalized input events and their associated properties, see the
-	* documentation on [User Input](building-apps/user-input.html) in the Enyo Developer Guide.
+	* documentation on [User Input]{@link building-apps/user-input.html} in the Enyo Developer Guide.
 	*
 	* @namespace enyo.gesture
 	* @public
@@ -23,11 +23,12 @@
 			'detail', 'identifier', 'dispatchTarget', 'which', 'srcEvent'],
 
 		/**
-		* Creates an event of type _type_ and returns it. _evt_ should be an event object.
+		* Creates an [event]{@glossary event} of type `type` and returns it.
+		* `evt` should be an event [object]{@glossary Object}.
 		*
-		* @param {String} type The type of event to make.
+		* @param {String} type The type of [event]{@glossary event} to make.
 		* @param {(Event|Object)} evt The event you'd like to clone or an object that looks like it.
-		* @returns {Object} The new event object.
+		* @returns {Object} The new event [object]{@glossary Object}.
 		* @public
 		*/
 		makeEvent: function(type, evt) {
@@ -75,10 +76,10 @@
 		},
 
 		/**
-		* The method for handling "down" events. This includes `mousedown` and `keydown`. This is
+		* Handles "down" [events]{@glossary event}, including `mousedown` and `keydown`. This is
 		* responsible for the press-and-hold key repeater.
 		*
-		* @param {Event} evt The standard event object.
+		* @param {Event} evt The standard [event]{@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		down: function(evt) {
@@ -100,9 +101,9 @@
 		},
 
 		/**
-		* The method for handling `mousemove` events.
+		* Handles `mousemove` [events]{@glossary event}.
 		*
-		* @param {Event} evt The standard event object.
+		* @param {Event} evt The standard [event]{@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		move: function(evt) {
@@ -119,9 +120,9 @@
 		},
 
 		/**
-		* The method for handling "up" events. This includes `mouseup` and `keyup`.
+		* Handles "up" [events]{@glossary event}, including `mouseup` and `keyup`.
 		*
-		* @param {Event} evt The standard event object.
+		* @param {Event} evt The standard [event]{@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		up: function(evt) {
@@ -138,9 +139,9 @@
 		},
 
 		/**
-		* The method for handling `mouseover` events.
+		* Handles `mouseover` [events]{@glossary event}.
 		*
-		* @param {Event} evt The standard event object.
+		* @param {Event} evt The standard [event]{@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		over: function(evt) {
@@ -149,9 +150,9 @@
 		},
 
 		/**
-		* The method for handling `mouseout` events.
+		* Handles `mouseout` [events]{@glossary event}.
 		*
-		* @param {Event} evt The standard event object.
+		* @param {Event} evt The standard [event]{@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		out: function(evt) {
@@ -160,9 +161,9 @@
 		},
 
 		/**
-		* This generates the `tap` events.
+		* Generates `tap` [events]{@glossary event}.
 		*
-		* @param {Event} evt The standard event object.
+		* @param {Event} evt The standard [event]{@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		sendTap: function(evt) {
@@ -176,9 +177,9 @@
 		},
 
 		/**
-		* Given two [DOM nodes]{@glossary Node}, this searches for a shared ancestor (looks up
-		* the heirarchic [DOM]{@glossary DOM} tree of [nodes]{@glossary Node}). The shared
-		* ancestor [node]{@glossary Node} is returned.
+		* Given two [DOM nodes]{@glossary Node}, searches for a shared ancestor (looks up
+		* the hierarchic [DOM]{@glossary DOM} tree of [nodes]{@glossary Node}). The shared
+		* ancestor node is returned.
 		*
 		* @param {Node} controlA Control one.
 		* @param {Node} controlB Control two.
@@ -196,11 +197,11 @@
 		},
 
 		/**
-		* Given two controls, returns true if the _child_ is inside the _parent_.
+		* Given two controls, returns `true` if the `child` is inside the `parent`.
 		*
 		* @param {Node} child The child to search for.
 		* @param {Node} parent The expected parent.
-		* @returns {(Boolean|undefined)} True if the _child_ is actually a child of _parent_.
+		* @returns {(Boolean|undefined)} `true` if the `child` is actually a child of `parent`.
 		*/
 		isTargetDescendantOf: function(child, parent) {
 			var c = child;
@@ -223,7 +224,7 @@
 	};
 
 	/**
-	* Installed on events and called in event context
+	* Installed on [events]{@glossary event} and called in event context.
 	*
 	* @private
 	*/
@@ -260,7 +261,7 @@
 		/** @lends enyo.gesture.events */ {
 
 		/**
-		* Shortcut to {@link enyo.gesture.down}.
+		* Shortcut to [enyo.gesture.down()]{@link enyo.gesture.down}.
 		*
 		* @public
 		*/
@@ -269,7 +270,7 @@
 		},
 
 		/**
-		* Shortcut to {@link enyo.gesture.up}.
+		* Shortcut to [enyo.gesture.up()]{@link enyo.gesture.up}.
 		*
 		* @public
 		*/
@@ -278,7 +279,7 @@
 		},
 
 		/**
-		* Shortcut to {@link enyo.gesture.move}.
+		* Shortcut to [enyo.gesture.move()]{@link enyo.gesture.move}.
 		*
 		* @public
 		*/
@@ -287,7 +288,7 @@
 		},
 
 		/**
-		* Shortcut to {@link enyo.gesture.over}.
+		* Shortcut to [enyo.gesture.over()]{@link enyo.gesture.over}.
 		*
 		* @public
 		*/
@@ -296,7 +297,7 @@
 		},
 
 		/**
-		* Shortcut to {@link enyo.gesture.out}.
+		* Shortcut to [enyo.gesture.out()]{@link enyo.gesture.out}.
 		*
 		* @public
 		*/

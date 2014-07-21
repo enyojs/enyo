@@ -79,10 +79,10 @@
 	};
 
 	/**
-	* Returns true if the platform supports CSS3 Transforms.
+	* Returns `true` if the platform supports CSS3 Transforms.
 	*
-	* @returns {Boolean} `True` if its possible to use the CSS `transform` property, `false`
-	*	otherwise.
+	* @returns {Boolean} `true` if platform supports CSS `transform` property;
+	* otherwise, `false`.
 	* @public
 	*/
 	enyo.dom.canTransform = function() {
@@ -90,7 +90,7 @@
 	};
 
 	/**
-	* Returns true if platform supports CSS3 3D Transforms.
+	* Returns `true` if platform supports CSS3 3D Transforms.
 	*
 	* Typically used like this:
 	* ```
@@ -101,7 +101,8 @@
 	* }
 	* ```
 	*
-	* @returns {Boolean} `True` if platform supports CSS3 3D Transforms.
+	* @returns {Boolean} `true` if platform supports CSS3 3D Transforms;
+	* otherwise, `false`.
 	* @public
 	*/
 	enyo.dom.canAccelerate = function() {
@@ -109,11 +110,12 @@
 	};
 
 	/**
-	* Applies a series of transforms to _control_, using the platform's prefixed transform property.
+	* Applies a series of transforms to the specified {@link enyo.Control}, using
+	* the platform's prefixed `transform` property.
 	*
-	* **Note:** Transforms are not commutative, so order is important
+	* **Note:** Transforms are not commutative, so order is important.
 	*
-	* Transform values are updated by successive calls:
+	* Transform values are updated by successive calls, so
 	* ```javascript
 	* enyo.dom.transform(control, {translate: '30px, 40px', scale: 2, rotate: '20deg'});
 	* enyo.dom.transform(control, {scale: 3, skewX: '-30deg'});
@@ -124,18 +126,18 @@
 	* enyo.dom.transform(control, {translate: '30px, 40px', scale: 3, rotate: '20deg', skewX: '-30deg'});
 	* ```
 	*
-	* When applying these transforms in webkit browser, this is equivalent to:
+	* When applying these transforms in a WebKit browser, this is equivalent to:
 	* ```javascript
 	* control.applyStyle('-webkit-transform', 'translate(30px, 40px) scale(3) rotate(20deg) skewX(-30deg)');
 	* ```
 	*
-	* And in firefox, this is equivalent to:
+	* And in Firefox, this is equivalent to:
 	* ```javascript
 	* control.applyStyle('-moz-transform', 'translate(30px, 40px) scale(3) rotate(20deg) skewX(-30deg)');
 	* ```
 	*
 	* @param {enyo.Control} control The {@link enyo.Control} to transform.
-	* @param {Object} transforms The set of transforms to apply to _control_.
+	* @param {Object} transforms The set of transforms to apply to `control`.
 	* @public
 	*/
 	enyo.dom.transform = function(control, transforms) {
@@ -145,7 +147,7 @@
 	};
 
 	/**
-	* Apply a single transform to _control_.
+	* Applies a single transform to the specified {@link enyo.Control}.
 	*
 	* Example:
 	* ```
@@ -161,8 +163,8 @@
 	* This will rotate the tapped control by 45 degrees clockwise.
 	*
 	* @param {enyo.Control} control The {@link enyo.Control} to transform.
-	* @param {String} transform Name of the transform function.
-	* @param {(String|Number)} value The value to apply to the _transform_.
+	* @param {String} transform The name of the transform function.
+	* @param {(String|Number)} value The value to apply to the transform.
 	* @public
 	*/
 	enyo.dom.transformValue = function(control, transform, value) {
@@ -172,9 +174,10 @@
 	};
 
 	/**
-	* Applies a transform that should trigger GPU compositing for _control_. The acceleration, by
-	* default, is only applied if the browser supports it. You may also optionally force-set _value_
-	* directly, to be applied to the `translateZ(value)`.
+	* Applies a transform that should trigger GPU compositing for the specified
+	* {@link enyo.Control}. By default, the acceleration is only applied if the
+	* browser supports it. You may also optionally force-set `value` directly, to
+	* be applied to `translateZ(value)`.
 	*
 	* @param {enyo.Control} control The {@link enyo.Control} to accelerate.
 	* @param {(String|Number)} [value] An optional value to apply to the acceleration transform

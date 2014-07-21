@@ -13,8 +13,9 @@
 	);
 
 	/**
-	* Enyo supports a cross-platform set of drag events. These events allow users to write a single set
-	* of event handlers for applications that run on both mobile and desktop platforms.
+	* Enyo supports a cross-platform set of drag [events]{@glossary event}. These
+	* events allow users to write a single set of event handlers for applications
+	* that run on both mobile and desktop platforms.
 	*
 	* The following events are provided:
 	*
@@ -30,7 +31,7 @@
 	* * 'flick'
 	*
 	* For more information on these events, see the documentation on
-	* [User Input](building-apps/user-input.html) in the Enyo Developer Guide.
+	* [User Input]{@link building-apps/user-input.html} in the Enyo Developer Guide.
 	*
 	* @namespace enyo.gesture.drag
 	* @public

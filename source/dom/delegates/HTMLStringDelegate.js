@@ -4,9 +4,10 @@
 		meta: 1, command: 1, embed: 1, keygen: 1, wbr: 1, param: 1, source: 1, track: 1, col: 1};
 	
 	/**
-	* This is the default render delegate used by {@link enyo.Control}. It generates the HTML
-	* [string]{@glossary String} content and correctly inserts it into the DOM. This employs
-	* a string-concatenation technique to accomplish DOM insertion in batches.
+	* This is the default render delegate used by {@link enyo.Control}. It
+	* generates the HTML [string]{@glossary String} content and correctly inserts
+	* it into the DOM. A string-concatenation technique is used to perform DOM
+	* insertion in batches.
 	*
 	* @name enyo.HTMLStringDelegate
 	* @type Object

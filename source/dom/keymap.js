@@ -1,9 +1,11 @@
 (function (enyo, scope) {
 	/**
-	* Key mapping feature: Adds a _keySymbol_ property to key events, based on a global key mapping.
-	* Use {@link enyo.dispatcher.registerKeyMap} to add keyCode-to-keySymbol mappings via a simple
-	* hash. This method may be called multiple times from different libraries to mix different maps
-	* into the global mapping table; if conflicts arise, the last-in wins.
+	* Key mapping feature: Adds a `keySymbol` property to key [events]{@glossary event},
+	* based on a global key mapping. Use
+	* [enyo.dispatcher.registerKeyMap()]{@link enyo.dispatcher.registerKeyMap} to add
+	* keyCode-to-keySymbol mappings via a simple hash. This method may be called
+	* multiple times from different libraries to mix different maps into the global
+	* mapping table; if conflicts arise, the last-in wins.
 	*
 	* ```
 	* enyo.dispatcher.registerKeyMap({

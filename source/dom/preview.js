@@ -2,8 +2,8 @@
 	/**
 	* Dispatcher preview feature
 	* 
-	* Allow {@link enyo.Control} ancestors of the `event target` a chance (eldest first) to react
-	* via implementing "`previewDomEvent`" event.
+	* Allows {@link enyo.Control} ancestors of the [event]{@glossary event} target
+	* a chance (eldest first) to react by implementing `previewDomEvent`.
 	*
 	* @private
 	*/
@@ -36,9 +36,9 @@
 		},
 
 		/**
-		* We ascend, making a list of [enyo controls]{@link enyo.Control}.
+		* We ascend, making a list of Enyo [controls]{@link enyo.Control}.
 		*
-		* _NOTE: the control is considered its own ancestor._
+		* Note that a control is considered to be its own ancestor.
 		*
 		* @private
 		*/

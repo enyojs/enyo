@@ -4,7 +4,7 @@
 	* properties:
 	*
 	* * android
-	* * androidChrome _(Chrome on Android, standard starting in 4.1)_
+	* * androidChrome (Chrome on Android, standard starting in 4.1)
 	* * androidFirefox
 	* * ie
 	* * ios
@@ -12,9 +12,9 @@
 	* * windowsPhone
 	* * blackberry
 	* * tizen
-	* * safari _(desktop version)_
-	* * chrome _(desktop version)_
-	* * firefox _(desktop version)_
+	* * safari (desktop version)
+	* * chrome (desktop version)
+	* * firefox (desktop version)
 	* * firefoxOS
 	*
 	* If the property is defined, its value will be the major version number of the platform.
@@ -34,9 +34,9 @@
 	*/
 	enyo.platform = 
 		/** @lends enyo.platform */ {
-		//* True if the platform has native single-finger events
+		//* `true` if the platform has native single-finger [events]{@glossary event}.
 		touch: Boolean(('ontouchstart' in window) || window.navigator.msMaxTouchPoints),
-		//* True if the platform has native double-finger events
+		//* `true` if the platform has native double-finger [events]{@glossary event}.
 		gesture: Boolean(('ongesturestart' in window) || window.navigator.msMaxTouchPoints)
 	};
 
@@ -105,7 +105,7 @@
 	}
 	
 	/**
-	* These platforms only allow one argument for `console.log`:
+	* These platforms only allow one argument for [console.log()]{@glossary console.log}:
 	*
 	* * android
 	* * ios
