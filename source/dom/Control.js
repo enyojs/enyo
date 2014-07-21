@@ -1007,6 +1007,9 @@
 
 				// initialize the styles for this instance
 				this.style = this.kindStyle + this.style;
+				
+				// ensure that the default value assigned to showing is actually a boolean
+				this.showing = !! this.showing;
 
 				// super initialization
 				sup.apply(this, arguments);
@@ -1081,6 +1084,20 @@
 			return function (control) {
 				sup.apply(this, arguments);
 				control.removeClass(this.controlClasses);
+			};
+		}),
+		
+		/**
+		* @private
+		*/
+		set: enyo.inherit(function (sup) {
+			return function (path, value, opts) {
+				// this should be updated if a better api for hooking becomes available but for
+				// now we just do this directly to ensure that the showing value is actually
+				// a boolean
+				if (path == 'showing') {
+					return sup.call(this, path, !! value, opts);
+				} else return sup.apply(this, arguments);
 			};
 		}),
 
@@ -1263,7 +1280,9 @@
 		*/
 		setShowing: function (showing) {
 			var was = this.showing;
-			this.showing = showing;
+			
+			// force the showing property to always be a boolean value
+			this.showing = !! showing;
 
 			if (was != showing) this.notify('showing', was, showing);
 
