@@ -81,7 +81,7 @@
 
 		/**
 		* [Boolean]{@glossary Boolean} flag indicating whether HTML is allowed in
-		* this control's [`content`]{@link enyo.Control.content} property. If `false`
+		* this control's [content]{@link enyo.Control.content} property. If `false`
 		* (the default), HTML will be encoded into [HTML entities]{@glossary entity}
 		* (e.g., `&lt;` and `&gt;`) for literal visual representation.
 		*
@@ -129,7 +129,7 @@
 		controlClasses: '',
 
 		/**
-		* The text-based content of the Control. If the [`allowHtml`]{@link enyo.Control.allowHtml}
+		* The text-based content of the Control. If the [allowHtml]{@link enyo.Control.allowHtml}
 		* flag is set to `true`, you may set this property to an HTML string.
 		* @public
 		*/

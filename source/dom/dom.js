@@ -1,6 +1,6 @@
 (function(enyo, scope) {
 	/**
-	* Allow bootstrapping in environments that do not have a window object right away.
+	* Allows bootstrapping in environments that do not have a window object right away.
 	*
 	* @param {Function} func The function to run
 	* @public
@@ -16,8 +16,9 @@
 		/** @lends enyo.dom */ {
 
 		/**
-		* Shortcut for `document.getElementById` if _id_ is a string, otherwise returns _id_. Uses
-		* `_window.document_` unless a document is specified in the (optional) _doc_ parameter.
+		* Shortcut for `document.getElementById()` if `id` is a string; otherwise,
+		* returns `id`. Uses `window.document` unless a document is specified in the
+		* (optional) `doc` parameter.
 		*
 		* ```javascript
 		* // find 'node' if it's a string id, or return it unchanged if it's already a node reference
@@ -35,13 +36,13 @@
 
 		/**
 		* Returns a string with ampersand, less-than, and greater-than characters replaced with HTML
-		* entities, e.g.
+		* entities, e.g.,
 		* ```
 		* '&lt;code&gt;'This &amp; That'&lt;/code&gt;'
 		* ```
 		* becomes
 		* ```
-		* '&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;'
+		* '&amp;lt;code&amp;gt;'This &amp;amp; That'&amp;lt;/code&amp;gt;'
 		* ```
 		*
 		* @param {String} text A string with entities you'd like to escape/convert.
@@ -53,11 +54,11 @@
 		},
 
 		/**
-		* Returns an object describing the geometry of this node, like so:
+		* Returns an object describing the geometry of this node.
 		*
 		* @param {Node} n The [node]{@glossary Node} to measure.
-		* @returns {Object} An object containing the properties `top`, `left`, `height`, and
-		*	`width`.
+		* @returns {Object} An object containing the properties `top`, `left`,
+		* `height`, and `width`.
 		* @public
 		*/
 		getBounds: function(n) {
@@ -70,7 +71,7 @@
 		},
 
 		/**
-		* This is designed to be copied into the computedStyle object
+		* This is designed to be copied into the `computedStyle` object.
 		*
 		* @private
 		*/
@@ -198,8 +199,8 @@
 		},
 
 		/**
-		* The proportion by which the body tag differs from the window size, in both X and Y
-		* dimensions. This happens when we need to scale the whole interface down from 1920x1080
+		* The proportion by which the `body` tag differs from the window size, in both X and Y
+		* dimensions. This is relevant when we need to scale the whole interface down from 1920x1080
 		* (1080p) to 1280x720 (720p), for example.
 		*
 		* @private
@@ -297,7 +298,8 @@
 		},
 
 		/**
-		* Gets the calculated padding of a node. Shortcut for {@link enyo.dom.calcBoxExtents}.
+		* Gets the calculated padding of a node. Shortcut for
+		* [enyo.dom.calcBoxExtents()]{@link enyo.dom.calcBoxExtents}.
 		*
 		* @param {Node} node The [node]{@glossary Node} to measure.
 		* @returns {Object} An object containing the properties `top`, `right`, `bottom`, and
@@ -309,7 +311,8 @@
 		},
 
 		/**
-		* Gets the calculated margin of a node. Shortcut for {@link enyo.dom.calcBoxExtents}.
+		* Gets the calculated margin of a node. Shortcut for
+		* [enyo.dom.calcBoxExtents()]{@link enyo.dom.calcBoxExtents}.
 		*
 		* @param {Node} node The [node]{@glossary Node} to measure.
 		* @returns {Object} An object containing the properties `top`, `right`, `bottom`, and
@@ -323,7 +326,7 @@
 		* Returns an object like `{top: 0, left: 0, bottom: 100, right: 100, height: 10, width: 10}`
 		* that represents the object's position relative to `relativeToNode` (suitable for absolute
 		* positioning within that parent node). Negative values mean part of the object is not
-		* visible. If you leave `relativeToNode` `undefined` (or it is not a parent element), then
+		* visible. If you leave `relativeToNode` as `undefined` (or it is not a parent element), then
 		* the position will be relative to the viewport and suitable for absolute positioning in a
 		* floating layer.
 		*
@@ -408,7 +411,7 @@
 		},
 
 		/**
-		* Set the `innerHTML` property of a _node_ to _html_.
+		* Sets the `innerHTML` property of the specified `node` to `html`.
 		*
 		* @param {Node} node The [node]{@glossary Node} to set.
 		* @param {String} html An HTML string.
@@ -419,12 +422,12 @@
 		},
 
 		/**
-		* Check a [DOM]{@glossary Node} [node]{@glossary Node} for a specific CSS class.
+		* Checks a [DOM]{@glossary Node} [node]{@glossary Node} for a specific CSS class.
 		*
 		* @param {Node} node The [node]{@glossary Node} to set.
 		* @param {String} s The class name to check for.
-		* @returns {(Boolean|undefined)} True if the _node_ has the _s_ class. Undefined if there is
-		*	no _node_ or it has no className property.
+		* @returns {(Boolean|undefined)} `true` if `node` has the `s` class; `undefined`
+		* if there is no `node` or it has no `className` property.
 		* @public
 		*/
 		hasClass: function(node, s) {
@@ -433,7 +436,7 @@
 		},
 
 		/**
-		* Uniquely add a CSS class to a DOM node.
+		* Uniquely adds a CSS class to a DOM node.
 		*
 		* @param {Node} node The [node]{@glossary Node} to set.
 		* @param {String} s The class name to add.
@@ -447,10 +450,10 @@
 		},
 
 		/**
-		* Remove a CSS class from a DOM node if it exists.
+		* Removes a CSS class from a DOM node if it exists.
 		*
-		* @param {Node} node The [node]{@glossary Node} to set.
-		* @param {String} s The class name to remove from _node_.
+		* @param {Node} node The [node]{@glossary Node} from which to remove the class.
+		* @param {String} s The class name to remove from `node`.
 		* @public
 		*/
 		removeClass: function(node, s) {
@@ -461,8 +464,8 @@
 		},
 
 		/**
-		* Add a class to `document.body`. This defers the actual class change if nothing has been
-		* rendered into body yet.
+		* Adds a class to `document.body`. This defers the actual class change if nothing has been
+		* rendered into `body` yet.
 		*
 		* @param {String} s The class name to add to the document's `body`.
 		* @public
@@ -482,16 +485,16 @@
 
 		/**
 		* Returns an object describing the absolute position on the screen, relative to the top left
-		* point on the screen. This function takes into account account absolute/relative
-		* `offsetParent` positioning, `scroll` position, and CSS `transform`s (currently
+		* corner of the screen. This function takes into account account absolute/relative
+		* `offsetParent` positioning, `scroll` position, and CSS transforms (currently
 		* `translateX`, `translateY`, and `matrix3d`).
 		*
 		* ```javascript
 		* {top: ..., right: ..., bottom: ..., left: ..., height: ..., width: ...}
 		* ```
 		*
-		* Values returned are only valid if _hasNode()_ is truthy. If there's no DOM node for the
-		* object, this returns a bounds structure with _undefined_ as the value of all fields.
+		* Values returned are only valid if `hasNode()` is truthy. If there's no DOM node for the
+		* object, this returns a bounds structure with `undefined` as the value of all fields.
 		*
 		* @param {Node} n The [node]{@glossary Node} to measure.
 		* @returns {Object} An object containing the properties `top`, `right`, `bottom`, `left`,

@@ -164,7 +164,7 @@
 	};
 
 	/**
-	* Called in the context of an event
+	* Called in the context of an event.
 	*
 	* @private
 	*/
@@ -233,8 +233,8 @@
 		};
 
 		/**
-		* Removes the event listening and bubbling initiated by {@link enyo.makeBubble}() on a
-		* specific control.
+		* Removes the event listening and bubbling initiated by
+		* [enyo.makeBubble()]{@link enyo.makeBubble} on a specific control.
 		*
 		* @private
 		*/
@@ -259,7 +259,7 @@
 	enyo.requiresWindow(enyo.dispatcher.connect);
 
 	/**
-	* Generate a tapped event for a raw-click event
+	* Generates a tapped event for a raw-click event.
 	*
 	* @private
 	*/
@@ -279,9 +279,9 @@
 	);
 
 	/**
-	* Instead of having multiple _features_ pushed and handled in separate methods for these events
-	* we will handle them uniformly here to expose as accurate as possible the last known
-	* interaction coordinates.
+	* Instead of having multiple `features` pushed and handled in separate methods
+	* for these events, we handle them uniformly here to expose the last known
+	* interaction coordinates as accurately as possible.
 	*
 	* @private
 	*/
@@ -307,11 +307,13 @@
 	);
 
 	/**
-	* Retrieve the last known coordinates of the cursor or user-interaction point in _touch_
-	* environments. Returns an immutable object with the _clientX, clientY_, _pageX, pageY_ and
-	* _screenX, screenY_ properties. It is important to note that IE 8 and Opera have improper
-	* reporting for the _screenX, screenY_ properties (they both use CSS pixels as opposed to device
-	* pixels) and IE8 has no support for the _pageX, pageY_ properties so they are facaded.
+	* Retrieves the last known coordinates of the cursor or user-interaction point
+	* in touch environments. Returns an immutable object with the `clientX`,
+	* `clientY`, `pageX`, `pageY`, `screenX`, and `screenY` properties. It is
+	* important to note that IE8 and Opera have improper reporting for the
+	* `screenX` and `screenY` properties (they both use CSS pixels as opposed to
+	* device pixels) and IE8 has no support for the `pageX` and `pageY` properties,
+	* so they are facaded.
 	*
 	* @public
 	*/

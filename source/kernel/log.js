@@ -11,7 +11,7 @@
 		/**
 		* The log level to use. Can be from -1-99 where -1 disables all logging, 0 is 'error',
 		* 10 is 'warn' and 20 is 'log'. It is preferred that this value be set using the
-		* [`enyo.setLogLevel()`]{@link enyo.setLogLevel} method.
+		* [enyo.setLogLevel()]{@link enyo.setLogLevel} method.
 		*
 		* @type {Number}
 		* @default 99
@@ -117,10 +117,10 @@
 	};
 
 	/**
-	* A wrapper for [`console.log()`]{@glossary console.log}, compatible
+	* A wrapper for [console.log()]{@glossary console.log}, compatible
 	* across supported platforms. Will output only if the current
 	* [log level]{@link enyo.logging.level} allows it. [Object]{@glossary Object}
-	* parameters will be serialized via [`JSON.stringify()`]{@glossary JSON.stringify}
+	* parameters will be serialized via [JSON.stringify()]{@glossary JSON.stringify}
 	* automatically.
 	*
 	* @utility
@@ -133,10 +133,10 @@
 	};
 
 	/**
-	* A wrapper for [`console.warn()`]{@glossary console.warn}, compatible
+	* A wrapper for [console.warn()]{@glossary console.warn}, compatible
 	* across supported platforms. Will output only if the current
 	* [log level]{@link enyo.logging.level} allows it. [Object]{@glossary Object}
-	* parameters will be serialized via [`JSON.stringify()`]{@glossary JSON.stringify}
+	* parameters will be serialized via [JSON.stringify()]{@glossary JSON.stringify}
 	* automatically.
 	*
 	* @utility
@@ -149,10 +149,10 @@
 	};
 
 	/**
-	* A wrapper for [`console.error()`]{@glossary console.error}, compatible
+	* A wrapper for [console.error()]{@glossary console.error}, compatible
 	* across supported platforms. Will output only if the current
 	* [log level]{@link enyo.logging.level} allows it. [Object]{@glossary Object}
-	* parameters will be serialized via [`JSON.stringify()`]{@glossary JSON.stringify}
+	* parameters will be serialized via [JSON.stringify()]{@glossary JSON.stringify}
 	* automatically.
 	*
 	* @utility

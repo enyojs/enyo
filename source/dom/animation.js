@@ -57,7 +57,7 @@
 	*                            animation frame.
 	* @param {Node} node The DOM node to request the animation frame for.
 	* @returns {Object} A request id to be used with
-	*                     [`enyo.cancelRequestAnimationFrame()`]{@link enyo.cancelRequestAnimationFrame}.
+	*                     [enyo.cancelRequestAnimationFrame()]{@link enyo.cancelRequestAnimationFrame}.
 	* @public
 	*/
 	enyo.requestAnimationFrame = function(callback, node) {

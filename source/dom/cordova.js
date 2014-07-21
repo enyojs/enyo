@@ -1,7 +1,7 @@
 /**
-* Listens for Cordova specific events
+* Listens for Cordova-specific events
 * 
-* Events are exposed through the [Signals](#enyo.Signals) kind by adding callback handlers.
+* Events are exposed through the {@link enyo.Signals} kind by adding callback handlers.
 * 
 * Example:
 * ```
@@ -17,7 +17,8 @@
 * });
 * ```
 * 
-* List of Cordova events detailed on the [PhoneGap Docs](http://docs.phonegap.com/en/1.6.0/phonegap_events_events.md.html#Events)
+* Cordova events are described in detail in the
+* [PhoneGap Docs](http://docs.phonegap.com/en/1.6.0/phonegap_events_events.md.html#Events)
 *
 * @private
 */
