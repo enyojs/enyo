@@ -136,6 +136,21 @@
 		content: '',
 
 		/**
+		* Due to performace matter, developer could delay rendering of Control
+		* until when it becomes visible.
+		* You may set this property to true to postpone rendering.
+		* @public
+		*/
+		renderOnShow: false,
+		/**
+		* When you make a control which renderOnShow is true visible,
+		* you should know where it placed.
+		* To resolve this matter, we remember the position
+		* when we traverse component hierachy to generate HTML
+		* @private
+		*/
+		renderOnShowQueue: [],
+		/**
 		* @todo Find out how to document "handlers".
 		* @public
 		*/
@@ -646,6 +661,18 @@
 			var delegate = this.renderDelegate || Control.renderDelegate;
 			delegate.invalidate(this, 'content');
 		},
+		/**
+		* If developer would like to delay rendering of control
+		* until it is required to be shown actually,
+		* set renderOnShow to true.
+		* It means that _canGenerate_ becomes false and will be true 
+		* when you set showing to true
+		* @private
+		*/
+		renderOnShowChanged: function () {
+			if (!this.hasNode() && this.renderOnShow) this.showing = false;
+			this.setCanGenerate(!this.renderOnShow);
+		},
 
 		/**
 		* If the control has been generated, re-flows the control.
@@ -665,8 +692,16 @@
 
 			// if we are changing from not showing to showing we attempt to find whatever
 			// our last known value for display was or use the default
-			if (!was) this.applyStyle('display', this._display || '');
-
+			if (!was) {
+				this.applyStyle('display', this._display || '');
+				// If renderOnShow is true and generated is false then
+				// develper intended to make this control un-rendered 
+				// until there is a request to show
+				if (this.renderOnShow && !this.generated) {
+					this.setCanGenerate(true);
+					this.render();
+				}
+			}
 			// if we are supposed to be hiding the control then we need to cache our current
 			// display state
 			else if (!this.showing) {
@@ -1030,6 +1065,7 @@
 				// setup the id for this control if we have one
 				this.idChanged();
 				this.contentChanged();
+				this.renderOnShowChanged();
 			};
 		}),
 
@@ -1248,7 +1284,26 @@
 
 			return this;
 		},
-
+		/**
+			@public
+			@deprecated
+		*/
+		getRenderOnShow: function () {
+			return this.renderOnShow;
+		},
+		
+		/**
+			@public
+			@deprecated
+		*/
+		setRenderOnShow: function (can) {
+			var was = this.renderOnShow;
+			this.renderOnShow = can;
+			
+			if (was !== can) this.notify('renderOnShow', was, can);
+			
+			return this;
+		},
 		/**
 		* @deprecated
 		* @public

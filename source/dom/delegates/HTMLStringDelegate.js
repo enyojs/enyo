@@ -127,9 +127,25 @@
 		*/
 		generateHtml: function (control) {
 			var content,
-				html;
-			
-			if (control.canGenerate === false) {
+				html,
+				prevControl;
+				
+			// If previous control has enabled renderOnShow
+			// then renderOnShowQueue has an entity.
+			if (control.renderOnShowQueue.length) {
+				prevControl = control.renderOnShowQueue.pop();
+				// If prevControl and control are sibling
+				// then place prevControl before control
+				// If they are not sibling, just append prevControl to parent
+				if (prevControl.parent === control.parent) {
+					prevControl.addBefore = control;	
+				}				
+			}
+
+			if (control.canGenerate === false) {				
+				if (control.renderOnShow === true) {
+					control.renderOnShowQueue.push(control);
+				}
 				return '';
 			}
 			// do this first in case content generation affects outer html (styles or attributes)
