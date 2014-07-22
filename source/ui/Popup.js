@@ -46,8 +46,9 @@
 	* For more information, see the documentation on
 	* [Popups](building-apps/controls/popups.html) in the Enyo Developer Guide.
 	*
-	* @ui
 	* @class enyo.Popup
+	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -57,6 +58,11 @@
 		* @private
 		*/
 		name: 'enyo.Popup',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 
 		/**
 		* @private
@@ -324,7 +330,7 @@
 		/**
 		* @private
 		*/
-		calcViewportSize: function() {
+		calcViewportSize: function () {
 			if (window.innerWidth) {
 				return {
 					width: window.innerWidth,
@@ -342,7 +348,7 @@
 		/**
 		* @private
 		*/
-		updatePosition: function() {
+		updatePosition: function () {
 			var d = this.calcViewportSize();
 			var b = this.getBounds();
 
@@ -477,21 +483,21 @@
 		/**
 		* @private
 		*/
-		capture: function() {
+		capture: function () {
 			enyo.dispatcher.capture(this, this.eventsToCapture);
 		},
 
 		/**
 		* @private
 		*/
-		release: function() {
+		release: function () {
 			enyo.dispatcher.release(this);
 		},
 
 		/**
 		* @private
 		*/
-		capturedDown: function(sender, e) {
+		capturedDown: function (sender, e) {
 			//record the down event to verify in tap
 			this.downEvent = e;
 
@@ -505,7 +511,7 @@
 		/**
 		* @private
 		*/
-		capturedTap: function(sender, e) {
+		capturedTap: function (sender, e) {
 			// dismiss on tap if property is set and click started & ended outside the popup
 			if (this.autoDismiss && (!e.dispatchTarget.isDescendantOf(this)) && this.downEvent &&
 				(!this.downEvent.dispatchTarget.isDescendantOf(this))) {
@@ -520,7 +526,7 @@
 		* 
 		* @private
 		*/
-		dragstart: function(sender, e) {
+		dragstart: function (sender, e) {
 			var inScope = (e.dispatchTarget === this || e.dispatchTarget.isDescendantOf(this));
 			if (sender.autoDismiss && !inScope) {
 				sender.setShowing(false);
@@ -531,7 +537,7 @@
 		/**
 		* @private
 		*/
-		keydown: function(sender, e) {
+		keydown: function (sender, e) {
 			if (this.showing && this.autoDismiss && e.keyCode == 27 /* escape */) {
 				this.hide();
 			}
@@ -542,7 +548,7 @@
 		* 
 		* @private
 		*/
-		blur: function(sender, e) {
+		blur: function (sender, e) {
 			if (e.dispatchTarget.isDescendantOf(this)) {
 				this.lastFocus = e.originator;
 			}
@@ -554,7 +560,7 @@
 		* 
 		* @private
 		*/
-		focus: function(sender, e) {
+		focus: function (sender, e) {
 			var dt = e.dispatchTarget;
 			if (this.modal && !dt.isDescendantOf(this)) {
 				if (dt.hasNode()) {
@@ -570,7 +576,7 @@
 		/**
 		* @private
 		*/
-		requestShow: function() {
+		requestShow: function () {
 			this.show();
 			return true;
 		},
@@ -578,7 +584,7 @@
 		/**
 		* @private
 		*/
-		requestHide: function() {
+		requestHide: function () {
 			this.hide();
 			return true;
 		},
@@ -595,7 +601,7 @@
 		* location where the [popup]{@link enyo.Popup} would otherwise be positioned.
 		* @public
 		*/
-		showAtEvent: function(e, offset) {
+		showAtEvent: function (e, offset) {
 			// Calculate our ideal target based on the event position and offset
 			var p = {
 				left: e.centerX || e.clientX || e.pageX,
@@ -622,7 +628,7 @@
 		* top.
 		* @public
 		*/
-		showAtPosition: function(pos) {
+		showAtPosition: function (pos) {
 			// Save our target position for later processing
 			this.targetPosition = pos;
 

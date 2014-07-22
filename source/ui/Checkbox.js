@@ -14,9 +14,9 @@
 	* {@link enyo.Checkbox} implements an HTML checkbox [input]{@glossary input}, with
 	* support for grouping using {@link enyo.Group}.
 	*
-	* @ui
 	* @class enyo.Checkbox
 	* @extends enyo.Input
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -106,7 +106,7 @@
 		/**
 		* @private
 		*/
-		checkedChanged: function() {
+		checkedChanged: function () {
 			this.setNodeProperty('checked', this.checked);
 			this.setAttribute('checked', this.checked ? 'checked' : '');
 			this.setActive(this.checked);
@@ -119,7 +119,7 @@
 		* 
 		* @private
 		*/
-		activeChanged: function() {
+		activeChanged: function () {
 			this.active = enyo.isTrue(this.active);
 			this.setChecked(this.active);
 			this.bubble('onActivate');
@@ -134,7 +134,7 @@
 		* `false`.
 		* @public
 		*/
-		setValue: function(val) {
+		setValue: function (val) {
 			this.setChecked(enyo.isTrue(val));
 		},
 
@@ -146,14 +146,14 @@
 		* otherwise, `false`.
 		* @public
 		*/
-		getValue: function() {
+		getValue: function () {
 			return this.getChecked();
 		},
 
 		/**
 		* @private
 		*/
-		valueChanged: function() {
+		valueChanged: function () {
 
 		/**
 		* @private
@@ -162,7 +162,7 @@
 		// which does not apply to checkbox (uses "checked") so
 		// we squelch the inherited method
 		},
-		change: function() {
+		change: function () {
 			var nodeChecked = enyo.isTrue(this.getNodeProperty('checked'));
 			this.setActive(nodeChecked);
 		},
@@ -170,7 +170,7 @@
 		/**
 		* @private
 		*/
-		click: function(sender, e) {
+		click: function (sender, e) {
 			// Various versions of IE (notably IE8) do not fire 'onchange' for
 			// checkboxes, so we discern change via 'click'.
 			// Note: keyboard interaction (e.g. pressing space when focused) fires

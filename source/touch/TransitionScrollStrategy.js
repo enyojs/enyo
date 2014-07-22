@@ -832,7 +832,7 @@
 		*
 		* @private
 		*/
-		beyondBoundary: function (current,boundary,max) {
+		beyondBoundary: function (current, boundary, max) {
 			return (Math.abs(Math.abs(boundary) - Math.abs(current)) > Math.abs(max));
 		},
 		

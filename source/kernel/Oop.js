@@ -400,7 +400,7 @@
 		* @memberof enyo.kind
 		* @public
 		*/
-		subclass: function(ctor, props) {},
+		subclass: function (ctor, props) {},
 
 		/**
 		* Allows for extension of the current [kind]{@glossary kind} without
@@ -491,7 +491,7 @@
 	/**
 	* @private
 	*/
-	enyo.constructorForKind = function(kind) {
+	enyo.constructorForKind = function (kind) {
 		if (kind === null) {
 			return kind;
 		} else if (kind === undefined) {

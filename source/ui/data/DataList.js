@@ -50,9 +50,9 @@
 	* by calling [addListener()]{@link enyo.EventEmitter#addListener} and specifying the
 	* event, along with a callback method.
 	*
-	* @ui
 	* @class enyo.DataList
 	* @extends enyo.DataRepeater
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -346,7 +346,7 @@
 		* 
 		* @private
 		*/
-		remove: function(idx) {},
+		remove: function (idx) {},
 
 		/**
 		* Overloaded to call a method of the [delegate]{@glossary delegate} strategy.
@@ -369,7 +369,7 @@
 		*
 		* @private
 		*/
-		modelsRemoved: enyo.inherit(function(sup) {
+		modelsRemoved: enyo.inherit(function (sup) {
 			return function modelsRemoved(c, e, props) {
 				if (c === this.collection && this.$.scroller.canGenerate) {
 					if (this.get('absoluteShowing')) {
@@ -420,7 +420,7 @@
 		*
 		* @private
 		*/
-		didScroll: function (sender, event) {
+		didScroll: function (sender, e) {
 			if (this.hasRendered && this.collection) {
 				if (this.heightNeedsUpdate || this.widthNeedsUpdate) {
 					// assign this here so that if for any reason it needs to
@@ -428,7 +428,7 @@
 					this.heightNeedsUpdate = this.widthNeedsUpdate = false;
 					this.refresh();
 				}
-				this.delegate.didScroll(this, event);
+				this.delegate.didScroll(this, e);
 			}
 			return true;
 		},
@@ -439,7 +439,7 @@
 		*
 		* @private
 		*/
-		didResize: function (sender, event) {
+		didResize: function (sender, e) {
 			if (this.get('absoluteShowing')) {
 				if (this.hasRendered && this.collection) {
 					if (this.heightNeedsUpdate || this.widthNeedsUpdate) {
@@ -448,7 +448,7 @@
 						this.heightNeedsUpdate = this.widthNeedsUpdate = false;
 						this.refresh();
 					}
-					this.delegate.didResize(this, event);
+					this.delegate.didResize(this, e);
 				}
 			} else {
 				this._addToShowingQueue('didResize', this.didResize);
@@ -459,7 +459,7 @@
 		* @private
 		*/
 		showingChangedHandler: enyo.inherit(function (sup) {
-			return function (inSender, inEvent) {
+			return function (sender, e) {
 				this.set('absoluteShowing', this.getAbsoluteShowing(true));
 				
 				return sup.apply(this, arguments);

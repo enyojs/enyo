@@ -25,8 +25,9 @@
 	* radio groups from arbitrary [components]{@link enyo.Component} that support the
 	* {@link enyo.GroupItem} API.
 	*
-	* @ui
 	* @class enyo.Group
+	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -36,6 +37,11 @@
 		* @private
 		*/
 		name: 'enyo.Group',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 
 		/**
 		* @private
@@ -101,7 +107,7 @@
 		/**
 		* @private
 		*/
-		activate: function(sender, e) {
+		activate: function (sender, e) {
 			if ((this.groupName || e.originator.groupName) && (e.originator.groupName != this.groupName)) {
 				return;
 			}
@@ -134,10 +140,10 @@
 		* @fires enyo.Group#onActiveChanged
 		* @private
 		*/
-		activeChanged: function(inOld) {
-			if (inOld) {
-				inOld.setActive(false);
-				inOld.removeClass('active');
+		activeChanged: function (was) {
+			if (was) {
+				was.setActive(false);
+				was.removeClass('active');
 			}
 			if (this.active) {
 				this.active.addClass('active');

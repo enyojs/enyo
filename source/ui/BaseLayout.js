@@ -40,7 +40,7 @@
 		* 
 		* @public
 		*/
-		reflow: function() {
+		reflow: function () {
 			enyo.forEach(this.container.children, function(c) {
 				if (c.fit !== null) {
 					c.addRemoveClass('enyo-fit', c.fit);

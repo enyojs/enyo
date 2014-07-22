@@ -24,8 +24,9 @@
 	* For an example of how this works, see the {@link enyo.Group} kind, which enables the
 	* creation of radio groups from arbitrary components that	support the Grouping API.
 	*
-	* @ui
 	* @class enyo.GroupItem
+	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -35,6 +36,11 @@
 		* @private
 		*/
 		name: 'enyo.GroupItem',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 
 		/**
 		* @private
@@ -67,7 +73,7 @@
 		* @fires enyo.GroupItem#onActivate
 		* @private
 		*/
-		activeChanged: function() {
+		activeChanged: function () {
 			this.bubble('onActivate');
 		}
 	});

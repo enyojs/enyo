@@ -40,7 +40,7 @@
 		* @method
 		* @private
 		*/
-		create: enyo.inherit(function(sup) {
+		create: enyo.inherit(function (sup) {
 			return function() {
 				// debugger;
 				this._stylesheet_tag = this.owner.createComponent({kind: 'enyo.Style'}, {owner: this});
@@ -61,7 +61,7 @@
 		* @method
 		* @private
 		*/
-		stylesheetContentChanged: enyo.inherit(function(sup) {
+		stylesheetContentChanged: enyo.inherit(function (sup) {
 			return function() {
 				sup.apply(this, arguments);
 				this._stylesheet_tag.set('content', this.stylesheetContent);
@@ -75,7 +75,7 @@
 		* @method
 		* @public
 		*/
-		addStylesheetContent: enyo.inherit(function(sup) {
+		addStylesheetContent: enyo.inherit(function (sup) {
 			return function(newStyle) {
 				sup.apply(this, arguments);
 				var existingStyle = this.get('stylesheetContent');
@@ -86,7 +86,7 @@
 		/**
 		* @private
 		*/
-		_stylesheet_getId: function() {
+		_stylesheet_getId: function () {
 			return this.getId() + this._stylesheet_id_suffix;
 		}
 	};

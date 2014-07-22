@@ -40,7 +40,7 @@
 		/**
 		* @private
 		*/
-		contentChanged: function() {
+		contentChanged: function () {
 			this.content = '<!--\n' + this.content + '\n-->';
 			this.inherited(arguments);
 		}

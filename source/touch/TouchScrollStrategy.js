@@ -724,7 +724,7 @@
 		/**
 		* @private
 		*/
-		effectOverscroll: function(x, y) {
+		effectOverscroll: function (x, y) {
 			var n = this.scrollNode;
 			var xt = '0', yt = '0', zt = this.accel ? ',0' : '';
 			if (y !== null && Math.abs(y - n.scrollTop) > 1) {
