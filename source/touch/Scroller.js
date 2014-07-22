@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* An [object]{@link enyo.Object} representing the scroll boundaries.
+	* An [object]{@glossary Object} representing the scroll boundaries.
 	*
 	* @typedef {Object} enyo.Scroller~BoundaryObject
 	* @property {Number} left The left scroll position.
@@ -13,15 +13,15 @@
 	*	screen.
 	* @property {Number} width The horizontal size of the full area of the scrolled region.
 	* @property {Number} height The vertical size of the full area of the scrolled region.
-	* @property {Number} xDir Either 1, -1, or 0, indicating positive/negative movement along the 
-	*	x-axis or none at all, respectively.
-	* @property {Number} yDir Either 1, -1, or 0, indicating positive/negative movement along the
-	*	y-axis or none at all, respectively.
+	* @property {Number} xDir Either 1, -1, or 0, indicating positive movement along the 
+	*	x-axis, negative movement, or no movement, respectively.
+	* @property {Number} yDir Either 1, -1, or 0, indicating positive movement along the
+	*	y-axis, negative movement, or no movement, respectively.
 	*/
 
 
 	/**
-	* An [object]{@link enyo.Object} representing the overscroll boundaries.
+	* An [object]{@glossary Object} representing the overscroll boundaries.
 	*
 	* @typedef {Object} enyo.Scroller~OverscrollBoundaryObject
 	* @property {Number} overleft The left overscroll position.
@@ -30,7 +30,7 @@
 
 	/**
 	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided 
-	* when a scroll [event]{@glossary event} is fired.
+	* when a scroll event is fired.
 	*
 	* @typedef {Object} enyo.Scroller~ScrollEvent
 	* @property {enyo.Scroller~BoundaryObject} bounds Current values of scroller bounds.
@@ -44,7 +44,7 @@
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @public
 	*/
 
@@ -56,7 +56,7 @@
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @public
 	*/
 
@@ -68,22 +68,22 @@
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @public
 	*/
 
 	/**
-	* _enyo.Scroller_ is a scroller suitable for use in both desktop and mobile applications.
+	* {@link enyo.Scroller} is a scroller suitable for use in both desktop and mobile applications.
 	* 
 	* In some mobile environments, a default scrolling solution is not implemented for DOM elements.
-	* In such cases, _enyo.Scroller_ implements a touch-based scrolling solution, which may be opted
+	* In such cases, `enyo.Scroller` implements a touch-based scrolling solution, which may be opted
 	* into either globally (by setting 
-	* [_enyo.Scroller.touchScrolling_]{@link enyo.Scroller#touchScrolling} to `true`) or on a 
-	* per-instance basis (by specifying a [_strategyKind_]{@link enyo.Scroller#strategyKind} of 
+	* [enyo.Scroller.touchScrolling]{@link enyo.Scroller#touchScrolling} to `true`) or on a 
+	* per-instance basis (by specifying a [strategyKind]{@link enyo.Scroller#strategyKind} of 
 	* `"TouchScrollStrategy"`).
 	* 
 	* For more information, see the documentation on
-	* [Scrollers](building-apps/layout/scrollers.html) in the Enyo Developer Guide.
+	* [Scrollers]{@link building-apps/layout/scrollers.html} in the Enyo Developer Guide.
 	*
 	* @class enyo.Scroller
 	* @public
@@ -103,9 +103,9 @@
 			/** @lends enyo.Scroller.prototype */ {
 
 			/**
-			* Specifies how to horizontally scroll.  Acceptable values are 'scroll', 'auto', 
-			* 'hidden' and 'default'. The precise effect of the setting is determined by the scroll 
-			* strategy.
+			* Specifies how to horizontally scroll.  Acceptable values are `'scroll'`, `'auto'`,
+			* `'hidden'`, and `'default'`. The precise effect of the setting is determined by the
+			* scroll strategy.
 			* 
 			* @type {String}
 			* @default 'default'
@@ -114,8 +114,9 @@
 			horizontal: 'default',
 
 			/**
-			* Specifies how to vertically scroll.  Acceptable values are 'scroll', 'auto', 'hidden',
-			* and 'default'. The precise effect of the setting is determined by the scroll strategy.
+			* Specifies how to vertically scroll.  Acceptable values are `'scroll'`, `'auto'`,
+			* `'hidden'`, and `'default'`. The precise effect of the setting is determined by the
+			* scroll strategy.
 			* 
 			* @type {String}
 			* @default 'default'
@@ -142,7 +143,7 @@
 			scrollLeft: 0,
 
 			/**
-			* Maximum height of the scroll content
+			* Maximum height of the scroll content.
 			* 
 			* @type {Number}
 			* @default null
@@ -154,7 +155,7 @@
 			/**
 			* Set to `true` to make this [scroller]{@link enyo.Scroller} select a 
 			* platform-appropriate touch-based scrolling strategy. Note that if you specify a value 
-			* for [_strategyKind_]{@link enyo.Scroller#strategyKind}, that will take precedence over
+			* for [strategyKind]{@link enyo.Scroller#strategyKind}, that will take precedence over
 			* this setting.
 			* 
 			* @type {Boolean}
@@ -173,7 +174,7 @@
 			*	mechanism.
 			* - [TranslateScrollStrategy]{@link enyo.TranslateScrollStrategy} implements a touch 
 			*	scrolling mechanism using translations; it is currently recommended only for Android
-			*	3 and 4 & Windows Phone 8.
+			*	3 and 4, and Windows Phone 8.
 			* - [TransitionScrollStrategy]{@link enyo.TransitionScrollStrategy} implements a touch 
 			*	scrolling mechanism using CSS transitions; it is currently recommended only for iOS 
 			*	5 and later.
@@ -194,7 +195,7 @@
 			thumb: true,
 
 			/**
-			* Use mouse wheel to move [scroller]{@link enyo.Scroller}.
+			* If `true`, mouse wheel may be used to move the [scroller]{@link enyo.Scroller}.
 			* 
 			* @type {Boolean}
 			* @default true
@@ -213,7 +214,7 @@
 		},
 
 		/**
-		* If `true`, globally enables touch scrolling.
+		* If `true`, enables touch scrolling globally.
 		*
 		* @name touchScrolling
 		* @type {Boolean}
@@ -223,7 +224,7 @@
 		*/
 
 		/**
-		* If `true` and a touch [scroller]{@link enyo.Scroller}, the [scroller]{@link enyo.Scroller}
+		* If `true` and this is a touch [scroller]{@link enyo.Scroller}, the scroller
 		* will overscroll and bounce back at the edges.
 		*
 		* @type {Boolean}
@@ -233,7 +234,7 @@
 		touchOverscroll: true,
 
 		/**
-		* If `true`, the [scroller]{@link enyo.Scroller} will not propagate _dragstart_ 
+		* If `true`, the [scroller]{@link enyo.Scroller} will not propagate `dragstart` 
 		* [events]{@glossary event} that cause it to start scrolling.
 		*
 		* @type {Boolean}
@@ -253,7 +254,7 @@
 		preventScrollPropagation: true,
 
 		/**
-		* Needed to allow global mods to enyo.Scroller.touchScrolling
+		* Needed to allow global mods to `enyo.Scroller.touchScrolling`.
 		* 
 		* @private
 		*/
@@ -495,7 +496,7 @@
 		// property value changes, not if getter changes.
 		
 		/**
-		* Set the horizontal scroll position.
+		* Sets the horizontal scroll position.
 		*
 		* @param {Number} left The horizontal scroll position in pixels.
 		* @public
@@ -509,7 +510,7 @@
 		},
 
 		/**
-		* Set the vertical scroll position.
+		* Sets the vertical scroll position.
 		*
 		* @param {Number} top The vertical scroll position in pixels.
 		* @public
@@ -523,7 +524,7 @@
 		},
 
 		/**
-		* Retrieve the horizontal scroll position.
+		* Retrieves the horizontal scroll position.
 		*
 		* @returns {Number} The horizontal scroll position in pixels.
 		* @public
@@ -535,7 +536,7 @@
 		},
 
 		/**
-		* Retrieve the vertical scroll position.
+		* Retrieves the vertical scroll position.
 		*
 		* @returns {Number} The vertical scroll position in pixels.
 		* @private
@@ -547,7 +548,7 @@
 		},
 
 		/**
-		* Retrieve the scroll boundaries of the [scroller]{@link enyo.Scroller}.
+		* Retrieves the scroll boundaries of the [scroller]{@link enyo.Scroller}.
 		* 
 		* @returns {enyo.Scroller~BoundaryObject} An [object]{@glossary Object} describing the 
 		*	scroll boundaries.
@@ -570,10 +571,10 @@
 		/**
 		* Scrolls the given [control]{@link enyo.Control} into view.
 		*
-		* @param {enyo.Control} ctl The [control]{@link enyo.Control} to make visible in the 
+		* @param {enyo.Control} ctl The control to make visible in the 
 		*	[scroller's]{@link enyo.Scroller} viewport.
-		* @param {Boolean} alignWithTop If `true`, the node is aligned with the top of the
-		*	[scroller]{@link enyo.Scroller}.
+		* @param {Boolean} alignWithTop If `true`, the node is aligned with the top
+		* of the scroller.
 		* @public
 		*/
 		scrollIntoView: function (ctl, alignWithTop) {
@@ -581,10 +582,10 @@
 		},
 
 		/** 
-		* Scrolls to the position specified.
+		* Scrolls to the specified position.
 		*
-		* @param {Number} x The _x_ position in pixels.
-		* @param {Number} y The _y_ position in pixels.
+		* @param {Number} x The `x` position in pixels.
+		* @param {Number} y The `y` position in pixels.
 		* @public
 		*/
 		scrollTo: function (x, y) {
@@ -594,14 +595,14 @@
 		/**
 		* Ensures that the given [control]{@link enyo.Control} is visible in the 
 		* [scroller's]{@link enyo.Scroller} viewport. Unlike 
-		* [_scrollIntoView_]{@link enyo.Scroller#scrollIntoView}, which uses DOM's 
-		* [_scrollIntoView_]{@glossary scrollIntoView}, this only affects the current 
-		* [scroller]{@link enyo.Scroller}.
+		* [scrollIntoView()]{@link enyo.Scroller#scrollIntoView}, which uses DOM's 
+		* [scrollIntoView()]{@glossary scrollIntoView}, this only affects the current 
+		* scroller.
 		*
 		* @param {enyo.Control} ctl The [control]{@link enyo.Control} to make visible in the 
 		*	[scroller's]{@link enyo.Scroller} viewport.
 		* @param {Boolean} alignWithTop If `true`, the node is aligned with the top of the
-		*	[scroller]{@link enyo.Scroller}.
+		*	scroller.
 		* @public
 		*/
 		scrollToControl: function (ctl, alignWithTop) {
@@ -614,7 +615,7 @@
 		* @param {Node} node The node to make visible in the [scroller's]{@link enyo.Scroller}
 		*	viewport.
 		* @param {Boolean} alignWithTop If `true`, the node is aligned with the top of the
-		*	[scroller]{@link enyo.Scroller}.
+		*	scroller.
 		* @public
 		*/
 		scrollToNode: function (node, alignWithTop) {
@@ -622,7 +623,7 @@
 		},
 
 		/** 
-		* Adds current values of getScrollBounds to [event]{@glossary event}.
+		* Adds current values of `getScrollBounds()` to [event]{@glossary event}.
 		* 
 		* @private
 		*/
@@ -656,7 +657,7 @@
 		},
 
 		/** 
-		* Normalizes scroll [event]{@glossary event} to _onScroll_.
+		* Normalizes scroll [event]{@glossary event} to `onScroll`.
 		*
 		* @fires enyo.Scroller#event:onScroll
 		* @private
@@ -672,7 +673,7 @@
 		},
 
 		/**
-		* @returns {Boolean} Returns `true` if the current scroll [event]{@glossary event} 
+		* @returns {Boolean} `true` if the current scroll [event]{@glossary event} 
 		*	should be stopped; `false` if it should be allowed to propagate.
 		* @private
 		*/
@@ -682,7 +683,7 @@
 		},
 
 		/**
-		* Calls [_shouldStopScrollEvent_]{@link enyo.Scroller#shouldStopScrollEvent} to determine 
+		* Calls [shouldStopScrollEvent()]{@link enyo.Scroller#shouldStopScrollEvent} to determine 
 		* whether current scroll [event]{@glossary event} should be stopped.
 		*
 		* @private
@@ -718,7 +719,7 @@
 		},
 
 		/**
-		* Calls [_shouldStopScrollEvent_]{@link enyo.Scroller#shouldStopScrollEvent} to determine 
+		* Calls [shouldStopScrollEvent()]{@link enyo.Scroller#shouldStopScrollEvent} to determine 
 		* whether current scroll [event]{@glossary event} should be stopped.
 		*
 		* @private
@@ -732,7 +733,7 @@
 		},
 
 		/**
-		* Scroll to the top of the scrolling region.
+		* Scrolls to the top of the scrolling region.
 		*
 		* @public
 		*/
@@ -741,7 +742,7 @@
 		},
 
 		/**
-		* Scroll to the bottom of the scrolling region.
+		* Scrolls to the bottom of the scrolling region.
 		*
 		* @public
 		*/
@@ -750,7 +751,7 @@
 		},
 
 		/**
-		* Scroll to the right edge of the scrolling region.
+		* Scrolls to the right edge of the scrolling region.
 		*
 		* @public
 		*/
@@ -759,7 +760,7 @@
 		},
 
 		/**
-		* Scroll to the left edge of the scrolling region.
+		* Scrolls to the left edge of the scrolling region.
 		*
 		* @public
 		*/
@@ -780,7 +781,7 @@
 		},
 
 		/**
-		* Send the [useMouseWheel]{@link enyo.Scroller#useMouseWheel} property to the scroll 
+		* Sends the [useMouseWheel]{@link enyo.Scroller#useMouseWheel} property to the scroll 
 		* strategy.
 		*
 		* @private

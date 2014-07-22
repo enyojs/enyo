@@ -1,12 +1,11 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.ScrollStrategy_ is a helper [kind]{@glossary kind} that implements a default 
+	* {@link enyo.ScrollStrategy} is a helper [kind]{@glossary kind} that implements a default 
 	* scrolling strategy for an {@link enyo.Scroller}.
 	* 
-	* _enyo.ScrollStrategy_ is not typically created in application code. Instead, it is specified 
-	* as the value of the [`strategyKind`]{@link enyo.Scroller#strategyKind} property of an
-	* [`enyo.Scroller`]{@link enyo.Scroller} or {@link enyo.List}, or is used by the framework 
-	* implicitly.
+	* `enyo.ScrollStrategy` is not typically created in application code. Instead, it is specified 
+	* as the value of the [strategyKind]{@link enyo.Scroller#strategyKind} property of an
+	* `enyo.Scroller` or {@link enyo.List}, or is used by the framework implicitly.
 	*
 	* @class enyo.ScrollStrategy
 	* @protected
@@ -31,8 +30,9 @@
 			/** @lends enyo.ScrollStrategy.prototype */ {
 			
 			/**
-			* Specifies how to vertically scroll.  Acceptable values are 'scroll', 'auto', 'hidden',
-			* and 'default'. The precise effect of the setting is determined by the scroll strategy.
+			* Specifies how to vertically scroll.  Acceptable values are `'scroll'`, `'auto'`,
+			* `'hidden'`, and `'default'`. The precise effect of the setting is determined by the
+			* scroll strategy.
 			* 
 			* @type {String}
 			* @default 'default'
@@ -41,9 +41,9 @@
 			vertical: 'default',
 			
 			/**
-			* Specifies how to horizontally scroll.  Acceptable values are 'scroll', 'auto', 
-			* 'hidden' and 'default'. The precise effect of the setting is determined by the scroll 
-			* strategy.
+			* Specifies how to horizontally scroll.  Acceptable values are `'scroll'`, `'auto'`,
+			* `'hidden'`, and `'default'`. The precise effect of the setting is determined by the
+			* scroll strategy.
 			* 
 			* @type {String}
 			* @default 'default'
@@ -70,7 +70,7 @@
 			scrollTop: 0,
 			
 			/**
-			* Maximum height of the scroll content
+			* Maximum height of the scroll content.
 			* 
 			* @type {Number}
 			* @default null
@@ -79,7 +79,7 @@
 			maxHeight: null,
 			
 			/**
-			* Use mouse wheel to move [scroller]{@link enyo.Scroller}.
+			* Indicates whether mouse wheel may be used to move the [scroller]{@link enyo.Scroller}.
 			* 
 			* @type {Boolean}
 			* @default true
@@ -164,10 +164,10 @@
 		},
 
 		/** 
-		* Scrolls to the position specified.
+		* Scrolls to the specified position.
 		*
-		* @param {Number} x The _x_ position in pixels.
-		* @param {Number} y The _y_ position in pixels.
+		* @param {Number} x The `x` position in pixels.
+		* @param {Number} y The `y` position in pixels.
 		* @public
 		*/
 		scrollTo: function (x, y) {
@@ -183,7 +183,7 @@
 		* @param {Node} node The node to make visible in the [scroller's]{@link enyo.Scroller}
 		*	viewport.
 		* @param {Boolean} alignWithTop If `true`, the node is aligned with the top of the
-		*	[scroller]{@link enyo.Scroller}.
+		*	scroller.
 		* @public
 		*/
 		scrollToNode: function (node, alignWithTop) {
@@ -208,7 +208,7 @@
 		* @param {enyo.Control} ctl The [control]{@link enyo.Control} to make visible in the 
 		*	[scroller's]{@link enyo.Scroller} viewport.
 		* @param {Boolean} alignWithTop If `true`, the node is aligned with the top of the
-		*	[scroller]{@link enyo.Scroller}.
+		*	scroller.
 		* @public
 		*/
 		scrollIntoView: function (ctl, alignWithTop) {
@@ -226,7 +226,7 @@
 		},
 
 		/**
-		* Set the vertical scroll position.
+		* Sets the vertical scroll position.
 		*
 		* @param {Number} top The vertical scroll position in pixels.
 		* @public
@@ -239,7 +239,7 @@
 		},
 
 		/**
-		* Set the horizontal scroll position.
+		* Sets the horizontal scroll position.
 		*
 		* @param {Number} left The horizontal scroll position in pixels.
 		* @public
@@ -252,7 +252,7 @@
 		},
 
 		/**
-		* Retrieve the horizontal scroll position.
+		* Retrieves the horizontal scroll position.
 		*
 		* @returns {Number} The horizontal scroll position in pixels.
 		* @public
@@ -262,7 +262,7 @@
 		},
 
 		/**
-		* Retrieve the vertical scroll position.
+		* Retrieves the vertical scroll position.
 		*
 		* @returns {Number} The vertical scroll position in pixels.
 		* @private
@@ -298,7 +298,7 @@
 		},
 
 		/**
-		* Retrieve the scroll boundaries of the [scroller]{@link enyo.Scroller}.
+		* Retrieves the scroll boundaries of the [scroller]{@link enyo.Scroller}.
 		* 
 		* @returns {enyo.Scroller~BoundaryObject} An [object]{@glossary Object} describing the 
 		*	scroll boundaries.
@@ -365,8 +365,8 @@
 		},
 
 		/**
-		* NOTE: Mobile native [scrollers]{@link enyo.Scroller} need touchmove. Indicate this by 
-		* setting the _requireTouchmove_ property to `true`.
+		* NOTE: Mobile native [scrollers]{@link enyo.Scroller} need `touchmove`. Indicate this by 
+		* setting the `requireTouchmove` property to `true`.
 		* 
 		* @private
 		*/

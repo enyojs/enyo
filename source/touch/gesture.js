@@ -2,7 +2,7 @@
 
 	/**
 	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided when we
-	* emulate iOS gesture [events]{@glossary event} on non-iOS devices.
+	* emulate iOS gesture events on non-iOS devices.
 	*
 	* @typedef {Object} enyo.gesture~EmulatedGestureEvent
 	* @property {Number} pageX The x-coordinate of the center point between fingers.
@@ -122,7 +122,7 @@
 		},
 
 		/**
-		* Find rotation angle.
+		* Finds rotation angle.
 		* 
 		* @private
 		*/
@@ -143,7 +143,7 @@
 		},
 
 		/**
-		* Find bounding box.
+		* Finds bounding box.
 		* 
 		* @private
 		*/

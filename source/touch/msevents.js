@@ -81,7 +81,7 @@
 		};
 
 		/**
-		* Alias in the older MS versions.
+		* Aliases in the older MS versions.
 		* 
 		* @private
 		*/
@@ -95,7 +95,7 @@
 		}
 
 		/**
-		* Tell Enyo to listen for these [events]{@glossary event}.
+		* Tells Enyo to listen for these [events]{@glossary event}.
 		* 
 		* @private
 		*/
@@ -104,7 +104,7 @@
 		});
 
 		/**
-		* Add our transform methods to the dispatcher features list.
+		* Adds our transform methods to the dispatcher features list.
 		* 
 		* @private
 		*/

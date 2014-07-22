@@ -1,11 +1,11 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.TranslateScrollStrategy_ is a helper [kind]{@glossary kind} that extends
+	* {@link enyo.TranslateScrollStrategy} is a helper [kind]{@glossary kind} that extends
 	* {@link enyo.TouchScrollStrategy}, optimizing it for scrolling environments in which effecting 
-	* scroll changes with transforms is fastest.
+	* scroll changes with transforms using CSS translations is fastest.
 	* 
-	* _enyo.TranslateScrollStrategy_ is not typically created in application code. Instead, it is 
-	* specified as the value of the [_strategyKind_]{@link enyo.Scroller#strategyKind} property of 
+	* `enyo.TranslateScrollStrategy` is not typically created in application code. Instead, it is 
+	* specified as the value of the [strategyKind]{@link enyo.Scroller#strategyKind} property of 
 	* an {@link enyo.Scroller} or {@link enyo.List}, or is used by the framework implicitly.
 	*
 	* @class enyo.TranslateScrollStrategy
@@ -29,7 +29,7 @@
 		* Set to `true` to optimize the strategy to only use translation to scroll; this increases 
 		* fluidity of scrolling animation. It should not be used when the 
 		* [scroller]{@link enyo.Scroller} contains [controls]{@link enyo.Control} that require 
-		* keyboard input. This is because when _translateOptimized_ is `true`, it is possible to 
+		* keyboard input. This is because when `translateOptimized` is `true`, it is possible to 
 		* position inputs such that they will not become visible when focused.
 		*
 		* @type {Boolean}
@@ -121,7 +121,7 @@
 		}),
 		
 		/**
-		* Set the horizontal scroll position.
+		* Sets the horizontal scroll position.
 		*
 		* @param {Number} left The horizontal scroll position in pixels.
 		* @method
@@ -141,7 +141,7 @@
 		}),
 		
 		/**
-		* Set the vertical scroll position.
+		* Sets the vertical scroll position.
 		*
 		* @param {Number} top The vertical scroll position in pixels.
 		* @method
@@ -161,7 +161,7 @@
 		}),
 		
 		/**
-		* Retrieve the horizontal scroll position.
+		* Retrieves the horizontal scroll position.
 		*
 		* @returns {Number} The horizontal scroll position in pixels.
 		* @method
@@ -174,7 +174,7 @@
 		}),
 		
 		/**
-		* Retrieve the vertical scroll position.
+		* Retrieves the vertical scroll position.
 		*
 		* @returns {Number} The vertical scroll position in pixels.
 		* @method
@@ -235,7 +235,7 @@
 		},
 
 		/**
-		* When stopped, we use scrollLeft/Top (makes cursor positioning automagic).
+		* When stopped, we use `scrollLeft/scrollTop` (makes cursor positioning automagic).
 		* 
 		* @private
 		*/

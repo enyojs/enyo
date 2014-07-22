@@ -1,26 +1,25 @@
 (function (enyo, scope) {
 	/**
 	* Fires when dragging has started, allowing drags to propagate to parent 
-	* [scrollers]{@link enyo.Scroller}
+	* [scrollers]{@link enyo.Scroller}.
 	*
 	* @event enyo.TouchScrollStrategy#onShouldDrag
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @private
 	*/
 
 	/**
-	* _enyo.TouchScrollStrategy_ is a helper [kind]{@link external:kind for implementing a 
-	* touch-based [scroller]{@link enyo.Scroller}. It integrates the scrolling simulation provided 
-	* by {@link enyo.ScrollMath} into an {@link enyo.Scroller}.
+	* {@link enyo.TouchScrollStrategy} is a helper [kind]{@glossary kind} for implementing a
+	* touch-based [scroller]{@link enyo.Scroller}. It integrates the scrolling simulation provided
+	* by {@link enyo.ScrollMath} into an `enyo.Scroller`.
 	* 
-	* _enyo.TouchScrollStrategy_ is not typically created in application code. Instead, it is 
-	* specified as the value of the [_strategyKind_]{@link enyo.Scroller#strategyKind property of
-	* an [_enyo.Scroller_]{@link enyo.Scroller} or {@link enyo.List}, or is used by the framework 
-	* implicitly.
+	* `enyo.TouchScrollStrategy` is not typically created in application code. Instead, it is
+	* specified as the value of the [strategyKind]{@link enyo.Scroller#strategyKind property of
+	* an `enyo.Scroller` or {@link enyo.List}, or is used by the framework implicitly.
 	*
 	* @class enyo.TouchScrollStrategy
 	* @extends enyo.ScrollStrategy
@@ -40,13 +39,13 @@
 		kind: 'enyo.ScrollStrategy',
 
 		/**
-			If true (the default), the scroller will overscroll and bounce back at the edges
+			If `true` (the default), the scroller will overscroll and bounce back at the edges.
 		*/
 		overscroll: true,
 
 		/**
-			If true (the default), the scroller will not propagate _dragstart_
-			events that cause it to start scrolling
+			If `true` (the default), the scroller will not propagate `dragstart`
+			events that cause it to start scrolling.
 		*/
 		preventDragPropagation: true,
 
@@ -57,8 +56,9 @@
 			/** @lends enyo.TouchScrollStrategy.prototype */ {
 			
 			/**
-			* Specifies how to vertically scroll.  Acceptable values are 'scroll', 'auto', 'hidden',
-			* and 'default'. The precise effect of the setting is determined by the scroll strategy.
+			* Specifies how to vertically scroll.  Acceptable values are `'scroll'`, `'auto'`,
+			* `'hidden'`, and `'default'`. The precise effect of the setting is determined by the
+			* scroll strategy.
 			* 
 			* @type {String}
 			* @default 'default'
@@ -67,9 +67,9 @@
 			vertical: 'default',
 			
 			/**
-			* Specifies how to horizontally scroll.  Acceptable values are 'scroll', 'auto', 
-			* 'hidden' and 'default'. The precise effect of the setting is determined by the scroll 
-			* strategy.
+			* Specifies how to horizontally scroll.  Acceptable values are `'scroll'`, `'auto'`,
+			* `'hidden'`, and `'default'`. The precise effect of the setting is determined by the
+			* scroll strategy.
 			* 
 			* @type {String}
 			* @default 'default'
@@ -97,8 +97,8 @@
 			scrim: false,
 
 			/**	
-			* Allow drag [events]{@glossary event} sent when gesture 
-			* [events]{@Link external:event} are happening simultaneously.
+			* Indicates whether to allow drag [events]{@glossary event} to be sent while gesture 
+			* events are happening simultaneously.
 			* 
 			* @type {Boolean}
 			* @default true
@@ -107,7 +107,7 @@
 			dragDuringGesture: true,
 
 			/** 
-			* Facade animation time step from [ScrollMath]{@link enyo.ScrollMath}.
+			* Facades animation time step from [ScrollMath]{@link enyo.ScrollMath}.
 			* 
 			* @type {Number}
 			* @default 20
@@ -116,7 +116,7 @@
 			interval: 20,
 
 			/** 
-			* Adjust animation interval type from [ScrollMath]{@link enyo.ScrollMath}.
+			* Facades animation interval type from [ScrollMath]{@link enyo.ScrollMath}.
 			* 
 			* @type {Boolean}
 			* @default true
@@ -125,7 +125,7 @@
 			fixedTime: true,
 
 			/** 
-			* Modify one unit of time for simulation from [ScrollMath]{@link enyo.ScrollMath}.
+			* Facades one unit of time for simulation from [ScrollMath]{@link enyo.ScrollMath}.
 			* 
 			* @type {Number}
 			* @default 10
@@ -134,7 +134,8 @@
 			frame: 10,
 
 			/** 
-			* Allow default [events]{@glossary event} to occur (e.g., native scrolling).
+			* Indicates whether default [events]{@glossary event} (e.g., native scrolling
+			* events) should be suppressed.
 			* 
 			* @type {Boolean}
 			* @default true
@@ -186,7 +187,7 @@
 		],
 
 		/**
-		* Flag telling us whether the list is currently reordering.
+		* Flag indicating whether the list is currently reordering.
 		* 
 		* @readonly
 		* @public
@@ -291,9 +292,9 @@
 		},
 
 		/** 
-		* Determine whether or not the scroller is actively moving.
+		* Determines whether or not the scroller is actively moving.
 		* 
-		* @return {Boolean} Returns `true` if actively moving, `false` otherwise.
+		* @return {Boolean} `true` if actively moving; otherwise, `false`.
 		* @public
 		*/
 		isScrolling: function () {
@@ -302,9 +303,9 @@
 		},
 
 		/** 
-		* Determine whether or not the scroller is in overscroll.
+		* Determines whether or not the scroller is in overscroll.
 		* 
-		* @return {Boolean} Returns `true` if in overscroll, `false` otherwise.
+		* @return {Boolean} `true` if in overscroll; otherwise, `false`.
 		* @public
 		*/
 		isOverscrolling: function () {
@@ -385,11 +386,11 @@
 		},
 
 		/**
-		* Stop any active scroll movement.
+		* Stops any active scroll movement.
 		*
 		* @todo Doc update made while merging, need official documentation update!
 		*
-		* @param {Boolean} emit Whether or not to fire the _onScrollStop_ event.
+		* @param {Boolean} emit Whether or not to fire the `onScrollStop` event.
 		* @public
 		*/
 		stop: function (emit) {
@@ -399,8 +400,8 @@
 		},
 
 		/**
-		* Adjust the scroll position to be valid, if necessary, especially after the scroll contents
-		* have changed.
+		* Adjusts the scroll position to be valid, if necessary (e.g., after the scroll contents
+		* have changed).
 		*
 		* @public
 		*/
@@ -411,10 +412,10 @@
 		},
 
 		/** 
-		* Scrolls to specific x/y positions within the scroll area.
+		* Scrolls to a specific position within the scroll area.
 		*
-		* @param {Number} x The _x_ position in pixels.
-		* @param {Number} y The _y_ position in pixels.
+		* @param {Number} x The `x` position in pixels.
+		* @param {Number} y The `y` position in pixels.
 		* @public
 		*/
 		scrollTo: function (x, y) {
@@ -428,7 +429,7 @@
 		* @param {enyo.Control} ctl The [control]{@link enyo.Control} to make visible in the 
 		*	[scroller's]{@link enyo.Scroller} viewport.
 		* @param {Boolean} alignWithTop If `true`, the node is aligned with the top of the
-		*	[scroller]{@link enyo.Scroller}.
+		*	scroller.
 		* @method
 		* @public
 		*/
@@ -440,7 +441,7 @@
 		}),
 		
 		/**
-		* Set the horizontal scroll position.
+		* Sets the horizontal scroll position.
 		*
 		* @param {Number} left The horizontal scroll position in pixels.
 		* @method
@@ -454,7 +455,7 @@
 		}),
 		
 		/**
-		* Set the vertical scroll position.
+		* Sets the vertical scroll position.
 		*
 		* @param {Number} top The vertical scroll position in pixels.
 		* @method
@@ -468,7 +469,7 @@
 		}),
 		
 		/**
-		* Retrieve the horizontal scroll position.
+		* Retrieves the horizontal scroll position.
 		*
 		* @returns {Number} The horizontal scroll position in pixels.
 		* @method
@@ -481,7 +482,7 @@
 		}),
 		
 		/**
-		* Retrieve the vertical scroll position.
+		* Retrieves the vertical scroll position.
 		*
 		* @returns {Number} The vertical scroll position in pixels.
 		* @method
@@ -741,7 +742,7 @@
 		},
 
 		/**
-		* Retrieve the overscroll boundaries of the [scroller]{@link enyo.Scroller}.
+		* Retrieves the overscroll boundaries of the [scroller]{@link enyo.Scroller}.
 		*
 		* @returns {enyo.Scroller~OverscrollBoundaryObject} An [object]{@glossary Object}
 		*	describing the overscroll boundaries.
@@ -768,7 +769,7 @@
 		}),
 
 		/**
-		* Retrieve the scroll boundaries of the [scroller]{@link enyo.Scroller}.
+		* Retrieves the scroll boundaries of the [scroller]{@link enyo.Scroller}.
 		* 
 		* @returns {enyo.Scroller~BoundaryObject} An [object]{@glossary Object} describing the 
 		*	scroll boundaries.
@@ -783,7 +784,7 @@
 		}),
 
 		/** 
-		* Displays the scroll indicators and sets the auto hide timeout.
+		* Displays the scroll indicators and sets the auto-hide timeout.
 		*
 		* @public
 		*/

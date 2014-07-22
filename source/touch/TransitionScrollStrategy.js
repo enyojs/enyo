@@ -7,7 +7,7 @@
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @private
 	*/
 
@@ -19,7 +19,7 @@
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @private
 	*/
 
@@ -31,17 +31,17 @@
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @private
 	*/
 
 	/**
-	* _enyo.TransitionScrollStrategy_ is a helper [kind]{@glossary kind} that extends
-	* {@link enyo.TouchScrollStrategy}, optimizing it for scrolling environments in which effecting 
-	* scroll changes with transforms using CSS transitions is fastest.
+	* {@link enyo.TransitionScrollStrategy} is a helper [kind]{@glossary kind} that extends
+	* {@link enyo.TouchScrollStrategy}, optimizing it for scrolling environments in which
+	* effecting scroll changes with transforms using CSS transitions is fastest.
 	* 
-	* _enyo.TransitionScrollStrategy_ is not typically created in application code. Instead, it is 
-	* specified as the value of the [_strategyKind_]{@link enyo.Scroller#strategyKind} property of 
+	* `enyo.TransitionScrollStrategy` is not typically created in application code. Instead, it is
+	* specified as the value of the [strategyKind]{@link enyo.Scroller#strategyKind} property of
 	* an {@link enyo.Scroller} or {@link enyo.List}, or is used by the framework implicitly.
 	*
 	* @class enyo.TransitionScrollStrategy
@@ -99,42 +99,42 @@
 		],
 
 		/** 
-		* Scalar applied to 'flick' event velocity.
+		* Scalar applied to `flick` event velocity.
 		*
 		* @private
 		*/
 		kFlickScalar: 600,
 		
 		/** 
-		* Top snap boundary, generally 0.
+		* Top snap boundary, generally `0`.
 		*
 		* @private
 		*/
 		topBoundary: 0,
 		
 		/** 
-		* Right snap boundary, generally (viewport width - content width).
+		* Right snap boundary, generally `(viewport width - content width)`.
 		*
 		* @private
 		*/
 		rightBoundary: 0,
 		
 		/** 
-		* Bottom snap boundary, generally (viewport height - content height).
+		* Bottom snap boundary, generally `(viewport height - content height)`.
 		*
 		* @private
 		*/
 		bottomBoundary: 0,
 		
 		/** 
-		* Left snap boundary, generally 0.
+		* Left snap boundary, generally `0`.
 		*
 		* @private
 		*/
 		leftBoundary: 0,
 		
 		/** 
-		* Flag to specify whether scrolling is in progress.
+		* Flag indicating whether scrolling is in progress.
 		*
 		* @private
 		*/
@@ -148,28 +148,28 @@
 		listener: null,
 		
 		/** 
-		* Distance in the x-axis to scroll into overscroll space before bouncing back.
+		* Distance along the x-axis to scroll into overscroll space before bouncing back.
 		*
 		* @private
 		*/
 		boundaryX:0,
 		
 		/** 
-		* Distance in the y-axis to scroll into overscroll space before bouncing back.
+		* Distance along the y-axis to scroll into overscroll space before bouncing back.
 		*
 		* @private
 		*/
 		boundaryY:0,
 		
 		/** 
-		* Timeout used to stop scrolling on mousedown.
+		* Timeout used to stop scrolling on `mousedown`.
 		*
 		* @private
 		*/
 		stopTimeout: null,
 		
 		/** 
-		* Delay in milliseconds used to stop scrolling on mousedown.
+		* Delay in milliseconds used to stop scrolling on `mousedown`.
 		*
 		* @private
 		*/
@@ -205,7 +205,7 @@
 		},
 
 		/**
-		* Set the horizontal scroll position.
+		* Sets the horizontal scroll position.
 		*
 		* @param {Number} left The horizontal scroll position in pixels.
 		* @method
@@ -222,7 +222,7 @@
 		},
 		
 		/**
-		* Set the vertical scroll position.
+		* Sets the vertical scroll position.
 		*
 		* @param {Number} top The vertical scroll position in pixels.
 		* @method
@@ -239,7 +239,7 @@
 		},
 
 		/**
-		* Set the scroll position in the x-axis.
+		* Sets the scroll position along the x-axis.
 		*
 		* @param {Number} x The x-axis scroll position in pixels.
 		* @method
@@ -250,7 +250,7 @@
 		},
 
 		/**
-		* Set the scroll position in the y-axis.
+		* Sets the scroll position along the y-axis.
 		*
 		* @param {Number} y The y-axis scroll position in pixels.
 		* @method
@@ -261,7 +261,7 @@
 		},
 
 		/**
-		* Retrieve the horizontal scroll position.
+		* Retrieves the horizontal scroll position.
 		*
 		* @returns {Number} The horizontal scroll position in pixels.
 		* @method
@@ -272,7 +272,7 @@
 		},
 		
 		/**
-		* Retrieve the vertical scroll position.
+		* Retrieves the vertical scroll position.
 		*
 		* @returns {Number} The vertical scroll position in pixels.
 		* @method
@@ -283,7 +283,7 @@
 		},
 
 		/**
-		* Apply initial transform so we're always composited.
+		* Applies initial transform so we're always composited.
 		*
 		* @method
 		* @private
@@ -457,7 +457,7 @@
 		},
 		
 		/**
-		* Update thumbs, recalculate boundaries, and bubble scroll [event]{@glossary event}.
+		* Updates thumbs, recalculates boundaries, and bubbles scroll [event]{@glossary event}.
 		*
 		* @fires enyo.TransitionScrollStrategy#event:onScroll
 		* @private
@@ -471,7 +471,8 @@
 		},
 		
 		/**
-		* Scroll to current x,y coordinates and bubble scrollstart [event]{@glossary event}.
+		* Scrolls to current `x` and `y` coordinates and bubbles `scrollstart`
+		* [event]{@glossary event}.
 		*
 		* @fires enyo.TransitionScrollStrategy#event:onScrollStart
 		* @private
@@ -482,7 +483,8 @@
 		},
 		
 		/**
-		* If scrolling, stop. Hide thumbs and bubble scrollstop [event]{@glossary event}.
+		* If currently scrolling, stops scrolling. Hides thumbs and bubbles `scrollstop`
+		* [event]{@glossary event}.
 		*
 		* @fires enyo.TransitionScrollStrategy#event:onScrollStop
 		* @private
@@ -498,7 +500,7 @@
 		},
 
 		/**
-		* Set scroll x value to the current computed style.
+		* Sets scroll `x` value to the current computed style.
 		*
 		* @private
 		*/
@@ -513,7 +515,7 @@
 		},
 		
 		/**
-		* Set scroll y value to the current computed style.
+		* Sets scroll `y` value to the current computed style.
 		*
 		* @private
 		*/
@@ -528,7 +530,7 @@
 		},
 		
 		/**
-		* Apply transform to scroll the [scroller]{@link enyo.Scroller}.
+		* Applies transform to scroll the [scroller]{@link enyo.Scroller}.
 		*
 		* @private
 		*/
@@ -584,7 +586,7 @@
 		},
 		
 		/**
-		* Determine if we should allow dragging.
+		* Determines whether we should allow dragging.
 		*
 		* @private
 		*/
@@ -668,7 +670,7 @@
 		},
 		
 		/**
-		* Move [scroller]{@link enyo.Scroller} based on user's dragging.
+		* Moves [scroller]{@link enyo.Scroller} based on user's dragging.
 		*
 		* @private
 		*/
@@ -699,7 +701,7 @@
 		},
 
 		/** 
-		* Figure how far the drag should go based on pointer movement (delta).
+		* Calculates how far the drag should go, based on pointer movement (delta).
 		*
 		* @private
 		*/
@@ -709,7 +711,7 @@
 		},
 		
 		/** 
-		* Provides resistance against dragging into overscroll.
+		* Provides resistance against dragging into overscroll region.
 		*
 		* @private
 		*/
@@ -736,8 +738,8 @@
 		},
 		
 		/**
-		* When user releases the drag, set _this.dragging_ to `false`, bounce overflow back, and 
-		* hide scrim.
+		* When user releases the drag, sets `this.dragging` to `false`, bounces overflow back, and 
+		* hides scrim.
 		*
 		* @private
 		*/
@@ -755,7 +757,7 @@
 		},
 		
 		/**
-		* Bounce back from overscroll region.
+		* Bounces back from overscroll region.
 		*
 		* @private
 		*/
@@ -790,7 +792,7 @@
 		},
 		
 		/**
-		* Determine if we're overscrolled on the x axis and if so return proper edge value.
+		* Determines whether we're overscrolled on the x-axis; if so, returns proper edge value.
 		*
 		* @private
 		*/
@@ -808,7 +810,7 @@
 		},
 		
 		/**
-		* Determine if we're overscrolled on the y axis and if so return proper edge value.
+		* Determines whether we're overscrolled on the y-axis; if so, returns proper edge value.
 		*
 		* @private
 		*/
@@ -835,7 +837,7 @@
 		},
 		
 		/**
-		* When user flicks/throws [scroller]{@link enyo.Scroller}, calculate the distance to be 
+		* When user flicks/throws [scroller]{@link enyo.Scroller}, calculates the distance to be 
 		* travelled and where we will end up in the overscroll region.
 		*
 		* @private
@@ -881,8 +883,8 @@
 		},
 		
 		/**
-		* Apply the "scroll" transition, apply new transform based on x and y, and begin
-		* this.scrollInterval to update the scrollTop/Left values while scrolling.
+		* Applies the "scroll" transition, applies new transform based on `x` and `y`, and begins
+		* interval to update the `scrollTop/scrollLeft` values while scrolling.
 		*
 		* @private
 		*/
@@ -894,8 +896,8 @@
 		},
 		
 		/**
-		* Apply the "bounce" transition, apply new transform based on x and y, and begin
-		* this.scrollInterval to update the scrollTop/Left values while scrolling.
+		* Applies the "bounce" transition, applies new transform based on `x` and `y`, and begins
+		* interval to update the `scrollTop/scrollLeft` values while scrolling.
 		*
 		* @private
 		*/
@@ -907,7 +909,7 @@
 		},
 		
 		/**
-		* Apply the given transition to this.$.client.
+		* Applies the given transition to `this.$.client`.
 		*
 		* @private
 		*/
@@ -916,7 +918,7 @@
 		},
 		
 		/**
-		* Turn off CSS transition and clear this.scrollInterval.
+		* Turns off CSS transition and clears `this.scrollInterval`.
 		*
 		* @private
 		*/
@@ -927,8 +929,8 @@
 		},
 		
 		/**
-		* Create an interval to: update the x/y values while scrolling is happening, check for
-		* crossing into the overflow region, and bubble a scroll [event]{@glossary event}.
+		* Creates an interval to update the `x` and `y` values while scrolling is happening,
+		* check for crossing into the overflow region, and bubble a scroll [event]{@glossary event}.
 		*
 		* @private
 		*/
@@ -941,8 +943,9 @@
 		},
 
 		/**
-		* Create an interval to update the x/y values while scrolling is happening, and bubble a 
-		* scroll event (don't check for crossing into overflow since we're there already).
+		* Creates an interval to update the `x` and `y` values while scrolling is happening,
+		* and bubble a scroll [event]{@glossary event}. (We don't need to check for crossing
+		* into the overflow area since we're there already.)
 		*
 		* @private
 		*/
@@ -954,7 +957,7 @@
 		},
 		
 		/**
-		* Save current x/y position and bubble scroll [event]{@glossary event}.
+		* Saves current `x` and `y` position and bubbles scroll [event]{@glossary event}.
 		*
 		* @private
 		*/
@@ -968,7 +971,7 @@
 		},
 		
 		/** 
-		* Clear this.scrollInterval.
+		* Clears `this.scrollInterval`.
 		*
 		* @private
 		*/
@@ -980,8 +983,8 @@
 		},
 		
 		/**
-		* Set scroller translation to current position and turn transition off. This effectively
-		* stops scrolling.
+		* Sets scroller translation to current position and turns transition off.
+		* This effectively stops scrolling.
 		*
 		* @private
 		*/
@@ -995,7 +998,7 @@
 		},
 
 		/**
-		* Figure how far into the overscroll region we should go before bouncing back.
+		* Calculates how far into the overscroll region we should go before bouncing back.
 		*
 		* @private
 		*/
@@ -1007,8 +1010,8 @@
 		},
 
 		/**
-		* When transition animation is complete, check if we need to bounce back from overscroll
-		* region. If not, stop.
+		* When transition animation is complete, checks whether we need to bounce back from
+		* overscroll region. If not, stops.
 		* 
 		* @private
 		*/
@@ -1044,10 +1047,10 @@
 		},
 		
 		/** 
-		* Scrolls to specific x/y positions within the scroll area.
+		* Scrolls to a specific position within the scroll area.
 		*
-		* @param {Number} x The _x_ position in pixels.
-		* @param {Number} y The _y_ position in pixels.
+		* @param {Number} x The `x` position in pixels.
+		* @param {Number} y The `y` position in pixels.
 		* @public
 		*/
 		scrollTo: function (x, y) {
@@ -1057,7 +1060,7 @@
 		},
 		
 		/**
-		* Retrieve the overscroll boundaries of the [scroller]{@link enyo.Scroller}.
+		* Retrieves the overscroll boundaries of the [scroller]{@link enyo.Scroller}.
 		*
 		* @returns {enyo.Scroller~OverscrollBoundaryObject} An [object]{@glossary Object}
 		*	describing the overscroll boundaries.

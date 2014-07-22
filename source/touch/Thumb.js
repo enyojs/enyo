@@ -1,10 +1,10 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.ScrollThumb_ is a helper [kind]{@glossary kind} used by 
-	* {@link enyo.TouchScrollStrategy} and {@link enyo.TranslateScrollStrategy} to display a small 
-	* visual scroll indicator.
+	* {@link enyo.ScrollThumb} is a helper [kind]{@glossary kind} used by 
+	* {@link enyo.TouchScrollStrategy} and {@link enyo.TranslateScrollStrategy} to
+	* display a small visual scroll indicator.
 	* 
-	* _enyo.ScrollThumb_ is not typically created in application code.
+	* `enyo.ScrollThumb` is not typically created in application code.
 	*
 	* @class enyo.ScrollThumb
 	* @protected
@@ -34,7 +34,7 @@
 		minSize: 4,
 
 		/**
-		* Size of the corners of the indicator.
+		* Size of the indicator's corners.
 		* 
 		* @private
 		*/
@@ -134,12 +134,12 @@
 		},
 
 		/**
-		* We implement _setShowing_ and cancel the [delayHide]{@link enyo.ScrollThumb#delayHide} 
-		* because [showing]{@link enyo.Control#showing} is not changed while we execute 
-		* [delayHide]{@link enyo.ScrollThumb#delayHide}.
+		* We implement `setShowing()` and cancel the [delayHide()]{@link enyo.ScrollThumb#delayHide} 
+		* because [showing]{@link enyo.Control#showing} is not changed while we execute
+		* `delayHide()`.
 		*
-		* @param {Boolean} showing If `true`, displays the {enyo.ScrollThumb} if appropriate, 
-		*	otherwise hides the {enyo.ScrollThumb}.
+		* @param {Boolean} showing If `true`, displays the {@link enyo.ScrollThumb} if appropriate;
+		*	otherwise, hides the ScrollThumb.
 		* @public
 		*/
 		setShowing: function (showing) {
@@ -159,10 +159,10 @@
 		},
 
 		/**
-		* Delays automatic hiding of the {enyo.ScrollThumb}.
+		* Delays automatic hiding of the {@link enyo.ScrollThumb}.
 		*
 		* @param {Number} delay The number of milliseconds to delay hiding of the 
-		*	{enyo.ScrollThumb}.
+		*	{@link enyo.ScrollThumb}.
 		* @public
 		*/
 		delayHide: function (delay) {
@@ -172,7 +172,7 @@
 		},
 
 		/**
-		* Cancels any pending [delayHide]{@link enyo.ScrollThumb#delayHide} jobs.
+		* Cancels any pending [delayHide()]{@link enyo.ScrollThumb#delayHide} jobs.
 		* 
 		* @public
 		*/

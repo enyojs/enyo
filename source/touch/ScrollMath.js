@@ -7,7 +7,7 @@
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @private
 	*/
 
@@ -19,7 +19,7 @@
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @private
 	*/
 
@@ -31,16 +31,16 @@
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @private
 	*/
 
 	/**
-	* _enyo.ScrollMath_ implements a scrolling dynamics simulation. It is a helper 
-	* [kind]{@glossary kind} used by other [scroller]{@link enyo.Scroller} 
-	* [kinds]{@glossary kind}, such as {@link enyo.TouchScrollStrategy}.
+	* {@link enyo.ScrollMath} implements a scrolling dynamics simulation. It is a
+	* helper [kind]{@glossary kind} used by other [scroller]{@link enyo.Scroller}
+	* kinds, such as {@link enyo.TouchScrollStrategy}.
 	* 
-	* _enyo.ScrollMath_ is not typically created in application code.
+	* `enyo.ScrollMath` is not typically created in application code.
 	*
 	* @class enyo.ScrollMath
 	* @protected
@@ -94,7 +94,7 @@
 
 		/**
 		* "Spring" damping returns the scroll position to a value inside the boundaries. Lower 
-		* values provide _faster_ snapback.
+		* values provide faster snapback.
 		*
 		* @private
 		*/
@@ -102,14 +102,14 @@
 
 		/** 
 		* "Drag" damping resists dragging the scroll position beyond the boundaries. Lower values 
-		* provide _more_ resistance.
+		* provide more resistance.
 		*
 		* @private
 		*/
 		kDragDamping: 0.5,
 		
 		/** 
-		* "Friction" damping reduces momentum over time. Lower values provide _more_ friction.
+		* "Friction" damping reduces momentum over time. Lower values provide more friction.
 		*
 		* @private
 		*/
@@ -117,14 +117,14 @@
 
 		/** 
 		* Additional "friction" damping applied when momentum carries the viewport into overscroll. 
-		* Lower values provide _more_ friction.
+		* Lower values provide more friction.
 		*
 		* @private
 		*/
 		kSnapFriction: 0.9,
 		
 		/** 
-		* Scalar applied to 'flick' event velocity.
+		* Scalar applied to `flick` event velocity.
 		*
 		* @private
 		*/
@@ -147,28 +147,28 @@
 		kFrictionEpsilon: enyo.platform.webos >= 4 ? 1e-1 : 1e-2,
 		
 		/** 
-		* Top snap boundary, generally 0.
+		* Top snap boundary, generally `0`.
 		*
 		* @private
 		*/
 		topBoundary: 0,
 		
 		/** 
-		* Right snap boundary, generally (viewport width - content width).
+		* Right snap boundary, generally `(viewport width - content width)`.
 		*
 		* @private
 		*/
 		rightBoundary: 0,
 		
 		/** 
-		* Bottom snap boundary, generally (viewport height - content height).
+		* Bottom snap boundary, generally `(viewport height - content height)`.
 		*
 		* @private
 		*/
 		bottomBoundary: 0,
 		
 		/** 
-		* Left snap boundary, generally 0.
+		* Left snap boundary, generally `0`.
 		*
 		* @private
 		*/
@@ -182,7 +182,7 @@
 		interval: 20,
 		
 		/** 
-		* Flag to enable frame-based animation; if false, time-based animation is used.
+		* Flag to enable frame-based animation; if `false`, time-based animation is used.
 		*
 		* @private
 		*/
@@ -243,8 +243,8 @@
 		},
 
 		/**
-		* Boundary damping function. Returns damped 'value' based on 'coeff' on one side of 
-		* 'origin'.
+		* Boundary damping function. Returns damped `value` based on `coeff` on one side of 
+		* `origin`.
 		*
 		* @private
 		*/
@@ -265,7 +265,7 @@
 		},
 
 		/**
-		* Dual-boundary damping function. Returns damped 'value' based on 'coeff' when exceeding 
+		* Dual-boundary damping function. Returns damped `value` based on `coeff` when exceeding 
 		* either boundary.
 		*
 		* @private
@@ -403,8 +403,8 @@
 		},
 
 		/**
-		* Adjust the scroll position to be valid, if necessary, especially after the scroll contents
-		* have changed.
+		* Adjusts the scroll position to be valid, if necessary (e.g., after the scroll contents
+		* have changed).
 		*
 		* @private
 		*/
@@ -525,8 +525,8 @@
 		/**
 		* Animates a scroll to the specified position.
 		*
-		* @param {Number} x The _x_ position in pixels.
-		* @param {Number} y The _y_ position in pixels.
+		* @param {Number} x The `x` position in pixels.
+		* @param {Number} y The `y` position in pixels.
 		* @private
 		*/
 		scrollTo: function (x, y) {
@@ -541,7 +541,7 @@
 		},
 
 		/**
-		* Set the scroll position in the x-axis.
+		* Sets the scroll position along the x-axis.
 		*
 		* @param {Number} x The x-axis scroll position in pixels.
 		* @method
@@ -552,7 +552,7 @@
 		},
 
 		/**
-		* Set the scroll position in the y-axis.
+		* Sets the scroll position along the y-axis.
 		*
 		* @param {Number} y The y-axis scroll position in pixels.
 		* @method
@@ -563,7 +563,7 @@
 		},
 
 		/**
-		* Set the scroll position, which defaults to setting this position in the y-axis.
+		* Sets the scroll position; defaults to setting this position along the y-axis.
 		*
 		* @param {Number} pos The scroll position in pixels.
 		* @method
@@ -574,9 +574,9 @@
 		},
 
 		/** 
-		* Determine whether or not the scroller is actively moving.
+		* Determines whether or not the [scroller]{@link enyo.Scroller} is actively moving.
 		* 
-		* @return {Boolean} Returns `true` if actively moving, `false` otherwise.
+		* @return {Boolean} `true` if actively moving; otherwise, `false`.
 		* @private
 		*/
 		isScrolling: function () {
@@ -584,9 +584,9 @@
 		},
 
 		/** 
-		* Determine whether or not the scroller is in overscroll.
+		* Determines whether or not the [scroller]{@link enyo.Scroller} is in overscroll.
 		* 
-		* @return {Boolean} Returns `true` if in overscroll, `false` otherwise.
+		* @return {Boolean} `true` if in overscroll; otherwise, `false`.
 		* @private
 		*/
 		isInOverScroll: function () {
