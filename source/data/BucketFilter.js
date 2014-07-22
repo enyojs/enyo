@@ -7,7 +7,7 @@
 	/**
 	* A [filter]{@link enyo.Filter} designed to maintain multiple filtered sets based on one
 	* [collection]{@link enyo.Collection} of [models]{@link enyo.Model}.
-	* The {@link enyo.BucketFilter} and all of its [filters]{@link enyo.BucketFilter#filters} can
+	* {@link enyo.BucketFilter} and all of its [filters]{@link enyo.BucketFilter#filters} may
 	* be used in conjunction with [controls]{@link enyo.Control} that support usage with
 	* {@link enyo.Collection}.
 	*
@@ -34,11 +34,11 @@
 		noDefer: true,
 		
 		/**
-		* The currently activated internal filter to proxy. If the name of a filter is given the
+		* The currently activated internal filter to proxy. If the name of a filter is given, the
 		* {@link enyo.BucketFilter} will act as if its content is that of the selected filter.
-		* Setting this value to `*` will deselect any filter and will proxy its complete dataset.
-		* If this is set to any _falsy_ value it will be coerced to `*`. During initialization,
-		* if any child-filter has the `isDefault` flag set to `true` it will become the active
+		* Setting this value to `'*'` will deselect any filter and will proxy its complete dataset.
+		* If this is set to any **falsy** value, it will be coerced to `'*'`. During initialization,
+		* if any child-filter has the `isDefault` flag set to `true`, it will become the active
 		* filter instead.
 		* 
 		* @type String
@@ -48,8 +48,8 @@
 		activeFilter: '*',
 		
 		/**
-		* This will be the {@link enyo.BucketFilter#activeFilter} filter on initialization and
-		* anytime the {@link enyo.BucketFilter#reset} method is called. It can be set directly or
+		* This will be the [activeFilter]{@link enyo.BucketFilter#activeFilter} on initialization and
+		* anytime the [reset()]{@link enyo.BucketFilter#reset} method is called. It can be set directly or
 		* implicitly by setting a child-filter's `isDefault` flag to `true`.
 		* 
 		* @type String
@@ -60,10 +60,9 @@
 		
 		/**
 		* Removes any [activeFilter]{@link enyo.BucketFilter#activeFilter}. If there is a
-		* [defaultFilter]{@link enyo.BucketFilter#defaultFilter} it will automatically set it as the
-		* active filter (if it wasn't active already). Otherwise it will set the
-		* [activeFilter]{@link enyo.BucketFilter#activeFilter} property to the special `*`
-		* character and proxy its complete dataset.
+		* [defaultFilter]{@link enyo.BucketFilter#defaultFilter}, this method will automatically
+		* set it as the active filter (if it wasn't already active). Otherwise, it will set the
+		* `activeFilter` property to the special `'*'` character and proxy its complete dataset.
 		* 
 		* @param {Object} [opts] The options to be passed to the internal
 		* 	{@link enyo.Object#set} method.

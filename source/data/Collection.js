@@ -23,7 +23,8 @@
 	});
 	
 	/**
-	* [Models]{@link enyo.Model} were added to the [collection]{@link enyo.Collection}.
+	* Fires when [models]{@link enyo.Model} have been [added]{@link enyo.Collection#add}
+	* to the [collection]{@link enyo.Collection}.
 	*
 	* @event enyo.Collection#add
 	* @type {Object}
@@ -31,13 +32,13 @@
 	*	[models]{@link enyo.Model} that were [added]{@link enyo.Collection#add} to the
 	*	[collection]{@link enyo.Collection}.
 	* @property {enyo.Collection} collection - A reference to the
-	*	[collection]{@link enyo.Collection} that [emitted]{@link enyo.EventEmitter.emit} the event.
+	*	collection that [emitted]{@link enyo.EventEmitter.emit} the event.
 	* @public
 	*/
 	
 	/**
-	* [Models]{@link enyo.Model} were [removed]{@link enyo.Collection#remove} from the
-	* [collection]{@link enyo.Collection}.
+	* Fires when [models]{@link enyo.Model} have been [removed]{@link enyo.Collection#remove}
+	* from the [collection]{@link enyo.Collection}.
 	*
 	* @event enyo.Collection#remove
 	* @type {Object}
@@ -45,12 +46,13 @@
 	*	[models]{@link enyo.Model} that were [removed]{@link enyo.Collection#remove} from the
 	*	[collection]{@link enyo.Collection}.
 	* @property {enyo.Collection} collection - A reference to the
-	*	[collection]{@link enyo.Collection} that [emitted]{@link enyo.EventEmitter.emit} the event.
+	*	collection that [emitted]{@link enyo.EventEmitter.emit} the event.
 	* @public
 	*/
 	
 	/**
-	* The [collection]{@link enyo.Collection} was [sorted]{@link enyo.Collection#sort}.
+	* Fires when the [collection]{@link enyo.Collection} has been
+	* [sorted]{@link enyo.Collection#sort}.
 	*
 	* @event enyo.Collection#sort
 	* @type {Object}
@@ -60,13 +62,13 @@
 	*	[collection]{@link enyo.Collection} that [emitted]{@link enyo.EventEmitter.emit} the event.
 	* @property {Function} comparator - A reference to the
 	*	[comparator]{@link enyo.Collection#comparator} that was used when
-	*	[sorting]{@link enyo.Collection#sort} the [collection]{@link enyo.Collection}.
+	*	sorting the collection.
 	* @public
 	*/
 	
 	/**
-	* The [collection]{@link enyo.Collection} was reset and its contents have been updated
-	* arbitrarily.
+	* Fires when the [collection]{@link enyo.Collection} has been reset and its
+	* contents have been updated arbitrarily.
 	*
 	* @event enyo.Collection#event:reset
 	* @type {Object}
@@ -78,73 +80,64 @@
 	*/
 	
 	/**
-	* The default configurable [options]{@link enyo.Collection#options} used in certain API
+	* The default configurable [options]{@link enyo.Collection#options} used by certain API
 	* methods of {@link enyo.Collection}.
 	*
 	* @typedef {Object} enyo.Collection~Options
-	* @property {Boolean} merge=true - When data is being added to the
-	*	[collection]{@link enyo.Collection} that already exist (matched by
-	*	[primaryKey]{@link enyo.Model#primaryKey}) set the new data values with the current
-	*	[model]{@link enyo.Model} instance. This indicates that it will update the existing
-	*	values with the new ones by calling [set]{@link enyo.Model#set} on the
-	*	[model]{@link enyo.Model}.
-	* @property {Boolean} silent=false - Many accessor methods of the
-	*	[collection]{@link enyo.Collection} will emit events and/or notifications. This
-	*	indicates whether or not to supress those events or notifications at times when that
-	*	behavior is necessary. Most often you will not want to modify this value.
+	* @property {Boolean} merge=true - If `true`, when data is being added to the
+	*	[collection]{@link enyo.Collection} that already exists (i.e., is matched by
+	*	[primaryKey]{@link enyo.Model#primaryKey}), the new data values will be set
+	* with the current [model]{@link enyo.Model} instance. This means that the
+	* existing values will be updated with the new ones by calling
+	* [set()]{@link enyo.Model#set} on the model.
+	* @property {Boolean} silent=false - Many accessor methods of the collection
+	*	will emit events and/or notifications. This value indicates whether or not
+	*	those events or notifications will be suppressed at times when that behavior
+	*	is necessary. Typically, you will not want to modify this value.
 	* @property {Boolean} purge=false - When [adding]{@link enyo.Collection#add}
-	*	[models]{@link enyo.Model} this flag indicates whether or not to remove (_purge_) the
-	*	existing [models]{@link enyo.Model} that are not included in the new dataset.
-	* @property {Boolean} parse=false - The collection's [parse]{@link enyo.Collection#parse}
-	*	method can automatically be executed for incoming data added via the
-	*	[constructor]{@link enyo.Collection#constructor} method or later after having
-	*	[fetched]{@link enyo.Collection#fetch} data. It may be necessary to distinguish these
-	*	two occassions (one needing to parse and one not) by using the runtime configuration
-	*	options of the method(s). In cases where it will always be necessary this can be set to
-	*	`true`.
-	* @property {Boolean} create=true - When data being added to the
-	*	[collection]{@link enyo.Collection} cannot be found (or
-	*	[find]{@link enyo.Collection#options#find} is `false`) this determines if a new
-	*	[model]{@link enyo.Model} should be created. [Models]{@link enyo.Model} that are created
-	*	by a [collection]{@link enyo.Collection} have their [owner]{@link enyo.Model#owner}
-	*	property set to the [collection]{@link enyo.Collection} that instanced them.
-	* @property {Boolean} find=true - When data being added to the
-	*	[collection]{@link enyo.Collection} is not already a [model]{@link enyo.Model} instance
-	*	it will attempt to find an existing [model]{@link enyo.Model} by its
-	*	[primaryKey]{@link enyo.Model#primaryKey} if it exists. In most cases this is the
-	*	prefered behavior but if the {@link enyo.Model} [kind]{@glossary kind} being
-	*	instanced does not have a [primaryKey]{@link enyo.Model#primaryKey} it is unnecessary
-	*	and this value can be set to `false`.
-	* @property {Boolean} sort=false - When [adding]{@link enyo.Collection#add}
-	*	[models]{@link enyo.Model} to the [colleciton]{@link enyo.Collection} it can also be
-	*	sorted. If the [comparator]{@link enyo.Collection#comparator} is a
-	*	[function]{@glossary Function} and this value is `true` it will use the
-	*	[comparator]{@link enyo.Collection#comparator} to sort the entire
-	*	[collection]{@link enyo.Collection}. It can also be a
-	*	[function]{@glossary Function} that will be used to _sort_ the
-	*	[collection]{@link enyo.Collection} instead of or in-place of a defined
-	*	[comparator]{@link enyo.Collection#comparator}.
+	*	models, this flag indicates whether or not to [remove]{@link enyo.Collection#remove}
+	* (purge) the existing models that are not included in the new dataset.
+	* @property {Boolean} parse=false - The collection's [parse()]{@link enyo.Collection#parse}
+	*	method can be executed automatically when incoming data is added via the
+	*	[constructor()]{@link enyo.Collection#constructor} method, or, later, via a
+	*	[fetch]{@link enyo.Collection#fetch}. You may need to examine the runtime
+	* configuration options of the method(s) to determine whether parsing is needed.
+	* In cases where parsing will always be necessary, this may be set to `true`.
+	* @property {Boolean} create=true - This value determines whether a new
+	*	model will be created when data being added to the collection cannot be found
+	* (or the [find]{@link enyo.Collection#options#find} flag is `false`). Models
+	* that are created by a collection have their [owner]{@link enyo.Model#owner}
+	* property set to the collection that instanced them.
+	* @property {Boolean} find=true - When data being added to the collection is not
+	* already a model instance, the collection will attempt to find an existing model
+	* by its `primaryKey`, if it exists. In most cases, this is the preferred behavior,
+	* but if the model [kind]{@glossary kind} being  instanced does not have a
+	* `primaryKey`, it is unnecessary and this value may be set to `false`.
+	* @property {Boolean} sort=false - When adding models to the collection, the
+	* collection can also be sorted. If the [comparator]{@link enyo.Collection#comparator}
+	* is a [function]{@glossary Function} and this value is `true`, the comparator
+	*	will be used to sort the entire collection. It may also be a function that
+	* will be used to sort the collection, instead of (or in the place of) a defined
+	*	comparator.
 	* @property {Boolean} commit=false - When modifications are made to the
-	*	[collection]{@link enyo.Collection} this flag will ensure that those changes are
+	*	collection, this flag ensures that those changes are
 	*	[committed]{@link enyo.Collection#commit} according to the configuration and
-	*	availability of a [source]{@link enyo.Collection#source}. This can also be configured
-	*	per-call to methods that use it.
-	* @property {Boolean} destroy=false - When [models]{@link enyo.Model} are
-	*	[removed]{@link enyo.Collection#remove} from the [collection]{@link enyo.Collection}
-	*	this flag indicates whether or not to [destroy]{@link enyo.Model#destroy} them as well.
-	*	Note that this could have a significant impact if the same [models]{@link enyo.Model}
-	*	are used in other [collections]{@link enyo.Collection}.
-	* @property {Boolean} complete=false - When [models]{@link enyo.Model} are
-	*	[removed]{@link enyo.Collection#remove} from the [collection]{@link enyo.Collection}
-	*	this flag indicates whether or not to also _remove_ them from the
-	*	[store]{@link enyo.Collection#store}. This is rarely necessary and can cause problems if
-	*	the [models]{@link enyo.Model} are used in other [collections]{@link enyo.Collection}.
-	*	It is also ignored if the [destroy]{@link enyo.Collection#options#destroy} flag is
-	*	`true`.
-	* @property {Boolean} fetch=false - When the [collection]{@link enyo.Collection} is
-	*	initialized it can automatically attempt to [fetch]{@link enyo.Collection#fetch} data
-	*	when the [source]{@link enyo.Collection#source} and [url]{@link enyo.Collection#url}
-	*	or {@link enyo.Collection#getUrl} properties are configured properly.
+	*	availability of a [source]{@link enyo.Collection#source}. This may also be
+	* configured per-call to methods that use it.
+	* @property {Boolean} destroy=false - When models are removed from the collection,
+	*	this flag indicates whether or not they will be [destroyed]{@link enyo.Model#destroy}
+	* as well. Note that this could have a significant impact if the same models are
+	* used in other collections.
+	* @property {Boolean} complete=false - When models are removed from the
+	* collection, this flag indicates whether or not they will also be removed from
+	* the [store]{@link enyo.Collection#store}. This is rarely necessary and can
+	* cause problems if the models are used in other collections. In addition, this
+	* value will be ignored if the [destroy]{@link enyo.Collection#options#destroy}
+	* flag is `true`.
+	* @property {Boolean} fetch=false - If `true`, when the collection is initialized,
+	* it will automatically attempt to fetch data if the
+	* [source]{@link enyo.Collection#source} and [url]{@link enyo.Collection#url}
+	*	or [getUrl]{@link enyo.Collection#getUrl} properties are properly configured.
 	*/
 	
 	/**
