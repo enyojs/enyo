@@ -1,22 +1,21 @@
 (function (enyo, scope) {
-	/** @namespace enyo */
 	
 	/**
-		@private
+	* @private
 	*/
 	var callbacks = [],
 		roots = [];
 		
 	/**
-		@private
+	* @private
 	*/
 	enyo.roots = roots;
 	
 	/**
-		Invokes all known callbacks (if any) against the root view once it has been rendered. This
-		method won't likely be executed very often.
-	
-		@private
+	* Invokes all known callbacks (if any) against the root view once it has been rendered. This
+	* method won't likely be executed very often.
+	* 
+	* @private
 	*/
 	function invoke (root) {
 		callbacks.forEach(function (ln) {
@@ -25,19 +24,20 @@
 	}
 	
 	/**
-		Register a single callback to be executed whenever a _root_ view is rendered.
-	
-		@public
-		@method enyo.rendered
-		@param {Function} method The callback to execute.
-		@param {Object} [context=enyo.global] The context under which to execute the callback.
+	* Register a single callback to be executed whenever a _root_ view is rendered.
+	* 
+	* @name enyo.rendered
+	* @method
+	* @param {Function} method The callback to execute.
+	* @param {Object} [context=enyo.global] The context under which to execute the callback.
+	* @public
 	*/
 	enyo.rendered = function (method, context) {
 		callbacks.push({method: method, context: context || enyo.global});
 	};
 	
 	/**
-		@private
+	* @private
 	*/
 	enyo.addToRoots = function (view) {
 		var rendered,

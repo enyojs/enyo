@@ -1,9 +1,29 @@
-/**
-	_enyo.ToolDecorator_ lines up components in a row, centered vertically.
-*/
-enyo.kind({
-	name: "enyo.ToolDecorator",
-	//* @protected
-	kind: "enyo.GroupItem",
-	classes: "enyo-tool-decorator"
-});
+(function (enyo, scope) {
+	/**
+	* _enyo.ToolDecorator_ lines up [components]{@link enyo.Component} in a row, centered vertically.
+	*
+	* @ui
+	* @class enyo.ToolDecorator
+	* @extends enyo.GroupItem
+	* @public
+	*/
+	enyo.kind(
+		/** @lends enyo.ToolDecorator.prototype */ {
+
+		/**
+		* @private
+		*/
+		name: 'enyo.ToolDecorator',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.GroupItem',
+
+		/**
+		* @private
+		*/
+		classes: 'enyo-tool-decorator'
+	});
+
+})(enyo, this);

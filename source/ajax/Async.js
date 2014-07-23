@@ -1,166 +1,291 @@
-﻿/**
-	_enyo.Async_ is the base kind for handling asynchronous operations.
+﻿(function (enyo, scope) {
 
-	_enyo.Async_ is an **Object**, not a **Component**; thus, you may not declare
-	an _Async_ in a _components_ block. If you want to use _Async_ as a
-	component, you should probably be using
-	<a href="#enyo.WebService">enyo.WebService</a> instead.
-
-	An Async object represents a task that has not yet completed. You may attach
-	callback functions to an Async, to be called when the task completes or
-	encounters an error.
-
-	More information on _Async_ and its usage is available in the documentation	on
-	[Consuming Web Services](building-apps/managing-data/consuming-web-services.html)
-	in the Enyo Developer Guide.
-*/
-enyo.kind({
-	name: "enyo.Async",
-	kind: "enyo.Object",
-	published: {
+	/**
+	* An abstract [kind]{@link external:kind} designed to aid in handling asynchronous operations.
+	* It represents a task that has not yet completed. Callback functions may be registered to be
+	* notified when the task is complete.
+	*
+	* See [Consuming Web Services]{@link http://...building-apps/managing-data/consuming-web-services.html}
+	* in the Enyo Developer Guide.
+	*
+	* @class enyo.Async
+	* @extends enyo.Object
+	* @public
+	*/
+	enyo.kind(
+		/** @lends enyo.Async.prototype */ {
+		
 		/**
-			If set to a non-zero value, the number of milliseconds to
-			wait after the _go_ call before failing with the "timeout" error
+		* @private
 		*/
-		timeout: 0
-	},
-	//* @protected
-	failed: false,
-	context: null,
-	constructor: enyo.inherit(function (sup) {
-		return function() {
-			sup.apply(this, arguments);
-			this.responders = [];
-			this.errorHandlers = [];
-			this.progressHandlers = [];
-		};
-	}),
-	destroy: enyo.inherit(function (sup) {
-		return function() {
+		name: 'enyo.Async',
+		
+		/**
+		* @private
+		*/
+		kind: 'enyo.Object',
+		
+		/**
+		* @private
+		*/
+		published: {
+			
+			/**
+			* The number of milliseconds to wait after [execution]{@link enyo.Async#go} begins
+			* before failling with a timeout error. If set to `0` (the default) will not
+			* automatically throw a timeout error.
+			*
+			* @type {Number}
+			* @default 0
+			* @memberof enyo.Aysnc.prototype
+			* @public
+			*/
+			timeout: 0
+		},
+		
+		/**
+		* Will be `true` if an error has occurred and a handler calls the
+		* [fail]{@link enyo.Async#fail} method. Can be cleared using
+		* [recover]{@link enyo.Async#recover}.
+		*
+		* @readonly
+		* @type {Boolean}
+		* @default false
+		* @public
+		*/
+		failed: false,
+		
+		/**
+		* @private
+		*/
+		context: null,
+		
+		/**
+		* @method
+		* @private
+		*/
+		constructor: enyo.inherit(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				this.responders = [];
+				this.errorHandlers = [];
+				this.progressHandlers = [];
+			};
+		}),
+		
+		/**
+		* @method
+		* @private
+		*/
+		destroy: enyo.inherit(function (sup) {
+			return function () {
+				if (this.timeoutJob) {
+					this.clearTimeout();
+				}
+				sup.apply(this, arguments);
+			};
+		}),
+		
+		/**
+		* @private
+		*/
+		accumulate: function (array, fn, ctx) {
+			var tmp;
+			
+			// to preserve backward compatibility we have to accept that the order of the arguments
+			// might be different
+			if (ctx && typeof ctx == 'function') {
+				tmp = fn;
+				fn = ctx;
+				ctx = tmp;
+			}
+			
+			// we go ahead and bind the method to its context to preserve the original
+			// implementation
+			if (ctx) fn = fn.bind(ctx);
+			
+			// now store it for use later
+			array.push(fn);
+		},
+		
+		/**
+		* Register a [function]{@link external:Function} to be fired when
+		* [execution]{@link enyo.Async#go} is completed successfully. Parameters can be in any order
+		* to preserve backward compatibility.
+		*
+		* @param {Function} fn The callback to register.
+		* @param {Object} [ctx] The optional context under which to execute the callback.
+		* @returns {this} The callee for chaining.
+		* @public
+		*/
+		response: function (fn, ctx) {
+			this.accumulate(this.responders, fn, ctx);
+			return this;
+		},
+		
+		/**
+		* Register a [function]{@link external:Function} to be fired when
+		* [execution]{@link enyo.Async#go} is completed errantly. Parameters can be in any order to
+		* preserve backward compatibility.
+		*
+		* @param {Function} fn The callback to register.
+		* @param {Object} [ctx] The optional context under which to execute the callback.
+		* @returns {this} The callee for chaining.
+		* @public
+		*/
+		error: function (fn, ctx) {
+			this.accumulate(this.errorHandlers, fn, ctx);
+			return this;
+		},
+		
+		/**
+		* Register a [function]{@link external:Function} to be fired on progress events. Parameters
+		* can be in any order to preserve backward compatibility.
+		*
+		* @param {Function} fn The callback to register.
+		* @param {Object} [ctx] The optional context under which to execute the callback.
+		* @returns {this} The callee for chaining.
+		* @public
+		*/
+		progress: function (fn, ctx) {
+			this.accumulate(this.progressHandlers, fn, ctx);
+			return this;
+		},
+		
+		/**
+		* @private
+		*/
+		route: function (async, value) {
+			var r = this.bindSafely('respond');
+			async.response(function (sender, value) {
+				r(value);
+			});
+			var f = this.bindSafely('fail');
+			async.error(function (sender, value) {
+				f(value);
+			});
+			async.go(value);
+		},
+		
+		/**
+		* @private
+		*/
+		handle: function (value, handlers) {
+			var r = handlers.shift();
+			if (r) {
+				if (r instanceof enyo.Async) {
+					this.route(r, value);
+				} else {
+					// handler can return a new 'value'
+					var v = enyo.call(this.context || this, r, [this, value]);
+					// ... but only if it returns something other than undefined
+					v = (v !== undefined) ? v : value;
+					// next handler
+					(this.failed ? this.fail : this.respond).call(this, v);
+				}
+			}
+		},
+		
+		/**
+		* @private
+		*/
+		startTimer: function () {
+			this.startTime = enyo.perfNow();
+			if (this.timeout) {
+				this.timeoutJob = setTimeout(this.bindSafely('timeoutComplete'), this.timeout);
+			}
+		},
+		
+		/**
+		* @private
+		*/
+		endTimer: function () {
 			if (this.timeoutJob) {
-				this.clearTimeout();
+				this.endTime = enyo.perfNow();
+				clearTimeout(this.timeoutJob);
+				this.timeoutJob = null;
+				this.latency = this.endTime - this.startTime;
 			}
-			sup.apply(this, arguments);
-		};
-	}),
+		},
+		
+		/**
+		* @private
+		*/
+		timeoutComplete: function () {
+			this.timedout = true;
+			this.fail('timeout');
+		},
+		
+		/**
+		* Triggers the handler chain for valid outcomes.
+		*
+		* @private
+		*/
+		respond: function (value) {
+			this.failed = false;
+			this.endTimer();
+			this.handle(value, this.responders);
+		},
 
-	accumulate: function(inArray, inMethodArgs) {
-		var fn = (inMethodArgs.length < 2) ? inMethodArgs[0] : enyo.bind(inMethodArgs[0], inMethodArgs[1]);
-		inArray.push(fn);
-	},
-	//* @public
-	/**
-		Registers a response function.
-		First parameter is an optional _this_ context for the response method.
-		Second (or only) parameter is the function object.
-	*/
-	response: function(/* [inContext], inResponder */) {
-		this.accumulate(this.responders, arguments);
-		return this;
-	},
-	/**
-		Registers an error handler.
-		First parameter is an optional _this_ context for the response method.
-		Second (or only) parameter is the function object.
-	*/
-	error: function(/* [inContext], inResponder */) {
-		this.accumulate(this.errorHandlers, arguments);
-		return this;
-	},
-	//* @protected
-	route: function(inAsync, inValue) {
-		var r = this.bindSafely("respond");
-		inAsync.response(function(inSender, inValue) {
-			r(inValue);
-		});
-		var f = this.bindSafely("fail");
-		inAsync.error(function(inSender, inValue) {
-			f(inValue);
-		});
-		inAsync.go(inValue);
-	},
-	handle: function(inValue, inHandlers) {
-		var r = inHandlers.shift();
-		if (r) {
-			if (r instanceof enyo.Async) {
-				this.route(r, inValue);
-			} else {
-				// handler can return a new 'value'
-				var v = enyo.call(this.context || this, r, [this, inValue]);
-				// ... but only if it returns something other than undefined
-				v = (v !== undefined) ? v : inValue;
-				// next handler
-				(this.failed ? this.fail : this.respond).call(this, v);
+		/**
+		* Will fail the [task]{@link enyo.Async} and trigger the error chain. Can be called from any
+		* handler.
+		* 
+		* @param {*} err The error value to pass to error handlers.
+		* @returns {this} The callee for chaining.
+		* @public
+		*/
+		fail: function (err) {
+			this.failed = true;
+			this.endTimer();
+			this.handle(err, this.errorHandlers);
+			
+			return this;
+		},
+		
+		/**
+		* Clears the error condition ([failed]{@link enyo.Async#failed}) by setting it to `false`.
+		* If called while responding to handlers it will continue.
+		*
+		* @returns {this} The callee for chaining.
+		* @public
+		*/
+		recover: function () {
+			this.failed = false;
+			return this;
+		},
+		
+		/**
+		* @private
+		*/
+		sendProgress: function(current, min, max, sourceEvent) {
+			var event = enyo.mixin({}, sourceEvent);
+			event.type = 'progress';
+			event.current = current;
+			event.min = min;
+			event.max = max;
+			for (var i = 0; i < this.progressHandlers.length; i++) {
+				enyo.call(this.context || this, this.progressHandlers[i], [this, event]);
 			}
+		},
+		
+		/**
+		* Initiates the asynchronous routine and will supply the given value if it completes
+		* successfully. This method is usually overloaded in [subkinds]{@link external:subkind}.
+		*
+		* @virtual
+		* @param {*} value The value to pass to responders.
+		* @returns {this} The callee for chaining.
+		* @public
+		*/
+		go: function(value) {
+			this.sendProgress(0, 0, 1);
+			enyo.asyncMethod(this, function() {
+				this.sendProgress(1, 0, 1);
+				this.respond(value);
+			});
+			return this;
 		}
-	},
-	startTimer: function() {
-		this.startTime = enyo.perfNow();
-		if (this.timeout) {
-			this.timeoutJob = setTimeout(this.bindSafely("timeoutComplete"), this.timeout);
-		}
-	},
-	endTimer: function() {
-		if (this.timeoutJob) {
-			this.endTime = enyo.perfNow();
-			clearTimeout(this.timeoutJob);
-			this.timeoutJob = null;
-			this.latency = this.endTime - this.startTime;
-		}
-	},
-	timeoutComplete: function() {
-		this.timedout = true;
-		this.fail("timeout");
-	},
-	//* @protected
-	//* Called as part of the async implementation; triggers the handler chain.
-	respond: function(inValue) {
-		this.failed = false;
-		this.endTimer();
-		this.handle(inValue, this.responders);
-	},
-	//* @public
-	//* Can be called from any handler to trigger the error chain.
-	fail: function(inError) {
-		this.failed = true;
-		this.endTimer();
-		this.handle(inError, this.errorHandlers);
-	},
-	//* Called from an error handler; clears the error condition and resumes
-	//* calling handler methods.
-	recover: function() {
-		this.failed = false;
-	},
-    //* @public
-	/**
-		Registers a progress handler.
-		First parameter is an optional _this_ context for the response method.
-		Second (or only) parameter is the function object.
-		Progress handlers are called with the sender as the first argument and a progress event as the second argument.
-	*/
-	progress: function(/* [inContext], inResponder */) {
-		this.accumulate(this.progressHandlers, arguments);
-		return this;
-	},
-	//* @protected
-	//* Notifies the progress handlers
-	sendProgress: function(current, min, max, sourceEvent) {
-		var event = enyo.mixin({}, sourceEvent);
-		event.type = 'progress';
-		event.current = current;
-		event.min = min;
-		event.max = max;
-		for (var i = 0; i < this.progressHandlers.length; i++) {
-			enyo.call(this.context || this, this.progressHandlers[i], [this, event]);
-		}
-	},
-	//* Starts the async activity. Overridden in subkinds.
-	go: function(inValue) {
-		this.sendProgress(0, 0, 1);
-		enyo.asyncMethod(this, function() {
-			this.sendProgress(1, 0, 1);
-			this.respond(inValue);
-		});
-		return this;
-	}
-});
+	});
+	
+})(enyo, this);

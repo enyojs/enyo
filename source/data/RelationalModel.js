@@ -1,4 +1,3 @@
-
 (function (enyo, scope) {
 	
 	var kind = enyo.kind;
@@ -7,91 +6,87 @@
 		Collection = enyo.Collection;
 		
 	/**
-		Private class for a collection that defaults its model kind to enyo.RelationalModel
-		as oppossed to enyo.Model.
-		
-		@private
-		@class RelationalCollection
-		@extends enyo.Collection
+	* Private class for a collection that defaults its model kind to
+	* {@link enyo.RelationalModel} as oppossed to {@link enyo.Model}.
+	* 
+	* @class RelationalCollection
+	* @extends enyo.Collection
+	* @private
 	*/
 	var RelationalCollection = kind(
-		/** @lends Collection.prototype */ {
+		/** @lends RelationalCollection.prototype */ {
 			
 		/**
-			@private
+		* @private
 		*/
 		kind: Collection,
 		
 		/**
-			@private
+		* @private
 		*/
 		model: 'enyo.RelationalModel'
 	});
 
 	/**
-		@todo No idea how to document these as default options
+	* The default options for [relations]{@link enyo.RelationalModel#relations}. These may vary
+	* for the individual [kind]{@link external:kind} of relation.
+	*
+	* @typedef {Object} enyo.RelationalModel~RelationOptions
+	* @property {String} type=toOne - The [kind]{@link external:kind} of relation being declared.
+	*	Can be the name of the relation type or a reference to the constructor.
+	* @property {String} key=null - The [attribute]{@link enyo.Model#attributes} name for the
+	*	relation being declared.
+	* @property {Boolean} create=false - Whether or not the relation should automatically create
+	*	the instance of the related [kind]{@link external:kind}.
+	* @property {Boolean} parse=false - Whether or not the relation should call the
+	*	[parse]{@link enyo.Model#parse} method with incoming data before
+	*	[setting]{@link enyo.Model#set} it on the [model]{@link enyo.RelationalModel}.
+	* @property {String} model=enyo.RelationalModel - The [kind]{@link external:kind} of the
+	*	reverse of the relation. This will vary depending on the _type_ or relation being declared.
+	* @property {Boolean} fetch=false - Whether or not to automatically call
+	*	[fetch]{@link enyo.Model#fetch} (or {@link enyo.Collection#fetch}) after initialization.
+	* @property {String} inverseKey=null - The _key_ of the reverse relation.
+	* @property {String} inverseType=null - The _type_ of the reverse relation.
+	* @property {Boolean} isOwner=false - Whether or not this end of the relation _owns_ the
+	*	reverse. If it does, it will update according to changes and will include the reverse end
+	*	in its [raw]{@link enyo.Model#raw} output.
+	* @property {(Boolean|String|String[])} includeInJSON=true - Whether or not to include the
+	*	relation in its [raw]{@link enyo.Model#raw} output. If a [string]{@link external:String},
+	*	only that _key_ will be included, if an [array]{@link external:Array} only those _keys_ will
+	*	be included.
 	*/
 	var relationDefaults = {
-		/**
-		*/
 		type: 'toOne',
-		
-		/**
-		*/
 		key: null,
-		
-		/**
-		*/
 		create: false,
-		
-		/**
-		*/
 		parse: false,
-		
-		/**
-		*/
 		model: 'enyo.RelationalModel',
-		
-		/**
-		*/
 		fetch: false,
-		
-		/**
-		*/
 		inverseKey: null,
-		
-		/**
-		*/
 		inverseType: null,
-		
-		/**
-		*/
 		isOwner: false,
-		
-		/**
-		*/
 		includeInJSON: true
 	};
 
 	/**
-		@protected
-		@abstract Relation
+	* @class Relation
+	* @protected
 	*/
 	var Relation = kind(
 		/** @lends Relation.prototype */ {
 			
 		/**
-			@private
+		* @private
 		*/
 		kind: null,
 		
 		/**
-			@private
+		* @private
 		*/
 		options: {},
 		
 		/**
-			@private
+		* @private
 		*/
 		constructor: function (instance, props) {
 			
@@ -113,16 +108,14 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		getRelated: function () {
 			return this.related;
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		setRelated: function (related) {
 			var inst = this.instance,
@@ -150,8 +143,7 @@
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		destroy: function () {
 			var isOwner = this.isOwner,
@@ -169,8 +161,8 @@
 	});
 	
 	/**
-		@private
-		@static
+	* @private
+	* @static
 	*/
 	Relation.concat = function (ctor, props) {
 		var proto = ctor.prototype;
@@ -181,54 +173,53 @@
 	};
 	
 	/**
-		@public
-		@class enyo.toMany
-		@extends Relation
+	* Represents a relationship of data from one [model]{@link enyo.Model} to many
+	* [models]{@link enyo.Model}. This is an internally used class.
+	*
+	* @class enyo.toMany
+	* @extends Relation
+	* @protected
 	*/
 	kind(
 		/** @lends enyo.toMany.prototype */ {
 		
 		/**
-			@private
+		* @private
 		*/
 		name: 'enyo.toMany',
 		
 		/**
-			@private
+		* @private
 		*/
 		kind: Relation,
 		
 		/**
-			@private
+		* @private
 		*/
 		noDefer: true,
 		
 		/**
-			@public
+		* The default [options]{@link enyo.RelationalModel~RelationOptions} overloaded for this
+		* [kind]{@link external:kind}.
+		*
+		* @type enyo.RelationalModel~RelationOptions
+		* @property {Boolean} create=true - By default the relation should create the
+		*	[collection]{@link enyo.Collection} automatically.
+		* @property {enyo.Collection} collection=RelationalCollection - The
+		*	[kind]{@link external:kind} of {@link enyo.Collection} to use, can be a the name or a
+		*	reference to the constructor.
+		* @property {Object} collectionOptions - An options hash to pass to the
+		*	[collection]{@link enyo.Collection} when it is being instanced.
+		* @public
 		*/
 		options: {
-			
-			/**
-			*/
-			isOwner: false,
-			
-			/**
-			
-			*/
 			create: true,
-			
-			/**
-			*/
 			collection: RelationalCollection,
-			
-			/**
-			*/
 			collectionOptions: {}
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		init: function () {
 			/*jshint -W055 */
@@ -297,16 +288,14 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		fetchRelated: function () {
 			
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		setRelated: function (data) {
 			var related = this.related;
@@ -316,8 +305,7 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		findRelated: function () {
 			var ctor = this.model,
@@ -336,8 +324,7 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		checkRelation: function (model) {
 			var ctor = this.model,
@@ -375,8 +362,7 @@
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		raw: function () {
 			var iJson = this.includeInJSON
@@ -395,8 +381,7 @@
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		_changed: function (sender, e, props) {
 			// console.log('enyo.toMany._changed: ', arguments);
@@ -429,8 +414,7 @@
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		destroy: enyo.inherit(function (sup) {
 			return function () {
@@ -441,6 +425,9 @@
 		})
 	});
 	
+	/**
+	* @private
+	*/
 	enyo.toMany.concat = function (ctor, props) {
 		var proto = ctor.prototype;
 		if (props.collectionOptions) {
@@ -450,23 +437,46 @@
 	};
 	
 	/**
-		@public
-		@class enyo.manyToMany
+	* Represents a relationship of data from many [models]{@link enyo.Model} to many
+	* [models]{@link enyo.Model}. This is an internally used class.
+	*
+	* @class enyo.manyToMany
+	* @extends enyo.toMany
+	* @protected
 	*/
 	kind(
 		/** @lends enyo.manyToMany.prototype */ {
+		
+		/**
+		* @private
+		*/
 		name: 'enyo.manyToMany',
+		
+		/**
+		* @private
+		*/
 		kind: enyo.toMany,
+		
+		/**
+		* @private
+		*/
 		noDefer: true,
 		
+		/**
+		* The default [options]{@link enyo.RelationalModel~RelationOptions} overloaded for this
+		* [kind]{@link external:kind}.
+		*
+		* @see enyo.toMany#options
+		* @type enyo.RelationalModel~RelationOptions
+		* @property {String} inverseType=enyo.manyToMany - This is the __required__ _type_.
+		* @public
+		*/
 		options: {
-			inverseType: 'enyo.manyToMany',
-			isOwner: false
+			inverseType: 'enyo.manyToMany'
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		checkRelation: function (model) {
 			var Ctor = this.model,
@@ -503,6 +513,9 @@
 			return false;
 		},
 		
+		/**
+		* @private
+		*/
 		_changed: enyo.inherit(function (sup) {
 			return function (sender, e, props) {
 				var related = this.related,
@@ -568,41 +581,48 @@
 	});
 	
 	/**
-		@public
-		@class enyo.toOne
-		@extends Relation
+	* Represents a relationship of data from one [model]{@link enyo.Model} to another
+	* [model]{@link enyo.Model}. This is an internally used class.
+	*
+	* @class enyo.toOne
+	* @extends Relation
+	* @protected
 	*/
 	kind(
 		/** @lends enyo.toOne.prototype */ {
 			
 		/**
-			@private
+		* @private
 		*/
 		name: 'enyo.toOne',
 		
 		/**
-			@private
+		* @private
 		*/
 		kind: Relation,
 		
 		/**
-			@private
+		* @private
 		*/
 		noDefer: true,
 		
 		/**
-			@public
+		* The default [options]{@link enyo.RelationalModel~RelationOptions} overloaded for this
+		* [kind]{@link external:kind}.
+		*
+		* @type enyo.RelationalModel~RelationOptions
+		* @property {String} inverseType=enyo.toOne - This is can be `enyo.toOne` or `enyo.toMany`.
+		* @property {Object} modelOptions - A options hash to pass to the related instance if
+		*	_create_ is `true`.
+		* @public
 		*/
 		options: {
 			inverseType: 'enyo.toOne',
-			
-			/**
-			*/
 			modelOptions: null
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		init: function () {
 			
@@ -684,8 +704,7 @@
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		setRelated: enyo.inherit(function (sup) {
 			return function (related) {
@@ -720,15 +739,13 @@
 		}),
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		fetchRelated: function () {
 		},
 		
 		/**
-			@public
-			@method
+		* @private
 		*/
 		findRelated: function () {
 			
@@ -794,8 +811,7 @@
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		checkRelation: function (model) {
 			var related = this.related,
@@ -813,8 +829,7 @@
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		raw: function () {
 			var iJson = this.includeInJSON,
@@ -829,8 +844,7 @@
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		_changed: function (sender, e, props) {
 			var key = this.key,
@@ -861,43 +875,98 @@
 	});
 	
 	/**
-		@public
-		@class enyo.RelationalModel
+	* A type of {@link enyo.Model} extended to automatically understand relationships with other
+	* [models]{@link enyo.Model}. You can define these relationship via the
+	* [relations]{@link enyo.RelationalModel#relations} property. These relationships allow for
+	* individual [models]{@link enyo.Model} to exist separately but be treated as a singular
+	* entity.
+	*
+	* @class enyo.RelationalModel
+	* @extends enyo.Model
+	* @public
 	*/
-	var RelationalModel = kind({
+	var RelationalModel = kind(
+		/** @lends enyo.RelationalModel.prototype */ {
+		
+		/**
+		* @private
+		*/
 		name: 'enyo.RelationalModel',
+		
+		/**
+		* @private
+		*/
 		kind: Model,
+		
+		/**
+		* @private
+		*/
 		noDefer: true,
 		
 		/**
-			@public
-			@method
+		* An [array]{@link external:Array} declaring relationships of this
+		* [model]{@link enyo.RelationalModel} to other [models]{@link enyo.RelationalModel}. These
+		* are [hashes]{@link external:Object} of corresponding
+		* [properties]{@link enyo.RelationalModel~RelationOptions} defining and configuring
+		* individual relations. They can be of the _type_ {@link enyo.toOne}, {@link enyo.toMany}
+		* or {@link enyo.manyToMany}. They must include a _key_ property that is the name of the
+		* local [attribute]{@link enyo.Model#attributes}. For example:
+		*
+		* ```javascript
+		* enyo.kind({
+		* 	name: 'Person',
+		* 	kind: enyo.RelationalModel,
+		* 	relations: [
+		* 		{
+		* 			key: 'nicknames',
+		* 			type: 'toMany',
+		* 			model: 'Name',
+		* 			isOwner: true,
+		* 			includeInJSON: 'id'
+		* 		}
+		* 	]
+		* });
+		* ```
+		*
+		* @type {Array}
+		* @default null
+		* @public
 		*/
-		getRelation: function (name) {
+		relations: null,
+		
+		/**
+		* Retrieve the relation instance for a given _key_
+		* ([attribute]{@link enyo.Model#attributes}).
+		*
+		* @param {String} key The _key_ as defined in the
+		*	[relations]{@link enyo.RelationalModel#relations} property.
+		* @returns {(Relation|undefined)} The correct relation instance of `undefined` if not found.
+		* @public
+		*/
+		getRelation: function (key) {
 			return this.relations.find(function (ln) {
-				return ln instanceof Relation && ln.key == name;
+				return ln instanceof Relation && ln.key == key;
 			});
 		},
 		
 		/**
-			@public
-			@method
+		* Determine if the requested _key_ is the name of a relation.
+		*
+		* @param {String} key The _key_ as defined in the
+		*	[relations]{@link enyo.RelationalModel#relations} property.
+		* @returns {(Relation|undefined)} The correct relation instance of `undefined` if not found.
+		* @public
 		*/
-		isRelation: function (name) {
-			return this.getRelation(name);
+		isRelation: function (key) {
+			return this.getRelation(key);
 		},
 		
 		/**
-			@public
-			@method
-		*/
-		fetchRelated: function () {
-			
-		},
-		
-		/**
-			@private
-			@method
+		* Overloaded version of [get]{@link enyo.Model#get} to be able to use a _path_ through
+		* relations.
+		*
+		* @method
+		* @private
 		*/
 		get: enyo.inherit(function (sup) {
 			return function (path) {
@@ -919,8 +988,10 @@
 		}),
 		
 		/**
-			@public
-			@method
+		* Overloaded version of [set]{@link enyo.Model#set} to be able to set values for related
+		* [models]{@link enyo.RelationModel} as well.
+		*
+		* @private
 		*/
 		set: function (path, is, opts) {
 			if (!this.destroyed) {
@@ -997,8 +1068,9 @@
 		},
 		
 		/**
-			@private
-			@method
+		* Overloaded to provide additional features for relations.
+		*
+		* @private
 		*/
 		raw: function () {
 			var inc = this.includeKeys
@@ -1030,8 +1102,7 @@
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		constructor: enyo.inherit(function (sup) {
 			return function (attrs, props, opts) {
@@ -1045,8 +1116,7 @@
 		}),
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		destroy: enyo.inherit(function (sup) {
 			return function () {
@@ -1066,8 +1136,7 @@
 		}),
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		initRelations: function () {
 			// if there aren't any relations we initialize the value to an empty array
@@ -1096,9 +1165,11 @@
 	});
 	
 	/**
-		Ensure that we concatenate (sanely) the relations for any subkinds.
-	
-		@private
+	* Ensure that we concatenate (sanely) the relations for any subkinds.
+	* 
+	* @name enyo.RelationalModel.concat
+	* @static
+	* @private
 	*/
 	RelationalModel.concat = function (ctor, props) {
 		var proto = ctor.prototype || ctor

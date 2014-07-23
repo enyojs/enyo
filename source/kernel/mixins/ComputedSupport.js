@@ -1,13 +1,13 @@
-(function (enyo) {
+(function (enyo, scope) {
 	
 	var extend = enyo.kind.statics.extend;
 		
 	var ComputedSupport;
 	
-	enyo.concatenated.push("computed");
+	enyo.concatenated.push('computed');
 	
 	/**
-		@private
+	* @private
 	*/
 	function getComputedValue (obj, path) {
 		var cache = obj._getComputedCache(path)
@@ -27,7 +27,7 @@
 	}
 	
 	/**
-		@private
+	* @private
 	*/
 	function queueComputed (obj, path) {
 		var queue = obj._computedQueue || (obj._computedQueue = [])
@@ -41,7 +41,7 @@
 	}
 	
 	/**
-		@private
+	* @private
 	*/
 	function flushComputed (obj) {
 		var queue = obj._computedQueue;
@@ -54,20 +54,35 @@
 	}
 	
 	/**
-		@public
-		@mixin
+	* This mixin adds API methods to support
+	* [computed properties]{@link external:"computed property"}. Unlike with other support mixins,
+	* this mixin does not need to be explicitly included by a [kind]{@link external:kind}. If the
+	* [computed]{@link enyo.ComputedSupport.computed} [array]{@link external:Array} is found in
+	* a [kind]{@link external:kind} definition it will automatically be included.
+	*
+	* @mixin enyo.ComputedSupport
+	* @public
 	*/
 	ComputedSupport = enyo.ComputedSupport = {
-		name: "ComputedSupport",
 		
 		/**
-			@private
+		* @private
+		*/
+		name: 'ComputedSupport',
+		
+		/**
+		* @private
 		*/
 		_computedRecursion: 0,
 		
 		/**
-			@public
-			@method
+		* Primarily for internal use, this method determines if the given path is a known
+		* [computed property]{@link external:"computed property"}.
+		*
+		* @param {String} path The property or path to test.
+		* @returns {Boolean} Whether or not the _path_ is a
+		*	[computed property]{@link external:"computed property"}.
+		* @public
 		*/
 		isComputed: function (path) {
 			// if it exists it will be explicitly one of these cases and it is cheaper than hasOwnProperty
@@ -75,16 +90,20 @@
 		},
 		
 		/**
-			@public
-			@method
+		* Primarily for internal use, this method determines if the given path is a known dependency
+		* of a [computed property]{@link external:"computed property"}.
+		*
+		* @param {String} path The property or path to test.
+		* @returns {Boolean} Whether or not the _path_ is a dependency of a
+		*	[computed property]{@link external:"computed property"}.
+		* @public
 		*/
 		isComputedDependency: function (path) {
 			return !! (this._computedDependencies? this._computedDependencies[path]: false);
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		get: enyo.inherit(function (sup) {
 			return function (path) {
@@ -93,8 +112,7 @@
 		}),
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		set: enyo.inherit(function (sup) {
 			return function (path) {
@@ -104,16 +122,14 @@
 		}),
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		notifyObservers: function () {
 			return this.notify.apply(this, arguments);
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		notify: enyo.inherit(function (sup) {
 			return function (path, was, is) {
@@ -127,16 +143,14 @@
 		}),
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		_isComputedCached: function (path) {
 			return this._computed[path];
 		},
 		
 		/**
-			@private
-			@method
+		* @private
 		*/
 		_getComputedCache: function (path) {
 			var cache = this._computedCache || (this._computedCache = {});
@@ -146,12 +160,16 @@
 	
 
 	/**
-		Hijack the original so we can add additional default behavior.
+	* Hijack the original so we can add additional default behavior.
 	*/
 	var sup = enyo.concatHandler;
 
 	// @NOTE: It seems like a lot of work but it really won't happen that much and the more
 	// we push to kind-time the better for initialization time
+	
+	/**
+	* @private
+	*/
 	enyo.concatHandler = function (ctor, props, instance) {
 	
 		sup.call(this, ctor, props, instance);
@@ -181,7 +199,7 @@
 						/*jshint -W083 */
 						conf = deps && deps.find(function (ln) {
 							// we deliberately remove the entry here and forcibly return true to break
-							return typeof ln == "object"? (enyo.remove(deps, ln) || true): false;
+							return typeof ln == 'object'? (enyo.remove(deps, ln) || true): false;
 						});
 						/*jshint +W083 */
 						// create a single entry now for the method/computed with all dependencies
@@ -224,4 +242,4 @@
 		}
 	};
 	
-})(enyo);
+})(enyo, this);

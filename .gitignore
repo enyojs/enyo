@@ -7,4 +7,5 @@ Thumbs.db
 /examples/3 - Making Builds/source/minify-include-enyo/build
 
 node_modules/*
+docs/out
 out
