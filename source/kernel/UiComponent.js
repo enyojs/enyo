@@ -52,7 +52,7 @@
 
 			/**
 			* The [UiComponent]{@link enyo.UiComponent} that will physically contain new items added
-			* by calls to [`createComponent()`]{@link enyo.UiComponent#createComponent}.
+			* by calls to [createComponent()]{@link enyo.UiComponent#createComponent}.
 			*
 			* @type {String}
 			* @default 'client'
@@ -157,14 +157,14 @@
 		*	{name: 'zot'}
 		* ], {owner: this});
 		*
-		* As implemented, [`_controlParentName_`]{@link enyo.UiComponent#controlParentName} only works
+		* As implemented, [controlParentName]{@link enyo.UiComponent#controlParentName} only works
 		* to identify an owned control created via `createComponents()`
 		* (i.e., usually in our `components` block). To attach a `controlParent` via other means, 
-		* one must call [`discoverControlParent()`]{@link enyo.UiComponent#discoverControlParent} or 
+		* one must call [discoverControlParent()]{@link enyo.UiComponent#discoverControlParent} or 
 		* set `controlParent` directly.
 		* 
 		* We could call `discoverControlParent()` in
-		* [`addComponent()`]{@link enyo.Component#addComponent}, but that would
+		* [addComponent()]{@link enyo.Component#addComponent}, but that would
 		* cause a lot of useless checking.
 		* 
 		* @param {Object[]} props The array of {@link enyo.Component} definitions to be created.
@@ -276,7 +276,7 @@
 
 		/**
 		* Destroys "client controls", the same set of [controls]{@link enyo.Control} returned by 
-		* [`getClientControls()`]{@link enyo.UiComponent#getClientControls}.
+		* [getClientControls()]{@link enyo.UiComponent#getClientControls}.
 		*
 		* @public
 		*/

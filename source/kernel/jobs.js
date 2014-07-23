@@ -12,7 +12,7 @@
 	* of 5 by default; thus they are not blocked by animations.
 	*
 	* Normally, application code will not use `enyo.jobs` directly, but will
-	* instead use the [`job()`]{@link enyo.Component#job} method of
+	* instead use the [job()]{@link enyo.Component#job} method of
 	* {@link enyo.Component}.
 	*
 	* @name enyo.jobs

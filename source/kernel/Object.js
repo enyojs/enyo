@@ -57,7 +57,7 @@
 		noDefer: true,
 
 		/**
-		* If the [`destroy()`]{@link enyo.Object#destroy} method has been called, this property will be
+		* If the [destroy()]{@link enyo.Object#destroy} method has been called, this property will be
 		* `true`; otherwise, `false`.
 		*
 		* @readonly
@@ -113,7 +113,7 @@
 		},
 		
 		/**
-		* Calls the [`destroy()`]{@link enyo.Object#destroy} method for the named {@link enyo.Object} 
+		* Calls the [destroy()]{@link enyo.Object#destroy} method for the named {@link enyo.Object} 
 		* property.
 		*
 		* @param {String} name The name of the property to destroy, if possible.
@@ -154,8 +154,8 @@
 		},
 		
 		/**
-		* Same as [`log()`]{@link enyo.Object#log}, except that it uses the 
-		* [console's `warn()`]{@glossary console.warn} method (if it exists).
+		* Same as [log()]{@link enyo.Object#log}, except that it uses the 
+		* console's [warn()]{@glossary console.warn} method (if it exists).
 		*
 		* @public
 		*/
@@ -164,8 +164,8 @@
 		},
 		
 		/**
-		* Same as [`log()`]{@link enyo.Object#log} except that it uses the 
-		* [console's `error()`]{@glossary console.error} method (if it exists).
+		* Same as [log()]{@link enyo.Object#log} except that it uses the 
+		* console's [error()]{@glossary console.error} method (if it exists).
 		*
 		* @public
 		*/
@@ -221,7 +221,7 @@
 		},
 		
 		/**
-		* An abstract method (primarily) that sets the [`destroyed`]{@link enyo.Object#destroyed} 
+		* An abstract method (primarily) that sets the [destroyed]{@link enyo.Object#destroyed} 
 		* property to `true`.
 		*
 		* @returns {this} The callee for chaining.

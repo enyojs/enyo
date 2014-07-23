@@ -33,7 +33,7 @@
 
 		/**
 		* Needed because of early calls to bind DOM [event]{@glossary event} listeners
-		* to the [`enyo.Signals.send()`]{@link enyo.Signals#send} call.
+		* to the [enyo.Signals.send()]{@link enyo.Signals#send} call.
 		* 
 		* @private
 		*/

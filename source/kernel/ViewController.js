@@ -41,7 +41,7 @@
 		* controller's settings. If the `view` is set to an instance, it will be
 		* rendered according to the properties of the controller. If this property
 		* is a constructor, it will be preserved in the
-		* [`viewKind`]{@link enyo.ViewController#viewKind} property. Once
+		* [viewKind]{@link enyo.ViewController#viewKind} property. Once
 		* initialization is complete, the instance of this controller's view will be
 		* available via this property.
 		*
@@ -55,7 +55,7 @@
 		* The preserved [kind]{@glossary kind} for this controller's view. You may
 		* set this to a [constructor]{@glossary constructor} or a
 		* [string]{@glossary String} that resolves to a constructor (or the
-		* [`view`]{@link enyo.ViewController#view} property). In either case, if a
+		* [view]{@link enyo.ViewController#view} property). In either case, if a
 		* view is set explicitly or this property is used, the constructor will be
 		* available via this property.
 		*
@@ -82,10 +82,10 @@
 		renderTarget: 'document.body',
 
 		/**
-		* When the view of the controller has its [`destroy()`]{@link enyo.Control#destroy}
+		* When the view of the controller has its [destroy()]{@link enyo.Control#destroy}
 		* method called, it automatically triggers its own removal from the controller's
-		* [`view`]{@link enyo.ViewController#view} property. By default, the controller
-		* will not create a new view (from [`viewKind`]{@link enyo.ViewController#viewKind})
+		* [view]{@link enyo.ViewController#view} property. By default, the controller
+		* will not create a new view (from [viewKind]{@link enyo.ViewController#viewKind})
 		* automatically unless this flag is set to `true`.
 		*
 		* @type {Boolean}
@@ -98,11 +98,11 @@
 		* Renders the controller's view, if possible. If the controller is a
 		* component of a [UiComponent]{@link enyo.UiComponent}, the view will be
 		* rendered into its container; otherwise, the view will be rendered into the
-		* controller's [`renderTarget`]{@link enyo.ViewController#renderTarget}. If
+		* controller's [renderTarget]{@link enyo.ViewController#renderTarget}. If
 		* the view is already rendered, this method will do nothing.
 		*
 		* @param {String} [target] When specified, this value will be used instead of
-		*	[`renderTarget`]{@link enyo.ViewController#renderTarget}.
+		*	[renderTarget]{@link enyo.ViewController#renderTarget}.
 		* @public
 		*/
 		render: function (target) {
@@ -121,7 +121,7 @@
 
 		/**
 		* Renders the view into the specified `target` and sets the 
-		* [`renderTarget`]{@link enyo.ViewController#renderTarget} property to
+		* [renderTarget]{@link enyo.ViewController#renderTarget} property to
 		* `target`.
 		*
 		* @param {String} target Where the view will be rendered into.
@@ -132,7 +132,7 @@
 		},
 
 		/**
-		* Responds to changes in the controller's [`view`]{@link enyo.ViewController#view}
+		* Responds to changes in the controller's [view]{@link enyo.ViewController#view}
 		* property during initialization or whenever `set('view', ...)` is called.
 		* If a [constructor]{@glossary constructor} is found, it will be instanced
 		* or resolved from a [string]{@glossary String}. If a previous view exists

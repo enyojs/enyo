@@ -3,12 +3,12 @@
 	* {@link enyo.Layout} is the base [kind]{@glossary kind} for layout
 	* kinds. Layout kinds are used by {@link enyo.UiComponent}-based
 	* [controls]{@link enyo.Control} to allow for arranging of child controls by
-	* setting the [`layoutKind`]{@link enyo.UiComponent#layoutKind} property.
+	* setting the [layoutKind]{@link enyo.UiComponent#layoutKind} property.
 	* 
 	* Derived kinds will usually provide their own
-	* [`layoutClass`]{@link enyo.Layout#layoutClass} property to affect the CSS
-	* rules used, and may also implement the [`flow()`]{@link enyo.Layout#flow}
-	* and [`reflow()`]{@link enyo.Layout#reflow} methods. `flow()` is called
+	* [layoutClass]{@link enyo.Layout#layoutClass} property to affect the CSS
+	* rules used, and may also implement the [flow()]{@link enyo.Layout#flow}
+	* and [reflow()]{@link enyo.Layout#reflow} methods. `flow()` is called
 	* during control rendering, while `reflow()` is called when the associated
 	* control is resized.
 	*

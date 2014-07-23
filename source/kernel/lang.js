@@ -2,7 +2,7 @@
 	
 	/**
 	* A polyfill for platforms that don't yet support
-	* [`bind()`]{@glossary Function.prototype.bind}. As explained in the linked article, this
+	* [bind()]{@glossary Function.prototype.bind}. As explained in the linked article, this
 	* polyfill handles the general use case but cannot exactly mirror the ECMA-262 version 5
 	* implementation specification. This is an adaptation of the example promoted
 	* [here]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind}.
@@ -288,7 +288,7 @@
 	/**
 	* Calls the provided `method` on `scope`, asynchronously.
 	*
-	* Uses [`window.setTimeout()`]{@glossary window.setTimeout} with minimum delay,
+	* Uses [window.setTimeout()]{@glossary window.setTimeout} with minimum delay,
 	* usually around 10ms.
 	*
 	* Additional arguments are passed to `method` when it is invoked.
@@ -337,8 +337,8 @@
 
 	/**
 	* Returns the current time in milliseconds. On platforms that support it,
-	* [`Date.now()`]{@glossary Date.now} will be used; otherwise this will
-	* be equivalent to [`new Date().getTime()`]{@glossary Date.getTime}.
+	* [Date.now()]{@glossary Date.now} will be used; otherwise this will
+	* be equivalent to [new Date().getTime()]{@glossary Date.getTime}.
 	* 
 	* @returns {Number} Number of milliseconds representing the current time.
 	* @method
@@ -350,10 +350,10 @@
 	};
 
 	/**
-	* When [`window.performance`]{@glossary window.performance} is available, supplies
+	* When [window.performance]{@glossary window.performance} is available, supplies
 	* a high-precision, high-performance monotonic timestamp, which is independent of
 	* changes to the system clock and thus safer for use in animation, etc. Falls back to
-	* [`enyo.now()`]{@link enyo.now} (based on the JavaScript [Date]{@glossary Date}
+	* [enyo.now()]{@link enyo.now} (based on the JavaScript [Date]{@glossary Date}
 	* object), which is subject to system time changes.
 	* 
 	* @returns {Number} Number of milliseconds representing the current time or time since
@@ -661,7 +661,7 @@
 	
 	/**
 	* A [polyfill]{@glossary polyfill} for platforms that don't support
-	* [`Object.create()`]{@glossary Object.create}.
+	* [Object.create()]{@glossary Object.create}.
 	*/
 	Object.create = Object.create || (function () {
 		var Anon = function () {};
@@ -676,7 +676,7 @@
 	
 	/**
 	* A [polyfill]{@glossary polyfill} for platforms that don't support
-	* [`Object.keys()`]{@glossary Object.keys}.
+	* [Object.keys()]{@glossary Object.keys}.
 	*/
 	Object.keys = Object.keys || function (obj) {
 		var results = [];
@@ -827,7 +827,7 @@
 	* Creates and returns a shallow copy of an [Object]{@glossary Object} or an
 	* [Array]{@glossary Array}. For objects, by default, properties will be scanned and
 	* copied directly to the clone such that they would pass the
-	* [`hasOwnProperty()`]{@glossary Object.hasOwnProperty} test. This is expensive and often not
+	* [hasOwnProperty()]{@glossary Object.hasOwnProperty} test. This is expensive and often not
 	* required. In this case, the optional second parameter may be used to allow a more efficient
 	* [copy]{@link Object.create} to be made.
 	* 
@@ -952,7 +952,7 @@
 	/**
 	* Because our older API parameters are not consistent with other array API methods, and also
 	* because only [IE8 lacks integrated support]{@glossary polyfill} for
-	* [`indexOf()`]{@linkcode external:Array.indexOf}, we ensure it is defined (only IE8) and advise,
+	* [indexOf()]{@linkcode external:Array.indexOf}, we ensure it is defined (only IE8) and advise,
 	* moving forward, that the built-in method be used. But to preserve our original API, it will
 	* simply call this method, knowing it exists.
 	*
@@ -977,7 +977,7 @@
 	/**
 	* Because our older API parameters are not consistent with other array API methods, and also
 	* because only [IE8 lacks integrated support]{@glossary polyfill} for
-	* [`lastIndexOf()`]{@linkcode external:Array.lastIndexOf} we ensure it is defined (only IE8) and
+	* [lastIndexOf()]{@glossary Array.lastIndexOf} we ensure it is defined (only IE8) and
 	* advise, moving forward, that the built-in method be used. But to preserve our original API, it
 	* will simply call this method, knowing it exists.
 	*
@@ -1005,7 +1005,7 @@
 	
 	/**
 	* A [polyfill]{@glossary polyfill} for platforms that don't support
-	* [`Array.findIndex()`]{@glossary Array.findIndex}.
+	* [Array.findIndex()]{@glossary Array.findIndex}.
 	*/
 	Array.prototype.findIndex = Array.prototype.findIndex || function (fn, ctx) {
 		for (var i=0, len=this.length >>> 0; i<len; ++i) {
@@ -1016,7 +1016,7 @@
 	
 	/**
 	* A [polyfill]{@glossary polyfill} for platforms that don't support
-	* [`Array.find()`]{@glossary Array.find}.
+	* [Array.find()]{@glossary Array.find}.
 	*/
 	Array.prototype.find = Array.prototype.find || function (fn, ctx) {
 		for (var i=0, len=this.length >>> 0; i<len; ++i) {
@@ -1026,7 +1026,7 @@
 	
 	/**
 	* A [polyfill]{@glossary polyfill} for platforms that don't support
-	* [`Array.forEach()`]{@glossary Array.forEach}.
+	* [Array.forEach()]{@glossary Array.forEach}.
 	*/
 	Array.prototype.forEach = Array.prototype.forEach || function (fn, ctx) {
 		for (var i=0, len=this.length >>> 0; i<len; ++i) fn.call(ctx, this[i], this);
@@ -1034,7 +1034,7 @@
 	
 	/**
 	* A [polyfill]{@glossary polyfill} for platforms that don't support
-	* [`Array.map()`]{@glossary Array.map}.
+	* [Array.map()]{@glossary Array.map}.
 	*/
 	Array.prototype.map = Array.prototype.map || function (fn, ctx) {
 		var ret = [];
@@ -1046,7 +1046,7 @@
 	
 	/**
 	* A [polyfill]{@glossary polyfill} for platforms that don't support
-	* [`Array.filter()`]{@glossary Array.filter}.
+	* [Array.filter()]{@glossary Array.filter}.
 	*/
 	Array.prototype.filter = Array.prototype.filter || function (fn, ctx) {
 		var ret = [];
@@ -1057,7 +1057,7 @@
 	};
 	
 	/**
-	* An Enyo convenience method reference to [`Array.indexOf()`]{@glossary Array.indexOf}.
+	* An Enyo convenience method reference to [Array.indexOf()]{@glossary Array.indexOf}.
 	* 
 	* This also supports the legacy Enyo argument order `el.indexOf(array, offset)` and can
 	* differentiate between this and the standard `array.indexOf(el, offset)`.
@@ -1075,7 +1075,7 @@
 	};
 	
 	/**
-	* An Enyo convenience method reference to [`Array.lastIndexOf()`]{@glossary Array.lastIndexOf}.
+	* An Enyo convenience method reference to [Array.lastIndexOf()]{@glossary Array.lastIndexOf}.
 	* 
 	* This also supports the legacy Enyo argument order `el.lastIndexOf(array, offset)` and can
 	* differentiate between this and the standard `array.lastIndexOf(el, offset)`.
@@ -1093,7 +1093,7 @@
 	};
 	
 	/**
-	* An Enyo convenience method reference to [`Array.findIndex()`]{@glossary Array.findIndex}.
+	* An Enyo convenience method reference to [Array.findIndex()]{@glossary Array.findIndex}.
 	* 
 	* **When possible, you should use the native equivalent.**
 	* 
@@ -1107,7 +1107,7 @@
 	};
 	
 	/**
-	* An Enyo convenience method reference to [`Array.find()`]{@glossary Array.find}.
+	* An Enyo convenience method reference to [Array.find()]{@glossary Array.find}.
 	* 
 	* **When possible, you should use the native equivalent.**
 	* 
@@ -1129,7 +1129,7 @@
 	enyo.where = enyo.find;
 	
 	/**
-	* An Enyo convenience method reference to [`Array.forEach()`]{@glossary Array.forEach}.
+	* An Enyo convenience method reference to [Array.forEach()]{@glossary Array.forEach}.
 	* 
 	* **When possible, you should use the native equivalent.**
 	* 
@@ -1143,7 +1143,7 @@
 	};
 	
 	/**
-	* An Enyo convenience method reference to [`Array.map()`]{@glossary Array.map}.
+	* An Enyo convenience method reference to [Array.map()]{@glossary Array.map}.
 	*
 	* **When possible, you should use the native equivalent.**
 	* 
@@ -1157,7 +1157,7 @@
 	};
 	
 	/**
-	* An Enyo convenience method reference to [`Array.filter()`]{@glossary Array.filter}.
+	* An Enyo convenience method reference to [Array.filter()]{@glossary Array.filter}.
 	*
 	* **When possible, you should use the native equivalent.**
 	* 
@@ -1273,7 +1273,7 @@
 	};
 
 	/**
-	* This regex pattern is used by the [`enyo.isRtl()`]{@link enyo.isRtl} function.
+	* This regex pattern is used by the [enyo.isRtl()]{@link enyo.isRtl} function.
 	* 
 	* Arabic: \u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFE
 	* Hebrew: \u0590-\u05FF\uFB1D-\uFB4F

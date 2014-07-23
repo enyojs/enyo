@@ -20,7 +20,7 @@
 	* [application]{@link enyo.Application} at a given time, with unique names and target 
 	* [DOM nodes]{@glossary Node}. Within a given application, a reference to the
 	* application is available on all [components]{@link enyo.Component} via the
-	* [`app`]{@link enyo.ApplicationSupport#app} property.
+	* [app]{@link enyo.ApplicationSupport#app} property.
 	*
 	* @class enyo.Application
 	* @extends enyo.ViewController
@@ -41,8 +41,8 @@
 		
 		/**
 		* If set to `true` (the default), the [application's]{@link enyo.Application} 
-		* [`start()`]{@link enyo.Application#start} method will automatically be called once its 
-		* [`create()`]{@link enyo.Application#create} method has completed execution. Set this to 
+		* [start()]{@link enyo.Application#start} method will automatically be called once its 
+		* [create()]{@link enyo.Application#create} method has completed execution. Set this to 
 		* `false` if additional setup (or an asynchronous [event]{@glossary event}) is required
 		* before starting.
 		*
@@ -55,7 +55,7 @@
 		/**
 		* If set to `true` (the default), the [application]{@link enyo.Application} will immediately 
 		* [render]{@link enyo.Application#render} its [view]{@link enyo.ViewController#view} when 
-		* the [`start()`]{@link enyo.Application#start} method has completed execution. Set this to 
+		* the [start()]{@link enyo.Application#start} method has completed execution. Set this to 
 		* `false` to delay rendering if additional setup (or an asynchronous 
 		* [event]{@glossary event}) is required before rendering.
 		*
@@ -132,8 +132,8 @@
 		
 		/**
 		* Allows normal creation flow and then executes the application's 
-		* [`start()`]{@link enyo.Application#start} method if 
-		* [`autoStart`]{@link enyo.Application#autoStart} is `true`.
+		* [start()]{@link enyo.Application#start} method if the
+		* [autoStart]{@link enyo.Application#autoStart} property is `true`.
 		*
 		* @method
 		* @private
@@ -149,7 +149,7 @@
 		
 		/**
 		* Ensures that all [components]{@link enyo.Component} created by this application have 
-		* their [`app`]{@link enyo.ApplicationSupport#app} property set correctly.
+		* their [app]{@link enyo.ApplicationSupport#app} property set correctly.
 		*
 		* @method
 		* @private

@@ -22,7 +22,7 @@
 	* A [hash]{@glossary Object} of references to all the [components]{@link enyo.Component} 
 	* owned by this component. This property is updated whenever a new
 	* component is added; the new component may be accessed via its
-	* [`name`]{@link enyo.Component#name} property. We may also observe changes on
+	* [name]{@link enyo.Component#name} property. We may also observe changes on
 	* properties of components referenced by the `$` property.
 	*
 	* Component access via the `$` hash:
@@ -111,7 +111,7 @@
 	* ```
 	* 
 	* When a component is instantiated, items configured in its 
-	* [`components`]{@link enyo.Component#components} property are instantiated, too:
+	* [components]{@link enyo.Component#components} property are instantiated, too:
 	* 
 	* ```javascript
 	* // create a new component, which itself has a component
@@ -124,11 +124,11 @@
 	* ```
 	* 
 	* In this case, when `me` is created, `other` is also created, and we say that `me` owns `other`. 
-	* In other words, the [`owner`]{@link enyo.Component#owner} property of `other` equals `me`. 
+	* In other words, the [owner]{@link enyo.Component#owner} property of `other` equals `me`. 
 	* Notice that you can specify the [kind]{@glossary kind} of `other` explicitly in its
 	* configuration block, to tell `me` what constructor to use to create `other`.
 	* 
-	* Note that [`kind`]{@glossary kind} values may be references to actual 
+	* Note that [kind]{@glossary kind} values may be references to actual 
 	* kinds or string-names of kinds. Kind names that do not resolve directly to kinds
 	* are looked up in default namespaces. In this case, `kind: 'Component'` resolves to 
 	* `enyo.Component`.
@@ -190,7 +190,7 @@
 			* A unique id for the [component]{@link enyo.Component}, usually automatically generated
 			* based on its position within the component hierarchy, although
 			* it may also be directly specified. {@link enyo.Control} uses this `id` value for the 
-			* DOM [`id`]{@link enyo.Control#id} attribute.
+			* DOM [id]{@link enyo.Control#id} attribute.
 			* 
 			* @type {String}
 			* @default ''
@@ -201,8 +201,8 @@
 			/**
 			* The [component]{@link enyo.Component} that owns this component.
 			* It is usually defined implicitly at creation time based on the 
-			* [`createComponent()`]{@link enyo.Component#createComponent} call or 
-			* the [`components`]{@link enyo.Component#components} hash.
+			* [createComponent()]{@link enyo.Component#createComponent} call or 
+			* the [components]{@link enyo.Component#components} hash.
 			*
 			* @type {enyo.Component}
 			* @default null
@@ -443,7 +443,7 @@
 		* Removes the passed-in [component]{@link enyo.Component} from those known
 		* to be owned by this component. The component will be removed from the
 		* [$ hash]{@link enyo.Component#$}, and from the [owner]{@link enyo.Component#owner}
-		* directly if [`publish`]{@link enyo.Component#publish} is set to `true`.
+		* directly if [publish]{@link enyo.Component#publish} is set to `true`.
 		* 
 		* @param {enyo.Component} comp The component to remove.
 		* @returns {this} The callee for chaining.
@@ -533,11 +533,11 @@
 		* Creates [components]{@link enyo.Component} as defined by the [arrays]{@glossary Array}
 		* of base and additional property [hashes]{@glossary Object}. The standard and 
 		* additional property hashes are combined as described in 
-		* [`createComponent()`]{@link enyo.Component#createComponent}.
+		* [createComponent()]{@link enyo.Component#createComponent}.
 		* 
 		* @example
-		* // ask foo to create components _bar_ and _zot_, but set the owner of
-		* // both components to _this_.
+		* // ask foo to create components 'bar' and 'zot', but set the owner of
+		* // both components to 'this'.
 		* this.$.foo.createComponents([
 		*	{name: 'bar'},
 		*	{name: 'zot'}
@@ -728,7 +728,7 @@
 		* `nom`, if it exists. [Subkinds]{@glossary subkind} may re-route dispatches. Note that
 		* both 'handlers' events and events delegated from owned controls arrive here.
 		* If you need to handle these types of events differently, you may also need to
-		* override [`dispatchEvent()`]{@link enyo.Component#dispatchEvent}.
+		* override [dispatchEvent()]{@link enyo.Component#dispatchEvent}.
 		* 
 		* @param {String} nom The method name to dispatch the [event]{@glossary event}.
 		* @param {Object} [event] The [event]{@glossary event} [object]{@glossary Object} 
@@ -829,7 +829,7 @@
 		/**
 		* Sets a flag that disables [event]{@glossary event} propagation for this 
 		* [component]{@link enyo.Component}. Also increments an internal counter that tracks the 
-		* number of times the [`unsilence()`]{@link enyo.Component#unsilence} method must be called
+		* number of times the [unsilence()]{@link enyo.Component#unsilence} method must be called
 		* before event propagation will continue.
 		* 
 		* @returns {this} The callee for chaining.
@@ -858,7 +858,7 @@
 		* Allows [event]{@glossary event} propagation for this [component]{@link enyo.Component} 
 		* if the internal silence counter is `0`; otherwise, decrements the counter by one. For 
 		* event propagation to resume, this method must be called one time 
-		* for each call to [`silence()`]{@link enyo.Component#silence}.
+		* for each call to [silence()]{@link enyo.Component#silence}.
 		* 
 		* @returns {Boolean} `true` if the {@link enyo.Component} is now unsilenced completely;
 		*	`false` if it remains silenced.

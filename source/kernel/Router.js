@@ -230,8 +230,8 @@
 
 		/**
 		* A computed property that returns the location as known by this router. This property
-		* will be synchronized with [`window.location.hash`]{@glossary window.location}
-		* unless the [`internalOnly`]{@linkcode enyo.Router#internalOnly} flag is set to `true`.
+		* will be synchronized with [window.location.hash]{@glossary window.location}
+		* unless the [internalOnly]{@linkcode enyo.Router#internalOnly} flag is set to `true`.
 		* Passing a string to this property via `_set('location', 'mylocation')` will update the
 		* inner location known by this router.
 		*
@@ -273,7 +273,7 @@
 		* properties.
 		*
 		* If the `change` property is present and `true`, it will force a
-		* [`location.hash`]{@linkcode external:window.location} change in the
+		* [location.hash]{@linkcode external:window.location} change in the
 		* browser (this is always global). If the `global` property is present and
 		* `true` and `change` is not present or `false`, it will trigger an internal
 		* event that all routers will respond to (not just this instance).
@@ -396,9 +396,9 @@
 		},
 
 		/**
-		* May be used to programmatically add [routes]{@linkcode enyo.Router#routes}
+		* May be used to programmatically add [routes]{@link enyo.Router#routes}
 		* to the router. `route` is a hash as described by the
-		* [`routes`]{@linkcode enyo.Router#routes} array. Returns callee for chaining.
+		* [routes]{@link enyo.Router#routes} array. Returns callee for chaining.
 		*
 		* @param {Object} route The route to add.
 		* @returns {this} The callee for chaining.
