@@ -302,7 +302,7 @@
 		* @private
 		*/
 		observers: {
-			updateSource: ["src", "sourceComponents"]
+			updateSource: ['src', 'sourceComponents']
 		},
 
 		/**
@@ -332,6 +332,7 @@
 				this.preloadChanged();
 				this.autoplayChanged();
 				this.loopChanged();
+				this.updateSource()
 			};
 		}),
 
@@ -350,26 +351,21 @@
 		* @method
 		* @private
 		*/
-		updateSource: function(inOld, inNew, inSource) {
-			var src = this.src;
+		updateSource: function (old, value, source) {
+			var src = this.get('src');
 			
 			// Allways wipe out any previous sources before setting src or new sources
 			this.destroyClientControls();
 
-			if (inSource === "src") {
+			if (src) {
+				// favor this.src: if it has a value, use it
 				this.sourceComponents = null;
-				src = src ? enyo.path.rewrite(src) : "";
-				this.setAttribute("src", enyo.path.rewrite(src));
+				this.setAttribute('src', enyo.path.rewrite(src));
 			} else {
-				this.src = "";
-				if (!!this.getAttribute("src")) { this.setAttribute("src", ""); }
+				// if this.src isn't valued, try to use sourceComponents
+				this.src = '';
+				if (!!this.getAttribute('src')) { this.setAttribute('src', ''); }
 				this.addSources();
-			}
-			
-			// HTML5 spec says that if you change src after page is loaded, you
-			// need to call load() to load the new data
-			if (this.hasNode()) {
-				this.node.load();	// not called
 			}
 		},
 		/**
@@ -377,21 +373,20 @@
 		* 
 		* @private
 		*/
-		addSources: function() {
+		addSources: function () {
 			var sources = this.getSourceComponents(),
-				i
-			;
-			
+				i;
+
 			if (!sources || sources.length === 0) {
 				return;
 			}
-			
+
 			// Add a source tag for each source
 			for (i = 0; i < sources.length; i++) {
-				sources[i].src = sources[i].src ? enyo.path.rewrite(sources[i].src) : "";
-				this.createComponent(enyo.mixin({attributes: sources[i]}, {tag: "source"}));
+				sources[i].src = sources[i].src ? enyo.path.rewrite(sources[i].src) : '';
+				this.createComponent(enyo.mixin({attributes: sources[i]}, {tag: 'source'}));
 			}
-			
+
 			// Rerender
 			this.render();
 		},
