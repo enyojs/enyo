@@ -212,15 +212,15 @@
 	/**
 	* @callback enyo.Collection~Error
 	* @param {enyo.Collection} collection The [collection]{@link enyo.Collection}
-	* that is returning.
+	* that is returning an error.
 	* @param {String} action The name of the action that failed, one of `'FETCHING'`,
 	*	`'COMMITTING'`, or `'DESTROYING'`.
 	* @param {enyo.Collection~ActionOptions} opts The original options passed to the
-	*	action method that is returning.
+	*	action method that is returning an error.
 	* @param {*} res The result, if any, returned by the [source]{@link enyo.Source}
 	*	that executed it.
 	* @param {String} source The name of the [source]{@link enyo.Collection#source}
-	*	that has returned.
+	*	that has returned an error.
 	*/
 	
 	/**

@@ -18,14 +18,14 @@
 	* This is an abstract [kind]{@glossary kind} used by [subkinds]{@glossary subkind} to
 	* implement features relevant to filtered [collections]{@link enyo.Collection}. It does extend
 	* {@link enyo.Collection} but only implements a subset of its methods. Unlike a normal
-	* {@link enyo.Collection} that keeps its own set of [model]{@link enyo.Model} instances (and can
-	* create, remove or destroy them), a {@link enyo.Filter} uses another instance of
-	* {@link enyo.Collection} as its dataset and safely proxies its [models]{@link enyo.Model} as a
-	* complete set or according to the needs of its [subkind]{@glossary subkind}.
-	* {@link enyo.Filter} is not intended to communicate with [sources]{@link enyo.Source} (e.g. via
-	* {@link enyo.Collection#fetch}). It maintains an implementation specific API (from its
-	* [subkinds]{@glossary subkind}) and propagates the events and API's inherited from
-	* {@link enyo.Collection} required to interact with [controls]{@link enyo.Control}.
+	* collection, which keeps its own set of [model]{@link enyo.Model} instances (and can
+	* create, remove, or destroy them), an {@link enyo.Filter} uses another instance of
+	* `enyo.Collection` as its dataset and safely proxies its models as a complete set or
+	* according to the needs of its subkind. `enyo.Filter` is not intended to communicate
+	* with [sources]{@link enyo.Source} (e.g., via [fetch()]{@link enyo.Collection#fetch}).
+	* It maintains an implementation-specific API (from its subkinds) and propagates the
+	* events and APIs inherited from `enyo.Collection` that are needed to interact with
+	* [controls]{@link enyo.Control}.
 	* 
 	* @class enyo.Filter
 	* @extends enyo.Collection
@@ -50,8 +50,9 @@
 		noDefer: true,
 		
 		/**
-		* The actual {@link enyo.Collection} content to proxy. How the {@link enyo.Collection} is
-		* used varies by the [subkind]{@glossary subkind} implementing the feature.
+		* The actual {@link enyo.Collection} content to proxy. How the collection is
+		* used varies depending on the [subkind]{@glossary subkind} implementing the
+		* feature.
 		* 
 		* @type enyo.Collection
 		* @default null
@@ -60,10 +61,9 @@
 		collection: null,
 		
 		/**
-		* Once all components have been created, those that are [filters]{@link enyo.Filter} (or
-		* [subkinds]{@glossary subkind}) will be added to this [array]{@glossary Array}.
-		* This [array]{@glossary Array} should not be modified directly and is primarily for
-		* internal use.
+		* Once all components have been created, those that are [filters]{@link enyo.Filter}
+		* (or [subkinds]{@glossary subkind}) will be added to this [array]{@glossary Array}.
+		* This array is primarily for internal use and should not be modified directly.
 		* 
 		* @type Array
 		* @default null
@@ -124,8 +124,8 @@
 		}),
 		
 		/**
-		* Reset the [filter]{@link enyo.Filter} to its initial state. Will vary by
-		* [subkind]{@glossary subkind} implementation.
+		* Resets the [filter]{@link enyo.Filter} to its initial state. Behavior will
+		* vary depending on the [subkind]{@glossary subkind} implementation.
 		* 
 		* @virtual
 		* @method
@@ -233,12 +233,13 @@
 		},
 		
 		/**
-		* This method is invoked when events are received from a `collection` that is not the
-		* owner of this filter (meaning it is not a child since all child-filters owners are
-		* also filters and their event handling happens in another method). As long as we are
-		* consistent about applying the same action against ourselves we should remain in-sync as
-		* well as propagate the same event again with the exception of `sort` that will wind up
-		* being a `reset`.
+		* This method is invoked when events are received from a
+		* [collection]{@link enyo.Collection} that is not the owner of this
+		* [filter]{@link enyo.Filter} (meaning it is not a child, since all child-filters'
+		* owners are also filters and their event handling happens in another method).
+		* As long as we are consistent about applying the same action against ourselves,
+		* we should remain in sync and propagate the same event again, except that
+		* `sort` will end up being a `reset`.
 		* 
 		* @private
 		*/
@@ -276,7 +277,7 @@
 		},
 		
 		/**
-		* To be implemented by [subkind]{@glossary subkind} for internal use only.
+		* To be implemented by [subkind]{@glossary subkind}; for internal use only.
 		*
 		* @virtual
 		* @private
@@ -284,7 +285,7 @@
 		_internalEvent: enyo.nop,
 		
 		/**
-		* To be implemented by [subkind]{@glossary subkind} for internal use only.
+		* To be implemented by [subkind]{@glossary subkind}; for internal use only.
 		*
 		* @virtual
 		* @private
