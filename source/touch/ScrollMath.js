@@ -367,10 +367,10 @@
 					this.scroll();
 				} else if (!this.dragging) {
 					// set final values
-					if (enyo.exists(this.endX)) {
+					if (this.endX != null) {
 						this.x = this.x0 = this.endX;
 					}
-					if (enyo.exists(this.endY)) {
+					if (this.endY != null) {
 						this.y = this.y0 = this.endY;
 					}
 
@@ -378,8 +378,8 @@
 					this.scroll();
 					this.doScrollStop();
 
-					this.endX = undefined;
-					this.endY = undefined;
+					this.endX = null;
+					this.endY = null;
 				}
 				y0 = this.y;
 				x0 = this.x;
