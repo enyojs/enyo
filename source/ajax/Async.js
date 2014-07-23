@@ -103,12 +103,12 @@
 			// we go ahead and bind the method to its context to preserve the original
 			// implementation
 			if (ctx) {
-                if (typeof ctx == "string") {
-                    enyo.bind(fn, ctx);
-                } else {
-                    fn = fn.bind(ctx);
-                }
-            }
+				if (typeof ctx == "string") {
+					enyo.bind(fn, ctx);
+				} else {
+					fn = fn.bind(ctx);
+				}
+			}
 			
 			// now store it for use later
 			array.push(fn);
