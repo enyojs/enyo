@@ -156,7 +156,7 @@
 	* mine.set('value', false); // -> value was "true" but now it is "false"
 	* ```
 	*
-	* Using the [`observers`]{@link enyo.ObserverSupport.observers} property for
+	* Using the [observers]{@link enyo.ObserverSupport.observers} property for
 	* its declarative syntax, an observer may observe any property (or
 	* properties), regardless of its `name`. For example:
 	*
@@ -194,8 +194,8 @@
 	* property.
 	*
 	* There is one additional way to use observers, if necessary. You may use the
-	* API methods [`observe()`]{@link enyo.ObserverSupport.observe} and
-	* [`unobserve()`]{@link enyo.ObserverSupport.unobserve} to dynamically
+	* API methods [observe()]{@link enyo.ObserverSupport.observe} and
+	* [unobserve()]{@link enyo.ObserverSupport.unobserve} to dynamically
 	* register and unregister observers as needed. For example:
 	*
 	* ```javascript
@@ -245,7 +245,7 @@
 		
 		/**
 		* Determines whether `_observing` is enabled. If
-		* [`stopNotifications()`]{@link enyo.ObserverSupport.stopNotifications} has
+		* [stopNotifications()]{@link enyo.ObserverSupport.stopNotifications} has
 		* been called, then this will return `false`.
 		*
 		* @see enyo.ObserverSupport.stopNotifications
@@ -339,7 +339,7 @@
 		
 		/**
 		* Unregisters an [observer]{@link enyo.ObserverSupport~Observer}. If a `ctx`
-		* (context) was supplied to [`observe()`]{@link enyo.ObserverSupport.observe},
+		* (context) was supplied to [observe()]{@link enyo.ObserverSupport.observe},
 		* then it should also be supplied to this method.
 		*
 		* @see enyo.ObserverSupport.observe
@@ -407,11 +407,11 @@
 		/**
 		* Stops all [notifications]{@link enyo.ObserverSupport.notify} from
 		* propagating. By default, all notifications will be queued and flushed once
-		* [`startNotifications()`]{@link enyo.ObserverSupport.startNotifications}
+		* [startNotifications()]{@link enyo.ObserverSupport.startNotifications}
 		* has been called. Setting the optional `noQueue` flag will also disable the
 		* queue, or you can use the
-		* [`disableNotificationQueue()`]{@link enyo.ObserverSupport.disableNotificationQueue} and
-		* [`enableNotificationQueue()`]{@link enyo.ObserverSupport.enableNotificationQueue}
+		* [disableNotificationQueue()]{@link enyo.ObserverSupport.disableNotificationQueue} and
+		* [enableNotificationQueue()]{@link enyo.ObserverSupport.enableNotificationQueue}
 		* API methods. `startNotifications()` will need to be called the same number
 		* of times that this method has been called.
 		*
@@ -434,7 +434,7 @@
 		* notification queue was not disabled, this will automatically flush the
 		* queue of all notifications that were encountered while stopped. This
 		* method must be called the same number of times that
-		* [`stopNotifications()`]{@link enyo.ObserverSupport.stopNotifications} was
+		* [stopNotifications()]{@link enyo.ObserverSupport.stopNotifications} was
 		* called.
 		*
 		* @see enyo.ObserverSupport.stopNotifications

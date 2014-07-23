@@ -91,7 +91,7 @@
 		
 		/**
 		* Disables propagation of events. This is a counting semaphor and
-		* [`unsilence()`]{@link enyo.EventEmitter.unsilence} will need to be called
+		* [unsilence()]{@link enyo.EventEmitter.unsilence} will need to be called
 		* the same number of times that this method is called.
 		*
 		* @see enyo.EventEmitter.unsilence
@@ -107,7 +107,7 @@
 		/**
 		* Enables propagation of events. This is a counting semaphor and this method
 		* will need to be called the same number of times that
-		* [`silence()`]{@link enyo.EventEmitter.silence} was called.
+		* [silence()]{@link enyo.EventEmitter.silence} was called.
 		*
 		* @see enyo.EventEmitter.silence
 		* @returns {this} The callee for chaining.
