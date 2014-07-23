@@ -19,7 +19,7 @@ enyo.kind({
 			{kind: "enyo.Button", content: "Button 3"}
 		]},
 		{content: "Grouped Checkboxes", classes: "section"},
-		{kind: "enyo.Group", onActivate: "groupTapped", classes: "grouping", components: [
+		{kind: "enyo.Group", onActiveChanged:"activeChanged", classes: "grouping", components: [
 			{tag: "label", components: [
 				{kind: "enyo.Checkbox", content: "Checkbox 1"}
 			]},
@@ -56,13 +56,10 @@ enyo.kind({
 		]},
 		{name: "results", classes: "results"}
 	],
-	groupTapped: function(inSender, inEvent) {
-		if (inEvent.originator !== inSender) {
-			this.updateResults([
-				{content: "The \"" + inEvent.originator.getContent() + "\" control is selected."},
-				{content: "The \"" + inSender.getActive().getContent() + "\" control is active."}
-			]);
-		}
+	activeChanged: function(inSender, inEvent) {
+		this.updateResults([
+			{content: "The \"" + inEvent.active.getContent() + "\" control is active."}
+		]);
 		return true;
 	},
 	multiCheckboxGroupTapped: function(inSender, inEvent) {
