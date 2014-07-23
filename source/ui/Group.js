@@ -1,7 +1,28 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.Group_ provides a wrapper around multiple elements.  It enables the creation of 
-	* [radio groups]{@glossary input} from arbitrary [components]{@link enyo.Component} 
+	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided when the 
+	* [onActiveChanged]{@link enyo.Group#event:onActiveChanged} [event]{@glossary event} is fired.
+	*
+	* @typedef {Object} enyo.Group~ActiveChangedEvent
+	* @property {enyo.Control} active The active [control]{@link enyo.Control} for the
+	*	[group]{@link enyo.Group}.
+	*/
+
+	/**
+	* Fires when the active control is changed.
+	*
+	* @event enyo.Group#event:onActiveChanged
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@link external:event}.
+	* @property {enyo.Group~ActiveChangedEvent} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
+	* @public
+	*/
+
+	/**
+	* _enyo.Group_ provides a wrapper around multiple elements. It enables the creation of 
+	* [radio groups]{@link external:input} from arbitrary [components]{@link enyo.Component} 
 	* supporting the {@link enyo.GroupItem} API.
 	*
 	* @ui
@@ -62,6 +83,13 @@
 			*/
 			groupName: ''
 		},
+
+		/**
+		* @private
+		*/
+		events: {
+			onActiveChanged: ""
+		},
 		
 		/**
 		* @private
@@ -103,6 +131,7 @@
 		},
 
 		/**
+		* @fires enyo.Group#event:onActiveChanged
 		* @private
 		*/
 		activeChanged: function(inOld) {
@@ -113,6 +142,7 @@
 			if (this.active) {
 				this.active.addClass('active');
 			}
+			this.doActiveChanged({active: this.active});
 		}
 	});
 
