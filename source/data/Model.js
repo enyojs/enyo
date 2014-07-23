@@ -24,9 +24,9 @@
 	});
 	
 	/**
-	* The event emitted when [attributes]{@link enyo.Model#attributes} have been modified. The event
-	* [object]{@glossary Object} will be the key/value pairs of
-	* [attributes]{@link enyo.Model#attributes} that changed and their new values.
+	* The event emitted when [attributes]{@link enyo.Model#attributes} have been modified.
+	* The event [object]{@glossary Object} will consist of key/value pairs of attributes
+	* that changed and their new values.
 	*
 	* @event enyo.Model#change
 	* @type {Object}
@@ -40,20 +40,20 @@
 	* @typedef {Object} enyo.Model~Options
 	* @property {Boolean} silent=false - Keep events and notifications from being emitted.
 	* @property {Boolean} commit=false - Immediately [commit]{@link enyo.Model#commit} changes
-	*	after they have occurred. Also note that if `true` when
-	*	[destroyed]{@link enyo.Model#destroy} the [model]{@link enyo.Model} will also be
-	*	[destroyed]{@link enyo.Model#destroy} via any [sources]{@link enyo.Model#source} it has.
+	*	after they have occurred. Also note that, if `true`, when the [model]{@link enyo.Model}
+	* is [destroyed]{@link enyo.Model#destroy}, it will also be destroyed via any
+	* [sources]{@link enyo.Model#source} it has.
 	* @property {Boolean} parse=false - During initialization, [parse]{@link enyo.Model#parse}
 	*	any given [attributes]{@link enyo.Model#attributes}; after
-	*	[fetching]{@link enyo.Model#fetch} [parse]{@link enyo.Model#parse} the _data_ before
-	*	calling [set]{@link enyo.Model#set}.
-	* @property {Boolean} fetch=false - Automatically call [fetch]{@link enyo.Model#fetch}
+	*	[fetching]{@link enyo.Model#fetch}, parse the data before calling
+	* [set()]{@link enyo.Model#set}.
+	* @property {Boolean} fetch=false - Automatically call [fetch()]{@link enyo.Model#fetch}
 	*	during initialization.
 	*/
 	
 	/**
-	* The configurable options for [fetch]{@link enyo.Model#fetch},
-	* [commit]{@link enyo.Model#commit} and [destroy]{@link enyo.Model#destroy}.
+	* The configurable options for [fetch()]{@link enyo.Model#fetch},
+	* [commit()]{@link enyo.Model#commit}, and [destroy()]{@link enyo.Model#destroy}.
 	*
 	* @typedef {enyo.Model~Options} enyo.Model~ActionOptions
 	* @property {enyo.Model~Success} success - The callback executed upon successful
@@ -63,40 +63,41 @@
 	
 	/**
 	* @callback enyo.Model~Success
-	* @param {enyo.Model} model The model that is returning successfully.
-	* @param {enyo.Model~ActionOptions} opts The original options passed to the action method that
-	*	is returning successfully.
+	* @param {enyo.Model} model The [model]{@link enyo.Model} that is returning successfully.
+	* @param {enyo.Model~ActionOptions} opts The original options passed to the action method
+	*	that is returning successfully.
 	* @param {*} res The result, if any, returned by the [source]{@link enyo.Source} that
 	*	executed it.
-	* @param {String} source The name of the [source]{@link enyo.Model#source} that has returned
-	*	successfully.
+	* @param {String} source The name of the [source]{@link enyo.Model#source} that has
+	* returned successfully.
 	*/
 	
 	/**
 	* @callback enyo.Model~Error
-	* @param {enyo.Model} model The model that is returning successfully.
-	* @param {String} action The name of the action that failed, one of `FETCHING`,
-	*	`COMMITTING` or `DESTROYING`.
-	* @param {enyo.Model~Options} opts The original options passed to the action method that is
-	*	returning successfully.
+	* @param {enyo.Model} model The model that is returning an error.
+	* @param {String} action The name of the action that failed, one of `'FETCHING'`,
+	*	`'COMMITTING'`, or `'DESTROYING'`.
+	* @param {enyo.Model~Options} opts The original options passed to the action method
+	*	that is returning an error.
 	* @param {*} res The result, if any, returned by the [source]{@link enyo.Source} that
 	*	executed it.
-	* @param {String} source The name of the [source]{@link enyo.Model#source} that has returned
-	*	successfully.
+	* @param {String} source The name of the [source]{@link enyo.Model#source} that has
+	*	returned an error.
 	*/
 	
 	/**
-	* An [object]{@glossary Object} that is used to represent and maintain _state_. Usually,
-	* a [model]{@link enyo.Model} is used to expose _data_ to the _view layer_. It keeps logic
-	* related to the _data_ (retrieving it, updating it, storing it, etc.) out of the _view_ and
-	* the _view_ can automatically update based on changes in the [model]{@link enyo.Model}.
-	* [Models]{@link enyo.Model} have the ability to work with other _data layer_
-	* [kinds]{@glossary kind} for more sophisticated implementations.
+	* An [object]{@glossary Object} used to represent and maintain state. Usually,
+	* an {@link enyo.Model} is used to expose data to the view layer. It keeps logic
+	* related to the data (retrieving it, updating it, storing it, etc.) out of the
+	* view, and the view can automatically update based on changes in the model.
+	* Models have the ability to work with other data layer [kinds]{@glossary kind}
+	* to provide more sophisticated implementations.
 	*
-	* [Models]{@link enyo.Model} have [bindable]{@link enyo.BindingSupport}
-	* [attributes]{@link enyo.Model#attributes}. This differs from other
-	* [bindable]{@link enyo.BindingSupport} [kinds]{@glossary kind} in that it proxies values
-	* from an internal [hash]{@glossary Object} as opposed to the target property directly.
+	* Models have [bindable]{@link enyo.BindingSupport}
+	* [attributes]{@link enyo.Model#attributes}. Models differs from other
+	* bindable kinds in that attribute values are proxied from an internal
+	* [hash]{@glossary Object} instead of being set on the target properties
+	* directly.
 	* 
 	* @see enyo.Store
 	* @see enyo.Collection
@@ -130,9 +131,9 @@
 		
 		/**
 		* Used by various [sources]{@link enyo.Model#source} as part of the
-		* [URI]{@glossary URI} from which it can be [fetched]{@link enyo.Model#fetch},
-		* [committed]{@link enyo.Model#commit} or [destroyed]{@link enyo.Model#destroy}. Some
-		* [sources]{@link enyo.Model#source} may use this property in other ways.
+		* [URI]{@glossary URI} from which they may be [fetched]{@link enyo.Model#fetch},
+		* [committed]{@link enyo.Model#commit}, or [destroyed]{@link enyo.Model#destroy}.
+		* Some sources may use this property in other ways.
 		*
 		* @see enyo.Model#getUrl
 		* @see enyo.Source
@@ -145,11 +146,11 @@
 		url: '',
 		
 		/**
-		* Implement this method to be used by [sources]{@link enyo.Model#source} to dynamically
-		* derrive the [URI]{@glossary URI} from which it can be
-		* [fetched]{@link enyo.Model#fetch}, [committed]{@link enyo.Model#commit} or
-		* [destroyed]{@link enyo.Model#destroy}. Some [sources]{@link enyo.Model#source} may use
-		* this property in other ways. Note that implementing this method means the
+		* Implement this method to be used by [sources]{@link enyo.Model#source} to
+		* dynamically derive the [URI]{@glossary URI} from which they may be
+		* [fetched]{@link enyo.Model#fetch}, [committed]{@link enyo.Model#commit},
+		* or [destroyed]{@link enyo.Model#destroy}. Some sources may use this
+		* property in other ways. Note that, if this method is implemented, the
 		* [url]{@link enyo.Model#url} will not be used.
 		*
 		* @see enyo.Model#url
@@ -165,16 +166,15 @@
 				
 		/**
 		* The [hash]{@glossary Object} of properties proxied by this [model]{@link enyo.Model}.
-		* If defined on a [subkind]{@glossary subkind} it can be assigned default values and
+		* If defined on a [subkind]{@glossary subkind}, it may be assigned default values and
 		* all [instances]{@glossary instance} will share its default structure. If no
-		* _attributes_ are defined an empty [hash]{@glossary Object} will be assigned during
-		* initialization. It is not necessary to pre-define the structure of a
-		* [model]{@link enyo.Model} and depending on its complexity can even hinder performance when
-		* not necessary.
+		* attributes are defined, an empty [hash]{@glossary Object} will be assigned during
+		* initialization. It is not necessary to pre-define the structure of a model; depending
+		* on the model's complexity, pre-defining the structure may even hinder performance.
 		*
-		* It should also be noted that using [get]{@link enyo.Model#get} or
-		* [set]{@link enyo.Model#set} will be accessing and modifying this property. This includes
-		* the values that [bindings]{@link enyo.BindingSupport} are bound to/from.
+		* It should also be noted that calls to [get()]{@link enyo.Model#get} or
+		* [set()]{@link enyo.Model#set} will access and modify this property. This includes
+		* the values to which (or from which) [bindings]{@link enyo.BindingSupport} are bound.
 		*
 		* @type {Object}
 		* @default null
@@ -184,12 +184,11 @@
 		
 		/**
 		* The [source(s)]{@link enyo.Source} to use when [fetching]{@link enyo.Model#fetch},
-		* [committing]{@link enyo.Model#commit} or [destroying]{@link enyo.Model#destroy}. All
-		* methods that use a _source_ (or _sources_) can override this default value in their
-		* respective configurations parameter. This can be a [String]{@glossary String},
-		* an [Array]{@glossary Array} of [strings]{@glossary String}, an
-		* {@link enyo.Source} instance or an [Array]{@glossary Array} of
-		* [sources]{@link enyo.Source}.
+		* [committing]{@link enyo.Model#commit}, or [destroying]{@link enyo.Model#destroy}.
+		* Any method that uses sources may override this default value in its configuration
+		* options. This value may be a [string]{@glossary String}, an
+		* [Array]{@glossary Array} of strings, an instance of {@link enyo.Source}, or an
+		* array of `enyo.Source` instances.
 		*
 		* @see enyo.Source
 		* @see enyo.Model#fetch
@@ -203,10 +202,11 @@
 		
 		/**
 		* These [keys]{@glossary Object.keys} will be the only
-		* [attributes]{@link enyo.Model#attributes} included if the [model]{@link enyo.Model} is
-		* [committed]{@link enyo.Model#commit}. It directly modifies the result of calling
-		* [raw]{@link enyo.Model#raw}. If not defined all [keys]{@glossary Object.keys} from
-		* the [attributes]{@link enyo.Model#attributes} [hash]{@glossary Object} will be used.
+		* [attributes]{@link enyo.Model#attributes} included if the
+		* [model]{@link enyo.Model} is [committed]{@link enyo.Model#commit}. This
+		* directly modifies the result of calling [raw()]{@link enyo.Model#raw}. If
+		* not defined, all keys from the [attributes]{@link enyo.Model#attributes}
+		* [hash]{@glossary Object} will be used.
 		*
 		* @see enyo.Model#raw
 		* @see enyo.Model#toJSON
@@ -217,11 +217,12 @@
 		includeKeys: null,
 		
 		/**
-		* The inheritable default configuration _options_. These specify the behavior of particular
-		* API features of {@link enyo.Model}. For the methods that use them, they can be overloaded
-		* using their respective configurations parameter. Note that setting an
-		* [options hash]{@glossary Object} on a [subkind]{@glossary subkind} will be
-		* merged with - not replace - the [superkind's]{@glossary superkind} own _options_.
+		* The inheritable default configuration options. These specify the behavior of particular
+		* API features of {@link enyo.Model}. Any method that uses these options may override
+		* the default values in its own configuration options. Note that setting an
+		* [options hash]{@glossary Object} on a [subkind]{@glossary subkind} will result in
+		* the new values' being merged with--not replacing--the
+		* [superkind's]{@glossary superkind} own `options`.
 		*
 		* @type {enyo.Model~Options}
 		* @public
@@ -234,11 +235,10 @@
 		},
 		
 		/**
-		* The current [state(s)]{@link enyo.States} that the [model]{@link enyo.Model} may possess.
-		* There are limitations to which [state(s)]{@link enyo.States} the [model]{@link enyo.Model}
-		* may possess at any given time. By default a [model]{@link enyo.Model} is
-		* [NEW]{@link enyo.States.NEW} and [CLEAN]{@link enyo.States.CLEAN}. This is __not__ a
-		* [bindable]{@link enyo.BindingSupport} property.
+		* The current [state(s)]{@link enyo.States} possessed by the [model]{@link enyo.Model}.
+		* There are limitations as to which state(s) the model may possess at any given time.
+		* By default, a model is [NEW]{@link enyo.States.NEW} and [CLEAN]{@link enyo.States.CLEAN}.
+		* Note that this is **not** a [bindable]{@link enyo.BindingSupport} property.
 		*
 		* @see enyo.States
 		* @see enyo.StateSupport
@@ -249,9 +249,9 @@
 		status: STATES.NEW | STATES.CLEAN,
 		
 		/**
-		* The _unique_ attribute from which the [model]{@link enyo.Model} can be indexed. This
-		* _uniqueness_ must only exist for the specific [kind]{@glossary kind} of
-		* [model]{@link enyo.Model}.
+		* The unique attribute by which the [model]{@link enyo.Model} may be indexed. The
+		* attribute's value must be unique across all instances of the specific model
+		* [kind]{@glossary kind}
 		*
 		* @type {String}
 		* @default 'id'
@@ -260,18 +260,18 @@
 		primaryKey: 'id',
 		
 		/**
-		* Inspect and restructure incoming _data_ prior to having it [set]{@link enyo.Model#set} on
-		* the [model]{@link enyo.Model}. While this method _can_ be called directly it is most
-		* often used via the [parse]{@link enyo.Model~Options.parse} option and executed automatically
-		* either during initialization or when [fetched]{@link enyo.Model#fetch} (or both in some
-		* cases). This is an virtual method and needs to be provided for a given implementation's
-		* needs.
+		* Inspects and restructures incoming data prior to [setting]{@link enyo.Model#set} it on
+		* the [model]{@link enyo.Model}. While this method may be called directly, it is most
+		* often used via the [parse]{@link enyo.Model~Options.parse} option and executed
+		* automatically, either during initialization or when [fetched]{@link enyo.Model#fetch}
+		* (or, in some cases, both). This is a virtual method and must be provided to suit a
+		* given implementation's needs.
 		*
 		* @see enyo.Model~Options.parse
-		* @param {*} data The incoming _data_ that may need to be restructured or reduced prior to
+		* @param {*} data The incoming data that may need to be restructured or reduced prior to
 		*	being [set]{@link enyo.Model#set} on the [model]{@link enyo.Model}.
 		* @returns {Object} The [hash]{@glossary Object} to apply to the
-		*	[model]{@link enyo.Model} via [set]{@link enyo.Model#set}.
+		*	model via [set()]{@link enyo.Model#set}.
 		* @virtual
 		* @public
 		*/
@@ -284,7 +284,7 @@
 		* of the [model]{@link enyo.Model}. This is dependent on the current
 		* [attributes]{@link enyo.Model#attributes} as well as the
 		* [includeKeys]{@link enyo.Model#includeKeys}.
-		* [Computed properties]{@link enyo.ComputedSupport} are _never included_.
+		* [Computed properties]{@link enyo.ComputedSupport} are **never** included.
 		*
 		* @see enyo.Model#includeKeys
 		* @see enyo.Model#attributes
@@ -307,12 +307,12 @@
 		},
 		
 		/**
-		* Returns the [JSON]{@glossary JSON} serializable [raw]{@link enyo.Model#raw} output
+		* Returns the [JSON]{@glossary JSON} serializable [raw()]{@link enyo.Model#raw} output
 		* of the [model]{@link enyo.Model}. Will automatically be executed by
-		* [JSON.parse]{@glossary JSON.parse}.
+		* [JSON.parse()]{@glossary JSON.parse}.
 		*
 		* @see enyo.Model#raw
-		* @returns {Object} The return value of [raw]{@link enyo.Model#raw}
+		* @returns {Object} The return value of [raw()]{@link enyo.Model#raw}.
 		* @public
 		*/
 		toJSON: function () {
@@ -322,14 +322,14 @@
 		},
 		
 		/**
-		* Restore an [attribute]{@link enyo.Model#attributes} to its previous value. If no
-		* [attribute]{@link enyo.Model#attributes} is provided it will restore all previous values.
+		* Restores an [attribute]{@link enyo.Model#attributes} to its previous value. If no
+		* attribute is specified, all previous values will be restored.
 		*
 		* @see enyo.Model#set
 		* @see enyo.Model#previous
 		* @param {String} [prop] The [attribute]{@link enyo.Model#attributes} to
-		*	[restore]{@link enyo.Model#restore}. If not provided all
-		*	[attributes]{@link enyo.Model#attributes} will be [restored]{@link enyo.Model#restore}.
+		*	[restore]{@link enyo.Model#restore}. If not provided, all attributes will be
+		* restored to their previous values.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -344,14 +344,14 @@
 		},
 		
 		/**
-		* Commit the [model]{@link enyo.Model} to a [source]{@link enyo.Model#source} or
-		* [sources]{@link enyo.Model#source}. A {@link enyo.Model} cannot be
-		* [committed]{@link enyo.Model#commit} if it is in an
+		* Commits the [model]{@link enyo.Model} to a [source or sources]{@link enyo.Model#source}.
+		* A model cannot be [committed]{@link enyo.Model#commit} if it is in an
 		* [error]{@link enyo.States.ERROR} ({@link enyo.StateSupport.isError}) or
 		* [busy]{@link enyo.States.BUSY} ({@link enyo.StateSupport.isBusy})
-		* [state]{@link enyo.Model#status}. While executing it will add the
-		* [COMMITTING]{@link enyo.States.COMMITTING} flag to [status]{@link enyo.Model#status}. Once
-		* it has completed execution it will remove this flag (even if it fails).
+		* [state]{@link enyo.Model#status}. While executing, it will add the
+		* [COMMITTING]{@link enyo.States.COMMITTING} flag to the model's
+		* [status]{@link enyo.Model#status}. Once it has completed execution, it will
+		* remove this flag (even if it fails).
 		*
 		* @see enyo.Model#committed
 		* @see enyo.Model#status
@@ -396,14 +396,15 @@
 		},
 		
 		/**
-		* Fetch the [model]{@link enyo.Model} from a [source]{@link enyo.Model#source} or
-		* [sources]{@link enyo.Model#source}. A {@link enyo.Model} cannot be
-		* [fetcheded]{@link enyo.Model#fetch} if it is in an
+		* Fetches the [model]{@link enyo.Model} from a
+		* [source or sources]{@link enyo.Model#source}. A model cannot be
+		* [fetched]{@link enyo.Model#fetch} if it is in an
 		* [error]{@link enyo.States.ERROR} ({@link enyo.StateSupport.isError}) or
 		* [busy]{@link enyo.States.BUSY} ({@link enyo.StateSupport.isBusy})
-		* [state]{@link enyo.Model#status}. While executing it will add the
-		* [FETCHING]{@link enyo.States.FETCHING} flag to [status]{@link enyo.Model#status}. Once
-		* it has completed execution it will remove this flag (even if it fails).
+		* [state]{@link enyo.Model#status}. While executing, it will add the
+		* [FETCHING]{@link enyo.States.FETCHING} flag to the model's
+		* [status]{@link enyo.Model#status}. Once it has completed execution, it will
+		* remove this flag (even if it fails).
 		*
 		* @see enyo.Model#fetched
 		* @see enyo.Model#status
@@ -448,17 +449,18 @@
 		},
 		
 		/**
-		* Destroy the [model]{@link enyo.Model}. By default, the [model]{@link enyo.Model} will only
+		* Destroys the [model]{@link enyo.Model}. By default, the model will only
 		* be [destroyed]{@glossary destroy} in the client. To execute with a
-		* [source]{@link enyo.Model#source} or [sources]{@link enyo.Model#source} the
-		* [commit default option]{@link enyo.Model#options} must be `true` or a `source` property
-		* must be provided in the _opts_ parameter explicitly. A {@link enyo.Model} cannot be
-		* [destroyed]{@link enyo.Model#destroy} (using a [source]{@link enyo.Model#source}) if it is
-		* in an [error]{@link enyo.States.ERROR} ({@link enyo.StateSupport.isError}) or
-		* [busy]{@link enyo.States.BUSY} ({@link enyo.StateSupport.isBusy})
-		* [state]{@link enyo.Model#status}. While executing it will add the
-		* [DESTROYING]{@link enyo.States.DESTROYING} flag to [status]{@link enyo.Model#status}. Once
-		* it has completed execution it will remove this flag (even if it fails).
+		* [source or sources]{@link enyo.Model#source}, either the
+		* [commit default option]{@link enyo.Model#options} must be `true` or a
+		* `source` property must be explicitly provided in the `opts` parameter.
+		* A model cannot be destroyed (using a source) if it is in an
+		* [error]{@link enyo.States.ERROR} ({@link enyo.StateSupport.isError})
+		* or [busy]{@link enyo.States.BUSY} ({@link enyo.StateSupport.isBusy})
+		* [state]{@link enyo.Model#status}. While executing, it will add the
+		* [DESTROYING]{@link enyo.States.DESTROYING} flag to the model's
+		* [status]{@link enyo.Model#status}. Once it has completed execution, it
+		* will remove this flag (even if it fails).
 		*
 		* @see enyo.Model#status
 		* @param {enyo.Model~ActionOptions} [opts] Optional configuration options.
@@ -549,14 +551,14 @@
 		},
 		
 		/**
-		* Retrieve the value for the given property or path. If the property is a
-		* [computed property]{@link enyo.ComputedSupport.computed} then it will return that value
-		* otherwise it will attempt to retrieve the value from the
+		* Retrieves the value for the given property or path. If the property is a
+		* [computed property]{@link enyo.ComputedSupport.computed}, then it will return
+		* that value; otherwise, it will attempt to retrieve the value from the
 		* [attributes hash]{@link enyo.Model#attributes}.
 		*
 		* @param {String} path The property to retrieve.
-		* @returns {*} The value for the requested property or path, `undefined` if it cannot be
-		*	found or does not exist.
+		* @returns {*} The value for the requested property or path, or `undefined` if
+		* it cannot be found or does not exist.
 		* @public
 		*/
 		get: function (path) {
@@ -564,24 +566,24 @@
 		},
 		
 		/**
-		* Set the requested _path_ or [hash]{@glossary Object} of properties on the
+		* Sets the requested `path` or [hash]{@glossary Object} of properties on the
 		* [model]{@link enyo.Model}. Properties are applied to the
 		* [attributes hash]{@link enyo.Model#attributes} and are retrievable via
-		* [get]{@link enyo.Model#get}. If properties were updated and the `silent` option is not
-		* `true` it will emit a `change` event as well as individual
-		* [notifications]{@link enyo.ObserverSupport.notify} for the properties that were modified.
+		* [get()]{@link enyo.Model#get}. If properties were updated and the `silent`
+		* option is not `true`, this method will emit a `change` event, as well as
+		* individual [notifications]{@link enyo.ObserverSupport.notify} for the
+		* properties that were modified.
 		*
 		* @fires enyo.Model#event:change
 		* @see enyo.ObserverSupport
 		* @see enyo.BindingSupport
 		* @param {(String|Object)} path Either the property name or a [hash]{@glossary Object}
 		*	of properties and values to set.
-		* @param {(*|enyo.Model~Options)} is If _path_ is a [string]{@glossary String} this should be
-		*	the value to set for the given property; otherwise it should be an optional
-		*	[hash]{@link enyo.Model~Options} of available configuration options.
-		* @param {enyo.Model~Options} [opts] If _path_ is a [string]{@glossary String} this should be
-		*	the the optional [hash]{@link enyo.Model~Options} of available configuration options;
-		*	otherwise it will not be used.
+		* @param {(*|enyo.Model~Options)} is If `path` is a [string]{@glossary String},
+		* this should be the value to set for the given property; otherwise, it should be
+		* an optional hash of available [configuration options]{@link enyo.Model~Options}.
+		* @param {enyo.Model~Options} [opts] If `path` is a string, this should be the
+		* optional hash of available configuration options; otherwise, it will not be used.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -660,8 +662,8 @@
 		
 		/**
 		* A bit of hackery to facade the normal [getter]{@link enyo.ComputedSupport.get}. Note that
-		* we pass an arbitrary super-method that automatically returns `undefined` which is
-		* consistent with this use-case and it's intended purpose.
+		* we pass an arbitrary super-method that automatically returns `undefined`, which is
+		* consistent with this use case and its intended purpose.
 		*
 		* @private
 		*/
@@ -669,7 +671,7 @@
 		
 		/**
 		* Initializes the [model]{@link enyo.Model}. Unlike some methods, the parameters are not
-		* interchangeable. If not using a particular (optional) parameter use `null`.
+		* interchangeable. If you are not using a particular (optional) parameter, pass in `null`.
 		*
 		* @param {Object} [attrs] Optionally initialize the [model]{@link enyo.Model} with some
 		*	[attributes]{@link enyo.Model#attributes}.
@@ -731,8 +733,8 @@
 		},
 		
 		/**
-		* Overloaded. We funnel arbitrary notification updates through here as it is faster than
-		* using the built-in notification updates for batch operations.
+		* Overloaded. We funnel arbitrary notification updates through here, as this
+		* is faster than using the built-in notification updates for batch operations.
 		*
 		* @private
 		*/
@@ -746,7 +748,7 @@
 		}),
 		
 		/**
-		* Overloaded to alias the - also overloaded - [emit]{@link enyo.Model#emit} method.
+		* Overloaded to alias the (also overloaded) [emit()]{@link enyo.Model#emit} method.
 		*
 		* @private
 		*/
@@ -755,21 +757,20 @@
 		},
 		
 		/**
-		* When a [fetch]{@link enyo.Model#fetch} has completed successfully it is returned
-		* to this method. This method handles special and important behavior - it should not be
-		* called directly and take care when overloading to ensure you call the super-method. This
-		* correctly sets the [status]{@link enyo.Model#status} and in cases where multiple
-		* [sources]{@link enyo.Model#source} were used it waits until all have responded before
-		* clearing the [FETCHING]{@link enyo.States.FETCHING} flag. If a
-		* [success]{@link enyo.Model~Success} callback was was provided it will be called once for
-		* each [source]{@link enyo.Model#source}.
+		* When a [fetch]{@link enyo.Model#fetch} has completed successfully, it is returned
+		* to this method. This method handles special and important behavior; it should not be
+		* called directly and, when overloading, care must be taken to ensure that you call
+		* the super-method. This correctly sets the [status]{@link enyo.Model#status} and, in
+		* cases where multiple [sources]{@link enyo.Model#source} were used, it waits until
+		* all have responded before clearing the [FETCHING]{@link enyo.States.FETCHING} flag.
+		* If a [success]{@link enyo.Model~Success} callback was provided, it will be called
+		* once for each source.
 		*
 		* @param {enyo.Model~ActionOptions} opts The original options passed to
-		*	[fetch]{@link enyo.Model#fetch} merged with the defaults.
-		* @param {*} [res] The result provided from the given _source_ if any. This will vary
-		*	depending on the [source]{@link enyo.Model#source}.
-		* @param {String} source The name of the [source]{@link enyo.Model#source} that has
-		*	completed successfully.
+		*	[fetch()]{@link enyo.Model#fetch}, merged with the defaults.
+		* @param {*} [res] The result provided from the given [source]{@link enyo.Model#source},
+		* if any. This will vary depending on the source.
+		* @param {String} source The name of the source that has completed successfully.
 		* @public
 		*/
 		fetched: function (opts, res, source) {
@@ -800,21 +801,20 @@
 		},
 		
 		/**
-		* When a [commit]{@link enyo.Model#commit} has completed successfully it is returned
-		* to this method. This method handles special and important behavior - it should not be
-		* called directly and take care when overloading to ensure you call the super-method. This
-		* correctly sets the [status]{@link enyo.Model#status} and in cases where multiple
-		* [sources]{@link enyo.Model#source} were used it waits until all have responded before
-		* clearing the [COMMITTING]{@link enyo.States.COMMITTING} flag. If a
-		* [success]{@link enyo.Model~Success} callback was was provided it will be called once for
-		* each [source]{@link enyo.Model#source}.
+		* When a [commit]{@link enyo.Model#commit} has completed successfully, it is returned
+		* to this method. This method handles special and important behavior; it should not be
+		* called directly and, when overloading, care must be taken to ensure that you call the
+		* super-method. This correctly sets the [status]{@link enyo.Model#status} and, in cases
+		* where multiple [sources]{@link enyo.Model#source} were used, it waits until all have
+		* responded before clearing the [COMMITTING]{@link enyo.States.COMMITTING} flag. If a
+		* [success]{@link enyo.Model~Success} callback was provided, it will be called once for
+		* each source.
 		*
 		* @param {enyo.Model~ActionOptions} opts The original options passed to
-		*	[commit]{@link enyo.Model#commit} merged with the defaults.
-		* @param {*} [res] The result provided from the given _source_ if any. This will vary
-		*	depending on the [source]{@link enyo.Model#source}.
-		* @param {String} source The name of the [source]{@link enyo.Model#source} that has
-		*	completed successfully.
+		*	[commit()]{@link enyo.Model#commit}, merged with the defaults.
+		* @param {*} [res] The result provided from the given [source]{@link enyo.Model#source},
+		* if any. This will vary depending on the source.
+		* @param {String} source The name of the source that has completed successfully.
 		* @public
 		*/
 		committed: function (opts, res, source) {
@@ -839,23 +839,24 @@
 		},
 		
 		/**
-		* When an _action_ ([fetch]{@link enyo.Model#fetch}, [commit]{@link enyo.Model#commit} or
-		* [destroy]{@link enyo.Model#destroy}) has failed it will be passed to this method. This
-		* method handles special and important behavior - it should not be called directly and take
-		* care when overloading to ensure you call the super-method. This correctly sets the
-		* [status]{@link enyo.Model#status} to the known [error state]{@link enyo.States.ERROR} or
-		* the [unknown error state]{@link enyo.States.ERROR_UNKNOWN} if it could not be determined.
-		* If an [error callback]{@link enyo.Model~Error} was provided this method will execute it.
+		* When an action ([fetch()]{@link enyo.Model#fetch}, [commit()]{@link enyo.Model#commit},
+		* or [destroy()]{@link enyo.Model#destroy}) has failed, it will be passed to this method.
+		* This method handles special and important behavior; it should not be called directly
+		* and, when overloading, care must be taken to ensure that you call the super-method.
+		* This correctly sets the [status]{@link enyo.Model#status} to the known
+		* [error state]{@link enyo.States.ERROR}, or to the
+		* [unknown error state]{@link enyo.States.ERROR_UNKNOWN} if it the error state could not
+		* be determined. If an [error callback]{@link enyo.Model~Error} was provided, this method
+		* will execute it.
 		*
 		* @see enyo.StateSupport.clearError
-		* @param {String} action The _action_ (one of `FETCHING`, `COMMITTING` or `DESTROYING`) that
-		*	failed and is now in an [error state]{@link enyo.States.ERROR}.
-		* @param {enyo.Model~ActionOptions} opts The original options passed to the _action_ method
-		*	merged with the defaults.
-		* @param {*} [res] The result provided from the given _source_ if any. This will vary
-		*	depending on the [source]{@link enyo.Model#source}.
-		* @param {String} source The name of the [source]{@link enyo.Model#source} that has
-		*	errored.
+		* @param {String} action The action (one of `'FETCHING'`, `'COMMITTING'`, or
+		* `'DESTROYING'`) that failed and is now in an [error state]{@link enyo.States.ERROR}.
+		* @param {enyo.Model~ActionOptions} opts The original options passed to the `action`
+		* method, merged with the defaults.
+		* @param {*} [res] The result provided from the given [source]{@link enyo.Model#source},
+		* if any. This will vary depending on the source.
+		* @param {String} source The name of the source that has returned an error.
 		* @public
 		*/
 		errored: function (action, opts, res, source) {
