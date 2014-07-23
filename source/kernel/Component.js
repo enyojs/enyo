@@ -630,21 +630,6 @@
 						delete event.delegate;
 						return ret;
 					}
-
-					// if (this.handlers && this.handlers[nom] &&
-					// 	this.dispatch(this.handlers[nom], event, sender)) {
-					// 	return true;
-					// }
-					// // then check for a delegate property for this event
-					// if (this[nom] && enyo.isString(this[nom])) {
-					// 	// we dispatch it up as a special delegate event with the
-					// 	// component that had the delegation string property stored in
-					// 	// the 'delegate' property
-					// 	event.delegate = this;
-					// 	ret = this.bubbleUp(this[nom], event, sender);
-					// 	delete event.delegate;
-					// 	return ret;
-					// }
 				}
 			}
 			return false;
