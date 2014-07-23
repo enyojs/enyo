@@ -12,9 +12,9 @@
 	var sources = enyo.sources = {};
 	
 	/**
-	* This is an abstract base class. A [source]{@link enyo.Source} is a communication layer used
-	* by _data layer_ [kinds]{@glossary kind} to retrieve and persist data and application
-	* state via its abstract API methods.
+	* This is an abstract base class. A [source]{@link enyo.Source} is a communication
+	* layer used by data layer [kinds]{@glossary kind} to retrieve and persist data and
+	* application state via its abstract API methods.
 	*
 	* @class enyo.Source
 	* @public
@@ -38,8 +38,9 @@
 		noDefer: true,
 		
 		/**
-		* When initialized it should be passed properties to set on itself. These properties should
-		* include the name by which it will be referenced in the application.
+		* When initialized, the source should be passed properties to set on itself.
+		* These properties should include the name by which it will be referenced in
+		* the application.
 		*
 		* @param {Object} [props] The properties to set on itself.
 		* @public
@@ -54,45 +55,45 @@
 		
 		/**
 		* Overload this method to handle retrieval of data. This method should accept an options
-		* hash with additional configuration properties including a _success_ and _error_ callback
-		* to handle the result.
+		* [hash]{@glossary Object} with additional configuration properties, including `success`
+		* and `error` callbacks to handle the result.
 		*
 		* @virtual
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
-		*	[collection]{@link enyo.Collection} that need to be retrieved.
-		* @param {Object} opts The configuration options [hash]{@glossary Object} including
-		*	a _success_ and _error_ callback.
+		*	[collection]{@link enyo.Collection} to be retrieved.
+		* @param {Object} opts The configuration options [hash]{@glossary Object}, including
+		*	`success` and `error` callbacks.
 		*/
 		fetch: function (model, opts) {
 			//
 		},
 		
 		/**
-		* Overload this method to handle persisting data. This method should accept an options
-		* hash with additional configuration properties including a _success_ and _error_ callback
-		* to handle the result.
+		* Overload this method to handle persisting of data. This method should accept an options
+		* [hash]{@glossary Object} with additional configuration properties, including `success`
+		* and `error` callbacks to handle the result.
 		*
 		* @virtual
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
-		*	[collection]{@link enyo.Collection} that need to be persisted.
-		* @param {Object} opts The configuration options [hash]{@glossary Object} including
-		*	a _success_ and _error_ callback.
+		*	[collection]{@link enyo.Collection} to be persisted.
+		* @param {Object} opts The configuration options [hash]{@glossary Object}, including
+		*	`success` and `error` callback.
 		*/
 		commit: function (model, opts) {
 			//
 		},
 		
 		/**
-		* Overload this method to handle deleting data. This method should accept an options
-		* hash with additional configuration properties including a _success_ and _error_ callback
-		* to handle the result. If called without parameters it will instead destroy itself and
-		* be removed from [enyo.sources]{@link enyo.sources} rendering itself unavailable for
-		* further operation.
+		* Overload this method to handle deletion of data. This method should accept an options
+		* [hash]{@glossary Object} with additional configuration properties, including `success`
+		* and `error` callbacks to handle the result. If called without parameters, it will
+		* instead destroy itself and be removed from [enyo.sources]{@link enyo.sources}, rendering
+		* itself unavailable for further operations.
 		*
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
-		*	[collection]{@link enyo.Collection} that need to be deleted.
-		* @param {Object} opts The configuration options [hash]{@glossary Object} including
-		*	a _success_ and _error_ callback.
+		*	[collection]{@link enyo.Collection} to be deleted.
+		* @param {Object} opts The configuration options [hash]{@glossary Object}, including
+		*	`success` and `error` callbacks.
 		*/
 		destroy: function (model, opts) {
 			
@@ -105,15 +106,15 @@
 		},
 		
 		/**
-		* Overload this method to handle querying of data based on the constructor sent to it. This
-		* method should accept an options hash with additional configuration properties including
-		* a _success_ and _error_ callback to handle the result.
+		* Overload this method to handle querying of data based on the passed-in constructor. This
+		* method should accept an options [hash]{@glossary Object} with additional configuration
+		* properties, including `success` and `error` callbacks to handle the result.
 		*
 		* @virtual
 		* @param {Function} ctor The constructor for the [kind]{@glossary kind} of
 		*	{@link enyo.Model} or {@link enyo.Collection} to be queried.
-		* @param {Object} opts The configuration options [hash]{@glossary Object} including a
-		*	_success_ and _error_ callback.
+		* @param {Object} opts The configuration options [hash]{@glossary Object}, including
+		*	`success` and `error` callbacks.
 		*/
 		find: function (ctor, opts) {
 			//
@@ -142,21 +143,20 @@
 	});
 	
 	/**
-	* Create an instance of a [source]{@link enyo.Source} with the given properties. These
-	* properties should include a _kind_ properties with the name of the
-	* [kind]{@glossary kind} of [source]{@link enyo.Source} and a _name_ for that instance.
-	* This static method is also available on all [subkinds]{@glossary subkind} of
-	* {@link enyo.Source}. The instance will automatically be added to the
-	* [enyo.sources]{@link enyo.sources} [object]{@glossary Object} and will be referencable
-	* by its _name_.
+	* Creates an instance of {@link enyo.Source} with the given properties. These
+	* properties should include a `kind` property with the name of the
+	* [kind]{@glossary kind} of source and a `name` for the instance. This static
+	* method is also available on all [subkinds]{@glossary subkind} of
+	* `enyo.Source`. The instance will automatically be added to the
+	* [enyo.sources]{@link enyo.sources} [object]{@glossary Object} and may be
+	* referenced by its `name`.
 	*
 	* @name enyo.Source.create
 	* @static
 	* @method
 	* @param {Object} props The properties to pass to the constructor for the requested
 	*	[kind]{@glossary kind} of [source]{@link enyo.Source}.
-	* @returns {enyo.Source} An instance of the requested [kind]{@glossary kind} of
-	*	{@link enyo.Source}.
+	* @returns {enyo.Source} An instance of the requested kind of source.
 	* @public
 	*/
 	Source.create = function (props) {

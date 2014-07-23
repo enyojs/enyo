@@ -1,7 +1,7 @@
 (function (enyo) {
 	
 	/**
-	* A special type of [Array]{@glossary Array} used internally by _data layer_
+	* A special type of [array]{@glossary Array} used internally by data layer
 	* [kinds]{@glossary kind}.
 	*
 	* @class enyo.ModelList
@@ -18,18 +18,18 @@
 	enyo.ModelList = ModelList;
 	
 	/**
-	* Adds [models]{@link enyo.Model} to the [list]{@link enyo.ModelList}. It updates an internal
-	* table by the [models]{@link enyo.Model} [primaryKey]{@link enyo.Model#primaryKey} (if
+	* Adds [models]{@link enyo.Model} to the [list]{@link enyo.ModelList}, updating an
+	* internal table by the model's [primaryKey]{@link enyo.Model#primaryKey} (if
 	* possible) and its [euid]{@glossary euid}.
 	*
 	* @name enyo.ModelList#add
 	* @method
-	* @param {(enyo.Model|enyo.Model[])} models The [model or models]{@link enyo.Model} to add to
-	*	the [list]{@link enyo.ModelList}.
-	* @param {Number} [idx] If provided and valid will [splice]{@glossary Array.splice} the
-	*	[models]{@link enyo.Model} into the [list]{@link enyo.ModelList} at that position.
-	* @returns {enyo.Model[]} An immutable [array]{@glossary Array} with any
-	*	[models]{@link enyo.Model} that were actually added.
+	* @param {(enyo.Model|enyo.Model[])} models The [model or models]{@link enyo.Model}
+	*	to add to the [list]{@link enyo.ModelList}.
+	* @param {Number} [idx] If provided and valid, the models will be
+	* [spliced]{@glossary Array.splice} into the list at this position.
+	* @returns {enyo.Model[]} An immutable [array]{@glossary Array} of models
+	* that were actually added to the list.
 	* @protected
 	*/
 	enyo.ModelList.prototype.add = function (models, idx) {
@@ -76,14 +76,14 @@
 	};
 	
 	/**
-	* Removes the [models]{@link enyo.Model} from the [list]{@link enyo.ModelList}.
+	* Removes the specified [models]{@link enyo.Model} from the [list]{@link enyo.ModelList}.
 	*
 	* @name enyo.ModelList#remove
 	* @method
-	* @param {(enyo.Model|enyo.Model[])} models The [model or models]{@link enyo.Model} to remove
-	*	from the [list]{@link enyo.ModelList}.
+	* @param {(enyo.Model|enyo.Model[])} models The [model or models]{@link enyo.Model}
+	*	to remove from the [list]{@link enyo.ModelList}.
 	* @returns {enyo.Model[]} An immutable [array]{@glossary Array} of
-	*	[models]{@link enyo.Model} that were actually removed from the [list]{@link enyo.ModelList}.
+	*	models that were actually removed from the list.
 	* @protected
 	*/
 	enyo.ModelList.prototype.remove = function (models) {
@@ -115,16 +115,17 @@
 	};
 	
 	/**
-	* Determine if the [model]{@link enyo.Model} is present in the [list]{@link enyo.ModelList}. It
-	* attempts to resolve a [string]{@glossary String} or [number]{@glossary Number} to
-	* either a [primaryKey]{@link enyo.Model} or [euid]{@glossary euid}.
+	* Determines whether the specified [model]{@link enyo.Model} is present in the
+	* [list]{@link enyo.ModelList}. Will attempt to resolve a [string]{@glossary String}
+	* or [number]{@glossary Number} to either a [primaryKey]{@link enyo.Model#primaryKey}
+	* or [euid]{@glossary euid}.
 	*
 	* @name enyo.ModelList#has
 	* @method
 	* @param {(enyo.Model|String|Number)} model An identifier representing either the
-	*	[model]{@link enyo.Model} instance, its [primaryKey]{@link enyo.Model} or its
-	*	[euid]{@glossary euid}.
-	* @returns {Boolean} Whether or not the _model_ is present in the [list]{@link enyo.ModelList}.
+	*	[model]{@link enyo.Model} instance, its [primaryKey]{@link enyo.Model#primaryKey},
+	* or its [euid]{@glossary euid}.
+	* @returns {Boolean} Whether or not the model is present in the [list]{@link enyo.ModelList}.
 	* @protected
 	*/
 	enyo.ModelList.prototype.has = function (model) {
@@ -136,17 +137,16 @@
 	};
 	
 	/**
-	* Attempts to turn an identifier into a [model]{@link enyo.Model}. The identifier should be
-	* a [string]{@glossary String} or [number]{@glossary Number}.
+	* Given an identifier, attempts to return the associated [model]{@link enyo.Model}.
+	* The identifier should be a [string]{@glossary String} or [number]{@glossary Number}.
 	*
 	* @name enyo.ModelList#resolve
 	* @method
-	* @param {(String|Number)} model An identifier of either a
-	*	[primaryKey]{@link enyo.Model#primaryKey} or an [euid]{@glossary euid}.
-	* @returns {(undefined|null|enyo.Model)} If the identifier could be resolved a
-	*	[model]{@link enyo.Model} instance will be returned otherwise `undefined` or possibly
-	*	`null` if the [model]{@link enyo.Model} had once belonged to the
-	*	[list]{@link enyo.ModelList}.
+	* @param {(String|Number)} model An identifier (either a
+	*	[primaryKey]{@link enyo.Model#primaryKey} or an [euid]{@glossary euid}).
+	* @returns {(undefined|null|enyo.Model)} If the identifier could be resolved, a
+	*	[model]{@link enyo.Model} instance is returned; otherwise, `undefined`, or
+	* possibly `null` if the model once belonged to the [list]{@link enyo.ModelList}.
 	* @protected
 	*/
 	enyo.ModelList.prototype.resolve = function (model) {
@@ -156,10 +156,10 @@
 	};
 	
 	/**
-	* Copies the current [list]{@link enyo.ModelList} and returns an shallow copy. This method
-	* differs from [slice]{@glossary Array.slice} that it inherits from native
-	* [Array]{@glossary Array} because this returns a {@link enyo.ModelList} and
-	* [slice]{@glossary Array.slice} returns an [Array]{@glossary Array}.
+	* Copies the current [list]{@link enyo.ModelList} and returns an shallow copy. This
+	* method differs from the [slice()]{@glossary Array.slice} method inherited from
+	* native [Array]{@glossary Array} in that this returns an {@link enyo.ModelList},
+	* while `slice()` returns an array.
 	* 
 	* @name enyo.ModelList#copy
 	* @method

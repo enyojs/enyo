@@ -1,16 +1,16 @@
 (function (enyo, scope) {
 
 	/**
-	* Shared values for various [kinds]{@glossary kind} used to indicate a _state_ or
-	* _states_ (multiple states simultaneously). These flags are binary values represented by
-	* hexadecimal numerals. They can be modified and compared (or even extended) using
+	* Shared values for various [kinds]{@glossary kind} used to indicate a state or
+	* (multiple, simultaneous) states. These flags are binary values represented by
+	* hexadecimal numerals. They may be modified and compared (or even extended) using
 	* [bitwise operations]{@glossary bitwise} or various
-	* [API methods]{@link enyo.StateSupport} available to the [kinds]{@glossary kind} that
-	* support them. Make sure to explore the documentation for a given [kind]{@glossary kind}
-	* as they may have a specific use for a given flag.
+	* [API methods]{@link enyo.StateSupport} available to the kinds that support them.
+	* Make sure to explore the documentation for individual kinds, as they may have
+	* specific uses for a given flag.
 	* 
 	* As a cursory overview, here is a table of the values already declared by built-in flags.
-	* Each hexadecimal numeral represents a unique power of 2 in binary from which we can use
+	* Each hexadecimal numeral represents a unique power of 2 in binary, from which we can use
 	* [bitwise masks]{@glossary bitwise} to determine if a particular value is present.
 	* 
 	* ```javascript
@@ -82,7 +82,7 @@
 		DESTROYED: 0x0008,
 		
 		/**
-		* Currently attempting to _fetch_.
+		* Currently attempting to fetch.
 		* 
 		* @see enyo.Model#fetch
 		* @see enyo.RelationalModel#fetch
@@ -93,7 +93,7 @@
 		FETCHING: 0x0010,
 		
 		/**
-		* Currently attempting to _commit_.
+		* Currently attempting to commit.
 		* 
 		* @see enyo.Model#commit
 		* @see enyo.RelationalModel#commit
@@ -104,7 +104,7 @@
 		COMMITTING: 0x0020,
 		
 		/**
-		* Currently attmepting to _destroy_.
+		* Currently attempting to destroy.
 		* 
 		* @see enyo.Model#destroy
 		* @see enyo.RelationalModel#destroy
@@ -115,7 +115,7 @@
 		DESTROYING: 0x0040,
 		
 		/**
-		* There was an error during _commit_.
+		* There was an error during commit.
 		* 
 		* @see enyo.Model#commit
 		* @see enyo.RelationalModel#commit
@@ -126,7 +126,7 @@
 		ERROR_COMMITTING: 0x0080,
 		
 		/**
-		* There was an error during _fetch_.
+		* There was an error during fetch.
 		* 
 		* @see enyo.Model#fetch
 		* @see enyo.RelationalModel#fetch
@@ -137,7 +137,7 @@
 		ERROR_FETCHING: 0x0100,
 		
 		/**
-		* There was an error during _destroy_.
+		* There was an error during destroy.
 		* 
 		* @see enyo.Model#destroy
 		* @see enyo.RelationalModel#destroy
@@ -148,7 +148,7 @@
 		ERROR_DESTROYING: 0x0200,
 		
 		/**
-		* An error was encountered for which there was no exact flag or an invalid error was
+		* An error was encountered for which there was no exact flag, or an invalid error was
 		* specified.
 		*
 		* @default 1024
@@ -156,32 +156,32 @@
 		ERROR_UNKNOWN: 0x0400,
 		
 		/**
-		* A multi-state [bitmask]{@glossary bitwise}. Compares if a given flag is one of
-		* any state included in the definition of _BUSY_. By default, this is one of
-		* [FETCHING]{@link enyo.States.FETCHING}, [COMMITTING]{@link enyo.States.COMMITTING} or
-		* [DESTROYING]{@link enyo.States.DESTROYING}. It can be extended to include additional
-		* values using the [bitwise]{@glossary bitwise} _OR_ operator (`|`).
+		* A multi-state [bitmask]{@glossary bitwise}. Compares a given flag to the states
+		* included in the definition of `BUSY`. By default, this is one of
+		* [FETCHING]{@link enyo.States.FETCHING}, [COMMITTING]{@link enyo.States.COMMITTING}, or
+		* [DESTROYING]{@link enyo.States.DESTROYING}. It may be extended to include additional
+		* values using the [bitwise]{@glossary bitwise} `OR` operator (`|`).
 		*
 		* @default 112
 		*/
 		BUSY: 0x0010 | 0x0020 | 0x0040,
 		
 		/**
-		* A multi-state [bitmask]{@glossary bitwise}. Compares if a given flag is one of any
-		* state included in the definition of _ERROR_. By default, this is one of
+		* A multi-state [bitmask]{@glossary bitwise}. Compares a given flag to the states
+		* included in the definition of `ERROR`. By default, this is one of
 		* [ERROR_FETCHING]{@link enyo.States.ERROR_FETCHING},
 		* [ERROR_COMMITTING]{@link enyo.States.ERROR_COMMITTING},
-		* [ERROR_DESTROYING]{@link enyo.States.ERROR_DESTROYING} or
-		* [ERROR_UNKNOWN]{@link enyo.States.ERROR_UNKNOWN}. It can be extended to include
-		* additional values using the [bitwise]{@glossary bitwise} _OR_ operator (`|`).
+		* [ERROR_DESTROYING]{@link enyo.States.ERROR_DESTROYING}, or
+		* [ERROR_UNKNOWN]{@link enyo.States.ERROR_UNKNOWN}. It may be extended to include
+		* additional values using the [bitwise]{@glossary bitwise} `OR` operator (`|`).
 		*
 		* @default 1920
 		*/
 		ERROR: 0x0080 | 0x0100 | 0x0200 | 0x0400,
 		
 		/**
-		* A multi-state [bitmask]{@glossary bitwise}. Compares if a given flag is one of any
-		* state included in the definition of _READY_. By default, this is the inverse of any
+		* A multi-state [bitmask]{@glossary bitwise}. Compares a given flag to the states
+		* included in the definition of `READY`. By default, this is the inverse of any
 		* values included in [BUSY]{@link enyo.States.BUSY} or [ERROR]{@link enyo.States.ERROR}.
 		*
 		* @default -2041
@@ -223,10 +223,9 @@
 		
 		/**
 		* Convenience method to avoid using [bitwise]{@glossary bitwise} comparison for the
-		* [status]{@link enyo.StateSupport.status}. Uses the current
-		* [status]{@link enyo.StateSupport.status} or the provided value and determines if it is
-		* an [error state]{@link enyo.States.ERROR}. The provided value will only be used if it is
-		* a [Number]{@glossary Number}.
+		* [status]{@link enyo.StateSupport.status}. Determines whether the current status
+		* (or the optional passed-in value) is an [error state]{@link enyo.States.ERROR}.
+		* The passed-in value will only be used if it is a [Number]{@glossary Number}.
 		*
 		* @param {enyo.States} [status] The specific value to compare as an
 		*	[error state]{@link enyo.States.ERROR}.
@@ -239,10 +238,9 @@
 		
 		/**
 		* Convenience method to avoid using [bitwise]{@glossary bitwise} comparison for the
-		* [status]{@link enyo.StateSupport.status}. Uses the current
-		* [status]{@link enyo.StateSupport.status} or the provided value and determines if it is
-		* a [busy state]{@link enyo.States.BUSY}. The provided value will only be used if it is
-		* a [Number]{@glossary Number}.
+		* [status]{@link enyo.StateSupport.status}. Determines whether the current status
+		* (or the optional passed-in value) is a [busy state]{@link enyo.States.BUSY}. The
+		* passed-in value will only be used if it is a [Number]{@glossary Number}.
 		*
 		* @param {enyo.States} [status] The specific value to compare as a
 		*	[busy state]{@link enyo.States.BUSY}.
@@ -255,10 +253,9 @@
 		
 		/**
 		* Convenience method to avoid using [bitwise]{@glossary bitwise} comparison for the
-		* [status]{@link enyo.StateSupport.status}. Uses the current
-		* [status]{@link enyo.StateSupport.status} or the provided value and determines if it is
-		* a [ready state]{@link enyo.States.READY}. The provided value will only be used if it is
-		* a [Number]{@glossary Number}.
+		* [status]{@link enyo.StateSupport.status}. Determines whether the current status
+		* (or the optional passed-in value) is a [ready state]{@link enyo.States.READY}. The
+		* passed-in value will only be used if it is a [Number]{@glossary Number}.
 		*
 		* @param {enyo.States} [status] The specific value to compare as a
 		*	[ready state]{@link enyo.States.READY}.

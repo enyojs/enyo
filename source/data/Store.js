@@ -20,22 +20,23 @@
 	});
 	
 	/**
-	* This method should determine if the given [model]{@link enyo.Model} should be included in the
-	* filtered set for the [find]{@link enyo.Store#find} method.
+	* This method should determine whether the given [model]{@link enyo.Model}
+	* should be included in the filtered set for the [find()]{@link enyo.Store#find}
+	* method.
 	* 
 	* @callback enyo.Store~Filter
 	* @param {enyo.Model} model The [model]{@link enyo.Model} to filter.
-	* @returns {Boolean} Return `true` if the model meets the filter requirements, `false`
-	*	otherwise.
+	* @returns {Boolean} `true` if the model meets the filter requirements;
+	* otherwise, `false`.
 	*/
 	
 	/**
-	* The configuration options for the [find]{@link enyo.Store#find} method.
+	* The configuration options for the [find()]{@link enyo.Store#find} method.
 	* 
 	* @typedef {Object} enyo.Store~FindOptions
 	* @property {Boolean} all=true - Whether or not to include more than one match for the
-	*	filter method. If `true` will return an array of matches, otherwise a single match.
-	* @property {Object} context - If provided it will be used as the `this` (_context_) of
+	*	filter method. If `true`, an array of matches is returned; otherwise, a single match.
+	* @property {Object} context - If provided, it will be used as the `this` (context) of
 	*	the filter method.
 	*/
 	
@@ -56,20 +57,21 @@
 		kind: BaseStore,
 		
 		/**
-		* Find a [model (or models)]{@link enyo.Model} of a certain [kind]{@glossary kind}.
-		* It uses the return value from a filter method to determine whether or not to include a
-		* particular [model]{@link enyo.Model}. Using the _all_ optional flag will ensure it
-		* looks for all matches otherwise it will stop and return the first positive match.
+		* Finds a [model (or models)]{@link enyo.Model} of a certain [kind]{@glossary kind}.
+		* It uses the return value from a filter method to determine whether a particular
+		* model will be included. Set the optional `all` flag to `true` to ensure that
+		* the method looks for all matches; otherwise, it will return the first positive
+		* match.
 		* 
 		* @see {@glossary Array.find}
 		* @param {enyo.Model} ctor The constructor for the [kind]{@glossary kind} of
-		*	[model]{@link enyo.Model} it will be filtering.
+		*	[model]{@link enyo.Model} to be filtered.
 		* @param {enyo.Store~Filter} fn The filter method.
 		* @param {enyo.Store~FindOptions} [opts] The options parameter.
-		* @returns {(enyo.Model|enyo.Model[]|undefined)} If the _all_ flag is `true` it will
-		*	return an array of [models]{@link enyo.Model} otherwise it will return the first
-		*	[model]{@link enyo.Model} that returned `true` from the filter method. It will
-		*	return `undefined` if _all_ is `false` and no match could be found.
+		* @returns {(enyo.Model|enyo.Model[]|undefined)} If the `all` flag is `true`,
+		*	returns an array of models; otherwise, returns the first model that returned
+		*	that returned `true` from the filter method. Returns `undefined` if `all` is
+		* `false` and no match could be found.
 		* @public
 		*/
 		find: function (ctor, fn, opts) {
@@ -94,7 +96,7 @@
 		},
 		
 		/**
-		* This method is an alias for [find]{@link enyo.Store#find}.
+		* This method is an alias for [find()]{@link enyo.Store#find}.
 		*
 		* @deprecated
 		* @public
@@ -156,17 +158,16 @@
 		},
 		
 		/**
-		* Determine, from the given parameters, if the [store]{@link enyo.store} has a specific
-		* [model]{@link enyo.Model}.
+		* Determines, from the given parameters, whether the [store]{@link enyo.store}
+		* has a specific [model]{@link enyo.Model}.
 		*
-		* @param {(Function|enyo.Model)} ctor Can be the constructor for an {@link enyo.Model} or
-		*	a [model]{@link enyo.Model} instance. If not providing a [model]{@link enyo.Model}
-		*	instance as the next (_model_) parameter, this must be a constructor.
-		* @param {(String|Number|enyo.Model)} [model] If the _ctor_ parameter is a
-		*	constructor this can be a [Number]{@glossary Number} or a
-		*	[String]{@glossary String} representing a
-		*	[primaryKey]{@link enyo.Model#primaryKey} for the given {@link enyo.Model} or an
-		*	instance of a [model]{@link enyo.Model}.
+		* @param {(Function|enyo.Model)} ctor Can be the constructor for an {@link enyo.Model}
+		*	or a model instance. Must be a constructor unless a model instance is passed as the
+		* optional `model` parameter.
+		* @param {(String|Number|enyo.Model)} [model] If the `ctor` parameter is a
+		*	constructor, this may be a [Number]{@glossary Number} or a [String]{@glossary String}
+		* representing a [primaryKey]{@link enyo.Model#primaryKey} for the given model, or an
+		*	instance of a model.
 		* @returns {Boolean} Whether or not the [store]{@link enyo.store} has the given
 		*	[model]{@link enyo.Model}.
 		* @public
@@ -289,8 +290,8 @@
 	
 	/**
 	* A runtime database for working with [models]{@link enyo.Model}. It is primarily used
-	* internally by _data layer_ [kinds]{@glossary kind} ({@link enyo.Model},
-	* {@link enyo.Collection}, {@link enyo.RelationalModel}).
+	* internally by data layer [kinds]{@glossary kind} ({@link enyo.Model},
+	* {@link enyo.Collection}, and {@link enyo.RelationalModel}).
 	* 
 	* @see enyo.Model
 	* @see enyo.Collection

@@ -20,23 +20,23 @@
 	});
 	
 	/**
-	* A controller designed to proxy an underlying [model]{@link enyo.Model}. Other
-	* [kinds]{@glossary kind} can [bind]{@link enyo.BindingSupport.bindings} to this
-	* controller as if it was a {@link enyo.Model}. Using the
-	* [model]{@link enyo.ModelController#model} reserved property, the actual {@link enyo.Model}
-	* can be changed without the [bindings]{@link enyo.BindingSupport.bindings} needing to know. It
-	* will also propagate events [emitted]{@link enyo.EventEmitter.emit} by the underlying
-	* [model]{@link enyo.ModelController#model}.
+	* A controller designed to proxy an underlying {@link enyo.Model}. Other
+	* [kinds]{@glossary kind} may [bind]{@link enyo.BindingSupport.bindings} to this
+	* controller as if it were an `enyo.Model`. Using the
+	* [model]{@link enyo.ModelController#model} reserved property, the actual model
+	* may be changed without the bindings' needing to know. It will also propagate
+	* events [emitted]{@link enyo.EventEmitter.emit} by the underlying model.
 	* 
-	* It is important to note that the [model]{@link enyo.ModelController#model} property is a
-	* reserved property name. Also note that [bindings]{@link enyo.BindingSupport.bindings} should
-	* __never bind through the controller to the model directly__. Ever.
+	* It is important to note that `"model"` is a reserved property name. Also
+	* note that bindings should **never** bind through the controller to the model
+	* directly.
 	* 
-	* ##Rules of property resolution
-	* If the controller can call [hasOwnProperty]{@glossary Object.hasOwnProperty} and it
-	* returns `true` it will look locally or if the property is resolved to be a computed property
-	* otherwise assume to proxy the requested property from the given
-	* [model]{@link enyo.ModelController#model} when available.
+	* **Rules of property resolution**
+	*
+	* If the controller can call [hasOwnProperty()]{@glossary Object.hasOwnProperty}
+	* and it returns `true`, it will look locally; if the property is resolved to
+	* be a computed property, the requested property will be proxied from the given
+	* model, when available.
 	* 
 	* @class enyo.ModelController
 	* @extends enyo.Component
@@ -59,13 +59,14 @@
 		kind: BaseModelController,
 		
 		/**
-		* The {@link enyo.Model} to proxy. If this is set to an instance of {@link enyo.Model} the
-		* [controller]{@link enyo.ModelController} will propagate {@link enyo.Model} events and
-		* [notifications]{@link enyo.ObserverSupport.notify}. __No bindings should ever bind
-		* directly to attributes of this property__.
+		* The {@link enyo.Model} to proxy. If this is set to an instance of `enyo.Model`,
+		* the [controller]{@link enyo.ModelController} will propagate `enyo.Model`
+		* [events]{@glossary event} and [notifications]{@link enyo.ObserverSupport.notify}.
+		* **No bindings should ever bind directly to attributes of this property.**
 		*
-		* Also note that this is a _reserved_ property name and will collide with any
-		* [attribute]{@link enyo.Model#attributes} named _model_. This scenario should be avoided.
+		* Also note that this is a reserved property name and will collide with any
+		* [attribute]{@link enyo.Model#attributes} named `"model"`. This scenario should
+		* be avoided.
 		*
 		* @type enyo.Model
 		* @default null

@@ -6,8 +6,8 @@
 		Collection = enyo.Collection;
 		
 	/**
-	* Private class for a collection that defaults its model kind to
-	* {@link enyo.RelationalModel} as oppossed to {@link enyo.Model}.
+	* Private class for a collection with a default model kind of
+	* {@link enyo.RelationalModel} as opposed to {@link enyo.Model}.
 	* 
 	* @class RelationalCollection
 	* @extends enyo.Collection
@@ -28,8 +28,8 @@
 	});
 
 	/**
-	* The default options for [relations]{@link enyo.RelationalModel#relations}. These may vary
-	* for the individual [kind]{@glossary kind} of relation.
+	* The default options for [relations]{@link enyo.RelationalModel#relations}.
+	* These may vary depending on the individual [kind]{@glossary kind} of relation.
 	*
 	* @typedef {Object} enyo.RelationalModel~RelationOptions
 	* @property {String} type=toOne - The [kind]{@glossary kind} of relation being declared.
@@ -37,22 +37,22 @@
 	* @property {String} key=null - The [attribute]{@link enyo.Model#attributes} name for the
 	*	relation being declared.
 	* @property {Boolean} create=false - Whether or not the relation should automatically create
-	*	the instance of the related [kind]{@glossary kind}.
+	*	the instance of the related kind.
 	* @property {Boolean} parse=false - Whether or not the relation should call the
-	*	[parse]{@link enyo.Model#parse} method with incoming data before
+	*	[parse()]{@link enyo.Model#parse} method on incoming data before
 	*	[setting]{@link enyo.Model#set} it on the [model]{@link enyo.RelationalModel}.
-	* @property {String} model=enyo.RelationalModel - The [kind]{@glossary kind} of the
-	*	reverse of the relation. This will vary depending on the _type_ or relation being declared.
+	* @property {String} model=enyo.RelationalModel - The kind of the
+	*	reverse of the relation. This will vary depending on the type of relation being declared.
 	* @property {Boolean} fetch=false - Whether or not to automatically call
-	*	[fetch]{@link enyo.Model#fetch} (or {@link enyo.Collection#fetch}) after initialization.
-	* @property {String} inverseKey=null - The _key_ of the reverse relation.
-	* @property {String} inverseType=null - The _type_ of the reverse relation.
-	* @property {Boolean} isOwner=false - Whether or not this end of the relation _owns_ the
+	*	[fetch()]{@link enyo.Model#fetch} (or {@link enyo.Collection#fetch}) after initialization.
+	* @property {String} inverseKey=null - The key of the reverse relation.
+	* @property {String} inverseType=null - The type of the reverse relation.
+	* @property {Boolean} isOwner=false - Whether or not this end of the relation owns the
 	*	reverse. If it does, it will update according to changes and will include the reverse end
-	*	in its [raw]{@link enyo.Model#raw} output.
+	*	in its [raw()]{@link enyo.Model#raw} output.
 	* @property {(Boolean|String|String[])} includeInJSON=true - Whether or not to include the
-	*	relation in its [raw]{@link enyo.Model#raw} output. If a [string]{@glossary String},
-	*	only that _key_ will be included, if an [array]{@glossary Array} only those _keys_ will
+	*	relation in its `raw()` output. If a [string]{@glossary String},
+	*	only that key will be included; if an [array]{@glossary Array}, only those keys will
 	*	be included.
 	*/
 	var relationDefaults = {
@@ -174,7 +174,7 @@
 	
 	/**
 	* Represents a relationship of data from one [model]{@link enyo.Model} to many
-	* [models]{@link enyo.Model}. This is an internally used class.
+	* models. This is an internally-used class.
 	*
 	* @class enyo.toMany
 	* @extends Relation
@@ -203,13 +203,13 @@
 		* [kind]{@glossary kind}.
 		*
 		* @type enyo.RelationalModel~RelationOptions
-		* @property {Boolean} create=true - By default the relation should create the
+		* @property {Boolean} create=true - By default, the relation should create the
 		*	[collection]{@link enyo.Collection} automatically.
 		* @property {enyo.Collection} collection=RelationalCollection - The
-		*	[kind]{@glossary kind} of {@link enyo.Collection} to use, can be a the name or a
+		*	[kind]{@glossary kind} of collection to use; can be the kind name or a
 		*	reference to the constructor.
 		* @property {Object} collectionOptions - An options hash to pass to the
-		*	[collection]{@link enyo.Collection} when it is being instanced.
+		*	collection when it is being instanced.
 		* @public
 		*/
 		options: {
@@ -438,7 +438,7 @@
 	
 	/**
 	* Represents a relationship of data from many [models]{@link enyo.Model} to many
-	* [models]{@link enyo.Model}. This is an internally used class.
+	* models. This is an internally-used class.
 	*
 	* @class enyo.manyToMany
 	* @extends enyo.toMany
@@ -468,7 +468,7 @@
 		*
 		* @see enyo.toMany#options
 		* @type enyo.RelationalModel~RelationOptions
-		* @property {String} inverseType=enyo.manyToMany - This is the __required__ _type_.
+		* @property {String} inverseType=enyo.manyToMany - This is the **required** type.
 		* @public
 		*/
 		options: {
@@ -582,7 +582,7 @@
 	
 	/**
 	* Represents a relationship of data from one [model]{@link enyo.Model} to another
-	* [model]{@link enyo.Model}. This is an internally used class.
+	* model. This is an internally-used class.
 	*
 	* @class enyo.toOne
 	* @extends Relation
@@ -611,9 +611,9 @@
 		* [kind]{@glossary kind}.
 		*
 		* @type enyo.RelationalModel~RelationOptions
-		* @property {String} inverseType=enyo.toOne - This is can be `enyo.toOne` or `enyo.toMany`.
-		* @property {Object} modelOptions - A options hash to pass to the related instance if
-		*	_create_ is `true`.
+		* @property {String} inverseType=enyo.toOne - This can be `'enyo.toOne'` or `'enyo.toMany'`.
+		* @property {Object} modelOptions - An options hash to pass to the related instance if
+		*	`create` is `true`.
 		* @public
 		*/
 		options: {
@@ -875,11 +875,10 @@
 	});
 	
 	/**
-	* A type of {@link enyo.Model} extended to automatically understand relationships with other
-	* [models]{@link enyo.Model}. You can define these relationship via the
-	* [relations]{@link enyo.RelationalModel#relations} property. These relationships allow for
-	* individual [models]{@link enyo.Model} to exist separately but be treated as a singular
-	* entity.
+	* A type of {@link enyo.Model} extended to automatically understand relationships with
+	* other models. You may define these relationship via the
+	* [relations]{@link enyo.RelationalModel#relations} property. These relationships allow
+	* individual models to exist separately, but be treated as a single entity.
 	*
 	* @class enyo.RelationalModel
 	* @extends enyo.Model
@@ -905,11 +904,12 @@
 		
 		/**
 		* An [array]{@glossary Array} declaring relationships of this
-		* [model]{@link enyo.RelationalModel} to other [models]{@link enyo.RelationalModel}. These
-		* are [hashes]{@glossary Object} of corresponding
-		* [properties]{@link enyo.RelationalModel~RelationOptions} defining and configuring
-		* individual relations. They can be of the _type_ {@link enyo.toOne}, {@link enyo.toMany}
-		* or {@link enyo.manyToMany}. They must include a _key_ property that is the name of the
+		* [model]{@link enyo.RelationalModel} to other models. These are
+		* [hashes]{@glossary Object} of corresponding
+		* [properties]{@link enyo.RelationalModel~RelationOptions} used to define
+		* and configure individual relations. Relations may be of the type
+		* {@link enyo.toOne}, {@link enyo.toMany}, or {@link enyo.manyToMany}.
+		* Each relation must include a `key` property that is the name of the
 		* local [attribute]{@link enyo.Model#attributes}. For example:
 		*
 		* ```javascript
@@ -935,12 +935,13 @@
 		relations: null,
 		
 		/**
-		* Retrieve the relation instance for a given _key_
+		* Retrieves the relation instance for a given key
 		* ([attribute]{@link enyo.Model#attributes}).
 		*
-		* @param {String} key The _key_ as defined in the
+		* @param {String} key The key as defined in the
 		*	[relations]{@link enyo.RelationalModel#relations} property.
-		* @returns {(Relation|undefined)} The correct relation instance of `undefined` if not found.
+		* @returns {(Relation|undefined)} The correct relation instance, or
+		* `undefined` if not found.
 		* @public
 		*/
 		getRelation: function (key) {
@@ -950,11 +951,12 @@
 		},
 		
 		/**
-		* Determine if the requested _key_ is the name of a relation.
+		* Determines whether the requested key is the name of a relation.
 		*
-		* @param {String} key The _key_ as defined in the
+		* @param {String} key The key as defined in the
 		*	[relations]{@link enyo.RelationalModel#relations} property.
-		* @returns {(Relation|undefined)} The correct relation instance of `undefined` if not found.
+		* @returns {(Relation|undefined)} The correct relation instance, or
+		* `undefined` if not found.
 		* @public
 		*/
 		isRelation: function (key) {
@@ -988,8 +990,8 @@
 		}),
 		
 		/**
-		* Overloaded version of [set]{@link enyo.Model#set} to be able to set values for related
-		* [models]{@link enyo.RelationModel} as well.
+		* Overloaded version of [set()]{@link enyo.Model#set} with the ability to
+		* set values for related [models]{@link enyo.RelationModel} as well.
 		*
 		* @private
 		*/
@@ -1165,7 +1167,7 @@
 	});
 	
 	/**
-	* Ensure that we concatenate (sanely) the relations for any subkinds.
+	* Ensures that we concatenate (sanely) the relations for any subkinds.
 	* 
 	* @name enyo.RelationalModel.concat
 	* @static
