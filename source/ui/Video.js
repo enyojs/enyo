@@ -301,6 +301,13 @@
 		/**
 		* @private
 		*/
+		observers: {
+			updateSource: ['src', 'sourceComponents']
+		},
+
+		/**
+		* @private
+		*/
 		tag: 'video',
 
 		/**
@@ -325,7 +332,7 @@
 				this.preloadChanged();
 				this.autoplayChanged();
 				this.loopChanged();
-				this.srcChanged();
+				this.updateSource();
 			};
 		}),
 
@@ -339,6 +346,63 @@
 				this.hookupVideoEvents();
 			};
 		}),
+
+		/**
+		* @method
+		* @private
+		*/
+		updateSource: function (old, value, source) {
+			var src = this.get('src');
+			var sources = this.get('sourceComponents');
+
+			// if called due to a property change, clear the other property
+			if(source === 'src') {
+				sources = this.sourceComponents = null;
+			} else if(source === 'sourceComponents') {
+				src = this.src = '';
+				if (!!this.getAttribute('src')) {
+					this.setAttribute('src', '');
+				}
+			}
+
+			// Always wipe out any previous sources before setting src or new sources
+			this.destroyClientControls();
+
+			if (src) {
+				// favor this.src: if it has a value, use it
+				this.setAttribute('src', enyo.path.rewrite(src));
+			} else {
+				// if this.src isn't valued, try to use sourceComponents
+				this.addSources();
+			}
+
+			var node = this.hasNode();
+			if(node) {
+				node.load();
+			}
+		},
+		/**
+		* Add _<source>_ tags for each sources specified in _this.sources_
+		* 
+		* @private
+		*/
+		addSources: function () {
+			var sources = this.getSourceComponents(),
+				i;
+
+			if (!sources || sources.length === 0) {
+				return;
+			}
+
+			// Add a source tag for each source
+			for (i = 0; i < sources.length; i++) {
+				sources[i].src = sources[i].src ? enyo.path.rewrite(sources[i].src) : '';
+				this.createComponent(enyo.mixin({attributes: sources[i]}, {tag: 'source'}));
+			}
+
+			// Rerender
+			this.render();
+		},
 
 		/**
 		* @private
@@ -389,15 +453,6 @@
 			if (!this.hasNode()) {
 				return;
 			}
-		},
-
-		/**
-		* @private
-		*/
-		srcChanged: function() {
-			// We override the inherited method from enyo.Control because
-			// it prevents us from setting src to a falsy value.
-			this.setAttribute('src', enyo.path.rewrite(this.src));
 		},
 		
 		/**
