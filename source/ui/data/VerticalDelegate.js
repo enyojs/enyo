@@ -336,8 +336,10 @@
 			// if the list has not already reset, reset
 			if (!list.hasReset) return this.reset(list);
 			
-			// we need the controls per page for simple arithmetic
-			var cpp = this.controlsPerPage(list),
+			var collection = list.collection,
+				
+				// we need the controls per page for simple arithmetic
+				cpp = this.controlsPerPage(list),
 				pos = this.pagesByPosition(list),
 				first = pos.firstPage.start != null ? pos.firstPage.start : 0,
 				end = (cpp * 2) + (first - 1),
@@ -345,7 +347,7 @@
 				idx;
 			
 			// retrieve the first index for the first added model in the collection
-			idx = props.index;
+			idx = collection.indexOf(props.models[0]);
 			
 			// the only time we don't refresh is if the first index of the contiguous set of added
 			// models is beyond our final rendered page (possible) indices
@@ -406,16 +408,18 @@
 			// if the list has not already reset, reset
 			if (!list.hasReset) return this.reset(list);
 			
-			// we need the controls per page for simple arithmetic
-			var	cpp = this.controlsPerPage(list),
+			var collection = list.collection,
+				
+				// we need the controls per page for simple arithmetic
+				cpp = this.controlsPerPage(list),
 				pos = this.pagesByPosition(list),
 				first = pos.firstPage.start != null ? pos.firstPage.start : 0,
 				end = (cpp * 2) + (first - 1),
 				gen,
 				idx;
 			
-			// retrieve the index for the first removed model in the collection
-			idx = props.index;
+			// retrieve the index for the first added model in the collection
+			idx = collection.indexOf(props.models[0]);
 			
 			// if the index is above the end of our currently rendered indices we need to refresh
 			gen = idx <= end;
