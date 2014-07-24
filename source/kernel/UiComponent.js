@@ -497,8 +497,16 @@
 		/**
 		* @private
 		*/
-		getBubbleTarget: function () {
-			return this.bubbleTarget || this.parent || this.owner;
+		getBubbleTarget: function (nom, event) {
+			if (event.delegate) return this.owner;
+			else {
+				return (
+					this.bubbleTarget
+					|| (this.cachedBubble && this.cachedBubbleTarget[nom])
+					|| this.parent
+					|| this.owner
+				);
+			}
 		}
 	});
 
