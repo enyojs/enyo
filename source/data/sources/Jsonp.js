@@ -7,8 +7,8 @@
 		, JsonpRequest = checkConstructor(enyo.JsonpRequest);
 	
 	/**
-	* An all-purpose [ajax]{@glossary ajax} [source]{@link enyo.Source} designed to communicate
-	* with REST-ful API backends that support JSON-P style callbacks.
+	* An all-purpose [Ajax]{@glossary ajax} [source]{@link enyo.Source} designed to communicate
+	* with REST-ful API backends that support JSONP-style callbacks.
 	*
 	* @class enyo.JsonpSource
 	* @extends enyo.XHRSource
@@ -51,7 +51,7 @@
 		allowed: Object.keys(JsonpRequest.prototype.published),
 		
 		/**
-		* Implementation of {@link enyo.Source#fetch}.
+		* Implementation of [enyo.Source.fetch()]{@link enyo.Source#fetch}.
 		*
 		* @see enyo.Source#fetch
 		* @public
@@ -64,7 +64,7 @@
 		},
 		
 		/**
-		* Implementation of {@link enyo.Source#commit}.
+		* Implementation of [enyo.Source.commit()]{@link enyo.Source#commit}.
 		*
 		* @see enyo.Source#commit
 		* @public
@@ -78,7 +78,7 @@
 		},
 		
 		/**
-		* Implementation of {@link enyo.Source#destroy}.
+		* Implementation of [enyo.Source.destroy()]{@link enyo.Source#destroy}.
 		*
 		* @see enyo.Source#destroy
 		* @public

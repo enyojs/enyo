@@ -17,17 +17,18 @@
 		};
 	
 		/**
-		* A [localStorage]{@glossary localStorage} [source]{@link enyo.Source}. Is only even
-		* an available [kind]{@glossary kind} on platforms that support the
-		* [localStorage]{@glossary localStorage} web-standard.
+		* A [localStorage]{@glossary localStorage} [source]{@link enyo.Source}. This
+		* [kind]{@glossary kind} is only an available on platforms that support the
+		* localStorage Web standard.
 		*
-		* It is important to note that usage of this {@link enyo.Source} requires that
-		* [models]{@link enyo.Model} and [collections]{@link enyo.Collection} must use their
-		* respective _url_ properties ({@link enyo.Model#url} and {@link enyo.Collection#url}). The
-		* {@link enyo.Collection#url} must be unique for any [collection]{@link enyo.Collection}
-		* that needs to be [committed]{@link enyo.Collection#commit}. Any {@link enyo.Model} that
-		* will be [committed]{@link enyo.Model#commit} directly or within a {@link enyo.Collection}
-		* _must have a unique [primaryKey]{@link enyo.Model#primaryKey}_.
+		* It is important to note that usage of this source requires that
+		* [models]{@link enyo.Model} and [collections]{@link enyo.Collection} use
+		* their respective `url` properties ([enyo.Model.url]{@link enyo.Model#url} and
+		* [enyo.Collection.url]{@link enyo.Collection#url}). The `enyo.Collection.url`
+		* must be unique for any collection that needs to be
+		* [committed]{@link enyo.Collection#commit}. Any model that will be
+		*[committed]{@link enyo.Model#commit} directly, or within an `enyo.Collection`,
+		* must have a unique [primaryKey]{@link enyo.Model#primaryKey}.
 		*
 		* @class enyo.LocalStorageSource
 		* @extends enyo.Source
@@ -77,7 +78,7 @@
 			},
 			
 			/**
-			* Implementation of {@link enyo.Source#fetch}.
+			* Implementation of [enyo.Source.fetch()]{@link enyo.Source#fetch}.
 			*
 			* @see enyo.Source#fetch
 			* @public
@@ -111,7 +112,7 @@
 			},
 		
 			/**
-			* Implementation of {@link enyo.Source#commit}.
+			* Implementation of [enyo.Source.commit()]{@link enyo.Source#commit}.
 			*
 			* @see enyo.Source#commit
 			* @public
@@ -141,7 +142,7 @@
 			},
 			
 			/**
-			* Implementation of {@link enyo.Source#destroy}.
+			* Implementation of [enyo.Source.destroy()]{@link enyo.Source#destroy}.
 			*
 			* @see enyo.Source#destroy
 			* @public

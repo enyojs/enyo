@@ -41,9 +41,9 @@
 		requestKind: null,
 		
 		/**
-		* If provided, will be pre-fixed into the URI [string]{@glossary String}. Works in
-		* tandem with {@link enyo.Model#url} and {@link enyo.Collection#url} to build a complete
-		* path.
+		* If provided, will be prefixed to the URI [string]{@glossary String}. Used in
+		* tandem with [enyo.Model.url]{@link enyo.Model#url} and
+		* [enyo.Collection.url]{@link enyo.Collection#url} to build a complete path.
 		*
 		* @type {String}
 		* @default ''
@@ -52,7 +52,7 @@
 		urlRoot: '',
 		
 		/**
-		* These options will be merged (first with [subkinds]{@glossary subkind}) and then
+		* These options will be merged, first with [subkinds]{@glossary subkind}, and then
 		* with any options passed to the various API methods of {@link enyo.XHRSource}. While the
 		* options passed to the methods may include any properties, only properties found in
 		* {@link enyo.AjaxProperties} will be merged and passed to the
@@ -61,7 +61,7 @@
 		* @see enyo.AjaxProperties
 		* @type {Object}
 		* @property {Boolean} cacheBust - Defaults to `false`.
-		* @property {String} contentType - Defaults to `application/json`.
+		* @property {String} contentType - Defaults to `'application/json'`.
 		* @public
 		*/
 		defaultOptions: {
@@ -71,15 +71,14 @@
 		
 		/**
 		* Used internally to resolve and build the URI [string]{@glossary String} for requests.
-		* The derived url is a combination of the _opts_ param (optional) `url` property or the
-		* [model's]{@link enyo.Model} (or [collection's]{@link enyo.Collection})
-		* [getUrl]{@link enyo.Model#getUrl} ({@link enyo.Collection#getUrl}) and
-		* [url]{@link enyo.Model#url} ({@link enyo.Collection#url}).
+		* The derived url is based on the (optional) `opts` parameter's `url` property (if it
+		* exists), or on the the `getUrl` and `url` properties of the
+		* [model]{@link enyo.Model} or [collection]{@link enyo.Collection}.
 		*
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
-		*	[collection]{@link enyo.Collection} to use to derive the _url_.
+		*	[collection]{@link enyo.Collection} to use to derive the `url`.
 		* @param {Object} [opts] The options hash with possible `url` property.
-		* @returns {String} The normalized _url_ [string]{@glossary String}.
+		* @returns {String} The normalized `url` [string]{@glossary String}.
 		* @method
 		* @public
 		*/
@@ -132,15 +131,15 @@
 		},
 		
 		/**
-		* This _action_ should be used when querying a backend (or searching). How it is interpreted
-		* and used is highly dependent on the backend implementation. By default this method simply
-		* creates a _POST_ request with the serialized `attributes` of the _opts_ parameter.
-		* Re-implement this to suit your needs.
+		* This action should be used when querying a backend (or searching). How it is interpreted
+		* and used is highly dependent on the backend implementation. By default, this method simply
+		* creates a `POST` request with the serialized `attributes` of the `opts` parameter.
+		* Re-implement this method to suit your specific needs.
 		*
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
-		*	[collection]{@link enyo.Collection} from which to build the _url_.
+		*	[collection]{@link enyo.Collection} from which to build the `url`.
 		* @param {Object} opts The options [hash]{@glossary Object} passed to
-		*	[buildUrl]{@link enyo.XHRSource#buildUrl} and possessing the _method_ and _attributes_
+		*	[buildUrl()]{@link enyo.XHRSource#buildUrl} and possessing `method` and `attributes`
 		*	properties.
 		* @public
 		*/
