@@ -8,53 +8,85 @@
 		, AjaxProperties = enyo.AjaxProperties;
 	
 	/**
-		@public
-		@class enyo.AjaxSource
+	* An all-purpose [ajax]{@glossary ajax} [source]{@link enyo.Source} designed to communicate
+	* with REST-ful API backends.
+	*
+	* @class enyo.AjaxSource
+	* @extends enyo.XHRSource
+	* @public
 	*/
 	kind(
 		/** @lends enyo.AjaxSource.prototype */ {
-		name: "enyo.AjaxSource",
+		
+		/**
+		* @private
+		*/
+		name: 'enyo.AjaxSource',
+		
+		/**
+		* @private
+		*/
 		kind: XHRSource,
+		
+		/**
+		* @see enyo.XHRSource#requestKind
+		* @default enyo.Ajax
+		* @public
+		*/
 		requestKind: Ajax,
+		
+		/**
+		* @private
+		*/
 		noDefer: true,
 		
 		/**
-			@public
+		* An [array]{@glossary Array} of the keys that will be used for the options passed to
+		* the [requestKind]{@link enyo.XHRSource#requestKind}.
+		*
+		* @see enyo.AjaxProperties
+		* @type {String[]}
+		* @readonly
+		* @public
 		*/
 		allowed: Object.keys(AjaxProperties),
 		
 		/**
-			@public
-			@method
+		* Implementation of {@link enyo.Source#fetch}.
+		*
+		* @see enyo.Source#fetch
+		* @public
 		*/
 		fetch: function (model, opts) {
-			opts.method = "GET";
+			opts.method = 'GET';
 			opts.url = this.buildUrl(model, opts);
 			this.go(opts);
 		},
 		
 		/**
-			@public
-			@method
+		* Implementation of {@link enyo.Source#commit}.
+		*
+		* @see enyo.Source#commit
+		* @public
 		*/
 		commit: function (model, opts) {
-			opts.method = model.isNew? "POST": "PUT";
+			opts.method = model.isNew? 'POST': 'PUT';
 			opts.url = this.buildUrl(model, opts);
 			opts.postBody = opts.postBody || model.toJSON();
 			this.go(opts);
 		},
 		
 		/**
-			@public
-			@method
+		* Implementation of {@link enyo.Source#destroy}.
+		*
+		* @see enyo.Source#destroy
+		* @public
 		*/
 		destroy: function (model, opts) {
-			opts.method = "DELETE";
+			opts.method = 'DELETE';
 			opts.url = this.buildUrl(model, opts);
 			this.go(opts);
 		}
 	});
-	
-	// new AjaxSource();
 	
 })(enyo);

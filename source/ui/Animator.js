@@ -1,156 +1,317 @@
-/**
-	_enyo.Animator_ is a basic animation component.  Call _play_ to start the
-	animation. The animation will run for the period (in milliseconds) specified
-	by its _duration_ property.  The _onStep_ event will fire in quick
-	succession and should be handled to do something based on the _value_
-	property.
+(function (enyo, scope) {
+	/**
+	* Fires when an animation step occurs.
+	*
+	* @event enyo.Animator#event:onStep
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
+	* @public
+	*/
 
-	The _value_ property will progress from _startValue_ to _endValue_ during
-	the animation based on the function referenced by the _easingFunction_
-	property.  The _stop_ method may be called to manually stop an in-progress
-	animation; calling it will fire the _onStop_ event.  When an animation
-	completes normally, the _onEnd_ event is fired.
+	/**
+	* Fires when the animation finishes normally.
+	*
+	* @event enyo.Animator#event:onEnd
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
+	* @public
+	*/
 
-	Event handlers may be specified as functions.  If specified, the handler
-	function will be used to handle the event directly, without sending the
-	event to its owner or bubbling it.  The _context_ property can be used to
-	call the supplied event functions in a particular "this" context.
+	/**
+	* Fires when the animation is prematurely stopped.
+	*
+	* @event enyo.Animator#event:onStop
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the [event]{@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing 
+	*	[event]{@glossary event} information.
+	* @public
+	*/
 
-	During animation, an <a href="#enyo.jobs">enyo.jobs</a> priority of 5 is
-	registered to defer low priority tasks.
-*/
-enyo.kind({
-	name: "enyo.Animator",
-	kind: "Component",
-	published: {
-		//* Animation duration in milliseconds
-		duration: 350,
-		//* Value of _value_ property at the beginning of an animation
-		startValue: 0,
-		//* Value of _value_ property at the end of an animation
-		endValue: 1,
-		//* Node that must be visible in order for the animation to continue.
-		//* This reference is destroyed when the animation ceases.
-		node: null,
-		//* Function that determines how the animation progresses from
-		//* _startValue_ to _endValue_
-		easingFunction: enyo.easing.cubicOut
-	},
-	events: {
-		//* Fires when an animation step occurs.
-		onStep: "",
-		//* Fires when the animation finishes normally.
-		onEnd: "",
-		//* Fires when the animation is prematurely stopped.
-		onStop: ""
-	},
-	//* @protected
-	constructed: enyo.inherit(function (sup) {
-		return function() {
-			sup.apply(this, arguments);
-			this._next = this.bindSafely("next");
-		};
-	}),
-	destroy: enyo.inherit(function (sup) {
-		return function() {
+	/**
+	* _enyo.Animator_ is a basic animation [component]{@link enyo.Component}.  Call 
+	* [play]{@link enyo.Animator#play} to start the animation. The animation will run for the period 
+	* (in milliseconds) specified by its [duration]{@link enyo.Animator#duration} property. The 
+	* [onStep]{@link enyo.Animator#event:onStep} [event]{@glossary event} will fire in quick 
+	* succession and should be handled to do something based on the [value]{@link enyo.Animator#value} 
+	* property.
+	* 
+	* The [value]{@link enyo.Animator#value} property will progress from 
+	* [startValue]{@link enyo.Animator#startValue} to [endValue]{@link enyo.Animator#endValue} during
+	* the animation based on the [function]{@glossary Function} referenced by the 
+	* [easingFunction]{@link enyo.Animator#easingFunction} property.
+	* 
+	* [Event]{@glossary event} handlers may be specified as [functions]{@glossary Function}. 
+	* If specified, the handler [function]{@glossary Function} will be used to handle the 
+	* [event]{@glossary event} directly, without sending the [event]{@glossary event} to its 
+	* [owner]{@link enyo.Component#owner} or [bubbling]{@link enyo.Component#bubble} it. The 
+	* [context]{@link enyo.Animator#context} property can be used to call the supplied 
+	* [event]{@glossary event} [functions]{@glossary Function} in a particular "this" context.
+	* 
+	* During animation, an {@link enyo.jobs} priority of 5 is registered to defer low priority tasks.
+	*
+	* @class enyo.Animator
+	* @extends enyo.Component
+	* @public
+	*/
+	enyo.kind(
+		/** @lends enyo.Animator.prototype */ {
+
+		/**
+		* Specify a _context_ in which to run the specified [event]{@glossary Event} handlers. If 
+		* this is not specified or is falsy, then the [window object]{@glossary window} is used.
+		* 
+		* @name context
+		* @type {Object}
+		* @default undefined
+		* @memberOf enyo.Animator.prototype
+		* @public
+		*/
+
+		/**
+		* @private
+		*/
+		name: 'enyo.Animator',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Component',
+
+		/**
+		* @private
+		*/
+		published: 
+			/** @lends enyo.Animator.prototype */ {
+			
+			/** 
+			* Animation duration in milliseconds
+			*
+			* @type {Number}
+			* @default 350
+			* @public
+			*/
+			duration: 350,
+
+			/** 
+			* Value of [value]{@link enyo.Animator#value} property at the beginning of an animation.
+			*
+			* @type {Number}
+			* @default 0
+			* @public
+			*/
+			startValue: 0,
+
+			/** 
+			* Value of [value]{@link enyo.Animator#value} property at the end of an animation.
+			*
+			* @type {Number}
+			* @default 1
+			* @public
+			*/
+			endValue: 1,
+
+			/** 
+			* Node that must be visible in order for the animation to continue. This reference is 
+			* destroyed when the animation ceases.
+			*
+			* @type {Object}
+			* @default null
+			* @public
+			*/
+			node: null,
+
+			/** 
+			* [Function]{@glossary Function} that determines how the animation progresses from 
+			* [startValue]{@link enyo.Animator#startValue} to [endValue]{@link enyo.Animator#endValue}.
+			* 
+			* @type {Function}
+			* @default enyo.easing.cubicOut
+			* @public
+			*/
+			easingFunction: enyo.easing.cubicOut
+		},
+		
+		/*
+		* @private
+		*/
+		events: {
+			onStep: '',
+			onEnd: '',
+			onStop: ''
+		},
+
+		/**
+		* @method
+		* @private
+		*/
+		constructed: enyo.inherit(function (sup) {
+			return function() {
+				sup.apply(this, arguments);
+				this._next = this.bindSafely('next');
+			};
+		}),
+
+		/**
+		* @method
+		* @private
+		*/
+		destroy: enyo.inherit(function (sup) {
+			return function() {
+				this.stop();
+				sup.apply(this, arguments);
+			};
+		}),
+
+		/** 
+		* Plays the animation.
+		*
+		* @param {Object} props As a convenience, this [hash]{@glossary Object} will be mixed
+		*	directly into this [object]{@glossary Object}.
+		* @public
+		*/
+		play: function (props) {
 			this.stop();
-			sup.apply(this, arguments);
-		};
-	}),
-	//* @public
-	//* Plays the animation.
-	//* For convenience, _inProps_ will be mixed directly into this object.
-	play: function(inProps) {
-		this.stop();
-		this.reversed = false;
-		if (inProps) {
-			enyo.mixin(this, inProps);
-		}
-		this.t0 = this.t1 = enyo.perfNow();
-		this.value = this.startValue;
+			this.reversed = false;
+			if (props) {
+				enyo.mixin(this, props);
+			}
+			this.t0 = this.t1 = enyo.perfNow();
+			this.value = this.startValue;
 
-		// register this jobPriority to block less urgent tasks from executing
-		enyo.jobs.registerPriority(5, this.id);
+			// register this jobPriority to block less urgent tasks from executing
+			enyo.jobs.registerPriority(5, this.id);
 
-		this.job = true;
-		this.next();
-		return this;
-	},
-	//* Stops the animation and fires the _onStop_ event.
-	stop: function() {
-		if (this.isAnimating()) {
-			this.cancel();
-			this.fire("onStop");
+			this.job = true;
+			this.next();
 			return this;
-		}
-	},
-	//* Reverses the direction of a running animation; returns self if animating.
-	reverse: function() {
-		if (this.isAnimating()) {
-			this.reversed = !this.reversed;
-			var now = this.t1 = enyo.perfNow();
-			// adjust start time (t0) to allow for animation done so far to replay
-			var elapsed = now - this.t0;
-			this.t0 = now + elapsed - this.duration;
-			// swap start and end values
-			var startValue = this.startValue;
-			this.startValue = this.endValue;
-			this.endValue = startValue;
-			return this;
-		}
-	},
-	//* Returns true if animation is in progress.
-	isAnimating: function() {
-		return Boolean(this.job);
-	},
-	//* @protected
-	requestNext: function() {
-		this.job = enyo.requestAnimationFrame(this._next, this.node);
-	},
-	cancel: function() {
-		enyo.cancelRequestAnimationFrame(this.job);
-		this.node = null;
-		this.job = null;
+		},
 
-		// unblock job queue
-		enyo.jobs.unregisterPriority(this.id);
-	},
-	shouldEnd: function() {
-		return (this.dt >= this.duration);
-	},
-	next: function() {
-		this.t1 = enyo.perfNow();
-		this.dt = this.t1 - this.t0;
-		var args = this.easingFunction.length;
-		var f;
+		/** 
+		* Stops the animation and fires the associated [event]{@glossary event}.
+		*
+		* @fires enyo.Animator#event:onStop
+		* @returns {this} The callee for chaining.
+		* @public
+		*/
+		stop: function() {
+			if (this.isAnimating()) {
+				this.cancel();
+				this.fire('onStop');
+				return this;
+			}
+		},
 
-		if (args === 1) {
-			// time independent
-			f = this.fraction = enyo.easedLerp(this.t0, this.duration, this.easingFunction, this.reversed);
-			this.value = this.startValue + f * (this.endValue - this.startValue);
-		} else {
-			this.value = enyo.easedComplexLerp(this.t0, this.duration, this.easingFunction, this.reversed,
-				this.dt, this.startValue, (this.endValue - this.startValue));
+		/** 
+		* Reverses the direction of a running animation.
+		* 
+		* @return {this} The callee for chaining.
+		* @public
+		*/
+		reverse: function() {
+			if (this.isAnimating()) {
+				this.reversed = !this.reversed;
+				var now = this.t1 = enyo.perfNow();
+				// adjust start time (t0) to allow for animation done so far to replay
+				var elapsed = now - this.t0;
+				this.t0 = now + elapsed - this.duration;
+				// swap start and end values
+				var startValue = this.startValue;
+				this.startValue = this.endValue;
+				this.endValue = startValue;
+				return this;
+			}
+		},
+
+		/**
+		* Determine if animation is in progress.
+		*
+		* @returns {Boolean} `true` if there is an animation currently running, otherwise `false`.
+		* @private
+		*/
+		isAnimating: function() {
+			return Boolean(this.job);
+		},
+
+		/**
+		* @private
+		*/
+		requestNext: function() {
+			this.job = enyo.requestAnimationFrame(this._next, this.node);
+		},
+
+		/**
+		* @private
+		*/
+		cancel: function() {
+			enyo.cancelRequestAnimationFrame(this.job);
+			this.node = null;
+			this.job = null;
+
+			// unblock job queue
+			enyo.jobs.unregisterPriority(this.id);
+		},
+
+		/**
+		* @private
+		*/
+		shouldEnd: function() {
+			return (this.dt >= this.duration);
+		},
+
+		/**
+		* Runs the next step of the animation.
+		*
+		* @fires enyo.Animator#event:onStep
+		* @fires enyo.Animator#event:onEnd
+		* @private
+		*/
+		next: function() {
+			this.t1 = enyo.perfNow();
+			this.dt = this.t1 - this.t0;
+			var args = this.easingFunction.length;
+			var f;
+
+			if (args === 1) {
+				// time independent
+				f = this.fraction = enyo.easedLerp(this.t0, this.duration, this.easingFunction, this.reversed);
+				this.value = this.startValue + f * (this.endValue - this.startValue);
+			} else {
+				this.value = enyo.easedComplexLerp(this.t0, this.duration, this.easingFunction, this.reversed,
+					this.dt, this.startValue, (this.endValue - this.startValue));
+			}
+			if (((f >= 1) && (args === 1)) || this.shouldEnd()) {
+				this.value = this.endValue;
+				this.fraction = 1;
+				this.fire('onStep');
+				this.cancel();
+				enyo.asyncMethod(this.bindSafely(function() {
+					this.fire('onEnd');
+				}));
+			} else {
+				this.fire('onStep');
+				this.requestNext();
+			}
+		},
+
+		/**
+		* @private
+		*/
+		fire: function(nom) {
+			var fn = this[nom];
+			if (enyo.isString(fn)) {
+				this.bubble(nom);
+			} else if (fn) {
+				fn.call(this.context || window, this);
+			}
 		}
-		if (((f >= 1) && (args === 1)) || this.shouldEnd()) {
-			this.value = this.endValue;
-			this.fraction = 1;
-			this.fire("onStep");
-			this.cancel();
-			enyo.asyncMethod(this.bindSafely(function() {
-				this.fire("onEnd");
-			}));
-		} else {
-			this.fire("onStep");
-			this.requestNext();
-		}
-	},
-	fire: function(inEventName) {
-		var fn = this[inEventName];
-		if (enyo.isString(fn)) {
-			this.bubble(inEventName);
-		} else if (fn) {
-			fn.call(this.context || window, this);
-		}
-	}
-});
+	});
+
+})(enyo, this);

@@ -4,12 +4,19 @@
 		meta: 1, command: 1, embed: 1, keygen: 1, wbr: 1, param: 1, source: 1, track: 1, col: 1};
 	
 	/**
-		@public
+	* This is the default render delegate used by {@link enyo.Control}. It
+	* generates the HTML [string]{@glossary String} content and correctly inserts
+	* it into the DOM. A string-concatenation technique is used to perform DOM
+	* insertion in batches.
+	*
+	* @name enyo.HTMLStringDelegate
+	* @type Object
+	* @public
 	*/
 	enyo.HTMLStringDelegate = {
 		
 		/**
-			@private
+		* @private
 		*/
 		invalidate: function (control, item) {
 			switch (item) {
@@ -23,7 +30,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		render: function (control) {
 			if (control.parent) {
@@ -41,7 +48,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		renderInto: function (control, parentNode) {
 			parentNode.innerHTML = this.generateHtml(control);
@@ -50,7 +57,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		renderNode: function (control) {
 			this.teardownRender(control);
@@ -60,7 +67,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		renderDom: function (control) {
 			this.renderAttributes(control);
@@ -69,7 +76,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		renderStyles: function (control) {
 			var style = control.style;
@@ -87,7 +94,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		renderAttributes: function (control) {
 			var attrs = control.attributes,
@@ -108,7 +115,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		renderContent: function (control) {
 			if (control.generated) this.teardownChildren(control);
@@ -116,7 +123,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		generateHtml: function (control) {
 			var content,
@@ -142,7 +149,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		generateOuterHtml: function (control, content) {
 			if (!control.tag) return content;
@@ -151,7 +158,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		generateInnerHtml: function (control) {
 			var allowHtml = control.allowHtml,
@@ -168,7 +175,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		generateChildHtml: function (control) {
 			var child,
@@ -185,7 +192,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		prepareTags: function (control) {
 			var html = '';
@@ -205,7 +212,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		attributesToHtml: function(attrs) {
 			var key,
@@ -223,7 +230,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		escapeAttribute: function (text) {
 			if (typeof text != 'string') return text;
@@ -232,7 +239,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		teardownRender: function (control) {
 			if (control.generated) this.teardownChildren(control);
@@ -241,7 +248,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		teardownChildren: function (control) {
 			var child,

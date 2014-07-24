@@ -1,52 +1,107 @@
-/**
-	_enyo.Signals_ components are used to listen to global messages.
+(function (enyo, scope) {
+	/**
+	* {@link enyo.Signals} is a [component]{@link enyo.Component} used to listen
+	* to global messages.
+	* 
+	* An object with a Signals component can listen to messages sent from anywhere
+	* by declaring handlers for them.
+	* 
+	* DOM [events]{@glossary event} that have no node targets are broadcast as
+	* signals. These events include Window events, such as `onload` and
+	* `onbeforeunload`, as well as events that occur directly on `document`, such
+	* as `onkeypress` if `document` has the focus.
+	* 
+	* For more information, see the documentation on [Event
+	* Handling](key-concepts/event-handling.html) in the Enyo Developer Guide.
+	*
+	* @class enyo.Signals
+	* @extends enyo.Component
+	* @public
+	*/
+	enyo.kind(
+		/** @lends enyo.Signals.prototype */ {
 
-	An object with a Signals component can listen to messages sent from anywhere
-	by declaring handlers for them.
+		/**
+		* @private
+		*/
+		name: 'enyo.Signals',
 
-	DOM events that have no node targets are broadcast as signals. These events
-	include Window events, like _onload_ and _onbeforeunload_, and events that
-	occur directly on _document_, like _onkeypress_ if _document_ has the focus.
+		/**
+		* @private
+		*/
+		kind: 'enyo.Component',
 
-	For more information, see the documentation on [Event
-	Handling](key-concepts/event-handling.html) in the Enyo Developer Guide.
-*/
-enyo.kind({
-	name: "enyo.Signals",
-	kind: "enyo.Component",
-	//* @protected
-	// needed because of early calls to bind DOM event listeners
-	// to the enyo.Signals.send call.
-	noDefer: true,
-	create: enyo.inherit(function (sup) {
-		return function() {
-			sup.apply(this, arguments);
-			enyo.Signals.addListener(this);
-		};
-	}),
-	destroy: enyo.inherit(function (sup) {
-		return function() {
-			enyo.Signals.removeListener(this);
-			sup.apply(this, arguments);
-		};
-	}),
-	notify: function(inMsg, inPayload) {
-		this.dispatchEvent(inMsg, inPayload);
-	},
-	protectedStatics: {
-		listeners: [],
-		addListener: function(inListener) {
-			this.listeners.push(inListener);
+		/**
+		* Needed because of early calls to bind DOM [event]{@glossary event} listeners
+		* to the [enyo.Signals.send()]{@link enyo.Signals#send} call.
+		* 
+		* @private
+		*/
+		noDefer: true,
+
+		/**
+		* @method
+		* @private
+		*/
+		create: enyo.inherit(function (sup) {
+			return function() {
+				sup.apply(this, arguments);
+				enyo.Signals.addListener(this);
+			};
+		}),
+
+		/**
+		* @method
+		* @private
+		*/
+		destroy: enyo.inherit(function (sup) {
+			return function() {
+				enyo.Signals.removeListener(this);
+				sup.apply(this, arguments);
+			};
+		}),
+
+		/**
+		* @private
+		*/
+		notify: function (msg, load) {
+			this.dispatchEvent(msg, load);
 		},
-		removeListener: function(inListener) {
-			enyo.remove(inListener, this.listeners);
+
+		/**
+		* @private
+		*/
+		protectedStatics: {
+			listeners: [],
+			addListener: function(listener) {
+				this.listeners.push(listener);
+			},
+			removeListener: function(listener) {
+				enyo.remove(listener, this.listeners);
+			}
+		},
+
+		/**
+		* @private
+		*/
+		statics: 
+			/** @lends enyo.Signals.prototype */ {
+
+			/**
+			* Broadcasts a global message to be consumed by subscribers.
+			* 
+			* @param {String} msg The message to send; usually the name of the 
+			*	[event]{@glossary event}.
+			* @param {Object} load An [object]{@glossary Object} containing any
+			*	associated event properties to be accessed by subscribers.
+			* @public
+			*/
+			send: function (msg, load) {
+				enyo.forEach(this.listeners, function(l) {
+					l.notify(msg, load);
+				});
+			}
 		}
-	},
-	statics: {
-		send: function(inMsg, inPayload) {
-			enyo.forEach(this.listeners, function(l) {
-				l.notify(inMsg, inPayload);
-			});
-		}
-	}
-});
+	});
+
+})(enyo, this);
