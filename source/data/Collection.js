@@ -554,7 +554,7 @@
 				len != this.length && this.notify('length', len, this.length);
 				// notify listeners of the addition of records
 				if (added) {
-					this.emit('add', {models: added, collection: this, index: idx});
+					this.emit('add', {models: added, collection: this});
 				}
 			}
 			
