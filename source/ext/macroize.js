@@ -1,10 +1,10 @@
 (function (enyo, scope) {
 
 	/**
-	* Populates a {@glossary String} template with values from an {@glossary Object}. Can be used
-	* with custom _macro_ patterns.
+	* Populates a {@glossary String} template with values from an {@glossary Object}.
+	* Can be used with custom macro patterns.
 	*
-	* The default _macro_ pattern is of the form `{$name}`.
+	* The default macro pattern is of the form `{$name}`.
 	*
 	* ```javascript
 	* // returns 'My name is Barney.'
@@ -26,11 +26,12 @@
 	* ```
 	*
 	* @utility
-	* @param {String} text The template text from which to replace via _macro_.
-	* @param {Object} map The {@glossary Object} from which to find the data to insert into the
-	*	_text_.
-	* @param {RegExp} [regex] The optional _pattern_ to use to match the entries in the _text_.
-	* @returns {String} The modified _text_ value.
+	* @param {String} text The template text in which to insert values via macro.
+	* @param {Object} map The {@glossary Object} containing the data to be inserted
+	* into the `text`.
+	* @param {RegExp} [regex] The optional pattern to use to match the entries in
+	* the `text`.
+	* @returns {String} The modified `text` value.
 	* @public
 	*/
 	enyo.macroize = function (text, map, regex) {
@@ -56,16 +57,18 @@
 	};
 
 	/**
-	* Uses a {@glossary RegExp} pattern to replace tokens in a {@glossary String}. This is just like
-	* {@link enyo.macroize} except it does not support nested structures (dot notation).
+	* Uses a [regular expression]{@glossary RegExp} pattern to replace tokens in a
+	* {@glossary String}. This is just like [enyo.macroize()]{@link enyo.macroize},
+	* except it does not support nested structures (i.e., dot notation).
 	*
 	* @utility
 	* @see enyo.macroize
-	* @param {String} text The template text from which to replace via _macro_.
-	* @param {Object} map The {@glossary Object} from which to find the data to insert into the
-	*	_text_.
-	* @param {RegExp} [regex] The optional _pattern_ to use to match the entries in the _text_.
-	* @returns {String} The modified _text_ value.
+	* @param {String} text The template text in which tokens will be replaced via macro.
+	* @param {Object} map The {@glossary Object} containing the data to be inserted into
+	* the `text`.
+	* @param {RegExp} [regex] The optional pattern to use to match the entries in the
+	* `text`.
+	* @returns {String} The modified `text` value.
 	* @public
 	*/
 	enyo.quickReplace = function (text, map, pattern) {
@@ -78,16 +81,17 @@
 	};
 
 	/**
-	* A non-recursing version of {@link enyo.macroize}. This means it will not expand the same
-	* _macro_ more than once in the {@glossary String}, but it is much more efficient.
+	* A non-recursing version of [enyo.macroize()]{@link enyo.macroize}. This means it
+	* will not expand the same macro more than once in the {@glossary String}, but it
+	* is much more efficient than the recursing version.
 	*
 	* @utility
 	* @see enyo.macroize
-	* @param {String} text The template text from which to replace via _macro_.
-	* @param {Object} map The {@glossary Object} from which to find the data to insert into the
-	*	_text_.
-	* @param {RegExp} [regex] The optional _pattern_ to use to match the entries in the _text_.
-	* @returns {String} The modified _text_ value.
+	* @param {String} text The template text in which tokens will be replaced via macro.
+	* @param {Object} map The {@glossary Object} containing the data to be inserted into
+	* the `text`.
+	* @param {RegExp} [regex] The optional pattern to use to match the entries in the `text`.
+	* @returns {String} The modified `text` value.
 	* @public
 	*/
 	enyo.quickMacroize = function(text, map, regex) {
@@ -105,8 +109,9 @@
 	};
 
 	/**
-	* The default {@glossary RegExp} _macro_ pattern used by {@link enyo.macroize},
-	* {@link enyo.quickReplace} and {@link enyo.quickMacroize}. Matches _macros_ of the form
+	* The default [regular expression]{@glossary RegExp} macro pattern used by
+	* [enyo.macroize()]{@link enyo.macroize}, [enyo.quickReplace()]{@link enyo.quickReplace},
+	* and [enyo.quickMacroize()]{@link enyo.quickMacroize}. Matches macros of the form
 	* `{$name}`.
 	*
 	* @type {RegExp}

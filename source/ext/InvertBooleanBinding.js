@@ -3,7 +3,7 @@
 	var Binding = enyo.Binding;
 
 	/**
-	* A {@link enyo.Binding} designed to inverse a {@glossary Boolean} value.
+	* An {@link enyo.Binding} designed to invert a {@glossary Boolean} value.
 	*
 	* @class enyo.InvertBooleanBinding
 	* @extends enyo.Binding

@@ -3,7 +3,7 @@
 	var Binding = enyo.Binding;
 
 	/**
-	* A {@link enyo.Binding} that will only propagate changes if the value is a {@glossary Boolean}.
+	* An {@link enyo.Binding} that will only propagate changes if the value is a {@glossary Boolean}.
 	*
 	* @class enyo.BooleanOnlyBinding
 	* @extends enyo.Binding

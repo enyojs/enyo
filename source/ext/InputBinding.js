@@ -3,10 +3,10 @@
 	var Binding = enyo.Binding;
 
 	/**
-	* A {@link enyo.Binding} designed to have its {@link enyo.Binding#source} or its
-	* {@link enyo.Binding#target} be an {@link enyo.Input}. If the {@link enyo.Input} has a
-	* [placeholder]{@link enyo.Input#placeholder} it will use that when there is no value. This is
-	* a [two-way]{@link enyo.Binding#oneWay} {@link enyo.Binding}.
+	* An {@link enyo.Binding} designed to have its [source]{@link enyo.Binding#source}
+	* or its [target]{@link enyo.Binding#target} be an {@link enyo.Input}. If the
+	* `enyo.Input` has a [placeholder]{@link enyo.Input#placeholder}, it will be
+	* used when there is no value. This is a [two-way]{@link enyo.Binding#oneWay} binding.
 	*
 	* @class enyo.InputBinding
 	* @extends enyo.Binding
@@ -26,9 +26,9 @@
 		kind: Binding,
 		
 		/**
-		* This should be set to either 'source' or 'target' depending on which end is the
-		* {@link enyo.Input} so it will not use the
-		* [placeholder]{@link enyo.InputBinding#placeholder} in the wrong direction.
+		* This should be set to either `'source'` or `'target'` depending on which end is the
+		* {@link enyo.Input}, so that the [placeholder]{@link enyo.InputBinding#placeholder}
+		* is not used in the wrong direction.
 		*
 		* @type {String}
 		* @default 'source'

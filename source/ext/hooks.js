@@ -29,15 +29,15 @@
 	* presentation based on changes to the user's locale. This feature is currently used in webOS,
 	* where Cordova for webOS listens for changes to the system locales and fires a `localechange`
 	* event on the `document` object. Similar functionality could be implemented on other platforms
-	* via a Cordova plugin or other means.
-    * 
+	* via a Cordova plugin or by other means.
+	* 
 	* Enyo registers an event listener for the `localechange` event and broadcasts the
 	* `onlocalechange` signal when the locale has changed. Before broadcasting, Enyo calls
-	* _enyo.updateLocale()_. The default implementation of _enyo.updateLocale()_ is a stub, but a
+	* `enyo.updateLocale()`. The default implementation of `enyo.updateLocale()` is a stub, but a
 	* g11n library may override it to update its internal state before the `onlocalechange` signal
 	* is broadcast.
-    * 
-	* This feature is not supported on IE8 which doesn't support addEventListener.
+	* 
+	* This feature is not supported on IE8, which doesn't support `addEventListener()`.
 	*
 	* @private
 	*/
