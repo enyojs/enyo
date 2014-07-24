@@ -554,7 +554,7 @@
 				len != this.length && this.notify('length', len, this.length);
 				// notify listeners of the addition of records
 				if (added) {
-					this.emit('add', {models: added, collection: this, index: idx});
+					this.emit('add', {models: added, collection: this});
 				}
 			}
 			
@@ -585,7 +585,7 @@
 			var loc = this.models
 				, len = loc.length
 				, options = this.options
-				, removed, model, idx;
+				, removed, model;
 			
 			// normalize options so we have values
 			opts = opts? enyo.mixin({}, [options, opts]): options;
@@ -599,10 +599,6 @@
 			// we treat all additions as an array of additions
 			!(models instanceof Array) && (models = [models]);
 			
-			// save index of the first removed model before removing
-			idx = this.indexOf(models[0]);
-
-			// remove models from modelList
 			removed = loc.remove(models);
 			
 			if (removed.length) {
@@ -625,7 +621,7 @@
 			if (!silent) {
 				len != this.length && this.notify('length', len, this.length);
 				if (removed.length) {
-					this.emit('remove', {models: removed, collection: this, index: idx});
+					this.emit('remove', {models: removed, collection: this});
 				}
 			}
 			
@@ -640,7 +636,7 @@
 		* Retrieves a [model]{@link enyo.Model} for the provided index.
 		* 
 		* @param {Number} idx The index to return from the [collection]{@link enyo.Collection}.
-		* @returns {(enyo.Model|undefined)} The [model]{@link enyo.Model} at the given index or		
+		* @returns {(enyo.Model|undefined)} The [model]{@link enyo.Model} at the given index or
 		*	`undefined` if it cannot be found.
 		* @public
 		*/
