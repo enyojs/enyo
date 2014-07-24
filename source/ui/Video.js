@@ -332,7 +332,7 @@
 				this.preloadChanged();
 				this.autoplayChanged();
 				this.loopChanged();
-				this.updateSource()
+				this.updateSource();
 			};
 		}),
 
@@ -353,19 +353,32 @@
 		*/
 		updateSource: function (old, value, source) {
 			var src = this.get('src');
-			
-			// Allways wipe out any previous sources before setting src or new sources
+			var sources = this.get('sourceComponents');
+
+			// if called due to a property change, clear the other property
+			if(source === 'src') {
+				sources = this.sourceComponents = null;
+			} else if(source === 'sourceComponents') {
+				src = this.src = '';
+				if (!!this.getAttribute('src')) {
+					this.setAttribute('src', '');
+				}
+			}
+
+			// Always wipe out any previous sources before setting src or new sources
 			this.destroyClientControls();
 
 			if (src) {
 				// favor this.src: if it has a value, use it
-				this.sourceComponents = null;
 				this.setAttribute('src', enyo.path.rewrite(src));
 			} else {
 				// if this.src isn't valued, try to use sourceComponents
-				this.src = '';
-				if (!!this.getAttribute('src')) { this.setAttribute('src', ''); }
 				this.addSources();
+			}
+
+			var node = this.hasNode();
+			if(node) {
+				node.load();
 			}
 		},
 		/**
