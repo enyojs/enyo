@@ -27,16 +27,16 @@
 	* @see {@glossary ProgressEvent}
 	* @event enyo.WebService#event:onProgress
 	* @type {Object}
-	* @property {Boolean} lengthComputable - The read-only flag indicating if the progress is
-	*	computable.
+	* @property {Boolean} lengthComputable - The read-only flag indicating whether the progress
+	*	is computable.
 	* @property {Number} loaded - The read-only value of the downloaded resources.
-	* @property {Number} total - The read-only value used to indicated how much is left to be
-	*	acquired of a resource.
+	* @property {Number} total - The read-only value used to indicate how much of a resource
+	* is left to be acquired.
 	* @public
 	*/
 	
 	/**
-	* Internally used class.
+	* An internally-used class.
 	*
 	* @class enyo._AjaxComponent
 	* @extends enyo.Component
@@ -50,18 +50,18 @@
 
 	/**
 	* A [component]{@link enyo.Component} that performs [XHR]{@glossary XMLHttpRequest}
-	* requests. Internally it relies on the [async]{@link enyo.Async} subkinds
+	* requests. Internally, it relies on the [Async]{@link enyo.Async} subkinds
 	* ({@link enyo.Ajax} and {@link enyo.JsonpRequest}) to manage transactions.
 	*
-	* By default, {@link enyo.WebService} uses {@link enyo.Ajax} and publishes all of its properties
-	* via the {@link enyo.AjaxProperties} namespace.
+	* By default, {@link enyo.WebService} uses `enyo.Ajax` and publishes all of its
+	* properties via the {@link enyo.AjaxProperties} namespace.
 	*
-	* To use {@link enyo.JsonpRequest} instead of {@link enyo.Ajax} set
+	* To use `enyo.JsonpRequest` instead of `enyo.Ajax`, set
 	* [jsonp]{@link enyo.WebService#jsonp} to `true` (defaults to `false`).
 	*
 	* For more information, see the documentation on
-	* [Consuming Web Services](building-apps/managing-data/consuming-web-services.html) in the Enyo
-	* Developer Guide.
+	* [Consuming Web Services](building-apps/managing-data/consuming-web-services.html)
+	* in the Enyo Developer Guide.
 	*
 	* @class enyo.WebService
 	* @extends enyo.Component
@@ -86,7 +86,7 @@
 		published: {
 			
 			/**
-			* Whether or not to use the [JSONP]{@glossary JSONP} protocol (and
+			* Indicates whether or not to use the [JSONP]{@glossary JSONP} protocol (and
 			* {@link enyo.JsonpRequest} instead of {@link enyo.Ajax}).
 			*
 			* @memberof enyo.WebService.prototype
@@ -97,7 +97,7 @@
 			jsonp: false,
 			
 			/**
-			* When using [JSONP]{@glossary JSONP} this is the name of the callback parameter.
+			* When using [JSONP]{@glossary JSONP}, this is the name of the callback parameter.
 			* Note that this not the name of a callback function, but only the name of the callback
 			* parameter. Enyo will create an internal callback function as necessary.
 			*
@@ -123,7 +123,8 @@
 			
 			/**
 			* If set to a non-zero value, the number of milliseconds to wait after the
-			* [send]{@link enyo.WebService#send} call before failing with a _timeout_ error.
+			* [send()]{@link enyo.WebService#send} call before failing with a timeout
+			* error.
 			*
 			* @memberof enyo.WebService.prototype
 			* @type {Number}
@@ -143,8 +144,8 @@
 		},
 		
 		/**
-		* Sends a XHR request with the given parameters, returning the associated {@link enyo.Async}
-		* instance.
+		* Sends an XHR request with the given parameters, returning the associated
+		* {@link enyo.Async} instance.
 		*
 		* @param {Object} params The parameters to pass to the request.
 		* @param {Object} [props] The optional properties to override the

@@ -5,7 +5,7 @@
 	* It represents a task that has not yet completed. Callback functions may be registered to be
 	* notified when the task is complete.
 	*
-	* See [Consuming Web Services]{@link http://...building-apps/managing-data/consuming-web-services.html}
+	* See [Consuming Web Services]{@link building-apps/managing-data/consuming-web-services.html}
 	* in the Enyo Developer Guide.
 	*
 	* @class enyo.Async
@@ -32,7 +32,7 @@
 			
 			/**
 			* The number of milliseconds to wait after [execution]{@link enyo.Async#go} begins
-			* before failling with a timeout error. If set to `0` (the default) will not
+			* before failing with a timeout error. If set to `0` (the default), will not
 			* automatically throw a timeout error.
 			*
 			* @type {Number}
@@ -45,8 +45,8 @@
 		
 		/**
 		* Will be `true` if an error has occurred and a handler calls the
-		* [fail]{@link enyo.Async#fail} method. Can be cleared using
-		* [recover]{@link enyo.Async#recover}.
+		* [fail()]{@link enyo.Async#fail} method. Can be cleared using
+		* [recover()]{@link enyo.Async#recover}.
 		*
 		* @readonly
 		* @type {Boolean}
@@ -109,9 +109,9 @@
 		},
 		
 		/**
-		* Register a [function]{@glossary Function} to be fired when
-		* [execution]{@link enyo.Async#go} is completed successfully. Parameters can be in any order
-		* to preserve backward compatibility.
+		* Registers a [function]{@glossary Function} to be fired when
+		* [execution]{@link enyo.Async#go} is completed successfully. Parameters may be
+		* in any order, to preserve backward compatibility.
 		*
 		* @param {Function} fn The callback to register.
 		* @param {Object} [ctx] The optional context under which to execute the callback.
@@ -124,9 +124,9 @@
 		},
 		
 		/**
-		* Register a [function]{@glossary Function} to be fired when
-		* [execution]{@link enyo.Async#go} is completed errantly. Parameters can be in any order to
-		* preserve backward compatibility.
+		* Registers a [function]{@glossary Function} to be fired when
+		* [execution]{@link enyo.Async#go} completes with an error. Parameters may be
+		* in any order, to preserve backward compatibility.
 		*
 		* @param {Function} fn The callback to register.
 		* @param {Object} [ctx] The optional context under which to execute the callback.
@@ -139,8 +139,8 @@
 		},
 		
 		/**
-		* Register a [function]{@glossary Function} to be fired on progress events. Parameters
-		* can be in any order to preserve backward compatibility.
+		* Registers a [function]{@glossary Function} to be fired on progress events.
+		* Parameters may be in any order, to preserve backward compatibility.
 		*
 		* @param {Function} fn The callback to register.
 		* @param {Object} [ctx] The optional context under which to execute the callback.
@@ -228,7 +228,7 @@
 		},
 
 		/**
-		* Will fail the [task]{@link enyo.Async} and trigger the error chain. Can be called from any
+		* Fails the [task]{@link enyo.Async} and triggers the error chain. May be called from any
 		* handler.
 		* 
 		* @param {*} err The error value to pass to error handlers.
@@ -245,7 +245,7 @@
 		
 		/**
 		* Clears the error condition ([failed]{@link enyo.Async#failed}) by setting it to `false`.
-		* If called while responding to handlers it will continue.
+		* If called while responding to handlers, it will continue.
 		*
 		* @returns {this} The callee for chaining.
 		* @public
@@ -270,7 +270,7 @@
 		},
 		
 		/**
-		* Initiates the asynchronous routine and will supply the given value if it completes
+		* Initiates the asynchronous routine, supplying the given value if it completes
 		* successfully. This method is usually overloaded in [subkinds]{@glossary subkind}.
 		*
 		* @virtual

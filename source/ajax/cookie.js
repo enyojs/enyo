@@ -1,17 +1,17 @@
 (function (enyo, scope) {
 	
 	/**
-	* Available additional attributes that can be set with a [cookie]{@glossary cookie}.
+	* Available additional attributes that may be set with a [cookie]{@glossary cookie}.
 	*
 	* @typedef {Object} enyo~CookieOptions
-	* @property {String} path - The path that the cookie is relevant to, defaults to current
+	* @property {String} path - The path that the cookie is relevant to; defaults to current
 	*	[document.location]{@glossary document.location}.
-	* @property {String} domain - The _host_ portion of the domain URI.
-	* @property {String} max-age - The length of time the cookie is valid __in seconds__.
+	* @property {String} domain - The host portion of the domain URI.
+	* @property {String} max-age - The length of time the cookie is valid, **in seconds**.
 	* @property {String} expires - The date at which to expire the cookie, in GMTString format. If
-	*	not specified will expire at the end of the session.
-	* @property {Boolean} secure - Whether or not the cookie can be transferred over non-https
-	*	connections. The default is `false`.
+	*	not specified, the cookie will expire at the end of the session.
+	* @property {Boolean} secure - Whether or not the cookie may be transferred over non-https
+	*	connections. Defaults to `false`.
 	* @public
 	*/
 
@@ -20,7 +20,7 @@
 	* [document.cookie]{@glossary document.cookie}.
 	*
 	* @param {String} nom The name of the cookie to retrieve.
-	* @returns {(String|undefined)} The [decoded]{@glossary decoreURIComponent} cookie or
+	* @returns {(String|undefined)} The [decoded]{@glossary decoreURIComponent} cookie, or
 	*	`undefined` if it could not be retrieved.
 	* @public
 	*/
@@ -30,15 +30,15 @@
 	};
 
 	/**
-	* Set a [cookie]{@glossary cookie} for the given name and value to
+	* Sets a [cookie]{@glossary cookie} for the given name and value to
 	* [document.cookie]{@glossary document.cookie}. Use the optional configuration
 	* [hash]{@glossary Object} to specify the
-	* [cookie properties]{@link enyo~CookieProperties}. You can remove a
-	* [cookie]{@glossary cookie} using this method by setting its `Max-Age` value to `0`.
+	* [cookie properties]{@link enyo~CookieProperties}. You may remove a
+	* cookie using this method by setting its `Max-Age` value to `0`.
 	*
-	* Also note that if you are developing in Google Chrome with a local file as your application
-	* it must be started with `--enable-file-cookies` (from the command line) to allow
-	* [cookies]{@glossary cookie} to be set.
+	* Also note that if you are developing in Google Chrome with a local file as your
+	* application, Chrome must be started from the command line with the
+	* `--enable-file-cookies` switch to allow cookies to be set.
 	*
 	* @param {String} nom The name of the cookie.
 	* @param {*} value The value to be [encoded]{@glossary encodeURIComponent} for storage.

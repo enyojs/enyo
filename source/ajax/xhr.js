@@ -1,19 +1,19 @@
 (function (enyo, scope) {
 	
 	/**
-	* Parameters and options for the {@link enyo.xhr.request} method.
+	* Parameters and options for the [enyo.xhr.request()]{@link enyo.xhr.request} method.
 	*
 	* @typedef {Object} enyo.xhr.request~Options
 	* @property {String} url - The URL to request (required).
-	* @property {String} method - One of 'GET', 'POST', 'DELETE', 'UPDATE' (or custom methods),
-	*	defaults to 'GET'.
+	* @property {String} method - One of `'GET'`, `'POST'`, `'DELETE'`, `'UPDATE'`, or
+	* custom methods; defaults to `'GET'`.
 	* @property {Function} callback - Optional callback method to fire when complete.
-	* @property {Object} body - Optional serializable body for 'POST' requests.
-	* @property {Object} headers - Optional header overrides, defaults to `null`.
+	* @property {Object} body - Optional serializable body for `POST` requests.
+	* @property {Object} headers - Optional header overrides; defaults to `null`.
 	* @property {String} username - Optional username to provide for authentication purposes.
 	* @property {String} password - Optional password to provide for authentication purposes.
 	* @property {Object} xhrFields - Optional key/value pairs to apply directly to the request.
-	* @property {String} mimeType - Optional specification for the MIME-type of the request.
+	* @property {String} mimeType - Optional specification for the `MIME-Type` of the request.
 	* @property {Boolean} mozSystem - Optional boolean to create cross-domain XHR (Firefox OS only).
 	* @property {Boolean} mozAnon - Optional boolean to create anonymous XHR that does not send
 	*	cookies or authentication headers (Firefox OS only).
@@ -21,7 +21,7 @@
 	*/
 	
 	/**
-	* An internally used namespace for XHR related methods and wrappers.
+	* An internally-used namespace for XHR-related methods and wrappers.
 	*
 	* @namespace enyo.xhr
 	* @private
@@ -29,12 +29,12 @@
 	enyo.xhr = /** @lends enyo.xhr */ {
 		
 		/**
-		* Internally used method to execute XHR requestes.
+		* Internally-used method to execute XHR requests.
 		*
-		* Special note that we explicitly add a 'cache-control: no-cache' header for iOS 6 for any
-		* non-GET requests to workaround a system bug that caused non-cachable requests to be
-		* cached. To disable this use the _header_ property to specify an object where
-		* 'cache-control' is set to `null`.
+		* Note that we explicitly add a `'cache-control: no-cache'` header for iOS 6 for any
+		* non-`GET` requests to work around a system bug causing non-cachable requests to be
+		* cached. To disable this, use the `header` property to specify an object where
+		* `cache-control` is set to `null`.
 		*
 		* @param {enyo.xhr.request~Options} params The options and properties for this XHR request.
 		* @returns {XMLHttpRequest} The XHR request object.
@@ -88,8 +88,8 @@
 		},
 		
 		/**
-		* Remove any callbacks that might be set from enyo code for an existing XHR and stop the
-		* XHR from completing (if possible).
+		* Removes any callbacks that might be set from Enyo code for an existing XHR
+		* and stops the XHR from completing (if possible).
 		*
 		* @param {XMLHttpRequest} The request to cancel.
 		* @private

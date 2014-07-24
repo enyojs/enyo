@@ -13,14 +13,14 @@
 	
 	/**
 	* A [kind]{@glossary kind} designed to expose the native
-	* [XMLHttpRequest]{@glossary XMLHttpRequest} API. Available configuration options are
-	* exposed by {@link enyo.AjaxProperties}.
+	* [XMLHttpRequest]{@glossary XMLHttpRequest} API. Available configuration options
+	* are exposed by {@link enyo.AjaxProperties}.
 	*
-	* This [kind]{@glossary kind} does not extend {@link enyo.Component} and cannot be used
+	* This kind does not extend {@link enyo.Component} and cannot be used
 	* in the [components block]{@link enyo.Component#components}.
 	*
 	* For more information, see the documentation on
-	* [Consuming WebServices]{@link http://building-apps/managing-data/consuming-web-services.html}
+	* [Consuming Web Services]{@link building-apps/managing-data/consuming-web-services.html}
 	* in the Enyo Developer Guide.
 	*
 	* @class enyo.Ajax
@@ -67,8 +67,8 @@
 		}),
 		
 		/**
-		* This will be set once a request has completed (successfully or failed). It is a cache of
-		* the response values.
+		* This will be set once a request has completed (successfully or unsuccessfully).
+		* It is a cache of the response values.
 		*
 		* @type enyo.Ajax~xhrResponse
 		* @default null
@@ -77,16 +77,16 @@
 		xhrResponse: null,
 		
 		/**
-		* Execute the request with the given options. The parameter can be a
+		* Executes the request with the given options. The parameter may be a
 		* [hash]{@glossary Object} of properties or a [string]{@glossary String}. Both
-		* represent the query string, with the [hash]{@glossary Object} being serialized and
-		* the [string]{@glossary String} being used directly.
+		* represent the query string, with the hash being serialized and the string
+		* being used directly.
 		*
 		* ```javascript
 		* var query = {q: 'searchTerm'}; // -> "?q=searchTerm"
 		* ```
 		*
-		* Note that in order to provide a _POST_ body, see {@link enyo.AjaxProperties.postBody}.
+		* To provide a `POST` body, see {@link enyo.AjaxProperties.postBody}.
 		*
 		* When the request is completed, it will set the
 		* [xhrResponse]{@link enyo.Ajax#xhrResponse} property.

@@ -1,11 +1,11 @@
 (function (enyo, scope) {
 
 	/**
-	* A [async]{@link enyo.Async} task specifically designed to wrap [JSONP]{@glossary JSONP}
-	* requests to a remote server. Make sure to read about the use-case for
-	* [JSONP]{@glossary JSONP} requests and the
-	* [Consuming Web Services](building-apps/managing-data/consuming-web-services.html) in the Enyo
-	* Developer Guide.
+	* An [Async]{@link enyo.Async} task specifically designed to wrap [JSONP]{@glossary JSONP}
+	* requests to a remote server. Be sure to read about the use cases for
+	* [JSONP]{@glossary JSONP} requests, along with the document on
+	* [Consuming Web Services](building-apps/managing-data/consuming-web-services.html)
+	* in the Enyo Developer Guide.
 	*
 	* @class enyo.JsonRequest
 	* @extends enyo.Async
@@ -50,9 +50,9 @@
 			charset: null,
 			
 			/**
-			* This is the name of the [function]{@glossary Function} that is included in the
-			* encoded arguments and used to wrap the return value from the server. This can also
-			* be set to `null` in some cases.
+			* The name of the [function]{@glossary Function} that is included in the
+			* encoded arguments and used to wrap the return value from the server.
+			* This may also be set to `null` in some cases.
 			*
 			* @see enyo.JsonRequest#overrideCallback
 			* @memberof enyo.JsonRequest.prototype
@@ -63,8 +63,9 @@
 			callbackName: 'callback',
 			
 			/**
-			* Will append a randum number as a parameter for GET requests to (_attempt_) to force a
-			* new fetch of the resource instead of reusing a local cache.
+			* If `true`, will append a random number as a parameter for GET requests to
+			* (attempt to) force a new fetch of the resource instead of reusing a local
+			* cache.
 			*
 			* @memberof enyo.JsonRequest.prototype
 			* @type {Boolean}
@@ -74,12 +75,12 @@
 			cacheBust: true,
 			
 			/**
-			* In cases where a backend is inflexible with
-			* [callback]{@link enyo.JsonRequest#callback} names this property can be used to
+			* In cases where a backend is inflexible with regard to
+			* [callback]{@link enyo.JsonRequest#callback} names, this property may be used to
 			* specify a global [function]{@glossary Function} instead. Note that when using
-			* this, it will replace any existing [function]{@glossary Function} of the given
-			* name and only _one_ [JsonRequest]{@link enyo.JsonRequest} using this property can be
-			* active at a time.
+			* this, it will replace any existing function with the given
+			* name and only one [JsonRequest]{@link enyo.JsonRequest} using this property may
+			* be active at a time.
 			*
 			* @memberof enyo.JsonRequest.prototype
 			* @type {String}
@@ -143,7 +144,7 @@
 		
 		/**
 		* Initiates the asynchronous routine and will supply the given value if it completes
-		* successfully. Overloaded from {@link enyo.Async#go}.
+		* successfully. Overloaded from [enyo.Async.go()]{@link enyo.Async#go}.
 		*
 		* @param {*} value The value to pass to responders.
 		* @returns {this} The callee for chaining.
@@ -194,10 +195,9 @@
 		},
 		
 		/**
-		* For a string version of inParams, we follow the convention of
-		* replacing the string '=?' with the callback name. For the more
-		* common case of inParams being an object, we'll add a argument named
-		* using the callbackName published property.
+		* If `params` is a string, we follow the convention of replacing the string
+		* `'=?'` with the callback name. If `params` is an object (the more common
+		* case), we add an argument using the `callbackName` published property.
 		*
 		* @private
 		*/
