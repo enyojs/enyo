@@ -12,8 +12,8 @@
 	enyo.roots = roots;
 	
 	/**
-	* Invokes all known callbacks (if any) against the root view once it has been rendered. This
-	* method won't likely be executed very often.
+	* Invokes all known callbacks (if any) against the root view once it has been rendered.
+	* This method is not likely to be executed very often.
 	* 
 	* @private
 	*/
@@ -24,7 +24,7 @@
 	}
 	
 	/**
-	* Register a single callback to be executed whenever a _root_ view is rendered.
+	* Registers a single callback to be executed whenever a root view is rendered.
 	* 
 	* @name enyo.rendered
 	* @method

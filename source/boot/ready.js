@@ -16,16 +16,16 @@
 	var flushScheduled = false;
 
 	/**
-	* Register a callback (and optional "this" context) to run after all the enyo and library code
-	* has loaded and the DOMContentLoaded (or equivalent on older browsers) event has been sent.
+	* Registers a callback (and optional `this` context) to run after all the Enyo and library code
+	* has loaded and the `DOMContentLoaded` event (or equivalent on older browsers) has been sent.
     * 
-	* If called after system is in a ready state, run the supplied code asynchronously at earliest
-	* opportunity.
+	* If called after the system is in a ready state, runs the supplied code asynchronously at the
+	* earliest opportunity.
 	*
 	* @name enyo.ready
 	* @method
 	* @param {Function} fn The method to execute when the DOM is ready.
-	* @param {Object} [context] The optional context (_this_) under which to execute the
+	* @param {Object} [context] The optional context (`this`) under which to execute the
 	*	callback method.
 	* @public
 	*/

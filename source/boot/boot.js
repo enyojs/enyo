@@ -68,14 +68,14 @@
 	};
 
 	/**
-	* Create a dependency processor using our script machine.
+	* Creates a dependency processor using our script machine.
 	*
 	* @private
 	*/
 	enyo.loader = new enyo.loaderFactory(enyo.machine);
 
 	/**
-	* Dependency API uses enyo loader.
+	* Dependency API; uses `enyo.loader`.
 	*
 	* @private
 	*/
@@ -103,15 +103,15 @@
 		});
 
 		/**
-		* Used to load one or more script, stylesheet, or package.js files at runtime.
-        * 
-		* If called during load time (before the DOMContentLoaded event), this can only be used
-		* to load a single script and stylesheet file.  Using it to load a package.js file or
-		* providing an array of files can disrupt normal package.js handling.
+		* Loads one or more scripts, stylesheets, or `package.js` files at runtime.
+		* 
+		* If called during load time (before the `DOMContentLoaded` event), this may only be used
+		* to load a single script and stylesheet file.  Using it to load a `package.js` file or
+		* providing an [array]{@glossary Array} of files can disrupt normal `package.js` handling.
 		*
 		* @name enyo.load
 		* @method
-		* @param {(String|String[])} depends The paths to load.
+		* @param {(String|String[])} depends The path (or paths) to load.
 		* @param {Function} callback The callback to execute after the package has loaded.
 		* @public
 		*/
