@@ -636,7 +636,7 @@
 		* Retrieves a [model]{@link enyo.Model} for the provided index.
 		* 
 		* @param {Number} idx The index to return from the [collection]{@link enyo.Collection}.
-		* @returns {(enyo.Model|undefined)} The [model]{@link enyo.Model} at the given index or		
+		* @returns {(enyo.Model|undefined)} The [model]{@link enyo.Model} at the given index or
 		*	`undefined` if it cannot be found.
 		* @public
 		*/
