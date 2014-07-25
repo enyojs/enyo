@@ -2,7 +2,7 @@ describe('enyo.Collection', function () {
 	
 	var Collection = enyo.Collection,
 		Model = enyo.Model,
-		STATES = Collection.STATES;
+		STATES = enyo.States;
 	
 	var proto = Collection.prototype;
 	
@@ -55,8 +55,8 @@ describe('enyo.Collection', function () {
 				expect(collection.status & STATES.BUSY).to.be.ok;
 				expect(collection.status & STATES.READY).to.not.be.ok;
 				
-				// call onFetch to clear its state
-				collection.onFetch();
+				// call fetched to clear its state
+				collection.fetched();
 				expect(collection.status).to.equal(STATES.READY);
 			});
 			
@@ -69,8 +69,8 @@ describe('enyo.Collection', function () {
 				expect(collection.status & STATES.BUSY).to.be.ok;
 				expect(collection.statys & STATES.READY).to.not.be.ok;
 				
-				// call onCommit to clear its state
-				collection.onCommit();
+				// call committed to clear its state
+				collection.committed();
 				expect(collection.status).to.equal(STATES.READY);
 			});
 			
@@ -199,7 +199,7 @@ describe('enyo.Collection', function () {
 				expect(collection._waiting).to.have.length(1);
 				
 				// now try and complete the queue by fudging the callback
-				collection.onFetch(null, null, src3.name);
+				collection.fetched(null, null, src3.name);
 				expect(collection.status & STATES.READY).to.equal(STATES.READY);
 				expect(collection._waiting).to.be.null;
 				
@@ -213,7 +213,7 @@ describe('enyo.Collection', function () {
 				expect(collection._waiting).to.have.length(1);
 				
 				// now try and complete the queue by fudging the callback
-				collection.onCommit(null, null, src3.name);
+				collection.committed(null, null, src3.name);
 				expect(collection.status & STATES.READY).to.equal(STATES.READY);
 				expect(collection._waiting).to.be.null;
 				

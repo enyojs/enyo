@@ -1,43 +1,95 @@
-/**
-	_enyo.Button_ implements an HTML button, with support for grouping using
-	[enyo.Group](#enyo.Group).
+(function (enyo, scope) {
+	/**
+	* _enyo.Button_ implements an HTML [button]{@glossary button}, with support for grouping 
+	* using {@link enyo.Group}.
+	*
+	* For more information, see the documentation on
+	* [Buttons](building-apps/controls/buttons.html) in the Enyo Developer Guide.
+	*
+	* @ui
+	* @class enyo.Button
+	* @extends enyo.ToolDecorator
+	* @public
+	*/
+	enyo.kind(
+		/** @lends enyo.Button.prototype */ {
 
-	For more information, see the documentation on
-	[Buttons](building-apps/controls/buttons.html) in the Enyo Developer Guide.
-*/
-enyo.kind({
-	name: "enyo.Button",
-	//* @protected
-	kind: "enyo.ToolDecorator",
-	tag: "button",
-	attributes: {
-		// set to button, as default is "submit" which can cause unexpected
-		// problems when controls are used inside a form
-		type: "button"
-	},
-	//* @public
-	published: {
-		//* When true, button is shown as disabled and does not generate tap
-		//* events
-		disabled: false
-	},
-	//* @protected
-	create: enyo.inherit(function (sup) {
-		return function() {
-			sup.apply(this, arguments);
-			this.disabledChanged();
-		};
-	}),
-	disabledChanged: function() {
-		this.setAttribute("disabled", this.disabled);
-	},
-	tap: function() {
-		if (this.disabled) {
-			// work around for platforms like Chrome on Android or Opera that send
-			// mouseup to disabled form controls
-			return true;
-		} else {
-			this.setActive(true);
+		/**
+		* @private
+		*/
+		name: 'enyo.Button',
+		
+		/**
+		* @private
+		*/
+		kind: 'enyo.ToolDecorator',
+
+		/**
+		* @private
+		*/
+		tag: 'button',
+
+		/**
+		* @private
+		*/
+		attributes: {
+			/**
+			 * Set to `button`, as the default is `submit`, which can cause unexpected problems when
+			 * [controls]{@link enyo.Control} are used inside of a [form]{@glossary form}.
+			 * 
+			 * @type {String}
+			 * @private
+			 */
+			type: 'button'
+		},
+		
+		/**
+		* @private
+		*/
+		published: 
+			/** @lends enyo.Button.prototype */ {
+			
+			/**
+			 * When `true`, the [button]{@glossary button} is shown as disabled and does not 
+			 * generate tap [events]{@glossary event}.
+			 * 
+			 * @type {Boolean}
+			 * @default false
+			 * @public
+			 */
+			disabled: false
+		},
+		
+		/**
+		* @method
+		* @private
+		*/
+		create: enyo.inherit(function (sup) {
+			return function() {
+				sup.apply(this, arguments);
+				this.disabledChanged();
+			};
+		}),
+
+		/**
+		* @private
+		*/
+		disabledChanged: function() {
+			this.setAttribute('disabled', this.disabled);
+		},
+
+		/**
+		* @private
+		*/
+		tap: function() {
+			if (this.disabled) {
+				// work around for platforms like Chrome on Android or Opera that send
+				// mouseup to disabled form controls
+				return true;
+			} else {
+				this.setActive(true);
+			}
 		}
-	}
-});
+	});
+
+})(enyo, this);

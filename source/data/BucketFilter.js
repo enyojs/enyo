@@ -5,121 +5,114 @@
 	var Filter = enyo.Filter;
 	
 	/**
-		Maintain the filtered state of a {@link enyo.Collection} with pre-defined filters. The
-		{@link enyo.BucketFilter} acts as proxy for the content of a {@link enyo.Collection} and
-		can be used as a {@link enyo.Collection} for purposes of {@link enyo.Binding} to a the
-		`collection` property of a {@link enyo.Control}. It implements the abstract interface of
-		{@link enyo.Filter}, thus is only has a subset of normal {@link enyo.Collection} methods
-		and behaviors.
-		
-		@class enyo.BucketFilter
-		@extends enyo.Filter
-		@public
+	* A [filter]{@link enyo.Filter} designed to maintain multiple filtered sets based on one
+	* [collection]{@link enyo.Collection} of [models]{@link enyo.Model}.
+	* {@link enyo.BucketFilter} and all of its [filters]{@link enyo.BucketFilter#filters} may
+	* be used in conjunction with [controls]{@link enyo.Control} that support usage with
+	* {@link enyo.Collection}.
+	*
+	* @class enyo.BucketFilter
+	* @extends enyo.Filter
+	* @public
 	*/
 	kind(
 		/** @lends enyo.BucketFilter.prototype */ {
 		
 		/**
-			@private
+		* @private
 		*/
 		name: 'enyo.BucketFilter',
 		
 		/**
-			@private
+		* @private
 		*/
 		kind: Filter,
 		
 		/**
-			@private
+		* @private
 		*/
 		noDefer: true,
 		
 		/**
-			The currently activated internal filter to proxy. If the name of a filter is given the
-			{@link enyo.BucketFilter} will act as if its content is that of the selected filter.
-			Setting this value to `*` will deselect any filter and will proxy its complete dataset.
-			If this is set to any _falsy_ value it will be coerced to `*`. During initialization,
-			if any child-filter has the `isDefault` flag set to `true` it will become the active
-			filter instead.
-			
-			@type String
-			@default '*'
-			@public
+		* The currently activated internal filter to proxy. If the name of a filter is given, the
+		* {@link enyo.BucketFilter} will act as if its content is that of the selected filter.
+		* Setting this value to `'*'` will deselect any filter and will proxy its complete dataset.
+		* If this is set to any **falsy** value, it will be coerced to `'*'`. During initialization,
+		* if any child-filter has the `isDefault` flag set to `true`, it will become the active
+		* filter instead.
+		* 
+		* @type String
+		* @default '*'
+		* @public
 		*/
 		activeFilter: '*',
 		
 		/**
-			This will be the {@link enyo.BucketFilter#activeFilter} filter on initialization and
-			anytime the {@link enyo.BucketFilter#reset} method is called. It can be set directly or
-			implicitly by setting a child-filter's `isDefault` flag to `true`.
-		
-			@type String
-			@default null
-			@public
+		* This will be the [activeFilter]{@link enyo.BucketFilter#activeFilter} on initialization and
+		* anytime the [reset()]{@link enyo.BucketFilter#reset} method is called. It can be set directly or
+		* implicitly by setting a child-filter's `isDefault` flag to `true`.
+		* 
+		* @type String
+		* @default null
+		* @public
 		*/
 		defaultFilter: null,
 		
 		/**
-			Removes any active filter. If there is a {@link enyo.BucketFilter#defaultFilter} it will
-			automatically set it as the active filter (if it wasn't active already). Otherwise it
-			will set the {@link enyo.BucketFilter#activeFilter} property to the special `*`
-			character and proxy its complete dataset.
-		
-			@method
-			@param {Object} [opts] The options to be passed to the internal
-				{@link enyo.Object#set} method.
-			@returns {enyo.BucketFilter} The callee for chaining.
-			@public
+		* Removes any [activeFilter]{@link enyo.BucketFilter#activeFilter}. If there is a
+		* [defaultFilter]{@link enyo.BucketFilter#defaultFilter}, this method will automatically
+		* set it as the active filter (if it wasn't already active). Otherwise, it will set the
+		* `activeFilter` property to the special `'*'` character and proxy its complete dataset.
+		* 
+		* @param {Object} [opts] The options to be passed to the internal
+		* 	{@link enyo.Object#set} method.
+		* @returns {this} The callee for chaining.
+		* @public
 		*/
 		reset: function (opts) {
 			return this.set('activeFilter', this.defaultFilter || '*', opts);
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		defaultProps: {
 			kind: 'enyo.BucketFilter'
 		},
 		
 		/**
-			@private
-		*/
-		observers: [
-			{path: 'activeFilter', method: 'onActiveFilterChange'},
-			{path: 'activeFilterCollection', method: 'onActiveFilterCollectionChange'}
-		],
-		
-		/**
-			@private
+		* @private
 		*/
 		adjustComponentProps: enyo.inherit(function (sup) {
 			return function (props) {
 				sup.apply(this, arguments);
 				
-				// the last component who's property is found will win...
+				// the last component whose property is found will win...
 				if (props.isDefault) this.defaultFilter = props.name;
 			};
 		}),
 		
 		/**
-			@private
+		* @private
 		*/
 		constructed: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				
+				// TODO: Invoking changed handlers during initialization seems wrong
+				// but it's used everywhere...
+				
 				// we go ahead and let it initialize the current filter however it can
-				this.onActiveFilterChange();
+				this.reset({force: true});
 			};
 		}),
 		
 		/**
-			See the comments on {@link enyo.Filter#onCollectionEvent}.
-			
-			@private
+		* See the comments on {@link enyo.Filter#_collectionEvent}.
+		* 
+		* @private
 		*/
-		onOwnerEvent: function (sender, e, props) {
+		_ownerEvent: function (sender, e, props) {
 			// we are listening for particular events to signal that we should update according
 			// to its changes if we are a nested filter
 			var models = props.models,
@@ -160,9 +153,9 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
-		onInternalEvent: function (sender, e, props) {
+		_internalEvent: function (sender, e, props) {
 			
 			// if our internal collection is what we are currently proxying then we need to
 			// propagate the event, otherwise not
@@ -171,13 +164,18 @@
 				if (sender.models.length != this.length) this.set('length', sender.models.length);
 				
 				this.emit(e, props);
+			} else if ((!this.isChildFilter) && (e === 'reset')) {
+				this.set('models', this._internal.models);
 			}
 		},
 		
 		/**
-			@private
+		* Observes changes to the [activeFilter]{@link enyo.BucketFilter#activeFilter} property.
+		*
+		* @type {enyo.ObserverSupport~Observer}
+		* @private
 		*/
-		onActiveFilterChange: function () {
+		activeFilterChanged: function () {
 			var nom = this.activeFilter || '*',
 				filter;
 			
@@ -188,16 +186,20 @@
 		},
 		
 		/**
-			@private
+		* Observes changes to the
+		* [activeFilterCollection]{@link enyo.BucketFilter#activeFilterCollection} property.
+		*
+		* @type {enyo.ObserverSupport~Observer}
+		* @private
 		*/
-		onActiveFilterCollectionChange: function (was, is) {
+		activeFilterCollectionChanged: function (was, is) {
 			var internal = this._internal;
 			
-			if (was) was.off('*', this.onActiveFilterCollectionEvent, this);
+			if (was) was.off('*', this._activeFilterCollectionEvent, this);
 			// if the current filter has been updated it will have caused a set on this property
 			// with the correct filtered collection
 			if (is) {
-				is.on('*', this.onActiveFilterCollectionEvent, this);
+				is.on('*', this._activeFilterCollectionEvent, this);
 				
 				// we set our models to be shared with this new active collection so we can
 				// proxy its dataset and then we just proxy its events as our own
@@ -210,16 +212,16 @@
 			// that may be
 			else {
 				
-				// also note the shared reference such that the onInternalEvent will actually
+				// also note the shared reference such that the _internalEvent will actually
 				// propagate its internal events as our own now
 				this.set('models', internal.models);
 			}
 		},
 		
 		/**
-			@private
+		* @private
 		*/
-		onActiveFilterCollectionEvent: function (sender, e, props) {
+		_activeFilterCollectionEvent: function (sender, e, props) {
 			
 			if (sender.models.length != this.length) this.set('length', sender.models.length);
 			
