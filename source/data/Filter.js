@@ -50,6 +50,18 @@
 		noDefer: true,
 		
 		/**
+		* Provide a filter-method that will be applied to each [model]{@link enyo.Model} in the
+		* current set of models. This method will accept parameters according to those supplied
+		* with the native {@glossary Array.filter} method. If not provided a function that always
+		* returns `true` will be used.
+		*
+		* @virtual
+		* @type {Function}
+		* @public
+		*/
+		method: null,
+		
+		/**
 		* The actual {@link enyo.Collection} content to proxy. How the collection is
 		* used varies depending on the [subkind]{@glossary subkind} implementing the
 		* feature.
@@ -105,7 +117,10 @@
 					
 					// we assign an always true method if none exists just because we assume it was
 					// mean to be a mirror filter for the entire dataset
-					if (typeof props.method != 'function') props.method = alwaysTrue;
+					if (typeof props.method != 'function') {
+						// check to see if the prototype has one already
+						props.method = props.kind.prototype.method || alwaysTrue;
+					}
 				}
 			};
 		}),
