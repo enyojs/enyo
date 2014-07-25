@@ -20,7 +20,7 @@
 	* [document.cookie]{@glossary document.cookie}.
 	*
 	* @param {String} nom The name of the cookie to retrieve.
-	* @returns {(String|undefined)} The [decoded]{@glossary decoreURIComponent} cookie, or
+	* @returns {(String|undefined)} The [decoded]{@glossary decodeURIComponent} cookie, or
 	*	`undefined` if it could not be retrieved.
 	* @public
 	*/
