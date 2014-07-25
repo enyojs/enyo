@@ -40,6 +40,15 @@
 		},
 		
 		/**
+		* Whether or not the content is currently filtered.
+		*
+		* @type Boolean
+		* @default false
+		* @public
+		*/
+		filtered: false,
+		
+		/**
 		* Provide a filter-method that will be applied to each [model]{@link enyo.Model} in the
 		* current set of models. This method will accept parameters according to those supplied
 		* with the native {@glossary Array.filter} method.
@@ -62,6 +71,7 @@
 				// the collection we have to make a new copy each time reset is called
 				this._internal.set('models', this.collection.models.copy());
 			}
+			this.set('filtered', false);
 			return this;
 		},
 		
@@ -83,6 +93,18 @@
 		}),
 		
 		/**
+		* @method
+		* @private
+		*/
+		collectionChanged: enyo.inherit(function (sup) {
+			return function (was, is) {
+				sup.apply(this, arguments);
+				
+				this.set('filtered', false);
+			};
+		}),
+		
+		/**
 		* Abstracted so that (internal) subkinds could overload the filter method and still call
 		* this method for the same behavior if necessary.
 		*
@@ -98,7 +120,11 @@
 				// skip one arbitrary level of abstraction to the lowest level implementation of
 				// the filter that we can since we need an array that we can reuse anyway
 				res = internal.models.filter(this.method, this);
-				internal.set('models', new ModelList(res.length ? res : null));
+				
+				if (res.length != len) {
+					internal.set('models', new ModelList(res.length ? res : null));
+					this.set('filtered', true);
+				}
 			}
 			
 			return res || [];
