@@ -374,7 +374,7 @@
 		*/
 		at: enyo.inherit(function (sup) {
 			return function () {
-				return this.models ? sup.apply(this, arguments) : undefined;
+				return this.models ? sup.apply(this.models.at ? this.models : this, arguments) : undefined;
 			};
 		}),
 		
