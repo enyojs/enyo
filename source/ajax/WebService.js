@@ -3,7 +3,7 @@
 	/**
 	* Fires when a response is received.
 	*
-	* @event enyo.WebService#event:onResponse
+	* @event enyo.WebService#onResponse
 	* @type {Object}
 	* @property {enyo.Async} ajax - The {@link enyo.Async} instance associated with the request.
 	* @property {*} data - Any response data associated with the request.
@@ -13,7 +13,7 @@
 	/**
 	* Fires when an error is received.
 	*
-	* @event enyo.WebService#event:onError
+	* @event enyo.WebService#onError
 	* @type {Object}
 	* @property {enyo.Async} ajax - The {@link enyo.Async} instance associated with the request.
 	* @property {*} data - Any response data associated with the request.
@@ -25,7 +25,7 @@
 	* [ProgressEvent]{@glossary ProgressEvent}.
 	*
 	* @see {@glossary ProgressEvent}
-	* @event enyo.WebService#event:onProgress
+	* @event enyo.WebService#onProgress
 	* @type {Object}
 	* @property {Boolean} lengthComputable - The read-only flag indicating whether the progress
 	*	is computable.
