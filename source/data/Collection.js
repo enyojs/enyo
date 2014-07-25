@@ -33,6 +33,7 @@
 	*	[collection]{@link enyo.Collection}.
 	* @property {enyo.Collection} collection - A reference to the
 	*	collection that [emitted]{@link enyo.EventEmitter.emit} the event.
+	* @property {Number} index - The index in the given collection where the models were inserted.
 	* @public
 	*/
 	
