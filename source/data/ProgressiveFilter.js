@@ -6,9 +6,6 @@
 		ModelList = enyo.ModelList;
 	
 	/**
-	*
-	
-	/**
 	* A primarily abstract {@glossary kind} of {@link enyo.Filter}. It serves a simple purpose of
 	* taking a {@link enyo.Collection} of [models]{@link enyo.Model} and progressively filtering
 	* its contents each time it is triggered. Because this is primarily an abstract {@glossary kind}
@@ -49,20 +46,11 @@
 		filtered: false,
 		
 		/**
-		* Provide a filter-method that will be applied to each [model]{@link enyo.Model} in the
-		* current set of models. This method will accept parameters according to those supplied
-		* with the native {@glossary Array.filter} method.
+		* Resets the filtered set to the complete set of the proxied collection, if there is one,
+		* and sets the [filtered]{@link enyo.ProgressiveFilter#filtered} property to `false`.
 		*
-		* @virtual
-		* @type {Function}
+		* @returns {this} The callee for chaining.
 		* @public
-		*/
-		method: function () {
-			return true;
-		},
-		
-		/**
-		*
 		*/
 		reset: function () {
 			if (this.collection) {
@@ -100,7 +88,22 @@
 			return function (was, is) {
 				sup.apply(this, arguments);
 				
+				// this ensures we aren't filtered anymore
 				this.set('filtered', false);
+			};
+		}),
+		
+		/**
+		* @method
+		* @private
+		*/
+		constructor: enyo.inherit(function (sup) {
+			return function () {
+				sup.apply(this, arguments);
+				
+				// we need to always proxy a single targets content so, unlike bucket filters
+				// we facade our 'models' as our internal collection
+				this.models = this._internal;
 			};
 		}),
 		
@@ -137,22 +140,13 @@
 			
 			// if our internal collection is what we are currently proxying then we need to
 			// propagate the event, otherwise not
-			if (this.models === sender.models) {
+			if (this.models === sender) {
 				
 				if (sender.models.length != this.length) this.set('length', sender.models.length);
 				
 				this.emit(e, props);
-			} else if ((!this.isChildFilter) && (e === 'reset')) {
-				this.set('models', this._internal.models);
 			}
 		},
-		
-		// WHERE I LEFT OFF: Without a way to know where models were inserted (for add), they
-		// may not be able to remain in order correctly without rescanning/filtering the entire
-		// content every time a new model was added
-		
-		// Below is copied raw from BucketFilter and needs to be reviewed for applicability to
-		// this other case.
 		
 		/*
 		* See the comments on {@link enyo.Filter#_collectionEvent}.
@@ -160,27 +154,62 @@
 		* @private
 		*/
 		_ownerEvent: function (sender, e, props) {
+			this._collectionEvent(sender, e, props);
+		},
+		
+		/**
+		* This method is invoked when events are received from a
+		* [collection]{@link enyo.Collection} that is not the owner of this
+		* [filter]{@link enyo.Filter} (meaning it is not a child, since all child-filters'
+		* owners are also filters and their event handling happens in another method).
+		* As long as we are consistent about applying the same action against ourselves,
+		* we should remain in sync and propagate the same event again, except that
+		* `sort` will end up being a `reset`.
+		* 
+		* @private
+		*/
+		_collectionEvent: function (sender, e, props) {
 			// we are listening for particular events to signal that we should update according
 			// to its changes if we are a nested filter
+			
 			var models = props.models,
-				owner = this.owner,
 				internal = this._internal,
-				filtered;
+				filtered = this.get('filtered');
 			
 			switch (e) {
 			case 'add':
+				// to preserve the efficacy of the abstracted internal _filter method we need
+				// to go ahead and allow all of the models to be added at the correct location
+				// and then, if necessary filter but only emit events/changes for those that
+				// are actually added
+				if (filtered) internal.silence().stopNotifications(true);
 				
-				filtered = models.filter(this.method, owner);
+				internal.add(models, {merge: false, index: props.index});
 				
-				// will ensure an add gets propagated if the models are new
-				internal.add(filtered, {merge: false});
+				if (filtered) {
+					// here we let it update the filtered set
+					internal.unsilence().startNotifications(true);
+					this.filter();
+					
+					// there is the off-chance that the lengths don't get updated correctly
+					if (this.length !== internal.length) this.set('length', internal.length);
+				}
 				break;
 			case 'reset':
+			case 'sort':
 				
-				filtered = models.filter(this.method, owner);
+				if (filtered) internal.silence().stopNotifications(true);
 				
 				// will ensure a reset gets propagated
-				internal.empty(filtered);
+				internal.empty(models);
+				
+				if (filtered) {
+					internal.unsilence().startNotifications(true);
+					this.filter();
+					
+					// there is the off-chance that the lengths don't get updated correctly
+					if (this.length !== internal.length) this.set('length', internal.length);
+				}
 				break;
 			case 'remove':
 				
@@ -188,13 +217,14 @@
 				internal.remove(models);
 				break;
 			case 'change':
-				// the change event being emitted from a collection only stems from internal
-				// model changes so the property is model not models
-				filtered = this.method.call(owner, props.model);
 				
-				// if it should be included we add it otherwise we attempt to remove it
-				if (filtered) internal.add(props.model, {merge: false});
-				else if (internal.has(props.model)) internal.remove(props.model);
+				// we only want to emit the event if the model exists in the filtered set
+				// (if filtered)
+				if (filtered && !internal.has(props.model)) break; 
+				
+				// we need to propagate the change event as our internal collection's own so that
+				// child filters and/or subclasses will be able to handle this as they need to
+				internal.emit(e, props);
 				break;
 			}
 		}
