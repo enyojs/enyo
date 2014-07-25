@@ -139,6 +139,8 @@
 	* it will automatically attempt to fetch data if the
 	* [source]{@link enyo.Collection#source} and [url]{@link enyo.Collection#url}
 	*	or [getUrl]{@link enyo.Collection#getUrl} properties are properly configured.
+	* @property {Boolean} modelEvents=true - If `false`, this will keep the collection from
+	*	registering with each model for individual model events.
 	*/
 	
 	/**
@@ -364,7 +366,8 @@
 			commit: false,
 			destroy: false,
 			complete: false,
-			fetch: false
+			fetch: false,
+			modelEvents: true
 		},
 		
 		/**
@@ -1042,12 +1045,8 @@
 		*/
 		prepareModel: function (attrs, opts) {
 			var Ctor = this.model
-				// , options = {silent: true, noAdd: true}
+				, options = this.options
 				, model;
-			
-			// opts = opts? enyo.mixin({}, [options, opts]): options;
-			// opts = opts || {};
-			// opts.noAdd = true;
 			
 			attrs instanceof Ctor && (model = attrs);
 			if (!model) {
@@ -1056,7 +1055,7 @@
 				model = new Ctor(attrs, null, opts);
 			}
 			
-			model.on('*', this._modelEvent, this);
+			if (options.modelEvents) model.on('*', this._modelEvent, this);
 			
 			return model;
 		},
