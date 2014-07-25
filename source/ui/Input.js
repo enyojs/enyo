@@ -7,12 +7,12 @@
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @public
 	*/
 
 	/**
-	* Fires when the text has changed and the [input]{@link enyo.Image} subsequently loses 
+	* Fires when the text has changed and the [input]{@link enyo.Input} subsequently loses 
 	* focus.
 	*
 	* @event enyo.Input#event:onchange
@@ -20,7 +20,7 @@
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @public
 	*/
 
@@ -32,20 +32,21 @@
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @public
 	*/
 	
 	/**
-	* _enyo.Input_ implements an HTML [&lt;input&gt;]{@glossary input} element with 
-	* cross-platform support for change [events]{@glossary event}.
+	* {@link enyo.Input} implements an HTML [&lt;input&gt;]{@glossary input} element
+	* with cross-platform support for change [events]{@glossary event}.
 	* 
-	* You can listen for [oninput]{@link enyo.Input#event:oninput} and 
+	* You may listen for [oninput]{@link enyo.Input#event:oninput} and 
 	* [onchange]{@link enyo.Input#event:onchange} [DOM events]{@glossary DOMEvent} from this 
 	* [control]{@link enyo.Control} to know when the text inside has been modified.
 	* 
-	* For more information, see the documentation on [Text
-	* Fields](building-apps/controls/text-fields.html) in the Enyo Developer Guide.
+	* For more information, see the documentation on
+	* [Text Fields]{@link building-apps/controls/text-fields.html} in the Enyo
+	* Developer Guide.
 	*
 	* @ui
 	* @class enyo.Input
@@ -67,7 +68,7 @@
 			
 			/**
 			* Value of the [input]{@link enyo.Input}. Use this property only to initialize the 
-			* _value_. Call `getValue` and `setValue` to manipulate the _value_ at runtime.
+			* value. Call `getValue()` and `setValue()` to manipulate the value at runtime.
 			* 
 			* @type {String}
 			* @default ''
@@ -85,10 +86,9 @@
 			placeholder: '',
 
 			/**
-			* Type of [input]{@link enyo.Input}; if not specified, it's treated as "text". It can
-			* be anything specified for the _type_ attribute in the 
-			* [HTML specification]{@glossary input}, including "url", "email", "search", or 
-			* "number".
+			* Type of [input]{@link enyo.Input}; if not specified, it's treated as `'text'`.
+			* This may be anything specified for the `type` attribute in the HTML
+			* specification, including `'url'`, `'email'`, `'search'`, or `'number'`.
 			* 
 			* @type {String}
 			* @default ''
@@ -97,8 +97,8 @@
 			type: '',
 
 			/**
-			* When `true`, prevents input into the [control]{@link enyo.Control}. This maps to the
-			* _disabled_ DOM attribute.
+			* When `true`, prevents input into the [control]{@link enyo.Control}. This maps
+			* to the `disabled` DOM attribute.
 			* 
 			* @type {Boolean}
 			* @default false
@@ -107,7 +107,8 @@
 			disabled: false,
 
 			/**
-			* When `true`, select the contents of the [input]{@link enyo.Input} when it gains focus.
+			* When `true`, the contents of the [input]{@link enyo.Input} will be selected
+			* when the input gains focus.
 			* 
 			* @type {Boolean}
 			* @default false

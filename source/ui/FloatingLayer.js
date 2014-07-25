@@ -1,10 +1,9 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.FloatingLayer_ is a [control]{@link enyo.Control} that provides a layer for 
-	* [controls]{@link enyo.Control} that should be displayed above an 
-	* [application]{@link enyo.Application}. The FloatingLayer singleton can be set as a 
-	* [control's]{@link enyo.Control} parent to have the [control]{@link enyo.Control} float above 
-	* an [application]{@link enyo.Application}, e.g.:
+	* {@link enyo.FloatingLayer} is a [control]{@link enyo.Control} that provides a layer for
+	* controls that should be displayed above an [application]{@link enyo.Application}. The
+	* FloatingLayer singleton can be set as a control's parent to have the control float above
+	* the application, e.g.:
 	*
 	* ```
 	* create: enyo.inherit(function (sup) {
@@ -15,7 +14,7 @@
 	* });
 	* ```
 	* 
-	* Note: It's not intended that users create instances of _enyo.FloatingLayer_.
+	* Note: `enyo.FloatingLayer` is not meant to be instantiated by users.
 	*
 	* @class enyo.FloatingLayer
 	* @protected
@@ -40,7 +39,7 @@
 		}),
 
 		/**
-		* Detect when [node]{@glossary Node} is detatched due to document.body being stomped.
+		* Detects when [node]{@glossary Node} is detatched due to `document.body` being stomped.
 		*
 		* @method
 		* @private

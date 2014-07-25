@@ -7,27 +7,28 @@
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @public
 	*/
 
 	/**
-	* Fires when there has been an error when loading the [image]{@link enyo.Image}.
+	* Fires when there has been an error while loading the [image]{@link enyo.Image}.
 	*
 	* @event enyo.Image#event:onerror
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @public
 	*/
 
 	/**
-	* _enyo.Image_ implements an HTML [&lt;img&gt;]{@glossary img} element and, optionally, 
-	* [bubbles]{@link enyo.Component#bubble} the [onload]{@link enyo.Image#event:onload} and 
-	* [onerror]{@link enyo.Image#event:onerror} [events]{@glossary event}. Image dragging is 
-	* suppressed by default, so as not to interfere with touch interfaces.
+	* {@link enyo.Image} implements an HTML [&lt;img&gt;]{@glossary img} element and,
+	* optionally, [bubbles]{@link enyo.Component#bubble} the
+	* [onload]{@link enyo.Image#event:onload} and [onerror]{@link enyo.Image#event:onerror}
+	* [events]{@glossary event}. Image dragging is suppressed by default, so as not to
+	* interfere with touch interfaces.
 	*
 	* @ui
 	* @class enyo.Image
@@ -59,7 +60,7 @@
 			/** @lends enyo.Image.prototype */ {
 			
 			/**
-			* Maps to the _alt_ attribute of an [img tag]{@glossary img}.
+			* Maps to the `alt` attribute of an [&lt;img&gt; tag]{@glossary img}.
 			* 
 			* @type {String}
 			* @default ''
@@ -68,14 +69,14 @@
 			alt: '',
 
 			/**
-			* By default, the [image]{@link enyo.Image} is rendered using an `<img>` tag.  When this 
-			* property is set to `'cover'` or `'constrain'`, the [image]{@link enyo.Image} is 
+			* By default, the [image]{@link enyo.Image} is rendered using an `<img>` tag.
+			* When this property is set to `'cover'` or `'constrain'`, the image will be
 			* rendered using a `<div>`, utilizing `background-image` and `background-size`.
 			* 
-			* Set this property to `'constrain'` to letterbox the [image]{@link enyo.Image} in the 
-			* available space, or `'cover'` to cover the available space with the 
-			* [image]{@link enyo.Image} (cropping the larger dimension).  Note, when _sizing_ is set,
-			* the control must be explicitly sized.
+			* Set this property to `'constrain'` to letterbox the image in the available
+			* space, or `'cover'` to cover the available space with the image (cropping the
+			* larger dimension).  Note that when `sizing` is set, the control must be
+			* explicitly sized.
 			* 
 			* @type {String}
 			* @default ''
@@ -107,9 +108,9 @@
 
 		/**
 		* @type {Object}
-		* @property {Boolean} draggable Note: The _draggable_ attribute takes one of these 
-		*	[String]{@glossary String} values: 'true', 'false', 'auto' (Boolean `false` would 
-		*	remove the attribute). The default is 'false'.
+		* @property {Boolean} draggable This attribute will take one of the following 
+		*	[String]{@glossary String} values: 'true', 'false' (the default), or 'auto'.
+		* Setting Boolean `false` will remove the attribute.
 		* @public
 		*/
 		attributes: {
@@ -218,8 +219,8 @@
 		statics: {
 			/**
 				A globally accessible data URL that describes a simple
-				placeholder image that can be used in samples and applications
-				until final graphics are provided. As a SVG image, it will
+				placeholder image that may be used in samples and applications
+				until final graphics are provided. As an SVG image, it will
 				expand to fill the desired width and height set in the style.
 			*/
 			placeholder:

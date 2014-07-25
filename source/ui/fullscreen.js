@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
-	* Normalizes and provides fullscreen support for [controls]{@link enyo.Control}, based upon the
-	* [fullscreen]{@glossary fullscreen} API.
+	* Normalizes and provides fullscreen support for [controls]{@link enyo.Control},
+	* based on the [fullscreen]{@glossary fullscreen} API.
 	*
 	* @name enyo.fullscreen
 	* @type Object
@@ -10,28 +10,29 @@
 	enyo.fullscreen = {
 		
 		/**
-		* Reference to the current fs [control]{@link enyo.Control}.
+		* Reference to the current fullscreen [control]{@link enyo.Control}.
 		*
 		* @private
 		*/
 		fullscreenControl: null,
 
 		/**
-		* Reference to the current fs element (fallback for platforms w/o native support).
+		* Reference to the current fullscreen element (fallback for platforms
+		* without native support).
 		*
 		* @private
 		*/
 		fullscreenElement: null,
 
 		/** 
-		* Reference to [control]{@link enyo.Control} that requested fs.
+		* Reference to that [control]{@link enyo.Control} that requested fullscreen.
 		* 
 		* @private
 		*/
 		requestor: null,
 
 		/** 
-		* Native accessor used to get reference to the current fs element.
+		* Native accessor used to get reference to the current fullscreen element.
 		*
 		* @private
 		*/
@@ -42,7 +43,7 @@
 			null,
 
 		/** 
-		* Native accessor used to request fs.
+		* Native accessor used to request fullscreen.
 		*
 		* @private
 		*/
@@ -53,7 +54,7 @@
 			null,
 
 		/** 
-		* Native accessor used to cancel fs.
+		* Native accessor used to cancel fullscreen.
 		*
 		* @private
 		*/
@@ -75,7 +76,7 @@
 		},
 
 		/** 
-		* Normalize _getFullscreenElement()_.
+		* Normalizes `getFullscreenElement()`.
 		*
 		* @public
 		*/
@@ -84,7 +85,7 @@
 		},
 
 		/** 
-		* Return current fs [control]{@link enyo.Control}.
+		* Returns current fullscreen [control]{@link enyo.Control}.
 		*
 		* @public
 		*/
@@ -93,7 +94,7 @@
 		},
 
 		/**
-		* Normalize _requestFullscreen()_.
+		* Normalizes `requestFullscreen()`.
 		*
 		* @public
 		*/
@@ -115,7 +116,7 @@
 		},
 
 		/** 
-		* Normalize _cancelFullscreen()_.
+		* Normalizes `cancelFullscreen()`.
 		*
 		* @public
 		*/
@@ -128,8 +129,8 @@
 		},
 
 		/** 
-		* Fallback support for setting fullscreen element (done by browser on platforms with native 
-		* support).
+		* Fallback support for setting fullscreen element (done by browser on platforms with
+		* native support).
 		*
 		* @private
 		*/
@@ -138,7 +139,7 @@
 		},
 
 		/** 
-		* Set current fs [control]{@link enyo.Control}.
+		* Sets current fullscreen [control]{@link enyo.Control}.
 		*
 		* @private
 		*/
@@ -209,8 +210,8 @@
 		},
 
 		/** 
-		* Listen for fs change [event]{@glossary event} and broadcast as normalized 
-		* [event]{@glossary event}.
+		* Listens for fullscreen change [event]{@glossary event} and broadcasts it
+		* as normalized [event]{@glossary event}.
 		*
 		* @private
 		*/
@@ -224,7 +225,7 @@
 	};
 
 	/**
-	* Normalize platform-specific fs change [events]{@glossary event}.
+	* Normalizes platform-specific fullscreen change [events]{@glossary event}.
 	*
 	* @private
 	*/

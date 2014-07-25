@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
 	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided when the 
-	* [onActiveChanged]{@link enyo.Group#event:onActiveChanged} [event]{@glossary event} is fired.
+	* [onActiveChanged]{@link enyo.Group#event:onActiveChanged} event is fired.
 	*
 	* @typedef {Object} enyo.Group~ActiveChangedEvent
 	* @property {enyo.Control} active The active [control]{@link enyo.Control} for the
@@ -16,14 +16,14 @@
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
 	* @property {enyo.Group~ActiveChangedEvent} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event information.
 	* @public
 	*/
 
 	/**
-	* _enyo.Group_ provides a wrapper around multiple elements. It enables the creation of 
-	* [radio groups]{@link external:input} from arbitrary [components]{@link enyo.Component} 
-	* supporting the {@link enyo.GroupItem} API.
+	* {@link enyo.Group} provides a wrapper around multiple elements. It enables the creation of 
+	* radio groups from arbitrary [components]{@link enyo.Component} that support the
+	* {@link enyo.GroupItem} API.
 	*
 	* @ui
 	* @class enyo.Group
@@ -72,10 +72,10 @@
 			active: null,
 		
 			/**
-			* The _groupName_ property is used to scope this [group]{@link enyo.Group} to a certain
-			* set of [controls]{@link enyo.Control}.  When used, the [group]{@link enyo.Group} only 
-			* controls activation of [controls]{@link enyo.Control} who have the same _groupName_
-			* property set on them.
+			* This property is used to scope this [group]{@link enyo.Group} to a certain
+			* set of [controls]{@link enyo.Control}.  When this is used, the group only
+			* controls activation of controls that have the same `groupName` property set
+			* on them.
 			* 
 			* @type {String}
 			* @default null
