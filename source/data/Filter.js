@@ -143,7 +143,7 @@
 				
 				// unfortunately we must maintain data structures that need remain out of our
 				// proxy path so we each must create a collection instance for internal use
-				this._internal = new Collection();
+				this._internal = new Collection({options: {modelEvents: false}});
 				this._internal.on('*', this._internalEvent, this);
 				
 				sup.apply(this, arguments);
