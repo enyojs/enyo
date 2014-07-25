@@ -66,7 +66,9 @@
 		*/
 		_selectionHandler: function () {
 			if (this.repeater.selection && !this.get('disabled')) {
-				this.set('selected', !this.selected);
+				if (!this.repeater.groupSelection || !this.selected) {
+					this.set('selected', !this.selected);
+				}
 			}
 		},
 		/**
