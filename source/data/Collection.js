@@ -612,7 +612,11 @@
 				
 				for (var i=0, end=removed.length; i<end; ++i) {
 					model = removed[i];
-					model.off('*', this._modelEvent, this);
+					
+					// it is possible but highly, highly unlikely that this would have been set
+					// to false by default and true at runtime...so we take our chances for the
+					// small performance gain in those situations where it was defaulted to false
+					if (options.modelEvents) model.off('*', this._modelEvent, this);
 					if (destroy) model.destroy(opts);
 				}
 				
