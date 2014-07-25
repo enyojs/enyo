@@ -1249,11 +1249,17 @@
 				// this.models = this.models || new ModelList();
 				!this.models && (this.set('models', new ModelList()));
 				
+				// this is backwards compatibility
 				if (props && props.records) {
 					recs = recs? recs.concat(props.records): props.records.slice();
 					delete props.records;
 				}
-								
+				
+				if (props && props.models) {
+					recs = recs? recs.concat(props.models): props.models.slice();
+					delete props.models;
+				}
+				
 				if (props && props.options) {
 					this.options = enyo.mixin({}, [this.options, props.options]);
 					delete props.options;
