@@ -1,38 +1,38 @@
 (function (enyo, scope) {
 	/**
 	* Fires when the [drawer]{@link enyo.Drawer} has been opened or closed. The handler can 
-	* determine whether the [drawer]{@link enyo.Drawer} was just opened or just closed based
-	* on the [open]{@link enyo.Drawer#open} property. If `this.getOpen()` returns `true`, 
-	* the [drawer]{@link enyo.Drawer} was opened; if not, it was closed.
+	* determine whether the drawer was just opened or just closed based on the
+	* [open]{@link enyo.Drawer#open} property. If `this.getOpen()` returns `true`,
+	* the drawer was opened; if not, it was closed.
 	*
 	* @event enyo.Drawer#event:onDrawerAnimationStep
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	* @property {Object} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
 	/**
-	* Fires when the [drawer]{@link enyo.Drawer} has been opened or closed. The handler can 
-	* determine whether the [drawer]{@link enyo.Drawer} was just opened or just closed based
-	* on the [open]{@link enyo.Drawer#open} property. If `this.getOpen()` returns `true`, 
-	* the [drawer]{@link enyo.Drawer} was opened; if not, it was closed.
+	* Fires when the [drawer]{@link enyo.Drawer} has been opened or closed. The handler can
+	* determine whether the drawer was just opened or just closed based on the
+	* [open]{@link enyo.Drawer#open} property. If `this.getOpen()` returns `true`,
+	* the drawer was opened; if not, it was closed.
 	*
 	* @event enyo.Drawer#event:onDrawerAnimationEnd
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	*	event {@glossary event} information.
 	* @public
 	*/
 
 	/**
-	* _enyo.Drawer_ is a control that appears or disappears based on its 
-	* [open]{@link enyo.Drawer#open} property. By default, the [drawer]{@link enyo.Drawer} appears 
-	* or disappears with a sliding animation whose direction is determined by the 
+	* {@link enyo.Drawer} is a control that appears or disappears based on its
+	* [open]{@link enyo.Drawer#open} property. By default, the drawer appears
+	* or disappears with a sliding animation whose direction is determined by the
 	* [orient]{@link enyo.Drawer#orient} property.
 	*
 	* For more information, see the documentation on
@@ -66,7 +66,7 @@
 			open : true,
 
 			/**
-			* Direction of the opening/closing animation--either 'v' for vertical or 'h' for 
+			* The direction of the opening/closing animation--either 'v' for vertical or 'h' for 
 			* horizontal.
 			* 
 			* @type {String}
@@ -85,8 +85,9 @@
 			animated : true,
 
 			/**
-			* If `true`, {@link enyo.Drawer} will resize its container as it is animating, which is 
-			* useful when placed inside of a [FittableLayout]{@link enyo.FittableLayout}.
+			* If `true`, the [drawer]{@link enyo.Drawer} will resize its container as it is
+			* animating, which is useful when the drawer is placed inside a
+			* [FittableLayout]{@link enyo.FittableLayout}.
 			* 
 			* @type {Boolean}
 			* @default true

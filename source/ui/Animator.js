@@ -4,10 +4,10 @@
 	*
 	* @event enyo.Animator#event:onStep
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	* @property {Object} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
@@ -16,10 +16,10 @@
 	*
 	* @event enyo.Animator#event:onEnd
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	* @property {Object} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
@@ -28,32 +28,31 @@
 	*
 	* @event enyo.Animator#event:onStop
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	* @property {Object} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
 	/**
-	* _enyo.Animator_ is a basic animation [component]{@link enyo.Component}.  Call 
-	* [play]{@link enyo.Animator#play} to start the animation. The animation will run for the period 
-	* (in milliseconds) specified by its [duration]{@link enyo.Animator#duration} property. The 
-	* [onStep]{@link enyo.Animator#event:onStep} [event]{@glossary event} will fire in quick 
-	* succession and should be handled to do something based on the [value]{@link enyo.Animator#value} 
-	* property.
+	* {@link enyo.Animator} is a basic animation [component]{@link enyo.Component}.  Call
+	* [play()]{@link enyo.Animator#play} to start the animation. The animation will run for
+	* the period (in milliseconds) specified by its [duration]{@link enyo.Animator#duration}
+	* property. [onStep]{@link enyo.Animator#event:onStep} [events]{@glossary event} will
+	* fire in quick succession and should be handled to do something based on the
+	* [value]{@link enyo.Animator#value} property.
 	* 
-	* The [value]{@link enyo.Animator#value} property will progress from 
-	* [startValue]{@link enyo.Animator#startValue} to [endValue]{@link enyo.Animator#endValue} during
-	* the animation based on the [function]{@glossary Function} referenced by the 
+	* The `value` property will progress from [startValue]{@link enyo.Animator#startValue}
+	* to [endValue]{@link enyo.Animator#endValue} during the animation, based on the
+	* [function]{@glossary Function} referenced by the
 	* [easingFunction]{@link enyo.Animator#easingFunction} property.
 	* 
-	* [Event]{@glossary event} handlers may be specified as [functions]{@glossary Function}. 
-	* If specified, the handler [function]{@glossary Function} will be used to handle the 
-	* [event]{@glossary event} directly, without sending the [event]{@glossary event} to its 
-	* [owner]{@link enyo.Component#owner} or [bubbling]{@link enyo.Component#bubble} it. The 
-	* [context]{@link enyo.Animator#context} property can be used to call the supplied 
-	* [event]{@glossary event} [functions]{@glossary Function} in a particular "this" context.
+	* Event handlers may be specified as functions. If specified, the handler function will
+	* be used to handle the event directly, without sending the event to its
+	* [owner]{@link enyo.Component#owner} or [bubbling]{@link enyo.Component#bubble} it.
+	* The [context]{@link enyo.Animator#context} property may be used to call the supplied
+	* event functions in a particular `this` context.
 	* 
 	* During animation, an {@link enyo.jobs} priority of 5 is registered to defer low priority tasks.
 	*
@@ -65,8 +64,8 @@
 		/** @lends enyo.Animator.prototype */ {
 
 		/**
-		* Specify a _context_ in which to run the specified [event]{@glossary Event} handlers. If 
-		* this is not specified or is falsy, then the [window object]{@glossary window} is used.
+		* A context in which to run the specified [event]{@glossary Event} handlers. If this
+		* is not specified or is falsy, then the [window object]{@glossary window} is used.
 		* 
 		* @name context
 		* @type {Object}
@@ -231,9 +230,9 @@
 		},
 
 		/**
-		* Determine if animation is in progress.
+		* Determines whether an animation is in progress.
 		*
-		* @returns {Boolean} `true` if there is an animation currently running, otherwise `false`.
+		* @returns {Boolean} `true` if there is an animation currently running; otherwise, `false`.
 		* @private
 		*/
 		isAnimating: function() {

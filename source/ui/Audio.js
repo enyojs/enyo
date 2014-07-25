@@ -1,7 +1,8 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.Audio_ extends {@link enyo.Media} to implement an 
-	* [HTML 5 Media element]{@glossary HTML5MediaElement} that allows you to play audio data.
+	* {@link enyo.Audio} extends {@link enyo.Media} to implement an
+	* [HTML 5 Media element]{@glossary HTML5MediaElement} that allows you to play
+	* audio data.
 	* 
 	* Initialize an audio component as follows:
 	*
@@ -44,8 +45,8 @@
 			/** @lends enyo.Audio.prototype */ {
 			
 			/** 
-			* Indicates how data should be preloaded, reflecting the 
-			* [preload HTML attribute]{@glossary audio} ('none', 'metadata', 'auto').
+			* Indicates how data should be preloaded, reflecting the `preload` HTML attribute.
+			* Will be one of `'none'`, `'metadata'`, or `'auto'` (the default).
 			*
 			* @type {String}
 			* @default 'auto'

@@ -4,16 +4,16 @@
 	*
 	* @event enyo.Checkbox#event:onActivate
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	* @property {Object} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
 	/**
-	* _enyo.Checkbox_ implements an HTML checkbox [input]{@glossary input}, with support for 
-	* grouping using {@link enyo.Group}.
+	* {@link enyo.Checkbox} implements an HTML checkbox [input]{@glossary input}, with
+	* support for grouping using {@link enyo.Group}.
 	*
 	* @ui
 	* @class enyo.Checkbox
@@ -52,7 +52,7 @@
 			/** @lends enyo.Checkbox.prototype */ {
 			
 			/**
-			* Value of [checkbox]{@link enyo.Checkbox}; `true` if checked.
+			* Value of the checkbox; will be `true` if checked.
 			* 
 			* @type {Boolean}
 			* @default false
@@ -61,7 +61,7 @@
 			checked: false,
 			
 			/**
-			* [Group API]{@link enyo.Group} requirement for determining selected item
+			* A [Group API]{@link enyo.Group} requirement for determining the selected item.
 			* 
 			* @type {Boolean}
 			* @default false
@@ -114,9 +114,9 @@
 		},
 
 		/**
-		* The [active]{@link enyo.Checkbox#active} property, and onActivate 
-		* [event]{@glossary event}, are part of the [GroupItem]{@link enyo.Groupitem} interface
-		* that we support in this [object]{@glossary Object}.
+		* The [active]{@link enyo.Checkbox#active} property and `onActivate`
+		* [event]{@glossary event} are part of the [GroupItem]{@link enyo.Groupitem}
+		* interface supported by this [object]{@glossary Object}.
 		* 
 		* @private
 		*/
@@ -130,9 +130,9 @@
 		* All [input]{@link enyo.Input} type [controls]{@link enyo.Control} support the 
 		* [value]{@link enyo.Input#value} property.
 		*
-		* @param {Boolean} val Whether the [checkbox]{@link enyo.Checkbox} should be checked or not.
-		*	The value will be treated as `true` if it is truthy, otherwise it 
-		*	will be considered `false`.
+		* @param {Boolean} val Whether or not the [checkbox]{@link enyo.Checkbox} should
+		* be checked. The value will be treated as `true` if it is truthy; otherwise,
+		* `false`.
 		* @public
 		*/
 		setValue: function(val) {
@@ -140,10 +140,11 @@
 		},
 
 		/**
-		* Retrieve the current [value]{@link enyo.Input#value} of the [checkbox]{@link enyo.Checkbox}
+		* Retrieves the current [value]{@link enyo.Input#value} of the
+		* [checkbox]{@link enyo.Checkbox}.
 		*
-		* @returns {Boolean} `true` if the [checkbox]{@link enyo.Checkbox} is checked; `false`
-		*	otherwise.
+		* @returns {Boolean} `true` if the [checkbox]{@link enyo.Checkbox} is checked;
+		* otherwise, `false`.
 		* @public
 		*/
 		getValue: function() {

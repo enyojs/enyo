@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.Button_ implements an HTML [button]{@glossary button}, with support for grouping 
-	* using {@link enyo.Group}.
+	* {@link enyo.Button} implements an HTML [button]{@glossary button}, with support
+	* for grouping using {@link enyo.Group}.
 	*
 	* For more information, see the documentation on
 	* [Buttons](building-apps/controls/buttons.html) in the Enyo Developer Guide.
@@ -34,8 +34,9 @@
 		*/
 		attributes: {
 			/**
-			 * Set to `button`, as the default is `submit`, which can cause unexpected problems when
-			 * [controls]{@link enyo.Control} are used inside of a [form]{@glossary form}.
+			 * Set to `'button'`; otherwise, the default value would be `'submit'`, which
+			 * can cause unexpected problems when [controls]{@link enyo.Control} are used
+			 * inside of a [form]{@glossary form}.
 			 * 
 			 * @type {String}
 			 * @private

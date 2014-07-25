@@ -1,11 +1,10 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.Anchor_ implements an HTML [anchor]{@glossary Anchor} (&lt;a&gt;) tag. Published 
-	* properties allow you to [bind]{@link enyo.BindingSupport} the [anchor's]{@glossary Anchor} 
-	* [href]{@link enyo.Anchor#href} and [title]{@link enyo.Anchor#title} 
-	* [attributes]{@glossary Attribute} to appropriate fields on data 
+	* {@link enyo.Anchor} implements an HTML [anchor]{@glossary Anchor} (&lt;a&gt;) tag.
+	* Published properties allow you to [bind]{@link enyo.BindingSupport} the anchor's
+	* [href]{@link enyo.Anchor#href} and [title]{@link enyo.Anchor#title}
+	* [attributes]{@glossary Attribute} to appropriate fields on data
 	* [objects]{@glossary Object}.
-	*
 	* 
 	* @ui
 	* @class enyo.Anchor
@@ -37,7 +36,7 @@
 			/** @lends enyo.Anchor.prototype */ {
 			
 			/** 
-			* Maps to the _href_ [attribute]{@glossary Attribute} of the &lt;a&gt; tag.
+			* Maps to the `href` [attribute]{@glossary Attribute} of the &lt;a&gt; tag.
 			* 
 			* @type {String}
 			* @default ''
@@ -46,7 +45,7 @@
 			href: '',
 
 			/**
-			* Maps to the _title_ [attribute]{@glossary Attribute} of the &lt;a&gt; tag.
+			* Maps to the `title` [attribute]{@glossary Attribute} of the &lt;a&gt; tag.
 			* 
 			* @type {String}
 			* @default  ''
