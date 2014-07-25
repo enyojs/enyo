@@ -1,4 +1,4 @@
-(function() {
+(function () {
 	// enyo can use information from the script tag that loads this bootstrap file
 	var thisScript = "enyo.js";
 
@@ -9,7 +9,7 @@
 	/**
 	* @private
 	*/
-	enyo.locateScript = function(inName) {
+	enyo.locateScript = function (inName) {
 		var scripts = document.getElementsByTagName("script");
 		for (var i=scripts.length-1, s, src, l=inName.length; (i>=0) && (s=scripts[i]); i--) {
 			if (!s.located) {
