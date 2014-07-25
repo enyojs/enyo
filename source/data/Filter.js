@@ -211,6 +211,8 @@
 					} else {
 						collection.off('*', this._collectionEvent, this);
 					}
+					
+					collection.unobserve('destroyed', this._collectionDestroyed, this);
 				}
 				
 				sup.apply(this, arguments);
@@ -227,7 +229,10 @@
 		collectionChanged: function (was, is) {
 			var internal = this._internal;
 			
-			if (was) was.off('*', this._collectionEvent, this);
+			if (was) {
+				was.off('*', this._collectionEvent, this);
+				was.unobserve('destroyed', this._collectionDestroyed, this);
+			}
 			
 			// ensure that child-filters cannot have their internal/external collections reset
 			if (is && !(was && this.isChildFilter && was === this.owner._internal)) {
@@ -238,6 +243,9 @@
 				if (!this.isChildFilter || (is !== this.owner._internal)) {
 					is.on('*', this._collectionEvent, this);
 				}
+				
+				// if for any reason the collection is destroyed we want to know about it
+				is.observe('destroyed', this._collectionDestroyed, this);
 				
 				// reset the models (causing reset to propagate to children or bound parties)
 				internal.set('models', is.models.copy());
@@ -289,6 +297,16 @@
 				internal.emit(e, props);
 				break;
 			}
+		},
+		
+		/**
+		* When the collection is destroyed we can't use it anymore so we need to remove it as our
+		* collection to prevent weird things from happening.
+		*
+		* @private
+		*/
+		_collectionDestroyed: function () {
+			this.set('collection', null);
 		},
 		
 		/**
