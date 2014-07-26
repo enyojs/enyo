@@ -2,8 +2,8 @@
 	/**
 	* {@link enyo.FloatingLayer} is a [control]{@link enyo.Control} that provides a layer for
 	* controls that should be displayed above an [application]{@link enyo.Application}. The
-	* FloatingLayer singleton can be set as a control's parent to have the control float above
-	* the application, e.g.:
+	* `floatingLayer` singleton can be set as a control's parent to have the control float
+	* above the application, e.g.:
 	*
 	* ```
 	* create: enyo.inherit(function (sup) {
