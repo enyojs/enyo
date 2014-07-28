@@ -1,13 +1,13 @@
 (function (enyo, scope) {
 	/**
-	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer greater than 
+	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer greater than
 	* `1`.
 	*
 	* @event enyo.Video#event:onFastforward
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
+	* @property {Object} event - An [object]{@glossary Object} containing
 	*	[event]{@glossary event} information.
 	* @public
 	*/
@@ -18,60 +18,60 @@
 	*
 	* @event enyo.Video#event:onSlowforward
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	* @property {Object} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
 	/**
-	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer less than 
+	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer less than
 	* `-1`.
 	*
 	* @event enyo.Video#event:onRewind
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	* @property {Object} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
 	/**
-	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to a value less than `0` 
+	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to a value less than `0`
 	* but greater than or equal to `-1`.
 	*
 	* @event enyo.Video#event:onSlowrewind
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	* @property {Object} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
 	/**
-	* Fires when [_jumpForward()_]{@link enyo.Video#jumpForward} is called.
+	* Fires when [jumpForward()]{@link enyo.Video#jumpForward} is called.
 	*
 	* @event enyo.Video#event:onJumpForward
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	* @property {Object} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
 	/**
-	* Fires when [_jumpBackward()_]{@link enyo.Video#jumpBackward} is called.
+	* Fires when [jumpBackward()]{@link enyo.Video#jumpBackward} is called.
 	*
 	* @event enyo.Video#event:onJumpBackward
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	* @property {Object} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
@@ -80,10 +80,10 @@
 	*
 	* @event enyo.Video#event:onPlay
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	* @property {Object} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
@@ -92,27 +92,26 @@
 	*
 	* @event enyo.Video#event:onStart
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	* @property {Object} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
 	/**
-	* _enyo.Video_ is a [control]{@link enyo.Control} that allows you to play video. It is an
-	* abstraction of HTML 5 [Video]{@glossary video}.
+	* {@link enyo.Video} is a [control]{@link enyo.Control} that allows you to play video.
+	* It is an abstraction of HTML 5 [Video]{@glossary video}.
 	* 
-	* Initialize a [video]{@link enyo.Video} [component]{@link enyo.Component} as follows:
+	* Initialize a video [component]{@link enyo.Component} as follows:
 	*
 	* ```
 	* {kind: 'Video', src: 'http://www.w3schools.com/html/movie.mp4'}
 	* ```
 	* 
-	* To play a [video]{@link enyo.Video}, call `this.$.video.play()`.
+	* To play a video, call `this.$.video.play()`.
 	* 
-	* To get a reference to the actual HTML 5 [Video]{@glossary video} element, call
-	* `this.$.video.hasNode()`.
+	* To get a reference to the actual HTML 5 Video element, call `this.$.video.hasNode()`.
 	*
 	* @ui
 	* @class enyo.Video
@@ -149,7 +148,8 @@
 			src: '',
 
 			/**
-			* Specify multiple sources for the same [video]{@link enyo.Video} file.
+			* An [object]{@glossary Object} that may be used to specify multiple sources for the
+			* same [video]{@link enyo.Video} file.
 			* 
 			* @type {Object}
 			* @default null
@@ -177,11 +177,11 @@
 			showControls: false,
 
 			/**
-			* Determines how (or if) the [video]{@link enyo.Video} object is preloaded. Possible 
-			* values: 
-			* - 'auto': Preload the video data as soon as possible.
-			* - 'metadata': Preload only the video metadata.
-			* - 'none': Do not preload any video data.
+			* Determines how (or whether) the [video]{@link enyo.Video} object is preloaded.
+			* Possible values:
+			* - `'auto'`: Preload the video data as soon as possible.
+			* - `'metadata'`: Preload only the video metadata.
+			* - `'none'`: Do not preload any video data.
 			* 
 			* @type {String}
 			* @default 'metadata'
@@ -199,8 +199,8 @@
 			autoplay: false,
 
 			/**
-			* If `true`, when playback is finished, [video]{@link enyo.Video} player will restart 
-			* from the beginning.
+			* If `true`, when playback is finished, the [video]{@link enyo.Video} player will
+			* restart from the beginning.
 			* 
 			* @type {Boolean}
 			* @default false
@@ -209,8 +209,8 @@
 			loop: false,
 
 			/**
-			* If `true`, [video]{@link enyo.Video} is stretched to fill the entire window (webOS 
-			* only).
+			* If `true`, [video]{@link enyo.Video} will be stretched to fill the entire window
+			* (webOS only).
 			* 
 			* @type {Boolean}
 			* @default false
@@ -219,7 +219,7 @@
 			fitToWindow: false,
 
 			/**
-			* [Video]{@link enyo.Video} aspect ratio expressed as _width: height_
+			* The [video]{@link enyo.Video} aspect ratio, expressed as `width:height`.
 			* 
 			* @type {Number}
 			* @default 0
@@ -246,7 +246,7 @@
 			playbackRate: 1,
 
 			/**
-			* Mapping of playback rate names to playback rate values that can be set as follows:
+			* Mapping of playback rate names to playback rate values that may be set.
 			* ```
 			* {
 			*	fastForward: ['2', '4', '8', '16'],
@@ -382,7 +382,7 @@
 			}
 		},
 		/**
-		* Add _<source>_ tags for each sources specified in _this.sources_
+		* Adds `<source>` tags for each source specified in `this.sources`.
 		* 
 		* @private
 		*/
@@ -456,7 +456,7 @@
 		},
 		
 		/**
-		* Load the current [video]{@link enyo.Video} [source]{@link enyo.Video#src}.
+		* Loads the current [video]{@link enyo.Video} [source]{@link enyo.Video#src}.
 		* 
 		* @public
 		*/
@@ -465,8 +465,8 @@
 		},
 
 		/**
-		* Unloads the current [video]{@link enyo.Video} [source]{@link enyo.Video#src}, stopping all
-		* playback and buffering.
+		* Unloads the current [video]{@link enyo.Video} [source]{@link enyo.Video#src},
+		* stopping all playback and buffering.
 		* 
 		* @public
 		*/
@@ -476,7 +476,7 @@
 		},
 
 		/**
-		* Initiates playback of the media data.
+		* Initiates playback of the [video]{@link enyo.Video} data.
 		* 
 		* @public
 		*/
@@ -491,7 +491,7 @@
 		},
 
 		/**
-		* Pauses media playback.
+		* Pauses [video]{@link enyo.Video} playback.
 		* 
 		* @public
 		*/
@@ -506,7 +506,7 @@
 		},
 
 		/**
-		* Changes the playback speed via [selectPlaybackRate]{@link enyo.Video#selectPlaybackRate}.
+		* Changes the playback speed via [selectPlaybackRate()]{@link enyo.Video#selectPlaybackRate}.
 		*
 		* @public
 		*/
@@ -563,7 +563,7 @@
 		},
 
 		/**
-		* Changes the playback speed via [selectPlaybackRate]{@link enyo.Video#selectPlaybackRate}.
+		* Changes the playback speed via [selectPlaybackRate()]{@link enyo.Video#selectPlaybackRate}.
 		* 
 		* @public
 		*/
@@ -713,7 +713,7 @@
 		},
 
 		/**
-		* Retrieve the playback rate name.
+		* Retrieves the playback rate name.
 		*
 		* @param {Number} idx The index of the desired playback rate.
 		* @returns {String} The playback rate name.
@@ -757,9 +757,9 @@
 		},
 
 		/**
-		* Determine the paused state.
+		* Determines whether playback is in the paused state.
 		*
-		* @returns {Boolean} Returns `true if paused, `false` otherwise.
+		* @returns {Boolean} `true` if paused; otherwise, `false`.
 		* @public
 		*/
 		isPaused: function() {
@@ -767,7 +767,7 @@
 		},
 
 		/**
-		* Determine the current player position in the [video]{@link enyo.Video}.
+		* Determines the current player position in the [video]{@link enyo.Video}.
 		*
 		* @returns {Number} The current player position in seconds.
 		* @public
@@ -777,7 +777,7 @@
 		},
 
 		/**
-		* Determine the buffered [time range]{@glossary TimeRanges}.
+		* Determines the buffered [time range]{@glossary TimeRanges}.
 		*
 		* @returns {TimeRanges} The buffered [time range]{@glossary TimeRanges}.
 		* @public
@@ -789,7 +789,7 @@
 		/**
 		* Sets the current player position in the [video]{@link enyo.Video}.
 		*
-		* @param {Number} time The number of seconds to set the current player position to.
+		* @param {Number} time The position (in seconds) to which the player should be set.
 		* @public
 		*/
 		setCurrentTime: function(time) {
@@ -799,7 +799,7 @@
 		},
 
 		/**
-		* Determine the play duration in the [video]{@link enyo.Video}.
+		* Determines the play duration in the [video]{@link enyo.Video}.
 		*
 		* @returns {Number} The play duration in seconds.
 		* @public
@@ -822,7 +822,7 @@
 		/**
 		* Determines the seeking status of the player.
 		*
-		* @returns {Boolean} Returns `true` if currently seeking, `false` otherwise.
+		* @returns {Boolean} `true` if currently seeking; otherwise, `false`.
 		* @public
 		*/
 		getSeeking: function() {
@@ -830,7 +830,7 @@
 		},
 
 		/**
-		* Custom rewind functionality until browsers support negative playback rate.
+		* Implements custom rewind functionality (until browsers support negative playback rate).
 		* 
 		* @private
 		*/
@@ -840,7 +840,7 @@
 		},
 
 		/**
-		* Calculate the time that has elapsed since
+		* Calculates the time that has elapsed since
 		* 
 		* @private
 		*/
@@ -857,7 +857,7 @@
 		},
 
 		/**
-		* Start rewind job
+		* Starts rewind job.
 		* 
 		* @private
 		*/
@@ -867,7 +867,7 @@
 		},
 
 		/**
-		* Stop rewind job
+		* Stops rewind job.
 		* 
 		* @private
 		*/
@@ -876,7 +876,7 @@
 		},
 
 		/**
-		* Calc number value of rate (support for fractions)
+		* Calculates numeric value of playback rate (with support for fractions).
 		* 
 		* @private
 		*/
@@ -886,7 +886,7 @@
 		},
 
 		/**
-		* When we get the [video]{@link enyo.Video} metadata, update the
+		* When we get the [video]{@link enyo.Video} metadata, updates the
 		* [aspectRatio]{@link enyo.Video#aspectRatio} property.
 		* 
 		* @private
@@ -969,7 +969,7 @@
 		},
 
 		/**
-		* Normalizes enyo-generated _onPlay_ [events]{@glossary event}.
+		* Normalizes Enyo-generated `onPlay` [events]{@glossary event}.
 		* 
 		* @fires enyo.Video#event:doPlay
 		* @private
@@ -987,7 +987,7 @@
 		},
 
 		/**
-		* Add all HTML5 [video]{@glossary video} [events]{@glossary event}.
+		* All HTML5 [video]{@glossary video} [events]{@glossary event}.
 		* 
 		* @private
 		*/
