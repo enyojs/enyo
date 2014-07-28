@@ -28,6 +28,7 @@
 		* @param {String} id The document element ID to get.
 		* @param {Node} [doc] A [node]{@glossary Node} to search in. Default is the whole
 		*	document.
+		* @returns {Element} A reference to a DOM element.
 		* @public
 		*/
 		byId: function(id, doc){

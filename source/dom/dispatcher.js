@@ -1,4 +1,20 @@
 (function (enyo, source) {
+	/**
+	 * An [object]{@glossary Object} describing the the last known coordinates of the cursor or
+	 * user-interaction point in touch environments.
+	 *
+	 * @typedef {Object} enyo.dispatcher~CursorCoordinates
+	 * @property {Number} clientX The horizontal coordinate within the application's client area.
+	 * @property {Number} clientY The vertical coordinate within the application's client area.
+	 * @property {Number} pageX The X coordinate of the cursor relative to the viewport, including any
+	 *   scroll offset.
+	 * @property {Number} pageY The Y coordinate of the cursor relative to the viewport, including any
+	 *   scroll offset.
+	 * @property {Number} screenX The X coordinate of the cursor relative to the screen, not including
+	 *   any scroll offset.
+	 * @property {Number} screenY The Y coordinate of the cursor relative to the screen, not including
+	 *   any scroll offset.
+	 */
 
 	/**
 	* @private
@@ -315,6 +331,8 @@
 	* device pixels) and IE8 has no support for the `pageX` and `pageY` properties,
 	* so they are facaded.
 	*
+	* @returns {enyo.dispatcher~CursorCoordinates} An [object]{@glossary Object} describing the
+	*	the last known coordinates of the cursor or user-interaction point in touch environments.
 	* @public
 	*/
 	enyo.getPosition = function () {

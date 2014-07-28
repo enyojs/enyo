@@ -568,6 +568,7 @@
 		*
 		* @param {String} css A string containing one or more valid CSS styles.
 		* @returns {this} The callee for chaining.
+		* @public
 		*/
 		addStyles: function (css) {
 			var key,
