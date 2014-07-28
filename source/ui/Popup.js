@@ -132,7 +132,69 @@
 			* @default false
 			* @public
 			*/
-			allowDefault: false
+			allowDefault: false,
+
+			/**
+			* Boolean that controls whether a scrim will appear when the dialog is
+			* modal. Note that modal scrims are transparent, so you won't see them.
+			*
+			* @type {Boolean}
+			* @default true
+			* @public
+			*/
+			scrimWhenModal: true,
+
+			/**
+			* Boolean that controls whether or not a scrim will be displayed. Scrims are
+			* only displayed when the dialog is floating.
+			*
+			* @type {Boolean}
+			* @default  false
+			* @public
+			*/
+			scrim: false,
+
+			/**
+			* Optional class name to apply to the scrim. Be aware that the scrim
+			* is a singleton and you will be modifying the scrim instance used for
+			* other popups.
+			*
+			* @type {String}
+			* @default  ''
+			* @public
+			*/
+			scrimClassName: '',
+
+			/**
+			* Lowest z-index that may be applied to a popup
+			*
+			* @type {Number}
+			* @default  120
+			* @public
+			*/
+			defaultZ: 120
+		},
+
+		/**
+		* @lends  enyo.Popup
+		* @private
+		*/
+		protectedStatics: {
+			/**
+			* Count of currently showing popups
+			* @type {Number}
+			* @static
+			* @private
+			*/
+			count: 0,
+
+			/**
+			* Highest possible z-index for a popup
+			* @type {Number}
+			* @static
+			* @private
+			*/
+			highestZ: 120
 		},
 		
 		/**
@@ -367,14 +429,20 @@
 				sup.apply(this, arguments);
 				if (this.showing) {
 					this.resize();
+					enyo.Popup.count++;
+					this.applyZIndex();
 					if (this.captureEvents) {
 						this.capture();
 					}
 				} else {
+					if(enyo.Popup.count > 0) {
+						enyo.Popup.count--;
+					}
 					if (this.captureEvents) {
 						this.release();
 					}
 				}
+				this.showHideScrim(this.showing);
 				// show after sizing
 				if (this.centered || this.targetPosition && !this.showTransitions) {
 					this.applyStyle('visibility', null);
@@ -540,6 +608,90 @@
 
 			// Show the dialog
 			this.show();
+		},
+
+		/**
+		* Toggles the display of the scrim
+		*
+		* @param  {Boolean} show - Show the scrim
+		* @private
+		*/
+		showHideScrim: function (show) {
+			if (this.floating && (this.scrim || (this.modal && this.scrimWhenModal))) {
+				var scrim = this.getScrim();
+				if (show) {
+					// move scrim to just under the popup to obscure rest of screen
+					var i = this.getScrimZIndex();
+					this._scrimZ = i;
+					scrim.showAtZIndex(i);
+				} else {
+					scrim.hideAtZIndex(this._scrimZ);
+				}
+				enyo.call(scrim, 'addRemoveClass', [this.scrimClassName, scrim.showing]);
+			}
+		},
+
+		/**
+		* Calculates the z-index for the scrim so it's directly below the popup
+		*
+		* @private
+		*/
+		getScrimZIndex: function () {
+			return enyo.Popup.highestZ >= this._zIndex ? this._zIndex - 1 : enyo.Popup.highestZ;
+		},
+
+		/**
+		* Show a transparent scrim for modal popups if {@link enyo.Popup#scrimWhenModal} is `true`
+		* if {@link enyo.Popup#scrim} is `true`, then show a regular scrim.
+		*
+		* @return {enyo.Scrim}
+		* @private
+		*/
+		getScrim: function () {
+			//
+			if (this.modal && this.scrimWhenModal && !this.scrim) {
+				return enyo.scrimTransparent.make();
+			}
+			return enyo.scrim.make();
+		},
+
+		/**
+		* Adjust the zIndex so that popups will properly stack on each other.
+		*
+		* @private
+		*/
+		applyZIndex: function () {
+			this._zIndex = (enyo.Popup.count * 2) + this.findZIndex() + 1;
+			if (this._zIndex <= enyo.Popup.highestZ) {
+				this._zIndex = enyo.Popup.highestZ + 1;
+			}
+			if (this._zIndex > enyo.Popup.highestZ) {
+				enyo.Popup.highestZ = this._zIndex;
+			}
+			// leave room for scrim
+			this.applyStyle('z-index', this._zIndex);
+		},
+
+		/**
+		* Find the z-index for this popup, clamped by {@link enyo.Popup#defaultZ}
+		*
+		* @return {Number} z-index value
+		* @private
+		*/
+		findZIndex: function () {
+			// a default z value
+			var z = this.defaultZ;
+			if (this._zIndex) {
+				z = this._zIndex;
+			} else if (this.hasNode()) {
+				// Re-use existing zIndex if it has one
+				z = Number(enyo.dom.getComputedStyleValue(this.node, 'z-index')) || z;
+			}
+			if (z < this.defaultZ) {
+				z = this.defaultZ;
+			}
+			this._zIndex = z;
+			return this._zIndex;
 		}
 	});
 
