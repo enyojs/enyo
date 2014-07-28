@@ -1,10 +1,10 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.TextArea_ implements an HTML [&lt;textarea&gt;]{@glossary textarea} element with
-	* cross-platform support for change [events]{@glossary event}.
+	* {@link enyo.TextArea} implements an HTML [&lt;textarea&gt;]{@glossary textarea}
+	* element with cross-platform support for change [events]{@glossary event}.
 	* 
-	* For more information, see the documentation on [Text
-	* Fields](building-apps/controls/text-fields.html) in the Enyo Developer Guide.
+	* For more information, see the documentation on
+	* [Text Fields]{@link building-apps/controls/text-fields.html} in the Enyo Developer Guide.
 	*
 	* @ui
 	* @class enyo.TextArea
@@ -35,8 +35,8 @@
 		classes: 'enyo-textarea',
 
 		/**
-		* [TextArea]{@link enyo.TextArea} does use [value]{@link enyo.Input#value} attribute; needs 
-		* to be kicked when rendered.
+		* [TextArea]{@link enyo.TextArea} does use the [value]{@link enyo.Input#value} attribute;
+		* it needs to be kicked when rendered.
 		*
 		* @method
 		* @private

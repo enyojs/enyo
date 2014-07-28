@@ -1,8 +1,9 @@
 (function (enyo, scope) {
 	/**
-	* The _moon.StylesheetSupport_ [mixin]{@glossary mixin} is used to add a "side-car" 
-	* inline-stylesheet to a [control]{@link enyo.Control}, specifically for procedurally generated 
-	* CSS that can't live in the more appropriate location: a CSS/LESS file.
+	* The {@link enyo.StylesheetSupport} [mixin]{@glossary mixin} is used to add a
+	* "side-car" inline stylesheet to a [control]{@link enyo.Control}, specifically
+	* for procedurally-generated CSS that can't live in the more appropriate
+	* location (i.e., in a CSS/LESS file).
 	*
 	* @mixin enyo.StylesheetSupport
 	* @public
@@ -25,7 +26,7 @@
 		published: {
 
 			/**
-			* Set _stylesheetContent_ to the CSS you'd like to appear in the stylesheet.
+			* Set `stylesheetContent` to the CSS you'd like to appear in the stylesheet.
 			* 
 			* @type {String}
 			* @default ''
