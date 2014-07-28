@@ -39,6 +39,11 @@
 	* advantage of guaranteeing that the popup will be displayed on top of other
 	* content. This usage is appropriate when the popup does not need to scroll
 	* along with other content.
+	*
+	* To avoid obscuring popup contents, scrims require the dialog to be floating;
+	* otherwise, they won't render. A modal popup will get a transparent scrim
+	* unless the popup isn't floating. To get a translucent scrim when modal,
+	* specify `{@link enyo.Popup#scrim}: true` and `{@link enyo.Popup#scrimWhenModal}: false`.
 	* 
 	* For more information, see the documentation on
 	* [Popups](building-apps/controls/popups.html) in the Enyo Developer Guide.
