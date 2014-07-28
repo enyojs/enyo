@@ -5,8 +5,8 @@
 	* fired.
 	*
 	* @typedef {Object} enyo.Repeater~SetupItemEvent
-	* @property {Number} index Contains the item's index.
-	* @property {Object} item Contains the item control, for decoration.
+	* @property {Number} index The item's index.
+	* @property {Object} item The item control, for decoration.
 	*/
 
 	/**
@@ -17,16 +17,15 @@
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
 	* @property {enyo.Repeater~SetupItemEvent} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information. 
+	*	event information. 
 	* @public
 	*/
 
 	/**
-	* _enyo.Repeater_ is a simple [control]{@link enyo.Control} for making lists of items.
+	* {@link enyo.Repeater} is a simple [control]{@link enyo.Control} for making lists of items.
 	* 
-	* The [components]{@link enyo.Component} of a [repeater]{@link enyo.Repeater} are copied for 
-	* each item created, and are wrapped in a [control]{@link enyo.Control} that keeps the state of 
-	* the item index.
+	* The [components]{@link enyo.Component} of a repeater are copied for each item created,
+	* and are wrapped in a control that keeps the state of the item index.
 	* 
 	* ```javascript
 	* {kind: 'Repeater', count: 2, onSetupItem: 'setImageSource', components: [
@@ -43,7 +42,7 @@
 	* 
 	* Be sure to return `true` from your `onSetupItem` handler to avoid having other 
 	* [event]{@glossary event} handlers further up the tree try to modify your item 
-	* [control]{@link enyo.Control}.
+	* control.
 	* 
 	* For more information, see the documentation on
 	* [Lists](building-apps/layout/lists.html) in the Enyo Developer Guide.
@@ -121,14 +120,13 @@
 		},
 
 		/** 
-		* Renders the [collection]{@link enyo.Collection} of items. This will delete any existing 
-		* items and recreate the [repeater]{@link enyo.Repeater} if called after the 
-		* [repeater]{@link enyo.Repeater} has been rendered. This is called automatically when the 
-		* [count]{@link enyo.Repeater#count} property changes. To set the 
-		* [count]{@link enyo.Repeater#count} and force a re-render, such as when a 
-		* [data model]{@link enyo.Model} changes, use `set('count', newCount, true)`, where the last
-		* parameter forces the change handler to be called, even if the 
-		* [count]{@link enyo.Repeater#count} remains the same.
+		* Renders the [collection]{@link enyo.Collection} of items. This will delete any
+		* existing items and recreate the [repeater]{@link enyo.Repeater} if called after
+		* the repeater has been rendered. This is called automatically when the 
+		* [count]{@link enyo.Repeater#count} property changes. To set the `count` property
+		* and force a re-render, such as when a [data model]{@link enyo.Model} changes,
+		* use `set('count', newCount, true)`, where the last parameter forces the change
+		* handler to be called, even if the `count` remains the same.
 		*
 		* @fires enyo.Repeater#event:onSetupItem
 		* @public
@@ -160,10 +158,9 @@
 	});
 
 	/**
-	* Sometimes client [controls]{@link enyo.Control} are intermediated with null-controls. These 
-	* overrides reroute [events]{@glossary event} from such [controls]{@link enyo.Control} to 
-	* the nominal [delegate]{@glossary delegate}, as would happen in the absence of 
-	* intermediation.
+	* Sometimes client [controls]{@link enyo.Control} are intermediated with null-controls.
+	* These overrides reroute [events]{@glossary event} from such controls to the nominal
+	* [delegate]{@glossary delegate}, as would happen in the absence of intermediation.
 	* 
 	* @private
 	*/

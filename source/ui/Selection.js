@@ -1,14 +1,14 @@
 (function (enyo, scope) {
 	/**
-	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided 
-	* when the [onSelect]{@link enyo.Selection#event:onSelect} and 
-	* [onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@glossary event} are fired.
+	* The extended {@glossary event} [object]{@glossary Object} that is provided
+	* when the [onSelect]{@link enyo.Selection#event:onSelect} and
+	* [onDeselect]{@link enyo.Selection#event:onDeselect} events are fired.
 	*
 	* @typedef {Object} enyo.Selection~SelectionEvent
-	* @property {Number|String} key Whatever _key_ was used to register the 
+	* @property {Number|String} key The key that was used to register the
 	*	[selection]{@link enyo.Selection} (usually a row index).
-	* @property {Object} data References _data_ registered with this key by the code that made the 
-	*	original [selection]{@link enyo.Selection}.
+	* @property {Object} data References data registered with the key by the code
+	* that made the original selection.
 	*/
 
 	/**
@@ -23,10 +23,10 @@
 	*
 	* @event enyo.Selection#event:onSelect
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {enyo.Selection~SelectionEvent} event - An [object]{@glossary Object} 
-	*	containing [event]{@glossary event} information.
+	* @property {enyo.Selection~SelectionEvent} event - An [object]{@glossary Object}
+	*	containing event information.
 	* @public
 	*/
 
@@ -42,10 +42,10 @@
 	*
 	* @event enyo.Selection#event:onDeselect
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {enyo.Selection~SelectionEvent} event - An [object]{@glossary Object} 
-	*	containing [event]{@glossary event} information.
+	* @property {enyo.Selection~SelectionEvent} event - An [object]{@glossary Object}
+	*	containing event information.
 	* @public
 	*/
 
@@ -54,16 +54,16 @@
 	*
 	* @event enyo.Selection#event:onChange
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	* @property {Object} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
 	/**
-	* _enyo.Selection_ is used to manage row selection state for lists. It provides selection state 
-	* management for both single-select and multi-select lists.
+	* {@link enyo.Selection} is used to manage row selection state for lists. It provides
+	* selection state management for both single-select and multi-select lists.
 	*
 	* ```javascript
 	* // The following is an excerpt from enyo.FlyweightRepeater.
@@ -174,7 +174,7 @@
 		* Determines whether a particular row is selected.
 		*
 		* @param {Number|String} key The unique identifier of the row.
-		* @returns {Boolean} Returns `true` if the specified row is selected, `false` otherwise.
+		* @returns {Boolean} `true` if the specified row is selected; otherwise, `false`.
 		* @public
 		*/
 		isSelected: function(key) {
@@ -185,13 +185,13 @@
 		* Manually sets a row's state to selected or unselected.
 		*
 		* @param {Number|String} key The unique identifier of the row.
-		* @param {Boolean} sel Is `true` if the row should be selected, `false` if the row should be
-		*	unselected.
-		* @param {Object} [data] An optional data [object]{@glossary Object} to store in the 
-		*	selection for the key that will be sent with the 
-		*	[onSelect]{@link enyo.Selection#event:onSelect} or 
-		*	[onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@glossary event}. If
-		*	not used, the _data_ will be set to `true`.
+		* @param {Boolean} sel `true` if the row should be selected; `false` if the row
+		* should be unselected.
+		* @param {Object} [data] An optional data [object]{@glossary Object} to store 
+		*	in the selection for the key that will be sent with the
+		*	[onSelect]{@link enyo.Selection#event:onSelect} or
+		*	[onDeselect]{@link enyo.Selection#event:onDeselect} {@glossary event}. If
+		*	not used, the `data` will be set to `true`.
 		* @fires enyo.Selection#event:onChange
 		* @public
 		*/
@@ -221,15 +221,15 @@
 		},
 
 		/**
-		* Selects a row. If the [multi]{@link enyo.Selection#multi} property is set to `false`, 
-		* _select_ will also deselect the previous [selection]{@link enyo.Selection}.
+		* Selects a row. If the [multi]{@link enyo.Selection#multi} property is set to `false`,
+		* this will also deselect the previous [selection]{@link enyo.Selection}.
 		*
 		* @param {Number|String} key The unique identifier of the row.
-		* @param {Object} [data] An optional data [object]{@glossary Object} to store in the 
-		*	selection for the key that will be sent with the 
-		*	[onSelect]{@link enyo.Selection#event:onSelect} or 
-		*	[onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@glossary event}. If
-		*	not used, the _data_ will be set to `true`.
+		* @param {Object} [data] An optional data [object]{@glossary Object} to store
+		* in the selection for the key that will be sent with the
+		*	[onSelect]{@link enyo.Selection#event:onSelect} or
+		*	[onDeselect]{@link enyo.Selection#event:onDeselect} {@glossary event}. If
+		*	not used, the `data` will be set to `true`.
 		* @public
 		*/
 		select: function(key, data) {
@@ -242,17 +242,16 @@
 		},
 
 		/**
-		* Toggles [selection]{@link enyo.Selection} state for a row. If the 
-		* [multi]{@link enyo.Selection#multi} property is set to `false`, toggling a 
-		* [selection]{@link enyo.Selection} on will deselect the previous 
-		* [selection]{@link enyo.Selection}.
+		* Toggles [selection]{@link enyo.Selection} state for a row. If the
+		* [multi]{@link enyo.Selection#multi} property is set to `false`, toggling a
+		* selection "on" will deselect the previous selection.
 		*
 		* @param {Number|String} key The unique identifier of the row.
-		* @param {Object} [data] An optional data [object]{@glossary Object} to store in the 
-		*	selection for the key that will be sent with the 
-		*	[onSelect]{@link enyo.Selection#event:onSelect} or 
-		*	[onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@glossary event}. If
-		*	not used, the _data_ will be set to `true`.
+		* @param {Object} [data] An optional data [object]{@glossary Object} to store
+		* in the selection for the key that will be sent with the
+		*	[onSelect]{@link enyo.Selection#event:onSelect} or
+		*	[onDeselect]{@link enyo.Selection#event:onDeselect} {@glossary event}. If
+		*	not used, the `data` will be set to `true`.
 		* @public
 		*/
 		toggle: function(key, data) {
@@ -263,10 +262,10 @@
 		},
 
 		/**
-		* Retrieve the current [selection]{@link enyo.Selection}.
+		* Retrieves the current [selection]{@link enyo.Selection}.
 		*
-		* @returns {Object} the selection as a [hash]{@glossary Object} in which each selected 
-		*	item has a value; unselected items are [undefined]{@glossary undefined}.
+		* @returns {Object} The selection as a [hash]{@glossary Object} in which each
+		* selected item has a value; unselected items are [undefined]{@glossary undefined}.
 		* @public
 		*/
 		getSelected: function() {
@@ -276,9 +275,9 @@
 			
 		*/
 		/**
-		* Remove a row that's included in the [selection]{@link enyo.Selection} set. If this row is
-		* selected, it will be unselected.  Any rows above this row will have their keys value 
-		* reduced by one.
+		* Removes a row that's included in the [selection]{@link enyo.Selection} set.
+		* If this row is selected, it will be unselected.  Any rows above this row
+		* will have their keys value reduced by one.
 		*
 		* @param {Number|String} key The unique identifier of the row.
 		* @public

@@ -1,8 +1,8 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.Sprite_ is a basic animation [component]{@link enyo.Component}. Call _play()_ to start
-	* the animation. The animation will run for the period of time (in milliseconds) specified by 
-	* its [duration]{@link enyo.SpriteAnimation#duration}.
+	* {@link enyo.SpriteAnimation} is a basic animation [component]{@link enyo.Component}.
+	* Call `play()` to start the animation. The animation will run for the period
+	* of time (in milliseconds) specified by its [duration]{@link enyo.SpriteAnimation#duration}.
 	*
 	* @class enyo.SpriteAnimation
 	* @public
@@ -32,7 +32,7 @@
 			src: '',
 
 			/**
-			* The amount of milliseconds your animation will run.
+			* The number of milliseconds the animation will run.
 			* 
 			* @type {Number}
 			* @default 5000
@@ -59,7 +59,7 @@
 			height: 100,
 
 			/**
-			* The number of rows of sprites-cells.
+			* The number of rows of sprite-cells.
 			* 
 			* @type {Number}
 			* @default 1
@@ -68,7 +68,7 @@
 			rows: 1,
 
 			/**
-			* The number of columns of sprites-cells.
+			* The number of columns of sprite-cells.
 			* 
 			* @type {Number}
 			* @default 2
@@ -86,7 +86,7 @@
 			iterationCount: 'infinite',
 
 			/**
-			* Indicates whether the cells are horizontally laid-out or vertically laid-out. Example:
+			* Indicates whether the cells are laid out horizontally or vertically. For example:
 			* ```
 			* Horizontal:
 			*	[1][2]
@@ -103,9 +103,9 @@
 			cellOrientation: 'horizontal',
 
 			/**
-			* Apply an offset to the coordinates of the first sprite. Normally this can be left at 
-			* 0x0, but if you have multiple sprites in a single image file, or there's a padding 
-			* around your image, specify the amount of pixels.
+			* Applies an offset to the coordinates of the first sprite. Normally this may be left
+			* at `0`, but if you have multiple sprites in a single image file, or there's padding
+			* around your image, specify the offset in pixels.
 			* 
 			* @type {Number}
 			* @default 0
@@ -113,9 +113,9 @@
 			*/
 			offsetTop: 0,
 			/**
-			* Apply an offset to the coordinates of the first sprite. Normally this can be left at 
-			* 0x0, but if you have multiple sprites in a single image file, or there's a padding 
-			* around your image, specify the amount of pixels.
+			* Applies an offset to the coordinates of the first sprite. Normally this may be left
+			* at `0`, but if you have multiple sprites in a single image file, or there's padding 
+			* around your image, specify the offset in pixels.
 			* 
 			* @type {Number}
 			* @default 0

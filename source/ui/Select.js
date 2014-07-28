@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.Select_ implements an HTML [selection]{@glossary select} widget, using 
-	* {@link enyo.Option} [kinds]{@glossary kind} by default.
+	* {@link enyo.Select} implements an HTML [selection]{@glossary select} widget, using 
+	* {@link enyo.Option} instances by default.
 	*
 	* ```
 	* {kind: 'Select', onchange: 'selectChanged', components: [
@@ -19,7 +19,7 @@
 	* }
 	* ```
 	* 
-	* Note: This uses the [`&lt;select&gt;`]{@glossary select} tag, which isn't implemented for
+	* Note: This uses the [&lt;select&gt;]{@glossary select} tag, which isn't implemented for
 	* native webOS applications, although it does work in the webOS Web browser.
 	*
 	* @ui
@@ -41,7 +41,7 @@
 			/** @lends enyo.Select.prototype */ {
 			
 			/**
-			* Index of the selected [option]{@link enyo.Option} in the list.
+			* The index of the selected [option]{@link enyo.Option} in the list.
 			* 
 			* @type {Number}
 			* @default 0
@@ -133,8 +133,8 @@
 	});
 
 	/**
-	* _enyo.Option_ implements the [options]{@glossary option} in a 
-	* [select]{@glossary select} [control]{@link enyo.Control}.
+	* {@link enyo.Option} implements the [options]{@glossary option} in an
+	* {@link enyo.Select} [control]{@link enyo.Control}.
 	*
 	* @class enyo.Option
 	* @public
@@ -162,7 +162,7 @@
 			value: '',
 
 			/**
-			* Set to `true` if this [option]{@link enyo.Option} is selected, `false` otherwise.
+			* Set to `true` if this [option]{@link enyo.Option} is selected (default is `false`).
 			* 
 			* @type {Boolean}
 			* @default false
@@ -204,9 +204,9 @@
 	});
 
 	/**
-	* _enyo.OptionGroup_ allows for the [grouping]{@glossary optgroup} of 
-	* [options]{@link enyo.Option} in a [select]{@link enyo.Select} [control]{@link enyo.Control}, 
-	* and for the disabling of blocks of [options]{@link enyo.Option}.
+	* {@link enyo.OptionGroup} allows for the [grouping]{@glossary optgroup} of
+	* [options]{@link enyo.Option} in an {@link enyo.Select} [control]{@link enyo.Control}, 
+	* and for the disabling of blocks of options.
 	*
 	* @class enyo.OptionGroup
 	* @public

@@ -1,34 +1,34 @@
 (function (enyo, scope) {
 	/**
-	* The type of change to apply. Possible values are 'move' and 'extend'.
+	* The type of change to apply. Possible values are `'move'` and `'extend'`.
 	*
 	* @typedef {String} enyo.RichText~ModifyType
 	*/
 
 	/**
-	* The direction in which to apply the change. Possible values include: 'forward', 'backward', 
-	* 'left', and 'right'.
+	* The direction in which to apply the change. Possible values include: `'forward'`,
+	* `'backward'`, `'left'`, and `'right'`.
 	*
 	* @typedef {String} enyo.RichText~ModifyDirection
 	*/
 
 	/**
-	* This is the granularity for the change. Possible values include: 'character', 'word', 
-	* 'sentence', 'line', 'paragraph', 'lineboundary', 'sentenceboundary', 'paragraphboundary', and 
-	'documentboundary'.
+	* The granularity of the change. Possible values include: `'character'`, `'word'`,
+	* `'sentence'`, `'line'`, `'paragraph'`, `'lineboundary'`, `'sentenceboundary'`,
+	* `'paragraphboundary'`, and `'documentboundary'`.
 	*
 	* @typedef {String} enyo.RichText~ModifyAmount
 	*/
 
 	/**
-	* _enyo.RichText_ is a multi-line text [input]{@link external:input that supports rich 
+	* {@link enyo.RichText} is a multi-line text [input]{@link enyo.Input} that supports rich
 	* formatting, such as bold, italics, and underlining.
 	* 
-	* The content displayed in a [RichText]{@link enyo.RichText} may be accessed at runtime via the
-	* `getValue()` and `setValue()` methods.
+	* The content displayed in a RichText may be accessed at runtime via `get('value')`
+	* and `set('value')`.
 	* 
-	* For more information, see the documentation on [Text
-	* Fields](building-apps/controls/text-fields.html) in the Enyo Developer Guide.
+	* For more information, see the documentation on
+	* [Text Fields]{@link building-apps/controls/text-fields.html} in the Enyo Developer Guide.
 	*
 	* @ui
 	* @class enyo.RichText
@@ -60,11 +60,11 @@
 			/** @lends enyo.RichText.prototype */ {
 			
 			/**
-			* _allowHtml_ is enabled by default in [RichText]{@link enyo.RichText} to take advantage
-			* of all the rich editing properties. However, this allows for **ANY** HTML to be 
-			* inserted into the [RichText]{@link enyo.RichText}, including 
-			* [iframe]{@glossary iframe} and [script]{@glossary script} tags, which can be
-			* a secuity concern in some situations. If set to `false`, inserted HTML will be escaped.
+			* This flag is enabled by default in {@link enyo.RichText} to take advantage
+			* of all the rich editing properties. However, this allows for **any** HTML to be 
+			* inserted into the RichText, including [&lt;iframe&gt;]{@glossary iframe} and
+			* [&lt;script&gt;]{@glossary script} tags, which can be a security concern in
+			* some situations. If set to `false`, any inserted HTML will be escaped.
 			* 
 			* @type {Boolean}
 			* @default true
@@ -141,8 +141,8 @@
 		},
 
 		/**
-		* Create [RichText]{@link enyo.RichText} as a div if platform has `contenteditable` 
-		* attribute, otherwise create it as a `textarea`.
+		* Creates [RichText]{@link enyo.RichText} as a `<div>` if the platform has the
+		* `contenteditable` attribute; otherwise, creates it as a `<textarea>`.
 		*
 		* @method
 		* @private
@@ -162,8 +162,8 @@
 			this._value = this.get('value');
 		},
 		/**
-		* Simulate [onchange]{@link enyo.Input#event:onchange} [event]{@glossary event} that 
-		* [inputs]{@link enyo.Input} expose.
+		* Simulates [onchange]{@link enyo.Input#event:onchange} [event]{@glossary event}
+		* exposed by [inputs]{@link enyo.Input}.
 		*
 		* @fires enyo.Input#event:onchange
 		* @private
@@ -211,9 +211,10 @@
 		},
 
 		/**
-		* Determine if this [control]{@link enyo.Control} has focus.
+		* Determines whether this [control]{@link enyo.Control} has focus.
 		*
-		* @returns {Boolean} Returns `true` if the [RichText]{@link enyo.RichText} is focused.
+		* @returns {Boolean} `true` if the [RichText]{@link enyo.RichText} is focused;
+		* otherwise, `false`.
 		* @public
 		*/
 		hasFocus: function() {
@@ -222,9 +223,10 @@
 			}
 		},
 		/**
-		* Retrieve the current selection in the [RichText]{@link enyo.RichText}.
+		* Retrieves the current [selection]{@glossary Selection} from the
+		* [RichText]{@link enyo.RichText}.
 		* 
-		* @returns {Selection} The [selection]{@external:selection} [object]{@external:Object}.
+		* @returns {Selection} The [selection]{@glossary Selection} [object]{@glossary Object}.
 		* @public
 		*/
 		getSelection: function() {
@@ -236,11 +238,10 @@
 		/**
 		* Removes the [selection]{@glossary Selection} [object]{@glossary Object}.
 		* 
-		* @param {Boolean} start If `true`, the [selection]{@glossary Selection} is 
-		*	[collapsed to the start]{@glossary Selection.collapseToStart} of the 
-		*	[range]{@glossary Range}, otherwise it is 
-		*	[collapsed to the end]{@glossary Selection.collapseToEnd} of the 
-		*	[range]{@glossary Range}.
+		* @param {Boolean} start If `true`, the [selection]{@glossary Selection} is
+		*	[collapsed to the start]{@glossary Selection.collapseToStart} of the
+		*	[range]{@glossary Range}; otherwise, it is
+		*	[collapsed to the end]{@glossary Selection.collapseToEnd} of the range.
 		* @public
 		*/
 		removeSelection: function(start) {
@@ -256,7 +257,7 @@
 		* 
 		* @param {enyo.RichText~ModifyType} type The type of change to apply.
 		* @param {enyo.RichText~ModifyDirection} dir The direction in which to apply the change.
-		* @param {enyo.RichText~ModifyAmount} amount This is the granularity for the change.
+		* @param {enyo.RichText~ModifyAmount} amount The granularity of the change.
 		* @public
 		*/
 		modifySelection: function(type, dir, amount) {
@@ -270,7 +271,7 @@
 		* Moves the cursor according to the [Editing API]{@glossary Selection.modify}.
 		* 
 		* @param {enyo.RichText~ModifyDirection} dir The direction in which to apply the change.
-		* @param {enyo.RichText~ModifyAmount} amount This is the granularity for the change.
+		* @param {enyo.RichText~ModifyAmount} amount The granularity of the change.
 		* @public
 		*/
 		moveCursor: function(dir, amount) {
@@ -307,8 +308,8 @@
 		},
 
 		/**
-		* Inserts HTML at the cursor position. HTML is escaped unless the 
-		* [allowHTML]{@link enyo.RichText#allowHTML} property is `true`.
+		* Inserts HTML at the cursor position. HTML will be escaped unless the 
+		* [allowHtml]{@link enyo.RichText#allowHtml} property is `true`.
 		* 
 		* @param {String} val The HTML to insert at the current cursor position.
 		* @public
