@@ -4,10 +4,10 @@
 	*
 	* @event enyo.Popup#event:onShow
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	* @property {Object} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
@@ -16,29 +16,29 @@
 	*
 	* @event enyo.Popup#event:onHide
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	[event]{@glossary event} information.
+	* @property {Object} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
 	/**
-	* _enyo.Popup_ is a [control]{@link enyo.Control} used to display certain content on top of 
-	* other content.
+	* {@link enyo.Popup} is a [control]{@link enyo.Control} used to display certain content
+	* on top of other content.
 	* 
-	* [Popups]{@link enyo.Popup} are initially hidden on creation; they can be shown by calling the 
-	* [show]{@link enyo.Popup#show} method and re-hidden by calling [hide]{@link enyo.Popup#hide}.  
-	* [Popups]{@link enyo.Popup} may be centered using the 
-	* [centered]{@link enyo.Popup#centered} property; if not centered, they should be given a 
-	* specific position.
+	* Popups are initially hidden on creation; they may be shown by calling the 
+	* [show()]{@link enyo.Control#show} method and re-hidden by calling
+	* [hide()]{@link enyo.Control#hide}. Popups may be centered using the 
+	* [centered]{@link enyo.Popup#centered} property; if not centered, they should
+	* be given a specific position.
 	* 
-	* A [popup]{@link enyo.Popup} may be optionally floated above all 
+	* A popup may be optionally floated above all 
 	* [application]{@link enyo.Application} content by setting its 
-	* [floating]{@link enyo.Popup#floating} property to `true`. This has the advantage of 
-	* guaranteeing that the [popup]{@link enyo.Popup} will be displayed on top of other content. 
-	* This usage is appropriate when the [popup]{@link enyo.Popup} does not need to scroll along 
-	* with other content.
+	* [floating]{@link enyo.Popup#floating} property to `true`. This has the
+	* advantage of guaranteeing that the popup will be displayed on top of other
+	* content. This usage is appropriate when the popup does not need to scroll
+	* along with other content.
 	* 
 	* For more information, see the documentation on
 	* [Popups](building-apps/controls/popups.html) in the Enyo Developer Guide.
@@ -74,7 +74,7 @@
 			/**
 			* Set to `true` to prevent [controls]{@link enyo.Control} outside the 
 			* [popup]{@link enyo.Popup} from receiving [events]{@glossary event} while the 
-			* [popup]{@link enyo.Popup} is showing.
+			* popup is showing.
 			* 
 			* @type {Boolean}
 			* @default false
@@ -95,8 +95,8 @@
 			/**
 			* Set to `true` to render the [popup]{@link enyo.Popup} in a 
 			* [floating layer]{@link enyo.FloatingLayer} outside of other 
-			* [controls]{@link enyo.Control}.  This can be used to guarantee that the 
-			* [popup]{@link enyo.Popup} will be shown on top of other [controls]{@link enyo.Control}.
+			* [controls]{@link enyo.Control}.  This may be used to guarantee that the 
+			* popup will be shown on top of other controls.
 			* 
 			* @type {Boolean}
 			* @default false
@@ -105,8 +105,8 @@
 			floating: false,
 
 			/**
-			* Set to `true` to automatically center the [popup]{@link enyo.Popup} in the middle of 
-			* the viewport.
+			* Set to `true` to automatically center the [popup]{@link enyo.Popup} in
+			* the middle of the viewport.
 			* 
 			* @type {Boolean}
 			* @default false
@@ -115,8 +115,8 @@
 			centered: false,
 
 			/**
-			* Set to `true` to be able to show transition on the style modifications, otherwise the 
-			* transition is invisible (visibility: hidden).
+			* Set to `true` to be able to show transition on the style modifications;
+			* otherwise the transition is invisible `(visibility: hidden)`.
 			* 
 			* @type {Boolean}
 			* @default false
@@ -125,7 +125,7 @@
 			showTransitions: false,
 
 			/**
-			* Set to `true` to stop `preventDefault` from being called on captured 
+			* Set to `true` to stop `preventDefault()` from being called on captured 
 			* [events]{@glossary event}.
 			* 
 			* @type {Boolean}
@@ -496,15 +496,15 @@
 		},
 
 		/**
-		* Open at the location of a mouse [event]{link external:event}. The 
-		* [popup's]{@link enyo.Popup} position is automatically constrained so that it does not
-		* display outside the viewport, and defaults to anchoring the top left corner of the 
-		* [popup]{@link enyo.Popup} to the mouse [event]{@glossary event}.
+		* Opens the [popup]{@link enyo.Popup} at the location of a mouse
+		* [event]{@glossary event}. The popup's position is automatically
+		* constrained so that it does not display outside the viewport, and defaults
+		* to anchoring the top left corner of the popup to the mouse event.
 		* 
 		* @param {Object} e The mouse [event]{@glossary event} that initiated this call.
-		* @param {Object} [offset] An optional [object]{@glossary Object} which may contain 
-		*	`left` and `top` properties to specify an _offset_ relative to the location the
-		*	[popup]{@link enyo.Popup} would otherwise be positioned.
+		* @param {Object} [offset] An optional [object]{@glossary Object} that may
+		* contain `left` and `top` properties to specify an offset relative to the
+		* location where the [popup]{@link enyo.Popup} would otherwise be positioned.
 		* @public
 		*/
 		showAtEvent: function(e, offset) {
@@ -522,15 +522,16 @@
 		},
 
 		/**
-		* Open the [popup]{@link enyo.Popup} at a specific position. The final location of the 
-		* [popup]{@link enyo.Popup} will be automatically constrained so that it does not display 
-		* outside the viewport.
+		* Opens the [popup]{@link enyo.Popup} at a specific position. The final
+		* location of the popup will be automatically constrained so that it does
+		* not display outside the viewport.
 		* 
-		* @param {Object} pos An [object]{@glossary Object} which may contain left, top, bottom,
-		*	and right properties to specify where the [popup]{@link enyo.Popup} will be anchored. If 
-		*	both left and right are included, the [popup]{@link enyo.Popup} will have a preference 
-		*	of anchoring to the left (likewise, the preference will be for the top if both top and
-		*	bottom are specified).
+		* @param {Object} pos An [object]{@glossary Object} that may contain `left`,
+		* `top`, `bottom`, and `right` properties to specify where the
+		* [popup]{@link enyo.Popup} will be anchored. If both `left` and `right` are
+		* included, the preference will be to anchor on the left; similarly, if both
+		* `top` and `bottom` are specified, the preference will be to anchor at the
+		* top.
 		* @public
 		*/
 		showAtPosition: function(pos) {
@@ -543,10 +544,10 @@
 	});
 
 	/**
-	* By default, we capture ondown and ontap to implement the [popup's]{@link enyo.Popup} modal 
-	* behavior, but in certain circumstances it may be necessary to capture other 
-	* [events]{@glossary event} as well, so we provide this hook to extend. (Currently using 
-	* this in Moonstone to capture onSpotlightFocus [events]{@glossary event}).
+	* By default, we capture `ondown` and `ontap` to implement the [popup's]{@link enyo.Popup}
+	* modal behavior, but in certain circumstances it may be necessary to capture other 
+	* [events]{@glossary event} as well, so we provide this hook to extend. (We are currently
+	* using this in Moonstone to capture `onSpotlightFocus` [events]{@glossary event}).
 	* 
 	* @private
 	*/

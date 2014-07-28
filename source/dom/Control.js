@@ -239,7 +239,7 @@
 		},
 
 		/**
-		* Shortcut method to set @{link enyo.Control.showing} to `true`.
+		* Shortcut method to set [enyo.Control.showing]{@link enyo.Control#showing} to `true`.
 		*
 		* @public
 		*/
@@ -248,7 +248,7 @@
 		},
 
 		/**
-		* Shortcut method to set @{link enyo.Control.showing} to `false`.
+		* Shortcut method to set [enyo.Control.showing]{@link enyo.Control#showing} to `false`.
 		*
 		* @public
 		*/
