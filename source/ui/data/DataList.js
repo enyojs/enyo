@@ -207,6 +207,10 @@
 				if (this.pageSizeMultiplier !== null && !isNaN(this.pageSizeMultiplier)) {
 					this.pageSizeMultiplier = Math.max(1.2, this.pageSizeMultiplier);
 				}
+				// determine if the _controlsPerPage_ property has been set
+				if (this.controlsPerPage !== null && !isNaN(this.controlsPerPage)) {
+					this._staticControlsPerPage = true;
+				}
 			};
 		}),
 

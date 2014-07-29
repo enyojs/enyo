@@ -230,25 +230,29 @@
 		* @private
 		*/
 		controlsPerPage: function (list) {
-			var updatedControls = list._updatedControlsPerPage,
-				updatedBounds   = list._updatedBounds,
-				childSize       = list.childSize,
-				perPage         = list.controlsPerPage,
-				sizeProp        = list.psizeProp,
-				multi           = list.pageSizeMultiplier || this.pageSizeMultiplier,
-				fn              = this[sizeProp];
-			// if we've never updated the value or it was done longer ago than the most
-			// recent updated sizing/bounds we need to update
-			if (!updatedControls || (updatedControls < updatedBounds)) {
-				// we always update the default child size value first, here
-				childSize = this.childSize(list);
-				// using height/width of the available viewport times our multiplier value
-				perPage   = list.controlsPerPage = Math.ceil(((fn(list) * multi) / childSize) + 1);
-				// update our time for future comparison
-				list._updatedControlsPerPage = enyo.perfNow();
+			if (list._staticControlsPerPage) {
+				return list.controlsPerPage;
+			} else {
+				var updatedControls = list._updatedControlsPerPage,
+					updatedBounds   = list._updatedBounds,
+					childSize       = list.childSize,
+					perPage         = list.controlsPerPage,
+					sizeProp        = list.psizeProp,
+					multi           = list.pageSizeMultiplier || this.pageSizeMultiplier,
+					fn              = this[sizeProp];
+				// if we've never updated the value or it was done longer ago than the most
+				// recent updated sizing/bounds we need to update
+				if (!updatedControls || (updatedControls < updatedBounds)) {
+					// we always update the default child size value first, here
+					childSize = this.childSize(list);
+					// using height/width of the available viewport times our multiplier value
+					perPage   = list.controlsPerPage = Math.ceil(((fn(list) * multi) / childSize) + 1);
+					// update our time for future comparison
+					list._updatedControlsPerPage = enyo.perfNow();
+				}
+				/*jshint -W093 */
+				return (list.controlsPerPage = perPage);
 			}
-			/*jshint -W093 */
-			return (list.controlsPerPage = perPage);
 		},
 		
 		/**
