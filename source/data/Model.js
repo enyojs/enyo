@@ -574,7 +574,7 @@
 		* individual [notifications]{@link enyo.ObserverSupport.notify} for the
 		* properties that were modified.
 		*
-		* @fires enyo.Model#event:change
+		* @fires enyo.Model#change
 		* @see enyo.ObserverSupport
 		* @see enyo.BindingSupport
 		* @param {(String|Object)} path Either the property name or a [hash]{@glossary Object}

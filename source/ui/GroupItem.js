@@ -2,7 +2,7 @@
 	/**
 	* Fires when the [active state]{@link enyo.GroupItem#active} has changed.
 	*
-	* @event enyo.GroupItem#event:onActivate
+	* @event enyo.GroupItem#onActivate
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -18,7 +18,7 @@
 	* [component]{@link enyo.Component}). A [subkind]{@glossary subkind} may call `setActive` 
 	* to set the [active]{@link enyo.GroupItem#active} property to the desired state; this will 
 	* additionally [bubble]{@link enyo.Component#bubble} an 
-	* [onActivate]{@link enyo.Groupitem#event:onActivate} [event]{@glossary event}, which can 
+	* [onActivate]{@link enyo.Groupitem#onActivate} [event]{@glossary event}, which can
 	* be handled as needed by the containing [components]{@link enyo.Component}. This is useful for 
 	* creating [groups]{@link enyo.Group} of items whose state should be managed as a 
 	* [group]{@link enyo.Group}.
@@ -67,7 +67,7 @@
 		}),
 
 		/**
-		* @fires enyo.GroupItem#event:onActivate
+		* @fires enyo.GroupItem#onActivate
 		* @private
 		*/
 		activeChanged: function() {

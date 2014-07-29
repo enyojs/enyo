@@ -25,7 +25,7 @@
 		proxyObjectKey: 'data',
 		
 		/**
-		* The overloaded [getter]{@link enyo.Object#get}. Acccepts the same
+		* The overloaded [getter]{@link enyo.Object#get}. Accepts the same
 		* parameters and attempts to call the same method on the
 		* [proxy]{@link enyo.ProxyObject.proxyObjectKey}. Returns `undefined` if it
 		* cannot find a proxy.

@@ -3,7 +3,7 @@
 	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer greater than 
 	* `1`.
 	*
-	* @event enyo.Video#event:onFastforward
+	* @event enyo.Video#onFastforward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -16,7 +16,7 @@
 	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to a value between `0` and
 	* `1`.
 	*
-	* @event enyo.Video#event:onSlowforward
+	* @event enyo.Video#onSlowforward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -29,7 +29,7 @@
 	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer less than 
 	* `-1`.
 	*
-	* @event enyo.Video#event:onRewind
+	* @event enyo.Video#onRewind
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -42,7 +42,7 @@
 	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to a value less than `0` 
 	* but greater than or equal to `-1`.
 	*
-	* @event enyo.Video#event:onSlowrewind
+	* @event enyo.Video#onSlowrewind
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -54,7 +54,7 @@
 	/**
 	* Fires when [_jumpForward()_]{@link enyo.Video#jumpForward} is called.
 	*
-	* @event enyo.Video#event:onJumpForward
+	* @event enyo.Video#onJumpForward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -66,7 +66,7 @@
 	/**
 	* Fires when [_jumpBackward()_]{@link enyo.Video#jumpBackward} is called.
 	*
-	* @event enyo.Video#event:onJumpBackward
+	* @event enyo.Video#onJumpBackward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -78,7 +78,7 @@
 	/**
 	* Fires when EventData is changed.
 	*
-	* @event enyo.Video#event:onPlay
+	* @event enyo.Video#onPlay
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -90,7 +90,7 @@
 	/**
 	* Fires when the [image]{@link enyo.Image} has loaded.
 	*
-	* @event enyo.Video#event:onStart
+	* @event enyo.Video#onStart
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -611,7 +611,7 @@
 		/**
 		* Jumps backward [jumpSec]{@link enyo.Video#jumpSec} seconds from the current time.
 		*
-		* @fires enyo.Video#event:doJumpBackward
+		* @fires enyo.Video#doJumpBackward
 		* @public
 		*/
 		jumpBackward: function() {
@@ -631,7 +631,7 @@
 		/**
 		* Jumps forward [jumpSec]{@link enyo.Video#jumpSec} seconds from the current time.
 		*
-		* @fires enyo.Video#event:doJumpForward
+		* @fires enyo.Video#doJumpForward
 		* @public
 		*/
 		jumpForward: function() {
@@ -914,11 +914,11 @@
 		},
 
 		/**
-		* @fires enyo.Video#event:doSlowforward
-		* @fires enyo.Video#event:doFastforward
-		* @fires enyo.Video#event:doSlowrewind
-		* @fires enyo.Video#event:doRewind
-		* @fires enyo.Video#event:doPlay
+		* @fires enyo.Video#doSlowforward
+		* @fires enyo.Video#doFastforward
+		* @fires enyo.Video#doSlowrewind
+		* @fires enyo.Video#doRewind
+		* @fires enyo.Video#doPlay
 		* @private
 		*/
 		ratechange: function(sender, e) {
@@ -948,7 +948,7 @@
 		},
 
 		/**
-		* @fires enyo.Video#event:doStart
+		* @fires enyo.Video#doStart
 		* @private
 		*/
 		createEventData: function() {
@@ -971,7 +971,7 @@
 		/**
 		* Normalizes enyo-generated _onPlay_ [events]{@glossary event}.
 		* 
-		* @fires enyo.Video#event:doPlay
+		* @fires enyo.Video#doPlay
 		* @private
 		*/
 		_play: function(sender, e) {

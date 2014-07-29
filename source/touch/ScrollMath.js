@@ -328,7 +328,7 @@
 		},
 
 		/**
-		* @fires enyo.ScrollMath#event:onScrollStop
+		* @fires enyo.ScrollMath#onScrollStop
 		* @private
 		*/
 		animate: function () {
@@ -511,7 +511,7 @@
 		},
 
 		/**
-		* @fires enyo.ScrollMath#event:onScroll
+		* @fires enyo.ScrollMath#onScroll
 		* @private
 		*/
 		scroll: function () {

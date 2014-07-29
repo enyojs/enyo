@@ -2,7 +2,7 @@
 	/**
 	* Fires immediately when the text changes.
 	*
-	* @event enyo.Input#event:oninput
+	* @event enyo.Input#oninput
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -15,7 +15,7 @@
 	* Fires when the text has changed and the [input]{@link enyo.Image} subsequently loses 
 	* focus.
 	*
-	* @event enyo.Input#event:onchange
+	* @event enyo.Input#onchange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -27,7 +27,7 @@
 	/**
 	* Fires when the [input]{@link enyo.Input} is disabled or enabled.
 	*
-	* @event enyo.Input#event:onDisabledChange
+	* @event enyo.Input#onDisabledChange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -40,8 +40,8 @@
 	* _enyo.Input_ implements an HTML [&lt;input&gt;]{@glossary input} element with 
 	* cross-platform support for change [events]{@glossary event}.
 	* 
-	* You can listen for [oninput]{@link enyo.Input#event:oninput} and 
-	* [onchange]{@link enyo.Input#event:onchange} [DOM events]{@glossary DOMEvent} from this 
+	* You can listen for [oninput]{@link enyo.Input#oninput} and
+	* [onchange]{@link enyo.Input#onchange} [DOM events]{@glossary DOMEvent} from this
 	* [control]{@link enyo.Control} to know when the text inside has been modified.
 	* 
 	* For more information, see the documentation on [Text
@@ -211,7 +211,7 @@
 		},
 
 		/**
-		* @fires enyo.Input#event:onDisabledChange
+		* @fires enyo.Input#onDisabledChange
 		* @private
 		*/
 		disabledChanged: function() {

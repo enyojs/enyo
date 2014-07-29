@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
 	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided when the 
-	* [onActiveChanged]{@link enyo.Group#event:onActiveChanged} [event]{@glossary event} is fired.
+	* [onActiveChanged]{@link enyo.Group#onActiveChanged} [event]{@glossary event} is fired.
 	*
 	* @typedef {Object} enyo.Group~ActiveChangedEvent
 	* @property {enyo.Control} active The active [control]{@link enyo.Control} for the
@@ -11,7 +11,7 @@
 	/**
 	* Fires when the active control is changed.
 	*
-	* @event enyo.Group#event:onActiveChanged
+	* @event enyo.Group#onActiveChanged
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@link external:event}.
@@ -131,7 +131,7 @@
 		},
 
 		/**
-		* @fires enyo.Group#event:onActiveChanged
+		* @fires enyo.Group#onActiveChanged
 		* @private
 		*/
 		activeChanged: function(inOld) {

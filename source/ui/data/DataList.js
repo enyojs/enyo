@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
 	* The [event]{@glossary event} [object]{@glossary Object} that is provided when the 
-	* [paging]{@link enyo.DataList#event:paging} [event]{@glossary event} is fired.
+	* [paging]{@link enyo.DataList#paging} [event]{@glossary event} is fired.
 	*
 	* @typedef {Object} enyo.DataList~PagingEvent
 	* @property {Number} start The lowest active index in the dataset.
@@ -12,12 +12,12 @@
 	/**
 	* Fires each time data has been paged, on a per-page basis.
 	*
-	* @event enyo.DataList#event:paging
+	* @event enyo.DataList#paging
 	* @type {Object}
 	* @property {Object} sender - A reference to the {@link enyo.DataList}.
 	* @property {String} nom The name of the [event]{@glossary event}.
 	* @property {enyo.DataList~PagingEvent} event - A [hash]{@glossary Object} with properties
-	*	specific to the [paging]{@link enyo.DataList#event:paging} [event]{@glossary event}.
+	*	specific to the [paging]{@link enyo.DataList#paging} [event]{@glossary event}.
 	* @public
 	*/
 
@@ -34,7 +34,7 @@
 	* whenever possible.
 	* 
 	* While paging through data, _enyo.DataList_ emits the 
-	* [_paging_]{@link enyo.DataList#event:paging} [event]{@glossary event}, which allows you 
+	* [_paging_]{@link enyo.DataList#paging} [event]{@glossary event}, which allows you 
 	* to make updates on a per-page basis, as necessary. You may register for this 
 	* [event]{@glossary event} by calling [_addListener()_]{@link enyo.EventEmitter#addListener}
 	* and specifying the [event]{@glossary event}, along with a callback method.
@@ -524,7 +524,7 @@
 		*/
 		containerName: 'scroller',
 		/**
-		* We have to trap the Enyo-generated [_onScroll_]{@link enyo.Scroller#event:onScroll} 
+		* We have to trap the Enyo-generated [_onScroll_]{@link enyo.Scroller#onScroll} 
 		* [event]{@glossary event} and let the [delegate]{@glossary delegate} handle it. 
 		* We also need to catch the _onresize_ [events]{@glossary event} so we know when to
 		* update our cached sizing. We overload the default handler so that we don't 
@@ -544,7 +544,7 @@
 
 		/**
 		* Add the [RegisteredEventSupport]{@link enyo.RegisteredEventSupport} 
-		* [mixin]{@glossary mixin} for the [paging]{@link enyo.DataList#event:paging} 
+		* [mixin]{@glossary mixin} for the [paging]{@link enyo.DataList#paging} 
 		* [event]{@glossary event}.
 		* 
 		* @private

@@ -438,7 +438,7 @@
 		},
 
 		/**
-		* @fires enyo.TransitionScrollStrategy#event:onScroll
+		* @fires enyo.TransitionScrollStrategy#onScroll
 		* @private
 		*/
 		mousewheel: function (sender, e) {
@@ -459,7 +459,7 @@
 		/**
 		* Updates thumbs, recalculates boundaries, and bubbles scroll [event]{@glossary event}.
 		*
-		* @fires enyo.TransitionScrollStrategy#event:onScroll
+		* @fires enyo.TransitionScrollStrategy#onScroll
 		* @private
 		*/
 		scroll: function () {
@@ -474,7 +474,7 @@
 		* Scrolls to current `x` and `y` coordinates and bubbles `scrollstart`
 		* [event]{@glossary event}.
 		*
-		* @fires enyo.TransitionScrollStrategy#event:onScrollStart
+		* @fires enyo.TransitionScrollStrategy#onScrollStart
 		* @private
 		*/
 		start: function () {
@@ -486,7 +486,7 @@
 		* If currently scrolling, stops scrolling. Hides thumbs and bubbles `scrollstop`
 		* [event]{@glossary event}.
 		*
-		* @fires enyo.TransitionScrollStrategy#event:onScrollStop
+		* @fires enyo.TransitionScrollStrategy#onScrollStop
 		* @private
 		*/
 		stop: function () {

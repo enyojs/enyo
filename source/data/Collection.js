@@ -70,7 +70,7 @@
 	* Fires when the [collection]{@link enyo.Collection} has been reset and its
 	* contents have been updated arbitrarily.
 	*
-	* @event enyo.Collection#event:reset
+	* @event enyo.Collection#reset
 	* @type {Object}
 	* @property {enyo.Model[]} models - An [array]{@glossary Array} of all
 	*	[models]{@link enyo.Model} as they are currently.
@@ -317,7 +317,7 @@
 		* {@link enyo.Collection}. The array should not be modified directly, nor
 		* should the property be set directly. It is used as a container by the
 		* collection. If [set]{@link enyo.Collection#set} directly, it will
-		* [emit]{@link enyo.EventEmitter.emit} a [reset]{@link enyo.Collection#event:reset}
+		* [emit]{@link enyo.EventEmitter.emit} a [reset]{@link enyo.Collection#reset}
 		* event.
 		*
 		* @see enyo.Collection#modelsChanged
@@ -399,7 +399,7 @@
 		* ensure that loops do not consecutively call this method but instead
 		* build an array to pass as the first parameter.
 		* 
-		* @fires enyo.Collection#event:add
+		* @fires enyo.Collection#add
 		* @param {(Object|Object[]|enyo.Model|enyo.Model[])} models The data to add to the
 		*	{@link enyo.Collection} that can be a [hash]{@glossary Object}, an array of
 		*	hashes, an {@link enyo.Model} instance, or and array of `enyo.Model` instances.
@@ -790,10 +790,10 @@
 		* [comparator]{@link enyo.Collection#comparator} (if any) from the
 		* [collection]{@link enyo.Collection}. Note that the collection is sorted in-place
 		* and returns a reference to itself. The collection
-		* [emits]{@link enyo.EventEmitter.emit} the [sort]{@link enyo.Collection#event:sort}
+		* [emits]{@link enyo.EventEmitter.emit} the [sort]{@link enyo.Collection#sort}
 		* event.
 		*
-		* @fires enyo.Collection#event:sort
+		* @fires enyo.Collection#sort
 		* @see {@glossary Array.sort}
 		* @param {enyo.Collection~Comparator} [fn] The [comparator]{@link enyo.Collection#comparator}
 		* method.
@@ -1211,7 +1211,7 @@
 		* Responds to changes to the [models]{@link enyo.Collection#models} property.
 		*
 		* @see enyo.Collection#models
-		* @fires enyo.Collection#event:reset
+		* @fires enyo.Collection#reset
 		* @type {enyo.ObserverSupport~Observer}
 		* @public
 		*/

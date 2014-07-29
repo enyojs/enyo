@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
 	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided 
-	* when the [onSetupItem]{@link enyo.Repeater#event:onSetupItem} [event]{@glossary event} is
+	* when the [onSetupItem]{@link enyo.Repeater#onSetupItem} [event]{@glossary event} is
 	* fired.
 	*
 	* @typedef {Object} enyo.Repeater~SetupItemEvent
@@ -12,7 +12,7 @@
 	/**
 	* Fires when each item is created.
 	*
-	* @event enyo.Repeater#event:onSetupItem
+	* @event enyo.Repeater#onSetupItem
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -130,7 +130,7 @@
 		* parameter forces the change handler to be called, even if the 
 		* [count]{@link enyo.Repeater#count} remains the same.
 		*
-		* @fires enyo.Repeater#event:onSetupItem
+		* @fires enyo.Repeater#onSetupItem
 		* @public
 		*/
 		build: function() {
@@ -150,7 +150,7 @@
 		* it, so any state stored in the item is preserved.
 		*
 		* @param {Number} idx The index of the item to render.
-		* @fires enyo.Repeater#event:onSetupItem
+		* @fires enyo.Repeater#onSetupItem
 		* @public
 		*/
 		renderRow: function(idx) {

@@ -2,7 +2,7 @@
 	/**
 	* Fires when the [image]{@link enyo.Image} has loaded.
 	*
-	* @event enyo.Image#event:onload
+	* @event enyo.Image#onload
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -14,7 +14,7 @@
 	/**
 	* Fires when there has been an error when loading the [image]{@link enyo.Image}.
 	*
-	* @event enyo.Image#event:onerror
+	* @event enyo.Image#onerror
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -25,8 +25,8 @@
 
 	/**
 	* _enyo.Image_ implements an HTML [&lt;img&gt;]{@glossary img} element and, optionally, 
-	* [bubbles]{@link enyo.Component#bubble} the [onload]{@link enyo.Image#event:onload} and 
-	* [onerror]{@link enyo.Image#event:onerror} [events]{@glossary event}. Image dragging is 
+	* [bubbles]{@link enyo.Component#bubble} the [onload]{@link enyo.Image#onload} and
+	* [onerror]{@link enyo.Image#onerror} [events]{@glossary event}. Image dragging is
 	* suppressed by default, so as not to interfere with touch interfaces.
 	*
 	* @ui
@@ -42,8 +42,8 @@
 		name: 'enyo.Image',
 		
 		/**
-		* When `true`, no [onload]{@link enyo.Image#event:onload} or 
-		* [onerror]{@link enyo.Image#event:onerror} [event]{@glossary event} handlers will be 
+		* When `true`, no [onload]{@link enyo.Image#onload} or
+		* [onerror]{@link enyo.Image#onerror} [event]{@glossary event} handlers will be
 		* created.
 		* 
 		* @type {Boolean}
@@ -201,8 +201,8 @@
 		},
 
 		/**
-		* @fires enyo.Image#event:onload
-		* @fires enyo.Image#event:onerror
+		* @fires enyo.Image#onload
+		* @fires enyo.Image#onerror
 		* @private
 		*/
 		rendered: enyo.inherit(function (sup) {

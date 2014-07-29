@@ -1,8 +1,8 @@
 (function (enyo, scope) {
 	/**
 	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided 
-	* when the [onSelect]{@link enyo.Selection#event:onSelect} and 
-	* [onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@glossary event} are fired.
+	* when the [onSelect]{@link enyo.Selection#onSelect} and 
+	* [onDeselect]{@link enyo.Selection#onDeselect} [events]{@glossary event} are fired.
 	*
 	* @typedef {Object} enyo.Selection~SelectionEvent
 	* @property {Number|String} key Whatever _key_ was used to register the 
@@ -21,7 +21,7 @@
 	* ...
 	* ```
 	*
-	* @event enyo.Selection#event:onSelect
+	* @event enyo.Selection#onSelect
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -40,7 +40,7 @@
 	* ...
 	* ```
 	*
-	* @event enyo.Selection#event:onDeselect
+	* @event enyo.Selection#onDeselect
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -52,7 +52,7 @@
 	/**
 	* Fires when selection changes (but not when selection is cleared).
 	*
-	* @event enyo.Selection#event:onChange
+	* @event enyo.Selection#onChange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the [event]{@glossary event}.
@@ -189,10 +189,10 @@
 		*	unselected.
 		* @param {Object} [data] An optional data [object]{@glossary Object} to store in the 
 		*	selection for the key that will be sent with the 
-		*	[onSelect]{@link enyo.Selection#event:onSelect} or 
-		*	[onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@glossary event}. If
+		*	[onSelect]{@link enyo.Selection#onSelect} or 
+		*	[onDeselect]{@link enyo.Selection#onDeselect} [events]{@glossary event}. If
 		*	not used, the _data_ will be set to `true`.
-		* @fires enyo.Selection#event:onChange
+		* @fires enyo.Selection#onChange
 		* @public
 		*/
 		setByKey: function(key, sel, data) {
@@ -227,8 +227,8 @@
 		* @param {Number|String} key The unique identifier of the row.
 		* @param {Object} [data] An optional data [object]{@glossary Object} to store in the 
 		*	selection for the key that will be sent with the 
-		*	[onSelect]{@link enyo.Selection#event:onSelect} or 
-		*	[onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@glossary event}. If
+		*	[onSelect]{@link enyo.Selection#onSelect} or 
+		*	[onDeselect]{@link enyo.Selection#onDeselect} [events]{@glossary event}. If
 		*	not used, the _data_ will be set to `true`.
 		* @public
 		*/
@@ -250,8 +250,8 @@
 		* @param {Number|String} key The unique identifier of the row.
 		* @param {Object} [data] An optional data [object]{@glossary Object} to store in the 
 		*	selection for the key that will be sent with the 
-		*	[onSelect]{@link enyo.Selection#event:onSelect} or 
-		*	[onDeselect]{@link enyo.Selection#event:onDeselect} [events]{@glossary event}. If
+		*	[onSelect]{@link enyo.Selection#onSelect} or 
+		*	[onDeselect]{@link enyo.Selection#onDeselect} [events]{@glossary event}. If
 		*	not used, the _data_ will be set to `true`.
 		* @public
 		*/

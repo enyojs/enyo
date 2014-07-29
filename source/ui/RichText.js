@@ -162,10 +162,10 @@
 			this._value = this.get('value');
 		},
 		/**
-		* Simulate [onchange]{@link enyo.Input#event:onchange} [event]{@glossary event} that 
+		* Simulate [onchange]{@link enyo.Input#onchange} [event]{@glossary event} that
 		* [inputs]{@link enyo.Input} expose.
 		*
-		* @fires enyo.Input#event:onchange
+		* @fires enyo.Input#onchange
 		* @private
 		*/
 		blurHandler: function() {
