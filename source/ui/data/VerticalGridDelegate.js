@@ -1,9 +1,9 @@
 (function (enyo, scope) {
 	/**
-	* This is a [delegate]{@glossary delegate} (strategy) used by 
-	* [_enyo.DataGridList_]{@link enyo.DataGridList} for vertically oriented lists. This is used by 
-	* all lists for this strategy and does not get copied but called directly from the list. It is 
-	* only available to [_enyo.DataGridList_]{@link enyo.DataGridList}.
+	* This is a [delegate]{@glossary delegate} (strategy) used by {@link enyo.DataGridList}
+	* for vertically-oriented lists. This is used by all lists for this strategy; it does
+	* not get copied, but is called directly from the list. It is only available to
+	* `enyo.DataGridList`.
 	*
 	* @name enyo.DataGridList.delegates.verticalGrid
 	* @type Object
@@ -13,8 +13,8 @@
 	enyo.kind.extendMethods(p, {
 		
 		/**
-		* Once the list is initially rendered it will generate its [scroller]{@link enyo.Scroller} 
-		* (so we know that is available). Now we need to cache our initial size values and apply 
+		* Once the list is initially rendered, it will generate its [scroller]{@link enyo.Scroller}
+		* (so we know that is available). Now we need to cache our initial size values and apply
 		* them to our pages individually.
 		*
 		* @private
@@ -30,7 +30,7 @@
 		},
 		
 		/**
-		* Reset the page with the added class update to the list.
+		* Resets the page, setting `canAddResetClass` flag if appropriate.
 		*
 		* @method
 		* @private
@@ -45,7 +45,7 @@
 		}),
 		
 		/**
-		* Unlike in [DataList]{@link enyo.DataList} we can calculate the page heights since we know 
+		* Unlike in {@link enyo.DataList}, we can calculate the page height since we know
 		* the structure and layout of the page precisely.
 		*
 		* @private
@@ -61,7 +61,7 @@
 		},
 
 		/**
-		* This method generates the markup for the page content.
+		* Generates the markup for the page content.
 		*
 		* @method
 		* @private
@@ -97,8 +97,8 @@
 		},
 
 		/**
-		* Calculates metric values required for the absolute positioning and scaling of the children
-		* in the list.
+		* Calculates metric values required for the absolute positioning and scaling of the
+		* children in the list.
 		*
 		* @private
 		*/
@@ -125,8 +125,8 @@
 		},
 
 		/**
-		* Calculates index bound that is required for adjusting page position. You can call this 
-		* method after DataGridList is rendered.
+		* Calculates index bound that is required for adjusting page position. Can be called
+		* after the [DataGridList]{@link enyo.DataGridList} is rendered.
 		*
 		* @private
 		*/
@@ -144,7 +144,8 @@
 		},
 
 		/**
-		* We guarantee that index bound is maintained and up to date.
+		* Ensures that index bound is maintained and up-to-date as
+		* [models]{@link enyo.Model} are added.
 		*
 		* @method
 		* @private
@@ -157,7 +158,8 @@
 		}),
 
 		/**
-		* We guarantee that index bound is maintained and up to date.
+		* Ensures that index bound is maintained and up-to-date as
+		* [models]{@link enyo.Model} are removed.
 		*
 		* @method
 		* @private
@@ -170,10 +172,10 @@
 		}),
 
 		/**
-		* The number of [controls]{@link enyo.Control} necessary to fill a page will change 
-		* depending on some factors such as scaling and list-size adjustments. It is a 
-		* [function]{@glossary Function} of the calculated size required 
-		* ([pageSizeMultiplier]{@link enyo.DataList#pageSizeMultiplier} * the current boundary 
+		* The number of [controls]{@link enyo.Control} necessary to fill a page. This will
+		* change depending on factors such as scaling and list-size adjustments. It is a 
+		* [function]{@glossary Function} of the calculated size required
+		* ([pageSizeMultiplier]{@link enyo.DataList#pageSizeMultiplier} * current boundary
 		* height) and the adjusted tile height and spacing.
 		*
 		* @method
@@ -206,7 +208,7 @@
 		* metrics of the list.
 	
 		* TODO: This could be optimized to use requestAnimationFrame as well as render not by child 
-		* index but by row thus cutting down some of the over-calculation when iterating over every 
+		* index but by row, thus cutting down some of the over-calculation when iterating over every 
 		* child.
 		*
 		* @private
@@ -240,7 +242,7 @@
 		},
 
 		/**
-		* Recalculates the buffer size based on the current metrics for the given list. This may or 
+		* Recalculates the buffer size based on the current metrics for the given list. This
 		* may not be completely accurate until the final page is scrolled into view.
 		*
 		* @private
@@ -263,7 +265,7 @@
 		},
 		
 		/**
-		* Delegate's resize [event]{@glossary event} handler.
+		* The delegate's `resize` [event]{@glossary event} handler.
 		*
 		* @private
 		*/

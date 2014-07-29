@@ -1,11 +1,11 @@
 (function (enyo, scope) {
 	/**
-	* This is a [delegate]{@glossary delegate} (strategy) used by 
-	* [_enyo.DataList_]{@link enyo.DataList} for horizontally orientedlists. This is used by all 
-	* lists for this strategy and does not get copied but called directly from the list.
+	* This is a [delegate]{@glossary delegate} (strategy) used by {@link enyo.DataList}
+	* for horizontally-oriented lists. This is used by all lists for this strategy;
+	* it does not get copied, but is called directly from the list.
 	*
-	* Note that this is best off of the _vertical_ delegate and overloads only what is necessary 
-	* since much of the logic is shared.
+	* Note that this is based on the [vertical delegate]{@link enyo.DataList.delegates.vertical}
+	* and shares most of that delegate's logic. Overloads are implemented only where necessary.
 	*
 	* @name enyo.DataList.delegates.horizontal
 	* @type Object
@@ -14,8 +14,8 @@
 	var p = enyo.clone(enyo.DataList.delegates.vertical);
 	enyo.kind.extendMethods(p, {
 		/**
-		* Initialize the list by adding a class to modify the CSS properly and settings its priority
-		* properties.
+		* Initializes the list, adding a class to modify the CSS properly and setting its
+		* priority properties.
 		*
 		* @method
 		* @private
@@ -57,7 +57,7 @@
 			return list.$.scroller.getScrollLeft();
 		},
 		/**
-		* Overload to ensure we arbitrarily resize the _active_ container to the width of the buffer.
+		* Overload to ensure we arbitrarily resize the active container to the width of the buffer.
 		*
 		* @method
 		* @private

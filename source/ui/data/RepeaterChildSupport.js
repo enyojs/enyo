@@ -1,14 +1,13 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.RepeaterChildSupport_ contains methods and properties that are automatically applied to 
-	* all children of [_enyo.DataRepeater_]{@link enyo.DataRepeater} to assist in selection support. 
-	* (See {@link enyo.DataRepeater} for details on how to use selection support.) 
-	* _enyo.RepeaterChildSupport_ also adds the _model_, _child_ ([control]{@link enyo.Control} 
-	* instance), and _index_ properties to all [events]{@glossary event} emitted from the 
-	* repeater's children.
+	* The {@link enyo.RepeaterChildSupport} [mixin]{@glossary mixin} contains methods and
+	* properties that are automatically applied to all children of {@link enyo.DataRepeater}
+	* to assist in selection support. (See {@link enyo.DataRepeater} for details on how to
+	* use selection support.) This mixin also [adds]{@link enyo.Repeater#decorateEvent} the
+	* `model`, `child` ([control]{@link enyo.Control} instance), and `index` properties to
+	* all [events]{@glossary event} emitted from the repeater's children.
 	*
-	* @name enyo.RepeaterChildSupport
-	* @type Object
+	* @mixin enyo.RepeaterChildSupport
 	* @public
 	*/
 	enyo.RepeaterChildSupport = {
@@ -86,7 +85,7 @@
 			};
 		}),
 		/**
-		* Used so that we don't stomp on any built-in handlers for the _ontap_ 
+		* Used so that we don't stomp on any built-in handlers for the `ontap` 
 		* [event]{@glossary event}.
 		*
 		* @method

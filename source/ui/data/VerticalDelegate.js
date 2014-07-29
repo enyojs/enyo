@@ -1,8 +1,8 @@
 (function (enyo, scope) {
 	/**
-	* This is a [delegate]{@glossary delegate} (strategy) used by 
-	* [_enyo.DataList_]{@link enyo.DataList} for vertically oriented lists. This is used by all 
-	* lists for this strategy and does not get copied but called directly from the list.
+	* This is a [delegate]{@glossary delegate} (strategy) used by {@link enyo.DataList}
+	* for vertically-oriented lists. This is used by all lists for this strategy; it
+	* does not get copied, but is called directly from the list.
 	*
 	* @name enyo.DataList.delegates.vertical
 	* @type Object
@@ -11,7 +11,7 @@
 	enyo.DataList.delegates.vertical = {
 		
 		/**
-		* Used to determine the minumum size of the pages. The page size will be at least this 
+		* Used to determine the minimum size of the page. The page size will be at least this
 		* number of times greater than the viewport size.
 		*
 		* @type {Number}
@@ -21,10 +21,10 @@
 		pageSizeMultiplier: 2,
 
 		/**
-		* Simply set the priority properties for this orientation that can be differentiated by 
-		* other [delegates]{@glossary delegate} that wish to share some basic functionality.
+		* Sets the priority properties for this orientation, which can then be customized by
+		* other [delegates]{@glossary delegate} that wish to share basic functionality.
 		*
-		* @param {enyo.DataList} list The list to perform this action on.
+		* @param {enyo.DataList} list The [list]{@link enyo.DataList} to perform this action on.
 		* @private
 		*/
 		initList: function (list) {
@@ -41,10 +41,10 @@
 		},
 		
 		/**
-		* A hard reset of the list pages and children. Will scroll to the top, reset children of 
-		* each page to the correct indices starting at the beginning.
+		* Performs a hard reset of the [list's]{@link enyo.DataList} pages and children.
+		* Scrolls to the top and resets each page's children to have the correct indices.
 		*
-		* @param {enyo.DataList} list The list to perform this action on.
+		* @param {enyo.DataList} list The [list]{@link enyo.DataList} to perform this action on.
 		* @private
 		*/
 		reset: function (list) {
@@ -64,9 +64,9 @@
 		},
 		
 		/**
-		* Retrieve list pages, indexed by their position.
+		* Retrieves [list]{@link enyo.DataList} pages, indexed by their position.
 		*
-		* @param {enyo.DataList} list The list to perform this action on.
+		* @param {enyo.DataList} list The [list]{@link enyo.DataList} to perform this action on.
 		* @returns {Object} Returns a [hash]{@glossary Object} of the pages marked by their 
 		*	position as either 'firstPage' or 'lastPage'.
 		* @private
@@ -87,10 +87,10 @@
 		},
 		
 		/**
-		* Refreshes each page in the given list, adjusting their positions and adjusting the buffer 
-		* accordingly.
+		* Refreshes each page in the given [list]{@link enyo.DataList}, adjusting its position
+		* and adjusting the buffer accordingly.
 		*
-		* @param {enyo.DataList} list The list to perform this action on.
+		* @param {enyo.DataList} list The [list]{@link enyo.DataList} to perform this action on.
 		* @private
 		*/
 		refresh: function (list) {
@@ -121,11 +121,11 @@
 		},
 		
 		/**
-		* Once the list is initially rendered it will generate its [scroller]{@link enyo.Scroller} 
-		* (so we know that is available). Now we need to cache our initial size values and apply 
-		* them to our pages individually.
+		* Once the [list]{@link enyo.DataList} is initially rendered, it will generate its
+		* [scroller]{@link enyo.Scroller} (so we know that is available). Now we need to
+		* cache our initial size values and apply them to our pages individually.
 		*
-		* @param {enyo.DataList} list The list to perform this action on.
+		* @param {enyo.DataList} list The [list]{@link enyo.DataList} to perform this action on.
 		* @private
 		*/
 		rendered: function (list) {
@@ -144,7 +144,7 @@
 			if (list.collection && list.collection.length) { this.reset(list); }
 		},
 		/**
-		* This method generates the markup for the page content.
+		* Generates the markup for the page content.
 		*
 		* @private
 		*/
@@ -200,7 +200,7 @@
 		},
 
 		/**
-		* Generates a child size for the given list.
+		* Generates a child size for the given [list]{@link enyo.DataList}.
 		*
 		* @private
 		*/
@@ -220,12 +220,12 @@
 		},
 		
 		/**
-		* When necessary will update the the value of _controlsPerPage_ dynamically to ensure the 
-		* page size is always larger than the viewport. Note that once a 
-		* [control]{@link enyo.Control} is instanced (if this number becomes greater and then is
-		* reduced) the number of available [controls]{@link enyo.Control} will be used instead. This
-		* method will updated the _childSize_ value as well used internally for other values such as
-		* _defaultPageSize_.
+		* When necessary, updates the the value of `controlsPerPage` dynamically to ensure that
+		* the page size is always larger than the viewport size. Note that once a 
+		* [control]{@link enyo.Control} is instanced (if this number increases and then decreases),
+		* the number of available controls will be used instead. This method updates the
+		* [childSize]{@link enyo.DataList#childSize} and is used internally to calculate other
+		* values, such as [defaultPageSize]{@link DataList.delegates.vertical#defaultPageSize}.
 		*
 		* @private
 		*/
@@ -264,7 +264,7 @@
 		/**
 		* Attempts to scroll to the given index.
 		*
-		* @param {enyo.DataList} list The list to perform this action on.
+		* @param {enyo.DataList} list The [list]{@link enyo.DataList} to perform this action on.
 		* @param {Number} i The index to scroll to.
 		* @private
 		*/
@@ -326,8 +326,8 @@
 		
 		/**
 		* Attempts to intelligently decide when to force updates for [models]{@link enyo.Model} 
-		* being added if the [models]{@link enyo.Model} are part of any visible pages. For now an 
-		* assumption is made that records being added are ordered and sequential.
+		* being added, if the models are part of any visible pages. For now, an assumption is
+		* made that records being added are ordered and sequential.
 		*
 		* @private
 		*/
@@ -379,7 +379,7 @@
 		},
 		
 		/**
-		* Attempts to find the control for the requested index.
+		* Attempts to find the [control]{@link enyo.Control} for the requested index.
 		*
 		* @private
 		*/
@@ -398,8 +398,8 @@
 		},
 		
 		/**
-		* Attempts to inelligently decide when to force updates for [models]{@link enyo.Model} being
-		* removed if the [models]{@link enyo.Model} are part of any visible pages.
+		* Attempts to intelligently decide when to force updates for [models]{@link enyo.Model}
+		* being removed, if the models are part of any visible pages.
 		*
 		* @private
 		*/
@@ -436,7 +436,7 @@
 		},
 		
 		/**
-		* Recalculates the buffer size based on the current metrics for the given list. This may or 
+		* Recalculates the buffer size based on the current metrics for the given list. This
 		* may not be completely accurate until the final page is scrolled into view.
 		*
 		* @private
@@ -460,8 +460,8 @@
 		},
 		
 		/**
-		* Will ensure that the pages are positioned according to their calculated positions and 
-		* update if necessary.
+		* Ensures that the pages are positioned according to their calculated positions,
+		* updating if necessary.
 		*
 		* @private
 		*/
@@ -510,7 +510,7 @@
 		},
 
 		/**
-		* Retrieves the number of pages for for given list.
+		* Retrieves the number of pages for the given [list]{@link enyo.DataList}.
 		*
 		* @private
 		*/
@@ -521,7 +521,7 @@
 		},
 
 		/**
-		* Retrieves the current (and desired) scroll position from the 
+		* Retrieves the current (and desired) scroll position from the
 		* [scroller]{@link enyo.Scroller} for the given list.
 		*
 		* @private
@@ -614,11 +614,11 @@
 			}
 		},
 		/**
-		* Handles scroll [events]{@glossary event} for the given list. The 
-		* [events]{@glossary event} themselves aren't helpful as depending on the underlying 
-		* _scrollStrategy_ they have varied information. This is a hefty method but contained to 
-		* keep from calling too many [functions]{@glossary Function} whenever this 
-		* [event]{@glossary event} is propagated.
+		* Handles scroll [events]{@glossary event} for the given [list]{@link enyo.DataList}.
+		* The events themselves aren't helpful, as, depending on the underlying
+		* `scrollStrategy`, they have varied information. This is a hefty method, but it is
+		* contained to keep from calling too many [functions]{@glossary Function} whenever
+		* this event is propagated.
 		*
 		* @private
 		*/
@@ -642,7 +642,7 @@
 		},
 
 		/**
-		* Delegate's resize event handler.
+		* The delegate's `resize` event handler.
 		*
 		* @private
 		*/
@@ -653,8 +653,8 @@
 		},
 
 		/**
-		* Returns the height for the given list, will cache this value and reuse if no resizing of 
-		* the list has taken place.
+		* Returns the height for the given [list]{@link enyo.DataList}. This value
+		* is cached and reused until the list is resized.
 		*
 		* @private
 		*/
@@ -664,8 +664,8 @@
 		},
 
 		/**
-		* Returns the width for the given list, will cache this value and reuse if no resizing of 
-		* the list has taken place.
+		* Returns the width for the given [list]{@link enyo.DataList}. This value
+		* is cached and reused until the list is resized.
 		*
 		* @private
 		*/
