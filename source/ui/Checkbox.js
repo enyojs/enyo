@@ -12,7 +12,7 @@
 	*/
 
 	/**
-	* _enyo.Checkbox_ implements an HTML checkbox [input]{@glossary input}, with support for 
+	* `enyo.Checkbox` implements an HTML checkbox [input]{@glossary input}, with support for
 	* grouping using {@link enyo.Group}.
 	*
 	* @ui
@@ -130,7 +130,7 @@
 		* All [input]{@link enyo.Input} type [controls]{@link enyo.Control} support the 
 		* [value]{@link enyo.Input#value} property.
 		*
-		* @param {Boolean} val Whether the [checkbox]{@link enyo.Checkbox} should be checked or not.
+		* @param {Boolean} val - Whether the [checkbox]{@link enyo.Checkbox} should be checked or not.
 		*	The value will be treated as `true` if it is truthy, otherwise it 
 		*	will be considered `false`.
 		* @public

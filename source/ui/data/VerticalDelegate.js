@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
 	* This is a [delegate]{@glossary delegate} (strategy) used by 
-	* [_enyo.DataList_]{@link enyo.DataList} for vertically oriented lists. This is used by all 
+	* [`enyo.DataList`]{@link enyo.DataList} for vertically oriented lists. This is used by all
 	* lists for this strategy and does not get copied but called directly from the list.
 	*
 	* @name enyo.DataList.delegates.vertical
@@ -24,7 +24,7 @@
 		* Simply set the priority properties for this orientation that can be differentiated by 
 		* other [delegates]{@glossary delegate} that wish to share some basic functionality.
 		*
-		* @param {enyo.DataList} list The list to perform this action on.
+		* @param {enyo.DataList} list - The list to perform this action on.
 		* @private
 		*/
 		initList: function (list) {
@@ -44,7 +44,7 @@
 		* A hard reset of the list pages and children. Will scroll to the top, reset children of 
 		* each page to the correct indices starting at the beginning.
 		*
-		* @param {enyo.DataList} list The list to perform this action on.
+		* @param {enyo.DataList} list - The list to perform this action on.
 		* @private
 		*/
 		reset: function (list) {
@@ -66,7 +66,7 @@
 		/**
 		* Retrieve list pages, indexed by their position.
 		*
-		* @param {enyo.DataList} list The list to perform this action on.
+		* @param {enyo.DataList} list - The list to perform this action on.
 		* @returns {Object} Returns a [hash]{@glossary Object} of the pages marked by their 
 		*	position as either 'firstPage' or 'lastPage'.
 		* @private
@@ -90,7 +90,7 @@
 		* Refreshes each page in the given list, adjusting their positions and adjusting the buffer 
 		* accordingly.
 		*
-		* @param {enyo.DataList} list The list to perform this action on.
+		* @param {enyo.DataList} list - The list to perform this action on.
 		* @private
 		*/
 		refresh: function (list) {
@@ -125,7 +125,7 @@
 		* (so we know that is available). Now we need to cache our initial size values and apply 
 		* them to our pages individually.
 		*
-		* @param {enyo.DataList} list The list to perform this action on.
+		* @param {enyo.DataList} list - The list to perform this action on.
 		* @private
 		*/
 		rendered: function (list) {
@@ -264,8 +264,8 @@
 		/**
 		* Attempts to scroll to the given index.
 		*
-		* @param {enyo.DataList} list The list to perform this action on.
-		* @param {Number} i The index to scroll to.
+		* @param {enyo.DataList} list - The list to perform this action on.
+		* @param {Number} i - The index to scroll to.
 		* @private
 		*/
 		scrollToIndex: function (list, i) {

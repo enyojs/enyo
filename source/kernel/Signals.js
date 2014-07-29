@@ -90,9 +90,9 @@
 			/**
 			* Broadcasts a global message to be consumed by subscribers.
 			* 
-			* @param {String} msg The message to send; usually the name of the 
+			* @param {String} msg - The message to send; usually the name of the
 			*	[event]{@glossary event}.
-			* @param {Object} load An [object]{@glossary Object} containing any
+			* @param {Object} load - An [object]{@glossary Object} containing any
 			*	associated event properties to be accessed by subscribers.
 			* @public
 			*/

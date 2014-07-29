@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.Select_ implements an HTML [selection]{@glossary select} widget, using 
+	* `enyo.Select` implements an HTML [selection]{@glossary select} widget, using
 	* {@link enyo.Option} [kinds]{@glossary kind} by default.
 	*
 	* ```
@@ -133,7 +133,7 @@
 	});
 
 	/**
-	* _enyo.Option_ implements the [options]{@glossary option} in a 
+	* `enyo.Option` implements the [options]{@glossary option} in a
 	* [select]{@glossary select} [control]{@link enyo.Control}.
 	*
 	* @class enyo.Option
@@ -204,7 +204,7 @@
 	});
 
 	/**
-	* _enyo.OptionGroup_ allows for the [grouping]{@glossary optgroup} of 
+	* `enyo.OptionGroup` allows for the [grouping]{@glossary optgroup} of
 	* [options]{@link enyo.Option} in a [select]{@link enyo.Select} [control]{@link enyo.Control}, 
 	* and for the disabling of blocks of [options]{@link enyo.Option}.
 	*

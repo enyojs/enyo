@@ -101,7 +101,7 @@
 		* controller's [renderTarget]{@link enyo.ViewController#renderTarget}. If
 		* the view is already rendered, this method will do nothing.
 		*
-		* @param {String} [target] When specified, this value will be used instead of
+		* @param {String} [target] - When specified, this value will be used instead of
 		*	[renderTarget]{@link enyo.ViewController#renderTarget}.
 		* @public
 		*/
@@ -124,7 +124,7 @@
 		* [renderTarget]{@link enyo.ViewController#renderTarget} property to
 		* `target`.
 		*
-		* @param {String} target Where the view will be rendered into.
+		* @param {String} target - Where the view will be rendered into.
 		* @public
 		*/
 		renderInto: function (target) {

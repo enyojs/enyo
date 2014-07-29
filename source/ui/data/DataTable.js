@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.DataTable_ enables the creation of data-driven tables. 
-	* Along with [_enyo.Table_]{@link enyo.Table}, this is a work in progress.
+	* `enyo.DataTable` enables the creation of data-driven tables.
+	* Along with [`enyo.Table`]{@link enyo.Table}, this is a work in progress.
 	*
 	* @ui
 	* @class enyo.DataTable

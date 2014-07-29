@@ -62,7 +62,7 @@
 	*/
 
 	/**
-	* _enyo.Selection_ is used to manage row selection state for lists. It provides selection state 
+	* `enyo.Selection` is used to manage row selection state for lists. It provides selection state
 	* management for both single-select and multi-select lists.
 	*
 	* ```javascript
@@ -173,7 +173,7 @@
 		/**
 		* Determines whether a particular row is selected.
 		*
-		* @param {Number|String} key The unique identifier of the row.
+		* @param {Number|String} key - The unique identifier of the row.
 		* @returns {Boolean} Returns `true` if the specified row is selected, `false` otherwise.
 		* @public
 		*/
@@ -184,10 +184,10 @@
 		/**
 		* Manually sets a row's state to selected or unselected.
 		*
-		* @param {Number|String} key The unique identifier of the row.
-		* @param {Boolean} sel Is `true` if the row should be selected, `false` if the row should be
+		* @param {Number|String} key - The unique identifier of the row.
+		* @param {Boolean} sel - Is `true` if the row should be selected, `false` if the row should be
 		*	unselected.
-		* @param {Object} [data] An optional data [object]{@glossary Object} to store in the 
+		* @param {Object} [data] - An optional data [object]{@glossary Object} to store in the
 		*	selection for the key that will be sent with the 
 		*	[onSelect]{@link enyo.Selection#onSelect} or 
 		*	[onDeselect]{@link enyo.Selection#onDeselect} [events]{@glossary event}. If
@@ -211,7 +211,7 @@
 		/**
 		* Deselects a row.
 		*
-		* @param {Number|String} key The unique identifier of the row.
+		* @param {Number|String} key - The unique identifier of the row.
 		* @public
 		*/
 		deselect: function(key) {
@@ -224,8 +224,8 @@
 		* Selects a row. If the [multi]{@link enyo.Selection#multi} property is set to `false`, 
 		* _select_ will also deselect the previous [selection]{@link enyo.Selection}.
 		*
-		* @param {Number|String} key The unique identifier of the row.
-		* @param {Object} [data] An optional data [object]{@glossary Object} to store in the 
+		* @param {Number|String} key - The unique identifier of the row.
+		* @param {Object} [data] - An optional data [object]{@glossary Object} to store in the
 		*	selection for the key that will be sent with the 
 		*	[onSelect]{@link enyo.Selection#onSelect} or 
 		*	[onDeselect]{@link enyo.Selection#onDeselect} [events]{@glossary event}. If
@@ -247,8 +247,8 @@
 		* [selection]{@link enyo.Selection} on will deselect the previous 
 		* [selection]{@link enyo.Selection}.
 		*
-		* @param {Number|String} key The unique identifier of the row.
-		* @param {Object} [data] An optional data [object]{@glossary Object} to store in the 
+		* @param {Number|String} key - The unique identifier of the row.
+		* @param {Object} [data] - An optional data [object]{@glossary Object} to store in the
 		*	selection for the key that will be sent with the 
 		*	[onSelect]{@link enyo.Selection#onSelect} or 
 		*	[onDeselect]{@link enyo.Selection#onDeselect} [events]{@glossary event}. If
@@ -280,7 +280,7 @@
 		* selected, it will be unselected.  Any rows above this row will have their keys value 
 		* reduced by one.
 		*
-		* @param {Number|String} key The unique identifier of the row.
+		* @param {Number|String} key - The unique identifier of the row.
 		* @public
 		*/
 		remove: function(key) {

@@ -938,7 +938,7 @@
 		* Retrieves the relation instance for a given key
 		* ([attribute]{@link enyo.Model#attributes}).
 		*
-		* @param {String} key The key as defined in the
+		* @param {String} key - The key as defined in the
 		*	[relations]{@link enyo.RelationalModel#relations} property.
 		* @returns {(Relation|undefined)} The correct relation instance, or
 		* `undefined` if not found.
@@ -953,7 +953,7 @@
 		/**
 		* Determines whether the requested key is the name of a relation.
 		*
-		* @param {String} key The key as defined in the
+		* @param {String} key - The key as defined in the
 		*	[relations]{@link enyo.RelationalModel#relations} property.
 		* @returns {(Relation|undefined)} The correct relation instance, or
 		* `undefined` if not found.

@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.DataGridList_ is a paginated {@link enyo.DataList} designed to lay out its children in a 
+	* `enyo.DataGridList` is a paginated {@link enyo.DataList} designed to lay out its children in a
 	* grid. Like {@link enyo.DataList}, it links its children directly to the underlying record in 
 	* the collection set as its collection.
 	* 
@@ -9,7 +9,7 @@
 	* [_spacing_]{@link enyo.DataGridList#spacing}, [_minWidth_]{@link enyo.DataGridList#minWidth}, 
 	* [_minHeight_]{@link enyo.DataGridList#minHeight}).
 	* 
-	* Note that _enyo.DataGridList_ will attempt to grow or shrink the size of its children in order
+	* Note that `enyo.DataGridList` will attempt to grow or shrink the size of its children in order
 	* to keep them evenly spaced.
 	*
 	* @ui
@@ -111,7 +111,7 @@
 				var len = this.collection? this.collection.length: 0;
 				if (this.$.scroller.generated && len && this.showing) {
 					// avoid the default handler and call the event handler method
-					// designated by _enyo.DataList_
+					// designated by `enyo.DataList`
 					this.didResize();
 				}
 			};

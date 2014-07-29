@@ -14,7 +14,7 @@
 	* @name $L
 	* @scope global
 	* @type {Function}
-	* @param {String} str The {@glossary String} to translate.
+	* @param {String} str - The {@glossary String} to translate.
 	* @returns {String} The translated {@glossary String}.
 	* @public
 	*/

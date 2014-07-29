@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.BaseLayout_ provides a basic [layout]{@glossary layout} strategy, positioning 
+	* `enyo.BaseLayout` provides a basic [layout]{@glossary layout} strategy, positioning
 	* contained [components]{@link enyo.Component} with the `enyo-positioned` 
 	* [layoutClass]{@link enyo.BaseLayout#layoutClass}. In addition, it adjusts the 
 	* [layout]{@glossary layout} when [reflow]{@link enyo.BaseLayout#reflow} is called, 

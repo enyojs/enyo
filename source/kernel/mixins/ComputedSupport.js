@@ -79,7 +79,7 @@
 		* Primarily intended for internal use, this method determines whether the
 		* given path is a known [computed property]{@glossary "computed property"}.
 		*
-		* @param {String} path The property or path to test.
+		* @param {String} path - The property or path to test.
 		* @returns {Boolean} Whether or not the `path` is a
 		*	[computed property]{@glossary "computed property"}.
 		* @public
@@ -94,7 +94,7 @@
 		* given path is a known dependency of a
 		* [computed property]{@glossary "computed property"}.
 		*
-		* @param {String} path The property or path to test.
+		* @param {String} path - The property or path to test.
 		* @returns {Boolean} Whether or not the `path` is a dependency of a
 		*	[computed property]{@glossary "computed property"}.
 		* @public

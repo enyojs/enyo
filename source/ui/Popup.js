@@ -24,7 +24,7 @@
 	*/
 
 	/**
-	* _enyo.Popup_ is a [control]{@link enyo.Control} used to display certain content on top of 
+	* `enyo.Popup` is a [control]{@link enyo.Control} used to display certain content on top of
 	* other content.
 	* 
 	* [Popups]{@link enyo.Popup} are initially hidden on creation; they can be shown by calling the 
@@ -501,8 +501,8 @@
 		* display outside the viewport, and defaults to anchoring the top left corner of the 
 		* [popup]{@link enyo.Popup} to the mouse [event]{@glossary event}.
 		* 
-		* @param {Object} e The mouse [event]{@glossary event} that initiated this call.
-		* @param {Object} [offset] An optional [object]{@glossary Object} which may contain 
+		* @param {Object} e - The mouse [event]{@glossary event} that initiated this call.
+		* @param {Object} [offset] - An optional [object]{@glossary Object} which may contain
 		*	`left` and `top` properties to specify an _offset_ relative to the location the
 		*	[popup]{@link enyo.Popup} would otherwise be positioned.
 		* @public
@@ -526,7 +526,7 @@
 		* [popup]{@link enyo.Popup} will be automatically constrained so that it does not display 
 		* outside the viewport.
 		* 
-		* @param {Object} pos An [object]{@glossary Object} which may contain left, top, bottom,
+		* @param {Object} pos - An [object]{@glossary Object} which may contain left, top, bottom,
 		*	and right properties to specify where the [popup]{@link enyo.Popup} will be anchored. If 
 		*	both left and right are included, the [popup]{@link enyo.Popup} will have a preference 
 		*	of anchoring to the left (likewise, the preference will be for the top if both top and

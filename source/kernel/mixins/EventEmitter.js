@@ -148,9 +148,9 @@
 		* Adds an event listener. Until [removed]{@link enyo.EventEmitter.off}, this
 		* listener will fire every time the event is [emitted]{@link enyo.EventEmitter.emit}.
 		*
-		* @param {String} e The event name to register for.
-		* @param {Function} fn The listener.
-		* @param {Object} [ctx] The optional context under which to execute the listener.
+		* @param {String} e - The event name to register for.
+		* @param {Function} fn - The listener.
+		* @param {Object} [ctx] - The optional context under which to execute the listener.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -170,9 +170,9 @@
 		/**
 		* Removes an event listener.
 		*
-		* @param {String} e The event name.
-		* @param {Function} fn The listener to unregister.
-		* @param {Object} [ctx] If the listener was registered with a context, it
+		* @param {String} e - The event name.
+		* @param {Function} fn - The listener to unregister.
+		* @param {Object} [ctx] - If the listener was registered with a context, it
 		* should be provided when unregistering as well.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -184,7 +184,7 @@
 		/**
 		* Removes all listeners, or all listeners for a given event.
 		*
-		* @param {String} [e] The optional target event.
+		* @param {String} [e] - The optional target event.
 		* @returns {this} The callee for chaining.
 		*/
 		removeAllListeners: function (e) {
@@ -208,7 +208,7 @@
 		* Primarily intended for internal use, this method returns an immutable copy
 		* of all listeners, or all listeners for a particular event (if any).
 		*
-		* @param {String} [e] The targeted event.
+		* @param {String} [e] - The targeted event.
 		* @returns {Object[]} Event listeners are stored in [hashes]{@glossary Object}.
 		*	The return value will be an [array]{@glossary Array} of these hashes
 		* if any listeners exist.
@@ -235,7 +235,7 @@
 		/**
 		* Emits the named event. All subsequent arguments will be passed to the event listeners.
 		*
-		* @param {String} e The event to emit.
+		* @param {String} e - The event to emit.
 		* @param {...*} args All subsequent arguments will be passed to the event listeners.
 		* @returns {Boolean} Whether or not any listeners were notified.
 		* @public

@@ -96,7 +96,7 @@
 		/**
 		* Extends the instance with the given properties.
 		*
-		* @param {Object} props The property [hash]{@glossary Object} from which to extend
+		* @param {Object} props - The property [hash]{@glossary Object} from which to extend
 		*	the callee.
 		*/
 		extend: function (props) {

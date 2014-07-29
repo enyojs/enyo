@@ -72,10 +72,10 @@
 		* level is higher than this job's priority, this job gets deferred until the
 		* job level drops; if it is lower, this job is run immediately.
 		*
-		* @param {Function} job The actual {@glossary Function} to execute as the
+		* @param {Function} job - The actual {@glossary Function} to execute as the
 		* [job]{@link enyo.job}.
-		* @param {Number} priority The priority of the job.
-		* @param {String} nom The name of the job for later reference.
+		* @param {Number} priority - The priority of the job.
+		* @param {String} nom - The name of the job for later reference.
 		* @public
 		*/
 		add: function (job, priority, nom) {
@@ -102,7 +102,7 @@
 		/**
 		* Will remove the named [job]{@link enyo.job} from the queue.
 		*
-		* @param {String} nom The name of the [job]{@link enyo.job} to remove.
+		* @param {String} nom - The name of the [job]{@link enyo.job} to remove.
 		* @returns {Array} An {@glossary Array} that will contain the removed job if
 		* it was found, or empty if it was not found.
 		* @public
@@ -123,8 +123,8 @@
 		* highest current priority, the priority level rises. Newly added jobs below that priority
 		* level are deferred until the priority is removed (i.e., unregistered).
 		*
-		* @param {Number} priority The priority value to register.
-		* @param {String} id The name of the priority.
+		* @param {Number} priority - The priority value to register.
+		* @param {String} id - The name of the priority.
 		* @public
 		*/
 		registerPriority: function(priority, id) {
@@ -137,7 +137,7 @@
 		* highest priority, the priority level drops to the next highest priority
 		* and queued jobs with a higher priority are executed.
 		*
-		* @param {String} id The name of the priority level to remove.
+		* @param {String} id - The name of the priority level to remove.
 		* @public
 		*/
 		unregisterPriority: function (id) {

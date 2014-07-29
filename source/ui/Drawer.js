@@ -30,7 +30,7 @@
 	*/
 
 	/**
-	* _enyo.Drawer_ is a control that appears or disappears based on its 
+	* `enyo.Drawer` is a control that appears or disappears based on its
 	* [open]{@link enyo.Drawer#open} property. By default, the [drawer]{@link enyo.Drawer} appears 
 	* or disappears with a sliding animation whose direction is determined by the 
 	* [orient]{@link enyo.Drawer#orient} property.

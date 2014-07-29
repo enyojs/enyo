@@ -123,7 +123,7 @@
 		/**
 		* Sets the horizontal scroll position.
 		*
-		* @param {Number} left The horizontal scroll position in pixels.
+		* @param {Number} left - The horizontal scroll position in pixels.
 		* @method
 		* @public
 		*/
@@ -143,7 +143,7 @@
 		/**
 		* Sets the vertical scroll position.
 		*
-		* @param {Number} top The vertical scroll position in pixels.
+		* @param {Number} top - The vertical scroll position in pixels.
 		* @method
 		* @public
 		*/

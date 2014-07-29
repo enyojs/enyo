@@ -22,7 +22,7 @@
 	*/
 
 	/**
-	* _enyo.Repeater_ is a simple [control]{@link enyo.Control} for making lists of items.
+	* `enyo.Repeater` is a simple [control]{@link enyo.Control} for making lists of items.
 	* 
 	* The [components]{@link enyo.Component} of a [repeater]{@link enyo.Repeater} are copied for 
 	* each item created, and are wrapped in a [control]{@link enyo.Control} that keeps the state of 
@@ -149,7 +149,7 @@
 		* the item, but just calls the `onSetupItem` [event]{@glossary event} handler again for
 		* it, so any state stored in the item is preserved.
 		*
-		* @param {Number} idx The index of the item to render.
+		* @param {Number} idx - The index of the item to render.
 		* @fires enyo.Repeater#onSetupItem
 		* @public
 		*/

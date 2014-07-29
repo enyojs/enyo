@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.Button_ implements an HTML [button]{@glossary button}, with support for grouping 
+	* `enyo.Button` implements an HTML [button]{@glossary button}, with support for grouping
 	* using {@link enyo.Group}.
 	*
 	* For more information, see the documentation on

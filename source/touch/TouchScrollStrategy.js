@@ -390,7 +390,7 @@
 		*
 		* @todo Doc update made while merging, need official documentation update!
 		*
-		* @param {Boolean} emit Whether or not to fire the `onScrollStop` event.
+		* @param {Boolean} emit - Whether or not to fire the `onScrollStop` event.
 		* @public
 		*/
 		stop: function (emit) {
@@ -414,8 +414,8 @@
 		/** 
 		* Scrolls to a specific position within the scroll area.
 		*
-		* @param {Number} x The `x` position in pixels.
-		* @param {Number} y The `y` position in pixels.
+		* @param {Number} x - The `x` position in pixels.
+		* @param {Number} y - The `y` position in pixels.
 		* @public
 		*/
 		scrollTo: function (x, y) {
@@ -426,9 +426,9 @@
 		/**
 		* Scrolls the given [control]{@link enyo.Control} into view.
 		*
-		* @param {enyo.Control} ctl The [control]{@link enyo.Control} to make visible in the 
+		* @param {enyo.Control} ctl - The [control]{@link enyo.Control} to make visible in the
 		*	[scroller's]{@link enyo.Scroller} viewport.
-		* @param {Boolean} alignWithTop If `true`, the node is aligned with the top of the
+		* @param {Boolean} alignWithTop - If `true`, the node is aligned with the top of the
 		*	scroller.
 		* @method
 		* @public
@@ -443,7 +443,7 @@
 		/**
 		* Sets the horizontal scroll position.
 		*
-		* @param {Number} left The horizontal scroll position in pixels.
+		* @param {Number} left - The horizontal scroll position in pixels.
 		* @method
 		* @public
 		*/
@@ -457,7 +457,7 @@
 		/**
 		* Sets the vertical scroll position.
 		*
-		* @param {Number} top The vertical scroll position in pixels.
+		* @param {Number} top - The vertical scroll position in pixels.
 		* @method
 		* @public
 		*/

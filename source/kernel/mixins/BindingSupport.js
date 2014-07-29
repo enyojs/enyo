@@ -66,7 +66,7 @@
 		* Removes and [destroys]{@link enyo.Binding#destroy} all of, or a subset of,
 		* the [bindings]{@link enyo.Binding} belonging to the callee.
 		*
-		* @param {enyo.Binding[]} [subset] The optional [array]{@glossary Array} of
+		* @param {enyo.Binding[]} [subset] - The optional [array]{@glossary Array} of
 		*	[bindings]{@link enyo.Binding} to remove.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -88,7 +88,7 @@
 		* It should be noted that when a binding is destroyed, it is automatically
 		* removed from its owner.
 		*
-		* @param {enyo.Binding} binding The {@link enyo.Binding} instance to remove.
+		* @param {enyo.Binding} binding - The {@link enyo.Binding} instance to remove.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/

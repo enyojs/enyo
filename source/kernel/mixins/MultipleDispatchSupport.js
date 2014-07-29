@@ -20,7 +20,7 @@
 		/**
 		* Adds a target for dispatching.
 		*
-		* @param {enyo.Component} component The {@link enyo.Component} to add as a dispatch target.
+		* @param {enyo.Component} component - The {@link enyo.Component} to add as a dispatch target.
 		* @public
 		*/
 		addDispatchTarget: function (component) {
@@ -32,7 +32,7 @@
 		/**
 		* Removes a target from dispatching.
 		*
-		* @param {enyo.Component} component The {@link enyo.Component} to remove as a dispatch
+		* @param {enyo.Component} component - The {@link enyo.Component} to remove as a dispatch
 		*	target.
 		* @public
 		*/

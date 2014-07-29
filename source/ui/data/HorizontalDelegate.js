@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
 	* This is a [delegate]{@glossary delegate} (strategy) used by 
-	* [_enyo.DataList_]{@link enyo.DataList} for horizontally orientedlists. This is used by all 
+	* [`enyo.DataList`]{@link enyo.DataList} for horizontally orientedlists. This is used by all
 	* lists for this strategy and does not get copied but called directly from the list.
 	*
 	* Note that this is best off of the _vertical_ delegate and overloads only what is necessary 

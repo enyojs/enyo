@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.DataRepeater_ iterates over the items in an {@link enyo.Collection} to repeatedly render
+	* `enyo.DataRepeater` iterates over the items in an {@link enyo.Collection} to repeatedly render
 	* and synchronize records (instances of {@link enyo.Model}) to its own children. For any record
 	* in the [collection]{@link enyo.Collection}, a new child will be rendered in this repeater. If 
 	* the record is destroyed, the child will be destroyed. These [controls]{@link enyo.Control} 
@@ -232,7 +232,7 @@
 		/**
 		* Refreshes each [control]{@link enyo.Control} in the dataset.
 		*
-		* @param {Boolean} immediate If `true`, _refresh_ will occur immediately, otherwise it will
+		* @param {Boolean} immediate - If `true`, _refresh_ will occur immediately, otherwise it will
 		*	be queued up as a job.
 		* @public
 		*/
@@ -279,8 +279,8 @@
 		/**
 		* Add a [record]{@link enyo.Model} at a particular index.
 		* 
-		* @param {enyo.Model} rec The [record]{@link enyo.Model} to add.
-		* @param {Number} idx The index at which the [record]{@link enyo.Model} should be added.
+		* @param {enyo.Model} rec - The [record]{@link enyo.Model} to add.
+		* @param {Number} idx - The index at which the [record]{@link enyo.Model} should be added.
 		* @public
 		*/
 		add: function (rec, idx) {
@@ -293,7 +293,7 @@
 		/**
 		* Remove the [record]{@link enyo.Model} at a particular index.
 		*
-		* @param {Number} idx The index of the [record]{@link enyo.Model} to be removed.
+		* @param {Number} idx - The index of the [record]{@link enyo.Model} to be removed.
 		* @public
 		*/
 		remove: function (idx) {
@@ -445,7 +445,7 @@
 		/**
 		* Calls [_childForIndex()_]{@link enyo.DataRepeater#getChildForIndex}, leaving for posterity.
 		*
-		* @param {Number} idx The index of the child to retrieve.
+		* @param {Number} idx - The index of the child to retrieve.
 		* @returns {enyo.Control|undefined} Returns the [control]{@link enyo.Control} or `undefined`
 		*	if it could not be found or the index of out of bounds.
 		* @public
@@ -457,7 +457,7 @@
 		/**
 		* Attempts to return the [control]{@link enyo.Control} representation at a particular index.
 		*
-		* @param {Number} idx The index of the child to retrieve.
+		* @param {Number} idx - The index of the child to retrieve.
 		* @returns {enyo.Control|undefined} Returns the [control]{@link enyo.Control} or `undefined`
 		*	if it could not be found or the index of out of bounds.
 		* @public
@@ -520,7 +520,7 @@
 		/**
 		* Selects the item at the given index.
 		*
-		* @param {Number} idx The index of the item to select.
+		* @param {Number} idx - The index of the item to select.
 		* @public
 		*/
 		select: function (idx) {
@@ -530,7 +530,7 @@
 		/**
 		* De-selects the item at the given index.
 		*
-		* @param {Number} idx The index of the item to deselect.
+		* @param {Number} idx - The index of the item to deselect.
 		* @public
 		*/
 		deselect: function (idx) {
@@ -540,7 +540,7 @@
 		/**
 		* Determines whether a [model]{@link enyo.Model} is currently selected.
 		*
-		* @param {enyo.Model} model The model whose selection status is to be determined.
+		* @param {enyo.Model} model - The model whose selection status is to be determined.
 		* @returns {Boolean} Returns `true` if the given [model]{@link enyo.Model} is selected,
 		*	`false` otherwise.
 		* @public

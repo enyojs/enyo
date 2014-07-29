@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.Style_ is a wrapper for a [style]{@glossary style} tag, which automatically wraps 
+	* `enyo.Style` is a wrapper for a [style]{@glossary style} tag, which automatically wraps
 	* the [content]{@link enyo.Control#content} property in proper CSS commented format.
 	*
 	* @class enyo.Style

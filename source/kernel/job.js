@@ -14,10 +14,10 @@
 	*	enyo.job("updateThumb", this.bindSafely("updateThumb"), 1000);
 	* }
 	*
-	* @param {String} nom The name of the [job]{@link enyo.job} to throttle.
-	* @param {(Function|String)} job Either the name of a method or a [function]{@glossary Function} 
+	* @param {String} nom - The name of the [job]{@link enyo.job} to throttle.
+	* @param {(Function|String)} job - Either the name of a method or a [function]{@glossary Function}
 	*                                to execute as the requested job.
-	* @param {Number} wait The number of milliseconds to wait before executing the job again.
+	* @param {Number} wait - The number of milliseconds to wait before executing the job again.
 	* @static
 	* @public
 	*/
@@ -32,7 +32,7 @@
 	/**
 	* Cancels the named [job]{@link enyo.job}, if it has not already fired.
 	*
-	* @param {String} nom The name of the [job]{@link enyo.job} to cancel.
+	* @param {String} nom - The name of the [job]{@link enyo.job} to cancel.
 	* @static
 	* @public
 	*/
@@ -52,10 +52,10 @@
 	* immediate response, but later invocations might just be noise if they arrive
 	* too often.
 	* 
-	* @param {String} nom The name of the [job]{@link enyo.job} to throttle.
-	* @param {(Function|String)} job Either the name of a method or a [function]{@glossary Function} 
+	* @param {String} nom - The name of the [job]{@link enyo.job} to throttle.
+	* @param {(Function|String)} job - Either the name of a method or a [function]{@glossary Function}
 	*                                to execute as the requested job.
-	* @param {Number} wait The number of milliseconds to wait before executing the
+	* @param {Number} wait - The number of milliseconds to wait before executing the
 	*                      job again.
 	* @static
 	* @public

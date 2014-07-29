@@ -186,7 +186,7 @@
 		* [string]{@link exteral:String} to be applied to each of the position/size
 		* assignments.
 		*
-		* @param {Object} bounds An [object]{@glossary Object}, optionally
+		* @param {Object} bounds - An [object]{@glossary Object}, optionally
 		* containing one or more of the following properties: `width`, `height`,
 		* `top`, `right`, `bottom`, and `left`.
 		* @param {String} [unit='px']
@@ -302,7 +302,7 @@
 		* [hash]{@glossary Object}, from its cache of node attributes, or, if it has
 		* yet to be cached, from the [node]{@glossary Node} itself.
 		*
-		* @param {String} name The attribute name to get.
+		* @param {String} name - The attribute name to get.
 		* @returns {(String|Null)} The value of the requested attribute, or `null`
 		* if there isn't a [DOM node]{@glossary Node} yet.
 		* @public
@@ -331,8 +331,8 @@
 		* `name` a value of `null`, `false`, or the empty string `("")` will remove
 		* the attribute from the node altogether.
 		*
-		* @param {String} name Attribute name to assign/remove.
-		* @param {(String|Number|null)} value The value to assign to `name`
+		* @param {String} name - Attribute name to assign/remove.
+		* @param {(String|Number|null)} value - The value to assign to `name`
 		* @returns {this} Callee for chaining.
 		* @public
 		*/
@@ -358,8 +358,8 @@
 		* Reads the `name` property directly from the [node]{@glossary Node}. You
 		* may provide a default (`def`) to use if there is no node yet.
 		*
-		* @param {String} name The [node]{@glossary Node} property name to get.
-		* @param {*} def The default value to apply if there is no node.
+		* @param {String} name - The [node]{@glossary Node} property name to get.
+		* @param {*} def - The default value to apply if there is no node.
 		* @returns {String} The value of the `name` property, or `def` if the node
 		* was not available.
 		* @public
@@ -371,8 +371,8 @@
 		/**
 		* Sets the value of a property (`name`) directly on the [node]{@glossary Node}.
 		*
-		* @param {String} name The [node]{@glossary Node} property name to set.
-		* @param {*} value The value to assign to the property.
+		* @param {String} name - The [node]{@glossary Node} property name to set.
+		* @param {*} value - The value to assign to the property.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -384,7 +384,7 @@
 		/**
 		* Appends additional content to this control.
 		*
-		* @param {String} content The new string to add to the end of the `content`
+		* @param {String} content - The new string to add to the end of the `content`
 		* property.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -401,7 +401,7 @@
 		/**
 		* Determines whether this control has the class `name`.
 		*
-		* @param {String} name The name of the class (or classes) to check for.
+		* @param {String} name - The name of the class (or classes) to check for.
 		* @returns {Boolean} Whether the control has the class `name`.
 		* @public
 		*/
@@ -412,7 +412,7 @@
 		/**
 		* Adds the specified class to this control's list of classes.
 		*
-		* @param {String} name The name of the class to add.
+		* @param {String} name - The name of the class to add.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -438,7 +438,7 @@
 		* class names into this method. Instead, call the method once for each class
 		* name that you want to remove.**
 		*
-		* @param {String} name The name of the class to remove.
+		* @param {String} name - The name of the class to remove.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -456,8 +456,8 @@
 		* Adds or removes the specified class conditionally, based on the state
 		* of the `add` argument.
 		*
-		* @param {String} name The name of the class to add or remove.
-		* @param {Boolean} add If `true`, `name` will be added as a class; if
+		* @param {String} name - The name of the class to add or remove.
+		* @param {Boolean} add - If `true`, `name` will be added as a class; if
 		* `false`, it will be removed.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -498,8 +498,8 @@
 		* the desired value. Setting `value` to `null` will remove the CSS property
 		* `prop` altogether.
 		*
-		* @param {String} prop The CSS property to assign.
-		* @param {(String|Number|null|undefined)} value The value to assign to
+		* @param {String} prop - The CSS property to assign.
+		* @param {(String|Number|null|undefined)} value - The value to assign to
 		* `prop`. Setting a value of `null`, `undefined`, or the empty string `("")`
 		* will remove the property `prop` from the control.
 		* @returns {this} Callee for chaining.
@@ -566,7 +566,7 @@
 		* Allows the addition of several CSS properties and values at once, via a
 		* single string, similar to how the HTML `style` attribute works.
 		*
-		* @param {String} css A string containing one or more valid CSS styles.
+		* @param {String} css - A string containing one or more valid CSS styles.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -611,8 +611,8 @@
 		* the "computed" value. If the control isn't been rendered yet, and you need
 		* a default value (such as `0`), include it in the arguments as `def`.
 		*
-		* @param {String} prop The property name to get.
-		* @param {*} [def] An optional default value, in case the control isn't
+		* @param {String} prop - The property name to get.
+		* @param {*} [def] - An optional default value, in case the control isn't
 		* rendered yet.
 		* @returns {(String|Number)} The computed value of `prop`, as the browser
 		* sees it.
@@ -698,7 +698,7 @@
 		/**
 		* Returns true if this control and all parents are showing.
 		*
-		* @param {Boolean} ignoreBounds If `true`, it will not force a layout by retrieving
+		* @param {Boolean} ignoreBounds - If `true`, it will not force a layout by retrieving
 		*	computed bounds and rely on the return from {@link enyo.Control.showing} exclusively.
 		* @returns {Boolean} Indicates whether the control is showing (visible).
 		* @public
@@ -854,7 +854,7 @@
 		* [DOM node]{@glossary Node}. This will replace any existing nodes in the
 		* target `parentNode`.
 		*
-		* @param {Node} parentNode The new parent of this control.
+		* @param {Node} parentNode - The new parent of this control.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/

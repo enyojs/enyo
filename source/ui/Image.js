@@ -24,7 +24,7 @@
 	*/
 
 	/**
-	* _enyo.Image_ implements an HTML [&lt;img&gt;]{@glossary img} element and, optionally, 
+	* `enyo.Image` implements an HTML [&lt;img&gt;]{@glossary img} element and, optionally,
 	* [bubbles]{@link enyo.Component#bubble} the [onload]{@link enyo.Image#onload} and
 	* [onerror]{@link enyo.Image#onerror} [events]{@glossary event}. Image dragging is
 	* suppressed by default, so as not to interfere with touch interfaces.

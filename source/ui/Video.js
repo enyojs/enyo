@@ -100,7 +100,7 @@
 	*/
 
 	/**
-	* _enyo.Video_ is a [control]{@link enyo.Control} that allows you to play video. It is an
+	* `enyo.Video` is a [control]{@link enyo.Control} that allows you to play video. It is an
 	* abstraction of HTML 5 [Video]{@glossary video}.
 	* 
 	* Initialize a [video]{@link enyo.Video} [component]{@link enyo.Component} as follows:
@@ -690,7 +690,7 @@
 		* Sets the playback rate type (from the [keys]{@glossary Object.keys} of 
 		* [playbackRateHash]{@link enyo.Video#playbackRateHash}).
 		*
-		* @param {String} cmd Key of the playback rate type.
+		* @param {String} cmd - Key of the playback rate type.
 		* @public
 		*/
 		selectPlaybackRateArray: function(cmd) {
@@ -701,7 +701,7 @@
 		* Changes [playbackRate]{@link enyo.Video#playbackRate} to a valid value when initiating 
 		* fast forward or rewind.
 		*
-		* @param {Number} idx The index of the desired playback rate.
+		* @param {Number} idx - The index of the desired playback rate.
 		* @public
 		*/
 		clampPlaybackRate: function(idx) {
@@ -715,7 +715,7 @@
 		/**
 		* Retrieve the playback rate name.
 		*
-		* @param {Number} idx The index of the desired playback rate.
+		* @param {Number} idx - The index of the desired playback rate.
 		* @returns {String} The playback rate name.
 		* @public
 		*/
@@ -726,7 +726,7 @@
 		/**
 		* Sets [playbackRate]{@link enyo.Video#playbackRate}.
 		* 
-		* @param {String} rate The desired playback rate.
+		* @param {String} rate - The desired playback rate.
 		* @public
 		*/
 		setPlaybackRate: function(rate) {
@@ -789,7 +789,7 @@
 		/**
 		* Sets the current player position in the [video]{@link enyo.Video}.
 		*
-		* @param {Number} time The number of seconds to set the current player position to.
+		* @param {Number} time - The number of seconds to set the current player position to.
 		* @public
 		*/
 		setCurrentTime: function(time) {

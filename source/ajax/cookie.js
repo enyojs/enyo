@@ -19,7 +19,7 @@
 	* Retrieves the given [cookie]{@glossary cookie} from
 	* [document.cookie]{@glossary document.cookie}.
 	*
-	* @param {String} nom The name of the cookie to retrieve.
+	* @param {String} nom - The name of the cookie to retrieve.
 	* @returns {(String|undefined)} The [decoded]{@glossary decodeURIComponent} cookie, or
 	*	`undefined` if it could not be retrieved.
 	* @public
@@ -40,8 +40,8 @@
 	* application, Chrome must be started from the command line with the
 	* `--enable-file-cookies` switch to allow cookies to be set.
 	*
-	* @param {String} nom The name of the cookie.
-	* @param {*} value The value to be [encoded]{@glossary encodeURIComponent} for storage.
+	* @param {String} nom - The name of the cookie.
+	* @param {*} value - The value to be [encoded]{@glossary encodeURIComponent} for storage.
 	* @param {enyo~CookieProperties} [props] The optional configuration properties to apply to
 	*	the cookie.
 	* @public

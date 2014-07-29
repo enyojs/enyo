@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.Sprite_ is a basic animation [component]{@link enyo.Component}. Call _play()_ to start
+	* `enyo.Sprite` is a basic animation [component]{@link enyo.Component}. Call _play()_ to start
 	* the animation. The animation will run for the period of time (in milliseconds) specified by 
 	* its [duration]{@link enyo.SpriteAnimation#duration}.
 	*

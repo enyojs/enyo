@@ -103,7 +103,7 @@
 		* Creates a new [benchmark]{@link enyo.dev.Benchmark} test with the given
 		* configuration options.
 		*
-		* @param {enyo.dev.Benchmark~Options} opts The configuration
+		* @param {enyo.dev.Benchmark~Options} opts - The configuration
 		* [options]{@link enyo.dev.Benchmark~Options} to apply to the
 		* [benchmark]{@link enyo.dev.Benchmark}.
 		* @returns {enyo.dev.Benchmark} A Benchmark instance with `start()` and
@@ -121,7 +121,7 @@
 		/**
 		* Shows a report for a given [benchmark]{@link enyo.dev.Benchmark} by name.
 		*
-		* @param {String} name The name of the [benchmark]{@link enyo.dev.Benchmark} to report.
+		* @param {String} name - The name of the [benchmark]{@link enyo.dev.Benchmark} to report.
 		* @public
 		*/
 		report: function (name) {
@@ -151,7 +151,7 @@
 		/**
 		* Removes all stored data related to the named [benchmark]{@link enyo.dev.Benchmark}.
 		*
-		* @param {String} name The name of the [benchmark]{@link enyo.dev.Benchmark} from which to
+		* @param {String} name - The name of the [benchmark]{@link enyo.dev.Benchmark} from which to
 		*	remove stored data.
 		* @public
 		*/

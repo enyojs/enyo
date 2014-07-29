@@ -94,7 +94,7 @@
 		* @see enyo.AjaxProperties
 		* @see enyo.Ajax#xhrResponse
 		* @see enyo.Ajax~xhrResponse
-		* @param {(Object|String)} [params] A [string]{@glossary String} or
+		* @param {(Object|String)} [params] - A [string]{@glossary String} or
 		*	[hash]{@glossary Object} to be used as the query string.
 		* @returns {this} The callee for chaining.
 		* @public

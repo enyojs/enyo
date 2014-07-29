@@ -77,7 +77,7 @@
 		*
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
 		*	[collection]{@link enyo.Collection} to use to derive the `url`.
-		* @param {Object} [opts] The options hash with possible `url` property.
+		* @param {Object} [opts] - The options hash with possible `url` property.
 		* @returns {String} The normalized `url` [string]{@glossary String}.
 		* @method
 		* @public
@@ -138,7 +138,7 @@
 		*
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
 		*	[collection]{@link enyo.Collection} from which to build the `url`.
-		* @param {Object} opts The options [hash]{@glossary Object} passed to
+		* @param {Object} opts - The options [hash]{@glossary Object} passed to
 		*	[buildUrl()]{@link enyo.XHRSource#buildUrl} and possessing `method` and `attributes`
 		*	properties.
 		* @public

@@ -36,7 +36,7 @@
 	*/
 
 	/**
-	* _enyo.Animator_ is a basic animation [component]{@link enyo.Component}.  Call 
+	* `enyo.Animator` is a basic animation [component]{@link enyo.Component}.  Call
 	* [play]{@link enyo.Animator#play} to start the animation. The animation will run for the period 
 	* (in milliseconds) specified by its [duration]{@link enyo.Animator#duration} property. The 
 	* [onStep]{@link enyo.Animator#onStep} [event]{@glossary event} will fire in quick
@@ -173,7 +173,7 @@
 		/** 
 		* Plays the animation.
 		*
-		* @param {Object} props As a convenience, this [hash]{@glossary Object} will be mixed
+		* @param {Object} props - As a convenience, this [hash]{@glossary Object} will be mixed
 		*	directly into this [object]{@glossary Object}.
 		* @public
 		*/

@@ -22,7 +22,7 @@
 	*/
 
 	/**
-	* _enyo.DataList_ is an {@link enyo.DataRepeater} that employs a paginated scrolling scheme to 
+	* `enyo.DataList` is an {@link enyo.DataRepeater} that employs a paginated scrolling scheme to
 	* enhance performance with larger datasets. The data is provided to the 
 	* [DataList]{@link enyo.DataList} by an {@link enyo.Collection} set as the value of its 
 	* [collection]{@link enyo.DataRepeater#collection} property.
@@ -33,7 +33,7 @@
 	* that require lots of calculations each time the data in a view is updated. Try to use CSS 
 	* whenever possible.
 	* 
-	* While paging through data, _enyo.DataList_ emits the 
+	* While paging through data, `enyo.DataList` emits the
 	* [_paging_]{@link enyo.DataList#paging} [event]{@glossary event}, which allows you 
 	* to make updates on a per-page basis, as necessary. You may register for this 
 	* [event]{@glossary event} by calling [_addListener()_]{@link enyo.EventEmitter#addListener}
@@ -58,11 +58,11 @@
 		kind: enyo.DataRepeater,
 
 		/**
-		* _enyo.DataList_ places its rows inside of a [scroller]{@link enyo.Scroller}. Any 
-		* configurable options of [_enyo.Scroller_]{@link enyo.Scroller} may be placed in this 
+		* `enyo.DataList` places its rows inside of a [scroller]{@link enyo.Scroller}. Any
+		* configurable options of [`enyo.Scroller`]{@link enyo.Scroller} may be placed in this
 		* [hash]{@glossary Object}; their values will be set accordingly on this 
 		* [list's]{@link enyo.DataList} [scroller]{@link enyo.Scroller}. If no options are specified,
-		* the default [_enyo.Scroller_]{@link enyo.Scroller} settings are used.
+		* the default [`enyo.Scroller`]{@link enyo.Scroller} settings are used.
 		*
 		* @type {Object}
 		* @default null
@@ -174,7 +174,7 @@
 		* [collection]{@link enyo.DataRepeater#collection} to scroll to the position of that index 
 		* in the [list]{@link enyo.DataList}.
 		*
-		* @param {Number} idx The index in the [lists's]{@link enyo.DataList} 
+		* @param {Number} idx - The index in the [lists's]{@link enyo.DataList}
 		*	[collection]{@link enyo.DataRepeater#collection} to scroll to.
 		* @public
 		*/
@@ -473,7 +473,7 @@
 			this.addRemoveClass('transitions', this.allowTransitions);
 		},
 		/**
-		* [_enyo.DataList_]{@link enyo.DataList} uses an overloaded container from its base 
+		* [`enyo.DataList`]{@link enyo.DataList} uses an overloaded container from its base
 		* [kind]{@glossary kind}. We set the container to a [scroller]{@link enyo.Scroller} and
 		* provide a way to modify the [scroller]{@link enyo.Scroller} options (via the 
 		* [_scrollerOptions_]{@link enyo.DataList#scrollerOptions} [hash]{@link enyo.Object}). All 
@@ -568,7 +568,7 @@
 	});
 
 	/**
-	* All subclasses of [_enyo.DataList_]{@link enyo.DataList} will have their own 
+	* All subclasses of [`enyo.DataList`]{@link enyo.DataList} will have their own
 	* [_delegates_]{@glossary delegate} static [hash]{@glossary Object}. This is per 
 	* [_kind_]{@glossary kind}, not per _instance_.
 	*

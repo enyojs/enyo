@@ -1,9 +1,9 @@
 (function (enyo, scope) {
 	/**
 	* This is a [delegate]{@glossary delegate} (strategy) used by 
-	* [_enyo.DataGridList_]{@link enyo.DataGridList} for vertically oriented lists. This is used by 
+	* [`enyo.DataGridList`]{@link enyo.DataGridList} for vertically oriented lists. This is used by
 	* all lists for this strategy and does not get copied but called directly from the list. It is 
-	* only available to [_enyo.DataGridList_]{@link enyo.DataGridList}.
+	* only available to [`enyo.DataGridList`]{@link enyo.DataGridList}.
 	*
 	* @name enyo.DataGridList.delegates.verticalGrid
 	* @type Object

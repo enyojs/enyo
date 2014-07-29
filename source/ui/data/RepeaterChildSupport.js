@@ -1,9 +1,9 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.RepeaterChildSupport_ contains methods and properties that are automatically applied to 
-	* all children of [_enyo.DataRepeater_]{@link enyo.DataRepeater} to assist in selection support. 
+	* `enyo.RepeaterChildSupport` contains methods and properties that are automatically applied to
+	* all children of [`enyo.DataRepeater`]{@link enyo.DataRepeater} to assist in selection support.
 	* (See {@link enyo.DataRepeater} for details on how to use selection support.) 
-	* _enyo.RepeaterChildSupport_ also adds the _model_, _child_ ([control]{@link enyo.Control} 
+	* `enyo.RepeaterChildSupport` also adds the _model_, _child_ ([control]{@link enyo.Control}
 	* instance), and _index_ properties to all [events]{@glossary event} emitted from the 
 	* repeater's children.
 	*

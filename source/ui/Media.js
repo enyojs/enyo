@@ -346,7 +346,7 @@
 	*/
 
 	/**
-	* _enyo.Media_ implements an HTML5 [Media]{@glossary HTML5MediaElement} element. It is not
+	* `enyo.Media` implements an HTML5 [Media]{@glossary HTML5MediaElement} element. It is not
 	* intended to be used directly, but serves as the base [kind]{@glossary kind} for 
 	* {@link enyo.Audio} and {@link enyo.Video}.
 	*
@@ -869,7 +869,7 @@
 		/**
 		* Calculate the number value of the given playback rate (support for fractions).
 		*
-		* @param {String} rate The playback rate, which can be a fraction, that will be converted to
+		* @param {String} rate - The playback rate, which can be a fraction, that will be converted to
 		*	a numerical value.
 		* @returns {Number} The numerical representation of the playback rate.
 		* @private
@@ -1009,7 +1009,7 @@
 		/**
 		* Seeks to the specified time.
 		*
-		* @param {Number} time The time, in seconds, to seek to.
+		* @param {Number} time - The time, in seconds, to seek to.
 		* @public
 		*/
 		seekTo: function(time) {
@@ -1114,7 +1114,7 @@
 		/** 
 		* Set current player position in the video.
 		*
-		* @param {Number} time The player position, in seconds.
+		* @param {Number} time - The player position, in seconds.
 		* @public
 		*/
 		setCurrentTime: function(time) {

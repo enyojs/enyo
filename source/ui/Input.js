@@ -37,7 +37,7 @@
 	*/
 	
 	/**
-	* _enyo.Input_ implements an HTML [&lt;input&gt;]{@glossary input} element with 
+	* `enyo.Input` implements an HTML [&lt;input&gt;]{@glossary input} element with
 	* cross-platform support for change [events]{@glossary event}.
 	* 
 	* You can listen for [oninput]{@link enyo.Input#oninput} and

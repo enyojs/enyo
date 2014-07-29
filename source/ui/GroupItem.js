@@ -12,7 +12,7 @@
 	*/
 
 	/**
-	* _enyo.GroupItem_ is the base [kind]{@glossary kind} for the [Grouping]{@link enyo.Group} 
+	* `enyo.GroupItem` is the base [kind]{@glossary kind} for the [Grouping]{@link enyo.Group}
 	* API. It manages the [active state]{@link enyo.GroupItem#active} of the 
 	* [component]{@link enyo.Component} (or the [inheriting]{@glossary subkind} 
 	* [component]{@link enyo.Component}). A [subkind]{@glossary subkind} may call `setActive` 

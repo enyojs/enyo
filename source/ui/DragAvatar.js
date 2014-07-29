@@ -15,7 +15,7 @@
 	});
 
 	/**
-	* _enyo.DragAvatar_ creates a control to follow the pointer when dragging. It automatically 
+	* `enyo.DragAvatar` creates a control to follow the pointer when dragging. It automatically
 	* displays the avatar control when the user drags, and updates its position relative to the 
 	* current pointer location.
 	*
@@ -130,7 +130,7 @@
 		* Instantiates the avatar control (if necessary), determines correct position, and calls 
 		* [show]{@enyo.DragAvatar#show} to make it visible.
 		*
-		* @param {Object} e An [object]{@glossary Object} containing 
+		* @param {Object} e - An [object]{@glossary Object} containing
 		*	[event]{@glossary event} information.
 		* @public
 		*/
