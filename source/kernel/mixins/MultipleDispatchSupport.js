@@ -2,10 +2,11 @@
 
 	/**
 	* A collection of methods to allow a single {@link enyo.Component} to
-	* [dispatch]{@link enyo.Component#dispatchEvent} a single event to multiple
-	* targets. The events are synchronously propagated in the order in which the
-	* targets are encountered. Note that this mixin is already applied to a base
-	* [kind]{@glossary kind}, {@link enyo.MultipleDispatchComponent}.
+	* [dispatch]{@link enyo.Component#dispatchEvent} a single {@glossary event} to
+	* multiple targets. The events are synchronously propagated in the order in
+	* which the targets are encountered. Note that this {@glossary mixin} is
+	* already applied to a base [kind]{@glossary kind},
+	* {@link enyo.MultipleDispatchComponent}.
 	*
 	* @mixin enyo.MultipleDispatchSupport
 	* @public

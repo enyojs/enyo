@@ -63,11 +63,11 @@
 	}
 	
 	/**
-	* A mixin that adds support for registered event listeners. These events are
-	* different from bubbled events (e.g., DOM events and
-	* [handlers]{@link enyo.Component#handlers}). When
-	* [emitted]{@link enyo.EventEmitter.emit}, these events **do not bubble** and
-	* will only be handled by [registered listeners]{@link enyo.EventEmitter.on}.
+	* {@link enyo.EventEmitter} is a {@glossary mixin} that adds support for
+	* registered {@glossary event} listeners. These events are different from
+	* bubbled events (e.g., DOM events and [handlers]{@link enyo.Component#handlers}).
+	* When [emitted]{@link enyo.EventEmitter#emit}, these events **do not bubble**
+	* and will only be handled by [registered listeners]{@link enyo.EventEmitter#on}.
 	*
 	* @mixin enyo.EventEmitter
 	* @public
@@ -90,9 +90,9 @@
 		_silenceCount: 0,
 		
 		/**
-		* Disables propagation of events. This is a counting semaphor and
-		* [unsilence()]{@link enyo.EventEmitter.unsilence} will need to be called
-		* the same number of times that this method is called.
+		* Disables propagation of [events]{@glossary event}. This is a counting
+		* semaphor and [unsilence()]{@link enyo.EventEmitter#unsilence} will need to
+		* be called the same number of times that this method is called.
 		*
 		* @see enyo.EventEmitter.unsilence
 		* @returns {this} The callee for chaining.
@@ -105,9 +105,9 @@
 		},
 		
 		/**
-		* Enables propagation of events. This is a counting semaphor and this method
-		* will need to be called the same number of times that
-		* [silence()]{@link enyo.EventEmitter.silence} was called.
+		* Enables propagation of [events]{@glossary event}. This is a counting
+		* semaphor and this method will need to be called the same number of times
+		* that [silence()]{@link enyo.EventEmitter#silence} was called.
 		*
 		* @see enyo.EventEmitter.silence
 		* @returns {this} The callee for chaining.
@@ -125,7 +125,7 @@
 		},
 		
 		/**
-		* Determines whether the callee is currently [silenced]{@link enyo.EventEmitter.silence}.
+		* Determines whether the callee is currently [silenced]{@link enyo.EventEmitter#silence}.
 		*
 		* @returns {Boolean} Whether or not the callee is
 		*	[silenced]{@link enyo.EventEmitter.silence}.
@@ -145,10 +145,11 @@
 		},
 		
 		/**
-		* Adds an event listener. Until [removed]{@link enyo.EventEmitter.off}, this
-		* listener will fire every time the event is [emitted]{@link enyo.EventEmitter.emit}.
+		* Adds an {@glossary event} listener. Until [removed]{@link enyo.EventEmitter#off},
+		* this listener will fire every time the event is
+		* [emitted]{@link enyo.EventEmitter#emit}.
 		*
-		* @param {String} e The event name to register for.
+		* @param {String} e The {@glossary event} name to register for.
 		* @param {Function} fn The listener.
 		* @param {Object} [ctx] The optional context under which to execute the listener.
 		* @returns {this} The callee for chaining.
@@ -168,9 +169,9 @@
 		},
 		
 		/**
-		* Removes an event listener.
+		* Removes an {@glossary event} listener.
 		*
-		* @param {String} e The event name.
+		* @param {String} e The {@glossary event} name.
 		* @param {Function} fn The listener to unregister.
 		* @param {Object} [ctx] If the listener was registered with a context, it
 		* should be provided when unregistering as well.
@@ -182,9 +183,9 @@
 		},
 		
 		/**
-		* Removes all listeners, or all listeners for a given event.
+		* Removes all listeners, or all listeners for a given {@glossary event}.
 		*
-		* @param {String} [e] The optional target event.
+		* @param {String} [e] The optional target {@glossary event}.
 		* @returns {this} The callee for chaining.
 		*/
 		removeAllListeners: function (e) {
@@ -206,9 +207,9 @@
 		
 		/**
 		* Primarily intended for internal use, this method returns an immutable copy
-		* of all listeners, or all listeners for a particular event (if any).
+		* of all listeners, or all listeners for a particular {@glossary event} (if any).
 		*
-		* @param {String} [e] The targeted event.
+		* @param {String} [e] The targeted {@glossary event}.
 		* @returns {Object[]} Event listeners are stored in [hashes]{@glossary Object}.
 		*	The return value will be an [array]{@glossary Array} of these hashes
 		* if any listeners exist.
@@ -233,9 +234,10 @@
 		},
 		
 		/**
-		* Emits the named event. All subsequent arguments will be passed to the event listeners.
+		* Emits the named {@glossary event}. All subsequent arguments will be passed
+		* to the event listeners.
 		*
-		* @param {String} e The event to emit.
+		* @param {String} e The {@glossary event} to emit.
 		* @param {...*} args All subsequent arguments will be passed to the event listeners.
 		* @returns {Boolean} Whether or not any listeners were notified.
 		* @public

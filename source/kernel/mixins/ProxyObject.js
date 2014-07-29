@@ -1,9 +1,10 @@
 (function (enyo, scope) {
 	
 	/**
-	* A mixin designed to abstract interaction of the {@link enyo.Object#get} and
-	* {@link enyo.Object#set} methods. It does not need to be applied to
-	* [subkinds]{@glossary subkind} of {@link enyo.Object}.
+	* A {@glossary mixin} designed to abstract interaction of the
+	* [enyo.Object.get()]{@link enyo.Object#get} and
+	* [enyo.Object.set()]{@link enyo.Object#set} methods. It does not need to be
+	* applied to [subkinds]{@glossary subkind} of {@link enyo.Object}.
 	* 
 	* @mixin enyo.ProxyObject
 	* @public
@@ -16,7 +17,8 @@
 		name: 'ProxyObject',
 		
 		/**
-		* The property designated as the object from which to proxy actions.
+		* The property designated as the [object]{@glossary Object} from which to
+		* proxy actions.
 		* 
 		* @type {String}
 		* @default 'data'

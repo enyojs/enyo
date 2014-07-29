@@ -80,8 +80,8 @@
 	};
 	
 	/**
-	* An internally-used support mixin that adds API methods to aid in using and
-	* applying mixins to [kinds]{@glossary kind}.
+	* An internally-used support {@glossary mixin} that adds API methods to aid in
+	* using and applying mixins to [kinds]{@glossary kind}.
 	*
 	* @mixin enyo.MixinSupport
 	* @protected

@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	
 	/**
-	* An internally-used support mixin that is applied to all
+	* An internally-used support {@glossary mixin} that is applied to all
 	* [components]{@link enyo.Component} of an {@link enyo.Application} instance
 	* (and to their components, recursively). This mixin adds an `app` property to
 	* each component--a local reference to the `enyo.Application` instance that

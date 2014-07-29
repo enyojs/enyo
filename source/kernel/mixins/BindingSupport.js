@@ -11,8 +11,8 @@
 	enyo.concatenated.push('bindings');
 	
 	/**
-	* An internally used mixin that is added to {@link enyo.Object} and its
-	* [subkinds]{@glossary subkind}. It includes public and protected API
+	* An internally-used {@glossary mixin} that is added to {@link enyo.Object}
+	* and its [subkinds]{@glossary subkind}. It includes public and protected API
 	* methods for working with [bindings]{@link enyo.Binding}.
 	*
 	* @mixin enyo.BindingSupport
@@ -127,9 +127,9 @@
 	};
 	
 	/**
-	* An internally used mixin applied to {@link enyo.Component} instances to
-	* better support [bindings]{@link enyo.Binding}.
-	
+	* An internally-used {@glossary mixin} applied to {@link enyo.Component}
+	* instances to better support [bindings]{@link enyo.Binding}.
+	*
 	* @mixin enyo.ComponentBindingSupport
 	* @protected
 	*/

@@ -54,11 +54,11 @@
 	}
 	
 	/**
-	* A mixin that adds API methods to support
+	* A {@glossary mixin} that adds API methods to support
 	* [computed properties]{@glossary "computed property"}. Unlike other support mixins,
 	* this mixin does not need to be explicitly included by a [kind]{@glossary kind}. If the
-	* [computed]{@link enyo.ComputedSupport.computed} [array]{@glossary Array} is found in
-	* a kind definition, this mixin will automatically be included.
+	* `computed` [array]{@glossary Array} is found in a kind definition, this mixin will
+	* automatically be included.
 	*
 	* @mixin enyo.ComputedSupport
 	* @public

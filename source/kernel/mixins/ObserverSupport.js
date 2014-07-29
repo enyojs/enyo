@@ -129,7 +129,7 @@
 	/**
 	* Adds support for notifications on property changes. Most
 	* [kinds]{@glossary kind} (including all kinds that inherit from
-	* {@link enyo.Object}) already have this [mixin]{@glossary mixin} applied.
+	* {@link enyo.Object}) already have this {@glossary mixin} applied.
 	* This allows for
 	* [observers]{@link enyo.ObserverSupport~Observer} to be
 	* [declared]{@link enyo.ObserverSupport.observers} or "implied" (see below).
@@ -156,9 +156,8 @@
 	* mine.set('value', false); // -> value was "true" but now it is "false"
 	* ```
 	*
-	* Using the [observers]{@link enyo.ObserverSupport.observers} property for
-	* its declarative syntax, an observer may observe any property (or
-	* properties), regardless of its `name`. For example:
+	* Using the `observers` property for its declarative syntax, an observer may
+	* observe any property (or properties), regardless of its `name`. For example:
 	*
 	* ```javascript
 	* enyo.kind({
