@@ -1,43 +1,44 @@
 (function (enyo, scope) {
 	/**
-	* The [event]{@glossary event} [object]{@glossary Object} that is provided when the 
-	* [paging]{@link enyo.DataList#event:paging} [event]{@glossary event} is fired.
+	* The [event]{@glossary event} [object]{@glossary Object} that is provided when the
+	* [paging]{@link enyo.DataList#event:paging} event is fired.
 	*
 	* @typedef {Object} enyo.DataList~PagingEvent
 	* @property {Number} start The lowest active index in the dataset.
 	* @property {Number} end The highest active index.
-	* @property {String} action The _action_ that triggered the paging, either "scroll" or "reset".
+	* @property {String} action The action that triggered the paging, either `'scroll'`
+	* or `'reset'`.
 	*/
 
 	/**
-	* Fires each time data has been paged, on a per-page basis.
+	* Fires each time data is paged, on a per-page basis.
 	*
 	* @event enyo.DataList#event:paging
 	* @type {Object}
 	* @property {Object} sender - A reference to the {@link enyo.DataList}.
 	* @property {String} nom The name of the [event]{@glossary event}.
 	* @property {enyo.DataList~PagingEvent} event - A [hash]{@glossary Object} with properties
-	*	specific to the [paging]{@link enyo.DataList#event:paging} [event]{@glossary event}.
+	*	specific to the [paging]{@link enyo.DataList#event:paging} event.
 	* @public
 	*/
 
 	/**
-	* _enyo.DataList_ is an {@link enyo.DataRepeater} that employs a paginated scrolling scheme to 
-	* enhance performance with larger datasets. The data is provided to the 
-	* [DataList]{@link enyo.DataList} by an {@link enyo.Collection} set as the value of its 
-	* [collection]{@link enyo.DataRepeater#collection} property.
+	* {@link enyo.DataList} is an {@link enyo.DataRepeater} that employs a paginated
+	* scrolling scheme to enhance performance with larger datasets. The data is provided to
+	* the DataList by an {@link enyo.Collection} set as the value of its
+	* [collection]{@link enyo.DataRepeater#data} property.
 	* 
-	* Note that care should be taken when deciding how to lay out the list's children. When there 
-	* are a large number of child [elements]{@link enyo.Control}, the layout process can be taxing 
-	* and non-performant for the browser. Avoid	dynamically-updated [layouts]{@glossary layout}
-	* that require lots of calculations each time the data in a view is updated. Try to use CSS 
-	* whenever possible.
+	* Note that care should be taken when deciding how to lay out the list's children. When
+	* there are a large number of child [elements]{@link enyo.Control}, the layout process
+	* can be taxing and non-performant for the browser. Avoid	dynamically-updated
+	* [layouts]{@glossary layout} that require lots of calculations each time the data in a
+	* view is updated. Try to use CSS whenever possible.
 	* 
-	* While paging through data, _enyo.DataList_ emits the 
-	* [_paging_]{@link enyo.DataList#event:paging} [event]{@glossary event}, which allows you 
-	* to make updates on a per-page basis, as necessary. You may register for this 
-	* [event]{@glossary event} by calling [_addListener()_]{@link enyo.EventEmitter#addListener}
-	* and specifying the [event]{@glossary event}, along with a callback method.
+	* While paging through data, `enyo.DataList` emits the
+	* [paging]{@link enyo.DataList#event:paging} [event]{@glossary event}, which allows you
+	* to make updates as necessary, on a per-page basis. You may register for this event
+	* by calling [addListener()]{@link enyo.EventEmitter#addListener} and specifying the
+	* event, along with a callback method.
 	*
 	* @ui
 	* @class enyo.DataList
@@ -58,11 +59,11 @@
 		kind: enyo.DataRepeater,
 
 		/**
-		* _enyo.DataList_ places its rows inside of a [scroller]{@link enyo.Scroller}. Any 
-		* configurable options of [_enyo.Scroller_]{@link enyo.Scroller} may be placed in this 
-		* [hash]{@glossary Object}; their values will be set accordingly on this 
-		* [list's]{@link enyo.DataList} [scroller]{@link enyo.Scroller}. If no options are specified,
-		* the default [_enyo.Scroller_]{@link enyo.Scroller} settings are used.
+		* {@link enyo.DataList} places its rows inside of a [scroller]{@link enyo.Scroller}.
+		* Any configurable options of {@link enyo.Scroller} may be placed in the
+		* `scrollerOptions` [hash]{@glossary Object}; their values will be set on the
+		* DataList's scroller accordingly. If no options are specified, the default
+		* `enyo.Scroller` settings will be used.
 		*
 		* @type {Object}
 		* @default null
@@ -71,7 +72,7 @@
 		scrollerOptions: null,
 
 		/**
-		* The paging _orientation_. Valid values are `'vertical'` and `'horizontal'`. This property 
+		* The paging orientation. Valid values are `'vertical'` and `'horizontal'`. This property 
 		* will be mapped to a particular strategy governing how the list will flow.
 		*
 		* @type {String}
@@ -81,12 +82,13 @@
 		orientation: 'vertical',
 
 		/**
-		* This is typically handled automatically, but some platforms may benefit from having a 
-		* larger or smaller value here. If there is a number here, it will be multiplied by the 
-		* available viewport size (depending on orientation) to determine the minimum page size. The
-		* page size is directly related to the number of [controls]{@link enyo.Control} that are 
-		* generated at any given time (and that subsequently need updating) whenever paging occurs. 
-		* This number may be any rational number greater than `1.2`.
+		* While page sizing is typically handled automatically, some platforms may benefit from
+		* having a larger or smaller value set for this property. If a number is specified, it
+		* will be multiplied by the available viewport size (depending on
+		* [orientation]{@link enyo.DataList#orientation}) to determine the minimum page size.
+		* The page size is directly related to the number of [controls]{@link enyo.Control} that
+		* are generated at any given time (and that subsequently need updating) whenever paging
+		* occurs. This value may be any rational number greater than `1.2`.
 		*
 		* @type {Number}
 		* @default 1.2
@@ -95,14 +97,15 @@
 		pageSizeMultiplier: null,
 
 		/**
-		* It is helpful for performance if the [list]{@link enyo.DataList} doesn't need to guess at 
-		* the size of the children. In cases where all children are a fixed height/width (depending 
-		* on the orientation of the [list]{@link enyo.DataList}) you may explicitly define that 
-		* value for the [list]{@link enyo.DataList} to use and bypass much of its guesswork. This 
-		* value is a number that will be interpreted in pixels and applied to the primary size 
-		* depending on [orientation]{@link enyo.DataList#orientation}: _height_ when `'vertical'` 
-		* and _width_ when `'horizontal'`. Note this value is not applied to the children via CSS by
-		* the [list]{@link enyo.DataList}.
+		* It is helpful for performance if the [DataList]{@link enyo.DataList} doesn't need to
+		* guess the size of the children. In cases where all children are a fixed height (or
+		* width, depending on the [orientation]{@link enyo.DataList#orientation} of the list),
+		* you may explicitly define the size of the fixed dimension and thus allow the list to
+		* bypass much of its guesswork. This value is a number that will be interpreted in
+		* pixels and applied to the primary size depending on the list's `orientation` (i.e.,
+		* it will be applied to `height` when the `orientation` is `'vertical'`, and to `width`
+		* when the `orientation` is `'horizontal'`). Note that the list does not apply this
+		* value to the children via CSS.
 		*
 		* @type {Number}
 		* @default null
@@ -121,11 +124,12 @@
 		allowTransitions: true,
 
 		/**
-		* Because some systems perform poorly on initialization, there is a delay when we attempt to
-		* actually draw the contents of a [DataList]{@link enyo.DataList}. Usually, you will not 
-		* need to adjust this value (expressed in milliseconds). If _renderDelay_ is `null`, there 
-		* will be no delay and rendering will take place synchronously. If _renderDelay_ is set to 
-		* `0`, rendering will be done asynchronously.
+		* Because some systems perform poorly on initialization, there is a delay when we
+		* attempt to actually draw the contents of a [DataList]{@link enyo.DataList}. Usually,
+		* you will not need to adjust this value, which is expressed in milliseconds. If
+		* `renderDelay` is `null`, there will be no delay and rendering will take place
+		* synchronously; if `renderDelay` is set to `0`, rendering will be done
+		* asynchronously.
 		*
 		* @type {Number}
 		* @default 250
@@ -152,10 +156,10 @@
 		},
 
 		/**
-		* Unlike [_reset()_]{@link enyo.DataList#reset}, which tears down and regenerates the entire
+		* Unlike [reset()]{@link enyo.DataList#reset}, which tears down and regenerates the entire
 		* [list]{@link enyo.DataList}, this method attempts to refresh the pages as they are against
-		* the current dataset. This is much cheaper to call than 
-		* [_reset()_]{@link enyo.DataList#reset}, but is primarily used internally.
+		* the current dataset. This is much cheaper to call than `reset()`, but is primarily used
+		* internally.
 		*
 		* @public
 		*/
@@ -170,12 +174,12 @@
 		},
 		
 		/**
-		* Pass in an integer within the bounds of the [lists's]{@link enyo.DataList} 
-		* [collection]{@link enyo.DataRepeater#collection} to scroll to the position of that index 
-		* in the [list]{@link enyo.DataList}.
+		* Pass in an integer within the bounds of the [list's]{@link enyo.DataList} 
+		* [collection]{@link enyo.DataRepeater#data} to scroll to the position of that
+		* index in the list.
 		*
-		* @param {Number} idx The index in the [lists's]{@link enyo.DataList} 
-		*	[collection]{@link enyo.DataRepeater#collection} to scroll to.
+		* @param {Number} idx The index in the [list's]{@link enyo.DataList} 
+		*	[collection]{@link enyo.DataRepeater#data} to scroll to.
 		* @public
 		*/
 		scrollToIndex: function (idx) {
@@ -245,18 +249,18 @@
 		}),
 
 		/**
-		* Attempts to perform initialization. There are only a few basic startup paths, but we need 
-		* to be aware of what they are:
+		* Attempts to perform initialization. There are only a few basic startup paths, but it's
+		* important to be aware of what they are:
 		* 
 		* - The view is rendered, it has a collection, and the collection has data.
 		* - The view is rendered, it has a collection with no data, and data is added
 			later.
 		* - The view is rendered, but has no collection.
 		*
-		* Once the [list]{@link enyo.DataList} itself is rendered, we check to see if we have a 
-		* [collection]{@link enyo.Collection}; if so, do we have any data to start rendering the 
-		* rest of the [list]{@link enyo.DataList}? Ultimately, the implementation decisions are 
-		* decided by the [delegate]{@glossary delegate} strategy.
+		* Once the [list]{@link enyo.DataList} itself is rendered, we check to see if we have a
+		* [collection]{@link enyo.Collection}; if so, do we have any data to start rendering the
+		* rest of the list? Ultimately, the implementation decisions are decided by the
+		* [delegate]{@glossary delegate} strategy.
 		* 
 		* @private
 		*/
@@ -326,9 +330,9 @@
 			methods[name] = fn;
 		},
 		/**
-		* This [function]{@glossary Function} intentionally left blank. In 
-		* [DataRepeater]{@link enyo.DataRepeater}, it removes the [control]{@link enyo.Control} at 
-		* the specified index but that is handled by the [delegate]{@glossary delegate} here.
+		* This [function]{@glossary Function} is intentionally left blank. In
+		* [DataRepeater]{@link enyo.DataRepeater}, it removes the [control]{@link enyo.Control}
+		* at the specified index, but that is handled by the [delegate]{@glossary delegate} here.
 		* 
 		* @private
 		*/
@@ -401,9 +405,9 @@
 			};
 		}),
 		/**
-		* We let the [delegate]{@glossary delegate} strategy manage the 
-		* [event]{@glossary event}, but we arbitrarily return `true` because we don't want the 
-		* [event]{@glossary event} to propagate beyond this [kind]{@glossary kind}.
+		* We let the [delegate]{@glossary delegate} strategy manage the
+		* [event]{@glossary event}, but we arbitrarily return `true` because we don't want the
+		* event to propagate beyond this [kind]{@glossary kind}.
 		*
 		* @private
 		*/
@@ -457,7 +461,7 @@
 		* requested index if its page is currently active. Returns `undefined` if the index is out 
 		* of bounds or if the [control]{@link enyo.Control} is not currently available.
 		* 
-		* Also see [_getChildForIndex()_]{@link enyo.Repeater#getChildForIndex}, which calls this 
+		* Also see [getChildForIndex()]{@link enyo.Repeater#getChildForIndex}, which calls this 
 		* method.
 		*
 		* @private
@@ -473,11 +477,11 @@
 			this.addRemoveClass('transitions', this.allowTransitions);
 		},
 		/**
-		* [_enyo.DataList_]{@link enyo.DataList} uses an overloaded container from its base 
-		* [kind]{@glossary kind}. We set the container to a [scroller]{@link enyo.Scroller} and
-		* provide a way to modify the [scroller]{@link enyo.Scroller} options (via the 
-		* [_scrollerOptions_]{@link enyo.DataList#scrollerOptions} [hash]{@link enyo.Object}). All 
-		* children will reside in one of the two pages owned by the [scroller]{@link enyo.Scroller}.
+		* {@link enyo.DataList} uses an overloaded container from its base
+		* [kind]{@glossary kind}. We set the container to a [scroller]{@link enyo.Scroller}
+		* and provide a way to modify the scroller options (via the
+		*[scrollerOptions]{@link enyo.DataList#scrollerOptions} [hash]{@link enyo.Object}).
+		* All children will reside in one of the two pages owned by the scroller.
 		*
 		* @private
 		*/
@@ -510,7 +514,7 @@
 		classes: 'enyo-data-list',
 
 		/**
-		* Our initial _controlParent_ is us for the _flyweight_ child.
+		* Our initial `controlParent` is us for the flyweight child.
 		* 
 		* @private
 		*/
@@ -524,12 +528,12 @@
 		*/
 		containerName: 'scroller',
 		/**
-		* We have to trap the Enyo-generated [_onScroll_]{@link enyo.Scroller#event:onScroll} 
-		* [event]{@glossary event} and let the [delegate]{@glossary delegate} handle it. 
-		* We also need to catch the _onresize_ [events]{@glossary event} so we know when to
-		* update our cached sizing. We overload the default handler so that we don't 
-		* [waterfall]{@link enyo.Component#waterfall} the resizing; we arbitrarily handle it to 
-		* minimize the amount of work we do.
+		* We have to trap the Enyo-generated [onScroll]{@link enyo.Scroller#event:onScroll}
+		* [event]{@glossary event} and let the [delegate]{@glossary delegate} handle it.
+		* We also need to catch the `onresize` events so we know when to update our cached
+		* sizing. We overload the default handler so that we don't
+		* [waterfall]{@link enyo.Component#waterfall} the resizing; we arbitrarily handle it
+		* to minimize the amount of work we do.
 		*
 		* @private
 		*/
@@ -543,7 +547,7 @@
 		],
 
 		/**
-		* Add the [RegisteredEventSupport]{@link enyo.RegisteredEventSupport} 
+		* Adds the [RegisteredEventSupport]{@link enyo.RegisteredEventSupport} 
 		* [mixin]{@glossary mixin} for the [paging]{@link enyo.DataList#event:paging} 
 		* [event]{@glossary event}.
 		* 
@@ -560,7 +564,7 @@
 		statics: {delegates: {}},
 
 		/**
-		* An [array]{@glossary Array} of the actual _page_ references for easier access.
+		* An [array]{@glossary Array} of the actual page references for easier access.
 		* 
 		* @private
 		*/
@@ -568,9 +572,9 @@
 	});
 
 	/**
-	* All subclasses of [_enyo.DataList_]{@link enyo.DataList} will have their own 
-	* [_delegates_]{@glossary delegate} static [hash]{@glossary Object}. This is per 
-	* [_kind_]{@glossary kind}, not per _instance_.
+	* All subclasses of {@link enyo.DataList} will have their own static
+	* [delegates]{@glossary delegate} [hash]{@glossary Object}. This is
+	* per-[kind]{@glossary kind}, not per-instance.
 	*
 	* @private
 	*/

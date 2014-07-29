@@ -1,16 +1,16 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.DataGridList_ is a paginated {@link enyo.DataList} designed to lay out its children in a 
-	* grid. Like {@link enyo.DataList}, it links its children directly to the underlying record in 
-	* the collection set as its collection.
+	* {@link enyo.DataGridList} is a paginated {@link enyo.DataList} designed to lay out
+	* its children in a grid. Like `enyo.DataList`, it links its children directly to the
+	* underlying records in the collection specified as its collection.
 	* 
-	* Because the layout is arbitrarily handled, spacing of 
-	* children must be set using the kind's available API (e.g., 
-	* [_spacing_]{@link enyo.DataGridList#spacing}, [_minWidth_]{@link enyo.DataGridList#minWidth}, 
-	* [_minHeight_]{@link enyo.DataGridList#minHeight}).
+	* Because the layout is arbitrarily handled, spacing of children must be set using
+	* the kind's available API (e.g., with the [spacing]{@link enyo.DataGridList#spacing},
+	* [minWidth]{@link enyo.DataGridList#minWidth}, and
+	* [minHeight]{@link enyo.DataGridList#minHeight} properties).
 	* 
-	* Note that _enyo.DataGridList_ will attempt to grow or shrink the size of its children in order
-	* to keep them evenly spaced.
+	* Note that `enyo.DataGridList` will attempt to grow or shrink the size of its
+	* children in order to keep them evenly spaced.
 	*
 	* @ui
 	* @class enyo.DataGridList
@@ -43,8 +43,8 @@
 
 		/**
 		* The minimum width (in pixels) for each [grid]{@link enyo.DataGridList} item. 
-		* [Grid]{@link enyo.DataGridList} items will not be collapsed beyond this size, but they may
-		* be proportionally expanded.
+		* Grid items will not be collapsed beyond this size, but they may be proportionally
+		* expanded.
 		*
 		* @type {Number}
 		* @default 100
@@ -54,16 +54,16 @@
 
 		/**
 		* The minimum height (in pixels) for each [grid]{@link enyo.DataGridList} item. 
-		* [Grid]{@link enyo.DataGridList} items will not be collapsed beyond this size, but they may
-		* be proportionally expanded.
+		* Grid items will not be collapsed beyond this size, but they may be proportionally
+		* expanded.
 		*/
 		minHeight: 100,
 
 		/**
-		* While {@link enyo.DataList} provides some generic [delegates]{@glossary delegate} for 
+		* While {@link enyo.DataList} provides some generic [delegates]{@glossary delegate} for
 		* handling [objects]{@glossary Object}, we have to arbitrarily lay out our children, so
-		* we have our own. We add these and ensure that the appropriate 
-		* [delegate]{@glossary delegate} is selected depending on the request.
+		* we have our own. We add these and ensure that the appropriate delegate is selected
+		* depending on the request.
 		*
 		* @method
 		* @private
@@ -81,9 +81,9 @@
 			};
 		}),
 		/**
-		* We ensure that each item being created for the [DataGridList]{@link enyo.DataGridList} has
-		* the correct CSS classes so it will display properly (and be movable, since the items must 
-		* be absolutely positioned).
+		* Ensures that each item being created for the [DataGridList]{@link enyo.DataGridList}
+		* has the correct CSS classes so it will display properly (and be movable, since the items
+		* must be absolutely positioned).
 		*
 		* @method
 		* @private
@@ -99,8 +99,9 @@
 			};
 		}),
 		/**
-		* We don't want to worry about the normal required handling when showing changes unless 
-		* we're actually visible and the list has been fully rendered and we actually have some data.
+		* We don't want to worry about the normal required handling when `showing` changes
+		* unless we're actually visible and the list has been fully rendered and we actually
+		* have some data.
 		*
 		* @method
 		* @private
@@ -118,7 +119,7 @@
 		}),
 
 		/** 
-		* We access this [kind's]{@glossary kind} [constructor]{@glossary constructor} 
+		* We access this [kind's]{@glossary kind} [constructor]{@glossary constructor}
 		* and need it to be undeferred at that time.
 		*
 		* @private

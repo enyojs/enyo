@@ -1,11 +1,12 @@
 (function (enyo, scope) {
 	/**
-	* _enyo.DataRepeater_ iterates over the items in an {@link enyo.Collection} to repeatedly render
-	* and synchronize records (instances of {@link enyo.Model}) to its own children. For any record
-	* in the [collection]{@link enyo.Collection}, a new child will be rendered in this repeater. If 
-	* the record is destroyed, the child will be destroyed. These [controls]{@link enyo.Control} 
-	* will automatically update when the properties on the underlying record are modified if they 
-	* have been bound using bindings (see {@link enyo.Binding}).
+	* {@link enyo.DataRepeater} iterates over the items in an {@link enyo.Collection} to
+	* repeatedly render and synchronize records (instances of {@link enyo.Model}) to its
+	* own children. For any record in the collection, a new child will be rendered in
+	* the repeater. If the record is destroyed, the child will be destroyed. These
+	* [controls]{@link enyo.Control} will automatically update when properties on the
+	* underlying records are modified if they have been bound using
+	* [bindings]{@link enyo.Binding}.
 	*
 	* @ui
 	* @class enyo.DataRepeater
@@ -20,7 +21,7 @@
 		name: 'enyo.DataRepeater',
 
 		/**
-		* Set this to `true` to allow selection support to be enabled. Note that selection stores a 
+		* Set this to `true` to enable selection support. Note that selection stores a
 		* reference to the [model]{@link enyo.Model} that is selected.
 		*
 		* @type {Boolean}
@@ -30,9 +31,10 @@
 		selection: true,
 
 		/**
-		* Set this to `true` to allow multiple children to be selected simultaneously. If this is 
-		* `true`, then the [_selection_]{@link enyo.DataRepeater#selection} property will be set to 
-		* `true` even if it has previously been set to `false`.
+		* Set this to `true` to allow multiple children to be selected simultaneously.
+		* If this property is set to `true`, then the
+		* [selection]{@link enyo.DataRepeater#selection} property will also be set to
+		* `true`, even if it was previously set to `false`.
 		*
 		* @type {Boolean}
 		* @default false
@@ -41,10 +43,12 @@
 		multipleSelection: false,
 		
 		/**
-		* Set this to `true` to allow group-selection behavior such that only one child can be
-		* selected at a time and once one is selected, it cannot be deselected (via user input).
-		* The child can still be deselected via the _selection api methods_. Note that this will set
-		* {@link enyo.DataRepeater#multipleSelection} to `false`.
+		* Set this to `true` to allow group-selection behavior such that only one child
+		* may be selected at a time and, once a child is selected, it cannot be
+		* deselected via user input. The child may still be deselected via the selection
+		* API methods. Note that setting this property to `true` will set the
+		* [multipleSelection]{@link enyo.DataRepeater#multipleSelection} property to
+		* `false`.
 		*
 		* @type {Boolean}
 		* @default false
@@ -53,10 +57,10 @@
 		groupSelection: false,
 
 		/**
-		* This class will be applied to the [repeater]{@link enyo.DataRepeater} when 
-		* [_selection_]{@link enyo.DataRepeater#selection} is enabled. If 
-		* [_multipleSelection_]{@link enyo.DataRepeater#multipleSelection} is `true`, this class 
-		* will also be applied.
+		* This class will be applied to the [repeater]{@link enyo.DataRepeater} when
+		* [selection]{@link enyo.DataRepeater#selection} is enabled. It will also be
+		* applied if [multipleSelection]{@link enyo.DataRepeater#multipleSelection}
+		* is `true`.
 		*
 		* @type {String}
 		* @default 'selection-enabled'
@@ -65,10 +69,10 @@
 		selectionClass: 'selection-enabled',
 
 		/**
-		* This class will be applied to the [repeater]{@link enyo.DataRepeater} when 
-		* [_multipleSelection_]{@link enyo.DataRepeater#multipleSelection} is `true`. If 
-		* [_multipleSelection_]{@link enyo.DataRepeater#multipleSelection} is `true`, the 
-		* [_selectionClass_]{@link enyo.DataRepeater#selectionClass} will also be applied.
+		* This class will be applied to the [repeater]{@link enyo.DataRepeater} when
+		* [multipleSelection]{@link enyo.DataRepeater#multipleSelection} is `true`.
+		* When that is the case, the [selectionClass]{@link enyo.DataRepeater#selectionClass}
+		* will also be applied.
 		*
 		* @type {String}
 		* @default 'multiple-selection-enabled'
@@ -77,13 +81,13 @@
 		multipleSelectionClass: 'multiple-selection-enabled',
 
 		/**
-		* In cases where selection should be detected from the state of the 
-		* [model]{@link enyo.Model}, this property should be set to the property that the 
-		* [repeater]{@link enyo.DataRepeater} should observe for changes. If the 
-		* [model]{@link enyo.Model} changes, the [repeater]{@link enyo.DataRepeater} will reflect 
-		* the change without needing to interact directly with the [model]{@link enyo.Model}. Note 
-		* that this property must be a part of the [model's]{@link enyo.Model} schema or its changes
-		* will not be detected properly.
+		* In cases where selection should be detected from the state of the
+		* [model]{@link enyo.Model}, this property should be set to the property on
+		* the model that the [repeater]{@link enyo.DataRepeater} should observe for
+		* changes. If the model changes, the repeater will reflect the change without
+		* having to interact directly with the model. Note that this property must be
+		* part of the model's schema, or else its changes will not be detected
+		* properly.
 		*
 		* @type {String}
 		* @default ''
@@ -92,10 +96,10 @@
 		selectionProperty: '',
 
 		/**
-		* Set this to a space-delimited string of [events]{@glossary event} or an 
-		* [array]{@glossary Array} that can trigger the selection of a particular child. To 
-		* prevent selection entirely see [_selection_]{@link enyo.DataRepeater#selection} and set it
-		* to `false`.
+		* Set this to a space-delimited string of [events]{@glossary event} or an
+		* [array]{@glossary Array} that can trigger the selection of a particular
+		* child. To prevent selection entirely, set
+		* [selection]{@link enyo.DataRepeater#selection} to `false`.
 		*
 		* @type {String}
 		* @default 'ontap'
@@ -104,11 +108,12 @@
 		selectionEvents: 'ontap',
 
 		/**
-		* Use this [hash]{@glossary Object} to define _defaultBindingProperties_ for _all_ 
-		* children (even children of children) of this [repeater]{@link enyo.DataRepeater}. This can
-		* eliminate the need to write the same paths many times. You can also use any 
-		* [binding]{@link enyo.Binding} macros. Any property defined here will be superseded by the 
-		* same property if defined for an individual [binding]{@link enyo.Binding}.
+		* Use this [hash]{@glossary Object} to define default [binding]{@link enyo.Binding}
+		* properties for **all** children (even children of children) of this
+		* [repeater]{@link enyo.DataRepeater}. This can eliminate the need to write the
+		* same paths over and over. You may also use any binding macros. Any property
+		* defined here will be superseded by the same property if defined for an individual
+		* binding.
 		*
 		* @type {Object}
 		* @default null
@@ -212,7 +217,7 @@
 		},
 
 		/**
-		* Destroys any existing children in the [repeater]{@link enyo.DataRepeater} and creates all 
+		* Destroys any existing children in the [repeater]{@link enyo.DataRepeater} and creates all
 		* new children based on the current [data]{@link enyo.Repeater#data}.
 		*
 		* @public
@@ -232,8 +237,8 @@
 		/**
 		* Refreshes each [control]{@link enyo.Control} in the dataset.
 		*
-		* @param {Boolean} immediate If `true`, _refresh_ will occur immediately, otherwise it will
-		*	be queued up as a job.
+		* @param {Boolean} immediate If `true`, refresh will occur immediately; otherwise,
+		* it will be queued up as a job.
 		* @public
 		*/
 		refresh: function (immediate) {
@@ -277,10 +282,10 @@
 		}),
 
 		/**
-		* Add a [record]{@link enyo.Model} at a particular index.
+		* Adds a [record]{@link enyo.Model} at a particular index.
 		* 
 		* @param {enyo.Model} rec The [record]{@link enyo.Model} to add.
-		* @param {Number} idx The index at which the [record]{@link enyo.Model} should be added.
+		* @param {Number} idx The index at which the record should be added.
 		* @public
 		*/
 		add: function (rec, idx) {
@@ -291,7 +296,7 @@
 		},
 
 		/**
-		* Remove the [record]{@link enyo.Model} at a particular index.
+		* Removes the [record]{@link enyo.Model} at a particular index.
 		*
 		* @param {Number} idx The index of the [record]{@link enyo.Model} to be removed.
 		* @public
@@ -306,9 +311,9 @@
 		},
 
 		/**
-		* Removes any [controls]{@link enyo.Control} that are outside the boundaries of the 
-		* [data]{@link enyo.DataRepeater#data} [collection]{@link enyo.Collection} for the 
-		* {@link enyo.DataRepeater}.
+		* Removes any [controls]{@link enyo.Control} that are outside the boundaries of the
+		* [data]{@link enyo.DataRepeater#data} [collection]{@link enyo.Collection} for the
+		* [repeater]{@link enyo.DataRepeater}.
 		* 
 		* @public
 		*/
@@ -443,11 +448,11 @@
 		},
 
 		/**
-		* Calls [_childForIndex()_]{@link enyo.DataRepeater#getChildForIndex}, leaving for posterity.
+		* Calls [childForIndex()]{@link enyo.DataRepeater#getChildForIndex}. Leaving for posterity.
 		*
 		* @param {Number} idx The index of the child to retrieve.
-		* @returns {enyo.Control|undefined} Returns the [control]{@link enyo.Control} or `undefined`
-		*	if it could not be found or the index of out of bounds.
+		* @returns {enyo.Control|undefined} The [control]{@link enyo.Control} at the specified
+		* index, or `undefined` if it could not be found or the index is out of bounds.
 		* @public
 		*/
 		getChildForIndex: function (idx) {
@@ -458,8 +463,8 @@
 		* Attempts to return the [control]{@link enyo.Control} representation at a particular index.
 		*
 		* @param {Number} idx The index of the child to retrieve.
-		* @returns {enyo.Control|undefined} Returns the [control]{@link enyo.Control} or `undefined`
-		*	if it could not be found or the index of out of bounds.
+		* @returns {enyo.Control|undefined} The [control]{@link enyo.Control} at the specified
+		* index, or `undefined` if it could not be found or the index is out of bounds.
 		* @public
 		*/
 		childForIndex: function (idx) {
@@ -467,9 +472,9 @@
 		},
 
 		/**
-		* Retrieve the data associated with the {@link enyo.DataRepeater}.
+		* Retrieves the data associated with the [repeater]{@link enyo.DataRepeater}.
 		*
-		* @returns {enyo.Collection} The {@link enyo.Collection} that comprises the _data_.
+		* @returns {enyo.Collection} The {@link enyo.Collection} that comprises the data.
 		* @public
 		*/
 		data: function () {
@@ -528,7 +533,7 @@
 		},
 
 		/**
-		* De-selects the item at the given index.
+		* Deselects the item at the given index.
 		*
 		* @param {Number} idx The index of the item to deselect.
 		* @public
@@ -540,9 +545,9 @@
 		/**
 		* Determines whether a [model]{@link enyo.Model} is currently selected.
 		*
-		* @param {enyo.Model} model The model whose selection status is to be determined.
-		* @returns {Boolean} Returns `true` if the given [model]{@link enyo.Model} is selected,
-		*	`false` otherwise.
+		* @param {enyo.Model} model The [model]{@link enyo.Model} whose selection status
+		* is to be determined.
+		* @returns {Boolean} `true` if the given model is selected; otherwise, `false`.
 		* @public
 		*/
 		isSelected: function (model) {
@@ -550,8 +555,8 @@
 		},
 
 		/**
-		* Selects all items (if [_multipleSelection_]{@link enyo.DataRepeater#multipleSelection} is 
-		* `true`).
+		* Selects all items (if [multipleSelection]{@link enyo.DataRepeater#multipleSelection}
+		* is `true`).
 		*
 		* @public
 		*/
@@ -569,7 +574,7 @@
 		},
 
 		/**
-		* De-selects all items.
+		* Deselects all items.
 		*
 		* @public
 		*/
@@ -587,10 +592,10 @@
 		},
 
 		/**
-		* A computed property that returns the currently selected [model]{@link enyo.Model} (if 
-		* [_multipleSelection_]{@link enyo.DataRepeater#multipleSelection} is `false`), or an 
-		* immutable [array]{@glossary Array} of all currently selected 
-		* [models]{@link enyo.Model} (if it is `true`).
+		* A computed property that returns the currently selected [model]{@link enyo.Model}
+		* (if [multipleSelection]{@link enyo.DataRepeater#multipleSelection} is `false`),
+		* or an immutable [array]{@glossary Array} of all currently selected models (if
+		* `multipleSelection` is `true`).
 		*
 		* @public
 		*/
