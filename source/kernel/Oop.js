@@ -23,7 +23,7 @@
 	* in the Enyo Developer Guide.
 	*
 	* @namespace enyo.kind
-	* @param {Object} props A [hash]{@glossary Object} of properties used to define and create
+	* @param {Object} props - A [hash]{@glossary Object} of properties used to define and create
 	*	the [kind]{@glossary kind}
 	* @public
 	*/
@@ -335,7 +335,7 @@
 		* The older `this.inherited(arguments)` method still works, but this version results in much
 		* faster code and is the only one supported for kind [mixins]{@glossary mixin}.
 		*
-		* @param {Function} fn A [function]{@glossary Function} that takes a single
+		* @param {Function} fn - A [function]{@glossary Function} that takes a single
 		*                      argument (usually named `sup`) and returns a function where
 		*                      `sup.apply(this, arguments)` is used as a mechanism to make the
 		*                      super-call.
@@ -394,9 +394,9 @@
 		* it is subclassed, the constructor and properties will be passed through
 		* this method for special handling of important features.
 		*
-		* @param {Function} ctor The [constructor]{@glossary constructor} of the
+		* @param {Function} ctor - The [constructor]{@glossary constructor} of the
 		*	[kind]{@glossary kind} being subclassed.
-		* @param {Object} props The properties of the kind being subclassed.
+		* @param {Object} props - The properties of the kind being subclassed.
 		* @memberof enyo.kind
 		* @public
 		*/
@@ -418,7 +418,7 @@
 		*	`this.inherited()` or be wrapped with `enyo.inherit()` to call
 		*	the original method (this chains multiple methods tied to a
 		*	single [kind]{@glossary kind}).
-		* @param {Object} [target] The instance to be extended. If this is not specified, then the
+		* @param {Object} [target] - The instance to be extended. If this is not specified, then the
 		*	[constructor]{@glossary constructor} of the
 		*	[object]{@glossary Object} this method is being called on will
 		*	be extended.

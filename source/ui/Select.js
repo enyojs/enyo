@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* {@link enyo.Select} implements an HTML [selection]{@glossary select} widget, using 
+	* {@link enyo.Select} implements an HTML [selection]{@glossary select} widget, using
 	* {@link enyo.Option} instances by default.
 	*
 	* ```

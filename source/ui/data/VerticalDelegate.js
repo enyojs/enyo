@@ -24,7 +24,11 @@
 		* Sets the priority properties for this orientation, which can then be customized by
 		* other [delegates]{@glossary delegate} that wish to share basic functionality.
 		*
+<<<<<<< HEAD
 		* @param {enyo.DataList} list The [list]{@link enyo.DataList} to perform this action on.
+=======
+		* @param {enyo.DataList} list - The list to perform this action on.
+>>>>>>> ENYO-43: Re-review Enyo docs
 		* @private
 		*/
 		initList: function (list) {
@@ -44,7 +48,11 @@
 		* Performs a hard reset of the [list's]{@link enyo.DataList} pages and children.
 		* Scrolls to the top and resets each page's children to have the correct indices.
 		*
+<<<<<<< HEAD
 		* @param {enyo.DataList} list The [list]{@link enyo.DataList} to perform this action on.
+=======
+		* @param {enyo.DataList} list - The list to perform this action on.
+>>>>>>> ENYO-43: Re-review Enyo docs
 		* @private
 		*/
 		reset: function (list) {
@@ -66,7 +74,11 @@
 		/**
 		* Retrieves [list]{@link enyo.DataList} pages, indexed by their position.
 		*
+<<<<<<< HEAD
 		* @param {enyo.DataList} list The [list]{@link enyo.DataList} to perform this action on.
+=======
+		* @param {enyo.DataList} list - The list to perform this action on.
+>>>>>>> ENYO-43: Re-review Enyo docs
 		* @returns {Object} Returns a [hash]{@glossary Object} of the pages marked by their 
 		*	position as either 'firstPage' or 'lastPage'.
 		* @private
@@ -90,7 +102,11 @@
 		* Refreshes each page in the given [list]{@link enyo.DataList}, adjusting its position
 		* and adjusting the buffer accordingly.
 		*
+<<<<<<< HEAD
 		* @param {enyo.DataList} list The [list]{@link enyo.DataList} to perform this action on.
+=======
+		* @param {enyo.DataList} list - The list to perform this action on.
+>>>>>>> ENYO-43: Re-review Enyo docs
 		* @private
 		*/
 		refresh: function (list) {
@@ -125,7 +141,11 @@
 		* [scroller]{@link enyo.Scroller} (so we know that is available). Now we need to
 		* cache our initial size values and apply them to our pages individually.
 		*
+<<<<<<< HEAD
 		* @param {enyo.DataList} list The [list]{@link enyo.DataList} to perform this action on.
+=======
+		* @param {enyo.DataList} list - The list to perform this action on.
+>>>>>>> ENYO-43: Re-review Enyo docs
 		* @private
 		*/
 		rendered: function (list) {
@@ -264,8 +284,13 @@
 		/**
 		* Attempts to scroll to the given index.
 		*
+<<<<<<< HEAD
 		* @param {enyo.DataList} list The [list]{@link enyo.DataList} to perform this action on.
 		* @param {Number} i The index to scroll to.
+=======
+		* @param {enyo.DataList} list - The list to perform this action on.
+		* @param {Number} i - The index to scroll to.
+>>>>>>> ENYO-43: Re-review Enyo docs
 		* @private
 		*/
 		scrollToIndex: function (list, i) {

@@ -21,7 +21,7 @@
 	*/
 
 	/**
-	* {@link enyo.Group} provides a wrapper around multiple elements. It enables the creation of 
+	* {@link enyo.Group} provides a wrapper around multiple elements. It enables the creation of
 	* radio groups from arbitrary [components]{@link enyo.Component} that support the
 	* {@link enyo.GroupItem} API.
 	*

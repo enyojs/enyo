@@ -498,7 +498,7 @@
 		/**
 		* Sets the horizontal scroll position.
 		*
-		* @param {Number} left The horizontal scroll position in pixels.
+		* @param {Number} left - The horizontal scroll position in pixels.
 		* @public
 		*/
 		setScrollLeft: function (left) {
@@ -512,7 +512,7 @@
 		/**
 		* Sets the vertical scroll position.
 		*
-		* @param {Number} top The vertical scroll position in pixels.
+		* @param {Number} top - The vertical scroll position in pixels.
 		* @public
 		*/
 		setScrollTop: function (top) {
@@ -571,9 +571,9 @@
 		/**
 		* Scrolls the given [control]{@link enyo.Control} into view.
 		*
-		* @param {enyo.Control} ctl The control to make visible in the 
+		* @param {enyo.Control} ctl - The control to make visible in the
 		*	[scroller's]{@link enyo.Scroller} viewport.
-		* @param {Boolean} alignWithTop If `true`, the node is aligned with the top
+		* @param {Boolean} alignWithTop - If `true`, the node is aligned with the top
 		* of the scroller.
 		* @public
 		*/
@@ -584,8 +584,8 @@
 		/** 
 		* Scrolls to the specified position.
 		*
-		* @param {Number} x The `x` position in pixels.
-		* @param {Number} y The `y` position in pixels.
+		* @param {Number} x - The `x` position in pixels.
+		* @param {Number} y - The `y` position in pixels.
 		* @public
 		*/
 		scrollTo: function (x, y) {
@@ -599,9 +599,9 @@
 		* [scrollIntoView()]{@glossary scrollIntoView}, this only affects the current 
 		* scroller.
 		*
-		* @param {enyo.Control} ctl The [control]{@link enyo.Control} to make visible in the 
+		* @param {enyo.Control} ctl - The [control]{@link enyo.Control} to make visible in the
 		*	[scroller's]{@link enyo.Scroller} viewport.
-		* @param {Boolean} alignWithTop If `true`, the node is aligned with the top of the
+		* @param {Boolean} alignWithTop - If `true`, the node is aligned with the top of the
 		*	scroller.
 		* @public
 		*/
@@ -612,9 +612,9 @@
 		/** 
 		* Ensures that the given node is visible in the [scroller's]{@link enyo.Scroller} viewport.
 		*
-		* @param {Node} node The node to make visible in the [scroller's]{@link enyo.Scroller}
+		* @param {Node} node - The node to make visible in the [scroller's]{@link enyo.Scroller}
 		*	viewport.
-		* @param {Boolean} alignWithTop If `true`, the node is aligned with the top of the
+		* @param {Boolean} alignWithTop - If `true`, the node is aligned with the top of the
 		*	scroller.
 		* @public
 		*/

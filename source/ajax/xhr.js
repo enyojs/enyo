@@ -36,7 +36,7 @@
 		* cached. To disable this, use the `header` property to specify an object where
 		* `cache-control` is set to `null`.
 		*
-		* @param {enyo.xhr.request~Options} params The options and properties for this XHR request.
+		* @param {enyo.xhr.request~Options} params - The options and properties for this XHR request.
 		* @returns {XMLHttpRequest} The XHR request object.
 		* @private
 		*/
@@ -91,7 +91,7 @@
 		* Removes any callbacks that might be set from Enyo code for an existing XHR
 		* and stops the XHR from completing (if possible).
 		*
-		* @param {XMLHttpRequest} The request to cancel.
+		* @param {XMLHttpRequest} The - request to cancel.
 		* @private
 		*/
 		cancel: function (xhr) {

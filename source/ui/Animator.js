@@ -169,7 +169,7 @@
 		/** 
 		* Plays the animation.
 		*
-		* @param {Object} props As a convenience, this [hash]{@glossary Object} will be mixed
+		* @param {Object} props - As a convenience, this [hash]{@glossary Object} will be mixed
 		*	directly into this [object]{@glossary Object}.
 		* @public
 		*/

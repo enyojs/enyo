@@ -146,7 +146,7 @@
 		* Initiates the asynchronous routine and will supply the given value if it completes
 		* successfully. Overloaded from [enyo.Async.go()]{@link enyo.Async#go}.
 		*
-		* @param {*} value The value to pass to responders.
+		* @param {*} value - The value to pass to responders.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/

@@ -63,25 +63,25 @@
 	
 	/**
 	* @callback enyo.Model~Success
-	* @param {enyo.Model} model The [model]{@link enyo.Model} that is returning successfully.
-	* @param {enyo.Model~ActionOptions} opts The original options passed to the action method
+	* @param {enyo.Model} model - The [model]{@link enyo.Model} that is returning successfully.
+	* @param {enyo.Model~ActionOptions} opts - The original options passed to the action method
 	*	that is returning successfully.
-	* @param {*} res The result, if any, returned by the [source]{@link enyo.Source} that
+	* @param {*} res - The result, if any, returned by the [source]{@link enyo.Source} that
 	*	executed it.
-	* @param {String} source The name of the [source]{@link enyo.Model#source} that has
+	* @param {String} source - The name of the [source]{@link enyo.Model#source} that has
 	* returned successfully.
 	*/
 	
 	/**
 	* @callback enyo.Model~Error
-	* @param {enyo.Model} model The model that is returning an error.
-	* @param {String} action The name of the action that failed, one of `'FETCHING'`,
+	* @param {enyo.Model} model - The model that is returning an error.
+	* @param {String} action - The name of the action that failed, one of `'FETCHING'`,
 	*	`'COMMITTING'`, or `'DESTROYING'`.
-	* @param {enyo.Model~Options} opts The original options passed to the action method
+	* @param {enyo.Model~Options} opts - The original options passed to the action method
 	*	that is returning an error.
-	* @param {*} res The result, if any, returned by the [source]{@link enyo.Source} that
+	* @param {*} res - The result, if any, returned by the [source]{@link enyo.Source} that
 	*	executed it.
-	* @param {String} source The name of the [source]{@link enyo.Model#source} that has
+	* @param {String} source - The name of the [source]{@link enyo.Model#source} that has
 	*	returned an error.
 	*/
 	
@@ -268,7 +268,7 @@
 		* given implementation's needs.
 		*
 		* @see enyo.Model~Options.parse
-		* @param {*} data The incoming data that may need to be restructured or reduced prior to
+		* @param {*} data - The incoming data that may need to be restructured or reduced prior to
 		*	being [set]{@link enyo.Model#set} on the [model]{@link enyo.Model}.
 		* @returns {Object} The [hash]{@glossary Object} to apply to the
 		*	model via [set()]{@link enyo.Model#set}.
@@ -327,7 +327,7 @@
 		*
 		* @see enyo.Model#set
 		* @see enyo.Model#previous
-		* @param {String} [prop] The [attribute]{@link enyo.Model#attributes} to
+		* @param {String} [prop] - The [attribute]{@link enyo.Model#attributes} to
 		*	[restore]{@link enyo.Model#restore}. If not provided, all attributes will be
 		* restored to their previous values.
 		* @returns {this} The callee for chaining.
@@ -355,7 +355,7 @@
 		*
 		* @see enyo.Model#committed
 		* @see enyo.Model#status
-		* @param {enyo.Model~ActionOptions} [opts] Optional configuration options.
+		* @param {enyo.Model~ActionOptions} [opts] - Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -408,7 +408,7 @@
 		*
 		* @see enyo.Model#fetched
 		* @see enyo.Model#status
-		* @param {enyo.Model~ActionOptions} [opts] Optional configuration options.
+		* @param {enyo.Model~ActionOptions} [opts] - Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -463,7 +463,7 @@
 		* will remove this flag (even if it fails).
 		*
 		* @see enyo.Model#status
-		* @param {enyo.Model~ActionOptions} [opts] Optional configuration options.
+		* @param {enyo.Model~ActionOptions} [opts] - Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -556,7 +556,7 @@
 		* that value; otherwise, it will attempt to retrieve the value from the
 		* [attributes hash]{@link enyo.Model#attributes}.
 		*
-		* @param {String} path The property to retrieve.
+		* @param {String} path - The property to retrieve.
 		* @returns {*} The value for the requested property or path, or `undefined` if
 		* it cannot be found or does not exist.
 		* @public
@@ -577,12 +577,12 @@
 		* @fires enyo.Model#change
 		* @see enyo.ObserverSupport
 		* @see enyo.BindingSupport
-		* @param {(String|Object)} path Either the property name or a [hash]{@glossary Object}
+		* @param {(String|Object)} path - Either the property name or a [hash]{@glossary Object}
 		*	of properties and values to set.
 		* @param {(*|enyo.Model~Options)} is If `path` is a [string]{@glossary String},
 		* this should be the value to set for the given property; otherwise, it should be
 		* an optional hash of available [configuration options]{@link enyo.Model~Options}.
-		* @param {enyo.Model~Options} [opts] If `path` is a string, this should be the
+		* @param {enyo.Model~Options} [opts] - If `path` is a string, this should be the
 		* optional hash of available configuration options; otherwise, it will not be used.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -673,13 +673,13 @@
 		* Initializes the [model]{@link enyo.Model}. Unlike some methods, the parameters are not
 		* interchangeable. If you are not using a particular (optional) parameter, pass in `null`.
 		*
-		* @param {Object} [attrs] Optionally initialize the [model]{@link enyo.Model} with some
+		* @param {Object} [attrs] - Optionally initialize the [model]{@link enyo.Model} with some
 		*	[attributes]{@link enyo.Model#attributes}.
-		* @param {Object} [props] Properties to apply directly to the [model]{@link enyo.Model} and
+		* @param {Object} [props] - Properties to apply directly to the [model]{@link enyo.Model} and
 		*	not the [attributes hash]{@link enyo.Model#attributes}. If these properties contain an
 		*	`options` property (a [hash]{@glossary Object}) it will be merged with existing
 		*	[options]{@link enyo.Model#options}.
-		* @param {enyo.Model~Options} [opts] This is a one-time [options hash]{@link enyo.Model~Options} that
+		* @param {enyo.Model~Options} [opts] - This is a one-time [options hash]{@link enyo.Model~Options} that
 		*	is only used during initialization and not applied as defaults.
 		* @public
 		*/
@@ -766,11 +766,11 @@
 		* If a [success]{@link enyo.Model~Success} callback was provided, it will be called
 		* once for each source.
 		*
-		* @param {enyo.Model~ActionOptions} opts The original options passed to
+		* @param {enyo.Model~ActionOptions} opts - The original options passed to
 		*	[fetch()]{@link enyo.Model#fetch}, merged with the defaults.
-		* @param {*} [res] The result provided from the given [source]{@link enyo.Model#source},
+		* @param {*} [res] - The result provided from the given [source]{@link enyo.Model#source},
 		* if any. This will vary depending on the source.
-		* @param {String} source The name of the source that has completed successfully.
+		* @param {String} source - The name of the source that has completed successfully.
 		* @public
 		*/
 		fetched: function (opts, res, source) {
@@ -810,11 +810,11 @@
 		* [success]{@link enyo.Model~Success} callback was provided, it will be called once for
 		* each source.
 		*
-		* @param {enyo.Model~ActionOptions} opts The original options passed to
+		* @param {enyo.Model~ActionOptions} opts - The original options passed to
 		*	[commit()]{@link enyo.Model#commit}, merged with the defaults.
-		* @param {*} [res] The result provided from the given [source]{@link enyo.Model#source},
+		* @param {*} [res] - The result provided from the given [source]{@link enyo.Model#source},
 		* if any. This will vary depending on the source.
-		* @param {String} source The name of the source that has completed successfully.
+		* @param {String} source - The name of the source that has completed successfully.
 		* @public
 		*/
 		committed: function (opts, res, source) {
@@ -850,13 +850,13 @@
 		* will execute it.
 		*
 		* @see enyo.StateSupport.clearError
-		* @param {String} action The action (one of `'FETCHING'`, `'COMMITTING'`, or
+		* @param {String} action - The action (one of `'FETCHING'`, `'COMMITTING'`, or
 		* `'DESTROYING'`) that failed and is now in an [error state]{@link enyo.States.ERROR}.
-		* @param {enyo.Model~ActionOptions} opts The original options passed to the `action`
+		* @param {enyo.Model~ActionOptions} opts - The original options passed to the `action`
 		* method, merged with the defaults.
-		* @param {*} [res] The result provided from the given [source]{@link enyo.Model#source},
+		* @param {*} [res] - The result provided from the given [source]{@link enyo.Model#source},
 		* if any. This will vary depending on the source.
-		* @param {String} source The name of the source that has returned an error.
+		* @param {String} source - The name of the source that has returned an error.
 		* @public
 		*/
 		errored: function (action, opts, res, source) {

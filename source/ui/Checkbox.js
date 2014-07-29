@@ -129,7 +129,7 @@
 		* All [input]{@link enyo.Input} type [controls]{@link enyo.Control} support the 
 		* [value]{@link enyo.Input#value} property.
 		*
-		* @param {Boolean} val Whether or not the [checkbox]{@link enyo.Checkbox} should
+		* @param {Boolean} val - Whether or not the [checkbox]{@link enyo.Checkbox} should
 		* be checked. The value will be treated as `true` if it is truthy; otherwise,
 		* `false`.
 		* @public

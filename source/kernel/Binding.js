@@ -37,7 +37,7 @@
 			
 			if (!source) {
 				
-				// the worst case scenario here is for backward compatability purposes
+				// the worst case scenario here is for backward compatibility purposes
 				// we have to at least be able to derive the source via the from string
 				if (from[0] == '^') {
 					
@@ -53,7 +53,7 @@
 			
 			if (!target) {
 				
-				// same worst case as above, for backwards compatability purposes
+				// same worst case as above, for backwards compatibility purposes
 				// we have to at least be able to derive the target via the to string
 				if (to[0] == '^') {
 					
@@ -98,10 +98,10 @@
 	* including the available parameters and how they can be used.
 	* 
 	* @callback enyo.Binding~Transform
-	* @param {*} value The value being synchronized.
-	* @param {String} direction The direction (a string matching either "source" or "target", 
+	* @param {*} value - The value being synchronized.
+	* @param {String} direction - The direction (a string matching either "source" or "target", 
 	*	as in "going to the source").
-	* @param {Object} binding A reference to the associated [binding]{@link enyo.Binding}. In cases 
+	* @param {Object} binding - A reference to the associated [binding]{@link enyo.Binding}. In cases 
 	*	where the binding should be interrupted and not propagate the synchronization at all, call
 	* the `stop()` method on the passed-in binding reference.
 	*/
@@ -547,7 +547,7 @@
 	/**
 	* Retrieves a [binding]{@link enyo.Binding} by its global id.
 	*
-	* @param {String} euid The [Enyo global id]{@glossary EUID} by which to retrieve a 
+	* @param {String} euid - The [Enyo global id]{@glossary EUID} by which to retrieve a 
 	*	[binding]{@link enyo.Binding}.
 	* @returns {enyo.Binding|undefined} A reference to the binding if the id 
 	*	is found; otherwise, it will return [undefined]{@glossary undefined}.

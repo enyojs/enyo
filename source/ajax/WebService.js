@@ -147,8 +147,8 @@
 		* Sends an XHR request with the given parameters, returning the associated
 		* {@link enyo.Async} instance.
 		*
-		* @param {Object} params The parameters to pass to the request.
-		* @param {Object} [props] The optional properties to override the
+		* @param {Object} params - The parameters to pass to the request.
+		* @param {Object} [props] - The optional properties to override the
 		*	{@link enyo.AjaxProperties} of the request.
 		* @returns {enyo.Async} The associated {@link enyo.Async} instance.
 		* @public

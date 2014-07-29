@@ -24,7 +24,7 @@
 	/**
 	* {@link enyo.Popup} is a [control]{@link enyo.Control} used to display certain content
 	* on top of other content.
-	* 
+	*
 	* Popups are initially hidden on creation; they may be shown by calling the 
 	* [show()]{@link enyo.Control#show} method and re-hidden by calling
 	* [hide()]{@link enyo.Control#hide}. Popups may be centered using the 
@@ -499,8 +499,8 @@
 		* that it does not display outside the viewport, and defaults to anchoring
 		* the top left corner of the popup to the position of the mouse event.
 		* 
-		* @param {Object} e The mouse {@glossary event} that initiated this call.
-		* @param {Object} [offset] An optional [object]{@glossary Object} that may
+		* @param {Object} e - The mouse {@glossary event} that initiated this call.
+		* @param {Object} [offset] - An optional [object]{@glossary Object} that may
 		* contain `left` and `top` properties to specify an offset relative to the
 		* location where the [popup]{@link enyo.Popup} would otherwise be positioned.
 		* @public

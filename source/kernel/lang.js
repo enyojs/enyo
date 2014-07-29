@@ -94,7 +94,7 @@
 	/**
 	* Determines whether a variable is defined.
 	* 
-	* @param {*} target Anything that can be compared to `undefined`.
+	* @param {*} target - Anything that can be compared to `undefined`.
 	* @returns {Boolean} `true` if defined, `false` otherwise.
 	* @public
 	*/
@@ -107,7 +107,7 @@
 	/**
 	* Creates a unique identifier (with an optional prefix) and returns the identifier as a string.
 	*
-	* @param {String} [prefix] The prefix to prepend to the generated unique id.
+	* @param {String} [prefix] - The prefix to prepend to the generated unique id.
 	* @returns {String} An optionally-prefixed identifier.
 	* @public
 	*/
@@ -137,7 +137,7 @@
 	/**
 	* Generates a random number using [Math.random]{@glossary Math.random}.
 	*
-	* @param {Number} bound The multiplier used to generate the product.
+	* @param {Number} bound - The multiplier used to generate the product.
 	* @returns {Number} A random number.
 	* @public
 	*/
@@ -150,7 +150,7 @@
 	/**
 	* Determines whether a given variable is a [String]{@glossary String}.
 	*
-	* @param {*} it The variable to be tested.
+	* @param {*} it - The variable to be tested.
 	* @returns {Boolean} `true` if variable is a [String]{@glossary String};
 	* otherwise, `false`.
 	* @public
@@ -162,7 +162,7 @@
 	/**
 	* Determines whether a given variable is a [Function]{@glossary Function}.
 	* 
-	* @param {*} it The variable to be tested.
+	* @param {*} it - The variable to be tested.
 	* @returns {Boolean} `true` if variable is a [Function]{@glossary Function};
 	* otherwise, `false`.
 	* @public
@@ -174,7 +174,7 @@
 	/**
 	* Determines whether a given variable is an [Array]{@glossary Array}.
 	*
-	* @param {*} it The variable to be tested.
+	* @param {*} it - The variable to be tested.
 	* @returns {Boolean} `true` if variable is an [Array]{@glossary Array};
 	* otherwise, `false`.
 	* @method
@@ -187,7 +187,7 @@
 	/**
 	* Determines whether a given variable is an [Object]{@glossary Object}.
 	*
-	* @param {*} it The variable to be tested.
+	* @param {*} it - The variable to be tested.
 	* @returns {Boolean} `true` if variable is an [Object]{@glossary Object};
 	* otherwise, `false`.
 	* @method
@@ -201,7 +201,7 @@
 	/**
 	* Determines whether a given variable is an explicit boolean `true`.
 	*
-	* @param {*} it The variable to be tested.
+	* @param {*} it - The variable to be tested.
 	* @returns {Boolean} `true` if variable is an explicit `true`; otherwise,
 	* `false`.
 	* @public
@@ -214,8 +214,8 @@
 	* Binds the `this` context of any method to a scope and a variable number of provided initial
 	* parameters.
 	*
-	* @param {Object} scope The `this` context for the method.
-	* @param {(Function|String)} method A Function or the name of a method to bind.
+	* @param {Object} scope - The `this` context for the method.
+	* @param {(Function|String)} method - A Function or the name of a method to bind.
 	* @param {...*} [args] Any arguments that will be provided as the initial arguments to the
 	*                      enclosed method.
 	* @returns {Function} The bound method/closure.
@@ -256,8 +256,8 @@
 	* {@link enyo.Object.bindSafely} and {@link enyo.Object}-like objects like
 	* {@link enyo.Model} and {@link enyo.Collection}.
 	*
-	* @param {Object} scope The `this` context for the method.
-	* @param {(Function|String)} method A Function or the name of a method to bind.
+	* @param {Object} scope - The `this` context for the method.
+	* @param {(Function|String)} method - A Function or the name of a method to bind.
 	* @param {...*} [args] Any arguments that will be provided as the initial arguments to the
 	*                      enclosed method.
 	* @returns {Function} The bound method/closure.
@@ -296,8 +296,8 @@
 	* If only a single argument is supplied, will just call that function asynchronously without
 	* doing any additional binding.
 	*
-	* @param {Object} scope The `this` context for the method.
-	* @param {(Function|String)} method A Function or the name of a method to bind.
+	* @param {Object} scope - The `this` context for the method.
+	* @param {(Function|String)} method - A Function or the name of a method to bind.
 	* @param {...*} [args] Any arguments that will be provided as the initial arguments to the
 	*                      enclosed method.
 	* @returns {Number} The `setTimeout` id.
@@ -319,9 +319,9 @@
 	* @example
 	* 	enyo.call(myWorkObject, 'doWork', [3, 'foo']);
 	*
-	* @param {Object} scope The `this` context for the method.
-	* @param {(Function|String)} method A Function or the name of a method to bind.
-	* @param {Array} [args] An array of arguments to pass to the method.
+	* @param {Object} scope - The `this` context for the method.
+	* @param {(Function|String)} method - A Function or the name of a method to bind.
+	* @param {Array} [args] - An array of arguments to pass to the method.
 	* @returns {*} The return value of the method.
 	* @public
 	*/
@@ -380,7 +380,7 @@
 	* computed properties. Returns `undefined` if the object at the given path cannot be found. May
 	* safely be called on non-existent paths.
 	*	
-	* @param {String} path The path from which to retrieve a value.
+	* @param {String} path - The path from which to retrieve a value.
 	* @returns {*} The value for the given path, or `undefined` if the path could not be
 	*                  completely resolved.
 	* @method enyo.getPath
@@ -450,9 +450,9 @@
 	* triggered by default. If the third parameter is present and is an explicit boolean true, the
 	* observers will be triggered regardless. Returns the context from which the method was executed.
 	*
-	* @param {String} path The path for which to set the given value.
-	* @param {*} is The value to set.
-	* @param {Object} [opts] An options hash.
+	* @param {String} path - The path for which to set the given value.
+	* @param {*} is - The value to set.
+	* @param {Object} [opts] - An options hash.
 	* @returns {this} Whatever the given context was when executed.
 	* @method enyo.setPath
 	* @public
@@ -565,7 +565,7 @@
 	* Uppercases a given string. Will coerce to a [String]{@glossary String}
 	* if possible/necessary.
 	*
-	* @param {String} str The string to uppercase.
+	* @param {String} str - The string to uppercase.
 	* @returns {String} The uppercased string.
 	* @public
 	*/
@@ -580,7 +580,7 @@
 	* Lowercases a given string. Will coerce to a [String]{@glossary String}
 	* if possible/necessary.
 	*
-	* @param {String} str The string to lowercase.
+	* @param {String} str - The string to lowercase.
 	* @returns {String} The lowercased string.
 	* @public
 	*/
@@ -594,7 +594,7 @@
 	/**
 	* Capitalizes a given string.
 	*
-	* @param {String} str The string to capitalize.
+	* @param {String} str - The string to capitalize.
 	* @returns {String} The capitalized string.
 	* @public
 	*/
@@ -605,7 +605,7 @@
 	/**
 	* Un-capitalizes a given string.
 	* 
-	* @param {String} str The string to un-capitalize.
+	* @param {String} str - The string to un-capitalize.
 	* @returns {String} The un-capitalized string.
 	* @public
 	*/
@@ -617,7 +617,7 @@
 	* Injects an arbitrary number of values, in order, into a template string at
 	* positions marked by `"%."`.
 	*
-	* @param {String} template The string template to inject with values.
+	* @param {String} template - The string template to inject with values.
 	* @param {...String} val The values to inject into the template.
 	* @returns {String} A copy of the template populated with values.
 	* @public
@@ -647,7 +647,7 @@
 	* Takes a string and trims leading and trailing spaces. Strings with no length,
 	* non-strings, and falsy values will be returned without modification.
 	*
-	* @param {String} str The string from which to remove whitespace.
+	* @param {String} str - The string from which to remove whitespace.
 	* @returns {String} The trimmed string.
 	* @public
 	*/
@@ -722,7 +722,7 @@
 	* base object. If the third parameter is `true`, falsy values will be ignored.
 	*
 	* @param {String[]} properties The properties to include on the returned object.
-	* @param {Object} object The object from which to retrieve values for the requested properties.
+	* @param {Object} object - The object from which to retrieve values for the requested properties.
 	* @param {Boolean} [ignore=false] Whether or not to ignore copying falsy values.
 	* @returns {Object} A new object populated with the requested properties and values from
 	*                     the given object.
@@ -754,8 +754,8 @@
 	* designating whether to pass unknown key/value pairs through to the new object.
 	* If `true`, those keys will exist on the returned object.
 	*
-	* @param {Object} map The object with key/value pairs.
-	* @param {Object} obj The object whose values will be used.
+	* @param {Object} map - The object with key/value pairs.
+	* @param {Object} obj - The object whose values will be used.
 	* @param {Boolean} [pass=false] Whether or not to pass unnamed properties through
 	*                               from the given object.
 	* @returns {Object} A new object whose properties have been mapped.
@@ -779,9 +779,9 @@
 	* reference, and an immutable copy of the original array of objects for
 	* comparison.
 	*
-	* @param {String} property The property to index the array by.
-	* @param {Array} array An array of property objects.
-	* @param {Function} [filter] The filter function to use; accepts four arguments.
+	* @param {String} property - The property to index the array by.
+	* @param {Array} array - An array of property objects.
+	* @param {Function} [filter] - The filter function to use; accepts four arguments.
 	* @returns {Object} A hash (object) indexed by the `property` argument
 	* @public
 	*/
@@ -831,9 +831,9 @@
 	* required. In this case, the optional second parameter may be used to allow a more efficient
 	* [copy]{@link Object.create} to be made.
 	* 
-	* @param {(Object|Array)} base The [Object]{@glossary Object} or
+	* @param {(Object|Array)} base - The [Object]{@glossary Object} or
 	*                              [Array]{@glossary Array} to be cloned.
-	* @param {Boolean} [quick] If `true`, when cloning objects, a faster [copy]{@link Object.create}
+	* @param {Boolean} [quick] - If `true`, when cloning objects, a faster [copy]{@link Object.create}
 	*                          method will be used. This parameter has no meaning when cloning arrays.
 	* @returns {*} A clone of the provided `base` if `base` is of the correct type; otherwise,
 	*              returns `base` as it was passed in.
@@ -933,7 +933,7 @@
 	* Returns an [array]{@glossary Array} of the values of all properties in an
 	* [object]{@glossary Object}.
 	*
-	* @param {Object} obj The [Object]{@glossary Object} to read the values from.
+	* @param {Object} obj - The [Object]{@glossary Object} to read the values from.
 	* @returns {Array} An [array]{@glossary Array} with the values from the `obj`.
 	* @public
 	*/
@@ -1178,9 +1178,9 @@
 	* an `undefined` placeholder element is added to the result array, such that the
 	* returned result array has the same length as the passed-in `array` parameter.
 	* 
-	* @param {Array} array The [array]{@glossary Array} of [objects]{@glossary Object}
+	* @param {Array} array - The [array]{@glossary Array} of [objects]{@glossary Object}
 	*                      in which the `prop` will be searched for.
-	* @param {String} prop A string containing the name of the property to search for.
+	* @param {String} prop - A string containing the name of the property to search for.
 	* @returns {Array} An array of all the values of the named property from
 	*                     objects contained in the `array`.
 	* @public
@@ -1256,8 +1256,8 @@
 	* [strictly equal to]{@glossary ===} occurrence of `el`.
 	* Note that `array` is modified directly.
 	*
-	* @param {Array} array The [Array]{@glossary Array} to look through.
-	* @param {*} el The element to search for and remove.
+	* @param {Array} array - The [Array]{@glossary Array} to look through.
+	* @param {*} el - The element to search for and remove.
 	* @public
 	*/
 	enyo.remove = function (array, el) {
@@ -1285,7 +1285,7 @@
 	/**
 	* Takes content `str` and determines whether or not it is [RTL]{@glossary RTL}.
 	*
-	* @param {String} str A [String]{@glossary String} to check the [RTL]{@glossary RTL}-ness of.
+	* @param {String} str - A [String]{@glossary String} to check the [RTL]{@glossary RTL}-ness of.
 	* @return {Boolean} `true` if `str` should be RTL; `false` if not.
 	* @public
 	*/

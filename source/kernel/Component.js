@@ -10,9 +10,15 @@
 
 	/**
 	* @callback enyo.Component~EventHandler
+<<<<<<< HEAD
 	* @param {enyo.Component} sender The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
 	* @param {Object} event An [object]{@glossary Object} containing 
+=======
+	* @param {enyo.Component} sender - The [component]{@link enyo.Component} that most recently
+	*	propagated the [event]{@glossary event}.
+	* @param {Object} event - An [object]{@glossary Object} containing
+>>>>>>> ENYO-43: Re-review Enyo docs
 	*	event information.
 	* @returns {Boolean} A value indicating whether the event has been
 	*	handled or not. If `true`, then bubbling is stopped.
@@ -416,7 +422,7 @@
 		* Adds a [component]{@link enyo.Component} to the list of components
 		* owned by the current component (i.e., [this.$]{@link enyo.Component#$}).
 		* 
-		* @param {enyo.Component} comp The [component]{@link enyo.Component} to add.
+		* @param {enyo.Component} comp - The [component]{@link enyo.Component} to add.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -456,7 +462,7 @@
 		* [$ hash]{@link enyo.Component#$}, and from the [owner]{@link enyo.Component#owner}
 		* directly if [publish]{@link enyo.Component#publish} is set to `true`.
 		* 
-		* @param {enyo.Component} comp The component to remove.
+		* @param {enyo.Component} comp - The component to remove.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -528,8 +534,8 @@
 		* // (will be available as other.$.another).
 		* this.createComponent({name: 'another'}, {owner: other});
 		* 
-		* @param {Object} props The declarative [kind]{@glossary kind} definition.
-		* @param {Object} ext Additional properties to be applied (defaults).
+		* @param {Object} props - The declarative [kind]{@glossary kind} definition.
+		* @param {Object} ext - Additional properties to be applied (defaults).
 		* @returns {enyo.Component} The instance created with the given parameters.
 		* @public
 		*/
@@ -555,7 +561,7 @@
 		* ], {owner: this});
 		* 
 		* @param {Object[]} props The array of {@link enyo.Component} definitions to be created.
-		* @param {Object} ext Additional properties to be supplied as defaults for each.
+		* @param {Object} ext - Additional properties to be supplied as defaults for each.
 		* @returns {enyo.Component[]} The array of [components]{@link enyo.Component} that were
 		*	created.
 		* @public
@@ -596,11 +602,19 @@
 		* A handler for an event may be specified. See {@link enyo.Component~EventHandler}
 		* for complete details.
 		* 
+<<<<<<< HEAD
 		* @param {String} nom The name of the {@glossary event} to bubble.
 		* @param {Object} [event] The event [object]{@glossary Object} to be passed along
 		* while bubbling.
 		* @param {enyo.Component} [sender=this] The {@link enyo.Component} responsible for
 		*	bubbling the event.
+=======
+		* @param {String} nom - The name of the [event]{@glossary event} to bubble.
+		* @param {Object} [event] - The [event]{@glossary event} [object]{@glossary Object}
+		*	to be passed along while bubbling.
+		* @param {enyo.Component} [sender=this] - The {@link enyo.Component} responsible for
+		*	bubbling the [event]{@glossary event}.
+>>>>>>> ENYO-43: Re-review Enyo docs
 		* @returns {Boolean} `false` if unhandled or uninterrupted; otherwise, `true`.
 		* @public
 		*/
@@ -623,8 +637,14 @@
 		* A handler for an event may be specified. See {@link enyo.Component~EventHandler}
 		* for complete details.
 		* 
+<<<<<<< HEAD
 		* @param {String} nom The name of the {@glossary event}.
 		* @param {Object} [event] The event properties to pass along while bubbling.
+=======
+		* @param {String} nom - The name of the [event]{@glossary event}.
+		* @param {Object} [event] - The [event]{@glossary event} properties to pass along while
+		*	bubbling.
+>>>>>>> ENYO-43: Re-review Enyo docs
 		* @returns {Boolean} `false` if unhandled or uninterrupted; otherwise, `true`.
 		* @public
 		*/
@@ -761,9 +781,16 @@
 		* If you need to handle these types of events differently, you may also need to
 		* override [dispatchEvent()]{@link enyo.Component#dispatchEvent}.
 		* 
+<<<<<<< HEAD
 		* @param {String} nom The method name to dispatch the {@glossary event}.
 		* @param {Object} [event] The event [object]{@glossary Object} to pass along.
 		* @param {enyo.Component} [sender=this] The originator of the event.
+=======
+		* @param {String} nom - The method name to dispatch the [event]{@glossary event}.
+		* @param {Object} [event] - The [event]{@glossary event} [object]{@glossary Object}
+		*	to pass along.
+		* @param {enyo.Component} [sender=this] - The originator of the [event]{@glossary event}.
+>>>>>>> ENYO-43: Re-review Enyo docs
 		* @public
 		*/
 		dispatch: function (nom, event, sender) {
@@ -786,9 +813,15 @@
 		* @example
 		* myControl.triggerHandler('ontap');
 		* 
+<<<<<<< HEAD
 		* @param {String} nom The name of the {@glossary event} to trigger.
 		* @param {Object} [event] The event object to pass along.
 		* @param {enyo.Component} [sender=this] The originator of the event.
+=======
+		* @param {String} nom - The name of the [event]{@glossary event} to trigger.
+		* @param {Object} [event] - The [event]{@glossary event} object to pass along.
+		* @param {enyo.Component} [sender=this] - The originator of the [event]{@glossary event}.
+>>>>>>> ENYO-43: Re-review Enyo docs
 		* @returns {Boolean} `false` if unhandled or uninterrupted, `true` otherwise.
 		* @public
 		*/
@@ -802,9 +835,9 @@
 		* by returning a truthy value from the {@glossary event}
 		* [handler]{@link enyo.Component~EventHandler}.
 		* 
-		* @param {String} nom The name of the {@glossary event} to waterfall.
-		* @param {Object} [event] The event [object]{@glossary Object} to pass along.
-		* @param {enyo.Component} [sender=this] The originator of the event.
+		* @param {String} nom - The name of the {@glossary event} to waterfall.
+		* @param {Object} [event] - The event [object]{@glossary Object} to pass along.
+		* @param {enyo.Component} [sender=this] - The originator of the event.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -830,8 +863,8 @@
 		* {@glossary event} [handler]{@link enyo.Component~EventHandler}.
 		* 
 		* @param {String} nom The name of the {@glossary event}.
-		* @param {Object} [event] The event [object]{@glossary Object} to pass along.
-		* @param {enyo.Component} [sender=this] The event originator.
+		* @param {Object} [event] - The event [object]{@glossary Object} to pass along.
+		* @param {enyo.Component} [sender=this] - The event originator.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -916,10 +949,10 @@
 		* the string `"low"`) will defer the job if an animation is in progress,
 		* which can help to avoid stuttering.
 		* 
-		* @param {String} nom The name of the [job]{@link enyo.job} to start.
-		* @param {(Function|String)} job Either the name of a method or a
+		* @param {String} nom - The name of the [job]{@link enyo.job} to start.
+		* @param {(Function|String)} job - Either the name of a method or a
 		*	[function]{@glossary Function} to execute as the requested job.
-		* @param {Number} wait The number of milliseconds to wait before starting
+		* @param {Number} wait - The number of milliseconds to wait before starting
 		*	the job.
 		* @param {Number} [priority=5] The priority value to be associated with this
 		*	job.
@@ -944,7 +977,7 @@
 		* Stops a [component]{@link enyo.Component}-specific [job]{@link enyo.job} before it has 
 		* been activated.
 		*
-		* @param {String} nom The name of the [job]{@link enyo.job} to be stopped.
+		* @param {String} nom - The name of the [job]{@link enyo.job} to be stopped.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -962,10 +995,10 @@
 		* any other calls to `throttleJob()` with the same job name from running for
 		* the specified amount of time.
 		* 
-		* @param {String} nom The name of the [job]{@link enyo.job} to throttle.
-		* @param {(Function|String)} job Either the name of a method or a
+		* @param {String} nom - The name of the [job]{@link enyo.job} to throttle.
+		* @param {(Function|String)} job - Either the name of a method or a
 		*	[function]{@glossary Function} to execute as the requested job.
-		* @param {Number} wait The number of milliseconds to wait before executing the
+		* @param {Number} wait - The number of milliseconds to wait before executing the
 		*	job again.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -997,7 +1030,7 @@
 	* attribute.
 	* 
 	* @name enyo.create
-	* @param {Object} props The properties that define the [kind]{@glossary kind}.
+	* @param {Object} props - The properties that define the [kind]{@glossary kind}.
 	* @returns {*} An instance of the requested [kind]{@glossary kind}.
 	* @public
 	*/

@@ -168,7 +168,7 @@
 		* cause a lot of useless checking.
 		* 
 		* @param {Object[]} props The array of {@link enyo.Component} definitions to be created.
-		* @param {Object} ext Additional properties to be supplied as defaults for each.
+		* @param {Object} ext - Additional properties to be supplied as defaults for each.
 		* @returns {enyo.Component[]} The array of components that were created.
 		* @method
 		* @public
@@ -236,7 +236,7 @@
 		* 
 		* Note: Oddly, a control is considered to be a descendant of itself.
 		*
-		* @param {enyo.Control} ancestor The [control]{@link enyo.Control} whose lineage 
+		* @param {enyo.Control} ancestor - The [control]{@link enyo.Control} whose lineage
 		*	will be checked to determine whether the current control is a descendant.
 		* @public
 		*/
@@ -462,9 +462,15 @@
 		* owned by a receiving [object]{@glossary Object} by returning a truthy value from the
 		* {@glossary event} [handler]{@link enyo.Component~EventHandler}.
 		* 
+<<<<<<< HEAD
 		* @param {String} nom The name of the {@glossary event}.
 		* @param {Object} [event] The event object to pass along.
 		* @param {enyo.Component} [sender=this] The event's originator.
+=======
+		* @param {String} nom - The name of the [event]{@glossary event}.
+		* @param {Object} [event] - The event object to pass along.
+		* @param {enyo.Component} [sender=this] - The event's originator.
+>>>>>>> ENYO-43: Re-review Enyo docs
 		* @returns {this} The callee for chaining.
 		* @public
 		*/

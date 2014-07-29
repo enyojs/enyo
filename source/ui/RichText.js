@@ -238,7 +238,7 @@
 		/**
 		* Removes the [selection]{@glossary Selection} [object]{@glossary Object}.
 		* 
-		* @param {Boolean} start If `true`, the [selection]{@glossary Selection} is
+		* @param {Boolean} start - If `true`, the [selection]{@glossary Selection} is
 		*	[collapsed to the start]{@glossary Selection.collapseToStart} of the
 		*	[range]{@glossary Range}; otherwise, it is
 		*	[collapsed to the end]{@glossary Selection.collapseToEnd} of the range.
@@ -255,9 +255,9 @@
 		* Modifies the [selection]{@glossary Selection} [object]{@glossary Object}. Please
 		* see the [Selection.modify]{@glossary Selection.modify} API for more information.
 		* 
-		* @param {enyo.RichText~ModifyType} type The type of change to apply.
-		* @param {enyo.RichText~ModifyDirection} dir The direction in which to apply the change.
-		* @param {enyo.RichText~ModifyAmount} amount The granularity of the change.
+		* @param {enyo.RichText~ModifyType} type - The type of change to apply.
+		* @param {enyo.RichText~ModifyDirection} dir - The direction in which to apply the change.
+		* @param {enyo.RichText~ModifyAmount} amount - The granularity of the change.
 		* @public
 		*/
 		modifySelection: function(type, dir, amount) {
@@ -270,8 +270,8 @@
 		/**
 		* Moves the cursor according to the [Editing API]{@glossary Selection.modify}.
 		* 
-		* @param {enyo.RichText~ModifyDirection} dir The direction in which to apply the change.
-		* @param {enyo.RichText~ModifyAmount} amount The granularity of the change.
+		* @param {enyo.RichText~ModifyDirection} dir - The direction in which to apply the change.
+		* @param {enyo.RichText~ModifyAmount} amount - The granularity of the change.
 		* @public
 		*/
 		moveCursor: function(dir, amount) {
@@ -311,7 +311,7 @@
 		* Inserts HTML at the cursor position. HTML will be escaped unless the 
 		* [allowHtml]{@link enyo.RichText#allowHtml} property is `true`.
 		* 
-		* @param {String} val The HTML to insert at the current cursor position.
+		* @param {String} val - The HTML to insert at the current cursor position.
 		* @public
 		*/
 		insertAtCursor: function(val) {

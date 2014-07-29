@@ -844,7 +844,7 @@
 		/**
 		* Calculates the number value of the given playback rate (with support for fractions).
 		*
-		* @param {String} rate The playback rate, which may be a fraction, that will be converted to
+		* @param {String} rate - The playback rate, which may be a fraction, that will be converted to
 		*	a numerical value.
 		* @returns {Number} The numerical representation of the playback rate.
 		* @private
@@ -985,7 +985,7 @@
 		/**
 		* Seeks to the specified time.
 		*
-		* @param {Number} time The time, in seconds, to seek to.
+		* @param {Number} time - The time, in seconds, to seek to.
 		* @public
 		*/
 		seekTo: function(time) {
@@ -1091,7 +1091,7 @@
 		/** 
 		* Sets current player position in the [media]{@link enyo.Media} element.
 		*
-		* @param {Number} time The player position, in seconds.
+		* @param {Number} time - The player position, in seconds.
 		* @public
 		*/
 		setCurrentTime: function(time) {

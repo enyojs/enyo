@@ -112,7 +112,7 @@
 		* @name enyo.load
 		* @method
 		* @param {(String|String[])} depends The path (or paths) to load.
-		* @param {Function} callback The callback to execute after the package has loaded.
+		* @param {Function} callback - The callback to execute after the package has loaded.
 		* @public
 		*/
 		enyo.load = function (depends, callback) {

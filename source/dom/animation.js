@@ -53,9 +53,9 @@
 	* On compatible browsers, if `node` is defined, the [callback]{@glossary callback} will
 	* fire only if `node` is visible.
 	*
-	* @param {Function} callback A [callback]{@glossary callback} to be executed on the
+	* @param {Function} callback - A [callback]{@glossary callback} to be executed on the
 	*                            animation frame.
-	* @param {Node} node The DOM node to request the animation frame for.
+	* @param {Node} node - The DOM node to request the animation frame for.
 	* @returns {Object} A request id to be used with
 	*                     [enyo.cancelRequestAnimationFrame()]{@link enyo.cancelRequestAnimationFrame}.
 	* @public
@@ -137,11 +137,11 @@
 	* method applies the `easing` function to the percentage of time elapsed
 	* divided by duration, capped at 100%.
 	*
-	* @param {Number} t0 Start time.
-	* @param {Number} duration Duration in milliseconds.
-	* @param {Function} easing An easing [function]{@glossary Function} reference from
+	* @param {Number} t0 - Start time.
+	* @param {Number} duration - Duration in milliseconds.
+	* @param {Function} easing - An easing [function]{@glossary Function} reference from
 	*	{@link enyo.easing}.
-	* @param {Boolean} reverse Whether the animation will run in reverse.
+	* @param {Boolean} reverse - Whether the animation will run in reverse.
 	* @returns {Number} The resulting position, capped at a maximum of 100%.
 	* @public
 	*/
@@ -161,13 +161,13 @@
 	* Applies the `easing` function with a wider range of variables to allow for
 	* more complex animations.
 	*
-	* @param {Number} t0 Start time.
-	* @param {Number} duration Duration in milliseconds.
-	* @param {Function} easing An easing [function]{@glossary Function} reference from
+	* @param {Number} t0 - Start time.
+	* @param {Number} duration - Duration in milliseconds.
+	* @param {Function} easing - An easing [function]{@glossary Function} reference from
 	*	{@link enyo.easing}.
-	* @param {Boolean} reverse Whether the animation will run in reverse.
+	* @param {Boolean} reverse - Whether the animation will run in reverse.
 	* @param {Number} time
-	* @param {Number} startValue Starting value.
+	* @param {Number} startValue - Starting value.
 	* @param {Number} valueChange
 	* @returns {Number} The resulting position, capped at a maximum of 100%.
 	* @public

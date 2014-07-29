@@ -2,7 +2,7 @@
 	/**
 	* Allows bootstrapping in environments that do not have a window object right away.
 	*
-	* @param {Function} func The function to run
+	* @param {Function} func - The function to run
 	* @public
 	*/
 	enyo.requiresWindow = function(func) {
@@ -25,8 +25,8 @@
 		* var domNode = enyo.dom.byId(node);
 		* ```
 		*
-		* @param {String} id The document element ID to get.
-		* @param {Node} [doc] A [node]{@glossary Node} to search in. Default is the whole
+		* @param {String} id - The document element ID to get.
+		* @param {Node} [doc] - A [node]{@glossary Node} to search in. Default is the whole
 		*	document.
 		* @returns {Element} A reference to a DOM element.
 		* @public
@@ -46,7 +46,7 @@
 		* '&amp;lt;code&amp;gt;'This &amp;amp; That'&amp;lt;/code&amp;gt;'
 		* ```
 		*
-		* @param {String} text A string with entities you'd like to escape/convert.
+		* @param {String} text - A string with entities you'd like to escape/convert.
 		* @returns {String} A string that is properly escaped (the above characters.)
 		* @public
 		*/
@@ -57,7 +57,7 @@
 		/**
 		* Returns an object describing the geometry of this node.
 		*
-		* @param {Node} n The [node]{@glossary Node} to measure.
+		* @param {Node} n - The [node]{@glossary Node} to measure.
 		* @returns {Object} An object containing the properties `top`, `left`,
 		* `height`, and `width`.
 		* @public
@@ -282,8 +282,8 @@
 		/**
 		* Gets the boundaries of a [node's]{@glossary Node} `margin` or `padding` box.
 		*
-		* @param {Node} node The [node]{@glossary Node} to measure.
-		* @param {Node} box The boundary to measure from ('padding' or 'margin').
+		* @param {Node} node - The [node]{@glossary Node} to measure.
+		* @param {Node} box - The boundary to measure from ('padding' or 'margin').
 		* @returns {Object} An object containing the properties `top`, `right`, `bottom`, and
 		*	`left`.
 		* @public
@@ -302,7 +302,7 @@
 		* Gets the calculated padding of a node. Shortcut for
 		* [enyo.dom.calcBoxExtents()]{@link enyo.dom.calcBoxExtents}.
 		*
-		* @param {Node} node The [node]{@glossary Node} to measure.
+		* @param {Node} node - The [node]{@glossary Node} to measure.
 		* @returns {Object} An object containing the properties `top`, `right`, `bottom`, and
 		*	`left`.
 		* @public
@@ -315,7 +315,7 @@
 		* Gets the calculated margin of a node. Shortcut for
 		* [enyo.dom.calcBoxExtents()]{@link enyo.dom.calcBoxExtents}.
 		*
-		* @param {Node} node The [node]{@glossary Node} to measure.
+		* @param {Node} node - The [node]{@glossary Node} to measure.
 		* @returns {Object} An object containing the properties `top`, `right`, `bottom`, and
 		*	`left`.
 		* @public
@@ -331,8 +331,8 @@
 		* the position will be relative to the viewport and suitable for absolute positioning in a
 		* floating layer.
 		*
-		* @param {Node} node The [node]{@glossary Node} to measure.
-		* @param {Node} relativeToNode The [node]{@glossary Node} to measure the distance from.
+		* @param {Node} node - The [node]{@glossary Node} to measure.
+		* @param {Node} relativeToNode - The [node]{@glossary Node} to measure the distance from.
 		* @returns {Object} An object containing the properties `top`, `right`, `bottom`, `left`,
 		*	`height`, and `width`.
 		* @public
@@ -414,8 +414,8 @@
 		/**
 		* Sets the `innerHTML` property of the specified `node` to `html`.
 		*
-		* @param {Node} node The [node]{@glossary Node} to set.
-		* @param {String} html An HTML string.
+		* @param {Node} node - The [node]{@glossary Node} to set.
+		* @param {String} html - An HTML string.
 		* @public
 		*/
 		setInnerHtml: function(node, html) {
@@ -425,8 +425,8 @@
 		/**
 		* Checks a [DOM]{@glossary Node} [node]{@glossary Node} for a specific CSS class.
 		*
-		* @param {Node} node The [node]{@glossary Node} to set.
-		* @param {String} s The class name to check for.
+		* @param {Node} node - The [node]{@glossary Node} to set.
+		* @param {String} s - The class name to check for.
 		* @returns {(Boolean|undefined)} `true` if `node` has the `s` class; `undefined`
 		* if there is no `node` or it has no `className` property.
 		* @public
@@ -439,8 +439,8 @@
 		/**
 		* Uniquely adds a CSS class to a DOM node.
 		*
-		* @param {Node} node The [node]{@glossary Node} to set.
-		* @param {String} s The class name to add.
+		* @param {Node} node - The [node]{@glossary Node} to set.
+		* @param {String} s - The class name to add.
 		* @public
 		*/
 		addClass: function(node, s) {
@@ -453,8 +453,8 @@
 		/**
 		* Removes a CSS class from a DOM node if it exists.
 		*
-		* @param {Node} node The [node]{@glossary Node} from which to remove the class.
-		* @param {String} s The class name to remove from `node`.
+		* @param {Node} node - The [node]{@glossary Node} from which to remove the class.
+		* @param {String} s - The class name to remove from `node`.
 		* @public
 		*/
 		removeClass: function(node, s) {
@@ -468,7 +468,7 @@
 		* Adds a class to `document.body`. This defers the actual class change if nothing has been
 		* rendered into `body` yet.
 		*
-		* @param {String} s The class name to add to the document's `body`.
+		* @param {String} s - The class name to add to the document's `body`.
 		* @public
 		*/
 		addBodyClass: function(s) {
@@ -497,7 +497,7 @@
 		* Values returned are only valid if `hasNode()` is truthy. If there's no DOM node for the
 		* object, this returns a bounds structure with `undefined` as the value of all fields.
 		*
-		* @param {Node} n The [node]{@glossary Node} to measure.
+		* @param {Node} n - The [node]{@glossary Node} to measure.
 		* @returns {Object} An object containing the properties `top`, `right`, `bottom`, `left`,
 		*	`height`, and `width`.
 		* @public

@@ -136,8 +136,8 @@
 	* control.applyStyle('-moz-transform', 'translate(30px, 40px) scale(3) rotate(20deg) skewX(-30deg)');
 	* ```
 	*
-	* @param {enyo.Control} control The {@link enyo.Control} to transform.
-	* @param {Object} transforms The set of transforms to apply to `control`.
+	* @param {enyo.Control} control - The {@link enyo.Control} to transform.
+	* @param {Object} transforms - The set of transforms to apply to `control`.
 	* @public
 	*/
 	enyo.dom.transform = function(control, transforms) {
@@ -162,9 +162,9 @@
 	*
 	* This will rotate the tapped control by 45 degrees clockwise.
 	*
-	* @param {enyo.Control} control The {@link enyo.Control} to transform.
-	* @param {String} transform The name of the transform function.
-	* @param {(String|Number)} value The value to apply to the transform.
+	* @param {enyo.Control} control - The {@link enyo.Control} to transform.
+	* @param {String} transform - The name of the transform function.
+	* @param {(String|Number)} value - The value to apply to the transform.
 	* @public
 	*/
 	enyo.dom.transformValue = function(control, transform, value) {
@@ -179,8 +179,8 @@
 	* browser supports it. You may also optionally force-set `value` directly, to
 	* be applied to `translateZ(value)`.
 	*
-	* @param {enyo.Control} control The {@link enyo.Control} to accelerate.
-	* @param {(String|Number)} [value] An optional value to apply to the acceleration transform
+	* @param {enyo.Control} control - The {@link enyo.Control} to accelerate.
+	* @param {(String|Number)} [value] - An optional value to apply to the acceleration transform
 	*	property.
 	* @public
 	*/

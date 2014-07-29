@@ -84,7 +84,7 @@
 		* Imports the values from the given [object]{@glossary Object}. Automatically called
 		* from the [constructor]{@link enyo.Object#constructor}.
 		*
-		* @param {Object} props If provided, the [object]{@glossary Object} from which to 
+		* @param {Object} props - If provided, the [object]{@glossary Object} from which to
 		*	retrieve [keys/values]{@glossary Object.keys} to mix in.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -116,7 +116,7 @@
 		* Calls the [destroy()]{@link enyo.Object#destroy} method for the named {@link enyo.Object} 
 		* property.
 		*
-		* @param {String} name The name of the property to destroy, if possible.
+		* @param {String} name - The name of the property to destroy, if possible.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -183,7 +183,7 @@
 		* should use [computed properties]{@link enyo.ComputedSupport} instead of relying on the 
 		* getter naming convention.)
 		*
-		* @param {String} path The path from which to retrieve a value.
+		* @param {String} path - The path from which to retrieve a value.
 		* @returns {*} The value for the given path or [undefined]{@glossary undefined} if 
 		*	the path could not be completely resolved.
 		* @public
@@ -195,9 +195,9 @@
 		* resolvable relative to the given {@link enyo.Object}. See {@link enyo.setPath} for 
 		* complete details.
 		*
-		* @param {String} path The path for which to set the given value.
-		* @param {*} value The value to set.
-		* @param {Object} [opts] An options hash.
+		* @param {String} path - The path for which to set the given value.
+		* @param {*} value - The value to set.
+		* @param {Object} [opts] - An options hash.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/

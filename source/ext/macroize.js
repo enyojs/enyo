@@ -26,10 +26,10 @@
 	* ```
 	*
 	* @utility
-	* @param {String} text The template text in which to insert values via macro.
-	* @param {Object} map The {@glossary Object} containing the data to be inserted
+	* @param {String} text - The template text in which to insert values via macro.
+	* @param {Object} map - The {@glossary Object} containing the data to be inserted
 	* into the `text`.
-	* @param {RegExp} [regex] The optional pattern to use to match the entries in
+	* @param {RegExp} [regex] - The optional pattern to use to match the entries in
 	* the `text`.
 	* @returns {String} The modified `text` value.
 	* @public
@@ -63,10 +63,10 @@
 	*
 	* @utility
 	* @see enyo.macroize
-	* @param {String} text The template text in which tokens will be replaced via macro.
-	* @param {Object} map The {@glossary Object} containing the data to be inserted into
+	* @param {String} text - The template text in which tokens will be replaced via macro.
+	* @param {Object} map - The {@glossary Object} containing the data to be inserted into
 	* the `text`.
-	* @param {RegExp} [regex] The optional pattern to use to match the entries in the
+	* @param {RegExp} [regex] - The optional pattern to use to match the entries in the
 	* `text`.
 	* @returns {String} The modified `text` value.
 	* @public
@@ -87,10 +87,10 @@
 	*
 	* @utility
 	* @see enyo.macroize
-	* @param {String} text The template text in which tokens will be replaced via macro.
-	* @param {Object} map The {@glossary Object} containing the data to be inserted into
+	* @param {String} text - The template text in which tokens will be replaced via macro.
+	* @param {Object} map - The {@glossary Object} containing the data to be inserted into
 	* the `text`.
-	* @param {RegExp} [regex] The optional pattern to use to match the entries in the `text`.
+	* @param {RegExp} [regex] - The optional pattern to use to match the entries in the `text`.
 	* @returns {String} The modified `text` value.
 	* @public
 	*/

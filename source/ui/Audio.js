@@ -3,7 +3,7 @@
 	* {@link enyo.Audio} extends {@link enyo.Media} to implement an
 	* [HTML 5 Media element]{@glossary HTML5MediaElement} that allows you to play
 	* audio data.
-	* 
+	*
 	* Initialize an audio component as follows:
 	*
 	* ```

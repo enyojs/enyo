@@ -42,7 +42,7 @@
 		* These properties should include the name by which it will be referenced in
 		* the application.
 		*
-		* @param {Object} [props] The properties to set on itself.
+		* @param {Object} [props] - The properties to set on itself.
 		* @public
 		*/
 		constructor: function (props) {
@@ -61,7 +61,7 @@
 		* @virtual
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
 		*	[collection]{@link enyo.Collection} to be retrieved.
-		* @param {Object} opts The configuration options [hash]{@glossary Object}, including
+		* @param {Object} opts - The configuration options [hash]{@glossary Object}, including
 		*	`success` and `error` callbacks.
 		*/
 		fetch: function (model, opts) {
@@ -76,7 +76,7 @@
 		* @virtual
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
 		*	[collection]{@link enyo.Collection} to be persisted.
-		* @param {Object} opts The configuration options [hash]{@glossary Object}, including
+		* @param {Object} opts - The configuration options [hash]{@glossary Object}, including
 		*	`success` and `error` callback.
 		*/
 		commit: function (model, opts) {
@@ -92,7 +92,7 @@
 		*
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
 		*	[collection]{@link enyo.Collection} to be deleted.
-		* @param {Object} opts The configuration options [hash]{@glossary Object}, including
+		* @param {Object} opts - The configuration options [hash]{@glossary Object}, including
 		*	`success` and `error` callbacks.
 		*/
 		destroy: function (model, opts) {
@@ -111,9 +111,9 @@
 		* properties, including `success` and `error` callbacks to handle the result.
 		*
 		* @virtual
-		* @param {Function} ctor The constructor for the [kind]{@glossary kind} of
+		* @param {Function} ctor - The constructor for the [kind]{@glossary kind} of
 		*	{@link enyo.Model} or {@link enyo.Collection} to be queried.
-		* @param {Object} opts The configuration options [hash]{@glossary Object}, including
+		* @param {Object} opts - The configuration options [hash]{@glossary Object}, including
 		*	`success` and `error` callbacks.
 		*/
 		find: function (ctor, opts) {
@@ -154,7 +154,7 @@
 	* @name enyo.Source.create
 	* @static
 	* @method
-	* @param {Object} props The properties to pass to the constructor for the requested
+	* @param {Object} props - The properties to pass to the constructor for the requested
 	*	[kind]{@glossary kind} of [source]{@link enyo.Source}.
 	* @returns {enyo.Source} An instance of the requested kind of source.
 	* @public

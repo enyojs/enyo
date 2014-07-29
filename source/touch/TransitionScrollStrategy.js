@@ -207,7 +207,7 @@
 		/**
 		* Sets the horizontal scroll position.
 		*
-		* @param {Number} left The horizontal scroll position in pixels.
+		* @param {Number} left - The horizontal scroll position in pixels.
 		* @method
 		* @public
 		*/
@@ -224,7 +224,7 @@
 		/**
 		* Sets the vertical scroll position.
 		*
-		* @param {Number} top The vertical scroll position in pixels.
+		* @param {Number} top - The vertical scroll position in pixels.
 		* @method
 		* @public
 		*/
@@ -241,7 +241,7 @@
 		/**
 		* Sets the scroll position along the x-axis.
 		*
-		* @param {Number} x The x-axis scroll position in pixels.
+		* @param {Number} x - The x-axis scroll position in pixels.
 		* @method
 		* @public
 		*/
@@ -252,7 +252,7 @@
 		/**
 		* Sets the scroll position along the y-axis.
 		*
-		* @param {Number} y The y-axis scroll position in pixels.
+		* @param {Number} y - The y-axis scroll position in pixels.
 		* @method
 		* @public
 		*/
@@ -1049,8 +1049,8 @@
 		/** 
 		* Scrolls to a specific position within the scroll area.
 		*
-		* @param {Number} x The `x` position in pixels.
-		* @param {Number} y The `y` position in pixels.
+		* @param {Number} x - The `x` position in pixels.
+		* @param {Number} y - The `y` position in pixels.
 		* @public
 		*/
 		scrollTo: function (x, y) {

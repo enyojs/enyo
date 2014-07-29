@@ -64,7 +64,7 @@
 		* set it as the active filter (if it wasn't already active). Otherwise, it will set the
 		* `activeFilter` property to the special `'*'` character and proxy its complete dataset.
 		* 
-		* @param {Object} [opts] The options to be passed to the internal
+		* @param {Object} [opts] - The options to be passed to the internal
 		* 	{@link enyo.Object#set} method.
 		* @returns {this} The callee for chaining.
 		* @public

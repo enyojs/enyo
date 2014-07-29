@@ -18,9 +18,9 @@
 	* @see enyo.ObserverSupport
 	* @see enyo.ObserverSupport.observe
 	* @callback enyo.ObserverSupport~Observer
-	* @param {*} was The previous value of the property that has changed.
-	* @param {*} is The current value of the property that has changed.
-	* @param {String} prop The name of the property that has changed.
+	* @param {*} was - The previous value of the property that has changed.
+	* @param {*} is - The current value of the property that has changed.
+	* @param {String} prop - The name of the property that has changed.
 	* @public
 	*/
 	
@@ -259,7 +259,7 @@
 		* Returns an immutable list of [observers]{@link enyo.ObserverSupport~Observer}
 		* for the given `path`, or all observers for the callee.
 		*
-		* @param {String} [path] Path or property path for which
+		* @param {String} [path] - Path or property path for which
 		* [observers]{@link enyo.ObserverSupport~Observer} will be returned. If not
 		* specified, all observers for the callee will be returned.
 		*
@@ -314,10 +314,10 @@
 		* registering, it should also be used when unregistering.**
 		*
 		* @see enyo.ObserverSupport.unobserve
-		* @param {String} path The property or property path to observe.
-		* @param {enyo.ObserverSupport~Observer} fn The
+		* @param {String} path - The property or property path to observe.
+		* @param {enyo.ObserverSupport~Observer} fn - The
 		*	[observer]{@link enyo.ObserverSupport~Observer} method that responds to changes.
-		* @param {*} [ctx] The `this` (context) under which to execute the observer.
+		* @param {*} [ctx] - The `this` (context) under which to execute the observer.
 		*
 		* @returns {this} The callee for chaining.
 		* @public
@@ -342,10 +342,10 @@
 		* then it should also be supplied to this method.
 		*
 		* @see enyo.ObserverSupport.observe
-		* @param {String} path The property or property path to unobserve.
-		* @param {enyo.ObserverSupport~Observer} fn The
+		* @param {String} path - The property or property path to unobserve.
+		* @param {enyo.ObserverSupport~Observer} fn - The
 		*	[observer]{@link enyo.ObserverSupport~Observer} method that responds to changes.
-		* @param {*} [ctx] The `this` (context) under which to execute the observer.
+		* @param {*} [ctx] - The `this` (context) under which to execute the observer.
 		*
 		* @returns {this} The callee for chaining.
 		* @public
@@ -359,7 +359,7 @@
 		* callee. If a `path` parameter is provided, observers will only be removed
 		* from that path (or property).
 		*
-		* @param {String} [path] A property or property path from which to remove all
+		* @param {String} [path] - A property or property path from which to remove all
 		*	[observers]{@link enyo.ObserverSupport~Observer}.
 		* @returns {this} The callee for chaining.
 		*/
@@ -394,9 +394,9 @@
 		* forcibly by [setting]{@link enyo.Object#set} a value with the
 		* `force` option.
 		*
-		* @param {String} path The property or property path to notify.
-		* @param {*} was The previous value.
-		* @param {*} is The current value.
+		* @param {String} path - The property or property path to notify.
+		* @param {*} was - The previous value.
+		* @param {*} is - The current value.
 		* @returns {this} The callee for chaining.
 		*/
 		notify: function (path, was, is, opts) {
@@ -417,7 +417,7 @@
 		* @see enyo.ObserverSupport.startNotifications
 		* @see enyo.ObserverSupport.disableNotificationQueue
 		* @see enyo.ObserverSupport.enableNotificationQueue
-		* @param {Boolean} [noQueue] If `true`, this will also disable the notification queue.
+		* @param {Boolean} [noQueue] - If `true`, this will also disable the notification queue.
 		* @returns {this} The callee for chaining.
 		*/
 		stopNotifications: function (noQueue) {
@@ -439,7 +439,7 @@
 		* @see enyo.ObserverSupport.stopNotifications
 		* @see enyo.ObserverSupport.disableNotificationQueue
 		* @see enyo.ObserverSupport.enableNotificationQueue
-		* @param {Boolean} [queue] If `true` and the notification queue is disabled,
+		* @param {Boolean} [queue] - If `true` and the notification queue is disabled,
 		* the queue will be re-enabled.
 		* @returns {this} The callee for chaining.
 		*/

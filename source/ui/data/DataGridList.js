@@ -3,7 +3,7 @@
 	* {@link enyo.DataGridList} is a paginated {@link enyo.DataList} designed to lay out
 	* its children in a grid. Like `enyo.DataList`, it links its children directly to the
 	* underlying records in the collection specified as its collection.
-	* 
+	*
 	* Because the layout is arbitrarily handled, spacing of children must be set using
 	* the kind's available API (e.g., with the [spacing]{@link enyo.DataGridList#spacing},
 	* [minWidth]{@link enyo.DataGridList#minWidth}, and
@@ -112,7 +112,7 @@
 				var len = this.collection? this.collection.length: 0;
 				if (this.$.scroller.generated && len && this.showing) {
 					// avoid the default handler and call the event handler method
-					// designated by _enyo.DataList_
+					// designated by `enyo.DataList`
 					this.didResize();
 				}
 			};

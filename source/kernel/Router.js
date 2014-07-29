@@ -312,7 +312,7 @@
 		* `path` being a string that will be evaluated against the routes owned by
 		* this router.
 		*
-		* @param {String} path A path to test against this router's
+		* @param {String} path - A path to test against this router's
 		*	[routes]{@linkcode enyo.Router#routes}.
 		* @public
 		*/
@@ -356,8 +356,8 @@
 		* the lowest position (the same as if boolean `true` is passed as the second
 		* parameter). Returns callee for chaining.
 		*
-		* @param {String} location The location string to add to the history.
-		* @param {(Number|Boolean)} [idx] Position in the history stack where the
+		* @param {String} location - The location string to add to the history.
+		* @param {(Number|Boolean)} [idx] - Position in the history stack where the
 		* new location should be added. Pass `true` for the first/oldest position,
 		* or a number indicating the index where the location should be added. If no
 		* value (or `undefined`) is specified, the location will be added at the
@@ -400,7 +400,7 @@
 		* to the router. `route` is a hash as described by the
 		* [routes]{@link enyo.Router#routes} array. Returns callee for chaining.
 		*
-		* @param {Object} route The route to add.
+		* @param {Object} route - The route to add.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
