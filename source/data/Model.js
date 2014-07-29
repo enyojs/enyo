@@ -163,14 +163,14 @@
 		* @public
 		*/
 		getUrl: null,
-				
+		
 		/**
 		* The [hash]{@glossary Object} of properties proxied by this [model]{@link enyo.Model}.
 		* If defined on a [subkind]{@glossary subkind}, it may be assigned default values and
-		* all [instances]{@glossary instance} will share its default structure. If no
-		* attributes are defined, an empty [hash]{@glossary Object} will be assigned during
-		* initialization. It is not necessary to pre-define the structure of a model; depending
-		* on the model's complexity, pre-defining the structure may even hinder performance.
+		* all instances will share its default structure. If no attributes are defined, an
+		* empty [hash]{@glossary Object} will be assigned during initialization. It is not
+		* necessary to pre-define the structure of a model; depending on the model's complexity,
+		* pre-defining the structure may possibly hinder performance.
 		*
 		* It should also be noted that calls to [get()]{@link enyo.Model#get} or
 		* [set()]{@link enyo.Model#set} will access and modify this property. This includes
