@@ -38,6 +38,10 @@
 			// this is a datalist...it has to be scroll or auto for vertical
 			so.vertical    = so.vertical == 'scroll'? 'scroll': 'auto';
 			so.horizontal  = so.horizontal || 'hidden';
+			// determine if the _controlsPerPage_ property has been set on the list
+			if (list.controlsPerPage !== null && !isNaN(list.controlsPerPage)) {
+				this._staticControlsPerPage = true;
+			}
 		},
 		
 		/**
@@ -230,7 +234,7 @@
 		* @private
 		*/
 		controlsPerPage: function (list) {
-			if (list._staticControlsPerPage) {
+			if (this._staticControlsPerPage) {
 				return list.controlsPerPage;
 			} else {
 				var updatedControls = list._updatedControlsPerPage,

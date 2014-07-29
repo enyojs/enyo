@@ -23,6 +23,16 @@
 	*/
 
 	/**
+	* When this property is specified, we force the static usage of this value instead of 
+	* dynamically calculating the number of controls per page based upon the viewport size.
+	* 
+	* @name enyo.DataList#controlsPerPage
+	* @type {Number}
+	* @default undefined
+	* @public
+	*/
+
+	/**
 	* {@link enyo.DataList} is an {@link enyo.DataRepeater} that employs a paginated
 	* scrolling scheme to enhance performance with larger datasets. The data is provided to
 	* the DataList by an {@link enyo.Collection} set as the value of its
@@ -30,7 +40,7 @@
 	* 
 	* Note that care should be taken when deciding how to lay out the list's children. When
 	* there are a large number of child [elements]{@link enyo.Control}, the layout process
-	* can be taxing and non-performant for the browser. Avoid	dynamically-updated
+	* can be taxing and non-performant for the browser. Avoid dynamically-updated
 	* [layouts]{@glossary layout} that require lots of calculations each time the data in a
 	* view is updated. Try to use CSS whenever possible.
 	* 
@@ -206,10 +216,6 @@
 				this.metrics.pages = {};
 				if (this.pageSizeMultiplier !== null && !isNaN(this.pageSizeMultiplier)) {
 					this.pageSizeMultiplier = Math.max(1.2, this.pageSizeMultiplier);
-				}
-				// determine if the _controlsPerPage_ property has been set
-				if (this.controlsPerPage !== null && !isNaN(this.controlsPerPage)) {
-					this._staticControlsPerPage = true;
 				}
 			};
 		}),
