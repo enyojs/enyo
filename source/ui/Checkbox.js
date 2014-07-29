@@ -2,7 +2,7 @@
 	/**
 	* Fires when checkbox is tapped.
 	*
-	* @event enyo.Checkbox#event:onActivate
+	* @event enyo.Checkbox#onActivate
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the @glossary event}.

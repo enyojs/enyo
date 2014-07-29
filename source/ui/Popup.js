@@ -2,7 +2,7 @@
 	/**
 	* Fires after the [popup]{@link enyo.Popup} is shown.
 	*
-	* @event enyo.Popup#event:onShow
+	* @event enyo.Popup#onShow
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -13,7 +13,7 @@
 	/**
 	* Fires after the [popup]{@link enyo.Popup} is hidden.
 	*
-	* @event enyo.Popup#event:onHide
+	* @event enyo.Popup#onHide
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -345,8 +345,8 @@
 
 		/**
 		* @method
-		* @fires enyo.Popup#event:onShow
-		* @fires enyo.Popup#event:onHide
+		* @fires enyo.Popup#onShow
+		* @fires enyo.Popup#onHide
 		* @private
 		*/
 		showingChanged: enyo.inherit(function (sup) {

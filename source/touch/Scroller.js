@@ -659,7 +659,7 @@
 		/** 
 		* Normalizes scroll {@glossary event} to `onScroll`.
 		*
-		* @fires enyo.Scroller#event:onScroll
+		* @fires enyo.Scroller#onScroll
 		* @private
 		*/
 		domScroll: function (sender, e) {

@@ -1,8 +1,8 @@
 (function (enyo, scope) {
 	/**
 	* The extended {@glossary event} [object]{@glossary Object} that is provided
-	* when the [onSelect]{@link enyo.Selection#event:onSelect} and
-	* [onDeselect]{@link enyo.Selection#event:onDeselect} events are fired.
+	* when the [onSelect]{@link enyo.Selection#onSelect} and
+	* [onDeselect]{@link enyo.Selection#onDeselect} events are fired.
 	*
 	* @typedef {Object} enyo.Selection~SelectionEvent
 	* @property {Number|String} key The key that was used to register the
@@ -21,7 +21,7 @@
 	* ...
 	* ```
 	*
-	* @event enyo.Selection#event:onSelect
+	* @event enyo.Selection#onSelect
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -40,7 +40,7 @@
 	* ...
 	* ```
 	*
-	* @event enyo.Selection#event:onDeselect
+	* @event enyo.Selection#onDeselect
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -52,7 +52,7 @@
 	/**
 	* Fires when selection changes (but not when selection is cleared).
 	*
-	* @event enyo.Selection#event:onChange
+	* @event enyo.Selection#onChange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -188,8 +188,8 @@
 		* should be unselected.
 		* @param {Object} [data] An optional data [object]{@glossary Object} to store 
 		*	in the selection for the key that will be sent with the
-		*	[onSelect]{@link enyo.Selection#event:onSelect} or
-		*	[onDeselect]{@link enyo.Selection#event:onDeselect} {@glossary event}. If
+		*	[onSelect]{@link enyo.Selection#onSelect} or
+		*	[onDeselect]{@link enyo.Selection#onDeselect} {@glossary event}. If
 		*	not used, the `data` will be set to `true`.
 		* @fires enyo.Selection#event:onChange
 		* @public
@@ -226,8 +226,8 @@
 		* @param {Number|String} key The unique identifier of the row.
 		* @param {Object} [data] An optional data [object]{@glossary Object} to store
 		* in the selection for the key that will be sent with the
-		*	[onSelect]{@link enyo.Selection#event:onSelect} or
-		*	[onDeselect]{@link enyo.Selection#event:onDeselect} {@glossary event}. If
+		*	[onSelect]{@link enyo.Selection#onSelect} or
+		*	[onDeselect]{@link enyo.Selection#onDeselect} {@glossary event}. If
 		*	not used, the `data` will be set to `true`.
 		* @public
 		*/
@@ -248,8 +248,8 @@
 		* @param {Number|String} key The unique identifier of the row.
 		* @param {Object} [data] An optional data [object]{@glossary Object} to store
 		* in the selection for the key that will be sent with the
-		*	[onSelect]{@link enyo.Selection#event:onSelect} or
-		*	[onDeselect]{@link enyo.Selection#event:onDeselect} {@glossary event}. If
+		*	[onSelect]{@link enyo.Selection#onSelect} or
+		*	[onDeselect]{@link enyo.Selection#onDeselect} {@glossary event}. If
 		*	not used, the `data` will be set to `true`.
 		* @public
 		*/

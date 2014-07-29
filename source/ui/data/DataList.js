@@ -1,7 +1,12 @@
 (function (enyo, scope) {
 	/**
+<<<<<<< HEAD
 	* The {@glossary event} [object]{@glossary Object} that is provided when the
 	* [paging]{@link enyo.DataList#event:paging} event is fired.
+=======
+	* The [event]{@glossary event} [object]{@glossary Object} that is provided when the 
+	* [paging]{@link enyo.DataList#paging} [event]{@glossary event} is fired.
+>>>>>>> ENYO-43: Re-review Enyo docs
 	*
 	* @typedef {Object} enyo.DataList~PagingEvent
 	* @property {Number} start The lowest active index in the dataset.
@@ -13,12 +18,16 @@
 	/**
 	* Fires each time data is paged, on a per-page basis.
 	*
-	* @event enyo.DataList#event:paging
+	* @event enyo.DataList#paging
 	* @type {Object}
 	* @property {Object} sender - A reference to the {@link enyo.DataList}.
 	* @property {String} nom The name of the {@glossary event}.
 	* @property {enyo.DataList~PagingEvent} event - A [hash]{@glossary Object} with properties
+<<<<<<< HEAD
 	*	specific to the [paging]{@link enyo.DataList#event:paging} event.
+=======
+	*	specific to the [paging]{@link enyo.DataList#paging} [event]{@glossary event}.
+>>>>>>> ENYO-43: Re-review Enyo docs
 	* @public
 	*/
 
@@ -34,11 +43,19 @@
 	* [layouts]{@glossary layout} that require lots of calculations each time the data in a
 	* view is updated. Try to use CSS whenever possible.
 	* 
+<<<<<<< HEAD
 	* While paging through data, `enyo.DataList` emits the
 	* [paging]{@link enyo.DataList#event:paging} {@glossary event}, which allows you
 	* to make updates as necessary, on a per-page basis. You may register for this event
 	* by calling [addListener()]{@link enyo.EventEmitter#addListener} and specifying the
 	* event, along with a callback method.
+=======
+	* While paging through data, _enyo.DataList_ emits the 
+	* [_paging_]{@link enyo.DataList#paging} [event]{@glossary event}, which allows you 
+	* to make updates on a per-page basis, as necessary. You may register for this 
+	* [event]{@glossary event} by calling [_addListener()_]{@link enyo.EventEmitter#addListener}
+	* and specifying the [event]{@glossary event}, along with a callback method.
+>>>>>>> ENYO-43: Re-review Enyo docs
 	*
 	* @ui
 	* @class enyo.DataList
@@ -528,12 +545,21 @@
 		*/
 		containerName: 'scroller',
 		/**
+<<<<<<< HEAD
 		* We have to trap the Enyo-generated [onScroll]{@link enyo.Scroller#event:onScroll}
 		* {@glossary event} and let the [delegate]{@glossary delegate} handle it. We also
 		* need to catch the `onresize` events so we know when to update our cached sizing.
 		* We overload the default handler so that we don't
 		* [waterfall]{@link enyo.Component#waterfall} the resizing; we arbitrarily handle it
 		* to minimize the amount of work we do.
+=======
+		* We have to trap the Enyo-generated [_onScroll_]{@link enyo.Scroller#onScroll} 
+		* [event]{@glossary event} and let the [delegate]{@glossary delegate} handle it. 
+		* We also need to catch the _onresize_ [events]{@glossary event} so we know when to
+		* update our cached sizing. We overload the default handler so that we don't 
+		* [waterfall]{@link enyo.Component#waterfall} the resizing; we arbitrarily handle it to 
+		* minimize the amount of work we do.
+>>>>>>> ENYO-43: Re-review Enyo docs
 		*
 		* @private
 		*/
@@ -547,9 +573,15 @@
 		],
 
 		/**
+<<<<<<< HEAD
 		* Adds the [RegisteredEventSupport]{@link enyo.RegisteredEventSupport}
 		* [mixin]{@glossary mixin} for the [paging]{@link enyo.DataList#event:paging}
 		* {@glossary event}.
+=======
+		* Add the [RegisteredEventSupport]{@link enyo.RegisteredEventSupport} 
+		* [mixin]{@glossary mixin} for the [paging]{@link enyo.DataList#paging} 
+		* [event]{@glossary event}.
+>>>>>>> ENYO-43: Re-review Enyo docs
 		* 
 		* @private
 		*/
