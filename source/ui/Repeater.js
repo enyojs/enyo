@@ -4,8 +4,8 @@
 	* when the [onSetupItem]{@link enyo.Repeater#onSetupItem} event is fired.
 	*
 	* @typedef {Object} enyo.Repeater~SetupItemEvent
-	* @property {Number} index The item's index.
-	* @property {Object} item The item control, for decoration.
+	* @property {Number} index - The item's index.
+	* @property {Object} item - The item control, for decoration.
 	*/
 
 	/**

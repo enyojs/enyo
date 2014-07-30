@@ -1,17 +1,12 @@
 (function (enyo, scope) {
 	/**
-<<<<<<< HEAD
 	* The {@glossary event} [object]{@glossary Object} that is provided when the
 	* [paging]{@link enyo.DataList#event:paging} event is fired.
-=======
-	* The [event]{@glossary event} [object]{@glossary Object} that is provided when the 
-	* [paging]{@link enyo.DataList#paging} [event]{@glossary event} is fired.
->>>>>>> ENYO-43: Re-review Enyo docs
 	*
 	* @typedef {Object} enyo.DataList~PagingEvent
-	* @property {Number} start The lowest active index in the dataset.
-	* @property {Number} end The highest active index.
-	* @property {String} action The action that triggered the paging, either `'scroll'`
+	* @property {Number} start - The lowest active index in the dataset.
+	* @property {Number} end - The highest active index.
+	* @property {String} action - The action that triggered the paging, either `'scroll'`
 	* or `'reset'`.
 	*/
 
@@ -21,7 +16,7 @@
 	* @event enyo.DataList#paging
 	* @type {Object}
 	* @property {Object} sender - A reference to the {@link enyo.DataList}.
-	* @property {String} nom The name of the {@glossary event}.
+	* @property {String} nom - The name of the {@glossary event}.
 	* @property {enyo.DataList~PagingEvent} event - A [hash]{@glossary Object} with properties
 	*	specific to the [paging]{@link enyo.DataList#paging} event.
 	* @public

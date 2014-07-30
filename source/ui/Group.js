@@ -4,7 +4,7 @@
 	* [onActiveChanged]{@link enyo.Group#onActiveChanged} event is fired.
 	*
 	* @typedef {Object} enyo.Group~ActiveChangedEvent
-	* @property {enyo.Control} active The active [control]{@link enyo.Control} for the
+	* @property {enyo.Control} active - The active [control]{@link enyo.Control} for the
 	*	[group]{@link enyo.Group}.
 	*/
 
