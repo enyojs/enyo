@@ -72,7 +72,7 @@
 		},
 
 		/**
-		* Sets the information for a captured [event]{@glossary event}.
+		* Sets the information for a captured {@glossary event}.
 		* 
 		* @private
 		*/

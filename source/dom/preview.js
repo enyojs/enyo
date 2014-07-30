@@ -2,7 +2,7 @@
 	/**
 	* Dispatcher preview feature
 	* 
-	* Allows {@link enyo.Control} ancestors of the [event]{@glossary event} target
+	* Allows {@link enyo.Control} ancestors of the {@glossary event} target
 	* a chance (eldest first) to react by implementing `previewDomEvent`.
 	*
 	* @private
