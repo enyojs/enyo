@@ -120,7 +120,7 @@
 		/** 
 		* Renders the [collection]{@link enyo.Collection} of items. This will delete any
 		* existing items and recreate the [repeater]{@link enyo.Repeater} if called after
-		* the repeater has been rendered. This is called automatically when the 
+		* the repeater has been rendered. This is called automatically when the
 		* [count]{@link enyo.Repeater#count} property changes. To set the `count` property
 		* and force a re-render, such as when a [data model]{@link enyo.Model} changes,
 		* use `set('count', newCount, true)`, where the last parameter forces the change

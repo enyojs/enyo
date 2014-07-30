@@ -463,15 +463,9 @@
 		* owned by a receiving [object]{@glossary Object} by returning a truthy value from the
 		* {@glossary event} [handler]{@link enyo.Component~EventHandler}.
 		* 
-<<<<<<< HEAD
-		* @param {String} nom The name of the {@glossary event}.
-		* @param {Object} [event] The event object to pass along.
-		* @param {enyo.Component} [sender=this] The event's originator.
-=======
-		* @param {String} nom - The name of the [event]{@glossary event}.
+		* @param {String} nom - The name of the {@glossary event}.
 		* @param {Object} [event] - The event object to pass along.
 		* @param {enyo.Component} [sender=this] - The event's originator.
->>>>>>> ENYO-43: Re-review Enyo docs
 		* @returns {this} The callee for chaining.
 		* @public
 		*/

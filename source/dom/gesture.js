@@ -79,11 +79,7 @@
 		* Handles "down" [events]{@glossary event}, including `mousedown` and `keydown`. This is
 		* responsible for the press-and-hold key repeater.
 		*
-<<<<<<< HEAD
-		* @param {Event} evt The standard {@glossary event} [object]{glossary Object}.
-=======
-		* @param {Event} evt - The standard [event]{@glossary event} [object]{glossary Object}.
->>>>>>> ENYO-43: Re-review Enyo docs
+		* @param {Event} evt - The standard {@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		down: function(evt) {
@@ -107,11 +103,7 @@
 		/**
 		* Handles `mousemove` [events]{@glossary event}.
 		*
-<<<<<<< HEAD
-		* @param {Event} evt The standard {@glossary event} [object]{glossary Object}.
-=======
-		* @param {Event} evt - The standard [event]{@glossary event} [object]{glossary Object}.
->>>>>>> ENYO-43: Re-review Enyo docs
+		* @param {Event} evt - The standard {@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		move: function(evt) {
@@ -130,11 +122,7 @@
 		/**
 		* Handles "up" [events]{@glossary event}, including `mouseup` and `keyup`.
 		*
-<<<<<<< HEAD
-		* @param {Event} evt The standard {@glossary event} [object]{glossary Object}.
-=======
-		* @param {Event} evt - The standard [event]{@glossary event} [object]{glossary Object}.
->>>>>>> ENYO-43: Re-review Enyo docs
+		* @param {Event} evt - The standard {@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		up: function(evt) {
@@ -153,11 +141,7 @@
 		/**
 		* Handles `mouseover` [events]{@glossary event}.
 		*
-<<<<<<< HEAD
-		* @param {Event} evt The standard {@glossary event} [object]{glossary Object}.
-=======
-		* @param {Event} evt - The standard [event]{@glossary event} [object]{glossary Object}.
->>>>>>> ENYO-43: Re-review Enyo docs
+		* @param {Event} evt - The standard {@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		over: function(evt) {
@@ -168,11 +152,7 @@
 		/**
 		* Handles `mouseout` [events]{@glossary event}.
 		*
-<<<<<<< HEAD
-		* @param {Event} evt The standard {@glossary event} [object]{glossary Object}.
-=======
-		* @param {Event} evt - The standard [event]{@glossary event} [object]{glossary Object}.
->>>>>>> ENYO-43: Re-review Enyo docs
+		* @param {Event} evt - The standard {@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		out: function(evt) {
@@ -183,11 +163,7 @@
 		/**
 		* Generates `tap` [events]{@glossary event}.
 		*
-<<<<<<< HEAD
-		* @param {Event} evt The standard {@glossary event} [object]{glossary Object}.
-=======
-		* @param {Event} evt - The standard [event]{@glossary event} [object]{glossary Object}.
->>>>>>> ENYO-43: Re-review Enyo docs
+		* @param {Event} evt - The standard {@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		sendTap: function(evt) {

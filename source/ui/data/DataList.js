@@ -72,7 +72,7 @@
 		scrollerOptions: null,
 
 		/**
-		* The paging orientation. Valid values are `'vertical'` and `'horizontal'`. This property 
+		* The paging orientation. Valid values are `'vertical'` and `'horizontal'`. This property
 		* will be mapped to a particular strategy governing how the list will flow.
 		*
 		* @type {String}
@@ -174,7 +174,7 @@
 		},
 		
 		/**
-		* Pass in an integer within the bounds of the [list's]{@link enyo.DataList} 
+		* Pass in an integer within the bounds of the [list's]{@link enyo.DataList}
 		* [collection]{@link enyo.DataRepeater#data} to scroll to the position of that
 		* index in the list.
 		*
@@ -461,7 +461,7 @@
 		* requested index if its page is currently active. Returns `undefined` if the index is out 
 		* of bounds or if the [control]{@link enyo.Control} is not currently available.
 		* 
-		* Also see [getChildForIndex()]{@link enyo.Repeater#getChildForIndex}, which calls this 
+		* Also see [getChildForIndex()]{@link enyo.Repeater#getChildForIndex}, which calls this
 		* method.
 		*
 		* @private
