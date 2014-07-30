@@ -144,6 +144,7 @@
 		* matched.
 		* 
 		* @type {Object}
+		* @default null
 		* @public
 		*/
 		defaultRoute: null,

@@ -149,13 +149,14 @@
 		* additional property hashes are combined as described in
 		* {@link enyo.Component#createComponent}.
 		* 
-		* @example
+		* ```
 		* // ask foo to create components 'bar' and 'zot', but set the owner of
 		* // both components to 'this'.
 		* this.$.foo.createComponents([
 		*	{name: 'bar'},
 		*	{name: 'zot'}
 		* ], {owner: this});
+		* ```
 		*
 		* As implemented, [controlParentName]{@link enyo.UiComponent#controlParentName} only works
 		* to identify an owned control created via `createComponents()`
