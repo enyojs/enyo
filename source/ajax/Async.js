@@ -104,9 +104,7 @@
 			// implementation
             if (ctx) {
                 if (typeof ctx == "string") {
-                    if (ctx) {
-                        fn = enyo.bind(fn, ctx);
-                    }
+                    fn = enyo.bind(fn, ctx);
                 } else {
                     fn = fn.bind(ctx);
                 }
