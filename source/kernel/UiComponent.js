@@ -41,7 +41,7 @@
 
 			/**
 			* The [UiComponent]{@link enyo.UiComponent} that owns this
-			* [component]{@link enyo.Component} for purposes of [event]{@glossary event}
+			* [component]{@link enyo.Component} for purposes of {@glossary event}
 			* propagation.
 			*
 			* @type {enyo.UiComponent}
@@ -457,12 +457,12 @@
 		},
 
 		/**
-		* Sends a message to all of my descendants, but not myself. You can stop a 
-		* [waterfall]{@link enyo.Component#waterfall} into [components]{@link enyo.Component}owned 
-		* by a receiving [object]{@glossary Object} by returning a truthy value from the 
-		* [event]{@glossary event} [handler]{@link enyo.Component~EventHandler}.
+		* Sends a message to all of my descendants, but not myself. You can stop a
+		* [waterfall]{@link enyo.Component#waterfall} into [components]{@link enyo.Component}
+		* owned by a receiving [object]{@glossary Object} by returning a truthy value from the
+		* {@glossary event} [handler]{@link enyo.Component~EventHandler}.
 		* 
-		* @param {String} nom The name of the [event]{@glossary event}.
+		* @param {String} nom The name of the {@glossary event}.
 		* @param {Object} [event] The event object to pass along.
 		* @param {enyo.Component} [sender=this] The event's originator.
 		* @returns {this} The callee for chaining.

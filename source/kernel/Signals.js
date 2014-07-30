@@ -32,7 +32,7 @@
 		kind: 'enyo.Component',
 
 		/**
-		* Needed because of early calls to bind DOM [event]{@glossary event} listeners
+		* Needed because of early calls to bind DOM {@glossary event} listeners
 		* to the [enyo.Signals.send()]{@link enyo.Signals#send} call.
 		* 
 		* @private
@@ -91,7 +91,7 @@
 			* Broadcasts a global message to be consumed by subscribers.
 			* 
 			* @param {String} msg The message to send; usually the name of the 
-			*	[event]{@glossary event}.
+			*	{@glossary event}.
 			* @param {Object} load An [object]{@glossary Object} containing any
 			*	associated event properties to be accessed by subscribers.
 			* @public

@@ -11,7 +11,7 @@
 	/**
 	* @callback enyo.Component~EventHandler
 	* @param {enyo.Component} sender The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
+	*	propagated the {@glossary event}.
 	* @param {Object} event An [object]{@glossary Object} containing 
 	*	event information.
 	* @returns {Boolean} A value indicating whether the event has been
@@ -590,17 +590,17 @@
 		},
 		
 		/**
-		* Bubbles an [event]{@glossary event} up an [object]{@glossary Object} chain,
+		* Bubbles an {@glossary event} up an [object]{@glossary Object} chain,
 		* starting with `this`.
 		*
 		* A handler for an event may be specified. See {@link enyo.Component~EventHandler}
 		* for complete details.
 		* 
-		* @param {String} nom The name of the [event]{@glossary event} to bubble.
-		* @param {Object} [event] The [event]{@glossary event} [object]{@glossary Object}
-		*	to be passed along while bubbling.
+		* @param {String} nom The name of the {@glossary event} to bubble.
+		* @param {Object} [event] The event [object]{@glossary Object} to be passed along
+		* while bubbling.
 		* @param {enyo.Component} [sender=this] The {@link enyo.Component} responsible for
-		*	bubbling the [event]{@glossary event}.
+		*	bubbling the event.
 		* @returns {Boolean} `false` if unhandled or uninterrupted; otherwise, `true`.
 		* @public
 		*/
@@ -617,15 +617,14 @@
 		},
 		
 		/**
-		* Bubbles an [event]{@glossary event} up an [object]{@glossary Object} chain,
-		* starting _above_ `this`.
+		* Bubbles an {@glossary event} up an [object]{@glossary Object} chain,
+		* starting **above** `this`.
 		* 
 		* A handler for an event may be specified. See {@link enyo.Component~EventHandler}
 		* for complete details.
 		* 
-		* @param {String} nom The name of the [event]{@glossary event}.
-		* @param {Object} [event] The [event]{@glossary event} properties to pass along while
-		*	bubbling.
+		* @param {String} nom The name of the {@glossary event}.
+		* @param {Object} [event] The event properties to pass along while bubbling.
 		* @returns {Boolean} `false` if unhandled or uninterrupted; otherwise, `true`.
 		* @public
 		*/
@@ -647,7 +646,7 @@
 		},
 		
 		/**
-		* Sends an [event]{@glossary event} to a named [delegate]{@glossary delegate}. 
+		* Sends an {@glossary event} to a named [delegate]{@glossary delegate}. 
 		* This [object]{@glossary Object} may dispatch an event to 
 		* itself via a [handler]{@link enyo.Component~EventHandler}, or to its 
 		* [owner]{@link enyo.Component#owner} via an event property, e.g.:
@@ -721,7 +720,7 @@
 		},
 		
 		/**
-		* Internal - try dispatching [event]{@glossary event} to self; if that fails, 
+		* Internal - try dispatching {@glossary event} to self; if that fails, 
 		* [bubble it up]{@link enyo.Component#bubbleUp} the tree.
 		* 
 		* @private
@@ -756,16 +755,15 @@
 		},
 		
 		/**
-		* Dispatches the [event]{@glossary event} to named [delegate]{@glossary delegate}
-		* `nom`, if it exists. [Subkinds]{@glossary subkind} may re-route dispatches. Note that
+		* Dispatches the {@glossary event} to named [delegate]{@glossary delegate} `nom`,
+		* if it exists. [Subkinds]{@glossary subkind} may re-route dispatches. Note that
 		* both 'handlers' events and events delegated from owned controls arrive here.
 		* If you need to handle these types of events differently, you may also need to
 		* override [dispatchEvent()]{@link enyo.Component#dispatchEvent}.
 		* 
-		* @param {String} nom The method name to dispatch the [event]{@glossary event}.
-		* @param {Object} [event] The [event]{@glossary event} [object]{@glossary Object} 
-		*	to pass along.
-		* @param {enyo.Component} [sender=this] The originator of the [event]{@glossary event}.
+		* @param {String} nom The method name to dispatch the {@glossary event}.
+		* @param {Object} [event] The event [object]{@glossary Object} to pass along.
+		* @param {enyo.Component} [sender=this] The originator of the event.
 		* @public
 		*/
 		dispatch: function (nom, event, sender) {
@@ -783,14 +781,14 @@
 		
 		/**
 		* Triggers the [handler]{@link enyo.Component~EventHandler} for a given 
-		* [event]{@glossary event} type.
+		* {@glossary event} type.
 		* 
 		* @example
 		* myControl.triggerHandler('ontap');
 		* 
-		* @param {String} nom The name of the [event]{@glossary event} to trigger.
-		* @param {Object} [event] The [event]{@glossary event} object to pass along.
-		* @param {enyo.Component} [sender=this] The originator of the [event]{@glossary event}.
+		* @param {String} nom The name of the {@glossary event} to trigger.
+		* @param {Object} [event] The event object to pass along.
+		* @param {enyo.Component} [sender=this] The originator of the event.
 		* @returns {Boolean} `false` if unhandled or uninterrupted, `true` otherwise.
 		* @public
 		*/
@@ -801,13 +799,12 @@
 		/**
 		* Sends a message to myself and all of my [components]{@link enyo.Component}.
 		* You can stop a waterfall into components owned by a receiving object
-		* by returning a truthy value from the [event]{@glossary event}
+		* by returning a truthy value from the {@glossary event}
 		* [handler]{@link enyo.Component~EventHandler}.
 		* 
-		* @param {String} nom The name of the [event]{@glossary event} to waterfall.
-		* @param {Object} [event] The [event]{@glossary event} [object]{@glossary Object} 
-		*	to pass along.
-		* @param {enyo.Component} [sender=this] The originator of the [event]{@glossary event}.
+		* @param {String} nom The name of the {@glossary event} to waterfall.
+		* @param {Object} [event] The event [object]{@glossary Object} to pass along.
+		* @param {enyo.Component} [sender=this] The originator of the event.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -830,12 +827,11 @@
 		* Sends a message to all of my [components]{@link enyo.Component}, but not myself. You can 
 		* stop a [waterfall]{@link enyo.Component#waterfall} into [components]{@link enyo.Component}
 		* owned by a receiving [object]{@glossary Object} by returning a truthy value from the 
-		* [event]{@glossary event} [handler]{@link enyo.Component~EventHandler}.
+		* {@glossary event} [handler]{@link enyo.Component~EventHandler}.
 		* 
-		* @param {String} nom The name of the [event]{@glossary event}.
-		* @param {Object} [event] The [event]{@glossary event} [object]{@glossary Object} 
-		*	to pass along.
-		* @param {enyo.Component} [sender=this] The [event]{@glossary event} originator.
+		* @param {String} nom The name of the {@glossary event}.
+		* @param {Object} [event] The event [object]{@glossary Object} to pass along.
+		* @param {enyo.Component} [sender=this] The event originator.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -862,10 +858,10 @@
 		_silenceCount: 0,
 		
 		/**
-		* Sets a flag that disables [event]{@glossary event} propagation for this 
-		* [component]{@link enyo.Component}. Also increments an internal counter that tracks the 
-		* number of times the [unsilence()]{@link enyo.Component#unsilence} method must be called
-		* before event propagation will continue.
+		* Sets a flag that disables {@glossary event} propagation for this 
+		* [component]{@link enyo.Component}. Also increments an internal counter that tracks
+		* the number of times the [unsilence()]{@link enyo.Component#unsilence} method must
+		* be called before event propagation will continue.
 		* 
 		* @returns {this} The callee for chaining.
 		* @public
@@ -890,10 +886,10 @@
 		},
 		
 		/**
-		* Allows [event]{@glossary event} propagation for this [component]{@link enyo.Component} 
-		* if the internal silence counter is `0`; otherwise, decrements the counter by one. For 
-		* event propagation to resume, this method must be called one time 
-		* for each call to [silence()]{@link enyo.Component#silence}.
+		* Allows {@glossary event} propagation for this [component]{@link enyo.Component}
+		* if the internal silence counter is `0`; otherwise, decrements the counter by one.
+		* For event propagation to resume, this method must be called one time each call to
+		* [silence()]{@link enyo.Component#silence}.
 		* 
 		* @returns {Boolean} `true` if the {@link enyo.Component} is now unsilenced completely;
 		*	`false` if it remains silenced.

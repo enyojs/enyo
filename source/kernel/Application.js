@@ -40,11 +40,11 @@
 		kind: ViewController,
 		
 		/**
-		* If set to `true` (the default), the [application's]{@link enyo.Application} 
-		* [start()]{@link enyo.Application#start} method will automatically be called once its 
-		* [create()]{@link enyo.Application#create} method has completed execution. Set this to 
-		* `false` if additional setup (or an asynchronous [event]{@glossary event}) is required
-		* before starting.
+		* If set to `true` (the default), the [application's]{@link enyo.Application}
+		* [start()]{@link enyo.Application#start} method will automatically be called
+		* once its [create()]{@link enyo.Application#create} method has completed
+		* execution. Set this to `false` if additional setup (or an asynchronous
+		* {@glossary event}) is required before starting.
 		*
 		* @type {Boolean}
 		* @default true
@@ -53,11 +53,11 @@
 		autoStart: true,
 		
 		/**
-		* If set to `true` (the default), the [application]{@link enyo.Application} will immediately 
-		* [render]{@link enyo.Application#render} its [view]{@link enyo.ViewController#view} when 
-		* the [start()]{@link enyo.Application#start} method has completed execution. Set this to 
-		* `false` to delay rendering if additional setup (or an asynchronous 
-		* [event]{@glossary event}) is required before rendering.
+		* If set to `true` (the default), the [application]{@link enyo.Application} will immediately
+		* [render]{@link enyo.Application#render} its [view]{@link enyo.ViewController#view} when
+		* the [start()]{@link enyo.Application#start} method has completed execution. Set this to
+		* `false` to delay rendering if additional setup (or an asynchronous {@glossary event}) is
+		* required before rendering.
 		*
 		* @type {Boolean}
 		* @default true
