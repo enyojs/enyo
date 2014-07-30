@@ -336,9 +336,9 @@
 		* faster code and is the only one supported for kind [mixins]{@glossary mixin}.
 		*
 		* @param {Function} fn - A [function]{@glossary Function} that takes a single
-		*                      argument (usually named `sup`) and returns a function where
-		*                      `sup.apply(this, arguments)` is used as a mechanism to make the
-		*                      super-call.
+		*   argument (usually named `sup`) and returns a function where
+		*   `sup.apply(this, arguments)` is used as a mechanism to make the
+		*   super-call.
 		* @public
 		*/
 		enyo.inherit = function (fn) {
