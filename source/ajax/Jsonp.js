@@ -205,7 +205,7 @@
 			if (enyo.isString(params)) {
 				return params.replace('=?', '=' + fn);
 			} else {
-				params = enyo.clone((params == null) ? {} : params, true);
+				params = params ? enyo.clone(params, true) : {};
 				if (this.callbackName) {
 					params[this.callbackName] = fn;
 				}
