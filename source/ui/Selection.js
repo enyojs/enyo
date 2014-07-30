@@ -7,7 +7,7 @@
 	* @typedef {Object} enyo.Selection~SelectionEvent
 	* @property {Number|String} key Whatever _key_ was used to register the 
 	*	[selection]{@link enyo.Selection} (usually a row index).
-	* @property {Object} data References _data_ registered with this key by the code that made the 
+	* @property {Object} data - References _data_ registered with this key by the code that made the
 	*	original [selection]{@link enyo.Selection}.
 	*/
 

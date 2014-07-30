@@ -107,7 +107,7 @@
 
 		/**
 		* @type {Object}
-		* @property {Boolean} draggable Note: The _draggable_ attribute takes one of these 
+		* @property {Boolean} draggable - Note: The _draggable_ attribute takes one of these
 		*	[String]{@glossary String} values: 'true', 'false', 'auto' (Boolean `false` would 
 		*	remove the attribute). The default is 'false'.
 		* @public

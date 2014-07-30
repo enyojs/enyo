@@ -4,15 +4,15 @@
 	 * user-interaction point in touch environments.
 	 *
 	 * @typedef {Object} enyo.dispatcher~CursorCoordinates
-	 * @property {Number} clientX The horizontal coordinate within the application's client area.
-	 * @property {Number} clientY The vertical coordinate within the application's client area.
-	 * @property {Number} pageX The X coordinate of the cursor relative to the viewport, including any
+	 * @property {Number} clientX - The horizontal coordinate within the application's client area.
+	 * @property {Number} clientY - The vertical coordinate within the application's client area.
+	 * @property {Number} pageX - The X coordinate of the cursor relative to the viewport, including any
 	 *   scroll offset.
-	 * @property {Number} pageY The Y coordinate of the cursor relative to the viewport, including any
+	 * @property {Number} pageY - The Y coordinate of the cursor relative to the viewport, including any
 	 *   scroll offset.
-	 * @property {Number} screenX The X coordinate of the cursor relative to the screen, not including
+	 * @property {Number} screenX - The X coordinate of the cursor relative to the screen, not including
 	 *   any scroll offset.
-	 * @property {Number} screenY The Y coordinate of the cursor relative to the screen, not including
+	 * @property {Number} screenY - The Y coordinate of the cursor relative to the screen, not including
 	 *   any scroll offset.
 	 */
 

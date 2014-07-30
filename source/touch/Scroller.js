@@ -3,19 +3,19 @@
 	* An [object]{@glossary Object} representing the scroll boundaries.
 	*
 	* @typedef {Object} enyo.Scroller~BoundaryObject
-	* @property {Number} left The left scroll position.
-	* @property {Number} top The top scroll position.
-	* @property {Number} maxLeft Maximum value for the left scroll position (minimum is always 0).
-	* @property {Number} maxTop Maximum value for the top scroll position (minimum is always 0).
-	* @property {Number} clientHeight The vertical size of the [scroller]{@link enyo.Scroller} on
+	* @property {Number} left - The left scroll position.
+	* @property {Number} top - The top scroll position.
+	* @property {Number} maxLeft - Maximum value for the left scroll position (minimum is always 0).
+	* @property {Number} maxTop - Maximum value for the top scroll position (minimum is always 0).
+	* @property {Number} clientHeight - The vertical size of the [scroller]{@link enyo.Scroller} on
 	*	screen.
-	* @property {Number} clientWidth The horizontal size of the [scroller]{@link enyo.Scroller} on
+	* @property {Number} clientWidth - The horizontal size of the [scroller]{@link enyo.Scroller} on
 	*	screen.
-	* @property {Number} width The horizontal size of the full area of the scrolled region.
-	* @property {Number} height The vertical size of the full area of the scrolled region.
-	* @property {Number} xDir Either 1, -1, or 0, indicating positive movement along the 
+	* @property {Number} width - The horizontal size of the full area of the scrolled region.
+	* @property {Number} height - The vertical size of the full area of the scrolled region.
+	* @property {Number} xDir - Either 1, -1, or 0, indicating positive movement along the
 	*	x-axis, negative movement, or no movement, respectively.
-	* @property {Number} yDir Either 1, -1, or 0, indicating positive movement along the
+	* @property {Number} yDir - Either 1, -1, or 0, indicating positive movement along the
 	*	y-axis, negative movement, or no movement, respectively.
 	*/
 
@@ -24,8 +24,8 @@
 	* An [object]{@glossary Object} representing the overscroll boundaries.
 	*
 	* @typedef {Object} enyo.Scroller~OverscrollBoundaryObject
-	* @property {Number} overleft The left overscroll position.
-	* @property {Number} overtop The top overscroll position.
+	* @property {Number} overleft - The left overscroll position.
+	* @property {Number} overtop - The top overscroll position.
 	*/
 
 	/**

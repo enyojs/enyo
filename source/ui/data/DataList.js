@@ -4,9 +4,9 @@
 	* [paging]{@link enyo.DataList#paging} [event]{@glossary event} is fired.
 	*
 	* @typedef {Object} enyo.DataList~PagingEvent
-	* @property {Number} start The lowest active index in the dataset.
-	* @property {Number} end The highest active index.
-	* @property {String} action The _action_ that triggered the paging, either "scroll" or "reset".
+	* @property {Number} start - The lowest active index in the dataset.
+	* @property {Number} end - The highest active index.
+	* @property {String} action - The _action_ that triggered the paging, either "scroll" or "reset".
 	*/
 
 	/**
@@ -15,7 +15,7 @@
 	* @event enyo.DataList#paging
 	* @type {Object}
 	* @property {Object} sender - A reference to the {@link enyo.DataList}.
-	* @property {String} nom The name of the [event]{@glossary event}.
+	* @property {String} nom - The name of the [event]{@glossary event}.
 	* @property {enyo.DataList~PagingEvent} event - A [hash]{@glossary Object} with properties
 	*	specific to the [paging]{@link enyo.DataList#paging} [event]{@glossary event}.
 	* @public

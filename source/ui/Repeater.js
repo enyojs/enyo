@@ -5,8 +5,8 @@
 	* fired.
 	*
 	* @typedef {Object} enyo.Repeater~SetupItemEvent
-	* @property {Number} index Contains the item's index.
-	* @property {Object} item Contains the item control, for decoration.
+	* @property {Number} index - Contains the item's index.
+	* @property {Object} item - Contains the item control, for decoration.
 	*/
 
 	/**
