@@ -6,7 +6,7 @@
 	* @event enyo.TouchScrollStrategy#onShouldDrag
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
+	*	propagated the {@glossary event}.
 	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
 	*	event information.
 	* @private
@@ -18,8 +18,8 @@
 	* by {@link enyo.ScrollMath} into an `enyo.Scroller`.
 	* 
 	* `enyo.TouchScrollStrategy` is not typically created in application code. Instead, it is
-	* specified as the value of the [strategyKind]{@link enyo.Scroller#strategyKind property of
-	* an `enyo.Scroller` or {@link enyo.List}, or is used by the framework implicitly.
+	* specified as the value of the [strategyKind]{@link enyo.Scroller#strategyKind} property
+	* of an `enyo.Scroller` or {@link enyo.List}, or is used by the framework implicitly.
 	*
 	* @class enyo.TouchScrollStrategy
 	* @extends enyo.ScrollStrategy

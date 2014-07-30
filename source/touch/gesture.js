@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 
 	/**
-	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided when we
+	* The extended {@glossary event} [object]{@glossary Object} that is provided when we
 	* emulate iOS gesture events on non-iOS devices.
 	*
 	* @typedef {Object} enyo.gesture~EmulatedGestureEvent

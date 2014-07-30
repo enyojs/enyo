@@ -5,7 +5,7 @@
 	* @event enyo.ScrollMath#onScrollStart
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
+	*	propagated the {@glossary event}.
 	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
 	*	event information.
 	* @private
@@ -17,7 +17,7 @@
 	* @event enyo.ScrollMath#onScroll
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
+	*	propagated the {@glossary event}.
 	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
 	*	event information.
 	* @private
@@ -29,7 +29,7 @@
 	* @event enyo.ScrollMath#onScrollStop
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
+	*	propagated the {@glossary event}.
 	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
 	*	event information.
 	* @private

@@ -4,9 +4,9 @@
 	*
 	* @event enyo.TransitionScrollStrategy#onScrollStart
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
-	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
+	*	propagated the {@glossary event}.
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
 	*	event information.
 	* @private
 	*/
@@ -16,9 +16,9 @@
 	*
 	* @event enyo.TransitionScrollStrategy#onScroll
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
-	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
+	*	propagated the {@glossary event}.
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
 	*	event information.
 	* @private
 	*/
@@ -28,9 +28,9 @@
 	*
 	* @event enyo.TransitionScrollStrategy#onScrollStop
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
-	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
+	*	propagated the {@glossary event}.
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
 	*	event information.
 	* @private
 	*/
@@ -457,7 +457,7 @@
 		},
 		
 		/**
-		* Updates thumbs, recalculates boundaries, and bubbles scroll [event]{@glossary event}.
+		* Updates thumbs, recalculates boundaries, and bubbles `scroll` {@glossary event}.
 		*
 		* @fires enyo.TransitionScrollStrategy#event:onScroll
 		* @private
@@ -472,7 +472,7 @@
 		
 		/**
 		* Scrolls to current `x` and `y` coordinates and bubbles `scrollstart`
-		* [event]{@glossary event}.
+		* {@glossary event}.
 		*
 		* @fires enyo.TransitionScrollStrategy#event:onScrollStart
 		* @private
@@ -484,7 +484,7 @@
 		
 		/**
 		* If currently scrolling, stops scrolling. Hides thumbs and bubbles `scrollstop`
-		* [event]{@glossary event}.
+		* {@glossary event}.
 		*
 		* @fires enyo.TransitionScrollStrategy#event:onScrollStop
 		* @private
@@ -930,7 +930,7 @@
 		
 		/**
 		* Creates an interval to update the `x` and `y` values while scrolling is happening,
-		* check for crossing into the overflow region, and bubble a scroll [event]{@glossary event}.
+		* check for crossing into the overflow region, and bubble a scroll {@glossary event}.
 		*
 		* @private
 		*/
@@ -944,8 +944,8 @@
 
 		/**
 		* Creates an interval to update the `x` and `y` values while scrolling is happening,
-		* and bubble a scroll [event]{@glossary event}. (We don't need to check for crossing
-		* into the overflow area since we're there already.)
+		* and bubble a scroll {@glossary event}. (We don't need to check for crossing into
+		* the overflow area since we're there already.)
 		*
 		* @private
 		*/
@@ -957,7 +957,7 @@
 		},
 		
 		/**
-		* Saves current `x` and `y` position and bubbles scroll [event]{@glossary event}.
+		* Saves current `x` and `y` position and bubbles scroll {@glossary event}.
 		*
 		* @private
 		*/

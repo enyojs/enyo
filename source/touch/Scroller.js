@@ -29,7 +29,7 @@
 	*/
 
 	/**
-	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided 
+	* The extended {@glossary event} [object]{@glossary Object} that is provided 
 	* when a scroll event is fired.
 	*
 	* @typedef {Object} enyo.Scroller~ScrollEvent
@@ -42,7 +42,7 @@
 	* @event enyo.Scroller#onScrollStart
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
+	*	propagated the {@glossary event}.
 	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
 	*	event information.
 	* @public
@@ -54,7 +54,7 @@
 	* @event enyo.Scroller#onScroll
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
+	*	propagated the {@glossary event}.
 	* @property {Object} event - An [object]{@glossary Object} containing 
 	*	event information.
 	* @public
@@ -66,7 +66,7 @@
 	* @event enyo.Scroller#onScrollStop
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
+	*	propagated the {@glossary event}.
 	* @property {Object} event - An [object]{@glossary Object} containing 
 	*	event information.
 	* @public
@@ -623,7 +623,7 @@
 		},
 
 		/** 
-		* Adds current values of `getScrollBounds()` to [event]{@glossary event}.
+		* Adds current values of `getScrollBounds()` to {@glossary event}.
 		* 
 		* @private
 		*/
@@ -657,7 +657,7 @@
 		},
 
 		/** 
-		* Normalizes scroll [event]{@glossary event} to `onScroll`.
+		* Normalizes scroll {@glossary event} to `onScroll`.
 		*
 		* @fires enyo.Scroller#event:onScroll
 		* @private
@@ -673,8 +673,8 @@
 		},
 
 		/**
-		* @returns {Boolean} `true` if the current scroll [event]{@glossary event} 
-		*	should be stopped; `false` if it should be allowed to propagate.
+		* @returns {Boolean} `true` if the current scroll {@glossary event} should
+		* be stopped; `false` if it should be allowed to propagate.
 		* @private
 		*/
 		shouldStopScrollEvent: function (e) {
@@ -683,8 +683,8 @@
 		},
 
 		/**
-		* Calls [shouldStopScrollEvent()]{@link enyo.Scroller#shouldStopScrollEvent} to determine 
-		* whether current scroll [event]{@glossary event} should be stopped.
+		* Calls [shouldStopScrollEvent()]{@link enyo.Scroller#shouldStopScrollEvent} to
+		* determine whether current scroll {@glossary event} should be stopped.
 		*
 		* @private
 		*/
@@ -697,7 +697,7 @@
 		},
 
 		/** 
-		* Either propagates or stops the current scroll [event]{@glossary event}.
+		* Either propagates or stops the current scroll {@glossary event}.
 		*
 		* @private
 		*/
@@ -719,8 +719,8 @@
 		},
 
 		/**
-		* Calls [shouldStopScrollEvent()]{@link enyo.Scroller#shouldStopScrollEvent} to determine 
-		* whether current scroll [event]{@glossary event} should be stopped.
+		* Calls [shouldStopScrollEvent()]{@link enyo.Scroller#shouldStopScrollEvent} to
+		* determine whether current scroll {@glossary event} should be stopped.
 		*
 		* @private
 		*/
