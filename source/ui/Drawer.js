@@ -8,24 +8,22 @@
 	* @event enyo.Drawer#event:onDrawerAnimationStep
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
 	/**
-	* Fires when the [drawer]{@link enyo.Drawer} has been opened or closed. The handler can
-	* determine whether the drawer was just opened or just closed based on the
+	* Fires when the [drawer]{@link enyo.Drawer} has been opened or closed. The handler
+	* can determine whether the drawer was just opened or just closed based on the
 	* [open]{@link enyo.Drawer#open} property. If `this.getOpen()` returns `true`,
 	* the drawer was opened; if not, it was closed.
 	*
 	* @event enyo.Drawer#event:onDrawerAnimationEnd
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	event {@glossary event} information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 

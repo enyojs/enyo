@@ -6,9 +6,8 @@
 	* @event enyo.Video#event:onFastforward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	[event]{@glossary event} information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -19,9 +18,8 @@
 	* @event enyo.Video#event:onSlowforward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -32,9 +30,8 @@
 	* @event enyo.Video#event:onRewind
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -45,9 +42,8 @@
 	* @event enyo.Video#event:onSlowrewind
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -57,9 +53,8 @@
 	* @event enyo.Video#event:onJumpForward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -69,9 +64,8 @@
 	* @event enyo.Video#event:onJumpBackward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -81,9 +75,8 @@
 	* @event enyo.Video#event:onPlay
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -93,9 +86,8 @@
 	* @event enyo.Video#event:onStart
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 

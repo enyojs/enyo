@@ -162,7 +162,7 @@
 			this._value = this.get('value');
 		},
 		/**
-		* Simulates [onchange]{@link enyo.Input#event:onchange} [event]{@glossary event}
+		* Simulates [onchange]{@link enyo.Input#event:onchange} {@glossary event}
 		* exposed by [inputs]{@link enyo.Input}.
 		*
 		* @fires enyo.Input#event:onchange

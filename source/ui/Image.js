@@ -4,10 +4,9 @@
 	*
 	* @event enyo.Image#event:onload
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	event information.
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -16,10 +15,9 @@
 	*
 	* @event enyo.Image#event:onerror
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	event information.
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -44,7 +42,7 @@
 		
 		/**
 		* When `true`, no [onload]{@link enyo.Image#event:onload} or 
-		* [onerror]{@link enyo.Image#event:onerror} [event]{@glossary event} handlers will be 
+		* [onerror]{@link enyo.Image#event:onerror} {@glossary event} handlers will be 
 		* created.
 		* 
 		* @type {Boolean}

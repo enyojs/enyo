@@ -6,9 +6,8 @@
 	* @event enyo.Media#event:onAbort
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/ 
 
@@ -19,9 +18,8 @@
 	* @event enyo.Media#event:onCanPlay
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -32,9 +30,8 @@
 	* @event enyo.Media#event:onCanPlayThrough
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -44,9 +41,8 @@
 	* @event enyo.Media#event:onDurationChange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -57,9 +53,8 @@
 	* @event enyo.Media#event:onEmptied
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -69,9 +64,8 @@
 	* @event enyo.Media#event:onEnded
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -81,9 +75,8 @@
 	* @event enyo.Media#event:onError
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -94,9 +87,8 @@
 	* @event enyo.Media#event:onLoadedData
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -107,9 +99,8 @@
 	* @event enyo.Media#event:onLoadedMetaData
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -119,9 +110,8 @@
 	* @event enyo.Media#event:onLoadStart
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	[event]{@glossary event} information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -131,9 +121,8 @@
 	* @event enyo.Media#event:onPause
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -143,9 +132,8 @@
 	* @event enyo.Media#event:onPlay
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -156,9 +144,8 @@
 	* @event enyo.Media#event:onPlaying
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -168,9 +155,8 @@
 	* @event enyo.Media#event:onProgress
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -181,9 +167,8 @@
 	* @event enyo.Media#event:onRateChange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -193,9 +178,8 @@
 	* @event enyo.Media#event:onSeeked
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -204,10 +188,9 @@
 	*
 	* @event enyo.Media#event:onSeeking
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -217,9 +200,8 @@
 	* @event enyo.Media#event:onStalled
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -229,9 +211,8 @@
 	* @event enyo.Media#event:onTimeUpdate
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -242,9 +223,8 @@
 	* @event enyo.Media#event:onVolumeChange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -255,9 +235,8 @@
 	* @event enyo.Media#event:onWaiting
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -267,9 +246,8 @@
 	* @event enyo.Media#event:onFastforward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -279,9 +257,8 @@
 	* @event enyo.Media#event:onSlowforward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -291,9 +268,8 @@
 	* @event enyo.Media#event:onRewind
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -303,9 +279,8 @@
 	* @event enyo.Media#event:onSlowrewind
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -316,9 +291,8 @@
 	* @event enyo.Media#event:onJumpForward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -329,9 +303,8 @@
 	* @event enyo.Media#event:onJumpBackward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -341,9 +314,8 @@
 	* @event enyo.Media#event:onStart
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 

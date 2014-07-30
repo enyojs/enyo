@@ -1,8 +1,7 @@
 (function (enyo, scope) {
 	/**
-	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided 
-	* when the [onSetupItem]{@link enyo.Repeater#event:onSetupItem} [event]{@glossary event} is
-	* fired.
+	* The extended {@glossary event} [object]{@glossary Object} that is provided 
+	* when the [onSetupItem]{@link enyo.Repeater#event:onSetupItem} event is fired.
 	*
 	* @typedef {Object} enyo.Repeater~SetupItemEvent
 	* @property {Number} index The item's index.
@@ -14,10 +13,10 @@
 	*
 	* @event enyo.Repeater#event:onSetupItem
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
-	* @property {enyo.Repeater~SetupItemEvent} event - An [object]{@glossary Object} containing 
-	*	event information. 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
+	*	propagated the {@glossary event}.
+	* @property {enyo.Repeater~SetupItemEvent} event - An [object]{@glossary Object} containing
+	*	event information.
 	* @public
 	*/
 
@@ -41,8 +40,7 @@
 	* ```
 	* 
 	* Be sure to return `true` from your `onSetupItem` handler to avoid having other 
-	* [event]{@glossary event} handlers further up the tree try to modify your item 
-	* control.
+	* {@glossary event} handlers further up the tree try to modify your item control.
 	* 
 	* For more information, see the documentation on
 	* [Lists](building-apps/layout/lists.html) in the Enyo Developer Guide.
@@ -143,9 +141,9 @@
 			this.render();
 		},
 		/**
-		* Renders a specific item in the [collection]{@link enyo.Collection}. This does not destroy
-		* the item, but just calls the `onSetupItem` [event]{@glossary event} handler again for
-		* it, so any state stored in the item is preserved.
+		* Renders a specific item in the [collection]{@link enyo.Collection}. This does not
+		* destroy the item, but just calls the `onSetupItem` {@glossary event} handler again
+		* for it, so any state stored in the item is preserved.
 		*
 		* @param {Number} idx The index of the item to render.
 		* @fires enyo.Repeater#event:onSetupItem

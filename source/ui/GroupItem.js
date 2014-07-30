@@ -5,9 +5,8 @@
 	* @event enyo.GroupItem#event:onActivate
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -18,8 +17,8 @@
 	* (or the [inheriting]{@glossary subkind} component). A subkind may call `setActive()` 
 	* to set the [active]{@link enyo.GroupItem#active} property to the desired state; this
 	* will additionally [bubble]{@link enyo.Component#bubble} an 
-	* [onActivate]{@link enyo.GroupItem#event:onActivate} [event]{@glossary event}, which
-	* may be handled as needed by the containing components. This is useful for creating
+	* [onActivate]{@link enyo.GroupItem#event:onActivate} {@glossary event}, which may
+	* be handled as needed by the containing components. This is useful for creating
 	* groups of items whose state should be managed collectively.
 	* 
 	* For an example of how this works, see the {@link enyo.Group} kind, which enables the

@@ -5,9 +5,8 @@
 	* @event enyo.Popup#event:onShow
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -17,9 +16,8 @@
 	* @event enyo.Popup#event:onHide
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -497,11 +495,11 @@
 
 		/**
 		* Opens the [popup]{@link enyo.Popup} at the location of a mouse
-		* [event]{@glossary event}. The popup's position is automatically
-		* constrained so that it does not display outside the viewport, and defaults
-		* to anchoring the top left corner of the popup to the mouse event.
+		* {@glossary event}. The popup's position is automatically constrained so
+		* that it does not display outside the viewport, and defaults to anchoring
+		* the top left corner of the popup to the position of the mouse event.
 		* 
-		* @param {Object} e The mouse [event]{@glossary event} that initiated this call.
+		* @param {Object} e The mouse {@glossary event} that initiated this call.
 		* @param {Object} [offset] An optional [object]{@glossary Object} that may
 		* contain `left` and `top` properties to specify an offset relative to the
 		* location where the [popup]{@link enyo.Popup} would otherwise be positioned.

@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* The extended [event]{@glossary event} [object]{@glossary Object} that is provided when the 
+	* The extended {@glossary event} [object]{@glossary Object} that is provided when the 
 	* [onActiveChanged]{@link enyo.Group#event:onActiveChanged} event is fired.
 	*
 	* @typedef {Object} enyo.Group~ActiveChangedEvent
@@ -13,9 +13,9 @@
 	*
 	* @event enyo.Group#event:onActiveChanged
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@link external:event}.
-	* @property {enyo.Group~ActiveChangedEvent} event - An [object]{@glossary Object} containing 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
+	*	propagated the {@glossary event}.
+	* @property {enyo.Group~ActiveChangedEvent} event - An [object]{@glossary Object} containing
 	*	event information.
 	* @public
 	*/

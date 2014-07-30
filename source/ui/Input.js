@@ -4,10 +4,9 @@
 	*
 	* @event enyo.Input#event:oninput
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	event information.
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -17,10 +16,9 @@
 	*
 	* @event enyo.Input#event:onchange
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	event information.
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -29,10 +27,9 @@
 	*
 	* @event enyo.Input#event:onDisabledChange
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing 
-	*	event information.
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 	

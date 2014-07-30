@@ -5,9 +5,8 @@
 	* @event enyo.Animator#event:onStep
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -17,9 +16,8 @@
 	* @event enyo.Animator#event:onEnd
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -29,9 +27,8 @@
 	* @event enyo.Animator#event:onStop
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 
@@ -64,8 +61,8 @@
 		/** @lends enyo.Animator.prototype */ {
 
 		/**
-		* A context in which to run the specified [event]{@glossary Event} handlers. If this
-		* is not specified or is falsy, then the [window object]{@glossary window} is used.
+		* A context in which to run the specified {@glossary event} handlers. If this is
+		* not specified or is falsy, then the [window object]{@glossary window} is used.
 		* 
 		* @name context
 		* @type {Object}
@@ -194,7 +191,7 @@
 		},
 
 		/** 
-		* Stops the animation and fires the associated [event]{@glossary event}.
+		* Stops the animation and fires the associated {@glossary event}.
 		*
 		* @fires enyo.Animator#event:onStop
 		* @returns {this} The callee for chaining.

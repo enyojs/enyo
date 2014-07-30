@@ -24,7 +24,7 @@
 	* @event enyo.Selection#event:onSelect
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
+	*	propagated the {@glossary event}.
 	* @property {enyo.Selection~SelectionEvent} event - An [object]{@glossary Object}
 	*	containing event information.
 	* @public
@@ -43,7 +43,7 @@
 	* @event enyo.Selection#event:onDeselect
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
+	*	propagated the {@glossary event}.
 	* @property {enyo.Selection~SelectionEvent} event - An [object]{@glossary Object}
 	*	containing event information.
 	* @public
@@ -55,9 +55,8 @@
 	* @event enyo.Selection#event:onChange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the [event]{@glossary event}.
-	* @property {Object} event - An [object]{@glossary Object} containing
-	*	event information.
+	*	propagated the {@glossary event}.
+	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
 

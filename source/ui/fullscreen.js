@@ -210,8 +210,8 @@
 		},
 
 		/** 
-		* Listens for fullscreen change [event]{@glossary event} and broadcasts it
-		* as normalized [event]{@glossary event}.
+		* Listens for fullscreen change {@glossary event} and broadcasts it as a
+		* normalized event.
 		*
 		* @private
 		*/
