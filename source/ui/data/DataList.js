@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* The [event]{@glossary event} [object]{@glossary Object} that is provided when the
+	* The {@glossary event} [object]{@glossary Object} that is provided when the
 	* [paging]{@link enyo.DataList#event:paging} event is fired.
 	*
 	* @typedef {Object} enyo.DataList~PagingEvent
@@ -16,7 +16,7 @@
 	* @event enyo.DataList#event:paging
 	* @type {Object}
 	* @property {Object} sender - A reference to the {@link enyo.DataList}.
-	* @property {String} nom The name of the [event]{@glossary event}.
+	* @property {String} nom The name of the {@glossary event}.
 	* @property {enyo.DataList~PagingEvent} event - A [hash]{@glossary Object} with properties
 	*	specific to the [paging]{@link enyo.DataList#event:paging} event.
 	* @public
@@ -35,7 +35,7 @@
 	* view is updated. Try to use CSS whenever possible.
 	* 
 	* While paging through data, `enyo.DataList` emits the
-	* [paging]{@link enyo.DataList#event:paging} [event]{@glossary event}, which allows you
+	* [paging]{@link enyo.DataList#event:paging} {@glossary event}, which allows you
 	* to make updates as necessary, on a per-page basis. You may register for this event
 	* by calling [addListener()]{@link enyo.EventEmitter#addListener} and specifying the
 	* event, along with a callback method.
@@ -405,9 +405,9 @@
 			};
 		}),
 		/**
-		* We let the [delegate]{@glossary delegate} strategy manage the
-		* [event]{@glossary event}, but we arbitrarily return `true` because we don't want the
-		* event to propagate beyond this [kind]{@glossary kind}.
+		* We let the [delegate]{@glossary delegate} strategy manage the {@glossary event},
+		* but we arbitrarily return `true` because we don't want the event to propagate
+		* beyond this [kind]{@glossary kind}.
 		*
 		* @private
 		*/
@@ -424,9 +424,9 @@
 			return true;
 		},
 		/**
-		* Special override to handle resizing in an attempt to minimize the amount of work we're 
-		* doing. We don't want to [waterfall]{@link enyo.Component#waterfall} the 
-		* [event]{@glossary event} to all children, so we hijack the normal handler.
+		* Special override to handle resizing in an attempt to minimize the amount of work
+		* we're doing. We don't want to [waterfall]{@link enyo.Component#waterfall} the
+		* {@glossary event} to all children, so we hijack the normal handler.
 		*
 		* @private
 		*/
@@ -529,9 +529,9 @@
 		containerName: 'scroller',
 		/**
 		* We have to trap the Enyo-generated [onScroll]{@link enyo.Scroller#event:onScroll}
-		* [event]{@glossary event} and let the [delegate]{@glossary delegate} handle it.
-		* We also need to catch the `onresize` events so we know when to update our cached
-		* sizing. We overload the default handler so that we don't
+		* {@glossary event} and let the [delegate]{@glossary delegate} handle it. We also
+		* need to catch the `onresize` events so we know when to update our cached sizing.
+		* We overload the default handler so that we don't
 		* [waterfall]{@link enyo.Component#waterfall} the resizing; we arbitrarily handle it
 		* to minimize the amount of work we do.
 		*
@@ -547,9 +547,9 @@
 		],
 
 		/**
-		* Adds the [RegisteredEventSupport]{@link enyo.RegisteredEventSupport} 
-		* [mixin]{@glossary mixin} for the [paging]{@link enyo.DataList#event:paging} 
-		* [event]{@glossary event}.
+		* Adds the [RegisteredEventSupport]{@link enyo.RegisteredEventSupport}
+		* [mixin]{@glossary mixin} for the [paging]{@link enyo.DataList#event:paging}
+		* {@glossary event}.
 		* 
 		* @private
 		*/

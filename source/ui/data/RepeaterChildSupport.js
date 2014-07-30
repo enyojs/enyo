@@ -85,8 +85,8 @@
 			};
 		}),
 		/**
-		* Used so that we don't stomp on any built-in handlers for the `ontap` 
-		* [event]{@glossary event}.
+		* Used so that we don't stomp on any built-in handlers for the `ontap`
+		* {@glossary event}.
 		*
 		* @method
 		* @private

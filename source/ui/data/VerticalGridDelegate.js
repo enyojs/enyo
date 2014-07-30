@@ -265,7 +265,7 @@
 		},
 		
 		/**
-		* The delegate's `resize` [event]{@glossary event} handler.
+		* The delegate's `resize` {@glossary event} handler.
 		*
 		* @private
 		*/
