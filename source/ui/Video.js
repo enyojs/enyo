@@ -1,7 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer greater than
-	* `1`.
+	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer greater than `1`.
 	*
 	* @event enyo.Video#onFastforward
 	* @type {Object}
@@ -12,8 +11,7 @@
 	*/
 
 	/**
-	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to a value between `0` and
-	* `1`.
+	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to a value between `0` and `1`.
 	*
 	* @event enyo.Video#onSlowforward
 	* @type {Object}
@@ -24,8 +22,7 @@
 	*/
 
 	/**
-	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer less than
-	* `-1`.
+	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer less than `-1`.
 	*
 	* @event enyo.Video#onRewind
 	* @type {Object}
