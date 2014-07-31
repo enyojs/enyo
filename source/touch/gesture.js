@@ -51,15 +51,22 @@
 		*/
 		touchstart: function(e) {
 			// some devices can send multiple changed touches on start and end
-			enyo.forEach(e.changedTouches, function(t) {
-				var id = t.identifier;
+			var i,
+				changedTouches = e.changedTouches,
+				length = changedTouches.length;
+
+			for (i = 0; i < length; i++) {
+				var id = changedTouches[i].identifier;
+
 				// some devices can send multiple touchstarts
 				if (enyo.indexOf(id, this.orderedTouches) < 0) {
 					this.orderedTouches.push(id);
 				}
-			}, this);
+			}
+
 			if (e.touches.length >= 2 && !this.gesture) {
 				var p = this.gesturePositions(e);
+
 				this.gesture = this.gestureVector(p);
 				this.gesture.angle = this.gestureAngle(p);
 				this.gesture.scale = 1;
@@ -74,11 +81,17 @@
 		*/
 		touchend: function(e) {
 			// some devices can send multiple changed touches on start and end
-			enyo.forEach(e.changedTouches, function(t) {
-				enyo.remove(t.identifier, this.orderedTouches);
-			}, this);
+			var i,
+				changedTouches = e.changedTouches,
+				length = changedTouches.length;
+
+			for (i = 0; i < length; i++) {
+				enyo.remove(changedTouches[i].identifier, this.orderedTouches);
+			}
+
 			if (e.touches.length <= 1 && this.gesture) {
 				var t = e.touches[0] || e.changedTouches[e.changedTouches.length - 1];
+
 				// gesture end sends last rotation and scale, with the x/y of the last finger
 				enyo.dispatch(this.makeGesture('gestureend', e, {vector: {xcenter: t.pageX, ycenter: t.pageY}, scale: this.gesture.scale, rotation: this.gesture.rotation}));
 				this.gesture = null;
