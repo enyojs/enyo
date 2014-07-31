@@ -366,9 +366,20 @@
 					//this.log(this.y, y0);
 					this.scroll();
 				} else if (!this.dragging) {
+					// set final values
+					if (this.endX != null) {
+						this.x = this.x0 = this.endX;
+					}
+					if (this.endY != null) {
+						this.y = this.y0 = this.endY;
+					}
+
 					this.stop();
 					this.scroll();
 					this.doScrollStop();
+
+					this.endX = null;
+					this.endY = null;
 				}
 				y0 = this.y;
 				x0 = this.x;
@@ -531,9 +542,11 @@
 		*/
 		scrollTo: function (x, y) {
 			if (y !== null) {
+				this.endY = this.clampY(-y);
 				this.y = this.y0 - (y + this.y0) * (1 - this.kFrictionDamping);
 			}
 			if (x !== null) {
+				this.endX = this.clampX(-x);
 				this.x = this.x0 - (x + this.x0) * (1 - this.kFrictionDamping);
 			}
 			if (x == this.x && y == this.y) return;
@@ -592,6 +605,20 @@
 		isInOverScroll: function () {
 			return this.job && (this.x > this.leftBoundary || this.x < this.rightBoundary ||
 				this.y > this.topBoundary || this.y < this.bottomBoundary);
+		},
+
+		/**
+		* @private
+		*/
+		clampX: function(x) {
+			return Math.min(this.leftBoundary, Math.max(x, this.rightBoundary));
+		},
+
+		/**
+		* @private
+		*/
+		clampY: function(y) {
+			return Math.min(this.topBoundary, Math.max(y, this.bottomBoundary));
 		}
 	});
 
