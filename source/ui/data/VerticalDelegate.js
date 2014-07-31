@@ -100,6 +100,7 @@
 				secondIndex = list.$.page2.index;
 			if (firstIndex > pageCount) {
 				firstIndex = pageCount;
+				secondIndex = (firstIndex > 0) ? firstIndex - 1 : firstIndex + 1;
 			}
 			if (secondIndex > pageCount) {
 				if ((firstIndex + 1) > pageCount && (firstIndex - 1) >= 0) {
