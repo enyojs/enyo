@@ -38,6 +38,10 @@
 			// this is a datalist...it has to be scroll or auto for vertical
 			so.vertical    = so.vertical == 'scroll'? 'scroll': 'auto';
 			so.horizontal  = so.horizontal || 'hidden';
+			// determine if the _controlsPerPage_ property has been set on the list
+			if (list.controlsPerPage !== null && !isNaN(list.controlsPerPage)) {
+				this._staticControlsPerPage = true;
+			}
 		},
 		
 		/**
@@ -230,25 +234,29 @@
 		* @private
 		*/
 		controlsPerPage: function (list) {
-			var updatedControls = list._updatedControlsPerPage,
-				updatedBounds   = list._updatedBounds,
-				childSize       = list.childSize,
-				perPage         = list.controlsPerPage,
-				sizeProp        = list.psizeProp,
-				multi           = list.pageSizeMultiplier || this.pageSizeMultiplier,
-				fn              = this[sizeProp];
-			// if we've never updated the value or it was done longer ago than the most
-			// recent updated sizing/bounds we need to update
-			if (!updatedControls || (updatedControls < updatedBounds)) {
-				// we always update the default child size value first, here
-				childSize = this.childSize(list);
-				// using height/width of the available viewport times our multiplier value
-				perPage   = list.controlsPerPage = Math.ceil(((fn(list) * multi) / childSize) + 1);
-				// update our time for future comparison
-				list._updatedControlsPerPage = enyo.perfNow();
+			if (this._staticControlsPerPage) {
+				return list.controlsPerPage;
+			} else {
+				var updatedControls = list._updatedControlsPerPage,
+					updatedBounds   = list._updatedBounds,
+					childSize       = list.childSize,
+					perPage         = list.controlsPerPage,
+					sizeProp        = list.psizeProp,
+					multi           = list.pageSizeMultiplier || this.pageSizeMultiplier,
+					fn              = this[sizeProp];
+				// if we've never updated the value or it was done longer ago than the most
+				// recent updated sizing/bounds we need to update
+				if (!updatedControls || (updatedControls < updatedBounds)) {
+					// we always update the default child size value first, here
+					childSize = this.childSize(list);
+					// using height/width of the available viewport times our multiplier value
+					perPage   = list.controlsPerPage = Math.ceil(((fn(list) * multi) / childSize) + 1);
+					// update our time for future comparison
+					list._updatedControlsPerPage = enyo.perfNow();
+				}
+				/*jshint -W093 */
+				return (list.controlsPerPage = perPage);
 			}
-			/*jshint -W093 */
-			return (list.controlsPerPage = perPage);
 		},
 		
 		/**
