@@ -270,9 +270,7 @@
 		getSelected: function() {
 			return this.selected;
 		},
-		/**
-			
-		*/
+
 		/**
 		* Removes a row that's included in the [selection]{@link enyo.Selection} set.
 		* If this row is selected, it will be unselected.  Any rows above this row
