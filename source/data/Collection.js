@@ -33,6 +33,7 @@
 	*	[collection]{@link enyo.Collection}.
 	* @property {enyo.Collection} collection - A reference to the
 	*	collection that [emitted]{@link enyo.EventEmitter.emit} the event.
+	* @property {Number} index - The index in the given collection where the models were inserted.
 	* @public
 	*/
 	
@@ -138,6 +139,8 @@
 	* it will automatically attempt to fetch data if the
 	* [source]{@link enyo.Collection#source} and [url]{@link enyo.Collection#url}
 	*	or [getUrl]{@link enyo.Collection#getUrl} properties are properly configured.
+	* @property {Boolean} modelEvents=true - If `false`, this will keep the collection from
+	*	registering with each model for individual model events.
 	*/
 	
 	/**
@@ -363,7 +366,8 @@
 			commit: false,
 			destroy: false,
 			complete: false,
-			fetch: false
+			fetch: false,
+			modelEvents: true
 		},
 		
 		/**
@@ -554,7 +558,7 @@
 				len != this.length && this.notify('length', len, this.length);
 				// notify listeners of the addition of records
 				if (added) {
-					this.emit('add', {models: added, collection: this});
+					this.emit('add', {models: added, collection: this, index: idx});
 				}
 			}
 			
@@ -608,7 +612,11 @@
 				
 				for (var i=0, end=removed.length; i<end; ++i) {
 					model = removed[i];
-					model.off('*', this._modelEvent, this);
+					
+					// it is possible but highly, highly unlikely that this would have been set
+					// to false by default and true at runtime...so we take our chances for the
+					// small performance gain in those situations where it was defaulted to false
+					if (options.modelEvents) model.off('*', this._modelEvent, this);
 					if (destroy) model.destroy(opts);
 				}
 				
@@ -1041,12 +1049,8 @@
 		*/
 		prepareModel: function (attrs, opts) {
 			var Ctor = this.model
-				// , options = {silent: true, noAdd: true}
+				, options = this.options
 				, model;
-			
-			// opts = opts? enyo.mixin({}, [options, opts]): options;
-			// opts = opts || {};
-			// opts.noAdd = true;
 			
 			attrs instanceof Ctor && (model = attrs);
 			if (!model) {
@@ -1055,7 +1059,7 @@
 				model = new Ctor(attrs, null, opts);
 			}
 			
-			model.on('*', this._modelEvent, this);
+			if (options.modelEvents) model.on('*', this._modelEvent, this);
 			
 			return model;
 		},
@@ -1248,11 +1252,17 @@
 				// this.models = this.models || new ModelList();
 				!this.models && (this.set('models', new ModelList()));
 				
+				// this is backwards compatibility
 				if (props && props.records) {
 					recs = recs? recs.concat(props.records): props.records.slice();
 					delete props.records;
 				}
-								
+				
+				if (props && props.models) {
+					recs = recs? recs.concat(props.models): props.models.slice();
+					delete props.models;
+				}
+				
 				if (props && props.options) {
 					this.options = enyo.mixin({}, [this.options, props.options]);
 					delete props.options;

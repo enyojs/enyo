@@ -50,6 +50,18 @@
 		noDefer: true,
 		
 		/**
+		* Provide a filter-method that will be applied to each [model]{@link enyo.Model} in the
+		* current set of models. This method will accept parameters according to those supplied
+		* with the native {@glossary Array.filter} method. If not provided a function that always
+		* returns `true` will be used.
+		*
+		* @virtual
+		* @type {Function}
+		* @public
+		*/
+		method: null,
+		
+		/**
 		* The actual {@link enyo.Collection} content to proxy. How the collection is
 		* used varies depending on the [subkind]{@glossary subkind} implementing the
 		* feature.
@@ -105,7 +117,10 @@
 					
 					// we assign an always true method if none exists just because we assume it was
 					// mean to be a mirror filter for the entire dataset
-					if (typeof props.method != 'function') props.method = alwaysTrue;
+					if (typeof props.method != 'function') {
+						// check to see if the prototype has one already
+						props.method = props.kind.prototype.method || alwaysTrue;
+					}
 				}
 			};
 		}),
@@ -143,7 +158,7 @@
 				
 				// unfortunately we must maintain data structures that need remain out of our
 				// proxy path so we each must create a collection instance for internal use
-				this._internal = new Collection();
+				this._internal = new Collection({options: {modelEvents: false}});
 				this._internal.on('*', this._internalEvent, this);
 				
 				sup.apply(this, arguments);
@@ -196,6 +211,8 @@
 					} else {
 						collection.off('*', this._collectionEvent, this);
 					}
+					
+					collection.unobserve('destroyed', this._collectionDestroyed, this);
 				}
 				
 				sup.apply(this, arguments);
@@ -212,7 +229,10 @@
 		collectionChanged: function (was, is) {
 			var internal = this._internal;
 			
-			if (was) was.off('*', this._collectionEvent, this);
+			if (was) {
+				was.off('*', this._collectionEvent, this);
+				was.unobserve('destroyed', this._collectionDestroyed, this);
+			}
 			
 			// ensure that child-filters cannot have their internal/external collections reset
 			if (is && !(was && this.isChildFilter && was === this.owner._internal)) {
@@ -223,6 +243,9 @@
 				if (!this.isChildFilter || (is !== this.owner._internal)) {
 					is.on('*', this._collectionEvent, this);
 				}
+				
+				// if for any reason the collection is destroyed we want to know about it
+				is.observe('destroyed', this._collectionDestroyed, this);
 				
 				// reset the models (causing reset to propagate to children or bound parties)
 				internal.set('models', is.models.copy());
@@ -274,6 +297,16 @@
 				internal.emit(e, props);
 				break;
 			}
+		},
+		
+		/**
+		* When the collection is destroyed we can't use it anymore so we need to remove it as our
+		* collection to prevent weird things from happening.
+		*
+		* @private
+		*/
+		_collectionDestroyed: function () {
+			this.set('collection', null);
 		},
 		
 		/**
@@ -341,7 +374,7 @@
 		*/
 		at: enyo.inherit(function (sup) {
 			return function () {
-				return this.models ? sup.apply(this, arguments) : undefined;
+				return this.models ? sup.apply(this.models.at ? this.models : this, arguments) : undefined;
 			};
 		}),
 		
