@@ -1,6 +1,6 @@
 (function (enyo, scope) {
 	/**
-	* {@link enyo.DataTable} enables the creation of data-driven tables. 
+	* {@link enyo.DataTable} enables the creation of data-driven tables.
 	* Along with {@link enyo.Table}, this is a work in progress.
 	*
 	* @ui

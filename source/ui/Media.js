@@ -3,7 +3,7 @@
 	* Fires when element stops fetching [media]{@link enyo.Media} data before it is
 	* completely downloaded, but not due to an error.
 	*
-	* @event enyo.Media#event:onAbort
+	* @event enyo.Media#onAbort
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -15,7 +15,7 @@
 	* Fires when element can resume playback of the [media]{@link enyo.Media} data, but may
 	* need to stop for further buffering of content.
 	*
-	* @event enyo.Media#event:onCanPlay
+	* @event enyo.Media#onCanPlay
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -27,7 +27,7 @@
 	* Fires when element can resume playback of the [media]{@link enyo.Media} data without
 	* needing to stop for further buffering of content.
 	*
-	* @event enyo.Media#event:onCanPlayThrough
+	* @event enyo.Media#onCanPlayThrough
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
 	*	propagated the {@glossary event}.
@@ -38,7 +38,7 @@
 	/**
 	* Fires when the [duration]{@link enyo.Media#duration} attribute has been changed.
 	*
-	* @event enyo.Media#event:onDurationChange
+	* @event enyo.Media#onDurationChange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -50,7 +50,7 @@
 	* Fires when [networkState]{@glossary networkState} switches to `NETWORK_EMPTY`
 	* from another state.
 	*
-	* @event enyo.Media#event:onEmptied
+	* @event enyo.Media#onEmptied
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -61,7 +61,7 @@
 	/**
 	* Fires when [media]{@link enyo.Media} playback finishes normally.
 	*
-	* @event enyo.Media#event:onEnded
+	* @event enyo.Media#onEnded
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -72,7 +72,7 @@
 	/**
 	* Fires when an error occurs while fetching [media]{@link enyo.Media} data.
 	*
-	* @event enyo.Media#event:onError
+	* @event enyo.Media#onError
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -84,7 +84,7 @@
 	* Fires when the [media]{@link enyo.Media} data at the current playback position
 	* can be rendered for the first time.
 	*
-	* @event enyo.Media#event:onLoadedData
+	* @event enyo.Media#onLoadedData
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -96,7 +96,7 @@
 	* Fires when the duration and dimensions of the [media]{@link enyo.Media}
 	* resource/text tracks are ready.
 	*
-	* @event enyo.Media#event:onLoadedMetaData
+	* @event enyo.Media#onLoadedMetaData
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -107,7 +107,7 @@
 	/**
 	* Fires when the [media]{@link enyo.Media} element begins looking for media data.
 	*
-	* @event enyo.Media#event:onLoadStart
+	* @event enyo.Media#onLoadStart
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -118,7 +118,7 @@
 	/**
 	* Fires when playback is paused.
 	*
-	* @event enyo.Media#event:onPause
+	* @event enyo.Media#onPause
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -129,7 +129,7 @@
 	/**
 	* Fires when playback is no longer paused.
 	*
-	* @event enyo.Media#event:onPlay
+	* @event enyo.Media#onPlay
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -141,7 +141,7 @@
 	* Fires when playback is ready to start after having been paused or delayed due to lack
 	* of [media]{@link enyo.Media} data.
 	*
-	* @event enyo.Media#event:onPlaying
+	* @event enyo.Media#onPlaying
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -152,7 +152,7 @@
 	/**
 	* Fires when fetching [media]{@link enyo.Media} data.
 	*
-	* @event enyo.Media#event:onProgress
+	* @event enyo.Media#onProgress
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -164,7 +164,7 @@
 	* Fires when either [defaultPlaybackRate]{@link enyo.Media#defaultPlaybackRate} or
 	* [playbackRate]{@link enyo.Media#playbackRate} is updated.
 	*
-	* @event enyo.Media#event:onRateChange
+	* @event enyo.Media#onRateChange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -175,7 +175,7 @@
 	/**
 	* Fires when the seeking IDL attribute changes to `false`.
 	*
-	* @event enyo.Media#event:onSeeked
+	* @event enyo.Media#onSeeked
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -186,7 +186,7 @@
 	/**
 	* Fires when the seeking IDL attribute changes to `true`.
 	*
-	* @event enyo.Media#event:onSeeking
+	* @event enyo.Media#onSeeking
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -197,7 +197,7 @@
 	/**
 	* Fires when [media]{@link enyo.Media} fetching is interrupted.
 	*
-	* @event enyo.Media#event:onStalled
+	* @event enyo.Media#onStalled
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -208,7 +208,7 @@
 	/**
 	* Fires when the [media]{@link enyo.Media} controller position changes.
 	*
-	* @event enyo.Media#event:onTimeUpdate
+	* @event enyo.Media#onTimeUpdate
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -220,7 +220,7 @@
 	* Fires when either [volume]{@link enyo.Media#volume} or [muted]{@link enyo.Media#muted}
 	* is updated.
 	*
-	* @event enyo.Media#event:onVolumeChange
+	* @event enyo.Media#onVolumeChange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -232,7 +232,7 @@
 	* Fires when playback has stopped because the next frame is not available, but is
 	* expected to be.
 	*
-	* @event enyo.Media#event:onWaiting
+	* @event enyo.Media#onWaiting
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -243,7 +243,7 @@
 	/**
 	* Fires when the playback rate has changed to a value > 1.
 	*
-	* @event enyo.Media#event:onFastforward
+	* @event enyo.Media#onFastforward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -254,7 +254,7 @@
 	/**
 	* Fires when the playback rate has changed to a positive value < 1.
 	*
-	* @event enyo.Media#event:onSlowforward
+	* @event enyo.Media#onSlowforward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -265,7 +265,7 @@
 	/**
 	* Fires when the playback rate has changed to a value < -1.
 	*
-	* @event enyo.Media#event:onRewind
+	* @event enyo.Media#onRewind
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -276,7 +276,7 @@
 	/**
 	* Fires when the playback rate has changed to a negative value > -1.
 	*
-	* @event enyo.Media#event:onSlowrewind
+	* @event enyo.Media#onSlowrewind
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -288,7 +288,7 @@
 	* Fires when the playback has jumped forward by the number of seconds specified by the
 	* [jumpSec property]{@link enyo.Media#jumpSec}.
 	*
-	* @event enyo.Media#event:onJumpForward
+	* @event enyo.Media#onJumpForward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -300,7 +300,7 @@
 	* Fires when the playback has jumped backward by the number of seconds specified by the
 	* [jumpSec property]{@link enyo.Media#jumpSec}.
 	*
-	* @event enyo.Media#event:onJumpBackward
+	* @event enyo.Media#onJumpBackward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -311,7 +311,7 @@
 	/**
 	* Fires when playback has started.
 	*
-	* @event enyo.Media#event:onStart
+	* @event enyo.Media#onStart
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -683,7 +683,7 @@
 		* Called when element stops fetching media data before it has been completely downloaded,
 		* but not due to an error.
 		*
-		* @fires enyo.Media#event:onEnded
+		* @fires enyo.Media#onEnded
 		* @private
 		*/
 		_abort: function() {
@@ -694,7 +694,7 @@
 		* Called when element can resume playback of media data, but may need to stop for further
 		* buffering of content.
 		*
-		* @fires enyo.Media#event:onCanPlay
+		* @fires enyo.Media#onCanPlay
 		* @private
 		*/
 		_canPlay: function() {
@@ -704,7 +704,7 @@
 		* Called when element can resume playback of the media data without needing to stop for
 		* further buffering of content.
 		*
-		* @fires enyo.Media#event:onCanPlayThrough
+		* @fires enyo.Media#onCanPlayThrough
 		* @private
 		*/
 		_canPlayThrough: function() {
@@ -714,7 +714,7 @@
 		/**
 		* Called when the [duration]{@link enyo.Media#duration} attribute has been changed.
 		*
-		* @fires enyo.Media#event:onDurationChange
+		* @fires enyo.Media#onDurationChange
 		* @private
 		*/
 		_durationChange: function() {
@@ -725,7 +725,7 @@
 		* Called when [networkState]{@glossary networkState} switches to `NETWORK_EMPTY` from
 		* another state.
 		*
-		* @fires enyo.Media#event:onEmptied
+		* @fires enyo.Media#onEmptied
 		* @private
 		*/
 		_emptied: function() {
@@ -735,7 +735,7 @@
 		/**
 		* Called when playback reaches the end of the media data.
 		*
-		* @fires enyo.Media#event:onEnded
+		* @fires enyo.Media#onEnded
 		* @private
 		*/
 		_ended: function() {
@@ -754,7 +754,7 @@
 		* Called when we can render the media data at the current playback position for the first
 		* time.
 		*
-		* @fires enyo.Media#event:onLoadedData
+		* @fires enyo.Media#onLoadedData
 		* @private
 		*/
 		_loadedData: function() {
@@ -772,7 +772,7 @@
 		/**
 		* Called when the media element begins looking for media data.
 		*
-		* @fires enyo.Media#event:onLoadStart
+		* @fires enyo.Media#onLoadStart
 		* @private
 		*/
 		_loadStart: function() {
@@ -782,7 +782,7 @@
 		/**
 		* Called when playback is paused.
 		*
-		* @fires enyo.Media#event:onPause
+		* @fires enyo.Media#onPause
 		* @private
 		*/
 		_pause: function() {
@@ -792,7 +792,7 @@
 		/**
 		* Called when playback is no longer paused.
 		*
-		* @fires enyo.Media#event:onPlay
+		* @fires enyo.Media#onPlay
 		* @private
 		*/
 		_play: function() {
@@ -803,7 +803,7 @@
 		* Called when playback is ready to start after having been paused or delayed due to lack of
 		* media data.
 		*
-		* @fires enyo.Media#event:onPlaying
+		* @fires enyo.Media#onPlaying
 		* @private
 		*/
 		_playing: function() {
@@ -813,7 +813,7 @@
 		/**
 		* Called when the media element is fetching media data.
 		*
-		* @fires enyo.Media#event:onProgress
+		* @fires enyo.Media#onProgress
 		* @private
 		*/
 		_progress: function() {
@@ -821,7 +821,7 @@
 		},
 
 		/**
-		* @fires enyo.Media#event:onStart
+		* @fires enyo.Media#onStart
 		* @private
 		*/
 		createEventData: function() {
@@ -844,7 +844,7 @@
 		/**
 		* Calculates the number value of the given playback rate (with support for fractions).
 		*
-		* @param {String} rate The playback rate, which may be a fraction, that will be converted to
+		* @param {String} rate - The playback rate, which may be a fraction, that will be converted to
 		*	a numerical value.
 		* @returns {Number} The numerical representation of the playback rate.
 		* @private
@@ -857,11 +857,11 @@
 		* Called when either [defaultPlaybackRate]{@link enyo.Media#defaultPlaybackRate} or 
 		* [playbackRate]{@link enyo.Media#playbackRate} has been updated.
 		*
-		* @fires enyo.Media#event:onSlowforward
-		* @fires enyo.Media#event:onFastforward
-		* @fires enyo.Media#event:onSlowrewind
-		* @fires enyo.Media#event:onRewind
-		* @fires enyo.Media#event:onPlay
+		* @fires enyo.Media#onSlowforward
+		* @fires enyo.Media#onFastforward
+		* @fires enyo.Media#onSlowrewind
+		* @fires enyo.Media#onRewind
+		* @fires enyo.Media#onPlay
 		* @private
 		*/
 		_rateChange: function(sender, e) {
@@ -893,7 +893,7 @@
 		/**
 		* Called when fetching of media data is interrupted.
 		*
-		* @fires enyo.Media#event:onStalled
+		* @fires enyo.Media#onStalled
 		* @private
 		*/
 		_stalled: function() {
@@ -902,7 +902,7 @@
 		/**
 		* Called when the seeking IDL attribute changes to `false`.
 		*
-		* @fires enyo.Media#event:onSeeked
+		* @fires enyo.Media#onSeeked
 		* @private
 		*/
 		_seeked: function() {
@@ -912,7 +912,7 @@
 		/**
 		* Called when the seeking IDL attribute changes to `true`.
 		*
-		* @fires enyo.Media#event:onSeeking
+		* @fires enyo.Media#onSeeking
 		* @private
 		*/
 		_seeking: function() {
@@ -937,7 +937,7 @@
 		* Called when either [volume]{@link enyo.Media#volume} or [muted]{@link enyo.Media#muted} is
 		* updated.
 		*
-		* @fires enyo.Media#event:onVolumeChange
+		* @fires enyo.Media#onVolumeChange
 		* @private
 		*/
 		_volumeChange: function() {
@@ -948,7 +948,7 @@
 		* Called when playback has stopped because the next frame is not available, but is expected
 		* to be.
 		*
-		* @fires enyo.Media#event:onWaiting
+		* @fires enyo.Media#onWaiting
 		* @private
 		*/
 		_waiting: function() {
@@ -985,7 +985,7 @@
 		/**
 		* Seeks to the specified time.
 		*
-		* @param {Number} time The time, in seconds, to seek to.
+		* @param {Number} time - The time, in seconds, to seek to.
 		* @public
 		*/
 		seekTo: function(time) {
@@ -1091,7 +1091,7 @@
 		/** 
 		* Sets current player position in the [media]{@link enyo.Media} element.
 		*
-		* @param {Number} time The player position, in seconds.
+		* @param {Number} time - The player position, in seconds.
 		* @public
 		*/
 		setCurrentTime: function(time) {
@@ -1302,7 +1302,7 @@
 		* Jumps backward by an amount specified by the [jumpSec]{@link enyo.Media#jumpSec}
 		* property.
 		*
-		* @fires enyo.Media#event:onJumpBackward
+		* @fires enyo.Media#onJumpBackward
 		* @public
 		*/
 		jumpBackward: function() {
@@ -1323,7 +1323,7 @@
 		* Jumps forward by an amount specified by the [jumpSec]{@link enyo.Media#jumpSec}
 		* property.
 		*
-		* @fires enyo.Media#event:onJumpForward
+		* @fires enyo.Media#onJumpForward
 		* @public
 		*/
 		jumpForward: function() {

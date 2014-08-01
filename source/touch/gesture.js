@@ -5,10 +5,10 @@
 	* emulate iOS gesture events on non-iOS devices.
 	*
 	* @typedef {Object} enyo.gesture~EmulatedGestureEvent
-	* @property {Number} pageX The x-coordinate of the center point between fingers.
-	* @property {Number} pageY The y-coordinate of the center point between fingers.
-	* @property {Number} rotation The degrees of rotation from the beginning of the gesture.
-	* @property {Number} scale The percent change of distance between fingers.
+	* @property {Number} pageX - The x-coordinate of the center point between fingers.
+	* @property {Number} pageY - The y-coordinate of the center point between fingers.
+	* @property {Number} rotation - The degrees of rotation from the beginning of the gesture.
+	* @property {Number} scale - The percent change of distance between fingers.
 	*/
 	
 	/**

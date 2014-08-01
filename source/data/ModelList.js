@@ -26,7 +26,7 @@
 	* @method
 	* @param {(enyo.Model|enyo.Model[])} models The [model or models]{@link enyo.Model}
 	*	to add to the [list]{@link enyo.ModelList}.
-	* @param {Number} [idx] If provided and valid, the models will be
+	* @param {Number} [idx] - If provided and valid, the models will be
 	* [spliced]{@glossary Array.splice} into the list at this position.
 	* @returns {enyo.Model[]} An immutable [array]{@glossary Array} of models
 	* that were actually added to the list.
@@ -142,7 +142,7 @@
 	*
 	* @name enyo.ModelList#resolve
 	* @method
-	* @param {(String|Number)} model An identifier (either a
+	* @param {(String|Number)} model - An identifier (either a
 	*	[primaryKey]{@link enyo.Model#primaryKey} or an [euid]{@glossary euid}).
 	* @returns {(undefined|null|enyo.Model)} If the identifier could be resolved, a
 	*	[model]{@link enyo.Model} instance is returned; otherwise, `undefined`, or

@@ -24,8 +24,8 @@
 	*
 	* @name enyo.ready
 	* @method
-	* @param {Function} fn The method to execute when the DOM is ready.
-	* @param {Object} [context] The optional context (`this`) under which to execute the
+	* @param {Function} fn - The method to execute when the DOM is ready.
+	* @param {Object} [context] - The optional context (`this`) under which to execute the
 	*	callback method.
 	* @public
 	*/

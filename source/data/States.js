@@ -227,7 +227,7 @@
 		* (or the optional passed-in value) is an [error state]{@link enyo.States.ERROR}.
 		* The passed-in value will only be used if it is a [Number]{@glossary Number}.
 		*
-		* @param {enyo.States} [status] The specific value to compare as an
+		* @param {enyo.States} [status] - The specific value to compare as an
 		*	[error state]{@link enyo.States.ERROR}.
 		* @returns {Boolean} Whether the value is an [error state]{@link enyo.States.ERROR} or not.
 		* @public
@@ -242,7 +242,7 @@
 		* (or the optional passed-in value) is a [busy state]{@link enyo.States.BUSY}. The
 		* passed-in value will only be used if it is a [Number]{@glossary Number}.
 		*
-		* @param {enyo.States} [status] The specific value to compare as a
+		* @param {enyo.States} [status] - The specific value to compare as a
 		*	[busy state]{@link enyo.States.BUSY}.
 		* @returns {Boolean} Whether the value is a [busy state]{@link enyo.States.BUSY} or not.
 		* @public
@@ -257,7 +257,7 @@
 		* (or the optional passed-in value) is a [ready state]{@link enyo.States.READY}. The
 		* passed-in value will only be used if it is a [Number]{@glossary Number}.
 		*
-		* @param {enyo.States} [status] The specific value to compare as a
+		* @param {enyo.States} [status] - The specific value to compare as a
 		*	[ready state]{@link enyo.States.READY}.
 		* @returns {Boolean} Whether the value is a [ready state]{@link enyo.States.BUSY} or not.
 		* @public

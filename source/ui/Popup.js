@@ -2,7 +2,7 @@
 	/**
 	* Fires after the [popup]{@link enyo.Popup} is shown.
 	*
-	* @event enyo.Popup#event:onShow
+	* @event enyo.Popup#onShow
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -13,7 +13,7 @@
 	/**
 	* Fires after the [popup]{@link enyo.Popup} is hidden.
 	*
-	* @event enyo.Popup#event:onHide
+	* @event enyo.Popup#onHide
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -24,7 +24,7 @@
 	/**
 	* {@link enyo.Popup} is a [control]{@link enyo.Control} used to display certain content
 	* on top of other content.
-	* 
+	*
 	* Popups are initially hidden on creation; they may be shown by calling the 
 	* [show()]{@link enyo.Control#show} method and re-hidden by calling
 	* [hide()]{@link enyo.Control#hide}. Popups may be centered using the 
@@ -345,8 +345,8 @@
 
 		/**
 		* @method
-		* @fires enyo.Popup#event:onShow
-		* @fires enyo.Popup#event:onHide
+		* @fires enyo.Popup#onShow
+		* @fires enyo.Popup#onHide
 		* @private
 		*/
 		showingChanged: enyo.inherit(function (sup) {
@@ -499,8 +499,8 @@
 		* that it does not display outside the viewport, and defaults to anchoring
 		* the top left corner of the popup to the position of the mouse event.
 		* 
-		* @param {Object} e The mouse {@glossary event} that initiated this call.
-		* @param {Object} [offset] An optional [object]{@glossary Object} that may
+		* @param {Object} e - The mouse {@glossary event} that initiated this call.
+		* @param {Object} [offset] - An optional [object]{@glossary Object} that may
 		* contain `left` and `top` properties to specify an offset relative to the
 		* location where the [popup]{@link enyo.Popup} would otherwise be positioned.
 		* @public

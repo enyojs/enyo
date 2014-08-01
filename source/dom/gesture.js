@@ -26,8 +26,8 @@
 		* Creates an {@glossary event} of type `type` and returns it.
 		* `evt` should be an event [object]{@glossary Object}.
 		*
-		* @param {String} type The type of {@glossary event} to make.
-		* @param {(Event|Object)} evt The event you'd like to clone or an object that looks like it.
+		* @param {String} type - The type of {@glossary event} to make.
+		* @param {(Event|Object)} evt - The event you'd like to clone or an object that looks like it.
 		* @returns {Object} The new event [object]{@glossary Object}.
 		* @public
 		*/
@@ -79,7 +79,7 @@
 		* Handles "down" [events]{@glossary event}, including `mousedown` and `keydown`. This is
 		* responsible for the press-and-hold key repeater.
 		*
-		* @param {Event} evt The standard {@glossary event} [object]{glossary Object}.
+		* @param {Event} evt - The standard {@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		down: function(evt) {
@@ -103,7 +103,7 @@
 		/**
 		* Handles `mousemove` [events]{@glossary event}.
 		*
-		* @param {Event} evt The standard {@glossary event} [object]{glossary Object}.
+		* @param {Event} evt - The standard {@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		move: function(evt) {
@@ -122,7 +122,7 @@
 		/**
 		* Handles "up" [events]{@glossary event}, including `mouseup` and `keyup`.
 		*
-		* @param {Event} evt The standard {@glossary event} [object]{glossary Object}.
+		* @param {Event} evt - The standard {@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		up: function(evt) {
@@ -141,7 +141,7 @@
 		/**
 		* Handles `mouseover` [events]{@glossary event}.
 		*
-		* @param {Event} evt The standard {@glossary event} [object]{glossary Object}.
+		* @param {Event} evt - The standard {@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		over: function(evt) {
@@ -152,7 +152,7 @@
 		/**
 		* Handles `mouseout` [events]{@glossary event}.
 		*
-		* @param {Event} evt The standard {@glossary event} [object]{glossary Object}.
+		* @param {Event} evt - The standard {@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		out: function(evt) {
@@ -163,7 +163,7 @@
 		/**
 		* Generates `tap` [events]{@glossary event}.
 		*
-		* @param {Event} evt The standard {@glossary event} [object]{glossary Object}.
+		* @param {Event} evt - The standard {@glossary event} [object]{glossary Object}.
 		* @public
 		*/
 		sendTap: function(evt) {
@@ -181,8 +181,8 @@
 		* the hierarchic [DOM]{@glossary DOM} tree of [nodes]{@glossary Node}). The shared
 		* ancestor node is returned.
 		*
-		* @param {Node} controlA Control one.
-		* @param {Node} controlB Control two.
+		* @param {Node} controlA - Control one.
+		* @param {Node} controlB - Control two.
 		* @returns {(Node|undefined)} The shared ancestor.
 		* @public
 		*/
@@ -199,8 +199,8 @@
 		/**
 		* Given two controls, returns `true` if the `child` is inside the `parent`.
 		*
-		* @param {Node} child The child to search for.
-		* @param {Node} parent The expected parent.
+		* @param {Node} child - The child to search for.
+		* @param {Node} parent - The expected parent.
 		* @returns {(Boolean|undefined)} `true` if the `child` is actually a child of `parent`.
 		*/
 		isTargetDescendantOf: function(child, parent) {

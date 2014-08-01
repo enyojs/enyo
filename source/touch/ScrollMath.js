@@ -328,7 +328,7 @@
 		},
 
 		/**
-		* @fires enyo.ScrollMath#event:onScrollStop
+		* @fires enyo.ScrollMath#onScrollStop
 		* @private
 		*/
 		animate: function () {
@@ -522,7 +522,7 @@
 		},
 
 		/**
-		* @fires enyo.ScrollMath#event:onScroll
+		* @fires enyo.ScrollMath#onScroll
 		* @private
 		*/
 		scroll: function () {
@@ -536,8 +536,8 @@
 		/**
 		* Animates a scroll to the specified position.
 		*
-		* @param {Number} x The `x` position in pixels.
-		* @param {Number} y The `y` position in pixels.
+		* @param {Number} x - The `x` position in pixels.
+		* @param {Number} y - The `y` position in pixels.
 		* @private
 		*/
 		scrollTo: function (x, y) {
@@ -556,7 +556,7 @@
 		/**
 		* Sets the scroll position along the x-axis.
 		*
-		* @param {Number} x The x-axis scroll position in pixels.
+		* @param {Number} x - The x-axis scroll position in pixels.
 		* @method
 		* @private
 		*/
@@ -567,7 +567,7 @@
 		/**
 		* Sets the scroll position along the y-axis.
 		*
-		* @param {Number} y The y-axis scroll position in pixels.
+		* @param {Number} y - The y-axis scroll position in pixels.
 		* @method
 		* @private
 		*/
@@ -578,7 +578,7 @@
 		/**
 		* Sets the scroll position; defaults to setting this position along the y-axis.
 		*
-		* @param {Number} pos The scroll position in pixels.
+		* @param {Number} pos - The scroll position in pixels.
 		* @method
 		* @private
 		*/

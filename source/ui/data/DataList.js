@@ -4,21 +4,21 @@
 	* [paging]{@link enyo.DataList#event:paging} event is fired.
 	*
 	* @typedef {Object} enyo.DataList~PagingEvent
-	* @property {Number} start The lowest active index in the dataset.
-	* @property {Number} end The highest active index.
-	* @property {String} action The action that triggered the paging, either `'scroll'`
+	* @property {Number} start - The lowest active index in the dataset.
+	* @property {Number} end - The highest active index.
+	* @property {String} action - The action that triggered the paging, either `'scroll'`
 	* or `'reset'`.
 	*/
 
 	/**
 	* Fires each time data is paged, on a per-page basis.
 	*
-	* @event enyo.DataList#event:paging
+	* @event enyo.DataList#paging
 	* @type {Object}
 	* @property {Object} sender - A reference to the {@link enyo.DataList}.
-	* @property {String} nom The name of the {@glossary event}.
+	* @property {String} nom - The name of the {@glossary event}.
 	* @property {enyo.DataList~PagingEvent} event - A [hash]{@glossary Object} with properties
-	*	specific to the [paging]{@link enyo.DataList#event:paging} event.
+	*	specific to the [paging]{@link enyo.DataList#paging} event.
 	* @public
 	*/
 
@@ -37,7 +37,7 @@
 	* scrolling scheme to enhance performance with larger datasets. The data is provided to
 	* the DataList by an {@link enyo.Collection} set as the value of its
 	* [collection]{@link enyo.DataRepeater#data} property.
-	* 
+	*
 	* Note that care should be taken when deciding how to lay out the list's children. When
 	* there are a large number of child [elements]{@link enyo.Control}, the layout process
 	* can be taxing and non-performant for the browser. Avoid dynamically-updated
@@ -82,7 +82,7 @@
 		scrollerOptions: null,
 
 		/**
-		* The paging orientation. Valid values are `'vertical'` and `'horizontal'`. This property 
+		* The paging orientation. Valid values are `'vertical'` and `'horizontal'`. This property
 		* will be mapped to a particular strategy governing how the list will flow.
 		*
 		* @type {String}
@@ -184,11 +184,11 @@
 		},
 		
 		/**
-		* Pass in an integer within the bounds of the [list's]{@link enyo.DataList} 
+		* Pass in an integer within the bounds of the [list's]{@link enyo.DataList}
 		* [collection]{@link enyo.DataRepeater#data} to scroll to the position of that
 		* index in the list.
 		*
-		* @param {Number} idx The index in the [list's]{@link enyo.DataList} 
+		* @param {Number} idx - The index in the [list's]{@link enyo.DataList}
 		*	[collection]{@link enyo.DataRepeater#data} to scroll to.
 		* @public
 		*/
@@ -471,7 +471,7 @@
 		* requested index if its page is currently active. Returns `undefined` if the index is out 
 		* of bounds or if the [control]{@link enyo.Control} is not currently available.
 		* 
-		* Also see [getChildForIndex()]{@link enyo.Repeater#getChildForIndex}, which calls this 
+		* Also see [getChildForIndex()]{@link enyo.Repeater#getChildForIndex}, which calls this
 		* method.
 		*
 		* @private
@@ -538,7 +538,7 @@
 		*/
 		containerName: 'scroller',
 		/**
-		* We have to trap the Enyo-generated [onScroll]{@link enyo.Scroller#event:onScroll}
+		* We have to trap the Enyo-generated [onScroll]{@link enyo.Scroller#onScroll}
 		* {@glossary event} and let the [delegate]{@glossary delegate} handle it. We also
 		* need to catch the `onresize` events so we know when to update our cached sizing.
 		* We overload the default handler so that we don't
@@ -558,9 +558,9 @@
 
 		/**
 		* Adds the [RegisteredEventSupport]{@link enyo.RegisteredEventSupport}
-		* [mixin]{@glossary mixin} for the [paging]{@link enyo.DataList#event:paging}
+		* [mixin]{@glossary mixin} for the [paging]{@link enyo.DataList#paging}
 		* {@glossary event}.
-		* 
+		*
 		* @private
 		*/
 		mixins: [enyo.RegisteredEventSupport],

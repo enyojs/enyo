@@ -149,9 +149,9 @@
 		* this listener will fire every time the event is
 		* [emitted]{@link enyo.EventEmitter#emit}.
 		*
-		* @param {String} e The {@glossary event} name to register for.
-		* @param {Function} fn The listener.
-		* @param {Object} [ctx] The optional context under which to execute the listener.
+		* @param {String} e - The {@glossary event} name to register for.
+		* @param {Function} fn - The listener.
+		* @param {Object} [ctx] - The optional context under which to execute the listener.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -171,9 +171,9 @@
 		/**
 		* Removes an {@glossary event} listener.
 		*
-		* @param {String} e The {@glossary event} name.
-		* @param {Function} fn The listener to unregister.
-		* @param {Object} [ctx] If the listener was registered with a context, it
+		* @param {String} e - The {@glossary event} name.
+		* @param {Function} fn - The listener to unregister.
+		* @param {Object} [ctx] - If the listener was registered with a context, it
 		* should be provided when unregistering as well.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -185,7 +185,7 @@
 		/**
 		* Removes all listeners, or all listeners for a given {@glossary event}.
 		*
-		* @param {String} [e] The optional target {@glossary event}.
+		* @param {String} [e] - The optional target {@glossary event}.
 		* @returns {this} The callee for chaining.
 		*/
 		removeAllListeners: function (e) {
@@ -209,7 +209,7 @@
 		* Primarily intended for internal use, this method returns an immutable copy
 		* of all listeners, or all listeners for a particular {@glossary event} (if any).
 		*
-		* @param {String} [e] The targeted {@glossary event}.
+		* @param {String} [e] - The targeted {@glossary event}.
 		* @returns {Object[]} Event listeners are stored in [hashes]{@glossary Object}.
 		*	The return value will be an [array]{@glossary Array} of these hashes
 		* if any listeners exist.
@@ -237,7 +237,7 @@
 		* Emits the named {@glossary event}. All subsequent arguments will be passed
 		* to the event listeners.
 		*
-		* @param {String} e The {@glossary event} to emit.
+		* @param {String} e - The {@glossary event} to emit.
 		* @param {...*} args All subsequent arguments will be passed to the event listeners.
 		* @returns {Boolean} Whether or not any listeners were notified.
 		* @public

@@ -1,17 +1,17 @@
 (function (enyo, scope) {
 	/**
-	* The extended {@glossary event} [object]{@glossary Object} that is provided when the 
-	* [onActiveChanged]{@link enyo.Group#event:onActiveChanged} event is fired.
+	* The extended {@glossary event} [object]{@glossary Object} that is provided when the
+	* [onActiveChanged]{@link enyo.Group#onActiveChanged} event is fired.
 	*
 	* @typedef {Object} enyo.Group~ActiveChangedEvent
-	* @property {enyo.Control} active The active [control]{@link enyo.Control} for the
+	* @property {enyo.Control} active - The active [control]{@link enyo.Control} for the
 	*	[group]{@link enyo.Group}.
 	*/
 
 	/**
 	* Fires when the active control is changed.
 	*
-	* @event enyo.Group#event:onActiveChanged
+	* @event enyo.Group#onActiveChanged
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -21,7 +21,7 @@
 	*/
 
 	/**
-	* {@link enyo.Group} provides a wrapper around multiple elements. It enables the creation of 
+	* {@link enyo.Group} provides a wrapper around multiple elements. It enables the creation of
 	* radio groups from arbitrary [components]{@link enyo.Component} that support the
 	* {@link enyo.GroupItem} API.
 	*
@@ -131,7 +131,7 @@
 		},
 
 		/**
-		* @fires enyo.Group#event:onActiveChanged
+		* @fires enyo.Group#onActiveChanged
 		* @private
 		*/
 		activeChanged: function(inOld) {

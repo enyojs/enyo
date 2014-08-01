@@ -107,7 +107,7 @@
 	* @see enyo.log
 	* @see enyo.warn
 	* @see enyo.error
-	* @param {Number} level The level to set logging to.
+	* @param {Number} level - The level to set logging to.
 	*/
 	enyo.setLogLevel = function (level) {
 		var ll = parseInt(level, 0);

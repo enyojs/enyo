@@ -2,7 +2,7 @@
 	/**
 	* Fires when an animation step occurs.
 	*
-	* @event enyo.Animator#event:onStep
+	* @event enyo.Animator#onStep
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -13,7 +13,7 @@
 	/**
 	* Fires when the animation finishes normally.
 	*
-	* @event enyo.Animator#event:onEnd
+	* @event enyo.Animator#onEnd
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -24,7 +24,7 @@
 	/**
 	* Fires when the animation is prematurely stopped.
 	*
-	* @event enyo.Animator#event:onStop
+	* @event enyo.Animator#onStop
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -36,10 +36,10 @@
 	* {@link enyo.Animator} is a basic animation [component]{@link enyo.Component}.  Call
 	* [play()]{@link enyo.Animator#play} to start the animation. The animation will run for
 	* the period (in milliseconds) specified by its [duration]{@link enyo.Animator#duration}
-	* property. [onStep]{@link enyo.Animator#event:onStep} [events]{@glossary event} will
+	* property. [onStep]{@link enyo.Animator#onStep} [events]{@glossary event} will
 	* fire in quick succession and should be handled to do something based on the
 	* [value]{@link enyo.Animator#value} property.
-	* 
+	*
 	* The `value` property will progress from [startValue]{@link enyo.Animator#startValue}
 	* to [endValue]{@link enyo.Animator#endValue} during the animation, based on the
 	* [function]{@glossary Function} referenced by the
@@ -169,7 +169,7 @@
 		/** 
 		* Plays the animation.
 		*
-		* @param {Object} props As a convenience, this [hash]{@glossary Object} will be mixed
+		* @param {Object} props - As a convenience, this [hash]{@glossary Object} will be mixed
 		*	directly into this [object]{@glossary Object}.
 		* @public
 		*/
@@ -193,7 +193,7 @@
 		/** 
 		* Stops the animation and fires the associated {@glossary event}.
 		*
-		* @fires enyo.Animator#event:onStop
+		* @fires enyo.Animator#onStop
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -265,8 +265,8 @@
 		/**
 		* Runs the next step of the animation.
 		*
-		* @fires enyo.Animator#event:onStep
-		* @fires enyo.Animator#event:onEnd
+		* @fires enyo.Animator#onStep
+		* @fires enyo.Animator#onEnd
 		* @private
 		*/
 		next: function() {

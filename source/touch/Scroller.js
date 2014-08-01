@@ -3,19 +3,19 @@
 	* An [object]{@glossary Object} representing the scroll boundaries.
 	*
 	* @typedef {Object} enyo.Scroller~BoundaryObject
-	* @property {Number} left The left scroll position.
-	* @property {Number} top The top scroll position.
-	* @property {Number} maxLeft Maximum value for the left scroll position (minimum is always 0).
-	* @property {Number} maxTop Maximum value for the top scroll position (minimum is always 0).
-	* @property {Number} clientHeight The vertical size of the [scroller]{@link enyo.Scroller} on
+	* @property {Number} left - The left scroll position.
+	* @property {Number} top - The top scroll position.
+	* @property {Number} maxLeft - Maximum value for the left scroll position (minimum is always 0).
+	* @property {Number} maxTop - Maximum value for the top scroll position (minimum is always 0).
+	* @property {Number} clientHeight - The vertical size of the [scroller]{@link enyo.Scroller} on
 	*	screen.
-	* @property {Number} clientWidth The horizontal size of the [scroller]{@link enyo.Scroller} on
+	* @property {Number} clientWidth - The horizontal size of the [scroller]{@link enyo.Scroller} on
 	*	screen.
-	* @property {Number} width The horizontal size of the full area of the scrolled region.
-	* @property {Number} height The vertical size of the full area of the scrolled region.
-	* @property {Number} xDir Either 1, -1, or 0, indicating positive movement along the 
+	* @property {Number} width - The horizontal size of the full area of the scrolled region.
+	* @property {Number} height - The vertical size of the full area of the scrolled region.
+	* @property {Number} xDir - Either 1, -1, or 0, indicating positive movement along the
 	*	x-axis, negative movement, or no movement, respectively.
-	* @property {Number} yDir Either 1, -1, or 0, indicating positive movement along the
+	* @property {Number} yDir - Either 1, -1, or 0, indicating positive movement along the
 	*	y-axis, negative movement, or no movement, respectively.
 	*/
 
@@ -24,8 +24,8 @@
 	* An [object]{@glossary Object} representing the overscroll boundaries.
 	*
 	* @typedef {Object} enyo.Scroller~OverscrollBoundaryObject
-	* @property {Number} overleft The left overscroll position.
-	* @property {Number} overtop The top overscroll position.
+	* @property {Number} overleft - The left overscroll position.
+	* @property {Number} overtop - The top overscroll position.
 	*/
 
 	/**
@@ -498,7 +498,7 @@
 		/**
 		* Sets the horizontal scroll position.
 		*
-		* @param {Number} left The horizontal scroll position in pixels.
+		* @param {Number} left - The horizontal scroll position in pixels.
 		* @public
 		*/
 		setScrollLeft: function (left) {
@@ -512,7 +512,7 @@
 		/**
 		* Sets the vertical scroll position.
 		*
-		* @param {Number} top The vertical scroll position in pixels.
+		* @param {Number} top - The vertical scroll position in pixels.
 		* @public
 		*/
 		setScrollTop: function (top) {
@@ -571,9 +571,9 @@
 		/**
 		* Scrolls the given [control]{@link enyo.Control} into view.
 		*
-		* @param {enyo.Control} ctl The control to make visible in the 
+		* @param {enyo.Control} ctl - The control to make visible in the
 		*	[scroller's]{@link enyo.Scroller} viewport.
-		* @param {Boolean} alignWithTop If `true`, the node is aligned with the top
+		* @param {Boolean} alignWithTop - If `true`, the node is aligned with the top
 		* of the scroller.
 		* @public
 		*/
@@ -584,8 +584,8 @@
 		/** 
 		* Scrolls to the specified position.
 		*
-		* @param {Number} x The `x` position in pixels.
-		* @param {Number} y The `y` position in pixels.
+		* @param {Number} x - The `x` position in pixels.
+		* @param {Number} y - The `y` position in pixels.
 		* @public
 		*/
 		scrollTo: function (x, y) {
@@ -599,9 +599,9 @@
 		* [scrollIntoView()]{@glossary scrollIntoView}, this only affects the current 
 		* scroller.
 		*
-		* @param {enyo.Control} ctl The [control]{@link enyo.Control} to make visible in the 
+		* @param {enyo.Control} ctl - The [control]{@link enyo.Control} to make visible in the
 		*	[scroller's]{@link enyo.Scroller} viewport.
-		* @param {Boolean} alignWithTop If `true`, the node is aligned with the top of the
+		* @param {Boolean} alignWithTop - If `true`, the node is aligned with the top of the
 		*	scroller.
 		* @public
 		*/
@@ -612,9 +612,9 @@
 		/** 
 		* Ensures that the given node is visible in the [scroller's]{@link enyo.Scroller} viewport.
 		*
-		* @param {Node} node The node to make visible in the [scroller's]{@link enyo.Scroller}
+		* @param {Node} node - The node to make visible in the [scroller's]{@link enyo.Scroller}
 		*	viewport.
-		* @param {Boolean} alignWithTop If `true`, the node is aligned with the top of the
+		* @param {Boolean} alignWithTop - If `true`, the node is aligned with the top of the
 		*	scroller.
 		* @public
 		*/
@@ -659,7 +659,7 @@
 		/** 
 		* Normalizes scroll {@glossary event} to `onScroll`.
 		*
-		* @fires enyo.Scroller#event:onScroll
+		* @fires enyo.Scroller#onScroll
 		* @private
 		*/
 		domScroll: function (sender, e) {

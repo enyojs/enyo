@@ -25,7 +25,7 @@
 	* method.
 	* 
 	* @callback enyo.Store~Filter
-	* @param {enyo.Model} model The [model]{@link enyo.Model} to filter.
+	* @param {enyo.Model} model - The [model]{@link enyo.Model} to filter.
 	* @returns {Boolean} `true` if the model meets the filter requirements;
 	* otherwise, `false`.
 	*/
@@ -64,10 +64,10 @@
 		* match.
 		* 
 		* @see {@glossary Array.find}
-		* @param {enyo.Model} ctor The constructor for the [kind]{@glossary kind} of
+		* @param {enyo.Model} ctor - The constructor for the [kind]{@glossary kind} of
 		*	[model]{@link enyo.Model} to be filtered.
-		* @param {enyo.Store~Filter} fn The filter method.
-		* @param {enyo.Store~FindOptions} [opts] The options parameter.
+		* @param {enyo.Store~Filter} fn - The filter method.
+		* @param {enyo.Store~FindOptions} [opts] - The options parameter.
 		* @returns {(enyo.Model|enyo.Model[]|undefined)} If the `all` flag is `true`,
 		*	returns an array of models; otherwise, returns the first model that returned
 		*	that returned `true` from the filter method. Returns `undefined` if `all` is

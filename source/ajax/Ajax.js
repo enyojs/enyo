@@ -49,7 +49,7 @@
 		* @private
 		*/
 		constructor: enyo.inherit(function (sup) {
-			return function(inParams) {
+			return function (inParams) {
 				enyo.mixin(this, inParams);
 				sup.apply(this, arguments);
 			};
@@ -59,7 +59,7 @@
 		* @private
 		*/
 		destroy: enyo.inherit(function (sup) {
-			return function() {
+			return function () {
 				// explicilty release any XHR refs
 				this.xhr = null;
 				sup.apply(this, arguments);
@@ -94,12 +94,12 @@
 		* @see enyo.AjaxProperties
 		* @see enyo.Ajax#xhrResponse
 		* @see enyo.Ajax~xhrResponse
-		* @param {(Object|String)} [params] A [string]{@glossary String} or
+		* @param {(Object|String)} [params] - A [string]{@glossary String} or
 		*	[hash]{@glossary Object} to be used as the query string.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
-		go: function(params) {
+		go: function (params) {
 			this.failed = false;
 			this.startTimer();
 			this.request(params);
@@ -109,7 +109,7 @@
 		/**
 		* @private
 		*/
-		request: function(params) {
+		request: function (params) {
 			var parts = this.url.split('?');
 			var uri = parts.shift() || '';
 			var args = parts.length ? (parts.join('?').split('&')) : [];
@@ -196,7 +196,7 @@
 		/**
 		* @private
 		*/
-		receive: function(inText, inXhr) {
+		receive: function (inText, inXhr) {
 			if (!this.failed && !this.destroyed) {
 				var body;
 				if (inXhr.responseType === 'arraybuffer') {
@@ -224,7 +224,7 @@
 		* @private
 		*/
 		fail: enyo.inherit(function (sup) {
-			return function(inError) {
+			return function (inError) {
 				// on failure, explicitly cancel the XHR to prevent
 				// further responses.  cancellation also resets the
 				// response headers & body,
@@ -239,7 +239,7 @@
 		/**
 		* @private
 		*/
-		xhrToResponse: function(inXhr) {
+		xhrToResponse: function (inXhr) {
 			if (inXhr) {
 				return this[(this.handleAs || 'text') + 'Handler'](inXhr);
 			}
@@ -248,7 +248,7 @@
 		/**
 		* @private
 		*/
-		isFailure: function(inXhr) {
+		isFailure: function (inXhr) {
 			// if any exceptions are thrown while checking fields in the xhr,
 			// assume a failure.
 			try {
@@ -285,21 +285,21 @@
 		/**
 		* @private
 		*/
-		xmlHandler: function(inXhr) {
+		xmlHandler: function (inXhr) {
 			return inXhr.responseXML;
 		},
 		
 		/**
 		* @private
 		*/
-		textHandler: function(inXhr) {
+		textHandler: function (inXhr) {
 			return inXhr.responseText;
 		},
 		
 		/**
 		* @private
 		*/
-		jsonHandler: function(inXhr) {
+		jsonHandler: function (inXhr) {
 			var r = inXhr.responseText;
 			try {
 				return r && enyo.json.parse(r);
@@ -312,14 +312,14 @@
 		/**
 		* @private
 		*/
-		binaryHandler: function(inXhr) {
+		binaryHandler: function (inXhr) {
 			return inXhr.response;
 		}, 
 		
 		/**
 		* @private
 		*/
-		updateProgress: function(event) {
+		updateProgress: function (event) {
 			// filter out 'input' as it causes exceptions on some Firefox versions
 			// due to unimplemented internal APIs
 			var ev = {};
@@ -335,7 +335,7 @@
 		* @private
 		*/
 		statics: {
-			objectToQuery: function(/*Object*/ map) {
+			objectToQuery: function (/*Object*/ map) {
 				var enc = encodeURIComponent;
 				var pairs = [];
 				var backstop = {};
@@ -360,7 +360,7 @@
 		* @private
 		*/
 		protectedStatics: {
-			parseResponseHeaders: function(xhr) {
+			parseResponseHeaders: function (xhr) {
 				var headers = {};
 				var headersStr = [];
 				if (xhr.getAllResponseHeaders) {

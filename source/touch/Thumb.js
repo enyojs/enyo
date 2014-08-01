@@ -70,7 +70,7 @@
 		* Syncs the scroll indicator bar to the [scroller]{@link enyo.Scroller} size and position,
 		* as determined by the passed-in scroll strategy.
 		*
-		* @param {enyo.ScrollStrategy} strategy The scroll strategy to be synced with.
+		* @param {enyo.ScrollStrategy} strategy - The scroll strategy to be synced with.
 		* @public
 		*/
 		sync: function (strategy) {
@@ -83,7 +83,7 @@
 		* scroll area, and whether there is overscrolling. If the scroll indicator bar is not
 		* needed, it will be not be displayed.
 		* 
-		* @param {enyo.ScrollStrategy} strategy The scroll strategy to update from.
+		* @param {enyo.ScrollStrategy} strategy - The scroll strategy to update from.
 		* @public
 		*/
 		update: function (strategy) {
@@ -138,7 +138,7 @@
 		* because [showing]{@link enyo.Control#showing} is not changed while we execute
 		* `delayHide()`.
 		*
-		* @param {Boolean} showing If `true`, displays the {@link enyo.ScrollThumb} if appropriate;
+		* @param {Boolean} showing - If `true`, displays the {@link enyo.ScrollThumb} if appropriate;
 		*	otherwise, hides the ScrollThumb.
 		* @public
 		*/
@@ -161,7 +161,7 @@
 		/**
 		* Delays automatic hiding of the {@link enyo.ScrollThumb}.
 		*
-		* @param {Number} delay The number of milliseconds to delay hiding of the 
+		* @param {Number} delay - The number of milliseconds to delay hiding of the
 		*	{@link enyo.ScrollThumb}.
 		* @public
 		*/

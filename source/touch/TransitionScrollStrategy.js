@@ -207,7 +207,7 @@
 		/**
 		* Sets the horizontal scroll position.
 		*
-		* @param {Number} left The horizontal scroll position in pixels.
+		* @param {Number} left - The horizontal scroll position in pixels.
 		* @method
 		* @public
 		*/
@@ -224,7 +224,7 @@
 		/**
 		* Sets the vertical scroll position.
 		*
-		* @param {Number} top The vertical scroll position in pixels.
+		* @param {Number} top - The vertical scroll position in pixels.
 		* @method
 		* @public
 		*/
@@ -241,7 +241,7 @@
 		/**
 		* Sets the scroll position along the x-axis.
 		*
-		* @param {Number} x The x-axis scroll position in pixels.
+		* @param {Number} x - The x-axis scroll position in pixels.
 		* @method
 		* @public
 		*/
@@ -252,7 +252,7 @@
 		/**
 		* Sets the scroll position along the y-axis.
 		*
-		* @param {Number} y The y-axis scroll position in pixels.
+		* @param {Number} y - The y-axis scroll position in pixels.
 		* @method
 		* @public
 		*/
@@ -438,7 +438,7 @@
 		},
 
 		/**
-		* @fires enyo.TransitionScrollStrategy#event:onScroll
+		* @fires enyo.TransitionScrollStrategy#onScroll
 		* @private
 		*/
 		mousewheel: function (sender, e) {
@@ -459,7 +459,7 @@
 		/**
 		* Updates thumbs, recalculates boundaries, and bubbles `scroll` {@glossary event}.
 		*
-		* @fires enyo.TransitionScrollStrategy#event:onScroll
+		* @fires enyo.TransitionScrollStrategy#onScroll
 		* @private
 		*/
 		scroll: function () {
@@ -474,7 +474,7 @@
 		* Scrolls to current `x` and `y` coordinates and bubbles `scrollstart`
 		* {@glossary event}.
 		*
-		* @fires enyo.TransitionScrollStrategy#event:onScrollStart
+		* @fires enyo.TransitionScrollStrategy#onScrollStart
 		* @private
 		*/
 		start: function () {
@@ -486,7 +486,7 @@
 		* If currently scrolling, stops scrolling. Hides thumbs and bubbles `scrollstop`
 		* {@glossary event}.
 		*
-		* @fires enyo.TransitionScrollStrategy#event:onScrollStop
+		* @fires enyo.TransitionScrollStrategy#onScrollStop
 		* @private
 		*/
 		stop: function () {
@@ -1049,8 +1049,8 @@
 		/** 
 		* Scrolls to a specific position within the scroll area.
 		*
-		* @param {Number} x The `x` position in pixels.
-		* @param {Number} y The `y` position in pixels.
+		* @param {Number} x - The `x` position in pixels.
+		* @param {Number} y - The `y` position in pixels.
 		* @public
 		*/
 		scrollTo: function (x, y) {

@@ -1,13 +1,13 @@
 (function (enyo, scope) {
 	/**
 	* The extended {@glossary event} [object]{@glossary Object} that is provided
-	* when the [onSelect]{@link enyo.Selection#event:onSelect} and
-	* [onDeselect]{@link enyo.Selection#event:onDeselect} events are fired.
+	* when the [onSelect]{@link enyo.Selection#onSelect} and
+	* [onDeselect]{@link enyo.Selection#onDeselect} events are fired.
 	*
 	* @typedef {Object} enyo.Selection~SelectionEvent
 	* @property {Number|String} key The key that was used to register the
 	*	[selection]{@link enyo.Selection} (usually a row index).
-	* @property {Object} data References data registered with the key by the code
+	* @property {Object} data - References data registered with the key by the code
 	* that made the original selection.
 	*/
 
@@ -21,7 +21,7 @@
 	* ...
 	* ```
 	*
-	* @event enyo.Selection#event:onSelect
+	* @event enyo.Selection#onSelect
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -40,7 +40,7 @@
 	* ...
 	* ```
 	*
-	* @event enyo.Selection#event:onDeselect
+	* @event enyo.Selection#onDeselect
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -52,7 +52,7 @@
 	/**
 	* Fires when selection changes (but not when selection is cleared).
 	*
-	* @event enyo.Selection#event:onChange
+	* @event enyo.Selection#onChange
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -172,7 +172,7 @@
 		/**
 		* Determines whether a particular row is selected.
 		*
-		* @param {Number|String} key The unique identifier of the row.
+		* @param {Number|String} key - The unique identifier of the row.
 		* @returns {Boolean} `true` if the specified row is selected; otherwise, `false`.
 		* @public
 		*/
@@ -183,15 +183,15 @@
 		/**
 		* Manually sets a row's state to selected or unselected.
 		*
-		* @param {Number|String} key The unique identifier of the row.
-		* @param {Boolean} sel `true` if the row should be selected; `false` if the row
+		* @param {Number|String} key - The unique identifier of the row.
+		* @param {Boolean} sel - `true` if the row should be selected; `false` if the row
 		* should be unselected.
-		* @param {Object} [data] An optional data [object]{@glossary Object} to store 
+		* @param {Object} [data] - An optional data [object]{@glossary Object} to store
 		*	in the selection for the key that will be sent with the
-		*	[onSelect]{@link enyo.Selection#event:onSelect} or
-		*	[onDeselect]{@link enyo.Selection#event:onDeselect} {@glossary event}. If
+		*	[onSelect]{@link enyo.Selection#onSelect} or
+		*	[onDeselect]{@link enyo.Selection#onDeselect} {@glossary event}. If
 		*	not used, the `data` will be set to `true`.
-		* @fires enyo.Selection#event:onChange
+		* @fires enyo.Selection#onChange
 		* @public
 		*/
 		setByKey: function(key, sel, data) {
@@ -210,7 +210,7 @@
 		/**
 		* Deselects a row.
 		*
-		* @param {Number|String} key The unique identifier of the row.
+		* @param {Number|String} key - The unique identifier of the row.
 		* @public
 		*/
 		deselect: function(key) {
@@ -223,11 +223,11 @@
 		* Selects a row. If the [multi]{@link enyo.Selection#multi} property is set to `false`,
 		* this will also deselect the previous [selection]{@link enyo.Selection}.
 		*
-		* @param {Number|String} key The unique identifier of the row.
-		* @param {Object} [data] An optional data [object]{@glossary Object} to store
+		* @param {Number|String} key - The unique identifier of the row.
+		* @param {Object} [data] - An optional data [object]{@glossary Object} to store
 		* in the selection for the key that will be sent with the
-		*	[onSelect]{@link enyo.Selection#event:onSelect} or
-		*	[onDeselect]{@link enyo.Selection#event:onDeselect} {@glossary event}. If
+		*	[onSelect]{@link enyo.Selection#onSelect} or
+		*	[onDeselect]{@link enyo.Selection#onDeselect} {@glossary event}. If
 		*	not used, the `data` will be set to `true`.
 		* @public
 		*/
@@ -245,11 +245,11 @@
 		* [multi]{@link enyo.Selection#multi} property is set to `false`, toggling a
 		* selection "on" will deselect the previous selection.
 		*
-		* @param {Number|String} key The unique identifier of the row.
-		* @param {Object} [data] An optional data [object]{@glossary Object} to store
+		* @param {Number|String} key - The unique identifier of the row.
+		* @param {Object} [data] - An optional data [object]{@glossary Object} to store
 		* in the selection for the key that will be sent with the
-		*	[onSelect]{@link enyo.Selection#event:onSelect} or
-		*	[onDeselect]{@link enyo.Selection#event:onDeselect} {@glossary event}. If
+		*	[onSelect]{@link enyo.Selection#onSelect} or
+		*	[onDeselect]{@link enyo.Selection#onDeselect} {@glossary event}. If
 		*	not used, the `data` will be set to `true`.
 		* @public
 		*/
@@ -270,15 +270,13 @@
 		getSelected: function() {
 			return this.selected;
 		},
-		/**
-			
-		*/
+
 		/**
 		* Removes a row that's included in the [selection]{@link enyo.Selection} set.
 		* If this row is selected, it will be unselected.  Any rows above this row
 		* will have their keys value reduced by one.
 		*
-		* @param {Number|String} key The unique identifier of the row.
+		* @param {Number|String} key - The unique identifier of the row.
 		* @public
 		*/
 		remove: function(key) {

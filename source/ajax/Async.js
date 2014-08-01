@@ -119,8 +119,8 @@
 		* [execution]{@link enyo.Async#go} is completed successfully. Parameters may be
 		* in any order, to preserve backward compatibility.
 		*
-		* @param {Function} fn The callback to register.
-		* @param {Object} [ctx] The optional context under which to execute the callback.
+		* @param {Function} fn - The callback to register.
+		* @param {Object} [ctx] - The optional context under which to execute the callback.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -134,8 +134,8 @@
 		* [execution]{@link enyo.Async#go} completes with an error. Parameters may be
 		* in any order, to preserve backward compatibility.
 		*
-		* @param {Function} fn The callback to register.
-		* @param {Object} [ctx] The optional context under which to execute the callback.
+		* @param {Function} fn - The callback to register.
+		* @param {Object} [ctx] - The optional context under which to execute the callback.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -148,8 +148,8 @@
 		* Registers a [function]{@glossary Function} to be fired on progress events.
 		* Parameters may be in any order, to preserve backward compatibility.
 		*
-		* @param {Function} fn The callback to register.
-		* @param {Object} [ctx] The optional context under which to execute the callback.
+		* @param {Function} fn - The callback to register.
+		* @param {Object} [ctx] - The optional context under which to execute the callback.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -237,7 +237,7 @@
 		* Fails the [task]{@link enyo.Async} and triggers the error chain. May be called from any
 		* handler.
 		* 
-		* @param {*} err The error value to pass to error handlers.
+		* @param {*} err - The error value to pass to error handlers.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -280,7 +280,7 @@
 		* successfully. This method is usually overloaded in [subkinds]{@glossary subkind}.
 		*
 		* @virtual
-		* @param {*} value The value to pass to responders.
+		* @param {*} - value The value to pass to responders.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/

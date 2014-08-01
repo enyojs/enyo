@@ -27,14 +27,14 @@
 		proxyObjectKey: 'data',
 		
 		/**
-		* The overloaded [getter]{@link enyo.Object#get}. Acccepts the same
+		* The overloaded [getter]{@link enyo.Object#get}. Accepts the same
 		* parameters and attempts to call the same method on the
 		* [proxy]{@link enyo.ProxyObject.proxyObjectKey}. Returns `undefined` if it
 		* cannot find a proxy.
 		* 
 		* @see enyo.Object.get
 		* @see enyo.getPath
-		* @param {String} path The path from which to retrieve a value.
+		* @param {String} path - The path from which to retrieve a value.
 		* @returns {this} The value for the given path, or `undefined` if the path
 		* could not be completely resolved.
 		* @method
@@ -58,9 +58,9 @@
 		* [proxy]{@link enyo.ProxyObject~proxyObjectKey}. Returns the callee for
 		* chaining if it cannot find the proxy.
 		* 
-		* @param {String} path The path for which to set the given value.
-		* @param {*} is The value to set.
-		* @param {Object} [opts] An options hash.
+		* @param {String} path - The path for which to set the given value.
+		* @param {*} is - The value to set.
+		* @param {Object} [opts] - An options hash.
 		* @returns {this} The callee for chaining.
 		* @method
 		* @public

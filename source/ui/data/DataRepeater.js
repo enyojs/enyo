@@ -237,7 +237,7 @@
 		/**
 		* Refreshes each [control]{@link enyo.Control} in the dataset.
 		*
-		* @param {Boolean} immediate If `true`, refresh will occur immediately; otherwise,
+		* @param {Boolean} immediate - If `true`, refresh will occur immediately; otherwise,
 		* it will be queued up as a job.
 		* @public
 		*/
@@ -284,8 +284,8 @@
 		/**
 		* Adds a [record]{@link enyo.Model} at a particular index.
 		* 
-		* @param {enyo.Model} rec The [record]{@link enyo.Model} to add.
-		* @param {Number} idx The index at which the record should be added.
+		* @param {enyo.Model} rec - The [record]{@link enyo.Model} to add.
+		* @param {Number} idx - The index at which the record should be added.
 		* @public
 		*/
 		add: function (rec, idx) {
@@ -298,7 +298,7 @@
 		/**
 		* Removes the [record]{@link enyo.Model} at a particular index.
 		*
-		* @param {Number} idx The index of the [record]{@link enyo.Model} to be removed.
+		* @param {Number} idx - The index of the [record]{@link enyo.Model} to be removed.
 		* @public
 		*/
 		remove: function (idx) {
@@ -450,7 +450,7 @@
 		/**
 		* Calls [childForIndex()]{@link enyo.DataRepeater#getChildForIndex}. Leaving for posterity.
 		*
-		* @param {Number} idx The index of the child to retrieve.
+		* @param {Number} idx - The index of the child to retrieve.
 		* @returns {enyo.Control|undefined} The [control]{@link enyo.Control} at the specified
 		* index, or `undefined` if it could not be found or the index is out of bounds.
 		* @public
@@ -462,7 +462,7 @@
 		/**
 		* Attempts to return the [control]{@link enyo.Control} representation at a particular index.
 		*
-		* @param {Number} idx The index of the child to retrieve.
+		* @param {Number} idx - The index of the child to retrieve.
 		* @returns {enyo.Control|undefined} The [control]{@link enyo.Control} at the specified
 		* index, or `undefined` if it could not be found or the index is out of bounds.
 		* @public
@@ -525,7 +525,7 @@
 		/**
 		* Selects the item at the given index.
 		*
-		* @param {Number} idx The index of the item to select.
+		* @param {Number} idx - The index of the item to select.
 		* @public
 		*/
 		select: function (idx) {
@@ -535,7 +535,7 @@
 		/**
 		* Deselects the item at the given index.
 		*
-		* @param {Number} idx The index of the item to deselect.
+		* @param {Number} idx - The index of the item to deselect.
 		* @public
 		*/
 		deselect: function (idx) {
@@ -545,7 +545,7 @@
 		/**
 		* Determines whether a [model]{@link enyo.Model} is currently selected.
 		*
-		* @param {enyo.Model} model The [model]{@link enyo.Model} whose selection status
+		* @param {enyo.Model} model - The [model]{@link enyo.Model} whose selection status
 		* is to be determined.
 		* @returns {Boolean} `true` if the given model is selected; otherwise, `false`.
 		* @public

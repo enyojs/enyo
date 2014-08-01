@@ -1,9 +1,8 @@
 (function (enyo, scope) {
 	/**
-	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer greater than
-	* `1`.
+	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer greater than `1`.
 	*
-	* @event enyo.Video#event:onFastforward
+	* @event enyo.Video#onFastforward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -12,10 +11,9 @@
 	*/
 
 	/**
-	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to a value between `0` and
-	* `1`.
+	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to a value between `0` and `1`.
 	*
-	* @event enyo.Video#event:onSlowforward
+	* @event enyo.Video#onSlowforward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -24,10 +22,9 @@
 	*/
 
 	/**
-	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer less than
-	* `-1`.
+	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to an integer less than `-1`.
 	*
-	* @event enyo.Video#event:onRewind
+	* @event enyo.Video#onRewind
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -39,7 +36,7 @@
 	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to a value less than `0`
 	* but greater than or equal to `-1`.
 	*
-	* @event enyo.Video#event:onSlowrewind
+	* @event enyo.Video#onSlowrewind
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -50,7 +47,7 @@
 	/**
 	* Fires when [jumpForward()]{@link enyo.Video#jumpForward} is called.
 	*
-	* @event enyo.Video#event:onJumpForward
+	* @event enyo.Video#onJumpForward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -61,7 +58,7 @@
 	/**
 	* Fires when [jumpBackward()]{@link enyo.Video#jumpBackward} is called.
 	*
-	* @event enyo.Video#event:onJumpBackward
+	* @event enyo.Video#onJumpBackward
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -72,7 +69,7 @@
 	/**
 	* Fires when EventData is changed.
 	*
-	* @event enyo.Video#event:onPlay
+	* @event enyo.Video#onPlay
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -83,7 +80,7 @@
 	/**
 	* Fires when the [image]{@link enyo.Image} has loaded.
 	*
-	* @event enyo.Video#event:onStart
+	* @event enyo.Video#onStart
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -94,7 +91,7 @@
 	/**
 	* {@link enyo.Video} is a [control]{@link enyo.Control} that allows you to play video.
 	* It is an abstraction of HTML 5 [Video]{@glossary video}.
-	* 
+	*
 	* Initialize a video [component]{@link enyo.Component} as follows:
 	*
 	* ```
@@ -603,7 +600,7 @@
 		/**
 		* Jumps backward [jumpSec]{@link enyo.Video#jumpSec} seconds from the current time.
 		*
-		* @fires enyo.Video#event:doJumpBackward
+		* @fires enyo.Video#doJumpBackward
 		* @public
 		*/
 		jumpBackward: function() {
@@ -623,7 +620,7 @@
 		/**
 		* Jumps forward [jumpSec]{@link enyo.Video#jumpSec} seconds from the current time.
 		*
-		* @fires enyo.Video#event:doJumpForward
+		* @fires enyo.Video#doJumpForward
 		* @public
 		*/
 		jumpForward: function() {
@@ -682,7 +679,7 @@
 		* Sets the playback rate type (from the [keys]{@glossary Object.keys} of 
 		* [playbackRateHash]{@link enyo.Video#playbackRateHash}).
 		*
-		* @param {String} cmd Key of the playback rate type.
+		* @param {String} cmd - Key of the playback rate type.
 		* @public
 		*/
 		selectPlaybackRateArray: function(cmd) {
@@ -693,7 +690,7 @@
 		* Changes [playbackRate]{@link enyo.Video#playbackRate} to a valid value when initiating 
 		* fast forward or rewind.
 		*
-		* @param {Number} idx The index of the desired playback rate.
+		* @param {Number} idx - The index of the desired playback rate.
 		* @public
 		*/
 		clampPlaybackRate: function(idx) {
@@ -707,7 +704,7 @@
 		/**
 		* Retrieves the playback rate name.
 		*
-		* @param {Number} idx The index of the desired playback rate.
+		* @param {Number} idx - The index of the desired playback rate.
 		* @returns {String} The playback rate name.
 		* @public
 		*/
@@ -718,7 +715,7 @@
 		/**
 		* Sets [playbackRate]{@link enyo.Video#playbackRate}.
 		* 
-		* @param {String} rate The desired playback rate.
+		* @param {String} rate - The desired playback rate.
 		* @public
 		*/
 		setPlaybackRate: function(rate) {
@@ -781,7 +778,7 @@
 		/**
 		* Sets the current player position in the [video]{@link enyo.Video}.
 		*
-		* @param {Number} time The position (in seconds) to which the player should be set.
+		* @param {Number} time - The position (in seconds) to which the player should be set.
 		* @public
 		*/
 		setCurrentTime: function(time) {
@@ -906,11 +903,11 @@
 		},
 
 		/**
-		* @fires enyo.Video#event:doSlowforward
-		* @fires enyo.Video#event:doFastforward
-		* @fires enyo.Video#event:doSlowrewind
-		* @fires enyo.Video#event:doRewind
-		* @fires enyo.Video#event:doPlay
+		* @fires enyo.Video#doSlowforward
+		* @fires enyo.Video#doFastforward
+		* @fires enyo.Video#doSlowrewind
+		* @fires enyo.Video#doRewind
+		* @fires enyo.Video#doPlay
 		* @private
 		*/
 		ratechange: function(sender, e) {
@@ -940,7 +937,7 @@
 		},
 
 		/**
-		* @fires enyo.Video#event:doStart
+		* @fires enyo.Video#doStart
 		* @private
 		*/
 		createEventData: function() {
@@ -963,7 +960,7 @@
 		/**
 		* Normalizes Enyo-generated `onPlay` [events]{@glossary event}.
 		* 
-		* @fires enyo.Video#event:doPlay
+		* @fires enyo.Video#doPlay
 		* @private
 		*/
 		_play: function(sender, e) {

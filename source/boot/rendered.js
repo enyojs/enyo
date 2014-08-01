@@ -28,7 +28,7 @@
 	* 
 	* @name enyo.rendered
 	* @method
-	* @param {Function} method The callback to execute.
+	* @param {Function} method - The callback to execute.
 	* @param {Object} [context=enyo.global] The context under which to execute the callback.
 	* @public
 	*/

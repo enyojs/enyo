@@ -57,6 +57,8 @@
 			* [collections]{@link enyo.Collection} that will be stored by this
 			* {@link enyo.LocalStorageSource}.
 			*
+			* @type {String}
+			* @default 'enyo-app'
 			* @public
 			*/
 			prefix: 'enyo-app',

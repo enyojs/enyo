@@ -1,17 +1,17 @@
 (function (enyo, scope) {
 	/**
-	* The extended {@glossary event} [object]{@glossary Object} that is provided 
-	* when the [onSetupItem]{@link enyo.Repeater#event:onSetupItem} event is fired.
+	* The extended {@glossary event} [object]{@glossary Object} that is provided
+	* when the [onSetupItem]{@link enyo.Repeater#onSetupItem} event is fired.
 	*
 	* @typedef {Object} enyo.Repeater~SetupItemEvent
-	* @property {Number} index The item's index.
-	* @property {Object} item The item control, for decoration.
+	* @property {Number} index - The item's index.
+	* @property {Object} item - The item control, for decoration.
 	*/
 
 	/**
 	* Fires when each item is created.
 	*
-	* @event enyo.Repeater#event:onSetupItem
+	* @event enyo.Repeater#onSetupItem
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
@@ -22,7 +22,7 @@
 
 	/**
 	* {@link enyo.Repeater} is a simple [control]{@link enyo.Control} for making lists of items.
-	* 
+	*
 	* The [components]{@link enyo.Component} of a repeater are copied for each item created,
 	* and are wrapped in a control that keeps the state of the item index.
 	* 
@@ -120,13 +120,13 @@
 		/** 
 		* Renders the [collection]{@link enyo.Collection} of items. This will delete any
 		* existing items and recreate the [repeater]{@link enyo.Repeater} if called after
-		* the repeater has been rendered. This is called automatically when the 
+		* the repeater has been rendered. This is called automatically when the
 		* [count]{@link enyo.Repeater#count} property changes. To set the `count` property
 		* and force a re-render, such as when a [data model]{@link enyo.Model} changes,
 		* use `set('count', newCount, true)`, where the last parameter forces the change
 		* handler to be called, even if the `count` remains the same.
 		*
-		* @fires enyo.Repeater#event:onSetupItem
+		* @fires enyo.Repeater#onSetupItem
 		* @public
 		*/
 		build: function() {
@@ -145,8 +145,8 @@
 		* destroy the item, but just calls the `onSetupItem` {@glossary event} handler again
 		* for it, so any state stored in the item is preserved.
 		*
-		* @param {Number} idx The index of the item to render.
-		* @fires enyo.Repeater#event:onSetupItem
+		* @param {Number} idx - The index of the item to render.
+		* @fires enyo.Repeater#onSetupItem
 		* @public
 		*/
 		renderRow: function(idx) {

@@ -71,7 +71,7 @@
 	* Fires when the [collection]{@link enyo.Collection} has been reset and its
 	* contents have been updated arbitrarily.
 	*
-	* @event enyo.Collection#event:reset
+	* @event enyo.Collection#reset
 	* @type {Object}
 	* @property {enyo.Model[]} models - An [array]{@glossary Array} of all
 	*	[models]{@link enyo.Model} as they are currently.
@@ -202,27 +202,27 @@
 	
 	/**
 	* @callback enyo.Collection~Success
-	* @param {enyo.Collection} collection The [collection]{@link enyo.Collection}
+	* @param {enyo.Collection} collection - The [collection]{@link enyo.Collection}
 	* that is returning successfully.
-	* @param {enyo.Collection~ActionOptions} opts The original options passed to the action method
+	* @param {enyo.Collection~ActionOptions} - opts The original options passed to the action method
 	*	that is returning successfully.
-	* @param {*} res The result, if any, returned by the [source]{@link enyo.Source} that
+	* @param {*} - res The result, if any, returned by the [source]{@link enyo.Source} that
 	*	executed it.
-	* @param {String} source The name of the [source]{@link enyo.Collection#source} that has
+	* @param {String} source - The name of the [source]{@link enyo.Collection#source} that has
 	*	returned successfully.
 	*/
 	
 	/**
 	* @callback enyo.Collection~Error
-	* @param {enyo.Collection} collection The [collection]{@link enyo.Collection}
+	* @param {enyo.Collection} collection - The [collection]{@link enyo.Collection}
 	* that is returning an error.
-	* @param {String} action The name of the action that failed, one of `'FETCHING'`,
+	* @param {String} action - The name of the action that failed, one of `'FETCHING'`,
 	*	`'COMMITTING'`, or `'DESTROYING'`.
-	* @param {enyo.Collection~ActionOptions} opts The original options passed to the
+	* @param {enyo.Collection~ActionOptions} opts - The original options passed to the
 	*	action method that is returning an error.
-	* @param {*} res The result, if any, returned by the [source]{@link enyo.Source}
+	* @param {*} res - The result, if any, returned by the [source]{@link enyo.Source}
 	*	that executed it.
-	* @param {String} source The name of the [source]{@link enyo.Collection#source}
+	* @param {String} source - The name of the [source]{@link enyo.Collection#source}
 	*	that has returned an error.
 	*/
 	
@@ -234,8 +234,8 @@
 	* @see enyo.Collection#sort
 	* @see enyo.Collection#comparator
 	* @callback enyo.Collection~Comparator
-	* @param {enyo.Model} a The first [model]{@link enyo.Model} to compare.
-	* @param {enyo.Model} b The second model to compare.
+	* @param {enyo.Model} a - The first [model]{@link enyo.Model} to compare.
+	* @param {enyo.Model} b - The second model to compare.
 	* @returns {Number} `-1` if `a` should have the lower index, `0` if they are the same,
 	* or `1` if `b` should have the lower index.
 	*/
@@ -320,7 +320,7 @@
 		* {@link enyo.Collection}. The array should not be modified directly, nor
 		* should the property be set directly. It is used as a container by the
 		* collection. If [set]{@link enyo.Collection#set} directly, it will
-		* [emit]{@link enyo.EventEmitter.emit} a [reset]{@link enyo.Collection#event:reset}
+		* [emit]{@link enyo.EventEmitter.emit} a [reset]{@link enyo.Collection#reset}
 		* event.
 		*
 		* @see enyo.Collection#modelsChanged
@@ -380,7 +380,7 @@
 		* modification before it can be added to the [collection]{@link enyo.Collection}.
 		* This is a virtual method and must be implemented.
 		* 
-		* @param {*} data The incoming data passed to the
+		* @param {*} data - The incoming data passed to the
 		*	[constructor]{@link enyo.Collection#constructor} or returned by a successful
 		*	[fetch]{@link enyo.Collection#fetch}.
 		* @returns {Array} The properly formatted data to be accepted by the
@@ -403,13 +403,13 @@
 		* ensure that loops do not consecutively call this method but instead
 		* build an array to pass as the first parameter.
 		* 
-		* @fires enyo.Collection#event:add
+		* @fires enyo.Collection#add
 		* @param {(Object|Object[]|enyo.Model|enyo.Model[])} models The data to add to the
 		*	{@link enyo.Collection} that can be a [hash]{@glossary Object}, an array of
 		*	hashes, an {@link enyo.Model} instance, or and array of `enyo.Model` instances.
 		* Note that if the [parse]{@link enyo.Collection#options#parse} configuration
 		* option is `true`, it will use the returned value as this parameter.
-		* @param {enyo.Collection~AddOptions} [opts] The configuration options that modify
+		* @param {enyo.Collection~AddOptions} [opts] - The configuration options that modify
 		*	the behavior of this method. The default values will be merged with these options
 		* before evaluating.
 		* @returns {enyo.Model[]} The models that were added, if any.
@@ -580,7 +580,7 @@
 		* @fires enyo.Collection#remove
 		* @param {(enyo.Model|enyo.Model[])} models The [models]{@link enyo.Model} to remove		
 		*	if they exist in the [collection]{@link enyo.Collection}.
-		* @param {enyo.Collection~RemoveOptions} [opts] The configuration options that modify		
+		* @param {enyo.Collection~RemoveOptions} [opts] - The configuration options that modify
 		*	the behavior of this method.
 		* @returns {enyo.Model[]} The models that were removed, if any.
 		* @public
@@ -643,7 +643,7 @@
 		/**
 		* Retrieves a [model]{@link enyo.Model} for the provided index.
 		* 
-		* @param {Number} idx The index to return from the [collection]{@link enyo.Collection}.
+		* @param {Number} idx - The index to return from the [collection]{@link enyo.Collection}.
 		* @returns {(enyo.Model|undefined)} The [model]{@link enyo.Model} at the given index or
 		*	`undefined` if it cannot be found.
 		* @public
@@ -670,7 +670,7 @@
 		* Determines if the specified [model]{@link enyo.Model} is contained by this
 		* [collection]{@link enyo.Collection}.
 		*
-		* @param {enyo.Model} model The [model]{@link enyo.Model} to check.
+		* @param {enyo.Model} model - The [model]{@link enyo.Model} to check.
 		* @returns {Boolean} Whether or not the model belongs to the
 		*	[collection]{@link enyo.Collection}.
 		* @public
@@ -745,7 +745,7 @@
 		* @param {(enyo.Model|enyo.Model[])} [models] The [model or models]{@link enyo.Model}
 		*	to use as a replacement for the current set of models in the
 		*	{@link enyo.Collection}.
-		* @param {enyo.Collection~Options} [opts] The options that will modify the behavior
+		* @param {enyo.Collection~Options} [opts] - The options that will modify the behavior
 		*	of this method.
 		* @returns {enyo.Model[]} The models that were removed from the collection.
 		* @public
@@ -798,14 +798,14 @@
 		* [comparator]{@link enyo.Collection#comparator} (if any) from the
 		* [collection]{@link enyo.Collection}. Note that the collection is sorted in-place
 		* and returns a reference to itself. The collection
-		* [emits]{@link enyo.EventEmitter.emit} the [sort]{@link enyo.Collection#event:sort}
+		* [emits]{@link enyo.EventEmitter.emit} the [sort]{@link enyo.Collection#sort}
 		* event.
 		*
-		* @fires enyo.Collection#event:sort
+		* @fires enyo.Collection#sort
 		* @see {@glossary Array.sort}
-		* @param {enyo.Collection~Comparator} [fn] The [comparator]{@link enyo.Collection#comparator}
+		* @param {enyo.Collection~Comparator} [fn] - The [comparator]{@link enyo.Collection#comparator}
 		* method.
-		* @param {enyo.Collection~Options} [opts] The configuration options.
+		* @param {enyo.Collection~Options} [opts] - The configuration options.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -837,7 +837,7 @@
 		*
 		* @see enyo.Collection#committed
 		* @see enyo.Collection#status
-		* @param {enyo.Collection~ActionOptions} [opts] Optional configuration options.
+		* @param {enyo.Collection~ActionOptions} [opts] - Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -889,7 +889,7 @@
 		*
 		* @see enyo.Collection#fetched
 		* @see enyo.Collection#status
-		* @param {enyo.Collection~ActionOptions} [opts] Optional configuration options.
+		* @param {enyo.Collection~ActionOptions} [opts] - Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
@@ -944,7 +944,7 @@
 		* it will remove this flag (even if it fails).
 		*
 		* @see enyo.Collection#status
-		* @param {enyo.Collection~ActionOptions} [opts] Optional configuration options.
+		* @param {enyo.Collection~ActionOptions} [opts] - Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @method
 		* @public
@@ -1074,12 +1074,12 @@
 		* flag. If a [success]{@link enyo.Collection~Success} callback was provided, it will be
 		* called once for each source.
 		*
-		* @param {enyo.Collection~ActionOptions} opts The original options passed to
+		* @param {enyo.Collection~ActionOptions} opts - The original options passed to
 		*	[commit()]{@link enyo.Collection#commit}, merged with the defaults.
-		* @param {*} [res] The result provided from the given
+		* @param {*} [res] - The result provided from the given
 		* [source]{@link enyo.Collection#source}, if any. This will vary depending
 		* on the source.
-		* @param {String} source The name of the source that has completed successfully.
+		* @param {String} source - The name of the source that has completed successfully.
 		* @public
 		*/
 		committed: function (opts, res, source) {
@@ -1111,12 +1111,12 @@
 		* a [success]{@link enyo.Collection~Success} callback was provided, it will be called
 		* once for each source.
 		*
-		* @param {enyo.Collection~ActionOptions} opts The original options passed to
+		* @param {enyo.Collection~ActionOptions} opts - The original options passed to
 		*	[fetch()]{@link enyo.Collection#fetch}, merged with the defaults.
-		* @param {*} [res] The result provided from the given
+		* @param {*} [res] - The result provided from the given
 		* [source]{@link enyo.Collection#source}, if any. This will vary depending
 		*	on the source.
-		* @param {String} source The name of the source that has completed successfully.
+		* @param {String} source - The name of the source that has completed successfully.
 		* @public
 		*/
 		fetched: function (opts, res, source) {
@@ -1154,13 +1154,13 @@
 		* [error handler]{@link enyo.Collection~ErrorCallback}. If the error handler
 		* exists, it will be called.
 		* 
-		* @param {String} action The name of the action that failed,
+		* @param {String} action - The name of the action that failed,
 		* one of `'FETCHING'` or `'COMMITTING'`.
-		* @param {enyo.Collection~ActionOptions} opts The options hash originally
+		* @param {enyo.Collection~ActionOptions} opts - The options hash originally
 		* passed along with the original action.
-		* @param {*} [res] The result of the requested `action`; varies depending on the
+		* @param {*} [res] - The result of the requested `action`; varies depending on the
 		*	requested [source]{@link enyo.Collection#source}.
-		* @param {String} source The name of the source that has returned an error.
+		* @param {String} source - The name of the source that has returned an error.
 		* @public
 		*/
 		errored: function (action, opts, res, source) {
@@ -1215,7 +1215,7 @@
 		* Responds to changes to the [models]{@link enyo.Collection#models} property.
 		*
 		* @see enyo.Collection#models
-		* @fires enyo.Collection#event:reset
+		* @fires enyo.Collection#reset
 		* @type {enyo.ObserverSupport~Observer}
 		* @public
 		*/
@@ -1235,9 +1235,9 @@
 		*	of either [models]{@link enyo.Model} or [hashes]{@glossary Object} used to
 		* initialize the [collection]{@link enyo.Collection}, or an [object]{@glossary Object}
 		*	equivalent to the `props` parameter.
-		* @param {Object} [props] A hash of properties to apply directly to the
+		* @param {Object} [props] - A hash of properties to apply directly to the
 		* collection.
-		* @param {Object} [opts] A hash.
+		* @param {Object} [opts] - A hash.
 		* @method
 		* @public
 		*/
