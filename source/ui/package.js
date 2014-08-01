@@ -27,5 +27,6 @@ enyo.depends(
 	'Media.js',
 	'Audio.js',
 	'Video.js',
+	'Scrim.js',
 	'data'
 );
