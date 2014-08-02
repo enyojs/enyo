@@ -341,14 +341,11 @@
 		* @private
 		*/
 		updateSource: function (old, value, source) {
-			var src = this.get('src');
-			var sources = this.get('sourceComponents');
-
 			// if called due to a property change, clear the other property
 			if(source === 'src') {
-				sources = this.sourceComponents = null;
+				this.sourceComponents = null;
 			} else if(source === 'sourceComponents') {
-				src = this.src = '';
+				this.src = '';
 				if (!!this.getAttribute('src')) {
 					this.setAttribute('src', '');
 				}
@@ -357,10 +354,10 @@
 			// Always wipe out any previous sources before setting src or new sources
 			this.destroyClientControls();
 
-			if (src) {
+			if(source === 'src' || (!source && this.src)) {
 				// favor this.src: if it has a value, use it
-				this.setAttribute('src', enyo.path.rewrite(src));
-			} else {
+				this.setAttribute('src', !!this.src ? enyo.path.rewrite(this.src) : '');
+			} else if(source === 'sourceComponents' || (!source && this.sourceComponents)) {
 				// if this.src isn't valued, try to use sourceComponents
 				this.addSources();
 			}
@@ -376,7 +373,7 @@
 		* @private
 		*/
 		addSources: function () {
-			var sources = this.getSourceComponents(),
+			var sources = this.sourceComponents,
 				i;
 
 			if (!sources || sources.length === 0) {
