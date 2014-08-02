@@ -461,6 +461,7 @@
 		*/
 		unload: function() {
 			this.set('src', '');
+			this.set('sourceComponents', null);
 			this.load();
 		},
 
