@@ -752,7 +752,8 @@
 		*/
 		empty: function (models, opts) {
 			var silent,
-				removed;
+				removed,
+				len = this.length;
 			
 			if (models && !(models instanceof Array || models instanceof Model)) {
 				// there were no models but instead some options only
@@ -774,7 +775,10 @@
 			
 			// now if the entire thing wasn't supposed to have been done silently we issue
 			// a reset
-			if (!silent) this.emit('reset', {models: this.models.copy(), collection: this});
+			if (!silent) {
+				if (len != this.length) this.notify('length', len, this.length);
+				this.emit('reset', {models: this.models.copy(), collection: this});
+			}
 			
 			return removed;
 		},
