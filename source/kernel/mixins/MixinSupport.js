@@ -27,6 +27,9 @@
 			// @TODO: Normalize error format
 			!props && enyo.error('Could not find the mixin ' + name);
 			
+			// it should be noted that this ensures it won't recursively re-add the same mixin but
+			// since it is possible for mixins to apply mixins the names will be out of order
+			// this name is pushed on but the nested mixins are applied before this one
 			name && applied.push(name);
 			
 			props = clone(props);
@@ -73,10 +76,14 @@
 	*/
 	extend = enyo.kind.statics.extend = function (args, target) {
 		if (isArray(args)) return forEach(args, function (ln) { extend.call(this, ln, target); }, this);
-		if (args.mixins) feature(target || this, args);
-		else if (isString(args)) apply(target || this.prototype, args);
-		else if (args.name) apply(target || this.prototype, args);
-		else sup.apply(this, arguments);
+		if (typeof args == 'string') apply(target || this.prototype, args);
+		else {
+			if (args.mixins) feature(target || this, args);
+		
+			// this allows for mixins to apply mixins which...is less than ideal but possible
+			if (args.name) apply(target || this.prototype, args);
+			else sup.apply(this, arguments);
+		}
 	};
 	
 	/**
