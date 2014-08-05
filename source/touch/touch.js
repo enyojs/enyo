@@ -44,6 +44,7 @@
 				this._touchCount += e.changedTouches.length;
 				this.excludedTarget = null;
 				var event = this.makeEvent(e);
+				this.currentIdentifier = event.identifier;
 				gesture.down(event);
 				// generate a new event object since over is a different event
 				event = this.makeEvent(e);
@@ -61,6 +62,7 @@
 				var de = gesture.drag.dragEvent;
 				this.excludedTarget = de && de.dragInfo && de.dragInfo.node;
 				var event = this.makeEvent(e);
+				if (this.currentIdentifier != event.identifier) return;
 				gesture.move(event);
 				// prevent default document scrolling if enyo.bodyIsFitting == true
 				// avoid window scrolling by preventing default on this event
