@@ -277,7 +277,8 @@
 	}
 
 	w(opt);
-	walker.init(opt.enyo, opt.lib || opt.enyo + "/../lib", opt.mapfrom, opt.mapto);
+	var libPath = (opt.enyo.indexOf("lib"+path.sep+"enyo")>=0 ? opt.enyo+"/.." : opt.enyo+"/../lib");
+	walker.init(opt.enyo, opt.lib || libPath, opt.mapfrom, opt.mapto);
 	walker.walk(path.basename(opt.packagejs), walkerFinished);
 
 })();
