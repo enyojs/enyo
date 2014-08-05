@@ -73,6 +73,7 @@ enyo.DataList.delegates.vertical = {
 			secondIndex = list.$.page2.index;
 		if (firstIndex > pageCount) {
 			firstIndex = pageCount;
+			secondIndex = (firstIndex > 0) ? firstIndex - 1 : firstIndex + 1;
 		}
 		if (secondIndex > pageCount) {
 			if ((firstIndex + 1) > pageCount && (firstIndex - 1) >= 0) {
@@ -272,8 +273,10 @@ enyo.DataList.delegates.vertical = {
 	modelsAdded: function (list, props) {
 		if (!list.hasReset) { return this.reset(list); }
 		// the current indices that are rendered
-		var fi = list.$.page1.index || (list.$.page1.index=0),
-			si = list.$.page2.index || (list.$.page2.index=1), rf, rs, pi;
+		var p1 = list.$.page1, p2 = list.$.page2, fi, si, rf, rs, pi;
+		if (!!p1.index && !!p2.index) { p1.index = 0; p2.index = 1; }
+		fi = p1.index;
+		si = p2.index;
 		for (var i=0, ri; (ri=props.records[i]) >= 0; ++i) {
 			pi = this.pageForIndex(list, ri);
 			// we ensure that if the page index is either page we flag that page as
@@ -289,8 +292,8 @@ enyo.DataList.delegates.vertical = {
 			}
 		}
 		// if either page was flagged go ahead and update it
-		if (rf) { this.generatePage(list, list.$.page1, fi); }
-		if (rs) { this.generatePage(list, list.$.page2, si); }
+		if (rf) { this.generatePage(list, p1, fi); }
+		if (rs) { this.generatePage(list, p2, si); }
 		// if either was updated we want to go ahead and ensure that our page positions
 		// are still appropriate
 		if (rf || rs) { this.adjustPagePositions(list); }
