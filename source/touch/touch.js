@@ -44,6 +44,7 @@
 				this._touchCount += e.changedTouches.length;
 				this.excludedTarget = null;
 				var event = this.makeEvent(e);
+				//store the finger which generated the touchstart event
 				this.currentIdentifier = event.identifier;
 				gesture.down(event);
 				// generate a new event object since over is a different event
@@ -62,7 +63,11 @@
 				var de = gesture.drag.dragEvent;
 				this.excludedTarget = de && de.dragInfo && de.dragInfo.node;
 				var event = this.makeEvent(e);
-				if (this.currentIdentifier != event.identifier) return;
+				// do not generate the move event if this touch came from a different
+				// finger than the starting touch
+				if (this.currentIdentifier !== event.identifier) {
+					return;
+				}
 				gesture.move(event);
 				// prevent default document scrolling if enyo.bodyIsFitting == true
 				// avoid window scrolling by preventing default on this event
