@@ -341,6 +341,18 @@
 		* @private
 		*/
 		updateSource: function (old, value, source) {
+			// We use a job here to avoid update source multiple
+			// times in succession on unload.
+			this.startJob('updateSource', function() {
+				this.updateSourceJob(old, value, source)
+			}, 10);
+		},
+
+		/**
+		* @method
+		* @private
+		*/
+		updateSourceJob: function(old, value, source) {
 			// if called due to a property change, clear the other property
 			if(source === 'src') {
 				this.sourceComponents = null;
@@ -367,6 +379,7 @@
 				node.load();
 			}
 		},
+
 		/**
 		* Adds `<source>` tags for each source specified in `this.sources`.
 		* 
