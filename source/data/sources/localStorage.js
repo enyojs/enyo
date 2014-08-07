@@ -23,12 +23,12 @@
 		*
 		* It is important to note that usage of this source requires that
 		* [models]{@link enyo.Model} and [collections]{@link enyo.Collection} use
-		* their respective `url` properties ([enyo.Model.url]{@link enyo.Model#url} and
-		* [enyo.Collection.url]{@link enyo.Collection#url}). The `enyo.Collection.url`
-		* must be unique for any collection that needs to be
-		* [committed]{@link enyo.Collection#commit}. Any model that will be
-		*[committed]{@link enyo.Model#commit} directly, or within an `enyo.Collection`,
-		* must have a unique [primaryKey]{@link enyo.Model#primaryKey}.
+		* their respective `url` properties ({@link enyo.Model#url} and
+		* {@link enyo.Collection#url}). Any collection that needs to be
+		* [committed]{@link enyo.Collection#commit} must have a unique `url` value.
+		* Any model that will be [committed]{@link enyo.Model#commit} directly, or
+		* within an {@link enyo.Collection}, must have a unique
+		* [primaryKey]{@link enyo.Model#primaryKey}.
 		*
 		* @class enyo.LocalStorageSource
 		* @extends enyo.Source
@@ -80,7 +80,7 @@
 			},
 			
 			/**
-			* Implementation of [enyo.Source.fetch()]{@link enyo.Source#fetch}.
+			* Implementation of {@link enyo.Source#fetch}.
 			*
 			* @see enyo.Source#fetch
 			* @public
@@ -114,7 +114,7 @@
 			},
 		
 			/**
-			* Implementation of [enyo.Source.commit()]{@link enyo.Source#commit}.
+			* Implementation of {@link enyo.Source#commit}.
 			*
 			* @see enyo.Source#commit
 			* @public
@@ -144,7 +144,7 @@
 			},
 			
 			/**
-			* Implementation of [enyo.Source.destroy()]{@link enyo.Source#destroy}.
+			* Implementation of {@link enyo.Source#destroy}.
 			*
 			* @see enyo.Source#destroy
 			* @public

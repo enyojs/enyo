@@ -13,9 +13,9 @@
 	*	screen.
 	* @property {Number} width - The horizontal size of the full area of the scrolled region.
 	* @property {Number} height - The vertical size of the full area of the scrolled region.
-	* @property {Number} xDir - Either 1, -1, or 0, indicating positive movement along the
+	* @property {Number} xDir - Either `1`, `-1`, or `0`, indicating positive movement along the
 	*	x-axis, negative movement, or no movement, respectively.
-	* @property {Number} yDir - Either 1, -1, or 0, indicating positive movement along the
+	* @property {Number} yDir - Either `1`, `-1`, or `0`, indicating positive movement along the
 	*	y-axis, negative movement, or no movement, respectively.
 	*/
 
@@ -73,14 +73,15 @@
 	*/
 
 	/**
-	* {@link enyo.Scroller} is a scroller suitable for use in both desktop and mobile applications.
+	* {@link enyo.Scroller} is a scroller suitable for use in both desktop and mobile
+	* applications.
 	* 
-	* In some mobile environments, a default scrolling solution is not implemented for DOM elements.
-	* In such cases, `enyo.Scroller` implements a touch-based scrolling solution, which may be opted
-	* into either globally (by setting 
-	* [enyo.Scroller.touchScrolling]{@link enyo.Scroller#touchScrolling} to `true`) or on a 
-	* per-instance basis (by specifying a [strategyKind]{@link enyo.Scroller#strategyKind} of 
-	* `"TouchScrollStrategy"`).
+	* In some mobile environments, a default scrolling solution is not implemented for
+	* DOM elements. In such cases, `enyo.Scroller` implements a touch-based scrolling
+	* solution, which may be opted into either globally (by setting
+	* [touchScrolling]{@link enyo.Scroller#touchScrolling} to `true`) or on a
+	* per-instance basis (by specifying a [strategyKind]{@link enyo.Scroller#strategyKind}
+	* of `"TouchScrollStrategy"`).
 	* 
 	* For more information, see the documentation on
 	* [Scrollers]{@link building-apps/layout/scrollers.html} in the Enyo Developer Guide.

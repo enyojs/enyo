@@ -111,7 +111,7 @@
 	* ```
 	* 
 	* When a component is instantiated, items configured in its 
-	* [components]{@link enyo.Component#components} property are instantiated, too:
+	* `components` property are instantiated, too:
 	* 
 	* ```javascript
 	* // create a new component, which itself has a component
@@ -212,7 +212,7 @@
 			* The [component]{@link enyo.Component} that owns this component.
 			* It is usually defined implicitly at creation time based on the 
 			* [createComponent()]{@link enyo.Component#createComponent} call or 
-			* the [components]{@link enyo.Component#components} hash.
+			* the `components` hash.
 			*
 			* @type {enyo.Component}
 			* @default null

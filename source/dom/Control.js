@@ -15,8 +15,7 @@
 	* this kind.
 	*
 	* For more information, see the documentation on
-	* [Controls]{@link key-concepts/controls.html} in the
-	* [Enyo Developer Guide]{@link index.html}.
+	* [Controls]{@link key-concepts/controls.html} in the Enyo Developer Guide.
 	*
 	* **If you make changes to `enyo.Control`, be sure to add or update the
 	* appropriate unit tests.**
@@ -129,7 +128,7 @@
 		controlClasses: '',
 
 		/**
-		* The text-based content of the Control. If the [allowHtml]{@link enyo.Control.allowHtml}
+		* The text-based content of the Control. If the [allowHtml]{@link enyo.Control#allowHtml}
 		* flag is set to `true`, you may set this property to an HTML string.
 		* @public
 		*/
