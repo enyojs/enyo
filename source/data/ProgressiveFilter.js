@@ -6,11 +6,11 @@
 		ModelList = enyo.ModelList;
 	
 	/**
-	* A primarily abstract {@glossary kind} of {@link enyo.Filter}. It serves a simple purpose of
-	* taking a {@link enyo.Collection} of [models]{@link enyo.Model} and progressively filtering
-	* its contents each time it is triggered. Because this is primarily an abstract {@glossary kind}
-	* it makes no assumptions about how it is triggered. [Sub-kinds]{@glossary sub-kind} may
-	* provide a more defined API.
+	* A primarily abstract {@glossary kind} of {@link enyo.Filter}. It serves the simple purpose
+	* of taking a [collection]{@link enyo.Collection} of [models]{@link enyo.Model} and
+	* progressively filtering its contents each time it is triggered. Because this is primarily
+	* an abstract kind, it makes no assumptions about how it is triggered.
+	* [Subkinds]{@glossary subkind} may provide a more defined API.
 	*
 	* @class enyo.ProgressiveFilter
 	* @extends enyo.Filter
@@ -46,8 +46,9 @@
 		filtered: false,
 		
 		/**
-		* Resets the filtered set to the complete set of the proxied collection, if there is one,
-		* and sets the [filtered]{@link enyo.ProgressiveFilter#filtered} property to `false`.
+		* Resets the filtered set to the complete set of the proxied
+		* [collection]{@link enyo.Collection}, if there is one, and sets the
+		* [filtered]{@link enyo.ProgressiveFilter#filtered} property to `false`.
 		*
 		* @returns {this} The callee for chaining.
 		* @public
@@ -64,10 +65,10 @@
 		},
 		
 		/**
-		* An overloaded version of the normal [filter]{@link enyo.Collection#filter} method. This
-		* method can be called without parameters to trigger an in-place application of the
-		* {@link enyo.ProgressiveFilter#filterMethod} against the current set or subset of
-		* [models]{@link enyo.Model}.
+		* An overloaded version of the normal [filter()]{@link enyo.Collection#filter} method.
+		* This method may be called without parameters to trigger an in-place application of
+		* the [_filter()]{@link enyo.ProgressiveFilter#_filter} method against the current set
+		* or subset of [models]{@link enyo.Model}.
 		*
 		* @method
 		* @public
@@ -108,7 +109,7 @@
 		}),
 		
 		/**
-		* Abstracted so that (internal) subkinds could overload the filter method and still call
+		* Abstracted to allow (internal) subkinds to overload the filter method and still call
 		* this method for the same behavior if necessary.
 		*
 		* @private

@@ -1,18 +1,19 @@
 (function (enyo, scope) {
 
 	/**
-	* _enyo.Scrim_ provides an overlay that will prevent taps from propagating to
-	* the controls that it covers.  A scrim may be 'floating' or 'non-floating'. A
-	* floating scrim will fill the entire viewport, while a non-floating scrim
-	* will be constrained by the dimensions of its container.
+	* {@link enyo.Scrim} provides an overlay that will prevent taps from propagating
+	* to the controls that it covers.  A scrim may be "floating" or "non-floating".
+	* A floating scrim will fill the entire viewport, while a non-floating scrim will
+	* be constrained by the dimensions of its container.
 	*
 	* The scrim should have a CSS class of `enyo-scrim-transparent`,
 	* `enyo-scrim-translucent`, or any other class that has
 	* `pointer-events: auto` in its style properties.
 	*
 	* You may specify the `z-index` at which you want the scrim to appear by calling
-	* {@link enyo.Scrim#showAtZIndex}. If you do so, you must call {@link enyo.Scrim#hideAtZIndex}
-	* with the same value to hide the scrim.
+	* [showAtZIndex()]{@link enyo.Scrim#showAtZIndex}. If you do so, you must call
+	* [hideAtZIndex()]{@link enyo.Scrim#hideAtZIndex} with the same value to hide the
+	* scrim.
 	*
 	* @class  enyo.Scrim
 	* @extends enyo.Control
@@ -20,7 +21,7 @@
 	* @public
 	*/
 	enyo.kind(
-		/** @lends  enyo.Scrim.prototype */ {
+		/** @lends enyo.Scrim.prototype */ {
 
 		/**
 		* @private
@@ -28,7 +29,7 @@
 		name: 'enyo.Scrim',
 
 		/**
-		* Current visibility state of scrim
+		* Current visibility state
 		*
 		* @type {Boolean}
 		* @private
@@ -41,7 +42,7 @@
 		classes: 'enyo-scrim enyo-fit',
 
 		/**
-		* If true, the scrim is rendered in a floating layer outside of other
+		* If `true`, the scrim is rendered in a floating layer outside of other
 		* controls. This can be used to guarantee that the scrim will be shown
 		* on top of other controls.
 		*
@@ -92,8 +93,8 @@
 
 		/**
 		* Shows scrim at the specified z-index. Note that if you call
-		* _showAtZIndex()_, you must call _hideAtZIndex()_ to properly unwind the
-		* z-index stack.
+		* `showAtZIndex()`, you must call [hideAtZIndex()]{@link enyo.Scrim#hideAtZIndex}
+		* to properly unwind the z-index stack.
 		*
 		* @param  {Number} zIndex - z-index for the scrim
 		* @public
@@ -139,8 +140,8 @@
 	});
 
 	/**
-	* Scrim singleton exposing a subset of Scrim API;
-	* is replaced with a proper enyo.Scrim instance.
+	* Scrim singleton exposing a subset of the Scrim API;
+	* it is replaced with a proper {@link enyo.Scrim} instance.
 	*
 	* @class  enyo.scrimSingleton
 	* @private
