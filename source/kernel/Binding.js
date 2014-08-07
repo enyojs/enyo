@@ -103,7 +103,7 @@
 	*	as in "going to the source").
 	* @param {Object} binding - A reference to the associated [binding]{@link enyo.Binding}. In cases 
 	*	where the binding should be interrupted and not propagate the synchronization at all, call
-	* the `stop()` method on the passed-in binding reference.
+	* the [stop()]{@link enyo.Binding#stop} method on the passed-in binding reference.
 	*/
 	
 	/**

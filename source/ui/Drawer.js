@@ -64,8 +64,8 @@
 			open : true,
 
 			/**
-			* The direction of the opening/closing animation--either 'v' for vertical or 'h' for 
-			* horizontal.
+			* The direction of the opening/closing animation; will be either `'v'` for vertical
+			* or `'h'` for horizontal.
 			* 
 			* @type {String}
 			* @default 'v'
