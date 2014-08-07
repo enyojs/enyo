@@ -84,16 +84,16 @@
 		* verbatim in the request body. When it is a [hash]{@glossary Object}, the way it is
 		* encoded depends on the `contentType`:
 		*
-		* - `'application/json'` => `JSON.stringify()`
+		* - `'application/json'` => [JSON.stringify()]{@glossary JSON.stringify}
 		* - `'application/x-www-urlencoded'` => url-encoded parameters
-		* - `'multipart/form-data'` => passed as fields in `enyo.FormData` (XHR2 emulation)
+		* - `'multipart/form-data'` => passed as fields in {@link enyo.FormData} (XHR2 emulation)
 		*
 		* @type {(String|Buffer|Object)}
 		* @default ''
 		* @public
 		*/
 		postBody: '',
-		
+
 		/**
 		* The optional username to use for authentication purposes.
 		*

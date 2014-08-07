@@ -52,7 +52,7 @@
 		allowed: Object.keys(AjaxProperties),
 		
 		/**
-		* Implementation of [enyo.Source.fetch()]{@link enyo.Source#fetch}.
+		* Implementation of {@link enyo.Source#fetch}.
 		*
 		* @see enyo.Source#fetch
 		* @public
@@ -64,7 +64,7 @@
 		},
 		
 		/**
-		* Implementation of [enyo.Source.commit()]{@link enyo.Source#commit}.
+		* Implementation of {@link enyo.Source#commit}.
 		*
 		* @see enyo.Source#commit
 		* @public
@@ -77,7 +77,7 @@
 		},
 		
 		/**
-		* Implementation of [enyo.Source.destroy()]{@link enyo.Source#destroy}.
+		* Implementation of {@link enyo.Source#destroy}.
 		*
 		* @see enyo.Source#destroy
 		* @public

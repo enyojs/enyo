@@ -42,8 +42,8 @@
 		
 		/**
 		* If provided, will be prefixed to the URI [string]{@glossary String}. Used in
-		* tandem with [enyo.Model.url]{@link enyo.Model#url} and
-		* [enyo.Collection.url]{@link enyo.Collection#url} to build a complete path.
+		* tandem with {@link enyo.Model#url} and {@link enyo.Collection#url} to build a
+		* complete path.
 		*
 		* @type {String}
 		* @default ''
