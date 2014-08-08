@@ -136,6 +136,25 @@
 		content: '',
 
 		/**
+		* If true or 'inherit' and enyo.gesture.doubleTabEnabled == true, will fire a doubletap
+		* event, and will temporarily suppress a single tap while waiting for a double tap.
+		*
+		* @type {String|Boolean}
+		* @default 'inherit'
+		* @public
+		*/
+		doubleTapEnabled: 'inherit',
+
+		/**
+		* Time in milliseconds to wait to detect a double tap
+		*
+		* @type {Number}
+		* @default 400
+		* @public
+		*/
+		doubleTapInterval: 400,
+
+		/**
 		* @todo Find out how to document "handlers".
 		* @public
 		*/

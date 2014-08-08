@@ -133,7 +133,16 @@
 			};
 			enyo.dispatch(e);
 			if (!tapPrevented && this.downEvent && this.downEvent.which == 1) {
-				this.sendTap(e);
+				var target = this.findCommonAncestor(this.downEvent.target, evt.target);
+
+				// the common ancestor of the down/up events is the target of the tap
+				if(target) {
+					if(this.supportsDoubleTap(target)) {
+						this.doubleTap(e, target);
+					} else {
+						this.sendTap(e, target);
+					}
+				}
 			}
 			this.downEvent = null;
 		},
@@ -166,13 +175,85 @@
 		* @param {Event} evt - The standard {@glossary event} [object]{glossary Object}.
 		* @public
 		*/
-		sendTap: function(evt) {
-			// The common ancestor for the down/up pair is the origin for the tap event
-			var t = this.findCommonAncestor(this.downEvent.target, evt.target);
-			if (t) {
-				var e = this.makeEvent('tap', evt);
-				e.target = t;
-				enyo.dispatch(e);
+		sendTap: function(evt, target) {
+			var e = this.makeEvent('tap', evt);
+			e.target = target;
+			enyo.dispatch(e);
+		},
+
+		/**
+		* @private
+		*/
+		tapData: {
+			id: null,
+			timer: null,
+			start: 0
+		},
+
+		/**
+		* Global configuration for double tap support. If this is true, all tap events for Controls
+		* that do not have {@link enyo.Control#doubleTapEnabled} explicitly set to false will be
+		* delayed by the {@link enyo.Control#doubleTapInterval}.
+		*
+		* @type {Boolean}
+		* @default  false
+		* @public
+		*/
+		doubleTapEnabled: false,
+
+		/**
+		* Determines if the provided target node supports double tap events
+		*
+		* @param {Node} target
+		* @return {Boolean}
+		* @private
+		*/
+		supportsDoubleTap: function(target) {
+			var obj = enyo.dispatcher.findDispatchTarget(target);
+
+			if(obj) {
+				// Control.doubleTapEnabled is a tri-value property. The default is 'inherit'
+				// which takes its cue from gesture's doubleTapEnabled. Values of true or false
+				// override the default. So, if the global is true, any truthy value on Control
+				// results in true. If the global is false, only an explicit true on Control
+				// results in true.
+				return this.doubleTapEnabled? !!obj.doubleTapEnabled : obj.doubleTapEnabled === true;
+			} else {
+				return false;
+			}
+		},
+
+		/**
+		* private
+		*/
+		doubleTap: function(evt, t) {
+			var obj = enyo.dispatcher.findDispatchTarget(t);
+
+			if(this.tapData.id !== obj.id) {	// this is the first tap
+				this.resetTapData();
+
+				this.tapData.id = obj.id;
+				this.tapData.timer = setTimeout(enyo.bind(this, function() {
+					this.resetTapData();
+					this.sendTap(evt, t);
+				}), obj.doubleTapInterval);
+				this.tapData.start = enyo.perfNow();
+			} else {							// this is the double tap
+				var e2 = this.makeEvent('doubletap', evt);
+				e2.target = t;
+				e2.tapInterval = enyo.perfNow() - this.tapData.start;
+				this.resetTapData();
+				enyo.dispatch(e2);
+			}
+		},
+
+		resetTapData: function() {
+			this.tapData.id = null;
+			this.tapData.start = null;
+
+			if(this.tapData.timer) {
+				clearTimeout(this.tapData.timer);
+				this.tapData.timer = null;
 			}
 		},
 
