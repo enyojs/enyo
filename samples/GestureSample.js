@@ -6,6 +6,7 @@ enyo.kind({
 		{
 			classes:"gesture-sample-pad",
 			fit:true,
+			doubleTapEnabled: true,
 			ondown: "handleEvent",
 			onup: "handleEvent",
 			ontap: "handleEvent",
@@ -22,6 +23,7 @@ enyo.kind({
 			ongesturestart: "handleEvent",
 			ongesturechange: "handleEvent",
 			ongestureend: "handleEvent",
+			ondoubletap: "handleEvent",
 			components: [
 				{content: "Perform gestures here"},
 				{classes: "gesture-sample-note", content:"(tap below for options)"}

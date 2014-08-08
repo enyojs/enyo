@@ -80,7 +80,6 @@
 			// Note: 'tracking' flag indicates interest in mousemove, it's turned off
 			// on mouseup
 			// make sure to stop dragging in case the up event was not received.
-			enyo.log("enyo.gesture.drag down");
 			this.stopDragging(e);
 			this.target = e.target;
 			this.startTracking(e);
@@ -90,7 +89,6 @@
 		* @public
 		*/
 		move: function(e) {
-			// enyo.log("enyo.gesture.drag move");
 			if (this.tracking) {
 				this.track(e);
 				// If the mouse is not down and we're tracking a drag, abort.
@@ -125,7 +123,6 @@
 		* @public
 		*/
 		up: function(e) {
-			enyo.log("enyo.gesture.drag up");
 			this.endTracking(e);
 			this.stopDragging(e);
 			this.cancelHold();

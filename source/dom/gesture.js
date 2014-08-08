@@ -23,6 +23,11 @@
 			'detail', 'identifier', 'dispatchTarget', 'which', 'srcEvent'],
 
 		/**
+		* @public
+		*/
+		defaultDoubleTapInterval: 400,
+
+		/**
 		* Creates an {@glossary event} of type `type` and returns it.
 		* `evt` should be an event [object]{@glossary Object}.
 		*
@@ -84,7 +89,6 @@
 		*/
 		down: function(evt) {
 			// set holdpulse defaults
-			enyo.log("enyo.gesture down");
 			this.drag.holdPulseConfig = enyo.clone(this.drag.holdPulseDefaultConfig);
 
 			// cancel any hold since it's possible in corner cases to get a down without an up
@@ -108,7 +112,6 @@
 		* @public
 		*/
 		move: function(evt) {
-			// enyo.log("enyo.gesture move");
 			var e = this.makeEvent('move', evt);
 			// include delta and direction v. down info in move event
 			e.dx = e.dy = e.horizontal = e.vertical = 0;
@@ -128,7 +131,6 @@
 		* @public
 		*/
 		up: function(evt) {
-			enyo.log("enyo.gesture up");
 			var e = this.makeEvent('up', evt);
 			var tapPrevented = false;
 			e.preventTap = function() {
@@ -170,37 +172,62 @@
 		* @public
 		*/
 		sendTap: function(evt) {
-			enyo.log("enyo.gesture sendTap");
 			// The common ancestor for the down/up pair is the origin for the tap event
 			var t = this.findCommonAncestor(this.downEvent.target, evt.target);
-			if (t) {
+			if (t && !this.doubleTap(evt, t)) {
 				var e = this.makeEvent('tap', evt);
 				e.target = t;
 				enyo.dispatch(e);
-				this.checkForDoubleTap(evt, t);
 			}
 		},
-		
+
 		/**
 		* private
 		*/
-		checkForDoubleTap: function(evt, t) {
+		doubleTap: function(evt, t) {
+
+			var obj = enyo.dispatcher.findDispatchTarget(t);
+			if (!obj || !obj.doubleTapEnabled) {
+				return false;
+			}
+
+			var tapTimeToWait = obj.doubleTapInterval || this.defaultDoubleTapInterval; 
 			var tempTimestamp = this.lastTapTimestamp, tempTarget = this.lastTapTarget;
 			this.lastTapTimestamp = enyo.perfNow();
 			this.lastTapTarget = t;
-			
-			if ((tempTarget === this.lastTapTarget) && tempTimestamp) {
-				var tapInterval = this.lastTapTimestamp - tempTimestamp;
-				enyo.log("tapInterval: " + tapInterval);
-				if (tapInterval <= 400) {
-					enyo.log("sending double tap");
-					var e2 = this.makeEvent('doubletap', evt);
-					e2.target = t;
-					enyo.dispatch(e2);
-				}
-			}			
+
+			if (t !== tempTarget || !t._waitingForSecondTap) {
+				t._waitingForSecondTap = true;
+				setTimeout(enyo.bind(this, 'waitTapTimeout', {evt: evt, t: t}), tapTimeToWait);
+				return true;
+			}
+
+			t._waitingForSecondTap = false;
+
+			var tapInterval = this.lastTapTimestamp - tempTimestamp;
+
+			if (tapInterval <= tapTimeToWait) {
+				var e2 = this.makeEvent('doubletap', evt);
+				e2.target = t;
+				e2.tapInterval = tapInterval;
+				enyo.dispatch(e2);
+			}
+
+			return true;
 		},
-		
+
+		/**
+		* @private
+		*/
+		waitTapTimeout: function(ctx) {
+			if (ctx.t._waitingForSecondTap) {
+				var e = this.makeEvent('tap', ctx.evt);
+				e.target = ctx.t;
+				enyo.dispatch(e);
+				ctx.t._waitingForSecondTap = false;
+			}
+		},
+
 		/**
 		* Given two [DOM nodes]{@glossary Node}, searches for a shared ancestor (looks up
 		* the hierarchic [DOM]{@glossary DOM} tree of [nodes]{@glossary Node}). The shared
