@@ -80,7 +80,7 @@
 
 		/**
 		* [Boolean]{@glossary Boolean} flag indicating whether HTML is allowed in
-		* this control's [content]{@link enyo.Control.content} property. If `false`
+		* this control's [content]{@link enyo.Control#content} property. If `false`
 		* (the default), HTML will be encoded into [HTML entities]{@glossary entity}
 		* (e.g., `&lt;` and `&gt;`) for literal visual representation.
 		*
@@ -119,7 +119,7 @@
 		kindClasses: '',
 
 		/**
-		* [Classes]{@link enyo.Control.classes} that are applied to all controls.
+		* [Classes]{@link enyo.Control#classes} that are applied to all controls.
 		*
 		* @type {String}
 		* @default ''
@@ -215,7 +215,7 @@
 		* Gets the bounds for this control. The `top` and `left` properties returned
 		* by this method represent the control's positional distance in pixels from
 		* `document.body`. To get the bounds relative to this control's parent(s),
-		* use {@link enyo.Control.getBounds}.
+		* use [getBounds()]{@link enyo.Control#getBounds}.
 		*
 		* This is a shortcut convenience method for {@link enyo.dom.getAbsoluteBounds}.
 		*
@@ -238,7 +238,7 @@
 		},
 
 		/**
-		* Shortcut method to set [enyo.Control.showing]{@link enyo.Control#showing} to `true`.
+		* Shortcut method to set [showing]{@link enyo.Control#showing} to `true`.
 		*
 		* @public
 		*/
@@ -247,7 +247,7 @@
 		},
 
 		/**
-		* Shortcut method to set [enyo.Control.showing]{@link enyo.Control#showing} to `false`.
+		* Shortcut method to set [showing]{@link enyo.Control#showing} to `false`.
 		*
 		* @public
 		*/
@@ -266,7 +266,7 @@
 
 		/**
 		* [Blurs]{@glossary blur} this control. (The opposite of
-		* {@link enyo.Control.focus}.)
+		* [focus()]{@link enyo.Control#focus}.)
 		*
 		* @public
 		*/
@@ -695,11 +695,12 @@
 		},
 
 		/**
-		* Returns true if this control and all parents are showing.
+		* Returns `true` if this control and all parents are showing.
 		*
 		* @param {Boolean} ignoreBounds - If `true`, it will not force a layout by retrieving
-		*	computed bounds and rely on the return from {@link enyo.Control.showing} exclusively.
-		* @returns {Boolean} Indicates whether the control is showing (visible).
+		*	computed bounds and rely on the return from [showing]{@link enyo.Control#showing}
+		* exclusively.
+		* @returns {Boolean} Whether the control is showing (visible).
 		* @public
 		*/
 		getAbsoluteShowing: function (ignoreBounds) {
@@ -894,7 +895,7 @@
 
 		/**
 		* A function that fires after the control has rendered. This performs a
-		* [reflow]{@link enyo.Control.reflow}.
+		* reflow.
 		*
 		* @public
 		*/
