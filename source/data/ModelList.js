@@ -90,6 +90,7 @@
 		var table = this.table,
 			removed = [],
 			model,
+			theMostFrontIdx,
 			idx,
 			id,
 			i;
@@ -109,8 +110,13 @@
 				this.splice(idx, 1);
 				removed.push(model);
 			}
+
+			if (idx < theMostFrontIdx || theMostFrontIdx === undefined) {
+				theMostFrontIdx = idx;
+			}
 		}
-		
+		removed.push(theMostFrontIdx);
+
 		return removed;
 	};
 	
