@@ -184,6 +184,11 @@
 		/**
 		* private
 		*/
+		tapData: {},
+
+		/**
+		* private
+		*/
 		doubleTap: function(evt, t) {
 
 			var obj = enyo.dispatcher.findDispatchTarget(t);
@@ -191,20 +196,25 @@
 				return false;
 			}
 
+			var data = this.tapData[obj.name];
+			if (!data) {
+				data = {name: obj.name, lastTapTimestamp: null, waitingForSecondTap: false};
+				this.tapData[obj.name] = data;
+			}
+
 			var tapTimeToWait = obj.doubleTapInterval || this.defaultDoubleTapInterval; 
-			var tempTimestamp = this.lastTapTimestamp, tempTarget = this.lastTapTarget;
-			this.lastTapTimestamp = enyo.perfNow();
+			var tempTimestamp = data.lastTapTimestamp, tempTarget = this.lastTapTarget;
+			data.lastTapTimestamp = enyo.perfNow();
 			this.lastTapTarget = t;
 
-			if (t !== tempTarget || !t._waitingForSecondTap) {
-				t._waitingForSecondTap = true;
-				setTimeout(enyo.bind(this, 'waitTapTimeout', {evt: evt, t: t}), tapTimeToWait);
+			if (t !== tempTarget || !data.waitingForSecondTap) {
+				data.waitingForSecondTap = true;
+				setTimeout(enyo.bind(this, 'waitTapTimeout', {evt: evt, t: t, data: data}), tapTimeToWait);
 				return true;
 			}
 
-			t._waitingForSecondTap = false;
-
-			var tapInterval = this.lastTapTimestamp - tempTimestamp;
+			data.waitingForSecondTap = false;
+			var tapInterval = data.lastTapTimestamp - tempTimestamp;
 
 			if (tapInterval <= tapTimeToWait) {
 				var e2 = this.makeEvent('doubletap', evt);
@@ -213,6 +223,8 @@
 				enyo.dispatch(e2);
 			}
 
+			delete this.tapData[obj.name];
+
 			return true;
 		},
 
@@ -220,11 +232,12 @@
 		* @private
 		*/
 		waitTapTimeout: function(ctx) {
-			if (ctx.t._waitingForSecondTap) {
+			if (ctx.data && ctx.data.waitingForSecondTap) {
+				ctx.data.waitingForSecondTap = false;
 				var e = this.makeEvent('tap', ctx.evt);
 				e.target = ctx.t;
 				enyo.dispatch(e);
-				ctx.t._waitingForSecondTap = false;
+				delete this.tapData[ctx.data.name];
 			}
 		},
 

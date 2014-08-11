@@ -142,7 +142,7 @@
 		* @default false
 		* @public
 		*/
-		doubleTapEnabled: 'false',
+		doubleTapEnabled: false,
 
 		/**
 		* @todo Find out how to document "handlers".
