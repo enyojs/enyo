@@ -321,7 +321,6 @@
 				this.preloadChanged();
 				this.autoplayChanged();
 				this.loopChanged();
-				this.updateSource();
 			};
 		}),
 
