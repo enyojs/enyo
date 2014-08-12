@@ -8,7 +8,7 @@ enyo.kind({
 				kind: "enyo.Video", 
 				poster: "http://media.w3.org/2010/05/bunny/poster.png", 
 				preload: "auto", 
-				src: "http://media.w3.org/2010/05/bunny/movie.mp4", 
+				src: "http://vjs.zencdn.net/v/oceans.mp4", 
 				onratechange: "rateChanged", 
 				ontimeupdate: "timeChanged",
 				ondurationchange: "durationChanged",
