@@ -36,6 +36,7 @@
 		var table = this.table,
 			added = [],
 			model,
+			theMostFrontIdx,
 			euid,
 			id,
 			i = 0;
@@ -63,6 +64,10 @@
 				table[euid] = model;
 				added.push(model);
 			}
+
+			if (idx < theMostFrontIdx || theMostFrontIdx === undefined) {
+				theMostFrontIdx = idx;
+			}	
 		}
 		
 		if (added.length) {
@@ -72,6 +77,8 @@
 			this.splice.apply(this, added);
 		}
 		
+		added.push(theMostFrontIdx);
+
 		return added.length > 0 ? added.slice(2) : added; 
 	};
 	
