@@ -422,7 +422,7 @@
 				, options = this.options
 				, pkey = ctor.prototype.primaryKey
 				, idx = len
-				, added, keep, removed, model, attrs, found, id, theMostFrontIdx;
+				, added, keep, removed, model, attrs, found, id;
 				
 			// for backwards compatibility with earlier api standards we allow the
 			// second paramter to be the index and third param options when
@@ -458,9 +458,6 @@
 				
 			// we treat all additions as an array of additions
 			!(models instanceof Array) && (models = [models]);
-
-			// remember the most front model index
-			theMostFrontIdx = models.splice(models.length - 1, 1)[0];
 			
 			for (var i=0, end=models.length; i<end; ++i) {
 				model = models[i];
@@ -561,7 +558,7 @@
 				len != this.length && this.notify('length', len, this.length);
 				// notify listeners of the addition of records
 				if (added) {
-					this.emit('add', {models: added, collection: this, index: idx, theMostFrontIdx: theMostFrontIdx});
+					this.emit('add', {models: added, collection: this, index: idx});
 				}
 			}
 			
