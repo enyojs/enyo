@@ -633,7 +633,7 @@
 			if (!silent) {
 				len != this.length && this.notify('length', len, this.length);
 				if (removed.length) {
-					this.emit('remove', {models: removed, collection: this, theMostFrontIdx: theMostFrontIdx});
+					this.emit('remove', {models: removed, collection: this, index: theMostFrontIdx});
 				}
 			}
 			

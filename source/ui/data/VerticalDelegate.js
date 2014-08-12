@@ -353,7 +353,7 @@
 			
 			// the only time we don't refresh is if the first index of the contiguous set of added
 			// models is beyond our final rendered page (possible) indices
-			// we remember the first model's index and saved in props.theMostFrontIdx 
+			// we remember the first model's index and saved in props.index 
 			
 			// note that this will refresh the following scenarios
 			// 1. if the dataset was spliced in above the current indices and the last index added was
@@ -368,7 +368,7 @@
 			
 			// in the case where it does not need to refresh the existing controls it will update its
 			// measurements and page positions within the buffer so scrolling can continue properly
-			if (props.theMostFrontIdx > end) gen = false;
+			if (props.index > end) gen = false;
 			
 			// if we need to refresh, do it now and ensure that we're properly setup to scroll
 			// if we were adding to a partially filled page
@@ -420,7 +420,7 @@
 
 			// we remember the most front model's index from removed models
 			// if the index is above the end of our currently rendered indices we need to refresh
-			gen = props.theMostFrontIdx <= end;
+			gen = props.index <= end;
 			
 			// if we need to refresh, do it now and ensure that we're properly setup to scroll
 			// if we were adding to a partially filled page
