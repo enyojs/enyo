@@ -355,8 +355,13 @@
 				// frame-time accumulator
 				// min acceptable time is 16ms (60fps)
 				t += Math.max(16, dt);
+				// prevent snapping to originally desired scroll position if we are in overscroll
+				if (this.isInOverScroll()) {
+					this.endX = null;
+					this.endY = null;
+				}
 				// alternate fixed-time step strategy:
-				if (this.fixedTime && !this.isInOverScroll()) {
+				else if (this.fixedTime) {
 					t = this.interval;
 				}
 				// consume some t in simulation
@@ -542,11 +547,11 @@
 		*/
 		scrollTo: function (x, y) {
 			if (y !== null) {
-				this.endY = this.clampY(-y);
+				this.endY = -y;
 				this.y = this.y0 - (y + this.y0) * (1 - this.kFrictionDamping);
 			}
 			if (x !== null) {
-				this.endX = this.clampX(-x);
+				this.endX = -x;
 				this.x = this.x0 - (x + this.x0) * (1 - this.kFrictionDamping);
 			}
 			if (x == this.x && y == this.y) return;
@@ -605,20 +610,6 @@
 		isInOverScroll: function () {
 			return this.job && (this.x > this.leftBoundary || this.x < this.rightBoundary ||
 				this.y > this.topBoundary || this.y < this.bottomBoundary);
-		},
-
-		/**
-		* @private
-		*/
-		clampX: function(x) {
-			return Math.min(this.leftBoundary, Math.max(x, this.rightBoundary));
-		},
-
-		/**
-		* @private
-		*/
-		clampY: function(y) {
-			return Math.min(this.topBoundary, Math.max(y, this.bottomBoundary));
 		}
 	});
 
