@@ -106,6 +106,10 @@
 		
 		// we start at the end to ensure that you could even pass the list itself
 		// and it will work
+		// usually models are ordered so to reduce redundant assignment excution
+		// we set the first index to the first value of theMostFrontIdx
+		theMostFrontIdx = this.indexOf(models[0]);
+
 		for (i = models.length - 1; (model = models[i]); --i) {
 			table[model.euid] = null;
 			id = model.get(model.primaryKey);
@@ -118,7 +122,7 @@
 				removed.push(model);
 			}
 
-			if (idx < theMostFrontIdx || theMostFrontIdx === undefined) {
+			if (idx < theMostFrontIdx) {
 				theMostFrontIdx = idx;
 			}
 		}
