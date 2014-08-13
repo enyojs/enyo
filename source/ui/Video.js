@@ -321,6 +321,7 @@
 				this.preloadChanged();
 				this.autoplayChanged();
 				this.loopChanged();
+				this.updateSource();
 			};
 		}),
 
@@ -353,8 +354,10 @@
 				}
 			}
 
-			// Always wipe out any previous sources before setting src or new sources
-			this.destroyClientControls();
+			if (source) {
+				// Wipe out previous sources before setting src or new sources
+				this.destroyClientControls();
+			}
 
 			if (src) {
 				// favor this.src: if it has a value, use it
