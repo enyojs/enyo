@@ -411,7 +411,7 @@
 		/**
 		* Notify if removed models are currently selected.
 		* After calling it, we can ensure that the removed models aren't currently selected.
-		* @param {modelList} models - The modelList{@link enyo.ModelList} instance to be removed.
+		* @param {array} models - The array of models that are removed from collection.
 		* @private
 		*/
 		notifySelectedModels: function(models) {
