@@ -403,18 +403,18 @@
 		*/
 		modelsRemoved: function (sender, e, props) {
 			if (sender === this.collection) {
-				this.notifySelectedModels(props.models);
+				this.deselectRemovedModels(props.models);
 				this.refresh();
 			}
 		},
 
 		/**
-		* Notify if removed models are currently selected.
+		* Deselect removed models from _selected array.
 		* After calling it, we can ensure that the removed models aren't currently selected.
-		* @param {modelList} models - The modelList{@link enyo.ModelList} instance to be removed.
+		* @param {array} models - The array of models that are removed from collection.
 		* @private
 		*/
-		notifySelectedModels: function(models) {
+		deselectRemovedModels: function(models) {
 			var selected = this._selection,
 				orig,
 				model,
@@ -428,8 +428,9 @@
 				// so we can pass it with the notification if any of these are deselected
 				orig = selected.slice();
 				
-				// clearly we won't need to continue checking if we need to remove the model from
-				// the selection if there aren't any more in there
+				// we have _selected array to track currently selected models
+				// if some removed models are in _selected, we should remove them from _selected
+				// clearly we won't need to continue checking if selected does not have any models
 				for (; (model = models[i]) && selected.length; --i) {
 					idx = selected.indexOf(model);
 					if (idx > -1) selected.splice(idx, 1);
