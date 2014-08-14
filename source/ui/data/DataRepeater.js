@@ -402,38 +402,46 @@
 		* @private
 		*/
 		modelsRemoved: function (sender, e, props) {
+			if (sender === this.collection) {
+				this.notifySelectedModels(props.models);
+				this.refresh();
+			}
+		},
+
+		/**
+		* Notify if removed models are currently selected.
+		* After calling it, we can ensure that the removed models aren't currently selected.
+		* @param {modelList} models - The modelList{@link enyo.ModelList} instance to be removed.
+		* @private
+		*/
+		notifySelectedModels: function(models) {
 			var selected = this._selection,
 				orig,
 				model,
 				idx,
 				len = selected && selected.length,
-				i = props.models.length - 1;
-			
-			if (sender === this.collection) {
+				i = models.length - 1;
+
+			// We have selected models
+			if (len) {			
+				// unfortunately we need to make a copy to preserve what the original was
+				// so we can pass it with the notification if any of these are deselected
+				orig = selected.slice();
 				
-				// ensure that the models aren't currently selected
-				if (len) {
-					
-					// unfortunately we need to make a copy to preserve what the original was
-					// so we can pass it with the notification if any of these are deselected
-					orig = selected.slice();
-					
-					// clearly we won't need to continue checking if we need to remove the model from
-					// the selection if there aren't any more in there
-					for (; (model = props.models[i]) && selected.length; --i) {
-						idx = selected.indexOf(model);
-						if (idx > -1) selected.splice(idx, 1);
-					}
-					
-					if (len != selected.length) {
-						if (this.selection) {
-							if (this.multipleSelection) this.notify('selected', orig, selected);
-							else this.notify('selected', orig[0], selected[0] || null);
-						}
+				// clearly we won't need to continue checking if we need to remove the model from
+				// the selection if there aren't any more in there
+				for (; (model = models[i]) && selected.length; --i) {
+					idx = selected.indexOf(model);
+					if (idx > -1) selected.splice(idx, 1);
+				}
+
+				// Some selected models are discovered, so we need to notify
+				if (len != selected.length) {
+					if (this.selection) {
+						if (this.multipleSelection) this.notify('selected', orig, selected);
+						else this.notify('selected', orig[0], selected[0] || null);
 					}
 				}
-				
-				this.refresh();
 			}
 		},
 
