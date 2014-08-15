@@ -230,31 +230,31 @@
 			var obj = enyo.dispatcher.findDispatchTarget(t);
 
 			if(this.tapData.id !== obj.id) {	// this is the first tap
-				this.resetTapData();
+				this.resetTapData(true);
 
 				this.tapData.id = obj.id;
-				this.tapData.timer = setTimeout(enyo.bind(this, function() {
-					this.resetTapData();
-					this.sendTap(evt, t);
-				}), obj.doubleTapInterval);
+				this.tapData.event = evt;
+				this.tapData.target = t;
+				this.tapData.timer = setTimeout(enyo.bind(this, "resetTapData", true), obj.doubleTapInterval);
 				this.tapData.start = enyo.perfNow();
 			} else {							// this is the double tap
 				var e2 = this.makeEvent('doubletap', evt);
 				e2.target = t;
 				e2.tapInterval = enyo.perfNow() - this.tapData.start;
-				this.resetTapData();
+				this.resetTapData(false);
 				enyo.dispatch(e2);
 			}
 		},
 
-		resetTapData: function() {
-			this.tapData.id = null;
-			this.tapData.start = null;
+		resetTapData: function(sendTap) {
+			var data = this.tapData;
 
-			if(this.tapData.timer) {
-				clearTimeout(this.tapData.timer);
-				this.tapData.timer = null;
+			if(sendTap && data.id) {
+				this.sendTap(data.event, data.target);
 			}
+
+			clearTimeout(data.timer);
+			data.id = data.start = data.event = data.target = data.timer = null;
 		},
 
 		/**
