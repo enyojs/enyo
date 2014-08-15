@@ -688,13 +688,16 @@
 		* @private
 		*/
 		updateBounds: function (list) {
-			var node                = list.hasNode();
-			list.boundsCache        = list.getBounds();
-			list.boundsCache.width -= node.offsetWidth - node.getBoundingClientRect().width -
-				(parseInt(enyo.dom.getComputedStyleValue(node, 'border-left-width'), 10) +
-					parseInt(enyo.dom.getComputedStyleValue(node, 'border-right-width'), 10));
-			list._updatedBounds     = enyo.perfNow();
-			list._updateBounds      = false;
+			list.boundsCache    = list.getBounds();
+			list._updatedBounds = enyo.perfNow();
+			list._updateBounds  = false;
+
+			var node = list.hasNode();
+			if (node) {
+				list.boundsCache.width -= node.offsetWidth - node.getBoundingClientRect().width -
+					(parseInt(enyo.dom.getComputedStyleValue(node, 'border-left-width'), 10) +
+						parseInt(enyo.dom.getComputedStyleValue(node, 'border-right-width'), 10));
+			}
 		}
 	};
 
