@@ -324,6 +324,51 @@
 				this.updateSource();
 			};
 		}),
+		
+		/**
+		* @method
+		* @private
+		*/
+		createComponent: enyo.inherit(function (sup) {
+			return function() {
+				this.initSourceTag(arguments[0]);
+				return sup.apply(this, arguments);
+			};
+		}),
+
+		/**
+		* @method
+		* @private
+		*/
+		createComponents: enyo.inherit(function (sup) {
+			return function() {
+				this.initSourceTags();
+				return sup.apply(this, arguments);
+			};
+		}),
+
+		/**
+		* @method
+		* @private
+		*/
+		initSourceTags: function() {
+			for(var i=0; this.components && i<this.components.length; i++) {
+				this.initSourceTag(this.components[i]);
+			}
+		},
+
+		/**
+		* @method
+		* @private
+		*/
+		initSourceTag: function(comp) {
+			if (comp && (comp.src || comp.type)) {
+				comp.tag = 'source';
+				comp.attributes = comp.attributes ? comp.attributes : {};
+				comp.attributes.src = comp.src ? comp.src : undefined;
+				comp.attributes.type = comp.type ? comp.type : undefined;
+			}
+		},
 
 		/**
 		* @method
