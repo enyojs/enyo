@@ -149,10 +149,10 @@
 		* Time in milliseconds to wait to detect a double tap
 		*
 		* @type {Number}
-		* @default 400
+		* @default 300
 		* @public
 		*/
-		doubleTapInterval: 400,
+		doubleTapInterval: 300,
 
 		/**
 		* @todo Find out how to document "handlers".
