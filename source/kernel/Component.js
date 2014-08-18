@@ -690,7 +690,7 @@
 				// for non-delgated events, try the handlers block if possible
 				if (!delegate) {
 					var bHandler = this.handlers && this.handlers[nom];
-					var bDelegatedFunction = enyo.isString(this[nom]);
+					var bDelegatedFunction = this[nom] && enyo.isString(this[nom]);
 					var cachePoint = this.cachePoint || bHandler || bDelegatedFunction || this.id === "master" ;
 
 					if (event.bubbling) {
