@@ -46,6 +46,7 @@
 	* @property {enyo.Model[]} models - An [array]{@glossary Array} of
 	*	[models]{@link enyo.Model} that were [removed]{@link enyo.Collection#remove} from the
 	*	[collection]{@link enyo.Collection}.
+	* @property {Number[]} indices - Array of respective indices of the models removed
 	* @property {enyo.Collection} collection - A reference to the
 	*	collection that [emitted]{@link enyo.EventEmitter.emit} the event.
 	* @public
@@ -589,7 +590,7 @@
 			var loc = this.models
 				, len = loc.length
 				, options = this.options
-				, removed, model;
+				, found, removed, model, index;
 			
 			// normalize options so we have values
 			opts = opts? enyo.mixin({}, [options, opts]): options;
@@ -600,10 +601,10 @@
 				, complete = opts.complete
 				, commit = opts.commit;
 			
-			// we treat all additions as an array of additions
-			!(models instanceof Array) && (models = [models]);
-			
-			removed = loc.remove(models);
+			// find the indices of the removed models
+			found = this.findModels(models);
+			removed = found.models;
+			loc.remove(removed);
 			
 			if (removed.length) {
 				
@@ -629,7 +630,7 @@
 			if (!silent) {
 				len != this.length && this.notify('length', len, this.length);
 				if (removed.length) {
-					this.emit('remove', {models: removed, collection: this});
+					this.emit('remove', {models: removed, indices: found.indices, collection: this});
 				}
 			}
 			
@@ -638,6 +639,41 @@
 			commit && removed.length && this.commit();
 			
 			return removed;
+		},
+
+		/**
+		* Searches the collection for `models`
+		*
+		* @param  {enyo.Model|enyo.Model[]} models - Model(s) to find
+		* @return {Object} The `models` found and their respective `indices` in the collection
+		* @private
+		*/
+		findModels: function (models) {
+			var i, l,
+				found = [],
+				indices = [];
+
+			if(models instanceof Array) {
+				for(i=0, l=models.length; i<l; i++) {
+					var model = models[i];
+					index = loc.indexOf(model);
+					if(index !== -1) {
+						found.push(model);
+						indices.push(index);
+					}
+				}
+			} else {
+				index = this.models.indexOf(models);
+				if(index !== -1) {
+					found.push(models);
+					indices.push(index);
+				}
+			}
+
+			return {
+				models: found,
+				indices: indices
+			};
 		},
 		
 		/**
