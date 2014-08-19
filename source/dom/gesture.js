@@ -23,6 +23,11 @@
 			'detail', 'identifier', 'dispatchTarget', 'which', 'srcEvent'],
 
 		/**
+		* @public
+		*/
+		defaultDoubleTapInterval: 400,
+
+		/**
 		* Creates an {@glossary event} of type `type` and returns it.
 		* `evt` should be an event [object]{@glossary Object}.
 		*
@@ -169,10 +174,70 @@
 		sendTap: function(evt) {
 			// The common ancestor for the down/up pair is the origin for the tap event
 			var t = this.findCommonAncestor(this.downEvent.target, evt.target);
-			if (t) {
+			if (t && !this.doubleTap(evt, t)) {
 				var e = this.makeEvent('tap', evt);
 				e.target = t;
 				enyo.dispatch(e);
+			}
+		},
+
+		/**
+		* private
+		*/
+		tapData: {},
+
+		/**
+		* private
+		*/
+		doubleTap: function(evt, t) {
+
+			var obj = enyo.dispatcher.findDispatchTarget(t);
+			if (!obj || !obj.doubleTapEnabled) {
+				return false;
+			}
+
+			var data = this.tapData[obj.name];
+			if (!data) {
+				data = {name: obj.name, lastTapTimestamp: null, waitingForSecondTap: false};
+				this.tapData[obj.name] = data;
+			}
+
+			var tapTimeToWait = obj.doubleTapInterval || this.defaultDoubleTapInterval; 
+			var tempTimestamp = data.lastTapTimestamp, tempTarget = this.lastTapTarget;
+			data.lastTapTimestamp = enyo.perfNow();
+			this.lastTapTarget = t;
+
+			if (t !== tempTarget || !data.waitingForSecondTap) {
+				data.waitingForSecondTap = true;
+				setTimeout(enyo.bind(this, 'waitTapTimeout', {evt: evt, t: t, data: data}), tapTimeToWait);
+				return true;
+			}
+
+			data.waitingForSecondTap = false;
+			var tapInterval = data.lastTapTimestamp - tempTimestamp;
+
+			if (tapInterval <= tapTimeToWait) {
+				var e2 = this.makeEvent('doubletap', evt);
+				e2.target = t;
+				e2.tapInterval = tapInterval;
+				enyo.dispatch(e2);
+			}
+
+			delete this.tapData[obj.name];
+
+			return true;
+		},
+
+		/**
+		* @private
+		*/
+		waitTapTimeout: function(ctx) {
+			if (ctx.data && ctx.data.waitingForSecondTap) {
+				ctx.data.waitingForSecondTap = false;
+				var e = this.makeEvent('tap', ctx.evt);
+				e.target = ctx.t;
+				enyo.dispatch(e);
+				delete this.tapData[ctx.data.name];
 			}
 		},
 

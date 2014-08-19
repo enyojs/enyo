@@ -135,6 +135,15 @@
 		content: '',
 
 		/**
+		* if true, will fire a doubletap event, and will temporarily suppress a single tap while
+		* waiting for a double tap
+		*
+		* @default false
+		* @public
+		*/
+		doubleTapEnabled: false,
+
+		/**
 		* @todo Find out how to document "handlers".
 		* @public
 		*/
@@ -1101,6 +1110,25 @@
 				} else return sup.apply(this, arguments);
 			};
 		}),
+
+		/**
+		* @private
+		*/
+		statics:
+			/** @lends enyo.Control.prototype */ {
+
+			/**
+			* sets the default value of doubleTapEnabled
+			*
+			* @param {Boolean} defaultValue - the new default Value
+			* @public
+			*/
+			setDefaultDoubleTapEnabled: function (defaultValue) {
+				if (enyo.Control) {
+					enyo.Control.prototype.doubleTapEnabled = defaultValue;
+				}
+			}
+		},
 
 		// .................................
 		// BACKWARDS COMPATIBLE API, LEGACY METHODS AND PUBLIC PROPERTY
