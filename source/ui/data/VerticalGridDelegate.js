@@ -103,9 +103,16 @@
 		* @private
 		*/
 		updateMetrics: function (list) {
+			// to account for scroll bars, force the scroller contents to overflow
+			// before getting the bounds
+			list.$.active.setBounds({height: '110%', width: '110%'})
 			this.updateBounds(list);
+
+			// reset the bounds afterwards
+			list.$.active.setBounds({height: 'auto', width: 'auto'});
+
 			var bs = list.boundsCache,
-				w  = bs.width,
+				w  = bs.clientWidth,
 				s  = list.spacing,
 				m  = list.minWidth,
 				h  = list.minHeight;

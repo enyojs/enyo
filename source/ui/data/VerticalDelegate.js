@@ -689,6 +689,12 @@
 		*/
 		updateBounds: function (list) {
 			list.boundsCache    = list.getBounds();
+
+			// add clientWidth/clientHeight for calculations that need to account for scroll bars
+			var node = list.$.scroller.hasNode();
+			list.boundsCache.clientWidth = node.clientWidth;
+			list.boundsCache.clientHeight = node.clientHeight;
+
 			list._updatedBounds = enyo.perfNow();
 			list._updateBounds  = false;
 		}
