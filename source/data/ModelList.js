@@ -119,7 +119,7 @@
 				theMostFrontIdx = idx;
 			}
 		}
-		removed.push(theMostFrontIdx);
+		this.theMostFrontIdx = theMostFrontIdx;
 
 		return removed;
 	};

@@ -607,7 +607,7 @@
 			removed = loc.remove(models);
 
 			// remember the most front model index
-			theMostFrontIdx = removed.splice(removed.length - 1, 1)[0];
+			theMostFrontIdx = loc.theMostFrontIdx;
 			
 			if (removed.length) {
 				
