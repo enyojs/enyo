@@ -82,26 +82,21 @@
 	* @method
 	* @param {(enyo.Model|enyo.Model[])} models The [model or models]{@link enyo.Model}
 	*	to remove from the [list]{@link enyo.ModelList}.
-	* @returns {enyo.Model[]} An immutable [array]{@glossary Array} of
+	* @returns {enyo.Model[], Array} An immutable [array]{@glossary Array} of
 	*	models that were actually removed from the list.
+	*	An [array] of index which is removed from the list.
 	* @protected
 	*/
 	enyo.ModelList.prototype.remove = function (models) {
 		var table = this.table,
 			removed = [],
 			model,
-			theMostFrontIdx,
+			indices = [],
 			idx,
 			id,
 			i;
 		
-		if (models && !(models instanceof Array)) models = [models];
-		
-		// we start at the end to ensure that you could even pass the list itself
-		// and it will work
-		// usually models are ordered so to reduce redundant assignment excution
-		// we set the first index to the first value of theMostFrontIdx
-		theMostFrontIdx = this.indexOf(models[0]);
+		if (models && !(models instanceof Array)) models = [models];		
 
 		for (i = models.length - 1; (model = models[i]); --i) {
 			table[model.euid] = null;
@@ -113,15 +108,15 @@
 			if (idx > -1) {
 				this.splice(idx, 1);
 				removed.push(model);
+				indices.push(idx);
 			}
 
-			if (idx < theMostFrontIdx) {
-				theMostFrontIdx = idx;
-			}
 		}
-		removed.push(theMostFrontIdx);
 
-		return removed;
+		return {
+			removed: removed, 
+			indices: indices
+		};
 	};
 	
 	/**

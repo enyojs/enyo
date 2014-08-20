@@ -416,15 +416,15 @@
 				pos = this.pagesByPosition(list),
 				first = pos.firstPage.start != null ? pos.firstPage.start : 0,
 				end = (cpp * 2) + (first - 1),
-				gen;
+				theFirstRemovedIdx;
 
 			// we remember the most front model's index from removed models
 			// if the index is above the end of our currently rendered indices we need to refresh
-			gen = props.index <= end;
+			theFirstRemovedIdx = Math.min.apply(Math, props.indices);
 			
 			// if we need to refresh, do it now and ensure that we're properly setup to scroll
 			// if we were adding to a partially filled page
-			if (gen) {
+			if (theFirstRemovedIdx <= end) {
 				this.refresh(list);
 				
 				// for sanity ensure that the current scroll position is showing our available content

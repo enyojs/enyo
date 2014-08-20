@@ -589,7 +589,7 @@
 			var loc = this.models
 				, len = loc.length
 				, options = this.options
-				, removed, model, theMostFrontIdx;
+				, removed, model, indices;
 			
 			// normalize options so we have values
 			opts = opts? enyo.mixin({}, [options, opts]): options;
@@ -604,11 +604,11 @@
 			!(models instanceof Array) && (models = [models]);
 			
 			// remove models from modelList
-			removed = loc.remove(models);
+			removedModels = loc.remove(models);
+			removed = removedModels.removed;
+			indices = removedModels.indices;
 
-			// remember the most front model index
-			theMostFrontIdx = removed.splice(removed.length - 1, 1)[0];
-			
+
 			if (removed.length) {
 				
 				// ensure that we can batch remove from the store
@@ -633,7 +633,7 @@
 			if (!silent) {
 				len != this.length && this.notify('length', len, this.length);
 				if (removed.length) {
-					this.emit('remove', {models: removed, collection: this, index: theMostFrontIdx});
+					this.emit('remove', {models: removed, collection: this, indices: indices});
 				}
 			}
 			
