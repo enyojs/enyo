@@ -25,6 +25,7 @@ enyo.depends(
 	'Table.js',
 	'fullscreen.js',
 	'Media.js',
+	'MediaSource.js',
 	'Audio.js',
 	'Video.js',
 	'Scrim.js',
