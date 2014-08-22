@@ -546,6 +546,7 @@
 		* @private
 		*/
 		scrollTo: function (x, y) {
+			if (x == this.x && y == this.y) return;
 			if (y !== null) {
 				this.endY = -y;
 				this.y = this.y0 - (y + this.y0) * (1 - this.kFrictionDamping);
@@ -554,7 +555,6 @@
 				this.endX = -x;
 				this.x = this.x0 - (x + this.x0) * (1 - this.kFrictionDamping);
 			}
-			if (x == this.x && y == this.y) return;
 			this.start();
 		},
 
