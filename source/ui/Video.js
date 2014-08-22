@@ -341,14 +341,23 @@
 		* @private
 		*/
 		updateSource: function (old, value, source) {
-			var src = this.get('src');
-			var sources = this.get('sourceComponents');
+			// We use a job here to avoid update source multiple
+			// times in succession on unload.
+			this.startJob('updateSource', function() {
+				this.updateSourceJob(old, value, source)
+			}, 10);
+		},
 
+		/**
+		* @method
+		* @private
+		*/
+		updateSourceJob: function(old, value, source) {
 			// if called due to a property change, clear the other property
 			if(source === 'src') {
-				sources = this.sourceComponents = null;
+				this.sourceComponents = null;
 			} else if(source === 'sourceComponents') {
-				src = this.src = '';
+				this.src = '';
 				if (!!this.getAttribute('src')) {
 					this.setAttribute('src', '');
 				}
@@ -359,10 +368,10 @@
 				this.destroyClientControls();
 			}
 
-			if (src) {
+			if(source === 'src' || (!source && this.src)) {
 				// favor this.src: if it has a value, use it
-				this.setAttribute('src', enyo.path.rewrite(src));
-			} else {
+				this.setAttribute('src', !!this.src ? enyo.path.rewrite(this.src) : '');
+			} else if(source === 'sourceComponents' || (!source && this.sourceComponents)) {
 				// if this.src isn't valued, try to use sourceComponents
 				this.addSources();
 			}
@@ -372,13 +381,14 @@
 				node.load();
 			}
 		},
+
 		/**
 		* Adds `<source>` tags for each source specified in `this.sources`.
 		* 
 		* @private
 		*/
 		addSources: function () {
-			var sources = this.getSourceComponents(),
+			var sources = this.sourceComponents,
 				i;
 
 			if (!sources || sources.length === 0) {
@@ -463,6 +473,7 @@
 		*/
 		unload: function() {
 			this.set('src', '');
+			this.set('sourceComponents', null);
 			this.load();
 		},
 
