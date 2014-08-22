@@ -284,7 +284,8 @@
 			onloadedmetadata: 'metadataLoaded',
 			ontimeupdate: 'timeupdate',
 			onratechange: 'ratechange',
-			onplay: '_play'
+			onplay: '_play',
+			onChangeSource: 'load'
 		},
 
 		/**
@@ -298,6 +299,8 @@
 		* @private
 		*/
 		tag: 'video',
+
+		defaultKind: 'enyo.MediaSource',
 
 		/**
 		* @private
@@ -321,7 +324,12 @@
 				this.preloadChanged();
 				this.autoplayChanged();
 				this.loopChanged();
-				this.updateSource();
+				// If no source has be specified, <source> elements may have been added directly
+				// to the components block so skip updating sources to avoid erasing those
+				// components.
+				if(this.src || this.sourceComponents) {
+					this.updateSource();
+				}
 			};
 		}),
 
@@ -345,54 +353,26 @@
 			var sources = this.get('sourceComponents');
 
 			// if called due to a property change, clear the other property
-			if(source === 'src') {
-				sources = this.sourceComponents = null;
-			} else if(source === 'sourceComponents') {
+			if(source === 'src' || (!source && src)) {
+				this.sourceComponents = null;
+				sources = [{src: src}];
+			} else if(source === 'sourceComponents' || (!source && sources)) {
 				src = this.src = '';
 				if (!!this.getAttribute('src')) {
 					this.setAttribute('src', '');
 				}
 			}
 
-			if (source) {
-				// Wipe out previous sources before setting src or new sources
-				this.destroyClientControls();
+			// Always wipe out any previous sources before setting src or new sources
+			this.destroyClientControls();
+			if(sources) {
+				this.createComponents(sources);
+				if(this.hasNode()) {
+					this.render();
+				}
 			}
 
-			if (src) {
-				// favor this.src: if it has a value, use it
-				this.setAttribute('src', enyo.path.rewrite(src));
-			} else {
-				// if this.src isn't valued, try to use sourceComponents
-				this.addSources();
-			}
-
-			var node = this.hasNode();
-			if(node) {
-				node.load();
-			}
-		},
-		/**
-		* Adds `<source>` tags for each source specified in `this.sources`.
-		* 
-		* @private
-		*/
-		addSources: function () {
-			var sources = this.getSourceComponents(),
-				i;
-
-			if (!sources || sources.length === 0) {
-				return;
-			}
-
-			// Add a source tag for each source
-			for (i = 0; i < sources.length; i++) {
-				sources[i].src = sources[i].src ? enyo.path.rewrite(sources[i].src) : '';
-				this.createComponent(enyo.mixin({attributes: sources[i]}, {tag: 'source'}));
-			}
-
-			// Rerender
-			this.render();
+			this.load();
 		},
 
 		/**
@@ -462,7 +442,10 @@
 		* @public
 		*/
 		unload: function() {
-			this.set('src', '');
+			this.src ='';
+			this.sourceComponents = null;
+			this.setAttribute('src', '');
+			this.destroyClientControls();
 			this.load();
 		},
 
