@@ -678,7 +678,7 @@
 				}
 
 				// first, handle any delegated events intended for this object
-				if (delegate && delegate.owner === this) {
+				if (delegate) {
 					// the most likely case is that we have a method to handle this
 					if (this[nom] && 'function' === typeof this[nom]) {
 						return this.dispatch(nom, event, sender);
