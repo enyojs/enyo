@@ -327,7 +327,7 @@
 				// If no source has be specified, <source> elements may have been added directly
 				// to the components block so skip updating sources to avoid erasing those
 				// components.
-				if(this.src || this.srcComponents) {
+				if(this.src || this.sourceComponents) {
 					this.updateSource();
 				}
 			};
@@ -353,10 +353,10 @@
 			var sources = this.get('sourceComponents');
 
 			// if called due to a property change, clear the other property
-			if(source === 'src') {
+			if(source === 'src' || (!source && src)) {
 				this.sourceComponents = null;
 				sources = [{src: src}];
-			} else if(source === 'sourceComponents') {
+			} else if(source === 'sourceComponents' || (!source && sources)) {
 				src = this.src = '';
 				if (!!this.getAttribute('src')) {
 					this.setAttribute('src', '');
@@ -442,7 +442,10 @@
 		* @public
 		*/
 		unload: function() {
-			this.set('src', '');
+			this.src ='';
+			this.sourceComponents = null;
+			this.setAttribute('src', '');
+			this.destroyClientControls();
 			this.load();
 		},
 
