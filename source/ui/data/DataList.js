@@ -374,11 +374,10 @@
 				if (c === this.collection && this.$.scroller.canGenerate) {
 					if (this.get('absoluteShowing')) {
 						this.delegate.modelsRemoved(this, props);
-						sup.apply(this, arguments);
+						this.deselectRemovedModels(props.models);
 					} else {
 						this._addToShowingQueue('refresh', function () {
 							sup.apply(this, arguments);
-							this.refresh();
 						});
 					}
 				}
