@@ -281,6 +281,23 @@
 				sup.apply(this, arguments);
 			};
 		}),
+		
+		/**
+		* @method
+		* @private
+		*/
+		teardownRender: enyo.inherit(function (sup) {
+			return function () {
+				// if this is a rendered floating popup, remove the node from the
+				// floating layer because it won't be removed otherwise
+				var node = this.hasNode();
+				if(this.floating && node) {
+					this.node.remove();
+				}
+
+				sup.apply(this, arguments);	
+			};
+		}),
 
 		/**
 		* @method
