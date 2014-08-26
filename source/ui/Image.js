@@ -45,12 +45,12 @@
 		* @private
 		*/
 		kind: 'enyo.Control',
-		
+
 		/**
 		* When `true`, no [onload]{@link enyo.Image#onload} or
 		* [onerror]{@link enyo.Image#event:onerror} {@glossary event} handlers will be
 		* created.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -60,12 +60,12 @@
 		/**
 		* @private
 		*/
-		published: 
+		published:
 			/** @lends enyo.Image.prototype */ {
-			
+
 			/**
 			* Maps to the `alt` attribute of an [&lt;img&gt; tag]{@glossary img}.
-			* 
+			*
 			* @type {String}
 			* @default ''
 			* @public
@@ -76,12 +76,12 @@
 			* By default, the [image]{@link enyo.Image} is rendered using an `<img>` tag.
 			* When this property is set to `'cover'` or `'constrain'`, the image will be
 			* rendered using a `<div>`, utilizing `background-image` and `background-size`.
-			* 
+			*
 			* Set this property to `'constrain'` to letterbox the image in the available
 			* space, or `'cover'` to cover the available space with the image (cropping the
 			* larger dimension).  Note that when `sizing` is set, the control must be
 			* explicitly sized.
-			* 
+			*
 			* @type {String}
 			* @default ''
 			* @public
@@ -89,17 +89,17 @@
 			sizing: '',
 
 			/**
-			* When [sizing]{@link enyo.Image#sizing} is used, this property sets the positioning of 
-			* the [image]{@link enyo.Image} within the bounds, corresponding to the 
+			* When [sizing]{@link enyo.Image#sizing} is used, this property sets the positioning of
+			* the [image]{@link enyo.Image} within the bounds, corresponding to the
 			* [`background-position`]{@glossary backgroundPosition} CSS property.
-			* 
+			*
 			* @type {String}
 			* @default ''
 			* @public
 			*/
 			position: 'center'
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -151,7 +151,7 @@
 		setSrc: function (src) {
 			var was = this.src;
 			this.src = src;
-			
+
 			if (was !== src) this.notify('src', was, src);
 		},
 
@@ -159,8 +159,8 @@
 		* @private
 		*/
 		srcChanged: function () {
-			if (this.sizing && this.src) {
-				this.applyStyle('background-image', 'url(' + enyo.path.rewrite(this.src) + ')');
+			if (this.sizing) {
+				this.applyStyle('background-image', this.src ? 'url(' + enyo.path.rewrite(this.src) + ')' : 'none');
 			} else {
 				if (!this.src) {
 					// allow us to clear the src property
@@ -174,14 +174,14 @@
 		/**
 		* @private
 		*/
-		altChanged: function () {
+		altChanged: function() {
 			this.setAttribute('alt', this.alt);
 		},
 
 		/**
 		* @private
 		*/
-		sizingChanged: function (was) {
+		sizingChanged: function(was) {
 			this.tag = this.sizing ? 'div' : 'img';
 			this.addRemoveClass('sized', !!this.sizing);
 			if (was) {
@@ -199,7 +199,7 @@
 		/**
 		* @private
 		*/
-		positionChanged: function () {
+		positionChanged: function() {
 			if (this.sizing) {
 				this.applyStyle('background-position', this.containPosition);
 			}
