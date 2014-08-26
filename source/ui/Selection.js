@@ -87,7 +87,6 @@
 	* });
 	* ```
 	*
-	* @ui
 	* @class enyo.Selection
 	* @extends enyo.Component
 	* @public
@@ -98,12 +97,12 @@
 		/**
 		* @private
 		*/
-		name: "enyo.Selection",
+		name: 'enyo.Selection',
 
 		/**
 		* @private
 		*/
-		kind: "enyo.Component",
+		kind: 'enyo.Component',
 
 		/**
 		* @private
@@ -125,9 +124,9 @@
 		* @private
 		*/
 		events: {
-			onSelect: "",
-			onDeselect: "",
-			onChange: ""
+			onSelect: '',
+			onDeselect: '',
+			onChange: ''
 		},
 		
 		/**
@@ -144,7 +143,7 @@
 		/**
 		* @private
 		*/
-		multiChanged: function() {
+		multiChanged: function () {
 			if (!this.multi) {
 				this.clear();
 			}
@@ -154,7 +153,7 @@
 		/**
 		* @private
 		*/
-		highlander: function() {
+		highlander: function () {
 			if (!this.multi) {
 				this.deselect(this.lastSelected);
 			}
@@ -165,7 +164,7 @@
 		* 
 		* @public
 		*/
-		clear: function() {
+		clear: function () {
 			this.selected = {};
 		},
 
@@ -176,7 +175,7 @@
 		* @returns {Boolean} `true` if the specified row is selected; otherwise, `false`.
 		* @public
 		*/
-		isSelected: function(key) {
+		isSelected: function (key) {
 			return this.selected[key];
 		},
 
@@ -194,7 +193,7 @@
 		* @fires enyo.Selection#onChange
 		* @public
 		*/
-		setByKey: function(key, sel, data) {
+		setByKey: function (key, sel, data) {
 			if (sel) {
 				this.selected[key] = (data || true);
 				this.lastSelected = key;
@@ -213,7 +212,7 @@
 		* @param {Number|String} key - The unique identifier of the row.
 		* @public
 		*/
-		deselect: function(key) {
+		deselect: function (key) {
 			if (this.isSelected(key)) {
 				this.setByKey(key, false);
 			}
@@ -231,7 +230,7 @@
 		*	not used, the `data` will be set to `true`.
 		* @public
 		*/
-		select: function(key, data) {
+		select: function (key, data) {
 			if (this.multi) {
 				this.setByKey(key, !this.isSelected(key), data);
 			} else if (!this.isSelected(key)) {
@@ -253,7 +252,7 @@
 		*	not used, the `data` will be set to `true`.
 		* @public
 		*/
-		toggle: function(key, data) {
+		toggle: function (key, data) {
 			if (!this.multi && this.lastSelected != key) {
 				this.deselect(this.lastSelected);
 			}
@@ -267,7 +266,7 @@
 		* selected item has a value; unselected items are [undefined]{@glossary undefined}.
 		* @public
 		*/
-		getSelected: function() {
+		getSelected: function () {
 			return this.selected;
 		},
 
@@ -279,7 +278,7 @@
 		* @param {Number|String} key - The unique identifier of the row.
 		* @public
 		*/
-		remove: function(key) {
+		remove: function (key) {
 			var newSelected = {};
 			for (var row in this.selected) {
 				if (row < key) {

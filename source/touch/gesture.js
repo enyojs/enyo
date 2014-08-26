@@ -49,7 +49,7 @@
 		/**
 		* @private
 		*/
-		touchstart: function(e) {
+		touchstart: function (e) {
 			// some devices can send multiple changed touches on start and end
 			var i,
 				changedTouches = e.changedTouches,
@@ -79,7 +79,7 @@
 		/**
 		* @private
 		*/
-		touchend: function(e) {
+		touchend: function (e) {
 			// some devices can send multiple changed touches on start and end
 			var i,
 				changedTouches = e.changedTouches,
@@ -101,7 +101,7 @@
 		/**
 		* @private
 		*/
-		touchmove: function(e) {
+		touchmove: function (e) {
 			if (this.gesture) {
 				var g = this.makeGesture('gesturechange', e);
 				this.gesture.scale = g.scale;
@@ -113,7 +113,7 @@
 		/**
 		* @private
 		*/
-		findIdentifiedTouch: function(touches, id) {
+		findIdentifiedTouch: function (touches, id) {
 			for (var i = 0, t; (t = touches[i]); i++) {
 				if (t.identifier === id) {
 					return t;
@@ -124,7 +124,7 @@
 		/**
 		* @private
 		*/
-		gesturePositions: function(e) {
+		gesturePositions: function (e) {
 			var first = this.findIdentifiedTouch(e.touches, this.orderedTouches[0]);
 			var last = this.findIdentifiedTouch(e.touches, this.orderedTouches[this.orderedTouches.length - 1]);
 			var fx = first.pageX, lx = last.pageX, fy = first.pageY, ly = last.pageY;
@@ -139,7 +139,7 @@
 		* 
 		* @private
 		*/
-		gestureAngle: function(positions) {
+		gestureAngle: function (positions) {
 			var p = positions;
 			// yay math!, rad -> deg
 			var a = Math.asin(p.y / p.h) * (180 / Math.PI);
@@ -160,7 +160,7 @@
 		* 
 		* @private
 		*/
-		gestureVector: function(positions) {
+		gestureVector: function (positions) {
 			// the least recent touch and the most recent touch determine the bounding box of the gesture event
 			var p = positions;
 			// center the first touch as 0,0
@@ -174,7 +174,7 @@
 		/**
 		* @private
 		*/
-		makeGesture: function(type, e, cache) {
+		makeGesture: function (type, e, cache) {
 			var vector, scale, rotation;
 			if (cache) {
 				vector = cache.vector;

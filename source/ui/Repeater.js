@@ -45,8 +45,9 @@
 	* For more information, see the documentation on
 	* [Lists](building-apps/layout/lists.html) in the Enyo Developer Guide.
 	*
-	* @ui
 	* @class enyo.Repeater
+	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -56,6 +57,11 @@
 		* @private
 		*/
 		name: 'enyo.Repeater',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 
 		/**
 		* @private
@@ -106,14 +112,14 @@
 		/**
 		* @private
 		*/
-		countChanged: function() {
+		countChanged: function () {
 			this.build();
 		},
 
 		/**
 		* @private
 		*/
-		itemAtIndex: function(idx) {
+		itemAtIndex: function (idx) {
 			return this.controlAtIndex(idx);
 		},
 
@@ -129,7 +135,7 @@
 		* @fires enyo.Repeater#onSetupItem
 		* @public
 		*/
-		build: function() {
+		build: function () {
 			this.destroyClientControls();
 			for (var i=0, c; i<this.count; i++) {
 				c = this.createComponent({kind: 'enyo.OwnerProxy', index: i});
@@ -149,7 +155,7 @@
 		* @fires enyo.Repeater#onSetupItem
 		* @public
 		*/
-		renderRow: function(idx) {
+		renderRow: function (idx) {
 			var c = this.itemAtIndex(idx);
 			this.doSetupItem({index: idx, item: c});
 		}
@@ -160,15 +166,22 @@
 	* These overrides reroute [events]{@glossary event} from such controls to the nominal
 	* [delegate]{@glossary delegate}, as would happen in the absence of intermediation.
 	* 
+	* @class enyo.OwnerProxy
+	* @extends enyo.Control
 	* @private
 	*/
 	enyo.kind(
 		/** @lends enyo.OwnerProxy.prototype */ {
-			
+		
 		/**
 		* @private
 		*/
 		name: 'enyo.OwnerProxy',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 
 		/**
 		* @private

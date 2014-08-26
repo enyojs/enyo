@@ -17,6 +17,8 @@
 	* Note: `enyo.FloatingLayer` is not meant to be instantiated by users.
 	*
 	* @class enyo.FloatingLayer
+	* @extends enyo.Control
+	* @ui
 	* @protected
 	*/
 	enyo.kind(
@@ -26,6 +28,11 @@
 		* @private
 		*/
 		name: 'enyo.FloatingLayer',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 		
 		/**
 		* @method
@@ -68,14 +75,14 @@
 		/**
 		* @private
 		*/
-		generateInnerHtml: function() {
+		generateInnerHtml: function () {
 			return '';
 		},
 
 		/**
 		* @private
 		*/
-		beforeChildRender: function() {
+		beforeChildRender: function () {
 			if (!this.hasNode()) {
 				this.render();
 			}
@@ -84,7 +91,7 @@
 		/**
 		* @private
 		*/
-		teardownChildren: function() {
+		teardownChildren: function () {
 		}
 	});
 

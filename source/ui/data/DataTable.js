@@ -3,8 +3,9 @@
 	* {@link enyo.DataTable} enables the creation of data-driven tables.
 	* Along with {@link enyo.Table}, this is a work in progress.
 	*
-	* @ui
 	* @class enyo.DataTable
+	* @extends enyo.DataRepeater
+	* @ui
 	* @public
 	*/
 	enyo.kind(

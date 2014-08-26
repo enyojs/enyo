@@ -51,7 +51,8 @@
 	* The [context]{@link enyo.Animator#context} property may be used to call the supplied
 	* event functions in a particular `this` context.
 	* 
-	* During animation, an {@link enyo.jobs} priority of 5 is registered to defer low priority tasks.
+	* During animation, an {@link enyo.jobs} priority of 5 is registered to defer low priority 
+	* tasks.
 	*
 	* @class enyo.Animator
 	* @extends enyo.Component
@@ -197,7 +198,7 @@
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
-		stop: function() {
+		stop: function () {
 			if (this.isAnimating()) {
 				this.cancel();
 				this.fire('onStop');
@@ -211,7 +212,7 @@
 		* @return {this} The callee for chaining.
 		* @public
 		*/
-		reverse: function() {
+		reverse: function () {
 			if (this.isAnimating()) {
 				this.reversed = !this.reversed;
 				var now = this.t1 = enyo.perfNow();
@@ -232,21 +233,21 @@
 		* @returns {Boolean} `true` if there is an animation currently running; otherwise, `false`.
 		* @private
 		*/
-		isAnimating: function() {
+		isAnimating: function () {
 			return Boolean(this.job);
 		},
 
 		/**
 		* @private
 		*/
-		requestNext: function() {
+		requestNext: function () {
 			this.job = enyo.requestAnimationFrame(this._next, this.node);
 		},
 
 		/**
 		* @private
 		*/
-		cancel: function() {
+		cancel: function () {
 			enyo.cancelRequestAnimationFrame(this.job);
 			this.node = null;
 			this.job = null;
@@ -258,7 +259,7 @@
 		/**
 		* @private
 		*/
-		shouldEnd: function() {
+		shouldEnd: function () {
 			return (this.dt >= this.duration);
 		},
 
@@ -269,7 +270,7 @@
 		* @fires enyo.Animator#onEnd
 		* @private
 		*/
-		next: function() {
+		next: function () {
 			this.t1 = enyo.perfNow();
 			this.dt = this.t1 - this.t0;
 			var args = this.easingFunction.length;
@@ -300,7 +301,7 @@
 		/**
 		* @private
 		*/
-		fire: function(nom) {
+		fire: function (nom) {
 			var fn = this[nom];
 			if (enyo.isString(fn)) {
 				this.bubble(nom);

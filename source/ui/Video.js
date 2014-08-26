@@ -102,9 +102,9 @@
 	* 
 	* To get a reference to the actual HTML 5 Video element, call `this.$.video.hasNode()`.
 	*
-	* @ui
 	* @class enyo.Video
 	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -378,7 +378,7 @@
 		/**
 		* @private
 		*/
-		posterChanged: function() {
+		posterChanged: function () {
 			if (this.poster) {
 				var path = enyo.path.rewrite(this.poster);
 				this.setAttribute('poster', path);
@@ -391,21 +391,21 @@
 		/**
 		* @private
 		*/
-		showControlsChanged: function() {
+		showControlsChanged: function () {
 			this.setAttribute('controls', this.showControls ? 'controls' : null);
 		},
 
 		/**
 		* @private
 		*/
-		preloadChanged: function() {
+		preloadChanged: function () {
 			this.setAttribute('preload', this.preload ? this.preload : null);
 		},
 
 		/**
 		* @private
 		*/
-		autoplayChanged: function() {
+		autoplayChanged: function () {
 			this.setAttribute('autoplay', this.autoplay ? 'autoplay' : null);
 			this._prevCommand = this.autoplay ? 'play' : 'pause';
 		},
@@ -413,14 +413,14 @@
 		/**
 		* @private
 		*/
-		loopChanged: function() {
+		loopChanged: function () {
 			this.setAttribute('loop', this.loop ? 'loop' : null);
 		},
 
 		/**
 		* @private
 		*/
-		fitToWindowChanged: function() {
+		fitToWindowChanged: function () {
 			if (!this.hasNode()) {
 				return;
 			}
@@ -431,7 +431,7 @@
 		* 
 		* @public
 		*/
-		load: function() {
+		load: function () {
 			if(this.hasNode()) { this.hasNode().load(); }
 		},
 
@@ -454,7 +454,7 @@
 		* 
 		* @public
 		*/
-		play: function() {
+		play: function () {
 			if (!this.hasNode()) {
 				return;
 			}
@@ -469,7 +469,7 @@
 		* 
 		* @public
 		*/
-		pause: function() {
+		pause: function () {
 			if (!this.hasNode()) {
 				return;
 			}
@@ -484,7 +484,7 @@
 		*
 		* @public
 		*/
-		fastForward: function() {
+		fastForward: function () {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -541,7 +541,7 @@
 		* 
 		* @public
 		*/
-		rewind: function() {
+		rewind: function () {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -588,7 +588,7 @@
 		* @fires enyo.Video#doJumpBackward
 		* @public
 		*/
-		jumpBackward: function() {
+		jumpBackward: function () {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -608,7 +608,7 @@
 		* @fires enyo.Video#doJumpForward
 		* @public
 		*/
-		jumpForward: function() {
+		jumpForward: function () {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -628,7 +628,7 @@
 		* 
 		* @public
 		*/
-		jumpToStart: function() {
+		jumpToStart: function () {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -647,7 +647,7 @@
 		* 
 		* @public
 		*/
-		jumpToEnd: function() {
+		jumpToEnd: function () {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -667,7 +667,7 @@
 		* @param {String} cmd - Key of the playback rate type.
 		* @public
 		*/
-		selectPlaybackRateArray: function(cmd) {
+		selectPlaybackRateArray: function (cmd) {
 			this._playbackRateArray = this.playbackRateHash[cmd];
 		},
 
@@ -678,7 +678,7 @@
 		* @param {Number} idx - The index of the desired playback rate.
 		* @public
 		*/
-		clampPlaybackRate: function(idx) {
+		clampPlaybackRate: function (idx) {
 			if (!this._playbackRateArray) {
 				return;
 			}
@@ -693,7 +693,7 @@
 		* @returns {String} The playback rate name.
 		* @public
 		*/
-		selectPlaybackRate: function(idx) {
+		selectPlaybackRate: function (idx) {
 			return this._playbackRateArray[idx];
 		},
 
@@ -703,7 +703,7 @@
 		* @param {String} rate - The desired playback rate.
 		* @public
 		*/
-		setPlaybackRate: function(rate) {
+		setPlaybackRate: function (rate) {
 			var node = this.hasNode(),
 				pbNumber
 			;
@@ -736,7 +736,7 @@
 		* @returns {Boolean} `true` if paused; otherwise, `false`.
 		* @public
 		*/
-		isPaused: function() {
+		isPaused: function () {
 			return this.hasNode() ? this.hasNode().paused : true;
 		},
 
@@ -746,7 +746,7 @@
 		* @returns {Number} The current player position in seconds.
 		* @public
 		*/
-		getCurrentTime: function() {
+		getCurrentTime: function () {
 			return this.hasNode() ? this.hasNode().currentTime : 0;
 		},
 
@@ -756,7 +756,7 @@
 		* @returns {TimeRanges} The buffered [time range]{@glossary TimeRanges}.
 		* @public
 		*/
-		getBufferedTimeRange: function() {
+		getBufferedTimeRange: function () {
 			return this.hasNode() ? this.hasNode().buffered : 0;
 		},
 
@@ -766,7 +766,7 @@
 		* @param {Number} time - The position (in seconds) to which the player should be set.
 		* @public
 		*/
-		setCurrentTime: function(time) {
+		setCurrentTime: function (time) {
 			if ((typeof time === 'number') && this.hasNode()) {
 				this.node.currentTime = time;
 			}
@@ -778,7 +778,7 @@
 		* @returns {Number} The play duration in seconds.
 		* @public
 		*/
-		getDuration: function() {
+		getDuration: function () {
 			return this.hasNode() ? this.hasNode().duration : 0;
 		},
 
@@ -789,7 +789,7 @@
 		*	[video]{@link enyo.Video}.
 		* @public
 		*/
-		getReadyState: function() {
+		getReadyState: function () {
 			return this.hasNode() ? this.hasNode().readyState : -1;
 		},
 
@@ -799,7 +799,7 @@
 		* @returns {Boolean} `true` if currently seeking; otherwise, `false`.
 		* @public
 		*/
-		getSeeking: function() {
+		getSeeking: function () {
 			return this.hasNode() ? this.hasNode().seeking : -1;
 		},
 
@@ -808,7 +808,7 @@
 		* 
 		* @private
 		*/
-		beginRewind: function() {
+		beginRewind: function () {
 			this.node.pause();
 			this.startRewindJob();
 		},
@@ -818,7 +818,7 @@
 		* 
 		* @private
 		*/
-		_rewind: function() {
+		_rewind: function () {
 			var now = enyo.perfNow(),
 				distance = now - this.rewindBeginTime,
 				pbRate = this.calcNumberValueOfPlaybackRate(this.playbackRate),
@@ -835,7 +835,7 @@
 		* 
 		* @private
 		*/
-		startRewindJob: function() {
+		startRewindJob: function () {
 			this.rewindBeginTime = enyo.perfNow();
 			enyo.job(this.id + 'rewind', this.bindSafely('_rewind'), 100);
 		},
@@ -845,7 +845,7 @@
 		* 
 		* @private
 		*/
-		stopRewindJob: function() {
+		stopRewindJob: function () {
 			enyo.job.stop(this.id + 'rewind');
 		},
 
@@ -854,7 +854,7 @@
 		* 
 		* @private
 		*/
-		calcNumberValueOfPlaybackRate: function(rate) {
+		calcNumberValueOfPlaybackRate: function (rate) {
 			var pbArray = String(rate).split('/');
 			return (pbArray.length > 1) ? parseInt(pbArray[0], 10) / parseInt(pbArray[1], 10) : parseInt(rate, 10);
 		},
@@ -865,7 +865,7 @@
 		* 
 		* @private
 		*/
-		metadataLoaded: function(sender, e) {
+		metadataLoaded: function (sender, e) {
 			var node = this.hasNode();
 			this.setAspectRatio('none');
 			if (!node || !node.videoWidth || !node.videoHeight) {
@@ -878,7 +878,7 @@
 		/**
 		* @private
 		*/
-		timeupdate: function(sender, e) {
+		timeupdate: function (sender, e) {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -895,7 +895,7 @@
 		* @fires enyo.Video#doPlay
 		* @private
 		*/
-		ratechange: function(sender, e) {
+		ratechange: function (sender, e) {
 			var node = this.hasNode(),
 				pbNumber
 			;
@@ -925,7 +925,7 @@
 		* @fires enyo.Video#doStart
 		* @private
 		*/
-		createEventData: function() {
+		createEventData: function () {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -948,7 +948,7 @@
 		* @fires enyo.Video#doPlay
 		* @private
 		*/
-		_play: function(sender, e) {
+		_play: function (sender, e) {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -965,7 +965,7 @@
 		* 
 		* @private
 		*/
-		hookupVideoEvents: function() {
+		hookupVideoEvents: function () {
 			enyo.makeBubble(this,
 				'loadstart',
 				'emptied',

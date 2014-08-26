@@ -21,7 +21,7 @@
 	* @static
 	* @public
 	*/
-	enyo.job = function(nom, job, wait) {
+	enyo.job = function (nom, job, wait) {
 		enyo.job.stop(nom);
 		enyo.job._jobs[nom] = setTimeout(function() {
 			enyo.job.stop(nom);
@@ -36,7 +36,7 @@
 	* @static
 	* @public
 	*/
-	enyo.job.stop = function(nom) {
+	enyo.job.stop = function (nom) {
 		if (enyo.job._jobs[nom]) {
 			clearTimeout(enyo.job._jobs[nom]);
 			delete enyo.job._jobs[nom];
@@ -60,7 +60,7 @@
 	* @static
 	* @public
 	*/
-	enyo.job.throttle = function(nom, job, wait) {
+	enyo.job.throttle = function (nom, job, wait) {
 		// if we still have a job with this name pending, return immediately
 		if (enyo.job._jobs[nom]) {
 			return;

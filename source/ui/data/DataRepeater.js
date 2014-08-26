@@ -8,8 +8,9 @@
 	* underlying records are modified if they have been bound using
 	* [bindings]{@link enyo.Binding}.
 	*
-	* @ui
 	* @class enyo.DataRepeater
+	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -21,7 +22,12 @@
 		name: 'enyo.DataRepeater',
 
 		/**
-		* Set this to `true` to enable selection support. Note that selection stores a
+		* @private
+		*/
+		kind: 'enyo.Control',
+
+		/**
+		* Set this to `true` to enable selection support. Note that selection stores a 
 		* reference to the [model]{@link enyo.Model} that is selected.
 		*
 		* @type {Boolean}

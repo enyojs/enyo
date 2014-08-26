@@ -40,9 +40,9 @@
 	* });
 	* ```
 	*
-	* @ui
 	* @class enyo.DragAvatar
 	* @extends enyo.Component
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -109,7 +109,7 @@
 		/**
 		* @private
 		*/
-		requireAvatar: function() {
+		requireAvatar: function () {
 			// FIXME: there is nobody to call teardownRender on this.avatar
 			// if document.body.innerHTML has been written over, his node is invalid
 			// we should have a trap for this condition here
@@ -121,7 +121,7 @@
 		/**
 		* @private
 		*/
-		showingChanged: function() {
+		showingChanged: function () {
 			this.avatar.setShowing(this.showing);
 			document.body.style.cursor = this.showing ? 'move' : null;
 		},
@@ -134,7 +134,7 @@
 		* information.
 		* @public
 		*/
-		drag: function(e) {
+		drag: function (e) {
 			this.requireAvatar();
 			this.avatar.setBounds({top: e.pageY - this.offsetY, left: e.pageX + this.offsetX});
 			this.show();
@@ -145,7 +145,7 @@
 		* 
 		* @public
 		*/
-		show: function() {
+		show: function () {
 			this.setShowing(true);
 		},
 
@@ -154,7 +154,7 @@
 		* 
 		* @public
 		*/
-		hide: function() {
+		hide: function () {
 			this.setShowing(false);
 		}
 	});

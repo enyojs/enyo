@@ -22,8 +22,9 @@
 	* Note: This uses the [&lt;select&gt;]{@glossary select} tag, which isn't implemented for
 	* native webOS applications, although it does work in the webOS Web browser.
 	*
-	* @ui
 	* @class enyo.Select
+	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -33,6 +34,11 @@
 		* @private
 		*/
 		name: 'enyo.Select',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 
 		/**
 		* @private
@@ -95,21 +101,21 @@
 		/**
 		* @private
 		*/
-		getSelected: function() {
+		getSelected: function () {
 			return Number(this.getNodeProperty('selectedIndex', this.selected));
 		},
 
 		/**
 		* @private
 		*/
-		selectedChanged: function() {
+		selectedChanged: function () {
 			this.setNodeProperty('selectedIndex', this.selected);
 		},
 
 		/**
 		* @private
 		*/
-		change: function() {
+		change: function () {
 			this.selected = this.getSelected();
 			if (this.hasNode()) {
 				this.set('value', this.node.value);
@@ -117,6 +123,7 @@
 		},
 
 		/**
+		* @method
 		* @private
 		*/
 		render: enyo.inherit(function (sup) {
@@ -137,6 +144,8 @@
 	* {@link enyo.Select} [control]{@link enyo.Control}.
 	*
 	* @class enyo.Option
+	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -146,6 +155,11 @@
 		* @private
 		*/
 		name: 'enyo.Option',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 
 		/**
 		* @private
@@ -178,6 +192,7 @@
 		tag: 'option',
 
 		/**
+		* @method
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {
@@ -191,14 +206,14 @@
 		/**
 		* @private
 		*/
-		valueChanged: function() {
+		valueChanged: function () {
 			this.setAttribute('value', this.value);
 		},
 
 		/**
 		* @private
 		*/
-		selectedChanged: function() {
+		selectedChanged: function () {
 			this.setAttribute('selected', this.selected);
 		}
 	});
@@ -209,6 +224,8 @@
 	* and for the disabling of blocks of options.
 	*
 	* @class enyo.OptionGroup
+	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -218,6 +235,11 @@
 		* @private
 		*/
 		name: 'enyo.OptionGroup',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 
 		/**
 		* @private
@@ -245,6 +267,7 @@
 		defaultKind: 'enyo.Option',
 
 		/**
+		* @method
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {
@@ -257,7 +280,7 @@
 		/**
 		* @private
 		*/
-		labelChanged: function() {
+		labelChanged: function () {
 			this.setAttribute('label', this.label);
 		}
 	});

@@ -926,7 +926,7 @@
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
-		startJob: function(nom, job, wait, priority) {
+		startJob: function (nom, job, wait, priority) {
 			var jobs = (this.__jobs = this.__jobs || {});
 			priority = priority || 5;
 			// allow strings as job names, they map to local method names
@@ -948,7 +948,7 @@
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
-		stopJob: function(nom) {
+		stopJob: function (nom) {
 			var jobs = (this.__jobs = this.__jobs || {});
 			if (jobs[nom]) {
 				clearTimeout(jobs[nom]);
@@ -970,7 +970,7 @@
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
-		throttleJob: function(nom, job, wait) {
+		throttleJob: function (nom, job, wait) {
 			var jobs = (this.__jobs = this.__jobs || {});
 			// if we still have a job with this name pending, return immediately
 			if (!jobs[nom]) {
@@ -1001,7 +1001,7 @@
 	* @returns {*} An instance of the requested [kind]{@glossary kind}.
 	* @public
 	*/
-	enyo.create = Component.create = function(props) {
+	enyo.create = Component.create = function (props) {
 		var kind,
 			Ctor;
 		
@@ -1025,7 +1025,7 @@
 	* @static
 	* @private
 	*/
-	Component.subclass = function(ctor, props) {
+	Component.subclass = function (ctor, props) {
 		// Note: To reduce API surface area, sub-components are declared only as
 		// 'components' in both kind and instance declarations.
 		//
@@ -1074,7 +1074,7 @@
 	* @static
 	* @private
 	*/
-	Component.overrideComponents = function(components, overrides, defaultKind) {
+	Component.overrideComponents = function (components, overrides, defaultKind) {
 		var fn = function (k, v) { return !(enyo.isFunction(v) || enyo.isInherited(v)); };
 		components = enyo.clone(components);
 		for (var i=0; i<components.length; i++) {
@@ -1107,7 +1107,7 @@
 	* @static
 	* @private
 	*/
-	Component.publishEvents = function(ctor, props) {
+	Component.publishEvents = function (ctor, props) {
 		var events = props.events,
 			event,
 			proto;
@@ -1122,23 +1122,23 @@
 	* @static
 	* @private
 	*/
-	Component.addEvent = function(inName, inValue, inProto) {
+	Component.addEvent = function (nom, val, proto) {
 		var v, fn;
-		if (!enyo.isString(inValue)) {
-			v = inValue.value;
-			fn = inValue.caller;
+		if (!enyo.isString(val)) {
+			v = val.value;
+			fn = val.caller;
 		} else {
-			if (inName.slice(0, 2) != 'on') {
-				enyo.warn('enyo.Component.addEvent: event names must start with "on". ' + inProto.kindName + ' ' +
-					'event "' + inName + '" was auto-corrected to "on' + inName + '".');
-				inName = 'on' + inName;
+			if (nom.slice(0, 2) != 'on') {
+				enyo.warn('enyo.Component.addEvent: event names must start with "on". ' + proto.kindName + ' ' +
+					'event "' + nom + '" was auto-corrected to "on' + nom + '".');
+				nom = 'on' + nom;
 			}
-			v = inValue;
-			fn = 'do' + enyo.cap(inName.slice(2));
+			v = val;
+			fn = 'do' + enyo.cap(nom.slice(2));
 		}
-		inProto[inName] = v;
-		if (!inProto[fn]) {
-			inProto[fn] = function(payload) {
+		proto[nom] = v;
+		if (!proto[fn]) {
+			proto[fn] = function(payload) {
 				// bubble this event
 				var e = payload;
 				if (!e) {
@@ -1148,16 +1148,16 @@
 				// delete payload.delegate;
 				e.delegate = undefined;
 				if (!enyo.exists(e.type)) {
-					e.type = inName;
+					e.type = nom;
 				}
-				this.bubble(inName, e);
+				this.bubble(nom, e);
 				if (d) {
 					e.delegate = d;
 				}
 			};
 			// NOTE: Mark this function as a generated event handler to allow us to
 			// do event chaining. Is this too complicated?
-			//inProto[fn]._dispatcher = true;
+			//proto[fn]._dispatcher = true;
 		}
 	};
 

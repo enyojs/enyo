@@ -45,8 +45,9 @@
 	* [Text Fields]{@link building-apps/controls/text-fields.html} in the Enyo
 	* Developer Guide.
 	*
-	* @ui
 	* @class enyo.Input
+	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -56,6 +57,11 @@
 		* @private
 		*/
 		name: 'enyo.Input',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 
 		/**
 		* @private
@@ -197,14 +203,14 @@
 		/**
 		* @private
 		*/
-		typeChanged: function() {
+		typeChanged: function () {
 			this.setAttribute('type', this.type);
 		},
 
 		/**
 		* @private
 		*/
-		placeholderChanged: function() {
+		placeholderChanged: function () {
 			this.setAttribute('placeholder', this.placeholder);
 		},
 
@@ -212,7 +218,7 @@
 		* @fires enyo.Input#onDisabledChange
 		* @private
 		*/
-		disabledChanged: function() {
+		disabledChanged: function () {
 			this.setAttribute('disabled', this.disabled);
 			this.bubble('onDisabledChange');
 		},
@@ -220,7 +226,7 @@
 		/**
 		* @private
 		*/
-		valueChanged: function() {
+		valueChanged: function () {
 			var node = this.hasNode(),
 				attrs = this.attributes;
 			if (node) {
@@ -241,7 +247,7 @@
 		/**
 		* @private
 		*/
-		iekeyup: function(sender, e) {
+		iekeyup: function (sender, e) {
 			var ie = enyo.platform.ie, kc = e.keyCode;
 			// input event missing on ie 8, fails to fire on backspace and delete keys in ie 9
 			if (ie <= 8 || (ie == 9 && (kc == 8 || kc == 46))) {
@@ -252,7 +258,7 @@
 		/**
 		* @private
 		*/
-		iekeydown: function(sender, e) {
+		iekeydown: function (sender, e) {
 			var wp = enyo.platform.windowsPhone, kc = e.keyCode, dt = e.dispatchTarget;
 			// onchange event fails to fire on enter key for Windows Phone 8, so we force blur
 			if (wp <= 8 && kc == 13 && this.tag == 'input' && dt.hasNode()) {
@@ -263,7 +269,7 @@
 		/**
 		* @private
 		*/
-		clear: function() {
+		clear: function () {
 			this.setValue('');
 		},
 
@@ -271,14 +277,14 @@
 		/**
 		* @private
 		*/
-		dragstart: function() {
+		dragstart: function () {
 			return this.hasFocus();
 		},
 
 		/**
 		* @private
 		*/
-		focused: function() {
+		focused: function () {
 			if (this.selectOnFocus) {
 				enyo.asyncMethod(this, 'selectContents');
 			}
@@ -287,7 +293,7 @@
 		/**
 		* @private
 		*/
-		selectContents: function() {
+		selectContents: function () {
 			var n = this.hasNode();
 
 			if (n && n.setSelectionRange) {
@@ -302,7 +308,7 @@
 		/**
 		* @private
 		*/
-		input: function() {
+		input: function () {
 			var val = this.getNodeProperty('value');
 			this.setValue(val);
 		}

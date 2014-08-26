@@ -6,9 +6,9 @@
 	* [attributes]{@glossary Attribute} to appropriate fields on data
 	* [objects]{@glossary Object}.
 	* 
-	* @ui
 	* @class enyo.Anchor
 	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -69,14 +69,14 @@
 		/**
 		* @private
 		*/
-		hrefChanged: function() {
+		hrefChanged: function () {
 			this.setAttribute('href', this.href);
 		},
 
 		/**
 		* @private
 		*/
-		titleChanged: function() {
+		titleChanged: function () {
 			this.setAttribute('title', this.title);
 		}
 	});

@@ -5,6 +5,8 @@
 	* of time (in milliseconds) specified by its [duration]{@link enyo.SpriteAnimation#duration}.
 	*
 	* @class enyo.SpriteAnimation
+	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -14,6 +16,11 @@
 		* @private
 		*/
 		name: 'enyo.SpriteAnimation',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 		
 		/**
 		* @private
@@ -175,7 +182,7 @@
 		/**
 		* @private
 		*/
-		durationChanged: function() {
+		durationChanged: function () {
 			this.$.spriteImage.applyStyle('-webkit-animation-duration', (this.get('duration') / 1000) + 's');
 			this._forceAnimationReset();
 		},
@@ -183,7 +190,7 @@
 		/**
 		* @private
 		*/
-		setSize: function() {
+		setSize: function () {
 			this.applyStyle('width', this.get('width') + 'px');
 			this.applyStyle('height', this.get('height') + 'px');
 			this.applyStyle('overflow', 'hidden');
@@ -195,14 +202,14 @@
 		/**
 		* @private
 		*/
-		setOffset: function() {
+		setOffset: function () {
 			this.$.spriteImage.applyStyle('background-position', this.get('offsetTop') + 'px ' + this.get('offsetLeft') + 'px');
 		},
 
 		/**
 		* @private
 		*/
-		updateKeyframes: function() {
+		updateKeyframes: function () {
 			this.$.spriteImage.set('stylesheetContent', this._generateKeyframes());
 			this._forceAnimationReset();
 		},
@@ -210,35 +217,35 @@
 		/**
 		* @private
 		*/
-		animationName: function() {
+		animationName: function () {
 			return this.get('id') + '_keyframes';
 		},
 
 		/**
 		* @private
 		*/
-		totalWidth: function() {
+		totalWidth: function () {
 			return this.get('offsetLeft') + this.get('width') * this.get('columns');
 		},
 
 		/**
 		* @private
 		*/
-		totalHeight: function() {
+		totalHeight: function () {
 			return this.get('offsetTop') + this.get('height') * this.get('rows');
 		},
 
 		/**
 		* @private
 		*/
-		steps: function() {
+		steps: function () {
 			return (this.get('cellOrientation') == 'horizontal') ? this.get('columns') : this.get('rows');
 		},
 
 		/**
 		* @private
 		*/
-		_forceAnimationReset: function() {
+		_forceAnimationReset: function () {
 			this.$.spriteImage.applyStyle('-webkit-animation-name', null);
 			this.startJob('forceAnimationReset', function() {
 				this.$.spriteImage.applyStyle('-webkit-animation-name', this.get('animationName'));
@@ -248,7 +255,7 @@
 		/**
 		* @private
 		*/
-		_applyAnimation: function() {
+		_applyAnimation: function () {
 			this.$.spriteImage.applyStyle('-webkit-animation-timing-function', 'steps(' + this.get('steps') + ', start)');
 			this.$.spriteImage.applyStyle('-webkit-animation-iteration-count', this.get('iterationCount'));
 			this.durationChanged();
@@ -257,7 +264,7 @@
 		/**
 		* @private
 		*/
-		_generateKeyframes: function() {
+		_generateKeyframes: function () {
 			var o,
 				width = this.get('width'),
 				height = this.get('height'),
@@ -293,7 +300,7 @@
 		/**
 		* @private
 		*/
-		_generateKeyframe: function(percent, x, y) {
+		_generateKeyframe: function (percent, x, y) {
 			return (percent * 100) +'%	{ -webkit-transform: translateZ(0) translateX('+ x +'px)   translateY('+ y +'px); }\n';
 		}
 	});

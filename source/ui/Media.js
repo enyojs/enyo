@@ -324,8 +324,9 @@
 	* It is not intended to be used directly, but serves as the base [kind]{@glossary kind}
 	* for {@link enyo.Audio} and {@link enyo.Video}.
 	*
-	* @ui
 	* @class enyo.Media
+	* @extends enyo.Control
+	* @ui
 	* @protected
 	*/
 	enyo.kind(
@@ -335,6 +336,11 @@
 		* @private
 		*/
 		name: 'enyo.Media',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 		
 		/**
 		* @private
@@ -584,7 +590,7 @@
 		/**
 		* @private
 		*/
-		srcChanged: function() {
+		srcChanged: function () {
 			var path = enyo.path.rewrite(this.src);
 			this.setAttribute('src', path);
 			if (this.hasNode()) {
@@ -595,35 +601,35 @@
 		/**
 		* @private
 		*/
-		autoplayChanged: function() {
+		autoplayChanged: function () {
 			this.setAttribute('autoplay', this.autoplay ? 'autoplay' : null);
 		},
 
 		/**
 		* @private
 		*/
-		loopChanged: function() {
+		loopChanged: function () {
 			this.setAttribute('loop', this.loop ? 'loop' : null);
 		},
 
 		/**
 		* @private
 		*/
-		mutedChanged: function() {
+		mutedChanged: function () {
 			this.setAttribute('muted', this.muted ? 'muted' : null);
 		},
 
 		/**
 		* @private
 		*/
-		preloadChanged: function() {
+		preloadChanged: function () {
 			this.setAttribute('preload', this.preload);
 		},
 
 		/**
 		* @private
 		*/
-		defaultPlaybackRateChanged: function() {
+		defaultPlaybackRateChanged: function () {
 			if (this.hasNode()) {
 				this.node.defaultPlaybackRate = this.defaultPlaybackRate;
 			}
@@ -632,32 +638,32 @@
 		/**
 		* @private
 		*/
-		selectPlaybackRateArray: function(cmd) {
+		selectPlaybackRateArray: function (cmd) {
 			this._playbackRateArray = this.playbackRateHash[cmd];
 		},
 
 		/**
 		* @private
 		*/
-		selectPlaybackRate: function(index) {
-			return this._playbackRateArray[index];
+		selectPlaybackRate: function (idx) {
+			return this._playbackRateArray[idx];
 		},
 
 		/**
 		* @private
 		*/
-		clampPlaybackRate: function(index) {
+		clampPlaybackRate: function (idx) {
 			if (!this._playbackRateArray) {
 				return;
 			}
 
-			return index % this._playbackRateArray.length;
+			return idx % this._playbackRateArray.length;
 		},
 
 		/**
 		* @private
 		*/
-		playbackRateChanged: function() {
+		playbackRateChanged: function () {
 			if (this.hasNode()) {
 				this.node.playbackRate = this.playbackRate;
 			}
@@ -666,14 +672,14 @@
 		/**
 		* @private
 		*/
-		showControlsChanged: function() {
+		showControlsChanged: function () {
 			this.setAttribute('controls', this.showControls ? 'controls' : null);
 		},
 
 		/**
 		* @private
 		*/
-		volumeChanged: function() {
+		volumeChanged: function () {
 			if (this.hasNode()) {
 				this.node.volume = this.volume;
 			}
@@ -686,7 +692,7 @@
 		* @fires enyo.Media#onEnded
 		* @private
 		*/
-		_abort: function() {
+		_abort: function () {
 			this.doEnded();
 		},
 
@@ -697,7 +703,7 @@
 		* @fires enyo.Media#onCanPlay
 		* @private
 		*/
-		_canPlay: function() {
+		_canPlay: function () {
 			this.doCanPlay();
 		},
 		/**
@@ -707,7 +713,7 @@
 		* @fires enyo.Media#onCanPlayThrough
 		* @private
 		*/
-		_canPlayThrough: function() {
+		_canPlayThrough: function () {
 			this.doCanPlayThrough();
 		},
 		
@@ -717,7 +723,7 @@
 		* @fires enyo.Media#onDurationChange
 		* @private
 		*/
-		_durationChange: function() {
+		_durationChange: function () {
 			this.doDurationChange();
 		},
 
@@ -728,7 +734,7 @@
 		* @fires enyo.Media#onEmptied
 		* @private
 		*/
-		_emptied: function() {
+		_emptied: function () {
 			this.doEmptied();
 		},
 
@@ -738,7 +744,7 @@
 		* @fires enyo.Media#onEnded
 		* @private
 		*/
-		_ended: function() {
+		_ended: function () {
 			this.doEnded();
 		},
 
@@ -747,7 +753,7 @@
 		* 
 		* @private
 		*/
-		_error: function() {
+		_error: function () {
 			this.doError();
 		},
 		/**
@@ -757,7 +763,7 @@
 		* @fires enyo.Media#onLoadedData
 		* @private
 		*/
-		_loadedData: function() {
+		_loadedData: function () {
 			this.doLoadedData();
 		},
 		/**
@@ -765,7 +771,7 @@
 		* 
 		* @private
 		*/
-		_loadedMetaData: function() {
+		_loadedMetaData: function () {
 			this.doLoadedMetaData();
 		},
 
@@ -775,7 +781,7 @@
 		* @fires enyo.Media#onLoadStart
 		* @private
 		*/
-		_loadStart: function() {
+		_loadStart: function () {
 			this.doLoadStart();
 		},
 
@@ -785,7 +791,7 @@
 		* @fires enyo.Media#onPause
 		* @private
 		*/
-		_pause: function() {
+		_pause: function () {
 			this.doPause();
 		},
 
@@ -795,7 +801,7 @@
 		* @fires enyo.Media#onPlay
 		* @private
 		*/
-		_play: function() {
+		_play: function () {
 			this.doPlay();
 		},
 
@@ -806,7 +812,7 @@
 		* @fires enyo.Media#onPlaying
 		* @private
 		*/
-		_playing: function() {
+		_playing: function () {
 			this.doPlaying();
 		},
 
@@ -816,7 +822,7 @@
 		* @fires enyo.Media#onProgress
 		* @private
 		*/
-		_progress: function() {
+		_progress: function () {
 			this.doProgress();
 		},
 
@@ -824,7 +830,7 @@
 		* @fires enyo.Media#onStart
 		* @private
 		*/
-		createEventData: function() {
+		createEventData: function () {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -849,7 +855,7 @@
 		* @returns {Number} The numerical representation of the playback rate.
 		* @private
 		*/
-		calcNumberValueOfPlaybackRate: function(rate) {
+		calcNumberValueOfPlaybackRate: function (rate) {
 			var pbArray = String(rate).split('/');
 			return (pbArray.length > 1) ? parseInt(pbArray[0], 10) / parseInt(pbArray[1], 10) : parseInt(rate, 10);
 		},
@@ -864,7 +870,7 @@
 		* @fires enyo.Media#onPlay
 		* @private
 		*/
-		_rateChange: function(sender, e) {
+		_rateChange: function (sender, e) {
 			var node = this.hasNode(),
 				pbNumber
 			;
@@ -896,7 +902,7 @@
 		* @fires enyo.Media#onStalled
 		* @private
 		*/
-		_stalled: function() {
+		_stalled: function () {
 			this.doStalled();
 		},
 		/**
@@ -905,7 +911,7 @@
 		* @fires enyo.Media#onSeeked
 		* @private
 		*/
-		_seeked: function() {
+		_seeked: function () {
 			this.doSeeked();
 		},
 
@@ -915,7 +921,7 @@
 		* @fires enyo.Media#onSeeking
 		* @private
 		*/
-		_seeking: function() {
+		_seeking: function () {
 			this.doSeeking();
 		},
 
@@ -924,7 +930,7 @@
 		* 
 		* @private
 		*/
-		_timeUpdate: function(sender, e) {
+		_timeUpdate: function (sender, e) {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -940,7 +946,7 @@
 		* @fires enyo.Media#onVolumeChange
 		* @private
 		*/
-		_volumeChange: function() {
+		_volumeChange: function () {
 			this.doVolumeChange();
 		},
 
@@ -951,7 +957,7 @@
 		* @fires enyo.Media#onWaiting
 		* @private
 		*/
-		_waiting: function() {
+		_waiting: function () {
 			this.doWaiting();
 		},
 
@@ -961,7 +967,7 @@
 		*
 		* @public
 		*/
-		play: function() {
+		play: function () {
 			if (this.hasNode()) {
 				this.setPlaybackRate(1);
 				this._prevCommand = 'play';
@@ -974,7 +980,7 @@
 		*
 		* @public
 		*/
-		pause: function() {
+		pause: function () {
 			if (this.hasNode()) {
 				this.setPlaybackRate(1);
 				this._prevCommand = 'pause';
@@ -988,7 +994,7 @@
 		* @param {Number} time - The time, in seconds, to seek to.
 		* @public
 		*/
-		seekTo: function(time) {
+		seekTo: function (time) {
 			if (this.hasNode()) {
 				this.node.currentTime = time;
 			}
@@ -1002,7 +1008,7 @@
 		*	[source]{@link enyo.Media#src} that have been buffered.
 		* @public
 		*/
-		getBuffered: function() {
+		getBuffered: function () {
 			if (this.hasNode()) {
 				return this.node.buffered;
 			}
@@ -1015,7 +1021,7 @@
 		* @returns {Number} The current playback position in seconds.
 		* @public
 		*/
-		getCurrentTime: function() {
+		getCurrentTime: function () {
 			if (this.hasNode()) {
 				return this.node.currentTime;
 			}
@@ -1028,7 +1034,7 @@
 		* @returns {Number} The duration in seconds.
 		* @public
 		*/
-		getDuration: function() {
+		getDuration: function () {
 			if (this.hasNode()) {
 				return this.node.duration;
 			}
@@ -1042,7 +1048,7 @@
 		*	otherwise, `false`.
 		* @public
 		*/
-		getPaused: function() {
+		getPaused: function () {
 			if (this.hasNode()) {
 				return this.node.paused;
 			}
@@ -1056,7 +1062,7 @@
 		*	[source]{@link enyo.Media#src} that have been played.
 		* @public
 		*/
-		getPlayed: function() {
+		getPlayed: function () {
 			if (this.hasNode()) {
 				return this.node.played;
 			}
@@ -1068,7 +1074,7 @@
 		* @returns {ReadyState} The [readiness]{@glossary readyState} state.
 		* @public
 		*/
-		getReadyState: function() {
+		getReadyState: function () {
 			if (this.hasNode()) {
 				return this.node.readyState;
 			}
@@ -1082,7 +1088,7 @@
 		*	[source]{@link enyo.Media#src} that are seekable.
 		* @public
 		*/
-		getSeekable: function() {
+		getSeekable: function () {
 			if (this.hasNode()) {
 				return this.node.seekable;
 			}
@@ -1094,7 +1100,7 @@
 		* @param {Number} time - The player position, in seconds.
 		* @public
 		*/
-		setCurrentTime: function(time) {
+		setCurrentTime: function (time) {
 			if ((typeof time === 'number') && this.hasNode()) {
 				this.node.currentTime = time;
 			}
@@ -1105,7 +1111,7 @@
 		*
 		* @public
 		*/
-		beginRewind: function() {
+		beginRewind: function () {
 			this.node.pause();
 			this.startRewindJob();
 		},
@@ -1115,7 +1121,7 @@
 		* 
 		* @private
 		*/
-		_rewind: function() {
+		_rewind: function () {
 			var now = enyo.perfNow(),
 				distance = now - this.rewindBeginTime,
 				pbRate = this.calcNumberValueOfPlaybackRate(this.playbackRate),
@@ -1130,7 +1136,7 @@
 		*
 		* @public
 		*/
-		startRewindJob: function() {
+		startRewindJob: function () {
 			this.rewindBeginTime = enyo.perfNow();
 			enyo.job(this.id + 'rewind', this.bindSafely('_rewind'), 100);
 		},
@@ -1140,7 +1146,7 @@
 		*
 		* @public
 		*/
-		stopRewindJob: function() {
+		stopRewindJob: function () {
 			enyo.job.stop(this.id + 'rewind');
 		},
 
@@ -1150,7 +1156,7 @@
 		* @returns {Boolean} `true` if currently seeking; otherwise, `false`.
 		* @public
 		*/
-		getSeeking: function() {
+		getSeeking: function () {
 			if (this.hasNode()) {
 				return this.node.seeking;
 			}
@@ -1162,7 +1168,7 @@
 		* @returns {Boolean} `true` if paused; otherwise, `false`.
 		* @public
 		*/
-		isPaused: function() {
+		isPaused: function () {
 			return this.hasNode() ? this.hasNode().paused : true;
 		},
 
@@ -1172,7 +1178,7 @@
 		*
 		* @public
 		*/
-		fastForward: function() {
+		fastForward: function () {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -1230,7 +1236,7 @@
 		*
 		* @public
 		*/
-		rewind: function() {
+		rewind: function () {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -1271,7 +1277,7 @@
 		},
 
 
-		setPlaybackRate: function(rate) {
+		setPlaybackRate: function (rate) {
 			var node = this.hasNode(),
 				pbNumber
 			;
@@ -1305,7 +1311,7 @@
 		* @fires enyo.Media#onJumpBackward
 		* @public
 		*/
-		jumpBackward: function() {
+		jumpBackward: function () {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -1326,7 +1332,7 @@
 		* @fires enyo.Media#onJumpForward
 		* @public
 		*/
-		jumpForward: function() {
+		jumpForward: function () {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -1345,7 +1351,7 @@
 		*
 		* @public
 		*/
-		jumpToStart: function() {
+		jumpToStart: function () {
 			var node = this.hasNode();
 
 			if (!node) {
@@ -1363,7 +1369,7 @@
 		*
 		* @public
 		*/
-		jumpToEnd: function() {
+		jumpToEnd: function () {
 			var node = this.hasNode();
 
 			if (!node) {

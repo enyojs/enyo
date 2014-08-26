@@ -161,18 +161,18 @@
 			* 
 			* @private
 			*/
-			findTargetTraverse: function (inNode, inX, inY) {
-				var n = inNode || document.body;
+			findTargetTraverse: function (node, x, y) {
+				var n = node || document.body;
 				var o = this.calcNodeOffset(n);
 				if (o && n != this.excludedTarget) {
-					var x = inX - o.left;
-					var y = inY - o.top;
+					var adjX = x - o.left;
+					var adjY = y - o.top;
 					//enyo.log("test: " + n.id + " (left: " + o.left + ", top: " + o.top + ", width: " + o.width + ", height: " + o.height + ")");
-					if (x>0 && y>0 && x<=o.width && y<=o.height) {
-						//enyo.log("IN: " + n.id + " -> [" + x + "," + y + " in " + o.width + "x" + o.height + "] (children: " + n.childNodes.length + ")");
+					if (adjX>0 && adjY>0 && adjX<=o.width && adjY<=o.height) {
+						//enyo.log("IN: " + n.id + " -> [" + adjX + "," + adjY + " in " + o.width + "x" + o.height + "] (children: " + n.childNodes.length + ")");
 						var target;
 						for (var n$=n.childNodes, i=n$.length-1, c; (c=n$[i]); i--) {
-							target = this.findTargetTraverse(c, inX, inY);
+							target = this.findTargetTraverse(c, x, y);
 							if (target) {
 								return target;
 							}

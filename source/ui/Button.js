@@ -6,9 +6,9 @@
 	* For more information, see the documentation on
 	* [Buttons](building-apps/controls/buttons.html) in the Enyo Developer Guide.
 	*
-	* @ui
 	* @class enyo.Button
 	* @extends enyo.ToolDecorator
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -75,14 +75,14 @@
 		/**
 		* @private
 		*/
-		disabledChanged: function() {
+		disabledChanged: function () {
 			this.setAttribute('disabled', this.disabled);
 		},
 
 		/**
 		* @private
 		*/
-		tap: function() {
+		tap: function () {
 			if (this.disabled) {
 				// work around for platforms like Chrome on Android or Opera that send
 				// mouseup to disabled form controls

@@ -10,8 +10,9 @@
 	* {@link enyo.Table} implements an HTML [&lt;table&gt;]{@glossary table} element.
 	* This is a work in progress.
 	*
-	* @ui
 	* @class enyo.Table
+	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -21,6 +22,11 @@
 		* @private
 		*/
 		name: 'enyo.Table',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 
 		/**
 		* @private
@@ -45,6 +51,8 @@
 	* {@link enyo.TableRow} implements an HTML [&lt;tr&gt;]{@glossary tr} element.
 	*
 	* @class enyo.TableRow
+	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -54,6 +62,11 @@
 		* @private
 		*/
 		name: 'enyo.TableRow',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 
 		/**
 		* @private
@@ -70,6 +83,8 @@
 	* {@link enyo.TableCell} implements an HTML [&lt;td&gt;]{@glossary td} element.
 	*
 	* @class enyo.TableCell
+	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -79,6 +94,11 @@
 		* @private
 		*/
 		name: 'enyo.TableCell',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 
 		/**
 		* @private

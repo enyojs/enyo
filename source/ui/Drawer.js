@@ -36,8 +36,9 @@
 	* For more information, see the documentation on
 	* [Drawers](building-apps/layout/drawers.html) in the Enyo Developer Guide.
 	*
-	* @ui
 	* @class enyo.Drawer
+	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -47,6 +48,11 @@
 		* @private
 		*/
 		name: 'enyo.Drawer',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 
 		/**
 		* @private
@@ -141,7 +147,7 @@
 		/**
 		* @private
 		*/
-		animatedChanged: function() {
+		animatedChanged: function () {
 			if (!this.animated && this.hasNode() && this.$.animator.isAnimating()) {
 				this.$.animator.stop();
 				this.animatorEnd();
@@ -151,7 +157,7 @@
 		/**
 		* @private
 		*/
-		openChanged: function() {
+		openChanged: function () {
 			this.$.client.show();
 			if (this.hasNode()) {
 				if (this.$.animator.isAnimating()) {
@@ -185,18 +191,18 @@
 		/**
 		* @private
 		*/
-		animatorStep: function(inSender) {
+		animatorStep: function (sender) {
 			// the actual drawer DOM node adjusts its height
 			if (this.hasNode()) {
-				var d = inSender.dimension;
-				this.applyStyle(d, inSender.value + 'px');
+				var d = sender.dimension;
+				this.applyStyle(d, sender.value + 'px');
 			}
 			// while the client inside the drawer adjusts its position to move out of the visible area
 			var cn = this.$.client.hasNode();
 			if (cn) {
-				var p = inSender.position;
-				var o = (this.open ? inSender.endValue : inSender.startValue);
-				this.$.client.applyStyle(p, (inSender.value - o) + 'px');
+				var p = sender.position;
+				var o = (this.open ? sender.endValue : sender.startValue);
+				this.$.client.applyStyle(p, (sender.value - o) + 'px');
 			}
 			if (this.container && this.resizeContainer) {
 				this.container.resize();
@@ -208,7 +214,7 @@
 		/**
 		* @private
 		*/
-		animatorEnd: function() {
+		animatorEnd: function () {
 			if (!this.open) {
 				this.$.client.hide();
 			}

@@ -30,9 +30,9 @@
 	* For more information, see the documentation on
 	* [Text Fields]{@link building-apps/controls/text-fields.html} in the Enyo Developer Guide.
 	*
-	* @ui
 	* @class enyo.RichText
 	* @extends enyo.Input
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -158,7 +158,7 @@
 		/**
 		* @private
 		*/
-		focusHandler: function() {
+		focusHandler: function () {
 			this._value = this.get('value');
 		},
 		/**
@@ -168,7 +168,7 @@
 		* @fires enyo.Input#onchange
 		* @private
 		*/
-		blurHandler: function() {
+		blurHandler: function () {
 			if (this._value !== this.get('value')) {
 				this.bubble('onchange');
 			}
@@ -176,7 +176,7 @@
 		/**
 		* @private
 		*/
-		valueChanged: function() {
+		valueChanged: function () {
 			var val = this.get('value');
 			if (this.hasFocus() && val !== this.node.innerHTML) {
 				this.selectAll();
@@ -188,7 +188,7 @@
 		/**
 		* @private
 		*/
-		disabledChanged: function() {
+		disabledChanged: function () {
 			if(this.tag === 'div') {
 				this.setAttribute('contenteditable', this.disabled ? null : 'true');
 			} else {
@@ -199,14 +199,14 @@
 		/**
 		* @private
 		*/
-		updateValue: function() {
+		updateValue: function () {
 			var val = this.node.innerHTML;
 			this.set('value', val);
 		},
 		/**
 		* @private
 		*/
-		updateValueAsync: function() {
+		updateValueAsync: function () {
 			enyo.asyncMethod(this.bindSafely('updateValue'));
 		},
 
@@ -217,7 +217,7 @@
 		* otherwise, `false`.
 		* @public
 		*/
-		hasFocus: function() {
+		hasFocus: function () {
 			if (this.hasNode()) {
 				return document.activeElement === this.node;
 			}
@@ -229,7 +229,7 @@
 		* @returns {Selection} The [selection]{@glossary Selection} [object]{@glossary Object}.
 		* @public
 		*/
-		getSelection: function() {
+		getSelection: function () {
 			if (this.hasFocus()) {
 				return window.getSelection();
 			}
@@ -244,7 +244,7 @@
 		*	[collapsed to the end]{@glossary Selection.collapseToEnd} of the range.
 		* @public
 		*/
-		removeSelection: function(start) {
+		removeSelection: function (start) {
 			var s = this.getSelection();
 			if (s) {
 				s[start ? 'collapseToStart' : 'collapseToEnd']();
@@ -260,7 +260,7 @@
 		* @param {enyo.RichText~ModifyAmount} amount - The granularity of the change.
 		* @public
 		*/
-		modifySelection: function(type, dir, amount) {
+		modifySelection: function (type, dir, amount) {
 			var s = this.getSelection();
 			if (s) {
 				s.modify(type || 'move', dir, amount);
@@ -274,7 +274,7 @@
 		* @param {enyo.RichText~ModifyAmount} amount - The granularity of the change.
 		* @public
 		*/
-		moveCursor: function(dir, amount) {
+		moveCursor: function (dir, amount) {
 			this.modifySelection('move', dir, amount);
 		},
 
@@ -283,7 +283,7 @@
 		*
 		* @public
 		*/
-		moveCursorToEnd: function() {
+		moveCursorToEnd: function () {
 			this.moveCursor('forward', 'documentboundary');
 		},
 
@@ -292,7 +292,7 @@
 		*
 		* @public
 		*/
-		moveCursorToStart: function() {
+		moveCursorToStart: function () {
 			this.moveCursor('backward', 'documentboundary');
 		},
 
@@ -301,7 +301,7 @@
 		*
 		* @public
 		*/
-		selectAll: function() {
+		selectAll: function () {
 			if (this.hasFocus()) {
 				document.execCommand('selectAll');
 			}
@@ -314,7 +314,7 @@
 		* @param {String} val - The HTML to insert at the current cursor position.
 		* @public
 		*/
-		insertAtCursor: function(val) {
+		insertAtCursor: function (val) {
 			if (this.hasFocus()) {
 				var v = this.allowHtml ? val : enyo.Control.escapeHtml(val).replace(/\n/g, '<br/>');
 				document.execCommand('insertHTML', false, v);

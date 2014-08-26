@@ -28,8 +28,9 @@
 	* [events]{@glossary event}. Image dragging is suppressed by default, so as not to
 	* interfere with touch interfaces.
 	*
-	* @ui
 	* @class enyo.Image
+	* @extends enyo.Control
+	* @ui
 	* @public
 	*/
 	enyo.kind(
@@ -39,6 +40,11 @@
 		* @private
 		*/
 		name: 'enyo.Image',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 		
 		/**
 		* When `true`, no [onload]{@link enyo.Image#onload} or
@@ -168,14 +174,14 @@
 		/**
 		* @private
 		*/
-		altChanged: function() {
+		altChanged: function () {
 			this.setAttribute('alt', this.alt);
 		},
 
 		/**
 		* @private
 		*/
-		sizingChanged: function(was) {
+		sizingChanged: function (was) {
 			this.tag = this.sizing ? 'div' : 'img';
 			this.addRemoveClass('sized', !!this.sizing);
 			if (was) {
@@ -193,7 +199,7 @@
 		/**
 		* @private
 		*/
-		positionChanged: function() {
+		positionChanged: function () {
 			if (this.sizing) {
 				this.applyStyle('background-position', this.containPosition);
 			}

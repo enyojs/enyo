@@ -28,7 +28,7 @@
 		/**
 		* @private
 		*/
-		var makeEvent = function(e) {
+		var makeEvent = function (e) {
 			var event = enyo.clone(e);
 			event.srcEvent = e;
 			// normalize "mouse button" info
@@ -52,29 +52,29 @@
 		* @private
 		*/
 		var handlers = {
-			pointerdown: function(e) {
+			pointerdown: function (e) {
 				var event = makeEvent(e);
 				gesture.down(event);
 			},
-			pointerup: function(e) {
+			pointerup: function (e) {
 				var event = makeEvent(e);
 				gesture.up(event);
 			},
-			pointermove: function(e) {
+			pointermove: function (e) {
 				var event = makeEvent(e);
 				gesture.move(event);
 			},
-			pointercancel: function(e) {
+			pointercancel: function (e) {
 				// FIXME: not really the same as touchend, as touch action
 				// was cancelled, but Enyo doesn't have that concept
 				var event = makeEvent(e);
 				gesture.up(event);
 			},
-			pointerover: function(e) {
+			pointerover: function (e) {
 				var event = makeEvent(e);
 				gesture.over(event);
 			},
-			pointerout: function(e) {
+			pointerout: function (e) {
 				var event = makeEvent(e);
 				gesture.out(event);
 			}
@@ -99,7 +99,7 @@
 		* 
 		* @private
 		*/
-		enyo.forEach(pointerEvents, function(e) {
+		enyo.forEach(pointerEvents, function (e) {
 			enyo.dispatcher.listen(document, e);
 		});
 
@@ -108,7 +108,7 @@
 		* 
 		* @private
 		*/
-		enyo.dispatcher.features.push(function(e) {
+		enyo.dispatcher.features.push(function (e) {
 			if (handlers[e.type] && e.isPrimary) {
 				handlers[e.type](e);
 			}
