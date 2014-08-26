@@ -167,7 +167,7 @@
 	* [delegate]{@glossary delegate}, as would happen in the absence of intermediation.
 	* 
 	* @class enyo.OwnerProxy
-	* @extends enyo.Component
+	* @extends enyo.Control
 	* @private
 	*/
 	enyo.kind(
@@ -181,7 +181,7 @@
 		/**
 		* @private
 		*/
-		kind: 'enyo.Component',
+		kind: 'enyo.Control',
 
 		/**
 		* @private
