@@ -695,7 +695,7 @@
 				enyo.Popup.highestZ = this._zIndex;
 			}
 			// leave room for scrim
-			this.applyStyle('z-index', this._zIndex);
+			this.applyStyle('zIndex', this._zIndex);
 		},
 
 		/**
