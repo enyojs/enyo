@@ -141,7 +141,7 @@
 		* @private
 		*/
 		activeChanged: function (was) {
-			if (was) {
+			if (was && !was.destroyed) {
 				was.setActive(false);
 				was.removeClass('active');
 			}
