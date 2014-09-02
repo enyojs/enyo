@@ -476,7 +476,9 @@
 		* @private
 		*/
 		childForIndex: function (i) {
-			return this.delegate.childForIndex(this, i);
+			if (this.generated) {
+				return this.delegate.childForIndex(this, i);
+			}
 		},
 		
 		/**
