@@ -417,8 +417,8 @@
 			// if the list has not already reset, reset
 			if (!list.hasReset) return this.reset(list);
 			
-			var pg1 = this.$.page1,
-				pg2 = this.$.page2,
+			var pg1 = list.$.page1,
+				pg2 = list.$.page2,
 				lastIdx = Math.max(pg1.end, pg2.end);
 				
 			if (props.models.low <= lastIdx) {
