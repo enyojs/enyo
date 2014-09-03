@@ -21,17 +21,17 @@
 		* @private
 		*/
 		kind: 'enyo.Control',
-		
+
 		/**
 		* @private
 		*/
-		published: 
+		published:
 			/** @lends enyo.SpriteAnimation.prototype */ {
 
 			/**
-			* Default value used if the animation has no 
+			* Default value used if the animation has no
 			* [duration]{@link enyo.SpriteAnimation#duration} specified.
-			* 
+			*
 			* @type {String}
 			* @default ''false''
 			* @public
@@ -40,7 +40,7 @@
 
 			/**
 			* The number of milliseconds the animation will run.
-			* 
+			*
 			* @type {Number}
 			* @default 5000
 			* @public
@@ -49,7 +49,7 @@
 
 			/**
 			* The width of a single sprite-cell image.
-			* 
+			*
 			* @type {Number}
 			* @default 100
 			* @public
@@ -58,7 +58,7 @@
 
 			/**
 			* The height of a single sprite-cell image.
-			* 
+			*
 			* @type {Number}
 			* @default 100
 			* @public
@@ -67,7 +67,7 @@
 
 			/**
 			* The number of rows of sprite-cells.
-			* 
+			*
 			* @type {Number}
 			* @default 1
 			* @public
@@ -76,7 +76,7 @@
 
 			/**
 			* The number of columns of sprite-cells.
-			* 
+			*
 			* @type {Number}
 			* @default 2
 			* @public
@@ -85,7 +85,7 @@
 
 			/**
 			* Accepts any valid CSS animation-iteration-count value.
-			* 
+			*
 			* @type {String}
 			* @default 'infinite'
 			* @public
@@ -102,7 +102,7 @@
 			*	[1][3]
 			*	[2][4]
 			* ```
-			* 
+			*
 			* @type {String}
 			* @default 'horizontal'
 			* @public
@@ -113,7 +113,7 @@
 			* Applies an offset to the coordinates of the first sprite. Normally this may be left
 			* at `0`, but if you have multiple sprites in a single image file, or there's padding
 			* around your image, specify the offset in pixels.
-			* 
+			*
 			* @type {Number}
 			* @default 0
 			* @public
@@ -121,9 +121,9 @@
 			offsetTop: 0,
 			/**
 			* Applies an offset to the coordinates of the first sprite. Normally this may be left
-			* at `0`, but if you have multiple sprites in a single image file, or there's padding 
+			* at `0`, but if you have multiple sprites in a single image file, or there's padding
 			* around your image, specify the offset in pixels.
-			* 
+			*
 			* @type {Number}
 			* @default 0
 			* @public
@@ -135,7 +135,7 @@
 		* @private
 		*/
 		components: [
-			{kind: 'enyo.Image', name: 'spriteImage', mixins: ['enyo.StylesheetSupport'], sizing: 'cover', styles: 'background-size: initial;'}
+			{kind: 'enyo.Image', name: 'spriteImage', mixins: ['enyo.StylesheetSupport'], sizing: 'cover'}
 		],
 
 		/**
@@ -172,7 +172,9 @@
 		create: enyo.inherit(function (sup) {
 			return function() {
 				sup.apply(this, arguments);
-			
+
+				this.$.spriteImage.applyStyle('background-size', 'initial');
+				this.setOffset();
 				this.setSize();
 				this.updateKeyframes();
 				this._applyAnimation();
@@ -203,7 +205,7 @@
 		* @private
 		*/
 		setOffset: function () {
-			this.$.spriteImage.applyStyle('background-position', this.get('offsetTop') + 'px ' + this.get('offsetLeft') + 'px');
+			this.$.spriteImage.applyStyle('background-position', (this.get('offsetLeft') * -1) + 'px ' + (this.get('offsetTop') * -1) + 'px');
 		},
 
 		/**
