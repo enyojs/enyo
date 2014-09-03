@@ -608,13 +608,6 @@
 			removed = removedModels.removed;
 			indices = removedModels.indices;
 
-
-<<<<<<< HEAD
-=======
-			// remember the most front model index
-			theMostFrontIdx = loc.theMostFrontIdx;
-			
->>>>>>> f7ccca72f76faa592f2a48b22eb32ac1bbee2212
 			if (removed.length) {
 				
 				// ensure that we can batch remove from the store

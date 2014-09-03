@@ -112,10 +112,6 @@
 			}
 
 		}
-<<<<<<< HEAD
-=======
-		this.theMostFrontIdx = theMostFrontIdx;
->>>>>>> f7ccca72f76faa592f2a48b22eb32ac1bbee2212
 
 		return {
 			removed: removed, 
