@@ -354,7 +354,7 @@
 				end = (cpp * 2) + (first - 1),
 				gen = true,
 				idx;
-				
+
 			// retrieve the first index for the first added model in the collection
 			idx = collection.indexOf(props.models[0]);
 
@@ -417,25 +417,21 @@
 			// if the list has not already reset, reset
 			if (!list.hasReset) return this.reset(list);
 			
-			// we need the controls per page for simple arithmetic
-			var cpp = this.controlsPerPage(list),
-				pos = this.pagesByPosition(list),
-				first = pos.firstPage.start != null ? pos.firstPage.start : 0,
-				end = (cpp * 2) + (first - 1),
-				theFirstRemovedIdx;
-
-			// we remember the most front model's index from removed models
-			// if the index is above the end of our currently rendered indices we need to refresh
-			theFirstRemovedIdx = Math.min.apply(Math, props.indices);
+			// we can find the most front model's index from removed models
+			// if the index is less than currently rendered indices we need to refresh
+			var theFirstRemovedIdx = Math.min.apply(Math, props.indices),
+				page1 = list.$.page1,
+				page2 = list.$.page2,
+				lastIdxInPages = Math.max(page1.end, page2.end);
 			
 			// if we need to refresh, do it now and ensure that we're properly setup to scroll
 			// if we were adding to a partially filled page
-			if (theFirstRemovedIdx <= end) {
+			if (theFirstRemovedIdx <= lastIdxInPages) {
 				this.refresh(list);
 				
 				// for sanity ensure that the current scroll position is showing our available content
 				// fully since elements were removed
-				this.scrollToIndex(list, pos.firstPage.start);
+				this.scrollToIndex(list, Math.min(page1.start, page2.start));
 			}
 		},
 		
