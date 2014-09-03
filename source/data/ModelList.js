@@ -92,7 +92,12 @@
 			model,
 			idx,
 			id,
-			i;
+			i,
+			
+			// these modifications are made to allow more performant logic to take place in
+			// views that may need to know this information
+			low = 0,
+			high = 0;
 		
 		if (models && !(models instanceof Array)) models = [models];
 		
@@ -106,10 +111,19 @@
 			
 			idx = models === this ? i : this.indexOf(model);
 			if (idx > -1) {
+				
+				if (idx > high) high = idx;
+				if (idx < low) low = idx;
+				
 				this.splice(idx, 1);
 				removed.push(model);
 			}
 		}
+		
+		// since this is a separate array we will add these properties to it for internal use
+		// only
+		removed.low = low;
+		removed.high = high;
 		
 		return removed;
 	};

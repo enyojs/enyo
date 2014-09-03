@@ -417,30 +417,13 @@
 			// if the list has not already reset, reset
 			if (!list.hasReset) return this.reset(list);
 			
-			var collection = list.collection,
+			var pg1 = this.$.page1,
+				pg2 = this.$.page2,
+				lastIdx = Math.max(pg1.end, pg2.end);
 				
-				// we need the controls per page for simple arithmetic
-				cpp = this.controlsPerPage(list),
-				pos = this.pagesByPosition(list),
-				first = pos.firstPage.start != null ? pos.firstPage.start : 0,
-				end = (cpp * 2) + (first - 1),
-				gen,
-				idx;
-			
-			// retrieve the index for the first added model in the collection
-			idx = collection.indexOf(props.models[0]);
-			
-			// if the index is above the end of our currently rendered indices we need to refresh
-			gen = idx <= end;
-			
-			// if we need to refresh, do it now and ensure that we're properly setup to scroll
-			// if we were adding to a partially filled page
-			if (gen) {
+			if (props.models.low <= lastIdx) {
 				this.refresh(list);
-				
-				// for sanity ensure that the current scroll position is showing our available content
-				// fully since elements were removed
-				this.scrollToIndex(list, pos.firstPage.start);
+				this.scrollToIndex(list, Math.min(pg1.start, pg2.start));
 			}
 		},
 		
