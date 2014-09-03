@@ -126,7 +126,7 @@
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {
-			return function() {
+			return function () {
 				if (this.noEvents) {
 					delete this.attributes.onload;
 					delete this.attributes.onerror;
@@ -174,14 +174,14 @@
 		/**
 		* @private
 		*/
-		altChanged: function() {
+		altChanged: function () {
 			this.setAttribute('alt', this.alt);
 		},
 
 		/**
 		* @private
 		*/
-		sizingChanged: function(was) {
+		sizingChanged: function (was) {
 			this.tag = this.sizing ? 'div' : 'img';
 			this.addRemoveClass('sized', !!this.sizing);
 			if (was) {
@@ -199,7 +199,7 @@
 		/**
 		* @private
 		*/
-		positionChanged: function() {
+		positionChanged: function () {
 			if (this.sizing) {
 				this.applyStyle('background-position', this.containPosition);
 			}
@@ -211,7 +211,7 @@
 		* @private
 		*/
 		rendered: enyo.inherit(function (sup) {
-			return function() {
+			return function () {
 				sup.apply(this, arguments);
 				enyo.makeBubble(this, 'load', 'error');
 			};
