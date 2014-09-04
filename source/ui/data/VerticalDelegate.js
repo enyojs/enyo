@@ -345,22 +345,9 @@
 			// if the list has not already reset, reset
 			if (!list.hasReset) return this.reset(list);
 			
-			var collection = list.collection,
-				
-				// we need the controls per page for simple arithmetic
-				cpp = this.controlsPerPage(list),
-				pos = this.pagesByPosition(list),
-				first = pos.firstPage.start != null ? pos.firstPage.start : 0,
-				end = (cpp * 2) + (first - 1),
-				gen = true,
-				idx;
-			
-			// retrieve the first index for the first added model in the collection
-			idx = collection.indexOf(props.models[0]);
-			
-			// the only time we don't refresh is if the first index of the contiguous set of added
-			// models is beyond our final rendered page (possible) indices
-			
+			var cpp = this.controlsPerPage(list),
+				end = Math.max(list.$.page1.start, list.$.page2.start) + cpp;
+									
 			// note that this will refresh the following scenarios
 			// 1. if the dataset was spliced in above the current indices and the last index added was
 			//    less than the first index rendered
@@ -372,14 +359,16 @@
 			// 5. if the dataset was appended to the current dataset and was inside the indices that
 			//    should be currently rendered (there was a partially filled page)
 			
+			// the only time we don't refresh is if the first index of the contiguous set of added
+			// models is beyond our final rendered page (possible) indices
+
 			// in the case where it does not need to refresh the existing controls it will update its
 			// measurements and page positions within the buffer so scrolling can continue properly
-			if (idx > end) gen = false;
-			
+
 			// if we need to refresh, do it now and ensure that we're properly setup to scroll
 			// if we were adding to a partially filled page
-			if (gen) this.refresh(list);
-			else {
+			if (props.index <= end ) this.refresh(list);						
+			else {				
 				// we still need to ensure that the metrics are updated so it knows it can scroll
 				// past the boundaries of the current pages (potentially)
 				this.adjustBuffer(list);
@@ -420,7 +409,8 @@
 			var pg1 = list.$.page1,
 				pg2 = list.$.page2,
 				lastIdx = Math.max(pg1.end, pg2.end);
-				
+			
+			// props.models is removed modelList and the lowest index among removed models	
 			if (props.models.low <= lastIdx) {
 				this.refresh(list);
 				this.scrollToIndex(list, Math.min(pg1.start, pg2.start));
