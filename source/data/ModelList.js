@@ -96,8 +96,12 @@
 			
 			// these modifications are made to allow more performant logic to take place in
 			// views that may need to know this information
-			low = 0,
-			high = 0;
+			// to decide whether pages need to be refreshed or not, 
+			// the lowest position of removed models is required.
+
+			// usually models are ordered so we assume that the first model's index
+			// is the most lowest one.
+			low = this.indexOf(models[0]);
 		
 		if (models && !(models instanceof Array)) models = [models];
 		
@@ -110,9 +114,7 @@
 			if (id != null) table[id] = null;
 			
 			idx = models === this ? i : this.indexOf(model);
-			if (idx > -1) {
-				
-				if (idx > high) high = idx;
+			if (idx > -1) {				
 				if (idx < low) low = idx;
 				
 				this.splice(idx, 1);
@@ -123,7 +125,6 @@
 		// since this is a separate array we will add these properties to it for internal use
 		// only
 		removed.low = low;
-		removed.high = high;
 		
 		return removed;
 	};
