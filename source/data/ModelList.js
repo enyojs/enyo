@@ -96,7 +96,8 @@
 			
 			// these modifications are made to allow more performant logic to take place in
 			// views that may need to know this information
-			low = Infinity;
+			// case of empty collection, we can set the first index of models as a low
+			low = (models === this) ? this.indexOf(models[0]) : Infinity;
 		
 		if (models && !(models instanceof Array)) models = [models];
 		
