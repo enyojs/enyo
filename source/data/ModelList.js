@@ -96,7 +96,8 @@
 			
 			// these modifications are made to allow more performant logic to take place in
 			// views that may need to know this information
-			low = Infinity;
+			// for case of empty collection, set 0 as a low value
+			low = (models === this) ? 0 : Infinity;
 		
 		if (models && !(models instanceof Array)) models = [models];
 		
