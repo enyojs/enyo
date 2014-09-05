@@ -92,7 +92,12 @@
 			model,
 			idx,
 			id,
-			i;
+			i,
+			
+			// these modifications are made to allow more performant logic to take place in
+			// views that may need to know this information
+			// for case of empty collection, set 0 as a low value
+			low = (models === this) ? 0 : Infinity;
 		
 		if (models && !(models instanceof Array)) models = [models];
 		
@@ -105,11 +110,16 @@
 			if (id != null) table[id] = null;
 			
 			idx = models === this ? i : this.indexOf(model);
-			if (idx > -1) {
+			if (idx > -1) {				
+				if (idx < low) low = idx;
+				
 				this.splice(idx, 1);
 				removed.push(model);
 			}
 		}
+		
+		// since this is a separate array we will add this property to it for internal use only
+		removed.low = low;
 		
 		return removed;
 	};
