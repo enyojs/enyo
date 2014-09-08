@@ -411,7 +411,7 @@
 				// 'initial' values are necessary to override positioning rules in the CSS
 				this.addStyles('left: ' + (p.left !== null ? p.left + 'px' : 'initial') + '; right: ' + (p.right !== null ? p.right + 'px' : 'initial') + '; top: ' + (p.top !== null ? p.top + 'px' : 'initial') + '; bottom: ' + (p.bottom !== null ? p.bottom + 'px' : 'initial') + ';');
 			} else if (this.centered) {
-				var o = this.getInstanceOwner().getBounds();
+				var o = this.floating ? d : this.getInstanceOwner().getBounds();
 				this.addStyles( 'top: ' + Math.max( ( ( o.height - b.height ) / 2 ), 0 ) + 'px; left: ' + Math.max( ( ( o.width - b.width ) / 2 ), 0 ) + 'px;' );
 			}
 		},
