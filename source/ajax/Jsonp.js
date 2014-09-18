@@ -1,18 +1,18 @@
 (function (enyo, scope) {
 
 	/**
-	* An [Async]{@link enyo.Async} task specifically designed to wrap [JSONP]{@glossary JSONP}
-	* requests to a remote server. Be sure to read about the use cases for
-	* [JSONP]{@glossary JSONP} requests, along with the document on
-	* [Consuming Web Services](building-apps/managing-data/consuming-web-services.html)
+	* {@link enyo.JsonpRequest} is an [Async]{@link enyo.Async} task specifically
+	* designed to wrap {@glossary JSONP} requests to a remote server. Be
+	* sure to read about the use cases for JSONP requests, along with the document on
+	* [Consuming Web Services]{@link building-apps/managing-data/consuming-web-services.html}
 	* in the Enyo Developer Guide.
 	*
-	* @class enyo.JsonRequest
+	* @class enyo.JsonpRequest
 	* @extends enyo.Async
 	* @public
 	*/
 	enyo.kind(
-		/** @lends enyo.JsonRequest.prototype */ {
+		/** @lends enyo.JsonpRequest.prototype */ {
 		
 		/**
 		* @private
@@ -32,7 +32,7 @@
 			/**
 			* The URL for the service.
 			*
-			* @memberof enyo.JsonRequest.prototype
+			* @memberof enyo.JsonpRequest.prototype
 			* @type {String}
 			* @default ''
 			* @public
@@ -42,7 +42,7 @@
 			/**
 			* The optional character set to use to interpret the return data.
 			*
-			* @memberof enyo.JsonRequest.prototype
+			* @memberof enyo.JsonpRequest.prototype
 			* @type {String}
 			* @default null
 			* @public
@@ -54,8 +54,8 @@
 			* encoded arguments and used to wrap the return value from the server.
 			* This may also be set to `null` in some cases.
 			*
-			* @see enyo.JsonRequest#overrideCallback
-			* @memberof enyo.JsonRequest.prototype
+			* @see enyo.JsonpRequest#overrideCallback
+			* @memberof enyo.JsonpRequest.prototype
 			* @type {String}
 			* @default 'callback'
 			* @public
@@ -63,11 +63,11 @@
 			callbackName: 'callback',
 			
 			/**
-			* If `true`, will append a random number as a parameter for GET requests to
-			* (attempt to) force a new fetch of the resource instead of reusing a local
-			* cache.
+			* When `true`, a random number is appended as a parameter for GET requests
+			* to (attempt to) force a new fetch of the resource instead of reusing a
+			* local cache.
 			*
-			* @memberof enyo.JsonRequest.prototype
+			* @memberof enyo.JsonpRequest.prototype
 			* @type {Boolean}
 			* @default true
 			* @public
@@ -76,13 +76,13 @@
 			
 			/**
 			* In cases where a backend is inflexible with regard to
-			* [callback]{@link enyo.JsonRequest#callback} names, this property may be used to
+			* [callback]{@link enyo.JsonpRequest#callback} names, this property may be used to
 			* specify a global [function]{@glossary Function} instead. Note that when using
 			* this, it will replace any existing function with the given
-			* name and only one [JsonRequest]{@link enyo.JsonRequest} using this property may
+			* name and only one [JsonpRequest]{@link enyo.JsonpRequest} using this property may
 			* be active at a time.
 			*
-			* @memberof enyo.JsonRequest.prototype
+			* @memberof enyo.JsonpRequest.prototype
 			* @type {String}
 			* @default null
 			* @public
