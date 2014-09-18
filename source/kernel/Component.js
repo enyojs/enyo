@@ -694,7 +694,7 @@
 					var cachePoint = this.cachePoint || bHandler || bDelegatedFunction || this.id === "master" ;
 
 					if (event.bubbling) {
-						if (event.lastHandledComponent && cachePoint) {
+						if (event.lastHandledComponent && cachePoint && !event.payload) {
 							event.lastHandledComponent.cachedBubbleTarget[nom] = this;
 							event.lastHandledComponent = null;
 						}
@@ -1143,6 +1143,8 @@
 				var e = payload;
 				if (!e) {
 					e = {};
+				} else {
+					e.payload = true;
 				}
 				var d = e.delegate;
 				// delete payload.delegate;
@@ -1153,6 +1155,9 @@
 				this.bubble(nom, e);
 				if (d) {
 					e.delegate = d;
+				}
+				if (e.payload) {
+					e.payload = null;
 				}
 			};
 			// NOTE: Mark this function as a generated event handler to allow us to
