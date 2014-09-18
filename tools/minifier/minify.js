@@ -48,6 +48,9 @@
 		w("");
 		var blob = "";
 		var addToBlob = function(sheet, code) {
+			// for the "gathering" feature, we need to determine whether this sheet lives
+			// inside a lib directory; normalizing the path makes it easier to check, below
+			sheet = path.normalize(sheet);
 			// fix url paths
 			code = code.replace(/url\([^)]*\)/g, function(inMatch) {
 				// find the url path, ignore quotes in url string
