@@ -1138,9 +1138,8 @@
 		}
 		proto[nom] = v;
 		if (!proto[fn]) {
-			proto[fn] = function(payload) {
+			proto[fn] = function(sender, e) {
 				// bubble this event
-				var e = payload;
 				if (!e) {
 					e = {};
 				}
