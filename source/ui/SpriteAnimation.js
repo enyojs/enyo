@@ -89,13 +89,14 @@
 			columns: 2,
 
 			/**
-			* Accepts any valid CSS animation-iteration-count value.
+			* Accepts any valid CSS animation-iteration-count value. Default is null, which implies
+			* infinite iterations.
 			*
-			* @type {String}
-			* @default 'infinite'
+			* @type {Number|String}
+			* @default null
 			* @public
 			*/
-			iterationCount: 'infinite',
+			iterationCount: null,
 
 			/**
 			* Indicates whether the cells are laid out horizontally or vertically. For example:
@@ -144,7 +145,20 @@
 			* @default false
 			* @public
 			*/
-			paused: false
+			paused: false,
+
+			/**
+			* When an animation should run a finite number of times (set
+			* [iterationCount]{@link enyo.SpriteAnimation#iterationCount}), and stop at the last
+			* frame when it's finished: set this to `true` (default). Setting this to `false` will
+			* reset the animation back to the starting frame when the iterations complete. This
+			* property has no effect on infinitely iterating animations.
+			*
+			* @type {Boolean}
+			* @default true
+			* @public
+			*/
+			stopAtEnd: true
 		},
 
 		/**
@@ -192,6 +206,7 @@
 				this.setOffset();
 				this.setSize();
 				this.pausedChanged();
+				this.stopAtEndChanged();
 				this.updateKeyframes();
 				this._applyAnimation();
 			};
@@ -285,6 +300,14 @@
 		},
 
 		/**
+		* @private
+		*/
+		stopAtEndChanged: function() {
+			this.$.spriteImage.applyStyle('-webkit-animation-fill-mode', this.get('stopAtEnd') ? 'forwards' : null);
+			this.$.spriteImage.applyStyle('animation-fill-mode', this.get('stopAtEnd') ? 'forwards' : null);
+		},
+
+		/**
 		* Links the pause property to the [pause]{@link enyo.SpriteAnimation#pause} method.
 		*
 		* @private
@@ -317,10 +340,14 @@
 		* @private
 		*/
 		_applyAnimation: function () {
-			this.$.spriteImage.applyStyle('-webkit-animation-timing-function', 'steps(' + this.get('steps') + ', start)');
-			this.$.spriteImage.applyStyle('animation-timing-function', 'steps(' + this.get('steps') + ', start)');
-			this.$.spriteImage.applyStyle('-webkit-animation-iteration-count', this.get('iterationCount'));
-			this.$.spriteImage.applyStyle('animation-iteration-count', this.get('iterationCount'));
+			var steps = this.get('steps'),
+				iterations = this.get('iterationCount');
+
+			iterations = (iterations && iterations !== 0) ? iterations : 'infinite';
+			this.$.spriteImage.applyStyle('-webkit-animation-timing-function', 'steps(' + steps + ', start)');
+			this.$.spriteImage.applyStyle('animation-timing-function', 'steps(' + steps + ', start)');
+			this.$.spriteImage.applyStyle('-webkit-animation-iteration-count', iterations);
+			this.$.spriteImage.applyStyle('animation-iteration-count', iterations);
 			this.durationChanged();
 		},
 
