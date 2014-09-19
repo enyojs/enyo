@@ -272,8 +272,6 @@
 			this.$.spriteImage.applyStyle('-webkit-animation-name', this.get('animationName'));
 			this.$.spriteImage.applyStyle('animation-name', this.get('animationName'));
 			this.set('paused', false);
-			// this.$.spriteImage.applyStyle('-webkit-animation-play-state', 'running');
-			// this.$.spriteImage.applyStyle('animation-play-state', 'running');
 		},
 
 		/**
