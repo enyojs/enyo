@@ -25,6 +25,11 @@
 		/**
 		* @private
 		*/
+		classes: 'enyo-sprite-animation',
+
+		/**
+		* @private
+		*/
 		published:
 			/** @lends enyo.SpriteAnimation.prototype */ {
 
@@ -119,6 +124,7 @@
 			* @public
 			*/
 			offsetTop: 0,
+
 			/**
 			* Applies an offset to the coordinates of the first sprite. Normally this may be left
 			* at `0`, but if you have multiple sprites in a single image file, or there's padding
@@ -128,14 +134,24 @@
 			* @default 0
 			* @public
 			*/
-			offsetLeft: 0
+			offsetLeft: 0,
+
+			/**
+			* Boolean property to get or set the `paused`-state of this animation. This is bindable.
+			* There's also a [pause()]{@linkcode enyo.SpriteAnimation#pause} method for convenience.
+			*
+			* @type {Boolean}
+			* @default false
+			* @public
+			*/
+			paused: false
 		},
 
 		/**
 		* @private
 		*/
 		components: [
-			{kind: 'enyo.Image', name: 'spriteImage', mixins: ['enyo.StylesheetSupport'], sizing: 'cover'}
+			{kind: 'enyo.Image', name: 'spriteImage', classes: 'enyo-sprite-animation-image', mixins: ['enyo.StylesheetSupport'], sizing: 'cover'}
 		],
 
 		/**
@@ -173,9 +189,9 @@
 			return function() {
 				sup.apply(this, arguments);
 
-				this.$.spriteImage.applyStyle('background-size', 'initial');
 				this.setOffset();
 				this.setSize();
+				this.pausedChanged();
 				this.updateKeyframes();
 				this._applyAnimation();
 			};
@@ -186,6 +202,7 @@
 		*/
 		durationChanged: function () {
 			this.$.spriteImage.applyStyle('-webkit-animation-duration', (this.get('duration') / 1000) + 's');
+			this.$.spriteImage.applyStyle('animation-duration', (this.get('duration') / 1000) + 's');
 			this._forceAnimationReset();
 		},
 
@@ -195,7 +212,6 @@
 		setSize: function () {
 			this.applyStyle('width', this.get('width') + 'px');
 			this.applyStyle('height', this.get('height') + 'px');
-			this.applyStyle('overflow', 'hidden');
 
 			this.$.spriteImage.applyStyle('width', this.get('totalWidth') + 'px');
 			this.$.spriteImage.applyStyle('height', this.get('totalHeight') + 'px');
@@ -238,6 +254,9 @@
 		},
 
 		/**
+		* Retrieves the amount of steps each row or column has.
+		*
+		* @returns {Number} The amount of rows or columns the animation will step through.
 		* @private
 		*/
 		steps: function () {
@@ -245,12 +264,52 @@
 		},
 
 		/**
+		* Starts the animation.
+		*
+		* @public
+		*/
+		start: function () {
+			this.$.spriteImage.applyStyle('-webkit-animation-name', this.get('animationName'));
+			this.$.spriteImage.applyStyle('animation-name', this.get('animationName'));
+			this.set('paused', false);
+		},
+
+		/**
+		* Stops (and resets) the animation.
+		*
+		* @public
+		*/
+		stop: function () {
+			this.$.spriteImage.applyStyle('-webkit-animation-name', null);
+			this.$.spriteImage.applyStyle('animation-name', null);
+		},
+
+		/**
+		* Links the pause property to the [pause]{@link enyo.SpriteAnimation#pause} method.
+		*
+		* @private
+		*/
+		pausedChanged: function() {
+			this.addRemoveClass('paused', this.get('paused'));
+		},
+
+		/**
+		* Pauses the animation. Starting the animation after running this will resume it from where
+		* it left off (or paused at).
+		*
+		* @public
+		*/
+		pause: function () {
+			this.set('paused', true);
+		},
+
+		/**
 		* @private
 		*/
 		_forceAnimationReset: function () {
-			this.$.spriteImage.applyStyle('-webkit-animation-name', null);
+			this.stop();
 			this.startJob('forceAnimationReset', function() {
-				this.$.spriteImage.applyStyle('-webkit-animation-name', this.get('animationName'));
+				this.start();
 			}, 100);	// This long delay is needed to force webkit to un-set and re-set the animation.
 		},
 
@@ -259,7 +318,9 @@
 		*/
 		_applyAnimation: function () {
 			this.$.spriteImage.applyStyle('-webkit-animation-timing-function', 'steps(' + this.get('steps') + ', start)');
+			this.$.spriteImage.applyStyle('animation-timing-function', 'steps(' + this.get('steps') + ', start)');
 			this.$.spriteImage.applyStyle('-webkit-animation-iteration-count', this.get('iterationCount'));
+			this.$.spriteImage.applyStyle('animation-iteration-count', this.get('iterationCount'));
 			this.durationChanged();
 		},
 
@@ -303,7 +364,7 @@
 		* @private
 		*/
 		_generateKeyframe: function (percent, x, y) {
-			return (percent * 100) +'%	{ -webkit-transform: translateZ(0) translateX('+ x +'px)   translateY('+ y +'px); }\n';
+			return (parseInt(percent*10000, 10) / 100) +'%	{ -webkit-transform: translate3d('+ x +'px, '+ y +'px, 0);	transform: translate3d('+ x +'px, '+ y +'px, 0); }\n';
 		}
 	});
 
