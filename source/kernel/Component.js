@@ -1138,9 +1138,14 @@
 		}
 		proto[nom] = v;
 		if (!proto[fn]) {
-			proto[fn] = function(payload) {
+			proto[fn] = function(payload, other) {
 				// bubble this event
-				var e = payload;
+				
+				// if the second parameter exists then we use that - this is for a single case
+				// where a named event delegates happent to point to an auto generated event
+				// bubbler like this one - in that case the first parameter is actually the
+				// sender
+				var e = other || payload;
 				if (!e) {
 					e = {};
 				}
@@ -1155,9 +1160,6 @@
 					e.delegate = d;
 				}
 			};
-			// NOTE: Mark this function as a generated event handler to allow us to
-			// do event chaining. Is this too complicated?
-			//proto[fn]._dispatcher = true;
 		}
 	};
 
