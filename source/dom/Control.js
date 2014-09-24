@@ -932,10 +932,31 @@
 		},
 
 		/**
+		* TODO: Document this.
+		*
+		* @public
+		*/
+		retainNode: function(node) {
+			var control = this,
+				retainedNode = this._retainedNode = node || this.hasNode();
+			return function() {
+				if (control && control._retainedNode == retainedNode) {
+					control._retainedNode = null;
+				} else {
+					Control._releaseRetainedNode(retainedNode);
+				}
+			};
+		},
+
+		/**
 		* @private
 		*/
 		teardownRender: function () {
 			var delegate = this.renderDelegate || Control.renderDelegate;
+
+			if (this._retainedNode) {
+				Control._storeRetainedNode(this);
+			}
 
 			delegate.teardownRender(this);
 		},
@@ -1438,6 +1459,42 @@
 			// remove first semi-colon and space
 			.substr(2).trim()
 		) : "";
+	};
+
+	/**
+	* @private
+	*/
+	Control._storeRetainedNode = function(control) {
+		var p = Control._getNodePurgatory(),
+			n = control._retainedNode;
+		if (n) {
+			p.appendChild(n);
+		}
+		control._retainedNode = null;
+	};
+
+	/**
+	* @private
+	*/
+	Control._releaseRetainedNode = function(retainedNode) {
+		var p = Control._getNodePurgatory();
+		if (retainedNode) {
+			p.removeChild(retainedNode);
+		}
+	};
+
+	/**
+	* @private
+	*/
+	Control._getNodePurgatory = function() {
+		var p = Control._nodePurgatory;
+		if (!p) {
+			p = Control._nodePurgatory = document.createElement("div");
+			p.id = "node_purgatory";
+			p.style.display = "none";
+			document.body.appendChild(p);
+		}
+		return p;
 	};
 
 	/**
