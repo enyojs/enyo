@@ -158,6 +158,18 @@
 		renderRow: function (idx) {
 			var c = this.itemAtIndex(idx);
 			this.doSetupItem({index: idx, item: c});
+		},
+
+		/**
+		* A legacy method that sets the number of items to be repeated and effectively forces a 
+		* rebuild of the [repeater]{@link enyo.Repeater}, regardless of whether or not the count has
+		* changed.
+		*
+		* @param {Number} count - The number of items to be repeated.
+		* @public
+		*/
+		setCount: function (count) {
+			this.set('count', count, {force: true});
 		}
 	});
 
