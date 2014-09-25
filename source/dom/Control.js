@@ -1162,13 +1162,16 @@
 		},
 
 		/**
-		* Sets the control's directionality based on its content.
+		* Sets the control's directionality based on its content, or an optional `stringInstead`.
 		*
+		* @param {String} [stringInstead] An alternate string for consideration may be sent instead,
+		*	in-case the string to test the directionality of the control is stored in `this.value`,
+		*	or some other property, for example.
 		* @private
 		*/
-		detectTextDirectionality: function () {
-			if (this.content && this.content.length) {
-				this.rtl = enyo.isRtl(this.content);
+		detectTextDirectionality: function (stringInstead) {
+			if ((stringInstead && stringInstead.length) || (this.content && this.content.length)) {
+				this.rtl = enyo.isRtl(stringInstead || this.content);
 				this.applyStyle('direction', this.rtl ? 'rtl' : 'ltr');
 			}
 		},
