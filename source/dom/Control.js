@@ -5,6 +5,57 @@
 	var UiComponent = enyo.UiComponent,
 		HTMLStringDelegate = enyo.HTMLStringDelegate;
 
+	var nodePurgatory;
+
+	/**
+	* Called by `Control.teardownRender()`. In certain circumstances,
+	* we need to temporarily keep a DOM node around after tearing down
+	* because we're still acting on a stream of touch events emanating
+	* from the node. See `Control.retainNode()` for more information.
+	*
+	* @private
+	*/
+	function storeRetainedNode (control) {
+		var p = getNodePurgatory(),
+			n = control._retainedNode;
+		if (n) {
+			p.appendChild(n);
+		}
+		control._retainedNode = null;
+	}
+
+	/**
+	* Called (via a callback) when it's time to release a DOM node
+	* that we've retained.
+	*
+	* @private
+	*/
+	function releaseRetainedNode (retainedNode) {
+		var p = getNodePurgatory();
+		if (retainedNode) {
+			p.removeChild(retainedNode);
+		}
+	}
+
+	/**
+	* Lazily add a hidden `<div>` to `document.body` to serve as a
+	* container for retained DOM nodes.
+	*
+	* @private
+	*/
+	function getNodePurgatory () {
+		var p = nodePurgatory;
+		if (!p) {
+			p = nodePurgatory = document.createElement("div");
+			p.id = "node_purgatory";
+			p.style.display = "none";
+			document.body.appendChild(p);
+		}
+		return p;
+	}
+
+
+
 	/**
 	* {@link enyo.Control} is a [component]{@link enyo.UiComponent} that controls
 	* a [DOM]{@glossary DOM} [node]{@glossary Node} (i.e., an element in the user
@@ -932,10 +983,60 @@
 		},
 
 		/**
+		* You should generally not need to call this method in your app code.
+		* It is used internally by some Enyo UI libraries to handle a rare
+		* issue that sometimes arises when using a virtualized list or repeater
+		* on a touch device.
+		* 
+		* This issue occurs when a gesture (e.g. a drag) originates with a DOM
+		* node that ends up being destroyed in mid-gesture as the list updates.
+		* When the node is destroyed, the stream of DOM events representing the
+		* gesture stops, causing the associated action to stop or otherwise
+		* fail.
+		*
+		* You can prevent this problem from occurring by calling `retainNode`
+		* on the {@link enyo.Control} from which the gesture originates. Doing
+		* so will cause Enyo to keep the DOM node around (hidden from view)
+		* until you explicitly release it. You should call `retainNode` in the
+		* event handler for the event that starts the gesture.
+		*
+		* `retainNode` returns a function that you must call when the gesture
+		* ends to release the node. Make sure you call this function to avoid 
+		* "leaking" the DOM node (failing to remove it from the DOM).
+		* 
+		* @param {Node} node - Optional. Defaults to the node associated with
+		* the Control (`Control.node`). You can generally omit this parameter
+		* when working with {@link enyo.DataList} or {@link enyo.DataGridList},
+		* but should generally pass in the event's target node (`event.target`)
+		* when working with {@link enyo.List}. (Because {@link enyo.List} is
+		* based on the Flyweight pattern, the event's target node is often not
+		* the node currently associated with the Control at the time the event
+		* occurs.)
+		* @returns {Function} Keep a reference to this function and call it
+		* to release the node when the gesture has ended.
+		* @public
+		*/
+		retainNode: function(node) {
+			var control = this,
+				retainedNode = this._retainedNode = (node || this.hasNode());
+			return function() {
+				if (control && (control._retainedNode == retainedNode)) {
+					control._retainedNode = null;
+				} else {
+					releaseRetainedNode(retainedNode);
+				}
+			};
+		},
+
+		/**
 		* @private
 		*/
 		teardownRender: function () {
 			var delegate = this.renderDelegate || Control.renderDelegate;
+
+			if (this._retainedNode) {
+				storeRetainedNode(this);
+			}
 
 			delegate.teardownRender(this);
 		},
