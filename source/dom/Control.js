@@ -685,7 +685,7 @@
 			// if we are changing from not showing to showing we attempt to find whatever
 			// our last known value for display was or use the default
 			if (!was && this.showing) this.applyStyle('display', this._display || '');
-			
+
 			// if we are supposed to be hiding the control then we need to cache our current
 			// display state
 			else if (was && !this.showing) {
@@ -1027,7 +1027,7 @@
 
 				// initialize the styles for this instance
 				this.style = this.kindStyle + this.style;
-				
+
 				// ensure that the default value assigned to showing is actually a boolean
 				this.showing = !! this.showing;
 
@@ -1106,7 +1106,7 @@
 				control.removeClass(this.controlClasses);
 			};
 		}),
-		
+
 		/**
 		* @private
 		*/
@@ -1170,10 +1170,11 @@
 		* @private
 		*/
 		detectTextDirectionality: function (stringInstead) {
-			if ((stringInstead && stringInstead.length) || (this.content && this.content.length)) {
-				this.rtl = enyo.isRtl(stringInstead || this.content);
-				this.applyStyle('direction', this.rtl ? 'rtl' : 'ltr');
-			}
+			// If an argument was supplied at all, use it, even if it's undefined.
+			// Nulls, undefindeds, numbers, arrays, and some objects are safe to be tested.
+			var str = (arguments.length) ? stringInstead : this.content;
+			this.rtl = enyo.isRtl(str);
+			this.applyStyle('direction', this.rtl ? 'rtl' : 'ltr');
 		},
 
 		// .................................
@@ -1303,7 +1304,7 @@
 		*/
 		setShowing: function (showing) {
 			var was = this.showing;
-			
+
 			// force the showing property to always be a boolean value
 			this.showing = !! showing;
 
