@@ -358,9 +358,7 @@
 				if (this.get('absoluteShowing')) {
 					this.delegate.modelsAdded(this, props);
 				} else {
-					this._addToShowingQueue('refresh', function () {
-						this.refresh();
-					});
+					this._addToShowingQueue('refresh', this.refresh);
 				}
 			}
 		},
@@ -369,20 +367,16 @@
 		*
 		* @private
 		*/
-		modelsRemoved: enyo.inherit(function (sup) {
-			return function modelsRemoved(c, e, props) {
-				if (c === this.collection && this.$.scroller.canGenerate) {
-					if (this.get('absoluteShowing')) {
-						this.delegate.modelsRemoved(this, props);
-						this.deselectRemovedModels(props.models);
-					} else {
-						this._addToShowingQueue('refresh', function () {
-							sup.apply(this, arguments);
-						});
-					}
+		modelsRemoved: function (c, e, props) {
+			if (c === this.collection && this.$.scroller.canGenerate) {
+				this.deselectRemovedModels(props.models);
+				if (this.get('absoluteShowing')) {
+					this.delegate.modelsRemoved(this, props);
+				} else {
+					this._addToShowingQueue('refresh', this.refresh);
 				}
-			};
-		}),
+			}
+		},
 
 		/**
 		* @method
