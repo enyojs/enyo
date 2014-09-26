@@ -1171,7 +1171,8 @@
 		*/
 		detectTextDirectionality: function (stringInstead) {
 			// If an argument was supplied at all, use it, even if it's undefined.
-			// Nulls, undefindeds, numbers, arrays, and some objects are safe to be tested.
+			// Values that are null or undefined, or are numbers, arrays, and some objects are safe 
+			// to be tested.
 			var str = (arguments.length) ? stringInstead : this.content;
 			this.rtl = enyo.isRtl(str);
 			this.applyStyle('direction', this.rtl ? 'rtl' : 'ltr');
