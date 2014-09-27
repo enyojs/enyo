@@ -602,21 +602,23 @@
 				// we need to invalidate the style for the delegate
 				delegate.invalidate(this, 'style');
 			} else {
-
 				var matched = false,
-					newRule = ' ' + prop + ':' + value + ';';
-				// this is a rare case to nullify the style of a control that is not
-				// rendered or does not have a node
+					newRule = (value !== null && value !== '' && value !== undefined) ? (prop + ': ' + value + ';') : '';
+				// when value is a non-zero falsy value, it is a rare case to nullify the style of a
+				// control that is not rendered or does not have a node
 				style = style.replace(new RegExp(
-					// This looks a lot worse than it is. The complexity stems from needing to
-					// match a url container that can have other characters including semi-
-					// colon and also that the last property may/may-not end with one
+					// This looks a lot worse than it is. The complexity stems from needing to match
+					// a url container that can have other characters including semi-colon and also
+					// that the last property may/may-not end with one
 					'\\s*' + prop + '\\s*:\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*(?:url\\(.*\\)\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*)?\\s*(?:;|;?$)'
 				), function (match) {
 					matched = true;
-					return (value !== null && value !== '' && value !== undefined) ? newRule : '';
+					return newRule;
 				});
-				this.set('style', matched ? style : (style + newRule));
+				// We add to the style string only when we have a new rule to concatenate. This does
+				// not apply to situations where we've matched and overriden an existing rule, or
+				// when we are trying to remove a style (setting a non-zero, falsy value).
+				this.set('style', (matched || !newRule) ? style : (style + (style.length ? ' ' : '') + newRule));
 			}
 
 			return this;
@@ -1559,7 +1561,7 @@
 
 		if (props.style) {
 			if (instance) {
-				str = (proto.style ? (proto.style + ';') : '') + (props.style + ';');
+				str = (proto.style ? (proto.style + ';') : '') + props.style.replace(/;?\s*$/, ';');
 				proto.style = Control.normalizeCssStyleString(str);
 			} else {
 				str = proto.kindStyle ? proto.kindStyle : '';
