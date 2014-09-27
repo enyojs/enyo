@@ -587,45 +587,36 @@
 				style = this.style,
 				delegate = this.renderDelegate || Control.renderDelegate;
 
-			if (value !== null && value !== '' && value !== undefined) {
-				// update our current cached value
-				if (node) {
-					node.style[prop] = value;
+			// If value is a non-zero (String or Number) falsy value, we are trying to clear the 
+			// style property so if we have the node, we let the browser handle whatever the value
+			// should be now and otherwise we have to parse it out of the style string and wait to 
+			// be rendered.
+			// In all other cases, we update our current cached value.
+			if (node) {
+				node.style[prop] = value;
 
-					// cssText is an internal property used to help know when to sync and not
-					// sync with the node in styleChanged
-					this.style = this.cssText = node.style.cssText;
+				// cssText is an internal property used to help know when to sync and not sync with
+				// the node in styleChanged
+				this.style = this.cssText = node.style.cssText;
 
-					// we need to invalidate the style for the delegate
-					delegate.invalidate(this, 'style');
-
-					// otherwise we have to try and prepare it for the next time it is rendered we
-					// will need to update it because it will not be synchronized
-				} else this.set('style', style + (' ' + prop + ':' + value + ';'));
+				// we need to invalidate the style for the delegate
+				delegate.invalidate(this, 'style');
 			} else {
 
-				// in this case we are trying to clear the style property so if we have the node
-				// we let the browser handle whatever the value should be now and otherwise
-				// we have to parse it out of the style string and wait to be rendered
-
-				if (node) {
-					node.style[prop] = '';
-					this.style = this.cssText = node.style.cssText;
-
-					// we need to invalidate the style for the delegate
-					delegate.invalidate(this, 'style');
-				} else {
-
-					// this is a rare case to nullify the style of a control that is not
-					// rendered or does not have a node
-					style = style.replace(new RegExp(
-						// This looks a lot worse than it is. The complexity stems from needing to
-						// match a url container that can have other characters including semi-
-						// colon and also that the last property may/may-not end with one
-						'\\s*' + prop + '\\s*:\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*(?:url\\(.*\\)\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*)?\\s*(?:;|;?$)'
-					),'');
-					this.set('style', style);
-				}
+				var matched = false,
+					newRule = ' ' + prop + ':' + value + ';';
+				// this is a rare case to nullify the style of a control that is not
+				// rendered or does not have a node
+				style = style.replace(new RegExp(
+					// This looks a lot worse than it is. The complexity stems from needing to
+					// match a url container that can have other characters including semi-
+					// colon and also that the last property may/may-not end with one
+					'\\s*' + prop + '\\s*:\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*(?:url\\(.*\\)\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*)?\\s*(?:;|;?$)'
+				), function (match) {
+					matched = true;
+					return (value !== null && value !== '' && value !== undefined) ? newRule : '';
+				});
+				this.set('style', matched ? style : (style + newRule));
 			}
 
 			return this;
