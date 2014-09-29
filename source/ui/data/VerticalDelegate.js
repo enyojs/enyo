@@ -565,7 +565,7 @@
 			if (lastIdx >= count) {
 				threshold[lowerProp] = undefined;
 			} else {
-				threshold[lowerProp] = (metrics[lastIdx][lowerProp] - fn(list) - this.childSize(list));
+				threshold[lowerProp] = (metrics[lastIdx][lowerProp] - fn.call(this, list) - this.childSize(list));
 			}
 			if (list.usingScrollListener) {
 				list.$.scroller.setScrollThreshold(threshold);
