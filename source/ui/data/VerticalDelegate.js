@@ -642,7 +642,7 @@
 		*/
 		height: function (list) {
 			if (list._updateBounds) { this.updateBounds(list); }
-			return list.boundsCache.height;
+			return list.boundsCache ? list.boundsCache.height : undefined;
 		},
 
 		/**
@@ -653,7 +653,7 @@
 		*/
 		width: function (list) {
 			if (list._updateBounds) { this.updateBounds(list); }
-			return list.boundsCache.width;
+			return list.boundsCache ? list.boundsCache.width : undefined;
 		},
 
 		/**
