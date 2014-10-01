@@ -214,10 +214,8 @@
 		* to be `false`. Arbitrarily modifying the values of these properties prior to its initial
 		* render may have unexpected results.
 		*
-		* Also note that if `renderOnShow` is `true` and the control has its
-		* [teardownRender]{@link enyo.Control#teardownRender} method called, these properties will
-		* be set to `false` again to preserve the original behavior. If the desire is only to delay
-		* render the initial time set `renderOnShow` to `false` post-render.
+		* Once a control has been shown/rendered with `renderOnShow` `true` the behavior will not
+		* be used again.
 		*
 		* @type {Boolean}
 		* @default false
@@ -847,6 +845,11 @@
 		* @private
 		*/
 		showingChangedHandler: function (sender, event) {
+
+			if (!this.showing && event.showing && this.renderOnShow && !this.generated) {
+				this.set('showing', true);
+			}
+
 			return sender === this ? false : !this.showing;
 		},
 
