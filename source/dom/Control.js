@@ -203,6 +203,27 @@
 		* @public
 		*/
 		doubleTapInterval: 300,
+		
+		/**
+		* If set to `true`, the [control]{@link enyo.Control} will not be rendered until its
+		* [showing]{@link enyo.Control#showing} property has been set to `true`. This can be used
+		* directly or is used by some widgets to control when children are rendered.
+		*
+		* It is important to note that setting this to `true` will _force_
+		* [canGenerate]{@link enyo.Control#canGenerate} and [showing]{@link enyo.Control#showing}
+		* to be `false`. Arbitrarily modifying the values of these properties prior to its initial
+		* render may have unexpected results.
+		*
+		* Also note that if `renderOnShow` is `true` and the control has its
+		* [teardownRender]{@link enyo.Control#teardownRender} method called, these properties will
+		* be set to `false` again to preserve the original behavior. If the desire is only to delay
+		* render the initial time set `renderOnShow` to `false` post-render.
+		*
+		* @type Boolean
+		* @default false
+		* @public
+		*/
+		renderOnShow: false,
 
 		/**
 		* @todo Find out how to document "handlers".
@@ -735,7 +756,17 @@
 
 			// if we are changing from not showing to showing we attempt to find whatever
 			// our last known value for display was or use the default
-			if (!was && this.showing) this.applyStyle('display', this._display || '');
+			if (!was && this.showing) {
+				this.applyStyle('display', this._display || '');
+				
+				// note the check for generated and canGenerate as changes to canGenerate will force
+				// us to ignore the renderOnShow value so we don't undo whatever the developer was
+				// intending
+				if (!this.generated && !this.canGenerate && this.renderOnShow) {
+					this.set('canGenerate', true);
+					this.render();
+				}
+			}
 
 			// if we are supposed to be hiding the control then we need to cache our current
 			// display state
@@ -1039,6 +1070,13 @@
 			}
 
 			delegate.teardownRender(this);
+			
+			// if the original state was set with renderOnShow true then we need to reset these
+			// values as well to coordinate the original intent
+			if (this.renderOnShow) {
+				this.set('showing', false);
+				this.set('canGenerate', false);
+			}
 		},
 
 		/**
@@ -1130,7 +1168,12 @@
 				this.style = this.kindStyle + this.style;
 
 				// ensure that the default value assigned to showing is actually a boolean
-				this.showing = !! this.showing;
+				// and that it is only true if the renderOnShow is also false
+				this.showing = ((!!this.showing) && !this.renderOnShow);
+				
+				// we want to check and make sure that the canGenerate value is correct given
+				// the state of renderOnShow
+				this.canGenerate = (this.canGenerate && !this.renderOnShow);
 
 				// super initialization
 				sup.apply(this, arguments);
