@@ -219,7 +219,7 @@
 		* be set to `false` again to preserve the original behavior. If the desire is only to delay
 		* render the initial time set `renderOnShow` to `false` post-render.
 		*
-		* @type Boolean
+		* @type {Boolean}
 		* @default false
 		* @public
 		*/
