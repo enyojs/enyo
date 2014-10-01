@@ -226,9 +226,6 @@
 		*/
 		create: enyo.inherit(function (sup) {
 			return function () {
-				// synchronize the showing and absoluteShowing properties as absoluteShowing is
-				// an internal property that should not be true if showing is false
-				this.absoluteShowing = this.showing;
 				// if we can, we use transitions
 				this.allowTransitionsChanged();
 				// map the selected strategy to the correct delegate for operations
@@ -275,6 +272,8 @@
 		* @private
 		*/
 		rendered: function () {
+			// Initialize / sync the internal absoluteShowing property when we're rendered
+			this.absoluteShowing = this.getAbsoluteShowing({ignoreBounds: true});
 			if (this.get('absoluteShowing')) {
 				// actually rendering a datalist can be taxing for some systems so
 				// we arbitrarily delay showing for a fixed amount of time unless delay is
@@ -505,11 +504,6 @@
 		* @private
 		*/
 		noDefer: true,
-
-		/**
-		* @private
-		*/
-		absoluteShowing: true,
 
 		/**
 		* All of the CSS is relative to this class.
