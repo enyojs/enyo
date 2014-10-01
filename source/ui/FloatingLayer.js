@@ -13,7 +13,7 @@
 	*	}
 	* });
 	* ```
-	*
+	* 
 	* Note: `enyo.FloatingLayer` is not meant to be instantiated by users.
 	*
 	* @class enyo.FloatingLayer
@@ -33,12 +33,7 @@
 		* @private
 		*/
 		kind: 'enyo.Control',
-
-		/**
-		* @private
-		*/
-		classes: 'enyo-fit enyo-clip enyo-untouchable',
-
+		
 		/**
 		* @method
 		* @private
@@ -101,5 +96,5 @@
 	});
 
 	enyo.floatingLayer = new enyo.FloatingLayer();
-
+	
 })(enyo, this);
