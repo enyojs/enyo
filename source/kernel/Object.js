@@ -27,10 +27,10 @@
 
 	/**
 	* {@link enyo.Object} lies at the heart of the Enyo framework's implementations of property
-	* publishing, computed properties (via the {@link enyo.ComputedSupport} 
-	* [mixin]{@glossary mixin}), and data binding (via the {@link enyo.BindingSupport} 
-	* [mixin]{@glossary mixin} and {@link enyo.Binding} object). It also provides several 
-	* utility [functions]{@glossary Function} for its [subkinds]{@glossary subkind}.
+	* publishing, computed properties (via the {@link enyo.ComputedSupport} {@glossary mixin}),
+	* and data binding (via the {@link enyo.BindingSupport} mixin and {@link enyo.Binding}
+	* object). It also provides several utility [functions]{@glossary Function} for its
+	* [subkinds]{@glossary subkind}.
 	*
 	* @class enyo.Object
 	* @mixes enyo.MixinSupport
@@ -57,8 +57,8 @@
 		noDefer: true,
 
 		/**
-		* If the [destroy()]{@link enyo.Object#destroy} method has been called, this property will be
-		* `true`; otherwise, `false`.
+		* Will be `true` if the [destroy()]{@link enyo.Object#destroy} method has been called;
+		* otherwise, `false`.
 		*
 		* @readonly
 		* @type {Boolean}
@@ -130,9 +130,9 @@
 		},
 		
 		/**
-		* Sends a log message to the [console]{@glossary console}, prepended with the name of 
-		* the [kind]{@glossary kind} and method from which `log()` was invoked. Multiple 
-		* [arguments]{@glossary arguments} are coerced to [String]{@glossary String} and 
+		* Sends a log message to the [console]{@glossary console}, prepended with the name
+		* of the {@glossary kind} and method from which `log()` was invoked. Multiple
+		* {@glossary arguments} are coerced to {@glossary String} and
 		* [joined with spaces]{@glossary Array.join}.
 		*
 		* ```javascript
@@ -164,7 +164,7 @@
 		},
 		
 		/**
-		* Same as [log()]{@link enyo.Object#log} except that it uses the 
+		* Same as [log()]{@link enyo.Object#log}, except that it uses the 
 		* console's [error()]{@glossary console.error} method (if it exists).
 		*
 		* @public
@@ -175,8 +175,8 @@
 
 		/**
 		* Retrieves the value for the given path. The value may be retrieved as long as the given 
-		* path is resolvable relative to the given {@link enyo.Object}. See {@link enyo.getPath} for
-		* complete details.
+		* path is resolvable relative to the given {@link enyo.Object}. See
+		* [enyo.getPath()]{@link enyo.getPath} for complete details.
 		*
 		* This method is backwards-compatible and will automatically call any existing getter
 		* method that uses the "getProperty" naming convention. (Moving forward, however, Enyo code
@@ -191,9 +191,9 @@
 		get: enyo.getPath,
 		
 		/**
-		* Updates the value for the given path. The value may be set as long as the given path is 
-		* resolvable relative to the given {@link enyo.Object}. See {@link enyo.setPath} for 
-		* complete details.
+		* Updates the value for the given path. The value may be set as long as the
+		* given path is resolvable relative to the given {@link enyo.Object}. See
+		* [enyo.setPath()]{@link enyo.setPath} for complete details.
 		*
 		* @param {String} path - The path for which to set the given value.
 		* @param {*} value - The value to set.
