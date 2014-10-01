@@ -205,6 +205,27 @@
 		doubleTapInterval: 300,
 
 		/**
+		* If set to `true`, the [control]{@link enyo.Control} will not be rendered until its
+		* [showing]{@link enyo.Control#showing} property has been set to `true`. This can be used
+		* directly or is used by some widgets to control when children are rendered.
+		*
+		* It is important to note that setting this to `true` will _force_
+		* [canGenerate]{@link enyo.Control#canGenerate} and [showing]{@link enyo.Control#showing}
+		* to be `false`. Arbitrarily modifying the values of these properties prior to its initial
+		* render may have unexpected results.
+		*
+		* Also note that if `renderOnShow` is `true` and the control has its
+		* [teardownRender]{@link enyo.Control#teardownRender} method called, these properties will
+		* be set to `false` again to preserve the original behavior. If the desire is only to delay
+		* render the initial time set `renderOnShow` to `false` post-render.
+		*
+		* @type Boolean
+		* @default false
+		* @public
+		*/
+		renderOnShow: false,
+
+		/**
 		* @todo Find out how to document "handlers".
 		* @public
 		*/
@@ -587,10 +608,10 @@
 				style = this.style,
 				delegate = this.renderDelegate || Control.renderDelegate;
 
-			// FIXME: This is put in place for a Firefox bug where setting a style value of a node 
+			// FIXME: This is put in place for a Firefox bug where setting a style value of a node
 			// via its CSSStyleDeclaration object (by accessing its node.style property) does
-			// not work when using a CSS property name that contains one or more dash, and requires 
-			// setting the property via the JavaScript-style property name. This fix should be 
+			// not work when using a CSS property name that contains one or more dash, and requires
+			// setting the property via the JavaScript-style property name. This fix should be
 			// removed once this issue has been resolved in the Firefox mainline and its variants
 			// (it is currently resolved in the 36.0a1 nightly):
 			// https://bugzilla.mozilla.org/show_bug.cgi?id=1083457
@@ -751,6 +772,14 @@
 			if (!was && this.showing) {
 				this.applyStyle('display', this._display || '');
 				this.sendShowingChangedEvent(was);
+
+				// note the check for generated and canGenerate as changes to canGenerate will force
+				// us to ignore the renderOnShow value so we don't undo whatever the developer was
+				// intending
+				if (!this.generated && !this.canGenerate && this.renderOnShow) {
+					this.set('canGenerate', true);
+					this.render();
+				}
 			}
 
 			// if we are supposed to be hiding the control then we need to cache our current
@@ -941,7 +970,7 @@
 		* target `parentNode`.
 		*
 		* @param {Node} parentNode - The new parent of this control.
-		* @param {Boolean} preventRooting - If `true`, this control will not be treated as a root 
+		* @param {Boolean} preventRooting - If `true`, this control will not be treated as a root
 		*	view and will not be added to the set of roots.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -1059,6 +1088,13 @@
 			}
 
 			delegate.teardownRender(this);
+
+			// if the original state was set with renderOnShow true then we need to reset these
+			// values as well to coordinate the original intent
+			if (this.renderOnShow) {
+				this.set('showing', false);
+				this.set('canGenerate', false);
+			}
 		},
 
 		/**
@@ -1150,7 +1186,12 @@
 				this.style = this.kindStyle + this.style;
 
 				// ensure that the default value assigned to showing is actually a boolean
-				this.showing = !! this.showing;
+				// and that it is only true if the renderOnShow is also false
+				this.showing = ((!!this.showing) && !this.renderOnShow);
+
+				// we want to check and make sure that the canGenerate value is correct given
+				// the state of renderOnShow
+				this.canGenerate = (this.canGenerate && !this.renderOnShow);
 
 				// super initialization
 				sup.apply(this, arguments);
