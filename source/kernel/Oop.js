@@ -87,6 +87,13 @@
 	};
 
 	/**
+	* Array of all finalized kind constructors
+	*
+	* @type {Function[]}
+	*/
+	enyo._finishedKinds = [];
+
+	/**
 	* @private
 	*/
 	enyo.kind.finish = function (props) {
@@ -149,6 +156,10 @@
 			enyo.error('enyo.kind: ' + name + ' is already in use by another ' +
 				'kind, all kind definitions must have unique names.');
 		}
+
+		// add the constructor to the list of finalized
+		enyo._finishedKinds.push(ctor);
+
 		return ctor;
 	};
 
