@@ -501,14 +501,20 @@
 		*/
 		_execHandler: function (context, handler, args, route) {
 			var $fn = handler;
-			var $ctx = 'string' === typeof context? enyo.getPath.call(this, context): context || this;
-			// if the handler is defined as a string, we need to determine if
-			// it is relative to the router, relative to the context, or a named
-			// function in the global scope
+			var $ctx = 'string' === typeof context? enyo.getPath.call(this, context): context;
+			// if the handler is defined as a string, we need to determine if it is relative to the
+			// router, relative to the owner, relative to the context, or a named function in the
+			// global scope
 			if ('string' === typeof handler) {
-				// first check to see if the handler is a named property
-				// on the router; otherwise, try the context itself
-				$fn = this[handler] || $ctx[handler];
+				if (typeof this[handler] === 'function') {
+					$fn = this[handler];
+					$ctx = $ctx || this;
+				} else if (typeof this.owner[handler] === 'function') {
+					$fn = this.owner[handler];
+					$ctx = $ctx || this.owner;
+				} else if (typeof $ctx[handler] === 'function') {
+					$fn = $ctx[handler];
+				}
 				if ('function' === typeof $fn) {
 					// in case we actually found it, let's not go hunting
 					// next time
