@@ -273,8 +273,8 @@
 		*/
 		rendered: function () {
 			// Initialize / sync the internal absoluteShowing property when we're rendered
-			this.absoluteShowing = this.getAbsoluteShowing({ignoreBounds: true});
-			if (this.get('absoluteShowing')) {
+			var as = this.absoluteShowing = this.getAbsoluteShowing(true);
+			if (as) {
 				// actually rendering a datalist can be taxing for some systems so
 				// we arbitrarily delay showing for a fixed amount of time unless delay is
 				// null in which case it will be executed immediately
