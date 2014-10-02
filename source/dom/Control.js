@@ -587,6 +587,16 @@
 				style = this.style,
 				delegate = this.renderDelegate || Control.renderDelegate;
 
+			if(!node) {
+				// if there isn't a node yet, remove the property so we don't get duplicates
+				style = style.replace(new RegExp(
+					// This looks a lot worse than it is. The complexity stems from needing to
+					// match a url container that can have other characters including semi-
+					// colon and also that the last property may/may-not end with one
+					'\\s*' + prop + '\\s*:\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*(?:url\\(.*\\)\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*)?\\s*(?:;|;?$)'
+				),'');
+			}
+
 			if (value !== null && value !== '' && value !== undefined) {
 				// update our current cached value
 				if (node) {
@@ -615,15 +625,7 @@
 					// we need to invalidate the style for the delegate
 					delegate.invalidate(this, 'style');
 				} else {
-
-					// this is a rare case to nullify the style of a control that is not
-					// rendered or does not have a node
-					style = style.replace(new RegExp(
-						// This looks a lot worse than it is. The complexity stems from needing to
-						// match a url container that can have other characters including semi-
-						// colon and also that the last property may/may-not end with one
-						'\\s*' + prop + '\\s*:\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*(?:url\\(.*\\)\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*)?\\s*(?:;|;?$)'
-					),'');
+					// update style after the prop was removed
 					this.set('style', style);
 				}
 			}
