@@ -207,7 +207,7 @@
 		* @private
 		*/
 		progress: function (sender, event) {
-			this.doProgress();
+			this.doProgress(event);
 		}
 	});
 
