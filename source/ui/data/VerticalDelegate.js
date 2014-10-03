@@ -251,7 +251,7 @@
 					// we always update the default child size value first, here
 					childSize = this.childSize(list);
 					// using height/width of the available viewport times our multiplier value
-					perPage   = list.controlsPerPage = Math.ceil(((fn(list) * multi) / childSize) + 1);
+					perPage   = list.controlsPerPage = Math.ceil(((fn.call(this, list) * multi) / childSize) + 1);
 					// update our time for future comparison
 					list._updatedControlsPerPage = enyo.perfNow();
 				}
@@ -565,7 +565,7 @@
 			if (lastIdx >= count) {
 				threshold[lowerProp] = undefined;
 			} else {
-				threshold[lowerProp] = (metrics[lastIdx][lowerProp] - fn(list) - this.childSize(list));
+				threshold[lowerProp] = (metrics[lastIdx][lowerProp] - fn.call(this, list) - this.childSize(list));
 			}
 			if (list.usingScrollListener) {
 				list.$.scroller.setScrollThreshold(threshold);
