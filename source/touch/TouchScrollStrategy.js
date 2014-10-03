@@ -143,13 +143,6 @@
 			*/
 			preventDefault: true
 		},
-
-		/**
-		* @private
-		*/
-		events: {
-			onShouldDrag: ''
-		},
 		
 		/**
 		* @private
@@ -159,7 +152,6 @@
 			onflick: 'flick',
 			onhold: 'hold',
 			ondragstart: 'dragstart',
-			onShouldDrag: 'shouldDrag',
 			ondrag: 'drag',
 			ondragfinish: 'dragfinish',
 			onmousewheel: 'mousewheel'
@@ -521,7 +513,7 @@
 		/**
 		* @private
 		*/
-		shouldDrag: function (sender, e) {
+		shouldDrag: function (e) {
 			this.calcAutoScrolling();
 			var requestV = e.vertical;
 			var canH = this.$.scrollMath.horizontal && !requestV;
@@ -580,7 +572,7 @@
 				return true;
 			}
 			// note: allow drags to propagate to parent scrollers via data returned in the shouldDrag event.
-			this.doShouldDrag(e);
+			this.shouldDrag(e);
 			this.dragging = (e.dragger == this || (!e.dragger && e.boundaryDragger == this));
 			if (this.dragging) {
 				if(this.preventDefault){
