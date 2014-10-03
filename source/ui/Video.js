@@ -897,27 +897,26 @@
 		*/
 		ratechange: function (sender, e) {
 			var node = this.hasNode(),
-				pbNumber,
-				info;
+				pbNumber;
 
 			if (!node) {
 				return;
 			}
 
-			info = this.createEventData();
+			e = enyo.mixin(e, this.createEventData());
 
 			pbNumber = this.calcNumberValueOfPlaybackRate(e.playbackRate);
 
 			if (pbNumber > 0 && pbNumber < 1) {
-				this.doSlowforward(info);
+				this.doSlowforward({originalEvent: enyo.clone(e, true)});
 			} else if (pbNumber > 1) {
-				this.doFastforward(info);
+				this.doFastforward({originalEvent: enyo.clone(e, true)});
 			} else if (pbNumber < 0 && pbNumber >= -1) {
-				this.doSlowrewind(info);
+				this.doSlowrewind({originalEvent: enyo.clone(e, true)});
 			} else if (pbNumber < -1) {
-				this.doRewind(info);
+				this.doRewind({originalEvent: enyo.clone(e, true)});
 			} else if (pbNumber == 1) {
-				this.doPlay(info);
+				this.doPlay({originalEvent: enyo.clone(e, true)});
 			}
 		},
 
