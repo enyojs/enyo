@@ -42,8 +42,9 @@
 				if (from[0] == '^') {
 					
 					// this means we're reaching for a global
-					from = from.slice(1);
-					source = enyo.getPath.call(enyo.global, from);
+					var fromParts = from.split('.');
+					from = fromParts.pop();
+					source = enyo.getPath.call(enyo.global, fromParts.join('.').slice(1));
 					
 				} else {
 					source = owner;
@@ -58,8 +59,9 @@
 				if (to[0] == '^') {
 					
 					// this means we're reaching for a global
-					to = to.slice(1);
-					target = enyo.getPath.call(enyo.global, to);
+					var toParts = to.split('.');
+					to = toParts.pop();
+					target = enyo.getPath.call(enyo.global, toParts.join('.').slice(1));
 				} else {
 					target = owner;
 				}

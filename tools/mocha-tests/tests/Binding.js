@@ -224,7 +224,13 @@ describe('enyo.Binding', function () {
 			noAuto,
 			
 		// reference to ownerless binding
-			ownerless;
+			ownerless,
+
+		// reference to global 'from' binding
+			globalFrom,
+
+		// reference to global 'to' binding
+			globalTo;
 		
 		before(function () {
 			
@@ -256,7 +262,7 @@ describe('enyo.Binding', function () {
 			};
 			
 			// we instance the ends of the bindings before creating them
-			source = new TestComponent({oneWay: true, twoWay: false});
+			source = new TestComponent({oneWay: true, twoWay: false, sourceProp: 'source'});
 			target = new enyo.Object();
 			
 			// we do this to be able to test resolution of the source and target later
@@ -293,6 +299,17 @@ describe('enyo.Binding', function () {
 				to: 'ownerless',
 				transform: function (value) { return value + 1; }
 			});
+
+			window.globalTestComponent = new TestComponent({sourceProp: 'source', destProp: null});
+			globalFrom = target.binding({
+				from: '^globalTestComponent.sourceProp',
+				to: '.destProp'
+			});
+
+			globalTo = source.binding({
+				from: '.sourceProp',
+				to: '^globalTestComponent.destProp'
+			});
 		});
 		
 		after(function () {
@@ -304,9 +321,15 @@ describe('enyo.Binding', function () {
 			source.destroy();
 			target.destroy();
 			ownerless.destroy();
+			globalTo.destroy();
+			globalFrom.destroy();
+			globalTestComponent.destroy();
 			
 			// and the function
 			window.globalXform = null;
+
+			// and the global instance
+			window.globalTestComponent = null;
 		});
 		
 		describe('#oneWay', function () {
@@ -429,13 +452,18 @@ describe('enyo.Binding', function () {
 		});
 		
 		describe('#from', function () {
-			
+
+			it ('should resolve global paths when it begins with ^', function () {
+				expect(target.get('destProp')).to.equal('source');
+			})
 			
 		});
 		
 		describe('#to', function () {
 			
-			
+			it ('should resolve global paths when it begins with ^', function () {
+				expect(globalTestComponent.get('destProp')).to.equal('source');
+			})
 			
 		});
 		
