@@ -100,7 +100,7 @@
 		* @private
 		*/
 		shouldDrag: enyo.inherit(function (sup) {
-			return function(inSender, inEvent) {
+			return function(inEvent) {
 				// stop and update drag info before checking drag status
 				this.stop();
 				this.calcStartInfo();
