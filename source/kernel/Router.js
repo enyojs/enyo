@@ -454,12 +454,13 @@
 				// ok, register for events
 				listeners.push(this);
 				// ok, if we need to go ahead and route our current
-				// location, lets do it
+				// location, lets do it, but let create finish first
 				if (this.triggerOnStart) {
 					if (this.defaultPathOnStart) {
-						this.trigger({change: true, location: this.get('defaultPath')});
+						enyo.asyncMethod(this, 'trigger', {change: true, location: this.get('defaultPath')});
 					} else {
-						this.trigger();
+						enyo.asyncMethod(this, 'trigger');
+
 					}
 				}
 			};
