@@ -1,5 +1,18 @@
 (function (enyo, scope) {
 	/**
+	* Fires when dragging has started, allowing drags to propagate to parent 
+	* [scrollers]{@link enyo.Scroller}.
+	*
+	* @event enyo.TouchScrollStrategy#onShouldDrag
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the {@glossary event}.
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	*	event information.
+	* @private
+	*/
+
+	/**
 	* {@link enyo.TouchScrollStrategy} is a helper [kind]{@glossary kind} for implementing a
 	* touch-based [scroller]{@link enyo.Scroller}. It integrates the scrolling simulation provided
 	* by {@link enyo.ScrollMath} into an `enyo.Scroller`.
@@ -130,6 +143,13 @@
 			*/
 			preventDefault: true
 		},
+
+		/**
+		* @private
+		*/
+		events: {
+			onShouldDrag: ''
+		},
 		
 		/**
 		* @private
@@ -139,6 +159,7 @@
 			onflick: 'flick',
 			onhold: 'hold',
 			ondragstart: 'dragstart',
+			onShouldDrag: 'shouldDrag',
 			ondrag: 'drag',
 			ondragfinish: 'dragfinish',
 			onmousewheel: 'mousewheel'
@@ -500,7 +521,7 @@
 		/**
 		* @private
 		*/
-		shouldDrag: function (e) {
+		shouldDrag: function (sender, e) {
 			this.calcAutoScrolling();
 			var requestV = e.vertical;
 			var canH = this.$.scrollMath.horizontal && !requestV;
@@ -550,6 +571,7 @@
 		// Special synthetic DOM events served up by the Gesture system
 		
 		/**
+		* @fires enyo.TouchScrollStrategy#onShouldDrag
 		* @private
 		*/
 		dragstart: function (sender, e) {
@@ -558,7 +580,7 @@
 				return true;
 			}
 			// note: allow drags to propagate to parent scrollers via data returned in the shouldDrag event.
-			this.shouldDrag(e);
+			this.doShouldDrag(e);
 			this.dragging = (e.dragger == this || (!e.dragger && e.boundaryDragger == this));
 			if (this.dragging) {
 				if(this.preventDefault){
