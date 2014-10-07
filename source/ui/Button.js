@@ -4,7 +4,7 @@
 	* for grouping using {@link enyo.Group}.
 	*
 	* For more information, see the documentation on
-	* [Buttons](building-apps/controls/buttons.html) in the Enyo Developer Guide.
+	* [Buttons]{@linkplain docs/building-apps/controls/buttons.html} in the Enyo Developer Guide.
 	*
 	* @class enyo.Button
 	* @extends enyo.ToolDecorator
