@@ -59,8 +59,8 @@
 	* To use `enyo.JsonpRequest` instead of `enyo.Ajax`, set
 	* [jsonp]{@link enyo.WebService#jsonp} to `true` (defaults to `false`).
 	*
-	* For more information, see the documentation on
-	* [Consuming Web Services](building-apps/managing-data/consuming-web-services.html)
+	* For more information, see the documentation on [Consuming
+	* Web Services]{@linkplain docs/building-apps/managing-data/consuming-web-services.html}
 	* in the Enyo Developer Guide.
 	*
 	* @class enyo.WebService
