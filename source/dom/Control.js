@@ -66,7 +66,8 @@
 	* this kind.
 	*
 	* For more information, see the documentation on
-	* [Controls]{@link key-concepts/controls.html} in the Enyo Developer Guide.
+	* [Controls]{@linkplain docs/key-concepts/controls.html} in the
+	* Enyo Developer Guide.
 	*
 	* **If you make changes to `enyo.Control`, be sure to add or update the
 	* appropriate unit tests.**
