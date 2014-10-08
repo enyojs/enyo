@@ -140,7 +140,7 @@
 	* {@linkplain https://github.com/enyojs/enyo/tree/master/tools/test/core/tests unit tests}.
 	* 
 	* For more information, see the documentation on
-	* {@linkplain key-concepts/components.html Components} in the Enyo Developer Guide.
+	* [Components]{@linkplain docs/key-concepts/components.html} in the Enyo Developer Guide.
 	* 
 	* @class enyo.Component
 	* @extends enyo.Object

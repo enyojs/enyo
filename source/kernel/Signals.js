@@ -12,7 +12,8 @@
 	* as `onkeypress` if `document` has the focus.
 	* 
 	* For more information, see the documentation on [Event
-	* Handling](key-concepts/event-handling.html) in the Enyo Developer Guide.
+	* Handling]{@linkplain docs/key-concepts/event-handling.html} in the
+	* Enyo Developer Guide.
 	*
 	* @class enyo.Signals
 	* @extends enyo.Component
