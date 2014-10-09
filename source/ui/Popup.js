@@ -240,7 +240,9 @@
 		* @private
 		*/
 		events: {
+			onBeforeShow: '',
 			onShow: '',
+			onBeforeHide: '',
 			onHide: ''
 		},
 
@@ -435,16 +437,35 @@
 
 		/**
 		* @method
+		* @private
+		*/
+		showingChanged: function() {
+				// events desired due to programmatic show/hide
+				// true for before event
+				this.showHideEvent(true);
+				// breaking normal inheritance chain here, we need
+				// call the showHideMethod between event bubbles
+				// to keep from changing any code, we'll curry
+				// from showingChanged to showHideMethod.
+				// other libs should inherit showHideMethod from now on.
+				this.showHideMethod.call(this, arguments);
+				// events desired due to programmatic show/hide
+				this.showHideEvent();
+		},
+
+		/**
+		* @method
 		* @fires enyo.Popup#onShow
 		* @fires enyo.Popup#onHide
 		* @private
 		*/
-		showingChanged: enyo.inherit(function (sup) {
-			return function() {
+		showHideMethod: function() {
+
 				// auto render when shown.
 				if (this.floating && this.showing && !this.hasNode()) {
 					this.render();
 				}
+
 				// hide while sizing, and move to top corner for accurate sizing
 				if (this.centered || this.targetPosition) {
 					if (!this.showTransitions) {
@@ -452,7 +473,10 @@
 					}
 					this.addStyles('top: 0px; left: 0px; right: initial; bottom: initial;');
 				}
-				sup.apply(this, arguments);
+
+				// using apply to finish inhertiance chain back to enyo.Component
+				this.inherited.apply(this, arguments);
+
 				if (this.showing) {
 					this.resize();
 					enyo.Popup.count++;
@@ -468,17 +492,23 @@
 						this.release();
 					}
 				}
+
 				this.showHideScrim(this.showing);
 				// show after sizing
 				if (this.centered || this.targetPosition && !this.showTransitions) {
 					this.applyStyle('visibility', null);
 				}
-				// events desired due to programmatic show/hide
-				if (this.hasNode()) {
-					this[this.showing ? 'doShow' : 'doHide']();
-				}
-			};
-		}),
+		},
+
+		/**
+		* @private
+		*/
+		showHideEvent: function(before) {
+			if (this.hasNode() || before) {
+				var event = ['do', before ? 'Before' : '', this.showing ? 'Show' : 'Hide'].join('');
+				this[event]();
+			}
+		},
 
 		/**
 		* @private
