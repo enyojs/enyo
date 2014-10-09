@@ -273,12 +273,12 @@
 		*/
 		rendered: function () {
 			// Initialize / sync the internal absoluteShowing property when we're rendered
-			var as = this.absoluteShowing = this.getAbsoluteShowing(true);
-			if (as) {
-				// actually rendering a datalist can be taxing for some systems so
-				// we arbitrarily delay showing for a fixed amount of time unless delay is
-				// null in which case it will be executed immediately
-				var startup = function () {
+			this.absoluteShowing = this.getAbsoluteShowing(true);
+			// actually rendering a datalist can be taxing for some systems so
+			// we arbitrarily delay showing for a fixed amount of time unless delay is
+			// null in which case it will be executed immediately
+			var finishRendering = function () {
+				if (this.get('absoluteShowing')) {
 					// now that the base list is rendered, we can safely generate our scroller
 					this.$.scroller.canGenerate = true;
 					this.$.scroller.render();
@@ -291,16 +291,16 @@
 					if (this.didRender) {
 						this.didRender();
 					}
-				};
-				if (this.renderDelay === null) {
-					startup.call(this);
 				} else {
-					this.startJob('rendering', startup, this.renderDelay);
-					// this delay will allow slower systems to keep going and get everything else
-					// on screen before worrying about setting up the list
+					this._addToShowingQueue('finish rendering', finishRendering);
 				}
+			};
+			if (this.renderDelay === null) {
+				finishRendering.call(this);
 			} else {
-				this._addToShowingQueue('rendered', this.rendered);
+				this.startJob('finish rendering', finishRendering, this.renderDelay);
+				// this delay will allow slower systems to keep going and get everything else
+				// on screen before worrying about setting up the list
 			}
 		},
 		
