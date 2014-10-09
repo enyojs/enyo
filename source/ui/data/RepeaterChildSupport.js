@@ -104,6 +104,27 @@
 		*/
 		dispatchEvent: enyo.inherit(function (sup) {
 			return function (name, event, sender) {
+				var owner;
+				
+				// if the event is coming from a child of the repeater-child (this...) and has a
+				// delegate assigned to it there is a distinct possibility it is supposed to be
+				// targeting the instanceOwner of repeater-child not the repeater-child itself
+				// so we have to check this case and treat is as expected - if there is a handler
+				// and it returns true then we must skip the normal flow
+				if (event.originator !== this && event.delegate && event.delegate !== this) {
+					if (typeof this[name] != 'function') {
+						// ok we don't have the handler here let's see if our owner does
+						owner = this.getInstanceOwner();
+						if (owner && owner !== this) {
+							if (typeof owner[name] == 'function') {
+								// alright it appears that we're supposed to forward this the next
+								// owner instead
+								return owner.dispatch(name, event, sender);
+							}
+						}
+					}
+				}
+				
 				if (!event._fromRepeaterChild) {
 					if (!!~enyo.indexOf(name, this.repeater.selectionEvents)) {
 						this._selectionHandler();
