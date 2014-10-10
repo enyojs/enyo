@@ -3,7 +3,11 @@
 	var thisScript = "enyo.js";
 
 	/* global enyo:true */
-	/** @namespace enyo */
+	/**
+		Contains the core functionality of the Enyo framework.
+
+		@namespace enyo
+	*/
 	enyo = window.enyo || {options: {}};
 
 	/**
