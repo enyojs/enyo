@@ -1,9 +1,9 @@
 (function (enyo, scope) {
-	
+
 	var kind = enyo.kind
 		, unnamedCounter = 0
 		, kindPrefix = {};
-	
+
 	var eObject = enyo.Object
 		, ApplicationSupport = enyo.ApplicationSupport
 		, ComponentBindingSupport = enyo.ComponentBindingSupport;
@@ -12,14 +12,14 @@
 	* @callback enyo.Component~EventHandler
 	* @param {enyo.Component} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
-	* @param {Object} event - An [object]{@glossary Object} containing 
+	* @param {Object} event - An [object]{@glossary Object} containing
 	*	event information.
 	* @returns {Boolean} A value indicating whether the event has been
 	*	handled or not. If `true`, then bubbling is stopped.
 	*/
 
 	/**
-	* A [hash]{@glossary Object} of references to all the [components]{@link enyo.Component} 
+	* A [hash]{@glossary Object} of references to all the [components]{@link enyo.Component}
 	* owned by this component. This property is updated whenever a new
 	* component is added; the new component may be accessed via its
 	* [name]{@link enyo.Component#name} property. We may also observe changes on
@@ -52,7 +52,7 @@
 	*
 	* c.$.other.set('active', true); // this will trigger the observer to run its callback
 	* ```
-	* 
+	*
 	* @name $
 	* @type {Object}
 	* @default null
@@ -74,7 +74,7 @@
 	* });
 	*
 	* // We can now access 'other' directly, via c.other
-	* 
+	*
 	* @name publish
 	* @type {Boolean}
 	* @default undefined
@@ -83,36 +83,36 @@
 	*/
 
 	/**
-	* If `true`, the [layout]{@glossary layout} strategy will adjust the size of this 
+	* If `true`, the [layout]{@glossary layout} strategy will adjust the size of this
 	* [component]{@link enyo.Component} to occupy the remaining available space.
-	* 
+	*
 	* @name fit
 	* @type {Boolean}
 	* @default undefined
 	* @memberOf enyo.Component.prototype
 	* @public
 	*/
-	
+
 	/**
-	* {@link enyo.Component} is the fundamental building block for Enyo applications. 
+	* {@link enyo.Component} is the fundamental building block for Enyo applications.
 	* Components are designed to fit together, allowing complex behaviors to
 	* be fashioned from smaller bits of functionality.
-	* 
-	* Component [constructors]{@glossary constructor} take a single 
-	* argument (sometimes called a [component configuration]{@glossary configurationBlock}), 
-	* a JavaScript [object]{@glossary Object} that defines various properties to be initialized on the 
+	*
+	* Component [constructors]{@glossary constructor} take a single
+	* argument (sometimes called a [component configuration]{@glossary configurationBlock}),
+	* a JavaScript [object]{@glossary Object} that defines various properties to be initialized on the
 	* component.  For example:
-	* 
+	*
 	* ```javascript
 	* // create a new component, initialize its name property to 'me'
 	* var c = new enyo.Component({
 	*	name: 'me'
 	* });
 	* ```
-	* 
-	* When a component is instantiated, items configured in its 
+	*
+	* When a component is instantiated, items configured in its
 	* `components` property are instantiated, too:
-	* 
+	*
 	* ```javascript
 	* // create a new component, which itself has a component
 	* var c = new enyo.Component({
@@ -122,26 +122,26 @@
 	*	]
 	* });
 	* ```
-	* 
-	* In this case, when `me` is created, `other` is also created, and we say that `me` owns `other`. 
-	* In other words, the [owner]{@link enyo.Component#owner} property of `other` equals `me`. 
+	*
+	* In this case, when `me` is created, `other` is also created, and we say that `me` owns `other`.
+	* In other words, the [owner]{@link enyo.Component#owner} property of `other` equals `me`.
 	* Notice that you can specify the [kind]{@glossary kind} of `other` explicitly in its
 	* configuration block, to tell `me` what constructor to use to create `other`.
-	* 
-	* Note that [kind]{@glossary kind} values may be references to actual 
+	*
+	* Note that [kind]{@glossary kind} values may be references to actual
 	* kinds or string-names of kinds. Kind names that do not resolve directly to kinds
-	* are looked up in default namespaces. In this case, `kind: 'Component'` resolves to 
+	* are looked up in default namespaces. In this case, `kind: 'Component'` resolves to
 	* `enyo.Component`.
-	* 
+	*
 	* To move a component, use the `setOwner()` method to change the
 	* component's owner. If you want a component to be unowned, use `setOwner(null)`.
-	* 
+	*
 	* If you make changes to `enyo.Component`, be sure to add or update the appropriate
 	* {@linkplain https://github.com/enyojs/enyo/tree/master/tools/test/core/tests unit tests}.
-	* 
+	*
 	* For more information, see the documentation on
 	* [Components]{@linkplain docs/key-concepts/components.html} in the Enyo Developer Guide.
-	* 
+	*
 	* @class enyo.Component
 	* @extends enyo.Object
 	* @mixes enyo.ApplicationSupport
@@ -150,17 +150,17 @@
 	*/
 	var Component = kind(
 		/** @lends enyo.Component.prototype */ {
-		
+
 		/**
 		* @private
 		*/
 		name: 'enyo.Component',
-		
+
 		/**
 		* @private
 		*/
 		kind: eObject,
-		
+
 		/**
 		* @private
 		*/
@@ -175,43 +175,43 @@
 		* @private
 		*/
 		cachePoint: false,
-		
+
 		/**
 		* @private
 		*/
-		published: 
+		published:
 			/** @lends enyo.Component.prototype */ {
-			
+
 			/**
-			* A unique name for the [component]{@link enyo.Component} within its 
-			* [owner]{@link enyo.Component#owner}. This is used to set the access name in the 
-			* owner's [$ hash]{@link enyo.Component#$}. If not 
-			* specified, a default name will be provided based on the name of the 
+			* A unique name for the [component]{@link enyo.Component} within its
+			* [owner]{@link enyo.Component#owner}. This is used to set the access name in the
+			* owner's [$ hash]{@link enyo.Component#$}. If not
+			* specified, a default name will be provided based on the name of the
 			* [object's]{@link enyo.Object} [kind]{@glossary kind}, with a numeric
 			* suffix appended if more than one instance exists in the owner.
-			* 
+			*
 			* @type {String}
 			* @default ''
 			* @public
 			*/
 			name: '',
-			
+
 			/**
 			* A unique id for the [component]{@link enyo.Component}, usually automatically generated
 			* based on its position within the component hierarchy, although
-			* it may also be directly specified. {@link enyo.Control} uses this `id` value for the 
+			* it may also be directly specified. {@link enyo.Control} uses this `id` value for the
 			* DOM [id]{@link enyo.Control#id} attribute.
-			* 
+			*
 			* @type {String}
 			* @default ''
 			* @public
 			*/
 			id: '',
-			
+
 			/**
 			* The [component]{@link enyo.Component} that owns this component.
-			* It is usually defined implicitly at creation time based on the 
-			* [createComponent()]{@link enyo.Component#createComponent} call or 
+			* It is usually defined implicitly at creation time based on the
+			* [createComponent()]{@link enyo.Component#createComponent} call or
 			* the `components` hash.
 			*
 			* @type {enyo.Component}
@@ -219,44 +219,44 @@
 			* @public
 			*/
 			owner: null,
-			
+
 			/**
-			* This can be a [hash]{@glossary Object} of features to apply to 
-			* [chrome]{@glossary chrome} [components]{@link enyo.Component} of the base 
-			* [kind]{@glossary kind}. They are matched by [name]{@link enyo.Component#name} 
+			* This can be a [hash]{@glossary Object} of features to apply to
+			* [chrome]{@glossary chrome} [components]{@link enyo.Component} of the base
+			* [kind]{@glossary kind}. They are matched by [name]{@link enyo.Component#name}
 			* (if the component you wish to modify does not have a name, this will not work).
 			* You can modify any properties of the component except for methods. Setting a
 			* value for `componentOverrides` at runtime will have no effect.
-			* 
+			*
 			* @type {Object}
 			* @default null
 			* @public
 			*/
 			componentOverrides: null
 		},
-		
+
 		/**
 		* @private
 		*/
 		defaultKind: 'Component',
-		
+
 		/**
 		* @private
 		*/
 		handlers: {},
-		
+
 		/**
 		* @private
 		*/
 		mixins: [ApplicationSupport, ComponentBindingSupport],
-		
+
 		/**
 		* @private
 		*/
 		toString: function () {
 			return this.id + ' [' + this.kindName + ']';
 		},
-		
+
 		/**
 		* @method
 		* @private
@@ -270,7 +270,7 @@
 				sup.apply(this, arguments);
 			};
 		}),
-		
+
 		/**
 		* @method
 		* @private
@@ -282,7 +282,7 @@
 				sup.apply(this, arguments);
 			};
 		}),
-		
+
 		/**
 		* @private
 		*/
@@ -295,7 +295,7 @@
 			// release the kraken!
 			this.startNotifications();
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -311,28 +311,28 @@
 			this.createChrome(this.kindComponents);
 			this.createClientComponents(this.components);
 		},
-		
+
 		/**
 		* @private
 		*/
 		createChrome: function (comps) {
 			this.createComponents(comps, {isChrome: true});
 		},
-		
+
 		/**
 		* @private
 		*/
 		createClientComponents: function (comps) {
 			this.createComponents(comps, {owner: this.getInstanceOwner()});
 		},
-		
+
 		/**
 		* @private
 		*/
 		getInstanceOwner: function () {
 			return (!this.owner || this.owner.notInstanceOwner) ? this : this.owner;
 		},
-		
+
 		/**
 		* Removes this [component]{@link enyo.Component} from its
 		* [owner]{@link enyo.Component#owner} (setting `owner` to `null`)
@@ -354,7 +354,7 @@
 				return this;
 			};
 		}),
-		
+
 		/**
 		* Destroys all owned [components]{@link enyo.Component}.
 		*
@@ -365,7 +365,7 @@
 			var comps = this.getComponents(),
 				comp,
 				i;
-				
+
 			for (i = 0; i < comps.length; ++i) {
 				comp = comps[i];
 				// @todo: previous comment said list might be stale and ownership may have caused
@@ -373,10 +373,10 @@
 				// because that seems incorrect or avoidable
 				if (!comp.destroyed) comp.destroy();
 			}
-			
+
 			return this;
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -385,7 +385,7 @@
 				baseName = this.name || ('@@' + (++unnamedCounter));
 			return (pre ? pre + delim : '') + baseName;
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -394,7 +394,7 @@
 			if (this.owner && this.owner.addComponent) this.owner.addComponent(this);
 			if (!this.id) this.id = this.makeId();
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -402,30 +402,30 @@
 			var pre = prefixFromKindName(comp.kindName),
 				last = this._componentNameMap[pre] || 0,
 				nom;
-			
+
 			do {
 				nom = pre + (++last > 1 ? String(last) : '');
 			} while (this.$[nom]);
-			
+
 			this._componentNameMap[pre] = Number(last);
 			/*jshint -W093 */
 			return (comp.name = nom);
 		},
-		
+
 		/**
 		* Adds a [component]{@link enyo.Component} to the list of components
 		* owned by the current component (i.e., [this.$]{@link enyo.Component#$}).
-		* 
+		*
 		* @param {enyo.Component} comp - The [component]{@link enyo.Component} to add.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
 		addComponent: function (comp) {
 			var nom = comp.get('name');
-			
+
 			// if there is no name we have to come up with a generic name
 			if (!nom) nom = this.nameComponent(comp);
-			
+
 			// if there already was a component by that name we issue a warning
 			// @todo: if we're going to name rules being violated we need to normalize this approach
 			// and ensure we have one for every warning/error we throw
@@ -434,49 +434,49 @@
 				'unique-name-under-owner rule, replacing existing component in the hash and ' +
 				'continuing, but this is an error condition and should be fixed.'
 			);
-				
+
 			this.$[nom] = comp;
 			this.notify('$.' + nom, null, comp);
-			
+
 			// if the component has the `publish` true property then we also create a reference to
 			// it directly on the owner (this)
 			if (comp.publish) {
 				this[nom] = comp;
-				
+
 				// and to ensure that bindings are aware we have to notify them as well
 				this.notify(nom, null, comp);
 			}
-			
+
 			return this;
 		},
-		
+
 		/**
 		* Removes the passed-in [component]{@link enyo.Component} from those known
 		* to be owned by this component. The component will be removed from the
 		* [$ hash]{@link enyo.Component#$}, and from the [owner]{@link enyo.Component#owner}
 		* directly if [publish]{@link enyo.Component#publish} is set to `true`.
-		* 
+		*
 		* @param {enyo.Component} comp - The component to remove.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
 		removeComponent: function (comp) {
 			var nom = comp.get('name');
-			
+
 			// remove it from the hash if it existed
 			delete this.$[nom];
-			
+
 			// if it was published remove it from the component proper
 			if (comp.publish) delete this[nom];
-			
+
 			return this;
 		},
-		
+
 		/**
-		* Returns an [array]{@glossary Array} of owned [components]{@link enyo.Component}; in 
+		* Returns an [array]{@glossary Array} of owned [components]{@link enyo.Component}; in
 		* other words, converts the [$ hash]{@link enyo.Component#$} into an array
 		* and returns the array.
-		* 
+		*
 		* @returns {enyo.Component[]} The [components]{@link enyo.Component} found in the
 		*	[$ hash]{@link enyo.Component#$}.
 		* @public
@@ -484,7 +484,7 @@
 		getComponents: function () {
 			return enyo.values(this.$);
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -493,41 +493,41 @@
 			props.kind = props.kind || props.isa || this.defaultKind;
 			props.owner = props.owner || this;
 		},
-		
+
 		/**
 		* @private
 		*/
 		_createComponent: function (props, ext) {
 			var def = ext ? enyo.mixin({}, [ext, props]) : enyo.clone(props);
-			
+
 			// always adjust the properties according to the needs of the kind and parent kinds
 			this.adjustComponentProps(def);
-			
+
 			// pass along for the final stage
 			return Component.create(def);
 		},
-		
+
 		/**
-		* Creates and returns a [component]{@link enyo.Component} as defined by the combination of 
-		* a base and an additional property [hash]{@glossary Object}. The properties provided 
-		* in the standard property hash override those provided in the 
+		* Creates and returns a [component]{@link enyo.Component} as defined by the combination of
+		* a base and an additional property [hash]{@glossary Object}. The properties provided
+		* in the standard property hash override those provided in the
 		* additional property hash.
-		* 
-		* The created component passes through initialization machinery 
-		* provided by the creating component, which may supply special 
-		* handling. Unless the [owner]{@link enyo.Component#owner} is explicitly specified, the new 
+		*
+		* The created component passes through initialization machinery
+		* provided by the creating component, which may supply special
+		* handling. Unless the [owner]{@link enyo.Component#owner} is explicitly specified, the new
 		* component will be owned by the instance on which this method is called.
-		* 
+		*
 		* @example
 		* // Create a new component named 'dynamic', owned by 'this'
 		* // (will be available as this.$.dynamic).
 		* this.createComponent({name: 'dynamic'});
-		* 
+		*
 		* @example
 		* // Create a new component named 'another' owned by 'other'
 		* // (will be available as other.$.another).
 		* this.createComponent({name: 'another'}, {owner: other});
-		* 
+		*
 		* @param {Object} props - The declarative [kind]{@glossary kind} definition.
 		* @param {Object} ext - Additional properties to be applied (defaults).
 		* @returns {enyo.Component} The instance created with the given parameters.
@@ -539,13 +539,13 @@
 			// createComponents separately.
 			return this._createComponent(props, ext);
 		},
-		
+
 		/**
 		* Creates [components]{@link enyo.Component} as defined by the [arrays]{@glossary Array}
-		* of base and additional property [hashes]{@glossary Object}. The standard and 
-		* additional property hashes are combined as described in 
+		* of base and additional property [hashes]{@glossary Object}. The standard and
+		* additional property hashes are combined as described in
 		* [createComponent()]{@link enyo.Component#createComponent}.
-		* 
+		*
 		* @example
 		* // ask foo to create components 'bar' and 'zot', but set the owner of
 		* // both components to 'this'.
@@ -553,7 +553,7 @@
 		*	{name: 'bar'},
 		*	{name: 'zot'}
 		* ], {owner: this});
-		* 
+		*
 		* @param {Object[]} props The array of {@link enyo.Component} definitions to be created.
 		* @param {Object} ext - Additional properties to be supplied as defaults for each.
 		* @returns {enyo.Component[]} The array of [components]{@link enyo.Component} that were
@@ -564,17 +564,17 @@
 			var comps = [],
 				comp,
 				i;
-				
+
 			if (props) {
 				for (i = 0; i < props.length; ++i) {
 					comp = props[i];
 					comps.push(this._createComponent(comp, ext));
 				}
 			}
-			
+
 			return comps;
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -588,14 +588,14 @@
 				);
 			}
 		},
-		
+
 		/**
 		* Bubbles an {@glossary event} up an [object]{@glossary Object} chain,
 		* starting with `this`.
 		*
 		* A handler for an event may be specified. See {@link enyo.Component~EventHandler}
 		* for complete details.
-		* 
+		*
 		* @param {String} nom - The name of the {@glossary event} to bubble.
 		* @param {Object} [event] - The event [object]{@glossary Object} to be passed along
 		* while bubbling.
@@ -615,14 +615,14 @@
 			}
 			return false;
 		},
-		
+
 		/**
 		* Bubbles an {@glossary event} up an [object]{@glossary Object} chain,
 		* starting **above** `this`.
-		* 
+		*
 		* A handler for an event may be specified. See {@link enyo.Component~EventHandler}
 		* for complete details.
-		* 
+		*
 		* @param {String} nom - The name of the {@glossary event}.
 		* @param {Object} [event] - The event properties to pass along while bubbling.
 		* @returns {Boolean} `false` if unhandled or uninterrupted; otherwise, `true`.
@@ -630,7 +630,7 @@
 		*/
 		bubbleUp: function (nom, event) {
 			var next;
-			
+
 			if (!this._silenced) {
 				event = event || {};
 				event.bubbling = true;
@@ -644,34 +644,34 @@
 			}
 			return false;
 		},
-		
+
 		/**
-		* Sends an {@glossary event} to a named [delegate]{@glossary delegate}. 
-		* This [object]{@glossary Object} may dispatch an event to 
-		* itself via a [handler]{@link enyo.Component~EventHandler}, or to its 
+		* Sends an {@glossary event} to a named [delegate]{@glossary delegate}.
+		* This [object]{@glossary Object} may dispatch an event to
+		* itself via a [handler]{@link enyo.Component~EventHandler}, or to its
 		* [owner]{@link enyo.Component#owner} via an event property, e.g.:
-		* 
+		*
 		*	handlers {
 		*		// 'tap' events dispatched to this.tapHandler
 		*		ontap: 'tapHandler'
 		*	}
-		* 
+		*
 		*	// 'tap' events dispatched to 'tapHandler' delegate in this.owner
 		*	ontap: 'tapHandler'
-		* 
+		*
 		* @private
 		*/
 		dispatchEvent: function (nom, event, sender) {
 			var delegate,
 				ret;
-			
+
 			if (!this._silenced) {
 				// if the event has a delegate associated with it we grab that
 				// for reference
 				// NOTE: This is unfortunate but we can't use a pooled object here because
 				// we don't know where to release it
 				delegate = (event || (event = {})).delegate;
-				ret;
+
 				// bottleneck event decoration w/ optimization to avoid call to empty function
 				if (this.decorateEvent !== Component.prototype.decorateEvent) {
 					this.decorateEvent(nom, event, sender);
@@ -718,11 +718,11 @@
 			}
 			return false;
 		},
-		
+
 		/**
-		* Internal - try dispatching {@glossary event} to self; if that fails, 
+		* Internal - try dispatching {@glossary event} to self; if that fails,
 		* [bubble it up]{@link enyo.Component#bubbleUp} the tree.
-		* 
+		*
 		* @private
 		*/
 		dispatchBubble: function (nom, event, sender) {
@@ -736,7 +736,7 @@
 			}
 			return false;
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -744,23 +744,23 @@
 			// an event may float by us as part of a dispatchEvent chain
 			// both call this method so intermediaries can decorate inEvent
 		},
-		
+
 		/**
 		* @private
 		*/
 		stopAllJobs: function () {
 			var job;
-			
+
 			if (this.__jobs) for (job in this.__jobs) this.stopJob(job);
 		},
-		
+
 		/**
 		* Dispatches the {@glossary event} to named [delegate]{@glossary delegate} `nom`,
 		* if it exists. [Subkinds]{@glossary subkind} may re-route dispatches. Note that
 		* both 'handlers' events and events delegated from owned controls arrive here.
 		* If you need to handle these types of events differently, you may also need to
 		* override [dispatchEvent()]{@link enyo.Component#dispatchEvent}.
-		* 
+		*
 		* @param {String} nom - The method name to dispatch the {@glossary event}.
 		* @param {Object} [event] - The event [object]{@glossary Object} to pass along.
 		* @param {enyo.Component} [sender=this] - The originator of the event.
@@ -768,7 +768,7 @@
 		*/
 		dispatch: function (nom, event, sender) {
 			var fn;
-			
+
 			if (!this._silenced) {
 				fn = nom && this[nom];
 				if (fn && typeof fn == 'function') {
@@ -778,14 +778,14 @@
 			}
 			return false;
 		},
-		
+
 		/**
-		* Triggers the [handler]{@link enyo.Component~EventHandler} for a given 
+		* Triggers the [handler]{@link enyo.Component~EventHandler} for a given
 		* {@glossary event} type.
-		* 
+		*
 		* @example
 		* myControl.triggerHandler('ontap');
-		* 
+		*
 		* @param {String} nom - The name of the {@glossary event} to trigger.
 		* @param {Object} [event] - The event object to pass along.
 		* @param {enyo.Component} [sender=this] - The originator of the event.
@@ -795,13 +795,13 @@
 		triggerHandler: function () {
 			return this.dispatchEvent.apply(this, arguments);
 		},
-		
+
 		/**
 		* Sends a message to myself and all of my [components]{@link enyo.Component}.
 		* You can stop a waterfall into components owned by a receiving object
 		* by returning a truthy value from the {@glossary event}
 		* [handler]{@link enyo.Component~EventHandler}.
-		* 
+		*
 		* @param {String} nom - The name of the {@glossary event} to waterfall.
 		* @param {Object} [event] - The event [object]{@glossary Object} to pass along.
 		* @param {enyo.Component} [sender=this] - The originator of the event.
@@ -812,23 +812,23 @@
 			if (!this._silenced) {
 				event = event || {};
 				event.bubbling = false;
-				
+
 				// give the locals an opportunity to interrupt the event
 				if (this.dispatchEvent(nom, event, sender)) return true;
-				
+
 				// otherwise carry on
 				this.waterfallDown(nom, event, sender || this);
 			}
-			
+
 			return this;
 		},
-		
+
 		/**
-		* Sends a message to all of my [components]{@link enyo.Component}, but not myself. You can 
+		* Sends a message to all of my [components]{@link enyo.Component}, but not myself. You can
 		* stop a [waterfall]{@link enyo.Component#waterfall} into [components]{@link enyo.Component}
-		* owned by a receiving [object]{@glossary Object} by returning a truthy value from the 
+		* owned by a receiving [object]{@glossary Object} by returning a truthy value from the
 		* {@glossary event} [handler]{@link enyo.Component~EventHandler}.
-		* 
+		*
 		* @param {String} nom - The name of the {@glossary event}.
 		* @param {Object} [event] - The event [object]{@glossary Object} to pass along.
 		* @param {enyo.Component} [sender=this] - The event originator.
@@ -843,54 +843,54 @@
 			if (!this._silenced) {
 				for (comp in this.$) this.$[comp].waterfall(nom, event, sender || this);
 			}
-			
+
 			return this;
 		},
-		
+
 		/**
 		* @private
 		*/
 		_silenced: false,
-		
+
 		/**
 		* @private
 		*/
 		_silenceCount: 0,
-		
+
 		/**
-		* Sets a flag that disables {@glossary event} propagation for this 
+		* Sets a flag that disables {@glossary event} propagation for this
 		* [component]{@link enyo.Component}. Also increments an internal counter that tracks
 		* the number of times the [unsilence()]{@link enyo.Component#unsilence} method must
 		* be called before event propagation will continue.
-		* 
+		*
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
 		silence: function () {
 			this._silenced = true;
 			this._silenceCount += 1;
-			
+
 			return this;
 		},
-		
+
 		/**
-		* Determines if the [object]{@glossary Object} is currently 
+		* Determines if the [object]{@glossary Object} is currently
 		* [silenced]{@link enyo.Component#_silenced}, which will prevent propagation of
 		* [events]{@glossary event} (of any kind).
-		* 
+		*
 		* @returns {Boolean} `true` if silenced; otherwise, `false`.
 		* @public
 		*/
 		isSilenced: function () {
 			return this._silenced;
 		},
-		
+
 		/**
 		* Allows {@glossary event} propagation for this [component]{@link enyo.Component}
 		* if the internal silence counter is `0`; otherwise, decrements the counter by one.
 		* For event propagation to resume, this method must be called one time each call to
 		* [silence()]{@link enyo.Component#silence}.
-		* 
+		*
 		* @returns {Boolean} `true` if the {@link enyo.Component} is now unsilenced completely;
 		*	`false` if it remains silenced.
 		* @public
@@ -900,22 +900,22 @@
 			if (0 === this._silenceCount) this._silenced = false;
 			return !this._silenced;
 		},
-		
+
 		/**
 		* Creates a new [job]{@link enyo.job} tied to this instance of the
 		* [component]{@link enyo.Component}. If the component is
 		* [destroyed]{@link enyo.Component#destroy}, any jobs associated with it
 		* will be stopped.
-		* 
+		*
 		* If you start a job with the same name as a pending job,
 		* the original job will be stopped; this can be useful for resetting
 		* timeouts.
-		* 
+		*
 		* You may supply a priority level (1-10) at which the job should be
 		* executed. The default level is `5`. Setting the priority lower than `5` (or setting it to
 		* the string `"low"`) will defer the job if an animation is in progress,
 		* which can help to avoid stuttering.
-		* 
+		*
 		* @param {String} nom - The name of the [job]{@link enyo.job} to start.
 		* @param {(Function|String)} job - Either the name of a method or a
 		*	[function]{@glossary Function} to execute as the requested job.
@@ -936,12 +936,12 @@
 			jobs[nom] = setTimeout(this.bindSafely(function() {
 				enyo.jobs.add(this.bindSafely(job), priority, nom);
 			}), wait);
-			
+
 			return this;
 		},
-		
+
 		/**
-		* Stops a [component]{@link enyo.Component}-specific [job]{@link enyo.job} before it has 
+		* Stops a [component]{@link enyo.Component}-specific [job]{@link enyo.job} before it has
 		* been activated.
 		*
 		* @param {String} nom - The name of the [job]{@link enyo.job} to be stopped.
@@ -956,12 +956,12 @@
 			}
 			enyo.jobs.remove(nom);
 		},
-		
+
 		/**
 		* Executes the specified [job]{@link enyo.job} immediately, then prevents
 		* any other calls to `throttleJob()` with the same job name from running for
 		* the specified amount of time.
-		* 
+		*
 		* @param {String} nom - The name of the [job]{@link enyo.job} to throttle.
 		* @param {(Function|String)} job - Either the name of a method or a
 		*	[function]{@glossary Function} to execute as the requested job.
@@ -991,11 +991,11 @@
 	enyo.defaultCtor = Component;
 
 	/**
-	* Creates new instances from [config]{@glossary configurationBlock} 
-	* [objects]{@glossary Object}. This method looks up the proper 
-	* [constructor]{@glossary constructor} based on the provided [kind]{@glossary kind} 
+	* Creates new instances from [config]{@glossary configurationBlock}
+	* [objects]{@glossary Object}. This method looks up the proper
+	* [constructor]{@glossary constructor} based on the provided [kind]{@glossary kind}
 	* attribute.
-	* 
+	*
 	* @name enyo.create
 	* @param {Object} props - The properties that define the [kind]{@glossary kind}.
 	* @returns {*} An instance of the requested [kind]{@glossary kind}.
@@ -1004,19 +1004,19 @@
 	enyo.create = Component.create = function (props) {
 		var kind,
 			Ctor;
-		
+
 		if (!props.kind && props.hasOwnProperty('kind')) throw new Error(
 			'enyo.create: Attempt to create a null kind. Check dependencies for [' + props.name + ']'
 		);
-		
+
 		kind = props.kind || props.isa || enyo.defaultCtor;
 		Ctor = enyo.constructorForKind(kind);
-		
+
 		if (!Ctor) {
 			enyo.error('No constructor found for kind ' + kind);
 			Ctor = Component;
 		}
-		
+
 		return new Ctor(props);
 	};
 
@@ -1140,7 +1140,7 @@
 		if (!proto[fn]) {
 			proto[fn] = function(payload, other) {
 				// bubble this event
-				
+
 				// if the second parameter exists then we use that - this is for a single case
 				// where a named event delegates happent to point to an auto generated event
 				// bubbler like this one - in that case the first parameter is actually the
@@ -1169,14 +1169,14 @@
 	function prefixFromKindName (nom) {
 		var pre = kindPrefix[nom],
 			last;
-			
+
 		if (!pre) {
 			last = nom.lastIndexOf('.');
 			pre = (last >= 0) ? nom.slice(last+1) : nom;
 			pre = pre.charAt(0).toLowerCase() + pre.slice(1);
 			kindPrefix[nom] = pre;
 		}
-		
+
 		return pre;
 	}
 
