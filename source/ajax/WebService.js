@@ -38,8 +38,6 @@
 	/**
 	* An internally-used class.
 	*
-	* @class enyo._AjaxComponent
-	* @extends enyo.Component
 	* @private
 	*/
 	enyo.kind({

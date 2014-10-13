@@ -56,6 +56,21 @@
 * @glossary layout
 */
 
+/**
+* @todo need to define this.
+* @glossary JSON.stringify
+*/
+
+/**
+* @todo need to define this.
+* @glossary JSONP
+*/
+
+/**
+* @todo need to define this.
+* @glossary ProgressEvent
+*/
+
 ///// Internally Documented Links (Glossary) /////
 
 /**
