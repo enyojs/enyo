@@ -702,7 +702,7 @@
 							event.lastHandledComponent = this;
 						}
 					}
-					if (bHandler && this.dispatch(this.handlers[nom], event, sender)) {
+					if (bHandler && this.dispatch(bHandler, event, sender)) {
 						return true;
 					}
 					if (bDelegatedFunction) {
