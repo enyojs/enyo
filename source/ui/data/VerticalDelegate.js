@@ -412,8 +412,7 @@
 			
 			// props.models is removed modelList and the lowest index among removed models	
 			if (props.models.low <= lastIdx) {
-				this.refresh(list);
-				this.scrollToIndex(list, Math.min(pg1.start, pg2.start));
+				this.refresh(list);				
 			}
 		},
 		
