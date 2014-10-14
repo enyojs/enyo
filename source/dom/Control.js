@@ -54,8 +54,6 @@
 		return p;
 	}
 
-
-
 	/**
 	* {@link enyo.Control} is a [component]{@link enyo.UiComponent} that controls
 	* a [DOM]{@glossary DOM} [node]{@glossary Node} (i.e., an element in the user
@@ -74,6 +72,7 @@
 	*
 	* @class enyo.Control
 	* @extends enyo.UiComponent
+	* @ui
 	* @public
 	*/
 	var Control = kind(
