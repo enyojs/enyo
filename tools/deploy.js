@@ -77,6 +77,8 @@ var nopt = require("nopt"),
 
 var stat, script;
 
+shell.config.fatal = true;	// Abort on all shelljs errors (e.g. cp/mkdir)
+
 // Send message to parent node process, if any
 process.on('uncaughtException', function (err) {
 	var errMsg = err.toString() + err.stack;
