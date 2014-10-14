@@ -115,7 +115,8 @@
 	* Once a binding has been established, it will wait for change notifications;
 	* when a notification arrives, the binding will synchronize the value between
 	* the two ends. Note that bindings may be either
-	* [one-way (the default) or two-way]{@link enyo.Binding#oneWay}.
+	* [one-way]{@link enyo.Binding#oneWay} (the default) or
+	* [two-way]{@link enyo.Binding#oneWay}.
 	* 
 	* Usually, you will not need to create Binding objects arbitrarily, but will
 	* instead rely on the public [BindingSupport API]{@link enyo.BindingSupport},
