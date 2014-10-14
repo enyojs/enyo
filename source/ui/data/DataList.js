@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
 	* The {@glossary event} [object]{@glossary Object} that is provided when the
-	* [paging]{@link enyo.DataList#event:paging} event is fired.
+	* [paging]{@link enyo.DataList#paging} event is fired.
 	*
 	* @typedef {Object} enyo.DataList~PagingEvent
 	* @property {Number} start - The lowest active index in the dataset.
@@ -18,7 +18,7 @@
 	* @property {Object} sender - A reference to the {@link enyo.DataList}.
 	* @property {String} nom - The name of the {@glossary event}.
 	* @property {enyo.DataList~PagingEvent} event - A [hash]{@glossary Object} with properties
-	*	specific to the [paging]{@link enyo.DataList#paging} event.
+	*	specific to this event.
 	* @public
 	*/
 
@@ -34,9 +34,9 @@
 
 	/**
 	* {@link enyo.DataList} is an {@link enyo.DataRepeater} that employs a paginated
-	* scrolling scheme to enhance performance with larger datasets. The data is provided to
-	* the DataList by an {@link enyo.Collection} set as the value of its
-	* [collection]{@link enyo.DataRepeater#data} property.
+	* scrolling scheme to enhance performance with larger datasets. The data is provided
+	* to the DataList by an {@link enyo.Collection} set as the value of its
+	* `collection` property and accessed by calling [data()]{@link enyo.DataRepeater#data}.
 	*
 	* Note that care should be taken when deciding how to lay out the list's children. When
 	* there are a large number of child [elements]{@link enyo.Control}, the layout process
@@ -45,10 +45,10 @@
 	* view is updated. Try to use CSS whenever possible.
 	* 
 	* While paging through data, `enyo.DataList` emits the
-	* [paging]{@link enyo.DataList#event:paging} {@glossary event}, which allows you
-	* to make updates as necessary, on a per-page basis. You may register for this event
-	* by calling [addListener()]{@link enyo.EventEmitter#addListener} and specifying the
-	* event, along with a callback method.
+	* [paging]{@link enyo.DataList#paging} event, which allows you to make updates as
+	* necessary, on a per-page basis. You may register for this event by calling
+	* [addListener()]{@link enyo.EventEmitter#addListener} and specifying the event,
+	* along with a callback method.
 	*
 	* @class enyo.DataList
 	* @extends enyo.DataRepeater
@@ -546,9 +546,8 @@
 		],
 
 		/**
-		* Adds the [RegisteredEventSupport]{@link enyo.RegisteredEventSupport}
-		* [mixin]{@glossary mixin} for the [paging]{@link enyo.DataList#paging}
-		* {@glossary event}.
+		* Adds the [EventEmitter]{@link enyo.EventEmitter} [mixin]{@glossary mixin}
+		* for the [paging]{@link enyo.DataList#paging} {@glossary event}.
 		*
 		* @private
 		*/

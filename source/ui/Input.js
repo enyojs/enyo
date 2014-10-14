@@ -37,13 +37,13 @@
 	* {@link enyo.Input} implements an HTML [&lt;input&gt;]{@glossary input} element
 	* with cross-platform support for change [events]{@glossary event}.
 	*
-	* You may listen for [oninput]{@link enyo.Input#event:oninput} and
-	* [onchange]{@link enyo.Input#event:onchange} [DOM events]{@glossary DOMEvent} from
+	* You may listen for [oninput]{@link enyo.Input#oninput} and
+	* [onchange]{@link enyo.Input#onchange} [DOM events]{@glossary DOMEvent} from
 	* this [control]{@link enyo.Control} to know when the text inside has been modified.
 	* 
 	* For more information, see the documentation on
-	* [Text Fields]{@link building-apps/controls/text-fields.html} in the Enyo
-	* Developer Guide.
+	* [Text Fields]{@linkplain docs/building-apps/controls/text-fields.html} in the
+	* Enyo Developer Guide.
 	*
 	* @class enyo.Input
 	* @extends enyo.Control

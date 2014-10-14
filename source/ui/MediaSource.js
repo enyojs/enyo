@@ -1,13 +1,13 @@
 /**
-* Fires when the `src` or `type` of the {@link enyo.MediaSource} changes
+* Fires when the `src` or `type` of the {@link enyo.MediaSource} changes.
 *
-* @event enyo.MediaSource#event:onChangeSource
+* @event enyo.MediaSource#onChangeSource
 * @type {Object}
 * @public
 */
 
 /**
-* A media source for {@link enyo.Audio} or {@link enyo.Video}
+* A media source for {@link enyo.Audio} or {@link enyo.Video}.
 *
 * ```
 * {kind: 'Video', components: [
@@ -41,7 +41,7 @@ enyo.kind(
 	tag: 'source',
 	
 	/**
-	* Path to the source
+	* Path to the source.
 	*
 	* @type {String}
 	* @default ''
@@ -50,7 +50,7 @@ enyo.kind(
 	src: '',
 	
 	/**
-	* MIME Type of the source
+	* MIME Type of the source.
 	*
 	* @type {String}
 	* @default ''
@@ -80,7 +80,7 @@ enyo.kind(
 	}),
 	
 	/**
-	* @fires enyo.MediaSource#event:onChangeSource
+	* @fires enyo.MediaSource#onChangeSource
 	* @private
 	*/
 	srcChanged: function () {
@@ -89,7 +89,7 @@ enyo.kind(
 	},
 	
 	/**
-	* @fires enyo.MediaSource#event:onChangeSource
+	* @fires enyo.MediaSource#onChangeSource
 	* @private
 	*/
 	typeChanged: function () {
