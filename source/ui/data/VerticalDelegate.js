@@ -452,6 +452,7 @@
 				list.bufferSize = bs;
 				n.style[sp] = bs + 'px';
 				n.style[ss] = this[ss](list) + 'px';
+				list.$.scroller.remeasure();
 			}
 		},
 		

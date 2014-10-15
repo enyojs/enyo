@@ -784,6 +784,24 @@
 		}),
 
 		/** 
+		* This method exists primarily to support an internal use case for
+		* [enyo.DataList]{@link enyo.DataList}. It is intended to be called by the
+		* [scroller]{@link enyo.Scroller} that owns this strategy.
+		*
+		* Triggers a remeasurement of the scroller's metrics (specifically, the
+		* size of its viewport, the size of its contents and the difference between
+		* the two, which determines the extent to which the scroller may scroll).
+		*
+		* @public
+		*/
+		remeasure: function () {
+			this.calcBoundaries();
+			if (this.thumb) {
+				this.syncThumbs();
+			}
+		},
+
+		/** 
 		* Displays the scroll indicators and sets the auto-hide timeout.
 		*
 		* @public
