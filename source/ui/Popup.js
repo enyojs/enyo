@@ -444,14 +444,26 @@
 				// events desired due to programmatic show/hide
 				// true for before event
 				this.showHideEvent(true);
+
+				// events desired due to programmatic show/hide
+				if(this.animate){
+					this.animationEnd = this.bindSafely(function (sender, ev) {
+						//call doShow when the animation ends
+						this.showHideEvent();
+					});
+				}
+
 				// breaking normal inheritance chain here, we need
 				// call the showHideMethod between event bubbles
 				// to keep from changing any code, we'll curry
 				// from showingChanged to showHideMethod.
 				// other libs should inherit showHideMethod from now on.
 				this.showHideMethod.call(this, arguments);
-				// events desired due to programmatic show/hide
-				this.showHideEvent();
+
+				if(!this.animate) {
+					//call doShow if this isn't animated
+					this.showHideEvent();
+				}
 		},
 
 		/**
@@ -506,6 +518,11 @@
 		*/
 		showHideEvent: function(before) {
 			if (this.hasNode() || before) {
+				if(this.animate) {
+					//only return true when hiding start
+					//double bitwise to force undefined to false
+					this.isAnimatingHide = !!(before && !this.showing);
+			   	}
 				var event = ['do', before ? 'Before' : '', this.showing ? 'Show' : 'Hide'].join('');
 				this[event]();
 			}
