@@ -587,6 +587,19 @@
 				style = this.style,
 				delegate = this.renderDelegate || Control.renderDelegate;
 
+			// FIXME: This is put in place for a Firefox bug where setting a style value of a node 
+			// via its CSSStyleDeclaration object (by accessing its node.style property) does
+			// not work when using a CSS property name that contains one or more dash, and requires 
+			// setting the property via the JavaScript-style property name. This fix should be 
+			// removed once this issue has been resolved in the Firefox mainline and its variants
+			// (it is currently resolved in the 36.0a1 nightly):
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=1083457
+			if (node && (enyo.platform.firefox || enyo.platform.firefoxOS || enyo.platform.androidFirefox)) {
+				prop = prop.replace(/-([a-z])/gi, function(match, submatch) {
+					return submatch.toUpperCase();
+				});
+			}
+
 			if (value !== null && value !== '' && value !== undefined) {
 				// update our current cached value
 				if (node) {
