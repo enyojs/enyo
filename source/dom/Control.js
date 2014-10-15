@@ -252,7 +252,7 @@
 		* Sets the absolute/relative position and/or size for this control. Values
 		* of `null` or `undefined` for the `bounds` properties will be ignored. You
 		* may optionally specify a `unit` (i.e., a valid CSS measurement unit) as a
-		* [string]{@link exteral:String} to be applied to each of the position/size
+		* [string]{@glossary String} to be applied to each of the position/size
 		* assignments.
 		*
 		* @param {Object} bounds - An [object]{@glossary Object}, optionally

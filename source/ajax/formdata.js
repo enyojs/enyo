@@ -1,8 +1,8 @@
 (function (enyo, scope) {
 
 	/**
-	* An [XHR2]{@link http://www.w3.org/TR/XMLHttpRequest/} FormData implementation. It is used
-	* to send `multipart/form-data` [Ajax]{@glossary ajax} requests. The {@link enyo.Blob}
+	* An [XHR2]{@linkplain http://www.w3.org/TR/XMLHttpRequest/} FormData implementation. It
+	* is used to send `multipart/form-data` [Ajax]{@glossary ajax} requests. The {@link enyo.Blob}
 	* [kind]{@glossary kind} is the content provider for file-parts.
 	*
 	* Note that in Internet Explorer < 10, both {@link enyo.FormData} and `enyo.Blob` are
@@ -10,7 +10,7 @@
 	* instantiated using an [array]{@glossary Array} or [string]{@glossary String}.
 	*
 	* This implementation is inspired by
-	* [html5-formdata]{@link https://github.com/francois2metz/html5-formdata/blob/master/formdata.js}.
+	* [html5-formdata]{@linkplain https://github.com/francois2metz/html5-formdata/blob/master/formdata.js}.
 	*
 	* ```
 	* Emulate FormData for some browsers

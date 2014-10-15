@@ -5,7 +5,7 @@
 	* @event enyo.Checkbox#onActivate
 	* @type {Object}
 	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
-	*	propagated the @glossary event}.
+	*	propagated the {@glossary event}.
 	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
@@ -114,7 +114,7 @@
 
 		/**
 		* The [active]{@link enyo.Checkbox#active} property and `onActivate`
-		* {@glossary event} are part of the [GroupItem]{@link enyo.Groupitem}
+		* {@glossary event} are part of the [GroupItem]{@link enyo.GroupItem}
 		* interface supported by this [object]{@glossary Object}.
 		* 
 		* @private
