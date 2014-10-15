@@ -447,8 +447,10 @@
 				// events desired due to programmatic show/hide
 				if(this.animate){
 					this.animationEnd = this.bindSafely(function (sender, ev) {
-						//call doShow when the animation ends
-						this.showHideEvent();
+						if (ev.originator === this) {
+							//call doShow when the animation ends
+							this.showHideEvent();
+						}
 					});
 				}
 
@@ -506,6 +508,7 @@
 				}
 
 				this.showHideScrim(this.showing);
+
 				// show after sizing
 				if (this.centered || this.targetPosition && !this.showTransitions) {
 					this.applyStyle('visibility', null);
