@@ -437,6 +437,8 @@
 
 		/**
 		* @method
+		* @fires enyo.Popup#onShow
+		* @fires enyo.Popup#onHide
 		* @private
 		*/
 		showingChanged: function() {
@@ -469,8 +471,6 @@
 
 		/**
 		* @method
-		* @fires enyo.Popup#onShow
-		* @fires enyo.Popup#onHide
 		* @private
 		*/
 		showHideMethod: function() {
