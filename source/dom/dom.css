@@ -52,10 +52,6 @@ button::-moz-focus-inner {
 	user-select: none;
 }
 
-.enyo-unselectable::selection, .enyo-unselectable ::selection {
-	color: transparent;
-}
-
 .enyo-selectable {
 	cursor: auto;
 	-ms-user-select: element;
