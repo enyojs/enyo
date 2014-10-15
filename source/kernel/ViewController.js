@@ -3,12 +3,12 @@
 	* {@link enyo.ViewController} is designed to manage the lifecycle of a particular view
 	* ({@link enyo.Control}) that it owns. It is capable of controlling when a view is inserted into
 	* the DOM and where, managing [events]{@glossary event} bubbled from the view, and isolating (or
-	* encapsulating) the entire view hierarchy below it. Alternatively, it may be implemented as a 
+	* encapsulating) the entire view hierarchy below it. Alternatively, it may be implemented as a
 	* [component]{@link enyo.Component} in a larger hierarchy, in which case it will inject its view
-	* into its parent rather than directly into the DOM. And, of course, a ViewController may be 
-	* used as the `controller` property of another view, although this usage will (by default) 
+	* into its parent rather than directly into the DOM. And, of course, a ViewController may be
+	* used as the `controller` property of another view, although this usage will (by default)
 	* result in the removal of its own view from the {@link enyo.Component} bubbling hierarchy.
-	* 
+	*
 	* Note that `enyo.ViewController` may have components defined in its
 	* `components` [array]{@glossary Array}, but these components should
 	* not be `enyo.Controls`.
@@ -120,7 +120,7 @@
 		},
 
 		/**
-		* Renders the view into the specified `target` and sets the 
+		* Renders the view into the specified `target` and sets the
 		* [renderTarget]{@link enyo.ViewController#renderTarget} property to
 		* `target`.
 		*
@@ -201,7 +201,7 @@
 			}
 			this.view = v;
 		},
-		
+
 		/**
 		* @method
 		* @private
@@ -220,6 +220,7 @@
 		destroy: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
+				this.resetView = false;
 				this.view = null;
 				this.viewKind = null;
 			};
