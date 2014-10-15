@@ -540,7 +540,7 @@
 		* Retrieves the vertical scroll position.
 		*
 		* @returns {Number} The vertical scroll position in pixels.
-		* @private
+		* @public
 		*/
 		getScrollTop: function () {
 			// sync our internal property
@@ -567,6 +567,23 @@
 			this.scrollTop  = bounds.top;
 			this.scrollLeft = bounds.left;
 			return bounds;
+		},
+
+		/** 
+		* Trigger a remeasurement of the scroller's metrics (specifically, the
+		* size of its viewport, the size of its contents and the difference between
+		* the two, which determines the extent to which the scroller may scroll).
+		* 
+		* You should generally not need to call this from application code, as the
+		* scroller usually remeasures automatically whenever needed. This method
+		* exists primarily to support an internal use case for
+		* [enyo.DataList]{@link enyo.DataList}.
+		*
+		* @public
+		*/
+		remeasure: function() {
+			var s = this.$.strategy;
+			if (s.remeasure) s.remeasure();
 		},
 
 		/**
