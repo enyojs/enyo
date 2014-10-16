@@ -99,7 +99,7 @@
 			* Note that this not the name of a callback function, but only the name of the callback
 			* parameter. Enyo will create an internal callback function as necessary.
 			*
-			* @see enyo.WebService#jsonp
+			* @see enyo.WebService.jsonp
 			* @memberof enyo.WebService.prototype
 			* @type {String}
 			* @default 'callback'
@@ -111,7 +111,7 @@
 			* When using [JSONP]{@glossary JSONP}, the optional character set to use to
 			* interpret the return data.
 			*
-			* @see enyo.WebService#jsonp
+			* @see enyo.WebService.jsonp
 			* @memberof enyo.WebService.prototype
 			* @type {String}
 			* @default null

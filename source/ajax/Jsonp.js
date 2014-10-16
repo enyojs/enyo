@@ -54,7 +54,7 @@
 			* encoded arguments and used to wrap the return value from the server.
 			* This may also be set to `null` in some cases.
 			*
-			* @see enyo.JsonpRequest#overrideCallback
+			* @see enyo.JsonpRequest.overrideCallback
 			* @memberof enyo.JsonpRequest.prototype
 			* @type {String}
 			* @default 'callback'

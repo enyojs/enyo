@@ -135,7 +135,7 @@
 		* [committed]{@link enyo.Model#commit}, or [destroyed]{@link enyo.Model#destroy}.
 		* Some sources may use this property in other ways.
 		*
-		* @see enyo.Model#getUrl
+		* @see enyo.Model.getUrl
 		* @see enyo.Source
 		* @see enyo.AjaxSource
 		* @see enyo.JsonpSource
@@ -153,7 +153,7 @@
 		* property in other ways. Note that, if this method is implemented, the
 		* [url]{@link enyo.Model#url} will not be used.
 		*
-		* @see enyo.Model#url
+		* @see enyo.Model.url
 		* @see enyo.Source
 		* @see enyo.AjaxSource
 		* @see enyo.JsonpSource
@@ -191,9 +191,9 @@
 		* array of `enyo.Source` instances.
 		*
 		* @see enyo.Source
-		* @see enyo.Model#fetch
-		* @see enyo.Model#commit
-		* @see enyo.Model#destroy
+		* @see enyo.Model.fetch
+		* @see enyo.Model.commit
+		* @see enyo.Model.destroy
 		* @type {(String|String[]|enyo.Source|enyo.Source[])}
 		* @default null
 		* @public
@@ -208,8 +208,8 @@
 		* not defined, all keys from the [attributes]{@link enyo.Model#attributes}
 		* [hash]{@glossary Object} will be used.
 		*
-		* @see enyo.Model#raw
-		* @see enyo.Model#toJSON
+		* @see enyo.Model.raw
+		* @see enyo.Model.toJSON
 		* @type {String[]}
 		* @default null
 		* @public
@@ -286,8 +286,8 @@
 		* [includeKeys]{@link enyo.Model#includeKeys}.
 		* [Computed properties]{@link enyo.ComputedSupport} are **never** included.
 		*
-		* @see enyo.Model#includeKeys
-		* @see enyo.Model#attributes
+		* @see enyo.Model.includeKeys
+		* @see enyo.Model.attributes
 		* @returns {Object} The formatted [hash]{@glossary Object} representing the underlying
 		*	data structure of the [model]{@link enyo.Model}.
 		* @public
@@ -311,7 +311,7 @@
 		* of the [model]{@link enyo.Model}. Will automatically be executed by
 		* [JSON.parse()]{@glossary JSON.parse}.
 		*
-		* @see enyo.Model#raw
+		* @see enyo.Model.raw
 		* @returns {Object} The return value of [raw()]{@link enyo.Model#raw}.
 		* @public
 		*/
@@ -325,8 +325,8 @@
 		* Restores an [attribute]{@link enyo.Model#attributes} to its previous value. If no
 		* attribute is specified, all previous values will be restored.
 		*
-		* @see enyo.Model#set
-		* @see enyo.Model#previous
+		* @see enyo.Model.set
+		* @see enyo.Model.previous
 		* @param {String} [prop] - The [attribute]{@link enyo.Model#attributes} to
 		*	[restore]{@link enyo.Model#restore}. If not provided, all attributes will be
 		* restored to their previous values.
@@ -353,8 +353,8 @@
 		* [status]{@link enyo.Model#status}. Once it has completed execution, it will
 		* remove this flag (even if it fails).
 		*
-		* @see enyo.Model#committed
-		* @see enyo.Model#status
+		* @see enyo.Model.committed
+		* @see enyo.Model.status
 		* @param {enyo.Model~ActionOptions} [opts] - Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -406,8 +406,8 @@
 		* [status]{@link enyo.Model#status}. Once it has completed execution, it will
 		* remove this flag (even if it fails).
 		*
-		* @see enyo.Model#fetched
-		* @see enyo.Model#status
+		* @see enyo.Model.fetched
+		* @see enyo.Model.status
 		* @param {enyo.Model~ActionOptions} [opts] - Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -462,7 +462,7 @@
 		* [status]{@link enyo.Model#status}. Once it has completed execution, it
 		* will remove this flag (even if it fails).
 		*
-		* @see enyo.Model#status
+		* @see enyo.Model.status
 		* @param {enyo.Model~ActionOptions} [opts] - Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @public

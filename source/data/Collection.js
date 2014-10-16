@@ -231,8 +231,8 @@
 	* implemented like callbacks used with [Array.sort()]{@glossary Array.sort}.
 	*
 	* @see {@glossary Array.sort}
-	* @see enyo.Collection#sort
-	* @see enyo.Collection#comparator
+	* @see enyo.Collection.sort
+	* @see enyo.Collection.comparator
 	* @callback enyo.Collection~Comparator
 	* @param {enyo.Model} a - The first [model]{@link enyo.Model} to compare.
 	* @param {enyo.Model} b - The second model to compare.
@@ -273,7 +273,7 @@
 		* [committed]{@link enyo.Collection#commit}, or [destroyed]{@link enyo.Collection#destroy}.
 		* Some sources may use this property in other ways.
 		*
-		* @see enyo.Collection#getUrl
+		* @see enyo.Collection.getUrl
 		* @see enyo.Source
 		* @see enyo.AjaxSource
 		* @see enyo.JsonpSource
@@ -292,7 +292,7 @@
 		* Note that if this method is implemented, the [url]{@link enyo.Collection#url}
 		* property will not be used.
 		*
-		* @see enyo.Collection#url
+		* @see enyo.Collection.url
 		* @see enyo.Source
 		* @see enyo.AjaxSource
 		* @see enyo.JsonpSource
@@ -323,7 +323,7 @@
 		* [emit]{@link enyo.EventEmitter.emit} a [reset]{@link enyo.Collection#reset}
 		* event.
 		*
-		* @see enyo.Collection#modelsChanged
+		* @see enyo.Collection.modelsChanged
 		* @type enyo.ModelList
 		* @default null
 		* @readonly
@@ -788,7 +788,7 @@
 		* output of the [collection]{@link enyo.Collection}. Will automatically be executed by
 		* [JSON.parse()]{@glossary JSON.parse}.
 		*
-		* @see enyo.Collection#raw
+		* @see enyo.Collection.raw
 		* @returns {Object} The return value of [raw()]{@link enyo.Collection#raw}.
 		* @public
 		*/
@@ -839,8 +839,8 @@
 		* to the collection's [status]{@link enyo.Collection#status}. Once it has
 		* completed execution, it will remove this flag (even if it fails).
 		*
-		* @see enyo.Collection#committed
-		* @see enyo.Collection#status
+		* @see enyo.Collection.committed
+		* @see enyo.Collection.status
 		* @param {enyo.Collection~ActionOptions} [opts] - Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -891,8 +891,8 @@
 		* the collection's [status]{@link enyo.Collection#status}. Once it has
 		* completed execution, it will remove this flag (even if it fails).
 		*
-		* @see enyo.Collection#fetched
-		* @see enyo.Collection#status
+		* @see enyo.Collection.fetched
+		* @see enyo.Collection.status
 		* @param {enyo.Collection~ActionOptions} [opts] - Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -947,7 +947,7 @@
 		* [status]{@link enyo.Collection#status}. Once it has completed execution,
 		* it will remove this flag (even if it fails).
 		*
-		* @see enyo.Collection#status
+		* @see enyo.Collection.status
 		* @param {enyo.Collection~ActionOptions} [opts] - Optional configuration options.
 		* @returns {this} The callee for chaining.
 		* @method
@@ -1218,7 +1218,7 @@
 		/**
 		* Responds to changes to the [models]{@link enyo.Collection#models} property.
 		*
-		* @see enyo.Collection#models
+		* @see enyo.Collection.models
 		* @fires enyo.Collection#reset
 		* @type {enyo.ObserverSupport~Observer}
 		* @public

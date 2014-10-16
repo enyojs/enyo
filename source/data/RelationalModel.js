@@ -466,7 +466,7 @@
 		* The default [options]{@link enyo.RelationalModel~RelationOptions} overloaded for this
 		* [kind]{@glossary kind}.
 		*
-		* @see enyo.toMany#options
+		* @see enyo.toMany.options
 		* @type enyo.RelationalModel~RelationOptions
 		* @property {String} inverseType=enyo.manyToMany - This is the **required** type.
 		* @public
