@@ -510,10 +510,12 @@
 				my             = 0,
 				width          = node.offsetWidth,
 				height         = node.offsetHeight,
-				transformProp  = enyo.dom.getCssTransformProp(),
+				transformProp  = enyo.dom.getStyleTransformProp(),
+				cssTransProp   = enyo.dom.getCssTransformProp(),
 				xRegEx         = /translateX\((-?\d+|-?\d*\.\d+)px\)/i,
 				yRegEx         = /translateY\((-?\d+|-?\d*\.\d+)px\)/i,
 				m3RegEx        = /(?!matrix(3d)?\()(-?\d+|-?\d*\.\d+)(?=[,\)])/g,
+				unitRegEx      = /\d(em|ex|rem|%|ch|vh|vw|vmin|vmax|mm|cm|in|pt|pc)/g,
 				match          = null,
 				style          = null,
 				offsetParent   = null;
@@ -533,7 +535,12 @@
 				}
 				// Add offset from transforms
 				if (transformProp && node.style) {
-					style = enyo.dom.getComputedStyle(node)[transformProp];
+					style = node.style[transformProp];
+					// if the transform is using a non-px value in transform, use the computed
+					// style instead
+					if(unitRegEx.test(style)) {
+						style = enyo.dom.getComputedStyle(node)[cssTransProp];
+					}
 					// translateX
 					match = style.match(xRegEx);
 					if (match && typeof match[1] != 'undefined' && match[1]) {
