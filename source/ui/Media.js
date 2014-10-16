@@ -880,6 +880,7 @@
 			}
 
 			info = this.createEventData();
+			enyo.mixin(e, enyo.clone(info, true));
 			info.originalEvent = enyo.clone(e, true);
 
 			pbNumber = this.calcNumberValueOfPlaybackRate(info.playbackRate);
