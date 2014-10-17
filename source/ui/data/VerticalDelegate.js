@@ -183,6 +183,7 @@
 				view.stopNotifications();
 				view.set('model', data.at(i));
 				view.set('index', i);
+				this.checkSelected(list, view);
 				view.set('selected', list.isSelected(view.model));
 				view.startNotifications();
 				view.canGenerate = true;
@@ -202,6 +203,20 @@
 			metrics.width  = this.pageWidth(list, page);
 			// update the childSize value now that we have measurements
 			this.childSize(list);
+		},
+
+		/**
+		* checks whether the control should have selected set based on selectionProperty
+		*
+		* @private
+		*/
+		checkSelected: function (list, view) {
+			var s = list.selectionProperty;
+			if (s && view.model.get(s) && !list.isSelected(view.model)) {
+				list.select(view.index);
+				// don't have to check opposite case (model is false and isSelected is true) 
+				// because that shouldn't happen
+			}
 		},
 
 		/**
