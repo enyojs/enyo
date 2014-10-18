@@ -990,11 +990,14 @@
 		*/
 		resetCSSTranslationVals: function () {
 			var prop = enyo.dom.getCssTransformProp();
-			var transformStyle = window.getComputedStyle(this.$.client.node,null).getPropertyValue(prop).split('(')[1].split(')')[0].split(',');
-			this.applyTransition("none");
-			this.scrollLeft = -1*transformStyle[4];
-			this.scrollTop = -1*transformStyle[5];
-			this.effectScroll();
+			var transform = window.getComputedStyle(this.$.client.node,null).getPropertyValue(prop);
+			if (transform != "none") {
+				var transformStyle = transform.split('(')[1].split(')')[0].split(',');
+				this.applyTransition("none");
+				this.scrollLeft = -1*transformStyle[4];
+				this.scrollTop = -1*transformStyle[5];
+				this.effectScroll();
+			}
 		},
 
 		/**
