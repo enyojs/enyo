@@ -153,7 +153,7 @@
 				props.mixins = props.mixins? props.mixins.concat(this.childMixins): this.childMixins;
 			}
 
-			this.defaultProps = enyo.clone(props, true);
+			this.defaultProps = props;
 		},
 
 		/**
