@@ -27,7 +27,7 @@
 		kind: 'enyo.Control',
 
 		/**
-		* Set this to `true` to enable selection support. Note that selection stores a 
+		* Set this to `true` to enable selection support. Note that selection stores a
 		* reference to the [model]{@link enyo.Model} that is selected.
 		*
 		* @type {Boolean}
@@ -47,7 +47,7 @@
 		* @public
 		*/
 		multipleSelection: false,
-		
+
 		/**
 		* Set this to `true` to allow group-selection behavior such that only one child
 		* may be selected at a time and, once a child is selected, it cannot be
@@ -126,32 +126,34 @@
 		* @public
 		*/
 		childBindingDefaults: null,
-		
+
 		/**
 		* @private
 		*/
 		initComponents: function () {
 			this.initContainer();
-			var c = this.kindComponents || this.components || [],
-				o = this.getInstanceOwner(),
-				d = this.defaultProps? enyo.clone(this.defaultProps): (this.defaultProps = {});
+			var components = this.kindComponents || this.components || [],
+				owner = this.getInstanceOwner(),
+				props = this.defaultProps? enyo.clone(this.defaultProps, true): (this.defaultProps = {});
 			// ensure that children know who their binding owner is
-			d.bindingTransformOwner = this;
-			d.bindingDefaults = this.childBindingDefaults;
-			if (c) {
+			props.bindingTransformOwner = this;
+			props.bindingDefaults = this.childBindingDefaults;
+			if (components) {
 				// if there are multiple components in the components block they will become nested
 				// children of the default kind set for the repeater
-				if (c.length > 1) {
-					d.components = c;
+				if (components.length > 1) {
+					props.components = components;
 				}
 				// if there is only one child, the properties will be the default kind of the repeater
 				else {
-					enyo.mixin(d, c[0]);
+					enyo.mixin(props, components[0]);
 				}
-				d.repeater = this;
-				d.owner = o;
-				d.mixins = d.mixins? d.mixins.concat(this.childMixins): this.childMixins;
+				props.repeater = this;
+				props.owner = owner;
+				props.mixins = props.mixins? props.mixins.concat(this.childMixins): this.childMixins;
 			}
+
+			this.defaultProps = props;
 		},
 
 		/**
@@ -193,14 +195,14 @@
 		observers: [
 			{method: 'selectionChanged', path: 'multipleSelection'}
 		],
-		
+
 		/**
 		* @private
 		*/
 		groupSelectionChanged: function () {
-			if (this.groupSelection) this.set('multipleSelection', false); 
+			if (this.groupSelection) this.set('multipleSelection', false);
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -272,7 +274,7 @@
 				this.startJob('refreshing', refresh, 16);
 			}
 		},
-		
+
 		/**
 		* @method
 		* @private
@@ -289,7 +291,7 @@
 
 		/**
 		* Adds a [record]{@link enyo.Model} at a particular index.
-		* 
+		*
 		* @param {enyo.Model} rec - The [record]{@link enyo.Model} to add.
 		* @param {Number} idx - The index at which the record should be added.
 		* @public
@@ -310,9 +312,9 @@
 		remove: function (idx) {
 			var controls = this.getClientControls()
 				, control;
-			
+
 			control = controls[idx];
-			
+
 			if (control) control.destroy();
 		},
 
@@ -320,7 +322,7 @@
 		* Removes any [controls]{@link enyo.Control} that are outside the boundaries of the
 		* [data]{@link enyo.DataRepeater#data} [collection]{@link enyo.Collection} for the
 		* [repeater]{@link enyo.DataRepeater}.
-		* 
+		*
 		* @public
 		*/
 		prune: function () {
@@ -429,11 +431,11 @@
 				i = models.length - 1;
 
 			// We have selected models
-			if (len) {			
+			if (len) {
 				// unfortunately we need to make a copy to preserve what the original was
 				// so we can pass it with the notification if any of these are deselected
 				orig = selected.slice();
-				
+
 				// we have _selected array to track currently selected models
 				// if some removed models are in _selected, we should remove them from _selected
 				// clearly we won't need to continue checking if selected does not have any models
@@ -497,9 +499,9 @@
 		},
 
 		/**
-		* Consolidates selection logic and allows for deselection of a [model]{@link enyo.Model} 
+		* Consolidates selection logic and allows for deselection of a [model]{@link enyo.Model}
 		* that has already been removed from the [collection]{@link enyo.Collection}.
-		* 
+		*
 		* @private
 		*/
 		_select: function (idx, model, select) {
