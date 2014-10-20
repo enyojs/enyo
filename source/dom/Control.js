@@ -417,7 +417,8 @@
 					if (value == null || value === false || value === '') {
 						node.removeAttribute(name);
 					} else node.setAttribute(name, value);
-				} else delegate.invalidate(this, 'attributes');
+				}
+				delegate.invalidate(this, 'attributes');
 			}
 
 			return this;
@@ -1387,7 +1388,7 @@
 			var was = this.content;
 			this.content = content;
 
-			if (was != content) this.notify('content', was, content);
+			if (was !== content) this.notify('content', was, content);
 
 			return this;
 		},
