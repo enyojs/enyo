@@ -1,66 +1,155 @@
-/**
-	_enyo.Group_ provides a wrapper around multiple elements.  It enables the
-	creation of radio groups from arbitrary components supporting the
-	[GroupItem](#enyo.GroupItem) API.
-*/
-enyo.kind({
-	name: "enyo.Group",
-	published: {
+(function (enyo, scope) {
+	/**
+	* The extended {@glossary event} [object]{@glossary Object} that is provided when the
+	* [onActiveChanged]{@link enyo.Group#onActiveChanged} event is fired.
+	*
+	* @typedef {Object} enyo.Group~ActiveChangedEvent
+	* @property {enyo.Control} active - The active [control]{@link enyo.Control} for the
+	*	[group]{@link enyo.Group}.
+	*/
+
+	/**
+	* Fires when the active control is changed.
+	*
+	* @event enyo.Group#onActiveChanged
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
+	*	propagated the {@glossary event}.
+	* @property {enyo.Group~ActiveChangedEvent} event - An [object]{@glossary Object} containing
+	*	event information.
+	* @public
+	*/
+
+	/**
+	* {@link enyo.Group} provides a wrapper around multiple elements. It enables the creation of
+	* radio groups from arbitrary [components]{@link enyo.Component} that support the
+	* {@link enyo.GroupItem} API.
+	*
+	* @class enyo.Group
+	* @extends enyo.Control
+	* @ui
+	* @public
+	*/
+	enyo.kind(
+		/** @lends enyo.Group.prototype */ {
+
 		/**
-			If true, only one GroupItem in the component list may be active at
-			a given time.
+		* @private
 		*/
-		highlander: true,
-		//* If true, an active highlander item may be deactivated
-		allowHighlanderDeactivate: false,
-		//* The control that was last selected
-		active: null,
+		name: 'enyo.Group',
+
 		/**
-			The `groupName` property is used to scope this group to a certain
-			set of controls.  When used, the group only controls activation of controls who
-			have the same `groupName` property set on them.
+		* @private
 		*/
-		groupName: null
-	},
-	//* @protected
-	handlers: {
-		onActivate: "activate"
-	},
-	activate: function(inSender, inEvent) {
-		if ((this.groupName || inEvent.originator.groupName) && (inEvent.originator.groupName != this.groupName)) {
-			return;
-		}
-		if (this.highlander) {
-			// we can optionally accept an `allowHighlanderDeactivate` property in inEvent without directly 
-			// specifying it when instatiating the group - used mainly for custom kinds requiring deactivation  
-			if (inEvent.allowHighlanderDeactivate !== undefined && inEvent.allowHighlanderDeactivate !== this.allowHighlanderDeactivate) {
-				this.setAllowHighlanderDeactivate(inEvent.allowHighlanderDeactivate);
+		kind: 'enyo.Control',
+
+		/**
+		* @private
+		*/
+		published: 
+			/** @lends enyo.Group.prototype */ {
+			
+			/**
+			* If `true`, only one [GroupItem]{@link enyo.GroupItem} in the 
+			* [component]{@link enyo.Component} list may be active at a given time.
+			* 
+			* @type {Boolean}
+			* @default true
+			* @public
+			*/
+			highlander: true,
+
+			/**
+			* If `true`, an active highlander item may be deactivated.
+			* 
+			* @type {Boolean}
+			* @default false
+			* @public
+			*/
+			allowHighlanderDeactivate: false,
+
+			/**
+			* The [control]{@link enyo.Control} that was last selected.
+			* 
+			* @type {Object}
+			* @default null
+			* @public
+			*/
+			active: null,
+		
+			/**
+			* This property is used to scope this [group]{@link enyo.Group} to a certain
+			* set of [controls]{@link enyo.Control}.  When this is used, the group only
+			* controls activation of controls that have the same `groupName` property set
+			* on them.
+			* 
+			* @type {String}
+			* @default null
+			* @public
+			*/
+			groupName: ''
+		},
+
+		/**
+		* @private
+		*/
+		events: {
+			onActiveChanged: ""
+		},
+		
+		/**
+		* @private
+		*/
+		handlers: {
+			onActivate: 'activate'
+		},
+
+		/**
+		* @private
+		*/
+		activate: function (sender, e) {
+			if ((this.groupName || e.originator.groupName) && (e.originator.groupName != this.groupName)) {
+				return;
 			}
-			// deactivation messages are ignored unless it's an attempt
-			// to deactivate the highlander
-			if (!inEvent.originator.active) {
-				// this clause prevents deactivating a grouped item once it's been active,
-				// as long as `allowHighlanderDeactivate` is false. Otherwise, the only
-				// proper way to deactivate a grouped item is to choose a new highlander.
-				if (inEvent.originator == this.active) {
-					if (!this.allowHighlanderDeactivate) {
-						this.active.setActive(true);
-					} else {
-						this.setActive(null);
-					}
+			if (this.highlander) {
+				// we can optionally accept an `allowHighlanderDeactivate` property in e without directly 
+				// specifying it when instatiating the group - used mainly for custom kinds requiring deactivation  
+				if (e.allowHighlanderDeactivate !== undefined && e.allowHighlanderDeactivate !== this.allowHighlanderDeactivate) {
+					this.setAllowHighlanderDeactivate(e.allowHighlanderDeactivate);
 				}
-			} else {
-				this.setActive(inEvent.originator);
+				// deactivation messages are ignored unless it's an attempt
+				// to deactivate the highlander
+				if (!e.originator.active) {
+					// this clause prevents deactivating a grouped item once it's been active,
+					// as long as `allowHighlanderDeactivate` is false. Otherwise, the only
+					// proper way to deactivate a grouped item is to choose a new highlander.
+					if (e.originator == this.active) {
+						if (!this.allowHighlanderDeactivate) {
+							this.active.setActive(true);
+						} else {
+							this.setActive(null);
+						}
+					}
+				} else {
+					this.setActive(e.originator);
+				}
 			}
+		},
+
+		/**
+		* @fires enyo.Group#onActiveChanged
+		* @private
+		*/
+		activeChanged: function (was) {
+			if (was && !was.destroyed) {
+				was.setActive(false);
+				was.removeClass('active');
+			}
+			if (this.active) {
+				this.active.addClass('active');
+			}
+			this.doActiveChanged({active: this.active});
 		}
-	},
-	activeChanged: function(inOld) {
-		if (inOld) {
-			inOld.setActive(false);
-			inOld.removeClass("active");
-		}
-		if (this.active) {
-			this.active.addClass("active");
-		}
-	}
-});
+	});
+
+})(enyo, this);

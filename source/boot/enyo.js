@@ -1,11 +1,19 @@
-(function() {
+(function () {
 	// enyo can use information from the script tag that loads this bootstrap file
 	var thisScript = "enyo.js";
 
 	/* global enyo:true */
+	/**
+		Contains the core functionality of the Enyo framework.
+
+		@namespace enyo
+	*/
 	enyo = window.enyo || {options: {}};
 
-	enyo.locateScript = function(inName) {
+	/**
+	* @private
+	*/
+	enyo.locateScript = function (inName) {
 		var scripts = document.getElementsByTagName("script");
 		for (var i=scripts.length-1, s, src, l=inName.length; (i>=0) && (s=scripts[i]); i--) {
 			if (!s.located) {
@@ -17,7 +25,14 @@
 			}
 		}
 	};
-
+	
+	/**
+	* Optional options to pass to the framework.
+	*
+	* @name enyo.args
+	* @type {Object}
+	* @public
+	*/
 	enyo.args = enyo.args || {};
 
 	var tag = enyo.locateScript(thisScript);
