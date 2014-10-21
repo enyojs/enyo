@@ -209,6 +209,19 @@
 	enyo.isTrue = function (it) {
 		return !(it === 'false' || it === false || it === 0 || it === null || it === undefined);
 	};
+
+	/**
+	* Determines whether a given variable is a numeric value.
+	*
+	* @param {*} it - The variable to be tested.
+	* @returns {Boolean} `true` if variable is a numeric value; otherwise,
+	* `false`.
+	* @public
+	*/
+	enyo.isNumeric = function (it) {
+		// borrowed from jQuery
+		return !enyo.isArray(it) && (it - parseFloat(it) + 1) >= 0;
+	};
 	
 	/**
 	* Binds the `this` context of any method to a scope and a variable number of provided initial
