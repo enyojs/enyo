@@ -42,6 +42,10 @@
 			return function() {
 				sup.apply(this, arguments);
 				this.setParent(null);
+
+				if (enyo.platform.ie < 11) {
+					this.removeClass('enyo-fit');
+				}
 			};
 		}),
 
