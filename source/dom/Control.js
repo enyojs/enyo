@@ -987,7 +987,7 @@
 		* It is used internally by some Enyo UI libraries to handle a rare
 		* issue that sometimes arises when using a virtualized list or repeater
 		* on a touch device.
-		* 
+		*
 		* This issue occurs when a gesture (e.g. a drag) originates with a DOM
 		* node that ends up being destroyed in mid-gesture as the list updates.
 		* When the node is destroyed, the stream of DOM events representing the
@@ -1001,9 +1001,9 @@
 		* event handler for the event that starts the gesture.
 		*
 		* `retainNode` returns a function that you must call when the gesture
-		* ends to release the node. Make sure you call this function to avoid 
+		* ends to release the node. Make sure you call this function to avoid
 		* "leaking" the DOM node (failing to remove it from the DOM).
-		* 
+		*
 		* @param {Node} node - Optional. Defaults to the node associated with
 		* the Control (`Control.node`). You can generally omit this parameter
 		* when working with {@link enyo.DataList} or {@link enyo.DataGridList},
@@ -1272,11 +1272,16 @@
 		*/
 		detectTextDirectionality: function (stringInstead) {
 			// If an argument was supplied at all, use it, even if it's undefined.
-			// Values that are null or undefined, or are numbers, arrays, and some objects are safe 
+			// Values that are null or undefined, or are numbers, arrays, and some objects are safe
 			// to be tested.
 			var str = (arguments.length) ? stringInstead : this.content;
 			this.rtl = enyo.isRtl(str);
-			this.applyStyle('direction', this.rtl ? 'rtl' : 'ltr');
+			if (str || str === 0) {
+				this.applyStyle('direction', this.rtl ? 'rtl' : 'ltr');
+			} else {
+				this.applyStyle('direction', null);
+			}
+
 		},
 
 		// .................................
