@@ -594,7 +594,7 @@
 			// removed once this issue has been resolved in the Firefox mainline and its variants
 			// (it is currently resolved in the 36.0a1 nightly):
 			// https://bugzilla.mozilla.org/show_bug.cgi?id=1083457
-			if (node && (enyo.platform.firefox || enyo.platform.firefoxOS || enyo.platform.androidFirefox)) {
+			if (node && (enyo.platform.firefox < 35 || enyo.platform.firefoxOS || enyo.platform.androidFirefox)) {
 				prop = prop.replace(/-([a-z])/gi, function(match, submatch) {
 					return submatch.toUpperCase();
 				});
