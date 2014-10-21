@@ -1276,7 +1276,7 @@
 			// to be tested.
 			var str = (arguments.length) ? stringInstead : this.content;
 			this.rtl = enyo.isRtl(str);
-			if (str || str === 0 || str === '0') {
+			if (str || str === 0) {
 				this.applyStyle('direction', this.rtl ? 'rtl' : 'ltr');
 			} else {
 				this.applyStyle('direction', null);
