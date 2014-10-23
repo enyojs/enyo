@@ -635,7 +635,8 @@
 						// This looks a lot worse than it is. The complexity stems from needing to
 						// match a url container that can have other characters including semi-
 						// colon and also that the last property may/may-not end with one
-						'\\s*' + prop + '\\s*:\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*(?:url\\(.*\\)\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*)?\\s*(?:;|;?$)'
+						'\\s*' + prop + '\\s*:\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*(?:url\\(.*\\)\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*)?\\s*(?:;|;?$)',
+						'gi'
 					),'');
 					this.set('style', style);
 				}
