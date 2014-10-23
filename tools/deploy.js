@@ -77,6 +77,8 @@ var nopt = require("nopt"),
 
 var stat, script;
 
+shell.config.fatal = true;	// Abort on all shelljs errors (e.g. cp/mkdir)
+
 // Send message to parent node process, if any
 process.on('uncaughtException', function (err) {
 	var errMsg = err.toString() + err.stack;
@@ -105,12 +107,13 @@ var node = process.argv[0],
 	less = true, // LESS compilation, turned on by default
 	verbose = false,
 	beautify = false,
-	noexec = false;
+	noexec = false,
+	gather = true;
 
 function printUsage() {
 	// format generated using node-optimist...
 	console.log('\n' +
-		'Usage: ' + node + ' ' + deploy + ' [-c][-e enyo_dir][-l lib_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir][-f map_from -t map_to ...]\n' +
+		'Usage: ' + node + ' ' + deploy + ' [-c][-g][-v][-B][-e enyo_dir][-l lib_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir][-f map_from -t map_to ...]\n' +
 		'\n' +
 		'Options:\n' +
 		'  -v  verbose operation                     [boolean]  [default: ' + verbose + ']\n' +
@@ -121,7 +124,8 @@ function printUsage() {
 		'  -o  alternate output directory            [default: "PWD/deploy/APPNAME"]\n' +
 		'  -p  main package.js file (relative)       [default: "./package.js"]\n' +
 		'  -s  source code root directory            [default: "PWD"]\n' +
-		'  -B  pretty-print (beautify) JS output     [default: "' + beautify + '"]\n' +
+		'  -B  pretty-print (beautify) JS output     [boolean]  [default: ' + beautify + ']\n' +
+		'  -g  gather libs to default location       [boolean]  [default: ' + gather + ']\n' +
 		'  -f  remote source mapping: from local path\n' +
 		'  -t  remote source mapping: to remote path\n' +
 		'  -E|--noexec disallow execution of application-provided scripts [default: false]\n' +
@@ -143,7 +147,8 @@ var opt = nopt(/*knownOpts*/ {
 	"noexec": Boolean,
 	"test": Boolean,
 	"mapfrom": [String, Array],
-	"mapto": [String, Array]
+	"mapto": [String, Array],
+	"gather": Boolean
 }, /*shortHands*/ {
 	"b": "--build",
 	"c": "--no-less",
@@ -159,7 +164,8 @@ var opt = nopt(/*knownOpts*/ {
 	"t": "--mapto",
 	"E": "--noexec",
 	"T": "--test",
-	"?": "--help"
+	"?": "--help",
+	"g": "--gather"
 }, process.argv /*args*/, 2 /*slice*/);
 
 var log = function() {};
@@ -199,7 +205,7 @@ if (fs.existsSync("deploy.json")) {
 } else {
 	manifest = {
 		_default: true
-	};	
+	};
 }
 
 opt.packagejs = opt.packagejs || manifest.packagejs || "package.js";
@@ -213,6 +219,7 @@ opt.enyo = opt.enyo || manifest.enyo || "enyo"; // from top-level folder
 log("opt:", opt);
 
 less = (opt.less !== false) && less;
+gather = (opt.gather !== false) && gather;
 beautify = opt.beautify;
 noexec = opt.noexec;
 verbose = opt.verbose;
@@ -234,6 +241,7 @@ log("Using: opt.test=" + opt.test);
 log("Using: less=" + less);
 log("Using: beautify=" + beautify);
 log("Using: noexec=" + noexec);
+log("Using: gather=" + gather);
 
 // utils
 
@@ -297,6 +305,9 @@ if (opt.lib) {
 	// LIBPATH, from the top-level package.js
 	args.push("-lib", path.join(rootFolder, opt.lib));
 }
+if (gather) {
+	args.push("-gathering");
+}
 run(args);
 
 // Deploy / Copy
@@ -333,15 +344,16 @@ if (opt.test) {
 	shell.cp('-r', path.join(opt.out, opt.build), ".");
 }
 
-function deployDir(subDir) {
+function deployDir(subDir, dstSubDir) {
 	log("Deploying '" + subDir + "'...");
 	var dj = path.join(subDir, "deploy.json");
 	if (fs.existsSync(dj)) {
 		try {
 			var manifest = JSON.parse(fs.readFileSync(dj));
+			dstSubDir = dstSubDir || subDir;
 			if (Array.isArray(manifest.assets)) {
 				manifest.assets.forEach(function(asset) {
-					var dstAssetDir = path.dirname(path.join(opt.out, subDir, asset));
+					var dstAssetDir = path.dirname(path.join(opt.out, dstSubDir, asset));
 					log("% mkdir -p " + dstAssetDir);
 					shell.mkdir('-p', dstAssetDir);
 					log("% cp -r " + path.join(subDir, asset) + "...");
@@ -350,7 +362,8 @@ function deployDir(subDir) {
 			}
 			if (Array.isArray(manifest.libs)) {
 				manifest.libs.forEach(function(libDir) {
-					deployDir(path.join(subDir, libDir));
+					var libDst = gather ? path.join(subDir, "lib", path.basename(libDir)) : undefined;
+					deployDir(path.join(subDir, libDir), libDst);
 				});
 			}
 		} catch(e) {

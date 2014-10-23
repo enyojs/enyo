@@ -1,0 +1,528 @@
+/**
+* @todo Need to define this.
+* @glossary kind
+* @see enyo.kind
+*/
+
+/**
+* @todo Need to define this.
+* @glossary mixin
+* @see enyo.mixin
+*/
+
+/**
+* @todo Need to define this.
+* @glossary event
+* @see https://github.com/enyojs/enyo/wiki/Event-Handling
+*/
+
+/**
+* @todo Need to define this.
+* @glossary EUID
+*/
+
+/**
+* @todo Need to define this.
+* @glossary delegate
+*/
+
+/**
+* @todo Need to define this.
+* @glossary constructor
+*/
+
+/**
+* @todo Need to define this.
+* @glossary configurationBlock
+*/
+
+/**
+* @todo Need to define this.
+* @glossary chrome
+*/
+
+/**
+* @todo Need to define this.
+* @glossary subkind
+*/
+
+/**
+* @todo Need to define this.
+* @glossary deferred
+*/
+
+/**
+* @todo need to define this.
+* @glossary layout
+*/
+
+/**
+* @todo need to define this.
+* @glossary JSON.stringify
+*/
+
+/**
+* @todo need to define this.
+* @glossary JSONP
+*/
+
+/**
+* @todo need to define this.
+* @glossary ProgressEvent
+*/
+
+/**
+* @todo need to define this.
+* @glossary Spotlight
+*/
+
+/**
+* @todo need to define this.
+* @glossary ilib
+*/
+
+/**
+* @todo need to define this.
+* @glossary true
+*/
+
+/**
+* @todo need to define this.
+* @glossary false
+*/
+
+/**
+* @todo need to define this.
+* @glossary null
+*/
+
+/**
+* @todo need to define this.
+* @glossary Number
+*/
+
+/**
+* @todo need to define this.
+* @glossary Boolean
+*/
+
+///// Internally Documented Links (Glossary) /////
+
+/**
+* Binary (bitwise) operations.
+* 
+* @glossary bitwise
+* @see http://www.experts-exchange.com/Programming/Misc/A_1842-Binary-Bit-Flags-Tutorial-and-Usage-Tips.html
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators
+*/
+
+/**
+* Strict Equality. This comparison logic ensures not only that the value of the things being
+* compared is the same, but also their types.
+* 
+* @glossary ===
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Using_the_Equality_Operators
+*/
+
+/**
+* A "polyfill" describes a method or function that is added to older browsers
+* that don't support a native version of said method, in an effort to bring the
+* browser up to the standards of modern browsers. This allows code that expects
+* a modern browser to work properly in an older one.
+* 
+* @glossary polyfill
+* @see http://en.wikipedia.org/wiki/Polyfill
+*/
+
+/**
+* The Document Object Model (DOM) is a programming interface for HTML and XML documents.
+* @glossary DOM
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model
+*/
+
+/**
+* Inheritance
+* @glossary inheritance
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain
+*/
+
+///// Externally Documented Links /////
+
+/**
+* Universally Unique Identifier
+* @glossary UUID
+* @see http://en.wikipedia.org/wiki/Universally_unique_identifier
+*/
+
+/**
+* @glossary callback
+* @see https://developer.mozilla.org/en-US/docs/Mozilla/js-ctypes/js-ctypes_reference/Callbacks
+*/
+
+/**
+* @glossary entity
+* @see http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
+*/
+
+/**
+* @glossary undefined
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined
+*/
+
+/**
+* @glossary arguments
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions_and_function_scope/arguments
+*/
+
+/**
+* @glossary String
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
+*/
+
+/**
+* @glossary Function
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
+*/
+
+/**
+* @glossary Array
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+*/
+
+/**
+* @glossary Array.indexOf
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
+* @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.14
+*/
+
+/**
+* @glossary Array.lastIndexOf
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf
+* http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.15
+*/
+
+/**
+* @glossary Array.findIndex
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
+*/
+
+/**
+* @glossary Array.find
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+*/
+
+/**
+* @glossary Array.forEach
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
+* @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.18
+*/
+
+/**
+* @glossary Array.map
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+* @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.19
+*/
+
+/**
+* @glossary Array.filter
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+* @see http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.20
+*/
+
+/**
+* @glossary Array.join
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+*/
+
+/**
+* @glossary Object
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
+*/
+
+/**
+* @glossary Object.prototype
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype
+*/
+
+/**
+* @glossary Object.create
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
+*/
+
+/**
+* @glossary Object.hasOwnProperty
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
+*/
+
+/**
+* @glossary Object.keys
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
+*/
+
+/**
+* @glossary window
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window
+*/
+
+/**
+* @glossary window.getComputedStyle
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window.getComputedStyle
+*/
+
+/**
+* @glossary window.getComputedStyleValue
+* @see https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/NsIAccessNode#getComputedStyleValue()
+*/
+
+/**
+* @glossary window.location
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window.location
+*/
+
+/**
+* @glossary window.performance
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window.performance
+*/
+
+/**
+* @glossary window.setTimeout
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Window.setTimeout
+*/
+
+/**
+* @glossary Date
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+*/
+
+/**
+* @glossary Date.now
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now
+*/
+
+/**
+* @glossary Date.getTime
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime
+*/
+
+/**
+* @glossary console
+* @see https://developer.mozilla.org/en-US/docs/Web/API/console
+*/
+
+/**
+* @glossary console.log
+* @see https://developer.mozilla.org/en-US/docs/Web/API/console.log
+*/
+
+/**
+* @glossary console.warn
+* @see https://developer.mozilla.org/en-US/docs/Web/API/console.warn
+*/
+
+/**
+* @glossary console.error
+* @see https://developer.mozilla.org/en-US/docs/Web/API/console.error
+*/
+
+/**
+* @glossary DOM
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model
+*/
+
+/**
+* @glossary Node
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Node
+*/
+
+/**
+* @glossary Anchor
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
+*/
+
+/**
+* @glossary Attribute
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
+*/
+
+/**
+* @glossary audio
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
+*/
+
+/**
+* @glossary button
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button
+*/
+
+/**
+* @glossary form
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+*/
+
+/**
+* @glossary input
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input
+*/
+
+/**
+* @glossary img
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Img
+*/
+
+/**
+* @glossary focus
+* @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement.focus
+*/
+
+/**
+* @glossary blur
+* @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement.blur
+*/
+
+/**
+* @glossary iframe
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
+*/
+
+/**
+* @glossary script
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script
+*/
+
+/**
+* @glossary select
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select
+*/
+
+/**
+* @glossary option
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option
+*/
+
+/**
+* @glossary optgroup
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/optgroup
+*/
+
+/**
+* @glossary style
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/style
+*/
+
+/**
+* @glossary table
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table
+*/
+
+/**
+* @glossary tr
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/tr
+*/
+
+/**
+* @glossary td
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/td
+*/
+
+/**
+* @glossary textarea
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea
+*/
+
+/**
+* @glossary video
+* @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video
+*/
+
+/**
+* @glossary scrollIntoView
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Element.scrollIntoView
+*/
+
+/**
+* @glossary HTML5MediaElement
+* @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
+*/
+
+/**
+* @glossary backgroundPosition
+* @see https://developer.mozilla.org/en-US/docs/Web/CSS/background-position
+*/
+
+/**
+* @glossary DOMEvent
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Event
+*/
+
+/**
+* @glossary TimeRanges
+* @see https://developer.mozilla.org/en-US/docs/Web/API/TimeRanges
+*/
+
+/**
+* @glossary Selection
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Selection
+*/
+
+/**
+* @glossary Selection.collapseToStart
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Selection.collapseToStart
+*/
+
+/**
+* @glossary Selection.collapseToEnd
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Selection.collapseToEnd
+*/
+
+/**
+* @glossary Selection.modify
+* @see https://developer.mozilla.org/en-US/docs/Web/API/Selection.modify
+*/
+
+/**
+* @glossary Range
+* @see https://developer.mozilla.org/en-US/docs/Web/API/range
+*/
+
+/**
+* @glossary fullscreen
+* @see https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Using_full_screen_mode
+*/
+
+/**
+* @todo Find a better external source
+* @glossary networkState
+* @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement#Properties
+*/
+
+/**
+* @todo Find a better external source
+* @glossary readyState
+* @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement#Properties
+*/
+
+///// Common Type Definitions /////
+
+/**
+* A [DOM]{@glossary DOM} [node]{@glossary Node} element [object]{@glossary Object}.
+*
+* @typedef {Node}
+*/
+
+/**
+* A {@glossary TimeRanges} element {@glossary Object}.
+*
+* @typedef {TimeRanges}
+*/
+
+/**
+* A {@glossary readyState} value.
+*
+* @typedef {ReadyState}
+*/
+
+/**
+* A {@glossary Selection} [object]{@glossary Object}.
+*
+* @typedef {Selection}
+*/

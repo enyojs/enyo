@@ -37,7 +37,7 @@ enyo.kind({
 		this.$.enyoPlatformJSON.setContent(JSON.stringify(enyo.platform, null, 1));
 		this.updateWindowSize();
 	},
-	resizeHandler: function() {
+	handleResize: function() {
 		this.inherited(arguments);
 		this.updateWindowSize();
 	}

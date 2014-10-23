@@ -1,16 +1,23 @@
-(function (enyo) {
-	//*@protected
+(function (enyo, scope) {
 	/**
-		This is a delegate (strategy) used by _enyo.DataGridList_ for vertically oriented
-		lists. This is used by all lists for this strategy and does not get copied but
-		called directly from the list. It is only available to _enyo.DataGridLists_.
+	* This is a [delegate]{@glossary delegate} (strategy) used by {@link enyo.DataGridList}
+	* for vertically-oriented lists. This is used by all lists for this strategy; it does
+	* not get copied, but is called directly from the list. It is only available to
+	* `enyo.DataGridList`.
+	*
+	* @name enyo.DataGridList.delegates.verticalGrid
+	* @type Object
+	* @private
 	*/
 	var p = enyo.clone(enyo.DataGridList.delegates.vertical);
 	enyo.kind.extendMethods(p, {
+		
 		/**
-			Once the list is initially rendered it will generate its scroller (so
-			we know that is available). Now we need to cache our initial size values
-			and apply them to our pages individually.
+		* Once the list is initially rendered, it will generate its [scroller]{@link enyo.Scroller}
+		* (so we know that is available). Now we need to cache our initial size values and apply
+		* them to our pages individually.
+		*
+		* @private
 		*/
 		rendered: function (list) {
 			// get our initial sizing cached now since we should actually have
@@ -21,32 +28,43 @@
 			// want to do any more initialization
 			if (list.collection && list.collection.length) { this.reset(list); }
 		},
+		
 		/**
-			Reset the page with the added class update to the list.
+		* Resets the page, setting `canAddResetClass` flag if appropriate.
+		*
+		* @method
+		* @private
 		*/
 		reset: enyo.inherit(function (sup) {
 			return function (list) {
 				sup.apply(this, arguments);
-				if (list.hasReset && !list.hasClass("reset")) {
+				if (list.hasReset && !list.hasClass('reset')) {
 					list.canAddResetClass = true;
 				}
 			};
 		}),
+		
 		/**
-			Unlike in DataList we can calculate the page heights since we know the structure
-			and layout of the page precisely.
+		* Unlike in {@link enyo.DataList}, we can calculate the page height since we know
+		* the structure and layout of the page precisely.
+		*
+		* @private
 		*/
 		pageHeight: function (list, page) {
 			var n  = page.node || page.hasNode(),
 				a  = n.children.length,
 				mx = list.metrics.pages[page.index], s;
 			s = (Math.floor(a/list.columns)+(a%list.columns? 1: 0))*(list.tileHeight+list.spacing);
-			n.style.height = s + "px";
+			n.style.height = s + 'px';
 			mx.height = s;
 			return s;
 		},
+
 		/**
-			This method generates the markup for the page content.
+		* Generates the markup for the page content.
+		*
+		* @method
+		* @private
 		*/
 		generatePage: enyo.inherit(function (sup) {
 			return function (list, page) {
@@ -54,26 +72,35 @@
 				this.layout(list, page);
 			};
 		}),
+
 		/**
-			Returns the calculated width for the given page.
+		* Returns the calculated width for the given page.
+		*
+		* @private
 		*/
 		pageWidth: function (list, page) {
 			var s  = list.boundsCache.width,
 				n  = page.node || page.hasNode(),
 				mx = list.metrics.pages[page.index];
-			n.style.width = s + "px";
+			n.style.width = s + 'px';
 			mx.width = s;
 			return s;
 		},
+
 		/**
-			Retrieves the default page size.
+		* Retrieves the default page size.
+		*
+		* @private
 		*/
 		defaultPageSize: function (list) {
 			return (Math.ceil(this.controlsPerPage(list)/list.columns) * (list.tileHeight+list.spacing));
 		},
+
 		/**
-			Calculates metric values required for the absolute positioning and scaling of
-			the children in the list.
+		* Calculates metric values required for the absolute positioning and scaling of the
+		* children in the list.
+		*
+		* @private
 		*/
 		updateMetrics: function (list) {
 			this.updateBounds(list);
@@ -94,16 +121,65 @@
 			// be used for each page
 			this.controlsPerPage(list);
 			// Compute first and last row index bounds
-			if (list.collection) {
-				list.indexBoundFirstRow = list.columns;
-				list.indexBoundLastRow = (Math.ceil(list.collection.length / list.columns) - 1) * list.columns - 1;
-			}
+			this.updateIndexBound(list);
 		},
+
 		/**
-			The number of controls necessary to fill a page will change depending on some
-			factors such as scaling and list-size adjustments. It is a function of the calculated
-			size required (pageSizeMultiplier * the current boundary height) and the adjusted tile height and
-			spacing.
+		* Calculates index bound that is required for adjusting page position. Can be called
+		* after the [DataGridList]{@link enyo.DataGridList} is rendered.
+		*
+		* @private
+		*/
+		updateIndexBound: function(list) {
+			if (!list.collection) {
+				return;
+			}
+			// If user calls this method before DataGridList is rendered
+			if (list.boundsCache === undefined) {
+				this.updateMetrics(list);
+			}
+
+			list.indexBoundFirstRow = list.columns;
+			list.indexBoundLastRow = (Math.ceil(list.collection.length / list.columns) - 1) * list.columns - 1;
+		},
+
+		/**
+		* Ensures that index bound is maintained and up-to-date as
+		* [models]{@link enyo.Model} are added.
+		*
+		* @method
+		* @private
+		*/
+		modelsAdded: enyo.inherit(function (sup) {
+			return function (list, props) {
+				this.updateIndexBound(list);
+				sup.apply(this, arguments);
+			};
+		}),
+
+		/**
+		* Ensures that index bound is maintained and up-to-date as
+		* [models]{@link enyo.Model} are removed.
+		*
+		* @method
+		* @private
+		*/
+		modelsRemoved: enyo.inherit(function (sup) {
+			return function (list, props) {
+				this.updateIndexBound(list);
+				sup.apply(this, arguments);
+			};
+		}),
+
+		/**
+		* The number of [controls]{@link enyo.Control} necessary to fill a page. This will
+		* change depending on factors such as scaling and list-size adjustments. It is a 
+		* [function]{@glossary Function} of the calculated size required
+		* ([pageSizeMultiplier]{@link enyo.DataList#pageSizeMultiplier} * current boundary
+		* height) and the adjusted tile height and spacing.
+		*
+		* @method
+		* @private
 		*/
 		controlsPerPage: enyo.inherit(function (sup) {
 			return function (list) {
@@ -117,22 +193,29 @@
 				return perPage;
 			};
 		}),
+
+		/*
+		* @private
+		*/
 		childSize: function (list) {
 			// currently DataGridList is only vertical
 			/*jshint -W093 */
 			return (list.childSize = (list.tileHeight + list.spacing));
 		},
+
 		/**
-			Takes a given page and arbitrarily positions its children according to the pre-computed
-			metrics of the list.
+		* Takes a given page and arbitrarily positions its children according to the pre-computed
+		* metrics of the list.
 	
-			TODO: This could be optimized to use requestAnimationFrame as well as render not by
-			child index but by row thus cutting down some of the over-calculation when iterating
-			over every child.
+		* TODO: This could be optimized to use requestAnimationFrame as well as render not by child 
+		* index but by row, thus cutting down some of the over-calculation when iterating over every 
+		* child.
+		*
+		* @private
 		*/
 		layout: function (list, page) {
 			if (list.canAddResetClass) {
-				list.addClass("reset");
+				list.addClass('reset');
 				delete list.canAddResetClass;
 			}
 			var cc = list.columns,
@@ -147,20 +230,22 @@
 					// the column
 					co = i % cc;
 					c.addStyles(
-						"top: "    + Math.round(s  + (r  * (h+s))) + "px; " +
-						(list.rtl ? "right: " : "left: ") + Math.round(s  + (co * (w+s))) + "px; " +
-						"width: "  + Math.round(w) +                 "px; " +
-						"height: " + Math.round(h) +                 "px"
+						'top: '    + Math.round(s  + (r  * (h+s))) + 'px; ' +
+						(list.rtl ? 'right: ' : 'left: ') + Math.round(s  + (co * (w+s))) + 'px; ' +
+						'width: '  + Math.round(w) +                 'px; ' +
+						'height: ' + Math.round(h) +                 'px;'
 					);
 					// check if we need to increment the row
 					if ((i+1) % cc === 0) { ++r; }
 				}
 			}
 		},
+
 		/**
-			Recalculates the buffer size based on the current metrics for the given
-			list. This may or may not be completely accurate until the final page is
-			scrolled into view.
+		* Recalculates the buffer size based on the current metrics for the given list. This
+		* may not be completely accurate until the final page is scrolled into view.
+		*
+		* @private
 		*/
 		adjustBuffer: function (list) {
 			var pc = this.pageCount(list),
@@ -174,12 +259,15 @@
 				}
 				bs += list.spacing;
 				list.bufferSize = bs;
-				n.style[sp] = bs + "px";
-				n.style[ss] = this[ss](list) + "px";
+				n.style[sp] = bs + 'px';
+				n.style[ss] = this[ss](list) + 'px';
 			}
 		},
+		
 		/**
-			Delegate's resize event handler.
+		* The delegate's `resize` {@glossary event} handler.
+		*
+		* @private
 		*/
 		didResize: function (list) {
 			// store the previous stats for comparative purposes
@@ -205,6 +293,7 @@
 			this.refresh(list);
 		}
 	}, true);
-	enyo.DataGridList.delegates.verticalGrid = p;
-})(enyo);
 
+	enyo.DataGridList.delegates.verticalGrid = p;
+
+})(enyo, this);

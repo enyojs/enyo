@@ -1,125 +1,288 @@
-/**
-	_enyo.Select_ implements an HTML selection widget, using
-	[enyo.Option](#enyo.Option) kinds by default.
+(function (enyo, scope) {
+	/**
+	* {@link enyo.Select} implements an HTML [selection]{@glossary select} widget, using
+	* {@link enyo.Option} instances by default.
+	*
+	* ```
+	* {kind: 'Select', onchange: 'selectChanged', components: [
+	*	{content: 'Descending', value: 'd'},
+	*	{content: 'Ascending', value: 'a'}
+	* ]}
+	* 
+	* selectChanged: function(inSender, inEvent) {
+	*	var s = inSender.getValue();
+	*	if (s == 'd') {
+	*		this.sortListDescending();
+	*	} else {
+	*		this.sortListAscending();
+	*	}
+	* }
+	* ```
+	* 
+	* Note: This uses the [&lt;select&gt;]{@glossary select} tag, which isn't implemented for
+	* native webOS applications, although it does work in the webOS Web browser.
+	*
+	* @class enyo.Select
+	* @extends enyo.Control
+	* @ui
+	* @public
+	*/
+	enyo.kind(
+		/** @lends enyo.Select.prototype */ {
 
-	Example:
+		/**
+		* @private
+		*/
+		name: 'enyo.Select',
 
-		{kind: "Select", onchange: "selectChanged", components: [
-			{content: "Descending", value: "d"},
-			{content: "Ascending", value: "a"}
-		]}
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
 
-		selectChanged: function(inSender, inEvent) {
-			var s = inSender.getValue();
-			if (s == "d") {
-				this.sortListDescending();
-			} else {
-				this.sortListAscending();
-			}
-		}
+		/**
+		* @private
+		*/
+		published: 
+			/** @lends enyo.Select.prototype */ {
+			
+			/**
+			* The index of the selected [option]{@link enyo.Option} in the list.
+			* 
+			* @type {Number}
+			* @default 0
+			* @public
+			*/
+			selected: 0,
 
-	Note: This uses the `<select>` tag, which isn't implemented
-	for native webOS applications, although it does work in the
-	webOS Web browser.
-*/
+			/**
+			* The value of the selected [option]{@link enyo.Option}.
+			* 
+			* @type {Object}
+			* @default null
+			* @public
+			*/
+			value: null
+		},
+		
+		/**
+		* @private
+		*/
+		handlers: {
+			onchange: 'change'
+		},
 
-enyo.kind({
-	name: "enyo.Select",
-	published: {
-		//* Index of the selected option in the list
-		selected: 0,
-		//* The value of the selected option
-		value: null
-	},
-	//* @protected
-	handlers: {
-		onchange: "change"
-	},
-	tag: "select",
-	defaultKind: "enyo.Option",
-	rendered: enyo.inherit(function (sup) {
-		return function() {
-			sup.apply(this, arguments);
-			//Trick to force IE8 onchange event bubble
-			if(enyo.platform.ie == 8){
-				this.setAttribute("onchange", enyo.bubbler);
-			}
-			this.change();
-			this.selectedChanged();
-		};
-	}),
-	getSelected: function() {
-		return Number(this.getNodeProperty("selectedIndex", this.selected));
-	},
-	selectedChanged: function() {
-		this.setNodeProperty("selectedIndex", this.selected);
-	},
-	change: function() {
-		this.selected = this.getSelected();
-		if (this.hasNode()) {
-			this.set("value", this.node.value);
-		}
-	},
-	render: enyo.inherit(function (sup) {
-		return function() {
-			// work around IE bug with innerHTML setting of <select>, rerender parent instead
-			// http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
-			if (enyo.platform.ie) {
-				this.parent.render();
-			} else {
+		/**
+		* @private
+		*/
+		tag: 'select',
+
+		/**
+		* @private
+		*/
+		defaultKind: 'enyo.Option',
+
+		/**
+		* @method
+		* @private
+		*/
+		rendered: enyo.inherit(function (sup) {
+			return function() {
 				sup.apply(this, arguments);
+				//Trick to force IE8 onchange event bubble
+				if(enyo.platform.ie == 8){
+					this.setAttribute('onchange', enyo.bubbler);
+				}
+				this.change();
+				this.selectedChanged();
+			};
+		}),
+
+		/**
+		* @private
+		*/
+		getSelected: function () {
+			return Number(this.getNodeProperty('selectedIndex', this.selected));
+		},
+
+		/**
+		* @private
+		*/
+		selectedChanged: function () {
+			this.setNodeProperty('selectedIndex', this.selected);
+		},
+
+		/**
+		* @private
+		*/
+		change: function () {
+			this.selected = this.getSelected();
+			if (this.hasNode()) {
+				this.set('value', this.node.value);
 			}
-		};
-	})
-});
+		},
 
-/**
-	_enyo.Option_ implements the options in an HTML select widget.
-*/
-enyo.kind({
-	name: "enyo.Option",
-	published: {
-		//* Value of the option
-		value: "",
-		//* Is this option selected or not (not by default)
-		selected: false
-	},
-	//* @protected
-	tag: "option",
-	create: enyo.inherit(function (sup) {
-		return function() {
-			sup.apply(this, arguments);
-			this.valueChanged();
-			this.selectedChanged();
-		};
-	}),
-	valueChanged: function() {
-		this.setAttribute("value", this.value);
-	},
-	selectedChanged: function() {
-		this.setAttribute("selected", this.selected);
-	}
-});
+		/**
+		* @method
+		* @private
+		*/
+		render: enyo.inherit(function (sup) {
+			return function() {
+				// work around IE bug with innerHTML setting of <select>, rerender parent instead
+				// http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
+				if (enyo.platform.ie) {
+					this.parent.render();
+				} else {
+					sup.apply(this, arguments);
+				}
+			};
+		})
+	});
 
-/**
-	_enyo.OptionGroup_ allows for the grouping of options in a select widget,
-	and for the disabling of blocks of options.
-*/
-enyo.kind({
-	name: "enyo.OptionGroup",
-	published: {
-		label: ""
-	},
-	//* @protected
-	tag: "optgroup",
-	defaultKind: "enyo.Option",
-	create: enyo.inherit(function (sup) {
-		return function() {
-			sup.apply(this, arguments);
-			this.labelChanged();
-		};
-	}),
-	labelChanged: function() {
-		this.setAttribute("label", this.label);
-	}
-});
+	/**
+	* {@link enyo.Option} implements the [options]{@glossary option} in an
+	* {@link enyo.Select} [control]{@link enyo.Control}.
+	*
+	* @class enyo.Option
+	* @extends enyo.Control
+	* @ui
+	* @public
+	*/
+	enyo.kind(
+		/** @lends enyo.Option.prototype */ {
+
+		/**
+		* @private
+		*/
+		name: 'enyo.Option',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
+
+		/**
+		* @private
+		*/
+		published: {
+			/**
+			* Value of the [option]{@link enyo.Option}.
+			* 
+			* @type {String}
+			* @default ''
+			* @memberof enyo.Option.prototype
+			* @public
+			*/
+			value: '',
+
+			/**
+			* Set to `true` if this [option]{@link enyo.Option} is selected (default is `false`).
+			* 
+			* @type {Boolean}
+			* @default false
+			* @memberof enyo.Option.prototype
+			* @public
+			*/
+			selected: false
+		},
+		
+		/**
+		* @private
+		*/
+		tag: 'option',
+
+		/**
+		* @method
+		* @private
+		*/
+		create: enyo.inherit(function (sup) {
+			return function() {
+				sup.apply(this, arguments);
+				this.valueChanged();
+				this.selectedChanged();
+			};
+		}),
+
+		/**
+		* @private
+		*/
+		valueChanged: function () {
+			this.setAttribute('value', this.value);
+		},
+
+		/**
+		* @private
+		*/
+		selectedChanged: function () {
+			this.setAttribute('selected', this.selected);
+		}
+	});
+
+	/**
+	* {@link enyo.OptionGroup} allows for the [grouping]{@glossary optgroup} of
+	* [options]{@link enyo.Option} in an {@link enyo.Select} [control]{@link enyo.Control}, 
+	* and for the disabling of blocks of options.
+	*
+	* @class enyo.OptionGroup
+	* @extends enyo.Control
+	* @ui
+	* @public
+	*/
+	enyo.kind(
+		/** @lends enyo.OptionGroup.prototype */ {
+
+		/**
+		* @private
+		*/
+		name: 'enyo.OptionGroup',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Control',
+
+		/**
+		* @private
+		*/
+		published: {
+			/**
+			* The name for this [option group]{@link enyo.OptionGroup}.
+			* 
+			* @type {String}
+			* @default ''
+			* @memberof enyo.OptionGroup.prototype
+			* @public
+			*/
+			label: ''
+		},
+		
+		/**
+		* @private
+		*/
+		tag: 'optgroup',
+
+		/**
+		* @private
+		*/
+		defaultKind: 'enyo.Option',
+
+		/**
+		* @method
+		* @private
+		*/
+		create: enyo.inherit(function (sup) {
+			return function() {
+				sup.apply(this, arguments);
+				this.labelChanged();
+			};
+		}),
+
+		/**
+		* @private
+		*/
+		labelChanged: function () {
+			this.setAttribute('label', this.label);
+		}
+	});
+
+})(enyo, this);

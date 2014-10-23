@@ -224,7 +224,13 @@ describe('enyo.Binding', function () {
 			noAuto,
 			
 		// reference to ownerless binding
-			ownerless;
+			ownerless,
+
+		// reference to global 'from' binding
+			globalFrom,
+
+		// reference to global 'to' binding
+			globalTo;
 		
 		before(function () {
 			
@@ -256,7 +262,7 @@ describe('enyo.Binding', function () {
 			};
 			
 			// we instance the ends of the bindings before creating them
-			source = new TestComponent({oneWay: true, twoWay: false});
+			source = new TestComponent({oneWay: true, twoWay: false, sourceProp: 'source'});
 			target = new enyo.Object();
 			
 			// we do this to be able to test resolution of the source and target later
@@ -293,6 +299,17 @@ describe('enyo.Binding', function () {
 				to: 'ownerless',
 				transform: function (value) { return value + 1; }
 			});
+
+			window.globalTestComponent = new TestComponent({sourceProp: 'source', destProp: null});
+			globalFrom = target.binding({
+				from: '^globalTestComponent.sourceProp',
+				to: '.destProp'
+			});
+
+			globalTo = source.binding({
+				from: '.sourceProp',
+				to: '^globalTestComponent.destProp'
+			});
 		});
 		
 		after(function () {
@@ -304,9 +321,15 @@ describe('enyo.Binding', function () {
 			source.destroy();
 			target.destroy();
 			ownerless.destroy();
+			globalTo.destroy();
+			globalFrom.destroy();
+			globalTestComponent.destroy();
 			
 			// and the function
-			window.xform = null;
+			window.globalXform = null;
+
+			// and the global instance
+			window.globalTestComponent = null;
 		});
 		
 		describe('#oneWay', function () {
@@ -398,11 +421,11 @@ describe('enyo.Binding', function () {
 			it ('should be derrived out of the from property if not explicitly provided and ' +
 				'relative to the binding\'s owner if it has one', function () {
 				
-				expect(oneWay.source).to.equal(source);
+				expect(oneWay._source).to.equal(source);
 			});
 			
 			it ('should use the object passed in when explicitly set', function () {
-				expect(ownerless.source).to.equal(source);
+				expect(ownerless._source).to.equal(source);
 			});
 			
 		});
@@ -418,24 +441,29 @@ describe('enyo.Binding', function () {
 				var path = oneWay.to.split('.').shift();
 				
 				// the source and target will be the same object actually
-				expect(oneWay.source).to.equal(oneWay.target);
-				expect(oneWay.source.get(path)).to.equal(target);
+				expect(oneWay._source).to.equal(oneWay._target);
+				expect(oneWay._source.get(path)).to.equal(target);
 			});
 			
 			it ('should use the object passed in when explicitly set', function () {
-				expect(ownerless.target).to.equal(target);
+				expect(ownerless._target).to.equal(target);
 			});
 			
 		});
 		
 		describe('#from', function () {
-			
+
+			it ('should resolve global paths when it begins with ^', function () {
+				expect(target.get('destProp')).to.equal('source');
+			})
 			
 		});
 		
 		describe('#to', function () {
 			
-			
+			it ('should resolve global paths when it begins with ^', function () {
+				expect(globalTestComponent.get('destProp')).to.equal('source');
+			})
 			
 		});
 		
