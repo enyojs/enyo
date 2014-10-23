@@ -348,7 +348,7 @@
 		* Determines whether this control currently has the [focus]{@glossary focus}.
 		*
 		* @returns {Boolean} Whether this control has focus. `true` if the control
-		* has focus; otherwise, false.
+		* has focus; otherwise, `false`.
 		* @public
 		*/
 		hasFocus: function () {
@@ -359,7 +359,7 @@
 		* Determines whether this control's [DOM node]{@glossary Node} has been created.
 		*
 		* @returns {Boolean} Whether this control's [DOM node]{@glossary Node} has
-		* been created. `true` if it has been created; otherwise, false.
+		* been created. `true` if it has been created; otherwise, `false`.
 		* @public
 		*/
 		hasNode: function () {
