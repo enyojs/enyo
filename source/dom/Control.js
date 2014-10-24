@@ -1280,8 +1280,8 @@
 			// Values that are null or undefined, or are numbers, arrays, and some objects are safe
 			// to be tested.
 			var str = (arguments.length) ? stringInstead : this.content;
-			this.rtl = enyo.isRtl(str);
 			if (str || str === 0) {
+				this.rtl = enyo.isRtl(str);
 				this.applyStyle('direction', this.rtl ? 'rtl' : 'ltr');
 			} else {
 				this.applyStyle('direction', null);
