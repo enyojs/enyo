@@ -73,3 +73,7 @@
   -o-transition: top 300ms ease-out, left 300ms ease-out, width 300ms ease-out, height 300ms ease-out;
   transition: top 300ms ease-out, left 300ms ease-out, width 300ms ease-out, height 300ms ease-out;
 }
+.enyo-data-list.transitions .fastmove.page {
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+}

@@ -218,6 +218,7 @@
 				list.addClass('reset');
 				delete list.canAddResetClass;
 			}
+			if (page.queue) {return;}
 			var cc = list.columns,
 				s  = list.spacing,
 				w  = list.tileWidth,

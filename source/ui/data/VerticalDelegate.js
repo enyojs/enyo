@@ -153,7 +153,7 @@
 		*
 		* @private
 		*/
-		generatePage: function (list, page, index) {
+		generatePage: function (list, page, index, queue) {
 			// in case it hasn't been set we ensure it is marked correctly
 			page.index  = index;
 				// the collection of data with records to use
@@ -175,27 +175,43 @@
 			
 			// if generating a control we need to use the correct page as the control parent
 			list.controlParent = page;
-			for (var i=page.start; i <= page.end && i < data.length; ++i) {
-				view = (page.children[i - page.start] || list.createComponent({}));
-				// disable notifications until all properties to be updated
-				// have been
-				view.teardownRender();
-				view.stopNotifications();
-				view.set('model', data.at(i));
-				view.set('index', i);
-				view.set('selected', list.isSelected(view.model));
-				view.startNotifications();
-				view.canGenerate = true;
+			if (!queue || (index > (data.length / perPage)-2) || index < 2) {
+				for (var i=page.start; i <= page.end && i < data.length; ++i) {
+					view = (page.children[i - page.start] || list.createComponent({}));
+					// disable notifications until all properties to be updated
+					// have been
+					view.teardownRender();
+					view.stopNotifications();
+					view.set('model', data.at(i));
+					view.set('index', i);
+					view.set('selected', list.isSelected(view.model));
+					view.startNotifications();
+					view.canGenerate = true;
+				}
+				// if there are any controls that need to be hidden we do that now
+				for (i=(i-page.start); i < page.children.length; ++i) {
+					view = page.children[i];
+					view.teardownRender();
+					view.canGenerate = false;
+				}
+			
+				// update the entire page at once - this removes old nodes and updates
+				// to the correct ones
+				page.render();
+				page.addRemoveClass('fastmove', false);
+				page.queue = undefined;
+			} else {
+				for (var i=page.start; i <= page.end && i < data.length; ++i) {
+					view = (page.children[i - page.start] || list.createComponent({}));
+					view.stopNotifications();
+					view.set('index', i);
+					view.startNotifications();
+				}
+				// indicate that this page is not rendered for lazy render
+				page.addRemoveClass('fastmove', true);
+				page.queue = true;
 			}
-			// if there are any controls that need to be hidden we do that now
-			for (i=(i-page.start); i < page.children.length; ++i) {
-				view = page.children[i];
-				view.teardownRender();
-				view.canGenerate = false;
-			}
-			// update the entire page at once - this removes old nodes and updates
-			// to the correct ones
-			page.render();
+
 			// now to update the metrics
 			metrics        = metrics.pages[index] || (metrics.pages[index] = {});
 			metrics.height = this.pageHeight(list, page);
@@ -515,11 +531,13 @@
 		/**
 		* @private
 		*/
-		scrollHandler: function (list, bounds) {
+		scrollHandler: function (list, bounds, event) {
 			var last = this.pageCount(list)-1,
-				pos  = this.pagesByPosition(list);
+				pos  = this.pagesByPosition(list),
+				queue = (event.speed != undefined) && (Math.abs(event.speed) > 1);
+
 			if ((bounds.xDir === 1 || bounds.yDir === 1) && pos.lastPage.index !== (last)) {
-				this.generatePage(list, pos.firstPage, pos.lastPage.index + 1);
+				this.generatePage(list, pos.firstPage, pos.lastPage.index + 1, queue); //console.log("scrollHandler down", event.speed, queue);
 				this.adjustPagePositions(list);
 				this.adjustBuffer(list);
 				// note that the reference to the page positions has been udpated by
@@ -530,7 +548,7 @@
 					action: 'scroll'
 				});
 			} else if ((bounds.xDir === -1 || bounds.yDir === -1) && pos.firstPage.index !== 0) {
-				this.generatePage(list, pos.lastPage, pos.firstPage.index - 1);
+				this.generatePage(list, pos.lastPage, pos.firstPage.index - 1, queue); //console.log("scrollHandler up", event.speed, queue);
 				this.adjustPagePositions(list);
 				// note that the reference to the page positions has been udpated by
 				// another method so we trust the actual pages
@@ -540,6 +558,7 @@
 					action: 'scroll'
 				});
 			}
+			// console.log("scrollHandler", event.speed, queue);
 		},
 
 		/**
@@ -613,14 +632,78 @@
 				bounds[upperProp] = this.getScrollPosition(list);
 				if (bounds.xDir === 1 || bounds.yDir === 1) {
 					if (!isNaN(threshold[lowerProp]) && (bounds[upperProp] >= threshold[lowerProp])) {
-						this.scrollHandler(list, bounds);
+						this.scrollHandler(list, bounds, event);
 					}
 				} else if (bounds.yDir === -1 || bounds.xDir === -1) {
 					if (!isNaN(threshold[upperProp]) && (bounds[upperProp] <= threshold[upperProp])) {
-						this.scrollHandler(list, bounds);
+						this.scrollHandler(list, bounds, event);
 					}
 				}
 			}
+		},
+
+		aboutScrollStop: function(list) {
+			var last = this.pageCount(list)-1,
+				pos  = this.pagesByPosition(list);
+			if (pos.firstPage.queue) {
+				this.renderPageItems(list, pos.firstPage);
+				// pos.firstPage.render(); pos.firstPage.queue = undefined;
+				this.adjustPagePositions(list);
+			}
+			if (pos.lastPage.queue) {
+				this.renderPageItems(list, pos.lastPage);
+				// pos.lastPage.render(); pos.lastPage.queue = undefined;
+				this.adjustPagePositions(list);
+			}
+		},
+
+		didScrollStop: function(list, event) {
+			var last = this.pageCount(list)-1,
+				pos  = this.pagesByPosition(list);
+			if (pos.firstPage.queue) {
+				this.renderPageItems(list, pos.firstPage);
+				// pos.firstPage.render(); pos.firstPage.queue = undefined;
+				this.adjustPagePositions(list);
+			}
+			if (pos.lastPage.queue) {
+				this.renderPageItems(list, pos.lastPage);
+				// pos.lastPage.render(); pos.lastPage.queue = undefined;
+				this.adjustPagePositions(list);
+			}
+		},
+
+		renderPageItems: function (list, page) {
+			var data    = list.collection,
+				// controls per page
+				perPage = this.controlsPerPage(list),
+				// placeholder for the control we're going to update
+				view;
+			
+			for (var i=page.start; i <= page.end && i < data.length; ++i) {
+				view = (page.children[i - page.start] || list.createComponent({}));
+				// disable notifications until all properties to be updated
+				// have been
+				// view.teardownRender();
+				view.stopNotifications();
+				view.set('model', data.at(i));
+				view.set('index', i);
+				view.set('selected', list.isSelected(view.model));
+				view.startNotifications();
+				// view.canGenerate = true;
+				view.render();
+			}
+			// if there are any controls that need to be hidden we do that now
+			for (i=(i-page.start); i < page.children.length; ++i) {
+				view = page.children[i];view.hide();
+				// view.teardownRender();
+				// view.canGenerate = false;
+			}
+		
+			// update the entire page at once - this removes old nodes and updates
+			// to the correct ones
+			// page.render();
+			page.addRemoveClass('fastmove', false);
+			page.queue = undefined;
 		},
 
 		/**

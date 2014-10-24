@@ -381,7 +381,7 @@
 
 					this.stop();
 					this.scroll();
-					this.doScrollStop();
+					this.doScrollStop({loadnext: true});
 
 					this.endX = null;
 					this.endY = null;
@@ -531,7 +531,11 @@
 		* @private
 		*/
 		scroll: function () {
-			this.doScroll();
+			var curTime = enyo.perfNow(), speed = 0;
+			if (this.last == undefined) { this.last = {time: curTime, pos: this.y }; }
+			speed = (this.y - this.last.pos) / (curTime - this.last.time);
+			this.doScroll({speed: speed});
+			this.last = {time: enyo.perfNow(), pos: this.y};
 		},
 
 		// NOTE: Yip/Orvell method for determining scroller instantaneous velocity

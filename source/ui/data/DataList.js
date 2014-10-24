@@ -425,6 +425,11 @@
 			}
 			return true;
 		},
+		didScrollStop: function(sender, e) {
+			if (e.loadnext) {
+				this.delegate.didScrollStop(this, e);
+			}
+		},
 		/**
 		* Special override to handle resizing in an attempt to minimize the amount of work
 		* we're doing. We don't want to [waterfall]{@link enyo.Component#waterfall} the
@@ -536,7 +541,7 @@
 		*
 		* @private
 		*/
-		handlers: {onScroll: 'didScroll', onresize: 'didResize'},
+		handlers: {onScroll: 'didScroll', onScrollStop: 'didScrollStop', onresize: 'didResize'},
 
 		/**
 		* @private
