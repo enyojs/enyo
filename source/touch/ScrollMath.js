@@ -1,320 +1,616 @@
-﻿/**
-_enyo.ScrollMath_ implements a scrolling dynamics simulation.  It is a helper
-kind used by other scroller kinds, such as
-<a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a>.
+(function (enyo, scope) {
+	/**
+	* Fires when a scrolling action starts.
+	*
+	* @event enyo.ScrollMath#onScrollStart
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the {@glossary event}.
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	*	event information.
+	* @private
+	*/
 
-_enyo.ScrollMath_ is not typically created in application code.
-*/
-enyo.kind({
-	name: "enyo.ScrollMath",
-	kind: "enyo.Component",
-	published: {
-		//* True if vertical scrolling is enabled
-		vertical: true,
-		//* True if horizontal scrolling is enabled
-		horizontal: true
-	},
-	events: {
-		//* Fires when scroll action starts.
-		onScrollStart: "",
-		//* Fires while scroll action is in progress.
-		onScroll: "",
-		//* Fires when scroll action stops.
-		onScrollStop: ""
-	},
-	//* 'Spring' damping returns the scroll position to a value inside the
-	//* boundaries.  Lower values provide _faster_ snapback.
-	kSpringDamping: 0.93,
-	//* 'Drag' damping resists dragging the scroll position beyond the
-	//* boundaries.  Lower values provide _more_ resistance.
-	kDragDamping: 0.5,
-	//* 'Friction' damping reduces momentum over time.  Lower values provide
-	//* _more_ friction.
-	kFrictionDamping: 0.97,
-	//* Additional 'friction' damping applied when momentum carries the viewport
-	//* into overscroll.  Lower values provide _more_ friction.
-	kSnapFriction: 0.9,
-	//* Scalar applied to 'flick' event velocity
-	kFlickScalar: 15,
-	//* Limits the maximum allowable flick.  On Android > 2, we limit this to
-	//* prevent compositing artifacts.
-	kMaxFlick: enyo.platform.android > 2 ? 2 : 1e9,
-	//* The value used in friction() to determine if the delta (e.g., y - y0) is
-	//* close enough to zero to consider as zero
-	kFrictionEpsilon: 1e-2,
-	//* Top snap boundary, generally 0
-	topBoundary: 0,
-	//* Right snap boundary, generally (viewport width - content width)
-	rightBoundary: 0,
-	//* Bottom snap boundary, generally (viewport height - content height)
-	bottomBoundary: 0,
-	//* Left snap boundary, generally 0
-	leftBoundary: 0,
-	//* Animation time step
-	interval: 20,
-	//* Flag to enable frame-based animation; if false, time-based animation is used
-	fixedTime: true,
-	//* @protected
-	// simulation state
-	x0: 0,
-	x: 0,
-	y0: 0,
-	y: 0,
-	destroy: enyo.inherit(function (sup) {
-		return function() {
-			this.stop();
-			sup.apply(this, arguments);
-		};
-	}),
 	/**
-		Simple Verlet integrator for simulating Newtonian motion.
+	* Fires while a scrolling action is in progress.
+	*
+	* @event enyo.ScrollMath#onScroll
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the {@glossary event}.
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	*	event information.
+	* @private
 	*/
-	verlet: function() {
-		var x = this.x;
-		this.x += x - this.x0;
-		this.x0 = x;
-		//
-		var y = this.y;
-		this.y += y - this.y0;
-		this.y0 = y;
-	},
+
 	/**
-		Boundary damping function.
-		Returns damped 'value' based on 'coeff' on one side of 'origin'.
+	* Fires when a scrolling action stops.
+	*
+	* @event enyo.ScrollMath#onScrollStop
+	* @type {Object}
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	*	propagated the {@glossary event}.
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	*	event information.
+	* @private
 	*/
-	damping: function(value, origin, coeff, sign) {
-		var kEpsilon = 0.5;
-		//
-		// this is basically just value *= coeff (generally, coeff < 1)
-		//
-		// 'sign' and the conditional is to force the damping to only occur
-		// on one side of the origin.
-		//
-		var dv = value - origin;
-		// Force close-to-zero to zero
-		if (Math.abs(dv) < kEpsilon) {
-			return origin;
-		}
-		return value*sign > origin*sign ? coeff * dv + origin : value;
-	},
+
 	/**
-		Dual-boundary damping function.
-		Returns damped 'value' based on 'coeff' when exceeding either boundary.
+	* {@link enyo.ScrollMath} implements a scrolling dynamics simulation. It is a
+	* helper [kind]{@glossary kind} used by other [scroller]{@link enyo.Scroller}
+	* kinds, such as {@link enyo.TouchScrollStrategy}.
+	* 
+	* `enyo.ScrollMath` is not typically created in application code.
+	*
+	* @class enyo.ScrollMath
+	* @protected
 	*/
-	boundaryDamping: function(value, aBoundary, bBoundary, coeff) {
-		return this.damping(this.damping(value, aBoundary, coeff, 1), bBoundary, coeff, -1);
-	},
-	/**
-		Simulation constraints (spring damping occurs here)
-	*/
-	constrain: function() {
-		var y = this.boundaryDamping(this.y, this.topBoundary, this.bottomBoundary, this.kSpringDamping);
-		if (y != this.y) {
-			// ensure snapping introduces no velocity, add additional friction
-			this.y0 = y - (this.y - this.y0) * this.kSnapFriction;
-			this.y = y;
-		}
-		var x = this.boundaryDamping(this.x, this.leftBoundary, this.rightBoundary, this.kSpringDamping);
-		if (x != this.x) {
-			this.x0 = x - (this.x - this.x0) * this.kSnapFriction;
-			this.x = x;
-		}
-	},
-	/**
-		The friction function
-	*/
-	friction: function(inEx, inEx0, inCoeff) {
-		// implicit velocity
-		var dp = this[inEx] - this[inEx0];
-		// let close-to-zero collapse to zero (i.e. smaller than epsilon is considered zero)
-		var c = Math.abs(dp) > this.kFrictionEpsilon ? inCoeff : 0;
-		// reposition using damped velocity
-		this[inEx] = this[inEx0] + c * dp;
-	},
-	// one unit of time for simulation
-	frame: 10,
-	// piece-wise constraint simulation
-	simulate: function(t) {
-		while (t >= this.frame) {
-			t -= this.frame;
-			if (!this.dragging) {
-				this.constrain();
-			}
-			this.verlet();
-			this.friction('y', 'y0', this.kFrictionDamping);
-			this.friction('x', 'x0', this.kFrictionDamping);
-		}
-		return t;
-	},
-	animate: function() {
-		this.stop();
-		// time tracking
-		var t0 = enyo.perfNow(), t = 0;
-		// delta tracking
-		var x0, y0;
-		// animation handler
-		var fn = this.bindSafely(function() {
-			// wall-clock time
-			var t1 = enyo.perfNow();
-			// schedule next frame
-			this.job = enyo.requestAnimationFrame(fn);
-			// delta from last wall clock time
-			var dt = t1 - t0;
-			// record the time for next delta
-			t0 = t1;
-			// user drags override animation
-			if (this.dragging) {
-				this.y0 = this.y = this.uy;
-				this.x0 = this.x = this.ux;
-			}
-			// frame-time accumulator
-			// min acceptable time is 16ms (60fps)
-			t += Math.max(16, dt);
-			// alternate fixed-time step strategy:
-			if (this.fixedTime && !this.isInOverScroll()) {
-				t = this.interval;
-			}
-			// consume some t in simulation
-			t = this.simulate(t);
-			// scroll if we have moved, otherwise the animation is stalled and we can stop
-			if (y0 != this.y || x0 != this.x) {
-				//this.log(this.y, y0);
-				this.scroll();
-			} else if (!this.dragging) {
+	enyo.kind(
+		/** @lends enyo.ScrollMath.prototype */ {
+
+		/**
+		* @private
+		*/
+		name: 'enyo.ScrollMath',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Component',
+
+		/**
+		* @private
+		*/
+		published: 
+			/** @lends enyo.ScrollMath.prototype */ {
+
+			/** 
+			* Set to `true` to enable vertical scrolling.
+			*
+			* @type {Boolean}
+			* @default true
+			* @private
+			*/
+			vertical: true,
+
+			/** 
+			* Set to `true` to enable horizontal scrolling.
+			*
+			* @type {Boolean}
+			* @default true
+			* @private
+			*/
+			horizontal: true
+		},
+
+		/**
+		* @private
+		*/
+		events: {
+			onScrollStart: '',
+			onScroll: '',
+			onScrollStop: ''
+		},
+
+		/**
+		* "Spring" damping returns the scroll position to a value inside the boundaries. Lower 
+		* values provide faster snapback.
+		*
+		* @private
+		*/
+		kSpringDamping: 0.93,
+
+		/** 
+		* "Drag" damping resists dragging the scroll position beyond the boundaries. Lower values 
+		* provide more resistance.
+		*
+		* @private
+		*/
+		kDragDamping: 0.5,
+		
+		/** 
+		* "Friction" damping reduces momentum over time. Lower values provide more friction.
+		*
+		* @private
+		*/
+		kFrictionDamping: 0.97,
+
+		/** 
+		* Additional "friction" damping applied when momentum carries the viewport into overscroll. 
+		* Lower values provide more friction.
+		*
+		* @private
+		*/
+		kSnapFriction: 0.9,
+		
+		/** 
+		* Scalar applied to `flick` event velocity.
+		*
+		* @private
+		*/
+		kFlickScalar: 15,
+
+		/** 
+		* Limits the maximum allowable flick. On Android > 2, we limit this to prevent compositing 
+		* artifacts.
+		*
+		* @private
+		*/
+		kMaxFlick: enyo.platform.android > 2 ? 2 : 1e9,
+		
+		/** 
+		* The value used in [friction()]{@link enyo.ScrollMath#friction} to determine if the delta 
+		* (e.g., y - y0) is close enough to zero to consider as zero.
+		*
+		* @private
+		*/
+		kFrictionEpsilon: enyo.platform.webos >= 4 ? 1e-1 : 1e-2,
+		
+		/** 
+		* Top snap boundary, generally `0`.
+		*
+		* @private
+		*/
+		topBoundary: 0,
+		
+		/** 
+		* Right snap boundary, generally `(viewport width - content width)`.
+		*
+		* @private
+		*/
+		rightBoundary: 0,
+		
+		/** 
+		* Bottom snap boundary, generally `(viewport height - content height)`.
+		*
+		* @private
+		*/
+		bottomBoundary: 0,
+		
+		/** 
+		* Left snap boundary, generally `0`.
+		*
+		* @private
+		*/
+		leftBoundary: 0,
+		
+		/** 
+		* Animation time step.
+		*
+		* @private
+		*/
+		interval: 20,
+		
+		/** 
+		* Flag to enable frame-based animation; if `false`, time-based animation is used.
+		*
+		* @private
+		*/
+		fixedTime: true,
+
+		/**
+		* Simulation state.
+		*
+		* @private
+		*/
+		x0: 0,
+
+		/**
+		* Simulation state.
+		*
+		* @private
+		*/
+		x: 0,
+
+		/**
+		* Simulation state.
+		*
+		* @private
+		*/
+		y0: 0,
+
+		/**
+		* Simulation state.
+		*
+		* @private
+		*/
+		y: 0,
+
+		/**
+		* @method
+		* @private
+		*/
+		destroy: enyo.inherit(function (sup) {
+			return function() {
 				this.stop();
-				this.scroll();
-				this.doScrollStop();
+				sup.apply(this, arguments);
+			};
+		}),
+
+		/**
+		* Simple Verlet integrator for simulating Newtonian motion.
+		*
+		* @private
+		*/
+		verlet: function () {
+			var x = this.x;
+			this.x += x - this.x0;
+			this.x0 = x;
+			//
+			var y = this.y;
+			this.y += y - this.y0;
+			this.y0 = y;
+		},
+
+		/**
+		* Boundary damping function. Returns damped `value` based on `coeff` on one side of 
+		* `origin`.
+		*
+		* @private
+		*/
+		damping: function (val, origin, coeff, sign) {
+			var kEpsilon = 0.5;
+			//
+			// this is basically just value *= coeff (generally, coeff < 1)
+			//
+			// 'sign' and the conditional is to force the damping to only occur
+			// on one side of the origin.
+			//
+			var dv = val - origin;
+			// Force close-to-zero to zero
+			if (Math.abs(dv) < kEpsilon) {
+				return origin;
 			}
-			y0 = this.y;
-			x0 = this.x;
-		});
-		this.job = enyo.requestAnimationFrame(fn);
-	},
-	//* @protected
-	start: function() {
-		if (!this.job) {
-			this.doScrollStart();
-			this.animate();
-		}
-	},
-	stop: function(inFireEvent) {
-		var job = this.job;
-		if (job) {
-			this.job = enyo.cancelRequestAnimationFrame(job);
-		}
-		if (inFireEvent) {
-			this.doScrollStop();
-		}
-	},
-	stabilize: function() {
-		this.start();
-		var y = Math.min(this.topBoundary, Math.max(this.bottomBoundary, this.y));
-		var x = Math.min(this.leftBoundary, Math.max(this.rightBoundary, this.x));
-		this.y = this.y0 = y;
-		this.x = this.x0 = x;
-		this.scroll();
-		this.stop(true);
-	},
-	startDrag: function(e) {
-		this.dragging = true;
-		//
-		this.my = e.pageY;
-		this.py = this.uy = this.y;
-		//
-		this.mx = e.pageX;
-		this.px = this.ux = this.x;
-	},
-	drag: function(e) {
-		if (this.dragging) {
-			var dy = this.vertical ? e.pageY - this.my : 0;
-			this.uy = dy + this.py;
-			// provides resistance against dragging into overscroll
-			this.uy = this.boundaryDamping(this.uy, this.topBoundary, this.bottomBoundary, this.kDragDamping);
-			//
-			var dx = this.horizontal ? e.pageX - this.mx : 0;
-			this.ux = dx + this.px;
-			// provides resistance against dragging into overscroll
-			this.ux = this.boundaryDamping(this.ux, this.leftBoundary, this.rightBoundary, this.kDragDamping);
-			//
+			return val*sign > origin*sign ? coeff * dv + origin : val;
+		},
+
+		/**
+		* Dual-boundary damping function. Returns damped `value` based on `coeff` when exceeding 
+		* either boundary.
+		*
+		* @private
+		*/
+		boundaryDamping: function (val, aBoundary, bBoundary, coeff) {
+			return this.damping(this.damping(val, aBoundary, coeff, 1), bBoundary, coeff, -1);
+		},
+
+		/**
+		* Simulation constraints (spring damping occurs here).
+		*
+		* @private
+		*/
+		constrain: function () {
+			var y = this.boundaryDamping(this.y, this.topBoundary, this.bottomBoundary, this.kSpringDamping);
+			if (y != this.y) {
+				// ensure snapping introduces no velocity, add additional friction
+				this.y0 = y - (this.y - this.y0) * this.kSnapFriction;
+				this.y = y;
+			}
+			var x = this.boundaryDamping(this.x, this.leftBoundary, this.rightBoundary, this.kSpringDamping);
+			if (x != this.x) {
+				this.x0 = x - (this.x - this.x0) * this.kSnapFriction;
+				this.x = x;
+			}
+		},
+
+		/**
+		* The friction function.
+		*
+		* @private
+		*/
+		friction: function (ex, ex0, coeff) {
+			// implicit velocity
+			var dp = this[ex] - this[ex0];
+			// let close-to-zero collapse to zero (i.e. smaller than epsilon is considered zero)
+			var c = Math.abs(dp) > this.kFrictionEpsilon ? coeff : 0;
+			// reposition using damped velocity
+			this[ex] = this[ex0] + c * dp;
+		},
+
+		/** 
+		* One unit of time for simulation.
+		*
+		* @private
+		*/
+		frame: 10,
+		// piece-wise constraint simulation
+		simulate: function (t) {
+			while (t >= this.frame) {
+				t -= this.frame;
+				if (!this.dragging) {
+					this.constrain();
+				}
+				this.verlet();
+				this.friction('y', 'y0', this.kFrictionDamping);
+				this.friction('x', 'x0', this.kFrictionDamping);
+			}
+			return t;
+		},
+
+		/**
+		* @fires enyo.ScrollMath#onScrollStop
+		* @private
+		*/
+		animate: function () {
+			this.stop();
+			// time tracking
+			var t0 = enyo.perfNow(), t = 0;
+			// delta tracking
+			var x0, y0;
+			// animation handler
+			var fn = this.bindSafely(function() {
+				// wall-clock time
+				var t1 = enyo.perfNow();
+				// schedule next frame
+				this.job = enyo.requestAnimationFrame(fn);
+				// delta from last wall clock time
+				var dt = t1 - t0;
+				// record the time for next delta
+				t0 = t1;
+				// user drags override animation
+				if (this.dragging) {
+					this.y0 = this.y = this.uy;
+					this.x0 = this.x = this.ux;
+				}
+				// frame-time accumulator
+				// min acceptable time is 16ms (60fps)
+				t += Math.max(16, dt);
+				// prevent snapping to originally desired scroll position if we are in overscroll
+				if (this.isInOverScroll()) {
+					this.endX = null;
+					this.endY = null;
+				}
+				// alternate fixed-time step strategy:
+				else if (this.fixedTime) {
+					t = this.interval;
+				}
+				// consume some t in simulation
+				t = this.simulate(t);
+				// scroll if we have moved, otherwise the animation is stalled and we can stop
+				if (y0 != this.y || x0 != this.x) {
+					//this.log(this.y, y0);
+					this.scroll();
+				} else if (!this.dragging) {
+					// set final values
+					if (this.endX != null) {
+						this.x = this.x0 = this.endX;
+					}
+					if (this.endY != null) {
+						this.y = this.y0 = this.endY;
+					}
+
+					this.stop();
+					this.scroll();
+					this.doScrollStop();
+
+					this.endX = null;
+					this.endY = null;
+				}
+				y0 = this.y;
+				x0 = this.x;
+			});
+			this.job = enyo.requestAnimationFrame(fn);
+		},
+		
+		/**
+		* @private
+		*/
+		start: function () {
+			if (!this.job) {
+				this.doScrollStart();
+				this.animate();
+			}
+		},
+
+		/**
+		* @private
+		*/
+		stop: function (fire) {
+			var job = this.job;
+			if (job) {
+				this.job = enyo.cancelRequestAnimationFrame(job);
+			}
+			if (fire) {
+				this.doScrollStop();
+
+				this.endX = undefined;
+				this.endY = undefined;
+			}
+		},
+
+		/**
+		* Adjusts the scroll position to be valid, if necessary (e.g., after the scroll contents
+		* have changed).
+		*
+		* @private
+		*/
+		stabilize: function () {
 			this.start();
-			return true;
-		}
-	},
-	dragDrop: function() {
-		if (this.dragging && !window.PalmSystem) {
-			var kSimulatedFlickScalar = 0.5;
-			this.y = this.uy;
-			this.y0 = this.y - (this.y - this.y0) * kSimulatedFlickScalar;
-			this.x = this.ux;
-			this.x0 = this.x - (this.x - this.x0) * kSimulatedFlickScalar;
-		}
-		this.dragFinish();
-	},
-	dragFinish: function() {
-		this.dragging = false;
-	},
-	flick: function(e) {
-		var v;
-		if (this.vertical) {
-			v = e.yVelocity > 0 ? Math.min(this.kMaxFlick, e.yVelocity) : Math.max(-this.kMaxFlick, e.yVelocity);
-			this.y = this.y0 + v * this.kFlickScalar;
-		}
-		if (this.horizontal) {
-			v = e.xVelocity > 0 ? Math.min(this.kMaxFlick, e.xVelocity) : Math.max(-this.kMaxFlick, e.xVelocity);
-			this.x = this.x0 + v * this.kFlickScalar;
-		}
-		this.start();
-	},
-	mousewheel: function(e) {
-		var dy = this.vertical ? e.wheelDeltaY || (!e.wheelDeltaX ? e.wheelDelta : 0) : 0,
-			dx = this.horizontal ? e.wheelDeltaX : 0,
-			shouldScroll = false;
-		if ((dy > 0 && this.y < this.topBoundary) || (dy < 0 && this.y > this.bottomBoundary)) {
-			this.y = this.y0 = this.y0 + dy;
-			shouldScroll = true;
-		}
-		if ((dx > 0 && this.x < this.leftBoundary) || (dx < 0 && this.x > this.rightBoundary)) {
-			this.x = this.x0 = this.x0 + dx;
-			shouldScroll = true;
-		}
-		if (shouldScroll) {
+			var y = Math.min(this.topBoundary, Math.max(this.bottomBoundary, this.y));
+			var x = Math.min(this.leftBoundary, Math.max(this.rightBoundary, this.x));
+			this.y = this.y0 = y;
+			this.x = this.x0 = x;
+			this.scroll();
 			this.stop(true);
+		},
+
+		/**
+		* @private
+		*/
+		startDrag: function (e) {
+			this.dragging = true;
+			//
+			this.my = e.pageY;
+			this.py = this.uy = this.y;
+			//
+			this.mx = e.pageX;
+			this.px = this.ux = this.x;
+		},
+
+		/**
+		* @private
+		*/
+		drag: function (e) {
+			if (this.dragging) {
+				var dy = this.vertical ? e.pageY - this.my : 0;
+				this.uy = dy + this.py;
+				// provides resistance against dragging into overscroll
+				this.uy = this.boundaryDamping(this.uy, this.topBoundary, this.bottomBoundary, this.kDragDamping);
+				//
+				var dx = this.horizontal ? e.pageX - this.mx : 0;
+				this.ux = dx + this.px;
+				// provides resistance against dragging into overscroll
+				this.ux = this.boundaryDamping(this.ux, this.leftBoundary, this.rightBoundary, this.kDragDamping);
+				//
+				this.start();
+				return true;
+			}
+		},
+
+		/**
+		* @private
+		*/
+		dragDrop: function () {
+			if (this.dragging && !window.PalmSystem) {
+				var kSimulatedFlickScalar = 0.5;
+				this.y = this.uy;
+				this.y0 = this.y - (this.y - this.y0) * kSimulatedFlickScalar;
+				this.x = this.ux;
+				this.x0 = this.x - (this.x - this.x0) * kSimulatedFlickScalar;
+			}
+			this.dragFinish();
+		},
+
+		/**
+		* @private
+		*/
+		dragFinish: function () {
+			this.dragging = false;
+		},
+
+		/**
+		* @private
+		*/
+		flick: function (e) {
+			var v;
+			if (this.vertical) {
+				v = e.yVelocity > 0 ? Math.min(this.kMaxFlick, e.yVelocity) : Math.max(-this.kMaxFlick, e.yVelocity);
+				this.y = this.y0 + v * this.kFlickScalar;
+			}
+			if (this.horizontal) {
+				v = e.xVelocity > 0 ? Math.min(this.kMaxFlick, e.xVelocity) : Math.max(-this.kMaxFlick, e.xVelocity);
+				this.x = this.x0 + v * this.kFlickScalar;
+			}
 			this.start();
-			return true;
+		},
+
+		/**
+		* @private
+		*/
+		mousewheel: function (e) {
+			var dy = this.vertical ? e.wheelDeltaY || (!e.wheelDeltaX ? e.wheelDelta : 0) : 0,
+				dx = this.horizontal ? e.wheelDeltaX : 0,
+				shouldScroll = false;
+			if ((dy > 0 && this.y < this.topBoundary) || (dy < 0 && this.y > this.bottomBoundary)) {
+				this.y = this.y0 = this.y0 + dy;
+				shouldScroll = true;
+			}
+			if ((dx > 0 && this.x < this.leftBoundary) || (dx < 0 && this.x > this.rightBoundary)) {
+				this.x = this.x0 = this.x0 + dx;
+				shouldScroll = true;
+			}
+			if (shouldScroll) {
+				this.stop(true);
+				this.start();
+				return true;
+			}
+		},
+
+		/**
+		* @fires enyo.ScrollMath#onScroll
+		* @private
+		*/
+		scroll: function () {
+			this.doScroll();
+		},
+
+		// NOTE: Yip/Orvell method for determining scroller instantaneous velocity
+		// FIXME: incorrect if called when scroller is in overscroll region
+		// because does not account for additional overscroll damping.
+		
+		/**
+		* Animates a scroll to the specified position.
+		*
+		* @param {Number} x - The `x` position in pixels.
+		* @param {Number} y - The `y` position in pixels.
+		* @private
+		*/
+		scrollTo: function (x, y) {
+			if (x == this.x && y == this.y) return;
+			if (y !== null) {
+				this.endY = -y;
+				this.y = this.y0 - (y + this.y0) * (1 - this.kFrictionDamping);
+			}
+			if (x !== null) {
+				this.endX = -x;
+				this.x = this.x0 - (x + this.x0) * (1 - this.kFrictionDamping);
+			}
+			this.start();
+		},
+
+		/**
+		* Sets the scroll position along the x-axis.
+		*
+		* @param {Number} x - The x-axis scroll position in pixels.
+		* @method
+		* @private
+		*/
+		setScrollX: function (x) {
+			this.x = this.x0 = x;
+		},
+
+		/**
+		* Sets the scroll position along the y-axis.
+		*
+		* @param {Number} y - The y-axis scroll position in pixels.
+		* @method
+		* @private
+		*/
+		setScrollY: function (y) {
+			this.y = this.y0 = y;
+		},
+
+		/**
+		* Sets the scroll position; defaults to setting this position along the y-axis.
+		*
+		* @param {Number} pos - The scroll position in pixels.
+		* @method
+		* @private
+		*/
+		setScrollPosition: function (pos) {
+			this.setScrollY(pos);
+		},
+
+		/** 
+		* Determines whether or not the [scroller]{@link enyo.Scroller} is actively moving.
+		* 
+		* @return {Boolean} `true` if actively moving; otherwise, `false`.
+		* @private
+		*/
+		isScrolling: function () {
+			return Boolean(this.job);
+		},
+
+		/** 
+		* Determines whether or not the [scroller]{@link enyo.Scroller} is in overscroll.
+		* 
+		* @return {Boolean} `true` if in overscroll; otherwise, `false`.
+		* @private
+		*/
+		isInOverScroll: function () {
+			return this.job && (this.x > this.leftBoundary || this.x < this.rightBoundary ||
+				this.y > this.topBoundary || this.y < this.bottomBoundary);
 		}
-	},
-	scroll: function() {
-		this.doScroll();
-	},
-	// NOTE: Yip/Orvell method for determining scroller instantaneous velocity
-	// FIXME: incorrect if called when scroller is in overscroll region
-	// because does not account for additional overscroll damping.
-	/**
-		Animates a scroll to the specified position.
-	*/
-	scrollTo: function(inX, inY) {
-		if (inY !== null) {
-			this.y = this.y0 - (inY + this.y0) * (1 - this.kFrictionDamping);
-		}
-		if (inX !== null) {
-			this.x = this.x0 - (inX + this.x0) * (1 - this.kFrictionDamping);
-		}
-		this.start();
-	},
-	setScrollX: function(inX) {
-		this.x = this.x0 = inX;
-	},
-	setScrollY: function(inY) {
-		this.y = this.y0 = inY;
-	},
-	setScrollPosition: function(inPosition) {
-		this.setScrollY(inPosition);
-	},
-	isScrolling: function() {
-		return Boolean(this.job);
-	},
-	isInOverScroll: function() {
-		return this.job && (this.x > this.leftBoundary || this.x < this.rightBoundary ||
-			this.y > this.topBoundary || this.y < this.bottomBoundary);
-	}
-});
+	});
+
+})(enyo, this);

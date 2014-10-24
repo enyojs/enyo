@@ -1,24 +1,39 @@
-(function (enyo) {
-	//*@public
+(function (enyo, scope) {
 	/**
-		_enyo.RepeaterChildSupport_ contains methods and properties that are
-		automatically applied to all children of _enyo.DataRepeater_ to assist in
-		selection support. (See [enyo.DataRepeater](#enyo.DataRepeater) for details on
-		how to use selection support.) _enyo.RepeaterChildSupport_ also adds the
-		_model_, _child_ (control instance), and _index_ properties to all events
-		emitted from the repeater's children.
+	* The {@link enyo.RepeaterChildSupport} [mixin]{@glossary mixin} contains methods and
+	* properties that are automatically applied to all children of {@link enyo.DataRepeater}
+	* to assist in selection support. (See {@link enyo.DataRepeater} for details on how to
+	* use selection support.) This mixin also [adds]{@link enyo.Repeater#decorateEvent} the
+	* `model`, `child` ([control]{@link enyo.Control} instance), and `index` properties to
+	* all [events]{@glossary event} emitted from the repeater's children.
+	*
+	* @mixin enyo.RepeaterChildSupport
+	* @public
 	*/
 	enyo.RepeaterChildSupport = {
-		name: "RepeaterChildSupport",
+
+		/*
+		* @private
+		*/
+		name: 'RepeaterChildSupport',
+
 		/**
-			Indicates whether the current child is selected in the repeater.
+		* Indicates whether the current child is selected in the [repeater]{@link enyo.DataRepeater}.
+		*
+		* @type {Boolean}
+		* @default false
+		* @public
 		*/
 		selected: false,
-		//*@protected
+		
+		/*
+		* @method
+		* @private
+		*/
 		selectedChanged: enyo.inherit(function (sup) {
 			return function () {
 				if (this.repeater.selection) {
-					this.addRemoveClass(this.selectedClass || "selected", this.selected);
+					this.addRemoveClass(this.selectedClass || 'selected', this.selected);
 					// for efficiency purposes, we now directly call this method as opposed to
 					// forcing a synchronous event dispatch
 					var idx = this.repeater.collection.indexOf(this.model);
@@ -31,6 +46,11 @@
 				sup.apply(this, arguments);
 			};
 		}),
+
+		/*
+		* @method
+		* @private
+		*/
 		decorateEvent: enyo.inherit(function (sup) {
 			return function (sender, event) {
 				event.model = this.model;
@@ -39,15 +59,25 @@
 				sup.apply(this, arguments);
 			};
 		}),
+
+		/*
+		* @private
+		*/
 		_selectionHandler: function () {
-			if (this.repeater.selection && !this.get("disabled")) {
-				this.set("selected", !this.selected);
+			if (this.repeater.selection && !this.get('disabled')) {
+				if (!this.repeater.groupSelection || !this.selected) {
+					this.set('selected', !this.selected);
+				}
 			}
 		},
 		/**
-			Deliberately used to supersede the default method and set owner to this
-			control so that there are no name collisions in the instance owner, and also
-			so that bindings will correctly map to names.
+		* Deliberately used to supersede the default method and set 
+		* [owner]{@link enyo.Component#owner} to this [control]{@link enyo.Control} so that there 
+		* are no name collisions in the instance [owner]{@link enyo.Component#owner}, and also so 
+		* that [bindings]{@link enyo.Binding} will correctly map to names.
+		*
+		* @method
+		* @private
 		*/
 		createClientComponents: enyo.inherit(function () {
 			return function (components) {
@@ -55,7 +85,11 @@
 			};
 		}),
 		/**
-			Used so that we don't stomp on any built-in handlers for the _ontap_ event.
+		* Used so that we don't stomp on any built-in handlers for the `ontap`
+		* {@glossary event}.
+		*
+		* @method
+		* @private
 		*/
 		dispatchEvent: enyo.inherit(function (sup) {
 			return function (name, event, sender) {
@@ -68,6 +102,11 @@
 				return sup.apply(this, arguments);
 			};
 		}),
+
+		/*
+		* @method
+		* @private
+		*/
 		constructed: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
@@ -77,8 +116,8 @@
 				// to track the selected state from the view and model and keep them in sync
 				if (s) {
 					var bnd = this.binding({
-						from: "model." + s,
-						to: "selected",
+						from: 'model.' + s,
+						to: 'selected',
 						oneWay: false/*,
 						kind: enyo.BooleanBinding*/
 					});
@@ -86,6 +125,11 @@
 				}
 			};
 		}),
+
+		/*
+		* @method
+		* @private
+		*/
 		destroy: enyo.inherit(function (sup) {
 			return function () {
 				if (this._selectionBindingId) {
@@ -97,6 +141,11 @@
 				sup.apply(this, arguments);
 			};
 		}),
+
+		/*
+		* @private
+		*/
 		_selectionBindingId: null
 	};
-})(enyo);
+
+})(enyo, this);

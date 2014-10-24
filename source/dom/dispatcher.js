@@ -1,17 +1,59 @@
-(function (enyo) {
+(function (enyo, source) {
+	/**
+	 * An [object]{@glossary Object} describing the the last known coordinates of the cursor or
+	 * user-interaction point in touch environments.
+	 *
+	 * @typedef {Object} enyo.dispatcher~CursorCoordinates
+	 * @property {Number} clientX - The horizontal coordinate within the application's client area.
+	 * @property {Number} clientY - The vertical coordinate within the application's client area.
+	 * @property {Number} pageX - The X coordinate of the cursor relative to the viewport, including any
+	 *   scroll offset.
+	 * @property {Number} pageY - The Y coordinate of the cursor relative to the viewport, including any
+	 *   scroll offset.
+	 * @property {Number} screenX - The X coordinate of the cursor relative to the screen, not including
+	 *   any scroll offset.
+	 * @property {Number} screenY - The Y coordinate of the cursor relative to the screen, not including
+	 *   any scroll offset.
+	 */
 
-	//* @protected
+	/**
+	* @private
+	*/
 	enyo.$ = {};
 
-	enyo.dispatcher = {
-		// these events come from document
+	/**
+	* @private
+	*/
+	enyo.dispatcher =
+		/** @lends enyo.dispatcher.prototype */ {
+
+		/**
+		* These events come from document
+		*
+		* @private
+		*/
 		events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel",
 			"click", "dblclick", "change", "keydown", "keyup", "keypress", "input",
-			"paste", "copy", "cut", "webkitTransitionEnd", "transitionend", "webkitAnimationEnd", "animationEnd"],
-		// these events come from window
+			"paste", "copy", "cut", "webkitTransitionEnd", "transitionend", "webkitAnimationEnd", "animationend",
+			"webkitAnimationStart", "animationstart", "webkitAnimationIteration", "animationiteration"],
+
+		/**
+		* These events come from window
+		*
+		* @private
+		*/
 		windowEvents: ["resize", "load", "unload", "message", "hashchange", "popstate"],
-		// feature plugins (aka filters)
+
+		/**
+		* Feature plugins (aka filters)
+		*
+		* @private
+		*/
 		features: [],
+
+		/**
+		* @private
+		*/
 		connect: function() {
 			var d = enyo.dispatcher, i, n;
 			for (i=0; (n=d.events[i]); i++) {
@@ -28,6 +70,10 @@
 				d.listen(window, n);
 			}
 		},
+
+		/**
+		* @private
+		*/
 		listen: function(inListener, inEventName, inHandler) {
 			var d = enyo.dispatch;
 			if (inListener.addEventListener) {
@@ -48,6 +94,10 @@
 			}
 			this.listen(inListener, inEventName, inHandler);
 		},
+
+		/**
+		* @private
+		*/
 		stopListening: function(inListener, inEventName, inHandler) {
 			var d = enyo.dispatch;
 			if (inListener.addEventListener) {
@@ -62,7 +112,12 @@
 			}
 			this.stopListening(inListener, inEventName, inHandler);
 		},
-		//* Fires an event for Enyo to listen for.
+
+		/**
+		* Fires an event for Enyo to listen for.
+		*
+		* @private
+		*/
 		dispatch: function(e) {
 			// Find the control who maps to e.target, or the first control that maps to an ancestor of e.target.
 			var c = this.findDispatchTarget(e.target) || this.findDefaultTarget();
@@ -78,7 +133,12 @@
 				return this.dispatchBubble(e, c);
 			}
 		},
-		//* Takes an event target and finds the corresponding Enyo control.
+
+		/**
+		* Takes an event target and finds the corresponding Enyo control.
+		*
+		* @private
+		*/
 		findDispatchTarget: function(inNode) {
 			var t, n = inNode;
 			// FIXME: Mozilla: try/catch is here to squelch "Permission denied to access property xxx from a non-chrome context"
@@ -100,10 +160,19 @@
 			}
 			return t;
 		},
-		//* Returns the default Enyo control for events.
+
+		/**
+		* Returns the default Enyo control for events.
+		*
+		* @private
+		*/
 		findDefaultTarget: function() {
 			return enyo.master;
 		},
+
+		/**
+		* @private
+		*/
 		dispatchBubble: function(e, c) {
 			var type = e.type;
 			type = e.customEvent ? type : "on" + type;
@@ -111,7 +180,11 @@
 		}
 	};
 
-	// Called in the context of an event
+	/**
+	* Called in the context of an event.
+	*
+	* @private
+	*/
 	enyo.iePreventDefault = function() {
 		try {
 			this.returnValue = false;
@@ -121,10 +194,16 @@
 		}
 	};
 
+	/**
+	* @private
+	*/
 	enyo.dispatch = function(inEvent) {
 		return enyo.dispatcher.dispatch(inEvent);
 	};
 
+	/**
+	* @private
+	*/
 	enyo.bubble = function(inEvent) {
 		// '|| window.event' clause needed for IE8
 		var e = inEvent || window.event;
@@ -153,7 +232,9 @@
 		};
 
 		/**
-			Makes given events bubble on a specified Enyo control.
+		* Makes given events bubble on a specified Enyo control.
+		*
+		* @private
 		*/
 		enyo.makeBubble = function() {
 			var args = Array.prototype.slice.call(arguments, 0),
@@ -167,10 +248,13 @@
 				}, control);
 			}
 		};
+
 		/**
-			Removes the event listening and bubbling initiated by _enyo.makeBubble()_
-			on a specific control.
-		 */
+		* Removes the event listening and bubbling initiated by
+		* [enyo.makeBubble()]{@link enyo.makeBubble} on a specific control.
+		*
+		* @private
+		*/
 		enyo.unmakeBubble = function() {
 			var args = Array.prototype.slice.call(arguments, 0),
 				control = args.shift();
@@ -185,10 +269,17 @@
 		};
 	})();
 
+	/**
+	* @private
+	*/
 	// FIXME: we need to create and initialize dispatcher someplace else to allow overrides
 	enyo.requiresWindow(enyo.dispatcher.connect);
 
-	// generate a tapped event for a raw-click event
+	/**
+	* Generates a tapped event for a raw-click event.
+	*
+	* @private
+	*/
 	enyo.dispatcher.features.push(
 		function (e) {
 			if ("click" === e.type) {
@@ -205,9 +296,11 @@
 	);
 
 	/**
-		Instead of having multiple _features_ pushed and handled in separate methods
-		for these events we will handle them uniformly here to expose as accurate as
-		possible the last known interaction coordinates.
+	* Instead of having multiple `features` pushed and handled in separate methods
+	* for these events, we handle them uniformly here to expose the last known
+	* interaction coordinates as accurately as possible.
+	*
+	* @private
 	*/
 	var _xy = {};
 	enyo.dispatcher.features.push(
@@ -229,14 +322,19 @@
 			}
 		}
 	);
-	//*@public
+
 	/**
-		Retrieve the last known coordinates of the cursor or user-interaction point
-		in _touch_ environments. Returns an immutable object with the _clientX, clientY_,
-		_pageX, pageY_ and _screenX, screenY_ properties. It is important to note that
-		IE 8 and Opera have improper reporting for the _screenX, screenY_
-		properties (they both use CSS pixels as opposed to device pixels) and IE8 has no
-		support for the _pageX, pageY_ properties so they are facaded.
+	* Retrieves the last known coordinates of the cursor or user-interaction point
+	* in touch environments. Returns an immutable object with the `clientX`,
+	* `clientY`, `pageX`, `pageY`, `screenX`, and `screenY` properties. It is
+	* important to note that IE8 and Opera have improper reporting for the
+	* `screenX` and `screenY` properties (they both use CSS pixels as opposed to
+	* device pixels) and IE8 has no support for the `pageX` and `pageY` properties,
+	* so they are facaded.
+	*
+	* @returns {enyo.dispatcher~CursorCoordinates} An [object]{@glossary Object} describing the
+	*	the last known coordinates of the cursor or user-interaction point in touch environments.
+	* @public
 	*/
 	enyo.getPosition = function () {
 		var p = enyo.clone(_xy);
@@ -249,4 +347,4 @@
 		return p;
 	};
 	
-})(enyo);
+})(enyo, this);
