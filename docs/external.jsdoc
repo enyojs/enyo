@@ -1,109 +1,150 @@
 /**
-* @todo Need to define this.
+* A kind is an object constructor created using the enyo.kind factory method.
+*
 * @glossary kind
 * @see enyo.kind
 */
 
 /**
-* @todo Need to define this.
+* A set of properties from one or more objects to be added or "mixed in" to a single object.
+*
 * @glossary mixin
 * @see enyo.mixin
 */
 
 /**
-* @todo Need to define this.
+* A message-passing strategy for indirect communication between components.
+*
 * @glossary event
 * @see https://github.com/enyojs/enyo/wiki/Event-Handling
 */
 
 /**
-* @todo Need to define this.
+* A unique identifier that follows and Enyo specific format consisting of an optional prefix followed by a number.
+*
 * @glossary EUID
 */
 
 /**
-* @todo Need to define this.
+* An object that provides a specified set of functionalities to another object.
+*
 * @glossary delegate
 */
 
 /**
-* @todo Need to define this.
+* A function that is called in the context of a new object when that object is created
+
 * @glossary constructor
 */
 
 /**
-* @todo Need to define this.
+* A JavaScript object that defines various properties to be initialized on the component.
 * @glossary configurationBlock
 */
 
 /**
-* @todo Need to define this.
+* Non-client sub-components of a component.
 * @glossary chrome
 */
 
 /**
-* @todo Need to define this.
+* A kind that inherits from another kind
+*
 * @glossary subkind
 */
 
 /**
-* @todo Need to define this.
+* Code whose execution has been delayed until a later time.
+*
 * @glossary deferred
 */
 
 /**
-* @todo need to define this.
+* The arrangement of controls on a page or view. The Enyo layout library provides a collection of techniques for laying out controls.
+*
 * @glossary layout
+* @see https://github.com/enyojs/layout
 */
 
 /**
-* @todo need to define this.
+* JSON.stringify turns an object into a text string.
+*
 * @glossary JSON.stringify
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify
 */
 
 /**
-* @todo need to define this.
+* JSONP or "JSON with padding" is a communication technique used in JavaScript programs running in web browsers to request data from a server in a different domain, something prohibited by typical web browsers because of the same-origin policy.
+*
 * @glossary JSONP
+* @see http://en.wikipedia.org/wiki/JSONP
 */
 
 /**
-* @todo need to define this.
+* An event that fires when a service progresses.
+*
 * @glossary ProgressEvent
 */
 
 /**
-* @todo need to define this.
+* Spotlight is an extensible utility that enables users to navigate Enyo applications using a keyboard or television remote control.
+*
 * @glossary Spotlight
+* @see https://github.com/enyojs/spotlight
 */
 
 /**
-* @todo need to define this.
+* A library of i18n routines written in Javascript
+*
 * @glossary ilib
+* @see http://sourceforge.net/p/i18nlib/wiki/iLib%20-%20an%20internationalization%20library%20written%20in%20Javascript/
 */
 
 /**
-* @todo need to define this.
+* One of two boolean data type values
+*
 * @glossary true
 */
 
 /**
-* @todo need to define this.
+* One of two boolean data type values
+*
 * @glossary false
 */
 
 /**
-* @todo need to define this.
+* The value null is a JavaScript literal representing null or an "empty" value, i.e. no object value is present.
+*
 * @glossary null
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null
 */
 
 /**
-* @todo need to define this.
+* The Number object is an object wrapper for a numerical value.
+*
 * @glossary Number
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number
 */
 
 /**
-* @todo need to define this.
+* number is a JavaScript data type that can have a double-precision 64-bit binary format IEEE 754 numerical value.
+*
+* @glossary number
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
+*/
+
+/**
+* The Boolean object is an object wrapper for a boolean value.
+*
 * @glossary Boolean
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+*/
+
+/**
+* boolean is a JavaScript data type that can have one of two values; true or false
+*
+* @glossary boolean
+* @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
 */
 
 ///// Internally Documented Links (Glossary) /////
