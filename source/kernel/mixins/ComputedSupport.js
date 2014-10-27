@@ -217,7 +217,7 @@
 				// its really an inverse look at the original
 				var deps;
 				
-				if (dependencies[path] && !dependencies.hasOwnProperty(path)) dependencies[path] = dependencies.path.slice();
+				if (dependencies[path] && !dependencies.hasOwnProperty(path)) dependencies[path] = dependencies[path].slice();
 				deps = dependencies[path] || (dependencies[path] = []);
 				deps.push(dep);
 			};
