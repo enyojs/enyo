@@ -198,17 +198,15 @@
 				// update the entire page at once - this removes old nodes and updates
 				// to the correct ones
 				page.render();
-				page.addRemoveClass('fastmove', false);
 				page.queue = undefined;
 			} else {
+				// We update index here so that at least items has valid index number before render.
 				for (var i=page.start; i <= page.end && i < data.length; ++i) {
 					view = (page.children[i - page.start] || list.createComponent({}));
 					view.stopNotifications();
 					view.set('index', i);
 					view.startNotifications();
 				}
-				// indicate that this page is not rendered for lazy render
-				page.addRemoveClass('fastmove', true);
 				page.queue = true;
 			}
 
@@ -536,6 +534,9 @@
 				pos  = this.pagesByPosition(list),
 				queue = (event.speed != undefined) && (Math.abs(event.speed) > 1);
 
+			// indicate that this page is not rendered for lazy render
+			list.addRemoveClass('fastmove', queue);
+
 			if ((bounds.xDir === 1 || bounds.yDir === 1) && pos.lastPage.index !== (last)) {
 				this.generatePage(list, pos.firstPage, pos.lastPage.index + 1, queue); //console.log("scrollHandler down", event.speed, queue);
 				this.adjustPagePositions(list);
@@ -689,20 +690,21 @@
 				view.set('index', i);
 				view.set('selected', list.isSelected(view.model));
 				view.startNotifications();
-				// view.canGenerate = true;
-				view.render();
+				view.canGenerate = true;
+				// view.render();
 			}
 			// if there are any controls that need to be hidden we do that now
 			for (i=(i-page.start); i < page.children.length; ++i) {
-				view = page.children[i];view.hide();
-				// view.teardownRender();
-				// view.canGenerate = false;
+				view = page.children[i];
+				// view.hide();
+				view.teardownRender();
+				view.canGenerate = false;
 			}
 		
 			// update the entire page at once - this removes old nodes and updates
 			// to the correct ones
-			// page.render();
-			page.addRemoveClass('fastmove', false);
+			page.render();
+			list.addRemoveClass('fastmove', false);
 			page.queue = undefined;
 		},
 
