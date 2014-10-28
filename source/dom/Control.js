@@ -925,10 +925,12 @@
 		* target `parentNode`.
 		*
 		* @param {Node} parentNode - The new parent of this control.
+		* @param {Boolean} preventRooting - If `true`, this control will not be treated as a root 
+		*	view and will not be added to the set of roots.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
-		renderInto: function (parentNode) {
+		renderInto: function (parentNode, preventRooting) {
 			var delegate = this.renderDelegate || Control.renderDelegate,
 				noFit = this.fit === false;
 
@@ -953,7 +955,9 @@
 
 			// we inject this as a root view because, well, apparently that is just an assumption
 			// we've been making...
-			enyo.addToRoots(this);
+			if (!preventRooting) {
+				enyo.addToRoots(this);
+			}
 
 			// now let the delegate render it the way it needs to
 			delegate.renderInto(this, parentNode);
