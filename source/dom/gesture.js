@@ -84,8 +84,8 @@
 		* @public
 		*/
 		down: function(evt) {
-			// set holdpulse defaults
-			this.drag.holdPulseConfig = enyo.clone(this.drag.holdPulseDefaultConfig);
+			// set holdpulse defaults, using JSON.parse / JSON.stringify for a cheap & easy deep copy
+			this.drag.holdPulseConfig = JSON.parse(JSON.stringify(this.drag.holdPulseDefaultConfig));
 
 			// cancel any hold since it's possible in corner cases to get a down without an up
 			var e = this.makeEvent('down', evt);
@@ -301,7 +301,10 @@
 		* @public
 		*/
 		configureHoldPulse: function(opts) {
-			enyo.mixin(enyo.gesture.drag.holdPulseConfig, opts);
+			var nOpts = (opts.delay === undefined) ?
+				opts :
+				enyo.gesture.drag.normalizeHoldPulseConfig(opts);
+			enyo.mixin(enyo.gesture.drag.holdPulseConfig, nOpts);
 		}
 	};
 
