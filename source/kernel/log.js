@@ -11,7 +11,7 @@
 		/**
 		* The log level to use. Can be a value from -1 to 99, where -1 disables all
 		* logging, 0 is 'error', 10 is 'warn', and 20 is 'log'. It is preferred that
-		* this value be set using the [enyo.setLogLevel()]{@link enyo.setLogLevel}
+		* this value be set using the [enyo.setLogLevel()]{@link enyo~setLogLevel}
 		* method.
 		*
 		* @type {Number}
