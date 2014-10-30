@@ -5,7 +5,7 @@
 	/**
 	* All of the known, instanced [sources]{@link enyo.Source}, by name.
 	*
-	* @name enyo.sources
+	* @name enyo~sources
 	* @type {Object}
 	* @readonly
 	*/
@@ -87,7 +87,7 @@
 		* Overload this method to handle deletion of data. This method should accept an options
 		* [hash]{@glossary Object} with additional configuration properties, including `success`
 		* and `error` callbacks to handle the result. If called without parameters, it will
-		* instead destroy itself and be removed from [enyo.sources]{@link enyo.sources}, rendering
+		* instead destroy itself and be removed from [enyo.sources]{@link enyo~sources}, rendering
 		* itself unavailable for further operations.
 		*
 		* @param {(enyo.Model|enyo.Collection)} model The [model]{@link enyo.Model} or
@@ -148,7 +148,7 @@
 	* [kind]{@glossary kind} of source and a `name` for the instance. This static
 	* method is also available on all [subkinds]{@glossary subkind} of
 	* `enyo.Source`. The instance will automatically be added to the
-	* [enyo.sources]{@link enyo.sources} [object]{@glossary Object} and may be
+	* [enyo.sources]{@link enyo~sources} [object]{@glossary Object} and may be
 	* referenced by its `name`.
 	*
 	* @name enyo.Source.create
