@@ -129,7 +129,6 @@
 		*/
 		setScrollLeft: enyo.inherit(function (sup) {
 			return function(inLeft) {
-				this.stop();
 				if (this.translateOptimized) {
 					var m = this.$.scrollMath;
 					m.setScrollX(-inLeft);
@@ -149,7 +148,6 @@
 		*/
 		setScrollTop: enyo.inherit(function (sup) {
 			return function(inTop) {
-				this.stop();
 				if (this.translateOptimized) {
 					var m = this.$.scrollMath;
 					m.setScrollY(-inTop);

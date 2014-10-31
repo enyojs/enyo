@@ -432,7 +432,7 @@
 			this.y = this.y0 = y;
 			this.x = this.x0 = x;
 			this.scroll();
-			this.stop(true);
+			this.stop();
 		},
 
 		/**
@@ -521,7 +521,7 @@
 				shouldScroll = true;
 			}
 			if (shouldScroll) {
-				this.stop(true);
+				this.stop();
 				this.start();
 				return true;
 			}

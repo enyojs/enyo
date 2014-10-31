@@ -504,11 +504,10 @@
 		* @public
 		*/
 		setScrollLeft: function (left) {
-			this.scrollLeft = left;
 			if (this.cachedPosition) {
 				this.cachedPosition.left = left;
 			}
-			this.$.strategy.setScrollLeft(this.scrollLeft);
+			this.$.strategy.setScrollLeft(left);
 		},
 
 		/**
@@ -518,7 +517,6 @@
 		* @public
 		*/
 		setScrollTop: function (top) {
-			this.scrollTop = top;
 			if (this.cachedPosition) {
 				this.cachedPosition.top = top;
 			}
