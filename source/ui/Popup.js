@@ -438,7 +438,9 @@
 
 		/**
 		* @method
+		* @fires enyo.Popup#onShowing
 		* @fires enyo.Popup#onShow
+		* @fires enyo.Popup#onHiding
 		* @fires enyo.Popup#onHide
 		* @private
 		*/
