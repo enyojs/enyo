@@ -275,8 +275,7 @@
 				this.scrollNode.scrollTop = 1;
 				this.scrollNode.scrollTop = 0;
 			}
-		},
-		down: enyo.nop
+		}
 	});
 
 })(enyo, this);
