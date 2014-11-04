@@ -360,7 +360,7 @@
 					enyo.asyncMethod(enyo.bindSafely(this, function(){
 						sup.apply(this, [idx, model, select]);
 					}));
-				})
+				});
 
 				if (this.$.scroller.canGenerate) {
 					if (this.get('absoluteShowing')) {
