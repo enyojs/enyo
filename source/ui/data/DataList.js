@@ -23,9 +23,9 @@
 	*/
 
 	/**
-	* When this property is specified, we force the static usage of this value instead of 
+	* When this property is specified, we force the static usage of this value instead of
 	* dynamically calculating the number of controls per page based upon the viewport size.
-	* 
+	*
 	* @name enyo.DataList#controlsPerPage
 	* @type {Number}
 	* @default undefined
@@ -43,7 +43,7 @@
 	* can be taxing and non-performant for the browser. Avoid dynamically-updated
 	* [layouts]{@glossary layout} that require lots of calculations each time the data in a
 	* view is updated. Try to use CSS whenever possible.
-	* 
+	*
 	* While paging through data, `enyo.DataList` emits the
 	* [paging]{@link enyo.DataList#paging} event, which allows you to make updates as
 	* necessary, on a per-page basis. You may register for this event by calling
@@ -124,7 +124,7 @@
 		fixedChildSize: null,
 
 		/**
-		* To disable the default smoothing-transitions (for supported platforms), set this flag to 
+		* To disable the default smoothing-transitions (for supported platforms), set this flag to
 		* `false`.
 		*
 		* @type {Boolean}
@@ -148,8 +148,8 @@
 		renderDelay: 250,
 
 		/**
-		* Completely resets the current [list]{@link enyo.DataList} such that it scrolls to the top 
-		* of the scrollable region and regenerates all of its children. This is typically necessary 
+		* Completely resets the current [list]{@link enyo.DataList} such that it scrolls to the top
+		* of the scrollable region and regenerates all of its children. This is typically necessary
 		* only on initialization or if the entire dataset has been swapped out.
 		*
 		* @public
@@ -182,7 +182,7 @@
 				this._addToShowingQueue('refresh', this.refresh);
 			}
 		},
-		
+
 		/**
 		* Pass in an integer within the bounds of the [list's]{@link enyo.DataList}
 		* [collection]{@link enyo.DataRepeater#data} to scroll to the position of that
@@ -204,7 +204,7 @@
 				}
 			}
 		},
-		
+
 		/**
 		* @method
 		* @private
@@ -258,7 +258,7 @@
 		/**
 		* Attempts to perform initialization. There are only a few basic startup paths, but it's
 		* important to be aware of what they are:
-		* 
+		*
 		* - The view is rendered, it has a collection, and the collection has data.
 		* - The view is rendered, it has a collection with no data, and data is added
 			later.
@@ -268,7 +268,7 @@
 		* [collection]{@link enyo.Collection}; if so, do we have any data to start rendering the
 		* rest of the list? Ultimately, the implementation decisions are decided by the
 		* [delegate]{@glossary delegate} strategy.
-		* 
+		*
 		* @private
 		*/
 		rendered: function () {
@@ -303,7 +303,7 @@
 				// on screen before worrying about setting up the list
 			}
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -342,10 +342,37 @@
 		* This [function]{@glossary Function} is intentionally left blank. In
 		* [DataRepeater]{@link enyo.DataRepeater}, it removes the [control]{@link enyo.Control}
 		* at the specified index, but that is handled by the [delegate]{@glossary delegate} here.
-		* 
+		*
 		* @private
 		*/
 		remove: function (idx) {},
+
+		/**
+		* Async wrapped to work with dynamic paging, when delegate que renders
+		* sup _select will then be executed
+		*
+		* @private
+		*/
+		_select: enyo.inherit(function (sup) {
+			return function (idx, model, select) {
+
+				var deferFn = enyo.bindSafely(this, function() {
+					enyo.asyncMethod(enyo.bindSafely(this, function(){
+						sup.apply(this, [idx, model, select]);
+					}));
+				})
+
+				if (this.$.scroller.canGenerate) {
+					if (this.get('absoluteShowing')) {
+						deferFn();
+					} else {
+						this._addToShowingQueue('refresh', deferFn);
+					}
+				} else {
+					deferFn();
+				}
+			};
+		}),
 
 		/**
 		* Overloaded to call a method of the [delegate]{@glossary delegate} strategy.
@@ -392,7 +419,7 @@
 			};
 		}),
 		/**
-		* Overloaded from base [kind]{@glossary kind} to ensure that the container options 
+		* Overloaded from base [kind]{@glossary kind} to ensure that the container options
 		* correctly apply the [scroller]{@link enyo.Scroller} options before instantiating it.
 		*
 		* @private
@@ -454,15 +481,15 @@
 		showingChangedHandler: enyo.inherit(function (sup) {
 			return function (sender, e) {
 				this.set('absoluteShowing', this.getAbsoluteShowing(true));
-				
+
 				return sup.apply(this, arguments);
 			};
 		}),
 		/**
-		* Overload to adjust the root method to be able to find the nested child based on the 
-		* requested index if its page is currently active. Returns `undefined` if the index is out 
+		* Overload to adjust the root method to be able to find the nested child based on the
+		* requested index if its page is currently active. Returns `undefined` if the index is out
 		* of bounds or if the [control]{@link enyo.Control} is not currently available.
-		* 
+		*
 		* Also see [getChildForIndex()]{@link enyo.Repeater#getChildForIndex}, which calls this
 		* method.
 		*
@@ -473,7 +500,7 @@
 				return this.delegate.childForIndex(this, i);
 			}
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -500,29 +527,29 @@
 		/**
 		* We access this [kind's]{@glossary kind} [constructor]{@glossary constructor} and
 		* need it to be undeferred at that time.
-		* 
+		*
 		* @private
 		*/
 		noDefer: true,
 
 		/**
 		* All of the CSS is relative to this class.
-		* 
+		*
 		* @private
 		*/
 		classes: 'enyo-data-list',
 
 		/**
 		* Our initial `controlParent` is us for the flyweight child.
-		* 
+		*
 		* @private
 		*/
 		controlParentName: '',
 
 		/**
-		* Of course we set our container to `'scroller'` as needed by the base 
+		* Of course we set our container to `'scroller'` as needed by the base
 		* [kind]{@glossary kind}.
-		* 
+		*
 		* @private
 		*/
 		containerName: 'scroller',
@@ -554,16 +581,16 @@
 		mixins: [enyo.RegisteredEventSupport],
 
 		/**
-		* All [delegates]{@glossary delegate} are named elsewhere but are stored in these 
+		* All [delegates]{@glossary delegate} are named elsewhere but are stored in these
 		* statics.
-		* 
+		*
 		* @private
 		*/
 		statics: {delegates: {}},
 
 		/**
 		* An [array]{@glossary Array} of the actual page references for easier access.
-		* 
+		*
 		* @private
 		*/
 		pages: null
