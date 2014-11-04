@@ -351,6 +351,7 @@
 				if (this.dragging) {
 					this.y0 = this.y = this.uy;
 					this.x0 = this.x = this.ux;
+					this.endX = this.endY = null;
 				}
 				// frame-time accumulator
 				// min acceptable time is 16ms (60fps)
