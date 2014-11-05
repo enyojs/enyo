@@ -212,6 +212,7 @@
 		*/
 		placeholderChanged: function () {
 			this.setAttribute('placeholder', this.placeholder);
+			this.valueChanged();
 		},
 
 		/**
@@ -242,6 +243,7 @@
 			} else {
 				this.setAttribute('value', this.value);
 			}
+			this.detectTextDirectionality((this.value || this.value === 0 || this.value === '0') ? this.value : this.get('placeholder'));
 		},
 
 		/**
