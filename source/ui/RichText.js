@@ -23,10 +23,10 @@
 	/**
 	* {@link enyo.RichText} is a multi-line text [input]{@link enyo.Input} that supports rich
 	* formatting, such as bold, italics, and underlining.
-	* 
+	*
 	* The content displayed in a RichText may be accessed at runtime via `get('value')`
 	* and `set('value')`.
-	* 
+	*
 	* For more information, see the documentation on
 	* [Text Fields]{@linkplain docs/building-apps/controls/text-fields.html} in the
 	* Enyo Developer Guide.
@@ -57,16 +57,16 @@
 		/**
 		* @private
 		*/
-		published: 
+		published:
 			/** @lends enyo.RichText.prototype */ {
-			
+
 			/**
 			* This flag is enabled by default in {@link enyo.RichText} to take advantage
-			* of all the rich editing properties. However, this allows for **any** HTML to be 
+			* of all the rich editing properties. However, this allows for **any** HTML to be
 			* inserted into the RichText, including [&lt;iframe&gt;]{@glossary iframe} and
 			* [&lt;script&gt;]{@glossary script} tags, which can be a security concern in
 			* some situations. If set to `false`, any inserted HTML will be escaped.
-			* 
+			*
 			* @type {Boolean}
 			* @default true
 			* @public
@@ -74,9 +74,9 @@
 			allowHtml: true,
 
 			/**
-			* If `true`, the [RichText]{@link enyo.RichText} will not accept input or generate 
+			* If `true`, the [RichText]{@link enyo.RichText} will not accept input or generate
 			* [events]{@glossary event}.
-			* 
+			*
 			* @type {Boolean}
 			* @default false
 			* @public
@@ -85,7 +85,7 @@
 
 			/**
 			* Value of the text field.
-			* 
+			*
 			* @type {String}
 			* @default ''
 			* @public
@@ -95,13 +95,13 @@
 
 		/**
 		* Set to `true` to focus this [control]{@link enyo.Control} when it is rendered.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
 		*/
 		defaultFocus: false,
-		
+
 		/**
 		* @private
 		*/
@@ -185,6 +185,7 @@
 			} else if(!this.hasFocus()) {
 				this.set('content', val);
 			}
+			this.detectTextDirectionality((this.value || this.value === 0) ? this.value : '');
 		},
 		/**
 		* @private
@@ -226,7 +227,7 @@
 		/**
 		* Retrieves the current [selection]{@glossary Selection} from the
 		* [RichText]{@link enyo.RichText}.
-		* 
+		*
 		* @returns {Selection} The [selection]{@glossary Selection} [object]{@glossary Object}.
 		* @public
 		*/
@@ -238,7 +239,7 @@
 
 		/**
 		* Removes the [selection]{@glossary Selection} [object]{@glossary Object}.
-		* 
+		*
 		* @param {Boolean} start - If `true`, the [selection]{@glossary Selection} is
 		*	[collapsed to the start]{@glossary Selection.collapseToStart} of the
 		*	[range]{@glossary Range}; otherwise, it is
@@ -255,7 +256,7 @@
 		/**
 		* Modifies the [selection]{@glossary Selection} [object]{@glossary Object}. Please
 		* see the [Selection.modify]{@glossary Selection.modify} API for more information.
-		* 
+		*
 		* @param {enyo.RichText~ModifyType} type - The type of change to apply.
 		* @param {enyo.RichText~ModifyDirection} dir - The direction in which to apply the change.
 		* @param {enyo.RichText~ModifyAmount} amount - The granularity of the change.
@@ -270,7 +271,7 @@
 
 		/**
 		* Moves the cursor according to the [Editing API]{@glossary Selection.modify}.
-		* 
+		*
 		* @param {enyo.RichText~ModifyDirection} dir - The direction in which to apply the change.
 		* @param {enyo.RichText~ModifyAmount} amount - The granularity of the change.
 		* @public
@@ -309,9 +310,9 @@
 		},
 
 		/**
-		* Inserts HTML at the cursor position. HTML will be escaped unless the 
+		* Inserts HTML at the cursor position. HTML will be escaped unless the
 		* [allowHtml]{@link enyo.RichText#allowHtml} property is `true`.
-		* 
+		*
 		* @param {String} val - The HTML to insert at the current cursor position.
 		* @public
 		*/
