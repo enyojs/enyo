@@ -44,36 +44,129 @@
 		* @private
 		*/
 		holdPulseDefaultConfig: {
-			delay: 200,
-			// if 'true', holdPulse will resume when pointer re-enters original control ('onLeave' endHold value)
-			// or coordinates with tolerance ('onMove' endHold value), otherwise will utilize drag behavior
+			frequency: 200,
+			events: [{name: 'hold', time: 200}],
 			resume: false,
 			moveTolerance: 16,
-			endHold: 'onMove' // other values include 'onLeave' (stop hold when pointer leaves original control)
+			endHold: 'onMove'
 		},
 
 		/**
+		* Call this method to specify the framework's 'holdPulse' behavior, which
+		* determines the nature of the events generated when a user presses and holds
+		* on a user interface element.
+		*
+		* By default, an `onhold` event fires after 200 ms. After that, an `onholdpulse`
+		* event fires every 200 ms until the user stops holding, at which point a
+		* `onrelease` event fires.
+		*
+		* To change the default behavior, call this method and pass it a holdPulse
+		* configuration object. The holdPulse configuration object has a number of
+		* properties.
+		*
+		* You can specify a set of custom hold events by setting the `events` property
+		* to an array containing one or more objects. Each object specifies a custom
+		* hold event, in the form of a `name` / `time` pair. Notes:
+		*
+		*  * Your custom event names should not include the 'on' prefix; that will be
+		*    added automatically by the framework.
+		*
+		*  * Times should be specified in milliseconds.
+		*
+		*  * Your `events` array overrides the framework defaults entirely, so if you
+		*    want the standard `hold` event to fire at 200 ms (in addition to whatever
+		*    custom events you define), you'll need to redefine it yourself as part of
+		*    your `events` array.
+		*
+		* Regardless of how many custom hold events you define, `onholdpulse` events
+		* will start firing after the first custom hold event fires, and continue until
+		* the user stops holding. Likewise, only one `onrelease` event will fire,
+		* regardless of how many custom hold events you define.
+		*
+		* The`frequency` parameter determines not only how often `holdpulse` events are
+		* sent, but the frequency with which the hold duration is measured. This means
+		* that the value you set for `frequency` should always be a common factor of the
+		* times you set for your custom hold events, to ensure accurate event timing.
+		*
+		* You can use the `endHold` property to specify the circumstances under which a
+		* hold is considered to end. Set `endHold` to `onMove` (the default) if you want
+		* the hold to end as soon as the user's finger or pointer moves. Set `endHold`
+		* to `onLeave` if you want the hold to end only when the finger or pointer
+		* leaves the element altogether. When specifying `onMove`, you can also provide
+		* a `moveTolerance` value (default: `16`) that determines how tolerant you want
+		* to be of small movements when deciding whether a hold has ended. The higher
+		* the value, the further a user's finger or pointer may move without causing
+		* the hold to end.
+		*
+		* Finally, the `resume` parameter (default: `false`) specifies whether a hold
+		* that has ended due to finger / pointer movement should be resumed if the
+		* user's finger or pointer moves back inside the tolerance threshold (in the
+		* case of `endHold: onMove`) or back over the element (in the case of
+		* `endHold: onLeave`).
+		*
+		* Here is an example:
+		*
+		* ```
+		* enyo.gesture.drag.configureHoldPulse({
+		*     frequency: 100,
+		*     events: [
+		*         {name: 'hold', time: 200},
+		*         {name: 'longpress', time: 500}
+		*     ],
+		*     endHold: 'onLeave',
+		*     resume: true
+		* });
+		* ```
+		* For comparison, here are the out-of-the-box defaults:
+		*
+		* ```
+		* enyo.gesture.drag.configureHoldPulse({
+		*     frequency: 200,
+		*     events: [
+		*         {name: 'hold', time: 200}
+		*     ],
+		*     endHold: 'onMove',
+		*     moveTolerance: 16,
+		*     resume: false
+		* });
+		* ```
+		*
+		* The settings you provide via this method will be applied globally, affecting
+		* every Control. Note that you can also override the defaults on a case-by-case
+		* basis by handling the `down` event for any Control and calling the
+		* `configureHoldPulse` method exposed by the event itself. That method works
+		* exactly like this one, except that the settings you provide will apply only to
+		* holds on that particular Control.
+		*
 		* @public
+		*/
+		configureHoldPulse: function(config) {
+			// TODO: Might be nice to do some validation, error handling
+			this.holdPulseDefaultConfig = config;
+		},
+
+		/**
+		* @private
 		*/
 		holdPulseConfig: {},
 
 		/**
-		* @public
+		* @private
 		*/
 		trackCount: 5,
 
 		/**
-		* @public
+		* @private
 		*/
 		minFlick: 0.1,
 
 		/**
-		* @public
+		* @private
 		*/
 		minTrack: 8,
 
 		/**
-		* @public
+		* @private
 		*/
 		down: function(e) {
 			// tracking if the mouse is down
@@ -87,7 +180,7 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		move: function(e) {
 			if (this.tracking) {
@@ -121,7 +214,7 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		up: function(e) {
 			this.endTracking(e);
@@ -131,7 +224,7 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		enter: function(e) {
 			// resume hold when re-entering original target when using 'onLeave' endHold value
@@ -141,7 +234,7 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		leave: function(e) {
 			if (this.dragEvent) {
@@ -157,7 +250,7 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		stopDragging: function(e) {
 			if (this.dragEvent) {
@@ -169,7 +262,7 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		makeDragEvent: function(inType, inTarget, inEvent, inInfo) {
 			var adx = Math.abs(this.dx), ady = Math.abs(this.dy);
@@ -211,7 +304,7 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		sendDragStart: function(e) {
 			//enyo.log('dragstart');
@@ -220,7 +313,7 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		sendDrag: function(e) {
 			//enyo.log('sendDrag to ' + this.dragEvent.target.id + ', over to ' + e.target.id);
@@ -234,7 +327,7 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		sendDragFinish: function(e) {
 			//enyo.log('dragfinish');
@@ -248,7 +341,7 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		sendDragOut: function(e) {
 			var synth = this.makeDragEvent('dragout', e.target, e, this.dragEvent.dragInfo);
@@ -256,7 +349,7 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		sendDrop: function(e) {
 			var synth = this.makeDragEvent('drop', e.target, e, this.dragEvent.dragInfo);
@@ -269,7 +362,7 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		startTracking: function(e) {
 			this.tracking = true;
@@ -286,7 +379,7 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		track: function(e) {
 			this.lastDx = this.dx;
@@ -309,7 +402,7 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		endTracking: function() {
 			this.tracking = false;
@@ -345,38 +438,68 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		calcDirection: function(inNum, inDefault) {
 			return inNum > 0 ? 1 : (inNum < 0 ? -1 : inDefault);
 		},
 
 		/**
-		* @public
+		* Translate the old format for holdPulseConfig to the new one, to
+		* preserve backward compatibility.
+		*
+		* @private
+		*/
+		normalizeHoldPulseConfig: function (oldOpts) {
+			var nOpts = enyo.clone(oldOpts);
+			nOpts.frequency = nOpts.delay;
+			nOpts.events = [{hold: nOpts.delay}];
+			return nOpts;
+		},
+
+		/**
+		* @private
 		*/
 		beginHold: function(e) {
 			this.holdStart = enyo.perfNow();
 			// clone the event to ensure it stays alive on IE upon returning to event loop
 			var $ce = enyo.clone(e);
 			$ce.srcEvent = enyo.clone(e.srcEvent);
-			this._holdJobFunction = enyo.bind(this, 'sendHoldPulse', $ce);
+			this._holdJobFunction = enyo.bind(this, 'handleHoldPulse', $ce);
 			this._holdJobFunction.ce = $ce;
-			this.holdJob = setInterval(this._holdJobFunction, this.holdPulseConfig.delay);
-		},
-
-		/**
-		* @public
-		*/
-		cancelHold: function() {
-			this.stopHold();
-			if (this.sentHold) {
-				this.sentHold = false;
-				this.sendRelease(this.holdEvent);
+			this._pulsing = false;
+			this._unsent = this.holdPulseConfig.events;
+			this._unsent.sort(this.sortEvents);
+			this._next = this._unsent.shift();
+			if (this._next) {
+				this.holdJob = setInterval(this._holdJobFunction, this.holdPulseConfig.frequency);
 			}
 		},
 
 		/**
-		* @public
+		* @private
+		*/
+		sortEvents: function(a, b) {
+				if (a.time < b.time) return -1;
+				if (a.time > b.time) return 1;
+				return 0;
+		},
+
+		/**
+		* @private
+		*/
+		cancelHold: function() {
+			var e = this._holdJobFunction ? this._holdJobFunction.ce : null;
+			this.stopHold();
+			if (this._pulsing) {
+				this.sendRelease(e);
+			}
+			this._pulsing = false;
+			this._unsent = null;
+		},
+
+		/**
+		* @private
 		*/
 		stopHold: function() {
 			clearInterval(this.holdJob);
@@ -388,29 +511,34 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
-		sendHoldPulse: function(inEvent) {
-			if (!this.sentHold) {
-				this.sentHold = true;
-				this.sendHold(inEvent);
+		handleHoldPulse: function(inEvent) {
+			var holdTime = enyo.perfNow() - this.holdStart,
+				e;
+			this.maybeSendHold(inEvent, holdTime);
+			if (this._pulsing) {
+				e = enyo.gesture.makeEvent('holdpulse', inEvent);
+				e.holdTime = holdTime;
+				enyo.dispatch(e);
 			}
-			var e = enyo.gesture.makeEvent('holdpulse', inEvent);
-			e.holdTime = enyo.perfNow() - this.holdStart;
-			enyo.dispatch(e);
 		},
 
 		/**
-		* @public
+		* @private
 		*/
-		sendHold: function(inEvent) {
-			this.holdEvent = inEvent;
-			var e = enyo.gesture.makeEvent('hold', inEvent);
-			enyo.dispatch(e);
+		maybeSendHold: function(inEvent, inHoldTime) {
+			var n = this._next;
+			if (n && n.time <= inHoldTime) {
+				var e = enyo.gesture.makeEvent(n.name, inEvent);
+				this._next = this._unsent.shift();
+				this._pulsing = true;
+				enyo.dispatch(e);
+			}
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		sendRelease: function(inEvent) {
 			var e = enyo.gesture.makeEvent('release', inEvent);
@@ -418,7 +546,7 @@
 		},
 
 		/**
-		* @public
+		* @private
 		*/
 		sendFlick: function(inEvent, inX, inY, inV) {
 			var e = enyo.gesture.makeEvent('flick', inEvent);
