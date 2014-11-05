@@ -93,6 +93,11 @@
 			// expose method for configuring holdpulse options
 			e.configureHoldPulse = this.configureHoldPulse;
 
+			// enable prevention of tap event
+			e.preventTap = function() {
+				e._tapPrevented = true;
+			};
+
 			enyo.dispatch(e);
 			this.downEvent = e;
 
@@ -128,12 +133,14 @@
 		*/
 		up: function(evt) {
 			var e = this.makeEvent('up', evt);
-			var tapPrevented = false;
+
+			e._tapPrevented = this.downEvent._tapPrevented;
 			e.preventTap = function() {
-				tapPrevented = true;
+				e._tapPrevented = true;
 			};
+
 			enyo.dispatch(e);
-			if (!tapPrevented && this.downEvent && this.downEvent.which == 1) {
+			if (!e._tapPrevented && this.downEvent && this.downEvent.which == 1) {
 				var target = this.findCommonAncestor(this.downEvent.target, evt.target);
 
 				// the common ancestor of the down/up events is the target of the tap

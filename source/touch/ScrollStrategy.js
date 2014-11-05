@@ -91,12 +91,21 @@
 		/**
 		* @private
 		*/
+		events: {
+			onScrollStart: '',
+			onScrollStop: ''
+		},
+
+		/**
+		* @private
+		*/
 		handlers: {
 			ondragstart: 'dragstart',
 			ondragfinish: 'dragfinish',
 			ondown: 'down',
 			onmove: 'move',
-			onmousewheel: 'mousewheel'
+			onmousewheel: 'mousewheel',
+			onscroll: 'domScroll'
 		},
 
 		/**
@@ -360,7 +369,10 @@
 		* 
 		* @private
 		*/
-		down: function () {
+		down: function (sender, e) {
+			if (this.isScrolling()) {
+				e.preventTap();
+			}
 			this.calcStartInfo();
 		},
 
@@ -384,6 +396,27 @@
 			if (!this.useMouseWheel) {
 				e.preventDefault();
 			}
+		},
+
+		/**
+		* @private
+		*/
+		domScroll: function(sender, e) {
+			if (!this._scrolling) {
+				this.doScrollStart();
+			}
+			this._scrolling = true;
+			this.startJob('stopScrolling', function() {
+				this._scrolling = false;
+				this.doScrollStop();
+			}, 100);
+		},
+
+		/**
+		* @public
+		*/
+		isScrolling: function() {
+			return this._scrolling;
 		}
 	});
 
