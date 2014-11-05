@@ -211,7 +211,7 @@ enyo.kind({
 });
 
 enyo.gesture.drag.configureHoldPulse({
-	frequency: 1000,
+	frequency: 100,
 	events: [
 	    {name: 'hold', time: 200},
 	    {name: 'longpress', time: 500},
