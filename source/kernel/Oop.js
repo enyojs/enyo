@@ -20,7 +20,7 @@
 	* [unit tests](@link https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
 	*
 	* For more information, see the documentation on
-	* [Kinds]{@linkplain docs/key-concepts/kinds.html} in the Enyo Developer Guide.
+	* [Kinds]{@linkplain $dev-guide/key-concepts/kinds.html} in the Enyo Developer Guide.
 	*
 	* @namespace enyo.kind
 	* @param {Object} props - A [hash]{@glossary Object} of properties used to define and create

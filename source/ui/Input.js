@@ -42,8 +42,8 @@
 	* this [control]{@link enyo.Control} to know when the text inside has been modified.
 	* 
 	* For more information, see the documentation on
-	* [Text Fields]{@linkplain docs/building-apps/controls/text-fields.html} in the
-	* Enyo Developer Guide.
+	* [Text Fields]{@linkplain $dev-guide/building-apps/controls/text-fields.html}
+	* in the Enyo Developer Guide.
 	*
 	* @class enyo.Input
 	* @extends enyo.Control

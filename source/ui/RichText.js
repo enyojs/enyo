@@ -28,8 +28,8 @@
 	* and `set('value')`.
 	* 
 	* For more information, see the documentation on
-	* [Text Fields]{@linkplain docs/building-apps/controls/text-fields.html} in the
-	* Enyo Developer Guide.
+	* [Text Fields]{@linkplain $dev-guide/building-apps/controls/text-fields.html}
+	* in the Enyo Developer Guide.
 	*
 	* @class enyo.RichText
 	* @extends enyo.Input

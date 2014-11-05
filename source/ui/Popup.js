@@ -44,7 +44,7 @@
 	* specify `{@link enyo.Popup#scrim}: true` and `{@link enyo.Popup#scrimWhenModal}: false`.
 	*
 	* For more information, see the documentation on
-	* [Popups]{@linkplain docs/building-apps/controls/popups.html} in the
+	* [Popups]{@linkplain $dev-guide/building-apps/controls/popups.html} in the
 	* Enyo Developer Guide.
 	*
 	* @class enyo.Popup
