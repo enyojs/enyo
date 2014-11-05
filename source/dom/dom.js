@@ -506,12 +506,16 @@
 			var node           = targetNode,
 				left           = 0,
 				top            = 0,
+				mx             = 0,
+				my             = 0,
 				width          = node.offsetWidth,
 				height         = node.offsetHeight,
 				transformProp  = enyo.dom.getStyleTransformProp(),
+				cssTransProp   = enyo.dom.getCssTransformProp(),
 				xRegEx         = /translateX\((-?\d+|-?\d*\.\d+)px\)/i,
 				yRegEx         = /translateY\((-?\d+|-?\d*\.\d+)px\)/i,
-				m3RegEx        = /(?!matrix3d\()(-?\d+|-?\d*\.\d+)(?=[,\)])/g,
+				m3RegEx        = /(?!matrix(3d)?\()(-?\d+|-?\d*\.\d+)(?=[,\)])/g,
+				unitRegEx      = /\d(em|ex|rem|%|ch|vh|vw|vmin|vmax|mm|cm|in|pt|pc)/g,
 				match          = null,
 				style          = null,
 				offsetParent   = null;
@@ -532,6 +536,11 @@
 				// Add offset from transforms
 				if (transformProp && node.style) {
 					style = node.style[transformProp];
+					// if the transform is using a non-px value in transform, use the computed
+					// style instead
+					if(unitRegEx.test(style)) {
+						style = enyo.dom.getComputedStyle(node)[cssTransProp];
+					}
 					// translateX
 					match = style.match(xRegEx);
 					if (match && typeof match[1] != 'undefined' && match[1]) {
@@ -542,15 +551,27 @@
 					if (match && typeof match[1] != 'undefined' && match[1]) {
 						top += parseInt(match[1], 10);
 					}
-					// matrix3D
+					// matrix/matrix3D
+					// ex) matrix(1, 0, 0, 1, 1920, 100)
 					// ex) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -5122.682003906055, 1, 1)
 					match = style.match(m3RegEx);
-					if (match && match.length === 16) {
-						if (typeof match[12] != 'undefined' && match[12] !== '0') {
-							left += parseFloat(match[12]);
+					if (match) {
+						mx = my = 0;
+
+						if(match.length === 16) {
+							mx = match[12];
+							my = match[13];
+						} else if(match.length == 6) {
+							mx = match[4];
+							my = match[5];
 						}
-						if (typeof match[13] != 'undefined' && match[13] !== '0') {
-							top += parseFloat(match[13]);
+
+						if (typeof mx != 'undefined' && mx !== '0') {
+							left += parseFloat(mx);
+						}
+
+						if (typeof my != 'undefined' && my !== '0') {
+							top += parseFloat(my);
 						}
 					}
 				}
