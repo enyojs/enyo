@@ -25,6 +25,8 @@ enyo.kind({
 			ongesturechange: "handleEvent",
 			ongestureend: "handleEvent",
 			ondoubletap: "handleEvent",
+			onlongpress: "handleEvent",
+			onlongerpress: "handleEvent",
 			components: [
 				{content: "Perform gestures here", style: "pointer-events: none;"},
 				{classes: "gesture-sample-note", content:"(tap below for options)", style: "pointer-events: none;"}
@@ -63,7 +65,7 @@ enyo.kind({
 		this.eventCount = 0;
 		enyo.forEach(
 			["All events","down","up","tap","move","enter","leave","dragstart","drag","dragover","hold","release",
-				"holdpulse","flick","gesturestart","gesturechange","gestureend","doubletap"],
+				"holdpulse","flick","gesturestart","gesturechange","gestureend","doubletap", "longpress", "longerpress"],
 			this.bindSafely(function(event) {
 				this.$.eventPicker.createComponent({content:event, style:"text-align:left"});
 			}));
@@ -206,4 +208,16 @@ enyo.kind({
 		}
 		return "<b>" + this.event.type + "</b>: { " + props.join(", ") + " }";
 	}
+});
+
+enyo.gesture.drag.configureHoldPulse({
+	frequency: 1000,
+	events: [
+	    {name: 'hold', time: 200},
+	    {name: 'longpress', time: 500},
+	    {name: 'longerpress', time: 1000}
+	],
+	endHold: 'onMove',
+	moveTolerance: 16,
+	resume: false
 });
