@@ -64,7 +64,7 @@
 	* this kind.
 	*
 	* For more information, see the documentation on
-	* [Controls]{@linkplain docs/key-concepts/controls.html} in the
+	* [Controls]{@linkplain $dev-guide/key-concepts/controls.html} in the
 	* Enyo Developer Guide.
 	*
 	* **If you make changes to `enyo.Control`, be sure to add or update the

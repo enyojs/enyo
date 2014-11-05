@@ -58,6 +58,7 @@
 		* Only exists in the client and was created during the runtime of the
 		* [application]{@glossary application}.
 		*
+		* @name enyo.States.NEW
 		* @default 1
 		*/
 		NEW: 0x0001,
@@ -65,6 +66,7 @@
 		/**
 		* Has been modified locally only.
 		*
+		* @name enyo.States.DIRTY
 		* @default 2
 		*/
 		DIRTY: 0x0002,
@@ -72,6 +74,7 @@
 		/**
 		* Has not been modified locally.
 		*
+		* @name enyo.States.CLEAN
 		* @default 4
 		*/
 		CLEAN: 0x0004,
@@ -177,6 +180,7 @@
 		* [ERROR_UNKNOWN]{@link enyo.States.ERROR_UNKNOWN}. It may be extended to include
 		* additional values using the [bitwise]{@glossary bitwise} `OR` operator (`|`).
 		*
+		* @name enyo.States.ERROR
 		* @default 1920
 		*/
 		ERROR: 0x0080 | 0x0100 | 0x0200 | 0x0400,
@@ -186,6 +190,7 @@
 		* included in the definition of `READY`. By default, this is the inverse of any
 		* values included in [BUSY]{@link enyo.States.BUSY} or [ERROR]{@link enyo.States.ERROR}.
 		*
+		* @name enyo.States.READY
 		* @default -2041
 		*/
 		READY: ~(0x0008 | 0x0010 | 0x0020 | 0x0040 | 0x0080 | 0x0100 | 0x0200 | 0x0400)
