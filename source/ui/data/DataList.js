@@ -356,8 +356,8 @@
 		remove: function (idx) {},
 
 		/**
-		* Async wrapped to work with dynamic paging, when delegate que renders
-		* sup _select will then be executed
+		* Async wrapped to work with dynamic paging, when delegate que renders sup _select will then
+		* be executed.
 		*
 		* @private
 		*/
@@ -368,7 +368,7 @@
 					if (this.get('absoluteShowing')) {
 						sup.apply(this, arguments);
 					} else {
-						this._addToShowingQueue('select', function(){
+						this._addToShowingQueue('select', function () {
 							sup.apply(this, [idx, model, select]);
 						});
 					}
