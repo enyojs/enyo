@@ -356,20 +356,16 @@
 		_select: enyo.inherit(function (sup) {
 			return function (idx, model, select) {
 
-				var deferFn = enyo.bindSafely(this, function(skipDefer) {
-					!skipDefer ? enyo.asyncMethod(enyo.bindSafely(this, function(){
-						sup.apply(this, [idx, model, select]);
-					})) : sup.apply(this, [idx, model, select]);
-				});
-
 				if (this.$.scroller.canGenerate) {
 					if (this.get('absoluteShowing')) {
-						deferFn(true);
+						sup.apply(this, arguments);
 					} else {
-						this._addToShowingQueue('refresh', deferFn);
+						this._addToShowingQueue('_select', function(){
+							sup.apply(this, [idx, model, select]);
+						});
 					}
 				} else {
-					deferFn(true);
+					sup.apply(this, arguments);
 				}
 			};
 		}),
