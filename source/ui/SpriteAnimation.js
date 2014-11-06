@@ -139,7 +139,7 @@
 
 			/**
 			* Boolean property to get or set the `paused`-state of this animation. This is bindable.
-			* There's also a [pause()]{@linkcode enyo.SpriteAnimation#pause} method for convenience.
+			* There's also a [pause()]{@link enyo.SpriteAnimation#pause} method for convenience.
 			*
 			* @type {Boolean}
 			* @default false

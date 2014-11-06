@@ -53,8 +53,8 @@
 	* the hash portion of the browser location and will not force a reload of the
 	* current page.
 	*
-	* [Routes]{@linkcode enyo.Router#routes} may be defined in several ways and
-	* may be added at startup or [added programmatically]{@linkcode enyo.Router#addRoute}
+	* [Routes]{@link enyo.Router#routes} may be defined in several ways and
+	* may be added at startup or [added programmatically]{@link enyo.Router#addRoute}
 	* at a later time.
 	*
 	* A route is a declarative hash with the following structure:
@@ -128,7 +128,7 @@
 		/**
 		* Set this to `true` to force the current browser location to a particular
 		* path on startup. This flag will be ignored if
-		* [triggerOnStart]{@linkcode enyo.Router#triggerOnStart} is `false`.
+		* [triggerOnStart]{@link enyo.Router#triggerOnStart} is `false`.
 		* 
 		* @type {Boolean}
 		* @default false
@@ -139,7 +139,7 @@
 		/**
 		* The `defaultRoute` should have the same structure as a normal route (hash). It may be
 		* arbitrarily assigned to this property or mixed into the
-		* [routes]{@linkcode enyo.Router#routes} array with a special `default: true` flag set. For
+		* [routes]{@link enyo.Router#routes} array with a special `default: true` flag set. For
 		* any unmatched hash changes, this route will be executed and passed the path that was not
 		* matched.
 		* 
@@ -232,7 +232,7 @@
 		/**
 		* A computed property that returns the location as known by this router. This property
 		* will be synchronized with [window.location.hash]{@glossary window.location}
-		* unless the [internalOnly]{@linkcode enyo.Router#internalOnly} flag is set to `true`.
+		* unless the [internalOnly]{@link enyo.Router#internalOnly} flag is set to `true`.
 		* Passing a string to this property via `_set('location', 'mylocation')` will update the
 		* inner location known by this router.
 		*
@@ -274,7 +274,7 @@
 		* properties.
 		*
 		* If the `change` property is present and `true`, it will force a
-		* [location.hash]{@linkcode external:window.location} change in the
+		* [location.hash]{@glossary window.location} change in the
 		* browser (this is always global). If the `global` property is present and
 		* `true` and `change` is not present or `false`, it will trigger an internal
 		* event that all routers will respond to (not just this instance).
@@ -308,13 +308,13 @@
 
 		/**
 		* In very rare circumstances, it may be useful to pass a path to the
-		* [routes]{@linkcode enyo.Router#routes} without using
-		* [trigger()]{@linkcode enyo.Router#trigger} or global hash changes with
+		* [routes]{@link enyo.Router#routes} without using
+		* [trigger()]{@link enyo.Router#trigger} or global hash changes with
 		* `path` being a string that will be evaluated against the routes owned by
 		* this router.
 		*
 		* @param {String} path - A path to test against this router's
-		*	[routes]{@linkcode enyo.Router#routes}.
+		*	[routes]{@link enyo.Router#routes}.
 		* @public
 		*/
 		handle: function (path) {

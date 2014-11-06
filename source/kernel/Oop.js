@@ -19,8 +19,8 @@
 	* If you make changes to `enyo.kind()`, be sure to add or update the appropriate
 	* [unit tests](@link https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
 	*
-	* For more information, see the documentation on [Kinds](key-concepts/kinds.html)
-	* in the Enyo Developer Guide.
+	* For more information, see the documentation on
+	* [Kinds]{@linkplain docs/key-concepts/kinds.html} in the Enyo Developer Guide.
 	*
 	* @namespace enyo.kind
 	* @param {Object} props - A [hash]{@glossary Object} of properties used to define and create
@@ -463,7 +463,7 @@
 	};
 
 	/**
-	* Call this with an [enyo.kind()]{@link enyo.kind{}} [constructor]{@glossary constructor} to
+	* Call this with an [enyo.kind()]{@link enyo.kind} [constructor]{@glossary constructor} to
 	* make sure it's been [undeferred]{@glossary deferred}.
 	*
 	* @private

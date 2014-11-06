@@ -65,7 +65,7 @@
 		/**
 		* `true` if the document is hidden; otherwise, `false`.
 		*
-		* @name enyo#hidden
+		* @name enyo.hidden
 		* @readonly
 		* @type {Boolean}
 		* @default false
@@ -76,7 +76,7 @@
 		/**
 		* String indicating the document's visibility state.
 		*
-		* @name enyo#visibilityState
+		* @name enyo.visibilityState
 		* @readonly
 		* @type {String}
 		* @default 'visible'

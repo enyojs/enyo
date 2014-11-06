@@ -48,7 +48,7 @@
 
 		/**
 		* When `true`, no [onload]{@link enyo.Image#onload} or
-		* [onerror]{@link enyo.Image#event:onerror} {@glossary event} handlers will be
+		* [onerror]{@link enyo.Image#onerror} {@glossary event} handlers will be
 		* created.
 		*
 		* @type {Boolean}

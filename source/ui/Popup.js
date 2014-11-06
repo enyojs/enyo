@@ -25,14 +25,14 @@
 	* {@link enyo.Popup} is a [control]{@link enyo.Control} used to display certain content
 	* on top of other content.
 	*
-	* Popups are initially hidden on creation; they may be shown by calling the 
+	* Popups are initially hidden on creation; they may be shown by calling the
 	* [show()]{@link enyo.Control#show} method and re-hidden by calling
-	* [hide()]{@link enyo.Control#hide}. Popups may be centered using the 
+	* [hide()]{@link enyo.Control#hide}. Popups may be centered using the
 	* [centered]{@link enyo.Popup#centered} property; if not centered, they should
 	* be given a specific position.
-	* 
-	* A popup may be optionally floated above all 
-	* [application]{@link enyo.Application} content by setting its 
+	*
+	* A popup may be optionally floated above all
+	* [application]{@link enyo.Application} content by setting its
 	* [floating]{@link enyo.Popup#floating} property to `true`. This has the
 	* advantage of guaranteeing that the popup will be displayed on top of other
 	* content. This usage is appropriate when the popup does not need to scroll
@@ -42,9 +42,10 @@
 	* otherwise, they won't render. A modal popup will get a transparent scrim
 	* unless the popup isn't floating. To get a translucent scrim when modal,
 	* specify `{@link enyo.Popup#scrim}: true` and `{@link enyo.Popup#scrimWhenModal}: false`.
-	* 
+	*
 	* For more information, see the documentation on
-	* [Popups](building-apps/controls/popups.html) in the Enyo Developer Guide.
+	* [Popups]{@linkplain docs/building-apps/controls/popups.html} in the
+	* Enyo Developer Guide.
 	*
 	* @class enyo.Popup
 	* @extends enyo.Control
@@ -77,14 +78,14 @@
 		/**
 		* @private
 		*/
-		published: 
+		published:
 			/** @lends enyo.Popup.prototype */ {
-			
+
 			/**
-			* Set to `true` to prevent [controls]{@link enyo.Control} outside the 
-			* [popup]{@link enyo.Popup} from receiving [events]{@glossary event} while the 
+			* Set to `true` to prevent [controls]{@link enyo.Control} outside the
+			* [popup]{@link enyo.Popup} from receiving [events]{@glossary event} while the
 			* popup is showing.
-			* 
+			*
 			* @type {Boolean}
 			* @default false
 			* @public
@@ -94,7 +95,7 @@
 			/**
 			* By default, the [popup]{@link enyo.Popup} will hide when the user taps outside it or
 			* presses `ESC`.  Set to `false` to prevent this behavior.
-			* 
+			*
 			* @type {Boolean}
 			* @default true
 			* @public
@@ -102,11 +103,11 @@
 			autoDismiss: true,
 
 			/**
-			* Set to `true` to render the [popup]{@link enyo.Popup} in a 
-			* [floating layer]{@link enyo.FloatingLayer} outside of other 
-			* [controls]{@link enyo.Control}.  This may be used to guarantee that the 
+			* Set to `true` to render the [popup]{@link enyo.Popup} in a
+			* [floating layer]{@link enyo.FloatingLayer} outside of other
+			* [controls]{@link enyo.Control}.  This may be used to guarantee that the
 			* popup will be shown on top of other controls.
-			* 
+			*
 			* @type {Boolean}
 			* @default false
 			* @public
@@ -116,7 +117,7 @@
 			/**
 			* Set to `true` to automatically center the [popup]{@link enyo.Popup} in
 			* the middle of the viewport.
-			* 
+			*
 			* @type {Boolean}
 			* @default false
 			* @public
@@ -126,7 +127,7 @@
 			/**
 			* Set to `true` to be able to show transition on the style modifications;
 			* otherwise the transition is invisible `(visibility: hidden)`.
-			* 
+			*
 			* @type {Boolean}
 			* @default false
 			* @public
@@ -134,9 +135,9 @@
 			showTransitions: false,
 
 			/**
-			* Set to `true` to stop `preventDefault()` from being called on captured 
+			* Set to `true` to stop `preventDefault()` from being called on captured
 			* [events]{@glossary event}.
-			* 
+			*
 			* @type {Boolean}
 			* @default false
 			* @public
@@ -205,7 +206,7 @@
 			*/
 			highestZ: 120
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -231,11 +232,11 @@
 		/**
 		* @private
 		*/
-		eventsToCapture: { 
-			ondown: 'capturedDown', 
+		eventsToCapture: {
+			ondown: 'capturedDown',
 			ontap: 'capturedTap'
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -259,10 +260,10 @@
 			return function() {
 				var showing = this.showing;
 				this.showing = false;
-				
+
 				sup.apply(this, arguments);
 				this.canGenerate = !this.floating;
-				
+
 				// if the showing flag was true we know the intent was to automatically show the
 				// popup on render...but it can't be rendered in the normal flow...but the rendered
 				// method won't be called because it wasn't generated...SO...we arbitrarily flag
@@ -287,7 +288,7 @@
 				sup.apply(this, arguments);
 			};
 		}),
-		
+
 		/**
 		* @method
 		* @private
@@ -301,7 +302,7 @@
 					this.node.remove();
 				}
 
-				sup.apply(this, arguments);	
+				sup.apply(this, arguments);
 			};
 		}),
 
@@ -349,15 +350,15 @@
 		* @private
 		*/
 		updatePosition: function () {
-			var d = this.calcViewportSize();
-			var b = this.getBounds();
+			var d = this.calcViewportSize(),
+				b = this.getBounds();
 
 			if (this.targetPosition) {
 				// For brevity's sake...
 				var p = this.targetPosition;
 
 				// Test and optionally adjust our target bounds (only first is commented, because logic is effectively identical for all scenarios)
-				if (typeof p.left === 'number') {
+				if (typeof p.left == 'number') {
 					// If popup will be outside window bounds, switch anchor
 					if (p.left + b.width > d.width) {
 						if (p.left - b.width >= 0) {
@@ -371,7 +372,7 @@
 					} else {
 						p.right = null;
 					}
-				} else if (typeof p.right === 'number') {
+				} else if (typeof p.right == 'number') {
 					if (p.right + b.width > d.width) {
 						if (p.right - b.width >= 0) {
 							p.left = d.width - p.right;
@@ -384,7 +385,7 @@
 					}
 				}
 
-				if (typeof p.top === 'number') {
+				if (typeof p.top == 'number') {
 					if (p.top + b.height > d.height) {
 						if (p.top - b.height >= 0) {
 							p.bottom = d.height - p.top;
@@ -395,7 +396,7 @@
 					} else {
 						p.bottom = null;
 					}
-				} else if (typeof p.bottom === 'number') {
+				} else if (typeof p.bottom == 'number') {
 					if (p.bottom + b.height > d.height) {
 						if (p.bottom - b.height >= 0) {
 							p.top = d.height - p.bottom;
@@ -523,7 +524,7 @@
 
 		/**
 		* If a drag event occurs outside a [popup]{@link enyo.Popup}, hide.
-		* 
+		*
 		* @private
 		*/
 		dragstart: function (sender, e) {
@@ -545,7 +546,7 @@
 
 		/**
 		* If something inside the [popup]{@link enyo.Popup} blurred, keep track of it.
-		* 
+		*
 		* @private
 		*/
 		blur: function (sender, e) {
@@ -557,7 +558,7 @@
 		/**
 		* When something outside the [popup]{@link enyo.Popup} focuses (e.g., due to tab key), focus
 		* our last focused [control]{@link enyo.Control}.
-		* 
+		*
 		* @private
 		*/
 		focus: function (sender, e) {
@@ -594,7 +595,7 @@
 		* {@glossary event}. The popup's position is automatically constrained so
 		* that it does not display outside the viewport, and defaults to anchoring
 		* the top left corner of the popup to the position of the mouse event.
-		* 
+		*
 		* @param {Object} e - The mouse {@glossary event} that initiated this call.
 		* @param {Object} [offset] - An optional [object]{@glossary Object} that may
 		* contain `left` and `top` properties to specify an offset relative to the
@@ -619,7 +620,7 @@
 		* Opens the [popup]{@link enyo.Popup} at a specific position. The final
 		* location of the popup will be automatically constrained so that it does
 		* not display outside the viewport.
-		* 
+		*
 		* @param {Object} pos An [object]{@glossary Object} that may contain `left`,
 		* `top`, `bottom`, and `right` properties to specify where the
 		* [popup]{@link enyo.Popup} will be anchored. If both `left` and `right` are
@@ -723,10 +724,10 @@
 
 	/**
 	* By default, we capture `ondown` and `ontap` to implement the [popup's]{@link enyo.Popup}
-	* modal behavior, but in certain circumstances it may be necessary to capture other 
+	* modal behavior, but in certain circumstances it may be necessary to capture other
 	* [events]{@glossary event} as well, so we provide this hook to extend. (We are currently
 	* using this in Moonstone to capture `onSpotlightFocus` [events]{@glossary event}).
-	* 
+	*
 	* @private
 	*/
 	enyo.Popup.concat = function (ctor, props, instance) {

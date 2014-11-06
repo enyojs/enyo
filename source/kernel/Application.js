@@ -14,13 +14,13 @@
 	enyo.applications = {};
 	
 	/**
-	* {@link enyo.Application} is a type of {@link enyo.ViewController} that encapsulates a 
-	* collection of {@link enyo.Controller controllers} and a hierarchy of 
-	* [controls]{@link enyo.Control}. There may be multiple instances of an 
-	* [application]{@link enyo.Application} at a given time, with unique names and target 
-	* [DOM nodes]{@glossary Node}. Within a given application, a reference to the
-	* application is available on all [components]{@link enyo.Component} via the
-	* [app]{@link enyo.ApplicationSupport#app} property.
+	* {@link enyo.Application} is a type of {@link enyo.ViewController} that
+	* encapsulates a collection of [controllers]{@link enyo.Controller} and a
+	* hierarchy of [controls]{@link enyo.Control}. There may be multiple instances
+	* of an [application]{@link enyo.Application} at a given time, with unique
+	* names and target [DOM nodes]{@glossary Node}. Within a given application, a
+	* reference to the application is available on all [components]{@link enyo.Component}
+	* via the [app]{@link enyo.ApplicationSupport#app} property.
 	*
 	* @class enyo.Application
 	* @extends enyo.ViewController

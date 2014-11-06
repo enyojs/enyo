@@ -54,8 +54,6 @@
 		return p;
 	}
 
-
-
 	/**
 	* {@link enyo.Control} is a [component]{@link enyo.UiComponent} that controls
 	* a [DOM]{@glossary DOM} [node]{@glossary Node} (i.e., an element in the user
@@ -66,13 +64,15 @@
 	* this kind.
 	*
 	* For more information, see the documentation on
-	* [Controls]{@link key-concepts/controls.html} in the Enyo Developer Guide.
+	* [Controls]{@linkplain docs/key-concepts/controls.html} in the
+	* Enyo Developer Guide.
 	*
 	* **If you make changes to `enyo.Control`, be sure to add or update the
 	* appropriate unit tests.**
 	*
 	* @class enyo.Control
 	* @extends enyo.UiComponent
+	* @ui
 	* @public
 	*/
 	var Control = kind(
@@ -252,7 +252,7 @@
 		* Sets the absolute/relative position and/or size for this control. Values
 		* of `null` or `undefined` for the `bounds` properties will be ignored. You
 		* may optionally specify a `unit` (i.e., a valid CSS measurement unit) as a
-		* [string]{@link exteral:String} to be applied to each of the position/size
+		* [string]{@glossary String} to be applied to each of the position/size
 		* assignments.
 		*
 		* @param {Object} bounds - An [object]{@glossary Object}, optionally
@@ -348,7 +348,7 @@
 		* Determines whether this control currently has the [focus]{@glossary focus}.
 		*
 		* @returns {Boolean} Whether this control has focus. `true` if the control
-		* has focus; otherwise, false.
+		* has focus; otherwise, `false`.
 		* @public
 		*/
 		hasFocus: function () {
@@ -359,7 +359,7 @@
 		* Determines whether this control's [DOM node]{@glossary Node} has been created.
 		*
 		* @returns {Boolean} Whether this control's [DOM node]{@glossary Node} has
-		* been created. `true` if it has been created; otherwise, false.
+		* been created. `true` if it has been created; otherwise, `false`.
 		* @public
 		*/
 		hasNode: function () {
@@ -939,10 +939,12 @@
 		* target `parentNode`.
 		*
 		* @param {Node} parentNode - The new parent of this control.
+		* @param {Boolean} preventRooting - If `true`, this control will not be treated as a root 
+		*	view and will not be added to the set of roots.
 		* @returns {this} The callee for chaining.
 		* @public
 		*/
-		renderInto: function (parentNode) {
+		renderInto: function (parentNode, preventRooting) {
 			var delegate = this.renderDelegate || Control.renderDelegate,
 				noFit = this.fit === false;
 
@@ -967,7 +969,9 @@
 
 			// we inject this as a root view because, well, apparently that is just an assumption
 			// we've been making...
-			enyo.addToRoots(this);
+			if (!preventRooting) {
+				enyo.addToRoots(this);
+			}
 
 			// now let the delegate render it the way it needs to
 			delegate.renderInto(this, parentNode);
@@ -1001,7 +1005,7 @@
 		* It is used internally by some Enyo UI libraries to handle a rare
 		* issue that sometimes arises when using a virtualized list or repeater
 		* on a touch device.
-		* 
+		*
 		* This issue occurs when a gesture (e.g. a drag) originates with a DOM
 		* node that ends up being destroyed in mid-gesture as the list updates.
 		* When the node is destroyed, the stream of DOM events representing the
@@ -1015,9 +1019,9 @@
 		* event handler for the event that starts the gesture.
 		*
 		* `retainNode` returns a function that you must call when the gesture
-		* ends to release the node. Make sure you call this function to avoid 
+		* ends to release the node. Make sure you call this function to avoid
 		* "leaking" the DOM node (failing to remove it from the DOM).
-		* 
+		*
 		* @param {Node} node - Optional. Defaults to the node associated with
 		* the Control (`Control.node`). You can generally omit this parameter
 		* when working with {@link enyo.DataList} or {@link enyo.DataGridList},
@@ -1286,11 +1290,16 @@
 		*/
 		detectTextDirectionality: function (stringInstead) {
 			// If an argument was supplied at all, use it, even if it's undefined.
-			// Values that are null or undefined, or are numbers, arrays, and some objects are safe 
+			// Values that are null or undefined, or are numbers, arrays, and some objects are safe
 			// to be tested.
 			var str = (arguments.length) ? stringInstead : this.content;
 			this.rtl = enyo.isRtl(str);
-			this.applyStyle('direction', this.rtl ? 'rtl' : 'ltr');
+			if (str || str === 0) {
+				this.applyStyle('direction', this.rtl ? 'rtl' : 'ltr');
+			} else {
+				this.applyStyle('direction', null);
+			}
+
 		},
 
 		// .................................

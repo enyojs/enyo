@@ -23,8 +23,8 @@
 		*
 		* It is important to note that usage of this source requires that
 		* [models]{@link enyo.Model} and [collections]{@link enyo.Collection} use
-		* their respective `url` properties ({@link enyo.Model#url} and
-		* {@link enyo.Collection#url}). Any collection that needs to be
+		* their respective `url` properties ({@link enyo.Model.url} and
+		* {@link enyo.Collection.url}). Any collection that needs to be
 		* [committed]{@link enyo.Collection#commit} must have a unique `url` value.
 		* Any model that will be [committed]{@link enyo.Model#commit} directly, or
 		* within an {@link enyo.Collection}, must have a unique
@@ -80,9 +80,9 @@
 			},
 			
 			/**
-			* Implementation of {@link enyo.Source#fetch}.
+			* Implementation of {@link enyo.Source.fetch}.
 			*
-			* @see enyo.Source#fetch
+			* @see enyo.Source.fetch
 			* @public
 			*/
 			fetch: function (model, opts) {
@@ -114,9 +114,9 @@
 			},
 		
 			/**
-			* Implementation of {@link enyo.Source#commit}.
+			* Implementation of {@link enyo.Source.commit}.
 			*
-			* @see enyo.Source#commit
+			* @see enyo.Source.commit
 			* @public
 			*/
 			commit: function (model, opts) {
@@ -144,9 +144,9 @@
 			},
 			
 			/**
-			* Implementation of {@link enyo.Source#destroy}.
+			* Implementation of {@link enyo.Source.destroy}.
 			*
-			* @see enyo.Source#destroy
+			* @see enyo.Source.destroy
 			* @public
 			*/
 			destroy: function (model, opts) {

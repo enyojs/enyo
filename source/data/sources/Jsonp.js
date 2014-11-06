@@ -28,7 +28,7 @@
 		kind: XHRSource,
 		
 		/**
-		* @see enyo.XHRSource#requestKind
+		* @see enyo.XHRSource.requestKind
 		* @default enyo.JsonpRequest
 		* @public
 		*/
@@ -51,9 +51,9 @@
 		allowed: Object.keys(JsonpRequest.prototype.published),
 		
 		/**
-		* Implementation of {@link enyo.Source#fetch}.
+		* Implementation of {@link enyo.Source.fetch}.
 		*
-		* @see enyo.Source#fetch
+		* @see enyo.Source.fetch
 		* @public
 		*/
 		fetch: function (model, opts) {
@@ -64,9 +64,9 @@
 		},
 		
 		/**
-		* Implementation of {@link enyo.Source#commit}.
+		* Implementation of {@link enyo.Source.commit}.
 		*
-		* @see enyo.Source#commit
+		* @see enyo.Source.commit
 		* @public
 		*/
 		commit: function (model, opts) {
@@ -78,9 +78,9 @@
 		},
 		
 		/**
-		* Implementation of {@link enyo.Source#destroy}.
+		* Implementation of {@link enyo.Source.destroy}.
 		*
-		* @see enyo.Source#destroy
+		* @see enyo.Source.destroy
 		* @public
 		*/
 		destroy: function (model, opts) {

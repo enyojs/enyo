@@ -368,7 +368,7 @@
 		/**
 		* Overloaded implementation.
 		*
-		* @see enyo.Collection#at
+		* @see enyo.Collection.at
 		* @method
 		* @public
 		*/
@@ -397,7 +397,7 @@
 		/**
 		* Overloaded implementation.
 		*
-		* @see enyo.Collection#has
+		* @see enyo.Collection.has
 		* @method
 		* @public
 		*/
@@ -410,7 +410,7 @@
 		/**
 		* Overloaded implementation.
 		*
-		* @see enyo.Collection#forEach
+		* @see enyo.Collection.forEach
 		* @method
 		* @public
 		*/
@@ -423,7 +423,7 @@
 		/**
 		* Overloaded implementation.
 		*
-		* @see enyo.Collection#filter
+		* @see enyo.Collection.filter
 		* @method
 		* @public
 		*/
@@ -436,7 +436,7 @@
 		/**
 		* Overloaded implementation.
 		*
-		* @see enyo.Collection#find
+		* @see enyo.Collection.find
 		* @method
 		* @public
 		*/
@@ -449,7 +449,7 @@
 		/**
 		* Overloaded implementation.
 		*
-		* @see enyo.Collection#map
+		* @see enyo.Collection.map
 		* @method
 		* @public
 		*/
@@ -462,7 +462,7 @@
 		/**
 		* Overloaded implementation.
 		*
-		* @see enyo.Collection#indexOf
+		* @see enyo.Collection.indexOf
 		* @method
 		* @public
 		*/

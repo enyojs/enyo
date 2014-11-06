@@ -38,8 +38,6 @@
 	/**
 	* An internally-used class.
 	*
-	* @class enyo._AjaxComponent
-	* @extends enyo.Component
 	* @private
 	*/
 	enyo.kind({
@@ -59,8 +57,8 @@
 	* To use `enyo.JsonpRequest` instead of `enyo.Ajax`, set
 	* [jsonp]{@link enyo.WebService#jsonp} to `true` (defaults to `false`).
 	*
-	* For more information, see the documentation on
-	* [Consuming Web Services](building-apps/managing-data/consuming-web-services.html)
+	* For more information, see the documentation on [Consuming
+	* Web Services]{@linkplain docs/building-apps/managing-data/consuming-web-services.html}
 	* in the Enyo Developer Guide.
 	*
 	* @class enyo.WebService
@@ -101,7 +99,7 @@
 			* Note that this not the name of a callback function, but only the name of the callback
 			* parameter. Enyo will create an internal callback function as necessary.
 			*
-			* @see enyo.WebService#jsonp
+			* @see enyo.WebService.jsonp
 			* @memberof enyo.WebService.prototype
 			* @type {String}
 			* @default 'callback'
@@ -113,7 +111,7 @@
 			* When using [JSONP]{@glossary JSONP}, the optional character set to use to
 			* interpret the return data.
 			*
-			* @see enyo.WebService#jsonp
+			* @see enyo.WebService.jsonp
 			* @memberof enyo.WebService.prototype
 			* @type {String}
 			* @default null

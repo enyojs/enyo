@@ -353,7 +353,7 @@
 	* When [window.performance]{@glossary window.performance} is available, supplies
 	* a high-precision, high-performance monotonic timestamp, which is independent of
 	* changes to the system clock and thus safer for use in animation, etc. Falls back to
-	* [enyo.now()]{@link enyo.now} (based on the JavaScript [Date]{@glossary Date}
+	* [enyo.now()]{@link enyo#now} (based on the JavaScript [Date]{@glossary Date}
 	* object), which is subject to system time changes.
 	* 
 	* @returns {Number} Number of milliseconds representing the current time or time since
