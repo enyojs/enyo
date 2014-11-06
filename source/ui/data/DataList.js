@@ -148,6 +148,15 @@
 		renderDelay: 250,
 
 		/**
+		* This is an inclusive list of all methods that can be queued,
+		* and the prefered order they should execute, if a method is
+		* not listed, it will NOT be called ever.
+		*
+		* @private
+		*/
+		_absoluteShowingPriority:['reset', 'refresh', 'scrollToIndex', 'finish rendering', 'didResize' , 'select'],
+
+		/**
 		* Completely resets the current [list]{@link enyo.DataList} such that it scrolls to the top
 		* of the scrollable region and regenerates all of its children. This is typically necessary
 		* only on initialization or if the entire dataset has been swapped out.
@@ -308,8 +317,6 @@
 		* @private
 		*/
 		_absoluteShowingChanged: function () {
-			//this ranks the importance of related methods
-			var ranks = ['refresh', 'select'];
 			if (this.get('absoluteShowing')) {
 				if (this._showingQueue && this._showingQueue.length) {
 					var queue = this._showingQueue;
@@ -319,29 +326,22 @@
 					this._showingQueue = null;
 					this._showingQueueMethods = null;
 
-					//get items to be prioritized from queue
-					var prioritized = ranks.filter(function(o){
-						return !(-1 == enyo.indexOf(o, ranks));
-					});
+					for (i = 0; i < this._absoluteShowingPriority.length; i++) {
+						if(queue.indexOf(this._absoluteShowingPriority[i]) > -1){
+							name = this._absoluteShowingPriority[i];
+							fn = methods[name];
+							fn.call(this);
+						}
+					}
 
-					//remove prioritized items
-					queue = queue.filter(function(o){
-						return -1 == enyo.indexOf(o, prioritized);
-					});
-
-					//add prioritized items to end of queue
-					queue = queue.concat(prioritized);
-
-					do {
-						name = queue.shift();
-						fn = methods[name];
-						fn.call(this);
-					} while (queue.length);
+					queue = [];
 				}
 			}
 		},
 
 		/**
+		* Creates a deferred Que of methods to run.
+		* Methods must be prioritized in [_absoluteShowingPriority]{@link enyo.DataList#_absoluteShowingPriority}
 		* @private
 		*/
 		_addToShowingQueue: function (name, fn) {
