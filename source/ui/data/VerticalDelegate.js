@@ -302,13 +302,14 @@
 			// if there isn't one, then we know we need to go ahead and
 			// update, otherwise we should be able to use the scroller's
 			// own methods to find it
+			list.$.scroller.stop();
 			if (c) {
-				list.$.scroller.scrollIntoView(c, this.pagePosition(list, p));
+				list.$.scroller.scrollToControl(c);
 			} else {
 				// we do this to ensure we trigger the paging event when necessary
 				this.resetToPosition(list, this.pagePosition(list, p));
 				// now retry the original logic until we have this right
-				enyo.asyncMethod(function () {
+				list.startJob('vertical_delegate_scrollToIndex', function () {
 					list.scrollToIndex(i);
 				});
 			}
@@ -592,7 +593,7 @@
 		*/
 		resetToPosition: function (list, px) {
 			if (px >= 0 && px <= list.bufferSize) {
-				var index = Math.ceil(px / this.defaultPageSize(list)),
+				var index = Math.floor(px / this.defaultPageSize(list)),
 					last  = this.pageCount(list) - 1,
 					pos   = this.pagesByPosition(list);
 				if (
@@ -623,16 +624,35 @@
 			if (!list.usingScrollListener) {
 				var threshold = list.scrollThreshold,
 					bounds    = event.scrollBounds,
+					ds        = this.defaultPageSize(list),
 					lowerProp = list.lowerProp,
-					upperProp = list.upperProp;
-				bounds[upperProp] = this.getScrollPosition(list);
+					upperProp = list.upperProp,
+					pos       = bounds[upperProp],
+					ut        = threshold[upperProp],
+					lt        = threshold[lowerProp];
 				if (bounds.xDir === 1 || bounds.yDir === 1) {
-					if (!isNaN(threshold[lowerProp]) && (bounds[upperProp] >= threshold[lowerProp])) {
-						this.scrollHandler(list, bounds);
+					if (!isNaN(lt)) {
+						if (pos >= lt) {
+							if (pos >= lt + ds) {
+								// big jump
+								this.resetToPosition(list, pos);
+							} else {
+								// continuous scrolling
+								this.scrollHandler(list, bounds);
+							}
+						}
 					}
 				} else if (bounds.yDir === -1 || bounds.xDir === -1) {
-					if (!isNaN(threshold[upperProp]) && (bounds[upperProp] <= threshold[upperProp])) {
-						this.scrollHandler(list, bounds);
+					if (!isNaN(ut) && (pos <= ut)) {
+						if (pos <= ut) {
+							if (pos <= ut - ds) {
+								// big jump
+								this.resetToPosition(list, pos);
+							} else {
+								//continuous scrolling
+								this.scrollHandler(list, bounds);
+							}
+						}
 					}
 				}
 			}

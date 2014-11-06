@@ -479,7 +479,6 @@
 		* @public
 		*/
 		setScrollLeft: function (left) {
-			this.scrollLeft = left;
 			this.$.strategy.setScrollLeft(left);
 		},
 
@@ -490,7 +489,6 @@
 		* @public
 		*/
 		setScrollTop: function (top) {
-			this.scrollTop = top;
 			this.$.strategy.setScrollTop(top);
 		},
 
@@ -608,6 +606,17 @@
 		*/
 		scrollToNode: function (node, alignWithTop) {
 			this.$.strategy.scrollToNode(node, alignWithTop);
+		},
+
+		/** 
+		* Stops the scroller if it is currently animating.
+		* 
+		* @public
+		*/
+		stop: function() {
+			if (typeof this.$.strategy.stop == 'function') {
+				this.$.strategy.stop(true);
+			}
 		},
 
 		/** 

@@ -414,7 +414,7 @@
 		* @public
 		*/
 		scrollTo: function (x, y) {
-			this.stop();
+			this.stop(true);
 			this.$.scrollMath.scrollTo(x, y || y === 0 ? y : null);
 		},
 
@@ -430,7 +430,7 @@
 		*/
 		scrollIntoView: enyo.inherit(function (sup) {
 			return function() {
-				this.stop();
+				this.stop(true);
 				sup.apply(this, arguments);
 			};
 		}),
@@ -444,7 +444,7 @@
 		*/
 		setScrollLeft: enyo.inherit(function (sup) {
 			return function() {
-				this.stop();
+				this.stop(true);
 				sup.apply(this, arguments);
 			};
 		}),
@@ -458,7 +458,7 @@
 		*/
 		setScrollTop: enyo.inherit(function (sup) {
 			return function() {
-				this.stop();
+				this.stop(true);
 				sup.apply(this, arguments);
 			};
 		}),
@@ -773,7 +773,7 @@
 		*/
 		getScrollBounds: enyo.inherit(function (sup) {
 			return function() {
-				this.stop();
+				this.stop(true);
 				return sup.apply(this, arguments);
 			};
 		}),
