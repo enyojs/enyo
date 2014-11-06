@@ -442,10 +442,8 @@
 		*/
 		showingChangedHandler: enyo.inherit(function(sup) {
 			return function(sender, event) {
-				if (this.showing) {
-					if (event.showing) {
-						this.syncStrategy();
-					}
+				if (this.showing && event.showing) {
+					this.syncStrategy();
 				}
 			};
 		}),
