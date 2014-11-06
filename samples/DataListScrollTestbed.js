@@ -49,6 +49,10 @@
                 sup.apply(this,arguments);
                 this.r = this.$.repeater;
                 this.s = this.r.$.scroller;
+                //hack
+                if (this.strategy == 'Translate (Optimized)') {
+                    this.s.$.strategy.translateOptimized = true;
+                }
                 this.addTestControls();
             };
         }),
