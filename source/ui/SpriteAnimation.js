@@ -30,6 +30,11 @@
 		/**
 		* @private
 		*/
+		rtl: false,
+
+		/**
+		* @private
+		*/
 		published:
 			/** @lends enyo.SpriteAnimation.prototype */ {
 
@@ -203,6 +208,7 @@
 			return function() {
 				sup.apply(this, arguments);
 
+				this.applyStyle('direction', 'ltr');
 				this.setOffset();
 				this.setSize();
 				this.pausedChanged();
@@ -368,7 +374,7 @@
 			for (o = 0; o < outer; o++) {
 				kfStr += this._generateKeyframe(
 					// percent
-					((o / outer) ? ((o / outer) + 0.0001) : 0),
+					((o / outer) ? ((o / outer) + 0.0000001) : 0),
 					// startX
 					horiz ? width : (-width * o),
 					// startY
@@ -391,7 +397,7 @@
 		* @private
 		*/
 		_generateKeyframe: function (percent, x, y) {
-			return (parseInt(percent*10000, 10) / 100) +'%	{ -webkit-transform: translate3d('+ x +'px, '+ y +'px, 0);	transform: translate3d('+ x +'px, '+ y +'px, 0); }\n';
+			return (Math.ceil(percent*1000000, 10) / 10000) +'%	{ -webkit-transform: translate3d('+ x +'px, '+ y +'px, 0);	transform: translate3d('+ x +'px, '+ y +'px, 0); }\n';
 		}
 	});
 

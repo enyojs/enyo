@@ -64,7 +64,7 @@
 	* this kind.
 	*
 	* For more information, see the documentation on
-	* [Controls]{@linkplain docs/key-concepts/controls.html} in the
+	* [Controls]{@linkplain $dev-guide/key-concepts/controls.html} in the
 	* Enyo Developer Guide.
 	*
 	* **If you make changes to `enyo.Control`, be sure to add or update the
@@ -733,21 +733,23 @@
 		* @private
 		*/
 		showingChanged: function (was) {
-
 			// if we are changing from not showing to showing we attempt to find whatever
 			// our last known value for display was or use the default
-			if (!was && this.showing) this.applyStyle('display', this._display || '');
+			if (!was && this.showing) {
+				this.applyStyle('display', this._display || '');
+				this.sendShowingChangedEvent(was);
+			}
 
 			// if we are supposed to be hiding the control then we need to cache our current
 			// display state
 			else if (was && !this.showing) {
+				this.sendShowingChangedEvent(was);
 				// we can't truly cache this because it _could_ potentially be set to multiple
 				// values throughout its lifecycle although that seems highly unlikely...
 				this._display = this.hasNode() ? this.node.style.display : '';
 				this.applyStyle('display', 'none');
 			}
 
-			this.sendShowingChangedEvent(was);
 		},
 
 		/**
@@ -795,7 +797,7 @@
 		},
 
 		/**
-		* Handles the `onshowingchanged` event that is waterfalled by controls when
+		* Handles the `onShowingChanged` event that is waterfalled by controls when
 		* their `showing` value is modified. If the control is not showing itself
 		* already, it will not continue the waterfall. Overload this method to
 		* provide additional handling for this event.
@@ -1280,8 +1282,8 @@
 			// Values that are null or undefined, or are numbers, arrays, and some objects are safe
 			// to be tested.
 			var str = (arguments.length) ? stringInstead : this.content;
-			this.rtl = enyo.isRtl(str);
 			if (str || str === 0) {
+				this.rtl = enyo.isRtl(str);
 				this.applyStyle('direction', this.rtl ? 'rtl' : 'ltr');
 			} else {
 				this.applyStyle('direction', null);

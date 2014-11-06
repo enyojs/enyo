@@ -155,14 +155,9 @@
 		* @private
 		*/
 		handlers: {
-			onscroll: 'domScroll',
 			onflick: 'flick',
-			onhold: 'hold',
-			ondragstart: 'dragstart',
 			onShouldDrag: 'shouldDrag',
-			ondrag: 'drag',
-			ondragfinish: 'dragfinish',
-			onmousewheel: 'mousewheel'
+			ondrag: 'drag'
 		},
 
 		/**
@@ -554,13 +549,13 @@
 		/**
 		* @private
 		*/
-		hold: function (sender, e) {
-			if (this.isScrolling() && !this.isOverscrolling()) {
-				var m = this.$.scrollMath || this;
-				m.stop(e);
-				return true;
-			}
-		},
+		down: enyo.inherit(function (sup) {
+			return function (sender, e) {
+				if (!this.isOverscrolling()) {
+					sup.apply(this, arguments);
+				}
+			};
+		}),
 
 		/**
 		* @private

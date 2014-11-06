@@ -334,8 +334,8 @@
 		/**
 		* The current [state]{@link enyo.States} of the [collection]{@link enyo.Collection}.
 		* This value changes automatically and may be observed for more complex state
-		* monitoring. The default value is [READY]{@link enyo.States.READY}.
-		* 
+		* monitoring. The default value is [READY]{@link enyo~States.READY}.
+		* (And let's try {@link enyo~States#READY} while we're at it.)
 		* @see enyo.States
 		* @see enyo.StateSupport
 		* @type enyo.States

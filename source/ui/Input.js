@@ -11,7 +11,7 @@
 	*/
 
 	/**
-	* Fires when the text has changed and the [input]{@link enyo.Input} subsequently loses 
+	* Fires when the text has changed and the [input]{@link enyo.Input} subsequently loses
 	* focus.
 	*
 	* @event enyo.Input#onchange
@@ -32,7 +32,7 @@
 	* @property {Object} event - An [object]{@glossary Object} containing event information.
 	* @public
 	*/
-	
+
 	/**
 	* {@link enyo.Input} implements an HTML [&lt;input&gt;]{@glossary input} element
 	* with cross-platform support for change [events]{@glossary event}.
@@ -40,10 +40,10 @@
 	* You may listen for [oninput]{@link enyo.Input#oninput} and
 	* [onchange]{@link enyo.Input#onchange} [DOM events]{@glossary DOMEvent} from
 	* this [control]{@link enyo.Control} to know when the text inside has been modified.
-	* 
+	*
 	* For more information, see the documentation on
-	* [Text Fields]{@linkplain docs/building-apps/controls/text-fields.html} in the
-	* Enyo Developer Guide.
+	* [Text Fields]{@linkplain $dev-guide/building-apps/controls/text-fields.html}
+	* in the Enyo Developer Guide.
 	*
 	* @class enyo.Input
 	* @extends enyo.Control
@@ -66,13 +66,13 @@
 		/**
 		* @private
 		*/
-		published: 
+		published:
 			/** @lends enyo.Input.prototype */ {
-			
+
 			/**
-			* Value of the [input]{@link enyo.Input}. Use this property only to initialize the 
+			* Value of the [input]{@link enyo.Input}. Use this property only to initialize the
 			* value. Call `getValue()` and `setValue()` to manipulate the value at runtime.
-			* 
+			*
 			* @type {String}
 			* @default ''
 			* @public
@@ -81,7 +81,7 @@
 
 			/**
 			* Text to display when the [input]{@link enyo.Input} is empty
-			* 
+			*
 			* @type {String}
 			* @default ''
 			* @public
@@ -92,7 +92,7 @@
 			* Type of [input]{@link enyo.Input}; if not specified, it's treated as `'text'`.
 			* This may be anything specified for the `type` attribute in the HTML
 			* specification, including `'url'`, `'email'`, `'search'`, or `'number'`.
-			* 
+			*
 			* @type {String}
 			* @default ''
 			* @public
@@ -102,7 +102,7 @@
 			/**
 			* When `true`, prevents input into the [control]{@link enyo.Control}. This maps
 			* to the `disabled` DOM attribute.
-			* 
+			*
 			* @type {Boolean}
 			* @default false
 			* @public
@@ -112,7 +112,7 @@
 			/**
 			* When `true`, the contents of the [input]{@link enyo.Input} will be selected
 			* when the input gains focus.
-			* 
+			*
 			* @type {Boolean}
 			* @default false
 			* @public
@@ -129,13 +129,13 @@
 
 		/**
 		* Set to `true` to focus this [control]{@link enyo.Control} when it is rendered.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
 		*/
 		defaultFocus: false,
-		
+
 		/**
 		* @private
 		*/
@@ -212,6 +212,7 @@
 		*/
 		placeholderChanged: function () {
 			this.setAttribute('placeholder', this.placeholder);
+			this.valueChanged();
 		},
 
 		/**
@@ -242,6 +243,7 @@
 			} else {
 				this.setAttribute('value', this.value);
 			}
+			this.detectTextDirectionality((this.value || this.value === 0) ? this.value : this.get('placeholder'));
 		},
 
 		/**

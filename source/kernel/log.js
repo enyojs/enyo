@@ -103,6 +103,7 @@
 	* Sets the log level to the given value. This will restrict the amount of output depending on
 	* the settings. The higher the value, the more output that will be allowed. The default is
 	* 99. The value, -1, would silence all logging, even 'error' (0).
+	* Without the 'see': {@link enyo.log}.
 	*
 	* @see enyo.logging.level
 	* @see enyo.log

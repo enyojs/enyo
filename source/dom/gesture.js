@@ -7,8 +7,8 @@
 	* and mobile platforms handle basic input differently.
 	*
 	* For more information on normalized input events and their associated properties, see the
-	* documentation on [Event Handling]{@linkplain docs/key-concepts/event-handling.html} in
-	* the Enyo Developer Guide.
+	* documentation on [Event Handling]{@linkplain $dev-guide/key-concepts/event-handling.html}
+	* in the Enyo Developer Guide.
 	*
 	* @namespace enyo.gesture
 	* @public
@@ -84,14 +84,19 @@
 		* @public
 		*/
 		down: function(evt) {
-			// set holdpulse defaults
-			this.drag.holdPulseConfig = enyo.clone(this.drag.holdPulseDefaultConfig);
+			// set holdpulse defaults, using JSON.parse / JSON.stringify for a cheap & easy deep copy
+			this.drag.holdPulseConfig = JSON.parse(JSON.stringify(this.drag.holdPulseDefaultConfig));
 
 			// cancel any hold since it's possible in corner cases to get a down without an up
 			var e = this.makeEvent('down', evt);
 
 			// expose method for configuring holdpulse options
 			e.configureHoldPulse = this.configureHoldPulse;
+
+			// enable prevention of tap event
+			e.preventTap = function() {
+				e._tapPrevented = true;
+			};
 
 			enyo.dispatch(e);
 			this.downEvent = e;
@@ -128,12 +133,14 @@
 		*/
 		up: function(evt) {
 			var e = this.makeEvent('up', evt);
-			var tapPrevented = false;
+
+			e._tapPrevented = this.downEvent._tapPrevented;
 			e.preventTap = function() {
-				tapPrevented = true;
+				e._tapPrevented = true;
 			};
+
 			enyo.dispatch(e);
-			if (!tapPrevented && this.downEvent && this.downEvent.which == 1) {
+			if (!e._tapPrevented && this.downEvent && this.downEvent.which == 1) {
 				var target = this.findCommonAncestor(this.downEvent.target, evt.target);
 
 				// the common ancestor of the down/up events is the target of the tap
@@ -301,7 +308,10 @@
 		* @public
 		*/
 		configureHoldPulse: function(opts) {
-			enyo.mixin(enyo.gesture.drag.holdPulseConfig, opts);
+			var nOpts = (opts.delay === undefined) ?
+				opts :
+				enyo.gesture.drag.normalizeHoldPulseConfig(opts);
+			enyo.mixin(enyo.gesture.drag.holdPulseConfig, nOpts);
 		}
 	};
 

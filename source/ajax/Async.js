@@ -6,7 +6,7 @@
 	* notified when the task is complete.
 	*
 	* For more information, see the documentation on [Consuming Web
-	* Services]{@linkplain docs/building-apps/managing-data/consuming-web-services.html}
+	* Services]{@linkplain $dev-guide/building-apps/managing-data/consuming-web-services.html}
 	* in the Enyo Developer Guide.
 	*
 	* @class enyo.Async

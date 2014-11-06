@@ -19,8 +19,8 @@
 	* This kind does not extend {@link enyo.Component} and cannot be used
 	* in the [components block]{@link enyo.Component#components}.
 	*
-	* For more information, see the documentation on [Consuming
-	* Web Services]{@linkplain docs/building-apps/managing-data/consuming-web-services.html}
+	* For more information, see the documentation on [Consuming Web
+	* Services]{@linkplain $dev-guide/building-apps/managing-data/consuming-web-services.html}
 	* in the Enyo Developer Guide.
 	*
 	* @class enyo.Ajax
