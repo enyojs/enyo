@@ -520,8 +520,8 @@
 				this.x = this.x0 = this.x0 + dx;
 				shouldScroll = true;
 			}
+			this.stop(!shouldScroll);
 			if (shouldScroll) {
-				this.stop();
 				this.start();
 				return true;
 			}

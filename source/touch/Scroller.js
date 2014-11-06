@@ -640,6 +640,17 @@
 		},
 
 		/** 
+		* Stops the scroller if it is currently animating.
+		* 
+		* @public
+		*/
+		stop: function() {
+			if (typeof this.$.strategy.stop == 'function') {
+				this.$.strategy.stop(true);
+			}
+		},
+
+		/** 
 		* Adds current values of `getScrollBounds()` to {@glossary event}.
 		* 
 		* @private

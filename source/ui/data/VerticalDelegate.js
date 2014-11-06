@@ -302,13 +302,14 @@
 			// if there isn't one, then we know we need to go ahead and
 			// update, otherwise we should be able to use the scroller's
 			// own methods to find it
+			list.$.scroller.stop();
 			if (c) {
-				list.$.scroller.scrollIntoView(c, this.pagePosition(list, p));
+				list.$.scroller.scrollToControl(c);
 			} else {
 				// we do this to ensure we trigger the paging event when necessary
 				this.resetToPosition(list, this.pagePosition(list, p));
 				// now retry the original logic until we have this right
-				enyo.asyncMethod(function () {
+				list.startJob('vertical_delegate_scrollToIndex', function () {
 					list.scrollToIndex(i);
 				});
 			}
