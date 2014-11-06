@@ -317,25 +317,18 @@
 		* @private
 		*/
 		_absoluteShowingChanged: function () {
-			if (this.get('absoluteShowing')) {
-				if (this._showingQueue && this._showingQueue.length) {
-					var queue = this._showingQueue;
-					var methods = this._showingQueueMethods;
-					var fn;
-					var name;
-					this._showingQueue = null;
-					this._showingQueueMethods = null;
+			if (this.get('absoluteShowing') && this._showingQueue) {
+				var methods = this._showingQueueMethods;
+				var fn;
 
-					for (var i = 0; i < this._absoluteShowingPriority.length; i++) {
-						if(queue.indexOf(this._absoluteShowingPriority[i]) > -1){
-							name = this._absoluteShowingPriority[i];
-							fn = methods[name];
-							fn.call(this);
-						}
-					}
+				this._showingQueueMethods = null;
 
-					queue = [];
+				for (var i = 0; i < this._absoluteShowingPriority.length; i++) {
+					fn = methods[this._absoluteShowingPriority[i]];
+					if(fn) fn.call(this);
 				}
+
+				this._showingQueue = false;
 			}
 		},
 
@@ -345,15 +338,11 @@
 		* @private
 		*/
 		_addToShowingQueue: function (name, fn) {
-			var queue = this._showingQueue || (this._showingQueue = []);
 			var methods = this._showingQueueMethods || (this._showingQueueMethods = {});
-			var idx = enyo.indexOf(name, queue);
-			if (idx >= 0) {
-				queue.splice(idx, 1);
-			}
-			queue.push(name);
 			methods[name] = fn;
+			this._showingQueue = true;
 		},
+
 		/**
 		* This [function]{@glossary Function} is intentionally left blank. In
 		* [DataRepeater]{@link enyo.DataRepeater}, it removes the [control]{@link enyo.Control}
