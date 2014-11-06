@@ -326,7 +326,7 @@
 					this._showingQueue = null;
 					this._showingQueueMethods = null;
 
-					for (i = 0; i < this._absoluteShowingPriority.length; i++) {
+					for (var i = 0; i < this._absoluteShowingPriority.length; i++) {
 						if(queue.indexOf(this._absoluteShowingPriority[i]) > -1){
 							name = this._absoluteShowingPriority[i];
 							fn = methods[name];
