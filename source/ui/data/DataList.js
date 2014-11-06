@@ -309,7 +309,7 @@
 		*/
 		_absoluteShowingChanged: function () {
 			//this ranks the importance of related methods
-			var priorities = ['refresh', 'select'];
+			var ranks = ['refresh', 'select'];
 			if (this.get('absoluteShowing')) {
 				if (this._showingQueue && this._showingQueue.length) {
 					var queue = this._showingQueue;
@@ -319,10 +319,18 @@
 					this._showingQueue = null;
 					this._showingQueueMethods = null;
 
+					//get items to be prioritized from queue
+					var prioritized = ranks.filter(function(o){
+						return !(-1 == enyo.indexOf(o, ranks));
+					});
+
 					//remove prioritized items
-					queue.splice(priorities);
-					//add in prioritized order to end of stack
-					queue = queue.concat(priorities);
+					queue = queue.filter(function(o){
+						return -1 == enyo.indexOf(o, prioritized);
+					});
+
+					//add prioritized items to end of queue
+					queue = queue.concat(prioritized);
 
 					do {
 						name = queue.shift();
