@@ -308,6 +308,8 @@
 		* @private
 		*/
 		_absoluteShowingChanged: function () {
+			//this ranks the importance of related methods
+			var priorities = ['refresh', 'select'];
 			if (this.get('absoluteShowing')) {
 				if (this._showingQueue && this._showingQueue.length) {
 					var queue = this._showingQueue;
@@ -316,6 +318,12 @@
 					var name;
 					this._showingQueue = null;
 					this._showingQueueMethods = null;
+
+					//remove prioritized items
+					queue.splice(priorities);
+					//add in prioritized order to end of stack
+					queue = queue.concat(priorities);
+
 					do {
 						name = queue.shift();
 						fn = methods[name];
@@ -360,7 +368,7 @@
 					if (this.get('absoluteShowing')) {
 						sup.apply(this, arguments);
 					} else {
-						this._addToShowingQueue('_select', function(){
+						this._addToShowingQueue('select', function(){
 							sup.apply(this, [idx, model, select]);
 						});
 					}
