@@ -317,18 +317,16 @@
 		* @private
 		*/
 		_absoluteShowingChanged: function () {
-			if (this.get('absoluteShowing') && this._showingQueue) {
+			if (this.get('absoluteShowing') && this._showingQueueMethods) {
 				var methods = this._showingQueueMethods;
 				var fn;
-
-				this._showingQueueMethods = null;
 
 				for (var i = 0; i < this._absoluteShowingPriority.length; i++) {
 					fn = methods[this._absoluteShowingPriority[i]];
 					if(fn) fn.call(this);
 				}
 
-				this._showingQueue = false;
+				this._showingQueueMethods = null;
 			}
 		},
 
@@ -340,7 +338,6 @@
 		_addToShowingQueue: function (name, fn) {
 			var methods = this._showingQueueMethods || (this._showingQueueMethods = {});
 			methods[name] = fn;
-			this._showingQueue = true;
 		},
 
 		/**
