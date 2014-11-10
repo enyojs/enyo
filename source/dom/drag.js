@@ -453,7 +453,7 @@
 		normalizeHoldPulseConfig: function (oldOpts) {
 			var nOpts = enyo.clone(oldOpts);
 			nOpts.frequency = nOpts.delay;
-			nOpts.events = [{hold: nOpts.delay}];
+			nOpts.events = [{name: 'hold', time: nOpts.delay}];
 			return nOpts;
 		},
 
