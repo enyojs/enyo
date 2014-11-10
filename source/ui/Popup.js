@@ -204,7 +204,14 @@
 			* @static
 			* @private
 			*/
-			highestZ: 120
+			highestZ: 120,
+			/**
+			* Current z-index for extended popup
+			* @type {Number}
+			* @static
+			* @private
+			*/
+			_zIndex: null
 		},
 
 		/**
@@ -664,7 +671,7 @@
 		* @private
 		*/
 		getScrimZIndex: function () {
-			return enyo.Popup.highestZ >= this._zIndex ? this._zIndex - 1 : enyo.Popup.highestZ;
+			return enyo.Popup.highestZ >= enyo.Popup._zIndex ? enyo.Popup._zIndex - 1 : enyo.Popup.highestZ;
 		},
 
 		/**
@@ -688,15 +695,15 @@
 		* @private
 		*/
 		applyZIndex: function () {
-			this._zIndex = (enyo.Popup.count * 2) + this.findZIndex() + 1;
-			if (this._zIndex <= enyo.Popup.highestZ) {
-				this._zIndex = enyo.Popup.highestZ + 1;
+			enyo.Popup._zIndex = (enyo.Popup.count * 2) + this.findZIndex() + 1;
+			if (enyo.Popup._zIndex <= enyo.Popup.highestZ) {
+				enyo.Popup._zIndex = enyo.Popup.highestZ + 1;
 			}
-			if (this._zIndex > enyo.Popup.highestZ) {
-				enyo.Popup.highestZ = this._zIndex;
+			if (enyo.Popup._zIndex > enyo.Popup.highestZ) {
+				enyo.Popup.highestZ = enyo.Popup._zIndex;
 			}
 			// leave room for scrim
-			this.applyStyle('z-index', this._zIndex);
+			this.applyStyle('z-index', enyo.Popup._zIndex);
 		},
 
 		/**
@@ -708,8 +715,8 @@
 		findZIndex: function () {
 			// a default z value
 			var z = this.defaultZ;
-			if (this._zIndex) {
-				z = this._zIndex;
+			if (enyo.Popup._zIndex) {
+				z = enyo.Popup._zIndex;
 			} else if (this.hasNode()) {
 				// Re-use existing zIndex if it has one
 				z = Number(enyo.dom.getComputedStyleValue(this.node, 'z-index')) || z;
@@ -717,8 +724,8 @@
 			if (z < this.defaultZ) {
 				z = this.defaultZ;
 			}
-			this._zIndex = z;
-			return this._zIndex;
+			enyo.Popup._zIndex = z;
+			return enyo.Popup._zIndex;
 		}
 	});
 
@@ -738,4 +745,3 @@
 	};
 
 })(enyo, this);
-
