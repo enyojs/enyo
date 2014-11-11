@@ -38,6 +38,7 @@
     "nopt": "2.1.2"
   },
   "devDependencies": {
+    "chai": "~1.9.2",
     "sinon": "~1.8.1",
     "sinon-chai": "~2.5.0",
     "mocha": "~1.20.0",
