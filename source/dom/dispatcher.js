@@ -35,7 +35,8 @@
 		events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel",
 			"click", "dblclick", "change", "keydown", "keyup", "keypress", "input",
 			"paste", "copy", "cut", "webkitTransitionEnd", "transitionend", "webkitAnimationEnd", "animationend",
-			"webkitAnimationStart", "animationstart", "webkitAnimationIteration", "animationiteration"],
+			"webkitAnimationStart", "animationstart", "webkitAnimationIteration", "animationiteration",
+			"visibilitychange", "webkitvisibilitychange"],
 
 		/**
 		* These events come from window
@@ -346,5 +347,5 @@
 		}
 		return p;
 	};
-	
+
 })(enyo, this);
