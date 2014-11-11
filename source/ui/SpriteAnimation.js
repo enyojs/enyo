@@ -397,7 +397,7 @@
 		* @private
 		*/
 		_generateKeyframe: function (percent, x, y) {
-			return (Math.ceil(percent*10000000, 10) / 100000) +'%	{ -webkit-transform: translate3d('+ x +'px, '+ y +'px, 0);	transform: translate3d('+ x +'px, '+ y +'px, 0); }\n';
+			return (Math.ceil(percent*10000000) / 100000) +'%	{ -webkit-transform: translate3d('+ x +'px, '+ y +'px, 0);	transform: translate3d('+ x +'px, '+ y +'px, 0); }\n';
 		}
 	});
 
