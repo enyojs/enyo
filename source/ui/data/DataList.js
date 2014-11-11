@@ -154,7 +154,7 @@
 		*
 		* @private
 		*/
-		_absoluteShowingPriority:['reset', 'refresh', 'scrollToIndex', 'finish rendering', 'didResize' , 'select'],
+		_absoluteShowingPriority:['reset', 'refresh', 'finish rendering', 'scrollToIndex', 'didResize' , 'select'],
 
 		/**
 		* Completely resets the current [list]{@link enyo.DataList} such that it scrolls to the top
