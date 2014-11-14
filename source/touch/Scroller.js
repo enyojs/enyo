@@ -381,8 +381,8 @@
 		* @private
 		*/
 		syncStrategy: function() {
-			this.$.strategy.setScrollLeft(this.scrollLeft);
-			this.$.strategy.setScrollTop(this.scrollTop);
+			//this.$.strategy.setScrollLeft(this.scrollLeft);
+			//this.$.strategy.setScrollTop(this.scrollTop);
 		},
 
 		/**
