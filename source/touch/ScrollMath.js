@@ -426,13 +426,13 @@
 		* @private
 		*/
 		stabilize: function () {
-			this.start();
+			//this.start();
 			var y = Math.min(this.topBoundary, Math.max(this.bottomBoundary, this.y));
 			var x = Math.min(this.leftBoundary, Math.max(this.rightBoundary, this.x));
 			this.y = this.y0 = y;
 			this.x = this.x0 = x;
 			this.scroll();
-			this.stop(true);
+			//this.stop(true);
 		},
 
 		/**
