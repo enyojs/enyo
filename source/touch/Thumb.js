@@ -167,7 +167,7 @@
 		*/
 		delayHide: function (delay) {
 			if (this.showing) {
-				enyo.job(this.id + 'hide', this.bindSafely('hide'), delay || 0);
+				this.startJob('hide', this.hide, delay || 0);
 			}
 		},
 
@@ -177,7 +177,7 @@
 		* @public
 		*/
 		cancelDelayHide: function () {
-			enyo.job.stop(this.id + 'hide');
+			this.stopJob('hide');
 		}
 	});
 
