@@ -158,7 +158,7 @@
 	* automatically.
 	*
 	* @utility
-	* @see [console.error]{@glossary console.error}
+	* @see {@glossary console.error}
 	* @param {...*} - The arguments to be logged.
 	* @public
 	*/
