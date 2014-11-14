@@ -217,7 +217,7 @@
 					this.effectScroll(this.startX - this.scrollLeft, this.startY - this.scrollTop);
 				}
 				if (this.thumb) {
-					this.updateThumbs();
+					//this.updateThumbs();
 				}
 			}
 		},

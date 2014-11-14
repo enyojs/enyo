@@ -668,7 +668,7 @@
 				this.effectScroll(-sender.x, -sender.y);
 			}
 			if (this.thumb) {
-				this.updateThumbs();
+				//this.updateThumbs();
 			}
 		},
 
