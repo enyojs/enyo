@@ -372,7 +372,7 @@
 		rendered: enyo.inherit(function (sup) {
 			return function() {
 				sup.apply(this, arguments);
-				//this.syncStrategy();
+				this.syncStrategy();
 			};
 		}),
 
@@ -381,8 +381,6 @@
 		* @private
 		*/
 		syncStrategy: function() {
-			enyo.log('old left', this.$.strategy.getScrollLeft(), 'new left', this.scrollLeft);
-			enyo.log('old top', this.$.strategy.getScrollTop(), 'new top', this.scrollTop);
 			this.$.strategy.setScrollLeft(this.scrollLeft);
 			this.$.strategy.setScrollTop(this.scrollTop);
 		},
@@ -618,7 +616,7 @@
 		* @private
 		*/
 		decorateScrollEvent: function (e) {
-			/*var bounds = e.scrollBounds = e.scrollBounds || this.$.strategy._getScrollBounds();
+			var bounds = e.scrollBounds = e.scrollBounds || this.$.strategy._getScrollBounds();
 			// in the off chance that the event already had scrollBounds then we need
 			// to make sure they are decorated
 			if (
@@ -629,7 +627,7 @@
 			}
 			// keep our properties synchronized always and without extra calls
 			this.scrollTop  = bounds.top;
-			this.scrollLeft = bounds.left;*/
+			this.scrollLeft = bounds.left;
 		},
 
 		/**
