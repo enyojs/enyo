@@ -693,6 +693,7 @@
 		*/
 		scroll: function (sender, e) {
 			// note: scroll event can be native dom or generated.
+			enyo.log('scroll');
 			var stop;
 			if (e.dispatchTarget) {
 				// allow a dom event if it orignated with this scroller or its strategy
