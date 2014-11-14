@@ -381,8 +381,10 @@
 		* @private
 		*/
 		syncStrategy: function() {
-			//this.$.strategy.setScrollLeft(this.scrollLeft);
-			//this.$.strategy.setScrollTop(this.scrollTop);
+			enyo.log('old left', this.$.strategy.getScrollLeft(), 'new left', this.scrollLeft);
+			enyo.log('old top', this.$.strategy.getScrollTop(), 'new top', this.scrollTop);
+			this.$.strategy.setScrollLeft(this.scrollLeft);
+			this.$.strategy.setScrollTop(this.scrollTop);
 		},
 
 		/**
