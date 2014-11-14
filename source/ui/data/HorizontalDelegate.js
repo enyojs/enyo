@@ -56,6 +56,17 @@
 		getScrollPosition: function (list) {
 			return list.$.scroller.getScrollLeft();
 		},
+
+		/**
+		* Sets the scroll position on the [scroller]{@link enyo.Scroller}
+		* owned by the given list.
+		*
+		* @private
+		*/
+		setScrollPosition: function (list, pos) {
+			list.$.scroller.setScrollLeft(pos);
+		},
+		
 		/**
 		* Overload to ensure we arbitrarily resize the active container to the width of the buffer.
 		*

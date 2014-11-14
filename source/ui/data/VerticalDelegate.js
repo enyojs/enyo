@@ -82,9 +82,10 @@
 				firstIndex  = list.$.page1.index || 0,
 				secondIndex = list.$.page2.index || 1;
 			pos.firstPage   = (
-				metrics[firstIndex][upperProp] < metrics[secondIndex][upperProp]
-				? list.$.page1
-				: list.$.page2			
+				metrics[firstIndex] && metrics[secondIndex] &&
+				(metrics[secondIndex][upperProp] < metrics[firstIndex][upperProp])
+				? list.$.page2
+				: list.$.page1			
 			);
 			pos.lastPage = (pos.firstPage === list.$.page1? list.$.page2: list.$.page1);
 			return pos;
@@ -257,6 +258,7 @@
 					updatedBounds   = list._updatedBounds,
 					childSize       = list.childSize,
 					perPage         = list.controlsPerPage,
+					prev            = perPage,
 					sizeProp        = list.psizeProp,
 					multi           = list.pageSizeMultiplier || this.pageSizeMultiplier,
 					fn              = this[sizeProp];
@@ -267,6 +269,10 @@
 					childSize = this.childSize(list);
 					// using height/width of the available viewport times our multiplier value
 					perPage   = list.controlsPerPage = Math.ceil(((fn.call(this, list) * multi) / childSize) + 1);
+					if (prev != perPage) {
+						// invalidate our page metrics
+						list.metrics.pages = {};
+					}
 					// update our time for future comparison
 					list._updatedControlsPerPage = enyo.perfNow();
 				}
@@ -529,6 +535,16 @@
 		},
 
 		/**
+		* Sets the scroll position on the [scroller]{@link enyo.Scroller}
+		* owned by the given list.
+		*
+		* @private
+		*/
+		setScrollPosition: function (list, pos) {
+			list.$.scroller.setScrollTop(pos);
+		},
+
+		/**
 		* @private
 		*/
 		scrollHandler: function (list, bounds) {
@@ -548,6 +564,7 @@
 			} else if ((bounds.xDir === -1 || bounds.yDir === -1) && pos.firstPage.index !== 0) {
 				this.generatePage(list, pos.lastPage, pos.firstPage.index - 1);
 				this.adjustPagePositions(list);
+				this.adjustBuffer(list);
 				// note that the reference to the page positions has been udpated by
 				// another method so we trust the actual pages
 				list.triggerEvent('paging', {
@@ -592,24 +609,25 @@
 		* @private
 		*/
 		resetToPosition: function (list, px) {
-			if (px >= 0 && px <= list.bufferSize) {
-				var index = Math.floor(px / this.defaultPageSize(list)),
-					last  = this.pageCount(list) - 1,
-					pos   = this.pagesByPosition(list);
-				if (
-					(px <= pos.firstPage[list.upperProp]) ||
-					(px >= pos.lastPage[list.lowerProp])
-				) {
-					list.$.page1.index = (index = Math.min(index, last));
-					list.$.page2.index = (index === last? (index-1): (index+1));
-					this.refresh(list);
-					list.triggerEvent('paging', {
-						start: list.$.page1.start,
-						end: list.$.page2.end,
-						action: 'reset'
-					});
-				}
-			}
+			var index, last, pos;
+
+			// If we weren't passed a position, use the current position
+			px = (typeof px == 'undefined') ? this.getScrollPosition(list) : px;
+			// Don't try to reset to an out-of-bounds position
+			px = Math.max(0, Math.min(px, list.bufferSize));
+
+			index = Math.floor(px / this.defaultPageSize(list));
+			last  = this.pageCount(list) - 1;
+			pos   = this.pagesByPosition(list);
+
+			list.$.page1.index = (index = Math.min(index, last));
+			list.$.page2.index = (index === last? (index-1): (index+1));
+			this.refresh(list);
+			list.triggerEvent('paging', {
+				start: list.$.page1.start,
+				end: list.$.page2.end,
+				action: 'reset'
+			});
 		},
 		/**
 		* Handles scroll [events]{@glossary event} for the given [list]{@link enyo.DataList}.
@@ -666,7 +684,10 @@
 		didResize: function (list) {
 			list._updateBounds = true;
 			this.updateBounds(list);
-			this.refresh(list);
+			// Need to update our controlsPerPage value immediately,
+			// before any cached metrics are used
+			this.controlsPerPage(list);
+			this.resetToPosition(list);
 		},
 
 		/**

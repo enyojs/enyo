@@ -89,7 +89,8 @@
 		events: {
 			onScrollStart: '',
 			onScroll: '',
-			onScrollStop: ''
+			onScrollStop: '',
+			onStabilize: ''
 		},
 
 		/**
@@ -426,13 +427,13 @@
 		* @private
 		*/
 		stabilize: function () {
-			this.start();
 			var y = Math.min(this.topBoundary, Math.max(this.bottomBoundary, this.y));
 			var x = Math.min(this.leftBoundary, Math.max(this.rightBoundary, this.x));
-			this.y = this.y0 = y;
-			this.x = this.x0 = x;
-			this.scroll();
-			this.stop(true);
+			if (y != this.y || x != this.x) {
+				this.y = this.y0 = y;
+				this.x = this.x0 = x;
+				this.doStabilize();
+			}
 		},
 
 		/**
@@ -568,6 +569,7 @@
 		*/
 		setScrollX: function (x) {
 			this.x = this.x0 = x;
+			this.stabilize();
 		},
 
 		/**
@@ -579,6 +581,7 @@
 		*/
 		setScrollY: function (y) {
 			this.y = this.y0 = y;
+			this.stabilize();
 		},
 
 		/**

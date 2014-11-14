@@ -164,7 +164,7 @@
 		* @private
 		*/
 		tools: [
-			{kind: 'ScrollMath', onScrollStart: 'scrollMathStart', onScroll: 'scrollMathScroll', onScrollStop: 'scrollMathStop'},
+			{kind: 'ScrollMath', onScrollStart: 'scrollMathStart', onScroll: 'scrollMathScroll', onScrollStop: 'scrollMathStop', onStabilize: 'scrollMathStabilize'},
 			{name: 'vthumb', kind: 'ScrollThumb', axis: 'v', showing: false},
 			{name: 'hthumb', kind: 'ScrollThumb', axis: 'h', showing: false}
 		],
@@ -457,7 +457,7 @@
 		* @public
 		*/
 		setScrollTop: enyo.inherit(function (sup) {
-			return function() {
+			return function(top) {
 				this.stop(true);
 				sup.apply(this, arguments);
 			};
@@ -645,9 +645,6 @@
 				if (!this.isOverscrolling()) {
 					this.calcBoundaries();
 				}
-				if (this.thumb) {
-					this.showThumbs();
-				}
 			}
 		},
 
@@ -663,7 +660,7 @@
 				this.effectScroll(-sender.x, -sender.y);
 			}
 			if (this.thumb) {
-				this.updateThumbs();
+				this.showThumbs();
 			}
 		},
 
@@ -674,6 +671,17 @@
 			this.scrolling = false;
 			this.effectScrollStop();
 			if (this.thumb) {
+				this.delayHideThumbs(100);
+			}
+		},
+
+		/**
+		* @private
+		*/
+		scrollMathStabilize: function (sender) {
+			this.effectScroll(-sender.x, -sender.y);
+			if (this.thumb) {
+				this.showThumbs();
 				this.delayHideThumbs(100);
 			}
 		},
