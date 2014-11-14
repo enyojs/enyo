@@ -707,7 +707,6 @@
 		* @private
 		*/
 		effectScroll: function (x, y) {
-			enyo.log('effectScroll touch', this.scrollNode.scrollLeft, x, this.scrollNode.scrollTop, y);
 			if (this.scrollNode) {
 				this.scrollLeft = this.scrollNode.scrollLeft = x;
 				this.scrollTop = this.scrollNode.scrollTop = y;

@@ -426,7 +426,6 @@
 		* @private
 		*/
 		stabilize: function () {
-			enyo.log('stabilize');
 			this.start();
 			var y = Math.min(this.topBoundary, Math.max(this.bottomBoundary, this.y));
 			var x = Math.min(this.leftBoundary, Math.max(this.rightBoundary, this.x));

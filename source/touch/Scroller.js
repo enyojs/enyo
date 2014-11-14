@@ -372,7 +372,7 @@
 		rendered: enyo.inherit(function (sup) {
 			return function() {
 				sup.apply(this, arguments);
-				this.syncStrategy();
+				//this.syncStrategy();
 			};
 		}),
 

@@ -228,7 +228,6 @@
 		* @private
 		*/
 		effectScroll: function (x, y) {
-			enyo.log('effectScroll translate', x, y);
 			var o = x + 'px, ' + y + 'px' + (this.accel ? ',0' : '');
 			enyo.dom.transformValue(this.$.client, this.translation, o);
 			this._translated = true;
