@@ -618,7 +618,7 @@
 		* @private
 		*/
 		decorateScrollEvent: function (e) {
-			var bounds = e.scrollBounds = e.scrollBounds || this.$.strategy._getScrollBounds();
+			/*var bounds = e.scrollBounds = e.scrollBounds || this.$.strategy._getScrollBounds();
 			// in the off chance that the event already had scrollBounds then we need
 			// to make sure they are decorated
 			if (
@@ -629,7 +629,7 @@
 			}
 			// keep our properties synchronized always and without extra calls
 			this.scrollTop  = bounds.top;
-			this.scrollLeft = bounds.left;
+			this.scrollLeft = bounds.left;*/
 		},
 
 		/**
