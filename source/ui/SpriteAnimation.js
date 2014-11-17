@@ -374,7 +374,7 @@
 			for (o = 0; o < outer; o++) {
 				kfStr += this._generateKeyframe(
 					// percent
-					((o / outer) ? ((o / outer) + 0.0000001) : 0),
+					((o / outer) ? ((o / outer) + 0.000001) : 0),
 					// startX
 					horiz ? width : (-width * o),
 					// startY
@@ -397,7 +397,7 @@
 		* @private
 		*/
 		_generateKeyframe: function (percent, x, y) {
-			return (Math.ceil(percent*10000000) / 100000) +'%	{ -webkit-transform: translate3d('+ x +'px, '+ y +'px, 0);	transform: translate3d('+ x +'px, '+ y +'px, 0); }\n';
+			return (Math.ceil(percent*1000000) / 10000) +'%	{ -webkit-transform: translate3d('+ x +'px, '+ y +'px, 0);	transform: translate3d('+ x +'px, '+ y +'px, 0); }\n';
 		}
 	});
 
