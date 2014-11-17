@@ -369,10 +369,10 @@
 		* @method
 		* @private
 		*/
-		rendered: enyo.inherit(function (sup) {
+		teardownChildren: enyo.inherit(function (sup) {
 			return function() {
+				this.cacheScrollPosition();
 				sup.apply(this, arguments);
-				this.syncStrategy();
 			};
 		}),
 
@@ -380,10 +380,12 @@
 		* @method
 		* @private
 		*/
-		syncStrategy: function() {
-			this.$.strategy.setScrollLeft(this.scrollLeft);
-			this.$.strategy.setScrollTop(this.scrollTop);
-		},
+		rendered: enyo.inherit(function (sup) {
+			return function() {
+				sup.apply(this, arguments);
+				this.restoreScrollPosition();
+			};
+		}),
 
 		/**
 		* @private
@@ -430,20 +432,12 @@
 		*/
 		showingChanged: enyo.inherit(function (sup) {
 			return function() {
+				if (!this.showing) {
+					this.cacheScrollPosition(true);
+				}
 				sup.apply(this, arguments);
 				if (this.showing) {
-					this.syncStrategy();
-				}
-			};
-		}),
-
-		/**
-		* @private
-		*/
-		showingChangedHandler: enyo.inherit(function(sup) {
-			return function(sender, event) {
-				if (this.showing && event.showing) {
-					this.syncStrategy();
+					this.restoreScrollPosition();
 				}
 			};
 		}),
@@ -453,6 +447,37 @@
 		*/
 		thumbChanged: function () {
 			this.$.strategy.setThumb(this.thumb);
+		},
+
+		/**
+		* Cache mechanism is necessary because scrollTop/scrollLeft aren't available when a DOM node
+		* is hidden via `display:none`. They always return `0` and don't accept changes.
+		* 
+		* FIXME: need to know when parent is hidden, not just self
+		* 
+		* @private
+		*/
+		cacheScrollPosition: function (reset) {
+			var cachedPosition = {left: this.getScrollLeft(), top: this.getScrollTop()};
+			if (reset) {
+				this.setScrollLeft(0);
+				this.setScrollTop(0);
+			}
+			this.cachedPosition = cachedPosition;
+		},
+
+		/**
+		* @private
+		*/
+		restoreScrollPosition: function () {
+			if (this.cachedPosition) {
+				var cp = this.cachedPosition;
+				if (cp.top || cp.left) {
+					this.cachedPosition = null;
+					this.setScrollLeft(cp.left);
+					this.setScrollTop(cp.top);
+				}
+			}
 		},
 
 		/**
@@ -479,7 +504,11 @@
 		* @public
 		*/
 		setScrollLeft: function (left) {
-			this.$.strategy.setScrollLeft(left);
+			this.scrollLeft = left;
+			if (this.cachedPosition) {
+				this.cachedPosition.left = left;
+			}
+			this.$.strategy.setScrollLeft(this.scrollLeft);
 		},
 
 		/**
@@ -489,6 +518,10 @@
 		* @public
 		*/
 		setScrollTop: function (top) {
+			this.scrollTop = top;
+			if (this.cachedPosition) {
+				this.cachedPosition.top = top;
+			}
 			this.$.strategy.setScrollTop(top);
 		},
 
