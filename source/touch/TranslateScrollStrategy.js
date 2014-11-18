@@ -130,9 +130,8 @@
 		setScrollLeft: enyo.inherit(function (sup) {
 			return function(inLeft) {
 				if (this.translateOptimized) {
-					var m = this.$.scrollMath;
-					m.setScrollX(-inLeft);
-					m.stabilize();
+					this.$.scrollMath.setScrollX(-inLeft);
+					this.stabilize();
 				} else {
 					sup.apply(this, arguments);
 				}
@@ -149,9 +148,8 @@
 		setScrollTop: enyo.inherit(function (sup) {
 			return function(inTop) {
 				if (this.translateOptimized) {
-					var m = this.$.scrollMath;
-					m.setScrollY(-inTop);
-					m.stabilize();
+					this.$.scrollMath.setScrollY(-inTop);
+					this.stabilize();
 				} else {
 					sup.apply(this, arguments);
 				}
@@ -183,6 +181,29 @@
 				return this._translated ? this.scrollTop : sup.apply(this, arguments);
 			};
 		}),
+
+		/** 
+		* See [enyo.TouchScrollStrategy.remeasure()]{@link enyo.TouchScrollStrategy#remeasure}.
+		*
+		* @method
+		* @public
+		*/
+		remeasure: enyo.inherit(function (sup) {
+			return function() {
+				sup.apply(this, arguments);
+				if (this.translateOptimized && !this.isScrolling()) this.stabilize();
+			};
+		}),
+
+		/**
+		* @method
+		* @private
+		*/
+		handleResize: function() {
+			if (this.translateOptimized) {
+				this.stabilize();
+			}
+		},
 		
 		/**
 		* @method
@@ -191,7 +212,6 @@
 		scrollMathStart: enyo.inherit(function (sup) {
 			return function(inSender) {
 				sup.apply(this, arguments);
-				this.scrollStarting = true;
 				if (!this._translated) {
 					this.startX = this.getScrollLeft();
 					this.startY = this.getScrollTop();
@@ -215,7 +235,7 @@
 					this.effectScroll(this.startX - this.scrollLeft, this.startY - this.scrollTop);
 				}
 				if (this.thumb) {
-					this.updateThumbs();
+					this.showThumbs();
 				}
 			}
 		},
