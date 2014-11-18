@@ -1020,22 +1020,21 @@
 	* A [polyfill]{@glossary polyfill} for platforms that don't support
 	* [Array.findIndex()]{@glossary Array.findIndex}.
 	*/
-	Array.prototype.findIndex = Array.prototype.findIndex || function (fn, ctx) {
-		for (var i=0, len=this.length >>> 0; i<len; ++i) {
-			if (fn.call(ctx, this[i], i, this)) return i;
-		}
-		return -1;
-	};
+	if (!Array.prototype.findIndex)
+          Object.defineProperty(Array.prototype, 'findIndex',{enumerable:false, value : function (fn, ctx) {
+            for (var i=0, len=this.length >>> 0; i<len; ++i) if (fn.call(ctx, this[i], i, this)) return i;
+            return -1;
+          } });
+	
 	
 	/**
 	* A [polyfill]{@glossary polyfill} for platforms that don't support
 	* [Array.find()]{@glossary Array.find}.
 	*/
-	Array.prototype.find = Array.prototype.find || function (fn, ctx) {
-		for (var i=0, len=this.length >>> 0; i<len; ++i) {
-			if (fn.call(ctx, this[i], i, this)) return this[i];
-		}
-	};
+        if(!Array.prototype.find)
+          Object.defineProperty(Array.prototype, 'find', {enumerable:false, value: function (fn, ctx) {
+            for (var i=0, len=this.length >>> 0; i<len; ++i) if (fn.call(ctx, this[i], i, this)) return this[i];
+          } });
 	
 	/**
 	* A [polyfill]{@glossary polyfill} for platforms that don't support
