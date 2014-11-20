@@ -150,7 +150,7 @@
 					// ScrollMath.stabilize(), ensuring
 					// that we stay in bounds
 					m.setScrollX(-inLeft);
-					if (p != -inLeft) {
+					if (p != -m.x) {
 						// We won't get a native scroll event,
 						// so need to make one ourselves
 						m.doScroll();
@@ -180,7 +180,7 @@
 					// ScrollMath.stabilize(), ensuring
 					// that we stay in bounds
 					m.setScrollY(-inTop);
-					if (p != -inTop) {
+					if (p != -m.y) {
 						// We won't get a native scroll event,
 						// so need to make one ourselves
 						m.doScroll();
