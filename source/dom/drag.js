@@ -475,8 +475,8 @@
 		* @private
 		*/
 		prepareHold: function(e) {
-			// set holdpulse defaults, using JSON.parse / JSON.stringify for a cheap & easy deep copy
-			this.holdPulseConfig = JSON.parse(JSON.stringify(this.holdPulseDefaultConfig));
+			// quick copy as the prototype of the new overridable config
+			this.holdPulseConfig = enyo.clone(this.holdPulseDefaultConfig, true);
 
 			// expose method for configuring holdpulse options
 			e.configureHoldPulse = this._configureHoldPulse.bind(this);
