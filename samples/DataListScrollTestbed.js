@@ -49,6 +49,8 @@
                 sup.apply(this,arguments);
                 this.r = this.$.repeater;
                 this.s = this.r.$.scroller;
+                // global reference for easier console testing
+                window._sample = this;
                 //hack
                 if (this.strategy == 'Translate (Optimized)') {
                     this.s.$.strategy.translateOptimized = true;
