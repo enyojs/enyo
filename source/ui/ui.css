@@ -69,3 +69,8 @@
 	pointer-events: auto;
 	background: transparent;
 }
+
+.enyo-richtext {
+	overflow: hidden;
+	word-wrap: break-word;
+}
