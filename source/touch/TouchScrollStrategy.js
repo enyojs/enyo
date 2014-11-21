@@ -684,6 +684,7 @@
 				this.showThumbs();
 				this.delayHideThumbs(100);
 			}
+			return true;
 		},
 
 		/**
