@@ -495,7 +495,7 @@
 			ce = this._holdJobEvent = enyo.clone(e);
 			ce.srcEvent = enyo.clone(e.srcEvent);
 			this._pulsing = false;
-			this._unsent = this.holdPulseConfig.events;
+			this._unsent = enyo.clone(this.holdPulseConfig.events);
 			this._unsent.sort(this.sortEvents);
 			this._next = this._unsent.shift();
 			if (this._next) {
