@@ -370,7 +370,6 @@
 				t = this.simulate(t);
 				// scroll if we have moved, otherwise the animation is stalled and we can stop
 				if (y0 != this.y || x0 != this.x) {
-					//this.log(this.y, y0);
 					this.scroll();
 				} else if (!this.dragging) {
 					// set final values
@@ -569,7 +568,6 @@
 		*/
 		setScrollX: function (x) {
 			this.x = this.x0 = x;
-			this.stabilize();
 		},
 
 		/**
@@ -581,7 +579,6 @@
 		*/
 		setScrollY: function (y) {
 			this.y = this.y0 = y;
-			this.stabilize();
 		},
 
 		/**

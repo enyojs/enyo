@@ -146,10 +146,8 @@
 					p = this.scrollLeft;
 					m = this.$.scrollMath;
 					this.stop(true);
-					// This will result in a call to
-					// ScrollMath.stabilize(), ensuring
-					// that we stay in bounds
 					m.setScrollX(-inLeft);
+					m.stabilize();
 					if (p != -m.x) {
 						// We won't get a native scroll event,
 						// so need to make one ourselves
@@ -176,10 +174,8 @@
 					p = this.scrollTop;
 					m = this.$.scrollMath;
 					this.stop(true);
-					// This will result in a call to
-					// ScrollMath.stabilize(), ensuring
-					// that we stay in bounds
 					m.setScrollY(-inTop);
+					m.stabilize();
 					if (p != -m.y) {
 						// We won't get a native scroll event,
 						// so need to make one ourselves
@@ -278,8 +274,9 @@
 					this.scrollLeft = -sender.x;
 					this.scrollTop = -sender.y;
 					this.effectScroll(-sender.x, -sender.y);
+					return true;
 				} else {
-					sup.apply(this, arguments);
+					return sup.apply(this, arguments);
 				}
 			};
 		}),
