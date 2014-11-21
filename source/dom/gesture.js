@@ -84,14 +84,10 @@
 		* @public
 		*/
 		down: function(evt) {
-			// set holdpulse defaults, using JSON.parse / JSON.stringify for a cheap & easy deep copy
-			this.drag.holdPulseConfig = JSON.parse(JSON.stringify(this.drag.holdPulseDefaultConfig));
-
-			// cancel any hold since it's possible in corner cases to get a down without an up
 			var e = this.makeEvent('down', evt);
 
-			// expose method for configuring holdpulse options
-			e.configureHoldPulse = this.configureHoldPulse;
+			// prepare for hold
+			this.drag.prepareHold(e);
 
 			// enable prevention of tap event
 			e.preventTap = function() {
@@ -101,8 +97,8 @@
 			enyo.dispatch(e);
 			this.downEvent = e;
 
-			// workaround to allow event to propagate to control before hold job begins
-			this.drag.cancelHold();
+			// start hold, now that control has had a chance
+			// to override the holdPulse configuration
 			this.drag.beginHold(e);
 		},
 
@@ -300,18 +296,6 @@
 				}
 				c = c.parentNode;
 			}
-		},
-
-		/**
-		* Assigns {@link enyo.gesture.drag.holdPulseConfig} to {@link enyo.gesture}.
-		*
-		* @public
-		*/
-		configureHoldPulse: function(opts) {
-			var nOpts = (opts.delay === undefined) ?
-				opts :
-				enyo.gesture.drag.normalizeHoldPulseConfig(opts);
-			enyo.mixin(enyo.gesture.drag.holdPulseConfig, nOpts);
 		}
 	};
 

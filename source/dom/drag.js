@@ -189,7 +189,7 @@
 				// this error condition can occur on IE/Webkit after interaction with a scrollbar.
 				if (!e.which) {
 					this.stopDragging(e);
-					this.cancelHold();
+					this.endHold();
 					this.tracking = false;
 					//enyo.log('enyo.gesture.drag: mouse must be down to drag.');
 					return;
@@ -200,14 +200,14 @@
 					if (this.dy*this.dy + this.dx*this.dx >= this.holdPulseConfig.moveTolerance) { // outside of target
 						if (this.holdJob) { // only stop/cancel hold job if it currently exists
 							if (this.holdPulseConfig.resume) { // pause hold to potentially resume later
-								this.stopHold();
+								this.suspendHold();
 							} else { // completely cancel hold
-								this.cancelHold();
+								this.endHold();
 								this.sendDragStart(e);
 							}
 						}
 					} else if (this.holdPulseConfig.resume && !this.holdJob) { // when moving inside target, only resume hold job if it was previously paused
-						this.beginHold(e);
+						this.resumeHold();
 					}
 				}
 			}
@@ -219,7 +219,7 @@
 		up: function(e) {
 			this.endTracking(e);
 			this.stopDragging(e);
-			this.cancelHold();
+			this.endHold();
 			this.target = null;
 		},
 
@@ -229,7 +229,7 @@
 		enter: function(e) {
 			// resume hold when re-entering original target when using 'onLeave' endHold value
 			if (this.holdPulseConfig.resume && this.holdPulseConfig.endHold === 'onLeave' && this.target && e.target === this.target) {
-				this.beginHold(e);
+				this.resumeHold();
 			}
 		},
 
@@ -241,9 +241,9 @@
 				this.sendDragOut(e);
 			} else if (this.holdPulseConfig.endHold === 'onLeave') {
 				if (this.holdPulseConfig.resume) { // pause hold to potentially resume later
-					this.stopHold();
+					this.suspendHold();
 				} else { // completely cancel hold
-					this.cancelHold();
+					this.endHold();
 					this.sendDragStart(e);
 				}
 			}
@@ -458,22 +458,57 @@
 		},
 
 		/**
+		* Method to override holdPulseConfig for a given gesture. This method isn't
+		* accessed directly from enyo.gesture.drag, but exposed by the `down` event.
+		* See `prepareHold()`.
+		*
+		* @private
+		*/
+		_configureHoldPulse: function(opts) {
+			var nOpts = (opts.delay === undefined) ?
+				opts :
+				this.normalizeHoldPulseConfig(opts);
+			enyo.mixin(this.holdPulseConfig, nOpts);
+		},
+
+		/**
+		* @private
+		*/
+		prepareHold: function(e) {
+			// quick copy as the prototype of the new overridable config
+			this.holdPulseConfig = enyo.clone(this.holdPulseDefaultConfig, true);
+
+			// expose method for configuring holdpulse options
+			e.configureHoldPulse = this._configureHoldPulse.bind(this);
+		},
+
+		/**
 		* @private
 		*/
 		beginHold: function(e) {
+			var ce;
+			// cancel any existing hold since it's possible in corner cases to get a down without an up
+			this.endHold();
 			this.holdStart = enyo.perfNow();
+			this._holdJobFunction = enyo.bind(this, 'handleHoldPulse');
 			// clone the event to ensure it stays alive on IE upon returning to event loop
-			var $ce = enyo.clone(e);
-			$ce.srcEvent = enyo.clone(e.srcEvent);
-			this._holdJobFunction = enyo.bind(this, 'handleHoldPulse', $ce);
-			this._holdJobFunction.ce = $ce;
+			ce = this._holdJobEvent = enyo.clone(e);
+			ce.srcEvent = enyo.clone(e.srcEvent);
 			this._pulsing = false;
-			this._unsent = this.holdPulseConfig.events;
+			this._unsent = enyo.clone(this.holdPulseConfig.events);
 			this._unsent.sort(this.sortEvents);
 			this._next = this._unsent.shift();
 			if (this._next) {
 				this.holdJob = setInterval(this._holdJobFunction, this.holdPulseConfig.frequency);
 			}
+		},
+
+		/**
+		* @private
+		*/
+		resumeHold: function() {
+			this.handleHoldPulse();
+			this.holdJob = setInterval(this._holdJobFunction, this.holdPulseConfig.frequency);
 		},
 
 		/**
@@ -488,37 +523,37 @@
 		/**
 		* @private
 		*/
-		cancelHold: function() {
-			var e = this._holdJobFunction ? this._holdJobFunction.ce : null;
-			this.stopHold();
-			if (this._pulsing) {
+		endHold: function() {
+			var e = this._holdJobEvent;
+			this.suspendHold();
+			if (e && this._pulsing) {
 				this.sendRelease(e);
 			}
 			this._pulsing = false;
 			this._unsent = null;
+			this._holdJobFunction = null;
+			this._holdJobEvent = null;
+			this._next = null;
 		},
 
 		/**
 		* @private
 		*/
-		stopHold: function() {
+		suspendHold: function() {
 			clearInterval(this.holdJob);
 			this.holdJob = null;
-			if (this._holdJobFunction) {
-				this._holdJobFunction.ce = null;
-				this._holdJobFunction = null;
-			}
 		},
 
 		/**
 		* @private
 		*/
-		handleHoldPulse: function(inEvent) {
+		handleHoldPulse: function() {
 			var holdTime = enyo.perfNow() - this.holdStart,
+				hje = this._holdJobEvent,
 				e;
-			this.maybeSendHold(inEvent, holdTime);
+			this.maybeSendHold(hje, holdTime);
 			if (this._pulsing) {
-				e = enyo.gesture.makeEvent('holdpulse', inEvent);
+				e = enyo.gesture.makeEvent('holdpulse', hje);
 				e.holdTime = holdTime;
 				enyo.dispatch(e);
 			}
@@ -529,11 +564,11 @@
 		*/
 		maybeSendHold: function(inEvent, inHoldTime) {
 			var n = this._next;
-			if (n && n.time <= inHoldTime) {
+			while (n && n.time <= inHoldTime) {
 				var e = enyo.gesture.makeEvent(n.name, inEvent);
-				this._next = this._unsent.shift();
 				this._pulsing = true;
 				enyo.dispatch(e);
+				n = this._next = this._unsent.shift();
 			}
 		},
 
