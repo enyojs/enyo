@@ -609,7 +609,7 @@
 		* @private
 		*/
 		resetToPosition: function (list, px) {
-			var index, last, pos;
+			var index, pc, last;
 
 			// If we weren't passed a position, use the current position
 			px = (typeof px == 'undefined') ? this.getScrollPosition(list) : px;
@@ -617,11 +617,11 @@
 			px = Math.max(0, Math.min(px, list.bufferSize));
 
 			index = Math.floor(px / this.defaultPageSize(list));
-			last  = this.pageCount(list) - 1;
-			pos   = this.pagesByPosition(list);
+			pc = this.pageCount(list);
+			last  = pc - 1;
 
 			list.$.page1.index = (index = Math.min(index, last));
-			list.$.page2.index = (index === last? (index-1): (index+1));
+			list.$.page2.index = (index === last && pc > 1? (index-1): (index+1));
 			this.refresh(list);
 			list.triggerEvent('paging', {
 				start: list.$.page1.start,
