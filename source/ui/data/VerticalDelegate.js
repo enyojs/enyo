@@ -40,7 +40,7 @@
 			so.horizontal  = so.horizontal || 'hidden';
 			// determine if the _controlsPerPage_ property has been set on the list
 			if (list.controlsPerPage !== null && !isNaN(list.controlsPerPage)) {
-				this._staticControlsPerPage = true;
+				list._staticControlsPerPage = true;
 			}
 		},
 		
@@ -251,7 +251,7 @@
 		* @private
 		*/
 		controlsPerPage: function (list) {
-			if (this._staticControlsPerPage) {
+			if (list._staticControlsPerPage) {
 				return list.controlsPerPage;
 			} else {
 				var updatedControls = list._updatedControlsPerPage,
