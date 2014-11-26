@@ -774,7 +774,8 @@
 		* @public
 		*/
 		fetched: function (opts, res, source) {
-			var idx;
+			var idx
+				, options = this.options;
 			
 			if (this._waiting) {
 				idx = this._waiting.findIndex(function (ln) {
@@ -784,10 +785,20 @@
 				if (!this._waiting.length) this._waiting = null;
 			}
 			
+			// normalize options so we have values
+			opts = opts ? enyo.mixin({}, [options, opts]) : options;
+			
 			// ensure we have an options hash and it knows it was just fetched
-			opts = opts ? opts : {};
+		 	opts = opts? enyo.mixin({}, [this.options, opts]): this.options;
 			opts.fetched = true;
 			
+			// parse flag
+			var parse = opts.parse;
+			
+			// for a special case purge to only use the result sub-tree of the fetched data for 
+			// the model attributes
+			if (parse) res = this.parse(res);
+
 			// note this will not add the DIRTY state because it was fetched but also note that it
 			// will not clear the DIRTY flag if it was already DIRTY
 			if (res) this.set(res, opts);
