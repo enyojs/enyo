@@ -148,6 +148,16 @@
 		renderDelay: 250,
 
 		/**
+		* Percentage (as a number between 0 and 1) of a control that must be visible to be counted
+		* by {@link enyo.DataList#getVisibleControls}.
+		*
+		* @type {Number}
+		* @default 0.6
+		* @public
+		*/
+		visibleThreshold: 0.6,
+
+		/**
 		* This is an inclusive list of all methods that can be queued,
 		* and the prefered order they should execute, if a method is
 		* not listed, it will NOT be called ever.
@@ -212,6 +222,19 @@
 					});
 				}
 			}
+		},
+
+		/**
+		* Returns the `start` and `end` indices of the visible controls. Partially visible controls
+		* are included if the amount visible exceeds the {@link enyo.DataList#visibleThreshold}.
+		*
+		* This operation is *layout intesive* and should not be called during scrolling.
+		*
+		* @return {Object}
+		* @public
+		*/
+		getVisibleControlRange: function () {
+			return this.delegate.getVisibleControlRange(this);
 		},
 
 		/**
