@@ -721,6 +721,125 @@
 			list.boundsCache    = list.getBounds();
 			list._updatedBounds = enyo.perfNow();
 			list._updateBounds  = false;
+		},
+
+		/**
+		* Returns the `start` and `end` indices of the visible controls. Partially visible controls
+		* are included if the amount visible exceeds the {@link enyo.DataList#visibleThreshold}.
+		*
+		* @private
+		*/
+		getVisibleControls: function (list) {
+			var ret = {
+					start: -1,
+					end: -1
+				},
+				posProp = list.posProp,
+				sizeProp  = list.psizeProp,
+				size = this[sizeProp](list),
+				scrollPosition = this.getScrollPosition(list),
+				pages = list.pages.slice(0).sort(function (a, b) {
+					return a.start - b.start;
+				}),
+				i = 0,
+				len = list.collection? list.collection.length: 0,
+				cpp = list.controlsPerPage,
+				p, bounds, ratio;
+
+			// find the first showing page and estimate the start and end indices
+			while ((p = pages[i++])) {
+				bounds = p.getBounds();
+
+				if (scrollPosition >= bounds[posProp] && scrollPosition < bounds[posProp] + bounds[sizeProp]) {
+					ratio = cpp/bounds[sizeProp];
+					ret.start = Math.max(0, Math.round((scrollPosition - bounds[posProp])*ratio) + p.start);
+					ret.end = Math.min(len - 1, Math.round(size*ratio) + ret.start);
+					break;
+				}
+			}
+
+			ret.start = this.adjustIndex(list, ret.start, p, bounds, scrollPosition, true);
+			ret.end = this.adjustIndex(list, ret.end, p, bounds, scrollPosition + size, false);
+
+			return ret;
+		},
+
+		/**
+		* Refines an estimated `index` to a precise index by evaluating the bounds of the control at
+		* the estimated `index` against the visible area and adjusting it up or down based on the
+		* actual bounds and the `list`'s {@link enyo.DataList#visibleThreshold}.
+		*
+		* @param {enyo.DataList} list
+		* @param {Number}        index           Estimated index
+		* @param {enyo.Control}  page            Page control containing control at `index`
+		* @param {Object}        pageBounds      Bounds of `page`
+		* @param {Number}        scrollBoundary  Edge of visible area (top, bottom, left, or right)
+		* @param {Boolean}       start           `true` for start of boundary (top, right), `false`
+		*   for end
+		* @private
+		*/
+		adjustIndex: function (list, index, page, pageBounds, scrollBoundary, start) {
+			var dir = start? -1 : 1,
+				posProp = list.posProp,
+				sizeProp  = list.psizeProp,
+				last, control, bounds,
+
+				// edge of control
+				edge,
+
+				// distance from edge of control to scroll boundary
+				dEdge,
+
+				// distance from visible threshold to scroll boundary
+				dThresh;
+
+			do {
+				control = list.getChildForIndex(index);
+
+				// @TODO sort out why i'm going oob
+				if (!control) {
+					index = last || 0;
+					break;
+				}
+
+				bounds = control.getBounds();
+
+				// account for crossing page boundaries
+				if (control.parent != page) {
+					page = control.parent;
+					pageBounds = page.getBounds();
+				}
+
+				edge = bounds[posProp] + page[posProp] + (start? 0 : bounds[sizeProp]);
+				dEdge = edge - scrollBoundary;
+				dThresh = dEdge - dir*bounds[sizeProp]*(1-list.visibleThreshold)	;
+
+				if ((start && dEdge >= 0) || (!start && dEdge <= 0)) {
+					// control is fully visible
+					if (last !== index + dir) {
+						last = index;
+						index += dir;
+					} else {
+						// if this control is fully visible but the last was too obscured, use this
+						break;
+					}
+				} else if ((start && dThresh >= 0) || (!start && dThresh <= 0)) {
+					// control is partially obscured but enough is visible
+					break;
+				} else {
+					// control is too obscured
+					if (last !== index - dir) {
+						last = index;
+						index -= dir;
+					} else {
+						// use the last since this is too obscured
+						index = last;
+						break;
+					}
+				}
+			} while (true);
+
+			return index;
 		}
 	};
 

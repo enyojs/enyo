@@ -292,7 +292,23 @@
 			// it is necessary to update the content of the list according to our
 			// new sizing
 			this.refresh(list);
-		}
+		},
+
+		/**
+		* @see enyo.VerticalDelegate#adjustIndex
+		* @private
+		*/
+		adjustIndex: enyo.inherit(function (sup) {
+			return function (list, index, page, pageBounds, scrollBoundary, start) {
+				var idx = sup.apply(this, arguments),
+					max = list.collection? list.collection.length - 1 : 0,
+					delta = index%list.columns;
+
+				idx = idx - delta + (start? 0 : list.columns - 1);
+
+				return (idx > max)? max : ((idx < 0)? 0 : idx);
+			};
+		})
 	}, true);
 
 	enyo.DataGridList.delegates.verticalGrid = p;
