@@ -646,6 +646,9 @@
 					this.calcBoundaries();
 				}
 			}
+			if (this.thumb) {
+				this.showThumbs();
+			}
 		},
 
 		/**
@@ -660,7 +663,7 @@
 				this.effectScroll(-sender.x, -sender.y);
 			}
 			if (this.thumb) {
-				this.showThumbs();
+				this.updateThumbs();
 			}
 		},
 
