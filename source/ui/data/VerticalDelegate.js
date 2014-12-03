@@ -45,6 +45,18 @@
 		},
 		
 		/**
+		* @private
+		*/
+		generate: function (list) {
+			for (var i=0, p; (p=list.pages[i]); ++i) {
+				this.generatePage(list, p, p.index);
+			}
+			this.adjustPagePositions(list);
+			this.adjustBuffer(list);
+		},
+
+
+		/**
 		* Performs a hard reset of the [list's]{@link enyo.DataList} pages and children.
 		* Scrolls to the top and resets each page's children to have the correct indices.
 		*
@@ -52,15 +64,9 @@
 		* @private
 		*/
 		reset: function (list) {
-			// go ahead and reset the page content and the pages to their original
-			// positions
-			for (var i=0, p; (p=list.pages[i]); ++i) {
-				this.generatePage(list, p, i);
-			}
-			// adjust page positions
-			this.adjustPagePositions(list);
-			// now update the buffer
-			this.adjustBuffer(list);
+			list.$.page1.index = 0;
+			list.$.page2.index = 1;
+			this.generate(list);
 			list.hasReset = true;
 			// reset the scroller so it will also start from the 'top' whatever that may
 			// be (left/top)
@@ -100,30 +106,8 @@
 		*/
 		refresh: function (list) {
 			if (!list.hasReset) { return this.reset(list); }
-			var pageCount   = Math.max(this.pageCount(list) - 1, 0),
-				firstIndex  = list.$.page1.index,
-				secondIndex = list.$.page2.index;
-			if (firstIndex > pageCount) {
-				firstIndex = pageCount;
-				secondIndex = (firstIndex > 0) ? firstIndex - 1 : firstIndex + 1;
-			}
-			if (secondIndex > pageCount) {
-				if ((firstIndex + 1) > pageCount && (firstIndex - 1) >= 0) {
-					secondIndex = firstIndex - 1;
-				} else {
-					secondIndex = firstIndex + 1;
-				}
-			}
-			list.$.page1.index = firstIndex;
-			list.$.page2.index = secondIndex;
-			// update according to their current indices
-			for (var i=0, p; (p=list.pages[i]); ++i) {
-				this.generatePage(list, p, p.index);
-			}
-			// adjust their positions in case they've changed at all
-			this.adjustPagePositions(list);
-			// now update the buffer
-			this.adjustBuffer(list);
+			this.assignPageIndices(list);
+			this.generate(list);
 		},
 		
 		/**
@@ -171,12 +155,9 @@
 			// the last index for this generated page
 			page.end    = Math.min((data.length - 1), (page.start + perPage) - 1);
 			
-			if (page.start < 0) page.start = null;
-			if (page.end < 0) page.end = null;
-			
 			// if generating a control we need to use the correct page as the control parent
 			list.controlParent = page;
-			for (var i=page.start; i != null && i <= page.end && i < data.length; ++i) {
+			for (var i=page.start; i <= page.end && i < data.length; ++i) {
 				view = (page.children[i - page.start] || list.createComponent({}));
 				// disable notifications until all properties to be updated
 				// have been
@@ -298,19 +279,22 @@
 		* @param {Number} i - The index to scroll to.
 		* @private
 		*/
-		scrollToIndex: function (list, i) {
+		scrollToIndex: function (list, i, scrollerArgs) {
 				// first see if the child is already available to scroll to
 			var c = this.childForIndex(list, i),
 				// but we also need the page so we can find its position
-				p = this.pageForIndex(list, i);
+				p = this.pageForIndex(list, i),
+				s = list.$.scroller;
 			// if there is no page then the index is bad
 			if (p < 0 || p > this.pageCount(list)) { return; }
 			// if there isn't one, then we know we need to go ahead and
 			// update, otherwise we should be able to use the scroller's
 			// own methods to find it
-			list.$.scroller.stop();
+			s.stop();
 			if (c) {
-				list.$.scroller.scrollToControl(c);
+				scrollerArgs = scrollerArgs || [];
+				scrollerArgs.unshift(c);
+				s.scrollToControl.apply(s, scrollerArgs);
 			} else {
 				// we do this to ensure we trigger the paging event when necessary
 				this.resetToPosition(list, this.pagePosition(list, p));
@@ -606,23 +590,63 @@
 		},
 
 		/**
+		* Determines which two pages to generate, based on a
+		* specific target scroll position.
+		*
+		* @private
+		*/
+		assignPageIndices: function (list, targetPos) {
+			var index1, index2, bias,
+				pc = this.pageCount(list),
+				last = Math.max(0, pc - 1),
+				currentPos = this.getScrollPosition(list);
+
+			// If no target position was specified, use the current position
+			if (typeof targetPos == 'undefined') {
+				targetPos = currentPos;
+			}
+			
+			// Make sure the target position is in-bounds
+			targetPos = Math.max(0, Math.min(targetPos, list.bufferSize));
+
+			// First, we find the target page (the one that covers the target position)
+			index1 = Math.floor(targetPos / this.defaultPageSize(list));
+			index1 = Math.min(index1, last);
+
+			// Our list always generates two pages worth of content, so -- now that we have
+			// our target page -- we need to pick either the preceding page or the following
+			// page to generate as well. To help us decide, we first determine how our
+			// target position relates to our current position. If we know which direction
+			// we're moving in, it's generally better to render the page that lies between
+			// our current position and our target position, in case we are about to scroll
+			// "lazily" to an element near the edge of our target page. If we don't have any
+			// information to work with, we arbitrarily favor the following page.
+			bias = (targetPos > currentPos) ? -1 : 1;
+
+			// Now we know everything we need to choose our second page...
+			index2 =
+				// If our target page is the first page (index == 0), there is no preceding
+				// page -- so we choose the following page (index == 1). Note that our
+				// our target page will always be (index == 0) if the list is empty or has
+				// only one page worth of content. Picking (index == 1) for our second page
+				// in these cases is fine, though the page won't contain any elements.
+				(index1 === 0) ? 1 :
+				// If target page is the last page, there is no following page -- so we choose
+				// the preceding page.
+				(index1 === last) ? index1 - 1 :
+				// In all other cases, we pick a page using our previously determined bias.  
+				index1 + bias;
+
+			list.$.page1.index = index1;
+			list.$.page2.index = index2;
+		},
+
+		/**
 		* @private
 		*/
 		resetToPosition: function (list, px) {
-			var index, pc, last;
-
-			// If we weren't passed a position, use the current position
-			px = (typeof px == 'undefined') ? this.getScrollPosition(list) : px;
-			// Don't try to reset to an out-of-bounds position
-			px = Math.max(0, Math.min(px, list.bufferSize));
-
-			index = Math.floor(px / this.defaultPageSize(list));
-			pc = this.pageCount(list);
-			last  = pc - 1;
-
-			list.$.page1.index = (index = Math.min(index, last));
-			list.$.page2.index = (index === last && pc > 1? (index-1): (index+1));
-			this.refresh(list);
+			this.assignPageIndices(list, px);
+			this.generate(list);
 			list.triggerEvent('paging', {
 				start: list.$.page1.start,
 				end: list.$.page2.end,
