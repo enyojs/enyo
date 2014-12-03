@@ -130,7 +130,7 @@
 		up: function(evt) {
 			var e = this.makeEvent('up', evt);
 
-			e._tapPrevented = this.downEvent._tapPrevented;
+			e._tapPrevented = this.downEvent && this.downEvent._tapPrevented && this.downEvent.which == e.which;
 			e.preventTap = function() {
 				e._tapPrevented = true;
 			};
@@ -148,7 +148,9 @@
 					}
 				}
 			}
-			this.downEvent = null;
+			if (this.downEvent && this.downEvent.which == e.which) {
+				this.downEvent = null;
+			}
 		},
 
 		/**
