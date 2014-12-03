@@ -176,7 +176,7 @@
 			
 			// if generating a control we need to use the correct page as the control parent
 			list.controlParent = page;
-			for (var i=page.start; i <= page.end && i < data.length; ++i) {
+			for (var i=page.start; i != null && i <= page.end && i < data.length; ++i) {
 				view = (page.children[i - page.start] || list.createComponent({}));
 				// disable notifications until all properties to be updated
 				// have been
