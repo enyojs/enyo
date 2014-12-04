@@ -331,7 +331,7 @@ if(!manifest._default) {
 			if (opt.mapfrom && opt.mapfrom.indexOf(libDir) >= 0) {
 				// Don't deploy libraries that are loaded from elsewhere
 				console.log("Skipping:", libDir);
-			} else {
+			} else if (lib !== 'enyo') {
 				deployDir(libDir);
 			}
 		});
