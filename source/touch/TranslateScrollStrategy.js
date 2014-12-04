@@ -114,7 +114,7 @@
 		*/
 		syncScrollMath: enyo.inherit(function (sup) {
 			return function() {
-				if (!this._translated) {
+				if (!this.translateOptimized) {
 					sup.apply(this, arguments);
 				}
 			};
@@ -169,7 +169,7 @@
 		*/
 		getScrollLeft: enyo.inherit(function (sup) {
 			return function() {
-				return this._translated ? this.scrollLeft: sup.apply(this, arguments);
+				return this.translateOptimized ? this.scrollLeft: sup.apply(this, arguments);
 			};
 		}),
 		
@@ -182,7 +182,7 @@
 		*/
 		getScrollTop: enyo.inherit(function (sup) {
 			return function() {
-				return this._translated ? this.scrollTop : sup.apply(this, arguments);
+				return this.translateOptimized ? this.scrollTop : sup.apply(this, arguments);
 			};
 		}),
 		
@@ -194,7 +194,9 @@
 			return function(inSender) {
 				sup.apply(this, arguments);
 				this.scrollStarting = true;
-				if (!this._translated) {
+				this.startX = 0;
+				this.startY = 0;
+				if (!this.translateOptimized && this.scrollNode) {
 					this.startX = this.getScrollLeft();
 					this.startY = this.getScrollTop();
 				}
@@ -230,7 +232,6 @@
 		effectScroll: function (x, y) {
 			var o = x + 'px, ' + y + 'px' + (this.accel ? ',0' : '');
 			enyo.dom.transformValue(this.$.client, this.translation, o);
-			this._translated = true;
 		},
 
 		/**
@@ -261,7 +262,6 @@
 				if (needsBoundsFix) {
 					enyo.dom.transformValue(this.$.client, this.translation, t);
 				}
-				this._translated = false;
 			}
 		},
 

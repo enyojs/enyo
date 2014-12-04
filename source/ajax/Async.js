@@ -5,8 +5,7 @@
 	* It represents a task that has not yet completed. Callback functions may be registered to be
 	* notified when the task is complete.
 	*
-	* For more information, see the documentation on [Consuming Web
-	* Services]{@linkplain docs/building-apps/managing-data/consuming-web-services.html}
+	* See [Consuming Web Services]{@link building-apps/managing-data/consuming-web-services.html}
 	* in the Enyo Developer Guide.
 	*
 	* @class enyo.Async

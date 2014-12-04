@@ -34,8 +34,7 @@
 		*/
 		events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel",
 			"click", "dblclick", "change", "keydown", "keyup", "keypress", "input",
-			"paste", "copy", "cut", "webkitTransitionEnd", "transitionend", "webkitAnimationEnd", "animationend",
-			"webkitAnimationStart", "animationstart", "webkitAnimationIteration", "animationiteration"],
+			"paste", "copy", "cut", "webkitTransitionEnd", "transitionend", "webkitAnimationEnd", "animationEnd"],
 
 		/**
 		* These events come from window

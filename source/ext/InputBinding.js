@@ -46,8 +46,8 @@
 		*/
 		transform: function (value, direction, binding) {
 			if (value) { return value; }
-			var pd = '_' + binding.placeholderDirection,
-				ph = binding[pd] && binding[pd].placeholder || '';
+			var pd = binding.placeholderDirection,
+				ph = binding[pd].placeholder || '';
 			return ph;
 		}
 	});

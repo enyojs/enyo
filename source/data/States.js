@@ -47,9 +47,7 @@
 	* 0000 1000 0000 0000 (BIN)
 	* ```
 	*
-	* @name enyo.States
 	* @enum {Number}
-	* @public
 	* @see enyo.StateSupport
 	*/
 	enyo.States = {
@@ -86,9 +84,9 @@
 		/**
 		* Currently attempting to fetch.
 		* 
-		* @see enyo.Model.fetch
-		* @see enyo.RelationalModel.fetch
-		* @see enyo.Collection.fetch
+		* @see enyo.Model#fetch
+		* @see enyo.RelationalModel#fetch
+		* @see enyo.Collection#fetch
 		*
 		* @default 16
 		*/
@@ -97,9 +95,9 @@
 		/**
 		* Currently attempting to commit.
 		* 
-		* @see enyo.Model.commit
-		* @see enyo.RelationalModel.commit
-		* @see enyo.Collection.commit
+		* @see enyo.Model#commit
+		* @see enyo.RelationalModel#commit
+		* @see enyo.Collection#commit
 		*
 		* @default 32
 		*/
@@ -108,9 +106,9 @@
 		/**
 		* Currently attempting to destroy.
 		* 
-		* @see enyo.Model.destroy
-		* @see enyo.RelationalModel.destroy
-		* @see enyo.Collection.destroy
+		* @see enyo.Model#destroy
+		* @see enyo.RelationalModel#destroy
+		* @see enyo.Collection#destroy
 		*
 		* @default 64
 		*/
@@ -119,9 +117,9 @@
 		/**
 		* There was an error during commit.
 		* 
-		* @see enyo.Model.commit
-		* @see enyo.RelationalModel.commit
-		* @see enyo.Collection.commit
+		* @see enyo.Model#commit
+		* @see enyo.RelationalModel#commit
+		* @see enyo.Collection#commit
 		*
 		* @default 128
 		*/
@@ -130,9 +128,9 @@
 		/**
 		* There was an error during fetch.
 		* 
-		* @see enyo.Model.fetch
-		* @see enyo.RelationalModel.fetch
-		* @see enyo.Collection.fetch
+		* @see enyo.Model#fetch
+		* @see enyo.RelationalModel#fetch
+		* @see enyo.Collection#fetch
 		*
 		* @default 256
 		*/
@@ -141,9 +139,9 @@
 		/**
 		* There was an error during destroy.
 		* 
-		* @see enyo.Model.destroy
-		* @see enyo.RelationalModel.destroy
-		* @see enyo.Collection.destroy
+		* @see enyo.Model#destroy
+		* @see enyo.RelationalModel#destroy
+		* @see enyo.Collection#destroy
 		*
 		* @default 512
 		*/

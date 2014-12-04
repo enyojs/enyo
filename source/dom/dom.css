@@ -31,13 +31,6 @@ body.webkitOverflowScrolling {
 	-ms-touch-action: none;
 }
 
-.enyo-untouchable {
-	pointer-events: none;
-}
-.enyo-untouchable > * {
-	pointer-events: auto;
-}
-
 /* reset */
 
 button {

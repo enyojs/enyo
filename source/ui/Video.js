@@ -127,7 +127,8 @@
 			/** @lends enyo.Video.prototype */ {
 
 			/**
-			* Source URL of the video file; may be relative to the application's HTML file.
+			* Source URL of the [video]{@link enyo.Video} file; may be relative to the application's
+			* HTML file.
 			* 
 			* @type {String}
 			* @default ''
@@ -137,7 +138,7 @@
 
 			/**
 			* An [object]{@glossary Object} that may be used to specify multiple sources for the
-			* same video file.
+			* same [video]{@link enyo.Video} file.
 			* 
 			* @type {Object}
 			* @default null
@@ -146,7 +147,7 @@
 			sourceComponents: null,
 
 			/**
-			* Source of image file to show when video is not available.
+			* Source of image file to show when [video]{@link enyo.Video} is not available.
 			* 
 			* @type {String}
 			* @default ''
@@ -155,7 +156,8 @@
 			poster: '',
 
 			/**
-			* If `true`, controls for starting and stopping the video player are shown.
+			* If `true`, controls for starting and stopping the [video]{@link enyo.Video} player are
+			* shown.
 			* 
 			* @type {Boolean}
 			* @default false
@@ -164,7 +166,7 @@
 			showControls: false,
 
 			/**
-			* Determines how (or whether) the {@link enyo.Video} object is preloaded.
+			* Determines how (or whether) the [video]{@link enyo.Video} object is preloaded.
 			* Possible values:
 			* - `'auto'`: Preload the video data as soon as possible.
 			* - `'metadata'`: Preload only the video metadata.
@@ -177,7 +179,7 @@
 			preload: 'metadata',
 
 			/**
-			* If `true`, video will automatically start playing.
+			* If `true`, [video]{@link enyo.Video} will automatically start playing.
 			* 
 			* @type {Boolean}
 			* @default false
@@ -186,8 +188,8 @@
 			autoplay: false,
 
 			/**
-			* If `true`, when playback is finished, the video player will restart from
-			* the beginning.
+			* If `true`, when playback is finished, the [video]{@link enyo.Video} player will
+			* restart from the beginning.
 			* 
 			* @type {Boolean}
 			* @default false
@@ -196,7 +198,8 @@
 			loop: false,
 
 			/**
-			* If `true`, video will be stretched to fill the entire window (webOS only).
+			* If `true`, [video]{@link enyo.Video} will be stretched to fill the entire window
+			* (webOS only).
 			* 
 			* @type {Boolean}
 			* @default false
@@ -205,7 +208,7 @@
 			fitToWindow: false,
 
 			/**
-			* The video aspect ratio, expressed as `width:height`.
+			* The [video]{@link enyo.Video} aspect ratio, expressed as `width:height`.
 			* 
 			* @type {Number}
 			* @default 0
@@ -424,7 +427,7 @@
 		},
 		
 		/**
-		* Loads the current video [source]{@link enyo.Video#src}.
+		* Loads the current [video]{@link enyo.Video} [source]{@link enyo.Video#src}.
 		* 
 		* @public
 		*/
@@ -433,8 +436,8 @@
 		},
 
 		/**
-		* Unloads the current video [source]{@link enyo.Video#src}, stopping all
-		* playback and buffering.
+		* Unloads the current [video]{@link enyo.Video} [source]{@link enyo.Video#src},
+		* stopping all playback and buffering.
 		* 
 		* @public
 		*/
@@ -447,7 +450,7 @@
 		},
 
 		/**
-		* Initiates playback of the video data.
+		* Initiates playback of the [video]{@link enyo.Video} data.
 		* 
 		* @public
 		*/
@@ -462,7 +465,7 @@
 		},
 
 		/**
-		* Pauses video playback.
+		* Pauses [video]{@link enyo.Video} playback.
 		* 
 		* @public
 		*/
@@ -738,7 +741,7 @@
 		},
 
 		/**
-		* Determines the current player position in the video.
+		* Determines the current player position in the [video]{@link enyo.Video}.
 		*
 		* @returns {Number} The current player position in seconds.
 		* @public
@@ -758,7 +761,7 @@
 		},
 
 		/**
-		* Sets the current player position in the video.
+		* Sets the current player position in the [video]{@link enyo.Video}.
 		*
 		* @param {Number} time - The position (in seconds) to which the player should be set.
 		* @public
@@ -770,7 +773,7 @@
 		},
 
 		/**
-		* Determines the play duration in the video.
+		* Determines the play duration in the [video]{@link enyo.Video}.
 		*
 		* @returns {Number} The play duration in seconds.
 		* @public
@@ -780,9 +783,10 @@
 		},
 
 		/**
-		* Determines the [readyState]{@glossary readyState} of the video.
+		* Determines the [readyState]{@glossary readyState} of the [video]{@link enyo.Video}.
 		*
-		* @returns {ReadyState} The [readyState]{@glossary readyState} of the video.
+		* @returns {ReadyState} The [readyState]{@glossary readyState} of the 
+		*	[video]{@link enyo.Video}.
 		* @public
 		*/
 		getReadyState: function () {
@@ -856,10 +860,9 @@
 		},
 
 		/**
+		* When we get the [video]{@link enyo.Video} metadata, updates the
+		* [aspectRatio]{@link enyo.Video#aspectRatio} property.
 		* 
-		* Updates the [aspectRatio]{@link enyo.Video#aspectRatio} property when the
-		* video's metadata is received.
-		*
 		* @private
 		*/
 		metadataLoaded: function (sender, e) {

@@ -1,4 +1,7 @@
 (function(enyo, scope) {
+	/**
+	* @namespace enyo.dom
+	*/
 	var cssTransformProps = ['transform', '-webkit-transform', '-moz-transform', '-ms-transform', '-o-transform'],
 		styleTransformProps = ['transform', 'webkitTransform', 'MozTransform', 'msTransform', 'OTransform'];
 

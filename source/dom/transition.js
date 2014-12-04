@@ -1,5 +1,9 @@
 (function(enyo, scope) {
 	/**
+	* @namespace enyo.dom
+	*/
+
+	/**
 	 * The CSS `transition` property name for the current browser/platform, e.g.:
 	 *
 	 * * `-webkit-transition`

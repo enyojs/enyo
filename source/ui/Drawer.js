@@ -34,8 +34,7 @@
 	* [orient]{@link enyo.Drawer#orient} property.
 	*
 	* For more information, see the documentation on
-	* [Drawers]{@linkplain docs/building-apps/layout/drawers.html} in the
-	* Enyo Developer Guide.
+	* [Drawers](building-apps/layout/drawers.html) in the Enyo Developer Guide.
 	*
 	* @class enyo.Drawer
 	* @extends enyo.Control
