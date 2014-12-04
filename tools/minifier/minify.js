@@ -293,7 +293,7 @@
 
 	var libBasedEnyo = path.join(defaultLibLoc, defaultEnyoLoc);
 	if (opt.enyo.indexOf(libBasedEnyo) ===
-			(opt.enyo.enyo.length - libBasedEnyo.length) {
+			(opt.enyo.length - libBasedEnyo.length) {
 		opt.lib = opt.lib || path.join(opt.enyo, "..");
 	} else {
 		opt.lib = opt.lib || path.join(opt.enyo, "../lib");
