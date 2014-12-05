@@ -130,7 +130,11 @@
 		up: function(evt) {
 			var e = this.makeEvent('up', evt);
 
-			e._tapPrevented = this.downEvent._tapPrevented;
+			// We have added some logic to synchronize up and down events in certain scenarios (i.e.
+			// clicking multiple buttons with a mouse) and to generally guard against any potential
+			// asymmetry, but a full solution would be to maintain a map of up/down events as an 
+			// ideal solution, for future work.
+			e._tapPrevented = this.downEvent && this.downEvent._tapPrevented && this.downEvent.which == e.which;
 			e.preventTap = function() {
 				e._tapPrevented = true;
 			};
@@ -148,7 +152,9 @@
 					}
 				}
 			}
-			this.downEvent = null;
+			if (this.downEvent && this.downEvent.which == e.which) {
+				this.downEvent = null;
+			}
 		},
 
 		/**
