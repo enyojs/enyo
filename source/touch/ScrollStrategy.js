@@ -85,7 +85,16 @@
 			* @default true
 			* @public
 			*/
-			useMouseWheel: true
+			useMouseWheel: true,
+
+			/**
+			* Set to `false` to prevent a tap from stopping the current scroll animation.
+			* 
+			* @type {Boolean}
+			* @default true
+			* @public
+			*/
+			tapToStop: true
 		},
 		
 		/**
@@ -370,10 +379,12 @@
 		* @private
 		*/
 		down: function (sender, e) {
-			if (this.isScrolling()) {
-				e.preventTap();
+			if (this.tapToStop) {
+				if (this.isScrolling()) {
+					e.preventTap();
+				}
+				this.calcStartInfo();
 			}
-			this.calcStartInfo();
 		},
 
 		/**

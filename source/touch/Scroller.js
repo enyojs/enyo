@@ -164,6 +164,7 @@
 			* @default false
 			* @public
 			*/
+
 			touch: false,
 			/**
 			* Specifies a type of scrolling. The [scroller]{@link enyo.Scroller} will attempt to 
@@ -203,7 +204,16 @@
 			* @default true
 			* @public
 			*/
-			useMouseWheel: true
+			useMouseWheel: true,
+
+			/**
+			* Set to `false` to prevent a tap from stopping the current scroll animation.
+			* 
+			* @type {Boolean}
+			* @default true
+			* @public
+			*/
+			tapToStop: true
 		},
 
 		/**
@@ -405,7 +415,7 @@
 		*/
 		createStrategy: function () {
 			this.createComponents([{name: 'strategy', maxHeight: this.maxHeight,
-				kind: this.strategyKind, thumb: this.thumb,
+				kind: this.strategyKind, thumb: this.thumb, tapToStop: this.tapToStop,
 				preventDragPropagation: this.preventDragPropagation,
 				overscroll:this.touchOverscroll, isChrome: true}]);
 		},
@@ -785,6 +795,15 @@
 		*/
 		useMouseWheelChanged: function () {
 			this.$.strategy.setUseMouseWheel(this.useMouseWheel);
+		},
+
+		/**
+		* Sends the [tapToStop]{@link enyo.Scroller#tapToStop} property to the scroll strategy.
+		*
+		* @private
+		*/
+		tapToStopChanged: function () {
+			this.$.strategy.setTapToStop(this.tapToStop);
 		},
 
 		/**
