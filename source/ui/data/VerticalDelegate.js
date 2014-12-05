@@ -271,6 +271,19 @@
 			var perPage = list.controlsPerPage || this.controlsPerPage(list);
 			return Math.floor(i / (perPage || 1));
 		},
+
+		/**
+		* An indirect interface to the list's scroller's scrollToControl()
+		* method. We provide this to create looser coupling between the
+		* delegate and the list / scroller, and to enable subkinds of the
+		* delegate to easily override scrollToControl() functionality to
+		* include options specific to the scroller being used.
+		*
+		* @private
+		*/
+		scrollToControl: function (list, control) {
+			list.$.scroller.scrollToControl(control);
+		},
 		
 		/**
 		* Attempts to scroll to the given index.
@@ -279,22 +292,19 @@
 		* @param {Number} i - The index to scroll to.
 		* @private
 		*/
-		scrollToIndex: function (list, i, scrollerArgs) {
+		scrollToIndex: function (list, i) {
 				// first see if the child is already available to scroll to
 			var c = this.childForIndex(list, i),
 				// but we also need the page so we can find its position
-				p = this.pageForIndex(list, i),
-				s = list.$.scroller;
+				p = this.pageForIndex(list, i);
 			// if there is no page then the index is bad
 			if (p < 0 || p > this.pageCount(list)) { return; }
 			// if there isn't one, then we know we need to go ahead and
 			// update, otherwise we should be able to use the scroller's
 			// own methods to find it
-			s.stop();
+			list.$.scroller.stop();
 			if (c) {
-				scrollerArgs = scrollerArgs || [];
-				scrollerArgs.unshift(c);
-				s.scrollToControl.apply(s, scrollerArgs);
+				this.scrollToControl(list, c);
 			} else {
 				// we do this to ensure we trigger the paging event when necessary
 				this.resetToPosition(list, this.pagePosition(list, p));
