@@ -729,7 +729,7 @@
 		*
 		* @private
 		*/
-		getVisibleControls: function (list) {
+		getVisibleControlRange: function (list) {
 			var ret = {
 					start: -1,
 					end: -1
@@ -742,7 +742,7 @@
 					return a.start - b.start;
 				}),
 				i = 0,
-				len = list.collection? list.collection.length: 0,
+				max = list.collection? list.collection.length - 1 : 0,
 				cpp = list.controlsPerPage,
 				p, bounds, ratio;
 
@@ -753,13 +753,13 @@
 				if (scrollPosition >= bounds[posProp] && scrollPosition < bounds[posProp] + bounds[sizeProp]) {
 					ratio = cpp/bounds[sizeProp];
 					ret.start = Math.max(0, Math.round((scrollPosition - bounds[posProp])*ratio) + p.start);
-					ret.end = Math.min(len - 1, Math.round(size*ratio) + ret.start);
+					ret.end = Math.min(max, Math.round(size*ratio) + ret.start);
 					break;
 				}
 			}
 
-			ret.start = this.adjustIndex(list, ret.start, p, bounds, scrollPosition, true);
-			ret.end = this.adjustIndex(list, ret.end, p, bounds, scrollPosition + size, false);
+			ret.start = this.adjustIndex(list, ret.start, p, bounds, scrollPosition, max, true);
+			ret.end = this.adjustIndex(list, ret.end, p, bounds, scrollPosition + size, max, false);
 
 			return ret;
 		},
@@ -778,7 +778,7 @@
 		*   for end
 		* @private
 		*/
-		adjustIndex: function (list, index, page, pageBounds, scrollBoundary, start) {
+		adjustIndex: function (list, index, page, pageBounds, scrollBoundary, max, start) {
 			var dir = start? -1 : 1,
 				posProp = list.posProp,
 				sizeProp  = list.psizeProp,
@@ -795,13 +795,6 @@
 
 			do {
 				control = list.getChildForIndex(index);
-
-				// @TODO sort out why i'm going oob
-				if (!control) {
-					index = last || 0;
-					break;
-				}
-
 				bounds = control.getBounds();
 
 				// account for crossing page boundaries
@@ -814,7 +807,7 @@
 				dEdge = edge - scrollBoundary;
 				dThresh = dEdge - dir*bounds[sizeProp]*(1-list.visibleThreshold)	;
 
-				if ((start && dEdge >= 0) || (!start && dEdge <= 0)) {
+				if ((start && dEdge > 0) || (!start && dEdge < 0)) {
 					// control is fully visible
 					if (last !== index + dir) {
 						last = index;
@@ -836,6 +829,15 @@
 						index = last;
 						break;
 					}
+				}
+
+				// guard against selecting an index that is out of bounds
+				if (index < 0) {
+					index = 0;
+					break;
+				} else if (index > max) {
+					index = max;
+					break;
 				}
 			} while (true);
 

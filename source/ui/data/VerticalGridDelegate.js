@@ -299,14 +299,11 @@
 		* @private
 		*/
 		adjustIndex: enyo.inherit(function (sup) {
-			return function (list, index, page, pageBounds, scrollBoundary, start) {
+			return function (list, index, page, pageBounds, scrollBoundary, max, start) {
 				var idx = sup.apply(this, arguments),
-					max = list.collection? list.collection.length - 1 : 0,
-					delta = index%list.columns;
+					delta = idx%list.columns;
 
-				idx = idx - delta + (start? 0 : list.columns - 1);
-
-				return (idx > max)? max : ((idx < 0)? 0 : idx);
+				return idx - delta + (start? 0 : list.columns - 1);
 			};
 		})
 	}, true);

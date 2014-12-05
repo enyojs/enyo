@@ -231,8 +231,8 @@
 		* @return {Object}
 		* @public
 		*/
-		getVisibleControls: function () {
-			return this.delegate.getVisibleControls(this);
+		getVisibleControlRange: function () {
+			return this.delegate.getVisibleControlRange(this);
 		},
 
 		/**
