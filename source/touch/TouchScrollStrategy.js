@@ -661,6 +661,7 @@
 			}
 			if (this.thumb) {
 				this.showThumbs();
+				this.delayHideThumbs(100);
 			}
 		},
 
