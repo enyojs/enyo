@@ -760,7 +760,7 @@
 			}
 
 			ret.start = this.adjustIndex(list, ret.start, p, bounds, scrollPosition, max, true);
-			ret.end = this.adjustIndex(list, ret.end, p, bounds, scrollPosition + size, max, false);
+			ret.end = Math.max(ret.start, this.adjustIndex(list, ret.end, p, bounds, scrollPosition + size, max, false));
 
 			return ret;
 		},
