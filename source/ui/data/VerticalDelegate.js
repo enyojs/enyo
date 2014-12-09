@@ -749,6 +749,7 @@
 			// find the first showing page and estimate the start and end indices
 			while ((p = pages[i++])) {
 				bounds = p.getBounds();
+				bounds.right = list.bufferSize - bounds.left - bounds.width;
 
 				if (scrollPosition >= bounds[posProp] && scrollPosition < bounds[posProp] + bounds[sizeProp]) {
 					ratio = cpp/bounds[sizeProp];
@@ -795,7 +796,6 @@
 
 			do {
 				control = list.getChildForIndex(index);
-				bounds = control.getBounds();
 
 				// account for crossing page boundaries
 				if (control.parent != page) {
@@ -803,7 +803,10 @@
 					pageBounds = page.getBounds();
 				}
 
-				edge = bounds[posProp] + page[posProp] + (start? 0 : bounds[sizeProp]);
+				bounds = control.getBounds();
+				bounds.right = pageBounds.width - bounds.left - bounds.width;
+
+				edge = bounds[posProp] + pageBounds[posProp] + (start? 0 : bounds[sizeProp]);
 				dEdge = edge - scrollBoundary;
 				dThresh = dEdge - dir*bounds[sizeProp]*(1-list.visibleThreshold)	;
 
