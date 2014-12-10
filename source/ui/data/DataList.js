@@ -228,6 +228,8 @@
 		* Returns the `start` and `end` indices of the visible controls. Partially visible controls
 		* are included if the amount visible exceeds the {@link enyo.DataList#visibleThreshold}.
 		*
+		* This operation is *layout intesive* and should not be called during scrolling.
+		*
 		* @return {Object}
 		* @public
 		*/
