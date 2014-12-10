@@ -28,7 +28,8 @@
 
 		/**
 		* Set this to `true` to enable selection support. Note that selection stores a
-		* reference to the [model]{@link enyo.Model} that is selected.
+		* reference to the [model]{@link enyo.Model} that is selected, via the
+		* [selected]{@link enyo.DataRepeater#selected} method.
 		*
 		* @type {Boolean}
 		* @default true
@@ -37,11 +38,24 @@
 		selection: true,
 
 		/**
+		* Specifies the type of selection (if enabled), that we want to enable. The possible values
+		* are 'single', 'multi', and 'group'. The default is 'single' selection mode, which enables
+		* selection and deselection of a single item at a time. The 'multi' selection mode allows
+		* multiple children to be selected simultaneously, while the 'group' selection mode allows
+		* group-selection behavior such that only one child may be selected at a time and, once a
+		* child is selected, it cannot be selected via user input. The child may still be deselected
+		* via the selection API methods.
+		* 
+		* @type {String}
+		* @default 'single'
+		* @public
+		*/
+		selectionType: 'single',
+
+		/**
 		* Set this to `true` to allow multiple children to be selected simultaneously.
-		* If this property is set to `true`, then the
-		* [selection]{@link enyo.DataRepeater#selection} property will also be set to
-		* `true`, even if it was previously set to `false`.
 		*
+		* @deprecated since version 2.6
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -56,6 +70,7 @@
 		* [multipleSelection]{@link enyo.DataRepeater#multipleSelection} property to
 		* `false`.
 		*
+		* @deprecated since version 2.6
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -76,7 +91,7 @@
 
 		/**
 		* This class will be applied to the [repeater]{@link enyo.DataRepeater} when
-		* [multipleSelection]{@link enyo.DataRepeater#multipleSelection} is `true`.
+		* [selectionType]{@link enyo.DataRepeater#selectionType} is `multi`.
 		* When that is the case, the [selectionClass]{@link enyo.DataRepeater#selectionClass}
 		* will also be applied.
 		*
@@ -172,7 +187,6 @@
 				for (var e in h) {
 					h[e] = this.bindSafely(h[e]);
 				}
-				if (this.groupSelection === true) this.multipleSelection = false;
 				sup.apply(this, arguments);
 			};
 		}),
@@ -185,35 +199,36 @@
 			return function () {
 				sup.apply(this, arguments);
 				this.collectionChanged();
-				this.selectionChanged();
+				// Converting deprecated selection properties to our current selection API
+				this.selectionType = this.multipleSelection ? (this.groupSelection ? 'group' : 'multi') : this.selectionType;
+				this.selectionTypeChanged();
 			};
 		}),
 
 		/**
 		* @private
 		*/
-		observers: [
-			{method: 'selectionChanged', path: 'multipleSelection'}
-		],
-
-		/**
-		* @private
-		*/
 		groupSelectionChanged: function () {
-			if (this.groupSelection) this.set('multipleSelection', false);
+			this.set('selectionType', this.groupSelection ? 'group' : 'single');
 		},
 
 		/**
 		* @private
 		*/
-		multipleSelectionChanged: function (was) {
-			if (was && !this.multipleSelection) {
+		multipleSelectionChanged: function () {
+			this.set('selectionType', this.multipleSelection ? 'multi' : 'single');
+		},
+
+		/**
+		* @private
+		*/
+		selectionTypeChanged: function (was) {
+			if (was == 'multi') {
 				if (this._selection.length > 1) {
 					this.deselectAll();
 				}
-			} else if (this.multipleSelection) {
-				this.set('groupSelection', false);
 			}
+			this.selectionChanged();
 		},
 
 		/**
@@ -221,7 +236,7 @@
 		*/
 		selectionChanged: function () {
 			this.addRemoveClass(this.selectionClass, this.selection);
-			this.addRemoveClass(this.multipleSelectionClass, this.multipleSelection && this.selection);
+			this.addRemoveClass(this.multipleSelectionClass, this.selectionType == 'multi' && this.selection);
 		},
 
 		/**
@@ -447,7 +462,7 @@
 				// Some selected models are discovered, so we need to notify
 				if (len != selected.length) {
 					if (this.selection) {
-						if (this.multipleSelection) this.notify('selected', orig, selected);
+						if (this.selectionType == 'multi') this.notify('selected', orig, selected);
 						else this.notify('selected', orig[0], selected[0] || null);
 					}
 				}
@@ -515,7 +530,7 @@
 
 			if (select) {
 				if(i == -1) {
-					if(!this.multipleSelection) {
+					if(this.selectionType != 'multi') {
 						while (s.length) {
 							i = this.collection.indexOf(s.pop());
 							this.deselect(i);
@@ -572,13 +587,12 @@
 		},
 
 		/**
-		* Selects all items (if [multipleSelection]{@link enyo.DataRepeater#multipleSelection}
-		* is `true`).
+		* Selects all items (if [selectionType]{@link enyo.DataRepeater#selectionType} is `multi`).
 		*
 		* @public
 		*/
 		selectAll: function () {
-			if (this.multipleSelection) {
+			if (this.selectionType == 'multi') {
 				this.stopNotifications();
 				var s = this._selection
 					, len = this.collection? this.collection.length: 0;
@@ -610,15 +624,15 @@
 
 		/**
 		* A computed property that returns the currently selected [model]{@link enyo.Model}
-		* (if [multipleSelection]{@link enyo.DataRepeater#multipleSelection} is `false`),
+		* (if [selectionType]{@link enyo.DataRepeater#selectionType} is not `multi'`),
 		* or an immutable [array]{@glossary Array} of all currently selected models (if
-		* `multipleSelection` is `true`).
+		* `selectionType` is `multi'`).
 		*
 		* @public
 		*/
 		selected: function() {
 			// to ensure that bindings will clear properly according to their api
-			return (this.multipleSelection ? this._selection : this._selection[0]) || null;
+			return (this.selectionType == 'multi' ? this._selection : this._selection[0]) || null;
 		},
 
 		/**

@@ -76,7 +76,7 @@
 		*/
 		_selectionHandler: function () {
 			if (this.repeater.selection && !this.get('disabled')) {
-				if (!this.repeater.groupSelection || !this.selected) {
+				if (this.repeater.selectionType != 'group' || !this.selected) {
 					this.set('selected', !this.selected);
 				}
 			}
