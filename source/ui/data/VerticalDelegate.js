@@ -256,7 +256,8 @@
 			if (list._staticControlsPerPage) {
 				return list.controlsPerPage;
 			} else {
-				var updatedBounds   = list._updatedBounds,
+				var updatedControls = list._updatedControlsPerPage,
+					updatedBounds   = list._updatedBounds,
 					perPage         = list.controlsPerPage,
 					prev            = perPage;
 				// if we've never updated the value or it was done longer ago than the most
@@ -268,6 +269,8 @@
 						// we need to invalidate our cached page metrics
 						list.metrics.pages = {};
 					}
+					// update our time for future comparison
+					list._updatedControlsPerPage = enyo.perfNow();
 				}
 				return perPage;
 			}
