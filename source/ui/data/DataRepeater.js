@@ -43,8 +43,8 @@
 		* selection and deselection of a single item at a time. The 'multi' selection mode allows
 		* multiple children to be selected simultaneously, while the 'group' selection mode allows
 		* group-selection behavior such that only one child may be selected at a time and, once a
-		* child is selected, it cannot be selected via user input. The child may still be deselected
-		* via the selection API methods.
+		* child is selected, it cannot be deselected via user input. The child may still be 
+		* deselected via the selection API methods.
 		* 
 		* @type {String}
 		* @default 'single'
@@ -223,6 +223,10 @@
 		* @private
 		*/
 		selectionTypeChanged: function (was) {
+			// Synchronizing our deprecated properties
+			this.groupSelection = this.selectionType == 'group';
+			this.multipleSelection = this.selectionType == 'multi';
+
 			if (was == 'multi') {
 				if (this._selection.length > 1) {
 					this.deselectAll();
