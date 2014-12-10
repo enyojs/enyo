@@ -299,7 +299,7 @@
 		* @private
 		*/
 		adjustIndex: enyo.inherit(function (sup) {
-			return function (list, index, page, pageBounds, scrollBoundary, max, start) {
+			return function (list, index, page, pageBounds, scrollBoundary, start) {
 				var idx = sup.apply(this, arguments),
 					delta = idx%list.columns;
 

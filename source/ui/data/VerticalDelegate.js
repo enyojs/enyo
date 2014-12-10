@@ -759,8 +759,8 @@
 				}
 			}
 
-			ret.start = this.adjustIndex(list, ret.start, p, bounds, scrollPosition, max, true);
-			ret.end = Math.max(ret.start, this.adjustIndex(list, ret.end, p, bounds, scrollPosition + size, max, false));
+			ret.start = this.adjustIndex(list, ret.start, p, bounds, scrollPosition, true);
+			ret.end = Math.max(ret.start, this.adjustIndex(list, ret.end, p, bounds, scrollPosition + size, false));
 
 			return ret;
 		},
@@ -779,10 +779,11 @@
 		*   for end
 		* @private
 		*/
-		adjustIndex: function (list, index, page, pageBounds, scrollBoundary, max, start) {
+		adjustIndex: function (list, index, page, pageBounds, scrollBoundary, start) {
 			var dir = start? -1 : 1,
 				posProp = list.posProp,
 				sizeProp  = list.psizeProp,
+				max = list.collection? list.collection.length - 1 : 0,
 				last, control, bounds,
 
 				// edge of control
