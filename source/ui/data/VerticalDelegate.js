@@ -225,6 +225,22 @@
 			}
 			return list.fixedChildSize || list.childSize || (list.childSize = 100); // we have to start somewhere
 		},
+
+		/**
+		* Calculates the number of controls required to fill a page. This functionality is broken
+		* out of [controlsPerPage]{@link DataList.delegates.vertical#controlsPerPage} so that it
+		* can be overridden by delegates that inherit from this one.
+		*
+		* @private
+		*/
+		calculateControlsPerPage: function (list) {
+			var fn              = this[list.psizeProp],
+				multi           = list.pageSizeMultiplier || this.pageSizeMultiplier,
+				childSize       = this.childSize(list);
+
+			// using height/width of the available viewport times our multiplier value
+			return Math.ceil(((fn.call(this, list) * multi) / childSize) + 1);
+		},
 		
 		/**
 		* When necessary, updates the the value of `controlsPerPage` dynamically to ensure that
@@ -242,28 +258,21 @@
 			} else {
 				var updatedControls = list._updatedControlsPerPage,
 					updatedBounds   = list._updatedBounds,
-					childSize       = list.childSize,
 					perPage         = list.controlsPerPage,
-					prev            = perPage,
-					sizeProp        = list.psizeProp,
-					multi           = list.pageSizeMultiplier || this.pageSizeMultiplier,
-					fn              = this[sizeProp];
+					prev            = perPage;
 				// if we've never updated the value or it was done longer ago than the most
 				// recent updated sizing/bounds we need to update
 				if (!updatedControls || (updatedControls < updatedBounds)) {
-					// we always update the default child size value first, here
-					childSize = this.childSize(list);
-					// using height/width of the available viewport times our multiplier value
-					perPage   = list.controlsPerPage = Math.ceil(((fn.call(this, list) * multi) / childSize) + 1);
-					if (prev != perPage) {
-						// invalidate our page metrics
+					perPage = list.controlsPerPage = this.calculateControlsPerPage(list);
+					if (prev !== perPage) {
+						// since we are now using a different number of controls per page,
+						// we need to invalidate our cached page metrics
 						list.metrics.pages = {};
 					}
 					// update our time for future comparison
 					list._updatedControlsPerPage = enyo.perfNow();
 				}
-				/*jshint -W093 */
-				return (list.controlsPerPage = perPage);
+				return perPage;
 			}
 		},
 		

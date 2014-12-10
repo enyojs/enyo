@@ -171,26 +171,19 @@
 			};
 		}),
 
+
 		/**
-		* The number of [controls]{@link enyo.Control} necessary to fill a page. This will
-		* change depending on factors such as scaling and list-size adjustments. It is a 
-		* [function]{@glossary Function} of the calculated size required
-		* ([pageSizeMultiplier]{@link enyo.DataList#pageSizeMultiplier} * current boundary
-		* height) and the adjusted tile height and spacing.
+		* This method calculates the number of [controls]{@link enyo.Control} necessary to
+		* fill a page. It inherits from the same method in
+		* [verticalDelegate]{@link DataList.delegates.vertical} and extends it to reflect
+		* the number of columns in the grid list.
 		*
 		* @method
 		* @private
 		*/
-		controlsPerPage: enyo.inherit(function (sup) {
-			return function (list) {
-				var orig    = list._updatedControlsPerPage,
-					perPage = sup.apply(this, arguments);
-				if (orig != list._updatedControlsPerPage) {
-					// we need to adjust this value as it did not take into account
-					// the spacing or the columns
-					perPage = list.controlsPerPage = (perPage * list.columns);
-				}
-				return perPage;
+		calculateControlsPerPage: enyo.inherit(function (sup) {
+			return function(list) {
+				return sup.apply(this, arguments) * list.columns;
 			};
 		}),
 
