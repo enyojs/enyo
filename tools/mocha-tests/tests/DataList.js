@@ -136,7 +136,7 @@ describe('enyo.DataList', function () {
 				
 				var selected;
 				
-				repeater.set('multipleSelection', true);
+				repeater.set('selectionType', 'multi');
 				repeater.select(0);
 				repeater.select(1);
 				selected = repeater.get('selected');
@@ -174,14 +174,14 @@ describe('enyo.DataList', function () {
 				expect(selected).to.exist.and.to.have.length(collection.length);
 			});
 			
-			it ('should select all available indices when multipleSelection is true and the ' +
+			it ('should select all available indices when selectionType is "multi" and the ' +
 				'selectAll method is called', function () {
 				
 				repeater.selectAll();
 				expect(repeater.get('selected')).to.exist.and.to.have.length(collection.length);
 			});
 			
-			it ('should deselect all available indices when multipleSelection is true and the ' +
+			it ('should deselect all available indices when selectionType is "multi" and the ' +
 				'deselectAll method is called', function () {
 				
 				repeater.deselectAll();
@@ -191,7 +191,7 @@ describe('enyo.DataList', function () {
 			it ('should deselect a model that was selected and destroyed in single select mode',
 				function () {
 				
-				repeater.set('multipleSelection', false);
+				repeater.set('selectionType', 'single');
 				repeater.select(3);
 				
 				// ensure that we had a selection to begin with for the sake of the test
@@ -211,7 +211,7 @@ describe('enyo.DataList', function () {
 			it ('should deselect a model that was selected and destroyed in multiple select mode',
 				function () {
 				
-				repeater.set('multipleSelection', true);
+				repeater.set('selectionType', 'multi');
 				repeater.selectAll();
 				
 				// for sanity of the test
