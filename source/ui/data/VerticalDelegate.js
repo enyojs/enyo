@@ -370,35 +370,15 @@
 			// if the list has not already reset, reset
 			if (!list.hasReset) return this.reset(list);
 			
-			var cpp = this.controlsPerPage(list),
-				end = Math.max(list.$.page1.start, list.$.page2.start) + cpp;
-									
-			// note that this will refresh the following scenarios
-			// 1. if the dataset was spliced in above the current indices and the last index added was
-			//    less than the first index rendered
-			// 2. if the dataset was spliced in above the current indices and overlapped some of the
-			//    current indices
-			// 3. if the dataset was spliced in above the current indices and completely overlapped
-			//    the current indices (pushing them all down)
-			// 4. if the dataset was spliced inside the current indices (pushing some down)
-			// 5. if the dataset was appended to the current dataset and was inside the indices that
-			//    should be currently rendered (there was a partially filled page)
-			
-			// the only time we don't refresh is if the first index of the contiguous set of added
-			// models is beyond our final rendered page (possible) indices
+			// For now, we don't try to do anything smart -- just
+			// refresh the list. We were previously trying to avoid
+			// refreshing in the case where all of the models being
+			// added came later in the list than the currently
+			// rendered pages, but that optimization could cause
+			// problems when subsequently scrolling back toward the
+			// beginning of the list
 
-			// in the case where it does not need to refresh the existing controls it will update its
-			// measurements and page positions within the buffer so scrolling can continue properly
-
-			// if we need to refresh, do it now and ensure that we're properly setup to scroll
-			// if we were adding to a partially filled page
-			if (props.index <= end ) this.refresh(list);						
-			else {				
-				// we still need to ensure that the metrics are updated so it knows it can scroll
-				// past the boundaries of the current pages (potentially)
-				this.adjustBuffer(list);
-				this.adjustPagePositions(list);
-			}
+			this.refresh(list);
 		},
 		
 		/**
