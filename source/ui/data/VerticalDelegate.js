@@ -253,17 +253,11 @@
 			} else {
 				var updatedControls = list._updatedControlsPerPage,
 					updatedBounds   = list._updatedBounds,
-					perPage         = list.controlsPerPage,
-					prev            = perPage;
+					perPage         = list.controlsPerPage;
 				// if we've never updated the value or it was done longer ago than the most
 				// recent updated sizing/bounds we need to update
 				if (!updatedControls || (updatedControls < updatedBounds)) {
 					perPage = list.controlsPerPage = this.calculateControlsPerPage(list);
-					if (prev !== perPage) {
-						// since we are now using a different number of controls per page,
-						// we need to invalidate our cached page metrics
-						list.metrics.pages = {};
-					}
 					// update our time for future comparison
 					list._updatedControlsPerPage = enyo.perfNow();
 				}
@@ -725,11 +719,18 @@
 		* @private
 		*/
 		didResize: function (list) {
+			var prevCPP = list.controlsPerPage;
+
 			list._updateBounds = true;
 			this.updateBounds(list);
 			// Need to update our controlsPerPage value immediately,
 			// before any cached metrics are used
 			this.controlsPerPage(list);
+			if (prevCPP !== list.controlsPerPage) {
+				// since we are now using a different number of controls per page,
+				// we need to invalidate our cached page metrics
+				list.metrics.pages = {};
+			}
 			this.resetToPosition(list);
 		},
 
