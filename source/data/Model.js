@@ -785,11 +785,8 @@
 				if (!this._waiting.length) this._waiting = null;
 			}
 			
-			// normalize options so we have values
+			// normalize options so we have values and ensure it knows it was just fetched
 			opts = opts ? enyo.mixin({}, [options, opts]) : options;
-			
-			// ensure we have an options hash and it knows it was just fetched
-		 	opts = opts? enyo.mixin({}, [this.options, opts]): this.options;
 			opts.fetched = true;
 			
 			// parse flag
