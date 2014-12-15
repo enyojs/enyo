@@ -375,13 +375,16 @@ describe('enyo.Model', function () {
 						res.parsed = true;
 						return res;
 					}
-				})
+				});
 
 				model = new enyo.test.Model();
 			});
 
 			after(function () {
+				model.source.destroy();
 				model.destroy();
+				delete enyo.test.Source;
+				delete enyo.test.Model;
 			});
 
 			it ('should parse the result', function () {
