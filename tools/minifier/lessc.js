@@ -4,56 +4,13 @@ var
 	path = require("path"),
 	walker = require("walker"),
 	nopt = require("nopt"),
-	less = require("less");
+	less = require("less"),
+	RezInd = require('less-plugin-resolution-independence');
 
 // Shimming path.relative with 0.8.8's version if it doesn't exist
 if(!path.relative){
 	path.relative = require('./path-relative-shim').relative;
 }
-
-// Adding a "plugin" that works with LESS 1.7, for converting pixel measurements to resolution
-// independent units i.e. rems.
-ResolutionIndependence = function(opts) {
-	this._baseSize = opts && opts.baseSize || this._baseSize;
-	this._riUnit = opts && opts.riUnit || this._riUnit;
-	this._unit = opts && opts.unit || this._unit;
-	this._visitor = new less.tree.visitor(this);
-};
-ResolutionIndependence.prototype = {
-	_baseSize: 12,
-	_riUnit: 'rem',
-	_unit: 'px',
-	_ignoreUnit: 'apx', // "absolute" px
-	run: function (root) {
-		return this._visitor.visit(root);
-	},
-	visitRule: function (node) {
-		var values = node && node.value && node.value.value && node.value.value.length && node.value.value[0],
-			i;
-
-		if (values) {
-			if (Array.isArray(values.value)) {
-				for (i = 0 ; i < values.value.length; i++) {
-					this.parseValue(values.value[i]);
-				}
-			} else {
-				this.parseValue(values);
-			}
-		}
-		return node;
-	},
-	parseValue: function (valueNode) {
-		if (valueNode.value && valueNode.value.toString().indexOf(this._ignoreUnit) != -1) {
-			valueNode.value = parseInt(valueNode.value, 10) + this._unit;
-		} else if (valueNode.value && valueNode.value.toString().indexOf(this._unit) != -1) {
-			valueNode.value = parseInt(valueNode.value, 10) / this._baseSize + this._riUnit;
-		} else if (valueNode.unit && valueNode.unit.numerator && valueNode.unit.numerator.length &&
-			valueNode.unit.numerator[0] == this._unit) {
-			valueNode.value = valueNode.value / this._baseSize;
-			valueNode.unit.numerator[0] = this._riUnit;
-		}
-	}
-};
 
 var w = console.log;
 
@@ -83,7 +40,8 @@ function finish(loader, objs, doneCB) {
 				try {
 					var generatedCss, ri;
 					if (opt.ri) {
-						ri = new ResolutionIndependence();
+						ri = new RezInd();
+						// console.log("ri:", RezInd, ri);
 						generatedCss = tree.toCSS({plugins: [ri]});
 					} else {
 						generatedCss = tree.toCSS();
