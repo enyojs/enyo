@@ -26,6 +26,9 @@ ResolutionIndependence.prototype = {
 	run: function (root) {
 		return this._visitor.visit(root);
 	},
+	generateRootRule: function () {
+		return "html { font-size: " + this._baseSize + "px; }";
+	},
 	visitRule: function (node) {
 		var values = node && node.value && node.value.value && node.value.value.length && node.value.value[0],
 			i;
@@ -77,6 +80,7 @@ function finish(loader, objs, doneCB) {
 				}
 			} else {
 				try {
+					var ri = new ResolutionIndependence();
 					var css =
 						"/* WARNING: This is a generated file for backward-compatibility.  Most      */\n" +
 						"/* users should instead modify LESS files.  If you choose to edit this CSS  */\n" +
@@ -85,7 +89,7 @@ function finish(loader, objs, doneCB) {
 						"/* '-c' flag to disable LESS compilation.  This will force the loader and   */\n" +
 						"/* minifier to fall back to using CSS files in place of the same-name       */\n" +
 						"/* LESS file.                                                               */\n" +
-						"\n" + tree.toCSS({plugins: [new ResolutionIndependence()]});
+						"\n" + ri.generateRootRule() + "\n" + tree.toCSS({plugins: [ri]});
 					fs.writeFileSync(cssFile, css, "utf8");
 					nextSheet();
 				} catch(e)  {
