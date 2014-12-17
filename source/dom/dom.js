@@ -521,7 +521,45 @@
 		/**
 		* @private
 		*/
-		_bodyClasses: null
+		_bodyClasses: null,
+
+		/**
+		* Convert to various unit formats. Useful for converting pixels to a resolution-independent
+		* measurement method, like "rem". Other units are available if defined in the
+		* [enyo.dom.unitToPixelFactors]{@link enyo.dom.unitToPixelFactors} object.
+		*
+		* ```javascript
+		* // Do calculations and get back the desired CSS unit.
+		* var frameWidth = 250,
+		*     frameWithMarginInches = enyo.dom.unit( 10 + frameWidth + 10, 'in' ),
+		*     frameWithMarginRems = enyo.dom.unit( 10 + frameWidth + 10, 'rem' );
+		* // '2.8125in' == frameWithMarginInches
+		* // '22.5rem' == frameWithMarginRems
+		* ```
+		*
+		* @param {(String|Number)} pixels - The the pixels or math to convert to the unit.
+		*	("px" suffix in String format is permitted. ex: `'20px'`)
+		* @param {(String)} toUnit - The name of the unit to convert to.
+		* @returns {(Number|undefined)} Resulting conversion, in case of malformed input, `undefined`
+		* @public
+		*/
+		unit: function (pixels, toUnit) {
+			if (!toUnit || !this.unitToPixelFactors[toUnit]) return;
+			if (typeof pixels == 'string' && pixels.substr(-2) == 'px') pixels = parseInt(pixels.substr(0, pixels.length - 2), 10);
+			if (typeof pixels != 'number') return;
+
+			return (pixels / this.unitToPixelFactors[toUnit]) + '' + toUnit;
+		},
+
+		/**
+		* Object that stores all of the pixel conversion factors to each keyed unit.
+		*
+		* @public
+		*/
+		unitToPixelFactors: {
+			'rem': 12,
+			'in': 96
+		}
 	};
 
 	// override setInnerHtml for Windows 8 HTML applications
