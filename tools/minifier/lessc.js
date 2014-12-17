@@ -23,11 +23,9 @@ ResolutionIndependence.prototype = {
 	_baseSize: 12,
 	_riUnit: 'rem',
 	_unit: 'px',
+	_ignoreUnit: 'apx', // "absolute" px
 	run: function (root) {
 		return this._visitor.visit(root);
-	},
-	generateRootRule: function () {
-		return "html { font-size: " + this._baseSize + "px; }";
 	},
 	visitRule: function (node) {
 		var values = node && node.value && node.value.value && node.value.value.length && node.value.value[0],
@@ -45,7 +43,9 @@ ResolutionIndependence.prototype = {
 		return node;
 	},
 	parseValue: function (valueNode) {
-		if (valueNode.value && valueNode.value.toString().indexOf(this._unit) != -1) {
+		if (valueNode.value && valueNode.value.toString().indexOf(this._ignoreUnit) != -1) {
+			valueNode.value = parseInt(valueNode.value, 10) + this._unit;
+		} else if (valueNode.value && valueNode.value.toString().indexOf(this._unit) != -1) {
 			valueNode.value = parseInt(valueNode.value, 10) / this._baseSize + this._riUnit;
 		} else if (valueNode.unit && valueNode.unit.numerator && valueNode.unit.numerator.length &&
 			valueNode.unit.numerator[0] == this._unit) {
@@ -63,6 +63,7 @@ function printUsage() {
 	w("<package-file>\t", "Path to package file to walk; all LESS files encountered will be compiled");
 	w("-enyo <path>\t", "Path to enyo loader (enyo/enyo.js)");
 	w("-w\t", "Watch the file and any dependencies, and re-compile on changes");
+	w("-ri\t", "Perform resolution-independence conversion of measurements i.e. px -> rem");
 	w("-h, -?, -help\t", "Show this message");
 }
 
@@ -80,7 +81,14 @@ function finish(loader, objs, doneCB) {
 				}
 			} else {
 				try {
-					var ri = new ResolutionIndependence();
+					var generatedCss, ri;
+					if (opt.ri) {
+						ri = new ResolutionIndependence();
+						generatedCss = tree.toCSS({plugins: [ri]});
+					} else {
+						generatedCss = tree.toCSS();
+					}
+
 					var css =
 						"/* WARNING: This is a generated file for backward-compatibility.  Most      */\n" +
 						"/* users should instead modify LESS files.  If you choose to edit this CSS  */\n" +
@@ -89,7 +97,7 @@ function finish(loader, objs, doneCB) {
 						"/* '-c' flag to disable LESS compilation.  This will force the loader and   */\n" +
 						"/* minifier to fall back to using CSS files in place of the same-name       */\n" +
 						"/* LESS file.                                                               */\n" +
-						"\n" + ri.generateRootRule() + "\n" + tree.toCSS({plugins: [ri]});
+						"\n" + generatedCss;
 					fs.writeFileSync(cssFile, css, "utf8");
 					nextSheet();
 				} catch(e)  {
@@ -187,7 +195,8 @@ var knownOpts = {
 	"enyo": String,
 	"output": String,
 	"watch": Boolean,
-	"help": Boolean
+	"help": Boolean,
+	"ri": Boolean
 };
 
 var shortHands = {
@@ -196,7 +205,8 @@ var shortHands = {
 	"w": ['--watch'],
 	"h": ['--help'],
 	"?": ['--help'],
-	"help": ['--help']
+	"help": ['--help'],
+	"ri": ['--ri']
 };
 
 var opt = nopt(knownOpts, shortHands, process.argv, 2);
