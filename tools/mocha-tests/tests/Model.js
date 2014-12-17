@@ -351,6 +351,49 @@ describe('enyo.Model', function () {
 			});
 			
 		});
+
+		describe('#fetch', function () {
+
+			var model, source;
+
+			before(function () {
+				enyo.kind({
+					name: 'enyo.test.Source',
+					kind: 'enyo.Source',
+					fetch: function (model, opts) {
+						opts.success({
+							parsed: false
+						});
+					}
+				});
+
+				enyo.kind({
+					name: 'enyo.test.Model',
+					kind: 'enyo.Model',
+					source: new enyo.test.Source(),
+					parse: function (res) {
+						res.parsed = true;
+						return res;
+					}
+				});
+
+				model = new enyo.test.Model();
+			});
+
+			after(function () {
+				model.source.destroy();
+				model.destroy();
+				delete enyo.test.Source;
+				delete enyo.test.Model;
+			});
+
+			it ('should parse the result', function () {
+				model.fetch({
+					parse: true
+				});
+				expect(model.attributes.parsed).to.equal(true);
+			});
+		});
 		
 	});
 	
