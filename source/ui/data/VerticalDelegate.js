@@ -778,7 +778,7 @@
 					end: -1
 				},
 				posProp = list.posProp,
-				sizeProp  = list.psizeProp,
+				sizeProp = list.psizeProp,
 				size = this[sizeProp](list),
 				scrollPosition = this.getScrollPosition(list),
 				pages = list.pages.slice(0).sort(function (a, b) {
@@ -787,25 +787,56 @@
 				i = 0,
 				max = list.collection? list.collection.length - 1 : 0,
 				cpp = list.controlsPerPage,
-				p, bounds, ratio;
+				adjustedScrollPosition, p, bounds, ratio;
 
 			// find the first showing page and estimate the start and end indices
 			while ((p = pages[i++])) {
 				bounds = p.getBounds();
 				bounds.right = list.bufferSize - bounds.left - bounds.width;
 
+				adjustedScrollPosition = this.adjustScrollPosition(list, p, bounds, scrollPosition);
+
 				if (scrollPosition >= bounds[posProp] && scrollPosition < bounds[posProp] + bounds[sizeProp]) {
 					ratio = cpp/bounds[sizeProp];
-					ret.start = Math.max(0, Math.round((scrollPosition - bounds[posProp])*ratio) + p.start);
+					ret.start = Math.min(max, Math.max(0, Math.round((adjustedScrollPosition - bounds[posProp])*ratio) + p.start));
 					ret.end = Math.min(max, Math.round(size*ratio) + ret.start);
 					break;
 				}
 			}
 
-			ret.start = this.adjustIndex(list, ret.start, p, bounds, scrollPosition, true);
-			ret.end = Math.max(ret.start, this.adjustIndex(list, ret.end, p, bounds, scrollPosition + size, false));
+			ret.start = this.adjustIndex(list, ret.start, p, bounds, adjustedScrollPosition, true);
+			ret.end = Math.max(ret.start, this.adjustIndex(list, ret.end, p, bounds, adjustedScrollPosition + size, false));
 
 			return ret;
+		},
+
+		/**
+		* Adjusts the scroll position to ignore the dimensions of any controls that are within the
+		* scroller but precede the pages. Accepts the `page` and `pageBounds` to avoid another
+		* call to `getBounds()`.
+		*
+		* @param  {enyo.DataList} list            The instance of enyo.DataList
+		* @param  {enyo.Control}  page            Either of the pages
+		* @param  {Object}        pageBounds      Bounds of `page`
+		* @param  {Number}        scrollPosition  Current scroll position
+		*
+		* @return {Number}                        Adjusted scroll position
+		* @private
+		*/
+		adjustScrollPosition: function (list, page, pageBounds, scrollPosition) {
+			var posProp = list.posProp,
+				offset = list.scrollPositionOffset,
+				pageNode, scrollerNode, position;
+
+			// adjust scroll position for any controls within scroller preceding the pages
+			if (!offset && offset !== 0) {
+				pageNode = list.pages[0].hasNode();
+				scrollerNode = list.$.scroller.hasNode();
+				position = enyo.dom.calcNodePosition(pageNode, scrollerNode);
+				offset = list.scrollPositionOffset = position[posProp] - pageBounds[posProp];
+			}
+
+			return scrollPosition - offset;
 		},
 
 		/**
@@ -840,6 +871,14 @@
 
 			do {
 				control = list.getChildForIndex(index);
+
+				// if index is on a boundary (other than 0) and the control is fully visible, the
+				// control at index may not exist if the buffer page hasn't shifted to cover this
+				// index range yet. If that's the case, revert to our previous index and stop.
+				if (!control) {
+					index = last;
+					break;
+				}
 
 				// account for crossing page boundaries
 				if (control.parent != page) {
