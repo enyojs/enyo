@@ -7,6 +7,7 @@
 		uglify = require("uglify-js"),
 		nopt = require("nopt"),
 		less = require("less");
+		RezInd = require('less-plugin-resolution-independence');
 
 	var basename = path.basename(__filename),
 		w = console.log,
@@ -24,7 +25,8 @@
 		w("Enyo 2.0 Minifier");
 		w("Usage: " + __filename + " [Flags] [path/to/package.js]");
 		w("Flags:");
-		w("-no-less:", "Don't compile less; instad substitute css for less");
+		w("-no-less:", "Don't compile less; instead substitute css for less");
+		w("-ri", "Perform LESS resolution-independence conversion of measurements i.e. px to rem");
 		w("-no-alias:", "Don't use path macros");
 		w("-alias:", "Give paths a macroized alias");
 		w("-enyo ENYOPATH:", "Relative path to enyo folder (enyo)");
@@ -88,23 +90,31 @@
 		// Pops one sheet off the sheets[] array, reads (and parses if less), and then
 		// recurses again from the async callback until no sheets left, then calls doneCB
 		function readAndParse() {
-			var sheet = sheets.shift();
+			var sheet = sheets.shift(),
+				ri = new RezInd();
 			if (sheet) {
 				w(sheet);
 				var isLess = (sheet.slice(-4) == "less");
+				var isCss = (sheet.slice(-3) == "css");
 				if (isLess && (opt.less !== true)) {
 					sheet = sheet.slice(0, sheet.length-4) + "css";
 					isLess = false;
 					w(" (Substituting CSS: " + sheet + ")");
 				}
 				var code = fs.readFileSync(sheet, "utf8");
-				if (isLess) {
+				if (isLess || isCss) {
 					var parser = new(less.Parser)({filename:sheet, paths:[path.dirname(sheet)], relativeUrls:true});
 					parser.parse(code, function (err, tree) {
 						if (err) {
 							console.error(err);
 						} else {
-							addToBlob(sheet, tree.toCSS());
+							var generatedCss;
+							if (opt.ri) {
+								generatedCss = tree.toCSS({plugins: [ri]});
+							} else {
+								generatedCss = tree.toCSS();
+							}
+							addToBlob(sheet, generatedCss);
 						}
 						readAndParse(sheets);
 					});
@@ -227,7 +237,8 @@
 		"beautify": Boolean,
 		"mapfrom": [String, Array],
 		"mapto": [String, Array],
-		"gathering": Boolean
+		"gathering": Boolean,
+		"ri": Boolean
 	};
 
 	var shortHands = {
@@ -242,7 +253,8 @@
 		"help": ['--help'],
 		"beautify": ['--beautify'],
 		"f": ['--mapfrom'],
-		"t": ['--mapto']
+		"t": ['--mapto'],
+		"ri": ['--ri']
 	};
 
 	opt = nopt(knownOpts, shortHands, process.argv, 2);
