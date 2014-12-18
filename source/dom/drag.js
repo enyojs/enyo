@@ -589,6 +589,13 @@
 			e.yVelocity = inY;
 			e.velocity = inV;
 			enyo.dispatch(e);
+		},
+
+		/**
+		* @public
+		*/
+		isPulsing: function() {
+			return this._pulsing;
 		}
 	};
 
