@@ -1,7 +1,7 @@
 /**
 * Fires when the `src` or `type` of the {@link enyo.MediaSource} changes
 *
-* @event enyo.MediaSource#event:onChangeSource
+* @event enyo.MediaSource#onChangeSource
 * @type {Object}
 * @public
 */
@@ -80,7 +80,7 @@ enyo.kind(
 	}),
 	
 	/**
-	* @fires enyo.MediaSource#event:onChangeSource
+	* @fires enyo.MediaSource#onChangeSource
 	* @private
 	*/
 	srcChanged: function () {
@@ -89,7 +89,7 @@ enyo.kind(
 	},
 	
 	/**
-	* @fires enyo.MediaSource#event:onChangeSource
+	* @fires enyo.MediaSource#onChangeSource
 	* @private
 	*/
 	typeChanged: function () {

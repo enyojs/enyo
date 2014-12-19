@@ -114,7 +114,7 @@
 
 		/**
 		* The [active]{@link enyo.Checkbox#active} property and `onActivate`
-		* {@glossary event} are part of the [GroupItem]{@link enyo.Groupitem}
+		* {@glossary event} are part of the [GroupItem]{@link enyo.GroupItem}
 		* interface supported by this [object]{@glossary Object}.
 		* 
 		* @private

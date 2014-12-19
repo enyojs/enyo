@@ -463,7 +463,7 @@
 	};
 
 	/**
-	* Call this with an [enyo.kind()]{@link enyo.kind{}} [constructor]{@glossary constructor} to
+	* Call this with an [enyo.kind()]{@link enyo.kind} [constructor]{@glossary constructor} to
 	* make sure it's been [undeferred]{@glossary deferred}.
 	*
 	* @private

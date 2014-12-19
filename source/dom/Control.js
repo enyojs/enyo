@@ -66,7 +66,7 @@
 	* this kind.
 	*
 	* For more information, see the documentation on
-	* [Controls]{@link key-concepts/controls.html} in the Enyo Developer Guide.
+	* [Controls]{@linkplain $dev-guide/key-concepts/controls.html} in the Enyo Developer Guide.
 	*
 	* **If you make changes to `enyo.Control`, be sure to add or update the
 	* appropriate unit tests.**
@@ -252,7 +252,7 @@
 		* Sets the absolute/relative position and/or size for this control. Values
 		* of `null` or `undefined` for the `bounds` properties will be ignored. You
 		* may optionally specify a `unit` (i.e., a valid CSS measurement unit) as a
-		* [string]{@link exteral:String} to be applied to each of the position/size
+		* [string]{@glossary String} to be applied to each of the position/size
 		* assignments.
 		*
 		* @param {Object} bounds - An [object]{@glossary Object}, optionally

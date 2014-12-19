@@ -4,7 +4,7 @@
 	* {@link enyo.JsonpRequest} is an [Async]{@link enyo.Async} task specifically
 	* designed to wrap {@glossary JSONP} requests to a remote server. Be
 	* sure to read about the use cases for JSONP requests, along with the document on
-	* [Consuming Web Services]{@link building-apps/managing-data/consuming-web-services.html}
+	* [Consuming Web Services]{@linkplain $dev-guide/building-apps/managing-data/consuming-web-services.html}
 	* in the Enyo Developer Guide.
 	*
 	* @class enyo.JsonpRequest

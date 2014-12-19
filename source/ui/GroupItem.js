@@ -30,7 +30,7 @@
 	* @public
 	*/
 	enyo.kind(
-		/** @lends enyo.Groupitem.prototype */ {
+		/** @lends enyo.GroupItem.prototype */ {
 
 		/**
 		* @private
@@ -46,7 +46,7 @@
 		* @private
 		*/
 		published: 
-			/** @lends enyo.Groupitem.prototype */ {
+			/** @lends enyo.GroupItem.prototype */ {
 
 			/**
 			* Will be `true` if the item is currently selected.

@@ -84,7 +84,7 @@
 	* of `"TouchScrollStrategy"`).
 	* 
 	* For more information, see the documentation on
-	* [Scrollers]{@link building-apps/layout/scrollers.html} in the Enyo Developer Guide.
+	* [Scrollers]{@linkplain $dev-guide/building-apps/layout/scrollers.html} in the Enyo Developer Guide.
 	*
 	* @class enyo.Scroller
 	* @public

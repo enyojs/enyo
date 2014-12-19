@@ -991,7 +991,7 @@
 		
 		/**
 		* Overloaded version of [set()]{@link enyo.Model#set} with the ability to
-		* set values for related [models]{@link enyo.RelationModel} as well.
+		* set values for related [models]{@link enyo.RelationalModel} as well.
 		*
 		* @private
 		*/

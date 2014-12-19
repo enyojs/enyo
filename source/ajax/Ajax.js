@@ -20,7 +20,7 @@
 	* in the [components block]{@link enyo.Component#components}.
 	*
 	* For more information, see the documentation on
-	* [Consuming Web Services]{@link building-apps/managing-data/consuming-web-services.html}
+	* [Consuming Web Services]{@linkplain $dev-guide/building-apps/managing-data/consuming-web-services.html}
 	* in the Enyo Developer Guide.
 	*
 	* @class enyo.Ajax

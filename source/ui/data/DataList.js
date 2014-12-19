@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
 	* The {@glossary event} [object]{@glossary Object} that is provided when the
-	* [paging]{@link enyo.DataList#event:paging} event is fired.
+	* [paging]{@link enyo.DataList#paging} event is fired.
 	*
 	* @typedef {Object} enyo.DataList~PagingEvent
 	* @property {Number} start - The lowest active index in the dataset.
@@ -45,7 +45,7 @@
 	* view is updated. Try to use CSS whenever possible.
 	* 
 	* While paging through data, `enyo.DataList` emits the
-	* [paging]{@link enyo.DataList#event:paging} {@glossary event}, which allows you
+	* [paging]{@link enyo.DataList#paging} {@glossary event}, which allows you
 	* to make updates as necessary, on a per-page basis. You may register for this event
 	* by calling [addListener()]{@link enyo.EventEmitter#addListener} and specifying the
 	* event, along with a callback method.
@@ -546,7 +546,7 @@
 		],
 
 		/**
-		* Adds the [RegisteredEventSupport]{@link enyo.RegisteredEventSupport}
+		* Adds the [RegisteredEventSupport]{@link enyo.EventEmitter}
 		* [mixin]{@glossary mixin} for the [paging]{@link enyo.DataList#paging}
 		* {@glossary event}.
 		*

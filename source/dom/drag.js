@@ -31,7 +31,7 @@
 	* * 'flick'
 	*
 	* For more information on these events, see the documentation on
-	* [User Input]{@link building-apps/user-input.html} in the Enyo Developer Guide.
+	* [User Input]{@linkplain $dev-guide/building-apps/user-input.html} in the Enyo Developer Guide.
 	*
 	* @namespace enyo.gesture.drag
 	* @public

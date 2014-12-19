@@ -7,7 +7,7 @@
 	* and mobile platforms handle basic input differently.
 	*
 	* For more information on normalized input events and their associated properties, see the
-	* documentation on [User Input]{@link building-apps/user-input.html} in the Enyo Developer Guide.
+	* documentation on [User Input]{@linkplain $dev-guide/building-apps/user-input.html} in the Enyo Developer Guide.
 	*
 	* @namespace enyo.gesture
 	* @public
