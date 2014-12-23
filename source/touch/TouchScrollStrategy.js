@@ -831,8 +831,10 @@
 		},
 
 		/**
-		* Syncs and shows both the vertical and horizontal scroll indicators.
-		* Sync after deciding to show/hide so thumb.update doesn't calculate if uneeded.
+		* Syncs and shows both the vertical and horizontal scroll indicators. We only sync after we
+		* have checked if the vertical and/or horizontal scroll indicators are to be shown, so that
+		* {@link enyo.ScrollThumb#update} accurately makes calculations when the indicators are
+		* visible.
 		*
 		* @public
 		*/
