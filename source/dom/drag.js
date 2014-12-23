@@ -592,6 +592,10 @@
 		},
 
 		/**
+		* Determines whether or not we are currently pulsing.
+		* 
+		* @returns {Boolean} Is `true` if we are currently sending `holdpulse` events, otherwise
+		*	`false`.
 		* @public
 		*/
 		isPulsing: function() {
