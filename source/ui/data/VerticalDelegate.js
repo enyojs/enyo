@@ -70,7 +70,7 @@
 			list.hasReset = true;
 			// reset the scroller so it will also start from the 'top' whatever that may
 			// be (left/top)
-			list.$.scroller.scrollTo(0, 0);
+			this.scrollTo(list, 0, 0);
 		},
 		
 		/**
@@ -247,23 +247,17 @@
 		*
 		* @private
 		*/
-		controlsPerPage: function (list) {
+		controlsPerPage: function (list, forceUpdate) {
 			if (list._staticControlsPerPage) {
 				return list.controlsPerPage;
 			} else {
 				var updatedControls = list._updatedControlsPerPage,
 					updatedBounds   = list._updatedBounds,
-					perPage         = list.controlsPerPage,
-					prev            = perPage;
+					perPage         = list.controlsPerPage;
 				// if we've never updated the value or it was done longer ago than the most
 				// recent updated sizing/bounds we need to update
-				if (!updatedControls || (updatedControls < updatedBounds)) {
+				if (forceUpdate || !updatedControls || (updatedControls < updatedBounds)) {
 					perPage = list.controlsPerPage = this.calculateControlsPerPage(list);
-					if (prev !== perPage) {
-						// since we are now using a different number of controls per page,
-						// we need to invalidate our cached page metrics
-						list.metrics.pages = {};
-					}
 					// update our time for future comparison
 					list._updatedControlsPerPage = enyo.perfNow();
 				}
@@ -292,6 +286,19 @@
 		*/
 		scrollToControl: function (list, control) {
 			list.$.scroller.scrollToControl(control);
+		},
+		
+		/**
+		* An indirect interface to the list's scroller's scrollTo()
+		* method. We provide this to create looser coupling between the
+		* delegate and the list / scroller, and to enable subkinds of the
+		* delegate to easily override scrollTo() functionality to
+		* include options specific to the scroller being used.
+		*
+		* @private
+		*/
+		scrollTo: function (list, x, y) {
+			list.$.scroller.scrollTo(x, y);
 		},
 		
 		/**
@@ -705,11 +712,18 @@
 		* @private
 		*/
 		didResize: function (list) {
+			var prevCPP = list.controlsPerPage;
+
 			list._updateBounds = true;
 			this.updateBounds(list);
 			// Need to update our controlsPerPage value immediately,
 			// before any cached metrics are used
 			this.controlsPerPage(list);
+			if (prevCPP !== list.controlsPerPage) {
+				// since we are now using a different number of controls per page,
+				// we need to invalidate our cached page metrics
+				list.metrics.pages = {};
+			}
 			this.resetToPosition(list);
 		},
 
