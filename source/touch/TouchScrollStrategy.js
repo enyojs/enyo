@@ -1,13 +1,13 @@
 (function (enyo, scope) {
 	/**
-	* Fires when dragging has started, allowing drags to propagate to parent 
+	* Fires when dragging has started, allowing drags to propagate to parent
 	* [scrollers]{@link enyo.Scroller}.
 	*
 	* @event enyo.TouchScrollStrategy#onShouldDrag
 	* @type {Object}
-	* @property {Object} sender - The [component]{@link enyo.Component} that most recently 
+	* @property {Object} sender - The [component]{@link enyo.Component} that most recently
 	*	propagated the {@glossary event}.
-	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing 
+	* @property {enyo.Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
 	*	event information.
 	* @private
 	*/
@@ -16,7 +16,7 @@
 	* {@link enyo.TouchScrollStrategy} is a helper [kind]{@glossary kind} for implementing a
 	* touch-based [scroller]{@link enyo.Scroller}. It integrates the scrolling simulation provided
 	* by {@link enyo.ScrollMath} into an `enyo.Scroller`.
-	* 
+	*
 	* `enyo.TouchScrollStrategy` is not typically created in application code. Instead, it is
 	* specified as the value of the [strategyKind]{@link enyo.Scroller#strategyKind} property
 	* of an `enyo.Scroller` or {@link enyo.List}, or is used by the framework implicitly.
@@ -52,25 +52,25 @@
 		/**
 		* @private
 		*/
-		published: 
+		published:
 			/** @lends enyo.TouchScrollStrategy.prototype */ {
-			
+
 			/**
 			* Specifies how to vertically scroll.  Acceptable values are `'scroll'`, `'auto'`,
 			* `'hidden'`, and `'default'`. The precise effect of the setting is determined by the
 			* scroll strategy.
-			* 
+			*
 			* @type {String}
 			* @default 'default'
 			* @public
 			*/
 			vertical: 'default',
-			
+
 			/**
 			* Specifies how to horizontally scroll.  Acceptable values are `'scroll'`, `'auto'`,
 			* `'hidden'`, and `'default'`. The precise effect of the setting is determined by the
 			* scroll strategy.
-			* 
+			*
 			* @type {String}
 			* @default 'default'
 			* @public
@@ -79,7 +79,7 @@
 
 			/**
 			* Set to `true` to display a scroll thumb.
-			* 
+			*
 			* @type {Boolean}
 			* @default true
 			* @public
@@ -87,7 +87,7 @@
 			thumb: true,
 
 			/**
-			* Set to `true` to display a transparent overlay while scrolling. This can help improve 
+			* Set to `true` to display a transparent overlay while scrolling. This can help improve
 			* performance of complex, large scroll regions on some platforms (e.g., Android).
 			*
 			* @type {Boolean}
@@ -96,47 +96,47 @@
 			*/
 			scrim: false,
 
-			/**	
-			* Indicates whether to allow drag [events]{@glossary event} to be sent while gesture 
+			/**
+			* Indicates whether to allow drag [events]{@glossary event} to be sent while gesture
 			* events are happening simultaneously.
-			* 
+			*
 			* @type {Boolean}
 			* @default true
 			* @public
 			*/
 			dragDuringGesture: true,
 
-			/** 
+			/**
 			* Facades animation time step from [ScrollMath]{@link enyo.ScrollMath}.
-			* 
+			*
 			* @type {Number}
 			* @default 20
 			* @public
 			*/
 			interval: 20,
 
-			/** 
+			/**
 			* Facades animation interval type from [ScrollMath]{@link enyo.ScrollMath}.
-			* 
+			*
 			* @type {Boolean}
 			* @default true
 			* @public
 			*/
 			fixedTime: true,
 
-			/** 
+			/**
 			* Facades one unit of time for simulation from [ScrollMath]{@link enyo.ScrollMath}.
-			* 
+			*
 			* @type {Number}
 			* @default 10
 			* @public
 			*/
 			frame: 10,
 
-			/** 
+			/**
 			* Indicates whether default [events]{@glossary event} (e.g., native scrolling
 			* events) should be suppressed.
-			* 
+			*
 			* @type {Boolean}
 			* @default true
 			* @public
@@ -150,7 +150,7 @@
 		events: {
 			onShouldDrag: ''
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -183,7 +183,7 @@
 
 		/**
 		* Flag indicating whether the list is currently reordering.
-		* 
+		*
 		* @readonly
 		* @public
 		*/
@@ -286,9 +286,9 @@
 			}
 		},
 
-		/** 
+		/**
 		* Determines whether or not the scroller is actively moving.
-		* 
+		*
 		* @return {Boolean} `true` if actively moving; otherwise, `false`.
 		* @public
 		*/
@@ -297,9 +297,9 @@
 			return m ? m.isScrolling() : this.scrolling;
 		},
 
-		/** 
+		/**
 		* Determines whether or not the scroller is in overscroll.
-		* 
+		*
 		* @return {Boolean} `true` if in overscroll; otherwise, `false`.
 		* @public
 		*/
@@ -406,7 +406,7 @@
 			}
 		},
 
-		/** 
+		/**
 		* Scrolls to a specific position within the scroll area.
 		*
 		* @param {Number} x - The `x` position in pixels.
@@ -434,7 +434,7 @@
 				sup.apply(this, arguments);
 			};
 		}),
-		
+
 		/**
 		* Sets the horizontal scroll position.
 		*
@@ -448,7 +448,7 @@
 				sup.apply(this, arguments);
 			};
 		}),
-		
+
 		/**
 		* Sets the vertical scroll position.
 		*
@@ -462,7 +462,7 @@
 				sup.apply(this, arguments);
 			};
 		}),
-		
+
 		/**
 		* Retrieves the horizontal scroll position.
 		*
@@ -475,7 +475,7 @@
 				return this.isScrolling() ? this.scrollLeft : sup.apply(this, arguments);
 			};
 		}),
-		
+
 		/**
 		* Retrieves the vertical scroll position.
 		*
@@ -564,7 +564,7 @@
 		},
 
 		// Special synthetic DOM events served up by the Gesture system
-		
+
 		/**
 		* @fires enyo.TouchScrollStrategy#onShouldDrag
 		* @private
@@ -775,8 +775,8 @@
 
 		/**
 		* Retrieves the scroll boundaries of the [scroller]{@link enyo.Scroller}.
-		* 
-		* @returns {enyo.Scroller~BoundaryObject} An [object]{@glossary Object} describing the 
+		*
+		* @returns {enyo.Scroller~BoundaryObject} An [object]{@glossary Object} describing the
 		*	scroll boundaries.
 		* @method
 		* @public
@@ -788,7 +788,7 @@
 			};
 		}),
 
-		/** 
+		/**
 		* This method exists primarily to support an internal use case for
 		* [enyo.DataList]{@link enyo.DataList}. It is intended to be called by the
 		* [scroller]{@link enyo.Scroller} that owns this strategy.
@@ -806,7 +806,7 @@
 			}
 		},
 
-		/** 
+		/**
 		* Displays the scroll indicators and sets the auto-hide timeout.
 		*
 		* @public
@@ -816,7 +816,7 @@
 			this.delayHideThumbs(500);
 		},
 
-		/** 
+		/**
 		* Syncs the vertical and horizontal scroll indicators.
 		*
 		* @public
@@ -830,22 +830,25 @@
 			this.$.hthumb.update(this);
 		},
 
-		/** 
-		* Syncs and shows both the vertical and horizontal scroll indicators.
+		/**
+		* Syncs and shows both the vertical and horizontal scroll indicators. We only sync after we
+		* have checked if the vertical and/or horizontal scroll indicators are to be shown, so that
+		* {@link enyo.ScrollThumb#update} accurately makes calculations when the indicators are
+		* visible.
 		*
 		* @public
 		*/
 		showThumbs: function () {
-			this.syncThumbs();
 			if (this.horizontal != 'hidden') {
 				this.$.hthumb.show();
 			}
 			if (this.vertical != 'hidden') {
 				this.$.vthumb.show();
 			}
+			this.syncThumbs();
 		},
 
-		/** 
+		/**
 		* Hides the vertical and horizontal scroll indicators.
 		*
 		* @public
