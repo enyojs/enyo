@@ -79,7 +79,7 @@
 		* @private
 		*/
 		pageWidth: function (list, page) {
-			var s  = list.boundsCache.width,
+			var s  = this.width(list),
 				n  = page.node || page.hasNode(),
 				mx = list.metrics.pages[page.index];
 			n.style.width = s + 'px';
@@ -104,8 +104,11 @@
 		*/
 		updateMetrics: function (list) {
 			this.updateBounds(list);
-			var bs = list.boundsCache,
-				w  = bs.width,
+			this.calculateMetrics(list);
+		},
+
+		calculateMetrics: function (list, width) {
+			var w  = (width === undefined) ? this.width(list) : width,
 				s  = list.spacing,
 				m  = list.minWidth,
 				h  = list.minHeight;
@@ -119,7 +122,7 @@
 			list.tileHeight = (h*(list.tileWidth/m));
 			// unfortunately this forces us to recalculate the number of controls that can
 			// be used for each page
-			this.controlsPerPage(list);
+			this.controlsPerPage(list, true);
 			// Compute first and last row index bounds
 			this.updateIndexBound(list);
 		},
@@ -152,7 +155,7 @@
 		*/
 		modelsAdded: enyo.inherit(function (sup) {
 			return function (list, props) {
-				this.updateIndexBound(list);
+				this.calculateMetrics(list);
 				sup.apply(this, arguments);
 			};
 		}),
@@ -166,7 +169,7 @@
 		*/
 		modelsRemoved: enyo.inherit(function (sup) {
 			return function (list, props) {
-				this.updateIndexBound(list);
+				this.calculateMetrics(list);
 				sup.apply(this, arguments);
 			};
 		}),
