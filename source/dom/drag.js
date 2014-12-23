@@ -589,6 +589,17 @@
 			e.yVelocity = inY;
 			e.velocity = inV;
 			enyo.dispatch(e);
+		},
+
+		/**
+		* Determines whether or not we are currently pulsing.
+		* 
+		* @returns {Boolean} Is `true` if we are currently sending `holdpulse` events, otherwise
+		*	`false`.
+		* @public
+		*/
+		isPulsing: function() {
+			return this._pulsing;
 		}
 	};
 
