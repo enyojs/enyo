@@ -156,7 +156,7 @@
 				view;
 			
 			// the first index for this generated page
-			page.start  = perPage * index;
+			page.start  = Math.min(data.length - 1, perPage * index);
 			// the last index for this generated page
 			page.end    = Math.min((data.length - 1), (page.start + perPage) - 1);
 			
@@ -449,7 +449,7 @@
 			
 			// props.models is removed modelList and the lowest index among removed models	
 			if (props.models.low <= lastIdx) {
-				this.refresh(list);				
+				this.refresh(list);
 			}
 		},
 		
@@ -639,6 +639,11 @@
 			
 			// Make sure the target position is in-bounds
 			targetPos = Math.max(0, Math.min(targetPos, list.bufferSize));
+			// Scroll into bounds if necessary
+			if (targetPos !== currentPos) {
+				this.scrollTo(list, 0, targetPos);
+			}
+
 
 			// First, we find the target page (the one that covers the target position)
 			index1 = Math.floor(targetPos / this.defaultPageSize(list));
