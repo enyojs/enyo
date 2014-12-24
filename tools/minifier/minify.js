@@ -291,7 +291,13 @@
 
 	opt.enyo = opt.enyo || defaultEnyoLoc;
 
-	opt.lib = opt.lib || path.join(opt.enyo, "../lib");
+	var libBasedEnyo = path.join(defaultLibLoc, defaultEnyoLoc);
+	if (opt.enyo.indexOf(libBasedEnyo) ===
+			(opt.enyo.length - libBasedEnyo.length) {
+		opt.lib = opt.lib || path.join(opt.enyo, "..");
+	} else {
+		opt.lib = opt.lib || path.join(opt.enyo, "../lib");
+	}
 	opt.gathering = opt.gathering && (opt.lib != defaultLibLoc);
 
 	w(opt);
