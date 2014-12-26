@@ -804,6 +804,7 @@
 			if (this.thumb) {
 				this.syncThumbs();
 			}
+			this.stabilize();
 		},
 
 		/** 
