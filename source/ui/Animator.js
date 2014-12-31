@@ -206,6 +206,23 @@
 			}
 		},
 
+		/**
+		* Stops the animation after a final step
+		*
+		* @returns {this} The callee for chaining
+		* @public
+		*/
+		complete: function () {
+			if (this.isAnimating()) {
+				// set the start time such that the delta will always be greater than the duration
+				// causing the animation to complete immediately
+				this.t0 = -this.duration - 1;
+				this.next();
+			}
+
+			return this;
+		},
+
 		/** 
 		* Reverses the direction of a running animation.
 		* 
