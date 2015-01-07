@@ -13,7 +13,7 @@
 /**
 * @todo Need to define this.
 * @glossary event
-* @see https://github.com/enyojs/enyo/wiki/Event-Handling
+* @see http://enyojs.com/docs/latest/developer-guide/key-concepts/event-handling.html
 */
 
 /**
