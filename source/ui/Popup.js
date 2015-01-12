@@ -41,11 +41,14 @@
 	* To avoid obscuring popup contents, scrims require the dialog to be floating;
 	* otherwise, they won't render. A modal popup will get a transparent scrim
 	* unless the popup isn't floating. To get a translucent scrim when modal,
-	* specify `{@link enyo.Popup#scrim}: true` and `{@link enyo.Popup#scrimWhenModal}: false`.
+	* specify `[scrim]{@link enyo.Popup#scrim}: true` and
+	* `[scrimWhenModal]{@link enyo.Popup#scrimWhenModal}: false`.
 	*
-	* For more information, see the documentation on
-	* [Popups]{@linkplain $dev-guide/building-apps/controls/popups.html} in the
-	* Enyo Developer Guide.
+	* Finally, there is a WebKit bug affecting the behavior of popups that are
+	* displayed on top of text input controls.  For more information, including a
+	* workaround, see the documentation on
+	* [Popups]{@linkplain $dev-guide/building-apps/controls/popups.html}
+	* in the Enyo Developer Guide.
 	*
 	* @class enyo.Popup
 	* @extends enyo.Control
