@@ -903,6 +903,42 @@
 		},
 
 		/**
+		* Temporarily suppresses events that can be triggered by some specific code (passed-in as a 
+		* method) in the current context by surrouding this code with a pair of `silence` and
+		* `unsilence` calls. This feature is useful in situations where events triggered from the
+		* component and its children are either unnecessary or harmful to handle (i.e. during
+		* programmatic child component creation).
+		*
+		* @example
+		* // We wrap the code that normally triggers events inside an anonymous function that is
+		* // passed to our `muzzle` function.
+		* myFunction: function () {
+		*	// some code here
+		*	this.muzzle(function () {
+		*		// code that normally triggers events
+		*	});
+		*	// some more code here
+		* }
+		*
+		* @param {(Function|String)} method - A Function or the name of a method whose code can
+		*	trigger events that are to be temporarily suppressed.
+		* @param {Array} [args] - An array of arguments to pass to the method.
+		*
+		* @returns {this} The callee for chaining.
+		* @public
+		*/
+		muzzle: function (method, args) {
+			var fn = this[method] || method;
+			if (fn && fn.apply) {
+				this.silence();
+				fn.apply(this, args || []);
+				this.unsilence();
+			}
+
+			return this;
+		},
+
+		/**
 		* Creates a new [job]{@link enyo.job} tied to this instance of the
 		* [component]{@link enyo.Component}. If the component is
 		* [destroyed]{@link enyo.Component#destroy}, any jobs associated with it
