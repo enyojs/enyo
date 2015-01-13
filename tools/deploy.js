@@ -1,4 +1,4 @@
-index.html#!/usr/bin/env node
+#!/usr/bin/env node
 /* jshint node: true */
 /**
 # deploy.js - portable deployment script
