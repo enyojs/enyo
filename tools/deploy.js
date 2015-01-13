@@ -318,8 +318,13 @@ if(!manifest._default) {
 } else {
 	/* Use legacy built-in list of files & folders to copy */
 	shell.mkdir('-p', path.join(opt.out, 'lib'));
-	shell.cp('index.html', opt.out);
-	shell.cp('icon.png', opt.out);
+	if (shell.test('-f', 'index.html')) {
+		shell.cp('index.html', opt.out);
+	}
+
+	if (shell.test('-f', 'icon.png')) {
+		shell.cp('icon.png', opt.out);
+	}
 
 	if(shell.test('-d', 'assets')) {
 		shell.cp('-r', 'assets', opt.out);
