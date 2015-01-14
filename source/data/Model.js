@@ -718,7 +718,7 @@
 			// ensure we have the updated attributes
 			this.attributes = this.attributes? defaults? enyo.mixin({}, [defaults, this.attributes]): enyo.clone(this.attributes, true): defaults? enyo.clone(defaults, true): {};
 			attrs && enyo.mixin(this.attributes, attrs);
-			this.previous = enyo.clone(this.attributes, true);
+			this.previous = enyo.clone(this.attributes);
 
 			// now we need to ensure we have a store and register with it
 			this.store = this.store || enyo.store;
@@ -836,7 +836,7 @@
 			if (!this._waiting) {
 				// we need to clear the COMMITTING bit and DIRTY bit as well as ensure that the
 				// 'previous' hash is whatever the current attributes are
-				this.previous = enyo.clone(this.attributes, true);
+				this.previous = enyo.clone(this.attributes);
 				this.status = (this.status | STATES.CLEAN) & ~(STATES.COMMITTING | STATES.DIRTY);
 			}
 
