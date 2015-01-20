@@ -219,6 +219,7 @@
 		* @private
 		*/
 		handlers: {
+			tap: 'tap',
 			onkeydown: 'keydown',
 			ondragstart: 'dragstart',
 			onfocus: 'focus',
@@ -523,6 +524,15 @@
 				this.hide();
 			}
 			return this.modal;
+		},
+
+		/**
+		* Prevent taps from cascading to controls covered by the popup
+		*
+		* @private
+		*/
+		tap: function (sender, event) {
+			event.preventDefault();
 		},
 
 		/**
