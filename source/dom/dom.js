@@ -503,7 +503,7 @@
 		* @public
 		*/
 		getAbsoluteBounds: function(targetNode) {
-			return targetNode.getBoundingClientRect();
+			return enyo.clone(targetNode.getBoundingClientRect());
 		},
 
 		/**
