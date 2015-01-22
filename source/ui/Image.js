@@ -94,7 +94,7 @@
 			* [`background-position`]{@glossary backgroundPosition} CSS property.
 			*
 			* @type {String}
-			* @default ''
+			* @default 'center'
 			* @public
 			*/
 			position: 'center'
@@ -135,6 +135,7 @@
 				this.altChanged();
 				this.sizingChanged();
 				this.srcChanged();
+				this.positionChanged();
 			};
 		}),
 
@@ -201,7 +202,7 @@
 		*/
 		positionChanged: function () {
 			if (this.sizing) {
-				this.applyStyle('background-position', this.containPosition);
+				this.applyStyle('background-position', this.position);
 			}
 		},
 
