@@ -503,17 +503,7 @@
 		* @public
 		*/
 		getAbsoluteBounds: function(targetNode) {
-			var rect           = targetNode.getBoundingClientRect(),
-				width          = targetNode.offsetWidth,
-				height         = targetNode.offsetHeight;
-			return {
-				top     : rect.top,
-				left    : rect.left,
-				bottom  : document.body.offsetHeight - rect.top  - height,
-				right   : document.body.offsetWidth  - rect.left - width,
-				height  : height,
-				width   : width
-			};
+			return targetNode.getBoundingClientRect();
 		},
 
 		/**
