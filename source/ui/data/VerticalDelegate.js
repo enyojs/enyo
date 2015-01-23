@@ -128,6 +128,8 @@
 			// get our initial sizing cached now since we should actually have
 			// bounds at this point
 			this.updateBounds(list);
+			// calc offset of pages to scroller client
+			this.calcScrollOffset(list);
 			// now if we already have a length then that implies we have a controller
 			// and that we have data to render at this point, otherwise we don't
 			// want to do any more initialization
@@ -813,7 +815,7 @@
 				bounds = p.getBounds();
 				bounds.right = list.bufferSize - bounds.left - bounds.width;
 
-				adjustedScrollPosition = this.adjustScrollPosition(list, p, bounds, scrollPosition);
+				adjustedScrollPosition = scrollPosition - list.scrollPositionOffset;
 
 				if (scrollPosition >= bounds[posProp] && scrollPosition < bounds[posProp] + bounds[sizeProp]) {
 					ratio = cpp/bounds[sizeProp];
@@ -830,32 +832,26 @@
 		},
 
 		/**
-		* Adjusts the scroll position to ignore the dimensions of any controls that are within the
-		* scroller but precede the pages. Accepts the `page` and `pageBounds` to avoid another
-		* call to `getBounds()`.
+		* Calculates the scroll position offset to account for the dimensions of any controls that
+		* are within the scroller but precede the pages.
 		*
 		* @param  {enyo.DataList} list            The instance of enyo.DataList
-		* @param  {enyo.Control}  page            Either of the pages
-		* @param  {Object}        pageBounds      Bounds of `page`
-		* @param  {Number}        scrollPosition  Current scroll position
-		*
-		* @return {Number}                        Adjusted scroll position
 		* @private
 		*/
-		adjustScrollPosition: function (list, page, pageBounds, scrollPosition) {
-			var posProp = list.posProp,
-				offset = list.scrollPositionOffset,
-				pageNode, scrollerNode, position;
+		calcScrollOffset: function (list) {
+			var wrapper = list.pages[0].parent.hasNode(),
+				scroller = list.$.scroller.hasNode(),
+				posProp = list.posProp,
+				position;
 
-			// adjust scroll position for any controls within scroller preceding the pages
-			if (!offset && offset !== 0) {
-				pageNode = list.pages[0].hasNode();
-				scrollerNode = list.$.scroller.hasNode();
-				position = enyo.dom.calcNodePosition(pageNode, scrollerNode);
-				offset = list.scrollPositionOffset = position[posProp] - pageBounds[posProp];
+			// these should always be truthy in production scenarios but since the nodes aren't
+			// actually rendered in mocha, the tests fail so guarding against that.
+			if (wrapper && scroller) {
+				position = enyo.dom.calcNodePosition(wrapper, scroller);
+				list.scrollPositionOffset = position[posProp];
+			} else {
+				list.scrollPositionOffset = 0;
 			}
-
-			return scrollPosition - offset;
 		},
 
 		/**
