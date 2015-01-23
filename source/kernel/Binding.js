@@ -101,11 +101,12 @@
 	* 
 	* @callback enyo.Binding~Transform
 	* @param {*} value - The value being synchronized.
-	* @param {String} direction - The direction (a string matching either "source" or "target", 
-	*	as in "going to the source").
+	* @param {Number} direction - The direction of synchronization; will be either
+	* 	1 (source value has changed and will be written to target) or 2 (target
+	* 	value has changed and will be written to source).
 	* @param {Object} binding - A reference to the associated [binding]{@link enyo.Binding}. In cases 
-	*	where the binding should be interrupted and not propagate the synchronization at all, call
-	* the [stop()]{@link enyo.Binding#stop} method on the passed-in binding reference.
+	* 	where the binding should be interrupted and not propagate the synchronization at all, call
+	* 	the [stop()]{@link enyo.Binding#stop} method on the passed-in binding reference.
 	*/
 	
 	/**
