@@ -174,7 +174,6 @@
 				if (this.type) {
 					this.typeChanged();
 				}
-				this.valueChanged();
 			};
 		}),
 

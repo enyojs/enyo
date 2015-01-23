@@ -139,6 +139,11 @@
 		* @private
 		*/
 		generatePage: function (list, page, index) {
+			// Temporarily add logging code to make it easier for
+			// QA and others to detect and report page-index issues
+			if (index < 0) {
+				enyo.warn('Invalid page index: ' + index);
+			} 
 			// in case it hasn't been set we ensure it is marked correctly
 			page.index  = index;
 				// the collection of data with records to use

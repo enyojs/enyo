@@ -320,15 +320,19 @@
 		* @private
 		*/
 		updateProgress: function (event) {
-			// filter out 'input' as it causes exceptions on some Firefox versions
-			// due to unimplemented internal APIs
-			var ev = {};
-			for (var k in event) {
-				if (k !== 'input') {
-					ev[k] = event[k];
+			// IE8 doesn't properly support progress events and doesn't pass an object to the
+			// handlers so we'll check that before continuing.
+			if (event) {
+				// filter out 'input' as it causes exceptions on some Firefox versions
+				// due to unimplemented internal APIs
+				var ev = {};
+				for (var k in event) {
+					if (k !== 'input') {
+						ev[k] = event[k];
+					}
 				}
+				this.sendProgress(event.loaded, 0, event.total, ev);
 			}
-			this.sendProgress(event.loaded, 0, event.total, ev);
 		},
 		
 		/**
