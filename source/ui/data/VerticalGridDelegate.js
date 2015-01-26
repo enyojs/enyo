@@ -23,6 +23,8 @@
 			// get our initial sizing cached now since we should actually have
 			// bounds at this point
 			this.updateMetrics(list);
+			// calc offset of pages to scroller client
+			this.calcScrollOffset(list);
 			// now if we already have a length then that implies we have a controller
 			// and that we have data to render at this point, otherwise we don't
 			// want to do any more initialization
