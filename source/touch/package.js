@@ -10,5 +10,6 @@ enyo.depends(
 	'TranslateScrollStrategy.js',
 	'TransitionScrollStrategy.js',
 	'Scroller.js',
+	'Scrollable.js',
 	'Scroller.css'
 );
