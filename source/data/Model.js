@@ -638,6 +638,9 @@
 						// note that we check inside this loop so we don't have to examine keys
 						// later only the local variable changed
 						changed = this.changed || (this.changed = {});
+						//store the previous attr value
+						this.previous[key] = attrs[key];
+						//set new value
 						changed[key] = attrs[key] = value;
 					}
 				}
