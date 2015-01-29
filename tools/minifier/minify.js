@@ -106,7 +106,7 @@
 					var parser = new(less.Parser)({filename:sheet, paths:[path.dirname(sheet)], relativeUrls:true});
 					parser.parse(code, function (err, tree) {
 						if (err) {
-							console.error(err);
+							throw new Error("LESS parsing: " + err);
 						} else {
 							var generatedCss;
 							if (opt.ri) {
