@@ -9,7 +9,7 @@
 	* @private
 	*/
 	enyo.DataList.delegates.vertical = {
-		
+
 		/**
 		* Used to determine the minimum size of the page. The page size will be at least this
 		* number of times greater than the viewport size.
@@ -43,7 +43,7 @@
 				list._staticControlsPerPage = true;
 			}
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -72,12 +72,12 @@
 			// be (left/top)
 			this.scrollTo(list, 0, 0);
 		},
-		
+
 		/**
 		* Retrieves [list]{@link enyo.DataList} pages, indexed by their position.
 		*
 		* @param {enyo.DataList} list - The [list]{@link enyo.DataList} to perform this action on.
-		* @returns {Object} Returns a [hash]{@glossary Object} of the pages marked by their 
+		* @returns {Object} Returns a [hash]{@glossary Object} of the pages marked by their
 		*	position as either 'firstPage' or 'lastPage'.
 		* @private
 		*/
@@ -86,17 +86,17 @@
 				pos         = list.pagePositions || (list.pagePositions={}),
 				upperProp   = list.upperProp,
 				firstIndex  = list.$.page1.index || 0,
-				secondIndex = list.$.page2.index || 1;
+				secondIndex = (list.$.page2.index || list.$.page2.index === 0) ? list.$.page2.index : 1;
 			pos.firstPage   = (
 				metrics[firstIndex] && metrics[secondIndex] &&
 				(metrics[secondIndex][upperProp] < metrics[firstIndex][upperProp])
 				? list.$.page2
-				: list.$.page1			
+				: list.$.page1
 			);
 			pos.lastPage = (pos.firstPage === list.$.page1? list.$.page2: list.$.page1);
 			return pos;
 		},
-		
+
 		/**
 		* Refreshes each page in the given [list]{@link enyo.DataList}, adjusting its position
 		* and adjusting the buffer accordingly.
@@ -109,7 +109,7 @@
 			this.assignPageIndices(list);
 			this.generate(list);
 		},
-		
+
 		/**
 		* Once the [list]{@link enyo.DataList} is initially rendered, it will generate its
 		* [scroller]{@link enyo.Scroller} (so we know that is available). Now we need to
@@ -143,7 +143,7 @@
 			// QA and others to detect and report page-index issues
 			if (index < 0) {
 				enyo.warn('Invalid page index: ' + index);
-			} 
+			}
 			// in case it hasn't been set we ensure it is marked correctly
 			page.index  = index;
 				// the collection of data with records to use
@@ -154,12 +154,12 @@
 				perPage = this.controlsPerPage(list),
 				// placeholder for the control we're going to update
 				view;
-			
+
 			// the first index for this generated page
 			page.start  = perPage * index;
 			// the last index for this generated page
 			page.end    = Math.min((data.length - 1), (page.start + perPage) - 1);
-			
+
 			// if generating a control we need to use the correct page as the control parent
 			list.controlParent = page;
 			for (var i=page.start; i <= page.end && i < data.length; ++i) {
@@ -201,7 +201,7 @@
 			var s = list.selectionProperty;
 			if (s && view.model.get(s) && !list.isSelected(view.model)) {
 				list.select(view.index);
-				// don't have to check opposite case (model is false and isSelected is true) 
+				// don't have to check opposite case (model is false and isSelected is true)
 				// because that shouldn't happen
 			}
 		},
@@ -241,10 +241,10 @@
 			// using height/width of the available viewport times our multiplier value
 			return Math.ceil(((fn.call(this, list) * multi) / childSize) + 1);
 		},
-		
+
 		/**
 		* When necessary, updates the the value of `controlsPerPage` dynamically to ensure that
-		* the page size is always larger than the viewport size. Note that once a 
+		* the page size is always larger than the viewport size. Note that once a
 		* [control]{@link enyo.Control} is instanced (if this number increases and then decreases),
 		* the number of available controls will be used instead. This method updates the
 		* [childSize]{@link enyo.DataList#childSize} and is used internally to calculate other
@@ -269,7 +269,7 @@
 				return perPage;
 			}
 		},
-		
+
 		/**
 		* Retrieves the page index for the given record index.
 		*
@@ -292,7 +292,7 @@
 		scrollToControl: function (list, control) {
 			list.$.scroller.scrollToControl(control);
 		},
-		
+
 		/**
 		* An indirect interface to the list's scroller's scrollTo()
 		* method. We provide this to create looser coupling between the
@@ -305,7 +305,7 @@
 		scrollTo: function (list, x, y) {
 			list.$.scroller.scrollTo(x, y);
 		},
-		
+
 		/**
 		* Attempts to scroll to the given index.
 		*
@@ -338,7 +338,7 @@
 
 		/**
 		* Returns the calculated height for the given page.
-		* 
+		*
 		* @private
 		*/
 		pageHeight: function (list, page) {
@@ -352,7 +352,7 @@
 			}
 			return h;
 		},
-		
+
 		/**
 		* Returns the calculated width for the given page.
 		*
@@ -369,22 +369,22 @@
 			}
 			return w;
 		},
-		
+
 		/**
-		* Attempts to intelligently decide when to force updates for [models]{@link enyo.Model} 
+		* Attempts to intelligently decide when to force updates for [models]{@link enyo.Model}
 		* being added, if the models are part of any visible pages. For now, an assumption is
 		* made that records being added are ordered and sequential.
 		*
 		* @private
 		*/
 		modelsAdded: function (list, props) {
-			
+
 			// if the list has not already reset, reset
 			if (!list.hasReset) return this.reset(list);
-			
+
 			var cpp = this.controlsPerPage(list),
 				end = Math.max(list.$.page1.start, list.$.page2.start) + cpp;
-									
+
 			// note that this will refresh the following scenarios
 			// 1. if the dataset was spliced in above the current indices and the last index added was
 			//    less than the first index rendered
@@ -395,7 +395,7 @@
 			// 4. if the dataset was spliced inside the current indices (pushing some down)
 			// 5. if the dataset was appended to the current dataset and was inside the indices that
 			//    should be currently rendered (there was a partially filled page)
-			
+
 			// the only time we don't refresh is if the first index of the contiguous set of added
 			// models is beyond our final rendered page (possible) indices
 
@@ -404,15 +404,15 @@
 
 			// if we need to refresh, do it now and ensure that we're properly setup to scroll
 			// if we were adding to a partially filled page
-			if (props.index <= end ) this.refresh(list);						
-			else {				
+			if (props.index <= end ) this.refresh(list);
+			else {
 				// we still need to ensure that the metrics are updated so it knows it can scroll
 				// past the boundaries of the current pages (potentially)
 				this.adjustBuffer(list);
 				this.adjustPagePositions(list);
 			}
 		},
-		
+
 		/**
 		* Attempts to find the [control]{@link enyo.Control} for the requested index.
 		*
@@ -431,7 +431,7 @@
 				}
 			}
 		},
-		
+
 		/**
 		* Attempts to intelligently decide when to force updates for [models]{@link enyo.Model}
 		* being removed, if the models are part of any visible pages.
@@ -439,20 +439,20 @@
 		* @private
 		*/
 		modelsRemoved: function (list, props) {
-			
+
 			// if the list has not already reset, reset
 			if (!list.hasReset) return this.reset(list);
-			
+
 			var pg1 = list.$.page1,
 				pg2 = list.$.page2,
 				lastIdx = Math.max(pg1.end, pg2.end);
-			
-			// props.models is removed modelList and the lowest index among removed models	
+
+			// props.models is removed modelList and the lowest index among removed models
 			if (props.models.low <= lastIdx) {
-				this.refresh(list);				
+				this.refresh(list);
 			}
 		},
-		
+
 		/**
 		* Recalculates the buffer size based on the current metrics for the given list. This
 		* may not be completely accurate until the final page is scrolled into view.
@@ -477,7 +477,7 @@
 				list.$.scroller.remeasure();
 			}
 		},
-		
+
 		/**
 		* Ensures that the pages are positioned according to their calculated positions,
 		* updating if necessary.
@@ -636,7 +636,7 @@
 			if (typeof targetPos == 'undefined') {
 				targetPos = currentPos;
 			}
-			
+
 			// Make sure the target position is in-bounds
 			targetPos = Math.max(0, Math.min(targetPos, list.bufferSize));
 
@@ -665,7 +665,7 @@
 				// If target page is the last page, there is no following page -- so we choose
 				// the preceding page.
 				(index1 === last) ? index1 - 1 :
-				// In all other cases, we pick a page using our previously determined bias.  
+				// In all other cases, we pick a page using our previously determined bias.
 				index1 + bias;
 
 			list.$.page1.index = index1;
