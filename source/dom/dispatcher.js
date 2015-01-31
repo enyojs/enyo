@@ -58,7 +58,8 @@
 			var d = enyo.dispatcher,
 				webosWindowEvents = ["focus", "blur"];
 			if (enyo.platform.webos >= 4) {
-				d.windowEvents.concat(webosWindowEvents);
+				// webos send focus/blue event for window but doesn't send for input field
+				d.windowEvents = d.windowEvents.concat(webosWindowEvents);
 			}
 		},
 
