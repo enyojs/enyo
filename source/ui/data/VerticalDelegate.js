@@ -128,6 +128,8 @@
 			// get our initial sizing cached now since we should actually have
 			// bounds at this point
 			this.updateBounds(list);
+			// calc offset of pages to scroller client
+			this.calcScrollOffset(list);
 			// now if we already have a length then that implies we have a controller
 			// and that we have data to render at this point, otherwise we don't
 			// want to do any more initialization
@@ -783,6 +785,164 @@
 			list.boundsCache    = list.getBounds();
 			list._updatedBounds = enyo.perfNow();
 			list._updateBounds  = false;
+		},
+
+		/**
+		* Returns the `start` and `end` indices of the visible controls. Partially visible controls
+		* are included if the amount visible exceeds the {@link enyo.DataList#visibleThreshold}.
+		*
+		* @private
+		*/
+		getVisibleControlRange: function (list) {
+			var ret = {
+					start: -1,
+					end: -1
+				},
+				posProp = list.posProp,
+				sizeProp = list.psizeProp,
+				size = this[sizeProp](list),
+				scrollPosition = this.getScrollPosition(list),
+				pages = list.pages.slice(0).sort(function (a, b) {
+					return a.start - b.start;
+				}),
+				i = 0,
+				max = list.collection? list.collection.length - 1 : 0,
+				cpp = list.controlsPerPage,
+				adjustedScrollPosition, p, bounds, ratio;
+
+			// find the first showing page and estimate the start and end indices
+			while ((p = pages[i++])) {
+				bounds = p.getBounds();
+				bounds.right = list.bufferSize - bounds.left - bounds.width;
+
+				adjustedScrollPosition = scrollPosition - list.scrollPositionOffset;
+
+				if (scrollPosition >= bounds[posProp] && scrollPosition < bounds[posProp] + bounds[sizeProp]) {
+					ratio = cpp/bounds[sizeProp];
+					ret.start = Math.min(max, Math.max(0, Math.round((adjustedScrollPosition - bounds[posProp])*ratio) + p.start));
+					ret.end = Math.min(max, Math.round(size*ratio) + ret.start);
+					break;
+				}
+			}
+
+			ret.start = this.adjustIndex(list, ret.start, p, bounds, adjustedScrollPosition, true);
+			ret.end = Math.max(ret.start, this.adjustIndex(list, ret.end, p, bounds, adjustedScrollPosition + size, false));
+
+			return ret;
+		},
+
+		/**
+		* Calculates the scroll position offset to account for the dimensions of any controls that
+		* are within the scroller but precede the pages.
+		*
+		* @param  {enyo.DataList} list            The instance of enyo.DataList
+		* @private
+		*/
+		calcScrollOffset: function (list) {
+			var wrapper = list.pages[0].parent.hasNode(),
+				scroller = list.$.scroller.hasNode(),
+				posProp = list.posProp,
+				position;
+
+			// these should always be truthy in production scenarios but since the nodes aren't
+			// actually rendered in mocha, the tests fail so guarding against that.
+			if (wrapper && scroller) {
+				position = enyo.dom.calcNodePosition(wrapper, scroller);
+				list.scrollPositionOffset = position[posProp];
+			} else {
+				list.scrollPositionOffset = 0;
+			}
+		},
+
+		/**
+		* Refines an estimated `index` to a precise index by evaluating the bounds of the control at
+		* the estimated `index` against the visible area and adjusting it up or down based on the
+		* actual bounds and the `list`'s {@link enyo.DataList#visibleThreshold}.
+		*
+		* @param {enyo.DataList} list
+		* @param {Number}        index           Estimated index
+		* @param {enyo.Control}  page            Page control containing control at `index`
+		* @param {Object}        pageBounds      Bounds of `page`
+		* @param {Number}        scrollBoundary  Edge of visible area (top, bottom, left, or right)
+		* @param {Boolean}       start           `true` for start of boundary (top, right), `false`
+		*   for end
+		* @private
+		*/
+		adjustIndex: function (list, index, page, pageBounds, scrollBoundary, start) {
+			var dir = start? -1 : 1,
+				posProp = list.posProp,
+				sizeProp  = list.psizeProp,
+				max = list.collection? list.collection.length - 1 : 0,
+				last, control, bounds,
+
+				// edge of control
+				edge,
+
+				// distance from edge of control to scroll boundary
+				dEdge,
+
+				// distance from visible threshold to scroll boundary
+				dThresh;
+
+			do {
+				control = list.getChildForIndex(index);
+
+				// if index is on a boundary (other than 0) and the control is fully visible, the
+				// control at index may not exist if the buffer page hasn't shifted to cover this
+				// index range yet. If that's the case, revert to our previous index and stop.
+				if (!control) {
+					index = last;
+					break;
+				}
+
+				// account for crossing page boundaries
+				if (control.parent != page) {
+					page = control.parent;
+					pageBounds = page.getBounds();
+				}
+
+				bounds = control.getBounds();
+				bounds.right = pageBounds.width - bounds.left - bounds.width;
+
+				edge = bounds[posProp] + pageBounds[posProp] + (start? 0 : bounds[sizeProp]);
+				dEdge = edge - scrollBoundary;
+				dThresh = dEdge - dir*bounds[sizeProp]*(1-list.visibleThreshold)	;
+
+				if ((start && dEdge > 0) || (!start && dEdge < 0)) {
+					// control is fully visible
+					if (last !== index + dir) {
+						last = index;
+						index += dir;
+					} else {
+						// if this control is fully visible but the last was too obscured, use this
+						break;
+					}
+				} else if ((start && dThresh >= 0) || (!start && dThresh <= 0)) {
+					// control is partially obscured but enough is visible
+					break;
+				} else {
+					// control is too obscured
+					if (last !== index - dir) {
+						last = index;
+						index -= dir;
+					} else {
+						// use the last since this is too obscured
+						index = last;
+						break;
+					}
+				}
+
+				// guard against selecting an index that is out of bounds
+				if (index < 0) {
+					index = 0;
+					break;
+				} else if (index > max) {
+					index = max;
+					break;
+				}
+			} while (true);
+
+			return index;
 		}
 	};
 
