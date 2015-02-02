@@ -42,7 +42,7 @@
 		*
 		* @private
 		*/
-		windowEvents: ["resize", "load", "unload", "message", "hashchange", "popstate"],
+		windowEvents: ["resize", "load", "unload", "message", "hashchange", "popstate", "focus", "blur"],
 
 		/**
 		* Feature plugins (aka filters)
@@ -54,21 +54,8 @@
 		/**
 		* @private
 		*/
-		platformSpecific: function() {
-			var d = enyo.dispatcher,
-				webosWindowEvents = ["focus", "blur"];
-			if (enyo.platform.webos >= 4) {
-				// webos send focus/blue event for window but doesn't send for input field
-				d.windowEvents = d.windowEvents.concat(webosWindowEvents);
-			}
-		},
-
-		/**
-		* @private
-		*/
 		connect: function() {
 			var d = enyo.dispatcher, i, n;
-			d.platformSpecific();
 			for (i=0; (n=d.events[i]); i++) {
 				d.listen(document, n);
 			}
