@@ -62,7 +62,25 @@
 			* @default null
 			* @public
 			*/
-			value: null
+			value: null,
+
+			/**
+			* The size of the select box in rows.
+			* 
+			* @type {Number}
+			* @default 1
+			* @public
+			*/
+			size: 1,
+
+			/**
+			* Sets whether the enyo.Select can select multiple options
+			* 
+			* @type {Boolean}
+			* @default false
+			* @public
+			*/
+			multiple: false
 		},
 		
 		/**
@@ -93,8 +111,10 @@
 				if(enyo.platform.ie == 8){
 					this.setAttribute('onchange', enyo.bubbler);
 				}
-				this.change();
 				this.selectedChanged();
+				this.updateValue();
+				this.sizeChanged();
+				this.multipleChanged();
 			};
 		}),
 
@@ -102,24 +122,68 @@
 		* @private
 		*/
 		getSelected: function () {
-			return Number(this.getNodeProperty('selectedIndex', this.selected));
+			if (this.hasNode()) {
+				return Number(this.node.selectedIndex);
+			}
 		},
 
 		/**
 		* @private
 		*/
 		selectedChanged: function () {
-			this.setNodeProperty('selectedIndex', this.selected);
+			if (this.hasNode() && !this.updating) {
+				this.node.selectedIndex = this.selected;
+			}
 		},
-
+		/**
+		* @private
+		*/
+		valueChanged: function() {
+			if (this.hasNode() && !this.updating) {
+				//Needs delay otherwise it won't update value (at least on chrome 42 canary)
+				this.startJob('updateValue', function() {
+					this.node.value = this.value;
+					this.set('selected', this.getSelected());
+				}, 100);
+			}
+		},
+		/**
+		* @private
+		*/
+		sizeChanged: function() {
+			if (this.hasNode()) {
+				this.node.size = this.size;
+			}
+		},
+		/**
+		* @private
+		*/
+		multipleChanged: function() {
+			if (this.hasNode()) {
+				this.node.multiple = this.multiple;
+			}
+		},
+		/**
+		* @private
+		*/
+		updateValue: function() {
+			if (this.hasNode()) {
+				this.set('value', this.node.value);
+			}
+		},
 		/**
 		* @private
 		*/
 		change: function () {
-			this.selected = this.getSelected();
-			if (this.hasNode()) {
-				this.set('value', this.node.value);
-			}
+			//Need to know internally if we are changing values,
+			//to prevent value and selected observers from firing
+			//until maximum_call_stack error is received
+			//But we still want this control's owner to be able to bind
+			//to changes of either or both of the selected and value properties
+			this.updating = true;
+			this.set('selected', this.getSelected());
+			this.updateValue();
+			this.updating = false;
 		},
 
 		/**
