@@ -7,19 +7,18 @@
 		sheet: function (inPath) {
 			var type = 'text/css';
 			var rel = 'stylesheet';
-			var isLess = (inPath.slice(-5) == '.less');
-			if (isLess) {
-				if (window.less) {
-					// If client-side less is loaded, insert the less stylesheet
-					type = 'text/less';
-					rel = 'stylesheet/less';
-				} else {
-					// Otherwise, we expect a css file of the same name to exist
-					inPath = inPath.slice(0, inPath.length-4) + 'css';
-				}
+			var isCss = (inPath.slice(-4) == '.css');
+			var isLess = !isCss || (inPath.slice(-5) == '.less');
+			if (window.less && (isLess || isCss)) {
+				// If client-side less is loaded, insert the less stylesheet
+				type = 'text/less';
+				rel = 'stylesheet/less';
+			} else if (isLess) {
+				// Otherwise, we expect a css file of the same name to exist
+				inPath = inPath.slice(0, inPath.length-4) + 'css';
 			}
 			var link;
-			if (enyo.runtimeLoading || isLess) {
+			if (enyo.runtimeLoading || isLess || (window.less && isCss)) {
 				link = document.createElement('link');
 				link.href = inPath;
 				link.media = 'screen';
@@ -33,7 +32,7 @@
 					rel + '" type="' + type + '" />');
 				/* jshint evil: false */
 			}
-			if (isLess && window.less) {
+			if (window.less && (isLess || isCss)) {
 				window.less.sheets.push(link);
 				if (!enyo.loader.finishCallbacks.lessRefresh) {
 					enyo.loader.finishCallbacks.lessRefresh = function () {
@@ -105,7 +104,7 @@
 
 		/**
 		* Loads one or more scripts, stylesheets, or `package.js` files at runtime.
-		* 
+		*
 		* If called during load time (before the `DOMContentLoaded` event), this may only be used
 		* to load a single script and stylesheet file.  Using it to load a `package.js` file or
 		* providing an [array]{@glossary Array} of files can disrupt normal `package.js` handling.
@@ -133,7 +132,7 @@
 				}
 			}
 		};
-		
+
 		/**
 		* @private
 		*/
@@ -166,7 +165,7 @@
 			}
 		}
 	})();
-	
+
 	/**
 	* Predefined path aliases.
 	*
@@ -176,5 +175,5 @@
 		enyo: enyo.args.root,
 		lib: '$enyo/../lib'
 	});
-	
+
 })(enyo, this);
