@@ -3,16 +3,15 @@
 	var _baseScreenType = 'standard',
 		_riRatio,
 		_screenType,
-		_screenTypes = [ {name: 'standard', pxPerRem: 16} ],	// Assign one sane value in case defineScreenTypes is never run.
+		_screenTypes = [ {name: 'standard', pxPerRem: 16, width: scope.innerWidth,  height: scope.innerHeight, aspectRatioName: 'standard'} ],	// Assign one sane value in case defineScreenTypes is never run.
 		_screenTypeObject;
 
-	var getScreenTypeObject = function (name) {
-		if (name == _screenType && _screenTypeObject) {
+	var getScreenTypeObject = function (type) {
+		if ((!type || type == _screenType) && _screenTypeObject) {
 			return _screenTypeObject;
 		}
-		var types = _screenTypes;
-		return types.filter(function (elem) {
-			return (name == elem.name);
+		return _screenTypes.filter(function (elem) {
+			return (type == elem.name);
 		})[0];
 	};
 
@@ -25,15 +24,18 @@
 		* with. These should be in the order of smallest to largest (according to width). Running
 		* this also initializes the rest of this resolution code.
 		*
-		* In the arguments, the following properties are required: 'name', 'pxPerRem', 'width'.
-		* The property 'base' defines the primary or default resoultion that everything else will be
-		* based upon.
+		* In the arguments, the following properties are required: 'name', 'pxPerRem', 'width',
+		* 'aspectRatioName'. The property 'base' defines the primary or default resoultion that
+		* everything else will be based upon.
 		*
 		* ```
 		* enyo.ri.defineScreenTypes([
-		* 	{name: 'hd',    pxPerRem: 16, height: 720,  width: 1280},
-		* 	{name: 'fhd',   pxPerRem: 24, height: 1080, width: 1920, base: true},
-		* 	{name: 'uhd',   pxPerRem: 48, height: 2160, width: 3840}
+		* 	{name: 'vga',     pxPerRem: 8,  width: 640,  height: 480,  aspectRatioName: 'standard'},
+		* 	{name: 'xga',     pxPerRem: 16, width: 1024, height: 768,  aspectRatioName: 'standard'},
+		* 	{name: 'hd',      pxPerRem: 16, width: 1280, height: 720,  aspectRatioName: 'hdtv'},
+		* 	{name: 'fhd',     pxPerRem: 24, width: 1920, height: 1080, aspectRatioName: 'hdtv', base: true},
+		* 	{name: 'uw-uxga', pxPerRem: 24, width: 2560, height: 1080, aspectRatioName: 'cinema'},
+		* 	{name: 'uhd',     pxPerRem: 48, width: 3840, height: 2160, aspectRatioName: 'hdtv'}
 		* ]);
 		* ```
 		*
@@ -80,10 +82,14 @@
 		/**
 		* @private
 		*/
-		updateScreenTypeOnBody: function (type) {
+		updateScreenBodyClasses: function (type) {
 			type = type || _screenType;
 			if (type) {
 				enyo.dom.addBodyClass('enyo-res-' + type.toLowerCase());
+				var scrObj = getScreenTypeObject(type);
+				if (scrObj.aspectRatioName) {
+					enyo.dom.addBodyClass('enyo-aspect-ratio-' + scrObj.aspectRatioName.toLowerCase());
+				}
 				return type;
 			}
 		},
@@ -116,9 +122,43 @@
 		},
 
 		/**
+		* Calculates the aspect ratio of the screen type provided. If none is provided the current
+		* screen type is used.
+		*
+		* @param {String} type Screen type to get the aspect ratio of. Providing nothing uses the
+		*	current screen type.
+		* @returns {Number} The calculated screen ratio (1.333, 1.777, 2.333, etc)
+		* @public
+		*/
+		getAspectRatio: function (type) {
+			var scrObj = getScreenTypeObject(type);
+			if (scrObj.width && scrObj.height) {
+				return (scrObj.width / scrObj.height);
+			}
+			return 1;
+		},
+
+		/**
+		* Returns the name of the aspect ration given the screen type or the default screen type if
+		* none is proided.
+		*
+		* @param {String} type Screen type to get the aspect ratio of. Providing nothing uses the
+		*	current screen type.
+		* @returns {String} The name of the type of screen ratio
+		* @public
+		*/
+		getAspectRatioName: function (type) {
+			var scrObj = getScreenTypeObject(type);
+			 return scrObj.aspectRatioName || 'standard';
+		},
+
+		/**
 		* Takes a provided pixel value and preforms a scaling operation on the number based on the
 		* current screen type.
 		*
+		* @param {Number} px The amount of standard-resolution pixels to scale to the current screen
+		*	resolution.
+		* @returns {Number} The scaled value based on the current screen scaling factor.
 		* @public
 		*/
 		scale: function (px) {
@@ -188,9 +228,9 @@
 		// Later we can wire this up to a screen resize event so it doesn't need to be called manually.
 		init: function () {
 			_screenType = this.getScreenType();
-			this.updateScreenTypeOnBody();
-			enyo.dom.unitToPixelFactors.rem = this.getUnitToPixelFactors();
 			_screenTypeObject = getScreenTypeObject();
+			this.updateScreenBodyClasses();
+			enyo.dom.unitToPixelFactors.rem = this.getUnitToPixelFactors();
 			_riRatio = this.getRiRatio();
 		}
 	};
