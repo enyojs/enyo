@@ -7,7 +7,8 @@
 		_screenTypeObject;
 
 	var getScreenTypeObject = function (type) {
-		if ((!type || type == _screenType) && _screenTypeObject) {
+		type = type || _screenType;
+		if (type == _screenType && _screenTypeObject) {
 			return _screenTypeObject;
 		}
 		return _screenTypes.filter(function (elem) {
