@@ -95,14 +95,13 @@
 			if (sheet) {
 				w(sheet);
 				var isLess = (sheet.slice(-4) == "less");
-				var isCss = (sheet.slice(-3) == "css");
 				if (isLess && (opt.less !== true)) {
 					sheet = sheet.slice(0, sheet.length-4) + "css";
 					isLess = false;
 					w(" (Substituting CSS: " + sheet + ")");
 				}
 				var code = fs.readFileSync(sheet, "utf8");
-				if (isLess || isCss) {
+				if (isLess) {
 					var parser = new(less.Parser)({filename:sheet, paths:[path.dirname(sheet)], relativeUrls:true});
 					parser.parse(code, function (err, tree) {
 						if (err) {
