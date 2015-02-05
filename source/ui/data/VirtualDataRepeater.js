@@ -16,7 +16,7 @@
 			this.doIt();
 			this.hasReset = true;
 			// TODO: Decide whether we really need this
-			this.notifyObservers('first');
+			// this.notifyObservers('first');
 		},
 		
 		refresh: function (immediate) {
@@ -77,9 +77,10 @@
 			if (ln) {
 				o[0].addClass('enyo-vdr-first');
 				o[ln - 1].addClass('enyo-vdr-last');
+				
+				if (this.positionChildren) this.positionChildren();
 			}
 
-			if (this.positionChildren) this.positionChildren();
 		},
 
 		fwd: function() {
