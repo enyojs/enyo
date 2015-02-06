@@ -178,6 +178,7 @@
 		},
 
 		_frameIndex: 0,
+		_loopCount: 0,
 
 		/**
 		* @private
@@ -334,7 +335,8 @@
 		stop: function () {
 			this.$.spriteImage.applyStyle('-webkit-animation-name', null);
 			this.$.spriteImage.applyStyle('animation-name', null);
-			this._intervalHandle = null;
+			scope.clearInterval(this._intervalHandle);
+			this._loopCount = 0;
 		},
 
 		/**
@@ -352,6 +354,13 @@
 		*/
 		pausedChanged: function() {
 			this.addRemoveClass('paused', this.get('paused'));
+			if (!this.get('useCssAnimation')) {
+				if (this.get('paused')) {
+					this.stop();
+				} else {
+					this.start();
+				}
+			}
 		},
 
 		/**
@@ -365,16 +374,24 @@
 		},
 
 		_nextFrame: function () {
-			// console.log("frameIndex:", this._frameIndex, this._positionList.length, this._frameIndex >= this._positionList.length);
-			var pos = this._positionList[this._frameIndex],
-				x = (pos.x * -1) + this.offsetLeft,
-				y = (pos.y * -1) + this.offsetTop;
+			var fi = this._frameIndex * 2,
+				x = this._positionList[fi]     * -1 + this.offsetLeft,
+				y = this._positionList[fi + 1] * -1 + this.offsetTop;
+
 			this.$.spriteImage.applyStyle('-webkit-transform', 'translate3d('+ x +'px, '+ y +'px, 0)');
 			this.$.spriteImage.applyStyle('transform', 'translate3d('+ x +'px, '+ y +'px, 0)');
 
-			if (this._frameIndex >= this._positionList.length - 1) {
-				// console.log("Resetting!:", this._frameIndex);
+			if (fi + 1 >= this._positionList.length - 1) {
 				this._frameIndex = 0;
+				this._loopCount++;
+				if (typeof this.get('iterations') == 'number' && this._loopCount >= this.get('iterations')) {
+					this.stop();
+					if (!this.get('stopAtEnd')) {
+						// go one additional frame to get us back to the start.
+						this._frameIndex++;
+						this._nextFrame();
+					}
+				}
 			} else {
 				this._frameIndex++;
 			}
@@ -456,20 +473,15 @@
 				rows = this.get('rows'),
 				cols = this.get('columns'),
 				horiz = this.get('cellOrientation') == 'horizontal' ? true : false,
-				// outer = (horiz ? rows : cols),
-				// inner = (horiz ? cols : rows);
-				outer = (horiz ? cols : rows),
-				inner = (horiz ? rows : cols);
+				outer = (horiz ? rows : cols),
+				inner = (horiz ? cols : rows);
 
-			console.log("_generatePositionList:", outer, inner);
 			this._positionList = [];
-			for (o = 0; o <= outer; o++) {
-				for (i = 0; i < inner - 1; i++) {
-					this._positionList.push({ x: (width * i), y: (height * o) });
-					console.log("_generatePositionList:", o, i);
+			for (o = 0; o < outer; o++) {
+				for (i = 0; i < inner; i++) {
+					this._positionList.push((width * (horiz ? i : o)), (height * (horiz ? o : i)));
 				}
 			}
-			console.log("_generatePositionList:", this._positionList);
 			return this._positionList;
 		}
 	});
