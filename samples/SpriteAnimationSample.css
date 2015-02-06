@@ -21,3 +21,6 @@
 	color: #FFF;
 	background-color: #555;
 }
+.sprite-animation-sample .animation {
+	display: inline-block;
+}
