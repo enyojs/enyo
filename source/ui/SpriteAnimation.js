@@ -163,8 +163,21 @@
 			* @default true
 			* @public
 			*/
-			stopAtEnd: true
+			stopAtEnd: true,
+
+			/**
+			* A toggle for whether to use high-performance CSS animation keyframes or low
+			* performance JavaScript-based timing methods. This may be useful for times when the CSS
+			* animation capabilities are lacking or the device is low-powered.
+			*
+			* @type {Boolean}
+			* @default true
+			* @public
+			*/
+			useCssAnimation: true
 		},
+
+		_frameIndex: 0,
 
 		/**
 		* @private
@@ -187,7 +200,9 @@
 			'animationName': ['id'],
 			'totalWidth': ['offsetLeft', 'width', 'columns'],
 			'totalHeight': ['offsetTop', 'height', 'rows'],
-			'steps': ['cellOrientation', 'columns', 'rows']
+			'steps': ['cellOrientation', 'columns', 'rows'],
+			'frameCount': ['columns', 'rows'],
+			'frameLength': ['duration', 'frameCount']
 		},
 
 		/**
@@ -249,7 +264,11 @@
 		* @private
 		*/
 		updateKeyframes: function () {
-			this.$.spriteImage.set('stylesheetContent', this._generateKeyframes());
+			if (this.useCssAnimation) {
+				this.$.spriteImage.set('stylesheetContent', this._generateKeyframes());
+			} else {
+				this._generatePositionList();
+			}
 			this._forceAnimationReset();
 		},
 
@@ -284,14 +303,26 @@
 			return (this.get('cellOrientation') == 'horizontal') ? this.get('columns') : this.get('rows');
 		},
 
+		frameCount: function () {
+			return (this.rows * this.columns);
+		},
+
+		frameLength: function () {
+			return Math.floor(this.get('duration') / this.get('frameCount'));
+		},
+
 		/**
 		* Starts the animation.
 		*
 		* @public
 		*/
 		start: function () {
-			this.$.spriteImage.applyStyle('-webkit-animation-name', this.get('animationName'));
-			this.$.spriteImage.applyStyle('animation-name', this.get('animationName'));
+			if (this.useCssAnimation) {
+				this.$.spriteImage.applyStyle('-webkit-animation-name', this.get('animationName'));
+				this.$.spriteImage.applyStyle('animation-name', this.get('animationName'));
+			} else {
+				this._intervalHandle = scope.setInterval(this.bindSafely(this._nextFrame, this), this.get('frameLength'));
+			}
 			this.set('paused', false);
 		},
 
@@ -303,6 +334,7 @@
 		stop: function () {
 			this.$.spriteImage.applyStyle('-webkit-animation-name', null);
 			this.$.spriteImage.applyStyle('animation-name', null);
+			this._intervalHandle = null;
 		},
 
 		/**
@@ -330,6 +362,22 @@
 		*/
 		pause: function () {
 			this.set('paused', true);
+		},
+
+		_nextFrame: function () {
+			// console.log("frameIndex:", this._frameIndex, this._positionList.length, this._frameIndex >= this._positionList.length);
+			var pos = this._positionList[this._frameIndex],
+				x = (pos.x * -1) + this.offsetLeft,
+				y = (pos.y * -1) + this.offsetTop;
+			this.$.spriteImage.applyStyle('-webkit-transform', 'translate3d('+ x +'px, '+ y +'px, 0)');
+			this.$.spriteImage.applyStyle('transform', 'translate3d('+ x +'px, '+ y +'px, 0)');
+
+			if (this._frameIndex >= this._positionList.length - 1) {
+				// console.log("Resetting!:", this._frameIndex);
+				this._frameIndex = 0;
+			} else {
+				this._frameIndex++;
+			}
 		},
 
 		/**
@@ -398,6 +446,31 @@
 		*/
 		_generateKeyframe: function (percent, x, y) {
 			return (Math.ceil(percent*1000000) / 10000) +'%	{ -webkit-transform: translate3d('+ x +'px, '+ y +'px, 0);	transform: translate3d('+ x +'px, '+ y +'px, 0); }\n';
+		},
+
+		_generatePositionList: function () {
+			// build and store a list of all of the necessary keyframe positions in order
+			var o, i,
+				width = this.get('width'),
+				height = this.get('height'),
+				rows = this.get('rows'),
+				cols = this.get('columns'),
+				horiz = this.get('cellOrientation') == 'horizontal' ? true : false,
+				// outer = (horiz ? rows : cols),
+				// inner = (horiz ? cols : rows);
+				outer = (horiz ? cols : rows),
+				inner = (horiz ? rows : cols);
+
+			console.log("_generatePositionList:", outer, inner);
+			this._positionList = [];
+			for (o = 0; o <= outer; o++) {
+				for (i = 0; i < inner - 1; i++) {
+					this._positionList.push({ x: (width * i), y: (height * o) });
+					console.log("_generatePositionList:", o, i);
+				}
+			}
+			console.log("_generatePositionList:", this._positionList);
+			return this._positionList;
 		}
 	});
 
