@@ -189,7 +189,7 @@
 		init: function () {
 			_screenType = this.getScreenType();
 			this.updateScreenTypeOnBody();
-			enyo.dom.unitToPixelFactors.rem = scope.enyo.getUnitToPixelFactors();
+			enyo.dom.unitToPixelFactors.rem = this.getUnitToPixelFactors();
 			_screenTypeObject = getScreenTypeObject();
 			_riRatio = this.getRiRatio();
 		}
