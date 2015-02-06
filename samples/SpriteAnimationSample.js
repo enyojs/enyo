@@ -4,11 +4,13 @@ enyo.kind({
 	classes: "sprite-animation-sample",
 	components: [
 		{content: "Sprite Animation (Horizontally Sprited)", classes: "section"},
-		{kind: "enyo.SpriteAnimation", name: "sprite1", useCssAnimation: false, src: "http://www.polybeast.de/portfolio/SkybusterExplosion.jpg", width: 320, height: 240, rows: 5, columns: 4, duration: 20000},
+		{kind: "enyo.SpriteAnimation", name: "sprite1", classes: "animation", src: "http://www.polybeast.de/portfolio/SkybusterExplosion.jpg", width: 320, height: 240, rows: 5, columns: 4, duration: 2000},
+		{kind: "enyo.SpriteAnimation", name: "sprite3", classes: "animation", useCssAnimation: false, src: "http://www.polybeast.de/portfolio/SkybusterExplosion.jpg", width: 320, height: 240, rows: 5, columns: 4, duration: 2000},
+		{tag: "br"},
 		{kind: "enyo.Select", name: "sprite1Picker", onchange: "select1Changed", components: [
 			{content: "0.5s", value: "500"},
 			{content: "1s", value: "1000"},
-			{content: "2s", value: "20000", selected: true},
+			{content: "2s", value: "2000", selected: true},
 			{content: "3s", value: "3000"},
 			{content: "4s", value: "4000"},
 			{content: "5s", value: "5000"},
@@ -20,7 +22,9 @@ enyo.kind({
 		]},
 		// {kind: "moon.SimpleIntegerPicker", name: "sprite1Picker", value: 2},
 		{content: "Sprite Animation (Vertically Sprited)", classes: "section"},
-		{kind: "enyo.SpriteAnimation", name: "sprite2", src: "http://media.pyweek.org/dl/3/RoeBros/herring-sub.png", cellOrientation: "vertical", width: 50, height: 50, rows: 3, columns: 16, duration: 6000},
+		{kind: "enyo.SpriteAnimation", name: "sprite2", classes: "animation", src: "http://media.pyweek.org/dl/3/RoeBros/herring-sub.png", cellOrientation: "vertical", width: 50, height: 50, rows: 3, columns: 16, duration: 6000},
+		{kind: "enyo.SpriteAnimation", name: "sprite4", classes: "animation", useCssAnimation: false, src: "http://media.pyweek.org/dl/3/RoeBros/herring-sub.png", cellOrientation: "vertical", width: 50, height: 50, rows: 3, columns: 16, duration: 6000},
+		{tag: "br"},
 		{kind: "enyo.Select", name: "sprite2Picker", onchange: "select2Changed", components: [
 			{content: "0.5s", value: "500"},
 			{content: "1s", value: "1000"},
@@ -37,6 +41,8 @@ enyo.kind({
 	],
 	bindings: [
 		{from: ".$.sprite1Picker.value", to: ".$.sprite1.duration"},
-		{from: ".$.sprite2Picker.value", to: ".$.sprite2.duration"}
+		{from: ".$.sprite1Picker.value", to: ".$.sprite3.duration"},
+		{from: ".$.sprite2Picker.value", to: ".$.sprite2.duration"},
+		{from: ".$.sprite2Picker.value", to: ".$.sprite4.duration"}
 	]
 });
