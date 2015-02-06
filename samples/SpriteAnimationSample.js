@@ -4,11 +4,11 @@ enyo.kind({
 	classes: "sprite-animation-sample",
 	components: [
 		{content: "Sprite Animation (Horizontally Sprited)", classes: "section"},
-		{kind: "enyo.SpriteAnimation", name: "sprite1", src: "http://www.polybeast.de/portfolio/SkybusterExplosion.jpg", width: 320, height: 240, rows: 5, columns: 4, duration: 2000},
+		{kind: "enyo.SpriteAnimation", name: "sprite1", useCssAnimation: false, src: "http://www.polybeast.de/portfolio/SkybusterExplosion.jpg", width: 320, height: 240, rows: 5, columns: 4, duration: 20000},
 		{kind: "enyo.Select", name: "sprite1Picker", onchange: "select1Changed", components: [
 			{content: "0.5s", value: "500"},
 			{content: "1s", value: "1000"},
-			{content: "2s", value: "2000", selected: true},
+			{content: "2s", value: "20000", selected: true},
 			{content: "3s", value: "3000"},
 			{content: "4s", value: "4000"},
 			{content: "5s", value: "5000"},
