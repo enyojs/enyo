@@ -94,7 +94,12 @@
 		getRiRatio: function (type) {
 			type = type || _screenType;
 			if (type) {
-				return this.getUnitToPixelFactors(type) / this.getUnitToPixelFactors(_baseScreenType);
+				var ratio = this.getUnitToPixelFactors(type) / this.getUnitToPixelFactors(_baseScreenType);
+				if (type == _screenType) {
+					// cache this if it's for our current screen type.
+					_riRatio = ratio;
+				}
+				return ratio;
 			}
 			return 1;
 		},
@@ -105,8 +110,7 @@
 		getUnitToPixelFactors: function (type) {
 			type = type || _screenType;
 			if (type) {
-				_riRatio = getScreenTypeObject(type).pxPerRem;
-				return _riRatio;
+				return getScreenTypeObject(type).pxPerRem;
 			}
 			return 1;
 		},
