@@ -129,6 +129,14 @@
 			};
 		}),
 
+		scrollTopChanged: function() {
+			this.$.scrollMath.setScrollY(-this.scrollTop);
+		},
+
+		scrollLeftChanged: function() {
+			this.$.scrollMath.setScrollX(-this.scrollLeft);
+		},
+
 		/**
 		* @public
 		*/
@@ -213,7 +221,6 @@
 						this.lastScrollToX = x = (isScrolling ? this.lastScrollToX : this.scrollLeft) + -dir * delta;
 					}
 				}
-
 				this.scrollTo(x, y);
 				event.preventDefault();
 				//this.scrollBounds = null;
@@ -224,7 +231,6 @@
 
 
 		dragstart: function (sender, e) {
-			this.log(e);
 			this.calcBoundaries();
 			// Ignore drags sent from multi-touch events
 			if(!this.dragDuringGesture && e.srcEvent.touches && e.srcEvent.touches.length > 1) {
@@ -256,7 +262,6 @@
 			/*if(this.listReordering) {
 				return false;
 			}*/
-			this.log(this.dragging, e);
 			if (this.dragging) {
 				if(this.preventDefault){
 					e.preventDefault();
@@ -308,7 +313,6 @@
 		* @private
 		*/
 		scrollStart: function () {
-			this.log();
 			// if (this.scrollNode && !this.isScrolling()) {
 			// 	this.scrolling = true;
 			// 	if (!this.isOverscrolling()) {

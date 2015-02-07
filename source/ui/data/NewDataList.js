@@ -18,23 +18,62 @@
 				'itemHeight', 'itemWidth', 'columns'
 			]}
 		],
+		/**
+		* @private
+		*/
 		calculateMetrics: function() {
 			var d = this.direction,
-				iw = this.itemWidth,
-				ih = this.itemHeight,
-				m = (d == 'vertical') ? 'clientHeight' : 'clientWidth',
-				h = this.hasNode()[m],
-				minMax, d2x;
-			this.itemSize = (d == 'vertical') ? ih : iw;
-			this.itemSize2 = (d == 'vertical') ? iw : ih;
+				sp = this.spacing,
+				n = this.hasNode(),
+				s1, s2, md1, md2, d2x, is1, is2, d1, minMax, num;
 
-			d2x = (d == 'vertical') ? this.columns : this.rows;
-			this.dim2extent = (d2x == 'auto') ? 1 : d2x;
+			if (this.direction == 'vertical') {
+				s1 = n.clientHeight;
+				s2 = n.clientWidth;
+				md1 = this.minItemHeight;
+				md2 = this.minItemWidth;
+				is1 = this.itemHeight;
+				is2 = this.itemWidth;
+				d2x = this.columns;
+			}
+			else {
+				s1 = n.clientWidth;
+				s2 = n.clientHeight;
+				md1 = this.minItemWidth;
+				md2 = this.minItemHeight;
+				is1 = this.itemWidth;
+				is2 = this.itemHeight;
+				d2x = this.rows;
+			}
+
+			this.sizeItems = (md1 && md2);
+
+			if (this.sizeItems) {
+				// the number of columns is the ratio of the available width minus the spacing
+				// by the minimum tile width plus the spacing
+				d2x = Math.max(Math.floor((s2 - (sp * 2)) / (md2 + sp)), 1);
+				// the actual tile width is a ratio of the remaining width after all columns
+				// and spacing are accounted for and the number of columns that we know we should have
+				is2 = ((s2 - (sp * (d2x + 1))) / d2x);
+				// the actual tile height is related to the tile width
+				is1 = (md1 * (is2 / md2));
+			}
 			
-			minMax = this.itemSize * 2;
+			d1 = sp + is1;
+			d2 = sp + is2;
+
+			minMax = d1 * 2;
 			this.threshold = { min: -Infinity, max: minMax, minMax: minMax };
 
-			this.set('numItems', this.dim2extent * (Math.ceil(h / this.itemSize) + this.overhang));
+			num = d2x * (Math.ceil(s1 / d1) + this.overhang);
+
+			this.dim2extent = d2x;
+			this.itemSize = is1;
+			this.itemSize2 = is2;
+			this.delta = d1;
+			this.delta2 = d2;
+
+			this.set('numItems', num);
 		},
 		rendered: enyo.inherit(function (sup) {
 			return function() {
@@ -42,53 +81,70 @@
 				sup.apply(this, arguments);
 			};
 		}),
+		/**
+		* @private
+		*/
 		scroll: function() {
 			var tt = this.threshold,
 				v = this.scrollTop,
 				dir = this.yDir,
-				sz = this.itemSize,
+				delta = this.delta,
 				cb = this.cachedBounds ? this.cachedBounds : this._getScrollBounds(),
 				mTop = cb.maxTop,
 				mMax = this.threshold.minMax,
-				mMin = mTop - (sz * 2),
+				mMin = mTop - (delta * 2),
 				d, st, j;
 			if (dir == 1 && v > tt.max) {
 				d = v - tt.max;
-				st = Math.ceil(d / sz);
-				j = st * sz;
+				st = Math.ceil(d / delta);
+				j = st * delta;
 				tt.max = Math.min(mTop, tt.max + j);
-				tt.min = (tt.max == mTop) ? mMin : tt.max - sz;
+				tt.min = (tt.max == mTop) ? mMin : tt.max - delta;
 				this.set('first', this.first + (st * this.dim2extent));
 			}
 			else if (dir == -1 && v < tt.min) {
 				d = tt.min - v;
-				st = Math.ceil(d / sz);
-				j = st * sz;
-				tt.max = Math.max(mMax, tt.min - (j - sz));
-				tt.min = (tt.max > mMax) ? tt.max - sz : -Infinity;
+				st = Math.ceil(d / delta);
+				j = st * delta;
+				tt.max = Math.max(mMax, tt.min - (j - delta));
+				tt.min = (tt.max > mMax) ? tt.max - delta : -Infinity;
 				this.set('first', this.first - (st * this.dim2extent));
 			}
 			this.positionChildren();
 		},
+		/**
+		* @private
+		*/
 		positionChildren: function() {
 			var oc = this.orderedChildren,
 				e = this.dim2extent,
-				d = this.direction,
-				i, c, idx, g, p, g2, p2, a, b;
+				v = (this.direction == 'vertical'),
+				// TODO: Fix this
+				sd = v ? 'scrollTop' : 'scrollTop',
+				sp = this.spacing,
+				i, c, idx, g, p, g2, p2, a, b, w, h;
 			for (i = 0; i < oc.length; i++) {
 				c = oc[i];
 				idx = c.index;
 				g = Math.floor(idx / e);
 				g2 = idx % e;
-				p = ((g * this.itemSize) - Math.round(this.scrollTop));
-				p2 = g2 * (this.itemSize2 + this.spacing);
-				if (d == 'vertical') {
+				p = sp + (g * this.delta) - Math.round(this[sd]);
+				p2 = sp + (g2 * this.delta2);
+				if (v) {
 					a = p2;
 					b = p;
+					w = this.itemSize2;
+					h = this.itemSize;
 				}
 				else {
 					a = p;
 					b = p2;
+					w = this.itemSize;
+					h = this.itemSize2;
+				}
+				if (this.sizeItems) {
+					c.applyStyle('width', w + 'px');
+					c.applyStyle('height', h + 'px');
 				}
 				enyo.dom.transform(c, {translate3d: a + 'px, ' + b + 'px, 0'});
 			}
@@ -97,7 +153,18 @@
 		* @private
 		*/
 		getScrollHeight: function () {
-			return Math.ceil(this.collection.length / this.dim2extent) * this.itemSize;
-		}
+			return (Math.ceil(this.collection.length / this.dim2extent) * this.delta) + this.spacing;
+		},
+		/**
+		* @private
+		*/
+		reset: enyo.inherit(function (sup) {
+			return function () {
+				this.set('scrollTop', 0);
+				this.set('scrollLeft', 0);
+				this.calculateMetrics();
+				sup.apply(this, arguments);
+			};
+		})
 	});
 })(enyo, this);

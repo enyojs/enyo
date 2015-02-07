@@ -12,6 +12,7 @@
 			}
 			this._last = Math.min(this.numItems, this.collection.length) - 1;
 			this.orderedChildren = [],
+			this.childIndex = {},
 			this.destroyClientControls();
 			this.doIt();
 			this.hasReset = true;
@@ -35,10 +36,15 @@
 			}
 		},
 
+		childForIndex: function(idx) {
+			return this.childIndex[idx];
+		},
+
 		doIt: function(immediate) {
 			var dd = this.get('data'),
 				f = this.first,
 				o = this.orderedChildren,
+				ci = this.childIndex,
 				n = this.numItems,
 				e = Math.max(n, o.length),
 				i, idx, c, m, s, sc, l, ln;
@@ -52,19 +58,25 @@
 					s = this.isSelected(m);
 					if (c) {
 						sc = c.selectedClass || 'selected';
+						ci[c.index] = null;
 						c.set('model', m);
 						c.set('index', idx);
 						c.addRemoveClass(sc, s);
+						c.selected = s;
+						ci[idx] = c
 					}
 					else {
 						c = this.createComponent({model: m, index: i});
 						sc = c.selectedClass || 'selected';
 						c.addRemoveClass(sc, s);
+						c.selected = s;
 						c.render();
 						o.push(c);
+						ci[idx] = c;
 					}
 				}
 				else {
+					ci[idx] = null;
 					if (c) {
 						c.destroy();
 						if (l === undefined) l = i;
@@ -214,13 +226,13 @@
 					d = 0;
 
 				if (sender == this.collection) {
-					this.log(lo, f, ii);
+					// this.log(lo, f, ii);
 					if (lo <= l) {
 						while (ii[i] <=f) {
 							d++;
 							i--;
 						}
-						if (d) this.adjustChildren(d);
+						if (d) this.adjustHead(d);
 						/*for (; i >= 0; i--) {
 							if (ii[i] <= f) {
 								d++
@@ -243,7 +255,7 @@
 		*/
 		modelsAdded: enyo.inherit( function (sup) {
 			return function (sender, e, props) {
-				this.log(props);
+				// this.log(props);
 				sup.apply(this, arguments);
 			};
 		}),
