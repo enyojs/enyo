@@ -73,7 +73,7 @@
 						if (c === sp) {
 							enyo.Spotlight.unspot();
 						}
-						ci[idx] = c
+						ci[idx] = c;
 					}
 					else {
 						c = this.createComponent({model: m, index: i});

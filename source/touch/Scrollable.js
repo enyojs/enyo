@@ -309,9 +309,9 @@
 					x = this.scrollLeft = -sender.x,
 					y = this.scrollTop = -sender.y,
 					dx = px - x,
-					dy = py - y,
+					dy = py - y;
 					// TODO: Use d to enable / disable mouse events based on velocity
-					d = (dx * dx) + (dy + dy);
+					// d = (dx * dx) + (dy + dy);
 				this.xDir = (dx < 0? 1: dx > 0? -1: 0);
 				this.yDir = (dy < 0? 1: dy > 0? -1: 0);
 				sup.apply(this, arguments);

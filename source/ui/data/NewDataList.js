@@ -22,10 +22,9 @@
 		* @private
 		*/
 		calculateMetrics: function() {
-			var d = this.direction,
-				sp = this.spacing,
+			var sp = this.spacing,
 				n = this.hasNode(),
-				s1, s2, md1, md2, d2x, is1, is2, d1, minMax, num;
+				s1, s2, md1, md2, d2x, is1, is2, d1, d2, minMax, num;
 
 			if (this.direction == 'vertical') {
 				s1 = n.clientHeight;
