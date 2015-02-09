@@ -169,7 +169,7 @@
 				// the metrics for the entire list
 				metrics = list.metrics,
 				// controls per page
-				perPage = this.controlsPerPage(list),
+				perPage = this.controlsPerPage(list, list.updatedChildSize),
 				// placeholder for the control we're going to update
 				view;
 
@@ -207,7 +207,8 @@
 			metrics.height = this.pageHeight(list, page);
 			metrics.width  = this.pageWidth(list, page);
 			// update the childSize value now that we have measurements
-			this.childSize(list);
+			var oldChildSize = list.childSize;
+			list.updatedChildSize = (oldChildSize == this.childSize(list)) ? false : true;
 		},
 
 		/**
