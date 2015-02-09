@@ -22,11 +22,28 @@
 	*/
 
 	/**
-	* {@link enyo.Image} implements an HTML [&lt;img&gt;]{@glossary img} element and,
-	* optionally, [bubbles]{@link enyo.Component#bubble} the
-	* [onload]{@link enyo.Image#onload} and [onerror]{@link enyo.Image#onerror}
-	* [events]{@glossary event}. Image dragging is suppressed by default, so as not to
-	* interfere with touch interfaces.
+	* {@link enyo.Image} implements an HTML [&lt;img&gt;]{@glossary img} element and, optionally,
+	* [bubbles]{@link enyo.Component#bubble} the [onload]{@link enyo.Image#onload} and
+	* [onerror]{@link enyo.Image#onerror} [events]{@glossary event}. Image dragging is suppressed by
+	* default, so as not to interfere with touch interfaces.
+	*
+	* {@link enyo.Image} also has support for multi-resolution images. If you are developing assets
+	* for specific screen sizes, HD (720p), FHD (1080p), UHD (4k), for example, you may provide
+	* specific image assets in a hash/object format to the `src` property, instead of the usual
+	* string. The image sources will be used automatically when the screen resolution is less than
+	* or equal to those screen types. For more informaton on our resolution support, and how to
+	* enable this feature, see our [resolution independence docs]{@link enyo.ri}.
+	*
+	* ```
+	* // Take advantage of the multi-rez mode
+	* {kind: 'enyo.Image', src: {
+	* 	'hd': 'http://lorempixel.com/64/64/city/1/',
+	* 	'fhd': 'http://lorempixel.com/128/128/city/1/',
+	* 	'uhd': 'http://lorempixel.com/256/256/city/1/'
+	* }, alt: 'Multi-rez'},
+	* // Standard string `src`
+	* {kind: 'enyo.Image', src: http://lorempixel.com/128/128/city/1/', alt: 'Large'},
+	* ```
 	*
 	* @class enyo.Image
 	* @extends enyo.Control
@@ -64,6 +81,18 @@
 			/** @lends enyo.Image.prototype */ {
 
 			/**
+			* Maps to the `src` attribute of an [&lt;img&gt; tag]{@glossary img}. This also supports
+			* a multi-resolution hash object. See
+			* [the above description of enyo.Image]{@link enyo.Image} for more details and examples
+			* or our [resolution independence docs]{@link enyo.ri}.
+			*
+			* @type {String}
+			* @default ''
+			* @public
+			*/
+			src: '',
+
+			/**
 			* Maps to the `alt` attribute of an [&lt;img&gt; tag]{@glossary img}.
 			*
 			* @type {String}
@@ -94,7 +123,7 @@
 			* [`background-position`]{@glossary backgroundPosition} CSS property.
 			*
 			* @type {String}
-			* @default ''
+			* @default 'center'
 			* @public
 			*/
 			position: 'center'
@@ -135,38 +164,23 @@
 				this.altChanged();
 				this.sizingChanged();
 				this.srcChanged();
+				this.positionChanged();
 			};
 		}),
 
 		/**
 		* @private
 		*/
-		getSrc: function () {
-			return this.getAttribute('src');
-		},
-
-		/**
-		* @private
-		*/
-		setSrc: function (src) {
-			var was = this.src;
-			this.src = src;
-
-			if (was !== src) this.notify('src', was, src);
-		},
-
-		/**
-		* @private
-		*/
 		srcChanged: function () {
+			var src = enyo.ri.selectSrc(this.src);
 			if (this.sizing) {
-				this.applyStyle('background-image', this.src ? 'url(' + enyo.path.rewrite(this.src) + ')' : 'none');
+				this.applyStyle('background-image', src ? 'url(' + enyo.path.rewrite(src) + ')' : 'none');
 			} else {
-				if (!this.src) {
+				if (!src) {
 					// allow us to clear the src property
 					this.setAttribute('src', '');
 				} else {
-					this.setAttribute('src', enyo.path.rewrite(this.src));
+					this.setAttribute('src', enyo.path.rewrite(src));
 				}
 			}
 		},
@@ -201,7 +215,7 @@
 		*/
 		positionChanged: function () {
 			if (this.sizing) {
-				this.applyStyle('background-position', this.containPosition);
+				this.applyStyle('background-position', this.position);
 			}
 		},
 
