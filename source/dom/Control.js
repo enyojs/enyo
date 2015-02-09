@@ -765,6 +765,7 @@
 		* @private
 		*/
 		showingChanged: function (was) {
+			var nextControl;
 			// if we are changing from not showing to showing we attempt to find whatever
 			// our last known value for display was or use the default
 			if (!was && this.showing) {
@@ -775,6 +776,8 @@
 				// us to ignore the renderOnShow value so we don't undo whatever the developer was
 				// intending
 				if (!this.generated && !this.canGenerate && this.renderOnShow) {
+					nextControl = this.getNextControl();
+					if (nextControl && !this.addBefore) this.addBefore = nextControl;
 					this.set('canGenerate', true);
 					this.render();
 				}
