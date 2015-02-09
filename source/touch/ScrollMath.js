@@ -452,13 +452,17 @@
 		* @private
 		*/
 		drag: function (e) {
+			var dy, dx, v, h;
 			if (this.dragging) {
-				var dy = this.vertical ? e.pageY - this.my : 0;
+				v = this.vertical && this.bottomBoundary;
+				h = this.horizontal && this.rightBoundary;
+
+				dy = v ? e.pageY - this.my : 0;
 				this.uy = dy + this.py;
 				// provides resistance against dragging into overscroll
 				this.uy = this.boundaryDamping(this.uy, this.topBoundary, this.bottomBoundary, this.kDragDamping);
 				//
-				var dx = this.horizontal ? e.pageX - this.mx : 0;
+				dx = h ? e.pageX - this.mx : 0;
 				this.ux = dx + this.px;
 				// provides resistance against dragging into overscroll
 				this.ux = this.boundaryDamping(this.ux, this.leftBoundary, this.rightBoundary, this.kDragDamping);
@@ -494,11 +498,11 @@
 		*/
 		flick: function (e) {
 			var v;
-			if (this.vertical) {
+			if (this.vertical && this.bottomBoundary) {
 				v = e.yVelocity > 0 ? Math.min(this.kMaxFlick, e.yVelocity) : Math.max(-this.kMaxFlick, e.yVelocity);
 				this.y = this.y0 + v * this.kFlickScalar;
 			}
-			if (this.horizontal) {
+			if (this.horizontal && this.rightBoundary) {
 				v = e.xVelocity > 0 ? Math.min(this.kMaxFlick, e.xVelocity) : Math.max(-this.kMaxFlick, e.xVelocity);
 				this.x = this.x0 + v * this.kFlickScalar;
 			}
