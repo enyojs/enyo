@@ -543,7 +543,10 @@
 				canX = !!(this.horizontal && this.rightBoundary),
 				shouldScroll = false,
 				m = 2,
-				max = 100,
+				// TODO: Figure out whether we need to port the configurable
+				// max / multiplier feature from Moonstone's implementation,
+				// and (if so) how
+				// max = 100,
 				scr = this.isScrolling(),
 				ovr = this.isInOverScroll(),
 				refY = (scr && this.endY !== null) ? this.endY : this.y,
