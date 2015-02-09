@@ -45,9 +45,22 @@
 		},
 
 		/**
+		* After size of viewport is decided, get pageSize using pageSizeMutiplier.
+		* We should update this.pageSize when we update viewport or pageSizeMutiplier.
+		*
+		* @private
+		*/
+		calculatePageSize: function(list) {
+			var fn = this[list.psizeProp],
+				multi = list.pageSizeMultiplier || this.pageSizeMultiplier;
+			// using height/width of the available viewport times our multiplier value
+			this.pageSize = fn.call(this, list) * multi;
+		},
+		/**
 		* @private
 		*/
 		generate: function (list) {
+			this.pageSize = this.pageSize | this.calculatePageSize(list);
 			for (var i=0, p; (p=list.pages[i]); ++i) {
 				this.generatePage(list, p, p.index);
 			}
@@ -236,12 +249,10 @@
 		* @private
 		*/
 		calculateControlsPerPage: function (list) {
-			var fn              = this[list.psizeProp],
-				multi           = list.pageSizeMultiplier || this.pageSizeMultiplier,
+			var pageSize        = this.pageSize | this.calculatePageSize(list),
 				childSize       = this.childSize(list);
 
-			// using height/width of the available viewport times our multiplier value
-			return Math.ceil(((fn.call(this, list) * multi) / childSize) + 1);
+			return Math.ceil((pageSize / childSize) + 1);
 		},
 
 		/**
