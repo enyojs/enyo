@@ -506,6 +506,7 @@
 		},
 
 		/**
+		* TODO: Refine and test newMousewheel, remove this
 		* @private
 		*/
 		mousewheel: function (e) {
@@ -523,6 +524,52 @@
 			this.stop(!shouldScroll);
 			if (shouldScroll) {
 				this.start();
+				return true;
+			}
+		},
+
+		/**
+		* @private
+		*/
+		newMousewheel: function (e) {
+			var wdY = (e.wheelDeltaY === undefined) ? e.wheelDelta : e.wheelDeltaY,
+				dY = wdY,
+				dX = e.wheelDeltaX,
+				canY = !!(this.vertical && this.bottomBoundary),
+				canX = !!(this.horizontal && this.rightBoundary),
+				shouldScroll = false,
+				m = 2,
+				max = 100,
+				scr = this.isScrolling(),
+				ovr = this.isInOverScroll(),
+				refY = (scr && this.endY !== null) ? this.endY : this.y,
+				refX = (scr && this.endX !== null) ? this.endX : this.x,
+				tY = refY,
+				tX = refX;
+
+			if (ovr) {
+				return true;
+			}
+
+			// If we're getting strictly vertical mousewheel events over a scrolling
+			// scroller that can only move horizontally, the user is probably using a
+			// one-dimensional mousewheel and would like us to scroll horizontally instead
+			if (dY && !dX && canX && !canY) {
+				dX = dY;
+				dY = 0;
+			}
+			
+			if (dY && canY) {
+				tY = -(refY + (dY * m));
+				shouldScroll = true;
+			}
+			if (dX && canX) {
+				tX = -(refX + (dX * m));
+				shouldScroll = true;
+			}
+
+			if (shouldScroll) {
+				this.scrollTo(tX, tY);
 				return true;
 			}
 		},

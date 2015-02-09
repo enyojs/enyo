@@ -73,7 +73,7 @@
 		* @default false
 		* @public
 		*/
-		touch: false,
+		touch: true,
 
 		/**
 		* Set to `true` to display a scroll thumb in touch [scrollers]{@link enyo.Scroller}.
@@ -104,13 +104,15 @@
 			onscroll: 'domScroll',
 			onScroll: 'scroll',
 			onScrollStart: 'scrollStart',
-			onScrollStop: 'scrollStop'
+			onScrollStop: 'scrollStop',
+			onShouldDrag: 'shouldDrag'
 		},
 
 		events: {
 			onScrollStart: '',
 			onScroll: '',
-			onScrollStop: ''
+			onScrollStop: '',
+			onShouldDrag: ''
 		},
 
 		classes: 'enyo-scroller enyo-touch-strategy-container enyo-fill',
@@ -124,15 +126,40 @@
 					// Is there a better way?
 					owner: this
 				}]);
-				//this.addClass('enyo-scroller');
-				//this.addClass('enyo-touch-strategy-container');
 			};
 		}),
 
+		rendered: enyo.inherit(function (sup) {
+			return function() {
+				sup.apply(this, arguments);
+				this.calcScrollNode();
+			};
+		}),
+
+		/**
+		* @private
+		*/
+		horizontalChanged: function () {
+			this.$.scrollMath.horizontal = (this.horizontal != 'hidden');
+		},
+
+		/**
+		* @private
+		*/
+		verticalChanged: function () {
+			this.$.scrollMath.vertical = (this.vertical != 'hidden');
+		},
+
+		/**
+		* @private
+		*/
 		scrollTopChanged: function() {
 			this.$.scrollMath.setScrollY(-this.scrollTop);
 		},
 
+		/**
+		* @private
+		*/
 		scrollLeftChanged: function() {
 			this.$.scrollMath.setScrollX(-this.scrollLeft);
 		},
@@ -145,91 +172,52 @@
 		},
 
 		/**
-		* @private
-		*/
-		xmousewheel: function (sender, e) {
-			this.$.scrollMath.mousewheel(e);
-			e.preventDefault();
-			return true;
-/*			if (!this.dragging && this.useMouseWheel) {
-				this.calcBoundaries();
-				//this.syncScrollMath();
-				//this.stabilize();
-				if (this.$.scrollMath.mousewheel(e) || true) {
-					e.preventDefault();
-					return true;
-				} else this.log('hey!');
-			}
-*/		},
-
-		scrollWheelMultiplier: 2,
-		scrollWheelPageMultiplier: 0.2,
-		/**
-		* On `mousewheel` event, scrolls a fixed amount.
+		* Stops any active scroll movement.
 		*
-		* @private
+		* @param {Boolean} emit - Whether or not to fire the `onScrollStop` event.
+		* @public
 		*/
-		mousewheel: function(sender, event) {
-			if (this.useMouseWheel) {
-				var isScrolling = this.$.scrollMath.isScrolling(),//this.isScrolling();
-					sb = this.cachedBounds ? this.cachedBounds : this._getScrollBounds();
-				//this.scrollBounds = this._getScrollBounds();
-				//this.setupBounds();
+		stop: function (emit) {
+			var m = this.$.scrollMath;
 
-				var x = null,
-					y = null,
-					showVertical = true,//this.showVertical(),
-					showHorizontal = false,//this.showHorizontal(),
-					dir = null,
-					val = null,
-					max = null,
-					delta = null
-				;
-
-				//* If we don't have to scroll, allow mousewheel event to bubble
-				if (!showVertical && !showHorizontal) {
-					//this.scrollBounds = null;
-					return false;
-				}
-
-				if (showVertical) {
-					dir = event.wheelDeltaY >= 0 ? 1 : -1;
-					val = Math.abs(event.wheelDeltaY * this.scrollWheelMultiplier);
-					max = sb.clientHeight * this.scrollWheelPageMultiplier;
-					delta = Math.min(val, max);
-					this.lastScrollToY = y = (isScrolling ? this.lastScrollToY : this.scrollTop) + -dir * delta;
-				}
-
-				if (showHorizontal) {
-					var intDirection = 1;
-					// Reverse the direction for RTL
-					// if (this.$.pageLeftControl.rtl) {
-					// 	intDirection = -1;
-					// }
-					if (event.wheelDeltaX) {
-						dir = (event.wheelDeltaX >= 0 ? 1 : -1) * intDirection;
-						val = Math.abs(event.wheelDeltaX * this.scrollWheelMultiplier);
-						max = sb.clientWidth * this.scrollWheelPageMultiplier;
-						delta = Math.min(val, max);
-						this.lastScrollToX = x = (isScrolling ? this.lastScrollToX : this.scrollLeft) + -dir * delta;
-					} else if (!showVertical) {
-						// only use vertical wheel for horizontal scrolling when no vertical bars shown
-						dir = (event.wheelDeltaY >= 0 ? 1 : -1) * intDirection;
-						val = Math.abs(event.wheelDeltaY * this.scrollWheelMultiplier);
-						max = sb.clientWidth * this.scrollWheelPageMultiplier;
-						delta = Math.min(val, max);
-						this.lastScrollToX = x = (isScrolling ? this.lastScrollToX : this.scrollLeft) + -dir * delta;
-					}
-				}
-				this.scrollTo(x, y);
-				event.preventDefault();
-				//this.scrollBounds = null;
-				return true;
+			if (m.isScrolling()) {
+				m.stop(emit);
 			}
 		},
 
+		/**
+		/* @private
+		*/
+		mousewheel: function (sender, e) {
+			if (this.useMouseWheel) {
+				 if (!this.$.scrollMath.isScrolling()) {
+				 	this.calcBoundaries();
+				 }
 
+				// TODO: Change this after newMousewheel becomes mousewheel
+				if (this.$.scrollMath.newMousewheel(e)) {
+					e.preventDefault();
+					return true;
+				}
+			}
+		},
 
+		/**
+		* @private
+		*/
+		down: function (sender, e) {
+			var m = this.$.scrollMath;
+
+			if (m.isScrolling() && !m.isInOverScroll()) {
+				this.stop(true);
+				e.preventTap();
+			}
+			this.calcStartInfo();
+		},
+
+		/**
+		* @private
+		*/
 		dragstart: function (sender, e) {
 			this.calcBoundaries();
 			// Ignore drags sent from multi-touch events
@@ -237,8 +225,8 @@
 				return true;
 			}
 			// note: allow drags to propagate to parent scrollers via data returned in the shouldDrag event.
-			//this.doShouldDrag(e);
-			this.dragging = true; // (e.dragger == this || (!e.dragger && e.boundaryDragger == this));
+			this.doShouldDrag(e);
+			this.dragging = (e.dragger == this || (!e.dragger && e.boundaryDragger == this));
 			if (this.dragging) {
 				if(this.preventDefault){
 					e.preventDefault();
@@ -258,29 +246,22 @@
 		* @private
 		*/
 		drag: function (sender, e) {
-			// if the list is doing a reorder, don't scroll
-			/*if(this.listReordering) {
-				return false;
-			}*/
 			if (this.dragging) {
 				if(this.preventDefault){
 					e.preventDefault();
 				}
 				this.$.scrollMath.drag(e);
-				/*if (this.scrim) {
-					this.$.scrim.show();
-				}*/
 			}
 		},
 		
+		/**
+		* @private
+		*/
 		dragfinish: function (sender, e) {
 			if (this.dragging) {
 				e.preventTap();
 				this.$.scrollMath.dragFinish();
 				this.dragging = false;
-				/*if (this.scrim) {
-					this.$.scrim.hide();
-				}*/
 			}
 		},
 
@@ -295,6 +276,32 @@
 			}
 		},
 
+		/**
+		* @private
+		*/
+		shouldDrag: function (sender, e) {
+			//this.calcAutoScrolling();
+			var requestV = e.vertical,
+				canH = this.$.scrollMath.horizontal && !requestV,
+				canV = this.$.scrollMath.vertical && requestV,
+				down = e.dy < 0,
+				right = e.dx < 0,
+				oobV = (!down && this.startEdges.top || down && this.startEdges.bottom),
+				oobH = (!right && this.startEdges.left || right && this.startEdges.right);
+			// we would scroll if not at a boundary
+			if (!e.boundaryDragger && (canH || canV)) {
+				e.boundaryDragger = this;
+			}
+			// include boundary exclusion
+			if ((!oobV && canV) || (!oobH && canH)) {
+				e.dragger = this;
+				return true;
+			}
+		},
+
+		/**
+		* @private
+		*/
 		scroll: enyo.inherit(function (sup) {
 			return function(sender, event) {
 				var px = this.scrollLeft,
@@ -302,7 +309,9 @@
 					x = this.scrollLeft = -sender.x,
 					y = this.scrollTop = -sender.y,
 					dx = px - x,
-					dy = py - y;
+					dy = py - y,
+					// TODO: Use d to enable / disable mouse events based on velocity
+					d = (dx * dx) + (dy + dy);
 				this.xDir = (dx < 0? 1: dx > 0? -1: 0);
 				this.yDir = (dy < 0? 1: dy > 0? -1: 0);
 				sup.apply(this, arguments);
@@ -313,6 +322,10 @@
 		* @private
 		*/
 		scrollStart: function () {
+			if (!this.touch) {
+				this.suppressMouseEvents();
+			}
+
 			// if (this.scrollNode && !this.isScrolling()) {
 			// 	this.scrolling = true;
 			// 	if (!this.isOverscrolling()) {
@@ -321,12 +334,40 @@
 			// }
 		},
 
+		/**
+		* @private
+		*/
+		scrollStop: function () {
+			if (!this.touch) {
+				this.resumeMouseEvents();
+			}
+		},
 
 		/**
 		* @private
 		*/
-		_getScrollBounds: function () {
-			var s = this.getScrollSize(), cn = this.hasNode();
+		suppressMouseEvents: function() {
+			// TODO: Create a dispatcher API for this
+			enyo.dispatcher.stopListening(document, 'mouseover');
+			enyo.dispatcher.stopListening(document, 'mouseout');
+			enyo.dispatcher.stopListening(document, 'mousemove');
+		},
+
+		/**
+		* @private
+		*/
+		resumeMouseEvents: function(event) {
+			// TODO: Create a dispatcher API for this
+			enyo.dispatcher.listen(document, 'mouseover');
+			enyo.dispatcher.listen(document, 'mouseout');
+			enyo.dispatcher.listen(document, 'mousemove');
+		},
+
+		/**
+		* @private
+		*/
+		getScrollBounds: function () {
+			var s = this.getScrollSize(), cn = this.scrollNode;
 			var b = {
 				left: this.get('scrollLeft'),
 				top: this.get('scrollTop'),
@@ -345,19 +386,50 @@
 		* @private
 		*/
 		getScrollSize: function () {
-			var n = this.hasNode(),
-				w = this.getScrollWidth ? this.getScrollWidth() : (n ? n.ScrollWidth : 0),
-				h = this.getScrollHeight ? this.getScrollHeight() : (n ? n.ScrollHeight : 0);
+			var n = this.scrollNode,
+				w = this.getScrollWidth && this.getScrollWidth() || (n ? n.scrollWidth : 0),
+				h = this.getScrollHeight && this.getScrollHeight() || (n ? n.scrollHeight : 0);
 			return {width: w, height: h};
 		},
 
 		/**
 		* @private
 		*/
-		calcBoundaries: function () {
-			var s = this.$.scrollMath || this, b = this._getScrollBounds();
-			s.bottomBoundary = b.clientHeight - b.height;
-			s.rightBoundary = b.clientWidth - b.width;
+		calcScrollNode: enyo.inherit(function (sup) {
+			return function() {
+				return (this.scrollNode = sup.apply(this, arguments) || this.hasNode());
+			};
+		}),
+
+		/**
+		* @private
+		*/
+		calcStartInfo: function (bounds) {
+			var sb = bounds || this.getScrollBounds(),
+				y = this.scrollTop,
+				x = this.scrollLeft;
+
+			this.canVertical = sb.maxTop > 0 && this.vertical !== 'hidden';
+			this.canHorizontal = sb.maxLeft > 0 && this.horizontal !== 'hidden';
+			this.startEdges = {
+				top: y === 0,
+				bottom: y === sb.maxTop,
+				left: x === 0,
+				right: x === sb.maxLeft
+			};
+		},
+
+		/**
+		* @private
+		*/
+		calcBoundaries: function (bounds) {
+			var m = this.$.scrollMath,
+				b = bounds || this.getScrollBounds();
+
+			m.bottomBoundary = b.clientHeight - b.height;
+			m.rightBoundary = b.clientWidth - b.width;
+
+			return b;
 		}
 
 	};

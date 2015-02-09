@@ -13,7 +13,7 @@
 		overhang: 3,
 		mixins: [Scrollable],
 		observers: [
-			{method: 'calculateMetrics', path: [
+			{method: 'reset', path: [
 				'direction', 'columns', 'rows',
 				'itemHeight', 'itemWidth', 'columns'
 			]}
@@ -75,35 +75,30 @@
 
 			this.set('numItems', num);
 		},
-		rendered: enyo.inherit(function (sup) {
-			return function() {
-				this.calculateMetrics();
-				sup.apply(this, arguments);
-			};
-		}),
 		/**
 		* @private
 		*/
 		scroll: function() {
 			var tt = this.threshold,
-				v = this.scrollTop,
-				dir = this.yDir,
+				v = (this.direction === 'vertical'),
+				val = v ? this.scrollTop : this.scrollLeft,
+				dir = v ? this.yDir : this.xDir,
 				delta = this.delta,
 				cb = this.cachedBounds ? this.cachedBounds : this._getScrollBounds(),
-				mTop = cb.maxTop,
+				mTop = v ? cb.maxTop : cb.maxLeft,
 				mMax = this.threshold.minMax,
 				mMin = mTop - (delta * 2),
 				d, st, j;
-			if (dir == 1 && v > tt.max) {
-				d = v - tt.max;
+			if (dir == 1 && val > tt.max) {
+				d = val - tt.max;
 				st = Math.ceil(d / delta);
 				j = st * delta;
 				tt.max = Math.min(mTop, tt.max + j);
 				tt.min = (tt.max == mTop) ? mMin : tt.max - delta;
 				this.set('first', this.first + (st * this.dim2extent));
 			}
-			else if (dir == -1 && v < tt.min) {
-				d = tt.min - v;
+			else if (dir == -1 && val < tt.min) {
+				d = tt.min - val;
 				st = Math.ceil(d / delta);
 				j = st * delta;
 				tt.max = Math.max(mMax, tt.min - (j - delta));
@@ -119,8 +114,7 @@
 			var oc = this.orderedChildren,
 				e = this.dim2extent,
 				v = (this.direction == 'vertical'),
-				// TODO: Fix this
-				sd = v ? 'scrollTop' : 'scrollTop',
+				sd = v ? 'scrollTop' : 'scrollLeft',
 				sp = this.spacing,
 				i, c, idx, g, p, g2, p2, a, b, w, h;
 			for (i = 0; i < oc.length; i++) {
@@ -153,6 +147,18 @@
 		* @private
 		*/
 		getScrollHeight: function () {
+			return (this.direction === 'vertical' ? this.getVirtualScrollDimension() : null);
+		},
+		/**
+		* @private
+		*/
+		getScrollWidth: function () {
+			return (this.direction === 'horizontal' ? this.getVirtualScrollDimension() : null);
+		},
+		/**
+		* @private
+		*/
+		getVirtualScrollDimension: function() {
 			return (Math.ceil(this.collection.length / this.dim2extent) * this.delta) + this.spacing;
 		},
 		/**
@@ -160,8 +166,12 @@
 		*/
 		reset: enyo.inherit(function (sup) {
 			return function () {
+				var v = (this.direction === 'vertical');
+
 				this.set('scrollTop', 0);
 				this.set('scrollLeft', 0);
+				this.set('vertical', v || 'auto');
+				this.set('horizontal', !v || 'auto');
 				this.calculateMetrics();
 				sup.apply(this, arguments);
 			};

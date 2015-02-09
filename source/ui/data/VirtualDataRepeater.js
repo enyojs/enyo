@@ -47,7 +47,13 @@
 				ci = this.childIndex,
 				n = this.numItems,
 				e = Math.max(n, o.length),
-				i, idx, c, m, s, sc, l, ln;
+				sp, i, idx, c, m, s, sc, l, ln;
+
+			// TODO: Something better. Shouldn't have
+			// Spotlight-specific code here.
+			if (enyo.Spotlight) {
+				sp = enyo.Spotlight.getCurrent();
+			}
 
 			// TODO: Explore optimizing for direction of change
 			for (i = 0; i < e; ++i) {
@@ -62,14 +68,18 @@
 						c.set('model', m);
 						c.set('index', idx);
 						c.addRemoveClass(sc, s);
-						c.selected = s;
+						c.set('selected', s);
+						// TODO: See above.
+						if (c === sp) {
+							enyo.Spotlight.unspot();
+						}
 						ci[idx] = c
 					}
 					else {
 						c = this.createComponent({model: m, index: i});
 						sc = c.selectedClass || 'selected';
 						c.addRemoveClass(sc, s);
-						c.selected = s;
+						c.set('selected', s);
 						c.render();
 						o.push(c);
 						ci[idx] = c;
