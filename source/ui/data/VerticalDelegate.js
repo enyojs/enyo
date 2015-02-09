@@ -48,6 +48,8 @@
 		* After size of viewport is decided, get pageSize using pageSizeMutiplier.
 		* We should update this.pageSize when we update viewport or pageSizeMutiplier.
 		*
+		* @param {enyo.DataList} list - The [list]{@link enyo.DataList} to perform this action on.
+		* @return {Number} this.pageSize - height or width of each page.
 		* @private
 		*/
 		calculatePageSize: function(list) {
@@ -55,6 +57,7 @@
 				multi = list.pageSizeMultiplier || this.pageSizeMultiplier;
 			// using height/width of the available viewport times our multiplier value
 			this.pageSize = fn.call(this, list) * multi;
+			return this.pageSize;
 		},
 		/**
 		* @private
