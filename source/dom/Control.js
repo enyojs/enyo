@@ -771,12 +771,9 @@
 				this.applyStyle('display', this._display || '');
 				this.sendShowingChangedEvent(was);
 
-				// note the check for generated and canGenerate as changes to canGenerate will force
-				// us to ignore the renderOnShow value so we don't undo whatever the developer was
-				// intending
-				if (!this.generated && !this.canGenerate && this.renderOnShow) {
-					this.set('canGenerate', true);
+				if (this.shouldGenerateStub && this.renderOnShow) {
 					this.render();
+					this.shouldGenerateStub = false;
 				}
 			}
 
@@ -920,6 +917,16 @@
 		* @public
 		*/
 		canGenerate: true,
+
+		/**
+		* Indicates whether the control should just generate a placeholder stub (DOM element) for
+		* creation performance considerations.
+		*
+		* @type {Boolean}
+		* @default false
+		* @public
+		*/
+		shouldGenerateStub: false,
 
 		/**
 		* Indicates whether the control is visible.
@@ -1192,9 +1199,9 @@
 				// and that it is only true if the renderOnShow is also false
 				this.showing = ((!!this.showing) && !this.renderOnShow);
 
-				// we want to check and make sure that the canGenerate value is correct given
+				// we want to check and make sure that the shouldGenerateStub value is correct given
 				// the state of renderOnShow
-				this.canGenerate = (this.canGenerate && !this.renderOnShow);
+				this.shouldGenerateStub = this.renderOnShow;
 
 				// super initialization
 				sup.apply(this, arguments);
