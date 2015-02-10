@@ -769,12 +769,13 @@
 			// our last known value for display was or use the default
 			if (!was && this.showing) {
 				this.applyStyle('display', this._display || '');
-				this.sendShowingChangedEvent(was);
 
 				if (this.shouldGenerateStub && this.renderOnShow) {
 					this.render();
 					this.shouldGenerateStub = false;
 				}
+
+				this.sendShowingChangedEvent(was);
 			}
 
 			// if we are supposed to be hiding the control then we need to cache our current
@@ -787,6 +788,19 @@
 				this.applyStyle('display', 'none');
 			}
 
+		},
+
+		/**
+		* @private
+		*/
+		renderOnShowChanged: function () {
+			// ensure that the default value assigned to showing is actually a boolean
+			// and that it is only true if the renderOnShow is also false
+			this.showing = ((!!this.showing) && !this.renderOnShow);
+
+			// we want to check and make sure that the shouldGenerateStub value is correct given
+			// the state of renderOnShow
+			this.shouldGenerateStub = this.renderOnShow;
 		},
 
 		/**
@@ -1195,13 +1209,8 @@
 				// initialize the styles for this instance
 				this.style = this.kindStyle + this.style;
 
-				// ensure that the default value assigned to showing is actually a boolean
-				// and that it is only true if the renderOnShow is also false
-				this.showing = ((!!this.showing) && !this.renderOnShow);
-
-				// we want to check and make sure that the shouldGenerateStub value is correct given
-				// the state of renderOnShow
-				this.shouldGenerateStub = this.renderOnShow;
+				// set initial value based on renderOnShow
+				this.renderOnShowChanged();
 
 				// super initialization
 				sup.apply(this, arguments);
