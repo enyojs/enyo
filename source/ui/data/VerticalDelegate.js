@@ -63,7 +63,7 @@
 		* @private
 		*/
 		generate: function (list) {
-			this.pageSize = this.pageSize | this.calculatePageSize(list);
+			this.pageSize = this.pageSize || this.calculatePageSize(list);
 			for (var i=0, p; (p=list.pages[i]); ++i) {
 				this.generatePage(list, p, p.index);
 			}
@@ -253,7 +253,7 @@
 		* @private
 		*/
 		calculateControlsPerPage: function (list) {
-			var pageSize        = this.pageSize | this.calculatePageSize(list),
+			var pageSize        = this.pageSize || this.calculatePageSize(list),
 				childSize       = this.childSize(list);
 
 			return Math.ceil((pageSize / childSize) + 1);
