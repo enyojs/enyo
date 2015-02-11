@@ -122,8 +122,10 @@
 		*/
 		refresh: function (list) {
 			if (!list.hasReset) { return this.reset(list); }
+			this._dirtyBit = true;
 			this.assignPageIndices(list);
 			this.generate(list);
+			this._dirtyBit = false;
 		},
 
 		/**
@@ -220,8 +222,14 @@
 				// update the each page's childSize value
 				list.isChildSizeUpdated = (list.childSize == childSize) ? false : true;
 				if (list.isChildSizeUpdated) {
+					metrics.hasListChildSize = false;
 					metrics.childSize = childSize;
 					metrics.controlsPerPage = this.controlsPerPage(list, true, index);
+				} else {
+					if (metrics.childSize) {
+						metrics.childSize = childSize;
+					}
+					metrics.hasListChildSize = true;
 				}
 			}
 		},
@@ -250,19 +258,30 @@
 		* @private
 		*/
 		childSize: function (list, index) {
-			var childSize;
 			if (!list.fixedChildSize) {
+				var metrics = list.metrics.pages[index];
+				// if childSize of this indexed page is already calculated and same as list.childSize
+				// we will avoid redundant calculation.
+				if (metrics && !this._dirtyBit) {
+					if (metrics.childSize) {
+						return metrics.childSize;
+					}
+					if (list.childSize && metrics.hasListChildSize) {
+						return list.childSize;
+					}
+				}
+
 				var pageIndex = (typeof index !== 'undefined') ? index : list.$.page1.index,
 					sizeProp  = list.psizeProp,
 					page      = (pageIndex == list.$.page1.index) ? list.$.page1 : list.$.page2,
 					n         = page.node || page.hasNode(),
-					size, props;
+					size, props, childSize;
 				if (pageIndex >= 0 && n) {
 					props = list.metrics.pages[pageIndex];
 					size  = props? props[sizeProp]: 0;
 					childSize = Math.floor(size / (n.children.length || 1));
 				}
-				if (index) {
+				if (pageIndex) {
 					list.metrics.pages[index].childSize = childSize;
 				}
 			}
@@ -660,12 +679,12 @@
 			if (firstIdx === 0) {
 				threshold[upperProp] = undefined;
 			} else {
-				threshold[upperProp] = (metrics[firstIdx][upperProp] + this.childSize(list));
+				threshold[upperProp] = (metrics[firstIdx][upperProp] + this.childSize(list, firstIdx));
 			}
 			if (lastIdx >= count) {
 				threshold[lowerProp] = undefined;
 			} else {
-				threshold[lowerProp] = (metrics[lastIdx][lowerProp] - fn.call(this, list) - this.childSize(list));
+				threshold[lowerProp] = (metrics[lastIdx][lowerProp] - fn.call(this, list) - this.childSize(list, lastIdx));
 			}
 			if (list.usingScrollListener) {
 				list.$.scroller.setScrollThreshold(threshold);
