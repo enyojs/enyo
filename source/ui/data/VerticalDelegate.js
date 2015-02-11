@@ -169,9 +169,11 @@
 				// the metrics for the entire list
 				metrics = list.metrics,
 				// controls per page
-				perPage = this.controlsPerPage(list, list.isChildSizeUpdated),
+				perPage = this.controlsPerPage(list),
 				// placeholder for the control we're going to update
-				view;
+				view,
+				// basically we assume that every page has same childSize, but just in case
+				childSize;
 
 			// the first index for this generated page
 			page.start  = perPage * index;
@@ -206,9 +208,22 @@
 			metrics        = metrics.pages[index] || (metrics.pages[index] = {});
 			metrics.height = this.pageHeight(list, page);
 			metrics.width  = this.pageWidth(list, page);
-			// update the childSize value now that we have measurements
-			var oldChildSize = list.childSize;
-			list.isChildSizeUpdated = (oldChildSize == this.childSize(list)) ? false : true;
+
+			// we can know exact childSize after it rendered once
+			if (!list.fixedChildSize) {
+				childSize = this.childSize(list, index);
+			}
+			// when initial page (index: 0) is generated
+			if (!list.childSize) {
+				list.childSize = childSize;
+			} else {
+				// update the each page's childSize value
+				list.isChildSizeUpdated = (list.childSize == childSize) ? false : true;
+				if (list.isChildSizeUpdated) {
+					metrics.childSize = childSize;
+					metrics.controlsPerPage = this.controlsPerPage(list, true, index);
+				}
+			}
 		},
 
 		/**
@@ -227,23 +242,33 @@
 
 		/**
 		* Generates a child size for the given [list]{@link enyo.DataList}.
-		* if fixedChildSize is not assigned, we assume that each page could have different childSize
+		* if fixedChildSize is not assigned, we assume that each page could have different childSize.
 		*
+		* @param {enyo.DataList} list - The [list]{@link enyo.DataList} to perform this action on.
+		* @param {Number} index - The index of given page. If it is, we can assume that only this page
+		*						has individual childSize and controlsPerPage.
 		* @private
 		*/
-		childSize: function (list) {
+		childSize: function (list, index) {
+			var childSize;
 			if (!list.fixedChildSize) {
-				var pageIndex = list.$.page1.index,
+				var pageIndex = (typeof index !== 'undefined') ? index : list.$.page1.index,
 					sizeProp  = list.psizeProp,
 					n         = list.$.page1.node || list.$.page1.hasNode(),
 					size, props;
 				if (pageIndex >= 0 && n) {
 					props = list.metrics.pages[pageIndex];
 					size  = props? props[sizeProp]: 0;
-					list.childSize = Math.floor(size / (n.children.length || 1));
+					childSize = Math.floor(size / (n.children.length || 1));
 				}
+				if (index) {
+					list.metrics.pages[index].childSize = childSize;
+				} else {
+					list.childSize = childSize;
+				}
+
 			}
-			return list.fixedChildSize || list.childSize || (list.childSize = 100); // we have to start somewhere
+			return list.fixedChildSize || childSize || 100; // we have to start somewhere
 		},
 
 		/**
