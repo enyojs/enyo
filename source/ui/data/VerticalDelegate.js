@@ -254,7 +254,8 @@
 			if (!list.fixedChildSize) {
 				var pageIndex = (typeof index !== 'undefined') ? index : list.$.page1.index,
 					sizeProp  = list.psizeProp,
-					n         = list.$.page1.node || list.$.page1.hasNode(),
+					page      = (pageIndex == list.$.page1.index) ? list.$.page1 : list.$.page2,
+					n         = page.node || page.hasNode(),
 					size, props;
 				if (pageIndex >= 0 && n) {
 					props = list.metrics.pages[pageIndex];
