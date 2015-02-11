@@ -253,7 +253,7 @@
 		* @private
 		*/
 		calculateControlsPerPage: function (list) {
-			var pageSize        = this.pageSize || this.calculatePageSize(list),
+			var pageSize        = this.pageSize,
 				childSize       = this.childSize(list);
 
 			return Math.ceil((pageSize / childSize) + 1);
@@ -758,8 +758,9 @@
 
 			list._updateBounds = true;
 			this.updateBounds(list);
-			// Need to update our controlsPerPage value immediately,
+			// Need to update our controlsPerPage and pageSize value immediately,
 			// before any cached metrics are used
+			this.calculatePageSize(list);
 			this.controlsPerPage(list);
 			if (prevCPP !== list.controlsPerPage) {
 				// since we are now using a different number of controls per page,
