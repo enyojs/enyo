@@ -42,7 +42,7 @@
 		*
 		* @private
 		*/
-		windowEvents: ["resize", "load", "unload", "message", "hashchange", "popstate"],
+		windowEvents: ["resize", "load", "unload", "message", "hashchange", "popstate", "focus", "blur"],
 
 		/**
 		* Feature plugins (aka filters)
