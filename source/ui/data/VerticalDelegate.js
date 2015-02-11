@@ -227,6 +227,7 @@
 
 		/**
 		* Generates a child size for the given [list]{@link enyo.DataList}.
+		* if fixedChildSize is not assigned, we assume that each page could have different childSize
 		*
 		* @private
 		*/
@@ -269,8 +270,10 @@
 		*
 		* @private
 		*/
-		controlsPerPage: function (list, forceUpdate) {
-			if (list._staticControlsPerPage) {
+		controlsPerPage: function (list, forceUpdate, pageIndex) {
+			// if controlsPerPage is given from dataList instantiation, we will use it
+			// unless fixedChildSize is not assigned.
+			if (!list.fixedChildSize && list._staticControlsPerPage) {
 				return list.controlsPerPage;
 			} else {
 				var updatedControls = list._updatedControlsPerPage,
