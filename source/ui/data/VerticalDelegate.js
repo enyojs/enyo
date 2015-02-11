@@ -169,7 +169,7 @@
 				// the metrics for the entire list
 				metrics = list.metrics,
 				// controls per page
-				perPage = this.controlsPerPage(list),
+				perPage = this.controlsPerPage(list, list.isChildSizeUpdated, page.index),
 				// placeholder for the control we're going to update
 				view,
 				// basically we assume that every page has same childSize, but just in case
@@ -264,10 +264,7 @@
 				}
 				if (index) {
 					list.metrics.pages[index].childSize = childSize;
-				} else {
-					list.childSize = childSize;
 				}
-
 			}
 			return list.fixedChildSize || childSize || 100; // we have to start somewhere
 		},
@@ -277,11 +274,14 @@
 		* out of [controlsPerPage]{@link DataList.delegates.vertical#controlsPerPage} so that it
 		* can be overridden by delegates that inherit from this one.
 		*
+		* @param {enyo.DataList} list - The [list]{@link enyo.DataList} to perform this action on.
+		* @param {Number} index - The index of given page. If it is, we can assume that only this page
+		*						has individual childSize and controlsPerPage.
 		* @private
 		*/
-		calculateControlsPerPage: function (list) {
+		calculateControlsPerPage: function (list, pageIndex) {
 			var pageSize        = this.pageSize,
-				childSize       = this.childSize(list);
+				childSize       = this.childSize(list, pageIndex);
 
 			return Math.ceil((pageSize / childSize) + 1);
 		},
@@ -308,9 +308,15 @@
 				// if we've never updated the value or it was done longer ago than the most
 				// recent updated sizing/bounds we need to update
 				if (forceUpdate || !updatedControls || (updatedControls < updatedBounds)) {
-					perPage = list.controlsPerPage = this.calculateControlsPerPage(list);
-					// update our time for future comparison
-					list._updatedControlsPerPage = enyo.perfNow();
+					perPage = this.calculateControlsPerPage(list, pageIndex);
+
+					if (list.controlsPerPage && typeof pageIndex !== 'undefined') {
+						list.metrics.pages[pageIndex].controlsPerPage = perPage;
+					} else {
+						list.controlsPerPage = perPage;
+						// update our time for future comparison
+						list._updatedControlsPerPage = enyo.perfNow();
+					}
 				}
 				return perPage;
 			}
