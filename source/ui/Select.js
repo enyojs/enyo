@@ -135,6 +135,9 @@
 			if (this.hasNode()) {
 				return Number(this.node.selectedIndex);
 			}
+			else {
+				return this.selected;
+			}
 		},
 
 		/**
@@ -149,12 +152,9 @@
 		* @private
 		*/
 		valueChanged: function() {
-			if (this.hasNode() && !this.updating) {
-				//Needs delay otherwise it won't update value (at least on chrome 42 canary)
-				this.startJob('updateValue', function() {
-					this.node.value = this.value;
-					this.set('selected', this.getSelected());
-				}, 100);
+			if (this.hasNode() && !this.updating && this.value) {
+				this.node.value = this.value;
+				this.set('selected', this.getSelected());
 			}
 		},
 		/**
