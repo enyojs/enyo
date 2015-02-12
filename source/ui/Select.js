@@ -80,7 +80,16 @@
 			* @default false
 			* @public
 			*/
-			multiple: false
+			multiple: false,
+
+			/**
+			* Sets whether the enyo.Select is disabled, or not
+			* 
+			* @type {Boolean}
+			* @default false
+			* @public
+			*/
+			disabled: false
 		},
 		
 		/**
@@ -112,9 +121,10 @@
 					this.setAttribute('onchange', enyo.bubbler);
 				}
 				this.selectedChanged();
-				this.updateValue();
+				this.valueChanged();
 				this.sizeChanged();
 				this.multipleChanged();
+				this.disabledChanged();
 			};
 		}),
 
@@ -161,6 +171,14 @@
 		multipleChanged: function() {
 			if (this.hasNode()) {
 				this.node.multiple = this.multiple;
+			}
+		},
+		/**
+		* @private
+		*/
+		disabledChanged: function() {
+			if (this.hasNode()) {
+				this.node.disabled = this.disabled;
 			}
 		},
 		/**
