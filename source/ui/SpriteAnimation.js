@@ -177,6 +177,20 @@
 			useCssAnimation: true
 		},
 
+		/**
+		* @private
+		*/
+		events: {
+			onSpriteAnimationEnds: ''
+		},
+
+		/**
+		* @private
+		*/
+		handlers: {
+			onwebkitAnimationEnd: 'doSpriteAnimationEnds'
+		},
+
 		_frameIndex: 0,
 		_loopCount: 0,
 
@@ -384,8 +398,9 @@
 			if (fi + 1 >= this._positionList.length - 1) {
 				this._frameIndex = 0;
 				this._loopCount++;
-				if (typeof this.get('iterations') == 'number' && this._loopCount >= this.get('iterations')) {
+				if (this.get('iterationCount') !== null && this._loopCount >= this.get('iterationCount')) {
 					this.stop();
+					this.doSpriteAnimationEnds();
 					if (!this.get('stopAtEnd')) {
 						// go one additional frame to get us back to the start.
 						this._frameIndex++;
