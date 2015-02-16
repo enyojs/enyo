@@ -1236,6 +1236,13 @@
 				// this should be updated if a better api for hooking becomes available but for
 				// now we just do this directly to ensure that the showing value is actually
 				// a boolean
+				if (path == "classes" && value == "focus") {
+					// To verify channelsItem_0 is valid and has node
+					console.log("[Enyo] Control set: apply this as ", this, arguments, this.hasNode());
+				}
+				if (typeof this == "undefined") {
+					console.log("[Enyo] Control set: this is undefined! ", this, arguments);
+				}
 				if (path == 'showing') {
 					return sup.call(this, path, !! value, opts);
 				} else return sup.apply(this, arguments);

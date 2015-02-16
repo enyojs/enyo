@@ -484,7 +484,10 @@
 			create,
 			silent,
 			comparator;
-		
+		if (typeof next == "undefined" || enyo.breakpoint) {
+			// To verify which condition is matched
+			console.log("[Enyo] setPath[case 0]", this === enyo, enyo.global, this, arguments);
+		}
 		if (typeof opts == 'object') opts = enyo.mixin({}, [options, opts]);
 		else {
 			force = opts;
@@ -509,7 +512,12 @@
 		
 		do {
 			
-			if (!parts.length) was = next.get && next.get !== getPath? next.get(part): next[part];
+			if (!parts.length) {
+				if (typeof next == "undefined" || enyo.breakpoint) {
+					console.log("[Enyo] setPath[case 0-1]", this, enyo.global);
+				}
+				was = next.get && next.get !== getPath? next.get(part): next[part];
+			}
 			else {
 				// this allows us to ensure that if we're setting a static property of a constructor we have the
 				// correct constructor
@@ -520,6 +528,9 @@
 					parts.unshift(part);
 					next.set(parts.join('.'), is, opts);
 					return base;
+				}
+				if (typeof next == "undefined" || enyo.breakpoint) {
+					console.log("[Enyo] setPath[case 0-2]:", this, enyo.global);
 				}
 				if (next !== base && next.get) next = (next.get !== getPath? next.get(part): next[part]) || (create && (next[part] = {}));
 				else next = next[part] || (create && (next[part] = {}));
