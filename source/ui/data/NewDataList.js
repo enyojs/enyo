@@ -57,6 +57,9 @@
 				// the actual tile height is related to the tile width
 				is1 = (md1 * (is2 / md2));
 			}
+			else if (d2x === 'auto') {
+				d2x = 1;
+			}
 			
 			d1 = sp + is1;
 			d2 = sp + is2;
