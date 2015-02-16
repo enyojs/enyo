@@ -2,6 +2,9 @@ enyo.kind({
 	kind: "FittableRows",
 	name: "enyo.sample.SpriteAnimationSample",
 	classes: "sprite-animation-sample",
+	handlers: {
+		onSpriteAnimationEnds: 'animationEndHandler'
+	},
 	components: [
 		{content: "Sprite Animation (Horizontally Sprited)", classes: "section"},
 		{kind: "enyo.SpriteAnimation", name: "sprite1", classes: "animation", src: "http://www.polybeast.de/portfolio/SkybusterExplosion.jpg", width: 320, height: 240, rows: 5, columns: 4, duration: 2000},
@@ -19,6 +22,19 @@ enyo.kind({
 			{content: "8s", value: "8000"},
 			{content: "9s", value: "9000"},
 			{content: "10s", value: "10000"}
+		]},
+		{kind: "enyo.Select", name: "iterationPicker", onchange: "iterationChanged", components: [
+			{content: "Infinite", value: null},
+			{content: "Iterate 1", value: 1},
+			{content: "Iterate 2", value: 2},
+			{content: "Iterate 3", value: 3},
+			{content: "Iterate 4", value: 4},
+			{content: "Iterate 5", value: 5, selected: true},
+			{content: "Iterate 6", value: 6},
+			{content: "Iterate 7", value: 7},
+			{content: "Iterate 8", value: 8},
+			{content: "Iterate 9", value: 9},
+			{content: "Iterate 10", value: 10}
 		]},
 		// {kind: "moon.SimpleIntegerPicker", name: "sprite1Picker", value: 2},
 		{content: "Sprite Animation (Vertically Sprited)", classes: "section"},
@@ -43,6 +59,11 @@ enyo.kind({
 		{from: ".$.sprite1Picker.value", to: ".$.sprite1.duration"},
 		{from: ".$.sprite1Picker.value", to: ".$.sprite3.duration"},
 		{from: ".$.sprite2Picker.value", to: ".$.sprite2.duration"},
-		{from: ".$.sprite2Picker.value", to: ".$.sprite4.duration"}
-	]
+		{from: ".$.sprite2Picker.value", to: ".$.sprite4.duration"},
+		{from: ".$.iterationPicker.value", to: ".$.sprite3.iterationCount"},
+		{from: ".$.iterationPicker.value", to: ".$.sprite1.iterationCount"}
+	],
+	animationEndHandler: function(sender, ev) {
+		console.log("onEnd", sender.id, sender.useCssAnimation, sender.iterationCount)
+	}
 });
