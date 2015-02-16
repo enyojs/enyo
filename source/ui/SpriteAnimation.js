@@ -390,7 +390,8 @@
 		_nextFrame: function () {
 			var fi = this._frameIndex * 2,
 				x = this._positionList[fi]     * -1 + this.offsetLeft,
-				y = this._positionList[fi + 1] * -1 + this.offsetTop;
+				y = this._positionList[fi + 1] * -1 + this.offsetTop,
+				iterations = parseInt(this.get('iterationCount'), 10) || null; // strings like "infinite" will be converted to null
 
 			this.$.spriteImage.applyStyle('-webkit-transform', 'translate3d('+ x +'px, '+ y +'px, 0)');
 			this.$.spriteImage.applyStyle('transform', 'translate3d('+ x +'px, '+ y +'px, 0)');
@@ -398,7 +399,7 @@
 			if (fi + 1 >= this._positionList.length - 1) {
 				this._frameIndex = 0;
 				this._loopCount++;
-				if (this.get('iterationCount') !== null && this._loopCount >= this.get('iterationCount')) {
+				if (iterations != null && this._loopCount >= iterations) {
 					this.stop();
 					this.doSpriteAnimationEnds();
 					if (!this.get('stopAtEnd')) {
