@@ -163,8 +163,36 @@
 			* @default true
 			* @public
 			*/
-			stopAtEnd: true
+			stopAtEnd: true,
+
+			/**
+			* A toggle for whether to use high-performance CSS animation keyframes or low
+			* performance JavaScript-based timing methods. This may be useful for times when the CSS
+			* animation capabilities are lacking or the device is low-powered.
+			*
+			* @type {Boolean}
+			* @default true
+			* @public
+			*/
+			useCssAnimation: true
 		},
+
+		/**
+		* @private
+		*/
+		events: {
+			onSpriteAnimationEnds: ''
+		},
+
+		/**
+		* @private
+		*/
+		handlers: {
+			onwebkitAnimationEnd: 'doSpriteAnimationEnds'
+		},
+
+		_frameIndex: 0,
+		_loopCount: 0,
 
 		/**
 		* @private
@@ -187,7 +215,9 @@
 			'animationName': ['id'],
 			'totalWidth': ['offsetLeft', 'width', 'columns'],
 			'totalHeight': ['offsetTop', 'height', 'rows'],
-			'steps': ['cellOrientation', 'columns', 'rows']
+			'steps': ['cellOrientation', 'columns', 'rows'],
+			'frameCount': ['columns', 'rows'],
+			'frameLength': ['duration', 'frameCount']
 		},
 
 		/**
@@ -249,7 +279,11 @@
 		* @private
 		*/
 		updateKeyframes: function () {
-			this.$.spriteImage.set('stylesheetContent', this._generateKeyframes());
+			if (this.useCssAnimation) {
+				this.$.spriteImage.set('stylesheetContent', this._generateKeyframes());
+			} else {
+				this._generatePositionList();
+			}
 			this._forceAnimationReset();
 		},
 
@@ -284,14 +318,26 @@
 			return (this.get('cellOrientation') == 'horizontal') ? this.get('columns') : this.get('rows');
 		},
 
+		frameCount: function () {
+			return (this.rows * this.columns);
+		},
+
+		frameLength: function () {
+			return Math.floor(this.get('duration') / this.get('frameCount'));
+		},
+
 		/**
 		* Starts the animation.
 		*
 		* @public
 		*/
 		start: function () {
-			this.$.spriteImage.applyStyle('-webkit-animation-name', this.get('animationName'));
-			this.$.spriteImage.applyStyle('animation-name', this.get('animationName'));
+			if (this.useCssAnimation) {
+				this.$.spriteImage.applyStyle('-webkit-animation-name', this.get('animationName'));
+				this.$.spriteImage.applyStyle('animation-name', this.get('animationName'));
+			} else {
+				this._intervalHandle = scope.setInterval(this.bindSafely(this._nextFrame, this), this.get('frameLength'));
+			}
 			this.set('paused', false);
 		},
 
@@ -303,6 +349,8 @@
 		stop: function () {
 			this.$.spriteImage.applyStyle('-webkit-animation-name', null);
 			this.$.spriteImage.applyStyle('animation-name', null);
+			scope.clearInterval(this._intervalHandle);
+			this._loopCount = 0;
 		},
 
 		/**
@@ -320,6 +368,13 @@
 		*/
 		pausedChanged: function() {
 			this.addRemoveClass('paused', this.get('paused'));
+			if (!this.get('useCssAnimation')) {
+				if (this.get('paused')) {
+					this.stop();
+				} else {
+					this.start();
+				}
+			}
 		},
 
 		/**
@@ -330,6 +385,32 @@
 		*/
 		pause: function () {
 			this.set('paused', true);
+		},
+
+		_nextFrame: function () {
+			var fi = this._frameIndex * 2,
+				x = this._positionList[fi]     * -1 + this.offsetLeft,
+				y = this._positionList[fi + 1] * -1 + this.offsetTop,
+				iterations = parseInt(this.get('iterationCount'), 10) || null; // strings like "infinite" will be converted to null
+
+			this.$.spriteImage.applyStyle('-webkit-transform', 'translate3d('+ x +'px, '+ y +'px, 0)');
+			this.$.spriteImage.applyStyle('transform', 'translate3d('+ x +'px, '+ y +'px, 0)');
+
+			if (fi + 1 >= this._positionList.length - 1) {
+				this._frameIndex = 0;
+				this._loopCount++;
+				if (iterations != null && this._loopCount >= iterations) {
+					this.stop();
+					this.doSpriteAnimationEnds();
+					if (!this.get('stopAtEnd')) {
+						// go one additional frame to get us back to the start.
+						this._frameIndex++;
+						this._nextFrame();
+					}
+				}
+			} else {
+				this._frameIndex++;
+			}
 		},
 
 		/**
@@ -398,6 +479,26 @@
 		*/
 		_generateKeyframe: function (percent, x, y) {
 			return (Math.ceil(percent*1000000) / 10000) +'%	{ -webkit-transform: translate3d('+ x +'px, '+ y +'px, 0);	transform: translate3d('+ x +'px, '+ y +'px, 0); }\n';
+		},
+
+		_generatePositionList: function () {
+			// build and store a list of all of the necessary keyframe positions in order
+			var o, i,
+				width = this.get('width'),
+				height = this.get('height'),
+				rows = this.get('rows'),
+				cols = this.get('columns'),
+				horiz = this.get('cellOrientation') == 'horizontal' ? true : false,
+				outer = (horiz ? rows : cols),
+				inner = (horiz ? cols : rows);
+
+			this._positionList = [];
+			for (o = 0; o < outer; o++) {
+				for (i = 0; i < inner; i++) {
+					this._positionList.push((width * (horiz ? i : o)), (height * (horiz ? o : i)));
+				}
+			}
+			return this._positionList;
 		}
 	});
 
