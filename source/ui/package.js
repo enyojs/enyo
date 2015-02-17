@@ -30,5 +30,6 @@ enyo.depends(
 	'Audio.js',
 	'Video.js',
 	'Scrim.js',
+	'LightPanels.js',
 	'data'
 );

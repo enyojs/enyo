@@ -1,0 +1,9 @@
+.light-panels-sample {
+	width: 50%;
+}
+
+.light-panels-sample .light-panel > * {
+	text-align: center;
+	font-size: 36px;
+	font-weight: bold;
+}
