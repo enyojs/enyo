@@ -75,6 +75,13 @@
 	word-wrap: break-word;
 }
 
+.enyo-light-panels {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
 .enyo-light-panels > * {
 	position: absolute;
 	left: 100%;
