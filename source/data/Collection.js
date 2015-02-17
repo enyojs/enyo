@@ -422,6 +422,7 @@
 				, options = this.options
 				, pkey = ctor.prototype.primaryKey
 				, idx = len
+				, removedBeforeIdx = 0
 				, added, keep, removed, model, attrs, found, id;
 				
 			// for backwards compatibility with earlier api standards we allow the
@@ -537,9 +538,15 @@
 			if (purge && (keep && keep.length)) {
 				removed || (removed = []);
 				keep || (keep = {});
-				for (i=0; i<len; ++i) !keep[(model = loc[i]).euid] && removed.push(model);
+				for (i=0; i<len; ++i) {
+					if (!keep[(model = loc[i]).euid]) {
+						removed.push(model);
+						if (i < idx) removedBeforeIdx++;
+					}
+				} 
 				// if we removed any we process that now
 				removed.length && this.remove(removed, opts);
+				idx = idx - removedBeforeIdx;
 			}
 			
 			// added && loc.stopNotifications().add(added, idx).startNotifications();
