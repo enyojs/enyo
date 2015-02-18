@@ -228,10 +228,7 @@
 		popPanels: function (index) {
 			var panels = this.getPanels();
 			index = index || panels.length - 1;
-
-			while (panels.length > index && index >= 0) {
-				panels[panels.length - 1].destroy();
-			}
+			panels.length = index;
 		},
 
 		/**
@@ -240,10 +237,7 @@
 		* @public
 		*/
 		clear: function () {
-			var panels = this.getPanels();
-			while (panels.length) {
-				panels[panels.length - 1].destroy();
-			}
+			this.getPanels().length = 0;
 		},
 
 		/**
