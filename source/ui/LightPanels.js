@@ -3,13 +3,13 @@
 	* A light-weight panels implementation that has basic support for side-to-side transitions
 	* between child components.
 	*
-	* @class moon.LightPanels
-	* @extends enyo.LightPanels
+	* @class enyo.LightPanels
+	* @extends enyo.Control
 	* @ui
 	* @public
 	*/
 	enyo.kind(
-		/** @lends moon.LightPanels.prototype */ {
+		/** @lends enyo.LightPanels.prototype */ {
 
 		/**
 		* @private
@@ -28,7 +28,7 @@
 
 		/**
 		* @private
-		* @lends moon.LightPanels.prototype
+		* @lends enyo.LightPanels.prototype
 		*/
 		published: {
 
