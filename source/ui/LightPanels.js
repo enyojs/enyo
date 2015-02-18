@@ -108,7 +108,7 @@
 
 			if (nextPanel) {
 				// only animate transition if there is more than one panel and/or we're animating
-				if (panels.length == 1 || !this.animate) {
+				if (!this.shouldAnimate()) {
 					nextPanel.applyStyle('-webkit-transition-duration', '0s');
 					nextPanel.applyStyle('transition-duration', '0s');
 				} else {
@@ -124,9 +124,24 @@
 						enyo.dom.transform(this._currentPanel, {translateX: this._direction > 0 ? '-200%' : '0%'});
 						enyo.dom.transform(this._currentPanel, {translateZ: 0});
 					}
+
 					this._currentPanel = nextPanel;
+					if (!this.shouldAnimate() && !this._currentPanel.shouldSkipPostTransition()) {
+						this._currentPanel.postTransition();
+					}
+
 				}), 16);
 			}
+		},
+
+		/**
+		* Determines whether or not we should animate the panel transition.
+		*
+		* @return {Boolean} If `true`, the panels should animate.
+		* @public
+		*/
+		shouldAnimate: function () {
+			return this.getPanels().length > 1 && this.animate;
 		},
 
 		/**
@@ -244,8 +259,14 @@
 		* @private
 		*/
 		transitionFinished: function (sender, ev) {
-			if (ev.originator === this._currentPanel && this.popOnBack && this._direction < 0
-				&& this.index < this.getPanels().length - 1) this.popPanels(this.index + 1);
+			if (ev.originator === this._currentPanel) {
+				if (this.popOnBack && this._direction < 0 && this.index < this.getPanels().length - 1) {
+					this.popPanels(this.index + 1);
+				}
+				if (!this._currentPanel.shouldSkipPostTransition()) {
+					this._currentPanel.postTransition();
+				}
+			}
 		}
 
 	});
