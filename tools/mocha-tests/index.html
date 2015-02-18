@@ -42,10 +42,19 @@
 		<script src="tests/ProgressiveFilter.js"></script>
 		<script src="tests/EventEmitter.js"></script>
 		<script>
+			function upload() {
+				if(window.__coverage__) {
+					var xhr = new XMLHttpRequest();
+					xhr.open("post","/coverage/client", false);
+					xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+					xhr.send(JSON.stringify(__coverage__));
+				}
+			}
 			if (window.mochaPhantomJS) {
+				mocha.run = mocha.run.bind(mocha, upload);	// Hack, mochaPhantomJS.run does not accept args.  See https://github.com/metaskills/mocha-phantomjs/issues/159
 				mochaPhantomJS.run();
 			} else {
-				mocha.run();
+				mocha.run(upload);
 			}
 		</script>
 	</body>

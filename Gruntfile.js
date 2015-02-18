@@ -13,9 +13,10 @@ module.exports = function (grunt) {
 		},
 		
 		mocha_phantomjs: {
-			all: ['tools/mocha-tests/index.html']
+			all: ['tools/mocha-tests/index.html'],
+			cover: { options: {urls: ['http://localhost:8888/tools/mocha-tests/index.html'] } }
 		},
-		
+
 		exec: {
 			
 			// need to still execute the older tests
@@ -30,6 +31,7 @@ module.exports = function (grunt) {
 	// currently this is only being used because we are still running the older unit-tests
 	grunt.loadNpmTasks('grunt-exec');
 	
-	grunt.registerTask('test', ['jshint', 'mocha_phantomjs', 'exec:core']);
+	grunt.registerTask('test', ['jshint', 'mocha_phantomjs:all', 'exec:core']);
 	
+	grunt.loadTasks('tasks');
 };

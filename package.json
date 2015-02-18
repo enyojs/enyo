@@ -38,16 +38,19 @@
     "nopt": "2.1.2"
   },
   "devDependencies": {
+    "body-parser": "^1.9.2",
     "chai": "~1.9.2",
-    "sinon": "~1.8.1",
-    "sinon-chai": "~2.5.0",
+    "express": "^4.10.2",
+    "grunt": "~0.4.5",
+    "grunt-cli": "~0.1.13",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-exec": "~0.4.5",
+    "grunt-mocha-phantomjs": "~0.5.0",
+    "istanbul": "^0.3.5",
+    "jshint": "~2.5.1",
     "mocha": "~1.20.0",
     "mocha-phantomjs": "~3.4.1",
-    "jshint": "~2.5.1",
-    "grunt": "~0.4.5",
-    "grunt-contrib-jshint": "~0.10.0",
-    "grunt-mocha-phantomjs": "~0.5.0",
-    "grunt-exec": "~0.4.5",
-    "grunt-cli": "~0.1.13"
+    "sinon": "~1.8.1",
+    "sinon-chai": "~2.5.0"
   }
 }

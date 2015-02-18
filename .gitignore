@@ -9,3 +9,5 @@ Thumbs.db
 node_modules/*
 docs/out
 out
+lcov-report
+lcov.info
