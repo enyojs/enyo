@@ -130,6 +130,16 @@
 		},
 
 		/**
+		* Retrieves the currently displayed panel.
+		*
+		* @return {Object} The currently displayed panel.
+		* @public
+		*/
+		getActivePanel: function () {
+			return this._currentPanel;
+		},
+
+		/**
 		* Transitions to the previous panel--i.e., the panel whose index value is one
 		* less than that of the current active panel.
 		*
