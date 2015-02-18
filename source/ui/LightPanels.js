@@ -235,6 +235,18 @@
 		},
 
 		/**
+		* Destroys all panels.
+		*
+		* @public
+		*/
+		clear: function () {
+			var panels = this.getPanels();
+			while (panels.length) {
+				panels[panels.length - 1].destroy();
+			}
+		},
+
+		/**
 		* @private
 		*/
 		transitionFinished: function (sender, ev) {
