@@ -146,6 +146,7 @@
 		selectedChanged: function () {
 			if (this.hasNode() && !this.updating) {
 				this.node.selectedIndex = this.selected;
+				this.updateValue();
 			}
 		},
 		/**
