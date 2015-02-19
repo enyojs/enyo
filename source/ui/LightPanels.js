@@ -115,6 +115,7 @@
 					nextPanel.applyStyle('-webkit-transition', enyo.format('-webkit-transform %.ms linear', this.duration));
 					nextPanel.applyStyle('transition', enyo.format('transform %.ms linear', this.duration));
 					if (this._currentPanel) {
+						this._currentPanel.addClass('transitioning');
 						this._currentPanel.applyStyle('-webkit-transition', enyo.format('-webkit-transform %.ms linear', this.duration));
 						this._currentPanel.applyStyle('transition', enyo.format('-webkit-transform %.ms linear', this.duration));
 					}
@@ -127,6 +128,7 @@
 						enyo.dom.transform(this._currentPanel, {translateZ: 0});
 					}
 
+					this._previousPanel = this._currentPanel;
 					this._currentPanel = nextPanel;
 					if (!this.shouldAnimate() && this._currentPanel.shouldSkipPostTransition && !this._currentPanel.shouldSkipPostTransition()) {
 						this.transitionFinished(this._currentPanel, {originator: this._currentPanel});
@@ -287,6 +289,9 @@
 		*/
 		transitionFinished: function (sender, ev) {
 			if (ev.originator === this._currentPanel) {
+				if (this._previousPanel) {
+					this._previousPanel.removeClass('transitioning');
+				}
 				if (this.popOnBack && this._direction < 0 && this.index < this.getPanels().length - 1) {
 					this.popPanels(this.index + 1);
 				}
