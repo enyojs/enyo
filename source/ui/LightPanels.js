@@ -167,7 +167,9 @@
 			if (this.wrap && prevIndex < 0) {
 				prevIndex = this.getPanels().length - 1;
 			}
-			this.set('index', prevIndex);
+			if (prevIndex >= 0) {
+				this.set('index', prevIndex);
+			}
 		},
 
 		/**
@@ -177,11 +179,13 @@
 		* @public
 		*/
 		next: function () {
-			var nextIndex = this.index+1;
+			var nextIndex = this.index + 1;
 			if (this.wrap && nextIndex >= this.getPanels().length) {
 				nextIndex = 0;
 			}
-			this.set('index', nextIndex);
+			if (nextIndex < this.getPanels().length) {
+				this.set('index', nextIndex);
+			}
 		},
 
 		/**
