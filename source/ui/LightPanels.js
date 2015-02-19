@@ -128,7 +128,7 @@
 					}
 
 					this._currentPanel = nextPanel;
-					if (!this.shouldAnimate() && !this._currentPanel.shouldSkipPostTransition()) {
+					if (!this.shouldAnimate() && this._currentPanel.shouldSkipPostTransition && !this._currentPanel.shouldSkipPostTransition()) {
 						this.transitionFinished(this._currentPanel, {originator: this._currentPanel});
 					}
 
@@ -286,7 +286,7 @@
 				if (this.popOnBack && this._direction < 0 && this.index < this.getPanels().length - 1) {
 					this.popPanels(this.index + 1);
 				}
-				if (!this._currentPanel.shouldSkipPostTransition()) {
+				if (this._currentPanel.shouldSkipPostTransition && !this._currentPanel.shouldSkipPostTransition()) {
 					this._currentPanel.postTransition();
 				}
 				if (this._garbagePanels && this._garbagePanels.length) {
