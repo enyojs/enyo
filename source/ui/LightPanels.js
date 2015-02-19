@@ -114,8 +114,10 @@
 				} else {
 					nextPanel.applyStyle('-webkit-transition', enyo.format('-webkit-transform %.ms linear', this.duration));
 					nextPanel.applyStyle('transition', enyo.format('transform %.ms linear', this.duration));
-					this._currentPanel.applyStyle('-webkit-transition', enyo.format('-webkit-transform %.ms linear', this.duration));
-					this._currentPanel.applyStyle('transition', enyo.format('-webkit-transform %.ms linear', this.duration));
+					if (this._currentPanel) {
+						this._currentPanel.applyStyle('-webkit-transition', enyo.format('-webkit-transform %.ms linear', this.duration));
+						this._currentPanel.applyStyle('transition', enyo.format('-webkit-transform %.ms linear', this.duration));
+					}
 				}
 				setTimeout(this.bindSafely(function () {
 					enyo.dom.transform(nextPanel, {translateX: '-100%'});
@@ -127,7 +129,7 @@
 
 					this._currentPanel = nextPanel;
 					if (!this.shouldAnimate() && !this._currentPanel.shouldSkipPostTransition()) {
-						this._currentPanel.postTransition();
+						this.transitionFinished(this._currentPanel, {originator: this._currentPanel});
 					}
 
 				}), 16);
@@ -187,10 +189,15 @@
 		*
 		* @param {Object} info - The declarative {@glossary kind} definition.
 		* @param {Object} moreInfo - Additional properties to be applied (defaults).
+		* @param {Object} opts - Additional options to be used during panel pushing.
 		* @return {Object} The instance of the panel that was created on top of the stack.
 		* @public
 		*/
-		pushPanel: function (info, moreInfo) {
+		pushPanel: function (info, moreInfo, opts) {
+			if (opts && opts.purge) {
+				this.purge();
+			}
+
 			var lastIndex = this.getPanels().length - 1,
 				nextPanel = this.createComponent(info, moreInfo);
 			nextPanel.render();
@@ -243,16 +250,32 @@
 		popPanels: function (index) {
 			var panels = this.getPanels();
 			index = index || panels.length - 1;
-			panels.length = index;
+			while (panels.length > index && index >= 0) {
+				panels[panels.length - 1].destroy();
+			}
 		},
 
 		/**
-		* Destroys all panels.
+		* Destroys all panels. These will be queued for destruction after the next panel has loaded.
 		*
-		* @public
+		* @private
 		*/
-		clear: function () {
-			this.getPanels().length = 0;
+		purge: function () {
+			var panels = this.getPanels();
+			this._garbagePanels = panels.slice();
+			panels.length = 0;
+		},
+
+		/**
+		* Clean-up any panels queued for destruction.
+		*
+		* @private
+		*/
+		finalizePurge: function () {
+			var panels = this._garbagePanels;
+			for (var idx = 0; idx < panels.length; idx++) {
+				panels[idx].destroy();
+			}
 		},
 
 		/**
@@ -265,6 +288,9 @@
 				}
 				if (!this._currentPanel.shouldSkipPostTransition()) {
 					this._currentPanel.postTransition();
+				}
+				if (this._garbagePanels && this._garbagePanels.length) {
+					this.finalizePurge();
 				}
 			}
 		}
