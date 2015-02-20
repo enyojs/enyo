@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
-	* A light-weight panels implementation that has basic support for side-to-side transitions
-	* between child components.
+	* A light-weight panels implementation that has basic support for CSS transitions between child
+	* components.
 	*
 	* @class enyo.LightPanels
 	* @extends enyo.Control
@@ -88,13 +88,22 @@
 			timingFunction: 'ease-out',
 
 			/**
-			* The orientation of the scrolling. Possible values are 'vertical' and 'horizontal'.
+			* The orientation of the panels. Possible values are 'vertical' and 'horizontal'.
 			*
 			* @type {String}
 			* @default 'horizontal'
 			* @public
 			*/
-			orientation: 'horizontal'
+			orientation: 'horizontal',
+
+			/**
+			* The direction of the panel movement. Possible values are 'forwards' and 'backwards'.
+			*
+			* @type {String}
+			* @default 'forwards'
+			* @public
+			*/
+			direction: 'forwards'
 		},
 
 		/**
@@ -121,6 +130,7 @@
 		*/
 		init: function () {
 			this.addClass(this.orientation);
+			this.addClass(this.direction);
 		},
 
 		/**
@@ -129,9 +139,9 @@
 		indexChanged: function (previousIndex) {
 			var panels = this.getPanels(),
 				nextPanel = panels[this.index],
-				trans, wTrans;
+				trans, wTrans, axis, direction;
 
-			this._direction = (this.index - previousIndex < 0 ? -1 : 1);
+			this._indexDirection = (this.index - previousIndex < 0 ? -1 : 1);
 
 			if (nextPanel) {
 				// only animate transition if there is more than one panel and/or we're animating
@@ -143,23 +153,24 @@
 					wTrans = '-webkit-' + trans;
 					nextPanel.applyStyle('-webkit-transition', wTrans);
 					nextPanel.applyStyle('transition', trans);
+					nextPanel.addClass('transitioning');
 					if (this._currentPanel) {
-						this._currentPanel.addClass('transitioning');
 						this._currentPanel.applyStyle('-webkit-transition', wTrans);
 						this._currentPanel.applyStyle('transition', trans);
+						this._currentPanel.addClass('transitioning');
 					}
 				}
-				var axis = this.orientation == 'horizontal' ? 'X' : 'Y';
+
+				axis = this.orientation == 'horizontal' ? 'X' : 'Y';
+				direction = this.direction == 'forwards' ? 1 : -1;
 				setTimeout(this.bindSafely(function () {
 					var nextTransition = {};
-					nextTransition['translate' + axis] = '-100%';
+					nextTransition['translate' + axis] = enyo.format('%.%', -100 * direction);
 					enyo.dom.transform(nextPanel, nextTransition);
-					enyo.dom.transform(nextPanel, {translateZ: 0});
 					if (this._currentPanel) {
 						var currentTransition = {};
-						currentTransition['translate' + axis] = this._direction > 0 ? '-200%' : '0%';
+						currentTransition['translate' + axis] = this._indexDirection > 0 ? enyo.format('%.%', -200 * direction) : '0%';
 						enyo.dom.transform(this._currentPanel, currentTransition);
-						enyo.dom.transform(this._currentPanel, {translateZ: 0});
 					}
 
 					this._previousPanel = this._currentPanel;
@@ -323,10 +334,11 @@
 		*/
 		transitionFinished: function (sender, ev) {
 			if (ev.originator === this._currentPanel) {
+				this._currentPanel.removeClass('transitioning');
 				if (this._previousPanel) {
 					this._previousPanel.removeClass('transitioning');
 				}
-				if (this.popOnBack && this._direction < 0 && this.index < this.getPanels().length - 1) {
+				if (this.popOnBack && this._indexDirection < 0 && this.index < this.getPanels().length - 1) {
 					this.popPanels(this.index + 1);
 				}
 				if (this._currentPanel.shouldSkipPostTransition && !this._currentPanel.shouldSkipPostTransition()) {

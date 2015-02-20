@@ -89,10 +89,18 @@
 	box-sizing: border-box;
 }
 
-.enyo-light-panels.horizontal > * {
+.enyo-light-panels.horizontal.forwards > * {
 	left: 100%;
 }
 
-.enyo-light-panels.vertical > * {
+.enyo-light-panels.horizontal.backwards > * {
+	left: -100%;
+}
+
+.enyo-light-panels.vertical.forwards > * {
 	top: 100%;
+}
+
+.enyo-light-panels.vertical.backwards > * {
+	top: -100%;
 }
