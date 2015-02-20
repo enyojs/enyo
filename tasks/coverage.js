@@ -55,8 +55,8 @@ module.exports = function(grunt) {
 			res.json({ok: true});
 			utils.removeDerivedInfo(body);
 			collector.add(body);
-			Report.create('lcovonly', { dir: baseDir }).writeReport(collector);
-			Report.create('html', { dir: path.join(baseDir, 'lcov-report') }).writeReport(collector);
+			Report.create('lcovonly', { dir: baseDir }).writeReport(collector, true);
+			Report.create('html', { dir: path.join(baseDir, 'lcov-report') }).writeReport(collector, true);
 		});
 		app.get('*', instrumentRequest);
 		app.use(express['static'](process.cwd()));
