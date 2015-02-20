@@ -2,29 +2,31 @@ enyo.kind({
 	name: 'enyo.sample.LightPanelsSample',
 	classes: 'light-panels-sample',
 	components: [
-		{kind: 'enyo.LightPanels'}
+		{kind: 'enyo.LightPanels', name: 'lightHorizontal'},
+		{kind: 'enyo.LightPanels', name: 'lightVertical', orientation: 'vertical'}
 	],
 	rendered: function () {
 		this.inherited(arguments);
-		this.pushSinglePanel();
+		this.pushSinglePanel(this.$.lightHorizontal);
+		this.pushSinglePanel(this.$.lightVertical);
 	},
-	pushSinglePanel: function () {
-		this.$.lightPanels.pushPanels([{
+	pushSinglePanel: function (panels) {
+		panels.pushPanels([{
 			classes: 'light-panel',
 			style: 'background-color: ' + this.bgcolors[Math.floor(Math.random() * this.bgcolors.length)],
 			components: [
-				{content: 'Panel ' + this.$.lightPanels.getPanels().length},
-				{content: 'Prev', kind: 'enyo.Button', style: 'position:absolute;left:0;bottom:50%', ontap: 'prevTapped'},
-				{content: 'Next', kind: 'enyo.Button', style: 'position:absolute;right:0;bottom:50%', ontap: 'nextTapped'}
+				{content: panels.getPanels().length, classes: 'label'},
+				{content: 'Prev', kind: 'enyo.Button', classes: 'previous', ontap: 'prevTapped'},
+				{content: 'Next', kind: 'enyo.Button', classes: 'next', ontap: 'nextTapped'}
 			]
 		}], {owner: this});
 	},
-	prevTapped: function () {
-		this.$.lightPanels.previous();
+	prevTapped: function (sender, ev) {
+		ev.originator.parent.parent.previous();
 		return true;
 	},
-	nextTapped: function () {
-		this.pushSinglePanel();
+	nextTapped: function (sender, ev) {
+		this.pushSinglePanel(ev.originator.parent.parent);
 		return true;
 	},
 	bgcolors: ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet']

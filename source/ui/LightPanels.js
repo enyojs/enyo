@@ -76,7 +76,16 @@
 			* @default 350
 			* @public
 			*/
-			duration: 350
+			duration: 350,
+
+			/**
+			* The orientation of the scrolling. Possible values are 'vertical' and 'horizontal'.
+			*
+			* @type {String}
+			* @default 'horizontal'
+			* @public
+			*/
+			orientation: 'horizontal'
 		},
 
 		/**
@@ -93,9 +102,17 @@
 		create: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
+				this.init();
 				this.indexChanged();
 			};
 		}),
+
+		/**
+		* @private
+		*/
+		init: function () {
+			this.addClass(this.orientation);
+		},
 
 		/**
 		* @private
@@ -120,11 +137,16 @@
 						this._currentPanel.applyStyle('transition', enyo.format('-webkit-transform %.ms linear', this.duration));
 					}
 				}
+				var axis = this.orientation == 'horizontal' ? 'X' : 'Y';
 				setTimeout(this.bindSafely(function () {
-					enyo.dom.transform(nextPanel, {translateX: '-100%'});
+					var nextTransition = {};
+					nextTransition['translate' + axis] = '-100%';
+					enyo.dom.transform(nextPanel, nextTransition);
 					enyo.dom.transform(nextPanel, {translateZ: 0});
 					if (this._currentPanel) {
-						enyo.dom.transform(this._currentPanel, {translateX: this._direction > 0 ? '-200%' : '0%'});
+						var currentTransition = {};
+						currentTransition['translate' + axis] = this._direction > 0 ? '-200%' : '0%';
+						enyo.dom.transform(this._currentPanel, currentTransition);
 						enyo.dom.transform(this._currentPanel, {translateZ: 0});
 					}
 
