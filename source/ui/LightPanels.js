@@ -73,10 +73,19 @@
 			* The amount of time, in milliseconds, to run the transition animation between panels.
 			*
 			* @type {Number}
-			* @default 350
+			* @default 250
 			* @public
 			*/
-			duration: 350,
+			duration: 250,
+
+			/**
+			* The timing function to be applied to the transition animation between panels.
+			*
+			* @type {String}
+			* @default 'ease-out'
+			* @public
+			*/
+			timingFunction: 'ease-out',
 
 			/**
 			* The orientation of the scrolling. Possible values are 'vertical' and 'horizontal'.
@@ -119,7 +128,8 @@
 		*/
 		indexChanged: function (previousIndex) {
 			var panels = this.getPanels(),
-				nextPanel = panels[this.index];
+				nextPanel = panels[this.index],
+				trans, wTrans;
 
 			this._direction = (this.index - previousIndex < 0 ? -1 : 1);
 
@@ -129,12 +139,14 @@
 					nextPanel.applyStyle('-webkit-transition-duration', '0s');
 					nextPanel.applyStyle('transition-duration', '0s');
 				} else {
-					nextPanel.applyStyle('-webkit-transition', enyo.format('-webkit-transform %.ms linear', this.duration));
-					nextPanel.applyStyle('transition', enyo.format('transform %.ms linear', this.duration));
+					trans = enyo.format('transform %.ms %.', this.duration, this.timingFunction);
+					wTrans = '-webkit-' + trans;
+					nextPanel.applyStyle('-webkit-transition', wTrans);
+					nextPanel.applyStyle('transition', trans);
 					if (this._currentPanel) {
 						this._currentPanel.addClass('transitioning');
-						this._currentPanel.applyStyle('-webkit-transition', enyo.format('-webkit-transform %.ms linear', this.duration));
-						this._currentPanel.applyStyle('transition', enyo.format('-webkit-transform %.ms linear', this.duration));
+						this._currentPanel.applyStyle('-webkit-transition', wTrans);
+						this._currentPanel.applyStyle('transition', trans);
 					}
 				}
 				var axis = this.orientation == 'horizontal' ? 'X' : 'Y';
