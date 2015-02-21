@@ -179,7 +179,7 @@
 						this.transitionFinished(this._currentPanel, {originator: this._currentPanel});
 					}
 
-				}), 16);
+				}), this.shouldAnimate() ? 16 : 0);
 			}
 		},
 
@@ -342,7 +342,9 @@
 					this.popPanels(this.index + 1);
 				}
 				if (this._currentPanel.shouldSkipPostTransition && !this._currentPanel.shouldSkipPostTransition()) {
-					this._currentPanel.postTransition();
+					enyo.asyncMethod(this, function () {
+						this._currentPanel.postTransition();
+					});
 				}
 				if (this._garbagePanels && this._garbagePanels.length) {
 					this.finalizePurge();
