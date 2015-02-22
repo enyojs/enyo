@@ -105,6 +105,13 @@
 			*/
 			direction: 'forwards',
 
+			/**
+			* When `true`, existing panels are cached for reuse, otherwise they are destroyed.
+			*
+			* @type {Boolean}
+			* @default true
+			* @public
+			*/
 			cachePanels: true
 		},
 
@@ -152,6 +159,7 @@
 				nextPanel = panels[this.index],
 				trans, wTrans, axis, direction;
 
+			this._shouldAnimate = null;
 			this._indexDirection = (this.index - previousIndex < 0 ? -1 : 1);
 
 			if (nextPanel) {
@@ -160,7 +168,7 @@
 					nextPanel.applyStyle('-webkit-transition-duration', '0s');
 					nextPanel.applyStyle('transition-duration', '0s');
 				} else {
-					trans = enyo.format('transform %.ms %.', this.duration, this.timingFunction);
+					trans = 'transform ' + this.duration + 'ms ' + this.timingFunction;
 					wTrans = '-webkit-' + trans;
 					nextPanel.applyStyle('-webkit-transition', wTrans);
 					nextPanel.applyStyle('transition', trans);
@@ -175,10 +183,11 @@
 				axis = this.orientation == 'horizontal' ? 'X' : 'Y';
 				direction = this.direction == 'forwards' ? 1 : -1;
 				setTimeout(this.bindSafely(function () {
+					// setup the transition for the next panel
 					var nextTransition = {};
 					nextTransition['translate' + axis] = -100 * direction + '%';
 					enyo.dom.transform(nextPanel, nextTransition);
-					if (this._currentPanel) {
+					if (this._currentPanel) { // setup the transition for the current panel
 						var currentTransition = {};
 						currentTransition['translate' + axis] = this._indexDirection > 0 ? -200 * direction + '%' : '0%';
 						enyo.dom.transform(this._currentPanel, currentTransition);
@@ -186,7 +195,7 @@
 
 					this._previousPanel = this._currentPanel;
 					this._currentPanel = nextPanel;
-					if (!this.shouldAnimate()) {
+					if (!this.shouldAnimate()) { // ensure that `transitionFinished is called, regardless of animation
 						this.transitionFinished(this._currentPanel, {originator: this._currentPanel});
 					}
 
@@ -201,7 +210,8 @@
 		* @public
 		*/
 		shouldAnimate: function () {
-			return this.getPanels().length > 1 && this.animate;
+			/*jshint -W093 */
+			return (this._shouldAnimate = this._shouldAnimate || this.getPanels().length > 1 && this.animate);
 		},
 
 		/**
