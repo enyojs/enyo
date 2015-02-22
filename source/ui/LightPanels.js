@@ -159,6 +159,7 @@
 				nextPanel = panels[this.index],
 				trans, wTrans, axis, direction;
 
+			this._shouldAnimate = null;
 			this._indexDirection = (this.index - previousIndex < 0 ? -1 : 1);
 
 			if (nextPanel) {
