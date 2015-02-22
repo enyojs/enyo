@@ -370,8 +370,6 @@
 			// identifier for panel-caching purposes
 			var pid = panel.kind;
 
-			this.log('caching ' + pid);
-
 			panel.node.remove();
 			panel.teardownRender();
 
@@ -393,7 +391,6 @@
 				panel = cp[pid];
 
 			if (panel) {
-				this.log('restored!');
 				this.$.panelCache.removeControl(panel);
 				this.addControl(panel);
 
@@ -416,7 +413,7 @@
 		*/
 		preCachePanels: function(info, commonInfo, runPostTransition) {
 			var pc, panels, i, panel;
-			var now = enyo.perfNow();
+
 			if (this.cachePanels) {
 				pc = this.$.panelCache;
 				commonInfo = commonInfo || {};
@@ -430,7 +427,6 @@
 					}
 				}
 			}
-			this.log(enyo.perfNow() - now);
 		},
 
 		/**
