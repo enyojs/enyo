@@ -103,7 +103,9 @@
 			* @default 'forwards'
 			* @public
 			*/
-			direction: 'forwards'
+			direction: 'forwards',
+
+			cachePanels: true
 		},
 
 		/**
@@ -131,6 +133,15 @@
 		init: function () {
 			this.addClass(this.orientation);
 			this.addClass(this.direction);
+
+			if (this.cachePanels) {
+				this.createChrome([
+					{name: 'panelCache', kind: 'enyo.Control', canGenerate: false}
+				]);
+				this.removeChild(this.$.panelCache);
+				this.cachedPanels = {};
+				this.queuedPanels = [];
+			}
 		},
 
 		/**
@@ -165,17 +176,17 @@
 				direction = this.direction == 'forwards' ? 1 : -1;
 				setTimeout(this.bindSafely(function () {
 					var nextTransition = {};
-					nextTransition['translate' + axis] = enyo.format('%.%', -100 * direction);
+					nextTransition['translate' + axis] = -100 * direction + '%';
 					enyo.dom.transform(nextPanel, nextTransition);
 					if (this._currentPanel) {
 						var currentTransition = {};
-						currentTransition['translate' + axis] = this._indexDirection > 0 ? enyo.format('%.%', -200 * direction) : '0%';
+						currentTransition['translate' + axis] = this._indexDirection > 0 ? -200 * direction + '%' : '0%';
 						enyo.dom.transform(this._currentPanel, currentTransition);
 					}
 
 					this._previousPanel = this._currentPanel;
 					this._currentPanel = nextPanel;
-					if (!this.shouldAnimate() && this._currentPanel.shouldSkipPostTransition && !this._currentPanel.shouldSkipPostTransition()) {
+					if (!this.shouldAnimate()) {
 						this.transitionFinished(this._currentPanel, {originator: this._currentPanel});
 					}
 
@@ -250,7 +261,7 @@
 			}
 
 			var lastIndex = this.getPanels().length - 1,
-				nextPanel = this.createComponent(info, moreInfo);
+				nextPanel = (this.cachePanels && this.restorePanel(info.kind)) || this.createComponent(info, moreInfo);
 			nextPanel.render();
 			this.set('index', lastIndex + 1, true);
 
@@ -299,10 +310,19 @@
 		* @public
 		*/
 		popPanels: function (index) {
-			var panels = this.getPanels();
+			var panels = this.getPanels(),
+				panel;
+
 			index = index || panels.length - 1;
+
 			while (panels.length > index && index >= 0) {
-				panels[panels.length - 1].destroy();
+				panel = panels[panels.length - 1];
+				if (this.cachePanels) {
+					this.cachePanel(panel);
+				}
+				else {
+					panel.destroy();
+				}
 			}
 		},
 
@@ -323,10 +343,118 @@
 		* @private
 		*/
 		finalizePurge: function () {
-			var panels = this._garbagePanels;
-			for (var idx = 0; idx < panels.length; idx++) {
-				panels[idx].destroy();
+			var panels = this._garbagePanels,
+				panel;
+			while (panels.length) {
+				panel = panels.pop();
+				if (this.cachePanels) {
+					this.cachePanel(panel);
+				}
+				else {
+					panel.destroy();
+				}
 			}
+		},
+
+		/**
+		* Caches a given panel so that it can be quickly instantiated and utilized at a later point.
+		* This is typically performed on a panel which has already been rendered and which no longer
+		* needs to remain in view, but may be revisited at a later time.
+		*
+		* @param {Object} panel - The panel to cache for later use.
+		* @public
+		*/
+		cachePanel: function (panel) {
+			// TODO: This works for Settings use case,
+			// but we need to support an alternative
+			// identifier for panel-caching purposes
+			var pid = panel.kind;
+
+			panel.node.remove();
+			panel.teardownRender();
+
+			this.removeControl(panel);
+			this.$.panelCache.addControl(panel);
+
+			this.cachedPanels[pid] = panel;
+		},
+
+		/**
+		* Restores the specified panel that was previously cached.
+		*
+		* @param {String} pid - The unique identifier for the cached panel that is being restored.
+		* @return {Object} The restored panel.
+		* @public
+		*/
+		restorePanel: function (pid) {
+			var cp = this.cachedPanels,
+				panel = cp[pid];
+
+			if (panel) {
+				this.$.panelCache.removeControl(panel);
+				this.addControl(panel);
+
+				this.cachedPanels[pid] = null;
+			}
+
+			return panel;
+		},
+
+		/**
+		* Pre-caches a set of panels by creating and caching them, even if they have not yet been
+		* rendered into view. This is helpful for reducing the instantiation time for panels which
+		* have yet to be shown, but can and eventually will be shown to the user.
+		*
+		* @param {Object} info - The declarative {@glossary kind} definition.
+		* @param {Object} commonInfo - Additional properties to be applied (defaults).
+		* @param {Boolean} runPostTransition - If `true`, the {@link enyo.LightPanel#postTransition}
+		*	method will be run.
+		* @public
+		*/
+		preCachePanels: function(info, commonInfo, runPostTransition) {
+			var pc, panels, i, panel;
+
+			if (this.cachePanels) {
+				pc = this.$.panelCache;
+				commonInfo = commonInfo || {};
+				commonInfo.owner = this;
+				panels = pc.createComponents(info, commonInfo);
+				for (i = 0; i < panels.length; i++) {
+					panel = panels[i];
+					this.cachedPanels[panel.kind] = panel;
+					if (runPostTransition) {
+						panel.postTransition();
+					}
+				}
+			}
+		},
+
+		/**
+		* @private
+		*/
+		preCacheQueuedPanels: function () {
+			this.preCachePanels(this.queuedPanels, {}, true);
+			this.queuedPanels.length = 0;
+		},
+
+		/**
+		* Enqueues a view that will eventually be pre-cached at an opportunistic time.
+		*
+		* @param {String} viewProps - The properties of the view to be enqueued.
+		* @public
+		*/
+		enqueueView: function (viewProps) {
+			this.queuedPanels.push(viewProps);
+		},
+
+		/**
+		* Enqueues a set of views that will eventually be pre-cached at an opportunistic time.
+		*
+		* @param {Array} viewPropsArray - A set of views to be enqueued.
+		* @public
+		*/
+		enqueueViews: function (viewPropsArray) {
+			this.queuedPanels = this.queuedPanels.concat(viewPropsArray);
 		},
 
 		/**
@@ -348,6 +476,11 @@
 				}
 				if (this._garbagePanels && this._garbagePanels.length) {
 					this.finalizePurge();
+				}
+				if (this.cachePanels && this.queuedPanels.length) {
+					this.startJob('preCacheQueuedPanels', function() {
+						this.preCacheQueuedPanels();
+					}, 750);
 				}
 			}
 		}
