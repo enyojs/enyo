@@ -103,7 +103,9 @@
 			* @default 'forwards'
 			* @public
 			*/
-			direction: 'forwards'
+			direction: 'forwards',
+
+			cachePanels: true
 		},
 
 		/**
@@ -131,6 +133,14 @@
 		init: function () {
 			this.addClass(this.orientation);
 			this.addClass(this.direction);
+
+			if (this.cachePanels) {
+				this.createChrome([
+					{name: 'panelCache', kind: 'enyo.Control', canGenerate: false}
+				]);
+				this.removeChild(this.$.panelCache);
+				this.cachedPanels = {};
+			}
 		},
 
 		/**
@@ -175,7 +185,7 @@
 
 					this._previousPanel = this._currentPanel;
 					this._currentPanel = nextPanel;
-					if (!this.shouldAnimate() && this._currentPanel.shouldSkipPostTransition && !this._currentPanel.shouldSkipPostTransition()) {
+					if (!this.shouldAnimate()) {
 						this.transitionFinished(this._currentPanel, {originator: this._currentPanel});
 					}
 
@@ -250,7 +260,7 @@
 			}
 
 			var lastIndex = this.getPanels().length - 1,
-				nextPanel = this.createComponent(info, moreInfo);
+				nextPanel = this.restorePanel(info.kind) || this.createComponent(info, moreInfo);
 			nextPanel.render();
 			this.set('index', lastIndex + 1, true);
 
@@ -299,10 +309,19 @@
 		* @public
 		*/
 		popPanels: function (index) {
-			var panels = this.getPanels();
+			var panels = this.getPanels(),
+				panel;
+
 			index = index || panels.length - 1;
+
 			while (panels.length > index && index >= 0) {
-				panels[panels.length - 1].destroy();
+				panel = panels[panels.length - 1];
+				if (this.cachePanels) {
+					this.cachePanel(panel);
+				}
+				else {
+					panel.destroy();
+				}
 			}
 		},
 
@@ -323,10 +342,65 @@
 		* @private
 		*/
 		finalizePurge: function () {
-			var panels = this._garbagePanels;
-			for (var idx = 0; idx < panels.length; idx++) {
-				panels[idx].destroy();
+			var panels = this._garbagePanels,
+				panel;
+			while (panels.length) {
+				panel = panels.pop();
+				if (this.cachePanels) {
+					this.cachePanel(panel);
+				}
+				else {
+					panel.destroy();
+				}
 			}
+		},
+
+		cachePanel: function(panel) {
+			// TODO: This works for Settings use case,
+			// but we need to support an alternative
+			// identifier for panel-caching purposes
+			var pid = panel.kind;
+
+			this.log('caching ' + pid);
+
+			panel.node.remove();
+			panel.teardownRender();
+
+			this.removeControl(panel);
+			this.$.panelCache.addControl(panel);
+
+			this.cachedPanels[pid] = panel;
+		},
+
+		restorePanel: function(pid) {
+			var cp = this.cachedPanels,
+				panel = cp[pid];
+
+			if (panel) {
+				this.log('restored!');
+				this.$.panelCache.removeControl(panel);
+				this.addControl(panel);
+
+				this.cachedPanels[pid] = null;
+			}
+			
+			return panel;
+		},
+
+		preCachePanels: function(info, commonInfo) {
+			var pc, panels, i, panel;
+			var now = enyo.perfNow();
+			if (this.cachePanels) {
+				pc = this.$.panelCache;
+				commonInfo = commonInfo || {};
+				commonInfo.owner = this;
+				panels = pc.createComponents(info, commonInfo);
+				for (i = 0; i < panels.length; i++) {
+					panel = panels[i];
+					this.cachedPanels[panel.kind] = panel;
+				}
+			}
+			this.log(enyo.perfNow() - now);
 		},
 
 		/**
