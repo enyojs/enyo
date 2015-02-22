@@ -261,7 +261,7 @@
 			}
 
 			var lastIndex = this.getPanels().length - 1,
-				nextPanel = this.restorePanel(info.kind) || this.createComponent(info, moreInfo);
+				nextPanel = (this.cachePanels && this.restorePanel(info.kind)) || this.createComponent(info, moreInfo);
 			nextPanel.render();
 			this.set('index', lastIndex + 1, true);
 
@@ -447,8 +447,8 @@
 		* @param {String} viewName - The name of the view to be enqueued.
 		* @public
 		*/
-		enqueueView: function (viewName) {
-			this.queuedPanels.push({kind: viewName});
+		enqueueView: function (viewProps) {
+			this.queuedPanels.push(viewProps);
 		},
 
 		/**
@@ -457,12 +457,8 @@
 		* @param {Array} viewNames - A set of views to be enqueued.
 		* @public
 		*/
-		enqueueViews: function (viewNames) {
-			this.queuedPanels = this.queuedPanels.concat(
-				enyo.map(viewNames, function (viewName) {
-					return {kind: viewName};
-				})
-			);
+		enqueueViews: function (viewPropsArray) {
+			this.queuedPanels = this.queuedPanels.concat(viewPropsArray);
 		},
 
 		/**
@@ -485,11 +481,10 @@
 				if (this._garbagePanels && this._garbagePanels.length) {
 					this.finalizePurge();
 				}
-				if (this.queuedPanels.length) {
-					// TODO: Unsure if async'ing this is necessary - leaving for now until verified.
-					enyo.asyncMethod(this, function () {
+				if (this.cachePanels && this.queuedPanels.length) {
+					this.startJob('preCacheQueuedPanels', function() {
 						this.preCacheQueuedPanels();
-					});
+					}, 750);
 				}
 			}
 		}
