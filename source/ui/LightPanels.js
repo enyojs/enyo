@@ -440,7 +440,7 @@
 		/**
 		* Enqueues a view that will eventually be pre-cached at an opportunistic time.
 		*
-		* @param {String} viewName - The name of the view to be enqueued.
+		* @param {String} viewProps - The properties of the view to be enqueued.
 		* @public
 		*/
 		enqueueView: function (viewProps) {
@@ -450,7 +450,7 @@
 		/**
 		* Enqueues a set of views that will eventually be pre-cached at an opportunistic time.
 		*
-		* @param {Array} viewNames - A set of views to be enqueued.
+		* @param {Array} viewPropsArray - A set of views to be enqueued.
 		* @public
 		*/
 		enqueueViews: function (viewPropsArray) {
