@@ -205,6 +205,45 @@
 		doubleTapInterval: 300,
 
 		/**
+		* AccessibilityLabel is used for accessibility voice readout.
+		* when the control is focused, screen reader reads accessibilityLabel.
+		*
+		* @type {String}
+		* @default ''
+		* @public
+		*/
+		accessibilityLabel : '',
+
+		/**
+		* AccessibilityAlert allows to set alert message.
+		* if accessibilityAlert is true, screen reader reads control label
+		* immediately without focus.
+		*
+		* Range: [`true`, `false`]
+		* - true: screen reader reads control label immediately.
+		* - false: screen reader reads control label with focus.
+		*
+		* @type {Boolean}
+		* @default false
+		* @public
+		*/
+		accessibilityAlert : false,
+
+		/**
+		* AccessibilityDisabled prevents VoiceReadout.
+		* if accessibilityDisabled is true, it doesn't add any accessibility properties.
+		*
+		* Range: [`true`, `false`]
+		* - true: screen reader doesn't read control label.
+		* - false: screen reader reads control label.
+		*
+		* @type {Boolean}
+		* @default false
+		* @public
+		*/
+		accessibilityDisabled : false,
+
+		/**
 		* @todo Find out how to document "handlers".
 		* @public
 		*/
@@ -414,7 +453,10 @@
 				attrs[name] = value;
 
 				if (node) {
-					if (value == null || value === false || value === '') {
+					// in case of aria-pressed and aria-checked, value false is meaningful.
+					if (name === 'aria-pressed' || name === 'aria-checked' && value === false) {
+							node.setAttribute(name, value);
+					} else if (value == null || value === false || value === '') {
 						node.removeAttribute(name);
 					} else node.setAttribute(name, value);
 				} else delegate.invalidate(this, 'attributes');
@@ -460,6 +502,169 @@
 		*/
 		addContent: function (content) {
 			return this.set('content', this.get('content') + content);
+		},
+
+		// .................................
+		// Accessibility API
+
+		/**
+		* @method
+		* @private
+		*/
+		initAccessibility: enyo.inherit(function(sup) {
+			return function() {
+				if (!this.getAttribute("role")) {
+					this.accessibilityAlertChanged();
+				}
+				if (!this.getAttribute("aria-label")) {
+					this.accessibilityLabelChanged();
+				}
+			};
+		}),
+
+		/**
+		* @method
+		* @private
+		*/
+		accessibilityLabelChanged: enyo.inherit(function (sup) {
+			return function (control) {
+				var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi;
+
+				sup.apply(this, arguments);
+				if (!this.accessibilityDisabled) {
+					if (this.accessibilityLabel) {
+						this.setAttribute('tabindex', 0);
+						this.setAttribute('aria-label', this.allowHtml? this.accessibilityLabel.replace(tags, " ") : this.accessibilityLabel);
+						this.setAttribute('aria-labelledby', null);
+					} else if (this.content) {
+						this.setAttribute('tabindex', 0);
+						this.setAttribute('aria-label', this.allowHtml? this.content.replace(tags, " ") : this.content);
+					}
+				}
+			};
+		}),
+
+		/**
+		* @method
+		* @private
+		*/
+		accessibilityAlertChanged: enyo.inherit(function (sup) {
+			return function (control) {
+				sup.apply(this, arguments);
+				if (!this.accessibilityDisabled) {
+					if (this.accessibilityAlert) {
+						this.setAttribute('role', 'alert');
+						this.setAttribute('tabindex', 0);
+						if (!this.accessibilityLabel && !this.content) {
+							this.setAttribute('aria-labelledby', this.id);
+						}
+					} else {
+						this.setAttribute('role', 'heading');
+					}
+				}
+			};
+		}),
+
+		/**
+		* @method
+		* @private
+		*/
+		accessibilityDisabledChanged: enyo.inherit(function (sup) {
+			return function (control) {
+				sup.apply(this, arguments);
+				if (this.accessibilityDisabled) {
+					this.setAttribute('role', null);
+					this.setAttribute('tabindex', null);
+					this.setAttribute('aria-label', null);
+				} else {
+					this.initAccessibility();
+				}
+			};
+		}),
+
+		/**
+		* Get the accessibilityAlert value true or false.
+		*
+		* @returns {Boolean} return accessibilityAlert status.
+		* @public
+		*/
+		getAccessibilityAlert: function () {
+			return this.accessibilityAlert;
+		},
+
+		/**
+		* Set the accessibilityAlert to true or false.
+		* If accessibilityAlert is true, screen reader reads control label
+		* immediately without focus.
+		*
+		* @param {Boolean} accessibilityAlert - if true, screen reader reads control label immediately.
+		* @returns {this} callee for chaining.
+		* @public
+		*/
+		setAccessibilityAlert: function (accessibilityAlert) {
+			var was = this.accessibilityAlert;
+			this.accessibilityAlert = accessibilityAlert;
+
+			if (was != accessibilityAlert) {
+				this.notify('accessibilityAlert', was, accessibilityAlert);
+			}
+			return this;
+		},
+
+		/**
+		* Get the accessibilityLabel text.
+		*
+		* @returns {String} return accessibilityLabel.
+		* @public
+		*/
+		getAccessibilityLabel: function () {
+			return this.accessibilityLabel;
+		},
+
+		/**
+		* Set the accessibilityLabel with label text.
+		* when the control is focused, screen reader reads accessibilityLabel.
+		*
+		* @param {Boolean} accessibilityLabel - text to readout by screen reader.
+		* @returns {this} callee for chaining.
+		* @public
+		*/
+		setAccessibilityLabel: function (accessibilityLabel) {
+			var was = this.accessibilityLabel;
+			this.accessibilityLabel = accessibilityLabel;
+
+			if (was != accessibilityLabel) {
+				this.notify('accessibilityLabel', was, accessibilityLabel);
+			}
+			return this;
+		},
+
+		/**
+		* Get the accessibilityDisabled value.
+		*
+		* @returns {Boolean} return accessibilityDisabled status.
+		* @public
+		*/
+		getAccessibilityDisabled: function () {
+			return this.accessibilityDisabled;
+		},
+
+		/**
+		* Set the accessibilityDisabled to true or false.
+		* If accessibilityDisabled is true, screen reader reads nothing.
+		*
+		* @param {Boolean} accessibilityDisabled - if true, screen reader reads nothing.
+		* @returns {this} callee for chaining.
+		* @public
+		*/
+		setAccessibilityDisabled: function (accessibilityDisabled) {
+			var was = this.accessibilityDisabled;
+			this.accessibilityDisabled = accessibilityDisabled;
+
+			if (was != accessibilityDisabled) {
+				this.notify('accessibilityDisabled', was, accessibilityDisabled);
+			}
+			return this;
 		},
 
 		// .................................
@@ -587,10 +792,10 @@
 				style = this.style,
 				delegate = this.renderDelegate || Control.renderDelegate;
 
-			// FIXME: This is put in place for a Firefox bug where setting a style value of a node 
+			// FIXME: This is put in place for a Firefox bug where setting a style value of a node
 			// via its CSSStyleDeclaration object (by accessing its node.style property) does
-			// not work when using a CSS property name that contains one or more dash, and requires 
-			// setting the property via the JavaScript-style property name. This fix should be 
+			// not work when using a CSS property name that contains one or more dash, and requires
+			// setting the property via the JavaScript-style property name. This fix should be
 			// removed once this issue has been resolved in the Firefox mainline and its variants
 			// (it is currently resolved in the 36.0a1 nightly):
 			// https://bugzilla.mozilla.org/show_bug.cgi?id=1083457
@@ -729,6 +934,11 @@
 		contentChanged: function () {
 			var delegate = this.renderDelegate || Control.renderDelegate;
 			delegate.invalidate(this, 'content');
+
+			// upadte aria-label for changing content.
+			if (!this.accessibilityDisabled) {
+				this.accessibilityLabelChanged();
+			}
 		},
 
 		/**
@@ -941,7 +1151,7 @@
 		* target `parentNode`.
 		*
 		* @param {Node} parentNode - The new parent of this control.
-		* @param {Boolean} preventRooting - If `true`, this control will not be treated as a root 
+		* @param {Boolean} preventRooting - If `true`, this control will not be treated as a root
 		*	view and will not be added to the set of roots.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -999,6 +1209,11 @@
 
 			for (; (child = this.children[i]); ++i) {
 				if (child.generated) child.rendered();
+			}
+
+			// initialize accessibility.
+			if (!this.accessibilityDisabled) {
+				this.initAccessibility();
 			}
 		},
 
