@@ -19,5 +19,5 @@
 * @public
 */
 enyo.version = {
-	enyo: '2.5.3-pre.15.t'
+	enyo: '2.5.3-pre.17.t'
 };
