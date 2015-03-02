@@ -132,77 +132,46 @@
 		* @private
 		*/
 		getSelected: function () {
-			if (this.hasNode()) {
-				return Number(this.node.selectedIndex);
-			}
-			else {
-				return this.selected;
-			}
+			return Number(this.getNodeProperty('selectedIndex', this.selected));
 		},
 
 		/**
 		* @private
 		*/
 		selectedChanged: function () {
-			if (this.hasNode() && !this.updating) {
-				this.node.selectedIndex = this.selected;
-				this.updateValue();
-			}
+			this.setNodeProperty('selectedIndex', this.selected);
+			this.set('value', this.getNodeProperty('value', this.value));
 		},
 		/**
 		* @private
 		*/
 		valueChanged: function() {
-			if (this.hasNode() && !this.updating && this.value) {
-				this.node.value = this.value;
-				this.set('selected', this.getSelected());
-			}
+			this.setNodeProperty('value', this.value);
+			this.set('selected', this.getSelected());
 		},
 		/**
 		* @private
 		*/
 		sizeChanged: function() {
-			if (this.hasNode()) {
-				this.node.size = this.size;
-			}
+			this.setNodeProperty('size', this.size);
 		},
 		/**
 		* @private
 		*/
 		multipleChanged: function() {
-			if (this.hasNode()) {
-				this.node.multiple = this.multiple;
-			}
+			this.setNodeProperty('multiple', this.multiple);
 		},
 		/**
 		* @private
 		*/
 		disabledChanged: function() {
-			if (this.hasNode()) {
-				this.node.disabled = this.disabled;
-			}
-		},
-		/**
-		* @private
-		*/
-		updateValue: function() {
-			if (this.hasNode()) {
-				this.set('value', this.node.value);
-			}
+			this.setNodeProperty('disabled', this.disabled);
 		},
 		/**
 		* @private
 		*/
 		change: function () {
-			//Need to know internally if we are changing values,
-			//to prevent value and selected observers from firing
-			//until maximum_call_stack error is received
-			//But we still want this control's owner to be able to bind
-			//to changes of either or both of the selected and value properties
-			this.updating = true;
 			this.set('selected', this.getSelected());
-			this.updateValue();
-			this.updating = false;
 		},
 
 		/**
