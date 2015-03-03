@@ -283,7 +283,7 @@
 	enyo.dispatcher.features.push(
 		function (e) {
 			if ("click" === e.type) {
-				if (e.clientX === 0 && e.clientY === 0) {
+				if (e.clientX === 0 && e.clientY === 0 && e.detail === 0) {
 					// this allows the click to dispatch as well
 					// but note the tap event will fire first
 					var cp = enyo.clone(e);
@@ -347,5 +347,5 @@
 		}
 		return p;
 	};
-	
+
 })(enyo, this);
