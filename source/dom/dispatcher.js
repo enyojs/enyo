@@ -288,7 +288,6 @@
 					// but note the tap event will fire first
 					var cp = enyo.clone(e);
 					cp.type = "tap";
-					cp.simulated = true;
 					cp.preventDefault = enyo.nop;
 					enyo.dispatch(cp);
 				}
