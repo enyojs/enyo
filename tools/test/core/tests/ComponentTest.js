@@ -77,7 +77,7 @@ enyo.kind({
 			if (c.number === 2) {
 				finish();
 			} else {
-				finish("too many or too few calls");
+				finish("called " + c.number + " time(s) (expected 2)");
 			}
 		}, 30);
 	},
@@ -97,7 +97,7 @@ enyo.kind({
 			} else {
 				finish();
 			}
-		}, 20);
+		}, 80);
 	},
 	testStartJobPriorityNumberBlocked: function() {
 		var finish = this.bindSafely("finish");
@@ -115,13 +115,17 @@ enyo.kind({
 			if (c.number !== 1) {
 				finish("High priority did not execute");
 			}
+			
 			enyo.jobs.unregisterPriority("testPriority");
-			if (c.number !== 2) {
-				finish("Low priority did not execute");
-			} else {
-				finish();
-			}
-		}, 20);
+
+			setTimeout(function() {
+				if (c.number !== 2) {
+					finish("Low priority did not execute");
+				} else {
+					finish();
+				}
+			}, 80);
+		}, 80);
 	},
 	testOverrideComponentProps: function() {
 		// Base kind
