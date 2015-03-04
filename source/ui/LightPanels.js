@@ -143,6 +143,7 @@
 					this.removeChild(this.$.panelCache);
 					this._cachedPanels = {};
 					this._queuedPanels = [];
+					this._loadedPanels = [];
 				}
 
 				this.indexChanged();
@@ -283,7 +284,7 @@
 			var lastIndex = this.getPanels().length - 1,
 				nextPanel = (this.cachePanels && this.restorePanel(info.kind)) || this.createComponent(info, moreInfo);
 			if (this.cachePanels) {
-				this.pruneQueue(info.kind);
+				this._loadedPanels.push(info.kind);
 			}
 			nextPanel.render();
 			this.set('index', lastIndex + 1, true);
@@ -313,7 +314,7 @@
 				ids = info.map(function (def) {
 					return def.kind;
 				});
-				this.pruneQueue(ids);
+				this._loadedPanels = this._loadedPanels.concat(ids);
 			}
 			for (idx = 0; idx < newPanels.length; ++idx) {
 				newPanel = newPanels[idx];
@@ -501,6 +502,8 @@
 		* @public
 		*/
 		dequeueView: function () {
+			this.pruneQueue();
+
 			var panel = this._queuedPanels.shift();
 			while (panel && panel.pruned) {
 				panel = this._queuedPanels.shift();
@@ -514,34 +517,13 @@
 		* Prunes the queue of to-be-cached panels in the event that any panels in the queue have
 		* already been instanced.
 		*
-		* @param {String|String[]} id - The unique identifier (or {@glossary Array} of identifiers)
-		*	of the panel(s) that we wish to prune from the queue. In our current scheme this is the
-		*	kind name, but should eventually be generalized.
 		* @private
 		*/
-		pruneQueue: function (id) {
-			var hasMultiple = enyo.isArray(id),
-				idCount = hasMultiple ? id.length : 1,
-				pruneCount = 0,
-				queuedPanel, idx;
-			for (idx = 0; idx < this._queuedPanels.length; idx++) {
-				queuedPanel = this._queuedPanels[idx];
-				// Setting a property rather than modifying array here for efficiency purposes;
-				// we will eventually modify the array when dequeueing panels, which should occur
-				// at a more opportune time where we have more resources or idle time.
-				if (hasMultiple) {
-					if (enyo.indexOf(id, queuedPanel.kind) >= 0) {
-						queuedPanel.pruned = true;
-						pruneCount++;
-						if (idCount == pruneCount) break;
-					}
-				} else {
-					if (queuedPanel.kind == id) {
-						queuedPanel.pruned = true;
-						break;
-					}
-				}
-			}
+		pruneQueue: function () {
+			this._queuedPanels = this._queuedPanels.filter( function (el) {
+				return this._loadedPanels.length === 0 || this._loadedPanels.indexOf(el) >= 0;
+			});
+			this._loadedPanels.length = 0;
 		},
 
 		/**
