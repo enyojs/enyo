@@ -282,7 +282,9 @@
 
 			var lastIndex = this.getPanels().length - 1,
 				nextPanel = (this.cachePanels && this.restorePanel(info.kind)) || this.createComponent(info, moreInfo);
-			if (this.cachePanels) this.pruneQueue(nextPanel.kindName);
+			if (this.cachePanels) {
+				this.pruneQueue(info.kind);
+			}
 			nextPanel.render();
 			this.set('index', lastIndex + 1, true);
 
@@ -305,13 +307,18 @@
 		pushPanels: function (info, commonInfo, options) {
 			var lastIndex = this.getPanels().length,
 				newPanels = this.createComponents(info, commonInfo),
-				newPanel, idx;
+				newPanel, idx, ids;
 
+			if (this.cachePanels) {
+				ids = info.map(function (def) {
+					return def.kind;
+				});
+			}
 			for (idx = 0; idx < newPanels.length; ++idx) {
 				newPanel = newPanels[idx];
-				// TODO: should call this with an array of id's, so we don't have to iterate through
-				// our queue repeatedly.
-				if (this.cachePanels) this.pruneQueue(newPanel.kindName);
+				if (this.cachePanels) {
+					this.pruneQueue(ids);
+				}
 				newPanel.render();
 			}
 
@@ -496,9 +503,9 @@
 		* @public
 		*/
 		dequeueView: function () {
-			var panel = this._queuedPanels.pop();
+			var panel = this._queuedPanels.shift();
 			while (panel && panel.pruned) {
-				panel = this._queuedPanels.pop();
+				panel = this._queuedPanels.shift();
 			}
 			if (panel) this.preCachePanels([panel], {}, true);
 
@@ -509,20 +516,32 @@
 		* Prunes the queue of to-be-cached panels in the event that any panels in the queue have
 		* already been instanced.
 		*
-		* @param {String} id - The unique identifier of the panel that we wish to prune from the
-		*	queue. In our current scheme this is the kind name, but should be generalized.
+		* @param {String|String[]} id - The unique identifier (or {@glossary Array} of identifiers)
+		*	of the panel(s) that we wish to prune from the queue. In our current scheme this is the
+		*	kind name, but should eventually be generalized.
 		* @private
 		*/
 		pruneQueue: function (id) {
-			var queuedPanel, idx;
+			var hasMultiple = enyo.isArray(id),
+				idCount = hasMultiple ? id.length : 1,
+				pruneCount = 0,
+				queuedPanel, idx;
 			for (idx = 0; idx < this._queuedPanels.length; idx++) {
 				queuedPanel = this._queuedPanels[idx];
 				// Setting a property rather than modifying array here for efficiency purposes;
 				// we will eventually modify the array when dequeueing panels, which should occur
 				// at a more opportune time where we have more resources or idle time.
-				if (queuedPanel.kind == id) {
-					queuedPanel.pruned = true;
-					break;
+				if (hasMultiple) {
+					if (enyo.indexOf(id, queuedPanel.kind) >= 0) {
+						queuedPanel.pruned = true;
+						pruneCount++;
+						if (idCount == pruneCount) break;
+					}
+				} else {
+					if (queuedPanel.kind == id) {
+						queuedPanel.pruned = true;
+						break;
+					}
 				}
 			}
 		},
