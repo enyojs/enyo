@@ -112,7 +112,25 @@
 			* @default true
 			* @public
 			*/
-			cachePanels: true
+			cachePanels: true,
+
+			/**
+			* The default priority for view caching jobs.
+			*
+			* @type {Number}
+			* @default 3
+			* @public
+			*/
+			priority: 3,
+
+			/**
+			* The default delay for view caching jobs.
+			*
+			* @type {Number}
+			* @default 0
+			* @public
+			*/
+			delay: 0
 		},
 
 		/**
@@ -142,8 +160,6 @@
 					]);
 					this.removeChild(this.$.panelCache);
 					this._cachedPanels = {};
-					this._queuedPanels = [];
-					this._loadedPanels = [];
 				}
 
 				this.indexChanged();
@@ -284,7 +300,7 @@
 			var lastIndex = this.getPanels().length - 1,
 				nextPanel = (this.cachePanels && this.restorePanel(info.kind)) || this.createComponent(info, moreInfo);
 			if (this.cachePanels) {
-				this._loadedPanels.push(info.kind);
+				this.pruneQueue([info]);
 			}
 			nextPanel.render();
 			this.set('index', lastIndex + 1, true);
@@ -308,13 +324,10 @@
 		pushPanels: function (info, commonInfo, options) {
 			var lastIndex = this.getPanels().length,
 				newPanels = this.createComponents(info, commonInfo),
-				newPanel, idx, ids;
+				newPanel, idx;
 
 			if (this.cachePanels) {
-				ids = info.map(function (def) {
-					return def.kind;
-				});
-				this._loadedPanels = this._loadedPanels.concat(ids);
+				this.pruneQueue(info);
 			}
 			for (idx = 0; idx < newPanels.length; ++idx) {
 				newPanel = newPanels[idx];
@@ -388,6 +401,19 @@
 		},
 
 		/**
+		* Reset the state of the given panel. Currently resets the translated position of the panel.
+		*
+		* @param {Object} panel - The panel whose state we wish to reset.
+		* @private
+		*/
+		resetPanel: function (panel) {
+			// reset position
+			var trans = {};
+			trans['translate' + this._axis] = '0%';
+			enyo.dom.transform(panel, trans);
+		},
+
+		/**
 		* Caches a given panel so that it can be quickly instantiated and utilized at a later point.
 		* This is typically performed on a panel which has already been rendered and which no longer
 		* needs to remain in view, but may be revisited at a later time.
@@ -404,10 +430,7 @@
 			panel.node.remove();
 			panel.teardownRender();
 
-			// reset position
-			var trans = {};
-			trans['translate' + this._axis] = '0%';
-			enyo.dom.transform(panel, trans);
+			this.resetPanel(panel);
 
 			this.removeControl(panel);
 			this.$.panelCache.addControl(panel);
@@ -466,64 +489,56 @@
 		},
 
 		/**
-		* @private
-		*/
-		preCacheQueuedPanels: function () {
-			this.preCachePanels(this._queuedPanels, {}, true);
-			this._queuedPanels.length = 0;
-		},
-
-		/**
 		* Enqueues a view that will eventually be pre-cached at an opportunistic time.
 		*
 		* @param {String} viewProps - The properties of the view to be enqueued.
+		* @param {Number} [delay] - The delay in ms before starting the job to cache the view.
+		* @param {Number} [priority] - The priority of the job.
 		* @public
 		*/
-		enqueueView: function (viewProps) {
-			this._queuedPanels.push(viewProps);
+		enqueueView: function (viewProps, delay, priority) {
+			this.startViewCacheJob(viewProps, delay, priority);
 		},
 
 		/**
 		* Enqueues a set of views that will eventually be pre-cached at an opportunistic time.
 		*
 		* @param {Array} viewPropsArray - A set of views to be enqueued.
+		* @param {Number} [delay] - The delay in ms before starting the job to cache the view.
+		* @param {Number} [priority] - The priority of the job.
 		* @public
 		*/
-		enqueueViews: function (viewPropsArray) {
-			this._queuedPanels = this._queuedPanels.concat(viewPropsArray);
+		enqueueViews: function (viewPropsArray, delay, priority) {
+			for (var idx = 0; idx < viewPropsArray.length; idx++) {
+				this.startViewCacheJob(viewPropsArray[idx], delay, priority);
+			}
 		},
 
 		/**
-		* Processes a single "unit" of work by dequeueing panels that are to be created/cached. This
-		* will only dequeue a single panel from the queue (if the queue is non-empty) as this is the
-		* smallest amount of atomic work.
+		* Starts a job to cache a given view at an opportune time.
 		*
-		* @return {Number} - The number of remaining, queued panels.
-		* @public
+		* @param {String} viewProps - The properties of the view to be enqueued.
+		* @param {Number} [delay] - The delay in ms before starting the job to cache the view.
+		* @param {Number} [priority] - The priority of the job.
+		* @private
 		*/
-		dequeueView: function () {
-			this.pruneQueue();
-
-			var panel = this._queuedPanels.shift();
-			while (panel && panel.pruned) {
-				panel = this._queuedPanels.shift();
-			}
-			if (panel) this.preCachePanels([panel], {}, true);
-
-			return this._queuedPanels.length;
+		startViewCacheJob: function (viewProps, delay, priority) {
+			this.startJob(viewProps.kind, function () {
+				this.preCachePanels([viewProps], {}, true);
+			}, delay || this.delay, priority || this.priority);
 		},
 
 		/**
 		* Prunes the queue of to-be-cached panels in the event that any panels in the queue have
 		* already been instanced.
 		*
+		* @param {String} viewProps - The properties of the view to be enqueued.
 		* @private
 		*/
-		pruneQueue: function () {
-			this._queuedPanels = this._queuedPanels.filter( function (el) {
-				return this._loadedPanels.length === 0 || this._loadedPanels.indexOf(el) >= 0;
-			});
-			this._loadedPanels.length = 0;
+		pruneQueue: function (viewProps) {
+			for (var idx = 0; idx < viewProps.length; idx++) {
+				this.stopJob(viewProps[idx].kind);
+			}
 		},
 
 		/**
@@ -545,11 +560,6 @@
 				}
 				if (this._garbagePanels && this._garbagePanels.length) {
 					this.finalizePurge();
-				}
-				if (this.cachePanels && this._queuedPanels.length) {
-					this.startJob('preCacheQueuedPanels', function() {
-						this.preCacheQueuedPanels();
-					}, 750);
 				}
 			}
 		}
