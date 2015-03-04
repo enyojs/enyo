@@ -468,10 +468,10 @@
 		/**
 		* @private
 		*/
-		/*preCacheQueuedPanels: function () {
+		preCacheQueuedPanels: function () {
 			this.preCachePanels(this._queuedPanels, {}, true);
 			this._queuedPanels.length = 0;
-		},*/
+		},
 
 		/**
 		* Enqueues a view that will eventually be pre-cached at an opportunistic time.
