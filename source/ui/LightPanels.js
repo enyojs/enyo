@@ -524,6 +524,8 @@
 		*/
 		startViewCacheJob: function (viewProps, delay, priority) {
 			this.startJob(viewProps.kind, function () {
+				// TODO: once the data layer is hooked into the run loop, we should no longer need
+				// to forcibly trigger the post transition work.
 				this.preCachePanels([viewProps], {}, true);
 			}, delay || this.delay, priority || this.priority);
 		},
