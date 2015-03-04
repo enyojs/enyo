@@ -126,7 +126,14 @@
 			* @default 'center'
 			* @public
 			*/
-			position: 'center'
+			position: 'center',
+
+			/**
+			* @type {String}
+			* @default ''
+			* @public
+			*/
+			placeholder: ''
 		},
 
 		/**
@@ -173,14 +180,15 @@
 		*/
 		srcChanged: function () {
 			var src = enyo.ri.selectSrc(this.src);
+			var multiple= "url('"+ enyo.path.rewrite(src) +"'), url('"+ this.placeholder + "');";
 			if (this.sizing) {
-				this.applyStyle('background-image', src ? 'url(' + enyo.path.rewrite(src) + ')' : 'none');
+				this.applyStyle('background-image', src ? multiple : 'none');
 			} else {
 				if (!src) {
 					// allow us to clear the src property
 					this.setAttribute('src', '');
 				} else {
-					this.setAttribute('src', enyo.path.rewrite(src));
+					this.applyStyle('background-image', multiple );
 				}
 			}
 		},
