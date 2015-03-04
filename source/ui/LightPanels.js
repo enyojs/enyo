@@ -496,9 +496,9 @@
 		* @public
 		*/
 		dequeueView: function () {
-			var panel = this._queuedPanels.pop();
+			var panel = this._queuedPanels.shift();
 			while (panel && panel.pruned) {
-				panel = this._queuedPanels.pop();
+				panel = this._queuedPanels.shift();
 			}
 			if (panel) this.preCachePanels([panel], {}, true);
 
