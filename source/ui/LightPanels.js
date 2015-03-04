@@ -282,6 +282,7 @@
 
 			var lastIndex = this.getPanels().length - 1,
 				nextPanel = (this.cachePanels && this.restorePanel(info.kind)) || this.createComponent(info, moreInfo);
+			if (this.cachePanels) this.pruneQueue(nextPanel.kindName);
 			nextPanel.render();
 			this.set('index', lastIndex + 1, true);
 
@@ -304,10 +305,14 @@
 		pushPanels: function (info, commonInfo, options) {
 			var lastIndex = this.getPanels().length,
 				newPanels = this.createComponents(info, commonInfo),
-				idx;
+				newPanel, idx;
 
 			for (idx = 0; idx < newPanels.length; ++idx) {
-				newPanels[idx].render();
+				newPanel = newPanels[idx];
+				// TODO: should call this with an array of id's, so we don't have to iterate through
+				// our queue repeatedly.
+				if (this.cachePanels) this.pruneQueue(newPanel.kindName);
+				newPanel.render();
 			}
 
 			this.set('index', lastIndex, true);
@@ -457,10 +462,10 @@
 		/**
 		* @private
 		*/
-		preCacheQueuedPanels: function () {
+		/*preCacheQueuedPanels: function () {
 			this.preCachePanels(this._queuedPanels, {}, true);
 			this._queuedPanels.length = 0;
-		},
+		},*/
 
 		/**
 		* Enqueues a view that will eventually be pre-cached at an opportunistic time.
@@ -483,6 +488,46 @@
 		},
 
 		/**
+		* Processes a single "unit" of work by dequeueing panels that are to be created/cached. This
+		* will only dequeue a single panel from the queue (if the queue is non-empty) as this is the
+		* smallest amount of atomic work.
+		*
+		* @return {Number} - The number of remaining, queued panels.
+		* @public
+		*/
+		dequeueView: function () {
+			var panel = this._queuedPanels.pop();
+			while (panel && panel.pruned) {
+				panel = this._queuedPanels.pop();
+			}
+			if (panel) this.preCachePanels([panel], {}, true);
+
+			return this._queuedPanels.length;
+		},
+
+		/**
+		* Prunes the queue of to-be-cached panels in the event that any panels in the queue have
+		* already been instanced.
+		*
+		* @param {String} id - The unique identifier of the panel that we wish to prune from the
+		*	queue. In our current scheme this is the kind name, but should be generalized.
+		* @private
+		*/
+		pruneQueue: function (id) {
+			var queuedPanel, idx;
+			for (idx = 0; idx < this._queuedPanels.length; idx++) {
+				queuedPanel = this._queuedPanels[idx];
+				// Setting a property rather than modifying array here for efficiency purposes;
+				// we will eventually modify the array when dequeueing panels, which should occur
+				// at a more opportune time where we have more resources or idle time.
+				if (queuedPanel.kind == id) {
+					queuedPanel.pruned = true;
+					break;
+				}
+			}
+		},
+
+		/**
 		* @private
 		*/
 		transitionFinished: function (sender, ev) {
@@ -502,11 +547,11 @@
 				if (this._garbagePanels && this._garbagePanels.length) {
 					this.finalizePurge();
 				}
-				if (this.cachePanels && this._queuedPanels.length) {
+				/*if (this.cachePanels && this._queuedPanels.length) {
 					this.startJob('preCacheQueuedPanels', function() {
 						this.preCacheQueuedPanels();
 					}, 750);
-				}
+				}*/
 			}
 		}
 
