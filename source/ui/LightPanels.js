@@ -313,12 +313,10 @@
 				ids = info.map(function (def) {
 					return def.kind;
 				});
+				this.pruneQueue(ids);
 			}
 			for (idx = 0; idx < newPanels.length; ++idx) {
 				newPanel = newPanels[idx];
-				if (this.cachePanels) {
-					this.pruneQueue(ids);
-				}
 				newPanel.render();
 			}
 
