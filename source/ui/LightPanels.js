@@ -546,11 +546,11 @@
 				if (this._garbagePanels && this._garbagePanels.length) {
 					this.finalizePurge();
 				}
-				/*if (this.cachePanels && this._queuedPanels.length) {
+				if (this.cachePanels && this._queuedPanels.length) {
 					this.startJob('preCacheQueuedPanels', function() {
 						this.preCacheQueuedPanels();
 					}, 750);
-				}*/
+				}
 			}
 		}
 
