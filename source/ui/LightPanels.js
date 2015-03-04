@@ -129,7 +129,22 @@
 		create: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
-				this.init();
+
+				this.addClass(this.orientation);
+				this.addClass(this.direction);
+
+				this.orientationChanged();
+				this.directionChanged();
+
+				if (this.cachePanels) {
+					this.createChrome([
+						{name: 'panelCache', kind: 'enyo.Control', canGenerate: false}
+					]);
+					this.removeChild(this.$.panelCache);
+					this._cachedPanels = {};
+					this._queuedPanels = [];
+				}
+
 				this.indexChanged();
 			};
 		}),
@@ -137,18 +152,15 @@
 		/**
 		* @private
 		*/
-		init: function () {
-			this.addClass(this.orientation);
-			this.addClass(this.direction);
+		orientationChanged: function () {
+			this._axis = this.orientation == 'horizontal' ? 'X' : 'Y';
+		},
 
-			if (this.cachePanels) {
-				this.createChrome([
-					{name: 'panelCache', kind: 'enyo.Control', canGenerate: false}
-				]);
-				this.removeChild(this.$.panelCache);
-				this.cachedPanels = {};
-				this.queuedPanels = [];
-			}
+		/**
+		* @private
+		*/
+		directionChanged: function () {
+			this._direction = this.direction == 'forwards' ? 1 : -1;
 		},
 
 		/**
@@ -157,7 +169,7 @@
 		indexChanged: function (previousIndex) {
 			var panels = this.getPanels(),
 				nextPanel = panels[this.index],
-				trans, wTrans, axis, direction;
+				trans, wTrans;
 
 			this._shouldAnimate = null;
 			this._indexDirection = (this.index - previousIndex < 0 ? -1 : 1);
@@ -180,16 +192,14 @@
 					}
 				}
 
-				axis = this.orientation == 'horizontal' ? 'X' : 'Y';
-				direction = this.direction == 'forwards' ? 1 : -1;
 				setTimeout(this.bindSafely(function () {
 					// setup the transition for the next panel
 					var nextTransition = {};
-					nextTransition['translate' + axis] = -100 * direction + '%';
+					nextTransition['translate' + this._axis] = -100 * this._direction + '%';
 					enyo.dom.transform(nextPanel, nextTransition);
 					if (this._currentPanel) { // setup the transition for the current panel
 						var currentTransition = {};
-						currentTransition['translate' + axis] = this._indexDirection > 0 ? -200 * direction + '%' : '0%';
+						currentTransition['translate' + this._axis] = this._indexDirection > 0 ? -200 * this._direction + '%' : '0%';
 						enyo.dom.transform(this._currentPanel, currentTransition);
 					}
 
@@ -383,10 +393,15 @@
 			panel.node.remove();
 			panel.teardownRender();
 
+			// reset position
+			var trans = {};
+			trans['translate' + this._axis] = '0%';
+			enyo.dom.transform(panel, trans);
+
 			this.removeControl(panel);
 			this.$.panelCache.addControl(panel);
 
-			this.cachedPanels[pid] = panel;
+			this._cachedPanels[pid] = panel;
 		},
 
 		/**
@@ -397,14 +412,14 @@
 		* @public
 		*/
 		restorePanel: function (pid) {
-			var cp = this.cachedPanels,
+			var cp = this._cachedPanels,
 				panel = cp[pid];
 
 			if (panel) {
 				this.$.panelCache.removeControl(panel);
 				this.addControl(panel);
 
-				this.cachedPanels[pid] = null;
+				this._cachedPanels[pid] = null;
 			}
 
 			return panel;
@@ -431,7 +446,7 @@
 				panels = pc.createComponents(info, commonInfo);
 				for (i = 0; i < panels.length; i++) {
 					panel = panels[i];
-					this.cachedPanels[panel.kind] = panel;
+					this._cachedPanels[panel.kind] = panel;
 					if (runPostTransition) {
 						panel.postTransition();
 					}
@@ -443,8 +458,8 @@
 		* @private
 		*/
 		preCacheQueuedPanels: function () {
-			this.preCachePanels(this.queuedPanels, {}, true);
-			this.queuedPanels.length = 0;
+			this.preCachePanels(this._queuedPanels, {}, true);
+			this._queuedPanels.length = 0;
 		},
 
 		/**
@@ -454,7 +469,7 @@
 		* @public
 		*/
 		enqueueView: function (viewProps) {
-			this.queuedPanels.push(viewProps);
+			this._queuedPanels.push(viewProps);
 		},
 
 		/**
@@ -464,7 +479,7 @@
 		* @public
 		*/
 		enqueueViews: function (viewPropsArray) {
-			this.queuedPanels = this.queuedPanels.concat(viewPropsArray);
+			this._queuedPanels = this._queuedPanels.concat(viewPropsArray);
 		},
 
 		/**
@@ -487,7 +502,7 @@
 				if (this._garbagePanels && this._garbagePanels.length) {
 					this.finalizePurge();
 				}
-				if (this.cachePanels && this.queuedPanels.length) {
+				if (this.cachePanels && this._queuedPanels.length) {
 					this.startJob('preCacheQueuedPanels', function() {
 						this.preCacheQueuedPanels();
 					}, 750);
