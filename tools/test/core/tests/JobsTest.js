@@ -22,22 +22,27 @@ enyo.kind({
 		enyo.jobs.add(enyo.bind(this, invoke, "stopped"), 3, "stopped");
 		enyo.jobs.remove("stopped");
 
-		if (!executed.normal) {
-			finish("Normal priority job did not execute");
-		} else if (executed.low) {
-			finish("Low priority job did execute too early");
-		}
-
-		enyo.jobs.unregisterPriority("testPriority");
-
-		setTimeout(function(){
-			if (executed.stopped) {
-				finish("stopped job has been executed");
-			} else if (!executed.low) {
-				finish("Low priority did not execute");
-			} else {
-				finish();
+		setTimeout(function() {
+			if (!executed.normal) {
+				finish("Normal priority job did not execute");
+			} else if (executed.low) {
+				finish("Low priority job did execute too early");
 			}
+
+			enyo.jobs.unregisterPriority("testPriority");
+
+			setTimeout(function(){
+				if (executed.stopped) {
+					finish("stopped job has been executed");
+				} else if (!executed.low) {
+					finish("Low priority did not execute");
+				} else {
+					finish();
+				}
+			}, 20);
 		}, 20);
+
+
+
 	}
 });
