@@ -17,7 +17,11 @@ API changes in Enyo core:
 
 * In `enyo.Animator`, added `complete()` method.
 
-* In `enyo.Control`, added second parameter (`preventRooting`) to `renderInto()`.
+* In `enyo.Control`, added accessibility API for voice readout (text-to-speech).
+    This includes configuration properties `accessibilityLabel`,
+    `accessibilityAlert`, and `accessibilityDisabled`, along with their
+    associated getter and setter methods.  Also added second parameter
+    (`preventRooting`) to `renderInto()`.
 
 * In `enyo.DataList`, added new API method `getVisibleControlRange()` and
     related configuration property `visibleThreshold`.
