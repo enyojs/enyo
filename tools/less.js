@@ -5,11 +5,17 @@
 		less.relativeUrls = true;
 	}
 	if (less.environment === undefined) {
-		less.environment = "production";
+		less.environment = 'production';
 	}
 	window.less = less;
-	var script = document.createElement('script');
-	script.src = "enyo/tools/minifier/node_modules/less/dist/less-1.7.0.min.js";
-	script.charset = "utf-8";
+
+	// find the relative path to the less script by finding this script tag and using its src
+	var thisScript = document.querySelector('script[src $= \'enyo/tools/less.js\']'),
+		src = thisScript ? thisScript.getAttribute('src') : null,
+		basePath = src ? src.substring(0, src.length - 7) : 'enyo/tools/',
+		script = document.createElement('script');
+
+	script.src = basePath + 'minifier/node_modules/less/dist/less-1.7.0.min.js';
+	script.charset = 'utf-8';
 	document.getElementsByTagName('head')[0].appendChild(script);
 })();
