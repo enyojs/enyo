@@ -238,7 +238,7 @@
 		*/
 		shouldAnimate: function () {
 			/*jshint -W093 */
-			return (this._shouldAnimate = this._shouldAnimate || this.getPanels().length > 1 && this.animate);
+			return this.generated && (this._shouldAnimate = this._shouldAnimate || this.getPanels().length > 1 && this.animate);
 		},
 
 		/**
