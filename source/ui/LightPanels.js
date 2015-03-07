@@ -209,24 +209,34 @@
 					}
 				}
 
-				setTimeout(this.bindSafely(function () {
-					// setup the transition for the next panel
-					var nextTransition = {};
-					nextTransition['translate' + this._axis] = -100 * this._direction + '%';
-					enyo.dom.transform(nextPanel, nextTransition);
-					if (this._currentPanel) { // setup the transition for the current panel
-						var currentTransition = {};
-						currentTransition['translate' + this._axis] = this._indexDirection > 0 ? -200 * this._direction + '%' : '0%';
-						enyo.dom.transform(this._currentPanel, currentTransition);
-					}
+				if (this.shouldAnimate()) {
+					setTimeout(this.bindSafely(function () {
+						this.setupAnimations(nextPanel);
+					}), 16);
+				} else {
+					this.setupAnimations(nextPanel);
+				}
+			}
+		},
 
-					this._previousPanel = this._currentPanel;
-					this._currentPanel = nextPanel;
-					if (!this.shouldAnimate()) { // ensure that `transitionFinished is called, regardless of animation
-						this.transitionFinished(this._currentPanel, {originator: this._currentPanel});
-					}
+		/**
+		* @private
+		*/
+		setupAnimations: function (nextPanel) {
+			// setup the transition for the next panel
+			var nextTransition = {};
+			nextTransition['translate' + this._axis] = -100 * this._direction + '%';
+			enyo.dom.transform(nextPanel, nextTransition);
+			if (this._currentPanel) { // setup the transition for the current panel
+				var currentTransition = {};
+				currentTransition['translate' + this._axis] = this._indexDirection > 0 ? -200 * this._direction + '%' : '0%';
+				enyo.dom.transform(this._currentPanel, currentTransition);
+			}
 
-				}), this.shouldAnimate() ? 16 : 0);
+			this._previousPanel = this._currentPanel;
+			this._currentPanel = nextPanel;
+			if (!this.shouldAnimate()) { // ensure that `transitionFinished is called, regardless of animation
+				this.transitionFinished(this._currentPanel, {originator: this._currentPanel});
 			}
 		},
 
