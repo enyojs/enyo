@@ -25,7 +25,7 @@ enyo.depends(
 	'Selection.js',
 	'Drawer.js',
 	'NewDrawer.js',
-	'NewDrawer.less',
+	'NewDrawer.css',
 	'Table.js',
 	'fullscreen.js',
 	'Media.js',
