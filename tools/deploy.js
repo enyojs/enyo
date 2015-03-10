@@ -281,6 +281,7 @@ if (!opt.mapfrom || opt.mapfrom.indexOf("enyo") < 0) {
 		'-enyo', opt.enyo,
 		'-destdir', opt.out,
 		'-output', path.join(opt.build, 'enyo'),
+		(less ? '-less' : '-no-less'),
 		(ri ? '-ri' : '-no-ri'),
 		(beautify ? '-beautify' : '-no-beautify'),
 		path.join(opt.enyo, 'minify', 'package.js')];
