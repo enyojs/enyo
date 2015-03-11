@@ -68,10 +68,10 @@
 			* The size of the select box in rows.
 			* 
 			* @type {Number}
-			* @default 1
+			* @default 0
 			* @public
 			*/
-			size: 1,
+			size: 0,
 
 			/**
 			* Sets whether the enyo.Select can select multiple options
