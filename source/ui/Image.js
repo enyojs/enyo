@@ -77,6 +77,13 @@
 		/**
 		* @private
 		*/
+		handlers: {
+			onload: 'handleLoad'
+		},
+
+		/**
+		* @private
+		*/
 		published:
 			/** @lends enyo.Image.prototype */ {
 
@@ -129,6 +136,9 @@
 			position: 'center',
 
 			/**
+			* When specified, this will be displayed until the image specified by the
+			* {@link enyo.Image#src} property loads.
+			*
 			* @type {String}
 			* @default ''
 			* @public
@@ -181,14 +191,17 @@
 		srcChanged: function () {
 			var src = enyo.ri.selectSrc(this.src);
 			if (this.sizing) {
-				var placeholder =  enyo.path.rewrite(this.placeholder);
-				var multiple= "url('"+ enyo.path.rewrite(src) +"'), url('"+ (placeholder ? placeholder : enyo.Image.placeholder) + "');";
-				this.applyStyle('background-image',  multiple);
+				var placeholder = this.placeholder ? ', url(\'' + enyo.path.rewrite(this.placeholder) + '\')' : '';
+				var url = 'url(\'' + enyo.path.rewrite(src) + '\')' + placeholder + ';';
+				this.applyStyle('background-image', url);
 			} else {
 				if (!src) {
 					// allow us to clear the src property
 					this.setAttribute('src', '');
 				} else {
+					if (this.placeholder) {
+						this.applyStyle('background-image', 'url(\'' + enyo.path.rewrite(this.placeholder) + '\')');
+					}
 					this.setAttribute('src', enyo.path.rewrite(src));
 				}
 			}
@@ -225,6 +238,15 @@
 		positionChanged: function () {
 			if (this.sizing) {
 				this.applyStyle('background-position', this.position);
+			}
+		},
+
+		/**
+		* @private
+		*/
+		handleLoad: function () {
+			if (!this.sizing && this.placeholder) {
+				this.applyStyle('background-image', null);
 			}
 		},
 
