@@ -180,15 +180,16 @@
 		*/
 		srcChanged: function () {
 			var src = enyo.ri.selectSrc(this.src);
-			var multiple= "url('"+ enyo.path.rewrite(src) +"'), url('"+ this.placeholder + "');";
 			if (this.sizing) {
-				this.applyStyle('background-image', src ? multiple : 'none');
+				var placeholder =  enyo.path.rewrite(this.placeholder);
+				var multiple= "url('"+ enyo.path.rewrite(src) +"'), url('"+ (placeholder ? placeholder : enyo.Image.placeholder) + "');";
+				this.applyStyle('background-image',  multiple);
 			} else {
 				if (!src) {
 					// allow us to clear the src property
 					this.setAttribute('src', '');
 				} else {
-					this.applyStyle('background-image', multiple );
+					this.setAttribute('src', enyo.path.rewrite(src));
 				}
 			}
 		},
