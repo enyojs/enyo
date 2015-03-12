@@ -1098,20 +1098,23 @@
 		},
 
 		/**
+		* @param {Boolean} [cache] - Whether or not we are tearing down as part of a destroy
+		*	operation, or if we are just caching. If `true`, the `showing` and `canGenerate`
+		*	properties of the control will not be reset.
 		* @private
 		*/
-		teardownRender: function () {
+		teardownRender: function (cache) {
 			var delegate = this.renderDelegate || Control.renderDelegate;
 
 			if (this._retainedNode) {
 				storeRetainedNode(this);
 			}
 
-			delegate.teardownRender(this);
+			delegate.teardownRender(this, cache);
 
 			// if the original state was set with renderOnShow true then we need to reset these
 			// values as well to coordinate the original intent
-			if (this.renderOnShow) {
+			if (this.renderOnShow && !cache) {
 				this.set('showing', false);
 				this.set('canGenerate', false);
 			}
