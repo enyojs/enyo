@@ -490,7 +490,7 @@
 		preCachePanels: function(info, commonInfo, runPostTransition) {
 			var pc, panels, i, panel;
 
-			if (this.cachePanels) {
+			if (this.cachePanels && !this._cachedPanels[info.kind]) {
 				pc = this.$.panelCache;
 				commonInfo = commonInfo || {};
 				commonInfo.owner = this;
