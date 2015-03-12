@@ -490,7 +490,7 @@
 		preCachePanels: function(info, commonInfo, runPostTransition) {
 			var pc, panels, i, panel;
 
-			if (this.cachePanels && !this._cachedPanels[info.kind]) {
+			if (this.cachePanels) {
 				pc = this.$.panelCache;
 				commonInfo = commonInfo || {};
 				commonInfo.owner = this;
@@ -501,6 +501,32 @@
 					if (runPostTransition) {
 						panel.postTransition();
 					}
+				}
+			}
+		},
+
+		/**
+		* Pre-caches a single panel by creating and caching the panel, even if it has not yet been
+		* rendered into view. This is helpful for reducing the instantiation time for panels which
+		* have yet to be shown, but can and eventually will be shown to the user.
+		*
+		* @param {Object} info - The declarative {@glossary kind} definition.
+		* @param {Object} commonInfo - Additional properties to be applied (defaults).
+		* @param {Boolean} runPostTransition - If `true`, the {@link enyo.LightPanel#postTransition}
+		*	method will be run.
+		* @public
+		*/
+		preCachePanel: function(info, commonInfo, runPostTransition) {
+			var pc, panel;
+
+			if (this.cachePanels && !this._cachedPanels[info.kind]) {
+				pc = this.$.panelCache;
+				commonInfo = commonInfo || {};
+				commonInfo.owner = this;
+				panel = pc.createComponent(info, commonInfo);
+				this._cachedPanels[panel.kind] = panel;
+				if (runPostTransition) {
+					panel.postTransition();
 				}
 			}
 		},
@@ -532,6 +558,13 @@
 		},
 
 		/**
+		*
+		*/
+		isViewQueued: function (id) {
+			return this._cachedPanels[id];
+		},
+
+		/**
 		* Starts a job to cache a given view at an opportune time.
 		*
 		* @param {String} viewProps - The properties of the view to be enqueued.
@@ -543,7 +576,7 @@
 			this.startJob(viewProps.kind, function () {
 				// TODO: once the data layer is hooked into the run loop, we should no longer need
 				// to forcibly trigger the post transition work.
-				this.preCachePanels([viewProps], {}, true);
+				this.preCachePanel(viewProps, {}, true);
 			}, delay || this.delay, priority || this.priority);
 		},
 
