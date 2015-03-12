@@ -368,7 +368,7 @@
 			for (i = comps.length - 1; i >= 0; i--) {
 				comp = comps[i];
 				if (comp === this) return sibling ? sibling : null;
-				sibling = comp;
+				if (comp.generated) sibling = comp;
 			}
 
 			return null;

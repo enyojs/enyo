@@ -445,7 +445,7 @@
 			var pid = panel.kind;
 
 			panel.node.remove();
-			panel.teardownRender();
+			panel.teardownRender(true);
 
 			this.resetPanel(panel);
 
