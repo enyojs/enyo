@@ -70,6 +70,16 @@
 			popOnBack: true,
 
 			/**
+			* When `true`, panels are automatically popped when the user moves forward (they remain
+			* components of the parent to maintain the proper hierarchy).
+			*
+			* @type {Boolean}
+			* @default true
+			* @public
+			*/
+			popOnForward: true,
+
+			/**
 			* The amount of time, in milliseconds, to run the transition animation between panels.
 			*
 			* @type {Number}
@@ -191,6 +201,9 @@
 			this._indexDirection = (this.index - previousIndex < 0 ? -1 : 1);
 
 			if (nextPanel) {
+				if (!nextPanel.generated) {
+					nextPanel.render();
+				}
 
 				if (this.shouldAnimate()) {
 					setTimeout(this.bindSafely(function () {
@@ -365,23 +378,45 @@
 		},
 
 		/**
-		* Destroys panels whose index is greater than or equal to a specified value.
+		* Destroys panels whose index is either greater than or equal, or less than or equal to the
+		* specified value, depending on the direction.
 		*
 		* @param {Number} index - Index at which to start destroying panels.
 		* @public
 		*/
-		popPanels: function (index) {
-			var panels = this.getPanels(),
-				panel;
+		popPanels: function (index, direction) {
+			var panels = this.getPanels();
 
-			index = index || panels.length - 1;
+			index = direction < 0 ? index || panels.length - 1 : index;
 
-			while (panels.length > index && index >= 0) {
-				panel = panels[panels.length - 1];
-				if (this.cachePanels) {
-					this.cachePanel(panel);
+			if (direction < 0) {
+				while (panels.length > index && index >= 0) {
+					this.popPanel(panels.length - 1);
 				}
-				else {
+			} else {
+				for (var panelIndex = index; panelIndex >= 0; panelIndex--) {
+					this.popPanel(panelIndex, true);
+				}
+			}
+		},
+
+		/**
+		* Destroys the specified panel.
+		*
+		* @param {Number} index - The index of the panel to destroy.
+		* @param {Boolean} [preserve] - If {@link enyo.LightPanels#cachePanels} is `true`, this
+		*	value is used to determine whether or not to preserve the current panel's position in
+		*	the component hierarchy and on the screen, when caching.
+		* @public
+		*/
+		popPanel: function (index, preserve) {
+			var panels = this.getPanels(),
+				panel = panels[index];
+
+			if (panel) {
+				if (this.cachePanels) {
+					this.cachePanel(panel, preserve);
+				} else {
 					panel.destroy();
 				}
 			}
@@ -436,21 +471,29 @@
 		* needs to remain in view, but may be revisited at a later time.
 		*
 		* @param {Object} panel - The panel to cache for later use.
+		* @param {Boolean} preserve - If `true`, preserves the panel's position both on the screen
+		*	and within the component hierarchy.
 		* @public
 		*/
-		cachePanel: function (panel) {
+		cachePanel: function (panel, preserve) {
 			// TODO: This works for Settings use case,
 			// but we need to support an alternative
 			// identifier for panel-caching purposes
 			var pid = panel.kind;
 
-			panel.node.remove();
-			panel.teardownRender(true);
+			// The panel could have already been removed from DOM and torn down if we popped when
+			// moving forward.
+			if (panel.node) {
+				panel.node.remove();
+				panel.teardownRender(true);
+			}
 
-			this.resetPanel(panel);
+			if (!preserve) {
+				this.resetPanel(panel);
 
-			this.removeControl(panel);
-			this.$.panelCache.addControl(panel);
+				this.removeControl(panel);
+				this.$.panelCache.addControl(panel);
+			}
 
 			this._cachedPanels[pid] = panel;
 		},
@@ -602,8 +645,9 @@
 				if (this._previousPanel) {
 					this._previousPanel.removeClass('transitioning');
 				}
-				if (this.popOnBack && this._indexDirection < 0 && this.index < this.getPanels().length - 1) {
-					this.popPanels(this.index + 1);
+				if ((this._indexDirection < 0 && this.popOnBack && this.index < this.getPanels().length - 1) ||
+					(this._indexDirection > 0 && this.popOnForward && this.index > 0)) {
+					this.popPanels(this.index - this._indexDirection, this._indexDirection);
 				}
 				if (this._currentPanel.shouldSkipPostTransition && !this._currentPanel.shouldSkipPostTransition()) {
 					enyo.asyncMethod(this, function () {
