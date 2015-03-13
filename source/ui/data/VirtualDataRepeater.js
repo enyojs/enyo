@@ -7,17 +7,17 @@
 		reorderNodes: false,
 		
 		reset: function () {
-			if (this.hasRendered) {
-				this.first = 0;
-			}
-			this._last = Math.min(this.numItems, this.collection.length) - 1;
 			this.orderedChildren = [],
 			this.childIndex = {},
 			this.destroyClientControls();
+			this.setExtent();
+			this._last = Math.min(this.numItems, this.collection.length) - 1;
 			this.doIt();
 			this.hasReset = true;
-			// TODO: Decide whether we really need this
-			// this.notifyObservers('first');
+		},
+
+		setExtent: function() {
+			this.first = 0;
 		},
 		
 		refresh: function (immediate) {
@@ -197,7 +197,7 @@
 
 				this.refresh();
 			}*/
-			if (this.data && this.hasRendered) {
+			if (this.data && this.hasRendered && this.hasReset) {
 				this.refresh(true);
 			}
 		},
@@ -263,12 +263,12 @@
 		/**
 		* @private
 		*/
-		modelsAdded: enyo.inherit( function (sup) {
-			return function (sender, e, props) {
-				// this.log(props);
-				sup.apply(this, arguments);
-			};
-		}),
+		// modelsAdded: enyo.inherit( function (sup) {
+		// 	return function (sender, e, props) {
+		// 		this.log(props);
+		// 		sup.apply(this, arguments);
+		// 	};
+		// }),
 
 		dataChanged: function() {
 			if (this.data && this.hasRendered) {
