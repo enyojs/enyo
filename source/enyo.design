@@ -112,6 +112,13 @@
                         "isRepeater": true
                     }
                 },
+        		{
+                    "name": "Scrim",
+                    "description": "A overlay area to prevent tap events",
+                    "config": {
+            		"kind": "enyo.Scrim"
+				}
+                },
                 {
                     "name": "Scroller",
                     "description": "A scroller",
