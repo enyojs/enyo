@@ -42,7 +42,7 @@
 		*
 		* @private
 		*/
-		windowEvents: ["resize", "load", "unload", "message", "hashchange", "popstate"],
+		windowEvents: ["resize", "load", "unload", "message", "hashchange", "popstate", "focus", "blur"],
 
 		/**
 		* Feature plugins (aka filters)
@@ -283,7 +283,7 @@
 	enyo.dispatcher.features.push(
 		function (e) {
 			if ("click" === e.type) {
-				if (e.clientX === 0 && e.clientY === 0) {
+				if (e.clientX === 0 && e.clientY === 0 && !e.detail) {
 					// this allows the click to dispatch as well
 					// but note the tap event will fire first
 					var cp = enyo.clone(e);
@@ -346,5 +346,5 @@
 		}
 		return p;
 	};
-	
+
 })(enyo, this);
