@@ -342,29 +342,40 @@
 
 		/**
 		* Creates multiple panels on top of the stack and updates index to select the last one
-		* created. Supports an optional `options` object as the third parameter.
+		* created. Supports an optional `opts` object as the third parameter.
 		*
 		* @param {Object[]} info - The declarative {@glossary kind} definitions.
-		* @param {Object} commonInfo - Additional properties to be applied (defaults).
-		* @param {Object} options - Additional options for pushPanels.
+		* @param {Object} moreInfo - Additional properties to be applied (defaults).
+		* @param {Object} opts - Additional options for pushPanels. A `targetIndex` can be
+		*	specified as the index of the panel to display, otherwise the last panel created will
+		*	be displayed.
 		* @return {null|Object[]} Array of the panels that were created on top of the stack, or
 		*	`null` if panels could not be created.
 		* @public
 		*/
-		pushPanels: function (info, commonInfo, options) {
+		pushPanels: function (info, moreInfo, opts) {
+			if (opts && opts.purge) {
+				this.purge();
+			}
+
 			var lastIndex = this.getPanels().length,
-				newPanels = this.createComponents(info, commonInfo),
+				newPanels = [],
 				newPanel, idx;
 
+			for (idx = 0; idx < info.length; idx++) {
+				if (!this.panelExists(info[idx].kind)) {
+					newPanel = (this.cachePanels && this.restorePanel(info[idx].kind)) || this.createComponent(info[idx], moreInfo);
+					newPanels.push(newPanel);
+					if ((opts && opts.targetIndex != null && lastIndex + idx == opts.targetIndex) || idx == info.length - 1) {
+						newPanel.render();
+					}
+				}
+			}
 			if (this.cachePanels) {
 				this.pruneQueue(info);
 			}
-			for (idx = 0; idx < newPanels.length; ++idx) {
-				newPanel = newPanels[idx];
-				newPanel.render();
-			}
 
-			this.set('index', lastIndex, true);
+			this.set('index', (opts && opts.targetIndex != null) ? opts.targetIndex : lastIndex + newPanels.length - 1, true);
 
 			return newPanels;
 		},
@@ -375,6 +386,19 @@
 		getPanels: function () {
 			/*jshint -W093 */
 			return (this._panels = this._panels || (this.controlParent || this).children);
+		},
+
+		/**
+		* Determines whether or not the specified panel already exists as part of the current set of
+		* panels.
+		*
+		* @param {String} pid - The id of the panel to check.
+		* @private
+		*/
+		panelExists: function (pid) {
+			return !!(this.getPanels().filter( function (elem) {
+				return elem.kind == pid;
+			})).length;
 		},
 
 		/**
