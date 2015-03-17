@@ -8,7 +8,7 @@
 		bindings: [
 			{from: 'content', to: '.$.client.content'}
 		],
-		rendered: enyo.inherit(function (sup) {
+		create: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
 				this.adjust(this.expanded);
