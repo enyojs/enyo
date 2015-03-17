@@ -73,6 +73,7 @@
 						if (c === sp) {
 							enyo.Spotlight.unspot();
 						}
+						if (typeof this.updateChild === 'function') this.updateChild(c);
 						ci[idx] = c;
 					}
 					else {
@@ -80,12 +81,14 @@
 						sc = c.selectedClass || 'selected';
 						c.addRemoveClass(sc, s);
 						c.set('selected', s);
+						if (typeof this.deployChild === 'function') this.deployChild(c);
 						c.render();
 						o.push(c);
 						ci[idx] = c;
 					}
 				}
 				else {
+					if (typeof this.retireChild === 'function') this.retireChild(c);
 					ci[idx] = null;
 					if (c) {
 						c.destroy();
@@ -100,7 +103,7 @@
 				o[0].addClass('enyo-vdr-first');
 				o[ln - 1].addClass('enyo-vdr-last');
 				
-				if (this.positionChildren) this.positionChildren();
+				if (typeof this.positionChildren === 'function') this.positionChildren();
 			}
 
 		},
