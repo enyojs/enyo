@@ -45,9 +45,25 @@
 		},
 
 		/**
+		* After size of viewport is decided, get pageSize using pageSizeMutiplier.
+		* We should update this.pageSize when we update viewport or pageSizeMutiplier.
+		*
+		* @param {enyo.DataList} list - The [list]{@link enyo.DataList} to perform this action on.
+		* @return {Number} this.pageSize - height or width of each page.
+		* @private
+		*/
+		calculatePageSize: function(list) {
+			var fn = this[list.psizeProp],
+				multi = list.pageSizeMultiplier || this.pageSizeMultiplier;
+			// using height/width of the available viewport times our multiplier value
+			this.pageSize = fn.call(this, list) * multi;
+			return this.pageSize;
+		},
+		/**
 		* @private
 		*/
 		generate: function (list) {
+			this.pageSize = this.pageSize || this.calculatePageSize(list);
 			for (var i=0, p; (p=list.pages[i]); ++i) {
 				this.generatePage(list, p, p.index);
 			}
@@ -106,8 +122,10 @@
 		*/
 		refresh: function (list) {
 			if (!list.hasReset) { return this.reset(list); }
+			this._dirtyBit = true;
 			this.assignPageIndices(list);
 			this.generate(list);
+			this._dirtyBit = false;
 		},
 
 		/**
@@ -153,9 +171,11 @@
 				// the metrics for the entire list
 				metrics = list.metrics,
 				// controls per page
-				perPage = this.controlsPerPage(list),
+				perPage = this.controlsPerPage(list, list.isChildSizeUpdated, page.index),
 				// placeholder for the control we're going to update
-				view;
+				view,
+				// basically we assume that every page has same childSize, but just in case
+				childSize;
 
 			// the first index for this generated page
 			page.start  = perPage * index;
@@ -190,8 +210,28 @@
 			metrics        = metrics.pages[index] || (metrics.pages[index] = {});
 			metrics.height = this.pageHeight(list, page);
 			metrics.width  = this.pageWidth(list, page);
-			// update the childSize value now that we have measurements
-			this.childSize(list);
+
+			// we can know exact childSize after it rendered once
+			if (!list.fixedChildSize) {
+				childSize = this.childSize(list, index);
+			}
+			// when initial page (index: 0) is generated
+			if (!list.childSize) {
+				list.childSize = childSize;
+			} else {
+				// update the each page's childSize value
+				list.isChildSizeUpdated = (list.childSize == childSize) ? false : true;
+				if (list.isChildSizeUpdated) {
+					metrics.hasListChildSize = false;
+					metrics.childSize = childSize;
+					metrics.controlsPerPage = this.controlsPerPage(list, true, index);
+				} else {
+					if (metrics.childSize) {
+						metrics.childSize = childSize;
+					}
+					metrics.hasListChildSize = true;
+				}
+			}
 		},
 
 		/**
@@ -210,22 +250,42 @@
 
 		/**
 		* Generates a child size for the given [list]{@link enyo.DataList}.
+		* if fixedChildSize is not assigned, we assume that each page could have different childSize.
 		*
+		* @param {enyo.DataList} list - The [list]{@link enyo.DataList} to perform this action on.
+		* @param {Number} index - The index of given page. If it is, we can assume that only this page
+		*						has individual childSize and controlsPerPage.
 		* @private
 		*/
-		childSize: function (list) {
+		childSize: function (list, index) {
 			if (!list.fixedChildSize) {
-				var pageIndex = list.$.page1.index,
+				var metrics = list.metrics.pages[index];
+				// if childSize of this indexed page is already calculated and same as list.childSize
+				// we will avoid redundant calculation.
+				if (metrics && !this._dirtyBit) {
+					if (metrics.childSize) {
+						return metrics.childSize;
+					}
+					if (list.childSize && metrics.hasListChildSize) {
+						return list.childSize;
+					}
+				}
+
+				var pageIndex = (typeof index !== 'undefined') ? index : list.$.page1.index,
 					sizeProp  = list.psizeProp,
-					n         = list.$.page1.node || list.$.page1.hasNode(),
-					size, props;
+					page      = (pageIndex == list.$.page1.index) ? list.$.page1 : list.$.page2,
+					n         = page.node || page.hasNode(),
+					size, props, childSize;
 				if (pageIndex >= 0 && n) {
 					props = list.metrics.pages[pageIndex];
 					size  = props? props[sizeProp]: 0;
-					list.childSize = Math.floor(size / (n.children.length || 1));
+					childSize = Math.floor(size / (n.children.length || 1));
+				}
+				if (pageIndex) {
+					list.metrics.pages[index].childSize = childSize;
 				}
 			}
-			return list.fixedChildSize || list.childSize || (list.childSize = 100); // we have to start somewhere
+			return list.fixedChildSize || childSize || 100; // we have to start somewhere
 		},
 
 		/**
@@ -233,15 +293,16 @@
 		* out of [controlsPerPage]{@link DataList.delegates.vertical#controlsPerPage} so that it
 		* can be overridden by delegates that inherit from this one.
 		*
+		* @param {enyo.DataList} list - The [list]{@link enyo.DataList} to perform this action on.
+		* @param {Number} index - The index of given page. If it is, we can assume that only this page
+		*						has individual childSize and controlsPerPage.
 		* @private
 		*/
-		calculateControlsPerPage: function (list) {
-			var fn              = this[list.psizeProp],
-				multi           = list.pageSizeMultiplier || this.pageSizeMultiplier,
-				childSize       = this.childSize(list);
+		calculateControlsPerPage: function (list, pageIndex) {
+			var pageSize        = this.pageSize,
+				childSize       = this.childSize(list, pageIndex);
 
-			// using height/width of the available viewport times our multiplier value
-			return Math.ceil(((fn.call(this, list) * multi) / childSize) + 1);
+			return Math.ceil((pageSize / childSize) + 1);
 		},
 
 		/**
@@ -254,8 +315,10 @@
 		*
 		* @private
 		*/
-		controlsPerPage: function (list, forceUpdate) {
-			if (list._staticControlsPerPage) {
+		controlsPerPage: function (list, forceUpdate, pageIndex) {
+			// if controlsPerPage is given from dataList instantiation, we will use it
+			// unless fixedChildSize is not assigned.
+			if (!list.fixedChildSize && list._staticControlsPerPage) {
 				return list.controlsPerPage;
 			} else {
 				var updatedControls = list._updatedControlsPerPage,
@@ -264,9 +327,15 @@
 				// if we've never updated the value or it was done longer ago than the most
 				// recent updated sizing/bounds we need to update
 				if (forceUpdate || !updatedControls || (updatedControls < updatedBounds)) {
-					perPage = list.controlsPerPage = this.calculateControlsPerPage(list);
-					// update our time for future comparison
-					list._updatedControlsPerPage = enyo.perfNow();
+					perPage = this.calculateControlsPerPage(list, pageIndex);
+
+					if (list.controlsPerPage && typeof pageIndex !== 'undefined') {
+						list.metrics.pages[pageIndex].controlsPerPage = perPage;
+					} else {
+						list.controlsPerPage = perPage;
+						// update our time for future comparison
+						list._updatedControlsPerPage = enyo.perfNow();
+					}
 				}
 				return perPage;
 			}
@@ -610,12 +679,12 @@
 			if (firstIdx === 0) {
 				threshold[upperProp] = undefined;
 			} else {
-				threshold[upperProp] = (metrics[firstIdx][upperProp] + this.childSize(list));
+				threshold[upperProp] = (metrics[firstIdx][upperProp] + this.childSize(list, firstIdx));
 			}
 			if (lastIdx >= count) {
 				threshold[lowerProp] = undefined;
 			} else {
-				threshold[lowerProp] = (metrics[lastIdx][lowerProp] - fn.call(this, list) - this.childSize(list));
+				threshold[lowerProp] = (metrics[lastIdx][lowerProp] - fn.call(this, list) - this.childSize(list, lastIdx));
 			}
 			if (list.usingScrollListener) {
 				list.$.scroller.setScrollThreshold(threshold);
@@ -743,8 +812,9 @@
 
 			list._updateBounds = true;
 			this.updateBounds(list);
-			// Need to update our controlsPerPage value immediately,
+			// Need to update our controlsPerPage and pageSize value immediately,
 			// before any cached metrics are used
+			this.calculatePageSize(list);
 			this.controlsPerPage(list);
 			if (prevCPP !== list.controlsPerPage) {
 				// since we are now using a different number of controls per page,
