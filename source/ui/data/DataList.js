@@ -190,12 +190,14 @@
 		* the current dataset. This is much cheaper to call than `reset()`, but is primarily used
 		* internally.
 		*
+		* @param {Boolean} skipPageIndicesUpdate - Basically refreshing DataList requires to update
+		* page indices. but if it is true, we can skip this process.
 		* @public
 		*/
-		refresh: function (c, e) {
+		refresh: function (skipPageIndicesUpdate) {
 			if (this.get('absoluteShowing')) {
 				if (this.hasRendered) {
-					this.delegate.refresh(this);
+					this.delegate.refresh(this, skipPageIndicesUpdate);
 				}
 			} else {
 				this._addToShowingQueue('refresh', this.refresh);

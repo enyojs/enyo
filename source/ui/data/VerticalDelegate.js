@@ -102,11 +102,13 @@
 		* and adjusting the buffer accordingly.
 		*
 		* @param {enyo.DataList} list - The [list]{@link enyo.DataList} to perform this action on.
+		* @param {Boolean} skipPageIndicesUpdate - Basically refreshing DataList requires to update
+		* page indices. but if it is true, we can skip this process.
 		* @private
 		*/
-		refresh: function (list) {
+		refresh: function (list, skipPageIndicesUpdate) {
 			if (!list.hasReset) { return this.reset(list); }
-			this.assignPageIndices(list);
+			if (!skipPageIndicesUpdate) { this.assignPageIndices(list); }
 			this.generate(list);
 		},
 
