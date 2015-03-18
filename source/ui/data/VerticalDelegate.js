@@ -524,6 +524,26 @@
 		},
 
 		/**
+		* Retrieves the assumed page index for the requested position.
+		*
+		* @param {enyo.DataList} list - The [list]{@link enyo.DataList} to perform this action on.
+		* @param {Number} targetPos - How long does target control in scroller.
+		* @private
+		*/
+		pageIndexByPosition: function (list, targetPos) {
+			var mx = list.metrics.pages,
+				ds = this.defaultPageSize(list),
+				tt = 0, sp = list.psizeProp, cp, i = 0;
+			while (tt < targetPos) {
+				cp = mx[i++];
+				tt += cp && cp.childSize ? cp.childSize * list.controlsPerPage
+					: cp && cp[sp] ? cp[sp]
+					: ds;
+			}
+			return (i > 0) ? i - 1 : 0;
+		},
+
+		/**
 		* Retrieves the default page size.
 		*
 		* @private
@@ -646,7 +666,8 @@
 			targetPos = Math.max(0, Math.min(targetPos, list.bufferSize));
 
 			// First, we find the target page (the one that covers the target position)
-			index1 = Math.floor(targetPos / this.defaultPageSize(list));
+			index1 = list.fixedChildSize ? Math.floor(targetPos / this.defaultPageSize(list))
+					: this.pageIndexByPosition(list, targetPos);
 			index1 = Math.min(index1, last);
 
 			// Our list always generates two pages worth of content, so -- now that we have
