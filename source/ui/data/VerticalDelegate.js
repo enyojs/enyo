@@ -190,8 +190,9 @@
 			metrics        = metrics.pages[index] || (metrics.pages[index] = {});
 			metrics.height = this.pageHeight(list, page);
 			metrics.width  = this.pageWidth(list, page);
+
 			// update the childSize value now that we have measurements
-			this.childSize(list);
+			metrics.childSize = this.childSize(list);
 		},
 
 		/**
@@ -214,6 +215,7 @@
 		* @private
 		*/
 		childSize: function (list) {
+			var childSize;
 			if (!list.fixedChildSize) {
 				var pageIndex = list.$.page1.index,
 					sizeProp  = list.psizeProp,
@@ -222,10 +224,11 @@
 				if (pageIndex >= 0 && n) {
 					props = list.metrics.pages[pageIndex];
 					size  = props? props[sizeProp]: 0;
-					list.childSize = Math.floor(size / (n.children.length || 1));
+					childSize = Math.floor(size / (n.children.length || 1));
+					list.childSize = list.childSize? Math.max(list.childSize, childSize) : childSize;
 				}
 			}
-			return list.fixedChildSize || list.childSize || (list.childSize = 100); // we have to start somewhere
+			return list.fixedChildSize || childSize || (childSize = 100); // we have to start somewhere
 		},
 
 		/**
