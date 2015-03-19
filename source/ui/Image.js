@@ -158,7 +158,8 @@
 		},
 
 		handlers: {
-			onload: 'handleLoad'
+			onload: 'handleLoad',
+			onerror: 'handleError'
 		},
 
 		/**
@@ -243,6 +244,16 @@
 				this.applyStyle('background-image', null);
 			}
 		},
+
+		/**
+		* @private
+		*/
+		handleError: function() {
+			if (this.placeholder) {
+				this.setSrc(null);
+			}
+		},
+
 
 		/**
 		* @fires enyo.Image#onload
