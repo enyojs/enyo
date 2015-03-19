@@ -332,16 +332,15 @@
 		models: null,
 		
 		/**
-		* The current [state]{@link enyo.States} of the [collection]{@link enyo.Collection}.
+		* The current [state]{@link enyo~States} of the [collection]{@link enyo.Collection}.
 		* This value changes automatically and may be observed for more complex state
 		* monitoring. The default value is [READY]{@link enyo~States.READY}.
-		* (And let's try {@link enyo~States#READY} while we're at it.)
-		* @see enyo.States
-		* @see enyo.StateSupport
 		* @type enyo.States
-		* @default enyo.States.READY
+		* @default enyo~States.READY
 		* @readonly
 		* @public
+		* @see enyo.States
+		* @see enyo.StateSupport
 		*/
 		status: STATES.READY,
 		
@@ -839,10 +838,10 @@
 		/**
 		* Commits the [collection]{@link enyo.Collection} to a
 		* [source]{@link enyo.Collection#source} or sources. An {@link enyo.Collection}
-		* cannot be committed if it is in an [error]{@link enyo.States.ERROR}
-		* ({@link enyo.StateSupport.isError}) or [busy]{@link enyo.States.BUSY}
+		* cannot be committed if it is in an [error]{@link enyo~States.ERROR}
+		* ({@link enyo.StateSupport.isError}) or [busy]{@link enyo~States.BUSY}
 		* ({@link enyo.StateSupport.isBusy}) [state]{@link enyo.Model#status}. While
-		* executing, it will add the [COMMITTING]{@link enyo.States.COMMITTING} flag
+		* executing, it will add the [COMMITTING]{@link enyo~States.COMMITTING} flag
 		* to the collection's [status]{@link enyo.Collection#status}. Once it has
 		* completed execution, it will remove this flag (even if it fails).
 		*
@@ -891,10 +890,10 @@
 		/**
 		* Fetches the [collection]{@link enyo.Collection} from a
 		* [source]{@link enyo.Collection#source} or sources. An {@link enyo.Collection}
-		* cannot be fetched if it is in an [error]{@link enyo.States.ERROR}
-		* ({@link enyo.StateSupport.isError}) or [busy]{@link enyo.States.BUSY}
+		* cannot be fetched if it is in an [error]{@link enyo~States.ERROR}
+		* ({@link enyo.StateSupport.isError}) or [busy]{@link enyo~States.BUSY}
 		* ({@link enyo.StateSupport.isBusy}) [state]{@link enyo.Model#status}. While
-		* executing, it will add the [FETCHING]{@link enyo.States.FETCHING} flag to
+		* executing, it will add the [FETCHING]{@link enyo~States.FETCHING} flag to
 		* the collection's [status]{@link enyo.Collection#status}. Once it has
 		* completed execution, it will remove this flag (even if it fails).
 		*
@@ -947,10 +946,10 @@
 		* [commit default option]{@link enyo.Collection#options} must be `true` or a
 		* `source` property must be explicitly provided in the `opts` parameter. A
 		* collection cannot be destroyed (using a source) if it is in an
-		* [error]{@link enyo.States.ERROR} ({@link enyo.StateSupport.isError}) or
-		* [busy]{@link enyo.States.BUSY} ({@link enyo.StateSupport.isBusy})
+		* [error]{@link enyo~States.ERROR} ({@link enyo.StateSupport.isError}) or
+		* [busy]{@link enyo~States.BUSY} ({@link enyo.StateSupport.isBusy})
 		* [state]{@link enyo.Collection#status}. While executing, it will add the
-		* [DESTROYING]{@link enyo.States.DESTROYING} flag to the collection's
+		* [DESTROYING]{@link enyo~States.DESTROYING} flag to the collection's
 		* [status]{@link enyo.Collection#status}. Once it has completed execution,
 		* it will remove this flag (even if it fails).
 		*
@@ -1081,7 +1080,7 @@
 		* called directly and, when overloading, care must be taken to ensure that the
 		* super-method is called. This correctly sets the [status]{@link enyo.Collection#status}
 		* and, in cases where multiple [sources]{@link enyo.Collection#source} were used, it waits
-		* until all have responded before clearing the [COMMITTING]{@link enyo.States.COMMITTING}
+		* until all have responded before clearing the [COMMITTING]{@link enyo~States.COMMITTING}
 		* flag. If a [success]{@link enyo.Collection~Success} callback was provided, it will be
 		* called once for each source.
 		*
@@ -1118,7 +1117,7 @@
 		* called directly and, when overloading, care must be taken to ensure that you call the
 		* super-method. This correctly sets the [status]{@link enyo.Collection#status} and, in
 		* cases where multiple [sources]{@link enyo.Collection#source} were used, it waits until
-		* all have responded before clearing the [FETCHING]{@link enyo.States.FETCHING} flag. If
+		* all have responded before clearing the [FETCHING]{@link enyo~States.FETCHING} flag. If
 		* a [success]{@link enyo.Collection~Success} callback was provided, it will be called
 		* once for each source.
 		*

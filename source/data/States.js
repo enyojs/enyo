@@ -47,9 +47,9 @@
 	* 0000 1000 0000 0000 (BIN)
 	* ```
 	*
-	* @name enyo.States
 	* @enum {Number}
 	* @public
+	* @memberof enyo
 	* @see enyo.StateSupport
 	*/
 	enyo.States = {
