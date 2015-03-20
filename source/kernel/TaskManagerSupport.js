@@ -21,7 +21,6 @@
 		* @public
 		*/
 		add: function (task, priority) {
-			priority = this.normalizePriority(priority) || enyo.PriorityQueue.defaultPriority;
 			this.tasks.add(task, priority);
 		},
 
@@ -86,7 +85,7 @@
 		* @private
 		*/
 		normalizePriority: function (priority) {
-			return enyo.isString(priority) ? this.priorities[priority] : priority;
+			return enyo.isString(priority) ? enyo.PriorityQueue.priorities[priority] : priority;
 		}
 
 	};

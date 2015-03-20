@@ -37,8 +37,8 @@
 
 				sup.apply(this, arguments);
 
-				enyo.Idler.start();
-				enyo.Idler.addActivityHandler(this.bindSafely(this.pause));
+				enyo.System.startIdleCheck();
+				enyo.System.addActivityHandler(this.bindSafely(this.pause));
 
 				this.cb = this.bindSafely(function() {
 					if (!c) {
@@ -48,7 +48,7 @@
 						c = enyo.perfNow();
 						f = ((c - p) < d) ? f + 1 : 0;
 					}
-					if (f >= this.frameThreshold && enyo.Idler.isIdle()) {
+					if (f >= this.frameThreshold && enyo.System.isIdle()) {
 						this.run();
 						c = p = f = 0;
 					} else {
@@ -72,6 +72,7 @@
 		* @public
 		*/
 		add: function (customer) {
+			// TODO: check if TaskManagerSupport has been mixed-in to this customer object
 			return this.customers.push(customer);
 		},
 
