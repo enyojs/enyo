@@ -1,12 +1,12 @@
 (function (enyo, scope) {
 
 	enyo.singleton(
-		/** @lends enyo.Idler */ {
+		/** @lends enyo.System */ {
 
 		/**
 		* @private
 		*/
-		name: 'enyo.Idler',
+		name: 'enyo.System',
 
 		/**
 		* @private
@@ -49,7 +49,7 @@
 		*
 		* @public
 		*/
-		start: function () {
+		startIdleCheck: function () {
 			this.previewDomEvent = this.checkEvent;
 		},
 
@@ -58,7 +58,7 @@
 		*
 		* @public
 		*/
-		stop: function () {
+		stopIdleCheck: function () {
 			this.previewDomEvent = this.nop;
 		},
 
