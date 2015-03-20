@@ -19,5 +19,9 @@ enyo.depends(
 	'Router.js',
 	'ViewController.js',
 	'Application.js',
-	'jobs.js'
+	'jobs.js',
+	'System.js',
+	'PriorityQueue.js',
+	'BackgroundTaskManager.js',
+	'TaskManagerSupport.js'
 );

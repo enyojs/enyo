@@ -1,5 +1,15 @@
 (function (enyo, scope) {
 
+	/**
+	* The default configurable options used by {@link enyo.PriorityQueue}.
+	*
+	* @typedef {Object} enyo.PriorityQueue~Options
+	* @property {Function} [compareFn] - A comparison function to be utilized when comparing two
+	*	items to determine prioritization. The function will receive two parameters, and should
+	*	return a boolean indicating whether or not the priority of the first item is greater than
+	*	the priority of the second time.
+	*/
+
 	enyo.kind(
 		/** @lends enyo.PriorityQueue */ {
 
@@ -22,6 +32,18 @@
 		},
 
 		/**
+		* The type of heap utilized by the {@link enyo.PriorityQueue}. Possible values include
+		* 'minHeap' and 'maxHeap', which correspond to overridable functions that are used when
+		* comparing values. This value is ignored if a comparison function is provided at
+		* initialization time via [configuration options]{@link enyo.PriorityQueue~Options}.
+		*
+		* @type {String}
+		* @default 'minHeap'
+		* @public
+		*/
+		type: 'minHeap',
+
+		/**
 		* @private
 		*/
 		defaultPriority: 5,
@@ -32,6 +54,20 @@
 		queue: [],
 
 		/**
+		* Initializes the {@link enyo.PriorityQueue}.
+		*
+		* @param {enyo.PriorityQueue~Options} [opts] - The hash of configuration options.
+		* @method
+		* @public
+		*/
+		constructor: enyo.inherit( function (sup) {
+			return function (opts) {
+				sup.apply(this, arguments);
+				this.compareFn = (opts && opts.compareFn) || this[this.type];
+			};
+		}),
+
+		/**
 		* Inserts a given item into the queue, with an optional priority.
 		*
 		* @param {Object} item - The item to insert.
@@ -40,12 +76,11 @@
 		*/
 		add: function (item, priority) {
 			priority = this.normalizePriority(priority) || this.defaultPriority;
-			this.queue.push({
+			var len = this.queue.push({
 				item: item,
 				priority: priority
 			});
-			// TODO: implement method to adjust queue
-			// this.adjustQueue();
+			this.bubbleUp(len - 1);
 		},
 
 		/**
@@ -74,7 +109,13 @@
 		* @public
 		*/
 		poll: function () {
-			return this.queue.shift().item;
+			var item = this.queue.shift();
+
+			if (this.queue.length > 1) { // heapify
+				this.moveFromEnd(0);
+			}
+
+			return item.item;
 		},
 
 		/**
@@ -83,7 +124,14 @@
 		* @param {Object} item - The item to be removed.
 		* @public
 		*/
-		remove: function (item) {},
+		remove: function (item) {
+			// TODO: explore a more efficient technique
+			var idx = this.queue.indexOf(item);
+
+			if (idx > -1) {
+				this.moveFromEnd(idx, true);
+			}
+		},
 
 		/**
 		* The number of items in the queue.
@@ -110,44 +158,104 @@
 		*
 		* @private
 		*/
-		adjustQueue: function (addedIdx) {
+		bubbleUp: function (idx) {
 			var length = this.queue.length,
-				added = this.queue[addedIdx],
+				current = this.queue[idx],
 				parent, parentIdx;
 
 			if (length == 1) {
 				return;
 			}
 
-			parentIdx = this.getParentIndex(added);
+			parentIdx = Math.floor((idx + 1) / 2) - 1;
 			parent = this.queue[parentIdx];
 
-			if (added.priority < parent.priority) {
-				this.swap(addedIdx, parentIdx);
-				this.adjustQueue(parentIdx);
+			if (parent && this.compareFn(current, parent)) {
+				this.swap(idx, parentIdx);
+				this.bubbleUp(parentIdx);
 			}
-
-			return;
 		},
 
 		/**
-		* Retrieves the index of the parent of the given item.
+		* This is our down-heap function.
 		*
 		* @private
 		*/
-		getParentIndex: function (item) {
+		bubbleDown: function (idx) {
+			var current = this.queue[idx],
+				leftIdx = (idx + 1) * 2 - 1,
+				rightIdx = (idx + 1) * 2,
+				left = this.queue[leftIdx],
+				right = this.queue[rightIdx],
+				swapIdx;
 
+			if (left) {
+				if (left.priority < current.priority) {
+					if (right && this.compareFn(right, left)) {
+						swapIdx = rightIdx;
+						this.swap(swapIdx, idx);
+					} else {
+						swapIdx = leftIdx;
+						this.swap(swapIdx, idx);
+					}
+					this.bubbleDown(swapIdx);
+				}
+			}
 		},
 
 		/**
 		* Swap the position of the given elements.
 		*
+		* @param {Number} idx1 - The position of the first element.
+		* @param {Number} idx2 - The position of the second element.
 		* @private
 		*/
 		swap: function (idx1, idx2) {
 			var tmp = this.queue[idx1];
 			this.queue[idx1] = this.queue[idx2];
 			this.queue[idx2] = tmp;
+		},
+
+		/**
+		* Swap the position of the given elements.
+		*
+		* @param {Number} idx - The position where we wish to insert the element from the end of the
+		*	queue.
+		* @param {Boolean} [replace] - If `true`, the element at the specified position will be
+		*	replaced by the element from the end of the queue; otherwise, an insertion will occur.
+		* @private
+		*/
+		moveFromEnd: function (idx, replace) {
+			var len = this.queue.length,
+				deleteCount = replace ? 1 : 0;
+
+			this.queue.splice(idx, deleteCount, this.queue[len - 1]);
+			this.queue.splice(len, 1);
+			this.bubbleDown(idx);
+		},
+
+		/**
+		* The comparison {@glossary function} used when the {@link enyo.PriorityQueue} utilizes a
+		* min heap. This assumes that we wish to make a comparison utilizing the `priority` property
+		* of the given items.
+		*
+		* @return {Boolean} If `true`, the first item has higher priority than the second item.
+		* @private
+		*/
+		minHeap: function (item1, item2) {
+			return item1.priority < item2.priority;
+		},
+
+		/**
+		* The comparison {@glossary function} used when the {@link enyo.PriorityQueue} utilizes a
+		* max heap. This assumes that we wish to make a comparison utilizing the `priority` property
+		* of the given items.
+		*
+		* @return {Boolean} If `true`, the first item has higher priority than the second item.
+		* @private
+		*/
+		maxHeap: function (item1, item2) {
+			return item1.priority > item2.priority;
 		}
 
 	});

@@ -29,20 +29,14 @@
 		/**
 		* @private
 		*/
+		activityHandlers: [],
+
+		/**
+		* @private
+		*/
 		components: [
 			{kind: 'enyo.Signals', onkeydown: 'handleUserAction'}
 		],
-
-		/**
-		* @method
-		* @private
-		*/
-		create: enyo.inherit( function (sup) {
-			return function () {
-				sup.apply(this, arguments);
-				this.activityHandlers = [];
-			};
-		}),
 
 		/**
 		* Starts observing the system for idleness.
