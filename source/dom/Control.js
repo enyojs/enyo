@@ -862,11 +862,6 @@
 		* @private
 		*/
 		showingChangedHandler: function (sender, event) {
-
-			if (!this.showing && event.showing && this.renderOnShow && !this.generated) {
-				this.set('showing', true);
-			}
-
 			return sender === this ? false : !this.showing;
 		},
 
