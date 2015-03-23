@@ -796,6 +796,13 @@
 		contentChanged: function () {
 			var delegate = this.renderDelegate || Control.renderDelegate;
 			delegate.invalidate(this, 'content');
+
+			// Accessibility : If accessibilityLabel is not set, change
+			// aria-label to current content when content changed.
+			if (this.content && !this.accessibilityLabel) {
+				this.setAttribute('tabindex', 0);
+				this.setAttribute('aria-label', this.content);
+			}
 		},
 
 		/**

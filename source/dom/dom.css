@@ -134,3 +134,11 @@ body .enyo-fullscreen {
 	height: 100% !important;
 	box-sizing: border-box !important;
 }
+
+/* Accessibility CSS */
+*[tabindex] {
+	/* remove outline in case dom has tabindex attribute */
+	outline: none;
+	/* remove tap highlight in case dom has tabindex attribute */
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
