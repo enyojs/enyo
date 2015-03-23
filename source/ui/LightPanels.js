@@ -195,7 +195,8 @@
 		*/
 		indexChanged: function (previousIndex) {
 			var panels = this.getPanels(),
-				nextPanel = panels[this.index];
+				nextPanel = panels[this.index],
+				trans, wTrans;
 
 			this._shouldAnimate = null;
 			this._indexDirection = (this.index - previousIndex < 0 ? -1 : 1);
@@ -205,9 +206,26 @@
 					nextPanel.render();
 				}
 
+				// only animate transition if there is more than one panel and/or we're animating
+				if (this.shouldAnimate()) {
+					trans = 'transform ' + this.duration + 'ms ' + this.timingFunction;
+					wTrans = '-webkit-' + trans;
+					nextPanel.applyStyle('-webkit-transition', wTrans);
+					nextPanel.applyStyle('transition', trans);
+					nextPanel.addClass('transitioning');
+					if (this._currentPanel) {
+						this._currentPanel.applyStyle('-webkit-transition', wTrans);
+						this._currentPanel.applyStyle('transition', trans);
+						this._currentPanel.addClass('transitioning');
+					}
+				} else {
+					nextPanel.applyStyle('-webkit-transition-duration', '0s');
+					nextPanel.applyStyle('transition-duration', '0s');
+				}
+
 				if (this.shouldAnimate()) {
 					setTimeout(this.bindSafely(function () {
-						this.setupTransitions(nextPanel, true);
+						this.setupTransitions(nextPanel);
 					}), 16);
 				} else {
 					this.setupTransitions(nextPanel);
@@ -219,30 +237,9 @@
 		* Sets up the transitions between the current and next panel.
 		*
 		* @param {Object} nextPanel - The panel we are transitioning to.
-		* @param {Boolean} animate - If `true`, the transition will be animated, otherwise the
-		*	transition will be non-animated.
 		* @private
 		*/
-		setupTransitions: function (nextPanel, animate) {
-			var trans, wTrans;
-
-			// only animate transition if there is more than one panel and/or we're animating
-			if (animate) {
-				trans = 'transform ' + this.duration + 'ms ' + this.timingFunction;
-				wTrans = '-webkit-' + trans;
-				nextPanel.applyStyle('-webkit-transition', wTrans);
-				nextPanel.applyStyle('transition', trans);
-				nextPanel.addClass('transitioning');
-				if (this._currentPanel) {
-					this._currentPanel.applyStyle('-webkit-transition', wTrans);
-					this._currentPanel.applyStyle('transition', trans);
-					this._currentPanel.addClass('transitioning');
-				}
-			} else {
-				nextPanel.applyStyle('-webkit-transition-duration', '0s');
-				nextPanel.applyStyle('transition-duration', '0s');
-			}
-
+		setupTransitions: function (nextPanel) {
 			// setup the transition for the next panel
 			var nextTransition = {};
 			nextTransition['translate' + this._axis] = -100 * this._direction + '%';
