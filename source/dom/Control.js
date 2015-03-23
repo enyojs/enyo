@@ -502,7 +502,7 @@
 		* Set the accessibilityLabel with label text.
 		* When the control is focused, screen reader reads accessibilityLabel.
 		*
-		* @param {Boolean} accessibilityLabel - text to readout by screen reader.
+		* @param {String} accessibilityLabel - text to readout by screen reader.
 		* @returns {this} callee for chaining.
 		* @public
 		*/
