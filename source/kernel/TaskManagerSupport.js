@@ -9,6 +9,7 @@
 		*/
 		create: enyo.inherit(function (sup) {
 			return function () {
+				sup.apply(this, arguments);
 				this.tasks = new enyo.PriorityQueue();
 			};
 		}),
@@ -30,11 +31,23 @@
 		* @param {Function} task - The task to be cancelled.
 		* @public
 		*/
-		cancel: function (task) {
+		remove: function (task) {
 			if (this.task === task) {
 				this.task = null;
 			}
 			this.tasks.remove(task);
+		},
+
+		/**
+		* Terminates the active task.
+		*
+		* @public
+		*/
+		cancel: function () {
+			if (this.task) {
+				this.task.cancel();
+				this.task = null;
+			}
 		},
 
 		/**
@@ -47,7 +60,7 @@
 		},
 
 		/**
-		* The expectation is that the current task will be resumed - To be implemented by the kind.
+		* The expectation is that the current task will be resumed - to be implemented by the kind.
 		*
 		* @public
 		*/
@@ -79,13 +92,6 @@
 		*/
 		isBusy: function () {
 			return !!this.task;
-		},
-
-		/**
-		* @private
-		*/
-		normalizePriority: function (priority) {
-			return enyo.isString(priority) ? enyo.PriorityQueue.priorities[priority] : priority;
 		}
 
 	};

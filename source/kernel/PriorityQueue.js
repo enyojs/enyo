@@ -95,7 +95,7 @@
 		/**
 		* Retrives the highest-priority item from the queue, without removing it from the queue.
 		*
-		* @return {Object} The item in the queue currently with the highest-priority.
+		* @return {Object} The highest-priority item in the queue.
 		* @public
 		*/
 		peek: function () {
@@ -105,7 +105,7 @@
 		/**
 		* Retrives and removes the highest-priority item from the queue.
 		*
-		* @return {Object} The item in the queue currently with the highest-priority.
+		* @return {Object} The highest-priority item in the queue.
 		* @public
 		*/
 		poll: function () {
@@ -156,6 +156,7 @@
 		/**
 		* This is our up-heap function.
 		*
+		* @param {Number} idx - The position from which we want to start bubbling up.
 		* @private
 		*/
 		bubbleUp: function (idx) {
@@ -179,6 +180,7 @@
 		/**
 		* This is our down-heap function.
 		*
+		* @param {Number} idx - The position from which we want to start bubbling down.
 		* @private
 		*/
 		bubbleDown: function (idx) {
@@ -239,6 +241,8 @@
 		* min heap. This assumes that we wish to make a comparison utilizing the `priority` property
 		* of the given items.
 		*
+		* @param {Object} item1 - The first item whose priority we are comparing.
+		* @param {Object} item2 - The second item whose priority we are comparing.
 		* @return {Boolean} If `true`, the first item has higher priority than the second item.
 		* @private
 		*/
@@ -251,6 +255,8 @@
 		* max heap. This assumes that we wish to make a comparison utilizing the `priority` property
 		* of the given items.
 		*
+		* @param {Object} item1 - The first item whose priority we are comparing.
+		* @param {Object} item2 - The second item whose priority we are comparing.
 		* @return {Boolean} If `true`, the first item has higher priority than the second item.
 		* @private
 		*/

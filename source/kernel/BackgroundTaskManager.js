@@ -84,8 +84,8 @@
 		*/
 		remove: function (customer) {
 			var idx = this.customers.indexOf(customer);
-			if (idx >= 0) {
-				this.customers[idx].pause();
+			if (idx > -1) {
+				this.customers[idx].cancel(); // TODO: should this pause the task instead?
 				return this.customers.splice(idx, 1);
 			}
 		},
@@ -96,7 +96,10 @@
 		* @public
 		*/
 		clear: function () {
-			this.pause(); // pauses(?) any currently executing customers
+			var idx;
+			for (idx = 0; idx < this.customers.length; idx++) {
+				this.customers[idx].cancel(); // TODO: should this pause the task instead?
+			}
 			this.customers = [];
 		},
 
@@ -106,8 +109,9 @@
 		* @public
 		*/
 		pause: function () {
+			var idx;
 			this.paused = true;
-			for (var idx = 0; idx < this.customers.length; idx++) {
+			for (idx = 0; idx < this.customers.length; idx++) {
 				this.customers[idx].pause();
 			}
 		},
