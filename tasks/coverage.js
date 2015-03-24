@@ -60,7 +60,7 @@ module.exports = function(grunt) {
 		});
 		app.get('*', instrumentRequest);
 		app.use(express['static'](process.cwd()));
-		app.listen(8888);
+		app.listen(8789);
 		console.log(process.cwd());
 
 		grunt.task.run(['mocha_phantomjs:cover']);
