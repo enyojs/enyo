@@ -235,12 +235,12 @@
 		},
 
 		/**
-		* The current [state(s)]{@link enyo.States} possessed by the [model]{@link enyo.Model}.
+		* The current [state(s)]{@link enyo~States} possessed by the [model]{@link enyo.Model}.
 		* There are limitations as to which state(s) the model may possess at any given time.
-		* By default, a model is [NEW]{@link enyo.States.NEW} and [CLEAN]{@link enyo.States.CLEAN}.
+		* By default, a model is [NEW]{@link enyo~States.NEW} and [CLEAN]{@link enyo~States.CLEAN}.
 		* Note that this is **not** a [bindable]{@link enyo.BindingSupport} property.
 		*
-		* @see enyo.States
+		* @see enyo~States
 		* @see enyo.StateSupport
 		* @type {enyo.States}
 		* @readonly
@@ -346,10 +346,10 @@
 		/**
 		* Commits the [model]{@link enyo.Model} to a [source or sources]{@link enyo.Model#source}.
 		* A model cannot be [committed]{@link enyo.Model#commit} if it is in an
-		* [error]{@link enyo.States.ERROR} ({@link enyo.StateSupport.isError}) or
-		* [busy]{@link enyo.States.BUSY} ({@link enyo.StateSupport.isBusy})
+		* [error]{@link enyo~States.ERROR} ({@link enyo.StateSupport.isError}) or
+		* [busy]{@link enyo~States.BUSY} ({@link enyo.StateSupport.isBusy})
 		* [state]{@link enyo.Model#status}. While executing, it will add the
-		* [COMMITTING]{@link enyo.States.COMMITTING} flag to the model's
+		* [COMMITTING]{@link enyo~States.COMMITTING} flag to the model's
 		* [status]{@link enyo.Model#status}. Once it has completed execution, it will
 		* remove this flag (even if it fails).
 		*
@@ -399,10 +399,10 @@
 		* Fetches the [model]{@link enyo.Model} from a
 		* [source or sources]{@link enyo.Model#source}. A model cannot be
 		* [fetched]{@link enyo.Model#fetch} if it is in an
-		* [error]{@link enyo.States.ERROR} ({@link enyo.StateSupport.isError}) or
-		* [busy]{@link enyo.States.BUSY} ({@link enyo.StateSupport.isBusy})
+		* [error]{@link enyo~States.ERROR} ({@link enyo.StateSupport.isError}) or
+		* [busy]{@link enyo~States.BUSY} ({@link enyo.StateSupport.isBusy})
 		* [state]{@link enyo.Model#status}. While executing, it will add the
-		* [FETCHING]{@link enyo.States.FETCHING} flag to the model's
+		* [FETCHING]{@link enyo~States.FETCHING} flag to the model's
 		* [status]{@link enyo.Model#status}. Once it has completed execution, it will
 		* remove this flag (even if it fails).
 		*
@@ -455,10 +455,10 @@
 		* [commit default option]{@link enyo.Model#options} must be `true` or a
 		* `source` property must be explicitly provided in the `opts` parameter.
 		* A model cannot be destroyed (using a source) if it is in an
-		* [error]{@link enyo.States.ERROR} ({@link enyo.StateSupport.isError})
-		* or [busy]{@link enyo.States.BUSY} ({@link enyo.StateSupport.isBusy})
+		* [error]{@link enyo~States.ERROR} ({@link enyo.StateSupport.isError})
+		* or [busy]{@link enyo~States.BUSY} ({@link enyo.StateSupport.isBusy})
 		* [state]{@link enyo.Model#status}. While executing, it will add the
-		* [DESTROYING]{@link enyo.States.DESTROYING} flag to the model's
+		* [DESTROYING]{@link enyo~States.DESTROYING} flag to the model's
 		* [status]{@link enyo.Model#status}. Once it has completed execution, it
 		* will remove this flag (even if it fails).
 		*
@@ -762,7 +762,7 @@
 		* called directly and, when overloading, care must be taken to ensure that you call
 		* the super-method. This correctly sets the [status]{@link enyo.Model#status} and, in
 		* cases where multiple [sources]{@link enyo.Model#source} were used, it waits until
-		* all have responded before clearing the [FETCHING]{@link enyo.States.FETCHING} flag.
+		* all have responded before clearing the [FETCHING]{@link enyo~States.FETCHING} flag.
 		* If a [success]{@link enyo.Model~Success} callback was provided, it will be called
 		* once for each source.
 		*
@@ -811,7 +811,7 @@
 		* called directly and, when overloading, care must be taken to ensure that you call the
 		* super-method. This correctly sets the [status]{@link enyo.Model#status} and, in cases
 		* where multiple [sources]{@link enyo.Model#source} were used, it waits until all have
-		* responded before clearing the [COMMITTING]{@link enyo.States.COMMITTING} flag. If a
+		* responded before clearing the [COMMITTING]{@link enyo~States.COMMITTING} flag. If a
 		* [success]{@link enyo.Model~Success} callback was provided, it will be called once for
 		* each source.
 		*
@@ -849,14 +849,14 @@
 		* This method handles special and important behavior; it should not be called directly
 		* and, when overloading, care must be taken to ensure that you call the super-method.
 		* This correctly sets the [status]{@link enyo.Model#status} to the known
-		* [error state]{@link enyo.States.ERROR}, or to the
-		* [unknown error state]{@link enyo.States.ERROR_UNKNOWN} if it the error state could not
+		* [error state]{@link enyo~States.ERROR}, or to the
+		* [unknown error state]{@link enyo~States.ERROR_UNKNOWN} if it the error state could not
 		* be determined. If an [error callback]{@link enyo.Model~Error} was provided, this method
 		* will execute it.
 		*
 		* @see enyo.StateSupport.clearError
 		* @param {String} action - The action (one of `'FETCHING'`, `'COMMITTING'`, or
-		* `'DESTROYING'`) that failed and is now in an [error state]{@link enyo.States.ERROR}.
+		* `'DESTROYING'`) that failed and is now in an [error state]{@link enyo~States.ERROR}.
 		* @param {enyo.Model~ActionOptions} opts - The original options passed to the `action`
 		* method, merged with the defaults.
 		* @param {*} [res] - The result provided from the given [source]{@link enyo.Model#source},

@@ -48,6 +48,8 @@
 	* ```
 	*
 	* @enum {Number}
+	* @public
+	* @memberof enyo
 	* @see enyo.StateSupport
 	*/
 	enyo.States = {
