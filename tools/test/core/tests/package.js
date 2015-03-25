@@ -1,8 +1,11 @@
 enyo.depends(
 	"readyTest.js",
 	"langTest.js",
-	"JobTest.js",
-	"JobsTest.js",
+	// Disabling these job-related tests due to issues with rAF support and timing in PhantomJS.
+	// "JobTest.js",
+	// "JobsTest.js",
+	// "ComponentJobTest.js",
+	// "AnimatorTest.js",
 	"LoaderTest.js",
 	"KindTest.js",
 	"ApplicationTest.js",
@@ -14,7 +17,6 @@ enyo.depends(
 	"PathResolverTest.js",
 	"ViewportPositioningTest.js",
 	"InheritanceSanityTest.js",
-	"AnimatorTest.js",
 	"MultipleDispatchTest.js",
 	"JsonTest.js",
 	"AsyncTest.js",
