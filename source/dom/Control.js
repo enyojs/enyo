@@ -205,6 +205,16 @@
 		doubleTapInterval: 300,
 
 		/**
+		* AccessibilityLabel is used for accessibility voice readout.
+		* If accessibilityLabel is set, screen reader reads the label when control is focused.
+		*
+		* @type {String}
+		* @default ''
+		* @public
+		*/
+		accessibilityLabel : '',
+
+		/**
 		* @todo Find out how to document "handlers".
 		* @public
 		*/
@@ -465,6 +475,63 @@
 		// .................................
 
 		// .................................
+		// ACCESSIBILITY API
+
+		/**
+		* @private
+		*/
+		initAccessibility: function () {
+			if (this.accessibilityLabel) {
+				this.accessibilityLabelChanged();
+			}
+
+			//TODO: adding accessibility code such as accessibilityDisabled.
+		},
+
+		/**
+		* Get the accessibilityLabel.
+		*
+		* @returns {String} return accessibilityLabel.
+		* @public
+		*/
+		getAccessibilityLabel: function () {
+			return this.accessibilityLabel;
+		},
+
+		/**
+		* Set the accessibilityLabel with label text.
+		* When the control is focused, screen reader reads accessibilityLabel.
+		*
+		* @param {String} accessibilityLabel - text to readout by screen reader.
+		* @returns {this} callee for chaining.
+		* @public
+		*/
+		setAccessibilityLabel: function (accessibilityLabel) {
+			var was = this.accessibilityLabel;
+			this.accessibilityLabel = accessibilityLabel;
+
+			if (was != accessibilityLabel) {
+				this.notify('accessibilityLabel', was, accessibilityLabel);
+			}
+			return this;
+		},
+
+		/**
+		* @private
+		*/
+		accessibilityLabelChanged: function () {
+			if (this.accessibilityLabel == null || this.accessibilityLabel === '') {
+				this.setAttribute('tabindex', null);
+				this.setAttribute('aria-label', null);
+			} else {
+				this.setAttribute('tabindex', 0);
+				this.setAttribute('aria-label', this.accessibilityLabel);
+			}
+		},
+
+		// .................................
+
+		// .................................
 		// STYLE/CLASS API
 
 		/**
@@ -587,10 +654,10 @@
 				style = this.style,
 				delegate = this.renderDelegate || Control.renderDelegate;
 
-			// FIXME: This is put in place for a Firefox bug where setting a style value of a node 
+			// FIXME: This is put in place for a Firefox bug where setting a style value of a node
 			// via its CSSStyleDeclaration object (by accessing its node.style property) does
-			// not work when using a CSS property name that contains one or more dash, and requires 
-			// setting the property via the JavaScript-style property name. This fix should be 
+			// not work when using a CSS property name that contains one or more dash, and requires
+			// setting the property via the JavaScript-style property name. This fix should be
 			// removed once this issue has been resolved in the Firefox mainline and its variants
 			// (it is currently resolved in the 36.0a1 nightly):
 			// https://bugzilla.mozilla.org/show_bug.cgi?id=1083457
@@ -941,7 +1008,7 @@
 		* target `parentNode`.
 		*
 		* @param {Node} parentNode - The new parent of this control.
-		* @param {Boolean} preventRooting - If `true`, this control will not be treated as a root 
+		* @param {Boolean} preventRooting - If `true`, this control will not be treated as a root
 		*	view and will not be added to the set of roots.
 		* @returns {this} The callee for chaining.
 		* @public
@@ -1174,6 +1241,9 @@
 				// setup the id for this control if we have one
 				this.idChanged();
 				this.contentChanged();
+
+				// setup the ARIA attributes
+				this.initAccessibility();
 			};
 		}),
 
