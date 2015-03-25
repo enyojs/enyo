@@ -98,7 +98,7 @@
 		clear: function () {
 			var idx;
 			for (idx = 0; idx < this.customers.length; idx++) {
-				this.customers[idx].cancel(); // TODO: should this pause the task instead?
+				this.customers[idx].cancelTask(); // TODO: should this pause the task instead?
 			}
 			this.customers = [];
 		},
@@ -112,7 +112,7 @@
 			var idx;
 			this.paused = true;
 			for (idx = 0; idx < this.customers.length; idx++) {
-				this.customers[idx].pause();
+				this.customers[idx].pauseTask();
 			}
 		},
 
@@ -124,7 +124,7 @@
 		resume: function () {
 			this.paused = false;
 			for (var idx = 0; idx < this.customers.length; idx++) {
-				this.customers[idx].resume();
+				this.customers[idx].resumeTask();
 			}
 		},
 
@@ -135,7 +135,7 @@
 		*/
 		run: function () {
 			for (var idx = 0; idx < this.customers.length; idx++) {
-				this.customers[idx].run();
+				this.customers[idx].runTask();
 			}
 		}
 

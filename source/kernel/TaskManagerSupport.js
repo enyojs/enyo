@@ -7,6 +7,12 @@
 		* @method
 		* @private
 		*/
+		name: 'enyo.TaskManagerSupport',
+
+		/**
+		* @method
+		* @private
+		*/
 		create: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
@@ -21,7 +27,7 @@
 		* @param {Number|String} priority - The priority of the task.
 		* @public
 		*/
-		add: function (task, priority) {
+		addTask: function (task, priority) {
 			this.tasks.add(task, priority);
 		},
 
@@ -31,7 +37,7 @@
 		* @param {Function} task - The task to be cancelled.
 		* @public
 		*/
-		remove: function (task) {
+		removeTask: function (task) {
 			if (this.task === task) {
 				this.task = null;
 			}
@@ -43,7 +49,7 @@
 		*
 		* @public
 		*/
-		cancel: function () {
+		cancelTask: function () {
 			if (this.task) {
 				this.task.cancel();
 				this.task = null;
@@ -55,7 +61,7 @@
 		*
 		* @public
 		*/
-		pause: function () {
+		pauseTask: function () {
 			this.paused = true;
 		},
 
@@ -64,7 +70,7 @@
 		*
 		* @public
 		*/
-		resume: function () {
+		resumeTask: function () {
 			this.paused = false;
 		},
 
@@ -74,7 +80,7 @@
 		*
 		* @public
 		*/
-		run: function () {
+		runTask: function () {
 			if (this.paused && this.task) {
 				this.resume();
 			} else if (!this.isBusy()) {
