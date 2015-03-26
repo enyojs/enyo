@@ -212,7 +212,7 @@
 		* @default ''
 		* @public
 		*/
-		accessibilityLabel : '',
+		accessibilityLabel: '',
 
 		/**
 		* AccessibilityAlert is for alert message or page description.
@@ -227,7 +227,7 @@
 		* @default false
 		* @public
 		*/
-		accessibilityAlert : false,
+		accessibilityAlert: false,
 
 		/**
 		* @todo Find out how to document "handlers".
