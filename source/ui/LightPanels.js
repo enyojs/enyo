@@ -369,7 +369,7 @@
 				newPanel, idx;
 
 			for (idx = 0; idx < info.length; idx++) {
-				if (!this.panelExists(info[idx].kind)) {
+				if (!this.cachePanels || this.cachePanels && !this.panelExists(info[idx].kind)) {
 					newPanel = (this.cachePanels && this.restorePanel(info[idx].kind)) || this.createComponent(info[idx], moreInfo);
 					newPanels.push(newPanel);
 					if ((opts && opts.targetIndex != null && lastIndex + idx == opts.targetIndex) || idx == info.length - 1) {
