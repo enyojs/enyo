@@ -315,7 +315,9 @@
 		*
 		* @param {Object} info - The declarative {@glossary kind} definition.
 		* @param {Object} moreInfo - Additional properties to be applied (defaults).
-		* @param {Object} opts - Additional options to be used during panel pushing.
+		* @param {Object} opts - Additional options to be used during panel pushing. If the
+		*	`forcePostTransition` option is truthy, post-transition work will be run immediately
+		*	after the creation of the panel.
 		* @return {Object} The instance of the panel that was created on top of the stack.
 		* @public
 		*/
@@ -329,7 +331,13 @@
 			if (this.cachePanels) {
 				this.pruneQueue([info]);
 			}
+
 			nextPanel.render();
+
+			if (opts && opts.forcePostTransition && nextPanel.postTransition) {
+				nextPanel.postTransition();
+			}
+
 			this.set('index', lastIndex + 1, true);
 
 			// TODO: When pushing panels after we have gone back (but have not popped), we need to
@@ -345,7 +353,8 @@
 		* @param {Object} moreInfo - Additional properties to be applied (defaults).
 		* @param {Object} opts - Additional options for pushPanels. A `targetIndex` can be
 		*	specified as the index of the panel to display, otherwise the last panel created will
-		*	be displayed.
+		*	be displayed. Additionally, `forcePostTransition` can be specified to force
+		*	post-transition work to be run immediately after each panel is created.
 		* @return {null|Object[]} Array of the panels that were created on top of the stack, or
 		*	`null` if panels could not be created.
 		* @public
@@ -365,6 +374,9 @@
 					newPanels.push(newPanel);
 					if ((opts && opts.targetIndex != null && lastIndex + idx == opts.targetIndex) || idx == info.length - 1) {
 						newPanel.render();
+					}
+					if (opts && opts.forcePostTransition && newPanel.postTransition) {
+						newPanel.postTransition();
 					}
 				}
 			}
@@ -562,7 +574,7 @@
 				for (i = 0; i < panels.length; i++) {
 					panel = panels[i];
 					this._cachedPanels[panel.kind] = panel;
-					if (runPostTransition) {
+					if (runPostTransition && panel.postTransition) {
 						panel.postTransition();
 					}
 				}
@@ -589,7 +601,7 @@
 				commonInfo.owner = this;
 				panel = pc.createComponent(info, commonInfo);
 				this._cachedPanels[panel.kind] = panel;
-				if (runPostTransition) {
+				if (runPostTransition && panel.postTransition) {
 					panel.postTransition();
 				}
 			}
@@ -670,7 +682,8 @@
 					(this._indexDirection > 0 && this.popOnForward && this.index > 0)) {
 					this.popPanels(this.index - this._indexDirection, this._indexDirection);
 				}
-				if (this._currentPanel.shouldSkipPostTransition && !this._currentPanel.shouldSkipPostTransition()) {
+				if (this._currentPanel.shouldSkipPostTransition && !this._currentPanel.shouldSkipPostTransition()
+					&& this._currentPanel.postTransition) {
 					enyo.asyncMethod(this, function () {
 						this._currentPanel.postTransition();
 					});
