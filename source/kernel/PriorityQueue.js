@@ -49,11 +49,6 @@
 		defaultPriority: 5,
 
 		/**
-		* @private
-		*/
-		queue: [],
-
-		/**
 		* Initializes the {@link enyo.PriorityQueue}.
 		*
 		* @param {enyo.PriorityQueue~Options} [opts] - The hash of configuration options.
@@ -63,6 +58,8 @@
 		constructor: enyo.inherit( function (sup) {
 			return function (opts) {
 				sup.apply(this, arguments);
+				this.queue = [];
+				this.length = 0;
 				this.compareFn = (opts && opts.compareFn) || this[this.type];
 			};
 		}),
@@ -76,11 +73,11 @@
 		*/
 		add: function (item, priority) {
 			priority = this.normalizePriority(priority) || this.defaultPriority;
-			var len = this.queue.push({
+			this.length = this.queue.push({
 				item: item,
 				priority: priority
 			});
-			this.bubbleUp(len - 1);
+			this.bubbleUp(this.length - 1);
 		},
 
 		/**
@@ -90,6 +87,7 @@
 		*/
 		clear: function () {
 			this.queue = [];
+			this.length = 0;
 		},
 
 		/**
@@ -109,13 +107,18 @@
 		* @public
 		*/
 		poll: function () {
-			var item = this.queue.shift();
+			var item;
+			if (this.length) {
+				item = this.queue.shift();
 
-			if (this.queue.length > 1) { // heapify
-				this.moveFromEnd(0);
+				if (this.queue.length > 1) { // heapify
+					this.moveFromEnd(0);
+				}
+
+				this.length = this.queue.length;
 			}
 
-			return item.item;
+			return item && item.item;
 		},
 
 		/**
@@ -126,21 +129,14 @@
 		*/
 		remove: function (item) {
 			// TODO: explore a more efficient technique
-			var idx = this.queue.indexOf(item);
+			//var idx = this.queue.indexOf(item);
+			var idx = this.findIndexInQueue(item);
 
 			if (idx > -1) {
 				this.moveFromEnd(idx, true);
 			}
-		},
 
-		/**
-		* The number of items in the queue.
-		*
-		* @return {Number} The number of items in the queue.
-		* @public
-		*/
-		size: function () {
-			return this.queue.length;
+			this.length = this.queue.length;
 		},
 
 		/**
@@ -192,7 +188,7 @@
 				swapIdx;
 
 			if (left) {
-				if (left.priority < current.priority) {
+				if (this.compareFn(left, current)) {
 					if (right && this.compareFn(right, left)) {
 						swapIdx = rightIdx;
 						this.swap(swapIdx, idx);
@@ -201,6 +197,11 @@
 						this.swap(swapIdx, idx);
 					}
 					this.bubbleDown(swapIdx);
+				} else {
+					if (right && this.compareFn(right, current)) {
+						swapIdx = rightIdx;
+						this.swap(swapIdx, idx);
+					}
 				}
 			}
 		},
@@ -228,11 +229,15 @@
 		* @private
 		*/
 		moveFromEnd: function (idx, replace) {
-			var len = this.queue.length,
-				deleteCount = replace ? 1 : 0;
+			var len = this.queue.length;
 
-			this.queue.splice(idx, deleteCount, this.queue[len - 1]);
-			this.queue.splice(len, 1);
+			if (replace) {
+				this.queue.splice(idx, 1, this.queue[len - 1]);
+				this.queue.splice(len - 1, 1);
+			} else {
+				this.queue.splice(idx, 0, this.queue[len - 1]);
+				this.queue.splice(len, 1);
+			}
 			this.bubbleDown(idx);
 		},
 
@@ -262,6 +267,21 @@
 		*/
 		maxHeap: function (item1, item2) {
 			return item1.priority > item2.priority;
+		},
+
+		/**
+		* For a given element, determines its index in our internal queue structure.
+		*
+		* @param {Object} item - The element whose index in our queue we wish to retrieve.
+		* @private
+		*/
+		findIndexInQueue: function (item) {
+			var idx;
+			for (idx = 0; idx < this.queue.length; idx++) {
+				if (item === this.queue[idx].item) {
+					return idx;
+				}
+			}
 		}
 
 	});
