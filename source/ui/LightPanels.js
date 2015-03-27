@@ -1,4 +1,17 @@
 (function (enyo, scope) {
+
+	/**
+	* The configurable options used by {@link enyo.LightPanels} when pushing panels.
+	*
+	* @typedef {Object} enyo.LightPanels~PushPanelOptions
+	* @property {Boolean} [direct] - If `true`, the transition to the panel whose index we are
+	*	changing to will not be animated.
+	* @property {Boolean} [forcePostTransition] - If `true`, forces post-transition work to be run
+	*	immediately after each panel is created.
+	* @property {Number} [targetIndex] - The index of the panel to display, otherwise the last panel
+	*	created will be displayed.
+	*/
+
 	/**
 	* A light-weight panels implementation that has basic support for CSS transitions between child
 	* components.
@@ -20,6 +33,11 @@
 		* @private
 		*/
 		kind: 'enyo.Control',
+
+		/**
+		* @private
+		*/
+		mixins: ['enyo.ViewPreloadSupport'],
 
 		/**
 		* @private
@@ -52,7 +70,6 @@
 
 			/**
 			* Indicates whether panels "wrap around" when moving past the end.
-			* The actual effect depends upon the arranger in use.
 			*
 			* @type {Boolean}
 			* @default false
@@ -116,15 +133,6 @@
 			direction: 'forwards',
 
 			/**
-			* When `true`, existing panels are cached for reuse, otherwise they are destroyed.
-			*
-			* @type {Boolean}
-			* @default true
-			* @public
-			*/
-			cachePanels: true,
-
-			/**
 			* The default priority for view caching jobs.
 			*
 			* @type {Number}
@@ -163,18 +171,17 @@
 
 				this.orientationChanged();
 				this.directionChanged();
-
-				if (this.cachePanels) {
-					this.createChrome([
-						{name: 'panelCache', kind: 'enyo.Control', canGenerate: false}
-					]);
-					this.removeChild(this.$.panelCache);
-					this._cachedPanels = {};
-				}
-
 				this.indexChanged();
 			};
 		}),
+
+
+
+		/*
+			===============
+			Change handlers
+			===============
+		*/
 
 		/**
 		* @private
@@ -193,80 +200,17 @@
 		/**
 		* @private
 		*/
-		indexChanged: function (previousIndex) {
-			var panels = this.getPanels(),
-				nextPanel = panels[this.index],
-				trans, wTrans;
-
-			this._shouldAnimate = null;
-			this._indexDirection = (this.index - previousIndex < 0 ? -1 : 1);
-
-			if (nextPanel) {
-				if (!nextPanel.generated) {
-					nextPanel.render();
-				}
-
-				// only animate transition if there is more than one panel and/or we're animating
-				if (this.shouldAnimate()) {
-					trans = 'transform ' + this.duration + 'ms ' + this.timingFunction;
-					wTrans = '-webkit-' + trans;
-					nextPanel.applyStyle('-webkit-transition', wTrans);
-					nextPanel.applyStyle('transition', trans);
-					nextPanel.addClass('transitioning');
-					if (this._currentPanel) {
-						this._currentPanel.applyStyle('-webkit-transition', wTrans);
-						this._currentPanel.applyStyle('transition', trans);
-						this._currentPanel.addClass('transitioning');
-					}
-				} else {
-					nextPanel.applyStyle('-webkit-transition-duration', '0s');
-					nextPanel.applyStyle('transition-duration', '0s');
-				}
-
-				if (this.shouldAnimate()) {
-					setTimeout(this.bindSafely(function () {
-						this.setupTransitions(nextPanel);
-					}), 16);
-				} else {
-					this.setupTransitions(nextPanel);
-				}
-			}
+		indexChanged: function (was) {
+			this.setupTransitions(was, this.shouldAnimate());
 		},
 
-		/**
-		* Sets up the transitions between the current and next panel.
-		*
-		* @param {Object} nextPanel - The panel we are transitioning to.
-		* @private
+
+
+		/*
+			=======================
+			Public accessor methods
+			=======================
 		*/
-		setupTransitions: function (nextPanel) {
-			// setup the transition for the next panel
-			var nextTransition = {};
-			nextTransition['translate' + this._axis] = -100 * this._direction + '%';
-			enyo.dom.transform(nextPanel, nextTransition);
-			if (this._currentPanel) { // setup the transition for the current panel
-				var currentTransition = {};
-				currentTransition['translate' + this._axis] = this._indexDirection > 0 ? -200 * this._direction + '%' : '0%';
-				enyo.dom.transform(this._currentPanel, currentTransition);
-			}
-
-			this._previousPanel = this._currentPanel;
-			this._currentPanel = nextPanel;
-			if (!this.shouldAnimate()) { // ensure that `transitionFinished is called, regardless of animation
-				this.transitionFinished(this._currentPanel, {originator: this._currentPanel});
-			}
-		},
-
-		/**
-		* Determines whether or not we should animate the panel transition.
-		*
-		* @return {Boolean} If `true`, the panels should animate.
-		* @public
-		*/
-		shouldAnimate: function () {
-			/*jshint -W093 */
-			return this.generated && (this._shouldAnimate = this._shouldAnimate || this.getPanels().length > 1 && this.animate);
-		},
 
 		/**
 		* Retrieves the currently displayed panel.
@@ -277,6 +221,25 @@
 		getActivePanel: function () {
 			return this._currentPanel;
 		},
+
+		/**
+		* Retrieves the panels currently part of this control.
+		*
+		* @return {Array} The set of panels.
+		* @public
+		*/
+		getPanels: function () {
+			/*jshint -W093 */
+			return (this._panels = this._panels || (this.controlParent || this).children);
+		},
+
+
+
+		/*
+			=====================
+			Public action methods
+			=====================
+		*/
 
 		/**
 		* Transitions to the previous panel--i.e., the panel whose index value is one
@@ -315,9 +278,8 @@
 		*
 		* @param {Object} info - The declarative {@glossary kind} definition.
 		* @param {Object} moreInfo - Additional properties to be applied (defaults).
-		* @param {Object} opts - Additional options to be used during panel pushing. If the
-		*	`forcePostTransition` option is truthy, post-transition work will be run immediately
-		*	after the creation of the panel.
+		* @param {enyo.LightPanels~PushPanelOptions} opts - Additional options to be used during
+		*	panel pushing.
 		* @return {Object} The instance of the panel that was created on top of the stack.
 		* @public
 		*/
@@ -327,8 +289,9 @@
 			}
 
 			var lastIndex = this.getPanels().length - 1,
-				nextPanel = (this.cachePanels && this.restorePanel(info.kind)) || this.createComponent(info, moreInfo);
-			if (this.cachePanels) {
+				nextPanel = (this.cacheViews && this.restoreView(info.kind)) || this.createComponent(info, moreInfo),
+				newIndex = lastIndex + 1;
+			if (this.cacheViews) {
 				this.pruneQueue([info]);
 			}
 
@@ -338,7 +301,13 @@
 				nextPanel.postTransition();
 			}
 
-			this.set('index', lastIndex + 1, true);
+			if (!opts || opts.direct) {
+				var currentIndex = this.index;
+				this.index = newIndex;
+				this.setupTransitions(currentIndex, false);
+			} else {
+				this.set('index', newIndex, true);
+			}
 
 			// TODO: When pushing panels after we have gone back (but have not popped), we need to
 			// adjust the position of the panels after the previous index before our push.
@@ -351,10 +320,8 @@
 		*
 		* @param {Object[]} info - The declarative {@glossary kind} definitions.
 		* @param {Object} moreInfo - Additional properties to be applied (defaults).
-		* @param {Object} opts - Additional options for pushPanels. A `targetIndex` can be
-		*	specified as the index of the panel to display, otherwise the last panel created will
-		*	be displayed. Additionally, `forcePostTransition` can be specified to force
-		*	post-transition work to be run immediately after each panel is created.
+		* @param {enyo.LightPanels~PushPanelOptions} opts - Additional options to be used when
+		*	pushing multiple panels.
 		* @return {null|Object[]} Array of the panels that were created on top of the stack, or
 		*	`null` if panels could not be created.
 		* @public
@@ -366,11 +333,11 @@
 
 			var lastIndex = this.getPanels().length,
 				newPanels = [],
-				newPanel, idx;
+				newPanel, targetIdx, idx;
 
 			for (idx = 0; idx < info.length; idx++) {
-				if (!this.cachePanels || this.cachePanels && !this.panelExists(info[idx].kind)) {
-					newPanel = (this.cachePanels && this.restorePanel(info[idx].kind)) || this.createComponent(info[idx], moreInfo);
+				if (!this.cacheViews || this.cacheViews && !this.panelExists(info[idx].kind)) {
+					newPanel = (this.cacheViews && this.restoreView(info[idx].kind)) || this.createComponent(info[idx], moreInfo);
 					newPanels.push(newPanel);
 					if ((opts && opts.targetIndex != null && lastIndex + idx == opts.targetIndex) || idx == info.length - 1) {
 						newPanel.render();
@@ -380,34 +347,21 @@
 					}
 				}
 			}
-			if (this.cachePanels) {
+			if (this.cacheViews) {
 				this.pruneQueue(info);
 			}
 
-			this.set('index', (opts && opts.targetIndex != null) ? opts.targetIndex : lastIndex + newPanels.length - 1, true);
+			targetIdx = (opts && opts.targetIndex != null) ? opts.targetIndex : lastIndex + newPanels.length - 1;
+
+			if (!opts || opts.direct) {
+				var currentIndex = this.index;
+				this.index = targetIdx;
+				this.setupTransitions(currentIndex, false);
+			} else {
+				this.set('index', targetIdx, true);
+			}
 
 			return newPanels;
-		},
-
-		/**
-		* @private
-		*/
-		getPanels: function () {
-			/*jshint -W093 */
-			return (this._panels = this._panels || (this.controlParent || this).children);
-		},
-
-		/**
-		* Determines whether or not the specified panel already exists as part of the current set of
-		* panels.
-		*
-		* @param {String} pid - The id of the panel to check.
-		* @private
-		*/
-		panelExists: function (pid) {
-			return !!(this.getPanels().filter( function (elem) {
-				return elem.kind == pid;
-			})).length;
 		},
 
 		/**
@@ -437,7 +391,7 @@
 		* Destroys the specified panel.
 		*
 		* @param {Number} index - The index of the panel to destroy.
-		* @param {Boolean} [preserve] - If {@link enyo.LightPanels#cachePanels} is `true`, this
+		* @param {Boolean} [preserve] - If {@link enyo.LightPanels#cacheViews} is `true`, this
 		*	value is used to determine whether or not to preserve the current panel's position in
 		*	the component hierarchy and on the screen, when caching.
 		* @public
@@ -447,165 +401,56 @@
 				panel = panels[index];
 
 			if (panel) {
-				if (this.cachePanels) {
-					this.cachePanel(panel, preserve);
+				if (this.cacheViews) {
+					this.cacheView(panel, preserve);
 				} else {
 					panel.destroy();
 				}
 			}
 		},
 
-		/**
-		* Destroys all panels. These will be queued for destruction after the next panel has loaded.
-		*
-		* @private
+
+
+		/*
+			============================================================
+			Public methods implementing the ViewPreloadSupport interface
+			============================================================
 		*/
-		purge: function () {
-			var panels = this.getPanels();
-			this._garbagePanels = panels.slice();
-			panels.length = 0;
-		},
 
 		/**
-		* Clean-up any panels queued for destruction.
+		* Determines the id of the given view.
 		*
-		* @private
+		* @param {Object} view - The view whose id we will determine.
+		* @return {String} The id of the given view.
+		* @public
 		*/
-		finalizePurge: function () {
-			var panels = this._garbagePanels,
-				panel;
-			while (panels.length) {
-				panel = panels.pop();
-				if (this.cachePanels) {
-					this.cachePanel(panel);
-				}
-				else {
-					panel.destroy();
-				}
-			}
+		getViewId: function (view) {
+			// TODO: This works for Settings use case,
+			// but we need to support an alternative
+			// identifier for panel-caching purposes
+			return view.kind;
 		},
 
 		/**
 		* Reset the state of the given panel. Currently resets the translated position of the panel.
 		*
-		* @param {Object} panel - The panel whose state we wish to reset.
+		* @param {Object} view - The panel whose state we wish to reset.
 		* @private
 		*/
-		resetPanel: function (panel) {
+		resetView: function (view) {
 			// reset position
 			var trans = {};
 			trans['translate' + this._axis] = '0%';
-			enyo.dom.transform(panel, trans);
+			enyo.dom.transform(view, trans);
 		},
 
-		/**
-		* Caches a given panel so that it can be quickly instantiated and utilized at a later point.
-		* This is typically performed on a panel which has already been rendered and which no longer
-		* needs to remain in view, but may be revisited at a later time.
-		*
-		* @param {Object} panel - The panel to cache for later use.
-		* @param {Boolean} preserve - If `true`, preserves the panel's position both on the screen
-		*	and within the component hierarchy.
-		* @public
+
+
+		/*
+			======================================
+			Public methods for queued task support
+			======================================
 		*/
-		cachePanel: function (panel, preserve) {
-			// TODO: This works for Settings use case,
-			// but we need to support an alternative
-			// identifier for panel-caching purposes
-			var pid = panel.kind;
-
-			// The panel could have already been removed from DOM and torn down if we popped when
-			// moving forward.
-			if (panel.node) {
-				panel.node.remove();
-				panel.teardownRender(true);
-			}
-
-			if (!preserve) {
-				this.resetPanel(panel);
-
-				this.removeControl(panel);
-				this.$.panelCache.addControl(panel);
-			}
-
-			this._cachedPanels[pid] = panel;
-		},
-
-		/**
-		* Restores the specified panel that was previously cached.
-		*
-		* @param {String} pid - The unique identifier for the cached panel that is being restored.
-		* @return {Object} The restored panel.
-		* @public
-		*/
-		restorePanel: function (pid) {
-			var cp = this._cachedPanels,
-				panel = cp[pid];
-
-			if (panel) {
-				this.$.panelCache.removeControl(panel);
-				this.addControl(panel);
-
-				this._cachedPanels[pid] = null;
-			}
-
-			return panel;
-		},
-
-		/**
-		* Pre-caches a set of panels by creating and caching them, even if they have not yet been
-		* rendered into view. This is helpful for reducing the instantiation time for panels which
-		* have yet to be shown, but can and eventually will be shown to the user.
-		*
-		* @param {Object} info - The declarative {@glossary kind} definition.
-		* @param {Object} commonInfo - Additional properties to be applied (defaults).
-		* @param {Boolean} runPostTransition - If `true`, the {@link enyo.LightPanel#postTransition}
-		*	method will be run.
-		* @public
-		*/
-		preCachePanels: function(info, commonInfo, runPostTransition) {
-			var pc, panels, i, panel;
-
-			if (this.cachePanels) {
-				pc = this.$.panelCache;
-				commonInfo = commonInfo || {};
-				commonInfo.owner = this;
-				panels = pc.createComponents(info, commonInfo);
-				for (i = 0; i < panels.length; i++) {
-					panel = panels[i];
-					this._cachedPanels[panel.kind] = panel;
-					if (runPostTransition && panel.postTransition) {
-						panel.postTransition();
-					}
-				}
-			}
-		},
-
-		/**
-		* Pre-caches a single panel by creating and caching the panel, even if it has not yet been
-		* rendered into view. This is helpful for reducing the instantiation time for panels which
-		* have yet to be shown, but can and eventually will be shown to the user.
-		*
-		* @param {Object} info - The declarative {@glossary kind} definition.
-		* @param {Object} commonInfo - Additional properties to be applied (defaults).
-		* @param {Boolean} runPostTransition - If `true`, the {@link enyo.LightPanel#postTransition}
-		*	method will be run.
-		* @public
-		*/
-		preCachePanel: function(info, commonInfo, runPostTransition) {
-			var pc, panel;
-
-			if (this.cachePanels && !this._cachedPanels[info.kind]) {
-				pc = this.$.panelCache;
-				commonInfo = commonInfo || {};
-				commonInfo.owner = this;
-				panel = pc.createComponent(info, commonInfo);
-				this._cachedPanels[panel.kind] = panel;
-				if (runPostTransition && panel.postTransition) {
-					panel.postTransition();
-				}
-			}
-		},
 
 		/**
 		* Enqueues a view that will eventually be pre-cached at an opportunistic time.
@@ -633,41 +478,31 @@
 			}
 		},
 
-		/**
-		*
+
+
+		/*
+			=================
+			Protected methods
+			=================
 		*/
-		isViewQueued: function (id) {
-			return this._cachedPanels[id];
-		},
 
 		/**
-		* Starts a job to cache a given view at an opportune time.
+		* Determines whether or not we should animate the panel transition.
 		*
-		* @param {String} viewProps - The properties of the view to be enqueued.
-		* @param {Number} [delay] - The delay in ms before starting the job to cache the view.
-		* @param {Number} [priority] - The priority of the job.
-		* @private
+		* @return {Boolean} If `true`, the panels should animate.
+		* @protected
 		*/
-		startViewCacheJob: function (viewProps, delay, priority) {
-			this.startJob(viewProps.kind, function () {
-				// TODO: once the data layer is hooked into the run loop, we should no longer need
-				// to forcibly trigger the post transition work.
-				this.preCachePanel(viewProps, {}, true);
-			}, delay || this.delay, priority || this.priority);
+		shouldAnimate: function () {
+			return this.generated && this.getPanels().length > 1 && this.animate;
 		},
 
-		/**
-		* Prunes the queue of to-be-cached panels in the event that any panels in the queue have
-		* already been instanced.
-		*
-		* @param {String} viewProps - The properties of the view to be enqueued.
-		* @private
+
+
+		/*
+			==============
+			Event handlers
+			==============
 		*/
-		pruneQueue: function (viewProps) {
-			for (var idx = 0; idx < viewProps.length; idx++) {
-				this.stopJob(viewProps[idx].kind);
-			}
-		},
 
 		/**
 		* @private
@@ -691,6 +526,169 @@
 				if (this._garbagePanels && this._garbagePanels.length) {
 					this.finalizePurge();
 				}
+			}
+		},
+
+
+
+		/*
+			=======================
+			Private support methods
+			=======================
+		*/
+
+		/**
+		* Sets up the transitions between the current and next panel.
+		*
+		* @param {Number} previousIndex - The index of the panel we are transitioning from.
+		* @param {Boolean} animate - Whether or not there should be a visible animation when
+		*	transitioning between the current and next panel.
+		* @private
+		*/
+		setupTransitions: function (previousIndex, animate) {
+			var panels = this.getPanels(),
+				nextPanel = panels[this.index],
+				trans, wTrans;
+
+			this._indexDirection = (this.index - previousIndex < 0 ? -1 : 1);
+
+			if (nextPanel) {
+				if (!nextPanel.generated) {
+					nextPanel.render();
+				}
+
+				// only animate transition if there is more than one panel and/or we're animating
+				if (animate) {
+					trans = 'transform ' + this.duration + 'ms ' + this.timingFunction;
+					wTrans = '-webkit-' + trans;
+					nextPanel.applyStyle('-webkit-transition', wTrans);
+					nextPanel.applyStyle('transition', trans);
+					nextPanel.addClass('transitioning');
+					if (this._currentPanel) {
+						this._currentPanel.applyStyle('-webkit-transition', wTrans);
+						this._currentPanel.applyStyle('transition', trans);
+						this._currentPanel.addClass('transitioning');
+					}
+
+					setTimeout(this.bindSafely(function () {
+						this.applyTransitions(nextPanel);
+					}), 16);
+				} else {
+					this.transitionDirect(nextPanel);
+				}
+			}
+		},
+
+		/**
+		* Applies the transitions for moving between the current and next panel.
+		*
+		* @param {Object} nextPanel - The panel we are transitioning to.
+		* @param {[type]} [direct] - If `true`, signifies that this is a direct transition.
+		* @private
+		*/
+		applyTransitions: function (nextPanel, direct) {
+			// setup the transition for the next panel
+			var nextTransition = {};
+			nextTransition['translate' + this._axis] = -100 * this._direction + '%';
+			enyo.dom.transform(nextPanel, nextTransition);
+			if (this._currentPanel) { // setup the transition for the current panel
+				var currentTransition = {};
+				currentTransition['translate' + this._axis] = this._indexDirection > 0 ? -200 * this._direction + '%' : '0%';
+				enyo.dom.transform(this._currentPanel, currentTransition);
+			}
+
+			this._previousPanel = this._currentPanel;
+			this._currentPanel = nextPanel;
+			if (!this.shouldAnimate() || direct) { // ensure that `transitionFinished is called, regardless of animation
+				this.transitionFinished(this._currentPanel, {originator: this._currentPanel});
+			}
+		},
+
+		/**
+		* Determines whether or not the specified panel already exists as part of the current set of
+		* panels.
+		*
+		* @param {String} pid - The id of the panel to check.
+		* @private
+		*/
+		panelExists: function (pid) {
+			return !!(this.getPanels().filter( function (elem) {
+				return elem.kind == pid;
+			})).length;
+		},
+
+		/**
+		* Destroys all panels. These will be queued for destruction after the next panel has loaded.
+		*
+		* @private
+		*/
+		purge: function () {
+			var panels = this.getPanels();
+			this._garbagePanels = panels.slice();
+			panels.length = 0;
+		},
+
+		/**
+		* Clean-up any panels queued for destruction.
+		*
+		* @private
+		*/
+		finalizePurge: function () {
+			var panels = this._garbagePanels,
+				panel;
+			while (panels.length) {
+				panel = panels.pop();
+				if (this.cacheViews) {
+					this.cacheView(panel);
+				}
+				else {
+					panel.destroy();
+				}
+			}
+		},
+
+		/**
+		* Transition to a given panel directly, without any animation.
+		*
+		* @param {Object} panel - The panel we are transitioning to.
+		* @private
+		*/
+		transitionDirect: function (panel) {
+			panel.applyStyle('-webkit-transition-duration', '0s');
+			panel.applyStyle('transition-duration', '0s');
+			this.applyTransitions(panel, true);
+		},
+
+		/**
+		* Starts a job to cache a given view at an opportune time.
+		*
+		* @param {String} viewProps - The properties of the view to be enqueued.
+		* @param {Number} [delay] - The delay in ms before starting the job to cache the view.
+		* @param {Number} [priority] - The priority of the job.
+		* @private
+		*/
+		startViewCacheJob: function (viewProps, delay, priority) {
+			this.startJob(viewProps.kind, function () {
+				// TODO: once the data layer is hooked into the run loop, we should no longer need
+				// to forcibly trigger the post transition work.
+				this.preCacheView(viewProps, {}, function (view) {
+					if (view.postTransition) {
+						view.postTransition();
+					}
+				});
+			}, delay || this.delay, priority || this.priority);
+		},
+
+		/**
+		* Prunes the queue of to-be-cached panels in the event that any panels in the queue have
+		* already been instanced.
+		*
+		* @param {String} viewProps - The properties of the view to be enqueued.
+		* @private
+		*/
+		pruneQueue: function (viewProps) {
+			for (var idx = 0; idx < viewProps.length; idx++) {
+				this.stopJob(viewProps[idx].kind);
 			}
 		}
 
