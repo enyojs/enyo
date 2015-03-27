@@ -95,10 +95,7 @@
 		* @public
 		*/
 		cacheView: function (view, preserve) {
-			// TODO: This works for Settings use case,
-			// but we need to support an alternative
-			// identifier for panel-caching purposes
-			var id = this.getViewId();
+			var id = this.getViewId(view);
 
 			// The panel could have already been removed from DOM and torn down if we popped when
 			// moving forward.
@@ -150,13 +147,13 @@
 		* @public
 		*/
 		preCacheViews: function(info, commonInfo, cbComplete) {
-			var pc, views, i, view;
+			var vc, views, i, view;
 
 			if (this.cacheViews) {
-				pc = this.$.viewCache;
+				vc = this.$.viewCache;
 				commonInfo = commonInfo || {};
 				commonInfo.owner = this;
-				views = pc.createComponents(info, commonInfo);
+				views = vc.createComponents(info, commonInfo);
 				for (i = 0; i < views.length; i++) {
 					view = views[i];
 					this._cachedViews[this.getViewId(view)] = view;
@@ -179,13 +176,13 @@
 		* @public
 		*/
 		preCacheView: function(info, commonInfo, cbComplete) {
-			var pc, view;
+			var vc, view;
 
 			if (this.cacheViews && !this._cachedViews[info.kind]) {
-				pc = this.$.viewCache;
+				vc = this.$.viewCache;
 				commonInfo = commonInfo || {};
 				commonInfo.owner = this;
-				view = pc.createComponent(info, commonInfo);
+				view = vc.createComponent(info, commonInfo);
 				this._cachedViews[this.getViewId(info)] = view;
 				if (cbComplete) {
 					cbComplete.call(this, view);

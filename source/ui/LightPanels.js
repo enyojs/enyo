@@ -4,8 +4,8 @@
 	* The configurable options used by {@link enyo.LightPanels} when pushing panels.
 	*
 	* @typedef {Object} enyo.LightPanels~PushPanelOptions
-	* @property {Boolean} [preventAnimation] - If `true`, the transition to the panel whose index
-	*	we are changing to will not be animated.
+	* @property {Boolean} [direct] - If `true`, the transition to the panel whose index we are
+	*	changing to will not be animated.
 	* @property {Boolean} [forcePostTransition] - If `true`, forces post-transition work to be run
 	*	immediately after each panel is created.
 	* @property {Number} [targetIndex] - The index of the panel to display, otherwise the last panel
@@ -201,43 +201,7 @@
 		* @private
 		*/
 		indexChanged: function (was) {
-			var panels = this.getPanels(),
-				nextPanel = panels[this.index],
-				trans, wTrans;
-
-			this._shouldAnimate = null;
-			this._indexDirection = (this.index - was < 0 ? -1 : 1);
-
-			if (nextPanel) {
-				if (!nextPanel.generated) {
-					nextPanel.render();
-				}
-
-				// only animate transition if there is more than one panel and/or we're animating
-				if (this.shouldAnimate()) {
-					trans = 'transform ' + this.duration + 'ms ' + this.timingFunction;
-					wTrans = '-webkit-' + trans;
-					nextPanel.applyStyle('-webkit-transition', wTrans);
-					nextPanel.applyStyle('transition', trans);
-					nextPanel.addClass('transitioning');
-					if (this._currentPanel) {
-						this._currentPanel.applyStyle('-webkit-transition', wTrans);
-						this._currentPanel.applyStyle('transition', trans);
-						this._currentPanel.addClass('transitioning');
-					}
-				} else {
-					nextPanel.applyStyle('-webkit-transition-duration', '0s');
-					nextPanel.applyStyle('transition-duration', '0s');
-				}
-
-				if (this.shouldAnimate()) {
-					setTimeout(this.bindSafely(function () {
-						this.setupTransitions(nextPanel);
-					}), 16);
-				} else {
-					this.setupTransitions(nextPanel);
-				}
-			}
+			this.setupTransitions(was, this.shouldAnimate());
 		},
 
 
@@ -325,7 +289,8 @@
 			}
 
 			var lastIndex = this.getPanels().length - 1,
-				nextPanel = (this.cacheViews && this.restoreView(info.kind)) || this.createComponent(info, moreInfo);
+				nextPanel = (this.cacheViews && this.restoreView(info.kind)) || this.createComponent(info, moreInfo),
+				newIndex = lastIndex + 1;
 			if (this.cacheViews) {
 				this.pruneQueue([info]);
 			}
@@ -336,7 +301,13 @@
 				nextPanel.postTransition();
 			}
 
-			this.set('index', lastIndex + 1, true);
+			if (!opts || opts.direct) {
+				var currentIndex = this.index;
+				this.index = newIndex;
+				this.setupTransitions(currentIndex, false);
+			} else {
+				this.set('index', newIndex, true);
+			}
 
 			// TODO: When pushing panels after we have gone back (but have not popped), we need to
 			// adjust the position of the panels after the previous index before our push.
@@ -362,7 +333,7 @@
 
 			var lastIndex = this.getPanels().length,
 				newPanels = [],
-				newPanel, idx;
+				newPanel, targetIdx, idx;
 
 			for (idx = 0; idx < info.length; idx++) {
 				if (!this.cacheViews || this.cacheViews && !this.panelExists(info[idx].kind)) {
@@ -380,7 +351,15 @@
 				this.pruneQueue(info);
 			}
 
-			this.set('index', (opts && opts.targetIndex != null) ? opts.targetIndex : lastIndex + newPanels.length - 1, true);
+			targetIdx = (opts && opts.targetIndex != null) ? opts.targetIndex : lastIndex + newPanels.length - 1;
+
+			if (!opts || opts.direct) {
+				var currentIndex = this.index;
+				this.index = targetIdx;
+				this.setupTransitions(currentIndex, false);
+			} else {
+				this.set('index', targetIdx, true);
+			}
 
 			return newPanels;
 		},
@@ -446,7 +425,10 @@
 		* @public
 		*/
 		getViewId: function (view) {
-			return view.kind || view.kindName;
+			// TODO: This works for Settings use case,
+			// but we need to support an alternative
+			// identifier for panel-caching purposes
+			return view.kind;
 		},
 
 		/**
@@ -511,8 +493,7 @@
 		* @protected
 		*/
 		shouldAnimate: function () {
-			/*jshint -W093 */
-			return this.generated && (this._shouldAnimate = this._shouldAnimate || this.getPanels().length > 1 && this.animate);
+			return this.generated && this.getPanels().length > 1 && this.animate;
 		},
 
 
@@ -559,10 +540,53 @@
 		/**
 		* Sets up the transitions between the current and next panel.
 		*
-		* @param {Object} nextPanel - The panel we are transitioning to.
+		* @param {Number} previousIndex - The index of the panel we are transitioning from.
+		* @param {Boolean} animate - Whether or not there should be a visible animation when
+		*	transitioning between the current and next panel.
 		* @private
 		*/
-		setupTransitions: function (nextPanel) {
+		setupTransitions: function (previousIndex, animate) {
+			var panels = this.getPanels(),
+				nextPanel = panels[this.index],
+				trans, wTrans;
+
+			this._indexDirection = (this.index - previousIndex < 0 ? -1 : 1);
+
+			if (nextPanel) {
+				if (!nextPanel.generated) {
+					nextPanel.render();
+				}
+
+				// only animate transition if there is more than one panel and/or we're animating
+				if (animate) {
+					trans = 'transform ' + this.duration + 'ms ' + this.timingFunction;
+					wTrans = '-webkit-' + trans;
+					nextPanel.applyStyle('-webkit-transition', wTrans);
+					nextPanel.applyStyle('transition', trans);
+					nextPanel.addClass('transitioning');
+					if (this._currentPanel) {
+						this._currentPanel.applyStyle('-webkit-transition', wTrans);
+						this._currentPanel.applyStyle('transition', trans);
+						this._currentPanel.addClass('transitioning');
+					}
+
+					setTimeout(this.bindSafely(function () {
+						this.applyTransitions(nextPanel);
+					}), 16);
+				} else {
+					this.transitionDirect(nextPanel);
+				}
+			}
+		},
+
+		/**
+		* Applies the transitions for moving between the current and next panel.
+		*
+		* @param {Object} nextPanel - The panel we are transitioning to.
+		* @param {[type]} [direct] - If `true`, signifies that this is a direct transition.
+		* @private
+		*/
+		applyTransitions: function (nextPanel, direct) {
 			// setup the transition for the next panel
 			var nextTransition = {};
 			nextTransition['translate' + this._axis] = -100 * this._direction + '%';
@@ -575,7 +599,7 @@
 
 			this._previousPanel = this._currentPanel;
 			this._currentPanel = nextPanel;
-			if (!this.shouldAnimate()) { // ensure that `transitionFinished is called, regardless of animation
+			if (!this.shouldAnimate() || direct) { // ensure that `transitionFinished is called, regardless of animation
 				this.transitionFinished(this._currentPanel, {originator: this._currentPanel});
 			}
 		},
@@ -621,6 +645,18 @@
 					panel.destroy();
 				}
 			}
+		},
+
+		/**
+		* Transition to a given panel directly, without any animation.
+		*
+		* @param {Object} panel - The panel we are transitioning to.
+		* @private
+		*/
+		transitionDirect: function (panel) {
+			panel.applyStyle('-webkit-transition-duration', '0s');
+			panel.applyStyle('transition-duration', '0s');
+			this.applyTransitions(panel, true);
 		},
 
 		/**
