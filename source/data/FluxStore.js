@@ -61,7 +61,7 @@
 		*/
 		id: -1,
 
-		mixins: [EventEmitter],
+		mixins: [EventEmitter, StateSupport],
 
 		/**
 		* @name enyo.FluxStore.source
