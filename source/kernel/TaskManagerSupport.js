@@ -81,13 +81,15 @@
 		* @public
 		*/
 		runTask: function () {
-			if (this.paused && this.task) {
-				this.resume();
-			} else if (!this.isBusy()) {
-				this.task = this.tasks.poll();
-				this.task({onComplete: this.bindSafely(function () {
-					this.task = null;
-				})});
+			if (this.tasks.length) {
+				if (this.paused && this.task) {
+					this.resume();
+				} else if (!this.isBusy()) {
+					this.task = this.tasks.poll();
+					this.task({onComplete: this.bindSafely(function () {
+						this.task = null;
+					})});
+				}
 			}
 		},
 
