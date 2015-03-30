@@ -22,8 +22,8 @@
 		* @private
 		*/
 		userEvents: [
-			'onmousemove',
-			'ontap'
+			'mousemove',
+			'tap'
 		],
 
 		/**
@@ -44,7 +44,7 @@
 		* @public
 		*/
 		startIdleCheck: function () {
-			this.previewDomEvent = this.checkEvent;
+			enyo.dispatcher.features.push(this.bindSafely(this.checkEvent));
 		},
 
 		/**
@@ -53,7 +53,8 @@
 		* @public
 		*/
 		stopIdleCheck: function () {
-			this.previewDomEvent = this.nop;
+			var idx = enyo.dispatcher.features.indexOf(this.bindSafely(this.checkEvent));
+			enyo.dispatcher.features.splice(idx, 1);
 		},
 
 		/**
@@ -76,7 +77,7 @@
 		isIdle: function () {
 			// TODO check framerate, mouse movement, etc.
 			// check last idle time with some sensible threshold
-			return enyo.perfNow() - this._lastIdle > this.idleThreshold;
+			return !this.lastIdle || enyo.perfNow() - this.lastIdle > this.idleThreshold;
 		},
 
 		/**
@@ -92,11 +93,6 @@
 				this._idleCheckJob = null;
 			}, 32);
 		},
-
-		/**
-		* @private
-		*/
-		previewDomEvent: enyo.nop,
 
 		/**
 		* @private

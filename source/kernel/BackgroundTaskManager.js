@@ -73,7 +73,8 @@
 		*/
 		add: function (customer) {
 			// TODO: check if TaskManagerSupport has been mixed-in to this customer object
-			return this.customers.push(customer);
+			this.customers.push(customer);
+			this.trigger();
 		},
 
 		/**
@@ -88,6 +89,7 @@
 				this.customers[idx].cancel(); // TODO: should this pause the task instead?
 				return this.customers.splice(idx, 1);
 			}
+			this.trigger();
 		},
 
 		/**
@@ -126,6 +128,7 @@
 			for (var idx = 0; idx < this.customers.length; idx++) {
 				this.customers[idx].resumeTask();
 			}
+			this.trigger();
 		},
 
 		/**
