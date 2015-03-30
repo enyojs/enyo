@@ -194,7 +194,7 @@
 		* @private
 		*/
 		directionChanged: function () {
-			this._direction = this.direction == 'forwards' ? 1 : -1;
+			this._direction = this.direction == 'forwards' ? 1 : this.direction == 'backwards' ? -1 : 0;
 		},
 
 		/**
@@ -333,7 +333,7 @@
 
 			var lastIndex = this.getPanels().length,
 				newPanels = [],
-				newPanel, targetIdx, idx;
+				newPanel, targetIdx, compareIdx, idx;
 
 			for (idx = 0; idx < info.length; idx++) {
 				if (!this.cacheViews || this.cacheViews && !this.panelExists(info[idx].kind)) {
@@ -341,6 +341,9 @@
 					newPanels.push(newPanel);
 					if ((opts && opts.targetIndex != null && lastIndex + idx == opts.targetIndex) || idx == info.length - 1) {
 						newPanel.render();
+					} else {
+						compareIdx = opts && opts.targetIndex != null ? opts.targetIndex : lastIndex + info.length;
+						this.shiftPanel(newPanel, compareIdx - this.index);
 					}
 					if (opts && opts.forcePostTransition && newPanel.postTransition) {
 						newPanel.postTransition();
@@ -550,7 +553,7 @@
 				nextPanel = panels[this.index],
 				trans, wTrans;
 
-			this._indexDirection = (this.index - previousIndex < 0 ? -1 : 1);
+			this._indexDirection = this.index - previousIndex;
 
 			if (nextPanel) {
 				if (!nextPanel.generated) {
@@ -587,14 +590,12 @@
 		* @private
 		*/
 		applyTransitions: function (nextPanel, direct) {
-			// setup the transition for the next panel
+			// apply the transition for the next panel
 			var nextTransition = {};
 			nextTransition['translate' + this._axis] = -100 * this._direction + '%';
 			enyo.dom.transform(nextPanel, nextTransition);
-			if (this._currentPanel) { // setup the transition for the current panel
-				var currentTransition = {};
-				currentTransition['translate' + this._axis] = this._indexDirection > 0 ? -200 * this._direction + '%' : '0%';
-				enyo.dom.transform(this._currentPanel, currentTransition);
+			if (this._currentPanel) { // apply the transition for the current panel
+				this.shiftPanel(this._currentPanel, this._indexDirection);
 			}
 
 			this._previousPanel = this._currentPanel;
@@ -602,6 +603,20 @@
 			if (!this.shouldAnimate() || direct) { // ensure that `transitionFinished is called, regardless of animation
 				this.transitionFinished(this._currentPanel, {originator: this._currentPanel});
 			}
+		},
+
+		/**
+		* Shifts the given panel into its post-transition position.
+		*
+		* @param {Object} panel - The panel to be shifted to its final position.
+		* @param {Number} indexDirection - The direction (positive indicates forward, negative
+		*	backwards) in which we are changing the index.
+		* @private
+		*/
+		shiftPanel: function (panel, indexDirection) {
+			var trans = {};
+			trans['translate' + this._axis] = indexDirection > 0 ? -200 * this._direction + '%' : '0%';
+			enyo.dom.transform(panel, trans);
 		},
 
 		/**
