@@ -6,8 +6,8 @@ enyo.singleton({
 	* @extends enyo.Object
 	* @protected
 	*/
-	kind(
 	name: 'enyo.FluxDispatcher',
+
 	kind: enyo.Object,
 
 	/**
@@ -69,13 +69,14 @@ enyo.singleton({
 	*/
 	subscribe: function(storeid, callback) {
 
+		console.log(this);
+
 		//a store, or a view subscribes to be notified of an update
 		//to the data
 		var id = this.prefix + this.lastID++;
 
 		if(typeof storeid == 'undefined') {
 			this.pending[id] = false;
-			console.log(id, this.pending[id]);
 			//send an id back
 			return id;
 		}
@@ -122,7 +123,6 @@ enyo.singleton({
 		//wait for any callbacks to resolve
 		//before issuing this callback
 		for (var i = 0; i < ids.length; i++) {
-			console.log(this.pending[ids[i]]);
 			if(this.pending[ids[i]]) {
 				continue;
 			}
@@ -143,9 +143,7 @@ enyo.singleton({
 	notify: function(storeid, payload) {
 		var notifyQue = this.subscriptions[storeid];
 		if(notifyQue) {
-			console.log(this);
 			this.isDispatching = true;
-			console.log(storeid, this.pending[storeid]);
 			this.pending[storeid] = false;
 			try {
 				for (var key in notifyQue) {
