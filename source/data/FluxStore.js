@@ -95,24 +95,6 @@
 		/**
 		* @private
 		*/
-		add: function (data, opts) {
-			if(this.MergeRoot) {
-				update(this.data, data);
-				return;
-			}
-			this.data = data;
-		},
-
-		/**
-		* @public
-		*/
-		reset: function () {
-			this.data = {};
-		},
-
-		/**
-		* @private
-		*/
 		constructor: enyo.inherit(function(sup){
 			return function(){
 				sup.apply(this, arguments);
@@ -122,6 +104,34 @@
 				}
 			}
 		}),
+
+		/**
+		* @name enyo.FluxStore.add
+		*
+		* Adds data to the store, is called from the store's fetch
+		*
+		* @param [data] - Object that has the data to be added to store.
+		* @param {enyo.FluxStore~ActionOptions} [opts] - Optional configuration options.
+		* @private
+		*/
+		add: function (data, opts) {
+			if(this.MergeRoot) {
+				update(this.data, data);
+				return;
+			}
+			this.data = data;
+		},
+
+		/**
+		* @name enyo.FluxStore.reset
+		*
+		* Clears the store's data
+		*
+		* @public
+		*/
+		reset: function () {
+			this.data = {};
+		},
 
 		/**
 		* @name enyo.FluxStore.fetch
