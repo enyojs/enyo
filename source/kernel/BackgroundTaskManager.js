@@ -1,7 +1,28 @@
 (function (enyo, scope) {
 
-	enyo.Priority = {
+	/**
+	* @name enyo.Priorities
+	* @enum {Number}
+	* @public
+	*/
+	enyo.Priorities = {
+
+		/**
+		* This is effectively the probable-need priority. Any customers who have enqueued a task
+		* with this priority will automatically be bumped to the front of the queue.
+		*
+		* @name enyo.Priorities.SOON
+		* @default 1
+		*/
 		SOON: 1,
+
+		/**
+		* This is the default priority and is used to indicate that the execution of the task is not
+		* required in the near future.
+		*
+		* @name enyo.Priorities.SOMETIME
+		* @default 5
+		*/
 		SOMETIME: 5
 	};
 
@@ -71,7 +92,9 @@
 		* @private
 		*/
 		trigger: function() {
-			enyo.Loop.request(this.cb);
+			if (this.customers.length) {
+				enyo.Loop.request(this.cb);
+			}
 		},
 
 		/**
@@ -83,6 +106,7 @@
 		add: function (customer) {
 			// TODO: check if TaskManagerSupport has been mixed-in to this customer object
 			this.customers.push(customer);
+			customer.managed = true;
 			this.trigger();
 		},
 
@@ -95,8 +119,9 @@
 		remove: function (customer) {
 			var idx = this.customers.indexOf(customer);
 			if (idx > -1) {
-				this.customers[idx].cancelTask(); // TODO: should this pause the task instead?
-				return this.customers.splice(idx, 1);
+				customer.cancelTask(); // TODO: should this pause the task instead?
+				customer.managed = false;
+				this.customers.splice(idx, 1);
 			}
 			this.trigger();
 		},
@@ -141,16 +166,17 @@
 		},
 
 		/**
-		* Updates the priority of a given customer. This is generally triggered by a customer
-		* informing the {@link enyo.BackgroundTaskManager} via a callback.
+		* Handle high-priority tasks being added to a given customer.
 		*
-		* @param {Object} customer - The customer whose priority is being updated.
-		* @param {Number} priority - The updated priority.
+		* @param {Object} customer - The customer to move to the front of the queue.
 		* @public
 		*/
-		updatePriority: function (customer, priority) {
-			if (priority == enyo.Priority.SOON) {
-				this.moveToFront(customer);
+		notifyHighPriority: function (customer) {
+			var idx = this.customers.indexOf(customer);
+
+			if (idx > -1) {
+				this.customers.slice(idx, 1);
+				this.customers.unshift(customer);
 			}
 		},
 
@@ -160,26 +186,15 @@
 		* @private
 		*/
 		run: function () {
-			var item = this.customers.shift();
+			var item;
 
-			item.runTask();
-			this.customers.push(item); // move item to back of the queue
-			this.trigger();
-		},
-
-		/**
-		* Move the specified item to the front of the queue.
-		*
-		* @param {Object} item - The item to move to the front of the queue.
-		* @private
-		*/
-		moveToFront: function (item) {
-			var idx = this.customers.indexOf(item);
-
-			if (idx > -1) {
-				this.customers.slice(idx, 1);
-				this.customers.unshift(item);
+			if (this.customers.length && !this.customers[0].paused) {
+				item = this.customers.shift();
+				this.customers.push(item); // move item to back of the queue
+				item.runTask();
 			}
+
+			this.trigger();
 		}
 
 	});
