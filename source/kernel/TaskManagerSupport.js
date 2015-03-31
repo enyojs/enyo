@@ -50,7 +50,7 @@
 		*
 		* @param {Function} task - The task to be added to the queue.
 		* @param {Number|String} priority - The priority of the task.
-		* @param {String} nom - The name of the job for later reference.
+		* @param {String} nom - The name of the task for later reference.
 		* @public
 		*/
 		addTask: function (task, priority, nom) {

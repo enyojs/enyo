@@ -86,7 +86,7 @@
 		* Inserts a given item into the queue, with an optional priority.
 		*
 		* @param {Object} item - The item to insert.
-		* @param {Number} priority - The priority of the item in the queue.
+		* @param {Number} [priority] - The priority of the item in the queue.
 		* @public
 		*/
 		add: function (item, priority) {
