@@ -1,17 +1,27 @@
 (function (enyo, scope) {
 
 	enyo.singleton(
-		/** @lends enyo.System */ {
+		/** @lends enyo.SystemMonitor */ {
 
 		/**
 		* @private
 		*/
-		name: 'enyo.System',
+		name: 'enyo.SystemMonitor',
 
 		/**
 		* @private
 		*/
 		kind: 'enyo.Object',
+
+		/**
+		* The threshold of pixel movement per second that must be met before we classify mouse
+		* movement as such.
+		*
+		* @type {Number}
+		* @default 10
+		* @public
+		*/
+		moveTolerance: 100,
 
 		/**
 		* @private
@@ -43,7 +53,7 @@
 		*
 		* @public
 		*/
-		startIdleCheck: function () {
+		trigger: function () {
 			enyo.dispatcher.features.push(this.bindSafely(this.checkEvent));
 		},
 
@@ -52,7 +62,7 @@
 		*
 		* @public
 		*/
-		stopIdleCheck: function () {
+		stop: function () {
 			var idx = enyo.dispatcher.features.indexOf(this.bindSafely(this.checkEvent));
 			enyo.dispatcher.features.splice(idx, 1);
 		},
@@ -64,7 +74,7 @@
 		*	idle.
 		* @public
 		*/
-		addActivityHandler: function (handler) {
+		addHandler: function (handler) {
 			this.activityHandlers.push(handler);
 		},
 
@@ -74,10 +84,10 @@
 		* @return {Boolean} If `true`, the system is idle, `false` otherwise.
 		* @public
 		*/
-		isIdle: function () {
+		idle: function () {
 			// TODO check framerate, mouse movement, etc.
 			// check last idle time with some sensible threshold
-			return !this.lastIdle || enyo.perfNow() - this.lastIdle > this.idleThreshold;
+			return !this.lastActive || enyo.perfNow() - this.lastActive > this.idleThreshold;
 		},
 
 		/**
@@ -89,7 +99,7 @@
 				for (var idx = 0; idx < this.activityHandlers.length; idx++) {
 					this.activityHandlers[idx]();
 				}
-				this.lastIdle = enyo.perfNow();
+				this.lastActive = enyo.perfNow();
 				this._idleCheckJob = null;
 			}, 32);
 		},
@@ -99,7 +109,17 @@
 		*/
 		checkEvent: function (ev) {
 			if (this.userEvents.indexOf(ev.type) >= 0) {
-				this.lastIdle = enyo.perfNow();
+				if (ev.type == 'mousemove') {
+					if (!this.lastMouseMove || !this.lastX || !this.lastY ||
+						Math.abs((ev.clientX - this.lastX) / (enyo.perfNow() - this.lastMouseMove)) * 1000 > this.moveTolerance) {
+						this.lastActive = enyo.perfNow();
+					}
+					this.lastMouseMove = enyo.perfNow();
+					this.lastX = ev.clientX;
+					this.lastY = ev.clientY;
+				} else {
+					this.lastActive = enyo.perfNow();
+				}
 			}
 		}
 

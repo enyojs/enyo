@@ -16,6 +16,7 @@
 		create: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
+				enyo.BackgroundTaskManager.add(this);
 				this.tasks = new enyo.PriorityQueue();
 			};
 		}),
@@ -29,6 +30,11 @@
 		*/
 		addTask: function (task, priority) {
 			this.tasks.add(task, priority);
+
+			// if the priority matches a specific, high-priority value, we let the BTM know
+			if (priority == enyo.Priority.SOON) {
+				enyo.BackgroundTaskManager.updatePriority(this, priority);
+			}
 		},
 
 		/**
@@ -72,6 +78,18 @@
 		*/
 		resumeTask: function () {
 			this.paused = false;
+		},
+
+		/**
+		* Update the priority of a given task.
+		*
+		* @param {Object} task - The item whose priority we wish to update.
+		* @param {Number} priority - The updated priority which we wish to assign to the specified
+		*	task.
+		* @public
+		*/
+		updateTaskPriority: function (task, priority) {
+			this.tasks.updatePriority(task, priority);
 		},
 
 		/**
