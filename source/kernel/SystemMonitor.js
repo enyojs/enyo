@@ -24,9 +24,22 @@
 		moveTolerance: 100,
 
 		/**
-		* @private
+		* The threshold amount of time, in ms, for determining if we are in an idle state.
+		*
+		* @type {Number}
+		* @default 2000
+		* @public
 		*/
 		idleThreshold: 2000,
+
+		/**
+		* When `true`, we are actively monitoring the system.
+		*
+		* @type {Boolean}
+		* @default false
+		* @public
+		*/
+		active: false,
 
 		/**
 		* @private
@@ -55,6 +68,7 @@
 		*/
 		trigger: function () {
 			enyo.dispatcher.features.push(this.bindSafely(this.checkEvent));
+			this.active = true;
 		},
 
 		/**
@@ -65,17 +79,7 @@
 		stop: function () {
 			var idx = enyo.dispatcher.features.indexOf(this.bindSafely(this.checkEvent));
 			enyo.dispatcher.features.splice(idx, 1);
-		},
-
-		/**
-		* Add a callback to be run when the system is no longer idle.
-		*
-		* @param {Function} handler - The callback that will be run when the system is no longer
-		*	idle.
-		* @public
-		*/
-		addHandler: function (handler) {
-			this.activityHandlers.push(handler);
+			this.active = false;
 		},
 
 		/**
@@ -95,10 +99,6 @@
 		*/
 		handleUserAction: function () {
 			this._idleCheckJob = scope.setTimeout(function () {
-				// execute any interrupt handlers
-				for (var idx = 0; idx < this.activityHandlers.length; idx++) {
-					this.activityHandlers[idx]();
-				}
 				this.lastActive = enyo.perfNow();
 				this._idleCheckJob = null;
 			}, 32);

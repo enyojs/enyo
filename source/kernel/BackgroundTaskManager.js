@@ -63,10 +63,15 @@
 
 				sup.apply(this, arguments);
 
-				enyo.SystemMonitor.trigger();
-				enyo.SystemMonitor.addHandler(this.bindSafely(this.pause));
-
 				this.cb = this.bindSafely(function() {
+					if (this.customers.length) {
+						if (!enyo.SystemMonitor.active) {
+							enyo.SystemMonitor.trigger();
+						}
+					} else {
+						enyo.SystemMonitor.stop();
+					}
+
 					if (!c) {
 						c = enyo.perfNow();
 					} else {
@@ -74,7 +79,7 @@
 						c = enyo.perfNow();
 						f = ((c - p) < d) ? f + 1 : 0;
 					}
-					if (f == this.frameThreshold && enyo.SystemMonitor.idle()) {
+					if (this.customers.length && f == this.frameThreshold && enyo.SystemMonitor.idle()) {
 						this.run();
 						c = p = f = 0;
 					} else {
@@ -105,6 +110,7 @@
 		*/
 		add: function (customer) {
 			// TODO: check if TaskManagerSupport has been mixed-in to this customer object
+			customer.on('priorityChanged', this.notifyPriority, this);
 			this.customers.push(customer);
 			customer.managed = true;
 			this.trigger();
@@ -119,6 +125,7 @@
 		remove: function (customer) {
 			var idx = this.customers.indexOf(customer);
 			if (idx > -1) {
+				customer.off('priorityChanged', this.notifyPriority, this);
 				customer.cancelTask(); // TODO: should this pause the task instead?
 				customer.managed = false;
 				this.customers.splice(idx, 1);
@@ -166,17 +173,24 @@
 		},
 
 		/**
-		* Handle high-priority tasks being added to a given customer.
+		* Determines whether the priority of the last task added to a given customer is urgent
+		* enough to move the customer to the front of the queue.
 		*
-		* @param {Object} customer - The customer to move to the front of the queue.
-		* @public
+		* @param {Object} customer - The customer which has had a change in priority for one of its
+		*	tasks.
+		* @param {Number} priority - The priority that will be checked for urgency.
+		* @private
 		*/
-		notifyHighPriority: function (customer) {
-			var idx = this.customers.indexOf(customer);
+		notifyPriority: function (customer, priority) {
+			var idx;
 
-			if (idx > -1) {
-				this.customers.slice(idx, 1);
-				this.customers.unshift(customer);
+			if (priority == enyo.Priorities.SOON) {
+				idx = this.customers.indexOf(customer);
+
+				if (idx > -1) {
+					this.customers.slice(idx, 1);
+					this.customers.unshift(customer);
+				}
 			}
 		},
 
@@ -188,7 +202,7 @@
 		run: function () {
 			var item;
 
-			if (this.customers.length && !this.customers[0].paused) {
+			if (!this.customers[0].paused) {
 				item = this.customers.shift();
 				this.customers.push(item); // move item to back of the queue
 				item.runTask();
