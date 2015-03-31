@@ -9,7 +9,6 @@ enyo.depends(
 	'Binding.js',
 	'mixins',
 	'Object.js',
-	'Loop.js',
 	'Component.js',
 	'UiComponent.js',
 	'Layout.js',

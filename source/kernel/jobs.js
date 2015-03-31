@@ -25,11 +25,6 @@
 		* @private
 		*/
 		name: 'enyo.jobs',
-
-		/**
-		* @private
-		*/
-		kind: 'enyo.Object',
 		
 		/**
 		* @private
@@ -73,41 +68,6 @@
 		},
 		
 		/**
-		* @private
-		*/
-		fpsThreshold: 55,
-
-		/**
-		* @private
-		*/
-		frameThreshold: 4,
-
-		/**
-		* @private
-		*/
-		constructor: function() {
-			var c, p, f = 0, d = 1000 / this.fpsThreshold;
-
-			this.inherited(arguments);
-
-			this.cb = this.bindSafely(function() {
-				if (!c) {
-					c = enyo.perfNow();
-				} else {
-					p = c;
-					c = enyo.perfNow();
-					f = ((c - p) < d) ? f + 1 : 0;
-				}
-				if (f == this.frameThreshold) {
-					this._doJob();
-					c = p = f = 0;
-				} else {
-					this.trigger();
-				}
-			});
-		},
-
-		/**
 		* Adds a [job]{@link enyo.job} to the job queue. If the current priority
 		* level is higher than this job's priority, this job gets deferred until the
 		* job level drops; if it is lower, this job is run immediately.
@@ -119,8 +79,10 @@
 		* @public
 		*/
 		add: function (job, priority, nom) {
-			priority = this.normalizePriority(priority) || 5;
+			priority = priority || 5;
 
+			// magic words: low = 3, normal = 5, high = 7
+			priority = enyo.isString(priority) ? this._magicWords[priority] : priority;
 
 			// if a job of the same name exists, remove it first (replace it)
 			if(nom){
@@ -128,8 +90,13 @@
 				this._namedJobs[nom] = priority;
 			}
 
-			this._jobs[priority - 1].push({fn: job, name: nom});
-			this.trigger();
+			// if the job is of higher priority than the current priority level then
+			// there's no point in queueing it
+			if(priority >= this.priorityLevel){
+				job();
+			} else {
+				this._jobs[priority - 1].push({fkt: job, name: nom});
+			}
 		},
 		
 		/**
@@ -161,7 +128,6 @@
 		* @public
 		*/
 		registerPriority: function(priority, id) {
-			priority = this.normalizePriority(priority);
 			this._priorities[id] = priority;
 			this.setPriorityLevel( Math.max(priority, this.priorityLevel) );
 		},
@@ -187,11 +153,6 @@
 
 			this.setPriorityLevel( highestPriority );
 		},
-
-		normalizePriority: function(priority) {
-			// magic words: low = 3, normal = 5, high = 7
-			return enyo.isString(priority) ? this._magicWords[priority] : priority;
-		},
 		
 		/**
 		* Tries to run next job if priority level has dropped.
@@ -201,41 +162,10 @@
 		*/
 		priorityLevelChanged: function (was) {
 			if(was > this.priorityLevel){
-				this.trigger();
+				this._doJob();
 			}
 		},
-
-		_findJob: function(pluck) {
-			var min = this.priorityLevel || 1,
-				jobs,
-				job;
-
-			for (var i = 10; i >= min; i--){
-				jobs = this._jobs[i - 1];
-				if (jobs.length) {
-					if (!pluck) {
-						return true;
-					}
-					job = jobs.shift();
-					break;
-				}
-			}
-
-			return job;
-		},
-
-		getJob: function() {
-			return this._findJob(true);
-		},
-
-		hasJob: function() {
-			return this._findJob(false);
-		},
-
-		trigger: function() {
-			enyo.Loop.request(this.cb);
-		},
-
+		
 		/**
 		* Finds and executes the job of highest priority; in this way, all jobs with priority
 		* greater than or equal to the current level are run, in order of their priority (highest
@@ -244,17 +174,21 @@
 		* @private
 		*/
 		_doJob: function () {
-			var job = this.getJob();
+			var job;
 			// find the job of highest priority above the current priority level
 			// and remove from the job list
+			for (var i = 9; i >= this.priorityLevel; i--){
+				if (this._jobs[i].length) {
+					job = this._jobs[i].shift();
+					break;
+				}
+			}
 
 			// allow other events to pass through
 			if (job) {
-				job.fn();
+				job.fkt();
 				delete this._namedJobs[job.name];
-				if (this.hasJob()) {
-					this.trigger();
-				}
+				setTimeout(enyo.bind(this, '_doJob'), 10);
 			}
 		}
 	});

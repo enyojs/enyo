@@ -16,10 +16,10 @@ enyo.kind({
 
 					finish();
 				}
-			}, 96);
+			}, 10);
 			return true;
 		};
-		var animation = this.createComponent({kind: "enyo.Animator", duration: 500, onEnd: "checkJobs"});
+		var animation = this.createComponent({kind: "enyo.Animator", duration: 70, onEnd: "checkJobs"});
 		var c = new enyo.Component({
 			executionOrder: [],
 			executeHighPriorityJob: function() {
@@ -37,9 +37,9 @@ enyo.kind({
 		});
 		animation.play();
 
-		c.startJob("LowPriorityJob", "executeLowPriorityJob", 0, 3); // gets deferred
-		c.startJob("NormalPriorityJob", "executeNormalPriorityJob", 0); // is invoked immediately
-		c.startJob("HighPriorityJob", "executeHighPriorityJob", 100, 8); // is invoked immediately
+		c.startJob("LowPriorityJob", "executeLowPriorityJob", 1, 3); // gets deferred
+		c.startJob("NormalPriorityJob", "executeNormalPriorityJob", 1); // is invoked immediately
+		c.startJob("HighPriorityJob", "executeHighPriorityJob", 1, 8); // is invoked immediately
 
 		setTimeout(function(){
 			if(c.low){
@@ -51,7 +51,7 @@ enyo.kind({
 			if(!c.high){
 				finish("high priority job did not execute despite overriding priority");
 			}
-		}, 250);
+		}, 10);
 	}
 });
 
@@ -78,8 +78,6 @@ enyo.kind({
 		this.animation.onEnd = this.bindSafely("animationFinished");
 	},
 	animationFinished: function(){
-		setTimeout(this.bindSafely(function() {
-			this.finish(this.c.counter ? "" : "Job didn't run even though the animation finished");
-		}), 250);
+		this.finish(this.c.counter ? "" : "Job didn't run even though the animation finished");
 	}
 });

@@ -928,24 +928,19 @@
 		* @public
 		*/
 		startJob: function (nom, job, wait, priority) {
-			var jobs = (this.__jobs = this.__jobs || {}),
-				gNom = this.getGlobalName(nom);
+			var jobs = (this.__jobs = this.__jobs || {});
 			priority = priority || 5;
 			// allow strings as job names, they map to local method names
 			if (typeof job == 'string') job = this[job];
 			// stop any existing jobs with same name
 			this.stopJob(nom);
-			jobs[gNom] = setTimeout(this.bindSafely(function() {
-				enyo.jobs.add(this.bindSafely(job), priority, gNom);
+			jobs[nom] = setTimeout(this.bindSafely(function() {
+				enyo.jobs.add(this.bindSafely(job), priority, nom);
 			}), wait);
 
 			return this;
 		},
 
-		getGlobalName: function(nom) {
-			return this.id + '_' + nom;
-		},
-		
 		/**
 		* Stops a [component]{@link enyo.Component}-specific [job]{@link enyo.job} before it has
 		* been activated.
@@ -955,13 +950,12 @@
 		* @public
 		*/
 		stopJob: function (nom) {
-			var jobs = (this.__jobs = this.__jobs || {}),
-				gNom = this.getGlobalName(nom);
-			if (jobs[gNom]) {
-				clearTimeout(jobs[gNom]);
-				delete jobs[gNom];
+			var jobs = (this.__jobs = this.__jobs || {});
+			if (jobs[nom]) {
+				clearTimeout(jobs[nom]);
+				delete jobs[nom];
 			}
-			enyo.jobs.remove(gNom);
+			enyo.jobs.remove(nom);
 		},
 
 		/**
@@ -978,14 +972,13 @@
 		* @public
 		*/
 		throttleJob: function (nom, job, wait) {
-			var jobs = (this.__jobs = this.__jobs || {}),
-				gNom = this.getGlobalName(nom);
+			var jobs = (this.__jobs = this.__jobs || {});
 			// if we still have a job with this name pending, return immediately
-			if (!jobs[gNom]) {
+			if (!jobs[nom]) {
 				// allow strings as job names, they map to local method names
 				if (typeof job == 'string') job = this[job];
 				job.call(this);
-				jobs[gNom] = setTimeout(this.bindSafely(function() {
+				jobs[nom] = setTimeout(this.bindSafely(function() {
 					this.stopJob(nom);
 				}), wait);
 			}
