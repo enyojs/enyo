@@ -1,31 +1,5 @@
 (function (enyo, scope) {
 
-	/**
-	* @name enyo.Priorities
-	* @enum {Number}
-	* @public
-	*/
-	enyo.Priorities = {
-
-		/**
-		* This is effectively the probable-need priority. Any customers who have enqueued a task
-		* with this priority will automatically be bumped to the front of the queue.
-		*
-		* @name enyo.Priorities.SOON
-		* @default 1
-		*/
-		SOON: 1,
-
-		/**
-		* This is the default priority and is used to indicate that the execution of the task is not
-		* required in the near future.
-		*
-		* @name enyo.Priorities.SOMETIME
-		* @default 5
-		*/
-		SOMETIME: 5
-	};
-
 	enyo.singleton(
 		/** @lends enyo.BackgroundTaskManager */ {
 
