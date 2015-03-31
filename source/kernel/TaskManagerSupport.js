@@ -4,7 +4,6 @@
 	enyo.TaskManagerSupport = {
 
 		/**
-		* @method
 		* @private
 		*/
 		name: 'enyo.TaskManagerSupport',
@@ -24,9 +23,9 @@
 		paused: false,
 
 		/**
-		* If `true`, we are being in a management queue, usually the queue for
-		* {@link enyo.BackgroundTaskManager}, otherwise we have not yet been added to a task
-		* manager.
+		* If `true`, we are being managed in a management queue, usually the queue for
+		* {@link enyo.BackgroundTaskManager}, otherwise we have not yet been added to a management
+		* queue.
 		*
 		* @type {Boolean}
 		* @default false
@@ -42,6 +41,7 @@
 			return function () {
 				sup.apply(this, arguments);
 				this.tasks = new enyo.PriorityQueue();
+				this._namedTasks = {};
 			};
 		}),
 
@@ -50,10 +50,16 @@
 		*
 		* @param {Function} task - The task to be added to the queue.
 		* @param {Number|String} priority - The priority of the task.
+		* @param {String} nom - The name of the job for later reference.
 		* @public
 		*/
-		addTask: function (task, priority) {
+		addTask: function (task, priority, nom) {
+			if (this._namedTasks[nom]) {
+				this.removeTask(nom); // remove existing task so that it can be replaced
+			}
+
 			this.tasks.add(task, priority);
+			this._namedTasks[nom] = task;
 
 			if (!this.managed) { // add ourselves if we are not currently being managed
 				enyo.BackgroundTaskManager.add(this);
@@ -65,13 +71,11 @@
 		/**
 		* Removes the specified task from the queue.
 		*
-		* @param {Function} task - The task to be cancelled.
+		* @param {Function} nom - The name of the task to be cancelled.
 		* @public
 		*/
-		removeTask: function (task) {
-			if (this.task === task) {
-				this.task = null;
-			}
+		removeTask: function (nom) {
+			var task = this._namedTasks[nom];
 			this.tasks.remove(task);
 		},
 
@@ -110,12 +114,13 @@
 		/**
 		* Update the priority of a given task.
 		*
-		* @param {Object} task - The item whose priority we wish to update.
+		* @param {Object} nom - The name of the task whose priority we wish to update.
 		* @param {Number} priority - The updated priority which we wish to assign to the specified
 		*	task.
 		* @public
 		*/
-		updateTaskPriority: function (task, priority) {
+		updateTaskPriority: function (nom, priority) {
+			var task = this._namedTasks[nom];
 			this.tasks.updatePriority(task, priority);
 			this.emit('priorityChanged', this, priority);
 		},

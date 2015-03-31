@@ -674,7 +674,7 @@
 		* @private
 		*/
 		startViewCacheJob: function (viewProps, priority) {
-			this.addTask(function (opts) {
+			this.addTask(function () {
 				// TODO: once the data layer is hooked into the run loop, we should no longer need
 				// to forcibly trigger the post transition work.
 				this.preCacheView(viewProps, {}, function (view) {
@@ -682,9 +682,7 @@
 						view.postTransition();
 					}
 				});
-
-				opts && opts.onComplete();
-			}, priority);
+			}, priority, 'PRE-CACHE:' + viewProps.kind);
 		},
 
 		/**
