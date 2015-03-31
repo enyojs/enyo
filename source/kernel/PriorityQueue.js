@@ -24,14 +24,6 @@
 		kind: 'enyo.Object',
 
 		/**
-		* @public
-		*/
-		priorities: {
-			'soon': 1,
-			'sometime': 5
-		},
-
-		/**
 		* The type of heap utilized by the {@link enyo.PriorityQueue}. Possible values include
 		* 'minHeap' and 'maxHeap', which correspond to overridable functions that are used when
 		* comparing values. This value is ignored if a comparison function is provided at
@@ -140,13 +132,29 @@
 		},
 
 		/**
+		* Updates the priority for the given item.
+		*
+		* @param {Object} item - The item whose priority is to be updated.
+		* @param {Number} priority - The new priority value.
+		* @public
+		*/
+		updatePriority: function (item, priority) {
+			var idx = this.findIndexInQueue(item),
+				itemInQueue = this.queue[idx];
+
+			itemInQueue.priority = priority;
+			this.swap(idx, this.queue.length - 1);
+			this.bubbleUp();
+		},
+
+		/**
 		* Normalizes the priority to a numerical value.
 		*
 		* @param {String|Number} priority - The priority value to normalize.
 		* @private
 		*/
 		normalizePriority: function (priority) {
-			return enyo.isString(priority) ? this.priorities[priority] : priority;
+			return enyo.isString(priority) ? enyo.Priority[enyo.toUpperCase(priority)] : priority;
 		},
 
 		/**
@@ -220,7 +228,7 @@
 		},
 
 		/**
-		* Swap the position of the given elements.
+		* Move the last item into a specified position, usually to handle item removal.
 		*
 		* @param {Number} idx - The position where we wish to insert the element from the end of the
 		*	queue.
