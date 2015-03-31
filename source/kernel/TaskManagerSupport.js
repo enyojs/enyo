@@ -10,6 +10,11 @@
 		name: 'enyo.TaskManagerSupport',
 
 		/**
+		* @private
+		*/
+		mixins: ['enyo.EventEmitter'],
+
+		/**
 		* If `true`, the current task execution is paused, otherwise task execution is ongoing.
 		*
 		* @type {Boolean}
@@ -49,11 +54,12 @@
 		*/
 		addTask: function (task, priority) {
 			this.tasks.add(task, priority);
-			this.checkTaskPriority(priority);
 
 			if (!this.managed) { // add ourselves if we are not currently being managed
 				enyo.BackgroundTaskManager.add(this);
 			}
+
+			this.emit('priorityChanged', this, priority);
 		},
 
 		/**
@@ -111,7 +117,7 @@
 		*/
 		updateTaskPriority: function (task, priority) {
 			this.tasks.updatePriority(task, priority);
-			this.checkTaskPriority(priority);
+			this.emit('priorityChanged', this, priority);
 		},
 
 		/**
@@ -128,21 +134,6 @@
 				if (this.tasks.length === 0) { // remove ourselves if we no longer have tasks
 					enyo.BackgroundTaskManager.remove(this);
 				}
-			}
-		},
-
-		/**
-		* Determines if the current task and priority should trigger this
-		* {@link enyo.TaskManagerSupport} component to be moved to the front of the
-		* {@link enyo.BackgroundTaskManager} queue.
-		*
-		* @param {Number} priority - The priority of the task we are checking.
-		* @private
-		*/
-		checkTaskPriority: function (priority) {
-			// if the priority matches a specific, high-priority value, we let the BTM know
-			if (priority == enyo.Priorities.SOON) {
-				enyo.BackgroundTaskManager.notifyHighPriority(this);
 			}
 		}
 
