@@ -169,7 +169,7 @@
 		},
 
 		/**
-		* Give each customer a chance to execute once, per run.
+		* Give the next customer a chance to execute a single task.
 		*
 		* @private
 		*/

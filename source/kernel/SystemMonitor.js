@@ -21,7 +21,7 @@
 		* @default 10
 		* @public
 		*/
-		moveTolerance: 100,
+		moveTolerance: 1000,
 
 		/**
 		* The threshold amount of time, in ms, for determining if we are in an idle state.
@@ -46,19 +46,8 @@
 		*/
 		userEvents: [
 			'mousemove',
-			'tap'
-		],
-
-		/**
-		* @private
-		*/
-		activityHandlers: [],
-
-		/**
-		* @private
-		*/
-		components: [
-			{kind: 'enyo.Signals', onkeydown: 'handleUserAction'}
+			'tap',
+			'keydown'
 		],
 
 		/**
@@ -89,22 +78,14 @@
 		* @public
 		*/
 		idle: function () {
-			// TODO check framerate, mouse movement, etc.
 			// check last idle time with some sensible threshold
 			return !this.lastActive || enyo.perfNow() - this.lastActive > this.idleThreshold;
 		},
 
 		/**
-		* @private
-		*/
-		handleUserAction: function () {
-			this._idleCheckJob = scope.setTimeout(function () {
-				this.lastActive = enyo.perfNow();
-				this._idleCheckJob = null;
-			}, 32);
-		},
-
-		/**
+		* Each event is passed through this check to determine if the event corresponds to a
+		* pre-defined set of events corresponding to user action.
+		*
 		* @private
 		*/
 		checkEvent: function (ev) {
@@ -117,6 +98,11 @@
 					this.lastMouseMove = enyo.perfNow();
 					this.lastX = ev.clientX;
 					this.lastY = ev.clientY;
+				} else if (ev.type == 'keydown') {
+					this._idleCheckJob = scope.setTimeout(function () {
+						this.lastActive = enyo.perfNow();
+						this._idleCheckJob = null;
+					}, 32);
 				} else {
 					this.lastActive = enyo.perfNow();
 				}
