@@ -37,7 +37,7 @@
 		/**
 		* @private
 		*/
-		mixins: ['enyo.ViewPreloadSupport'],
+		mixins: ['enyo.ViewPreloadSupport', 'enyo.TaskManagerSupport'],
 
 		/**
 		* @private
@@ -136,19 +136,10 @@
 			* The default priority for view caching jobs.
 			*
 			* @type {Number}
-			* @default 3
+			* @default enyo.Priorities.SOMETIME
 			* @public
 			*/
-			priority: 3,
-
-			/**
-			* The default delay for view caching jobs.
-			*
-			* @type {Number}
-			* @default 0
-			* @public
-			*/
-			delay: 0
+			priority: enyo.Priorities.SOMETIME
 		},
 
 		/**
@@ -682,8 +673,8 @@
 		* @param {Number} [priority] - The priority of the job.
 		* @private
 		*/
-		startViewCacheJob: function (viewProps, delay, priority) {
-			this.startJob(viewProps.kind, function () {
+		startViewCacheJob: function (viewProps, priority) {
+			this.addTask(function () {
 				// TODO: once the data layer is hooked into the run loop, we should no longer need
 				// to forcibly trigger the post transition work.
 				this.preCacheView(viewProps, {}, function (view) {
@@ -691,7 +682,7 @@
 						view.postTransition();
 					}
 				});
-			}, delay || this.delay, priority || this.priority);
+			}, priority, 'PRE-CACHE:' + viewProps.kind);
 		},
 
 		/**
