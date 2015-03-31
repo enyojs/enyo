@@ -5,6 +5,7 @@
 * and are subject to future changes, so you may use these only "at your own risk".
 */
 enyo.depends(
+	'Loop.js',
 	'SystemMonitor.js',
 	'PriorityQueue.js',
 	'BackgroundTaskManager.js',
