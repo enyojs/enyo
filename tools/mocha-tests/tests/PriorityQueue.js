@@ -2,8 +2,6 @@ describe('enyo.PriorityQueue', function () {
 
 	var PriorityQueue = enyo.PriorityQueue;
 
-	var proto = PriorityQueue.prototype;
-
 	describe('methods', function () {
 
 		describe('#add', function () {
