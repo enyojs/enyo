@@ -136,10 +136,10 @@
 			* The default priority for view caching jobs.
 			*
 			* @type {Number}
-			* @default enyo.Priority.SOMETIME
+			* @default enyo.Priorities.SOMETIME
 			* @public
 			*/
-			priority: enyo.Priority.SOMETIME
+			priority: enyo.Priorities.SOMETIME
 		},
 
 		/**

@@ -10,13 +10,32 @@
 		name: 'enyo.TaskManagerSupport',
 
 		/**
+		* If `true`, the current task execution is paused, otherwise task execution is ongoing.
+		*
+		* @type {Boolean}
+		* @default false
+		* @public
+		*/
+		paused: false,
+
+		/**
+		* If `true`, we are being in a management queue, usually the queue for
+		* {@link enyo.BackgroundTaskManager}, otherwise we have not yet been added to a task
+		* manager.
+		*
+		* @type {Boolean}
+		* @default false
+		* @public
+		*/
+		managed: false,
+
+		/**
 		* @method
 		* @private
 		*/
 		create: enyo.inherit(function (sup) {
 			return function () {
 				sup.apply(this, arguments);
-				enyo.BackgroundTaskManager.add(this);
 				this.tasks = new enyo.PriorityQueue();
 			};
 		}),
@@ -30,10 +49,10 @@
 		*/
 		addTask: function (task, priority) {
 			this.tasks.add(task, priority);
+			this.checkTaskPriority(priority);
 
-			// if the priority matches a specific, high-priority value, we let the BTM know
-			if (priority == enyo.Priority.SOON) {
-				enyo.BackgroundTaskManager.updatePriority(this, priority);
+			if (!this.managed) { // add ourselves if we are not currently being managed
+				enyo.BackgroundTaskManager.add(this);
 			}
 		},
 
@@ -50,35 +69,37 @@
 			this.tasks.remove(task);
 		},
 
+
 		/**
-		* Terminates the active task.
+		* The expectation is that the current task will be canceled - to be implemented by the kind.
 		*
 		* @public
 		*/
-		cancelTask: function () {
-			if (this.task) {
-				this.task.cancel();
-				this.task = null;
-			}
-		},
+		cancelTask: function () {},
 
 		/**
 		* The expectation is that the current task will be paused - to be implemented by the kind.
 		*
 		* @public
 		*/
-		pauseTask: function () {
-			this.paused = true;
-		},
+		pauseTask: enyo.inherit(function (sup) {
+			return function() {
+				sup.apply(this, arguments);
+				this.paused = true;
+			};
+		}),
 
 		/**
 		* The expectation is that the current task will be resumed - to be implemented by the kind.
 		*
 		* @public
 		*/
-		resumeTask: function () {
-			this.paused = false;
-		},
+		resumeTask: enyo.inherit(function (sup) {
+			return function() {
+				sup.apply(this, arguments);
+				this.paused = false;
+			};
+		}),
 
 		/**
 		* Update the priority of a given task.
@@ -90,6 +111,7 @@
 		*/
 		updateTaskPriority: function (task, priority) {
 			this.tasks.updatePriority(task, priority);
+			this.checkTaskPriority(priority);
 		},
 
 		/**
@@ -100,24 +122,28 @@
 		*/
 		runTask: function () {
 			if (this.tasks.length) {
-				if (this.paused && this.task) {
-					this.resume();
-				} else if (!this.isBusy()) {
-					this.task = this.tasks.poll();
-					this.task({onComplete: this.bindSafely(function () {
-						this.task = null;
-					})});
+				this.task = this.tasks.poll();
+				this.task && this.task();
+
+				if (this.tasks.length === 0) { // remove ourselves if we no longer have tasks
+					enyo.BackgroundTaskManager.remove(this);
 				}
 			}
 		},
 
 		/**
-		* Whether or not a task is currently running.
+		* Determines if the current task and priority should trigger this
+		* {@link enyo.TaskManagerSupport} component to be moved to the front of the
+		* {@link enyo.BackgroundTaskManager} queue.
 		*
-		* @public
+		* @param {Number} priority - The priority of the task we are checking.
+		* @private
 		*/
-		isBusy: function () {
-			return !!this.task;
+		checkTaskPriority: function (priority) {
+			// if the priority matches a specific, high-priority value, we let the BTM know
+			if (priority == enyo.Priorities.SOON) {
+				enyo.BackgroundTaskManager.notifyHighPriority(this);
+			}
 		}
 
 	};
