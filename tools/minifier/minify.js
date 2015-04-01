@@ -54,9 +54,9 @@
 			// inside a lib directory; normalizing the path makes it easier to check, below
 			sheet = path.normalize(sheet);
 			// fix url paths
-			code = code.replace(/(?!url\((?:['"])?(?:data:|https?|(?:file:)?\/\/))url\((['"])?([a-zA-Z0-9\ \.\/\-\~&%#:+=_]*)\1\)/g,
+			code = code.replace(/(?!url\((?:['"])?(?:data:|https?|(?:file:)?\/\/))url\((['"])?([a-zA-Z0-9\ \.\/\-~&%#:+=_?]*)\1\)/g,
 				function (uri, char, content) {
-					var rel;
+					var rel, dest;
 					// we do nothing if there was nothing even though this is probably not intended 
 					// by the author let a true CSS parser deal with the flaws
 					if (!content) return uri;
@@ -69,9 +69,13 @@
 					// encoded relative paths, rewrite them, and re-encode them, however this will
 					// work with relative IRI's (using # for the same document -> %23 when encoded)
 					if (/^%23/.test(content)) return uri;
+					// if we are gathering libs to default location, rewrite urls beneath lib folder
+					dest = opt.gathering && sheet.indexOf(opt.lib) === 0
+						? defaultLibLoc + sheet.substr(opt.lib.length)
+						: sheet;
 					// leaving this because this was working according to these build tools 
 					// specific needs
-					rel = path.join('..', opt.relsrcdir, path.dirname(sheet), content);
+					rel = path.join('..', opt.relsrcdir, path.dirname(dest), content);
 					// for sanity we wrap all URI's safely with single quote
 					return 'url(\'' + rel + '\')';
 				}
