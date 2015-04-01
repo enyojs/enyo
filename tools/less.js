@@ -9,7 +9,7 @@
 	}
 	window.less = less;
 	var script = document.createElement('script');
-	script.src = "enyo/tools/minifier/node_modules/less/dist/less-1.3.3.min.js";
+	script.src = "enyo/tools/minifier/node_modules/less/dist/less-1.7.0.min.js";
 	script.charset = "utf-8";
 	document.getElementsByTagName('head')[0].appendChild(script);
 })();

@@ -7,10 +7,14 @@
   font-family: "Trebuchet MS", Verdana, sans-serif;
   quotes: "~" "~";
 }
-.redefinition {
+.redef {
+  zero: 0;
+}
+.redef .inition {
   three: 3;
 }
 .values {
+  minus-one: -1;
   font-family: 'Trebuchet', 'Trebuchet', 'Trebuchet';
   color: #888888 !important;
   multi: something 'A', B, C, 'Trebuchet';
@@ -21,6 +25,21 @@
 .alpha {
   filter: alpha(opacity=42);
 }
-a:nth-child(2) {
-  border: 1px;
+.testPollution {
+  a: 'no-pollution';
+}
+.units {
+  width: 1px;
+  same-unit-as-previously: 1px;
+  square-pixel-divided: 1px;
+  odd-unit: 2;
+  percentage: 500%;
+  pixels: 500px;
+  conversion-metric-a: 30mm;
+  conversion-metric-b: 3cm;
+  conversion-imperial: 3in;
+  custom-unit: 420octocats;
+  custom-unit-cancelling: 18dogs;
+  mix-units: 2px;
+  invalid-units: 1px;
 }

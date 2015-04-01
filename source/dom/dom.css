@@ -31,6 +31,13 @@ body.webkitOverflowScrolling {
 	-ms-touch-action: none;
 }
 
+.enyo-untouchable {
+	pointer-events: none;
+}
+.enyo-untouchable > * {
+	pointer-events: auto;
+}
+
 /* reset */
 
 button {
@@ -50,10 +57,6 @@ button::-moz-focus-inner {
 	-webkit-user-select: none;
 	-moz-user-select: -moz-none;
 	user-select: none;
-}
-
-.enyo-unselectable::selection, .enyo-unselectable ::selection {
-	color: transparent;
 }
 
 .enyo-selectable {

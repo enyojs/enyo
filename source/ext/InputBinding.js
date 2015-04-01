@@ -1,24 +1,55 @@
-//*@public
-/**
-	_enyo.InputBinding_ is a binding designed to have its source or target be an
-	_input_ with an optional _placeholder_ value. This keeps the input from
-	showing _undefined_ when there is no content, as the _placeholder_ value will
-	then be used for display.
-*/
-enyo.kind({
-	name: "enyo.InputBinding",
-	kind: enyo.Binding,
+(function (enyo, scope) {
+
+	var Binding = enyo.Binding;
+
 	/**
-		The direction priority for the placeholder text so it is not propagated when
-		an empty string should be.
+	* An {@link enyo.Binding} designed to have its [source]{@link enyo.Binding#source}
+	* or its [target]{@link enyo.Binding#target} be an {@link enyo.Input}. If the
+	* `enyo.Input` has a [placeholder]{@link enyo.Input#placeholder}, it will be
+	* used when there is no value. This is a [two-way]{@link enyo.Binding#oneWay} binding.
+	*
+	* @class enyo.InputBinding
+	* @extends enyo.Binding
+	* @public
 	*/
-	placeholderDirection: "source",
-	oneWay: false,
-	//*@protected
-	transform: function (value, direction, binding) {
-		if (value) { return value; }
-		var pd = binding.placeholderDirection,
-			ph = binding[pd].placeholder || "";
-		return ph;
-	}
-});
+	enyo.kind(
+		/** @lends enyo.InputBinding.prototype */ {
+		
+		/**
+		* @private
+		*/
+		name: 'enyo.InputBinding',
+		
+		/**
+		* @private
+		*/
+		kind: Binding,
+		
+		/**
+		* This should be set to either `'source'` or `'target'` depending on which end is the
+		* {@link enyo.Input}, so that the [placeholder]{@link enyo.InputBinding#placeholder}
+		* is not used in the wrong direction.
+		*
+		* @type {String}
+		* @default 'source'
+		* @public
+		*/
+		placeholderDirection: 'source',
+		
+		/**
+		* @private
+		*/
+		oneWay: false,
+		
+		/**
+		* @private
+		*/
+		transform: function (value, direction, binding) {
+			if (value) { return value; }
+			var pd = '_' + binding.placeholderDirection,
+				ph = binding[pd] && binding[pd].placeholder || '';
+			return ph;
+		}
+	});
+
+})(enyo, this);

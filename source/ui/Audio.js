@@ -1,22 +1,59 @@
-/**
-	_enyo.Audio_ extends [enyo.Media](#enyo.Media) to implement an HTML 5 Media
-	element that allows you to play audio data.
+(function (enyo, scope) {
+	/**
+	* {@link enyo.Audio} extends {@link enyo.Media} to implement an
+	* [HTML 5 Media element]{@glossary HTML5MediaElement} that allows you to play
+	* audio data.
+	*
+	* Initialize an audio component as follows:
+	*
+	* ```
+	* {kind: 'enyo.Audio', src: 'http://www.w3schools.com/tags/horse.mp3'}
+	* ```
+	* 
+	* To play the audio, call `this.$.audio.play()`.
+	* 
+	* To get a reference to the actual [HTML 5 Media element]{@glossary HTML5MediaElement}, 
+	* call `this.$.audio.hasNode()`.
+	*
+	* @class enyo.Audio
+	* @extends enyo.Media
+	* @ui
+	* @public
+	*/
+	enyo.kind(
+		/** @lends enyo.Audio.prototype */ {
 
-	Initialize an audio component as follows:
+		/**
+		* @private
+		*/
+		name: 'enyo.Audio',
 
-		{kind: "enyo.Audio", src: "http://www.w3schools.com/tags/horse.mp3"}
+		/**
+		* @private
+		*/
+		kind: 'enyo.Media',
 
-	To play the audio, call _this.$.audio.play()_.
+		/**
+		* @private
+		*/
+		tag: 'audio',
 
-	To get a reference to the actual HTML 5 Media element, call
-	_this.$.audio.hasNode()_.
-*/
-enyo.kind({
-	name: "enyo.Audio",
-	kind: "enyo.Media",
-	tag: "audio",
-	published: {
-		//* Indicates how data should be preloaded, reflecting the preload HTML attribute (none, metadata, auto)
-		preload: "auto"
-	}
-});
+		/**
+		* @private
+		*/
+		published: 
+			/** @lends enyo.Audio.prototype */ {
+			
+			/** 
+			* Indicates how data should be preloaded, reflecting the `preload` HTML attribute.
+			* Will be one of `'none'`, `'metadata'`, or `'auto'` (the default).
+			*
+			* @type {String}
+			* @default 'auto'
+			* @public
+			*/
+			preload: 'auto'
+		}
+	});
+	
+})(enyo, this);

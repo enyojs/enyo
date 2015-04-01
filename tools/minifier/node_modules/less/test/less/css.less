@@ -27,11 +27,15 @@ div#id {
 }
 
 @media print {
-  font-size: 3em;
+  * {
+    font-size: 3em;
+  }
 }
 
 @media screen {
-  font-size: 10px;
+  * {
+    font-size: 10px;
+  }
 }
 
 @font-face {
@@ -65,8 +69,9 @@ p + h1 {
 #more-shorthands {
   margin: 0;
   padding: 1px 0 2px 0;
-  font: normal small/20px 'Trebuchet MS', Verdana, sans-serif; 
+  font: normal small/20px 'Trebuchet MS', Verdana, sans-serif;
   font: 0/0 a;
+  border-radius: 5px / 10px;
 }
 
 .misc {
@@ -80,6 +85,7 @@ p + h1 {
 	multiple-semi-colons: yes;;;;;;
   };
   filter: alpha(opacity=100);
+  width: auto\9;
 }
 
 #important {

@@ -18,7 +18,7 @@ enyo.kind({
 			{kind: "enyo.Button", content: "Grouped Button 3"}
 		]},
 		{content: "Image Button", classes: "section"},
-		{kind: "enyo.Button", content: "Image Button", ontap: "buttonTapped", components: [
+		{kind: "enyo.Button", content: "Image Button", classes: "image-button", ontap: "buttonTapped", components: [
 			{kind: "enyo.Image", src: "http://enyojs.com/img/enyo-logo.png", alt: "Enyo Logo"}
 		]},
 		{name: "results", classes: "results"}

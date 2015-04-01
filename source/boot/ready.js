@@ -1,4 +1,4 @@
-(function (scope, enyo) {
+(function (enyo, scope) {
 
 	// we need to register appropriately to know when
 	// the document is officially ready, to ensure that
@@ -15,14 +15,19 @@
 	var flush;
 	var flushScheduled = false;
 
-	//*@public
 	/**
-		Register a callback (and optional "this" context) to run
-		after all the enyo and library code has loaded and the DOMContentLoaded
-		(or equivalent on older browsers) event has been sent.
-
-		If called after system is in a ready state, run the supplied code
-		asynchronously at earliest opportunity.
+	* Registers a callback (and optional `this` context) to run after all the Enyo and library code
+	* has loaded and the `DOMContentLoaded` event (or equivalent on older browsers) has been sent.
+    * 
+	* If called after the system is in a ready state, runs the supplied code asynchronously at the
+	* earliest opportunity.
+	*
+	* @name enyo.ready
+	* @method
+	* @param {Function} fn - The method to execute when the DOM is ready.
+	* @param {Object} [context] - The optional context (`this`) under which to execute the
+	*	callback method.
+	* @public
 	*/
 	enyo.ready = function (fn, context) {
 		queue.push([fn, context]);
@@ -33,11 +38,16 @@
 		}
 	};
 
-	//*@protected
+	/**
+	* @private
+	*/
 	run = function (fn, context) {
 		fn.call(context || enyo.global);
 	};
 
+	/**
+	* @private
+	*/
 	init = function (event) {
 		// if we're interactive, it should be safe to move
 		// forward because the content has been parsed
@@ -54,18 +64,27 @@
 		}
 	};
 
+	/**
+	* @private
+	*/
 	add = function (event, fn) {
 		var name = doc.addEventListener? "addEventListener": "attachEvent";
 		var on = name === "attachEvent"? "on": "";
 		doc[name](on + event, fn, false);
 	};
 
+	/**
+	* @private
+	*/
 	remove = function (event, fn) {
 		var name = doc.addEventListener? "removeEventListener": "detachEvent";
 		var on = name === "detachEvent"? "on": "";
 		doc[name](on + event, fn, false);
 	};
 
+	/**
+	* @private
+	*/
 	flush = function () {
 		if (ready && queue.length) {
 			while (queue.length) {
@@ -79,4 +98,4 @@
 	add("DOMContentLoaded", init);
 	add("readystatechange", init);
 
-})(window, enyo);
+})(enyo, this);

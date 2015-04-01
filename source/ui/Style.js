@@ -1,20 +1,49 @@
-//* @public
+(function (enyo, scope) {
+	/**
+	* {@link enyo.Style} is a wrapper for a [&lt;style&gt;]{@glossary style} tag;
+	* it automatically wraps the [content]{@link enyo.Control#content} property
+	* with proper CSS comment formatting.
+	*
+	* @class enyo.Style
+	* @public
+	*/
+	enyo.kind(
+		/** @lends enyo.Style.prototype */ {
 
-/**
-	enyo.Style is a wrapper for a style tag, which automatically wrapps the
-	content property in proper CSS commented format.
-*/
-enyo.kind({
-	name: "enyo.Style",
-	//* @protected
-	tag: "style",
-	classes: "moon-style",
-	attributes: {
-		type: "text/css"
-	},
-	allowHtml: true,
-	contentChanged: function() {
-		this.content = "<!--\n" + this.content + "\n-->";
-		this.inherited(arguments);
-	}
-});
+		/**
+		* @private
+		*/
+		name: 'enyo.Style',
+		
+		/**
+		* @private
+		*/
+		tag: 'style',
+
+		/**
+		* @private
+		*/
+		classes: 'moon-style',
+
+		/**
+		* @private
+		*/
+		attributes: {
+			type: 'text/css'
+		},
+
+		/**
+		* @private
+		*/
+		allowHtml: true,
+
+		/**
+		* @private
+		*/
+		contentChanged: function () {
+			this.content = '<!--\n' + this.content + '\n-->';
+			this.inherited(arguments);
+		}
+	});
+
+})(enyo, this);

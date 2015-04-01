@@ -1,15 +1,35 @@
-//*@public
-/**
-	_enyo.MultipleDispatchComponent_ is a purely abstract kind that simply provides
-	a common ancestor for [enyo.Component](#enyo.Component) objects that need the
-	[MultipleDispatchSupport](#enyo/source/kernel/mixins/MultipleDispatchSupport.js)
-	mixin.
-*/
-enyo.kind({
-	//*@public
-	name: "enyo.MultipleDispatchComponent",
-	kind: "enyo.Component",
-	mixins: [
-		enyo.MultipleDispatchSupport
-	]
-});
+(function (enyo, scope) {
+	/**
+	* {@link enyo.MultipleDispatchComponent} is a purely abstract [kind]
+	* {@glossary kind} that simply provides a common ancestor for
+	* {@link enyo.Component} [objects]{@glossary Object} that need 
+	* the [MultipleDispatchSupport]{@link enyo.MultipleDispatchSupport}
+	* [mixin]{@glossary mixin}.
+	*
+	* @class enyo.MultipleDispatchComponent
+	* @extends enyo.Component
+	* @mixes enyo.MultipleDispatchSupport
+	* @public
+	*/
+	enyo.kind(
+		/** @lends enyo.MultipleDispatchComponent */ {
+
+		/**
+		* @private
+		*/
+		name: 'enyo.MultipleDispatchComponent',
+
+		/**
+		* @private
+		*/
+		kind: 'enyo.Component',
+
+		/**
+		* @private
+		*/
+		mixins: [
+			enyo.MultipleDispatchSupport
+		]
+	});
+
+})(enyo, this);

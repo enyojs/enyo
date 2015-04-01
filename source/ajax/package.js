@@ -1,11 +1,11 @@
 enyo.depends(
-	"Async.js",
-	"json.js",
-	"cookie.js",
-	"xhr.js",
-	"formdata.js",
-	"AjaxProperties.js",
-	"Ajax.js",
-	"Jsonp.js",
-	"WebService.js"
+	'Async.js',
+	'json.js',
+	'cookie.js',
+	'xhr.js',
+	'formdata.js',
+	'AjaxProperties.js',
+	'Ajax.js',
+	'Jsonp.js',
+	'WebService.js'
 );

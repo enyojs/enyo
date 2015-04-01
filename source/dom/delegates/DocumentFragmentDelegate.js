@@ -1,19 +1,27 @@
 (function (enyo, scope) {
 	
 	/**
-		@public
+	* An incomplete (but mostly working) render delegate designed to use DocumentFragment for
+	* generating new content and updating the DOM by reusing existing
+	* [nodes]{@glossary Node} when possible.
+	*
+	* This delegate is retained for future work and is not ready for production use.
+	*
+	* @name enyo.DocumentFragmentDelegate
+	* @type Object
+	* @public
 	*/
 	enyo.DocumentFragmentDelegate = {
 		
 		/**
-			@private
+		* @private
 		*/
 		invalidate: function (control, item) {
 			
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		render: function (control) {
 			
@@ -40,7 +48,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		renderInto: function (control, parentNode) {
 			
@@ -52,7 +60,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		teardownRender: function (control) {
 			if (control.generated) this.teardownChildren(control);
@@ -61,7 +69,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		teardownChildren: function (control) {
 			var child,
@@ -73,7 +81,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		generate: function (control, node) {
 			var child,
@@ -132,7 +140,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		update: function (control, node) {
 			
@@ -170,7 +178,7 @@
 		},
 		
 		/**
-			@private
+		* @private
 		*/
 		renderAttributes: function (control, node) {
 			var attrs = control.attributes,

@@ -1,16 +1,33 @@
-//*@public
-/**
-	_enyo.BooleanOnlyBinding_ is a binding that will only continue propagation
-	if the value being passed is an explicit boolean value.
-*/
-enyo.kind({
-	name: "enyo.BooleanOnlyBinding",
-	kind: enyo.Binding,
-	//*@protected
-	transform: function (value, direction, binding) {
-		if (value !== true && value !== false) {
-			return undefined;
+(function (enyo, scope) {
+
+	var Binding = enyo.Binding;
+
+	/**
+	* An {@link enyo.Binding} that will only propagate changes if the value is a {@glossary Boolean}.
+	*
+	* @class enyo.BooleanOnlyBinding
+	* @extends enyo.Binding
+	* @public
+	*/
+	enyo.kind(
+		/** @lends enyo.BooleanOnlyBinding.prototype */ {
+		
+		/**
+		* @private
+		*/
+		name: 'enyo.BooleanOnlyBinding',
+		
+		/**
+		* @private
+		*/
+		kind: Binding,
+		
+		/**
+		* @private
+		*/
+		transform: function (value, direction, binding) {
+			return (typeof value == 'boolean') ? value : binding.stop();
 		}
-		return value;
-	}
-});
+	});
+
+})(enyo, this);

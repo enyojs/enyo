@@ -1,68 +1,90 @@
-//* @protected
-(function() {
+(function (enyo, scope) {
+	
+	/**
+	* @private
+	*/
 	var pointerEvents;
 	if (window.navigator.pointerEnabled) {
 		pointerEvents = [
-			"pointerdown",
-			"pointerup",
-			"pointermove",
-			"pointerover",
-			"pointerout",
-			"pointercancel"
+			'pointerdown',
+			'pointerup',
+			'pointermove',
+			'pointerover',
+			'pointerout',
+			'pointercancel'
 		];
 	} else if (window.navigator.msPointerEnabled) {
 		pointerEvents = [
-			"MSPointerDown",
-			"MSPointerUp",
-			"MSPointerMove",
-			"MSPointerOver",
-			"MSPointerOut",
-			"MSPointerCancel"
+			'MSPointerDown',
+			'MSPointerUp',
+			'MSPointerMove',
+			'MSPointerOver',
+			'MSPointerOut',
+			'MSPointerCancel'
 		];
 	}
 	if (pointerEvents) {
-		var makeEvent = function(inEvent) {
-			var e = enyo.clone(inEvent);
-			e.srcEvent = inEvent;
+
+		/**
+		* @private
+		*/
+		var makeEvent = function (e) {
+			var event = enyo.clone(e);
+			event.srcEvent = e;
 			// normalize "mouse button" info
 			// 1: left, 2: right, 3: both left & right, 4: center
-			// on IE10, inEvents.buttons may be 0 for touch, so map 0 to 1
-			e.which = inEvent.buttons || 1;
-			return e;
+			// on IE10, es.buttons may be 0 for touch, so map 0 to 1
+			event.which = e.buttons || 1;
+			return event;
 		};
 
+		/**
+		* @private
+		*/
 		var gesture = enyo.gesture;
+
+		/**
+		* @private
+		*/
 		enyo.gesture.events = {};
+
+		/**
+		* @private
+		*/
 		var handlers = {
-			pointerdown: function(inEvent) {
-				var e = makeEvent(inEvent);
-				gesture.down(e);
+			pointerdown: function (e) {
+				var event = makeEvent(e);
+				gesture.down(event);
 			},
-			pointerup: function(inEvent) {
-				var e = makeEvent(inEvent);
-				gesture.up(e);
+			pointerup: function (e) {
+				var event = makeEvent(e);
+				gesture.up(event);
 			},
-			pointermove: function(inEvent) {
-				var e = makeEvent(inEvent);
-				gesture.move(e);
+			pointermove: function (e) {
+				var event = makeEvent(e);
+				gesture.move(event);
 			},
-			pointercancel: function(inEvent) {
+			pointercancel: function (e) {
 				// FIXME: not really the same as touchend, as touch action
 				// was cancelled, but Enyo doesn't have that concept
-				var e = makeEvent(inEvent);
-				gesture.up(e);
+				var event = makeEvent(e);
+				gesture.up(event);
 			},
-			pointerover: function(inEvent) {
-				var e = makeEvent(inEvent);
-				gesture.over(e);
+			pointerover: function (e) {
+				var event = makeEvent(e);
+				gesture.over(event);
 			},
-			pointerout: function(inEvent) {
-				var e = makeEvent(inEvent);
-				gesture.out(e);
+			pointerout: function (e) {
+				var event = makeEvent(e);
+				gesture.out(event);
 			}
 		};
 
-		// alias in the older MS versions
+		/**
+		* Aliases in the older MS versions.
+		* 
+		* @private
+		*/
 		if (!window.navigator.pointerEnabled && window.navigator.msPointerEnabled) {
 			handlers.MSPointerDown = handlers.pointerdown;
 			handlers.MSPointerUp = handlers.pointerup;
@@ -72,16 +94,25 @@
 			handlers.MSPointerOut = handlers.pointerout;
 		}
 
-		// tell Enyo to listen for these events
-		enyo.forEach(pointerEvents, function(e) {
+		/**
+		* Tells Enyo to listen for these [events]{@glossary event}.
+		* 
+		* @private
+		*/
+		enyo.forEach(pointerEvents, function (e) {
 			enyo.dispatcher.listen(document, e);
 		});
 
-		// add our transform methods to the dispatcher features list
-		enyo.dispatcher.features.push(function(e) {
+		/**
+		* Adds our transform methods to the dispatcher features list.
+		* 
+		* @private
+		*/
+		enyo.dispatcher.features.push(function (e) {
 			if (handlers[e.type] && e.isPrimary) {
 				handlers[e.type](e);
 			}
 		});
 	}
-})();
+
+})(enyo, this);

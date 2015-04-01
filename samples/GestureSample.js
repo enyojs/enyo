@@ -5,7 +5,9 @@ enyo.kind({
 	components: [
 		{
 			classes:"gesture-sample-pad",
+			name: "gestureSamplePad",
 			fit:true,
+			doubleTapEnabled: false,
 			ondown: "handleEvent",
 			onup: "handleEvent",
 			ontap: "handleEvent",
@@ -22,9 +24,12 @@ enyo.kind({
 			ongesturestart: "handleEvent",
 			ongesturechange: "handleEvent",
 			ongestureend: "handleEvent",
+			ondoubletap: "handleEvent",
+			onlongpress: "handleEvent",
+			onlongerpress: "handleEvent",
 			components: [
-				{content: "Perform gestures here"},
-				{classes: "gesture-sample-note", content:"(tap below for options)"}
+				{content: "Perform gestures here", style: "pointer-events: none;"},
+				{classes: "gesture-sample-note", content:"(tap below for options)", style: "pointer-events: none;"}
 			]
 		},
 		{kind: "onyx.Groupbox", ontap:"toggleSettings", components: [
@@ -39,6 +44,10 @@ enyo.kind({
 				{classes:"gesture-sample-setting", components: [
 					{content:"Truncate detail on small screen: "},
 					{name:"truncateDetail", onchange:"truncateChanged", ontap:"preventDefault", kind:"onyx.Checkbox", checked:true}
+				]},
+				{classes:"gesture-sample-setting", components: [
+					{content:"Enable Double Tap: "},
+					{name:"enableDoubleTap", onchange:"doubleTapChanged", ontap:"preventDefault", kind:"onyx.Checkbox", checked:false}
 				]},
 				{classes:"gesture-sample-setting", style:"min-height:40px;", components: [
 					{content:"Monitor event: "},
@@ -56,7 +65,7 @@ enyo.kind({
 		this.eventCount = 0;
 		enyo.forEach(
 			["All events","down","up","tap","move","enter","leave","dragstart","drag","dragover","hold","release",
-				"holdpulse","flick","gesturestart","gesturechange","gestureend"],
+				"holdpulse","flick","gesturestart","gesturechange","gestureend","doubletap", "longpress", "longerpress"],
 			this.bindSafely(function(event) {
 				this.$.eventPicker.createComponent({content:event, style:"text-align:left"});
 			}));
@@ -90,6 +99,9 @@ enyo.kind({
 		}
 		this.reflow();
 		return false;
+	},
+	doubleTapChanged: function() {
+		this.$.gestureSamplePad.doubleTapEnabled = this.$.enableDoubleTap.checked;
 	},
 	removeEvent: function(inSender, inEvent) {
 		this.eventCount--;
@@ -196,4 +208,16 @@ enyo.kind({
 		}
 		return "<b>" + this.event.type + "</b>: { " + props.join(", ") + " }";
 	}
+});
+
+enyo.gesture.drag.configureHoldPulse({
+	frequency: 100,
+	events: [
+	    {name: 'hold', time: 200},
+	    {name: 'longpress', time: 500},
+	    {name: 'longerpress', time: 1000}
+	],
+	endHold: 'onMove',
+	moveTolerance: 16,
+	resume: false
 });

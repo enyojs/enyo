@@ -183,23 +183,6 @@ describe('enyo.RelationalModel', function () {
 			
 		});
 		
-		describe('#setLocal', function () {
-			
-			it ('should respond to the method setLocal', function () {
-				expect(proto).to.itself.respondTo('setLocal');
-			});
-			
-			it ('should set a local property not of the attributes object', function () {
-				// set the value to explicit false just to further distinguish it from the
-				// same testprop set on the attributes hash
-				model.setLocal('testprop', false);
-				// now make sure things were set as expected
-				expect(model.getLocal('testprop')).to.be.false;
-				expect(model.testprop).to.be.false;
-				expect(model.attributes.testprop).to.be.true;
-			});
-		});
-		
 		describe('#raw', function () {
 			
 			it ('should respond to the method raw', function () {
@@ -792,9 +775,9 @@ describe('enyo.RelationalModel', function () {
 				// the teacher
 				expect(teacher1.get('students')).to.have.length(4);
 				// that student4 is one of those students
-				expect(teacher1.get('students').indexOf(student4) > -1);
+				expect(teacher1.get('students').indexOf(student4) > -1).to.be.true;
 				// that student4 has teacher1 as one of its teachers
-				expect(student4.get('teachers').indexOf(teacher1) > -1);
+				expect(student4.get('teachers').indexOf(teacher1) > -1).to.be.true;
 			});
 			
 			it ('should identify related models when they have already been generated ' +
@@ -823,9 +806,9 @@ describe('enyo.RelationalModel', function () {
 					student3 = students.at(2),
 					student5 = students.at(4);
 					
-				expect(student2.get('teachers').indexOf(teacher2) > -1);
-				expect(student3.get('teachers').indexOf(teacher2) > -1);
-				expect(student5.get('teachers').indexOf(teacher2) > -1);
+				expect(student2.get('teachers').indexOf(teacher2) > -1).to.be.true;
+				expect(student3.get('teachers').indexOf(teacher2) > -1).to.be.true;
+				expect(student5.get('teachers').indexOf(teacher2) > -1).to.be.true;
 				
 				// destroy it
 				teacher2.destroy();
@@ -834,9 +817,9 @@ describe('enyo.RelationalModel', function () {
 				// the destroyed teacher
 				
 				// note that the test reports slow because of these contiguous lookups
-				expect(student2.get('teachers').indexOf(teacher2) === -1);
-				expect(student3.get('teachers').indexOf(teacher2) === -1);
-				expect(student5.get('teachers').indexOf(teacher2) === -1);
+				expect(student2.get('teachers').indexOf(teacher2) === -1).to.be.true;
+				expect(student3.get('teachers').indexOf(teacher2) === -1).to.be.true;
+				expect(student5.get('teachers').indexOf(teacher2) === -1).to.be.true;
 			});
 			
 			it ('should properly update all related models when one is created post-initialization',
@@ -858,8 +841,8 @@ describe('enyo.RelationalModel', function () {
 				expect(teacher4.get('students')).to.have.length(2);
 				
 				// and we expect those students to now have that teacher
-				expect(students.at(0).get('teachers').indexOf(teacher4) > -1);
-				expect(students.at(1).get('teachers').indexOf(teacher4) > -1);
+				expect(students.at(0).get('teachers').indexOf(teacher4) > -1).to.be.true;
+				expect(students.at(1).get('teachers').indexOf(teacher4) > -1).to.be.true;
 			});
 			
 			it ('should properly update all related models when a relationship is added between ' +
@@ -868,17 +851,23 @@ describe('enyo.RelationalModel', function () {
 				// we will attempt this bidirectionally if not for any other reason than
 				// completeness
 				var student3 = students.at(2),
-					teacher4 = teachers.at(2);
+					teacher4 = teachers.at(2),
+					spy = sinon.spy();
 				
-				expect(student3.get('teachers').indexOf(teacher4) === -1);
-				expect(teacher4.get('students').indexOf(student3) === -1);
+				expect(student3.get('teachers').indexOf(teacher4) === -1).to.be.true;
+				expect(teacher4.get('students').indexOf(student3) === -1).to.be.true;
+				
+				// register a spy to detect if the student will announce a change event as
+				// expected
+				student3.on('change', spy);
 				
 				// so we go ahead and add it
 				student3.get('teachers').add(teacher4);
 				
 				// and now we see if it actually updated as expected
-				expect(student3.get('teachers').indexOf(teacher4) > -1);
-				expect(teacher4.get('students').indexOf(student3) > -1);
+				expect(student3.get('teachers').indexOf(teacher4) > -1).to.be.true;
+				expect(teacher4.get('students').indexOf(student3) > -1).to.be.true;
+				expect(spy.called).to.be.true;
 			});
 			
 			it ('should properly update all related models when a relationship is removed ' +
@@ -887,17 +876,23 @@ describe('enyo.RelationalModel', function () {
 				// we will attempt this bidirectionally if not for any other reason than
 				// completeness
 				var student3 = students.at(2),
-					teacher4 = teachers.at(2);
+					teacher4 = teachers.at(2),
+					spy = sinon.spy();
 				
-				expect(student3.get('teachers').indexOf(teacher4) > -1);
-				expect(teacher4.get('students').indexOf(student3) > -1);
+				expect(student3.get('teachers').indexOf(teacher4) > -1).to.be.true;
+				expect(teacher4.get('students').indexOf(student3) > -1).to.be.true;
+				
+				// register a spy to detect if the student will announce a change event as
+				// expected
+				student3.on('change', spy);
 				
 				// so we go ahead and add it
 				student3.get('teachers').remove(teacher4);
 				
 				// and now we see if it actually updated as expected
-				expect(student3.get('teachers').indexOf(teacher4) === -1);
-				expect(teacher4.get('students').indexOf(student3) === -1);
+				expect(student3.get('teachers').indexOf(teacher4) === -1).to.be.true;
+				expect(teacher4.get('students').indexOf(student3) === -1).to.be.true;
+				expect(spy.called).to.be.true;
 			});
 			
 		});

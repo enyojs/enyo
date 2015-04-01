@@ -8,7 +8,7 @@ enyo.kind({
 				kind: "enyo.Video", 
 				poster: "http://media.w3.org/2010/05/bunny/poster.png", 
 				preload: "auto", 
-				src: "http://media.w3.org/2010/05/bunny/movie.mp4", 
+				src: "http://vjs.zencdn.net/v/oceans.mp4", 
 				onratechange: "rateChanged", 
 				ontimeupdate: "timeChanged",
 				ondurationchange: "durationChanged",
@@ -26,6 +26,8 @@ enyo.kind({
 		{kind: "enyo.Button", content: "< Jump", ontap: "buttonJumpBackwardTapped"},
 		{kind: "enyo.Button", content: "Jump >", ontap: "buttonJumpForwardTapped"},
 		{kind: "enyo.Button", content: "Loop", ontap: "buttonToggleLoopTapped"},
+		{kind: "enyo.Button", content: "Use src", ontap: "buttonUseSrcTapped"},
+		{kind: "enyo.Button", content: "Use sourceComponents", ontap: "buttonUseSourceComponentsTapped"},
 		{name: "results", classes: "results", components: [
 			{classes: "result-section", components: [
 				{classes: "result-label", content: "Position:"},
@@ -98,6 +100,18 @@ enyo.kind({
 		this.$.video.setLoop(!this.$.video.getLoop());
 		this.$.videoAction.setContent("Looping " + (this.$.video.getLoop() ? "Enabled" : "Disabled"));
 		return true;
+	},
+	buttonUseSrcTapped: function(inSender, inEvent) {
+		this.pauseVideo();
+		this.$.video.set('src', 'http://media.w3.org/2010/05/bunny/movie.mp4');
+	},
+	buttonUseSourceComponentsTapped: function(inSender, inEvent) {
+		this.pauseVideo();
+		this.$.video.set('sourceComponents', [
+		 	{src: "http://media.w3.org/2010/05/bunny/movie.mp4", type: "video/mp4"},
+			{src: "http://media.w3.org/2010/05/bunny/movie.ogv", type: "video/ogg"},
+			{src: "http://media.w3.org/2010/05/bunny/movie.webm", type: "video/webm"}
+		]);
 	},
 	rateChanged: function(inSender, inEvent) {
 		this.$.videoAction.setContent("Playback " + inEvent.playbackRate + "x");
