@@ -186,8 +186,8 @@
 		srcChanged: function () {
 			var src = enyo.ri.selectSrc(this.src);
 			if (this.sizing) {
-				var placeholder = this.placeholder ? ', url(\'' + enyo.path.rewrite(this.placeholder) + '\')' : '';
-				var url = 'url(\'' + enyo.path.rewrite(src) + '\')' + placeholder + ';';
+				var placeholder = this.placeholder ? 'url(\'' + enyo.path.rewrite(this.placeholder) + '\')' : '';
+				var url= (src? 'url(\'' + enyo.path.rewrite(src) + '\'),' : '') + placeholder;
 				this.applyStyle('background-image', url);
 			} else {
 				if (!src) {
