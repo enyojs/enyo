@@ -175,6 +175,7 @@
 				sup.apply(this, arguments);
 				this.altChanged();
 				this.sizingChanged();
+				this.placeholderChanged();
 				this.srcChanged();
 				this.positionChanged();
 			};
@@ -183,22 +184,31 @@
 		/**
 		* @private
 		*/
+		placeholderChanged: function () {
+			if (this.placeholder) {
+				this.applyStyle('background-image', 'url(\'' + enyo.path.rewrite(this.placeholder) + '\')');			
+			}
+		},
+
+		/**
+		* @private
+		*/
 		srcChanged: function () {
-			var src = enyo.ri.selectSrc(this.src);
-			if (this.sizing) {
-				var placeholder = this.placeholder ? 'url(\'' + enyo.path.rewrite(this.placeholder) + '\')' : '';
-				var url= (src? 'url(\'' + enyo.path.rewrite(src) + '\'),' : '') + placeholder;
-				this.applyStyle('background-image', url);
+			var src = enyo.path.rewrite(enyo.ri.selectSrc(this.src) || '');
+
+			if (this.sizing && src) {
+				this.srcUrl = 'url(\'' + src + '\')';
+
+				// We won't be notified when the background-image is loaded so we need a proxy <img>
+				// to which the handlers can be bound.
+				this.img = document.createElement('img');
+				this.img.onload = this.bindSafely('handleLoad');
+				this.img.onerror = this.bindSafely('handleError');
+				this.img.src = src;
 			} else {
-				if (!src) {
-					// allow us to clear the src property
-					this.setAttribute('src', '');
-				} else {
-					if (this.placeholder) {
-						this.applyStyle('background-image', 'url(\'' + enyo.path.rewrite(this.placeholder) + '\')');
-					}
-					this.setAttribute('src', enyo.path.rewrite(src));
-				}
+				this.srcUrl = null;
+				this.img = null;
+				this.setAttribute('src', src);
 			}
 		},
 
@@ -240,15 +250,18 @@
 		* @private
 		*/
 		handleLoad: function () {
-			if (!this.sizing && this.placeholder) {
-				this.applyStyle('background-image', null);
-			}
+			this.img = null;
+			// this.srcUrl will be a valid url string if src is valid and sizing is truthy and
+			// null if not so we can safely set it here knowing that it will either clear the
+			// background-image or reset it to only src as necessary
+			this.applyStyle('background-image', this.srcUrl);
 		},
 
 		/**
 		* @private
 		*/
 		handleError: function() {
+			this.img = null;
 			if (this.placeholder) {
 				this.setSrc(null);
 			}
