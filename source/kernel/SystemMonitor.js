@@ -42,15 +42,6 @@
 		active: false,
 
 		/**
-		* @private
-		*/
-		userEvents: [
-			'mousemove',
-			'tap',
-			'keydown'
-		],
-
-		/**
 		* Starts observing the system for idleness.
 		*
 		* @public
@@ -89,8 +80,8 @@
 		* @private
 		*/
 		checkEvent: function (ev) {
-			if (this.userEvents.indexOf(ev.type) >= 0) {
-				if (ev.type == 'mousemove') {
+			switch (ev.type) {
+				case 'mousemove':
 					if (!this.lastMouseMove || !this.lastX || !this.lastY ||
 						Math.abs((ev.clientX - this.lastX) / (enyo.perfNow() - this.lastMouseMove)) * 1000 > this.moveTolerance) {
 						this.lastActive = enyo.perfNow();
@@ -98,14 +89,19 @@
 					this.lastMouseMove = enyo.perfNow();
 					this.lastX = ev.clientX;
 					this.lastY = ev.clientY;
-				} else if (ev.type == 'keydown') {
+
+					break;
+				case 'keydown':
 					this._idleCheckJob = scope.setTimeout(function () {
 						this.lastActive = enyo.perfNow();
 						this._idleCheckJob = null;
 					}, 32);
-				} else {
+
+					break;
+				case 'mousedown':
 					this.lastActive = enyo.perfNow();
-				}
+
+					break;
 			}
 		}
 

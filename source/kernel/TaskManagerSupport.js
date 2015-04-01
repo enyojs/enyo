@@ -119,7 +119,7 @@
 		*	task.
 		* @public
 		*/
-		updateTaskPriority: function (nom, priority) {
+		updateTask: function (nom, priority) {
 			var task = this._namedTasks[nom];
 			this.tasks.updatePriority(task, priority);
 			this.emit('priorityChanged', this, priority);

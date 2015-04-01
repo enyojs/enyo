@@ -84,9 +84,9 @@
 		*/
 		add: function (customer) {
 			// TODO: check if TaskManagerSupport has been mixed-in to this customer object
-			customer.on('priorityChanged', this.notifyPriority, this);
 			this.customers.push(customer);
 			customer.managed = true;
+			customer.on('priorityChanged', this.notifyPriority, this);
 			this.trigger();
 		},
 
