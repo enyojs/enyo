@@ -54,7 +54,7 @@
 			// inside a lib directory; normalizing the path makes it easier to check, below
 			sheet = path.normalize(sheet);
 			// fix url paths
-			code = code.replace(/(?!url\((?:['"])?(?:data:|https?|\/\/))url\((['"])?([a-zA-Z0-9#\ \.\/\-]*)\1\)/g,
+			code = code.replace(/(?!url\((?:['"])?(?:data:|https?|\/\/))url\((['"])?([a-zA-Z0-9\ \.\/\-\~&%#:+=_]*)\1\)/g,
 				function (uri, char, content) {
 					var rel;
 					// we do nothing if there was nothing even though this is probably not intended 
@@ -62,14 +62,18 @@
 					if (!content) return uri;
 					// if the initial character is from a relative IRI (say, a nested entry from 
 					// inline SVG encoded utf8 instead of base64) we leave it alone
+					// it would be # in standard utf8
 					if (content.charAt(0) == '#') return uri;
-					// we ensure that all uri's are wrapped for sanity and to avoid unnecessary 
-					// tests for spaces in unwrapped scenarios
-					char = '\'';
+					// @note this is where the limitation sets in (so we don't do crazy things to
+					// cover a very rare use-case that can be avoided) where we do not decode uri-
+					// encoded relative paths, rewrite them, and re-encode them, however this will
+					// work with relative IRI's (using # for the same document -> %23 when encoded)
+					if (/^%23/.test(content)) return uri;
 					// leaving this because this was working according to these build tools 
 					// specific needs
 					rel = path.join('..', opt.relsrcdir, path.dirname(sheet), content);
-					return 'url(' + char + rel + char + ')';
+					// for sanity we wrap all URI's safely with single quote
+					return 'url(\'' + rel + '\')';
 				}
 			);
 			blob += "\n/* " + path.relative(process.cwd(), sheet) + " */\n\n" + code + "\n";
