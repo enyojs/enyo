@@ -173,7 +173,7 @@
 	*/
 	enyo.path.addPaths({
 		enyo: enyo.args.root,
-		lib: '$enyo/../lib'
+		lib: (enyo.args.root.indexOf('lib/enyo')===enyo.args.root.length-8 ? '$enyo/..' : '$enyo/../lib')
 	});
 
 })(enyo, this);
