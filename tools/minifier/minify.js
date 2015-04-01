@@ -54,7 +54,7 @@
 			// inside a lib directory; normalizing the path makes it easier to check, below
 			sheet = path.normalize(sheet);
 			// fix url paths
-			code = code.replace(/(?!url\((?:['"])?(?:data:|https?|\/\/))url\((['"])?([a-zA-Z0-9\ \.\/\-\~&%#:+=_]*)\1\)/g,
+			code = code.replace(/(?!url\((?:['"])?(?:data:|https?|(?:file:)?\/\/))url\((['"])?([a-zA-Z0-9\ \.\/\-\~&%#:+=_]*)\1\)/g,
 				function (uri, char, content) {
 					var rel;
 					// we do nothing if there was nothing even though this is probably not intended 
