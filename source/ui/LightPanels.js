@@ -501,10 +501,6 @@
 		*/
 		transitionFinished: function (sender, ev) {
 			if (ev.originator === this._currentPanel) {
-				this._currentPanel.removeClass('transitioning');
-				if (this._previousPanel) {
-					this._previousPanel.removeClass('transitioning');
-				}
 				if ((this._indexDirection < 0 && this.popOnBack && this.index < this.getPanels().length - 1) ||
 					(this._indexDirection > 0 && this.popOnForward && this.index > 0)) {
 					this.popPanels(this.index - this._indexDirection, this._indexDirection);
@@ -517,6 +513,16 @@
 				}
 				if (this._garbagePanels && this._garbagePanels.length) {
 					this.finalizePurge();
+				}
+
+				if (this._currentPanel) {
+					this._currentPanel.removeClass('transitioning');
+					this._currentPanel.activated && this._currentPanel.activated();
+				}
+
+				if (this._previousPanel) {
+					this._previousPanel.removeClass('transitioning');
+					this._previousPanel.deactivated && this._previousPanel.deactivated();
 				}
 			}
 		},
