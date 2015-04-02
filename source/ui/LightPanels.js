@@ -327,18 +327,16 @@
 				newPanel, targetIdx, compareIdx, idx;
 
 			for (idx = 0; idx < info.length; idx++) {
-				if (!this.cacheViews || this.cacheViews && !this.panelExists(info[idx].kind)) {
-					newPanel = (this.cacheViews && this.restoreView(info[idx].kind)) || this.createComponent(info[idx], moreInfo);
-					newPanels.push(newPanel);
-					if ((opts && opts.targetIndex != null && lastIndex + idx == opts.targetIndex) || idx == info.length - 1) {
-						newPanel.render();
-					} else {
-						compareIdx = opts && opts.targetIndex != null ? opts.targetIndex : lastIndex + info.length;
-						this.shiftPanel(newPanel, compareIdx - this.index);
-					}
-					if (opts && opts.forcePostTransition && newPanel.postTransition) {
-						newPanel.postTransition();
-					}
+				newPanel = (this.cacheViews && this.restoreView(info[idx].kind)) || this.createComponent(info[idx], moreInfo);
+				newPanels.push(newPanel);
+				if ((opts && opts.targetIndex != null && lastIndex + idx == opts.targetIndex) || idx == info.length - 1) {
+					newPanel.render();
+				} else {
+					compareIdx = opts && opts.targetIndex != null ? opts.targetIndex : lastIndex + info.length;
+					this.shiftPanel(newPanel, compareIdx - this.index);
+				}
+				if (opts && opts.forcePostTransition && newPanel.postTransition) {
+					newPanel.postTransition();
 				}
 			}
 			if (this.cacheViews) {
@@ -608,19 +606,6 @@
 			var trans = {};
 			trans['translate' + this._axis] = indexDirection > 0 ? -200 * this._direction + '%' : '0%';
 			enyo.dom.transform(panel, trans);
-		},
-
-		/**
-		* Determines whether or not the specified panel already exists as part of the current set of
-		* panels.
-		*
-		* @param {String} pid - The id of the panel to check.
-		* @private
-		*/
-		panelExists: function (pid) {
-			return !!(this.getPanels().filter( function (elem) {
-				return elem.kind == pid;
-			})).length;
 		},
 
 		/**
