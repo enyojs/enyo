@@ -6,9 +6,12 @@ enyo.depends(
 	'ScrollStrategy.js',
 	'Thumb.css',
 	'Thumb.js',
+	'NewThumb.css',
+	'NewThumb.js',
 	'TouchScrollStrategy.js',
 	'TranslateScrollStrategy.js',
 	'TransitionScrollStrategy.js',
 	'Scroller.js',
+	'Scrollable.js',
 	'Scroller.css'
 );
