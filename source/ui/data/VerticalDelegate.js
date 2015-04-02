@@ -413,14 +413,20 @@
 			if (props.index <= end ) this.refresh(list);
 			else {
 				// we should confirm that the page which new models are added is need to update list.metrics
-				var targetPageIndex = this.pageForIndex(list, props.index),
-					page = list.metrics.pages[targetPageIndex],
+				var lastPageIndex = this.pageForIndex(list, props.index),
+					// the last page before model added
+					lastPage = list.metrics.pages[lastPageIndex],
 					sp = list.psizeProp,
+					// current page count after models added
 					pc = this.pageCount(list),
-					pageSize = this.defaultPageSize(list);
+					pageSize;
 
-				if (targetPageIndex < pc && page[sp] < pageSize) {
-					page[sp] = pageSize;
+				// if there is more pages after lastPage, the lastPage metric needs to be updated
+				if (lastPageIndex < pc) {
+					pageSize = this.defaultPageSize(list);
+					if (lastPage[sp] < pageSize) {
+						lastPage[sp] = pageSize;
+					}
 				}
 
 				// we still need to ensure that the metrics are updated so it knows it can scroll
