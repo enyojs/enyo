@@ -69,8 +69,6 @@ enyo.singleton({
 	*/
 	subscribe: function(storeid, callback) {
 
-		console.log(this);
-
 		//a store, or a view subscribes to be notified of an update
 		//to the data
 		var id = this.prefix + this.lastID++;

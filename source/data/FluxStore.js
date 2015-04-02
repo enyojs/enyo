@@ -102,7 +102,7 @@
 					//subscribe the store to the dispatcher
 					this.id = enyo.FluxDispatcher.subscribe();
 				}
-			}
+			};
 		}),
 
 		/**
@@ -143,7 +143,7 @@
 		*/
 		fetch: function(opts) {
 
-			var opts = opts || {};
+			opts = opts || {};
 
 			opts.success = opts.success || this.success.bind(this);
 			opts.error = opts.error || this.error.bind(this);
