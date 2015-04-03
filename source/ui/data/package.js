@@ -7,7 +7,5 @@ enyo.depends(
 	'HorizontalDelegate.js',
 	'DataGridList.js',
 	'DataTable.js',
-	'VerticalGridDelegate.js',
-	'VirtualDataRepeater.js',
-	'NewDataList.js'
+	'VerticalGridDelegate.js'
 );
