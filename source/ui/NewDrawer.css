@@ -1,0 +1,10 @@
+.enyo-new-drawer {
+	-webkit-transform: scale3d(1, 1, 1);
+	-webkit-transform-origin: 0 0 0;
+	overflow: hidden;
+}
+
+.enyo-new-drawer .enyo-new-drawer-client {
+	-webkit-transform: scale3d(1, 1, 1);
+	-webkit-transform-origin: 0 0 0;
+}

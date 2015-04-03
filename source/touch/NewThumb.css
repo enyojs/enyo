@@ -1,0 +1,22 @@
+.enyo-new-thumb {
+	position: absolute;
+
+	z-index: 1;
+
+	-webkit-transform-origin: 0 0 0;
+	transform-origin: 0 0 0;
+
+	background: #666;
+	opacity: 0.75;
+
+	width: 3px;
+	height: 3px;
+
+	transition: opacity 0.1s linear;
+	-moz-transition: opacity 0.1s linear;
+	-webkit-transition: opacity 0.1s linear;
+}
+
+.enyo-new-thumb.hidden {
+	opacity: 0;
+}

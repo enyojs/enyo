@@ -391,6 +391,14 @@
 		/**
 		* @private
 		*/
+		componentsChanged: function (p) {
+			this.initComponents();
+			this.reset();
+		},
+
+		/**
+		* @private
+		*/
 		collectionChanged: function (p) {
 			var c = this.collection;
 			if (typeof c == 'string') {
