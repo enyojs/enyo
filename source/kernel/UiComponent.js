@@ -1,7 +1,7 @@
 (function (enyo, scope) {
 	/**
 	* {@link enyo.UiComponent} implements a container strategy suitable for presentation layers.
-	* 
+	*
 	* `UiComponent` itself is abstract. Concrete [subkinds]{@glossary subkind} include
 	* {@link enyo.Control} (for HTML/DOM) and
 	* {@link enyo.canvas.Control} (for Canvas contexts).
@@ -26,11 +26,11 @@
 		/**
 		* @private
 		*/
-		published: 
+		published:
 			/** @lends  enyo.UiComponent.prototype */ {
 
-			/** 
-			* The [UiComponent]{@link enyo.UiComponent} that physically contains this 
+			/**
+			* The [UiComponent]{@link enyo.UiComponent} that physically contains this
 			* [component]{@link enyo.Component} in the DOM.
 			*
 			* @type {enyo.UiComponent}
@@ -59,9 +59,9 @@
 			* @public
 			*/
 			controlParentName: 'client',
-			
-			/** 
-			* A [kind]{@glossary kind} used to manage the size and placement of child 
+
+			/**
+			* A [kind]{@glossary kind} used to manage the size and placement of child
 			* [components]{@link enyo.Component}.
 			*
 			* @type {String}
@@ -93,7 +93,7 @@
 		* @public
 		*/
 		addBefore: undefined,
-		
+
 		/**
 		* @private
 		*/
@@ -145,10 +145,10 @@
 
 		/**
 		* Creates [components]{@link enyo.Component} as defined by the [arrays]{@glossary Array}
-		* of base and additional property [hashes]{@glossary Object}. The standard and 
+		* of base and additional property [hashes]{@glossary Object}. The standard and
 		* additional property hashes are combined as described in
 		* {@link enyo.Component#createComponent}.
-		* 
+		*
 		* ```
 		* // ask foo to create components 'bar' and 'zot', but set the owner of
 		* // both components to 'this'.
@@ -160,21 +160,21 @@
 		*
 		* As implemented, [controlParentName]{@link enyo.UiComponent#controlParentName} only works
 		* to identify an owned control created via `createComponents()`
-		* (i.e., usually in our `components` block). To attach a `controlParent` via other means, 
-		* one must call [discoverControlParent()]{@link enyo.UiComponent#discoverControlParent} or 
+		* (i.e., usually in our `components` block). To attach a `controlParent` via other means,
+		* one must call [discoverControlParent()]{@link enyo.UiComponent#discoverControlParent} or
 		* set `controlParent` directly.
-		* 
+		*
 		* We could call `discoverControlParent()` in
 		* [addComponent()]{@link enyo.Component#addComponent}, but that would
 		* cause a lot of useless checking.
-		* 
+		*
 		* @param {Object[]} props The array of {@link enyo.Component} definitions to be created.
 		* @param {Object} ext - Additional properties to be supplied as defaults for each.
 		* @returns {enyo.Component[]} The array of components that were created.
 		* @method
 		* @public
 		*/
-		// 
+		//
 		createComponents: enyo.inherit(function (sup) {
 			return function() {
 				var results = sup.apply(this, arguments);
@@ -206,7 +206,7 @@
 
 		/**
 		* Containment
-		* 
+		*
 		* @method
 		* @private
 		*/
@@ -221,7 +221,7 @@
 
 		/**
 		* Parentage
-		* 
+		*
 		* @method
 		* @private
 		*/
@@ -234,7 +234,7 @@
 		/**
 		* Determines whether the [control]{@link enyo.Control} is a descendant of
 		* another control.
-		* 
+		*
 		* Note: Oddly, a control is considered to be a descendant of itself.
 		*
 		* @param {enyo.Control} ancestor - The [control]{@link enyo.Control} whose lineage
@@ -276,7 +276,7 @@
 		},
 
 		/**
-		* Destroys "client controls", the same set of [controls]{@link enyo.Control} returned by 
+		* Destroys "client controls", the same set of [controls]{@link enyo.Control} returned by
 		* [getClientControls()]{@link enyo.UiComponent#getClientControls}.
 		*
 		* @public
@@ -287,7 +287,7 @@
 				c.destroy();
 			}
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -350,10 +350,33 @@
 		controlAtIndex: function (idx) {
 			return this.controls[idx];
 		},
-		
+
+		/**
+		* Determines what the following sibling [control]{@link enyo.Control} is for the current
+		* [control]{@link enyo.Control}.
+		*
+		* @returns {enyo.Control | null} The [control]{@link enyo.Control} that is the] following
+		*	sibling. If no following sibling exists, we return `null`.
+		* @public
+		*/
+		getNextControl: function () {
+			var comps = this.getParent().children,
+				comp,
+				sibling,
+				i;
+
+			for (i = comps.length - 1; i >= 0; i--) {
+				comp = comps[i];
+				if (comp === this) return sibling ? sibling : null;
+				if (comp.generated) sibling = comp;
+			}
+
+			return null;
+		},
+
 		/**
 		* Children
-		* 
+		*
 		* @private
 		*/
 		addChild: function (child, before) {
@@ -423,7 +446,7 @@
 		},
 
 		/**
-		* CAVEAT: currently we use the entry point for both post-render layout work *and* 
+		* CAVEAT: currently we use the entry point for both post-render layout work *and*
 		* post-resize layout work.
 		* @private
 		*/
@@ -434,17 +457,17 @@
 		},
 
 		/**
-		* Call after this [control]{@link enyo.Control} has been resized to allow it to process the 
-		* size change. To respond to a resize, override `handleResize()` instead. Acts as syntactic 
+		* Call after this [control]{@link enyo.Control} has been resized to allow it to process the
+		* size change. To respond to a resize, override `handleResize()` instead. Acts as syntactic
 		* sugar for `waterfall('onresize')`.
-		* 
+		*
 		* @public
 		*/
 		resize: function () {
 			this.waterfall('onresize', enyo.UiComponent._resizeFlags);
 			this.waterfall('onpostresize', enyo.UiComponent._resizeFlags);
 		},
-		
+
 		/**
 		* @private
 		*/
@@ -462,7 +485,7 @@
 		* [waterfall]{@link enyo.Component#waterfall} into [components]{@link enyo.Component}
 		* owned by a receiving [object]{@glossary Object} by returning a truthy value from the
 		* {@glossary event} [handler]{@link enyo.Component~EventHandler}.
-		* 
+		*
 		* @param {String} nom - The name of the {@glossary event}.
 		* @param {Object} [event] - The event object to pass along.
 		* @param {enyo.Component} [sender=this] - The event's originator.
@@ -525,7 +548,7 @@
 	* Default owner assigned to ownerless [UiComponents]{@link enyo.UiComponent},
 	* to allow such UiComponents to be notified of important system events like window resize.
 	*
-	* NOTE: Ownerless [UiComponents]{@link enyo.UiComponent} will not be garbage collected unless 
+	* NOTE: Ownerless [UiComponents]{@link enyo.UiComponent} will not be garbage collected unless
 	* explicitly destroyed, as they will be referenced by `enyo.master`.
 	*
 	* @private
