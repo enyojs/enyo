@@ -78,7 +78,7 @@
 		published: {
 
 			/**
-			* @name enyo.FluxStore.MergeRoot
+			* @name enyo.FluxStore.mergeRoot
 			*
 			* When a source sends data to the store,
 			* should the data root have the new data
@@ -89,7 +89,7 @@
 			* @default true
 			*
 			*/
-			MergeRoot: true
+			mergeRoot: true
 		},
 
 		/**
@@ -115,7 +115,7 @@
 		* @private
 		*/
 		add: function (data, opts) {
-			if(this.MergeRoot) {
+			if(this.mergeRoot) {
 				update(this.data, data);
 				return;
 			}
