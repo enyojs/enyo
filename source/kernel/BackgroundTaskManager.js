@@ -42,26 +42,27 @@
 						if (!enyo.SystemMonitor.active) {
 							enyo.SystemMonitor.trigger();
 						}
-					} else {
-						enyo.SystemMonitor.stop();
-					}
 
-					if (!c) {
-						c = enyo.perfNow();
-					} else {
-						p = c;
-						c = enyo.perfNow();
-						f = ((c - p) < d) ? f + 1 : 0;
-					}
-					if (this.customers.length && f == this.frameThreshold && enyo.SystemMonitor.idle()) {
-						this.run();
-						c = p = f = 0;
-					} else {
-						// reset fps check if threshold is met but system is not user-idle
-						if (f == this.frameThreshold) {
-							c = p = f = 0;
+						if (!c) {
+							c = enyo.perfNow();
+						} else {
+							p = c;
+							c = enyo.perfNow();
+							f = ((c - p) < d) ? f + 1 : 0;
 						}
-						this.trigger();
+						if (f == this.frameThreshold && enyo.SystemMonitor.idle()) {
+							this.run();
+							c = p = f = 0;
+						} else {
+							// reset fps check if threshold is met but system is not user-idle
+							if (f == this.frameThreshold) {
+								c = p = f = 0;
+							}
+							this.trigger();
+						}
+
+					} else if (enyo.SystemMonitor.active) {
+						enyo.SystemMonitor.stop();
 					}
 				});
 			};
@@ -71,9 +72,7 @@
 		* @private
 		*/
 		trigger: function() {
-			if (this.customers.length) {
-				enyo.Loop.request(this.cb);
-			}
+			enyo.Loop.request(this.cb);
 		},
 
 		/**

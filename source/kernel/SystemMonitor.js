@@ -58,8 +58,10 @@
 		*/
 		stop: function () {
 			var idx = enyo.dispatcher.features.indexOf(this.bindSafely(this.checkEvent));
-			enyo.dispatcher.features.splice(idx, 1);
-			this.active = false;
+			if (idx > -1) {
+				enyo.dispatcher.features.splice(idx, 1);
+				this.active = false;
+			}
 		},
 
 		/**
