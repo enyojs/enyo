@@ -212,7 +212,18 @@
 		* @default ''
 		* @public
 		*/
-		accessibilityLabel : '',
+		accessibilityLabel: '',
+
+		/**
+		* AccessibilityHint is used for additional information of control.
+		* If accessibilityHint is set and content exists, screen reader
+		* reads accessibilityHint with content when control is focused.
+		*
+		* @type {String}
+		* @default ''
+		* @public
+		*/
+		accessibilityHint: '',
 
 		/**
 		* @todo Find out how to document "handlers".
@@ -485,6 +496,10 @@
 				this.accessibilityLabelChanged();
 			}
 
+			if (this.accessibilityHint) {
+				this.accessibilityHintChanged();
+			}
+
 			//TODO: adding accessibility code such as accessibilityDisabled.
 		},
 
@@ -520,12 +535,57 @@
 		* @private
 		*/
 		accessibilityLabelChanged: function () {
-			if (this.accessibilityLabel == null || this.accessibilityLabel === '') {
-				this.setAttribute('tabindex', null);
-				this.setAttribute('aria-label', null);
-			} else {
+			if (this.accessibilityLabel) {
 				this.setAttribute('tabindex', 0);
-				this.setAttribute('aria-label', this.accessibilityLabel);
+				this.setAttribute('aria-label', this.accessibilityHint? this.accessibilityLabel + ' ' + this.accessibilityHint : this.accessibilityLabel);
+			} else if (this.content) {
+				this.setAttribute('aria-label', this.accessibilityHint? this.content + ' ' + this.accessibilityHint : this.content);
+			} else {
+				this.setAttribute('tabindex', this.accessibilityHint? 0 : null);
+				this.setAttribute('aria-label', this.accessibilityHint? this.accessibilityHint : null);
+			}
+		},
+
+		/**
+		* Get the accessibilityHint.
+		*
+		* @returns {String} return accessibilityHint.
+		* @public
+		*/
+		getAccessibilityHint: function () {
+			return this.accessibilityHint;
+		},
+
+		/**
+		* Set the accessibilityHint with hint text.
+		* When the control is focused, screen reader reads accessibilityHint with
+		* content or accessibilityLabel.
+		*
+		* @param {Boolean} accessibilityHint - text to readout by screen reader.
+		* @returns {this} callee for chaining.
+		* @public
+		*/
+		setAccessibilityHint: function (accessibilityHint) {
+			var was = this.accessibilityHint;
+			this.accessibilityHint = accessibilityHint;
+
+			if (was != accessibilityHint) {
+				this.notify('accessibilityHint', was, accessibilityHint);
+			}
+			return this;
+		},
+
+		/**
+		* @private
+		*/
+		accessibilityHintChanged: function () {
+			if (this.accessibilityLabel) {
+				this.setAttribute('aria-label', this.accessibilityHint? this.accessibilityLabel + ' ' + this.accessibilityHint : this.accessibilityLabel);
+			} else if (this.content) {
+				this.setAttribute('aria-label', this.accessibilityHint? this.content + ' ' + this.accessibilityHint : this.content);
+			} else {
+				this.setAttribute('tabindex', this.accessibilityHint? 0 : null);
+				this.setAttribute('aria-label', this.accessibilityHint? this.accessibilityHint : null);
 			}
 		},
 
@@ -799,9 +859,10 @@
 
 			// Accessibility : If accessibilityLabel is not set, change
 			// aria-label to current content when content changed.
+			// If accessibilityHint is defined, combine it with content for more information.
 			if (this.content && !this.accessibilityLabel) {
 				this.setAttribute('tabindex', 0);
-				this.setAttribute('aria-label', this.content);
+				this.setAttribute('aria-label', this.accessibilityHint? this.content + ' ' + this.accessibilityHint : this.content);
 			}
 		},
 
