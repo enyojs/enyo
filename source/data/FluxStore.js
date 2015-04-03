@@ -148,7 +148,9 @@
 			opts.success = opts.success || this.success.bind(this);
 			opts.error = opts.error || this.error.bind(this);
 
+			enyo.FluxDispatcher.pending[this.id] = true;
 			enyo.Source.execute('fetch', this, opts);
+			enyo.FluxDispatcher.pending[this.id] = false;
 		},
 
 		/**
