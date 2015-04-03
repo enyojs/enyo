@@ -1,0 +1,6 @@
+{
+  "main": "Control.js" ,
+  "style": [
+    "Control.css"
+  ]
+}

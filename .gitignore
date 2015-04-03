@@ -11,3 +11,5 @@ docs/out
 out
 lcov-report
 lcov.info
+build
+dist
