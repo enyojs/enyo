@@ -140,9 +140,10 @@ enyo.singleton({
 	*/
 	notify: function(storeid, payload) {
 		var notifyQue = this.subscriptions[storeid];
+		this.pending[storeid] = true;
 		if(notifyQue) {
 			this.isDispatching = true;
-			this.pending[storeid] = false;
+
 			try {
 				for (var key in notifyQue) {
 					var callback = notifyQue[key];
@@ -153,7 +154,7 @@ enyo.singleton({
 			} finally {
 				this.isDispatching = false;
 			}
-			this.pending[storeid] = false;
 		}
+		this.pending[storeid] = false;
 	}
 });
