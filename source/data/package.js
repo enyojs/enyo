@@ -3,8 +3,6 @@ enyo.depends(
 	'Source.js',
 	'ModelList.js',
 	'Store.js',
-	'FluxDispatcher.js',
-	'FluxStore.js',
 	'Model.js',
 	'Collection.js',
 	'RelationalModel.js',
