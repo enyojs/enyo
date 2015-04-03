@@ -35,9 +35,9 @@ enyo.kind({
 		c.startJob("testStopJob", function() {
 			finish("job wasn't stopped");
 		}, 10);
-	
+
 		enyo.jobs.registerPriority(8, "high");
-	
+
 		setTimeout(function() {
 			c.stopJob("testStopJob");
 			enyo.jobs.unregisterPriority("high");
@@ -90,7 +90,7 @@ enyo.kind({
 			}
 		});
 		c.startJob("increment", "increment", 1); // number should be 1
-	
+
 		setTimeout(function(){
 			if (c.number !== 1) {
 				finish("job did not execute even though its not blocked");
@@ -110,7 +110,7 @@ enyo.kind({
 		enyo.jobs.registerPriority(5, "testPriority");
 		c.startJob("incrementLow", "increment", 1, 1); // number should be 1
 		c.startJob("incrementHigh", "increment", 1, 6); // number should be 2
-	
+
 		setTimeout(function(){
 			if (c.number !== 1) {
 				finish("High priority did not execute");
@@ -146,7 +146,7 @@ enyo.kind({
 				green: {kind:"enyo.Button", newMethod: function () {throw "I EXIST";}, content:"Overridden green", classes:"over-green", style:"background:over-green;"}
 			}
 		});
-		// Sub-sub kind: override kind & content again, 
+		// Sub-sub kind: override kind & content again,
 		var C3 = enyo.kind({
 			name: "componenttest.SubSubKind",
 			kind: "componenttest.SubKind",
@@ -169,10 +169,10 @@ enyo.kind({
 		this.finish();
 	},
 	checkOverrides: function(baseKind, subKind, subSubKind) {
-		if ((baseKind.$.purple.kindName != "enyo.Control") || 
+		if ((baseKind.$.purple.kindName != "enyo.Control") ||
 			(baseKind.$.green.kindName != "enyo.Anchor")) {
 			throw "Overrides should not modify base kind: unexpected kindName";
-		} 
+		}
 		if ((baseKind.$.purple.content != "Purple") ||
 			(baseKind.$.green.content != "Green")) {
 			throw "Overrides should not modify base kind: unexpected content";
@@ -182,11 +182,11 @@ enyo.kind({
 			throw "Overrides should not modify base kind: unexpected classes";
 		}
 
-		if ((subKind.$.purple.kindName != "enyo.Button") || 
+		if ((subKind.$.purple.kindName != "enyo.Button") ||
 			(subKind.$.green.kindName != "enyo.Button")) {
 			throw "Subclass overrides were not applied properly: unexpected kindName";
 		}
-		if ((subKind.$.purple.content != "Overridden purple") || 
+		if ((subKind.$.purple.content != "Overridden purple") ||
 			(subKind.$.green.content != "Overridden green")) {
 			throw "Subclass overrides were not applied properly: unexpected content";
 		}
@@ -195,7 +195,7 @@ enyo.kind({
 			throw "Subclass overrides were not applied properly: unexpected classes";
 		}
 
-		if ((subSubKind.$.purple.kindName != "enyo.Anchor") || 
+		if ((subSubKind.$.purple.kindName != "enyo.Anchor") ||
 			(subSubKind.$.green.kindName != "enyo.Anchor")) {
 			throw "Multiply-subclassed overrides were not applied properly: unexpeted kindName";
 		}

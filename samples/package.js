@@ -53,5 +53,7 @@ enyo.depends(
 	"TextAreaSample.js",
 	"TextAreaSample.css",
 	"VideoSample.js",
-	"VideoSample.css"
+	"VideoSample.css",
+	"LightPanelsSample.js",
+	"LightPanelsSample.css"
 );
