@@ -174,10 +174,10 @@
 				}
 				sup.apply(this, arguments);
 				// We skip '' here to avoid unnecessary DOM access.
-				if (this.alt != '') this.altChanged();
-				if (this.sizing != '') this.sizingChanged();
-				if (this.backgroundColor != '') this.backgroundColorChanged();
-				if (this.src != '') this.srcChanged();
+				if (this.alt !== '') this.altChanged();
+				if (this.sizing !== '') this.sizingChanged();
+				if (this.backgroundColor !== '') this.backgroundColorChanged();
+				if (this.src !== '') this.srcChanged();
 				this.positionChanged();
 			};
 		}),
