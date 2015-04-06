@@ -187,8 +187,8 @@
 			var src = enyo.ri.selectSrc(this.src);
 			if (this.sizing) {
 				var placeholder = this.placeholder ? 'url(\'' + enyo.path.rewrite(this.placeholder) + '\')' : '';
-				var url= (src? 'url(\'' + enyo.path.rewrite(src) + '\'),' : '') + placeholder;
-				this.applyStyle('background-image', url);
+				var url= (src ? ( placeholder ? 'url(\'' + enyo.path.rewrite(src) + '\'),' : 'url(\'' + enyo.path.rewrite(src) + '\')') : '');
+				this.applyStyle('background-image', url+placeholder);
 			} else {
 				if (!src) {
 					// allow us to clear the src property
@@ -199,6 +199,15 @@
 					}
 					this.setAttribute('src', enyo.path.rewrite(src));
 				}
+			}
+		},
+
+		/**
+		* @private
+		*/
+		placeholderChanged: function(){
+			if (this.placeholder) {
+				this.applyStyle('background-image', 'url(\'' + enyo.path.rewrite(this.placeholder) + '\')');
 			}
 		},
 
