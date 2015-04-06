@@ -1,7 +1,16 @@
-describe('enyo.Binding', function () {
-	
-	var Binding = enyo.Binding,
-		proto = Binding.prototype;
+var
+	kind = require('../../lib/kind'),
+	utils = require('../../lib/utils');
+
+var
+	Binding = require('../../lib/Binding'),
+	CoreObject = require('../../lib/CoreObject'),
+	Component = require('../../lib/Component');
+
+var
+	proto = Binding.prototype;
+
+describe('Binding', function () {
 	
 	describe('methods', function () {
 		
@@ -19,8 +28,8 @@ describe('enyo.Binding', function () {
 			
 			// we create two generic objects and then a binding between them that we will
 			// manipulate with api methods to verify they are working as intended
-			source = new enyo.Object({prop: 0});
-			target = new enyo.Object();
+			source = new CoreObject({prop: 0});
+			target = new CoreObject();
 			
 			// create our binding
 			binding = source.binding({
@@ -76,7 +85,7 @@ describe('enyo.Binding', function () {
 				function () {
 				
 				// create a temporary binding with no information so it cannot be resolved
-				var bnd = new enyo.Binding();
+				var bnd = new Binding();
 				
 				// there is no way this should be true
 				expect(bnd.isReady()).to.be.false;
@@ -199,7 +208,7 @@ describe('enyo.Binding', function () {
 			});
 			
 			it ('should return undefined when not found', function () {
-				expect(Binding.find(enyo.uid('b'))).to.be.undefined;
+				expect(Binding.find(utils.uid('b'))).to.be.undefined;
 			});
 			
 		});
@@ -235,9 +244,9 @@ describe('enyo.Binding', function () {
 		before(function () {
 			
 			// temporary kind used for transform tests
-			enyo.kind({
+			var TestComponent = kind({
 				name: 'TestComponent',
-				kind: 'enyo.Component',
+				kind: Component,
 				
 				ownerless: 0,
 				noAuto: 0,
@@ -263,7 +272,7 @@ describe('enyo.Binding', function () {
 			
 			// we instance the ends of the bindings before creating them
 			source = new TestComponent({oneWay: true, twoWay: false, sourceProp: 'source'});
-			target = new enyo.Object();
+			target = new CoreObject();
 			
 			// we do this to be able to test resolution of the source and target later
 			source.target = target;
@@ -536,7 +545,7 @@ describe('enyo.Binding', function () {
 			// it should be the default binding constructor kind unless overridden by an
 			// application specific need
 			it ('should be the enyo.defaultBindingKind static property default', function () {
-				expect(enyo.defaultBindingKind).to.equal(Binding);
+				expect(Binding.defaultBindingKind).to.equal(Binding);
 			});
 			
 		});
