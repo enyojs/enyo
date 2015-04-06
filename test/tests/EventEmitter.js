@@ -1,13 +1,16 @@
+var
+	EventEmitter = require('../../lib/EventEmitter'),
+	CoreObject = require('../../lib/CoreObject');
+
 // TODO: Someday add tests that test with default context and emit with a specified object to emit to
-describe('enyo.EventEmitter', function () {
-	var EventEmitter = enyo.EventEmitter;
+describe('EventEmitter', function () {
 
 	describe('methods', function () {
 		
 		var emitter;
 
 		beforeEach(function() {
-			emitter = new enyo.Object({mixins: [EventEmitter]});
+			emitter = new CoreObject({mixins: [EventEmitter]});
 		});
 		
 		describe('silence', function () {
