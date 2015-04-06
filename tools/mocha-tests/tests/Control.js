@@ -2,6 +2,55 @@ describe('enyo.Control', function () {
 	
 	var Control = enyo.Control;
 	
+	describe('usage', function () {
+		
+		describe('renderOnShow', function () {
+			
+			var testControl;
+			
+			before(function () {
+				enyo.kind({
+					name: 'TestControl',
+					kind: 'enyo.Control',
+					id: 'TESTCONTROL1',
+					components: [
+						{name: 'child', id: 'TESTCONTROL2', renderOnShow: true}
+					]
+				});
+				
+				testControl = new TestControl({parentNode: document.body});
+			});
+			
+			after(function () {
+				testControl.destroy();
+				TestControl = null;
+			});
+			
+			it ('should not render a control with renderOnShow true until it has its showing ' +
+				'value set to true', function () {
+				
+				var pn, node;
+				
+				testControl.render();
+				pn = document.querySelector('#TESTCONTROL1');
+				
+				expect(pn).to.exist;
+				
+				node = pn.querySelector('#TESTCONTROL2');
+				
+				expect(node).to.not.exist;
+				
+				testControl.$.child.set('showing', true);
+				
+				node = pn.querySelector('#TESTCONTROL2');
+				
+				expect(node).to.exist;
+			});
+			
+		});
+		
+	});
+	
 	describe('statics', function () {
 		
 		describe('concat', function () {

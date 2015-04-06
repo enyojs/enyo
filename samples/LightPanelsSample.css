@@ -1,0 +1,61 @@
+.enyo-light-panels {
+	width: 50%;
+}
+
+.enyo-light-panels.vertical {
+	left: 50%;
+}
+
+.light-panel {
+	border: 2px solid white;
+}
+
+.light-panel > * {
+	text-align: center;
+	font-size: 36px;
+	font-weight: bold;
+}
+
+.light-panel > * {
+	position: absolute;
+}
+
+/* horizontal orientation */
+.enyo-light-panels.horizontal .light-panel > * {
+	bottom: 50%;
+}
+
+.enyo-light-panels.horizontal .light-panel .label {
+	left: 50%;
+}
+
+.enyo-light-panels.horizontal .light-panel .enyo-tool-decorator.previous {
+	left: 0;
+}
+
+.enyo-light-panels.horizontal .light-panel .enyo-tool-decorator.next {
+	right: 0;
+}
+
+/* vertical orientation */
+.enyo-light-panels.vertical .light-panel > * {
+	left: 50%;
+}
+
+.enyo-light-panels.vertical .light-panel .label {
+	margin-left: 32px;
+	bottom: 50%;
+}
+
+.enyo-light-panels.vertical .light-panel .enyo-tool-decorator {
+	position: absolute;
+	left: 50%;
+}
+
+.enyo-light-panels.vertical .light-panel .enyo-tool-decorator.previous {
+	top: 0;
+}
+
+.enyo-light-panels.vertical .light-panel .enyo-tool-decorator.next {
+	bottom: 0;
+}
