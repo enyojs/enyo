@@ -1,0 +1,6 @@
+{
+  "main": "NewDrawer.js",
+  "style": [
+    "NewDrawer.css"
+  ]
+}
