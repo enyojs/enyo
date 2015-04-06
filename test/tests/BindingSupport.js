@@ -1,10 +1,21 @@
+var
+	kind = require('../../lib/kind');
+
+var
+	BindingSupport = require('../../lib/BindingSupport'),
+	Binding = require('../../lib/Binding'),
+	CoreObject = require('../../lib/CoreObject'),
+	Component = require('../../lib/Component'),
+	Control = require('../../lib/Control'),
+	Model = require('../../lib/Model');
+
 describe ("BindingSupport Mixin", function () {
 	describe ("Methods", function () {
 		var ctor, obj;
 		
-		ctor = enyo.kind({
+		ctor = kind({
 			kind: null,
-			mixins: [enyo.BindingSupport]
+			mixins: [BindingSupport]
 		});
 		
 		describe("#binding", function () {
@@ -27,18 +38,18 @@ describe ("BindingSupport Mixin", function () {
 			it ("should append properties to bindings array if object uninitialized", function () {
 				var loc;
 				
-				loc = enyo.singleton({
+				loc = kind.singleton({
 					kind: ctor,
 					constructed: function () {
 						this.binding({testentry: true});
 						expect(this.bindings).to.have.length(1);
-						expect(this.bindings[0]).to.not.be.an.instanceof(enyo.Binding);
+						expect(this.bindings[0]).to.not.be.an.instanceof(Binding);
 						this.inherited(arguments);
 					}
 				});
 				
 				expect(loc.bindings).to.have.length(1);
-				expect(loc.bindings[0]).to.be.instanceof(enyo.Binding);
+				expect(loc.bindings[0]).to.be.instanceof(Binding);
 				
 				loc.destroy();
 			});
@@ -50,7 +61,7 @@ describe ("BindingSupport Mixin", function () {
 			it ("should destroy and remove all bindings without a parameter", function () {
 				var loc, bindings;
 				
-				loc = enyo.singleton({
+				loc = kind.singleton({
 					kind: ctor,
 					bindings: [
 						{name: "binding1"},
@@ -61,9 +72,9 @@ describe ("BindingSupport Mixin", function () {
 				bindings = loc.bindings.slice();
 				expect(loc.bindings).to.have.length(3);
 				expect(bindings).to.have.length(3);
-				expect(loc.bindings[0]).to.be.instanceof(enyo.Binding);
-				expect(loc.bindings[1]).to.be.instanceof(enyo.Binding);
-				expect(loc.bindings[2]).to.be.instanceof(enyo.Binding);
+				expect(loc.bindings[0]).to.be.instanceof(Binding);
+				expect(loc.bindings[1]).to.be.instanceof(Binding);
+				expect(loc.bindings[2]).to.be.instanceof(Binding);
 				loc.clearBindings();
 				expect(loc.bindings).to.be.empty;
 				expect(bindings[0].destroyed).to.be.true;
@@ -74,7 +85,7 @@ describe ("BindingSupport Mixin", function () {
 			it ("should destroy and remove only bindings from the subset provided", function () {
 				var loc, bindings;
 				
-				loc = enyo.singleton({
+				loc = kind.singleton({
 					kind: ctor,
 					bindings: [
 						{name: "binding1"},
@@ -86,9 +97,9 @@ describe ("BindingSupport Mixin", function () {
 				bindings = loc.bindings.slice(1);
 				expect(loc.bindings).to.have.length(3);
 				expect(bindings).to.have.length(2);
-				expect(loc.bindings[0]).to.be.instanceof(enyo.Binding);
-				expect(loc.bindings[1]).to.be.instanceof(enyo.Binding);
-				expect(loc.bindings[2]).to.be.instanceof(enyo.Binding);
+				expect(loc.bindings[0]).to.be.instanceof(Binding);
+				expect(loc.bindings[1]).to.be.instanceof(Binding);
+				expect(loc.bindings[2]).to.be.instanceof(Binding);
 				loc.clearBindings(bindings);
 				expect(loc.bindings).to.have.length(1);
 				expect(loc.bindings[0]).to.have.property("name", "binding1");
@@ -104,7 +115,7 @@ describe ("BindingSupport Mixin", function () {
 			it ("should remove a binding from the bindings array", function () {
 				var loc, bnd;
 				
-				loc = enyo.singleton({
+				loc = kind.singleton({
 					kind: ctor,
 					bindings: [
 						{name: "binding1"}
@@ -112,7 +123,7 @@ describe ("BindingSupport Mixin", function () {
 				});
 				
 				expect(loc.bindings).to.have.length(1);
-				expect(loc.bindings[0]).to.be.instanceof(enyo.Binding);
+				expect(loc.bindings[0]).to.be.instanceof(Binding);
 				bnd = loc.bindings[0];
 				loc.removeBinding(bnd);
 				expect(loc.bindings).to.be.empty;
@@ -125,7 +136,7 @@ describe ("BindingSupport Mixin", function () {
 			it ("should properly initialize binding definitions in the bindings array", function () {
 				var loc;
 				
-				loc = enyo.singleton({
+				loc = kind.singleton({
 					kind: ctor,
 					bindings: [
 						{name: "binding1"},
@@ -134,8 +145,8 @@ describe ("BindingSupport Mixin", function () {
 				});
 				
 				expect(loc.bindings).to.have.length(2);
-				expect(loc.bindings[0]).to.be.an.instanceof(enyo.Binding);
-				expect(loc.bindings[1]).to.be.an.instanceof(enyo.Binding);
+				expect(loc.bindings[0]).to.be.an.instanceof(Binding);
+				expect(loc.bindings[1]).to.be.an.instanceof(Binding);
 				
 				loc.destroy();
 			})
@@ -144,7 +155,7 @@ describe ("BindingSupport Mixin", function () {
 			it ("should properly destroy and remove all bindings from an instance", function () {
 				var loc, bindings;
 				
-				loc = enyo.singleton({
+				loc = kind.singleton({
 					kind: ctor,
 					bindings: [
 						{name: "binding1"},
@@ -155,9 +166,9 @@ describe ("BindingSupport Mixin", function () {
 				bindings = loc.bindings.slice();
 				expect(loc.bindings).to.have.length(3);
 				expect(bindings).to.have.length(3);
-				expect(loc.bindings[0]).to.be.instanceof(enyo.Binding);
-				expect(loc.bindings[1]).to.be.instanceof(enyo.Binding);
-				expect(loc.bindings[2]).to.be.instanceof(enyo.Binding);
+				expect(loc.bindings[0]).to.be.instanceof(Binding);
+				expect(loc.bindings[1]).to.be.instanceof(Binding);
+				expect(loc.bindings[2]).to.be.instanceof(Binding);
 				loc.destroy();
 				expect(loc.bindings).to.be.null;
 				expect(bindings[0].destroyed).to.be.true;
@@ -171,21 +182,22 @@ describe ("BindingSupport Mixin", function () {
 			it ("should be able to correctly find components when they are created", function () {
 				var childCtor, loc;
 				
-				childCtor = enyo.kind({
+				childCtor = kind({
+					kind: Control,
 					components: [
 						{name: "two", testprop: "two-testprop"}
 					], 
 					deep1: {
-						deep2: new enyo.Object({
-							deep3: new enyo.Object({
+						deep2: new CoreObject({
+							deep3: new CoreObject({
 								testprop: "deep3-testprop"
 							})
 						})
 					}
 				});
 				
-				loc = enyo.singleton({
-					kind: enyo.Component,
+				loc = kind.singleton({
+					kind: Component,
 					components: [
 						{name: "one", kind: childCtor, testprop: "one-testprop"}
 					],
@@ -209,7 +221,7 @@ describe ("BindingSupport Mixin", function () {
 				expect(loc).to.have.property("testprop2", "two-testprop-three");
 				expect(loc).to.have.property("testprop3", "deep3-testprop-four");
 				
-				loc.set("$.one.deep1.deep2.deep3", new enyo.Object({
+				loc.set("$.one.deep1.deep2.deep3", new CoreObject({
 					testprop: "new-deep3-testprop"
 				}));
 				
@@ -221,8 +233,8 @@ describe ("BindingSupport Mixin", function () {
 			it ("should function correctly with two-way synchronization", function () {
 				var loc;
 				
-				loc = enyo.singleton({
-					kind: enyo.Component,
+				loc = kind.singleton({
+					kind: Component,
 					components: [
 						{name: "one", testprop: true}
 					],
@@ -245,8 +257,8 @@ describe ("BindingSupport Mixin", function () {
 			it ("should have correct ownership when a bindings array block is in a nested component", function () {
 				var loc;
 				
-				loc = enyo.singleton({
-					kind: enyo.Component,
+				loc = kind.singleton({
+					kind: Component,
 					components: [
 						{name: "one", components: [
 							{name: "two", components: [
@@ -274,8 +286,8 @@ describe ("BindingSupport Mixin", function () {
 			it ("should properly update a one-way synchronized binding", function () {
 				var loc, obj;
 				
-				loc = enyo.singleton({
-					kind: enyo.Component,
+				loc = kind.singleton({
+					kind: Component,
 					components: [
 						{name: "one", model: null}
 					],
@@ -284,7 +296,7 @@ describe ("BindingSupport Mixin", function () {
 					]
 				});
 				
-				obj = new enyo.Model();
+				obj = new Model();
 				
 				expect(loc.model).to.not.exist;
 				expect(loc.$.one.model).to.not.exist;
@@ -293,7 +305,7 @@ describe ("BindingSupport Mixin", function () {
 				
 				expect(obj).to.equal(loc.model).and.to.equal(loc.$.one.model);
 				
-				obj = new enyo.Model();
+				obj = new Model();
 				
 				loc.set("model", obj);
 				
