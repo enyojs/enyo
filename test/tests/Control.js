@@ -1,17 +1,21 @@
-describe('enyo.Control', function () {
-	
-	var Control = enyo.Control;
+var
+	kind = require('../../lib/kind');
+
+var
+	Control = require('../../lib/Control');
+
+describe('Control', function () {
 	
 	describe('usage', function () {
 		
 		describe('renderOnShow', function () {
 			
-			var testControl;
+			var TestControl, testControl;
 			
 			before(function () {
-				enyo.kind({
+				TestControl = kind({
 					name: 'TestControl',
-					kind: 'enyo.Control',
+					kind: Control,
 					id: 'TESTCONTROL1',
 					components: [
 						{name: 'child', id: 'TESTCONTROL2', renderOnShow: true}
@@ -58,13 +62,15 @@ describe('enyo.Control', function () {
 			// we will share a single instance of the subclassed control for inspection
 			var control;
 			
+			var TestControl1, TestControl2;
+			
 			before(function () {
 				
 				// we want to create two classes, one that the second can base off of, so as to
 				// test what happens to the concatenated properties when being subclassed
-				enyo.kind({
+				TestControl1 = kind({
 					name: 'TestControl1',
-					kind: 'enyo.Control',
+					kind: Control,
 					attributes: {
 						attr1: 'attr1',
 						attr2: 'attr2'
@@ -73,9 +79,9 @@ describe('enyo.Control', function () {
 					style: 'height: 50px; width: 50px;'
 				});
 				
-				enyo.kind({
+				TestControl2 = kind({
 					name: 'TestControl2',
-					kind: 'TestControl1',
+					kind: TestControl1,
 					attributes: {
 						attr1: 'attr1*',
 						attr3: 'attr3'
