@@ -8,11 +8,14 @@ var
 	gulp = require('gulp'),
 	browserify = require('browserify'),
 	source = require('vinyl-source-stream'),
-	buffer = require('vinyl-buffer');
+	buffer = require('vinyl-buffer'),
+	mochaPhantomJs = require('gulp-mocha-phantomjs');
 
 
 
 gulp.task('build', buildTests);
+gulp.task('run', ['build'], runTests);
+gulp.task('default', ['build', 'run']);
 
 
 
@@ -38,4 +41,10 @@ function getTests () {
 	return fs.readdirSync(path.join(__dirname, './tests'))
 		.filter(function (file) { return path.extname(file) == '.js'; })
 		.map(function (file) { return path.join(__dirname, './tests/', file); });
+}
+
+function runTests () {
+	return gulp
+		.src(path.join(__dirname, './index.html'))
+		.pipe(mochaPhantomJs());
 }
