@@ -10,7 +10,6 @@ enyo.depends(
 	'kernel/PriorityQueue.js',
 	'kernel/BackgroundTaskManager.js',
 	'kernel/TaskManagerSupport.js',
-	'dom/resolution.js',
 	'touch/NewThumb.css',
 	'touch/NewThumb.js',
 	'touch/Scrollable.js',
@@ -20,5 +19,7 @@ enyo.depends(
 	'ui/NewDrawer.js',
 	'ui/NewDrawer.css',
 	'ui/data/VirtualDataRepeater.js',
-	'ui/data/NewDataList.js'
+	'ui/data/NewDataList.js',
+	'FluxDispatcher.js',
+	'FluxStore.js'
 );
