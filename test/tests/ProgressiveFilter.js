@@ -1,3 +1,9 @@
+var
+	kind = require('../../lib/kind');
+var
+	ProgressiveFilter = require('../../lib/ProgressiveFilter'),
+	Collection = require('../../lib/Collection');
+
 describe('ProgressiveFilter', function () {
 	
 	describe('properties', function () {
@@ -9,12 +15,13 @@ describe('ProgressiveFilter', function () {
 		describe('basic', function () {
 		
 			var filter,
-				collection;
+				collection,
+				TestProgressiveFilter;
 		
 			before(function () {
-				enyo.kind({
+				TestProgressiveFilter = kind({
 					name: 'TestProgressiveFilter',
-					kind: 'enyo.ProgressiveFilter',
+					kind: ProgressiveFilter,
 					method: function (model) {
 						var regex = /^[Aa]/;
 					
@@ -22,7 +29,7 @@ describe('ProgressiveFilter', function () {
 					}
 				});
 
-				collection = new enyo.Collection();
+				collection = new Collection();
 				filter = new TestProgressiveFilter({collection: collection});
 			});
 		
@@ -193,12 +200,14 @@ describe('ProgressiveFilter', function () {
 		describe('advanced', function () {
 			
 			var filter,
-				collection;
+				collection,
+				TestNestedProgressiveFilter,
+				TestProgressiveFilter;
 				
 			before(function () {
-				enyo.kind({
+				TestNestedProgressiveFilter = kind({
 					name: 'TestNestedProgressiveFilter',
-					kind: 'enyo.ProgressiveFilter',
+					kind: ProgressiveFilter,
 					method: function (model) {
 						
 						// contains a 'd' or an 'o'
@@ -208,12 +217,12 @@ describe('ProgressiveFilter', function () {
 					}
 				})
 				
-				enyo.kind({
+				TestProgressiveFilter = kind({
 					name: 'TestProgressiveFilter',
-					kind: 'enyo.ProgressiveFilter',
+					kind: ProgressiveFilter,
 					
 					components: [
-						{name: 'nested', kind: 'TestNestedProgressiveFilter'}
+						{name: 'nested', kind: TestNestedProgressiveFilter}
 					],
 					
 					method: function (model) {
@@ -223,7 +232,7 @@ describe('ProgressiveFilter', function () {
 					}
 				});
 				
-				collection = new enyo.Collection();
+				collection = new Collection();
 				filter = new TestProgressiveFilter({collection: collection});
 			});
 			

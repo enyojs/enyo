@@ -1,9 +1,15 @@
-describe('enyo.Model', function () {
+var
+	kind = require('../../lib/kind');
+
+var
+	Model = require('../../lib/Model'),
+	States = require('../../lib/States'),
+	Source = require('../../lib/Source'),
+	Store = require('../../lib/Store');
+
+describe('Model', function () {
 	
-	var Model = enyo.Model,
-		proto = Model.prototype,
-		STATES = enyo.States;
-	
+	var proto = Model.prototype;
 	
 	describe('properties', function () {
 		
@@ -25,9 +31,9 @@ describe('enyo.Model', function () {
 				src3;
 			
 			before(function () {
-				src1 = enyo.Source.create({name: 'src1'});
-				src2 = enyo.Source.create({name: 'src2'});
-				src3 = enyo.Source.create({name: 'src3'});
+				src1 = Source.create({name: 'src1'});
+				src2 = Source.create({name: 'src2'});
+				src3 = Source.create({name: 'src3'});
 			
 				// assign it directly
 				model.source = src1;
@@ -42,31 +48,31 @@ describe('enyo.Model', function () {
 			});
 			
 			it ('should have the default CLEAN and NEW status and be READY', function () {
-				expect(model.status & STATES.READY).to.be.ok;
+				expect(model.status & States.READY).to.be.ok;
 			});
 			
 			it ('should be FETCHING and BUSY after fetch is called', function () {
 				
-				// because we're using the default nop implementation of enyo.Source it will not
+				// because we're using the default nop implementation of Source it will not
 				// actually do anything
 				model.fetch();
-				expect(model.status & (STATES.FETCHING | STATES.BUSY)).to.be.ok;
+				expect(model.status & (States.FETCHING | States.BUSY)).to.be.ok;
 				
 				// call fetched to clear its state
 				model.fetched();
-				expect(model.status & STATES.READY).to.be.ok;
+				expect(model.status & States.READY).to.be.ok;
 			});
 			
 			it ('should be COMMITTING and BUSY after commit is called', function () {
 				
-				// because we're using the default nop implementation of enyo.Source it will not
+				// because we're using the default nop implementation of Source it will not
 				// actually do anything
 				model.commit();
-				expect(model.status & (STATES.COMMITTING | STATES.BUSY)).to.be.ok;
+				expect(model.status & (States.COMMITTING | States.BUSY)).to.be.ok;
 				
 				// call committed to clear its state
 				model.committed();
-				expect(model.status & STATES.READY).to.be.ok;
+				expect(model.status & States.READY).to.be.ok;
 			});
 			
 			it ('should be ERROR_FETCHING and ERROR if error encountered during either a commit ' +
@@ -82,14 +88,14 @@ describe('enyo.Model', function () {
 				
 				// first we check the fetch
 				model.fetch();
-				expect(model.status & (STATES.ERROR_FETCHING | STATES.ERROR)).to.be.ok;
+				expect(model.status & (States.ERROR_FETCHING | States.ERROR)).to.be.ok;
 				
 				// clear the state
 				model.clearError();
 				
 				// now we check the commit
 				model.commit();
-				expect(model.status & (STATES.ERROR_COMMITTING | STATES.ERROR)).to.be.ok;
+				expect(model.status & (States.ERROR_COMMITTING | States.ERROR)).to.be.ok;
 				
 				model.clearError();
 				src1.commit.restore();
@@ -115,13 +121,13 @@ describe('enyo.Model', function () {
 				sinon.stub(src1, 'fetch', fn);
 				
 				// should not do this unless testing!
-				model.status = STATES.CLEAN | STATES.ERROR;
+				model.status = States.CLEAN | States.ERROR;
 				
 				// successive calls to commit or fetch should never be successful
 				model.commit(opts);
 				model.fetch(opts);
 				expect(spy.called).to.be.false;
-				expect(model.status & STATES.ERROR).to.be.ok;
+				expect(model.status & States.ERROR).to.be.ok;
 				
 				model.clearError();
 				src1.commit.restore();
@@ -150,12 +156,12 @@ describe('enyo.Model', function () {
 				
 				// we expect 2 of the 3 to have responded successfully that will leave the state
 				// in BUSY
-				expect(model.status & (STATES.FETCHING | STATES.BUSY)).to.be.ok;
+				expect(model.status & (States.FETCHING | States.BUSY)).to.be.ok;
 				expect(model._waiting).to.have.length(1);
 				
 				// now try and complete the queue by fudging the callback
 				model.fetched(null, null, src3.name);
-				expect(model.status & STATES.READY).to.be.ok;
+				expect(model.status & States.READY).to.be.ok;
 				expect(model._waiting).to.be.null;
 				
 				// first we will check the state control of committing
@@ -163,12 +169,12 @@ describe('enyo.Model', function () {
 				
 				// we expect 2 of the 3 to have responded successfully that will leave the state
 				// in BUSY
-				expect(model.status & (STATES.COMMITTING | STATES.BUSY)).to.be.ok;
+				expect(model.status & (States.COMMITTING | States.BUSY)).to.be.ok;
 				expect(model._waiting).to.have.length(1);
 				
 				// now try and complete the queue by fudging the callback
 				model.committed(null, null, src3.name);
-				expect(model.status & STATES.READY).to.be.ok;
+				expect(model.status & States.READY).to.be.ok;
 				expect(model._waiting).to.be.null;
 				
 				src1.fetch.restore();
@@ -189,8 +195,10 @@ describe('enyo.Model', function () {
 			
 				describe('@attrs', function () {
 					
+					var TestModel;
+					
 					before(function () {
-						enyo.kind({
+						TestModel = kind({
 							name: 'TestModel',
 							kind: Model,
 							attributes: {
@@ -248,7 +256,7 @@ describe('enyo.Model', function () {
 						// without adding it to the store so that it can batch the operation
 						var model = new Model(null, null, {noAdd: true});
 						
-						expect(enyo.store.has(model)).to.be.false;
+						expect(Store.has(model)).to.be.false;
 						model.destroy();
 					});
 					
@@ -270,7 +278,7 @@ describe('enyo.Model', function () {
 				
 				model.destroy();
 				
-				expect(enyo.store.has(model)).to.be.false;
+				expect(Store.has(model)).to.be.false;
 			});
 			
 			it ('should remove all listeners from the model', function () {
@@ -354,12 +362,12 @@ describe('enyo.Model', function () {
 
 		describe('#fetch', function () {
 
-			var model, source;
+			var model, source, TestSource, TestModel;
 
 			before(function () {
-				enyo.kind({
-					name: 'enyo.test.Source',
-					kind: 'enyo.Source',
+				TestSource = kind({
+					name: 'TestSource',
+					kind: Source,
 					fetch: function (model, opts) {
 						opts.success({
 							parsed: false
@@ -367,24 +375,24 @@ describe('enyo.Model', function () {
 					}
 				});
 
-				enyo.kind({
-					name: 'enyo.test.Model',
-					kind: 'enyo.Model',
-					source: new enyo.test.Source(),
+				TestModel = kind({
+					name: 'TestModel',
+					kind: Model,
+					source: new TestSource(),
 					parse: function (res) {
 						res.parsed = true;
 						return res;
 					}
 				});
 
-				model = new enyo.test.Model();
+				model = new TestModel();
 			});
 
 			after(function () {
 				model.source.destroy();
 				model.destroy();
-				delete enyo.test.Source;
-				delete enyo.test.Model;
+				delete TestSource;
+				delete TestModel;
 			});
 
 			it ('should parse the result', function () {
@@ -401,8 +409,10 @@ describe('enyo.Model', function () {
 		
 		describe('~concat', function () {
 			
+			var TestModel;
+			
 			before(function () {
-				enyo.kind({
+				TestModel = kind({
 					name: 'TestModel',
 					noDefer: true,
 					kind: Model,
@@ -420,7 +430,7 @@ describe('enyo.Model', function () {
 			it ('should merge the options hash for all subkinds', function () {
 				
 				// create an anonymous subkind to see if the options are being merged
-				var Ctor = enyo.kind({
+				var Ctor = kind({
 					kind: TestModel,
 					noDefer: true,
 					options: {
@@ -436,10 +446,10 @@ describe('enyo.Model', function () {
 				
 			});
 			
-			it ('should add an entry to enyo.store.models for each new subclass of enyo.Model',
+			it ('should add an entry to Store.models for each new subclass of enyo.Model',
 				function () {
 				
-				expect(enyo.store.models.TestModel).to.exist;
+				expect(Store.models.TestModel).to.exist;
 			});
 			
 		});
@@ -448,14 +458,14 @@ describe('enyo.Model', function () {
 	
 	describe('usage', function () {
 		
-		it ('should property add an instance of enyo.Model to enyo.store\'s internal models',
+		it ('should property add an instance of enyo.Model to Store\'s internal models',
 			function () {
 			
-			var len = enyo.store.models['enyo.Model'].length,
+			var len = Store.models['enyo.Model'].length,
 				model = new Model();
 			
-			expect(enyo.store.has(model)).to.be.true;
-			expect(enyo.store.models['enyo.Model']).to.have.length.above(len);
+			expect(Store.has(model)).to.be.true;
+			expect(Store.models['enyo.Model']).to.have.length.above(len);
 		});
 		
 	});

@@ -1,6 +1,15 @@
-describe('enyo.DataRepeater', function () {
+var
+	kind = require('../../lib/kind');
+
+var
+	Collection = require('../../lib/Collection'),
+	Model = require('../../lib/Model'),
+	DataRepeater = require('../../lib/DataRepeater'),
+	CoreObject = require('../../lib/CoreObject');
+
+describe('DataRepeater', function () {
 	
-	var Repeater = enyo.DataRepeater,
+	var Repeater = DataRepeater,
 		proto = Repeater.prototype;
 	
 	describe('methods', function () {
@@ -44,12 +53,13 @@ describe('enyo.DataRepeater', function () {
 				div,
 				
 			// the binding target for testing bound selections
-				target;
+				target,
+				TestRepeater;
 			
 			before(function () {
 				
 				// create our repeater kind
-				enyo.kind({
+				TestRepeater = kind({
 					name: 'TestRepeater',
 					kind: Repeater,
 					components: [
@@ -62,10 +72,10 @@ describe('enyo.DataRepeater', function () {
 				div = document.createElement('div');
 				
 				// we need an object that we can create bindings from/to
-				target = new enyo.Object();
+				target = new CoreObject();
 				
 				// we will instance the collection and add some data
-				collection = new enyo.Collection([
+				collection = new Collection([
 					{id: 0},
 					{id: 1},
 					{id: 2},
@@ -105,7 +115,7 @@ describe('enyo.DataRepeater', function () {
 				function () {
 				
 				repeater.select(0);
-				expect(repeater.get('selected')).to.exist.and.to.be.an.instanceof(enyo.Model);
+				expect(repeater.get('selected')).to.exist.and.to.be.an.instanceof(Model);
 				expect(repeater.get('selected').get('id')).to.equal(0);
 			});
 			

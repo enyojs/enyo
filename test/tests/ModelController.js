@@ -1,7 +1,13 @@
-describe('enyo.ModelController', function () {
-	
-	var ModelController = enyo.ModelController,
-		Model = enyo.Model;
+var
+	kind = require('../../lib/kind');
+
+var
+	ModelController = require('../../lib/ModelController'),
+	Model = require('../../lib/Model'),
+	RelationalModel = require('../../lib/RelationalModel'),
+	CoreObject = require('../../lib/CoreObject');
+
+describe('ModelController', function () {
 	
 	describe('methods', function () {
 		
@@ -56,10 +62,11 @@ describe('enyo.ModelController', function () {
 		describe('#get', function () {
 			
 			var controller,
-				model;
+				model,
+				TestModelController;
 				
 			before(function () {
-				enyo.kind({
+				TestModelController = kind({
 					name: 'TestModelController',
 					kind: ModelController,
 					computed: [
@@ -167,12 +174,12 @@ describe('enyo.ModelController', function () {
 		
 		it ('should notify for each property changed on a model and trigger binding updated', function () {
 			controller = new ModelController();
-			model = new enyo.Model();
+			model = new Model();
 			controller.set('model', model);
 			
 			var spy1 = sinon.spy()
 				, spy2 = sinon.spy()
-				, obj = new enyo.Object();
+				, obj = new CoreObject();
 				
 			obj.binding({from: 'someProp1', source: controller, to: 'someProp'});
 			controller.observe('someProp1', spy1);
@@ -186,8 +193,8 @@ describe('enyo.ModelController', function () {
 		it ('should allow bindings to chain through to child attributes and update properly when the model instance changes', function () {
 			var ctor, mod1, mod2, obj;
 			
-			ctor = enyo.kind({
-				kind: enyo.RelationalModel,
+			ctor = kind({
+				kind: RelationalModel,
 				relations: [{
 					key: 'tooneprop',
 					create: true
@@ -196,7 +203,7 @@ describe('enyo.ModelController', function () {
 			
 			mod1 = new ctor({tooneprop: {name: 'model1'}});
 			mod2 = new ctor({tooneprop: {name: 'model2'}});
-			obj = new enyo.Object();
+			obj = new CoreObject();
 			controller = new ModelController();
 			obj.binding({from: 'tooneprop.name', source: controller, to: 'selectedName'});
 			expect(obj.selectedName).to.be.undefined;
