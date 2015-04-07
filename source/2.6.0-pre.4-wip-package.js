@@ -10,7 +10,6 @@ enyo.depends(
 	'kernel/PriorityQueue.js',
 	'kernel/BackgroundTaskManager.js',
 	'kernel/TaskManagerSupport.js',
-	'dom/resolution.js',
 	'touch/NewThumb.css',
 	'touch/NewThumb.js',
 	'touch/Scrollable.js',
