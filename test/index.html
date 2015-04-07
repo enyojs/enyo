@@ -30,7 +30,8 @@
 				}
 			}
 			if (window.mochaPhantomJS) {
-				mocha.run = mocha.run.bind(mocha, upload);	// Hack, mochaPhantomJS.run does not accept args.  See https://github.com/metaskills/mocha-phantomjs/issues/159
+				mocha.run = mocha.run.bind(mocha, upload);	// Hack, mochaPhantomJS.run does not
+				// accept args.  See https://github.com/metaskills/mocha-phantomjs/issues/159
 				mochaPhantomJS.run();
 			} else {
 				mocha.run(upload);
