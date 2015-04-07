@@ -1,8 +1,11 @@
-describe('enyo.Collection', function () {
-	
-	var Collection = enyo.Collection,
-		Model = enyo.Model,
-		STATES = enyo.States;
+var
+	Collection = require('../../lib/Collection'),
+	Model = require('../../lib/Model'),
+	States = require('../../lib/States'),
+	Source = require('../../lib/Source'),
+	Store = require('../../lib/Store');
+
+describe('Collection', function () {
 	
 	var proto = Collection.prototype;
 	
@@ -26,9 +29,9 @@ describe('enyo.Collection', function () {
 				src3;
 			
 			before(function () {
-				src1 = enyo.Source.create({name: 'src1'});
-				src2 = enyo.Source.create({name: 'src2'});
-				src3 = enyo.Source.create({name: 'src3'});
+				src1 = Source.create({name: 'src1'});
+				src2 = Source.create({name: 'src2'});
+				src3 = Source.create({name: 'src3'});
 			
 				// assign it directly
 				collection.source = src1;
@@ -43,7 +46,7 @@ describe('enyo.Collection', function () {
 			});
 			
 			it ('should have the default READY status', function () {
-				expect(collection.status).to.equal(STATES.READY);
+				expect(collection.status).to.equal(States.READY);
 			});
 			
 			it ('should be FETCHING and BUSY after fetch is called', function () {
@@ -51,13 +54,13 @@ describe('enyo.Collection', function () {
 				// because we're using the default nop implementation of enyo.Source it will not
 				// actually do anything
 				collection.fetch();
-				expect(collection.status & STATES.FETCHING).to.equal(STATES.FETCHING);
-				expect(collection.status & STATES.BUSY).to.be.ok;
-				expect(collection.status & STATES.READY).to.not.be.ok;
+				expect(collection.status & States.FETCHING).to.equal(States.FETCHING);
+				expect(collection.status & States.BUSY).to.be.ok;
+				expect(collection.status & States.READY).to.not.be.ok;
 				
 				// call fetched to clear its state
 				collection.fetched();
-				expect(collection.status).to.equal(STATES.READY);
+				expect(collection.status).to.equal(States.READY);
 			});
 			
 			it ('should be COMMITTING and BUSY after commit is called', function () {
@@ -65,13 +68,13 @@ describe('enyo.Collection', function () {
 				// because we're using the default nop implementation of enyo.Source it will not
 				// actually do anything
 				collection.commit();
-				expect(collection.status & STATES.COMMITTING).to.equal(STATES.COMMITTING);
-				expect(collection.status & STATES.BUSY).to.be.ok;
-				expect(collection.statys & STATES.READY).to.not.be.ok;
+				expect(collection.status & States.COMMITTING).to.equal(States.COMMITTING);
+				expect(collection.status & States.BUSY).to.be.ok;
+				expect(collection.statys & States.READY).to.not.be.ok;
 				
 				// call committed to clear its state
 				collection.committed();
-				expect(collection.status).to.equal(STATES.READY);
+				expect(collection.status).to.equal(States.READY);
 			});
 			
 			it ('should be ERROR_FETCHING and ERROR if error encountered during either a commit ' +
@@ -87,18 +90,18 @@ describe('enyo.Collection', function () {
 				
 				// first we check the fetch
 				collection.fetch();
-				expect(collection.status & STATES.ERROR_FETCHING).to.equal(STATES.ERROR_FETCHING);
-				expect(collection.status & STATES.ERROR).to.be.ok;
-				expect(collection.status & STATES.READY).to.not.be.ok;
+				expect(collection.status & States.ERROR_FETCHING).to.equal(States.ERROR_FETCHING);
+				expect(collection.status & States.ERROR).to.be.ok;
+				expect(collection.status & States.READY).to.not.be.ok;
 				
 				// clear the state
 				collection.clearError();
 				
 				// now we check the commit
 				collection.commit();
-				expect(collection.status & STATES.ERROR_COMMITTING).to.be.ok
-				expect(collection.status & STATES.ERROR).to.be.ok;
-				expect(collection.status & STATES.READY).to.not.be.ok;
+				expect(collection.status & States.ERROR_COMMITTING).to.be.ok
+				expect(collection.status & States.ERROR).to.be.ok;
+				expect(collection.status & States.READY).to.not.be.ok;
 				
 				collection.clearError();
 				src1.commit.restore();
@@ -124,15 +127,15 @@ describe('enyo.Collection', function () {
 				sinon.stub(src1, 'fetch', fn);
 				
 				// should not do this unless testing!
-				collection.set('status', collection.status | STATES.ERROR);
+				collection.set('status', collection.status | States.ERROR);
 				
 				// successive calls to commit or fetch should never be successful
 				collection.commit(opts);
 				collection.fetch(opts);
 				
 				expect(spy.called).to.be.false;
-				expect(collection.status & STATES.ERROR).to.be.ok;
-				expect(collection.statys & STATES.READY).to.not.be.ok;
+				expect(collection.status & States.ERROR).to.be.ok;
+				expect(collection.statys & States.READY).to.not.be.ok;
 				
 				collection.clearError();
 				src1.commit.restore();
@@ -150,7 +153,7 @@ describe('enyo.Collection', function () {
 					fn;
 				
 				collection.source = src1;
-				collection.status = collection.status | STATES.ERROR_COMMITTING;
+				collection.status = collection.status | States.ERROR_COMMITTING;
 				
 				opts.success = spy;
 				opts.commit = true;
@@ -164,8 +167,8 @@ describe('enyo.Collection', function () {
 				collection.destroy(opts);
 				
 				expect(spy.called).to.be.false;
-				expect(collection.status & STATES.ERROR).to.be.ok;
-				expect(collection.status & STATES.READY).to.not.be.ok;
+				expect(collection.status & States.ERROR).to.be.ok;
+				expect(collection.status & States.READY).to.not.be.ok;
 				
 				collection.clearError();
 				collection.destroy();
@@ -194,13 +197,13 @@ describe('enyo.Collection', function () {
 				
 				// we expect 2 of the 3 to have responded successfully that will leave the state
 				// in BUSY
-				expect(collection.status & STATES.FETCHING).to.equal(STATES.FETCHING);
-				expect(collection.status & STATES.BUSY).to.be.ok;
+				expect(collection.status & States.FETCHING).to.equal(States.FETCHING);
+				expect(collection.status & States.BUSY).to.be.ok;
 				expect(collection._waiting).to.have.length(1);
 				
 				// now try and complete the queue by fudging the callback
 				collection.fetched(null, null, src3.name);
-				expect(collection.status & STATES.READY).to.equal(STATES.READY);
+				expect(collection.status & States.READY).to.equal(States.READY);
 				expect(collection._waiting).to.be.null;
 				
 				// first we will check the state control of committing
@@ -208,13 +211,13 @@ describe('enyo.Collection', function () {
 				
 				// we expect 2 of the 3 to have responded successfully that will leave the state
 				// in BUSY
-				expect(collection.status & STATES.COMMITTING).to.equal(STATES.COMMITTING);
-				expect(collection.status & STATES.BUSY).to.be.ok;
+				expect(collection.status & States.COMMITTING).to.equal(States.COMMITTING);
+				expect(collection.status & States.BUSY).to.be.ok;
 				expect(collection._waiting).to.have.length(1);
 				
 				// now try and complete the queue by fudging the callback
 				collection.committed(null, null, src3.name);
-				expect(collection.status & STATES.READY).to.equal(STATES.READY);
+				expect(collection.status & States.READY).to.equal(States.READY);
 				expect(collection._waiting).to.be.null;
 				
 				src1.fetch.restore();
@@ -243,16 +246,16 @@ describe('enyo.Collection', function () {
 			
 			it ('should correctly return true if the status is an ERROR state value', function () {
 				
-				collection.status = STATES.ERROR_COMMITTING;
+				collection.status = States.ERROR_COMMITTING;
 				expect(collection.isError()).to.be.true;
 				
-				collection.status = STATES.ERROR_FETCHING;
+				collection.status = States.ERROR_FETCHING;
 				expect(collection.isError()).to.be.true;
 				
-				collection.status = STATES.ERROR_DESTROYING;
+				collection.status = States.ERROR_DESTROYING;
 				expect(collection.isError()).to.be.true;
 				
-				collection.status = STATES.ERROR_UNKNOWN;
+				collection.status = States.ERROR_UNKNOWN;
 				expect(collection.isError()).to.be.true;
 				
 			});
@@ -260,24 +263,24 @@ describe('enyo.Collection', function () {
 			it ('should correctly return false if the status is not an ERROR state value',
 				function () {
 				
-				collection.status = STATES.READY;
+				collection.status = States.READY;
 				expect(collection.isError()).to.be.false;
 				
 			});
 			
 			it ('should correctly use the parameter if provided', function () {
 				
-				collection.status = STATES.READY;
-				expect(collection.isError(STATES.ERROR_COMMITTING)).to.be.true;
+				collection.status = States.READY;
+				expect(collection.isError(States.ERROR_COMMITTING)).to.be.true;
 				
-				collection.status = STATES.ERROR_FETCHING;
-				expect(collection.isError(STATES.READY)).to.be.false;
+				collection.status = States.ERROR_FETCHING;
+				expect(collection.isError(States.READY)).to.be.false;
 				
 			});
 			
 			it ('should correctly ignore the parameter if it is not numeric', function () {
 				
-				collection.status = STATES.ERROR_FETCHING;
+				collection.status = States.ERROR_FETCHING;
 				expect(collection.isError({})).to.be.true;
 				
 			});
@@ -298,13 +301,13 @@ describe('enyo.Collection', function () {
 			
 			it ('should correctly return true if the status is a BUSY state value', function () {
 				
-				collection.status = STATES.FETCHING;
+				collection.status = States.FETCHING;
 				expect(collection.isBusy()).to.be.true;
 				
-				collection.status = STATES.COMMITTING;
+				collection.status = States.COMMITTING;
 				expect(collection.isBusy()).to.be.true;
 				
-				collection.status = STATES.DESTROYING;
+				collection.status = States.DESTROYING;
 				expect(collection.isBusy()).to.be.true;
 				
 			});
@@ -312,24 +315,24 @@ describe('enyo.Collection', function () {
 			it ('should correctly return false if the status is not a BUSY state value',
 				function () {
 				
-				collection.status = STATES.READY;
+				collection.status = States.READY;
 				expect(collection.isBusy()).to.be.false;
 				
 			});
 			
 			it ('should correctly use the parameter if provided', function () {
 				
-				collection.status = STATES.READY;
-				expect(collection.isBusy(STATES.COMMITTING)).to.be.true;
+				collection.status = States.READY;
+				expect(collection.isBusy(States.COMMITTING)).to.be.true;
 				
-				collection.status = STATES.BUSY;
-				expect(collection.isBusy(STATES.READY)).to.be.false;
+				collection.status = States.BUSY;
+				expect(collection.isBusy(States.READY)).to.be.false;
 				
 			});
 			
 			it ('should correctly ignore the parameter if it is not numeric', function () {
 				
-				collection.status = STATES.COMMITTING;
+				collection.status = States.COMMITTING;
 				expect(collection.isBusy({})).to.be.true;
 				
 			});
@@ -350,7 +353,7 @@ describe('enyo.Collection', function () {
 			
 			it ('should correctly return true if the status is a READY state value', function () {
 				
-				collection.status = STATES.READY;
+				collection.status = States.READY;
 				expect(collection.isReady()).to.be.true;
 				
 			});
@@ -358,24 +361,24 @@ describe('enyo.Collection', function () {
 			it ('should correctly return false if the status is not a READY state value',
 				function () {
 				
-				collection.status = STATES.BUSY;
+				collection.status = States.BUSY;
 				expect(collection.isReady()).to.be.false;
 				
 			});
 			
 			it ('should correctly use the parameter if provided', function () {
 				
-				collection.status = STATES.READY;
-				expect(collection.isReady(STATES.COMMITTING)).to.be.false;
+				collection.status = States.READY;
+				expect(collection.isReady(States.COMMITTING)).to.be.false;
 				
-				collection.status = STATES.BUSY;
-				expect(collection.isReady(STATES.READY)).to.be.true;
+				collection.status = States.BUSY;
+				expect(collection.isReady(States.READY)).to.be.true;
 				
 			});
 			
 			it ('should correctly ignore the parameter if it is not numeric', function () {
 				
-				collection.status = STATES.READY;
+				collection.status = States.READY;
 				expect(collection.isReady({})).to.be.true;
 				
 			});
@@ -440,7 +443,7 @@ describe('enyo.Collection', function () {
 					});
 					
 					it ('should accept a model instance', function () {
-						collection.add(new enyo.Model());
+						collection.add(new Model());
 						
 						expect(collection.length).to.equal(1);
 					});
@@ -651,7 +654,7 @@ describe('enyo.Collection', function () {
 							collection.add({id: 0});
 							
 							// we pre-add a model to the store
-							enyo.store.add(model);
+							Store.add(model);
 							
 							// this spy should not be called but once
 							collection.on('add', spy);
@@ -679,7 +682,7 @@ describe('enyo.Collection', function () {
 								collection.add({id: 0});
 							
 								// we pre-add a model to the store
-								enyo.store.add(model);
+								Store.add(model);
 							
 								// this spy should not be called but once
 								collection.on('add', spy);
@@ -866,7 +869,7 @@ describe('enyo.Collection', function () {
 							collection.empty({destroy: true});
 						});
 						
-						it ('should pass these options to the enyo.Model constructor when ' +
+						it ('should pass these options to the Model constructor when ' +
 							'create is true', function () {
 							var spy = sinon.spy(Model.prototype, 'parse');
 							

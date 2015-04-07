@@ -1,10 +1,18 @@
+var
+	kind = require('../../lib/kind'),
+	utils = require('../../lib/utils');
+
+var
+	CoreObject = require('../../lib/CoreObject'),
+	Control = require('../../lib/Control');
+
 describe ("ObserverSupport Mixin", function () {
 	describe ("methods", function () {
 		describe ("#addObserver", function () {
 			var obj;
 		
 			beforeEach (function () {
-				obj = new enyo.Object();
+				obj = new CoreObject();
 			});
 		
 			afterEach (function () {
@@ -22,7 +30,7 @@ describe ("ObserverSupport Mixin", function () {
 			});
 			
 			it ("should use the correct context when provided", function () {
-				var obj1 = new enyo.Object({name: "obj1"});
+				var obj1 = new CoreObject({name: "obj1"});
 				
 				obj.addObserver("someProp", function () {
 					obj.set("name", this.get("name"));
@@ -39,7 +47,7 @@ describe ("ObserverSupport Mixin", function () {
 			var obj;
 			
 			beforeEach (function () {
-				obj = new enyo.Object();
+				obj = new CoreObject();
 			});
 			
 			afterEach (function () {
@@ -57,7 +65,7 @@ describe ("ObserverSupport Mixin", function () {
 			});
 			
 			it ("should use the correct context when provided", function () {
-				var obj1 = new enyo.Object({name: "obj1"});
+				var obj1 = new CoreObject({name: "obj1"});
 				
 				obj.observe("someProp", function () {
 					obj.set("name", this.get("name"));
@@ -71,7 +79,7 @@ describe ("ObserverSupport Mixin", function () {
 		});
 		
 		describe ("#removeObserver", function () {
-			var obj = new enyo.Object();
+			var obj = new CoreObject();
 			
 			after (function () {
 				obj.destroy();
@@ -91,7 +99,7 @@ describe ("ObserverSupport Mixin", function () {
 		});
 		
 		describe ("#unobserve", function () {
-			var obj = new enyo.Object();
+			var obj = new CoreObject();
 			
 			after (function () {
 				obj.destroy();
@@ -112,7 +120,7 @@ describe ("ObserverSupport Mixin", function () {
 		});
 		
 		describe ("#notifyObservers", function () {
-			var obj = new enyo.Object();
+			var obj = new CoreObject();
 			
 			after (function () {
 				obj.destroy();
@@ -132,7 +140,7 @@ describe ("ObserverSupport Mixin", function () {
 		});
 		
 		describe ("#notify", function () {
-			var obj = new enyo.Object();
+			var obj = new CoreObject();
 			
 			after (function () {
 				obj.destroy();
@@ -155,7 +163,7 @@ describe ("ObserverSupport Mixin", function () {
 			var obj
 			
 			beforeEach (function () {
-				obj = new enyo.Object();
+				obj = new CoreObject();
 			});
 			
 			afterEach (function () {
@@ -204,7 +212,7 @@ describe ("ObserverSupport Mixin", function () {
 			var obj;
 			
 			beforeEach (function () {
-				obj = new enyo.Object();
+				obj = new CoreObject();
 			});
 			
 			afterEach (function () {
@@ -254,7 +262,7 @@ describe ("ObserverSupport Mixin", function () {
 		});
 		
 		describe ("#isObserving", function () {
-			var obj = new enyo.Object();
+			var obj = new CoreObject();
 			
 			after (function () {
 				obj.destroy();
@@ -275,7 +283,7 @@ describe ("ObserverSupport Mixin", function () {
 		});
 		
 		describe ("#enableNotificationQueue", function () {
-			var obj = new enyo.Object();
+			var obj = new CoreObject();
 			
 			after (function () {
 				obj.destroy();
@@ -293,7 +301,7 @@ describe ("ObserverSupport Mixin", function () {
 		});
 		
 		describe ("#disableNotificationQueue", function () {
-			var obj = new enyo.Object();
+			var obj = new CoreObject();
 			
 			after (function () {
 				obj.destroy();
@@ -311,7 +319,7 @@ describe ("ObserverSupport Mixin", function () {
 		});
 		
 		describe ("#removeAllObservers", function () {
-			var obj = new enyo.Object();
+			var obj = new CoreObject();
 			
 			after (function () {
 				obj.destroy();
@@ -337,8 +345,8 @@ describe ("ObserverSupport Mixin", function () {
 			describe ("array syntax", function () {
 				var ctor, obj;
 			
-				ctor = enyo.kind({
-					kind: "enyo.Object",
+				ctor = kind({
+					kind: CoreObject,
 					testObserver1: function (was, is, prop) {
 						throw new Error("testObserver1" + prop);
 					},
@@ -395,8 +403,8 @@ describe ("ObserverSupport Mixin", function () {
 			describe ("object literal syntax (deprecated)", function () {
 				var ctor, obj;
 			
-				ctor = enyo.kind({
-					kind: "enyo.Object",
+				ctor = kind({
+					kind: CoreObject,
 					testObserver1: function (was, is, prop) {
 						throw new Error("testObserver1" + prop);
 					},
@@ -453,7 +461,8 @@ describe ("ObserverSupport Mixin", function () {
 		describe ("chained observers", function () {
 			var ctor, obj;
 		
-			ctor = enyo.kind({
+			ctor = kind({
+				kind: Control,
 				chainObserver: function (was, is, path) {
 					throw new Error(path);
 				},
@@ -466,13 +475,13 @@ describe ("ObserverSupport Mixin", function () {
 					{method: "chainObserver", path: "some.nested.property"},
 					{method: "chainValueInspector", path: "broken.chain.path"}
 				],
-				some: new enyo.Object({
-					nested: new enyo.Object({
+				some: new CoreObject({
+					nested: new CoreObject({
 						property: true
 					})
 				}),
-				broken: new enyo.Object({
-					chain: new enyo.Object({
+				broken: new CoreObject({
+					chain: new CoreObject({
 						path: true
 					})
 				})
@@ -502,9 +511,9 @@ describe ("ObserverSupport Mixin", function () {
 					throw new Error(path);
 				});
 			
-				path = new enyo.Object({
-					chained: new enyo.Object({
-						moreLengthy: new enyo.Object({
+				path = new CoreObject({
+					chained: new CoreObject({
+						moreLengthy: new CoreObject({
 							path: true
 						})
 					})
@@ -526,7 +535,7 @@ describe ("ObserverSupport Mixin", function () {
 				// haha, that wasn't intentional but it's staying
 				var some = obj.get("some")
 					, fn, repl;
-				repl = new enyo.Object({
+				repl = new CoreObject({
 					property: "now it's a string"
 				});
 			
@@ -543,7 +552,7 @@ describe ("ObserverSupport Mixin", function () {
 					names = Object.keys(chains);
 				expect(names).to.be.an("array").and.have.length(2);
 				obj.destroy();
-				enyo.forEach(names, function (nom) {
+				utils.forEach(names, function (nom) {
 					var chain = chains[nom];
 					expect(chain.destroyed).to.be.true;
 					expect(chain).to.have.length(0);
