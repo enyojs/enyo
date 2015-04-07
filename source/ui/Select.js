@@ -62,7 +62,34 @@
 			* @default null
 			* @public
 			*/
-			value: null
+			value: null,
+
+			/**
+			* The size of the select box in rows.
+			* 
+			* @type {Number}
+			* @default 0
+			* @public
+			*/
+			size: 0,
+
+			/**
+			* Sets whether the enyo.Select can select multiple options
+			* 
+			* @type {Boolean}
+			* @default false
+			* @public
+			*/
+			multiple: false,
+
+			/**
+			* Sets whether the enyo.Select is disabled, or not
+			* 
+			* @type {Boolean}
+			* @default false
+			* @public
+			*/
+			disabled: false
 		},
 		
 		/**
@@ -93,8 +120,11 @@
 				if(enyo.platform.ie == 8){
 					this.setAttribute('onchange', enyo.bubbler);
 				}
-				this.change();
 				this.selectedChanged();
+				this.valueChanged();
+				this.sizeChanged();
+				this.multipleChanged();
+				this.disabledChanged();
 			};
 		}),
 
@@ -110,16 +140,38 @@
 		*/
 		selectedChanged: function () {
 			this.setNodeProperty('selectedIndex', this.selected);
+			this.set('value', this.getNodeProperty('value', this.value));
 		},
-
+		/**
+		* @private
+		*/
+		valueChanged: function() {
+			this.setNodeProperty('value', this.value);
+			this.set('selected', this.getSelected());
+		},
+		/**
+		* @private
+		*/
+		sizeChanged: function() {
+			this.setNodeProperty('size', this.size);
+		},
+		/**
+		* @private
+		*/
+		multipleChanged: function() {
+			this.setNodeProperty('multiple', this.multiple);
+		},
+		/**
+		* @private
+		*/
+		disabledChanged: function() {
+			this.setNodeProperty('disabled', this.disabled);
+		},
 		/**
 		* @private
 		*/
 		change: function () {
-			this.selected = this.getSelected();
-			if (this.hasNode()) {
-				this.set('value', this.node.value);
-			}
+			this.set('selected', this.getSelected());
 		},
 
 		/**

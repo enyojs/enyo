@@ -1,6 +1,18 @@
 enyo.kind({
 	name: "enyo.sample.SelectSample",
 	classes: "select-sample",
+	bindings: [
+		{from: '$.selectTransitionTiming.selected', to: 'timingIndex'},
+		{from: '$.selectTransitionTiming.value', to: 'timingValue'},
+		{from: '$.selectTransitionDuration.selected', to: 'durationIndex'},
+		{from: '$.selectTransitionDuration.value', to: 'durationValue'},
+		{from: '$.selectColor.selected', to: 'colorIndex'},
+		{from: '$.selectColor.value', to: 'colorValue'},
+	],
+	observers: {
+		'logSelectChanged': ['timingIndex', 'timingValue', 'durationIndex', 'durationValue',
+							'colorIndex', 'colorValue']
+	},
 	components: [
 		{content: "Transition Timing Function", classes: "section"},
 		{kind: "enyo.Select", name: "selectTransitionTiming", onchange: "selectChanged", components: [
@@ -67,5 +79,8 @@ enyo.kind({
 	},
 	selectChanged: function(inSender, inEvent) {
 		this.$.results.setContent("The \"" + inSender.getName() + "\" value is \"" + inSender.getValue() + "\".");
+	},
+	logSelectChanged: function (was, is, prop) {
+		this.log(prop, 'was', was, 'and is now', is);
 	}
 });

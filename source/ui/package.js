@@ -1,6 +1,5 @@
 enyo.depends(
 	'ui.css',
-	'resolution.js',
 	'Anchor.js',
 	'Style.js',
 	'Animator.js',

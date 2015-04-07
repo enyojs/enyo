@@ -401,13 +401,34 @@
 			// the only time we don't refresh is if the first index of the contiguous set of added
 			// models is beyond our final rendered page (possible) indices
 
-			// in the case where it does not need to refresh the existing controls it will update its
-			// measurements and page positions within the buffer so scrolling can continue properly
+			// in the case where it does not need to refresh the existing controls except the last page
+			// if the last page is not fully filled, it will be filled with added models
+			// so we should generate the last page.
+
+			// it will update its measurements and page positions within the buffer
+			// so scrolling can continue properly
 
 			// if we need to refresh, do it now and ensure that we're properly setup to scroll
 			// if we were adding to a partially filled page
 			if (props.index <= end ) this.refresh(list);
 			else {
+				// we should confirm that the page which new models are added is need to update list.metrics
+				var lastPageIndex = this.pageForIndex(list, props.index),
+					// the last page before model added
+					lastPage = list.metrics.pages[lastPageIndex],
+					sp = list.psizeProp,
+					// current page count after models added
+					pc = this.pageCount(list),
+					pageSize;
+
+				// if there is more pages after lastPage, the lastPage metric needs to be updated
+				if (lastPageIndex < pc) {
+					pageSize = this.defaultPageSize(list);
+					if (lastPage[sp] < pageSize) {
+						lastPage[sp] = pageSize;
+					}
+				}
+
 				// we still need to ensure that the metrics are updated so it knows it can scroll
 				// past the boundaries of the current pages (potentially)
 				this.adjustBuffer(list);

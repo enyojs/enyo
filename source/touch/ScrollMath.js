@@ -425,13 +425,16 @@
 		*
 		* @private
 		*/
-		stabilize: function () {
+		stabilize: function (opts) {
+			var fire = !opts || opts.fire === undefined || opts.fire;
 			var y = Math.min(this.topBoundary, Math.max(this.bottomBoundary, this.y));
 			var x = Math.min(this.leftBoundary, Math.max(this.rightBoundary, this.x));
 			if (y != this.y || x != this.x) {
 				this.y = this.y0 = y;
 				this.x = this.x0 = x;
-				this.doStabilize();
+				if (fire) {
+					this.doStabilize();
+				}
 			}
 		},
 
@@ -452,13 +455,17 @@
 		* @private
 		*/
 		drag: function (e) {
+			var dy, dx, v, h;
 			if (this.dragging) {
-				var dy = this.vertical ? e.pageY - this.my : 0;
+				v = this.canScrollY();
+				h = this.canScrollX();
+
+				dy = v ? e.pageY - this.my : 0;
 				this.uy = dy + this.py;
 				// provides resistance against dragging into overscroll
 				this.uy = this.boundaryDamping(this.uy, this.topBoundary, this.bottomBoundary, this.kDragDamping);
 				//
-				var dx = this.horizontal ? e.pageX - this.mx : 0;
+				dx = h ? e.pageX - this.mx : 0;
 				this.ux = dx + this.px;
 				// provides resistance against dragging into overscroll
 				this.ux = this.boundaryDamping(this.ux, this.leftBoundary, this.rightBoundary, this.kDragDamping);
@@ -494,11 +501,11 @@
 		*/
 		flick: function (e) {
 			var v;
-			if (this.vertical) {
+			if (this.canScrollY()) {
 				v = e.yVelocity > 0 ? Math.min(this.kMaxFlick, e.yVelocity) : Math.max(-this.kMaxFlick, e.yVelocity);
 				this.y = this.y0 + v * this.kFlickScalar;
 			}
-			if (this.horizontal) {
+			if (this.canScrollX()) {
 				v = e.xVelocity > 0 ? Math.min(this.kMaxFlick, e.xVelocity) : Math.max(-this.kMaxFlick, e.xVelocity);
 				this.x = this.x0 + v * this.kFlickScalar;
 			}
@@ -506,6 +513,7 @@
 		},
 
 		/**
+		* TODO: Refine and test newMousewheel, remove this
 		* @private
 		*/
 		mousewheel: function (e) {
@@ -528,6 +536,55 @@
 		},
 
 		/**
+		* @private
+		*/
+		newMousewheel: function (e) {
+			var wdY = (e.wheelDeltaY === undefined) ? e.wheelDelta : e.wheelDeltaY,
+				dY = wdY,
+				dX = e.wheelDeltaX,
+				canY = this.canScrollY(),
+				canX = this.canScrollX(),
+				shouldScroll = false,
+				m = 2,
+				// TODO: Figure out whether we need to port the configurable
+				// max / multiplier feature from Moonstone's implementation,
+				// and (if so) how
+				// max = 100,
+				scr = this.isScrolling(),
+				ovr = this.isInOverScroll(),
+				refY = (scr && this.endY !== null) ? this.endY : this.y,
+				refX = (scr && this.endX !== null) ? this.endX : this.x,
+				tY = refY,
+				tX = refX;
+
+			if (ovr) {
+				return true;
+			}
+
+			// If we're getting strictly vertical mousewheel events over a scroller that
+			// can only move horizontally, the user is probably using a one-dimensional
+			// mousewheel and would like us to scroll horizontally instead
+			if (dY && !dX && canX && !canY) {
+				dX = dY;
+				dY = 0;
+			}
+			
+			if (dY && canY) {
+				tY = -(refY + (dY * m));
+				shouldScroll = true;
+			}
+			if (dX && canX) {
+				tX = -(refX + (dX * m));
+				shouldScroll = true;
+			}
+
+			if (shouldScroll) {
+				this.scrollTo(tX, tY, {allowOverScroll: true});
+				return true;
+			}
+		},
+
+		/**
 		* @fires enyo.ScrollMath#onScroll
 		* @private
 		*/
@@ -540,23 +597,44 @@
 		// because does not account for additional overscroll damping.
 		
 		/**
-		* Animates a scroll to the specified position.
+		* Scrolls to the specified position.
 		*
 		* @param {Number} x - The `x` position in pixels.
 		* @param {Number} y - The `y` position in pixels.
+		* @param {Object} opts - TODO: Document. When behavior == 'instant', we skip animation.
 		* @private
 		*/
-		scrollTo: function (x, y) {
-			if (x == this.x && y == this.y) return;
-			if (y !== null) {
-				this.endY = -y;
-				this.y = this.y0 - (y + this.y0) * (1 - this.kFrictionDamping);
+		scrollTo: function (x, y, opts) {
+			var animate = !opts || opts.behavior !== 'instant',
+				allowOverScroll = opts && opts.allowOverScroll,
+				maxX = Math.abs(Math.min(0, this.rightBoundary)),
+				maxY = Math.abs(Math.min(0, this.bottomBoundary));
+
+			if (!animate || !allowOverScroll) {
+				x = Math.max(0, Math.min(x, maxX));
+				y = Math.max(0, Math.min(y, maxY));
 			}
-			if (x !== null) {
-				this.endX = -x;
-				this.x = this.x0 - (x + this.x0) * (1 - this.kFrictionDamping);
+
+			if (-x == this.x && -y == this.y) return;
+
+			if (!animate) {
+				this.doScrollStart();
+				this.setScrollX(-x);
+				this.setScrollY(-y);
+				this.doScroll();
+				this.doScrollStop();
 			}
-			this.start();
+			else {
+				if (y !== null) {
+					this.endY = -y;
+					this.y = this.y0 - (y + this.y0) * (1 - this.kFrictionDamping);
+				}
+				if (x !== null) {
+					this.endX = -x;
+					this.x = this.x0 - (x + this.x0) * (1 - this.kFrictionDamping);
+				}
+				this.start();
+			}
 		},
 
 		/**
@@ -600,6 +678,14 @@
 		*/
 		isScrolling: function () {
 			return Boolean(this.job);
+		},
+
+		canScrollX: function() {
+			return this.horizontal && this.rightBoundary < 0;
+		},
+
+		canScrollY: function() {
+			return this.vertical && this.bottomBoundary < 0;
 		},
 
 		/** 

@@ -10,7 +10,7 @@
 	    <link rel="stylesheet" href="../../node_modules/mocha/mocha.css" />
 
 		<script src="../../enyo.js" charset="utf-8"></script>
-		<script src="../../source/kernel/wip-package.js" charset="utf-8"></script>
+		<script src="../../source/2.6.0-pre.4-wip-package.js" charset="utf-8"></script>
 	</head>
 	<body>
 		<div id="mocha"></div>
@@ -44,10 +44,19 @@
 		<script src="tests/EventEmitter.js"></script>
 		<script src="tests/PriorityQueue.js"></script>
 		<script>
+			function upload() {
+				if(window.__coverage__) {
+					var xhr = new XMLHttpRequest();
+					xhr.open("post","/coverage/client", false);
+					xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+					xhr.send(JSON.stringify(__coverage__));
+				}
+			}
 			if (window.mochaPhantomJS) {
+				mocha.run = mocha.run.bind(mocha, upload);	// Hack, mochaPhantomJS.run does not accept args.  See https://github.com/metaskills/mocha-phantomjs/issues/159
 				mochaPhantomJS.run();
 			} else {
-				mocha.run();
+				mocha.run(upload);
 			}
 		</script>
 	</body>
