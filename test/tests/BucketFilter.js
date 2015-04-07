@@ -1,6 +1,8 @@
-describe('enyo.BucketFilter', function () {
-	var Collection = enyo.Collection,
-		BucketFilter = enyo.BucketFilter;
+var
+	BucketFilter = require('../../lib/BucketFilter'),
+	Collection = require('../../lib/Collection');
+
+describe('BucketFilter', function () {
 
 	describe('properties', function () {
 		

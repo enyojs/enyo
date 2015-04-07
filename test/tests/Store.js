@@ -1,21 +1,29 @@
-describe('enyo.Store', function () {
+var
+	kind = require('../../lib/kind');
+
+var
+	Store = require('../../lib/Store'),
+	Model = require('../../lib/Model');
+
+describe('Store', function () {
 	
 	describe('methods', function () {
 		
 		describe('#find', function () {
 			
 			it ('should respond to the method find', function () {
-				expect(enyo.store).to.respondTo('find');
+				expect(Store).to.respondTo('find');
 			});
 			
 			describe('@params', function () {
 				
 				describe('ctor', function () {
+					var TestModel;
 					
 					before(function () {
-						enyo.kind({
+						TestModel = kind({
 							name: 'TestModel',
-							kind: 'enyo.Model'
+							kind: Model
 						});
 					});
 					
@@ -34,15 +42,15 @@ describe('enyo.Store', function () {
 						};
 						
 						// first we test for a generic model
-						model1 = new enyo.Model({id: 12});
+						model1 = new Model({id: 12});
 						
-						expect(enyo.store.find(enyo.Model, fn, {all: false})).to.eql(model1);
+						expect(Store.find(Model, fn, {all: false})).to.eql(model1);
 						
 						// now we show it differentiating which models its filtering based on the
 						// constructor passed in
 						model2 = new TestModel({id: 12});
 						
-						expect(enyo.store.find(TestModel, fn, {all: false})).to.eql(model2);
+						expect(Store.find(TestModel, fn, {all: false})).to.eql(model2);
 						
 						model1.destroy();
 						model2.destroy();
@@ -56,7 +64,7 @@ describe('enyo.Store', function () {
 						
 						var fn = function () { return false; };
 						
-						expect(enyo.store.find(enyo.Model, fn)).to.be.an('array');
+						expect(Store.find(Model, fn)).to.be.an('array');
 						
 					});
 					
@@ -65,7 +73,7 @@ describe('enyo.Store', function () {
 						
 						var fn = function () { return false; };
 						
-						expect(enyo.store.find(enyo.Model, fn, {all: false})).to.be.undefined;
+						expect(Store.find(Model, fn, {all: false})).to.be.undefined;
 						
 					});
 					
@@ -78,7 +86,7 @@ describe('enyo.Store', function () {
 							expect(this).to.eql(ctx);
 						};
 						
-						enyo.store.find(enyo.Model, fn, {context: ctx});
+						Store.find(Model, fn, {context: ctx});
 						
 					});
 					
@@ -93,7 +101,7 @@ describe('enyo.Store', function () {
 			// really it is an alias so the only thing we test is that it exists like we say
 			// it does
 			it ('should respond to the method findLocal', function () {
-				expect(enyo.store).to.respondTo('findLocal');
+				expect(Store).to.respondTo('findLocal');
 			});
 			
 		});
