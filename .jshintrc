@@ -2,8 +2,9 @@
   "globals": {
     "global": false,
     "require": false,
-    "exports": false,
-    "module": false
+    "exports": true,
+    "module": true,
+    "module.exports": true
   },
   "es3": true,
   "evil": false,
@@ -17,7 +18,7 @@
   "laxcomma": true,
   "curly": false,
   "indent": 4,
-  "newcap": true,
+  "newcap": false,
   "undef": true,
   "expr": true,
   "unused": "vars"
