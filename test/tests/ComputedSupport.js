@@ -1,11 +1,18 @@
+var
+	kind = require('../../lib/kind');
+
+var
+	ComputedSupport = require('../../lib/ComputedSupport');
+
+
 describe ("ComputedSupport Mixin", function () {
 	describe ("Other", function () {
 		var ctor, obj;
 		
-		ctor = enyo.kind({
+		ctor = kind({
 			kind: null,
 			p1: 1,
-			mixins: [enyo.ComputedSupport],
+			mixins: [ComputedSupport],
 			computed: [
 				{method: "cp1", path: ["p1"]}
 			]
@@ -15,7 +22,7 @@ describe ("ComputedSupport Mixin", function () {
 			// ENYO-380
 			it ("should allow sub-kind to reference the same path as parent", function () {
 
-				var sub = enyo.kind({
+				var sub = kind({
 					kind: ctor,
 					computed: [
 						{method: "cp2", path: ["p1"]}
