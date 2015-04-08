@@ -10,5 +10,7 @@ enyo.depends(
 	'Filter.js',
 	'BucketFilter.js',
 	'ProgressiveFilter.js',
-	'sources'
+	'sources',
+	'FluxDispatcher.js',
+	'FluxStore.js'
 );
