@@ -15,5 +15,6 @@ enyo.depends(
 	'gesture.js',
 	'drag.js',
 	'transition.js',
-	'keymap.js'
+	'keymap.js',
+	'accessibility.js'
 );
