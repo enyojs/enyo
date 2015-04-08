@@ -20,6 +20,6 @@ enyo.depends(
 	'ui/NewDrawer.css',
 	'ui/data/VirtualDataRepeater.js',
 	'ui/data/NewDataList.js',
-	'FluxDispatcher.js',
-	'FluxStore.js'
+	'data/FluxDispatcher.js',
+	'data/FluxStore.js'
 );
