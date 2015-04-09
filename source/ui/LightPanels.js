@@ -505,8 +505,7 @@
 					(this._indexDirection > 0 && this.popOnForward && this.index > 0)) {
 					this.popPanels(this.index - this._indexDirection, this._indexDirection);
 				}
-				if (this._currentPanel.shouldSkipPostTransition && !this._currentPanel.shouldSkipPostTransition()
-					&& this._currentPanel.postTransition) {
+				if (this._currentPanel.postTransition) {
 					enyo.asyncMethod(this, function () {
 						this._currentPanel.postTransition();
 					});
