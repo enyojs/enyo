@@ -581,7 +581,7 @@
 		* Applies the transitions for moving between the current and next panel.
 		*
 		* @param {Object} nextPanel - The panel we are transitioning to.
-		* @param {[type]} [direct] - If `true`, signifies that this is a direct transition.
+		* @param {Boolean} direct - If `true`, signifies that this is a direct transition.
 		* @private
 		*/
 		applyTransitions: function (nextPanel, direct) {
