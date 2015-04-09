@@ -233,7 +233,7 @@
 		* @default true
 		* @public
 		*/
-		touchOverscroll: false,
+		touchOverscroll: true,
 
 		/**
 		* If `true`, the [scroller]{@link enyo.Scroller} will not propagate `dragstart`
