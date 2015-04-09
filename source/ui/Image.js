@@ -126,7 +126,19 @@
 			* @default 'center'
 			* @public
 			*/
-			position: 'center'
+			position: 'center',
+
+			/**
+			* This property sets the background color of the [image]{@link enyo.Image}.
+			* Additionally, you can clear background color on load event by adding onload handler.
+			* Note that onload handler will work only when no sizing value is set.
+			* Because, background image can not handle onload event. 
+			*
+			* @type {String}
+			* @default ''
+			* @public
+			*/
+			backgroundColor: ''
 		},
 
 		/**
@@ -161,12 +173,21 @@
 					delete this.attributes.onerror;
 				}
 				sup.apply(this, arguments);
-				this.altChanged();
-				this.sizingChanged();
-				this.srcChanged();
+				// We skip '' here to avoid unnecessary DOM access.
+				if (this.alt !== '') this.altChanged();
+				if (this.sizing !== '') this.sizingChanged();
+				if (this.backgroundColor !== '') this.backgroundColorChanged();
+				if (this.src !== '') this.srcChanged();
 				this.positionChanged();
 			};
 		}),
+
+		/**
+		* @private
+		*/
+		backgroundColorChanged: function () {
+			this.applyStyle('background-color', this.backgroundColor);
+		},
 
 		/**
 		* @private
