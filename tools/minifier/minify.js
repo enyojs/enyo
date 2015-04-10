@@ -49,26 +49,43 @@
 	function concatCss(sheets, doneCB) {
 		w("");
 		var blob = "";
-		var addToBlob = function(sheet, code) {
-			// for the "gathering" feature, we need to determine whether this sheet lives
-			// inside a lib directory; normalizing the path makes it easier to check, below
-			sheet = path.normalize(sheet);
-			// fix url paths
-			code = code.replace(/url\([^)]*\)/g, function(inMatch) {
-				// find the url path, ignore quotes in url string
-				var matches = /url\s*\(\s*(('([^']*)')|("([^"]*)")|([^'"]*))\s*\)/.exec(inMatch);
-				var urlPath = matches[3] || matches[5] || matches[6];
+		var addToBlob = function(sheet, codeIn) {
+			var codeOut = "";
+			var partials;
+			var partial;
+			var urlProp = "";
+			var nested;
+			var quote;
+			var i;
 
-				// handle the case url('') or url("").
-				if(!urlPath){
+			// Start new url() property
+			var startUrlProp = function() {
+				urlProp = "url(";
+				nested = 0;
+				quote = partial[0] === "'" || partial[0] === "\"" ? partial[0] : null;
+			};
+
+			// Fixes relative paths in url() property, ignores external urls and data uri's.
+			var fixUrlPath = function() {
+				var urlPath;
+				var urlPathTrimmed;
+				var relPath;
+
+				// Find url path, ignore quotes in url string
+				urlPath = urlProp.slice(4, -1);
+				urlPathTrimmed = urlPath.split(/^['"]|['"]$/)[1];
+				urlPath = urlPathTrimmed === undefined ? urlPath : urlPathTrimmed;
+
+				// Handle the case url('') or url("").
+				if (!urlPath) {
 					return "url()";
 				}
-				// skip an external url (one that starts with <protocol>: or just //, includes data:)
+				// Skip an external url (one that starts with <protocol>: or just //, includes data:)
 				if (/^([\w-]*:)|(\/\/)/.test(urlPath)) {
 					return "url('" + urlPath + "')";
 				}
 
-				// if we are gathering libs to default location, rewrite urls beneath lib folder
+				// If we are gathering libs to default location, rewrite urls beneath lib folder
 				var dstSheet = (opt.gathering && sheet.indexOf(opt.lib) == 0) ?
 					defaultLibLoc + sheet.substr(opt.lib.length) :
 					sheet;
@@ -84,8 +101,84 @@
 				console.log("urlPath:", urlPath);
 				console.log("relPath:", relPath);
 				return "url('" + relPath + "')";
-			});
-			blob += "\n/* " + path.relative(process.cwd(), sheet) + " */\n\n" + code + "\n";
+			};
+
+			// Finalize url() property
+			var finalizeUrlProp = function() {
+				// Fix url path
+				urlProp = fixUrlPath(urlProp);
+				// Add fixed urlPath and the rest of this partial
+				// to final output
+				codeOut += urlProp + partial.substr(i + 1);
+				// Clear urlProp and continue to next partial.
+				urlProp = "";
+			};
+
+			// For the "gathering" feature, we need to determine whether this sheet lives
+			// inside a lib directory; normalizing the path makes it easier to check, below
+			sheet = path.normalize(sheet);
+
+			// Start scanning incoming code for url() properties.
+			partials = codeIn.split(/url\(/ig);
+			if(codeIn.substr(0,4) === "url(") {
+				partial = partials[0];
+				startUrlProp();
+			}
+			codeOut = partials.shift();
+
+			// From this point onwards, each partial contains at least part of a url() property.
+			iteratePartials: while (partials.length) {
+				partial = partials.shift();
+
+				// If we are not already constructing a url() property, create a new one.
+				if (!urlProp.length) {
+					startUrlProp();
+				} else if(urlProp.length > 4) {
+					urlProp += "url(";
+					++nested;
+				}
+
+				// Complete url property
+				for (i = 0; i < partial.length; i++) {
+					urlProp += partial[i];
+
+					// Quoted url property string ends with and un-escaped quote, followed by a closing parenthesis.
+					if (quote &&
+						partial[i] === quote &&
+						partial[i - 1] !== "\\" &&
+						partial[i + 1] === ")") {
+						// Append closing parenthesis;
+						urlProp += partial[i + 1];
+						++i;
+						finalizeUrlProp();
+						continue iteratePartials;
+					}
+
+					// Unquoted url property string ends with an un-escaped closing parenthesis.
+					else if (!quote &&
+						nested === 0 &&
+						partial[i] === ")" &&
+						partial[i - 1] !== "\\") {
+						finalizeUrlProp();
+						continue iteratePartials;
+					}
+
+					// Intercept un-escaped nested parenthesis in unquoted url() value strings.
+					// Unbalanced parenthesis are escaped and can be ignored.
+					else if(!quote &&
+					partial[i] === "(" &&
+					partial[i - 1] !== "\\") {
+						++nested;
+					}
+					else if(!quote &&
+						partial[i] === ")" &&
+						partial[i - 1] !== "\\") {
+						--nested;
+					}
+				}
+			}
+
+			blob += "\n/* " + path.relative(process.cwd(), sheet) + " */\n\n" + codeOut + "\n";
 		};
 		// Pops one sheet off the sheets[] array, reads (and parses if less), and then
 		// recurses again from the async callback until no sheets left, then calls doneCB
