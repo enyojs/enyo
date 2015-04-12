@@ -526,6 +526,19 @@
 		},
 
 		/**
+		* Prevent taps from cascading to controls covered by the popup
+		*
+		* @private
+		*/
+		tap: enyo.inherit(function (sup) {
+			return function (sender, event) {
+				if (!this.showing) {
+					event.preventDefault();
+				}
+			};
+		}),
+
+		/**
 		* If a drag event occurs outside a [popup]{@link enyo.Popup}, hide.
 		*
 		* @private
