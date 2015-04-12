@@ -37,6 +37,7 @@
 		w("-f", "Remote source mapping: from local path");
 		w("-t", "Remote source mapping: to remote path");
 		w("-gathering:", "Gathering libs to default location, so rewrite urls accordingly");
+		w("-ignore:", "Ignores LESS parsing errors and does not halt the minification; otherwise any errors are thrown");
 		w("-h, -?, -help:", "Show this message");
 	}
 
@@ -106,7 +107,11 @@
 					var parser = new(less.Parser)({filename:sheet, paths:[path.dirname(sheet)], relativeUrls:true});
 					parser.parse(code, function (err, tree) {
 						if (err) {
-							console.error(err);
+							if (opt.ignore) {
+								console.error(err);
+							} else {
+								throw new Error("LESS parsing: " + err);
+							}
 						} else {
 							var generatedCss;
 							if (opt.ri) {
@@ -238,7 +243,8 @@
 		"mapfrom": [String, Array],
 		"mapto": [String, Array],
 		"gathering": Boolean,
-		"ri": Boolean
+		"ri": Boolean,
+		"ignore": Boolean
 	};
 
 	var shortHands = {
@@ -254,7 +260,8 @@
 		"beautify": ['--beautify'],
 		"f": ['--mapfrom'],
 		"t": ['--mapto'],
-		"ri": ['--ri']
+		"ri": ['--ri'],
+		"ignore": ['--ignore']
 	};
 
 	opt = nopt(knownOpts, shortHands, process.argv, 2);
