@@ -644,7 +644,8 @@
 		*/
 		decorateBounds: function (bounds) {
 			var x       = this.scrollLeft - bounds.left,
-				y       = this.scrollTop  - bounds.top;
+				y       = this.scrollTop  - bounds.top,
+				s       = this.$.strategy;
 			bounds.xDir = (x < 0? 1: x > 0? -1: 0);
 			bounds.yDir = (y < 0? 1: y > 0? -1: 0);
 			// we update our current bounds properties so we don't have to unnecessarily
@@ -652,13 +653,12 @@
 			this.scrollLeft = bounds.left;
 			this.scrollTop  = bounds.top;
 
-			var m = this.$.strategy;
-			if (!this.touchOverscroll && (this.vertical !== "hidden") && (this.horizontal === "hidden" || m.$.scrollMath.rightBoundary === 0)) {
+			if (!this.touchOverscroll && (this.vertical !== "hidden") && (this.horizontal === "hidden" || s.$.scrollMath.rightBoundary === 0)) {
 				if (this.scrollTop === 0 || bounds.maxTop === this.scrollTop) {
 					this.stop();
 				}
 			}
-			if (!this.touchOverscroll && (this.horizontal !== "hidden") && (this.vertical === "hidden" || m.$.scrollMath.bottomBoundary === 0)) {
+			if (!this.touchOverscroll && (this.horizontal !== "hidden") && (this.vertical === "hidden" || s.$.scrollMath.bottomBoundary === 0)) {
 				if (this.scrollLeft === 0 || bounds.maxLeft === this.scrollLeft) {
 					this.stop();
 				}
