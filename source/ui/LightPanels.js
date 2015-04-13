@@ -673,7 +673,7 @@
 						view.postTransition();
 					}
 				});
-			}, priority, 'PRE-CACHE:' + viewProps.kind);
+			}, priority || this.priority, 'PRE-CACHE:' + viewProps.kind);
 		},
 
 		/**
