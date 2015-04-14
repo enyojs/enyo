@@ -54,10 +54,10 @@
 			* The index of the active panel.
 			*
 			* @type {Number}
-			* @default 0
+			* @default -1
 			* @public
 			*/
-			index: 0,
+			index: -1,
 
 			/**
 			* Indicates whether the panels animate when transitioning.
@@ -297,7 +297,7 @@
 				this.index = newIndex;
 				this.setupTransitions(currentIndex, false);
 			} else {
-				this.set('index', newIndex, true);
+				this.set('index', newIndex);
 			}
 
 			// TODO: When pushing panels after we have gone back (but have not popped), we need to
@@ -350,7 +350,7 @@
 				this.index = targetIdx;
 				this.setupTransitions(currentIndex, false);
 			} else {
-				this.set('index', targetIdx, true);
+				this.set('index', targetIdx);
 			}
 
 			return newPanels;
