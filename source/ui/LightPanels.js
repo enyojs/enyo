@@ -292,7 +292,7 @@
 				nextPanel.postTransition();
 			}
 
-			if (!opts || opts.direct) {
+			if (opts && opts.direct) {
 				var currentIndex = this.index;
 				this.index = newIndex;
 				this.setupTransitions(currentIndex, false);
@@ -345,7 +345,7 @@
 
 			targetIdx = (opts && opts.targetIndex != null) ? opts.targetIndex : lastIndex + newPanels.length - 1;
 
-			if (!opts || opts.direct) {
+			if (opts && opts.direct) {
 				var currentIndex = this.index;
 				this.index = targetIdx;
 				this.setupTransitions(currentIndex, false);
