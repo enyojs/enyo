@@ -448,25 +448,23 @@
 		* Enqueues a view that will eventually be pre-cached at an opportunistic time.
 		*
 		* @param {String} viewProps - The properties of the view to be enqueued.
-		* @param {Number} [delay] - The delay in ms before starting the job to cache the view.
 		* @param {Number} [priority] - The priority of the job.
 		* @public
 		*/
-		enqueueView: function (viewProps, delay, priority) {
-			this.startViewCacheJob(viewProps, delay, priority);
+		enqueueView: function (viewProps, priority) {
+			this.startViewCacheJob(viewProps, priority);
 		},
 
 		/**
 		* Enqueues a set of views that will eventually be pre-cached at an opportunistic time.
 		*
 		* @param {Array} viewPropsArray - A set of views to be enqueued.
-		* @param {Number} [delay] - The delay in ms before starting the job to cache the view.
 		* @param {Number} [priority] - The priority of the job.
 		* @public
 		*/
-		enqueueViews: function (viewPropsArray, delay, priority) {
+		enqueueViews: function (viewPropsArray, priority) {
 			for (var idx = 0; idx < viewPropsArray.length; idx++) {
-				this.startViewCacheJob(viewPropsArray[idx], delay, priority);
+				this.startViewCacheJob(viewPropsArray[idx], priority);
 			}
 		},
 
@@ -660,7 +658,6 @@
 		* Starts a job to cache a given view at an opportune time.
 		*
 		* @param {String} viewProps - The properties of the view to be enqueued.
-		* @param {Number} [delay] - The delay in ms before starting the job to cache the view.
 		* @param {Number} [priority] - The priority of the job.
 		* @private
 		*/
@@ -673,7 +670,7 @@
 						view.postTransition();
 					}
 				});
-			}, priority, 'PRE-CACHE:' + viewProps.kind);
+			}, priority || this.priority, 'PRE-CACHE:' + viewProps.kind);
 		},
 
 		/**
