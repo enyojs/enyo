@@ -620,6 +620,7 @@
 			var panels = this.getPanels();
 			this._garbagePanels = panels.slice();
 			panels.length = 0;
+			this.index = -1;
 		},
 
 		/**
