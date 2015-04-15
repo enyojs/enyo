@@ -820,11 +820,11 @@
 			this.set('canScrollY', m.canScrollY());
 
 			if (b.top !== cTop || b.left !== cLeft) {
-				this.log('boom!', cTop);
-				this.scrollLeft = (b.left = cLeft);
-				this.scrollTop = (b.top = cTop);
+				b.left = cLeft;
+				b.top = cTop;
 				m.setScrollX(-cLeft);
 				m.setScrollY(-cTop);
+				this.scroll(m);
 				this.stop();
 			}
 
