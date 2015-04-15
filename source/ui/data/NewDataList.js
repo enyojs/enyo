@@ -106,25 +106,30 @@
 				dir = v ? this.yDir : this.xDir,
 				delta = this.delta,
 				cb = this.cachedBounds ? this.cachedBounds : this._getScrollBounds(),
-				mTop = v ? cb.maxTop : cb.maxLeft,
-				mMax = this.threshold.minMax,
-				mMin = mTop - (delta * 2),
+				maxVal = v ? cb.maxTop : cb.maxLeft,
+				minMax = this.threshold.minMax,
+				maxMin = maxVal - (delta * 2),
 				d, st, j;
+
 			if (dir == 1 && val > tt.max) {
 				d = val - tt.max;
 				st = Math.ceil(d / delta);
 				j = st * delta;
-				tt.max = Math.min(mTop, tt.max + j);
-				tt.min = (tt.max == mTop) ? mMin : tt.max - delta;
+				tt.max = Math.min(maxVal, tt.max + j);
+				tt.min = (tt.max == maxVal) ? maxMin : tt.max - delta;
 				this.set('first', this.first + (st * this.dim2extent));
 			}
 			else if (dir == -1 && val < tt.min) {
 				d = tt.min - val;
 				st = Math.ceil(d / delta);
 				j = st * delta;
-				tt.max = Math.max(mMax, tt.min - (j - delta));
-				tt.min = (tt.max > mMax) ? tt.max - delta : -Infinity;
+				tt.max = Math.max(minMax, tt.min - (j - delta));
+				tt.min = (tt.max > minMax) ? tt.max - delta : -Infinity;
 				this.set('first', this.first - (st * this.dim2extent));
+			}
+			if (tt.max > maxVal) {
+				tt.max = maxVal;
+				tt.min = maxMin;
 			}
 			this.positionChildren();
 		},
@@ -202,7 +207,7 @@
 		* @private
 		*/
 		modelsAdded: enyo.inherit(function (sup) {
-			return function() {
+			return function () {
 				this.calcBoundaries();
 				sup.apply(this, arguments);
 			};
@@ -212,9 +217,21 @@
 		* @private
 		*/
 		modelsRemoved: enyo.inherit(function (sup) {
-			return function() {
+			return function () {
 				this.calcBoundaries();
 				sup.apply(this, arguments);
+			};
+		}),
+
+		showingChangedHandler: enyo.inherit(function (sup) {
+			return function () {
+				if (this.needsReset) {
+					this.reset();
+				}
+				else if (this.needsRefresh) {
+					this.refresh();
+				}
+				return sup.apply(this, arguments);
 			};
 		}),
 
@@ -223,10 +240,16 @@
 		*/
 		refresh: enyo.inherit(function (sup) {
 			return function () {
-				if (arguments[1] === 'reset') {
-					this.calcBoundaries();
+				if (this.getAbsoluteShowing()) {
+					if (arguments[1] === 'reset') {
+						this.calcBoundaries();
+					}
+					this.needsRefresh = false;
+					sup.apply(this, arguments);
 				}
-				sup.apply(this, arguments);
+				else {
+					this.needsRefresh = true;
+				}
 			};
 		}),
 		
@@ -235,15 +258,23 @@
 		*/
 		reset: enyo.inherit(function (sup) {
 			return function () {
-				var v = (this.direction === 'vertical');
+				var v;
 
-				this.set('scrollTop', 0);
-				this.set('scrollLeft', 0);
-				this.set('vertical', v || 'hidden');
-				this.set('horizontal', !v || 'hidden');
-				this.calculateMetrics();
-				this.calcBoundaries();
-				sup.apply(this, arguments);
+				if (this.getAbsoluteShowing()) {
+					v = (this.direction === 'vertical');
+
+					this.set('scrollTop', 0);
+					this.set('scrollLeft', 0);
+					this.set('vertical', v ? 'auto' : 'hidden');
+					this.set('horizontal', v ? 'hidden' : 'auto');
+					this.calculateMetrics();
+					this.calcBoundaries();
+					this.needsReset = false;
+					sup.apply(this, arguments);
+				}
+				else {
+					this.needsReset = true;
+				}
 			};
 		})
 	});
