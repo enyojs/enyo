@@ -207,7 +207,7 @@
 		* @private
 		*/
 		modelsAdded: enyo.inherit(function (sup) {
-			return function() {
+			return function () {
 				this.calcBoundaries();
 				sup.apply(this, arguments);
 			};
@@ -217,7 +217,7 @@
 		* @private
 		*/
 		modelsRemoved: enyo.inherit(function (sup) {
-			return function() {
+			return function () {
 				this.calcBoundaries();
 				sup.apply(this, arguments);
 			};
