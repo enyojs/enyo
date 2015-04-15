@@ -4,13 +4,11 @@
 		_riRatio,
 		_screenType,
 		_screenTypes = [ {name: 'standard', pxPerRem: 16, width: scope.innerWidth,  height: scope.innerHeight, aspectRatioName: 'standard'} ],	// Assign one sane value in case defineScreenTypes is never run.
-		_screenTypeObject;
+		_screenTypeObject,
+		_oldScreenType;
 
 	var getScreenTypeObject = function (type) {
 		type = type || _screenType;
-		if (type == _screenType && _screenTypeObject) {
-			return _screenTypeObject;
-		}
 		return _screenTypes.filter(function (elem) {
 			return (type == elem.name);
 		})[0];
@@ -85,6 +83,13 @@
 		*/
 		updateScreenBodyClasses: function (type) {
 			type = type || _screenType;
+			if (_oldScreenType) {
+				enyo.dom.removeClass(document.body, 'enyo-res-' + _oldScreenType.toLowerCase());
+				var oldScrObj = getScreenTypeObject(_oldScreenType);
+				if (oldScrObj.aspectRatioName) {
+					enyo.dom.removeClass(document.body, 'enyo-aspect-ratio-' + oldScrObj.aspectRatioName.toLowerCase());
+				}
+			}
 			if (type) {
 				enyo.dom.addBodyClass('enyo-res-' + type.toLowerCase());
 				var scrObj = getScreenTypeObject(type);
@@ -228,6 +233,7 @@
 		*/
 		// Later we can wire this up to a screen resize event so it doesn't need to be called manually.
 		init: function () {
+			_oldScreenType = _screenType;
 			_screenType = this.getScreenType();
 			_screenTypeObject = getScreenTypeObject();
 			this.updateScreenBodyClasses();
