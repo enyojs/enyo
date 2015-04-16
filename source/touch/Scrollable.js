@@ -8,6 +8,16 @@
 			farthest: true
 		};
 
+	function calcNodeVisibility (nodePos, nodeSize, scrollPos, scrollSize) {
+		return (nodePos >= scrollPos && nodePos + nodeSize <= scrollPos + scrollSize)
+			? 0
+			: nodePos - scrollPos > 0
+				? 1
+				: nodePos - scrollPos < 0
+					? -1
+					: 0;
+	}
+
 	/**
 	* Doc
 	*
@@ -304,25 +314,30 @@
 			offsetWidth    = nodeBounds.width;
 
 			// 0: currently visible, 1: right of viewport, -1: left of viewport
-			xDir = (offsetLeft >= scrollBounds.left && offsetLeft + offsetWidth <= scrollBounds.left + scrollBounds.clientWidth)
-				? 0
-				: offsetLeft - scrollBounds.left > 0
-					? 1
-					: offsetLeft - scrollBounds.left < 0
-						? -1
-						: 0;
+			xDir = calcNodeVisibility(offsetLeft, offsetWidth, scrollBounds.left, scrollBounds.clientWidth);
 
 			// 0: currently visible, 1: below viewport, -1: above viewport
-			yDir = (offsetTop >= scrollBounds.top && offsetTop + offsetHeight <= scrollBounds.top + scrollBounds.clientHeight)
-				? 0
-				: offsetTop - scrollBounds.top > 0
-					? 1
-					: offsetTop - scrollBounds.top < 0
-						? -1
-						: 0;
+			yDir = calcNodeVisibility(offsetTop, offsetHeight, scrollBounds.top, scrollBounds.clientHeight);
 
-			scrollBounds.xDir = xDir;
-			scrollBounds.yDir = yDir;
+			// If we're already scrolling and the direction the node is in is not the same as the direction we're scrolling,
+			// we need to recalculate based on where the scroller will end up, not where it is now. This is to handle the
+			// case where the node is currently visible but won't be once the scroller settles.
+			//
+			// NOTE: Currently setting block = 'nearest' whenever we make this correction to avoid some nasty jumpiness
+			// when 5-way moving horizontally in a vertically scrolling grid layout in Moonstone. Not sure this is the
+			// right fix.
+			if (this.isScrolling) {
+				if (this.xDir !== xDir) {
+					scrollBounds.left = this.destX;
+					xDir = calcNodeVisibility(offsetLeft, offsetWidth, scrollBounds.left, scrollBounds.clientWidth);
+					block = 'nearest';
+				}
+				if (this.yDir !== yDir) {
+					scrollBounds.top = this.destY;
+					yDir = calcNodeVisibility(offsetTop, offsetHeight, scrollBounds.top, scrollBounds.clientHeight);
+					block = 'nearest';
+				}
+			}
 
 			switch (xDir) {
 				case 0:
@@ -348,7 +363,7 @@
 						x = offsetLeft - scrollBounds.clientWidth + offsetWidth;
 					} else {
 						x = offsetLeft;
-						// If nodeStyle exists, subtract the _marginLeft_ to the scroll value.
+						// If nodeStyle exists, subtract the _marginLeft_ from the scroll value.
 						x -= enyo.dom.getComputedBoxValue(node, 'margin', 'left');
 					}
 					break;
@@ -364,7 +379,7 @@
 					// far enough to get the control into view.
 					if (block === 'farthest' || block === 'start' || offsetHeight > scrollBounds.clientHeight) {
 						y = offsetTop;
-						// If nodeStyle exists, add the _marginBottom_ to the scroll value.
+						// If nodeStyle exists, subtract the _marginTop_ from the scroll value.
 						y -= enyo.dom.getComputedBoxValue(node, 'margin', 'top');
 					} else {
 						y = offsetTop - scrollBounds.clientHeight + offsetHeight;
@@ -380,7 +395,7 @@
 						y = offsetTop - scrollBounds.clientHeight + offsetHeight;
 					} else {
 						y = offsetTop;
-						// If nodeStyle exists, subtract the _marginTop_ to the scroll value.
+						// If nodeStyle exists, subtract the _marginBottom_ from the scroll value.
 						y -= enyo.dom.getComputedBoxValue(node, 'margin', 'bottom');
 					}
 					break;
@@ -608,6 +623,9 @@
 					// d = (dx * dx) + (dy + dy);
 				this.xDir = (dx < 0? 1: dx > 0? -1: 0);
 				this.yDir = (dy < 0? 1: dy > 0? -1: 0);
+
+				this.destX = -sender.endX;
+				this.destY = -sender.endY;
 
 				this.updateScrollability(x, y);
 
