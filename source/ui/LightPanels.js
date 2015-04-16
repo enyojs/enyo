@@ -130,16 +130,7 @@
 			* @default 'forwards'
 			* @public
 			*/
-			direction: 'forwards',
-
-			/**
-			* The default priority for view caching jobs.
-			*
-			* @type {Number}
-			* @default enyo.Priorities.SOMETIME
-			* @public
-			*/
-			priority: enyo.Priorities.SOMETIME
+			direction: 'forwards'
 		},
 
 		/**
@@ -670,7 +661,7 @@
 						view.postTransition();
 					}
 				});
-			}, priority || this.priority, 'PRE-CACHE:' + viewProps.kind);
+			}, priority || this.defaultPriority, 'PRE-CACHE:' + viewProps.kind);
 		},
 
 		/**

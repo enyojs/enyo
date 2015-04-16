@@ -34,6 +34,15 @@
 		managed: false,
 
 		/**
+		* The default priority for added tasks.
+		*
+		* @type {Number}
+		* @default enyo.Priorities.SOMETIME
+		* @public
+		*/
+		defaultPriority: enyo.Priorities.SOMETIME,
+
+		/**
 		* @method
 		* @private
 		*/
