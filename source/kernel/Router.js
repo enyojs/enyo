@@ -2,7 +2,7 @@
 
 	/**
 	* Any instance of a router will be referenced here for the global hash change handler.
-	* 
+	*
 	* @private
 	*/
 	var listeners = [];
@@ -10,7 +10,7 @@
 	/**
 	* This is the intended global `window.hashchange` event handler. If another handler is
 	* arbitrarily registered for this event, then it will not fire.
-	* 
+	*
 	* @private
 	*/
 	var hashDidChange = function (hash) {
@@ -37,7 +37,7 @@
 	/**
 	* All of our actively-supported browsers support this method of registering
 	* for `hashchange` events.
-	* 
+	*
 	* @private
 	*/
 	enyo.ready(function () {
@@ -87,7 +87,7 @@
 	* be mapped to an object, if possible.
 	*
 	* Note that, currently, only letters and numbers are supported in dynamic routes.
-	* 
+	*
 	* @class enyo.Router
 	* @extends enyo.Controller
 	* @public
@@ -106,7 +106,7 @@
 		/**
 		* If `true`, the router will respond to hash changes or internal events. If this flag is set
 		* to `false`, it will stop responding. This may be changed at any time.
-		* 
+		*
 		* @type {Boolean}
 		* @default true
 		* @public
@@ -118,7 +118,7 @@
 		* nor be able to trigger them. Instead, the router may be used internally to
 		* maintain or trigger state changes in an application without changing
 		* location.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -129,7 +129,7 @@
 		* Set this to `true` to force the current browser location to a particular
 		* path on startup. This flag will be ignored if
 		* [triggerOnStart]{@link enyo.Router#triggerOnStart} is `false`.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -142,7 +142,7 @@
 		* [routes]{@link enyo.Router#routes} array with a special `default: true` flag set. For
 		* any unmatched hash changes, this route will be executed and passed the path that was not
 		* matched.
-		* 
+		*
 		* @type {Object}
 		* @default null
 		* @public
@@ -152,7 +152,7 @@
 		/**
 		* By default, when a router is created, it will attempt to trigger the correct route for the
 		* current browser location. Set this flag to `false` to prevent this behavior.
-		* 
+		*
 		* @type {Boolean}
 		* @default true
 		* @public
@@ -162,7 +162,7 @@
 		/**
 		* The router will attempt to track history based on the events that have been generated
 		* through it. This allows the usage of the browser's 'Back' and 'Forward' buttons.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -177,7 +177,7 @@
 		* (for static and dynamic paths), an optional `context` (for the `handler`),
 		* or a `default` Boolean `true`|`false` value indicating whether the handler
 		* should be used when no other route can handle the `hashchange` event.
-		* 
+		*
 		* @example
 		* routes: [
 		*     {path: 'users/:userName', handler: 'loadUser'},
@@ -187,7 +187,7 @@
 		*     {path: 'home', handler: 'homeScreen', default: true},
 		*     {path: '', handler: 'handleBlankRoute'}
 		* ]
-		* 
+		*
 		* @type {Array}
 		* @public
 		*/
@@ -223,7 +223,7 @@
 
 		// ...........................
 		// COMPUTED PROPERTIES
-		
+
 		computed: [
 			{method: 'location', path: '_current', config: {cached: true}},
 			{method: 'defaultPath'}
@@ -344,7 +344,7 @@
 					this._history.shift();
 					// we shift the requested location off the stack
 					// but reapply it
-					this.set('location', this._history.shift());
+					this.location(this._history.shift());
 				}
 			}
 		},

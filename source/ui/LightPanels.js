@@ -54,10 +54,10 @@
 			* The index of the active panel.
 			*
 			* @type {Number}
-			* @default 0
+			* @default -1
 			* @public
 			*/
-			index: 0,
+			index: -1,
 
 			/**
 			* Indicates whether the panels animate when transitioning.
@@ -292,12 +292,12 @@
 				nextPanel.postTransition();
 			}
 
-			if (!opts || opts.direct) {
+			if (opts && opts.direct) {
 				var currentIndex = this.index;
 				this.index = newIndex;
 				this.setupTransitions(currentIndex, false);
 			} else {
-				this.set('index', newIndex, true);
+				this.set('index', newIndex);
 			}
 
 			// TODO: When pushing panels after we have gone back (but have not popped), we need to
@@ -345,12 +345,12 @@
 
 			targetIdx = (opts && opts.targetIndex != null) ? opts.targetIndex : lastIndex + newPanels.length - 1;
 
-			if (!opts || opts.direct) {
+			if (opts && opts.direct) {
 				var currentIndex = this.index;
 				this.index = targetIdx;
 				this.setupTransitions(currentIndex, false);
 			} else {
-				this.set('index', targetIdx, true);
+				this.set('index', targetIdx);
 			}
 
 			return newPanels;
@@ -448,25 +448,23 @@
 		* Enqueues a view that will eventually be pre-cached at an opportunistic time.
 		*
 		* @param {String} viewProps - The properties of the view to be enqueued.
-		* @param {Number} [delay] - The delay in ms before starting the job to cache the view.
 		* @param {Number} [priority] - The priority of the job.
 		* @public
 		*/
-		enqueueView: function (viewProps, delay, priority) {
-			this.startViewCacheJob(viewProps, delay, priority);
+		enqueueView: function (viewProps, priority) {
+			this.startViewCacheJob(viewProps, priority);
 		},
 
 		/**
 		* Enqueues a set of views that will eventually be pre-cached at an opportunistic time.
 		*
 		* @param {Array} viewPropsArray - A set of views to be enqueued.
-		* @param {Number} [delay] - The delay in ms before starting the job to cache the view.
 		* @param {Number} [priority] - The priority of the job.
 		* @public
 		*/
-		enqueueViews: function (viewPropsArray, delay, priority) {
+		enqueueViews: function (viewPropsArray, priority) {
 			for (var idx = 0; idx < viewPropsArray.length; idx++) {
-				this.startViewCacheJob(viewPropsArray[idx], delay, priority);
+				this.startViewCacheJob(viewPropsArray[idx], priority);
 			}
 		},
 
@@ -505,8 +503,7 @@
 					(this._indexDirection > 0 && this.popOnForward && this.index > 0)) {
 					this.popPanels(this.index - this._indexDirection, this._indexDirection);
 				}
-				if (this._currentPanel.shouldSkipPostTransition && !this._currentPanel.shouldSkipPostTransition()
-					&& this._currentPanel.postTransition) {
+				if (this._currentPanel.postTransition) {
 					enyo.asyncMethod(this, function () {
 						this._currentPanel.postTransition();
 					});
@@ -623,6 +620,7 @@
 			var panels = this.getPanels();
 			this._garbagePanels = panels.slice();
 			panels.length = 0;
+			this.index = -1;
 		},
 
 		/**
@@ -660,7 +658,6 @@
 		* Starts a job to cache a given view at an opportune time.
 		*
 		* @param {String} viewProps - The properties of the view to be enqueued.
-		* @param {Number} [delay] - The delay in ms before starting the job to cache the view.
 		* @param {Number} [priority] - The priority of the job.
 		* @private
 		*/
@@ -673,7 +670,7 @@
 						view.postTransition();
 					}
 				});
-			}, priority, 'PRE-CACHE:' + viewProps.kind);
+			}, priority || this.priority, 'PRE-CACHE:' + viewProps.kind);
 		},
 
 		/**

@@ -68,7 +68,7 @@
 					if (c) {
 						// this.log(this.id, f, n, c.index, idx);
 
-						if (c.model === m) continue;
+						if (c.model === m && c.index === idx) continue;
 
 						sc = c.selectedClass || 'selected';
 						ci[c.index] = null;
