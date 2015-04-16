@@ -78,7 +78,7 @@
 		published: {
 
 			/**
-			* @name enyo.FluxStore.mergeRoot
+			* @name enyo.FluxStore.MergeRoot
 			*
 			* When a source sends data to the store,
 			* should the data root have the new data
@@ -89,7 +89,7 @@
 			* @default true
 			*
 			*/
-			mergeRoot: true
+			MergeRoot: true
 		},
 
 		/**
@@ -99,8 +99,11 @@
 			return function(){
 				sup.apply(this, arguments);
 				if(enyo.FluxDispatcher) {
-					//subscribe the store to the dispatcher
+					//id the store with the dispatcher
 					this.id = enyo.FluxDispatcher.subscribe();
+
+					//if the store has an update method, subscribe to payload updates
+					if(this.update) this.updateID = enyo.FluxDispatcher.subscribe(this.id, enyo.bindSafely(this, this.update));
 				}
 			};
 		}),
@@ -115,7 +118,7 @@
 		* @private
 		*/
 		add: function (data, opts) {
-			if(this.mergeRoot) {
+			if(this.MergeRoot) {
 				update(this.data, data);
 				return;
 			}
