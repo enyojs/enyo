@@ -226,18 +226,25 @@
 		* @private
 		*/
 		childSize: function (list) {
-			if (!list.fixedChildSize) {
-				var pageIndex = list.$.page1.index,
+			if (!list.fixedChildSize || !list.childSize) {
+				var page = list.$.page1,
 					sizeProp  = list.psizeProp,
 					n         = list.$.page1.node || list.$.page1.hasNode(),
 					size, props;
-				if (pageIndex >= 0 && n) {
-					props = list.metrics.pages[pageIndex];
-					size  = props? props[sizeProp]: 0;
-					list.childSize = Math.floor(size / (n.children.length || 1));
+				if (page.index >= 0 && n) {
+					// if indexed page was not generated ever, it will return 'undefined'
+					props = list.metrics.pages[page.index];
+					if (!props) {
+						page.start = page.end = 0;
+						this.updatePage(list, page);
+						list.childSize = page.getBounds()[sizeProp];
+					} else {
+						size  = props[sizeProp];
+						list.childSize = Math.floor(size / (n.children.length || 1));
+					}
 				}
 			}
-			return list.fixedChildSize || list.childSize || (list.childSize = 100); // we have to start somewhere
+			return list.fixedChildSize || list.childSize;
 		},
 
 		/**
