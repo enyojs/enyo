@@ -1647,7 +1647,7 @@
 
 		if (props.style) {
 			if (instance) {
-				str = (proto.style ? (proto.style + ';') : '') + (props.style + ';');
+				str = (proto.style ? proto.style : '') + props.style;
 				proto.style = Control.normalizeCssStyleString(str);
 			} else {
 				str = proto.kindStyle ? proto.kindStyle : '';
