@@ -1,29 +1,109 @@
 (function (enyo, scope) {
+
+	var vdrBench = {};
+
+	function getBench (inst) {
+		var k = inst.kind;
+
+		return vdrBench[k] || (vdrBench[k] = enyo.dev.bench({name: k, logging: false, autoStart: false}));
+	}
+
+	window.vdrReport = function () {
+		for (var k in vdrBench) {
+			enyo.dev.report(k);
+		}
+	};
+
+	window.vdrClear = function () {
+		for (var k in vdrBench) {
+			enyo.dev.clear(k);
+			enyo.dev.clear(k);
+		}
+	};
+
 	enyo.kind({
 		name: 'enyo.VirtualDataRepeater',
 		kind: 'enyo.DataRepeater',
 		numItems: 10,
 		first: 0,
 		reorderNodes: false,
-		
+
 		reset: function () {
-			this.orderedChildren = [],
-			this.childIndex = {},
+			this.init();
 			this.destroyClientControls();
 			this.setExtent();
-			this._last = Math.min(this.numItems, this.collection.length) - 1;
-			this.doIt();
-			this.hasReset = true;
 		},
 
-		setExtent: function() {
-			this.first = 0;
+		init: function () {
+			this.orderedChildren = [],
+			this.orderedChildren_alt = [],
+			this.childrenByIndex = {},
+			this.orderedModels = [],
+			this.orderedModels_alt = [],
+			this.needed = [],
+			this.bullpen = [],
+			this.hasInitialized = true;
+		},
+
+		_tempLogOC: function() {
+			var o = this.orderedChildren;
+
+			if (o) {
+				return o.reduce(function(cur, child) {
+					return cur + child.index + ' ';
+				}, '');
+			}
+		},
+
+		setExtent: function(first, numItems) {
+			var pf = this.first,
+				pn = this.numItems,
+				df, dn;
+
+			// if (this.id.match(/Row2_r/)) this.log(this.id, 'pre', this._tempLogOC());
+
+			if (typeof first === 'number') {
+				this.first = first;
+			}
+
+			if (typeof numItems === 'number') {
+				this.numItems = numItems;
+			}
+
+			if (this.collection) {
+				this.stabilizeExtent();
+
+				if (this.hasInitialized/* && this.hasRendered*/) {
+					df = this.first - pf;
+					dn = this.numItems - pn;
+
+					// if (this.id.match(/Row2_r/)) this.log(this.id, 'diff', df, dn);
+
+					// this.adjustHead(df, dn);
+				}
+				else {
+					this.init();
+				}
+
+				// TODO: Figure out if we need to guard this...
+				// What happens if it's called before we've rendered?
+				// if (this.id.match(/Row2_r/)) this.log(this.id, 'post', this._tempLogOC());
+				this.doIt();
+			}
+
+			if (this.first !== pf) {
+				this.notify('first', pf, this.first);
+			}
+
+			if (this.numItems !== pn) {
+				this.notify('numItems', pn, this.numItems);
+			}
 		},
 		
 		refresh: function (immediate) {
-			if (!this.hasReset) return this.reset();
+			if (!this.hasInitialized) return this.reset();
 
-			this.stabilizeWindow();
+			this.stabilizeExtent();
 
 			var refresh = this.bindSafely(function() {
 				this.doIt();
@@ -40,19 +120,119 @@
 		},
 
 		childForIndex: function(idx) {
-			return this.childIndex[idx];
+			return this.childrenByIndex[idx];
 		},
 
-		doIt: function(immediate) {
+		childForModel: function(model) {
+			var idx = this.orderedModels.indexOf(model);
+			return this.orderedChildren[idx];
+		},
+
+		assignChild: function(model, index, child) {
+			var s = this.isSelected(model),
+				sc = child.selectedClass || 'selected',
+				spc;
+
+			// TODO: Something better. Shouldn't have
+			// Spotlight-specific code here.
+			spc = enyo.Spotlight && enyo.Spotlight.getCurrent();
+			if (spc && child === spc && child.model !== model) {
+				enyo.Spotlight.unspot;
+			}
+
+			child.set('model', model);
+			child.set('index', index);
+			child.set('selected', s);
+			child.show();
+
+			child.addRemoveClass(sc, s);
+			child.removeClass('enyo-vdr-first');
+			child.removeClass('enyo-vdr-last');
+		},
+
+		doIt: function() {
+			var bench = this.bench || (this.bench = getBench(this));
+			bench.start();
+
 			var dd = this.get('data'),
 				f = this.first,
 				o = this.orderedChildren,
-				ci = this.childIndex,
+				o2 = this.orderedChildren_alt,
+				om = this.orderedModels,
+				om2 = this.orderedModels_alt,
 				n = this.numItems,
-				e = Math.max(n, o.length),
-				sp, i, idx, c, m, s, sc, l, ln;
+				needed = this.needed,
+				b = this.bullpen,
+				i, idx, m, ci, c, nNeeded, j, ln;
 
-			// TODO: Something better. Shouldn't have
+			for (i = 0; i < n; ++i) {
+				idx = f + i;
+				m = dd.at(idx);
+				if (m) {
+					ci = om.indexOf(m);
+					if (ci >= 0) {
+						c = o[ci];
+						o.splice(ci, 1);
+						om.splice(ci, 1);
+						o2.push(c);
+						c.set('index', idx);
+					}
+					else {
+ 						o2.push(null);
+ 						needed.push(i);
+					}
+					om2.push(m);
+				}
+				else {
+					break;
+				}
+			}
+
+			nNeeded = needed.length;
+
+			for (j = 0; j < nNeeded; ++j) {
+				i = needed[j];
+				idx = f + i;
+				m = dd.at(idx);
+				c = om.pop() && o.pop() || b.pop();
+				if (c) {
+					this.assignChild(m, idx, c);
+				}
+				else {
+					c = this.createComponent({model: m});
+					this.assignChild(m, idx, c);
+					// TODO: Rethink child lifecycle hooks (currently deploy / update / retire)
+					if (typeof this.deployChild === 'function') this.deployChild(c);
+					c.render();
+				}
+				o2[i] = c;
+			}
+
+			needed.length = 0;
+
+			while (o.length) {
+				c = om.pop() && o.pop();
+				c.set('model', null);
+				c.hide();
+				b.push(c);
+			}
+
+			this.orderedChildren = o2;
+			this.orderedChildren_alt = o;
+			this.orderedModels = om2;
+			this.orderedModels_alt = om;
+
+			ln = o2.length;
+			if (ln) {
+				o2[0].addClass('enyo-vdr-first');
+				o2[ln - 1].addClass('enyo-vdr-last');
+				
+				if (typeof this.positionChildren === 'function') this.positionChildren();
+			}
+
+			bench.stop();
+			
+			/*// TODO: Something better. Shouldn't have
 			// Spotlight-specific code here.
 			if (enyo.Spotlight) {
 				sp = enyo.Spotlight.getCurrent();
@@ -66,7 +246,7 @@
 				if (m) {
 					s = this.isSelected(m);
 					if (c) {
-						// this.log(this.id, f, n, c.index, idx);
+						if (this.id.match(/Row2_r/)) this.log(this.id, f, n, c.index, idx);
 
 						if (c.model === m && c.index === idx) continue;
 
@@ -111,7 +291,7 @@
 				o[ln - 1].addClass('enyo-vdr-last');
 				
 				if (typeof this.positionChildren === 'function') this.positionChildren();
-			}
+			}*/
 		},
 
 		fwd: function() {
@@ -122,21 +302,22 @@
 			this.set('first', this.first - 1);
 		},
 
-		adjustHead: function(d) {
+		adjustHead: function(df, dn) {
 			var n = this.numItems,
 				o = this.orderedChildren,
 				m;
 
 			if (o) {
-				if (0 < d && d < n) {
-					m = o.splice(d);
+				if (0 < df && df < n) {
+
+					m = o.splice(df);
 					if (this.reorderNodes) {
 						this.moveNodesDown(o);
 					}
 					this.orderedChildren = m.concat(o);
 				}
-				else if (0 > d && -d < n) {
-					m = o.splice(n + d);
+				else if (0 > df && -df < n) {
+					m = o.splice(n + df);
 					if (this.reorderNodes) {
 						this.moveNodesUp(m);
 					}
@@ -145,17 +326,32 @@
 			}
 		},
 
+		set: enyo.inherit(function (sup) {
+			return function (prop, val) {
+				if (prop === 'first') {
+					this.setExtent(val);
+					return this;
+				}
+				if (prop === 'numItems') {
+					this.setExtent(null, val);
+					return this;
+				}
+				return sup.apply(this, arguments);
+			};
+		}),
+
 		firstChanged: function(prev) {
-			this.stabilizeWindow();
+			// this.log(arguments);
+			/*this.stabilizeExtent();
 
 			if (this.hasRendered) {
 				this.adjustHead(this.first - prev);
 
 				this.refresh(true);
-			}
+			}*/
 		},
 
-		stabilizeWindow: function() {
+		stabilizeExtent: function() {
 			var f = this.first,
 				n = this.numItems,
 				c = this.collection,
@@ -191,6 +387,7 @@
 		},*/
 
 		numItemsChanged: function(prev) {
+			// this.log(arguments);
 			/*var f = this.first,
 				n = this.numItems,
 				c = this.collection,
@@ -212,9 +409,9 @@
 
 				this.refresh();
 			}*/
-			if (this.data && this.hasRendered && this.hasReset) {
+			/*if (this.data && this.hasRendered) {
 				this.refresh(true);
-			}
+			}*/
 		},
 
 		moveNodesDown: function(nodes) {
@@ -240,7 +437,7 @@
 		/**
 		* @private
 		*/
-		modelsRemoved: enyo.inherit( function (sup) {
+		/*modelsRemoved: enyo.inherit( function (sup) {
 			return function (sender, e, props) {
 				var m = props.models,
 					lo = m.low,
@@ -257,22 +454,22 @@
 							i--;
 						}
 						if (d) this.adjustHead(d);
-						/*for (; i >= 0; i--) {
-							if (ii[i] <= f) {
-								d++
-							}
-							else {
-								break;
-							}
-						}
-						if (d) {
-							this.adjustChildren(d);
-						}*/
+						// for (; i >= 0; i--) {
+						// 	if (ii[i] <= f) {
+						// 		d++
+						// 	}
+						// 	else {
+						// 		break;
+						// 	}
+						// }
+						// if (d) {
+						// 	this.adjustChildren(d);
+						// }
 					}
 					sup.apply(this, arguments);
 				}
 			};
-		}),
+		}),*/
 
 		/**
 		* @private

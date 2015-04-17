@@ -94,7 +94,10 @@
 			this.size = s1;
 			this.size2 = s2;
 
-			this.set('numItems', num);
+			// We don't call the setter here, because doing so would trigger a
+			// redundant and expensive call do doIt(). This approach should be fine
+			// as long as calculateMetrics() is called only by reset().
+			this.numItems = num;
 		},
 		/**
 		* @private
