@@ -128,8 +128,14 @@
 				this.set('first', this.first - (st * this.dim2extent));
 			}
 			if (tt.max > maxVal) {
-				tt.max = maxVal;
-				tt.min = maxMin;
+				if (maxVal < minMax) {
+					tt.max = minMax;
+					tt.min = -Infinity;
+				}
+				else {
+					tt.max = maxVal;
+					tt.min = maxMin;
+				}
 			}
 			this.positionChildren();
 		},
