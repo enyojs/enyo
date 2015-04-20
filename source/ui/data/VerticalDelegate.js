@@ -399,6 +399,10 @@
 		* @private
 		*/
 		modelsAdded: function (list, props) {
+			// new added models could have different childSize.
+			if (list.childSize) {
+				list.childSize = null;
+			}
 
 			// if the list has not already reset, reset
 			if (!list.hasReset) return this.reset(list);
