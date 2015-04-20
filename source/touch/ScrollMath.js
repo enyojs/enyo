@@ -607,12 +607,12 @@
 		scrollTo: function (x, y, opts) {
 			var animate = !opts || opts.behavior !== 'instant',
 				allowOverScroll = opts && opts.allowOverScroll,
-				maxX = Math.abs(Math.min(0, this.rightBoundary)),
-				maxY = Math.abs(Math.min(0, this.bottomBoundary));
+				minX = Math.min(0, this.rightBoundary),
+				minY = Math.min(0, this.bottomBoundary);
 
 			if (!animate || !allowOverScroll) {
-				x = Math.max(0, Math.min(x, maxX));
-				y = Math.max(0, Math.min(y, maxY));
+				x = Math.max(0, Math.max(x, minX));
+				y = Math.max(0, Math.max(y, minY));
 			}
 
 			if (-x == this.x && -y == this.y) return;
