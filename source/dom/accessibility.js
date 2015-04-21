@@ -26,6 +26,24 @@
 			accessibilityHint: '',
 
 			/**
+			* AccessibilityAlert is for alert message or page description.
+			* If accessibilityAlert is true, aria role will be set to "alert" and 
+			* screen reader will automatically reads content or accessibilityLabel
+			* regardless focus.
+			* Note that if you use accessibilityAlert, previous role will be
+			* replaced with "alert" role.
+			*
+			* Range: [`true`, `false`]
+			* - true: screen reader automatically reads label regardless focus.
+			* - false: screen reader reads label with focus.
+			*
+			* @type {Boolean}
+			* @default false
+			* @public
+			*/
+			accessibilityAlert: false,
+
+			/**
 			* @method
 			* @private
 			*/
@@ -46,6 +64,10 @@
 
 				if (this.accessibilityHint) {
 					this.accessibilityHintChanged();
+				}
+
+				if (this.accessibilityAlert) {
+					this.accessibilityAlertChanged();
 				}
 			},
 
@@ -151,6 +173,46 @@
 				} else {
 					this.setAttribute('tabindex', this.accessibilityHint? 0 : null);
 					this.setAttribute('aria-label', this.accessibilityHint? this.accessibilityHint : null);
+				}
+			},
+
+			/**
+			* Get the accessibilityAlert value true or false.
+			*
+			* @returns {Boolean} return accessibilityAlert status.
+			* @public
+			*/
+			getAccessibilityAlert: function () {
+				return this.accessibilityAlert;
+			},
+
+			/**
+			* Set the accessibilityAlert to true or false.
+			* If accessibilityAlert is true, screen reader will automatically reads
+			* content or accessibilityLabel regardless focus.
+			*
+			* @param {Boolean} accessibilityAlert - if true, screen reader reads content automatically.
+			* @returns {this} callee for chaining.
+			* @public
+			*/
+			setAccessibilityAlert: function (accessibilityAlert) {
+				var was = this.accessibilityAlert;
+				this.accessibilityAlert = accessibilityAlert;
+
+				if (was != accessibilityAlert) {
+					this.notify('accessibilityAlert', was, accessibilityAlert);
+				}
+				return this;
+			},
+
+			/**
+			* @private
+			*/
+			accessibilityAlertChanged: function () {
+				if (this.accessibilityAlert) {
+					this.setAttribute('role', 'alert');
+				} else {
+					this.setAttribute('role', null);
 				}
 			}
 		});
