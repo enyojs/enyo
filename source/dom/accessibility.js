@@ -27,8 +27,11 @@
 
 			/**
 			* AccessibilityAlert is for alert message or page description.
-			* If accessibilityAlert is true, screen reader will automatically reads
-			* content or accessibilityLabel regardless focus.
+			* If accessibilityAlert is true, aria role will be set to "alert" and 
+			* screen reader will automatically reads content or accessibilityLabel
+			* regardless focus.
+			* Note that if you use accessibilityAlert, previous role will be
+			* replaced with "alert" role.
 			*
 			* Range: [`true`, `false`]
 			* - true: screen reader automatically reads label regardless focus.
