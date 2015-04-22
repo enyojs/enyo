@@ -159,6 +159,7 @@
 				o = this.orderedChildren,
 				o2 = this.orderedChildren_alt,
 				om = this.orderedModels,
+				omL = om.length,
 				om2 = this.orderedModels_alt,
 				n = this.numItems,
 				needed = this.needed,
@@ -169,7 +170,7 @@
 				idx = f + i;
 				m = dd.at(idx);
 				if (m) {
-					ci = om.indexOf(m);
+					ci = omL ? om.indexOf(m) : -1;
 					if (ci >= 0) {
 						c = o[ci];
 						o.splice(ci, 1);
@@ -178,7 +179,6 @@
 						c.set('index', idx);
 					}
 					else {
- 						o2.push(null);
  						needed.push(i);
 					}
 					om2.push(m);
@@ -193,7 +193,7 @@
 			for (j = 0; j < nNeeded; ++j) {
 				i = needed[j];
 				idx = f + i;
-				m = dd.at(idx);
+				m = om2[i];
 				c = om.pop() && o.pop() || b.pop();
 				if (c) {
 					this.assignChild(m, idx, c);
@@ -205,7 +205,7 @@
 					if (typeof this.deployChild === 'function') this.deployChild(c);
 					c.render();
 				}
-				o2[i] = c;
+				o2.splice(i, 0, c);
 			}
 
 			needed.length = 0;
