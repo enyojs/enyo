@@ -7,9 +7,9 @@
 		_screenTypeObject,
 		_oldScreenType;
 
-	var getScreenTypeObject = function (type, ignoreCache) {
+	var getScreenTypeObject = function (type) {
 		type = type || _screenType;
-		if (type == _screenType && !ignoreCache && _screenTypeObject) {
+		if (_screenTypeObject && _screenTypeObject.name == type) {
 			return _screenTypeObject;
 		}
 		return _screenTypes.filter(function (elem) {
@@ -238,7 +238,7 @@
 		init: function () {
 			_oldScreenType = _screenType;
 			_screenType = this.getScreenType();
-			_screenTypeObject = getScreenTypeObject(_screenType, true);
+			_screenTypeObject = getScreenTypeObject();
 			this.updateScreenBodyClasses();
 			enyo.dom.unitToPixelFactors.rem = this.getUnitToPixelFactors();
 			_riRatio = this.getRiRatio();
