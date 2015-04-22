@@ -44,6 +44,21 @@
 			accessibilityAlert: false,
 
 			/**
+			* AccessibilityLive is for dynamic content which updates without a page reload.
+			* If AccessibilityLive is true, screen reader will read content or accessibilityLabel
+			* when it changed.
+			*
+			* Range: [`true`, `false`]
+			* - true: screen reader reads content when it changed.
+			* - false: screen reader reads content with focus.
+			*
+			* @type {Boolean}
+			* @default false
+			* @public
+			*/
+			accessibilityLive: false,
+
+			/**
 			* @method
 			* @private
 			*/
@@ -68,6 +83,10 @@
 
 				if (this.accessibilityAlert) {
 					this.accessibilityAlertChanged();
+				}
+
+				if (this.accessibilityLive) {
+					this.accessibilityLiveChanged();
 				}
 			},
 
@@ -213,6 +232,46 @@
 					this.setAttribute('role', 'alert');
 				} else {
 					this.setAttribute('role', null);
+				}
+			},
+
+			/**
+			* Get the accessibilityLive value true or false.
+			*
+			* @returns {Boolean} return accessibilityLive status.
+			* @public
+			*/
+			getAccessibilityLive: function () {
+				return this.accessibilityLive;
+			},
+
+			/**
+			* Set the accessibilityLive to true or false.
+			* If AccessibilityLive is true, screen reader will read content or accessibilityLabel
+			* when it changed.
+			*
+			* @param {Boolean} accessibilityLive - if true, screen reader reads content when it changed.
+			* @returns {this} callee for chaining.
+			* @public
+			*/
+			setAccessibilityLive: function (accessibilityLive) {
+				var was = this.accessibilityLive;
+				this.accessibilityLive = accessibilityLive;
+
+				if (was != accessibilityLive) {
+					this.notify('accessibilityLive', was, accessibilityLive);
+				}
+				return this;
+			},
+
+			/**
+			* @private
+			*/
+			accessibilityLiveChanged: function () {
+				if (this.accessibilityLive) {
+					this.setAttribute('aria-live', 'assertive');
+				} else {
+					this.setAttribute('aria-live', null);
 				}
 			}
 		});
