@@ -2,9 +2,6 @@ var
 		kind = require('../../lib/kind'),
 		utils = require('../../lib/utils');
 
-var
-		MultipleDispatchComponent = require('../../lib/MultipleDispatchComponent');
-
 describe('Kind', function () {
 
 	describe('usage', function () {
