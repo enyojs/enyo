@@ -3,8 +3,8 @@
 		"allowUnknownTags": false
 	},
 	"source": {
-		"include": ["source", "docs/external.jsdoc"],
-		"exclude": ["tools", "samples", "minify", "docs", "node_modules"],
+		"include": ["lib", "docs/external.jsdoc"],
+		"exclude": ["test", "samples", "docs", "node_modules"],
 		"includePattern": ".+\\.js(doc)?$"
 	},
 	"opts": {
