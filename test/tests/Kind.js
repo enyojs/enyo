@@ -3,7 +3,6 @@ var
 		utils = require('../../lib/utils');
 
 var
-		Component = require('../../lib/Component');
 		MultipleDispatchComponent = require('../../lib/MultipleDispatchComponent');
 
 describe('Kind', function () {
