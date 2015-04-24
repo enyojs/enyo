@@ -101,7 +101,7 @@ describe('Job', function () {
 			after(function () {
 			});
 
-			it('should stop job', function (done) {
+			it('should throttle job', function (done) {
 				job.throttle("testThrottleJob", increment, 20);
 				setTimeout(function () {
 					job.throttle("testThrottleJob", increment, 20);
