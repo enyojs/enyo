@@ -48,11 +48,6 @@ describe('JSON', function () {
 
 	describe('usage', function () {
 
-//	testJsonStringifyExists: function() {
-//		enyo.json.stringify();
-//		this.finish();
-//	},
-
 //	testJsonParseSimple: function() {
 //		var obj = enyo.json.parse('{"foo":"bar"}'), err;
 //		if (!obj.foo || obj.foo !== "bar") {
