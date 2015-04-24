@@ -1,5 +1,4 @@
-var
-		job = require('../../lib/job');
+var job = require('../../lib/job');
 
 describe('Job', function () {
 

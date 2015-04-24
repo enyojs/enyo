@@ -1,5 +1,4 @@
-var
-		json = require('../../lib/json');
+var json = require('../../lib/json');
 
 describe('JSON', function () {
 
