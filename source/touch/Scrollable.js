@@ -136,6 +136,22 @@
 		*/
 		useMouseWheel: true,
 
+		/**
+		* TODO: Document
+		* Experimental
+		*
+		* @public
+		*/
+		horizontalSnapIncrement: null,
+
+		/**
+		* TODO: Document
+		* Experimental
+		*
+		* @public
+		*/
+		verticalSnapIncrement: null,
+
 		scrollMath: {kind: 'enyo.ScrollMath'},
 
 		pageMultiplier: 1,
@@ -207,6 +223,20 @@
 			};
 		}),
 
+		/**
+		* @private
+		*/
+		horizontalSnapIncrementChanged: function() {
+			this.$.scrollMath.xSnapIncrement = this.horizontalSnapIncrement;
+		},
+		
+		/**
+		* @private
+		*/
+		verticalSnapIncrementChanged: function() {
+			this.$.scrollMath.ySnapIncrement = this.verticalSnapIncrement;
+		},
+		
 		/**
 		* @private
 		*/

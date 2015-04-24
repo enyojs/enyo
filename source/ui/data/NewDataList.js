@@ -11,6 +11,8 @@
 		rows: 'auto',
 		columns: 'auto',
 		overhang: 3,
+		// Experimental
+		scrollToBoundaries: false,
 		mixins: [Scrollable],
 		observers: [
 			{method: 'reset', path: [
@@ -41,7 +43,7 @@
 				ch = (opts && opts.height !== undefined) ?
 					opts.height :
 					n.clientHeight - oT - oB,
-				s1, s2, md1, md2, d2x, is1, is2, d1, d2, minMax, num;
+				s1, s2, md1, md2, d2x, si, is1, is2, d1, d2, minMax, num;
 
 			if (this.direction == 'vertical') {
 				s1 = ch;
@@ -51,6 +53,7 @@
 				is1 = this.itemHeight;
 				is2 = this.itemWidth;
 				d2x = this.columns;
+				si = 'verticalSnapIncrement';
 			}
 			else {
 				s1 = cw;
@@ -60,6 +63,7 @@
 				is1 = this.itemWidth;
 				is2 = this.itemHeight;
 				d2x = this.rows;
+				si = 'horizontalSnapIncrement';
 			}
 
 			this.sizeItems = (md1 && md2);
@@ -93,6 +97,10 @@
 			this.delta2 = d2;
 			this.size = s1;
 			this.size2 = s2;
+
+			if (this.scrollToBoundaries) {
+				this.set(si, d1);
+			}
 
 			// We don't call the setter here, because doing so would trigger a
 			// redundant and expensive call do doIt(). This approach should be fine
