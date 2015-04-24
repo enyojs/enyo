@@ -50,10 +50,6 @@ describe('Jobs', function () {
 	});
 });
 
-
-
-
-
 //enyo.kind({
 //	name: "JobsTest",
 //	kind: enyo.TestSuite,
