@@ -136,6 +136,22 @@
 		*/
 		useMouseWheel: true,
 
+		/**
+		* TODO: Document
+		* Experimental
+		*
+		* @public
+		*/
+		horizontalSnapIncrement: null,
+
+		/**
+		* TODO: Document
+		* Experimental
+		*
+		* @public
+		*/
+		verticalSnapIncrement: null,
+
 		scrollMath: {kind: 'enyo.ScrollMath'},
 
 		pageMultiplier: 1,
@@ -148,6 +164,8 @@
 		canScrollDown: false,
 		canScrollLeft: false,
 		canScrollRight: false,
+
+		velocity: 0,
 
 		topOffset: 0,
 		rightOffset: 0,
@@ -207,6 +225,20 @@
 			};
 		}),
 
+		/**
+		* @private
+		*/
+		horizontalSnapIncrementChanged: function() {
+			this.$.scrollMath.xSnapIncrement = this.horizontalSnapIncrement;
+		},
+		
+		/**
+		* @private
+		*/
+		verticalSnapIncrementChanged: function() {
+			this.$.scrollMath.ySnapIncrement = this.verticalSnapIncrement;
+		},
+		
 		/**
 		* @private
 		*/
@@ -615,19 +647,38 @@
 			return function(sender, event) {
 				var px = this.scrollLeft,
 					py = this.scrollTop,
+					pv = this.velocity,
 					x = this.scrollLeft = -sender.x,
 					y = this.scrollTop = -sender.y,
 					dx = px - x,
-					dy = py - y;
-					// TODO: Use d to enable / disable mouse events based on velocity
-					// d = (dx * dx) + (dy + dy);
+					dy = py - y,
+					v = (dx * dx) + (dy * dy),
+					dec = v < pv;
+
 				this.xDir = (dx < 0? 1: dx > 0? -1: 0);
 				this.yDir = (dy < 0? 1: dy > 0? -1: 0);
+				this.velocity = v;
 
 				this.destX = -sender.endX;
 				this.destY = -sender.endY;
 
 				this.updateScrollability(x, y);
+
+				// Experimental: resume mouse events when we slow
+				// down sufficiently.
+				// TODO: Experiment, make configurable
+				if (!this.touch) {
+					if (this._suppressing) {
+						if (dec && v < 5) {
+							this.resumeMouseEvents();
+						}
+					} 
+					else {
+						if (!dec && v > 5) {
+							this.suppressMouseEvents();
+						}
+					}
+				}
 
 				sup.apply(this, arguments);
 			};
@@ -713,16 +764,7 @@
 		* @private
 		*/
 		scrollStart: function () {
-			if (!this.touch) {
-				this.suppressMouseEvents();
-			}
-
-			// if (this.calcScrollNode() && !this.isScrolling()) {
-			// 	this.scrolling = true;
-			// 	if (!this.isOverscrolling()) {
-					this.calcBoundaries();
-			// 	}
-			// }
+			this.calcBoundaries();
 			this.isScrolling = true;
 			this.emit('stateChanged');
 		},
@@ -731,6 +773,10 @@
 		* @private
 		*/
 		scrollStop: function () {
+			// TODO: Leaving this in to be safe...
+			// But we should already have resumed, due to
+			// velocity-sensitive logic in scroll().
+			// This whole scheme probably needs bullet-proofing.
 			if (!this.touch) {
 				this.resumeMouseEvents();
 			}
@@ -746,16 +792,18 @@
 			enyo.dispatcher.stopListening(document, 'mouseover');
 			enyo.dispatcher.stopListening(document, 'mouseout');
 			enyo.dispatcher.stopListening(document, 'mousemove');
+			this._suppressing = true;
 		},
 
 		/**
 		* @private
 		*/
-		resumeMouseEvents: function(event) {
+		resumeMouseEvents: function() {
 			// TODO: Create a dispatcher API for this
 			enyo.dispatcher.listen(document, 'mouseover');
 			enyo.dispatcher.listen(document, 'mouseout');
 			enyo.dispatcher.listen(document, 'mousemove');
+			this._suppressing = false;
 		},
 
 		/**
