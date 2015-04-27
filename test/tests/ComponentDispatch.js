@@ -420,8 +420,6 @@ describe('Component dispatch', function () {
 					onForwardedEvent: "handleForwardedEvent"
 				}],
 				handleForwardedEvent: function(inSender, inEvent) {
-					console.log('>>>> handleForwardedEvent');
-					console.log(this.$.child);
 
 					var child = this.$.child;
 
