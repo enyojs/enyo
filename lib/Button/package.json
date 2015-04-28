@@ -1,6 +1,6 @@
 {
   "main": "Button.js",
-  "style": [
+  "styles": [
     "Button.css"
   ]
 }

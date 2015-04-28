@@ -1,6 +1,6 @@
 {
   "main": "Image.js",
-  "style": [
+  "styles": [
     "Image.css"
   ]
 }

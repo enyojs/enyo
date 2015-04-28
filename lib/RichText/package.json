@@ -1,6 +1,6 @@
 {
   "main": "RichText.js",
-  "style": [
+  "styles": [
     "RichText.css"
   ]
 }

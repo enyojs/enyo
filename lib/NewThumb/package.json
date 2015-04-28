@@ -1,6 +1,6 @@
 {
   "main": "NewThunb.js",
-  "style": [
+  "styles": [
     "NewThumb.css"
   ]
 }

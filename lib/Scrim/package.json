@@ -1,6 +1,6 @@
 {
   "main": "Scrim.js",
-  "style": [
+  "styles": [
     "Scrim.css"
   ]
 }
