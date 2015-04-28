@@ -145,6 +145,11 @@ The code above creates a new kind called "Hello" derived from enyo.Control. It c
 
 This ability to define encapsulated objects and behavior (Components) and to re-use those encapsulations as prototypes (kinds) is money.
 
+## Samples
+
+All samples reside in a consolidated sample app for Enyo and its libraries:
+[enyo-strawman](https://github.com/enyojs/enyo-strawman)
+
 ## Copyright and License Information
 
 Unless otherwise specified, all content, including all source code files and
