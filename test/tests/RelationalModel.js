@@ -4,9 +4,9 @@ var
 	RelationalModel = require('../../lib/RelationalModel'),
 	Collection = require('../../lib/Collection'),
 	CoreObject = require('../../lib/CoreObject'),
-	toOne = require('../../lib/toOne'),
-	toMany = require('../../lib/toMany'),
-	manyToMany = require('../../lib/manyToMany');
+	toOne = RelationalModel.toOne,
+	toMany = RelationalModel.toMany,
+	manyToMany = RelationalModel.manyToMany;
 
 describe('RelationalModel', function () {
 	
