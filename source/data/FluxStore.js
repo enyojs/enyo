@@ -41,13 +41,6 @@
 		*/
 		kind: enyo.Object,
 
-
-		/**
-		* @private
-		*/
-		data: {},
-
-
 		/**
 		* @name enyo.FluxStore.id
 		*
@@ -61,6 +54,9 @@
 		*/
 		id: -1,
 
+		/**
+		* @private
+		*/
 		mixins: [EventEmitter, StateSupport],
 
 		/**
@@ -98,6 +94,8 @@
 		constructor: enyo.inherit(function(sup){
 			return function(){
 				sup.apply(this, arguments);
+				this.reset();
+
 				if(enyo.FluxDispatcher) {
 					//id the store with the dispatcher
 					this.id = enyo.FluxDispatcher.subscribe();
