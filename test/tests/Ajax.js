@@ -117,7 +117,7 @@ describe('Ajax', function () {
 //				.go();
 //	}
 
-		describe('AJAX Custom Error', function () {
+		describe('AJAX Serial', function () {
 
 			before(function () {
 			});
