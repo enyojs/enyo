@@ -1,0 +1,106 @@
+/* things we always want */
+body {
+	font-family: 'Helvetica Neue', 'Nimbus Sans L', Arial, sans-serif;
+}
+
+/* allow hw-accelerated scrolling on platforms that support it */
+body.webkitOverflowScrolling {
+	-webkit-overflow-scrolling: touch;
+}
+
+/* for apps */
+.enyo-document-fit {
+	margin: 0;
+	height: 100%;
+	/* note: giving html overflow: auto is odd and was only ever done to avoid duplication
+		however, android 4.04 sometimes does not hide nodes when their display is set to none
+		if document is overflow auto.
+	*/
+	position: relative;
+}
+
+.enyo-body-fit {
+	margin: 0;
+	height: 100%;
+	/* helps prevent ios page scroll */
+	overflow: auto;
+	position: relative;
+}
+
+.enyo-no-touch-action {
+	-ms-touch-action: none;
+}
+
+.enyo-untouchable {
+	pointer-events: none;
+}
+.enyo-untouchable > * {
+	pointer-events: auto;
+}
+
+/* user selection */
+
+.enyo-unselectable {
+	cursor: default;
+	-ms-user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: -moz-none;
+	user-select: none;
+}
+
+.enyo-selectable {
+	cursor: auto;
+	-ms-user-select: element;
+	-webkit-user-select: text;
+	-moz-user-select: text;
+	user-select: text;
+}
+
+.enyo-selectable::selection, .enyo-selectable ::selection {
+	background: #3297FD;
+	color: #FFF;
+}
+
+/* layout */
+
+body .enyo-fit {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.enyo-clip {
+	overflow: hidden;
+}
+
+.enyo-border-box {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+/* compositing */
+
+.enyo-composite {
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
+}
+
+.enyo-inline {
+	display: inline-block;
+}
+
+.enyo-positioned {
+	position: relative;
+}
+
+.enyo-fill {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}

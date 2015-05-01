@@ -1,0 +1,12 @@
+.enyo-sprite-animation {
+	overflow: hidden;
+}
+.enyo-sprite-animation .enyo-sprite-animation-image {
+	background-size: initial;
+	-webkit-animation-play-state: running;
+	animation-play-state: running;
+}
+.enyo-sprite-animation.paused .enyo-sprite-animation-image {
+	-webkit-animation-play-state: paused;
+	animation-play-state: paused;
+}
