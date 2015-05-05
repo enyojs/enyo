@@ -7,7 +7,7 @@
 	overflow: hidden;
 }
 
-.enyo-light-panels > * {
+.enyo-light-panels-client > * {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -16,18 +16,18 @@
 	box-sizing: border-box;
 }
 
-.enyo-light-panels.horizontal.forwards > * {
+.enyo-light-panels-client.horizontal.forwards > * {
 	left: 100%;
 }
 
-.enyo-light-panels.horizontal.backwards > * {
+.enyo-light-panels-client.horizontal.backwards > * {
 	left: -100%;
 }
 
-.enyo-light-panels.vertical.forwards > * {
+.enyo-light-panels-client.vertical.forwards > * {
 	top: 100%;
 }
 
-.enyo-light-panels.vertical.backwards > * {
+.enyo-light-panels-client.vertical.backwards > * {
 	top: -100%;
 }
