@@ -671,14 +671,14 @@
 				for (idx = 0; idx < objKeys.length; idx++) {
 					key = objKeys[idx];
 
-					if (hashes[key] != null) {
-						hashes[key] += '' + comp[key];
-					} else {
-						hashes[key] = '' + comp[key];
-					}
-
 					if (keys.indexOf(key) == -1) {
 						obj[key] = comp[key];
+					} else {
+						if (hashes[key] != null) {
+							hashes[key] += '' + comp[key];
+						} else {
+							hashes[key] = '' + comp[key];
+						}
 					}
 				}
 
