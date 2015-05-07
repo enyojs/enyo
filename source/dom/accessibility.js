@@ -72,6 +72,20 @@
 			accessibilityLive: false,
 
 			/**
+			* AccessibilityDisabled prevents VoiceReadout.
+			* if accessibilityDisabled is true, screen reader doesn't read any label for the control.
+			*
+			* Range: [`true`, `false`]
+			* - true: screen reader doesn't read control label.
+			* - false: screen reader reads control label.
+			*
+			* @type {Boolean}
+			* @default false
+			* @public
+			*/
+			accessibilityDisabled: false,
+
+			/**
 			* @method
 			* @private
 			*/
@@ -86,6 +100,10 @@
 			* @private
 			*/
 			initAccessibility: function () {
+				if (this.accessibilityDisabled) {
+					return;
+				}
+
 				if (this.accessibilityLabel) {
 					this.accessibilityLabelChanged();
 				}
@@ -109,6 +127,10 @@
 			contentChanged: enyo.inherit(function (sup) {
 				return function (control) {
 					sup.apply(this, arguments);
+
+					if (this.accessibilityDisabled) {
+						return;
+					}
 
 					// Accessibility : Set aria-label to current content 
 					// when content changed. The accessibilityLabel has higher priority
@@ -154,6 +176,10 @@
 			* @private
 			*/
 			accessibilityLabelChanged: function () {
+				if (this.accessibilityDisabled) {
+					return;
+				}
+
 				if (this.accessibilityLabel) {
 					this.setAttribute('tabindex', 0);
 					this.setAttribute('aria-label', this.accessibilityHint? this.accessibilityLabel + ' ' + this.accessibilityHint : this.accessibilityLabel);
@@ -198,6 +224,10 @@
 			* @private
 			*/
 			accessibilityHintChanged: function () {
+				if (this.accessibilityDisabled) {
+					return;
+				}
+
 				if (this.accessibilityLabel) {
 					this.setAttribute('aria-label', this.accessibilityHint? this.accessibilityLabel + ' ' + this.accessibilityHint : this.accessibilityLabel);
 				} else if (this.content) {
@@ -241,6 +271,10 @@
 			* @private
 			*/
 			accessibilityAlertChanged: function () {
+				if (this.accessibilityDisabled) {
+					return;
+				}
+
 				if (this.accessibilityAlert) {
 					this.setAttribute('role', 'alert');
 				} else {
@@ -281,10 +315,58 @@
 			* @private
 			*/
 			accessibilityLiveChanged: function () {
+				if (this.accessibilityDisabled) {
+					return;
+				}
+
 				if (this.accessibilityLive) {
 					this.setAttribute('aria-live', 'assertive');
 				} else {
 					this.setAttribute('aria-live', null);
+				}
+			},
+
+			/**
+			* Get the accessibilityDisabled value true or false.
+			*
+			* @returns {Boolean} return accessibilityDisabled status.
+			* @public
+			*/
+			getAccessibilityDisabled: function () {
+				return this.accessibilityDisabled;
+			},
+
+			/**
+			* Set the accessibilityDisabled to true or false.
+			* if accessibilityDisabled is true, screen reader doesn't read 
+			* any label for the control.
+			*
+			* @param {Boolean} accessibilityDisabled - if true, it doesn't read any label.
+			* @returns {this} callee for chaining.
+			* @public
+			*/
+			setAccessibilityDisabled: function (accessibilityDisabled) {
+				var was = this.accessibilityDisabled;
+				this.accessibilityDisabled = accessibilityDisabled;
+
+				if (was != accessibilityDisabled) {
+					this.notify('accessibilityDisabled', was, accessibilityDisabled);
+				}
+				return this;
+			},
+
+			/**
+			* @private
+			*/
+			accessibilityDisabledChanged: function () {
+					
+				if (this.accessibilityDisabled) {
+					this.setAttribute('role', null);
+					this.setAttribute('aria-label', null);
+					this.setAttribute('tabindex', null);
+					this.setAttribute('aria-live', null);
+				} else {
+					this.initAccessibility();
 				}
 			}
 		});
