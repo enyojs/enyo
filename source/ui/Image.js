@@ -157,11 +157,6 @@
 			draggable: 'false'
 		},
 
-		handlers: {
-			onload: 'handleLoad',
-			onerror: 'handleError'
-		},
-
 		/**
 		* @method
 		* @private
@@ -187,17 +182,22 @@
 			var src = enyo.ri.selectSrc(this.src);
 			if (this.sizing) {
 				var placeholder = this.placeholder ? 'url(\'' + enyo.path.rewrite(this.placeholder) + '\')' : '';
-				var url= (src ? ( placeholder ? 'url(\'' + enyo.path.rewrite(src) + '\'),' : 'url(\'' + enyo.path.rewrite(src) + '\')') : '');
-				this.applyStyle('background-image', url+placeholder);
-			} else {
+				var murl= src ? ( 'url(\'' + enyo.path.rewrite(src) + '\')' + ( placeholder ? ','+ placeholder : '' ) ): ''; 
+				this.applyStyle('background-image', murl ? murl : 'none');
+			} else{
 				if (!src) {
 					// allow us to clear the src property
 					this.setAttribute('src', '');
-				} else {
-					if (this.placeholder) {
-						this.applyStyle('background-image', 'url(\'' + enyo.path.rewrite(this.placeholder) + '\')');
+				} else{
+					//If placeholder property exists
+					if(this.placeholder){
+						this.img = document.createElement('img');
+						this.img.onload = this.bindSafely('handleLoad');
+						this.img.onerror = this.bindSafely('handleError');
+						this.img.src = src;
+					} else{
+						this.setAttribute('src', enyo.path.rewrite(src));
 					}
-					this.setAttribute('src', enyo.path.rewrite(src));
 				}
 			}
 		},
@@ -206,8 +206,14 @@
 		* @private
 		*/
 		placeholderChanged: function(){
-			if (this.placeholder) {
-				this.applyStyle('background-image', 'url(\'' + enyo.path.rewrite(this.placeholder) + '\')');
+			var placeholder = this.placeholder ? enyo.path.rewrite(this.placeholder) : '';
+			//Change placeholder when the src is empty
+			if(!this.src){
+				if(this.sizing){
+					this.applyStyle('background-image', placeholder ? 'url(\'' + placeholder + '\')' : 'none');
+				} else{
+					this.setAttribute('src', placeholder);
+				}
 			}
 		},
 
@@ -225,10 +231,10 @@
 			this.tag = this.sizing ? 'div' : 'img';
 			this.addRemoveClass('sized', !!this.sizing);
 			if (was) {
-				this.removeClass(was);
+				this.removeClass('enyo-'+was);
 			}
 			if (this.sizing) {
-				this.addClass(this.sizing);
+				this.addClass('enyo-'+this.sizing);
 			}
 			if (this.generated) {
 				this.srcChanged();
@@ -249,20 +255,15 @@
 		* @private
 		*/
 		handleLoad: function () {
-			if (!this.sizing && this.placeholder) {
-				this.applyStyle('background-image', null);
-			}
+			this.setAttribute('src', enyo.path.rewrite(this.src));
 		},
 
 		/**
 		* @private
 		*/
 		handleError: function() {
-			if (this.placeholder) {
-				this.setSrc(null);
-			}
+			this.setAttribute('src', enyo.path.rewrite(this.placeholder));
 		},
-
 
 		/**
 		* @fires enyo.Image#onload

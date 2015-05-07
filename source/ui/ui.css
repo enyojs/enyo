@@ -30,10 +30,10 @@
 	background-position: center;
 	background-repeat: no-repeat;
 }
-.enyo-image.contain {
+.enyo-image.enyo-contain {
 	background-size: contain;
 }
-.enyo-image.cover {
+.enyo-image.enyo-cover {
 	background-size: cover;
 }
 
