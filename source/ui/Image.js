@@ -231,10 +231,10 @@
 			this.tag = this.sizing ? 'div' : 'img';
 			this.addRemoveClass('sized', !!this.sizing);
 			if (was) {
-				this.removeClass('enyo-'+was);
+				this.removeClass(was);
 			}
 			if (this.sizing) {
-				this.addClass('enyo-'+this.sizing);
+				this.addClass(this.sizing);
 			}
 			if (this.generated) {
 				this.srcChanged();
