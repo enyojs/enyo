@@ -11,23 +11,27 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 100%;
-	height: 100%;
+	right: 0;
+	bottom: 0;
 	box-sizing: border-box;
 }
 
 .enyo-light-panels-client.horizontal.forwards > * {
-	left: 100%;
+	transform: translateX(100%);
+	-webkit-transform: translateX(100%);
 }
 
 .enyo-light-panels-client.horizontal.backwards > * {
-	left: -100%;
+	transform: translateX(-100%);
+	-webkit-transform: translateX(-100%);
 }
 
 .enyo-light-panels-client.vertical.forwards > * {
-	top: 100%;
+	transform: translateY(100%);
+	-webkit-transform: translateY(100%);
 }
 
 .enyo-light-panels-client.vertical.backwards > * {
-	top: -100%;
+	transform: translateY(-100%);
+	-webkit-transform: translateY(-100%);
 }
