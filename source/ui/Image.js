@@ -103,10 +103,10 @@
 
 			/**
 			* By default, the [image]{@link enyo.Image} is rendered using an `<img>` tag.
-			* When this property is set to `'cover'` or `'constrain'`, the image will be
+			* When this property is set to `'cover'` or `'contain'`, the image will be
 			* rendered using a `<div>`, utilizing `background-image` and `background-size`.
 			*
-			* Set this property to `'constrain'` to letterbox the image in the available
+			* Set this property to `'contain'` to letterbox the image in the available
 			* space, or `'cover'` to cover the available space with the image (cropping the
 			* larger dimension).  Note that when `sizing` is set, the control must be
 			* explicitly sized.
@@ -179,25 +179,29 @@
 		* @private
 		*/
 		srcChanged: function () {
-			var src = enyo.ri.selectSrc(this.src);
+			var url = 'none',
+				src = enyo.ri.selectSrc(this.src);
+
+			src = src ? enyo.path.rewrite(src) : '';	// Only run rewrite if src is truthy.
+
 			if (this.sizing) {
-				var placeholder = this.placeholder ? 'url(\'' + enyo.path.rewrite(this.placeholder) + '\')' : '';
-				var murl= src ? ( 'url(\'' + enyo.path.rewrite(src) + '\')' + ( placeholder ? ','+ placeholder : '' ) ): ''; 
-				this.applyStyle('background-image', murl ? murl : 'none');
-			} else{
-				if (!src) {
-					// allow us to clear the src property
-					this.setAttribute('src', '');
-				} else{
-					//If placeholder property exists
-					if(this.placeholder){
-						this.img = document.createElement('img');
-						this.img.onload = this.bindSafely('handleLoad');
-						this.img.onerror = this.bindSafely('handleError');
-						this.img.src = src;
-					} else{
-						this.setAttribute('src', enyo.path.rewrite(src));
+				if (src) {
+					url = 'url(\'' + src + '\')';
+
+					if (this.placeholder) {
+						url += ', url(\'' + enyo.path.rewrite(this.placeholder) + '\')';
 					}
+				}
+				this.applyStyle('background-image', url);
+			} else {
+				//If placeholder property exists
+				if (src && this.placeholder) {
+					this.img = document.createElement('img');
+					this.img.onload = this.bindSafely('handleLoad');
+					this.img.onerror = this.bindSafely('handleError');
+					this.img.src = src;
+				} else {
+					this.setAttribute('src', src);
 				}
 			}
 		},
@@ -208,10 +212,10 @@
 		placeholderChanged: function(){
 			var placeholder = this.placeholder ? enyo.path.rewrite(this.placeholder) : '';
 			//Change placeholder when the src is empty
-			if(!this.src){
-				if(this.sizing){
+			if (!this.src) {
+				if (this.sizing) {
 					this.applyStyle('background-image', placeholder ? 'url(\'' + placeholder + '\')' : 'none');
-				} else{
+				} else {
 					this.setAttribute('src', placeholder);
 				}
 			}
