@@ -10,15 +10,6 @@
 	font-weight: bold;
 	margin-bottom: 8px;
 }
-.image-sample .enyo-input[type=text] {
-	margin: 10px 0;
-	width: 400px;
-	display: block;
-	background: none;
-	border: 1px solid #CCC;
-	color: #555;
-	font-size: 16px;
-}
 .image-sample .placeholder {
 	width: 200px;
 	height: 200px;
