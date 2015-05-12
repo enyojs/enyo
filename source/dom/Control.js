@@ -1412,7 +1412,7 @@
 			var was = this.content;
 			this.content = content;
 
-			if (was != content) this.notify('content', was, content);
+			if (was !== content) this.notify('content', was, content);
 
 			return this;
 		},
