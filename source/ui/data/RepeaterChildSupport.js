@@ -64,9 +64,13 @@
 		*/
 		decorateEvent: enyo.inherit(function (sup) {
 			return function (sender, event) {
-				event.model = this.model;
-				event.child = this;
-				event.index = this.repeater.collection.indexOf(this.model);
+				var c;
+
+				if (event.bubbling && (c = this.repeater.collection)) {
+					event.model = this.model;
+					event.child = this;
+					event.index = c.indexOf(this.model);
+				}
 				sup.apply(this, arguments);
 			};
 		}),
