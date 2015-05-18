@@ -192,7 +192,14 @@
 				perPage = this.controlsPerPage(list);
 
 			// the first index for this generated page
-			page.start  = perPage * index;
+			// if childSize is just updated, we do not need to re-render
+			// the first child of this page.
+			if (list.childSizeNeedsUpdate) { 
+				page.start = perPage * index + 1;
+				list.childSizeNeedsUpdate = false;
+			} else {
+				page.start  =  perPage * index;	
+			}			
 			// the last index for this generated page
 			page.end    = Math.min((data.length - 1), (page.start + perPage) - 1);
 
@@ -230,14 +237,22 @@
 				var page = list.$.page1,
 					sizeProp  = list.psizeProp,
 					n         = list.$.page1.node || list.$.page1.hasNode(),
-					size, props;
+					size, props, childSize;
 				if (page.index >= 0 && n) {
 					// if indexed page was not generated ever, it will return 'undefined'
 					props = list.metrics.pages[page.index];
 					if (!props) {
-						page.start = page.end = 0;
+						// render the first page and get accurate childSize
+						if (list.controlsPerPage) {
+							page.start = page.end = list.controlsPerPage * page.index;	
+						} else {
+							page.start = page.end = 0;
+						}
+						
 						this.updatePage(list, page);
-						list.childSize = page.getBounds()[sizeProp];
+						childSize = page.getBounds()[sizeProp];
+						list.childSizeNeedsUpdate = (list.childSize != childSize)
+						if (list.childSizeNeedsUpdate) { list.childSize = childSize; } 
 					} else {
 						size  = props[sizeProp];
 						list.childSize = Math.floor(size / (n.children.length || 1));
