@@ -16,11 +16,11 @@ var w = console.log;
 
 function printUsage() {
 	w("Enyo Less->CSS Compiler");
-	w("Usage: lessc.sh|bat [-enyo <path>] [-w] <package-file>");
+	w("Usage: lessc.sh|bat [-enyo <path>] [-w] <package-file> [-ri] <ri-options>");
 	w("<package-file>\t", "Path to package file to walk; all LESS files encountered will be compiled");
 	w("-enyo <path>\t", "Path to enyo loader (enyo/enyo.js)");
 	w("-w\t", "Watch the file and any dependencies, and re-compile on changes");
-	w("-ri\t", "Perform resolution-independence conversion of measurements i.e. px -> rem");
+	w("-ri\t", "Perform resolution-independence conversion of measurements i.e. px -> rem. Specify optional parameter overrides as a JSON string i.e. '{\"baseSize\":16,\"minSize\":12,\"precision\":3}'");
 	w("-h, -?, -help\t", "Show this message");
 }
 
@@ -40,7 +40,7 @@ function finish(loader, objs, doneCB) {
 				try {
 					var generatedCss, ri;
 					if (opt.ri) {
-						ri = new RezInd();
+						ri = new RezInd(JSON.parse(opt.ri));
 						// console.log("ri:", RezInd, ri);
 						generatedCss = tree.toCSS({plugins: [ri]});
 					} else {
@@ -154,7 +154,7 @@ var knownOpts = {
 	"output": String,
 	"watch": Boolean,
 	"help": Boolean,
-	"ri": Boolean
+	"ri": String
 };
 
 var shortHands = {
