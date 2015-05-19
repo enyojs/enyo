@@ -144,10 +144,16 @@
 		updatePage: function(list, page) {
 			var data = list.collection,
 			// placeholder for the control we're going to update
-				view;
+				view, 
+				indexOffset = 0;
 			// if generating a control we need to use the correct page as the control parent
 			list.controlParent = page;
-			for (var i = page.start; i <= page.end && i < data.length; ++i) {
+			if (list.childSizeNeedsUpdate) {
+				indexOffset = 1;
+				list.childSizeNeedsUpdate = false;
+			} 
+
+			for (var i = page.start + indexOffset; i <= page.end && i < data.length; ++i) {
 				view = (page.children[i - page.start] || list.createComponent({}));
 				// disable notifications until all properties to be updated
 				// have been
@@ -161,7 +167,7 @@
 				view.canGenerate = true;
 			}
 			// if there are any controls that need to be hidden we do that now
-			for (i=(i-page.start); i < page.children.length; ++i) {
+			for (i=(i-page.start); i < page.children.length && page.start <= page.end; ++i) {
 				view = page.children[i];
 				view.teardownRender();
 				view.canGenerate = false;
@@ -192,14 +198,8 @@
 				perPage = this.controlsPerPage(list);
 
 			// the first index for this generated page
-			// if childSize is just updated, we do not need to re-render
-			// the first child of this page.
-			if (list.childSizeNeedsUpdate) { 
-				page.start = perPage * index + 1;
-				list.childSizeNeedsUpdate = false;
-			} else {
-				page.start  =  perPage * index;	
-			}			
+			page.start  =  perPage * index;	
+		
 			// the last index for this generated page
 			page.end    = Math.min((data.length - 1), (page.start + perPage) - 1);
 
@@ -236,7 +236,7 @@
 			if (!list.fixedChildSize || !list.childSize) {
 				var page = list.$.page1,
 					sizeProp  = list.psizeProp,
-					n         = list.$.page1.node || list.$.page1.hasNode(),
+					n         = page.node || page.hasNode(),
 					size, props, childSize;
 				if (page.index >= 0 && n) {
 					// if indexed page was not generated ever, it will return 'undefined'
@@ -251,7 +251,7 @@
 						
 						this.updatePage(list, page);
 						childSize = page.getBounds()[sizeProp];
-						list.childSizeNeedsUpdate = (list.childSize != childSize)
+						list.childSizeNeedsUpdate = (list.childSize != childSize);
 						if (list.childSizeNeedsUpdate) { list.childSize = childSize; } 
 					} else {
 						size  = props[sizeProp];
@@ -420,7 +420,7 @@
 			}
 
 			// if the list has not already reset, reset
-			if (!list.hasReset) return this.reset(list);
+			if (!list.hasReset) { return this.reset(list); }
 
 			var cpp = this.controlsPerPage(list),
 				end = Math.max(list.$.page1.start, list.$.page2.start) + cpp;
