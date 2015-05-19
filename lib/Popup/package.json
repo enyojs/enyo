@@ -1,6 +1,6 @@
 {
   "main": "Popup.js",
-  "style": [
+  "styles": [
     "Popup.css"
   ]
 }

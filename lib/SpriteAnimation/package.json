@@ -1,6 +1,6 @@
 {
   "main": "SpriteAnimation.js",
-  "style": [
+  "styles": [
     "SpriteAnimation.css"
   ]
 }

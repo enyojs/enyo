@@ -1,6 +1,6 @@
 {
   "main": "ScrollThumb.js",
-  "style": [
+  "styles": [
     "ScrollThumb.css"
   ]
 }

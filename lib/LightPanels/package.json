@@ -1,6 +1,6 @@
 {
   "main": "LightPanels.js",
-  "style": [
+  "styles": [
     "LightPanels.css"
   ]
 }

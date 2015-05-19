@@ -1,6 +1,6 @@
 {
   "main": "Scroller.js",
-  "style": [
+  "styles": [
     "Scroller.css"
   ]
 }

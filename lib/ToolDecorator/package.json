@@ -1,6 +1,6 @@
 {
   "main": "ToolDecorator.js",
-  "style": [
+  "styles": [
     "ToolDecorator.css"
   ]
 }

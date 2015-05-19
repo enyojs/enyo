@@ -1,6 +1,6 @@
 {
   "main": "DataGridList.js",
-  "style": [
+  "styles": [
     "DataGridList.less"
   ]
 }
