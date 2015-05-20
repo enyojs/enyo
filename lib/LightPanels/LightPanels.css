@@ -2,8 +2,8 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 100%;
-	height: 100%;
+	bottom: 0;
+	right: 0;
 	overflow: hidden;
 }
 
@@ -11,23 +11,27 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 100%;
-	height: 100%;
+	bottom: 0;
+	right: 0;
 	box-sizing: border-box;
 }
 
 .enyo-light-panels.horizontal.forwards > * {
-	left: 100%;
+	transform: translateX(100%);
+	-webkit-transform: translateX(100%);
 }
 
 .enyo-light-panels.horizontal.backwards > * {
-	left: -100%;
+	transform: translateX(-100%);
+	-webkit-transform: translateX(-100%);
 }
 
 .enyo-light-panels.vertical.forwards > * {
-	top: 100%;
+	transform: translateY(100%);
+	-webkit-transform: translateY(100%);
 }
 
 .enyo-light-panels.vertical.backwards > * {
-	top: -100%;
+	transform: translateY(-100%);
+	-webkit-transform: translateY(-100%);
 }
