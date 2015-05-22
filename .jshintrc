@@ -1,5 +1,6 @@
 {
   "globals": {
+    "JSON": false,
     "global": false,
     "require": false,
     "exports": true,
