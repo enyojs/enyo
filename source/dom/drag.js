@@ -140,9 +140,22 @@
 		*
 		* @public
 		*/
-		configureHoldPulse: function(config) {
+		configureHoldPulse: function (config) {
 			// TODO: Might be nice to do some validation, error handling
-			this.holdPulseDefaultConfig = config;
+
+			// _holdPulseConfig represents the current, global `holdpulse` settings, if the default
+			// settings have been overridden in some way.
+			this._holdPulseConfig = this._holdPulseConfig || enyo.clone(this.holdPulseDefaultConfig, true);
+			enyo.mixin(this._holdPulseConfig, config);
+		},
+
+		/**
+		* Resets the `holdPulse` behavior to the default settings.
+		*
+		* @public
+		*/
+		resetHoldPulseConfig: function () {
+			this._holdPulseConfig = null;
 		},
 
 		/**
@@ -476,7 +489,7 @@
 		*/
 		prepareHold: function(e) {
 			// quick copy as the prototype of the new overridable config
-			this.holdPulseConfig = enyo.clone(this.holdPulseDefaultConfig, true);
+			this.holdPulseConfig = enyo.clone(this._holdPulseConfig || this.holdPulseDefaultConfig, true);
 
 			// expose method for configuring holdpulse options
 			e.configureHoldPulse = this._configureHoldPulse.bind(this);
