@@ -178,7 +178,7 @@
 		* @private
 		*/
 		components: [
-			{name: 'client', classes: 'enyo-touch-scroller'}
+			{name: 'client', classes: 'enyo-touch-scroller enyo-touch-scroller-client'}
 		],
 
 		/**
