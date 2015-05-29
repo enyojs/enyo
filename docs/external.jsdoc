@@ -2,7 +2,7 @@
 * A kind is an object constructor created using the enyo.kind factory method.
 *
 * @glossary kind
-* @see enyo.kind
+* @see module:enyo/kind
 */
 
 /**
