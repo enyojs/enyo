@@ -91,7 +91,17 @@
 		// recurses again from the async callback until no sheets left, then calls doneCB
 		function readAndParse() {
 			var sheet = sheets.shift(),
-				ri = new RezInd();
+				riOpts;
+
+			if (!this.riPlugin) {
+				riOpts = opt.ri && JSON.parse(opt.ri.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2": '));
+				if (riOpts) {
+					this.riPlugin = new RezInd(riOpts);
+				} else {
+					this.riPlugin = new RezInd();
+				}
+			}
+
 			if (sheet) {
 				w(sheet);
 				var isLess = (sheet.slice(-4) == "less");
@@ -109,7 +119,7 @@
 						} else {
 							var generatedCss;
 							if (opt.ri) {
-								generatedCss = tree.toCSS({plugins: [ri]});
+								generatedCss = tree.toCSS({plugins: [this.riPlugin]});
 							} else {
 								generatedCss = tree.toCSS();
 							}
@@ -237,7 +247,7 @@
 		"mapfrom": [String, Array],
 		"mapto": [String, Array],
 		"gathering": Boolean,
-		"ri": Boolean
+		"ri": String
 	};
 
 	var shortHands = {

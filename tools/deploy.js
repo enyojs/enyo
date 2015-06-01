@@ -114,7 +114,7 @@ var node = process.argv[0],
 function printUsage() {
 	// format generated using node-optimist...
 	console.log('\n' +
-		'Usage: ' + node + ' ' + deploy + ' [-c][-g][-v][-B][-e enyo_dir][-l lib_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir][-f map_from -t map_to ...]\n' +
+		'Usage: ' + node + ' ' + deploy + ' [-c][-g][-v][-B][-e enyo_dir][-l lib_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir][-f map_from -t map_to ...][-r ri_opts]\n' +
 		'\n' +
 		'Options:\n' +
 		'  -v  verbose operation                         [boolean]  [default: ' + verbose + ']\n' +
@@ -138,7 +138,7 @@ function printUsage() {
 var opt = nopt(/*knownOpts*/ {
 	"build": String,	// relative path
 	"less": Boolean,
-	"ri": Boolean,
+	"ri": String,
 	"enyo": String,		// relative path
 	"lib": String,		// relative path
 	"out": path,		// absolute path
@@ -281,7 +281,8 @@ if (!opt.mapfrom || opt.mapfrom.indexOf("enyo") < 0) {
 		'-enyo', opt.enyo,
 		'-destdir', opt.out,
 		'-output', path.join(opt.build, 'enyo'),
-		(ri ? '-ri' : '-no-ri'),
+		(less ? '-less' : '-no-less'),
+		(ri ? '-ri' : '-no-ri'), opt.ri,
 		(beautify ? '-beautify' : '-no-beautify'),
 		path.join(opt.enyo, 'minify', 'package.js')];
 	if (opt.mapfrom) {
@@ -301,7 +302,7 @@ args = [node, minifier,
 	'-destdir', opt.out,
 	'-output', path.join(opt.build, 'app'),
 	(less ? '-less' : '-no-less'),
-	(ri ? '-ri' : '-no-ri'),
+	(ri ? '-ri' : '-no-ri'), opt.ri,
 	(beautify ? '-beautify' : '-no-beautify'),
 	opt.packagejs];
 if (opt.mapfrom) {
