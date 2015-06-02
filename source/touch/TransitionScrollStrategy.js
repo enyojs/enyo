@@ -66,7 +66,7 @@
 		*/
 		components: [
 			{name: 'clientContainer', classes: 'enyo-touch-scroller', components: [
-				{name: 'client'}
+				{name: 'client', classes: 'enyo-touch-scroller-client'}
 			]}
 		],
 
