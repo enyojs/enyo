@@ -40,11 +40,12 @@ function finish(loader, objs, doneCB) {
 				}
 			} else {
 				try {
-					var generatedCss, ri;
-					if (opt.ri) {
-						ri = new RezInd(JSON.parse(opt.ri.replace(re, '"$2": ')));
+					var riOpts = opt.ri && JSON.parse(opt.ri.replace(re, '"$2": ')),
+						generatedCss, riPlugin;
+					if (riOpts) {
+						riPlugin = new RezInd(riOpts);
 						// console.log("ri:", RezInd, ri);
-						generatedCss = tree.toCSS({plugins: [ri]});
+						generatedCss = tree.toCSS({plugins: [riPlugin]});
 					} else {
 						generatedCss = tree.toCSS();
 					}
