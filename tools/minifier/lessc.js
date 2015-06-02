@@ -12,6 +12,8 @@ if(!path.relative){
 	path.relative = require('./path-relative-shim').relative;
 }
 
+var re = /(['"])?([a-zA-Z0-9_]+)(['"])?:/g; // RegExp for adding missing quotes, to convert to JSON format
+
 var w = console.log;
 
 function printUsage() {
@@ -40,7 +42,7 @@ function finish(loader, objs, doneCB) {
 				try {
 					var generatedCss, ri;
 					if (opt.ri) {
-						ri = new RezInd(JSON.parse(opt.ri));
+						ri = new RezInd(JSON.parse(opt.ri.replace(re, '"$2": ')));
 						// console.log("ri:", RezInd, ri);
 						generatedCss = tree.toCSS({plugins: [ri]});
 					} else {

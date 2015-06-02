@@ -16,7 +16,7 @@
 		defaultLibLoc = "lib",
 		opt;
 
-	var re = /(['"])?([a-zA-Z0-9_]+)(['"])?:/g,
+	var re = /(['"])?([a-zA-Z0-9_]+)(['"])?:/g, // RegExp for adding missing quotes, to convert to JSON format
 		riPlugin;
 
 	// Shimming path.relative with 0.8.8's version if it doesn't exist
