@@ -10,6 +10,12 @@
 	overflow: hidden;
 }
 
+.enyo-touch-scroller-client::after,
+.enyo-touch-scroller-client::before {
+	content: "";
+	display: table-cell;
+}
+
 .enyo-touch-strategy-container {
 	overflow: hidden;
 }
