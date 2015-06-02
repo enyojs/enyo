@@ -16,6 +16,9 @@
 		defaultLibLoc = "lib",
 		opt;
 
+	var re = /(['"])?([a-zA-Z0-9_]+)(['"])?:/g,
+		riPlugin;
+
 	// Shimming path.relative with 0.8.8's version if it doesn't exist
 	if(!path.relative){
 		path.relative = require('./path-relative-shim').relative;
@@ -93,12 +96,12 @@
 			var sheet = sheets.shift(),
 				riOpts;
 
-			if (!this.riPlugin) {
-				riOpts = opt.ri && JSON.parse(opt.ri.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2": '));
+			if (!riPlugin) {
+				riOpts = opt.ri && JSON.parse(opt.ri.replace(re, '"$2": '));
 				if (riOpts) {
-					this.riPlugin = new RezInd(riOpts);
+					riPlugin = new RezInd(riOpts);
 				} else {
-					this.riPlugin = new RezInd();
+					riPlugin = new RezInd();
 				}
 			}
 
@@ -119,7 +122,7 @@
 						} else {
 							var generatedCss;
 							if (opt.ri) {
-								generatedCss = tree.toCSS({plugins: [this.riPlugin]});
+								generatedCss = tree.toCSS({plugins: [riPlugin]});
 							} else {
 								generatedCss = tree.toCSS();
 							}
