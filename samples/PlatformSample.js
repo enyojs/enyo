@@ -17,6 +17,11 @@ enyo.kind({
 		{kind: "onyx.Groupbox", components: [
 			{kind: "onyx.GroupboxHeader", content: "enyo.platform"},
 			{name: "enyoPlatformJSON", content: "", style: "padding: 8px;"}
+		]},
+		{tag: "br"},
+		{kind: "onyx.Groupbox", components: [
+			{kind: "onyx.GroupboxHeader", content: "enyo.version"},
+			{name: "enyoVersionJSON", content: "", style: "padding: 8px;"}
 		]}
 	],
 	updateWindowSize: function() {
@@ -35,6 +40,7 @@ enyo.kind({
 		this.inherited(arguments);
 		this.$.uaString.setContent(navigator.userAgent);
 		this.$.enyoPlatformJSON.setContent(JSON.stringify(enyo.platform, null, 1));
+		this.$.enyoVersionJSON.setContent(JSON.stringify(enyo.version, null, 1));
 		this.updateWindowSize();
 	},
 	handleResize: function() {

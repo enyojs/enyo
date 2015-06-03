@@ -105,6 +105,7 @@ process.on('message', function(msg) {
 var node = process.argv[0],
 	deploy = process.argv[1],
 	less = true, // LESS compilation, turned on by default
+	ri = false, // LESS resolution-independence conversion, turned off by default
 	verbose = false,
 	beautify = false,
 	noexec = false,
@@ -116,16 +117,17 @@ function printUsage() {
 		'Usage: ' + node + ' ' + deploy + ' [-c][-g][-v][-B][-e enyo_dir][-l lib_dir][-b build_dir][-o out_dir][-p package_js][-s source_dir][-f map_from -t map_to ...]\n' +
 		'\n' +
 		'Options:\n' +
-		'  -v  verbose operation                     [boolean]  [default: ' + verbose + ']\n' +
-		'  -b  build directory sub-folder            [default: "./build"]\n' +
-		'  -c  do not run the LESS compiler          [boolean]  [default: ' + less + ']\n' +
-		'  -e  enyo framework sub-folder             [default: "./enyo"]\n' +
-		'  -l  libs sub-folder                       [default: "./lib"]\n' +
-		'  -o  alternate output directory            [default: "PWD/deploy/APPNAME"]\n' +
-		'  -p  main package.js file (relative)       [default: "./package.js"]\n' +
-		'  -s  source code root directory            [default: "PWD"]\n' +
-		'  -B  pretty-print (beautify) JS output     [boolean]  [default: ' + beautify + ']\n' +
-		'  -g  gather libs to default location       [boolean]  [default: ' + gather + ']\n' +
+		'  -v  verbose operation                         [boolean]  [default: ' + verbose + ']\n' +
+		'  -b  build directory sub-folder                [default: "./build"]\n' +
+		'  -c  do not run the LESS compiler              [boolean]  [default: ' + less + ']\n' +
+		'  -r  perform LESS resolution-independence      [boolean]  [default: ' + ri + ']\n' +
+		'  -e  enyo framework sub-folder                 [default: "./enyo"]\n' +
+		'  -l  libs sub-folder                           [default: "./lib"]\n' +
+		'  -o  alternate output directory                [default: "PWD/deploy/APPNAME"]\n' +
+		'  -p  main package.js file (relative)           [default: "./package.js"]\n' +
+		'  -s  source code root directory                [default: "PWD"]\n' +
+		'  -B  pretty-print (beautify) JS output         [boolean]  [default: ' + beautify + ']\n' +
+		'  -g  gather libs to default location           [boolean]  [default: ' + gather + ']\n' +
 		'  -f  remote source mapping: from local path\n' +
 		'  -t  remote source mapping: to remote path\n' +
 		'  -E|--noexec disallow execution of application-provided scripts [default: false]\n' +
@@ -136,6 +138,7 @@ function printUsage() {
 var opt = nopt(/*knownOpts*/ {
 	"build": String,	// relative path
 	"less": Boolean,
+	"ri": Boolean,
 	"enyo": String,		// relative path
 	"lib": String,		// relative path
 	"out": path,		// absolute path
@@ -152,6 +155,7 @@ var opt = nopt(/*knownOpts*/ {
 }, /*shortHands*/ {
 	"b": "--build",
 	"c": "--no-less",
+	"r": "--ri",
 	"e": "--enyo",
 	"l": "--lib",
 	"o": "--out",
@@ -219,6 +223,7 @@ opt.enyo = opt.enyo || manifest.enyo || "enyo"; // from top-level folder
 log("opt:", opt);
 
 less = (opt.less !== false) && less;
+ri = opt.ri;
 gather = (opt.gather !== false) && gather;
 beautify = opt.beautify;
 noexec = opt.noexec;
@@ -239,6 +244,7 @@ log("Using: opt.enyo=" + opt.enyo);
 log("Using: opt.packagejs=" + opt.packagejs);
 log("Using: opt.test=" + opt.test);
 log("Using: less=" + less);
+log("Using: ri=" + ri);
 log("Using: beautify=" + beautify);
 log("Using: noexec=" + noexec);
 log("Using: gather=" + gather);
@@ -275,6 +281,8 @@ if (!opt.mapfrom || opt.mapfrom.indexOf("enyo") < 0) {
 		'-enyo', opt.enyo,
 		'-destdir', opt.out,
 		'-output', path.join(opt.build, 'enyo'),
+		(less ? '-less' : '-no-less'),
+		(ri ? '-ri' : '-no-ri'),
 		(beautify ? '-beautify' : '-no-beautify'),
 		path.join(opt.enyo, 'minify', 'package.js')];
 	if (opt.mapfrom) {
@@ -294,6 +302,7 @@ args = [node, minifier,
 	'-destdir', opt.out,
 	'-output', path.join(opt.build, 'app'),
 	(less ? '-less' : '-no-less'),
+	(ri ? '-ri' : '-no-ri'),
 	(beautify ? '-beautify' : '-no-beautify'),
 	opt.packagejs];
 if (opt.mapfrom) {
