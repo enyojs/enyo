@@ -40,10 +40,14 @@ function finish(loader, objs, doneCB) {
 				}
 			} else {
 				try {
-					var riOpts = opt.ri && JSON.parse(opt.ri.replace(re, '"$2": ')),
-						generatedCss, riPlugin;
-					if (riOpts) {
-						riPlugin = new RezInd(riOpts);
+					var riOpts, generatedCss, riPlugin;
+					if (opt.ri && opt.ri != 'false') {
+						riOpts = JSON.parse(opt.ri.replace(re, '"$2": '));
+						if (riOpts) {
+							riPlugin = new RezInd(riOpts);
+						} else {
+							riPlugin = new RezInd();
+						}
 						// console.log("ri:", RezInd, ri);
 						generatedCss = tree.toCSS({plugins: [riPlugin]});
 					} else {
