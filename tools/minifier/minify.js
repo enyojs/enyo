@@ -6,7 +6,7 @@
 		walker = require("walker"),
 		uglify = require("uglify-js"),
 		nopt = require("nopt"),
-		less = require("less");
+		less = require("less"),
 		RezInd = require('less-plugin-resolution-independence');
 
 	var basename = path.basename(__filename),
@@ -15,6 +15,9 @@
 		defaultEnyoLoc = "enyo",
 		defaultLibLoc = "lib",
 		opt;
+
+	var re = /(['"])?([a-zA-Z0-9_]+)(['"])?:/g, // RegExp for adding missing quotes, to convert to JSON format
+		riPlugin;
 
 	// Shimming path.relative with 0.8.8's version if it doesn't exist
 	if(!path.relative){
@@ -91,7 +94,8 @@
 		// recurses again from the async callback until no sheets left, then calls doneCB
 		function readAndParse() {
 			var sheet = sheets.shift(),
-				ri = new RezInd();
+				riOpts;
+
 			if (sheet) {
 				w(sheet);
 				var isLess = (sheet.slice(-4) == "less");
@@ -109,8 +113,16 @@
 							console.error(err);
 						} else {
 							var generatedCss;
-							if (opt.ri) {
-								generatedCss = tree.toCSS({plugins: [ri]});
+							if (opt.ri && opt.ri != 'false') { // ensure we have not ommitted the switch or the switch option has not been explicitly set to `false`
+								if (!riPlugin) {
+									if (opt.ri == 'true') { // case where we're using only the switch with no options or the switch option is explicitly set to `true`
+										riPlugin = new RezInd();
+									} else {
+										riOpts = JSON.parse(opt.ri.replace(re, '"$2": '));
+										riPlugin = new RezInd(riOpts);
+									}
+								}
+								generatedCss = tree.toCSS({plugins: [riPlugin]});
 							} else {
 								generatedCss = tree.toCSS();
 							}
@@ -238,7 +250,7 @@
 		"mapfrom": [String, Array],
 		"mapto": [String, Array],
 		"gathering": Boolean,
-		"ri": Boolean
+		"ri": String
 	};
 
 	var shortHands = {
