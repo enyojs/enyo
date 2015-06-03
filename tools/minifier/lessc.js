@@ -12,7 +12,8 @@ if(!path.relative){
 	path.relative = require('./path-relative-shim').relative;
 }
 
-var re = /(['"])?([a-zA-Z0-9_]+)(['"])?:/g; // RegExp for adding missing quotes, to convert to JSON format
+var re = /(['"])?([a-zA-Z0-9_]+)(['"])?:/g, // RegExp for adding missing quotes, to convert to JSON format
+	riPlugin;
 
 var w = console.log;
 
@@ -40,13 +41,15 @@ function finish(loader, objs, doneCB) {
 				}
 			} else {
 				try {
-					var riOpts, generatedCss, riPlugin;
+					var riOpts, generatedCss;
 					if (opt.ri && opt.ri != 'false') {
-						riOpts = JSON.parse(opt.ri.replace(re, '"$2": '));
-						if (riOpts) {
-							riPlugin = new RezInd(riOpts);
-						} else {
-							riPlugin = new RezInd();
+						if (!riPlugin) {
+							riOpts = JSON.parse(opt.ri.replace(re, '"$2": '));
+							if (riOpts) {
+								riPlugin = new RezInd(riOpts);
+							} else {
+								riPlugin = new RezInd();
+							}
 						}
 						// console.log("ri:", RezInd, ri);
 						generatedCss = tree.toCSS({plugins: [riPlugin]});
