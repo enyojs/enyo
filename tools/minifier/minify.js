@@ -121,7 +121,7 @@
 							console.error(err);
 						} else {
 							var generatedCss;
-							if (opt.ri) {
+							if (opt.ri && opt.ri != 'false') {
 								generatedCss = tree.toCSS({plugins: [riPlugin]});
 							} else {
 								generatedCss = tree.toCSS();
