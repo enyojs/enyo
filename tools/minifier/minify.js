@@ -6,7 +6,7 @@
 		walker = require("walker"),
 		uglify = require("uglify-js"),
 		nopt = require("nopt"),
-		less = require("less");
+		less = require("less"),
 		RezInd = require('less-plugin-resolution-independence');
 
 	var basename = path.basename(__filename),
@@ -113,13 +113,13 @@
 							console.error(err);
 						} else {
 							var generatedCss;
-							if (opt.ri && opt.ri != 'false') {
+							if (opt.ri && opt.ri != 'false') { // ensure we have not ommitted the switch or the switch option has not been explicitly set to `false`
 								if (!riPlugin) {
-									riOpts = JSON.parse(opt.ri.replace(re, '"$2": '));
-									if (riOpts) {
-										riPlugin = new RezInd(riOpts);
-									} else {
+									if (opt.ri == 'true') { // case where we're using only the switch with no options or the switch option is explicitly set to `true`
 										riPlugin = new RezInd();
+									} else {
+										riOpts = JSON.parse(opt.ri.replace(re, '"$2": '));
+										riPlugin = new RezInd(riOpts);
 									}
 								}
 								generatedCss = tree.toCSS({plugins: [riPlugin]});

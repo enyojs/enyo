@@ -42,13 +42,13 @@ function finish(loader, objs, doneCB) {
 			} else {
 				try {
 					var riOpts, generatedCss;
-					if (opt.ri && opt.ri != 'false') {
+					if (opt.ri && opt.ri != 'false') { // ensure we have not ommitted the switch or the switch option has not been explicitly set to `false`
 						if (!riPlugin) {
-							riOpts = JSON.parse(opt.ri.replace(re, '"$2": '));
-							if (riOpts) {
-								riPlugin = new RezInd(riOpts);
-							} else {
+							if (opt.ri == 'true') { // case where we're using only the switch with no options or switch option is explicitly set to `true`
 								riPlugin = new RezInd();
+							} else {
+								riOpts = JSON.parse(opt.ri.replace(re, '"$2": '));
+								riPlugin = new RezInd(riOpts);
 							}
 						}
 						// console.log("ri:", RezInd, ri);
