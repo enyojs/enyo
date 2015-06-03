@@ -282,7 +282,7 @@ if (!opt.mapfrom || opt.mapfrom.indexOf("enyo") < 0) {
 		'-destdir', opt.out,
 		'-output', path.join(opt.build, 'enyo'),
 		(less ? '-less' : '-no-less'),
-		(ri ? '-ri' : '-no-ri'), opt.ri,
+		'-ri', opt.ri,
 		(beautify ? '-beautify' : '-no-beautify'),
 		path.join(opt.enyo, 'minify', 'package.js')];
 	if (opt.mapfrom) {
@@ -302,7 +302,7 @@ args = [node, minifier,
 	'-destdir', opt.out,
 	'-output', path.join(opt.build, 'app'),
 	(less ? '-less' : '-no-less'),
-	(ri ? '-ri' : '-no-ri'), opt.ri,
+	'-ri', opt.ri,
 	(beautify ? '-beautify' : '-no-beautify'),
 	opt.packagejs];
 if (opt.mapfrom) {
