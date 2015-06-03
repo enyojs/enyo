@@ -96,15 +96,6 @@
 			var sheet = sheets.shift(),
 				riOpts;
 
-			if (!riPlugin) {
-				riOpts = opt.ri && JSON.parse(opt.ri.replace(re, '"$2": '));
-				if (riOpts) {
-					riPlugin = new RezInd(riOpts);
-				} else {
-					riPlugin = new RezInd();
-				}
-			}
-
 			if (sheet) {
 				w(sheet);
 				var isLess = (sheet.slice(-4) == "less");
@@ -122,6 +113,14 @@
 						} else {
 							var generatedCss;
 							if (opt.ri && opt.ri != 'false') {
+								if (!riPlugin) {
+									riOpts = JSON.parse(opt.ri.replace(re, '"$2": '));
+									if (riOpts) {
+										riPlugin = new RezInd(riOpts);
+									} else {
+										riPlugin = new RezInd();
+									}
+								}
 								generatedCss = tree.toCSS({plugins: [riPlugin]});
 							} else {
 								generatedCss = tree.toCSS();
