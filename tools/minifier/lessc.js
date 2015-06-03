@@ -4,7 +4,8 @@ var
 	path = require("path"),
 	walker = require("walker"),
 	nopt = require("nopt"),
-	less = require("less");
+	less = require("less"),
+	RezInd = require('less-plugin-resolution-independence');
 
 // Shimming path.relative with 0.8.8's version if it doesn't exist
 if(!path.relative){
@@ -19,6 +20,7 @@ function printUsage() {
 	w("<package-file>\t", "Path to package file to walk; all LESS files encountered will be compiled");
 	w("-enyo <path>\t", "Path to enyo loader (enyo/enyo.js)");
 	w("-w\t", "Watch the file and any dependencies, and re-compile on changes");
+	w("-ri\t", "Perform resolution-independence conversion of measurements i.e. px -> rem");
 	w("-h, -?, -help\t", "Show this message");
 }
 
@@ -36,6 +38,15 @@ function finish(loader, objs, doneCB) {
 				}
 			} else {
 				try {
+					var generatedCss, ri;
+					if (opt.ri) {
+						ri = new RezInd();
+						// console.log("ri:", RezInd, ri);
+						generatedCss = tree.toCSS({plugins: [ri]});
+					} else {
+						generatedCss = tree.toCSS();
+					}
+
 					var css =
 						"/* WARNING: This is a generated file for backward-compatibility.  Most      */\n" +
 						"/* users should instead modify LESS files.  If you choose to edit this CSS  */\n" +
@@ -44,7 +55,7 @@ function finish(loader, objs, doneCB) {
 						"/* '-c' flag to disable LESS compilation.  This will force the loader and   */\n" +
 						"/* minifier to fall back to using CSS files in place of the same-name       */\n" +
 						"/* LESS file.                                                               */\n" +
-						"\n" + tree.toCSS();
+						"\n" + generatedCss;
 					fs.writeFileSync(cssFile, css, "utf8");
 					nextSheet();
 				} catch(e)  {
@@ -142,7 +153,8 @@ var knownOpts = {
 	"enyo": String,
 	"output": String,
 	"watch": Boolean,
-	"help": Boolean
+	"help": Boolean,
+	"ri": Boolean
 };
 
 var shortHands = {
@@ -151,7 +163,8 @@ var shortHands = {
 	"w": ['--watch'],
 	"h": ['--help'],
 	"?": ['--help'],
-	"help": ['--help']
+	"help": ['--help'],
+	"ri": ['--ri']
 };
 
 var opt = nopt(knownOpts, shortHands, process.argv, 2);

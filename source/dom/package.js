@@ -1,4 +1,5 @@
 enyo.depends(
+	"resolution.js",
 	"dom.css",
 	"dom.js",
 	"transform.js",
