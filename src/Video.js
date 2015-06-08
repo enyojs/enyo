@@ -499,7 +499,8 @@ module.exports = kind(
 	* @public
 	*/
 	fastForward: function () {
-		var node = this.hasNode();
+		var node = this.hasNode(),
+			isNeedPlay = false;
 
 		if (!node) {
 			return;
@@ -520,7 +521,7 @@ module.exports = kind(
 			this.selectPlaybackRateArray('slowForward');
 			this._speedIndex = 0;
 			if (this.isPaused()) {
-				node.play();
+				isNeedPlay = true;
 			}
 			this._prevCommand = 'slowForward';
 			break;
@@ -548,6 +549,7 @@ module.exports = kind(
 
 		this.setPlaybackRate(this.selectPlaybackRate(this._speedIndex));
 
+		isNeedPlay && node.play();
 	},
 
 	/**
@@ -556,8 +558,8 @@ module.exports = kind(
 	* @public
 	*/
 	rewind: function () {
-		var node = this.hasNode();
-
+		var node = this.hasNode(),
+		isNeedPlay = false;
 		if (!node) {
 			return;
 		}
@@ -577,7 +579,7 @@ module.exports = kind(
 			this.selectPlaybackRateArray('slowRewind');
 			this._speedIndex = 0;
 			if (this.isPaused() && this.node.duration > this.node.currentTime) {
-				node.play();
+				isNeedPlay = true;
 			}
 			this._prevCommand = 'slowRewind';
 			break;
@@ -594,6 +596,8 @@ module.exports = kind(
 
 
 		this.setPlaybackRate(this.selectPlaybackRate(this._speedIndex));
+
+		isNeedPlay && node.play();
 	},
 
 	/**
