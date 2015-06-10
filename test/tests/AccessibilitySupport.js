@@ -9,7 +9,7 @@ describe('AccessibilitySupport', function () {
 
 	describe('usage', function () {
 
-		describe('#updateAriaAttributes', function () {
+		describe('#updateAccessibilityAttributes', function () {
 
 			var TestControl, testControl, content, label, hint;
 
@@ -93,7 +93,44 @@ describe('AccessibilitySupport', function () {
 
 				expect(testControl.getAttribute('aria-label')).to.equal(label + ' ' + hint);
 			});
+		});
 
+		describe('#accessibilityDisabled', function () {
+
+			var TestControl, testControl, label;
+
+			before(function () {
+				label = 'label';
+
+				TestControl = kind({
+					kind: Control,
+					mixins: [AccessibilitySupport]
+				});
+
+				testControl = new TestControl();
+			});
+
+			after(function () {
+				testControl.destroy();
+				TestControl = null;
+			});
+
+			it ('should equal accessibilityLabel', function () {
+
+				testControl.set('accessibilityLabel', label);
+				testControl.set('accessibilityDisabled', false);
+
+				expect(testControl.getAttribute('aria-label')).to.equal(label);
+			});
+
+			it ('should equal null', function () {
+
+				testControl.set('accessibilityLabel', label);
+				testControl.set('accessibilityDisabled', true);
+
+				expect(testControl.getAttribute('aria-label')).to.equal(null);
+				expect(testControl.getAttribute('tabindex')).to.equal(null);
+			});
 		});
 
 	});
