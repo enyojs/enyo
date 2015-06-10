@@ -9,7 +9,7 @@ describe('AccessibilitySupport', function () {
 
 	describe('usage', function () {
 
-		describe('#updateAriaAttributes', function () {
+		describe('#updateAccessibilityAttributes', function () {
 
 			var TestControl, testControl, content, label, hint;
 
