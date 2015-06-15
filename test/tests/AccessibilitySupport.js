@@ -31,13 +31,13 @@ describe('AccessibilitySupport', function () {
 				TestControl = null;
 			});
 
-			it ('should equal content', function () {
+			it ('should equal null with only content', function () {
 
 				testControl.set('content', content);
 				testControl.set('accessibilityLabel', '');
 				testControl.set('accessibilityHint', '');
 
-				expect(testControl.getAttribute('aria-label')).to.equal(content);
+				expect(testControl.getAttribute('aria-label')).to.equal(null);
 			});
 
 			it ('should equal accessibilityLabel without content', function () {
