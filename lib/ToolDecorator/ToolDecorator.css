@@ -1,0 +1,8 @@
+.enyo-tool-decorator {
+	display: inline-block;
+}
+
+.enyo-tool-decorator > * {
+	display: inline-block;
+	vertical-align: middle;
+}

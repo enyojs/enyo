@@ -1,0 +1,19 @@
+.enyo-scrim {
+	z-index: 1;
+	/*
+		note: by using pointer-events we allow tapping on scrim
+		while it is fading out; however, this requires any showing classes
+		to set pointer events to auto or scrim will not function as expected.
+	*/
+	pointer-events: none;
+}
+.enyo-scrim.enyo-scrim-translucent {
+	pointer-events: auto;
+	background-color: #000000;
+	opacity: 0.65;
+	filter: alpha(opacity=65);
+}
+.enyo-scrim.enyo-scrim-transparent {
+	pointer-events: auto;
+	background: transparent;
+}
