@@ -59,8 +59,6 @@ describe('Application', function () {
 			});
 
 			it('should have app property in all children', function () {
-				var okay = true;
-
 				for (var k in a.$) {
 					expect(a.$[k].app).to.exist;
 				}
@@ -120,7 +118,7 @@ describe('Application', function () {
 							{name: "child"}
 						],
 						bindings: [
-							{from: ".app.$.controller.data", to: ".$.child.content"}
+							{from: "app.$.controller.data", to: "$.child.content"}
 						]
 					},
 					components: [
