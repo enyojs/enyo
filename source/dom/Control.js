@@ -982,6 +982,24 @@
 
 			return this;
 		},
+			
+		/**
+		* A function that fires after the control has rendered. This performs a
+		* reflow.
+		*
+		* @public
+		*/
+		reflow: function () {
+			var child,
+				i = 0;
+
+			// notify children of reflow
+			this.inherited();
+
+			for (; (child = this.children[i]); ++i) {
+				if (child.generated) child.reflow();
+			}
+		},
 
 		/**
 		* A function that fires after the control has rendered. This performs a
