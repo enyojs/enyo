@@ -6,6 +6,9 @@
   "homepage": "http://enyojs.com/",
   "bugs": "http://jira.enyojs.com/",
   "main": "index.js",
+  "styles": [
+    "css/enyo.css"
+  ],
   "keywords": [
     "framework",
     "toolkit",
