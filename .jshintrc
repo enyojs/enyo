@@ -5,7 +5,7 @@
     "exports": true,
     "module": true,
     "module.exports": true,
-    "JSON": true
+    "JSON": false
   },
   "es3": true,
   "evil": false,
