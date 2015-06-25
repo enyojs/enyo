@@ -1,6 +1,7 @@
 // Client-side less.js configurator / loader
 (function() {
 	var less = window.less || {};
+	less.plugins = [];
 	if (less.relativeUrls === undefined) {
 		less.relativeUrls = true;
 	}
@@ -17,10 +18,18 @@
 	script.src = "enyo/tools/minifier/node_modules/less-plugin-resolution-independence/lib/resolution-independence.js";
 	script.charset = "utf-8";
 	script.onload = function () {
-		var less = window.less || {};
 		var ri = new enyoLessRiPlugin();
-		less.plugins = [ri];
-		window.less = less;
+		less.plugins.push(ri);
+	}
+	document.getElementsByTagName('head')[0].appendChild(script);	
+	
+	script = document.createElement('script');
+	script.src = "enyo/tools/minifier/node_modules/less-plugin-prefixly/lib/prefixly.js";
+	script.charset = "utf-8";
+	script.onload = function () {
+		var pfx = new enyoLessPrefixlyPlugin();
+		less.plugins.push(pfx);
 	}
 	document.getElementsByTagName('head')[0].appendChild(script);
+	
 })();
