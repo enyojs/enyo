@@ -1,8 +1,8 @@
 module.exports = {
     printUsage: function() {
         console.log("");
-        console.log("NPM Resolution Independence Conversion");
-        console.log("specify plugin with --resolution-independence");
+        console.log("Prefixly Vendor Prefix");
+        console.log("specify plugin with --prefixly");
         console.log("No options. import with npm://packagename/path..");
         console.log("css/less extensions not necessary");
         console.log("");
