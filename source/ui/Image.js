@@ -190,8 +190,8 @@
 			if (this.sizing) {
 				this.addClass(this.sizing);
 			}
+			this.srcChanged();
 			if (this.generated) {
-				this.srcChanged();
 				this.render();
 			}
 		},
