@@ -1,0 +1,39 @@
+{
+  "name": "enyo",
+  "main": [
+    "index.js",
+    "lib"
+  ],
+  "version": "2.6.0",
+  "homepage": "https://github.com/enyojs/enyo",
+  "authors": [
+    {"name": "EnyoJS Framework Team", "homepage": "http://enyojs.com/"}
+  ],
+  "description": "Core library modules for the EnyoJS JavaScript framework.",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "JavaScript",
+    "framework",
+    "js",
+    "javascript",
+    "library",
+    "enyo",
+    "enyojs",
+    "Enyo",
+    "EnyoJS",
+    "webos",
+    "WebOS",
+    "toolkit",
+    "components",
+    "mobile"
+  ],
+  "license": "Apache-2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "test",
+    "docs"
+  ]
+}
