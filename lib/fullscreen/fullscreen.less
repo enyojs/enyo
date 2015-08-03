@@ -1,0 +1,19 @@
+/* Fullscreen */
+
+.enyo-fullsize() {
+	width: 100% !important;
+	height: 100% !important;
+}
+
+.vendor-fullscreen({ .enyo-fullsize; });
+
+/* Fallback Fullscreen */
+body .enyo-fullscreen {
+	position: absolute !important;
+	left: 0 !important;
+	top: 0 !important;
+	right: 0 !important;
+	bottom: 0 !important;
+	.enyo-fullsize;
+	box-sizing: border-box !important;
+}
