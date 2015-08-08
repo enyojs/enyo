@@ -135,6 +135,48 @@
 			// want to do any more initialization
 			if (list.collection && list.collection.length) { this.reset(list); }
 		},
+
+		/**
+		* Update page with model
+		*
+		* @private
+		*/
+		updatePage: function(list, page) {
+			var data = list.collection,
+			// placeholder for the control we're going to update
+				view, 
+				indexOffset = 0;
+			// if generating a control we need to use the correct page as the control parent
+			list.controlParent = page;
+			if (list.childSizeNeedsUpdate) {
+				indexOffset = 1;
+				list.childSizeNeedsUpdate = false;
+			} 
+
+			for (var i = page.start + indexOffset; i <= page.end && i < data.length; ++i) {
+				view = (page.children[i - page.start] || list.createComponent({}));
+				// disable notifications until all properties to be updated
+				// have been
+				view.teardownRender();
+				view.stopNotifications();
+				view.set('model', data.at(i));
+				view.set('index', i);
+				this.checkSelected(list, view);
+				view.set('selected', list.isSelected(view.model));
+				view.startNotifications();
+				view.canGenerate = true;
+			}
+			// if there are any controls that need to be hidden we do that now
+			for (i=(i-page.start); i < page.children.length && page.start <= page.end; ++i) {
+				view = page.children[i];
+				view.teardownRender();
+				view.canGenerate = false;
+			}
+			// update the entire page at once - this removes old nodes and updates
+			// to the correct ones
+			page.render();
+		},
+
 		/**
 		* Generates the markup for the page content.
 		*
@@ -153,39 +195,16 @@
 				// the metrics for the entire list
 				metrics = list.metrics,
 				// controls per page
-				perPage = this.controlsPerPage(list),
-				// placeholder for the control we're going to update
-				view;
+				perPage = this.controlsPerPage(list);
 
 			// the first index for this generated page
-			page.start  = perPage * index;
+			page.start  =  perPage * index;	
+		
 			// the last index for this generated page
 			page.end    = Math.min((data.length - 1), (page.start + perPage) - 1);
 
-			// if generating a control we need to use the correct page as the control parent
-			list.controlParent = page;
-			for (var i=page.start; i <= page.end && i < data.length; ++i) {
-				view = (page.children[i - page.start] || list.createComponent({}));
-				// disable notifications until all properties to be updated
-				// have been
-				view.teardownRender();
-				view.stopNotifications();
-				view.set('model', data.at(i));
-				view.set('index', i);
-				this.checkSelected(list, view);
-				view.set('selected', list.isSelected(view.model));
-				view.startNotifications();
-				view.canGenerate = true;
-			}
-			// if there are any controls that need to be hidden we do that now
-			for (i=(i-page.start); i < page.children.length; ++i) {
-				view = page.children[i];
-				view.teardownRender();
-				view.canGenerate = false;
-			}
-			// update the entire page at once - this removes old nodes and updates
-			// to the correct ones
-			page.render();
+			this.updatePage(list, page);
+
 			// now to update the metrics
 			metrics        = metrics.pages[index] || (metrics.pages[index] = {});
 			metrics.height = this.pageHeight(list, page);
@@ -214,18 +233,33 @@
 		* @private
 		*/
 		childSize: function (list) {
-			if (!list.fixedChildSize) {
-				var pageIndex = list.$.page1.index,
+			if (!list.fixedChildSize || !list.childSize) {
+				var page = list.$.page1,
 					sizeProp  = list.psizeProp,
-					n         = list.$.page1.node || list.$.page1.hasNode(),
-					size, props;
-				if (pageIndex >= 0 && n) {
-					props = list.metrics.pages[pageIndex];
-					size  = props? props[sizeProp]: 0;
-					list.childSize = Math.floor(size / (n.children.length || 1));
+					n         = page.node || page.hasNode(),
+					size, props, childSize;
+				if (page.index >= 0 && n) {
+					// if indexed page was not generated ever, it will return 'undefined'
+					props = list.metrics.pages[page.index];
+					if (!props) {
+						// render the first page and get accurate childSize
+						if (list.controlsPerPage) {
+							page.start = page.end = list.controlsPerPage * page.index;	
+						} else {
+							page.start = page.end = 0;
+						}
+						
+						this.updatePage(list, page);
+						childSize = page.getBounds()[sizeProp];
+						list.childSizeNeedsUpdate = (list.childSize != childSize);
+						if (list.childSizeNeedsUpdate) { list.childSize = childSize; } 
+					} else {
+						size  = props[sizeProp];
+						list.childSize = Math.floor(size / (n.children.length || 1));
+					}
 				}
 			}
-			return list.fixedChildSize || list.childSize || (list.childSize = 100); // we have to start somewhere
+			return list.fixedChildSize || list.childSize;
 		},
 
 		/**
@@ -380,9 +414,13 @@
 		* @private
 		*/
 		modelsAdded: function (list, props) {
+			// new added models could have different childSize.
+			if (list.childSize) {
+				list.childSize = null;
+			}
 
 			// if the list has not already reset, reset
-			if (!list.hasReset) return this.reset(list);
+			if (!list.hasReset) { return this.reset(list); }
 
 			var cpp = this.controlsPerPage(list),
 				end = Math.max(list.$.page1.start, list.$.page2.start) + cpp;
