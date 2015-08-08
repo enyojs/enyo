@@ -128,6 +128,37 @@
 		childBindingDefaults: null,
 
 		/**
+		* The name of the container specified in
+		* [containerOptions]{@link enyo.DataRepeater#containerOptions}. This may or may not have the
+		* same value as [controlParentName]{@link enyo.DataRepeater#controlParentName}.
+		*
+		* @type {String}
+		* @default 'container'
+		* @public
+		*/
+		containerName: 'container',
+
+		/**
+		* A [Kind]{@glossary Kind} definition that will be used as the chrome for the container
+		*  of the DataRepeater. When specifying a custom definition be sure to include a container
+		*  component that has the name specified in
+		*  [controlParentName]{@link enyo.DataRepeater#controlParentName}.
+		*
+		* @type {Object}
+		* @default {name: 'container', classes: 'enyo-fill enyo-data-repeater-container'}
+		* @public
+		*/
+		containerOptions: {name: 'container', classes: 'enyo-fill enyo-data-repeater-container'},
+
+		/**
+		* See {@link enyo.UiComponent#controlParentName}
+		* @type {String}
+		* @default 'container'
+		* @public
+		*/
+		controlParentName: 'container',
+
+		/**
 		* @private
 		*/
 		initComponents: function () {
@@ -647,21 +678,6 @@
 		* @private
 		*/
 		childMixins: [enyo.RepeaterChildSupport],
-
-		/**
-		* @private
-		*/
-		controlParentName: 'container',
-
-		/**
-		* @private
-		*/
-		containerName: 'container',
-
-		/**
-		* @private
-		*/
-		containerOptions: {name: 'container', classes: 'enyo-fill enyo-data-repeater-container'},
 
 		/**
 		* @private
