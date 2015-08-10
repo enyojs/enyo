@@ -1,8 +1,6 @@
 (function (enyo, scope) {
-	
-	var localStorage = scope.localStorage;
-	
-	if (localStorage) {
+
+	if (scope.localStorage || scope.sessionStorage) {
 		var kind = enyo.kind
 			, json = enyo.json
 			, uuid = enyo.uuid;
@@ -12,14 +10,15 @@
 			, Model = enyo.Model;
 			
 		var CODES = {
-			UNIQUE_URL: 'A Collection must have a unique url property when using localStorage',
-			UNIQUE_PRIMARY_KEY: 'A Model must have a unqiue primaryKey to be able to fetch it from localStorage'
+			UNIQUE_URL: 'A Collection must have a unique url property when using a Web Storage',
+			UNIQUE_PRIMARY_KEY: 'A Model must have a unqiue primaryKey to be able to fetch it from a Web Storage'
 		};
 	
 		/**
-		* A [localStorage]{@glossary localStorage} [source]{@link enyo.Source}. This
-		* [kind]{@glossary kind} is only an available on platforms that support the
-		* localStorage Web standard.
+		* A [localStorage]{@glossary localStorage}
+		* or [sessionStorage]{@glossary sessionStorage} [source]{@link enyo.Source}.
+		* This [kind]{@glossary kind} is only an available on platforms that support the
+		* Web Storage standard.
 		*
 		* It is important to note that usage of this source requires that
 		* [models]{@link enyo.Model} and [collections]{@link enyo.Collection} use
@@ -30,17 +29,17 @@
 		* within an {@link enyo.Collection}, must have a unique
 		* [primaryKey]{@link enyo.Model#primaryKey}.
 		*
-		* @class enyo.LocalStorageSource
+		* @class enyo.WebStorageSource
 		* @extends enyo.Source
 		* @public
 		*/
 		kind(
-			/** @lends enyo.LocalStorageSource.prototype */ {
+			/** @lends enyo.WebStorageSource.prototype */ {
 			
 			/**
 			* @private
 			*/
-			name: 'enyo.LocalStorageSource',
+			name: 'enyo.WebStorageSource',
 			
 			/**
 			* @private
@@ -55,7 +54,7 @@
 			/**
 			* The namespace of all [models]{@link enyo.Model} and
 			* [collections]{@link enyo.Collection} that will be stored by this
-			* {@link enyo.LocalStorageSource}.
+			* {@link enyo.WebStorageSource}.
 			*
 			* @type {String}
 			* @default 'enyo-app'
@@ -64,12 +63,29 @@
 			prefix: 'enyo-app',
 			
 			/**
+			* The type of the store. Can be local or session.
+			* @type {String}
+			* @default 'local'
+			* @public
+			*/
+			storageType: 'local',
+
+			/**
+			* @public
+			*/
+			constructor: function () {
+				this.inherited(arguments);
+				this.webStorage = scope[this.storageType+'Storage'];
+			},
+
+			/**
 			* @private
 			*/
 			storage: function () {
+				var webStorage = this.webStorage;
 				return this._storage || (this._storage = (function (source) {
 					// try and acquire any previously stored uuids
-					var storage = localStorage.getItem(source.prefix);
+					var storage = webStorage.getItem(source.prefix);
 					
 					// if there was anything in the store we turn it into an array temporarily
 					if (typeof storage == 'string') storage = storage.split(',');
@@ -183,14 +199,15 @@
 			*/
 			save: function (uuid) {
 				var storage = this.storage()
-					, prefix = this.prefix;
+					, prefix = this.prefix
+					, webStorage = this.webStorage;
 					
 				var fn = function (uuid) {
 					var key = (prefix + '-' + uuid)
 						, model = storage.models[uuid]
 						, collection = storage.collections[uuid];
-					if (model || collection) localStorage.setItem(key, json.stringify({model: !! model, collection: !! collection, data: model || collection}));
-					else localStorage.removeItem(key);
+					if (model || collection) webStorage.setItem(key, json.stringify({model: !! model, collection: !! collection, data: model || collection}));
+					else webStorage.removeItem(key);
 				};
 				
 				// if a uuid is provided we only have to save a subset of the whole
@@ -204,7 +221,7 @@
 				}
 				
 				// we always update the overall array to ensure it is up-to-date
-				localStorage.setItem(prefix, storage.uuids.join(','));
+				webStorage.setItem(prefix, storage.uuids.join(','));
 			},
 			
 			/**
@@ -214,11 +231,12 @@
 				var prefix = this.prefix
 					, collections = {}
 					, models = {}
-					, storage = {uuids: uuids, models: models, collections: collections};
+					, storage = {uuids: uuids, models: models, collections: collections}
+					, webStorage = this.webStorage;
 					
 				uuids.forEach(function (uuid) {
 					var key = (prefix + '-' + uuid)
-						, ln = localStorage.getItem(key);
+						, ln = webStorage.getItem(key);
 					
 					if (ln && typeof ln == 'string') {
 						ln = json.parse(ln);
@@ -235,3 +253,4 @@
 	}
 	
 })(enyo, this);
+
