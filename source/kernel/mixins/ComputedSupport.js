@@ -135,9 +135,13 @@
 		notify: enyo.inherit(function (sup) {
 			return function (path, was, is) {
 				this.isComputedDependency(path) && queueComputed(this, path);
-				this._computedRecursion++;
-				sup.apply(this, arguments);
-				this._computedRecursion--;
+				try {
+					this._computedRecursion++;
+					sup.apply(this, arguments);
+					this._computedRecursion--;
+				} catch(e) {
+					this._computedRecursion = 0;
+				}
 				this._computedQueue && this._computedRecursion === 0 && flushComputed(this);
 				return this;
 			};
