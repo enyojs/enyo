@@ -57,37 +57,32 @@
 			// inside a lib directory; normalizing the path makes it easier to check, below
 			sheet = path.normalize(sheet);
 			// fix url paths
-			code = code.replace(/url\([^)]*\)/g, function(inMatch) {
-				// find the url path, ignore quotes in url string
-				var matches = /url\s*\(\s*(('([^']*)')|("([^"]*)")|([^'"]*))\s*\)/.exec(inMatch);
-				var urlPath = matches[3] || matches[5] || matches[6];
-
-				// handle the case url('') or url("").
-				if(!urlPath){
-					return "url()";
+			code = code.replace(/(?!url\((?:['"])?(?:data:|https?|(?:file:)?\/\/))url\((['"])?([a-zA-Z0-9\ \.\/\-~&%#:+=_?]*)\1\)/g,
+				function (uri, char, content) {
+					var rel, dest;
+					// we do nothing if there was nothing even though this is probably not intended 
+					// by the author let a true CSS parser deal with the flaws
+					if (!content) return uri;
+					// if the initial character is from a relative IRI (say, a nested entry from 
+					// inline SVG encoded utf8 instead of base64) we leave it alone
+					// it would be # in standard utf8
+					if (content.charAt(0) == '#') return uri;
+					// @note this is where the limitation sets in (so we don't do crazy things to
+					// cover a very rare use-case that can be avoided) where we do not decode uri-
+					// encoded relative paths, rewrite them, and re-encode them, however this will
+					// work with relative IRI's (using # for the same document -> %23 when encoded)
+					if (/^%23/.test(content)) return uri;
+					// if we are gathering libs to default location, rewrite urls beneath lib folder
+					dest = opt.gathering && sheet.indexOf(opt.lib) === 0
+						? defaultLibLoc + sheet.substr(opt.lib.length)
+						: sheet;
+					// leaving this because this was working according to these build tools 
+					// specific needs
+					rel = path.join('..', opt.relsrcdir, path.dirname(dest), content);
+					// for sanity we wrap all URI's safely with single quote
+					return 'url(\'' + rel + '\')';
 				}
-				// skip an external url (one that starts with <protocol>: or just //, includes data:)
-				if (/^([\w-]*:)|(\/\/)/.test(urlPath)) {
-					return "url('" + urlPath + "')";
-				}
-
-				// if we are gathering libs to default location, rewrite urls beneath lib folder
-				var dstSheet = (opt.gathering && sheet.indexOf(opt.lib) == 0) ?
-					defaultLibLoc + sheet.substr(opt.lib.length) :
-					sheet;
-
-				// Make relative asset path from 'top-of-the-tree/build'
-				var relPath = path.join("..", opt.relsrcdir, path.dirname(dstSheet), urlPath);
-				if (process.platform == "win32") {
-					relPath = pathSplit(relPath).join("/");
-				}
-				console.log("opt.relsrcdir:", opt.relsrcdir);
-				console.log("sheet:", sheet);
-				console.log("dstSheet:", dstSheet);
-				console.log("urlPath:", urlPath);
-				console.log("relPath:", relPath);
-				return "url('" + relPath + "')";
-			});
+			);
 			blob += "\n/* " + path.relative(process.cwd(), sheet) + " */\n\n" + code + "\n";
 		};
 		// Pops one sheet off the sheets[] array, reads (and parses if less), and then
