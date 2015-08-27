@@ -7,12 +7,10 @@ require('enyo');
 
 var
 	kind = require('../kind'),
-	options = require('../options'),
 	utils = require('../utils'),
 	platform = require('../platform');
 var
-	Input = require('../Input'),
-	CheckboxAccessibilitySupport = require('./CheckboxAccessibilitySupport');
+	Input = require('../Input');
 
 /**
 * Fires when checkbox is tapped.
@@ -46,11 +44,6 @@ module.exports = kind(
 	* @private
 	*/
 	kind: Input,
-
-	/**
-	* @private
-	*/
-	mixins: options.accessibility ? [CheckboxAccessibilitySupport] : null,
 
 	/**
 	* @private
@@ -198,5 +191,22 @@ module.exports = kind(
 		if (platform.ie <= 8) {
 			this.bubble('onchange', e);
 		}
-	}
+	},
+
+	// Accessibility
+
+	/**
+	* @default checkbox
+	* @type {String}
+	* @see enyo/AccessibilitySupport~AccessibilitySupport#accessibilityRole
+	* @public
+	*/
+	accessibilityRole: 'checkbox',
+
+	/**
+	* @private
+	*/
+	ariaObservers: [
+		{from: 'checked', to: 'aria-checked'}
+	]
 });

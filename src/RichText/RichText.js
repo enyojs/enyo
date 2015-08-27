@@ -9,14 +9,12 @@ require('enyo');
 
 var
 	kind = require('../kind'),
-	options = require('../options'),
 	utils = require('../utils'),
 	platform = require('../platform');
 
 var
 	Control = require('../Control'),
-	Input = require('../Input'),
-	RichTextAccessibilitySupport = require('./RichTextAccessibilitySupport');
+	Input = require('../Input');
 
 /**
 * The type of change to apply. Possible values are `'move'` and `'extend'`.
@@ -67,11 +65,6 @@ var RichText = module.exports = kind(
 	* @private
 	*/
 	kind: Input,
-
-	/**
-	* @private
-	*/
-	mixins: options.accessibility ? [RichTextAccessibilitySupport] : null,
 
 	/**
 	* @private
@@ -345,5 +338,14 @@ var RichText = module.exports = kind(
 			var v = this.allowHtml ? val : Control.escapeHtml(val).replace(/\n/g, '<br/>');
 			document.execCommand('insertHTML', false, v);
 		}
-	}
+	},
+
+	// Accessibility
+
+	/**
+	* @private
+	*/
+	ariaObservers: [
+		{to: 'aria-multiline', value: true}
+	]
 });

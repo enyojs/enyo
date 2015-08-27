@@ -6,12 +6,10 @@ require('enyo');
 */
 
 var
-	kind = require('../kind'),
-	options = require('../options');
+	kind = require('../kind');
 var
 	Control = require('../Control'),
-	TableCell = require('../TableCell'),
-	TableRowAccessibilitySupport = require('./TableRowAccessibilitySupport');
+	TableCell = require('../TableCell');
 
 /**
 * {@link module:enyo/TableRow~TableRow} implements an HTML [&lt;tr&gt;]{@glossary tr} element.
@@ -37,15 +35,20 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	mixins: options.accessibility ? [TableRowAccessibilitySupport] : null,
-
-	/**
-	* @private
-	*/
 	tag: 'tr',
 
 	/**
 	* @private
 	*/
-	defaultKind: TableCell
+	defaultKind: TableCell,
+
+	// Accessibility
+
+	/**
+	* @default row
+	* @type {String}
+	* @see enyo/AccessibilitySupport~AccessibilitySupport#accessibilityRole
+	* @public
+	*/
+	accessibilityRole: 'row'
 });

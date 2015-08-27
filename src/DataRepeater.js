@@ -774,7 +774,19 @@ var DataRepeater = module.exports = kind(
 	/**
 	* @private
 	*/
-	_selection: null
+	_selection: null,
+
+	// Accessibility
+
+	/**
+	* @private
+	*/
+	ariaObservers: [
+		{path: ['selection', 'multipleSelection'], method: function () {
+			this.setAriaAttribute('role', this.selection ? 'listbox' : 'list');
+			this.setAriaAttribute('aria-multiselectable', this.selection && this.multipleSelection ? true : null);
+		}}
+	]
 });
 
 /**
