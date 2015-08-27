@@ -1,15 +1,18 @@
 {
   "name": "enyo",
+  "assets": [],
+  "devAssets": [],
+  "styles": [
+    "css/enyo.css",
+    "css/mixins.less"
+  ],
+  "main": "index.js",
+  "moduleDir": "src",
   "filename": "enyo.js",
   "version": "2.6.0-pre",
   "description": "Enyo is an open source object-oriented JavaScript framework emphasizing encapsulation and modularity. Enyo contains everything you need to create a fast, scalable mobile or web application.",
   "homepage": "http://enyojs.com/",
   "bugs": "http://jira.enyojs.com/",
-  "main": "index.js",
-  "styles": [
-    "css/enyo.css",
-    "css/mixins.less"
-  ],
   "keywords": [
     "framework",
     "toolkit",
