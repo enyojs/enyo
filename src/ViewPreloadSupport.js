@@ -45,9 +45,15 @@ var ViewPreloadSupport = {
 			sup.apply(this, arguments);
 
 			if (this.cacheViews) {
+				// we don't want viewCache to be added to the client area, so we cache the original
+				// controlParent and restore it afterward
+				var cp = this.controlParent;
+				this.controlParent = null;
 				this.createChrome([
 					{name: 'viewCache', kind: Control, canGenerate: false}
 				]);
+				this.controlParent = cp;
+
 				this.removeChild(this.$.viewCache);
 				this._cachedViews = {};
 			}

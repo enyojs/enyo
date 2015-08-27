@@ -41,13 +41,6 @@ module.exports = kind(
 	kind: Control,
 
 	/**
-	* @private
-	*/
-	handlers: {
-		ontransitionend: 'transitionEnd'
-	},
-
-	/**
 	* The current [state]{@link module:enyo/LightPanel~LightPanel#States}.
 	*
 	* @type {module:enyo/LightPanel~LightPanel#States}
@@ -68,18 +61,7 @@ module.exports = kind(
 	*
 	* @public
 	*/
-	postTransition: function () {
-		// TODO: this is added for backwards-compatibility and is deprecated functionality
-		if (this.state == States.ACTIVE && this.activated) this.activated();
-		else if (this.state == States.INACTIVE && this.deactivated) this.deactivated();
-	},
-
-	/**
-	* @private
-	*/
-	transitionEnd: function (sender, ev) {
-		if (ev.originator === this) this.set('state', this.state == States.ACTIVATING ? States.ACTIVE : States.INACTIVE);
-	}
+	postTransition: function () {}
 
 });
 
