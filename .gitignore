@@ -8,3 +8,5 @@ out
 lcov-report
 lcov.info
 npm-*
+dist
+.enyocache
