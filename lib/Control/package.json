@@ -1,5 +1,5 @@
 {
-  "main": "fullscreen.js",
+  "main": "Control.js",
   "styles": [
     "fullscreen.less"
   ]
