@@ -65,10 +65,10 @@ var AjaxComponent = kind({
 * requests. Internally, it relies on the [Async]{@link module:enyo/Async~Async} subkinds
 * ({@link module:enyo/Ajax~Ajax} and {@link module:enyo/Jsonp~JsonpRequest}) to manage transactions.
 *
-* By default, {@link module:enyo/WebService~WebService} uses `enyo.Ajax` and publishes all of its
+* By default, {@link module:enyo/WebService~WebService} uses `enyo/Ajax` and publishes all of its
 * properties via the [enyo/AjaxProperties]{@link module:enyo/AjaxProperties} module.
 *
-* To use `enyo.JsonpRequest` instead of `enyo.Ajax`, set
+* To use `enyo/Jsonp/JsonpRequest` instead of `enyo/Ajax`, set
 * [jsonp]{@link module:enyo/WebService~WebService#jsonp} to `true` (defaults to `false`).
 *
 * For more information, see the documentation on [Consuming Web

@@ -154,7 +154,7 @@ var JsonpRequest = module.exports = kind(
 	
 	/**
 	* Initiates the asynchronous routine and will supply the given value if it completes
-	* successfully. Overloaded from [enyo.Async.go()]{@link module:enyo/Async~Async#go}.
+	* successfully. Overloaded from {@link module:enyo/Async~Async#go}.
 	*
 	* @param {*} value - The value to pass to responders.
 	* @returns {this} The callee for chaining.
