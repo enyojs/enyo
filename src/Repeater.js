@@ -233,5 +233,15 @@ module.exports = kind(
 	*/
 	setCount: function (count) {
 		this.set('count', count, {force: true});
-	}
+	},
+
+	// Accessibility
+
+	/**
+	* @default list
+	* @type {String}
+	* @see enyo/AccessibilitySupport~AccessibilitySupport#accessibilityRole
+	* @public
+	*/
+	accessibilityRole: 'list'
 });

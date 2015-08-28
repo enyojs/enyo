@@ -6,11 +6,9 @@ require('enyo');
 */
 
 var
-	kind = require('../kind'),
-	options = require('../options');
+	kind = require('../kind');
 var
-	Input = require('../Input'),
-	TextAreaAccessibilitySupport = require('./TextAreaAccessibilitySupport');
+	Input = require('../Input');
 
 /**
 * {@link module:enyo/TextArea~TextArea} implements an HTML [&lt;textarea&gt;]{@glossary textarea}
@@ -41,11 +39,6 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	mixins: options.accessibility ? [TextAreaAccessibilitySupport] : null,
-
-	/**
-	* @private
-	*/
 	tag: 'textarea',
 
 	/**
@@ -65,5 +58,15 @@ module.exports = kind(
 			sup.apply(this, arguments);
 			this.valueChanged();
 		};
-	})
+	}),
+
+	// Accessibility
+
+	/**
+	* @private
+	*/
+	ariaObservers: [
+		{to: 'aria-multiline', value: true},
+		{from: 'disabled', to: 'aria-disabled'}
+	]
 });

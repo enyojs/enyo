@@ -6,11 +6,9 @@ require('enyo');
 */
 
 var
-	kind = require('../kind'),
-	options = require('../options');
+	kind = require('../kind');
 var
-	ToolDecorator = require('../ToolDecorator'),
-	ButtonAccessibilitySupport = require('./ButtonAccessibilitySupport');
+	ToolDecorator = require('../ToolDecorator');
 
 /**
 * {@link module:enyo/Button~Button} implements an HTML [button]{@glossary button}, with support
@@ -37,11 +35,6 @@ module.exports = kind(
 	* @private
 	*/
 	kind: ToolDecorator,
-
-	/**
-	* @private
-	*/
-	mixins: options.accessibility ? [ButtonAccessibilitySupport] : null,
 
 	/**
 	* @private
@@ -109,5 +102,36 @@ module.exports = kind(
 		} else {
 			this.setActive(true);
 		}
-	}
+	},
+
+	// Accessibility
+
+	/**
+	* @default button
+	* @type {String}
+	* @see enyo/AccessibilitySupport~AccessibilitySupport#accessibilityRole
+	* @public
+	*/
+	accessibilityRole: 'button',
+
+	/**
+	* When `true`, `aria-pressed` will reflect the state of
+	* {@link module:enyo/GroupItem~GroupItem#active}
+	*
+	* @type {Boolean}
+	* @default false
+	* @public
+	*/
+	accessibilityPressed: false,
+
+	/**
+	* @private
+	*/
+	ariaObservers: [
+		{from: 'disabled', to: 'aria-disabled'},
+		{path: ['active', 'accessibilityPressed'], method: function () {
+			this.setAriaAttribute('aria-pressed', this.accessibilityPressed ? String(this.active) : null);
+		}},
+		{from: 'accessibilityRole', to: 'role'}
+	]
 });
