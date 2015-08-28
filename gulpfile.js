@@ -14,7 +14,7 @@ gulp.task('jshint', lint);
 
 function lint () {
 	return gulp
-		.src('./lib/**/*.js')
+		.src('./src/**/*.js')
 		.pipe(jshint())
 		.pipe(jshint.reporter(stylish, {verbose: true}))
 		.pipe(jshint.reporter('fail'));
