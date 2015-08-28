@@ -19,6 +19,9 @@ var
 	LightPanel = require('./LightPanel'),
 	States = LightPanel.States;
 
+var
+	trans, wTrans;
+
 /**
 * @enum {Number}
 * @memberof module:enyo/LightPanels~LightPanels
@@ -173,13 +176,20 @@ module.exports = kind(
 	direction: Direction.FORWARDS,
 
 	/**
+	* @private
+	*/
+	components: [
+		{kind: Control, name: 'client', classes: 'panels-container', ontransitionend: 'transitionFinished'}
+	],
+
+	/**
 	* @method
 	* @private
 	*/
 	create: kind.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
-			this._handleStateChange = this.bindSafely('handleStateChange');
+			this.updateTransforms();
 			this.orientationChanged();
 			this.directionChanged();
 			this.indexChanged();
@@ -216,6 +226,20 @@ module.exports = kind(
 			if (value == was) this.removeClass(key.toLowerCase());
 			if (value == this.orientation) this.addClass(key.toLowerCase());
 		}
+	},
+
+	/**
+	* @private
+	*/
+	durationChanged: function () {
+		this.updateTransforms();
+	},
+
+	/**
+	* @private
+	*/
+	timingFunctionChanged: function () {
+		this.updateTransforms();
 	},
 
 
@@ -377,7 +401,7 @@ module.exports = kind(
 				newPanel.render();
 			} else {
 				compareIdx = opts && opts.targetIndex != null ? opts.targetIndex : lastIndex + info.length;
-				this.shiftPanel(newPanel, compareIdx - this.index);
+				this.shiftContainer(compareIdx - this.index);
 			}
 			if (opts && opts.forcePostTransition && newPanel.postTransition) {
 				newPanel.postTransition();
@@ -459,17 +483,6 @@ module.exports = kind(
 		return view.panelId;
 	},
 
-	/**
-	* Reset the state of the given panel. Currently resets the translated position of the panel.
-	*
-	* @param {Object} view - The panel whose state we wish to reset.
-	* @private
-	*/
-	resetView: function (view) {
-		// reset position
-		dom.transformValue(view, 'translate' + this.orientation, 100 * this.direction + '%');
-	},
-
 
 
 	/*
@@ -531,53 +544,6 @@ module.exports = kind(
 		return this.generated && this.getPanels().length > 1 && this.animate;
 	},
 
-	/**
-	* @private
-	*/
-	addChild: kind.inherit(function (sup) {
-		return function (control) {
-			control.observe('state', this._handleStateChange);
-			sup.apply(this, arguments);
-		};
-	}),
-
-	/**
-	* @private
-	*/
-	removeChild: kind.inherit(function (sup) {
-		return function (control) {
-			sup.apply(this, arguments);
-			control.unobserve('state', this._handleStateChange);
-		};
-	}),
-
-	/*
-		==============
-		Event handlers
-		==============
-	*/
-
-	/**
-	* @private
-	*/
-	handleStateChange: function (was, is) {
-		var panel;
-		if (was == States.ACTIVATING || was == States.DEACTIVATING) {
-			panel = was == States.ACTIVATING ? this._currentPanel : this._previousPanel;
-			panel.removeClass('transitioning');
-
-			// async'ing this as it seems to improve ending transition performance on the TV. Requires
-			// further investigation into its behavior.
-			asyncMethod(function () {
-				if (panel.postTransition) panel.postTransition();
-			});
-
-			if ((this._currentPanel.state == States.ACTIVE) &&
-				(!this._previousPanel || this._previousPanel.state == States.INACTIVE))
-				this.finishTransition();
-		}
-	},
-
 
 
 	/*
@@ -587,17 +553,65 @@ module.exports = kind(
 	*/
 
 	/**
-	* When all transitions (i.e. next/previous panel) have completed, we perform some clean-up work.
+	* Updates the transform style strings we will apply to the panel container.
 	*
 	* @private
 	*/
-	finishTransition: function () {
-		if ((this._indexDirection < 0 && (this.popOnBack || this.cacheViews) && this.index < this.getPanels().length - 1) ||
-			(this._indexDirection > 0 && (this.popOnForward || this.cacheViews) && this.index > 0)) {
-			this.popPanels(this.index, this._indexDirection);
+	updateTransforms: function () {
+		trans = 'transform ' + this.duration + 'ms ' + this.timingFunction;
+		wTrans = '-webkit-' + trans;
+	},
+
+	/**
+	* Cleans-up the given panel, usually after the transition has completed.
+	*
+	* @param {Object} panel - The panel we wish to clean-up.
+	* @private
+	*/
+	cleanUpPanel: function (panel) {
+		if (panel) {
+			panel.set('state', panel === this._currentPanel ? States.ACTIVE : States.INACTIVE);
+			if (panel.postTransition) {
+				// Async'ing this as it seems to improve ending transition performance on the TV.
+				// Requires further investigation into its behavior.
+				asyncMethod(this, function () {
+					panel.postTransition();
+				});
+			}
 		}
-		if (this.popQueue && this.popQueue.length) this.finalizePurge();
-		this.transitioning = false;
+	},
+
+	/**
+	* When the transition has completed, we perform some clean-up work.
+	*
+	* @param {Object} sender - The event sender.
+	* @param {Object} ev - The event object.
+	* @param {Boolean} [direct] - If `true`, this was a non-animated (direct) transition.
+	* @private
+	*/
+	transitionFinished: function (sender, ev, direct) {
+		var prevPanel, currPanel;
+
+		if (ev && ev.originator === this.$.client || direct) {
+			prevPanel = this._previousPanel;
+			currPanel = this._currentPanel;
+
+			if ((this._indexDirection < 0 && (this.popOnBack || this.cacheViews) && this.index < this.getPanels().length - 1) ||
+				(this._indexDirection > 0 && (this.popOnForward || this.cacheViews) && this.index > 0)) {
+				this.popPanels(this.index, this._indexDirection);
+			}
+			if (this.popQueue && this.popQueue.length) this.finalizePurge();
+
+			this.cleanUpPanel(prevPanel);
+			this.cleanUpPanel(currPanel);
+
+			// Async'ing this as it seems to improve ending transition performance on the TV.
+			// Requires further investigation into its behavior.
+			asyncMethod(this, function () {
+				this.removeClass('transitioning');
+				this.transitioning = false;
+			});
+		}
 	},
 
 	/**
@@ -631,13 +645,14 @@ module.exports = kind(
 	setupTransitions: function (previousIndex, animate) {
 		var panels = this.getPanels(),
 			nextPanel = panels[this.index],
-			currPanel = this._currentPanel,
-			trans, wTrans;
+			currPanel = this._currentPanel;
 
-		this._indexDirection = this.index - previousIndex;
+		if (previousIndex != -1) this._indexDirection = this.index - previousIndex;
+		else this._indexDirection = 0;
 
 		if (nextPanel) {
 			this.transitioning = true;
+			this.addClass('transitioning');
 
 			if (currPanel) {
 				currPanel.set('state', States.INACTIVE);
@@ -651,25 +666,27 @@ module.exports = kind(
 			nextPanel.set('state', States.ACTIVE);
 			if (nextPanel.preTransition) nextPanel.preTransition();
 
+			// ensure our panel container is in the correct, pre-transition position
+			this.shiftContainer(-1 * this._indexDirection);
+
 			// only animate transition if there is more than one panel and/or we're animating
 			if (animate) {
-				trans = 'transform ' + this.duration + 'ms ' + this.timingFunction;
-				wTrans = '-webkit-' + trans;
-				nextPanel.applyStyle('-webkit-transition', wTrans);
-				nextPanel.applyStyle('transition', trans);
-				nextPanel.addClass('transitioning');
 
-				if (currPanel) {
-					currPanel.applyStyle('-webkit-transition', wTrans);
-					currPanel.applyStyle('transition', trans);
-					currPanel.addClass('transitioning');
-				}
+				// set the correct state for the next panel
+				nextPanel.set('state', States.ACTIVATING);
+				nextPanel.addRemoveClass('next', this._indexDirection > 0);
+				nextPanel.addRemoveClass('previous', this._indexDirection < 0);
+
+				// set the correct state for the previous panel
+				this._currentPanel.set('state', States.DEACTIVATING);
+				currPanel.addRemoveClass('previous', this._indexDirection > 0);
+				currPanel.addRemoveClass('next', this._indexDirection < 0);
 
 				setTimeout(this.bindSafely(function () {
 					this.applyTransitions(nextPanel);
 				}), 16);
 			} else {
-				this.transitionDirect(nextPanel);
+				this.applyTransitions(nextPanel, true);
 			}
 		}
 	},
@@ -682,35 +699,33 @@ module.exports = kind(
 	* @private
 	*/
 	applyTransitions: function (nextPanel, direct) {
-		var previousPanel = this._previousPanel = this._currentPanel;
+		// move the panel container to its intended post-transition position
+		if (this._currentPanel) this.shiftContainer(this._indexDirection, true);
 
-		// apply the transition for the next panel
-		nextPanel.set('state', States.ACTIVATING);
-		dom.transformValue(nextPanel, 'translate' + this.orientation, '0%');
-		if (this._currentPanel) { // apply the transition for the current panel
-			this._currentPanel.set('state', States.DEACTIVATING);
-			this.shiftPanel(this._currentPanel, this._indexDirection);
-		}
-
+		// update our panel references
+		this._previousPanel = this._currentPanel;
 		this._currentPanel = nextPanel;
 
-		if (!this.shouldAnimate() || direct) { // ensure that `transitionFinished is called, regardless of animation
-			nextPanel.set('state', States.ACTIVE);
-			if (previousPanel) previousPanel.set('state', States.INACTIVE);
-		}
+		// ensure that `transitionFinished` is called in the case where we are not animating
+		if (!this.shouldAnimate() || direct) this.transitionFinished(null, null, true);
 	},
 
 	/**
 	* Shifts the given panel into its post-transition position.
 	*
-	* @param {Object} panel - The panel to be shifted to its final position.
 	* @param {Number} indexDirection - The direction (positive indicates forward, negative
 	*	backwards) in which we are changing the index.
+	* @param {Boolean} [animate] - Whether or not we want this shift to be animated.
 	* @private
 	*/
-	shiftPanel: function (panel, indexDirection) {
-		var value = (indexDirection > 0 ? -100 : 100) * this.direction + '%';
-		dom.transformValue(panel, 'translate' + this.orientation, value);
+	shiftContainer: function (indexDirection, animate) {
+		var container = this.$.client,
+			value = (indexDirection > 0 ? -50 : 0) * this.direction + '%';
+
+		container.applyStyle('-webkit-transition', animate ? wTrans : null);
+		container.applyStyle('transition', animate ? trans: null);
+
+		dom.transformValue(container, 'translate' + this.orientation, value);
 	},
 
 	/**
@@ -742,18 +757,6 @@ module.exports = kind(
 				panel.destroy();
 			}
 		}
-	},
-
-	/**
-	* Transition to a given panel directly, without any animation.
-	*
-	* @param {Object} panel - The panel we are transitioning to.
-	* @private
-	*/
-	transitionDirect: function (panel) {
-		panel.applyStyle('-webkit-transition-duration', '0s');
-		panel.applyStyle('transition-duration', '0s');
-		this.applyTransitions(panel, true);
 	},
 
 	/**
