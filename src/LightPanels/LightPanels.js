@@ -622,6 +622,7 @@ module.exports = kind(
 			asyncMethod(this, function () {
 				this.removeClass('transitioning');
 				this.transitioning = false;
+				dom.transform(this.$.client, {translateZ: null});
 			});
 		}
 	},
@@ -665,6 +666,7 @@ module.exports = kind(
 		if (nextPanel) {
 			this.transitioning = true;
 			this.addClass('transitioning');
+			dom.transform(this.$.client, {translateZ: this.animate ? 0 : null});
 
 			if (currPanel) {
 				currPanel.set('state', States.INACTIVE);
