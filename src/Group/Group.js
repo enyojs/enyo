@@ -6,9 +6,11 @@ require('enyo');
 */
 
 var
-	kind = require('../kind');
+	kind = require('../kind'),
+	options = require('../options');
 var
-	Control = require('../Control');
+	Control = require('../Control'),
+	Button = require('../Button');
 
 /**
 * The extended {@glossary event} [object]{@glossary Object} that is provided when the
@@ -121,6 +123,10 @@ module.exports = kind(
 	activate: function (sender, e) {
 		if ((this.groupName || e.originator.groupName) && (e.originator.groupName != this.groupName)) {
 			return;
+		}
+		// Accessibility
+		if (options.accessibility && e.originator instanceof Button) {
+			e.originator.set('accessibilityPressed', true);
 		}
 		if (this.highlander) {
 			// we can optionally accept an `allowHighlanderDeactivate` property in e without directly 
