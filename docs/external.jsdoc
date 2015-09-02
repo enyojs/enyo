@@ -2,7 +2,7 @@
 * A kind is an object constructor created using the enyo.kind factory method.
 *
 * @glossary kind
-* @see enyo.kind
+* @see module:enyo/kind
 */
 
 /**
@@ -145,6 +145,12 @@
 *
 * @glossary boolean
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
+*/
+
+/**
+* A property whose value is bound to that of one or more dependent properties. When the value of a dependent property changes, the value of the computed property is automatically recalculated.
+*
+* @glossary computed_property
 */
 
 ///// Internally Documented Links (Glossary) /////

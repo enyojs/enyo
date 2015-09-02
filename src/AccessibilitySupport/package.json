@@ -1,0 +1,6 @@
+{
+	"main": "AccessibilitySupport.js",
+	"styles": [
+		"AccessibilitySupport.css"
+	]
+}
