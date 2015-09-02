@@ -10,6 +10,7 @@ var
 	utils = require('../utils');
 
 var defaultObservers = [
+	{from: 'tabIndex', to: 'tabindex'},
 	{from: 'accessibilityDisabled', method: function () {
 		this.setAriaAttribute('aria-hidden', this.accessibilityDisabled ? 'true' : null);
 	}},
@@ -21,15 +22,13 @@ var defaultObservers = [
 		var role = this.accessibilityAlert && 'alert' || this.accessibilityRole || null;
 		this.setAriaAttribute('role', role);
 	}},
-	{path: ['ariaContent', 'accessibilityHint', 'accessibilityLabel'], method: function () {
-		var focusable = this.accessibilityLabel || this.content || this.accessibilityHint || null,
-			prefix = this.accessibilityLabel || this.content || null,
+	{path: ['content', 'accessibilityHint', 'accessibilityLabel'], method: function () {
+		var prefix = this.accessibilityLabel || this.content || null,
 			label = this.accessibilityHint && prefix && (prefix + ' ' + this.accessibilityHint) ||
 					this.accessibilityHint ||
 					this.accessibilityLabel ||
 					null;
 
-		this.setAriaAttribute('tabindex', focusable ? 0 : null);
 		this.setAriaAttribute('aria-label', label);
 	}}
 ];
@@ -75,7 +74,8 @@ function registerAriaUpdate (obj) {
 }
 
 function toAriaAttribute (from, to) {
-	this.setAriaAttribute(to, this[from]);
+	var value = this[from];
+	this.setAriaAttribute(to, value === undefined ? null : value);
 }
 
 function staticToAriaAttribute (to, value) {
