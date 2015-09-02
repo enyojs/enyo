@@ -1,9 +1,9 @@
 var
-	kind = require('../../lib/kind');
+	kind = require('enyo/kind');
 
 var
-	Control = require('../../lib/Control'),
-	UiComponent = require('../../lib/UiComponent');
+	Control = require('enyo/Control'),
+	UiComponent = require('enyo/UiComponent');
 
 describe('Control', function () {
 

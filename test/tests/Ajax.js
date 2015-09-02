@@ -1,5 +1,5 @@
 var
-	Ajax = require('../../lib/Ajax');
+	Ajax = require('enyo/Ajax');
 
 describe('Ajax', function () {
 

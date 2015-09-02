@@ -1,10 +1,10 @@
 var
-		kind = require('../../lib/kind'),
-		utils = require('../../lib/utils');
+		kind = require('enyo/kind'),
+		utils = require('enyo/utils');
 
 var
-		Control = require('../../lib/Control');
-		ViewController = require('../../lib/ViewController');
+		Control = require('enyo/Control');
+		ViewController = require('enyo/ViewController');
 
 describe('ViewController', function () {
 

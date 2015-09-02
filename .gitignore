@@ -10,3 +10,4 @@ lcov.info
 npm-*
 dist
 .enyocache
+test/dist

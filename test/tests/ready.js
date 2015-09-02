@@ -1,5 +1,5 @@
 var
-	ready = require('../../lib/ready');
+	ready = require('enyo/ready');
 
 describe('ready', function () {
 

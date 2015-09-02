@@ -1,5 +1,5 @@
-var kind = require('../../lib/kind'),
-	Controller = require('../../lib/Controller');
+var kind = require('enyo/kind'),
+	Controller = require('enyo/Controller');
 
 describe('Controller', function () {
 

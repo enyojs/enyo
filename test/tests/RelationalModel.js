@@ -1,9 +1,9 @@
 var
-	kind = require('../../lib/kind');
+	kind = require('enyo/kind');
 var
-	RelationalModel = require('../../lib/RelationalModel'),
-	Collection = require('../../lib/Collection'),
-	CoreObject = require('../../lib/CoreObject'),
+	RelationalModel = require('enyo/RelationalModel'),
+	Collection = require('enyo/Collection'),
+	CoreObject = require('enyo/CoreObject'),
 	toOne = RelationalModel.toOne,
 	toMany = RelationalModel.toMany,
 	manyToMany = RelationalModel.manyToMany;
