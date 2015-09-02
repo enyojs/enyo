@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "chai": "^3.2.0",
-    "enyo-dev": "git@github.com:enyojs/enyo-dev.git#master",
+    "enyo-dev": "https://github.com/enyojs/enyo-dev.git#master",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-jshint": "^1.11.2",
