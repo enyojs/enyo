@@ -1,6 +1,6 @@
 var
-	kind = require('../../lib/kind'),
-	utils = require('../../lib/utils');
+	kind = require('enyo/kind'),
+	utils = require('enyo/utils');
 
 describe('Kind', function () {
 

@@ -1,9 +1,9 @@
 var
-	kind = require('../../lib/kind');
+	kind = require('enyo/kind');
 
 var
-	Store = require('../../lib/Store'),
-	Model = require('../../lib/Model');
+	Store = require('enyo/Store'),
+	Model = require('enyo/Model');
 
 describe('Store', function () {
 	

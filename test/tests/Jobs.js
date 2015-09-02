@@ -1,6 +1,6 @@
 var
-	utils = require('../../lib/utils'),
-	jobs = require('../../lib/jobs');
+	utils = require('enyo/utils'),
+	jobs = require('enyo/jobs');
 
 describe('Jobs', function () {
 

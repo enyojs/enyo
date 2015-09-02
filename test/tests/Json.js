@@ -1,5 +1,5 @@
 var
-	json = require('../../lib/json');
+	json = require('enyo/json');
 
 describe('JSON', function () {
 
