@@ -240,9 +240,9 @@ var Model = module.exports = kind(
 	},
 
 	/**
-	* The current [state(s)]{@link module:enyo/States~States} possessed by the [model]{@link module:enyo/Model~Model}.
+	* The current [state(s)]{@link module:enyo/States} possessed by the [model]{@link module:enyo/Model~Model}.
 	* There are limitations as to which state(s) the model may possess at any given time.
-	* By default, a model is [NEW]{@link module:enyo/States#NEW} and [CLEAN]{@link module:enyo/States~States.CLEAN}.
+	* By default, a model is [NEW]{@link module:enyo/States#NEW} and [CLEAN]{@link module:enyo/States#CLEAN}.
 	* Note that this is **not** a [bindable]{@link module:enyo/BindingSupport~BindingSupport} property.
 	*
 	* @see module:enyo/States~States
@@ -267,12 +267,12 @@ var Model = module.exports = kind(
 	/**
 	* Inspects and restructures incoming data prior to [setting]{@link module:enyo/Model~Model#set} it on
 	* the [model]{@link module:enyo/Model~Model}. While this method may be called directly, it is most
-	* often used via the [parse]{@link module:enyo/Model~Model~Options.parse} option and executed
+	* often used via the [parse]{@link module:enyo/Model~Model~Options#parse} option and executed
 	* automatically, either during initialization or when [fetched]{@link module:enyo/Model~Model#fetch}
 	* (or, in some cases, both). This is a virtual method and must be provided to suit a
 	* given implementation's needs.
 	*
-	* @see module:enyo/Model~Model~Options.parse
+	* @see module:enyo/Model~Model~Options#parse
 	* @param {*} data - The incoming data that may need to be restructured or reduced prior to
 	*	being [set]{@link module:enyo/Model~Model#set} on the [model]{@link module:enyo/Model~Model}.
 	* @returns {Object} The [hash]{@glossary Object} to apply to the
@@ -557,7 +557,7 @@ var Model = module.exports = kind(
 
 	/**
 	* Retrieves the value for the given property or path. If the property is a
-	* [computed property]{@link module:enyo/ComputedSupport~ComputedSupport.computed}, then it will return
+	* [computed property]{@link module:enyo/ComputedSupport}, then it will return
 	* that value; otherwise, it will attempt to retrieve the value from the
 	* [attributes hash]{@link module:enyo/Model~Model#attributes}.
 	*
