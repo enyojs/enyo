@@ -43,11 +43,13 @@
 .enyo-light-panels.horizontal.forwards .panels-container > .next,
 .enyo-light-panels.horizontal.backwards .panels-container > .previous {
 	left: 50%;
+	margin-left: -1px;
 }
 
 .enyo-light-panels.horizontal.backwards .panels-container > .next,
 .enyo-light-panels.horizontal.forwards .panels-container > .previous {
 	right: 50%;
+	margin-right: -1px;
 }
 
 .enyo-light-panels.vertical.forwards .panels-container > .next,
