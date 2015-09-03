@@ -1,5 +1,5 @@
 /**
- * Contains the declaration for the {@link module:enyo/RelationalModel} kind.
+ * Contains the declaration for the {@link module:enyo/RelationalModel~RelationalModel} kind.
  * @module enyo/RelationalModel
  */
 
@@ -51,9 +51,13 @@ var RelationalModel = module.exports = kind(
 	* local [attribute]{@link module:enyo/Model~Model#attributes}. For example:
 	*
 	* ```javascript
-	* enyo.kind({
+	* var
+	* 	kind = require('enyo/kind'),
+	* 	RelationalModel = require('enyo/RelationalModel');
+	*
+	* module.exports = kind({
 	* 	name: 'Person',
-	* 	kind: enyo.RelationalModel,
+	* 	kind: RelationalModel,
 	* 	relations: [
 	* 		{
 	* 			key: 'nicknames',
