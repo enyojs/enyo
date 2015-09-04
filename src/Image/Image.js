@@ -181,6 +181,14 @@ module.exports = kind(
 	_src: null,
 
 	/**
+	* This image is used to handle the border around placeholder, if the original image
+	* to load
+	*
+	* @private
+	*/
+	_transparentImg: 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==',
+
+	/**
 	* @type {Object}
 	* @property {Boolean} draggable - This attribute will take one of the following
 	*	[String]{@glossary String} values: 'true', 'false' (the default), or 'auto'.
@@ -276,7 +284,7 @@ module.exports = kind(
 	*/
 	handleLoad: function () {
 		if (!this.sizing && this.placeholder) {
-			this.applyStyle('background-image', null);
+			this._errorHandling? this._errorHandling = false : this.applyStyle('background-image', null);
 		}
 	},
 
@@ -285,7 +293,8 @@ module.exports = kind(
 	*/
 	handleError: function () {
 		if (this.placeholder) {
-			this.set('_src', null);
+			this.set('src', this._transparentImg);
+			this._errorHandling = true;
 		}
 	},
 
