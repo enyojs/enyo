@@ -39,24 +39,36 @@
 	height: 50%;
 }
 
+.enyo-light-panels.horizontal.backwards .panels-container {
+	transform: translateX(-50%);
+}
+
+.enyo-light-panels.vertical.backwards .panels-container {
+	transform: translateY(-50%);
+}
+
 /* Individual panel styles */
 
-.enyo-light-panels.horizontal.forwards .panels-container > .next,
+.enyo-light-panels.horizontal.backwards .panels-container > * {
+	transform: translateX(100%);
+}
+
+.enyo-light-panels.vertical.backwards .panels-container > * {
+	transform: translateY(100%);
+}
+
+.enyo-light-panels.horizontal.forwards .panels-container > .next {
+	transform: translateX(100%);
+}
+
 .enyo-light-panels.horizontal.backwards .panels-container > .previous {
-	left: 50%;
+	transform: translateX(0%);
 }
 
-.enyo-light-panels.horizontal.backwards .panels-container > .next,
-.enyo-light-panels.horizontal.forwards .panels-container > .previous {
-	right: 50%;
+.enyo-light-panels.vertical.forwards .panels-container > .next {
+	transform: translateY(100%);
 }
 
-.enyo-light-panels.vertical.forwards .panels-container > .next,
 .enyo-light-panels.vertical.backwards .panels-container > .previous {
-	top: 50%;
-}
-
-.enyo-light-panels.vertical.backwards .panels-container > .next,
-.enyo-light-panels.vertical.forwards .panels-container > .previous {
-	bottom: 50%;
+	transform: translateY(0%);
 }
