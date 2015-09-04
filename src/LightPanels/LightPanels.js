@@ -658,7 +658,8 @@ module.exports = kind(
 	setupTransitions: function (previousIndex, animate) {
 		var panels = this.getPanels(),
 			nextPanel = panels[this.index],
-			currPanel = this._currentPanel;
+			currPanel = this._currentPanel,
+			panelShift, panelReset;
 
 		if (previousIndex != -1) this._indexDirection = this.index - previousIndex;
 		else this._indexDirection = 0;
@@ -683,16 +684,22 @@ module.exports = kind(
 			// ensure our panel container is in the correct, pre-transition position
 			this.shiftContainer(-1 * this._indexDirection);
 
+			// determine what are final panel states should be
+			panelShift = (this.direction == Direction.FORWARDS && this._indexDirection > 0)
+				|| (this.direction == Direction.BACKWARDS && this._indexDirection  < 0);
+			panelReset = (this.direction == Direction.FORWARDS && this._indexDirection < 0)
+				|| (this.direction == Direction.BACKWARDS && this._indexDirection > 0);
+
 			// set the correct state for the next panel
 			nextPanel.set('state', States.ACTIVATING);
-			nextPanel.addRemoveClass('next', this._indexDirection > 0);
-			nextPanel.addRemoveClass('previous', this._indexDirection < 0);
+			nextPanel.addRemoveClass('next', panelShift);
+			nextPanel.addRemoveClass('previous', panelReset);
 
 			if (currPanel) {
 				// set the correct state for the previous panel
-				this._currentPanel.set('state', States.DEACTIVATING);
-				currPanel.addRemoveClass('previous', this._indexDirection > 0);
-				currPanel.addRemoveClass('next', this._indexDirection < 0);
+				currPanel.set('state', States.DEACTIVATING);
+				currPanel.addRemoveClass('previous', panelShift);
+				currPanel.addRemoveClass('next', panelReset);
 			}
 
 			// only animate transition if there is more than one panel and/or we're animating
@@ -735,12 +742,15 @@ module.exports = kind(
 	*/
 	shiftContainer: function (indexDirection, animate) {
 		var container = this.$.client,
-			value = (indexDirection > 0 ? -50 : 0) * this.direction + '%';
+			value;
+
+		if (this.direction == Direction.FORWARDS) value = indexDirection > 0 ? -50 : 0;
+		else value = indexDirection > 0 ? 0 : -50;
 
 		container.applyStyle('-webkit-transition', animate ? wTrans : null);
 		container.applyStyle('transition', animate ? trans: null);
 
-		dom.transformValue(container, 'translate' + this.orientation, value);
+		dom.transformValue(container, 'translate' + this.orientation, value + '%');
 	},
 
 	/**
