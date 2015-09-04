@@ -1,9 +1,9 @@
 var
-	kind = require('../../lib/kind');
+	kind = require('enyo/kind');
 
 var
-	AccessibilitySupport = require('../../lib/AccessibilitySupport')
-	Control = require('../../lib/Control');
+	AccessibilitySupport = require('enyo/AccessibilitySupport')
+	Control = require('enyo/Control');
 
 describe('AccessibilitySupport', function () {
 

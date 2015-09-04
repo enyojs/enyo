@@ -10,11 +10,6 @@
 
 /* Panels container styles */
 
-.enyo-light-panels.transitioning .panels-container {
-	-webkit-transform: translateZ(0);
-	transform: translateZ(0);
-}
-
 .enyo-light-panels .panels-container > * {
 	display: inline-block;
 	vertical-align: top;

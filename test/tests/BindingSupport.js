@@ -1,13 +1,13 @@
 var
-	kind = require('../../lib/kind');
+	kind = require('enyo/kind');
 
 var
-	BindingSupport = require('../../lib/BindingSupport'),
-	Binding = require('../../lib/Binding'),
-	CoreObject = require('../../lib/CoreObject'),
-	Component = require('../../lib/Component'),
-	Control = require('../../lib/Control'),
-	Model = require('../../lib/Model');
+	BindingSupport = require('enyo/BindingSupport'),
+	Binding = require('enyo/Binding'),
+	CoreObject = require('enyo/CoreObject'),
+	Component = require('enyo/Component'),
+	Control = require('enyo/Control'),
+	Model = require('enyo/Model');
 
 describe ("BindingSupport Mixin", function () {
 	describe ("Methods", function () {

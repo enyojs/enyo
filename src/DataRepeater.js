@@ -630,6 +630,7 @@ var DataRepeater = module.exports = kind(
 			}
 			else {
 				model[p] = select;
+				if(c) c.syncBindings({force: true, all: true});
 			}
 		}
 		this.notifyObservers('selected');

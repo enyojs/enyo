@@ -1,5 +1,5 @@
 var
-	Async = require('../../lib/Async');
+	Async = require('enyo/Async');
 
 describe('Async', function () {
 

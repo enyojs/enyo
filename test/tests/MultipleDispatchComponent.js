@@ -1,10 +1,10 @@
 var
-	kind = require('../../lib/kind'),
-	utils = require('../../lib/utils');
+	kind = require('enyo/kind'),
+	utils = require('enyo/utils');
 
 var
-	Component = require('../../lib/Component'),
-	MultipleDispatchComponent = require('../../lib/MultipleDispatchComponent');
+	Component = require('enyo/Component'),
+	MultipleDispatchComponent = require('enyo/MultipleDispatchComponent');
 
 describe('MultipleDispatch', function () {
 

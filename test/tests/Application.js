@@ -1,6 +1,6 @@
-var kind = require('../../lib/kind'),
-	Application = require('../../lib/Application'),
-	Router = require('../../lib/Router');
+var kind = require('enyo/kind'),
+	Application = require('enyo/Application'),
+	Router = require('enyo/Router');
 
 describe('Application', function () {
 

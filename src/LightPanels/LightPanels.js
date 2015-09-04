@@ -582,6 +582,15 @@ module.exports = kind(
 	},
 
 	/**
+	* Determines whether or not we are removing inactive panels from DOM.
+	* @returns {Boolean} If `true`, inactive panels are being removed; `false` otherwise.
+	* @private
+	*/
+	removesPanels: function () {
+		return this.cacheViews || this.popOnBack || this.popOnForward;
+	},
+
+	/**
 	* When the transition has completed, we perform some clean-up work.
 	*
 	* @param {Object} sender - The event sender.
@@ -592,14 +601,17 @@ module.exports = kind(
 	transitionFinished: function (sender, ev, direct) {
 		var prevPanel, currPanel;
 
-		if (ev && ev.originator === this.$.client || direct) {
+		if (this.transitioning && ((ev && ev.originator === this.$.client) || direct)) {
 			prevPanel = this._previousPanel;
 			currPanel = this._currentPanel;
 
 			if ((this._indexDirection < 0 && (this.popOnBack || this.cacheViews) && this.index < this.getPanels().length - 1) ||
 				(this._indexDirection > 0 && (this.popOnForward || this.cacheViews) && this.index > 0)) {
 				this.popPanels(this.index, this._indexDirection);
+			} else if (prevPanel && !this.removesPanels()) {
+				prevPanel.set('showing', false);
 			}
+
 			if (this.popQueue && this.popQueue.length) this.finalizePurge();
 
 			this.cleanUpPanel(prevPanel);
@@ -610,6 +622,7 @@ module.exports = kind(
 			asyncMethod(this, function () {
 				this.removeClass('transitioning');
 				this.transitioning = false;
+				dom.transform(this.$.client, {translateZ: null});
 			});
 		}
 	},
@@ -653,15 +666,16 @@ module.exports = kind(
 		if (nextPanel) {
 			this.transitioning = true;
 			this.addClass('transitioning');
+			dom.transform(this.$.client, {translateZ: this.animate ? 0 : null});
 
 			if (currPanel) {
 				currPanel.set('state', States.INACTIVE);
 				if (currPanel.preTransition) currPanel.preTransition();
 			}
 
-			if (!nextPanel.generated) {
-				nextPanel.render();
-			}
+			// prepare the panel that will be transitioned into view
+			if (!this.removesPanels()) nextPanel.set('showing', true);
+			if (!nextPanel.generated) nextPanel.render();
 
 			nextPanel.set('state', States.ACTIVE);
 			if (nextPanel.preTransition) nextPanel.preTransition();
@@ -669,24 +683,25 @@ module.exports = kind(
 			// ensure our panel container is in the correct, pre-transition position
 			this.shiftContainer(-1 * this._indexDirection);
 
-			// only animate transition if there is more than one panel and/or we're animating
-			if (animate) {
+			// set the correct state for the next panel
+			nextPanel.set('state', States.ACTIVATING);
+			nextPanel.addRemoveClass('next', this._indexDirection > 0);
+			nextPanel.addRemoveClass('previous', this._indexDirection < 0);
 
-				// set the correct state for the next panel
-				nextPanel.set('state', States.ACTIVATING);
-				nextPanel.addRemoveClass('next', this._indexDirection > 0);
-				nextPanel.addRemoveClass('previous', this._indexDirection < 0);
-
+			if (currPanel) {
 				// set the correct state for the previous panel
 				this._currentPanel.set('state', States.DEACTIVATING);
 				currPanel.addRemoveClass('previous', this._indexDirection > 0);
 				currPanel.addRemoveClass('next', this._indexDirection < 0);
+			}
 
+			// only animate transition if there is more than one panel and/or we're animating
+			if (animate) {
 				setTimeout(this.bindSafely(function () {
-					this.applyTransitions(nextPanel);
+					this.applyTransitions(nextPanel, true);
 				}), 16);
 			} else {
-				this.applyTransitions(nextPanel, true);
+				this.applyTransitions(nextPanel);
 			}
 		}
 	},
@@ -695,19 +710,19 @@ module.exports = kind(
 	* Applies the transitions for moving between the current and next panel.
 	*
 	* @param {Object} nextPanel - The panel we are transitioning to.
-	* @param {Boolean} direct - If `true`, signifies that this is a direct transition.
+	* @param {Boolean} animate - If `true`, signifies that this is an animated transition.
 	* @private
 	*/
-	applyTransitions: function (nextPanel, direct) {
+	applyTransitions: function (nextPanel, animate) {
 		// move the panel container to its intended post-transition position
-		if (this._currentPanel) this.shiftContainer(this._indexDirection, true);
+		if (this._currentPanel) this.shiftContainer(this._indexDirection, animate);
 
 		// update our panel references
 		this._previousPanel = this._currentPanel;
 		this._currentPanel = nextPanel;
 
 		// ensure that `transitionFinished` is called in the case where we are not animating
-		if (!this.shouldAnimate() || direct) this.transitionFinished(null, null, true);
+		if (!this.shouldAnimate() || !animate) this.transitionFinished(null, null, true);
 	},
 
 	/**

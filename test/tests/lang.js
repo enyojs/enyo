@@ -1,6 +1,6 @@
 var
-	utils = require('../../lib/utils'),
-	kind = require('../../lib/kind');
+	utils = require('enyo/utils'),
+	kind = require('enyo/kind');
 
 describe('language', function () {
 

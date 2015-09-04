@@ -1,8 +1,8 @@
 var
-	kind = require('../../lib/kind');
+	kind = require('enyo/kind');
 
 var
-	ComputedSupport = require('../../lib/ComputedSupport');
+	ComputedSupport = require('enyo/ComputedSupport');
 
 
 describe ('ComputedSupport Mixin', function () {

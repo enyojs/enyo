@@ -1,6 +1,6 @@
 var
-	BucketFilter = require('../../lib/BucketFilter'),
-	Collection = require('../../lib/Collection');
+	BucketFilter = require('enyo/BucketFilter'),
+	Collection = require('enyo/Collection');
 
 describe('BucketFilter', function () {
 

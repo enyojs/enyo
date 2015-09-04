@@ -120,7 +120,7 @@ var Popup = module.exports = kind(
 
 		/**
 		* Set to `true` to render the [popup]{@link module:enyo/Popup~Popup} in a
-		* [floating layer]{@link module:enyo/FloatingLayer~FloatingLayer} outside of other
+		* [floating layer]{@link module:enyo/Control/floatingLayer~FloatingLayer} outside of other
 		* [controls]{@link module:enyo/Control~Control}.  This may be used to guarantee that the
 		* popup will be shown on top of other controls.
 		*

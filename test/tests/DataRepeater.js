@@ -1,11 +1,11 @@
 var
-	kind = require('../../lib/kind');
+	kind = require('enyo/kind');
 
 var
-	Collection = require('../../lib/Collection'),
-	Model = require('../../lib/Model'),
-	DataRepeater = require('../../lib/DataRepeater'),
-	CoreObject = require('../../lib/CoreObject');
+	Collection = require('enyo/Collection'),
+	Model = require('enyo/Model'),
+	DataRepeater = require('enyo/DataRepeater'),
+	CoreObject = require('enyo/CoreObject');
 
 describe('DataRepeater', function () {
 	
