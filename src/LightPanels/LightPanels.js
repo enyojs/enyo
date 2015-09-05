@@ -192,7 +192,6 @@ module.exports = kind(
 			this.updateTransforms();
 			this.orientationChanged();
 			this.directionChanged();
-			this.indexChanged();
 		};
 	}),
 
@@ -246,8 +245,12 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	indexChanged: function (was) {
-		this.setupTransitions(was);
+	indexChanged: function (was, is) {
+		// when notifyObservers is called without arguments, we do not need to do any work here
+		// (since there's no transition required with the indices are the same)
+		if (was !== is) {
+			this.setupTransitions(was);
+		}
 	},
 
 
@@ -296,6 +299,7 @@ module.exports = kind(
 	animateTo: function (index) {
 		var from = this.index;
 		this.index = index;
+		this.notifyObservers('index');
 		this.setupTransitions(from, true);
 	},
 
