@@ -21,6 +21,10 @@
 	box-sizing: border-box;
 }
 
+.enyo-light-panels .panels-container {
+	position: relative;
+}
+
 .enyo-light-panels.horizontal .panels-container {
 	width: 200%;
 	height: 100%;
@@ -57,18 +61,26 @@
 	transform: translateY(100%);
 }
 
-.enyo-light-panels.horizontal.forwards .panels-container > .next {
+.enyo-light-panels.horizontal.forwards .panels-container > .shifted {
 	transform: translateX(100%);
 }
 
-.enyo-light-panels.horizontal.backwards .panels-container > .previous {
+.enyo-light-panels.horizontal.backwards .panels-container > .shifted {
 	transform: translateX(0%);
 }
 
-.enyo-light-panels.vertical.forwards .panels-container > .next {
+.enyo-light-panels.vertical.forwards .panels-container > .shifted {
 	transform: translateY(100%);
 }
 
-.enyo-light-panels.vertical.backwards .panels-container > .previous {
+.enyo-light-panels.vertical.backwards .panels-container > .shifted {
 	transform: translateY(0%);
+}
+
+.enyo-light-panels.horizontal .panels-container > .offscreen {
+	transform: translateY(100%);
+}
+
+.enyo-light-panels.vertical .panels-container > .offscreen {
+	transform: translateX(100%);
 }

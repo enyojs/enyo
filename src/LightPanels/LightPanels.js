@@ -95,10 +95,10 @@ module.exports = kind(
 	* The index of the active panel.
 	*
 	* @type {Number}
-	* @default -1
+	* @default 0
 	* @public
 	*/
-	index: -1,
+	index: 0,
 
 	/**
 	* Indicates whether the panels animate when transitioning.
@@ -178,22 +178,37 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	components: [
+	tools: [
 		{kind: Control, name: 'client', classes: 'panels-container', ontransitionend: 'transitionFinished'}
 	],
 
 	/**
-	* @method
 	* @private
 	*/
-	create: kind.inherit(function (sup) {
-		return function () {
-			sup.apply(this, arguments);
-			this.updateTransforms();
-			this.orientationChanged();
-			this.directionChanged();
-		};
-	}),
+	create: function () {
+		Control.prototype.create.apply(this, arguments);
+		this.updateTransforms();
+		this.orientationChanged();
+		this.directionChanged();
+		if (!this.getPanels().length) this.index = -1;
+		this.setupTransitions();
+	},
+
+	/**
+	* @private
+	*/
+	initComponents: function() {
+		this.createChrome(this.tools);
+		Control.prototype.initComponents.apply(this, arguments);
+	},
+
+	/**
+	* @private
+	*/
+	addChild: function (control) {
+		if (!control.isChrome) control.addClass('offscreen');
+		Control.prototype.addChild.apply(this, arguments);
+	},
 
 
 
@@ -586,15 +601,6 @@ module.exports = kind(
 	},
 
 	/**
-	* Determines whether or not we are removing inactive panels from DOM.
-	* @returns {Boolean} If `true`, inactive panels are being removed; `false` otherwise.
-	* @private
-	*/
-	removesPanels: function () {
-		return this.cacheViews || this.popOnBack || this.popOnForward;
-	},
-
-	/**
 	* When the transition has completed, we perform some clean-up work.
 	*
 	* @param {Object} sender - The event sender.
@@ -612,8 +618,11 @@ module.exports = kind(
 			if ((this._indexDirection < 0 && (this.popOnBack || this.cacheViews) && this.index < this.getPanels().length - 1) ||
 				(this._indexDirection > 0 && (this.popOnForward || this.cacheViews) && this.index > 0)) {
 				this.popPanels(this.index, this._indexDirection);
-			} else if (prevPanel && !this.removesPanels()) {
-				prevPanel.set('showing', false);
+			}
+
+			if (prevPanel) {
+				prevPanel.removeClass('shifted');
+				prevPanel.addClass('offscreen');
 			}
 
 			if (this.popQueue && this.popQueue.length) this.finalizePurge();
@@ -654,8 +663,8 @@ module.exports = kind(
 	/**
 	* Sets up the transitions between the current and next panel.
 	*
-	* @param {Number} previousIndex - The index of the panel we are transitioning from.
-	* @param {Boolean} animate - Whether or not there should be a visible animation when
+	* @param {Number} [previousIndex] - The index of the panel we are transitioning from.
+	* @param {Boolean} [animate] - Whether or not there should be a visible animation when
 	*	transitioning between the current and next panel.
 	* @private
 	*/
@@ -663,7 +672,7 @@ module.exports = kind(
 		var panels = this.getPanels(),
 			nextPanel = panels[this.index],
 			currPanel = this._currentPanel,
-			panelShift, panelReset;
+			shiftCurrent;
 
 		if (previousIndex != -1) this._indexDirection = this.index - previousIndex;
 		else this._indexDirection = 0;
@@ -679,7 +688,7 @@ module.exports = kind(
 			}
 
 			// prepare the panel that will be transitioned into view
-			if (!this.removesPanels()) nextPanel.set('showing', true);
+			nextPanel.removeClass('offscreen');
 			if (!nextPanel.generated) nextPanel.render();
 
 			nextPanel.set('state', States.ACTIVE);
@@ -688,22 +697,16 @@ module.exports = kind(
 			// ensure our panel container is in the correct, pre-transition position
 			this.shiftContainer(-1 * this._indexDirection);
 
-			// determine what are final panel states should be
-			panelShift = (this.direction == Direction.FORWARDS && this._indexDirection > 0)
-				|| (this.direction == Direction.BACKWARDS && this._indexDirection  < 0);
-			panelReset = (this.direction == Direction.FORWARDS && this._indexDirection < 0)
-				|| (this.direction == Direction.BACKWARDS && this._indexDirection > 0);
+			shiftCurrent = this._indexDirection > 0;
 
 			// set the correct state for the next panel
 			nextPanel.set('state', States.ACTIVATING);
-			nextPanel.addRemoveClass('next', panelShift);
-			nextPanel.addRemoveClass('previous', panelReset);
+			nextPanel.addRemoveClass('shifted', shiftCurrent);
 
 			if (currPanel) {
 				// set the correct state for the previous panel
 				currPanel.set('state', States.DEACTIVATING);
-				currPanel.addRemoveClass('previous', panelShift);
-				currPanel.addRemoveClass('next', panelReset);
+				currPanel.addRemoveClass('shifted', !shiftCurrent);
 			}
 
 			// only animate transition if there is more than one panel and/or we're animating
