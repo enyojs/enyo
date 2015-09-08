@@ -206,8 +206,8 @@ module.exports = kind(
 	* @private
 	*/
 	addChild: function (control) {
-		if (!control.isChrome) control.addClass('offscreen');
 		Control.prototype.addChild.apply(this, arguments);
+		if (control.parent === this.$.client) control.addClass('offscreen');
 	},
 
 
@@ -325,13 +325,15 @@ module.exports = kind(
 	* @public
 	*/
 	previous: function () {
-		var prevIndex = this.index - 1;
-		if (this.wrap && prevIndex < 0) {
-			prevIndex = this.getPanels().length - 1;
-		}
-		if (prevIndex >= 0) {
-			if (this.animate) this.animateTo(prevIndex);
-			else this.set('index', prevIndex);
+		if (!this.transitioning) {
+			var prevIndex = this.index - 1;
+			if (this.wrap && prevIndex < 0) {
+				prevIndex = this.getPanels().length - 1;
+			}
+			if (prevIndex >= 0) {
+				if (this.animate) this.animateTo(prevIndex);
+				else this.set('index', prevIndex);
+			}
 		}
 	},
 
@@ -342,13 +344,15 @@ module.exports = kind(
 	* @public
 	*/
 	next: function () {
-		var nextIndex = this.index + 1;
-		if (this.wrap && nextIndex >= this.getPanels().length) {
-			nextIndex = 0;
-		}
-		if (nextIndex < this.getPanels().length) {
-			if (this.animate) this.animateTo(nextIndex);
-			else this.set('index', nextIndex);
+		if (!this.transitioning) {
+			var nextIndex = this.index + 1;
+			if (this.wrap && nextIndex >= this.getPanels().length) {
+				nextIndex = 0;
+			}
+			if (nextIndex < this.getPanels().length) {
+				if (this.animate) this.animateTo(nextIndex);
+				else this.set('index', nextIndex);
+			}
 		}
 	},
 
@@ -674,8 +678,14 @@ module.exports = kind(
 			currPanel = this._currentPanel,
 			shiftCurrent;
 
-		if (previousIndex != -1) this._indexDirection = this.index - previousIndex;
-		else this._indexDirection = 0;
+		this._indexDirection = 0;
+
+		// handle the wrapping case
+		if (this.wrap) {
+			if (this.index === 0 && previousIndex == panels.length - 1) this._indexDirection = 1;
+			else if (this.index === panels.length - 1 && previousIndex === 0) this._indexDirection = -1;
+		}
+		if (this._indexDirection === 0 && previousIndex != -1) this._indexDirection = this.index - previousIndex;
 
 		if (nextPanel) {
 			this.transitioning = true;

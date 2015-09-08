@@ -10,7 +10,7 @@
 
 /* Panels container styles */
 
-.enyo-light-panels .panels-container > * {
+.enyo-light-panels > .panels-container > * {
 	display: inline-block;
 	vertical-align: top;
 	position: absolute;
@@ -21,66 +21,66 @@
 	box-sizing: border-box;
 }
 
-.enyo-light-panels .panels-container {
+.enyo-light-panels > .panels-container {
 	position: relative;
 }
 
-.enyo-light-panels.horizontal .panels-container {
+.enyo-light-panels.horizontal > .panels-container {
 	width: 200%;
 	height: 100%;
 }
 
-.enyo-light-panels.vertical .panels-container {
+.enyo-light-panels.vertical > .panels-container {
 	width: 100%;
 	height: 200%;
 }
 
-.enyo-light-panels.horizontal .panels-container > * {
+.enyo-light-panels.horizontal > .panels-container > * {
 	width: 50%;
 }
 
-.enyo-light-panels.vertical .panels-container > * {
+.enyo-light-panels.vertical > .panels-container > * {
 	height: 50%;
 }
 
-.enyo-light-panels.horizontal.backwards .panels-container {
+.enyo-light-panels.horizontal.backwards > .panels-container {
 	transform: translateX(-50%);
 }
 
-.enyo-light-panels.vertical.backwards .panels-container {
+.enyo-light-panels.vertical.backwards > .panels-container {
 	transform: translateY(-50%);
 }
 
 /* Individual panel styles */
 
-.enyo-light-panels.horizontal.backwards .panels-container > * {
+.enyo-light-panels.horizontal.backwards > .panels-container > * {
 	transform: translateX(100%);
 }
 
-.enyo-light-panels.vertical.backwards .panels-container > * {
+.enyo-light-panels.vertical.backwards > .panels-container > * {
 	transform: translateY(100%);
 }
 
-.enyo-light-panels.horizontal.forwards .panels-container > .shifted {
+.enyo-light-panels.horizontal.forwards > .panels-container > .shifted {
 	transform: translateX(100%);
 }
 
-.enyo-light-panels.horizontal.backwards .panels-container > .shifted {
+.enyo-light-panels.horizontal.backwards > .panels-container > .shifted {
 	transform: translateX(0%);
 }
 
-.enyo-light-panels.vertical.forwards .panels-container > .shifted {
+.enyo-light-panels.vertical.forwards > .panels-container > .shifted {
 	transform: translateY(100%);
 }
 
-.enyo-light-panels.vertical.backwards .panels-container > .shifted {
+.enyo-light-panels.vertical.backwards > .panels-container > .shifted {
 	transform: translateY(0%);
 }
 
-.enyo-light-panels.horizontal .panels-container > .offscreen {
+.enyo-light-panels.horizontal > .panels-container > .offscreen {
 	transform: translateY(100%);
 }
 
-.enyo-light-panels.vertical .panels-container > .offscreen {
+.enyo-light-panels.vertical > .panels-container > .offscreen {
 	transform: translateX(100%);
 }
