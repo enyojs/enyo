@@ -63,8 +63,9 @@ module.exports = kind(
 	constructor: kind.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
-			if (this.global) {
-				utils.setPath(this.name, this);
+			// don't attempt to set a controller globally without a name
+			if (this.global && this.name) {
+				utils.setPath.call(global, this.name, this);
 			}
 		};
 	}),
