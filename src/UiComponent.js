@@ -701,5 +701,17 @@ var UiComponent = module.exports = kind(
 				|| this.owner
 			);
 		}
+	},
+	
+	/**
+	* @method
+	* @private
+	*/
+	bubbleTargetChanged: function (was) {
+		if (was && this.cachedBubble && this.cachedBubbleTarget) {
+			for (var n in this.cachedBubbleTarget) {
+				if (this.cachedBubbleTarget[n] === was) delete this.cachedBubbleTarget[n];
+			}
+		}
 	}
 });
