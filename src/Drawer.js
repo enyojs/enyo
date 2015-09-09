@@ -13,7 +13,7 @@ var
 	Control = require('./Control');
 
 /**
-* Fires when the [drawer]{@link module:enyo/Drawer~Drawer} has been opened or closed. The handler can 
+* Fires when the [drawer]{@link module:enyo/Drawer~Drawer} has been opened or closed. The handler can
 * determine whether the drawer was just opened or just closed based on the
 * [open]{@link module:enyo/Drawer~Drawer#open} property. If `this.getOpen()` returns `true`,
 * the drawer was opened; if not, it was closed.
@@ -34,7 +34,7 @@ var
 *
 * @event module:enyo/Drawer~Drawer#onDrawerAnimationEnd
 * @type {Object}
-* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently 
+* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
 *	propagated the {@glossary event}.
 * @property {Object} event - An [object]{@glossary Object} containing event information.
 * @public
@@ -71,12 +71,12 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	published: 
+	published:
 		/** @lends module:enyo/Drawer~Drawer.prototype */ {
-		
+
 		/**
 		* The visibility state of the [drawer's]{@link module:enyo/Drawer~Drawer} associated control.
-		* 
+		*
 		* @type {Boolean}
 		* @default true
 		* @public
@@ -86,7 +86,7 @@ module.exports = kind(
 		/**
 		* The direction of the opening/closing animation; will be either `'v'` for vertical
 		* or `'h'` for horizontal.
-		* 
+		*
 		* @type {String}
 		* @default 'v'
 		* @public
@@ -95,7 +95,7 @@ module.exports = kind(
 
 		/**
 		* If `true`, the opening/closing transition will be animated.
-		* 
+		*
 		* @type {Boolean}
 		* @default true
 		* @public
@@ -106,7 +106,7 @@ module.exports = kind(
 		* If `true`, the [drawer]{@link module:enyo/Drawer~Drawer} will resize its container as it is
 		* animating, which is useful when the drawer is placed inside a
 		* [FittableLayout]{@link module:layout/FittableLayout~FittableLayout}.
-		* 
+		*
 		* @type {Boolean}
 		* @default true
 		* @public
@@ -121,7 +121,7 @@ module.exports = kind(
 		onDrawerAnimationStep: '',
 		onDrawerAnimationEnd: ''
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -154,6 +154,16 @@ module.exports = kind(
 	initComponents: kind.inherit(function (sup) {
 		return function() {
 			this.createChrome(this.tools);
+			sup.apply(this, arguments);
+		};
+	}),
+
+	/**
+	* @private
+	*/
+	teardownRender: kind.inherit(function (sup) {
+		return function (caching) {
+			if (caching) this.$.animator.complete();
 			sup.apply(this, arguments);
 		};
 	}),
