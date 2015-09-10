@@ -326,7 +326,7 @@ module.exports = kind(
 	}),
 
 	/**
-	* @lends enyo.Image
+	* @lends module:enyo/Image~Image
 	* @private
 	*/
 	statics: {
