@@ -182,7 +182,7 @@ module.exports = kind(
 
 	/**
 	* This image is used to handle the border around placeholder, if the original image
-	* to load
+	* fails to load
 	*
 	* @private
 	*/
