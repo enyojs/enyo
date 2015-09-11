@@ -190,6 +190,7 @@ module.exports = kind(
 		this.updateTransforms();
 		this.orientationChanged();
 		this.directionChanged();
+		this.animateChanged();
 		if (!this.getPanels().length) this.index = -1;
 		this.setupTransitions();
 	},
@@ -256,6 +257,12 @@ module.exports = kind(
 		this.updateTransforms();
 	},
 
+	/**
+	* @private
+	*/
+	animateChanged: function () {
+		dom.transform(this.$.client, {translateZ: this.animate ? 0 : null});
+	},
 
 	/**
 	* @private
@@ -634,13 +641,8 @@ module.exports = kind(
 			this.cleanUpPanel(prevPanel);
 			this.cleanUpPanel(currPanel);
 
-			// Async'ing this as it seems to improve ending transition performance on the TV.
-			// Requires further investigation into its behavior.
-			asyncMethod(this, function () {
-				this.removeClass('transitioning');
-				this.transitioning = false;
-				dom.transform(this.$.client, {translateZ: null});
-			});
+			this.removeClass('transitioning');
+			this.transitioning = false;
 		}
 	},
 
@@ -676,7 +678,7 @@ module.exports = kind(
 		var panels = this.getPanels(),
 			nextPanel = panels[this.index],
 			currPanel = this._currentPanel,
-			shiftCurrent;
+			shiftCurrent, fnSetupClasses, fnTransition;
 
 		this._indexDirection = 0;
 
@@ -689,43 +691,40 @@ module.exports = kind(
 
 		if (nextPanel) {
 			this.transitioning = true;
-			this.addClass('transitioning');
-			dom.transform(this.$.client, {translateZ: this.animate ? 0 : null});
 
+			// prepare the panel that will be deactivated
 			if (currPanel) {
-				currPanel.set('state', States.INACTIVE);
+				currPanel.set('state', States.DEACTIVATING);
 				if (currPanel.preTransition) currPanel.preTransition();
 			}
 
-			// prepare the panel that will be transitioned into view
-			nextPanel.removeClass('offscreen');
+			// prepare the panel that will be activated
+			nextPanel.set('state', States.ACTIVATING);
 			if (!nextPanel.generated) nextPanel.render();
-
-			nextPanel.set('state', States.ACTIVE);
 			if (nextPanel.preTransition) nextPanel.preTransition();
 
 			// ensure our panel container is in the correct, pre-transition position
 			this.shiftContainer(-1 * this._indexDirection);
-
 			shiftCurrent = this._indexDirection > 0;
 
-			// set the correct state for the next panel
-			nextPanel.set('state', States.ACTIVATING);
-			nextPanel.addRemoveClass('shifted', shiftCurrent);
+			fnSetupClasses = this.bindSafely(function () {
+				this.addClass('transitioning');
+				nextPanel.removeClass('offscreen');
+				nextPanel.addRemoveClass('shifted', shiftCurrent);
+				if (currPanel) currPanel.addRemoveClass('shifted', !shiftCurrent);
+			});
 
-			if (currPanel) {
-				// set the correct state for the previous panel
-				currPanel.set('state', States.DEACTIVATING);
-				currPanel.addRemoveClass('shifted', !shiftCurrent);
-			}
+			fnTransition = this.bindSafely(function () {
+				if (animate) setTimeout(this.bindSafely('applyTransitions', nextPanel, true), 16);
+				else this.applyTransitions(nextPanel);
+			});
 
-			// only animate transition if there is more than one panel and/or we're animating
-			if (animate) {
-				setTimeout(this.bindSafely(function () {
-					this.applyTransitions(nextPanel, true);
-				}), 16);
+			if (this.generated) {
+				global.requestAnimationFrame(fnSetupClasses);
+				global.requestAnimationFrame(fnTransition);
 			} else {
-				this.applyTransitions(nextPanel);
+				fnSetupClasses();
+				fnTransition();
 			}
 		}
 	},
