@@ -7,6 +7,7 @@
 var
 	dispatcher = require('../dispatcher'),
 	kind = require('../kind'),
+	platform = require('../platform'),
 	utils = require('../utils');
 
 var defaultObservers = [
@@ -21,16 +22,29 @@ var defaultObservers = [
 		var role = this.accessibilityAlert && 'alert' || this.accessibilityRole || null;
 		this.setAriaAttribute('role', role);
 	}},
-	{path: ['ariaContent', 'accessibilityHint', 'accessibilityLabel'], method: function () {
-		var focusable = this.accessibilityLabel || this.content || this.accessibilityHint || null,
+	{path: ['content', 'accessibilityHint', 'accessibilityLabel', 'tabIndex'], method: function () {
+		var focusable = this.accessibilityLabel || this.content || this.accessibilityHint || false,
 			prefix = this.accessibilityLabel || this.content || null,
 			label = this.accessibilityHint && prefix && (prefix + ' ' + this.accessibilityHint) ||
 					this.accessibilityHint ||
 					this.accessibilityLabel ||
 					null;
 
-		this.setAriaAttribute('tabindex', focusable ? 0 : null);
 		this.setAriaAttribute('aria-label', label);
+
+		// A truthy or zero tabindex will be set directly
+		if (this.tabIndex || this.tabIndex === 0) {
+			this.setAriaAttribute('tabindex', this.tabIndex);
+		}
+		// The webOS browser will only read nodes with a non-null tabindex so if the node has
+		// readable content, make it programmably focusable.
+		else if (focusable && this.tabIndex === undefined && platform.webos) {
+			this.setAriaAttribute('tabindex', -1);
+		}
+		// Otherwise, remove it
+		else {
+			this.setAriaAttribute('tabindex', null);
+		}
 	}}
 ];
 
@@ -75,7 +89,8 @@ function registerAriaUpdate (obj) {
 }
 
 function toAriaAttribute (from, to) {
-	this.setAriaAttribute(to, this[from]);
+	var value = this[from];
+	this.setAriaAttribute(to, value === undefined ? null : value);
 }
 
 function staticToAriaAttribute (to, value) {
@@ -236,6 +251,16 @@ var AccessibilitySupport = {
 	* @public
 	*/
 	accessibilityPreventScroll: false,
+
+	/**
+	* Sets the `tabindex` of the control. When `undefined` on webOS, it will be set to -1 to enable
+	* screen reading. A value of `null` (or `undefined` on non-webOS) ensures that no `tabindex` is
+	* set.
+	*
+	* @type {Number}
+	* @default undefined
+	* @public
+	*/
 
 	/**
 	* @method
