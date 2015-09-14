@@ -1,4 +1,5 @@
 require('enyo');
+require('./touch');
 
 /**
 * Contains the declaration for the {@link module:enyo/TouchScrollStrategy~TouchScrollStrategy} kind.
