@@ -649,9 +649,6 @@ var Control = module.exports = kind(
 				// sync with the node in styleChanged
 				this.style = this.cssText = node.style.cssText;
 
-				// we need to invalidate the style for the delegate
-				delegate.invalidate(this, 'style');
-
 				// otherwise we have to try and prepare it for the next time it is rendered we
 				// will need to update it because it will not be synchronized
 			} else this.set('style', style + (' ' + prop + ':' + value + ';'));
@@ -681,6 +678,10 @@ var Control = module.exports = kind(
 				this.set('style', style);
 			}
 		}
+		// we need to invalidate the style for the delegate -- regardless of whether or
+		// not the node exists to ensure that the tag is updated properly the next time
+		// it is rendered
+		delegate.invalidate(this, 'style');
 
 		return this;
 	},
