@@ -70,18 +70,7 @@ module.exports = kind({
 
 		this.stabilizeExtent();
 
-		var refresh = this.bindSafely(function() {
-			this.doIt();
-		});
-
-		// refresh is used as the event handler for
-		// collection resets so checking for truthy isn't
-		// enough. it must be true.
-		if(immediate === true) {
-			refresh();
-		} else {
-			this.startJob('refreshing', refresh, 16);
-		}
+		this.doIt();
 	},
 
 	childForIndex: function(idx) {
