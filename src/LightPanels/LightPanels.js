@@ -678,7 +678,7 @@ module.exports = kind(
 		var panels = this.getPanels(),
 			nextPanel = panels[this.index],
 			currPanel = this._currentPanel,
-			shiftCurrent, fnSetupClasses, fnTransition;
+			shiftCurrent, fnSetupClasses;
 
 		this._indexDirection = 0;
 
@@ -712,20 +712,12 @@ module.exports = kind(
 				nextPanel.removeClass('offscreen');
 				nextPanel.addRemoveClass('shifted', shiftCurrent);
 				if (currPanel) currPanel.addRemoveClass('shifted', !shiftCurrent);
-			});
-
-			fnTransition = this.bindSafely(function () {
 				if (animate) setTimeout(this.bindSafely('applyTransitions', nextPanel, true), 16);
 				else this.applyTransitions(nextPanel);
 			});
 
-			if (this.generated) {
-				global.requestAnimationFrame(fnSetupClasses);
-				global.requestAnimationFrame(fnTransition);
-			} else {
-				fnSetupClasses();
-				fnTransition();
-			}
+			if (this.generated) global.requestAnimationFrame(fnSetupClasses);
+			else fnSetupClasses();
 		}
 	},
 
