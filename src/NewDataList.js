@@ -323,57 +323,26 @@ module.exports = kind({
 	/**
 	* @private
 	*/
-	showingChangedHandler: kind.inherit(function (sup) {
-		return function () {
-			if (this.needsReset) {
-				this.reset();
-			}
-			else if (this.needsRefresh) {
-				this.refresh();
-			}
-			return sup.apply(this, arguments);
-		};
-	}),
+	collectionResetHandler: function () {
+		this.calcBoundaries();
+	},
 
 	/**
 	* @private
 	*/
-	refresh: kind.inherit(function (sup) {
+	init: kind.inherit(function (sup) {
 		return function () {
-			if (this.getAbsoluteShowing()) {
-				if (arguments[1] === 'reset') {
-					this.calcBoundaries();
-				}
-				this.needsRefresh = false;
-				sup.apply(this, arguments);
-			}
-			else {
-				this.needsRefresh = true;
-			}
-		};
-	}),
-	
-	/**
-	* @private
-	*/
-	reset: kind.inherit(function (sup) {
-		return function () {
-			var v;
-			if (this.getAbsoluteShowing()) {
-				v = (this.direction === 'vertical');
-				this.set('scrollTop', 0);
-				this.set('scrollLeft', 0);
-				this.set('vertical', v ? 'auto' : 'hidden');
-				this.set('horizontal', v ? 'hidden' : 'auto');
-				this.calculateMetrics();
-				this.calcBoundaries();
-				this.first = 0;
-				this.needsReset = false;
-				sup.apply(this, arguments);
-			}
-			else {
-				this.needsReset = true;
-			}
+			var v = (this.direction === 'vertical');
+
+			this.set('scrollTop', 0);
+			this.set('scrollLeft', 0);
+			this.set('vertical', v ? 'auto' : 'hidden');
+			this.set('horizontal', v ? 'hidden' : 'auto');
+			this.calculateMetrics();
+			this.calcBoundaries();
+			this.first = 0;
+
+			sup.apply(this, arguments);
 		};
 	})
 });

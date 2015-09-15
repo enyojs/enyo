@@ -25,9 +25,15 @@ module.exports = kind({
 	// reorderNodes: false,
 
 	reset: function () {
-		this.init();
-		this.destroyClientControls();
-		this.setExtent();
+		if (this.getAbsoluteShowing()) {
+			this.init();
+			this.destroyClientControls();
+			this.setExtent();
+			this._needsReset = false;
+		}
+		else {
+			this._needsReset = true;
+		}
 	},
 
 	init: function () {
@@ -64,14 +70,37 @@ module.exports = kind({
 			this.notify('numItems', pn, this.numItems);
 		}
 	},
-	
-	refresh: function (immediate) {
+
+	refresh: function () {
 		if (!this.hasInitialized) return this.reset();
 
-		this.stabilizeExtent();
-
-		this.doIt();
+		if (this.getAbsoluteShowing()) {
+			if (arguments[1] === 'reset' && typeof this.collectionResetHandler === 'function') {
+				this.collectionResetHandler();
+			}
+			this.stabilizeExtent();
+			this.doIt();
+			this._needsRefresh = false;
+		}
+		else {
+			this._needsRefresh = true;
+		}
 	},
+
+	/**
+	* @private
+	*/
+	showingChangedHandler: kind.inherit(function (sup) {
+		return function () {
+			if (this._needsReset) {
+				this.reset();
+			}
+			else if (this._needsRefresh) {
+				this.refresh();
+			}
+			return sup.apply(this, arguments);
+		};
+	}),
 
 	childForIndex: function(idx) {
 		return this.childrenByIndex[idx];
