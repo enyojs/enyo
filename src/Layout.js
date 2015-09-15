@@ -74,6 +74,12 @@ module.exports = kind(
 	/** 
 	* Called during dynamic measuring layout (i.e., during a resize).
 	*
+	* May short-circuit and return `true` if the layout needs to be
+	* redone when the associated Control is next shown. This is useful
+	* for cases where the Control itself has `showing` set to `true`
+	* but an ancestor is hidden, and the layout is therefore unable to
+	* get accurate measurements of the Control or its children.
+	*
 	* @public
 	*/
 	reflow: function () {
