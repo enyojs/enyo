@@ -882,7 +882,25 @@ var Control = module.exports = kind(
 	* @private
 	*/
 	showingChangedHandler: function (sender, event) {
+		// If we have deferred a reflow, do it now...
+		if (this.showing && this._needsReflow) {
+			this.reflow();
+		}
+
+		// Then propagate `onShowingChanged` if appropriate
 		return sender === this ? false : !this.showing;
+	},
+
+	/**
+	* Overriding reflow() so that we can take `showing` into
+	* account and defer reflowing accordingly.
+	*
+	* @private
+	*/
+	reflow: function () {
+		if (this.layout) {
+			this._needsReflow = this.showing ? this.layout.reflow() : true;
+		}
 	},
 
 	/**
