@@ -157,20 +157,20 @@ module.exports = kind(
 
 	/**
 	* The orientation of the panels. Possible values from
-	* {@link module:moonstone/LightPanels~Orientation}.
+	* {@link module:enyo/LightPanels~LightPanels#Orientation}.
 	*
 	* @type {String}
-	* @default Orientation.HORIZONTAL
+	* @default {@link module:enyo/LightPanels~LightPanels#Orientation.HORIZONTAL}
 	* @public
 	*/
 	orientation: Orientation.HORIZONTAL,
 
 	/**
 	* The direction of the panel movement. Possible values from
-	* {@link module:moonstone/LightPanels~Direction}.
+	* {@link module:enyo/LightPanels~LightPanels#Direction}.
 	*
 	* @type {String}
-	* @default Direction.FORWARDS
+	* @default {@link module:enyo/LightPanels~LightPanels#Direction.FORWARDS}
 	* @public
 	*/
 	direction: Direction.FORWARDS,
