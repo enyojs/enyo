@@ -445,12 +445,10 @@ module.exports = kind(
 	* depending on the direction.
 	*
 	* @param {Number} index - Index at which to start removing panels.
-	* @param {Number} [direction] - The direction in which we are changing indices. A negative
-	*	value signifies that we are moving backwards, and want to remove panels whose indices are
-	*	greater than the current index. Conversely, a positive value signifies that we are moving
-	*	forwards, and panels whose indices are less than the current index should be removed. To
-	*	maintain backwards-compatibility with the existing API, this parameter is optional and, if
-	*	not specified, will default to the popOnBack behavior.
+	* @param {Number} direction - The direction in which we are changing indices. A negative value
+	*	signifies that we are moving backwards, and want to remove panels whose indices are greater
+	*	than the current index. Conversely, a positive value signifies that we are moving forwards,
+	*	and panels whose indices are less than the current index should be removed.
 	* @public
 	*/
 	removePanels: function (index, direction) {
