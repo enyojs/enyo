@@ -1,5 +1,0 @@
-node_modules
-tools/mocha-tests
-tools/node_modules
-tools/minifier/path-relative-shim.js
-tools/minifier/node_modules
