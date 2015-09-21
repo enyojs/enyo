@@ -1,0 +1,25 @@
+.enyo-viewlayout-slide {
+
+	> .enyo-view {
+		transform: translateX(-100%);
+		transition-property: none;
+		transition-timing-function: ease-in-out;
+	}
+
+	&:not(.dragging) > .enyo-view.transitioning {
+		transition-property: transform;
+		will-change: transform;
+	}
+
+	&.horizontal > .enyo-view {
+		&.forward { transform: translateX(100%); }
+		&.back { transform: translateX(-100%); }
+		&.active { transform: translateX(0); }
+	}
+
+	&.vertical > .enyo-view {
+		&.forward { transform: translateY(-100%); }
+		&.back { transform: translateY(100%); }
+		&.active { transform: translateY(0); }
+	}
+}

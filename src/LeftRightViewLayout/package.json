@@ -1,0 +1,6 @@
+{
+	"main": "LeftRightViewLayout.js",
+	"styles": [
+		"LeftRightViewLayout.less"
+	]
+}

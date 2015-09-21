@@ -1,0 +1,6 @@
+{
+	"main": "SlideViewLayout.js",
+	"styles": [
+		"SlideViewLayout.less"
+	]
+}
