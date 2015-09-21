@@ -118,7 +118,11 @@ var ViewPreloadSupport = {
 		// The panel could have already been removed from DOM and torn down if we popped when
 		// moving forward.
 		if (view.node) {
-			view.node.remove();
+			if (!view.node.remove) { // Polyfill remove for safari browser
+				view.parent.node.removeChild(view.node);
+			} else {
+				view.node.remove();
+			}
 			view.teardownRender(true);
 		}
 

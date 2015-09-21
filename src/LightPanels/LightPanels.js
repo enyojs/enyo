@@ -8,6 +8,7 @@ require('enyo');
 var
 	kind = require('../kind'),
 	dom = require('../dom'),
+	animation = require('../animation'),
 	asyncMethod = require('../utils').asyncMethod;
 
 var
@@ -179,7 +180,7 @@ module.exports = kind(
 	* @private
 	*/
 	tools: [
-		{kind: Control, name: 'client', classes: 'panels-container', ontransitionend: 'transitionFinished'}
+		{kind: Control, name: 'client', classes: 'panels-container', ontransitionend: 'transitionFinished', onwebkitTransitionEnd: 'transitionFinished'}
 	],
 
 	/**
@@ -716,7 +717,7 @@ module.exports = kind(
 				else this.applyTransitions(nextPanel);
 			});
 
-			if (this.generated) global.requestAnimationFrame(fnSetupClasses);
+			if (this.generated) animation.requestAnimationFrame(fnSetupClasses);
 			else fnSetupClasses();
 		}
 	},
