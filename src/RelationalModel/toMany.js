@@ -1,6 +1,6 @@
 /**
- * Contains the declaration for the {@link toMany} kind.
- * @module enyo/toMany
+ * Contains the declaration for the {@link module:enyo/RelationalModel~toMany} kind.
+ * @module enyo/RelationalModel
  */
 
 var
@@ -23,7 +23,7 @@ var
 * @protected
 */
 var toMany = module.exports = kind(
-	/** @lends module:enyo/toMany~toMany.prototype */ {
+	/** @lends module:enyo/RelationalModel~toMany.prototype */ {
 	
 	/**
 	* @private

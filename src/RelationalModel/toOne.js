@@ -1,3 +1,8 @@
+/**
+* Contains the declaration for the {@link module:enyo/RelationalModel~toOne} kind.
+* @module enyo/RelationalModel
+*/
+
 var
 	kind = require('../kind'),
 	utils = require('../utils'),
@@ -14,7 +19,7 @@ var
 * @protected
 */
 var toOne = module.exports = kind(
-	/** @lends module:enyo/toOne~toOne.prototype */ {
+	/** @lends module:enyo/RelationalModel~toOne.prototype */ {
 	
 	/**
 	* @private
