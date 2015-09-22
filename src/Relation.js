@@ -1,7 +1,7 @@
 require('enyo');
 
 /**
-* Contains the declaration for the {@link module:enyo/Relation} kind.
+* Contains the declaration for the {@link module:enyo/Relation~Relation} kind.
 * @module enyo/Relation
 */
 

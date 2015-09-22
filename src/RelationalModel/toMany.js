@@ -19,7 +19,7 @@ var
 * models. This is an internally-used class.
 *
 * @class toMany
-* @extends Relation
+* @extends module:enyo/Relation~Relation
 * @protected
 */
 var toMany = module.exports = kind(

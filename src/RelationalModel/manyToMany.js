@@ -14,7 +14,7 @@ var
 * models. This is an internally-used class.
 *
 * @class manyToMany
-* @extends toMany
+* @extends module:enyo/RelationalModel~toMany
 * @protected
 */
 var manyToMany = module.exports = kind(

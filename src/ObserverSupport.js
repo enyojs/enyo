@@ -17,14 +17,14 @@ kind.concatenated.push("observers");
 
 /**
 * Responds to changes in one or more properties.
-* [Observers]{@link module:enyo/ObserverSupport~ObserverSupport.observer} may be registered in
+* [Observers]{@link module:enyo/ObserverSupport~ObserverSupport#observers} may be registered in
 * several different ways. See the {@link module:enyo/ObserverSupport} documentation
 * for more details. Also note that, while observers should not be called
 * directly, if defined on a [kind]{@glossary kind}, they may be
 * overloaded for special behavior.
 *
-* @see module:enyo/ObserverSupport
-* @see module:enyo/ObserverSupport~ObserverSupport.observe
+* @see {@link module:enyo/ObserverSupport}
+* @see {@link module:enyo/ObserverSupport~ObserverSupport#observe}
 * @callback module:enyo/ObserverSupport~ObserverSupport~Observer
 * @param {*} was - The previous value of the property that has changed.
 * @param {*} is - The current value of the property that has changed.
@@ -125,14 +125,17 @@ function flushQueue (obj) {
 * {@link module:enyo/CoreObject~Object}) already have this {@glossary mixin} applied.
 * This allows for
 * [observers]{@link module:enyo/ObserverSupport~ObserverSupport~Observer} to be
-* [declared]{@link module:enyo/ObserverSupport~ObserverSupport.observers} or "implied" (see below).
+* [declared]{@link module:enyo/ObserverSupport~ObserverSupport#observers} or "implied" (see below).
 *
 * Implied observers are not declared, but derived from their `name`. They take
 * the form `<property>Changed`, where `<property>` is the property to
-* [observe]{@link module:enyo/ObserverSupport~ObserverSupport.observe}. For example:
+* [observe]{@link module:enyo/ObserverSupport~ObserverSupport#observe}. For example:
 *
 * ```javascript
-* enyo.kind({
+* var
+* 	kind = require('enyo/kind');
+*
+* module.exports = kind({
 * 	name: 'MyKind',
 *
 * 	// some local property
@@ -153,7 +156,10 @@ function flushQueue (obj) {
 * observe any property (or properties), regardless of its `name`. For example:
 *
 * ```javascript
-* enyo.kind({
+* var
+* 	kind = require('enyo/kind');
+*
+* module.exports = kind({
 * 	name: 'MyKind',
 *
 * 	// some local property
@@ -180,18 +186,21 @@ function flushQueue (obj) {
 * mine.set('count', 2); // -> count was "1" but now it is "2"
 * ```
 *
-* While observers may be [notified]{@link module:enyo/ObserverSupport~ObserverSupport.notify} of
+* While observers may be [notified]{@link module:enyo/ObserverSupport~ObserverSupport#notify} of
 * changes to multiple properties, this is not a typical use case for implied
 * observers, since, by convention, they are only registered for the named
 * property.
 *
 * There is one additional way to use observers, if necessary. You may use the
-* API methods [observe()]{@link module:enyo/ObserverSupport~ObserverSupport.observe} and
-* [unobserve()]{@link module:enyo/ObserverSupport~ObserverSupport.unobserve} to dynamically
+* API methods [observe()]{@link module:enyo/ObserverSupport~ObserverSupport#observe} and
+* [unobserve()]{@link module:enyo/ObserverSupport~ObserverSupport#unobserve} to dynamically
 * register and unregister observers as needed. For example:
 *
 * ```javascript
-* var object = new enyo.Object({value: true});
+* var
+* 	Object = require('enyo/CoreObject').Object;
+*
+* var object = new Object({value: true});
 * var observer = function (was, is) {
 * 	enyo.log('value was "' + was + '" but now it is "' + is + '"');
 * };
@@ -237,11 +246,11 @@ var ObserverSupport = {
 	
 	/**
 	* Determines whether `_observing` is enabled. If
-	* [stopNotifications()]{@link module:enyo/ObserverSupport~ObserverSupport.stopNotifications} has
+	* [stopNotifications()]{@link module:enyo/ObserverSupport~ObserverSupport#stopNotifications} has
 	* been called, then this will return `false`.
 	*
-	* @see module:enyo/ObserverSupport~ObserverSupport.stopNotifications
-	* @see module:enyo/ObserverSupport~ObserverSupport.startNotifications
+	* @see {@link module:enyo/ObserverSupport~ObserverSupport#stopNotifications}
+	* @see {@link module:enyo/ObserverSupport~ObserverSupport#startNotifications}
 	* @returns {Boolean} Whether or not the callee is observing.
 	*/
 	isObserving: function () {
@@ -287,7 +296,7 @@ var ObserverSupport = {
 	
 	/**
 	* @deprecated
-	* @alias enyo.ObserverSupport.observe
+	* @alias {@link module:enyo/ObserverSupport~ObserverSupport#observe}
 	* @public
 	*/
 	addObserver: function () {
@@ -297,16 +306,16 @@ var ObserverSupport = {
 	
 	/**
 	* Registers an [observer]{@link module:enyo/ObserverSupport~ObserverSupport~Observer} to be
-	* [notified]{@link module:enyo/ObserverSupport~ObserverSupport.notify} when the given property has
+	* [notified]{@link module:enyo/ObserverSupport~ObserverSupport#notify} when the given property has
 	* been changed. It is important to note that it is possible to register the
 	* same observer multiple times (although this is never the intention), so
 	* care should be taken to avoid that scenario. It is also important to
 	* understand how observers are stored and unregistered
-	* ([unobserved]{@link module:enyo/ObserverSupport~ObserverSupport.unobserve}). The `ctx` (context)
+	* ([unobserved]{@link module:enyo/ObserverSupport~ObserverSupport#unobserve}). The `ctx` (context)
 	* parameter is stored with the observer reference. **If used when
 	* registering, it should also be used when unregistering.**
 	*
-	* @see module:enyo/ObserverSupport~ObserverSupport.unobserve
+	* @see {@link module:enyo/ObserverSupport~ObserverSupport#unobserve}
 	* @param {String} path - The property or property path to observe.
 	* @param {module:enyo/ObserverSupport~ObserverSupport~Observer} fn - The
 	*	[observer]{@link module:enyo/ObserverSupport~ObserverSupport~Observer} method that responds to changes.
@@ -322,7 +331,7 @@ var ObserverSupport = {
 	
 	/**
 	* @deprecated
-	* @alias enyo.ObserverSupport.unobserve
+	* @alias {@link module:enyo/ObserverSupport~ObserverSupport#unobserve}
 	* @public
 	*/
 	removeObserver: function (path, fn, ctx) {
@@ -331,10 +340,10 @@ var ObserverSupport = {
 	
 	/**
 	* Unregisters an [observer]{@link module:enyo/ObserverSupport~ObserverSupport~Observer}. If a `ctx`
-	* (context) was supplied to [observe()]{@link module:enyo/ObserverSupport~ObserverSupport.observe},
+	* (context) was supplied to [observe()]{@link module:enyo/ObserverSupport~ObserverSupport#observe},
 	* then it should also be supplied to this method.
 	*
-	* @see module:enyo/ObserverSupport~ObserverSupport.observe
+	* @see {@link module:enyo/ObserverSupport~ObserverSupport#observe}
 	* @param {String} path - The property or property path to unobserve.
 	* @param {module:enyo/ObserverSupport~ObserverSupport~Observer} fn - The
 	*	[observer]{@link module:enyo/ObserverSupport~ObserverSupport~Observer} method that responds to changes.
@@ -373,7 +382,7 @@ var ObserverSupport = {
 	
 	/**
 	* @deprecated
-	* @alias enyo.ObserverSupport.notify
+	* @alias module:enyo/ObserverSupport~ObserverSupport#notify
 	* @public
 	*/
 	notifyObservers: function (path, was, is, opts) {
@@ -397,19 +406,19 @@ var ObserverSupport = {
 	},
 	
 	/**
-	* Stops all [notifications]{@link module:enyo/ObserverSupport~ObserverSupport.notify} from
+	* Stops all [notifications]{@link module:enyo/ObserverSupport~ObserverSupport#notify} from
 	* propagating. By default, all notifications will be queued and flushed once
-	* [startNotifications()]{@link module:enyo/ObserverSupport~ObserverSupport.startNotifications}
+	* [startNotifications()]{@link module:enyo/ObserverSupport~ObserverSupport#startNotifications}
 	* has been called. Setting the optional `noQueue` flag will also disable the
 	* queue, or you can use the
-	* [disableNotificationQueue()]{@link module:enyo/ObserverSupport~ObserverSupport.disableNotificationQueue} and
-	* [enableNotificationQueue()]{@link module:enyo/ObserverSupport~ObserverSupport.enableNotificationQueue}
+	* [disableNotificationQueue()]{@link module:enyo/ObserverSupport~ObserverSupport#disableNotificationQueue} and
+	* [enableNotificationQueue()]{@link module:enyo/ObserverSupport~ObserverSupport#enableNotificationQueue}
 	* API methods. `startNotifications()` will need to be called the same number
 	* of times that this method has been called.
 	*
-	* @see module:enyo/ObserverSupport~ObserverSupport.startNotifications
-	* @see module:enyo/ObserverSupport~ObserverSupport.disableNotificationQueue
-	* @see module:enyo/ObserverSupport~ObserverSupport.enableNotificationQueue
+	* @see {@link module:enyo/ObserverSupport~ObserverSupport#startNotifications}
+	* @see {@link module:enyo/ObserverSupport~ObserverSupport#disableNotificationQueue}
+	* @see {@link module:enyo/ObserverSupport~ObserverSupport#enableNotificationQueue}
 	* @param {Boolean} [noQueue] - If `true`, this will also disable the notification queue.
 	* @returns {this} The callee for chaining.
 	*/
@@ -421,17 +430,17 @@ var ObserverSupport = {
 	},
 	
 	/**
-	* Starts [notifications]{@link module:enyo/ObserverSupport~ObserverSupport.notify} if they have
-	* been [disabled]{@link module:enyo/ObserverSupport~ObserverSupport.stopNotifications}. If the
+	* Starts [notifications]{@link module:enyo/ObserverSupport~ObserverSupport#notify} if they have
+	* been [disabled]{@link module:enyo/ObserverSupport~ObserverSupport#stopNotifications}. If the
 	* notification queue was not disabled, this will automatically flush the
 	* queue of all notifications that were encountered while stopped. This
 	* method must be called the same number of times that
-	* [stopNotifications()]{@link module:enyo/ObserverSupport~ObserverSupport.stopNotifications} was
+	* [stopNotifications()]{@link module:enyo/ObserverSupport~ObserverSupport#stopNotifications} was
 	* called.
 	*
-	* @see module:enyo/ObserverSupport~ObserverSupport.stopNotifications
-	* @see module:enyo/ObserverSupport~ObserverSupport.disableNotificationQueue
-	* @see module:enyo/ObserverSupport~ObserverSupport.enableNotificationQueue
+	* @see {@link module:enyo/ObserverSupport~ObserverSupport#stopNotifications}
+	* @see {@link module:enyo/ObserverSupport~ObserverSupport#disableNotificationQueue}
+	* @see {@link module:enyo/ObserverSupport~ObserverSupport#enableNotificationQueue}
 	* @param {Boolean} [queue] - If `true` and the notification queue is disabled,
 	* the queue will be re-enabled.
 	* @returns {this} The callee for chaining.
@@ -447,7 +456,7 @@ var ObserverSupport = {
 	/**
 	* Re-enables the notification queue, if it was disabled.
 	*
-	* @see module:enyo/ObserverSupport~ObserverSupport.disableNotificationQueue
+	* @see {@link module:enyo/ObserverSupport~ObserverSupport#disableNotificationQueue}
 	* @returns {this} The callee for chaining.
 	*/
 	enableNotificationQueue: function () {
@@ -459,7 +468,7 @@ var ObserverSupport = {
 	* If the notification queue is enabled (the default), it will be disabled
 	* and any notifications in the queue will be removed.
 	*
-	* @see module:enyo/ObserverSupport~ObserverSupport.enableNotificationQueue
+	* @see {@link module:enyo/ObserverSupport~ObserverSupport#enableNotificationQueue}
 	* @returns {this} The callee for chaining.
 	*/
 	disableNotificationQueue: function () {

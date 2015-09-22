@@ -1,3 +1,8 @@
+/**
+* Contains the declaration for the {@link module:enyo/RelationalModel~RelationalCollection} kind.
+* @module enyo/RelationalModel
+*/
+
 var
 	kind = require('../kind'),
 	Collection = require('../Collection');
@@ -14,7 +19,7 @@ var
 * @private
 */
 module.exports = kind(
-	/** @lends RelationalCollection.prototype */ {
+	/** @lends module:enyo/RelationalModel~RelationalCollection.prototype */ {
 		
 	/**
 	* @private
