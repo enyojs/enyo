@@ -8,6 +8,7 @@ require('enyo');
 var
 	kind = require('../kind'),
 	dom = require('../dom'),
+	animation = require('../animation'),
 	asyncMethod = require('../utils').asyncMethod;
 
 var
@@ -179,7 +180,7 @@ module.exports = kind(
 	* @private
 	*/
 	tools: [
-		{kind: Control, name: 'client', classes: 'panels-container', ontransitionend: 'transitionFinished'}
+		{kind: Control, name: 'client', classes: 'panels-container', ontransitionend: 'transitionFinished', onwebkitTransitionEnd: 'transitionFinished'}
 	],
 
 	/**
@@ -678,7 +679,7 @@ module.exports = kind(
 		var panels = this.getPanels(),
 			nextPanel = panels[this.index],
 			currPanel = this._currentPanel,
-			shiftCurrent, fnSetupClasses;
+			shiftCurrent, fnInitiateTransition;
 
 		this._indexDirection = 0;
 
@@ -703,21 +704,24 @@ module.exports = kind(
 			if (!nextPanel.generated) nextPanel.render();
 			if (nextPanel.preTransition) nextPanel.preTransition();
 
-			// ensure our panel container is in the correct, pre-transition position
-			this.shiftContainer(-1 * this._indexDirection);
-			shiftCurrent = this._indexDirection > 0;
+			fnInitiateTransition = this.bindSafely(function (timestamp) {
 
-			fnSetupClasses = this.bindSafely(function () {
+				// ensure our panel container is in the correct, pre-transition position
+				this.shiftContainer(-1 * this._indexDirection);
+				shiftCurrent = this._indexDirection > 0;
+
 				this.addClass('transitioning');
 				nextPanel.removeClass('offscreen');
 				nextPanel.addRemoveClass('shifted', shiftCurrent);
 				if (currPanel) currPanel.addRemoveClass('shifted', !shiftCurrent);
-				if (animate) setTimeout(this.bindSafely('applyTransitions', nextPanel, true), 16);
-				else this.applyTransitions(nextPanel);
+
+				// timestamp will be truthy if this is triggered from a rAF
+				if (timestamp) animation.requestAnimationFrame(this.bindSafely('applyTransitions', nextPanel, animate));
+				else this.applyTransitions(nextPanel, animate);
 			});
 
-			if (this.generated) global.requestAnimationFrame(fnSetupClasses);
-			else fnSetupClasses();
+			if (!this.generated || !animate) fnInitiateTransition();
+			else animation.requestAnimationFrame(fnInitiateTransition);
 		}
 	},
 
