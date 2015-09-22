@@ -84,7 +84,7 @@ module.exports = kind({
 		// Only update the view once per frame
 		if (!this.dragEvent) {
 			rAF(function () {
-				this.drag(this.dragEvent);
+				if (this.container.dragging) this.drag(this.dragEvent);
 				this.dragEvent = null;
 			}.bind(this));
 		}

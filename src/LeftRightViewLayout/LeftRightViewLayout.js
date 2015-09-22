@@ -14,7 +14,7 @@ module.exports = kind({
 	drag: function (event) {
 		var c = this.container,
 			node = c.hasNode(),
-			size = node.clientWidth
+			size = node.clientWidth,
 			delta = Math.min(size, Math.abs(event.delta));
 
 		TransitionViewLayout.prototype.drag.apply(this, arguments);
