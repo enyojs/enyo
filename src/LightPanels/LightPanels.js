@@ -8,6 +8,7 @@ require('enyo');
 var
 	kind = require('../kind'),
 	dom = require('../dom'),
+	animation = require('../animation'),
 	asyncMethod = require('../utils').asyncMethod;
 
 var
@@ -179,7 +180,7 @@ module.exports = kind(
 	* @private
 	*/
 	tools: [
-		{kind: Control, name: 'client', classes: 'panels-container', ontransitionend: 'transitionFinished'}
+		{kind: Control, name: 'client', classes: 'panels-container', ontransitionend: 'transitionFinished', onwebkitTransitionEnd: 'transitionFinished'}
 	],
 
 	/**
@@ -715,12 +716,12 @@ module.exports = kind(
 				if (currPanel) currPanel.addRemoveClass('shifted', !shiftCurrent);
 
 				// timestamp will be truthy if this is triggered from a rAF
-				if (timestamp) global.requestAnimationFrame(this.bindSafely('applyTransitions', nextPanel, animate));
+				if (timestamp) animation.requestAnimationFrame(this.bindSafely('applyTransitions', nextPanel, animate));
 				else this.applyTransitions(nextPanel, animate);
 			});
 
 			if (!this.generated || !animate) fnInitiateTransition();
-			else global.requestAnimationFrame(fnInitiateTransition);
+			else animation.requestAnimationFrame(fnInitiateTransition);
 		}
 	},
 
