@@ -349,7 +349,7 @@ var ViewMgr = kind({
 	* @private
 	*/
 	_deactivate: function (panel) {
-		if (panel.node) {
+		if (panel.node && !panel.persistent) {
 			panel.node.remove();
 			panel.teardownRender(true);
 		}

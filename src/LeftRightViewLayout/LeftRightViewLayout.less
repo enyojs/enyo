@@ -1,14 +1,16 @@
 .enyo-viewlayout-leftright {
 
+	&:not(.dragging) > .enyo-view.transitioning {
+		transition-property: transform;
+		will-change: transform;
+	}
+
 	> .enyo-view {
-		transform: translateX(-100%);
+		transition-property: none;
+		transform: translateX(100%);
 		&.active {
 			transform: translateX(0);
 		}
 	}
 
-	&:not(.dragging) > .enyo-view.transitioning {
-		transition: transform 300ms linear;
-		will-change: transform;
-	}
 }

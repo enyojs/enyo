@@ -24,6 +24,7 @@ module.exports = kind({
 	viewClass: 'enyo-view',
 	constructor: function () {
 		Layout.prototype._constructor.apply(this, arguments);
+		this.container.addClass(this.container.orientation);
 		this.container.observe('active', this.activeChanged = this.activeChanged.bind(this));
 		this.container.observe('dragging', this.draggingChanged = this.draggingChanged.bind(this));
 		this.container.on('drag', this.handleDrag = this.handleDrag.bind(this));

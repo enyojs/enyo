@@ -2,7 +2,7 @@ var
 	kind = require('enyo/kind');
 
 var
-	ViewLayout = require('../ViewLayout');
+	TransitionViewLayout = require('../TransitionViewLayout');
 
 /**
 * Slides views in from the right or top and out the left or bottom.
@@ -27,31 +27,12 @@ module.exports = kind({
 	/**
 	* @private
 	*/
-	kind: ViewLayout,
+	kind: TransitionViewLayout,
 
 	/**
 	* @private
 	*/
 	layoutClass: 'enyo-viewlayout enyo-viewlayout-slide',
-
-	/**
-	* Sets the duration of the transition. Imported from the value of `layoutDuration` on the
-	* container on which the layout is applied.
-	*
-	* @type {Number}
-	* @default 300
-	* @public
-	*/
-	duration: 300,
-
-	/**
-	* @private
-	*/
-	constructor: function () {
-		ViewLayout.prototype._constructor.apply(this, arguments);
-		this.container.addClass(this.container.orientation);
-		this.duration = this.container.layoutDuration || this.duration;
-	},
 
 	/**
 	* @private
@@ -62,16 +43,13 @@ module.exports = kind({
 			isHorizontal = c.orientation == 'horizontal',
 			transform = isHorizontal ? 'translateX' : 'translateY';
 
-		ViewLayout.prototype.drag.apply(this, arguments);
-		if (event.percentDelta)
+		TransitionViewLayout.prototype.drag.apply(this, arguments);
 		c.active.applyStyle('transform', transform + '(' + event.delta + 'px)');
 		if (c.dragView) {
 			node = c.hasNode();
 			size = isHorizontal ? node.clientWidth : node.clientHeight;
 			c.dragView.applyStyle('transform', transform + '(' + (size * event.direction + event.delta) + 'px)');
 		}
-
-		this.dragDuration = this.duration - Math.round(event.percentDelta * this.duration, 2);
 	},
 
 	/**
@@ -95,17 +73,12 @@ module.exports = kind({
 	* @private
 	*/
 	transition: function (was, is) {
-		ViewLayout.prototype.transition.apply(this, arguments);
-		if (was) {
-			this.applyTransitionDuration(was, this.dragDuration || this.duration);
-			was.applyStyle('transform', null);
-		}
+		TransitionViewLayout.prototype.transition.apply(this, arguments);
+		if (was) was.applyStyle('transform', null);
 		if (is) {
 			is.removeClass(this.direction);
-			this.applyTransitionDuration(is, this.dragDuration || this.duration);
 			is.applyStyle('transform', null);
 		}
-
 	},
 
 	/**
@@ -114,16 +87,7 @@ module.exports = kind({
 	* @private
 	*/
 	completeTransition: function (was, is) {
-		ViewLayout.prototype.completeTransition.apply(this, arguments);
-		this.dragDuration = null;
+		TransitionViewLayout.prototype.completeTransition.apply(this, arguments);
 		if (was) was.removeClass(this.direction == 'back' ? 'forward' : 'back');
-	},
-
-	/**
-	* @private
-	*/
-	applyTransitionDuration: function (view, duration) {
-		view.applyStyle('-webkit-transition-duration', duration + 'ms');
-		view.applyStyle('transition-duration', duration + 'ms');
 	}
 });
