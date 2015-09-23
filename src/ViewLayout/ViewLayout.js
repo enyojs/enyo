@@ -106,9 +106,9 @@ module.exports = kind({
 			is.addClass('active');
 		}
 	},
-	completeTransition: function (view) {
-		view.removeClass('transitioning');
-		if (view !== this.container.active) this.container.deactivate(view.name);
+	completeTransition: function (panel) {
+		panel.removeClass('transitioning');
+		if (panel !== this.container.active) this.container.deactivate(panel.name);
 	},
 
 	shouldAnimate: function () {
@@ -131,13 +131,13 @@ module.exports = kind({
 	},
 
 	handleTransitioned: function (sender, event) {
-		var view = event.originator;
-		if (view && view.container == this.container) {
+		var panel = event.originator;
+		if (panel && panel.container == this.container) {
 
 			if (this.shouldAnimate()) {
-				rAF(this.completeTransition.bind(this, view));
+				rAF(this.completeTransition.bind(this, panel));
 			} else {
-				this.completeTransition(view);
+				this.completeTransition(panel);
 			}
 
 			return true;

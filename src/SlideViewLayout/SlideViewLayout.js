@@ -59,8 +59,8 @@ module.exports = kind({
 	*/
 	prepareTransition: function (was, is) {
 		var c = this.container,
-			wasIndex = was ? c.views.indexOf(was) : -1,
-			isIndex = is ? c.views.indexOf(is) : -1;
+			wasIndex = was ? c.panels.indexOf(was) : -1,
+			isIndex = is ? c.panels.indexOf(is) : -1;
 
 		this.direction = wasIndex < isIndex ? 'forward' : 'back';
 		if (is) is.addClass(this.direction);
