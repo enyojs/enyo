@@ -67,7 +67,7 @@ module.exports = kind({
 	},
 
 	/**
-	* Removes the directional CSS class from the deactivating panel
+	* Removes the directional CSS class from the deactivating view
 	*
 	* @private
 	*/
