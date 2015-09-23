@@ -145,13 +145,6 @@ var UiComponent = module.exports = kind(
 	addBefore: undefined,
 
 	/**
-	* @private
-	*/
-	protectedStatics: {
-		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
-	},
-
-	/**
 	* @method
 	* @private
 	*/
@@ -631,8 +624,8 @@ var UiComponent = module.exports = kind(
 	* @public
 	*/
 	resize: function () {
-		this.waterfall('onresize', UiComponent._resizeFlags);
-		this.waterfall('onpostresize', UiComponent._resizeFlags);
+		this.waterfall('onresize');
+		this.waterfall('onpostresize');
 	},
 
 	/**
@@ -677,13 +670,7 @@ var UiComponent = module.exports = kind(
 		}
 		// waterfall to my children
 		for (var i=0, cs=this.children, c; (c=cs[i]); i++) {
-			// Do not send {showingOnly: true} events to hidden controls. This flag is set for resize events
-			// which are broadcast from within the framework. This saves a *lot* of unnecessary layout.
-			// TODO: Maybe remember that we did this, and re-send those messages on setShowing(true)?
-			// No obvious problems with it as-is, though
-			if (c.showing || !(event && event.showingOnly)) {
-				c.waterfall(nom, event, sender);
-			}
+			c.waterfall(nom, event, sender);
 		}
 	},
 
