@@ -18,7 +18,7 @@ var
 *
 * `UiComponent` itself is abstract. Concrete [subkinds]{@glossary subkind} include
 * {@link module:enyo/Control~Control} (for HTML/DOM) and
-* {@link module:enyo/canvas~canvas.Control} (for Canvas contexts).
+* {@link module:canvas/Control~Control} (for Canvas contexts).
 *
 * @class UiComponent
 * @extends module:enyo/Component~Component

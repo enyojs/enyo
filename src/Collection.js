@@ -378,7 +378,7 @@ exports = module.exports = kind(
 	* Modifies the structure of data so that it can be used by the
 	* [add()]{@link module:enyo/Collection~Collection#add} method. This method will only be used
 	* during initialization or after a successful [fetch]{@link module:enyo/Collection~Collection#fetch}
-	* if the [parse]{@link module:enyo/Collection~Options.parse} flag is set to `true`.
+	* if the [parse]{@link module:enyo/Collection~Options#parse} flag is set to `true`.
 	* It may be used for simple remapping, renaming, or complex restructuring of
 	* data coming from a [source]{@link module:enyo/Collection~Collection#source} that requires
 	* modification before it can be added to the [collection]{@link module:enyo/Collection~Collection}.

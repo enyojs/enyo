@@ -54,9 +54,9 @@ var
 * {@link module:enyo/TouchScrollStrategy~TouchScrollStrategy}, optimizing it for scrolling environments in which
 * effecting scroll changes with transforms using CSS transitions is fastest.
 *
-* `enyo.TransitionScrollStrategy` is not typically created in application code. Instead, it is
+* `enyo/TransitionScrollStrategy` is not typically created in application code. Instead, it is
 * specified as the value of the [strategyKind]{@link module:enyo/Scroller~Scroller#strategyKind} property of
-* an {@link module:enyo/Scroller~Scroller} or {@link module:layout/List#List}, or is used by the framework implicitly.
+* an {@link module:enyo/Scroller~Scroller} or {@link module:layout/List~List}, or is used by the framework implicitly.
 *
 * @class TransitionScrollStrategy
 * @extends module:enyo/TouchScrollStrategy~TouchScrollStrategy
@@ -565,7 +565,7 @@ var TransitionScrollStrategy = module.exports = kind(
 
 	/**
 	* Special synthetic [DOM events]{@glossary DOMEvent} served up by the
-	* [Gesture]{@link module:enyo/gesture~gesture} system.
+	* [Gesture]{@link module:enyo/gesture} system.
 	*
 	* @private
 	*/
