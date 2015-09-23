@@ -76,159 +76,184 @@ var ViewMgr = kind({
 	create: function () {
 		Control.prototype.create.apply(this, arguments);
 		this.managerEvent = this.managerEvent.bind(this);
+		this.managerChanged(null, this.manager);
 
-		if (this.type == 'fixed') this.initFirstPanel();
+		if (this.type == 'fixed') this.initFirstView();
 		else if (this.type == 'floating') this.stack = [];
 	},
 	rendered: function () {
 		Control.prototype.rendered.apply(this, arguments);
-		if (this.type == 'floating') this.initFirstPanel();
+		if (this.type == 'floating') this.initFirstView();
+		this.set('dismissed', false);
 	},
 	initComponents: function () {
-		// panel configs or instance
-		this.panels = [];
+		var managersOwner = Object.hasOwnProperty('managers') ? this.getInstanceOwner() : this;
 
-		// map of panel name to index
-		this.panelNames = {};
+		// view configs or instances
+		this.views = [];
+		this.viewManagers = {};
 
-		// import kind and user components into this.panels
-		this.importPanelConfig(this.kindComponents, this);
-		this.importPanelConfig(this.components, this.getInstanceOwner());
+		// map of view name to index
+		this.viewNames = {};
+
+		// import kind and user components into this.views
+		this.importViewConfig(this.kindComponents, this);
+		this.importViewConfig(this.components, this.getInstanceOwner());
+		this.importViewConfig(this.managers, managersOwner, true);
 
 		// clean up references
 		this.components = this.kindComponents = null;
 	},
 
 	addControl: function (control, before) {
-		var index;
 		Control.prototype.addControl.apply(this, arguments);
 
-		index = this.panelNames[control.name];
-		if (!index && index !== 0) {
-			this.addPanel(control);
+		if (!this.viewNames[control.name]) {
+			this.addView(control);
 		}
 	},
 	removeControl: function (control) {
 		var i, l,
-			index = this.panels.indexOf(control);
+			index = this.views.indexOf(control);
 		if (index >= 0) {
-			this.panels.splice(index, 1);
-			this.panelNames[control.name] = null;
+			this.views.splice(index, 1);
+			this.viewNames[control.name] = null;
 
-			for (i = index, l = this.panels.length; i < l; i++) {
-				this.panelNames[this.panels[i].name] = i;
+			for (i = index, l = this.views.length; i < l; i++) {
+				this.viewNames[this.views[i].name] = i;
 			}
 		}
 	},
 
 	/**
-	* Renders the initially active panel
+	* Renders the initially active view
 	*
 	* @private
 	*/
-	initFirstPanel: function () {
-		var name, panel,
+	initFirstView: function () {
+		var name, view,
 			i = 0;
 
-		if (this.panels.length === 0) return;
+		if (this.views.length === 0) return;
 
-		// find the first declared active panel
-		while ((panel = this.panels[i++]) && !name) {
-			if (panel.active) {
-				name = panel.name;
+		// find the first declared active view
+		while ((view = this.views[i++]) && !name) {
+			if (view.active) {
+				name = view.name;
 			}
 		}
 
-		name = name || this.panels[0].name;
+		name = name || this.views[0].name;
 		if (this.generated) {
 			this.activate(name);
 		} else {
-			panel = this.getPanel(name);
-			this._activate(panel);
+			view = this.getView(name);
+			this._activate(view);
 		}
 	},
 
 	/**
-	* Adds the list of components as panels
+	* Adds the list of components as views
 	*
 	* @param  {Object[]|enyo.Control[]} components List of components
 	* @param  {enyo.Control|null} [owner] Owner of components
 	*
 	* @private
 	*/
-	importPanelConfig: function (components, owner) {
+	importViewConfig: function (components, owner, isManager) {
 		var c,
 			i = 0;
 
 		while (components && (c = components[i++])) {
-			this.addPanel(c, owner);
+			this.addView(c, owner, isManager);
 		}
 	},
 
 	/**
-	* Adds a new panel to the panel set
+	* Adds a new view to the view set
 	*
-	* @param {Object|enyo.Control} panel Panel config or instance
-	* @param {enyo.Control|null} [owner] Optional owner of panel. Defaults to this.
+	* @param {Object|enyo.Control} view View config or instance
+	* @param {enyo.Control|null} [owner] Optional owner of view. Defaults to this.
 	*
 	* @private
 	*/
-	addPanel: function (panel, owner) {
-		var isControl = panel instanceof Control,
-			_panel = isControl ? panel : utils.clone(panel),
-			index = this.panels.push(_panel),
-			name = _panel.name || 'panel' + index;
-		owner = _panel.owner || owner || this;
+	addView: function (view, owner, isManager) {
+		var index, name,
+			isControl = view instanceof Control,
+			_view = isControl ? view : utils.clone(view);
 
+		owner = _view.owner || owner || this;
 		if (isControl) {
-			_panel.set('owner', owner);
-			_panel.set('name', name);
-
-			if (_panel instanceof ViewMgr) {
-				_panel.set('manager', this.manager || this);
+			_view.set('owner', owner);
+			if (_view instanceof ViewMgr) {
+				_view.isManager = true;
+				_view.set('manager', this.manager || this);
 			}
 		} else {
-			_panel.owner = owner;
-			_panel.name = name;
+			_view.owner = owner;
+			if (isManager || _view.isManager) {
+				if (!_view.name) {
+					_view.name = 'viewManager' + (Object.keys(this.viewManagers).length + 1);
+				}
+				_view.isManager = true;
+				_view.manager = this.manager || this;
+			}
 		}
 
-		this.panelNames[name] = index - 1;
+		if (_view.isManager) {
+			this.viewManagers[_view.name] = _view;
+		} else {
+			index = this.views.push(_view),
+			name = _view.name || (_view.name = 'view' + index);
+			this.viewNames[name] = index - 1;
+		}
 	},
 
 	/**
 	* @public
 	*/
-	getPanel: function (panelName) {
-		var index = this.panelNames[panelName],
-			p = this.panels[index];
+	getView: function (viewName) {
+		var view = this.viewManagers[viewName],
+			index = this.viewNames[viewName];
 
-		// not created yet
-		if (p && !(p instanceof Control)) {
-			p = this.panels[index] = this.createComponent(p);
+		// if it's a manager
+		if (view) {
+			// but not created, create it
+			if (!(view instanceof ViewMgr)) {
+				view = this.viewManagers[viewName] = this.createComponent(view);
+			}
+		}
+		// otherwise, it's probably a view
+		else {
+			view = this.views[index];
+			// but it might need to be created too
+			if (view && !(view instanceof Control)) {
+				view = this.views[index] = this.createComponent(view);
+			}
 		}
 
-		return p;
+		return view;
 	},
 
 	/**
-	 * @public
-	 */
+	* @public
+	*/
 	next: function () {
-		var index = this.panels.indexOf(this.active) + 1,
-			panel = this.panels[index];
-		if (panel) {
-			return this.activate(panel.name);
+		var index = this.views.indexOf(this.active) + 1,
+			view = this.views[index];
+		if (view) {
+			return this.activate(view.name);
 		}
 	},
 
 	/**
-	 * @public
-	 */
+	* @public
+	*/
 	previous: function () {
-		var index = this.panels.indexOf(this.active) - 1,
-			panel = this.panels[index];
-		if (panel) {
-			return this.activate(panel.name);
+		var index = this.views.indexOf(this.active) - 1,
+			view = this.views[index];
+		if (view) {
+			return this.activate(view.name);
 		}
 	},
 
@@ -244,6 +269,9 @@ var ViewMgr = kind({
 		}
 	},
 
+	/**
+	* @private
+	*/
 	canDrag: function (direction) {
 		var index;
 		if (this.draggable) {
@@ -251,9 +279,9 @@ var ViewMgr = kind({
 				return true;
 			}
 			else if (this.type == 'fixed') {
-				index = this.panels.indexOf(this.active);
+				index = this.views.indexOf(this.active);
 				return	(index > 0 && direction == -1) ||
-						(index < this.panels.length - 1 && direction == 1);
+						(index < this.views.length - 1 && direction == 1);
 			}
 		}
 
@@ -261,12 +289,13 @@ var ViewMgr = kind({
 	},
 
 	/**
-	 * Dismisses a floating view manager
-	 *
-	 * @public
-	 */
+	* Dismisses a view manager. If this is a root (manager-less) view manager, it cannot be
+	* dismissed.
+	*
+	* @public
+	*/
 	dismiss: function () {
-		if (this.type == 'floating') {
+		if (this.manager) {
 			this.set('active', null);
 			this.set('dismissed', true);
 			this.emit('dismiss');
@@ -274,51 +303,45 @@ var ViewMgr = kind({
 	},
 
 	/**
-	 * Since handler for events emitted from descendant view managers
-	 *
-	 * @param  {[type]} viewManager [description]
-	 * @param  {[type]} event       [description]
-	 * @param  {[type]} panel       [description]
-	 *
-	 * @return {[type]}             [description]
-	 */
-	managerEvent: function (viewManager, event, panel) {
+	* @private
+	*/
+	managerEvent: function (viewManager, event, view) {
 		if (event == 'dismiss') this.managerDismissing(viewManager);
 		else if (event == 'dismissed') this.managerDismissed(viewManager);
-		else if (event == 'activated') this.managerActivated(viewManager, panel);
-		else if (event == 'deactivated') this.managerDeactivated(viewManager, panel);
+		else if (event == 'activated') this.managerActivated(viewManager, view);
+		else if (event == 'deactivated') this.managerDeactivated(viewManager, view);
 	},
 
 	/**
-	 * Handles dismissal of child view managers
-	 *
-	 * @private
-	 */
+	* Handles dismissal of child view managers
+	*
+	* @private
+	*/
 	managerDismissed: function (viewManager) {
 		this.log(this.id, 'ViewMgr', viewManager.name, 'dismissed');
-		viewManager.destroy();
+		this.teardownView(viewManager);
 	},
 
 	managerDismissing: function (viewManager) {
 		this.log(this.id, 'ViewMgr', viewManager.name, 'dismissing');
 	},
 
-	managerActivated: function (viewManager, panel) {
-		this.log(this.id, 'activated', panel.name);
+	managerActivated: function (viewManager, view) {
+		this.log(this.id, 'activated', view.name);
 	},
 
-	managerDeactivated: function (viewManager, panel) {
-		this.log(this.id, 'deactivated', panel.name);
+	managerDeactivated: function (viewManager, view) {
+		this.log(this.id, 'deactivated', view.name);
 	},
 
 	/**
 	* @private
 	*/
-	activate: function (panelName) {
-		var p = this.getPanel(panelName);
+	activate: function (viewName) {
+		var p = this.getView(viewName);
 		if (p) {
-			if (this.type == 'floating' && this.stack[this.stack.length - 1] !== panelName) {
-				this.stack.push(panelName);
+			if (this.type == 'floating' && this.stack[this.stack.length - 1] !== viewName) {
+				this.stack.push(viewName);
 			}
 			rAF(this._activate.bind(this, p));
 		}
@@ -328,44 +351,67 @@ var ViewMgr = kind({
 	/**
 	* @private
 	*/
-	_activate: function (panel) {
-		// render the activated panel
-		if (this.generated) panel.render();
-		if (!this.dragging) {
-			this.set('active', panel);
-			this.emit('activated', panel);
+	_activate: function (view) {
+		// render the activated view
+		if (this.generated) {
+			view.set('canGenerate', true);
+			view.render();
+		}
+		if (!this.dragging && !view.isManager) {
+			this.set('active', view);
+			this.emit('activated', view);
 		}
 	},
 
 	/**
 	* @private
 	*/
-	deactivate: function (panelName) {
-		var p = this.getPanel(panelName);
+	deactivate: function (viewName) {
+		var p = this.getView(viewName);
 		if (p) rAF(this._deactivate.bind(this, p));
 	},
 
 	/**
 	* @private
 	*/
-	_deactivate: function (panel) {
-		if (panel.node && !panel.persistent) {
-			panel.node.remove();
-			panel.teardownRender(true);
-		}
+	_deactivate: function (view) {
+		this.teardownView(view);
 
 		if (!this.dragging) {
-			this.emit('deactivated', panel);
-			if (this.dismissed && this.manager) this.emit('dismissed');
+			if (!view.isManager) this.emit('deactivated', view);
+			if (this.dismissed) this.emit('dismissed');
+		}
+	},
+
+	/**
+	* Tears down a view or ViewManager if not flagged `persistent`
+	*
+	* @private
+	*/
+	teardownView: function (view) {
+		if (view.node && !view.persistent) {
+			view.node.remove();
+			view.set('canGenerate', false);
+			view.teardownRender(true);
 		}
 	},
 
 	// Draggable
 
+	/**
+	* Handles `ondown` events
+	*
+	* @private
+	*/
 	handleDown: function (sender, event) {
 		event.configureHoldPulse({endHold: 'onMove'});
 	},
 
+	/**
+	* Handles `ondragstart` events
+	*
+	* @private
+	*/
 	handleDragStart: function (sender, event) {
 		if (!this.draggable) return;
 		this.set('dragging', true);
@@ -375,6 +421,11 @@ var ViewMgr = kind({
 		return true;
 	},
 
+	/**
+	* Handles `ondrag` events
+	*
+	* @private
+	*/
 	handleDrag: function (sender, event) {
 		if (!this.draggable) return;
 
@@ -399,18 +450,28 @@ var ViewMgr = kind({
 		return true;
 	},
 
+	/**
+	* Handles `ondragfinish` events
+	*
+	* @private
+	*/
 	handleDragFinish: function (sender, event) {
 		if (!this.draggable) return;
 		this.decorateDragEvent(event);
+		// if the view has been dragged far enough
 		if (event.percentDelta * 100 > this.dragSnapPercent) {
+			// normally, there will be a becoming-active view to activate
 			if (this.dragView) {
 				this.activate(this.dragView.name);
 				this.dragView = null;
 			}
+			// unless it's a floating ViewManager that is being dismissed
 			else if (this.type == 'floating' && event.direction == -1) {
 				this.dismiss();
 			}
-		} else {
+		}
+		// otherwise the drag was small enough to be cancelled
+		else {
 			this.emit('cancelDrag', event);
 			this.dragView = null;
 		}
@@ -419,6 +480,12 @@ var ViewMgr = kind({
 		return true;
 	},
 
+	/**
+	* Calculates and adds a few additional properties to the event to aid in logic in ViewManager
+	* and ViewLayout
+	*
+	* @private
+	*/
 	decorateDragEvent: function (event) {
 		var isHorizontal = this.orientation == 'horizontal',
 			size = isHorizontal ? this.dragBounds.width : this.dragBounds.height;
