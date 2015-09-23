@@ -177,6 +177,17 @@ module.exports = kind(
 	direction: Direction.FORWARDS,
 
 	/**
+	* Whether or not to reverse the panel animation when the directionality changes (i.e. rtl). Note
+	* that the animation is only reversed if {@link module:enyo/LightPanels~LightPanels} is in a
+	* [horizontal orientation]{@link module:enyo/LightPanels~LightPanels#Orientation.HORIZONTAL}.
+	*
+	* @type {Boolean}
+	* @default false
+	* @public
+	*/
+	reverseForRtl: false,
+
+	/**
 	* @private
 	*/
 	tools: [
@@ -224,11 +235,16 @@ module.exports = kind(
 	* @private
 	*/
 	directionChanged: function (was) {
-		var key, value;
+		var shouldReverse = this.reverseForRtl && this.rtl && this.orientation == Orientation.HORIZONTAL,
+			key, value;
+
+		// Set internal direction property that respects RTL, if desired
+		this._direction = this.direction * (shouldReverse ? -1 : 1);
+
 		for (key in Direction) {
 			value = Direction[key];
 			if (value == was) this.removeClass(key.toLowerCase());
-			if (value == this.direction) this.addClass(key.toLowerCase());
+			if (value == this._direction) this.addClass(key.toLowerCase());
 		}
 	},
 
@@ -756,7 +772,7 @@ module.exports = kind(
 		var container = this.$.client,
 			value;
 
-		if (this.direction == Direction.FORWARDS) value = indexDirection > 0 ? -50 : 0;
+		if (this._direction == Direction.FORWARDS) value = indexDirection > 0 ? -50 : 0;
 		else value = indexDirection > 0 ? 0 : -50;
 
 		container.applyStyle('-webkit-transition', animate ? wTrans : null);
