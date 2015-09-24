@@ -1,3 +1,8 @@
+/**
+* Exports the {@link module:enyo/StylesheetSupport~StylesheetSupport} mixin.
+* @module enyo/StylesheetSupport
+*/
+
 require('enyo');
 
 var
@@ -12,7 +17,7 @@ var
 * for procedurally-generated CSS that can't live in the more appropriate
 * location (i.e., in a CSS/LESS file).
 *
-* @module enyo/StylesheetSupport
+* @mixin
 * @public
 */
 module.exports = {
@@ -37,7 +42,6 @@ module.exports = {
 		* 
 		* @type {String}
 		* @default ''
-		* @memberof enyo.StylesheetSupport.prototype
 		* @public
 		*/
 		stylesheetContent: ''

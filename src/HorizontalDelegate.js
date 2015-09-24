@@ -11,7 +11,7 @@ var
 * for horizontally-oriented lists. This is used by all lists for this strategy;
 * it does not get copied, but is called directly from the list.
 *
-* Note that this is based on the [vertical delegate]{@link module:enyo/DataList~DataList.delegates.vertical}
+* Note that this is based on the [vertical delegate]{@link module:enyo/VerticalDelegate}
 * and shares most of that delegate's logic. Overloads are implemented only where necessary.
 *
 * @module enyo/HorizontalDelegate
