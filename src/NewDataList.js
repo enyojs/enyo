@@ -171,7 +171,7 @@ module.exports = kind({
 			st = Math.ceil(d / delta);
 			j = st * delta;
 			tt.max = Math.min(maxVal, tt.max + j);
-			tt.min = (tt.max == maxVal) ? maxMin : tt.max - delta;
+			tt.min = Math.min(maxMin, tt.max - delta);
 			this.set('first', (d2x * Math.ceil(this.first / d2x)) + (st * d2x));
 		}
 		else if (dir == -1 && val < tt.min) {
