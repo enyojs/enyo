@@ -34,21 +34,27 @@ module.exports = kind({
 	*/
 	layoutClass: 'enyo-viewlayout enyo-viewlayout-slide',
 
+	constructor: function () {
+		TransitionViewLayout.prototype._constructor.apply(this, arguments);
+		if (this.container.layoutCover) this.container.addClass('cover');
+	},
+
 	/**
 	* @private
 	*/
 	drag: function (event) {
-		var size, node,
-			c = this.container,
+		var c = this.container,
+			bounds = c.dragBounds,
 			isHorizontal = c.orientation == 'horizontal',
+			size = isHorizontal ? bounds.width : bounds.height,
+			delta = event.delta < 0 ? Math.max(event.delta, -size) : Math.min(event.delta, size),
 			transform = isHorizontal ? 'translateX' : 'translateY';
 
 		TransitionViewLayout.prototype.drag.apply(this, arguments);
-		c.active.applyStyle('transform', transform + '(' + event.delta + 'px)');
+		c.active.applyStyle('transform', transform + '(' + delta + 'px)');
 		if (c.dragView) {
-			node = c.hasNode();
-			size = isHorizontal ? node.clientWidth : node.clientHeight;
-			c.dragView.applyStyle('transform', transform + '(' + (size * event.direction + event.delta) + 'px)');
+			px = this.container.layoutCover ? 0 : size * event.direction + delta;
+			c.dragView.applyStyle('transform', transform + '(' + px + 'px)');
 		}
 	},
 
@@ -74,7 +80,14 @@ module.exports = kind({
 	*/
 	transition: function (was, is) {
 		TransitionViewLayout.prototype.transition.apply(this, arguments);
-		if (was) was.applyStyle('transform', null);
+		if (was) {
+			was.applyStyle('transform', null);
+			// when using layoutCover, `was` doesn't transition so the ontransitionend doesn't fire
+			// to account for that, set a timeout of the same duration to manually clean up.
+			if (this.container.layoutCover) {
+				setTimeout(this.completeTransition.bind(this, was), this.dragDuration || this.duration);
+			}
+		}
 		if (is) {
 			is.removeClass(this.direction);
 			is.applyStyle('transform', null);

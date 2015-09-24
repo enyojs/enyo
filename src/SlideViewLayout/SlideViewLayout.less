@@ -22,4 +22,20 @@
 		&.back { transform: translateY(100%); }
 		&.active { transform: translateY(0); }
 	}
+
+	&.cover {
+		> .enyo-view {
+			// the active view should always be on top
+			&.active { z-index: 5; }
+			// unless the becoming-active is transitioning in over it
+			&.forward { z-index: 10; }
+			// the becoming-inactive view doesn't move
+			&.back { transform: translateX(0px); }
+		}
+
+		// promote any ViewLayout children to ensure they are above the active view
+		> .enyo-viewlayout {
+			z-index: 20;
+		}
+	}
 }

@@ -261,11 +261,19 @@ var ViewMgr = kind({
 	* @public
 	*/
 	back: function () {
+		var view = this.peek();
+		if (view) this.stack.pop();
+		return view;
+	},
+
+	/**
+	* @public
+	*/
+	peek: function () {
 		var name;
-		if (this.type == 'floating') {
-			this.stack.pop();
-			name = this.stack[this.stack.length - 1];
-			this.activate(name);
+		if (this.type == 'floating' && this.stack.length > 1) {
+			name = this.stack[this.stack.length - 2];
+			return this.activate(name);
 		}
 	},
 
@@ -442,7 +450,13 @@ var ViewMgr = kind({
 
 			// set up the new drag view
 			if (!this.dragView) {
-				this.dragView = this.dragDirection == 1 ? this.next() : this.previous();
+				if (this.dragDirection == 1) {
+					this.dragView = this.next();
+				} else if (this.type == 'floating') {
+					this.dragView = this.peek();
+				} else {
+					this.dragView = this.previous();
+				}
 			}
 			this.emit('drag', event);
 		}
