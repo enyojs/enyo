@@ -327,6 +327,11 @@ module.exports = kind(
 	_speedIndex: 0,
 
 	/**
+	* @private
+	*/
+	_virtualRewind: false,
+
+	/**
 	* @method
 	* @private
 	*/
@@ -472,6 +477,7 @@ module.exports = kind(
 		if (!this.hasNode()) {
 			return;
 		}
+		this._virtualRewind = false;
 		this._speedIndex = 0;
 		this.setPlaybackRate(1);
 		this.node.play();
@@ -545,6 +551,11 @@ module.exports = kind(
 			this._speedIndex = 0;
 			this._prevCommand = 'fastForward';
 			break;
+		}
+
+		if (this._virtualRewind) {
+			this._virtualRewind = false;
+			isNeedPlay = true;
 		}
 
 		this.setPlaybackRate(this.selectPlaybackRate(this._speedIndex));
@@ -742,7 +753,7 @@ module.exports = kind(
 
 		if (!(platform.webos || global.PalmSystem)) {
 			// For supporting cross browser behavior
-			if (pbNumber < 0) {
+			if (this._virtualRewind || pbNumber < 0) {
 				this.beginRewind();
 			}
 		}
@@ -826,6 +837,7 @@ module.exports = kind(
 	* @private
 	*/
 	beginRewind: function () {
+		this._virtualRewind = true;
 		this.node.pause();
 		this.startRewindJob();
 	},
