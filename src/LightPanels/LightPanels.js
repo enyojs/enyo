@@ -9,7 +9,7 @@ var
 	kind = require('../kind'),
 	dom = require('../dom'),
 	animation = require('../animation'),
-	asyncMethod = require('../utils').asyncMethod;
+	utils = require('../utils');
 
 var
 	Control = require('../Control'),
@@ -268,10 +268,10 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	indexChanged: function (was, is) {
+	indexChanged: function (was, is, nom, opts) {
 		// when notifyObservers is called without arguments, we do not need to do any work here
 		// (since there's no transition required with the indices are the same)
-		if (was !== is) {
+		if (was !== is || (opts && opts.force)) {
 			this.setupTransitions(was);
 		}
 	},
@@ -394,7 +394,7 @@ module.exports = kind(
 			nextPanel.postTransition();
 		}
 
-		if (!this.animate || (opts && opts.direct)) this.set('index', newIndex);
+		if (!this.animate || (opts && opts.direct)) this.set('index', newIndex, {force: opts && opts.force});
 		else this.animateTo(newIndex);
 
 		// TODO: When pushing panels after we have gone back (but have not popped), we need to
@@ -444,7 +444,7 @@ module.exports = kind(
 
 		targetIdx = (opts && opts.targetIndex != null) ? opts.targetIndex : lastIndex + newPanels.length - 1;
 
-		if (!this.animate || (opts && opts.direct)) this.set('index', targetIdx);
+		if (!this.animate || (opts && opts.direct)) this.set('index', targetIdx, {force: opts && opts.force});
 		else this.animateTo(targetIdx);
 
 		return newPanels;
@@ -493,6 +493,37 @@ module.exports = kind(
 				panel.destroy();
 			}
 		}
+	},
+
+	/**
+	* Replaces the panel(s) at the specified index with panels that will be created via provided
+	* component definition(s).
+	*
+	* @param {Number} start - The index where we wish to begin the replacement. If this is negative,
+	*	it will be treated as `panelsLength` + `start` i.e. we will use the absolute value of the
+	*	start index as a count from the end of the set of panels.
+	* @param {Number} count - The number of panels we wish to replace.
+	* @param {Object|Object[]} info - The component definition (or array of component definitions)
+	*	for the replacement panel(s).
+	* @public
+	*/
+	replaceAt: function (start, count, info) {
+		var panels = this.getPanels(),
+			insertBefore, commonInfo, end, idx;
+
+		start = start < 0 ? panels.length + start : start;
+		end = start + count;
+		insertBefore = panels[end];
+		commonInfo = {addBefore: insertBefore};
+
+		// remove existing panels
+		for (idx = start; idx < end; idx++) {
+			this.popPanel(idx);
+		}
+
+		// add replacement panels
+		if (utils.isArray(info)) this.pushPanels(info, commonInfo, {direct: true, force: true});
+		else this.pushPanel(info, commonInfo, {direct: true, force: true});
 	},
 
 
@@ -605,7 +636,7 @@ module.exports = kind(
 			if (panel.postTransition) {
 				// Async'ing this as it seems to improve ending transition performance on the TV.
 				// Requires further investigation into its behavior.
-				asyncMethod(this, function () {
+				utils.asyncMethod(this, function () {
 					panel.postTransition();
 				});
 			}
