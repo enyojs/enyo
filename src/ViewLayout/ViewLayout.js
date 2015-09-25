@@ -72,8 +72,16 @@ module.exports = kind({
 		}
 	},
 
+	/**
+	* Adds the dragging class to the container when dragging starts. It is then removed in
+	* `transition()` to avoid a potential flash due to CSS changes in different frames.
+	*
+	* @private
+	*/
 	draggingChanged: function (was, is) {
-		this.container.addRemoveClass('dragging', is);
+		rAF(function () {
+			if (is) this.container.addClass('dragging');
+		}.bind(this));
 	},
 
 	handleCancelDrag: function (sender, name, event) {
@@ -97,6 +105,7 @@ module.exports = kind({
 
 	prepareTransition: null,
 	transition: function (was, is) {
+		this.container.removeClass('dragging');
 		if (was) {
 			was.addClass('transitioning');
 			was.removeClass('active');
