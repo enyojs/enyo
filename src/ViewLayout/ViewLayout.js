@@ -18,10 +18,27 @@ var
 *
 * @class enyo.ViewLayout
 */
-module.exports = kind({
+module.exports = kind(
+	/** @lends enyo.ViewLayout.prototype */ {
+
+	/**
+	* @private
+	*/
 	kind: Layout,
+
+	/**
+	* @private
+	*/
 	layoutClass: 'enyo-viewlayout',
+
+	/**
+	* @private
+	*/
 	viewClass: 'enyo-view',
+
+	/**
+	* @private
+	*/
 	constructor: function () {
 		Layout.prototype._constructor.apply(this, arguments);
 		this.container.addClass(this.container.orientation);
@@ -30,6 +47,10 @@ module.exports = kind({
 		this.container.on('drag', this.handleDrag = this.handleDrag.bind(this));
 		this.container.on('cancelDrag', this.handleCancelDrag = this.handleCancelDrag.bind(this));
 	},
+
+	/**
+	* @private
+	*/
 	destroy: function () {
 		Layout.prototype.destroy.apply(this, arguments);
 		this.container.unobserve('active', this.activeChanged);
@@ -38,13 +59,9 @@ module.exports = kind({
 		this.container.off('cancelDrag', this.handleCancelDrag);
 	},
 
-	flow: function () {
-
-	},
-	reflow: function () {
-
-	},
-
+	/**
+	* @private
+	*/
 	setupView: function (view) {
 		if (view && !view.viewSetup) {
 			view.set('bubbleTarget', this);
@@ -53,6 +70,9 @@ module.exports = kind({
 		}
 	},
 
+	/**
+	* @private
+	*/
 	activeChanged: function (was, is) {
 		this.setupView(is);
 
@@ -84,10 +104,16 @@ module.exports = kind({
 		}.bind(this));
 	},
 
+	/**
+	* @private
+	*/
 	handleCancelDrag: function (sender, name, event) {
 		this.activeChanged(this.container.dragView, this.container.active);
 	},
 
+	/**
+	* @private
+	*/
 	handleDrag: function (sender, name, event) {
 		// Only update the view once per frame
 		if (!this.dragEvent) {
@@ -99,11 +125,21 @@ module.exports = kind({
 		this.dragEvent = utils.clone(event);
 	},
 
+	/**
+	* @private
+	*/
 	drag: function (event) {
 		this.setupView(this.container.dragView);
 	},
 
+	/**
+	* @protected
+	*/
 	prepareTransition: null,
+
+	/**
+	* @protected
+	*/
 	transition: function (was, is) {
 		this.container.removeClass('dragging');
 		if (was) {
@@ -115,11 +151,18 @@ module.exports = kind({
 			is.addClass('active');
 		}
 	},
+
+	/**
+	* @protected
+	*/
 	completeTransition: function (view) {
 		view.removeClass('transitioning');
 		if (view !== this.container.active) this.container.deactivate(view.name);
 	},
 
+	/**
+	* @protected
+	*/
 	shouldAnimate: function () {
 		return this.container.generated && this.container.animated;
 	},
@@ -136,6 +179,5 @@ module.exports = kind({
 		} else {
 			return this.container.dispatchBubble(name, event, delegate);
 		}
-	},
-
+	}
 });

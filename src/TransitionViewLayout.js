@@ -6,6 +6,7 @@ var
 var
 	ViewLayout = require('./ViewLayout');
 
+
 /**
 * Slides views in from the right or top and out the left or bottom.
 *

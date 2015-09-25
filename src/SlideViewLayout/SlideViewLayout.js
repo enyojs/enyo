@@ -43,7 +43,8 @@ module.exports = kind({
 	* @private
 	*/
 	drag: function (event) {
-		var c = this.container,
+		var px,
+			c = this.container,
 			bounds = c.dragBounds,
 			isHorizontal = c.orientation == 'horizontal',
 			size = isHorizontal ? bounds.width : bounds.height,
@@ -99,8 +100,8 @@ module.exports = kind({
 	*
 	* @private
 	*/
-	completeTransition: function (was, is) {
+	completeTransition: function (view) {
 		TransitionViewLayout.prototype.completeTransition.apply(this, arguments);
-		if (was) was.removeClass(this.direction == 'back' ? 'forward' : 'back');
+		if (view) view.removeClass(this.direction == 'back' ? 'forward' : 'back');
 	}
 });

@@ -117,6 +117,8 @@ var ViewMgr = kind({
 	removeControl: function (control) {
 		var i, l,
 			index = this.views.indexOf(control);
+
+		Control.prototype.removeControl.apply(this, arguments);
 		if (index >= 0) {
 			this.views.splice(index, 1);
 			this.viewNames[control.name] = null;
@@ -128,7 +130,7 @@ var ViewMgr = kind({
 	},
 
 	/**
-	* Renders the initially active view
+	* Activates the initial view
 	*
 	* @private
 	*/
