@@ -1,9 +1,9 @@
-var rAF = window.requestAnimationFrame;
-
 var
+	animation = require('enyo/animation'),
 	kind = require('enyo/kind'),
 	utils = require('enyo/utils'),
-	Layout = require('enyo/Layout');
+	Layout = require('enyo/Layout'),
+	rAF = animation.requestAnimationFrame;
 
 /**
 * Order of operations:

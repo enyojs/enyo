@@ -1,5 +1,7 @@
 var
-	kind = require('enyo/kind');
+	animation = require('enyo/animation'),
+	kind = require('enyo/kind'),
+	rAF = animation.requestAnimationFrame;
 
 var
 	ViewLayout = require('./ViewLayout');

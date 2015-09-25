@@ -1,10 +1,12 @@
 var rAF = window.requestAnimationFrame;
 
 var
+	animation = require('enyo/animation'),
 	kind = require('enyo/kind'),
 	utils = require('enyo/utils'),
 	Control = require('enyo/Control'),
-	EventEmitter = require('enyo/EventEmitter');
+	EventEmitter = require('enyo/EventEmitter'),
+	rAF = animation.requestAnimationFrame;
 
 var
 	CardViewLayout = require('../CardViewLayout');
