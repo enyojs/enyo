@@ -9,11 +9,11 @@ var
 	rAF = animation.requestAnimationFrame;
 
 var
-	CardViewLayout = require('../CardViewLayout');
+	SlideViewLayout = require('../SlideViewLayout');
 
 var ViewMgr = kind({
 	kind: Control,
-	layoutKind: CardViewLayout,
+	layoutKind: SlideViewLayout,
 	mixins: [EventEmitter],
 	animated: true,
 	classes: 'enyo-unselectable',
@@ -76,6 +76,9 @@ var ViewMgr = kind({
 	},
 
 	create: function () {
+		// Set layoutCover for floating ViewManagers that haven't explicitly defined it
+		if (this.type == 'floating' && this.layoutCover === undefined) this.layoutCover = true;
+
 		Control.prototype.create.apply(this, arguments);
 		this.managerEvent = this.managerEvent.bind(this);
 		this.managerChanged(null, this.manager);
