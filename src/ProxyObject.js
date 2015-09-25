@@ -32,7 +32,7 @@ module.exports = {
 	/**
 	* The overloaded [getter]{@link module:enyo/CoreObject~Object#get}. Accepts the same
 	* parameters and attempts to call the same method on the
-	* [proxy]{@link module:enyo/ProxyObject~ProxyObject#proxyObjectKey}. Returns `undefined` if it
+	* [proxy]{@link module:enyo/ProxyObject#proxyObjectKey}. Returns `undefined` if it
 	* cannot find a proxy.
 	* 
 	* @see module:enyo/CoreObject~Object#get
@@ -58,7 +58,7 @@ module.exports = {
 	/**
 	* The overloaded [setter]{@link module:enyo/CoreObject~Object#set}. Accepts the same
 	* parameters and attempts to call the same method on the
-	* [proxy]{@link module:enyo/ProxyObject~ProxyObject#proxyObjectKey}. Returns the callee for
+	* [proxy]{@link module:enyo/ProxyObject#proxyObjectKey}. Returns the callee for
 	* chaining if it cannot find the proxy.
 	* 
 	* @param {String} path - The path for which to set the given value.
