@@ -82,5 +82,23 @@ module.exports = kind({
 	applyTransitionDuration: function (view, duration) {
 		view.applyStyle('-webkit-transition-duration', duration + 'ms');
 		view.applyStyle('transition-duration', duration + 'ms');
+	},
+
+	handlers: {
+		ontransitionend: 'handleTransitioned'
+	},
+
+	handleTransitioned: function (sender, event) {
+		var view = event.originator;
+		if (view && view.container == this.container) {
+
+			if (this.shouldAnimate()) {
+				rAF(this.completeTransition.bind(this, view));
+			} else {
+				this.completeTransition(view);
+			}
+
+			return true;
+		}
 	}
 });

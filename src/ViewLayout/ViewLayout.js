@@ -115,12 +115,11 @@ module.exports = kind({
 		return this.container.generated && this.container.animated;
 	},
 
-	handlers: {
-		ontransitionend: 'handleTransitioned'
-	},
-
+	/**
+	* @private
+	*/
 	dispatchBubble: function (name, event, delegate) {
-		var handler = this.handlers[name];
+		var handler = this.handlers && this.handlers[name];
 		if (handler) {
 			if (this[handler](delegate, event)) {
 				return true;
@@ -130,17 +129,4 @@ module.exports = kind({
 		}
 	},
 
-	handleTransitioned: function (sender, event) {
-		var view = event.originator;
-		if (view && view.container == this.container) {
-
-			if (this.shouldAnimate()) {
-				rAF(this.completeTransition.bind(this, view));
-			} else {
-				this.completeTransition(view);
-			}
-
-			return true;
-		}
-	}
 });
