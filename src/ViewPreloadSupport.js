@@ -3,7 +3,8 @@
 * @module enyo/ViewPreloadSupport
 */
 var
-	kind = require('./kind');
+	kind = require('./kind'),
+	utils = require('./utils');
 
 var
 	Control = require('./Control');
@@ -22,19 +23,13 @@ var ViewPreloadSupport = {
 	name: 'enyo.ViewPreloadSupport',
 
 	/**
-	* @private
+	* When `true`, existing views are cached for reuse; otherwise, they are destroyed.
+	*
+	* @name cacheViews
+	* @type {Boolean}
+	* @default undefined
+	* @public
 	*/
-	published: {
-
-		/**
-		* When `true`, existing views are cached for reuse; otherwise, they are destroyed.
-		*
-		* @type {Boolean}
-		* @default true
-		* @public
-		*/
-		cacheViews: true
-	},
 
 	/**
 	* @method
@@ -43,6 +38,9 @@ var ViewPreloadSupport = {
 	create: kind.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
+
+			// initialize properties
+			this.cacheViews = utils.exists(this.cacheViews) ? this.cacheViews : true;
 
 			if (this.cacheViews) {
 				// we don't want viewCache to be added to the client area, so we cache the original
