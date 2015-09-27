@@ -62,6 +62,13 @@ var ViewMgr = kind({
 	*/
 	orientation: 'horizontal',
 
+	/**
+	* During a drag, contains a reference to the becoming-active view
+	*
+	* @private
+	*/
+	dragView: null,
+
 	manager: null,
 	managerChanged: function (was, is) {
 		if (was) this.off('*', was.managerEvent);
@@ -155,7 +162,7 @@ var ViewMgr = kind({
 			this.activate(name);
 		} else {
 			view = this.getView(name);
-			this._activate(view);
+			this.activateImmediate(view);
 		}
 	},
 
@@ -268,19 +275,10 @@ var ViewMgr = kind({
 	* @public
 	*/
 	back: function () {
-		var view = this.peek();
-		if (view) this.stack.pop();
-		return view;
-	},
-
-	/**
-	* @public
-	*/
-	peek: function () {
 		var name;
-		if (this.type == 'floating' && this.stack.length > 1) {
-			name = this.stack[this.stack.length - 2];
-			return this.activate(name);
+		if (this.type == 'floating') {
+			name = this.dragging ? this.stack[0] : this.stack.shift();
+			return this._activate(name);
 		}
 	},
 
@@ -350,23 +348,35 @@ var ViewMgr = kind({
 	},
 
 	/**
-	* @private
+	* Activates a new view.
+	*
+	* For floating ViewManagers, the view will be added to the stack and can be removed by `back()`.
+	*
+	* @param {String} viewName Name of the view to activate
+	* @public
 	*/
 	activate: function (viewName) {
-		var p = this.getView(viewName);
-		if (p) {
-			if (this.type == 'floating' && this.stack[this.stack.length - 1] !== viewName) {
-				this.stack.push(viewName);
-			}
-			rAF(this._activate.bind(this, p));
+		var p = this._activate(viewName);
+		if (p && this.active && this.type == 'floating') {
+			this.stack.unshift(this.active.name);
 		}
+	},
+
+	/**
+	* Activates a view
+	*
+	* @private
+	*/
+	_activate: function (viewName) {
+		var p = this.getView(viewName);
+		if (p) rAF(this.activateImmediate.bind(this, p));
 		return p;
 	},
 
 	/**
 	* @private
 	*/
-	_activate: function (view) {
+	activateImmediate: function (view) {
 		// render the activated view
 		if (this.generated) {
 			view.set('canGenerate', true);
@@ -383,13 +393,13 @@ var ViewMgr = kind({
 	*/
 	deactivate: function (viewName) {
 		var p = this.getView(viewName);
-		if (p) rAF(this._deactivate.bind(this, p));
+		if (p) rAF(this.deactivateImmediate.bind(this, p));
 	},
 
 	/**
 	* @private
 	*/
-	_deactivate: function (view) {
+	deactivateImmediate: function (view) {
 		this.teardownView(view);
 
 		if (!this.dragging) {
@@ -456,14 +466,15 @@ var ViewMgr = kind({
 			}
 
 			// set up the new drag view
-			if (!this.dragView) {
+			if (this.dragView === null) {
 				if (this.dragDirection == 1) {
 					this.dragView = this.next();
 				} else if (this.type == 'floating') {
-					this.dragView = this.peek();
+					this.dragView = this.back();
 				} else {
 					this.dragView = this.previous();
 				}
+				this.dragView = this.dragView || false;
 			}
 			this.emit('drag', event);
 		}
@@ -483,7 +494,10 @@ var ViewMgr = kind({
 		if (event.percentDelta * 100 > this.dragSnapPercent) {
 			// normally, there will be a becoming-active view to activate
 			if (this.dragView) {
-				this.activate(this.dragView.name);
+				if (this.type == 'floating') this.stack.shift();
+				// we can safely call _activate because this is a dragged `back()` and no stack
+				// updates are necessary.
+				this._activate(this.dragView.name);
 				this.dragView = null;
 			}
 			// unless it's a floating ViewManager that is being dismissed
