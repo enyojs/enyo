@@ -356,10 +356,11 @@ var ViewMgr = kind({
 	* @public
 	*/
 	activate: function (viewName) {
-		var p = this._activate(viewName);
-		if (p && this.active && this.type == 'floating') {
+		var view = this._activate(viewName);
+		if (view && !view.isManager && this.active && this.type == 'floating') {
 			this.stack.unshift(this.active.name);
 		}
+		return view;
 	},
 
 	/**
@@ -368,9 +369,9 @@ var ViewMgr = kind({
 	* @private
 	*/
 	_activate: function (viewName) {
-		var p = this.getView(viewName);
-		if (p) rAF(this.activateImmediate.bind(this, p));
-		return p;
+		var view = this.getView(viewName);
+		if (view) rAF(this.activateImmediate.bind(this, view));
+		return view;
 	},
 
 	/**
@@ -392,8 +393,9 @@ var ViewMgr = kind({
 	* @private
 	*/
 	deactivate: function (viewName) {
-		var p = this.getView(viewName);
-		if (p) rAF(this.deactivateImmediate.bind(this, p));
+		var view = this.getView(viewName);
+		if (view) rAF(this.deactivateImmediate.bind(this, view));
+		return view;
 	},
 
 	/**
@@ -498,7 +500,6 @@ var ViewMgr = kind({
 				// we can safely call _activate because this is a dragged `back()` and no stack
 				// updates are necessary.
 				this._activate(this.dragView.name);
-				this.dragView = null;
 			}
 			// unless it's a floating ViewManager that is being dismissed
 			else if (this.type == 'floating' && event.direction == -1) {
@@ -508,8 +509,8 @@ var ViewMgr = kind({
 		// otherwise the drag was small enough to be cancelled
 		else {
 			this.emit('cancelDrag', event);
-			this.dragView = null;
 		}
+		this.dragView = null;
 		this.set('dragging', false);
 
 		return true;
