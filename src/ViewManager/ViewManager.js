@@ -12,10 +12,30 @@ var
 	SlideViewLayout = require('../SlideViewLayout');
 
 var ViewMgr = kind({
+
+	/**
+	* @private
+	*/
 	kind: Control,
+
+	/**
+	* @private
+	*/
 	layoutKind: SlideViewLayout,
+
+	/**
+	* @private
+	*/
 	mixins: [EventEmitter],
+
+	/**
+	* @private
+	*/
 	animated: true,
+
+	/**
+	* @private
+	*/
 	classes: 'enyo-unselectable',
 
 	/**
@@ -36,6 +56,15 @@ var ViewMgr = kind({
 	active: null,
 
 	/**
+	* `true` when a floating view has been dismissed
+	*
+	* @type {Boolean}
+	* @default false
+	* @public
+	*/
+	dismissed: false,
+
+	/**
 	* When `true`, the views can be dragged into and out of view.
 	*
 	* @type {Boolean}
@@ -48,7 +77,7 @@ var ViewMgr = kind({
 	* Percent a new view must be dragged into the viewport to be activated on drag release
 	*
 	* @type {Number}
-	* @default 10
+	* @default 25
 	* @public
 	*/
 	dragSnapPercent: 25,
@@ -69,12 +98,28 @@ var ViewMgr = kind({
 	*/
 	dragView: null,
 
+	/**
+	* If created within another ViewManager, `manager` will maintain a reference to that
+	* ViewManager which will be notified of activated, deactivated, dismiss, and dismissed events
+	* from this ViewManager.
+	*
+	* @type {enyo.ViewManager}
+	* @default null
+	* @public
+	*/
 	manager: null,
+
+	/**
+	* @private
+	*/
 	managerChanged: function (was, is) {
 		if (was) this.off('*', was.managerEvent);
 		if (is) this.on('*', is.managerEvent);
 	},
 
+	/**
+	* @private
+	*/
 	handlers: {
 		ondown: 'handleDown',
 		ondragstart: 'handleDragStart',
@@ -82,22 +127,35 @@ var ViewMgr = kind({
 		ondragfinish: 'handleDragFinish'
 	},
 
+	/**
+	* @private
+	*/
 	create: function () {
 		// Set layoutCover for floating ViewManagers that haven't explicitly defined it
 		if (this.type == 'floating' && this.layoutCover === undefined) this.layoutCover = true;
 
 		Control.prototype.create.apply(this, arguments);
+
+		// cache a bound reference to the managerEvent handler
 		this.managerEvent = this.managerEvent.bind(this);
 		this.managerChanged(null, this.manager);
 
 		if (this.type == 'fixed') this.initFirstView();
 		else if (this.type == 'floating') this.stack = [];
 	},
+
+	/**
+	* @private
+	*/
 	rendered: function () {
 		Control.prototype.rendered.apply(this, arguments);
 		if (this.type == 'floating') this.initFirstView();
 		this.set('dismissed', false);
 	},
+
+	/**
+	* @private
+	*/
 	initComponents: function () {
 		var managersOwner = Object.hasOwnProperty('managers') ? this.getInstanceOwner() : this;
 
@@ -117,6 +175,11 @@ var ViewMgr = kind({
 		this.components = this.kindComponents = null;
 	},
 
+	/**
+	* If a newly added control doesn't exist in the view or manager array, add it
+	*
+	* @private
+	*/
 	addControl: function (control, before) {
 		Control.prototype.addControl.apply(this, arguments);
 
@@ -124,6 +187,10 @@ var ViewMgr = kind({
 			this.addView(control);
 		}
 	},
+
+	/**
+	* @private
+	*/
 	removeControl: function (control) {
 		var i, l,
 			index = this.views.indexOf(control);

@@ -5,7 +5,15 @@ var
 	TransitionViewLayout = require('../TransitionViewLayout');
 
 module.exports = kind({
+
+	/**
+	* @private
+	*/
 	kind: TransitionViewLayout,
+
+	/**
+	* @private
+	*/
 	layoutClass: 'enyo-viewlayout enyo-viewlayout-leftright',
 
 	/**

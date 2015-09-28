@@ -87,10 +87,16 @@ module.exports = kind({
 		view.applyStyle('transition-duration', duration + 'ms');
 	},
 
+	/**
+	* @private
+	*/
 	handlers: {
 		ontransitionend: 'handleTransitioned'
 	},
 
+	/**
+	* @private
+	*/
 	handleTransitioned: function (sender, event) {
 		var view = event.originator;
 		if (view && view.container == this.container) {

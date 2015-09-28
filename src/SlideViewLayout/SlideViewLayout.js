@@ -34,6 +34,9 @@ module.exports = kind({
 	*/
 	layoutClass: 'enyo-viewlayout enyo-viewlayout-slide',
 
+	/**
+	* @private
+	*/
 	constructor: function () {
 		TransitionViewLayout.prototype._constructor.apply(this, arguments);
 		if (this.container.layoutCover) this.container.addClass('cover');
