@@ -183,7 +183,7 @@ var ViewMgr = kind({
 	addControl: function (control, before) {
 		Control.prototype.addControl.apply(this, arguments);
 
-		if (!this.viewNames[control.name]) {
+		if (!this.viewNames[control.name] && !this.viewManagers[control.name]) {
 			this.addView(control);
 		}
 	},
@@ -268,7 +268,7 @@ var ViewMgr = kind({
 			_view.set('owner', owner);
 			if (_view instanceof ViewMgr) {
 				_view.isManager = true;
-				_view.set('manager', this.manager || this);
+				_view.set('manager', this);
 			}
 		} else {
 			_view.owner = owner;
@@ -277,7 +277,7 @@ var ViewMgr = kind({
 					_view.name = 'viewManager' + (Object.keys(this.viewManagers).length + 1);
 				}
 				_view.isManager = true;
-				_view.manager = this.manager || this;
+				_view.manager = this;
 			}
 		}
 
