@@ -46,7 +46,7 @@ var Orientation = {
 /**
 * The configurable options used by {@link module:enyo/LightPanels~LightPanels} when pushing panels.
 *
-* @typedef {Object} enyo.LightPanels~PushPanelOptions
+* @typedef {Object} enyo/LightPanels~LightPanels~PushPanelOptions
 * @property {Boolean} [direct] - If `true`, the transition to the panel whose index we are
 *	changing to will not be animated.
 * @property {Boolean} [forcePostTransition] - If `true`, forces post-transition work to be run
@@ -61,11 +61,13 @@ var Orientation = {
 */
 
 /**
-* A light-weight panels implementation that has basic support for CSS transitions between child
+* A lightweight panels implementation that has basic support for CSS transitions between child
 * components.
 *
 * @class LightPanels
 * @extends module:enyo/Control~Control
+* @mixes module:enyo/TaskManagerSupport~TaskManagerSupport
+* @mixes module:enyo/ViewPreloadSupport~ViewPreloadSupport
 * @ui
 * @public
 */

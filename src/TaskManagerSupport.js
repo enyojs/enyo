@@ -38,8 +38,8 @@ var TaskManagerSupport = {
 
 	/**
 	* If `true`, we are being managed in a management queue, usually the queue for
-	* {@link module:enyo/BackgroundTaskManager~BackgroundTaskManager}, otherwise we have not yet been added to a management
-	* queue.
+	* {@link module:enyo/BackgroundTaskManager}; otherwise, we have not yet been
+	* added to a management queue.
 	*
 	* @type {Boolean}
 	* @default false
@@ -51,14 +51,14 @@ var TaskManagerSupport = {
 	* The default priority for added tasks.
 	*
 	* @type {Number}
-	* @default enyo.Priorities.SOMETIME
+	* @default {@link module:enyo/PriorityQueue~PriorityQueue#Priorities.SOMETIME}
 	* @public
 	*/
 	defaultPriority: Priorities.SOMETIME,
 
 	/**
 	* The name of this manager, which can be used to easily retrieve this specific manager from the
-	* {@link enyo.BackgroundTaskManager}.
+	* {@link module:enyo/BackgroundTaskManager}.
 	*
 	* @type {String}
 	* @default ''
@@ -108,7 +108,7 @@ var TaskManagerSupport = {
 	/**
 	* Removes the specified task from the queue.
 	*
-	* @param {Function} nom - The name of the task to be cancelled.
+	* @param {Function} nom - The name of the task to be canceled.
 	* @public
 	*/
 	removeTask: function (nom) {
@@ -164,9 +164,9 @@ var TaskManagerSupport = {
 	},
 
 	/**
-	* Determines whether or not this {@link enyo.TaskManager} has tasks or not.
+	* Determines whether or not this task manager has tasks.
 	*
-	* @returns {Boolean} If there exist tasks and we are not paused, returns `true`; `false`
+	* @returns {Boolean} `true` if tasks exist and we are not paused; otherwise, `false`
 	*	otherwise.
 	* @public
 	*/
@@ -175,8 +175,8 @@ var TaskManagerSupport = {
 	},
 
 	/**
-	* Execute the next task in the queue. If the task had previously been paused, it will be
-	* resumed.
+	* Executes the next task in the queue. If the task had previously been paused,
+	* it will be resumed.
 	*
 	* @public
 	*/
