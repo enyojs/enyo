@@ -57,6 +57,11 @@ var ViewMgr = kind({
 	*/
 	active: null,
 
+	activeChanged: function (was, is) {
+		if (was) this.emit('deactivate', was);
+		if (is) this.emit('activate', is);
+	},
+
 	/**
 	* `true` when a floating view has been dismissed
 	*
@@ -388,6 +393,7 @@ var ViewMgr = kind({
 			this.set('active', null);
 			this.set('dismissed', true);
 			this.emit('dismiss');
+			this.stack = [];
 		}
 	},
 
@@ -395,10 +401,7 @@ var ViewMgr = kind({
 	* @private
 	*/
 	managerEvent: function (viewManager, event, view) {
-		if (event == 'dismiss') this.managerDismissing(viewManager);
-		else if (event == 'dismissed') this.managerDismissed(viewManager);
-		else if (event == 'activated') this.managerActivated(viewManager, view);
-		else if (event == 'deactivated') this.managerDeactivated(viewManager, view);
+		if (event == 'dismissed') this.managerDismissed(viewManager);
 	},
 
 	/**
@@ -407,20 +410,7 @@ var ViewMgr = kind({
 	* @private
 	*/
 	managerDismissed: function (viewManager) {
-		this.log(this.id, 'ViewMgr', viewManager.name, 'dismissed');
 		this.teardownView(viewManager);
-	},
-
-	managerDismissing: function (viewManager) {
-		this.log(this.id, 'ViewMgr', viewManager.name, 'dismissing');
-	},
-
-	managerActivated: function (viewManager, view) {
-		this.log(this.id, 'activated', view.name);
-	},
-
-	managerDeactivated: function (viewManager, view) {
-		this.log(this.id, 'deactivated', view.name);
 	},
 
 	/**
@@ -459,10 +449,7 @@ var ViewMgr = kind({
 			view.set('canGenerate', true);
 			view.render();
 		}
-		if (!this.dragging && !view.isManager) {
-			this.set('active', view);
-			this.emit('activated', view);
-		}
+		if (!this.dragging && !view.isManager) this.set('active', view);
 	},
 
 	/**
