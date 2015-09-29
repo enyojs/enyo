@@ -1,8 +1,9 @@
 var
-	animation = require('enyo/animation'),
-	kind = require('enyo/kind'),
-	utils = require('enyo/utils'),
-	Layout = require('enyo/Layout'),
+	animation = require('../animation'),
+	kind = require('../kind'),
+	utils = require('../utils'),
+	EventEmitter = require('../EventEmitter'),
+	Layout = require('../Layout'),
 	rAF = animation.requestAnimationFrame;
 
 /**
@@ -25,6 +26,11 @@ module.exports = kind(
 	* @private
 	*/
 	kind: Layout,
+
+	/**
+	* @private
+	*/
+	mixins: [EventEmitter],
 
 	/**
 	* @private
@@ -157,7 +163,7 @@ module.exports = kind(
 	*/
 	completeTransition: function (view) {
 		view.removeClass('transitioning');
-		if (view !== this.container.active) this.container.deactivate(view.name);
+		this.emit('complete', view);
 	},
 
 	/**

@@ -120,6 +120,16 @@ var ViewMgr = kind({
 	/**
 	* @private
 	*/
+	layoutKindChanged: function (was, is) {
+		Control.prototype.layoutKindChanged.apply(this, arguments);
+		if (this.layout && this.layout.on) {
+			this.layout.on('complete', this.handleLayoutComplete, this);
+		}
+	},
+
+	/**
+	* @private
+	*/
 	handlers: {
 		ondown: 'handleDown',
 		ondragstart: 'handleDragStart',
@@ -487,6 +497,20 @@ var ViewMgr = kind({
 			view.node.remove();
 			view.set('canGenerate', false);
 			view.teardownRender(true);
+		}
+	},
+
+	// Layout
+
+	/**
+	* Handles the 'complete' event from its layout indicating a view has completed its layout
+	* @private
+	*/
+	handleLayoutComplete: function (sender, name, view) {
+		if (view == this.active) {
+			this.emit('activated', view);
+		} else {
+			this.deactivate(view.name);
 		}
 	},
 
