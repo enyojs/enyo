@@ -115,8 +115,8 @@ var ViewPreloadSupport = {
 
 		// The panel could have already been removed from DOM and torn down if we popped when
 		// moving forward.
-		if (view.node) {
-			view.node.remove();
+		if (view.hasNode()) {
+			view.removeNodeFromDom();
 			view.teardownRender(true);
 		}
 

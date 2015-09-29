@@ -313,10 +313,7 @@ var Popup = module.exports = kind(
 		return function () {
 			// if this is a rendered floating popup, remove the node from the
 			// floating layer because it won't be removed otherwise
-			var node = this.hasNode();
-			if(this.floating && node) {
-				this.node.remove();
-			}
+			if (this.floating) this.removeNodeFromDom();
 
 			sup.apply(this, arguments);
 		};
