@@ -53,6 +53,11 @@ var Orientation = {
 *	immediately after each panel is created.
 * @property {Number} [targetIndex] - The index of the panel to display, otherwise the last panel
 *	created will be displayed.
+* @property {Boolean} [purge] - If `true`, removes and clears the existing set of panels before
+*	pushing new panels.
+* @property {Boolean} [force] - If `true`, forces an index change even if we are targetting an index
+*	that is the same as the current index. This can be useful in cases where we are purging panels
+*	and want to properly setup the positioning of the newly pushed panels.
 */
 
 /**
@@ -795,7 +800,7 @@ module.exports = kind(
 	},
 
 	/**
-	* Destroys all panels. These will be queued for destruction after the next panel has loaded.
+	* Destroys all panels.
 	*
 	* @private
 	*/
