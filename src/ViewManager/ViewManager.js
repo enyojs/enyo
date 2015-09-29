@@ -39,13 +39,13 @@ var ViewMgr = kind({
 	classes: 'enyo-unselectable',
 
 	/**
-	* View type
+	* If `true`, this ViewManager 'floats' over its parent `manager`
 	*
-	* @type {String}
-	* @default fixed
+	* @type {Boolean}
+	* @default false
 	* @public
 	*/
-	type: 'fixed',
+	floating: false,
 
 	/**
 	* Active view
@@ -132,7 +132,7 @@ var ViewMgr = kind({
 	*/
 	create: function () {
 		// Set layoutCover for floating ViewManagers that haven't explicitly defined it
-		if (this.type == 'floating' && this.layoutCover === undefined) this.layoutCover = true;
+		if (this.floating && this.layoutCover === undefined) this.layoutCover = true;
 
 		Control.prototype.create.apply(this, arguments);
 
@@ -140,8 +140,8 @@ var ViewMgr = kind({
 		this.managerEvent = this.managerEvent.bind(this);
 		this.managerChanged(null, this.manager);
 
-		if (this.type == 'fixed') this.initFirstView();
-		else if (this.type == 'floating') this.stack = [];
+		if (this.floating) this.stack = [];
+		else this.initFirstView();
 	},
 
 	/**
@@ -149,7 +149,7 @@ var ViewMgr = kind({
 	*/
 	rendered: function () {
 		Control.prototype.rendered.apply(this, arguments);
-		if (this.type == 'floating') this.initFirstView();
+		if (this.floating) this.initFirstView();
 		this.set('dismissed', false);
 	},
 
@@ -343,7 +343,7 @@ var ViewMgr = kind({
 	*/
 	back: function () {
 		var name;
-		if (this.type == 'floating') {
+		if (this.floating) {
 			name = this.dragging ? this.stack[0] : this.stack.shift();
 			return this._activate(name);
 		}
@@ -355,10 +355,10 @@ var ViewMgr = kind({
 	canDrag: function (direction) {
 		var index;
 		if (this.draggable) {
-			if (this.type == 'floating' && direction == -1) {
+			if (this.floating && direction == -1) {
 				return true;
 			}
-			else if (this.type == 'fixed') {
+			else if (!this.floating) {
 				index = this.views.indexOf(this.active);
 				return	(index > 0 && direction == -1) ||
 						(index < this.views.length - 1 && direction == 1);
@@ -424,7 +424,7 @@ var ViewMgr = kind({
 	*/
 	activate: function (viewName) {
 		var view = this._activate(viewName);
-		if (view && !view.isManager && this.active && this.type == 'floating') {
+		if (view && !view.isManager && this.active && this.floating) {
 			this.stack.unshift(this.active.name);
 		}
 		return view;
@@ -538,7 +538,7 @@ var ViewMgr = kind({
 			if (this.dragView === null) {
 				if (this.dragDirection == 1) {
 					this.dragView = this.next();
-				} else if (this.type == 'floating') {
+				} else if (this.floating) {
 					this.dragView = this.back();
 				} else {
 					this.dragView = this.previous();
@@ -563,13 +563,13 @@ var ViewMgr = kind({
 		if (event.percentDelta * 100 > this.dragSnapPercent) {
 			// normally, there will be a becoming-active view to activate
 			if (this.dragView) {
-				if (this.type == 'floating') this.stack.shift();
+				if (this.floating) this.stack.shift();
 				// we can safely call _activate because this is a dragged `back()` and no stack
 				// updates are necessary.
 				this._activate(this.dragView.name);
 			}
 			// unless it's a floating ViewManager that is being dismissed
-			else if (this.type == 'floating' && event.direction == -1) {
+			else if (this.floating && event.direction == -1) {
 				this.dismiss();
 			}
 		}
