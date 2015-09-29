@@ -11,6 +11,8 @@ var
 var
 	SlideViewLayout = require('../SlideViewLayout');
 
+var viewCount = 0;
+
 var ViewMgr = kind({
 
 	/**
@@ -269,9 +271,10 @@ var ViewMgr = kind({
 	* @private
 	*/
 	addView: function (view, owner, isManager) {
-		var index, name,
-			isControl = view instanceof Control,
-			_view = isControl ? view : utils.clone(view);
+		var index,
+		isControl = view instanceof Control,
+			_view = isControl ? view : utils.clone(view),
+			name = _view.name = _view.name || 'view' + (++viewCount);
 
 		owner = _view.owner || owner || this;
 		if (isControl) {
@@ -283,19 +286,15 @@ var ViewMgr = kind({
 		} else {
 			_view.owner = owner;
 			if (isManager || _view.isManager) {
-				if (!_view.name) {
-					_view.name = 'viewManager' + (Object.keys(this.viewManagers).length + 1);
-				}
 				_view.isManager = true;
 				_view.manager = this;
 			}
 		}
 
 		if (_view.isManager) {
-			this.viewManagers[_view.name] = _view;
+			this.viewManagers[name] = _view;
 		} else {
 			index = this.views.push(_view),
-			name = _view.name || (_view.name = 'view' + index);
 			this.viewNames[name] = index - 1;
 		}
 	},
