@@ -166,7 +166,7 @@ var ViewMgr = kind({
 	*/
 	rendered: function () {
 		Control.prototype.rendered.apply(this, arguments);
-		if (this.floating) this.initFirstView();
+		if (this.floating && !this.skipInit) this.initFirstView();
 		this.set('dismissed', false);
 	},
 
