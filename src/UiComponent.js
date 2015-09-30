@@ -14,6 +14,15 @@ var
 	Component = require('./Component');
 
 /**
+* The configurable options used by {@link module:enyo/UiComponent~UiComponent} when updating
+* components.
+*
+* @typedef {Object} enyo/UiComponent~UiComponent~UpdateComponentsOptions
+* @property {Boolean} [silent] - If `true`, component properties will be updated silently i.e. they
+*	will be set directly, rather than via the generic `set` method.
+*/
+
+/**
 * {@link module:enyo/UiComponent~UiComponent} implements a container strategy suitable for presentation layers.
 *
 * `UiComponent` itself is abstract. Concrete [subkinds]{@glossary subkind} include
@@ -242,10 +251,12 @@ var UiComponent = module.exports = kind(
 	* @param {Object} [ext] - Additional properties to be supplied as defaults for components, when
 	*	being created or recreated. These properties have no bearing on the diff computation of the
 	*	child components.
+	* @param {module:enyo/UiComponent~UpdateComponentsOptions} [opts] - Additional options for how
+	*	the update operation should behave.
 	* @returns {Boolean} - Whether or not the component should be re-rendered.
 	* @public
 	*/
-	updateComponents: function (props, ext) {
+	updateComponents: function (props, ext, opts) {
 		var allStatefulKeys = {},
 			isChanged = this.computeComponentsDiff(props, allStatefulKeys),
 			prop, controls, control, keys, key, idxKey, idxProp, kind;
@@ -265,7 +276,8 @@ var UiComponent = module.exports = kind(
 				for (idxKey = 0; idxKey < keys.length; idxKey++) { // for each key, determine if there is a change
 					key = keys[idxKey];
 					if (prop[key] != control[key]) {
-						control.set(key, prop[key]);
+						if (opts && opts.silent) control[key] = prop[key];
+						else control.set(key, prop[key]);
 					}
 				}
 			}
