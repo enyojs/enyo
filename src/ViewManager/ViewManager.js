@@ -205,9 +205,10 @@ var ViewMgr = kind({
 	* @private
 	*/
 	addControl: function (control, before) {
+		var viewIndex = this.viewNames[control.name];
 		Control.prototype.addControl.apply(this, arguments);
 
-		if (!this.viewNames[control.name] && !this.viewManagers[control.name]) {
+		if (!control.isChrome && !(viewIndex || viewIndex === 0) && !this.viewManagers[control.name]) {
 			this.addView(control);
 		}
 	},

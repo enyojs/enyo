@@ -87,8 +87,9 @@ module.exports = kind({
 		if (was) {
 			was.applyStyle('transform', null);
 			// when using layoutCover, `was` doesn't transition so the ontransitionend doesn't fire
-			// to account for that, set a timeout of the same duration to manually clean up.
-			if (this.container.layoutCover) {
+			// to account for that, set a timeout of the same duration to manually clean up. The
+			// exception being when dismissing the ViewManager and there is no becoming-active view.
+			if (this.container.layoutCover && is) {
 				setTimeout(this.completeTransition.bind(this, was), this.dragDuration || this.duration);
 			}
 		}
