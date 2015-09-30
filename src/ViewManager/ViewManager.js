@@ -57,9 +57,16 @@ var ViewMgr = kind({
 	*/
 	active: null,
 
+	/**
+	* @private
+	*/
 	activeChanged: function (was, is) {
-		if (was) this.emit('deactivate', was);
-		if (is) this.emit('activate', is);
+		if (was) {
+			this.emit('deactivate', {
+				view: was,
+				dragging: false
+			});
+		}
 	},
 
 	/**
@@ -449,6 +456,10 @@ var ViewMgr = kind({
 			view.set('canGenerate', true);
 			view.render();
 		}
+		this.emit('activate', {
+			view: view,
+			dragging: this.dragging
+		});
 		if (!this.dragging && !view.isManager) this.set('active', view);
 	},
 
@@ -467,10 +478,14 @@ var ViewMgr = kind({
 	deactivateImmediate: function (view) {
 		this.teardownView(view);
 
-		if (!this.dragging) {
-			if (!view.isManager) this.emit('deactivated', view);
-			if (this.dismissed) this.emit('dismissed');
+		if (!view.isManager) {
+			this.emit('deactivated', {
+				view: view,
+				dragging: this.dragging
+			});
 		}
+
+		if (!this.dragging && this.dismissed) this.emit('dismissed');
 	},
 
 	/**
@@ -494,7 +509,9 @@ var ViewMgr = kind({
 	*/
 	handleLayoutComplete: function (sender, name, view) {
 		if (view == this.active) {
-			this.emit('activated', view);
+			this.emit('activated', {
+				view: view
+			});
 		} else {
 			this.deactivate(view.name);
 		}
@@ -539,6 +556,10 @@ var ViewMgr = kind({
 			if (this.dragDirection !== event.direction) {
 				this.dragDirection = event.direction;
 				if (this.dragView) {
+					this.emit('deactivate', {
+						view: this.dragView,
+						dragging: true
+					});
 					this.deactivate(this.dragView.name);
 					this.dragView = null;
 				}
@@ -573,9 +594,9 @@ var ViewMgr = kind({
 		if (event.percentDelta * 100 > this.dragSnapPercent) {
 			// normally, there will be a becoming-active view to activate
 			if (this.dragView) {
+				// dragging for floating views can only be a back action so shift it off the stack
 				if (this.floating) this.stack.shift();
-				// we can safely call _activate because this is a dragged `back()` and no stack
-				// updates are necessary.
+				// stack updates aren't necessary as we updated it above
 				this._activate(this.dragView.name);
 			}
 			// unless it's a floating ViewManager that is being dismissed
@@ -589,6 +610,7 @@ var ViewMgr = kind({
 		}
 		this.dragView = null;
 		this.set('dragging', false);
+		event.preventTap();
 
 		return true;
 	},
