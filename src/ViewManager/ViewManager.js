@@ -70,11 +70,27 @@ var ViewMgr = kind({
 	},
 
 	/**
+	* Determines if and how the default view is activated. The default view is either the first
+	* view with a truthy `active` member or the first view if none are marked active.
+	*
+	* * 'off' - No view is activated by default
+	* * 'create' - The default view is activated on create and not animated into position
+	* * 'render' - The default view is activated on render and animated into position
+	* * 'auto' - For floating ViewManagers, this is equivalent to 'render'. For non-floating
+	*   ViewManagers, this is equivalent to 'create'.
+	*
+	* @type {String}
+	* @default auto
+	* @public
+	*/
+	activateDefault: 'auto',
+
+	/**
 	* `true` when a floating view has been dismissed
 	*
 	* @type {Boolean}
 	* @default false
-	* @public
+	* @private
 	*/
 	dismissed: false,
 
@@ -165,7 +181,10 @@ var ViewMgr = kind({
 		this.managerChanged(null, this.manager);
 
 		if (this.floating) this.stack = [];
-		else this.initFirstView();
+
+		if (this.activateDefault == 'create' || (this.activateDefault == 'auto' && !this.floating)) {
+			this.initFirstView();
+		}
 	},
 
 	/**
@@ -173,7 +192,9 @@ var ViewMgr = kind({
 	*/
 	rendered: function () {
 		Control.prototype.rendered.apply(this, arguments);
-		if (this.floating) this.initFirstView();
+		if (this.activateDefault == 'render' || (this.activateDefault == 'auto' && this.floating)) {
+			this.initFirstView();
+		}
 		this.set('dismissed', false);
 	},
 
