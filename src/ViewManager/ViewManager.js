@@ -456,6 +456,9 @@ var ViewMgr = kind({
 	*/
 	managerEvent: function (viewManager, event, view) {
 		if (event == 'dismissed') this.managerDismissed(viewManager);
+		this.emit('manager-' + event, {
+			manager: viewManager
+		});
 	},
 
 	/**
