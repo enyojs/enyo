@@ -21,11 +21,11 @@ var
 		cache: false
 	};
 
-gulp.task('default', ['jshint']);
+gulp.task('default', ['test']);
 gulp.task('jshint', lint);
 gulp.task('build-lib', buildLib);
 gulp.task('build-tests', buildTests);
-gulp.task('test', ['build-lib', 'build-tests'], test);
+gulp.task('test', ['jshint', 'build-lib', 'build-tests'], test);
 
 function lint () {
 	return gulp
