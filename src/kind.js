@@ -83,11 +83,6 @@ var kind = exports = module.exports = function (props) {
 	utils.forEach(kind.features, function(fn){ fn(ctor, props); });
 	
 	if (name) kindCtors[name] = ctor;
-
-	ctor.kind = function (props) {
-		props.kind = ctor;
-		return kind(props);
-	};
 	
 	return ctor;
 };
@@ -313,6 +308,9 @@ kind.features.push(function(ctor, props) {
 	if (!ctor.extend) {
 		ctor.extend = kind.statics.extend;
 	}
+	if (!ctor.kind) {
+		ctor.kind = kind.statics.kind;
+	}
 	// move props statics to constructor
 	if (props.statics) {
 		utils.mixin(ctor, props.statics);
@@ -392,6 +390,24 @@ kind.statics = {
 		}
 
 		return target || ctor;
+	},
+
+	/**
+	* Creates a new sub-[kind]{@glossary kind} of the current kind.
+	*
+	* @param  {Object} props A [hash]{@glossary Object} of properties used to define and create
+	*	the [kind]{@glossary kind}
+	* @return {Function} Constructor of the new kind
+	* @memberof enyo.kind
+	* @public
+	*/
+	kind: function (props) {
+		if (props.kind && props.kind !== this) {
+			logger.warn('Creating a different kind from a constructor\'s kind() method is not ' +
+				'supported and will be replaced with the constructor.');
+		}
+		props.kind = this;
+		return kind(props);
 	}
 };
 
