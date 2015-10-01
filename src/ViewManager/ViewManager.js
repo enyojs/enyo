@@ -330,17 +330,17 @@ var ViewMgr = kind({
 			_view.set('owner', owner);
 			if (_view instanceof ViewMgr) {
 				_view.isManager = true;
-				_view.set('manager', this);
 			}
 		} else {
 			_view.owner = owner;
 			if (isManager || _view.isManager) {
 				_view.isManager = true;
-				_view.manager = this;
 			}
 		}
 
 		if (_view.isManager) {
+			// setting directly because the change handler is called manually during create
+			_view.manager = this;
 			this.viewManagers[name] = _view;
 		} else {
 			index = this.views.push(_view),
@@ -400,8 +400,9 @@ var ViewMgr = kind({
 	* @public
 	*/
 	back: function () {
-		var name;
-		if (this.floating) {
+		var name,
+			depth = this.stack.length;
+		if (this.floating && depth > 0) {
 			name = this.dragging ? this.stack[0] : this.stack.shift();
 			return this._activate(name);
 		}
