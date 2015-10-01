@@ -83,6 +83,11 @@ var kind = exports = module.exports = function (props) {
 	utils.forEach(kind.features, function(fn){ fn(ctor, props); });
 	
 	if (name) kindCtors[name] = ctor;
+
+	ctor.kind = function (props) {
+		props.kind = ctor;
+		return kind(props);
+	};
 	
 	return ctor;
 };
