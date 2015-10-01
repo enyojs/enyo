@@ -86,13 +86,28 @@ var ViewMgr = kind({
 	activateDefault: 'auto',
 
 	/**
-	* `true` when a floating view has been dismissed
+	* `true` when this ViewManager has been dismissed
 	*
 	* @type {Boolean}
 	* @default false
 	* @private
 	*/
 	dismissed: false,
+
+	/**
+	* Determines if the view can be dismissed by dragging. The ViewManager can be programmatically
+	* dismissed via dismiss() regardless of the value of this property. If the ViewManager is the
+	* root and does not have a `manager`, it cannot be dismissed by dragging or by `dismiss()`.
+	*
+	* * `true` - Can be dismissed
+	* * `false` - Cannot be dismissed
+	* * 'auto' - Can be dismissed if `floating` is `true`
+	*
+	* @type {Boolean|String}
+	* @default auto
+	* @public
+	*/
+	dismissable: 'auto',
 
 	/**
 	* When `true`, the views can be dragged into and out of view.
@@ -398,7 +413,7 @@ var ViewMgr = kind({
 	canDrag: function (direction) {
 		var index;
 		if (this.draggable) {
-			if (this.floating && direction == -1) {
+			if (this.isDimissable() && direction == -1) {
 				return true;
 			}
 			else if (!this.floating) {
@@ -409,6 +424,16 @@ var ViewMgr = kind({
 		}
 
 		return false;
+	},
+
+	/**
+	* Indicates if the view is dismissable via dragging
+	*
+	* @return {Boolean}
+	* @public
+	*/
+	isDimissable: function () {
+		return this.dismissable === true || (this.dismissable == 'auto' && this.floating);
 	},
 
 	/**
@@ -559,6 +584,7 @@ var ViewMgr = kind({
 		if (!this.draggable) return;
 		this.set('dragging', true);
 		this.dragDirection = 0;
+		this.dragView = null;
 		this.dragBounds = this.getBounds();
 
 		return true;
@@ -585,9 +611,15 @@ var ViewMgr = kind({
 					this.deactivate(this.dragView.name);
 					this.dragView = null;
 				}
+				else if (this.dragView === false) {
+					this.dragView = null;
+				}
 			}
 
-			// set up the new drag view
+			// dragView can be a View, `false`, or `null`. `null` indicates we need to (try to)
+			// activate the becoming-active view. It should be null when a drag starts or when
+			// there's a change of direction. `false` indicates that we've tried to activate a view
+			// but there isn't one in that direction.
 			if (this.dragView === null) {
 				if (this.dragDirection == 1) {
 					this.dragView = this.next();
@@ -622,7 +654,7 @@ var ViewMgr = kind({
 				this._activate(this.dragView.name);
 			}
 			// unless it's a floating ViewManager that is being dismissed
-			else if (this.floating && event.direction == -1) {
+			else if (this.isDimissable() && event.direction == -1) {
 				this.dismiss();
 			}
 		}
@@ -630,7 +662,6 @@ var ViewMgr = kind({
 		else {
 			this.emit('cancelDrag', event);
 		}
-		this.dragView = null;
 		this.set('dragging', false);
 		event.preventTap();
 
