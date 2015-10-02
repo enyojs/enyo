@@ -651,12 +651,13 @@ module.exports = kind(
 		oldPlaybackRateNumber = this.calcNumberValueOfPlaybackRate(this.playbackRate);
 
 		this.setPlaybackRate(1);
-		node.currentTime += parseInt(this.jumpSec, 10);
-		this._prevCommand = 'jumpForward';
 
 		if(oldPlaybackRateNumber < 0) {
-			this.node.play();
+			this.node.play();	// Play before skip so video won't restart
 		}
+
+		node.currentTime += parseInt(this.jumpSec, 10);
+		this._prevCommand = 'jumpForward';
 
 		this.doJumpForward(utils.mixin(this.createEventData(), {jumpSize: this.jumpSec}));
 	},
