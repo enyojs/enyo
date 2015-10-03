@@ -263,7 +263,7 @@ module.exports = kind(
 		* @default {
 		*	fastForward: ['2', '4', '8', '16'],
 		*	rewind: ['-2', '-4', '-8', '-16'],
-		*	slowForward: ['1/4', '1/2', '1'],
+		*	slowForward: ['1/4', '1/2'],
 		*	slowRewind: ['-1/2', '-1']
 		* }
 		* @public
@@ -271,7 +271,7 @@ module.exports = kind(
 		playbackRateHash: {
 			fastForward: ['2', '4', '8', '16'],
 			rewind: ['-2', '-4', '-8', '-16'],
-			slowForward: ['1/4', '1/2', '1'],
+			slowForward: ['1/4', '1/2'],
 			slowRewind: ['-1/2', '-1']
 		}
 	},
@@ -508,13 +508,11 @@ module.exports = kind(
 		switch (this._prevCommand) {
 		case 'slowForward':
 			if (this._speedIndex == this._playbackRateArray.length - 1) {
-				// reached to the end of array => go to fastforward
-				this.selectPlaybackRateArray('fastForward');
-				this._speedIndex = 0;
-				this._prevCommand = 'fastForward';
+				// reached to the end of array => go to play
+				this.play();
+				return;
 			} else {
 				this._speedIndex = this.clampPlaybackRate(this._speedIndex+1);
-				this._prevCommand = 'slowForward';
 			}
 			break;
 		case 'pause':
@@ -526,14 +524,14 @@ module.exports = kind(
 			this._prevCommand = 'slowForward';
 			break;
 		case 'rewind':
-			var pbNumber = this.calcNumberValueOfPlaybackRate(this.playbackRate);
-			if (pbNumber < 0) {
-				this.selectPlaybackRateArray('slowForward');
-				this._prevCommand = 'slowForward';
-			} else {
-				this.selectPlaybackRateArray('fastForward');
-				this._prevCommand = 'fastForward';
-			}
+			node.play();
+			this.selectPlaybackRateArray('fastForward');
+			this._prevCommand = 'fastForward';
+			this._speedIndex = 0;
+			break;
+		case 'slowRewind':
+			this.selectPlaybackRateArray('slowForward');
+			this._prevCommand = 'slowForward';
 			this._speedIndex = 0;
 			break;
 		case 'fastForward':
@@ -572,8 +570,17 @@ module.exports = kind(
 				this._prevCommand = 'rewind';
 			} else {
 				this._speedIndex = this.clampPlaybackRate(this._speedIndex+1);
-				this._prevCommand = 'slowRewind';
 			}
+			break;
+		case 'fastForward':
+			this.selectPlaybackRateArray('rewind');
+			this._prevCommand = 'rewind';
+			this._speedIndex = 0;
+			break;
+		case 'slowForward':
+			this.selectPlaybackRateArray('slowRewind');
+			this._prevCommand = 'slowRewind';
+			this._speedIndex = 0;
 			break;
 		case 'pause':
 			this.selectPlaybackRateArray('slowRewind');
@@ -607,15 +614,22 @@ module.exports = kind(
 	* @public
 	*/
 	jumpBackward: function () {
-		var node = this.hasNode();
+		var node = this.hasNode(),
+			oldPlaybackRateNumber;
 
 		if (!node) {
 			return;
 		}
 
+		oldPlaybackRateNumber = this.calcNumberValueOfPlaybackRate(this.playbackRate);
+
 		this.setPlaybackRate(1);
 		node.currentTime -= this.jumpSec;
 		this._prevCommand = 'jumpBackward';
+
+		if(oldPlaybackRateNumber < 0) {
+			this.node.play();
+		}
 
 		this.doJumpBackward(utils.mixin(this.createEventData(), {jumpSize: this.jumpSec}));
 	},
@@ -627,13 +641,21 @@ module.exports = kind(
 	* @public
 	*/
 	jumpForward: function () {
-		var node = this.hasNode();
+		var node = this.hasNode(),
+			oldPlaybackRateNumber;
 
 		if (!node) {
 			return;
 		}
 
+		oldPlaybackRateNumber = this.calcNumberValueOfPlaybackRate(this.playbackRate);
+
 		this.setPlaybackRate(1);
+
+		if(oldPlaybackRateNumber < 0) {
+			this.node.play();	// Play before skip so video won't restart
+		}
+
 		node.currentTime += parseInt(this.jumpSec, 10);
 		this._prevCommand = 'jumpForward';
 
@@ -723,8 +745,7 @@ module.exports = kind(
 	*/
 	setPlaybackRate: function (rate) {
 		var node = this.hasNode(),
-			pbNumber
-		;
+			pbNumber;
 
 		if (!node) {
 			return;
