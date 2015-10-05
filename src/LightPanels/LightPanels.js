@@ -155,7 +155,7 @@ module.exports = kind(
 
 	/**
 	* The timing function to be applied to the transition animation between panels. Please refer
-	* to https://developer.mozilla.org/en-US/docs/Web/CSS/transition-timing-function.
+	* to {@linkplain https://developer.mozilla.org/en-US/docs/Web/CSS/transition-timing-function}.
 	*
 	* @type {String}
 	* @default 'ease-out'
@@ -184,7 +184,7 @@ module.exports = kind(
 	direction: Direction.FORWARDS,
 
 	/**
-	* Whether or not to reverse the panel animation when the directionality changes (i.e. rtl). Note
+	* Whether or not to reverse the panel animation when the directionality changes (i.e., rtl). Note
 	* that the animation is only reversed if {@link module:enyo/LightPanels~LightPanels} is in a
 	* [horizontal orientation]{@link module:enyo/LightPanels~LightPanels#Orientation.HORIZONTAL}.
 	*
