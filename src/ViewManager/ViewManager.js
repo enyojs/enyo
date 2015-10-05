@@ -38,7 +38,7 @@ var ViewMgr = kind({
 	/**
 	* @private
 	*/
-	classes: 'enyo-unselectable',
+	classes: 'enyo-viewmanager',
 
 	/**
 	* If `true`, this ViewManager 'floats' over its parent `manager`

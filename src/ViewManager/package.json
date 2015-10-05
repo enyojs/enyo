@@ -1,3 +1,6 @@
 {
-	"main": "ViewManager.js"
+	"main": "ViewManager.js",
+	"styles": [
+		"ViewManager.less"
+	]
 }

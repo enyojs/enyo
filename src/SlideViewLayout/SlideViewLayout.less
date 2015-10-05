@@ -2,7 +2,7 @@
 	> .enyo-view {
 		transform: translateX(-100%);
 		transition-property: none;
-		transition-timing-function: ease-in-out;
+		transition-timing-function: linear;
 	}
 
 	&:not(.dragging) > .enyo-view.transitioning {
@@ -30,11 +30,6 @@
 			&.forward { z-index: 10; }
 			// the becoming-inactive view doesn't move
 			&.back { transform: translateX(0px); }
-		}
-
-		// promote any ViewLayout children to ensure they are above the active view
-		> .enyo-viewlayout {
-			z-index: 20;
 		}
 	}
 }

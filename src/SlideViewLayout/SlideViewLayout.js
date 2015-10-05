@@ -83,19 +83,25 @@ module.exports = kind({
 	* @private
 	*/
 	transition: function (was, is) {
+		var stationaryView;
 		TransitionViewLayout.prototype.transition.apply(this, arguments);
 		if (was) {
 			was.applyStyle('transform', null);
-			// when using layoutCover, `was` doesn't transition so the ontransitionend doesn't fire
-			// to account for that, set a timeout of the same duration to manually clean up. The
-			// exception being when dismissing the ViewManager and there is no becoming-active view.
-			if (this.container.layoutCover && is) {
-				setTimeout(this.completeTransition.bind(this, was), this.dragDuration || this.duration);
-			}
 		}
 		if (is) {
 			is.removeClass(this.direction);
 			is.applyStyle('transform', null);
+		}
+
+		// when using layoutCover, one view doesn't transition so the ontransitionend doesn't fire
+		// to account for that, set a timeout of the same duration to manually clean up. The
+		// exception being when dismissing the ViewManager and there is no becoming-active view.
+		if (this.container.layoutCover) {
+			stationaryView = this.direction == 'forward' && was
+							|| this.direction == 'back' && is;
+			if (stationaryView) {
+				setTimeout(this.completeTransition.bind(this, stationaryView), this.dragDuration || this.duration);
+			}
 		}
 	},
 
