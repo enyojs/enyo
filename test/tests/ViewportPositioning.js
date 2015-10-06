@@ -1,6 +1,6 @@
-var kind = require('../../lib/kind');
-var Control = require('../../lib/Control');
-var dom = require('../../lib/dom');
+var kind = require('enyo/kind');
+var Control = require('enyo/Control');
+var dom = require('enyo/dom');
 
 describe('Meauring Viewport Positioning', function () {
 

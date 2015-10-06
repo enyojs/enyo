@@ -1,6 +1,6 @@
 var
-	Animator = require('../../lib/Animator'),
-	Component = require('../../lib/Component');
+	Animator = require('enyo/Animator'),
+	Component = require('enyo/Component');
 
 describe('Animator', function () {
 

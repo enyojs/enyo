@@ -1,10 +1,10 @@
 var
-	kind = require('../../lib/kind'),
-	utils = require('../../lib/utils');
+	kind = require('enyo/kind'),
+	utils = require('enyo/utils');
 
 var
-	CoreObject = require('../../lib/CoreObject'),
-	Control = require('../../lib/Control');
+	CoreObject = require('enyo/CoreObject'),
+	Control = require('enyo/Control');
 
 describe ("ObserverSupport Mixin", function () {
 	describe ("methods", function () {

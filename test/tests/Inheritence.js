@@ -1,7 +1,7 @@
-var CoreObject = require('../../lib/CoreObject'),
-	Component = require('../../lib/Component'),
-	UiComponent = require('../../lib/UiComponent'),
-	Control = require('../../lib/Control');
+var CoreObject = require('enyo/CoreObject'),
+	Component = require('enyo/Component'),
+	UiComponent = require('enyo/UiComponent'),
+	Control = require('enyo/Control');
 
 describe('Inherentence Sanity Tests', function () {
 

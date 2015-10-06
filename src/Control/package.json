@@ -1,0 +1,6 @@
+{
+  "main": "Control.js",
+  "styles": [
+    "fullscreen.less"
+  ]
+}

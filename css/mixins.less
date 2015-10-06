@@ -1,0 +1,30 @@
+// Applies RTL-compatible start and end margins to a selector
+.margin-start-end (@start, @end) {
+	margin-left: @start;
+	margin-right: @end;
+
+	.enyo-locale-right-to-left & {
+		margin-left: @end;
+		margin-right: @start;
+	}
+}
+
+// Applies RTL-compatible start and end padding to a selector
+.padding-start-end (@start, @end) {
+	padding-left: @start;
+	padding-right: @end;
+
+	.enyo-locale-right-to-left & {
+		padding-left: @end;
+		padding-right: @start;
+	}
+}
+
+// Provide a set of rules to assign to each vendor-prefixed pseudo selector
+.vendor-fullscreen(@rule) {
+	&:-webkit-full-screen { @rule(); }
+	&:-moz-full-screen { @rule(); }
+	&:-ms-fullscreen { @rule(); }
+	&:-o-full-screen { @rule(); }
+	&:fullscreen { @rule(); }
+}
