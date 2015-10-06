@@ -585,7 +585,7 @@ var ViewMgr = kind({
 	* @private
 	*/
 	handleDragStart: function (sender, event) {
-		if (!this.draggable) return;
+		if (!this.draggable || this.dismissed) return;
 		this.set('dragging', true);
 		this.dragDirection = 0;
 		this.dragView = null;
@@ -600,7 +600,7 @@ var ViewMgr = kind({
 	* @private
 	*/
 	handleDrag: function (sender, event) {
-		if (!this.draggable) return;
+		if (!this.draggable || this.dismissed) return;
 
 		this.decorateDragEvent(event);
 		if (this.canDrag(event.direction)) {
@@ -646,7 +646,8 @@ var ViewMgr = kind({
 	* @private
 	*/
 	handleDragFinish: function (sender, event) {
-		if (!this.draggable) return;
+		if (!this.draggable || this.dismissed) return;
+
 		this.decorateDragEvent(event);
 		// if the view has been dragged far enough
 		if (event.percentDelta * 100 > this.dragSnapPercent) {
