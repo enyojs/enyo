@@ -59,13 +59,13 @@ var
 * to [endValue]{@link module:enyo/Animator~Animator#endValue} during the animation, based on the
 * [function]{@glossary Function} referenced by the
 * [easingFunction]{@link module:enyo/Animator~Animator#easingFunction} property.
-* 
+*
 * Event handlers may be specified as functions. If specified, the handler function will
 * be used to handle the event directly, without sending the event to its
 * [owner]{@link module:enyo/Component~Component#owner} or [bubbling]{@link module:enyo/Component~Component#bubble} it.
 * The [context]{@link module:enyo/Animator~Animator#context} property may be used to call the supplied
 * event functions in a particular `this` context.
-* 
+*
 * During animation, an {@link module:enyo/jobs} priority of 5 is registered to defer low priority
 * tasks.
 *
@@ -79,14 +79,14 @@ module.exports = kind(
 	/**
 	* A context in which to run the specified {@glossary event} handlers. If this is
 	* not specified or is falsy, then the [global object]{@glossary global} is used.
-	* 
+	*
 	* @name context
 	* @type {Object}
 	* @default undefined
 	* @memberOf module:enyo/Animator~Animator.prototype
 	* @public
 	*/
-		
+
 	name: 'enyo.Animator',
 
 	/**
@@ -97,10 +97,10 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	published: 
+	published:
 		/** @lends module:enyo/Animator~Animator.prototype */ {
-		
-		/** 
+
+		/**
 		* Animation duration in milliseconds
 		*
 		* @type {Number}
@@ -109,7 +109,7 @@ module.exports = kind(
 		*/
 		duration: 350,
 
-		/** 
+		/**
 		* Value of [value]{@link module:enyo/Animator~Animator#value} property at the beginning of an animation.
 		*
 		* @type {Number}
@@ -118,7 +118,7 @@ module.exports = kind(
 		*/
 		startValue: 0,
 
-		/** 
+		/**
 		* Value of [value]{@link module:enyo/Animator~Animator#value} property at the end of an animation.
 		*
 		* @type {Number}
@@ -127,8 +127,8 @@ module.exports = kind(
 		*/
 		endValue: 1,
 
-		/** 
-		* Node that must be visible in order for the animation to continue. This reference is 
+		/**
+		* Node that must be visible in order for the animation to continue. This reference is
 		* destroyed when the animation ceases.
 		*
 		* @type {Object}
@@ -137,17 +137,17 @@ module.exports = kind(
 		*/
 		node: null,
 
-		/** 
-		* [Function]{@glossary Function} that determines how the animation progresses from 
+		/**
+		* [Function]{@glossary Function} that determines how the animation progresses from
 		* [startValue]{@link module:enyo/Animator~Animator#startValue} to [endValue]{@link module:enyo/Animator~Animator#endValue}.
-		* 
+		*
 		* @type {Function}
 		* @default module:enyo/easing~easing.cubicOut
 		* @public
 		*/
 		easingFunction: animation.easing.cubicOut
 	},
-	
+
 	/*
 	* @private
 	*/
@@ -179,7 +179,7 @@ module.exports = kind(
 		};
 	}),
 
-	/** 
+	/**
 	* Plays the animation.
 	*
 	* @param {Object} props - As a convenience, this [hash]{@glossary Object} will be mixed
@@ -203,7 +203,7 @@ module.exports = kind(
 		return this;
 	},
 
-	/** 
+	/**
 	* Stops the animation and fires the associated {@glossary event}.
 	*
 	* @fires module:enyo/Animator~Animator#onStop
@@ -235,9 +235,9 @@ module.exports = kind(
 		return this;
 	},
 
-	/** 
+	/**
 	* Reverses the direction of a running animation.
-	* 
+	*
 	* @return {this} The callee for chaining.
 	* @public
 	*/
@@ -318,9 +318,7 @@ module.exports = kind(
 			this.fraction = 1;
 			this.fire('onStep');
 			this.cancel();
-			utils.asyncMethod(this.bindSafely(function() {
-				this.fire('onEnd');
-			}));
+			this.fire('onEnd');
 		} else {
 			this.fire('onStep');
 			this.requestNext();
