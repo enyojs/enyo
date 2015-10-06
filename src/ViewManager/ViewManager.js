@@ -502,8 +502,8 @@ var ViewMgr = kind({
 	* @private
 	*/
 	activateImmediate: function (view) {
-		// render the activated view
-		if (this.generated) {
+		// render the activated view if not already
+		if (this.generated && !view.generated) {
 			view.set('canGenerate', true);
 			view.render();
 		}
