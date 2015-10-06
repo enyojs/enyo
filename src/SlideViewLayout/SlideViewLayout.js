@@ -51,8 +51,21 @@ module.exports = kind({
 			bounds = c.dragBounds,
 			isHorizontal = c.orientation == 'horizontal',
 			size = isHorizontal ? bounds.width : bounds.height,
-			delta = event.delta < 0 ? Math.max(event.delta, -size) : Math.min(event.delta, size),
+			delta = event.delta,
 			transform = isHorizontal ? 'translateX' : 'translateY';
+
+
+		if (event.delta < 0 && event.delta < -size) {
+			this.overDrag = true;
+			delta = -size;
+		}
+		else if (event.delta > 0 && event.delta > size) {
+			this.overDrag = true;
+			delta = size;
+		}
+		else {
+			this.overDrag = false;
+		}
 
 		TransitionViewLayout.prototype.drag.apply(this, arguments);
 		c.active.applyStyle('transform', transform + '(' + delta + 'px)');
@@ -93,15 +106,19 @@ module.exports = kind({
 			is.applyStyle('transform', null);
 		}
 
+		// If the user drags the entire view off screen, it won't animate so we won't see the CSS
+		// transition event.
+		if (this.overDrag) {
+			if (was) this.simulateTransition(was);
+			if (is) this.simulateTransition(is);
+		}
 		// when using layoutCover, one view doesn't transition so the ontransitionend doesn't fire
 		// to account for that, set a timeout of the same duration to manually clean up. The
 		// exception being when dismissing the ViewManager and there is no becoming-active view.
-		if (this.container.layoutCover) {
+		else if (this.container.layoutCover) {
 			stationaryView = this.direction == 'forward' && was
 							|| this.direction == 'back' && is;
-			if (stationaryView) {
-				setTimeout(this.completeTransition.bind(this, stationaryView), this.dragDuration || this.duration);
-			}
+			if (stationaryView) this.simulateTransition(stationaryView);
 		}
 	},
 
@@ -113,5 +130,15 @@ module.exports = kind({
 	completeTransition: function (view) {
 		TransitionViewLayout.prototype.completeTransition.apply(this, arguments);
 		if (view) view.removeClass(this.direction == 'back' ? 'forward' : 'back');
+	},
+
+	/**
+	* Calls completeTransition after the drag or normal duration in cases where a CSS transition
+	* will not have occurred.
+	*
+	* @private
+	*/
+	simulateTransition: function (view) {
+		setTimeout(this.completeTransition.bind(this, view), this.dragDuration || this.duration);
 	}
 });
