@@ -44,17 +44,17 @@ var keyFrame = module.exports = kind.singleton({
 
 		charc.keyProps = [];
 		charc.keyTime = [];
+		charc.currentIndex = 0;
 		for (prop in keyframe) {
 			charc.keyTime.push(prop);
 			charc.keyProps.push(keyframe[prop]);
 		}
-		charc.currentIndex = 0;
 		charc.keyframeCallback = cb;
-		charc.initialTime = utils.perfNow();
 		charc.totalDuration = proto.duration;
 		charc.completed = this.bindSafely(this.reframe);
 		
 		this.keyFraming(charc);
+		this.trigger(charc);
 	},
 
 	/**
@@ -85,41 +85,44 @@ var keyFrame = module.exports = kind.singleton({
             charc.keyProps = [];
 			charc.keyTime = [];
             charc.animating = false;
-            animation.trigger(charc);
+            this.trigger(charc);
 		}
 	},
 
 	trigger: function (charc) {
-		animation.trigger(charc);
+		if (charc.handleAnimationEvents && typeof charc.handleAnimationEvents != 'function') {
+			animation.register(charc);
+		} else 
+			animation.trigger(charc);
 	}
 });
 
 /**
 * @private
 */
-keyFrame.keyFraming = function (charc, callback) {
+keyFrame.keyFraming = function (charc) {
 	var index = charc.currentIndex || 0,
-		old = charc.keyTime[index -1],
+		old = charc.keyTime[index -1] || 0,
 		next = charc.keyTime[index],
-		total = charc.totalDuration,
-		time = charc.currentIndex ? total * ((next - old)/100) : "0";
+		total = charc.totalDuration || charc.totalDistance,
+		change = total ? total * ((next - old)/100) : "0";
 
-	charc.setAnimation(charc.keyProps[index]);
-	charc.setInitial(charc.currentState);
-	charc.setDuration(time);
+	charc.addAnimation(charc.keyProps[index]);
+	if(charc.totalDuration) charc.setDuration(change);
+	if(charc.totalDistance) charc.setDistance(change);
 	charc.animating = false;
 	charc.currentIndex = index;
-	animation.trigger(charc);
 };
+
 
 /**
 * @private
 */
 keyFrame.reframe = function (charc) {
-	charc.currentIndex++;
-	if (charc.currentIndex < charc.keyTime.length) {
+	charc.reverse ? charc.currentIndex-- : charc.currentIndex++;
+	if (charc.currentIndex >= 0 && charc.currentIndex < charc.keyTime.length) {
 		this.keyFraming(charc);
-		charc.start();
+		charc.start(true);
 	} else {
 		//Tigerring callback function at end of animation
         charc.keyframeCallback && charc.keyframeCallback(this);
