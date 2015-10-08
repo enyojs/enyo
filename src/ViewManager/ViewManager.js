@@ -155,6 +155,17 @@ var ViewMgr = kind({
 	manager: null,
 
 	/**
+	* The number of views managed by this ViewManager. This member is observable but should be
+	* considered read-only.
+	*
+	* @type {Number}
+	* @default 0
+	* @readOnly
+	* @public
+	*/
+	viewCount: 0,
+
+	/**
 	* @private
 	*/
 	managerChanged: function (was, is) {
@@ -230,6 +241,7 @@ var ViewMgr = kind({
 		this.importViewConfig(this.kindComponents, this);
 		this.importViewConfig(this.components, this.getInstanceOwner());
 		this.importViewConfig(this.managers, managersOwner, true);
+		this.viewCount = this.views.length;
 
 		// clean up references
 		this.components = this.kindComponents = null;
@@ -246,6 +258,7 @@ var ViewMgr = kind({
 
 		if (!control.isChrome && !(viewIndex || viewIndex === 0) && !this.viewManagers[control.name]) {
 			this.addView(control);
+			this.set('viewCount', this.views.length);
 		}
 	},
 
@@ -264,6 +277,7 @@ var ViewMgr = kind({
 			for (i = index, l = this.views.length; i < l; i++) {
 				this.viewNames[this.views[i].name] = i;
 			}
+			this.set('viewCount', this.viewCount - 1);
 		}
 	},
 
