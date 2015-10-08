@@ -23,13 +23,22 @@
 	}
 
 	&.cover {
+		// in cover mode, promote all views up a bit
 		> .enyo-view {
-			// the active view should always be on top
-			&.active { z-index: 5; }
-			// unless the becoming-active is transitioning in over it
-			&.forward { z-index: 10; }
-			// the becoming-inactive view doesn't move
-			&.back { transform: translateX(0px); }
+			z-index: 5;
+			// unless it's the stationary view which should always remain behind
+			&.stationary {
+				z-index: 0;
+				transform: translateX(0px);
+			}
+		}
+
+		// except when dragging where the active view is promoted
+		&.dragging {
+			> .enyo-view {
+				z-index: 0;
+				&.active { z-index: 10; }
+			}
 		}
 	}
 }

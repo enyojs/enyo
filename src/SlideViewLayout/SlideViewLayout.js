@@ -82,12 +82,26 @@ module.exports = kind({
 	*/
 	prepareTransition: function (was, is) {
 		var c = this.container,
-			wasIndex = was ? c.views.indexOf(was) : -1,
-			isIndex = is ? c.views.indexOf(is) : -1;
+			wasIndex = c.indexOf(was),
+			isIndex = c.indexOf(is);
 
-		this.direction = wasIndex < isIndex ? 'forward' : 'back';
+		if (c.floating) {
+			// for a floating VM, if both is and was are not found, we're going back because is was
+			// already popped off the stack. however when the initial view is displayed, both
+			// indices will also be -1 but `was` will be null as well so we check that too.
+			this.direction = was && isIndex == -1 && wasIndex == -1 ? 'back' : 'forward';
+		} else {
+			// fixed VMs direction is based only on each view's ordered position 
+			this.direction = wasIndex < isIndex ? 'forward' : 'back';
+		}
 		if (is) is.addClass(this.direction);
 		if (was) was.addClass(this.direction == 'back' ? 'forward' : 'back');
+
+		if (this.container.layoutCover) {
+			this.stationaryView = this.direction == 'forward' && was
+								|| this.direction == 'back' && is;
+			if (this.stationaryView) this.stationaryView.addClass('stationary');
+		}
 	},
 
 	/**
@@ -96,7 +110,6 @@ module.exports = kind({
 	* @private
 	*/
 	transition: function (was, is) {
-		var stationaryView;
 		TransitionViewLayout.prototype.transition.apply(this, arguments);
 		if (was) {
 			was.applyStyle('transform', null);
@@ -115,10 +128,8 @@ module.exports = kind({
 		// when using layoutCover, one view doesn't transition so the ontransitionend doesn't fire
 		// to account for that, set a timeout of the same duration to manually clean up. The
 		// exception being when dismissing the ViewManager and there is no becoming-active view.
-		else if (this.container.layoutCover) {
-			stationaryView = this.direction == 'forward' && was
-							|| this.direction == 'back' && is;
-			if (stationaryView) this.simulateTransition(stationaryView);
+		else if (this.stationaryView) {
+			this.simulateTransition(this.stationaryView);
 		}
 	},
 
@@ -129,7 +140,13 @@ module.exports = kind({
 	*/
 	completeTransition: function (view) {
 		TransitionViewLayout.prototype.completeTransition.apply(this, arguments);
-		if (view) view.removeClass(this.direction == 'back' ? 'forward' : 'back');
+		if (view) {
+			view.removeClass(this.direction == 'back' ? 'forward' : 'back');
+			if (this.stationaryView && this.stationaryView == view) {
+				this.stationaryView.removeClass('stationary');
+				this.stationaryView = null;
+			}
+		}
 	},
 
 	/**
