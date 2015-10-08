@@ -1,7 +1,8 @@
 require('enyo');
 
 var 
-	frame = require('./Frame'),
+	frame = require('./Frame'),	
+	utils = require('../utils'),
 	Vector = require('./Vector');
 
 var oldState, newState, node, matrix, cState = [];
@@ -39,6 +40,68 @@ module.exports = {
 		} else {
 			this.step(charc);
 		}
+	},
+
+	/**
+	* Tweens public API which notifies to change current state of 
+	* a character based on its interaction delta. This method is normally trigger by the Animation Core to
+	* update the animating characters state based on the current delta change.
+	*
+	* As of now this method is provided as an interface for application 
+	* to directly trigger an animation. However, this will be later made private
+	* and will be accessible only by the interfaces exposed by framework.
+	* @parameter	chrac-		Animating character
+	*				d-			An array of delta dimensions like [x,y,z]
+	*
+	* @public
+	*/
+	updateDelta: function (charc, d) {
+		var k, cV, sV, oV, mod, end = {}, dist, totdist, rev;
+		var prop = charc.getAnimation();
+
+		d = d || charc.animDelta;
+		charc.reverse = false;
+		for (k in prop) {
+			oV = charc._startAnim[k];
+			cV = charc.currentState && charc.currentState[k] || frame.copy(oV);
+			
+			sV = utils.isString(prop[k]) ? frame.parseValue(prop[k]) : prop[k];
+			sV = k == 'rotate' ? Vector.toQuant(sV) : sV;
+
+			if(!d || d.length <= 0) {
+				end[k] = sV[k];
+				continue;
+			}
+
+			totdist = (k == 'rotate' ? Vector.quantDistance : Vector.distance)(sV, oV);
+			dist = (k == 'rotate' ? Vector.quantDistance : Vector.distance)(sV, cV);
+			if (dist === 0) {
+				charc._startAnim[k] = frame.copy(sV);
+				end[k] || delete end[k];
+			} else if (totdist > 0 && dist > totdist) {
+				end[k] || delete end[k];
+			} else {
+				mod = this.propertyModifier(charc, k, d);
+				rev = Vector.direction(sV, cV);
+
+				if (rev) {
+					cV =  Vector.quantInverse(cV);
+					end[k] = k === 'rotate' ? Vector.quantCross(cV, mod) : Vector.add(frame.copy(cV), mod);
+					end[k] = Vector.quantInverse(end[k]);
+				} else {
+					end[k] = k === 'rotate' ? Vector.quantCross(mod, cV) : Vector.add(frame.copy(cV), mod);
+				}
+			}
+		}
+
+		if (Object.keys(end).length === 0) {
+			charc.animating = false;
+			return;
+		}
+
+		utils.mixin(charc._endAnim, end);
+		this.step(charc);
+		charc.animDelta = [];
 	},
 
 	/**
@@ -83,8 +146,7 @@ module.exports = {
 	
 	complete: function (charc) {
 		charc.animating = false;
-		charc._startAnim = undefined;
-		charc._endAnim = undefined;
+		charc._prop = undefined;
 	},
 
 	lerp: function (vA, vB, t, vR) {
@@ -115,5 +177,40 @@ module.exports = {
 			qR[i] = a + b;
 		}
 		return qR;
+	},
+
+	propertyModifier: function (c, p, d) {
+		var dP = (d instanceof Array) ? frame.copy(d) : [d, 0, 0];
+
+		if (frame.isTransform(p)) {
+			if (c.transformModifier)
+				dP = c.transformModifier(p, dP);
+			this.transformModifier(c, p, dP);
+		}
+
+		this.fire(c, 'onPropertyModify', {property: p, change: dP});
+		return dP;
+	},
+
+	transformModifier: function (c, p, d) {
+		if(p == 'rotate') {
+			return Vector.toQuant(d);
+		}
+		return d;
+	},
+
+	isCompleted: function (cV, eV) {
+		if (Vector.equals(cV, eV)) return 0;
+		else if (Vector.greater(cV, eV)) return 1;
+		else return -1;
+	},
+
+	fire: function (ctx, name, ev) {
+		var fn = ctx[name];
+		if (utils.isString(fn)) {
+			ctx.bubble(name, ev);
+		} else if (fn) {
+			fn.call(ctx, ev);
+		}
 	}
 };

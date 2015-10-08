@@ -115,13 +115,20 @@ module.exports = kind.singleton({
 	* @public
 	*/
 	register: function (charc) {
+		this.deRegister(charc);
 		this.evnts.push(charc);
+		this.remove(charc);
+		charc.animating = true;
 		
-		/*if (!this.running) {
-			this.running = true;
-			this.start();
-		}*/
-		this.start();
+		if (!this.isTicking) {
+			this.dummy();
+			this.isTicking = true;
+		}
+	},
+
+	deRegister: function (curr) {
+		var idx = this.evnts.indexOf(curr);
+		if (idx >= 0) this.evnts.splice(idx, 1);	
 	},
 
 	/**
@@ -144,7 +151,7 @@ module.exports = kind.singleton({
 	loop: function () {
 		var i, curr,
 			len = this.chracs.length,
-			ts = utils.perfNow();
+			ts;
 
 		if (len <= 0) {
 			this.cancel();
@@ -155,6 +162,7 @@ module.exports = kind.singleton({
 		for (i = 0; i < len; i++) {
 			curr = this.chracs[i];
 			if (curr && curr.ready()) {
+				ts = utils.perfNow();
 				tween.update(curr, ts);
 				if (!curr._lastTime || ts >= curr._lastTime) {
 					tween.complete(curr);
@@ -165,20 +173,32 @@ module.exports = kind.singleton({
 				}
 			}
 		}
-
-		len = this.evnts.length;
-		for (i = 0; i < len; i++) {
-			if (typeof this.evnts[i].commitAnimation === 'function') {
-				this.evnts[i].commitAnimation();
-			}
-		}
 		this.start();
 	},
 
 	/**
 	* @private
 	*/
+	eventLoop: function () {
+		var i, curr, evlen = this.evnts.length;
+		for (i = 0; i < evlen; i++) {
+			curr = this.evnts[i];
+			if (curr && curr.ready()) {
+				tween.updateDelta(curr);
+				if (!curr.animating) {
+					tween.complete(curr);
+					curr.completed(curr);
+				}
+			}
+		}
+		this.dummy();
+	},
+
+	/**
+	* TODO: Merge this implementation with actual start
+	* @private
+	*/
 	dummy: function () {
-		animation.requestAnimationFrame(function() {});
+		animation.requestAnimationFrame(this.eventLoop.bind(this));
 	}
 });
