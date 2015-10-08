@@ -684,7 +684,7 @@ var ViewMgr = kind({
 	* @private
 	*/
 	handleDragFinish: function (sender, event) {
-		if (!this.draggable || this.dismissed) return;
+		if (!this.dragging || !this.draggable || this.dismissed) return;
 
 		this.decorateDragEvent(event);
 		// if the view has been dragged far enough
