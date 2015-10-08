@@ -600,7 +600,13 @@ var ViewMgr = kind({
 	* @private
 	*/
 	handleDrag: function (sender, event) {
-		if (!this.draggable || this.dismissed) return;
+		if (!this.dragging || !this.draggable || this.dismissed) return;
+
+		// check direction against orientation to ignore drags that don't apply to this
+		if (!event[this.orientation]) {
+			this.set('dragging', false);
+			return;
+		}
 
 		this.decorateDragEvent(event);
 		if (this.canDrag(event.direction)) {
