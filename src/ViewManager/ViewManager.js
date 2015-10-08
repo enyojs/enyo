@@ -362,6 +362,24 @@ var ViewMgr = kind({
 		}
 	},
 
+
+	/**
+	* Returns the index of the provided view. For fixed ViewManagers, this reflects the view's ordered
+	* position. For floating ViewManagers, this reflects the last occurence of the view in the stack. If
+	* the view isn't found, -1 is returned.
+	*
+	* @param  {enyo.Control} view
+	* @return {Number}      Index of `view`
+	* @public
+	*/
+	indexOf: function (view) {
+		var index,
+			name = view && view.name;
+		if (!name) return -1;
+
+		return this.floating ? this.stack.lastIndexOf(name) : this.views.indexOf(view);
+	},
+
 	/**
 	* @public
 	*/
