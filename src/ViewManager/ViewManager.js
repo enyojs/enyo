@@ -373,8 +373,7 @@ var ViewMgr = kind({
 	* @public
 	*/
 	indexOf: function (view) {
-		var index,
-			name = view && view.name;
+		var name = view && view.name;
 		if (!name) return -1;
 
 		return this.floating ? this.stack.lastIndexOf(name) : this.views.indexOf(view);
