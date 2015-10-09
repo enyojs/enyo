@@ -531,7 +531,7 @@ var Control = module.exports = kind(
 		// NOTE: Because this method accepts a string and for efficiency does not wish to
 		// parse it to determine if it is actually multiple classes we later pull a trick
 		// to keep it normalized and synchronized with our attributes hash and the node's
-		if (!this.hasClass(name)) {
+		if (name && !this.hasClass(name)) {
 
 			// this is hooked
 			this.set('classes', classes + (classes ? (' ' + name) : name));
