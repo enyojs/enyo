@@ -4,3 +4,16 @@
 		z-index: 20;
 	}
 }
+
+.enyo-viewmanager-scrim {
+	background: #fff;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 300ms linear;
+	z-index: 10;
+
+	&.showing {
+		opacity: 0.5;
+		pointer-events: auto;
+	}
+}
