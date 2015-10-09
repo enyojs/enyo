@@ -44,11 +44,11 @@ var keyFrame = module.exports = kind.singleton({
 
 		charc.keyProps = [];
 		charc.keyTime = [];
+		charc.currentIndex = 0;
 		for (prop in keyframe) {
 			charc.keyTime.push(prop);
 			charc.keyProps.push(keyframe[prop]);
 		}
-		charc.currentIndex = 0;
 		charc.keyframeCallback = cb;
 		charc.initialTime = utils.perfNow();
 		charc.totalDuration = proto.duration;

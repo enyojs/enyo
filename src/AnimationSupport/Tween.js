@@ -45,17 +45,26 @@ module.exports = {
 	* @private
 	*/
 	step: function(charc, t) {
-		var k, c;
+		var k, c, pts;
 
 		node = charc.node;
 		newState = charc._endAnim;
+		props = charc.getAnimation(),
 		oldState = charc._startAnim;
 		charc.currentState = charc.currentState || {};
 
-		for (k in newState) {
+		for (k in props) {
 			cState = frame.copy(charc.currentState[k] || []);
-			c = k == 'rotate'? this.slerp : this.lerp;
-			cState = t ? c(oldState[k], newState[k], this.ease(t), cState) : newState[k];
+			// console.log(charc.name, charc.ease);
+			// console.log(charc.ease, (typeof charc.ease !== 'function'), (k !== 'rotate'));
+			if (charc.ease && (typeof charc.ease !== 'function') && (k !== 'rotate')) {
+				pts = this.calculateEase(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]));
+				cState = this.getBezier(t, pts, cState);
+			} else {
+				c = k == 'rotate' ? this.slerp : this.lerp;
+				cState = t ? c(oldState[k], newState[k], ((typeof charc.ease === 'function') ? charc.ease : this.ease)(t), cState) : newState[k];
+			}
+			
 			if (!frame.isTransform(k)) {
 				frame.setProperty(node, k, cState);
 			}
@@ -80,7 +89,49 @@ module.exports = {
 	ease: function (t) {
 		return t;
 	},
-	
+
+	calculateEase: function(data, startPoint, endPoint) {
+        var controlPoints = [startPoint];
+        var timeValues = [];
+        var animValues = [];
+        var thirdMatrix = [];
+
+        for (var key in data) {
+            var timeVal = parseFloat(key)/100;
+            var animVal = parseFloat(data[key])/100;
+            timeValues.push(timeVal);
+            animValues.push(animVal);
+            thirdMatrix.push(animVal - (timeVal * timeVal * timeVal));
+        }
+
+        var t1 = timeValues[0];
+        var t2 = timeValues[1];
+        var d1 = animValues[0];
+        var d2 = animValues[1];
+
+        // Bezier values
+        var A = 3 * t1 * [(1 - t1) * (1 - t1)];
+        var B = (3 * (t1 * t1)) * (1 - t1);
+        var C = 3 * t2 * [(1 - t2) * (1 - t2)];
+        var D = (3 * (t2 * t2)) * (1 - t2);
+
+        var E = thirdMatrix[0];
+        var F = thirdMatrix[1];
+        var det = 1 / [(A * D) - (B * C)];
+        var C1 = ((E * D) - (B * F)) * det;
+        var C2 = ((A * F) - (C * E)) * det;
+        controlPoints.push([C1,C1,C1]);
+        controlPoints.push([C2,C2,C2]);
+		controlPoints.push(endPoint);
+
+		// console.log(data);
+        // console.log("the third matrix values are " + thirdMatrix);
+		// console.log("E is " + E + "the F is " + F);
+        
+        console.log("CP", controlPoints);
+        return controlPoints;
+    },
+
 	complete: function (charc) {
 		charc.animating = false;
 		charc._startAnim = undefined;
@@ -115,5 +166,76 @@ module.exports = {
 			qR[i] = a + b;
 		}
 		return qR;
+	},
+
+	/**
+	* @public
+	* @params t: time, points: knot and control points, vR: resulting point
+	*/
+	getBezier: function (t, points, vR) {
+		if (!vR) vR = [];
+
+		var i, j,
+			c = points.length,
+			l = points[0].length,
+			lastIndex = (c - 1),
+			endPoint = points[lastIndex],
+			values = this.getBezierValues(t, lastIndex);
+
+		for (i = 0; i < l; i++) {
+			vR[i] = 0;
+			for (j = 0; j < c; j++) {
+				if ((j > 0) && (j < lastIndex)) {
+					vR[i] = vR[i] + (points[j][i] * endPoint[i] * values[j]);
+				} else {
+					vR[i] = vR[i] + (points[j][i] * values[j]);
+				}
+			}
+		}
+
+		console.log("vR", vR);
+		return vR;
+	},
+
+	/**
+	* @private
+	* @params t: time, n: order
+	*/
+	getCoeff: function (n, k) {
+
+		// Credits
+		// https://math.stackexchange.com/questions/202554/how-do-i-compute-binomial-coefficients-efficiently#answer-927064
+
+		if (k > n)
+			return void 0;
+		if (k === 0)
+			return 1;
+		if (k === n)
+			return 1;
+		if (k > n / 2)
+			return this.getCoeff(n, n - k);
+
+		return n * this.getCoeff(n - 1, k - 1) / k;
+	},
+
+	/**
+	* @public
+	* @params t: time, n: order
+	*/
+	getBezierValues: function (t, n) {
+		var c,
+			values = [],
+			x = (1 - t),
+			y = t;
+
+		//
+		// Binomial theorem to expand (x+y)^n
+		//
+		for (var k = 0; k <= n; k++) {
+			c = this.getCoeff(n, k) * Math.pow(x, (n - k)) * Math.pow(y, k);
+			values.push(c);
+		}
+
+		return values;
 	}
 };

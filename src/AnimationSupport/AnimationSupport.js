@@ -2,6 +2,7 @@ require('enyo');
 
 var
 	kind = require('../kind'),
+	core = require('./Core'),
 	activator = require('./KeyFrame'),
 	frame = require('./Frame'),
 	utils = require('../utils');
@@ -139,7 +140,17 @@ var AnimationSupport = {
 			this.initiate();
 			frame.accelerate(this.hasNode(), this.matrix);
 		};
-	})
+    }),
+    
+    /**
+     * @private
+     */
+    destroy: kind.inherit(function(sup) {
+        return function() {
+            core.remove(this);
+            sup.apply(this, arguments);
+        };
+    }),
 };
 
 module.exports = AnimationSupport;
