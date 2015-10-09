@@ -20,9 +20,25 @@ var AnimationSupport = {
 	//name: 'AnimationSupport',
 	animating: false,
 
+	/**
+	* To keep a character active for it to apply some other 
+	* animation at runtime. This gives a preformance boost when on
+	* character an animation is reapplied.
+	* @default false -	So the once the animation is completed, it has to be retriggered to 
+	*					start a new animation.
+	* @private
+	*/
 	active: false,
 
+	/**
+	* Holds variouts states of animation.
+	* Like: 'started'	- Character animation has started(within rAF)
+	*		'paused'	- Character animation has paused(within rAF)
+	*		'completed'	- Character animation has finished(within rAF)
+	* @private
+	*/
 	animationState: "",
+
 	/**
 	* Holds delta value in the order [x, y, z, rad]
 	* @private
@@ -30,7 +46,7 @@ var AnimationSupport = {
 	animDelta: [],
 
 	/**
-	*  Maximum threshold for animation
+	* Maximum threshold for animation
 	* @private
 	*/
 	animMaxThreshold: [],
@@ -63,6 +79,14 @@ var AnimationSupport = {
 	*/
 	setDistance: function (dist) {
 		this._distance = dist;
+	},
+
+	/**
+	* Gets animation distance for this character
+	* @public
+	*/
+	getDistance: function () {
+		return this._distance;
 	},
 
 	/**

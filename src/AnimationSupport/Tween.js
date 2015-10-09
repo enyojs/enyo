@@ -51,57 +51,46 @@ module.exports = {
 	* to directly trigger an animation. However, this will be later made private
 	* and will be accessible only by the interfaces exposed by framework.
 	* @parameter	chrac-		Animating character
-	*				d-			An array of delta dimensions like [x,y,z]
+	*				dt-			An array of delta dimensions like [x,y,z]
 	*
 	* @public
 	*/
-	updateDelta: function (charc, d) {
-		var k, cV, sV, oV, mod, end = {}, dist, totdist, rev;
-		var prop = charc.getAnimation();
+	updateDelta: function (charc, dt) {
+		var d,
+			st,
+			dst,
+			inc,
+			frc = charc.friction || 1,
+			trD = charc.animThresholdDuration || 1000,
+			trh = charc.animMaxThreshold || false,
+			dir = charc.direction || 0,
+			tot = charc.getDistance() || frame.getComputedDistance(
+				charc.getAnimation(),
+				charc._startAnim,
+				charc._endAnim);
 
-		d = d || charc.animDelta;
-		charc.reverse = false;
-		for (k in prop) {
-			oV = charc._startAnim[k];
-			cV = charc.currentState && charc.currentState[k] || frame.copy(oV);
-			
-			sV = utils.isString(prop[k]) ? frame.parseValue(prop[k]) : prop[k];
-			sV = k == 'rotate' ? Vector.toQuant(sV) : sV;
+		dt = dt || charc.animDelta[dir];
+		if (dt) {
+			dt = frc * dt;
+			dst = charc._animCurDistane || 0;
+			inc = dst + dt * (charc.reverse ? -1 : 1);
+			st  = inc > 0 && inc <= tot;
 
-			if(!d || d.length <= 0) {
-				end[k] = sV[k];
-				continue;
-			}
-
-			totdist = (k == 'rotate' ? Vector.quantDistance : Vector.distance)(sV, oV);
-			dist = (k == 'rotate' ? Vector.quantDistance : Vector.distance)(sV, cV);
-			if (dist === 0) {
-				charc._startAnim[k] = frame.copy(sV);
-				end[k] || delete end[k];
-			} else if (totdist > 0 && dist > totdist) {
-				end[k] || delete end[k];
-			} else {
-				mod = this.propertyModifier(charc, k, d);
-				rev = Vector.direction(sV, cV);
-
-				if (rev) {
-					cV =  Vector.quantInverse(cV);
-					end[k] = k === 'rotate' ? Vector.quantCross(cV, mod) : Vector.add(frame.copy(cV), mod);
-					end[k] = Vector.quantInverse(end[k]);
-				} else {
-					end[k] = k === 'rotate' ? Vector.quantCross(mod, cV) : Vector.add(frame.copy(cV), mod);
+			if (st) {
+				d = inc / tot;
+				if (trh &&  inc > trh && dt === 0) {
+					charc.setDuration(trD);
+					charc.start(true);
 				}
+				this.step(charc, d);
+			} else {
+				charc.animating = st;
+				charc.reverse = inc <= 0;
 			}
+			
+			charc._animCurDistane = st ? inc : 0;
+			charc.animDelta = [];
 		}
-
-		if (Object.keys(end).length === 0) {
-			charc.animating = false;
-			return;
-		}
-
-		utils.mixin(charc._endAnim, end);
-		this.step(charc);
-		charc.animDelta = [];
 	},
 
 	/**

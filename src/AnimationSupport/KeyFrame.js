@@ -104,12 +104,11 @@ keyFrame.keyFraming = function (charc) {
 	var index = charc.currentIndex || 0,
 		old = charc.keyTime[index -1] || 0,
 		next = charc.keyTime[index],
-		total = charc.totalDuration || charc.totalDistance,
+		total = charc.totalDuration,
 		change = total ? total * ((next - old)/100) : "0";
 
 	charc.addAnimation(charc.keyProps[index]);
 	if(charc.totalDuration) charc.setDuration(change);
-	if(charc.totalDistance) charc.setDistance(change);
 	charc.animating = false;
 	charc.currentIndex = index;
 };

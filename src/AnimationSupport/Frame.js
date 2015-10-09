@@ -340,5 +340,16 @@ var frame = module.exports = {
 			eP[k] = tP[k] || dP[k];
 		}
 		return {_startAnim: sP, _endAnim: eP, _transform: dP};
+	},
+
+	getComputedDistance: function (prop, initalProp, finalProp) {
+		var k, sV, eV, dst, tot = 0;
+		for (k in prop) {
+			sV = initalProp[k];
+			eV = finalProp[k];
+			dst = (k == 'rotate' ? Vector.quantDistance : Vector.distance)(eV, sV);
+			tot += dst;
+		}
+		return tot;
 	}
 };
