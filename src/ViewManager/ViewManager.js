@@ -10,7 +10,7 @@ var
 	rAF = animation.requestAnimationFrame;
 
 var
-	SlideViewLayout = require('../SlideViewLayout');
+	ScrimSupport = require('./ScrimSupport');
 
 var viewCount = 0;
 
@@ -733,3 +733,4 @@ var ViewMgr = kind({
 });
 
 module.exports = ViewMgr;
+module.exports.ScrimSupport = ScrimSupport;
