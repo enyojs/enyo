@@ -33,11 +33,11 @@ module.exports = {
 			since = ts - charc._startTime;
 
 		if (since < 0) return;
-		if (since < dur) {
+		if (since <= dur) {
 			t = since / dur;
 			this.step(charc, t);
 		} else {
-			this.step(charc);
+			this.step(charc, 1);
 		}
 	},
 
@@ -55,8 +55,6 @@ module.exports = {
 
 		for (k in props) {
 			cState = frame.copy(charc.currentState[k] || []);
-			// console.log(charc.name, charc.ease);
-			// console.log(charc.ease, (typeof charc.ease !== 'function'), (k !== 'rotate'));
 			if (charc.ease && (typeof charc.ease !== 'function') && (k !== 'rotate')) {
 				pts = this.calculateEase(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]));
 				cState = this.getBezier(t, pts, cState);
@@ -123,12 +121,8 @@ module.exports = {
         controlPoints.push([C1,C1,C1]);
         controlPoints.push([C2,C2,C2]);
 		controlPoints.push(endPoint);
-
-		// console.log(data);
-        // console.log("the third matrix values are " + thirdMatrix);
-		// console.log("E is " + E + "the F is " + F);
         
-        console.log("CP", controlPoints);
+        //console.log("CP", controlPoints);
         return controlPoints;
     },
 
@@ -185,7 +179,7 @@ module.exports = {
 		for (i = 0; i < l; i++) {
 			vR[i] = 0;
 			for (j = 0; j < c; j++) {
-				if ((j > 0) && (j < lastIndex)) {
+				if ((j > 0) && (j < (c - 1))) {
 					vR[i] = vR[i] + (points[j][i] * endPoint[i] * values[j]);
 				} else {
 					vR[i] = vR[i] + (points[j][i] * values[j]);
@@ -193,7 +187,7 @@ module.exports = {
 			}
 		}
 
-		console.log("vR", vR);
+		// console.log("vR", vR);
 		return vR;
 	},
 
