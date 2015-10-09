@@ -1,11 +1,12 @@
 var rAF = window.requestAnimationFrame;
 
 var
-	animation = require('enyo/animation'),
-	kind = require('enyo/kind'),
-	utils = require('enyo/utils'),
-	Control = require('enyo/Control'),
-	EventEmitter = require('enyo/EventEmitter'),
+	animation = require('../animation'),
+	kind = require('../kind'),
+	utils = require('../utils'),
+	Control = require('../Control'),
+	EventEmitter = require('../EventEmitter'),
+	SlideViewLayout = require('../SlideViewLayout'),
 	rAF = animation.requestAnimationFrame;
 
 var
@@ -292,9 +293,9 @@ var ViewMgr = kind({
 
 		if (this.views.length === 0) return;
 
-		// find the first declared active view
+		// find the first declared defaultView
 		while ((view = this.views[i++]) && !name) {
-			if (view.active) {
+			if (view.defaultView) {
 				name = view.name;
 			}
 		}
@@ -578,6 +579,7 @@ var ViewMgr = kind({
 	teardownView: function (view) {
 		if (view.node && !view.persistent) {
 			view.node.remove();
+			view.node = null;
 			view.set('canGenerate', false);
 			view.teardownRender(true);
 		}
@@ -617,7 +619,7 @@ var ViewMgr = kind({
 	*/
 	handleDragStart: function (sender, event) {
 		if (!this.draggable || this.dismissed) return;
-		this.set('dragging', true);
+		this.set('dragging', 'start');
 		this.dragDirection = 0;
 		this.dragView = null;
 		this.dragBounds = this.getBounds();
@@ -633,10 +635,14 @@ var ViewMgr = kind({
 	handleDrag: function (sender, event) {
 		if (!this.dragging || !this.draggable || this.dismissed) return;
 
-		// check direction against orientation to ignore drags that don't apply to this
-		if (!event[this.orientation]) {
+		// check direction against orientation to ignore drags that don't apply to this. the check
+		// should only be necessary for the first drag event so it's further guarded by the special
+		// 'start' value of dragging.
+		if (this.dragging == 'start' && !event[this.orientation]) {
 			this.set('dragging', false);
 			return;
+		} else {
+			this.set('dragging', true);
 		}
 
 		this.decorateDragEvent(event);
