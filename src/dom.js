@@ -431,7 +431,7 @@ var dom = module.exports = {
 	* @public
 	*/
 	hasClass: function(node, s) {
-		if (!node || !node.className) { return; }
+		if (!node || !s || !node.className) { return; }
 		return (' ' + node.className + ' ').indexOf(' ' + s + ' ') >= 0;
 	},
 
@@ -443,7 +443,7 @@ var dom = module.exports = {
 	* @public
 	*/
 	addClass: function(node, s) {
-		if (node && !this.hasClass(node, s)) {
+		if (node && s && !this.hasClass(node, s)) {
 			var ss = node.className;
 			node.className = (ss + (ss ? ' ' : '') + s);
 		}
@@ -457,7 +457,7 @@ var dom = module.exports = {
 	* @public
 	*/
 	removeClass: function(node, s) {
-		if (node && this.hasClass(node, s)) {
+		if (node && s && this.hasClass(node, s)) {
 			var ss = node.className;
 			node.className = (' ' + ss + ' ').replace(' ' + s + ' ', ' ').slice(1, -1);
 		}
