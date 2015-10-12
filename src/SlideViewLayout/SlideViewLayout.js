@@ -45,6 +45,15 @@ module.exports = kind({
 	/**
 	* @private
 	*/
+	addRemoveDirection: function (view, addRemove, invert) {
+		var direction = invert ? -this.container.direction : this.container.direction,
+			className = direction == 1 ? 'forward' : 'back';
+		view.addRemoveClass(className, addRemove);
+	},
+
+	/**
+	* @private
+	*/
 	drag: function (event) {
 		var px,
 			c = this.container,
@@ -81,25 +90,14 @@ module.exports = kind({
 	* @private
 	*/
 	prepareTransition: function (was, is) {
-		var c = this.container,
-			wasIndex = c.indexOf(was),
-			isIndex = c.indexOf(is);
+		var c = this.container;
 
-		if (c.floating) {
-			// for a floating VM, if both is and was are not found, we're going back because is was
-			// already popped off the stack. however when the initial view is displayed, both
-			// indices will also be -1 but `was` will be null as well so we check that too.
-			this.direction = was && isIndex == -1 && wasIndex == -1 ? 'back' : 'forward';
-		} else {
-			// fixed VMs direction is based only on each view's ordered position 
-			this.direction = wasIndex < isIndex ? 'forward' : 'back';
-		}
-		if (is) is.addClass(this.direction);
-		if (was) was.addClass(this.direction == 'back' ? 'forward' : 'back');
+		if (is) this.addRemoveDirection(is, true);
+		if (was) this.addRemoveDirection(was, true, true);
 
 		if (this.container.layoutCover) {
-			this.stationaryView = this.direction == 'forward' && was
-								|| this.direction == 'back' && is;
+			this.stationaryView = c.direction == 1 && was
+								|| c.direction == -1 && is;
 			if (this.stationaryView) this.stationaryView.addClass('stationary');
 		}
 	},
@@ -115,7 +113,7 @@ module.exports = kind({
 			was.applyStyle('transform', null);
 		}
 		if (is) {
-			is.removeClass(this.direction);
+			this.addRemoveDirection(is, false);
 			is.applyStyle('transform', null);
 		}
 
@@ -141,7 +139,7 @@ module.exports = kind({
 	completeTransition: function (view) {
 		TransitionViewLayout.prototype.completeTransition.apply(this, arguments);
 		if (view) {
-			view.removeClass(this.direction == 'back' ? 'forward' : 'back');
+			this.addRemoveDirection(view, false, true);
 			if (this.stationaryView && this.stationaryView == view) {
 				this.stationaryView.removeClass('stationary');
 				this.stationaryView = null;

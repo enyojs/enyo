@@ -59,6 +59,16 @@ var ViewMgr = kind({
 	active: null,
 
 	/**
+	* Indicates the logical direction of a view activation. May be used by ViewLayouts to inform the
+	* direction of their animation
+	*
+	* @type {Number}
+	* @default 0
+	* @private
+	*/
+	direction: 0,
+
+	/**
 	* @private
 	*/
 	activeChanged: function (was, is) {
@@ -413,6 +423,7 @@ var ViewMgr = kind({
 		var index = this.views.indexOf(this.active) + 1,
 			view = this.views[index];
 		if (view) {
+			this.direction = 1;
 			return this.activate(view.name);
 		}
 	},
@@ -424,6 +435,7 @@ var ViewMgr = kind({
 		var index = this.views.indexOf(this.active) - 1,
 			view = this.views[index];
 		if (view) {
+			this.direction = -1;
 			return this.activate(view.name);
 		}
 	},
@@ -436,6 +448,7 @@ var ViewMgr = kind({
 			depth = this.stack.length;
 		if (this.floating && depth > 0) {
 			name = this.dragging ? this.stack[0] : this.stack.shift();
+			this.direction = -1;
 			return this._activate(name);
 		}
 	},
@@ -460,6 +473,24 @@ var ViewMgr = kind({
 	},
 
 	/**
+	* @private
+	*/
+	determineDirection: function (view) {
+		var isIndex, wasIndex;
+
+		// for a floating VM, the default direction is always forward
+		if (this.floating) {
+			this.direction = 1;
+		}
+		// fixed VMs direction is based on each view's ordered position
+		else {
+			isIndex = this.indexOf(view);
+			wasIndex = this.indexOf(this.active);
+			this.direction = wasIndex < isIndex ? 1 : -1;
+		}
+	},
+
+	/**
 	* Indicates if the view is dismissable via dragging
 	*
 	* @return {Boolean}
@@ -477,6 +508,7 @@ var ViewMgr = kind({
 	*/
 	dismiss: function () {
 		if (this.manager) {
+			this.direction = -1;
 			this.set('active', null);
 			this.set('dismissed', true);
 			this.emit('dismiss');
@@ -513,9 +545,13 @@ var ViewMgr = kind({
 	*/
 	activate: function (viewName) {
 		var view = this._activate(viewName);
-		if (view && !view.isManager && this.active && this.floating) {
-			this.stack.unshift(this.active.name);
+		if (view && !view.isManager) {
+			if (this.active && this.floating) {
+				this.stack.unshift(this.active.name);
+			}
+			if (!this.direction) this.determineDirection(view);
 		}
+
 		return view;
 	},
 
@@ -592,6 +628,7 @@ var ViewMgr = kind({
 	* @private
 	*/
 	handleLayoutComplete: function (sender, name, view) {
+		this.direction = 0;
 		if (view == this.active) {
 			this.emit('activated', {
 				view: view
