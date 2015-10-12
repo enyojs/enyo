@@ -45,10 +45,11 @@ module.exports = {
 	* @private
 	*/
 	step: function(charc, t) {
-		var k, c, pts;
+		var k, c, d, pts;
 
 		node = charc.node;
 		newState = charc._endAnim;
+		d = charc._duration;
 		props = charc.getAnimation(),
 		oldState = charc._startAnim;
 		charc.currentState = charc.currentState || {};
@@ -60,7 +61,7 @@ module.exports = {
 				cState = this.getBezier(t, pts, cState);
 			} else {
 				c = k == 'rotate' ? this.slerp : this.lerp;
-				cState = t ? c(oldState[k], newState[k], ((typeof charc.ease === 'function') ? charc.ease : this.ease)(t), cState) : newState[k];
+				cState = t ? c(oldState[k], newState[k], ((typeof charc.ease === 'function') ? charc.ease : this.ease)(t, d), cState) : newState[k];
 			}
 			
 			if (!frame.isTransform(k)) {
