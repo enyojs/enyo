@@ -2,6 +2,7 @@ require('enyo');
 
 var 
 	frame = require('./Frame'),
+	matrixUtil = require('./Matrix'),
 	Vector = require('./Vector');
 
 var oldState, newState, node, matrix, cState = [];
@@ -89,43 +90,38 @@ module.exports = {
 		return t;
 	},
 
-	calculateEase: function(data, startPoint, endPoint) {
-        var controlPoints = [startPoint];
-        var timeValues = [];
-        var animValues = [];
-        var thirdMatrix = [];
+	calculateEase: function(easeObj, startPoint, endPoint) {
+		var order = (easeObj && Object.keys(easeObj).length) ? (Object.keys(easeObj).length + 1) : 0;
+		var controlPoints = [startPoint],
+			bValues = [],
+			m1 = [],
+			m2 = [],
+			m3 = [],
+			m4 = [],
+			l = 0;
 
-        for (var key in data) {
-            var timeVal = parseFloat(key)/100;
-            var animVal = parseFloat(data[key])/100;
-            timeValues.push(timeVal);
-            animValues.push(animVal);
-            thirdMatrix.push(animVal - (timeVal * timeVal * timeVal));
-        }
-
-        var t1 = timeValues[0];
-        var t2 = timeValues[1];
-        var d1 = animValues[0];
-        var d2 = animValues[1];
-
-        // Bezier values
-        var A = 3 * t1 * [(1 - t1) * (1 - t1)];
-        var B = (3 * (t1 * t1)) * (1 - t1);
-        var C = 3 * t2 * [(1 - t2) * (1 - t2)];
-        var D = (3 * (t2 * t2)) * (1 - t2);
-
-        var E = thirdMatrix[0];
-        var F = thirdMatrix[1];
-        var det = 1 / [(A * D) - (B * C)];
-        var C1 = ((E * D) - (B * F)) * det;
-        var C2 = ((A * F) - (C * E)) * det;
-        controlPoints.push([C1,C1,C1]);
-        controlPoints.push([C2,C2,C2]);
+		var t, a;
+		for (var key in easeObj) {
+			t = parseFloat(key) / 100;
+			a = parseFloat(easeObj[key]) / 100;
+			bValues = this.getBezierValues(t, order);
+			bValues.shift();
+			m1.push(a - bValues.pop());
+			m2.push(bValues);
+		}
+		
+		m3 = matrixUtil.inverseN(m2, bValues.length);
+		
+		m4 = matrixUtil.multiplyN(m3, m1);
+		l = m4.length;
+		for (var i = 0; i < l; i++) {
+			controlPoints.push([m4[i], m4[i], m4[i]]);
+		}
+		
 		controlPoints.push(endPoint);
-        
-        //console.log("CP", controlPoints);
-        return controlPoints;
-    },
+
+		return controlPoints;
+	},
 
 	complete: function (charc) {
 		charc.animating = false;
@@ -188,13 +184,12 @@ module.exports = {
 			}
 		}
 
-		// console.log("vR", vR);
 		return vR;
 	},
 
 	/**
 	* @private
-	* @params t: time, n: order
+	* @params n: order, k: current position
 	*/
 	getCoeff: function (n, k) {
 

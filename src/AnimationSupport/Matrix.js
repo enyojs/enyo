@@ -149,20 +149,17 @@ module.exports = {
 	* @public
 	*/
 	multiplyN: function(m1, m2) {
-		var j, k, i, sum,
+		var i, j, sum,
 			m = [],
 			l1 = m1.length,
 			l2 = m2.length;
 
-		for (j = 0; j < l2; j++) {
-			m[j] = [];
-			for (k = 0; k < m1[0].length; k++) {
-				sum = 0;
-				for (i = 0; i < l1; i++) {
-					sum += m1[i][k] * m2[j][k];
-				}
-				m[j].push(sum);
+		for (i = 0; i < l1; i++) {
+			sum = 0;
+			for (j = 0; j < l2; j++) {
+				sum += m1[i][j] * m2[j];
 			}
+			m.push(sum);
 		}
 		return m;
 	},
@@ -171,7 +168,8 @@ module.exports = {
 	* @public
 	*/
 	inverseN: function(matrix, n) {
-		var i, j, k, r,
+		var i, j, k, r, t,
+			precision = 100000,
 			result = [],
 			row = [];
 		for (i = 0; i < n; i++) {
@@ -180,22 +178,28 @@ module.exports = {
 				else matrix[i][j] = 0.0;
 			}
 		}
+
 		for (i = 0; i < n; i++) {
 			for (j = 0; j < n; j++) {
 				if (i != j) {
 					r = matrix[j][i] / matrix[i][i];
+					r = Math.round(r * precision) / precision;
 					for (k = 0; k < 2 * n; k++) {
-						matrix[j][k] -= r * matrix[i][k];
+						t = Math.round(matrix[j][k] * precision) / precision;
+						t -= Math.round((r * matrix[i][k]) * precision) / precision;
+						matrix[j][k] = t;
 					}
 				}
 			}
 		}
+
 		for (i = 0; i < n; i++) {
+			t = matrix[i][i];
 			for (j = 0; j < 2 * n; j++) {
-				matrix[i][j] /= matrix[i][i];
+				matrix[i][j] = matrix[i][j] / t;
 			}
 		}
-
+		
 		for (i = 0; i < n; i++) {
 			row = [];
 			for (k = 0, j = n; j < 2 * n; j++, k++) {
