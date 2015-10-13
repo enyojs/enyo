@@ -391,6 +391,10 @@ var ViewMgr = kind({
 	},
 
 	/**
+	* Retrieves and creates, if necessary, a view or view manager by name
+	*
+	* @param {String} viewName Name of the view or view manager
+	* @return {enyo.Control} View
 	* @public
 	*/
 	getView: function (viewName) {
@@ -417,6 +421,9 @@ var ViewMgr = kind({
 	},
 
 	/**
+	* Navigates to the next view based on order of definition or creation
+	*
+	* @return {enyo.Control} Activated view
 	* @public
 	*/
 	next: function () {
@@ -429,6 +436,9 @@ var ViewMgr = kind({
 	},
 
 	/**
+	* Navigates to the previous view based on order of definition or creation
+	*
+	* @return {enyo.Control} Activated view
 	* @public
 	*/
 	previous: function () {
@@ -441,13 +451,22 @@ var ViewMgr = kind({
 	},
 
 	/**
+	* If this is a floating ViewManager, navigates back `count` views from the stack.
+	*
+	* @param {Number} [count] Number of views to pop off the stack. Defaults to 1.
+	* @return {enyo.Control} Activated view
 	* @public
 	*/
-	back: function () {
+	back: function (count) {
 		var name,
 			depth = this.stack.length;
 		if (this.floating && depth > 0) {
-			name = this.dragging ? this.stack[0] : this.stack.shift();
+			if (this.dragging) {
+				name = this.stack[0];
+			} else {
+				count = count > depth ? depth : count || 1;
+				name = this.stack.splice(0, count).pop();
+			}
 			this.direction = -1;
 			return this._activate(name);
 		}
