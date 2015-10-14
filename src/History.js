@@ -183,6 +183,9 @@ var EnyoHistory = module.exports = kind.singleton(
 	*/
 	clear: function () {
 		var len = _history.length;
+
+		if (_popQueueCount) len = len - _popQueueCount;
+
 		if (len) {
 			this.drop(len);
 		}
