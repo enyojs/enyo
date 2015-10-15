@@ -175,17 +175,17 @@ var EnyoHistory = module.exports = kind.singleton(
 	},
 
 	/**
-	* Asynchronously drops all history entries without calling their respective handlers. When the
+	* Clears all history entries without calling their respective handlers. When the
 	* entries are popped, the internal history will be empty and the browser history will be
 	* reset to the state when this module started tracking the history.
 	*
 	* @public
 	*/
 	clear: function () {
-		var len = _history.length;
-		if (len) {
-			this.drop(len);
-		}
+		_queue.splice(0, _queue.length);
+		_history.splice(0, _history.length);
+		_popQueueCount = 0;
+		_pushQueued = false;
 	},
 
 	/**
