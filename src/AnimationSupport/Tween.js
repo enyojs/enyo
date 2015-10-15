@@ -192,10 +192,14 @@ module.exports = {
 	* @params n: order, k: current position
 	*/
 	getCoeff: function (n, k) {
-
+		n = parseInt(n);
+		k = parseInt(k);
 		// Credits
 		// https://math.stackexchange.com/questions/202554/how-do-i-compute-binomial-coefficients-efficiently#answer-927064
-
+		if (isNaN(n) || isNaN(k))
+			return void 0;
+		if ((n < 0) || (k < 0))
+			return void 0;
 		if (k > n)
 			return void 0;
 		if (k === 0)
