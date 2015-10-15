@@ -182,9 +182,9 @@ var EnyoHistory = module.exports = kind.singleton(
 	* @public
 	*/
 	clear: function () {
-		_queue.length = 0;
+		_queue.splice(0, _queue.length);
+		_history.splice(0, _history.length);
 		_popQueueCount = 0;
-		_history.length = 0;
 		_pushQueued = false;
 	},
 
