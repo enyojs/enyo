@@ -240,7 +240,7 @@ var ViewMgr = kind({
 	* @private
 	*/
 	initComponents: function () {
-		var managersOwner = Object.hasOwnProperty('managers') ? this.getInstanceOwner() : this;
+		var managersOwner = this.hasOwnProperty('managers') ? this.getInstanceOwner() : this;
 
 		// view configs or instances
 		this.views = [];
@@ -347,24 +347,19 @@ var ViewMgr = kind({
 	*/
 	addView: function (view, owner, isManager) {
 		var index,
-		isControl = view instanceof Control,
+			isControl = view instanceof Control,
 			_view = isControl ? view : utils.clone(view),
 			name = _view.name = _view.name || 'view' + (++viewCount);
 
 		owner = _view.owner || owner || this;
 		if (isControl) {
 			_view.set('owner', owner);
-			if (_view instanceof ViewMgr) {
-				_view.isManager = true;
-			}
+			isManager = _view instanceof ViewMgr;
 		} else {
 			_view.owner = owner;
-			if (isManager || _view.isManager) {
-				_view.isManager = true;
-			}
 		}
 
-		if (_view.isManager) {
+		if (isManager) {
 			// setting directly because the change handler is called manually during create
 			_view.manager = this;
 			this.viewManagers[name] = _view;
@@ -547,7 +542,7 @@ var ViewMgr = kind({
 		// that is changing. Contained ViewManagers will also fire activate and deactivate events
 		// but we can't notify them because of method overlap. Also ignore events originating from
 		// contained ViewManagers (prefixed by manager-).
-		if (event && event.view && !event.view.isManager && name.indexOf('manager-') !== 0) {
+		if (event && event.view && name.indexOf('manager-') !== 0 && !this.isManager(event.view)) {
 			if (utils.isFunction(event.view[name])) event.view[name](event);
 		}
 	},
@@ -581,7 +576,7 @@ var ViewMgr = kind({
 	*/
 	activate: function (viewName) {
 		var view = this._activate(viewName);
-		if (view && !view.isManager) {
+		if (view && !this.isManager(view)) {
 			if (this.active && this.floating) {
 				this.stack.unshift(this.active.name);
 			}
@@ -615,7 +610,7 @@ var ViewMgr = kind({
 			view: view,
 			dragging: this.dragging
 		});
-		if (!this.dragging && !view.isManager) this.set('active', view);
+		if (!this.dragging && !this.isManager(view)) this.set('active', view);
 	},
 
 	/**
@@ -633,7 +628,7 @@ var ViewMgr = kind({
 	deactivateImmediate: function (view) {
 		this.teardownView(view);
 
-		if (!view.isManager) {
+		if (!this.isManager(view)) {
 			this.emit('deactivated', {
 				view: view,
 				dragging: this.dragging
@@ -655,6 +650,13 @@ var ViewMgr = kind({
 			view.set('canGenerate', false);
 			view.teardownRender(true);
 		}
+	},
+
+	/**
+	* @private
+	*/
+	isManager: function (view) {
+		return view && this.viewManagers[view.name];
 	},
 
 	// Layout
