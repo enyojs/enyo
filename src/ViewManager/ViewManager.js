@@ -211,6 +211,7 @@ var ViewMgr = kind({
 		// Set layoutCover for floating ViewManagers that haven't explicitly defined it
 		if (this.floating && this.layoutCover === undefined) this.layoutCover = true;
 
+		this.on('*', this.notifyViews, this);
 		Control.prototype.create.apply(this, arguments);
 
 		// cache a bound reference to the managerEvent handler
@@ -532,6 +533,22 @@ var ViewMgr = kind({
 			this.set('dismissed', true);
 			this.emit('dismiss');
 			this.stack = [];
+		}
+	},
+
+	/**
+	* When any view event (activate, activated, deactivate, deactivated) fires, notify the view of
+	* its change of state by calling a method matching the event (e.g. activate()), if it exists.
+	*
+	* @private
+	*/
+	notifyViews: function (sender, name, event) {
+		// Any event for a view will have an event payload with a view property indicating the view
+		// that is changing. Contained ViewManagers will also fire activate and deactivate events
+		// but we can't notify them because of method overlap. Also ignore events originating from
+		// contained ViewManagers (prefixed by manager-).
+		if (event && event.view && !event.view.isManager && name.indexOf('manager-') !== 0) {
+			if (utils.isFunction(event.view[name])) event.view[name](event);
 		}
 	},
 
