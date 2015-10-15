@@ -1,3 +1,8 @@
+/**
+* Contains the declaration for the {@link module:enyo/LightPanels~LightPanel} kind.
+* @module enyo/LightPanels
+*/
+
 require('enyo');
 
 var
@@ -8,7 +13,7 @@ var
 
 /**
 * @enum {Number}
-* @memberof module:enyo/LightPanel~LightPanel
+* @memberof module:enyo/LightPanels~LightPanel
 * @public
 */
 var States = {
@@ -19,7 +24,7 @@ var States = {
 };
 
 /**
-* A light-weight panels implementation that has basic support for side-to-side transitions
+* A lightweight panels implementation that has basic support for side-to-side transitions
 * between child components.
 *
 * @class LightPanel
@@ -28,7 +33,7 @@ var States = {
 * @public
 */
 module.exports = kind(
-	/** @lends module:enyo/LightPanel~LightPanel.prototype */ {
+	/** @lends module:enyo/LightPanels~LightPanel.prototype */ {
 
 	/**
 	* @private
@@ -41,9 +46,9 @@ module.exports = kind(
 	kind: Control,
 
 	/**
-	* The current [state]{@link module:enyo/LightPanel~LightPanel#States}.
+	* The current [state]{@link module:enyo/LightPanels~LightPanel#States}.
 	*
-	* @type {module:enyo/LightPanel~LightPanel#States}
+	* @type {module:enyo/LightPanels~LightPanel#States}
 	* @default null
 	* @public
 	*/

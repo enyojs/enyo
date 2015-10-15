@@ -8,7 +8,8 @@ require('enyo');
 var
 	kind = require('../kind'),
 	dom = require('../dom'),
-	asyncMethod = require('../utils').asyncMethod;
+	animation = require('../animation'),
+	utils = require('../utils');
 
 var
 	Control = require('../Control'),
@@ -45,21 +46,28 @@ var Orientation = {
 /**
 * The configurable options used by {@link module:enyo/LightPanels~LightPanels} when pushing panels.
 *
-* @typedef {Object} enyo.LightPanels~PushPanelOptions
+* @typedef {Object} enyo/LightPanels~LightPanels~PushPanelOptions
 * @property {Boolean} [direct] - If `true`, the transition to the panel whose index we are
 *	changing to will not be animated.
 * @property {Boolean} [forcePostTransition] - If `true`, forces post-transition work to be run
 *	immediately after each panel is created.
 * @property {Number} [targetIndex] - The index of the panel to display, otherwise the last panel
 *	created will be displayed.
+* @property {Boolean} [purge] - If `true`, removes and clears the existing set of panels before
+*	pushing new panels.
+* @property {Boolean} [force] - If `true`, forces an index change even if we are targetting an index
+*	that is the same as the current index. This can be useful in cases where we are purging panels
+*	and want to properly setup the positioning of the newly pushed panels.
 */
 
 /**
-* A light-weight panels implementation that has basic support for CSS transitions between child
+* A lightweight panels implementation that has basic support for CSS transitions between child
 * components.
 *
 * @class LightPanels
 * @extends module:enyo/Control~Control
+* @mixes module:enyo/TaskManagerSupport~TaskManagerSupport
+* @mixes module:enyo/ViewPreloadSupport~ViewPreloadSupport
 * @ui
 * @public
 */
@@ -128,15 +136,6 @@ module.exports = kind(
 	popOnBack: true,
 
 	/**
-	* When `true`, previous panels are automatically popped when moving forwards.
-	*
-	* @type {Boolean}
-	* @default false
-	* @public
-	*/
-	popOnForward: false,
-
-	/**
 	* The amount of time, in milliseconds, to run the transition animation between panels.
 	*
 	* @type {Number}
@@ -147,7 +146,7 @@ module.exports = kind(
 
 	/**
 	* The timing function to be applied to the transition animation between panels. Please refer
-	* to https://developer.mozilla.org/en-US/docs/Web/CSS/transition-timing-function.
+	* to {@linkplain https://developer.mozilla.org/en-US/docs/Web/CSS/transition-timing-function}.
 	*
 	* @type {String}
 	* @default 'ease-out'
@@ -176,10 +175,21 @@ module.exports = kind(
 	direction: Direction.FORWARDS,
 
 	/**
+	* Whether or not to reverse the panel animation when the directionality changes (i.e., rtl). Note
+	* that the animation is only reversed if {@link module:enyo/LightPanels~LightPanels} is in a
+	* [horizontal orientation]{@link module:enyo/LightPanels~LightPanels#Orientation.HORIZONTAL}.
+	*
+	* @type {Boolean}
+	* @default false
+	* @public
+	*/
+	reverseForRtl: false,
+
+	/**
 	* @private
 	*/
 	tools: [
-		{kind: Control, name: 'client', classes: 'panels-container', ontransitionend: 'transitionFinished'}
+		{kind: Control, name: 'client', classes: 'panels-container', ontransitionend: 'transitionFinished', onwebkitTransitionEnd: 'transitionFinished'}
 	],
 
 	/**
@@ -223,11 +233,16 @@ module.exports = kind(
 	* @private
 	*/
 	directionChanged: function (was) {
-		var key, value;
+		var shouldReverse = this.reverseForRtl && this.rtl && this.orientation == Orientation.HORIZONTAL,
+			key, value;
+
+		// Set internal direction property that respects RTL, if desired
+		this._direction = this.direction * (shouldReverse ? -1 : 1);
+
 		for (key in Direction) {
 			value = Direction[key];
 			if (value == was) this.removeClass(key.toLowerCase());
-			if (value == this.direction) this.addClass(key.toLowerCase());
+			if (value == this._direction) this.addClass(key.toLowerCase());
 		}
 	},
 
@@ -267,10 +282,10 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	indexChanged: function (was, is) {
+	indexChanged: function (was, is, nom, opts) {
 		// when notifyObservers is called without arguments, we do not need to do any work here
 		// (since there's no transition required with the indices are the same)
-		if (was !== is) {
+		if (was !== is || (opts && opts.force)) {
 			this.setupTransitions(was);
 		}
 	},
@@ -393,7 +408,7 @@ module.exports = kind(
 			nextPanel.postTransition();
 		}
 
-		if (!this.animate || (opts && opts.direct)) this.set('index', newIndex);
+		if (!this.animate || (opts && opts.direct)) this.set('index', newIndex, {force: opts && opts.force});
 		else this.animateTo(newIndex);
 
 		// TODO: When pushing panels after we have gone back (but have not popped), we need to
@@ -443,48 +458,48 @@ module.exports = kind(
 
 		targetIdx = (opts && opts.targetIndex != null) ? opts.targetIndex : lastIndex + newPanels.length - 1;
 
-		if (!this.animate || (opts && opts.direct)) this.set('index', targetIdx);
+		if (!this.animate || (opts && opts.direct)) this.set('index', targetIdx, {force: opts && opts.force});
 		else this.animateTo(targetIdx);
 
 		return newPanels;
 	},
 
 	/**
-	* Destroys panels whose index is either greater than, or less than, the specified value,
+	* Removes panels whose index is either greater than, or less than, the specified value,
 	* depending on the direction.
 	*
-	* @param {Number} index - Index at which to start destroying panels.
-	* @param {Number} direction - The direction in which we want to destroy panels. A negative
-	*	number signifies popping backwards, otherwise we pop forwards.
+	* @param {Number} index - Index at which to start removing panels.
+	* @param {Number} direction - The direction in which we are changing indices. A negative value
+	*	signifies that we are moving backwards, and want to remove panels whose indices are greater
+	*	than the current index. Conversely, a positive value signifies that we are moving forwards,
+	*	and panels whose indices are less than the current index should be removed.
 	* @public
 	*/
-	popPanels: function (index, direction) {
-		var panels = this.getPanels();
+	removePanels: function (index, direction) {
+		var panels = this.getPanels(),
+			i;
 
 		if (direction < 0) {
-			while (panels.length > index + 1 && index >= 0) {
-				this.popPanel(panels.length - 1);
+			for (i = panels.length - 1; i > index; i--) {
+				this.removePanel(panels[i]);
 			}
 		} else {
-			for (var panelIndex = index - 1; panelIndex >= 0; panelIndex--) {
-				this.popPanel(panelIndex, true);
+			for (i = 0; i < index; i++) {
+				this.removePanel(panels[i], true);
 			}
 		}
 	},
 
 	/**
-	* Destroys the specified panel.
+	* Removes the specified panel.
 	*
-	* @param {Number} index - The index of the panel to destroy.
-	* @param {Boolean} [preserve] - If {@link module:enyo/LightPanels~LightPanels#cacheViews} is `true`, this
-	*	value is used to determine whether or not to preserve the current panel's position in
-	*	the component hierarchy and on the screen, when caching.
-	* @public
+	* @param {Object} panel - The panel to remove.
+	* @param {Boolean} [preserve] - If {@link module:enyo/LightPanels~LightPanels#cacheViews} is
+	*	`true`, this value is used to determine whether or not to preserve the current panel's
+	*	position in the component hierarchy and on the screen, when caching.
+	* @private
 	*/
-	popPanel: function (index, preserve) {
-		var panels = this.getPanels(),
-			panel = panels[index];
-
+	removePanel: function (panel, preserve) {
 		if (panel) {
 			if (this.cacheViews) {
 				this.cacheView(panel, preserve);
@@ -492,6 +507,37 @@ module.exports = kind(
 				panel.destroy();
 			}
 		}
+	},
+
+	/**
+	* Replaces the panel(s) at the specified index with panels that will be created via provided
+	* component definition(s).
+	*
+	* @param {Number} start - The index where we wish to begin the replacement. If this is negative,
+	*	it will be treated as `panelsLength` + `start` i.e. we will use the absolute value of the
+	*	start index as a count from the end of the set of panels.
+	* @param {Number} count - The number of panels we wish to replace.
+	* @param {Object|Object[]} info - The component definition (or array of component definitions)
+	*	for the replacement panel(s).
+	* @public
+	*/
+	replaceAt: function (start, count, info) {
+		var panels = this.getPanels(),
+			insertBefore, commonInfo, end, idx;
+
+		start = start < 0 ? panels.length + start : start;
+		end = start + count;
+		insertBefore = panels[end];
+		commonInfo = {addBefore: insertBefore};
+
+		// remove existing panels
+		for (idx = start; idx < end; idx++) {
+			this.popPanel(idx);
+		}
+
+		// add replacement panels
+		if (utils.isArray(info)) this.pushPanels(info, commonInfo, {direct: true, force: true});
+		else this.pushPanel(info, commonInfo, {direct: true, force: true});
 	},
 
 
@@ -604,7 +650,7 @@ module.exports = kind(
 			if (panel.postTransition) {
 				// Async'ing this as it seems to improve ending transition performance on the TV.
 				// Requires further investigation into its behavior.
-				asyncMethod(this, function () {
+				utils.asyncMethod(this, function () {
 					panel.postTransition();
 				});
 			}
@@ -627,16 +673,14 @@ module.exports = kind(
 			currPanel = this._currentPanel;
 
 			if ((this._indexDirection < 0 && (this.popOnBack || this.cacheViews) && this.index < this.getPanels().length - 1) ||
-				(this._indexDirection > 0 && (this.popOnForward || this.cacheViews) && this.index > 0)) {
-				this.popPanels(this.index, this._indexDirection);
+				(this._indexDirection > 0 && this.cacheViews && this.index > 0)) {
+				this.removePanels(this.index, this._indexDirection);
 			}
 
 			if (prevPanel) {
 				prevPanel.removeClass('shifted');
 				prevPanel.addClass('offscreen');
 			}
-
-			if (this.popQueue && this.popQueue.length) this.finalizePurge();
 
 			this.cleanUpPanel(prevPanel);
 			this.cleanUpPanel(currPanel);
@@ -678,7 +722,7 @@ module.exports = kind(
 		var panels = this.getPanels(),
 			nextPanel = panels[this.index],
 			currPanel = this._currentPanel,
-			shiftCurrent, fnSetupClasses;
+			shiftCurrent, fnInitiateTransition;
 
 		this._indexDirection = 0;
 
@@ -703,21 +747,24 @@ module.exports = kind(
 			if (!nextPanel.generated) nextPanel.render();
 			if (nextPanel.preTransition) nextPanel.preTransition();
 
-			// ensure our panel container is in the correct, pre-transition position
-			this.shiftContainer(-1 * this._indexDirection);
-			shiftCurrent = this._indexDirection > 0;
+			fnInitiateTransition = this.bindSafely(function (timestamp) {
 
-			fnSetupClasses = this.bindSafely(function () {
+				// ensure our panel container is in the correct, pre-transition position
+				this.shiftContainer(-1 * this._indexDirection);
+				shiftCurrent = this._indexDirection > 0;
+
 				this.addClass('transitioning');
 				nextPanel.removeClass('offscreen');
 				nextPanel.addRemoveClass('shifted', shiftCurrent);
 				if (currPanel) currPanel.addRemoveClass('shifted', !shiftCurrent);
-				if (animate) setTimeout(this.bindSafely('applyTransitions', nextPanel, true), 16);
-				else this.applyTransitions(nextPanel);
+
+				// timestamp will be truthy if this is triggered from a rAF
+				if (timestamp) animation.requestAnimationFrame(this.bindSafely('applyTransitions', nextPanel, animate));
+				else this.applyTransitions(nextPanel, animate);
 			});
 
-			if (this.generated) global.requestAnimationFrame(fnSetupClasses);
-			else fnSetupClasses();
+			if (!this.generated || !animate) fnInitiateTransition();
+			else animation.requestAnimationFrame(fnInitiateTransition);
 		}
 	},
 
@@ -752,7 +799,7 @@ module.exports = kind(
 		var container = this.$.client,
 			value;
 
-		if (this.direction == Direction.FORWARDS) value = indexDirection > 0 ? -50 : 0;
+		if (this._direction == Direction.FORWARDS) value = indexDirection > 0 ? -50 : 0;
 		else value = indexDirection > 0 ? 0 : -50;
 
 		container.applyStyle('-webkit-transition', animate ? wTrans : null);
@@ -762,25 +809,14 @@ module.exports = kind(
 	},
 
 	/**
-	* Destroys all panels. These will be queued for destruction after the next panel has loaded.
+	* Destroys all panels.
 	*
 	* @private
 	*/
 	purge: function () {
-		var panels = this.getPanels();
-		this.popQueue = panels.slice();
-		panels.length = 0;
-		this.index = -1;
-	},
-
-	/**
-	* Clean-up any panels queued for destruction.
-	*
-	* @private
-	*/
-	finalizePurge: function () {
-		var panels = this.popQueue,
+		var panels = this.getPanels(),
 			panel;
+
 		while (panels.length) {
 			panel = panels.pop();
 			if (this.cacheViews) {
@@ -790,6 +826,8 @@ module.exports = kind(
 				panel.destroy();
 			}
 		}
+
+		this.index = -1;
 	},
 
 	/**

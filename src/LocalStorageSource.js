@@ -29,8 +29,8 @@ if (typeof localStorage != 'undefined') {
 	*
 	* It is important to note that usage of this source requires that
 	* [models]{@link module:enyo/Model~Model} and [collections]{@link module:enyo/Collection~Collection} use
-	* their respective `url` properties ({@link module:enyo/Model~Model.url} and
-	* {@link module:enyo/Collection~Collection.url}). Any collection that needs to be
+	* their respective `url` properties ({@link module:enyo/Model~Model#url} and
+	* {@link module:enyo/Collection~Collection#url}). Any collection that needs to be
 	* [committed]{@link module:enyo/Collection~Collection#commit} must have a unique `url` value.
 	* Any model that will be [committed]{@link module:enyo/Model~Model#commit} directly, or
 	* within an {@link module:enyo/Collection~Collection}, must have a unique

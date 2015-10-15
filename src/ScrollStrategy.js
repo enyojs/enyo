@@ -16,9 +16,9 @@ var
 * {@link module:enyo/ScrollStrategy~ScrollStrategy} is a helper [kind]{@glossary kind} that implements a default 
 * scrolling strategy for an {@link module:enyo/Scroller~Scroller}.
 * 
-* `enyo.ScrollStrategy` is not typically created in application code. Instead, it is specified 
+* `enyo/ScrollStrategy` is not typically created in application code. Instead, it is specified 
 * as the value of the [strategyKind]{@link module:enyo/Scroller~Scroller#strategyKind} property of an
-* `enyo.Scroller` or {@link module:layout/List#List}, or is used by the framework implicitly.
+* `enyo/Scroller` or {@link module:layout/List~List}, or is used by the framework implicitly.
 *
 * @class ScrollStrategy
 * @protected

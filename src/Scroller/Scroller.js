@@ -20,7 +20,7 @@ var
 /**
 * An [object]{@glossary Object} representing the scroll boundaries.
 *
-* @typedef {Object} enyo.Scroller~BoundaryObject
+* @typedef {Object} module:enyo/Scroller~Scroller~BoundaryObject
 * @property {Number} left - The left scroll position.
 * @property {Number} top - The top scroll position.
 * @property {Number} maxLeft - Maximum value for the left scroll position (minimum is always 0).
@@ -41,7 +41,7 @@ var
 /**
 * An [object]{@glossary Object} representing the overscroll boundaries.
 *
-* @typedef {Object} enyo.Scroller~OverscrollBoundaryObject
+* @typedef {Object} module:enyo/Scroller~Scroller~OverscrollBoundaryObject
 * @property {Number} overleft - The left overscroll position.
 * @property {Number} overtop - The top overscroll position.
 */
@@ -50,8 +50,8 @@ var
 * The extended {@glossary event} [object]{@glossary Object} that is provided 
 * when a scroll event is fired.
 *
-* @typedef {Object} enyo.Scroller~ScrollEvent
-* @property {module:enyo/Scroller~BoundaryObject} bounds Current values of scroller bounds.
+* @typedef {Object} module:enyo/Scroller~Scroller~ScrollEvent
+* @property {module:enyo/Scroller~Scroller~BoundaryObject} bounds - Current values of scroller bounds.
 */
 
 /**
@@ -61,7 +61,7 @@ var
 * @type {Object}
 * @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently 
 *	propagated the {@glossary event}.
-* @property {module:enyo/Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
+* @property {module:enyo/Scroller~Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
 *	event information.
 * @public
 */
@@ -95,11 +95,11 @@ var
 * applications.
 * 
 * In some mobile environments, a default scrolling solution is not implemented for
-* DOM elements. In such cases, `enyo.Scroller` implements a touch-based scrolling
+* DOM elements. In such cases, `enyo/Scroller` implements a touch-based scrolling
 * solution, which may be opted into either globally (by setting
 * [touchScrolling]{@link module:enyo/Scroller~Scroller#touchScrolling} to `true`) or on a
 * per-instance basis (by specifying a [strategyKind]{@link module:enyo/Scroller~Scroller#strategyKind}
-* of `"TouchScrollStrategy"`).
+* of `'TouchScrollStrategy'`).
 * 
 * For more information, see the documentation on
 * [Scrollers]{@linkplain $dev-guide/building-apps/layout/scrollers.html} in the
@@ -166,7 +166,7 @@ var Scroller = module.exports = kind(
 		* 
 		* @type {Number}
 		* @default null
-		* @memberof enyo.Scroller.prototype
+		* @memberof enyo/Scroller~Scroller.prototype
 		* @public
 		*/
 		maxHeight: null,
@@ -238,7 +238,7 @@ var Scroller = module.exports = kind(
 	* @name touchScrolling
 	* @type {Boolean}
 	* @default undefined
-	* @memberof enyo.Scroller.prototype
+	* @memberof enyo/Scroller~Scroller.prototype
 	* @public
 	*/
 
@@ -273,7 +273,7 @@ var Scroller = module.exports = kind(
 	preventScrollPropagation: true,
 
 	/**
-	* Needed to allow global mods to `enyo.Scroller.touchScrolling`.
+	* Needed to allow global mods to `enyo/Scroller.touchScrolling`.
 	* 
 	* @private
 	*/
@@ -562,7 +562,7 @@ var Scroller = module.exports = kind(
 	* You should generally not need to call this from application code, as the
 	* scroller usually remeasures automatically whenever needed. This method
 	* exists primarily to support an internal use case for
-	* [enyo.DataList]{@link module:enyo/DataList~DataList}.
+	* [enyo/DataList]{@link module:enyo/DataList~DataList}.
 	*
 	* @public
 	*/

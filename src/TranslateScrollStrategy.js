@@ -20,7 +20,7 @@ var
 * 
 * `TranslateScrollStrategy` is not typically created in application code. Instead, it is
 * specified as the value of the [strategyKind]{@link module:enyo/Scroller~Scroller#strategyKind} property of
-* an {@link module:enyo/Scroller~Scroller} or {@link module:layout/List#List}, or is used by the framework implicitly.
+* an {@link module:enyo/Scroller~Scroller} or {@link module:layout/List~List}, or is used by the framework implicitly.
 *
 * @class TranslateScrollStrategy
 * @extends module:enyo/TouchScrollStrategy~TouchScrollStrategy
@@ -67,18 +67,28 @@ module.exports = kind(
 			sup.apply(this, arguments);
 			dispatcher.makeBubble(this.$.clientContainer, 'scroll');
 			if (this.translateOptimized) {
-				this.setStartPosition();
+				// on render, the start positions should be 0 for translateOptimized because the
+				// scrollNode's scrollTop/Left will always be 0 and therefore offsetting the
+				// translate to account for a non-zero scrollTop/Left isn't necessary.
+				this.setStartPosition(true);
 			}
 		};
 	}),
 
 	/**
-	* @method
+	* Sets the start position for scrolling.
+	*
+	* @param {Boolean} [reset] When true, resets the start position to 0 rather than the current
+	* 	scrollTop and scrollLeft.
 	* @private
 	*/
-	setStartPosition: function() {
-		this.startX = this.getScrollLeft();
-		this.startY = this.getScrollTop();
+	setStartPosition: function (reset) {
+		if (reset) {
+			this.startX = this.startY = 0;
+		} else {
+			this.startX = this.getScrollLeft();
+			this.startY = this.getScrollTop();
+		}
 	},
 
 	/**

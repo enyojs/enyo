@@ -38,7 +38,7 @@ exports.getCookie = function(nom) {
 * Sets a [cookie]{@glossary cookie} for the given name and value to
 * [document.cookie]{@glossary document.cookie}. Use the optional configuration
 * [hash]{@glossary Object} to specify the
-* [cookie properties]{@link enyo~CookieProperties}. You may remove a
+* [cookie properties]{@link module:enyo/cookie~CookieOptions}. You may remove a
 * cookie using this method by setting its `Max-Age` value to `0`.
 *
 * Also note that if you are developing in Google Chrome with a local file as your
@@ -47,7 +47,7 @@ exports.getCookie = function(nom) {
 *
 * @param {String} nom - The name of the cookie.
 * @param {*} value - The value to be [encoded]{@glossary encodeURIComponent} for storage.
-* @param {module:enyo/cookie~CookieProperties} [props] The optional configuration properties to apply to
+* @param {module:enyo/cookie~CookieOptions} [props] The optional configuration properties to apply to
 *	the cookie.
 * @public
 */

@@ -140,7 +140,7 @@ var Model = module.exports = kind(
 	* [committed]{@link module:enyo/Model~Model#commit}, or [destroyed]{@link module:enyo/Model~Model#destroy}.
 	* Some sources may use this property in other ways.
 	*
-	* @see module:enyo/Model~Model.getUrl
+	* @see module:enyo/Model~Model#getUrl
 	* @see module:enyo/Source~Source
 	* @see module:enyo/AjaxSource~AjaxSource
 	* @see module:enyo/JsonpSource~JsonpSource
@@ -158,7 +158,7 @@ var Model = module.exports = kind(
 	* property in other ways. Note that, if this method is implemented, the
 	* [url]{@link module:enyo/Model~Model#url} will not be used.
 	*
-	* @see module:enyo/Model~Model.url
+	* @see module:enyo/Model~Model#url
 	* @see module:enyo/Source~Source
 	* @see module:enyo/AjaxSource~AjaxSource
 	* @see module:enyo/JsonpSource~JsonpSource
@@ -193,12 +193,12 @@ var Model = module.exports = kind(
 	* Any method that uses sources may override this default value in its configuration
 	* options. This value may be a [string]{@glossary String}, an
 	* [Array]{@glossary Array} of strings, an instance of {@link module:enyo/Source~Source}, or an
-	* array of `enyo.Source` instances.
+	* array of `enyo/Source` instances.
 	*
 	* @see module:enyo/Source~Source
-	* @see module:enyo/Model~Model.fetch
-	* @see module:enyo/Model~Model.commit
-	* @see module:enyo/Model~Model.destroy
+	* @see module:enyo/Model~Model#fetch
+	* @see module:enyo/Model~Model#commit
+	* @see module:enyo/Model~Model#destroy
 	* @type {(String|String[]|module:enyo/Source~Source|module:enyo/Source~Source[])}
 	* @default null
 	* @public
@@ -213,8 +213,8 @@ var Model = module.exports = kind(
 	* not defined, all keys from the [attributes]{@link module:enyo/Model~Model#attributes}
 	* [hash]{@glossary Object} will be used.
 	*
-	* @see module:enyo/Model~Model.raw
-	* @see module:enyo/Model~Model.toJSON
+	* @see module:enyo/Model~Model#raw
+	* @see module:enyo/Model~Model#toJSON
 	* @type {String[]}
 	* @default null
 	* @public
@@ -246,7 +246,7 @@ var Model = module.exports = kind(
 	* Note that this is **not** a [bindable]{@link module:enyo/BindingSupport~BindingSupport} property.
 	*
 	* @see module:enyo/States~States
-	* @see module:enyo/StateSupport~StateSupport
+	* @see {@link module:enyo/StateSupport~StateSupport}
 	* @type {module:enyo/States~States}
 	* @readonly
 	* @public
@@ -291,8 +291,8 @@ var Model = module.exports = kind(
 	* [includeKeys]{@link module:enyo/Model~Model#includeKeys}.
 	* [Computed properties]{@link module:enyo/ComputedSupport} are **never** included.
 	*
-	* @see module:enyo/Model~Model.includeKeys
-	* @see module:enyo/Model~Model.attributes
+	* @see module:enyo/Model~Model#includeKeys
+	* @see module:enyo/Model~Model#attributes
 	* @returns {Object} The formatted [hash]{@glossary Object} representing the underlying
 	*	data structure of the [model]{@link module:enyo/Model~Model}.
 	* @public
@@ -316,7 +316,7 @@ var Model = module.exports = kind(
 	* of the [model]{@link module:enyo/Model~Model}. Will automatically be executed by
 	* [JSON.parse()]{@glossary JSON.parse}.
 	*
-	* @see module:enyo/Model~Model.raw
+	* @see module:enyo/Model~Model#raw
 	* @returns {Object} The return value of [raw()]{@link module:enyo/Model~Model#raw}.
 	* @public
 	*/
@@ -330,8 +330,8 @@ var Model = module.exports = kind(
 	* Restores an [attribute]{@link module:enyo/Model~Model#attributes} to its previous value. If no
 	* attribute is specified, all previous values will be restored.
 	*
-	* @see module:enyo/Model~Model.set
-	* @see module:enyo/Model~Model.previous
+	* @see module:enyo/Model~Model#set
+	* @see module:enyo/Model~Model#previous
 	* @param {String} [prop] - The [attribute]{@link module:enyo/Model~Model#attributes} to
 	*	[restore]{@link module:enyo/Model~Model#restore}. If not provided, all attributes will be
 	* restored to their previous values.
@@ -351,15 +351,15 @@ var Model = module.exports = kind(
 	/**
 	* Commits the [model]{@link module:enyo/Model~Model} to a [source or sources]{@link module:enyo/Model~Model#source}.
 	* A model cannot be [committed]{@link module:enyo/Model~Model#commit} if it is in an
-	* [error]{@link module:enyo/States#ERROR} ({@link module:enyo/StateSupport~StateSupport.isError}) or
-	* [busy]{@link module:enyo/States#BUSY} ({@link module:enyo/StateSupport~StateSupport.isBusy})
+	* [error]{@link module:enyo/States#ERROR} ({@link module:enyo/StateSupport~StateSupport#isError}) or
+	* [busy]{@link module:enyo/States#BUSY} ({@link module:enyo/StateSupport~StateSupport#isBusy})
 	* [state]{@link module:enyo/Model~Model#status}. While executing, it will add the
 	* [COMMITTING]{@link module:enyo/States#COMMITTING} flag to the model's
 	* [status]{@link module:enyo/Model~Model#status}. Once it has completed execution, it will
 	* remove this flag (even if it fails).
 	*
-	* @see module:enyo/Model~Model.committed
-	* @see module:enyo/Model~Model.status
+	* @see module:enyo/Model~Model#committed
+	* @see module:enyo/Model~Model#status
 	* @param {module:enyo/Model~Model~ActionOptions} [opts] - Optional configuration options.
 	* @returns {this} The callee for chaining.
 	* @public
@@ -404,15 +404,15 @@ var Model = module.exports = kind(
 	* Fetches the [model]{@link module:enyo/Model~Model} from a
 	* [source or sources]{@link module:enyo/Model~Model#source}. A model cannot be
 	* [fetched]{@link module:enyo/Model~Model#fetch} if it is in an
-	* [error]{@link module:enyo/States#ERROR} ({@link module:enyo/StateSupport~StateSupport.isError}) or
-	* [busy]{@link module:enyo/States#BUSY} ({@link module:enyo/StateSupport~StateSupport.isBusy})
+	* [error]{@link module:enyo/States#ERROR} ({@link module:enyo/StateSupport~StateSupport#isError}) or
+	* [busy]{@link module:enyo/States#BUSY} ({@link module:enyo/StateSupport~StateSupport#isBusy})
 	* [state]{@link module:enyo/Model~Model#status}. While executing, it will add the
 	* [FETCHING]{@link module:enyo/States#FETCHING} flag to the model's
 	* [status]{@link module:enyo/Model~Model#status}. Once it has completed execution, it will
 	* remove this flag (even if it fails).
 	*
-	* @see module:enyo/Model~Model.fetched
-	* @see module:enyo/Model~Model.status
+	* @see module:enyo/Model~Model#fetched
+	* @see module:enyo/Model~Model#status
 	* @param {module:enyo/Model~Model~ActionOptions} [opts] - Optional configuration options.
 	* @returns {this} The callee for chaining.
 	* @public
@@ -460,14 +460,14 @@ var Model = module.exports = kind(
 	* [commit default option]{@link module:enyo/Model~Model#options} must be `true` or a
 	* `source` property must be explicitly provided in the `opts` parameter.
 	* A model cannot be destroyed (using a source) if it is in an
-	* [error]{@link module:enyo/States#ERROR} ({@link module:enyo/StateSupport~StateSupport.isError})
-	* or [busy]{@link module:enyo/States#BUSY} ({@link module:enyo/StateSupport~StateSupport.isBusy})
+	* [error]{@link module:enyo/States#ERROR} ({@link module:enyo/StateSupport~StateSupport#isError})
+	* or [busy]{@link module:enyo/States#BUSY} ({@link module:enyo/StateSupport~StateSupport#isBusy})
 	* [state]{@link module:enyo/Model~Model#status}. While executing, it will add the
 	* [DESTROYING]{@link module:enyo/States#DESTROYING} flag to the model's
 	* [status]{@link module:enyo/Model~Model#status}. Once it has completed execution, it
 	* will remove this flag (even if it fails).
 	*
-	* @see module:enyo/Model~Model.status
+	* @see module:enyo/Model~Model#status
 	* @param {module:enyo/Model~Model~ActionOptions} [opts] - Optional configuration options.
 	* @returns {this} The callee for chaining.
 	* @public
@@ -580,8 +580,8 @@ var Model = module.exports = kind(
 	* properties that were modified.
 	*
 	* @fires module:enyo/Model~Model#change
-	* @see module:enyo/ObserverSupport~ObserverSupport
-	* @see module:enyo/BindingSupport~BindingSupport
+	* @see {@link module:enyo/ObserverSupport~ObserverSupport}
+	* @see {@link module:enyo/BindingSupport~BindingSupport}
 	* @param {(String|Object)} path - Either the property name or a [hash]{@glossary Object}
 	*	of properties and values to set.
 	* @param {(*|module:enyo/Model~Options)} is If `path` is a [string]{@glossary String},
@@ -669,7 +669,7 @@ var Model = module.exports = kind(
 	},
 
 	/**
-	* A bit of hackery to facade the normal [getter]{@link module:enyo/ComputedSupport~ComputedSupport.get}. Note that
+	* A bit of hackery to facade the normal [getter]{@link module:enyo/ComputedSupport~ComputedSupport#get}. Note that
 	* we pass an arbitrary super-method that automatically returns `undefined`, which is
 	* consistent with this use case and its intended purpose.
 	*
@@ -862,7 +862,7 @@ var Model = module.exports = kind(
 	* be determined. If an [error callback]{@link module:enyo/Model~Model~Error} was provided, this method
 	* will execute it.
 	*
-	* @see module:enyo/StateSupport~StateSupport.clearError
+	* @see {@link module:enyo/StateSupport~StateSupport#clearError}
 	* @param {String} action - The action (one of `'FETCHING'`, `'COMMITTING'`, or
 	* `'DESTROYING'`) that failed and is now in an [error state]{@link module:enyo/States#ERROR}.
 	* @param {module:enyo/Model~Model~ActionOptions} opts - The original options passed to the `action`

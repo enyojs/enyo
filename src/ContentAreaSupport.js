@@ -1,6 +1,6 @@
 /**
-* Provides {@link module:enyo/ContentAreaSupport~ContentAreaSupport} which adds ability to define
-* property-bound content areas.
+* Contains declaration for {@link module:enyo/ContentAreaSupport~ContentAreaSupport}
+* mixin, which adds ability to define property-bound content areas.
 *
 * @module enyo/ContentAreaSupport
 */
@@ -12,7 +12,7 @@ var
 
 /**
 * Populates a content area either initially or in response to a change to either the content or
-* components property. `owner` is only defined for the initial call
+* components property. `owner` is only defined for the initial call.
 *
 * @private
 */
@@ -39,7 +39,7 @@ function updateContentArea (control, targetName, contentProperty, componentsProp
 }
 
 /**
-* Defines the declaratively-configured content areas
+* Defines the declaratively-configured content areas.
 * 
 * @private
 */
@@ -61,34 +61,36 @@ function initContentAreas (control) {
 *
 * ```javascript
 * var
-*	ContentAreaSupport = require('enyo/ContentAreaSupport');
+* 	kind = require('enyo/kind'),
+* 	ContentAreaSupport = require('enyo/ContentAreaSupport');
 *
-* // Defines a new kind with a single content area rendering the value of `user` into the control
-* // named `name`. `user` can contain either a string or a components declaration array.
+* // Defines a new kind with a single content area rendering the value of `user`
+* // into the control named `name`. `user` can contain either a string or a
+* // components declaration array.
 * var Hello = kind({
-*	kind: Control,
-*	mixins: [ContentAreaSupport],
-*	user: 'The Doctor',
+*		kind: Control,
+*		mixins: [ContentAreaSupport],
+*		user: 'The Doctor',
 *
-*	contentAreas: [
-*		{target: 'name', content: 'user'}
-*	],
+*		contentAreas: [
+*			{target: 'name', content: 'user'}
+*		],
 *
-*	components: [
-*		{name: 'greeting', content: 'Hello, my name is'},
-*		{name: 'name'},
-*	]
+*		components: [
+*			{name: 'greeting', content: 'Hello, my name is'},
+*			{name: 'name'},
+*		]
 * });
 *
 * // Uses the new kind with customized `user` value
 * var SayHello = kind({
-*	kind: Control,
-*	components: [
-*		{kind: Hello, user: [
-*			{kind: Img, src: 'who.png'},
-*			{content: 'David Tennant'}
-*		]}
-*	]
+*		kind: Control,
+*		components: [
+*			{kind: Hello, user: [
+*				{kind: Img, src: 'who.png'},
+*				{content: 'David Tennant'}
+*			]}
+*		]
 * });
 * ```
 *
@@ -105,10 +107,10 @@ var ContentAreaSupport = {
 	* *Note:* If updating a property at run-time to a new components block, the owner must be
 	* explicitly set or the new components will be owned by `target`.
 	*
-	* @param  {String|enyo.Control} target	Control name or instance that will be populated with the
+	* @param  {String|module:enyo/Control~Control} target	-	Control name or instance that will be populated with the
 	*	content.
-	* @param  {String} contentProperty		Name of property from which the content will be sourced.
-	* @param  {String} [componentsProperty]	Name of property from which the components will be
+	* @param  {String} contentProperty -	Name of property from which the content will be sourced.
+	* @param  {String} [componentsProperty]	-	Name of property from which the components will be
 	*	sourced. May be omitted if `contentProperty` should support either string content or a
 	*	component declaration array.
 	*

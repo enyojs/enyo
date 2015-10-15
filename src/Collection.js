@@ -239,8 +239,8 @@ var BaseCollection = kind({
 * implemented like callbacks used with [Array.sort()]{@glossary Array.sort}.
 *
 * @see {@glossary Array.sort}
-* @see module:enyo/Collection~Collection.sort
-* @see module:enyo/Collection~Collection.comparator
+* @see module:enyo/Collection~Collection#sort
+* @see module:enyo/Collection~Collection#comparator
 * @callback module:enyo/Collection~Collection~Comparator
 * @param {module:enyo/Model~Model} a - The first [model]{@link module:enyo/Model~Model} to compare.
 * @param {module:enyo/Model~Model} b - The second model to compare.
@@ -278,7 +278,7 @@ exports = module.exports = kind(
 	* [committed]{@link module:enyo/Collection~Collection#commit}, or [destroyed]{@link module:enyo/Collection~Collection#destroy}.
 	* Some sources may use this property in other ways.
 	*
-	* @see module:enyo/Collection~Collection.getUrl
+	* @see module:enyo/Collection~Collection#getUrl
 	* @see module:enyo/Source~Source
 	* @see module:enyo/AjaxSource~AjaxSource
 	* @see module:enyo/JsonpSource~JsonpSource
@@ -297,7 +297,7 @@ exports = module.exports = kind(
 	* Note that if this method is implemented, the [url]{@link module:enyo/Collection~Collection#url}
 	* property will not be used.
 	*
-	* @see module:enyo/Collection~Collection.url
+	* @see module:enyo/Collection~Collection#url
 	* @see module:enyo/Source~Source
 	* @see module:enyo/AjaxSource~AjaxSource
 	* @see module:enyo/JsonpSource~JsonpSource
@@ -328,7 +328,7 @@ exports = module.exports = kind(
 	* [emit]{@link module:enyo/EventEmitter~EventEmitter#emit} a [reset]{@link module:enyo/Collection~Collection#reset}
 	* event.
 	*
-	* @see module:enyo/Collection~Collection.modelsChanged
+	* @see module:enyo/Collection~Collection#modelsChanged
 	* @type module:enyo/ModelList~ModelList
 	* @default null
 	* @readonly
@@ -378,7 +378,7 @@ exports = module.exports = kind(
 	* Modifies the structure of data so that it can be used by the
 	* [add()]{@link module:enyo/Collection~Collection#add} method. This method will only be used
 	* during initialization or after a successful [fetch]{@link module:enyo/Collection~Collection#fetch}
-	* if the [parse]{@link module:enyo/Collection~Options.parse} flag is set to `true`.
+	* if the [parse]{@link module:enyo/Collection~Options#parse} flag is set to `true`.
 	* It may be used for simple remapping, renaming, or complex restructuring of
 	* data coming from a [source]{@link module:enyo/Collection~Collection#source} that requires
 	* modification before it can be added to the [collection]{@link module:enyo/Collection~Collection}.
@@ -799,7 +799,7 @@ exports = module.exports = kind(
 	* output of the [collection]{@link module:enyo/Collection~Collection}. Will automatically be executed by
 	* [JSON.parse()]{@glossary JSON.parse}.
 	*
-	* @see module:enyo/Collection~Collection.raw
+	* @see module:enyo/Collection~Collection#raw
 	* @returns {Object} The return value of [raw()]{@link module:enyo/Collection~Collection#raw}.
 	* @public
 	*/
@@ -844,14 +844,14 @@ exports = module.exports = kind(
 	* Commits the [collection]{@link module:enyo/Collection~Collection} to a
 	* [source]{@link module:enyo/Collection~Collection#source} or sources. An {@link module:enyo/Collection~Collection}
 	* cannot be committed if it is in an [error]{@link module:enyo/States.ERROR}
-	* ({@link module:enyo/StateSupport~StateSupport.isError}) or [busy]{@link module:enyo/States.BUSY}
-	* ({@link module:enyo/StateSupport~StateSupport.isBusy}) [state]{@link module:enyo/Model~Model#status}. While
+	* ({@link module:enyo/StateSupport~StateSupport#isError}) or [busy]{@link module:enyo/States.BUSY}
+	* ({@link module:enyo/StateSupport~StateSupport#isBusy}) [state]{@link module:enyo/Model~Model#status}. While
 	* executing, it will add the [COMMITTING]{@link module:enyo/States.COMMITTING} flag
 	* to the collection's [status]{@link module:enyo/Collection~Collection#status}. Once it has
 	* completed execution, it will remove this flag (even if it fails).
 	*
-	* @see module:enyo/Collection~Collection.committed
-	* @see module:enyo/Collection~Collection.status
+	* @see module:enyo/Collection~Collection#committed
+	* @see module:enyo/Collection~Collection#status
 	* @param {module:enyo/Collection~Collection~ActionOptions} [opts] - Optional configuration options.
 	* @returns {this} The callee for chaining.
 	* @public
@@ -896,14 +896,14 @@ exports = module.exports = kind(
 	* Fetches the [collection]{@link module:enyo/Collection~Collection} from a
 	* [source]{@link module:enyo/Collection~Collection#source} or sources. An {@link module:enyo/Collection~Collection}
 	* cannot be fetched if it is in an [error]{@link module:enyo/States.ERROR}
-	* ({@link module:enyo/StateSupport~StateSupport.isError}) or [busy]{@link module:enyo/States.BUSY}
-	* ({@link module:enyo/StateSupport~StateSupport.isBusy}) [state]{@link module:enyo/Model~Model#status}. While
+	* ({@link module:enyo/StateSupport~StateSupport#isError}) or [busy]{@link module:enyo/States.BUSY}
+	* ({@link module:enyo/StateSupport~StateSupport#isBusy}) [state]{@link module:enyo/Model~Model#status}. While
 	* executing, it will add the [FETCHING]{@link module:enyo/States.FETCHING} flag to
 	* the collection's [status]{@link module:enyo/Collection~Collection#status}. Once it has
 	* completed execution, it will remove this flag (even if it fails).
 	*
-	* @see module:enyo/Collection~Collection.fetched
-	* @see module:enyo/Collection~Collection.status
+	* @see module:enyo/Collection~Collection#fetched
+	* @see module:enyo/Collection~Collection#status
 	* @param {module:enyo/Collection~Collection~ActionOptions} [opts] - Optional configuration options.
 	* @returns {this} The callee for chaining.
 	* @public
@@ -951,14 +951,14 @@ exports = module.exports = kind(
 	* [commit default option]{@link module:enyo/Collection~Collection#options} must be `true` or a
 	* `source` property must be explicitly provided in the `opts` parameter. A
 	* collection cannot be destroyed (using a source) if it is in an
-	* [error]{@link module:enyo/States.ERROR} ({@link module:enyo/StateSupport~StateSupport.isError}) or
-	* [busy]{@link module:enyo/States.BUSY} ({@link module:enyo/StateSupport~StateSupport.isBusy})
+	* [error]{@link module:enyo/States.ERROR} ({@link module:enyo/StateSupport~StateSupport#isError}) or
+	* [busy]{@link module:enyo/States.BUSY} ({@link module:enyo/StateSupport~StateSupport#isBusy})
 	* [state]{@link module:enyo/Collection~Collection#status}. While executing, it will add the
 	* [DESTROYING]{@link module:enyo/States.DESTROYING} flag to the collection's
 	* [status]{@link module:enyo/Collection~Collection#status}. Once it has completed execution,
 	* it will remove this flag (even if it fails).
 	*
-	* @see module:enyo/Collection~Collection.status
+	* @see module:enyo/Collection~Collection#status
 	* @param {module:enyo/Collection~Collection~ActionOptions} [opts] - Optional configuration options.
 	* @returns {this} The callee for chaining.
 	* @method
@@ -1202,10 +1202,10 @@ exports = module.exports = kind(
 	/**
 	* Overloaded version of the method to call [set()]{@link module:enyo/Collection~Collection#set}
 	* instead of simply assigning the value. This allows it to
-	* [notify observers]{@link module:enyo/ObserverSupport~ObserverSupport.notify} and thus update
-	* [bindings]{@link module:enyo/BindingSupport~BindingSupport.bindings} as well.
+	* [notify observers]{@link module:enyo/ObserverSupport} and thus update
+	* [bindings]{@link module:enyo/BindingSupport#binding} as well.
 	*
-	* @see module:enyo/StateSupport.clearError
+	* @see {@link module:enyo/StateSupport~StateSupport#clearError}
 	* @public
 	*/
 	clearError: function () {
@@ -1229,7 +1229,7 @@ exports = module.exports = kind(
 	/**
 	* Responds to changes to the [models]{@link module:enyo/Collection~Collection#models} property.
 	*
-	* @see module:enyo/Collection~Collection.models
+	* @see module:enyo/Collection~Collection#models
 	* @fires module:enyo/Collection~Collection#reset
 	* @type {module:enyo/ObserverSupport~ObserverSupport~Observer}
 	* @public

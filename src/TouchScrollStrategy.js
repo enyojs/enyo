@@ -34,11 +34,11 @@ var
 /**
 * {@link module:enyo/TouchScrollStrategy~TouchScrollStrategy} is a helper [kind]{@glossary kind} for implementing a
 * touch-based [scroller]{@link module:enyo/Scroller~Scroller}. It integrates the scrolling simulation provided
-* by {@link module:enyo/ScrollMath~ScrollMath} into an `enyo.Scroller`.
+* by {@link module:enyo/ScrollMath~ScrollMath} into an `enyo/Scroller`.
 *
-* `enyo.TouchScrollStrategy` is not typically created in application code. Instead, it is
+* `enyo/TouchScrollStrategy` is not typically created in application code. Instead, it is
 * specified as the value of the [strategyKind]{@link module:enyo/Scroller~Scroller#strategyKind} property
-* of an `enyo.Scroller` or {@link module:layout/List#List}, or is used by the framework implicitly.
+* of an `enyo/Scroller` or {@link module:layout/List~List}, or is used by the framework implicitly.
 *
 * @class TouchScrollStrategy
 * @extends module:enyo/ScrollStrategy~ScrollStrategy
@@ -806,7 +806,7 @@ module.exports = kind(
 
 	/**
 	* This method exists primarily to support an internal use case for
-	* [enyo.DataList]{@link module:enyo/DataList~DataList}. It is intended to be called by the
+	* [enyo/DataList]{@link module:enyo/DataList~DataList}. It is intended to be called by the
 	* [scroller]{@link module:enyo/Scroller~Scroller} that owns this strategy.
 	*
 	* Triggers a remeasurement of the scroller's metrics (specifically, the

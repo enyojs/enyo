@@ -47,7 +47,7 @@ var BaseStore = kind({
 */
 
 /**
-* An anonymous kind used internally for the singleton {@link module:enyo/store~store}.
+* An anonymous kind used internally for the singleton {@link module:enyo/Store~Store}.
 * 
 * @class Store
 * @mixes module:enyo/EventEmitter
@@ -166,7 +166,7 @@ var Store = kind(
 	},
 	
 	/**
-	* Determines, from the given parameters, whether the [store]{@link module:enyo/store~store}
+	* Determines, from the given parameters, whether the [store]{@link module:enyo/Store~Store}
 	* has a specific [model]{@link module:enyo/Model~Model}.
 	*
 	* @param {(Function|module:enyo/Model~Model)} ctor Can be the constructor for an {@link module:enyo/Model~Model}
@@ -176,7 +176,7 @@ var Store = kind(
 	*	constructor, this may be a [Number]{@glossary Number} or a [String]{@glossary String}
 	* representing a [primaryKey]{@link module:enyo/Model~Model#primaryKey} for the given model, or an
 	*	instance of a model.
-	* @returns {Boolean} Whether or not the [store]{@link module:enyo/store~store} has the given
+	* @returns {Boolean} Whether or not the [store]{@link module:enyo/Store~Store} has the given
 	*	[model]{@link module:enyo/Model~Model}.
 	* @public
 	*/

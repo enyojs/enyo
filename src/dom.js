@@ -17,8 +17,11 @@ var dom = module.exports = {
 	* (optional) `doc` parameter.
 	*
 	* ```javascript
+	* var
+	* 	dom = require('enyo/dom');
+	*
 	* // find 'node' if it's a string id, or return it unchanged if it's already a node reference
-	* var domNode = enyo.dom.byId(node);
+	* var domNode = dom.byId(node);
 	* ```
 	*
 	* @param {String} id - The document element ID to get.
@@ -296,7 +299,7 @@ var dom = module.exports = {
 
 	/**
 	* Gets the calculated padding of a node. Shortcut for
-	* [enyo.dom.calcBoxExtents()]{@link enyo.dom.calcBoxExtents}.
+	* {@link module:enyo/dom#calcBoxExtents}.
 	*
 	* @param {Node} node - The [node]{@glossary Node} to measure.
 	* @returns {Object} An object containing the properties `top`, `right`, `bottom`, and
@@ -309,7 +312,7 @@ var dom = module.exports = {
 
 	/**
 	* Gets the calculated margin of a node. Shortcut for
-	* [enyo.dom.calcBoxExtents()]{@link enyo.dom.calcBoxExtents}.
+	* {@link module:enyo/dom#calcBoxExtents}.
 	*
 	* @param {Node} node - The [node]{@glossary Node} to measure.
 	* @returns {Object} An object containing the properties `top`, `right`, `bottom`, and
@@ -428,7 +431,7 @@ var dom = module.exports = {
 	* @public
 	*/
 	hasClass: function(node, s) {
-		if (!node || !node.className) { return; }
+		if (!node || !s || !node.className) { return; }
 		return (' ' + node.className + ' ').indexOf(' ' + s + ' ') >= 0;
 	},
 
@@ -440,7 +443,7 @@ var dom = module.exports = {
 	* @public
 	*/
 	addClass: function(node, s) {
-		if (node && !this.hasClass(node, s)) {
+		if (node && s && !this.hasClass(node, s)) {
 			var ss = node.className;
 			node.className = (ss + (ss ? ' ' : '') + s);
 		}
@@ -454,7 +457,7 @@ var dom = module.exports = {
 	* @public
 	*/
 	removeClass: function(node, s) {
-		if (node && this.hasClass(node, s)) {
+		if (node && s && this.hasClass(node, s)) {
 			var ss = node.className;
 			node.className = (' ' + ss + ' ').replace(' ' + s + ' ', ' ').slice(1, -1);
 		}
@@ -522,13 +525,16 @@ var dom = module.exports = {
 	/**
 	* Convert to various unit formats. Useful for converting pixels to a resolution-independent
 	* measurement method, like "rem". Other units are available if defined in the
-	* [enyo.dom.unitToPixelFactors]{@link enyo.dom.unitToPixelFactors} object.
+	* {@link module:enyo/dom#unitToPixelFactors} object.
 	*
 	* ```javascript
+	* var
+	* 	dom = require('enyo/dom');
+	*
 	* // Do calculations and get back the desired CSS unit.
 	* var frameWidth = 250,
-	*     frameWithMarginInches = enyo.dom.unit( 10 + frameWidth + 10, 'in' ),
-	*     frameWithMarginRems = enyo.dom.unit( 10 + frameWidth + 10, 'rem' );
+	*     frameWithMarginInches = dom.unit( 10 + frameWidth + 10, 'in' ),
+	*     frameWithMarginRems = dom.unit( 10 + frameWidth + 10, 'rem' );
 	* // '2.8125in' == frameWithMarginInches
 	* // '22.5rem' == frameWithMarginRems
 	* ```
@@ -770,9 +776,9 @@ dom.transformValue = function(control, transform, value) {
 
 /**
 * Applies a transform that should trigger GPU compositing for the specified
-* {@link enyo.Control}. By default, the acceleration is only applied if the
-* browser supports it. You may also optionally force-set `value` directly, to
-* be applied to `translateZ(value)`.
+* {@link module:enyo/Control~Control}. By default, the acceleration is only
+* applied if the browser supports it. You may also optionally force-set `value`
+* directly, to be applied to `translateZ(value)`.
 *
 * @param {module:enyo/Control~Control} control - The {@link module:enyo/Control~Control} to accelerate.
 * @param {(String|Number)} [value] - An optional value to apply to the acceleration transform

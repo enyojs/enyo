@@ -241,7 +241,7 @@ var Control = module.exports = kind(
 	* @public
 	*/
 	renderOnShow: false,
-	
+
 	/**
 	* @todo Find out how to document "handlers".
 	* @public
@@ -531,7 +531,7 @@ var Control = module.exports = kind(
 		// NOTE: Because this method accepts a string and for efficiency does not wish to
 		// parse it to determine if it is actually multiple classes we later pull a trick
 		// to keep it normalized and synchronized with our attributes hash and the node's
-		if (!this.hasClass(name)) {
+		if (name && !this.hasClass(name)) {
 
 			// this is hooked
 			this.set('classes', classes + (classes ? (' ' + name) : name));
@@ -792,7 +792,7 @@ var Control = module.exports = kind(
 		// our last known value for display was or use the default
 		if (!was && this.showing) {
 			this.applyStyle('display', this._display || '');
-			
+
 			// note the check for generated and canGenerate as changes to canGenerate will force
 			// us to ignore the renderOnShow value so we don't undo whatever the developer was
 			// intending
@@ -802,7 +802,7 @@ var Control = module.exports = kind(
 				this.set('canGenerate', true);
 				this.render();
 			}
-			
+
 			this.sendShowingChangedEvent(was);
 		}
 
@@ -829,7 +829,7 @@ var Control = module.exports = kind(
 		// the state of renderOnShow
 		this.canGenerate = (this.canGenerate && !this.renderOnShow);
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -1197,8 +1197,10 @@ var Control = module.exports = kind(
 	* @private
 	*/
 	removeNodeFromDom: function() {
-		if (this.hasNode() && this.node.parentNode) {
-			this.node.parentNode.removeChild(this.node);
+		var node = this.hasNode();
+		if (node) {
+			if (node.remove) node.remove();
+			else if (node.parentNode) node.parentNode.removeChild(node);
 		}
 	},
 

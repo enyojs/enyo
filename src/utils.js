@@ -305,7 +305,7 @@ var bind = exports.bind = function (scope, method) {
 /**
 * Binds a callback to a scope. If the object has a `destroyed` property that's truthy, then the
 * callback will not be run if called. This can be used to implement both
-* {@link module:enyo/CoreObject~Object.bindSafely} and {@link module:enyo/CoreObject~Object}-like objects like
+* {@link module:enyo/CoreObject~Object#bindSafely} and {@link module:enyo/CoreObject~Object}-like objects like
 * {@link module:enyo/Model~Model} and {@link module:enyo/Collection~Collection}.
 *
 * @param {Object} scope - The `this` context for the method.
@@ -405,8 +405,8 @@ var now = exports.now = Date.now || function () {
 * When [window.performance]{@glossary window.performance} is available, supplies
 * a high-precision, high-performance monotonic timestamp, which is independent of
 * changes to the system clock and thus safer for use in animation, etc. Falls back to
-* [enyo.now()]{@link enyo#now} (based on the JavaScript [Date]{@glossary Date}
-* object), which is subject to system time changes.
+* {@link module:enyo/utils#now} (based on the JavaScript [Date]{@glossary Date} object),
+* which is subject to system time changes.
 *
 * @returns {Number} Number of milliseconds representing the current time or time since
 *                   start of application execution as reported by the platform.
@@ -1323,7 +1323,7 @@ exports.remove = function (array, el) {
 };
 
 /**
-* This regex pattern is used by the [isRtl()]{@link module:enyo/util#isRtl} function.
+* This regex pattern is used by the [isRtl()]{@link module:enyo/utils#isRtl} function.
 *
 * Arabic: \u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFE
 * Hebrew: \u0590-\u05FF\uFB1D-\uFB4F

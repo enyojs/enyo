@@ -88,9 +88,9 @@ module.exports = {
 	/**
 	* Currently attempting to fetch.
 	* 
-	* @see module:enyo/Model~Model.fetch
-	* @see module:enyo/RelationalModel~RelationalModel.fetch
-	* @see module:enyo/Collection~Collection.fetch
+	* @see module:enyo/Model~Model#fetch
+	* @see module:enyo/RelationalModel~RelationalModel#fetch
+	* @see module:enyo/Collection~Collection#fetch
 	*
 	* @type {Number}
 	* @default 16
@@ -100,9 +100,9 @@ module.exports = {
 	/**
 	* Currently attempting to commit.
 	* 
-	* @see module:enyo/Model~Model.commit
-	* @see module:enyo/RelationalModel~RelationalModel.commit
-	* @see module:enyo/Collection~Collection.commit
+	* @see module:enyo/Model~Model#commit
+	* @see module:enyo/RelationalModel~RelationalModel#commit
+	* @see module:enyo/Collection~Collection#commit
 	*
 	* @type {Number}
 	* @default 32
@@ -112,9 +112,9 @@ module.exports = {
 	/**
 	* Currently attempting to destroy.
 	* 
-	* @see module:enyo/Model~Model.destroy
-	* @see module:enyo/RelationalModel~RelationalModel.destroy
-	* @see module:enyo/Collection~Collection.destroy
+	* @see module:enyo/Model~Model#destroy
+	* @see module:enyo/RelationalModel~RelationalModel#destroy
+	* @see module:enyo/Collection~Collection#destroy
 	*
 	* @type {Number}
 	* @default 64
@@ -124,9 +124,9 @@ module.exports = {
 	/**
 	* There was an error during commit.
 	* 
-	* @see module:enyo/Model~Model.commit
-	* @see module:enyo/RelationalModel~RelationalModel.commit
-	* @see module:enyo/Collection~Collection.commit
+	* @see module:enyo/Model~Model#commit
+	* @see module:enyo/RelationalModel~RelationalModel#commit
+	* @see module:enyo/Collection~Collection#commit
 	*
 	* @type {Number}
 	* @default 128
@@ -136,9 +136,9 @@ module.exports = {
 	/**
 	* There was an error during fetch.
 	* 
-	* @see module:enyo/Model~Model.fetch
-	* @see module:enyo/RelationalModel~RelationalModel.fetch
-	* @see module:enyo/Collection~Collection.fetch
+	* @see module:enyo/Model~Model#fetch
+	* @see module:enyo/RelationalModel~RelationalModel#fetch
+	* @see module:enyo/Collection~Collection#fetch
 	*
 	* @type {Number}
 	* @default 256
@@ -148,9 +148,9 @@ module.exports = {
 	/**
 	* There was an error during destroy.
 	* 
-	* @see module:enyo/Model~Model.destroy
-	* @see module:enyo/RelationalModel~RelationalModel.destroy
-	* @see module:enyo/Collection~Collection.destroy
+	* @see module:enyo/Model~Model#destroy
+	* @see module:enyo/RelationalModel~RelationalModel#destroy
+	* @see module:enyo/Collection~Collection#destroy
 	*
 	* @type {Number}
 	* @default 512

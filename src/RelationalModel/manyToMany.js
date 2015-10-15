@@ -1,3 +1,8 @@
+/**
+* Contains the declaration for the {@link module:moonstone/RelationalModel~manyToMany} kind.
+* @module enyo/RelationalModel
+*/
+
 var
 	kind = require('../kind');
 
@@ -9,11 +14,11 @@ var
 * models. This is an internally-used class.
 *
 * @class manyToMany
-* @extends module:enyo/toMany~toMany
+* @extends module:enyo/RelationalModel~toMany
 * @protected
 */
 var manyToMany = module.exports = kind(
-	/** @lends module:enyo/manyToMany~manyToMany.prototype */ {
+	/** @lends module:enyo/RelationalModel~manyToMany.prototype */ {
 	
 	/**
 	* @private
@@ -29,7 +34,7 @@ var manyToMany = module.exports = kind(
 	* The default [options]{@link module:enyo/RelationalModel~RelationOptions} overloaded for this
 	* [kind]{@glossary kind}.
 	*
-	* @see module:enyo/toMany~toMany.options
+	* @see module:enyo/RelationalModel~toMany#options
 	* @type module:enyo/RelationalModel~RelationOptions
 	* @property {String} inverseType=enyo.manyToMany - This is the **required** type.
 	* @public
