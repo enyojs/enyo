@@ -783,10 +783,9 @@ var ViewMgr = kind({
 		}
 		// otherwise the drag was small enough to be cancelled
 		else {
-			// There really isn't a direction in this case but it's most like forward since the
-			// active view is transition back into position. This prevents determining a -1
-			// direction and the resulting odd layout.
-			this.direction = 1;
+			// Since we're restoring the active view, the navigation direction is the opposite of
+			// the drag direction.
+			this.direction = -event.direction;
 			this.emit('cancelDrag', event);
 		}
 		this.set('dragging', false);
