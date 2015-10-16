@@ -382,6 +382,16 @@ var ViewMgr = kind({
 	},
 
 	/**
+	* Returns the currently active view
+	*
+	* @return {enyo.Control}
+	* @public
+	*/
+	getActive: function () {
+		return this.active;
+	},
+
+	/**
 	* Retrieves and creates, if necessary, a view or view manager by name
 	*
 	* @param {String} viewName Name of the view or view manager
