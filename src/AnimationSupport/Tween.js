@@ -81,6 +81,8 @@ module.exports = {
 			);
 			frame.accelerate(node, matrix);
 		}
+
+		charc.animationStep && charc.animationStep(t);
 	},
 
 	/**
