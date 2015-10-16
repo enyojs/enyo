@@ -186,6 +186,7 @@ var EnyoHistory = module.exports = kind.singleton(
 		_history.splice(0, _history.length);
 		_popQueueCount = 0;
 		_pushQueued = false;
+		this.stopJob('history.go');
 	},
 
 	/**
