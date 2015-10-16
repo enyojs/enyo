@@ -86,6 +86,7 @@ module.exports = kind({
 		var pMod = child.model,
 			pIdx = child.index,
 			sc = child.selectedClass || 'selected',
+			cbi = this.childrenByIndex,
 			s;
 
 		if (pMod !== model) {
@@ -97,11 +98,9 @@ module.exports = kind({
 
 		if (pIdx !== index) {
 			child.set('index', index);
-			this.childrenByIndex[index] = child;
-			if (this.childrenByIndex[pIdx] === child) {
-				this.childrenByIndex[pIdx] = null;
-			}
 		}
+
+		cbi[index] = child;
 
 		child.removeClass('enyo-vdr-first');
 		child.removeClass('enyo-vdr-last');
@@ -114,17 +113,24 @@ module.exports = kind({
 			o = this.orderedChildren,
 			o2 = this.orderedChildren_alt,
 			om = this.orderedModels,
-			omL = om.length,
 			om2 = this.orderedModels_alt,
+			len = om.length,
 			n = this.numItems,
 			needed = this.needed,
 			b = this.bullpen,
-			i, idx, m, ci, c, nNeeded, j, ln;
+			cbi = this.childrenByIndex,
+			i, idx, m, ci, c, nNeeded, j, len2;
+		// Walk up from the first index through the
+		// last and make sure that a child is assigned
+		// for each
 		for (i = 0; i < n; ++i) {
 			idx = f + i;
+			// Get our model
 			m = dd.at(idx);
 			if (m) {
-				ci = omL ? om.indexOf(m) : -1;
+				// If we already have a child with the model
+				// we need, reuse it
+				ci = len ? om.indexOf(m) : -1;
 				if (ci >= 0) {
 					c = o[ci];
 					o.splice(ci, 1);
@@ -133,6 +139,8 @@ module.exports = kind({
 					this.assignChild(m, idx, c);
 				}
 				else {
+					// Otherwise, remember that we need to grab
+					// or create a child for this model
 					needed.push(i);
 				}
 				om2.push(m);
@@ -142,38 +150,58 @@ module.exports = kind({
 			}
 		}
 		nNeeded = needed.length;
+		// If we have any models that we need to produce children
+		// for, do it now
 		for (j = 0; j < nNeeded; ++j) {
 			i = needed[j];
 			idx = f + i;
 			m = om2[i];
+			// Reuse an existing child if we have one, checking
+			// just-decommissioned children first and then children
+			// previously placed in the bullpen
 			c = om.pop() && o.pop() || b.pop();
 			if (c) {
 				this.assignChild(m, idx, c);
 			}
 			else {
+				// If we don't have a child on hand, we create a new one
 				c = this.createComponent({model: m});
 				this.assignChild(m, idx, c);
 				// TODO: Rethink child lifecycle hooks (currently deploy / update / retire)
 				if (typeof this.deployChild === 'function') this.deployChild(c);
 				c.render();
 			}
+			// Put the newly assigned child in the right place in
+			// the new orderedChildren array
 			o2.splice(i, 0, c);
 		}
-		needed.length = 0;
+		// If we have unused children hanging around, make
+		// them wait in the bullpen
 		while (o.length) {
 			c = om.pop() && o.pop();
 			c.set('model', null);
 			c.hide();
 			b.push(c);
 		}
+		// And now some cleanup...
+		len2 = o2.length;
+		// First, if we have fewer children than we had before,
+		// we need to remove stale entries from our index
+		for (i = len2; i < len; i++) {
+			cbi[i] = null;
+		}
+		// Reset our "needed" array, so it's ready for next time
+		needed.length = 0;
+		// Swap in our new ordered arrays for the old ones
 		this.orderedChildren = o2;
 		this.orderedChildren_alt = o;
 		this.orderedModels = om2;
 		this.orderedModels_alt = om;
-		ln = o2.length;
-		if (ln) {
+		// If we have any children, tag the first and last ones,
+		// and then apply positioning if applicable
+		if (len2) {
 			o2[0].addClass('enyo-vdr-first');
-			o2[ln - 1].addClass('enyo-vdr-last');
+			o2[len2 - 1].addClass('enyo-vdr-last');
 			if (typeof this.positionChildren === 'function') this.positionChildren();
 		}
 	},
