@@ -72,12 +72,7 @@ var ViewMgr = kind({
 	* @private
 	*/
 	activeChanged: function (was, is) {
-		if (was) {
-			this.emit('deactivate', {
-				view: was,
-				dragging: false
-			});
-		}
+		if (was) this.emitViewEvent('deactivate', was);
 	},
 
 	/**
@@ -550,6 +545,17 @@ var ViewMgr = kind({
 	/**
 	* @private
 	*/
+	emitViewEvent: function (name, view) {
+		this.emit(name, {
+			view: view,
+			dragging: this.dragging,
+			direction: this.direction
+		});
+	},
+
+	/**
+	* @private
+	*/
 	managerEvent: function (viewManager, event, view) {
 		if (event == 'dismissed') this.managerDismissed(viewManager);
 		this.emit('manager-' + event, {
@@ -606,10 +612,7 @@ var ViewMgr = kind({
 			view.set('canGenerate', true);
 			view.render();
 		}
-		this.emit('activate', {
-			view: view,
-			dragging: this.dragging
-		});
+		this.emitViewEvent('activate', view);
 		if (!this.dragging && !this.isManager(view)) this.set('active', view);
 	},
 
@@ -628,13 +631,7 @@ var ViewMgr = kind({
 	deactivateImmediate: function (view) {
 		this.teardownView(view);
 
-		if (!this.isManager(view)) {
-			this.emit('deactivated', {
-				view: view,
-				dragging: this.dragging
-			});
-		}
-
+		if (!this.isManager(view)) this.emitViewEvent('deactivated', view);
 		if (!this.dragging && this.dismissed) this.emit('dismissed');
 	},
 
@@ -666,14 +663,13 @@ var ViewMgr = kind({
 	* @private
 	*/
 	handleLayoutComplete: function (sender, name, view) {
-		this.direction = 0;
 		if (view == this.active) {
-			this.emit('activated', {
-				view: view
-			});
+			this.emitViewEvent('activated', view);
 		} else {
-			this.deactivate(view.name);
+			// This is already within a rAF
+			this.deactivateImmediate(view);
 		}
+		this.direction = 0;
 	},
 
 	// Draggable
@@ -726,10 +722,7 @@ var ViewMgr = kind({
 			if (this.dragDirection !== event.direction) {
 				this.dragDirection = event.direction;
 				if (this.dragView) {
-					this.emit('deactivate', {
-						view: this.dragView,
-						dragging: true
-					});
+					this.emitViewEvent('deactivate', this.dragView);
 					this.deactivate(this.dragView.name);
 					this.dragView = null;
 				}
