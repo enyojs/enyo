@@ -172,6 +172,7 @@ module.exports = {
 			c = points.length,
 			l = points[0].length,
 			lastIndex = (c - 1),
+			startPoint = points[0],
 			endPoint = points[lastIndex],
 			values = this.getBezierValues(t, lastIndex);
 
@@ -179,7 +180,7 @@ module.exports = {
 			vR[i] = 0;
 			for (j = 0; j < c; j++) {
 				if ((j > 0) && (j < (c - 1))) {
-					vR[i] = vR[i] + (points[j][i] * endPoint[i] * values[j]);
+					vR[i] = vR[i] + ((startPoint[i] + (points[j][i] * (endPoint[i] - startPoint[i]))) * values[j]);
 				} else {
 					vR[i] = vR[i] + (points[j][i] * values[j]);
 				}
@@ -219,6 +220,16 @@ module.exports = {
 	* @params t: time, n: order
 	*/
 	getBezierValues: function (t, n) {
+		t = parseFloat(t),
+		n = parseInt(n);
+
+		if (isNaN(t) || isNaN(n))
+			return void 0;
+		if ((t < 0) || (n < 0))
+			return void 0;
+		if (t > 1)
+			return void 0;
+
 		var c,
 			values = [],
 			x = (1 - t),
