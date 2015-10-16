@@ -21,7 +21,9 @@ var
 *  * `completeTransition()`
 *    Removes the directional classes and resets the `dragDuration`
 *
-* @class enyo.SlideViewLayout
+* @class SlideViewLayout
+* @extends enyo/TransitionViewLayout~TransitionViewLayout
+* @public
 */
 module.exports = kind({
 	/**

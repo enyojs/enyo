@@ -1,3 +1,87 @@
+/**
+* ViewManager module
+*
+* @module enyo/ViewManager
+*/
+
+/**
+* Fires after a view has been created and rendered, if necessary, but before it transitions into
+* viewport.
+*
+* @event module:enyo/ViewManager~ViewManager#activate
+* @property {module:enyo/Control~Control} view The target view for the event
+* @property {Boolean} dragging `true` for `activate` or `deactivate` events that occur as a result
+*	of dragging
+* @property {Number} direction Either 1 representing forward or -1 representing backward
+* @public
+*/
+
+/**
+* Fires after a view has been created, rendered, and transitioned into the viewport.
+*
+* @event module:enyo/ViewManager~ViewManager#activated
+* @type {Object}
+* @property {module:enyo/Control~Control} view The target view for the event
+* @property {Boolean} dragging `true` for `activate` or `deactivate` events that occur as a result
+*	of dragging
+* @property {Number} direction Either 1 representing forward or -1 representing backward
+* @public
+*/
+
+/**
+* Fires on the previously active view when a new view has become active but before it has
+* transitioned out of the viewport
+*
+* @event module:enyo/ViewManager~ViewManager#deactivate
+* @property {module:enyo/Control~Control} view The target view for the event
+* @property {Boolean} dragging `true` for `activate` or `deactivate` events that occur as a result
+*	of dragging
+* @property {Number} direction Either 1 representing forward or -1 representing backward
+* @public
+*/
+
+/**
+* Fires on the previously active view when it has transitioned out of the viewport and been torn
+* down.
+*
+* @event module:enyo/ViewManager~ViewManager#deactivated
+* @property {module:enyo/Control~Control} view The target view for the event
+* @property {Boolean} dragging `true` for `activate` or `deactivate` events that occur as a result
+*	of dragging
+* @property {Number} direction Either 1 representing forward or -1 representing backward
+* @public
+*/
+
+/**
+* Fires on the previously active view when it has transitioned out of the viewport and been torn
+* down.
+*
+* @event module:enyo/ViewManager~ViewManager#deactivated
+* @property {module:enyo/Control~Control} view The target view for the event
+* @property {Boolean} dragging `true` for `activate` or `deactivate` events that occur as a result
+*	of dragging
+* @property {Number} direction Either 1 representing forward or -1 representing backward
+* @public
+*/
+
+/**
+* Fires when this ViewManager dimissal is initiated -- either by a call to
+* [dismiss()]{@link module:enyo/ViewManager~ViewManager#dismiss} or when a
+* [dismissable]{@link module:enyo/ViewManager~ViewManager#dismissable} ViewManager is on its first
+* view and is dragged beyond the
+* [dragThreshold]{@link module:enyo/ViewManager~ViewManager#dragThreshold}.
+*
+* @event module:enyo/ViewManager~ViewManager#dismiss
+* @public
+*/
+
+/**
+* Fires when a ViewManager completes its dismissal.
+*
+* @event module:enyo/ViewManager~ViewManager#dismissed
+* @public
+*/
+
 var rAF = window.requestAnimationFrame;
 
 var
@@ -14,7 +98,97 @@ var
 
 var viewCount = 0;
 
-var ViewMgr = kind({
+/**
+* ViewManager manages views.
+*
+* ```
+* module.exports = kind({
+*	kind: ViewMgr,
+*	classes: 'contacts',
+*
+*	// All the views are declared in the common components block
+*	components: [
+*		{name: 'history', components: [
+*			{content: 'History'},
+*			{kind: Button, content: 'Next', ontap: 'next'}
+*		]},
+*		{name: 'dialer', active: true, components: [
+*			{content: 'Dialer'},
+*			{kind: Button, content: 'Inline Example', ontap: 'activateInline'},
+*			{kind: Button, content: 'Previous', ontap: 'previous'},
+*			{kind: Button, content: 'Next', ontap: 'next'}
+*		]},
+*		{name: 'contacts', components: [
+*			{content: 'Contacts'},
+*			{kind: Button, content: 'Previous', ontap: 'previous'},
+*			{kind: Button, content: 'Add A Contact', ontap: 'pushAddContactView'}
+*		]}
+*	],
+*
+*	// Child ViewManagers are declared within a new managers block
+*	managers: [
+*		{name: 'add', kind: AddContact},
+*		{name: 'inline', kind: ViewMgr, floating: true, components: [
+*			{content: 'view1', style: 'background: #424242; color: #fff;', ontap: 'nextInline'},
+*			{content: 'view2', style: 'background: #424242; color: #fff;', ontap: 'nextInline'},
+*			{content: 'view3', style: 'background: #424242; color: #fff;', ontap: 'dismissInline'}
+*		]}
+*	],
+*
+*	create: function () {
+*		ViewMgr.prototype.create.apply(this, arguments);
+*
+*		function log (sender, name, event) {
+*			console.log('Event', name,
+*				'on view', event.view.name,
+*				event.dragging ? 'while dragging' : '');
+*		}
+*
+*		// ViewManager emits events to ease view initialization and teardown without concern for the
+*		// async nature of animations.
+*
+*		// `view` has been activated but not animated
+*		this.on('activate', log);
+*
+*		// `view` has been activate and animated
+*		this.on('activated', log);
+*
+*		// `view` has been deactivated but not animated
+*		this.on('deactivate', log);
+*
+*		// `view` has been deactivated and animated
+*		this.on('deactivated', log);
+*	},
+*
+*	// Activate and navigate the Inline ViewManager
+*	activateInline: function () {
+*		this.activate('inline');
+*	},
+*	nextInline: function () {
+*		this.$.inline.next();
+*	},
+*	dismissInline: function () {
+*		this.$.inline.dismiss();
+*	},
+*
+*	// Activate the Contacts ViewManager
+*	pushAddContactView: function () {
+*		var view = this.activate('add');
+*		view.set('model', new Model({
+*			first: 'First Name',
+*			last: 'Last Name'
+*		}));
+*	}
+* });
+* ```
+*
+* @class ViewManager
+* @extends module:enyo/Control~Control
+* @ui
+* @public
+*/
+var ViewMgr = kind(
+	/** @lends module:enyo/ViewManager~ViewManager.prototype */ {
 
 	/**
 	* @private
@@ -131,7 +305,7 @@ var ViewMgr = kind({
 	* @default 25
 	* @public
 	*/
-	dragSnapPercent: 25,
+	dragThreshold: 25,
 
 	/**
 	* When `draggable`, this constrains the drag to this direction.
@@ -154,7 +328,7 @@ var ViewMgr = kind({
 	* ViewManager which will be notified of activated, deactivated, dismiss, and dismissed events
 	* from this ViewManager.
 	*
-	* @type {enyo.ViewManager}
+	* @type {module:enyo/ViewManager~ViewManager}
 	* @default null
 	* @public
 	*/
@@ -318,8 +492,8 @@ var ViewMgr = kind({
 	/**
 	* Adds the list of components as views
 	*
-	* @param  {Object[]|enyo.Control[]} components List of components
-	* @param  {enyo.Control|null} [owner] Owner of components
+	* @param  {Object[]|module:enyo/Control~Control[]} components List of components
+	* @param  {module:enyo/Control~Control|null} [owner] Owner of components
 	*
 	* @private
 	*/
@@ -335,8 +509,8 @@ var ViewMgr = kind({
 	/**
 	* Adds a new view to the view set
 	*
-	* @param {Object|enyo.Control} view View config or instance
-	* @param {enyo.Control|null} [owner] Optional owner of view. Defaults to this.
+	* @param {Object|module:enyo/Control~Control} view View config or instance
+	* @param {module:enyo/Control~Control|null} [owner] Optional owner of view. Defaults to this.
 	*
 	* @private
 	*/
@@ -370,7 +544,7 @@ var ViewMgr = kind({
 	* position. For floating ViewManagers, this reflects the last occurence of the view in the stack. If
 	* the view isn't found, -1 is returned.
 	*
-	* @param  {enyo.Control} view
+	* @param  {module:enyo/Control~Control} view
 	* @return {Number}      Index of `view`
 	* @public
 	*/
@@ -384,7 +558,7 @@ var ViewMgr = kind({
 	/**
 	* Returns the currently active view
 	*
-	* @return {enyo.Control}
+	* @return {module:enyo/Control~Control}
 	* @public
 	*/
 	getActive: function () {
@@ -395,7 +569,7 @@ var ViewMgr = kind({
 	* Retrieves and creates, if necessary, a view or view manager by name
 	*
 	* @param {String} viewName Name of the view or view manager
-	* @return {enyo.Control} View
+	* @return {module:enyo/Control~Control} View
 	* @public
 	*/
 	getView: function (viewName) {
@@ -424,7 +598,7 @@ var ViewMgr = kind({
 	/**
 	* Navigates to the next view based on order of definition or creation
 	*
-	* @return {enyo.Control} Activated view
+	* @return {module:enyo/Control~Control} Activated view
 	* @public
 	*/
 	next: function () {
@@ -439,7 +613,7 @@ var ViewMgr = kind({
 	/**
 	* Navigates to the previous view based on order of definition or creation
 	*
-	* @return {enyo.Control} Activated view
+	* @return {module:enyo/Control~Control} Activated view
 	* @public
 	*/
 	previous: function () {
@@ -455,7 +629,7 @@ var ViewMgr = kind({
 	* If this is a floating ViewManager, navigates back `count` views from the stack.
 	*
 	* @param {Number} [count] Number of views to pop off the stack. Defaults to 1.
-	* @return {enyo.Control} Activated view
+	* @return {module:enyo/Control~Control} Activated view
 	* @public
 	*/
 	back: function (count) {
@@ -771,7 +945,7 @@ var ViewMgr = kind({
 
 		this.decorateDragEvent(event);
 		// if the view has been dragged far enough
-		if (event.percentDelta * 100 > this.dragSnapPercent) {
+		if (event.percentDelta * 100 > this.dragThreshold) {
 			// normally, there will be a becoming-active view to activate
 			if (this.dragView) {
 				// dragging for floating views can only be a back action so shift it off the stack
