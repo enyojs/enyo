@@ -327,27 +327,13 @@ module.exports = {
 	*
 	* @public
 	*/
-	scrollToControl: kind.inherit(function (sup) {
-		return function (control, opts) {
-			var n;
+	scrollToControl: function (control, opts) {
+		var n = control.hasNode();
 
-			// Default implementation -- in case the Control
-			// applying the Scrollable mixin does not supply
-			// its own
-			if (sup === utils.nop) {
-				n = control.hasNode();
-
-				if (n) {
-					this.scrollToNode(n, opts);
-				}
-			}
-			// If the Control does provide an alternative
-			// implementation, we use it
-			else {
-				sup.apply(this, arguments);
-			}
-		};
-	}),
+		if (n) {
+			this.scrollToNode(n, opts);
+		}
+	},
 
 	/**
 	* TODO: Document. Based on CSSOM View spec ()

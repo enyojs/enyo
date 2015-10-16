@@ -158,6 +158,30 @@ module.exports = kind(
 	* @private
 	*/
 	kFrictionEpsilon: platform.webos >= 4 ? 1e-1 : 1e-2,
+
+	/**
+	* TODO: Document
+	* Experimental
+	*
+	* @private
+	*/
+	xSnapIncrement: 0,
+
+	/**
+	* TODO: Document
+	* Experimental
+	*
+	* @private
+	*/
+	ySnapIncrement: 0,
+
+	/**
+	* TODO: Document
+	* Experimental
+	*
+	* @private
+	*/
+	boundarySnapThreshold: 0,
 	
 	/** 
 	* Top snap boundary, generally `0`.
@@ -683,16 +707,34 @@ module.exports = kind(
 		var animate = !opts || opts.behavior !== 'instant',
 			xSnap = this.xSnapIncrement,
 			ySnap = this.ySnapIncrement,
+			bSnap = this.boundarySnapThreshold,
 			allowOverScroll = opts && opts.allowOverScroll,
 			maxX = Math.abs(Math.min(0, this.rightBoundary)),
 			maxY = Math.abs(Math.min(0, this.bottomBoundary));
 
-		if (typeof xSnap === 'number') {
+
+		if (xSnap) {
 			x = xSnap * Math.round(x / xSnap);
 		}
 
-		if (typeof ySnap === 'number') {
+		if (ySnap) {
 			y = ySnap * Math.round(y / ySnap);
+		}
+
+		if (bSnap) {
+			if (x > -this.x && maxX > x && maxX - x < bSnap) {
+				x = maxX;
+			}
+			else if (x < -this.x && x > 0 && x < bSnap) {
+				x = 0;
+			}
+
+			if (y > -this.y && maxY > y && maxY - y < bSnap) {
+				y = maxY;
+			}
+			else if (y < -this.y && y > 0 && y < bSnap) {
+				y = 0;
+			}
 		}
 
 		if (!animate || !allowOverScroll) {
