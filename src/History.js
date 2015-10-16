@@ -102,12 +102,7 @@ var EnyoHistory = module.exports = kind.singleton(
 	*/
 	enabledChanged: function () {
 		// reset private members
-		_history = [];
-		_queue = [];
-		_popQueueCount = 0;
-		_pushQueued = false;
-		_processing = false;
-		this.stopJob('history.go');
+		this.clear();
 	},
 
 	/**
@@ -186,6 +181,7 @@ var EnyoHistory = module.exports = kind.singleton(
 		_history.splice(0, _history.length);
 		_popQueueCount = 0;
 		_pushQueued = false;
+		_processing = false;
 		this.stopJob('history.go');
 	},
 
