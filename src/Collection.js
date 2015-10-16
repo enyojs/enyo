@@ -212,9 +212,9 @@ var BaseCollection = kind({
 * @callback module:enyo/Collection~Collection~Success
 * @param {module:enyo/Collection~Collection} collection - The [collection]{@link module:enyo/Collection~Collection}
 * that is returning successfully.
-* @param {module:enyo/Collection~ActionOptions} - opts The original options passed to the action method
+* @param {module:enyo/Collection~ActionOptions} opts - The original options passed to the action method
 *	that is returning successfully.
-* @param {*} - res The result, if any, returned by the [source]{@link module:enyo/Source~Source} that
+* @param {*} res - The result, if any, returned by the [source]{@link module:enyo/Source~Source} that
 *	executed it.
 * @param {String} source - The name of the [source]{@link module:enyo/Collection~Collection#source} that has
 *	returned successfully.
