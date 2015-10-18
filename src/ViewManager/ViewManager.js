@@ -943,6 +943,7 @@ var ViewMgr = kind(
 	handleDragFinish: function (sender, event) {
 		if (!this.dragging || !this.draggable || this.dismissed) return;
 
+		this.set('dragging', false);
 		this.decorateDragEvent(event);
 		// if the view has been dragged far enough
 		if (event.percentDelta * 100 > this.dragThreshold) {
@@ -951,7 +952,7 @@ var ViewMgr = kind(
 				// dragging for floating views can only be a back action so shift it off the stack
 				if (this.floating) this.stack.shift();
 				// stack updates aren't necessary as we updated it above
-				this._activate(this.dragView.name);
+				this.activateImmediate(this.dragView);
 			}
 			// unless it's a floating ViewManager that is being dismissed
 			else if (this.isDimissable() && event.direction == -1) {
@@ -965,7 +966,6 @@ var ViewMgr = kind(
 			this.direction = -event.direction;
 			this.emit('cancelDrag', event);
 		}
-		this.set('dragging', false);
 		event.preventTap();
 
 		return true;
