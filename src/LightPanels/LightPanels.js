@@ -532,7 +532,7 @@ module.exports = kind(
 
 		// remove existing panels
 		for (idx = start; idx < end; idx++) {
-			this.popPanel(idx);
+			this.removePanel(panels[idx]);
 		}
 
 		// add replacement panels
