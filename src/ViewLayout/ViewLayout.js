@@ -114,6 +114,12 @@ module.exports = kind(
 	* @private
 	*/
 	draggingChanged: function (was, is) {
+		// if there's a transition in-progress, force it complete before dragging
+		if (is && this.isTransitioning()) {
+			this.setTransitionComplete('from');
+			this.setTransitionComplete('to');
+		}
+
 		rAF(function () {
 			if (is) this.container.addClass('dragging');
 		}.bind(this));
@@ -174,6 +180,17 @@ module.exports = kind(
 	},
 
 	/**
+	* `true` if either transition is still incomplete
+	*
+	* @return {Boolean}
+	* @private
+	*/
+	isTransitioning: function () {
+		var t = this._transitioning;
+		return !t.from.complete || !t.to.complete;
+	},
+
+	/**
 	* @private
 	*/
 	registerTransition: function (was, is) {
@@ -191,7 +208,7 @@ module.exports = kind(
 		var t = this._transitioning;
 
 		t[dir].complete = true;
-		if (t.from.complete && t.to.complete) {
+		if (!this.isTransitioning()) {
 			this.completeTransition(t.from.view, t.to.view);
 			t.from.view = t.to.view = null;
 			t.from.complete = t.to.complete = false;
