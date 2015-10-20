@@ -65,6 +65,15 @@
 */
 
 /**
+* Fires when this ViewManager is [activated]{@link module:enyo/ViewManager~ViewManager#activate} by
+* its [manager]{@link module:enyo/ViewManager~ViewManager#manager} and ready to activate its own
+* views.
+*
+* @event module:enyo/ViewManager~ViewManager#manage
+* @public
+*/
+
+/**
 * Fires when this ViewManager dimissal is initiated -- either by a call to
 * [dismiss()]{@link module:enyo/ViewManager~ViewManager#dismiss} or when a
 * [dismissable]{@link module:enyo/ViewManager~ViewManager#dismissable} ViewManager is on its first
@@ -717,12 +726,13 @@ var ViewMgr = kind(
 	* @private
 	*/
 	notifyViews: function (sender, name, event) {
+		var viewEvent = name == 'activate' || name == 'activated'
+					|| name == 'deactivate' || name == 'deactivated';
+
 		// Any event for a view will have an event payload with a view property indicating the view
-		// that is changing. Contained ViewManagers will also fire activate and deactivate events
-		// but we can't notify them because of method overlap. Also ignore events originating from
-		// contained ViewManagers (prefixed by manager-).
-		if (event && event.view && name.indexOf('manager-') !== 0 && !this.isManager(event.view)) {
-			if (utils.isFunction(event.view[name])) event.view[name](event);
+		// that is changing.
+		if (event && event.view && viewEvent && utils.isFunction(event.view[name])) {
+			event.view[name](event);
 		}
 	},
 
@@ -796,8 +806,13 @@ var ViewMgr = kind(
 			view.set('canGenerate', true);
 			view.render();
 		}
-		this.emitViewEvent('activate', view);
-		if (!this.dragging && !this.isManager(view)) this.set('active', view);
+		if (this.isManager(view)) {
+			view.emit('manage');
+		}
+		else {
+			this.emitViewEvent('activate', view);
+			if (!this.dragging) this.set('active', view);
+		}
 	},
 
 	/**
@@ -837,7 +852,7 @@ var ViewMgr = kind(
 	* @private
 	*/
 	isManager: function (view) {
-		return view && this.viewManagers[view.name];
+		return view && !!this.viewManagers[view.name];
 	},
 
 	// Layout
