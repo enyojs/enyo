@@ -2,8 +2,9 @@ require('enyo');
 
 var
 	kind = require('../kind'),
-	core = require('./Core'),
+	animation = require('./Core'),
 	activator = require('./KeyFrame'),
+	delegator = require('./EventDelegator'),
 	frame = require('./Frame'),
 	utils = require('../utils');
 
@@ -19,9 +20,36 @@ var AnimationSupport = {
 	//name: 'AnimationSupport',
 	animating: false,
 
+	/**
+	* To keep a character active for it to apply some other 
+	* animation at runtime. This gives a preformance boost when on
+	* character an animation is reapplied.
+	* @default false -	So the once the animation is completed, it has to be retriggered to 
+	*					start a new animation.
+	* @private
+	*/
 	active: false,
 
+	/**
+	* Holds variouts states of animation.
+	* Like: 'started'	- Character animation has started(within rAF)
+	*		'paused'	- Character animation has paused(within rAF)
+	*		'completed'	- Character animation has finished(within rAF)
+	* @private
+	*/
 	animationState: "",
+
+	/**
+	* Holds delta value in the order [x, y, z, rad]
+	* @private
+	*/
+	animDelta: [],
+
+	/**
+	* Maximum threshold for animation
+	* @private
+	*/
+	animMaxThreshold: [],
 
 	/**
 	* Check if the character is suitable for animation
@@ -41,7 +69,24 @@ var AnimationSupport = {
 	* @public
 	*/
 	setInitial: function (initial) {
-		this._startAnim = initial;
+		this._startAnim = initial ? frame.copy(initial) : {};
+	},
+
+
+	/**
+	* Sets animation distance for this character
+	* @public
+	*/
+	setDistance: function (dist) {
+		this._distance = dist;
+	},
+
+	/**
+	* Gets animation distance for this character
+	* @public
+	*/
+	getDistance: function () {
+		return this._distance;
 	},
 
 	/**
@@ -139,6 +184,9 @@ var AnimationSupport = {
 			sup.apply(this, arguments);
 			this.initiate();
 			frame.accelerate(this.hasNode(), this.matrix);
+			if (this.handleAnimationEvents) {
+				delegator.register(this);
+			}
 		};
     }),
     
@@ -147,7 +195,7 @@ var AnimationSupport = {
      */
     destroy: kind.inherit(function(sup) {
         return function() {
-            core.remove(this);
+            animation.remove(this);
             sup.apply(this, arguments);
         };
     }),
@@ -165,14 +213,17 @@ var sup = kind.concatHandler;
 */
 kind.concatHandler = function (ctor, props, instance) {
 	sup.call(this, ctor, props, instance);
-	if (props.animate || props.keyFrame || props.pattern) {
+	if (props.animate || props.keyFrame || props.handleAnimationEvents) {
 		var proto = ctor.prototype || ctor;
 		extend(AnimationSupport, proto);
 		if (props.keyFrame && typeof props.keyFrame != 'function') {
 			activator.animate(proto, props);
 		}
 		if (props.animate && typeof props.animate != 'function') {
-			activator.trigger(proto);
+			animation.trigger(proto);
+		}
+		if (props.handleAnimationEvents && typeof props.handleAnimationEvents != 'function') {
+			animation.register(proto);
 		}
 	}
 };

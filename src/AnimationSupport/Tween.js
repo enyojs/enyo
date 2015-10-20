@@ -43,15 +43,66 @@ module.exports = {
 	},
 
 	/**
+	* Tweens public API which notifies to change current state of 
+	* a character based on its interaction delta. This method is normally trigger by the Animation Core to
+	* update the animating characters state based on the current delta change.
+	*
+	* As of now this method is provided as an interface for application 
+	* to directly trigger an animation. However, this will be later made private
+	* and will be accessible only by the interfaces exposed by framework.
+	* @parameter	chrac-		Animating character
+	*				dt-			An array of delta dimensions like [x,y,z]
+	*
+	* @public
+	*/
+	updateDelta: function (charc, dt) {
+		var d,
+			st,
+			dst,
+			inc,
+			frc = charc.friction || 1,
+			trD = charc.animThresholdDuration || 1000,
+			trh = charc.animMaxThreshold || false,
+			dir = charc.direction || 0,
+			tot = charc.getDistance() || frame.getComputedDistance(
+				charc.getAnimation(),
+				charc._startAnim,
+				charc._endAnim);
+
+		dt = dt || charc.animDelta[dir];
+		if (dt) {
+			dt = frc * dt;
+			dst = charc._animCurDistane || 0;
+			inc = dst + dt * (charc.reverse ? -1 : 1);
+			st  = inc > 0 && inc <= tot;
+
+			if (st) {
+				d = inc / tot;
+				if (trh &&  inc > trh && dt === 0) {
+					charc.setDuration(trD);
+					charc.start(true);
+				}
+				this.step(charc, d);
+			} else {
+				charc.animating = st;
+				charc.reverse = inc <= 0;
+			}
+			
+			charc._animCurDistane = st ? inc : 0;
+			charc.animDelta = [];
+		}
+	},
+
+	/**
 	* @private
 	*/
 	step: function(charc, t) {
-		var k, c, d, pts;
+		var k, c, d, pts, props;
 
 		node = charc.node;
 		newState = charc._endAnim;
 		d = charc._duration;
-		props = charc.getAnimation(),
+		props = charc.getAnimation();
 		oldState = charc._startAnim;
 		charc.currentState = charc.currentState || {};
 
@@ -127,8 +178,7 @@ module.exports = {
 
 	complete: function (charc) {
 		charc.animating = false;
-		charc._startAnim = undefined;
-		charc._endAnim = undefined;
+		charc._prop = undefined;
 	},
 
 	lerp: function (vA, vB, t, vR) {
@@ -195,8 +245,8 @@ module.exports = {
 	* @params n: order, k: current position
 	*/
 	getCoeff: function (n, k) {
-		n = parseInt(n);
-		k = parseInt(k);
+		n = parseInt(n, 10);
+		k = parseInt(k, 10);
 		// Credits
 		// https://math.stackexchange.com/questions/202554/how-do-i-compute-binomial-coefficients-efficiently#answer-927064
 		if (isNaN(n) || isNaN(k))
@@ -220,8 +270,8 @@ module.exports = {
 	* @params t: time, n: order
 	*/
 	getBezierValues: function (t, n) {
-		t = parseFloat(t),
-		n = parseInt(n);
+		t = parseFloat(t, 10),
+		n = parseInt(n, 10);
 
 		if (isNaN(t) || isNaN(n))
 			return void 0;
