@@ -65,7 +65,6 @@ module.exports = kind({
 			delta = event.delta,
 			transform = isHorizontal ? 'translateX' : 'translateY';
 
-
 		if (event.delta < 0 && event.delta < -size) {
 			this.overDrag = true;
 			delta = -size;
@@ -93,7 +92,7 @@ module.exports = kind({
 	*/
 	prepareTransition: function (was, is) {
 		var c = this.container;
-
+		TransitionViewLayout.prototype.prepareTransition.apply(this, arguments);
 		if (is) this.addRemoveDirection(is, true);
 		if (was) this.addRemoveDirection(was, true, true);
 
@@ -110,6 +109,8 @@ module.exports = kind({
 	* @private
 	*/
 	transition: function (was, is) {
+		var dir;
+
 		TransitionViewLayout.prototype.transition.apply(this, arguments);
 		if (was) {
 			was.applyStyle('transform', null);
@@ -122,14 +123,15 @@ module.exports = kind({
 		// If the user drags the entire view off screen, it won't animate so we won't see the CSS
 		// transition event.
 		if (this.overDrag) {
-			if (was) this.simulateTransition(was);
-			if (is) this.simulateTransition(is);
+			if (was) this.setTransitionComplete('from');
+			if (is) this.setTransitionComplete('to');
 		}
 		// when using layoutCover, one view doesn't transition so the ontransitionend doesn't fire
 		// to account for that, set a timeout of the same duration to manually clean up. The
 		// exception being when dismissing the ViewManager and there is no becoming-active view.
 		else if (this.stationaryView) {
-			this.simulateTransition(this.stationaryView);
+			dir = this.getTransitionDirection(this.stationaryView);
+			if (dir) this.setTransitionComplete(dir);
 		}
 	},
 
@@ -138,24 +140,13 @@ module.exports = kind({
 	*
 	* @private
 	*/
-	completeTransition: function (view) {
-		TransitionViewLayout.prototype.completeTransition.apply(this, arguments);
-		if (view) {
-			this.addRemoveDirection(view, false, true);
-			if (this.stationaryView && this.stationaryView == view) {
-				this.stationaryView.removeClass('stationary');
-				this.stationaryView = null;
-			}
+	completeTransition: function (was, is) {
+		if (is) this.addRemoveDirection(is, false);
+		if (was) this.addRemoveDirection(was, false, true);
+		if (this.stationaryView) {
+			this.stationaryView.removeClass('stationary');
+			this.stationaryView = null;
 		}
-	},
-
-	/**
-	* Calls completeTransition after the drag or normal duration in cases where a CSS transition
-	* will not have occurred.
-	*
-	* @private
-	*/
-	simulateTransition: function (view) {
-		setTimeout(this.completeTransition.bind(this, view), this.dragDuration || this.duration);
+		TransitionViewLayout.prototype.completeTransition.apply(this, arguments);
 	}
 });

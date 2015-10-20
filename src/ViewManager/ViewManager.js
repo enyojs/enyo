@@ -308,6 +308,15 @@ var ViewMgr = kind(
 	draggable: true,
 
 	/**
+	* `true` when a drag gesture is in process
+	*
+	* @type {Boolean}
+	* @default false
+	* @private
+	*/
+	dragging: false,
+
+	/**
 	* Percent a new view must be dragged into the viewport to be activated on drag release
 	*
 	* @type {Number}
@@ -861,13 +870,9 @@ var ViewMgr = kind(
 	* Handles the 'complete' event from its layout indicating a view has completed its layout
 	* @private
 	*/
-	handleLayoutComplete: function (sender, name, view) {
-		if (view == this.active) {
-			this.emitViewEvent('activated', view);
-		} else {
-			// This is already within a rAF
-			this.deactivateImmediate(view);
-		}
+	handleLayoutComplete: function (sender, name, event) {
+		if (event.was) this.deactivateImmediate(event.was);
+		if (event.is) this.emitViewEvent('activated', event.is);
 		this.direction = 0;
 	},
 
@@ -890,7 +895,7 @@ var ViewMgr = kind(
 	handleDragStart: function (sender, event) {
 		if (!this.draggable || this.dismissed) return;
 		this.set('dragging', 'start');
-		this.dragDirection = 0;
+		this.direction = 0;
 		this.dragView = null;
 		this.dragBounds = this.getBounds();
 
@@ -918,8 +923,8 @@ var ViewMgr = kind(
 		this.decorateDragEvent(event);
 		if (this.canDrag(event.direction)) {
 			// clean up on change of direction
-			if (this.dragDirection !== event.direction) {
-				this.dragDirection = event.direction;
+			if (this.direction !== event.direction) {
+				this.direction = event.direction;
 				if (this.dragView) {
 					this.emitViewEvent('deactivate', this.dragView);
 					this.deactivate(this.dragView.name);
@@ -935,7 +940,7 @@ var ViewMgr = kind(
 			// there's a change of direction. `false` indicates that we've tried to activate a view
 			// but there isn't one in that direction.
 			if (this.dragView === null) {
-				if (this.dragDirection == 1) {
+				if (this.direction == 1) {
 					this.dragView = this.next();
 				} else if (this.floating) {
 					this.dragView = this.back();
