@@ -49,8 +49,8 @@ var defaultObservers = [
 ];
 
 /**
-* Prevents browser-initiated scrolling contained controls into view when those controls are
-* explicitly focus()'ed.
+* Prevents browser-initiated scrolling of contained controls into view when
+* those controls are explicitly focused.
 *
 * @private
 */
@@ -166,8 +166,9 @@ var AccessibilitySupport = {
 	name: 'enyo.AccessibilitySupport',
 
 	/**
-	* AccessibilityLabel is used for accessibility voice readout.
-	* If accessibilityLabel is set, screen reader reads the label when control is focused.
+	* `accessibilityLabel` is used for accessibility voice readout. If
+	* `accessibilityLabel` is set, the screen reader will read the label when the
+	* control is focused.
 	*
 	* @type {String}
 	* @default ''
@@ -176,9 +177,9 @@ var AccessibilitySupport = {
 	accessibilityLabel: '',
 
 	/**
-	* AccessibilityHint is used for additional information of control.
-	* If accessibilityHint is set and content exists, screen reader
-	* reads accessibilityHint with content when control is focused.
+	* `accessibilityHint` is used to provide additional information regarding the
+	* control. If `accessibilityHint` is set, the screen reader will read the
+	* hint content when the control is focused.
 	*
 	* @type {String}
 	* @default ''
@@ -187,7 +188,7 @@ var AccessibilitySupport = {
 	accessibilityHint: '',
 
 	/**
-	* The `role` of the control. May be superceded by a truthy `accessibilityAlert` value.
+	* The `role` of the control. May be superseded by a truthy `accessibilityAlert` value.
 	*
 	* @type {String}
 	* @default ''
@@ -196,16 +197,12 @@ var AccessibilitySupport = {
 	accessibilityRole: '',
 
 	/**
-	* AccessibilityAlert is for alert message or page description.
-	* If accessibilityAlert is true, aria role will be set to "alert" and
-	* screen reader will automatically reads content or accessibilityLabel
-	* regardless focus.
-	* Note that if you use accessibilityAlert, previous role will be
-	* replaced with "alert" role.
-	*
-	* Range: [`true`, `false`]
-	* - true: screen reader automatically reads label regardless focus.
-	* - false: screen reader reads label with focus.
+	* `accessibilityAlert` affects the handling of alert message or page
+	* description content. If `true`, aria role will be set to "alert" and the
+	* screen reader will automatically read the content of `accessibilityLabel`,
+	* regardless of focus state; if `false` (the default), the label will be read
+	* when the control receives focus. Note that if you use `accessibilityAlert`,
+	* the previous role will be replaced with "alert" role.
 	*
 	* @type {Boolean}
 	* @default false
@@ -214,13 +211,10 @@ var AccessibilitySupport = {
 	accessibilityAlert: false,
 
 	/**
-	* AccessibilityLive is for dynamic content which updates without a page reload.
-	* If AccessibilityLive is true, screen reader will read content or accessibilityLabel
-	* when it changed.
-	*
-	* Range: [`true`, `false`]
-	* - true: screen reader reads content when it changed.
-	* - false: screen reader reads content with focus.
+	* `accessibilityLive` affects the handling of dynamic content that updates
+	* without a page reload. If `true`, the screen reader will read the content of
+	* `accessibilityLabel` when the content changes; if `false` (the default), the
+	* label will be read when the control gains focus.
 	*
 	* @type {Boolean}
 	* @default false
@@ -229,11 +223,9 @@ var AccessibilitySupport = {
 	accessibilityLive: false,
 
 	/**
-	* AccessibilityDisabled prevents VoiceReadout.
-	* If accessibilityDisabled is true, screen reader doesn't read any label for the control.
-	* Note that this is not working on HTML form elements which can get focus without tabindex.
-	*
-	* Range: [`true`, `false`]
+	* `accessibilityDisabled` is used to prevent voice readout. If `true`, the
+	* screen reader will not read the label for the control. Note that this is not
+	* working on HTML form elements which can get focus without tabindex.
 	*
 	* @type {Boolean}
 	* @default false
@@ -242,9 +234,10 @@ var AccessibilitySupport = {
 	accessibilityDisabled: false,
 
 	/**
-	* When true, `onscroll` events will be observed and scrolling prevented by resetting the
-	* `scrollTop` and `scrollLeft` of the node. This prevents inadvertent layout issues introduced
-	* by the browser scrolling contained controls into view when `focus()`'ed.
+	* When `true`, `onscroll` events will be observed and scrolling will be
+	* prevented by resetting the node's `scrollTop` and `scrollLeft` values. This
+	* prevents inadvertent layout issues introduced by the browser's scrolling
+	* contained controls into view when focused.
 	*
 	* @type {Boolean}
 	* @default false
@@ -253,9 +246,9 @@ var AccessibilitySupport = {
 	accessibilityPreventScroll: false,
 
 	/**
-	* Sets the `tabindex` of the control. When `undefined` on webOS, it will be set to -1 to enable
-	* screen reading. A value of `null` (or `undefined` on non-webOS) ensures that no `tabindex` is
-	* set.
+	* The `tabindex` of the control. When `undefined` on webOS, it will be set to
+	* `-1` to enable screen reading. A value of `null` (or `undefined` on
+	* non-webOS) ensures that no `tabindex` will be set.
 	*
 	* @type {Number}
 	* @default undefined
@@ -274,7 +267,8 @@ var AccessibilitySupport = {
 	}),
 
 	/**
-	* If accessibilityDisabled is `false`, sets the node attribute. Otherwise, removes it.
+	* If `accessibilityDisabled` is `false`, sets the specified node attribute;
+	* otherwise, removes it.
 	*
 	* @param {String} name  Attribute name
 	* @param {String} value Attribute value
