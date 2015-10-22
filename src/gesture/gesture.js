@@ -9,10 +9,22 @@ global.__TRACING__ = false;
 if (global.PalmSystem) {
 	if (PalmSystem.PmTraceBefore) {
 		global.__TRACING__ = true;
-		global.PmTrace = PalmSystem.PmTrace;
-		global.PmTraceItem = PalmSystem.PmTraceItem;
-		global.PmTraceBefore = PalmSystem.PmTraceBefore;
-		global.PmTraceAfter = PalmSystem.PmTraceAfter;
+		global.PmTrace = function () {
+			console.log('PmTrace', arguments[0]);
+			PalmSystem.PmTrace.apply(PalmSystem, arguments);
+		};
+		global.PmTraceItem = function () {
+			console.log('PmTraceItem', arguments[0], arguments[1]);
+			PalmSystem.PmTraceItem.apply(PalmSystem, arguments);
+		};
+		global.PmTraceBefore = function () {
+			console.log('PmTraceBefore', arguments[0]);
+			PalmSystem.PmTraceBefore.apply(PalmSystem, arguments);
+		};
+		global.PmTraceAfter = function () {
+			console.log('PmTraceAfter', arguments[0]);
+			PalmSystem.PmTraceAfter.apply(PalmSystem, arguments);
+		};
 	}
 }
 
