@@ -25,13 +25,23 @@ module.exports = kind({
 	// reorderNodes: false,
 
 	reset: function () {
+		// If we are showing, go ahead and reset...
 		if (this.getAbsoluteShowing()) {
 			this.init();
 			this.destroyClientControls();
 			this.setExtent();
-			this._needsReset = false;
+			if (this._needsReset) {
+				// Now that we've done our deferred reset, we
+				// can become visible again
+				this.applyStyle('visibility', 'showing');
+				this._needsReset = false;
+			}
 		}
+		// If we aren't showing, defer the reset until we are shown again
 		else {
+			// Because our state will be stale by the time we reset, become invisible
+			// to avoid briefly "flashing" the stale state when we are shown
+			this.applyStyle('visibility', 'hidden');
 			this._needsReset = true;
 		}
 	},
@@ -71,19 +81,58 @@ module.exports = kind({
 		}
 	},
 
-	refresh: function () {
+	refresh: function (immediate) {
+		// If we haven't initialized, we need to reset instead
 		if (!this.hasInitialized) return this.reset();
 
-		if (this.getAbsoluteShowing()) {
-			if (arguments[1] === 'reset' && typeof this.collectionResetHandler === 'function') {
-				this.collectionResetHandler();
+		// If we're being called as the handler for a collection reset,
+		// note that so we can do extra stuff as needed
+		if (arguments[1] === 'reset' && typeof this.collectionResetHandler === 'function') {
+			this._needsToHandleCollectionReset = true;
+		}
+
+		// For performance reasons, it's better to refresh asynchronously most
+		// of the time, so we put the refresh logic in a function we can async
+		var refresh = this.bindSafely(function () {
+			// If we are showing, go ahead and refresh...
+			if (this.getAbsoluteShowing()) {
+				this.stabilizeExtent();
+				this.doIt();
+				// If we need to do anything to respond to the collection
+				// resetting, now's the time
+				if (this._needsToHandleCollectionReset) {
+					this.collectionResetHandler();
+					this._needsToHandleCollectionReset = false;
+				}
+				if (this._needsRefresh) {
+					// Now that we've done our deferred refresh, we
+					// can become visible again
+					this.applyStyle('visibility', 'visible');
+					this._needsRefresh = false;
+				}
 			}
-			this.stabilizeExtent();
-			this.doIt();
-			this._needsRefresh = false;
+			// If we aren't showing, defer the refresh until we are shown again
+			else {
+				// Because our state will be stale by the time we refresh, become invisible
+				// to avoid briefly "flashing" the stale state when we are shown
+				this.applyStyle('visibility', 'hidden');
+				this._needsRefresh = true;
+			}
+		});
+
+		// refresh is used as the event handler for
+		// collection resets so checking for truthy isn't
+		// enough. it must be true.
+		if (immediate === true) {
+			refresh();
 		}
 		else {
-			this._needsRefresh = true;
+			// TODO: Consider the use cases and the reasons why
+			// we're making this async, and decide whether it makes
+			// sense to delay more than 16ms. In particular, in cases
+			// where the benefit of async'ing comes from debouncing, it
+			// may be that 16ms is not enough on slower hardware.
+			this.startJob('refreshing', refresh, 16);
 		}
 	},
 
@@ -92,6 +141,8 @@ module.exports = kind({
 	*/
 	showingChangedHandler: kind.inherit(function (sup) {
 		return function () {
+			// If we have deferred a reset or a refresh,
+			// take care of it now that we're showing again
 			if (this._needsReset) {
 				this.reset();
 			}
