@@ -607,6 +607,7 @@ var ViewMgr = kind(
 			// but it might need to be created too
 			if (view && !(view instanceof Control)) {
 				view = this.views[index] = this.createComponent(view);
+				view.addClass('enyo-view');
 			}
 		}
 
@@ -785,11 +786,8 @@ var ViewMgr = kind(
 	*/
 	activate: function (viewName) {
 		var view = this._activate(viewName);
-		if (view && !this.isManager(view)) {
-			if (this.active && this.floating) {
-				this.stack.unshift(this.active.name);
-			}
-			if (!this.direction) this.determineDirection(view);
+		if (view && !this.isManager(view) && this.active && this.floating) {
+			this.stack.unshift(this.active.name);
 		}
 
 		return view;
@@ -802,7 +800,18 @@ var ViewMgr = kind(
 	*/
 	_activate: function (viewName) {
 		var view = this.getView(viewName);
-		if (view) rAF(this.activateImmediate.bind(this, view));
+		if (view) {
+			if (!this._toBeActivated) {
+				rAF(function () {
+					this.activateImmediate(this._toBeActivated);
+					this._toBeActivated = null;
+				}.bind(this));
+			}
+			else if (this.floating && !this.isManager(view)) {
+				this.stack.unshift(this._toBeActivated.name);
+			}
+			this._toBeActivated = view;
+		}
 		return view;
 	},
 
@@ -819,6 +828,7 @@ var ViewMgr = kind(
 			view.emit('manage');
 		}
 		else {
+			if (!this.direction) this.determineDirection(view);
 			this.emitViewEvent('activate', view);
 			if (!this.dragging) this.set('active', view);
 		}
