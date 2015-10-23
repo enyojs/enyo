@@ -1,25 +1,29 @@
 .enyo-viewlayout-slide {
+	.pre(@prop, @val) {
+		-webkit-@{prop}: @val;
+		@{prop}: @val;
+	}
 	> .enyo-view {
-		transform: translateX(-100%);
-		transition-property: none;
-		transition-timing-function: linear;
+		.pre(transform, translateX(-100%));
+		.pre(transition-property, none);
+		.pre(transition-timing-function, linear);
 	}
 
 	&:not(.dragging) > .enyo-view.transitioning {
-		transition-property: transform;
+		.pre(transition-property, transform);
 		will-change: transform;
 	}
 
 	&.horizontal > .enyo-view {
-		&.forward { transform: translateX(100%); }
-		&.back { transform: translateX(-100%); }
-		&.active { transform: translateX(0); }
+		&.forward { .pre(transform, translateX(100%)); }
+		&.back { .pre(transform, translateX(-100%)); }
+		&.active { .pre(transform, translateX(0)); }
 	}
 
 	&.vertical > .enyo-view {
-		&.forward { transform: translateY(-100%); }
-		&.back { transform: translateY(100%); }
-		&.active { transform: translateY(0); }
+		&.forward { .pre(transform, translateY(-100%)); }
+		&.back { .pre(transform, translateY(100%)); }
+		&.active { .pre(transform, translateY(0)); }
 	}
 
 	&.cover {
@@ -29,7 +33,7 @@
 			// unless it's the stationary view which should always remain behind
 			&.stationary {
 				z-index: 0;
-				transform: translateX(0px);
+				.pre(transform, translateX(0px));
 			}
 		}
 

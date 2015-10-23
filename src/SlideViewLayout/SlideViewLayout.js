@@ -1,4 +1,5 @@
 var
+	dom = require('enyo/dom'),
 	kind = require('enyo/kind');
 
 var
@@ -78,10 +79,10 @@ module.exports = kind({
 		}
 
 		TransitionViewLayout.prototype.drag.apply(this, arguments);
-		c.active.applyStyle('transform', transform + '(' + delta + 'px)');
+		dom.transformValue(c.active, transform,  delta + 'px');
 		if (c.dragView) {
 			px = this.container.layoutCover ? 0 : size * event.direction + delta;
-			c.dragView.applyStyle('transform', transform + '(' + px + 'px)');
+			dom.transformValue(c.dragView, transform,  px + 'px');
 		}
 	},
 
@@ -109,15 +110,16 @@ module.exports = kind({
 	* @private
 	*/
 	transition: function (was, is) {
-		var dir;
+		var dir,
+			transform = this.container.orientation == 'horizontal' ? 'translateX' : 'translateY';
 
 		TransitionViewLayout.prototype.transition.apply(this, arguments);
 		if (was) {
-			was.applyStyle('transform', null);
+			dom.transformValue(was, transform, null);
 		}
 		if (is) {
 			this.addRemoveDirection(is, false);
-			is.applyStyle('transform', null);
+			dom.transformValue(is, transform, null);
 		}
 
 		// If the user drags the entire view off screen, it won't animate so we won't see the CSS
