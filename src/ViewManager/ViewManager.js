@@ -960,6 +960,10 @@ var ViewMgr = kind(
 				this.dragView = this.dragView || false;
 			}
 			this.emit('drag', event);
+		} else {
+			// Reset the drag state when dragging in an invalid direction
+			this.dragView = null;
+			this.direction = 0;
 		}
 
 		return true;
