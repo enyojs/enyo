@@ -10,8 +10,8 @@
 	}
 
 	&:not(.dragging) > .enyo-view.transitioning {
-		.pre(transition-property, transform);
-		will-change: transform;
+		-webkit-transition-property: -webkit-transform;
+		transition-property: transform;
 	}
 
 	&.horizontal > .enyo-view {
