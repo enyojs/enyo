@@ -977,10 +977,10 @@ var ViewMgr = kind(
 	handleDragFinish: function (sender, event) {
 		if (!this.dragging || !this.draggable || this.dismissed) return;
 
-		this.set('dragging', false);
 		this.decorateDragEvent(event);
 		// if the view has been dragged far enough
 		if (event.percentDelta * 100 > this.dragThreshold) {
+			this.set('dragging', false);
 			// normally, there will be a becoming-active view to activate
 			if (this.dragView) {
 				// dragging for floating views can only be a back action so shift it off the stack
@@ -995,14 +995,22 @@ var ViewMgr = kind(
 		}
 		// otherwise the drag was small enough to be cancelled
 		else {
-			// Since we're restoring the active view, the navigation direction is the opposite of
-			// the drag direction.
-			this.direction = -event.direction;
-			this.emit('cancelDrag', event);
+			this.cancelDrag();
 		}
 		event.preventTap();
 
 		return true;
+	},
+
+	/**
+	* @protected
+	*/
+	cancelDrag: function () {
+		this.set('dragging', false);
+		// Since we're restoring the active view, the navigation direction is the opposite of the
+		// drag direction.
+		this.direction = -this.direction;
+		this.emit('cancelDrag');
 	},
 
 	/**
