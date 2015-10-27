@@ -183,8 +183,8 @@ var viewCount = 0;
 *
 *	// Activate the Contacts ViewManager
 *	pushAddContactView: function () {
-*		var view = this.activate('add');
-*		view.set('model', new Model({
+*		this.activate('add');
+*		this.$.add.set('model', new Model({
 *			first: 'First Name',
 *			last: 'Last Name'
 *		}));
@@ -783,15 +783,13 @@ var ViewMgr = kind(
 	* For floating ViewManagers, the view will be added to the stack and can be removed by `back()`.
 	*
 	* @param {String} viewName Name of the view to activate
+	* @return {Boolean} `true` if the requested view was found and activated
 	* @public
 	*/
 	activate: function (viewName) {
-		var view = this._activate(viewName);
-		if (view && !this.isManager(view) && this.active && this.floating) {
-			this.stack.unshift(this.active.name);
-		}
-
-		return view;
+		var activated = this._activate(viewName, true);
+		if (activated && !this.isManager(viewName)) this.updateStack(viewName);
+		return activated;
 	},
 
 	/**
@@ -802,18 +800,30 @@ var ViewMgr = kind(
 	_activate: function (viewName) {
 		var view = this.getView(viewName);
 		if (view) {
+			// In the first activate() of the frame, _toBeActivated will be null so the animation
+			// frame will be scheduled. Subsequent calls will only update _toBeActivated.
 			if (!this._toBeActivated) {
 				rAF(function () {
-					this.activateImmediate(this._toBeActivated);
+					this.activateImmediate(this.getView(this._toBeActivated));
 					this._toBeActivated = null;
 				}.bind(this));
 			}
-			else if (this.floating && !this.isManager(view)) {
-				this.stack.unshift(this._toBeActivated.name);
-			}
-			this._toBeActivated = view;
+			this._toBeActivated = viewName;
 		}
 		return view;
+	},
+
+	/**
+	* If the activating view is not a ViewManager, we have a active view (either truly or logically
+	* as this._toBeActivated) and this is a floating VM, add the active view to the stack.
+	*
+	* @private
+	*/
+	updateStack: function (viewName) {
+		var activeView = this._toBeActivated || this.active && this.active.name;
+		if (activeView && this.floating) {
+			this.stack.unshift(activeView);
+		}
 	},
 
 	/**
@@ -825,7 +835,7 @@ var ViewMgr = kind(
 			view.set('canGenerate', true);
 			view.render();
 		}
-		if (this.isManager(view)) {
+		if (this.isManager(view.name)) {
 			view.emit('manage');
 		}
 		else {
@@ -850,7 +860,7 @@ var ViewMgr = kind(
 	deactivateImmediate: function (view) {
 		this.teardownView(view);
 
-		if (!this.isManager(view)) this.emitViewEvent('deactivated', view);
+		if (!this.isManager(view.name)) this.emitViewEvent('deactivated', view);
 		if (!this.dragging && this.dismissed) this.emit('dismissed');
 	},
 
@@ -871,8 +881,8 @@ var ViewMgr = kind(
 	/**
 	* @private
 	*/
-	isManager: function (view) {
-		return view && !!this.viewManagers[view.name];
+	isManager: function (viewName) {
+		return viewName && !!this.viewManagers[viewName];
 	},
 
 	// Layout
