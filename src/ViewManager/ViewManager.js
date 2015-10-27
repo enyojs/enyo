@@ -103,6 +103,7 @@ var
 	rAF = animation.requestAnimationFrame;
 
 var
+	RequestSupport = require('./RequestSupport'),
 	ScrimSupport = require('./ScrimSupport');
 
 var viewCount = 0;
@@ -530,7 +531,7 @@ var ViewMgr = kind(
 	* @param {Object|module:enyo/Control~Control} view View config or instance
 	* @param {module:enyo/Control~Control|null} [owner] Optional owner of view. Defaults to this.
 	*
-	* @private
+	* @protected
 	*/
 	addView: function (view, owner, isManager) {
 		var index,
@@ -1031,3 +1032,4 @@ var ViewMgr = kind(
 
 module.exports = ViewMgr;
 module.exports.ScrimSupport = ScrimSupport;
+module.exports.RequestSupport = RequestSupport;
