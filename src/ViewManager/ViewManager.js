@@ -936,13 +936,10 @@ var ViewMgr = kind(
 			// clean up on change of direction
 			if (this.direction !== event.direction) {
 				this.direction = event.direction;
-				if (this.dragView) {
-					this.emitViewEvent('deactivate', this.dragView);
-					this.deactivate(this.dragView.name);
+				if (this.dragView === false) {
 					this.dragView = null;
-				}
-				else if (this.dragView === false) {
-					this.dragView = null;
+				} else {
+					this.resetDragView();
 				}
 			}
 
@@ -963,7 +960,7 @@ var ViewMgr = kind(
 			this.emit('drag', event);
 		} else {
 			// Reset the drag state when dragging in an invalid direction
-			this.dragView = null;
+			this.resetDragView();
 			this.direction = 0;
 		}
 
@@ -1001,6 +998,19 @@ var ViewMgr = kind(
 		event.preventTap();
 
 		return true;
+	},
+
+	/**
+	* Deactivates drag view and resets `dragView`
+	*
+	* @private
+	*/
+	resetDragView: function () {
+		if (this.dragView) {
+			this.emitViewEvent('deactivate', this.dragView);
+			this.deactivate(this.dragView.name);
+			this.dragView = null;
+		}
 	},
 
 	/**
