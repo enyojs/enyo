@@ -26,13 +26,15 @@ var getScreenTypeObject = function (type) {
 */
 var ri = module.exports = {
 	/**
-	* Setup screen resolution scaling capabilities by defining all of the screens you're working
-	* with. These should be in the order of smallest to largest (according to width). Running
-	* this also initializes the rest of this resolution code.
+	* Sets up screen resolution scaling capabilities by defining an array of all the screens
+	* being used. These should be listed in order from smallest to largest, according to
+	* width.
 	*
-	* In the arguments, the following properties are required: 'name', 'pxPerRem', 'width',
-	* 'aspectRatioName'. The property 'base' defines the primary or default resoultion that
-	* everything else will be based upon.
+	* The `name`, `pxPerRem`, `width`, and `aspectRatioName` properties are required for
+	* each screen type in the array. Setting `base: true` on a screen type marks it as the
+	* default resolution, upon which everything else will be based.
+	*
+	* Executing this method also initializes the rest of the resolution-independence code.
 	*
 	* ```
 	* ri.defineScreenTypes([
@@ -45,7 +47,8 @@ var ri = module.exports = {
 	* ]);
 	* ```
 	*
-	* @param {Array} types An array of objects with arguments like the example
+	* @param {Array} types - An array of objects containing screen configuration data, as in the
+	* preceding example.
 	* @public
 	*/
 	defineScreenTypes: function (types) {
@@ -57,12 +60,12 @@ var ri = module.exports = {
 	},
 
 	/**
-	* Fetches the best-matching screen type name for the current screen size. The "best" screen type
-	* is determined by the screen type name that is the closest to the screen resolution without
+	* Fetches the name of the screen type that best matches the current screen size. The best
+	* match is defined as the screen type that is the closest to the screen resolution without
 	* going over. ("The Price is Right" style.)
 	*
-	* @param {Object} [rez] - Optional measurement scheme. Must have "height" and "width" properties.
-	* @returns {String} Screen type, like "fhd", "uhd", etc.
+	* @param {Object} [rez] - Optional measurement scheme. Must include `height` and `width` properties.
+	* @returns {String} Screen type (e.g., `'fhd'`, `'uhd'`, etc.)
 	* @public
 	*/
 	getScreenType: function (rez) {
@@ -135,12 +138,12 @@ var ri = module.exports = {
 	},
 
 	/**
-	* Calculates the aspect ratio of the screen type provided. If none is provided the current
-	* screen type is used.
+	* Calculates the aspect ratio of the specified screen type. If no screen type is provided,
+	* the current screen type is used.
 	*
-	* @param {String} type Screen type to get the aspect ratio of. Providing nothing uses the
-	*	current screen type.
-	* @returns {Number} The calculated screen ratio (1.333, 1.777, 2.333, etc)
+	* @param {String} type - Screen type whose aspect ratio will be calculated. If no screen
+	* type is provided, the current screen type is used.
+	* @returns {Number} The calculated screen ratio (e.g., `1.333`, `1.777`, `2.333`, etc.)
 	* @public
 	*/
 	getAspectRatio: function (type) {
@@ -152,12 +155,12 @@ var ri = module.exports = {
 	},
 
 	/**
-	* Returns the name of the aspect ration given the screen type or the default screen type if
-	* none is proided.
+	* Returns the name of the aspect ratio for a specified screen type, or for the default
+	* screen type if none is provided.
 	*
-	* @param {String} type Screen type to get the aspect ratio of. Providing nothing uses the
-	*	current screen type.
-	* @returns {String} The name of the type of screen ratio
+	* @param {String} type - Screen type whose aspect ratio name will be returned. If no
+	* screen type is provided, the current screen type will be used.
+	* @returns {String} The name of the screen type's aspect ratio
 	* @public
 	*/
 	getAspectRatioName: function (type) {
@@ -166,12 +169,12 @@ var ri = module.exports = {
 	},
 
 	/**
-	* Takes a provided pixel value and preforms a scaling operation on the number based on the
-	* current screen type.
+	* Takes a provided pixel value and performs a scaling operation based on the current
+	* screen type.
 	*
-	* @param {Number} px The amount of standard-resolution pixels to scale to the current screen
-	*	resolution.
-	* @returns {Number} The scaled value based on the current screen scaling factor.
+	* @param {Number} px - The quantity of standard-resolution pixels to scale to the
+	* current screen resolution.
+	* @returns {Number} The scaled value based on the current screen scaling factor
 	* @public
 	*/
 	scale: function (px) {
@@ -190,29 +193,35 @@ var ri = module.exports = {
 	*/
 
 	/**
-	* Image src chooser. A simple utility method to select the ideal image asset from a set of
-	* assets, based on various screen resolutions: HD (720p), FHD (1080p), UHD (4k). When provided
-	* with a src argument, multiResSrc will choose the best image with respect to the current screen
-	* resolution. `src` may be either the traditional string, which will pass straight through, or a
-	* hash/object of screen types and their asset sources (keys:screen and values:src). The image
-	* sources will be used chosen when the screen resolution is less than or equal to the provided
-	* screen types.
+	* Selects the ideal image asset from a set of assets, based on various screen
+	* resolutions: HD (720p), FHD (1080p), UHD (4k). When a `src` argument is
+	* provided, `selectSrc()` will choose the best image with respect to the current
+	* screen resolution. `src` may be either the traditional string, which will pass
+	* straight through, or a hash/object of screen types and their asset sources
+	* (keys:screen and values:src). The image sources will be used when the screen
+	* resolution is less than or equal to the provided screen types.
 	*
 	* ```
-	* // Take advantage of the multi-rez mode
-	* {kind: 'moon.Image', src: {
+	* // Take advantage of the multi-res mode
+	* var
+	* 	kind = require('enyo/kind'),
+	* 	Image = require('enyo/Image');
+	*
+	* {kind: Image, src: {
 	* 	'hd': 'http://lorempixel.com/64/64/city/1/',
 	* 	'fhd': 'http://lorempixel.com/128/128/city/1/',
 	* 	'uhd': 'http://lorempixel.com/256/256/city/1/'
-	* }, alt: 'Multi-rez'},
+	* }, alt: 'Multi-res'},
+	*
 	* // Standard string `src`
-	* {kind: 'moon.Image', src: http://lorempixel.com/128/128/city/1/', alt: 'Large'},
+	* {kind: Image, src: http://lorempixel.com/128/128/city/1/', alt: 'Large'},
 	* ```
 	*
-	* @param {(String|moon.ri.selectSrc~src)} src A string containing a single image src or a
-	*	key/value hash/object containing keys representing screen types (hd, fhd, uhd, etc) and
-	*	values containing the asset src for that target screen resolution.
-	* @returns {String} The choosen src given the string or list provided.
+	* @param {(String|module:enyo/resolution#selectSrc~src)} src - A string containing
+	* a single image source or a key/value hash/object containing keys representing screen
+	* types (`'hd'`, `'fhd'`, `'uhd'`, etc.) and values containing the asset source for
+	* that target screen resolution.
+	* @returns {String} The chosen source, given the string or list provided
 	* @public
 	*/
 	selectSrc: function (src) {
