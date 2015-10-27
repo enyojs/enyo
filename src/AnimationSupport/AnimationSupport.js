@@ -135,7 +135,7 @@ var AnimationSupport = {
 	* @public
 	*/
 	getDuration: function() {
-		return this._duration || (this._duration = this.duration);
+		return this._duration || this.duration;
 	},
 
 	/**
