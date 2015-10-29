@@ -33,7 +33,9 @@ var EventDelegator = {
 	* @private
 	*/
 	eventArray: [
+		"drag",
 		"scroll",
+		"dragstart",
 		"mousewheel",
 		"touchstart",
 		"touchmove",
@@ -96,8 +98,8 @@ var EventDelegator = {
 			y = ev.targetTouches[0].pageY;
 			
 		if(x !== 0 || y !== 0) {
-			sender.animDelta[0] = x - sender.touchX;
-			sender.animDelta[1] = y - sender.touchY;
+			sender.animDelta[0] = sender.touchX - x;
+			sender.animDelta[1] = sender.touchY - y;
 			sender.animDelta[2] = 0;
 			sender.touchX = x;
 			sender.touchY = y;
@@ -137,6 +139,33 @@ var EventDelegator = {
 		this.animDelta[0] = delta;
 		this.animDelta[1] = 0;
 		this.animDelta[2] = 0;	
+	},
+
+	/**
+	* @private
+	*/
+	dragstartEvent: function (inSender, inEvent) {
+		this.dragLeft = inEvent.offsetX,
+		this.dragTop = inEvent.offsetY;
+	},
+
+	/**
+	* @private
+	*/
+	dragEvent: function (inSender, inEvent) {
+		var dragLeft = inEvent.offsetX,
+			dragTop = inEvent.offsetY;
+		if (dragLeft && dragTop) {
+			this.deltaX = this.dragLeft - dragLeft;
+			this.deltaY = this.dragTop - dragTop;
+			
+			this.dragLeft = dragLeft,
+			this.dragTop = dragTop;
+
+			this.animDelta[0] = this.deltaX;
+			this.animDelta[1] = this.deltaY;
+			this.animDelta[2] = 0;
+		}
 	},
 
 	/**
