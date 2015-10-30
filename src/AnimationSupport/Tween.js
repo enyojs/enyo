@@ -23,8 +23,8 @@ module.exports = {
      * As of now this method is provided as an interface for application 
      * to directly trigger an animation. However, this will be later made private
      * and will be accessible only by the interfaces exposed by framework.
-     * @parameter chrac-		Animating character
-     *			ts-			DOMHighResTimeStamp
+     * @parameter chrac-        Animating character
+     *          ts-         DOMHighResTimeStamp
      *
      * @public
      */
@@ -50,8 +50,8 @@ module.exports = {
      * As of now this method is provided as an interface for application 
      * to directly trigger an animation. However, this will be later made private
      * and will be accessible only by the interfaces exposed by framework.
-     * @parameter	chrac-		Animating character
-     *				dt-			An array of delta dimensions like [x,y,z]
+     * @parameter   chrac-      Animating character
+     *              dt-         An array of delta dimensions like [x,y,z]
      *
      * @public
      */
@@ -110,7 +110,7 @@ module.exports = {
         for (k in props) {
             cState = frame.copy(charc.currentState[k] || []);
             if (charc.ease && (typeof charc.ease !== 'function')) {
-                 if((k == 'rotate')) {
+                if ((k == 'rotate')) {
                     //Without control points
                     // pts = this.beizerSlerpPoints(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]), props[k]);
                     // cState = this.beizerSlerp(t, pts, cState);
@@ -118,6 +118,8 @@ module.exports = {
                     //With control points process
                     pts = this.beizerSPoints(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]), props[k]);
                     cState = this.beizerSpline(t, pts, cState);
+
+
                 } else {
                     pts = this.calculateEase(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]));
                     cState = this.getBezier(t, pts, cState);
@@ -147,7 +149,7 @@ module.exports = {
         charc.animationStep && charc.animationStep(t);
     },
 
-    
+
     /**
      * @private
      */
@@ -161,8 +163,8 @@ module.exports = {
             splinePoints = {},
             eD = frame.parseValue(endPoint),
             aN = startQuat;
-        
-        if(ease && Object.keys(ease).length > 0) {
+
+        if (ease && Object.keys(ease).length > 0) {
             for (key in ease) {
                 tm = parseFloat(key) / 100;
                 ag = parseFloat(ease[key]);
@@ -180,10 +182,10 @@ module.exports = {
     //Without control points
     beizerSlerp: function(t, points, vR) {
         var p, key;
-        for(p in points) {
-            if(p >= t) key = p;
+        for (p in points) {
+            if (p >= t) key = p;
         }
-        vR = this.slerp(points[key][0] , points[key][1], t);
+        vR = this.slerp(points[key][0], points[key][1], t);
         return vR;
     },
 
@@ -196,7 +198,7 @@ module.exports = {
         var t, a, q, n, _a, aI, bN,
             eD = frame.parseValue(endPoint);
 
-        if(ease && Object.keys(ease).length > 0) {
+        if (ease && Object.keys(ease).length > 0) {
             for (var key in ease) {
                 t = parseFloat(key) / 100;
                 a = parseFloat(ease[key]);
@@ -206,52 +208,49 @@ module.exports = {
                 quats.push(q);
                 time.push(t);
             }
-
             quats.push(endQuat);
             time.push(1);
 
-            n = quats.length -1;
+            n = quats.length - 1;
             for (var i = 0, j = 1; i < n; i++, j++) {
-                if(i === 0) {
+                if (i === 0) {
                     aI = this.slerp(quats[0], this.slerp(quats[2], quats[1], 2.0), 1.0 / 3);
                 } else {
-                    _a = this.slerp(this.slerp(quats[i-1], quats[i], 2.0), quats[i+1], 0.5);
-                    aI = this.slerp(quats[j] , _a , 1.0 / 3);
+                    _a = this.slerp(this.slerp(quats[i - 1], quats[i], 2.0), quats[i + 1], 0.5);
+                    aI = this.slerp(quats[j], _a, 1.0 / 3);
                 }
-                if(j === n) {
-                    bN = this.slerp(quats[j], this.slerp(quats[j-2], quats[j-1], 2.0), 1.0 / 3);
+                if (j === n) {
+                    bN = this.slerp(quats[j], this.slerp(quats[j - 2], quats[j - 1], 2.0), 1.0 / 3);
                 } else {
-                    _a = this.slerp(this.slerp(quats[j-1], quats[j], 2.0), quats[j+1], 0.5);
-                    bN = this.slerp(quats[j] , _a , -1.0 / 3);    
+                    _a = this.slerp(this.slerp(quats[j - 1], quats[j], 2.0), quats[j + 1], 0.5);
+                    bN = this.slerp(quats[j], _a, -1.0 / 3);
                 }
-                splinePoints[time[j]] = [quats[i], aI, bN, quats[i+1]];
+                splinePoints[time[j]] = [quats[i], aI, bN, quats[i + 1]];
             }
         }
         return splinePoints;
     },
 
     //With control points
-    beizerSpline: function (t, points, vR) {
-        if(!vR) vR = [];
+    beizerSpline: function(t, points, vR) {
+        if (!vR) vR = [];
         var Q0, Q1, Q2, R0, R1;
 
         var p, key, pts;
-        for(p in points) {
-            if(p >= t) key = p;
+        for (p in points) {
+            if (p >= t) key = p;
         }
         pts = points[key];
 
-        if(pts.length >= 4) {
-            Q0 = this.slerp(pts[0],pts[1],t);
-            Q1 = this.slerp(pts[1],pts[2],t);
-            Q2 = this.slerp(pts[2],pts[3],t);
-            R0 = this.slerp(Q0,Q1,t);
-            R1 = this.slerp(Q1,Q2,t);
-            vR = this.slerp(R0,R1,t);
-        }
-        else 
-            vR = this.slerp(pts[0],pts[1],t);
-        
+        if (pts.length >= 4) {
+            Q0 = this.slerp(pts[0], pts[1], t);
+            Q1 = this.slerp(pts[1], pts[2], t);
+            Q2 = this.slerp(pts[2], pts[3], t);
+            R0 = this.slerp(Q0, Q1, t);
+            R1 = this.slerp(Q1, Q2, t);
+            vR = this.slerp(R0, R1, t);
+        } else
+            vR = this.slerp(pts[0], pts[1], t);
         return vR;
     },
 
@@ -280,7 +279,7 @@ module.exports = {
         m4 = matrixUtil.multiplyN(m3, m1);
         l = m4.length;
         for (var i = 0; i < l; i++) {
-            controlPoints.push([m4[i], m4[i], m4[i], m4[i]]);
+            controlPoints.push([m4[i], m4[i], m4[i]]);
         }
 
         controlPoints.push(endPoint);
@@ -314,8 +313,12 @@ module.exports = {
         if (dot == 1.0) {
             qR = frame.copy(qA);
             return qR;
+        } else if (dot < 0) {
+            qB[0] = -qB[0];
+            qB[1] = -qB[1];
+            qB[2] = -qB[2];
+            qB[3] = -qB[3];
         }
-
         theta = Math.acos(dot);
         for (var i = 0; i < l; i++) {
             a = (Math.sin((1 - t) * theta) / Math.sin(theta)) * qA[i];
@@ -324,27 +327,6 @@ module.exports = {
         }
         return qR;
     },
-
-    // Old implementation of Slerp
-	// slerp: function (qA, qB, t, qR) {
-	// 	if (!qR) qR = [];
-	// 	var a, b, w, theta, dot = Vector.dot(qA, qB);
-
-	// 	dot = Math.min(Math.max(dot, -1.0), 1.0);
-	// 	if (dot == 1.0) {
-	// 		qR = frame.copy(qA);
-	// 		return qR;
-	// 	}
-
-	// 	theta = Math.acos(dot);
-	// 	w = Math.sin(t * theta) * 1 / Math.sqrt(1 - dot * dot);
-	// 	for (var i = 0; i < 4; i++) {
-	// 		a = qA[i] * (Math.cos(t * theta) - dot * w);
-	// 		b = qB[i] * w;
-	// 		qR[i] = a + b;
-	// 	}
-	// 	return qR;
-	// },
 
     /**
      * @public
@@ -417,9 +399,8 @@ module.exports = {
 
         var c,
             values = [],
-            x = Math.sin((1 - t) * 180) / Math.sin(180),
-            y = Math.sin(t * 180) / Math.sin(180);
-
+            x = (1 - t),
+            y = t;
         //
         // Binomial theorem to expand (x+y)^n
         //
