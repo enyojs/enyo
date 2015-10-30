@@ -1,0 +1,14 @@
+.enyo-viewlayout-card {
+	&:not(.dragging) > .enyo-view.transitioning {
+		transition-property: opacity;
+		will-change: opacity;
+	}
+
+	> .enyo-view {
+		transition-property: none;
+		opacity: 0;
+		&.active {
+			opacity: 1;
+		}
+	}
+}

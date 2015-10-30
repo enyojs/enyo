@@ -1,0 +1,48 @@
+.enyo-viewlayout-slide {
+	.pre(@prop, @val) {
+		-webkit-@{prop}: @val;
+		@{prop}: @val;
+	}
+	> .enyo-view {
+		.pre(transform, translateX(-100%));
+		.pre(transition-property, none);
+		.pre(transition-timing-function, linear);
+	}
+
+	&:not(.dragging) > .enyo-view.transitioning {
+		-webkit-transition-property: -webkit-transform;
+		transition-property: transform;
+	}
+
+	&.horizontal > .enyo-view {
+		&.forward { .pre(transform, translateX(100%)); }
+		&.back { .pre(transform, translateX(-100%)); }
+		&.active { .pre(transform, translateX(0)); }
+	}
+
+	&.vertical > .enyo-view {
+		&.forward { .pre(transform, translateY(-100%)); }
+		&.back { .pre(transform, translateY(100%)); }
+		&.active { .pre(transform, translateY(0)); }
+	}
+
+	&.cover {
+		// in cover mode, promote all views up a bit
+		> .enyo-view {
+			z-index: 5;
+			// unless it's the stationary view which should always remain behind
+			&.stationary {
+				z-index: 0;
+				.pre(transform, translateX(0px));
+			}
+		}
+
+		// except when dragging where the active view is promoted
+		&.dragging {
+			> .enyo-view {
+				z-index: 0;
+				&.active { z-index: 10; }
+			}
+		}
+	}
+}

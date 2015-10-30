@@ -1,0 +1,6 @@
+{
+	"main": "CardViewLayout.js",
+	"styles": [
+		"CardViewLayout.less"
+	]
+}
