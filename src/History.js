@@ -120,12 +120,13 @@ var EnyoHistory = module.exports = kind.singleton(
 	* Adds a new history entry
 	*
 	* @param  {module:enyo/History~HistoryEntry} entry Object describing the history entry
+	* @param  {Boolean} force Bypasses enqueuing and push entry synchronously when `true`.
 	*
 	* @public
 	*/
-	push: function (entry) {
+	push: function (entry, force) {
 		if (this.enabled) {
-			if (_popQueueCount) {
+			if (_popQueueCount && !force) {
 				this.enqueuePush(entry);
 			} else {
 				this.pushEntry(entry);
