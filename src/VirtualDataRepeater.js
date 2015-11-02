@@ -33,7 +33,7 @@ module.exports = kind({
 			if (this._needsReset) {
 				// Now that we've done our deferred reset, we
 				// can become visible again
-				this.applyStyle('visibility', 'showing');
+				this.applyStyle('visibility', 'visible');
 				this._needsReset = false;
 			}
 		}
@@ -289,7 +289,7 @@ module.exports = kind({
 	fwd: function() {
 		this.set('first', this.first + 1);
 	},
-	
+
 	bak: function() {
 		this.set('first', this.first - 1);
 	},
