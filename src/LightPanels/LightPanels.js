@@ -276,7 +276,7 @@ module.exports = kind(
 	* @private
 	*/
 	animateChanged: function () {
-		dom.transform(this.$.client, {translateZ: this.animate ? 0 : null});
+		dom.transformValue(this.$.client, 'translateZ', this.animate ? 0 : null);
 	},
 
 	/**
