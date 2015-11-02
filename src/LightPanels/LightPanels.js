@@ -799,8 +799,8 @@ module.exports = kind(
 		var container = this.$.client,
 			value;
 
-		if (this._direction == Direction.FORWARDS) value = indexDirection > 0 ? -50 : 0;
-		else value = indexDirection > 0 ? 0 : -50;
+		if (this._direction == Direction.FORWARDS) value = indexDirection > 0 ? -100 : 0;
+		else value = indexDirection > 0 ? 0 : -100;
 
 		container.applyStyle('-webkit-transition', animate ? wTrans : null);
 		container.applyStyle('transition', animate ? trans: null);
