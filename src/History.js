@@ -275,6 +275,8 @@ var EnyoHistory = module.exports = kind.singleton(
 				if (silence) {
 					silence -= 1;
 					next.silenced = true;
+				} else {
+					next.silenced = false;
 				}
 			} else {
 				silence += next.count;
@@ -305,7 +307,7 @@ var EnyoHistory = module.exports = kind.singleton(
 	*/
 	enqueuePop: function (type, count) {
 		count = count || 1;
-		_queue.push({type: type, count: count});
+		this.addToQueue({type: type, count: count});
 		// if we've only queued pop/drop events, we need to increment the number of entries to go
 		// back. once a push is queued, the history must be managed in processState.
 		if (!_pushQueued) {
@@ -338,7 +340,24 @@ var EnyoHistory = module.exports = kind.singleton(
 	*/
 	enqueuePush: function (entry) {
 		_pushQueued = true;
-		_queue.push({type: 'push', entry: entry});
+		this.addToQueue({type: 'push', entry: entry});
+	},
+
+	/**
+	* When entries are added while processing the queue, the new entries should be added at the top
+	* of the queue rather than the end because the queue is processed FIFO and the assumption of
+	* adding them mid-process is that they are being added at the point in the queue processing in
+	* which they are called.
+	*
+	* @private
+	*/
+	addToQueue: function (entry) {
+		if (_processing) {
+			_queue.unshift(entry);
+			this.silencePushEntries();
+		} else {
+			_queue.push(entry);
+		}
 	},
 
 	/**
