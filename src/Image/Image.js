@@ -295,11 +295,11 @@ module.exports = kind(
 			// use either both urls, src, placeholder, or 'none', in that order
 			url = srcUrl && plUrl && (srcUrl + ',' + plUrl) || srcUrl || plUrl || 'none';
 			this.applyStyle('background-image', url);
-		}
-		else if (prop === 'placeholder') {
-			this.applyStyle('background-image', plUrl);
-		}
-		else {
+		} else {
+			// when update source
+			if (!prop || prop == 'placeholder') {
+				this.applyStyle('background-image', plUrl);
+			}
 			this.setAttribute('src', src);
 		}
 	},
