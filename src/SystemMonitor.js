@@ -7,7 +7,7 @@ require('enyo');
 
 var
 	kind = require('./kind'),
-	dispatcher = require('./dispatcher'),
+	/*dispatcher = require('./dispatcher'),*/
 	perfNow = require('./utils').perfNow;
 
 var
@@ -88,14 +88,14 @@ module.exports = kind.singleton(
 					f = ((c - p) < d) ? f + 1 : 0;
 				}
 
-				if (f == this.frameThreshold && this.idle()) {
+				if (f == this.frameThreshold/* && this.idle()*/) {
 					this.active = false;
 					this.emit('idle');
-					if (this.listeners('idle').length === 0) {
+					/*if (this.listeners('idle').length === 0) {
 						var idx = dispatcher.features.indexOf(this._checkEvent);
 						if (idx > -1) dispatcher.features.splice(idx, 1);
 						this._checkEvent = null;
-					}
+					}*/
 					c = p = f = 0;
 				} else {
 					if (f == this.frameThreshold) {
@@ -120,11 +120,11 @@ module.exports = kind.singleton(
 	* @public
 	*/
 	start: function () {
-		if (!this.lastActive) this.lastActive = perfNow(); // setting initial value for lastActive
+		/*if (!this.lastActive) this.lastActive = perfNow(); // setting initial value for lastActive
 		if (!this._checkEvent) {
 			this._checkEvent = this.bindSafely(this.checkEvent);
 			dispatcher.features.push(this._checkEvent);
-		}
+		}*/
 		if (!this.active) {
 			this.active = true;
 			this.trigger();
