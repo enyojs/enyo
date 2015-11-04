@@ -411,6 +411,17 @@ var dom = module.exports = {
 	},
 
 	/**
+	* Removes a node from the DOM.
+	*
+	* @param {Node} node - The [node]{@glossary Node} to remove.
+	* @public
+	*/
+	removeNode: function (node) {
+		if (node.remove) node.remove();
+		else if (node.parentNode) node.parentNode.removeChild(node);
+	},
+
+	/**
 	* Sets the `innerHTML` property of the specified `node` to `html`.
 	*
 	* @param {Node} node - The [node]{@glossary Node} to set.

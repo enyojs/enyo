@@ -1199,8 +1199,7 @@ var Control = module.exports = kind(
 	removeNodeFromDom: function() {
 		var node = this.hasNode();
 		if (node) {
-			if (node.remove) node.remove();
-			else if (node.parentNode) node.parentNode.removeChild(node);
+			Dom.removeNode(node);
 		}
 	},
 
