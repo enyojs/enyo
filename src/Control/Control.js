@@ -410,7 +410,7 @@ var Control = module.exports = kind(
 	* yet to be cached, from the [node]{@glossary Node} itself.
 	*
 	* @param {String} name - The attribute name to get.
-	* @returns {(String|Null)} The value of the requested attribute, or `null`
+	* @returns {(String|null)} The value of the requested attribute, or `null`
 	* if there isn't a [DOM node]{@glossary Node} yet.
 	* @public
 	*/
