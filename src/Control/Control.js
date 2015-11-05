@@ -1132,6 +1132,16 @@ var Control = module.exports = kind(
 	},
 
 	/**
+	* If a Control needs to do something before it and its children's DOM nodes
+	* are torn down, it can implement this lifecycle method, which is called automatically
+	* by the framework and takes no arguments.
+	*
+	* @type {Function}
+	* @protected
+	*/
+	beforeTeardown: null,
+
+	/**
 	* @param {Boolean} [cache] - Whether or not we are tearing down as part of a destroy
 	*	operation, or if we are just caching. If `true`, the `showing` and `canGenerate`
 	*	properties of the control will not be reset.
