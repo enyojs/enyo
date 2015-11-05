@@ -686,7 +686,7 @@ module.exports = kind(
 			this.cleanUpPanel(currPanel);
 
 			this.removeClass('transitioning');
-			this.transitioning = false;
+			this.set('transitioning', false);
 		}
 	},
 
@@ -734,7 +734,7 @@ module.exports = kind(
 		if (this._indexDirection === 0 && previousIndex != -1) this._indexDirection = this.index - previousIndex;
 
 		if (nextPanel) {
-			this.transitioning = true;
+			this.set('transitioning', true);
 
 			// prepare the panel that will be deactivated
 			if (currPanel) {
