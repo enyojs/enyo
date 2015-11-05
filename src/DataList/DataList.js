@@ -244,6 +244,8 @@ var DataList = module.exports = kind(
 					this.delegate.scrollToIndex(this, idx, callback);
 				});
 			}
+		} else if (callback) {
+			callback();
 		}
 	},
 
