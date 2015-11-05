@@ -120,7 +120,7 @@ module.exports = {
 	* @private
 	*/
 	renderContent: function (control) {
-		if (control.generated) control.teardownChildren();
+		if (control.generated) this.teardownChildren(control);
 		if (control.hasNode()) control.node.innerHTML = this.generateInnerHtml(control);
 	},
 	
@@ -244,7 +244,7 @@ module.exports = {
 	* @private
 	*/
 	teardownRender: function (control, cache) {
-		if (control.generated) control.teardownChildren(cache);
+		if (control.generated) this.teardownChildren(control, cache);
 		control.node = null;
 		control.set('generated', false);
 	},
