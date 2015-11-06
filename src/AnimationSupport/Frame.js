@@ -6,7 +6,7 @@ var
 	Matrix = require('./Matrix');
 
 var
-	COLOR = {"color": 1, "background-color": 1},
+	COLOR = {"color": 1, "backgroundColor": 1},
 	TRANSFORM = {"translate": 1, "translateX": 1, "translateY": 1, "translateZ": 1, "rotateX": 1, "rotateY": 1, "rotateZ": 1, "rotate": 1, "skew": 1, "scale": 1, "perspective": 1};
 
 /**
@@ -253,12 +253,15 @@ var frame = module.exports = {
 	* @public
 	*/
 	getStyleValue: function (style, key) {
-		var v = style.getPropertyValue(key);
-		if (v === undefined || v === null || v == "auto" || isNaN(v)) {
+		var v = style.getPropertyValue(key) || style[key];
+		if (v === undefined || v === null || v == "auto") {
 			return 0;
 		}
 		if (COLOR[key]) {
 			return v.replace(/^\w*\(/, '').replace(')', '');
+		}
+		if (isNaN(v)) {
+			return 0;
 		}
 		v = parseFloat(v, 10);
 		return v;
