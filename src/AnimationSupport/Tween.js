@@ -109,24 +109,19 @@ module.exports = {
 
         for (k in props) {
             cState = frame.copy(charc.currentState[k] || []);
-            if (charc.ease && (typeof charc.ease !== 'function')) {
-                if ((k == 'rotate')) {
-                    //Without control points
-                    // pts = this.beizerSlerpPoints(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]), props[k]);
-                    // cState = this.beizerSlerp(t, pts, cState);
-
-                    //With control points process
-                    pts = this.beizerSPoints(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]), props[k]);
-                    cState = this.beizerSpline(t, pts, cState);
-
-
+            if (newState[k]) {
+                if (charc.ease && (typeof charc.ease !== 'function')) {
+                    if ((k == 'rotate')) {
+                        pts = this.beizerSPoints(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]), props[k]);
+                        cState = this.beizerSpline(t, pts, cState);
+                    } else {
+                        pts = this.calculateEase(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]));
+                        cState = this.getBezier(t, pts, cState);
+                    }
                 } else {
-                    pts = this.calculateEase(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]));
-                    cState = this.getBezier(t, pts, cState);
+                    c = k == 'rotate' ? this.slerp : this.lerp;
+                    cState = t ? c(oldState[k], newState[k], ((typeof charc.ease === 'function') ? charc.ease : this.ease)(t, d), cState) : newState[k];
                 }
-            } else {
-                c = k == 'rotate' ? this.slerp : this.lerp;
-                cState = t ? c(oldState[k], newState[k], ((typeof charc.ease === 'function') ? charc.ease : this.ease)(t, d), cState) : newState[k];
             }
 
             if (!frame.isTransform(k)) {
@@ -313,11 +308,6 @@ module.exports = {
         if (dot == 1.0) {
             qR = frame.copy(qA);
             return qR;
-        } else if (dot < 0) {
-            qB[0] = -qB[0];
-            qB[1] = -qB[1];
-            qB[2] = -qB[2];
-            qB[3] = -qB[3];
         }
         theta = Math.acos(dot);
         for (var i = 0; i < l; i++) {
