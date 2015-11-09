@@ -183,7 +183,6 @@ module.exports = {
 	* @private
 	*/
 	down: function(e) {
-		__TRACING__ && PmTrace('drag down');
 		// tracking if the mouse is down
 		//enyo.log('tracking ON');
 		// Note: 'tracking' flag indicates interest in mousemove, it's turned off
@@ -199,7 +198,6 @@ module.exports = {
 	*/
 	move: function(e) {
 		if (this.tracking) {
-			__TRACING__ && PmTrace('drag move');
 			this.track(e);
 			// If the mouse is not down and we're tracking a drag, abort.
 			// this error condition can occur on IE/Webkit after interaction with a scrollbar.
@@ -233,7 +231,6 @@ module.exports = {
 	* @private
 	*/
 	up: function(e) {
-		__TRACING__ && PmTrace('drag up');
 		this.endTracking(e);
 		this.stopDragging(e);
 		this.endHold();
@@ -244,7 +241,6 @@ module.exports = {
 	* @private
 	*/
 	enter: function(e) {
-		__TRACING__ && PmTrace('drag enter');
 		// resume hold when re-entering original target when using 'onLeave' endHold value
 		if (this.holdPulseConfig.resume && this.holdPulseConfig.endHold === 'onLeave' && this.target && e.target === this.target) {
 			this.resumeHold();
@@ -255,7 +251,6 @@ module.exports = {
 	* @private
 	*/
 	leave: function(e) {
-		__TRACING__ && PmTrace('drag leave');
 		if (this.dragEvent) {
 			this.sendDragOut(e);
 		} else if (this.holdPulseConfig.endHold === 'onLeave') {
@@ -272,7 +267,6 @@ module.exports = {
 	* @private
 	*/
 	stopDragging: function(e) {
-		__TRACING__ && PmTrace('stop dragging');
 		if (this.dragEvent) {
 			this.sendDrop(e);
 			var handled = this.sendDragFinish(e);
@@ -385,7 +379,6 @@ module.exports = {
 	* @private
 	*/
 	startTracking: function(e) {
-		__TRACING__ && PmTrace('start tracking drag events');
 		this.tracking = true;
 		// note: use clientX/Y to be compatible with ie8
 		this.px0 = e.clientX;
@@ -403,7 +396,6 @@ module.exports = {
 	* @private
 	*/
 	track: function(e) {
-		__TRACING__ && PmTraceItem('tracked drag event', e);
 		this.lastDx = this.dx;
 		this.lastDy = this.dy;
 		this.dx = e.clientX - this.px0;
@@ -427,7 +419,6 @@ module.exports = {
 	* @private
 	*/
 	endTracking: function() {
-		__TRACING__ && PmTrace('stop tracking drag events');
 		this.tracking = false;
 		var ti = this.flickInfo;
 		var moves = ti && ti.moves;
@@ -509,7 +500,6 @@ module.exports = {
 	* @private
 	*/
 	beginHold: function(e) {
-		__TRACING__ && PmTrace('beging hold');
 		var ce;
 		// cancel any existing hold since it's possible in corner cases to get a down without an up
 		this.endHold();
@@ -532,7 +522,6 @@ module.exports = {
 	* @private
 	*/
 	resumeHold: function() {
-		__TRACING__ && PmTrace('resume hold');
 		this.handleHoldPulse();
 		this.holdJob = setInterval(this._holdJobFunction, this.holdPulseConfig.frequency);
 	},
@@ -550,7 +539,6 @@ module.exports = {
 	* @private
 	*/
 	endHold: function() {
-		__TRACING__ && PmTrace('end hold');
 		var e = this._holdJobEvent;
 		this.suspendHold();
 		if (e && this._pulsing) {
@@ -567,7 +555,6 @@ module.exports = {
 	* @private
 	*/
 	suspendHold: function() {
-		__TRACING__ && PmTrace('suspend hold');
 		clearInterval(this.holdJob);
 		this.holdJob = null;
 	},

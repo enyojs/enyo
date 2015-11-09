@@ -4,30 +4,6 @@ require('enyo');
  */
 
 
-// setup for pmtrace checking
-global.__TRACING__ = false;
-if (global.PalmSystem) {
-	if (PalmSystem.PmTraceBefore) {
-		global.__TRACING__ = true;
-		global.PmTrace = function () {
-			console.log('PmTrace', arguments[0]);
-			PalmSystem.PmTrace.apply(PalmSystem, arguments);
-		};
-		global.PmTraceItem = function () {
-			console.log('PmTraceItem', arguments[0], arguments[1]);
-			PalmSystem.PmTraceItem.apply(PalmSystem, arguments);
-		};
-		global.PmTraceBefore = function () {
-			console.log('PmTraceBefore', arguments[0]);
-			PalmSystem.PmTraceBefore.apply(PalmSystem, arguments);
-		};
-		global.PmTraceAfter = function () {
-			console.log('PmTraceAfter', arguments[0]);
-			PalmSystem.PmTraceAfter.apply(PalmSystem, arguments);
-		};
-	}
-}
-
 var
 	dispatcher = require('../dispatcher'),
 	dom = require('../dom'),
@@ -62,7 +38,6 @@ var gesture = module.exports = {
 	* @public
 	*/
 	down: function(evt) {
-		__TRACING__ && PmTrace('down');
 		var e = gestureUtil.makeEvent('down', evt);
 
 		// prepare for hold
@@ -88,7 +63,6 @@ var gesture = module.exports = {
 	* @public
 	*/
 	move: function(evt) {
-		__TRACING__ && PmTrace('move');
 		var e = gestureUtil.makeEvent('move', evt);
 		// include delta and direction v. down info in move event
 		e.dx = e.dy = e.horizontal = e.vertical = 0;
@@ -108,7 +82,6 @@ var gesture = module.exports = {
 	* @public
 	*/
 	up: function(evt) {
-		__TRACING__ && PmTrace('up');
 		var e = gestureUtil.makeEvent('up', evt);
 
 		// We have added some logic to synchronize up and down events in certain scenarios (i.e.
@@ -145,7 +118,6 @@ var gesture = module.exports = {
 	* @public
 	*/
 	over: function(evt) {
-		__TRACING__ && PmTrace('enter');
 		var e = gestureUtil.makeEvent('enter', evt);
 		dispatcher.dispatch(e);
 	},
@@ -157,7 +129,6 @@ var gesture = module.exports = {
 	* @public
 	*/
 	out: function(evt) {
-		__TRACING__ && PmTrace('leave');
 		var e = gestureUtil.makeEvent('leave', evt);
 		dispatcher.dispatch(e);
 	},
@@ -169,7 +140,6 @@ var gesture = module.exports = {
 	* @public
 	*/
 	sendTap: function(evt, target) {
-		__TRACING__ && PmTrace('tap');
 		var e = gestureUtil.makeEvent('tap', evt);
 		e.target = target;
 		dispatcher.dispatch(e);
