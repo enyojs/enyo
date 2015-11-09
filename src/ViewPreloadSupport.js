@@ -3,6 +3,7 @@
 * @module enyo/ViewPreloadSupport
 */
 var
+	dom = require('./dom'),
 	kind = require('./kind'),
 	utils = require('./utils');
 
@@ -111,13 +112,14 @@ var ViewPreloadSupport = {
 	* @public
 	*/
 	cacheView: function (view, preserve) {
-		var id = this.getViewId(view);
+		var id = this.getViewId(view),
+			node = view.hasNode();
 
 		// The panel could have already been removed from DOM and torn down if we popped when
 		// moving forward.
-		if (view.hasNode()) {
-			view.removeNodeFromDom();
+		if (node) {
 			view.teardownRender(true);
+			dom.removeNode(node);
 		}
 
 		if (!preserve) {

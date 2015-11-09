@@ -531,7 +531,7 @@ module.exports = kind(
 		commonInfo = {addBefore: insertBefore};
 
 		// remove existing panels
-		for (idx = start; idx < end; idx++) {
+		for (idx = end - 1; idx >= start; idx--) {
 			this.removePanel(panels[idx]);
 		}
 

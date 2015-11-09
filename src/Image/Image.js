@@ -156,6 +156,11 @@ module.exports = kind(
 		* Provides a default image displayed while the URL specified by `src` is loaded or when that
 		* image fails to load.
 		*
+		* Note that the placeholder feature is not designed for use with images that contain transparent
+		* or semi-transparent pixels. Specifically, for performance reasons, the placeholder image is not
+		* removed when the image itself loads, but is simply covered by the image. This means that the
+		* placeholder will show through any transparent or semi-transparent pixels in the image.
+		*
 		* @type {String}
 		* @default ''
 		* @public
@@ -195,7 +200,6 @@ module.exports = kind(
 	* @private
 	*/
 	handlers: {
-		onload: 'handleLoad',
 		onerror: 'handleError'
 	},
 
@@ -268,19 +272,6 @@ module.exports = kind(
 	},
 
 	/**
-	* When the image is loaded successfully, we want to clear out the background image so it doesn't
-	* show through the transparency of the image. This only works when not using `sizing` because we
-	* do not get load/error events for failed background-image's.
-	*
-	* @private
-	*/
-	handleLoad: function () {
-		if (!this.sizing && this.placeholder) {
-			this.applyStyle('background-image', null);
-		}
-	},
-
-	/**
 	* @private
 	*/
 	handleError: function () {
@@ -304,11 +295,11 @@ module.exports = kind(
 			// use either both urls, src, placeholder, or 'none', in that order
 			url = srcUrl && plUrl && (srcUrl + ',' + plUrl) || srcUrl || plUrl || 'none';
 			this.applyStyle('background-image', url);
-		}
-		// if we've haven't failed to load src (this.src && this._src == this.src), we don't want to
-		// add the bg image that may have already been removed by handleLoad
-		else if (!(prop == 'placeholder' && this.src && this._src == this.src)) {
-			this.applyStyle('background-image', plUrl);
+		} else {
+			// when update source
+			if (!prop || prop == 'placeholder') {
+				this.applyStyle('background-image', plUrl);
+			}
 			this.setAttribute('src', src);
 		}
 	},
