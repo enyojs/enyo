@@ -33,6 +33,9 @@ module.exports = {
 	* @private
 	*/
 	touchstart: function (e) {
+		PmTraceBefore('touch');
+		PmTrace('touchstart');
+		PmTrace(e.touches[0].pageX + ',' + e.touches[0].pageY);
 		// some devices can send multiple changed touches on start and end
 		var i,
 			changedTouches = e.changedTouches,
@@ -63,6 +66,8 @@ module.exports = {
 	* @private
 	*/
 	touchend: function (e) {
+		PmTrace('touchend');
+		PmTraceAfter('touch');
 		// some devices can send multiple changed touches on start and end
 		var i,
 			changedTouches = e.changedTouches,
@@ -85,6 +90,8 @@ module.exports = {
 	* @private
 	*/
 	touchmove: function (e) {
+		PmTrace('touchmove');
+		PmTrace(e.touches[0].pageX + ',' + e.touches[0].pageY);
 		if (this.gesture) {
 			var g = this.makeGesture('gesturechange', e);
 			this.gesture.scale = g.scale;

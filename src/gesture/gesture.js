@@ -3,6 +3,21 @@ require('enyo');
  * @module enyo/gesture
  */
 
+function log () {
+	console.log.apply(console, arguments);
+}
+global.PmTrace = function () {
+	log('PmTrace', arguments[0]);
+	global.PalmSystem && PalmSystem.PmTrace.apply(PalmSystem, arguments);
+};
+global.PmTraceBefore = function () {
+	log('PmTraceBefore', arguments[0]);
+	global.PalmSystem && PalmSystem.PmTraceBefore.apply(PalmSystem, arguments);
+};
+global.PmTraceAfter = function () {
+	log('PmTraceAfter', arguments[0]);
+	global.PalmSystem && PalmSystem.PmTraceAfter.apply(PalmSystem, arguments);
+};
 
 var
 	dispatcher = require('../dispatcher'),
