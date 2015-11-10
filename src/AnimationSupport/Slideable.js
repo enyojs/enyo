@@ -78,6 +78,17 @@ module.exports = {
                     translate: 0 + "," + y + "," + 0
                 });
                 break;
+            case "depth":
+                this.addAnimation({
+                    translate: 0 + "," + 0 + "," + x
+                });
+                break;
+            case "depthForward":
+                this.addAnimation({
+                    translate: x + "," + 0 + "," + -0.009 * x
+                });
+                break;
+
             default:
                 this.addAnimation({
                     translate: x + "," + y + "," + z

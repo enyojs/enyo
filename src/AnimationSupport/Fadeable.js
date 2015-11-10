@@ -81,7 +81,6 @@ module.exports = {
      * Bubble the fadeable event
      */
     triggerEvent: function(e) {
-        console.log("TODO: Trigger the fadeable event" + e);
         //this.doFadeStart();
     }
 };

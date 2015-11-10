@@ -342,7 +342,7 @@ var frame = module.exports = {
 			sP[k] = dP[k];
 			eP[k] = tP[k] || dP[k];
 		}
-		return {_startAnim: sP, _endAnim: eP, _transform: dP, currentState: dP};
+		return {_startAnim: sP, _endAnim: eP, _transform: dP, currentState: dP, matrix: m};
 	},
 
 	getComputedDistance: function (prop, initalProp, finalProp) {

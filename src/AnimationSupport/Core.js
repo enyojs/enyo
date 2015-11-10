@@ -108,6 +108,23 @@ module.exports = kind.singleton({
 	},
 
 	/**
+	* Animator public API to pause animation happening on all the 
+	* characters.
+	*
+	* As of now this method is provided as an interface for application 
+	* to directly trigger an animation. However, this will be later made private
+	* and will be accessible only by the interfaces exposed by framework.
+	*
+	* @public
+	*/
+	pause: function () {
+		for (var i = 0; i < this.chracs.length; i++) {
+			this.chracs[i].animating = false;
+		}
+	},
+
+
+	/**
 	* Animator public API to register character with event
 	*
 	* @parameter charc-		Animation character
@@ -117,7 +134,7 @@ module.exports = kind.singleton({
 	register: function (charc) {
 		this.deRegister(charc);
 		this.evnts.push(charc);
-		this.remove(charc);
+		//this.remove(charc);
 		charc.animating = true;
 		
 		if (!this.isTicking) {
@@ -167,6 +184,7 @@ module.exports = kind.singleton({
 				if (!curr._lastTime || ts >= curr._lastTime) {
 					tween.complete(curr);
 					curr.completed(curr);
+					curr.set('animationState', 'completed');
 					if(!curr.active) {
 						this.remove(curr);
 					}
@@ -183,6 +201,9 @@ module.exports = kind.singleton({
 		var i, curr, evlen = this.evnts.length;
 		for (i = 0; i < evlen; i++) {
 			curr = this.evnts[i];
+			if (typeof this.evnts[i].commitAnimation === 'function') {
+	        	this.evnts[i].commitAnimation();
+	        }
 			if (curr && curr.ready()) {
 				tween.updateDelta(curr);
 				if (!curr.animating) {

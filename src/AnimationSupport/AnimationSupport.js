@@ -34,6 +34,7 @@ var AnimationSupport = {
 	* Holds variouts states of animation.
 	* Like: 'started'	- Character animation has started(within rAF)
 	*		'paused'	- Character animation has paused(within rAF)
+	*		'resumed'	- Character animation has resumed(within rAF)
 	*		'completed'	- Character animation has finished(within rAF)
 	* @private
 	*/
@@ -174,8 +175,25 @@ var AnimationSupport = {
 	*/
 	pause: function () {
 		this.animating = false;
+		this.set('animationState', 'paused');
 	},
 
+	/**
+	* Halt all existing animations
+	* @public
+	*/
+	pauseAll: function () {
+		animation.pause();
+	},
+
+	/**
+	* Resume the paused animation of this character
+	* @public
+	*/
+	resume: function () {
+		this.animating = true;
+		this.set('animationState', 'resumed');
+	},
 	/**
 	* @private
 	*/
@@ -213,7 +231,7 @@ var sup = kind.concatHandler;
 */
 kind.concatHandler = function (ctor, props, instance) {
 	sup.call(this, ctor, props, instance);
-	if (props.animate || props.keyFrame || props.handleAnimationEvents) {
+	if (props.animate || props.keyFrame || props.pattern || props.handleAnimationEvents) {
 		var proto = ctor.prototype || ctor;
 		extend(AnimationSupport, proto);
 		if (props.keyFrame && typeof props.keyFrame != 'function') {
@@ -223,6 +241,9 @@ kind.concatHandler = function (ctor, props, instance) {
 			animation.trigger(proto);
 		}
 		if (props.handleAnimationEvents && typeof props.handleAnimationEvents != 'function') {
+			animation.register(proto);
+		}
+		if (props.pattern && typeof props.pattern != 'function') {
 			animation.register(proto);
 		}
 	}

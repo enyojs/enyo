@@ -109,10 +109,11 @@ var AnimationInterfaceSupport = {
         "down",
         "move",
         "scroll",
-        "mousewheel",
+       // "mousewheel",
         "touchstart",
         "touchmove",
-        "touchend"
+        "touchend",
+        "mousemove"
     ],
 
     /**
@@ -164,6 +165,9 @@ var AnimationInterfaceSupport = {
             case "touchend":
                 this.touchDragEnd(inSender, inEvent);
                 break;
+            case "mousemove":
+                this.touchDragMove(inSender, inEvent, (inEvent, inSender.pageX) / 1.5, (inSender.pageY) / 1.5);
+                break;
             default:
                 this.handleMyEvent(inSender, inEvent);
         }
@@ -184,7 +188,7 @@ var AnimationInterfaceSupport = {
         var currentX = x,
             currentY = y;
 
-        if (currentX != 0 || currentY != 0) {
+        if (currentX !== 0 || currentY !== 0) {
             this.deltaValueX = this.checkX - currentX;
 
             this.checkX = currentX; // set the initial position to the current position while moving 
@@ -261,11 +265,9 @@ var AnimationInterfaceSupport = {
         this.setAnimateOne = delta;
         this.setAnimateTwo = (-1 * (this.translateX));
         this.setAnimateThree = (-1 * (this.translateY));
-        if (patterns[0].name === "Slideable") {
+        if (patterns[0].name === "Slideable" || patterns[0].name === "Parallax") {
             this.setAnimateTwo = this.setAnimateThree;
         }
-
-
     },
 
     /**
