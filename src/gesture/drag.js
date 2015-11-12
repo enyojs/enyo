@@ -322,11 +322,7 @@ module.exports = {
 	*/
 	sendDragStart: function(e) {
 		//enyo.log('dragstart');
-		PmTraceBefore('touch:synth');
 		this.dragEvent = this.makeDragEvent('dragstart', this.target, e);
-		PmTrace('dragstart');
-		// because this is synthetic event pageX,pageY should be valid
-		PmTrace(e.pageX + ',' + e.pageY);
 		dispatcher.dispatch(this.dragEvent);
 	},
 
@@ -341,8 +337,6 @@ module.exports = {
 		// send drag event to the drag source
 		synth.type = 'drag';
 		synth.target = this.dragEvent.target;
-		PmTrace('drag');
-		PmTrace(synth.pageX + ',' + synth.pageY);
 		dispatcher.dispatch(synth);
 	},
 
@@ -352,9 +346,6 @@ module.exports = {
 	sendDragFinish: function(e) {
 		//enyo.log('dragfinish');
 		var synth = this.makeDragEvent('dragfinish', this.dragEvent.target, e, this.dragEvent.dragInfo);
-		PmTrace('dragend');
-		PmTrace(synth.pageX + ',' + synth.pageY);
-		PmTraceAfter('touch:synth');
 		synth.preventTap = function() {
 			if (e.preventTap) {
 				e.preventTap();
