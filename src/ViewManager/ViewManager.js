@@ -224,39 +224,7 @@ var ViewMgr = kind(
 	*/
 	classes: 'enyo-viewmanager',
 
-	/**
-	* If `true`, this ViewManager 'floats' over its parent `manager`
-	*
-	* @type {Boolean}
-	* @default false
-	* @public
-	*/
-	floating: false,
-
-	/**
-	* Active view
-	*
-	* @type {Control}
-	* @private
-	*/
-	active: null,
-
-	/**
-	* Indicates the logical direction of a view activation. May be used by ViewLayouts to inform the
-	* direction of their animation
-	*
-	* @type {Number}
-	* @default 0
-	* @private
-	*/
-	direction: 0,
-
-	/**
-	* @private
-	*/
-	activeChanged: function (was, is) {
-		if (was) this.emitViewEvent('deactivate', was);
-	},
+	// PUBLIC PROPERTIES
 
 	/**
 	* Determines if and how the default view is activated. The default view is either the first
@@ -273,15 +241,6 @@ var ViewMgr = kind(
 	* @public
 	*/
 	activateDefault: 'auto',
-
-	/**
-	* `true` when this ViewManager has been dismissed
-	*
-	* @type {Boolean}
-	* @default false
-	* @private
-	*/
-	dismissed: false,
 
 	/**
 	* Determines if the view can be dismissed by dragging. The ViewManager can be programmatically
@@ -308,15 +267,6 @@ var ViewMgr = kind(
 	draggable: true,
 
 	/**
-	* `true` when a drag gesture is in process
-	*
-	* @type {Boolean}
-	* @default false
-	* @private
-	*/
-	dragging: false,
-
-	/**
 	* Percent a new view must be dragged into the viewport to be activated on drag release
 	*
 	* @type {Number}
@@ -326,20 +276,13 @@ var ViewMgr = kind(
 	dragThreshold: 25,
 
 	/**
-	* When `draggable`, this constrains the drag to this direction.
+	* If `true`, this ViewManager 'floats' over its parent `manager`
 	*
-	* @type {String}
-	* @default horizontal
+	* @type {Boolean}
+	* @default false
 	* @public
 	*/
-	orientation: 'horizontal',
-
-	/**
-	* During a drag, contains a reference to the becoming-active view
-	*
-	* @private
-	*/
-	dragView: null,
+	floating: false,
 
 	/**
 	* If created within another ViewManager, `manager` will maintain a reference to that
@@ -353,6 +296,23 @@ var ViewMgr = kind(
 	manager: null,
 
 	/**
+	* @private
+	*/
+	managerChanged: function (was, is) {
+		if (was) this.off('*', was.managerEvent);
+		if (is) this.on('*', is.managerEvent);
+	},
+
+	/**
+	* When `draggable`, this constrains the drag to this direction.
+	*
+	* @type {String}
+	* @default horizontal
+	* @public
+	*/
+	orientation: 'horizontal',
+
+	/**
 	* The number of views managed by this ViewManager. This member is observable but should be
 	* considered read-only.
 	*
@@ -363,13 +323,57 @@ var ViewMgr = kind(
 	*/
 	viewCount: 0,
 
+	// PRIVATE PROPERTIES
+
+	/**
+	* Active view
+	*
+	* @type {Control}
+	* @private
+	*/
+	active: null,
+
 	/**
 	* @private
 	*/
-	managerChanged: function (was, is) {
-		if (was) this.off('*', was.managerEvent);
-		if (is) this.on('*', is.managerEvent);
+	activeChanged: function (was, is) {
+		if (was) this.emitViewEvent('deactivate', was);
 	},
+
+	/**
+	* Indicates the logical direction of a view activation. May be used by ViewLayouts to inform the
+	* direction of their animation
+	*
+	* @type {Number}
+	* @default 0
+	* @private
+	*/
+	direction: 0,
+
+	/**
+	* `true` when this ViewManager has been dismissed
+	*
+	* @type {Boolean}
+	* @default false
+	* @private
+	*/
+	dismissed: false,
+
+	/**
+	* `true` when a drag gesture is in process
+	*
+	* @type {Boolean}
+	* @default false
+	* @private
+	*/
+	dragging: false,
+
+	/**
+	* During a drag, contains a reference to the becoming-active view
+	*
+	* @private
+	*/
+	dragView: null,
 
 	/**
 	* @private
