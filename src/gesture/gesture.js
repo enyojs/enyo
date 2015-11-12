@@ -2,9 +2,9 @@ require('enyo');
 /**
  * @module enyo/gesture
  */
-
+global.debug = false;
 function log () {
-	console.log.apply(console, arguments);
+	global.debug && console.log.apply(console, arguments);
 }
 global.PmTrace = function () {
 	log('PmTrace', arguments[0]);
