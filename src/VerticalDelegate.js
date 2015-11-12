@@ -359,6 +359,13 @@ module.exports = {
 				callback();
 			}
 		} else {
+			// In pathological cases, the page bounds may not match up with the specified
+			// fixedChildSize or our estimation of the child size. This would cause the
+			// pagePosition calculation to not match the actual page position and the pages
+			// we wanted would not be generated. We throw away the current page metrics and
+			// only rely on computed values to force the correct pages to be generated, even
+			// if we get the actual position wrong.
+			list.metrics.pages = {};
 			// we do this to ensure we trigger the paging event when necessary
 			this.resetToPosition(list, this.pagePosition(list, p));
 			// now retry the original logic until we have this right
