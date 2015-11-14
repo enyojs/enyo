@@ -5,6 +5,7 @@ var
 	dispatcher = require('../dispatcher');
 
 var
+	Control = require('../Control'),
 	EventEmitter = require('../EventEmitter'),
 	ScrollMath = require('../ScrollMath');
 
@@ -321,37 +322,64 @@ module.exports = {
 	},
 
 	/** 
-	* TODO: Document. Based on CSSOM View spec ()
-	* @see {@linkplain http://dev.w3.org/csswg/cssom-view/}
-	* @see {@linkplain https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView}
+	* Leaving for legacy support; should use scrollToChild() instead
 	*
+	* @deprecated
 	* @public
 	*/
 	scrollToControl: function (control, opts) {
-		var n = control.hasNode();
-
-		if (n) {
-			this.scrollToNode(n, opts);
-		}
+		this.scrollToChild(control, opts);
 	},
 
 	/**
-	* TODO: Document. Based on CSSOM View spec ()
-	* @see {@linkplain http://dev.w3.org/csswg/cssom-view/}
-	* @see {@linkplain https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView}
+	* Helper function for `scrollToChild()`
+	* 
+	* May be overridden as needed by more specific implementations. This
+	* API is to be considered experimental and subject to change -- use at
+	* your own risk.
 	*
-	* @public
+	* @protected
 	*/
-	scrollToNode: function(node, opts) {
-		var nodeBounds  = dom.getAbsoluteBounds(node),
-			absoluteBounds = dom.getAbsoluteBounds(this.scrollNode),
-			scrollBounds   = this.getScrollBounds(),
-			docWidth = document.body.offsetWidth,
-			block,
-			offsetTop,
-			offsetLeft,
-			offsetHeight,
-			offsetWidth,
+	getChildOffsets: kind.inherit(function (sup) {
+		if (sup === utils.nop) {
+			return function (child, scrollBounds) {
+				var node = (child instanceof Control) ? child.hasNode() : child,
+					offsets  = dom.getAbsoluteBounds(node),
+					viewportBounds = dom.getAbsoluteBounds(this.scrollNode);
+
+				offsets.right = document.body.offsetWidth - offsets.right;
+				viewportBounds.right = document.body.offsetWidth - viewportBounds.right;
+
+				// Make absolute controlBounds relative to scroll position
+				offsets.top += scrollBounds.top;
+				if (this.rtl) {
+					offsets.right += scrollBounds.left;
+				} else {
+					offsets.left += scrollBounds.left;
+				}
+
+				offsets.top = offsets.top - viewportBounds.top;
+				offsets.left = (this.rtl ? offsets.right : offsets.left) - (this.rtl ? viewportBounds.right : viewportBounds.left);
+
+				offsets.getMargin = function (side) {
+					return dom.getComputedBoxValue(node, 'margin', side);
+				};
+
+				return offsets;
+			};
+		}
+		else {
+			return sup;
+		}
+	}),
+
+	/**
+	* Helper function for `scrollToChild()`
+	*
+	* @private
+	*/
+	getTargetCoordinates: function (scrollBounds, offsets, opts) {
+		var block,
 			xDir,
 			yDir,
 			x,
@@ -367,30 +395,10 @@ module.exports = {
 			block = this.block;
 		}
 
-
-		// For the calculations below, we want the `right` bound
-		// to be relative to the document's right edge, not its
-		// left edge, so we adjust it now
-		nodeBounds.right = docWidth - nodeBounds.right;
-		absoluteBounds.right = docWidth - absoluteBounds.right;
-
-		// Make absolute controlBounds relative to scroll position
-		nodeBounds.top += scrollBounds.top;
-		if (this.rtl) {
-			nodeBounds.right += scrollBounds.left;
-		} else {
-			nodeBounds.left += scrollBounds.left;
-		}
-
-		offsetTop      = nodeBounds.top - absoluteBounds.top;
-		offsetLeft     = (this.rtl ? nodeBounds.right : nodeBounds.left) - (this.rtl ? absoluteBounds.right : absoluteBounds.left);
-		offsetHeight   = nodeBounds.height;
-		offsetWidth    = nodeBounds.width;
-
 		// 0: currently visible, 1: right of viewport, -1: left of viewport
-		xDir = calcNodeVisibility(offsetLeft, offsetWidth, scrollBounds.left, scrollBounds.clientWidth);
+		xDir = calcNodeVisibility(offsets.left, offsets.width, scrollBounds.left, scrollBounds.clientWidth);
 			// 0: currently visible, 1: below viewport, -1: above viewport
-		yDir = calcNodeVisibility(offsetTop, offsetHeight, scrollBounds.top, scrollBounds.clientHeight);
+		yDir = calcNodeVisibility(offsets.top, offsets.height, scrollBounds.top, scrollBounds.clientHeight);
 		// If we're already scrolling and the direction the node is in is not the same as the direction we're scrolling,
 		// we need to recalculate based on where the scroller will end up, not where it is now. This is to handle the
 		// case where the node is currently visible but won't be once the scroller settles.
@@ -401,12 +409,12 @@ module.exports = {
 		if (this.isScrolling) {
 			if (this.xDir !== xDir) {
 				scrollBounds.left = this.destX;
-				xDir = calcNodeVisibility(offsetLeft, offsetWidth, scrollBounds.left, scrollBounds.clientWidth);
+				xDir = calcNodeVisibility(offsets.left, offsets.width, scrollBounds.left, scrollBounds.clientWidth);
 				block = 'nearest';
 			}
 			if (this.yDir !== yDir) {
 				scrollBounds.top = this.destY;
-				yDir = calcNodeVisibility(offsetTop, offsetHeight, scrollBounds.top, scrollBounds.clientHeight);
+				yDir = calcNodeVisibility(offsets.top, offsets.height, scrollBounds.top, scrollBounds.clientHeight);
 				block = 'nearest';
 			}
 		}
@@ -419,24 +427,24 @@ module.exports = {
 				// If control requested to be scrolled all the way to the viewport's left, or if the control
 				// is larger than the viewport, scroll to the control's left edge. Otherwise, scroll just
 				// far enough to get the control into view.
-				if (block === 'farthest' || block === 'start' || offsetWidth > scrollBounds.clientWidth) {
-					x = offsetLeft;
+				if (block === 'farthest' || block === 'start' || offsets.width > scrollBounds.clientWidth) {
+					x = offsets.left;
 				} else {
-					x = offsetLeft - scrollBounds.clientWidth + offsetWidth;
+					x = offsets.left - scrollBounds.clientWidth + offsets.width;
 					// If nodeStyle exists, add the _marginRight_ to the scroll value.
-					x += dom.getComputedBoxValue(node, 'margin', 'right');
+					x += offsets.getMargin('right');
 				}
 				break;
 			case -1:
 				// If control requested to be scrolled all the way to the viewport's right, or if the control
 				// is larger than the viewport, scroll to the control's right edge. Otherwise, scroll just
 				// far enough to get the control into view.
-				if (block === 'farthest' || block === 'end' || offsetWidth > scrollBounds.clientWidth) {
-					x = offsetLeft - scrollBounds.clientWidth + offsetWidth;
+				if (block === 'farthest' || block === 'end' || offsets.width > scrollBounds.clientWidth) {
+					x = offsets.left - scrollBounds.clientWidth + offsets.width;
 				} else {
-					x = offsetLeft;
+					x = offsets.left;
 					// If nodeStyle exists, subtract the _marginLeft_ from the scroll value.
-					x -= dom.getComputedBoxValue(node, 'margin', 'left');
+					x -= offsets.getMargin('left');
 				}
 				break;
 		}
@@ -449,34 +457,66 @@ module.exports = {
 				// If control requested to be scrolled all the way to the viewport's top, or if the control
 				// is larger than the viewport, scroll to the control's top edge. Otherwise, scroll just
 				// far enough to get the control into view.
-				if (block === 'farthest' || block === 'start' || offsetHeight > scrollBounds.clientHeight) {
-					y = offsetTop;
+				if (block === 'farthest' || block === 'start' || offsets.height > scrollBounds.clientHeight) {
+					y = offsets.top;
 					// If nodeStyle exists, subtract the _marginTop_ from the scroll value.
-					y -= dom.getComputedBoxValue(node, 'margin', 'top');
+					y -= offsets.getMargin('top');
 				} else {
-					y = offsetTop - scrollBounds.clientHeight + offsetHeight;
+					y = offsets.top - scrollBounds.clientHeight + offsets.height;
 					// If nodeStyle exists, add the _marginBottom_ to the scroll value.
-					y += dom.getComputedBoxValue(node, 'margin', 'bottom');
+					y += offsets.getMargin('bottom');
 				}
 				break;
 			case -1:
 				// If control requested to be scrolled all the way to the viewport's bottom, or if the control
 				// is larger than the viewport, scroll to the control's bottom edge. Otherwise, scroll just
 				// far enough to get the control into view.
-				if (block === 'farthest' || block === 'end' || offsetHeight > scrollBounds.clientHeight) {
-					y = offsetTop - scrollBounds.clientHeight + offsetHeight;
+				if (block === 'farthest' || block === 'end' || offsets.height > scrollBounds.clientHeight) {
+					y = offsets.top - scrollBounds.clientHeight + offsets.height;
 				} else {
-					y = offsetTop;
+					y = offsets.top;
 					// If nodeStyle exists, subtract the _marginBottom_ from the scroll value.
-					y -= dom.getComputedBoxValue(node, 'margin', 'bottom');
+					y -= offsets.getMargin('bottom');
 				}
 				break;
 		}
 
-		// If x or y changed, scroll to new position
-		if (x !== this.scrollLeft || y !== this.scrollTop) {
-			this.scrollTo(x, y, opts);
+		return {x: x, y: y, xDir: xDir, yDir: yDir};
+	},
+
+	/**
+	* Helper function for `scrollToChild()`
+	* 
+	* May be overridden as needed by more specific implementations. This
+	* API is to be considered experimental and subject to change -- use at
+	* your own risk.
+	*
+	* @protected
+	*/
+	scrollToTarget: kind.inherit(function (sup) {
+		if (sup === utils.nop) {
+			return function (child, targetCoordinates, opts) {
+				this.scrollTo(targetCoordinates.x, targetCoordinates.y, opts);
+			};
 		}
+		else {
+			return sup;
+		}
+	}),
+
+	/**
+	* TODO: Document. Based on CSSOM View spec ()
+	* @see {@linkplain http://dev.w3.org/csswg/cssom-view/}
+	* @see {@linkplain https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView}
+	*
+	* @public
+	*/
+	scrollToChild: function(child, opts) {
+		var scrollBounds = this.getScrollBounds(),
+			offsets = this.getChildOffsets(child, scrollBounds),
+			coordinates = this.getTargetCoordinates(scrollBounds, offsets, opts);
+
+		this.scrollToTarget(child, coordinates, opts);
 	},
 
 	/**

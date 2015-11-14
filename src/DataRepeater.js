@@ -578,6 +578,22 @@ var DataRepeater = module.exports = kind(
 	},
 
 	/**
+	* Returns the index of a child control. This is useful primarily when you have a reference to a Control
+	* that is not (or may not be) an immediate child of the repeater, but is instead a sub-child of one of the
+	* repeater's immediate children.
+	*
+	* @param {Control} child - The child (or sub-child) whose index you want to retrieve.
+	* @returns {Number} The index of the child, or -1 if the Control is not a child of the repeater.
+	* @public
+	*/
+	indexForChild: function (child) {
+		while (child && child.repeater !== this) {
+			child = child.parent;
+		}
+		return child ? child.index : -1;
+	},
+
+	/**
 	* Retrieves the data associated with the [repeater]{@link module:enyo/DataRepeater~DataRepeater}.
 	*
 	* @returns {module:enyo/Collection~Collection} The {@link module:enyo/Collection~Collection} that comprises the data.
