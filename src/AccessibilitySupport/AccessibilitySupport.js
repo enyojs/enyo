@@ -54,11 +54,14 @@ var defaultObservers = [
 *
 * @private
 */
-function preventScroll (node) {
+function preventScroll (node, rtl) {
 	if (node) {
 		dispatcher.listen(node, 'scroll', function () {
 			node.scrollTop = 0;
-			node.scrollLeft = 0;
+			// TODO: This probably won't work cross-browser, as the different
+			// browser engines appear to treat scrollLeft differently in RTL.
+			// See ENYO-2841.
+			node.scrollLeft = rtl ? node.scrollWidth : 0;
 		});
 	}
 }
@@ -293,7 +296,7 @@ var AccessibilitySupport = {
 		return function () {
 			sup.apply(this, arguments);
 			if (this.accessibilityPreventScroll) {
-				preventScroll(this.hasNode());
+				preventScroll(this.hasNode(), this.rtl);
 			}
 		};
 	})
