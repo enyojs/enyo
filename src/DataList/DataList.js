@@ -132,7 +132,8 @@ var DataList = module.exports = kind(
 	* pixels and applied to the primary size depending on the list's `orientation` (i.e.,
 	* it will be applied to `height` when the `orientation` is `'vertical'`, and to `width`
 	* when the `orientation` is `'horizontal'`). Note that the list does not apply this
-	* value to the children via CSS.
+	* value to the children via CSS and mis-specifying this value can cause list operations that
+	* take the shortcut to fail.
 	*
 	* @type {Number}
 	* @default null
