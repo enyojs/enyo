@@ -81,6 +81,7 @@
 * [dragThreshold]{@link module:enyo/ViewManager~ViewManager#dragThreshold}.
 *
 * @event module:enyo/ViewManager~ViewManager#dismiss
+* @property {Boolean} dragging `true` for when dismissing as a result of dragging
 * @public
 */
 
@@ -728,7 +729,7 @@ var ViewMgr = kind(
 			this.direction = -1;
 			this.set('active', null);
 			this.set('dismissed', true);
-			this.emit('dismiss');
+			this.emit('dismiss', {dragging: false});
 			this.stack = [];
 		}
 	},
@@ -955,6 +956,7 @@ var ViewMgr = kind(
 					this.dragView = this.next();
 				} else if (this.floating) {
 					this.dragView = this.back();
+					if (!this.dragView) this.emit('dismiss', {dragging: true});
 				} else {
 					this.dragView = this.previous();
 				}
