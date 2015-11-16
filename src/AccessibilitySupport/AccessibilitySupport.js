@@ -283,7 +283,11 @@ var AccessibilitySupport = {
 		else if (value !== undefined && value !== null) {
 			value = String(value);
 		}
-		this.setAttribute(name, value);
+		// prevent invalidating attributes unnecessarily by checking current value first. avoids
+		// resetting values on alert-able properties (e.g. aria-valuenow).
+		if (this.getAttribute(name) !== value) {
+			this.setAttribute(name, value);
+		}
 	},
 
 	/**
