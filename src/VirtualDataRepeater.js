@@ -49,7 +49,7 @@ module.exports = kind({
 	init: function () {
 		this.orderedChildren = [],
 		this.orderedChildren_alt = [],
-		this.childrenByIndex = {},
+		this.childrenByIndex = [],
 		this.orderedModels = [],
 		this.orderedModels_alt = [],
 		this.needed = [],
@@ -198,8 +198,11 @@ module.exports = kind({
 			n = this.numItems,
 			needed = this.needed,
 			b = this.bullpen,
-			cbi = this.childrenByIndex,
 			i, idx, m, ci, c, nNeeded, j, len2;
+
+		// Clear our index, which we'll rebuild as we assign children
+		this.childrenByIndex.length = 0;
+
 		// Walk up from the first index through the
 		// last and make sure that a child is assigned
 		// for each
@@ -265,11 +268,6 @@ module.exports = kind({
 		}
 		// And now some cleanup...
 		len2 = o2.length;
-		// First, if we have fewer children than we had before,
-		// we need to remove stale entries from our index
-		for (i = len2; i < len; i++) {
-			cbi[i] = null;
-		}
 		// Reset our "needed" array, so it's ready for next time
 		needed.length = 0;
 		// Swap in our new ordered arrays for the old ones
