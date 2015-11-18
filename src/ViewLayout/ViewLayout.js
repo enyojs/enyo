@@ -6,6 +6,21 @@ var
 	Layout = require('../Layout'),
 	rAF = animation.requestAnimationFrame;
 
+// In order to handle DOM events (e.g. ontransitionend), we need to inject ViewLayout into the event
+// dispatch chain. Since we can't guarantee the usual event flow would pass through this, we
+// override the default behavior to call ViewLayout's event hanlder via a mixin applied to the view
+// when it is first setup
+var ViewLayoutSupport = {
+	name: 'enyo.ViewLayoutSupport',
+	_viewLayout: null,
+	bubbleUp: kind.inherit(function (sup) {
+		return function (name, event, sender) {
+			if (this._viewLayout) this._viewLayout.handleViewEvent(name, event, sender);
+			return sup.apply(this, arguments);
+		};
+	})
+};
+
 /**
 * Order of operations:
 *  * `prepareTransition()`
@@ -80,7 +95,8 @@ module.exports = kind(
 	*/
 	setupView: function (view) {
 		if (view && !view.viewSetup) {
-			view.set('bubbleTarget', this);
+			view.extend(ViewLayoutSupport);
+			view._viewLayout = this;
 			view.addClass(this.viewClass);
 			view.viewSetup = true;
 		}
@@ -234,14 +250,8 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	dispatchBubble: function (name, event, delegate) {
+	handleViewEvent: function (name, event, sender) {
 		var handler = this.handlers && this.handlers[name];
-		if (handler) {
-			if (this[handler](delegate, event)) {
-				return true;
-			}
-		} else {
-			return this.container.dispatchBubble(name, event, delegate);
-		}
+		if (handler) this[handler](sender, event);
 	}
 });
