@@ -100,6 +100,11 @@ module.exports = kind(
 	defaultKind: LightPanel,
 
 	/**
+	* @private
+	*/
+	accessibilityPreventScroll: true,
+
+	/**
 	* The index of the active panel.
 	*
 	* @type {Number}
