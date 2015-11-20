@@ -51,7 +51,7 @@ var
 * specific image assets in a hash/object format to the `src` property, instead of the usual
 * string. The image sources will be used automatically when the screen resolution is less than
 * or equal to those screen types. For more informaton on our resolution support, and how to
-* enable this feature, see our [resolution independence documentation]{@link module:enyo/resolution}.
+* enable this feature, see the documentation for {@link module:enyo/resolution}.
 *
 * ```
 * // Take advantage of the multi-rez mode
@@ -106,11 +106,10 @@ module.exports = kind(
 
 		/**
 		* Maps to the `src` attribute of an [&lt;img&gt; tag]{@glossary img}. This also supports
-		* a multi-resolution hash object. See
-		* [the above description of enyo.Image]{@link module:enyo/Image~Image} for more details and examples
-		* or our [resolution independence docs]{@link module:enyo/resolution}.
+		* a multi-resolution hash object. For more details and examples, see the description of
+		* {@link module:enyo/Image~Image} above, or the documentation for {@link module:enyo/resolution}.
 		*
-		* @type {String}
+		* @type {String|module:enyo/resolution#selectSrc~src}
 		* @default ''
 		* @public
 		*/
