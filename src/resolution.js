@@ -221,7 +221,7 @@ var ri = module.exports = {
 	* a single image source or a key/value hash/object containing keys representing screen
 	* types (`'hd'`, `'fhd'`, `'uhd'`, etc.) and values containing the asset source for
 	* that target screen resolution.
-	* @returns {String} The chosen source, given the string or list provided
+	* @returns {String} The chosen source, given the string or hash provided
 	* @public
 	*/
 	selectSrc: function (src) {

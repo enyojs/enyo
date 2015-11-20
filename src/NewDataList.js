@@ -62,14 +62,14 @@ module.exports = kind({
 
 		// If the item is near the horizontal or vertical
 		// origin, scroll all the way there
-		if (b.x <= this.spacing) {
-			b.x = 0;
+		if (b.left <= this.spacing) {
+			b.left = 0;
 		}
-		if (b.y <= this.spacing) {
-			b.y = 0;
+		if (b.top <= this.spacing) {
+			b.top = 0;
 		}
 
-		this.scrollTo(b.x, b.y, opts);
+		this.scrollTo(b.left, b.top, opts);
 	},
 
 	/**
@@ -274,9 +274,29 @@ module.exports = kind({
 		p2 = sp + (g2 * this.delta2);
 
 		return (this.direction == 'vertical')
-			? { x: p2, y: p, w: is2, h: is }
-			: { x: p, y: p2, w: is, h: is2 }
+			? { left: p2, top: p, width: is2, height: is }
+			: { left: p, top: p2, width: is, height: is2 }
 		;
+	},
+
+	/**
+	* Providing a NewDataList-specific implementation of the
+	* `getChildOffsets()` interface defined by enyo/Scrollable. This
+	* implemenation is less expensive than the general implementation
+	* provided by Scrollable, and properly accounts for item spacing.
+	*
+	* @private
+	*/
+	getChildOffsets: function (child, scrollBounds) {
+		var index = this.indexForChild(child),
+			offsets = this.getItemBounds(index),
+			margin = this.spacing;
+
+		offsets.getMargin = function (side) {
+			return margin;
+		};
+
+		return offsets;
 	},
 
 	/**
