@@ -723,12 +723,12 @@ var ViewMgr = kind(
 	*
 	* @public
 	*/
-	dismiss: function () {
+	dismiss: function (event) {
 		if (this.manager) {
 			this.direction = -1;
 			this.set('active', null);
 			this.set('dismissed', true);
-			this.emit('dismiss');
+			this.emit('dismiss', event);
 			this.stack = [];
 		}
 	},
@@ -991,7 +991,7 @@ var ViewMgr = kind(
 			}
 			// unless it's a floating ViewManager that is being dismissed
 			else if (this.isDimissable() && event.direction == -1) {
-				this.dismiss();
+				this.dismiss({dragging: true});
 			}
 		}
 		// otherwise the drag was small enough to be cancelled
