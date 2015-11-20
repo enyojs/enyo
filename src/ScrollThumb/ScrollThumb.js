@@ -17,7 +17,7 @@ var
 * {@link module:enyo/TouchScrollStrategy~TouchScrollStrategy} and {@link module:enyo/TranslateScrollStrategy~TranslateScrollStrategy} to
 * display a small visual scroll indicator.
 * 
-* `enyo.ScrollThumb` is not typically created in application code.
+* `enyo/ScrollThumb` is not typically created in application code.
 *
 * @class ScrollThumb
 * @protected

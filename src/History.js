@@ -235,14 +235,13 @@ var EnyoHistory = module.exports = kind.singleton(
 	* @private
 	*/
 	processQueue: function () {
-		var i, l = _queue.length, next,
-			i2, entries;
+		var next, i, entries;
 
 		this.silencePushEntries();
 
-		for (i = 0; i < l; i++) {
+		while (_queue.length) {
 			next = _queue.shift();
-			
+
 			if (next.type === 'push') {
 				this.pushEntry(next.entry, next.silenced);
 			} else {
@@ -251,9 +250,9 @@ var EnyoHistory = module.exports = kind.singleton(
 				// if a 'pop' was requested
 				if (next.type == 'pop') {
 					// iterate the requested number of history entries
-					for (i2 = entries.length - 1; i2 >= 0; --i2) {
+					for (i = entries.length - 1; i >= 0; --i) {
 						// and call each handler if it exists
-						this.processPopEntry(entries[i2]);
+						this.processPopEntry(entries[i]);
 					}
 				}
 				// otherwise we just drop the entries and do nothing

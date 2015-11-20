@@ -5,8 +5,6 @@ require('enyo');
 * @module enyo/Scrim
 */
 
-
-
 var
 	kind = require('../kind'),
 	utils = require('../utils');
@@ -159,11 +157,11 @@ var Scrim = module.exports = kind(
 * Scrim singleton exposing a subset of the Scrim API;
 * it is replaced with a proper {@link module:enyo/Scrim~Scrim} instance.
 *
-* @class  enyo.scrimSingleton
+* @class ScrimSingleton
 * @private
 */
 var ScrimSingleton = kind(
-	/** @lends module:enyo/scrimSingleton~scrimSingleton.prototype */ {
+	/** @lends module:enyo/Scrim~ScrimSingleton.prototype */ {
 
 	/**
 	* @private

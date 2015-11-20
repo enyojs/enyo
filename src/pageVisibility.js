@@ -10,11 +10,16 @@ var
 * `document.visibilityState` in supported browsers. The `visibilitychange`
 * event is channelled through the [Signals]{@link module:enyo/Signals~Signals} mechanism.
 *
-* Partly based on {@link http://stackoverflow.com/a/1060034}.
+* Partly based on {@linkplain http://stackoverflow.com/a/1060034}.
 *
 * Example:
+*
 * ```javascript
-* enyo.kind({
+* var
+* 	kind = require('enyo/kind'),
+* 	Signals = require('enyo/Signals');
+*
+* module.exports = kind({
 * 	name: 'App',
 * 	components: [
 * 		{kind: 'Signals', onvisibilitychange: 'visibilitychanged'}
@@ -28,6 +33,7 @@ var
 * 	}
 * });
 * ```
+*
 * @module enyo/pageVisibility
 * @private
 */

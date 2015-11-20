@@ -83,7 +83,7 @@ module.exports = {
 	* 
 	* @type {Number}
 	* @default null
-	* @memberof enyo.Scroller.prototype
+	* @memberof module:enyo/Scroller~Scroller.prototype
 	* @public
 	*/
 	maxHeight: null,
@@ -103,8 +103,8 @@ module.exports = {
 	/**
 	* TODO: Document. Based on CSSOM View spec ().
 	* Options: 'smooth', 'instant', maybe 'auto'
-	* See: http://dev.w3.org/csswg/cssom-view/
-	*      https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
+	* @see {@linkplain http://dev.w3.org/csswg/cssom-view/}
+	* @see {@linkplain https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView}
 	*
 	* @type {String}
 	* @default 'smooth'
@@ -116,8 +116,8 @@ module.exports = {
 	* TODO: Document. Based on CSSOM View spec (), but modified to add 'nearest' and
 	* 'farthest' to the possible values.
 	* Options: 'start', 'end', 'nearest', 'farthest'
-	* See: http://dev.w3.org/csswg/cssom-view/
-	*      https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
+	* @see {@linkplain http://dev.w3.org/csswg/cssom-view/}
+	* @see {@linkplain https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView}
 	*
 	* @type {String}
 	* @default 'nearest'
@@ -309,8 +309,8 @@ module.exports = {
 
 	/**
 	* TODO: Document. Based on CSSOM View spec ()
-	* See: http://dev.w3.org/csswg/cssom-view/
-	*      https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
+	* @see {@linkplain http://dev.w3.org/csswg/cssom-view/}
+	* @see {@linkplain https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView}
 	*
 	* @public
 	*/
@@ -322,23 +322,37 @@ module.exports = {
 
 	/** 
 	* TODO: Document. Based on CSSOM View spec ()
-	* See: http://dev.w3.org/csswg/cssom-view/
-	*      https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
+	* @see {@linkplain http://dev.w3.org/csswg/cssom-view/}
+	* @see {@linkplain https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView}
 	*
 	* @public
 	*/
-	scrollToControl: function (control, opts) {
-		var n = control.hasNode();
+	scrollToControl: kind.inherit(function (sup) {
+		return function (control, opts) {
+			var n;
 
-		if (n) {
-			this.scrollToNode(n, opts);
-		}
-	},
+			// Default implementation -- in case the Control
+			// applying the Scrollable mixin does not supply
+			// its own
+			if (sup === utils.nop) {
+				n = control.hasNode();
+
+				if (n) {
+					this.scrollToNode(n, opts);
+				}
+			}
+			// If the Control does provide an alternative
+			// implementation, we use it
+			else {
+				sup.apply(this, arguments);
+			}
+		};
+	}),
 
 	/**
 	* TODO: Document. Based on CSSOM View spec ()
-	* See: http://dev.w3.org/csswg/cssom-view/
-	*      https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
+	* @see {@linkplain http://dev.w3.org/csswg/cssom-view/}
+	* @see {@linkplain https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView}
 	*
 	* @public
 	*/
@@ -985,7 +999,7 @@ module.exports = {
 	* scroll controls, or if `control` is not a child of the
 	* Scrollable at all.
 	*
-	* @param {enyo.Control} control - The control to be tested
+	* @param {module:enyo/Control~Control} control - The control to be tested
 	* @protected
 	*/
 	isScrollingChild: function (control) {
@@ -1005,7 +1019,7 @@ module.exports = {
 	* Returns `true` if `control` is one of the Scrollable's
 	* scroll controls.
 	*
-	* @param {enyo.Control} control - The control to be tested
+	* @param {module:enyo/Control~Control} control - The control to be tested
 	* @protected
 	*/
 	isScrollControl: function (control) {

@@ -1,4 +1,5 @@
 var
+	dom = require('enyo/dom'),
 	kind = require('enyo/kind');
 
 var
@@ -21,7 +22,9 @@ var
 *  * `completeTransition()`
 *    Removes the directional classes and resets the `dragDuration`
 *
-* @class enyo.SlideViewLayout
+* @class SlideViewLayout
+* @extends enyo/TransitionViewLayout~TransitionViewLayout
+* @public
 */
 module.exports = kind({
 	/**
@@ -45,6 +48,15 @@ module.exports = kind({
 	/**
 	* @private
 	*/
+	addRemoveDirection: function (view, addRemove, invert) {
+		var direction = invert ? -this.container.direction : this.container.direction,
+			className = direction == 1 ? 'forward' : 'back';
+		view.addRemoveClass(className, addRemove);
+	},
+
+	/**
+	* @private
+	*/
 	drag: function (event) {
 		var px,
 			c = this.container,
@@ -53,7 +65,6 @@ module.exports = kind({
 			size = isHorizontal ? bounds.width : bounds.height,
 			delta = event.delta,
 			transform = isHorizontal ? 'translateX' : 'translateY';
-
 
 		if (event.delta < 0 && event.delta < -size) {
 			this.overDrag = true;
@@ -68,10 +79,10 @@ module.exports = kind({
 		}
 
 		TransitionViewLayout.prototype.drag.apply(this, arguments);
-		c.active.applyStyle('transform', transform + '(' + delta + 'px)');
+		dom.transformValue(c.active, transform,  delta + 'px');
 		if (c.dragView) {
 			px = this.container.layoutCover ? 0 : size * event.direction + delta;
-			c.dragView.applyStyle('transform', transform + '(' + px + 'px)');
+			dom.transformValue(c.dragView, transform,  px + 'px');
 		}
 	},
 
@@ -81,25 +92,14 @@ module.exports = kind({
 	* @private
 	*/
 	prepareTransition: function (was, is) {
-		var c = this.container,
-			wasIndex = c.indexOf(was),
-			isIndex = c.indexOf(is);
-
-		if (c.floating) {
-			// for a floating VM, if both is and was are not found, we're going back because is was
-			// already popped off the stack. however when the initial view is displayed, both
-			// indices will also be -1 but `was` will be null as well so we check that too.
-			this.direction = was && isIndex == -1 && wasIndex == -1 ? 'back' : 'forward';
-		} else {
-			// fixed VMs direction is based only on each view's ordered position 
-			this.direction = wasIndex < isIndex ? 'forward' : 'back';
-		}
-		if (is) is.addClass(this.direction);
-		if (was) was.addClass(this.direction == 'back' ? 'forward' : 'back');
+		var c = this.container;
+		TransitionViewLayout.prototype.prepareTransition.apply(this, arguments);
+		if (is) this.addRemoveDirection(is, true);
+		if (was) this.addRemoveDirection(was, true, true);
 
 		if (this.container.layoutCover) {
-			this.stationaryView = this.direction == 'forward' && was
-								|| this.direction == 'back' && is;
+			this.stationaryView = c.direction == 1 && was
+								|| c.direction == -1 && is;
 			if (this.stationaryView) this.stationaryView.addClass('stationary');
 		}
 	},
@@ -110,26 +110,30 @@ module.exports = kind({
 	* @private
 	*/
 	transition: function (was, is) {
+		var dir,
+			transform = this.container.orientation == 'horizontal' ? 'translateX' : 'translateY';
+
 		TransitionViewLayout.prototype.transition.apply(this, arguments);
 		if (was) {
-			was.applyStyle('transform', null);
+			dom.transformValue(was, transform, null);
 		}
 		if (is) {
-			is.removeClass(this.direction);
-			is.applyStyle('transform', null);
+			this.addRemoveDirection(is, false);
+			dom.transformValue(is, transform, null);
 		}
 
 		// If the user drags the entire view off screen, it won't animate so we won't see the CSS
 		// transition event.
 		if (this.overDrag) {
-			if (was) this.simulateTransition(was);
-			if (is) this.simulateTransition(is);
+			if (was) this.setTransitionComplete('from');
+			if (is) this.setTransitionComplete('to');
 		}
 		// when using layoutCover, one view doesn't transition so the ontransitionend doesn't fire
 		// to account for that, set a timeout of the same duration to manually clean up. The
 		// exception being when dismissing the ViewManager and there is no becoming-active view.
 		else if (this.stationaryView) {
-			this.simulateTransition(this.stationaryView);
+			dir = this.getTransitionDirection(this.stationaryView);
+			if (dir) this.setTransitionComplete(dir);
 		}
 	},
 
@@ -138,24 +142,13 @@ module.exports = kind({
 	*
 	* @private
 	*/
-	completeTransition: function (view) {
-		TransitionViewLayout.prototype.completeTransition.apply(this, arguments);
-		if (view) {
-			view.removeClass(this.direction == 'back' ? 'forward' : 'back');
-			if (this.stationaryView && this.stationaryView == view) {
-				this.stationaryView.removeClass('stationary');
-				this.stationaryView = null;
-			}
+	completeTransition: function (was, is) {
+		if (is) this.addRemoveDirection(is, false);
+		if (was) this.addRemoveDirection(was, false, true);
+		if (this.stationaryView) {
+			this.stationaryView.removeClass('stationary');
+			this.stationaryView = null;
 		}
-	},
-
-	/**
-	* Calls completeTransition after the drag or normal duration in cases where a CSS transition
-	* will not have occurred.
-	*
-	* @private
-	*/
-	simulateTransition: function (view) {
-		setTimeout(this.completeTransition.bind(this, view), this.dragDuration || this.duration);
+		TransitionViewLayout.prototype.completeTransition.apply(this, arguments);
 	}
 });

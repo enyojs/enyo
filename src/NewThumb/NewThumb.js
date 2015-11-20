@@ -1,5 +1,10 @@
 require('enyo');
 
+/**
+* Contains the declaration for the {@link module:enyo/NewThumb~NewThumb} kind.
+* @module enyo/NewThumb
+*/
+
 var
 	kind = require('../kind'),
 	ri = require('../resolution'),
@@ -9,17 +14,18 @@ var
 	Control = require('../Control');
 
 /**
-* {@link module:enyo/ScrollThumb~ScrollThumb} is a helper [kind]{@glossary kind} used by 
-* {@link module:enyo/TouchScrollStrategy~TouchScrollStrategy} and {@link module:enyo/TranslateScrollStrategy~TranslateScrollStrategy} to
-* display a small visual scroll indicator.
-* 
-* `enyo.ScrollThumb` is not typically created in application code.
+* {@link module:enyo/NewThumb~NewThumb} is a helper [kind]{@glossary kind} used
+* by {@link module:enyo/TouchScrollStrategy~TouchScrollStrategy} and
+* {@link module:enyo/TranslateScrollStrategy~TranslateScrollStrategy} to display
+* a small visual scroll indicator.
 *
-* @class ScrollThumb
+* `enyo/NewThumb` is not typically created in application code.
+*
+* @class NewThumb
 * @protected
 */
 module.exports = kind(
-	/** @lends module:enyo/ScrollThumb~ScrollThumb.prototype */ {
+	/** @lends module:enyo/NewThumb~NewThumb.prototype */ {
 
 	/**
 	* @private

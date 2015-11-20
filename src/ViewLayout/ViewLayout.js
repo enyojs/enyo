@@ -52,6 +52,16 @@ module.exports = kind(
 		this.container.observe('dragging', this.draggingChanged = this.draggingChanged.bind(this));
 		this.container.on('drag', this.handleDrag = this.handleDrag.bind(this));
 		this.container.on('cancelDrag', this.handleCancelDrag = this.handleCancelDrag.bind(this));
+		this._transitioning = {
+			from: {
+				view: null,
+				complete: false
+			},
+			to: {
+				view: null,
+				complete: false
+			}
+		};
 	},
 
 	/**
@@ -93,8 +103,7 @@ module.exports = kind(
 			}
 		} else {
 			this.transition(was, is);
-			if (was) this.completeTransition(was);
-			if (is) this.completeTransition(is);
+			this.completeTransition(was, is);
 		}
 	},
 
@@ -105,6 +114,12 @@ module.exports = kind(
 	* @private
 	*/
 	draggingChanged: function (was, is) {
+		// if there's a transition in-progress, force it complete before dragging
+		if (is && this.isTransitioning()) {
+			this.setTransitionComplete('from');
+			this.setTransitionComplete('to');
+		}
+
 		rAF(function () {
 			if (is) this.container.addClass('dragging');
 		}.bind(this));
@@ -141,29 +156,72 @@ module.exports = kind(
 	/**
 	* @protected
 	*/
-	prepareTransition: null,
+	prepareTransition: function (was, is) {
+		this.registerTransition(was, is);
+	},
 
 	/**
 	* @protected
 	*/
 	transition: function (was, is) {
 		this.container.removeClass('dragging');
-		if (was) {
-			was.addClass('transitioning');
-			was.removeClass('active');
-		}
-		if (is) {
-			is.addClass('transitioning');
-			is.addClass('active');
-		}
+		if (was) was.removeClass('active');
+		if (is) is.addClass('active');
 	},
 
 	/**
 	* @protected
 	*/
-	completeTransition: function (view) {
-		view.removeClass('transitioning');
-		this.emit('complete', view);
+	completeTransition: function (was, is) {
+		this.emit('complete', {
+			was: was,
+			is: is
+		});
+	},
+
+	/**
+	* `true` if either transition is still incomplete
+	*
+	* @return {Boolean}
+	* @private
+	*/
+	isTransitioning: function () {
+		var t = this._transitioning;
+		return !t.from.complete || !t.to.complete;
+	},
+
+	/**
+	* @private
+	*/
+	registerTransition: function (was, is) {
+		var t = this._transitioning;
+		t.from.view = was;
+		t.from.complete = !was;
+		t.to.view = is;
+		t.to.complete = !is;
+	},
+
+	/**
+	* @private
+	*/
+	setTransitionComplete: function (dir, view) {
+		var t = this._transitioning;
+
+		t[dir].complete = true;
+		if (!this.isTransitioning()) {
+			this.completeTransition(t.from.view, t.to.view);
+			t.from.view = t.to.view = null;
+			t.from.complete = t.to.complete = false;
+		}
+	},
+
+	/**
+	* @private
+	*/
+	getTransitionDirection: function (view) {
+		return this._transitioning.from.view == view && 'from' ||
+				this._transitioning.to.view == view && 'to' ||
+				null;
 	},
 
 	/**

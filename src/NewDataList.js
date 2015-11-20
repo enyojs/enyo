@@ -73,6 +73,26 @@ module.exports = kind({
 	},
 
 	/**
+	* This method is considered private for NewDataList, although
+	* the corresponding method defined in the Scrollable mixin is
+	* public in the more general case. For NewDataList, application
+	* code should generally use `scrollToItem()` instead, because it works
+	* regardless of whether the target item is currently "virtualized,"
+	* whereas `scrollToControl()` works only on non-virtual items.
+	*
+	* NewDataList overrides this method because it can provide a
+	* more accurate, more performant implementation than the general
+	* one provided by enyo/Scrollable.
+	*
+	* @private
+	*/
+	scrollToControl: function (control, opts) {
+		if (typeof control.index === 'number' && control.parent === this.$.container) {
+			this.scrollToItem(control.index, opts);
+		}
+	},
+
+	/**
 	* @private
 	*/
 	calculateMetrics: function(opts) {
@@ -171,7 +191,7 @@ module.exports = kind({
 			st = Math.ceil(d / delta);
 			j = st * delta;
 			tt.max = Math.min(maxVal, tt.max + j);
-			tt.min = (tt.max == maxVal) ? maxMin : tt.max - delta;
+			tt.min = Math.min(maxMin, tt.max - delta);
 			this.set('first', (d2x * Math.ceil(this.first / d2x)) + (st * d2x));
 		}
 		else if (dir == -1 && val < tt.min) {

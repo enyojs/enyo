@@ -1,7 +1,5 @@
 var
-	animation = require('enyo/animation'),
-	kind = require('enyo/kind'),
-	rAF = animation.requestAnimationFrame;
+	kind = require('enyo/kind');
 
 var
 	ViewLayout = require('./ViewLayout');
@@ -65,8 +63,14 @@ module.exports = kind({
 	*/
 	transition: function (was, is) {
 		ViewLayout.prototype.transition.apply(this, arguments);
-		if (was) this.applyTransitionDuration(was, this.dragDuration || this.duration);
-		if (is) this.applyTransitionDuration(is, this.dragDuration || this.duration);
+		if (was) {
+			was.addClass('transitioning');
+			this.applyTransitionDuration(was, this.dragDuration || this.duration);
+		}
+		if (is) {
+			is.addClass('transitioning');
+			this.applyTransitionDuration(is, this.dragDuration || this.duration);
+		}
 	},
 
 	/**
@@ -75,8 +79,10 @@ module.exports = kind({
 	* @private
 	*/
 	completeTransition: function (was, is) {
-		ViewLayout.prototype.completeTransition.apply(this, arguments);
+		if (was) was.removeClass('transitioning');
+		if (is) is.removeClass('transitioning');
 		this.dragDuration = null;
+		ViewLayout.prototype.completeTransition.apply(this, arguments);
 	},
 
 	/**
@@ -98,15 +104,11 @@ module.exports = kind({
 	* @private
 	*/
 	handleTransitioned: function (sender, event) {
-		var view = event.originator;
+		var dir,
+			view = event.originator;
 		if (view && view.container == this.container) {
-
-			if (this.shouldAnimate()) {
-				rAF(this.completeTransition.bind(this, view));
-			} else {
-				this.completeTransition(view);
-			}
-
+			dir = this.getTransitionDirection(view);
+			if (dir) this.setTransitionComplete(dir);
 			return true;
 		}
 	}

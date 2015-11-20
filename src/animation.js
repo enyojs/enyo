@@ -67,7 +67,7 @@ for (var i = 0, pl = prefix.length, p, wc, wr; (p = prefix[i]) || i < pl; i++) {
 *                            animation frame.
 * @param {Node} node - The DOM node to request the animation frame for.
 * @returns {Object} A request id to be used with
-*                     [enyo.cancelRequestAnimationFrame()]{@link module:enyo/cancelRequestAnimationFrame~cancelRequestAnimationFrame}.
+*                     {@link module:enyo/animation#cancelRequestAnimationFrame}.
 * @public
 */
 exports.requestAnimationFrame = function(callback, node) {
@@ -86,13 +86,13 @@ exports.cancelRequestAnimationFrame = function(inId) {
 * A set of interpolation functions for animations, similar in function to CSS3
 * transitions.
 *
-* These are intended for use with {@link module:enyo/animation.easedLerp}. Each easing function
+* These are intended for use with {@link module:enyo/animation#easedLerp}. Each easing function
 * accepts one (1) [Number]{@glossary Number} parameter and returns one (1)
 * [Number]{@glossary Number} value.
 *
 * @public
 */
-exports.easing = /** @lends module:enyo/easing~easing */ {
+exports.easing = /** @lends module:enyo/animation~easing.prototype */ {
 	/**
 	* cubicIn
 	*
@@ -149,7 +149,7 @@ exports.easing = /** @lends module:enyo/easing~easing */ {
 * @param {Number} t0 - Start time.
 * @param {Number} duration - Duration in milliseconds.
 * @param {Function} easing - An easing [function]{@glossary Function} reference from
-*	{@link module:enyo/easing~easing}.
+*	{@link module:enyo/animation#easing}.
 * @param {Boolean} reverse - Whether the animation will run in reverse.
 * @returns {Number} The resulting position, capped at a maximum of 100%.
 * @public
@@ -173,7 +173,7 @@ exports.easedLerp = function(t0, duration, easing, reverse) {
 * @param {Number} t0 - Start time.
 * @param {Number} duration - Duration in milliseconds.
 * @param {Function} easing - An easing [function]{@glossary Function} reference from
-*	{@link module:enyo/easing~easing}.
+*	{@link module:enyo/animation#easing}.
 * @param {Boolean} reverse - Whether the animation will run in reverse.
 * @param {Number} time
 * @param {Number} startValue - Starting value.

@@ -1,3 +1,8 @@
+/**
+* Exports the {@link module:enyo/StylesheetSupport} mixin.
+* @module enyo/StylesheetSupport
+*/
+
 require('enyo');
 
 var
@@ -7,12 +12,12 @@ var
 	Style = require('./Style');
 
 /**
-* The {@link module:enyo/StylesheetSupport~StylesheetSupport} {@glossary mixin} is used to add a
+* The {@link module:enyo/StylesheetSupport} {@glossary mixin} is used to add a
 * "side-car" inline stylesheet to a [control]{@link module:enyo/Control~Control}, specifically
 * for procedurally-generated CSS that can't live in the more appropriate
 * location (i.e., in a CSS/LESS file).
 *
-* @module enyo/StylesheetSupport
+* @mixin
 * @public
 */
 module.exports = {
@@ -37,7 +42,6 @@ module.exports = {
 		* 
 		* @type {String}
 		* @default ''
-		* @memberof enyo.StylesheetSupport.prototype
 		* @public
 		*/
 		stylesheetContent: ''

@@ -42,13 +42,14 @@ var RelationalModel = module.exports = kind(
 	
 	/**
 	* An [array]{@glossary Array} declaring relationships of this
-	* [model]{@link module:enyo/RelationalModel~RelationalModel} to other models. These are
-	* [hashes]{@glossary Object} of corresponding
+	* [model]{@link module:enyo/RelationalModel~RelationalModel} to other models.
+	* These are [hashes]{@glossary Object} of corresponding
 	* [properties]{@link module:enyo/RelationalModel~RelationOptions} used to define
 	* and configure individual relations. Relations may be of the type
-	* {@link module:enyo/toOne~toOne}, {@link module:enyo/toMany~toMany}, or {@link module:enyo/manyToMany~manyToMany}.
-	* Each relation must include a `key` property that is the name of the
-	* local [attribute]{@link module:enyo/Model~Model#attributes}. For example:
+	* {@link module:enyo/RelationalModel~toOne}, {@link module:enyo/RelationalModel~toMany},
+	* or {@link module:enyo/RelationalModel~manyToMany}. Each relation must include a
+	* `key` property that is the name of the local
+	* [attribute]{@link module:enyo/Model~Model#attributes}. For example:
 	*
 	* ```javascript
 	* var
