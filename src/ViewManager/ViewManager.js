@@ -338,7 +338,13 @@ var ViewMgr = kind(
 	* @private
 	*/
 	activeChanged: function (was, is) {
-		if (was) this.emitViewEvent('deactivate', was);
+		if (was) {
+			if (this.dragging) {
+				this.set('dragging', false);
+				this.releaseDraggedView = was.retainNode();
+			}
+			this.emitViewEvent('deactivate', was);
+		}
 	},
 
 	/**
@@ -865,8 +871,10 @@ var ViewMgr = kind(
 	*/
 	teardownView: function (view) {
 		if (view.node && !view.persistent) {
-			view.node.remove();
-			view.node = null;
+			if (!this.releaseDraggedView) {
+				view.node.remove();
+				view.node = null;
+			}
 			view.set('canGenerate', false);
 			view.teardownRender(true);
 		}
@@ -978,6 +986,10 @@ var ViewMgr = kind(
 	* @private
 	*/
 	handleDragFinish: function (sender, event) {
+		if (this.releaseDraggedView) {
+			this.releaseDraggedView();
+			this.releaseDraggedView = null;
+		}
 		if (!this.dragging || !this.draggable || this.dismissed) return;
 
 		this.decorateDragEvent(event);
