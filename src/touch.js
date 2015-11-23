@@ -36,8 +36,8 @@ Dom.requiresWindow(function() {
 	gesture.events.touchstart = function (e) {
 		// for duration of this touch, only handle touch events.  Old event
 		// structure will be restored during touchend.
-		gesture.events = touchGesture;
-		gesture.events.touchstart(e);
+		gesture.events = {};//touchGesture;
+		// gesture.events.touchstart(e);
 	};
 	
 	/**

@@ -512,16 +512,26 @@ module.exports = kind(
 		}
 	},
 
+	getPageY: function (e) {
+		return (e.pageY === undefined) ? e.touches[0].pageY : e.pageY;
+	},
+
+	getPageX: function (e) {
+		return (e.pageX === undefined) ? e.touches[0].pageX : e.pageX;
+	},
+
 	/**
 	* @private
 	*/
 	startDrag: function (e) {
 		this.dragging = true;
 		//
-		this.my = e.pageY;
+		// this.my = e.pageY;
+		this.my = this.getPageY(e);
 		this.py = this.uy = this.y;
 		//
-		this.mx = e.pageX;
+		// this.mx = e.pageX;
+		this.mx = this.getPageX(e);
 		this.px = this.ux = this.x;
 	},
 
@@ -534,12 +544,12 @@ module.exports = kind(
 			v = this.canScrollY();
 			h = this.canScrollX();
 		
-			dy = v ? e.pageY - this.my : 0;
+			dy = v ? this.getPageY(e) - this.my : 0;
 			this.uy = dy + this.py;
 			// provides resistance against dragging into overscroll
 			this.uy = this.boundaryDamping(this.uy, this.topBoundary, this.bottomBoundary, this.kDragDamping);
 			//
-			dx = h ? e.pageX - this.mx : 0;
+			dx = h ? this.getPageX(e) - this.mx : 0;
 			this.ux = dx + this.px;
 			// provides resistance against dragging into overscroll
 			this.ux = this.boundaryDamping(this.ux, this.leftBoundary, this.rightBoundary, this.kDragDamping);

@@ -112,12 +112,14 @@ module.exports = kind(
 	* @private
 	*/
 	handlers: {
-		ondragstart: 'dragstart',
-		ondragfinish: 'dragfinish',
-		ondown: 'down',
-		onmove: 'move',
-		onmousewheel: 'mousewheel',
-		onscroll: 'domScroll'
+		// ondragstart: 'dragstart',
+		// ondragfinish: 'dragfinish',
+		// ondown: 'down',
+		// onmove: 'move',
+		ontouchstart: 'dragstart',
+		ontouchend: 'dragfinish'//,
+		// onmousewheel: 'mousewheel',
+		// onscroll: 'domScroll'
 	},
 
 	/**

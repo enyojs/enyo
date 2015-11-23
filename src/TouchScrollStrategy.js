@@ -171,9 +171,21 @@ module.exports = kind(
 	* @private
 	*/
 	handlers: {
-		onflick: 'flick',
+		// onflick: 'flick',
 		onShouldDrag: 'shouldDrag',
-		ondrag: 'drag'
+		// ondrag: 'drag'
+		ontouchmove: 'drag'
+	},
+
+	previewDomEvent: function (e) {
+		if (e.type === 'touchstart') {
+			this.dragstart(this, e);
+			return true;
+		}
+		if (e.type === 'touchmove') {
+			this.drag(this, e);
+			return true;
+		}
 	},
 
 	/**
@@ -591,6 +603,7 @@ module.exports = kind(
 			return true;
 		}
 		// note: allow drags to propagate to parent scrollers via data returned in the shouldDrag event.
+		this.calcStartInfo();
 		this.doShouldDrag(e);
 		this.dragging = (e.dragger == this || (!e.dragger && e.boundaryDragger == this));
 		if (this.dragging) {
@@ -628,7 +641,7 @@ module.exports = kind(
 	},
 	dragfinish: function (sender, e) {
 		if (this.dragging) {
-			e.preventTap();
+			// e.preventTap();
 			this.$.scrollMath.dragFinish();
 			this.dragging = false;
 			if (this.scrim) {
