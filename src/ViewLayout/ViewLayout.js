@@ -70,11 +70,11 @@ module.exports = kind(
 		this._transitioning = {
 			from: {
 				view: null,
-				complete: false
+				complete: true
 			},
 			to: {
 				view: null,
-				complete: false
+				complete: true
 			}
 		};
 	},
@@ -227,7 +227,7 @@ module.exports = kind(
 		if (!this.isTransitioning()) {
 			this.completeTransition(t.from.view, t.to.view);
 			t.from.view = t.to.view = null;
-			t.from.complete = t.to.complete = false;
+			t.from.complete = t.to.complete = true;
 		}
 	},
 
