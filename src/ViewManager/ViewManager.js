@@ -259,9 +259,12 @@ var ViewMgr = kind(
 	dismissable: 'auto',
 
 	/**
-	* When `true`, the views can be dragged into and out of view.
+	* When `true`, the views can be dragged or flicked into and out of view.
+	* When `false`, the views cannot be dragged or flicked.
+	* When `drag`, the views can *only* be dragged and not flicked.
+	* When `flick`, the views can *only* be flicked and not dragged.
 	*
-	* @type {Boolean}
+	* @type {Boolean|String}
 	* @default true
 	* @public
 	*/
@@ -377,6 +380,13 @@ var ViewMgr = kind(
 	dragView: null,
 
 	/**
+	 * 
+	 *
+	 * @type {Boolean}
+	 */
+	flicked: false,
+
+	/**
 	* @private
 	*/
 	layoutKindChanged: function (was, is) {
@@ -390,6 +400,7 @@ var ViewMgr = kind(
 	* @private
 	*/
 	handlers: {
+		onflick: 'handleFlick',
 		ondown: 'handleDown',
 		ondragstart: 'handleDragStart',
 		ondrag: 'handleDrag',
@@ -672,11 +683,16 @@ var ViewMgr = kind(
 	},
 
 	/**
+	* Determines if the ViewManager can be dragged in the provided direction
+	*
+	* @param {Number} direction -1 or 1 indicating the direction of the drag
+	* @param {String} [mode] When provided, requires `draggable` be `true` or the provided value
 	* @private
 	*/
-	canDrag: function (direction) {
-		var index;
-		if (this.draggable) {
+	canDrag: function (direction, mode) {
+		var index,
+			check = mode ? this.draggable === true || this.draggable == mode : this.draggable;
+		if (check) {
 			if (this.isDimissable() && direction == -1) {
 				return true;
 			}
@@ -891,6 +907,37 @@ var ViewMgr = kind(
 		this.direction = 0;
 	},
 
+	// Flick
+
+	/**
+	* Flicks are handled by the drag system so here we only test if there was a valid flick and rely
+	* on the ondragfinish handler to actually act on the flick as if it were a completed drag.
+	*
+	* @private
+	*/
+	handleFlick: function (sender, event) {
+		var isHorizontal = this.orientation == 'horizontal',
+			dx = event.xVelocity,
+			dy = event.yVelocity,
+			adx = Math.abs(dx),
+			ady = Math.abs(dy),
+			direction = 0;
+
+		// Set direction iff the primary flick direction matches the orientation
+		if (isHorizontal && adx > ady) {
+			direction = dx < 0 ? 1 : -1;
+		}
+		else if (!this.isHorizontal && ady > adx) {
+			direction = dy < 0 ? 1 : -1;
+		}
+
+		// If we have a direction, are flickable, and flickable in that direction, indicate it
+		if (direction && this.canDrag(direction, 'flick')) {
+			this.flicked = true;
+			return true;
+		}
+	},
+
 	// Draggable
 
 	/**
@@ -936,6 +983,8 @@ var ViewMgr = kind(
 		}
 
 		this.decorateDragEvent(event);
+		// Intentionally ignoring draggable mode here so dragView will reference the becoming-active
+		// view even if we are only supporting flick and not drag
 		if (this.canDrag(event.direction)) {
 			// clean up on change of direction
 			if (this.direction !== event.direction) {
@@ -982,7 +1031,7 @@ var ViewMgr = kind(
 
 		this.decorateDragEvent(event);
 		// if the view has been dragged far enough
-		if (event.percentDelta * 100 > this.dragThreshold) {
+		if (this.flicked || event.percentDelta * 100 > this.dragThreshold) {
 			this.set('dragging', false);
 			// normally, there will be a becoming-active view to activate
 			if (this.dragView) {
@@ -1000,6 +1049,7 @@ var ViewMgr = kind(
 		else {
 			this.cancelDrag();
 		}
+		this.flicked = false;
 		event.preventTap();
 
 		return true;
@@ -1037,11 +1087,21 @@ var ViewMgr = kind(
 	*/
 	decorateDragEvent: function (event) {
 		var isHorizontal = this.orientation == 'horizontal',
-			size = isHorizontal ? this.dragBounds.width : this.dragBounds.height;
-		event.delta = isHorizontal ? event.dx : event.dy;
+			size = isHorizontal ? this.dragBounds.width : this.dragBounds.height,
+			delta = isHorizontal ? event.dx : event.dy;
+
 		// 'natural' touch causes us to invert the physical change
-		event.direction = event.delta < 0 ? 1 : -1;
-		event.percentDelta = 1 - (size - Math.abs(event.delta)) / size;
+		event.direction = delta < 0 ? 1 : -1;
+
+		// if we're only flickable, we won't set the deltas to suppress the views moving until a
+		// flick is encountered.
+		if (this.canDrag(event.direction, 'drag')) {
+			event.delta = delta;
+			event.percentDelta = 1 - (size - Math.abs(event.delta)) / size;
+		} else {
+			event.delta = 0;
+			event.percentDelta = 0;
+		}
 	}
 });
 
