@@ -114,12 +114,12 @@ module.exports = kind({
 			transform = this.container.orientation == 'horizontal' ? 'translateX' : 'translateY';
 
 		TransitionViewLayout.prototype.transition.apply(this, arguments);
-		if (was) {
+		if (was && was != this.dragView) {
 			dom.transformValue(was, transform, null);
 		}
 		if (is) {
 			this.addRemoveDirection(is, false);
-			dom.transformValue(is, transform, null);
+			if (is != this.dragView) dom.transformValue(is, transform, null);
 		}
 
 		// If the user drags the entire view off screen, it won't animate so we won't see the CSS
