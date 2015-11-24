@@ -313,6 +313,7 @@ module.exports = kind(
 		this._vx = null;
 		this._vy = null;
 		e.stopPropagation();
+		this.dragfinish(this, e);
 	},
 	
 	_touched: function (e) {
@@ -723,7 +724,7 @@ module.exports = kind(
 	},
 	dragfinish: function (sender, e) {
 		if (this.dragging) {
-			e.preventTap();
+			// e.preventTap();
 			this.$.scrollMath.dragFinish();
 			this.dragging = false;
 			if (this.scrim) {
