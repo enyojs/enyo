@@ -333,7 +333,7 @@ module.exports = kind(
 		var dt = e.timeStamp - this._lasttouch.timeStamp;
 		var x1 = (lt.clientX - ct.clientX) / dt;
 		var y1 = (lt.clientY - ct.clientY) / dt;
-		// this.log(dt, x1, y1);
+		this.log(dt, x1, y1);
 		if (this._vx == null || (x1 * xd > this._vx)) this._vx = x1;
 		if (this._vy == null || (y1 * yd > this._vy)) this._vy = y1;
 
