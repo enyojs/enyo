@@ -318,31 +318,50 @@ module.exports = kind(
 	_touched: function (e) {
 		var ft  = this._initialtouch.touches[0];
 		var lt  = this._lasttouch.touches[0];
-		var ct  = e.touches[0] || e.changedTouches[0];
-		var dx  = ct.clientX - ft.clientX;
-		var dy  = ct.clientY - ft.clientY;
-		var ddx = dx - lt.clientX;
-		var ddy = dy - lt.clientY;
-		var adx = Math.abs(dx);
-		var ady = Math.abs(dy);
-		var xd  = ddx > 0 ? 1 : ddx < 0 ? -1 : 0;
-		var yd  = ddy > 0 ? 1 : ddy < 0 ? -1 : 0;
-		var h   = adx > ady;
+		var ct  = e.touches[0];
+		var dx, dy, ddx, ddy, adx, ady, xd, yd, h, dt, x1, y1, px, py;
+		if (ct) {
+			dx  = ct.clientX - ft.clientX;
+			dy  = ct.clientY - ft.clientY;
+			ddx = dx - lt.clientX;
+			ddy = dy - lt.clientY;
+			adx = Math.abs(dx);
+			ady = Math.abs(dy);
+			xd  = ddx > 0 ? 1 : ddx < 0 ? -1 : 0;
+			yd  = ddy > 0 ? 1 : ddy < 0 ? -1 : 0;
+			h   = adx > ady;
+			px  = ct.pageX;
+			py  = ct.pageY;
 
-		// velocity update
-		var dt = e.timeStamp - this._lasttouch.timeStamp;
-		var x1 = (lt.clientX - ct.clientX) / dt;
-		var y1 = (lt.clientY - ct.clientY) / dt;
-		this.log(dt, x1, y1);
-		if (this._vx == null || (x1 * xd > this._vx)) this._vx = x1;
-		if (this._vy == null || (y1 * yd > this._vy)) this._vy = y1;
+			// velocity update
+			dt = e.timeStamp - this._lasttouch.timeStamp;
+			x1 = (ct.clientX - lt.clientX) / dt;
+			y1 = (ct.clientY - lt.clientY) / dt;
+
+			// update if necessary
+			if ((this._vx == null || this._vy == null) || ((x1 * xd > this._vx) || (y1 * yd > this._vy))) {
+				this._vx = x1;
+				this._vy = y1;
+			}
+		} else {
+			lt  = this._lasttouch;
+			dx  = lt.dx;
+			dy  = lt.dy;
+			ddx = lt.ddx;
+			ddy = lt.ddy;
+			px  = lt.pageX;
+			py  = lt.pageY;
+			h   = lt.horizontal;
+			xd  = lt.xDirection;
+			yd  = lt.yDirection;
+		}
 
 		e.dx    = dx;
 		e.dy    = dy;
 		e.ddx   = ddx;
 		e.ddy   = ddy;
-		e.pageX = ct.pageX;
-		e.pageY = ct.pageY;
+		e.pageX = px;
+		e.pageY = py;
 		e.vertical   = !h;
 		e.horizontal = h;
 		e.xDirection = xd;
