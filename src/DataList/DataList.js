@@ -132,7 +132,8 @@ var DataList = module.exports = kind(
 	* pixels and applied to the primary size depending on the list's `orientation` (i.e.,
 	* it will be applied to `height` when the `orientation` is `'vertical'`, and to `width`
 	* when the `orientation` is `'horizontal'`). Note that the list does not apply this
-	* value to the children via CSS.
+	* value to the children via CSS and mis-specifying this value can cause list operations that
+	* take the shortcut to fail.
 	*
 	* @type {Number}
 	* @default null
@@ -224,18 +225,24 @@ var DataList = module.exports = kind(
 	* [collection]{@link module:enyo/DataRepeater~DataRepeater#data} to scroll to the position of that
 	* index in the list.
 	*
+	* It is important to note that this scrolling operation is not guaranteed to be synchronous. If
+	* you need to perform another action upon the completion of scrolling, you should pass a callback
+	* function as a second argument to this method.
+	*
 	* @param {Number} idx - The index in the [list's]{@link module:enyo/DataList~DataList}
 	*	[collection]{@link module:enyo/DataRepeater~DataRepeater#data} to scroll to.
+	* @param {Function} callback - A function to be executed after the scroll operation is
+	*   complete.
 	* @public
 	*/
-	scrollToIndex: function (idx) {
+	scrollToIndex: function (idx, callback) {
 		var len = this.collection? this.collection.length: 0;
 		if (idx >= 0 && idx < len) {
 			if (this.get('absoluteShowing')) {
-				this.delegate.scrollToIndex(this, idx);
+				this.delegate.scrollToIndex(this, idx, callback);
 			} else {
 				this._addToShowingQueue('scrollToIndex', function () {
-					this.delegate.scrollToIndex(this, idx);
+					this.delegate.scrollToIndex(this, idx, callback);
 				});
 			}
 		}

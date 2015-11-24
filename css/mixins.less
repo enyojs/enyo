@@ -28,3 +28,11 @@
 	&:-o-full-screen { @rule(); }
 	&:fullscreen { @rule(); }
 }
+
+.vendor-fullscreen-ancestor(@rule) {
+	&:-webkit-full-screen-ancestor { @rule(); }
+	&:-moz-full-screen-ancestor { @rule(); }
+	&:-ms-fullscreen-ancestor { @rule(); }
+	&:-o-full-screen-ancestor { @rule(); }
+	&:fullscreen-ancestor { @rule(); }
+}

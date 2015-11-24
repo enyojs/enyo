@@ -100,6 +100,11 @@ module.exports = kind(
 	defaultKind: LightPanel,
 
 	/**
+	* @private
+	*/
+	accessibilityPreventScroll: true,
+
+	/**
 	* The index of the active panel.
 	*
 	* @type {Number}
@@ -531,8 +536,8 @@ module.exports = kind(
 		commonInfo = {addBefore: insertBefore};
 
 		// remove existing panels
-		for (idx = start; idx < end; idx++) {
-			this.popPanel(idx);
+		for (idx = end - 1; idx >= start; idx--) {
+			this.removePanel(panels[idx]);
 		}
 
 		// add replacement panels

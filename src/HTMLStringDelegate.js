@@ -244,7 +244,13 @@ module.exports = {
 	* @private
 	*/
 	teardownRender: function (control, cache) {
-		if (control.generated) this.teardownChildren(control, cache);
+		if (control.generated) {
+			if (typeof control.beforeTeardown === 'function') {
+				control.beforeTeardown();
+			}
+			this.teardownChildren(control, cache);
+		}
+			
 		control.node = null;
 		control.set('generated', false);
 	},
@@ -255,7 +261,7 @@ module.exports = {
 	teardownChildren: function (control, cache) {
 		var child,
 			i = 0;
-			
+
 		for (; (child = control.children[i]); ++i) {
 			child.teardownRender(cache);
 		}

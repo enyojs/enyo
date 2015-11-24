@@ -62,34 +62,14 @@ module.exports = kind({
 
 		// If the item is near the horizontal or vertical
 		// origin, scroll all the way there
-		if (b.x <= this.spacing) {
-			b.x = 0;
+		if (b.left <= this.spacing) {
+			b.left = 0;
 		}
-		if (b.y <= this.spacing) {
-			b.y = 0;
+		if (b.top <= this.spacing) {
+			b.top = 0;
 		}
 
-		this.scrollTo(b.x, b.y, opts);
-	},
-
-	/**
-	* This method is considered private for NewDataList, although
-	* the corresponding method defined in the Scrollable mixin is
-	* public in the more general case. For NewDataList, application
-	* code should generally use `scrollToItem()` instead, because it works
-	* regardless of whether the target item is currently "virtualized,"
-	* whereas `scrollToControl()` works only on non-virtual items.
-	*
-	* NewDataList overrides this method because it can provide a
-	* more accurate, more performant implementation than the general
-	* one provided by enyo/Scrollable.
-	*
-	* @private
-	*/
-	scrollToControl: function (control, opts) {
-		if (typeof control.index === 'number' && control.parent === this.$.container) {
-			this.scrollToItem(control.index, opts);
-		}
+		this.scrollTo(b.left, b.top, opts);
 	},
 
 	/**
@@ -294,9 +274,29 @@ module.exports = kind({
 		p2 = sp + (g2 * this.delta2);
 
 		return (this.direction == 'vertical')
-			? { x: p2, y: p, w: is2, h: is }
-			: { x: p, y: p2, w: is, h: is2 }
+			? { left: p2, top: p, width: is2, height: is }
+			: { left: p, top: p2, width: is, height: is2 }
 		;
+	},
+
+	/**
+	* Providing a NewDataList-specific implementation of the
+	* `getChildOffsets()` interface defined by enyo/Scrollable. This
+	* implemenation is less expensive than the general implementation
+	* provided by Scrollable, and properly accounts for item spacing.
+	*
+	* @private
+	*/
+	getChildOffsets: function (child, scrollBounds) {
+		var index = this.indexForChild(child),
+			offsets = this.getItemBounds(index),
+			margin = this.spacing;
+
+		offsets.getMargin = function (side) {
+			return margin;
+		};
+
+		return offsets;
 	},
 
 	/**
@@ -343,57 +343,26 @@ module.exports = kind({
 	/**
 	* @private
 	*/
-	showingChangedHandler: kind.inherit(function (sup) {
-		return function () {
-			if (this.needsReset) {
-				this.reset();
-			}
-			else if (this.needsRefresh) {
-				this.refresh();
-			}
-			return sup.apply(this, arguments);
-		};
-	}),
+	collectionResetHandler: function () {
+		this.calcBoundaries();
+	},
 
 	/**
 	* @private
 	*/
-	refresh: kind.inherit(function (sup) {
+	init: kind.inherit(function (sup) {
 		return function () {
-			if (this.getAbsoluteShowing()) {
-				if (arguments[1] === 'reset') {
-					this.calcBoundaries();
-				}
-				this.needsRefresh = false;
-				sup.apply(this, arguments);
-			}
-			else {
-				this.needsRefresh = true;
-			}
-		};
-	}),
-	
-	/**
-	* @private
-	*/
-	reset: kind.inherit(function (sup) {
-		return function () {
-			var v;
-			if (this.getAbsoluteShowing()) {
-				v = (this.direction === 'vertical');
-				this.set('scrollTop', 0);
-				this.set('scrollLeft', 0);
-				this.set('vertical', v ? 'auto' : 'hidden');
-				this.set('horizontal', v ? 'hidden' : 'auto');
-				this.calculateMetrics();
-				this.calcBoundaries();
-				this.first = 0;
-				this.needsReset = false;
-				sup.apply(this, arguments);
-			}
-			else {
-				this.needsReset = true;
-			}
+			var v = (this.direction === 'vertical');
+
+			this.set('scrollTop', 0);
+			this.set('scrollLeft', 0);
+			this.set('vertical', v ? 'auto' : 'hidden');
+			this.set('horizontal', v ? 'hidden' : 'auto');
+			this.calculateMetrics();
+			this.calcBoundaries();
+			this.first = 0;
+
+			sup.apply(this, arguments);
 		};
 	})
 });
