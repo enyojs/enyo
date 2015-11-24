@@ -265,6 +265,9 @@ module.exports = kind(
 		return function() {
 			sup.apply(this, arguments);
 			dispatcher.makeBubble(this.$.client, 'scroll');
+			this.$.client.hasNode().addEventListener('touchstart', this.touchStart.bind(this), true);
+			this.$.client.hasNode().addEventListener('touchmove',  this.touchMove.bind(this),  true);
+			this.$.client.hasNode().addEventListener('touchend',   this.touchEnd.bind(this),   true);
 			this.calcBoundaries();
 			this.syncScrollMath();
 			if (this.thumb) {
@@ -272,6 +275,79 @@ module.exports = kind(
 			}
 		};
 	}),
+
+	touchStart: function (e) {
+		// this.log(e);
+		this._lasttouch = e;
+		this._initialtouch = e;
+		e.stopPropagation();
+	},
+	
+	touchMove: function (e) {
+		// this.log(e);
+		this._touched(e);
+		this.dragging ? this.drag(this, e) : this.dragstart(this, e);
+		this._lasttouch = e;
+		e.stopPropagation();
+	},
+	
+	touchEnd: function (e) {
+		// this.log(e, this._vx, this._vy);
+		
+		// check velocity for flick
+		if (this._vx != null && this._vy != null) {
+			var v = Math.sqrt((this._vx * this._vx) + (this._vy * this._vy));
+			// this.log(v);
+			// minFlick was 0.1 by default
+			if (v > 0.1) {
+				this._touched(e);
+				e.xVelocity = this._vx;
+				e.yVelocity = this._vy;
+				e.velocity  = v;
+				this.flick(this, e);
+			}
+		}
+		
+		this._lasttouch = null;
+		this._initialtouch = null;
+		this._vx = null;
+		this._vy = null;
+		e.stopPropagation();
+	},
+	
+	_touched: function (e) {
+		var ft  = this._initialtouch.touches[0];
+		var lt  = this._lasttouch.touches[0];
+		var ct  = e.touches[0] || e.changedTouches[0];
+		var dx  = ct.clientX - ft.clientX;
+		var dy  = ct.clientY - ft.clientY;
+		var ddx = dx - lt.clientX;
+		var ddy = dy - lt.clientY;
+		var adx = Math.abs(dx);
+		var ady = Math.abs(dy);
+		var xd  = ddx > 0 ? 1 : ddx < 0 ? -1 : 0;
+		var yd  = ddy > 0 ? 1 : ddy < 0 ? -1 : 0;
+		var h   = adx > ady;
+
+		// velocity update
+		var dt = e.timeStamp - this._lasttouch.timeStamp;
+		var x1 = (lt.clientX - ct.clientX) / dt;
+		var y1 = (lt.clientY - ct.clientY) / dt;
+		// this.log(dt, x1, y1);
+		if (this._vx == null || (x1 * xd > this._vx)) this._vx = x1;
+		if (this._vy == null || (y1 * yd > this._vy)) this._vy = y1;
+
+		e.dx    = dx;
+		e.dy    = dy;
+		e.ddx   = ddx;
+		e.ddy   = ddy;
+		e.pageX = ct.pageX;
+		e.pageY = ct.pageY;
+		e.vertical   = !h;
+		e.horizontal = h;
+		e.xDirection = xd;
+		e.yDirection = yd;
+	},
 
 	/**
 	* @private
@@ -587,9 +663,9 @@ module.exports = kind(
 	*/
 	dragstart: function (sender, e) {
 		// Ignore drags sent from multi-touch events
-		if(!this.dragDuringGesture && e.srcEvent.touches && e.srcEvent.touches.length > 1) {
-			return true;
-		}
+		// if(!this.dragDuringGesture && e.srcEvent.touches && e.srcEvent.touches.length > 1) {
+		// 	return true;
+		// }
 		// note: allow drags to propagate to parent scrollers via data returned in the shouldDrag event.
 		this.doShouldDrag(e);
 		this.dragging = (e.dragger == this || (!e.dragger && e.boundaryDragger == this));
