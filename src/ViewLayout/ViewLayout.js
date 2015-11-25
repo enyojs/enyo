@@ -109,15 +109,12 @@ module.exports = kind(
 		this.setupView(is);
 
 		if (this.shouldAnimate()) {
-			if (this.prepareTransition) {
-				rAF(function () {
-					this.prepareTransition(was, is);
-					rAF(this.transition.bind(this, was, is));
-				}.bind(this));
-			} else {
+			rAF(function () {
+				this.prepareTransition(was, is);
 				rAF(this.transition.bind(this, was, is));
-			}
+			}.bind(this));
 		} else {
+			this.prepareTransition(was, is);
 			this.transition(was, is);
 			this.completeTransition(was, is);
 		}
@@ -244,7 +241,9 @@ module.exports = kind(
 	* @protected
 	*/
 	shouldAnimate: function () {
-		return this.container.generated && this.container.animated;
+		var opt = this.container.activationOptions,
+			animate = (opt && (opt.animate === false || opt.animate === true)) ? opt.animate : this.container.animate;
+		return this.container.generated && animate;
 	},
 
 	/**
