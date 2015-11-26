@@ -5,6 +5,7 @@ var
 	animation = require('./Core'),
 	activator = require('./KeyFrame'),
 	delegator = require('./EventDelegator'),
+	EventEmitter = require('../EventEmitter'),
 	frame = require('./Frame'),
 	utils = require('../utils');
 
@@ -46,11 +47,25 @@ var AnimationSupport = {
 	*/
 	animDelta: [],
 
+
+	vScrollX: 0,
+
+	vScrollY: 0,
+
+	vScrollZ: 0,
+
+
 	/**
 	* Maximum threshold for animation
 	* @private
 	*/
 	animMaxThreshold: [],
+
+	_animPose: [],
+
+	_pose: [],
+
+	mixins: [EventEmitter],
 
 	/**
 	* Check if the character is suitable for animation
@@ -79,7 +94,7 @@ var AnimationSupport = {
 	* @public
 	*/
 	setDistance: function (dist) {
-		this._distance = dist;
+		this.distance = dist;
 	},
 
 	/**
@@ -87,7 +102,7 @@ var AnimationSupport = {
 	* @public
 	*/
 	getDistance: function () {
-		return this._distance;
+		return this.distance;
 	},
 
 	/**
@@ -95,12 +110,31 @@ var AnimationSupport = {
 	* @parameter accelerate- Turns on/off hardware acceleration
 	* @public
 	*/
-	initiate: function (current) {
-		var dom = this.hasNode(),
+	initiate: function (current, t) {
+		var dom = this.hasNode(), curr = {},
 			prop = this.getAnimation(),
-			init = frame.getCompoutedProperty(dom, prop, current);
+			pose = frame.getCompoutedProperty(dom, prop, current),
+			dur = this.getDuration() || 0,
+			dist = this.getDistance() || 0;
 
-		utils.mixin(this, init);
+		if (current) {
+			if(this.animate) {
+				pose.duration = dur;
+				pose.distance = dist;
+				this._animPose.push(pose);
+			} else if (this.keyFrame) {
+				utils.mixin(curr, current);
+				for (prop in this.keyFrame) {
+					pose = frame.getCompoutedProperty(dom, this.keyFrame[prop], curr);
+					pose.duration = dur * prop / 100;
+					pose.distance = dist * prop / 100;
+					this._animPose.push(pose);
+					curr = pose._endAnim;
+				}
+			}
+		} else {
+			utils.mixin(this, pose);
+		}
 	},
 
 	/**
@@ -111,12 +145,41 @@ var AnimationSupport = {
 		return this._prop || (this._prop = this.animate);
 	},
 
+	getPoseByDistance: function(delta) {
+		var i = 0;
+		if(delta) {
+			if (this._animPose && this._animPose.length > 0) {
+				for (i = 0; i < this._animPose.length; i++) {
+					if (this._animPose[i].distance >= delta) {
+						break;
+					}
+				}
+			}
+		}
+		return this._animPose[i];
+	},
+
+
+	getPoseByTime: function(time) {
+		var i = 0;
+		if(time) {
+			if (this._animPose && this._animPose.length > 0) {
+				for (i = 0; i < this._animPose.length; i++) {
+					if (this._animPose[i].duration > time) {
+						break;
+					}
+				}
+			}
+		}
+		return this.reverse ? this._animPose[i <= 0 ? 0 : i-1] : this._animPose[i];
+	},
+
 	/**
 	* Adds new animation on already existing animation for this character.
 	* @public
 	*/
 	addAnimation: function (newProp) {
-		if (this._prop === undefined || this._prop == true) {
+		if (this._prop === undefined || this._prop === true) {
 			this._prop = newProp;
 		} else {
 			utils.mixin(this._prop, newProp);
@@ -216,7 +279,7 @@ var AnimationSupport = {
             animation.remove(this);
             sup.apply(this, arguments);
         };
-    }),
+    })
 };
 
 module.exports = AnimationSupport;
@@ -234,10 +297,11 @@ kind.concatHandler = function (ctor, props, instance) {
 	if (props.animate || props.keyFrame || props.pattern || props.handleAnimationEvents) {
 		var proto = ctor.prototype || ctor;
 		extend(AnimationSupport, proto);
-		if (props.keyFrame && typeof props.keyFrame != 'function') {
-			activator.animate(proto, props);
-		}
-		if (props.animate && typeof props.animate != 'function') {
+		// if (props.keyFrame && typeof props.keyFrame != 'function') {
+		// 	activator.animate(proto, props);
+		// }
+		if ((props.animate && typeof props.animate != 'function' ) ||
+			(props.keyFrame && typeof props.keyFrame != 'function')) {
 			animation.trigger(proto);
 		}
 		if (props.handleAnimationEvents && typeof props.handleAnimationEvents != 'function') {

@@ -134,7 +134,7 @@ module.exports = kind.singleton({
 	register: function (charc) {
 		this.deRegister(charc);
 		this.evnts.push(charc);
-		//this.remove(charc);
+		this.remove(charc);
 		charc.animating = true;
 		
 		if (!this.isTicking) {
@@ -201,9 +201,9 @@ module.exports = kind.singleton({
 		var i, curr, evlen = this.evnts.length;
 		for (i = 0; i < evlen; i++) {
 			curr = this.evnts[i];
-			if (typeof this.evnts[i].commitAnimation === 'function') {
-	        	this.evnts[i].commitAnimation();
-	        }
+			if (this.evnts[i].patterns  && typeof this.evnts[i].patterns.length > 0) {
+				this.evnts[i].commitAnimation();
+			}
 			if (curr && curr.ready()) {
 				tween.updateDelta(curr);
 				if (!curr.animating) {

@@ -306,24 +306,25 @@ var frame = module.exports = {
 	* @public
 	*/
 	getCompoutedProperty: function (node, props, initial) {
-		if(!node || !props) return;
+		if(!node) return;
 
 		var eP = {},
 			sP = initial ? this.copy(initial) : {},
 			tP = {},
 			dP = {},
 			m, k, v,
-			s = Dom.getComputedStyle(node);
+			s = initial ? undefined : Dom.getComputedStyle(node);
 
 		for (k in props) {
 			v = sP[k];
 			if (!this.isTransform(k)) {
-				v = v || this.getStyleValue(s, k);
+				v = v || this.getStyleValue(s || Dom.getComputedStyle(node), k);
 				eP[k] = this.parseValue(props[k]);
 				sP[k] = this.parseValue(v);
 			} else {
 				v = this.parseValue(props[k]);
-				tP[k] = k == 'rotate' ? Vector.toQuant(v) : v;
+				//tP[k] = k == 'rotate' ? Vector.toQuant(v) : v;
+				tP[k] = v;
 			}
 		}
 
@@ -334,7 +335,7 @@ var frame = module.exports = {
 			dP.skew = initial.skew;
 			dP.perspective = initial.perspective;
 		} else {
-			m = this.getMatrix(s) || Matrix.identity();
+			m = this.getMatrix(s || Dom.getComputedStyle(node)) || Matrix.identity();
 			this.decomposeMatrix(m, dP);
 		}
 
@@ -342,15 +343,15 @@ var frame = module.exports = {
 			sP[k] = dP[k];
 			eP[k] = tP[k] || dP[k];
 		}
-		return {_startAnim: sP, _endAnim: eP, _transform: dP, currentState: dP, matrix: m};
+		return {_startAnim: sP, _endAnim: eP, _transform: dP, currentState: dP, matrix: m, props: props};
 	},
 
 	getComputedDistance: function (prop, initalProp, finalProp) {
 		var k, sV, eV, dst, tot = 0;
 		for (k in prop) {
-			sV = initalProp[k];
+			sV = k==='rotate' ? Vector.quantToVector(initalProp[k]) : initalProp[k];
 			eV = finalProp[k];
-			dst = (k == 'rotate' ? Vector.quantDistance : Vector.distance)(eV, sV);
+			dst = Vector.distance(eV, sV);
 			tot += dst;
 		}
 		return tot;
