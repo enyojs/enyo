@@ -31,14 +31,15 @@ module.exports = {
     update: function(charc, ts) {
         var t,
             dur = charc._duration,
-            since = ts - charc._startTime;
+            since = ts - charc._startTime,
+            pose = charc.getPoseByTime(since);
 
         if (since < 0) return;
         if (since <= dur) {
             t = since / dur;
-            this.step(charc, t);
+            this.step(charc, pose,  t);
         } else {
-            this.step(charc, 1);
+            this.step(charc, pose, 1);
         }
     },
 
@@ -60,67 +61,80 @@ module.exports = {
             st,
             dst,
             inc,
+            pose,
             frc = charc.friction || 1,
             trD = charc.animThresholdDuration || 1000,
             trh = charc.animMaxThreshold || false,
             dir = charc.direction || 0,
-            tot = charc.getDistance() || frame.getComputedDistance(
-                charc.getAnimation(),
-                charc._startAnim,
-                charc._endAnim);
+            tot = charc.getDistance();
+             // || frame.getComputedDistance(
+             //    charc.getAnimation(),
+             //    charc._startAnim,
+             //    charc._endAnim);
 
-        dt = dt || charc.animDelta[dir];
-        if (dt) {
+        dt = dt || charc.vScrollX;
+        if (dt !== undefined) {
             dt = frc * dt;
             dst = charc._animCurDistane || 0;
             inc = dst + dt * (charc.reverse ? -1 : 1);
-            st = inc > 0 && inc <= tot;
 
-            if (st) {
+            pose = charc.getPoseByDistance(inc);
+            tot = pose.distance;
+
+            if (tot != 0) {
                 d = inc / tot;
                 if (trh && inc > trh && dt === 0) {
                     charc.setDuration(trD);
                     charc.start(true);
                 }
-                this.step(charc, d);
+                this.step(charc, pose, d);
             } else {
-                charc.animating = st;
-                charc.reverse = inc <= 0;
+                // charc.animating = st;
+                charc.reverse = inc < 0;
+                this.step(charc, pose, charc.reverse ? 0 : 1);
             }
 
-            charc._animCurDistane = st ? inc : 0;
-            charc.animDelta = [];
+            charc.set("_animCurDistane", inc);
+            charc.vScrollX = undefined;
         }
     },
 
     /**
      * @private
      */
-    step: function(charc, t) {
-        var k, c, d, pts, props;
+    step: function(charc, pose, t) {
+        var k, c, d, pts, tState, oState;
 
         node = charc.node;
-        newState = charc._endAnim;
+        newState = pose._endAnim;
         d = charc._duration;
-        props = charc.getAnimation();
-        oldState = charc._startAnim;
+        oldState = pose._startAnim;
         charc.currentState = charc.currentState || {};
 
-
-        for (k in props) {
+        for (k in pose.props) {
             cState = frame.copy(charc.currentState[k] || []);
             if (newState[k]) {
                 if (charc.ease && (typeof charc.ease !== 'function')) {
-                    if ((k == 'rotate')) {
-                        pts = this.beizerSPoints(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]), props[k]);
-                        cState = this.beizerSpline(t, pts, cState);
-                    } else {
-                        pts = this.calculateEase(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]));
-                        cState = this.getBezier(t, pts, cState);
-                    }
+                    // if ((k == 'rotate')) {
+                    //     pts = this.beizerSPoints(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]), props[k]);
+                    //     cState = this.beizerSpline(t, pts, cState);
+                    // } else {
+                    pts = this.calculateEase(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]));
+                    cState = this.getBezier(t, pts, cState);
+                    if (k == 'rotate') 
+                        cState = Vector.toQuant(cState);
+                    // }
                 } else {
-                    c = k == 'rotate' ? this.slerp : this.lerp;
-                    cState = t ? c(oldState[k], newState[k], ((typeof charc.ease === 'function') ? charc.ease : this.ease)(t, d), cState) : newState[k];
+                    if (k == 'rotate') {
+                        tState = Vector.toQuant(newState[k]);
+                        oState = Vector.toQuant(oldState[k]);
+                        c = this.slerp;
+                    } else {
+                        tState = newState[k];
+                        oState = oldState[k];
+                        c = this.lerp;
+                    }
+                    cState = c(oState, tState, ((typeof charc.ease === 'function') ? charc.ease : this.ease)(t, d), cState);
                 }
             }
 
@@ -304,6 +318,8 @@ module.exports = {
             dot = Vector.quantDot(qA, qB),
             l = qA.length;
 
+        // console.log("slerp qA" , qA);
+        // console.log("slerp qB" , qB);
         dot = Math.min(Math.max(dot, -1.0), 1.0);
         if (dot == 1.0) {
             qR = frame.copy(qA);
@@ -315,6 +331,7 @@ module.exports = {
             b = (Math.sin(t * theta) / Math.sin(theta)) * qB[i];
             qR[i] = a + b;
         }
+        // console.log("slerp" , qR);
         return qR;
     },
 
