@@ -4,11 +4,221 @@
  * @module enyo/AnimationSupport/Easings
  * @public
  */
+var matrixUtil = require('./Matrix');
 
 var b = 0,
     c = 1;
+var temp = null,
+    tempProp = null,
+    tempOldState = [],
+    tempNewState = [];
 
 var easings = {
+    /**
+     * @public
+     * apply the function to check whether the ease object has changed
+     * @params currentEase : the ease object which is currently available
+     */
+
+    easeChanged: function(currentEase) {
+
+        if (temp === null) { // setting the values for the first time
+            temp = currentEase;
+            return false;
+        } else {
+
+            if (JSON.stringify(temp) === JSON.stringify(currentEase)) { // compare the values
+                return false;
+            } else {
+                temp = currentEase;
+                return true;
+            }
+
+        }
+    },
+    /**
+     * @public
+     * apply the function to check whether the animating property of the object has changed
+     * @params currentProp : the animating property of the object which is currently available
+     */
+    propChange: function(currentProp) {
+
+        if (tempProp === null) { // setting the values for the first time
+            tempProp = currentProp;
+            return false;
+        } else {
+
+            if (tempProp === currentProp) { // compare the values
+                return false;
+            } else {
+                tempProp = currentProp;
+                return true;
+            }
+
+        }
+    },
+    /**
+     * @public
+     * apply the function to check whether the oldState of the object has changed
+     * @params currentOldState : the oldState  of the object which is currently available
+     */
+
+    oldStateChange: function(currentOldState) {
+
+        if (tempOldState === null) { // setting the values for the first time
+            tempOldState = currentOldState;
+            return false;
+        } else {
+            var compareValue = easings.compareStates(tempOldState, currentOldState);
+            if (compareValue === true) { // compare the values
+                return false;
+            } else {
+                tempOldState = currentOldState;
+                return true;
+            }
+
+        }
+
+    },
+    /**
+     * @public
+     * apply the function to check whether the newState of the object has changed
+     * @params currentOldState : the newState  of the object which is currently available
+     */
+
+    newStateChange: function(currentNewState) {
+
+        if (tempNewState === null) { // setting the values for the first time
+            tempNewState = currentNewState;
+            return false;
+        } else {
+            var compareValue = easings.compareStates(tempNewState, currentNewState);
+            if (compareValue === true) { // compare the values
+                return false;
+            } else {
+                tempNewState = currentNewState;
+                return true;
+            }
+
+        }
+
+    },
+    /**
+     * @public
+     * apply the function to compare the states which are arrays
+     * @params currentOldState : x is the previous state and y is the current state
+     */
+
+    compareStates: function(x, y) {
+        var xLen = x.length;
+        var yLen = y.length;
+        if (xLen != yLen) {
+            return false;
+        }
+        for (var i = 0; i < xLen; i++) {
+            if (x[i] instanceof Array && y[i] instanceof Array) {
+                // recurse into the nested arrays
+                if (x[i].length != y[i].length) {
+                    return false;
+                }
+                var recursiveValue = easings.compareStates(x[i], y[i]);
+                if (recursiveValue === false) {
+                    return false;
+                }
+            } else {
+                if (x[i] != y[i]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    },
+
+    calculateEase: function(easeObj, startPoint, endPoint) {
+        var order = (easeObj && Object.keys(easeObj).length) ? (Object.keys(easeObj).length + 1) : 0;
+        var controlPoints = [startPoint],
+            bValues = [],
+            m1 = [],
+            m2 = [],
+            m3 = [],
+            m4 = [],
+            l = 0;
+
+        var t, a;
+        for (var key in easeObj) {
+            t = parseFloat(key) / 100;
+            a = parseFloat(easeObj[key]) / 100;
+            bValues = easings.getBezierValues(t, order);
+            bValues.shift();
+            m1.push(a - bValues.pop());
+            m2.push(bValues);
+        }
+
+        m3 = matrixUtil.inverseN(m2, bValues.length);
+
+        m4 = matrixUtil.multiplyN(m3, m1);
+        l = m4.length;
+        for (var i = 0; i < l; i++) {
+            controlPoints.push([m4[i], m4[i], m4[i]]);
+        }
+
+        controlPoints.push(endPoint);
+        return controlPoints;
+    },
+    /**
+     * @private
+     * @params n: order, k: current position
+     */
+    getCoeff: function(n, k) {
+        n = parseInt(n, 10);
+        k = parseInt(k, 10);
+        // Credits
+        // https://math.stackexchange.com/questions/202554/how-do-i-compute-binomial-coefficients-efficiently#answer-927064
+        if (isNaN(n) || isNaN(k))
+            return void 0;
+        if ((n < 0) || (k < 0))
+            return void 0;
+        if (k > n)
+            return void 0;
+        if (k === 0)
+            return 1;
+        if (k === n)
+            return 1;
+        if (k > n / 2)
+            return this.getCoeff(n, n - k);
+
+        return n * this.getCoeff(n - 1, k - 1) / k;
+    },
+    /**
+     * @public
+     * @params t: time, n: order
+     */
+    getBezierValues: function(t, n) {
+        t = parseFloat(t, 10),
+            n = parseInt(n, 10);
+
+        if (isNaN(t) || isNaN(n))
+            return void 0;
+        if ((t < 0) || (n < 0))
+            return void 0;
+        if (t > 1)
+            return void 0;
+
+        var c,
+            values = [],
+            x = (1 - t),
+            y = t;
+        //
+        // Binomial theorem to expand (x+y)^n
+        //
+        for (var k = 0; k <= n; k++) {
+            c = this.getCoeff(n, k) * Math.pow(x, (n - k)) * Math.pow(y, k);
+            values.push(c);
+        }
+
+        return values;
+    },
+
 
     timeCheck: function(t, d) {
         t = t * d;
