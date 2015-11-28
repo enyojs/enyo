@@ -69,7 +69,7 @@ module.exports = {
                 charc._startAnim,
                 charc._endAnim);
 
-        dt = dt || charc.animDelta[dir];
+        dt = dt || charc.getAnimationDelta()[dir];
         if (dt) {
             dt = frc * dt;
             dst = charc._animCurDistane || 0;
@@ -89,7 +89,7 @@ module.exports = {
             }
 
             charc._animCurDistane = st ? inc : 0;
-            charc.animDelta = [];
+            charc.setAnimationDelta({});
         }
     },
 

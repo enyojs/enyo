@@ -202,10 +202,11 @@ module.exports = kind.singleton({
 		for (i = 0; i < evlen; i++) {
 			curr = this.evnts[i];
 			if (typeof this.evnts[i].commitAnimation === 'function') {
-	        	this.evnts[i].commitAnimation();
+				this.evnts[i].commitAnimation();
 	        }
 			if (curr && curr.ready()) {
-				tween.updateDelta(curr);
+				if (!curr.handleAnimationEvents) tween.updateDelta(curr);
+				if (curr.deltaChanged) curr.triggerEvent("mousewheel");
 				if (!curr.animating) {
 					tween.complete(curr);
 					curr.completed(curr);

@@ -41,10 +41,16 @@ var AnimationSupport = {
 	animationState: "",
 
 	/**
-	* Holds delta value in the order [x, y, z, rad]
+	* To check if the event delta value is changed
 	* @private
 	*/
-	animDelta: [],
+	deltaChanged: false,
+
+	/**
+	* To hold the name of the animation event which occured on the character
+	* @private
+	*/
+	eventName: "",
 
 	/**
 	* Maximum threshold for animation
@@ -132,10 +138,40 @@ var AnimationSupport = {
 	},
 
 	/**
+	* Sets the delta values of x, y and z for events
+	* @param {Object} obj - Object contains dX, dY and dZ as keys
+	* @public
+	*/
+	setAnimationDelta: function (obj) {
+		this.deltaChanged = false;
+
+		this._animDelta = this._animDelta || [];
+
+		if (!Object.keys(obj).length)
+			return this.deltaChanged = !!(this._animDelta = []) || true;
+
+		if (obj.dX !== this._animDelta[0])
+			this.deltaChanged = !!(this._animDelta[0] = obj.dX) || true;
+
+		if (obj.dY !== this._animDelta[1])
+			this.deltaChanged = !!(this._animDelta[1] = obj.dY) || true;
+
+		if (obj.dZ !== this._animDelta[2])
+			this.deltaChanged = !!(this._animDelta[2] = obj.dZ) || true;		
+	},
+
+	/**
+	* Gets the delta values of x, y and z for events
+	* @public
+	*/
+	getAnimationDelta: function () {
+		return this._animDelta;
+	},
+	/**
 	* Gets how long animation is active on this character
 	* @public
 	*/
-	getDuration: function() {
+	getDuration: function () {
 		return this._duration || this.duration;
 	},
 
@@ -194,6 +230,16 @@ var AnimationSupport = {
 		this.animating = true;
 		this.set('animationState', 'resumed');
 	},
+
+	/**
+	* Trigger the registered event to all the listeners
+	* @public
+	*/
+	triggerEvent: function (e) {
+		delegator.emitEvent(this, e, this.getAnimationDelta());
+		this.deltaChanged = false;
+	},
+
 	/**
 	* @private
 	*/
@@ -214,6 +260,10 @@ var AnimationSupport = {
     destroy: kind.inherit(function(sup) {
         return function() {
             animation.remove(this);
+            animation.deRegister(this);
+            if (this.handleAnimationEvents) {
+				delegator.deRegister(this);
+			}
             sup.apply(this, arguments);
         };
     }),
