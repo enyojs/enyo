@@ -218,7 +218,7 @@ var ViewMgr = kind(
 	/**
 	* @private
 	*/
-	animated: true,
+	animate: true,
 
 	/**
 	* @private
@@ -639,30 +639,32 @@ var ViewMgr = kind(
 	/**
 	* Navigates to the next view based on order of definition or creation
 	*
+	* @param {Object} [opts] Optional parameters to configure the activation
 	* @return {module:enyo/Control~Control} Activated view
 	* @public
 	*/
-	next: function () {
+	next: function (opts) {
 		var index = this.views.indexOf(this.active) + 1,
 			view = this.views[index];
 		if (view) {
 			this.direction = 1;
-			return this.activate(view.name);
+			return this.activate(view.name, opts);
 		}
 	},
 
 	/**
 	* Navigates to the previous view based on order of definition or creation
 	*
+	* @param {Object} [opts] Optional parameters to configure the activation
 	* @return {module:enyo/Control~Control} Activated view
 	* @public
 	*/
-	previous: function () {
+	previous: function (opts) {
 		var index = this.views.indexOf(this.active) - 1,
 			view = this.views[index];
 		if (view) {
 			this.direction = -1;
-			return this.activate(view.name);
+			return this.activate(view.name, opts);
 		}
 	},
 
@@ -670,10 +672,11 @@ var ViewMgr = kind(
 	* If this is a floating ViewManager, navigates back `count` views from the stack.
 	*
 	* @param {Number} [count] Number of views to pop off the stack. Defaults to 1.
+	* @param {Object} [opts] Optional parameters to configure the deactivation
 	* @return {module:enyo/Control~Control} Activated view
 	* @public
 	*/
-	back: function (count) {
+	back: function (count, opts) {
 		var name,
 			depth = this.stack.length;
 		if (this.floating && depth > 0) {
@@ -684,7 +687,7 @@ var ViewMgr = kind(
 				name = this.stack.splice(0, count).pop();
 			}
 			this.direction = -1;
-			return this._activate(name);
+			return this._activate(name, opts);
 		}
 	},
 
@@ -744,14 +747,16 @@ var ViewMgr = kind(
 	* Dismisses a view manager. If this is a root (manager-less) view manager, it cannot be
 	* dismissed.
 	*
+	* @param {Object} [opts] Optional parameters to configure the deactivation
 	* @public
 	*/
-	dismiss: function () {
+	dismiss: function (opts) {
 		if (this.manager) {
 			this.direction = -1;
-			this.set('active', null);
+			this.set('activationOptions', opts);
 			this.set('dismissed', true);
 			this.emit('dismiss', {dragging: false});
+			this.set('active', null);
 			this.stack = [];
 		}
 	},
@@ -809,11 +814,13 @@ var ViewMgr = kind(
 	* For floating ViewManagers, the view will be added to the stack and can be removed by `back()`.
 	*
 	* @param {String} viewName Name of the view to activate
+	* @param {Object} [opts] Optional parameters to configure the activation
 	* @public
 	*/
-	activate: function (viewName) {
-		var view = this._activate(viewName);
-		if (view && !this.isManager(view) && this.active && this.floating) {
+	activate: function (viewName, opts) {
+		var replace = !!(opts && opts.replace),
+			view = this._activate(viewName, opts);
+		if (!replace && view && !this.isManager(view) && this.active && this.floating) {
 			this.stack.unshift(this.active.name);
 		}
 
@@ -825,18 +832,20 @@ var ViewMgr = kind(
 	*
 	* @private
 	*/
-	_activate: function (viewName) {
-		var view = this.getView(viewName);
+	_activate: function (viewName, opts) {
+		var replace = !!(this.activationOptions && this.activationOptions.replace),
+			view = this.getView(viewName);
 		if (view) {
 			if (!this._toBeActivated) {
 				rAF(function () {
-					this.activateImmediate(this._toBeActivated);
+					this.activateImmediate(this._toBeActivated, opts);
 					this._toBeActivated = null;
 				}.bind(this));
 			}
-			else if (this.floating && !this.isManager(view)) {
+			else if (!replace && this.floating && !this.isManager(view)) {
 				this.stack.unshift(this._toBeActivated.name);
 			}
+			this.set('activationOptions', opts);
 			this._toBeActivated = view;
 		}
 		return view;
@@ -845,7 +854,7 @@ var ViewMgr = kind(
 	/**
 	* @private
 	*/
-	activateImmediate: function (view) {
+	activateImmediate: function (view, opts) {
 		// render the activated view if not already
 		if (this.generated && !view.generated) {
 			view.set('canGenerate', true);
