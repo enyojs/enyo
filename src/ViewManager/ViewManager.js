@@ -218,7 +218,7 @@ var ViewMgr = kind(
 	/**
 	* @private
 	*/
-	animated: true,
+	animate: true,
 
 	/**
 	* @private
@@ -259,9 +259,12 @@ var ViewMgr = kind(
 	dismissable: 'auto',
 
 	/**
-	* When `true`, the views can be dragged into and out of view.
+	* When `true`, the views can be dragged or flicked into and out of view.
+	* When `false`, the views cannot be dragged or flicked.
+	* When `drag`, the views can *only* be dragged and not flicked.
+	* When `flick`, the views can *only* be flicked and not dragged.
 	*
-	* @type {Boolean}
+	* @type {Boolean|String}
 	* @default true
 	* @public
 	*/
@@ -338,7 +341,13 @@ var ViewMgr = kind(
 	* @private
 	*/
 	activeChanged: function (was, is) {
-		if (was) this.emitViewEvent('deactivate', was);
+		if (was) {
+			if (this.dragging) {
+				this.set('dragging', false);
+				this.releaseDraggedView = was.retainNode();
+			}
+			this.emitViewEvent('deactivate', was);
+		}
 	},
 
 	/**
@@ -377,6 +386,13 @@ var ViewMgr = kind(
 	dragView: null,
 
 	/**
+	 * 
+	 *
+	 * @type {Boolean}
+	 */
+	flicked: false,
+
+	/**
 	* @private
 	*/
 	layoutKindChanged: function (was, is) {
@@ -390,6 +406,7 @@ var ViewMgr = kind(
 	* @private
 	*/
 	handlers: {
+		onflick: 'handleFlick',
 		ondown: 'handleDown',
 		ondragstart: 'handleDragStart',
 		ondrag: 'handleDrag',
@@ -622,30 +639,32 @@ var ViewMgr = kind(
 	/**
 	* Navigates to the next view based on order of definition or creation
 	*
+	* @param {Object} [opts] Optional parameters to configure the activation
 	* @return {module:enyo/Control~Control} Activated view
 	* @public
 	*/
-	next: function () {
+	next: function (opts) {
 		var index = this.views.indexOf(this.active) + 1,
 			view = this.views[index];
 		if (view) {
 			this.direction = 1;
-			return this.activate(view.name);
+			return this.activate(view.name, opts);
 		}
 	},
 
 	/**
 	* Navigates to the previous view based on order of definition or creation
 	*
+	* @param {Object} [opts] Optional parameters to configure the activation
 	* @return {module:enyo/Control~Control} Activated view
 	* @public
 	*/
-	previous: function () {
+	previous: function (opts) {
 		var index = this.views.indexOf(this.active) - 1,
 			view = this.views[index];
 		if (view) {
 			this.direction = -1;
-			return this.activate(view.name);
+			return this.activate(view.name, opts);
 		}
 	},
 
@@ -653,10 +672,11 @@ var ViewMgr = kind(
 	* If this is a floating ViewManager, navigates back `count` views from the stack.
 	*
 	* @param {Number} [count] Number of views to pop off the stack. Defaults to 1.
+	* @param {Object} [opts] Optional parameters to configure the deactivation
 	* @return {module:enyo/Control~Control} Activated view
 	* @public
 	*/
-	back: function (count) {
+	back: function (count, opts) {
 		var name,
 			depth = this.stack.length;
 		if (this.floating && depth > 0) {
@@ -667,16 +687,21 @@ var ViewMgr = kind(
 				name = this.stack.splice(0, count).pop();
 			}
 			this.direction = -1;
-			return this._activate(name);
+			return this._activate(name, opts);
 		}
 	},
 
 	/**
+	* Determines if the ViewManager can be dragged in the provided direction
+	*
+	* @param {Number} direction -1 or 1 indicating the direction of the drag
+	* @param {String} [mode] When provided, requires `draggable` be `true` or the provided value
 	* @private
 	*/
-	canDrag: function (direction) {
-		var index;
-		if (this.draggable) {
+	canDrag: function (direction, mode) {
+		var index,
+			check = mode ? this.draggable === true || this.draggable == mode : this.draggable;
+		if (check) {
 			if (this.isDimissable() && direction == -1) {
 				return true;
 			}
@@ -722,14 +747,16 @@ var ViewMgr = kind(
 	* Dismisses a view manager. If this is a root (manager-less) view manager, it cannot be
 	* dismissed.
 	*
+	* @param {Object} [opts] Optional parameters to configure the deactivation
 	* @public
 	*/
-	dismiss: function () {
+	dismiss: function (opts) {
 		if (this.manager) {
 			this.direction = -1;
-			this.set('active', null);
+			this.set('activationOptions', opts);
 			this.set('dismissed', true);
 			this.emit('dismiss', {dragging: false});
+			this.set('active', null);
 			this.stack = [];
 		}
 	},
@@ -787,11 +814,13 @@ var ViewMgr = kind(
 	* For floating ViewManagers, the view will be added to the stack and can be removed by `back()`.
 	*
 	* @param {String} viewName Name of the view to activate
+	* @param {Object} [opts] Optional parameters to configure the activation
 	* @public
 	*/
-	activate: function (viewName) {
-		var view = this._activate(viewName);
-		if (view && !this.isManager(view) && this.active && this.floating) {
+	activate: function (viewName, opts) {
+		var replace = !!(opts && opts.replace),
+			view = this._activate(viewName, opts);
+		if (!replace && view && !this.isManager(view) && this.active && this.floating) {
 			this.stack.unshift(this.active.name);
 		}
 
@@ -803,18 +832,20 @@ var ViewMgr = kind(
 	*
 	* @private
 	*/
-	_activate: function (viewName) {
-		var view = this.getView(viewName);
+	_activate: function (viewName, opts) {
+		var replace = !!(this.activationOptions && this.activationOptions.replace),
+			view = this.getView(viewName);
 		if (view) {
 			if (!this._toBeActivated) {
 				rAF(function () {
-					this.activateImmediate(this._toBeActivated);
+					this.activateImmediate(this._toBeActivated, opts);
 					this._toBeActivated = null;
 				}.bind(this));
 			}
-			else if (this.floating && !this.isManager(view)) {
+			else if (!replace && this.floating && !this.isManager(view)) {
 				this.stack.unshift(this._toBeActivated.name);
 			}
+			this.set('activationOptions', opts);
 			this._toBeActivated = view;
 		}
 		return view;
@@ -823,7 +854,7 @@ var ViewMgr = kind(
 	/**
 	* @private
 	*/
-	activateImmediate: function (view) {
+	activateImmediate: function (view, opts) {
 		// render the activated view if not already
 		if (this.generated && !view.generated) {
 			view.set('canGenerate', true);
@@ -865,8 +896,10 @@ var ViewMgr = kind(
 	*/
 	teardownView: function (view) {
 		if (view.node && !view.persistent) {
-			view.node.remove();
-			view.node = null;
+			if (!this.releaseDraggedView) {
+				view.node.remove();
+				view.node = null;
+			}
 			view.set('canGenerate', false);
 			view.teardownRender(true);
 		}
@@ -889,6 +922,37 @@ var ViewMgr = kind(
 		if (event.was) this.deactivateImmediate(event.was);
 		if (event.is) this.emitViewEvent('activated', event.is);
 		this.direction = 0;
+	},
+
+	// Flick
+
+	/**
+	* Flicks are handled by the drag system so here we only test if there was a valid flick and rely
+	* on the ondragfinish handler to actually act on the flick as if it were a completed drag.
+	*
+	* @private
+	*/
+	handleFlick: function (sender, event) {
+		var isHorizontal = this.orientation == 'horizontal',
+			dx = event.xVelocity,
+			dy = event.yVelocity,
+			adx = Math.abs(dx),
+			ady = Math.abs(dy),
+			direction = 0;
+
+		// Set direction iff the primary flick direction matches the orientation
+		if (isHorizontal && adx > ady) {
+			direction = dx < 0 ? 1 : -1;
+		}
+		else if (!this.isHorizontal && ady > adx) {
+			direction = dy < 0 ? 1 : -1;
+		}
+
+		// If we have a direction, are flickable, and flickable in that direction, indicate it
+		if (direction && this.canDrag(direction, 'flick')) {
+			this.flicked = true;
+			return true;
+		}
 	},
 
 	// Draggable
@@ -936,6 +1000,8 @@ var ViewMgr = kind(
 		}
 
 		this.decorateDragEvent(event);
+		// Intentionally ignoring draggable mode here so dragView will reference the becoming-active
+		// view even if we are only supporting flick and not drag
 		if (this.canDrag(event.direction)) {
 			// clean up on change of direction
 			if (this.direction !== event.direction) {
@@ -978,11 +1044,15 @@ var ViewMgr = kind(
 	* @private
 	*/
 	handleDragFinish: function (sender, event) {
+		if (this.releaseDraggedView) {
+			this.releaseDraggedView();
+			this.releaseDraggedView = null;
+		}
 		if (!this.dragging || !this.draggable || this.dismissed) return;
 
 		this.decorateDragEvent(event);
 		// if the view has been dragged far enough
-		if (event.percentDelta * 100 > this.dragThreshold) {
+		if (this.flicked || event.percentDelta * 100 > this.dragThreshold) {
 			this.set('dragging', false);
 			// normally, there will be a becoming-active view to activate
 			if (this.dragView) {
@@ -1000,6 +1070,7 @@ var ViewMgr = kind(
 		else {
 			this.cancelDrag();
 		}
+		this.flicked = false;
 		event.preventTap();
 
 		return true;
@@ -1037,11 +1108,21 @@ var ViewMgr = kind(
 	*/
 	decorateDragEvent: function (event) {
 		var isHorizontal = this.orientation == 'horizontal',
-			size = isHorizontal ? this.dragBounds.width : this.dragBounds.height;
-		event.delta = isHorizontal ? event.dx : event.dy;
+			size = isHorizontal ? this.dragBounds.width : this.dragBounds.height,
+			delta = isHorizontal ? event.dx : event.dy;
+
 		// 'natural' touch causes us to invert the physical change
-		event.direction = event.delta < 0 ? 1 : -1;
-		event.percentDelta = 1 - (size - Math.abs(event.delta)) / size;
+		event.direction = delta < 0 ? 1 : -1;
+
+		// if we're only flickable, we won't set the deltas to suppress the views moving until a
+		// flick is encountered.
+		if (this.canDrag(event.direction, 'drag')) {
+			event.delta = delta;
+			event.percentDelta = 1 - (size - Math.abs(event.delta)) / size;
+		} else {
+			event.delta = 0;
+			event.percentDelta = 0;
+		}
 	}
 });
 

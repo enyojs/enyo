@@ -103,7 +103,7 @@ exports.nar = [];
 
 /**
 * This name is reported in inspectors as the type of objects created via delegate;
-* otherwise, we would just use {@link module:enyo/nop~nop}.
+* otherwise, we would just use {@link module:enyo/utils#nop}.
 *
 * @private
 */

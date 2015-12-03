@@ -410,7 +410,7 @@ var Control = module.exports = kind(
 	* yet to be cached, from the [node]{@glossary Node} itself.
 	*
 	* @param {String} name - The attribute name to get.
-	* @returns {(String|Null)} The value of the requested attribute, or `null`
+	* @returns {(String|null)} The value of the requested attribute, or `null`
 	* if there isn't a [DOM node]{@glossary Node} yet.
 	* @public
 	*/
@@ -1132,6 +1132,16 @@ var Control = module.exports = kind(
 	},
 
 	/**
+	* If a Control needs to do something before it and its children's DOM nodes
+	* are torn down, it can implement this lifecycle method, which is called automatically
+	* by the framework and takes no arguments.
+	*
+	* @type {Function}
+	* @protected
+	*/
+	beforeTeardown: null,
+
+	/**
 	* @param {Boolean} [cache] - Whether or not we are tearing down as part of a destroy
 	*	operation, or if we are just caching. If `true`, the `showing` and `canGenerate`
 	*	properties of the control will not be reset.
@@ -1199,8 +1209,7 @@ var Control = module.exports = kind(
 	removeNodeFromDom: function() {
 		var node = this.hasNode();
 		if (node) {
-			if (node.remove) node.remove();
-			else if (node.parentNode) node.parentNode.removeChild(node);
+			Dom.removeNode(node);
 		}
 	},
 

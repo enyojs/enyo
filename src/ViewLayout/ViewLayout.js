@@ -70,11 +70,11 @@ module.exports = kind(
 		this._transitioning = {
 			from: {
 				view: null,
-				complete: false
+				complete: true
 			},
 			to: {
 				view: null,
-				complete: false
+				complete: true
 			}
 		};
 	},
@@ -109,15 +109,12 @@ module.exports = kind(
 		this.setupView(is);
 
 		if (this.shouldAnimate()) {
-			if (this.prepareTransition) {
-				rAF(function () {
-					this.prepareTransition(was, is);
-					rAF(this.transition.bind(this, was, is));
-				}.bind(this));
-			} else {
+			rAF(function () {
+				this.prepareTransition(was, is);
 				rAF(this.transition.bind(this, was, is));
-			}
+			}.bind(this));
 		} else {
+			this.prepareTransition(was, is);
 			this.transition(was, is);
 			this.completeTransition(was, is);
 		}
@@ -227,7 +224,7 @@ module.exports = kind(
 		if (!this.isTransitioning()) {
 			this.completeTransition(t.from.view, t.to.view);
 			t.from.view = t.to.view = null;
-			t.from.complete = t.to.complete = false;
+			t.from.complete = t.to.complete = true;
 		}
 	},
 
@@ -244,7 +241,9 @@ module.exports = kind(
 	* @protected
 	*/
 	shouldAnimate: function () {
-		return this.container.generated && this.container.animated;
+		var opt = this.container.activationOptions,
+			animate = (opt && (opt.animate === false || opt.animate === true)) ? opt.animate : this.container.animate;
+		return this.container.generated && animate;
 	},
 
 	/**
