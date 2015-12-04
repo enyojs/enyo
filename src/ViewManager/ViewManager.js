@@ -1092,11 +1092,15 @@ var ViewMgr = kind(
 	* @protected
 	*/
 	cancelDrag: function () {
+		var was = this.dragging;
 		this.set('dragging', false);
-		// Since we're restoring the active view, the navigation direction is the opposite of the
-		// drag direction.
-		this.direction = -this.direction;
-		this.emit('cancelDrag');
+		// only emit cancelDrag if a valid drag was encountered (=== true and != 'start')
+		if (was === true) {
+			// Since we're restoring the active view, the navigation direction is the opposite of the
+			// drag direction.
+			this.direction = -this.direction;
+			this.emit('cancelDrag');
+		}
 	},
 
 	/**

@@ -134,7 +134,7 @@ module.exports = kind(
 		}
 
 		rAF(function () {
-			if (is) this.container.addClass('dragging');
+			if (is === true) this.container.addClass('dragging');
 		}.bind(this));
 	},
 
