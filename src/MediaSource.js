@@ -22,11 +22,16 @@ var
 /**
 * A media source for {@link module:enyo/Audio~Audio} or {@link module:enyo/Video~Video}.
 *
-* ```
-* {kind: 'Video', components: [
-* 	{src: 'video.mp4', type: 'video/mp4'},
-* 	{src: 'video.ogg', type: 'video/ogg'},
-* 	{src: 'video.webm', type: 'video/webm'}
+* ```javascript
+* var
+* 	kind = require('enyo/kind'),
+* 	Video = require('enyo/Video'),
+* 	MediaSource = require('enyo/MediaSource');
+*
+* {kind: Video, components: [
+* 	{kind: MediaSource, src: 'video.mp4', type: 'video/mp4'},
+* 	{kind: MediaSource, src: 'video.ogg', type: 'video/ogg'},
+* 	{kind: MediaSource, src: 'video.webm', type: 'video/webm'}
 * ]}
 * ```
 * 
