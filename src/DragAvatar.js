@@ -32,23 +32,27 @@ var Avatar = kind({
 * position relative to the current pointer location.
 *
 * ```javascript
-* enyo.kind({
-*	name: 'App',
-*	handlers: {
-*		ondrag: 'drag',
-*		ondragfinish: 'dragFinish',
-*	},
-*	components: [
-*		{name: 'dragAvatar', kind: 'DragAvatar',
-*			components: [{tag: 'img', src: 'images/icon.png'}]
-*		}
-*	],
-*	drag: function(inSender, inEvent) {
-*		this.$.dragAvatar.drag(inEvent);
-*	},
-*	dragFinish: function(inSender, inEvent) {
-*		this.$.dragAvatar.hide();
-*	}
+* var
+* 	kind = require('enyo/kind'),
+* 	DragAvatar = require('enyo/DragAvatar');
+*
+* module.exports = kind({
+* 	name: 'App',
+* 	handlers: {
+* 		ondrag: 'drag',
+* 		ondragfinish: 'dragFinish',
+* 	},
+* 	components: [
+* 		{name: 'dragAvatar', kind: DragAvatar,
+* 			components: [{tag: 'img', src: 'images/icon.png'}]
+* 		}
+* 	],
+* 	drag: function(inSender, inEvent) {
+* 		this.$.dragAvatar.drag(inEvent);
+* 	},
+* 	dragFinish: function(inSender, inEvent) {
+* 		this.$.dragAvatar.hide();
+* 	}
 * });
 * ```
 *
