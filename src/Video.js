@@ -111,10 +111,14 @@ var
 *
 * Initialize a video [component]{@link module:enyo/Component~Component} as follows:
 *
+* ```javascript
+* var
+* 	kind = require('enyo/kind'),
+* 	Video = require('enyo/Video');
+*
+* {kind: Video, src: 'http://www.w3schools.com/html/movie.mp4'}
 * ```
-* {kind: 'Video', src: 'http://www.w3schools.com/html/movie.mp4'}
-* ```
-* 
+*
 * To play a video, call `this.$.video.play()`.
 * 
 * To get a reference to the actual HTML 5 Video element, call `this.$.video.hasNode()`.

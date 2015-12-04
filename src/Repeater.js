@@ -89,18 +89,23 @@ var OwnerProxy = kind(
 * and are wrapped in a control that keeps the state of the item index.
 * 
 * ```javascript
-* {kind: 'Repeater', count: 2, onSetupItem: 'setImageSource', components: [
-*	{kind: 'Image'}
+* var
+* 	kind = require('enyo/kind'),
+* 	Image = require('enyo/Image'),
+* 	Repeater = require('enyo/Repeater');
+*
+* {kind: Repeater, count: 2, onSetupItem: 'setImageSource', components: [
+* 	{kind: 'Image'}
 * ]}
-* 
+*
 * setImageSource: function(inSender, inEvent) {
-*	var index = inEvent.index;
-*	var item = inEvent.item;
-*	item.$.image.setSrc(this.imageSources[index]);
-*	return true;
+* 	var index = inEvent.index;
+* 	var item = inEvent.item;
+* 	item.$.image.setSrc(this.imageSources[index]);
+* 	return true;
 * }
 * ```
-* 
+*
 * Be sure to return `true` from your `onSetupItem` handler to avoid having other 
 * {@glossary event} handlers further up the tree try to modify your item control.
 * 
