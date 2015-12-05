@@ -462,6 +462,19 @@ var DataList = module.exports = kind(
 			sup.apply(this, arguments);
 		};
 	}),
+
+	/**
+	* @private
+	*/
+	beforeTeardown: kind.inherit(function (sup) {
+		return function () {
+			sup.apply(this, arguments);
+			// reset absoluteShowing on teardown because it can't be absolutely showing if it
+			// doesn't have a node!
+			this.set('absoluteShowing', false);
+		};
+	}),
+
 	/**
 	* Overloaded from base [kind]{@glossary kind} to ensure that the container options
 	* correctly apply the [scroller]{@link module:enyo/Scroller~Scroller} options before instantiating it.
