@@ -26,9 +26,9 @@ var
 * used as the `controller` property of another view, although this usage will (by default)
 * result in the removal of its own view from the {@link module:enyo/Component~Component} bubbling hierarchy.
 *
-* Note that `enyo.ViewController` may have components defined in its
+* Note that `enyo/ViewController` may have components defined in its
 * `components` [array]{@glossary Array}, but these components should
-* not be `enyo.Controls`.
+* not be instances of `enyo/Control`.
 *
 * @class ViewController
 * @extends module:enyo/Controller~Controller

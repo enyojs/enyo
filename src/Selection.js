@@ -26,10 +26,15 @@ var
 * Fires when an item is selected.
 * 
 * ```javascript
-* {kind: "Selection", onSelect: "selectRow"...
-* ...
+* var
+* 	kind = require('enyo/kind'),
+* 	Selection = require('enyo/Selection');
+*
+* {kind: Selection, onSelect: 'selectRow', ... }
+*
 * selectRow: function(inSender, inEvent) {
-* ...
+* 	...
+* }
 * ```
 *
 * @event module:enyo/Selection~Selection#onSelect
@@ -45,10 +50,15 @@ var
 * Fires when an item is deselected.
 * 
 * ```javascript
-* {kind: "Selection", onSelect: "deselectRow"...
-* ...
-* deselectRow: function(inSender, inEvent)
-* ...
+* var
+* 	kind = require('enyo/kind'),
+* 	Selection = require('enyo/Selection');
+*
+* {kind: Selection, onSelect: 'deselectRow', ... }
+*
+* deselectRow: function(inSender, inEvent) {
+* 	...
+* }
 * ```
 *
 * @event module:enyo/Selection~Selection#onDeselect
@@ -76,25 +86,30 @@ var
 * selection state management for both single-select and multi-select lists.
 *
 * ```javascript
-* // The following is an excerpt from enyo.FlyweightRepeater.
-* enyo.kind({
-*	name: "enyo.FlyweightRepeater",
-*	...
-*	components: [
-*		{kind: "Selection", onSelect: "selectDeselect", onDeselect: "selectDeselect"},
-*		...
-*	],
-*	tap: function(inSender, inEvent) {
-*		...
-*		// mark the tapped row as selected
-*		this.$.selection.select(inEvent.index);
-*		...
-*	},
-*	selectDeselect: function(inSender, inEvent) {
-*		// this is where a row selection highlight might be applied
-*		this.renderRow(inEvent.key);
-*	}
-*	...
+* // The following code is excerpted from layout/FlyweightRepeater.
+*
+* var
+* 	kind = require('enyo/kind'),
+* 	Selection = require('enyo/Selection');
+*
+* module.exports = kind({
+* 	components: [
+* 		{kind: Selection, onSelect: 'selectDeselect', onDeselect: 'selectDeselect'},
+* 		...
+* 	],
+* 	tap: function(inSender, inEvent) {
+* 		...
+* 		if (this.toggleSelected) {
+* 			this.$.selection.toggle(event.index);
+* 		} else {
+* 			this.$.selection.select(event.index);
+* 		}
+* 	},
+* 	selectDeselect: function(inSender, inEvent) {
+* 		// this is where a row selection highlight might be applied
+* 		this.renderRow(inEvent.key);
+* 	}
+* 	...
 * });
 * ```
 *

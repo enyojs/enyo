@@ -30,12 +30,12 @@ var BaseModelController = kind({
 /**
 * A controller designed to proxy an underlying {@link module:enyo/Model~Model}. Other
 * [kinds]{@glossary kind} may [bind]{@link module:enyo/BindingSupport~BindingSupport} to this
-* controller as if it were an `enyo.Model`. Using the
+* controller as if it were an `enyo/Model`. Using the
 * [model]{@link module:enyo/ModelController~ModelController#model} reserved property, the actual model
 * may be changed without the bindings' needing to know. It will also propagate
 * events [emitted]{@link module:enyo/EventEmitter~EventEmitter#emit} by the underlying model.
 * 
-* It is important to note that `"model"` is a reserved property name. Also
+* It is important to note that `'model'` is a reserved property name. Also
 * note that bindings should **never** bind through the controller to the model
 * directly.
 * 
