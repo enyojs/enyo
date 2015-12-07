@@ -59,7 +59,7 @@ var XhrSource = module.exports = kind(
 	* These options will be merged, first with [subkinds]{@glossary subkind}, and then
 	* with any options passed to the various API methods of {@link module:enyo/XhrSource~XhrSource}. While the
 	* options passed to the methods may include any properties, only properties found in
-	* [enyo.AjaxProperties]{@link module:enyo/AjaxProperties#AjaxProperties} will be merged and passed to the
+	* [enyo/AjaxProperties]{@link module:enyo/AjaxProperties} will be merged and passed to the
 	* [requestKind]{@link module:enyo/XhrSource~XhrSource#requestKind}.
 	*
 	* @see module:enyo/AjaxProperties

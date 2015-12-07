@@ -9,8 +9,8 @@ var
 * internal [enyo/Blob]{@link module:enyo/Blob} [kind]{@glossary kind} is the
 * content provider for file-parts.
 *
-* Note that in Internet Explorer < 10, both `enyo/FormData` and `enyo.Blob` are
-* limited to [string]{@glossary String} content and `enyo.Blob` may only be
+* Note that in Internet Explorer < 10, both `enyo/FormData` and `enyo/Blob` are
+* limited to [string]{@glossary String} content and `enyo/Blob` may only be
 * instantiated using an [array]{@glossary Array} of [strings]{@glossary String}.
 *
 * This implementation is inspired by
