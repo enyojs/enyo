@@ -55,7 +55,7 @@ var
 * helper [kind]{@glossary kind} used by other [scroller]{@link module:enyo/Scroller~Scroller}
 * kinds, such as {@link module:enyo/TouchScrollStrategy~TouchScrollStrategy}.
 * 
-* `enyo.ScrollMath` is not typically created in application code.
+* `enyo/ScrollMath` is not typically created in application code.
 *
 * @class ScrollMath
 * @protected

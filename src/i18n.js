@@ -1,5 +1,5 @@
 /**
-* A set of extensible methods to enable internationalization of enyo applications
+* A set of extensible methods to enable internationalization of Enyo applications.
 *
 * @module enyo/i18n
 */
@@ -15,7 +15,9 @@ var
 * preparation for localization. If a i18n library is not loaded, this function will return the
 * string as is.
 * 
-* `$L('Welcome')`
+* ```javascript
+* $L('Welcome');
+* ```
 * 
 * If a compatible i18n library is loaded, this function will be replaced by the i18n library's
 * version, which translates wrapped strings to strings from a developer-provided resource file
@@ -38,7 +40,7 @@ exports.$L = new utils.Extensible(function (str) {
 * 
 * Enyo registers an event listener for the `localechange` event and broadcasts the
 * `onlocalechange` signal when the locale has changed. Before broadcasting, Enyo calls
-* `enyo.updateLocale()`. The default implementation of `enyo.updateLocale()` is a stub, but a
+* `i18n.updateLocale()`. The default implementation of `i18n.updateLocale()` is a stub, but an
 * i18n library may override it to update its internal state before the `onlocalechange` signal
 * is broadcast.
 * 

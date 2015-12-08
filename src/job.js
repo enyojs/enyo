@@ -7,19 +7,20 @@ require('enyo');
 var _jobs = {};
 
 /**
-* Runs a job after the specified amount of time has elapsed
+* Runs a job after a specified amount of time has elapsed
 * since a job with the same name has run.
 * 
 * Jobs can be used to throttle behaviors.  If some event may occur one time or
 * multiple times, but we want a response to occur only once every `n` seconds,
 * we can use a job.
 *
-* @example
+* ```
 * onscroll: function() {
-*	// updateThumb will be called, but only when 1 second has elapsed since the
-*	// last onscroll
-*	exports("updateThumb", this.bindSafely("updateThumb"), 1000);
+* 	// updateThumb will be called, but only when 1 second has elapsed since the
+* 	// last onscroll
+* 	exports("updateThumb", this.bindSafely("updateThumb"), 1000);
 * }
+* ```
 *
 * @param {String} nom - The name of the job to throttle.
 * @param {(Function|String)} job - Either the name of a method or a [function]{@glossary Function}

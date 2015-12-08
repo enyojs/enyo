@@ -26,7 +26,6 @@ var
 * documentation on [Event Handling]{@linkplain $dev-guide/key-concepts/event-handling.html}
 * in the Enyo Developer Guide.
 *
-* @module enyo/gesture
 * @public
 */
 var gesture = module.exports = {
