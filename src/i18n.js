@@ -11,17 +11,17 @@ var
 	Signals = require('./Signals');
 
 /**
-* Provides a stub function for i18n string translation. This allows strings to be wrapped in
-* preparation for localization. If a i18n library is not loaded, this function will return the
-* string as is.
-* 
+* Provides a stub function for i18n string translation. This allows strings to
+* be wrapped in preparation for localization. If an i18n library is not loaded,
+* this function will return the string as is.
+*
 * ```javascript
-* $L('Welcome');
+* 	$L('Welcome');
 * ```
-* 
-* If a compatible i18n library is loaded, this function will be replaced by the i18n library's
-* version, which translates wrapped strings to strings from a developer-provided resource file
-* corresponding to the current user locale.
+*
+* If a compatible i18n library is loaded, this function will be replaced by the
+* i18n library's version, which translates wrapped strings to strings from a
+* developer-provided resource file corresponding to the current user locale.
 *
 * @param {String} str - The {@glossary String} to translate.
 * @returns {String} The translated {@glossary String}.
