@@ -89,7 +89,7 @@ function getNodePurgatory () {
 * [Controls]{@linkplain $dev-guide/key-concepts/controls.html} in the
 * Enyo Developer Guide.
 *
-* **If you make changes to `enyo.Control`, be sure to add or update the
+* **If you make changes to `enyo/Control`, be sure to add or update the
 * appropriate unit tests.**
 *
 * @class Control
