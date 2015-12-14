@@ -988,6 +988,7 @@ var ViewMgr = kind(
 	*/
 	handleDrag: function (sender, event) {
 		if (!this.dragging || !this.draggable || this.dismissed) return;
+		this.decorateDragEvent(event);
 
 		// check direction against orientation to ignore drags that don't apply to this. the check
 		// should only be necessary for the first drag event so it's further guarded by the special
@@ -995,14 +996,12 @@ var ViewMgr = kind(
 		if (this.dragging == 'start' && !event[this.orientation]) {
 			this.set('dragging', false);
 			return;
-		} else {
-			this.set('dragging', true);
 		}
-
-		this.decorateDragEvent(event);
 		// Intentionally ignoring draggable mode here so dragView will reference the becoming-active
 		// view even if we are only supporting flick and not drag
-		if (this.canDrag(event.direction)) {
+		else if (this.canDrag(event.direction)) {
+			this.set('dragging', true);
+
 			// clean up on change of direction
 			if (this.direction !== event.direction) {
 				this.direction = event.direction;
@@ -1093,11 +1092,15 @@ var ViewMgr = kind(
 	* @protected
 	*/
 	cancelDrag: function () {
+		var was = this.dragging;
 		this.set('dragging', false);
-		// Since we're restoring the active view, the navigation direction is the opposite of the
-		// drag direction.
-		this.direction = -this.direction;
-		this.emit('cancelDrag');
+		// only emit cancelDrag if a valid drag was encountered (=== true and != 'start')
+		if (was === true) {
+			// Since we're restoring the active view, the navigation direction is the opposite of the
+			// drag direction.
+			this.direction = -this.direction;
+			this.emit('cancelDrag');
+		}
 	},
 
 	/**
