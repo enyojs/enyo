@@ -403,6 +403,28 @@ var ViewMgr = kind(
 	},
 
 	/**
+	* When this ViewManager is obscured by a child ViewManager, it is considered `suspended` and
+	* the active view will be deactivated and reactivated when the covering ViewManager is
+	* dismissed.
+	*
+	* @default false
+	* @type {Boolean}
+	* @private
+	*/
+	suspended: false,
+
+	/**
+	* @private
+	*/
+	suspendedChanged: function (was, is) {
+		if (this.suspended) {
+			this.deactivate(this.active.name);
+		} else {
+			this.activateImmediate(this.active);
+		}
+	},
+
+	/**
 	* @private
 	*/
 	handlers: {
@@ -794,9 +816,12 @@ var ViewMgr = kind(
 	*/
 	managerEvent: function (viewManager, event, view) {
 		if (event == 'dismissed') this.managerDismissed(viewManager);
-		this.emit('manager-' + event, {
+		else if (event == 'activated' && this.active && !this.suspended) this.set('suspended', true);
+		else if (event == 'dismiss' && this.suspended) this.set('suspended', false);
+
+		this.emit('manager-' + event, utils.mixin({
 			manager: viewManager
-		});
+		}, event));
 	},
 
 	/**
@@ -805,7 +830,7 @@ var ViewMgr = kind(
 	* @private
 	*/
 	managerDismissed: function (viewManager) {
-		this.teardownView(viewManager);
+		if (this.canTeardownView(viewManager)) this.teardownView(viewManager);
 	},
 
 	/**
@@ -856,10 +881,7 @@ var ViewMgr = kind(
 	*/
 	activateImmediate: function (view, opts) {
 		// render the activated view if not already
-		if (this.generated && !view.generated) {
-			view.set('canGenerate', true);
-			view.render();
-		}
+		this.renderView(view, opts);
 		if (this.isManager(view)) {
 			view.emit('manage');
 		}
@@ -883,26 +905,48 @@ var ViewMgr = kind(
 	* @private
 	*/
 	deactivateImmediate: function (view) {
-		this.teardownView(view);
+		if (this.canTeardownView(view)) this.teardownView(view);
 
 		if (!this.isManager(view)) this.emitViewEvent('deactivated', view);
 		if (!this.dragging && this.dismissed) this.emit('dismissed');
 	},
 
 	/**
+	* Renders a view
+	*
+	* @param  {module:enyo/Control~Control} view View to be rendered
+	* @param  {Object} opts Activation options
+	* @protected
+	*/
+	renderView: function (view, opts) {
+		if (this.generated && !view.generated) {
+			view.set('canGenerate', true);
+			view.render();
+		}
+	},
+
+	/**
+	* Determines if a view can or should be tore down. By default, this is true if the view has a
+	* node and is not marked `persistent`. May be overidden by sub-kinds to customize the behavior.
+	*
+	* @protected
+	*/
+	canTeardownView: function (view) {
+		return view.node && !view.persistent;
+	},
+
+	/**
 	* Tears down a view or ViewManager if not flagged `persistent`
 	*
-	* @private
+	* @protected
 	*/
 	teardownView: function (view) {
-		if (view.node && !view.persistent) {
-			if (!this.releaseDraggedView) {
-				view.node.remove();
-				view.node = null;
-			}
-			view.set('canGenerate', false);
-			view.teardownRender(true);
+		if (!this.releaseDraggedView) {
+			view.node.remove();
+			view.node = null;
 		}
+		view.set('canGenerate', false);
+		view.teardownRender(true);
 	},
 
 	/**
