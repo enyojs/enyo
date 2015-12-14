@@ -729,17 +729,16 @@ module.exports = kind(
 			currPanel = this._currentPanel,
 			shiftCurrent, fnInitiateTransition;
 
-		this._indexDirection = 0;
-
-		// handle the wrapping case
-		if (this.wrap) {
-			if (this.index === 0 && previousIndex == panels.length - 1) this._indexDirection = 1;
-			else if (this.index === panels.length - 1 && previousIndex === 0) this._indexDirection = -1;
-		}
-		if (this._indexDirection === 0 && previousIndex != -1) this._indexDirection = this.index - previousIndex;
-
-		if (nextPanel) {
+		if (nextPanel && !this.transitioning) {
 			this.transitioning = true;
+			this._indexDirection = 0;
+
+			// handle the wrapping case
+			if (this.wrap) {
+				if (this.index === 0 && previousIndex == panels.length - 1) this._indexDirection = 1;
+				else if (this.index === panels.length - 1 && previousIndex === 0) this._indexDirection = -1;
+			}
+			if (this._indexDirection === 0 && previousIndex != -1) this._indexDirection = this.index - previousIndex;
 
 			// prepare the panel that will be deactivated
 			if (currPanel) {
