@@ -48,17 +48,6 @@ module.exports = kind({
 	/**
 	* @private
 	*/
-	setupView: function (view) {
-		if (view && !view.viewSetup) {
-			// apply translateZ to force compositing during dragging
-			dom.transformValue(view, 'translateZ', '0');
-		}
-		TransitionViewLayout.prototype.setupView.apply(this, arguments);
-	},
-
-	/**
-	* @private
-	*/
 	addRemoveDirection: function (view, addRemove, invert) {
 		var direction = invert ? -this.container.direction : this.container.direction,
 			className = direction == 1 ? 'forward' : 'back';
@@ -93,10 +82,7 @@ module.exports = kind({
 		dom.transformValue(c.active, transform,  delta + 'px');
 		if (c.dragView) {
 			px = this.container.layoutCover ? 0 : size * event.direction + delta;
-			var t = {};
-			t[transform] = px + 'px';
-			t['translateZ'] = '0px';
-			dom.transform(c.dragView, t);
+			dom.transformValue(c.dragView, transform,  px + 'px');
 		}
 	},
 
