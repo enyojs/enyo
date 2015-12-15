@@ -202,6 +202,7 @@ module.exports = kind(
 	*/
 	create: function () {
 		Control.prototype.create.apply(this, arguments);
+		this._queuedIndices = [];
 		this.updateTransforms();
 		this.orientationChanged();
 		this.directionChanged();
@@ -339,10 +340,7 @@ module.exports = kind(
 	* @public
 	*/
 	animateTo: function (index) {
-		var from = this.index;
-		this.index = index;
-		this.notifyObservers('index');
-		this.setupTransitions(from, true);
+		this.queueOrSetIndex(index, true);
 	},
 
 	/**
@@ -352,15 +350,12 @@ module.exports = kind(
 	* @public
 	*/
 	previous: function () {
-		if (!this.transitioning) {
-			var prevIndex = this.index - 1;
-			if (this.wrap && prevIndex < 0) {
-				prevIndex = this.getPanels().length - 1;
-			}
-			if (prevIndex >= 0) {
-				if (this.animate) this.animateTo(prevIndex);
-				else this.set('index', prevIndex);
-			}
+		var prevIndex = this.index - 1;
+		if (this.wrap && prevIndex < 0) {
+			prevIndex = this.getPanels().length - 1;
+		}
+		if (prevIndex >= 0) {
+			this.queueOrSetIndex(prevIndex);
 		}
 	},
 
@@ -371,15 +366,12 @@ module.exports = kind(
 	* @public
 	*/
 	next: function () {
-		if (!this.transitioning) {
-			var nextIndex = this.index + 1;
-			if (this.wrap && nextIndex >= this.getPanels().length) {
-				nextIndex = 0;
-			}
-			if (nextIndex < this.getPanels().length) {
-				if (this.animate) this.animateTo(nextIndex);
-				else this.set('index', nextIndex);
-			}
+		var nextIndex = this.index + 1;
+		if (this.wrap && nextIndex >= this.getPanels().length) {
+			nextIndex = 0;
+		}
+		if (nextIndex < this.getPanels().length) {
+			this.queueOrSetIndex(nextIndex);
 		}
 	},
 
@@ -692,6 +684,64 @@ module.exports = kind(
 
 			this.removeClass('transitioning');
 			this.transitioning = false;
+
+			this.processQueuedIndices();
+		}
+	},
+
+	/**
+	* Changes index, optionally animating the transition.
+	*
+	* @param {Number} index - The index to change to.
+	* @param {Boolean} [animate] If `true`, the transition is animated, otherwise the transition is
+	*	non-animated.
+	* @private
+	*/
+	animateOrSetIndex: function (index, animate) {
+		var from;
+
+		if (animate) {
+			from = this.index;
+			this.index = index;
+			this.notifyObservers('index');
+			this.setupTransitions(from, true);
+		} else {
+			this.set('index', index);
+		}
+	},
+
+	/**
+	* Changes the index; if currently transitioning, the index change operation will be queued.
+	*
+	* @param {Number} index - The index to change to.
+	* @param {Boolean} [animate] If `true`, the transition is animated, otherwise the transition is
+	*	non-animated.
+	* @private
+	*/
+	queueOrSetIndex: function (index, animate) {
+		animate = animate || this.animate;
+		if (this.transitioning) {
+			this._queuedIndices.push({
+				index: index,
+				animate: animate
+			});
+		} else {
+			this.animateOrSetIndex(index, animate);
+		}
+	},
+
+	/**
+	* Executes the next queued index change operation.
+	*
+	* @private
+	*/
+	processQueuedIndices: function () {
+		var queue = this._queuedIndices,
+			item;
+
+		if (queue.length) {
+			item = queue.shift();
+			this.animateOrSetIndex(item.index, item.animate);
 		}
 	},
 
