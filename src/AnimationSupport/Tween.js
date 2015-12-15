@@ -2,8 +2,10 @@ require('enyo');
 
 var
     frame = require('./Frame'),
-    easings = require('./Easings'),
-    Vector = require('./Vector');
+     easings = require('./Easings'),
+    matrixUtil = require('./Matrix'),
+    Vector = require('./Vector'),
+    utils = require('../utils');
 
 var oldState, newState, node, matrix, cState = [];
 /**
@@ -15,146 +17,72 @@ var oldState, newState, node, matrix, cState = [];
  * @module enyo/AnimationSupport/Tween
  */
 module.exports = {
-    /**
-     * Tweens public API which notifies to change current state of 
-     * a character. This method is normally trigger by the Animation Core to
-     * update the animating characters state based on the current timestamp.
-     *
-     * As of now this method is provided as an interface for application 
-     * to directly trigger an animation. However, this will be later made private
-     * and will be accessible only by the interfaces exposed by framework.
-     * @parameter chrac-        Animating character
-     *          ts-         DOMHighResTimeStamp
-     *
-     * @public
-     */
-    update: function(charc, ts) {
-        var t,
-            dur = charc._duration,
-            since = ts - charc._startTime;
-
-        if (since < 0) return;
-        if (since <= dur) {
-            t = since / dur;
-            this.step(charc, t);
-        } else {
-            this.step(charc, 1);
-        }
-    },
-
-    /**
-     * Tweens public API which notifies to change current state of 
-     * a character based on its interaction delta. This method is normally trigger by the Animation Core to
-     * update the animating characters state based on the current delta change.
-     *
-     * As of now this method is provided as an interface for application 
-     * to directly trigger an animation. However, this will be later made private
-     * and will be accessible only by the interfaces exposed by framework.
-     * @parameter   chrac-      Animating character
-     *              dt-         An array of delta dimensions like [x,y,z]
-     *
-     * @public
-     */
-    updateDelta: function(charc, dt) {
-        var d,
-            st,
-            dst,
-            inc,
-            frc = charc.friction || 1,
-            trD = charc.animThresholdDuration || 1000,
-            trh = charc.animMaxThreshold || false,
-            dir = charc.direction || 0,
-            tot = charc.getDistance() || frame.getComputedDistance(
-                charc.getAnimation(),
-                charc._startAnim,
-                charc._endAnim);
-
-        dt = dt || charc.animDelta[dir];
-        if (dt) {
-            dt = frc * dt;
-            dst = charc._animCurDistane || 0;
-            inc = dst + dt * (charc.reverse ? -1 : 1);
-            st = inc > 0 && inc <= tot;
-
-            if (st) {
-                d = inc / tot;
-                if (trh && inc > trh && dt === 0) {
-                    charc.setDuration(trD);
-                    charc.start(true);
-                }
-                this.step(charc, d);
-            } else {
-                charc.animating = st;
-                charc.reverse = inc <= 0;
-            }
-
-            charc._animCurDistane = st ? inc : 0;
-            charc.animDelta = [];
-        }
-    },
-
+    
     /**
      * @private
      */
-    step: function(charc, t) {
-        var k, c, d, pts, props;
+    step: function(charc, pose, t, d) {
+        var k, c, pts, tState, oState, ease;
 
         node = charc.node;
-        newState = charc._endAnim;
-        d = charc._duration;
-        props = charc.getAnimation();
-        oldState = charc._startAnim;
+        newState = pose._endAnim;
+        ease = pose.animate ? pose.animate.ease: this.ease;
+        oldState = pose._startAnim;
         charc.currentState = charc.currentState || {};
-
-
-        for (k in props) {
-            cState = frame.copy(charc.currentState[k] || []);
-            if (newState[k]) {
-                if (charc.ease && (typeof charc.ease !== 'function')) {
-                    if ((k == 'rotate')) {
-
-                        pts = this.beizerSPoints(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]), props[k]);
-                        cState = this.beizerSpline(t, pts, cState);
-
-                    } else {
-                        var checkEaseChange = easings.easeChanged(charc.ease);
+        if(pose.props){      
+            for (k in pose.props) {
+                cState = frame.copy(charc.currentState[k] || []);
+                if (newState[k]) {
+                    if (ease && (typeof ease !== 'function')) {
+		              var checkEaseChange = easings.easeChanged(ease);
                         var propChange = easings.propChange(k);
 
                         if (!charc.controlPoints || (propChange === true || checkEaseChange === true)) {
                             // for the first time or either of Ease/Propery changed
-                            charc.controlPoints = easings.calculateEase(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]));
+                            charc.controlPoints = easings.calculateEase(ease, frame.copy(oldState[k]), frame.copy(newState[k]));
                         } else if (propChange === false && checkEaseChange === false) {
                             // for the cases where property and ease remain same and the states are varying
                             var oldStateCheck = easings.oldStateChange(frame.copy(oldState[k]));
                             var newStateCheck = easings.newStateChange(frame.copy(newState[k]));
                             if (oldStateCheck === true || newStateCheck === true) {
-                                charc.controlPoints = easings.calculateEase(charc.ease, frame.copy(oldState[k]), frame.copy(newState[k]));
+                                charc.controlPoints = easings.calculateEase(ease, frame.copy(oldState[k]), frame.copy(newState[k]));
                             }
                         }
                         cState = this.getBezier(t, charc.controlPoints, cState);
+                        if (k == 'rotate') 
+                            cState = Vector.toQuant(cState);
+                    } else {
+                        if (k == 'rotate') {
+                            tState = Vector.toQuant(newState[k]);
+                            oState = Vector.toQuant(oldState[k]);
+                            c = this.slerp;
+                        } else {
+                            tState = newState[k];
+                            oState = oldState[k];
+                            c = this.lerp;
+                        }
+                        cState = c(oState, tState, ease(t, d), cState);
                     }
-                } else {
-                    c = k == 'rotate' ? this.slerp : this.lerp;
-                    cState = t ? c(oldState[k], newState[k], ((typeof charc.ease === 'function') ? charc.ease : this.ease)(t, d), cState) : newState[k];
                 }
-            }
 
-            if (!frame.isTransform(k)) {
-                frame.setProperty(node, k, cState);
+                if (!frame.isTransform(k)) {
+                    frame.setProperty(node, k, cState);
+                }
+                charc.currentState[k] = cState;
             }
-            charc.currentState[k] = cState;
+        }
+        else{
+            utils.mixin(charc.currentState,oldState);
         }
 
-        if (charc._transform) {
-            matrix = frame.recomposeMatrix(
-                charc.currentState.translate,
-                charc.currentState.rotate,
-                charc.currentState.scale,
-                charc.currentState.skew,
-                charc.currentState.perspective
-            );
-            frame.accelerate(node, matrix);
-        }
+        matrix = frame.recomposeMatrix(
+            charc.currentState.translate,
+            charc.currentState.rotate,
+            charc.currentState.scale,
+            charc.currentState.skew,
+            charc.currentState.perspective
+        );
+        frame.accelerate(node, matrix);
 
         charc.animationStep && charc.animationStep(t);
     },
@@ -265,10 +193,6 @@ module.exports = {
     },
 
 
-    complete: function(charc) {
-        charc.animating = false;
-        charc._prop = undefined;
-    },
 
     lerp: function(vA, vB, t, vR) {
         if (!vR) vR = [];

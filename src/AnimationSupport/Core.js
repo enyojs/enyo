@@ -4,9 +4,9 @@ var
 	kind = require('../kind'),
 	animation = require('../animation'),
 	utils = require('../utils'),
-	tween = require('./Tween');
+	director = require('./Director');
 
-var
+var ts, wasTs,
 	CoreObject = require('../CoreObject');
 
 /**
@@ -134,7 +134,7 @@ module.exports = kind.singleton({
 	register: function (charc) {
 		this.deRegister(charc);
 		this.evnts.push(charc);
-		//this.remove(charc);
+		this.remove(charc);
 		charc.animating = true;
 		
 		if (!this.isTicking) {
@@ -145,7 +145,7 @@ module.exports = kind.singleton({
 
 	deRegister: function (curr) {
 		var idx = this.evnts.indexOf(curr);
-		if (idx >= 0) this.evnts.splice(idx, 1);	
+		if (idx >= 0) this.evnts.splice(idx, 1);
 	},
 
 	/**
@@ -167,8 +167,7 @@ module.exports = kind.singleton({
 	*/
 	loop: function () {
 		var i, curr,
-			len = this.chracs.length,
-			ts;
+			len = this.chracs.length;
 
 		if (len <= 0) {
 			this.cancel();
@@ -176,21 +175,14 @@ module.exports = kind.singleton({
 			return;
 		}
 
+		ts = utils.perfNow();
 		for (i = 0; i < len; i++) {
 			curr = this.chracs[i];
 			if (curr && curr.ready()) {
-				ts = utils.perfNow();
-				tween.update(curr, ts);
-				if (!curr._lastTime || ts >= curr._lastTime) {
-					tween.complete(curr);
-					curr.completed(curr);
-					curr.set('animationState', 'completed');
-					if(!curr.active) {
-						this.remove(curr);
-					}
-				}
+				director.update(curr, ts - (wasTs || ts));
 			}
 		}
+		wasTs = ts;
 		this.start();
 	},
 
@@ -201,13 +193,13 @@ module.exports = kind.singleton({
 		var i, curr, evlen = this.evnts.length;
 		for (i = 0; i < evlen; i++) {
 			curr = this.evnts[i];
-			if (typeof this.evnts[i].commitAnimation === 'function') {
-	        	this.evnts[i].commitAnimation();
-	        }
+			if (this.evnts[i].patterns  && typeof this.evnts[i].patterns.length > 0) {
+				this.evnts[i].commitAnimation();
+			}
 			if (curr && curr.ready()) {
-				tween.updateDelta(curr);
+				director.updateDelta(curr);
 				if (!curr.animating) {
-					tween.complete(curr);
+					director.complete(curr);
 					curr.completed(curr);
 				}
 			}

@@ -98,9 +98,9 @@ var EventDelegator = {
 			y = ev.targetTouches[0].pageY;
 			
 		if(x !== 0 || y !== 0) {
-			sender.animDelta[0] = sender.touchX - x;
-			sender.animDelta[1] = sender.touchY - y;
-			sender.animDelta[2] = 0;
+			sender.vScrollX = sender.touchX - x;
+			sender.vScrollY = sender.touchY - y;
+			sender.vScrollZ = 0;
 			sender.touchX = x;
 			sender.touchY = y;
 		}
@@ -136,9 +136,9 @@ var EventDelegator = {
 		this.deltaY = scrollTop;
 
 
-		this.animDelta[0] = delta;
-		this.animDelta[1] = 0;
-		this.animDelta[2] = 0;	
+		this.vScrollX = delta;
+		this.vScrollY = 0;
+		this.vScrollZ = 0;	
 	},
 
 	/**
@@ -162,9 +162,9 @@ var EventDelegator = {
 			this.dragLeft = dragLeft,
 			this.dragTop = dragTop;
 
-			this.animDelta[0] = this.deltaX;
-			this.animDelta[1] = this.deltaY;
-			this.animDelta[2] = 0;
+			this.vScrollX = this.deltaX;
+			this.vScrollY = this.deltaY;
+			this.vScrollZ = 0;
 		}
 	},
 
@@ -172,9 +172,9 @@ var EventDelegator = {
 	* @private
 	*/
 	mousewheelEvent: function (sender, ev) {
-		sender.animDelta[0] = ev.deltaY;
-		sender.animDelta[1] = ev.deltaX;
-		sender.animDelta[2] = 0;
+		sender.vScrollX = ev.deltaY;
+		sender.vScrollY = ev.deltaX;
+		sender.vScrollZ = 0;
 	}
 };
 

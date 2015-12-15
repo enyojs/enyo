@@ -5,6 +5,8 @@ var
 	animation = require('./Core'),
 	activator = require('./KeyFrame'),
 	delegator = require('./EventDelegator'),
+	EventEmitter = require('../EventEmitter'),
+	FrameEditor = require('./FrameEditor'),
 	frame = require('./Frame'),
 	utils = require('../utils');
 
@@ -46,11 +48,29 @@ var AnimationSupport = {
 	*/
 	animDelta: [],
 
+
+	vScrollX: 0,
+
+	vScrollY: 0,
+
+	vScrollZ: 0,
+
+	prevDur: 0,
+
+	totalDuration: 0,
+
+
 	/**
 	* Maximum threshold for animation
 	* @private
 	*/
 	animMaxThreshold: [],
+
+	_animPose: [],
+
+	_pose: [],
+
+	mixins: [EventEmitter, FrameEditor],
 
 	/**
 	* Check if the character is suitable for animation
@@ -79,7 +99,7 @@ var AnimationSupport = {
 	* @public
 	*/
 	setDistance: function (dist) {
-		this._distance = dist;
+		this.distance = dist;
 	},
 
 	/**
@@ -87,40 +107,35 @@ var AnimationSupport = {
 	* @public
 	*/
 	getDistance: function () {
-		return this._distance;
+		return this.distance;
 	},
 
 	/**
 	* Gets current state of animation for this character
-	* @parameter accelerate- Turns on/off hardware acceleration
 	* @public
 	*/
 	initiate: function (current) {
-		var dom = this.hasNode(),
-			prop = this.getAnimation(),
-			init = frame.getCompoutedProperty(dom, prop, current);
+		var dom = this.hasNode(), dur,
+			pose = frame.getComputedProperty(dom, undefined, current);
+		pose.duration = 0;
+		this._animPose.push(pose);
+		this.currentState = pose.currentState;
+		frame.accelerate(dom, pose.matrix);
 
-		utils.mixin(this, init);
-	},
-
-	/**
-	* Gets animations applied to this chracter.
-	* @public
-	*/
-	getAnimation: function() {
-		return this._prop || (this._prop = this.animate);
+		if(this.animate !== true) {
+			dur = this.getDuration() || 0;
+			this.addAnimation(this.animate, dur);
+		}
 	},
 
 	/**
 	* Adds new animation on already existing animation for this character.
 	* @public
 	*/
-	addAnimation: function (newProp) {
-		if (this._prop === undefined || this._prop == true) {
-			this._prop = newProp;
-		} else {
-			utils.mixin(this._prop, newProp);
-		}
+	addAnimation: function (newProp, duration) {
+		this.prevDur = duration || this.prevDur;
+		this.totalDuration += this.prevDur;
+		this._animPose.push({animate: newProp, duration: this.totalDuration});
 	},
 
 	/**
@@ -161,39 +176,12 @@ var AnimationSupport = {
 	* @public
 	*/
 	start: function (active, delay) {
-		this._duration = parseInt(this.getDuration(), 10);
 		this._startTime = utils.perfNow() + (delay || 0) ;
 		this._lastTime = this._startTime + this._duration;
 		this.animating = true;
 		this.active = active;
-		this.initiate(this.currentState);
 	},
 
-	/**
-	* Halt existing animation of this character
-	* @public
-	*/
-	pause: function () {
-		this.animating = false;
-		this.set('animationState', 'paused');
-	},
-
-	/**
-	* Halt all existing animations
-	* @public
-	*/
-	pauseAll: function () {
-		animation.pause();
-	},
-
-	/**
-	* Resume the paused animation of this character
-	* @public
-	*/
-	resume: function () {
-		this.animating = true;
-		this.set('animationState', 'resumed');
-	},
 	/**
 	* @private
 	*/
@@ -201,7 +189,6 @@ var AnimationSupport = {
 		return function () {
 			sup.apply(this, arguments);
 			this.initiate();
-			frame.accelerate(this.hasNode(), this.matrix);
 			if (this.handleAnimationEvents) {
 				delegator.register(this);
 			}
@@ -216,7 +203,7 @@ var AnimationSupport = {
             animation.remove(this);
             sup.apply(this, arguments);
         };
-    }),
+    })
 };
 
 module.exports = AnimationSupport;
@@ -234,10 +221,11 @@ kind.concatHandler = function (ctor, props, instance) {
 	if (props.animate || props.keyFrame || props.pattern || props.handleAnimationEvents) {
 		var proto = ctor.prototype || ctor;
 		extend(AnimationSupport, proto);
-		if (props.keyFrame && typeof props.keyFrame != 'function') {
-			activator.animate(proto, props);
-		}
-		if (props.animate && typeof props.animate != 'function') {
+		// if (props.keyFrame && typeof props.keyFrame != 'function') {
+		// 	activator.animate(proto, props);
+		// }
+		if ((props.animate && typeof props.animate != 'function' ) ||
+			(props.keyFrame && typeof props.keyFrame != 'function')) {
 			animation.trigger(proto);
 		}
 		if (props.handleAnimationEvents && typeof props.handleAnimationEvents != 'function') {
